@@ -13,11 +13,7 @@
 #define CGAL_ARRAY_H
 
 #include <CGAL/config.h>
-#ifndef CGAL_CFG_NO_CPP0X_ARRAY
-#  include <array>
-#else
-#  include <boost/array.hpp>
-#endif
+#include <array>
 #include <utility>
 
 namespace CGAL {
@@ -50,8 +46,7 @@ namespace CGAL {
 // It's also untrue that this is not documented...  It is !
 
 template< typename T, typename... Args >
-inline
-std::array< T, 1 + sizeof...(Args) >
+constexpr std::array< T, 1 + sizeof...(Args) >
 make_array(const T & t, const Args & ... args)
 {
   std::array< T, 1 + sizeof...(Args) > a = { { t, static_cast<T>(args)... } };
@@ -63,7 +58,9 @@ make_array(const T & t, const Args & ... args)
 struct Construct_array
 {
   template <typename T, typename... Args>
-  std::array<T, 1 + sizeof...(Args)> operator()(const T& t, const Args& ... args)
+  constexpr
+  std::array<T, 1 + sizeof...(Args)>
+  operator()(const T& t, const Args& ... args)
   {
     return make_array (t, args...);
   }
