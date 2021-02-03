@@ -18,6 +18,7 @@
 #else
 #  include <boost/array.hpp>
 #endif
+#include <utility>
 
 namespace CGAL {
 
@@ -67,6 +68,19 @@ struct Construct_array
     return make_array (t, args...);
   }
 };
+
+template <std::size_t...Is, typename T>
+constexpr std::array<T, sizeof...(Is)>
+make_filled_array_aux(const T& value, std::index_sequence<Is...>)
+{
+  return {(static_cast<void>(Is), value)...};
+}
+
+template <std::size_t N, typename T>
+constexpr std::array<T, N> make_filled_array(const T& value)
+{
+  return make_filled_array_aux(value, std::make_index_sequence<N>());
+}
 
 } //namespace CGAL
 

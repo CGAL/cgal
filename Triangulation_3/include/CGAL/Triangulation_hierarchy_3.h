@@ -51,6 +51,7 @@
 #include <boost/mpl/if.hpp>
 
 #include <array>
+#include <CGAL/array.h>
 
 #endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
@@ -92,18 +93,6 @@ public:
 
 private:
 
-  template <std::size_t...Is>
-  constexpr std::array<Tr_Base, sizeof...(Is)>
-  make_array_of_triangulations(const Geom_traits& traits, std::index_sequence<Is...>)
-  {
-    return {{(static_cast<void>(Is), traits)...}};
-  }
-  template <std::size_t N>
-  constexpr std::array<Tr_Base, N> create_array_of_triangulation(const Geom_traits& traits)
-  {
-    return make_array_of_triangulations(traits, std::make_index_sequence<N>());
-  }
-
   void init_hierarchy() {
     hierarchy[0] = this;
     for(int i=1; i<maxlevel; ++i)
@@ -140,7 +129,7 @@ public:
   Triangulation_hierarchy_3(InputIterator first, InputIterator last,
                             const Geom_traits& traits = Geom_traits())
     : Tr_Base(traits)
-    , hierarchy_triangulations(create_array_of_triangulation<maxlevel-1>(traits))
+    , hierarchy_triangulations(make_filled_array<maxlevel-1, Tr_Base>(traits))
   {
     init_hierarchy();
     insert(first, last);
@@ -465,7 +454,7 @@ template <class Tr >
 Triangulation_hierarchy_3<Tr>::
 Triangulation_hierarchy_3(const Geom_traits& traits)
   : Tr_Base(traits)
-  , hierarchy_triangulations(create_array_of_triangulation<maxlevel-1>(traits))
+  , hierarchy_triangulations(make_filled_array<maxlevel-1, Tr_Base>(traits))
 {
   init_hierarchy();
 }
