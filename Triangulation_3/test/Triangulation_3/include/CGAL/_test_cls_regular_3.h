@@ -17,6 +17,8 @@
 #include <list>
 #include <type_traits>
 #include <CGAL/use.h>
+#include <CGAL/Testsuite/Triangulation_23/test_move_semantic.h>
+
 template <class Triangulation>
 void
 _test_cls_regular_3(const Triangulation &)
@@ -206,35 +208,6 @@ _test_cls_regular_3(const Triangulation &)
   assert(T.is_valid());
   assert(T.dimension()==3);
 
-  // move constructor
-  {
-    Triangulation T_copy(T);
-    assert(T_copy == T);
-    assert(T_copy == T);
-    Triangulation T_move_constructed(std::move(T_copy));
-    assert(T_move_constructed == T);
-    assert(T_copy.dimension() == -2);
-    assert(T_copy.number_of_vertices() + 1 == 0);
-
-    Cls T_copy2(T);
-    Cls T_move_constructed2(std::move(T_copy2));
-    T_copy2.clear();
-    assert(T_copy2 == Cls());
-
-    Cls T_copy3(T);
-    Cls T_move_constructed3(std::move(T_copy3));
-    T_copy3 = T;
-    assert(T_copy3 == T);
-  }
-  // move-assignment
-  {
-    Cls T_copy4(T);
-    Cls T_move_assigned;
-    T_move_assigned = std::move(T_copy4);
-    assert(T_copy4.dimension() == -2);
-    assert(T_copy4.number_of_vertices() + 1 == 0);
-    assert(T_move_assigned.dimension() == 3);
-    assert(T_move_assigned.is_valid());
-    assert(T_move_assigned == T);
-  }
+  namespace test_tr_23 = CGAL::Testsuite::Triangulation_23;
+  test_tr_23::test_move_semantic(T);
 }
