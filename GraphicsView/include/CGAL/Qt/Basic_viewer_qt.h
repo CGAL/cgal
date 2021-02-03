@@ -31,8 +31,8 @@
 #include <QKeyEvent>
 
 #include <CGAL/Qt/qglviewer.h>
+#include <CGAL/Qt/manipulatedFrame.h>
 #include <QKeyEvent>
-#include <QOpenGLFunctions>
 #include <QOpenGLVertexArrayObject>
 #include <QGLBuffer>
 #include <QOpenGLShaderProgram>
@@ -185,6 +185,15 @@ public:
     setMouseBindingDescription(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::LeftButton, "Rotate the clipping plane when enabled");
     setMouseBindingDescription(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::RightButton, "Translate the clipping plane when enabled");
     setMouseBindingDescription(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::MidButton, "Control the clipping plane transparency when enabled");
+
+    /*
+      TODO
+
+      setMouseBinding(::Qt::NoModifier, ::Qt::LeftButton, qglviewer::FRAME, qglviewer::ROTATE);
+      setMouseBinding(::Qt::NoModifier, ::Qt::RightButton, qglviewer::FRAME, qglviewer::TRANSLATE);
+      setMouseBinding(::Qt::NoModifier, ::Qt::MidButton, qglviewer::FRAME, qglviewer::ZOOM);
+      setWheelBinding(::Qt::NoModifier, qglviewer::FRAME, qglviewer::ZOOM);
+    */
 
     if (title[0]==0)
       setWindowTitle("CGAL Basic Viewer");
@@ -464,7 +473,7 @@ protected:
   {
     rendering_program_face.removeAllShaders();
     rendering_program_p_l.removeAllShaders();
-    rendering_program_clipping_plane.removeAllShaders();
+    rendering_program_clipping_plane.removeAllShaders(); // TODO remove this shader: replace by QGLViewer::drawGrid
 
     // Create the buffers
     for (unsigned int i=0; i<NB_VBO_BUFFERS; ++i)
@@ -531,7 +540,7 @@ protected:
 
     // clipping plane shader
 
-
+    // TODO REMOVE
     if (isOpenGL_4_3())
     {
       source_ = vertex_source_clipping_plane;
@@ -853,6 +862,7 @@ protected:
 
     rendering_program_face.release();
 
+    // TODO remove
     // 6) clipping plane shader
     if (isOpenGL_4_3())
     {
@@ -939,6 +949,7 @@ protected:
     rendering_program_p_l.setUniformValue(mvpLocation2, mvpMatrix);
     rendering_program_p_l.release();
 
+    // TODO remove
     if (isOpenGL_4_3())
     {
       QMatrix4x4 clipping_mMatrix;
@@ -1311,6 +1322,13 @@ protected:
       }
       glEnable(GL_LIGHTING);
     }
+
+    // Multiply matrix to get in the frame coordinate system.
+    // glMultMatrixd(manipulatedFrame()->matrix()); // Linker error
+    // Scale down the drawings
+    // glScalef(0.3f, 0.3f, 0.3f); // Linker error
+    // Draw an axis using the QGLViewer static function
+    // drawAxis();
   }
 
   virtual void init()
@@ -1348,6 +1366,7 @@ protected:
                                                        bb.zmax()));
 
     // init clipping plane array
+    // TODO REMOVE
     auto generate_clipping_plane = [this](qreal size, int nbSubdivisions)
     {
       for (int i = 0; i <= nbSubdivisions; i++)
@@ -1393,6 +1412,19 @@ protected:
       {
         // toggle clipping plane
         m_use_clipping_plane = (m_use_clipping_plane + 1) % CLIPPING_PLANE_END_INDEX;
+        // TODO verify
+        if (m_use_clipping_plane==CLIPPING_PLANE_OFF)
+        {
+          delete m_frame_plane;
+          m_frame_plane=nullptr;
+          setManipulatedFrame(nullptr);
+        }
+        else if (m_frame_plane==nullptr)
+        {
+          m_frame_plane=new CGAL::qglviewer::ManipulatedFrame;
+          setManipulatedFrame(m_frame_plane);
+        }
+
         switch(m_use_clipping_plane)
         {
         case CLIPPING_PLANE_OFF: displayMessage(QString("Draw clipping = flase")); break;
@@ -1606,6 +1638,7 @@ protected:
       CGAL::QGLViewer::keyPressEvent(e);
   }
 
+  // TODO maybe remove
  virtual void keyReleaseEvent(QKeyEvent *e)
   {
     const ::Qt::KeyboardModifiers modifiers = e->modifiers();
@@ -1615,6 +1648,7 @@ protected:
     }
   }
 
+  // TODO maybe remove
   virtual void mousePressEvent(QMouseEvent *e) {
     if (clipping_plane_operation && e->modifiers() == ::Qt::ControlModifier && e->buttons() == ::Qt::LeftButton) {
       // rotation starting point
@@ -1631,6 +1665,7 @@ protected:
     }
   }
 
+  // TODO maybe remove
   virtual void mouseMoveEvent(QMouseEvent *e) {
     if (clipping_plane_operation && e->modifiers() == ::Qt::ControlModifier && e->buttons() == ::Qt::LeftButton)
     {
@@ -1660,6 +1695,7 @@ protected:
     }
   }
 
+  // TODO maybe remove
   virtual void wheelEvent(QWheelEvent *e)
   {
     if (clipping_plane_operation && e->modifiers() == ::Qt::ControlModifier) {
@@ -1728,7 +1764,8 @@ protected:
     CLIPPING_PLANE_END_INDEX
   };
 
-  int m_use_clipping_plane = CLIPPING_PLANE_OFF;
+  int m_use_clipping_plane=CLIPPING_PLANE_OFF;
+  CGAL::qglviewer::ManipulatedFrame* m_frame_plane=nullptr;
 
   double m_size_points;
   double m_size_edges;
