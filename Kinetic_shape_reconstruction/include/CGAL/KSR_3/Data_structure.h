@@ -2861,25 +2861,19 @@ public:
       std::cout << "- adding new pface: " << std::endl;
     }
 
-    std::cout << "idx: " << idx << std::endl;
-    for (const auto& pvertex : pvertices) {
-      if (pvertex != null_pvertex()) {
-        std::cout << "pv: " << point_3(pvertex) << std::endl;
-      }
-    }
-
+    // The first pvertex of the new triangle.
     const auto& pv1 = pvertices[idx];
     CGAL_assertion(pv1 != null_pvertex());
     if (m_verbose) {
       std::cout << "- pv1 " << str(pv1) << ": " << point_3(pv1) << std::endl;
     }
 
+    // The second pvertex of the new triangle.
     PVertex pv2 = null_pvertex();
     const bool pv2_exists = (pvertices[idx + 1] != null_pvertex());
     if (pv2_exists) {
+      CGAL_assertion((pvertices.size() - 1) == (idx + 1));
       pv2 = pvertices[idx + 1];
-      std::cout << "- pv2 " << str(pv2) << ": " << point_3(pv2) << std::endl;
-      CGAL_assertion_msg(false, "ERROR: THAT SHOULD BE THE LAST PVERTEX!");
     } else {
       create_new_pvertex(
         pvertex, ivertex, pother, pv1, idx + 1, iedge, pvertices);
@@ -2890,6 +2884,7 @@ public:
       std::cout << "- pv2 " << str(pv2) << ": " << point_3(pv2) << std::endl;
     }
 
+    // Adding the new triangle.
     if (reverse) add_pface(std::array<PVertex, 3>{pvertex, pv2, pv1});
     else add_pface(std::array<PVertex, 3>{pvertex, pv1, pv2});
     if (!pv2_exists) connect_pedge(pvertex, pv2, iedge);
