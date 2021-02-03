@@ -258,6 +258,9 @@ public:
   /// \cond SKIP_IN_MANUAL
   // Default creates null node
   Node() { }
+
+  // Comparison operator
+  bool operator< (const Node& other) const { return m_data < other.m_data; }
   /// \endcond
 
   /// \name Type & Location
