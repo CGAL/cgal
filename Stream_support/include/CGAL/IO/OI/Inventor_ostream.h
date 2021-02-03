@@ -21,6 +21,7 @@
 
 #include <CGAL/basic.h>
 #include <iostream>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 // OpenInventor and VRML 1.0 are quite similar formats, so
 // output operators could be shared if they use the following
