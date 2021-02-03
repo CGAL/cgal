@@ -37,7 +37,7 @@ namespace CGAL {
     struct equal_to {
       typedef bool result_type;
 
-      bool operator()(const T &lhs, const T &rhs) const
+      result_type operator()(const T &lhs, const T &rhs) const
       {
         return lhs == rhs;
       }
@@ -48,23 +48,13 @@ namespace CGAL {
     struct minus {
       typedef T result_type;
 
-      T operator()(const T &lhs, const T &rhs) const
+      result_type operator()(const T &lhs, const T &rhs) const
       {
         return lhs - rhs;
       }
 
     };
 
-    template <typename T>
-    struct multiplies {
-      typedef T result_type;
-
-      T operator()(const T &lhs, const T &rhs) const
-      {
-        return lhs * rhs;
-      }
-
-    };
   } // namespace Kernel_d
 
   template < typename Point_, typename Functor_ >
@@ -314,7 +304,7 @@ namespace CGAL {
               Iter;
       Iter b(ptr()->upper, ptr()->lower, Begin());
       Iter e(ptr()->upper, ptr()->lower, Cartesian_end());
-      return std::accumulate(b, e, RT(1), Kernel_d::multiplies<RT>());
+      return std::accumulate(b, e, RT(1), std::multiplies<RT>());
     }
 
     RT volume_denominator() const
