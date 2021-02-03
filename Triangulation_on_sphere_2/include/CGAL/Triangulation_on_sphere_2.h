@@ -80,87 +80,6 @@ public:
   typedef typename Tds::Face                      Face;
   typedef typename Tds::Face_handle               Face_handle;
 
-  typedef typename Tds::Vertex_circulator         Vertex_circulator;
-  typedef typename Tds::Edge_circulator           Edge_circulator;
-  typedef typename Tds::Face_circulator           Face_circulator;
-
-  typedef typename Tds::Vertex_iterator           Vertices_iterator;
-  typedef typename Tds::Edge_iterator             All_edges_iterator;
-  typedef typename Tds::Face_iterator             All_faces_iterator;
-
-  // This class is used to generate the Solid*_iterators.
-  class Ghost_tester
-  {
-    const Triangulation_on_sphere_2& tr;
-
-  public:
-    Ghost_tester() { }
-    Ghost_tester(const Triangulation_on_sphere_2& tr) : tr(tr) { }
-    bool operator()(const All_faces_iterator& fit) const { return fit->is_ghost(); }
-    bool operator()(const All_edges_iterator& eit) const
-    {
-      // int dim = t->dimension();
-      Face_handle f = eit->first;
-      bool edge1 = f->is_ghost();
-      Face_handle f2 = f->neighbor(eit->second);
-      // bool edge2b = f2->is_ghost();
-      bool edge2 = (f->neighbor(eit->second))->is_ghost();
-      bool result = edge1 && edge2;
-      return !result;
-    }
-  };
-
-  // @todo check contour shenanigans correctness
-  class Contour_tester
-  {
-    const Triangulation_on_sphere_2 *t;
-
-  public:
-    Contour_tester() { }
-    Contour_tester(const Triangulation_on_sphere_2 *tr) : t(tr) { }
-    bool operator()(const All_edges_iterator& eit) const
-    {
-      Face_handle f = eit->first;
-      bool edge1 = f->is_ghost();
-      bool edge2 = f->neighbor(eit->second)->is_ghost();
-      return edge1 != edge2;
-    }
-  };
-
-  // We derive in order to add a conversion to handle.
-  class Solid_faces_iterator
-    : public Filter_iterator<All_faces_iterator, Ghost_tester>
-  {
-    typedef Filter_iterator<All_faces_iterator, Ghost_tester> Base;
-    typedef Solid_faces_iterator                              Self;
-
-  public:
-    Solid_faces_iterator() : Base() { }
-    Solid_faces_iterator(const Base& b) : Base(b) { }
-    Self& operator++() { Base::operator++(); return *this; }
-    Self& operator--() { Base::operator--(); return *this; }
-    Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
-    Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
-    operator const Face_handle() const { return Base::base(); }
-  };
-
-  // solid edges : both adjacent faces are solid
-  typedef Filter_iterator<All_edges_iterator, Ghost_tester>          Solid_edges_iterator;
-
-  // one solid and one ghost face adjacent to this face
-  typedef Filter_iterator<All_edges_iterator, Contour_tester>        Contour_edges_iterator;
-
-  typedef Iterator_range<Prevent_deref<Vertices_iterator> >          Vertex_handles;
-  typedef Iterator_range<All_edges_iterator>                         All_edges;
-  typedef Iterator_range<Prevent_deref<All_faces_iterator> >         All_face_handles;
-
-  typedef Iterator_range<Solid_edges_iterator>                       Solid_edges;
-  typedef Iterator_range<Prevent_deref<Solid_faces_iterator> >       Solid_face_handles;
-
-  typedef Project_point<Vertex>                                      Pt_proj;
-  typedef boost::transform_iterator<Pt_proj, Vertices_iterator>      Point_iterator;
-  typedef Iterator_range<Point_iterator>                             Points;
-
   enum Locate_type {VERTEX = 0,
                     EDGE, // 1
                     FACE, // 2
@@ -169,6 +88,7 @@ public:
                     CONTOUR, // 5
                     NOT_ON_SPHERE, // 6
                     TOO_CLOSE}; // 7
+
 protected:
   Gt _gt;
   Tds _tds;
@@ -219,56 +139,105 @@ public:
   size_type number_of_ghost_faces() const;
   size_type number_of_solid_faces() const { return number_of_faces() - number_of_ghost_faces(); }
 
-  // TDS predicates
+  // TDS access
   bool is_edge(Vertex_handle va, Vertex_handle vb) const;
   bool is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr, int& i) const;
   bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3) const;
   bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3, Face_handle& fr) const;
 
-  // Validity
-  bool is_valid(bool verbose = false, int level = 0) const;
+  size_type degree(Vertex_handle v) const { return _tds.degree(v); }
 
-  //-----------------------GEOMETRY-----------------------------------------------------------------
-  const Point& point(const Vertex_handle v) const { return v->point(); }
-  const Point& point(const Face_handle f, const int i) const { return point(f->vertex(i)); }
+  Vertex_handle mirror_vertex(Face_handle f, int i) const { return _tds.mirror_vertex(f, i); }
+  int mirror_index(Face_handle v, int i) const { return _tds.mirror_index(v, i); }
+  Edge mirror_edge(const Edge& e) const { return _tds.mirror_edge(e); }
 
-  Segment_3 segment(const Edge& e) const;
-  Segment_3 segment(const Face_handle f, int i) const;
-  Arc_on_sphere_2 arc_segment(const Edge& e) const;
-  Arc_on_sphere_2 arc_segment(const Face_handle f, int i) const;
-  Triangle_3 triangle(const Face_handle f) const;
-
-  //-----------------------PREDICATES---------------------------------------------------------------
-  Orientation orientation(const Point& p, const Point& q, const Point& r, const Point& s) const;
-  Orientation orientation(const Face_handle f, const Point& p) const;
-
-  Orientation orientation_on_sphere(const Point& p, const Point& q, const Point& r) const;
-  Orientation orientation_on_sphere(const Face_handle f) const;
-
-  Comparison_result compare(const Point& p, const Point& q) const;
-  bool are_equal(const Point& p, const Point& q) const;
-  bool collinear_between(const Point& p, const Point& q, const Point& r) const;
-
-  void test_distance(const Point& p, Face_handle& f, Locate_type& lt, int& li) const;
-  bool are_points_too_close(const Point& p, const Point& q, Locate_type& lt) const;
-
-  //-----------------------LOCATION-----------------------------------------------------------------
-  Face_handle march_locate_1D(const Point& t, Locate_type& lt, int& li) const ;
-  Face_handle march_locate_2D(Face_handle f, const Point& t, Locate_type& lt, int& li) const;
-  Face_handle locate(const Point& p, Locate_type& lt, int& li, Face_handle start) const;
-  Face_handle locate(const Point& p, const Face_handle start) const;
-  Face_handle locate_edge(const Point& p, Locate_type& lt, int& li, bool on_diametral_plane) const;
-
-  //-----------------------DEBUG--------------------------------------------------------------------
-  void show_all() const;
-  void show_vertex(Vertex_handle vh) const;
-  void show_face(Face_handle fh) const;
-
-  // IN/OUT
-  Vertex_handle file_input(std::istream& is);
-  void file_output(std::ostream& os) const;
+  bool is_ghost(const Face_handle f) const { return f->is_ghost(); }
+  bool is_ghost(const Edge& e) const
+  {
+    Face_handle f = e.first;
+    bool g1 = is_ghost(f);
+    bool g2 = is_ghost(f->neighbor(e.second));
+    return g1 && g2;
+  }
 
   //-----------------------TRAVERSING : ITERATORS AND CIRCULATORS-----------------------------------
+
+  typedef typename Tds::Vertex_circulator         Vertex_circulator;
+  typedef typename Tds::Edge_circulator           Edge_circulator;
+  typedef typename Tds::Face_circulator           Face_circulator;
+
+  typedef typename Tds::Vertex_iterator           Vertices_iterator;
+  typedef typename Tds::Edge_iterator             All_edges_iterator;
+  typedef typename Tds::Face_iterator             All_faces_iterator;
+
+  // This class is used to generate the Solid*_iterators.
+  class Ghost_tester
+  {
+    const Triangulation_on_sphere_2& tr;
+
+  public:
+    Ghost_tester() { }
+    Ghost_tester(const Triangulation_on_sphere_2& tr) : tr(tr) { }
+
+    bool operator()(const All_faces_iterator fit) const { return fit->is_ghost(); }
+    bool operator()(const All_edges_iterator eit) const
+    {
+      return !tr.is_ghost(*eit);
+    }
+  };
+
+  // @todo check contour shenanigans correctness
+  class Contour_tester
+  {
+    const Triangulation_on_sphere_2 *t;
+
+  public:
+    Contour_tester() { }
+    Contour_tester(const Triangulation_on_sphere_2 *tr) : t(tr) { }
+
+    bool operator()(const All_edges_iterator eit) const
+    {
+      Face_handle f = eit->first;
+      bool edge1 = f->is_ghost();
+      bool edge2 = f->neighbor(eit->second)->is_ghost();
+      return edge1 != edge2;
+    }
+  };
+
+  // We derive in order to add a conversion to handle.
+  class Solid_faces_iterator
+    : public Filter_iterator<All_faces_iterator, Ghost_tester>
+  {
+    typedef Filter_iterator<All_faces_iterator, Ghost_tester> Base;
+    typedef Solid_faces_iterator                              Self;
+
+  public:
+    Solid_faces_iterator() : Base() { }
+    Solid_faces_iterator(const Base& b) : Base(b) { }
+    Self& operator++() { Base::operator++(); return *this; }
+    Self& operator--() { Base::operator--(); return *this; }
+    Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
+    Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
+    operator const Face_handle() const { return Base::base(); }
+  };
+
+  // solid edges : both adjacent faces are solid
+  typedef Filter_iterator<All_edges_iterator, Ghost_tester>          Solid_edges_iterator;
+
+  // one solid and one ghost face adjacent to this face
+  typedef Filter_iterator<All_edges_iterator, Contour_tester>        Contour_edges_iterator;
+
+  typedef Iterator_range<Prevent_deref<Vertices_iterator> >          Vertex_handles;
+  typedef Iterator_range<All_edges_iterator>                         All_edges;
+  typedef Iterator_range<Prevent_deref<All_faces_iterator> >         All_face_handles;
+
+  typedef Iterator_range<Solid_edges_iterator>                       Solid_edges;
+  typedef Iterator_range<Prevent_deref<Solid_faces_iterator> >       Solid_face_handles;
+
+  typedef Project_point<Vertex>                                      Pt_proj;
+  typedef boost::transform_iterator<Pt_proj, Vertices_iterator>      Point_iterator;
+  typedef Iterator_range<Point_iterator>                             Points;
+
   All_faces_iterator all_faces_begin() const { return _tds.faces_begin(); }
   All_faces_iterator all_faces_end() const { return _tds.faces_end(); }
 
@@ -367,11 +336,47 @@ public:
     return _tds.incident_faces(v, f);
   }
 
-  size_type degree(Vertex_handle v) const { return _tds.degree(v); }
+  //-----------------------GEOMETRY-----------------------------------------------------------------
+  const Point& point(const Vertex_handle v) const { return v->point(); }
+  const Point& point(const Face_handle f, const int i) const { return point(f->vertex(i)); }
 
-  Vertex_handle mirror_vertex(Face_handle f, int i) const { return _tds.mirror_vertex(f, i); }
-  int mirror_index(Face_handle v, int i) const { return _tds.mirror_index(v, i); }
-  Edge mirror_edge(const Edge e) const { return _tds.mirror_edge(e); }
+  Segment_3 segment(const Edge& e) const;
+  Segment_3 segment(const Face_handle f, int i) const;
+  Arc_on_sphere_2 segment_on_sphere(const Edge& e) const; // @todo
+  Arc_on_sphere_2 segment_on_sphere(const Face_handle f, int i) const;
+  Triangle_3 triangle(const Face_handle f) const;
+
+  //-----------------------PREDICATES---------------------------------------------------------------
+  Orientation orientation(const Point& p, const Point& q, const Point& r, const Point& s) const;
+  Orientation orientation(const Face_handle f, const Point& p) const;
+
+  Orientation orientation_on_sphere(const Point& p, const Point& q, const Point& r) const;
+  Orientation orientation_on_sphere(const Face_handle f) const;
+
+  Comparison_result compare(const Point& p, const Point& q) const;
+  bool are_equal(const Point& p, const Point& q) const;
+  bool collinear_between(const Point& p, const Point& q, const Point& r) const;
+
+  void test_distance(const Point& p, Face_handle& f, Locate_type& lt, int& li) const;
+  bool are_points_too_close(const Point& p, const Point& q, Locate_type& lt) const;
+
+  //-----------------------LOCATION-----------------------------------------------------------------
+  Face_handle march_locate_1D(const Point& t, Locate_type& lt, int& li) const ;
+  Face_handle march_locate_2D(Face_handle f, const Point& t, Locate_type& lt, int& li) const;
+  Face_handle locate(const Point& p, Locate_type& lt, int& li, Face_handle start) const;
+  Face_handle locate(const Point& p, const Face_handle start) const;
+  Face_handle locate_edge(const Point& p, Locate_type& lt, int& li, bool on_diametral_plane) const;
+
+  //-----------------------DEBUG--------------------------------------------------------------------
+  bool is_valid(bool verbose = false, int level = 0) const;
+
+  void show_all() const;
+  void show_vertex(Vertex_handle vh) const;
+  void show_face(Face_handle fh) const;
+
+  // IN/OUT
+  Vertex_handle file_input(std::istream& is);
+  void file_output(std::ostream& os) const;
 
   /*-----------------------TEMPLATE MEMBERS---------------------------*/
 public:
