@@ -161,6 +161,9 @@ endif()
 file(COPY ${GIT_REPO}/GraphicsView/demo/resources ${GIT_REPO}/GraphicsView/demo/icons
   DESTINATION "${release_dir}/cmake/modules/demo")
 
+#copy data
+file(COPY ${GIT_REPO}/Data/data DESTINATION "${release_dir}/")
+
 #create VERSION
 file(WRITE ${release_dir}/VERSION "${CGAL_VERSION}")
 
