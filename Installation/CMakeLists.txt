@@ -39,6 +39,22 @@ option(CGAL_HEADER_ONLY
 
 message("== Setting paths ==")
 
+if (NOT CGAL_DATA_DIR)
+  if(DEFINED ENV{CGAL_DATA_DIR})
+    set(CGAL_DATA_DIR $ENV{CGAL_DATA_DIR})
+  else()
+    if (EXISTS "${CMAKE_SOURCE_DIR}/data")
+      set(CGAL_DATA_DIR "${CMAKE_SOURCE_DIR}/data")
+    else()
+      if (EXISTS "${CMAKE_SOURCE_DIR}/Data/data")
+        set(CGAL_DATA_DIR "${CMAKE_SOURCE_DIR}/Data/data")
+      else()
+        message(FATAL_ERROR "CGAL_DATA_DIR cannot be deduced, please set the variable CGAL_DATA_DIR")
+      endif()
+    endif()
+  endif()
+endif()
+
 set(CGAL_DATA_DIR "${CMAKE_SOURCE_DIR}/Data/data" CACHE STRING "Directory containing the Data files")
 if ( NOT "${CGAL_DATA_DIR}" STREQUAL "" )
   add_definitions(-DCGAL_DATA_DIR="${CGAL_DATA_DIR}")
