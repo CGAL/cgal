@@ -437,22 +437,18 @@ void extract_patch_simplices(
   typedef typename GT::vertex_descriptor vertex_descriptor;
   typedef typename GT::face_descriptor face_descriptor;
 
-  for(face_descriptor f : faces(pm))
+  for(face_descriptor f : patch_faces)
   {
-    if ( patch_ids[ get(fids, f) ]==patch_id )
+    for(halfedge_descriptor h :
+                  halfedges_around_face(halfedge(f, pm),pm))
     {
-      patch_faces.push_back( f );
-      for(halfedge_descriptor h :
-                    halfedges_around_face(halfedge(f, pm),pm))
+      if ( !is_intersection_edge.count(edge(h, pm)) )
       {
-        if ( !is_intersection_edge.count(edge(h, pm)) )
-        {
-          if ( h < opposite(h,pm) || is_border(opposite(h,pm),pm) )
-            interior_edges.push_back( h );
-        }
-        else
-          shared_edges.push_back(h);
+        if ( h < opposite(h,pm) || is_border(opposite(h,pm),pm) )
+          interior_edges.push_back( h );
       }
+      else
+        shared_edges.push_back(h);
     }
   }
 
@@ -494,7 +490,13 @@ struct Patch_container{
     , patch_ids(patch_ids)
     , fids(fids)
     , is_intersection_edge(is_intersection_edge)
-  {}
+  {
+    typedef boost::graph_traits<PolygonMesh> GT;
+    typedef typename GT::face_descriptor face_descriptor;
+
+    for(face_descriptor f : faces(pm))
+      patches[patch_ids[ get(fids, f) ]].faces.push_back( f );
+  }
 
   Patch_description<PolygonMesh>& operator[](std::size_t i) {
     if ( !patches[i].is_initialized )
