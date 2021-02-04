@@ -21,11 +21,11 @@ A comprehensive list of the supported file formats is available in the Stream_su
     Bolun Wang, Teseo Schneider, Yixin Hu, Marco Attene, and Daniele Panozzo.
     "Exact and efficient polyhedral envelope containment check." (ACM Trans. Graph., 39-4, July 2020).
 
-### [Surface Mesh Simplification](https://doc.cgal.org/5.3/Manual/packages.html#PkgSurfaceMeshSimplification2)
+### [Surface Mesh Simplification](https://doc.cgal.org/5.3/Manual/packages.html#PkgSurfaceMeshSimplification)
 -   Added a filtering mechanism so that costly tests get only applied to the next candidate for the edge collapse.
 -   Added the class `Polyhedral_envelope_filter` that enables to perform mesh simplification inside a polyhedral envelope of the input mesh.
 
-### [2D Polyline Simplification](https://doc.cgal.org/5.3/Manual/packages.html#PkgPolylineSiimplification)
+### [2D Polyline Simplification](https://doc.cgal.org/5.3/Manual/packages.html#PkgPolylineSimplification2)
 -   Subsequences of polylines that are shared are no longer marked as unremovable.
 
 [Release 5.2](https://github.com/CGAL/cgal/releases/tag/v5.2)
