@@ -339,7 +339,7 @@ function(cgal_add_test exe_name)
         message(STATUS "Using CGAL_DATA_DIR = ${CGAL_DATA_DIR}")
 
         file(STRINGS "${cmd_file}" CMD_LINES)
-        string(CONFIGURE ${CMD_LINES} CMD_LINES)
+        string(CONFIGURE "${CMD_LINES}" CMD_LINES)
         set(ARGS)
         #	  message(STATUS "DEBUG test ${exe_name}")
         foreach(CMD_LINE ${CMD_LINES})
