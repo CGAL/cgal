@@ -778,6 +778,7 @@ private:
         const FT distance = KSR::distance(pinit, ipoint);
         const FT time = distance / m_data.speed(pvertex);
 
+        // Should I break here?
         is_event_found = true;
         CGAL_assertion(time < m_max_time - m_min_time);
         m_queue.push(Event(true, pvertex, pother, ivertex, m_min_time + time));
@@ -787,9 +788,8 @@ private:
     return is_event_found;
   }
 
-  const bool try_pvertex_to_pvertex_constrained_event(
+  void try_pvertex_to_pvertex_constrained_event(
     const PVertex& pvertex, const Segment_2& pv_segment, const Bbox_2& pv_bbox) {
-    bool is_event_found = false;
 
     PVertex prev, next;
     std::tie(prev, next) = m_data.prev_and_next(pvertex);
@@ -821,17 +821,14 @@ private:
       // Constrained pvertex to another pvertex event.
       CGAL_assertion(time < m_max_time - m_min_time);
       m_queue.push(Event(true, pvertex, pother, m_min_time + time));
-      is_event_found = true;
 
       // std::cout << "pvertex: " << m_data.point_3(pvertex) << std::endl;
       // std::cout << "pother: "  << m_data.point_3(pother)  << std::endl;
     }
-    return is_event_found;
   }
 
-  const bool try_pvertex_to_ivertex_constrained_event(
+  void try_pvertex_to_ivertex_constrained_event(
     const PVertex& pvertex, const Segment_2& pv_segment, const Bbox_2& pv_bbox) {
-    bool is_event_found = false;
 
     CGAL_assertion(m_data.has_iedge(pvertex));
     const auto iedge = m_data.iedge(pvertex);
@@ -857,13 +854,11 @@ private:
 
         CGAL_assertion(time < m_max_time - m_min_time);
         m_queue.push(Event(true, pvertex, ivertex, m_min_time + time));
-        is_event_found = true;
 
         // std::cout << "pvertex: " << m_data.point_3(pvertex) << std::endl;
         // std::cout << "ivertex: " << m_data.point_3(ivertex) << std::endl;
       }
     }
-    return is_event_found;
   }
 
   void compute_events_of_unconstrained_pvertex(
@@ -878,7 +873,7 @@ private:
       pvertex, pv_segment, pv_bbox, iedges, segments, bboxes);
   }
 
-  const bool try_pvertex_to_iedge_unconstrained_event(
+  void try_pvertex_to_iedge_unconstrained_event(
     const PVertex& pvertex,
     const Segment_2& pv_segment,
     const Bbox_2& pv_bbox,
@@ -886,7 +881,6 @@ private:
     const std::vector<Segment_2>& segments,
     const std::vector<Bbox_2>& bboxes) {
 
-    bool is_event_found = false;
     const auto prev = m_data.prev(pvertex);
     const auto next = m_data.next(pvertex);
     for (std::size_t i = 0; i < iedges.size(); ++i) {
@@ -912,7 +906,7 @@ private:
 
       // Try to add unconstrained pvertex to ivertex event.
       const auto& pinit = pv_segment.source();
-      // is_event_found = try_pvertex_to_ivertex_unconstrained_event(
+      // const bool is_event_found = try_pvertex_to_ivertex_unconstrained_event(
       //   pvertex, iedge, inter, pinit);
 
       // Otherwise we add unconstrained pvertex to iedge event.
@@ -922,14 +916,12 @@ private:
       const FT time = distance / m_data.speed(pvertex);
       CGAL_assertion(time < m_max_time - m_min_time);
       m_queue.push(Event(false, pvertex, iedge, m_min_time + time));
-      is_event_found = true;
 
       // }
 
       // std::cout << "pvertex: " << m_data.point_3(pvertex) << std::endl;
       // std::cout << "iedge: "   << m_data.segment_3(iedge) << std::endl;
     }
-    return is_event_found;
   }
 
   const bool try_pvertex_to_ivertex_unconstrained_event(
