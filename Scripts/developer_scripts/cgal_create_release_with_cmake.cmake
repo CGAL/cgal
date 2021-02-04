@@ -296,6 +296,7 @@ file(REMOVE ${release_dir}/include/CGAL/license/package_list.txt)
 if(PUBLIC AND NOT TESTSUITE) # we are not creating an internal release.
   # Taken from create_new_release.
   file(REMOVE_RECURSE ${release_dir}/test)
+  file(REMOVE_RECURSE ${release_dir}/data/test)
   file(REMOVE_RECURSE ${release_dir}/package_info)
   file(REMOVE_RECURSE ${release_dir}/developer_scripts)
   file(REMOVE_RECURSE ${release_dir}/doc)
