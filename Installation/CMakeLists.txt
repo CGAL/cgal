@@ -39,7 +39,7 @@ option(CGAL_HEADER_ONLY
 
 message("== Setting paths ==")
 
-set(CGAL_DATA_DIR "${CMAKE_SOURCE_DIR}/Data" CACHE STRING "Directory containing the Data files")
+set(CGAL_DATA_DIR "${CMAKE_SOURCE_DIR}/Data/data" CACHE STRING "Directory containing the Data files")
 if ( NOT "${CGAL_DATA_DIR}" STREQUAL "" )
   add_definitions(-DCGAL_DATA_DIR="${CGAL_DATA_DIR}")
 endif()
