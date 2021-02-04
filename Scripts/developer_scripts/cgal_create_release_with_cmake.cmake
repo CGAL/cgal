@@ -322,7 +322,7 @@ if (GENERATE_TARBALLS)
 
   #create examples+demos
   execute_process(
-  COMMAND tar cJf ${DESTINATION}/CGAL-${CGAL_VERSION}-examples.tar.xz -C ${DESTINATION} CGAL-${CGAL_VERSION}/examples CGAL-${CGAL_VERSION}/demo
+  COMMAND tar cJf ${DESTINATION}/CGAL-${CGAL_VERSION}-examples.tar.xz -C ${DESTINATION} CGAL-${CGAL_VERSION}/data CGAL-${CGAL_VERSION}/examples CGAL-${CGAL_VERSION}/demo
   RESULT_VARIABLE RESULT_VAR
   OUTPUT_VARIABLE OUT_VAR
   )
@@ -336,6 +336,7 @@ if (GENERATE_TARBALLS)
     file(REMOVE_RECURSE ${release_dir}/include/CGAL/Test)
     file(REMOVE_RECURSE ${release_dir}/include/CGAL/Testsuite/)
   endif()
+  file(REMOVE_RECURSE ${release_dir}/data)
   file(REMOVE_RECURSE ${release_dir}/demo)
   file(REMOVE_RECURSE ${release_dir}/examples)
   file(REMOVE_RECURSE ${release_dir}/scripts)
