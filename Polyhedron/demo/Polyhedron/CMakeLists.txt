@@ -69,7 +69,7 @@ include(${CGAL_USE_FILE})
 
 find_package(
   Qt5 QUIET
-  COMPONENTS OpenGL Script
+  COMPONENTS OpenGL Script Xml
   OPTIONAL_COMPONENTS ScriptTools WebSockets)
 
 set_package_properties(
@@ -233,8 +233,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     Primitive_container.cpp
     Polyhedron_demo_plugin_helper.cpp
     CGAL_double_edit.cpp)
-  target_link_libraries(demo_framework PUBLIC Qt5::OpenGL Qt5::Widgets Qt5::Gui
-                                              Qt5::Script)
+  target_link_libraries(demo_framework PUBLIC Qt5::OpenGL Qt5::Widgets Qt5::Gui Qt5::Xml
+                                              Qt5::Script CGAL::CGAL_Qt5)
   if(TARGET Qt5::WebSockets)
     target_link_libraries(demo_framework PUBLIC Qt5::WebSockets)
     message(
