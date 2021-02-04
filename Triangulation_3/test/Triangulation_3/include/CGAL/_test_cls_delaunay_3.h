@@ -1209,9 +1209,10 @@ _test_cls_delaunay_3(const Triangulation &)
       for (int i=0; i<10; i++)
         tri.insert(Point(i+1, i+2, i+3));
 
-      return std::move(tri); // the move prevents the NRVO
+      return tri;
     };
-    Triangulation t = Triangulate();
+    auto t = Triangulate();
+    auto t2 = std::move(t);
   }
 }
 
