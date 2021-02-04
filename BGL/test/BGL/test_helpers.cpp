@@ -92,7 +92,7 @@ void test_validity()
 }
 
 template <typename Mesh>
-void test(const char *fname, bool triangle, bool quad, bool tetrahedron, bool hexahedron)
+void test(const std::string fname, bool triangle, bool quad, bool tetrahedron, bool hexahedron)
 {
   typedef typename boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
 

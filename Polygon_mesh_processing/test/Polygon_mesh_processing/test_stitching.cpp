@@ -25,7 +25,7 @@ namespace params = CGAL::parameters;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template <typename Mesh>
-void test_stitch_boundary_cycles(const char* fname,
+void test_stitch_boundary_cycles(const std::string fname,
                                  const std::size_t expected_n)
 {
   typedef typename boost::graph_traits<Mesh>::halfedge_descriptor     halfedge_descriptor;
@@ -97,7 +97,7 @@ typename boost::graph_traits<Mesh>::halfedge_descriptor get_border_halfedge(cons
 }
 
 template <typename Mesh>
-void test_stitch_borders(const char* fname,
+void test_stitch_borders(const std::string fname,
                          const std::size_t expected_n,
                          const bool per_cc = false,
                          std::set<int> unconstrained_edge_ids = { }, // constrained edges must appear in the output

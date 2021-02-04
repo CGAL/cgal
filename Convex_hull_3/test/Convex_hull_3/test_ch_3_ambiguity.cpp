@@ -12,7 +12,7 @@ typedef CGAL::Surface_mesh<Point_3>                          Surface_mesh;
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc>1)? argv[1] : CGAL::data_file_path("meshes/cross.off");
+  const std::string filename = (argc>1)? argv[1] : CGAL::data_file_path("meshes/cross.off");
 
   Surface_mesh poly;
   if(!CGAL::IO::read_polygon_mesh(filename, poly))

@@ -27,7 +27,7 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
 
 
 template <class Polyhedron>
-void read_poly(const char* file_name, Polyhedron& poly) {
+void read_poly(const std::string file_name, Polyhedron& poly) {
   poly.clear();
 
   std::ifstream input(file_name);
@@ -56,7 +56,7 @@ void detect_borders(Polyhedron& poly, std::vector<Halfedge_handle>& border_reps)
 }
 
 template <class Polyhedron, class Halfedge_handle>
-void read_poly_with_borders(const char* file_name, Polyhedron& poly, std::vector<Halfedge_handle>& border_reps)
+void read_poly_with_borders(const std::string file_name, Polyhedron& poly, std::vector<Halfedge_handle>& border_reps)
 {
   read_poly(file_name, poly);
   detect_borders(poly, border_reps);
@@ -96,7 +96,7 @@ CGAL::internal::Weight_min_max_dihedral_and_area
 
 
 template <class Polyhedron>
-void test_triangulate_hole_weight(const char* file_name, std::size_t nb_remaining_holes) {
+void test_triangulate_hole_weight(const std::string file_name, std::size_t nb_remaining_holes) {
 
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor Facet_handle;
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_handle;
@@ -120,7 +120,7 @@ void test_triangulate_hole_weight(const char* file_name, std::size_t nb_remainin
 }
 /******************************************************************/
 template <class Polyhedron>
-void test_triangulate_hole(const char* file_name) {
+void test_triangulate_hole(const std::string file_name) {
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor Facet_handle;
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_handle;
 
@@ -147,7 +147,7 @@ void test_triangulate_hole(const char* file_name) {
   std::cout << "  Done!" << std::endl;
 }
 template <class Polyhedron>
-void test_triangulate_hole_should_be_no_output(const char* file_name) {
+void test_triangulate_hole_should_be_no_output(const std::string file_name) {
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor Facet_handle;
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_handle;
 
@@ -178,7 +178,7 @@ void test_triangulate_hole_should_be_no_output(const char* file_name) {
 }
 
 template <class Polyhedron>
-void test_triangulate_and_refine_hole(const char* file_name) {
+void test_triangulate_and_refine_hole(const std::string file_name) {
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor Facet_handle;
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_handle;
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor        Vertex_handle;
@@ -209,7 +209,7 @@ void test_triangulate_and_refine_hole(const char* file_name) {
 }
 
 template <class Polyhedron>
-void test_triangulate_refine_and_fair_hole(const char* file_name) {
+void test_triangulate_refine_and_fair_hole(const std::string file_name) {
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_handle;
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor Facet_handle;
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor        Vertex_handle;
@@ -240,7 +240,7 @@ void test_triangulate_refine_and_fair_hole(const char* file_name) {
 }
 
 template <class Polyhedron>
-void test_ouput_iterators_triangulate_hole(const char* file_name) {
+void test_ouput_iterators_triangulate_hole(const std::string file_name) {
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_handle;
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor Facet_handle;
 
@@ -272,7 +272,7 @@ void test_ouput_iterators_triangulate_hole(const char* file_name) {
 }
 
 template <class Polyhedron>
-void test_ouput_iterators_triangulate_and_refine_hole(const char* file_name) {
+void test_ouput_iterators_triangulate_and_refine_hole(const std::string file_name) {
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_handle;
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor Facet_handle;
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor        Vertex_handle;

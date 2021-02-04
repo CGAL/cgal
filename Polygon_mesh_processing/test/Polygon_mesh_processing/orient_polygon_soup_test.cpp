@@ -57,7 +57,7 @@ std::istream& read_soup(
   return stream;
 }
 
-void shuffle_off(const char* fname_in, const char* fname_out)
+void shuffle_off(const std::string fname_in, const std::string fname_out)
 {
   std::ifstream input(fname_in);
   if ( !input ){

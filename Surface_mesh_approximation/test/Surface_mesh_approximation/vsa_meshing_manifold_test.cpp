@@ -19,7 +19,7 @@ typedef L21_approx::Error_metric L21_metric;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-bool test_manifold(const char *file_name, const FT drop = FT(1e-2))
+bool test_manifold(const std::string file_name, const FT drop = FT(1e-2))
 {
   Mesh mesh;
   std::ifstream input(file_name);

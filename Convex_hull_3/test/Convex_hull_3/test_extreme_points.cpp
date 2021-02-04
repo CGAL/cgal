@@ -43,7 +43,7 @@ void test_function_overload()
   }
 }
 
-void test_triangulated_cube(const char* fname)
+void test_triangulated_cube(const std::string fname)
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
   typedef K::Point_3 Point_3;
@@ -72,7 +72,7 @@ void test_triangulated_cube(const char* fname)
   assert(extreme_points.size() == 8);
 }
 
-void test_coplanar_points(const char* fname)
+void test_coplanar_points(const std::string fname)
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
   typedef K::Point_3 Point_3;
@@ -201,7 +201,7 @@ void test_equal_points()
 }
 
 
-void test_extreme_vertices(const char* fname)
+void test_extreme_vertices(const std::string fname)
 {
   std::ifstream input(fname);
   Polyhedron_3 P;

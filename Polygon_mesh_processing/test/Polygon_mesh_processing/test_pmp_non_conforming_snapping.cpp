@@ -34,7 +34,7 @@ typedef CGAL::Polyhedron_3<EPICK, CGAL::Polyhedron_items_with_id_3>   Polyhedron
 typedef CGAL::Surface_mesh<EPICK::Point_3>                            Surface_mesh;
 
 template <typename Kernel, typename Mesh>
-void read_mesh(const char* filename,
+void read_mesh(const std::string filename,
                Mesh& sm)
 {
   typedef typename Kernel::Point_3                                    Point;
@@ -69,7 +69,7 @@ void read_mesh(const char* filename,
 }
 
 template <typename Kernel, typename Mesh>
-void test(const char* filename,
+void test(const std::string filename,
           const double large_tolerance,
           const double good_tolerance,
           const double small_tolerance)
@@ -138,7 +138,7 @@ void test(const char* filename,
   out4.close();
 }
 
-void test(const char* filename,
+void test(const std::string filename,
           const double large_tolerance,
           const double good_tolerance,
           const double small_tolerance)

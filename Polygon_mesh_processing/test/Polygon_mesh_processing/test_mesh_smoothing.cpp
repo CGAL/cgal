@@ -19,7 +19,7 @@ typedef CGAL::Polyhedron_3<Kernel>                            Polyhedron;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 template <typename Mesh>
-void read_mesh(const char* filename, Mesh& mesh)
+void read_mesh(const std::string filename, Mesh& mesh)
 {
   std::ifstream input(filename);
 
@@ -31,7 +31,7 @@ void read_mesh(const char* filename, Mesh& mesh)
 }
 
 template <typename Mesh>
-void test_smoothing(const char* filename)
+void test_smoothing(const std::string filename)
 {
   Mesh mesh;
   read_mesh(filename, mesh);
@@ -41,7 +41,7 @@ void test_smoothing(const char* filename)
 }
 
 template <typename Mesh>
-void test_angle_smoothing(const char* filename)
+void test_angle_smoothing(const std::string filename)
 {
   Mesh mesh;
   read_mesh(filename, mesh);
@@ -52,7 +52,7 @@ void test_angle_smoothing(const char* filename)
 }
 
 template <typename Mesh>
-void test_area_smoothing(const char* filename)
+void test_area_smoothing(const std::string filename)
 {
   Mesh mesh;
   read_mesh(filename, mesh);
@@ -63,7 +63,7 @@ void test_area_smoothing(const char* filename)
 }
 
 template <typename Mesh>
-void test_angle_smoothing_without_projection(const char* filename)
+void test_angle_smoothing_without_projection(const std::string filename)
 {
   Mesh mesh;
   read_mesh(filename, mesh);
@@ -73,7 +73,7 @@ void test_angle_smoothing_without_projection(const char* filename)
 }
 
 template <typename Mesh>
-void test_area_smoothing_without_projection(const char* filename)
+void test_area_smoothing_without_projection(const std::string filename)
 {
   Mesh mesh;
   read_mesh(filename, mesh);
@@ -83,7 +83,7 @@ void test_area_smoothing_without_projection(const char* filename)
 }
 
 template <typename Mesh>
-void test_constrained_vertices(const char* filename)
+void test_constrained_vertices(const std::string filename)
 {
   Mesh mesh;
   read_mesh(filename, mesh);
@@ -115,8 +115,8 @@ void test_constrained_vertices(const char* filename)
 
 int main(int /*argc*/, char** /*argv*/)
 {
-  const char* filename_elephant = CGAL::data_file_path("meshes/elephant.off");
-  const char* filename_mannequin = CGAL::data_file_path("meshes/mannequin-devil.off");
+  const std::string filename_elephant = CGAL::data_file_path("meshes/elephant.off");
+  const std::string filename_mannequin = CGAL::data_file_path("meshes/mannequin-devil.off");
 
   std::cout << "Test files: " << filename_elephant << " " << filename_mannequin << std::endl;
 

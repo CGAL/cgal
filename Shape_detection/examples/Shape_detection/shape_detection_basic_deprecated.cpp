@@ -32,7 +32,7 @@ typedef CGAL::Shape_detection_3::Plane<Traits>               Plane;
 // This example is using deprecated code!
 // Please update your code to the new version using other examples!
 template<typename ShapeDetection>
-int run(const char* filename) {
+int run(const std::string filename) {
 
   // Points with normals.
   Pwn_vector points;

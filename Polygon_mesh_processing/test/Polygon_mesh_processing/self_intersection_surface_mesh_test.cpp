@@ -19,7 +19,7 @@ namespace PMP = ::CGAL::Polygon_mesh_processing;
 namespace CP = ::CGAL::parameters;
 
 template <typename K>
-int test_self_intersections(const char* filename,
+int test_self_intersections(const std::string filename,
                             const bool expected)
 {
   typedef CGAL::Surface_mesh<typename K::Point_3>                Mesh;
@@ -137,7 +137,7 @@ int main(int argc, char** argv)
 
   // First test ----------------------------------------------------------------
   bool expected = false;
-  const char* filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
+  std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
   if(argc > 1) {
     assert(argc > 2);
     std::stringstream ss(argv[2]);
