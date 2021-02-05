@@ -217,16 +217,6 @@ void CGAL::QGLViewer::initializeGL() {
          || QCoreApplication::arguments().contains(QStringLiteral("--old")))
 
     {
-      format.setDepthBufferSize(24);
-      format.setStencilBufferSize(8);
-      format.setVersion(2,0);
-      format.setRenderableType(QSurfaceFormat::OpenGLES);
-      format.setSamples(0);
-      format.setOption(QSurfaceFormat::DebugContext);
-      QSurfaceFormat::setDefaultFormat(format);
-
-      needNewContext();
-      qDebug()<<"GL 4.3 context initialization failed. ";
       is_ogl_4_3 = false;
     }
     else
