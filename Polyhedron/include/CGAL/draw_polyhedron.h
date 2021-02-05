@@ -16,7 +16,7 @@
 #include <CGAL/Qt/Basic_viewer_qt.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
-
+#include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Random.h>
 
@@ -208,6 +208,7 @@ void draw(const CGAL_POLY_TYPE& apoly,
 
   if (!cgal_test_suite)
   {
+    CGAL::Qt::init_ogl_context(4,3);
     int argc=1;
     const char* argv[2]={"polyhedron_viewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));

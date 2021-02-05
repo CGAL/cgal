@@ -35,6 +35,7 @@ void draw(const PS& aps);
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
+#include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Random.h>
 
@@ -100,6 +101,7 @@ void draw(const Point_set_3<P, V>& apointset,
 
   if (!cgal_test_suite)
   {
+    CGAL::Qt::init_ogl_context(4,3);
     int argc=1;
     const char* argv[2]={"point_set_viewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));
