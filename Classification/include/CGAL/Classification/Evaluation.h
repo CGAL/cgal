@@ -123,7 +123,7 @@ public:
     CGAL_precondition (m_labels.is_valid_ground_truth (ground_truth));
     CGAL_precondition (m_labels.is_valid_ground_truth (result));
 
-    for (const auto& p : CGAL::make_range
+    for (const auto p : CGAL::make_range
            (boost::make_zip_iterator(boost::make_tuple(ground_truth.begin(), result.begin())),
             boost::make_zip_iterator(boost::make_tuple(ground_truth.end(), result.end()))))
     {
