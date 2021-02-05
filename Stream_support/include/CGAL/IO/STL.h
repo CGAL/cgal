@@ -284,7 +284,7 @@ bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facet
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
- *     \cgalParamDefault{`the precision of the given stream`}
+ *     \cgalParamDefault{`the precision of the stream `os``}
  *     \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
@@ -317,7 +317,7 @@ bool write_STL(std::ostream& os,
   if(!os.good())
     return false;
 
-  set_default_stream_precision(os, np);
+  set_stream_precision_from_NP(os, np);
 
   if(get_mode(os) == IO::BINARY)
   {

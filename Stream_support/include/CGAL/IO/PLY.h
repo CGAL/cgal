@@ -445,7 +445,7 @@ bool read_PLY(const std::string& fname, PointRange& points, PolygonRange& polygo
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
- *     \cgalParamDefault{`the precision of the given stream`}
+ *     \cgalParamDefault{`the precision of the stream `os``}
  *     \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
@@ -468,7 +468,7 @@ bool write_PLY(std::ostream& out,
   if(!out.good())
     return false;
 
-  set_default_stream_precision(out, np);
+  set_stream_precision_from_NP(out, np);
 
   // Write header
   out << "ply" << std::endl

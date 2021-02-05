@@ -271,7 +271,7 @@ bool read_GOCAD(const std::string& fname, Graph& g,
 ///   \cgalParamNBegin{stream_precision}
 ///     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
 ///     \cgalParamType{int}
-///     \cgalParamDefault{`the precision of the given stream`}
+///     \cgalParamDefault{`the precision of the stream `os``}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
@@ -379,7 +379,7 @@ bool write_GOCAD(std::ostream& os, const char* name, const Graph& g,
 ///   \cgalParamNBegin{stream_precision}
 ///     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
 ///     \cgalParamType{int}
-///     \cgalParamDefault{`the precision of the given stream`}
+///     \cgalParamDefault{`the precision of the stream `os``}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
@@ -453,7 +453,6 @@ bool write_GOCAD(const std::string& fname,
 {
   std::ofstream os(fname);
   CGAL::set_mode(os, CGAL::IO::ASCII);
-
 
   return write_GOCAD(os, fname.c_str(), g, np);
 }

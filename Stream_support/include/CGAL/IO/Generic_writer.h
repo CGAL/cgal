@@ -49,7 +49,7 @@ public:
     if(!m_os.good())
       return false;
 
-    set_default_stream_precision(m_os, np);
+    set_stream_precision_from_NP(m_os, np);
 
     m_writer.write_header(m_os, points.size(), 0, polygons.size());
     for(std::size_t i=0, end=points.size(); i<end; ++i)

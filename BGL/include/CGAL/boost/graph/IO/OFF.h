@@ -300,7 +300,6 @@ CGAL_DEPRECATED bool read_off(const char* fname, Graph& g, const CGAL_BGL_NP_CLA
  return read_OFF(fname, g, np);
 }
 
-
 template <typename Graph>
 CGAL_DEPRECATED bool read_off(std::istream& is, Graph& g)
 {
@@ -387,7 +386,7 @@ bool write_OFF_BGL(std::ostream& os,
     \cgalParamNBegin{stream_precision}
       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
       \cgalParamType{int}
-      \cgalParamDefault{`the precision of the given stream`}
+      \cgalParamDefault{`the precision of the stream `os``}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 

@@ -28,7 +28,6 @@ namespace CGAL {
 
 class File_writer_VRML_2
 {
-
   VRML_2_ostream m_os;
   std::size_t m_facets;
 
@@ -43,7 +42,7 @@ public:
                     std::size_t facets,
                     const bool /*colors*/ = false,
                     const bool /*normals*/ = false,
-                    const bool /*te xtures*/ = false)
+                    const bool /*textures*/ = false)
   {
     m_os = o;
     m_facets = facets;

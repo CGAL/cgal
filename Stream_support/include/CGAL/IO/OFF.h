@@ -298,7 +298,7 @@ bool read_OFF(const std::string& fname, PointRange& points, PolygonRange& polygo
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
- *     \cgalParamDefault{`the precision of the given stream`}
+ *     \cgalParamDefault{`the precision of the stream `os``}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -367,7 +367,6 @@ bool write_OFF(const std::string& fname,
                )
 {
   std::ofstream os(fname);
-
   Generic_writer<std::ostream, File_writer_OFF> writer(os);
   return writer(points, polygons, np);
 }

@@ -91,15 +91,9 @@ private:
 };
 
 template<typename NP>
-void set_default_stream_precision(Inventor_ostream_base& os, const NP& np)
+void set_stream_precision_from_NP(Inventor_ostream_base& os, const NP& np)
 {
-  if(!parameters::is_default_parameter(
-       parameters::get_parameter(np, internal_np::stream_precision)))
-  {
-    const int precision = parameters::choose_parameter<int>(
-          parameters::get_parameter(np, internal_np::stream_precision));
-    os.os().precision(precision);
-  }
+  return set_stream_precision_from_NP(os.os(), np);
 }
 
 } // namespace CGAL

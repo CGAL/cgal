@@ -59,7 +59,7 @@ namespace CGAL {
     \cgalParamNBegin{stream_precision}
       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
       \cgalParamType{int}
-      \cgalParamDefault{`the precision of the given stream`}
+      \cgalParamDefault{`the precision of the stream `os``}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
