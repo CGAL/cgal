@@ -4795,12 +4795,12 @@ private:
     const FT num = (x0 - x2) * (y2 - y3) - (y0 - y2) * (x2 - x3);
     const FT den = (x0 - x1) * (y2 - y3) - (y0 - y1) * (x2 - x3);
 
-    // if (m_verbose) {
-    //   std::cout << "num: " << num << std::endl;
-    //   std::cout << "den: " << den << std::endl;
-    //   std::cout << "d1: " << d1 << std::endl;
-    //   std::cout << "d2: " << d2 << std::endl;
-    // }
+    if (m_verbose) {
+      std::cout << "- num: " << num << std::endl;
+      std::cout << "- den: " << den << std::endl;
+      std::cout << "- d1: " << d1 << std::endl;
+      std::cout << "- d2: " << d2 << std::endl;
+    }
 
     // Almost zero cases.
     // q0--w0--q---w1---q1
@@ -4887,6 +4887,7 @@ private:
       std::cout << "- q1: " << to_3d(pvertex.first, q1) << std::endl;
       std::cout << "- q2: " << to_3d(pvertex.first, q2) << std::endl;
       std::cout << "- q3: " << to_3d(pvertex.first, q3) << std::endl;
+      std::cout << "- q4: " << to_3d(pvertex.first, q4) << std::endl;
       std::cout << "- pv0 " << str(pv0) << ": " << point_3(pv0) << std::endl;
       std::cout << "- pv1 " << str(pv1) << ": " << point_3(pv1) << std::endl;
     }
@@ -4946,6 +4947,14 @@ private:
       CGAL_assertion_msg(false, "TODO: FUTURE POINT, PARALLEL, INVALID CASE!");
     }
 
+    // Check parallel case.
+    pair = compute_weights(q0, q1, q2, q4);
+    const FT l0 = pair.first; const FT l1 = pair.second;
+    const bool is_current_parallel = (l0 < FT(0) && l1 < FT(0));
+    if (is_current_parallel && !is_constrained) {
+      is_traverse_case = true;
+    }
+
     // Parallel cases.
     if (is_get_opposite_case) {
       if (m_verbose) std::cout << "- non std: getting opposite" << std::endl;
@@ -4958,8 +4967,15 @@ private:
       "ERROR: ZERO LENGTH VECTOR! DO WE HAVE A ZERO-LENGTH IEDGE?");
       const FT dot_product = vec1 * vec2;
       Point_2 future_point;
-      if (dot_product < FT(0)) future_point = source;
-      else future_point = target;
+      if (dot_product < FT(0)) {
+        // Vector_2 vec(target, source); vec /= FT(10000); // is it better?
+        // future_point = source + vec;
+        future_point = source;
+      } else {
+        // Vector_2 vec(source, target); vec /= FT(10000); // is it better?
+        // future_point = target + vec;
+        future_point = target;
+      }
       // CGAL_assertion_msg(false, "TODO: FUTURE POINT, NON STD, GET OPPOSITE CASE!");
       return std::make_pair(future_point, true);
     }
