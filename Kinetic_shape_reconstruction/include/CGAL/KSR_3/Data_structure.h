@@ -4756,41 +4756,99 @@ private:
     const FT x1 = q1.x(), y1 = q1.y();
     const FT x2 = q2.x(), y2 = q2.y();
     const FT x3 = q3.x(), y3 = q3.y();
+    bool is_almost_zero_1 = false, is_almost_zero_2 = false;
 
     const FT sq_d1 = (x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0);
     CGAL_assertion(sq_d1 >= FT(0));
-    // if (m_verbose) std::cout << "sq d1: " << sq_d1 << std::endl;
-    CGAL_assertion_msg(static_cast<FT>(CGAL::sqrt(CGAL::to_double(sq_d1))) >= tol,
-    "TODO: FUTURE POINT, HANDLE ZERO IEDGE!");
+    const FT d1 = static_cast<FT>(CGAL::sqrt(CGAL::to_double(sq_d1)));
+    CGAL_assertion(d1 >= FT(0));
+    if (d1 < tol) {
+      is_almost_zero_1 = true;
+      if (m_verbose) {
+        // std::cout << "-   tol: " << tol   << std::endl;
+        // std::cout << "-    d1: " << d1    << std::endl;
+        // std::cout << "- sq d1: " << sq_d1 << std::endl;
+        std::cout << "- warning: almost zero-length iedge" << std::endl;
+      }
+      // CGAL_assertion_msg(d1 >= tol, "TODO: COMPUTE WEIGHTS, HANDLE ZERO-LENGTH IEDGE!");
+      CGAL_assertion_msg(d1 != FT(0), "ERROR: COMPUTE WEIGHTS, ZERO-LENGTH IEDGE!");
+    }
 
     const FT sq_d2 = (x3 - x2) * (x3 - x2) + (y3 - y2) * (y3 - y2);
     CGAL_assertion(sq_d2 >= FT(0));
-    // if (m_verbose) std::cout << "sq d2: " << sq_d2 << std::endl;
-    CGAL_assertion_msg(static_cast<FT>(CGAL::sqrt(CGAL::to_double(sq_d2))) >= tol,
-    "TODO: FUTURE POINT, HANDLE ZERO FUTURE EDGE!");
+    const FT d2 = static_cast<FT>(CGAL::sqrt(CGAL::to_double(sq_d2)));
+    CGAL_assertion(d2 >= FT(0));
+    if (d2 < tol) {
+      is_almost_zero_2 = true;
+      if (m_verbose) {
+        // std::cout << "-   tol: " << tol   << std::endl;
+        // std::cout << "-    d2: " << d2    << std::endl;
+        // std::cout << "- sq d2: " << sq_d2 << std::endl;
+        std::cout << "- warning: almost zero-length pedge" << std::endl;
+      }
+      CGAL_assertion_msg(d2 >= tol, "TODO: COMPUTE WEIGHTS, HANDLE ZERO-LENGTH PEDGE!");
+      // CGAL_assertion_msg(d2 != FT(0), "ERROR: COMPUTE WEIGHTS, ZERO-LENGTH PEDGE!");
+    }
 
     // Barycentric coordinates.
     FT w0 = -FT(1), w1 = -FT(1);
     const FT num = (x0 - x2) * (y2 - y3) - (y0 - y2) * (x2 - x3);
     const FT den = (x0 - x1) * (y2 - y3) - (y0 - y1) * (x2 - x3);
+
     // if (m_verbose) {
     //   std::cout << "num: " << num << std::endl;
     //   std::cout << "den: " << den << std::endl;
+    //   std::cout << "d1: " << d1 << std::endl;
+    //   std::cout << "d2: " << d2 << std::endl;
     // }
 
-    // Parallel case.
+    // Almost zero cases.
+    // q0--w0--q---w1---q1
+
+    // Case 1.
+    if (is_almost_zero_1 && !is_almost_zero_2) {
+      if (m_verbose) std::cout << "- warning: almost-zero case iedge" << std::endl;
+      CGAL_assertion_msg(den != FT(0), "ERROR: COMPUTE WEIGHTS, ZERO DENOMINATOR!");
+      w0 = num / den; w1 = FT(1) - w0;
+      if (m_verbose) std::cout << "-" << " w0: " << w0 << ";" << " w1: " << w1 << std::endl;
+      return std::make_pair(w0, w1);
+      // CGAL_assertion_msg(false, "TODO: COMPUTE WEIGHTS, ALMOST EQUAL Q0 AND Q1");
+    }
+
+    // Case 2.
+    if (is_almost_zero_2 && !is_almost_zero_1) {
+      if (m_verbose) std::cout << "- warning: almost-zero case pedge" << std::endl;
+      // to be implemented if necessary
+      CGAL_assertion_msg(false, "TODO: COMPUTE WEIGHTS, ALMOST EQUAL Q2 AND Q3");
+    }
+
+    // Case 3.
+    if (is_almost_zero_1 && is_almost_zero_2) {
+      if (m_verbose) std::cout << "- warning: almost-zero case iedge and pedge" << std::endl;
+      // to be implemented if necessary
+      CGAL_assertion_msg(false, "TODO: COMPUTE WEIGHTS, INTERSECTING TWO ZERO-LENGTH SEGMENTS!");
+    }
+
+    // Case 4.
+    CGAL_assertion(!is_almost_zero_1 && !is_almost_zero_2);
+
+    // Parallel cases.
+    if (CGAL::abs(den) == FT(0)) {
+      if (m_verbose) std::cout << "- warning: parallel case" << std::endl;
+      if (m_verbose) std::cout << "-" << " w0: " << w0 << ";" << " w1: " << w1 << std::endl;
+      return std::make_pair(w0, w1);
+    }
+
     if (CGAL::abs(den) < tol) {
-      if (m_verbose) {
-        std::cout << "- warning: parallel case" << std::endl;
-      }
+      if (m_verbose) std::cout << "- warning: almost parallel case" << std::endl;
+      if (m_verbose) std::cout << "-" << " w0: " << w0 << ";" << " w1: " << w1 << std::endl;
       return std::make_pair(w0, w1);
     }
 
     // Standard case.
+    CGAL_assertion(CGAL::abs(den) >= tol);
     w0 = num / den; w1 = FT(1) - w0;
-    if (m_verbose) {
-      std::cout << "-" << " w0: " << w0 << ";" << " w1: " << w1 << std::endl;
-    }
+    if (m_verbose) std::cout << "-" << " w0: " << w0 << ";" << " w1: " << w1 << std::endl;
     return std::make_pair(w0, w1);
   }
 
@@ -4809,6 +4867,7 @@ private:
     const FT dist = KSR::distance(query, target);
     if (dist < tol) {
       if (m_verbose) {
+        std::cout << "- query: " << to_3d(pvertex.first, query) << std::endl;
         std::cout << "- warning: query is almost equal to target" << std::endl;
         std::cout << "- replacing query with source" << std::endl;
       }
@@ -4863,28 +4922,28 @@ private:
     if (is_parallel && is_constrained) {
 
       is_get_opposite_case = true;
-      // CGAL_assertion_msg(false, "TODO: PARALLEL, CONSTRAINED CASE!");
+      // CGAL_assertion_msg(false, "TODO: FUTURE POINT, PARALLEL, CONSTRAINED CASE!");
 
     } else if (is_parallel && is_ivertex) {
 
       CGAL_assertion(!is_constrained);
-      CGAL_assertion_msg(false, "TODO: PARALLEL, IVERTEX CASE!");
+      CGAL_assertion_msg(false, "TODO: FUTURE POINT, PARALLEL, IVERTEX CASE!");
 
     } else if (is_parallel && !is_intersected) {
 
       CGAL_assertion(!is_constrained);
       CGAL_assertion(!is_ivertex);
-      CGAL_assertion_msg(false, "TODO: PARALLEL, EXTERIOR CASE!");
+      CGAL_assertion_msg(false, "TODO: FUTURE POINT, PARALLEL, EXTERIOR CASE!");
 
     } else if (is_parallel && is_intersected) {
 
       is_traverse_case = true;
       CGAL_assertion(!is_constrained);
       CGAL_assertion(!is_ivertex);
-      // CGAL_assertion_msg(false, "TODO: PARALLEL, INTERIOR CASE!");
+      // CGAL_assertion_msg(false, "TODO: FUTURE POINT, PARALLEL, INTERIOR CASE!");
 
     } else if (is_parallel) {
-      CGAL_assertion_msg(false, "TODO: PARALLEL, INVALID CASE!");
+      CGAL_assertion_msg(false, "TODO: FUTURE POINT, PARALLEL, INVALID CASE!");
     }
 
     // Parallel cases.
@@ -4893,11 +4952,15 @@ private:
       const auto q5 = point_2(pv0);
       const Vector_2 vec1(q5, q4);
       const Vector_2 vec2(source, target);
+      CGAL_assertion_msg(KSR::distance(q5, q4) != FT(0),
+      "ERROR: ZERO LENGTH VECTOR! DO WE HAVE A ZERO-LENGTH PEDGE?");
+      CGAL_assertion_msg(KSR::distance(source, target) != FT(0),
+      "ERROR: ZERO LENGTH VECTOR! DO WE HAVE A ZERO-LENGTH IEDGE?");
       const FT dot_product = vec1 * vec2;
       Point_2 future_point;
       if (dot_product < FT(0)) future_point = source;
       else future_point = target;
-      // CGAL_assertion_msg(false, "TODO: NON STD, GET OPPOSITE CASE!");
+      // CGAL_assertion_msg(false, "TODO: FUTURE POINT, NON STD, GET OPPOSITE CASE!");
       return std::make_pair(future_point, true);
     }
 
@@ -4916,7 +4979,7 @@ private:
       const auto res = compute_future_point(
         source, query, target, pv1, pv1, pv2, is_testing_orientation);
       const auto& future_point = res.first;
-      // CGAL_assertion_msg(false, "TODO: NON STD, TRAVERSE CASE!");
+      // CGAL_assertion_msg(false, "TODO: FUTURE POINT, NON STD, TRAVERSE CASE!");
       return std::make_pair(future_point, false);
     }
 
@@ -4967,7 +5030,10 @@ private:
     const PVertex& pvertex, const PVertex& pv0, const PVertex& pv1,
     Point_2& future_point, Vector_2& future_direction) const {
 
-    if (m_verbose) std::cout << "- computing future point and direction" << std::endl;
+    if (m_verbose) {
+      std::cout << "- computing future point and direction" << std::endl;
+    }
+
     const auto res = compute_future_point(source, query, target, pvertex, pv0, pv1, true);
     const bool is_standard_case = res.second;
     const Line_2 iedge_line(source, target);
