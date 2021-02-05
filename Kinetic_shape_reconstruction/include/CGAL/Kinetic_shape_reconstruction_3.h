@@ -754,20 +754,20 @@ private:
       const auto target = m_data.point_2(pvertex.first, itarget);
 
       const FT tol = KSR::tolerance<FT>();
-      const FT sq_dist1 = CGAL::squared_distance(inter, source);
-      const FT sq_dist2 = CGAL::squared_distance(inter, target);
+      const FT dist1 = KSR::distance(inter, source);
+      const FT dist2 = KSR::distance(inter, target);
 
       // std::cout << "tol: " << tol << std::endl;
-      // std::cout << "sq dist 1: " << sq_dist1 << std::endl;
-      // std::cout << "sq dist 2: " << sq_dist2 << std::endl;
+      // std::cout << "dist 1: " << dist1 << std::endl;
+      // std::cout << "dist 2: " << dist2 << std::endl;
 
       Point_2 ipoint;
       IVertex ivertex = m_data.null_ivertex();
-      if (sq_dist1 < tol) {
-        CGAL_assertion(sq_dist2 >= tol);
+      if (dist1 < tol) {
+        CGAL_assertion(dist2 >= tol);
         ipoint = source; ivertex = isource;
-      } else if (sq_dist2 < tol) {
-        CGAL_assertion(sq_dist1 >= tol);
+      } else if (dist2 < tol) {
+        CGAL_assertion(dist1 >= tol);
         ipoint = target; ivertex = itarget;
       }
 
@@ -936,20 +936,20 @@ private:
     const auto target = m_data.point_2(pvertex.first, itarget);
 
     const FT tol = KSR::tolerance<FT>();
-    const FT sq_dist1 = CGAL::squared_distance(inter, source);
-    const FT sq_dist2 = CGAL::squared_distance(inter, target);
+    const FT dist1 = KSR::distance(inter, source);
+    const FT dist2 = KSR::distance(inter, target);
 
     // std::cout << "tol: " << tol << std::endl;
-    // std::cout << "sq dist 1: " << sq_dist1 << std::endl;
-    // std::cout << "sq dist 2: " << sq_dist2 << std::endl;
+    // std::cout << "dist 1: " << dist1 << std::endl;
+    // std::cout << "dist 2: " << dist2 << std::endl;
 
     Point_2 ipoint;
     IVertex ivertex = m_data.null_ivertex();
-    if (sq_dist1 < tol) {
-      CGAL_assertion(sq_dist2 >= tol);
+    if (dist1 < tol) {
+      CGAL_assertion(dist2 >= tol);
       ipoint = source; ivertex = isource;
-    } else if (sq_dist2 < tol) {
-      CGAL_assertion(sq_dist1 >= tol);
+    } else if (dist2 < tol) {
+      CGAL_assertion(dist1 >= tol);
       ipoint = target; ivertex = itarget;
     }
 

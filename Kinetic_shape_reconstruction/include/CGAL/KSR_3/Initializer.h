@@ -231,9 +231,9 @@ private:
       bbox[i] = point;
     }
 
-    const FT bbox_length_1 = CGAL::squared_distance(bbox[0], bbox[1]);
-    const FT bbox_length_2 = CGAL::squared_distance(bbox[0], bbox[3]);
-    const FT bbox_length_3 = CGAL::squared_distance(bbox[0], bbox[5]);
+    const FT bbox_length_1 = KSR::distance(bbox[0], bbox[1]);
+    const FT bbox_length_2 = KSR::distance(bbox[0], bbox[3]);
+    const FT bbox_length_3 = KSR::distance(bbox[0], bbox[5]);
     CGAL_assertion(bbox_length_1 >= FT(0));
     CGAL_assertion(bbox_length_2 >= FT(0));
     CGAL_assertion(bbox_length_3 >= FT(0));
@@ -276,9 +276,9 @@ private:
       Point_3(box.xmax(), box.ymin(), box.zmax()),
       Point_3(box.xmax(), box.ymax(), box.zmax()) };
 
-    const FT bbox_length_1 = CGAL::squared_distance(bbox[0], bbox[1]);
-    const FT bbox_length_2 = CGAL::squared_distance(bbox[0], bbox[3]);
-    const FT bbox_length_3 = CGAL::squared_distance(bbox[0], bbox[5]);
+    const FT bbox_length_1 = KSR::distance(bbox[0], bbox[1]);
+    const FT bbox_length_2 = KSR::distance(bbox[0], bbox[3]);
+    const FT bbox_length_3 = KSR::distance(bbox[0], bbox[5]);
     CGAL_assertion(bbox_length_1 >= FT(0));
     CGAL_assertion(bbox_length_2 >= FT(0));
     CGAL_assertion(bbox_length_3 >= FT(0));

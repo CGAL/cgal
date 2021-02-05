@@ -4760,13 +4760,13 @@ private:
     const FT sq_d1 = (x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0);
     CGAL_assertion(sq_d1 >= FT(0));
     // if (m_verbose) std::cout << "sq d1: " << sq_d1 << std::endl;
-    CGAL_assertion_msg(sq_d1 >= tol,
+    CGAL_assertion_msg(static_cast<FT>(CGAL::sqrt(CGAL::to_double(sq_d1))) >= tol,
     "TODO: FUTURE POINT, HANDLE ZERO IEDGE!");
 
     const FT sq_d2 = (x3 - x2) * (x3 - x2) + (y3 - y2) * (y3 - y2);
     CGAL_assertion(sq_d2 >= FT(0));
     // if (m_verbose) std::cout << "sq d2: " << sq_d2 << std::endl;
-    CGAL_assertion_msg(sq_d2 >= tol,
+    CGAL_assertion_msg(static_cast<FT>(CGAL::sqrt(CGAL::to_double(sq_d2))) >= tol,
     "TODO: FUTURE POINT, HANDLE ZERO FUTURE EDGE!");
 
     // Barycentric coordinates.
@@ -4804,29 +4804,30 @@ private:
       std::cout << "- computing future point" << std::endl;
     }
 
-    auto q0 = query;
-    const auto& q1 = target;
-
-    const FT tol = KSR::tolerance<FT>();
-    const FT sq_dist = CGAL::squared_distance(query, target);
-    if (sq_dist < tol) {
+    Point_2 q0;
+    const FT tol  = KSR::tolerance<FT>();
+    const FT dist = KSR::distance(query, target);
+    if (dist < tol) {
       if (m_verbose) {
         std::cout << "- warning: query is almost equal to target" << std::endl;
         std::cout << "- replacing query with source" << std::endl;
       }
       q0 = source;
-    }
+    } else { q0 = query; }
+    const auto& q1 = target;
 
     CGAL_assertion(pv0.first == pv1.first);
+    CGAL_assertion(pvertex.first == pv0.first);
+    CGAL_assertion(pvertex.first == pv1.first);
     const auto q2 = point_2(pv0, m_current_time + FT(1));
     const auto q3 = point_2(pv1, m_current_time + FT(1));
     const auto q4 = point_2(pv1);
 
     if (m_verbose) {
-      std::cout << "- q0: " << to_3d(pv0.first, q0) << std::endl;
-      std::cout << "- q1: " << to_3d(pv0.first, q1) << std::endl;
-      std::cout << "- q2: " << to_3d(pv0.first, q2) << std::endl;
-      std::cout << "- q3: " << to_3d(pv0.first, q3) << std::endl;
+      std::cout << "- q0: " << to_3d(pvertex.first, q0) << std::endl;
+      std::cout << "- q1: " << to_3d(pvertex.first, q1) << std::endl;
+      std::cout << "- q2: " << to_3d(pvertex.first, q2) << std::endl;
+      std::cout << "- q3: " << to_3d(pvertex.first, q3) << std::endl;
       std::cout << "- pv0 " << str(pv0) << ": " << point_3(pv0) << std::endl;
       std::cout << "- pv1 " << str(pv1) << ": " << point_3(pv1) << std::endl;
     }
@@ -4933,6 +4934,10 @@ private:
     const Point_2& source, const Point_2& target,
     const PVertex& pvertex, const PVertex& pv0, const PVertex& pv1) const {
 
+    if (m_verbose) {
+      std::cout << "- computing initial future direction" << std::endl;
+    }
+
     // Project.
     auto pinit = point_2(pv0);
     const Line_2 iedge_line(source, target);
@@ -4962,6 +4967,7 @@ private:
     const PVertex& pvertex, const PVertex& pv0, const PVertex& pv1,
     Point_2& future_point, Vector_2& future_direction) const {
 
+    if (m_verbose) std::cout << "- computing future point and direction" << std::endl;
     const auto res = compute_future_point(source, query, target, pvertex, pv0, pv1, true);
     const bool is_standard_case = res.second;
     const Line_2 iedge_line(source, target);
@@ -4978,7 +4984,7 @@ private:
 
     pinit = iedge_line.projection(pinit);
     future_point = res.first;
-    if (m_verbose) std::cout << "- future point: " << to_3d(pv0.first, future_point) << std::endl;
+    if (m_verbose) std::cout << "- future point: " << to_3d(pvertex.first, future_point) << std::endl;
     CGAL_assertion_msg(future_point != pinit, "ERROR: STD, ZERO LENGTH FUTURE DIRECTION!");
     future_direction = Vector_2(pinit, future_point);
     if (m_verbose) std::cout << "- future direction: " << future_direction << std::endl;
