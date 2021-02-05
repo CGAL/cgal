@@ -144,7 +144,7 @@ namespace Polygon_mesh_processing {
     #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
         false;
 #else
-        choose_parameter(get_parameter(np, internal_np::use_2d_constrained_delaunay_triangulation), true);
+        choose_parameter(get_parameter(np, internal_np::use_2d_constrained_delaunay_triangulation), false);
 #endif
 
     typename GeomTraits::FT max_squared_distance = typename GeomTraits::FT(-1);
