@@ -186,20 +186,10 @@ public:
   * location with minimal memory copy.
   * @param other The instance to be moved
   */
-  Side_of_triangle_mesh(Side_of_triangle_mesh&& other) :
-    tm_ptr{std::move(other.tm_ptr)},
-    opt_vpm{std::move(other.opt_vpm)},
-    own_tree{std::move(other.own_tree)},
-    box{std::move(other.box)},
-    #ifdef CGAL_HAS_THREADS
-      atomic_tree_ptr{other.atomic_tree_ptr.load()}
-    #else
-      tree_ptr{std::move(other.tree_ptr)}
-    #endif
+  Side_of_triangle_mesh(Side_of_triangle_mesh&& other)
   {
-    other.own_tree = false;
+    *this = std::move(other);
   }
-
   ~Side_of_triangle_mesh()
   {
     if (own_tree)
