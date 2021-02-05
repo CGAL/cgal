@@ -2476,7 +2476,7 @@ public:
         cropped = PVertex(pvertex.first, support_plane(pvertex).split_edge(pvertex.second, prev.second));
       } else {
         cropped = prev;
-        CGAL_assertion_msg(false, "TODO: BACK, IMPLEMENT NON STANDARD CASE!");
+        // CGAL_assertion_msg(false, "TODO: BACK, IMPLEMENT NON STANDARD CASE!");
       }
       CGAL_assertion(cropped != null_pvertex());
 
@@ -2599,7 +2599,7 @@ public:
         cropped = PVertex(pvertex.first, support_plane(pvertex).split_edge(pvertex.second, next.second));
       } else {
         cropped = next;
-        CGAL_assertion_msg(false, "TODO: FRONT, IMPLEMENT NON STANDARD CASE!");
+        // CGAL_assertion_msg(false, "TODO: FRONT, IMPLEMENT NON STANDARD CASE!");
       }
       CGAL_assertion(cropped != null_pvertex());
 
@@ -4801,7 +4801,7 @@ private:
 
     if (m_verbose) {
       std::cout.precision(20);
-      std::cout << "- computing future point" << std::endl;
+      // std::cout << "- computing future point" << std::endl;
     }
 
     Point_2 q0;
