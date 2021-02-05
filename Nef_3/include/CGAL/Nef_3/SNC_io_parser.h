@@ -1400,24 +1400,47 @@ template <typename EW>
 void SNC_io_parser<EW>::read()
 {
   if ( !check_sep("Selective Nef Complex") )
-    CGAL_error_msg("SNC_io_parser::read: no SNC header.");
+  {
+    CGAL_warning_msg(false, "SNC_io_parser::read: no SNC header.");
+    return;
+  }
   std::string kernel_type;
   in >> kernel_type;
   CGAL_assertion(kernel_type == "standard" || kernel_type == "extended");
   if ( !(check_sep("vertices") && (in >> vn)) )
-    CGAL_error_msg("SNC_io_parser::read: wrong vertex line.");
+  {
+    CGAL_warning_msg(false, "SNC_io_parser::read: wrong vertex line.");
+    return;
+  }
   if ( !(check_sep("halfedges") && (in >> en) && (en%2==0)) )
-    CGAL_error_msg("SNC_io_parser::read: wrong edge line.");
+  {
+    CGAL_warning_msg(false, "SNC_io_parser::read: wrong edge line.");
+    return;
+  }
   if ( !(check_sep("facets") && (in >> fn) && (fn%2==0)) )
-    CGAL_error_msg("SNC_io_parser::read: wrong facet line.");
+  {
+    CGAL_warning_msg(false, "SNC_io_parser::read: wrong facet line.");
+  }
   if ( !(check_sep("volumes") && (in >> cn)) )
-    CGAL_error_msg("SNC_io_parser::read: wrong volume line.");
+  {
+    CGAL_warning_msg(false, "SNC_io_parser::read: wrong volume line.");
+    return;
+  }
   if ( !(check_sep("shalfedges") && (in >> sen)) )
-    CGAL_error_msg("SNC_io_parser::read: wrong sedge line.");
+  {
+   CGAL_warning_msg(false, "SNC_io_parser::read: wrong sedge line.");
+   return;
+  }
   if ( !(check_sep("shalfloops") && (in >> sln)) )
-    CGAL_error_msg("SNC_io_parser::read: wrong sloop line.");
+  {
+    CGAL_warning_msg(false, "SNC_io_parser::read: wrong sloop line.");
+    return;
+  }
   if ( !(check_sep("sfaces") && (in >> sfn)) )
-    CGAL_error_msg("SNC_io_parser::read: wrong sface line.");
+  {
+    CGAL_warning_msg(false, "SNC_io_parser::read: wrong sface line.");
+    return;
+  }
 
   addInfiBox = (kernel_type == "standard" && Infi_box::extended_kernel());
 
@@ -1444,40 +1467,61 @@ void SNC_io_parser<EW>::read_items(int plus01) {
   typename std::vector<Vertex_iterator>::iterator vi;
   for(vi=Vertex_of.begin(); vi!=Vertex_of.end(); ++vi) {
     if (!read_vertex<K>(*vi))
-      CGAL_error_msg("SNC_io_parser::read: error in node line");
+    {
+      CGAL_warning_msg(false, "SNC_io_parser::read: error in node line");
+      return;
+    }
   }
 
   typename std::vector<Halfedge_iterator>::iterator ei;
   for(ei=Edge_of.begin(); ei!=Edge_of.end(); ++ei) {
     if (!read_edge<K>(*ei))
-      CGAL_error_msg("SNC_io_parser::read: error in edge line");
+    {
+      CGAL_warning_msg(false, "SNC_io_parser::read: error in edge line");
+      return;
+    }
   }
 
   typedef typename std::vector<Halffacet_iterator>::iterator vhf_iterator;
   vhf_iterator fi;
   for(fi=Halffacet_of.begin(); fi!=Halffacet_of.end(); ++fi) {
     if (!read_facet<K>(*fi))
-      CGAL_error_msg("SNC_io_parser::read: error in facet line");
+    {
+      CGAL_warning_msg(false, "SNC_io_parser::read: error in facet line");
+      return;
+    }
   }
   typename std::vector<Volume_iterator>::iterator ci;
   for(ci=Volume_of.begin()+plus01; ci!=Volume_of.end(); ++ci) {
     if (!read_volume(*ci))
-      CGAL_error_msg("SNC_io_parser::read: error in volume line");
+    {
+      CGAL_warning_msg(false, "SNC_io_parser::read: error in volume line");
+      return;
+    }
   }
   typename std::vector<SHalfedge_iterator>::iterator sei;
   for(sei=SEdge_of.begin(); sei!=SEdge_of.end(); ++sei) {
     if (!read_sedge<K>(*sei))
-      CGAL_error_msg("SNC_io_parser::read: error in sedge line");
+    {
+      CGAL_warning_msg(false, "SNC_io_parser::read: error in sedge line");
+      return;
+    }
   }
   typename std::vector<SHalfloop_iterator>::iterator sli;
   for(sli=SLoop_of.begin(); sli!=SLoop_of.end(); ++sli) {
     if (!read_sloop<K>(*sli))
-      CGAL_error_msg("SNC_io_parser::read: error in sloop line");
+    {
+      CGAL_warning_msg(false, "SNC_io_parser::read: error in sloop line");
+      return;
+    }
   }
   typename std::vector<SFace_iterator>::iterator sfi;
   for(sfi=SFace_of.begin(); sfi!=SFace_of.end(); ++sfi) {
     if (!read_sface(*sfi))
-      CGAL_error_msg("SNC_io_parser::read: error in sface line");
+    {
+      CGAL_warning_msg(false, "SNC_io_parser::read: error in sface line");
+      return;
+    }
   }
 
   SNC_constructor C(*this->sncp());
@@ -1535,21 +1579,56 @@ read_vertex(Vertex_handle vh) {
   vh->sncp() = this->sncp();
 
   in >> index;
+  if(index >= (int)en)
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   vh->svertices_begin() = (index >= 0 ? Edge_of[index] : this->svertices_end());
   in >> index;
+  if(index >= int(en))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   vh->svertices_last()  = index >= 0 ? Edge_of[index] : this->svertices_end();
   OK = OK && test_string(",");
   in >> index;
+  if(index >= int(sen))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   vh->shalfedges_begin() = index >= 0 ? SEdge_of[index] : this->shalfedges_end();
   in >> index;
+  if(index >= int(sen))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   vh->shalfedges_last()  = index >= 0 ? SEdge_of[index] : this->shalfedges_end();
   OK = OK && test_string(",");
   in >> index;
+  if(index >= int(sfn))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   vh->sfaces_begin() = index >= 0 ? SFace_of[index] : this->sfaces_end();
   in >> index;
+  if(index >= int(sfn))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   vh->sfaces_last()  = index >= 0 ? SFace_of[index] : this->sfaces_end();
   OK = OK && test_string(",");
   in >> index;
+  if(index >= int(sln))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   vh->shalfloop() = index >= 0 ? SLoop_of[index] : this->shalfloops_end();
   OK = OK && test_string("|");
 #ifdef CGAL_NEF_NATURAL_COORDINATE_INPUT
@@ -1604,17 +1683,37 @@ read_edge(Halfedge_handle eh) {
   OK = OK && test_string("{");
 
   in >> index;
+  if(index < 0 || index >= int(en))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   eh->twin() = Edge_of[index];
   OK = OK && test_string(",");
   in >> index;
+  if(index < 0 || index >= int(vn))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   eh->center_vertex() = Vertex_of[index];
   OK = OK && test_string(",");
   in >> index;
   if(index == 0) {
     in >> index;
+    if(index < 0 || index >= int(sen))
+    {
+      in.setstate(std::ios_base::badbit);
+      return false;
+    }
     eh->out_sedge() = SEdge_of[index];
   } else {
     in >> index;
+    if(index < 0 || index >= int(sfn))
+    {
+      in.setstate(std::ios_base::badbit);
+      return false;
+    }
     eh->incident_sface() = SFace_of[index];
   }
   OK = OK && test_string("|");
@@ -1669,6 +1768,11 @@ read_facet(Halffacet_handle fh) {
   OK = OK && test_string("{");
 
   in >> index;
+  if(index < 0 || index >= int(fn))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   fh->twin() = Halffacet_of[index];
   OK = OK && test_string(",");
 
@@ -1676,6 +1780,11 @@ read_facet(Halffacet_handle fh) {
   while(isdigit(cc)) {
     in.putback(cc);
     in >> index;
+    if(index < 0 || index >= int(sen))
+    {
+      in.setstate(std::ios_base::badbit);
+      return false;
+    }
     fh->boundary_entry_objects().push_back(make_object(SEdge_of[index]));
     in >> cc;
   }
@@ -1684,11 +1793,21 @@ read_facet(Halffacet_handle fh) {
   while(isdigit(cc)) {
     in.putback(cc);
     in >> index;
+    if(index < 0 || index >= int(sln))
+    {
+      in.setstate(std::ios_base::badbit);
+      return false;
+    }
     fh->boundary_entry_objects().push_back(make_object(SLoop_of[index]));
     in >> cc;
   }
 
   in >> index;
+  if(index < 0  || index >= int(cn))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   fh->incident_volume() = Volume_of[index+addInfiBox];
   OK = OK && test_string("|");
 #ifdef CGAL_NEF_NATURAL_COORDINATE_INPUT
@@ -1731,6 +1850,11 @@ read_volume(Volume_handle ch) {
   while(isdigit(cc)) {
     in.putback(cc);
     in >> index;
+    if(index < 0 || index >= int(sfn))
+    {
+      in.setstate(std::ios_base::badbit);
+      return false;
+    }
     ch->shell_entry_objects().push_back(make_object(SFace_of[index]));
     in >> cc;
   }
@@ -1781,27 +1905,67 @@ read_sedge(SHalfedge_handle seh) {
   OK = OK && test_string("{");
 
   in >> index;
+  if(index < 0 || index >= int(sen))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   seh->twin() = SEdge_of[index];
   OK = OK && test_string(",");
   in >> index;
+  if(index < 0 || index >= int(sen))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   seh->sprev() = SEdge_of[index];
   OK = OK && test_string(",");
   in >> index;
+  if(index < 0 || index >= int(sen))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   seh->snext() = SEdge_of[index];
   OK = OK && test_string(",");
   in >> index;
+  if(index < 0 || index >= int(en))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   seh->source() = Edge_of[index];
   OK = OK && test_string(",");
   in >> index;
+  if(index < 0 || index >= int(sfn))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   seh->incident_sface() = SFace_of[index];
   OK = OK && test_string(",");
   in >> index;
+  if(index < 0 || index >= int(sen))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   seh->prev() = SEdge_of[index];
   OK = OK && test_string(",");
   in >> index;
+  if(index < 0 || index >= int(sen))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   seh->next() = SEdge_of[index];
   OK = OK && test_string(",");
   in >> index;
+  if(index < 0 || index >= int(fn))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   seh->facet() = Halffacet_of[index];
   OK = OK && test_string("|");
 #ifdef CGAL_NEF_NATURAL_COORDINATE_INPUT
@@ -1852,12 +2016,27 @@ read_sloop(SHalfloop_handle slh) {
   OK = OK && test_string("{");
 
   in >> index;
+  if(index < 0 || index >= (int)(sln))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   slh->twin() = SLoop_of[index];
   OK = OK && test_string(",");
   in >> index;
+  if(index < 0 || index >= (int)(sfn))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   slh->incident_sface() = SFace_of[index];
   OK = OK && test_string(",");
   in >> index;
+  if(index < 0 || index >= (int)(fn))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   slh->facet() = Halffacet_of[index];
   OK = OK && test_string("|");
 #ifdef CGAL_NEF_NATURAL_COORDINATE_INPUT
@@ -1904,6 +2083,11 @@ read_sface(SFace_handle sfh) {
   OK = OK && test_string("{");
 
   in >> index;
+  if(index < 0 || index >= (int)(vn))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   sfh->center_vertex() = Vertex_of[index];
   OK = OK && test_string(",");
 
@@ -1913,6 +2097,11 @@ read_sface(SFace_handle sfh) {
     in >> index;
     //    sfh->boundary_entry_objects().push_back(SEdge_of[index]);
     SM_decorator SD(&*sfh->center_vertex());
+    if(index < 0 || index >= (int)(sen))
+    {
+      in.setstate(std::ios_base::badbit);
+      return false;
+    }
     SD.link_as_face_cycle(SEdge_of[index],sfh);
     in >> cc;
   }
@@ -1921,6 +2110,11 @@ read_sface(SFace_handle sfh) {
   while(isdigit(cc)) {
     in.putback(cc);
     in >> index;
+    if(index < 0 || index >= (int)(en))
+    {
+      in.setstate(std::ios_base::badbit);
+      return false;
+    }
     sfh->boundary_entry_objects().push_back(make_object(Edge_of[index]));
     this->sncp()->store_sm_boundary_item(Edge_of[index], --(sfh->sface_cycles_end()));
     in >> cc;
@@ -1930,12 +2124,22 @@ read_sface(SFace_handle sfh) {
   while(isdigit(cc)) {
     in.putback(cc);
     in >> index;
+    if(index < 0 || index >= (int)(sln))
+    {
+      in.setstate(std::ios_base::badbit);
+      return false;
+    }
     sfh->boundary_entry_objects().push_back(make_object(SLoop_of[index]));
     this->sncp()->store_sm_boundary_item(SLoop_of[index], --(sfh->sface_cycles_end()));
     in >> cc;
   }
 
   in >> index;
+  if(index < 0 || index >= (int)(cn))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   sfh->volume() = Volume_of[index+addInfiBox];
   OK = OK && test_string("}");
   in >> sfh->mark();
