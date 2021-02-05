@@ -50,7 +50,7 @@ The default values for the template parameters are as follows:
  <li> `EM = Field_tag`,
  <li> `FK = Simple_cartesian<Interval_nt<false> >`,
  <li> `FM = Field_with_sqrt_tag`.
- <li> If the \sc{Gmp} package is  installed with \cgal, the template parameter `EK` has the default   value: `EK = Simple_cartesian<Gmpq>`, otherwise its   default value is   `EK = Simple_cartesian<Quotient<MP_Float> >`.
+ <li> If the \gmp package is  installed with \cgal, the template parameter `EK` has the default   value: `EK = Simple_cartesian<Gmpq>`, otherwise its   default value is   `EK = Simple_cartesian<Quotient<MP_Float> >`.
 </ul>
 
 \cgalModels `SegmentDelaunayGraphTraits_2`
@@ -205,7 +205,7 @@ will be the entry for the template parameter `CK`),
 <li> `EM = CGAL::Euclidean_ring_tag`,
 <li> `FK = CGAL::Simple_cartesian<CGAL::Interval_nt<false> >`,
 <li> `FM = CGAL::Field_with_sqrt_tag`.
-<li> If the \sc{Gmp} package is
+<li> If the \gmp package is
 installed with \cgal, the template parameter `EK` has the default
 value: `EK = CGAL::Simple_cartesian<CGAL::Gmpq>`, otherwise its
 default value is
