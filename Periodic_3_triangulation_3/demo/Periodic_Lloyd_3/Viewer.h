@@ -27,6 +27,7 @@ public:
   {}
   ~Viewer()
   {
+    makeCurrent();
    for(int i=0; i<4; i++)
    {
     buffers[i].destroy();

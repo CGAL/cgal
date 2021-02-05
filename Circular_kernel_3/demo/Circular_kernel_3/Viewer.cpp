@@ -11,6 +11,14 @@ Viewer::Viewer(QWidget* parent )
 {
     extension_is_found = false;
 }
+Viewer::~Viewer()
+{
+  makeCurrent();
+  for(int i=0; i<3; ++i)
+    vao[i].destroy();
+  for(int i=0; i<9; ++i)
+    buffers[i].destroy();
+}
 
 void Viewer::compile_shaders()
 {
@@ -32,16 +40,16 @@ void Viewer::compile_shaders()
     //Vertex source code
     const char vertex_source[] =
     {
-        "#version 120 \n"
-        "attribute highp vec4 vertex;\n"
-        "attribute highp vec3 normal;\n"
-        "attribute highp vec4 center;\n"
+        "#version 150 \n"
+        "in highp vec4 vertex;\n"
+        "in highp vec3 normal;\n"
+        "in highp vec4 center;\n"
 
         "uniform highp mat4 mvp_matrix;\n"
         "uniform highp mat4 mv_matrix; \n"
 
-        "varying highp vec4 fP; \n"
-        "varying highp vec3 fN; \n"
+        "out highp vec4 fP; \n"
+        "out highp vec3 fN; \n"
         "void main(void)\n"
         "{\n"
         "   fP = mv_matrix * vertex; \n"
@@ -52,15 +60,16 @@ void Viewer::compile_shaders()
     //Vertex source code
     const char fragment_source[] =
     {
-        "#version 120 \n"
-        "varying highp vec4 fP; \n"
-        "varying highp vec3 fN; \n"
+        "#version 150 \n"
+        "in highp vec4 fP; \n"
+        "in highp vec3 fN; \n"
         "uniform highp vec4 color; \n"
         "uniform highp vec4 light_pos;  \n"
         "uniform highp vec4 light_diff; \n"
         "uniform highp vec4 light_spec; \n"
         "uniform highp vec4 light_amb;  \n"
         "uniform float spec_power ; \n"
+        "out highp vec4 out_color; \n"
 
         "void main(void) { \n"
 
@@ -75,7 +84,7 @@ void Viewer::compile_shaders()
         "   highp vec4 diffuse = max(dot(N,L), 0.0) * light_diff * color; \n"
         "   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
 
-        "gl_FragColor = light_amb*color + diffuse  ; \n"
+        "out_color = light_amb*color + diffuse  ; \n"
         "} \n"
         "\n"
     };
@@ -111,8 +120,8 @@ void Viewer::compile_shaders()
              //Vertex source code
              const char vertex_source_no_ext[] =
              {
-                 "#version 120 \n"
-                 "attribute highp vec4 vertex;\n"
+                 "#version 150 \n"
+                 "in highp vec4 vertex;\n"
                  "uniform highp mat4 mvp_matrix;\n"
                  "void main(void)\n"
                  "{\n"
@@ -123,10 +132,11 @@ void Viewer::compile_shaders()
              //Vertex source code
              const char fragment_source_no_ext[] =
              {
-                 "#version 120 \n"
+                 "#version 150 \n"
                  "uniform highp vec4 color; \n"
+                 "out highp vec4 out_color; \n"
                  "void main(void) { \n"
-                 "gl_FragColor = color; \n"
+                 "out_color = color; \n"
                  "} \n"
                  "\n"
              };

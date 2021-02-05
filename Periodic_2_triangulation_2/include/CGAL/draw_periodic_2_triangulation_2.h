@@ -17,6 +17,7 @@
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
+#include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Random.h>
 
@@ -260,6 +261,7 @@ void draw(const CGAL_P2T2_TYPE& ap2t2,
 
   if (!cgal_test_suite)
   {
+    CGAL::Qt::init_ogl_context(4,3);
     int argc=1;
     const char* argv[2]={"p2t2_viewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));
