@@ -12,7 +12,7 @@
 
 
 /*! \file NiX/LEDA/Coercion_traits.h
- *  \brief Provides specializations of Coercion_traits for the LEDA number types.
+ *  \brief provides specializations of Coercion_traits for the LEDA number types.
  */
 
 #ifndef CGAL_LEDA_COERCION_TRAITS_H

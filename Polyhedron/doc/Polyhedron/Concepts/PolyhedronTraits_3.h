@@ -13,7 +13,7 @@ and can be used directly as template argument.
 
 \cgalHasModel `CGAL::Polyhedron_traits_3<Kernel>`
 \cgalHasModel `CGAL::Polyhedron_traits_with_normals_3<Kernel>`
-\cgalHasModel All models of the `CGAL::Kernel` concept, e.g., `CGAL::Simple_cartesian<FieldNumberType>`
+\cgalHasModel All models of the `Kernel` concept, e.g., `CGAL::Simple_cartesian<FieldNumberType>`
 
 \sa `CGAL::Polyhedron_3<Traits>`
 

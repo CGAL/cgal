@@ -60,9 +60,11 @@ public:
 
   void initializeBuffers(Viewer_interface *) const Q_DECL_OVERRIDE;
   void computeElements() const Q_DECL_OVERRIDE;
+  bool eventFilter(QObject *watched, QEvent *event)Q_DECL_OVERRIDE;
 Q_SIGNALS:
   void on_color_changed();
   void picked(std::size_t id) const;
+  void destroyMe();
 protected:
   friend struct Scene_spheres_item_priv;
   Scene_spheres_item_priv* d;

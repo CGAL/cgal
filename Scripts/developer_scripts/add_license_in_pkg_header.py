@@ -3,7 +3,7 @@
 # Insert in all the header file of a package the include directive
 # "#include <CGAL/license/${package_name}.h" if it is not already there
 # There are two arguments to the script as some packages are split into
-# subdirectories (Polyhedron_IO, Algebraic_kernel_for_circles, ...)
+# subdirectories (Algebraic_kernel_for_circles, ...)
 
 from sys import argv
 import os

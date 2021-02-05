@@ -13,33 +13,33 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-
-#include <CGAL/tags.h>
-#include <CGAL/Handle.h>
-#include <CGAL/Uncertain.h>
 #include <CGAL/certified_numeric_predicates.h>
-#include <CGAL/Quotient.h>
 #include <CGAL/certified_quotient_predicates.h>
-#include <CGAL/Unfiltered_predicate_adaptor.h>
-#include <CGAL/Filtered_predicate.h>
+#include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
+#include <CGAL/Trisegment_2.h>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Filtered_predicate.h>
+#include <CGAL/Handle.h>
+#include <CGAL/Quotient.h>
+#include <CGAL/tags.h>
+#include <CGAL/Uncertain.h>
+#include <CGAL/Unfiltered_predicate_adaptor.h>
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/intrusive_ptr.hpp>
 #include <boost/optional/optional.hpp>
 #include <boost/none.hpp>
+#include <boost/mpl/has_xxx.hpp>
 
-
-#ifdef CGAL_USE_CORE
-#  include <CGAL/CORE_BigFloat.h>
-#endif
+#include <algorithm>
+#include <iterator>
+#include <limits>
+#include <stdexcept>
 
 namespace CGAL {
 
 namespace CGAL_SS_i {
-
-using boost::optional ;
-using boost::intrusive_ptr ;
 
 template<class T>
 T const& validate ( boost::optional<T> const& o )
@@ -58,8 +58,17 @@ NT const& validate( NT const& n )
 }
 
 // boost::make_optional is provided in Boost >= 1.34, but not before, so we define our own versions here.
-template<class T> optional<T> cgal_make_optional( T const& v ) { return optional<T>(v) ; }
-template<class T> optional<T> cgal_make_optional( bool cond, T const& v ) { return cond ? optional<T>(v) : optional<T>() ; }
+template<class T>
+boost::optional<T> cgal_make_optional( T const& v )
+{
+  return boost::optional<T>(v) ;
+}
+
+template<class T>
+boost::optional<T> cgal_make_optional( bool cond, T const& v )
+{
+  return cond ? boost::optional<T>(v) : boost::optional<T>() ;
+}
 
 template<class K>
 struct Is_filtering_kernel
@@ -98,13 +107,30 @@ private:
   typedef typename AC::result_type  AC_result_type;
   typedef typename FC::result_type  FC_result_type;
   typedef typename EC::result_type  EC_result_type;
+  typedef typename C2F::Target_kernel FK;
 
-public:
-  typedef AC_result_type           result_type;
+  bool has_enough_precision(const typename FK::Point_2& point, double precision) const
+  {
+    return has_smaller_relative_precision(point.x(), precision) &&
+           has_smaller_relative_precision(point.y(), precision);
+  }
+
+  bool has_enough_precision(const boost::tuple<typename FK::FT, typename FK::Point_2>& time_and_point, double precision) const
+  {
+    return has_smaller_relative_precision(boost::get<0>(time_and_point), precision) &&
+           has_enough_precision(boost::get<1>(time_and_point), precision);
+  }
 
 public:
 
   Exceptionless_filtered_construction() {}
+
+  Exceptionless_filtered_construction(const EC& Exact_construction, const FC& Filter_construction)
+    : Exact_construction(Exact_construction)
+    , Filter_construction(Filter_construction)
+  {}
+
+  typedef AC_result_type           result_type;
 
   template <class ... A>
   result_type
@@ -114,7 +140,11 @@ public:
     {
       Protect_FPU_rounding<Protection> P;
       FC_result_type fr = Filter_construction(To_Filtered(std::forward<A>(a))...);
-      if ( fr )
+
+      const double precision =
+        Lazy_exact_nt<double>::get_relative_precision_of_to_double();
+
+      if ( fr && has_enough_precision(*fr, precision) )
         return From_Filtered(fr);
     }
     catch (Uncertain_conversion_exception&) {}
@@ -127,7 +157,7 @@ public:
 
 
 //
-// This number type is provided because unlike Quotient<> is allows you to create it
+// This number type is provided because unlike Quotient<> it allows you to create it
 // with a zero denominator. Of course you can't evaluate it in that case, but is convenient because it allows client code
 // to handle the "error" itself, which in this context is useful.
 //
@@ -157,147 +187,106 @@ class Rational
     NT mN, mD ;
 } ;
 
-
-//
-// A straight skeleton event is the simultaneous coallision of 3 ore    ffseted oriented straight line segments
-// e0*,e1*,e2* [e* denotes an _offseted_ edge].
-//
-// A straight skeleton event is the simultaneous coallision of 3 ore
-//
-// This record stores the segments corresponding to the INPUT edges (e0,e1,e2) whose offsets intersect
-// at the event along with their collinearity.
-//
-// If the event is a an edge-event, then e0*->e1*->e2* must be consecutive right before the event so that
-// after the event e0* and e2* become consecutive. Thus, there are _offset_ vertices (e0*,e1*) and (e1*,e2*)
-// in the offset polygon which not neccesarily exist in the original polygon.
-//
-// If the event is a split-event, e0*->e1* must be consecutive right before the event so that after the event
-// e0*->right(e2*) and left(e2*)->e1* become consecutive. Thus, there is an offset vertex (e0*,e1*) in the
-// offset polygon which not neccesarily exist in the original polygon.
-//
-// The offset vertices (e0*,e1*) and (e1*,e2*) are called the left and right seeds for the event.
-// A seed is a contour node if the vertex is already present in the input polygon, otherwise is a skeleton node.
-// If a seed is a skeleton node is produced by a previous event so it is itself defined as a trisegment, thus,
-// a trisegment is actually a node in a binary tree.
-// Since trisegments are tree nodes they must always be handled via the nested smart pointer type: Self_ptr.
-//
-template<class K>
-class Trisegment_2 : public Ref_counted_base
+template <class K>
+struct Segment_2_with_ID
+  : public Segment_2<K>
 {
-public:
-
-  typedef typename K::Segment_2 Segment_2 ;
-
-  typedef intrusive_ptr<Trisegment_2> Self_ptr ;
+  typedef Segment_2<K> Base;
+  typedef typename K::Point_2 Point_2;
 
 public:
+  Segment_2_with_ID() : Base(), mID(-1) { }
+  Segment_2_with_ID(Base const& aS) : Base(aS), mID(-1) { }
+  Segment_2_with_ID(Base const& aS, const std::size_t aID) : Base(aS), mID(aID) { }
+  Segment_2_with_ID(Point_2 const& aP, Point_2 const& aQ, const std::size_t aID) : Base(aP, aQ), mID(aID) { }
 
-  Trisegment_2 ( Segment_2 const&        aE0
-               , Segment_2 const&        aE1
-               , Segment_2 const&        aE2
-               , Trisegment_collinearity aCollinearity
-               )
+public:
+  std::size_t mID;
+};
+
+template <class Info>
+struct No_cache
+{
+  bool IsCached ( std::size_t ) { return false; }
+
+  Info Get ( std::size_t )
   {
-    mCollinearity = aCollinearity ;
+    CGAL_error();
+    return Info();
+  }
 
-    mE[0] = aE0 ;
-    mE[1] = aE1 ;
-    mE[2] = aE2 ;
+  void Set ( std::size_t, Info const& ) { }
+  void Reset ( std::size_t ) { }
+};
 
-    switch ( mCollinearity )
+// Debug struct
+template <class Info>
+struct FPU_checker;
+
+template <class FT>
+struct FPU_checker<boost::optional< CGAL_SS_i::Rational< FT > > >
+{
+  static bool is_valid()
+  {
+    return !std::is_same<FT, CGAL::Interval_nt<false> >::value ||
+           FPU_get_cw() == CGAL_FE_UPWARD;
+  }
+};
+
+template <class K>
+struct FPU_checker<boost::optional< Line_2<K> > >
+{
+  static bool is_valid()
+  {
+    return !std::is_same<typename K::FT, CGAL::Interval_nt<false> >::value ||
+           FPU_get_cw() == CGAL_FE_UPWARD;
+  }
+};
+
+//TODO: call reserve, but how? #input vertices + n*m estimation?
+template <class Info>
+struct Info_cache
+{
+  std::vector<Info> mValues ;
+  std::vector<bool> mAlreadyComputed ;
+
+  bool IsCached ( std::size_t i )
+  {
+    return ( (mAlreadyComputed.size() > i) && mAlreadyComputed[i] ) ;
+  }
+
+  Info const& Get(std::size_t i)
+  {
+    CGAL_precondition ( IsCached(i) ) ;
+    CGAL_precondition ( FPU_checker<Info>::is_valid() ) ;
+    return mValues[i] ;
+  }
+
+  void Set ( std::size_t i, Info const& aValue)
+  {
+    CGAL_precondition ( FPU_checker<Info>::is_valid() ) ;
+    if (mValues.size() <= i )
     {
-      case TRISEGMENT_COLLINEARITY_01:
-        mCSIdx=0; mNCSIdx=2; break ;
-
-      case TRISEGMENT_COLLINEARITY_12:
-        mCSIdx=1; mNCSIdx=0; break ;
-
-      case TRISEGMENT_COLLINEARITY_02:
-        mCSIdx=0; mNCSIdx=1; break ;
-
-      case TRISEGMENT_COLLINEARITY_ALL:
-        mCSIdx = mNCSIdx = (std::numeric_limits<unsigned>::max)(); break ;
-
-      case TRISEGMENT_COLLINEARITY_NONE:
-        mCSIdx = mNCSIdx = (std::numeric_limits<unsigned>::max)(); break ;
+      mValues.resize(i+1) ;
+      mAlreadyComputed.resize(i+1, false) ;
     }
+
+    mAlreadyComputed[i] = true ;
+    mValues[i] = aValue ;
   }
 
-  static Trisegment_2 null() { return Self_ptr() ; }
-
-  Trisegment_collinearity collinearity() const { return mCollinearity ; }
-
-  Segment_2 const& e( unsigned idx ) const { CGAL_precondition(idx<3) ; return mE[idx] ; }
-
-  Segment_2 const& e0() const { return e(0) ; }
-  Segment_2 const& e1() const { return e(1) ; }
-  Segment_2 const& e2() const { return e(2) ; }
-
-  // If 2 out of the 3 edges are collinear they can be reclassified as 1 collinear edge (any of the 2) and 1 non-collinear.
-  // These methods returns the edges according to that classification.
-  // PRECONDITION: Exactly 2 out of 3 edges are collinear
-  Segment_2 const& collinear_edge    () const { return e(mCSIdx) ; }
-  Segment_2 const& non_collinear_edge() const { return e(mNCSIdx) ; }
-
-  Self_ptr child_l() const { return mChildL ; }
-  Self_ptr child_r() const { return mChildR ; }
-
-  void set_child_l( Self_ptr const& aChild ) { mChildL = aChild ; }
-  void set_child_r( Self_ptr const& aChild ) { mChildR = aChild ; }
-
-  enum SEED_ID { LEFT, RIGHT, UNKNOWN } ;
-
-  // Indicates which of the seeds is collinear for a normal collinearity case.
-  // PRECONDITION: The collinearity is normal.
-  SEED_ID degenerate_seed_id() const
+  void Reset ( std::size_t i )
   {
-    Trisegment_collinearity c = collinearity();
-
-    return c == TRISEGMENT_COLLINEARITY_01 ? LEFT : c == TRISEGMENT_COLLINEARITY_12 ? RIGHT : UNKNOWN  ;
+    if ( IsCached(i) ) // needed if approx info is set but not exact info
+      mAlreadyComputed[i] = false ;
   }
+};
 
-  friend std::ostream& operator << ( std::ostream& os, Trisegment_2<K> const& aTrisegment )
-  {
-    return os << "[" << s2str(aTrisegment.e0())
-              << " " << s2str(aTrisegment.e1())
-              << " " << s2str(aTrisegment.e2())
-              << " " << trisegment_collinearity_to_string(aTrisegment.collinearity())
-              << "]";
-  }
+template <typename K>
+using Time_cache = Info_cache< boost::optional< CGAL_SS_i::Rational< typename K::FT > > > ;
 
-  friend std::ostream& operator << ( std::ostream& os, Self_ptr const& aPtr )
-  {
-    recursive_print(os,aPtr,0);
-    return os ;
-  }
-
-  static void recursive_print ( std::ostream& os, Self_ptr const& aTriPtr, int aDepth )
-  {
-    os << "\n" ;
-
-    for ( int i = 0 ; i < aDepth ; ++ i )
-      os << "  " ;
-
-    if ( aTriPtr )
-         os << *aTriPtr ;
-    else os << "{null}" ;
-
-    if ( aTriPtr->child_l() )
-      recursive_print(os,aTriPtr->child_l(),aDepth+1);
-
-    if ( aTriPtr->child_r() )
-      recursive_print(os,aTriPtr->child_r(),aDepth+1);
-  }
-
-private :
-
-  Segment_2               mE[3];
-  Trisegment_collinearity mCollinearity ;
-  unsigned                mCSIdx, mNCSIdx ;
-
-  Self_ptr mChildL ;
-  Self_ptr mChildR ;
-} ;
+template <typename K>
+using Coeff_cache = Info_cache< boost::optional< Line_2<K> > > ;
 
 template<class K>
 struct Functor_base_2
@@ -305,8 +294,10 @@ struct Functor_base_2
   typedef typename K::FT        FT ;
   typedef typename K::Point_2   Point_2 ;
   typedef typename K::Segment_2 Segment_2 ;
+  typedef typename K::Vector_2 Vector_2 ;
+  typedef CGAL_SS_i::Segment_2_with_ID<K> Segment_2_with_ID ;
 
-  typedef CGAL_SS_i::Trisegment_2<K> Trisegment_2 ;
+  typedef CGAL::Trisegment_2<K, Segment_2_with_ID> Trisegment_2 ;
 
   typedef typename Trisegment_2::Self_ptr Trisegment_2_ptr ;
 };
@@ -323,11 +314,17 @@ struct SS_converter : Converter
   typedef typename Source_kernel::Point_2 Source_point_2 ;
   typedef typename Target_kernel::Point_2 Target_point_2 ;
 
+  typedef typename Source_kernel::Vector_2 Source_vector_2 ;
+  typedef typename Target_kernel::Vector_2 Target_vector_2 ;
+
   typedef typename Source_kernel::Segment_2 Source_segment_2 ;
   typedef typename Target_kernel::Segment_2 Target_segment_2 ;
 
-  typedef Trisegment_2<Source_kernel> Source_trisegment_2 ;
-  typedef Trisegment_2<Target_kernel> Target_trisegment_2 ;
+  typedef Segment_2_with_ID<Source_kernel> Source_segment_2_with_ID ;
+  typedef Segment_2_with_ID<Target_kernel> Target_segment_2_with_ID ;
+
+  typedef Trisegment_2<Source_kernel, Source_segment_2_with_ID> Source_trisegment_2 ;
+  typedef Trisegment_2<Target_kernel, Target_segment_2_with_ID> Target_trisegment_2 ;
 
   typedef boost::tuple<Source_FT,Source_point_2> Source_time_and_point_2 ;
   typedef boost::tuple<Target_FT,Target_point_2> Target_time_and_point_2 ;
@@ -360,7 +357,17 @@ struct SS_converter : Converter
 
   Target_point_2   cvt_p(Source_point_2 const& p) const  { return this->Converter::operator()(p); }
 
-  Target_segment_2 cvt_s( Source_segment_2 const& e) const { return Target_segment_2(cvt_p(e.source()), cvt_p(e.target()) ) ; }
+  Target_vector_2 cvt_v( Source_vector_2 const& v) const {
+    return Target_vector_2(cvt_p(Source_point_2(CGAL::ORIGIN)), cvt_p(Source_point_2(CGAL::ORIGIN) + v) ) ;
+  }
+
+  Target_segment_2 cvt_s( Source_segment_2 const& e) const {
+    return Target_segment_2(cvt_p(e.source()), cvt_p(e.target())) ;
+  }
+
+  Target_segment_2_with_ID cvt_s( Source_segment_2_with_ID const& e) const {
+    return Target_segment_2_with_ID(cvt_p(e.source()), cvt_p(e.target()), e.mID) ;
+  }
 
   Target_time_and_point_2 cvt_t_p( Source_time_and_point_2 const& v ) const
   {
@@ -378,6 +385,7 @@ struct SS_converter : Converter
                                                             ,cvt_s(tri->e1())
                                                             ,cvt_s(tri->e2())
                                                             ,tri->collinearity()
+                                                            ,tri->id()
                                                             )
                                    ) ;
   }
@@ -395,6 +403,9 @@ struct SS_converter : Converter
 
       if ( tri->child_r() )
         res->set_child_r( cvt_trisegment(tri->child_r() ) ) ;
+
+      if ( tri->child_t() )
+        res->set_child_t( cvt_trisegment(tri->child_t() ) ) ;
     }
 
     return res ;
@@ -412,7 +423,11 @@ struct SS_converter : Converter
 
   Target_point_2   operator()( Source_point_2 const& p) const { return cvt_p(p) ; }
 
+  Target_vector_2 operator()( Source_vector_2 const& v) const { return cvt_v(v); }
+
   Target_segment_2 operator()( Source_segment_2 const& s) const { return cvt_s(s); }
+
+  Target_segment_2_with_ID operator()( Source_segment_2_with_ID const& s) const { return cvt_s(s); }
 
   Target_trisegment_2_ptr operator()( Source_trisegment_2_ptr const& tri ) const
   {
@@ -446,6 +461,19 @@ struct SS_converter : Converter
   }
 
 };
+
+BOOST_MPL_HAS_XXX_TRAIT_DEF(Filters_split_events_tag)
+BOOST_MPL_HAS_XXX_TRAIT_DEF(Segment_2_with_ID)
+
+template <class GT, bool has_filters_split_events_tag = has_Filters_split_events_tag<GT>::value>
+struct Get_protector{ struct type{}; };
+
+template <class GT>
+struct Get_protector<GT, true>
+{
+  typedef typename GT::Protector type;
+};
+
 
 } // namespace CGAL_SS_i
 

@@ -1,130 +1,134 @@
 namespace CGAL {
 
+// ---------------------------------------------- EXTERIOR -----------------------------------------
+
 /*!
-\ingroup PkgStraightSkeleton2Functions
+\ingroup PkgStraightSkeleton2SkeletonFunctions
 
-The function `create_exterior_straight_skeleton_2()` creates a straight skeleton in the exterior of a 2D polygon with holes.
+The function `create_exterior_straight_skeleton_2()` creates a straight skeleton in the exterior
+of a 2D polygon with holes.
 
-The function returns a new `Straight_skeleton_2<K>` in the <I>limited exterior</I> of the 2D polygon `P` given by the point sequence `[vertices_begin,vertices_end]`.
-The skeleton in the <I>limited exterior</I> of `P` is the skeleton in the interior of a polygon `Q` with `P` as its hole and a rectangular frame `F` as outer boundary.
+The function returns a new `Straight_skeleton_2<SsK>` in the <I>limited exterior</I> of the 2D polygon `P`
+given by the point sequence `[vertices_begin,vertices_end]`.
+The skeleton in the <I>limited exterior</I> of `P` is the skeleton in the interior of a polygon `Q`
+with `P` as its hole and a rectangular frame `F` as outer boundary.
 The outer boundary `F` is constructed by enlarging the bounding box of `P` a distance `d`.
-`d` is a margin sufficiently large to allow an outer offset at distance `max_offset` to be obtained from this exterior skeleton, as computed by the function `compute_outer_frame_margin()`
+`d` is a margin sufficiently large to allow an outer offset at distance `max_offset` to be obtained
+from this exterior skeleton, as computed by the function `compute_outer_frame_margin()`.
 
+\tparam SsK must be a model of `Kernel`.
+\tparam FT must be a model of `FieldNumberType` convertible to `SsK::FT`.
+\tparam PointIterator must be a model of `InputIterator` with value type `InK::Point_2`.
 
-\cgalHeading{Requirements}
-
-\tparam FT a number type
-\tparam K is any \cgal Kernel
-\tparam PointIterator an `InputIterator` with `value_type` being equivalent to `K2::Point_2`
-`Cartesian_converter` is used to convert from `K2::Point_2` to `K::Point_2`
+\note `Cartesian_converter` is used to convert from `InK::Point_2` to `SsK::Point_2`, if they differ.
 
 \sa `create_interior_straight_skeleton_2()`
-\sa `Straight_skeleton_builder_2`
-
-
+\sa `CGAL::Straight_skeleton_builder_2<Traits,Ss,Visitor>`
 */
-template<class FT, class PointIterator, class K>
-boost::shared_ptr< Straight_skeleton_2<K> >
-create_exterior_straight_skeleton_2
-( FT max_offset
-, PointIterator vertices_begin
-, PointIterator vertices_end
-, K const& k = Exact_predicates_inexact_constructions_kernel
-) ;
+template<class FT, class PointIterator, class SsK>
+boost::shared_ptr< Straight_skeleton_2<SsK> >
+create_exterior_straight_skeleton_2( FT max_offset,
+                                     PointIterator vertices_begin,
+                                     PointIterator vertices_end,
+                                     SsK k = CGAL::Exact_predicates_inexact_constructions_kernel ) ;
 
 /*!
-\ingroup PkgStraightSkeleton2Functions
+\ingroup PkgStraightSkeleton2SkeletonFunctions
 
-The function `create_exterior_straight_skeleton_2()` creates a straight skeleton in the exterior of a 2D polygon with holes.
-The function returns a new `Straight_skeleton_2<K>` in the <I>limited exterior</I> of the 2D polygon `P`.
-The skeleton in the <I>limited exterior</I> of `P` is the skeleton in the interior of a polygon `Q` with `P` as its hole and a rectangular frame `F` as outer boundary.
+The function `create_exterior_straight_skeleton_2()` creates a straight skeleton in the exterior
+of a 2D polygon with holes.
+
+The function returns a new `Straight_skeleton_2<SsK>` in the <I>limited exterior</I> of the 2D polygon `P`.
+The skeleton in the <I>limited exterior</I> of `P` is the skeleton in the interior of a polygon `Q`
+with `P` as its hole and a rectangular frame `F` as outer boundary.
 The outer boundary `F` is constructed by enlarging the bounding box of `P` a distance `d`.
-`d` is a margin sufficiently large to allow an outer offset at distance `max_offset` to be obtained from this exterior skeleton, as computed by the function `compute_outer_frame_margin()`
+`d` is a margin sufficiently large to allow an outer offset at distance `max_offset` to be obtained
+from this exterior skeleton, as computed by the function `compute_outer_frame_margin()`.
 
-\cgalHeading{Requirements}
+\tparam FT must be a model of `FieldNumberType` convertible to `SsK::FT`.
+\tparam SsK must be a model of `Kernel`.
+\tparam Polygon must be a model of `SequenceContainer` with value type `InK::Point_2` (e.g. `Polygon_2<InK>`)
+                or a model of `GeneralPolygonWithHoles_2` (e.g. `Polygon_with_holes_2<InK>`).
 
-\tparam FT a number type
-\tparam K is any \cgal kernel.
-\tparam Polygon is `Polygon_2<K>` or a standard container of `K::Point_2` elements.
+\note `Cartesian_converter` is used to convert from `InK::Point_2` to `SsK::Point_2`, if they differ.
 
 \sa `create_interior_straight_skeleton_2()`
-\sa `Straight_skeleton_builder_2`
+\sa `CGAL::Straight_skeleton_builder_2<Traits,Ss,Visitor>`
 */
-template<class FT, class Polygon, class K>
-boost::shared_ptr< Straight_skeleton_2<K> >
-create_exterior_straight_skeleton_2 ( FT max_offset
-, Polygon P
-, K const& k = Exact_predicates_inexact_constructions_kernel
-) ;
+template<class FT, class Polygon, class SsK>
+boost::shared_ptr< Straight_skeleton_2<SsK> >
+create_exterior_straight_skeleton_2 ( FT max_offset,
+                                      const Polygon& P,
+                                      SsK k = CGAL::Exact_predicates_inexact_constructions_kernel ) ;
+
+// ---------------------------------------------- INTERIOR -----------------------------------------
 
 /*!
-\ingroup PkgStraightSkeleton2Functions
+\ingroup PkgStraightSkeleton2SkeletonFunctions
 
-returns a new `Straight_skeleton_2<K>` in the interior of the 2D
+returns a new `Straight_skeleton_2<SsK>` in the interior of the 2D
 polygon with holes whose outer boundary is given by the point sequence
 `[outer_contour_vertices_begin,outer_contour_vertices_end]` and its
 holes given by `[holes_begin,holes_end]`.
 
-\tparam K is any \cgal Kernel
-\tparam PointIterator an `InputIterator` with `value_type` begin equivalent to `K2::Point_2`.
-        `Cartesian_converter` is used to convert from `K2::Point_2` to `K::Point_2`
-\tparam HoleIterator an `InputIterator` with `value_type` being `Polygon_2<K>`
-        or a standard container of `K2::Point_2` elements.
+\tparam SsK must be a model of `Kernel`.
+\tparam PointIterator must be a model of `InputIterator` with value type `InK::Point_2`.
+\tparam HoleIterator must be a model of `InputIterator` with `value_type` a model of `SequenceContainer`
+                     with value type `InK::Point_2`.
 
+\note `Cartesian_converter` is used to convert from `InK::Point_2` to `SsK::Point_2`, if they differ.
 
 \sa `create_exterior_straight_skeleton_2()`
-\sa `Straight_skeleton_builder_2`
-
+\sa `CGAL::Straight_skeleton_builder_2<Traits,Ss,Visitor>`
 */
-template<class PointIterator, class HoleIterator, class K>
-boost::shared_ptr< Straight_skeleton_2<K> >
-create_interior_straight_skeleton_2 ( PointIterator outer_contour_vertices_begin
-                                    , PointIterator outer_contour_vertices_end
-                                    , HoleIterator  holes_begin
-                                    , HoleIterator  holes_end
-                                    , K const&      k = Exact_predicates_inexact_constructions_kernel
-                                    ) ;
+template<class PointIterator, class HoleIterator, class SsK>
+boost::shared_ptr< Straight_skeleton_2<SsK> >
+create_interior_straight_skeleton_2 ( PointIterator outer_contour_vertices_begin,
+                                      PointIterator outer_contour_vertices_end,
+                                      HoleIterator holes_begin,
+                                      HoleIterator holes_end,
+                                      SsK k = CGAL::Exact_predicates_inexact_constructions_kernel ) ;
 
 /*!
-\ingroup PkgStraightSkeleton2Functions
+\ingroup PkgStraightSkeleton2SkeletonFunctions
 
-returns a new `Straight_skeleton_2<K>` in the interior of the 2D
+returns a new `Straight_skeleton_2<SsK>` in the interior of the 2D
 polygon whose outer boundary is given by the point sequence
 `[outer_contour_vertices_begin,outer_contour_vertices_end]`.
 
-\tparam K is any \cgal Kernel
-\tparam PointIterator an `InputIterator` with `value_type` begin equivalent to `K2::Point_2`.
-        `Cartesian_converter` is used to convert from `K2::Point_2` to `K::Point_2`
+\tparam SsK must be a model of `Kernel`.
+\tparam PointIterator must be a model of `InputIterator` with value type `InK::Point_2`.
+
+\note `Cartesian_converter` is used to convert from `InK::Point_2` to `SsK::Point_2`, if they differ.
 
 \sa `create_exterior_straight_skeleton_2()`
-\sa `Straight_skeleton_builder_2`
-
+\sa `CGAL::Straight_skeleton_builder_2<Traits,Ss,Visitor>`
 */
-template<class PointIterator, class K>
-boost::shared_ptr< Straight_skeleton_2<K> >
-create_interior_straight_skeleton_2 ( PointIterator outer_contour_vertices_begin
-                                    , PointIterator outer_contour_vertices_end
-                                    , K const&      k = Exact_predicates_inexact_constructions_kernel
-                                    ) ;
+template<class PointIterator, class SsK>
+boost::shared_ptr< Straight_skeleton_2<SsK> >
+create_interior_straight_skeleton_2 ( PointIterator outer_contour_vertices_begin,
+                                      PointIterator outer_contour_vertices_end,
+                                      SsK k = CGAL::Exact_predicates_inexact_constructions_kernel ) ;
 
 /*!
-\ingroup PkgStraightSkeleton2Functions
+\ingroup PkgStraightSkeleton2SkeletonFunctions
 
-returns a new `Straight_skeleton_2<K>` in the interior of the 2D
+returns a new `Straight_skeleton_2<SsK>` in the interior of the 2D
 polygon `outer_contour`.
 
-\tparam K is any \cgal Kernel
-\tparam Polygon an `InputIterator` with `value_type` being `Polygon_2<K>`
-        or a standard container of `K2::Point_2` elements.
+\tparam SsK must be a model of `Kernel`.
+\tparam Polygon must be a model of `SequenceContainer` with value type `InK::Point_2` (e.g. `Polygon_2<InK>`)
+                or a model of `GeneralPolygonWithHoles_2` (e.g. `Polygon_with_holes_2<InK>`).
+
+\note `Cartesian_converter` is used to convert from `InK::Point_2` to `SsK::Point_2`,
+      if they differ.
 
 \sa `create_exterior_straight_skeleton_2()`
-\sa `Straight_skeleton_builder_2`
-
+\sa `CGAL::Straight_skeleton_builder_2<Traits,Ss,Visitor>`
 */
-template<class Polygon, class K>
-boost::shared_ptr< Straight_skeleton_2<K> >
-create_interior_straight_skeleton_2 ( Polygon const& outer_contour
-                                    , K const&       k = Exact_predicates_inexact_constructions_kernel
-                                    ) ;
+template<class Polygon, class SsK>
+boost::shared_ptr< Straight_skeleton_2<SsK> >
+create_interior_straight_skeleton_2 ( const Polygon& outer_contour,
+                                      SsK k = CGAL::Exact_predicates_inexact_constructions_kernel ) ;
 
 } /* namespace CGAL */

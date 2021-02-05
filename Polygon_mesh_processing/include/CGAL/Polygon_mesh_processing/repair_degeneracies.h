@@ -27,7 +27,7 @@
 
 #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
-#include <CGAL/IO/OFF_reader.h>
+#include <CGAL/IO/OFF.h>
 #endif
 
 #include <boost/algorithm/minmax_element.hpp>
@@ -423,10 +423,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
     std::cout << edges_to_collapse.size() << " needles and " << edges_to_flip.size() << " caps" << std::endl;
     std::ostringstream oss;
     oss << "degen_cleaning_iter_" << iter++ << ".off";
-    std::ofstream out(oss.str().c_str());
-    out << std::setprecision(17);
-    out << tmesh;
-    out.close();
+    CGAL::write_polygon_mesh(oss.str(), tmesh, CGAL::parameters::stream_precision(17));
 #endif
 
     if(edges_to_collapse.empty() && edges_to_flip.empty())
@@ -755,6 +752,7 @@ template <typename TriangleMesh, typename EdgeSet, typename FaceSet>
 typename boost::graph_traits<TriangleMesh>::vertex_descriptor
 remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor ed,
                      TriangleMesh& tm,
+                     EdgeSet& input_range,
                      EdgeSet& edge_set,
                      FaceSet& face_set)
 {
@@ -779,11 +777,14 @@ remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor
   if(CGAL::Euler::does_satisfy_link_condition(edge(h, tm), tm))
   {
     edge_set.erase(ed);
+    input_range.erase(ed);
     halfedge_descriptor h = halfedge(ed, tm);
     if(is_border(h, tm))
       h = opposite(h, tm);
 
-    edge_set.erase(edge(prev(h, tm), tm));
+    const edge_descriptor prev_e = edge(prev(h, tm), tm);
+    edge_set.erase(prev_e);
+    input_range.erase(prev_e);
     face_set.erase(face(h, tm));
 
     return CGAL::Euler::collapse_edge(ed, tm);
@@ -957,6 +958,7 @@ remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor
   for(edge_descriptor ed : edges_to_remove)
   {
     edge_set.erase(ed);
+    input_range.erase(ed);
     remove_edge(ed, tm);
   }
 
@@ -991,10 +993,11 @@ typename boost::graph_traits<TriangleMesh>::vertex_descriptor
 remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor ed,
                      TriangleMesh& tm)
 {
+  std::set<typename boost::graph_traits<TriangleMesh>::edge_descriptor> input_range;
   std::set<typename boost::graph_traits<TriangleMesh>::edge_descriptor> edge_set;
   std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor> face_set;
 
-  return remove_a_border_edge(ed, tm, edge_set, face_set);
+  return remove_a_border_edge(ed, tm, input_range, edge_set, face_set);
 }
 
 template <typename EdgeRange, typename TriangleMesh, typename NamedParameters, typename FaceSet>
@@ -1027,14 +1030,17 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
   bool some_removed = true;
   bool preserve_genus = choose_parameter(get_parameter(np, internal_np::preserve_genus), true);
 
+  // The input edge range needs to be kept up-to-date
+  std::set<edge_descriptor> local_edge_range(std::begin(edge_range), std::end(edge_range));
+
   // collect edges of length 0
   while(some_removed && !all_removed)
   {
     some_removed = false;
     all_removed = true;
     std::set<edge_descriptor> degenerate_edges_to_remove;
-    degenerate_edges(edge_range, tmesh, std::inserter(degenerate_edges_to_remove,
-                                                      degenerate_edges_to_remove.end()));
+    degenerate_edges(local_edge_range, tmesh, std::inserter(degenerate_edges_to_remove,
+                                                            degenerate_edges_to_remove.end()));
 
 #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
     std::cout << "Found " << degenerate_edges_to_remove.size() << " null edges.\n";
@@ -1047,21 +1053,26 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
       edge_descriptor e = *it;
       if(CGAL::Euler::does_satisfy_link_condition(e, tmesh))
       {
-        halfedge_descriptor h = halfedge(e, tmesh);
+        const halfedge_descriptor h = halfedge(e, tmesh);
+        local_edge_range.erase(*it);
         degenerate_edges_to_remove.erase(it);
 
         // remove edges that could also be set for removal
         if(face(h, tmesh) != GT::null_face())
         {
           ++nb_deg_faces;
-          degenerate_edges_to_remove.erase(edge(prev(h, tmesh), tmesh));
+          const edge_descriptor prev_e = edge(prev(h, tmesh), tmesh);
+          degenerate_edges_to_remove.erase(prev_e);
+          local_edge_range.erase(prev_e);
           face_set.erase(face(h, tmesh));
         }
 
         if(face(opposite(h, tmesh), tmesh) != GT::null_face())
         {
           ++nb_deg_faces;
-          degenerate_edges_to_remove.erase(edge(prev(opposite(h, tmesh), tmesh), tmesh));
+          const edge_descriptor prev_opp_e = edge(prev(opposite(h, tmesh), tmesh), tmesh);
+          degenerate_edges_to_remove.erase(prev_opp_e);
+          local_edge_range.erase(prev_opp_e);
           face_set.erase(face(opposite(h, tmesh), tmesh));
         }
 
@@ -1085,9 +1096,12 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
 
     while(!degenerate_edges_to_remove.empty())
     {
-      edge_descriptor ed = *degenerate_edges_to_remove.begin();
-      degenerate_edges_to_remove.erase(degenerate_edges_to_remove.begin());
-      halfedge_descriptor h = halfedge(ed, tmesh);
+      auto eb = degenerate_edges_to_remove.begin();
+      const edge_descriptor ed = *eb;
+      degenerate_edges_to_remove.erase(eb);
+      local_edge_range.erase(ed);
+
+      const halfedge_descriptor h = halfedge(ed, tmesh);
 
       if(CGAL::Euler::does_satisfy_link_condition(ed, tmesh))
       {
@@ -1095,14 +1109,18 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
         if(face(h, tmesh) != GT::null_face())
         {
           ++nb_deg_faces;
-          degenerate_edges_to_remove.erase(edge(prev(h, tmesh), tmesh));
+          const edge_descriptor prev_e = edge(prev(h, tmesh), tmesh);
+          degenerate_edges_to_remove.erase(prev_e);
+          local_edge_range.erase(prev_e);
           face_set.erase(face(h, tmesh));
         }
 
         if(face(opposite(h, tmesh), tmesh)!=GT::null_face())
         {
           ++nb_deg_faces;
-          degenerate_edges_to_remove.erase(edge(prev(opposite(h, tmesh), tmesh), tmesh));
+          const edge_descriptor prev_opp_e = edge(prev(opposite(h, tmesh), tmesh), tmesh);
+          degenerate_edges_to_remove.erase(prev_opp_e);
+          local_edge_range.erase(prev_opp_e);
           face_set.erase(face(opposite(h, tmesh), tmesh));
         }
 
@@ -1126,6 +1144,7 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
             {
               Euler::fill_hole(hd, tmesh);
               degenerate_edges_to_remove.insert(ed); // reinsert the edge for future processing
+              local_edge_range.insert(ed);
             }
             else
             {
@@ -1139,7 +1158,8 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
           std::cout << "Calling remove_a_border_edge\n";
 #endif
 
-          vertex_descriptor vd = remove_a_border_edge(ed, tmesh, degenerate_edges_to_remove, face_set);
+          vertex_descriptor vd = remove_a_border_edge(ed, tmesh, local_edge_range,
+                                                      degenerate_edges_to_remove, face_set);
           if(vd == GT::null_vertex())
           {
             // @todo: if some border edges are later removed, the edge might be processable later
@@ -1441,6 +1461,7 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
         for(edge_descriptor ed : edges_to_remove)
         {
           degenerate_edges_to_remove.erase(ed);
+          local_edge_range.erase(ed);
           remove_edge(ed, tmesh);
         }
 
@@ -1463,8 +1484,12 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
 
         for(halfedge_descriptor hd : halfedges_around_target(new_hd, tmesh))
         {
-          if(is_degenerate_edge(edge(hd, tmesh), tmesh, np))
-            degenerate_edges_to_remove.insert(edge(hd, tmesh));
+          const edge_descriptor inc_e = edge(hd, tmesh);
+          if(is_degenerate_edge(inc_e, tmesh, np))
+          {
+            degenerate_edges_to_remove.insert(inc_e);
+            local_edge_range.insert(inc_e);
+          }
 
           if(face(hd, tmesh) != GT::null_face() && is_degenerate_triangle_face(face(hd, tmesh), tmesh))
             face_set.insert(face(hd, tmesh));
@@ -1642,9 +1667,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
 #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
   {
     std::cout <<"Done with null edges.\n";
-    std::ofstream output("/tmp/no_null_edges.off");
-    output << std::setprecision(17) << tmesh << "\n";
-    output.close();
+    CGAL::write_polygon_mesh("/tmp/no_null_edges.off", tmesh, CGAL::parameters::stream_precision(17));
   }
 #endif
 

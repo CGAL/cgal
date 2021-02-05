@@ -8,7 +8,7 @@ The class `Dynamic_matrix` is an adaptor for an arbitrary
 matrix class `M` to provide the dynamic operations needed for monotone
 matrix search.
 
-\tparam `M` is a model of `BasicMatrix`.
+\tparam M is a model of `BasicMatrix`.
 
 \cgalModels `MonotoneMatrixSearchTraits`
 \cgalModels `BasicMatrix`
