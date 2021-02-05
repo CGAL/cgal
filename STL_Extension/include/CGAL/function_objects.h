@@ -349,19 +349,16 @@ class Creator_uniform_d {
 
 template < class Op1, class Op2 >
 class Unary_compose_1
-  : public CGAL::cpp98::unary_function< typename Op2::argument_type,
-                                        typename Op1::result_type >
 {
 protected:
   Op1 op1;
   Op2 op2;
 public:
-  typedef typename Op2::argument_type   argument_type;
-  typedef typename Op1::result_type     result_type;
 
   Unary_compose_1(const Op1& x, const Op2& y) : op1(x), op2(y) {}
 
-  result_type
+  template <typename argument_type>
+  auto
   operator()(const argument_type& x) const
   { return op1(op2(x)); }
 };
@@ -373,21 +370,18 @@ compose1_1(const Op1& op1, const Op2& op2)
 
 template < class Op1, class Op2, class Op3 >
 class Binary_compose_1
-  : public CGAL::cpp98::unary_function< typename Op2::argument_type,
-                                        typename Op1::result_type >
 {
 protected:
   Op1 op1;
   Op2 op2;
   Op3 op3;
 public:
-  typedef typename Op2::argument_type  argument_type;
-  typedef typename Op1::result_type    result_type;
 
   Binary_compose_1(const Op1& x, const Op2& y, const Op3& z)
   : op1(x), op2(y), op3(z) {}
 
-  result_type
+  template <typename argument_type>
+  auto
   operator()(const argument_type& x) const
   { return op1(op2(x), op3(x)); }
 };
@@ -399,21 +393,16 @@ compose2_1(const Op1& op1, const Op2& op2, const Op3& op3)
 
 template < class Op1, class Op2 >
 class Unary_compose_2
-  : public CGAL::cpp98::binary_function< typename Op2::first_argument_type,
-                                         typename Op2::second_argument_type,
-                                         typename Op1::result_type >
 {
 protected:
   Op1 op1;
   Op2 op2;
 public:
-  typedef typename Op2::first_argument_type   first_argument_type;
-  typedef typename Op2::second_argument_type  second_argument_type;
-  typedef typename Op1::result_type           result_type;
 
   Unary_compose_2(const Op1& x, const Op2& y) : op1(x), op2(y) {}
 
-  result_type
+  template <typename first_argument_type, typename second_argument_type>
+  auto
   operator()(const first_argument_type& x,
              const second_argument_type& y) const
   { return op1(op2(x, y)); }
@@ -426,18 +415,13 @@ compose1_2(const Op1& op1, const Op2& op2)
 
 template < class Op1, class Op2, class Op3 >
 class Binary_compose_2
-  : public CGAL::cpp98::binary_function< typename Op2::argument_type,
-                                         typename Op3::argument_type,
-                                         typename Op1::result_type >
+
 {
 protected:
   Op1 op1;
   Op2 op2;
   Op3 op3;
 public:
-  typedef typename Op2::argument_type  first_argument_type;
-  typedef typename Op3::argument_type  second_argument_type;
-  typedef typename Op1::result_type    result_type;
 
   Binary_compose_2(const Op1& x, const Op2& y, const Op3& z)
   : op1(x), op2(y), op3(z) {}
@@ -455,7 +439,8 @@ public:
     return *this;
   }
 
-  result_type
+  template <typename first_argument_type, typename second_argument_type>
+  auto
   operator()(const first_argument_type& x,
              const second_argument_type& y) const
   { return op1(op2(x), op3(y)); }
