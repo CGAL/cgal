@@ -97,11 +97,11 @@ intersection(
     case 1:
     {
       //adj to an edge
-      if(points.size() == 4)
+      if(points.size() == 4) // plane outside of cub and just touching at the edge, and hence the endpoints of 4 other edges
       {
         return result_type(std::forward<Segment_3>(segments.front()));
       }
-      //plane intersecting through an edge (not 2)
+      //plane intersecting through an edge (not 2)   This then intersects 2 other edges in points
       else
       {
         Poly res(4);
@@ -251,43 +251,51 @@ intersection(
       CGAL::Plane_3<K> >::result_type Pl_pl_type;
 
   std::vector<Line_3> plane_intersections;
-  Pl_pl_type pl_inter = CGAL::intersection(pl, Plane_3(cub.vertex(0),
-                                                       cub.vertex(1),
-                                                       cub.vertex(5)));
-  if(const Line_3* line = boost::get<Line_3>(&*pl_inter)){
-    plane_intersections.push_back(*line);
-  }
-  pl_inter = CGAL::intersection(pl, Plane_3(cub.vertex(0),
-                                            cub.vertex(3),
-                                            cub.vertex(4)));
-  if(const Line_3* line = boost::get<Line_3>(&*pl_inter)){
-    plane_intersections.push_back(*line);
-  }
-  pl_inter = CGAL::intersection(pl, Plane_3(cub.vertex(0),
-                                            cub.vertex(1),
-                                            cub.vertex(3)));
-  if(const Line_3* line = boost::get<Line_3>(&*pl_inter)){
-    plane_intersections.push_back(*line);
-  }
-  pl_inter = CGAL::intersection(pl, Plane_3(cub.vertex(7),
-                                            cub.vertex(6),
-                                            cub.vertex(1)));
-  if(const Line_3* line = boost::get<Line_3>(&*pl_inter)){
-    plane_intersections.push_back(*line);
-  }
-  pl_inter = CGAL::intersection(pl, Plane_3(cub.vertex(7),
-                                            cub.vertex(4),
-                                            cub.vertex(3)));
-  if(const Line_3* line = boost::get<Line_3>(&*pl_inter)){
-    plane_intersections.push_back(*line);
-  }
-  pl_inter = CGAL::intersection(pl, Plane_3(cub.vertex(7),
-                                            cub.vertex(6),
-                                            cub.vertex(4)));
-  if(const Line_3* line = boost::get<Line_3>(&*pl_inter)){
-    plane_intersections.push_back(*line);
+  Pl_pl_type pl_inter;
+
+  if(pl_inter = CGAL::intersection(pl, Plane_3(cub.vertex(0),
+                                               cub.vertex(1),
+                                               cub.vertex(5)))){
+    if(const Line_3* line = boost::get<Line_3>(&*pl_inter)){
+      plane_intersections.push_back(*line);
+    }
   }
 
+  if (pl_inter = CGAL::intersection(pl, Plane_3(cub.vertex(0),
+                                                cub.vertex(3),
+                                                cub.vertex(4)))){
+    if(const Line_3* line = boost::get<Line_3>(&*pl_inter)){
+      plane_intersections.push_back(*line);
+    }
+  }
+  if (pl_inter = CGAL::intersection(pl, Plane_3(cub.vertex(0),
+                                                cub.vertex(1),
+                                                cub.vertex(3)))){
+    if(const Line_3* line = boost::get<Line_3>(&*pl_inter)){
+      plane_intersections.push_back(*line);
+    }
+  }
+  if (pl_inter = CGAL::intersection(pl, Plane_3(cub.vertex(7),
+                                                cub.vertex(6),
+                                                cub.vertex(1)))){
+    if(const Line_3* line = boost::get<Line_3>(&*pl_inter)){
+      plane_intersections.push_back(*line);
+    }
+  }
+  if (pl_inter = CGAL::intersection(pl, Plane_3(cub.vertex(7),
+                                                cub.vertex(4),
+                                                cub.vertex(3)))){
+    if(const Line_3* line = boost::get<Line_3>(&*pl_inter)){
+      plane_intersections.push_back(*line);
+    }
+  }
+  if (pl_inter = CGAL::intersection(pl, Plane_3(cub.vertex(7),
+                                                cub.vertex(6),
+                                                cub.vertex(4)))){
+    if(const Line_3* line = boost::get<Line_3>(&*pl_inter)){
+      plane_intersections.push_back(*line);
+    }
+  }
   std::list<Segment_3> tmp_segs;
   for(const auto& line : plane_intersections)
   {
