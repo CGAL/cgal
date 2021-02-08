@@ -94,6 +94,7 @@ namespace CGAL {
     typedef typename boost::property_traits<PointMap>::value_type Point;
     typedef typename Kernel_traits<Point>::Kernel Kernel;
     typedef typename Kernel::Sphere_3 Sphere;
+    typedef typename Kernel::FT FT;
 
     typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_function;
     typedef typename CGAL::Surface_mesher::Surface_mesh_default_triangulation_3_generator<Kernel>::Type STr;
@@ -106,10 +107,10 @@ namespace CGAL {
 
     Point inner_point = function.get_inner_point();
     Sphere bsphere = function.bounding_sphere();
-    double radius = std::sqrt(bsphere.squared_radius());
+    FT radius = CGAL::approximate_sqrt(bsphere.squared_radius());
 
-    double sm_sphere_radius = 5.0 * radius;
-    double sm_dichotomy_error = sm_distance * spacing / 1000.0;
+    FT sm_sphere_radius = 5.0 * radius;
+    FT sm_dichotomy_error = sm_distance * spacing / 1000.0;
 
     Surface_3 surface(function,
                       Sphere (inner_point, sm_sphere_radius * sm_sphere_radius),
