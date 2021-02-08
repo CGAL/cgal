@@ -96,7 +96,7 @@ namespace CGAL {
     typedef typename Kernel::Sphere_3 Sphere;
 
     typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_function;
-    typedef CGAL::Surface_mesh_default_triangulation_3 STr;
+    typedef typename CGAL::Surface_mesher::Surface_mesh_default_triangulation_3_generator<Kernel>::Type STr;
     typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
     typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
 
