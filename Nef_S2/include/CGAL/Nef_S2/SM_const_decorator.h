@@ -275,7 +275,6 @@ where |M| is a sphere map and |F| is a sface.}*/
 
 private:
 std::string get_svertex_index(SVertex_const_handle) const;
-std::string get_shalfedge_index(SHalfedge_const_handle e) const;
 
 }; // SM_const_decorator
 
@@ -291,20 +290,14 @@ get_svertex_index(SVertex_const_handle v) const
 }
 
 template <typename SM_>
-std::string SM_const_decorator<SM_>::
-get_shalfedge_index(SHalfedge_const_handle e) const
-{
-  Object_index<SHalfedge_const_handle>
-    EI(shalfedges_begin(),shalfedges_end(),'e');
-  return EI(e);
-}
-
-template <typename SM_>
 void SM_const_decorator<SM_>::
 check_integrity_and_topological_planarity(bool faces) const
 {
   CGAL_NEF_TRACEN("check_integrity_and_topological_planarity:");
-
+#ifdef CGAL_USE_TRACE
+  Object_index<SHalfedge_const_iterator>
+    EI(shalfedges_begin(),shalfedges_end(),'e');
+#endif
   SVertex_const_handle v;
   int iso_vert_num=0;
   /* check the source links of out edges and count isolated vertices */
@@ -316,7 +309,7 @@ check_integrity_and_topological_planarity(bool faces) const
     } else {
       CGAL_assertion_code(SHalfedge_const_handle e=first_out_edge(v));
       CGAL_assertion_msg(e != SHalfedge_const_handle(), get_svertex_index(v).c_str());
-      CGAL_NEF_TRACEN(v->point()<<" "<<get_shalfedge_index(e));
+      CGAL_NEF_TRACEN(v->point()<<" "<<EI[first_out_edge(v)]);
       CGAL_assertion_msg(e->source() == v, get_svertex_index(v).c_str());
     }
   }
