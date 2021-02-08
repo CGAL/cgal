@@ -566,6 +566,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
   {
     using parameters::get_parameter;
     using parameters::choose_parameter;
+    using parameters::is_default_parameter;
 
     if(!is_default_parameter(get_parameter(np, internal_np::stream_precision)))
     {
