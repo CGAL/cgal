@@ -303,7 +303,7 @@ bool write_GOCAD(std::ostream& os,
   if(!os.good())
     return false;
 
-  set_default_stream_precision(os, np);
+  set_stream_precision_from_NP(os, np);
 
   os << "GOCAD TSurf 1\n"
         "HEADER {\n"
