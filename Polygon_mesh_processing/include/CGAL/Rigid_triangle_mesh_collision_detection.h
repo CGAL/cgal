@@ -178,7 +178,6 @@ public:
 
   //! move constructor
   Rigid_triangle_mesh_collision_detection(Rigid_triangle_mesh_collision_detection&& other)
-    :
   {
     *this = std::move(other);
   }
