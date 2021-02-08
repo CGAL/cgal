@@ -38,6 +38,7 @@
 #include <CGAL/Triangulation_ds_circulators_2.h>
 
 #include <CGAL/IO/io.h>
+#include <CGAL/IO/has_data.h>
 
 
 namespace CGAL {
