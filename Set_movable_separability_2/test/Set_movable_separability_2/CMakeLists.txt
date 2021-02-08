@@ -20,9 +20,6 @@ if(has_cpp11 LESS 0)
   return()
 endif()
 
-# Use C++11 for this directory and its sub-directories.
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 find_package(CGAL REQUIRED)
 
