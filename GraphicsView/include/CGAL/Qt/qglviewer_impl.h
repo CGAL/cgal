@@ -24,7 +24,6 @@
 #include <CGAL/Qt/qglviewer.h>
 #include <CGAL/Qt/manipulatedCameraFrame.h>
 #include <CGAL/Qt/camera.h>
-#include <CGAL/Qt/domUtils.h>
 #include <CGAL/Qt/keyFrameInterpolator.h>
 #include <CGAL/Qt/image_interface.h>
 
@@ -115,7 +114,6 @@ void CGAL::QGLViewer::defaultConstructor() {
 
   setSceneRadius(1.0);
   showEntireScene();
-  setStateFileName(".qglviewer.xml");
 
   setAxisIsDrawn(false);
   setGridIsDrawn(false);
@@ -1066,46 +1064,6 @@ void CGAL::QGLViewer::stopAnimation() {
     killTimer(animationTimerId_);
 }
 
-/*! Overloading of the \c QWidget method.
-
-Saves the viewer state using saveStateToFile() and then calls
-QOpenGLWidget::closeEvent(). */
-CGAL_INLINE_FUNCTION
-void CGAL::QGLViewer::closeEvent(QCloseEvent *e) {
-  // When the user clicks on the window close (x) button:
-  // - If the viewer is a top level window, closeEvent is called and then saves
-  // to file. - Otherwise, nothing happen s:( When the user press the
-  // EXIT_VIEWER keyboard shortcut: - If the viewer is a top level window,
-  // saveStateToFile() is also called - Otherwise, closeEvent is NOT called and
-  // keyPressEvent does the job.
-
-  /* After tests:
-  E : Embedded widget
-  N : Widget created with new
-  C : closeEvent called
-  D : destructor called
-
-  E        N        C        D
-  y        y
-  y        n                y
-  n        y        y
-  n        n        y        y
-
-  closeEvent is called iif the widget is NOT embedded.
-
-  Destructor is called iif the widget is created on the stack
-  or if widget (resp. parent if embedded) is created with WDestructiveClose
-  flag.
-
-  closeEvent always before destructor.
-
-  Close using qApp->closeAllWindows or (x) is identical.
-  */
-
-  // #CONNECTION# Also done for EXIT_VIEWER in keyPressEvent().
-  saveStateToFile();
-  QOpenGLWidget::closeEvent(e);
-}
 
 /*! Simple wrapper method: calls \c select(event->pos()).
 
@@ -2343,7 +2301,6 @@ void CGAL::QGLViewer::handleKeyboardAction(qglviewer::KeyboardAction id) {
     toggleTextIsEnabled();
     break;
   case qglviewer::EXIT_VIEWER:
-    saveStateToFileForAllViewers();
     qApp->closeAllWindows();
     break;
   case qglviewer::FULL_SCREEN:
@@ -3552,15 +3509,6 @@ void CGAL::QGLViewer::drawGrid(qreal size, int nbSubdivisions) {
 //       S t a t i c    m e t h o d s   :  Q G L V i e w e r   P o o l        //
 ////////////////////////////////////////////////////////////////////////////////
 
-/*! saveStateToFile() is called on all the CGAL::QGLViewers using the QGLViewerPool().
- */
-CGAL_INLINE_FUNCTION
-void CGAL::QGLViewer::saveStateToFileForAllViewers() {
-  Q_FOREACH (CGAL::QGLViewer *viewer, CGAL::QGLViewer::QGLViewerPool()) {
-    if (viewer)
-      viewer->saveStateToFile();
-  }
-}
 
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::copyBufferToTexture(GLint , GLenum ) {

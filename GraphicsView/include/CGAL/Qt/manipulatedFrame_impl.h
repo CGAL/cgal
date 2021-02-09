@@ -21,7 +21,6 @@
 
 #include <CGAL/Qt/manipulatedFrame.h>
 #include <CGAL/Qt/camera.h>
-#include <CGAL/Qt/domUtils.h>
 #include <CGAL/Qt/qglviewer.h>
 
 #include <cstdlib>

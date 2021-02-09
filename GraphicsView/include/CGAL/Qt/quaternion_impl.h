@@ -20,7 +20,6 @@
 #endif
 #include <CGAL/number_type_config.h>
 #include <CGAL/Qt/quaternion.h>
-#include <CGAL/Qt/domUtils.h>
 #include <stdlib.h> // RAND_MAX
 
 // All the methods are declared inline in Quaternion.h

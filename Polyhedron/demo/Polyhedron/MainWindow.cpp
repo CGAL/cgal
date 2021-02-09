@@ -3219,8 +3219,6 @@ void MainWindow::setDefaultSaveDir()
 
 void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer)
 {
-  // do not save the state of the viewer (anoying)
-  viewer->setStateFileName(QString());
   viewer->textRenderer()->setScene(scene);
   viewer->setScene(scene);
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),

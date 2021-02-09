@@ -21,7 +21,6 @@
 #include <CGAL/number_type_config.h>
 #include <CGAL/Qt/manipulatedCameraFrame.h>
 #include <CGAL/Qt/camera.h>
-#include <CGAL/Qt/domUtils.h>
 #include <CGAL/Qt/qglviewer.h>
 
 #include <QMouseEvent>

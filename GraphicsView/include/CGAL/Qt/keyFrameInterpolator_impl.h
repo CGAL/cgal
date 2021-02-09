@@ -19,7 +19,6 @@
 #endif
 
 #include <CGAL/Qt/keyFrameInterpolator.h>
-#include <CGAL/Qt/domUtils.h>
 
 namespace CGAL{
 namespace qglviewer{

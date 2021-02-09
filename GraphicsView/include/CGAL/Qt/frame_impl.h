@@ -21,7 +21,6 @@
 
 #include <CGAL/Qt/frame.h>
 #include <CGAL/Qt/constraint.h>
-#include <CGAL/Qt/domUtils.h>
 #include <math.h>
 
 namespace CGAL{

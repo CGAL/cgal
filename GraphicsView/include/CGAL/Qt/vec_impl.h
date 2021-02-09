@@ -20,7 +20,6 @@
 #endif
 
 #include <CGAL/Qt/vec.h>
-#include <CGAL/Qt/domUtils.h>
 
 // Most of the methods are declared inline in vec.h
 
