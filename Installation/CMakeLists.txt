@@ -1302,18 +1302,20 @@ endif()
 #print some info about versions
 if(RUNNING_CGAL_AUTO_TEST)
   find_package(Qt5 QUIET COMPONENTS Core)
+  find_package(Boost)
   if(NOT CGAL_DISABLE_GMP)
     find_package(GMP)
     find_package(MPFR)
-    find_package(Boost)
     get_dependency_version(GMP)
     get_dependency_version(MPFR)
-    message(
-      STATUS
-        "USING BOOST_VERSION = '${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}'"
-    )
-    if(Qt5_FOUND)
-      message(STATUS "USING Qt5_VERSION = '${Qt5Core_VERSION_STRING}'")
-    endif()#Qt5_FOUND
+  elseif(WITH_LEDA)#CGAL_DISABLE_GMP
+    find_package(LEDA)
   endif()#NOT CGAL_DISABLE_GMP
+  message(
+    STATUS
+    "USING BOOST_VERSION = '${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}'"
+    )
+  if(Qt5_FOUND)
+    message(STATUS "USING Qt5_VERSION = '${Qt5Core_VERSION_STRING}'")
+  endif()#Qt5_FOUND
 endif()#RUNNING_CGAL_AUTO_TEST
