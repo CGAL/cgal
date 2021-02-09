@@ -16,6 +16,7 @@
 
 #include <CGAL/kernel_basic.h>
 #include <CGAL/intersections.h>
+#include <CGAL/utility.h>
 
 #include <CGAL/Intersections_3/internal/tetrahedron_intersection_helpers.h>
 #include <CGAL/Intersections_3/Iso_cuboid_3_Segment_3.h>
@@ -27,318 +28,177 @@ namespace CGAL {
 namespace Intersections {
 namespace internal {
 
-template<typename Point>
-void filter_points(std::vector<Point>& input,
-                   std::vector<Point>& output)
+template <class Geom_traits, class Plane_3, class Point_3>
+int
+inter_pt_index(int i, int j,
+               const Plane_3& plane,
+               std::vector<Point_3>& points,
+               std::map<std::pair<int, int>, int>& id_map)
 {
-  std::sort(input.begin(), input.end());
-  auto last = std::unique(input.begin(), input.end());
-  input.erase(last, input.end());
-  output = std::move(input);
+  std::pair<std::map<std::pair<int, int>, int>::iterator, bool> res =
+    id_map.insert(std::make_pair(make_sorted_pair(i, j),
+                                 static_cast<int> (points.size())));
+  if (res.second)
+    points.push_back(typename Geom_traits::Construct_plane_line_intersection_point_3()
+                    (plane, points[i], points[j]));
+
+  return res.first->second;
 }
 
-//Tetrahedron_3 Line_3
+//Iso_cuboid_3 Plane_3
 template <class K>
 typename Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Plane_3>::result_type
 intersection(
-    const typename K::Iso_cuboid_3 &cub,
-    const typename K::Plane_3 &pl,
-    const K& k)
+             const typename K::Iso_cuboid_3& cub,
+             const typename K::Plane_3& plane,
+             const K& k)
 {
   typedef typename K::Point_3 Point_3;
-  typedef typename K::Segment_3 Segment_3;
-  typedef typename K::Line_3 Line_3;
-  typedef typename K::Plane_3 Plane_3;
   typedef std::vector<Point_3> Poly;
+  typedef typename Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Plane_3>::result_type result_type;
 
-  typedef typename Intersection_traits<K, CGAL::Iso_cuboid_3<K>,
-      CGAL::Plane_3<K> >::result_type result_type;
+  std::vector<Point_3> corners(8);
+  corners.reserve(14); // 8 corners + up to 6 polygon points
+  corners[0] = cub[0];
+  corners[1] = cub[3];
+  corners[2] = cub[2];
+  corners[3] = cub[1];
+  corners[4] = cub[5];
+  corners[5] = cub[4];
+  corners[6] = cub[7];
+  corners[7] = cub[6];
 
-  typedef typename Intersection_traits<K, CGAL::Segment_3<K>,
-      CGAL::Plane_3<K> >::result_type Inter_type;
+  std::array<CGAL::Oriented_side, 8> orientations = { {
+      plane.oriented_side(corners[0]),
+      plane.oriented_side(corners[1]),
+      plane.oriented_side(corners[2]),
+      plane.oriented_side(corners[3]),
+      plane.oriented_side(corners[4]),
+      plane.oriented_side(corners[5]),
+      plane.oriented_side(corners[6]),
+      plane.oriented_side(corners[7])
+    } };
 
-  std::vector<Segment_3> edges;
-  edges.reserve(12);
+  // description of faces of the bbox
+  std::array<int, 24> face_indices =
+    { { 0, 1, 2, 3,
+        2, 1, 5, 6,
+        3, 2, 6, 7,
+        1, 0, 4, 5,
+        4, 0, 3, 7,
+        6, 5, 4, 7 } };
 
-  //get all edges of cub
-  for(int i=0; i< 4; ++i)
-    edges.emplace_back(cub.vertex(i), cub.vertex((i+1)%4));
-  for(int i=0; i < 4; ++i)
-    edges.emplace_back(cub.vertex(i+4), cub.vertex((i+1)%4+4));
-  for(int i=0; i < 4; ++i)
-    edges.emplace_back(cub.vertex(i), cub.vertex((i+1)%4+4));
+  std::map<std::pair<int, int>, int> id_map;
+  bool all_in = true;
+  bool all_out = true;
 
-  //get all intersections between pl and cub edges
-  std::vector<Segment_3> segments;
-  std::vector<Point_3> points;
+  std::vector<int> next(14, -1);
+  std::vector<int> prev(14, -1);
 
-  for(int i=0; i < 12; ++i)
-  {
-    // Intersect_3 checks the orientation of the segment's extremities to avoid actually computing
-    // the intersection if possible
-    Inter_type inter = typename K::Intersect_3()(pl, edges[i]);
-    if(inter)
+  int start = -1;
+  int solo = -1;
+  // for each face of the bbox, we look for intersection of the plane with its edges
+  std::vector<int> ids;
+  for (int i = 0; i < 6; ++i)
     {
-      if(const Segment_3* seg = boost::get<Segment_3>(&*inter))
-        segments.push_back(*seg);
-      else if(const Point_3* p = boost::get<Point_3>(&*inter))
-        points.push_back(*p);
-    }
-  }
-
-  if(segments.empty() && points.empty())
-    return result_type();
-
-  switch(segments.size())
-  {
-    case 0:
-    //points dealt with later
-    break;
-    case 1:
-    {
-      //adj to an edge
-      if(points.size() == 4) // plane outside of cub and just touching at the edge, and hence the endpoints of 4 other edges
-      {
-        return result_type(std::forward<Segment_3>(segments.front()));
-      }
-      //plane intersecting through an edge (not 2)   This then intersects 2 other edges in points
-      else
-      {
-        Poly res(4);
-        const Segment_3& entry_seg(segments.front());
-        Point_3 p1, p2;
-        bool p1_found(false),
-             p2_found(false);
-
-        for(const Point_3& p : points)
+      ids.clear();
+      for (int k = 0; k < 4; ++k)
         {
-          if(!k.equal_3_object()(entry_seg.source(), p)
-             && ! k.equal_3_object()(entry_seg.target(), p))
-          {
-            if(!p1_found)
+
+          int current_id = face_indices[4 * i + k];
+          int next_id = face_indices[4 * i + (k + 1) % 4];
+
+          switch (orientations[current_id])
             {
-              p1 = p;
-              p1_found = true;
+            case ON_NEGATIVE_SIDE:
+              {
+                all_out = false;
+                // check for intersection of the edge
+                if (orientations[next_id] == ON_POSITIVE_SIDE)
+                  {
+                    ids.push_back(
+                                  inter_pt_index<K>(current_id, next_id, plane, corners, id_map));
+                  }
+                break;
+              }
+            case ON_POSITIVE_SIDE:
+              {
+                all_in = false;
+                // check for intersection of the edge
+                if (orientations[next_id] != ON_NEGATIVE_SIDE)
+                  {
+                    ids.push_back(
+                                  inter_pt_index<K>(current_id, next_id, plane, corners, id_map));
+                  }
+                break;
+              }
+            case ON_ORIENTED_BOUNDARY:
+              {
+                all_in = all_out = false;
+                ids.push_back(current_id);
+              }
             }
-            else {
-              p2 = p;
-              p2_found = true;
-              break;
-            }
-          }
         }
-        CGAL_USE(p2_found);
-        CGAL_assertion(p1_found && p2_found);
-        res[0] = entry_seg.target();
-        res[1] = p2;
-        res[2] = p1;
-        res[3] = entry_seg.source();
-
-        typename K::Coplanar_orientation_3 coplanar_orientation =
-          k.coplanar_orientation_3_object();
-
-        if( coplanar_orientation(res[0], res[1], res[2])
-            != coplanar_orientation(res[0], res[1], res[3]))
-        {
-          std::swap(res[1], res[2]);
-        }
-
+      if (ids.size() == 4){
+        std::vector<Point_3> res(4);
+        res[0] = corners[ids[0]];
+        res[1] = corners[ids[1]];
+        res[2] = corners[ids[2]];
+        res[3] = corners[ids[3]];
         return result_type(std::forward<Poly>(res));
-      }
-    }
-      break;
-
-    case 2: //intersects diagonally
-    {
-      Poly res(4);
-      Segment_3 &front(segments.front()),
-          &back(segments.back());
-      res[0] = front.target();
-      res[1] = back.target();
-      res[2] = back.source();
-      res[3] = front.source();
-      typename K::Coplanar_orientation_3 coplanar_orientation =
-        k.coplanar_orientation_3_object();
-
-      if( coplanar_orientation(res[0], res[1], res[2])
-          != coplanar_orientation(res[0], res[1], res[3]))
-      {
-        std::swap(res[1], res[2]);
-      }
-
-      return result_type(std::forward<Poly>(res));
-    }
-    break;
-  case 4: // intersects a face
-  {
-    Poly res;
-    res.reserve(4);
-    typename K::Has_on_3 has_on;
-    if(has_on(pl, cub.vertex(0))
-       && has_on(pl, cub.vertex(5))
-       && has_on(pl, cub.vertex(4)))
-    {
-      res.push_back(cub.vertex(0));
-      res.push_back(cub.vertex(5));
-      res.push_back(cub.vertex(4));
-      res.push_back(cub.vertex(3));
-    }
-    else if(has_on(pl, cub.vertex(0))
-            && has_on(pl, cub.vertex(1))
-            && has_on(pl, cub.vertex(6)))
-    {
-      res.push_back(cub.vertex(0));
-      res.push_back(cub.vertex(1));
-      res.push_back(cub.vertex(6));
-      res.push_back(cub.vertex(5));
-
-    }
-    else if(has_on(pl, cub.vertex(1))
-            && has_on(pl, cub.vertex(2))
-            && has_on(pl, cub.vertex(7)))
-    {
-      res.push_back(cub.vertex(1));
-      res.push_back(cub.vertex(2));
-      res.push_back(cub.vertex(7));
-      res.push_back(cub.vertex(6));
-    }
-    else if(has_on(pl, cub.vertex(2))
-            && has_on(pl, cub.vertex(3))
-            && has_on(pl, cub.vertex(4)))
-    {
-      res.push_back(cub.vertex(2));
-      res.push_back(cub.vertex(3));
-      res.push_back(cub.vertex(4));
-      res.push_back(cub.vertex(7));
-    }
-    else if(has_on(pl, cub.vertex(6))
-            && has_on(pl, cub.vertex(7))
-            && has_on(pl, cub.vertex(4)))
-    {
-      res.push_back(cub.vertex(6));
-      res.push_back(cub.vertex(7));
-      res.push_back(cub.vertex(4));
-      res.push_back(cub.vertex(5));
-    }
-    else if(has_on(pl, cub.vertex(2))
-            && has_on(pl, cub.vertex(1))
-            && has_on(pl, cub.vertex(0)))
-    {
-      res.push_back(cub.vertex(2));
-      res.push_back(cub.vertex(1));
-      res.push_back(cub.vertex(0));
-      res.push_back(cub.vertex(3));
-    }
-    return result_type(std::forward<Poly>(res));
-  }
-    break;
-  default:
-    break;
-  }
-
-  Poly filtered_points;
-  filter_points(points, filtered_points);
-
-  //adjacent to a vertex
-  if(filtered_points.size() == 1)
-  {
-    return result_type(std::forward<Point_3>(filtered_points.front()));
-  }
-
-  //get intersections between pl and each face -> line. Foreach line, creates segment with points. Then use helper_function to recover polygon.
-  typedef typename Intersection_traits<K,
-      CGAL::Plane_3<K>,
-      CGAL::Plane_3<K> >::result_type Pl_pl_type;
-
-  std::vector<Line_3> plane_intersections;
-  Pl_pl_type pl_inter;
-
-  if(pl_inter = CGAL::intersection(pl, Plane_3(cub.vertex(0),
-                                               cub.vertex(1),
-                                               cub.vertex(5)))){
-    if(const Line_3* line = boost::get<Line_3>(&*pl_inter)){
-      plane_intersections.push_back(*line);
-    }
-  }
-
-  if (pl_inter = CGAL::intersection(pl, Plane_3(cub.vertex(0),
-                                                cub.vertex(3),
-                                                cub.vertex(4)))){
-    if(const Line_3* line = boost::get<Line_3>(&*pl_inter)){
-      plane_intersections.push_back(*line);
-    }
-  }
-  if (pl_inter = CGAL::intersection(pl, Plane_3(cub.vertex(0),
-                                                cub.vertex(1),
-                                                cub.vertex(3)))){
-    if(const Line_3* line = boost::get<Line_3>(&*pl_inter)){
-      plane_intersections.push_back(*line);
-    }
-  }
-  if (pl_inter = CGAL::intersection(pl, Plane_3(cub.vertex(7),
-                                                cub.vertex(6),
-                                                cub.vertex(1)))){
-    if(const Line_3* line = boost::get<Line_3>(&*pl_inter)){
-      plane_intersections.push_back(*line);
-    }
-  }
-  if (pl_inter = CGAL::intersection(pl, Plane_3(cub.vertex(7),
-                                                cub.vertex(4),
-                                                cub.vertex(3)))){
-    if(const Line_3* line = boost::get<Line_3>(&*pl_inter)){
-      plane_intersections.push_back(*line);
-    }
-  }
-  if (pl_inter = CGAL::intersection(pl, Plane_3(cub.vertex(7),
-                                                cub.vertex(6),
-                                                cub.vertex(4)))){
-    if(const Line_3* line = boost::get<Line_3>(&*pl_inter)){
-      plane_intersections.push_back(*line);
-    }
-  }
-  std::list<Segment_3> tmp_segs;
-  for(const auto& line : plane_intersections)
-  {
-    bool first_found = false;
-    Point_3 first_p;
-    typename K::Has_on_3 has_on;
-    for(const auto  &p : filtered_points)
-    {
-      if(has_on(line, p))
-      {
-        if(!first_found)
+      } else
         {
-          first_found = true;
-          first_p = p;
+          if (ids.size() == 2)
+            {
+              if (start == -1) start = ids[0];
+              if (next[ids[0]] == -1) {
+                next[ids[0]] = ids[1];
+              }
+              else {
+                prev[ids[0]] = ids[1];
+              }
+              if (next[ids[1]] == -1) {
+                next[ids[1]] = ids[0];
+              }
+              else {
+                prev[ids[1]] = ids[0];
+              }
+
+            }
+          else
+            if (ids.size() == 1)
+              solo = ids[0];
         }
-        else
-        {
-          tmp_segs.emplace_back(first_p, p);
-          break;
-        }
-      }
     }
-  }
 
-  if(tmp_segs.size() < 3)
-    return result_type();
+  if (all_in || all_out) return boost::none;
+  if (start == -1) return { result_type(corners[solo]) };
 
-  std::list<Point_3> tmp_pts;
-  fill_points_list(tmp_segs,tmp_pts);
-
-  Poly res;
-  for(const auto& p : tmp_pts)
-    res.push_back(p);
-
-  if(res.size() == 3){
-    typename K::Triangle_3 tr(res[0], res[1], res[2]);
-    return result_type(std::forward<typename K::Triangle_3>(tr));
-  }
-  else
-  {
-    return result_type(std::forward<Poly>(res));
-  }
+  int pre = -1;
+  int cur = start;
+  std::vector<Point_3> res;
+  res.reserve(6);
+  do {
+    res.push_back(corners[cur]);
+    int n = next[cur] == pre ? prev[cur] : next[cur];
+    if (n == -1 || n == start){
+      if(res.size() == 2){
+        typename K::Segment_3 seg(res[0], res[1]);
+        return result_type(std::forward<typename K::Segment_3>(seg));
+      }
+      if(res.size() == 3){
+        typename K::Triangle_3 tr(res[0], res[1], res[2]);
+        return result_type(std::forward<typename K::Triangle_3>(tr));
+      }
+      return result_type(std::forward<Poly>(res));;
+    }
+    pre = cur;
+    cur = n;
+  } while (true);
 }
+
+
+
 
 template <class K>
 typename Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Plane_3>::result_type
@@ -350,6 +210,6 @@ intersection(
   return intersection(cub, pl, k);
 }
 
-}}}
+    }}}
 
 #endif // CGAL_INTERNAL_INTERSECTIONS_3_ISO_CUBOID_3_PLANE_3_INTERSECTION_H
