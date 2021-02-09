@@ -21,7 +21,11 @@
 #include <CGAL/config.h>
 #include <CGAL/disable_warnings.h>
 
-#if CGAL_CXX11
+#if CGAL_CXX20 || __cpp_lib_is_invocable>=201703L
+
+  // C++>=17
+
+#elif CGAL_CXX11
 
   #include <type_traits>
 
@@ -45,7 +49,7 @@
 namespace CGAL {
 namespace cpp11 {
 
-#if CGAL_CXX20
+#if CGAL_CXX20 || __cpp_lib_is_invocable>=201703L
 
   template<typename Signature> class result_of;
   template<typename F, typename... Args>
@@ -59,7 +63,7 @@ namespace cpp11 {
 
   using boost::result_of;
 
-#endif
+#endif // end C++<11
 
 } // end cpp11
 } // end CGAL

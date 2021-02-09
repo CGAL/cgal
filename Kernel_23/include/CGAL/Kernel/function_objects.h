@@ -3292,11 +3292,10 @@ namespace CommonKernelFunctors {
     bool operator()(const Sphere_3& s1, const Sphere_3& s2,
                     const Point_3& a, const Point_3& b) const
     {
-      typedef typename K::Circle_3    Circle_3;
-      typedef typename K::Point_3     Point_3;
-      typedef typename K::Segment_3   Segment_3;
-      typedef typename K::Plane_3     Plane_3;
-      typedef typename K::Intersect_3 Intersect_3;
+      typedef typename K::Circle_3  Circle_3;
+      typedef typename K::Point_3   Point_3;
+      typedef typename K::Segment_3 Segment_3;
+      typedef typename K::Plane_3   Plane_3;
 
       const Has_on_bounded_side_3& has_on_bounded_side = *this;
 
