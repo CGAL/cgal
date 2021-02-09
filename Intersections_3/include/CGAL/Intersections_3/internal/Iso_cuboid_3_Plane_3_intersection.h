@@ -92,8 +92,7 @@ intersection(
   bool all_in = true;
   bool all_out = true;
 
-  std::vector<int> next(14, -1);
-  std::vector<int> prev(14, -1);
+  std::vector<std::array<int,2>> neighbor_ids(14, {-1,-1});
 
   int start_id = -1;
   int solo_id = -1;
@@ -152,17 +151,17 @@ intersection(
       case 2:
       {
         if (start_id == -1) start_id = ids[0];
-        if (next[ids[0]] == -1) {
-          next[ids[0]] = ids[1];
+        if (neighbor_ids[ids[0]][0] == -1) {
+          neighbor_ids[ids[0]][0] = ids[1];
         }
         else {
-          prev[ids[0]] = ids[1];
+          neighbor_ids[ids[0]][1] = ids[1];
         }
-        if (next[ids[1]] == -1) {
-          next[ids[1]] = ids[0];
+        if (neighbor_ids[ids[1]][0] == -1) {
+          neighbor_ids[ids[1]][0] = ids[0];
         }
         else {
-          prev[ids[1]] = ids[0];
+          neighbor_ids[ids[1]][1] = ids[0];
         }
         break;
       }
@@ -182,7 +181,9 @@ intersection(
   res.reserve(6);
   do {
     res.push_back(corners[cur_id]);
-    int nxt_id = next[cur_id] == prv_id ? prev[cur_id] : next[cur_id];
+    int nxt_id = neighbor_ids[cur_id][0] == prv_id
+               ? neighbor_ids[cur_id][1]
+               : neighbor_ids[cur_id][0];
     if (nxt_id == -1 || nxt_id == start_id){
       if(res.size() == 2){
         typename K::Segment_3 seg(res[0], res[1]);
@@ -198,9 +199,6 @@ intersection(
     cur_id = nxt_id;
   } while (true);
 }
-
-
-
 
 template <class K>
 typename Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Plane_3>::result_type
