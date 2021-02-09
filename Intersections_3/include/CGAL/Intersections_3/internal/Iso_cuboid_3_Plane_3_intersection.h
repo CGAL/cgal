@@ -28,23 +28,6 @@ namespace CGAL {
 namespace Intersections {
 namespace internal {
 
-template <class K, class Plane_3, class Point_3>
-int
-inter_pt_index(int i, int j,
-               const Plane_3& plane,
-               std::vector<Point_3>& points,
-               std::map<std::pair<int, int>, int>& id_map)
-{
-  std::pair<std::map<std::pair<int, int>, int>::iterator, bool> res =
-    id_map.insert(std::make_pair(make_sorted_pair(i, j),
-                                 static_cast<int> (points.size())));
-  if (res.second)
-    points.push_back(typename K::Construct_plane_line_intersection_point_3()
-                    (plane, points[i], points[j]));
-
-  return res.first->second;
-}
-
 //Iso_cuboid_3 Plane_3
 template <class K>
 typename Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Plane_3>::result_type
@@ -68,7 +51,7 @@ intersection(
   corners[6] = cub[7];
   corners[7] = cub[6];
 
-  std::array<CGAL::Oriented_side, 8> orientations = { {
+  const std::array<CGAL::Oriented_side, 8> orientations  { {
       oriented_side(plane, corners[0]),
       oriented_side(plane, corners[1]),
       oriented_side(plane, corners[2]),
@@ -80,7 +63,7 @@ intersection(
     } };
 
   // description of faces of the bbox
-  std::array<int, 24> face_indices =
+  constexpr std::array<int, 24> face_indices
     { { 0, 1, 2, 3,
         2, 1, 5, 6,
         3, 2, 6, 7,
@@ -88,7 +71,30 @@ intersection(
         4, 0, 3, 7,
         6, 5, 4, 7 } };
 
-  std::map<std::pair<int, int>, int> id_map;
+  constexpr std::array<int, 24> edge_indices
+    { { 0,  1,  2, 3,
+        1,  4,  5, 6,
+        2,  6,  7, 8,
+        0,  9, 10, 4,
+        9,  3,  8, 11,
+        5, 10, 11, 7 } };
+
+  std::array<int, 12> edge_ipt_id;
+  edge_ipt_id.fill(-1);
+
+  auto inter_pt_index =
+    [&plane, &corners, &edge_ipt_id](int i, int j, int edge_id)
+  {
+    if (edge_ipt_id[edge_id]==-1)
+    {
+      edge_ipt_id[edge_id] = static_cast<int> (corners.size());
+      corners.push_back(typename K::Construct_plane_line_intersection_point_3()
+                      (plane, corners[i], corners[j]));
+    }
+
+    return edge_ipt_id[edge_id];
+  };
+
   bool all_in = true;
   bool all_out = true;
 
@@ -106,6 +112,7 @@ intersection(
 
       int current_id = face_indices[4 * i + k];
       int next_id = face_indices[4 * i + (k + 1) % 4];
+      int edge_id = edge_indices[4 * i + k];
 
       switch (orientations[current_id])
       {
@@ -116,7 +123,7 @@ intersection(
           if (orientations[next_id] == ON_POSITIVE_SIDE)
           {
             ids.push_back(
-                          inter_pt_index<K>(current_id, next_id, plane, corners, id_map));
+                          inter_pt_index(current_id, next_id, edge_id));
           }
           break;
         }
@@ -126,7 +133,7 @@ intersection(
           // check for intersection of the edge
           if (orientations[next_id] == ON_NEGATIVE_SIDE)
           {
-            ids.push_back(inter_pt_index<K>(current_id, next_id, plane, corners, id_map));
+            ids.push_back(inter_pt_index(current_id, next_id, edge_id));
           }
           break;
         }
