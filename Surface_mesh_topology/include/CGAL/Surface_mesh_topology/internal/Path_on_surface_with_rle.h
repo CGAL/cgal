@@ -1027,7 +1027,7 @@ public:
       return;
     }
 
-    it2=next_iterator(it1); // it2 is the the next flat after it1
+    it2=next_iterator(it1); // it2 is the next flat after it1
 
     reduce_flat_from_end(it1, modified_flats); // decrease also m_length
     reduce_flat_from_beginning(it3, modified_flats);

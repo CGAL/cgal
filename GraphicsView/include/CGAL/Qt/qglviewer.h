@@ -1140,7 +1140,6 @@ protected:
   QMap<ClickBindingPrivate, qglviewer::ClickAction> clickBinding_;
   ::Qt::Key currentlyPressedKey_;
 
-
   // H e l p   w i n d o w
   QTabWidget *helpWidget_;
 
@@ -1182,6 +1181,9 @@ protected:
   bool is_sharing;
   bool is_linked;
   QOpenGLContext* shared_context;
+  // Zoom
+  bool _first_tick;
+
 public:
   //! Is used to know if the openGL context is 4.3 or ES 2.0.
   //! @returns `true` if the context is 4.3.

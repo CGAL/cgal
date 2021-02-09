@@ -6,13 +6,11 @@
 #else
 #include <CGAL/Surface_mesh.h>
 #endif
+
 #include <CGAL/boost/graph/helpers.h>
-
-#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
-
 #include <CGAL/assertions.h>
-
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 
 #include <cassert>
 #include <vector>
@@ -357,15 +355,20 @@ void generate_elephant_with_hole()
     }
 }
 
-int main() {
+int main()
+{
+  std::cout.precision(17);
+  std::cerr.precision(17);
+
   generate_elephant_with_hole();
 
   std::vector<std::string> input_files;
   input_files.push_back("elephant_triangle_hole.off");
   input_files.push_back("elephant_quad_hole.off");
   input_files.push_back("data/mech-holes-shark.off");
-  // std::cerr.precision(15);
-  for(std::vector<std::string>::iterator it = input_files.begin(); it != input_files.end(); ++it) {
+
+  for(std::vector<std::string>::iterator it = input_files.begin(); it != input_files.end(); ++it)
+  {
     test_triangulate_hole(it->c_str());
     test_triangulate_and_refine_hole(it->c_str());
     test_triangulate_refine_and_fair_hole(it->c_str());

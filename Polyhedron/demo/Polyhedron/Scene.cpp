@@ -1184,7 +1184,7 @@ bool Scene::sort_lists(QVector<QList<int> >&sorted_lists, bool up)
   for(int i = 0; i< sorted_lists.first().size(); ++i)
   {
     Scene_group_item* group = qobject_cast<Scene_group_item*>(this->item(sorted_lists.first()[i]));
-    if(group && ! group->getChildren().isEmpty())
+    if(group && ! group->getChildren().isEmpty() && sorted_lists.first()[i] < sorted_lists.size())
     {
       sorted_lists[sorted_lists.first()[i]].clear();
     }

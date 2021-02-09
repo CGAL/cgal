@@ -54,6 +54,7 @@ else()
   message(STATUS "Examples that use OpenMesh will not be compiled.")
 endif()
 
+create_single_source_cgal_program("test_pmp_read_polygon_mesh.cpp")
 create_single_source_cgal_program("connected_component_polyhedron.cpp")
 create_single_source_cgal_program("connected_component_surface_mesh.cpp")
 create_single_source_cgal_program("test_detect_features.cpp")
@@ -102,6 +103,8 @@ create_single_source_cgal_program("test_pmp_manifoldness.cpp")
 create_single_source_cgal_program("test_mesh_smoothing.cpp")
 create_single_source_cgal_program("test_remove_caps_needles.cpp")
 create_single_source_cgal_program("test_simplify_polylines_pmp.cpp")
+create_single_source_cgal_program("test_pmp_polyhedral_envelope.cpp")
+
 #  create_single_source_cgal_program("test_pmp_repair_self_intersections.cpp")
 
 if(TARGET CGAL::TBB_support)

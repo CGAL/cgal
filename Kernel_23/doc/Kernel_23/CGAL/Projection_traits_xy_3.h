@@ -77,7 +77,7 @@ typedef Line_3<K> Line_2;
 A construction object.
 Provides the operator :
 
-`Object_2 operator()(Segment_2 s1, Segment_2 s2);`
+`boost::optional< boost::variant<Point_2,Segment_2> > operator()(Segment_2 s1, Segment_2 s2);`
 which returns a 3D object whose projection on the xy-plane
 is the intersection of the projections of `s1` and `s2`.
 If non empty, the returned object is either a segment or a point.
