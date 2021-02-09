@@ -18,11 +18,8 @@
 #include <CGAL/intersections.h>
 #include <CGAL/utility.h>
 
-#include <CGAL/Intersections_3/internal/tetrahedron_intersection_helpers.h>
-#include <CGAL/Intersections_3/Iso_cuboid_3_Segment_3.h>
-#include <CGAL/Intersections_3/Plane_3_Plane_3.h>
-
-#include <set>
+#include <vector>
+#include <array>
 
 namespace CGAL {
 namespace Intersections {
