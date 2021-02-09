@@ -33,7 +33,7 @@ int main()
 
   const std::vector<Point>* res = boost::get <std::vector<Point> >(&*result);
   for (Point p : *res) {
-	  std::cout << p << std::endl;
+    std::cout << p << std::endl;
   }
 
   return 0;
