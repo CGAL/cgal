@@ -46,7 +46,8 @@ namespace CGAL {
 // It's also untrue that this is not documented...  It is !
 
 template< typename T, typename... Args >
-constexpr std::array< T, 1 + sizeof...(Args) >
+BOOST_CXX14_CONSTEXPR
+std::array< T, 1 + sizeof...(Args) >
 make_array(const T & t, const Args & ... args)
 {
   std::array< T, 1 + sizeof...(Args) > a = { { t, static_cast<T>(args)... } };
