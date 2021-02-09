@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Maxime Gimeno
+// Author(s)     : Sebastien Loriot and Andreas Fabri
 //
 
 #ifndef CGAL_INTERNAL_INTERSECTIONS_3_ISO_CUBOID_3_PLANE_3_INTERSECTION_H
@@ -28,7 +28,7 @@ namespace CGAL {
 namespace Intersections {
 namespace internal {
 
-template <class Geom_traits, class Plane_3, class Point_3>
+template <class K, class Plane_3, class Point_3>
 int
 inter_pt_index(int i, int j,
                const Plane_3& plane,
@@ -39,7 +39,7 @@ inter_pt_index(int i, int j,
     id_map.insert(std::make_pair(make_sorted_pair(i, j),
                                  static_cast<int> (points.size())));
   if (res.second)
-    points.push_back(typename Geom_traits::Construct_plane_line_intersection_point_3()
+    points.push_back(typename K::Construct_plane_line_intersection_point_3()
                     (plane, points[i], points[j]));
 
   return res.first->second;
@@ -54,8 +54,8 @@ intersection(
              const K& k)
 {
   typedef typename K::Point_3 Point_3;
-  typedef std::vector<Point_3> Poly;
   typedef typename Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Plane_3>::result_type result_type;
+  typename K::Oriented_side_3 oriented_side = k.oriented_side_3_object();
 
   std::vector<Point_3> corners(8);
   corners.reserve(14); // 8 corners + up to 6 polygon points
@@ -69,14 +69,14 @@ intersection(
   corners[7] = cub[6];
 
   std::array<CGAL::Oriented_side, 8> orientations = { {
-      plane.oriented_side(corners[0]),
-      plane.oriented_side(corners[1]),
-      plane.oriented_side(corners[2]),
-      plane.oriented_side(corners[3]),
-      plane.oriented_side(corners[4]),
-      plane.oriented_side(corners[5]),
-      plane.oriented_side(corners[6]),
-      plane.oriented_side(corners[7])
+      oriented_side(plane, corners[0]),
+      oriented_side(plane, corners[1]),
+      oriented_side(plane, corners[2]),
+      oriented_side(plane, corners[3]),
+      oriented_side(plane, corners[4]),
+      oriented_side(plane, corners[5]),
+      oriented_side(plane, corners[6]),
+      oriented_side(plane, corners[7])
     } };
 
   // description of faces of the bbox
@@ -95,105 +95,107 @@ intersection(
   std::vector<int> next(14, -1);
   std::vector<int> prev(14, -1);
 
-  int start = -1;
-  int solo = -1;
+  int start_id = -1;
+  int solo_id = -1;
   // for each face of the bbox, we look for intersection of the plane with its edges
   std::vector<int> ids;
   for (int i = 0; i < 6; ++i)
+  {
+    ids.clear();
+    for (int k = 0; k < 4; ++k)
     {
-      ids.clear();
-      for (int k = 0; k < 4; ++k)
+
+      int current_id = face_indices[4 * i + k];
+      int next_id = face_indices[4 * i + (k + 1) % 4];
+
+      switch (orientations[current_id])
+      {
+        case ON_NEGATIVE_SIDE:
         {
-
-          int current_id = face_indices[4 * i + k];
-          int next_id = face_indices[4 * i + (k + 1) % 4];
-
-          switch (orientations[current_id])
-            {
-            case ON_NEGATIVE_SIDE:
-              {
-                all_out = false;
-                // check for intersection of the edge
-                if (orientations[next_id] == ON_POSITIVE_SIDE)
-                  {
-                    ids.push_back(
-                                  inter_pt_index<K>(current_id, next_id, plane, corners, id_map));
-                  }
-                break;
-              }
-            case ON_POSITIVE_SIDE:
-              {
-                all_in = false;
-                // check for intersection of the edge
-                if (orientations[next_id] == ON_NEGATIVE_SIDE)
-                  {
-                    ids.push_back(
-                                  inter_pt_index<K>(current_id, next_id, plane, corners, id_map));
-                  }
-                break;
-              }
-            case ON_ORIENTED_BOUNDARY:
-              {
-                all_in = all_out = false;
-                ids.push_back(current_id);
-              }
-            }
+          all_out = false;
+          // check for intersection of the edge
+          if (orientations[next_id] == ON_POSITIVE_SIDE)
+          {
+            ids.push_back(
+                          inter_pt_index<K>(current_id, next_id, plane, corners, id_map));
+          }
+          break;
         }
-      if (ids.size() == 4){
-        std::vector<Point_3> res(4);
-        res[0] = corners[ids[0]];
-        res[1] = corners[ids[1]];
-        res[2] = corners[ids[2]];
-        res[3] = corners[ids[3]];
-        return result_type(std::forward<Poly>(res));
-      } else
+        case ON_POSITIVE_SIDE:
         {
-          if (ids.size() == 2)
-            {
-              if (start == -1) start = ids[0];
-              if (next[ids[0]] == -1) {
-                next[ids[0]] = ids[1];
-              }
-              else {
-                prev[ids[0]] = ids[1];
-              }
-              if (next[ids[1]] == -1) {
-                next[ids[1]] = ids[0];
-              }
-              else {
-                prev[ids[1]] = ids[0];
-              }
-
-            }
-          else
-            if (ids.size() == 1)
-              solo = ids[0];
+          all_in = false;
+          // check for intersection of the edge
+          if (orientations[next_id] == ON_NEGATIVE_SIDE)
+          {
+            ids.push_back(inter_pt_index<K>(current_id, next_id, plane, corners, id_map));
+          }
+          break;
         }
+        case ON_ORIENTED_BOUNDARY:
+        {
+          all_in = all_out = false;
+          ids.push_back(current_id);
+        }
+      }
     }
 
-  if (all_in || all_out) return boost::none;
-  if (start == -1) return { result_type(corners[solo]) };
+    switch (ids.size())
+    {
+      case 4:
+      {
+        std::vector<Point_3> res({ corners[ids[0]],
+                                   corners[ids[1]],
+                                   corners[ids[2]],
+                                   corners[ids[3]] });
+        return result_type(res);
+      }
+      case 2:
+      {
+        if (start_id == -1) start_id = ids[0];
+        if (next[ids[0]] == -1) {
+          next[ids[0]] = ids[1];
+        }
+        else {
+          prev[ids[0]] = ids[1];
+        }
+        if (next[ids[1]] == -1) {
+          next[ids[1]] = ids[0];
+        }
+        else {
+          prev[ids[1]] = ids[0];
+        }
+        break;
+      }
+      case 1:
+        solo_id = ids[0];
+      default:
+        break;
+    }
+  }
 
-  int pre = -1;
-  int cur = start;
+  if (all_in || all_out) return boost::none;
+  if (start_id == -1) return { result_type(corners[solo_id]) };
+
+  int prv_id = -1;
+  int cur_id = start_id;
   std::vector<Point_3> res;
   res.reserve(6);
   do {
-    res.push_back(corners[cur]);
-    int n = next[cur] == pre ? prev[cur] : next[cur];
-    if (n == -1 || n == start){
+    res.push_back(corners[cur_id]);
+    int nxt_id = next[cur_id] == prv_id ? prev[cur_id] : next[cur_id];
+    if (nxt_id == -1 || nxt_id == start_id){
       if(res.size() == 2){
         typename K::Segment_3 seg(res[0], res[1]);
-        return result_type(std::forward<typename K::Segment_3>(seg));
+        return result_type(seg);
       }
       if(res.size() == 3){
         typename K::Triangle_3 tr(res[0], res[1], res[2]);
-        return result_type(std::forward<typename K::Triangle_3>(tr));
+        return result_type(tr);
       }
-      return result_type(std::forward<Poly>(res));;
+      return result_type(res);
     }
-    pre = cur;
-    cur = n;
+    prv_id = cur_id;
+    cur_id = nxt_id;
   } while (true);
 }
 
@@ -210,6 +212,6 @@ intersection(
   return intersection(cub, pl, k);
 }
 
-    }}}
+}}}
 
 #endif // CGAL_INTERNAL_INTERSECTIONS_3_ISO_CUBOID_3_PLANE_3_INTERSECTION_H
