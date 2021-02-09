@@ -69,7 +69,7 @@ include(${CGAL_USE_FILE})
 
 find_package(
   Qt5 QUIET
-  COMPONENTS OpenGL Script Xml
+  COMPONENTS OpenGL Script
   OPTIONAL_COMPONENTS ScriptTools WebSockets)
 
 set_package_properties(

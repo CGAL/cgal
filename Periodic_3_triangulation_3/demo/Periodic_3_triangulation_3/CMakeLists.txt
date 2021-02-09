@@ -17,7 +17,7 @@ endif()
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
 # Find Qt5 itself
-find_package(Qt5 QUIET COMPONENTS Xml OpenGL Help Core)
+find_package(Qt5 QUIET COMPONENTS OpenGL Help Core)
 
 if(Qt5_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
