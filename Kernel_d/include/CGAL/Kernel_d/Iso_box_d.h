@@ -121,9 +121,12 @@ namespace CGAL {
     typedef typename Point::Homogeneous_const_iterator  Iterator;
     typedef Homogeneous_iterator<Point,Functor>         Self;
 
-    typedef typename Functor::result_type  value_type;
-    typedef value_type&                    reference;
-    typedef value_type*                    pointer;
+    typedef typename Kernel_traits<Point>::Kernel::RT RT;
+    typedef decltype(std::declval<Functor>()(
+        *std::declval<Iterator>() * std::declval<RT>(),
+        *std::declval<Iterator>() * std::declval<RT>())) value_type;
+    typedef value_type                     reference;
+    typedef const value_type*              pointer;
     typedef std::ptrdiff_t                 difference_type;
     typedef std::input_iterator_tag        iterator_category;
 
@@ -131,7 +134,6 @@ namespace CGAL {
 
     Iterator pb, qb;
     Functor f;
-    typedef typename Kernel_traits<Point>::Kernel::RT RT;
     RT hp, hq; // homogenizing coordinates
 
   public:
@@ -280,7 +282,7 @@ namespace CGAL {
 
     RT volume_nominator() const
     {
-      typedef typename CIRT::template Iterator<Point_d, std::minus<RT> >::type
+      typedef typename CIRT::template Iterator<Point_d,std::minus<RT> >::type
               Iter;
       Iter b(ptr()->upper, ptr()->lower, Begin());
       Iter e(ptr()->upper, ptr()->lower, Cartesian_end());
