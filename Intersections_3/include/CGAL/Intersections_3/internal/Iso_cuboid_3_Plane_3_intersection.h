@@ -125,7 +125,7 @@ intersection(
               {
                 all_in = false;
                 // check for intersection of the edge
-                if (orientations[next_id] != ON_NEGATIVE_SIDE)
+                if (orientations[next_id] == ON_NEGATIVE_SIDE)
                   {
                     ids.push_back(
                                   inter_pt_index<K>(current_id, next_id, plane, corners, id_map));
