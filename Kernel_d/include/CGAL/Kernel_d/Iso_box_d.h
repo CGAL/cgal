@@ -42,15 +42,11 @@ namespace CGAL {
     typedef typename Point::Cartesian_const_iterator  Iterator;
     typedef Cartesian_iterator<Point,Functor>         Self;
 
-
-    typedef typename std::iterator_traits<Iterator>::value_type
-                                                      Coordinate_type;
-
-    typedef decltype(
-        std::declval<Functor>()(std::declval<Coordinate_type>(),
-                                std::declval<Coordinate_type>())) value_type;
-    typedef value_type&                    reference;
-    typedef value_type*                    pointer;
+    typedef decltype(std::declval<Functor>()(
+        *std::declval<Iterator>(),
+        *std::declval<Iterator>()))        value_type;
+    typedef value_type                     reference;
+    typedef const value_type*              pointer;
     typedef std::ptrdiff_t                 difference_type;
     typedef std::input_iterator_tag        iterator_category;
 
@@ -96,7 +92,7 @@ namespace CGAL {
       return tmp;
     }
 
-    value_type operator*()  const { return f(*pb, *qb); }
+    reference  operator*()  const { return f(*pb, *qb); }
     pointer    operator->() const { return &(**this); }
 
     const Functor& functor() const { return f; }
