@@ -114,7 +114,7 @@ void normal_vector_newell_3( IC first, IC last, Vector& n )
     CGAL_assertion( !CGAL::is_empty_range( first, last));
 
     if(internal_nef::is_triangle_3(first)) {
-      n = orthogonal_vector(*first,*(std::next(first)),*(std__next(first,2)));
+      n = orthogonal_vector(*first,*(std::next(first)),*(std::next(first,2)));
       return;
     }
 
