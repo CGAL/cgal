@@ -54,7 +54,7 @@ struct Facet_patch_id_map<MeshDomain, Primitive, false>
 {
   typedef typename MeshDomain::AABB_primitive::Id Id;
   typedef typename MeshDomain::Patch_id value_type;
-  typedef const value_type& reference;
+  typedef value_type reference;
   typedef typename MeshDomain::AABB_primitive::Id key_type;
   typedef boost::readable_property_map_tag category;
 
