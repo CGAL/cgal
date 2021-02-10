@@ -1560,7 +1560,6 @@ public:
   const std::pair<bool, bool> collision_occured (
     const PVertex& pvertex, const IEdge& iedge) const {
 
-    // const FT tol = KSR::tolerance<FT>();
     bool collision = false;
     for (const auto support_plane_idx : intersected_planes(iedge)) {
       if (support_plane_idx < 6) {
@@ -1572,37 +1571,15 @@ public:
           const auto pedge_segment = Segment_3(point_3(source(pedge)), point_3(target(pedge)));
 
           const Segment_3 source_to_pvertex(pedge_segment.source(), point_3(pvertex));
-          // if (CGAL::sqrt(source_to_pvertex.squared_length()) < tol) {
-          //   std::cerr << "WARNING: POINTS ARE ALMOST EQUAL!" << std::endl;
-          //   collision = true;
-          //   break;
-          // }
-
-          // std::cout << point_3(source(pedge)) << std::endl;
-          // std::cout << point_3(target(pedge)) << std::endl;
-          // std::cout << point_3(pvertex) << std::endl;
-
           const FT dot_product = pedge_segment.to_vector() * source_to_pvertex.to_vector();
           if (dot_product < FT(0)) {
             continue;
           }
-          // std::cout << source_to_pvertex.squared_length() << std::endl;
-          // std::cout << pedge_segment.squared_length() << std::endl;
-
           if (pedge_segment.squared_length() == FT(0)) {
             std::cerr << "ERROR: SOURCE_TO_PVERTEX/PEDGE SEGMENT SQ LENGTH = "
             << source_to_pvertex.squared_length() << std::endl;
           }
           CGAL_assertion(pedge_segment.squared_length() != FT(0));
-
-          // if (pedge_segment.squared_length() == FT(0)) {
-          //   if (pedge_segment.source() == point_3(pvertex)) {
-          //     collision = false;
-          //     break;
-          //   }
-          // }
-          // CGAL_assertion(pedge_segment.squared_length() != FT(0));
-
           if (source_to_pvertex.squared_length() <= pedge_segment.squared_length()) {
             collision = true;
             break;
@@ -1768,62 +1745,29 @@ public:
     if (m_verbose) {
       std::cout.precision(20);
       std::cout << "** cropping " << str(pvertex) << " along " << str(iedge) << std::endl;
-      // std::cout << "- pvertex: " << point_3(pvertex) << std::endl;
-      // std::cout << "- iedge: "   << segment_3(iedge) << std::endl;
+      std::cout << "- pvertex: " << point_3(pvertex) << std::endl;
+      std::cout << "- iedge: "   << segment_3(iedge) << std::endl;
     }
+
+    CGAL_assertion_msg(
+      point_2(pvertex.first, source(iedge)) != point_2(pvertex.first, target(iedge)),
+    "TODO: PVERTEX -> IEDGE, HANDLE ZERO-LENGTH IEDGE!");
 
     const PVertex prev(pvertex.first, support_plane(pvertex).prev(pvertex.second));
     const PVertex next(pvertex.first, support_plane(pvertex).next(pvertex.second));
 
-    auto source_p = point_2(pvertex.first, source(iedge));
-    auto target_p = point_2(pvertex.first, target(iedge));
-
-    CGAL_assertion_msg(source_p != target_p,
-    "TODO: PVERTEX -> IEDGE, HANDLE ZERO LENGTH IEDGE!");
-    const Vector_2 iedge_direction(source_p, target_p);
-
-    auto pvertex_p = point_2(pvertex);
-    const Line_2 iedge_line(source_p, target_p);
-    pvertex_p = iedge_line.projection(pvertex_p);
-
-    if (m_verbose) {
-      std::cout << "- source: " << to_3d(pvertex.first, source_p) << std::endl;
-      std::cout << "- target: " << to_3d(pvertex.first, target_p) << std::endl;
-
-      std::cout << "- prev: " << point_3(prev) << std::endl;
-      std::cout << "- curr: " << point_3(pvertex) << std::endl;
-      std::cout << "- next: " << point_3(next) << std::endl;
-    }
-
-    // const Vector_2 current_direction = compute_future_direction(
-    //   source_p, target_p, pvertex, pvertex, next);
-    // const FT dot_product = current_direction * iedge_direction;
-    // if (dot_product < FT(0)) {
-    //   std::swap(source_p, target_p);
-    //   if (m_verbose) std::cout << "- swap source and target" << std::endl;
-    // }
-
-    // Point_2 future_point_a, future_point_b;
-    // Vector_2 future_direction_a, future_direction_b;
-    // const bool is_standard_case_a = compute_future_point_and_direction(
-    //   target_p, pvertex_p, source_p, pvertex, pvertex, prev, future_point_a, future_direction_a);
-    // const bool is_standard_case_b = compute_future_point_and_direction(
-    //   source_p, pvertex_p, target_p, pvertex, pvertex, next, future_point_b, future_direction_b);
-    // CGAL_assertion(future_direction_a * future_direction_b < FT(0));
-    // CGAL_assertion(future_direction_a != Vector_2());
-    // CGAL_assertion(future_direction_b != Vector_2());
-
-    bool is_standard_case_a = true, is_standard_case_b = true;
     Point_2 future_point_a, future_point_b;
     Vector_2 future_direction_a, future_direction_b;
+    // const bool is_parallel =
     compute_future_points_and_directions(
       pvertex, iedge,
       future_point_a, future_point_b,
       future_direction_a, future_direction_b);
-
-    if (!is_standard_case_a || !is_standard_case_b) {
-      CGAL_assertion_msg(false, "TODO: PVERTEX -> IEDGE, IMPLEMENT NON STANDARD CASE!");
-    }
+    CGAL_assertion(future_direction_a != Vector_2());
+    CGAL_assertion(future_direction_b != Vector_2());
+    // if (is_parallel) {
+    //   CGAL_assertion_msg(false, "TODO: PVERTEX -> IEDGE, HANDLE CASE WITH PARALLEL LINES!");
+    // }
 
     const PEdge pedge(pvertex.first, support_plane(pvertex).split_vertex(pvertex.second));
     CGAL_assertion(source(pedge) == pvertex || target(pedge) == pvertex);
@@ -1893,32 +1837,15 @@ public:
       std::cout.precision(20);
       std::cout << "** cropping pedge [" << str(pvertex) << "-" << str(pother)
       << "] along " << str(iedge) << std::endl;
-      // std::cout << "- pvertex: " << point_3(pvertex) << std::endl;
-      // std::cout << "- pother: "  << point_3(pother)  << std::endl;
-      // std::cout << "- iedge: "   << segment_3(iedge) << std::endl;
+      std::cout << "- pvertex: " << point_3(pvertex) << std::endl;
+      std::cout << "- pother: "  << point_3(pother)  << std::endl;
+      std::cout << "- iedge: "   << segment_3(iedge) << std::endl;
     }
+
     CGAL_assertion(pvertex.first == pother.first);
-
-    auto source_p = point_2(pvertex.first, source(iedge));
-    auto target_p = point_2(pvertex.first, target(iedge));
-
-    CGAL_assertion_msg(source_p != target_p,
-    "TODO: PEDGE -> IEDGE, HANDLE ZERO LENGTH IEDGE!");
-    const Line_2 iedge_line(source_p, target_p);
-
-    auto pvertex_p = point_2(pvertex);
-    pvertex_p = iedge_line.projection(pvertex_p);
-
-    auto pother_p = point_2(pother);
-    pother_p = iedge_line.projection(pother_p);
-
-    if (m_verbose) {
-      std::cout << "- source: " << to_3d(pvertex.first, source_p) << std::endl;
-      std::cout << "- target: " << to_3d(pvertex.first, target_p) << std::endl;
-
-      std::cout << "- curr pv: " << point_3(pvertex) << std::endl;
-      std::cout << "- curr po: " << point_3(pother)  << std::endl;
-    }
+    CGAL_assertion_msg(
+      point_2(pvertex.first, source(iedge)) != point_2(pvertex.first, target(iedge)),
+    "TODO: PEDGE -> IEDGE, HANDLE ZERO-LENGTH IEDGE!");
     Point_2 future_point; Vector_2 future_direction;
 
     { // cropping pvertex ...
@@ -1943,26 +1870,12 @@ public:
         std::cout << "- pthird pv: " << point_3(pthird) << std::endl;
       }
 
-      // const Vector_2 current_direction = compute_future_direction(
-      //   source_p, target_p, pvertex, pvertex, pthird);
-      // const Vector_2 iedge_direction(source_p, target_p);
-
-      // const FT dot_product = current_direction * iedge_direction;
-      // if (dot_product < FT(0)) {
-      //   std::swap(source_p, target_p);
-      //   if (m_verbose) std::cout << "- swap source and target" << std::endl;
-      // }
-
-      // const bool is_standard_case = compute_future_point_and_direction(
-      //   source_p, pvertex_p, target_p, pvertex, pvertex, pthird, future_point, future_direction);
-      // CGAL_assertion(future_direction != Vector_2());
-
-      const bool is_standard_case = true;
+      // const bool is_parallel =
       compute_future_point_and_direction(0, pvertex, pthird, iedge, future_point, future_direction);
-
-      if (!is_standard_case) {
-        CGAL_assertion_msg(false, "TODO: PEDGE -> IEDGE, IMPLEMENT NON STANDARD CASE!");
-      }
+      CGAL_assertion(future_direction != Vector_2());
+      // if (is_parallel) {
+      //   CGAL_assertion_msg(false, "TODO: PEDGE -> IEDGE 1, HANDLE CASE WITH PARALLEL LINES!");
+      // }
 
       direction(pvertex) = future_direction;
       support_plane(pvertex).set_point(pvertex.second, future_point);
@@ -1991,20 +1904,12 @@ public:
         std::cout << "- pthird po: " << point_3(pthird) << std::endl;
       }
 
-      // CGAL_assertion(must_be_swapped(source_p, target_p, pother, pother, pthird));
-      // std::swap(source_p, target_p);
-      // if (m_verbose) std::cout << "- swap source and target" << std::endl;
-
-      // const bool is_standard_case = compute_future_point_and_direction(
-      //   source_p, pother_p, target_p, pother, pother, pthird, future_point, future_direction);
-      // CGAL_assertion(future_direction != Vector_2());
-
-      const bool is_standard_case = true;
+      // const bool is_parallel =
       compute_future_point_and_direction(0, pother, pthird, iedge, future_point, future_direction);
-
-      if (!is_standard_case) {
-        CGAL_assertion_msg(false, "TODO: PEDGE -> IEDGE, IMPLEMENT NON STANDARD CASE!");
-      }
+      CGAL_assertion(future_direction != Vector_2());
+      // if (is_parallel) {
+      //   CGAL_assertion_msg(false, "TODO: PEDGE -> IEDGE 2, HANDLE CASE WITH PARALLEL LINES!");
+      // }
 
       direction(pother) = future_direction;
       support_plane(pother).set_point(pother.second, future_point);
@@ -2106,40 +2011,14 @@ public:
     // Get future point and direction.
     CGAL_assertion(has_iedge(pvertex));
     const auto iedge = this->iedge(pvertex);
-    auto source_p = point_2(pvertex.first, source(iedge));
-    auto target_p = point_2(pvertex.first, target(iedge));
-    const Vector_2 iedge_direction(source_p, target_p);
-
-    if (m_verbose) {
-      std::cout << "- source: " << to_3d(pvertex.first, source_p) << std::endl;
-      std::cout << "- target: " << to_3d(pvertex.first, target_p) << std::endl;
-    }
+    const auto source_p = point_2(pvertex.first, source(iedge));
+    const auto target_p = point_2(pvertex.first, target(iedge));
     CGAL_assertion_msg(source_p != target_p,
-    "TODO: TRANSFER PVERTEX, HANDLE ZERO LENGTH IEDGE!");
-
-    auto pother_p = point_2(pother);
+    "TODO: TRANSFER PVERTEX, HANDLE ZERO-LENGTH IEDGE!");
     const Line_2 iedge_line(source_p, target_p);
-    pother_p = iedge_line.projection(pother_p);
-
-    // const Vector_2 current_direction = compute_future_direction(
-    //   source_p, target_p, pother, pother, pthird);
-    // const FT dot_product = current_direction * iedge_direction;
-    // if (dot_product < FT(0)) {
-    //   std::swap(source_p, target_p);
-    //   if (m_verbose) std::cout << "- swap source and target" << std::endl;
-    // }
 
     Point_2 future_point;
     Vector_2 future_direction;
-    const bool is_standard_case = true;
-    // const bool is_standard_case = compute_future_point_and_direction(
-    //   source_p, pother_p, target_p, pother, pother, pthird, future_point, future_direction);
-    // CGAL_assertion(future_direction != Vector_2());
-
-    if (!is_standard_case) {
-      CGAL_assertion_msg(false, "TODO: TRANSFER PVERTEX, IMPLEMENT NON STANDARD CASE!");
-    }
-
     if (target_pface == null_pface()) { // in case we have 1 pface
 
       const Point_2 pinit = iedge_line.projection(point_2(pother, m_current_time));
@@ -2147,11 +2026,12 @@ public:
         point_2(pother, m_current_time + FT(1)),
         point_2(pthird, m_current_time + FT(1)));
       CGAL_assertion_msg(!CGAL::parallel(future_line, iedge_line),
-      "TODO: TRANSFER PVERTEX, HANDLE CASE WITH PARALLEL LINES!");
-      Point_2 future_point = KSR::intersection<Point_2>(future_line, iedge_line);
+      "TODO: TRANSFER PVERTEX 1, HANDLE CASE WITH PARALLEL LINES!");
 
+      future_point = KSR::intersection<Point_2>(future_line, iedge_line);
+      CGAL_assertion(pinit != future_point);
       future_direction = Vector_2(pinit, future_point);
-      // direction(pvertex) = future_direction;
+      CGAL_assertion(future_direction != Vector_2());
       future_point = pinit - future_direction * m_current_time;
 
       support_plane(pvertex).set_point(pvertex.second, future_point);
@@ -2159,7 +2039,8 @@ public:
       const auto he = mesh(pvertex).halfedge(pother.second, pvertex.second);
       CGAL::Euler::join_vertex(he, mesh(pvertex));
 
-      // CGAL_assertion_msg(false, "TODO: TRANSFER 1, ADD NEW FUTURE POINTS AND DIRECTIONS!");
+      // CGAL_assertion_msg(false,
+      // "TODO: TRANSFER PVERTEX 1, ADD NEW FUTURE POINTS AND DIRECTIONS!");
 
     } else { // in case we have both pfaces
 
@@ -2189,23 +2070,27 @@ public:
 
       const Point_2 pinit = iedge_line.projection(point_2(pother, m_current_time));
       direction(pvertex) = direction(pother);
-      support_plane(pother).set_point(
-        pvertex.second, pinit - direction(pvertex) * m_current_time);
+      future_point = pinit - direction(pother) * m_current_time;
+      support_plane(pvertex).set_point(pvertex.second, future_point);
 
       const Line_2 future_line(
         point_2(pvertex, m_current_time + FT(1)),
         point_2(pthird , m_current_time + FT(1)));
       CGAL_assertion_msg(!CGAL::parallel(future_line, iedge_line),
-      "TODO: TRANSFER PVERTEX, HANDLE CASE WITH PARALLEL LINES!");
-      Point_2 future_point = KSR::intersection<Point_2>(future_line, iedge_line);
+      "TODO: TRANSFER PVERTEX 2, HANDLE CASE WITH PARALLEL LINES!");
 
+      future_point = KSR::intersection<Point_2>(future_line, iedge_line);
+      CGAL_assertion(pinit != future_point);
       future_direction = Vector_2(pinit, future_point);
-      direction(pother) = future_direction;
+      CGAL_assertion(future_direction != Vector_2());
       future_point = pinit - future_direction * m_current_time;
+
       support_plane(pother).set_point(pother.second, future_point);
+      direction(pother) = future_direction;
       connect(pother, iedge);
 
-      // CGAL_assertion_msg(false, "TODO: TRANSFER 2, ADD NEW FUTURE POINTS AND DIRECTIONS!");
+      // CGAL_assertion_msg(false,
+      // "TODO: TRANSFER PVERTEX 2, ADD NEW FUTURE POINTS AND DIRECTIONS!");
     }
 
     if (m_verbose) {
@@ -2501,20 +2386,20 @@ public:
 
     // Compute future points and directions.
     Point_2 future_point; Vector_2 future_direction;
-    // const auto opoint = point_2(pvertex.first, opposite(crossed_iedges[0].first, ivertex));
-    // // std::cout << "- opoint: " << to_3d(pvertex.first, opoint) << std::endl;
-    // CGAL_assertion_msg(ipoint != opoint, "TODO: BACK, HANDLE ZERO LENGTH IEDGE!");
-    // const bool is_standard_case = compute_future_point_and_direction(
-    //   ipoint, ipoint, opoint, pvertex, back, prev, future_point, future_direction);
-    // CGAL_assertion(future_direction != Vector_2());
-
     IEdge prev_iedge = null_iedge();
-    const bool is_parallel = compute_future_point_and_direction(
-      0, back, prev, crossed_iedges[0].first, future_point, future_direction);
-    if (is_parallel) {
-      if (is_intersecting_iedge(min_time, max_time, prev, crossed_iedges[0].first)) {
-        // CGAL_assertion_msg(i == 0, "TODO: BACK, CAN WE HAVE NON-ZERO I HERE?");
-        prev_iedge = crossed_iedges[0].first;
+    const auto iedge_0 = crossed_iedges[0].first;
+    CGAL_assertion_msg(
+      point_2(pvertex.first, source(iedge_0)) !=
+      point_2(pvertex.first, target(iedge_0)),
+    "TODO: BACK, HANDLE ZERO-LENGTH IEDGE!");
+
+    { // future point and direction
+      const bool is_parallel = compute_future_point_and_direction(
+        0, back, prev, iedge_0, future_point, future_direction);
+      if (is_parallel) {
+        if (is_intersecting_iedge(min_time, max_time, prev, iedge_0)) {
+          prev_iedge = iedge_0;
+        }
       }
     }
 
@@ -2522,17 +2407,10 @@ public:
     new_pvertices.clear();
     new_pvertices.resize(crossed_iedges.size(), null_pvertex());
 
-    { // crop the pvertex
+    { // crop
       PVertex cropped = null_pvertex();
-      // if (is_standard_case) {
-      //   cropped = PVertex(pvertex.first, support_plane(pvertex).split_edge(pvertex.second, prev.second));
-      // } else {
-      //   cropped = prev;
-      //   // CGAL_assertion_msg(false, "TODO: BACK, IMPLEMENT NON STANDARD CASE!");
-      // }
-
-      if (prev_iedge == crossed_iedges[0].first) {
-        if (m_verbose) std::cout << "- prev, parallel case" << std::endl;
+      if (prev_iedge == iedge_0) {
+        if (m_verbose) std::cout << "- back, prev, parallel case" << std::endl;
 
         // In case, we are parallel, we update the future point and direction.
         cropped = prev;
@@ -2541,19 +2419,19 @@ public:
           0, prev, pprev, prev_iedge, future_point, future_direction);
 
       } else {
-        if (m_verbose) std::cout << "- prev, standard case" << std::endl;
+        if (m_verbose) std::cout << "- back, prev, standard case" << std::endl;
         cropped = PVertex(pvertex.first, support_plane(pvertex).split_edge(pvertex.second, prev.second));
       }
-
       CGAL_assertion(cropped != null_pvertex());
 
       const PEdge pedge(pvertex.first, support_plane(pvertex).edge(pvertex.second, cropped.second));
       CGAL_assertion(cropped != pvertex);
       new_pvertices[0] = cropped;
 
-      connect(pedge, crossed_iedges[0].first);
-      connect(cropped, crossed_iedges[0].first);
+      connect(pedge, iedge_0);
+      connect(cropped, iedge_0);
 
+      CGAL_assertion(future_direction != Vector_2());
       support_plane(cropped).set_point(cropped.second, future_point);
       direction(cropped) = future_direction;
       if (m_verbose) std::cout << "- cropped: " << point_3(cropped) << std::endl;
@@ -2561,7 +2439,7 @@ public:
 
     // Create new pfaces if any.
     add_new_pfaces(
-      pvertex, ivertex, back, prev, back, false, true,
+      pvertex, ivertex, back, prev, false, true,
       crossed_iedges, new_pvertices);
 
     // CGAL_assertion_msg(false, "TODO: BACK BORDER CASE!");
@@ -2650,20 +2528,20 @@ public:
 
     // Compute future points and directions.
     Point_2 future_point; Vector_2 future_direction;
-    // const auto opoint = point_2(pvertex.first, opposite(crossed_iedges[0].first, ivertex));
-    // // std::cout << "- opoint: " << to_3d(pvertex.first, opoint) << std::endl;
-    // CGAL_assertion_msg(ipoint != opoint, "TODO: FRONT, HANDLE ZERO LENGTH IEDGE!");
-    // const bool is_standard_case = compute_future_point_and_direction(
-    //   ipoint, ipoint, opoint, pvertex, front, next, future_point, future_direction);
-    // CGAL_assertion(future_direction != Vector_2());
-
     IEdge next_iedge = null_iedge();
-    const bool is_parallel = compute_future_point_and_direction(
-      0, front, next, crossed_iedges[0].first, future_point, future_direction);
-    if (is_parallel) {
-      if (is_intersecting_iedge(min_time, max_time, next, crossed_iedges[0].first)) {
-        // CGAL_assertion_msg(i == 0, "TODO: FRONT, CAN WE HAVE NON-ZERO I HERE?");
-        next_iedge = crossed_iedges[0].first;
+    const auto iedge_0 = crossed_iedges[0].first;
+    CGAL_assertion_msg(
+      point_2(pvertex.first, source(iedge_0)) !=
+      point_2(pvertex.first, target(iedge_0)),
+    "TODO: FRONT, HANDLE ZERO-LENGTH IEDGE!");
+
+    { // future point and direction
+      const bool is_parallel = compute_future_point_and_direction(
+        0, front, next, iedge_0, future_point, future_direction);
+      if (is_parallel) {
+        if (is_intersecting_iedge(min_time, max_time, next, iedge_0)) {
+          next_iedge = iedge_0;
+        }
       }
     }
 
@@ -2671,39 +2549,31 @@ public:
     new_pvertices.clear();
     new_pvertices.resize(crossed_iedges.size(), null_pvertex());
 
-    { // crop the pvertex
+    { // crop
       PVertex cropped = null_pvertex();
-      // if (is_standard_case) {
-      //   cropped = PVertex(pvertex.first, support_plane(pvertex).split_edge(pvertex.second, next.second));
-      // } else {
-      //   cropped = next;
-      //   // CGAL_assertion_msg(false, "TODO: FRONT, IMPLEMENT NON STANDARD CASE!");
-      // }
-
-      if (next_iedge == crossed_iedges[0].first) {
-        if (m_verbose) std::cout << "- next, parallel case" << std::endl;
+      if (next_iedge == iedge_0) {
+        if (m_verbose) std::cout << "- front, next, parallel case" << std::endl;
 
         // In case, we are parallel, we update the future point and direction.
         cropped = next;
-        // Point_2 future_point; Vector_2 future_direction;
         const auto nnext = ( border_prev_and_next(next) ).second;
         compute_future_point_and_direction(
           0, next, nnext, next_iedge, future_point, future_direction);
 
       } else {
-        if (m_verbose) std::cout << "- next, standard case" << std::endl;
+        if (m_verbose) std::cout << "- front, next, standard case" << std::endl;
         cropped = PVertex(pvertex.first, support_plane(pvertex).split_edge(pvertex.second, next.second));
       }
-
       CGAL_assertion(cropped != null_pvertex());
 
       const PEdge pedge(pvertex.first, support_plane(pvertex).edge(pvertex.second, cropped.second));
       CGAL_assertion(cropped != pvertex);
       new_pvertices[0] = cropped;
 
-      connect(pedge, crossed_iedges[0].first);
-      connect(cropped, crossed_iedges[0].first);
+      connect(pedge, iedge_0);
+      connect(cropped, iedge_0);
 
+      CGAL_assertion(future_direction != Vector_2());
       support_plane(cropped).set_point(cropped.second, future_point);
       direction(cropped) = future_direction;
       if (m_verbose) std::cout << "- cropped: " << point_3(cropped) << std::endl;
@@ -2711,7 +2581,7 @@ public:
 
     // Create new pfaces if any.
     add_new_pfaces(
-      pvertex, ivertex, front, next, front, false, false,
+      pvertex, ivertex, front, next, false, false,
       crossed_iedges, new_pvertices);
 
     // CGAL_assertion_msg(false, "TODO: FRONT BORDER CASE!");
@@ -2810,36 +2680,42 @@ public:
     }
 
     // Compute future points and directions.
-    // Point_2 future_point_a, future_point_b;
-    // Vector_2 future_direction_a, future_direction_b;
-    // auto opoint = point_2(pvertex.first, opposite(crossed_iedges.front().first, ivertex));
-    // // std::cout << "- opoint1: " << to_3d(pvertex.first, opoint) << std::endl;
-    // CGAL_assertion_msg(ipoint != opoint, "TODO: OPEN, HANDLE ZERO LENGTH IEDGE!");
-    // const bool is_standard_case_front = compute_future_point_and_direction(
-    //   ipoint, ipoint, opoint, pvertex, front, next, future_point_a, future_direction_a);
-    // CGAL_assertion(future_direction_a != Vector_2());
-
-    // opoint = point_2(pvertex.first, opposite(crossed_iedges.back().first, ivertex));
-    // // std::cout << "- opoint2: " << to_3d(pvertex.first, opoint) << std::endl;
-    // CGAL_assertion_msg(ipoint != opoint, "TODO: OPEN, HANDLE ZERO LENGTH IEDGE!");
-    // const bool is_standard_case_back = compute_future_point_and_direction(
-    //   ipoint, ipoint, opoint, pvertex, back, prev, future_point_b, future_direction_b);
-    // CGAL_assertion(future_direction_b != Vector_2());
-
-    std::vector<Point_2> future_points(crossed_iedges.size());
-    std::vector<Vector_2> future_directions(crossed_iedges.size());
+    std::vector<Point_2> future_points(2);
+    std::vector<Vector_2> future_directions(2);
     IEdge prev_iedge = null_iedge(), next_iedge = null_iedge();
-    for (std::size_t i = 0; i < crossed_iedges.size(); ++i) {
+
+    CGAL_assertion_msg(
+      point_2(pvertex.first, source(crossed_iedges.front().first)) !=
+      point_2(pvertex.first, target(crossed_iedges.front().first)),
+    "TODO: OPEN, FRONT, HANDLE ZERO-LENGTH IEDGE!");
+
+    { // first future point and direction
       const bool is_parallel = compute_future_point_and_direction(
-        pvertex, prev, next, crossed_iedges[i].first, future_points[i], future_directions[i]);
+        pvertex, prev, next, crossed_iedges.front().first, future_points.front(), future_directions.front());
       if (is_parallel) {
-        if (is_intersecting_iedge(min_time, max_time, prev, crossed_iedges[i].first)) {
-          // CGAL_assertion_msg(i == crossed.size() - 1, "TODO: OPEN, PREV, CAN WE HAVE OTHER I HERE?");
-          prev_iedge = crossed_iedges[i].first;
+        if (is_intersecting_iedge(min_time, max_time, prev, crossed_iedges.front().first)) {
+          prev_iedge = crossed_iedges.front().first;
         }
-        if (is_intersecting_iedge(min_time, max_time, next, crossed_iedges[i].first)) {
-          // CGAL_assertion_msg(i == 0, "TODO: OPEN, NEXT, CAN WE HAVE OTHER I HERE?");
-          next_iedge = crossed_iedges[i].first;
+        if (is_intersecting_iedge(min_time, max_time, next, crossed_iedges.front().first)) {
+          next_iedge = crossed_iedges.front().first;
+        }
+      }
+    }
+
+    CGAL_assertion_msg(
+      point_2(pvertex.first, source(crossed_iedges.back().first)) !=
+      point_2(pvertex.first, target(crossed_iedges.back().first)),
+    "TODO: OPEN, BACK, HANDLE ZERO-LENGTH IEDGE!");
+
+    { // second future point and direction
+      const bool is_parallel = compute_future_point_and_direction(
+        pvertex, prev, next, crossed_iedges.back().first, future_points.back(), future_directions.back());
+      if (is_parallel) {
+        if (is_intersecting_iedge(min_time, max_time, prev, crossed_iedges.back().first)) {
+          prev_iedge = crossed_iedges.back().first;
+        }
+        if (is_intersecting_iedge(min_time, max_time, next, crossed_iedges.back().first)) {
+          next_iedge = crossed_iedges.back().first;
         }
       }
     }
@@ -2850,26 +2726,17 @@ public:
 
     { // first crop
       PVertex cropped = null_pvertex();
-      // if (is_standard_case_front) {
-      //   cropped = PVertex(pvertex.first, support_plane(pvertex).split_edge(pvertex.second, next.second));
-      // } else {
-      //   cropped = next;
-      //   // CGAL_assertion_msg(false, "TODO: OPEN, FRONT, IMPLEMENT NON STANDARD CASE!");
-      // }
       if (next_iedge == crossed_iedges.front().first) {
-        if (m_verbose) std::cout << "- next, parallel case" << std::endl;
+        if (m_verbose) std::cout << "- open, next, parallel case" << std::endl;
 
         // In case, we are parallel, we update the future point and direction.
         cropped = next;
-        Point_2 future_point; Vector_2 future_direction;
         const auto nnext = ( border_prev_and_next(next) ).second;
         compute_future_point_and_direction(
-          0, next, nnext, next_iedge, future_point, future_direction);
-        future_points[0] = future_point;
-        future_directions[0] = future_direction;
+          0, next, nnext, next_iedge, future_points.front(), future_directions.front());
 
       } else {
-        if (m_verbose) std::cout << "- next, standard case" << std::endl;
+        if (m_verbose) std::cout << "- open, next, standard case" << std::endl;
         cropped = PVertex(pvertex.first, support_plane(pvertex).split_edge(pvertex.second, next.second));
       }
       CGAL_assertion(cropped != null_pvertex());
@@ -2881,6 +2748,7 @@ public:
       connect(pedge, crossed_iedges.front().first);
       connect(cropped, crossed_iedges.front().first);
 
+      CGAL_assertion(future_directions.front() != Vector_2());
       support_plane(cropped).set_point(cropped.second, future_points.front());
       direction(cropped) = future_directions.front();
       if (m_verbose) std::cout << "- cropped 1: " << point_3(cropped) << std::endl;
@@ -2889,19 +2757,16 @@ public:
     { // second crop
       PVertex cropped = null_pvertex();
       if (prev_iedge == crossed_iedges.back().first) {
-        if (m_verbose) std::cout << "- prev, parallel case" << std::endl;
+        if (m_verbose) std::cout << "- open, prev, parallel case" << std::endl;
 
         // In case, we are parallel, we update the future point and direction.
         cropped = prev;
-        Point_2 future_point; Vector_2 future_direction;
         const auto pprev = ( border_prev_and_next(prev) ).first;
         compute_future_point_and_direction(
-          0, prev, pprev, prev_iedge, future_point, future_direction);
-        future_points[future_points.size() - 1] = future_point;
-        future_directions[future_directions.size() - 1] = future_direction;
+          0, prev, pprev, prev_iedge, future_points.back(), future_directions.back());
 
       } else {
-        if (m_verbose) std::cout << "- prev, standard case" << std::endl;
+        if (m_verbose) std::cout << "- open, prev, standard case" << std::endl;
         cropped = PVertex(pvertex.first, support_plane(pvertex).split_edge(pvertex.second, prev.second));
       }
       CGAL_assertion(cropped != null_pvertex());
@@ -2913,6 +2778,7 @@ public:
       connect(pedge, crossed_iedges.back().first);
       connect(cropped, crossed_iedges.back().first);
 
+      CGAL_assertion(future_directions.back() != Vector_2());
       support_plane(cropped).set_point(cropped.second, future_points.back());
       direction(cropped) = future_directions.back();
       if (m_verbose) std::cout << "- cropped 2: " << point_3(cropped) << std::endl;
@@ -2920,7 +2786,7 @@ public:
 
     // Create new pfaces if any.
     add_new_pfaces(
-      pvertex, ivertex, prev, next, front, true, false,
+      pvertex, ivertex, prev, next, true, false,
       crossed_iedges, new_pvertices);
 
     // CGAL_assertion_msg(false, "TODO: OPEN CASE!");
@@ -2929,7 +2795,7 @@ public:
   void add_new_pfaces(
     const PVertex& pvertex, const IVertex& ivertex,
     const PVertex& pv_prev, const PVertex& pv_next,
-    const PVertex& pother, const bool is_open, const bool reverse,
+    const bool is_open, const bool reverse,
     std::vector< std::pair<IEdge, bool> >& crossed_iedges,
     std::vector<PVertex>& new_pvertices) {
 
@@ -2939,7 +2805,7 @@ public:
     CGAL_assertion(crossed_iedges.front().first != crossed_iedges.back().first);
 
     add_new_pfaces_global(
-      pvertex, ivertex, pv_prev, pv_next, pother, is_open, reverse,
+      pvertex, ivertex, pv_prev, pv_next, is_open, reverse,
       crossed_iedges, new_pvertices);
 
     // CGAL_assertion_msg(false, "TODO: ADD NEW PFACES!");
@@ -2948,12 +2814,12 @@ public:
   void add_new_pfaces_global(
     const PVertex& pvertex, const IVertex& ivertex,
     const PVertex& pv_prev, const PVertex& pv_next,
-    const PVertex& pother, const bool is_open, bool reverse,
+    const bool is_open, bool reverse,
     std::vector< std::pair<IEdge, bool> >& crossed_iedges,
     std::vector<PVertex>& new_pvertices) {
 
     traverse_iedges_global(
-      pvertex, ivertex, pv_prev, pv_next, pother, reverse, is_open,
+      pvertex, ivertex, pv_prev, pv_next, is_open, reverse,
       crossed_iedges, new_pvertices);
 
     if (is_open) {
@@ -2962,7 +2828,7 @@ public:
       std::reverse(crossed_iedges.begin(), crossed_iedges.end());
 
       traverse_iedges_global(
-        pvertex, ivertex, pv_prev, pv_next, pother, reverse, is_open,
+        pvertex, ivertex, pv_prev, pv_next, is_open, reverse,
         crossed_iedges, new_pvertices);
 
       reverse = !reverse;
@@ -2976,8 +2842,7 @@ public:
   void traverse_iedges_global(
     const PVertex& pvertex, const IVertex& ivertex,
     const PVertex& pv_prev, const PVertex& pv_next,
-    const PVertex& pother, const bool reverse,
-    const bool is_open,
+    const bool is_open, const bool reverse,
     std::vector< std::pair<IEdge, bool> >& iedges,
     std::vector<PVertex>& pvertices) {
 
@@ -3001,8 +2866,12 @@ public:
           std::cout << "- handle iedge " << std::to_string(i) << std::endl;
         }
       }
+
       iedges[i].second = true;
       const auto& iedge_i = iedges[i].first;
+      CGAL_assertion_msg(
+        point_2(pvertex.first, ivertex) != point_2(pvertex.first, opposite(iedge_i, ivertex)),
+      "TODO: TRAVERSE IEDGES GLOBAL, HANDLE ZERO LENGTH IEDGE I!");
 
       bool is_occupied_iedge, is_bbox_reached;
       std::tie(is_occupied_iedge, is_bbox_reached) = this->is_occupied(pvertex, ivertex, iedge_i);
@@ -3023,9 +2892,14 @@ public:
       } else {
         if (m_verbose) std::cout << "- free, any k, continue" << std::endl;
         CGAL_assertion(this->k(pvertex.first) >= 1);
+
         const std::size_t ip = i + 1;
         const auto& iedge_ip = iedges[ip].first;
-        add_new_pface(pvertex, ivertex, pv_prev, pv_next, pother, reverse, i, iedge_ip, is_open, pvertices);
+        CGAL_assertion_msg(
+          point_2(pvertex.first, ivertex) != point_2(pvertex.first, opposite(iedge_ip, ivertex)),
+        "TODO: TRAVERSE IEDGES GLOBAL, HANDLE ZERO LENGTH IEDGE IP!");
+
+        add_new_pface(pvertex, pv_prev, pv_next, is_open, reverse, i, iedge_ip, pvertices);
         ++num_added_pfaces;
         continue;
       }
@@ -3045,11 +2919,8 @@ public:
   }
 
   void add_new_pface(
-    const PVertex& pvertex, const IVertex& ivertex,
-    const PVertex& pv_prev, const PVertex& pv_next,
-    const PVertex& pother, const bool reverse,
-    const std::size_t idx, const IEdge& iedge,
-    const bool is_open,
+    const PVertex& pvertex, const PVertex& pv_prev, const PVertex& pv_next,
+    const bool is_open, const bool reverse, const std::size_t idx, const IEdge& iedge,
     std::vector<PVertex>& pvertices) {
 
     if (m_verbose) {
@@ -3071,7 +2942,7 @@ public:
       pv2 = pvertices[idx + 1];
     } else {
       create_new_pvertex(
-        pvertex, ivertex, pv_prev, pv_next, pother, pv1, idx + 1, iedge, is_open, pvertices);
+        pvertex, pv_prev, pv_next, is_open, idx + 1, iedge, pvertices);
       pv2 = pvertices[idx + 1];
     }
     CGAL_assertion(pv2 != null_pvertex());
@@ -3079,7 +2950,7 @@ public:
       std::cout << "- pv2 " << str(pv2) << ": " << point_3(pv2) << std::endl;
     }
 
-    // Adding the new triangle.
+    // Adding new triangle.
     if (reverse) add_pface(std::array<PVertex, 3>{pvertex, pv2, pv1});
     else add_pface(std::array<PVertex, 3>{pvertex, pv1, pv2});
     if (!pv2_exists) connect_pedge(pvertex, pv2, iedge);
@@ -3088,51 +2959,26 @@ public:
   }
 
   void create_new_pvertex(
-    const PVertex& pvertex, const IVertex& ivertex,
-    const PVertex& pv_prev, const PVertex& pv_next,
-    const PVertex& pother, const PVertex& pthird,
-    const std::size_t idx, const IEdge& iedge,
-    const bool is_open,
+    const PVertex& pvertex, const PVertex& pv_prev, const PVertex& pv_next,
+    const bool is_open, const std::size_t idx, const IEdge& iedge,
     std::vector<PVertex>& pvertices) {
 
     if (m_verbose) std::cout << "- creating new pvertex" << std::endl;
-    // Point_2 future_point; Vector_2 future_direction;
-    // const auto ipoint = point_2(pvertex.first, ivertex);
-    // const auto opoint = point_2(pvertex.first, opposite(iedge, ivertex));
-    // std::cout << "- opoint: " << to_3d(pvertex.first, opoint) << std::endl;
-    // CGAL_assertion_msg(ipoint != opoint, "TODO: CREATE PVERTEX, HANDLE ZERO LENGTH IEDGE!");
-    // const bool is_standard_case = compute_future_point_and_direction2(
-    //   ipoint, ipoint, opoint, pvertex, pother, pthird, future_point, future_direction);
-    // CGAL_assertion(future_direction != Vector_2());
 
-
-    Point_2 future_point;
-    Vector_2 future_direction;
     bool is_parallel = false;
-    const bool is_standard_case = true;
+    Point_2 future_point; Vector_2 future_direction;
 
     if (!is_open) {
       is_parallel = compute_future_point_and_direction(
         0, pv_prev, pv_next, iedge, future_point, future_direction);
-      CGAL_assertion_msg(!is_parallel, "TODO: BACK/FRONT, ADD PARALLEL CASE!");
-      // if (is_parallel) {
-      //   const auto iv = ivertex(source);
-      //   const auto ov = opposite(iedge, iv);
-      //   future_point  = point_2(source.first, ov);
-      //   const auto pinit = point_2(source);
-      //   future_direction = Vector_2(pinit, future_point);
-      //   future_point = pinit - m_current_time * future_direction;
-      // }
+      CGAL_assertion_msg(!is_parallel, "TODO: CREATE PVERTEX, BACK/FRONT, ADD PARALLEL CASE!");
     } else {
       is_parallel = compute_future_point_and_direction(
         pvertex, pv_prev, pv_next, iedge, future_point, future_direction);
-      CGAL_assertion_msg(!is_parallel, "TODO: OPEN, ADD PARALLEL CASE!");
+      CGAL_assertion_msg(!is_parallel, "TODO: CREATE_PVERTEX, OPEN, ADD PARALLEL CASE!");
     }
 
-    if (!is_standard_case) {
-      CGAL_assertion_msg(false, "TODO: CREATE PVERTEX, IMPLEMENT NON STANDARD CASE!");
-    }
-
+    CGAL_assertion(future_direction != Vector_2());
     const auto propagated = add_pvertex(pvertex.first, future_point);
     direction(propagated) = future_direction;
     CGAL_assertion(propagated != pvertex);
@@ -4910,11 +4756,12 @@ private:
   **   FUTURE POINTS AND DIRECTIONS   **
   *************************************/
 
-  void compute_future_points_and_directions(
+  const bool compute_future_points_and_directions(
     const PVertex& pvertex, const IEdge& iedge,
     Point_2& future_point_a, Point_2& future_point_b,
     Vector_2& future_direction_a, Vector_2& future_direction_b) const {
 
+    bool is_parallel = false;
     const PVertex prev(pvertex.first, support_plane(pvertex).prev(pvertex.second));
     const PVertex next(pvertex.first, support_plane(pvertex).next(pvertex.second));
     const auto& curr = pvertex;
@@ -4980,6 +4827,7 @@ private:
 
     if (CGAL::abs(m1 - m3) < tol) {
       if (m_verbose) std::cout << "- prev parallel lines" << std::endl;
+      is_parallel = true;
       const FT prev_dot = current_vec_prev * iedge_vec;
       if (prev_dot < FT(0)) {
         if (m_verbose) std::cout << "- prev moves backwards" << std::endl;
@@ -5012,6 +4860,7 @@ private:
 
     if (CGAL::abs(m2 - m3) < tol) {
       if (m_verbose) std::cout << "- next parallel lines" << std::endl;
+      is_parallel = true;
       const FT next_dot = current_vec_next * iedge_vec;
       if (next_dot < FT(0)) {
         if (m_verbose) std::cout << "- next moves backwards" << std::endl;
@@ -5042,6 +4891,7 @@ private:
       to_3d(pvertex.first, pinit + m_current_time * tmp_b) << std::endl;
       std::cout << "- next future direction b: " << future_direction_b << std::endl;
     }
+    return is_parallel;
   }
 
   const bool compute_future_point_and_direction(
