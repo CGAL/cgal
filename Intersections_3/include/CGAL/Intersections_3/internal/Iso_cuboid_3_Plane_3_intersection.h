@@ -97,6 +97,19 @@ intersection(
 
   std::vector<std::array<int,2>> neighbor_ids(14, {-1,-1});
 
+  auto add_neighbor = [&neighbor_ids](int i, int j)
+  {
+    if (neighbor_ids[i][0] == -1 ) {
+      neighbor_ids[i][0] = j;
+    }
+    else {
+      if (neighbor_ids[i][0]!=j && neighbor_ids[i][1]==-1)
+      {
+        neighbor_ids[i][1] = j;
+      }
+    }
+  };
+
   int start_id = -1;
   int solo_id = -1;
   // for each face of the bbox, we look for intersection of the plane with its edges
@@ -155,18 +168,8 @@ intersection(
       case 2:
       {
         if (start_id == -1) start_id = ids[0];
-        if (neighbor_ids[ids[0]][0] == -1) {
-          neighbor_ids[ids[0]][0] = ids[1];
-        }
-        else {
-          neighbor_ids[ids[0]][1] = ids[1];
-        }
-        if (neighbor_ids[ids[1]][0] == -1) {
-          neighbor_ids[ids[1]][0] = ids[0];
-        }
-        else {
-          neighbor_ids[ids[1]][1] = ids[0];
-        }
+        add_neighbor(ids[0], ids[1]);
+        add_neighbor(ids[1], ids[0]);
         break;
       }
       case 1:
