@@ -112,10 +112,12 @@ void normal_vector_newell_3( IC first, IC last, Vector& n )
     // three.
 {
     CGAL_assertion( !CGAL::is_empty_range( first, last));
+
     if(internal_nef::is_triangle_3(first)) {
-      n = orthogonal_vector(*first,*(++first),*(++first));
+      n = orthogonal_vector(*first,*(std::next(first)),*(std__next(first,2)));
       return;
     }
+
 
     typedef typename Kernel_traits<Vector>::Kernel R;
     // Compute facet normals via the Newell-method as described in
@@ -140,10 +142,13 @@ template <class IC, class Vector, class VertexPointMap>
 void normal_vector_newell_3( IC first, IC last, VertexPointMap vpm, Vector& n )
 {
     CGAL_assertion( !CGAL::is_empty_range( first, last));
+
     if(internal_nef::is_triangle_3(first)) {
-      n = orthogonal_vector(get(vpm,*first),get(vpm,*(++first)),get(vpm,*(++first)));
+
+      n = orthogonal_vector(get(vpm,*first),get(vpm,*(std::next(first))),get(vpm,*(std::next(first,2))));
       return;
     }
+
 
     typedef typename Kernel_traits<Vector>::Kernel R;
     // Compute facet normals via the Newell-method as described in
