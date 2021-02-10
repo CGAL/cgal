@@ -1300,7 +1300,7 @@ if(NOT CGAL_BRANCH_BUILD AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/doc")
 endif()
 
 #print some info about versions
-if(RUNNING_CGAL_AUTO_TEST)
+if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
   find_package(Qt5 QUIET COMPONENTS Core)
   find_package(Boost)
   if(NOT CGAL_DISABLE_GMP)
