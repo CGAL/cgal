@@ -1262,36 +1262,26 @@ private:
         // the intersection of the two skewed bounding boxes.
         Bez_point_bbox  ipt_bbox;
         Control_points  aux_vec;
-        CGAL::Object    res;
-        Point_2         p;
 
-        res = f_intersect (skew1a, skew2a);
-        if (! assign (p, res))
-        {
-          CGAL_error();
-        }
-        aux_vec.push_back(p);
+        auto res1 = f_intersect(skew1a, skew2a);
+        const Point_2* p1 = boost::get<Point_2>(&*res1);
+        if (! p1) CGAL_error();
+        aux_vec.push_back(*p1);
 
-        res = f_intersect (skew1a, skew2b);
-        if (! assign(p, res))
-        {
-          CGAL_error();
-        }
-        aux_vec.push_back(p);
+        auto res2 = f_intersect(skew1a, skew2b);
+        const Point_2* p2 = boost::get<Point_2>(&*res2);
+        if (! p2) CGAL_error();
+        aux_vec.push_back(*p2);
 
-        res = f_intersect (skew1b, skew2a);
-        if (! assign(p, res))
-        {
-          CGAL_error();
-        }
-        aux_vec.push_back(p);
+        auto res3 = f_intersect(skew1b, skew2a);
+        const Point_2* p3 = boost::get<Point_2>(&*res3);
+        if (! p3) CGAL_error();
+        aux_vec.push_back(*p3);
 
-        res = f_intersect (skew1b, skew2b);
-        if (!assign(p, res))
-        {
-          CGAL_error();
-        }
-        aux_vec.push_back(p);
+        auto res4 = f_intersect (skew1b, skew2b);
+        const Point_2* p4 = boost::get<Point_2>(&*res4);
+        if (! p4) CGAL_error();
+        aux_vec.push_back(*p4);
 
         construct_bbox (aux_vec, ipt_bbox);
 

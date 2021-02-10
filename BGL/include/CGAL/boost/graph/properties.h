@@ -163,7 +163,7 @@ struct Is_writable_property_map<PropertyMap, boost::read_write_property_map_tag>
 // 'lvalue_pmap_tag' is annoying, because the property map is allowed to be non-mutable,
 // but boost::lvalue_property_map_tag is defined as:
 //   struct lvalue_property_map_tag : public read_write_property_map_tag
-// so we can't just check that 'writable_property_map_tag' is a base of the the lvalue tag.
+// so we can't just check that 'writable_property_map_tag' is a base of the lvalue tag.
 //
 // This checks if the reference is non-const, which is not completely correct: map[key] returning
 // a non-const reference doesn't mean that 'put(map, key, val)' exists, which is what a writable
@@ -177,7 +177,7 @@ struct Is_writable_property_map<PropertyMap, boost::lvalue_property_map_tag>
 
 } // namespace internal
 
-// Needed by PMP::detec_features and Mesh_3
+// Needed by PMP::detect_features and Mesh_3
 enum vertex_feature_degree_t    { vertex_feature_degree };
 enum edge_is_feature_t          { edge_is_feature };
 

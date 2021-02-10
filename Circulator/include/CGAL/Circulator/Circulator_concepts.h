@@ -57,11 +57,8 @@ struct ForwardCirculator
 
   BOOST_CONCEPT_USAGE(ForwardCirculator)
   {
-    // CGAL_UNUSED is needed with g++ 4.8, otherwise it warns:
-    // "typedef ‘boost_concept_check68’ locally defined but not used
-    // [-Wunused-local-typedefs]"
-    BOOST_CONCEPT_ASSERT((boost::SignedInteger<difference_type>)) CGAL_UNUSED;
-    BOOST_CONCEPT_ASSERT((boost::Convertible<iterator_category, CGAL::Forward_circulator_tag>)) CGAL_UNUSED;
+    BOOST_CONCEPT_ASSERT((boost::SignedInteger<difference_type>));
+    BOOST_CONCEPT_ASSERT((boost::Convertible<iterator_category, CGAL::Forward_circulator_tag>));
 
     boost::require_boolean_expr(a == nullptr);
     boost::require_boolean_expr(a != nullptr);
@@ -82,7 +79,7 @@ struct BidirectionalCirculator
 {
   BOOST_CONCEPT_USAGE(BidirectionalCirculator)
   {
-    BOOST_CONCEPT_ASSERT((boost::Convertible<typename C::iterator_category, CGAL::Bidirectional_circulator_tag>)) CGAL_UNUSED;
+    BOOST_CONCEPT_ASSERT((boost::Convertible<typename C::iterator_category, CGAL::Bidirectional_circulator_tag>));
     --a;
     a--;
   }
@@ -96,7 +93,7 @@ struct RandomAccessCirculator
 {
   BOOST_CONCEPT_USAGE(RandomAccessCirculator)
   {
-    BOOST_CONCEPT_ASSERT((boost::Convertible<typename C::iterator_category, CGAL::Random_access_circulator_tag>)) CGAL_UNUSED;
+    BOOST_CONCEPT_ASSERT((boost::Convertible<typename C::iterator_category, CGAL::Random_access_circulator_tag>));
     c += n; // addition
     c = c + n; c = n + c;
     c -= n; // subtraction

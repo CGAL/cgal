@@ -132,11 +132,6 @@ get_descriptor_from_location(const std::pair<typename boost::graph_traits<Triang
                                              std::array<FT, 3> >& loc,
                              const TriangleMesh& tm);
 
-template <typename FT, typename TriangleMesh>
-Face_location<TriangleMesh, FT>
-locate_in_face(typename boost::graph_traits<TriangleMesh>::halfedge_descriptor hd,
-               const FT t,
-               const TriangleMesh& tm);
 // end of forward declarations
 
 namespace internal {
@@ -391,7 +386,7 @@ barycentric_coordinates(const Point& p, const Point& q, const Point& r, const Po
 
 /// \ingroup PMP_locate_grp
 ///
-/// \brief Returns a random point over the halfedge `hd`, as a location.
+/// \brief returns a random point over the halfedge `hd`, as a location.
 ///
 /// \details The random point is chosen on the halfedge, meaning that all
 ///          its barycentric coordinates are positive. It is constructed by uniformly generating
@@ -426,7 +421,7 @@ random_location_on_halfedge(typename boost::graph_traits<TriangleMesh>::halfedge
 
 /// \ingroup PMP_locate_grp
 ///
-/// \brief Returns a random point over the face `fd`, as a location.
+/// \brief returns a random point over the face `fd`, as a location.
 ///
 /// \details The random point is on the face, meaning that all its barycentric coordinates
 ///          are positive.  It is constructed by uniformly picking a value `u` between `0` and `1`,
@@ -459,7 +454,7 @@ random_location_on_face(typename boost::graph_traits<TriangleMesh>::face_descrip
 
 /// \ingroup PMP_locate_grp
 ///
-/// \brief Returns a random point over the mesh `tm`.
+/// \brief returns a random point over the mesh `tm`.
 ///
 /// \details The returned location is obtained by choosing a random face of the mesh and
 ///          a random point on that face. The barycentric coordinates of the point in the face
@@ -562,22 +557,28 @@ get_descriptor_from_location(const std::pair<typename boost::graph_traits<Triang
 ///
 /// \tparam FT must be a model of `FieldNumberType`
 /// \tparam TriangleMesh must be a model of `FaceGraph`
-/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param loc the location from which a point is constructed
 /// \param tm a triangulated surface mesh
-/// \param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below:
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
-///   \cgalParamBegin{vertex_point_map}
-///     the property map with the points associated to the vertices of `tm`.
-///     If this parameter is omitted, an internal property map for
-///     `boost::vertex_point_t` must be available in `TriangleMesh`.
-///   \cgalParamEnd
-///   \cgalParamBegin{geom_traits}
-///     a geometric traits class instance, model of `Kernel`. If such traits class is provided,
-///     its type `FT` must be identical to the template parameter `FT` of this function.
-///   \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{geom_traits}
+///     \cgalParamDescription{an instance of a geometric traits class}
+///     \cgalParamType{a class model of `Kernel`}
+///     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+///     \cgalParamExtra{If such traits class is provided, its type `FT` must be identical
+///                     to the template parameter `FT` of this function.}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \pre `loc.first` is a face descriptor corresponding to a face of `tm`.
@@ -913,7 +914,7 @@ is_on_mesh_border(const std::pair<typename boost::graph_traits<TriangleMesh>::fa
 
 /// \ingroup PMP_locate_grp
 ///
-/// \brief Returns the location of the given vertex `vd` as a location,
+/// \brief returns the location of the given vertex `vd` as a location,
 ///        that is an ordered pair specifying a face incident to `vd`
 ///        and the barycentric coordinates of the vertex `vd` in that face.
 ///
@@ -975,7 +976,7 @@ locate_vertex(typename boost::graph_traits<TriangleMesh>::vertex_descriptor vd,
 
 /// \ingroup PMP_locate_grp
 ///
-/// \brief Returns the location of a given vertex as a location in `fd`,
+/// \brief returns the location of a given vertex as a location in `fd`,
 ///        that is an ordered pair composed of `fd` and of the barycentric coordinates
 ///        of the vertex in `fd`.
 ///
@@ -1066,32 +1067,41 @@ locate_on_halfedge(const typename boost::graph_traits<TriangleMesh>::halfedge_de
 ///          - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
 ///
 /// \tparam TriangleMesh must be a model of `FaceGraph`
-/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param query a point, whose type is equal to the value type of the vertex point property map
 ///              (either user-provided via named parameters or the internal point map of the mesh `tm`)
 /// \param fd a face of `tm`
 /// \param tm a triangulated surface mesh
-/// \param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below:
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
-///   \cgalParamBegin{vertex_point_map}
-///     the property map with the points associated to the vertices of `tm`.
-///     If this parameter is omitted, an internal property map for
-///     `boost::vertex_point_t` must be available in `TriangleMesh`.
-///   \cgalParamEnd
-///   \cgalParamBegin{geom_traits}
-///     a geometric traits class instance, model of `Kernel`. If provided, the types `FT` and `Kernel::FT`
-///     must be identical and the traits class must be compatible with the value type of the vertex point
-///     property map.
-///   \cgalParamEnd
-///   \cgalParamBegin{snapping_tolerance}
-///     a tolerance value used to snap barycentric coordinates. Depending on the geometric traits used,
-///     the computation of the barycentric coordinates might be an inexact construction, thus leading
-///     to sometimes surprising values (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle
-///     of an edge). The coordinates will be snapped towards `0` and `1` if the difference is smaller than the tolerance value, while
-///     still ensuring that the total sum of the coordinates is `1`. By default, the tolerance is `0`.
-///   \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{geom_traits}
+///     \cgalParamDescription{an instance of a geometric traits class}
+///     \cgalParamType{a class model of `Kernel`}
+///     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+///     \cgalParamExtra{If such traits class is provided, its type `FT` must be identical
+///                     to the template parameter `FT` of this function.}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{snapping_tolerance}
+///     \cgalParamDescription{a tolerance value used to snap barycentric coordinates}
+///     \cgalParamType{double}
+///     \cgalParamDefault{`0`}
+///     \cgalParamExtra{Depending on the geometric traits used, the computation of the barycentric coordinates
+///                     might be an inexact construction, thus leading to sometimes surprising values
+///                     (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle of an edge).
+///                     The coordinates will be snapped towards `0` and `1` if the difference is smaller
+///                     than the tolerance value, while still ensuring that the total sum of the coordinates is `1`.}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \pre `fd` is not the null face
@@ -1556,23 +1566,27 @@ void build_AABB_tree(const TriangleMesh& tm,
 /// \tparam TriangleMesh must be a model of `FaceListGraph`
 /// \tparam Point3VPM must be a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 ///                   as key type and the \cgal 3D point type (your traits' `%Point_3`) as value type.
-/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param tm a triangulated surface mesh
 /// \param outTree output parameter that stores the computed `AABB_tree`
-/// \param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below:
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
-///   \cgalParamBegin{vertex_point_map}
-///     the property map with the points associated to the vertices of `tm`.
-///     If this parameter is omitted, an internal property map for
-///     `boost::vertex_point_t` must be available in `TriangleMesh`.
-///   \cgalParamEnd
-///   \cgalParamBegin{geom_traits}
-///     a geometric traits class instance, model of `Kernel` compatible with the point type held
-///     in the vertex point property map (either user-provided or internal to the mesh).
-///     Must be identical to the traits used in the template parameter of the `AABB_traits`.
-///   \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{geom_traits}
+///     \cgalParamDescription{an instance of a geometric traits class}
+///     \cgalParamType{a class model of `Kernel`}
+///     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+///     \cgalParamExtra{Must be identical to the traits used in the template parameter of the `AABB_traits`.}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 template <typename TriangleMesh, typename Point3VPM, typename NamedParameters>
@@ -1618,31 +1632,39 @@ void build_AABB_tree(const TriangleMesh& tm, AABB_tree<AABBTraits>& outTree)
 /// \tparam TriangleMesh must be a model of `FaceListGraph`
 /// \tparam Point3VPM must be a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 ///                   as key type and the \cgal 3D point type (your traits' `%Point_3`) as value type.
-/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param p the point to locate on the input triangulated surface mesh
 /// \param tree an AABB tree containing the triangular faces of the input surface mesh to perform the point location with
 /// \param tm a triangulated surface mesh
-/// \param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below:
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
-///   \cgalParamBegin{vertex_point_map}
-///     the property map with the points associated to the vertices of `tm`.
-///     If this parameter is omitted, an internal property map for
-///     `boost::vertex_point_t` must be available in `TriangleMesh`.
-///   \cgalParamEnd
-///   \cgalParamBegin{geom_traits}
-///     a geometric traits class instance, model of `Kernel` compatible with the point type held
-///     in the vertex point property map (either user-provided or internal to the mesh).
-///     Must be identical to the traits used in the template parameter of the `AABB_traits`.
-///   \cgalParamEnd
-///   \cgalParamBegin{snapping_tolerance}
-///     a tolerance value used to snap barycentric coordinates. Depending on the geometric traits used,
-///     the computation of the barycentric coordinates might be an inexact construction, thus leading
-///     to sometimes surprising values (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle
-///     of an edge). The coordinates will be snapped towards `0` and `1` if the difference is smaller than the tolerance value, while
-///     still ensuring that the total sum of the coordinates is `1`. By default, the tolerance is `0`.
-///   \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{geom_traits}
+///     \cgalParamDescription{an instance of a geometric traits class}
+///     \cgalParamType{a class model of `Kernel`}
+///     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+///     \cgalParamExtra{Must be identical to the traits used in the template parameter of the `AABB_traits`.}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{snapping_tolerance}
+///     \cgalParamDescription{a tolerance value used to snap barycentric coordinates}
+///     \cgalParamType{double}
+///     \cgalParamDefault{`0`}
+///     \cgalParamExtra{Depending on the geometric traits used, the computation of the barycentric coordinates
+///                     might be an inexact construction, thus leading to sometimes surprising values
+///                     (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle of an edge).
+///                     The coordinates will be snapped towards `0` and `1` if the difference is smaller
+///                     than the tolerance value, while still ensuring that the total sum of the coordinates is `1`.}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \returns a face location. The type `FT` is deduced from the geometric traits, either provided by
@@ -1667,12 +1689,13 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
 {
   typedef typename internal::Location_traits<TriangleMesh, NamedParameters>::Point         Point;
   typedef internal::Point_to_Point_3<TriangleMesh, Point>                                  P_to_P3;
-  typedef typename boost::property_traits<Point3VPM>::value_type                           Point_3;
-  CGAL_static_assertion((std::is_same<Point_3, typename P_to_P3::Point_3>::value));
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type                      Geom_traits;
   typedef typename CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM>       Primitive;
   typedef typename CGAL::AABB_traits<Geom_traits, Primitive>                               AABB_traits;
+
+  typedef typename Primitive::Point                                                        Point_3;
+  CGAL_static_assertion((std::is_same<Point_3, typename P_to_P3::Point_3>::value));
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type            VertexPointMap;
   typedef internal::Point_to_Point_3_VPM<TriangleMesh, VertexPointMap>                     WrappedVPM;
@@ -1715,29 +1738,37 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh>::Po
 ///          an AABB tree that you can store and use the function `locate_with_AABB_tree()`.
 ///
 /// \tparam TriangleMesh must be a model of `FaceListGraph`.
-/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param p the point to locate on the input triangulated surface mesh
 /// \param tm a triangulated surface mesh
-/// \param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below:
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
-///   \cgalParamBegin{vertex_point_map}
-///     the property map with the points associated to the vertices of `tm`.
-///     If this parameter is omitted, an internal property map for
-///     `boost::vertex_point_t` must be available in `TriangleMesh`.
-///   \cgalParamEnd
-///   \cgalParamBegin{geom_traits}
-///     a geometric traits class instance, model of `Kernel` compatible with the point type held
-///     in the vertex point property map (either user-provided or internal to the mesh).
-///   \cgalParamEnd
-///   \cgalParamBegin{snapping_tolerance}
-///     a tolerance value used to snap barycentric coordinates. Depending on the geometric traits used,
-///     the computation of the barycentric coordinates might be an inexact construction, thus leading
-///     to sometimes surprising values (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle
-///     of an edge). The coordinates will be snapped towards `0` and `1` if the difference is smaller than the tolerance value, while
-///     still ensuring that the total sum of the coordinates is `1`. By default, the tolerance is `0`.
-///   \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{geom_traits}
+///     \cgalParamDescription{an instance of a geometric traits class}
+///     \cgalParamType{a class model of `Kernel`}
+///     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{snapping_tolerance}
+///     \cgalParamDescription{a tolerance value used to snap barycentric coordinates}
+///     \cgalParamType{double}
+///     \cgalParamDefault{`0`}
+///     \cgalParamExtra{Depending on the geometric traits used, the computation of the barycentric coordinates
+///                     might be an inexact construction, thus leading to sometimes surprising values
+///                     (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle of an edge).
+///                     The coordinates will be snapped towards `0` and `1` if the difference is smaller
+///                     than the tolerance value, while still ensuring that the total sum of the coordinates is `1`.}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 template <typename TriangleMesh, typename NamedParameters>
@@ -1793,38 +1824,46 @@ locate(const typename property_map_value<TriangleMesh, boost::vertex_point_t>::t
 
 /// \ingroup PMP_locate_grp
 ///
-/// \brief Returns the face location along `ray` nearest to its source point.
+/// \brief returns the face location along `ray` nearest to its source point.
 ///
 /// If the ray does not intersect the mesh, a default constructed location is returned.
 ///
 /// \tparam TriangleMesh must be a model of `FaceListGraph`.
 /// \tparam Point3VPM must be a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 ///                   as key type and the \cgal 3D point type (your traits' `%Point_3`) as value type.
-/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param ray a ray to intersect with the input triangulated surface mesh
 /// \param tree an AABB tree containing the triangular faces of the input surface mesh to perform the point location with
 /// \param tm a triangulated surface mesh
-/// \param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below:
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
-///   \cgalParamBegin{vertex_point_map}
-///     the property map with the points associated to the vertices of `tm`.
-///     If this parameter is omitted, an internal property map for
-///     `boost::vertex_point_t` must be available in `TriangleMesh`.
-///   \cgalParamEnd
-///   \cgalParamBegin{geom_traits}
-///     a geometric traits class instance, model of `Kernel` compatible with the point type held
-///     in the vertex point property map (either user-provided or internal to the mesh).
-///     Must be identical to the traits used in the template parameter of the `AABB_traits`.
-///   \cgalParamEnd
-///   \cgalParamBegin{snapping_tolerance}
-///     a tolerance value used to snap barycentric coordinates. Depending on the geometric traits used,
-///     the computation of the barycentric coordinates might be an inexact construction, thus leading
-///     to sometimes surprising values (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle
-///     of an edge). The coordinates will be snapped towards `0` and `1` if the difference is smaller than the tolerance value, while
-///     still ensuring that the total sum of the coordinates is `1`. By default, the tolerance is `0`.
-///   \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{geom_traits}
+///     \cgalParamDescription{an instance of a geometric traits class}
+///     \cgalParamType{a class model of `Kernel`}
+///     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+///     \cgalParamExtra{Must be identical to the traits used in the template parameter of the `AABB_traits`.}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{snapping_tolerance}
+///     \cgalParamDescription{a tolerance value used to snap barycentric coordinates}
+///     \cgalParamType{double}
+///     \cgalParamDefault{`0`}
+///     \cgalParamExtra{Depending on the geometric traits used, the computation of the barycentric coordinates
+///                     might be an inexact construction, thus leading to sometimes surprising values
+///                     (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle of an edge).
+///                     The coordinates will be snapped towards `0` and `1` if the difference is smaller
+///                     than the tolerance value, while still ensuring that the total sum of the coordinates is `1`.}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \pre `ray` is an object with the same ambient dimension as the point type (the value type of the vertex point map).
@@ -1926,7 +1965,7 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh>::Ra
 
 /// \ingroup PMP_locate_grp
 ///
-/// \brief Returns the face location along `ray` nearest to its source point.
+/// \brief returns the face location along `ray` nearest to its source point.
 ///
 /// If the ray does not intersect the mesh, a default constructed location is returned.
 ///
@@ -1936,29 +1975,37 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh>::Ra
 ///          that accept a reference to an AABB tree as input.
 ///
 /// \tparam TriangleMesh must be a model of `FaceListGraph`.
-/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param ray a ray to intersect with the input triangulated surface mesh
 /// \param tm the input triangulated surface mesh
-/// \param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below:
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
-///   \cgalParamBegin{vertex_point_map}
-///     the property map with the points associated to the vertices of `tm`.
-///     If this parameter is omitted, an internal property map for
-///     `boost::vertex_point_t` must be available in `TriangleMesh`.
-///   \cgalParamEnd
-///   \cgalParamBegin{geom_traits}
-///     a geometric traits class instance, model of `Kernel` compatible with the point type held
-///     in the vertex point property map (either user-provided or internal to the mesh).
-///   \cgalParamEnd
-///   \cgalParamBegin{snapping_tolerance}
-///     a tolerance value used to snap barycentric coordinates. Depending on the geometric traits used,
-///     the computation of the barycentric coordinates might be an inexact construction, thus leading
-///     to sometimes surprising values (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle
-///     of an edge). The coordinates will be snapped towards `0` and `1` if the difference is smaller than the tolerance value, while
-///     still ensuring that the total sum of the coordinates is `1`. By default, the tolerance is `0`.
-///   \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{geom_traits}
+///     \cgalParamDescription{an instance of a geometric traits class}
+///     \cgalParamType{a class model of `Kernel`}
+///     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{snapping_tolerance}
+///     \cgalParamDescription{a tolerance value used to snap barycentric coordinates}
+///     \cgalParamType{double}
+///     \cgalParamDefault{`0`}
+///     \cgalParamExtra{Depending on the geometric traits used, the computation of the barycentric coordinates
+///                     might be an inexact construction, thus leading to sometimes surprising values
+///                     (e.g. a triplet `[0.5, 0.5, -1-e17]` for a point at the middle of an edge).
+///                     The coordinates will be snapped towards `0` and `1` if the difference is smaller
+///                     than the tolerance value, while still ensuring that the total sum of the coordinates is `1`.}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \pre `ray` is an object with the same ambient dimension as the point type (the value type of the vertex point map).

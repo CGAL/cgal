@@ -29,7 +29,7 @@ namespace CGAL {
 //
 template <typename Arrangement, typename ZoneVisitor>
 void Arrangement_zone_2<Arrangement, ZoneVisitor>::
-init_with_hint(const X_monotone_curve_2& cv, const Object& obj)
+init_with_hint(const X_monotone_curve_2& cv, Pl_result_type obj)
 {
   // Set the curve and check whether its ends are bounded, therefore
   // associated with valid endpoints.
@@ -95,9 +95,8 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
   // curve (currently m_obj stores the object containing it).
   const Vertex_const_handle* vh;
   const Halfedge_const_handle* hh;
-  const Face_const_handle* fh;
 
-  if ((vh = object_cast<Vertex_const_handle>(&m_obj)) != nullptr) {
+  if ((vh = boost::get<Vertex_const_handle>(&m_obj)) != nullptr) {
     CGAL_assertion(m_has_left_pt);
 
     // The left endpoint coincides with an existing vertex:
@@ -119,7 +118,7 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
 #endif
 
   }
-  else if ((hh = object_cast<Halfedge_const_handle>(&m_obj)) != nullptr) {
+  else if ((hh = boost::get<Halfedge_const_handle>(&m_obj)) != nullptr) {
     if (m_has_left_pt) {
       // Obtain the right halfedge from the halfedge-pair containing m_left_pt
       // in their interior.
@@ -160,7 +159,7 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
   }
   else {
     // The left endpoint lies inside a face.
-    fh = object_cast<Face_const_handle>(&m_obj);
+    const Face_const_handle* fh = boost::get<Face_const_handle>(&m_obj);
 
     CGAL_assertion_msg(fh != nullptr,
                        "Invalid object returned by the point-location query.");
@@ -1514,7 +1513,7 @@ bool Arrangement_zone_2<Arrangement, ZoneVisitor>::_zone_in_overlap()
     // In this case m_overlap_cv has a finite right endpoint. In this case,
     // if the right vertex of m_intersect_he is associated with a finite point,
     // we check whether it is equal to cv_right_pt. Otherwise, we know that
-    // m_intersect_he extends to the the right of m_overlap_cv, and there is no
+    // m_intersect_he extends to the right of m_overlap_cv, and there is no
     // vertex currently associated with m_overlap_cv's right endpoint.
     if (! he_right_v->is_at_open_boundary() &&
         equal(cv_right_pt, he_right_v->point()))

@@ -91,7 +91,7 @@ struct Periodic_structural_filtering_selector_3<true>
 
 /**\class Periodic_3_triangulation_3
  *
- * \brief Implements functionality for computing in periodic space.
+ * \brief implements functionality for computing in periodic space.
  *
  * There are several things that are special to computing in $\mathbb{T}^3$
  * such as
@@ -2497,7 +2497,7 @@ inline Bounded_side Periodic_3_triangulation_3<GT,TDS>::side_of_cell(
   }
 } // side_of_cell
 
-/*! \brief Insert point.
+/*! \brief inserts point.
 *
 * Inserts the point p into the triangulation. It assumes that
 * the cell c containing p is already known.
@@ -2828,7 +2828,7 @@ find_conflicts(Cell_handle d, const Offset& current_off,
   return it;
 }
 
-/*! \brief Insert point into triangulation.
+/*! \brief inserts point into triangulation.
  *
  * Inserts the point p into the triangulation. It expects
  * - a cell to start the point location
@@ -2938,7 +2938,7 @@ inline bool Periodic_3_triangulation_3<GT,TDS>::has_self_edges(Cell_handle c) co
       (c->vertex(2) == c->vertex(3)));
 }
 
-/*! \brief Tests if the triangulation is valid.
+/*! \brief tests if the triangulation is valid.
  *
  * A triangulation is valid if
  * - A cell is not its own neighbor.
@@ -3086,7 +3086,7 @@ inline void Periodic_3_triangulation_3<GT,TDS>::make_hole(Vertex_handle v,
   }
 }
 
-/*! \brief Remove a vertex from the triangulation.
+/*! \brief removes a vertex from the triangulation.
  *
  * Removes vertex v from the triangulation.
  */
@@ -3127,7 +3127,7 @@ remove(Vertex_handle v, PointRemover& r, Conflict_tester& t, CoverManager& cover
   }
 }
 
-/*! \brief Remove a vertex from the triangulation.
+/*! \brief removes a vertex from the triangulation.
  *
  * Removes vertex v from the triangulation.
  * It expects a reference to an instance of a PointRemover.
@@ -3339,7 +3339,7 @@ periodic_remove(Vertex_handle v, PointRemover& remover, CoverManager& cover_mana
 // ############################################################################
 // ############################################################################
 
-/** \brief Delete each redundant cell and the not anymore needed data
+/** \brief deletes each redundant cell and the not anymore needed data
  *  structures.
  *
  *  This function consists of four iterations over all cells and one
@@ -3858,7 +3858,7 @@ Periodic_3_triangulation_3<GT,TDS>::get_cell(const Vertex_handle* vh) const
   return Cell_handle();
 }
 
-/*! \brief Get the offset of tester.point() such that
+/*! \brief gets the offset of tester.point() such that
  * this point is in conflict with c w.r.t tester.get_offset().
  *
  * Implementation: Just try all eight possibilities.

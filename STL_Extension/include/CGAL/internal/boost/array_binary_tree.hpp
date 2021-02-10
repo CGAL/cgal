@@ -23,6 +23,7 @@
 #include <CGAL/iterator.h>
 
 #include <boost/config.hpp>
+#include <boost/iterator.hpp>
 
 #include <functional>
 

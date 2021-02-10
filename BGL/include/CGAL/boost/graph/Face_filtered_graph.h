@@ -105,6 +105,66 @@ struct Face_filtered_graph
   typedef Face_filtered_graph<Graph, FIMap, VIMap, HIMap> Self;
 
   /*!
+   * \brief constructs an empty face filtered graph (no face is selected)
+   *
+   * \tparam NamedParameters a sequence of named parameters
+   *
+   * \param graph the underlying graph.
+   *
+   * \param np optional sequence of named parameters among the ones listed below
+   *
+   * \cgalNamedParamsBegin
+   *   \cgalParamNBegin{vertex_index_map}
+   *     \cgalParamDescription{a property map associating to each vertex of `graph` a unique index between `0` and `num_vertices(graph) - 1`}
+   *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+   *                    as key type and `std::size_t` as value type}
+   *     \cgalParamDefault{an automatically indexed internal map}
+   *     \cgalParamExtra{If this parameter is not passed, internal machinery will create and initialize
+   *                     a face index property map, either using the internal property map if it exists
+   *                     or using an external map. The latter might result in  - slightly - worsened performance
+   *                     in case of non-constant complexity for index access.}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{halfedge_index_map}
+   *     \cgalParamDescription{a property map associating to each halfedge of `graph` a unique index between `0` and `num_halfedges(graph) - 1`}
+   *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%halfedge_descriptor`
+   *                    as key type and `std::size_t` as value type}
+   *     \cgalParamDefault{an automatically indexed internal map}
+   *     \cgalParamExtra{If this parameter is not passed, internal machinery will create and initialize
+   *                     a face index property map, either using the internal property map if it exists
+   *                     or using an external map. The latter might result in  - slightly - worsened performance
+   *                     in case of non-constant complexity for index access.}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{face_index_map}
+   *     \cgalParamDescription{a property map associating to each face of `graph` a unique index between `0` and `num_faces(graph) - 1`}
+   *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%face_descriptor`
+   *                    as key type and `std::size_t` as value type}
+   *     \cgalParamDefault{an automatically indexed internal map}
+   *     \cgalParamExtra{If this parameter is not passed, internal machinery will create and initialize
+   *                     a face index property map, either using the internal property map if it exists
+   *                     or using an external map. The latter might result in  - slightly - worsened performance
+   *                     in case of non-constant complexity for index access.}
+   *   \cgalParamNEnd
+   * \cgalNamedParamsEnd
+   */
+  template <class CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+  Face_filtered_graph(const Graph& graph,
+                      const CGAL_BGL_NP_CLASS& np)
+    : _graph(const_cast<Graph&>(graph))
+    , fimap(CGAL::get_initialized_face_index_map(graph, np))
+    , vimap(CGAL::get_initialized_vertex_index_map(graph, np))
+    , himap(CGAL::get_initialized_halfedge_index_map(graph, np))
+    , selected_faces(num_faces(graph), 0)
+    , selected_vertices(num_vertices(graph), 0)
+    , selected_halfedges(num_halfedges(graph), 0)
+  {}
+
+  Face_filtered_graph(const Graph& graph)
+    :Face_filtered_graph(graph, parameters::all_default())
+  {}
+
+  /*!
    * \brief Constructor where the set of selected faces is specified as a range of patch ids.
    *
    * \tparam FacePatchIndexMap a model of `ReadablePropertyMap` with
@@ -113,22 +173,44 @@ struct Face_filtered_graph
    * \tparam FacePatchIndexRange a model of `ConstRange` with `boost::property_traits<FacePatchIndexMap>::%value_type` as value type.
    * \tparam NamedParameters a sequence of named parameters
    *
-   * \param graph the underlying graph.
-   * \param face_patch_index_map the property_map that assigns a patch index to each face, with
-      `face_descriptor` as key type and `boost::graph_traits<Graph>::%faces_size_type` as value type.
-   * \param selected_face_patch_indices a range of the face patch indices to select.
-   * \param np optional sequence of named parameters among the ones listed below
+   * \param graph the underlying graph
+   * \param face_patch_index_map the property map that assigns a patch index to each face
+   * \param selected_face_patch_indices a range of the face patch indices to select
+   * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
    *
    * \cgalNamedParamsBegin
-   *   \cgalParamBegin{face_index_map}
-   *     a property map containing for each face of `graph` a unique index between `0` and `num_faces(graph)-1`
-   *   \cgalParamEnd
-   *   \cgalParamBegin{vertex_index_map}
-   *     a property map containing for each vertex of `graph` a unique index between `0` and `num_vertices(graph)-1`
-   *   \cgalParamEnd
-   *   \cgalParamBegin{halfedge_index_map}
-   *     a property map containing for each halfedge of `graph` a unique index between `0` and `num_halfedges(graph)-1`
-   *   \cgalParamEnd
+   *   \cgalParamNBegin{vertex_index_map}
+   *     \cgalParamDescription{a property map associating to each vertex of `graph` a unique index between `0` and `num_vertices(graph) - 1`}
+   *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+   *                    as key type and `std::size_t` as value type}
+   *     \cgalParamDefault{an automatically indexed internal map}
+   *     \cgalParamExtra{If this parameter is not passed, internal machinery will create and initialize
+   *                     a face index property map, either using the internal property map if it exists
+   *                     or using an external map. The latter might result in  - slightly - worsened performance
+   *                     in case of non-constant complexity for index access.}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{halfedge_index_map}
+   *     \cgalParamDescription{a property map associating to each halfedge of `graph` a unique index between `0` and `num_halfedges(graph) - 1`}
+   *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%halfedge_descriptor`
+   *                    as key type and `std::size_t` as value type}
+   *     \cgalParamDefault{an automatically indexed internal map}
+   *     \cgalParamExtra{If this parameter is not passed, internal machinery will create and initialize
+   *                     a face index property map, either using the internal property map if it exists
+   *                     or using an external map. The latter might result in  - slightly - worsened performance
+   *                     in case of non-constant complexity for index access.}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{face_index_map}
+   *     \cgalParamDescription{a property map associating to each face of `graph` a unique index between `0` and `num_faces(graph) - 1`}
+   *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%face_descriptor`
+   *                    as key type and `std::size_t` as value type}
+   *     \cgalParamDefault{an automatically indexed internal map}
+   *     \cgalParamExtra{If this parameter is not passed, internal machinery will create and initialize
+   *                     a face index property map, either using the internal property map if it exists
+   *                     or using an external map. The latter might result in  - slightly - worsened performance
+   *                     in case of non-constant complexity for index access.}
+   *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    */
   template <typename FacePatchIndexMap, class FacePatchIndexRange, class CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -172,23 +254,45 @@ struct Face_filtered_graph
       `face_descriptor` as key type and
       `graph_traits<Graph>::%faces_size_type` as value type.
    * \tparam NamedParameters a sequence of named parameters
+   *
    * \param graph the underlying graph.
-   * \param face_patch_index_map the property_map that assigns a patch index to each face, with
-      `face_descriptor` as key type and
-      `graph_traits<Graph>::%faces_size_type` as value type.
-   * \param selected_face_patch_index the index of the face patch selected.
-   * \param np optional sequence of named parameters among the ones listed below
+   * \param face_patch_index_map the property map that assigns a patch index to each face
+   * \param selected_face_patch_index the index of the face patch selected
+   * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
    *
    * \cgalNamedParamsBegin
-   *   \cgalParamBegin{face_index_map}
-   *     a property map containing for each face of `graph` a unique index between `0` and `num_faces(graph)-1`
-   *   \cgalParamEnd
-   *   \cgalParamBegin{vertex_index_map}
-   *     a property map containing for each vertex of `graph` a unique index between `0` and `num_vertices(graph)-1`
-   *   \cgalParamEnd
-   *   \cgalParamBegin{halfedge_index_map}
-   *     a property map containing for each halfedge of `graph` a unique index between `0` and `num_halfedges(graph)-1`
-   *   \cgalParamEnd
+   *   \cgalParamNBegin{vertex_index_map}
+   *     \cgalParamDescription{a property map associating to each vertex of `graph` a unique index between `0` and `num_vertices(graph) - 1`}
+   *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+   *                    as key type and `std::size_t` as value type}
+   *     \cgalParamDefault{an automatically indexed internal map}
+   *     \cgalParamExtra{If this parameter is not passed, internal machinery will create and initialize
+   *                     a face index property map, either using the internal property map if it exists
+   *                     or using an external map. The latter might result in  - slightly - worsened performance
+   *                     in case of non-constant complexity for index access.}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{halfedge_index_map}
+   *     \cgalParamDescription{a property map associating to each halfedge of `graph` a unique index between `0` and `num_halfedges(graph) - 1`}
+   *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%halfedge_descriptor`
+   *                    as key type and `std::size_t` as value type}
+   *     \cgalParamDefault{an automatically indexed internal map}
+   *     \cgalParamExtra{If this parameter is not passed, internal machinery will create and initialize
+   *                     a face index property map, either using the internal property map if it exists
+   *                     or using an external map. The latter might result in  - slightly - worsened performance
+   *                     in case of non-constant complexity for index access.}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{face_index_map}
+   *     \cgalParamDescription{a property map associating to each face of `graph` a unique index between `0` and `num_faces(graph) - 1`}
+   *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%face_descriptor`
+   *                    as key type and `std::size_t` as value type}
+   *     \cgalParamDefault{an automatically indexed internal map}
+   *     \cgalParamExtra{If this parameter is not passed, internal machinery will create and initialize
+   *                     a face index property map, either using the internal property map if it exists
+   *                     or using an external map. The latter might result in  - slightly - worsened performance
+   *                     in case of non-constant complexity for index access.}
+   *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    */
   template <typename FacePatchIndexMap, class CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -221,20 +325,44 @@ struct Face_filtered_graph
    *
    * \tparam FaceRange a model of `ConstRange` with `face_descriptor` as value type.
    * \tparam NamedParameters a sequence of named parameters
-   * \param graph the graph containing the wanted patch.
-   * \param selected_faces the set of selected faces.
-   * \param np optional sequence of named parameters among the ones listed below
+   *
+   * \param graph the graph containing the wanted patch
+   * \param selected_faces the set of selected faces
+   * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
    *
    * \cgalNamedParamsBegin
-   *   \cgalParamBegin{face_index_map}
-   *     a property map containing an index for each face initialized from 0 to `num_vertices(graph)`
-   *   \cgalParamEnd
-   *   \cgalParamBegin{vertex_index_map}
-   *     a property map containing an index for each vertex initialized 0 to `num_vertices(graph)`
-   *   \cgalParamEnd
-   *   \cgalParamBegin{halfedge_index_map}
-   *     a property map containing an index for each halfedge initialized 0 to `num_halfedges(graph)`
-   *   \cgalParamEnd
+   *   \cgalParamNBegin{vertex_index_map}
+   *     \cgalParamDescription{a property map associating to each vertex of `graph` a unique index between `0` and `num_vertices(graph) - 1`}
+   *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+   *                    as key type and `std::size_t` as value type}
+   *     \cgalParamDefault{an automatically indexed internal map}
+   *     \cgalParamExtra{If this parameter is not passed, internal machinery will create and initialize
+   *                     a face index property map, either using the internal property map if it exists
+   *                     or using an external map. The latter might result in  - slightly - worsened performance
+   *                     in case of non-constant complexity for index access.}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{halfedge_index_map}
+   *     \cgalParamDescription{a property map associating to each halfedge of `graph` a unique index between `0` and `num_halfedges(graph) - 1`}
+   *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%halfedge_descriptor`
+   *                    as key type and `std::size_t` as value type}
+   *     \cgalParamDefault{an automatically indexed internal map}
+   *     \cgalParamExtra{If this parameter is not passed, internal machinery will create and initialize
+   *                     a face index property map, either using the internal property map if it exists
+   *                     or using an external map. The latter might result in  - slightly - worsened performance
+   *                     in case of non-constant complexity for index access.}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{face_index_map}
+   *     \cgalParamDescription{a property map associating to each face of `graph` a unique index between `0` and `num_faces(graph) - 1`}
+   *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%face_descriptor`
+   *                    as key type and `std::size_t` as value type}
+   *     \cgalParamDefault{an automatically indexed internal map}
+   *     \cgalParamExtra{If this parameter is not passed, internal machinery will create and initialize
+   *                     a face index property map, either using the internal property map if it exists
+   *                     or using an external map. The latter might result in  - slightly - worsened performance
+   *                     in case of non-constant complexity for index access.}
+   *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    */
   template <typename FaceRange, class CGAL_BGL_NP_TEMPLATE_PARAMETERS>

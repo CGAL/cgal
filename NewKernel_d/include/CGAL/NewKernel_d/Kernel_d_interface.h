@@ -59,8 +59,8 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
         typedef typename Get_functor<Base, Side_of_oriented_sphere_tag>::type Side_of_oriented_sphere_d;
         typedef typename Get_functor<Base, Power_side_of_power_sphere_tag>::type Power_side_of_power_sphere_d;
         typedef typename Get_functor<Base, Power_side_of_bounded_power_circumsphere_tag>::type Power_side_of_bounded_power_sphere_d;
-        typedef typename Get_functor<Base, Power_center_tag>::type Power_center_d;
-        typedef typename Get_functor<Base, Power_distance_tag>::type Power_distance_d;
+        typedef typename Get_functor<Base, Power_center_tag>::type Construct_power_sphere_d;
+        typedef typename Get_functor<Base, Power_distance_tag>::type Compute_power_product_d;
         typedef typename Get_functor<Base, Contained_in_affine_hull_tag>::type Contained_in_affine_hull_d;
         typedef typename Get_functor<Base, Construct_flat_orientation_tag>::type Construct_flat_orientation_d;
         typedef typename Get_functor<Base, In_flat_orientation_tag>::type In_flat_orientation_d;
@@ -222,8 +222,8 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
         Side_of_oriented_sphere_d side_of_oriented_sphere_d_object()const{ return Side_of_oriented_sphere_d(*this); }
         Power_side_of_power_sphere_d power_side_of_power_sphere_d_object()const{ return Power_side_of_power_sphere_d(*this); }
         Power_side_of_bounded_power_sphere_d power_side_of_bounded_power_sphere_d_object()const{ return Power_side_of_bounded_power_sphere_d(*this); }
-        Power_center_d power_center_d_object()const{ return Power_center_d(*this); }
-        Power_distance_d power_distance_d_object()const{ return Power_distance_d(*this); }
+        Construct_power_sphere_d construct_power_sphere_d_object()const{ return Construct_power_sphere_d(*this); }
+        Compute_power_product_d compute_power_product_d_object()const{ return Compute_power_product_d(*this); }
         Side_of_bounded_sphere_d side_of_bounded_sphere_d_object()const{ return Side_of_bounded_sphere_d(*this); }
         Contained_in_affine_hull_d contained_in_affine_hull_d_object()const{ return Contained_in_affine_hull_d(*this); }
         Contained_in_linear_hull_d contained_in_linear_hull_d_object()const{ return Contained_in_linear_hull_d(*this); }

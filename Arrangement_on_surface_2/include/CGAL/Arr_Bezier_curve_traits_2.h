@@ -7,9 +7,9 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Ron Wein     <wein@post.tau.ac.il>
-//                 Iddo Hanniel <iddoh@cs.technion.ac.il>
-//                 Waqar Khan   <wkhan@mpi-inf.mpg.de>
+// Author(s): Ron Wein     <wein@post.tau.ac.il>
+//            Iddo Hanniel <iddoh@cs.technion.ac.il>
+//            Waqar Khan   <wkhan@mpi-inf.mpg.de>
 
 #ifndef CGAL_ARR_BEZIER_CURVE_TRAITS_2_H
 #define CGAL_ARR_BEZIER_CURVE_TRAITS_2_H
@@ -163,7 +163,7 @@ public:
   }
   //@}
 
-  /// \name Functor definitions for the arrangement traits.
+  /// \name Basic functor definitions for the arrangement traits
   //@{
 
   /*! \class Compare_x_2
@@ -473,33 +473,34 @@ public:
   {
     return (Equal_2 (p_cache));
   }
+  //@}
+
+  //! \name Intersections, subdivisions, and mergings
+  //@{
 
   /*! \class Make_x_monotone_2
-   * The Make_x_monotone_2 functor.
+   * A functor for subdividing a curve into x-monotone curves.
    */
-  class Make_x_monotone_2
-  {
+  class Make_x_monotone_2 {
   private:
-    Bezier_cache         *p_cache;
+    Bezier_cache* p_cache;
 
   public:
-
     /*! Constructor. */
-    Make_x_monotone_2 (Bezier_cache *cache) :
-      p_cache (cache)
-    {}
+    Make_x_monotone_2(Bezier_cache* cache) : p_cache(cache) {}
 
-    /*!
-     * Cut the given Bezier curve into x-monotone subcurves and insert them
-     * into the given output iterator.
-     * \param cv The curve.
-     * \param oi The output iterator, whose value-type is Object. The returned
-     *           objects is a wrapper for an X_monotone_curve_2 object.
-     * \return The past-the-end iterator.
+    /*! Subdivide a given Bezier curve into x-monotone subcurves and insert them
+     * into a given output iterator.
+     * \param cv the curve.
+     * \param oi an output iterator for the result. Its value type is a variant
+     *           that wraps Point_2 or an X_monotone_curve_2 objects.
+     * \return the past-the-end iterator.
      */
-    template<class OutputIterator>
+    template <typename OutputIterator>
     OutputIterator operator() (const Curve_2& B, OutputIterator oi) const
     {
+      typedef boost::variant<Point_2, X_monotone_curve_2>
+                                                Make_x_monotone_result;
       typedef typename Bounding_traits::Vertical_tangency_point
                                                 Vertical_tangency_point;
 
@@ -512,20 +513,17 @@ public:
                  std::back_inserter(cpts));
 
       bound_tr.compute_vertical_tangency_points
-          (cpts, std::back_inserter (vpt_bounds));
+        (cpts, std::back_inserter (vpt_bounds));
 
       // Construct Point_2 from bounded tangency points.
       std::list<Point_2>                            vpts;
       bool                                          app_ok = true;
-      typename std::list<Vertical_tangency_point>::const_iterator iter;
 
-      for (iter = vpt_bounds.begin(); iter != vpt_bounds.end(); ++iter)
-      {
+      for (auto iter = vpt_bounds.begin(); iter != vpt_bounds.end(); ++iter) {
         const typename Bounding_traits::Bez_point_bound& bound = iter->bound;
         const typename Bounding_traits::Bez_point_bbox&  bbox = iter->bbox;
 
-        if (! bound.can_refine)
-        {
+        if (! bound.can_refine) {
           // If we cannot refine the vertical-tangency bound anymore, then
           // we failed to bound the vertical tangency point.
           // \todo In the future, we might want to use the info.
@@ -534,28 +532,25 @@ public:
         }
 
         // Construct an approximate vertical tangency point.
-        Point_2   pt;
+        Point_2 pt;
 
-        if (bound.type == Bounding_traits::Bez_point_bound::RATIONAL_PT)
-        {
+        if (bound.type == Bounding_traits::Bez_point_bound::RATIONAL_PT) {
           CGAL_assertion (CGAL::compare (bound.t_min, bound.t_max) == EQUAL);
-          Rational  t0 = bound.t_min;
+          Rational t0 = bound.t_min;
 
           pt = Point_2 (B, t0);
         }
-        else
-        {
-          pt.add_originator (typename Point_2::Originator(B, bound));
+        else {
+          pt.add_originator(typename Point_2::Originator(B, bound));
         }
-        pt.set_bbox (bbox);
+        pt.set_bbox(bbox);
 
         vpts.push_back(pt);
       }
 
       // If bounding the approximated vertical-tangency points went fine,
       // use these points as endpoint for the x-monotone subcurves.
-      if (app_ok)
-      {
+      if (app_ok) {
         // Create the x-monotone subcurves with approximate endpoints.
         typename std::list<Point_2>::const_iterator pit;
         unsigned int  xid = 1;            // Serial number of the subcurve.
@@ -563,19 +558,16 @@ public:
         // Note: xid is needed in ctr of p0 (and of p1 below),
         // for handling end case of start point == end point.
 
-        for (pit = vpts.begin(); pit != vpts.end(); ++pit)
-        {
-          *oi++ = CGAL::make_object (X_monotone_curve_2 (B, xid,
-                                                         p0, *pit,
-                                                         *p_cache));
+        for (pit = vpts.begin(); pit != vpts.end(); ++pit) {
+          *oi++ = Make_x_monotone_result(X_monotone_curve_2(B, xid, p0, *pit,
+                                                            *p_cache));
           xid++;
           p0 = *pit;
         }
 
         Point_2    p1(B, xid, Rational(1)); // A rational end point.
-        *oi++ = CGAL::make_object (X_monotone_curve_2 (B, xid,
-                                                       p0, p1,
-                                                       *p_cache));
+        *oi++ = Make_x_monotone_result(X_monotone_curve_2(B, xid, p0, p1,
+                                                          *p_cache));
         return (oi);
       }
 
@@ -583,41 +575,34 @@ public:
       // points in an exact manner. We do this by considering all t-values
       // on B(t) = (X(t), Y(t)), such that X'(t) = 0.
       const typename Bezier_cache::Vertical_tangency_list&
-        vt_list = p_cache->get_vertical_tangencies (B.id(),
-                                                    B.x_polynomial(),
-                                                    B.x_norm());
+        vt_list = p_cache->get_vertical_tangencies(B.id(), B.x_polynomial(),
+                                                   B.x_norm());
 
       // Create the x-monotone subcurves.
-      Point_2                                        p1;
-      typename Bezier_cache::Vertical_tangency_iter  it;
-      unsigned int  xid = 1;            // Serial number of the subcurve.
-      Point_2                                        p0 (B, xid, Rational(0));
+      Point_2 p1;
+      unsigned int xid = 1;            // Serial number of the subcurve.
+      Point_2 p0(B, xid, Rational(0));
 
 
-      for (it = vt_list.begin(); it != vt_list.end(); ++it)
-      {
-        p1 = Point_2 (B, *it);
-        *oi++ = CGAL::make_object (X_monotone_curve_2 (B, xid,
-                                                       p0, p1,
-                                                       *p_cache));
+      for (auto it = vt_list.begin(); it != vt_list.end(); ++it) {
+        p1 = Point_2(B, *it);
+        *oi++ = Make_x_monotone_result(X_monotone_curve_2(B, xid, p0, p1,
+                                                          *p_cache));
         xid++;
         p0 = p1;
       }
 
       // Create the final subcurve.
-      p1 = Point_2 (B, xid, Rational(1));
-      *oi++ = CGAL::make_object (X_monotone_curve_2 (B, xid,
-                                                     p0, p1,
-                                                     *p_cache));
-      return (oi);
+      p1 = Point_2(B, xid, Rational(1));
+      *oi++ = Make_x_monotone_result(X_monotone_curve_2(B, xid, p0, p1,
+                                                        *p_cache));
+      return oi;
     }
   };
 
   /*! Get a Make_x_monotone_2 functor object. */
-  Make_x_monotone_2 make_x_monotone_2_object () const
-  {
-    return (Make_x_monotone_2 (p_cache));
-  }
+  Make_x_monotone_2 make_x_monotone_2_object() const
+  { return (Make_x_monotone_2 (p_cache)); }
 
   /*! \class Split_2
    * The Split_2 functor.
@@ -756,7 +741,6 @@ public:
   {
     return Merge_2(this);
   }
-
   //@}
 
   /// \name Functor definitions for the Boolean set-operation traits.

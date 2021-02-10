@@ -59,10 +59,7 @@ takes only two required parameters: the input triangulation, and the desired edg
 which drives the remeshing process.
 
 \ref BGLNamedParameters are used to deal with optional parameters.
-The page \ref Remeshing_namedparameters provides a description
-of their usage, and of all the available parameters for tuning
-the remeshing process and results.
-
+The page \ref bgl_namedparameters describes their usage.
 
 \section secTetRemeshingExamples Examples
 
@@ -103,12 +100,34 @@ setting the named parameter `remesh_boundaries` to `false`.
 
 The tetrahedral remeshing algorithm is designed as a post-processing for
 mesh generation algorithms. The API allows to generate a tetrahedral mesh
-with `Mesh_3`, the tetrahedral mesh generation package, and
+with the \cgal \ref PkgMesh3 package, and
 further improve it with the tetrahedral remeshing algorithm.
 This example shows how to use tetrahedral mesh generation and remeshing in sequence,
 from a polyhedral domain with features.
 
 \cgalExample{Tetrahedral_remeshing/mesh_and_remesh_polyhedral_domain_with_features.cpp}
+
+
+\subsection ssecEx5 Tetrahedral Remeshing from Any Tetrahedral Mesh
+
+The following example shows how to read a mesh from a triangulation stored in a
+Medit file, perform tetrahedral remeshing, and save the output triangulation.
+The input triangulation should follow the validity requirements of a
+`CGAL::Triangulation_3` (valid connectivity, positive orientation of the cells, and
+coverage of the convex hull of the vertices).
+
+\cgalExample{Tetrahedral_remeshing/tetrahedral_remeshing_from_mesh.cpp}
+
+
+\section secTetRemeshingHistory Implementation History
+
+This package implements the uniform version of the "Multi-Material Adaptive Volume Remesher"
+algorithm for quality tetrahedral remeshing, described by Noura Faraj et al. in \cgalCite{faraj2016mvr}.
+
+A first version of the code was written by Noura Faraj, Jean-Marc Thiery, and Tamy Boubekeur.
+Jane Tournois worked on the finalization of the code, the API, and documentation.
+
+It was initially published in CGAL-5.1.
 
 */
 } /* namespace CGAL */

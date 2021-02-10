@@ -1,18 +1,16 @@
-#include<vector>
-#include<iterator>
-#include<iostream>
-#include<iomanip>
-#include<string>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include<boost/shared_ptr.hpp>
-
-#include<CGAL/Polygon_2.h>
-#include<CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include<CGAL/Straight_skeleton_builder_2.h>
-#include<CGAL/Polygon_offset_builder_2.h>
-#include<CGAL/compute_outer_frame_margin.h>
-
+#include <CGAL/Polygon_2.h>
+#include <CGAL/Polygon_2_algorithms.h>
+#include <CGAL/Straight_skeleton_builder_2.h>
+#include <CGAL/Polygon_offset_builder_2.h>
+#include <CGAL/compute_outer_frame_margin.h>
 #include "print.h"
+
+#include <boost/shared_ptr.hpp>
+
+#include <vector>
+#include <cassert>
 
 //
 // This example illustrates how to use the CGAL Straight Skeleton package
@@ -53,6 +51,8 @@ int main()
                   } ;
 
   std::vector<Point_2> star(pts,pts+8);
+
+  assert(CGAL::orientation_2(pts,pts+8,Kernel()) == CGAL::COUNTERCLOCKWISE);
 
   // We want an offset contour in the outside.
   // Since the package doesn't support that operation directly, we use the following trick:

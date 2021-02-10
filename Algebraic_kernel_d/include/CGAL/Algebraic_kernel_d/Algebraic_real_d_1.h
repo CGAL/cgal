@@ -180,13 +180,13 @@ public:
     }
   }
 
-  /*! \brief Refines the isolating interval. */
+  /*! \brief refines the isolating interval. */
   void refine() const{ this->ptr()->refine(); }
 
   /*! \brief Bisects the isolating interval. */
   void bisect() const{ this->ptr()->bisect(); }
 
-  /*! \brief Refines the isolating interval until \a m is outside
+  /*! \brief refines the isolating interval until \a m is outside
    *  the \c closed interval
    */
   template < class NTX >

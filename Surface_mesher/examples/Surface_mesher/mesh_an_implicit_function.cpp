@@ -2,6 +2,10 @@
 #include <CGAL/Complex_2_in_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
+#include <CGAL/IO/facets_in_complex_2_to_triangle_mesh.h>
+#include <CGAL/Surface_mesh.h>
+
+#include <fstream>
 
 // default triangulation for Surface_mesher
 typedef CGAL::Surface_mesh_default_triangulation_3 Tr;
@@ -17,6 +21,8 @@ typedef GT::FT FT;
 typedef FT (*Function)(Point_3);
 
 typedef CGAL::Implicit_surface_3<GT, Function> Surface_3;
+
+typedef CGAL::Surface_mesh<Point_3> Surface_mesh;
 
 FT sphere_function (Point_3 p) {
   const FT x2=p.x()*p.x(), y2=p.y()*p.y(), z2=p.z()*p.z();
@@ -38,6 +44,11 @@ int main() {
                                                      0.1); // distance bound
   // meshing surface
   CGAL::make_surface_mesh(c2t3, surface, criteria, CGAL::Non_manifold_tag());
+
+  Surface_mesh sm;
+  CGAL::facets_in_complex_2_to_triangle_mesh(c2t3, sm);
+  std::ofstream out("sphere.off");
+  out << sm << std::endl;
 
   std::cout << "Final number of points: " << tr.number_of_vertices() << "\n";
 }

@@ -159,9 +159,6 @@
 
 #if CGAL_HEADER_ONLY
 #  include <CGAL/internal/enable_third_party_libraries.h>
-#  if(BOOST_MSVC)
-#    include <CGAL/MSVC_compiler_config.h>
-#  endif
 #else
 #  include <CGAL/compiler_config.h>
 #endif
@@ -300,6 +297,10 @@
 // Same for C++17
 #if __cplusplus >= 201703L || _MSVC_LANG >= 201703L
 #  define CGAL_CXX17 1
+#endif
+// Same for C++20
+#if __cplusplus >= 202002L || _MSVC_LANG >= 202002L
+#  define CGAL_CXX20 1
 #endif
 
 #if defined(BOOST_NO_CXX11_HDR_FUNCTIONAL) || BOOST_VERSION < 105000
@@ -465,9 +466,9 @@ using std::max;
 
 //-------------------------------------------------------------------//
 // Is Geomview usable ?
-#if !defined(_MSC_VER) && !defined(__MINGW32__)
-#  define CGAL_USE_GEOMVIEW
-#endif
+//#if !defined(_MSC_VER) && !defined(__MINGW32__)
+//#  define CGAL_USE_GEOMVIEW
+//#endif
 
 
 //-------------------------------------------------------------------//
@@ -516,8 +517,10 @@ using std::max;
 #endif
 
 // Macro to specify a 'unused' attribute.
-#if defined(__GNUG__) || __has_attribute(__unused__)
-#  define CGAL_UNUSED  __attribute__ ((__unused__))
+#if __has_cpp_attribute(maybe_unused)
+#  define CGAL_UNUSED [[maybe_unused]]
+#elif defined(__GNUG__) || __has_attribute(__unused__) // [[maybe_unused]] is C++17
+#  define CGAL_UNUSED __attribute__ ((__unused__))
 #else
 #  define CGAL_UNUSED
 #endif
@@ -525,37 +528,12 @@ using std::max;
 // Macro to trigger deprecation warnings
 #ifdef CGAL_NO_DEPRECATION_WARNINGS
 #  define CGAL_DEPRECATED
+#  define CGAL_DEPRECATED_MSG(msg)
 #  define CGAL_DEPRECATED_UNUSED CGAL_UNUSED
-#elif defined(__GNUC__) || __has_attribute(__deprecated__)
-#  define CGAL_DEPRECATED __attribute__((__deprecated__))
-#if __has_attribute(__unused__)
-#  define CGAL_DEPRECATED_UNUSED __attribute__((__deprecated__, __unused__))
 #else
-#  define CGAL_DEPRECATED_UNUSED __attribute__((__deprecated__))
-#endif
-#elif defined (_MSC_VER) && (_MSC_VER > 1300)
-#  define CGAL_DEPRECATED __declspec(deprecated)
-#  define CGAL_DEPRECATED_UNUSED __declspec(deprecated)
-#else
-#  define CGAL_DEPRECATED
-#  define CGAL_DEPRECATED_UNUSED
-#endif
-
-// Macro to trigger deprecation warnings with a custom message
-#ifdef CGAL_NO_DEPRECATION_WARNINGS
-#  define CGAL_DEPRECATED_MSG(msg)
-#elif defined(__GNUC__) || __has_attribute(__deprecated__)
-#  if BOOST_GCC >= 40500 || __has_attribute(__deprecated__)
-#    define CGAL_DEPRECATED_MSG(msg) __attribute__ ((deprecated(msg)))
-#  else
-#    define CGAL_DEPRECATED_MSG(msg) __attribute__ ((deprecated))
-#  endif
-#elif defined (_MSC_VER) && (_MSC_VER > 1300)
-#  define CGAL_DEPRECATED_MSG(msg) __declspec(deprecated(msg))
-#elif defined(__clang__)
-#  define CGAL_DEPRECATED_MSG(msg) __attribute__ ((deprecated(msg)))
-#else
-#  define CGAL_DEPRECATED_MSG(msg)
+#  define CGAL_DEPRECATED [[deprecated]]
+#  define CGAL_DEPRECATED_MSG(msg) [[deprecated(msg)]]
+#  define CGAL_DEPRECATED_UNUSED [[deprecated]] CGAL_UNUSED
 #endif
 
 // Macro to specify a 'noreturn' attribute.
@@ -564,7 +542,7 @@ using std::max;
 #define CGAL_NORETURN  [[noreturn]]
 
 // Macro to specify [[no_unique_address]] if supported
-#if __has_cpp_attribute(no_unique_address)
+#if CGAL_CXX11 && __has_cpp_attribute(no_unique_address)
 #  define CGAL_NO_UNIQUE_ADDRESS [[no_unique_address]]
 #else
 #  define CGAL_NO_UNIQUE_ADDRESS
