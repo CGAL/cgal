@@ -85,7 +85,7 @@ private:
   FT m_max_time;
   Initializer m_initializer;
   Data_structure m_data;
-  const std::size_t m_num_events;
+  std::size_t m_num_events;
 
 public:
   Kinetic_shape_reconstruction_3(

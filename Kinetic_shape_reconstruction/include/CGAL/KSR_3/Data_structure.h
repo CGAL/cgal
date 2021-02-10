@@ -1752,16 +1752,19 @@ public:
 
     Point_2 future_point_a, future_point_b;
     Vector_2 future_direction_a, future_direction_b;
-    // const bool is_parallel =
+    bool is_parallel_a = false, is_parallel_b = false;
+    std::tie(is_parallel_a, is_parallel_b) =
     compute_future_points_and_directions(
       pvertex, iedge,
       future_point_a, future_point_b,
       future_direction_a, future_direction_b);
     CGAL_assertion(future_direction_a != Vector_2());
     CGAL_assertion(future_direction_b != Vector_2());
-    // if (is_parallel) {
-    //   CGAL_assertion_msg(false, "TODO: PVERTEX -> IEDGE, HANDLE CASE WITH PARALLEL LINES!");
-    // }
+    if (is_parallel_a || is_parallel_b) {
+      if (m_verbose) std::cout << "- pvertex to iedge, parallel case" << std::endl;
+      // CGAL_assertion_msg(!is_parallel_a && !is_parallel_b,
+      // "TODO: PVERTEX -> IEDGE, HANDLE CASE WITH PARALLEL LINES!");
+    }
 
     const PEdge pedge(pvertex.first, support_plane(pvertex).split_vertex(pvertex.second));
     CGAL_assertion(source(pedge) == pvertex || target(pedge) == pvertex);
@@ -1864,12 +1867,14 @@ public:
         std::cout << "- pthird pv: " << point_3(pthird) << std::endl;
       }
 
-      // const bool is_parallel =
+      const bool is_parallel =
       compute_future_point_and_direction(0, pvertex, pthird, iedge, future_point, future_direction);
       CGAL_assertion(future_direction != Vector_2());
-      // if (is_parallel) {
-      //   CGAL_assertion_msg(false, "TODO: PEDGE -> IEDGE 1, HANDLE CASE WITH PARALLEL LINES!");
-      // }
+      if (is_parallel) {
+        if (m_verbose) std::cout << "- pedge to iedge 1, parallel case" << std::endl;
+        // CGAL_assertion_msg(!is_parallel,
+        // "TODO: PEDGE -> IEDGE 1, HANDLE CASE WITH PARALLEL LINES!");
+      }
 
       direction(pvertex) = future_direction;
       support_plane(pvertex).set_point(pvertex.second, future_point);
@@ -1898,12 +1903,14 @@ public:
         std::cout << "- pthird po: " << point_3(pthird) << std::endl;
       }
 
-      // const bool is_parallel =
+      const bool is_parallel =
       compute_future_point_and_direction(0, pother, pthird, iedge, future_point, future_direction);
       CGAL_assertion(future_direction != Vector_2());
-      // if (is_parallel) {
-      //   CGAL_assertion_msg(false, "TODO: PEDGE -> IEDGE 2, HANDLE CASE WITH PARALLEL LINES!");
-      // }
+      if (is_parallel) {
+        if (m_verbose) std::cout << "- pedge to iedge 2, parallel case" << std::endl;
+        // CGAL_assertion_msg(!is_parallel,
+        // "TODO: PEDGE -> IEDGE 2, HANDLE CASE WITH PARALLEL LINES!");
+      }
 
       direction(pother) = future_direction;
       support_plane(pother).set_point(pother.second, future_point);
@@ -2013,20 +2020,16 @@ public:
 
     Point_2 future_point;
     Vector_2 future_direction;
+    const bool is_parallel =
+    compute_future_point_and_direction(0, pother, pthird, iedge, future_point, future_direction);
+    CGAL_assertion(future_direction != Vector_2());
+    if (is_parallel) {
+      if (m_verbose) std::cout << "- transfer pvertex, parallel case" << std::endl;
+      // CGAL_assertion_msg(!is_parallel,
+      // "TODO: TRANSFER PVERTEX, HANDLE CASE WITH PARALLEL LINES!");
+    }
+
     if (target_pface == null_pface()) { // in case we have 1 pface
-
-      const Point_2 pinit = iedge_line.projection(point_2(pother, m_current_time));
-      const Line_2 future_line(
-        point_2(pother, m_current_time + FT(1)),
-        point_2(pthird, m_current_time + FT(1)));
-      CGAL_assertion_msg(!CGAL::parallel(future_line, iedge_line),
-      "TODO: TRANSFER PVERTEX 1, HANDLE CASE WITH PARALLEL LINES!");
-
-      future_point = KSR::intersection<Point_2>(future_line, iedge_line);
-      CGAL_assertion(pinit != future_point);
-      future_direction = Vector_2(pinit, future_point);
-      CGAL_assertion(future_direction != Vector_2());
-      future_point = pinit - future_direction * m_current_time;
 
       support_plane(pvertex).set_point(pvertex.second, future_point);
       direction(pvertex) = future_direction;
@@ -2062,22 +2065,11 @@ public:
         CGAL::Euler::shift_source(he, mesh(pedge));
       }
 
-      const Point_2 pinit = iedge_line.projection(point_2(pother, m_current_time));
+      const auto pother_p = point_2(pother);
+      const Point_2 pinit = iedge_line.projection(pother_p);
       direction(pvertex) = direction(pother);
-      future_point = pinit - direction(pother) * m_current_time;
-      support_plane(pvertex).set_point(pvertex.second, future_point);
-
-      const Line_2 future_line(
-        point_2(pvertex, m_current_time + FT(1)),
-        point_2(pthird , m_current_time + FT(1)));
-      CGAL_assertion_msg(!CGAL::parallel(future_line, iedge_line),
-      "TODO: TRANSFER PVERTEX 2, HANDLE CASE WITH PARALLEL LINES!");
-
-      future_point = KSR::intersection<Point_2>(future_line, iedge_line);
-      CGAL_assertion(pinit != future_point);
-      future_direction = Vector_2(pinit, future_point);
-      CGAL_assertion(future_direction != Vector_2());
-      future_point = pinit - future_direction * m_current_time;
+      const auto fp = pinit - direction(pother) * m_current_time;
+      support_plane(pvertex).set_point(pvertex.second, fp);
 
       support_plane(pother).set_point(pother.second, future_point);
       direction(pother) = future_direction;
@@ -2964,11 +2956,19 @@ public:
     if (!is_open) {
       is_parallel = compute_future_point_and_direction(
         0, pv_prev, pv_next, iedge, future_point, future_direction);
-      CGAL_assertion_msg(!is_parallel, "TODO: CREATE PVERTEX, BACK/FRONT, ADD PARALLEL CASE!");
+      if (is_parallel) {
+        if (m_verbose) std::cout << "- new pvertex, back/front, parallel case" << std::endl;
+        CGAL_assertion_msg(!is_parallel,
+        "TODO: CREATE PVERTEX, BACK/FRONT, ADD PARALLEL CASE!");
+      }
     } else {
       is_parallel = compute_future_point_and_direction(
         pvertex, pv_prev, pv_next, iedge, future_point, future_direction);
-      CGAL_assertion_msg(!is_parallel, "TODO: CREATE_PVERTEX, OPEN, ADD PARALLEL CASE!");
+      if (is_parallel) {
+        if (m_verbose) std::cout << "- new pvertex, open, parallel case" << std::endl;
+        CGAL_assertion_msg(!is_parallel,
+        "TODO: CREATE_PVERTEX, OPEN, ADD PARALLEL CASE!");
+      }
     }
 
     CGAL_assertion(future_direction != Vector_2());
@@ -4837,7 +4837,9 @@ private:
       }
     }
 
+    CGAL_assertion(pinit != future_point_a);
     future_direction_a = Vector_2(pinit, future_point_a);
+    CGAL_assertion(future_direction_a != Vector_2());
     future_point_a = pinit - m_current_time * future_direction_a;
 
     if (m_verbose) {
@@ -4872,7 +4874,9 @@ private:
       }
     }
 
+    CGAL_assertion(pinit != future_point_b);
     future_direction_b = Vector_2(pinit, future_point_b);
+    CGAL_assertion(future_direction_b != Vector_2());
     future_point_b = pinit - m_current_time * future_direction_b;
 
     if (m_verbose) {
@@ -4953,7 +4957,9 @@ private:
       future_point = KSR::intersection<Point_2>(future_line_next, iedge_line);
     }
 
+    CGAL_assertion(pinit != future_point);
     future_direction = Vector_2(pinit, future_point);
+    CGAL_assertion(future_direction != Vector_2());
     future_point = pinit - m_current_time * future_direction;
 
     if (m_verbose) {
@@ -5028,7 +5034,9 @@ private:
       future_point = KSR::intersection<Point_2>(future_line_next, iedge_line);
     }
 
+    CGAL_assertion(pinit != future_point);
     future_direction = Vector_2(pinit, future_point);
+    CGAL_assertion(future_direction != Vector_2());
     future_point = pinit - m_current_time * future_direction;
 
     if (m_verbose) {
