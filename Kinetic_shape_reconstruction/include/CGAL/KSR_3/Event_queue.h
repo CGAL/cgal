@@ -37,7 +37,7 @@
 namespace CGAL {
 namespace KSR_3 {
 
-// TODO: DOES NOT WORK WITH AN EXACT KERNEL! WHY?
+// TODO: DOES NOT WORK WITH EXACT KERNEL! WHY?
 // m_time for some reason evaluates to null ptr with no memory!
 template<typename Data_structure>
 class Event_queue {

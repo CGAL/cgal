@@ -84,6 +84,9 @@ const bool run_test(
       time += timer.time();
 
       // Testing results.
+      const std::size_t num_events = ksr.number_of_events();
+      assert(num_events > 0);
+
       const int num_support_planes = ksr.number_of_support_planes();
       const int num_volume_levels  = ksr.number_of_volume_levels();
 

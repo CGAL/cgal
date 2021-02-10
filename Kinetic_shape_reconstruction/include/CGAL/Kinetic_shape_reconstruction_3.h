@@ -85,6 +85,7 @@ private:
   FT m_max_time;
   Initializer m_initializer;
   Data_structure m_data;
+  const std::size_t m_num_events;
 
 public:
   Kinetic_shape_reconstruction_3(
@@ -96,7 +97,8 @@ public:
   m_min_time(-FT(1)),
   m_max_time(-FT(1)),
   m_initializer(m_debug, m_verbose),
-  m_data(m_debug)
+  m_data(m_debug),
+  m_num_events(0)
   { }
 
   template<
@@ -220,6 +222,7 @@ public:
       std::cout << "* propagation finished" << std::endl;
       std::cout << "* number of events: " << global_iteration << std::endl;
     }
+    m_num_events = global_iteration;
 
     timer.reset();
     timer.start();
@@ -303,6 +306,10 @@ public:
   /*******************************
   **         STATISTICS         **
   ********************************/
+
+  const std::size_t number_of_events() const {
+    return m_num_events;
+  }
 
   const int number_of_support_planes() const {
     return static_cast<int>(m_data.number_of_support_planes());
@@ -628,6 +635,7 @@ public:
     m_min_time = -FT(1);
     m_max_time = -FT(1);
     m_initializer.clear();
+    m_num_events = 0;
   }
 
 private:

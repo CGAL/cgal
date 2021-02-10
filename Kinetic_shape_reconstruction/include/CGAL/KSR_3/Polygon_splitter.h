@@ -39,6 +39,7 @@
 namespace CGAL {
 namespace KSR_3 {
 
+// TODO: DOES NOT WORK WITH INEXACT KERNEL!
 template<typename Data_structure, typename GeomTraits>
 class Polygon_splitter {
 

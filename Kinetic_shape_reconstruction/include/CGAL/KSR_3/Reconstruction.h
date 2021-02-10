@@ -540,9 +540,9 @@ private:
       const std::size_t shape_idx = item.first;
       const auto& indices = item.second;
 
-      const std::size_t support_plane_idx = static_cast<std::size_t>(
-        m_data.support_plane_index(shape_idx));
-      CGAL_assertion(support_plane_idx >= 6);
+      const int sp_idx = m_data.support_plane_index(shape_idx);
+      CGAL_assertion(sp_idx >= 6);
+      const std::size_t support_plane_idx = static_cast<std::size_t>(sp_idx);
       // dump_points(indices, "sp-points-" + std::to_string(support_plane_idx));
 
       const auto pfaces = m_data.pfaces(support_plane_idx);

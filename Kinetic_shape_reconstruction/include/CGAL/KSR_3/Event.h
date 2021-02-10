@@ -51,7 +51,6 @@ public:
   friend Queue;
 
   // Event types.
-  // TODO: SHOULD I USE REFERENCE & IN THE CONSTRUCTORS? IS THAT FASTER?
 
   // Empty event.
   Event() :

@@ -436,9 +436,8 @@ public:
 
   const int support_plane_index(const std::size_t polygon_index) const {
 
-    const std::size_t polygon_idx = static_cast<std::size_t>(polygon_index);
-    CGAL_assertion(m_input_polygon_map.find(polygon_idx) != m_input_polygon_map.end());
-    const std::size_t sp_idx = m_input_polygon_map.at(polygon_idx);
+    CGAL_assertion(m_input_polygon_map.find(polygon_index) != m_input_polygon_map.end());
+    const std::size_t sp_idx = m_input_polygon_map.at(polygon_index);
     return static_cast<int>(sp_idx);
   }
 
@@ -487,10 +486,8 @@ public:
     m_support_planes.resize(number_of_items);
   }
 
-  // TODO: It looks like here we lose precision during the conversion because
-  // std::size_t is usually smaller than std::size_t!
   void reserve(const std::size_t number_of_polygons) {
-    m_support_planes.reserve(static_cast<std::size_t>(number_of_polygons) + 6);
+    m_support_planes.reserve(number_of_polygons + 6);
   }
 
   const FT current_time() const { return m_current_time; }
@@ -1556,6 +1553,9 @@ public:
   **          PREDICATES        **
   ********************************/
 
+  // TODO: ADD FUNCTION HAS_PEDGES() OR NUM_PEDGES() THAT RETURNS THE NUMBER OF PEDGES
+  // CONNECTED TO THE IEDGE. THAT WILL BE FASTER THAN CURRENT COMPUTATIONS!
+
   // Check if there is a collision with another polygon.
   const std::pair<bool, bool> collision_occured (
     const PVertex& pvertex, const IEdge& iedge) const {
@@ -1563,7 +1563,7 @@ public:
     bool collision = false;
     for (const auto support_plane_idx : intersected_planes(iedge)) {
       if (support_plane_idx < 6) {
-        return std::make_pair(true, true);
+        return std::make_pair(true, true); // bbox plane
       }
 
       for (const auto pedge : pedges(support_plane_idx)) {
@@ -1575,14 +1575,9 @@ public:
           if (dot_product < FT(0)) {
             continue;
           }
-          if (pedge_segment.squared_length() == FT(0)) {
-            std::cerr << "ERROR: SOURCE_TO_PVERTEX/PEDGE SEGMENT SQ LENGTH = "
-            << source_to_pvertex.squared_length() << std::endl;
-          }
           CGAL_assertion(pedge_segment.squared_length() != FT(0));
           if (source_to_pvertex.squared_length() <= pedge_segment.squared_length()) {
-            collision = true;
-            break;
+            collision = true; break;
           }
         }
       }
@@ -1637,8 +1632,7 @@ public:
   }
 
   const std::pair<bool, bool> is_occupied(
-    const PVertex& pvertex,
-    const IEdge& query_iedge) const {
+    const PVertex& pvertex, const IEdge& query_iedge) const {
 
     CGAL_assertion(query_iedge != null_iedge());
     // std::cout << str(query_iedge) << ": " << segment_3(query_iedge) << std::endl;
@@ -1966,7 +1960,7 @@ public:
       std::cout << "- new pface " << str(new_pface) << ": " << centroid_of_pface(new_pface) << std::endl;
     }
 
-    CGAL_assertion_msg(false, "TODO: PROPAGATE PEDGE BEYOND IEDGE!");
+    // CGAL_assertion_msg(false, "TODO: PROPAGATE PEDGE BEYOND IEDGE!");
     return std::make_pair(propagated_2, propagated_1);
   }
 
@@ -2192,7 +2186,6 @@ public:
     }
 
     // Get all connected iedges.
-    // TODO: CAN WE PRECOMPUTE INCIDENT IEDGES WITH RESPECT TO EACH SUPPORT PLANE AND IVERTEX?
     auto inc_iedges = this->incident_iedges(ivertex);
     std::vector< std::pair<IEdge, Direction_2> > iedges;
     std::copy(inc_iedges.begin(), inc_iedges.end(),
@@ -3823,7 +3816,7 @@ public:
     for (const auto vertex : m_intersection_graph.vertices()) {
       const auto nedges = m_intersection_graph.incident_edges(vertex);
       if (nedges.size() <= 2) {
-        std::cerr << "ERROR: CURRENT NUMBER OF EDGES = " << nedges.size() << std::endl;
+        std::cout << "ERROR: CURRENT NUMBER OF EDGES = " << nedges.size() << std::endl;
         CGAL_assertion_msg(nedges.size() > 2,
         "ERROR: VERTEX MUST HAVE AT LEAST 3 NEIGHBORS!");
         return false;
@@ -3838,7 +3831,7 @@ public:
     for (const auto edge : m_intersection_graph.edges()) {
       incident_faces(edge, nfaces);
       if (nfaces.size() == 1) {
-        std::cerr << "ERROR: CURRENT NUMBER OF FACES = " << nfaces.size() << std::endl;
+        std::cout << "ERROR: CURRENT NUMBER OF FACES = " << nfaces.size() << std::endl;
         CGAL_assertion_msg(nfaces.size() != 1,
         "ERROR: EDGE MUST HAVE 0 OR AT LEAST 2 NEIGHBORS!");
         return false;
@@ -4756,24 +4749,32 @@ private:
   **   FUTURE POINTS AND DIRECTIONS   **
   *************************************/
 
-  const bool compute_future_points_and_directions(
+  const std::pair<bool, bool> compute_future_points_and_directions(
     const PVertex& pvertex, const IEdge& iedge,
     Point_2& future_point_a, Point_2& future_point_b,
     Vector_2& future_direction_a, Vector_2& future_direction_b) const {
 
-    bool is_parallel = false;
-    const PVertex prev(pvertex.first, support_plane(pvertex).prev(pvertex.second));
-    const PVertex next(pvertex.first, support_plane(pvertex).next(pvertex.second));
-    const auto& curr = pvertex;
+    bool is_parallel_prev = false;
+    bool is_parallel_next = false;
 
-    const Line_2 iedge_line = segment_2(pvertex.first, iedge).supporting_line();
-    const Point_2 pinit = iedge_line.projection(point_2(pvertex));
+    const auto source_p = point_2(pvertex.first, source(iedge));
+    const auto target_p = point_2(pvertex.first, target(iedge));
+    CGAL_assertion_msg(source_p != target_p,
+    "TODO: COMPUTE FUTURE POINTS AND DIRECTIONS, HANDLE ZERO-LENGTH IEDGE!");
 
+    const Vector_2 iedge_vec(source_p, target_p);
+    const Line_2  iedge_line(source_p, target_p);
     // std::cout << "iedge segment: " << segment_3(iedge) << std::endl;
+
+    const auto& curr = pvertex;
+    const auto curr_p = point_2(curr);
+    const Point_2 pinit = iedge_line.projection(curr_p);
+
+    const PVertex prev(curr.first, support_plane(curr).prev(curr.second));
+    const PVertex next(curr.first, support_plane(curr).next(curr.second));
 
     const auto prev_p = point_2(prev);
     const auto next_p = point_2(next);
-    const auto curr_p = point_2(curr);
 
     // std::cout << "prev: " << point_3(prev) << std::endl;
     // std::cout << "next: " << point_3(next) << std::endl;
@@ -4786,25 +4787,13 @@ private:
       point_2(next, m_current_time + FT(1)),
       point_2(curr, m_current_time + FT(1)));
 
-    // std::cout << "future line prev: " <<
-    // Segment_3(
-    //   to_3d(pvertex.first, point_2(prev, m_current_time + FT(1))),
-    //   to_3d(pvertex.first, point_2(curr, m_current_time + FT(1)))) << std::endl;
-    // std::cout << "future line next: " <<
-    // Segment_3(
-    //   to_3d(pvertex.first, point_2(next, m_current_time + FT(1))),
-    //   to_3d(pvertex.first, point_2(curr, m_current_time + FT(1)))) << std::endl;
-
     const Vector_2 current_vec_prev(prev_p, curr_p);
     const Vector_2 current_vec_next(next_p, curr_p);
-
-    const auto source_p = point_2(pvertex.first, source(iedge));
-    const auto target_p = point_2(pvertex.first, target(iedge));
-    const Vector_2 iedge_vec(source_p, target_p);
 
     // TODO: CAN WE AVOID THIS VALUE?
     const FT tol = KSR::tolerance<FT>();
     FT m1 = FT(100000), m2 = FT(100000), m3 = FT(100000);
+    // std::cout << "tol: " << tol << std::endl;
 
     const FT prev_d = (curr_p.x() - prev_p.x());
     const FT next_d = (curr_p.x() - next_p.x());
@@ -4817,31 +4806,33 @@ private:
     if (CGAL::abs(edge_d) > tol)
       m3 = (target_p.y() - source_p.y()) / edge_d;
 
-    // std::cout << "prev slope: " << m1 << std::endl;
-    // std::cout << "next slope: " << m2 << std::endl;
-    // std::cout << "iedg slope: " << m3 << std::endl;
+    // std::cout << "m1: " << m1 << std::endl;
+    // std::cout << "m2: " << m2 << std::endl;
+    // std::cout << "m3: " << m3 << std::endl;
 
-    // std::cout << "tol: " << tol << std::endl;
     // std::cout << "m1 - m3 a: " << CGAL::abs(m1 - m3) << std::endl;
     // std::cout << "m2 - m3 b: " << CGAL::abs(m2 - m3) << std::endl;
 
     if (CGAL::abs(m1 - m3) < tol) {
       if (m_verbose) std::cout << "- prev parallel lines" << std::endl;
-      is_parallel = true;
+
+      is_parallel_prev = true;
       const FT prev_dot = current_vec_prev * iedge_vec;
       if (prev_dot < FT(0)) {
         if (m_verbose) std::cout << "- prev moves backwards" << std::endl;
         future_point_a = target_p;
+        // std::cout << point_3(target(iedge)) << std::endl;
       } else {
         if (m_verbose) std::cout << "- prev moves forwards" << std::endl;
         future_point_a = source_p;
+        // std::cout << point_3(source(iedge)) << std::endl;
       }
     } else {
-
       if (m_verbose) std::cout << "- prev intersected lines" << std::endl;
-      const bool a_found = KSR::intersection(future_line_prev, iedge_line, future_point_a);
-      if (!a_found) {
-        std::cerr << "WARNING: A IS NOT FOUND!" << std::endl;
+
+      const bool is_a_found = KSR::intersection(future_line_prev, iedge_line, future_point_a);
+      if (!is_a_found) {
+        std::cout << "WARNING: A IS NOT FOUND!" << std::endl;
         future_point_b = pinit + (pinit - future_point_a);
       }
     }
@@ -4849,33 +4840,34 @@ private:
     future_direction_a = Vector_2(pinit, future_point_a);
     future_point_a = pinit - m_current_time * future_direction_a;
 
-    auto tmp_a = future_direction_a;
-    tmp_a = KSR::normalize(tmp_a);
-
     if (m_verbose) {
+      auto tmp_a = future_direction_a;
+      tmp_a = KSR::normalize(tmp_a);
       std::cout << "- prev future point a: " <<
-      to_3d(pvertex.first, pinit + m_current_time * tmp_a) << std::endl;
+      to_3d(curr.first, pinit + m_current_time * tmp_a) << std::endl;
       std::cout << "- prev future direction a: " << future_direction_a << std::endl;
     }
 
     if (CGAL::abs(m2 - m3) < tol) {
       if (m_verbose) std::cout << "- next parallel lines" << std::endl;
-      is_parallel = true;
+
+      is_parallel_next = true;
       const FT next_dot = current_vec_next * iedge_vec;
       if (next_dot < FT(0)) {
         if (m_verbose) std::cout << "- next moves backwards" << std::endl;
         future_point_b = target_p;
+        // std::cout << point_3(target(iedge)) << std::endl;
       } else {
         if (m_verbose) std::cout << "- next moves forwards" << std::endl;
         future_point_b = source_p;
+        // std::cout << point_3(source(iedge)) << std::endl;
       }
-
     } else {
-
       if (m_verbose) std::cout << "- next intersected lines" << std::endl;
-      const bool b_found = KSR::intersection(future_line_next, iedge_line, future_point_b);
-      if (!b_found) {
-        std::cerr << "WARNING: B IS NOT FOUND!" << std::endl;
+
+      const bool is_b_found = KSR::intersection(future_line_next, iedge_line, future_point_b);
+      if (!is_b_found) {
+        std::cout << "WARNING: B IS NOT FOUND!" << std::endl;
         future_point_a = pinit + (pinit - future_point_b);
       }
     }
@@ -4883,43 +4875,50 @@ private:
     future_direction_b = Vector_2(pinit, future_point_b);
     future_point_b = pinit - m_current_time * future_direction_b;
 
-    auto tmp_b = future_direction_b;
-    tmp_b = KSR::normalize(tmp_b);
-
     if (m_verbose) {
+      auto tmp_b = future_direction_b;
+      tmp_b = KSR::normalize(tmp_b);
       std::cout << "- next future point b: " <<
-      to_3d(pvertex.first, pinit + m_current_time * tmp_b) << std::endl;
+      to_3d(curr.first, pinit + m_current_time * tmp_b) << std::endl;
       std::cout << "- next future direction b: " << future_direction_b << std::endl;
     }
-    return is_parallel;
+    return std::make_pair(is_parallel_prev, is_parallel_next);
   }
 
   const bool compute_future_point_and_direction(
-    const std::size_t idx,
-    const PVertex& pvertex, const PVertex& next, // back prev // front next
-    const IEdge& iedge,
-    Point_2& future_point, Vector_2& future_direction) const {
+    const std::size_t idx, const PVertex& pvertex, const PVertex& pother, // back prev // front next
+    const IEdge& iedge, Point_2& future_point, Vector_2& future_direction) const {
 
     bool is_parallel = false;
-    const Line_2 iedge_line = segment_2(pvertex.first, iedge).supporting_line();
-    const Point_2 pinit = iedge_line.projection(point_2(pvertex));
+    const auto source_p = point_2(pvertex.first, source(iedge));
+    const auto target_p = point_2(pvertex.first, target(iedge));
+    CGAL_assertion_msg(source_p != target_p,
+    "TODO: COMPUTE FUTURE POINT AND DIRECTION 1, HANDLE ZERO-LENGTH IEDGE!");
 
+    const Vector_2 iedge_vec(source_p, target_p);
+    const Line_2  iedge_line(source_p, target_p);
+    // std::cout << "iedge segment: " << segment_3(iedge) << std::endl;
+
+    const auto& next = pother;
     const auto& curr = pvertex;
+
+    // std::cout << "next: " << point_3(next) << std::endl;
+    // std::cout << "curr: " << point_3(curr) << std::endl;
+
     const auto next_p = point_2(next);
     const auto curr_p = point_2(curr);
+
+    const Point_2 pinit = iedge_line.projection(curr_p);
 
     const Line_2 future_line_next(
       point_2(next, m_current_time + FT(1)),
       point_2(curr, m_current_time + FT(1)));
     const Vector_2 current_vec_next(next_p, curr_p);
 
-    const auto source_p = point_2(pvertex.first, source(iedge));
-    const auto target_p = point_2(pvertex.first, target(iedge));
-    const Vector_2 iedge_vec(source_p, target_p);
-
     // TODO: CAN WE AVOID THIS VALUE?
     const FT tol = KSR::tolerance<FT>();
     FT m2 = FT(100000), m3 = FT(100000);
+    // std::cout << "tol: " << tol << std::endl;
 
     const FT next_d = (curr_p.x() - next_p.x());
     const FT edge_d = (target_p.x() - source_p.x());
@@ -4932,7 +4931,6 @@ private:
     // std::cout << "m2: " << m2 << std::endl;
     // std::cout << "m3: " << m3 << std::endl;
 
-    // std::cout << "tol: " << tol << std::endl;
     // std::cout << "m2 - m3: " << CGAL::abs(m2 - m3) << std::endl;
 
     if (CGAL::abs(m2 - m3) < tol) {
@@ -4955,34 +4953,39 @@ private:
       future_point = KSR::intersection<Point_2>(future_line_next, iedge_line);
     }
 
-    // std::cout << "prev: " << point_3(next, m_current_time + FT(1)) << std::endl;
-    // std::cout << "back: " << point_3(curr, m_current_time + FT(1)) << std::endl;
-
     future_direction = Vector_2(pinit, future_point);
     future_point = pinit - m_current_time * future_direction;
 
-    auto tmp = future_direction;
-    tmp = KSR::normalize(tmp);
-
     if (m_verbose) {
+      auto tmp = future_direction;
+      tmp = KSR::normalize(tmp);
       std::cout << "- back/front future point: " <<
-      to_3d(pvertex.first, pinit + m_current_time * tmp) << std::endl;
+      to_3d(curr.first, pinit + m_current_time * tmp) << std::endl;
       std::cout << "- back/front future direction: " << future_direction << std::endl;
     }
     return is_parallel;
   }
 
   const bool compute_future_point_and_direction(
-    const PVertex& pvertex,
-    const PVertex& prev, const PVertex& next,
-    const IEdge& iedge,
-    Point_2& future_point, Vector_2& future_direction) const {
+    const PVertex& pvertex, const PVertex& prev, const PVertex& next, // prev next
+    const IEdge& iedge, Point_2& future_point, Vector_2& future_direction) const {
 
-    const Line_2 iedge_line = segment_2(pvertex.first, iedge).supporting_line();
+    bool is_parallel = false;
+    const auto source_p = point_2(pvertex.first, source(iedge));
+    const auto target_p = point_2(pvertex.first, target(iedge));
+    CGAL_assertion_msg(source_p != target_p,
+    "TODO: COMPUTE FUTURE POINT AND DIRECTION 2, HANDLE ZERO-LENGTH IEDGE!");
+
+    const Line_2 iedge_line(source_p, target_p);
+    // std::cout << "iedge segment: " << segment_3(iedge) << std::endl;
+
     const auto pv_point = point_2(pvertex);
     const Point_2 pinit = iedge_line.projection(pv_point);
 
     const auto& curr = prev;
+    // std::cout << "next: " << point_3(next) << std::endl;
+    // std::cout << "curr: " << point_3(curr) << std::endl;
+
     const auto next_p = point_2(next);
     const auto curr_p = point_2(curr);
 
@@ -4990,13 +4993,10 @@ private:
       point_2(next, m_current_time + FT(1)),
       point_2(curr, m_current_time + FT(1)));
 
-    const auto source_p = point_2(pvertex.first, source(iedge));
-    const auto target_p = point_2(pvertex.first, target(iedge));
-    const Vector_2 iedge_vec(source_p, target_p);
-
     // TODO: CAN WE AVOID THIS VALUE?
     const FT tol = KSR::tolerance<FT>();
     FT m2 = FT(100000), m3 = FT(100000);
+    // std::cout << "tol: " << tol << std::endl;
 
     const FT next_d = (curr_p.x() - next_p.x());
     const FT edge_d = (target_p.x() - source_p.x());
@@ -5009,18 +5009,19 @@ private:
     // std::cout << "m2: " << m2 << std::endl;
     // std::cout << "m3: " << m3 << std::endl;
 
-    // std::cout << "tol: " << tol << std::endl;
     // std::cout << "m2 - m3: " << CGAL::abs(m2 - m3) << std::endl;
 
-    bool is_parallel = false;
     if (CGAL::abs(m2 - m3) < tol) {
       if (m_verbose) std::cout << "- open parallel lines" << std::endl;
 
       is_parallel = true;
-      if (source_p == pv_point)
+      if (source_p == pv_point) {
         future_point = target_p;
-      else
+        // std::cout << point_3(target(iedge)) << std::endl;
+      } else {
         future_point = source_p;
+        // std::cout << point_3(source(iedge)) << std::endl;
+      }
 
     } else {
       if (m_verbose) std::cout << "- open intersected lines" << std::endl;
@@ -5030,10 +5031,9 @@ private:
     future_direction = Vector_2(pinit, future_point);
     future_point = pinit - m_current_time * future_direction;
 
-    auto tmp = future_direction;
-    tmp = KSR::normalize(tmp);
-
     if (m_verbose) {
+      auto tmp = future_direction;
+      tmp = KSR::normalize(tmp);
       std::cout << "- open future point: " <<
       to_3d(pvertex.first, pinit + m_current_time * tmp) << std::endl;
       std::cout << "- open future direction: " << future_direction << std::endl;
@@ -5043,47 +5043,47 @@ private:
 
   const bool is_intersecting_iedge(
     const FT min_time, const FT max_time,
-    const PVertex& pvertex, const IEdge& iedge) {
+    const PVertex& pvertex, const IEdge& iedge) const {
 
     const FT time_step = (max_time - min_time) / FT(100);
     const FT time_1 = m_current_time - time_step;
     const FT time_2 = m_current_time + time_step;
     CGAL_assertion(time_1 != time_2);
 
-    const Segment_2 pv_seg(
+    const Segment_2 psegment(
       point_2(pvertex, time_1), point_2(pvertex, time_2));
-    const auto pv_bbox = pv_seg.bbox();
+    const auto pbbox = psegment.bbox();
 
-    const auto iedge_seg  = segment_2(pvertex.first, iedge);
-    const auto iedge_bbox = iedge_seg.bbox();
+    const auto isegment = segment_2(pvertex.first, iedge);
+    const auto ibbox = isegment.bbox();
 
     if (has_iedge(pvertex)) {
-      if (m_verbose) std::cout << "* constrained pvertex case" << std::endl;
+      if (m_verbose) std::cout << "- constrained pvertex case" << std::endl;
       return false;
     }
 
     if (!is_active(pvertex)) {
-      if (m_verbose) std::cout << "* pvertex no active case" << std::endl;
+      if (m_verbose) std::cout << "- pvertex no active case" << std::endl;
       return false;
     }
 
     if (!is_active(iedge)) {
-      if (m_verbose) std::cout << "* iedge no active case" << std::endl;
+      if (m_verbose) std::cout << "- iedge no active case" << std::endl;
       return false;
     }
 
-    if (!CGAL::do_overlap(pv_bbox, iedge_bbox)) {
-      if (m_verbose) std::cout << "* no overlap case" << std::endl;
+    if (!CGAL::do_overlap(pbbox, ibbox)) {
+      if (m_verbose) std::cout << "- no overlap case" << std::endl;
       return false;
     }
 
     Point_2 point;
-    if (!KSR::intersection(pv_seg, iedge_seg, point)) {
-      if (m_verbose) std::cout << "* no intersection case" << std::endl;
+    if (!KSR::intersection(psegment, isegment, point)) {
+      if (m_verbose) std::cout << "- no intersection case" << std::endl;
       return false;
     }
 
-    if (m_verbose) std::cout << "* found intersection" << std::endl;
+    if (m_verbose) std::cout << "- found intersection" << std::endl;
     return true;
   }
 };
