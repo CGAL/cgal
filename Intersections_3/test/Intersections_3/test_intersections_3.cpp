@@ -1101,7 +1101,7 @@ struct Test {
 
       //edge
       check_intersection (cub, Pl(P(1,1,1), P(1,2,1), P(1.5,0,0)),
-                          S(P(1,2,1), P(1,1,1)));
+                          S(P(1,1,1), P(1,2,1)));
       //face
       typedef typename CGAL::Intersection_traits<K,
           typename K::Plane_3,
@@ -1127,8 +1127,8 @@ struct Test {
       check_intersection (cub, Pl(P(2, 1.66, 2),
                                   P(1.66,2,2),
                                   P(2,2,1.66)),
-                          Tr(P(2, 2, 1.66),
-                             P(1.66,2,2),
+                          Tr(P(1.66,2,2),
+                             P(2, 2, 1.66),
                              P(2,1.66,2)));
 
       //random
