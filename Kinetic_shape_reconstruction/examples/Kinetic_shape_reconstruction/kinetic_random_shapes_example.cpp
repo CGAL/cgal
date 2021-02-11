@@ -403,7 +403,7 @@ int main(const int argc, const char** argv) {
   assert(input_polygons.size() == rnd_polygons.size());
 
   // Algorithm.
-  KSR ksr(false, false);
+  KSR ksr(true, false);
   const IPolygon_3_map polygon_map;
   const unsigned int k = (argc > 3 ? std::atoi(argv[3]) : 1);
   std::cout << "* input k: " << k << std::endl;

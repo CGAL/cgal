@@ -133,13 +133,13 @@ public:
     collect_points(Semantic_label::BUILDING_BOUNDARY, m_boundary_points);
     collect_points(Semantic_label::BUILDING_INTERIOR, m_interior_points);
 
-    if (
-      m_ground_points.size()   == 0 ||
-      m_boundary_points.size() == 0 ||
-      m_interior_points.size() == 0) {
+    // if (
+    //   m_ground_points.size()   == 0 ||
+    //   m_boundary_points.size() == 0 ||
+    //   m_interior_points.size() == 0) {
 
-      CGAL_assertion_msg(false, "TODO: IMPLEMENT FREE-FORM RECONSTRUCTION!");
-    }
+    //   CGAL_assertion_msg(false, "TODO: IMPLEMENT FREE-FORM RECONSTRUCTION!");
+    // }
 
     if (m_verbose) {
       std::cout << std::endl << "--- RECONSTRUCTION: " << std::endl;
@@ -330,6 +330,7 @@ private:
 
   void create_ground_plane() {
 
+    if (m_ground_points.size() == 0) return;
     if (m_verbose) std::cout << "* creating ground plane ... ";
     const auto plane = fit_plane(m_ground_points);
     const std::size_t shape_idx = add_planar_shape(m_ground_points, plane);

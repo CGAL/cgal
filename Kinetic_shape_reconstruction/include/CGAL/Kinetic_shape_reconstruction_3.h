@@ -203,9 +203,8 @@ public:
       ++num_iterations;
 
       if (m_verbose && !m_debug) {
-        std::cout << ".";
-        if (num_iterations == 50) {
-          std::cout << std::endl;
+        if ((num_iterations % 50) == 0) {
+          std::cout << ".................................................." << std::endl;
         }
       }
 
@@ -218,9 +217,9 @@ public:
     const double time_to_propagate = timer.time();
 
     if (m_verbose) {
-      if (m_verbose && !m_debug) std::cout << std::endl;
       std::cout << "* propagation finished" << std::endl;
-      std::cout << "* number of events: " << global_iteration << std::endl;
+      std::cout << "* number of iterations: " << num_iterations   << std::endl;
+      std::cout << "* number of events: "     << global_iteration << std::endl;
     }
     m_num_events = global_iteration;
 
