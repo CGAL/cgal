@@ -18,7 +18,8 @@
 
 #include <CGAL/Nef_S2/ID_support_handler.h>
 #include <CGAL/Nef_3/SNC_indexed_items.h>
-#include <CGAL/Unique_hash_map.h>
+#include <boost/container_hash/hash.hpp>
+#include <unordered_map>
 #include <map>
 
 #undef CGAL_NEF_DEBUG
@@ -48,13 +49,13 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
 
   struct Handle_pair_hash_function {
     std::size_t operator() (const Halffacet_pair& p) const {
-      std::size_t hash = 53;
-      hash = 97 * hash + Handle_hash_function()(p.f1);
-      hash = 97 * hash + Handle_hash_function()(p.f2);
+      std::size_t hash = 0;
+      boost::hash_combine(hash,Handle_hash_function()(p.f1));
+      boost::hash_combine(hash,Handle_hash_function()(p.f2));
       return hash;
     }
   };
-  CGAL::Unique_hash_map<Halffacet_pair, int, Handle_pair_hash_function> f2m;
+  std::unordered_map<Halffacet_pair, int, Handle_pair_hash_function> f2m;
   std::map<int, int> hash;
 
  public:
