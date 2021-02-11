@@ -83,8 +83,6 @@ bool  sorted_around_edge(
                      || coplanar_orientation(o,o_prime,p2,q)==NEGATIVE );
 
   typename Kernel::Orientation_3 orientation;
-  typedef typename Kernel::Point_3 Point_3;
-
   const auto s0 = orientation(o_prime, o, p1, p2);
 
   if ( s0==COPLANAR ) {
