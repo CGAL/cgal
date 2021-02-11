@@ -142,7 +142,7 @@ int main(const int argc, const char** argv) {
 
   // Parameters.
   const bool         verbose = true;
-  const bool         debug   = true;
+  const bool         debug   = false;
   const unsigned int k = (argc > 2 ? std::atoi(argv[2]) : 1); // intersections
   const unsigned int subdiv  = 0;
   const double       eratio  = 1.1;

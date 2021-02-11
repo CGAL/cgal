@@ -215,7 +215,7 @@ public:
       }
     }
     timer.stop();
-    const double time_to_partition = timer.time();
+    const double time_to_propagate = timer.time();
 
     if (m_verbose) {
       if (m_verbose && !m_debug) std::cout << std::endl;
@@ -245,10 +245,10 @@ public:
 
     if (m_verbose) std::cout << std::endl << "--- TIMING (sec.):" << std::endl;
     const double total_time =
-      time_to_initialize + time_to_partition + time_to_finalize;
+      time_to_initialize + time_to_propagate + time_to_finalize;
     if (m_verbose) {
       std::cout << "* initialization: " << time_to_initialize << std::endl;
-      std::cout << "* partition: "      << time_to_partition  << std::endl;
+      std::cout << "* propagation: "    << time_to_propagate  << std::endl;
       std::cout << "* finalization: "   << time_to_finalize   << std::endl;
       std::cout << "* total time: "     << total_time         << std::endl;
     }
