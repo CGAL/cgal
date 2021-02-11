@@ -175,11 +175,13 @@ private:
     const auto& minp = bbox.front();
     const auto& maxp = bbox.back();
     if (m_verbose) {
-      std::cout << "* bounding box minp: " <<
+      std::cout.precision(20);
+      std::cout << "* bounding box minp: " << std::fixed <<
       minp.x() << "\t, " << minp.y() << "\t, " << minp.z() << std::endl;
     }
     if (m_verbose) {
-      std::cout << "* bounding box maxp: " <<
+      std::cout.precision(20);
+      std::cout << "* bounding box maxp: " << std::fixed <<
       maxp.x() << "\t, " << maxp.y() << "\t, " << maxp.z() << std::endl;
     }
   }

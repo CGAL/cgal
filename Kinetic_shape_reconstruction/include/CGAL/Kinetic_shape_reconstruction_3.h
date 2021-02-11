@@ -172,9 +172,9 @@ public:
     }
 
     // if (m_verbose) {
-    //   std::cout << std::endl << "POLYGON SPLITTER SUCCESS!" << std::endl << std::endl;
+    //   std::cout << std::endl << "* initialization (sec.): " << time_to_initialize << std::endl;
+    //   std::cout << "POLYGON SPLITTER SUCCESS!" << std::endl << std::endl;
     // }
-    // return true;
     // exit(EXIT_SUCCESS);
 
     // Output planes.
