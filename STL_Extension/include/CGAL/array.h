@@ -61,7 +61,7 @@ struct Construct_array
   template <typename T, typename... Args>
   constexpr
   std::array<T, 1 + sizeof...(Args)>
-  operator()(const T& t, const Args& ... args)
+  operator()(const T& t, const Args& ... args) const
   {
     return make_array (t, args...);
   }
