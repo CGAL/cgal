@@ -32,17 +32,23 @@ template <typename Point>
 struct Get_point
 {
   const double vx, vy, vz;
+  const double tx, ty, tz;
   Get_point(const CGAL::Image_3* image)
     : vx(image->vx())
     , vy(image->vy())
     , vz(image->vz())
+    , tx(image->tx())
+    , ty(image->ty())
+    , tz(image->tz())
   {}
 
   Point operator()(const std::size_t i,
                    const std::size_t j,
                    const std::size_t k) const
   {
-    return Point(double(i) * vx, double(j) * vy, double(k) * vz);
+    return Point(double(i) * vx + tx,
+                 double(j) * vy + ty,
+                 double(k) * vz + tz);
   }
 };
 template<class C3T3, class MeshDomain, class MeshCriteria>
