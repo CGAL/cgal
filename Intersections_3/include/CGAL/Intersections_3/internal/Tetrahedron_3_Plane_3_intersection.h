@@ -36,6 +36,7 @@ intersection(
     const K& k)
 {
  typedef typename K::Point_3 Point_3;
+  typedef typename K::Triangle_3 Triangle_3;
  typedef typename Intersection_traits<K, typename K::Tetrahedron_3, typename K::Plane_3>::result_type result_type;
   typename K::Oriented_side_3 oriented_side = k.oriented_side_3_object();
 
@@ -149,9 +150,9 @@ intersection(
     {
       case 3:
       {
-        std::vector<Point_3> res({ corners[ids[0]],
-                                   corners[ids[1]],
-                                   corners[ids[2]] });
+        Triangle_3 res(corners[ids[0]],
+                       corners[ids[1]],
+                       corners[ids[2]]);
         return result_type(res);
       }
       case 2:
