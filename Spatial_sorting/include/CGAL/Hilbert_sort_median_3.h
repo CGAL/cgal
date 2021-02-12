@@ -85,6 +85,8 @@ struct Hilbert_cmp_3<K,2,false>
 
 #ifdef __clang__
 #define CGAL_VISIBILITY_MACRO __attribute__ ((visibility ("hidden")))
+#else
+#define CGAL_VISIBILITY_MACRO __attribute__ ((visibility ("default")))
 #endif
 
 template <class K, class ConcurrencyTag>
