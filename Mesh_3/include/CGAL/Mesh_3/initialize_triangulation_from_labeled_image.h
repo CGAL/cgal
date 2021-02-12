@@ -17,6 +17,7 @@
 
 #include <CGAL/Mesh_3/search_for_connected_components_in_labeled_image.h>
 #include <CGAL/Mesh_3/squared_distance_Point_3_Triangle_3.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 
 #include <CGAL/enum.h>
@@ -64,16 +65,41 @@ void init_tr_from_labeled_image_call_init_features(C3T3& c3t3,
             << " initial points on 1D-features" << std::endl;
 }
 
+template<class C3T3, class MeshDomain, class MeshCriteria,
+         typename FT, typename Image_word_type>
+void initialize_triangulation_from_gray_image(C3T3& c3t3,
+    const MeshDomain& domain,
+    const CGAL::Image_3& image,
+    const MeshCriteria& criteria,
+    const FT& iso_value,
+    Image_word_type,
+    bool protect_features = false)
+{
+  typedef CGAL::Null_functor Functor;
+  Functor image_values_to_subdomain_indices;
+
+  using CGAL::Mesh_3::internal::Create_gray_image_values_to_subdomain_indices;
+  typedef Create_gray_image_values_to_subdomain_indices<Functor> C_i_v_t_s_i;
+  typedef typename C_i_v_t_s_i::type Image_values_to_subdomain_indices;
+  Image_values_to_subdomain_indices transform_fct =
+    C_i_v_t_s_i()(image_values_to_subdomain_indices, iso_value);
+
+  initialize_triangulation_from_labeled_image(c3t3, domain, image, criteria,
+    Image_word_type(),
+    protect_features,
+    transform_fct);
+}
 
 template<class C3T3, class MeshDomain, class MeshCriteria,
-         typename Image_word_type>
+         typename Image_word_type,
+         typename TransformOperator = CGAL::Identity<Image_word_type> >
 void initialize_triangulation_from_labeled_image(C3T3& c3t3,
-                                                 const MeshDomain&   domain,
-                                                 const CGAL::Image_3& image,
-                                                 const MeshCriteria& criteria,
-                                                 Image_word_type,
-                                                 bool protect_features = false
-                                                 )
+      const MeshDomain&   domain,
+      const CGAL::Image_3& image,
+      const MeshCriteria& criteria,
+      Image_word_type,
+      bool protect_features = false,
+      TransformOperator transform = CGAL::Identity<Image_word_type>())
 {
   typedef typename C3T3::Triangulation       Tr;
   typedef typename Tr::Geom_traits           Gt;
@@ -111,11 +137,10 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
   Seeds seeds;
   Get_point<Bare_point> get_point(&image);
   std::cout << "Searching for connected components..." << std::endl;
-  CGAL::Identity<Image_word_type> no_transformation;
   search_for_connected_components_in_labeled_image(image,
                                                    std::back_inserter(seeds),
                                                    CGAL::Emptyset_iterator(),
-                                                   no_transformation,
+                                                   transform,
                                                    get_point,
                                                    Image_word_type());
   std::cout << "  " << seeds.size() << " components were found." << std::endl;
