@@ -66,31 +66,6 @@ void init_tr_from_labeled_image_call_init_features(C3T3& c3t3,
 }
 
 template<class C3T3, class MeshDomain, class MeshCriteria,
-         typename FT, typename Image_word_type>
-void initialize_triangulation_from_gray_image(C3T3& c3t3,
-    const MeshDomain& domain,
-    const CGAL::Image_3& image,
-    const MeshCriteria& criteria,
-    const FT& iso_value,
-    Image_word_type,
-    bool protect_features = false)
-{
-  typedef CGAL::Null_functor Functor;
-  Functor image_values_to_subdomain_indices;
-
-  using CGAL::Mesh_3::internal::Create_gray_image_values_to_subdomain_indices;
-  typedef Create_gray_image_values_to_subdomain_indices<Functor> C_i_v_t_s_i;
-  typedef typename C_i_v_t_s_i::type Image_values_to_subdomain_indices;
-  Image_values_to_subdomain_indices transform_fct =
-    C_i_v_t_s_i()(image_values_to_subdomain_indices, iso_value);
-
-  initialize_triangulation_from_labeled_image(c3t3, domain, image, criteria,
-    Image_word_type(),
-    protect_features,
-    transform_fct);
-}
-
-template<class C3T3, class MeshDomain, class MeshCriteria,
          typename Image_word_type,
          typename TransformOperator = CGAL::Identity<Image_word_type> >
 void initialize_triangulation_from_labeled_image(C3T3& c3t3,
@@ -268,6 +243,31 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
     CGAL::Mesh_3::internal::init_c3t3(c3t3, domain, criteria, 20);
     std::cout << "  -> " << tr.number_of_vertices() << " initial points." << std::endl;
   }
+}
+
+template<class C3T3, class MeshDomain, class MeshCriteria,
+         typename FT, typename Image_word_type>
+void initialize_triangulation_from_gray_image(C3T3& c3t3,
+    const MeshDomain& domain,
+    const CGAL::Image_3& image,
+    const MeshCriteria& criteria,
+    const FT& iso_value,
+    Image_word_type,
+    bool protect_features = false)
+{
+  typedef CGAL::Null_functor Functor;
+  Functor image_values_to_subdomain_indices;
+
+  using CGAL::Mesh_3::internal::Create_gray_image_values_to_subdomain_indices;
+  typedef Create_gray_image_values_to_subdomain_indices<Functor> C_i_v_t_s_i;
+  typedef typename C_i_v_t_s_i::type Image_values_to_subdomain_indices;
+  Image_values_to_subdomain_indices transform_fct =
+    C_i_v_t_s_i()(image_values_to_subdomain_indices, iso_value);
+
+  initialize_triangulation_from_labeled_image(c3t3, domain, image, criteria,
+    Image_word_type(),
+    protect_features,
+    transform_fct);
 }
 
 #endif // CGAL_MESH_3_INITIALIZE_TRIANGULATION_FROM_LABELED_IMAGE_H
