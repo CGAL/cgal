@@ -1,6 +1,7 @@
 #!/bin/bash
 
 #use this script from inside the build directory of the Polyhedron demo
+#Needs the Qt5_DIR env variable set to <Qt5_ROOT>/lib/cmake/Qt5
 
 declare config="Release"
 
@@ -29,9 +30,10 @@ for file in "${files[@]}"; do
 
   # list and copy dependencies
   cygcheck "$file" | while read -r dll ; do
-  
+
     copy_dll "$dll" "$target_directory"
-  
+
   done; #check dependencies
-    
 done #loop over directories
+mkdir -p "$target_directory/platforms"
+cp "$Qt5_DIR/../../../plugins/platforms/qwindows.dll" "$target_directory/platforms"
