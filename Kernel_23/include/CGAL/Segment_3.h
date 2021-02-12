@@ -99,7 +99,8 @@ public:
   max BOOST_PREVENT_MACRO_SUBSTITUTION () const;
 
   decltype(auto)
-  vertex(int i) const;
+  vertex(int i) const
+  { return (i%2 == 0) ? source() : target(); }
 
   decltype(auto)
   point(int i) const
@@ -177,14 +178,6 @@ Segment_3<R_>::max BOOST_PREVENT_MACRO_SUBSTITUTION () const
 {
   typename R_::Less_xyz_3 less_xyz;
   return less_xyz(source(),target()) ? target() : source();
-}
-
-template < class R_ >
-CGAL_KERNEL_INLINE
-decltype(auto)
-Segment_3<R_>::vertex(int i) const
-{
-  return (i%2 == 0) ? source() : target();
 }
 
 

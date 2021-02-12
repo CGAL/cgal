@@ -101,13 +101,16 @@ public:
   max BOOST_PREVENT_MACRO_SUBSTITUTION () const;
 
   decltype(auto)
-  vertex(int i) const;
+  vertex(int i) const
+  { return (i%2 == 0) ? source() : target(); }
 
   decltype(auto)
-  point(int i) const;
+  point(int i) const
+  { return vertex(i); }
 
   decltype(auto)
-  operator[](int i) const;
+  operator[](int i) const
+  { return vertex(i); }
 
   bool        is_horizontal() const;
   bool        is_vertical() const;
@@ -187,29 +190,6 @@ Segment_2<R_>::max BOOST_PREVENT_MACRO_SUBSTITUTION () const
   return less_xy(source(),target()) ? target() : source();
 }
 
-template < class R_ >
-CGAL_KERNEL_INLINE
-decltype(auto)
-Segment_2<R_>::vertex(int i) const
-{
-  return (i%2 == 0) ? source() : target();
-}
-
-template < class R_ >
-inline
-decltype(auto)
-Segment_2<R_>::point(int i) const
-{
-  return vertex(i);
-}
-
-template < class R_ >
-inline
-decltype(auto)
-Segment_2<R_>::operator[](int i) const
-{
-  return vertex(i);
-}
 
 template < class R_ >
 CGAL_KERNEL_INLINE
