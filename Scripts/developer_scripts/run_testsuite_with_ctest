@@ -262,7 +262,7 @@ run_test_on_platform()
   if [ ! -f "${INIT_FILE}" ]; then
     echo "error NEED A INIT FILE !"
   fi
-  cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' -DBUILD_TESTING=OFF -DWITH_tests=ON $CGAL_DIR>installation.log 2>&1
+  cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' -DBUILD_TESTING=ON -DWITH_tests=ON -DCGAL_TEST_SUITE=ON $CGAL_DIR>installation.log 2>&1
   rm CMakeCache.txt
   CMAKE_OPTS="-DCGAL_TEST_SUITE=ON -DCMAKE_VERBOSE_MAKEFILE=ON"
   if [ -n "${SCRIPTS_DIR}" ]; then
