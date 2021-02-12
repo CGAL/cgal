@@ -133,13 +133,29 @@ public:
     collect_points(Semantic_label::BUILDING_BOUNDARY, m_boundary_points);
     collect_points(Semantic_label::BUILDING_INTERIOR, m_interior_points);
 
-    // if (
-    //   m_ground_points.size()   == 0 ||
-    //   m_boundary_points.size() == 0 ||
-    //   m_interior_points.size() == 0) {
+    bool is_ground = (m_ground_points.size() >= 3);
+    bool is_wall = (m_boundary_points.size() >= 3);
+    bool is_roof = (m_interior_points.size() >= 3);
 
-    //   CGAL_assertion_msg(false, "TODO: IMPLEMENT FREE-FORM RECONSTRUCTION!");
-    // }
+    if (!is_ground && !is_wall && !is_roof) {
+      CGAL_assertion_msg(false, "TODO: IMPLEMENT FREE-FORM RECONSTRUCTION!");
+    }
+    CGAL_assertion(is_roof);
+
+    if (!is_ground) {
+      if (is_wall) {
+        get_ground_points_from_walls();
+      } else {
+        get_ground_points_from_roofs();
+      }
+      is_ground = true;
+    }
+    CGAL_assertion(is_ground);
+
+    if (!is_wall) {
+      get_wall_points_from_roofs();
+      is_wall = true;
+    }
 
     if (m_verbose) {
       std::cout << std::endl << "--- RECONSTRUCTION: " << std::endl;
@@ -160,11 +176,16 @@ public:
     m_polygons.clear();
     m_region_map.clear();
     create_ground_plane();
-    create_approximate_walls(np);
-    create_approximate_roofs(np);
+    // create_approximate_walls(np);
+    // create_approximate_roofs(np);
     CGAL_assertion(m_planes.size() == m_polygons.size());
     CGAL_assertion(m_polygons.size() == m_region_map.size());
     if (m_debug) dump_polygons("detected-planar-shapes");
+
+    if (m_polygons.size() == 0) {
+      if (m_verbose) std::cout << "* no planar shapes found" << std::endl;
+      return false;
+    }
     return true;
   }
 
@@ -172,9 +193,21 @@ public:
   const bool regularize_planar_shapes(
     const NamedParameters& np) {
 
+    if (m_verbose) {
+      std::cout << std::endl << "--- REGULARIZING PLANAR SHAPES: " << std::endl;
+    }
+
     const bool regularize = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::regularize), false);
-    if (!regularize) return true;
+    if (!regularize) {
+      if (m_verbose) std::cout << "* user-defined, skipping" << std::endl;
+      return true;
+    }
+
+    if (m_polygons.size() == 0) {
+      if (m_verbose) std::cout << "* no planes found, skipping" << std::endl;
+      return false;
+    }
 
     // Regularize.
     const FT max_accepted_angle    = FT(10); // parameters::choose_parameter(
@@ -182,10 +215,6 @@ public:
     const FT max_distance_to_plane = FT(1) / FT(5); // parameters::choose_parameter(
       // parameters::get_parameter(np, internal_np::distance_threshold), FT(1));
     const Vector_3 symmetry_axis(FT(0), FT(0), FT(1));
-
-    if (m_verbose) {
-      std::cout << std::endl << "--- REGULARIZING PLANAR SHAPES: " << std::endl;
-    }
 
     std::vector<Plane_3> planes;
     std::vector<Indices> regions;
@@ -238,9 +267,14 @@ public:
 
     if (m_verbose) {
       std::cout << std::endl << "--- COMPUTING THE MODEL: " << std::endl;
-      std::cout << "* computing visibility ... ";
     }
 
+    if (m_data.number_of_volumes(-1) == 0) {
+      if (m_verbose) std::cout << "* no volumes found, skipping" << std::endl;
+      return false;
+    }
+
+    if (m_verbose) std::cout << "* computing visibility ... ";
     std::map<PFace, Indices> pface_points;
     assign_points_to_pfaces(pface_points);
     const Visibility visibility(
@@ -328,14 +362,76 @@ private:
     }
   }
 
+  void get_ground_points_from_walls() {
+
+    CGAL_assertion(m_ground_points.size()    < 3);
+    CGAL_assertion(m_boundary_points.size() >= 3);
+    get_zero_level_points(m_boundary_points, m_ground_points);
+    CGAL_assertion(m_ground_points.size() >= 3);
+
+    // CGAL_assertion_msg(false, "TODO: ADD MISSING GROUND POINTS, GET FROM WALLS!");
+  }
+
+  void get_ground_points_from_roofs() {
+
+    CGAL_assertion(m_ground_points.size()    < 3);
+    CGAL_assertion(m_interior_points.size() >= 3);
+    get_zero_level_points(m_interior_points, m_ground_points);
+    CGAL_assertion(m_ground_points.size() >= 3);
+
+    // CGAL_assertion_msg(false, "TODO: ADD MISSING GROUND POINTS, GET FROM ROOFS!");
+  }
+
+  void get_wall_points_from_roofs() {
+
+    CGAL_assertion(m_boundary_points.size()  < 3);
+    CGAL_assertion(m_interior_points.size() >= 3);
+    CGAL_assertion_msg(false, "TODO: ADD MISSING WALL POINTS, GET FROM ROOFS!");
+  }
+
+  void get_zero_level_points(
+    const std::vector<std::size_t>& input,
+    std::vector<std::size_t>& output) const {
+
+    CGAL_assertion(input.size() >= 3);
+    output.clear();
+
+    FT min_z = +FT(1000000000000);
+    FT max_z = -FT(1000000000000);
+    for (const std::size_t idx : input) {
+      CGAL_assertion(idx < m_input_range.size());
+      const auto& point = get(m_point_map_3, idx);
+      min_z = CGAL::min(min_z, point.z());
+      max_z = CGAL::max(max_z, point.z());
+    }
+    CGAL_assertion(min_z < +FT(1000000000000));
+    CGAL_assertion(max_z > -FT(1000000000000));
+    CGAL_assertion(max_z > min_z);
+
+    const FT d = (max_z - min_z) / FT(100);
+    const FT top_level = min_z + d;
+
+    for (const std::size_t idx : input) {
+      CGAL_assertion(idx < m_input_range.size());
+      const auto& point = get(m_point_map_3, idx);
+      if (point.z() < top_level) output.push_back(idx);
+    }
+    CGAL_assertion(output.size() >= 3);
+  }
+
   void create_ground_plane() {
 
-    if (m_ground_points.size() == 0) return;
     if (m_verbose) std::cout << "* creating ground plane ... ";
+    if (m_ground_points.size() < 3) {
+      if (m_verbose) std::cout << "omitted, no points available" << std::endl;
+      return;
+    }
+
     const auto plane = fit_plane(m_ground_points);
     const std::size_t shape_idx = add_planar_shape(m_ground_points, plane);
     CGAL_assertion(shape_idx != std::size_t(-1));
     m_region_map[shape_idx] = m_ground_points;
+    CGAL_assertion_msg(false, "TODO: EXTEND GROUND PLANE BEYOND THE BBOX!");
     if (m_verbose) std::cout << "done" << std::endl;
   }
 
@@ -421,6 +517,11 @@ private:
   template<typename NamedParameters>
   void create_approximate_walls(const NamedParameters& np) {
 
+    if (m_boundary_points.size() < 3) {
+      if (m_verbose) std::cout << "* no facade points found, skipping" << std::endl;
+      return;
+    }
+
     std::vector< std::vector<std::size_t> > regions;
     apply_region_growing(np, m_boundary_points, regions);
     for (const auto& region : regions) {
@@ -436,6 +537,11 @@ private:
 
   template<typename NamedParameters>
   void create_approximate_roofs(const NamedParameters& np) {
+
+    if (m_interior_points.size() < 3) {
+      if (m_verbose) std::cout << "* no roof points found, skipping" << std::endl;
+      return;
+    }
 
     std::vector< std::vector<std::size_t> > regions;
     apply_region_growing(np, m_interior_points, regions);
