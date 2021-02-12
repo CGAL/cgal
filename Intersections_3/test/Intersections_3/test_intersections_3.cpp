@@ -673,7 +673,7 @@ struct Test {
 
       check_intersection (tet, Pl(P(0,0.5,0), P(1,0.5,-5), P(0.5,0.5,0.5)),
                           Tr(P(0, 0.5, 0), P(0.5,0.5,0),  P(0,0.5,0.5)));
-      
+
       Pl pl(P(0,0.9,0), P(0.9,0,0), P(0.9,0.01,0.06));
 
       typedef typename CGAL::Intersection_traits<K,
