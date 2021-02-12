@@ -395,10 +395,10 @@ endif()
 #   CGAL-3.9   : 8.0.0 (No way to check the binary compatibility.)
 #   CGAL-4.0   : 9.0.0 (No way to check the binary compatibility.)
 #   CGAL-4.1   : 10.0.0 (No way to check the binary compatibility.)
-#   CGAL-4.2   : 10.0.1 (Nothing different in CGAL compiled libraries¹.)
-#   CGAL-4.3   : 10.0.2 (Nothing different in CGAL compiled libraries¹.)
-#   CGAL-4.4   : 10.0.3 (Nothing different in CGAL compiled libraries¹.)
-#   CGAL-4.5   : 10.0.4 (Nothing different in CGAL compiled libraries¹.)
+#   CGAL-4.2   : 10.0.1 (Nothing different in CGAL compiled libraries.)
+#   CGAL-4.3   : 10.0.2 (Nothing different in CGAL compiled libraries.)
+#   CGAL-4.4   : 10.0.3 (Nothing different in CGAL compiled libraries.)
+#   CGAL-4.5   : 10.0.4 (Nothing different in CGAL compiled libraries.)
 #   CGAL-4.6   : 11.0.0 (int->size_t in CGAL_ImageIO)
 #   CGAL-4.7   : 11.0.1 (Nothing different in CGAL compiled libraries.)
 #   CGAL-4.8   : 11.0.2 (Nothing different in CGAL compiled libraries.)
@@ -409,7 +409,7 @@ endif()
 #   CGAL-4.14  : 14.0.0 , but only for CGAL_ImageIO (ABI broken in CGAL::Image_3.)
 #                              and for CGAL_Qt5 (ABI broken in DemoMainWindow)
 #   CGAL-4.14  : 13.0.3 , for other libraries
-# ¹) According to http://upstream-tracker.org/versions/cgal.html
+
 
 set(CGAL_SONAME_VERSION "13")
 set(CGAL_SOVERSION "13.0.3")
