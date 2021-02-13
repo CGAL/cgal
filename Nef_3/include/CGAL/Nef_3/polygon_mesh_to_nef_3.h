@@ -214,10 +214,12 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
 
 
   for(vertex_descriptor pv : vertices(P) ) {
+
+    Point_3 npv = get(pmap,pv);
     Vertex_handle nv = S.new_vertex();
-    nv->point() = get(pmap,pv);
+    nv->point() = npv;
     nv->mark() = true;
-    CGAL_NEF_TRACEN("v "<< get(pmap,pv));
+    CGAL_NEF_TRACEN("v "<< npv);
 
     SM_decorator SM(&*nv);
     Halfedge_around_vertex_const_circulator pec(pv,P), pec_prev(pec), done(pec);
@@ -226,7 +228,7 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
     // CGAL_assertion( pe != 0 );
 
     Point_3 pe_target_0(get(pmap,target(opposite(pe,P),P)));
-    Point_3 sp_point_0(CGAL::ORIGIN+(pe_target_0 - get(pmap,pv)));
+    Point_3 sp_point_0(CGAL::ORIGIN+(pe_target_0 - npv));
     Sphere_point sp_0(sp_point_0);
     SVertex_handle sv_0 = SM.new_svertex(sp_0);
     sv_0->mark() = true;
@@ -239,11 +241,11 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
     bool with_border = false;
     do {
       CGAL_assertion(face(pe_prev,P) == face(opposite(pe,P),P));
-      CGAL_assertion(get(pmap,target(pe_prev,P)) == get(pmap,pv));
-      CGAL_assertion(get(pmap,target(pe,P)) == get(pmap,pv));
+      CGAL_assertion(get(pmap,target(pe_prev,P)) == npv);
+      CGAL_assertion(get(pmap,target(pe,P)) == npv);
 
       Point_3 pe_target = get(pmap,target(opposite(pe,P),P));
-      Point_3 sp_point = CGAL::ORIGIN+(pe_target - get(pmap,pv));
+      Point_3 sp_point = CGAL::ORIGIN+(pe_target - npv);
       Sphere_point sp(sp_point);
       SVertex_handle sv = SM.new_svertex(sp);
       sv->mark() = true;
@@ -280,8 +282,8 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
     while( pec != done );
 
     CGAL_assertion(face(pe_prev,P) == face(opposite(*pe_0,P),P));
-    CGAL_assertion(get(pmap,target(pe_prev,P)) == get(pmap,pv));
-    CGAL_assertion(get(pmap,target(*pe_0,P)) == get(pmap,pv));
+    CGAL_assertion(get(pmap,target(pe_prev,P)) == npv);
+    CGAL_assertion(get(pmap,target(*pe_0,P)) == npv);
 
     SHalfedge_handle e;
     if(is_border(pe_prev,P)) {
