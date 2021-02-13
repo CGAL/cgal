@@ -195,7 +195,7 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
   struct Face_info
   {
     Vector_3 normal;
-    CGAL_assertion_code(std::size_t num_edges);
+    CGAL_assertion_code(std::size_t num_edges;)
   };
 
   PMap pmap = get(CGAL::vertex_point,P);
@@ -261,7 +261,7 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
         CGAL_assertion_code(if(fi.num_edges > 3) {
           CGAL_assertion(ss_circle.has_on(sp));
           CGAL_assertion(ss_circle.has_on(sv_prev->point()));
-        });
+        };)
 
         SHalfedge_handle e = SM.new_shalfedge_pair(sv_prev, sv);
         e->circle() = ss_circle;
@@ -295,7 +295,7 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
       CGAL_assertion_code(if(fi.num_edges > 3) {
         CGAL_assertion(ss_circle.has_on(sp_0));
         CGAL_assertion(ss_circle.has_on(sv_prev->point()));
-      });
+      };)
 
       e = SM.new_shalfedge_pair(sv_prev, sv_0);
       e->circle() = ss_circle;
