@@ -50,7 +50,7 @@ template<class R_,class Zero_> struct Construct_LA_vector
           // Makes no sense for an unknown dimension.
                 return typename Constructor::Dimension()(this->kernel().dimension());
         }
-        result_type operator()(result_type const& v)const{
+        result_type const& operator()(result_type const& v)const{
                 return v;
         }
         result_type operator()(result_type&& v)const{
