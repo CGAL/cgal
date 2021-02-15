@@ -223,6 +223,23 @@ struct Depth_base {
 #endif
 };
 
+template<class T, bool=std::is_base_of<Handle, T>::value> struct Lazy_reset_member_1 {
+  void operator()(T& t)const{ t = T(); }
+};
+template<class T> struct Lazy_reset_member_1<T, true> {
+  void operator()(T& t)const{ t.reset(); }
+};
+template<class T>void lazy_reset_member(T&t) {
+  Lazy_reset_member_1<T>()(t);
+}
+template<class...T, std::size_t...i>void lazy_reset_member_tuple(std::tuple<T...>&t, std::index_sequence<i...>) {
+  using ignore = int[];
+  ignore { (lazy_reset_member(std::get<i>(t)), 0) ... };
+}
+template<class...T>void lazy_reset_member(std::tuple<T...>&t) {
+  lazy_reset_member_tuple(t, std::make_index_sequence<sizeof...(T)>());
+}
+
 // 0: safe default, AT is behind a pointer that can be atomically changed, and it doesn't disappear during update_exact
 // 1: use plain AT without protection
 // 2: split an interval as 2 atomic_double
@@ -585,8 +602,7 @@ class Lazy_rep_n final :
     auto* p = new typename Base::Indirect(ec()( CGAL::exact( std::get<I>(l) ) ... ) );
     this->set_at(p);
     this->set_ptr(p);
-    // TODO: apply some reset-like function to each element instead.
-    l = std::tuple<L...>{};
+    lazy_reset_member(l);
   }
   public:
   void update_exact() const {
@@ -752,7 +768,7 @@ public:
     this->set_at(p);
     this->set_ptr(p);
     // Prune lazy tree
-    l1_ = L1();
+    lazy_reset_member(l1_);
   }
 
   Lazy_rep_with_vector_1(const AC& ac, const EC& /*ec*/, const L1& l1)
@@ -802,8 +818,8 @@ public:
     this->set_at(p);
     this->set_ptr(p);
     // Prune lazy tree
-    l1_ = L1();
-    l2_ = L2();
+    lazy_reset_member(l1_);
+    lazy_reset_member(l2_);
   }
 
   Lazy_rep_with_vector_2(const AC& ac, const EC& /*ec*/, const L1& l1, const L2& l2)
@@ -852,8 +868,8 @@ public:
     this->set_at(p);
     this->set_ptr(p);
     // Prune lazy tree
-    l1_ = L1();
-    l2_ = L2();
+    lazy_reset_member(l1_);
+    lazy_reset_member(l2_);
   }
 
   Lazy_rep_2_1(const AC& ac, const EC& /*ec*/, const L1& l1, const L2& l2)
@@ -905,8 +921,8 @@ public:
     this->set_at(p);
     this->set_ptr(p);
     // Prune lazy tree
-    l1_ = L1();
-    l2_ = L2();
+    lazy_reset_member(l1_);
+    lazy_reset_member(l2_);
   }
 
   Lazy_rep_2_2(const AC& ac, const EC& /*ec*/, const L1& l1, const L2& l2)
