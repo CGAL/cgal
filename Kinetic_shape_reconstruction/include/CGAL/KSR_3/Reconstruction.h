@@ -28,12 +28,16 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/Cartesian_converter.h>
-#include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
 #include <CGAL/Regularization/regularize_planes.h>
+
+#include <CGAL/Alpha_shape_2.h>
+#include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/Triangulation_face_base_with_info_2.h>
+#include <CGAL/Triangulation_vertex_base_with_info_2.h>
 
 // Internal includes.
 #include <CGAL/KSR/enum.h>
@@ -89,7 +93,24 @@ private:
   using IPlane_3  = typename IK::Plane_3;
 
   using Converter = CGAL::Cartesian_converter<Kernel, IK>;
-  using Delaunay  = CGAL::Delaunay_triangulation_2<Kernel>;
+
+  struct Vertex_info {
+    FT z = FT(0);
+  };
+
+  struct Face_info {
+
+  };
+
+  using Fbi = CGAL::Triangulation_face_base_with_info_2<Face_info, Kernel>;
+  using Fb  = CGAL::Alpha_shape_face_base_2<Kernel, Fbi>;
+
+  using Vbi = CGAL::Triangulation_vertex_base_with_info_2<Vertex_info, Kernel>;
+  using Vb  = CGAL::Alpha_shape_vertex_base_2<Kernel, Vbi>;
+
+  using Tds         = CGAL::Triangulation_data_structure_2<Vb, Fb>;
+  using Delaunay    = CGAL::Delaunay_triangulation_2<Kernel, Tds>;
+  using Alpha_shape = CGAL::Alpha_shape_2<Delaunay>;
 
   // using Neighbor_query_3 = CGAL::Shape_detection::Point_set::
   //   Sphere_neighbor_query<Kernel, Indices, Point_map_3>;
@@ -100,7 +121,7 @@ private:
     Least_squares_plane_fit_region<Kernel, Indices, Point_map_3, Vector_map_3>;
   using Planar_sorting   = CGAL::Shape_detection::Point_set::
     Least_squares_plane_fit_sorting<Kernel, Indices, Neighbor_query_3, Point_map_3>;
-  using Region_growing   = CGAL::Shape_detection::
+  using Region_growing_3 = CGAL::Shape_detection::
     Region_growing<Indices, Neighbor_query_3, Planar_region, typename Planar_sorting::Seed_map>;
 
   using Visibility_label = KSR::Visibility_label;
@@ -405,15 +426,15 @@ private:
   }
 
   void get_zero_level_points(
-    const std::vector<std::size_t>& input,
+    const std::vector<std::size_t>& input_range,
     std::vector<std::size_t>& output) const {
 
-    CGAL_assertion(input.size() >= 3);
+    CGAL_assertion(input_range.size() >= 3);
     output.clear();
 
     FT min_z = +FT(1000000000000);
     FT max_z = -FT(1000000000000);
-    for (const std::size_t idx : input) {
+    for (const std::size_t idx : input_range) {
       CGAL_assertion(idx < m_input_range.size());
       const auto& point = get(m_point_map_3, idx);
       min_z = CGAL::min(min_z, point.z());
@@ -426,7 +447,7 @@ private:
     const FT d = (max_z - min_z) / FT(100);
     const FT top_level = min_z + d;
 
-    for (const std::size_t idx : input) {
+    for (const std::size_t idx : input_range) {
       CGAL_assertion(idx < m_input_range.size());
       const auto& point = get(m_point_map_3, idx);
       if (point.z() < top_level) output.push_back(idx);
@@ -604,7 +625,7 @@ private:
     const std::vector<std::size_t>& input_range) {
 
     std::vector< std::vector<std::size_t> > regions;
-    apply_region_growing(np, input_range, regions);
+    apply_region_growing_3(np, input_range, regions);
     for (const auto& region : regions) {
       const auto plane = fit_plane(region);
       const std::size_t shape_idx = add_planar_shape(region, plane);
@@ -615,7 +636,7 @@ private:
   }
 
   template<typename NamedParameters>
-  void apply_region_growing(
+  void apply_region_growing_3(
     const NamedParameters& np,
     const std::vector<std::size_t>& input_range,
     std::vector< std::vector<std::size_t> >& regions) const {
@@ -645,7 +666,7 @@ private:
     sorting.sort();
 
     std::vector<Indices> result;
-    Region_growing region_growing(
+    Region_growing_3 region_growing(
       input_range, neighbor_query, planar_region, sorting.seed_map());
     region_growing.detect(std::back_inserter(result));
 
@@ -674,12 +695,66 @@ private:
 
     CGAL_assertion(m_interior_points.size() >= 3);
     if (m_verbose) std::cout << "* getting walls using roof boundaries" << std::endl;
-    // 0. split points into vertical and non-vertical
-    // 1. get all planar shapes for all vertical points
-    // 2. add planar shapes using alpha shapes
-    // 3. leave non-vertical points untouched
+
+    const FT max_accepted_angle = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::angle_threshold), FT(15));
+    std::vector<std::size_t> wall_points, roof_points;
+    split_points(max_accepted_angle, m_interior_points, wall_points, roof_points);
+    // dump_points(wall_points, "wall-points");
+    // dump_points(roof_points, "roof-points");
+
+    std::size_t num_shapes = compute_planar_shapes_with_rg(np, wall_points);
+    // dump_polygons("wall-planar-shapes-1");
+
+    num_shapes += add_polygons_using_alpha_shapes(np, roof_points);
+    // dump_polygons("wall-planar-shapes-2");
+
+    if (m_verbose) std::cout << "* found " << num_shapes << " approximate walls" << std::endl;
     CGAL_assertion_msg(false, "TODO: GET WALLS FROM ROOF BOUNDARIES!");
-    if (m_verbose) std::cout << "* found " << 0 << " approximate walls" << std::endl;
+  }
+
+  void split_points(
+    const FT max_accepted_angle,
+    const std::vector<std::size_t>& all_points,
+    std::vector<std::size_t>& wall_points,
+    std::vector<std::size_t>& roof_points) const {
+
+    wall_points.clear(); roof_points.clear();
+    const Vector_3 ref = Vector_3(FT(0), FT(0), FT(1));
+    for (const std::size_t idx : all_points) {
+      CGAL_assertion(idx < m_input_range.size());
+      const auto& normal = get(m_normal_map_3, idx);
+
+      FT angle = KSR::angle_3d(normal, ref);
+      if (angle > FT(90)) angle = FT(180) - angle;
+      angle = FT(90) - angle;
+      if (angle <= max_accepted_angle) wall_points.push_back(idx);
+      else roof_points.push_back(idx);
+    }
+  }
+
+  template<typename NamedParameters>
+  const std::size_t add_polygons_using_alpha_shapes(
+    const NamedParameters& np,
+    const std::vector<std::size_t>& input_range) {
+
+    Delaunay triangulation;
+    insert_in_triangulation(input_range, triangulation);
+    return 0;
+  }
+
+  void insert_in_triangulation(
+    const std::vector<std::size_t>& input_range,
+    Delaunay& triangulation) {
+
+    triangulation.clear();
+    for (const std::size_t idx : input_range) {
+      CGAL_assertion(idx < m_input_range.size());
+      const auto& point = get(m_point_map_3, idx);
+      const auto vh = triangulation.insert(
+        KSR::point_2_from_point_3(point));
+      vh->info().z = point.z();
+    }
   }
 
   void create_planes_and_regions(

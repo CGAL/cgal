@@ -158,6 +158,23 @@ const bool are_parallel(
   return false;
 }
 
+// Constructions.
+template<typename Vector_3>
+typename Kernel_traits<Vector_3>::Kernel::FT
+angle_3d(const Vector_3& v1, const Vector_3& v2) {
+
+  using Traits = typename Kernel_traits<Vector_3>::Kernel;
+  using FT = typename Traits::FT;
+
+  const double a = CGAL::to_double(v1 * v2) / (
+    CGAL::sqrt(CGAL::to_double(v1.squared_length())) *
+    CGAL::sqrt(CGAL::to_double(v2.squared_length())));
+
+  if (a < -1.0) return static_cast<FT>(std::acos(-1.0) / CGAL_PI * 180.0);
+  else if (a > 1.0) return static_cast<FT>(std::acos(1.0) / CGAL_PI * 180.0);
+  return static_cast<FT>(std::acos(a) / CGAL_PI * 180.0);
+}
+
 // Helpers.
 template<typename IVertex>
 class Indexer {
