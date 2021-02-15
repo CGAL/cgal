@@ -321,6 +321,7 @@ public:
                          typename Approximate_kernel::Construct_weighted_point_2,
                          typename Exact_kernel::Construct_weighted_point_2,
                          E2A_,
+                         true,
                          Return_base_tag,
                          Point_2,
                          FT
@@ -352,6 +353,7 @@ public:
                          typename Approximate_kernel::Construct_weighted_point_3,
                          typename Exact_kernel::Construct_weighted_point_3,
                          E2A_,
+                         true,
                          Return_base_tag,
                          Point_3,
                          FT
@@ -389,6 +391,7 @@ public:
                          typename Approximate_kernel::Construct_weighted_point_2,
                          typename Exact_kernel::Construct_weighted_point_2,
                          E2A_,
+                         true,
                          Return_base_tag,
                          Point_2,
                          FT
@@ -399,6 +402,7 @@ public:
                          typename Approximate_kernel::Construct_weighted_point_2,
                          typename Exact_kernel::Construct_weighted_point_2,
                          E2A_,
+                         true,
                          Return_base_tag,
                          Point_2,
                          int
@@ -441,6 +445,7 @@ public:
                          typename Approximate_kernel::Construct_weighted_point_3,
                          typename Exact_kernel::Construct_weighted_point_3,
                          E2A_,
+                         true,
                          Return_base_tag,
                          Point_3,
                          FT
@@ -451,6 +456,7 @@ public:
                          typename Approximate_kernel::Construct_weighted_point_3,
                          typename Exact_kernel::Construct_weighted_point_3,
                          E2A_,
+                         true,
                          Return_base_tag,
                          Point_3,
                          int
