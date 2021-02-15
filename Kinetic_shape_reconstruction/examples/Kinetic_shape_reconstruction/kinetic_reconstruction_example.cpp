@@ -99,8 +99,10 @@ int main(const int argc, const char** argv) {
 
   // Define a map from a user-defined label to the semantic label.
   const Label_map label_map = point_set. template property_map<int>("label").first;
+  const bool is_defined = point_set. template property_map<int>("label").second;
   const Semantic_map semantic_map(
     label_map,
+    is_defined,
     parameters.gi,
     parameters.bi,
     parameters.ii,

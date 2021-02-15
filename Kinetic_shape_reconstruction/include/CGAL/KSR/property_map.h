@@ -51,20 +51,27 @@ struct Semantic_from_label_map {
 
   Label_map m_label_map;
   Label_to_semantic_map m_label_to_semantic_map;
+  const bool m_is_defined;
 
   Semantic_from_label_map() { }
 
   Semantic_from_label_map(
     const Label_map label_map,
+    const bool is_defined,
     const std::string gi_str,
     const std::string bi_str,
     const std::string ii_str,
     const std::string vi_str,
     const bool verbose = true) :
-  m_label_map(label_map) {
+  m_label_map(label_map),
+  m_is_defined(is_defined) {
 
     if (verbose) {
       std::cout << "* setting semantic labels:" << std::endl;
+    }
+    if (!is_defined) {
+      if (verbose) std::cout << "* no labels defined, setting -1" << std::endl;
+      return;
     }
 
     std::istringstream gi(gi_str);
@@ -98,6 +105,10 @@ struct Semantic_from_label_map {
   friend value_type get(
     const Semantic_from_label_map& semantic_map,
     const key_type& key) {
+
+    if (!semantic_map.m_is_defined) {
+      return Semantic_label::UNCLASSIFIED;
+    }
 
     const int label = get(semantic_map.m_label_map, key);
     const auto it = semantic_map.m_label_to_semantic_map.find(label);
