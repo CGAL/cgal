@@ -176,8 +176,8 @@ public:
     m_polygons.clear();
     m_region_map.clear();
     create_ground_plane();
-    // create_approximate_walls(np);
-    // create_approximate_roofs(np);
+    create_approximate_walls(np);
+    create_approximate_roofs(np);
     CGAL_assertion(m_planes.size() == m_polygons.size());
     CGAL_assertion(m_polygons.size() == m_region_map.size());
     if (m_debug) dump_polygons("detected-planar-shapes");
@@ -386,6 +386,7 @@ private:
 
     CGAL_assertion(m_boundary_points.size()  < 3);
     CGAL_assertion(m_interior_points.size() >= 3);
+
     CGAL_assertion_msg(false, "TODO: ADD MISSING WALL POINTS, GET FROM ROOFS!");
   }
 
@@ -431,8 +432,41 @@ private:
     const std::size_t shape_idx = add_planar_shape(m_ground_points, plane);
     CGAL_assertion(shape_idx != std::size_t(-1));
     m_region_map[shape_idx] = m_ground_points;
-    CGAL_assertion_msg(false, "TODO: EXTEND GROUND PLANE BEYOND THE BBOX!");
+    extend_ground_plane(shape_idx);
     if (m_verbose) std::cout << "done" << std::endl;
+  }
+
+  void extend_ground_plane(const std::size_t shape_idx) {
+
+    FT min_x = +FT(1000000000000), min_y = +FT(1000000000000);
+    FT max_x = -FT(1000000000000), max_y = -FT(1000000000000);
+    CGAL_assertion(m_interior_points.size() >= 3);
+    for (const std::size_t idx : m_interior_points) {
+      CGAL_assertion(idx < m_input_range.size());
+      const auto& point = get(m_point_map_3, idx);
+      min_x = CGAL::min(min_x, point.x());
+      min_y = CGAL::min(min_y, point.y());
+      max_x = CGAL::max(max_x, point.x());
+      max_y = CGAL::max(max_y, point.y());
+    }
+
+    const Point_3 a(min_x, min_y, FT(0));
+    const Point_3 b(max_x, min_y, FT(0));
+    const Point_3 c(max_x, max_y, FT(0));
+    const Point_3 d(min_x, max_y, FT(0));
+
+    const auto& plane = m_planes[shape_idx];
+    const auto p0 = plane.projection(a);
+    const auto p1 = plane.projection(b);
+    const auto p2 = plane.projection(c);
+    const auto p3 = plane.projection(d);
+
+    auto& polygon = m_polygons[shape_idx];
+    polygon.clear();
+    polygon.push_back(p0);
+    polygon.push_back(p1);
+    polygon.push_back(p2);
+    polygon.push_back(p3);
   }
 
   const Plane_3 fit_plane(const std::vector<std::size_t>& region) const {

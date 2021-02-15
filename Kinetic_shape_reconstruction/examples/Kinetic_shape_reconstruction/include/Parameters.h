@@ -55,7 +55,7 @@ namespace KSR {
     // boolean tags
     with_normals(true),
     verbose(true),
-    debug(false),
+    debug(true),
     // shape detection / shape regularization
     k_neighbors(12),
     distance_threshold(noise / FT(2)),
