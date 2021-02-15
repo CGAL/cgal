@@ -2,8 +2,8 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Kinetic_shape_reconstruction_3.h>
-#include <CGAL/IO/OFF_reader.h>
 #include <CGAL/Real_timer.h>
+#include <CGAL/IO/OFF.h>
 
 using SCF   = CGAL::Simple_cartesian<float>;
 using SCD   = CGAL::Simple_cartesian<double>;

@@ -36,6 +36,7 @@
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Surface_mesh/IO.h>
 #include <CGAL/Random.h>
 
 // Internal includes.
@@ -145,7 +146,7 @@ void dump_2d_surface_mesh(
   const std::string filename = (tag != std::string() ? tag + "-" : "") + "polygons.ply";
   std::ofstream out(filename);
   out.precision(20);
-  CGAL::write_ply(out, mesh);
+  CGAL::write_PLY(out, mesh);
   out.close();
 }
 
@@ -218,7 +219,7 @@ void dump_polygons(const DS& data, const std::string tag = std::string()) {
   const std::string filename = (tag != std::string() ? tag + "-" : "") + "polygons.ply";
   std::ofstream out(filename);
   out.precision(20);
-  CGAL::write_ply(out, mesh);
+  CGAL::write_PLY(out, mesh);
   out.close();
 
 #if false
@@ -226,7 +227,7 @@ void dump_polygons(const DS& data, const std::string tag = std::string()) {
   const std::string bbox_filename = (tag != std::string() ? tag + "-" : "") + "bbox-polygons.ply";
   std::ofstream bbox_out(bbox_filename);
   bbox_out.precision(20);
-  CGAL::write_ply(bbox_out, bbox_mesh);
+  CGAL::write_PLY(bbox_out, bbox_mesh);
   bbox_out.close();
 
 #endif

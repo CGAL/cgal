@@ -2,8 +2,8 @@
 #include <CGAL/Kinetic_shape_reconstruction_2.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Aff_transformation_2.h>
-#include <CGAL/IO/PLY_writer.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/IO/PLY.h>
 #include <CGAL/Random.h>
 
 #include <vector>

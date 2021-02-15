@@ -4,8 +4,8 @@
 #include <CGAL/Kinetic_shape_reconstruction_3.h>
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
-#include <CGAL/IO/PLY_writer.h>
 #include <CGAL/Real_timer.h>
+#include <CGAL/IO/PLY.h>
 
 #include "include/Parameters.h"
 #include "include/Terminal_parser.h"

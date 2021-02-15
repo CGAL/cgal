@@ -3755,7 +3755,7 @@ public:
     file_name += "support-cdt-" + std::to_string(sp_idx) + ".ply";
     std::ofstream out(file_name);
     out.precision(20);
-    CGAL::write_ply(out, mesh);
+    CGAL::write_PLY(out, mesh);
     out.close();
   }
 
