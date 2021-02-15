@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
                                            domain,
                                            image,
                                            criteria,
-                                           2.9f,
+                                           2.9f,//isolevel
                                            Image_word_type(0));
   CGAL::refine_mesh_3(c3t3, domain, criteria);
   /// [Meshing]
