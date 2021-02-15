@@ -137,7 +137,7 @@ template<class R_> struct Compute_cartesian_coordinate {
         typedef typename Get_type<R, RT_tag>::type RT;
         typedef typename R::Vector_ first_argument_type;
         typedef int second_argument_type;
-        typedef Tag_true Is_exact;
+        typedef Tag_true Uses_no_arithmetic;
         typedef decltype(std::declval<const first_argument_type>()[0]) result_type;
 
         template <typename index_type>
@@ -153,7 +153,7 @@ template<class R_> struct Construct_cartesian_const_iterator {
         typedef typename R::LA_vector S_;
         typedef typename R::Point_cartesian_const_iterator result_type;
         // same as Vector
-        typedef Tag_true Is_exact;
+        typedef Tag_true Uses_no_arithmetic;
 
         result_type operator()(argument_type const& v,Begin_tag)const{
                 return S_::vector_begin(v);
@@ -282,7 +282,7 @@ template<class R_> struct PV_dimension {
         typedef typename R::Vector_ argument_type;
         typedef int result_type;
         typedef typename R::LA_vector LA;
-        typedef Tag_true Is_exact;
+        typedef Tag_true Uses_no_arithmetic;
 
         template<class T>
         result_type operator()(T const& v) const {
