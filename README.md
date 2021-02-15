@@ -8,7 +8,7 @@ computational geometry.
 
 CGAL Releases
 =============
-The primary vector of distribution of CGAL are sources tarballs, released
+The primary vector of distribution of CGAL are source tarballs, released
 twice a year, announced on [the web site of CGAL](https://www.cgal.org/).
 
 Getting Started with CGAL

@@ -171,9 +171,10 @@ Section "!Main CGAL" MAIN_Idx
   File "${CGAL_SRC}\CMakeLists.txt"
   File "${CGAL_SRC}\INSTALL.md"
   File "${CGAL_SRC}\LICENSE"
-  File "${CGAL_SRC}\LICENSE.FREE_USE"
+  File "${CGAL_SRC}\LICENSE.BSL"
   File "${CGAL_SRC}\LICENSE.LGPL"
   File "${CGAL_SRC}\LICENSE.GPL"
+  File "${CGAL_SRC}\LICENSE.RFL"
   File "${CGAL_SRC}\VERSION"
   File ".\cgal.ico"
 !endif

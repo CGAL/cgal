@@ -1,1 +1,2 @@
 GPL (v3 or later)
+GPL (v3 or later) AND MIT/X11 (BSD like)

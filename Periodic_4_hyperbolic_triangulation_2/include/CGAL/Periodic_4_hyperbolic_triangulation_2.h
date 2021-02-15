@@ -671,7 +671,7 @@ has_cycles_length_2(typename TDS::Vertex_handle v) const
   return false;
 }
 
-/*! \brief Tests if the triangulation is valid.
+/*! \brief tests if the triangulation is valid.
  *
  * A triangulation is valid if
  * - A cell is not its own neighbor.

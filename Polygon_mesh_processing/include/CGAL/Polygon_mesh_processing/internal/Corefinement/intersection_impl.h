@@ -554,7 +554,7 @@ class Intersection_of_triangle_meshes
 
       CGAL_assertion(&tm1!=&tm2 || f1!=f2);
 
-      typedef CGAL::Exact_predicates_exact_constructions_kernel EK;
+      typedef typename Node_vector::Exact_kernel EK;
       typedef Coplanar_intersection<TriangleMesh, EK> Cpl_inter_pt;
       std::list<Cpl_inter_pt> inter_pts;
 

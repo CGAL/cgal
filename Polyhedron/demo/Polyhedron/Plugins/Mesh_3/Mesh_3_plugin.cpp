@@ -100,8 +100,7 @@ public:
       connect(actionMesh_3_surface, SIGNAL(triggered()),
               this, SLOT(mesh_3_surface()));
     }
-
-    actionSplitPolylines = new QAction("Split polylines in a graph", mw);
+    actionSplitPolylines = new QAction("Build Features Graph for Mesh_3", mw);
     actionSplitPolylines->setProperty("subMenuName",
                                       "Tetrahedral Mesh Generation");
     connect(actionSplitPolylines, &QAction::triggered,

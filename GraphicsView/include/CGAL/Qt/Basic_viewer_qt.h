@@ -54,21 +54,20 @@
 
 namespace CGAL
 {
-
 //------------------------------------------------------------------------------
 const char vertex_source_color[] =
   {
-    "#version 120 \n"
-    "attribute highp vec4 vertex;\n"
-    "attribute highp vec3 normal;\n"
-    "attribute highp vec3 color;\n"
+    "#version 150 \n"
+    "in highp vec4 vertex;\n"
+    "in highp vec3 normal;\n"
+    "in highp vec3 color;\n"
 
     "uniform highp mat4 mvp_matrix;\n"
     "uniform highp mat4 mv_matrix; \n"
 
-    "varying highp vec4 fP; \n"
-    "varying highp vec3 fN; \n"
-    "varying highp vec4 fColor; \n"
+    "out highp vec4 fP; \n"
+    "out highp vec3 fN; \n"
+    "out highp vec4 fColor; \n"
 
     "uniform highp float point_size; \n"
     "void main(void)\n"
@@ -83,15 +82,16 @@ const char vertex_source_color[] =
 
 const char fragment_source_color[] =
   {
-    "#version 120 \n"
-    "varying highp vec4 fP; \n"
-    "varying highp vec3 fN; \n"
-    "varying highp vec4 fColor; \n"
+    "#version 150 \n"
+    "in highp vec4 fP; \n"
+    "in highp vec3 fN; \n"
+    "in highp vec4 fColor; \n"
     "uniform highp vec4 light_pos;  \n"
     "uniform highp vec4 light_diff; \n"
     "uniform highp vec4 light_spec; \n"
     "uniform highp vec4 light_amb;  \n"
     "uniform float spec_power ; \n"
+    "out vec4 out_color; \n"
 
     "void main(void) { \n"
     "   highp vec3 L = light_pos.xyz - fP.xyz; \n"
@@ -104,18 +104,18 @@ const char fragment_source_color[] =
     "   highp vec3 R = reflect(-L, N); \n"
     "   highp vec4 diffuse = max(dot(N,L), 0.0) * light_diff * fColor; \n"
     "   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
-    "   gl_FragColor = light_amb*fColor + diffuse  ; \n"
+    "   out_color = light_amb*fColor + diffuse  ; \n"
     "} \n"
     "\n"
   };
 
 const char vertex_source_p_l[] =
   {
-    "#version 120 \n"
-    "attribute highp vec4 vertex;\n"
-    "attribute highp vec3 color;\n"
+    "#version 150 \n"
+    "in highp vec4 vertex;\n"
+    "in highp vec3 color;\n"
     "uniform highp mat4 mvp_matrix;\n"
-    "varying highp vec4 fColor; \n"
+    "out highp vec4 fColor; \n"
     "uniform highp float point_size; \n"
     "void main(void)\n"
     "{\n"
@@ -127,10 +127,11 @@ const char vertex_source_p_l[] =
 
 const char fragment_source_p_l[] =
   {
-    "#version 120 \n"
-    "varying highp vec4 fColor; \n"
+    "#version 150 \n"
+    "in highp vec4 fColor; \n"
+    "out vec4 out_color; \n"
     "void main(void) { \n"
-    "gl_FragColor = fColor; \n"
+    "out_color = fColor; \n"
     "} \n"
     "\n"
   };
@@ -358,6 +359,7 @@ public:
 
   ~Basic_viewer_qt()
   {
+    makeCurrent();
     for (unsigned int i=0; i<NB_VBO_BUFFERS; ++i)
       buffers[i].destroy();
 

@@ -1,7 +1,7 @@
 #include "include/test_efficient_RANSAC_generators.h"
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/read_points.h>
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/Shape_detection/Efficient_RANSAC.h>
@@ -31,15 +31,13 @@ bool test_scene(int argc, char** argv) {
   Pwn_vector points;
 
   // Load point set from a file.
-  // read_xyz_points_and_normals takes an OutputIterator for storing the points
+  // read_points takes an OutputIterator for storing the points
   // and a property map to store the normal vector with each point.
-  std::ifstream stream((argc > 1) ? argv[1] : "data/cube.pwn");
+  const char* filename = (argc > 1) ? argv[1] : "data/cube.pwn";
 
-  if (!stream ||
-    !CGAL::read_xyz_points(stream,
-      std::back_inserter(points),
-      CGAL::parameters::point_map(Point_map()).
-      normal_map(Normal_map())))
+  if (!CGAL::read_points(filename, std::back_inserter(points),
+                         CGAL::parameters::point_map(Point_map())
+                                          .normal_map(Normal_map())))
   {
     std::cerr << "Error: cannot read file cube.pwn" << std::endl;
     return EXIT_FAILURE;

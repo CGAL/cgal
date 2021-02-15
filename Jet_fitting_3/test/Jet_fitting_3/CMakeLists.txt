@@ -8,10 +8,10 @@ find_package(CGAL REQUIRED)
 
 # use Eigen
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-include(CGAL_Eigen_support)
-if(TARGET CGAL::Eigen_support)
+include(CGAL_Eigen3_support)
+if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("blind_1pt.cpp")
-  target_link_libraries(blind_1pt PUBLIC CGAL::Eigen_support)
+  target_link_libraries(blind_1pt PUBLIC CGAL::Eigen3_support)
 else()
   message(
     STATUS

@@ -62,8 +62,8 @@ namespace CGAL {
    * @return a new dart.
    */
   template < class Map >
-  typename Map::Dart_handle
-  CGAL_DEPRECATED make_combinatorial_tetrahedron(Map& amap,
+  CGAL_DEPRECATED typename Map::Dart_handle
+  make_combinatorial_tetrahedron(Map& amap,
                                  typename Map::Dart_handle d1,
                                  typename Map::Dart_handle d2,
                                  typename Map::Dart_handle d3,
@@ -99,8 +99,8 @@ namespace CGAL {
    * @return a dart of the new cuboidal_cell.
    */
   template < class Map >
-  typename Map::Dart_handle
-  CGAL_DEPRECATED make_combinatorial_hexahedron(Map& amap,
+  CGAL_DEPRECATED typename Map::Dart_handle
+  make_combinatorial_hexahedron(Map& amap,
                                 typename Map::Dart_handle d1,
                                 typename Map::Dart_handle d2,
                                 typename Map::Dart_handle d3,

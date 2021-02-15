@@ -331,7 +331,7 @@ void output_to_medit(std::ostream& os,
 } // namespace Periodic_3_mesh_3
 
 /**
- * \brief Outputs a periodic mesh to the .mesh file format, which can be visualized
+ * \brief outputs a periodic mesh to the .mesh file format, which can be visualized
  *        using medit. By default, 7 copies are used, for a total of 8 instances of the domains.
  * \param os the stream
  * \param c3t3 the mesh

@@ -43,7 +43,7 @@
 #include "Kernel_type.h"
 
 #include <boost/unordered_set.hpp>
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <QMap>
 #include <QVector>
@@ -961,7 +961,9 @@ void Polyhedron_demo_hole_filling_plugin::hole_filling_polyline_action() {
       }
     }
     SMesh* poly = new SMesh;
-    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(*it,
+    std::vector<Point_3> ps(it->begin(), it->end());
+    ps.pop_back();
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(ps,
                                                                 patch,
                                                                 *poly);
 

@@ -17,7 +17,7 @@
 
 #include <CGAL/Qt/qglviewer.h>
 #include <QKeyEvent>
-#include <QOpenGLFunctions_2_1>
+#include <QOpenGLFunctions>
 #include <QOpenGLVertexArrayObject>
 #include <QGLBuffer>
 #include <QOpenGLShaderProgram>
@@ -43,15 +43,15 @@ typedef Local_kernel::Vector_3 Local_vector;
 //Vertex source code
 const char vertex_source_mono[] =
   {
-    "#version 120 \n"
-    "attribute highp vec4 vertex;\n"
-    "attribute highp vec3 normal;\n"
+    "#version 150 \n"
+    "in highp vec4 vertex;\n"
+    "in highp vec3 normal;\n"
 
     "uniform highp mat4 mvp_matrix;\n"
     "uniform highp mat4 mv_matrix; \n"
 
-    "varying highp vec4 fP; \n"
-    "varying highp vec3 fN; \n"
+    "out highp vec4 fP; \n"
+    "out highp vec3 fN; \n"
     "void main(void)\n"
     "{\n"
     "   fP = mv_matrix * vertex; \n"
@@ -62,17 +62,17 @@ const char vertex_source_mono[] =
 
 const char vertex_source_color[] =
   {
-    "#version 120 \n"
-    "attribute highp vec4 vertex;\n"
-    "attribute highp vec3 normal;\n"
-    "attribute highp vec3 color;\n"
+    "#version 150 \n"
+    "in highp vec4 vertex;\n"
+    "in highp vec3 normal;\n"
+    "in highp vec3 color;\n"
 
     "uniform highp mat4 mvp_matrix;\n"
     "uniform highp mat4 mv_matrix; \n"
 
-    "varying highp vec4 fP; \n"
-    "varying highp vec3 fN; \n"
-    "varying highp vec4 fColor; \n"
+    "out highp vec4 fP; \n"
+    "out highp vec3 fN; \n"
+    "out highp vec4 fColor; \n"
     "void main(void)\n"
     "{\n"
     "   fP = mv_matrix * vertex; \n"
@@ -85,15 +85,16 @@ const char vertex_source_color[] =
 //Vertex source code
 const char fragment_source_mono[] =
   {
-    "#version 120 \n"
-    "varying highp vec4 fP; \n"
-    "varying highp vec3 fN; \n"
+    "#version 150 \n"
+    "in highp vec4 fP; \n"
+    "in highp vec3 fN; \n"
     "uniform highp vec4 color; \n"
     "uniform highp vec4 light_pos;  \n"
     "uniform highp vec4 light_diff; \n"
     "uniform highp vec4 light_spec; \n"
     "uniform highp vec4 light_amb;  \n"
     "uniform float spec_power ; \n"
+    "out highp vec4 out_color; \n"
 
     "void main(void) { \n"
 
@@ -108,22 +109,23 @@ const char fragment_source_mono[] =
     "   highp vec4 diffuse = max(dot(N,L), 0.0) * light_diff * color; \n"
     "   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
 
-    "gl_FragColor = light_amb*color + diffuse  ; \n"
+    "out_color = light_amb*color + diffuse  ; \n"
     "} \n"
     "\n"
   };
 
 const char fragment_source_color[] =
   {
-    "#version 120 \n"
-    "varying highp vec4 fP; \n"
-    "varying highp vec3 fN; \n"
-    "varying highp vec4 fColor; \n"
+    "#version 150 \n"
+    "in highp vec4 fP; \n"
+    "in highp vec3 fN; \n"
+    "in highp vec4 fColor; \n"
     "uniform highp vec4 light_pos;  \n"
     "uniform highp vec4 light_diff; \n"
     "uniform highp vec4 light_spec; \n"
     "uniform highp vec4 light_amb;  \n"
     "uniform float spec_power ; \n"
+    "out highp vec4 out_color; \n"
 
     "void main(void) { \n"
 
@@ -138,7 +140,7 @@ const char fragment_source_color[] =
     "   highp vec4 diffuse = max(dot(N,L), 0.0) * light_diff * fColor; \n"
     "   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
 
-    "gl_FragColor = light_amb*fColor + diffuse  ; \n"
+    "out_color = light_amb*fColor + diffuse  ; \n"
     "} \n"
     "\n"
   };
@@ -146,8 +148,8 @@ const char fragment_source_color[] =
 //Vertex source code
 const char vertex_source_p_l[] =
   {
-    "#version 120 \n"
-    "attribute highp vec4 vertex;\n"
+    "#version 150 \n"
+    "in highp vec4 vertex;\n"
     "uniform highp mat4 mvp_matrix;\n"
     "void main(void)\n"
     "{\n"
@@ -157,10 +159,11 @@ const char vertex_source_p_l[] =
 //Vertex source code
 const char fragment_source_p_l[] =
   {
-    "#version 120 \n"
+    "#version 150 \n"
     "uniform highp vec4 color; \n"
+    "out highp vec4 out_color; \n"
     "void main(void) { \n"
-    "gl_FragColor = color; \n"
+    "out_color = color; \n"
     "} \n"
     "\n"
   };
@@ -194,7 +197,7 @@ typename K::Vector_3 compute_normal_of_face(const std::vector<typename K::Point_
   return (typename K::Construct_scaled_vector_3()(normal, 1.0/nb));
 }
 
-class Basic_viewer : public CGAL::QGLViewer, public QOpenGLFunctions_2_1
+class Basic_viewer : public CGAL::QGLViewer, public QOpenGLFunctions
 {
   struct Vertex_info
   {

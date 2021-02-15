@@ -50,7 +50,7 @@ jobs:
         run: |
           set -x
           sudo apt-get update && sudo apt-get install -y graphviz ssh bibtex2html
-          sudo pip install lxml 
+          sudo pip install lxml
           sudo pip install 'pyquery==1.4.1' # it seems to be the last py2 compatible version
           wget --no-verbose -O doxygen_exe https://cgal.geometryfactory.com/~mgimeno/doxygen/build_1_8_13/bin/doxygen
           sudo mv doxygen_exe /usr/bin/doxygen
@@ -92,7 +92,7 @@ jobs:
             egrep -v " ${PR_NUMBER}\." index.html > tmp.html || true
             echo "<li><a href=https://cgal.github.io/${PR_NUMBER}/$ROUND/Manual/index.html>Manual for PR ${PR_NUMBER} ($ROUND).</a></li>" >> ./tmp.html
             mv tmp.html index.html
-            git add ${PR_NUMBER}/$ROUND && git commit -q --amend -m "base commit" && git push -q -f -u origin master
+            git add ${PR_NUMBER}/$ROUND index.html && git commit -q --amend -m "base commit" && git push -q -f -u origin master
           else
             exit 1
           fi

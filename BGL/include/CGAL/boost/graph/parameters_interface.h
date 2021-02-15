@@ -39,6 +39,20 @@ CGAL_add_named_parameter(face_to_face_map_t, face_to_face_map, face_to_face_map)
 CGAL_add_named_parameter(implementation_tag_t, implementation_tag, implementation_tag)
 CGAL_add_named_parameter(prevent_unselection_t, prevent_unselection, prevent_unselection)
 
+CGAL_add_named_parameter(stream_precision_t, stream_precision, stream_precision)
+CGAL_add_named_parameter(verbose_t, verbose, verbose)
+
+// List of named parameters used for IO
+CGAL_add_named_parameter(vertex_normal_output_iterator_t, vertex_normal_output_iterator, vertex_normal_output_iterator)
+CGAL_add_named_parameter(vertex_color_output_iterator_t, vertex_color_output_iterator, vertex_color_output_iterator)
+CGAL_add_named_parameter(vertex_texture_output_iterator_t, vertex_texture_output_iterator, vertex_texture_output_iterator)
+CGAL_add_named_parameter(face_color_output_iterator_t, face_color_output_iterator, face_color_output_iterator)
+CGAL_add_named_parameter(vertex_normal_map_t, vertex_normal_map, vertex_normal_map)
+CGAL_add_named_parameter(vertex_color_map_t, vertex_color_map, vertex_color_map)
+CGAL_add_named_parameter(vertex_texture_map_t, vertex_texture_map, vertex_texture_map)
+CGAL_add_named_parameter(face_color_map_t, face_color_map, face_color_map)
+CGAL_add_named_parameter(repair_polygon_soup_t, repair_polygon_soup, repair_polygon_soup)
+
 // List of named parameters that we use in the package 'Mesh_3'
 CGAL_add_named_parameter(vertex_feature_degree_t, vertex_feature_degree, vertex_feature_degree_map)
 
@@ -103,10 +117,12 @@ CGAL_add_named_parameter(volume_threshold_t, volume_threshold, volume_threshold)
 CGAL_add_named_parameter(dry_run_t, dry_run, dry_run)
 CGAL_add_named_parameter(do_not_modify_t, do_not_modify, do_not_modify)
 CGAL_add_named_parameter(allow_self_intersections_t, allow_self_intersections, allow_self_intersections)
+CGAL_add_named_parameter(polyhedral_envelope_epsilon_t, polyhedral_envelope_epsilon, polyhedral_envelope_epsilon)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
 CGAL_add_named_parameter(get_placement_policy_t, get_placement_policy, get_placement)
+CGAL_add_named_parameter(filter_t, filter, filter)
 
 //to be documented
 CGAL_add_named_parameter(face_normal_t, face_normal, face_normal_map)

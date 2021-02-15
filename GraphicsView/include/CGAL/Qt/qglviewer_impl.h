@@ -88,7 +88,7 @@ void CGAL::QGLViewer::defaultConstructor() {
 
   CGAL::QGLViewer::QGLViewerPool().append(this);
   camera_ = new qglviewer::Camera(this);
-  setCamera(camera());
+  setCamera(camera_);
 
   setDefaultShortcuts();
   setDefaultMouseBindings();
@@ -155,6 +155,7 @@ void CGAL::QGLViewer::defaultConstructor() {
   is_sharing = false;
   is_linked = false;
   shared_context = nullptr;
+  _first_tick  = true;
 }
 
 CGAL_INLINE_FUNCTION
@@ -216,16 +217,6 @@ void CGAL::QGLViewer::initializeGL() {
          || QCoreApplication::arguments().contains(QStringLiteral("--old")))
 
     {
-      format.setDepthBufferSize(24);
-      format.setStencilBufferSize(8);
-      format.setVersion(2,0);
-      format.setRenderableType(QSurfaceFormat::OpenGLES);
-      format.setSamples(0);
-      format.setOption(QSurfaceFormat::DebugContext);
-      QSurfaceFormat::setDefaultFormat(format);
-
-      needNewContext();
-      qDebug()<<"GL 4.3 context initialization failed. ";
       is_ogl_4_3 = false;
     }
     else
@@ -520,6 +511,7 @@ camera is manipulated) : main drawing method. Should be overloaded. \arg
 postDraw() : display of visual hints (world axis, FPS...) */
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::paintGL() {
+  makeCurrent();
   // Clears screen, set model view matrix...
   preDraw();
   // Used defined method. Default calls draw()
@@ -529,6 +521,7 @@ void CGAL::QGLViewer::paintGL() {
     draw();
   // Add visual hints: axis, camera, grid...
   postDraw();
+  doneCurrent();
   Q_EMIT drawFinished(true);
 }
 
@@ -624,7 +617,7 @@ void CGAL::QGLViewer::postDraw() {
     painter.end();
     camera()->frame()->action_= qglviewer::NO_MOUSE_ACTION;
   }
-
+  glEnable(GL_DEPTH_TEST);
 }
 
 
@@ -1323,6 +1316,7 @@ void CGAL::QGLViewer::mousePressEvent(QMouseEvent *e) {
   //#CONNECTION# mouseDoubleClickEvent has the same structure
   //#CONNECTION# mouseString() concatenates bindings description in inverse
   // order.
+  makeCurrent();
   ClickBindingPrivate cbp(e->modifiers(), e->button(), false,
                           (::Qt::MouseButtons)(e->buttons() & ~(e->button())),
                           currentlyPressedKey_);
@@ -1506,6 +1500,7 @@ If defined, the wheel event is sent to the mouseGrabber(). It is otherwise sent
 according to wheel bindings (see setWheelBinding()). */
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::wheelEvent(QWheelEvent *e) {
+  makeCurrent();
   if (mouseGrabber()) {
     if (mouseGrabberIsAManipulatedFrame_) {
       for (QMap<WheelBindingPrivate, MouseActionPrivate>::ConstIterator
@@ -1536,6 +1531,17 @@ void CGAL::QGLViewer::wheelEvent(QWheelEvent *e) {
       MouseActionPrivate map = wheelBinding_[wbp];
       switch (map.handler) {
       case qglviewer::CAMERA:
+        if(currentlyPressedKey_ == ::Qt::Key_Z && _first_tick)
+        {
+          _first_tick = false;
+          makeCurrent();
+          //orient camera to the cursor.
+          bool found = false;
+          qglviewer::Vec point;
+          point = camera()->pointUnderPixel(mapFromGlobal(QCursor::pos()), found);
+          if(found)
+            camera()->lookAt(point);
+        }
         camera()->frame()->startAction(map.action, map.withConstraint);
         camera()->frame()->wheelEvent(e, camera());
         break;
@@ -2255,8 +2261,11 @@ void CGAL::QGLViewer::keyPressEvent(QKeyEvent *e) {
 
   const ::Qt::Key key = ::Qt::Key(e->key());
 
+  if(key == ::Qt::Key_Z && ! e->isAutoRepeat())
+  {
+    _first_tick = true;
+  }
   const ::Qt::KeyboardModifiers modifiers = e->modifiers();
-
   QMap<qglviewer::KeyboardAction, unsigned int>::ConstIterator it = keyboardBinding_
                                                              .begin(),
                                                     end =
