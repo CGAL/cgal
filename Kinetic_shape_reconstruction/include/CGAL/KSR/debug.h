@@ -645,6 +645,25 @@ void dump_volumes(const DS& data, const std::string tag = std::string()) {
   }
 }
 
+template<typename DS, typename Polygon_2>
+void dump_polygon(
+  const DS& data,
+  const std::size_t sp_idx,
+  const Polygon_2& input,
+  const std::string name) {
+
+  using Kernel = typename DS::Kernel;
+  using Point_3 = typename Kernel::Point_3;
+  std::vector<Point_3> polygon;
+  std::vector< std::vector<Point_3> > polygons;
+  for (const auto& point_2 : input) {
+    polygon.push_back(data.to_3d(sp_idx, point_2));
+  }
+  polygons.push_back(polygon);
+  Saver<Kernel> saver;
+  saver.export_polygon_soup_3(polygons, "volumes/" + name);
+}
+
 template<typename DS, typename PFace>
 void dump_pface(
   const DS& data,

@@ -104,9 +104,9 @@ public:
       // KSR_3::dump_segmented_edges(m_data, "init");
     }
 
-    CGAL_assertion(m_data.check_integrity(false, true, true));
+    CGAL_assertion(m_data.check_integrity(false));
     make_polygons_intersection_free();
-    CGAL_assertion(m_data.check_integrity(false, true, true));
+    CGAL_assertion(m_data.check_integrity(false));
     set_k_intersections(k);
 
     if (m_verbose) std::cout << "done" << std::endl;
@@ -136,7 +136,7 @@ public:
     m_data.convert(ds);
     m_data.clear();
 
-    CGAL_assertion(ds.check_integrity(false, true, true));
+    CGAL_assertion(ds.check_integrity(false));
     CGAL_assertion(ds.check_bbox());
   }
 

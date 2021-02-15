@@ -3886,6 +3886,7 @@ public:
 
       // Use only with an exact kernel!
       if (check_simplicity && !polygon.is_simple()) {
+        dump_polygon(*this, support_plane_idx, polygon, "non-simple-polygon");
         const std::string msg = "ERROR: PFACE " + str(pface) + " IS NOT SIMPLE!";
         CGAL_assertion_msg(false, msg.c_str());
         return false;
@@ -3893,6 +3894,7 @@ public:
 
       // Use only with an exact kernel!
       if (check_convexity && !polygon.is_convex()) {
+        dump_polygon(*this, support_plane_idx, polygon, "non-convex-polygon");
         const std::string msg = "ERROR: PFACE " + str(pface) + " IS NOT CONVEX!";
         CGAL_assertion_msg(false, msg.c_str());
         return false;

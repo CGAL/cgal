@@ -125,14 +125,15 @@ int main(const int argc, const char** argv) {
   std::cout.precision(20);
   const auto kernel_name = boost::typeindex::type_id<Kernel>().pretty_name();
   std::string input_filename = (argc > 1 ? argv[1] : "data/stress-test-0/test-1-polygon-a.off");
-  std::ifstream input_file(input_filename);
+  std::ifstream input_file_off(input_filename);
+  std::ifstream input_file_ply(input_filename);
 
   std::vector<Point_3> input_vertices;
   std::vector< std::vector<std::size_t> > input_faces;
 
-  if (CGAL::read_OFF(input_file, input_vertices, input_faces)) {
+  if (CGAL::read_OFF(input_file_off, input_vertices, input_faces)) {
     std::cout << "* reading the OFF file: " << input_filename << "!" << std::endl;
-  } else if (CGAL::read_PLY(input_file, input_vertices, input_faces)) {
+  } else if (CGAL::read_PLY(input_file_ply, input_vertices, input_faces)) {
     std::cout << "* reading the PLY file: " << input_filename << "!" << std::endl;
   } else {
     std::cerr << "ERROR: can't read the OFF/PLY file " << input_filename << "!" << std::endl;

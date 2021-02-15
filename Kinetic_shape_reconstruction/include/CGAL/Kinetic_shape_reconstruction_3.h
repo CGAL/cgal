@@ -161,7 +161,7 @@ public:
     m_initializer.convert(m_data);
     m_data.set_limit_lines();
     m_data.precompute_iedge_data();
-    CGAL_assertion(m_data.check_integrity(true, true, true));
+    CGAL_assertion(m_data.check_integrity());
     timer.stop();
     const double time_to_initialize = timer.time();
 
