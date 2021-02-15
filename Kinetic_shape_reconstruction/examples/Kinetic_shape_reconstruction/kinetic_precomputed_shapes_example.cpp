@@ -4,6 +4,7 @@
 #include <CGAL/Kinetic_shape_reconstruction_3.h>
 #include <CGAL/IO/OFF_reader.h>
 #include <CGAL/IO/PLY_writer.h>
+#include <CGAL/IO/PLY_reader.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Real_timer.h>
 
@@ -131,7 +132,9 @@ int main(const int argc, const char** argv) {
   std::vector< std::vector<std::size_t> > input_faces;
 
   if (!CGAL::read_OFF(input_file, input_vertices, input_faces)) {
-    std::cerr << "ERROR: can't read the file " << input_filename << "!" << std::endl;
+    std::cerr << "WARNING: can't read the OFF file " << input_filename << "!" << std::endl;
+  } else if (!CGAL::read_PLY(input_file, input_vertices, input_faces)) {
+    std::cerr << "ERROR: can't read the PLY file " << input_filename << "!" << std::endl;
     return EXIT_FAILURE;
   }
 
