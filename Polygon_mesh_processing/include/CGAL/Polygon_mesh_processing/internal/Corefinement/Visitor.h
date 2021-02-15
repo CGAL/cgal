@@ -472,7 +472,7 @@ public:
   {
     static const constexpr std::size_t NM_NID((std::numeric_limits<std::size_t>::max)());
 
-    for(const std::pair<const TriangleMesh*, const NM_features_map*>& tm_and_nm :
+    for(const std::pair<const TriangleMesh* const, const NM_features_map*>& tm_and_nm :
         non_manifold_feature_maps)
     {
       TriangleMesh* tm_ptr = const_cast<TriangleMesh*>(tm_and_nm.first);
@@ -485,7 +485,7 @@ public:
         if (eid!=NM_NID)
           edges_to_copy.push_back(std::make_pair(eid,&(ed_and_ids.second)));
       }
-      for(const std::pair<const std::size_t, const Node_ids*>& id_and_nodes : edges_to_copy)
+      for(const std::pair<std::size_t, const Node_ids*>& id_and_nodes : edges_to_copy)
       {
         const std::vector<edge_descriptor>& nm_edges =
           tm_and_nm.second->non_manifold_edges[id_and_nodes.first];
