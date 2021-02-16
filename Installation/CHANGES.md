@@ -26,7 +26,7 @@ A comprehensive list of the supported file formats is available in the Stream_su
 -   Added the class `Polyhedral_envelope_filter` that enables to perform mesh simplification inside a polyhedral envelope of the input mesh.
 
 ### [2D Polyline Simplification](https://doc.cgal.org/5.3/Manual/packages.html#PkgPolylineSimplification2)
--   Subsequences of polylines that are shared are no longer marked as unremovable.
+-   When polylines have common subsequences of vertices these subsequences may be simplifified simultaneously.
 
 [Release 5.2](https://github.com/CGAL/cgal/releases/tag/v5.2)
 -----------
