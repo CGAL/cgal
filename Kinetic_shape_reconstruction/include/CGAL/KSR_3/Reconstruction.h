@@ -24,12 +24,6 @@
 // #include <CGAL/license/Kinetic_shape_reconstruction.h>
 
 // CGAL includes.
-#include <CGAL/assertions.h>
-#include <CGAL/number_utils.h>
-#include <CGAL/convex_hull_2.h>
-#include <CGAL/Cartesian_converter.h>
-#include <CGAL/linear_least_squares_fitting_3.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
 #include <CGAL/Regularization/regularize_planes.h>
@@ -67,13 +61,15 @@ public:
   using Kernel       = GeomTraits;
 
 private:
-  using FT       = typename Kernel::FT;
-  using Point_2  = typename Kernel::Point_2;
-  using Line_2   = typename Kernel::Line_2;
-  using Point_3  = typename Kernel::Point_3;
-  using Plane_3  = typename Kernel::Plane_3;
-  using Vector_2 = typename Kernel::Vector_2;
-  using Vector_3 = typename Kernel::Vector_3;
+  using FT        = typename Kernel::FT;
+  using Point_2   = typename Kernel::Point_2;
+  using Line_2    = typename Kernel::Line_2;
+  using Point_3   = typename Kernel::Point_3;
+  using Plane_3   = typename Kernel::Plane_3;
+  using Vector_2  = typename Kernel::Vector_2;
+  using Vector_3  = typename Kernel::Vector_3;
+  using Segment_2 = typename Kernel::Segment_2;
+  using Segment_3 = typename Kernel::Segment_3;
 
   using Data_structure = KSR_3::Data_structure<Kernel>;
   using PFace          = typename Data_structure::PFace;
@@ -90,7 +86,7 @@ private:
   using Polygon_3   = std::vector<Point_3>;
   using Polygon_map = CGAL::Identity_property_map<Polygon_3>;
 
-  using IK       = Exact_predicates_inexact_constructions_kernel;
+  using IK       = CGAL::Exact_predicates_inexact_constructions_kernel;
   using IPoint_2 = typename IK::Point_2;
   using ILine_2  = typename IK::Line_2;
   using IPoint_3 = typename IK::Point_3;
@@ -737,7 +733,7 @@ private:
     }
 
     if (m_verbose) std::cout << "* found " << num_shapes << " approximate walls" << std::endl;
-    CGAL_assertion_msg(false, "TODO: GET WALLS FROM ROOF BOUNDARIES!");
+    // CGAL_assertion_msg(false, "TODO: GET WALLS FROM ROOF BOUNDARIES!");
   }
 
   void split_points(
@@ -781,10 +777,14 @@ private:
     std::vector<Line_2> lines;
     create_lines(boundary_points, regions, lines);
     CGAL_assertion(lines.size() == regions.size());
-    // std::cout << "num lines: " << lines.size() << std::endl;
+    // dump_points(boundary_points, regions, lines, "projected-regions");
 
-    const std::size_t num_walls = add_walls_from_lines(boundary_points, regions, lines);
-    std::cout << "num walls: " << num_walls << std::endl;
+    std::vector<Segment_2> segments;
+    create_segments(boundary_points, regions, lines, segments);
+    // dump_segments(segments, "boundary-segments");
+
+    const std::size_t num_walls = add_walls_from_segments(segments);
+    // std::cout << "num walls: " << num_walls << std::endl;
     return num_walls;
   }
 
@@ -943,13 +943,63 @@ private:
     return line;
   }
 
-  const std::size_t add_walls_from_lines(
+  void create_segments(
     const std::vector<Point_2>& input_range,
     const std::vector< std::vector<std::size_t> >& regions,
-    const std::vector<Line_2>& lines) const {
+    const std::vector<Line_2>& lines,
+    std::vector<Segment_2>& segments) const {
 
-    CGAL_assertion_msg(false, "TODO: ADD WALLS FROM LINES!");
-    return lines.size();
+    CGAL_assertion(lines.size() == regions.size());
+    CGAL_assertion(m_planes.size() > 0);
+
+    segments.clear();
+    segments.reserve(lines.size());
+    for (std::size_t i = 0; i < lines.size(); ++i) {
+      Point_2 source, target;
+      KSR::boundary_points_on_line_2(
+        input_range, regions[i], lines[i], source, target);
+      segments.push_back(Segment_2(source, target));
+    }
+    CGAL_assertion(segments.size() == lines.size());
+  }
+
+  const std::size_t add_walls_from_segments(
+    const std::vector<Segment_2>& segments) {
+
+    FT min_z = +FT(1000000000000);
+    FT max_z = -FT(1000000000000);
+
+    for (const std::size_t idx : m_boundary_points) {
+      CGAL_assertion(idx < m_input_range.size());
+      const auto& point = get(m_point_map_3, idx);
+      min_z = CGAL::min(min_z, point.z());
+      max_z = CGAL::max(max_z, point.z());
+    }
+
+    for (const std::size_t idx : m_interior_points) {
+      CGAL_assertion(idx < m_input_range.size());
+      const auto& point = get(m_point_map_3, idx);
+      min_z = CGAL::min(min_z, point.z());
+      max_z = CGAL::max(max_z, point.z());
+    }
+
+    CGAL_assertion(min_z <= max_z);
+    for (const auto& segment : segments) {
+      const auto& source = segment.source();
+      const auto& target = segment.target();
+
+      const Point_3 a(source.x(), source.y(), min_z);
+      const Point_3 b(target.x(), target.y(), min_z);
+      const Point_3 c(target.x(), target.y(), max_z);
+      const Point_3 d(source.x(), source.y(), max_z);
+
+      const std::size_t shape_idx = m_polygons.size();
+      m_polygons.push_back({a, b, c, d});
+      m_planes.push_back(Plane_3(a, b, c));
+      m_region_map[shape_idx] = std::vector<std::size_t>();
+    }
+
+    return segments.size();
   }
 
   void create_planes_and_regions(
@@ -1128,6 +1178,33 @@ private:
   }
 
   void dump_points(
+    const std::vector<Point_2>& boundary_points,
+    const std::vector< std::vector<std::size_t> >& regions,
+    const std::vector<Line_2>& lines,
+    const std::string file_name) const {
+
+    std::vector<Point_2> points;
+    std::vector< std::vector<Point_2> > all_points;
+    all_points.reserve(regions.size());
+
+    for (std::size_t i = 0; i < regions.size(); ++i) {
+      points.clear();
+      for (const std::size_t index : regions[i]) {
+        CGAL_assertion(index < boundary_points.size());
+        const auto& point = boundary_points[index];
+        const auto proj = lines[i].projection(point);
+        points.push_back(proj);
+      }
+      CGAL_assertion(points.size() == regions[i].size());
+      all_points.push_back(points);
+    }
+    CGAL_assertion(all_points.size() == regions.size());
+
+    KSR_3::Saver<Kernel> saver;
+    saver.export_points_2(all_points, file_name);
+  }
+
+  void dump_points(
     const std::vector<std::size_t>& indices,
     const std::string file_name) const {
 
@@ -1141,6 +1218,14 @@ private:
 
     KSR_3::Saver<Kernel> saver;
     saver.export_points_3(points, file_name);
+  }
+
+  void dump_segments(
+    const std::vector<Segment_2>& segments,
+    const std::string file_name) {
+
+    KSR_3::Saver<Kernel> saver;
+    saver.export_segments_2(segments, file_name);
   }
 
   void dump_polygons(const std::string file_name) {
