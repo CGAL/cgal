@@ -78,10 +78,6 @@ public:
 
   std::unordered_map<Vertex_handle, std::list<Vertices_in_constraint_iterator> > vertex_to_iterator;
 
-  typedef std::unordered_map<Vertex_handle,std::size_t> Vertex_index_map;
-
-  Vertex_index_map vertex_index_map;
-
   struct Compare_cost
   {
     bool operator() ( Vertices_in_constraint_iterator const& x,
@@ -104,15 +100,10 @@ public:
     typedef value_type                       reference;
     typedef Vertex_handle  key_type;
 
-    Vertex_index_map* vertex_index_map;
-
-    Id_map(const Vertex_index_map& vertex_index_map)
-      : vertex_index_map(& const_cast<Vertex_index_map&>(vertex_index_map))
-    {}
 
     reference operator[] ( key_type const& x ) const
     {
-      return (*vertex_index_map)[x];
+        return x->ID;
     }
   } ;
 
@@ -126,7 +117,7 @@ public:
     int m = initialize_indices();
     initialize_unremovable();
     Compare_cost cc;
-    Id_map idm(vertex_index_map);
+    Id_map idm;
     mpq =  new MPQ(m, cc, idm);
     initialize_costs();
   }
@@ -137,7 +128,7 @@ public:
     int m = initialize_indices(cid);
     initialize_unremovable();
     Compare_cost cc;
-    Id_map idm(vertex_index_map);
+    Id_map idm;
     mpq =  new MPQ(m, cc, idm);
     initialize_costs(cid);
   }
@@ -207,15 +198,6 @@ public:
         }
       }
     }
-
-    /*
-    //  debug output
-    for(Finite_vertices_iterator it = pct.finite_vertices_begin(); it != pct.finite_vertices_end(); ++it){
-      if(it->is_removable()){
-        std::cout << it->point() << " is  removable" << std::endl;
-      }
-    }
-    */
   }
 
   // For all polyline constraints we compute the cost of all unremovable and not removed vertices
@@ -307,7 +289,8 @@ public:
         it != pct.vertices_in_constraint_end(cid);
         ++it){
         Vertex_handle vh = *it;
-        vertex_index_map[vh] = id++;
+        vh->ID = id++;
+        //vertex_index_map[vh] = id++;
     }
     return id;
   }
@@ -316,14 +299,9 @@ public:
   initialize_indices()
   {
     int id = 0;
-    /*
-    Constraint_iterator b = pct.constraints_begin(), e = pct.constraints_end();
-    for(; b!=e; ++b){
-      id = initialize_indices(*b, id);
-    }
-    */
+
     for(Finite_vertices_iterator it =  pct.finite_vertices_begin(); it != pct.finite_vertices_end(); ++it){
-      vertex_index_map[it] = id++;
+      it->ID = id++;
     }
     return id;
   }
