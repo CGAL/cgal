@@ -4,10 +4,10 @@
 #Needs the Qt5_DIR env variable set to <Qt5_ROOT>/lib/cmake/Qt5
 
 #No config : in autotest_cgal we use NMake as generator
-#If you are using Visual as Generator, declare config="Release"
+#If using MSVC Generator, declare config="Release"
 
 
-declare config="$PWD"
+declare config=""
 declare target_directory="$1"
 
 if [[ ! -d "$target_directory" ]]
@@ -23,9 +23,9 @@ copy_dll()
 }
 
 
-files=($config/*.exe)
-files+=($config/*.dll)
-files+=(Plugins/*/$config/*.dll)
+files=($PWD/$config/*.exe)
+files+=($PWD/$config/*.dll)
+files+=($PWD/Plugins/*/$config/*.dll)
 
 for file in "${files[@]}"; do
 
@@ -38,6 +38,6 @@ for file in "${files[@]}"; do
     copy_dll "$dll" "$target_directory"
 
   done; #check dependencies
-  mkdir -p "$target_directory/platforms"
-  cp "$Qt5_DIR/../../../plugins/platforms/qwindows.dll" "$target_directory/platforms"
 done #loop over directories
+mkdir -p "$target_directory/platforms"
+cp "$Qt5_DIR/../../../plugins/platforms/qwindows.dll" "$target_directory/platforms"

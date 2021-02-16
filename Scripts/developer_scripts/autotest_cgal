@@ -624,9 +624,9 @@ if [ -f '${LIST_TEST_PACKAGES}' ]; then
 
   mkdir '${CGAL_BINARY_DIR}/test'
 
-  cp '${CGAL_TEST_DIR}/collect_cgal_testresults_from_cmake'  '${CGAL_BINARY_DIR}/test'
-  cp '${CGAL_TEST_DIR}/makefile2'                            '${CGAL_BINARY_DIR}/test'
-  cp '${CGAL_TEST_DIR}/run_testsuite_with_cmake'             '${CGAL_BINARY_DIR}/test'
+  cp '${CGAL_TEST_DIR}/collect_cgal_testresults_from_cmake' '${CGAL_BINARY_DIR}/test'
+  cp '${CGAL_TEST_DIR}/makefile2'                           '${CGAL_BINARY_DIR}/test'
+  cp '${CGAL_TEST_DIR}/run_testsuite_with_cmake'            '${CGAL_BINARY_DIR}/test'
 
   for PACKAGE in \`source '${LIST_TEST_PACKAGES}' '${CGAL_ROOT}'\`; do
 
@@ -649,39 +649,27 @@ else
 fi
 nice ${NICE_OPTIONS} make ${MAKE_OPTS} -k -fmakefile2;
 EOF
-for file in "${CGAL_BINARY_DIR}/localtestscript" "${CGAL_BINARY_DIR}/localtestscript-redo-results-collection"; do
-     cat >> "$file" <<EOF
+    for file in "${CGAL_BINARY_DIR}/localtestscript" "${CGAL_BINARY_DIR}/localtestscript-redo-results-collection"; do
+      cat >> "$file" <<EOF
 echo 'COLLECTING RESULTS';
 ./collect_cgal_testresults_from_cmake;
 if [ -n "\$COLLECT_DEMOS_BINARIES" ]; then
- echo 'COLLECTING DEMOS BINARIES';
- echo "cp ${CGAL_TEST_DIR}/../developer_scripts/cgal_demo_copy_all_dlls_cygwin.sh ${CGAL_BINARY_DIR}/test"
- cp "${CGAL_TEST_DIR}/../developer_scripts/cgal_demo_copy_all_dlls_cygwin.sh" "${CGAL_BINARY_DIR}/test"
+  echo 'COLLECTING DEMOS BINARIES';
+  echo "cp ${CGAL_TEST_DIR}/../developer_scripts/cgal_demo_copy_all_dlls_cygwin.sh ${CGAL_BINARY_DIR}/test"
+  cp "${CGAL_TEST_DIR}/../developer_scripts/cgal_demo_copy_all_dlls_cygwin.sh" "${CGAL_BINARY_DIR}/test"
 EOF
- cat >> "$file" <<'EOF'
- for demo_dir in *_Demo; do
-   echo "pushd ${demo_dir}"
-   pushd "${demo_dir}"
-   bash ../cgal_demo_copy_all_dlls_cygwin.sh "${demo_dir}_with_dlls"
-   mv "${demo_dir}_with_dlls" ..
-   popd
- done
+  cat >> "$file" <<'EOF'
+  for demo_dir in *_Demo; do
+    echo "pushd ${demo_dir}"
+    pushd "${demo_dir}"
+    bash ../cgal_demo_copy_all_dlls_cygwin.sh "${demo_dir}_with_dlls"
+    mv "${demo_dir}_with_dlls" ..
+    popd
+  done
 EOF
 cat >> "$file" <<EOF
- tar czvf "${CGAL_TEST_DIR}/demos_${CGAL_TESTER}_${PLATFORM}.tar.gz" *_Demo_with_dlls/*
+  tar czvf "${CGAL_TEST_DIR}/demos_${CGAL_TESTER}_${PLATFORM}.tar.gz" *_Demo_with_dlls/*
 fi
-echo 'COPYING RESULTS';
-cp "results_${CGAL_TESTER}_${PLATFORM}.tar.gz" "results_${CGAL_TESTER}_${PLATFORM}.txt" "${CGAL_TEST_DIR}";
-cd ..;
-EOF
-   done
-   if [ -z "${KEEP_TESTS}" ]; then
-     cat >> "${CGAL_BINARY_DIR}/localtestscript" <<EOF
-echo 'REMOVING LOCAL_TEST_DIR';
-rm -rf '${CGAL_BINARY_DIR}/test'
-EOF
-fi
-
 echo 'COPYING RESULTS';
 cp 'results_${CGAL_TESTER}_${PLATFORM}.tar.gz' 'results_${CGAL_TESTER}_${PLATFORM}.txt' '${CGAL_TEST_DIR}';
 cd ..;
