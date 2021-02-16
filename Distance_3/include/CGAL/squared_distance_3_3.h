@@ -30,34 +30,27 @@ namespace internal {
 template <class K>
 inline
 typename K::FT
-squared_distance(const typename K::Tetrahedron_3 & tet,
+squared_distance(const typename K::Tetrahedron_3 & t,
                  const typename K::Point_3 & pt,
                  const K& k)
 {
-  CGAL_assertion(orientation(tet[0],tet[1],tet[2],tet[3]) == POSITIVE);
 
-  if(orientation(tet[0],tet[1],tet[2],pt) != POSITIVE){
-    const Triangle_3<K> tr = {tet[0], tet[1], tet[2]};
-    return CGAL::squared_distance(tr, pt);
-  }
-
-  if(orientation(tet[1],tet[3],tet[2],pt) != POSITIVE){
-    const Triangle_3<K> tr = {tet[1], tet[3], tet[2]};
-    return CGAL::squared_distance(tr, pt);
-  }
-
-  if(orientation(tet[2],tet[3],tet[0],pt) != POSITIVE){
-    const Triangle_3<K> tr = {tet[2], tet[3], tet[0]};
-    return CGAL::squared_distance(tr, pt);
-  }
-
-  if(orientation(tet[0],tet[3],tet[1],pt) != POSITIVE){
-    const Triangle_3<K> tr = {tet[0], tet[3], tet[1]};
-    return CGAL::squared_distance(tr, pt);
-  }
-
+  if (! t.has_on_unbounded_side(pt)){
     return K::FT(0);
   }
+
+  const typename K::Triangle_3 t0 = {t[0], t[1], t[2]};
+  const typename K::Triangle_3 t1 = {t[0], t[1], t[3]};
+  const typename K::Triangle_3 t2 = {t[1], t[2], t[3]};
+  const typename K::Triangle_3 t3 = {t[0], t[2], t[3]};
+
+  const typename K::FT d0 = squared_distance(pt, t0, k);
+  const typename K::FT d1 = squared_distance(pt, t1, k);
+  const typename K::FT d2 = squared_distance(pt, t2, k);
+  const typename K::FT d3 = squared_distance(pt, t3, k);
+
+  return (std::min)({d0, d1, d2, d3});
+}
 
 } // namespace internal
 
