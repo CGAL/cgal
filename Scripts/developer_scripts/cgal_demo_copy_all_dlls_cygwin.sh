@@ -7,7 +7,7 @@
 #If using MSVC Generator, declare config="Release"
 
 
-declare config=""
+declare config="$2"
 declare target_directory="$1"
 
 if [[ ! -d "$target_directory" ]]

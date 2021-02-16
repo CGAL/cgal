@@ -655,8 +655,8 @@ echo 'COLLECTING RESULTS';
 ./collect_cgal_testresults_from_cmake;
 if [ -n "\$COLLECT_DEMOS_BINARIES" ]; then
   echo 'COLLECTING DEMOS BINARIES';
-  echo "cp ${CGAL_TEST_DIR}/../developer_scripts/cgal_demo_copy_all_dlls_cygwin.sh ${CGAL_BINARY_DIR}/test"
-  cp "${CGAL_TEST_DIR}/../developer_scripts/cgal_demo_copy_all_dlls_cygwin.sh" "${CGAL_BINARY_DIR}/test"
+  echo "cp ${CGAL_TEST_DIR}/../developer_scripts/cgal_demo_copy_all_dlls_cygwin.sh ${CGAL_BINARY_DIR}/test \"\""
+  cp "${CGAL_TEST_DIR}/../developer_scripts/cgal_demo_copy_all_dlls_cygwin.sh" "${CGAL_BINARY_DIR}/test \"\""
 EOF
   cat >> "$file" <<'EOF'
   for demo_dir in *_Demo; do
