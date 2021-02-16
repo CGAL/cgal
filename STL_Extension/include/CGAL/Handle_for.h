@@ -92,7 +92,7 @@ public:
     Handle_for(T1 && t1, T2 && t2, Args && ... args)
     {
         pointer p = allocator.allocate(1);
-        ptr_ = new (&(p->t)) RefCounted(std::forward<T1>(t1), std::forward<T2>(t2), std::forward<Args>(args)...);
+        ptr_ = new (p) RefCounted(std::forward<T1>(t1), std::forward<T2>(t2), std::forward<Args>(args)...);
     }
 
     Handle_for(const Handle_for& h) noexcept
