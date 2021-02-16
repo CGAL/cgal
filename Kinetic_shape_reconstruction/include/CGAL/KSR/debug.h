@@ -341,6 +341,26 @@ public:
     save(stream, file_name + ".xyz");
   }
 
+  void export_points_2(
+    const std::vector< std::vector<Point_2> >& regions,
+    const std::string file_name) const {
+
+    std::stringstream stream;
+    initialize(stream);
+
+    std::size_t num_points = 0;
+    for (const auto& region : regions)
+      num_points += region.size();
+    add_ply_header_points(stream, num_points);
+
+    for (std::size_t i = 0; i < regions.size(); ++i) {
+      const auto color = get_idx_color(i);
+      for (const auto& point : regions[i])
+        stream << point << " 0 " << color << std::endl;
+    }
+    save(stream, file_name + ".ply");
+  }
+
   void export_points_3(
     const std::vector<Point_3>& points,
     const std::string file_name) const {

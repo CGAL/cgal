@@ -69,8 +69,10 @@ public:
 private:
   using FT       = typename Kernel::FT;
   using Point_2  = typename Kernel::Point_2;
+  using Line_2   = typename Kernel::Line_2;
   using Point_3  = typename Kernel::Point_3;
   using Plane_3  = typename Kernel::Plane_3;
+  using Vector_2 = typename Kernel::Vector_2;
   using Vector_3 = typename Kernel::Vector_3;
 
   using Data_structure = KSR_3::Data_structure<Kernel>;
@@ -89,18 +91,15 @@ private:
   using Polygon_map = CGAL::Identity_property_map<Polygon_3>;
 
   using IK       = Exact_predicates_inexact_constructions_kernel;
-  using IPoint_3  = typename IK::Point_3;
-  using IPlane_3  = typename IK::Plane_3;
+  using IPoint_2 = typename IK::Point_2;
+  using ILine_2  = typename IK::Line_2;
+  using IPoint_3 = typename IK::Point_3;
+  using IPlane_3 = typename IK::Plane_3;
 
   using Converter = CGAL::Cartesian_converter<Kernel, IK>;
 
-  struct Vertex_info {
-    FT z = FT(0);
-  };
-
-  struct Face_info {
-
-  };
+  struct Vertex_info { FT z = FT(0); };
+  struct Face_info { };
 
   using Fbi = CGAL::Triangulation_face_base_with_info_2<Face_info, Kernel>;
   using Fb  = CGAL::Alpha_shape_face_base_2<Kernel, Fbi>;
@@ -123,6 +122,29 @@ private:
     Least_squares_plane_fit_sorting<Kernel, Indices, Neighbor_query_3, Point_map_3>;
   using Region_growing_3 = CGAL::Shape_detection::
     Region_growing<Indices, Neighbor_query_3, Planar_region, typename Planar_sorting::Seed_map>;
+
+  using Points_2           = std::vector<Point_2>;
+  using Pair_item_2        = std::pair<Point_2, Vector_2>;
+  using Pair_range_2       = std::vector<Pair_item_2>;
+  using First_of_pair_map  = CGAL::First_of_pair_property_map<Pair_item_2>;
+  using Second_of_pair_map = CGAL::Second_of_pair_property_map<Pair_item_2>;
+
+  using Identity_map_2   = CGAL::
+    Identity_property_map<Point_2>;
+  using Neighbor_query_2 = CGAL::Shape_detection::Point_set::
+    Sphere_neighbor_query<Kernel, Points_2, Identity_map_2>;
+
+  // using Neighbor_query_2 = CGAL::Shape_detection::Point_set::
+  //   K_neighbor_query<Kernel, Points_2, Identity_map_2>;
+
+  using Estimate_normals_2 = KSR::
+    Estimate_normals_2<Kernel, Points_2, Neighbor_query_2>;
+  using Linear_region      = CGAL::Shape_detection::Point_set::
+    Least_squares_line_fit_region<Kernel, Pair_range_2, First_of_pair_map, Second_of_pair_map>;
+  using Linear_sorting     = CGAL::Shape_detection::Point_set::
+    Least_squares_line_fit_sorting<Kernel, Points_2, Neighbor_query_2, Identity_map_2>;
+  using Region_growing_2   = CGAL::Shape_detection::
+    Region_growing<Points_2, Neighbor_query_2, Linear_region, typename Linear_sorting::Seed_map>;
 
   using Visibility_label = KSR::Visibility_label;
   using Visibility       = KSR_3::Visibility<Kernel, Point_map_3, Vector_map_3>;
@@ -703,11 +725,16 @@ private:
     // dump_points(wall_points, "wall-points");
     // dump_points(roof_points, "roof-points");
 
-    std::size_t num_shapes = compute_planar_shapes_with_rg(np, wall_points);
-    // dump_polygons("wall-planar-shapes-1");
+    std::size_t num_shapes = 0;
+    if (wall_points.size() >= 3) {
+      num_shapes += compute_planar_shapes_with_rg(np, wall_points);
+      // dump_polygons("walls-1");
+    }
 
-    num_shapes += add_polygons_using_alpha_shapes(np, roof_points);
-    // dump_polygons("wall-planar-shapes-2");
+    if (roof_points.size() >= 3) {
+      num_shapes += add_polygons_using_alpha_shapes(np, roof_points);
+      // dump_polygons("walls-2");
+    }
 
     if (m_verbose) std::cout << "* found " << num_shapes << " approximate walls" << std::endl;
     CGAL_assertion_msg(false, "TODO: GET WALLS FROM ROOF BOUNDARIES!");
@@ -739,11 +766,29 @@ private:
     const std::vector<std::size_t>& input_range) {
 
     Delaunay triangulation;
-    insert_in_triangulation(input_range, triangulation);
-    return 0;
+    CGAL_assertion(input_range.size() >= 3);
+    create_triangulation(input_range, triangulation);
+    if (triangulation.number_of_faces() == 0) return 0;
+
+    std::vector<Point_2> boundary_points;
+    add_filtered_points(np, triangulation, boundary_points);
+    // dump_points(boundary_points, "boundary-points");
+
+    std::vector<Indices> regions;
+    apply_region_growing_2(np, boundary_points, regions);
+    // dump_points(boundary_points, regions, "boundary-regions");
+
+    std::vector<Line_2> lines;
+    create_lines(boundary_points, regions, lines);
+    CGAL_assertion(lines.size() == regions.size());
+    // std::cout << "num lines: " << lines.size() << std::endl;
+
+    const std::size_t num_walls = add_walls_from_lines(boundary_points, regions, lines);
+    std::cout << "num walls: " << num_walls << std::endl;
+    return num_walls;
   }
 
-  void insert_in_triangulation(
+  void create_triangulation(
     const std::vector<std::size_t>& input_range,
     Delaunay& triangulation) {
 
@@ -755,6 +800,156 @@ private:
         KSR::point_2_from_point_3(point));
       vh->info().z = point.z();
     }
+  }
+
+  template<typename NamedParameters>
+  void add_filtered_points(
+    const NamedParameters& np,
+    Delaunay& triangulation,
+    std::vector<Point_2>& boundary_points) {
+
+    CGAL_precondition(triangulation.number_of_faces() != 0);
+    const FT distance_threshold = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::distance_threshold), FT(1));
+    const FT alpha = distance_threshold / FT(2);
+    CGAL_precondition(alpha > FT(0));
+
+    Alpha_shape alpha_shape(triangulation, alpha, Alpha_shape::GENERAL);
+    sample_edges(np, alpha_shape, boundary_points);
+  }
+
+  template<typename NamedParameters>
+  void sample_edges(
+    const NamedParameters& np,
+    const Alpha_shape& alpha_shape,
+    std::vector<Point_2>& boundary_points) const {
+
+    const FT distance_threshold = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::distance_threshold), FT(1));
+    const FT edge_sampling = distance_threshold / FT(4);
+    CGAL_precondition(edge_sampling > FT(0));
+
+    for (auto eit = alpha_shape.alpha_shape_edges_begin();
+      eit != alpha_shape.alpha_shape_edges_end(); ++eit) {
+
+      const auto& source = eit->first->vertex((eit->second + 1) % 3)->point();
+      const auto& target = eit->first->vertex((eit->second + 2) % 3)->point();
+      sample_edge(edge_sampling, source, target, boundary_points);
+    }
+  }
+
+  void sample_edge(
+    const FT edge_sampling,
+    const Point_2& source, const Point_2& target,
+    std::vector<Point_2>& boundary_points) const {
+
+    CGAL_precondition(edge_sampling > FT(0));
+    const FT distance = KSR::distance(source, target);
+    const std::size_t nb_pts = static_cast<std::size_t>(
+      CGAL::to_double(distance / edge_sampling)) + 1;
+
+    CGAL_precondition(nb_pts > 0);
+    for (std::size_t i = 0; i <= nb_pts; ++i) {
+      const FT ratio = static_cast<FT>(i) / static_cast<FT>(nb_pts);
+      boundary_points.push_back(
+        Point_2(
+          source.x() * (FT(1) - ratio) + target.x() * ratio,
+          source.y() * (FT(1) - ratio) + target.y() * ratio));
+    }
+  }
+
+  template<typename NamedParameters>
+  void apply_region_growing_2(
+    const NamedParameters& np,
+    const std::vector<Point_2>& input_range,
+    std::vector< std::vector<std::size_t> >& regions) const {
+
+    const FT distance_threshold = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::distance_threshold), FT(1));
+    CGAL_precondition(distance_threshold > FT(0));
+    const FT angle_threshold = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::angle_threshold), FT(15));
+    CGAL_precondition(angle_threshold > FT(0));
+    const std::size_t min_region_size = 20;
+    CGAL_precondition(min_region_size > 0);
+
+    regions.clear();
+    Identity_map_2 identity_map_2;
+    const FT scale = distance_threshold * FT(2);
+    Neighbor_query_2 neighbor_query(input_range, scale, identity_map_2);
+
+    std::vector<Vector_2> normals;
+    Estimate_normals_2 estimator(input_range, neighbor_query);
+    estimator.get_normals(normals);
+    CGAL_assertion(input_range.size() == normals.size());
+
+    Pair_range_2 range;
+    range.reserve(input_range.size());
+    for (std::size_t i = 0; i < input_range.size(); ++i)
+      range.push_back(std::make_pair(input_range[i], normals[i]));
+
+    First_of_pair_map point_map;
+    Second_of_pair_map normal_map;
+    Linear_region region(
+      range, distance_threshold, angle_threshold, min_region_size,
+      point_map, normal_map);
+
+    Linear_sorting sorting(
+      input_range, neighbor_query, identity_map_2);
+    sorting.sort();
+
+    Region_growing_2 region_growing(
+      input_range, neighbor_query, region, sorting.seed_map());
+    region_growing.detect(std::back_inserter(regions));
+  }
+
+  void create_lines(
+    const std::vector<Point_2>& input_range,
+    const std::vector< std::vector<std::size_t> >& regions,
+    std::vector<Line_2>& lines) const {
+
+    lines.clear();
+    lines.reserve(regions.size());
+    for (const auto& region : regions) {
+      const auto line = fit_line(input_range, region);
+      lines.push_back(line);
+    }
+    CGAL_assertion(lines.size() == regions.size());
+  }
+
+  const Line_2 fit_line(
+    const std::vector<Point_2>& input_range,
+    const std::vector<std::size_t>& region) const {
+
+    std::vector<IPoint_2> points;
+    points.reserve(region.size());
+    for (const std::size_t idx : region) {
+      CGAL_assertion(idx < input_range.size());
+      points.push_back(m_converter(input_range[idx]));
+    }
+    CGAL_assertion(points.size() == region.size());
+
+    ILine_2 fitted_line;
+    IPoint_2 fitted_centroid;
+    CGAL::linear_least_squares_fitting_2(
+      points.begin(), points.end(),
+      fitted_line, fitted_centroid,
+      CGAL::Dimension_tag<0>());
+
+    const Line_2 line(
+      static_cast<FT>(fitted_line.a()),
+      static_cast<FT>(fitted_line.b()),
+      static_cast<FT>(fitted_line.c()));
+    return line;
+  }
+
+  const std::size_t add_walls_from_lines(
+    const std::vector<Point_2>& input_range,
+    const std::vector< std::vector<std::size_t> >& regions,
+    const std::vector<Line_2>& lines) const {
+
+    CGAL_assertion_msg(false, "TODO: ADD WALLS FROM LINES!");
+    return lines.size();
   }
 
   void create_planes_and_regions(
@@ -897,6 +1092,39 @@ private:
   void orient_surface_model() {
     return;
     CGAL_assertion_msg(false, "TODO: ORIENT SURFACE MODEL!");
+  }
+
+  void dump_points(
+    const std::vector<Point_2>& points,
+    const std::string file_name) const {
+
+    KSR_3::Saver<Kernel> saver;
+    saver.export_points_2(points, file_name);
+  }
+
+  void dump_points(
+    const std::vector<Point_2>& boundary_points,
+    const std::vector< std::vector<std::size_t> >& regions,
+    const std::string file_name) const {
+
+    std::vector<Point_2> points;
+    std::vector< std::vector<Point_2> > all_points;
+    all_points.reserve(regions.size());
+
+    for (const auto& region : regions) {
+      points.clear();
+      for (const std::size_t index : region) {
+        CGAL_assertion(index < boundary_points.size());
+        const auto& point = boundary_points[index];
+        points.push_back(point);
+      }
+      CGAL_assertion(points.size() == region.size());
+      all_points.push_back(points);
+    }
+    CGAL_assertion(all_points.size() == regions.size());
+
+    KSR_3::Saver<Kernel> saver;
+    saver.export_points_2(all_points, file_name);
   }
 
   void dump_points(

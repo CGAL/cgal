@@ -185,6 +185,10 @@ namespace Point_set {
 
     /// @}
 
+    const Index_to_point_map& point_map() const {
+      return m_index_to_point_map;
+    }
+
   private:
 
     // Fields.
