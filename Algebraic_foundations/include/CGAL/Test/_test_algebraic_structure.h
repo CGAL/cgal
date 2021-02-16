@@ -338,6 +338,7 @@ void test_algebraic_structure_intern( const CGAL::Field_tag& ) {
     test_algebraic_structure_intern< AS >( CGAL::Integral_domain_tag());
      AS  a(1);
      AS  b(3);
+     AS& b_ref = b; b = b_ref; // to exercise self-copy
      AS  c = a / b;
     (void)c;  // avoid warnings for unused variables
 

@@ -61,7 +61,7 @@ class Handle
     {
       CGAL_precondition( x.PTR != static_cast<Rep*>(0) );
       x.incref();
-      reset();
+      if(PTR) decref(); // not reset() in case this==&x
       PTR = x.PTR;
       return *this;
     }
@@ -75,33 +75,7 @@ class Handle
 
     friend void swap(Handle& a, Handle& b) noexcept { std::swap(a.PTR, b.PTR); }
 
-    void reset()
-    {
-      if (PTR)
-      {
-        if (is_currently_single_threaded()) {
-          auto c = PTR->count.load(std::memory_order_relaxed);
-          if (c == 1)
-            delete PTR;
-          else
-            PTR->count.store(c - 1, std::memory_order_relaxed);
-          PTR = 0;
-        } else {
-        // TSAN does not support fences :-(
-#if !defined __SANITIZE_THREAD__ && !__has_feature(thread_sanitizer)
-          if (PTR->count.load(std::memory_order_relaxed) == 1
-              || PTR->count.fetch_sub(1, std::memory_order_release) == 1) {
-            std::atomic_thread_fence(std::memory_order_acquire);
-#else
-          if (PTR->count.fetch_sub(1, std::memory_order_acq_rel) == 1) {
-#endif
-            delete PTR;
-          }
-          PTR=0;
-        }
-      }
-    }
-
+  private:
     void incref() const noexcept
     {
       if (is_currently_single_threaded()) {
@@ -111,8 +85,40 @@ class Handle
       }
     }
 
+    void decref()
+    {
+      if (is_currently_single_threaded()) {
+        auto c = PTR->count.load(std::memory_order_relaxed);
+        if (c == 1)
+          delete PTR;
+        else
+          PTR->count.store(c - 1, std::memory_order_relaxed);
+      } else {
+      // TSAN does not support fences :-(
+#if !defined __SANITIZE_THREAD__ && !__has_feature(thread_sanitizer)
+        if (PTR->count.load(std::memory_order_relaxed) == 1
+            || PTR->count.fetch_sub(1, std::memory_order_release) == 1) {
+          std::atomic_thread_fence(std::memory_order_acquire);
+#else
+        if (PTR->count.fetch_sub(1, std::memory_order_acq_rel) == 1) {
+#endif
+          delete PTR;
+        }
+      }
+    }
+
+  public:
+    void reset()
+    {
+      if (PTR)
+      {
+        decref();
+        PTR=0;
+      }
+    }
+
     int
-    refs()  const noexcept { return PTR->count; }
+    refs()  const noexcept { return PTR->count.load(std::memory_order_relaxed); }
 
     Id_type id() const noexcept { return PTR - static_cast<Rep*>(0); }
 

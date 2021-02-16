@@ -316,8 +316,8 @@ public:
     // We could take the lack of _REENTRANT on that platform as forcing CGAL_HAS_NO_THREADS
     static_assert(false, "Please pass -pthread to the compiler");
 #endif
-    // The test is unnecessary, only use it if benchmark says so
-    //if (ptr_.load(std::memory_order_relaxed) == &at_orig)
+    // The test is unnecessary, only use it if benchmark says so, or in order to avoid calling Lazy_exact_Ex_Cst::update_exact() (which used to contain an assertion)
+    //if (is_lazy())
     std::call_once(once, [this](){this->update_exact();});
     return static_cast<AT_ET_wrap<AT,ET>*>(ptr_.load(std::memory_order_relaxed))->et(); // call_once already synchronized memory
   }
@@ -431,11 +431,11 @@ public:
   const ET & exact() const
   {
 #ifdef CGAL_HAS_THREADS
-    // The test is unnecessary, only use it if benchmark says so
-    //if (ptr_.load(std::memory_order_relaxed) == nullptr)
+    // The test is unnecessary, only use it if benchmark says so, or in order to avoid calling Lazy_exact_Ex_Cst::update_exact() (which used to contain an assertion)
+    //if (is_lazy())
     std::call_once(once, [this](){this->update_exact();});
 #else
-    if (ptr_.load(std::memory_order_relaxed) == nullptr)
+    if (is_lazy())
       this->update_exact();
 #endif
     return *ptr_.load(std::memory_order_relaxed); // call_once already synchronized memory
@@ -530,8 +530,8 @@ public:
 
   const ET & exact() const
   {
-    // The test is unnecessary, only use it if benchmark says so
-    //if (ptr_.load(std::memory_order_relaxed) == nullptr)
+    // The test is unnecessary, only use it if benchmark says so, or in order to avoid calling Lazy_exact_Ex_Cst::update_exact() (which used to contain an assertion)
+    //if (is_lazy())
     std::call_once(once, [this](){this->update_exact();});
     return *ptr_.load(std::memory_order_relaxed); // call_once already synchronized memory
   }

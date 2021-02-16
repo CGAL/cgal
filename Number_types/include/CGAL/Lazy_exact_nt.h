@@ -168,7 +168,10 @@ struct Lazy_exact_Ex_Cst final : public Lazy_exact_nt_rep<ET>
       : Lazy_exact_nt_rep<ET>(CGAL_NTS to_interval(e), std::forward<T>(e))
   { }
 
-  void update_exact() const { CGAL_error(); }
+  void update_exact() const {
+    // Currently we do not check is_lazy() before calling call_once, so this is called.
+    // CGAL_error();
+  }
 };
 
 // Construction from a Lazy_exact_nt<ET1> (which keeps the lazyness).
