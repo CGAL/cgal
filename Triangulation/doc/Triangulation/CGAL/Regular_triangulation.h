@@ -124,23 +124,30 @@ template< typename ForwardIterator >
 std::ptrdiff_t insert(ForwardIterator s, ForwardIterator e);
 
 /*!
-Inserts weighted point `p` in the triangulation and returns the corresponding
-vertex if `p` is in the star defined by `star_center`.
+inserts the weighted point `p` in the triangulation on the
+condition that the vertex `star_center` appears
+in the conflict zone of `p` (that is, `p` would appear
+in the star of `star_center` after the insertion).
 
-If this insertion creates a vertex, this vertex is returned.
+If the insertion of `p` creates a new vertex, this vertex is returned.
+Otherwise, a default constructed handle is returned.
 
-If `p` coincides with an existing vertex and has a greater weight,
-then `p` replaces it as vertex of the triangulation.
+If the dimension of the triangulation is `0` and if `p` coincides
+with an existing vertex and has a greater weight,
+then `p` replaces it as vertex of the triangulation
+and this vertex is returned.
 
-If `p` coincides with an already existing vertex (both point and
-weights being equal), then this vertex is returned and the triangulation
+If `p` coincides with an already existing vertex, with both point and
+weights being equal, then this vertex is returned and the triangulation
 remains unchanged.
 
-Otherwise if `p` does not appear as a vertex of the triangulation,
-then this method returns the default constructed handle.
+By convention, if the insertion of `p` would increase the dimension 
+of the triangulation, it is inserted.
 
 Prior to the actual insertion, `p` is located in the triangulation;
 `start` is used as a starting place for locating `p`.
+
+\sa `Regular_triangulation::compute_conflict_zone()`
 */
 Vertex_handle insert_if_in_star(const Weighted_point & p, Vertex_handle star_center,
   Full_cell_handle start = Full_cell_handle());
