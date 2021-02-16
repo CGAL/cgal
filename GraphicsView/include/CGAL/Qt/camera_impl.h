@@ -885,8 +885,11 @@ CGAL_INLINE_FUNCTION
 Vec Camera::pointUnderPixel(const QPoint &pixel, bool &found) const {
   float depth = 2.0;
   // Qt uses upper corner for its origin while GL uses the lower corner.
-    dynamic_cast<QOpenGLFunctions*>(parent())->glReadPixels(pixel.x(), screenHeight() - 1 - pixel.y(), 1, 1,
-                                                            GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+  if(auto parent = dynamic_cast<QOpenGLFunctions*>(parent()))
+  {
+    parent->glReadPixels(pixel.x(), screenHeight() - 1 - pixel.y(), 1, 1,
+                         GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+  }
   found = depth < 1.0;
   Vec point(pixel.x(), pixel.y(), depth);
   point = unprojectedCoordinatesOf(point);
