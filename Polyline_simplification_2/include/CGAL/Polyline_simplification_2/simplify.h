@@ -137,7 +137,7 @@ public:
     int m = initialize_indices(cid);
     initialize_unremovable();
     Compare_cost cc;
-    Id_map idm;
+    Id_map idm(vertex_index_map);
     mpq =  new MPQ(m, cc, idm);
     initialize_costs(cid);
   }
@@ -306,7 +306,8 @@ public:
     for(Vertices_in_constraint_iterator it = pct.vertices_in_constraint_begin(cid);
         it != pct.vertices_in_constraint_end(cid);
         ++it){
-      it.base()->id = id++;
+        Vertex_handle vh = *it;
+        vertex_index_map[vh] = id++;
     }
     return id;
   }
