@@ -159,10 +159,13 @@ Vertex_handle insert_if_in_star(const Weighted_point & p, Vertex_handle star_cen
   Vertex_handle hint);
 
 /*!
-Inserts weighted point `p` in the triangulation.
-Similar to the above `insert_if_in_star()` function, but takes as additional
-parameter the return values of a previous location query. See description of
-`Triangulation::locate()`.
+inserts the weighted point `p` in the triangulation.
+
+This function is similar to the above `insert_if_in_star()` function, 
+but takes as additional parameters the return values of the location query
+of `p`. 
+
+\sa `Triangulation::locate()`.
 */
 insert_if_in_star(const Weighted_point & p, Vertex_handle star_center, Locate_type lt,
   const Face & f, const Facet &, Full_cell_handle s);
