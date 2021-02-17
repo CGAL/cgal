@@ -82,7 +82,7 @@ struct Angle_tester
       const typename Kernel::Point_3& p1 = g[v1];
       const typename Kernel::Point_3& p2 = g[v2];
 
-      return (CGAL::angle(p1, p, p2) == CGAL::ACUTE);
+      return (CGAL::angle(p1, p, p2) != CGAL::OBTUSE);
     }
   }
 };
