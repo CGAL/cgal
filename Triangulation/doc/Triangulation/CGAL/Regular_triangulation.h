@@ -167,8 +167,8 @@ of `p`.
 
 \sa `Triangulation::locate()`.
 */
-insert_if_in_star(const Weighted_point & p, Vertex_handle star_center, Locate_type lt,
-  const Face & f, const Facet &, Full_cell_handle s);
+Vertex_handle insert_if_in_star(const Weighted_point& p, Vertex_handle star_center, Locate_type lt,
+                                const Face& f, const Facet&, Full_cell_handle s);
 
 /// @}
 
