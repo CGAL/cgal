@@ -101,12 +101,6 @@ private:
 
   using Planar_shape_type = KSR::Planar_shape_type;
 
-  Data_structure& m_data;
-  TRI m_cdt;
-  std::set<PVertex> m_input;
-  std::map<CID, IEdge> m_map_intersections;
-  const Planar_shape_type m_merge_type;
-
 public:
   Polygon_splitter(Data_structure& data) :
   m_data(data),
@@ -146,7 +140,18 @@ public:
     }
   }
 
+  void clear() {
+    m_cdt.clear();
+    m_input.clear();
+    m_map_intersections.clear();
+  }
+
 private:
+  Data_structure& m_data;
+  TRI m_cdt;
+  std::set<PVertex> m_input;
+  std::map<CID, IEdge> m_map_intersections;
+  const Planar_shape_type m_merge_type;
 
   void merge_coplanar_pfaces(
     const std::size_t support_plane_idx) {
@@ -309,7 +314,7 @@ private:
       // const auto cid = m_cdt.insert_constraint(vhs.begin(), vhs.end());
       original_face.push_back(original_face.front());
       const auto cid = m_cdt.insert_constraint(original_face.begin(), original_face.end());
-      m_map_intersections.insert(std::make_pair(cid, Data_structure::null_iedge()));
+      m_map_intersections.insert(std::make_pair(cid, m_data.null_iedge()));
     }
 
     // Then, add intersection vertices + constraints.
@@ -379,7 +384,7 @@ private:
       if (iter == m_map_intersections.end()) {
         continue;
       }
-      if (iter->second == Data_structure::null_iedge()) {
+      if (iter->second == m_data.null_iedge()) {
         return true;
       }
     }
@@ -465,7 +470,7 @@ private:
 
         const auto source = curr_face->vertex(m_cdt.ccw(idx));
         const auto target = curr_face->vertex(m_cdt.cw (idx));
-        if (source->info().pvertex == Data_structure::null_pvertex()) {
+        if (source->info().pvertex == m_data.null_pvertex()) {
           source->info().pvertex =
             m_data.add_pvertex(support_plane_idx, source->point());
         }
@@ -508,8 +513,8 @@ private:
 
     // Reconnect only those, which have already been connected.
     for (auto vit = m_cdt.finite_vertices_begin(); vit != m_cdt.finite_vertices_end(); ++vit) {
-      if (vit->info().pvertex != Data_structure::null_pvertex() &&
-          vit->info().ivertex != Data_structure::null_ivertex()) {
+      if (vit->info().pvertex != m_data.null_pvertex() &&
+          vit->info().ivertex != m_data.null_ivertex()) {
         m_data.connect(vit->info().pvertex, vit->info().ivertex);
       }
     }
@@ -522,10 +527,10 @@ private:
       const auto& cid   = item.first;
       const auto& iedge = item.second;
 
-      if (iedge == Data_structure::null_iedge()) {
+      if (iedge == m_data.null_iedge()) {
         continue;
       }
-      CGAL_assertion(iedge != Data_structure::null_iedge());
+      CGAL_assertion(iedge != m_data.null_iedge());
 
       auto vit = m_cdt.vertices_in_constraint_begin(cid);
       while (true) {
@@ -536,12 +541,12 @@ private:
         vit = next;
 
         if (
-          a->info().pvertex == Data_structure::null_pvertex() ||
-          b->info().pvertex == Data_structure::null_pvertex()) {
+          a->info().pvertex == m_data.null_pvertex() ||
+          b->info().pvertex == m_data.null_pvertex()) {
           continue;
         }
-        CGAL_assertion(a->info().pvertex != Data_structure::null_pvertex());
-        CGAL_assertion(b->info().pvertex != Data_structure::null_pvertex());
+        CGAL_assertion(a->info().pvertex != m_data.null_pvertex());
+        CGAL_assertion(b->info().pvertex != m_data.null_pvertex());
         m_data.connect(a->info().pvertex, b->info().pvertex, iedge);
       }
     }
@@ -556,9 +561,9 @@ private:
       // std::cout << "pvertex: " << m_data.point_3(pvertex) << std::endl;
 
       bool is_frozen = false;
-      auto iedge = Data_structure::null_iedge();
+      auto iedge = m_data.null_iedge();
       std::pair<PVertex, PVertex> neighbors(
-        Data_structure::null_pvertex(), Data_structure::null_pvertex());
+        m_data.null_pvertex(), m_data.null_pvertex());
 
       // Search for a frozen pvertex.
       const auto pedges = m_data.pedges_around_pvertex(pvertex);
@@ -567,7 +572,7 @@ private:
         // << m_data.has_iedge(pedge) << std::endl;
 
         if (m_data.has_iedge(pedge)) {
-          if (iedge == Data_structure::null_iedge()) {
+          if (iedge == m_data.null_iedge()) {
             // std::cout << "empty iedge" << std::endl;
             iedge = m_data.iedge(pedge);
           } else {
@@ -577,12 +582,12 @@ private:
           }
         } else {
           const auto opposite = m_data.opposite(pedge, pvertex);
-          if (neighbors.first == Data_structure::null_pvertex()) {
+          if (neighbors.first == m_data.null_pvertex()) {
             neighbors.first = opposite;
             // std::cout << "assigned first neighbor: " << m_data.point_3(opposite) << std::endl;
           } else {
-            CGAL_assertion(neighbors.first  != Data_structure::null_pvertex());
-            CGAL_assertion(neighbors.second == Data_structure::null_pvertex());
+            CGAL_assertion(neighbors.first  != m_data.null_pvertex());
+            CGAL_assertion(neighbors.second == m_data.null_pvertex());
             neighbors.second = opposite;
             // std::cout << "assigned second neighbor: " << m_data.point_3(opposite) << std::endl;
           }
@@ -596,22 +601,22 @@ private:
       }
 
       // No incident intersections = keep initial direction.
-      if (iedge == Data_structure::null_iedge()) {
+      if (iedge == m_data.null_iedge()) {
         continue;
       }
       m_data.connect(pvertex, iedge);
       // CGAL_assertion(
-      //   neighbors.first  != Data_structure::null_pvertex() &&
-      //   neighbors.second != Data_structure::null_pvertex());
+      //   neighbors.first  != m_data.null_pvertex() &&
+      //   neighbors.second != m_data.null_pvertex());
 
       // Set future direction.
       bool is_first_okay = false;
-      if (neighbors.first != Data_structure::null_pvertex()) {
+      if (neighbors.first != m_data.null_pvertex()) {
         is_first_okay = update_neighbor(pvertex,   neighbors.first);
       }
 
       bool is_second_okay = false;
-      if (neighbors.second != Data_structure::null_pvertex()) {
+      if (neighbors.second != m_data.null_pvertex()) {
         is_second_okay = update_neighbor(pvertex, neighbors.second);
       }
 

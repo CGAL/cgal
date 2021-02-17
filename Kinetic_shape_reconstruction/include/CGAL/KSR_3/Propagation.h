@@ -26,6 +26,8 @@
 // Internal includes.
 #include <CGAL/KSR/utils.h>
 #include <CGAL/KSR/debug.h>
+#include <CGAL/KSR_3/Event.h>
+#include <CGAL/KSR_3/Event_queue.h>
 #include <CGAL/KSR_3/Data_structure.h>
 
 namespace CGAL {
@@ -38,29 +40,2137 @@ public:
   using Kernel = GeomTraits;
 
 private:
-  using FT      = typename Kernel::FT;
-  using Point_3 = typename Kernel::Point_3;
+  using FT          = typename Kernel::FT;
+  using Point_2     = typename Kernel::Point_2;
+  using Vector_2    = typename Kernel::Vector_2;
+  using Segment_2   = typename Kernel::Segment_2;
+  using Direction_2 = typename Kernel::Direction_2;
+  using Line_2      = typename Kernel::Line_2;
 
   using Data_structure = KSR_3::Data_structure<Kernel>;
 
   using IVertex = typename Data_structure::IVertex;
   using IEdge   = typename Data_structure::IEdge;
 
+  using PVertex = typename Data_structure::PVertex;
+  using PEdge   = typename Data_structure::PEdge;
+  using PFace   = typename Data_structure::PFace;
+
+  using Event       = KSR_3::Event<Data_structure>;
+  using Event_queue = KSR_3::Event_queue<Data_structure>;
+
+  using Bbox_2     = CGAL::Bbox_2;
+  using Face_index = typename Data_structure::Face_index;
+
 public:
   Propagation(
-    const bool debug,
-    const bool verbose,
-    Data_structure& data) :
-  m_debug(debug),
-  m_verbose(verbose),
-  m_data(data)
+    const bool verbose, const bool dprint, const bool debug, Data_structure& data) :
+  m_verbose(verbose), m_export(dprint), m_debug(debug), m_data(data),
+  m_queue(m_debug), m_min_time(-FT(1)), m_max_time(-FT(1))
   { }
 
-private:
-  const bool m_debug;
-  const bool m_verbose;
-  Data_structure& m_data;
+  const std::pair<std::size_t, std::size_t> propagate(const FT time_step) {
 
+    std::size_t num_queue_calls = 0;
+    m_min_time = FT(0);
+    m_max_time = time_step;
+    CGAL_assertion(m_min_time >= FT(0) && m_max_time >= m_min_time);
+    std::size_t num_events = 0;
+    while (initialize_queue()) {
+
+      num_events = run(num_events);
+      m_min_time = m_max_time;
+      m_max_time += time_step;
+      CGAL_assertion(m_data.check_integrity());
+      ++num_queue_calls;
+
+      if (m_verbose && !m_debug) {
+        if ((num_queue_calls % 50) == 0) {
+          std::cout << ".................................................." << std::endl;
+        }
+      }
+
+      if (num_queue_calls > 1000000) {
+        CGAL_assertion_msg(false, "DEBUG ERROR: WHY SO MANY ITERATIONS?");
+        break;
+      }
+    }
+    return std::make_pair(num_queue_calls, num_events);
+  }
+
+  void clear() {
+    m_queue.clear();
+    m_min_time = -FT(1);
+    m_max_time = -FT(1);
+  }
+
+private:
+  const bool m_verbose;
+  const bool m_export;
+  const bool m_debug;
+  Data_structure& m_data;
+  Event_queue m_queue;
+  FT m_min_time;
+  FT m_max_time;
+
+  /*******************************
+  **       IDENTIFY EVENTS      **
+  ********************************/
+
+  const bool initialize_queue() {
+
+    if (m_debug) {
+      std::cout << "* initializing queue for events in [" <<
+      m_min_time << ";" << m_max_time << "]" << std::endl;
+    }
+
+    m_data.update_positions(m_max_time);
+    bool still_running = false;
+    for (std::size_t i = 0; i < m_data.number_of_support_planes(); ++i) {
+      const auto& iedges   = m_data.iedges(i);
+      const auto& segments = m_data.isegments(i);
+      const auto& bboxes   = m_data.ibboxes(i);
+      for (const auto pvertex : m_data.pvertices(i)) {
+        if (compute_events_of_pvertex(pvertex, iedges, segments, bboxes)) {
+          still_running = true;
+        }
+      }
+    }
+    m_data.update_positions(m_min_time);
+    return still_running;
+  }
+
+  const bool compute_events_of_pvertex(
+    const PVertex& pvertex,
+    const std::vector<IEdge>& iedges,
+    const std::vector<Segment_2>& segments,
+    const std::vector<Bbox_2>& bboxes) {
+
+    CGAL_assertion(iedges.size() > 0);
+    CGAL_assertion(iedges.size() == segments.size());
+    CGAL_assertion(iedges.size() == bboxes.size());
+
+    std::cout.precision(20);
+    if (m_data.is_frozen(pvertex)) {
+      return false;
+    }
+
+    const auto pv_min = m_data.point_2(pvertex, m_min_time);
+    const auto pv_max = m_data.point_2(pvertex, m_max_time);
+    const Segment_2 pv_segment(pv_min, pv_max);
+    const auto pv_bbox = pv_segment.bbox();
+
+    if (m_data.has_iedge(pvertex)) {
+      compute_events_of_constrained_pvertex(
+        pvertex, pv_segment, pv_bbox);
+    } else {
+      compute_events_of_unconstrained_pvertex(
+        pvertex, pv_segment, pv_bbox, iedges, segments, bboxes);
+    }
+    return true;
+  }
+
+  void compute_events_of_constrained_pvertex(
+    const PVertex& pvertex, const Segment_2& pv_segment, const Bbox_2& pv_bbox) {
+
+    // const bool is_event_found =
+    // try_pvertices_to_ivertex_event(pvertex, pv_segment, pv_bbox);
+    // if (!is_event_found) return;
+
+    try_pvertex_to_pvertex_constrained_event(pvertex, pv_segment, pv_bbox);
+    try_pvertex_to_ivertex_constrained_event(pvertex, pv_segment, pv_bbox);
+  }
+
+  const bool try_pvertices_to_ivertex_event(
+    const PVertex& pvertex, const Segment_2& pv_segment, const Bbox_2& pv_bbox) {
+    bool is_event_found = false;
+
+    PVertex prev, next;
+    std::tie(prev, next) = m_data.prev_and_next(pvertex);
+    for (const auto& pother : { prev, next }) {
+      if (pother == m_data.null_pvertex()
+          || !m_data.is_active(pother)
+          ||  m_data.has_iedge(pother)) {
+        continue;
+      }
+
+      const Segment_2 po_segment(
+        m_data.point_2(pother, m_min_time),
+        m_data.point_2(pother, m_max_time));
+      const auto po_bbox = po_segment.bbox();
+
+      if (!do_overlap(pv_bbox, po_bbox)) {
+        continue;
+      }
+
+      Point_2 inter;
+      if (!KSR::intersection(pv_segment, po_segment, inter)) {
+        continue;
+      }
+
+      CGAL_assertion(m_data.has_iedge(pvertex));
+      const auto iedge = m_data.iedge(pvertex);
+
+      const auto isource = m_data.source(iedge);
+      const auto itarget = m_data.target(iedge);
+
+      const auto source = m_data.point_2(pvertex.first, isource);
+      const auto target = m_data.point_2(pvertex.first, itarget);
+
+      const FT tol = KSR::tolerance<FT>();
+      const FT dist1 = KSR::distance(inter, source);
+      const FT dist2 = KSR::distance(inter, target);
+
+      // std::cout << "tol: " << tol << std::endl;
+      // std::cout << "dist 1: " << dist1 << std::endl;
+      // std::cout << "dist 2: " << dist2 << std::endl;
+
+      Point_2 ipoint;
+      IVertex ivertex = m_data.null_ivertex();
+      if (dist1 < tol) {
+        CGAL_assertion(dist2 >= tol);
+        ipoint = source; ivertex = isource;
+      } else if (dist2 < tol) {
+        CGAL_assertion(dist1 >= tol);
+        ipoint = target; ivertex = itarget;
+      }
+
+      if (ivertex != m_data.null_ivertex()) {
+        CGAL_assertion(ipoint != Point_2());
+
+        const auto& pinit = pv_segment.source();
+        const FT distance = KSR::distance(pinit, ipoint);
+        const FT time = distance / m_data.speed(pvertex);
+
+        // Should I break here?
+        is_event_found = true;
+        CGAL_assertion(time < m_max_time - m_min_time);
+        m_queue.push(Event(true, pvertex, pother, ivertex, m_min_time + time));
+        CGAL_assertion_msg(false, "TODO: TRY PVERTICES TO IVERTEX EVENT!");
+      }
+    }
+    return is_event_found;
+  }
+
+  void try_pvertex_to_pvertex_constrained_event(
+    const PVertex& pvertex, const Segment_2& pv_segment, const Bbox_2& pv_bbox) {
+
+    PVertex prev, next;
+    std::tie(prev, next) = m_data.prev_and_next(pvertex);
+    for (const auto& pother : { prev, next }) {
+      if (pother == m_data.null_pvertex()
+          || !m_data.is_active(pother)
+          ||  m_data.has_iedge(pother)) {
+        continue;
+      }
+
+      const Segment_2 po_segment(
+        m_data.point_2(pother, m_min_time),
+        m_data.point_2(pother, m_max_time));
+      const auto po_bbox = po_segment.bbox();
+
+      if (!do_overlap(pv_bbox, po_bbox)) {
+        continue;
+      }
+
+      Point_2 inter;
+      if (!KSR::intersection(pv_segment, po_segment, inter)) {
+        continue;
+      }
+
+      const auto& pinit = pv_segment.source();
+      const FT distance = KSR::distance(pinit, inter);
+      const FT time = distance / m_data.speed(pvertex);
+
+      // Constrained pvertex to another pvertex event.
+      CGAL_assertion(time < m_max_time - m_min_time);
+      m_queue.push(Event(true, pvertex, pother, m_min_time + time));
+
+      // std::cout << "pvertex: " << m_data.point_3(pvertex) << std::endl;
+      // std::cout << "pother: "  << m_data.point_3(pother)  << std::endl;
+    }
+  }
+
+  void try_pvertex_to_ivertex_constrained_event(
+    const PVertex& pvertex, const Segment_2& pv_segment, const Bbox_2& pv_bbox) {
+
+    CGAL_assertion(m_data.has_iedge(pvertex));
+    const auto iedge = m_data.iedge(pvertex);
+    for (const auto& ivertex : { m_data.source(iedge), m_data.target(iedge) }) {
+      if (!m_data.is_active(ivertex)) {
+        continue;
+      }
+
+      const Point_2 ipoint = m_data.to_2d(pvertex.first, ivertex);
+      const auto vec1 = pv_segment.to_vector();
+      const auto& pinit = pv_segment.source();
+      const Vector_2 vec2(pinit, ipoint);
+      const FT dot_product = vec1 * vec2;
+      if (dot_product < FT(0)) { // opposite directions
+        continue;
+      }
+
+      const FT distance = KSR::distance(pinit, ipoint);
+      const FT time = distance / m_data.speed(pvertex);
+
+      // Constrained pvertex to ivertex event.
+      if (time < m_max_time - m_min_time) {
+
+        CGAL_assertion(time < m_max_time - m_min_time);
+        m_queue.push(Event(true, pvertex, ivertex, m_min_time + time));
+
+        // std::cout << "pvertex: " << m_data.point_3(pvertex) << std::endl;
+        // std::cout << "ivertex: " << m_data.point_3(ivertex) << std::endl;
+      }
+    }
+  }
+
+  void compute_events_of_unconstrained_pvertex(
+    const PVertex& pvertex,
+    const Segment_2& pv_segment,
+    const Bbox_2& pv_bbox,
+    const std::vector<IEdge>& iedges,
+    const std::vector<Segment_2>& segments,
+    const std::vector<Bbox_2>& bboxes) {
+
+    try_pvertex_to_iedge_unconstrained_event(
+      pvertex, pv_segment, pv_bbox, iedges, segments, bboxes);
+  }
+
+  void try_pvertex_to_iedge_unconstrained_event(
+    const PVertex& pvertex,
+    const Segment_2& pv_segment,
+    const Bbox_2& pv_bbox,
+    const std::vector<IEdge>& iedges,
+    const std::vector<Segment_2>& segments,
+    const std::vector<Bbox_2>& bboxes) {
+
+    const auto prev = m_data.prev(pvertex);
+    const auto next = m_data.next(pvertex);
+    for (std::size_t i = 0; i < iedges.size(); ++i) {
+      const auto& iedge = iedges[i];
+
+      if (m_data.iedge(prev) == iedge ||
+          m_data.iedge(next) == iedge) {
+        continue;
+      }
+
+      if (!m_data.is_active(iedge)) {
+        continue;
+      }
+
+      if (!CGAL::do_overlap(pv_bbox, bboxes[i])) {
+        continue;
+      }
+
+      Point_2 inter;
+      if (!KSR::intersection(pv_segment, segments[i], inter)) {
+        continue;
+      }
+
+      // Try to add unconstrained pvertex to ivertex event.
+      const auto& pinit = pv_segment.source();
+      // const bool is_event_found = try_pvertex_to_ivertex_unconstrained_event(
+      //   pvertex, iedge, inter, pinit);
+
+      // Otherwise we add unconstrained pvertex to iedge event.
+      // if (!is_event_found) {
+
+      const FT distance = KSR::distance(pinit, inter);
+      const FT time = distance / m_data.speed(pvertex);
+      CGAL_assertion(time < m_max_time - m_min_time);
+      m_queue.push(Event(false, pvertex, iedge, m_min_time + time));
+
+      // }
+
+      // std::cout << "pvertex: " << m_data.point_3(pvertex) << std::endl;
+      // std::cout << "iedge: "   << m_data.segment_3(iedge) << std::endl;
+    }
+  }
+
+  const bool try_pvertex_to_ivertex_unconstrained_event(
+    const PVertex& pvertex, const IEdge& iedge,
+    const Point_2& inter, const Point_2& pinit) {
+
+    bool is_event_found = false;
+    const auto isource = m_data.source(iedge);
+    const auto itarget = m_data.target(iedge);
+
+    const auto source = m_data.point_2(pvertex.first, isource);
+    const auto target = m_data.point_2(pvertex.first, itarget);
+
+    const FT tol = KSR::tolerance<FT>();
+    const FT dist1 = KSR::distance(inter, source);
+    const FT dist2 = KSR::distance(inter, target);
+
+    // std::cout << "tol: " << tol << std::endl;
+    // std::cout << "dist 1: " << dist1 << std::endl;
+    // std::cout << "dist 2: " << dist2 << std::endl;
+
+    Point_2 ipoint;
+    IVertex ivertex = m_data.null_ivertex();
+    if (dist1 < tol) {
+      CGAL_assertion(dist2 >= tol);
+      ipoint = source; ivertex = isource;
+    } else if (dist2 < tol) {
+      CGAL_assertion(dist1 >= tol);
+      ipoint = target; ivertex = itarget;
+    }
+
+    if (ivertex != m_data.null_ivertex()) {
+      CGAL_assertion(ipoint != Point_2());
+      const FT distance = KSR::distance(pinit, ipoint);
+      const FT time = distance / m_data.speed(pvertex);
+      CGAL_assertion(time < m_max_time - m_min_time);
+      m_queue.push(Event(false, pvertex, ivertex, m_min_time + time));
+      is_event_found = true;
+    }
+
+    // CGAL_assertion_msg(false, "TODO: ADD PVERTEX TO IVERTEX UNCONSTRAINED EVENT!");
+    return is_event_found;
+  }
+
+  /*******************************
+  **          RUNNING           **
+  ********************************/
+
+  const std::size_t run(
+    const std::size_t initial_iteration) {
+
+    if (m_debug) {
+      std::cout << "* unstacking queue, current size: " << m_queue.size() << std::endl;
+    }
+
+    std::size_t iteration = initial_iteration;
+    while (!m_queue.empty()) {
+
+      const Event event = m_queue.pop();
+      const FT current_time = event.time();
+      if (m_export) {
+        if (iteration < 10) {
+          dump(m_data, "iter-0" + std::to_string(iteration));
+          dump_event(m_data, event, "iter-0" + std::to_string(iteration));
+        } else {
+          dump(m_data, "iter-" + std::to_string(iteration));
+          dump_event(m_data, event, "iter-" + std::to_string(iteration));
+        }
+        // const std::size_t sp_debug_idx = 23;
+        // dump_2d_surface_mesh(m_data, sp_debug_idx, "iter-" + std::to_string(iteration) +
+        // "-surface-mesh-" + std::to_string(sp_debug_idx));
+      }
+
+      m_data.update_positions(current_time);
+      if (m_debug) {
+        std::cout << std::endl << "* APPLYING " << iteration << ": " << event << std::endl;
+      }
+      ++iteration;
+
+      // if (iteration == 80) {
+      //   exit(EXIT_FAILURE);
+      // }
+
+      apply(event);
+      CGAL_assertion(m_data.check_integrity());
+    }
+    return iteration;
+  }
+
+  void apply(const Event& event) {
+
+    const auto pvertex = event.pvertex();
+    if (event.is_pvertices_to_ivertex()) {
+
+      const auto pother  = event.pother();
+      const auto ivertex = event.ivertex();
+      apply_event_pvertices_meet_ivertex(pvertex, pother, ivertex, event);
+
+    } else if (event.is_pvertex_to_pvertex()) {
+      const auto pother = event.pother();
+
+      remove_events(pvertex);
+      remove_events(pother);
+
+      if (m_data.has_iedge(pvertex)) {
+        CGAL_assertion(m_data.has_iedge(pvertex));
+        if (m_data.has_iedge(pother)) {
+          apply_event_two_constrained_pvertices_meet(pvertex, pother, event);
+        } else {
+          apply_event_constrained_pvertex_meets_free_pvertex(pvertex, pother, event);
+        }
+      } else {
+        CGAL_assertion(!m_data.has_iedge(pvertex));
+        if (!m_data.has_iedge(pother)) {
+          apply_event_two_unconstrained_pvertices_meet(pvertex, pother, event);
+        } else {
+          CGAL_assertion_msg(false, "ERROR: THIS EVENT SHOULD NOT EVER HAPPEN!");
+          apply_event_constrained_pvertex_meets_free_pvertex(pother, pvertex, event);
+        }
+      }
+    } else if (event.is_pvertex_to_iedge()) {
+
+      const auto iedge = event.iedge();
+      if (m_data.has_iedge(pvertex)) {
+        apply_event_constrained_pvertex_meets_iedge(pvertex, iedge, event);
+      } else {
+        const bool is_event_happend = apply_event_unconstrained_pedge_meets_iedge(
+          pvertex, iedge, event);
+        if (!is_event_happend) {
+          apply_event_unconstrained_pvertex_meets_iedge(pvertex, iedge, event);
+        }
+      }
+    } else if (event.is_pvertex_to_ivertex()) {
+
+      const auto ivertex = event.ivertex();
+      if (m_data.has_iedge(pvertex)) {
+        apply_event_constrained_pvertex_meets_ivertex(pvertex, ivertex, event);
+      } else {
+        apply_event_unconstrained_pvertex_meets_ivertex(pvertex, ivertex, event);
+      }
+    } else {
+      CGAL_assertion_msg(false, "ERROR: INVALID EVENT FOUND!");
+    }
+  }
+
+  /*******************************
+  **        HANDLE EVENTS       **
+  ********************************/
+
+  // INVALID EVENTS!
+  void apply_event_two_unconstrained_pvertices_meet(
+    const PVertex& /* pvertex */,
+    const PVertex& /* pother  */,
+    const Event&   /* event   */) {
+
+    CGAL_assertion_msg(false,
+    "ERROR: TWO UNCONSTRAINED PVERTICES MEET! DO WE HAVE A CONCAVE POLYGON?");
+  }
+
+  void apply_event_two_constrained_pvertices_meet(
+    const PVertex& /* pvertex */,
+    const PVertex& /* pother  */,
+    const Event&   /* event   */) {
+
+    CGAL_assertion_msg(false,
+    "ERROR: TWO CONSTRAINED PVERTICES MEET! CAN IT HAPPEN?");
+  }
+
+  void apply_event_constrained_pvertex_meets_iedge(
+    const PVertex& /* pvertex */,
+    const IEdge&   /* iedge   */,
+    const Event&   /* event   */) {
+
+    CGAL_assertion_msg(false,
+    "ERROR: CONSTRAINED PVERTEX MEETS IEDGE! WHAT IS WRONG?");
+  }
+
+  void apply_event_pvertices_meet_ivertex(
+    const PVertex& pvertex, const PVertex& pother,
+    const IVertex& /* ivertex */, const Event& /* event */) {
+
+    CGAL_assertion( m_data.has_iedge(pvertex));
+    CGAL_assertion(!m_data.has_iedge(pother));
+    CGAL_assertion_msg(false,
+    "ERROR: PVERTICES MEET IVERTEX! IT SHOULD NOT EVER HAPPEN!");
+  }
+
+  void apply_event_unconstrained_pvertex_meets_ivertex(
+    const PVertex& pvertex, const IVertex& ivertex, const Event& event) {
+
+    CGAL_assertion(!m_data.has_iedge(pvertex));
+    CGAL_assertion( m_data.has_one_pface(pvertex));
+
+    CGAL_assertion_msg(false,
+    "ERROR: UNCONSTRAINED PVERTEX MEETS IVERTEX! IT SHOULD NOT EVER HAPPEN!");
+    apply_event_pvertex_meets_ivertex(pvertex, ivertex, event);
+  }
+
+  // VALID EVENTS!
+  void apply_event_pvertex_meets_ivertex(
+    const PVertex& pvertex, const IVertex& ivertex, const Event& event) {
+
+    // First, let's gather all pvertices that will get merged.
+    const std::vector<PVertex> crossed_pvertices =
+      m_data.pvertices_around_ivertex(pvertex, ivertex);
+
+    // Remove associated events.
+    CGAL_assertion(crossed_pvertices.size() >= 3);
+    for (std::size_t i = 1; i < crossed_pvertices.size() - 1; ++i) {
+      remove_events(crossed_pvertices[i]);
+    }
+
+    // Merge them and get the newly created pvertices.
+    CGAL_assertion(!m_data.has_ivertex(pvertex));
+    std::vector< std::pair<IEdge, bool> > crossed_iedges;
+    const std::vector<PVertex> pvertices =
+      merge_pvertices_on_ivertex(
+        m_min_time, m_max_time, ivertex, crossed_pvertices, crossed_iedges);
+
+    // Remove all events of the crossed iedges.
+    CGAL_assertion(crossed_iedges.size() >= 1);
+    for (const auto& crossed_iedge : crossed_iedges) {
+      // TODO: SHOULD I LEAVE THIS CHECK? WILL IT MAKE THE CODE FASTER?
+      // if (crossed_iedges[ip].second) {
+        // bla bla
+      // }
+      const auto& iedge = crossed_iedge.first;
+      remove_events(iedge, pvertex.first);
+    }
+
+    // And compute new events.
+    CGAL_assertion(pvertices.size() > 0);
+    compute_events_of_pvertices(event.time(), pvertices);
+    // CGAL_assertion_msg(false, "TODO: PVERTEX MEETS IVERTEX!");
+  }
+
+  void apply_event_unconstrained_pvertex_meets_iedge(
+    const PVertex& pvertex, const IEdge& iedge, const Event& event) {
+
+    CGAL_assertion(!m_data.has_iedge(pvertex));
+    CGAL_assertion( m_data.has_one_pface(pvertex));
+
+    remove_events(pvertex);
+    const bool stop = check_stop_condition(pvertex, iedge);
+
+    if (stop) { // polygon stops
+      const PVertex pother =
+        crop_pvertex_along_iedge(pvertex, iedge);
+      const std::array<PVertex, 2> pvertices = {pvertex, pother};
+      remove_events(iedge, pvertex.first);
+      compute_events_of_pvertices(event.time(), pvertices);
+    } else { // polygon continues beyond the iedge
+      const std::array<PVertex, 3> pvertices =
+        propagate_pvertex_beyond_iedge(pvertex, iedge);
+      remove_events(iedge, pvertex.first);
+      compute_events_of_pvertices(event.time(), pvertices);
+    }
+    CGAL_assertion(m_data.has_iedge(pvertex));
+    // CGAL_assertion_msg(false, "TODO: UNCONSTRAINED PVERTEX MEETS IEDGE!");
+  }
+
+  const bool apply_event_unconstrained_pedge_meets_iedge(
+    const PVertex& pvertex, const IEdge& iedge, const Event& event) {
+
+    bool is_event_happend = false;
+    const auto prev = m_data.prev(pvertex);
+    const auto next = m_data.next(pvertex);
+    const auto isegment = m_data.segment_2(pvertex.first, iedge);
+
+    for (const auto& pother : { prev, next }) {
+      const Segment_2 segment(
+        m_data.point_2(pother , event.time()),
+        m_data.point_2(pvertex, event.time()));
+      CGAL_assertion(segment.squared_length() != FT(0));
+
+      bool both_are_free = true;
+      if (m_data.has_iedge(pvertex) || m_data.has_iedge(pother)) {
+        both_are_free = false;
+      }
+
+      if (both_are_free && KSR::are_parallel(segment, isegment)) {
+        CGAL_assertion(!m_data.has_iedge(pother));
+        CGAL_assertion(!m_data.has_iedge(pvertex));
+
+        CGAL_assertion(m_data.has_one_pface(pother));
+        CGAL_assertion(m_data.has_one_pface(pvertex));
+
+        remove_events(pother);
+        remove_events(pvertex);
+
+        const bool stop = check_stop_condition(pvertex, pother, iedge);
+
+        if (stop) { // polygon stops
+          crop_pedge_along_iedge(pvertex, pother, iedge);
+          const auto pvertices = std::array<PVertex, 2>{pvertex, pother};
+          remove_events(iedge, pvertex.first);
+          compute_events_of_pvertices(event.time(), pvertices);
+        } else { // polygon continues beyond the edge
+          PVertex pv0, pv1;
+          std::tie(pv0, pv1) = propagate_pedge_beyond_iedge(pvertex, pother, iedge);
+          const auto pvertices = std::array<PVertex, 4>{pvertex, pother, pv0, pv1};
+          remove_events(iedge, pvertex.first);
+          compute_events_of_pvertices(event.time(), pvertices);
+        }
+
+        CGAL_assertion(m_data.has_iedge(pother));
+        CGAL_assertion(m_data.has_iedge(pvertex));
+        CGAL_assertion(m_data.iedge(pvertex) == m_data.iedge(pother));
+        is_event_happend = true;
+        // CGAL_assertion_msg(false, "TODO: UNCONSTRAINED PEDGE MEETS IEDGE!");
+        break;
+      }
+    }
+    return is_event_happend;
+  }
+
+  void apply_event_constrained_pvertex_meets_ivertex(
+    const PVertex& pvertex, const IVertex& ivertex, const Event& event) {
+
+    CGAL_assertion(m_data.has_iedge(pvertex));
+    apply_event_pvertex_meets_ivertex(pvertex, ivertex, event);
+    // CGAL_assertion_msg(false, "TODO: CONSTRAINED PVERTEX MEETS IVERTEX!");
+  }
+
+  void apply_event_constrained_pvertex_meets_free_pvertex(
+    const PVertex& pvertex, const PVertex& pother, const Event& event) {
+
+    CGAL_assertion( m_data.has_iedge(pvertex));
+    CGAL_assertion(!m_data.has_iedge(pother));
+
+    if (transfer_pvertex_via_iedge(pvertex, pother)) {
+
+      // Check the first two pvertices.
+      if (m_data.has_iedge(pvertex)) {
+        remove_events(m_data.iedge(pvertex), pvertex.first);
+      }
+      if (m_data.has_iedge(pother)) {
+        remove_events(m_data.iedge(pother) , pother.first);
+      }
+      const auto pvertices1 = std::array<PVertex, 2>{pvertex, pother};
+      compute_events_of_pvertices(event.time(), pvertices1);
+
+      // Check the last pvertex.
+      PVertex prev, next;
+      std::tie(prev, next) = m_data.border_prev_and_next(pvertex);
+      PVertex pthird = prev;
+      if (pthird == pother) {
+        pthird = next;
+      } else { CGAL_assertion(pother == next); }
+
+      if (m_data.has_iedge(pthird)) {
+        remove_events(m_data.iedge(pthird), pthird.first);
+      }
+      const auto pvertices2 = std::array<PVertex, 1>{pthird};
+      compute_events_of_pvertices(event.time(), pvertices2);
+
+    } else {
+
+      if (m_data.has_iedge(pvertex)) {
+        remove_events(m_data.iedge(pvertex), pvertex.first);
+      }
+      const auto pvertices = std::array<PVertex, 1>{pvertex};
+      compute_events_of_pvertices(event.time(), pvertices);
+    }
+    // CGAL_assertion_msg(false, "TODO: CONSTRAINED PVERTEX MEETS FREE PVERTEX!");
+  }
+
+  // STOP CONDITIONS!
+  const bool check_stop_condition(
+    const PVertex& pvertex, const IEdge& iedge) {
+    return check_pvertex_meets_iedge_global_k(pvertex, iedge);
+  }
+
+  // GLOBAL STOP CONDITIONS!
+  const bool check_pvertex_meets_iedge_global_k(
+    const PVertex& pvertex, const IEdge& iedge) {
+
+    if (m_debug) {
+      std::cout << "- k intersections before: " << m_data.k(pvertex.first) << std::endl;
+    }
+
+    bool is_occupied_iedge, is_bbox_reached;
+    std::tie(is_occupied_iedge, is_bbox_reached) = m_data.collision_occured(pvertex, iedge);
+    const bool is_limit_line = m_data.update_limit_lines_and_k(pvertex, iedge, is_occupied_iedge);
+
+    if (m_debug) {
+      std::cout << "- bbox: " << is_bbox_reached  << "; " <<
+      " limit: "    << is_limit_line << "; " <<
+      " occupied: " << is_occupied_iedge << std::endl;
+    }
+
+    bool stop = false;
+    if (is_bbox_reached) {
+      if (m_debug) std::cout << "- bbox, stop" << std::endl;
+      stop = true;
+    } else if (is_limit_line) {
+      if (m_debug) std::cout << "- limit, stop" << std::endl;
+      stop = true;
+    } else {
+      if (m_debug) std::cout << "- free, any k, continue" << std::endl;
+      stop = false;
+    }
+    CGAL_assertion(m_data.k(pvertex.first) >= 1);
+    if (m_debug) {
+      std::cout << "- k intersections after: " << m_data.k(pvertex.first) << std::endl;
+    }
+    // CGAL_assertion_msg(false, "TODO: CHECK PVERTEX MEETS IVERTEX GLOBAL!");
+    return stop;
+  }
+
+  const bool check_stop_condition(
+    const PVertex& pvertex, const PVertex& pother, const IEdge& iedge) {
+    return check_pedge_meets_iedge_global_k(pvertex, pother, iedge);
+  }
+
+  const bool check_pedge_meets_iedge_global_k(
+    const PVertex& pvertex, const PVertex& pother, const IEdge& iedge) {
+
+    if (m_debug) {
+      std::cout << "- k intersections before: " << m_data.k(pvertex.first) << std::endl;
+    }
+
+    bool is_occupied_iedge_1, is_bbox_reached_1;
+    std::tie(is_occupied_iedge_1, is_bbox_reached_1) = m_data.collision_occured(pvertex, iedge);
+    bool is_occupied_iedge_2, is_bbox_reached_2;
+    std::tie(is_occupied_iedge_2, is_bbox_reached_2) = m_data.collision_occured(pother, iedge);
+
+    const bool is_limit_line_1 = m_data.update_limit_lines_and_k(pvertex, iedge, is_occupied_iedge_1);
+    const bool is_limit_line_2 = m_data.update_limit_lines_and_k(pother , iedge, is_occupied_iedge_2);
+
+    if (m_debug) {
+      std::cout << "- bbox1: " << is_bbox_reached_1  << "; " <<
+      " limit1: "    << is_limit_line_1 << "; " <<
+      " occupied1: " << is_occupied_iedge_1 << std::endl;
+      std::cout << "- bbox2: " << is_bbox_reached_2  << "; " <<
+      " limit2: "    << is_limit_line_2 << "; " <<
+      " occupied2: " << is_occupied_iedge_2 << std::endl;
+    }
+    CGAL_assertion(is_limit_line_1 == is_limit_line_2);
+    CGAL_assertion(is_bbox_reached_1 == is_bbox_reached_2);
+
+    bool stop = false;
+    if (is_bbox_reached_1 || is_bbox_reached_2) {
+      if (m_debug) std::cout << "- bbox, stop" << std::endl;
+      stop = true;
+    } else if (is_limit_line_1 || is_limit_line_2) {
+      if (m_debug) std::cout << "- limit, stop" << std::endl;
+      stop = true;
+    } else {
+      if (m_debug) std::cout << "- free, any k, continue" << std::endl;
+      CGAL_assertion(!m_data.is_sneaking_pedge(pvertex, pother, iedge));
+      stop = false;
+    }
+
+    CGAL_assertion(m_data.k(pvertex.first) >= 1);
+    if (m_debug) {
+      std::cout << "- k intersections after: " << m_data.k(pvertex.first) << std::endl;
+    }
+    // CGAL_assertion_msg(false, "TODO: CHECK PEDGE MEETS IEDGE GLOBAL!");
+    return stop;
+  }
+
+  // RECOMPUTE EVENTS!
+  template<typename PVertexRange>
+  void compute_events_of_pvertices(
+    const FT last_event_time, const PVertexRange& pvertices) {
+
+    m_min_time = m_data.current_time();
+    m_data.update_positions(m_max_time);
+
+    const auto& pfront = pvertices.front();
+    CGAL_assertion(pfront != m_data.null_pvertex());
+    const auto& iedges   = m_data.iedges(pfront.first);
+    const auto& segments = m_data.isegments(pfront.first);
+    const auto& bboxes   = m_data.ibboxes(pfront.first);
+
+    for (const auto& pvertex : pvertices) {
+      if (pvertex == m_data.null_pvertex()) continue;
+      m_data.deactivate(pvertex);
+    }
+    for (const auto& pvertex : pvertices) {
+      if (pvertex == m_data.null_pvertex()) continue;
+      m_data.set_last_event_time(pvertex, last_event_time);
+      compute_events_of_pvertex(pvertex, iedges, segments, bboxes);
+    }
+    for (const auto& pvertex : pvertices) {
+      if (pvertex == m_data.null_pvertex()) continue;
+      m_data.activate(pvertex);
+    }
+    m_data.update_positions(m_min_time);
+  }
+
+  // REMOVE EVENTS!
+  // Remove events associated with the given iedge.
+  void remove_events(const IEdge& iedge, const std::size_t support_plane_idx) {
+    CGAL_assertion(iedge != m_data.null_iedge());
+    m_queue.erase_vertex_events(iedge, support_plane_idx);
+    // std::cout << "erasing events for iedge: " << m_data.str(iedge) << std::endl;
+    // std::cout << "iedge: " << m_data.segment_3(iedge) << std::endl;
+  }
+
+  // Remove events associated with the given pvertex.
+  void remove_events(const PVertex& pvertex) {
+    CGAL_assertion(pvertex != m_data.null_pvertex());
+    m_queue.erase_vertex_events(pvertex);
+    // std::cout << "erasing events for pvertex: " << m_data.str(pvertex) << std::endl;
+    // std::cout << "pvertex: " << m_data.point_3(pvertex) << std::endl;
+  }
+
+  /*******************************
+  **    OPERATIONS ON POLYGONS  **
+  ********************************/
+
+  const PVertex crop_pvertex_along_iedge(
+    const PVertex& pvertex, const IEdge& iedge) {
+
+    if (m_verbose) {
+      std::cout.precision(20);
+      std::cout << "** cropping " << m_data.str(pvertex) << " along " << m_data.str(iedge) << std::endl;
+      std::cout << "- pvertex: " << m_data.point_3(pvertex) << std::endl;
+      std::cout << "- iedge: "   << m_data.segment_3(iedge) << std::endl;
+    }
+
+    CGAL_assertion_msg(
+      m_data.point_2(pvertex.first, m_data.source(iedge)) !=
+      m_data.point_2(pvertex.first, m_data.target(iedge)),
+    "TODO: PVERTEX -> IEDGE, HANDLE ZERO-LENGTH IEDGE!");
+
+    const PVertex prev(pvertex.first, m_data.support_plane(pvertex).prev(pvertex.second));
+    const PVertex next(pvertex.first, m_data.support_plane(pvertex).next(pvertex.second));
+
+    Point_2 future_point_a, future_point_b;
+    Vector_2 future_direction_a, future_direction_b;
+    bool is_parallel_a = false, is_parallel_b = false;
+    std::tie(is_parallel_a, is_parallel_b) =
+    m_data.compute_future_points_and_directions(
+      pvertex, iedge,
+      future_point_a, future_point_b,
+      future_direction_a, future_direction_b);
+    CGAL_assertion(future_direction_a != Vector_2());
+    CGAL_assertion(future_direction_b != Vector_2());
+    if (is_parallel_a || is_parallel_b) {
+      if (m_verbose) std::cout << "- pvertex to iedge, parallel case" << std::endl;
+      // CGAL_assertion_msg(!is_parallel_a && !is_parallel_b,
+      // "TODO: PVERTEX -> IEDGE, HANDLE CASE WITH PARALLEL LINES!");
+    }
+
+    const PEdge pedge(pvertex.first, m_data.support_plane(pvertex).split_vertex(pvertex.second));
+    CGAL_assertion(m_data.source(pedge) == pvertex || m_data.target(pedge) == pvertex);
+    const PVertex pother = m_data.opposite(pedge, pvertex);
+    if (m_verbose) {
+      std::cout << "- new pedge: " << m_data.str(pedge)  << " between "
+        << m_data.str(pvertex) << " and " << m_data.str(pother) << std::endl;
+    }
+
+    m_data.connect(pedge, iedge);
+    m_data.connect(pvertex, iedge);
+    m_data.connect(pother, iedge);
+
+    m_data.support_plane(pvertex).set_point(pvertex.second, future_point_a);
+    m_data.support_plane(pother).set_point(pother.second, future_point_b);
+    m_data.direction(pvertex) = future_direction_a;
+    m_data.direction(pother) = future_direction_b;
+
+    if (m_verbose) std::cout << "- new pvertices: " <<
+    m_data.str(pother) << ": " << m_data.point_3(pother) << std::endl;
+
+    // CGAL_assertion_msg(false, "TODO: CROP PVERTEX ALONG IEDGE!");
+    return pother;
+  }
+
+  const std::array<PVertex, 3> propagate_pvertex_beyond_iedge(
+    const PVertex& pvertex, const IEdge& iedge) {
+
+    if (m_verbose) {
+      std::cout.precision(20);
+      std::cout << "** propagating " << m_data.str(pvertex) << " beyond " << m_data.str(iedge) << std::endl;
+      std::cout << "- pvertex: " << m_data.point_3(pvertex) << std::endl;
+      std::cout << "- iedge: "   << m_data.segment_3(iedge) << std::endl;
+    }
+
+    const Point_2 original_point = m_data.point_2(pvertex, FT(0));
+    const Vector_2 original_direction = m_data.direction(pvertex);
+    const PVertex pother = crop_pvertex_along_iedge(pvertex, iedge);
+
+    const PVertex propagated = m_data.add_pvertex(pvertex.first, original_point);
+    m_data.direction(propagated) = original_direction;
+
+    if (m_verbose) {
+      std::cout << "- propagated: " << m_data.str(propagated) << ": " << m_data.point_3(propagated) << std::endl;
+    }
+
+    std::array<PVertex, 3> pvertices;
+    pvertices[0] = pvertex;
+    pvertices[1] = pother;
+    pvertices[2] = propagated;
+
+    const PFace new_pface = m_data.add_pface(pvertices);
+    CGAL_assertion(new_pface != m_data.null_pface());
+    CGAL_assertion(new_pface.second != Face_index());
+    if (m_verbose) {
+      std::cout << "- new pface " << m_data.str(new_pface) << ": " <<
+      m_data.centroid_of_pface(new_pface) << std::endl;
+    }
+
+    // CGAL_assertion_msg(false, "TODO: PROPAGATE PVERTEX BEYOND IEDGE!");
+    return pvertices;
+  }
+
+  void crop_pedge_along_iedge(
+    const PVertex& pvertex, const PVertex& pother, const IEdge& iedge) {
+
+    if (m_verbose) {
+      std::cout.precision(20);
+      std::cout << "** cropping pedge [" << m_data.str(pvertex) << "-" << m_data.str(pother)
+      << "] along " << m_data.str(iedge) << std::endl;
+      std::cout << "- pvertex: " << m_data.point_3(pvertex) << std::endl;
+      std::cout << "- pother: "  << m_data.point_3(pother)  << std::endl;
+      std::cout << "- iedge: "   << m_data.segment_3(iedge) << std::endl;
+    }
+
+    CGAL_assertion(pvertex.first == pother.first);
+    CGAL_assertion_msg(
+      m_data.point_2(pvertex.first, m_data.source(iedge)) !=
+      m_data.point_2(pvertex.first, m_data.target(iedge)),
+    "TODO: PEDGE -> IEDGE, HANDLE ZERO-LENGTH IEDGE!");
+    Point_2 future_point; Vector_2 future_direction;
+
+    { // cropping pvertex ...
+      const PVertex prev(pvertex.first, m_data.support_plane(pvertex).prev(pvertex.second));
+      const PVertex next(pvertex.first, m_data.support_plane(pvertex).next(pvertex.second));
+
+      if (m_verbose) {
+        std::cout << "- prev pv: " << m_data.point_3(prev) << std::endl;
+        std::cout << "- next pv: " << m_data.point_3(next) << std::endl;
+      }
+
+      PVertex pthird = m_data.null_pvertex();
+      if (pother == prev) {
+        pthird = next;
+      } else {
+        CGAL_assertion(pother == next);
+        pthird = prev;
+      }
+      CGAL_assertion(pthird != m_data.null_pvertex());
+
+      if (m_verbose) {
+        std::cout << "- pthird pv: " << m_data.point_3(pthird) << std::endl;
+      }
+
+      const bool is_parallel = m_data.compute_future_point_and_direction(
+        0, pvertex, pthird, iedge, future_point, future_direction);
+      CGAL_assertion(future_direction != Vector_2());
+      if (is_parallel) {
+        if (m_verbose) std::cout << "- pedge to iedge 1, parallel case" << std::endl;
+        // CGAL_assertion_msg(!is_parallel,
+        // "TODO: PEDGE -> IEDGE 1, HANDLE CASE WITH PARALLEL LINES!");
+      }
+
+      m_data.direction(pvertex) = future_direction;
+      m_data.support_plane(pvertex).set_point(pvertex.second, future_point);
+      m_data.connect(pvertex, iedge);
+    }
+
+    { // cropping pother ...
+      const PVertex prev(pother.first, m_data.support_plane(pother).prev(pother.second));
+      const PVertex next(pother.first, m_data.support_plane(pother).next(pother.second));
+
+      if (m_verbose) {
+        std::cout << "- prev po: " << m_data.point_3(prev) << std::endl;
+        std::cout << "- next po: " << m_data.point_3(next) << std::endl;
+      }
+
+      PVertex pthird = m_data.null_pvertex();
+      if (pvertex == prev) {
+        pthird = next;
+      } else {
+        CGAL_assertion(pvertex == next);
+        pthird = prev;
+      }
+      CGAL_assertion(pthird != m_data.null_pvertex());
+
+      if (m_verbose) {
+        std::cout << "- pthird po: " << m_data.point_3(pthird) << std::endl;
+      }
+
+      const bool is_parallel = m_data.compute_future_point_and_direction(
+        0, pother, pthird, iedge, future_point, future_direction);
+      CGAL_assertion(future_direction != Vector_2());
+      if (is_parallel) {
+        if (m_verbose) std::cout << "- pedge to iedge 2, parallel case" << std::endl;
+        // CGAL_assertion_msg(!is_parallel,
+        // "TODO: PEDGE -> IEDGE 2, HANDLE CASE WITH PARALLEL LINES!");
+      }
+
+      m_data.direction(pother) = future_direction;
+      m_data.support_plane(pother).set_point(pother.second, future_point);
+      m_data.connect(pother, iedge);
+    }
+
+    const PEdge pedge(pvertex.first, m_data.support_plane(pvertex).edge(pvertex.second, pother.second));
+    m_data.connect(pedge, iedge);
+
+    // CGAL_assertion_msg(false, "TODO: CROP PEDGE ALONG IEDGE!");
+  }
+
+  const std::pair<PVertex, PVertex> propagate_pedge_beyond_iedge(
+    const PVertex& pvertex, const PVertex& pother, const IEdge& iedge) {
+
+    if (m_verbose) {
+      std::cout.precision(20);
+      std::cout << "** propagating pedge [" << m_data.str(pvertex) << "-" << m_data.str(pother)
+      << "] beyond " << m_data.str(iedge) << std::endl;
+      std::cout << "- pvertex: " << m_data.point_3(pvertex) << std::endl;
+      std::cout << "- pother: "  << m_data.point_3(pother)  << std::endl;
+      std::cout << "- iedge: "   << m_data.segment_3(iedge) << std::endl;
+    }
+
+    const Point_2 original_point_1 = m_data.point_2(pvertex, FT(0));
+    const Point_2 original_point_2 = m_data.point_2(pother, FT(0));
+
+    const Vector_2 original_direction_1 = m_data.direction(pvertex);
+    const Vector_2 original_direction_2 = m_data.direction(pother);
+
+    crop_pedge_along_iedge(pvertex, pother, iedge);
+
+    const PVertex propagated_1 = m_data.add_pvertex(pvertex.first, original_point_1);
+    m_data.direction(propagated_1) = original_direction_1;
+
+    const PVertex propagated_2 = m_data.add_pvertex(pother.first, original_point_2);
+    m_data.direction(propagated_2) = original_direction_2;
+
+    if (m_verbose) {
+      std::cout << "- propagated 1: " << m_data.str(propagated_1) << ": " <<
+      m_data.point_3(propagated_1) << std::endl;
+      std::cout << "- propagated 2: " << m_data.str(propagated_2) << ": " <<
+      m_data.point_3(propagated_2) << std::endl;
+    }
+
+    std::array<PVertex, 4> pvertices;
+    pvertices[0] = pvertex;
+    pvertices[1] = pother;
+    pvertices[2] = propagated_2;
+    pvertices[3] = propagated_1;
+
+    const PFace new_pface = m_data.add_pface(pvertices);
+    CGAL_assertion(new_pface != m_data.null_pface());
+    CGAL_assertion(new_pface.second != Face_index());
+    if (m_verbose) {
+      std::cout << "- new pface " << m_data.str(new_pface) << ": " << m_data.centroid_of_pface(new_pface) << std::endl;
+    }
+
+    // CGAL_assertion_msg(false, "TODO: PROPAGATE PEDGE BEYOND IEDGE!");
+    return std::make_pair(propagated_2, propagated_1);
+  }
+
+  const bool transfer_pvertex_via_iedge(
+    const PVertex& pvertex, const PVertex& pother) {
+
+    if (m_verbose) {
+      std::cout.precision(20);
+      CGAL_assertion(m_data.has_iedge(pvertex));
+      std::cout << "** transfering " << m_data.str(pother) << " through " << m_data.str(pvertex) << " via "
+        << m_data.str(m_data.iedge(pvertex)) << std::endl;
+      std::cout << "- pvertex: " << m_data.point_3(pvertex) << std::endl;
+      std::cout << "- pother: "  << m_data.point_3(pother)  << std::endl;
+    }
+    CGAL_assertion(pvertex.first == pother.first);
+
+    // Is pvertex adjacent to one or two pfaces?
+    PFace source_pface, target_pface;
+    std::tie(source_pface, target_pface) = m_data.pfaces_of_pvertex(pvertex);
+    const auto common_pface = m_data.pface_of_pvertex(pother);
+    if (common_pface == target_pface) {
+      if (m_verbose) std::cout << "- swap pfaces" << std::endl;
+      std::swap(source_pface, target_pface);
+    }
+    CGAL_assertion(common_pface == source_pface);
+
+    if (m_verbose) {
+      std::cout << "- initial pfaces: " << std::endl;
+      if (source_pface != m_data.null_pface()) {
+        std::cout << "source " << m_data.str(source_pface) << ": " <<
+        m_data.centroid_of_pface(source_pface) << std::endl;
+      }
+      if (target_pface != m_data.null_pface()) {
+        std::cout << "target " << m_data.str(target_pface) << ": " <<
+        m_data.centroid_of_pface(target_pface) << std::endl;
+      }
+    }
+
+    // Get pthird.
+    PVertex pthird = m_data.next(pother);
+    if (pthird == pvertex) pthird = m_data.prev(pother);
+    if (m_verbose) std::cout << "- pthird: " << m_data.point_3(pthird) << std::endl;
+
+    // Get future point and direction.
+    CGAL_assertion(m_data.has_iedge(pvertex));
+    const auto iedge = m_data.iedge(pvertex);
+    const auto source_p = m_data.point_2(pvertex.first, m_data.source(iedge));
+    const auto target_p = m_data.point_2(pvertex.first, m_data.target(iedge));
+    CGAL_assertion_msg(source_p != target_p,
+    "TODO: TRANSFER PVERTEX, HANDLE ZERO-LENGTH IEDGE!");
+    const Line_2 iedge_line(source_p, target_p);
+
+    Point_2 future_point;
+    Vector_2 future_direction;
+    const bool is_parallel =
+    m_data.compute_future_point_and_direction(0, pother, pthird, iedge, future_point, future_direction);
+    CGAL_assertion(future_direction != Vector_2());
+    if (is_parallel) {
+      if (m_verbose) std::cout << "- transfer pvertex, parallel case" << std::endl;
+      // CGAL_assertion_msg(!is_parallel,
+      // "TODO: TRANSFER PVERTEX, HANDLE CASE WITH PARALLEL LINES!");
+    }
+
+    if (target_pface == m_data.null_pface()) { // in case we have 1 pface
+
+      m_data.support_plane(pvertex).set_point(pvertex.second, future_point);
+      m_data.direction(pvertex) = future_direction;
+      const auto he = m_data.mesh(pvertex).halfedge(pother.second, pvertex.second);
+      CGAL::Euler::join_vertex(he, m_data.mesh(pvertex));
+
+      // CGAL_assertion_msg(false,
+      // "TODO: TRANSFER PVERTEX 1, ADD NEW FUTURE POINTS AND DIRECTIONS!");
+
+    } else { // in case we have both pfaces
+
+      m_data.disconnect_iedge(pvertex);
+      PEdge pedge = m_data.null_pedge();
+      for (const auto edge : m_data.pedges_around_pvertex(pvertex)) {
+        if (m_data.iedge(edge) == iedge) {
+          pedge = edge; break;
+        }
+      }
+      CGAL_assertion(pedge != m_data.null_pedge());
+
+      auto he = m_data.mesh(pedge).halfedge(pedge.second);
+      if (m_data.mesh(pedge).face(he) != common_pface.second) {
+        he = m_data.mesh(pedge).opposite(he);
+      }
+      CGAL_assertion(m_data.mesh(pedge).face(he) == common_pface.second);
+
+      if (m_data.mesh(pedge).target(he) == pvertex.second) {
+        // if (m_verbose) std::cout << "- shifting target" << std::endl;
+        CGAL::Euler::shift_target(he, m_data.mesh(pedge));
+      } else {
+        CGAL_assertion(m_data.mesh(pedge).source(he) == pvertex.second);
+        // if (m_verbose) std::cout << "- shifting source" << std::endl;
+        CGAL::Euler::shift_source(he, m_data.mesh(pedge));
+      }
+
+      const auto pother_p = m_data.point_2(pother);
+      const Point_2 pinit = iedge_line.projection(pother_p);
+      m_data.direction(pvertex) = m_data.direction(pother);
+      const auto fp = pinit - m_data.direction(pother) * m_data.current_time();
+      m_data.support_plane(pvertex).set_point(pvertex.second, fp);
+
+      m_data.support_plane(pother).set_point(pother.second, future_point);
+      m_data.direction(pother) = future_direction;
+      m_data.connect(pother, iedge);
+
+      // CGAL_assertion_msg(false,
+      // "TODO: TRANSFER PVERTEX 2, ADD NEW FUTURE POINTS AND DIRECTIONS!");
+    }
+
+    if (m_verbose) {
+      std::cout << "- new pfaces: " << std::endl;
+      if (source_pface != m_data.null_pface()) {
+        std::cout << "source " << m_data.str(source_pface) << ": " <<
+        m_data.centroid_of_pface(source_pface) << std::endl;
+      }
+      if (target_pface != m_data.null_pface()) {
+        std::cout << "target " << m_data.str(target_pface) << ": " <<
+        m_data.centroid_of_pface(target_pface) << std::endl;
+      }
+    }
+
+    // CGAL_assertion_msg(false, "TODO: TRANSFER PVERTEX VIA IEDGE!");
+    return (target_pface != m_data.null_pface());
+  }
+
+  const std::vector<PVertex> merge_pvertices_on_ivertex(
+    const FT min_time, const FT max_time, const IVertex& ivertex,
+    const std::vector<PVertex>& pvertices,
+    std::vector< std::pair<IEdge, bool> >& crossed_iedges) {
+
+    if (m_verbose) {
+      std::cout.precision(20);
+      std::cout << "** merging " << m_data.str(pvertices[1]) << " on " << m_data.str(ivertex) << std::endl;
+      std::cout << "- pvertex: " << m_data.point_3(pvertices[1]) << std::endl;
+      std::cout << "- ivertex: " << m_data.point_3(ivertex) << std::endl;
+    }
+
+    CGAL_assertion(pvertices.size() >= 3);
+    const std::size_t support_plane_idx = pvertices.front().first;
+    const PVertex prev = pvertices.front();
+    const PVertex next = pvertices.back();
+    const PVertex pvertex = pvertices[1];
+
+    if (m_verbose) {
+      const auto iedge = m_data.iedge(pvertex);
+      if (iedge != m_data.null_iedge()) {
+        std::cout << "- start from: " << m_data.str(iedge) << " " <<
+        m_data.segment_3(iedge) << std::endl;
+      } else {
+        std::cout << "- start from: unconstrained setting" << std::endl;
+      }
+    }
+
+    // Copy front/back to remember position/direction.
+    PVertex front, back;
+    if (pvertices.size() < 3) {
+      CGAL_assertion_msg(false, "ERROR: INVALID CONNECTIVITY CASE!");
+    } else if (pvertices.size() == 3 || pvertices.size() == 4) {
+
+      const auto& initial = pvertex;
+      front = PVertex(support_plane_idx,
+      m_data.support_plane(support_plane_idx).duplicate_vertex(initial.second));
+      m_data.support_plane(support_plane_idx).set_point(
+        front.second, m_data.support_plane(support_plane_idx).get_point(initial.second));
+      back  = PVertex(support_plane_idx,
+      m_data.support_plane(support_plane_idx).duplicate_vertex(front.second));
+      m_data.support_plane(support_plane_idx).set_point(
+        back.second, m_data.support_plane(support_plane_idx).get_point(front.second));
+
+    } else if (pvertices.size() >= 5) {
+
+      const auto& initial1 = pvertices[1];
+      front = PVertex(support_plane_idx,
+      m_data.support_plane(support_plane_idx).duplicate_vertex(initial1.second));
+      m_data.support_plane(support_plane_idx).set_point(
+        front.second, m_data.support_plane(support_plane_idx).get_point(initial1.second));
+
+      const auto& initial2 = pvertices[pvertices.size() - 2];
+      back  = PVertex(support_plane_idx,
+      m_data.support_plane(support_plane_idx).duplicate_vertex(initial2.second));
+      m_data.support_plane(support_plane_idx).set_point(
+        back.second, m_data.support_plane(support_plane_idx).get_point(initial2.second));
+
+    } else {
+      CGAL_assertion_msg(false, "ERROR: INVALID CONNECTIVITY CASE!");
+    }
+
+    if (m_verbose) {
+      std::cout << "- found neighbors: " << std::endl <<
+      "prev = " << m_data.point_3(prev)  << std::endl <<
+      "fron = " << m_data.point_3(front) << std::endl <<
+      "back = " << m_data.point_3(back)  << std::endl <<
+      "next = " << m_data.point_3(next)  << std::endl;
+    }
+
+    // Freeze pvertices.
+    const Point_2 ipoint = m_data.point_2(support_plane_idx, ivertex);
+    for (std::size_t i = 1; i < pvertices.size() - 1; ++i) {
+      const PVertex& curr = pvertices[i];
+      m_data.support_plane(curr).direction(curr.second) = CGAL::NULL_VECTOR;
+      m_data.support_plane(curr).set_point(curr.second, ipoint);
+    }
+    m_data.connect(pvertex, ivertex);
+    if (m_verbose) {
+      std::cout << "- frozen pvertex: " << m_data.str(pvertex) << " : " << m_data.point_3(pvertex) << std::endl;
+    }
+
+    // Join pvertices.
+    for (std::size_t i = 2; i < pvertices.size() - 1; ++i) {
+      const auto he = m_data.mesh(support_plane_idx).halfedge(pvertices[i].second, pvertex.second);
+      m_data.disconnect_ivertex(pvertices[i]);
+      CGAL::Euler::join_vertex(he, m_data.mesh(support_plane_idx));
+    }
+
+    // Get all connected iedges.
+    auto inc_iedges = m_data.incident_iedges(ivertex);
+    std::vector< std::pair<IEdge, Direction_2> > iedges;
+    std::copy(inc_iedges.begin(), inc_iedges.end(),
+      boost::make_function_output_iterator(
+        [&](const IEdge& inc_iedge) -> void {
+          const auto iplanes = m_data.intersected_planes(inc_iedge);
+          if (iplanes.find(support_plane_idx) == iplanes.end()) {
+            return;
+          }
+          const Direction_2 direction(
+            m_data.point_2(support_plane_idx, m_data.opposite(inc_iedge, ivertex)) -
+            m_data.point_2(support_plane_idx, ivertex));
+          iedges.push_back(std::make_pair(inc_iedge, direction));
+        }
+      )
+    );
+
+    std::sort(iedges.begin(), iedges.end(),
+      [&](const std::pair<IEdge, Direction_2>& a,
+          const std::pair<IEdge, Direction_2>& b) -> bool {
+        return a.second < b.second;
+      }
+    );
+    CGAL_assertion(iedges.size() > 0);
+
+    // Get sub-event type.
+    bool back_constrained = false;
+    if (
+      (m_data.iedge(next) != m_data.null_iedge() &&
+      (m_data.source(m_data.iedge(next)) == ivertex || m_data.target(m_data.iedge(next)) == ivertex)) ||
+      (m_data.ivertex(next) != m_data.null_ivertex() && m_data.is_iedge(m_data.ivertex(next), ivertex))) {
+      back_constrained = true;
+    }
+
+    bool front_constrained = false;
+    if (
+      (m_data.iedge(prev) != m_data.null_iedge() &&
+      (m_data.source(m_data.iedge(prev)) == ivertex || m_data.target(m_data.iedge(prev)) == ivertex)) ||
+      (m_data.ivertex(prev) != m_data.null_ivertex() && m_data.is_iedge(m_data.ivertex(prev), ivertex))) {
+      front_constrained = true;
+    }
+
+    if (back_constrained && !front_constrained) {
+      if (m_verbose) std::cout << "- reverse iedges" << std::endl;
+      std::reverse(iedges.begin(), iedges.end());
+    }
+
+    if (m_verbose) {
+      std::cout << "- initial iedges: " << std::endl;
+      for (const auto& iedge : iedges) {
+        std::cout << m_data.str(iedge.first) << ": " <<
+        m_data.segment_3(iedge.first) << std::endl;
+      }
+    }
+
+    // Handle sub-events.
+    crossed_iedges.clear();
+    std::vector<PVertex> new_pvertices;
+
+    if (back_constrained && front_constrained) {
+      apply_closing_case(pvertex);
+    } else if (back_constrained) {
+      apply_back_border_case(
+        min_time, max_time,
+        pvertex, ivertex, back, prev,
+        iedges, crossed_iedges, new_pvertices);
+    } else if (front_constrained) {
+      apply_front_border_case(
+        min_time, max_time,
+        pvertex, ivertex, front, next,
+        iedges, crossed_iedges, new_pvertices);
+    } else {
+      apply_open_case(
+        min_time, max_time,
+        pvertex, ivertex, front, back, prev, next,
+        iedges, crossed_iedges, new_pvertices);
+    }
+
+    m_data.support_plane(support_plane_idx).remove_vertex(front.second);
+    m_data.support_plane(support_plane_idx).remove_vertex(back.second);
+
+    // Push also the remaining pvertex so that its events are recomputed.
+    new_pvertices.push_back(pvertex);
+    if (m_data.iedge(pvertex) != m_data.null_iedge()) {
+      crossed_iedges.push_back(std::make_pair(m_data.iedge(pvertex), true));
+    }
+    // TODO: I THINK, I SHOULD RETURN ONLY THOSE IEDGES, WHICH HAVE BEEN HANDLED
+    // AND THEY SHOULD BE EQUAL TO THE NUMBER OF NEW PVERTICES!
+
+    if (m_verbose) {
+      std::size_t num_new_pvertices = 0;
+      for (const auto& new_pvertex : new_pvertices) {
+        if (new_pvertex != m_data.null_pvertex()) ++num_new_pvertices;
+      }
+      std::cout << "- number of new pvertices: "  << num_new_pvertices     << std::endl;
+      std::cout << "- number of crossed iedges: " << crossed_iedges.size() << std::endl;
+    }
+
+    // CGAL_assertion_msg(false, "TODO: MERGE PVERTICES ON IVERTEX!");
+    return new_pvertices;
+  }
+
+  void apply_closing_case(const PVertex& pvertex) const {
+
+    if (m_verbose) {
+      std::cout.precision(20);
+      std::cout << "*** CLOSING CASE" << std::endl;
+    }
+    CGAL_assertion(m_data.has_complete_graph(pvertex));
+
+    // CGAL_assertion_msg(false, "TODO: CLOSING CASE!");
+  }
+
+  void apply_back_border_case(
+    const FT min_time, const FT max_time,
+    const PVertex& pvertex, const IVertex& ivertex,
+    const PVertex& back, const PVertex& prev,
+    const std::vector< std::pair<IEdge, Direction_2> >& iedges,
+    std::vector< std::pair<IEdge, bool> >& crossed_iedges,
+    std::vector<PVertex>& new_pvertices) {
+
+    if (m_verbose) {
+      std::cout.precision(20);
+      std::cout << "*** BACK BORDER CASE" << std::endl;
+    }
+
+    // We use this modification in order to avoid collinear directions.
+    CGAL_assertion(m_data.has_iedge(pvertex));
+    const std::size_t other_side_limit = m_data.line_idx(pvertex);
+    const FT prev_time = m_data.last_event_time(prev);
+    CGAL_assertion(prev_time < m_data.current_time());
+    CGAL_assertion(prev_time >= FT(0));
+
+    const auto pp_last = m_data.point_2(prev, prev_time);
+    const auto pp_curr = m_data.point_2(prev, m_data.current_time());
+    const auto dirp = Vector_2(pp_last, pp_curr);
+    const auto shifted_prev = pp_curr - dirp / FT(10);
+
+    if (m_verbose) {
+      std::cout << "- shifting prev: " << m_data.to_3d(pvertex.first, shifted_prev) << std::endl;
+    }
+
+    const auto ipoint = m_data.point_2(pvertex.first, ivertex);
+    const Direction_2 ref_direction_prev(shifted_prev - ipoint);
+
+    // Find the first iedge.
+    std::size_t first_idx = std::size_t(-1);
+    const std::size_t n = iedges.size();
+    for (std::size_t i = 0; i < n; ++i) {
+      const std::size_t ip = (i + 1) % n;
+
+      const auto& i_dir  = iedges[i].second;
+      const auto& ip_dir = iedges[ip].second;
+      if (ref_direction_prev.counterclockwise_in_between(ip_dir, i_dir)) {
+        first_idx = ip; break;
+      }
+    }
+    CGAL_assertion(first_idx != std::size_t(-1));
+    // std::cout << "- curr: " << segment_3(iedges[first_idx].first) << std::endl;
+
+    // Find all crossed iedges.
+    crossed_iedges.clear();
+    CGAL_assertion(crossed_iedges.size() == 0);
+    std::size_t iedge_idx = first_idx;
+    std::size_t iteration = 0;
+    while (true) {
+      const auto& iedge = iedges[iedge_idx].first;
+      // std::cout << "- next: " << segment_3(iedge) << std::endl;
+
+      const bool is_bbox_reached  = ( m_data.collision_occured(pvertex, iedge)   ).second;
+      const bool is_limit_reached = ( m_data.line_idx(iedge) == other_side_limit );
+      if (m_verbose) {
+        std::cout << "- bbox: " << is_bbox_reached << "; limit: " << is_limit_reached << std::endl;
+      }
+
+      crossed_iedges.push_back(std::make_pair(iedge, false));
+      if (is_bbox_reached || is_limit_reached) {
+        break;
+      }
+
+      iedge_idx = (iedge_idx + 1) % n;
+      if (iteration >= iedges.size()) {
+        CGAL_assertion_msg(false, "ERROR: BACK, WHY SO MANY ITERATIONS?");
+      } ++iteration;
+    }
+
+    CGAL_assertion(crossed_iedges.size() > 0);
+    if (m_verbose) {
+      std::cout << "- crossed " << crossed_iedges.size() << " iedges: " << std::endl;
+      for (const auto& crossed_iedge : crossed_iedges) {
+        std::cout << m_data.str(crossed_iedge.first) << ": " <<
+        m_data.segment_3(crossed_iedge.first) << std::endl;
+      }
+    }
+
+    // Compute future points and directions.
+    Point_2 future_point; Vector_2 future_direction;
+    IEdge prev_iedge = m_data.null_iedge();
+    const auto iedge_0 = crossed_iedges[0].first;
+    CGAL_assertion_msg(
+      m_data.point_2(pvertex.first, m_data.source(iedge_0)) !=
+      m_data.point_2(pvertex.first, m_data.target(iedge_0)),
+    "TODO: BACK, HANDLE ZERO-LENGTH IEDGE!");
+
+    { // future point and direction
+      const bool is_parallel = m_data.compute_future_point_and_direction(
+        0, back, prev, iedge_0, future_point, future_direction);
+      if (is_parallel) {
+        if (m_data.is_intersecting_iedge(min_time, max_time, prev, iedge_0)) {
+          prev_iedge = iedge_0;
+        }
+      }
+    }
+
+    // Crop the pvertex.
+    new_pvertices.clear();
+    new_pvertices.resize(crossed_iedges.size(), m_data.null_pvertex());
+
+    { // crop
+      PVertex cropped = m_data.null_pvertex();
+      if (prev_iedge == iedge_0) {
+        if (m_verbose) std::cout << "- back, prev, parallel case" << std::endl;
+
+        // In case, we are parallel, we update the future point and direction.
+        cropped = prev;
+        const auto pprev = ( m_data.border_prev_and_next(prev) ).first;
+        m_data.compute_future_point_and_direction(
+          0, prev, pprev, prev_iedge, future_point, future_direction);
+
+      } else {
+        if (m_verbose) std::cout << "- back, prev, standard case" << std::endl;
+        cropped = PVertex(pvertex.first, m_data.support_plane(pvertex).split_edge(pvertex.second, prev.second));
+      }
+      CGAL_assertion(cropped != m_data.null_pvertex());
+
+      const PEdge pedge(pvertex.first, m_data.support_plane(pvertex).edge(pvertex.second, cropped.second));
+      CGAL_assertion(cropped != pvertex);
+      new_pvertices[0] = cropped;
+
+      m_data.connect(pedge, iedge_0);
+      m_data.connect(cropped, iedge_0);
+
+      CGAL_assertion(future_direction != Vector_2());
+      m_data.support_plane(cropped).set_point(cropped.second, future_point);
+      m_data.direction(cropped) = future_direction;
+      if (m_verbose) std::cout << "- cropped: " << m_data.point_3(cropped) << std::endl;
+    }
+
+    // Create new pfaces if any.
+    add_new_pfaces(
+      pvertex, ivertex, back, prev, false, true,
+      crossed_iedges, new_pvertices);
+
+    // CGAL_assertion_msg(false, "TODO: BACK BORDER CASE!");
+  }
+
+  void apply_front_border_case(
+    const FT min_time, const FT max_time,
+    const PVertex& pvertex, const IVertex& ivertex,
+    const PVertex& front, const PVertex& next,
+    const std::vector< std::pair<IEdge, Direction_2> >& iedges,
+    std::vector< std::pair<IEdge, bool> >& crossed_iedges,
+    std::vector<PVertex>& new_pvertices) {
+
+    if (m_verbose) {
+      std::cout.precision(20);
+      std::cout << "*** FRONT BORDER CASE" << std::endl;
+    }
+
+    // We use this modification in order to avoid collinear directions.
+    CGAL_assertion(m_data.has_iedge(pvertex));
+    const std::size_t other_side_limit = m_data.line_idx(pvertex);
+    const FT next_time = m_data.last_event_time(next);
+    CGAL_assertion(next_time < m_data.current_time());
+    CGAL_assertion(next_time >= FT(0));
+
+    const auto pn_last = m_data.point_2(next, next_time);
+    const auto pn_curr = m_data.point_2(next, m_data.current_time());
+    const auto dirn = Vector_2(pn_last, pn_curr);
+    const auto shifted_next = pn_curr - dirn / FT(10);
+
+    if (m_verbose) {
+      std::cout << "- shifting next: " << m_data.to_3d(pvertex.first, shifted_next) << std::endl;
+    }
+
+    const auto ipoint = m_data.point_2(pvertex.first, ivertex);
+    const Direction_2 ref_direction_next(shifted_next - ipoint);
+
+    // Find the first iedge.
+    std::size_t first_idx = std::size_t(-1);
+    const std::size_t n = iedges.size();
+    for (std::size_t i = 0; i < n; ++i) {
+      const std::size_t ip = (i + 1) % n;
+
+      const auto& i_dir  = iedges[i].second;
+      const auto& ip_dir = iedges[ip].second;
+      if (ref_direction_next.counterclockwise_in_between(i_dir, ip_dir)) {
+        first_idx = ip; break;
+      }
+    }
+    CGAL_assertion(first_idx != std::size_t(-1));
+    // std::cout << "- curr: " << segment_3(iedges[first_idx].first) << std::endl;
+
+    // Find all crossed iedges.
+    crossed_iedges.clear();
+    CGAL_assertion(crossed_iedges.size() == 0);
+    std::size_t iedge_idx = first_idx;
+    std::size_t iteration = 0;
+    while (true) {
+      const auto& iedge = iedges[iedge_idx].first;
+      // std::cout << "- next: " << segment_3(iedge) << std::endl;
+
+      const bool is_bbox_reached  = ( m_data.collision_occured(pvertex, iedge)   ).second;
+      const bool is_limit_reached = ( m_data.line_idx(iedge) == other_side_limit );
+      if (m_verbose) {
+        std::cout << "- bbox: " << is_bbox_reached << "; limit: " << is_limit_reached << std::endl;
+      }
+
+      crossed_iedges.push_back(std::make_pair(iedge, false));
+      if (is_bbox_reached || is_limit_reached) {
+        break;
+      }
+
+      iedge_idx = (iedge_idx + 1) % n;
+      if (iteration >= iedges.size()) {
+        CGAL_assertion_msg(false, "ERROR: FRONT, WHY SO MANY ITERATIONS?");
+      } ++iteration;
+    }
+
+    CGAL_assertion(crossed_iedges.size() > 0);
+    if (m_verbose) {
+      std::cout << "- crossed " << crossed_iedges.size() << " iedges: " << std::endl;
+      for (const auto& crossed_iedge : crossed_iedges) {
+        std::cout << m_data.str(crossed_iedge.first) << ": " <<
+        m_data.segment_3(crossed_iedge.first) << std::endl;
+      }
+    }
+
+    // Compute future points and directions.
+    Point_2 future_point; Vector_2 future_direction;
+    IEdge next_iedge = m_data.null_iedge();
+    const auto iedge_0 = crossed_iedges[0].first;
+    CGAL_assertion_msg(
+      m_data.point_2(pvertex.first, m_data.source(iedge_0)) !=
+      m_data.point_2(pvertex.first, m_data.target(iedge_0)),
+    "TODO: FRONT, HANDLE ZERO-LENGTH IEDGE!");
+
+    { // future point and direction
+      const bool is_parallel = m_data.compute_future_point_and_direction(
+        0, front, next, iedge_0, future_point, future_direction);
+      if (is_parallel) {
+        if (m_data.is_intersecting_iedge(min_time, max_time, next, iedge_0)) {
+          next_iedge = iedge_0;
+        }
+      }
+    }
+
+    // Crop the pvertex.
+    new_pvertices.clear();
+    new_pvertices.resize(crossed_iedges.size(), m_data.null_pvertex());
+
+    { // crop
+      PVertex cropped = m_data.null_pvertex();
+      if (next_iedge == iedge_0) {
+        if (m_verbose) std::cout << "- front, next, parallel case" << std::endl;
+
+        // In case, we are parallel, we update the future point and direction.
+        cropped = next;
+        const auto nnext = ( m_data.border_prev_and_next(next) ).second;
+        m_data.compute_future_point_and_direction(
+          0, next, nnext, next_iedge, future_point, future_direction);
+
+      } else {
+        if (m_verbose) std::cout << "- front, next, standard case" << std::endl;
+        cropped = PVertex(pvertex.first, m_data.support_plane(pvertex).split_edge(pvertex.second, next.second));
+      }
+      CGAL_assertion(cropped != m_data.null_pvertex());
+
+      const PEdge pedge(pvertex.first, m_data.support_plane(pvertex).edge(pvertex.second, cropped.second));
+      CGAL_assertion(cropped != pvertex);
+      new_pvertices[0] = cropped;
+
+      m_data.connect(pedge, iedge_0);
+      m_data.connect(cropped, iedge_0);
+
+      CGAL_assertion(future_direction != Vector_2());
+      m_data.support_plane(cropped).set_point(cropped.second, future_point);
+      m_data.direction(cropped) = future_direction;
+      if (m_verbose) std::cout << "- cropped: " << m_data.point_3(cropped) << std::endl;
+    }
+
+    // Create new pfaces if any.
+    add_new_pfaces(
+      pvertex, ivertex, front, next, false, false,
+      crossed_iedges, new_pvertices);
+
+    // CGAL_assertion_msg(false, "TODO: FRONT BORDER CASE!");
+  }
+
+  void apply_open_case(
+    const FT min_time, const FT max_time,
+    const PVertex& pvertex, const IVertex& ivertex,
+    const PVertex& front, const PVertex& back,
+    const PVertex& prev , const PVertex& next,
+    const std::vector< std::pair<IEdge, Direction_2> >& iedges,
+    std::vector< std::pair<IEdge, bool> >& crossed_iedges,
+    std::vector<PVertex>& new_pvertices) {
+
+    if (m_verbose) {
+      std::cout.precision(20);
+      std::cout << "*** OPEN CASE" << std::endl;
+    }
+
+    // We use this modification in order to avoid collinear directions.
+    const FT prev_time = m_data.last_event_time(prev);
+    const FT next_time = m_data.last_event_time(next);
+    CGAL_assertion(prev_time < m_data.current_time());
+    CGAL_assertion(next_time < m_data.current_time());
+    CGAL_assertion(prev_time >= FT(0));
+    CGAL_assertion(next_time >= FT(0));
+
+    const auto pp_last = m_data.point_2(prev, prev_time);
+    const auto pp_curr = m_data.point_2(prev, m_data.current_time());
+    const auto dirp = Vector_2(pp_last, pp_curr);
+    const auto shifted_prev = pp_curr - dirp / FT(10);
+
+    const auto pn_last = m_data.point_2(next, next_time);
+    const auto pn_curr = m_data.point_2(next, m_data.current_time());
+    const auto dirn = Vector_2(pn_last, pn_curr);
+    const auto shifted_next = pn_curr - dirn / FT(10);
+
+    if (m_verbose) {
+      std::cout << "- shifting prev: " << m_data.to_3d(pvertex.first, shifted_prev) << std::endl;
+      std::cout << "- shifting next: " << m_data.to_3d(pvertex.first, shifted_next) << std::endl;
+    }
+
+    const auto ipoint = m_data.point_2(pvertex.first, ivertex);
+    const Direction_2 ref_direction_prev(shifted_prev - ipoint);
+    const Direction_2 ref_direction_next(shifted_next - ipoint);
+
+    // Find the first iedge.
+    std::size_t first_idx = std::size_t(-1);
+    const std::size_t n = iedges.size();
+    for (std::size_t i = 0; i < n; ++i) {
+      const std::size_t ip = (i + 1) % n;
+
+      const auto& i_dir  = iedges[i].second;
+      const auto& ip_dir = iedges[ip].second;
+      if (ref_direction_next.counterclockwise_in_between(i_dir, ip_dir)) {
+        first_idx = ip; break;
+      }
+    }
+    CGAL_assertion(first_idx != std::size_t(-1));
+    // std::cout << "- curr: " << segment_3(iedges[first_idx].first) << std::endl;
+
+    // Find all crossed iedges.
+    crossed_iedges.clear();
+    CGAL_assertion(crossed_iedges.size() == 0);
+    std::size_t iedge_idx = first_idx;
+    std::size_t iteration = 0;
+    while (true) {
+      const auto& iedge = iedges[iedge_idx].first;
+      // std::cout << "- next: " << segment_3(iedge) << std::endl;
+
+      if (iteration == iedges.size()) {
+        CGAL_assertion_msg(iedges.size() == 2,
+        "ERROR: CAN WE HAVE THIS CASE IN THE CONSTRAINED SETTING?");
+        break;
+      }
+
+      const auto& ref_direction = iedges[iedge_idx].second;
+      if (!ref_direction.counterclockwise_in_between(
+        ref_direction_next, ref_direction_prev)) {
+        break;
+      }
+
+      crossed_iedges.push_back(std::make_pair(iedge, false));
+      iedge_idx = (iedge_idx + 1) % n;
+      if (iteration >= iedges.size()) {
+        CGAL_assertion_msg(false, "ERROR: OPEN, WHY SO MANY ITERATIONS?");
+      } ++iteration;
+    }
+
+    CGAL_assertion(crossed_iedges.size() > 0);
+    if (m_verbose) {
+      std::cout << "- crossed " << crossed_iedges.size() << " iedges: " << std::endl;
+      for (const auto& crossed_iedge : crossed_iedges) {
+        std::cout << m_data.str(crossed_iedge.first) << ": " <<
+        m_data.segment_3(crossed_iedge.first) << std::endl;
+      }
+    }
+
+    // Compute future points and directions.
+    std::vector<Point_2> future_points(2);
+    std::vector<Vector_2> future_directions(2);
+    IEdge prev_iedge = m_data.null_iedge();
+    IEdge next_iedge = m_data.null_iedge();
+
+    CGAL_assertion_msg(
+      m_data.point_2(pvertex.first, m_data.source(crossed_iedges.front().first)) !=
+      m_data.point_2(pvertex.first, m_data.target(crossed_iedges.front().first)),
+    "TODO: OPEN, FRONT, HANDLE ZERO-LENGTH IEDGE!");
+
+    { // first future point and direction
+      const bool is_parallel = m_data.compute_future_point_and_direction(
+        pvertex, prev, next, crossed_iedges.front().first, future_points.front(), future_directions.front());
+      if (is_parallel) {
+        if (m_data.is_intersecting_iedge(min_time, max_time, prev, crossed_iedges.front().first)) {
+          prev_iedge = crossed_iedges.front().first;
+        }
+        if (m_data.is_intersecting_iedge(min_time, max_time, next, crossed_iedges.front().first)) {
+          next_iedge = crossed_iedges.front().first;
+        }
+      }
+    }
+
+    CGAL_assertion_msg(
+      m_data.point_2(pvertex.first, m_data.source(crossed_iedges.back().first)) !=
+      m_data.point_2(pvertex.first, m_data.target(crossed_iedges.back().first)),
+    "TODO: OPEN, BACK, HANDLE ZERO-LENGTH IEDGE!");
+
+    { // second future point and direction
+      const bool is_parallel = m_data.compute_future_point_and_direction(
+        pvertex, prev, next, crossed_iedges.back().first, future_points.back(), future_directions.back());
+      if (is_parallel) {
+        if (m_data.is_intersecting_iedge(min_time, max_time, prev, crossed_iedges.back().first)) {
+          prev_iedge = crossed_iedges.back().first;
+        }
+        if (m_data.is_intersecting_iedge(min_time, max_time, next, crossed_iedges.back().first)) {
+          next_iedge = crossed_iedges.back().first;
+        }
+      }
+    }
+
+    // Crop the pvertex.
+    new_pvertices.clear();
+    new_pvertices.resize(crossed_iedges.size(), m_data.null_pvertex());
+
+    { // first crop
+      PVertex cropped = m_data.null_pvertex();
+      if (next_iedge == crossed_iedges.front().first) {
+        if (m_verbose) std::cout << "- open, next, parallel case" << std::endl;
+
+        // In case, we are parallel, we update the future point and direction.
+        cropped = next;
+        const auto nnext = ( m_data.border_prev_and_next(next) ).second;
+        m_data.compute_future_point_and_direction(
+          0, next, nnext, next_iedge, future_points.front(), future_directions.front());
+
+      } else {
+        if (m_verbose) std::cout << "- open, next, standard case" << std::endl;
+        cropped = PVertex(pvertex.first, m_data.support_plane(pvertex).split_edge(pvertex.second, next.second));
+      }
+      CGAL_assertion(cropped != m_data.null_pvertex());
+
+      const PEdge pedge(pvertex.first, m_data.support_plane(pvertex).edge(pvertex.second, cropped.second));
+      CGAL_assertion(cropped != pvertex);
+      new_pvertices.front() = cropped;
+
+      m_data.connect(pedge, crossed_iedges.front().first);
+      m_data.connect(cropped, crossed_iedges.front().first);
+
+      CGAL_assertion(future_directions.front() != Vector_2());
+      m_data.support_plane(cropped).set_point(cropped.second, future_points.front());
+      m_data.direction(cropped) = future_directions.front();
+      if (m_verbose) std::cout << "- cropped 1: " << m_data.point_3(cropped) << std::endl;
+    }
+
+    { // second crop
+      PVertex cropped = m_data.null_pvertex();
+      if (prev_iedge == crossed_iedges.back().first) {
+        if (m_verbose) std::cout << "- open, prev, parallel case" << std::endl;
+
+        // In case, we are parallel, we update the future point and direction.
+        cropped = prev;
+        const auto pprev = ( m_data.border_prev_and_next(prev) ).first;
+        m_data.compute_future_point_and_direction(
+          0, prev, pprev, prev_iedge, future_points.back(), future_directions.back());
+
+      } else {
+        if (m_verbose) std::cout << "- open, prev, standard case" << std::endl;
+        cropped = PVertex(pvertex.first, m_data.support_plane(pvertex).split_edge(pvertex.second, prev.second));
+      }
+      CGAL_assertion(cropped != m_data.null_pvertex());
+
+      const PEdge pedge(pvertex.first, m_data.support_plane(pvertex).edge(pvertex.second, cropped.second));
+      CGAL_assertion(cropped != pvertex);
+      new_pvertices.back() = cropped;
+
+      m_data.connect(pedge, crossed_iedges.back().first);
+      m_data.connect(cropped, crossed_iedges.back().first);
+
+      CGAL_assertion(future_directions.back() != Vector_2());
+      m_data.support_plane(cropped).set_point(cropped.second, future_points.back());
+      m_data.direction(cropped) = future_directions.back();
+      if (m_verbose) std::cout << "- cropped 2: " << m_data.point_3(cropped) << std::endl;
+    }
+
+    // Create new pfaces if any.
+    add_new_pfaces(
+      pvertex, ivertex, prev, next, true, false,
+      crossed_iedges, new_pvertices);
+
+    // CGAL_assertion_msg(false, "TODO: OPEN CASE!");
+  }
+
+void add_new_pfaces(
+    const PVertex& pvertex, const IVertex& ivertex,
+    const PVertex& pv_prev, const PVertex& pv_next,
+    const bool is_open, const bool reverse,
+    std::vector< std::pair<IEdge, bool> >& crossed_iedges,
+    std::vector<PVertex>& new_pvertices) {
+
+    if (crossed_iedges.size() < 2) return;
+    CGAL_assertion(crossed_iedges.size() >= 2);
+    CGAL_assertion(crossed_iedges.size() == new_pvertices.size());
+    CGAL_assertion(crossed_iedges.front().first != crossed_iedges.back().first);
+
+    add_new_pfaces_global(
+      pvertex, ivertex, pv_prev, pv_next, is_open, reverse,
+      crossed_iedges, new_pvertices);
+
+    // CGAL_assertion_msg(false, "TODO: ADD NEW PFACES!");
+  }
+
+  void add_new_pfaces_global(
+    const PVertex& pvertex, const IVertex& ivertex,
+    const PVertex& pv_prev, const PVertex& pv_next,
+    const bool is_open, bool reverse,
+    std::vector< std::pair<IEdge, bool> >& crossed_iedges,
+    std::vector<PVertex>& new_pvertices) {
+
+    traverse_iedges_global(
+      pvertex, ivertex, pv_prev, pv_next, is_open, reverse,
+      crossed_iedges, new_pvertices);
+
+    if (is_open) {
+      reverse = !reverse;
+      std::reverse(new_pvertices.begin(), new_pvertices.end());
+      std::reverse(crossed_iedges.begin(), crossed_iedges.end());
+
+      traverse_iedges_global(
+        pvertex, ivertex, pv_prev, pv_next, is_open, reverse,
+        crossed_iedges, new_pvertices);
+
+      reverse = !reverse;
+      std::reverse(new_pvertices.begin(), new_pvertices.end());
+      std::reverse(crossed_iedges.begin(), crossed_iedges.end());
+    }
+
+    // CGAL_assertion_msg(false, "TODO: ADD NEW PFACES GLOBAL!");
+  }
+
+  void traverse_iedges_global(
+    const PVertex& pvertex, const IVertex& ivertex,
+    const PVertex& pv_prev, const PVertex& pv_next,
+    const bool is_open, const bool reverse,
+    std::vector< std::pair<IEdge, bool> >& iedges,
+    std::vector<PVertex>& pvertices) {
+
+    if (m_verbose) {
+      std::cout << "**** traversing iedges global" << std::endl;
+      std::cout << "- k intersections before: " << m_data.k(pvertex.first) << std::endl;
+    }
+
+    std::size_t num_added_pfaces = 0;
+    CGAL_assertion(iedges.size() >= 2);
+    CGAL_assertion(iedges.size() == pvertices.size());
+    CGAL_assertion(pvertices.front() != m_data.null_pvertex());
+    for (std::size_t i = 0; i < iedges.size() - 1; ++i) {
+
+      if (iedges[i].second) {
+        if (m_verbose) {
+          std::cout << "- break iedge " << std::to_string(i) << std::endl;
+        } break;
+      } else {
+        if (m_verbose) {
+          std::cout << "- handle iedge " << std::to_string(i) << std::endl;
+        }
+      }
+
+      iedges[i].second = true;
+      const auto& iedge_i = iedges[i].first;
+      CGAL_assertion_msg(
+        m_data.point_2(pvertex.first, ivertex) !=
+        m_data.point_2(pvertex.first, m_data.opposite(iedge_i, ivertex)),
+      "TODO: TRAVERSE IEDGES GLOBAL, HANDLE ZERO LENGTH IEDGE I!");
+
+      bool is_occupied_iedge, is_bbox_reached;
+      std::tie(is_occupied_iedge, is_bbox_reached) = m_data.is_occupied(pvertex, ivertex, iedge_i);
+      const bool is_limit_line = m_data.update_limit_lines_and_k(pvertex, iedge_i, is_occupied_iedge);
+
+      if (m_verbose) {
+        std::cout << "- bbox: " << is_bbox_reached  << "; " <<
+        " limit: "    << is_limit_line << "; " <<
+        " occupied: " << is_occupied_iedge << std::endl;
+      }
+
+      if (is_bbox_reached) {
+        if (m_verbose) std::cout << "- bbox, stop" << std::endl;
+        break;
+      } else if (is_limit_line) {
+        if (m_verbose) std::cout << "- limit, stop" << std::endl;
+        break;
+      } else {
+        if (m_verbose) std::cout << "- free, any k, continue" << std::endl;
+        CGAL_assertion(m_data.k(pvertex.first) >= 1);
+
+        const std::size_t ip = i + 1;
+        const auto& iedge_ip = iedges[ip].first;
+        CGAL_assertion_msg(
+          m_data.point_2(pvertex.first, ivertex) !=
+          m_data.point_2(pvertex.first, m_data.opposite(iedge_ip, ivertex)),
+        "TODO: TRAVERSE IEDGES GLOBAL, HANDLE ZERO LENGTH IEDGE IP!");
+
+        add_new_pface(pvertex, pv_prev, pv_next, is_open, reverse, i, iedge_ip, pvertices);
+        ++num_added_pfaces;
+        continue;
+      }
+    }
+
+    CGAL_assertion(m_data.k(pvertex.first) >= 1);
+    if (num_added_pfaces == iedges.size() - 1) {
+      iedges.back().second = true;
+    }
+
+    if (m_verbose) {
+      std::cout << "- num added pfaces: " << num_added_pfaces << std::endl;
+      std::cout << "- k intersections after: " << m_data.k(pvertex.first) << std::endl;
+    }
+
+    // CGAL_assertion_msg(false, "TODO: TRAVERSE IEDGES GLOBAL!");
+  }
+
+  void add_new_pface(
+    const PVertex& pvertex, const PVertex& pv_prev, const PVertex& pv_next,
+    const bool is_open, const bool reverse, const std::size_t idx, const IEdge& iedge,
+    std::vector<PVertex>& pvertices) {
+
+    if (m_verbose) {
+      std::cout << "- adding new pface: " << std::endl;
+    }
+
+    // The first pvertex of the new triangle.
+    const auto& pv1 = pvertices[idx];
+    CGAL_assertion(pv1 != m_data.null_pvertex());
+    if (m_verbose) {
+      std::cout << "- pv1 " << m_data.str(pv1) << ": " << m_data.point_3(pv1) << std::endl;
+    }
+
+    // The second pvertex of the new triangle.
+    PVertex pv2 = m_data.null_pvertex();
+    const bool pv2_exists = (pvertices[idx + 1] != m_data.null_pvertex());
+    if (pv2_exists) {
+      CGAL_assertion((pvertices.size() - 1) == (idx + 1));
+      pv2 = pvertices[idx + 1];
+    } else {
+      create_new_pvertex(
+        pvertex, pv_prev, pv_next, is_open, idx + 1, iedge, pvertices);
+      pv2 = pvertices[idx + 1];
+    }
+    CGAL_assertion(pv2 != m_data.null_pvertex());
+    if (m_verbose) {
+      std::cout << "- pv2 " << m_data.str(pv2) << ": " << m_data.point_3(pv2) << std::endl;
+    }
+
+    // Adding new triangle.
+    if (reverse) m_data.add_pface(std::array<PVertex, 3>{pvertex, pv2, pv1});
+    else m_data.add_pface(std::array<PVertex, 3>{pvertex, pv1, pv2});
+    if (!pv2_exists) m_data.connect_pedge(pvertex, pv2, iedge);
+
+    // CGAL_assertion_msg(false, "TODO: ADD NEW PFACE!");
+  }
+
+  void create_new_pvertex(
+    const PVertex& pvertex, const PVertex& pv_prev, const PVertex& pv_next,
+    const bool is_open, const std::size_t idx, const IEdge& iedge,
+    std::vector<PVertex>& pvertices) {
+
+    if (m_verbose) std::cout << "- creating new pvertex" << std::endl;
+
+    bool is_parallel = false;
+    Point_2 future_point; Vector_2 future_direction;
+
+    if (!is_open) {
+      is_parallel = m_data.compute_future_point_and_direction(
+        0, pv_prev, pv_next, iedge, future_point, future_direction);
+      if (is_parallel) {
+        if (m_verbose) std::cout << "- new pvertex, back/front, parallel case" << std::endl;
+        CGAL_assertion_msg(!is_parallel,
+        "TODO: CREATE PVERTEX, BACK/FRONT, ADD PARALLEL CASE!");
+      }
+    } else {
+      is_parallel = m_data.compute_future_point_and_direction(
+        pvertex, pv_prev, pv_next, iedge, future_point, future_direction);
+      if (is_parallel) {
+        if (m_verbose) std::cout << "- new pvertex, open, parallel case" << std::endl;
+        CGAL_assertion_msg(!is_parallel,
+        "TODO: CREATE_PVERTEX, OPEN, ADD PARALLEL CASE!");
+      }
+    }
+
+    CGAL_assertion(future_direction != Vector_2());
+    const auto propagated = m_data.add_pvertex(pvertex.first, future_point);
+    m_data.direction(propagated) = future_direction;
+    CGAL_assertion(propagated != pvertex);
+
+    CGAL_assertion(idx < pvertices.size());
+    CGAL_assertion(pvertices[idx] == m_data.null_pvertex());
+    pvertices[idx] = propagated;
+
+    // CGAL_assertion_msg(false, "TODO: CREATE NEW PVERTEX!");
+  }
 };
 
 } // namespace KSR_3

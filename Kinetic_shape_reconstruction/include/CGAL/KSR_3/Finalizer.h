@@ -110,12 +110,8 @@ private:
 
 public:
   Finalizer(
-    const bool debug,
-    const bool verbose,
-    Data_structure& data) :
-  m_debug(debug),
-  m_verbose(verbose),
-  m_data(data)
+    const bool verbose, const bool dprint, const bool debug, Data_structure& data) :
+  m_verbose(verbose), m_export(dprint), m_debug(debug), m_data(data)
   { }
 
   void clean() {
@@ -154,9 +150,14 @@ public:
     CGAL_assertion(m_data.check_faces());
   }
 
+  void clear() {
+    // to be done
+  }
+
 private:
-  const bool m_debug;
   const bool m_verbose;
+  const bool m_export;
+  const bool m_debug;
   Data_structure& m_data;
 
   /*******************************
@@ -273,7 +274,7 @@ private:
     if (!pair.second) return;
 
     CGAL_assertion(crossing_he != Halfedge_index());
-    CGAL_assertion(pface != Data_structure::null_pface());
+    CGAL_assertion(pface != m_data.null_pface());
     CGAL_assertion(pface.second != Support_plane::Mesh::null_face());
     nfaces.push_back(std::make_pair(crossing_he, pface));
 
@@ -550,7 +551,7 @@ private:
       const auto iter = map_intersections.find(cit->id());
       if (iter == map_intersections.end()) continue;
       const auto& iedge = iter->second;
-      CGAL_assertion(iedge != Data_structure::null_iedge());
+      CGAL_assertion(iedge != m_data.null_iedge());
       if (m_data.has_pedge(sp_idx, iedge)) return true;
     }
     return false;
@@ -595,14 +596,14 @@ private:
   const Face_handle find_initial_face(
     const CDT& cdt, const IEdge& init_iedge) const {
 
-    CGAL_assertion(init_iedge != Data_structure::null_iedge());
+    CGAL_assertion(init_iedge != m_data.null_iedge());
     for (auto fit = cdt.finite_faces_begin(); fit != cdt.finite_faces_end(); ++fit) {
       if (fit->info().index != KSR::no_element()) continue;
 
       for (std::size_t i = 0; i < 3; ++i) {
         const auto edge = std::make_pair(fit, i);
         const auto iedge = find_iedge(edge);
-        if (iedge == Data_structure::null_iedge()) {
+        if (iedge == m_data.null_iedge()) {
           CGAL_assertion(!cdt.is_constrained(edge));
           continue;
         }
@@ -631,10 +632,10 @@ private:
 
     // std::cout << "iv1: " << point_3(iv1) << std::endl;
     // std::cout << "iv2: " << point_3(iv2) << std::endl;
-    CGAL_assertion(iv1 != Data_structure::null_ivertex()); // if cdt has extra vertices with no ivertex,
-    CGAL_assertion(iv2 != Data_structure::null_ivertex()); // just comment out these assertions
+    CGAL_assertion(iv1 != m_data.null_ivertex()); // if cdt has extra vertices with no ivertex,
+    CGAL_assertion(iv2 != m_data.null_ivertex()); // just comment out these assertions
 
-    IEdge iedge = Data_structure::null_iedge();
+    IEdge iedge = m_data.null_iedge();
     if (m_data.igraph().is_edge(iv1, iv2)) {
       iedge = m_data.igraph().edge(iv1, iv2);
     } else if (m_data.igraph().is_edge(iv2, iv1)) {
@@ -708,12 +709,12 @@ private:
     if (fh->info().input != KSR::uninitialized()) return std::make_pair(false, false);
 
     const auto iedge = find_iedge(edge);
-    if (iedge == Data_structure::null_iedge()) {
+    if (iedge == m_data.null_iedge()) {
       CGAL_assertion(!cdt.is_constrained(edge));
       return std::make_pair(false, true);
     }
 
-    auto pvertex = Data_structure::null_pvertex();
+    auto pvertex = m_data.null_pvertex();
     pvertex.first = sp_idx;
     bool is_occupied_edge = false, is_bbox_reached = false;
     std::tie(is_occupied_edge, is_bbox_reached) = m_data.is_occupied(pvertex, iedge);
@@ -764,7 +765,7 @@ private:
 
         const auto source = curr_face->vertex(cdt.ccw(idx));
         const auto target = curr_face->vertex(cdt.cw (idx));
-        if (source->info().pvertex == Data_structure::null_pvertex()) {
+        if (source->info().pvertex == m_data.null_pvertex()) {
           source->info().pvertex = m_data.add_pvertex(sp_idx, source->point());
         }
         source->info().tagged = true;
@@ -803,8 +804,8 @@ private:
     // Reconnect only those, which have already been connected.
     for (auto vit = cdt.finite_vertices_begin(); vit != cdt.finite_vertices_end(); ++vit) {
       if (!vit->info().tagged) continue;
-      if (vit->info().pvertex != Data_structure::null_pvertex() &&
-          vit->info().ivertex != Data_structure::null_ivertex()) {
+      if (vit->info().pvertex != m_data.null_pvertex() &&
+          vit->info().ivertex != m_data.null_ivertex()) {
         m_data.connect(vit->info().pvertex, vit->info().ivertex);
       }
     }
@@ -819,10 +820,10 @@ private:
       const auto& cid   = item.first;
       const auto& iedge = item.second;
 
-      if (iedge == Data_structure::null_iedge()) {
+      if (iedge == m_data.null_iedge()) {
         continue;
       }
-      CGAL_assertion(iedge != Data_structure::null_iedge());
+      CGAL_assertion(iedge != m_data.null_iedge());
 
       auto vit = cdt.vertices_in_constraint_begin(cid);
       while (true) {
@@ -833,8 +834,8 @@ private:
         vit = next;
 
         if (
-          a->info().pvertex == Data_structure::null_pvertex() ||
-          b->info().pvertex == Data_structure::null_pvertex()) {
+          a->info().pvertex == m_data.null_pvertex() ||
+          b->info().pvertex == m_data.null_pvertex()) {
           continue;
         }
 
@@ -842,8 +843,8 @@ private:
           continue;
         }
 
-        CGAL_assertion(a->info().pvertex != Data_structure::null_pvertex());
-        CGAL_assertion(b->info().pvertex != Data_structure::null_pvertex());
+        CGAL_assertion(a->info().pvertex != m_data.null_pvertex());
+        CGAL_assertion(b->info().pvertex != m_data.null_pvertex());
         // std::cout << "a: " << point_3(a->info().pvertex) << std::endl;
         // std::cout << "b: " << point_3(b->info().pvertex) << std::endl;
         // std::cout << "e: " << segment_3(iedge) << std::endl;
@@ -969,7 +970,7 @@ private:
 
     if (m_verbose) {
       std::cout << "* created volumes: " << volumes.size() << std::endl;
-      dump_volumes(m_data, "volumes/final");
+      if (m_export) dump_volumes(m_data, "volumes/final");
       for (std::size_t i = 0; i < volumes.size(); ++i) {
         const auto& volume = volumes[i];
         CGAL_assertion(volume.pfaces.size() > 3);
@@ -1240,7 +1241,7 @@ private:
 
       const auto found_nface = find_using_2d_directions(
       volume_index, volume_centroid, pface, pedge, all_nfaces);
-      if (found_nface == Data_structure::null_pface()) continue;
+      if (found_nface == m_data.null_pface()) continue;
 
       if (is_boundary_pface(
         found_nface, volume_index, num_volumes, map_volumes)) {
@@ -1316,7 +1317,7 @@ private:
 
       const auto found_nface = find_using_2d_directions(
       volume_index, volume_centroid, pface, pedge, all_nfaces);
-      if (found_nface == Data_structure::null_pface()) continue;
+      if (found_nface == m_data.null_pface()) continue;
 
       if (is_boundary_pface(
         found_nface, volume_index, num_volumes, map_volumes)) {
@@ -1372,12 +1373,12 @@ private:
 
     CGAL_assertion(nfaces.size() > 0);
     if (nfaces.size() == 1) return nfaces[0];
-    const bool is_debug = false;
+    const bool debug = false;
       // ( volume_index == 31 &&
       //   pface.first == 8 &&
       //   static_cast<std::size_t>(pface.second) == 7);
 
-    if (is_debug) {
+    if (debug) {
       dump_info(m_data, pface, pedge, nfaces);
     }
     CGAL_assertion(nfaces.size() > 1);
@@ -1406,7 +1407,7 @@ private:
       point = plane.projection(point);
     }
 
-    if (is_debug) {
+    if (debug) {
       dump_frame(points, "volumes/directions-init");
     }
 
@@ -1439,7 +1440,7 @@ private:
       }
     }
 
-    if (is_debug) {
+    if (debug) {
       auto extended = points;
       extended.push_back(volume_centroid);
       dump_frame(extended, "volumes/directions");
@@ -1482,25 +1483,25 @@ private:
         const auto& dir_curr = dir_edges[i].first;
         const auto& dir_next = dir_edges[ip].first;
 
-        if (is_debug) {
+        if (debug) {
           dump_pface(m_data, dir_edges[im].second, "prev");
           dump_pface(m_data, dir_edges[ip].second, "next");
         }
 
         if (ref_dir.counterclockwise_in_between(dir_prev, dir_curr)) {
-          if (is_debug) {
+          if (debug) {
             std::cout << "found prev" << std::endl;
             exit(EXIT_SUCCESS);
           }
           return dir_edges[im].second;
         } else if (ref_dir.counterclockwise_in_between(dir_curr, dir_next)) {
-          if (is_debug) {
+          if (debug) {
             std::cout << "found next" << std::endl;
             exit(EXIT_SUCCESS);
           }
           return dir_edges[ip].second;
         } else {
-          // return Data_structure::null_pface();
+          // return m_data.null_pface();
           dump_info(m_data, pface, pedge, nfaces);
           dump_frame(points, "volumes/directions-init");
           auto extended = points;
@@ -1512,7 +1513,7 @@ private:
     }
 
     CGAL_assertion_msg(false, "ERROR: NEXT PFACE IS NOT FOUND!");
-    return Data_structure::null_pface();
+    return m_data.null_pface();
   }
 
   void create_cell_pvertices(Volume_cell& cell) {

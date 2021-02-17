@@ -63,11 +63,8 @@ private:
 
 public:
   Initializer(
-    const bool debug,
-    const bool verbose) :
-  m_debug(debug),
-  m_verbose(verbose),
-  m_data(m_debug)
+    const bool verbose, const bool dprint, const bool debug) :
+  m_verbose(verbose), m_export(dprint), m_debug(debug), m_data(m_debug)
   { }
 
   template<
@@ -95,7 +92,7 @@ public:
     add_polygons(input_range, polygon_map, bbox_faces);
 
     if (m_verbose) std::cout << "* intersecting input polygons ... ";
-    if (m_debug) {
+    if (m_export) {
       KSR_3::dump(m_data, "init");
       // KSR_3::dump_segmented_edges(m_data, "init");
     }
@@ -106,7 +103,7 @@ public:
     set_k_intersections(k);
 
     if (m_verbose) std::cout << "done" << std::endl;
-    if (m_debug) {
+    if (m_export) {
       KSR_3::dump(m_data, "intersected");
       // KSR_3::dump_segmented_edges(m_data, "intersected");
     }
@@ -126,7 +123,7 @@ public:
   }
 
   template<typename DS>
-  void convert_to_inexact(DS& ds) {
+  void transfer_to(DS& ds) {
 
     ds.clear();
     m_data.convert(ds);
@@ -141,8 +138,9 @@ public:
   }
 
 private:
-  const bool m_debug;
   const bool m_verbose;
+  const bool m_export;
+  const bool m_debug;
   Data_structure m_data;
 
   template<
@@ -527,7 +525,7 @@ private:
     for (std::size_t i = 0; i < m_data.number_of_support_planes(); ++i) {
       Polygon_splitter splitter(m_data);
       splitter.split_support_plane(i);
-      // if (i >= 6 && m_debug) {
+      // if (i >= 6 && m_export) {
       //   KSR_3::dump(m_data, "intersected-iter-" + std::to_string(i));
       // }
     }
