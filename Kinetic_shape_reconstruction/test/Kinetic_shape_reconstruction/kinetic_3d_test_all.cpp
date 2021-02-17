@@ -223,6 +223,10 @@ void run_all_tests() {
   results = {9,1,24,46,27,4};
   assert(run_test<Traits>("data/edge-case-test/test-5-polygons.off"  , ks, num_iters, results, all_times, num_tests));
 
+  // polygons with multiple near-collinear points
+  results = {8,1,18,33,19,3};
+  assert(run_test<Traits>("data/edge-case-test/test-collinear.off"   , ks, num_iters, results, all_times, num_tests));
+
   // Stress tests 0.
   results = {7,1,14,24,13,2};
   assert(run_test<Traits>("data/stress-test-0/test-1-polygon-a.off"    , ks, num_iters, results, all_times, num_tests));

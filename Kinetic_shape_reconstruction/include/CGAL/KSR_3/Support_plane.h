@@ -317,6 +317,9 @@ public:
     const std::array<Point_2, 4>& points,
     const std::array<IVertex, 4>& ivertices) {
 
+    CGAL_assertion(CGAL::is_simple_2(points.begin(), points.end()));
+    CGAL_assertion(CGAL::is_convex_2(points.begin(), points.end()));
+
     std::array<Vertex_index, 4> vertices;
     for (std::size_t i = 0; i < 4; ++i) {
       const auto vi = m_data->mesh.add_vertex(points[i]);
@@ -336,6 +339,9 @@ public:
     const std::vector<Point_2>& points,
     const Point_2& centroid,
     const std::vector<std::size_t>& input_indices) {
+
+    CGAL_assertion(CGAL::is_simple_2(points.begin(), points.end()));
+    CGAL_assertion(CGAL::is_convex_2(points.begin(), points.end()));
 
     std::vector<Vertex_index> vertices;
     const std::size_t n = points.size();

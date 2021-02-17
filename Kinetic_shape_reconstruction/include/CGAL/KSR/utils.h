@@ -48,6 +48,7 @@
 #include <CGAL/linear_least_squares_fitting_2.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Polygon_2_algorithms.h>
 
 // Boost includes.
 #include <boost/function_output_iterator.hpp>
@@ -221,6 +222,53 @@ void boundary_points_on_line_2(
       max_proj_value = value;
       q = point; }
   }
+}
+
+// Angles.
+
+// Converts radians to degrees.
+template<typename FT>
+const FT degrees_2(const FT angle_rad) {
+  return angle_rad * FT(180) / static_cast<FT>(CGAL_PI);
+}
+
+// Computes an angle in degrees between two directions.
+template<typename Direction_2>
+const typename Kernel_traits<Direction_2>::Kernel::FT
+compute_angle_2(const Direction_2& dir1, const Direction_2& dir2) {
+
+  using Traits = typename Kernel_traits<Direction_2>::Kernel;
+  using FT = typename Traits::FT;
+
+  const auto v1 =  dir2.to_vector();
+  const auto v2 = -dir1.to_vector();
+
+  const FT det = CGAL::determinant(v1, v2);
+  const FT dot = CGAL::scalar_product(v1, v2);
+  const FT angle_rad = static_cast<FT>(
+    std::atan2(CGAL::to_double(det), CGAL::to_double(dot)));
+  const FT angle_deg = degrees_2(angle_rad);
+  return angle_deg;
+}
+
+// Converts an angle in degrees from the range [-180, 180]
+// into the mod 90 angle.
+template<typename FT>
+const FT convert_angle_2(const FT angle_2) {
+
+  FT angle = angle_2;
+  if (angle > FT(90)) angle = FT(180) - angle;
+  else if (angle < -FT(90)) angle = FT(180) + angle;
+  return angle;
+}
+
+// Computes a positive angle in degrees that
+// is always in the range [0, 90].
+template<typename Direction_2>
+const typename Kernel_traits<Direction_2>::Kernel::FT
+angle_2(const Direction_2& dir1, const Direction_2& dir2) {
+  const auto angle_2 = compute_angle_2(dir1, dir2);
+  return CGAL::abs(convert_angle_2(angle_2));
 }
 
 // Classes.

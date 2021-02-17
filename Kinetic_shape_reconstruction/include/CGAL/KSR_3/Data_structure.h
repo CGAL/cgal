@@ -676,12 +676,58 @@ public:
         static_cast<FT>(point.z()));
       points.push_back(support_plane(support_plane_idx).to_2d(converted));
     }
+
+    remove_collinear_points(points);
     const auto centroid = sort_points_by_direction(points);
     std::vector<std::size_t> input_indices;
     input_indices.push_back(input_index);
     support_plane(support_plane_idx).
       add_input_polygon(points, centroid, input_indices);
     m_input_polygon_map[input_index] = support_plane_idx;
+  }
+
+  void add_input_polygon(
+    const std::size_t support_plane_idx,
+    const std::vector<std::size_t>& input_indices,
+    std::vector<Point_2>& points) {
+
+    remove_collinear_points(points);
+    const auto centroid = sort_points_by_direction(points);
+    support_plane(support_plane_idx).
+      add_input_polygon(points, centroid, input_indices);
+    for (const std::size_t input_index : input_indices) {
+      m_input_polygon_map[input_index] = support_plane_idx;
+    }
+  }
+
+  void remove_collinear_points(
+    std::vector<Point_2>& points, const FT min_angle = FT(10)) {
+
+    std::vector<Point_2> polygon;
+    const std::size_t n = points.size();
+    for (std::size_t i = 0; i < n; ++i) {
+      const std::size_t im = (i + n - 1) % n;
+      const std::size_t ip = (i + 1) % n;
+
+      const auto& p = points[im];
+      const auto& q = points[i];
+      const auto& r = points[ip];
+
+      Vector_2 vec1(q, r);
+      Vector_2 vec2(q, p);
+      vec1 = KSR::normalize(vec1);
+      vec2 = KSR::normalize(vec2);
+
+      const Direction_2 dir1(vec1);
+      const Direction_2 dir2(vec2);
+      const FT angle = KSR::angle_2(dir1, dir2);
+
+      // std::cout << "- angle: " << angle << std::endl;
+      if (angle > min_angle) polygon.push_back(q);
+    }
+    if (polygon.size() >= 3) points = polygon;
+    else remove_collinear_points(points, min_angle / FT(5));
+    // CGAL_assertion_msg(false, "TODO: REMOVE COLLINEAR POINTS!");
   }
 
   const Point_2 sort_points_by_direction(
@@ -708,19 +754,6 @@ public:
       return ( Direction_2(sega) < Direction_2(segb) );
     });
     return centroid;
-  }
-
-  void add_input_polygon(
-    const std::size_t support_plane_idx,
-    const std::vector<std::size_t>& input_indices,
-    std::vector<Point_2>& points) {
-
-    const auto centroid = sort_points_by_direction(points);
-    support_plane(support_plane_idx).
-      add_input_polygon(points, centroid, input_indices);
-    for (const std::size_t input_index : input_indices) {
-      m_input_polygon_map[input_index] = support_plane_idx;
-    }
   }
 
   /*******************************
