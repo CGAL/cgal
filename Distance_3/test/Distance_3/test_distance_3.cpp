@@ -118,6 +118,9 @@ struct Test {
   {
     std::cout << "Point - Tetrahedron\n";
     check_squared_distance (p(0, 0, 0), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 0, 0, 1)), 0);
+    check_squared_distance (p(0, 0, 2), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 0, 0, 1)), 1);
+    check_squared_distance (p(0, 0, -1), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 0, 0, 1)), 1);
+    check_squared_distance (p(5, 0, 0), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 4, 0, 1)), 2);
   }
 
   void S_S()

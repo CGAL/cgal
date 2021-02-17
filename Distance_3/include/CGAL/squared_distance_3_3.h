@@ -34,22 +34,70 @@ squared_distance(const typename K::Tetrahedron_3 & t,
                  const typename K::Point_3 & pt,
                  const K& k)
 {
+  bool on_bounded_side = true;
+  const typename K::Point_3 t0 = t[0];
+  const typename K::Point_3 t1 = t[1];
+  const typename K::Point_3 t2 = t[2];
+  const typename K::Point_3 t3 = t[3];
 
-  if (! t.has_on_unbounded_side(pt)){
-    return K::FT(0);
+  bool dmin_initialized = false;
+  typename K::FT dmin;
+  bool inside = false;
+  if(orientation(t0,t1,t2, pt) == NEGATIVE){
+    on_bounded_side = false;
+    dmin = squared_distance_to_triangle(pt, t0, t1, t2, inside, k);
+    dmin_initialized = true;
+    if(inside){
+      return dmin;
+    }
   }
 
-  const typename K::Triangle_3 t0 = {t[0], t[1], t[2]};
-  const typename K::Triangle_3 t1 = {t[0], t[1], t[3]};
-  const typename K::Triangle_3 t2 = {t[1], t[2], t[3]};
-  const typename K::Triangle_3 t3 = {t[0], t[2], t[3]};
+  if(orientation(t0,t3,t1, pt) == NEGATIVE){
+    on_bounded_side = false;
+    const typename K::FT d = squared_distance_to_triangle(pt, t0, t3, t1, inside, k);
+    if(inside){
+      return d;
+    }
+    if(! dmin_initialized){
+      dmin = d;
+      dmin_initialized = true;
+    }else{
+      dmin = std::min(d,dmin);
+    }
+  }
 
-  const typename K::FT d0 = squared_distance(pt, t0, k);
-  const typename K::FT d1 = squared_distance(pt, t1, k);
-  const typename K::FT d2 = squared_distance(pt, t2, k);
-  const typename K::FT d3 = squared_distance(pt, t3, k);
+  if(orientation(t1,t3,t2, pt) == NEGATIVE){
+    on_bounded_side = false;
+    const typename K::FT d = squared_distance_to_triangle(pt, t1, t3, t2, inside, k);
+    if(inside){
+      return d;
+    }
+    if(! dmin_initialized){
+      dmin = d;
+      dmin_initialized = true;
+    }else{
+      dmin = std::min(d,dmin);
+    }
+  }
 
-  return (std::min)({d0, d1, d2, d3});
+  if(orientation(t2,t3,t0, pt) == NEGATIVE){
+    on_bounded_side = false;
+    const typename K::FT d = squared_distance_to_triangle(pt, t2, t3, t0, inside, k);
+    if(inside){
+      return d;
+    }
+    if(! dmin_initialized){
+      dmin = d;
+      dmin_initialized = true;
+    }else{
+      dmin = std::min(d,dmin);
+    }
+  }
+
+  if(on_bounded_side){
+    return K::FT(0);
+  }
+  return dmin;
 }
 
 } // namespace internal
