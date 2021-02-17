@@ -15,8 +15,8 @@ concept.
            This type must be template parameter used for `CGAL::Segment_Delaunay_graph_2`.
 
 \tparam Vb is a vertex base class from which `Segment_Delaunay_graph_vertex_base_2` derives.
-           It must be a model of the `TriangulationVertexBase_2` concept.
-           It has the default value `CGAL::Triangulation_vertex_base_2<St::Geom_traits>`.
+           It must be a model of the `TriangulationDSVertexBase_2` concept.
+           It has the default value `CGAL::Triangulation_ds_vertex_base_2<>`.
 
 \sa `CGAL::Segment_Delaunay_graph_hierarchy_vertex_base_2<Vb>`
 */
