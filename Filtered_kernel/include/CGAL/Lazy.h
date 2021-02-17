@@ -269,6 +269,7 @@ struct AT_wrap {
   AT_wrap(AT const& a):at_(a){}
   AT_wrap(AT&& a):at_(std::move(a)){}
   AT const& at()const{return at_;}
+  virtual ~AT_wrap()=default; // TODO: check how costly this is.
 };
 
 // TODO: avoid initializing AT for nothing
