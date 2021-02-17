@@ -141,7 +141,7 @@ If `p` coincides with an already existing vertex, with both point and
 weights being equal, then this vertex is returned and the triangulation
 remains unchanged.
 
-By convention, if the insertion of `p` would increase the dimension 
+By convention, if the insertion of `p` would increase the dimension
 of the triangulation, it is inserted.
 
 Prior to the actual insertion, `p` is located in the triangulation;
@@ -161,9 +161,9 @@ Vertex_handle insert_if_in_star(const Weighted_point & p, Vertex_handle star_cen
 /*!
 inserts the weighted point `p` in the triangulation.
 
-This function is similar to the above `insert_if_in_star()` function, 
+This function is similar to the above `insert_if_in_star()` function,
 but takes as additional parameters the return values of the location query
-of `p`. 
+of `p`.
 
 \sa `Triangulation::locate()`.
 */
