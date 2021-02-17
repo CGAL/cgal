@@ -55,7 +55,7 @@ public:
  `Point_2 operator()(const Point_2& point) const`
 
   which returns the projection of the (3D) point `point` onto the plane passing through
-  the point 'plane_point' and with orthogonal vector `normal`, the vector given to the traits constructor.
+  the point `plane_point` and with orthogonal vector `normal`, the vector given to the traits constructor.
   */
   typedef unspecified_type Projection_to_plane;
   ///@}
