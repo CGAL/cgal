@@ -269,7 +269,6 @@ struct AT_wrap {
   AT_wrap(AT const& a):at_(a){}
   AT_wrap(AT&& a):at_(std::move(a)){}
   AT const& at()const{return at_;}
-  virtual ~AT_wrap()=default; // TODO: check how costly this is.
 };
 
 // TODO: avoid initializing AT for nothing
@@ -379,11 +378,11 @@ public:
     auto* p = ptr_.load(std::memory_order_relaxed);
     if (p != &at_orig) {
       std::atomic_thread_fence(std::memory_order_acquire);
-      delete p;
+      delete static_cast<Indirect*>(p);
     }
 #else
     auto* p = ptr_.load(std::memory_order_consume);
-    if (p != &at_orig) delete p;
+    if (p != &at_orig) delete static_cast<Indirect*>(p);
 #endif
   }
 };
