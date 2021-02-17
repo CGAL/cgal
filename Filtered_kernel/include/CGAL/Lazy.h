@@ -249,6 +249,10 @@ template<class AT>struct Lazy_rep_selector { static constexpr int value = 0; };
 # ifdef CGAL_USE_SSE2
 template<bool b>struct Lazy_rep_selector<Interval_nt<b>> { static constexpr int value = 1; };
 template<bool b, int N>struct Lazy_rep_selector<std::array<Interval_nt<b>,N>> { static constexpr int value = 1; };
+ // Need some declarations, including Simple_cartesian.h would also be possible.
+ template<class>struct Simple_cartesian;
+ template<class>class Point_2;
+ template<class>class Point_3;
 template<bool b>struct Lazy_rep_selector<CGAL::Point_2<CGAL::Simple_cartesian<CGAL::Interval_nt<b>>>> { static constexpr int value = 1; };
 template<bool b>struct Lazy_rep_selector<CGAL::Point_3<CGAL::Simple_cartesian<CGAL::Interval_nt<b>>>> { static constexpr int value = 1; };
 # else
