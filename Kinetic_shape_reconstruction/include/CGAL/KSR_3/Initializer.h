@@ -80,10 +80,6 @@ public:
     const double enlarge_bbox_ratio,
     const bool reorient) {
 
-    if (m_verbose) {
-      std::cout << std::endl << "--- INITIALIZING PARTITION:" << std::endl;
-    }
-
     FT time_step;
     std::array<Point_3, 8> bbox;
     create_bounding_box(
@@ -130,7 +126,7 @@ public:
   }
 
   template<typename DS>
-  void convert(DS& ds) {
+  void convert_to_inexact(DS& ds) {
 
     ds.clear();
     m_data.convert(ds);

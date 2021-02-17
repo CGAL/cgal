@@ -745,6 +745,51 @@ void dump_frame(
   saver.export_segments_3(segments, name);
 }
 
+template<typename DS, typename CDT>
+void dump_cdt(
+  const DS& data, const std::size_t sp_idx, const CDT& cdt, std::string file_name) {
+
+  using Point_3       = typename DS::Kernel::Point_3;
+  using Vertex_handle = typename CDT::Vertex_handle;
+
+  using Mesh_3 = CGAL::Surface_mesh<Point_3>;
+  using VIdx   = typename Mesh_3::Vertex_index;
+  using FIdx   = typename Mesh_3::Face_index;
+  using UM     = typename Mesh_3::template Property_map<FIdx, unsigned char>;
+
+  Mesh_3 mesh;
+  UM red   = mesh.template add_property_map<FIdx, unsigned char>("red"  , 125).first;
+  UM green = mesh.template add_property_map<FIdx, unsigned char>("green", 125).first;
+  UM blue  = mesh.template add_property_map<FIdx, unsigned char>("blue" , 125).first;
+
+  std::map<Vertex_handle, VIdx> map_v2i;
+  for (auto vit = cdt.finite_vertices_begin(); vit != cdt.finite_vertices_end(); ++vit) {
+    map_v2i.insert(std::make_pair(
+      vit, mesh.add_vertex(data.support_plane(sp_idx).to_3d(vit->point()))));
+  }
+
+  for (auto fit = cdt.finite_faces_begin(); fit != cdt.finite_faces_end(); ++fit) {
+    std::array<VIdx, 3> vertices;
+    for (std::size_t i = 0; i < 3; ++i) {
+      vertices[i] = map_v2i[fit->vertex(i)];
+    }
+
+    const auto face = mesh.add_face(vertices);
+    CGAL::Random rand(fit->info().index);
+    if (fit->info().index != KSR::no_element()) {
+      red[face]   = (unsigned char)(rand.get_int(32, 192));
+      green[face] = (unsigned char)(rand.get_int(32, 192));
+      blue[face]  = (unsigned char)(rand.get_int(32, 192));
+    }
+  }
+
+  file_name += "support-cdt-" + std::to_string(sp_idx) + ".ply";
+  std::ofstream out(file_name);
+  out.precision(20);
+  CGAL::write_PLY(out, mesh);
+  out.close();
+}
+
 } // namespace KSR_3
 } // namespace CGAL
 

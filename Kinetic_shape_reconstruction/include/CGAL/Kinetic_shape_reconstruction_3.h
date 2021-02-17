@@ -42,6 +42,8 @@
 #include <CGAL/KSR_3/Data_structure.h>
 #include <CGAL/KSR_3/Reconstruction.h>
 #include <CGAL/KSR_3/Initializer.h>
+#include <CGAL/KSR_3/Propagation.h>
+#include <CGAL/KSR_3/Finalizer.h>
 
 namespace CGAL {
 
@@ -69,9 +71,12 @@ private:
   using Event       = KSR_3::Event<Data_structure>;
   using Event_queue = KSR_3::Event_queue<Data_structure>;
 
-  using Bbox_2      = CGAL::Bbox_2;
-  using EK          = CGAL::Exact_predicates_exact_constructions_kernel;
+  using Bbox_2 = CGAL::Bbox_2;
+  using EK     = CGAL::Exact_predicates_exact_constructions_kernel;
+
   using Initializer = KSR_3::Initializer<EK>;
+  using Propagation = KSR_3::Propagation<Kernel>;
+  using Finalizer   = KSR_3::Finalizer<Kernel>;
 
   using Polygon_mesh = CGAL::Surface_mesh<Point_3>;
   using Vertex_index = typename Polygon_mesh::Vertex_index;
@@ -83,7 +88,6 @@ private:
   Event_queue m_queue;
   FT m_min_time;
   FT m_max_time;
-  Initializer m_initializer;
   Data_structure m_data;
   std::size_t m_num_events;
 
@@ -96,7 +100,6 @@ public:
   m_queue(m_debug),
   m_min_time(-FT(1)),
   m_max_time(-FT(1)),
-  m_initializer(m_debug, m_verbose),
   m_data(m_debug),
   m_num_events(0)
   { }
@@ -154,26 +157,26 @@ public:
       std::cout << "* reorient: "                             << is_reorient        << std::endl;
     }
 
+    if (m_verbose) {
+      std::cout << std::endl << "--- INITIALIZING PARTITION:" << std::endl;
+    }
+
+    // Initialization.
     timer.reset();
     timer.start();
-    const FT time_step = static_cast<FT>(m_initializer.initialize(
+    Initializer initializer(m_debug, m_verbose);
+    const FT time_step = static_cast<FT>(initializer.initialize(
       input_range, polygon_map, k, CGAL::to_double(enlarge_bbox_ratio), reorient));
-    m_initializer.convert(m_data);
+    initializer.convert_to_inexact(m_data);
     m_data.set_limit_lines();
     m_data.precompute_iedge_data();
     CGAL_assertion(m_data.check_integrity());
     timer.stop();
     const double time_to_initialize = timer.time();
 
-    if (k == 0) {
-      CGAL_warning_msg(k > 0,
-      "WARNING: YOU SET K TO 0! THAT MEANS NO PROPAGATION! THE VALID VALUES ARE {1,2,...}. INTERSECT AND RETURN!");
-      return false;
-    }
-
     // if (m_verbose) {
     //   std::cout << std::endl << "* initialization (sec.): " << time_to_initialize << std::endl;
-    //   std::cout << "POLYGON SPLITTER SUCCESS!" << std::endl << std::endl;
+    //   std::cout << "INITIALIZATION SUCCESS!" << std::endl << std::endl;
     // }
     // exit(EXIT_SUCCESS);
 
@@ -182,11 +185,18 @@ public:
     //   std::cout << m_data.support_plane(i).plane() << std::endl;
     // }
 
+    if (k == 0) {
+      CGAL_warning_msg(k > 0,
+      "WARNING: YOU SET K TO 0! THAT MEANS NO PROPAGATION! THE VALID VALUES ARE {1,2,...}. INTERSECT AND RETURN!");
+      return false;
+    }
+
     if (m_verbose) {
       std::cout << std::endl << "--- RUNNING THE QUEUE:" << std::endl;
       std::cout << "* propagation started" << std::endl;
     }
 
+    // Propagation.
     timer.reset();
     timer.start();
     std::size_t num_iterations = 0;
@@ -223,26 +233,38 @@ public:
     }
     m_num_events = global_iteration;
 
+    if (m_verbose) {
+      std::cout << std::endl << "--- FINALIZING PARTITION:" << std::endl;
+    }
+
+    // Finalization.
     timer.reset();
     timer.start();
-    if (m_verbose) std::cout << std::endl << "--- FINALIZING PARTITION:" << std::endl;
+    Finalizer finalizer(m_debug, m_verbose, m_data);
+
     if (m_debug) dump(m_data, "jiter-final-a-result");
-    m_data.finalize();
+    finalizer.clean();
     if (m_verbose) std::cout << "* checking final mesh integrity ...";
     CGAL_assertion(m_data.check_integrity(true, true, true));
     if (m_verbose) std::cout << " done" << std::endl;
     if (m_debug) dump(m_data, "jiter-final-b-result");
     // std::cout << std::endl << "CLEANING SUCCESS!" << std::endl << std::endl;
     // exit(EXIT_SUCCESS);
+
     if (m_verbose) std::cout << "* getting volumes ..." << std::endl;
-    m_data.create_polyhedra();
+    finalizer.create_polyhedra();
     timer.stop();
     const double time_to_finalize = timer.time();
     if (m_verbose) {
       std::cout << "* found " << m_data.number_of_volumes(-1) << " volumes" << std::endl;
     }
+    // std::cout << std::endl << "CREATING VOLUMES SUCCESS!" << std::endl << std::endl;
+    // exit(EXIT_SUCCESS);
 
-    if (m_verbose) std::cout << std::endl << "--- TIMING (sec.):" << std::endl;
+    // Timing.
+    if (m_verbose) {
+      std::cout << std::endl << "--- TIMING (sec.):" << std::endl;
+    }
     const double total_time =
       time_to_initialize + time_to_propagate + time_to_finalize;
     if (m_verbose) {
@@ -633,7 +655,6 @@ public:
     m_queue.clear();
     m_min_time = -FT(1);
     m_max_time = -FT(1);
-    m_initializer.clear();
     m_num_events = 0;
   }
 
