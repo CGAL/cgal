@@ -48,7 +48,7 @@ public:
   A construction object.
   Provides the constructor:
 
-  `Projection_to_plan(const Point_2& plane_point, const Triangulation_2_projection_traits_3& tr)`
+  `Projection_to_plane(const Point_2& plane_point, const Triangulation_2_projection_traits_3& tr)`
 
   and the operator:
 

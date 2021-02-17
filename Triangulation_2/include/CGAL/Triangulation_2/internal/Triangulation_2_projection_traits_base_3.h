@@ -463,14 +463,14 @@ public:
 
 
   // Special functor, not in the Kernel concept
-  class Projection_to_plan {
+  class Projection_to_plane {
     // Remeber: Point_2 is K::Point_3
     const Point_2& plane_point;
     const Vector_3& normal;
   public:
     // Return the projection of a point to a plane passing through
     // the point 'plane_point' and with orthogonal vector normal().
-    Projection_to_plan(const Point_2& plane_point_, const Self& self)
+    Projection_to_plane(const Point_2& plane_point_, const Self& self)
       : plane_point(plane_point_),
         normal(self.normal())
     {}
@@ -480,11 +480,11 @@ public:
       return point +
         ( ( (plane_point - point) * normal ) / (normal * normal) ) * normal;
     }
-  }; // end Projection_to_plan
+  }; // end Projection_to_plane
 
-  Projection_to_plan projection_to_plan_object(const Point_2& plane_point) const
+  Projection_to_plane projection_to_plane_object(const Point_2& plane_point) const
   {
-    return Projection_to_plan(plane_point, *this);
+    return Projection_to_plane(plane_point, *this);
   }
 
 }; // end class Triangulation_2_projection_traits_base_3<Kernel>
