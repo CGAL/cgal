@@ -13,12 +13,7 @@ deal with projections on the
 `zx`- and the `zy`-plane,
 respectively.
 
-\cgalHeading{Parameters}
-
-The template parameter `K` has to
-be instantiated by a model of the `Kernel` concept.
-`Projection_traits_xy_3` uses types
-and predicates defined in `K`.
+\tparam K must be a model of `Kernel`.
 
 \cgalModels The class is a model of several 2D triangulation traits class concepts,
   except that it does not provide the type and constructors

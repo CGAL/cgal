@@ -5,13 +5,13 @@
 #include <iostream>
 #include <vector>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K1;
-typedef CGAL::Triangulation_2_projection_traits_3<K1> K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel                K1;
+typedef CGAL::Triangulation_2_projection_traits_3<K1>                      K;
 
-typedef CGAL::Exact_predicates_tag                               Itag;
+typedef CGAL::Exact_predicates_tag                                         Itag;
 typedef CGAL::Constrained_Delaunay_triangulation_2<K, CGAL::Default, Itag> CDT;
-typedef CDT::Point Point;
-typedef CDT::Edge  Edge;
+typedef CDT::Point                                                         Point;
+typedef CDT::Edge                                                          Edge;
 
 int main()
 {
