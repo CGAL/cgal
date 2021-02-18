@@ -39,25 +39,6 @@ public:
   /// arguments. They come with preconditions that projections of the
   /// arguments are non-degenerate, eg. a line segment does not project
   /// on a single point, two points do not project on the same point, etc.
-  /// The following functor is an addition to the concepts.
-  /// @{
-
-  /*!
-  \brief projects a 3D point on a plane oriented by the traits.
-
-  A construction object.
-  Provides the constructor:
-
-  `Projection_to_plane(const Point_2& plane_point, const Triangulation_2_projection_traits_3& tr)`
-
-  and the operator:
-
- `Point_2 operator()(const Point_2& point) const`
-
-  which returns the projection of the (3D) point `point` onto the plane passing through
-  the point `plane_point` and with orthogonal vector `normal`, the vector given to the traits constructor.
-  */
-  typedef unspecified_type Projection_to_plane;
   ///@}
 
   /// \name Creation
