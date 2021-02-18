@@ -8,6 +8,7 @@
 #include <QInputDialog>
 #include <QElapsedTimer>
 #include <QAction>
+#include <QMessageBox>
 
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
@@ -103,7 +104,11 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
 
   Scene_polyhedron_selection_item* selection_item =
     qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
-
+  if(selection_item && selection_item->selected_edges.empty())
+  {
+    QMessageBox::warning(mw, "Empty Edges", "There are no selected edges. Aborting.");
+    return;
+  }
   if (poly_item || selection_item)
   {
     FaceGraph& pmesh = (poly_item != NULL)

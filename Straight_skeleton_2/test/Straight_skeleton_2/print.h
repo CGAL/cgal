@@ -1,5 +1,7 @@
+#include <CGAL/Point_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
+#include <CGAL/Straight_skeleton_2.h>
 
 template<class K>
 void print_point ( CGAL::Point_2<K> const& p )

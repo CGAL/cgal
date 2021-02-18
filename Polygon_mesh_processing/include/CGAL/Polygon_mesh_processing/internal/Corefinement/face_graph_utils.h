@@ -176,11 +176,11 @@ struct Dummy_default_vertex_point_map
   }
 };
 
-template <class Point_3, class NamedParameter, class PolygonMesh>
+template <class Point_3, class NamedParameters, class PolygonMesh>
 struct TweakedGetVertexPointMap
 {
   typedef typename GetVertexPointMap<PolygonMesh,
-                                     NamedParameter>::type Default_map;
+                                     NamedParameters>::type Default_map;
   typedef typename boost::is_same<Point_3,
     typename boost::property_traits<Default_map>::value_type>::type Use_default_tag;
 
@@ -215,6 +215,7 @@ template <class TriangleMesh>
 struct Default_visitor{
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::face_descriptor face_descriptor;
+  typedef typename GT::halfedge_descriptor halfedge_descriptor;
 
   void before_subface_creations(face_descriptor /*f_old*/,TriangleMesh&){}
   void after_subface_creations(TriangleMesh&){}
@@ -223,6 +224,9 @@ struct Default_visitor{
   void before_face_copy(face_descriptor /*f_old*/, TriangleMesh&, TriangleMesh&){}
   void after_face_copy(face_descriptor /*f_old*/, TriangleMesh&,
                        face_descriptor /* f_new */, TriangleMesh&){}
+  void before_edge_split(halfedge_descriptor /* h */, const TriangleMesh& /* tm */){}
+  void edge_split(halfedge_descriptor /* hnew */, const TriangleMesh& /* tm */){}
+  void after_edge_split(){}
 
 // calls commented in the code and probably incomplete due to the migration
 // see NODE_VISITOR_TAG
@@ -521,28 +525,38 @@ struct Patch_container{
     typedef typename GT::face_descriptor face_descriptor;
 
     Patch_description<PolygonMesh>& patch=this->operator[](i);
-    out << "OFF\n" << patch.interior_vertices.size() +
-                      patch.shared_edges.size();
-    out << " " << patch.faces.size() << " 0\n";
+
+    std::stringstream ss;
     std::map<vertex_descriptor, int> vertexid;
     int id=0;
     for(vertex_descriptor vh : patch.interior_vertices)
     {
       vertexid[vh]=id++;
-      out << get(vertex_point, pm, vh) << "\n";
+      ss << get(vertex_point, pm, vh) << "\n";
     }
 
     for(halfedge_descriptor hh : patch.shared_edges)
     {
-      vertexid[target(hh, pm)]=id++;
-      out << get(vertex_point, pm, target(hh, pm)) << "\n";
+      if( vertexid.insert( std::make_pair(target(hh,pm), id) ).second )
+      {
+        ss << get(vertex_point, pm, target(hh, pm)) << "\n";
+        ++id;
+      }
+      if( vertexid.insert( std::make_pair(source(hh,pm), id) ).second )
+      {
+        ss << get(vertex_point, pm, source(hh, pm)) << "\n";
+        ++id;
+      }
     }
+
+    out << "OFF\n" << id << " " << patch.faces.size() << " 0\n";
+    out << ss.str();
 
     for(face_descriptor f : patch.faces)
     {
-      out << "3 " << vertexid[source(halfedge(f,pm),pm)] <<
-             " "  << vertexid[target(halfedge(f,pm),pm)] <<
-             " "  << vertexid[target(next(halfedge(f,pm),pm),pm)] << "\n";
+      out << "3 " << vertexid.at(source(halfedge(f,pm),pm)) <<
+             " "  << vertexid.at(target(halfedge(f,pm),pm)) <<
+             " "  << vertexid.at(target(next(halfedge(f,pm),pm),pm)) << "\n";
     }
 
     return out;
@@ -552,6 +566,16 @@ struct Patch_container{
   {
     for (std::size_t i=selection.find_first();
                      i < selection.npos; i = selection.find_next(i))
+    {
+      std::stringstream ss;
+      ss << prefix << "-" << i << ".off";
+      std::ofstream output(ss.str().c_str());
+      dump_patch(i, output);
+    }
+  }
+  void dump_patches(std::string prefix)
+  {
+    for (std::size_t i=0;i <patches.size() ; ++i)
     {
       std::stringstream ss;
       ss << prefix << "-" << i << ".off";
@@ -1642,13 +1666,16 @@ void remove_unused_polylines(
 
     do{
 
-      halfedge_descriptor tmp_start = h;
+      halfedge_descriptor starter = h;
       while ( !is_border(h, tm) || is_border(opposite(h, tm), tm) )
       {
         h = opposite(next(h, tm), tm);
-        if (tmp_start==h) break;
+        if (starter==h) break; // it might happen that no update is required because
+                               // it is already closed thanks to another patch from tm'
+                               // (usually incident to coplanar patches)
+
       }
-      if( !is_border(h, tm) )
+      if( !is_border(h, tm) || is_border(opposite(h, tm), tm) )
       {
         // nothing to do: the vertex has already been updated and is now in the middle of a patch kept.
         // This function can be called after the stitching of the patches kept, the vertex halfedge

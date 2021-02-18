@@ -28,11 +28,14 @@ class Rep
 {
     friend class Handle;
   protected:
-             Rep() : count(1) { }
+    Rep(int count = 1)
+      : count(count)
+    {}
     virtual ~Rep() {}
 
     std::atomic_int count;
 };
+
 
 class Handle
 {

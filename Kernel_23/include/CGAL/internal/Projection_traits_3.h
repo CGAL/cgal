@@ -308,8 +308,13 @@ public:
     return (CGAL::abs(dx)>CGAL::abs(dy)) ? ( p.x()-source.x() ) / dx : (p.y()-source.y() ) / dy;
   }
 
-  Object operator()(const Segment_3& s1, const Segment_3& s2) const
+
+
+  boost::optional< boost::variant<Point_3,Segment_3> >
+  operator()(const Segment_3& s1, const Segment_3& s2) const
   {
+    typedef  boost::variant<Point_3, Segment_3> variant_type;
+
     Point_2 s1_source = project(s1.source());
     Point_2 s1_target = project(s1.target());
     Point_2 s2_source = project(s2.source());
@@ -321,11 +326,14 @@ public:
 
     //compute intersection points in projected plane
     //We know that none of the segment is degenerate
-    Object o = intersection(s1_2,s2_2);
-    const Point_2* pi=CGAL::object_cast<Point_2>(&o);
-    if (pi==nullptr) { //case of segment or empty
-      const Segment_2* si=CGAL::object_cast<Segment_2>(&o);
-      if (si==nullptr) return Object();
+
+    typename CGAL::cpp11::result_of<typename R::Intersect_2(Segment_2, Segment_2)>::type
+    o = intersection(s1_2,s2_2);
+    if(! o){
+      return boost::none;
+    }
+
+    if(const Segment_2* si = boost::get<Segment_2>(&*o)){
       FT src[3],tgt[3];
       //the third coordinate is the midpoint between the points on s1 and s2
       FT z1 = s1.source()[dim] + ( alpha(si->source(), s1_source, s1_target) * ( s1.target()[dim] - s1.source()[dim] ));
@@ -343,8 +351,11 @@ public:
       src[Projector<R,dim>::y_index] = si->source().y();
       tgt[Projector<R,dim>::x_index] = si->target().x();
       tgt[Projector<R,dim>::y_index] = si->target().y();
-      return make_object( Segment_3( Point_3(src[0],src[1],src[2]),Point_3(tgt[0],tgt[1],tgt[2]) ) );
+      return boost::make_optional(variant_type(Segment_3( Point_3(src[0],src[1],src[2]),Point_3(tgt[0],tgt[1],tgt[2]) ) ) );
     }
+
+
+    const Point_2* pi = boost::get<Point_2>(&*o);
     FT coords[3];
     //compute the third coordinate of the projected intersection point onto 3D segments
     FT z1 = s1.source()[dim] + ( alpha(*pi, s1_source, s1_target) * ( s1.target()[dim] - s1.source()[dim] ));
@@ -356,7 +367,7 @@ public:
 
     Point_3 res(coords[0],coords[1],coords[2]);
     CGAL_assertion(x(res)==pi->x() && y(res)==pi->y());
-    return make_object(res);
+    return boost::make_optional(variant_type(res));
   }
 };
 

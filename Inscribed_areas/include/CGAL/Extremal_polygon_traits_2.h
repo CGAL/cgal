@@ -19,7 +19,6 @@
 #include <CGAL/Optimisation/assertions.h>
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/Polygon_2.h>
-#include <boost/bind.hpp>
 #include <boost/function.hpp>
 
 namespace CGAL {
@@ -47,7 +46,7 @@ struct Extremal_polygon_area_traits_2 {
   };
 
   typedef Kgon_triangle_area                         Baseop;
-  typedef boost::function2<FT,Point_2,Point_2>       Operation;
+  typedef std::function<FT(const Point_2& , const Point_2&)>       Operation;
 
   Extremal_polygon_area_traits_2() {}
   Extremal_polygon_area_traits_2(const K& k_) : k(k_) {}
@@ -60,7 +59,7 @@ struct Extremal_polygon_area_traits_2 {
 
   Operation
   operation( const Point_2& p) const
-  { return boost::bind(Baseop(k), _1, _2, p); }
+  { return [&p, this](const Point_2& p1, const Point_2& p2){ return Baseop(this->k)(p1, p2, p);}; }
 
   template < class RandomAccessIC, class OutputIterator >
   OutputIterator
@@ -184,7 +183,7 @@ struct Extremal_polygon_perimeter_traits_2 {
   };
 
   typedef Kgon_triangle_perimeter                    Baseop;
-  typedef boost::function2<FT,Point_2,Point_2>       Operation;
+  typedef std::function<FT(const Point_2&, const Point_2&)>       Operation;
 
   Extremal_polygon_perimeter_traits_2() {}
   Extremal_polygon_perimeter_traits_2(const K& k_) : k(k_) {}
@@ -197,7 +196,7 @@ struct Extremal_polygon_perimeter_traits_2 {
 
   Operation
   operation( const Point_2& p) const
-  { return boost::bind(Baseop(k), _1, _2, p); }
+  { return [this,&p](const Point_2& p1, const Point_2& p2){ return Baseop(this->k)(p1,p2,p); }; }
 
   template < class RandomAccessIC, class OutputIterator >
   OutputIterator
@@ -234,10 +233,9 @@ struct Extremal_polygon_perimeter_traits_2 {
       max_element(
         points_begin + 1,
         points_end,
-        boost::bind(
-          less< FT >(),
-          boost::bind(operation(points_begin[0]), _1, points_begin[0]),
-          boost::bind(operation(points_begin[0]), _2, points_begin[0]))));
+        [points_begin, this](const Point_2& p1, const Point_2& p2)
+        { return less< FT >()( this->operation(points_begin[0])(p1, points_begin[0]),
+                               this->operation(points_begin[0])(p2, points_begin[0])); } ));
 
     // give result:
     max_perimeter = operation(*points_begin)(*maxi, *points_begin);

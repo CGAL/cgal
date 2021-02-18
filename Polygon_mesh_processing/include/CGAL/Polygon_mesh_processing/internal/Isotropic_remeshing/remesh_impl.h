@@ -49,6 +49,7 @@
 #include <vector>
 #include <iterator>
 #include <fstream>
+#include <tuple>
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
@@ -942,99 +943,94 @@ namespace internal {
         std::cout << nb_iterations << ") ";
         std::cout.flush();
 #endif
-      //todo : use boost::vector_property_map to improve computing time
-      typedef std::map<vertex_descriptor, Vector_3> VNormalsMap;
-      VNormalsMap vnormals;
-      boost::associative_property_map<VNormalsMap> propmap_normals(vnormals);
-      std::map<vertex_descriptor, Point> barycenters;
-
-      // at each vertex, compute vertex normal
-      // at each vertex, compute barycenter of neighbors
-      for(vertex_descriptor v : vertices(mesh_))
-      {
-        if (is_constrained(v) || is_isolated(v))
-          continue;
-
-        else if (is_on_patch(v))
+        typedef std::tuple<vertex_descriptor, Vector_3, Point> VNP;
+        std::vector< VNP > barycenters;
+        // at each vertex, compute vertex normal
+        // at each vertex, compute barycenter of neighbors
+        for(vertex_descriptor v : vertices(mesh_))
         {
-          Vector_3 vn = PMP::compute_vertex_normal(v, mesh_,
-                                                   parameters::vertex_point_map(vpmap_)
-                                                              .geom_traits(gt_));
-          put(propmap_normals, v, vn);
+          if (is_constrained(v) || is_isolated(v))
+            continue;
 
-          Vector_3 move = CGAL::NULL_VECTOR;
-          unsigned int star_size = 0;
-          for(halfedge_descriptor h : halfedges_around_target(v, mesh_))
+          else if (is_on_patch(v))
           {
-            move = move + Vector_3(get(vpmap_, v), get(vpmap_, source(h, mesh_)));
-            ++star_size;
+            Vector_3 vn = PMP::compute_vertex_normal(v, mesh_,
+                                                     parameters::vertex_point_map(vpmap_)
+                                                                .geom_traits(gt_));
+            Vector_3 move = CGAL::NULL_VECTOR;
+            unsigned int star_size = 0;
+            for(halfedge_descriptor h : halfedges_around_target(v, mesh_))
+            {
+              move = move + Vector_3(get(vpmap_, v), get(vpmap_, source(h, mesh_)));
+              ++star_size;
+            }
+            CGAL_assertion(star_size > 0); //isolated vertices have already been discarded
+            move = (1. / (double)star_size) * move;
+
+            barycenters.push_back( VNP(v, vn, get(vpmap_, v) + move) );
           }
-          CGAL_assertion(star_size > 0); //isolated vertices have already been discarded
-          move = (1. / (double)star_size) * move;
-
-          barycenters[v] = get(vpmap_, v) + move;
-        }
-        else if (relax_constraints
-              && !protect_constraints_
-              && is_on_patch_border(v)
-              && !is_corner(v))
-        {
-          put(propmap_normals, v, CGAL::NULL_VECTOR);
-
-          std::vector<halfedge_descriptor> border_halfedges;
-          for(halfedge_descriptor h : halfedges_around_target(v, mesh_))
+          else if (relax_constraints
+                && !protect_constraints_
+                && is_on_patch_border(v)
+                && !is_corner(v))
           {
-            if (is_on_patch_border(h) || is_on_patch_border(opposite(h, mesh_)))
-              border_halfedges.push_back(h);
-          }
-          if (border_halfedges.size() == 2)//others are corner cases
-          {
-            vertex_descriptor ph0 = source(border_halfedges[0], mesh_);
-            vertex_descriptor ph1 = source(border_halfedges[1], mesh_);
-            double dot = to_double(Vector_3(get(vpmap_, v), get(vpmap_, ph0))
-                                   * Vector_3(get(vpmap_, v), get(vpmap_, ph1)));
-            //check squared cosine is < 0.25 (~120 degrees)
-            if (0.25 < dot / (sqlength(border_halfedges[0]) * sqlength(border_halfedges[0])))
-              barycenters[v] = CGAL::midpoint(midpoint(border_halfedges[0]),
-                                              midpoint(border_halfedges[1]));
+            Vector_3 vn(NULL_VECTOR);
+
+            std::vector<halfedge_descriptor> border_halfedges;
+            for(halfedge_descriptor h : halfedges_around_target(v, mesh_))
+            {
+              if (is_on_patch_border(h) || is_on_patch_border(opposite(h, mesh_)))
+                border_halfedges.push_back(h);
+            }
+            if (border_halfedges.size() == 2)//others are corner cases
+            {
+              vertex_descriptor ph0 = source(border_halfedges[0], mesh_);
+              vertex_descriptor ph1 = source(border_halfedges[1], mesh_);
+              double dot = to_double(Vector_3(get(vpmap_, v), get(vpmap_, ph0))
+                                     * Vector_3(get(vpmap_, v), get(vpmap_, ph1)));
+              //check squared cosine is < 0.25 (~120 degrees)
+              if (0.25 < dot / (sqlength(border_halfedges[0]) * sqlength(border_halfedges[0])))
+                barycenters.push_back( VNP(v, vn, CGAL::midpoint(midpoint(border_halfedges[0]),
+                                                                 midpoint(border_halfedges[1]))) );
+            }
           }
         }
-      }
 
-      // compute moves
-      typedef typename std::map<vertex_descriptor, Point>::value_type VP_pair;
-      std::map<vertex_descriptor, Point> new_locations;
-      for(const VP_pair& vp : barycenters)
-      {
-        vertex_descriptor v = vp.first;
-        Point pv = get(vpmap_, v);
-        Vector_3 nv = boost::get(propmap_normals, v);
-        Point qv = vp.second; //barycenter at v
-
-        new_locations[v] = qv + (nv * Vector_3(qv, pv)) * nv;
-      }
-
-      // perform moves
-      for(const VP_pair& vp : new_locations)
-      {
-        const Point initial_pos = get(vpmap_, vp.first);
-        const Vector_3 move(initial_pos, vp.second);
-
-        put(vpmap_, vp.first, vp.second);
-
-        //check that no inversion happened
-        double frac = 1.;
-        while (frac > 0.03 //5 attempts maximum
-           && !check_normals(vp.first)) //if a face has been inverted
+        // compute moves
+        typedef std::pair<vertex_descriptor, Point> VP_pair;
+        std::vector< std::pair<vertex_descriptor, Point> > new_locations;
+        new_locations.reserve(barycenters.size());
+        for(const VNP& vnp : barycenters)
         {
-          frac = 0.5 * frac;
-          put(vpmap_, vp.first, initial_pos + frac * move);//shorten the move by 2
-        }
-        if (frac <= 0.02)
-          put(vpmap_, vp.first, initial_pos);//cancel move
-      }
+          vertex_descriptor v = std::get<0>(vnp);
+          Point pv = get(vpmap_, v);
+          const Vector_3& nv = std::get<1>(vnp);
+          const Point& qv = std::get<2>(vnp); //barycenter at v
 
-      CGAL_assertion(!input_mesh_is_valid_ || is_valid_polygon_mesh(mesh_));
+          new_locations.push_back( std::make_pair(v, qv + (nv * Vector_3(qv, pv)) * nv) );
+        }
+
+        // perform moves
+        for(const VP_pair& vp : new_locations)
+        {
+          const Point initial_pos = get(vpmap_, vp.first);
+          const Vector_3 move(initial_pos, vp.second);
+
+          put(vpmap_, vp.first, vp.second);
+
+          //check that no inversion happened
+          double frac = 1.;
+          while (frac > 0.03 //5 attempts maximum
+             && !check_normals(vp.first)) //if a face has been inverted
+          {
+            frac = 0.5 * frac;
+            put(vpmap_, vp.first, initial_pos + frac * move);//shorten the move by 2
+          }
+          if (frac <= 0.02)
+            put(vpmap_, vp.first, initial_pos);//cancel move
+        }
+
+        CGAL_assertion(!input_mesh_is_valid_ || is_valid_polygon_mesh(mesh_));
       }//end for loop (nit == nb_iterations)
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
@@ -1464,7 +1460,9 @@ private:
       unsigned int nb_incident_features = 0;
       for(halfedge_descriptor h : halfedges_around_target(v, mesh_))
       {
-        if (is_on_border(h) || is_on_patch_border(h))
+        halfedge_descriptor hopp = opposite(h, mesh_);
+        if ( is_on_border(h) || is_on_patch_border(h)
+          || is_on_border(hopp) || is_on_patch_border(hopp))
           ++nb_incident_features;
         if (nb_incident_features > 2)
           return true;
@@ -1880,34 +1878,32 @@ private:
     template <typename HalfedgeRange>
     bool check_normals(const HalfedgeRange& hedges) const
     {
-      typedef std::multimap<Patch_id, Vector_3>   Normals_multimap;
-      typedef typename Normals_multimap::iterator Normals_iterator;
+      std::size_t nb_patches = patch_id_to_index_map.size();
 
-      Normals_multimap normals_per_patch;
+      std::vector< std::vector<Vector_3> > normals_per_patch(nb_patches);
       for(halfedge_descriptor hd : hedges)
       {
+        Halfedge_status s = status(hd);
+
+        if(s != PATCH && s != PATCH_BORDER)
+          continue;
+
         Vector_3 n = compute_normal(face(hd, mesh_));
         if (n == CGAL::NULL_VECTOR) //for degenerate faces
           continue;
         Patch_id pid = get_patch_id(face(hd, mesh_));
-        normals_per_patch.insert(std::make_pair(pid, n));
+        normals_per_patch[patch_id_to_index_map.at(pid)].push_back(n);
       }
 
       //on each surface patch,
       //check all normals have same orientation
-      for (Normals_iterator it = normals_per_patch.begin();
-        it != normals_per_patch.end();/*done inside loop*/)
+      for (std::size_t i=0; i < nb_patches; ++i)
       {
-        std::vector<Vector_3> normals;
-        std::pair<Normals_iterator, Normals_iterator> n_range
-          = normals_per_patch.equal_range((*it).first);
-        for (Normals_iterator iit = n_range.first; iit != n_range.second; ++iit)
-          normals.push_back((*iit).second);
+        const std::vector<Vector_3>& normals = normals_per_patch[i];
+        if (normals.empty()) continue;
 
         if (!check_orientation(normals))
           return false;
-
-        it = n_range.second;
       }
       return true;
     }

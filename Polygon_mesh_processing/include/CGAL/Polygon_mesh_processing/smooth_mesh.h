@@ -328,6 +328,7 @@ void smooth_mesh(const FaceRange& faces,
   }
 }
 
+///\cond SKIP_IN_MANUAL
 template <typename FaceRange, typename TriangleMesh>
 void smooth_mesh(const FaceRange& face_range, TriangleMesh& tmesh)
 {
@@ -346,8 +347,6 @@ void smooth_mesh(TriangleMesh& tmesh)
   smooth_mesh(faces(tmesh), tmesh, parameters::all_default());
 }
 
-
-///\cond SKIP_IN_MANUAL
 template<typename TriangleMesh, typename GeomTraits, typename Stream>
 void angles_evaluation(TriangleMesh& tmesh, GeomTraits traits, Stream& output)
 {

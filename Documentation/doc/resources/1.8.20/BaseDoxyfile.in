@@ -297,7 +297,7 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
                          "cgalDebugEnd=\htmlonly[block] </div> \endhtmlonly" \
                          "cgalDebugFunction=This is a function for debugging purpose." \
                          "cgalAdvancedBegin=^^ \htmlonly[block] <div class=\"CGALAdvanced\"> <div>Advanced</div> \endhtmlonly ^^" \
-                         "cgalAdvancedEnd=^^ \htmlonly[block] </div> \endhtmlonly" \
+                         "cgalAdvancedEnd=\noop ^^ \htmlonly[block] </div> \endhtmlonly" \
                          "cgalAdvancedFunction=This is an advanced function." \
                          "cgalAdvancedClass=This is an advanced class." \
                          "cgalAdvancedType=This is an advanced type." \
@@ -1187,13 +1187,6 @@ VERBATIM_HEADERS       = NO
 # The default value is: YES.
 
 ALPHABETICAL_INDEX     = NO
-
-# The COLS_IN_ALPHA_INDEX tag can be used to specify the number of columns in
-# which the alphabetical index list will be split.
-# Minimum value: 1, maximum value: 20, default value: 5.
-# This tag requires that the tag ALPHABETICAL_INDEX is set to YES.
-
-COLS_IN_ALPHA_INDEX    = 5
 
 # In case all classes in a project start with a common prefix, all classes will
 # be put under the same header in the alphabetical index. The IGNORE_PREFIX tag

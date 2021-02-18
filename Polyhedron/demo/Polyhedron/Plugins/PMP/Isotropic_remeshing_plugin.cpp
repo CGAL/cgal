@@ -227,13 +227,16 @@ public:
     || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex()));
     }
 
+    bool ok(true), found_poly(false);
+
     Q_FOREACH(int index, scene->selectionIndices())
     {
-      //if one polyhedron is found in the selection, it's fine
-      if (qobject_cast<Scene_facegraph_item*>(scene->item(index)))
-        return true;
+      if (!qobject_cast<Scene_facegraph_item*>(scene->item(index)))
+        ok = false;
+      else
+        found_poly=true;
     }
-    return false;
+    return ok && found_poly;
   }
 
   typedef boost::property_map<FaceGraph, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
@@ -339,6 +342,11 @@ public Q_SLOTS:
 
     if (poly_item || selection_item)
     {
+      if(selection_item && selection_item->selected_edges.empty() && selection_item->selected_facets.empty())
+      {
+        QMessageBox::warning(mw, "Empty Edges", "There are no selected edges. Aborting.");
+        return;
+      }
       // Create dialog box
       QDialog dialog(mw);
       Ui::Isotropic_remeshing_dialog ui

@@ -38,7 +38,7 @@ void test_const_vertex_handles_and_points(
 
   auto pit = polyhedron.points_begin();
   auto vit = polyhedron.vertices_begin();
-  for (const auto vh : polyhedron.vertex_handles()) {
+  for (const auto& vh : polyhedron.vertex_handles()) {
     assert(vh == vit);
     assert(vh->point() == vit->point());
     assert(vh->point() == *pit);
@@ -88,7 +88,7 @@ void test_const_facet_handles_and_planes(
 
   auto pit = polyhedron.planes_begin();
   auto fit = polyhedron.facets_begin();
-  for (const auto fh : polyhedron.facet_handles()) {
+  for (const auto& fh : polyhedron.facet_handles()) {
     assert(fh == fit);
     assert(fh->plane() == fit->plane());
     assert(fh->plane() == *pit);
@@ -133,7 +133,7 @@ void test_const_halfedge_handles_and_edges(
   const Polyhedron& polyhedron) {
 
   auto hit = polyhedron.halfedges_begin();
-  for (const auto hh : polyhedron.halfedge_handles()) {
+  for (const auto& hh : polyhedron.halfedge_handles()) {
     assert(hh == hit);
     assert(hh->facet() == hit->facet());
     assert(hh->vertex() == hit->vertex());

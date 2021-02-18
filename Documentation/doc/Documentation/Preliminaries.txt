@@ -87,5 +87,36 @@ Note that setting inline manually is very fragile, especially in a template
 context.  It is usually better to let the compiler select by himself which
 functions should be inlined or not.
 
+\section seccgal_version Identifying the Version of CGAL
+
+Every release of \cgal defines the following preprocessor macros:
+
+<DL>
+<DT>`CGAL_VERSION_STR`</DT>
+<DD>a textual description of the current release (e.g., or 3.3 or 3.2.1 or 3.2.1-I-15) as a string literal</DD>
+<DT>`CGAL_VERSION_NR`</DT>
+<DD>a numerical description of the current release such that more recent
+releases have higher number.
+
+More precisely, it is defined as `1MMmmbiiii`, where `MM` is
+the major release number (e.g. 03), `mm` is the minor release
+number (e.g. 02), `b` is the bug-fix release number (e.g. 0),
+and `iiii` is the internal release number (e.g. 0001). For
+public releases, the latter is defined as 1000.  Examples: for the
+public release 3.2.4 this number is 1030241000; for internal release
+3.2-I-1, it is 1030200001.  Note that this scheme was modified around
+3.2-I-30.
+</DD>
+<DT>`CGAL_VERSION_NUMBER(M,m,b)`</DT>
+<DD>
+a function macro computing the version number macro from the
+M.m.b release version. Note that the internal release number is
+dropped here. Example: `CGAL_VERSION_NUMBER(3,2,4)` is equal to
+1030241000.
+</DD>
+</DL>
+
+The macro `CGAL_VERSION` is deprecated. It is the same as
+`CGAL_VERSION_STR`, but not as a string literal.
 
 */

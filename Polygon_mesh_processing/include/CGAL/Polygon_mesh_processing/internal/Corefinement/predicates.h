@@ -110,6 +110,16 @@ bool  sorted_around_edge(
 }
 
 template <class Kernel>
+bool  p_is_below_q(const typename Kernel::Point_3& o_prime, const typename Kernel::Point_3& o,
+                   const typename Kernel::Point_3& p, const typename Kernel::Point_3& q)
+{
+  CGAL::Orientation res = CGAL::orientation(o_prime, o, p, q);
+  CGAL_assertion(res != CGAL::COPLANAR);
+
+  return res == CGAL::POSITIVE;
+}
+
+template <class Kernel>
 bool  are_triangles_coplanar_same_side(
     const typename Kernel::Point_3& o_prime, const typename Kernel::Point_3& o,
     const typename Kernel::Point_3& P, const typename Kernel::Point_3& q)
@@ -165,6 +175,27 @@ bool sorted_around_edge( Node_id o_prime_index,
                            : nodes.exact_node(p2_index),
            q_index  == NID ? nodes.to_exact(get(vpm_q,q))
                            : nodes.exact_node(q_index ) );
+}
+
+template <class Node_id, class Node_vector, class vertex_descriptor, class VPMP, class VPMQ>
+bool p_is_below_q( Node_id o_prime_index,
+                     Node_id o_index,
+                     Node_id p_index,
+                     Node_id q_index,
+                     vertex_descriptor p,
+                     vertex_descriptor q,
+                     const VPMP& vpm_p,
+                     const VPMQ& vpm_q,
+                     const Node_vector& nodes)
+{
+  const Node_id NID((std::numeric_limits<Node_id>::max)());
+  return p_is_below_q<typename Node_vector::Exact_kernel>(
+           nodes.exact_node(o_prime_index),
+           nodes.exact_node(o_index),
+           p_index == NID ? nodes.to_exact(get(vpm_p,p))
+                           : nodes.exact_node(p_index),
+           q_index == NID ? nodes.to_exact(get(vpm_q,q))
+                           : nodes.exact_node(q_index) );
 }
 
 

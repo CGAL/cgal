@@ -15,7 +15,7 @@
 #define CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_POINT_2_H
 
 /*!\file include/CGAL/Curved_kernel_via_analysis_2/Point_2.h
- * \brief Defines class \c Point_2 that represents a point on a curve that can
+ * \brief defines class \c Point_2 that represents a point on a curve that can
  * be analyzed.
  */
 
@@ -817,7 +817,7 @@ std::ostream& operator <<(std::ostream& os,
 }
 
 
-//! \brief Reads the objects from stream.
+//! \brief reads the objects from stream.
 template < class CurvedKernelViaAnalysis_2, class Rep_ >
 std::istream& operator>> (
     std::istream& is,

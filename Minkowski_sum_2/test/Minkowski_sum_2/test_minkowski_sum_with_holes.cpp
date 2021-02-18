@@ -8,7 +8,7 @@
 
 #include <string.h>
 #include <list>
-#include <boost/timer.hpp>
+#include <CGAL/Timer.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 typedef CGAL::Polygon_2<Kernel> Polygon_2;
@@ -146,7 +146,8 @@ int main(int argc, char* argv[])
   }
 
   Polygon_with_holes_2 p, q;
-  boost::timer timer;
+  CGAL::Timer timer;
+  timer.start();
 
   std::list<Strategy> strategies;
 
@@ -186,9 +187,9 @@ int main(int argc, char* argv[])
     std::list<Strategy>::iterator it;
     for (it = strategies.begin(); it != strategies.end(); ++it) {
       std::cout << "Using " << strategy_names[*it] << ": ";
-      timer.restart();
+      timer.reset();
       Polygon_with_holes_2 result = compute_minkowski_sum_2(p, q, *it);
-      double secs = timer.elapsed();
+      double secs = timer.time();
       std::cout << secs << " s " << std::flush;
 
       if (compare) {
