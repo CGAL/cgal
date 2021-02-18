@@ -1264,8 +1264,6 @@ protected:
 
   virtual void init()
   {
-    // Restore previous viewer state.
-    restoreStateFromFile();
     initializeOpenGLFunctions();
 
     // Light default parameters

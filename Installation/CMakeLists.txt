@@ -991,7 +991,7 @@ if(CGAL_BRANCH_BUILD)
     find_package(GMP REQUIRED)
     find_package(Doxygen REQUIRED)
     find_package(Eigen3 REQUIRED)
-    find_package(Qt5 COMPONENTS Core Widgets Xml OpenGL Gui REQUIRED)
+    find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui REQUIRED)
     find_package(VTK COMPONENTS vtkImagingGeneral vtkIOImage NO_MODULE)
     find_package(IPE)
     find_package(RS3)
@@ -1002,10 +1002,9 @@ if(CGAL_BRANCH_BUILD)
     set(compile_options
         "\
 ${CMAKE_CXX_FLAGS} -DCGAL_EIGEN3_ENABLED -DCGAL_PROFILE \
-${Qt5Widgets_DEFINITIONS} ${Qt5Xml_DEFINITIONS} ${Qt5OpenGL_DEFINITIONS} ${Qt5Gui_DEFINITIONS} \
+${Qt5Widgets_DEFINITIONS} ${Qt5OpenGL_DEFINITIONS} ${Qt5Gui_DEFINITIONS} \
 ${Qt5OpenGL_EXECUTABLE_COMPILE_FLAGS} -fPIC \
 ${Qt5Gui_EXECUTABLE_COMPILE_FLAGS} \
-${Qt5Xml_EXECUTABLE_COMPILE_FLAGS} \
 ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt5_3RD_PARTY_DEFINITIONS} \
 ${CGAL_DEFINITIONS}")
     message("COMPILATION OPTIONS ARE :  ${compile_options}")
@@ -1098,7 +1097,6 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
       ${GMP_INCLUDE_DIR}
       ${Qt5OpenGL_INCLUDE_DIRS}
       ${Qt5Widgets_INCLUDE_DIRS}
-      ${Qt5Xml_INCLUDE_DIRS}
       ${Qt5Gui_DEFINITIONS}
       ${CGAL_3RD_PARTY_INCLUDE_DIRS}
       ${CGAL_Qt5_3RD_PARTY_INCLUDE_DIRS})
