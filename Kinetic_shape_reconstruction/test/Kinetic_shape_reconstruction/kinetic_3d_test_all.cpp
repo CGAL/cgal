@@ -338,7 +338,7 @@ void run_all_tests() {
   // Stress tests 5.
   results = {21,2,468,1224,723,67};
   assert(run_test<Traits>("data/stress-test-5/test-1-rnd-polygons-15-6.off", ks, num_iters, results, all_times, num_tests));
-  results = {26,3,1037,2829,1697,164};
+  results = {26,3,1037,2829,1693,161};
   assert(run_test<Traits>("data/stress-test-5/test-2-rnd-polygons-20-4.off", ks, num_iters, results, all_times, num_tests));
 
   // Real data tests.
@@ -346,7 +346,7 @@ void run_all_tests() {
   assert(run_test<Traits>("data/real-data-test/test-10-polygons.off", ks, num_iters, results, all_times, num_tests));
   results = {21,3,349,899,603,81};
   assert(run_test<Traits>("data/real-data-test/test-15-polygons.off", ks, num_iters, results, all_times, num_tests));
-  results = {25,3,606,1607,1019,107};
+  results = {25,3,606,1607,999,101};
   assert(run_test<Traits>("data/real-data-test/test-20-polygons.off", ks, num_iters, results, all_times, num_tests));
 
   // Still to be done!

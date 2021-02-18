@@ -92,7 +92,7 @@ public:
     add_polygons(input_range, polygon_map, bbox_faces);
 
     if (m_verbose) std::cout << "* intersecting input polygons ... ";
-    if (m_export) {
+    if (m_debug) {
       KSR_3::dump(m_data, "init");
       // KSR_3::dump_segmented_edges(m_data, "init");
     }
@@ -103,7 +103,7 @@ public:
     set_k_intersections(k);
 
     if (m_verbose) std::cout << "done" << std::endl;
-    if (m_export) {
+    if (m_debug) {
       KSR_3::dump(m_data, "intersected");
       // KSR_3::dump_segmented_edges(m_data, "intersected");
     }

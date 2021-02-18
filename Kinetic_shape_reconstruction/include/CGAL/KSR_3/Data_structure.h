@@ -703,6 +703,7 @@ public:
   void remove_collinear_points(
     std::vector<Point_2>& points, const FT min_angle = FT(10)) {
 
+    // std::cout << std::endl;
     std::vector<Point_2> polygon;
     const std::size_t n = points.size();
     for (std::size_t i = 0; i < n; ++i) {
@@ -722,11 +723,11 @@ public:
       const Direction_2 dir2(vec2);
       const FT angle = KSR::angle_2(dir1, dir2);
 
-      // std::cout << "- angle: " << angle << std::endl;
+      // std::cout << "- angle: " << angle << " : " << min_angle << std::endl;
       if (angle > min_angle) polygon.push_back(q);
     }
     if (polygon.size() >= 3) points = polygon;
-    else remove_collinear_points(points, min_angle / FT(5));
+    else remove_collinear_points(points, min_angle / FT(2));
     // CGAL_assertion_msg(false, "TODO: REMOVE COLLINEAR POINTS!");
   }
 

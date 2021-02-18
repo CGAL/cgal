@@ -203,7 +203,7 @@ public:
     // Finalization.
     timer.reset();
     timer.start();
-    if (m_export) dump(m_data, "jiter-final-a-result");
+    if (m_debug) dump(m_data, "jiter-final-a-result");
 
     Finalizer finalizer(m_verbose, m_export, m_debug, m_data);
     finalizer.clean();
@@ -212,7 +212,7 @@ public:
     CGAL_assertion(m_data.check_integrity(true, true, true));
     if (m_verbose) std::cout << " done" << std::endl;
 
-    if (m_export) dump(m_data, "jiter-final-b-result");
+    if (m_debug) dump(m_data, "jiter-final-b-result");
     // std::cout << std::endl << "CLEANING SUCCESS!" << std::endl << std::endl;
     // exit(EXIT_SUCCESS);
 
