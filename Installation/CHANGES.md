@@ -25,6 +25,9 @@ A comprehensive list of the supported file formats is available in the Stream_su
 -   Added a filtering mechanism so that costly tests get only applied to the next candidate for the edge collapse.
 -   Added the class `Polyhedral_envelope_filter` that enables to perform mesh simplification inside a polyhedral envelope of the input mesh.
 
+### 2D Regularized Boolean Set Operations
+-   Added documentation for the free functions `oriented_side(const Point_2& p, ....)` that accept a point and a polygon, and improved the documentation of all other functions
+
 [Release 5.2](https://github.com/CGAL/cgal/releases/tag/v5.2)
 -----------
 
