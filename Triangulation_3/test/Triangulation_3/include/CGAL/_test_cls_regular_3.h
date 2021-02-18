@@ -17,6 +17,8 @@
 #include <list>
 #include <type_traits>
 #include <CGAL/use.h>
+#include <CGAL/Testsuite/Triangulation_23/test_move_semantic.h>
+
 template <class Triangulation>
 void
 _test_cls_regular_3(const Triangulation &)
@@ -205,6 +207,7 @@ _test_cls_regular_3(const Triangulation &)
             << T.number_of_vertices() << std::endl;
   assert(T.is_valid());
   assert(T.dimension()==3);
+
+  namespace test_tr_23 = CGAL::Testsuite::Triangulation_23;
+  test_tr_23::test_move_semantic(T);
 }
-
-

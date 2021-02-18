@@ -31,6 +31,7 @@
 #include <CGAL/_test_fct_is_infinite.h>
 #include <CGAL/_test_triangulation_iterators.h>
 #include <CGAL/_test_triangulation_circulators.h>
+#include <CGAL/Testsuite/Triangulation_23/test_move_semantic.h>
 
 
 template <class Triangul>
@@ -281,6 +282,15 @@ _test_cls_triangulation_short_2( const Triangul &)
   assert( T2_3_4.number_of_vertices() == 11 );
   assert( T2_3_4.is_valid() );
 
+  /****************************/
+  /******* MOVE SEMANTIC*******/
+
+  std::cout << "    move constructors and move assignment" << std::endl;
+  namespace test_tr_23 = CGAL::Testsuite::Triangulation_23;
+  test_tr_23::test_move_semantic(T0_1);
+  test_tr_23::test_move_semantic(T1_5);
+  test_tr_23::test_move_semantic(T2_8);
+  test_tr_23::test_move_semantic(T2_3);
 
   /*********************************************/
   /****** FINITE/INFINITE VERTICES/FACES *******/
