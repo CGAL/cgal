@@ -153,7 +153,7 @@ void go(int N)
 
 int main(int argc, char **argv)
 {
-    srand(static_cast<unsigned int>(time(NULL)));
+    srand(static_cast<unsigned int>(time(nullptr)));
     int N = 1000;
     if( argc > 1 )
         N = atoi(argv[1]);

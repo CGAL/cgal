@@ -56,8 +56,8 @@ struct Node {
     int   key;
     Node* next;
     Node* prev;
-    Node() : key(0), next(0), prev(0) { next = prev = this; }
-    Node(int n) : key(n), next(0), prev(0) { next = prev = this; }
+    Node() : key(0), next(nullptr), prev(nullptr) { next = prev = this; }
+    Node(int n) : key(n), next(nullptr), prev(nullptr) { next = prev = this; }
     Node(Node* nx_, Node* pv_, int n) : key(n), next(nx_), prev(pv_) {}
 };
 Node* new_node( Node* nx_, Node* pv_, int n) {
@@ -106,8 +106,8 @@ class CNode {
     const CNode* next() const { return next_;}
     CNode*       prev()       { return prev_;}
     const CNode* prev() const { return prev_;}
-    CNode() : next_(0), prev_(0), key(0) { next_ = prev_ = this; }
-    CNode( int n) : next_(0), prev_(0), key(n) { next_ = prev_ = this; }
+    CNode() : next_(nullptr), prev_(nullptr), key(0) { next_ = prev_ = this; }
+    CNode( int n) : next_(nullptr), prev_(nullptr), key(n) { next_ = prev_ = this; }
     CNode( CNode* nx_, CNode* pv_, int n)
         : next_(nx_), prev_( pv_), key(n) {}
     friend CNode* new_cnode( CNode* nx_, CNode* pv_, int n);
@@ -243,8 +243,8 @@ void test_In_place_list() {
         CGAL::Assert_is_at_least_forward_category(end);
         typedef std::iterator_traits< Iterator >::value_type      VT;
         typedef std::iterator_traits< Iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Iterator z = Iterator();
@@ -336,8 +336,8 @@ void test_In_place_list() {
         CGAL::Assert_is_at_least_forward_category(end);
         typedef std::iterator_traits< Iterator >::value_type      VT;
         typedef std::iterator_traits< Iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Iterator z = Iterator();
@@ -441,8 +441,8 @@ void test_In_place_list() {
         CGAL::Assert_is_at_least_forward_category(c_end);
         typedef std::iterator_traits< Const_iterator >::value_type      VT;
         typedef std::iterator_traits< Const_iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Const_iterator z = Const_iterator();
@@ -573,8 +573,8 @@ void test_In_place_list() {
         CGAL::Assert_is_at_least_forward_category(end);
         typedef std::iterator_traits< Iterator >::value_type      VT;
         typedef std::iterator_traits< Iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Iterator z = Iterator();
@@ -666,8 +666,8 @@ void test_In_place_list() {
         CGAL::Assert_is_at_least_forward_category(end);
         typedef std::iterator_traits< Iterator >::value_type      VT;
         typedef std::iterator_traits< Iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Iterator z = Iterator();
@@ -770,8 +770,8 @@ void test_In_place_list() {
         CGAL::Assert_is_at_least_forward_category(c_end);
         typedef std::iterator_traits< Const_iterator >::value_type      VT;
         typedef std::iterator_traits< Const_iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Const_iterator z = Const_iterator();

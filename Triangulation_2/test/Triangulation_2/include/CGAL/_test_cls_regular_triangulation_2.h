@@ -199,7 +199,7 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   assert( T0_0.is_valid(verbose) );
 
   Cls T0_1;
-  Vertex_handle v0_1_0 = T0_1.insert(wp0); assert( v0_1_0 != NULL );
+  Vertex_handle v0_1_0 = T0_1.insert(wp0); assert( v0_1_0 != nullptr );
   assert( T0_1.dimension() == 0 );
   assert( T0_1.number_of_vertices() == 1 );
   assert( T0_1.is_valid(verbose) );
@@ -521,7 +521,7 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   // here == operator needed for Point!
   // testing with the grid triangulation
   LFC fc= T2_3.line_walk(wp1,wp10);
-  assert(fc != NULL);
+  assert(fc != nullptr);
   assert(!fc.is_empty());
   LFC fc2=fc;
   assert(fc==fc2);

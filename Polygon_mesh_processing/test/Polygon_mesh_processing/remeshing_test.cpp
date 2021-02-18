@@ -135,14 +135,14 @@ public:
 
   friend value_type get(const Constraints_pmap& map, const key_type& e)
   {
-    CGAL_assertion(map.set_ptr_ != NULL);
+    CGAL_assertion(map.set_ptr_ != nullptr);
     return !map.set_ptr_->empty()
          && map.set_ptr_->count(e);
   }
   friend void put(Constraints_pmap& map
                 , const key_type& e, const value_type is)
   {
-    CGAL_assertion(map.set_ptr_ != NULL);
+    CGAL_assertion(map.set_ptr_ != nullptr);
     if (is)                map.set_ptr_->insert(e);
     else if(get(map, e))   map.set_ptr_->erase(e);
   }
@@ -171,7 +171,7 @@ Main(int argc, char* argv[])
   unsigned int nb_iter = (argc > 3) ? atoi(argv[3]) : 2;
   const char* selection_file = (argc > 4) ? argv[4]
     : "data/joint-patch.selection.txt";
-  const char* save_file = (argc > 5) ? argv[5] : NULL;
+  const char* save_file = (argc > 5) ? argv[5] : nullptr;
 
   std::set<face_descriptor> pre_patch;
   collect_patch(selection_file, m, pre_patch);
@@ -240,7 +240,7 @@ Main(int argc, char* argv[])
   t.stop();
   std::cout << "Remeshing all took " << t.time() << std::endl;
 
-  if (save_file != NULL)
+  if (save_file != nullptr)
   {
     std::ofstream out("remeshed.off");
     out << m;

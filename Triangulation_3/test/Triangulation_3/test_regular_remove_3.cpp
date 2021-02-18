@@ -197,7 +197,7 @@ class point_reader
     Weighted_point wp;
     int nb;
 public:
-    point_reader () : in (0), wp(), nb(0) {}
+    point_reader () : in (nullptr), wp(), nb(0) {}
     point_reader (std::istream &is) : in(&is)
     {
         if (*in >> nb) {

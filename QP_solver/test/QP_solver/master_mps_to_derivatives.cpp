@@ -47,7 +47,7 @@ namespace QP_from_mps_detail {
 
   template<typename T>
   struct MPS_type_name {
-    static const char *name() { return 0; }
+    static const char *name() { return nullptr; }
   };
 
   template<>
@@ -69,7 +69,7 @@ namespace QP_from_mps_detail {
       else if (boost::multiprecision::number_category<NT>::value == boost::multiprecision::number_kind_rational)
         return "rational";
       else
-        return 0;
+        return nullptr;
     }
   };
 #endif
@@ -189,7 +189,7 @@ void write_MPS(std::ostream& out,
     const char *tn = QP_from_mps_detail::MPS_type_name
       <typename
       std::iterator_traits<typename QP::U_iterator>::value_type>::name();
-    if (tn != 0)
+    if (tn != nullptr)
       out << "* Number-type: " << tn << "\n";
   } else
       out << "* Number-type: " << number_type << "\n";

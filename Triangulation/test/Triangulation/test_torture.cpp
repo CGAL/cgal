@@ -132,7 +132,7 @@ int main(int argc, char **argv)
 {
     int N = 3;
     int nb_trials = 2;
-    unsigned int rand_init = static_cast<unsigned int>(time(NULL));
+    unsigned int rand_init = static_cast<unsigned int>(time(nullptr));
     if( argc > 1 )
         N = atoi(argv[1]);
     if( argc > 2 )

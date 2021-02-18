@@ -23,15 +23,15 @@ public:
 
   ~LEdge()
   {
-    if(v != NULL)
+    if(v != nullptr)
       delete v;
-    v = NULL;
+    v = nullptr;
   }
 
   LVertex* source() { return v; }
   LEdge* twin() { return t; }
   void set_twin(LEdge* t_) { t = t_; }
-  void reset_source() { v = NULL; }
+  void reset_source() { v = nullptr; }
 };
 
 template<typename Edget, typename Vertext>

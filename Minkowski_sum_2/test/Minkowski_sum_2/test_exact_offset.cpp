@@ -106,10 +106,10 @@ int main (int argc, char **argv)
 
     if (i+2 < argc && argv[i+2][0] == '-')
     {
-      use_ssab = (strchr (argv[i+2], 's') != NULL);
-      use_opt = (strchr (argv[i+2], 'o') != NULL);
-      use_hm = (strchr (argv[i+2], 'h') != NULL);
-      use_greene = (strchr (argv[i+2], 'g') != NULL);
+      use_ssab = (strchr (argv[i+2], 's') != nullptr);
+      use_opt = (strchr (argv[i+2], 'o') != nullptr);
+      use_hm = (strchr (argv[i+2], 'h') != nullptr);
+      use_greene = (strchr (argv[i+2], 'g') != nullptr);
     }
 
     // Compute the Minkowski sum using the convolution method.

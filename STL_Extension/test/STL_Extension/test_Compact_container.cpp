@@ -65,7 +65,7 @@ class Node_2
 public:
 
   Node_2()
-  : p(NULL), rnd(CGAL::get_default_random().get_int(0, 100)) {}
+  : p(nullptr), rnd(CGAL::get_default_random().get_int(0, 100)) {}
 
   bool operator==(const Node_2 &n) const { return rnd == n.rnd; }
   bool operator!=(const Node_2 &n) const { return rnd != n.rnd; }

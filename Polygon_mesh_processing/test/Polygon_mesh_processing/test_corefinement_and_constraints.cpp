@@ -165,7 +165,7 @@ void test_bool_op_no_copy(
   assert( count_constrained_edges(tm2, ecm2)==307 );
 
   typedef boost::optional<Triangle_mesh*> OTM;
-  Triangle_mesh *ptr = NULL;
+  Triangle_mesh *ptr = nullptr;
   const std::array<OTM,4> output =
     reverse ? CGAL::make_array(OTM(&tm2), OTM(&tm1), boost::make_optional(false,ptr), boost::make_optional(false,ptr))
             : CGAL::make_array(OTM(&tm1), OTM(&tm2), boost::make_optional(false,ptr), boost::make_optional(false,ptr));

@@ -26,7 +26,7 @@ void test(const int d, const string & type, const int N)
   assert(rt.empty());
   assert(rt_star_only.empty());
 
-  srand(static_cast<unsigned int>(time(NULL)));
+  srand(static_cast<unsigned int>(time(nullptr)));
 
   // Insert first point (0, 0...)
   vector<double> coords(d);

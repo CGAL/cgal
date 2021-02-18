@@ -188,7 +188,7 @@ int main() {
             << "timer new implementation: " << timer_new_implementation.time()
             << "\ntimer old implementation: " << timer_old_implementation.time()
             << "\n";
-  image.set_data(0); // trick to avoid ~Image_3 segfault.
+  image.set_data(nullptr); // trick to avoid ~Image_3 segfault.
 
 
   const char* filenames[] = {
