@@ -1022,6 +1022,10 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_vertex_d
           setProperty("need_hl_restore", true);
           set_highlighting(false);
         }
+        if(property("need_invalidate_aabb_tree").toBool()){
+          polyhedron_item()->invalidate_aabb_tree();
+          setProperty("need_invalidate_aabb_tree", false);
+        }
         invalidateOpenGLBuffers();
         Q_EMIT updateInstructions("Ctrl+Right-click to move the point. \nHit Ctrl+Z to leave the selection. (2/2)");
       }
@@ -1949,6 +1953,7 @@ void Scene_polyhedron_selection_item::moveVertex()
     put(vpm, vh, Point_3(d->manipulated_frame->position().x-offset.x,
                          d->manipulated_frame->position().y-offset.y,
                          d->manipulated_frame->position().z-offset.z));
+    setProperty("need_invalidate_aabb_tree", true);
     invalidateOpenGLBuffers();
     poly_item->updateVertex(vh);
    // poly_item->invalidateOpenGLBuffers();
@@ -1967,6 +1972,10 @@ void Scene_polyhedron_selection_item::validateMoveVertex()
   if(property("need_hl_restore").toBool()){
     set_highlighting(true);
     setProperty("need_hl_restore", false);
+  }
+  if(property("need_invalidate_aabb_tree").toBool()){
+    polyhedron_item()->invalidate_aabb_tree();
+    setProperty("need_invalidate_aabb_tree", false);
   }
   Q_EMIT updateInstructions("Select a vertex. (1/2)");
 }
