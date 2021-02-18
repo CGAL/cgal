@@ -16,10 +16,6 @@ if(has_cpp11 LESS 0)
   return()
 endif()
 
-# Use C++11 for this directory and its sub-directories.
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
-
 #Defines flags to emulate windows behavior for linking error generation
 if(CMAKE_CXX_COMPILER_ID EQUAL Clang
    OR CMAKE_COMPILER_IS_GNUCC
