@@ -17,6 +17,7 @@
 #include <CGAL/IO/helpers.h>
 
 #include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/property_map.h>
 #include <CGAL/iterator.h>
 
@@ -444,7 +445,7 @@ bool read_PLY(const std::string& fname, PointRange& points, PolygonRange& polygo
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
- *     \cgalParamDefault{`6`}
+ *     \cgalParamDefault{`the precision of the stream `os``}
  *     \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
@@ -467,8 +468,7 @@ bool write_PLY(std::ostream& out,
   if(!out.good())
     return false;
 
-  const int precision = parameters::choose_parameter(parameters::get_parameter(np, internal_np::stream_precision), 6);
-  out.precision(precision);
+  set_stream_precision_from_NP(out, np);
 
   // Write header
   out << "ply" << std::endl

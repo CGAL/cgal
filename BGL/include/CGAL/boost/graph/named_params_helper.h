@@ -560,6 +560,21 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
     Alpha_expansion_boost_adjacency_list_tag
     >::type type;
   };
+
+  template<typename NP>
+  void set_stream_precision_from_NP(std::ostream& os, const NP& np)
+  {
+    using parameters::get_parameter;
+    using parameters::choose_parameter;
+    using parameters::is_default_parameter;
+
+    if(!is_default_parameter(get_parameter(np, internal_np::stream_precision)))
+    {
+      const int precision = choose_parameter<int>(get_parameter(np,
+                              internal_np::stream_precision));
+      os.precision(precision);
+    }
+  }
 } //namespace CGAL
 
 
