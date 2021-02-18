@@ -149,14 +149,14 @@ Prior to the actual insertion, `p` is located in the triangulation;
 
 \sa `Regular_triangulation::compute_conflict_zone()`
 */
-Vertex_handle insert_if_in_star(const Weighted_point & p, Vertex_handle star_center,
-  Full_cell_handle start = Full_cell_handle());
+Vertex_handle insert_if_in_star(const Weighted_point& p, Vertex_handle star_center,
+                                Full_cell_handle start = Full_cell_handle());
 
 /*!
 Same as the above `insert_if_in_star()`, but uses a vertex as starting place for the search.
 */
-Vertex_handle insert_if_in_star(const Weighted_point & p, Vertex_handle star_center,
-  Vertex_handle hint);
+Vertex_handle insert_if_in_star(const Weighted_point& p, Vertex_handle star_center,
+                                Vertex_handle hint);
 
 /*!
 inserts the weighted point `p` in the triangulation.
@@ -168,7 +168,7 @@ of `p`.
 \sa `Triangulation::locate()`.
 */
 Vertex_handle insert_if_in_star(const Weighted_point& p, Vertex_handle star_center, Locate_type lt,
-                                const Face& f, const Facet&, Full_cell_handle s);
+                                const Face& f, const Facet& fr, Full_cell_handle start);
 
 /// @}
 
