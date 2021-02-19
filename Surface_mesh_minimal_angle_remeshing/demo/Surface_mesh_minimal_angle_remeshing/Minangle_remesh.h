@@ -23,7 +23,10 @@
 #define SRC_MINANGLE_REMESH_H_
 
 #include <string>
-#include "internal/minangle_remesh_impl.h"
+
+// TODO: replace line 29 with line 28 in the future
+// #include <CGAL/Polygon_mesh_processing/internal/minangle_remesh_impl.h>
+#include "../../include/CGAL/Polygon_mesh_processing/internal/minangle_remesh_impl.h"
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
