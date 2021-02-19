@@ -53,9 +53,11 @@ if ( CGAL_FOUND )
   endif()
 
   if(BUILD_TESTING)
-    set_property(TEST execution___of__parallel_insertion_and_removal_in_regular_3 PROPERTY RUN_SERIAL 1)
-    set_property(TEST execution___of__parallel_insertion_in_delaunay_3 PROPERTY RUN_SERIAL 1)
-    set_property(TEST execution___of__sequential_parallel PROPERTY RUN_SERIAL 1)
+    set_property(TEST
+      execution___of__parallel_insertion_and_removal_in_regular_3
+      execution___of__parallel_insertion_in_delaunay_3
+      execution___of__sequential_parallel
+    PROPERTY RUN_SERIAL 1)
   endif()
 else()
 

@@ -121,18 +121,20 @@ if ( CGAL_FOUND )
     endforeach()
 
     if(BUILD_TESTING)
-      set_property(TEST execution___of__test_meshing_verbose PROPERTY RUN_SERIAL 1)
-      set_property(TEST execution___of__test_meshing_polyhedron_with_features PROPERTY RUN_SERIAL 1)
-      set_property(TEST execution___of__test_meshing_implicit_function PROPERTY RUN_SERIAL 1)
-      set_property(TEST execution___of__test_meshing_3D_image PROPERTY RUN_SERIAL 1)
-      set_property(TEST execution___of__test_meshing_3D_gray_image PROPERTY RUN_SERIAL 1)
-      set_property(TEST execution___of__test_meshing_unit_tetrahedron PROPERTY RUN_SERIAL 1)
-      set_property(TEST execution___of__test_meshing_polyhedron PROPERTY RUN_SERIAL 1)
-      set_property(TEST execution___of__test_meshing_polyhedral_complex PROPERTY RUN_SERIAL 1)
-      set_property(TEST execution___of__test_mesh_capsule_var_distance_bound PROPERTY RUN_SERIAL 1)
-      set_property(TEST execution___of__test_mesh_3_issue_1554 PROPERTY RUN_SERIAL 1)
-      set_property(TEST execution___of__test_mesh_polyhedral_domain_with_features_deprecated PROPERTY RUN_SERIAL 1)
-      set_property(TEST execution___of__test_mesh_cell_base_3 PROPERTY RUN_SERIAL 1)
+      set_property(TEST
+        execution___of__test_meshing_verbose
+        execution___of__test_meshing_polyhedron_with_features
+        execution___of__test_meshing_implicit_function
+        execution___of__test_meshing_3D_image
+        execution___of__test_meshing_3D_gray_image
+        execution___of__test_meshing_unit_tetrahedron
+        execution___of__test_meshing_polyhedron
+        execution___of__test_meshing_polyhedral_complex
+        execution___of__test_mesh_capsule_var_distance_bound
+        execution___of__test_mesh_3_issue_1554
+        execution___of__test_mesh_polyhedral_domain_with_features_deprecated
+        execution___of__test_mesh_cell_base_3
+      PROPERTY RUN_SERIAL 1)
     endif()
   endif()
 
