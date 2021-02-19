@@ -79,12 +79,10 @@ is_badly_shaped(const typename boost::graph_traits<TriangleMesh>::face_descripto
       return make_array(res, null_h);
     }
   }
-  else // let's not make it possible to have a face be both a cap and a needle (for now)
-  {
-    res = PMP::is_cap_triangle_face(f, tmesh, cap_threshold, parameters::vertex_point_map(vpm).geom_traits(gt));
-    if(res != null_h && !get(ecm, edge(res, tmesh)))
-      return make_array(null_h, res);
-  }
+
+  res = PMP::is_cap_triangle_face(f, tmesh, cap_threshold, parameters::vertex_point_map(vpm).geom_traits(gt));
+  if(res != null_h && !get(ecm, edge(res, tmesh)))
+    return make_array(null_h, res);
 
   return make_array(null_h, null_h);
 }
