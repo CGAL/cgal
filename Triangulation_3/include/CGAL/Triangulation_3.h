@@ -2447,7 +2447,6 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
   typedef Triangulation_3<GT, Tds>                 Triangulation;
   typedef typename Triangulation::size_type        size_type;
   typedef typename Triangulation::Vertex_handle    Vertex_handle;
-  typedef typename Triangulation::Vertex_iterator  Vertex_iterator;
   typedef typename Triangulation::Cell_iterator    Cell_iterator;
   typedef typename Triangulation::Edge_iterator    Edge_iterator;
   typedef typename Triangulation::Facet_iterator   Facet_iterator;
