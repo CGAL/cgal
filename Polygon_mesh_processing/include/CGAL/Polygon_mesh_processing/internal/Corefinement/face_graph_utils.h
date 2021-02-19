@@ -420,12 +420,9 @@ struct Patch_description{
 // shared_edges will be filled by halfedges pointing in the patch
 // that are inside `is_intersection_edge`, thus mesh boundary halfedges
 // are not necessarily inside.
-template <class PolygonMesh, class FaceIndexMap, class IsIntersectionEdge>
+template <class PolygonMesh, class IsIntersectionEdge>
 void extract_patch_simplices(
-  std::size_t patch_id,
   PolygonMesh& pm,
-  const FaceIndexMap fids,
-  const std::vector<std::size_t>& patch_ids,
   std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor>& patch_faces,
   std::set<typename boost::graph_traits<PolygonMesh>::vertex_descriptor>& interior_vertices,
   std::vector<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor>& interior_edges,
@@ -502,8 +499,7 @@ struct Patch_container{
     if ( !patches[i].is_initialized )
     {
       extract_patch_simplices(
-        i, pm,
-        fids, patch_ids,
+        pm,
         patches[i].faces, patches[i].interior_vertices,
         patches[i].interior_edges, patches[i].shared_edges,
         is_intersection_edge
