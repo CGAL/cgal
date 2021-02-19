@@ -17,7 +17,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_map.h>
 #include <CGAL/Nef_2/Segment_overlay_traits.h>
 #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 #include <CGAL/Nef_2/geninfo.h>
@@ -48,12 +48,12 @@ struct SM_subdivision {
   typedef typename Decorator_::Sphere_point   Point;
   typedef typename Decorator_::Sphere_segment Segment;
   Triangulator T;
-  CGAL::Unique_hash_map<IT,INFO>& M;
+  CGAL::internal::Handle_hash_map<IT,INFO>& M;
   /* M stores the object that supports the segment that
      is input object of the sweep */
 
   SM_subdivision(Triangulator Ti,
-                 CGAL::Unique_hash_map<IT,INFO>& Mi) : T(Ti), M(Mi) {}
+                 CGAL::internal::Handle_hash_map<IT,INFO>& Mi) : T(Ti), M(Mi) {}
 
 Vertex_handle new_vertex(const Point& p)
 { Vertex_handle v = T.new_svertex(p); T.assoc_info(v);
@@ -172,7 +172,7 @@ public:
   typedef typename Seg_list::iterator          Seg_iterator;
   typedef std::pair<Seg_iterator,Seg_iterator> Seg_it_pair;
   typedef std::pair<Sphere_segment,Sphere_segment> Seg_pair;
-  typedef CGAL::Unique_hash_map<Seg_iterator,Object_handle> Seg_map;
+  typedef CGAL::internal::Handle_hash_map<Seg_iterator,Object_handle> Seg_map;
 
   using Base::info;
   using Base::set_first_out_edge;
@@ -338,7 +338,7 @@ public:
 
   template <typename Iterator, typename T>
   void partition_to_halfsphere(Iterator start, Iterator end,
-    Seg_list& L, CGAL::Unique_hash_map<Iterator,T>& M, int pos) const;
+    Seg_list& L, CGAL::internal::Handle_hash_map<Iterator,T>& M, int pos) const;
 
   void merge_halfsphere_maps(SVertex_handle v1, SVertex_handle v2);
   void merge_nodes(SHalfedge_handle e1, SHalfedge_handle e2);
@@ -534,7 +534,7 @@ template <typename Decorator_>
 template <typename Iterator, typename T>
 void SM_triangulator<Decorator_>::
 partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
-  CGAL::Unique_hash_map<Iterator,T>& M, int pos) const
+  CGAL::internal::Handle_hash_map<Iterator,T>& M, int pos) const
 { CGAL_NEF_TRACEN("partition_to_halfsphere ");
   CGAL_assertion(pos!=0);
   bool add_cross = true;

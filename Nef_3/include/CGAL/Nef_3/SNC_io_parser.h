@@ -20,7 +20,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_map.h>
 #include <CGAL/Nef_S2/SM_decorator.h>
 #include <CGAL/Nef_3/SNC_structure.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
@@ -635,7 +635,7 @@ struct find_minimal_sface_of_shell : public SNC_const_decorator<T> {
   typedef typename T::SFace_handle        SFace_handle;
   typedef typename T::SHalfedge_handle    SHalfedge_handle;
   typedef typename T::SHalfloop_handle    SHalfloop_handle;
-  typedef CGAL::Unique_hash_map<SFace_handle,bool> SFace_visited_hash;
+  typedef CGAL::internal::Handle_hash_map<SFace_handle,bool> SFace_visited_hash;
 
   SFace_visited_hash& Done;
   SFace_handle sf_min;
@@ -1275,7 +1275,7 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
     SFI[*sfl] = i++;
 
   Volume_iterator ci;
-  CGAL::Unique_hash_map<SFace_handle,bool> Done(false);
+  CGAL::internal::Handle_hash_map<SFace_handle,bool> Done(false);
   find_minimal_sface_of_shell<SNC_structure> findMinSF(*this->sncp(),Done);
   CGAL_forall_volumes(ci, *this->sncp()) {
     if(sorted) {

@@ -295,9 +295,9 @@ protected:
   template<typename IT>
   struct From_intersecting_polygons {
 
-    Unique_hash_map<Halfedge_handle,IT>& halfedge2iterator;
+    CGAL::internal::Handle_hash_map<Halfedge_handle,IT>& halfedge2iterator;
 
-    From_intersecting_polygons(Unique_hash_map<Halfedge_handle,IT>& e2i)
+    From_intersecting_polygons(CGAL::internal::Handle_hash_map<Halfedge_handle,IT>& e2i)
       : halfedge2iterator(e2i) {}
 
     void supporting_segment(Halfedge_handle e, IT it)
@@ -476,7 +476,7 @@ public:
     }
 
     Overlayer D(pm());
-    Unique_hash_map<Halfedge_handle,ES_iterator> e2i;
+    CGAL::internal::Handle_hash_map<Halfedge_handle,ES_iterator> e2i;
     From_intersecting_polygons<ES_iterator> fip(e2i);
     D.create(L.begin(),L.end(),fip);
 

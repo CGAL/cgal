@@ -773,7 +773,7 @@ class NefS2_to_UnitSphere
     CGAL_forall_svertices(v,E_)
       S_.push_back(v->point(),CO_.color(v,v->mark()));
 
-    Unique_hash_map<SHalfedge_const_iterator,bool> Done(false);
+    CGAL::internal::Handle_hash_map<SHalfedge_const_iterator,bool> Done(false);
     CGAL_forall_shalfedges(e,T_) {
       if ( Done[e] ) continue;
       SHalfedge_const_handle en(e->snext()),enn(en->snext());

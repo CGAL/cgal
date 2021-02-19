@@ -17,7 +17,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_map.h>
 #include <string>
 #include <list>
 #include <sstream>
@@ -505,7 +505,7 @@ PM_const_decorator<HDS>::
 number_of_face_cycles() const
 {
   Size_type fc_num=0;
-  CGAL::Unique_hash_map<Halfedge_const_handle,bool> visited;
+  CGAL::internal::Handle_hash_map<Halfedge_const_handle,bool> visited;
     // init with bool() == false
   Halfedge_const_iterator eit =  phds->halfedges_begin();
   Halfedge_const_iterator eend = phds->halfedges_end();
@@ -525,7 +525,7 @@ number_of_connected_components() const
   typedef Vertex_const_iterator vc_handle;
   typedef Halfedge_around_vertex_const_circulator hvc_circulator;
   int comp_num=0;
-  CGAL::Unique_hash_map< vc_handle, bool> handled(false);
+  CGAL::internal::Handle_hash_map< vc_handle, bool> handled(false);
   vc_handle vit = vertices_begin(), vend = vertices_end();
   for ( ; vit != vend; ++vit) {
     if (handled[vit]) continue;
@@ -567,8 +567,8 @@ void print_as_leda_graph(std::ostream& os, const PMCDEC& D,
   typedef typename PMCDEC::Halfedge_const_iterator
   Halfedge_const_iterator;
   int vn(1), en(1);
-  CGAL::Unique_hash_map<Vertex_const_iterator,int>   v_num;
-  CGAL::Unique_hash_map<Halfedge_const_iterator,int> e_num;
+  CGAL::internal::Handle_hash_map<Vertex_const_iterator,int>   v_num;
+  CGAL::internal::Handle_hash_map<Halfedge_const_iterator,int> e_num;
   os << "LEDA.GRAPH\n" << "point\n" << "int\n";
   os << D.number_of_vertices() << std::endl;
   Vertex_const_iterator vit;

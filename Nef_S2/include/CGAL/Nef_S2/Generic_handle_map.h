@@ -16,7 +16,7 @@
 #include <CGAL/license/Nef_S2.h>
 
 
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_map.h>
 
 namespace CGAL {
 
@@ -29,8 +29,8 @@ struct Void_handle_hash_function {
 
 template <class I>
 class Generic_handle_map : public
-  Unique_hash_map<void*,I,Void_handle_hash_function>
-{ typedef Unique_hash_map<void*,I,Void_handle_hash_function> Base;
+  CGAL::internal::Handle_hash_map<void*,I,Void_handle_hash_function>
+{ typedef CGAL::internal::Handle_hash_map<void*,I,Void_handle_hash_function> Base;
 public:
   Generic_handle_map() : Base() {}
   Generic_handle_map(I i) : Base(i) {}

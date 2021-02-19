@@ -435,7 +435,7 @@ public:
 
   Vertex_handle create_for_infibox_overlay(Vertex_const_handle vin) const {
 
-    Unique_hash_map<SHalfedge_handle, Mark> mark_of_right_sface;
+    CGAL::internal::Handle_hash_map<SHalfedge_handle, Mark> mark_of_right_sface;
 
     Vertex_handle v = this->sncp()->new_vertex(vin->point(), vin->mark());
     SM_decorator D(&*v);
@@ -689,10 +689,10 @@ public:
     ++number_of_clones;
 #endif
 
-    CGAL::Unique_hash_map<SVertex_const_handle, SVertex_handle>         VM;
-    CGAL::Unique_hash_map<SHalfedge_const_handle, SHalfedge_handle>     EM;
-    CGAL::Unique_hash_map<SHalfloop_const_handle, SHalfloop_handle>     LM;
-    CGAL::Unique_hash_map<SFace_const_handle, SFace_handle>             FM;
+    CGAL::internal::Handle_hash_map<SVertex_const_handle, SVertex_handle>         VM;
+    CGAL::internal::Handle_hash_map<SHalfedge_const_handle, SHalfedge_handle>     EM;
+    CGAL::internal::Handle_hash_map<SHalfloop_const_handle, SHalfloop_handle>     LM;
+    CGAL::internal::Handle_hash_map<SFace_const_handle, SFace_handle>             FM;
 
     SM_const_decorator E(&*vin);
     Vertex_handle vout = this->sncp()->new_vertex(vin->point(), vin->mark());
@@ -769,7 +769,7 @@ public:
 
     CGAL_NEF_TRACEN("edge facet overlay " << p);
 
-    Unique_hash_map<SHalfedge_handle, Mark> mark_of_right_sface;
+    CGAL::internal::Handle_hash_map<SHalfedge_handle, Mark> mark_of_right_sface;
 
     SM_decorator D(&*this->sncp()->new_vertex(p, BOP(e->mark(), f->mark())));
     SM_const_decorator E(&*e->source());
@@ -966,7 +966,7 @@ public:
       typedef std::map< Pluecker_line_3, Halfedge_list, Pluecker_line_lt>
         Pluecker_line_map;
 
-      Unique_hash_map<Vertex_handle, bool> erase_vertex(false);
+      CGAL::internal::Handle_hash_map<Vertex_handle, bool> erase_vertex(false);
       std::list<Point_3> recreate;
 
       SNC_decorator D(*this);
@@ -1910,10 +1910,10 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
     ++number_of_clones;
 #endif
 
-    CGAL::Unique_hash_map<SVertex_const_handle, SVertex_handle>         VM;
-    CGAL::Unique_hash_map<SHalfedge_const_handle, SHalfedge_handle>     EM;
-    CGAL::Unique_hash_map<SHalfloop_const_handle, SHalfloop_handle>     LM;
-    CGAL::Unique_hash_map<SFace_const_handle, SFace_handle>             FM;
+    CGAL::internal::Handle_hash_map<SVertex_const_handle, SVertex_handle>         VM;
+    CGAL::internal::Handle_hash_map<SHalfedge_const_handle, SHalfedge_handle>     EM;
+    CGAL::internal::Handle_hash_map<SHalfloop_const_handle, SHalfloop_handle>     LM;
+    CGAL::internal::Handle_hash_map<SFace_const_handle, SFace_handle>             FM;
 
     SM_const_decorator E(&*vin);
     Vertex_handle vout = this->sncp()->new_vertex(vin->point(), vin->mark());
@@ -1995,7 +1995,7 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
 
     CGAL_NEF_TRACEN("edge facet overlay " << p);
 
-    Unique_hash_map<SHalfedge_handle, Mark> mark_of_right_sface;
+    CGAL::internal::Handle_hash_map<SHalfedge_handle, Mark> mark_of_right_sface;
 
     SM_decorator D(&*this->sncp()->new_vertex(p, BOP(e->mark(), f->mark())));
     SM_const_decorator E(&*e->source());

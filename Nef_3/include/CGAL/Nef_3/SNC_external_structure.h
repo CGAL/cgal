@@ -247,12 +247,12 @@ public:
 
   SNC_point_locator* pl;
 
-  typedef CGAL::Unique_hash_map<SFace_const_handle,unsigned int>
+  typedef CGAL::internal::Handle_hash_map<SFace_const_handle,unsigned int>
                                                          Sface_shell_hash;
-  typedef CGAL::Unique_hash_map<Halffacet_const_handle,unsigned int>
+  typedef CGAL::internal::Handle_hash_map<Halffacet_const_handle,unsigned int>
                                                          Face_shell_hash;
-  typedef CGAL::Unique_hash_map<SFace_const_handle,bool> SFace_visited_hash;
-  typedef CGAL::Unique_hash_map<SFace_const_handle,bool> Shell_closed_hash;
+  typedef CGAL::internal::Handle_hash_map<SFace_const_handle,bool> SFace_visited_hash;
+  typedef CGAL::internal::Handle_hash_map<SFace_const_handle,bool> Shell_closed_hash;
 
   using SNC_decorator::visit_shell_objects;
   using SNC_decorator::link_as_inner_shell;
@@ -734,7 +734,7 @@ public:
       M[normalized(h)].push_back(make_object(e->twin()));
       CGAL_NEF_TRACEN(" normalized as " << normalized(h));
       /*
-        Unique_hash_map<SHalfedge_handle, bool> Done(false);
+        CGAL::internal::Handle_hash_map<SHalfedge_handle, bool> Done(false);
         SHalfedge_iterator ei;
         CGAL_forall_sedges(ei,*this->sncp()) {
         if(Done[ei]) continue;
@@ -1304,7 +1304,7 @@ public:
     link_shalfedges_to_facet_cycles();
 
     std::map<int, int> hash;
-    CGAL::Unique_hash_map<SHalfedge_handle, bool> done(false);
+    CGAL::internal::Handle_hash_map<SHalfedge_handle, bool> done(false);
 
     SHalfedge_iterator sei;
     CGAL_forall_shalfedges(sei, *this->sncp()) {
@@ -1382,7 +1382,7 @@ public:
     simp.vertex_simplificationI();
 
     //    std::map<int, int> hash;
-    CGAL::Unique_hash_map<SHalfedge_handle, bool>
+    CGAL::internal::Handle_hash_map<SHalfedge_handle, bool>
       done(false);
 
     /*

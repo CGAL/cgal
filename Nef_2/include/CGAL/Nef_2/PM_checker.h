@@ -17,7 +17,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_map.h>
 #include <CGAL/Nef_2/PM_const_decorator.h>
 
 namespace CGAL {
@@ -248,7 +248,7 @@ check_is_triangulation() const
   check_order_preserving_embedding();
   eb = check_boundary_is_clockwise_weakly_polygon();
 
-  CGAL::Unique_hash_map< Halfedge_const_iterator, bool> on_boundary(false);
+  CGAL::internal::Handle_hash_map< Halfedge_const_iterator, bool> on_boundary(false);
   Halfedge_around_face_const_circulator hit(eb), hend(hit);
   std::ostringstream error_status;
   CGAL::set_pretty_mode ( error_status );

@@ -20,7 +20,7 @@
 #include <CGAL/Nef_3/SNC_intersection.h>
 #include <CGAL/Nef_3/SNC_k3_tree_traits.h>
 #include <CGAL/Nef_3/K3_tree.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_map.h>
 #include <CGAL/Timer.h>
 #include <string>
 
@@ -116,9 +116,9 @@ public:
 
   virtual void transform(const Aff_transformation_3& t) = 0;
 
-  //virtual bool update( Unique_hash_map<Vertex_handle, bool>& V,
-  //                   Unique_hash_map<Halfedge_handle, bool>& E,
-  //                   Unique_hash_map<Halffacet_handle, bool>& F) = 0;
+  //virtual bool update( CGAL::internal::Handle_hash_map<Vertex_handle, bool>& V,
+  //                   CGAL::internal::Handle_hash_map<Halfedge_handle, bool>& E,
+  //                   CGAL::internal::Handle_hash_map<Halffacet_handle, bool>& F) = 0;
 
   virtual void add_facet(Halffacet_handle) {}
 
@@ -224,7 +224,7 @@ public:
     typedef typename CT::Edge                  Edge;
 
     CT ct;
-    CGAL::Unique_hash_map<Face_handle, bool> visited;
+    CGAL::internal::Handle_hash_map<Face_handle, bool> visited;
     Finite_face_iterator fi;
 
   public:
@@ -413,9 +413,9 @@ public:
     candidate_provider->transform(t);
   }
 
-  virtual bool update( Unique_hash_map<Vertex_handle, bool>& V,
-                       Unique_hash_map<Halfedge_handle, bool>& E,
-                       Unique_hash_map<Halffacet_handle, bool>& F) {
+  virtual bool update( CGAL::internal::Handle_hash_map<Vertex_handle, bool>& V,
+                       CGAL::internal::Handle_hash_map<Halfedge_handle, bool>& E,
+                       CGAL::internal::Handle_hash_map<Halffacet_handle, bool>& F) {
     CGAL_NEF_TIMER(ct_t.start());
     CGAL_assertion( initialized);
     bool updated = candidate_provider->update( V, E, F);
@@ -997,7 +997,7 @@ public:
                                                          e0->twin()->source()->point()));
 
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
-    Unique_hash_map< Halffacet_triangle_handle, bool> f_mark(false);
+    CGAL::internal::Handle_hash_map< Halffacet_triangle_handle, bool> f_mark(false);
 #endif // CGAL_NEF3_TRIANGULATE_FACETS
 
     Segment_3 s(Segment_3(e0->source()->point(),e0->twin()->source()->point()));
@@ -1134,7 +1134,7 @@ public:
     _CGAL_NEF_TRACEN( "intersecting edge: "<< Segment_3(e0->source()->point(),
                                                e0->twin()->source()->point()));
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
-    Unique_hash_map< Halffacet_triangle_handle, bool> f_mark(false);
+    CGAL::internal::Handle_hash_map< Halffacet_triangle_handle, bool> f_mark(false);
 #endif // CGAL_NEF3_TRIANGULATE_FACETS
     Segment_3 s(Segment_3(e0->source()->point(),e0->twin()->source()->point()));
     Vertex_handle v;
@@ -1297,9 +1297,9 @@ public:
     return new Self;
   }
 
-  virtual bool update( Unique_hash_map<Vertex_handle, bool>& V,
-                       Unique_hash_map<Halfedge_handle, bool>& E,
-                       Unique_hash_map<Halffacet_handle, bool>& F) {
+  virtual bool update( CGAL::internal::Handle_hash_map<Vertex_handle, bool>& V,
+                       CGAL::internal::Handle_hash_map<Halfedge_handle, bool>& E,
+                       CGAL::internal::Handle_hash_map<Halffacet_handle, bool>& F) {
     CGAL_NEF_TIMER(ct_t.start());
     CGAL_assertion( initialized);
     CGAL_NEF_TIMER(ct_t.stop());

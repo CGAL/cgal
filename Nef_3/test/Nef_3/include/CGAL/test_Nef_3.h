@@ -92,7 +92,7 @@ public:
 
 private:
 
-  typedef CGAL::Unique_hash_map<SFace_const_handle,bool> SFace_visited_hash;
+  typedef CGAL::internal::Handle_hash_map<SFace_const_handle,bool> SFace_visited_hash;
 
   struct Shell_explorer {
     bool first;

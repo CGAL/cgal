@@ -19,7 +19,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_map.h>
 #include <CGAL/In_place_list.h>
 #include <CGAL/Nef_3/SNC_list.h>
 #include <CGAL/Nef_S2/Generic_handle_map.h>
@@ -1352,13 +1352,13 @@ template <typename Kernel, typename Items, typename Mark>
 void SNC_structure<Kernel,Items,Mark>::
 pointer_update(const SNC_structure<Kernel,Items,Mark>& D)
 {
-  CGAL::Unique_hash_map<Vertex_const_handle,Vertex_handle>       VM;
-  CGAL::Unique_hash_map<Halfedge_const_handle,Halfedge_handle>   EM;
-  CGAL::Unique_hash_map<Halffacet_const_handle,Halffacet_handle> FM;
-  CGAL::Unique_hash_map<Volume_const_handle,Volume_handle>       CM;
-  CGAL::Unique_hash_map<SHalfedge_const_handle,SHalfedge_handle> SEM;
-  CGAL::Unique_hash_map<SHalfloop_const_handle,SHalfloop_handle> SLM;
-  CGAL::Unique_hash_map<SFace_const_handle,SFace_handle>         SFM;
+  CGAL::internal::Handle_hash_map<Vertex_const_handle,Vertex_handle>       VM;
+  CGAL::internal::Handle_hash_map<Halfedge_const_handle,Halfedge_handle>   EM;
+  CGAL::internal::Handle_hash_map<Halffacet_const_handle,Halffacet_handle> FM;
+  CGAL::internal::Handle_hash_map<Volume_const_handle,Volume_handle>       CM;
+  CGAL::internal::Handle_hash_map<SHalfedge_const_handle,SHalfedge_handle> SEM;
+  CGAL::internal::Handle_hash_map<SHalfloop_const_handle,SHalfloop_handle> SLM;
+  CGAL::internal::Handle_hash_map<SFace_const_handle,SFace_handle>         SFM;
   Vertex_const_iterator vc = D.vertices_begin();
   Vertex_iterator v = vertices_begin();
   for ( ; vc != D.vertices_end(); ++vc,++v) VM[vc] = v;

@@ -160,8 +160,8 @@ public:
   bool reference_counted;
 #endif
   SNC_decorator D;
-  Unique_hash_map<Vertex_handle, Oriented_side> OnSideMap;
-  Unique_hash_map<const RT*, Oriented_side> OnSideMapRC;
+  CGAL::internal::Handle_hash_map<Vertex_handle, Oriented_side> OnSideMap;
+  CGAL::internal::Handle_hash_map<const RT*, Oriented_side> OnSideMapRC;
 };
 
 template <class SNC_decorator>

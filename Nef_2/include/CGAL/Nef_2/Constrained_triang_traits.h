@@ -16,7 +16,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_map.h>
 #include <CGAL/generic_sweep.h>
 #include <CGAL/Nef_2/PM_checker.h>
 #include <cstdlib>
@@ -150,7 +150,7 @@ public:
     Vertex_handle           event;
     Point                   p_sweep;
     Sweep_status_structure  SL;
-    CGAL::Unique_hash_map<Halfedge_handle,ss_iterator> SLItem;
+    CGAL::internal::Handle_hash_map<Halfedge_handle,ss_iterator> SLItem;
     const NEWEDGE&          Treat_new_edge;
     Halfedge_handle         e_low,e_high; // framing edges !
     Halfedge_handle         e_search;

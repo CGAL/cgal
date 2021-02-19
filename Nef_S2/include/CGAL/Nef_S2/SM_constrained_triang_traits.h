@@ -16,7 +16,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_map.h>
 #include <CGAL/generic_sweep.h>
 //#include <CGAL/Nef_S2/SM_checker.h>
 #include <string>
@@ -133,7 +133,7 @@ public:
   SVertex_handle           event;
   Point                   p_sweep;
   Sweep_status_structure  SL;
-  CGAL::Unique_hash_map<SHalfedge_handle,ss_iterator> SLItem;
+  CGAL::internal::Handle_hash_map<SHalfedge_handle,ss_iterator> SLItem;
   SHalfedge_handle         e_low,e_high; // framing edges !
   SHalfedge_handle         e_search;
   SVertex_iterator         v_first, v_beyond;

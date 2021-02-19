@@ -507,7 +507,7 @@ void SM_io_parser<Decorator_>::print_faces() const
   out << "SHalfedges: " << this->number_of_shalfedges() << "\n";
   out << "Loop:      " << this->number_of_shalfloops() << "\n";
   SHalfedge_iterator e;
-  Unique_hash_map<SHalfedge_iterator,bool> Done(false);
+  CGAL::internal::Handle_hash_map<SHalfedge_iterator,bool> Done(false);
   CGAL_forall_shalfedges(e,*this) {
     if ( Done[e] ) continue;
     typename Base::SHalfedge_around_sface_circulator c(e), ce = c;

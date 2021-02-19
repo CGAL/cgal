@@ -17,7 +17,7 @@
 
 #include <vector>
 #include <CGAL/basic.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_map.h>
 #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 #include <CGAL/Nef_2/geninfo.h>
 #else
@@ -254,7 +254,7 @@ public:
     // s now initialized
 
     Sphere_direction dso(s.sphere_circle().opposite());
-    Unique_hash_map<SHalfedge_handle,bool> visited(false);
+    CGAL::internal::Handle_hash_map<SHalfedge_handle,bool> visited(false);
     CGAL_forall_svertices(v,*this) {
       Sphere_point vp = v->point();
       if ( (v == v_res) || s.has_on(vp) ) {
@@ -378,7 +378,7 @@ public:
       }
     } // all vertices
 
-    CGAL::Unique_hash_map<SHalfedge_handle,bool> visited(false);
+    CGAL::internal::Handle_hash_map<SHalfedge_handle,bool> visited(false);
     SHalfedge_iterator e_res;
     CGAL_forall_sedges(e,*this) {
       Sphere_segment se = segment(e);

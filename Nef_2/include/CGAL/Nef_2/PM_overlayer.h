@@ -17,7 +17,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_map.h>
 #include <CGAL/Union_find.h>
 #include <CGAL/Nef_2/Segment_overlay_traits.h>
 #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
@@ -132,11 +132,11 @@ struct PMO_from_pm {
 
   const Decorator& G;
   const Const_decorator* pGI[2];
-  CGAL::Unique_hash_map<IT,INFO>& M;
+  CGAL::internal::Handle_hash_map<IT,INFO>& M;
   PMO_from_pm(const Decorator& Gi,
               const Const_decorator* pG0,
               const Const_decorator* pG1,
-              CGAL::Unique_hash_map<IT,INFO>& Mi) : G(Gi),M(Mi)
+              CGAL::internal::Handle_hash_map<IT,INFO>& Mi) : G(Gi),M(Mi)
  { pGI[0]=pG0; pGI[1]=pG1; }
 
  Vertex_handle new_vertex(const Point& p) const
@@ -431,7 +431,7 @@ and |\Mvar.mark(v,1) = D1.mark(f1)|.}*/
   Const_decorator PI[2];
   PI[0] = Const_decorator(P0); PI[1] = Const_decorator(P1);
   Seg_list Segments; int i;
-  CGAL::Unique_hash_map<Seg_iterator,Seg_info> From;
+  CGAL::internal::Handle_hash_map<Seg_iterator,Seg_info> From;
   for (i=0; i<2; ++i) {
     Vertex_const_iterator v;
     for(v = PI[i].vertices_begin(); v != PI[i].vertices_end(); ++v)
@@ -567,7 +567,7 @@ avoid the simplification for edge pairs referenced by |e|.}*/
 {
   CGAL_NEF_TRACEN("simplifying");
   typedef typename CGAL::Union_find<Face_handle>::handle Union_find_handle;
-  CGAL::Unique_hash_map< Face_iterator, Union_find_handle> Pitem;
+  CGAL::internal::Handle_hash_map< Face_iterator, Union_find_handle> Pitem;
   CGAL::Union_find<Face_handle> unify_faces;
 
   Face_iterator f, fend = this->faces_end();
@@ -596,7 +596,7 @@ avoid the simplification for edge pairs referenced by |e|.}*/
     }
   }
 
-  CGAL::Unique_hash_map<Halfedge_handle,bool> linked(false);
+  CGAL::internal::Handle_hash_map<Halfedge_handle,bool> linked(false);
   for (e = this->halfedges_begin(); e != eend; ++e) {
     if ( linked[e] ) continue;
     Halfedge_around_face_circulator hfc(e),hend(hfc);
@@ -816,7 +816,7 @@ template <typename Below_info>
 void create_face_objects(const Below_info& D) const
 {
   CGAL_NEF_TRACEN("create_face_objects()");
-  CGAL::Unique_hash_map<Halfedge_handle,int> FaceCycle(-1);
+  CGAL::internal::Handle_hash_map<Halfedge_handle,int> FaceCycle(-1);
   std::vector<Halfedge_handle>  MinimalHalfedge;
   int i=0;
   Halfedge_iterator e, eend = this->halfedges_end();
@@ -877,7 +877,7 @@ template <typename Below_info>
 void create_face_objects_pl(const Below_info& D) const
 {
   CGAL_NEF_TRACEN("create_face_objects_pl()");
-  CGAL::Unique_hash_map<Halfedge_handle,int> FaceCycle(-1);
+  CGAL::internal::Handle_hash_map<Halfedge_handle,int> FaceCycle(-1);
   std::vector<Halfedge_handle>  MinimalHalfedge;
   int i=0;
   Halfedge_iterator e, eend = this->halfedges_end();
@@ -927,7 +927,7 @@ void create_face_objects_pl(const Below_info& D) const
 template <typename Below_info>
 Face_handle determine_face(Halfedge_handle e,
   const std::vector<Halfedge_handle>& MinimalHalfedge,
-  const CGAL::Unique_hash_map<Halfedge_handle,int>& FaceCycle,
+  const CGAL::internal::Handle_hash_map<Halfedge_handle,int>& FaceCycle,
   const Below_info& D) const
 { CGAL_NEF_TRACEN("determine_face "<<PE(e));
   Halfedge_handle e_min = MinimalHalfedge[FaceCycle[e]];

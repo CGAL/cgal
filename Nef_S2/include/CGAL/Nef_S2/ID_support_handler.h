@@ -16,7 +16,7 @@
 #include <CGAL/license/Nef_S2.h>
 
 
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_map.h>
 #include <map>
 
 #undef CGAL_NEF_DEBUG

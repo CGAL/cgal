@@ -28,7 +28,7 @@
 #include <CGAL/Nef_S2/SM_decorator_traits.h>
 #include <CGAL/Nef_S2/Sphere_map.h>
 #include <CGAL/Nef_S2/Normalizing.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_map.h>
 #include <CGAL/IO/Verbose_ostream.h>
 #ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
 #include <boost/any.hpp>
@@ -821,9 +821,9 @@ void extract_boundary() {
   CGAL_forall_sfaces(sf,*this) sf->mark() = false;
 }
 
-bool is_valid( Unique_hash_map<SVertex_handle,bool>& sv_hash,
-               Unique_hash_map<SHalfedge_handle,bool>& se_hash,
-               Unique_hash_map<SFace_handle,bool>& sf_hash,
+bool is_valid( CGAL::internal::Handle_hash_map<SVertex_handle,bool>& sv_hash,
+               CGAL::internal::Handle_hash_map<SHalfedge_handle,bool>& se_hash,
+               CGAL::internal::Handle_hash_map<SFace_handle,bool>& sf_hash,
                bool verb = false, int level = 0) {
 
   Verbose_ostream verr(verb);

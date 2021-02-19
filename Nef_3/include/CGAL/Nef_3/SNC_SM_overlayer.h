@@ -91,8 +91,8 @@ public:
     CGAL_NEF_TRACEN("simplifying");
 
     typedef typename CGAL::Union_find<SFace_handle>::handle Union_find_handle;
-    CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem(nullptr);
-    CGAL::Unique_hash_map< SVertex_handle, Union_find_handle> Vitem(nullptr);
+    CGAL::internal::Handle_hash_map< SFace_handle, Union_find_handle> Pitem(nullptr);
+    CGAL::internal::Handle_hash_map< SVertex_handle, Union_find_handle> Vitem(nullptr);
     CGAL::Union_find< SFace_handle> UF;
 
     SFace_iterator f;
@@ -142,7 +142,7 @@ public:
       }
     }
 
-    CGAL::Unique_hash_map<SHalfedge_handle,bool> linked(false);
+    CGAL::internal::Handle_hash_map<SHalfedge_handle,bool> linked(false);
     for (e = this->shalfedges_begin(); e != this->shalfedges_end(); ++e) {
       if ( linked[e] ) continue;
       SHalfedge_around_sface_circulator hfc(e),hend(hfc);
@@ -358,8 +358,8 @@ class SNC_SM_overlayer<SNC_indexed_items, SM_decorator_>
     CGAL_NEF_TRACEN("simplifying");
 
     typedef typename CGAL::Union_find<SFace_handle>::handle Union_find_handle;
-    CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem(nullptr);
-    CGAL::Unique_hash_map< SVertex_handle, Union_find_handle> Vitem(nullptr);
+    CGAL::internal::Handle_hash_map< SFace_handle, Union_find_handle> Pitem(nullptr);
+    CGAL::internal::Handle_hash_map< SVertex_handle, Union_find_handle> Vitem(nullptr);
     CGAL::Union_find< SFace_handle> UF;
 
     SFace_iterator f;
@@ -409,7 +409,7 @@ class SNC_SM_overlayer<SNC_indexed_items, SM_decorator_>
       }
     }
 
-    CGAL::Unique_hash_map<SHalfedge_handle,bool> linked(false);
+    CGAL::internal::Handle_hash_map<SHalfedge_handle,bool> linked(false);
     for (e = this->shalfedges_begin(); e != this->shalfedges_end(); ++e) {
       if ( linked[e] ) continue;
       SHalfedge_around_sface_circulator hfc(e),hend(hfc);

@@ -433,7 +433,7 @@ public:
 #include <sstream>
 #include <map>
 #include <CGAL/Multiset.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_map.h>
 
 namespace CGAL {
 
@@ -557,15 +557,15 @@ public:
   typedef std::list<ITERATOR>                            IsoList;
   typedef CGAL::Multiset<Point_2, compare_pnts_xy>       EventQueue;
   typedef typename EventQueue::iterator                  event_iterator;
-  typedef Unique_hash_map<Point_2*, IsoList*>            X2iso;
+  typedef CGAL::internal::Handle_hash_map<Point_2*, IsoList*>            X2iso;
 
   typedef CGAL::Multiset<ISegment, compare_segs_at_sweepline>  SweepStatus;
   typedef typename SweepStatus::iterator                       ss_iterator;
   typedef typename SweepStatus::const_iterator                 ss_const_iterator;
-  typedef CGAL::Unique_hash_map<ISegment, event_iterator>      Y2X;
-  typedef CGAL::Unique_hash_map<ISegment, ISegment>            Y2Y;
-  typedef CGAL::Unique_hash_map<Point_2*, ss_iterator>         X2Y;
-  typedef CGAL::Unique_hash_map<ISegment, Halfedge_handle>     AssocEdgeMap;
+  typedef CGAL::internal::Handle_hash_map<ISegment, event_iterator>      Y2X;
+  typedef CGAL::internal::Handle_hash_map<ISegment, ISegment>            Y2Y;
+  typedef CGAL::internal::Handle_hash_map<Point_2*, ss_iterator>         X2Y;
+  typedef CGAL::internal::Handle_hash_map<ISegment, Halfedge_handle>     AssocEdgeMap;
 
   typedef std::pair<ISegment,ISegment>                   is_pair;
 

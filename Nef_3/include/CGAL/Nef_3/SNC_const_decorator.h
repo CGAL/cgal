@@ -21,7 +21,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Nef_S2/Normalizing.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_map.h>
 #include <CGAL/Nef_3/SNC_iteration.h>
 #include <CGAL/Nef_3/SNC_decorator_traits.h>
 #include <CGAL/Nef_S2/SM_point_locator.h>
@@ -562,10 +562,10 @@ visit_shell_objects(SFace_const_handle f, Visitor& V) const
 {
   std::list<SFace_const_handle> SFaceCandidates;
   std::list<Halffacet_const_handle> FacetCandidates;
-  CGAL::Unique_hash_map<SFace_const_handle,bool> DoneSF(false);
-  CGAL::Unique_hash_map<Vertex_const_handle,bool> DoneV(false);
-  CGAL::Unique_hash_map<SVertex_const_handle,bool> DoneSV(false);
-  CGAL::Unique_hash_map<Halffacet_const_handle,bool> DoneF(false);
+  CGAL::internal::Handle_hash_map<SFace_const_handle,bool> DoneSF(false);
+  CGAL::internal::Handle_hash_map<Vertex_const_handle,bool> DoneV(false);
+  CGAL::internal::Handle_hash_map<SVertex_const_handle,bool> DoneSV(false);
+  CGAL::internal::Handle_hash_map<Halffacet_const_handle,bool> DoneF(false);
   SFaceCandidates.push_back(f);  DoneSF[f] = true;
   while ( true ) {
     if ( SFaceCandidates.empty() && FacetCandidates.empty() ) break;

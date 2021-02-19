@@ -16,7 +16,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_map.h>
 #include <CGAL/Nef_2/Constrained_triang_traits.h>
 #include <CGAL/Nef_2/Object_handle.h>
 #include <CGAL/Circulator_project.h>
@@ -233,7 +233,7 @@ public:
     Halfedge_const_handle e_res;
     Segment ss = s; // we shorten the segment iteratively
     Direction dso = K.construct_direction(K.target(s),p), d_res;
-    CGAL::Unique_hash_map<Halfedge_const_handle,bool> visited(false);
+    CGAL::internal::Handle_hash_map<Halfedge_const_handle,bool> visited(false);
     for(vit = this->vertices_begin(); vit != this->vertices_end(); ++vit) {
       Point p_res, vp = point(vit);
       if ( K.contains(ss,vp) ) {

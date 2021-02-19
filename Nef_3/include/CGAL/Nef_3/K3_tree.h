@@ -18,7 +18,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_map.h>
 #include <CGAL/Nef_3/quotient_coordinates_to_homogeneous_point.h>
 #include <CGAL/Lazy_kernel.h>
 #include <CGAL/Cartesian.h>
@@ -179,7 +179,7 @@ private:
                                     SHalfedge_around_facet_circulator;
 
     CT ct;
-    CGAL::Unique_hash_map<Face_handle, bool> visited;
+    CGAL::internal::Handle_hash_map<Face_handle, bool> visited;
     Finite_face_iterator fi;
 
   public:
@@ -885,9 +885,9 @@ typename Object_list::difference_type n_vertices = std::distance(objects.begin()
     Object_list O;
 
     Objects_around_segment objects( *this, s);
-    Unique_hash_map< Vertex_handle, bool> v_mark(false);
-    Unique_hash_map< Halfedge_handle, bool> e_mark(false);
-    Unique_hash_map< Halffacet_handle, bool> f_mark(false);
+    CGAL::internal::Handle_hash_map< Vertex_handle, bool> v_mark(false);
+    CGAL::internal::Handle_hash_map< Halfedge_handle, bool> e_mark(false);
+    CGAL::internal::Handle_hash_map< Halffacet_handle, bool> f_mark(false);
     std::map< Triangle_3, bool, Compare_triangle_3<Triangle_3> > t_mark;
     for( typename Objects_around_segment::Iterator oar = objects.begin();
          oar != objects.end(); ++oar) {
@@ -1067,16 +1067,16 @@ std::string dump_object_list( const Object_list& O, int level = 0) {
   return os.str();
  }
 
-bool update( Unique_hash_map<Vertex_handle, bool>& V,
-             Unique_hash_map<Halfedge_handle, bool>& E,
-             Unique_hash_map<Halffacet_handle, bool>& F) {
+bool update( CGAL::internal::Handle_hash_map<Vertex_handle, bool>& V,
+             CGAL::internal::Handle_hash_map<Halfedge_handle, bool>& E,
+             CGAL::internal::Handle_hash_map<Halffacet_handle, bool>& F) {
   return update( root, V, E, F);
 }
 
 bool update( Node_handle node,
-             Unique_hash_map<Vertex_handle, bool>& V,
-             Unique_hash_map<Halfedge_handle, bool>& E,
-             Unique_hash_map<Halffacet_handle, bool>& F) {
+             CGAL::internal::Handle_hash_map<Vertex_handle, bool>& V,
+             CGAL::internal::Handle_hash_map<Halfedge_handle, bool>& E,
+             CGAL::internal::Handle_hash_map<Halffacet_handle, bool>& F) {
   CGAL_assertion( node != nullptr);
   if( node->is_leaf()) {
     bool updated = false;

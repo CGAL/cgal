@@ -18,7 +18,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_map.h>
 #include <CGAL/Nef_2/Object_handle.h>
 #include <CGAL/Nef_S2/SM_iteration.h>
 #include <CGAL/Nef_S2/Generic_handle_map.h>

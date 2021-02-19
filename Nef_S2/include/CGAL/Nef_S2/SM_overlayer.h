@@ -52,7 +52,7 @@ struct SMO_from_segs {
   typedef typename SM_decorator::SHalfedge_handle   Halfedge_handle;
   typedef typename SM_decorator::Sphere_point       Point;
   typedef typename SM_decorator::Sphere_segment     Segment;
-  typedef CGAL::Unique_hash_map<I,bool>             Iterator_map;
+  typedef CGAL::internal::Handle_hash_map<I,bool>             Iterator_map;
   SM_decorator G;
   const Iterator_map& M;
   SMO_from_segs(SM_decorator Gi, const Iterator_map& Mi) : G(Gi),M(Mi) {}
@@ -159,10 +159,10 @@ struct SMO_from_sm {
   typedef typename SM_overlayer::Sphere_segment          Segment;
 
   SM_overlayer G;
-  CGAL::Unique_hash_map<IT,INFO>& M;
+  CGAL::internal::Handle_hash_map<IT,INFO>& M;
   SMO_from_sm(SM_overlayer Gi,
               SM_const_decorator* /* pGIi */,
-              CGAL::Unique_hash_map<IT,INFO>& Mi) :
+              CGAL::internal::Handle_hash_map<IT,INFO>& Mi) :
     G(Gi), M(Mi) {}
 
 Vertex_handle new_vertex(const Point& p)
@@ -532,7 +532,7 @@ public:
   typedef typename Seg_list::iterator          Seg_iterator;
   typedef std::pair<Seg_iterator,Seg_iterator> Seg_it_pair;
   typedef std::pair<Sphere_segment,Sphere_segment> Seg_pair;
-  typedef CGAL::Unique_hash_map<Seg_iterator,Seg_info> Seg_map;
+  typedef CGAL::internal::Handle_hash_map<Seg_iterator,Seg_info> Seg_map;
 
   // ---------------------------------------------------------------
 
@@ -693,7 +693,7 @@ public:
   template <typename Below_accessor>
   SFace_handle determine_face(SHalfedge_handle e,
     const std::vector<SHalfedge_handle>& MinimalSHalfedge,
-    const CGAL::Unique_hash_map<SHalfedge_handle,int>& SFaceCycle,
+    const CGAL::internal::Handle_hash_map<SHalfedge_handle,int>& SFaceCycle,
     const Below_accessor& D)
   { CGAL_NEF_TRACEN("determine_face "<<PH(e));
     int fc = SFaceCycle[e];
@@ -803,7 +803,7 @@ public:
   void subdivide_segments(Iterator start, Iterator end) const;
   template <typename Iterator, typename T>
   void partition_to_halfsphere(Iterator start, Iterator end,
-    Seg_list& L, CGAL::Unique_hash_map<Iterator,T>& M,
+    Seg_list& L, CGAL::internal::Handle_hash_map<Iterator,T>& M,
     Sphere_circle xycircle, Sphere_circle yzcircle, bool include_equator) const;
 
   template <typename Mark_accessor>
@@ -842,7 +842,7 @@ create_from_segments(Forward_iterator start, Forward_iterator end)
 {
   CGAL_NEF_TRACEN("creating from segment iterator range");
   Seg_list L(start,end);
-  Unique_hash_map<Seg_iterator,bool> From_input(false);
+  CGAL::internal::Handle_hash_map<Seg_iterator,bool> From_input(false);
   Seg_iterator it;
   CGAL_forall_iterators(it,L) From_input[it]=true;
   Seg_list L_pos,L_neg;
@@ -910,7 +910,7 @@ create_from_circles(Forward_iterator start, Forward_iterator end)
 {
   CGAL_NEF_TRACEN("creating from circle iterator range");
   Seg_list L;
-  Unique_hash_map<Seg_iterator,bool> From_input(false);
+  CGAL::internal::Handle_hash_map<Seg_iterator,bool> From_input(false);
   for ( ; start != end; ++start ) {
     std::pair<Sphere_segment,Sphere_segment> spair =
       start->split_at_xy_plane();
@@ -1942,7 +1942,7 @@ template <typename Map>
 template <typename Iterator, typename T>
 void SM_overlayer<Map>::
 partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
-                        CGAL::Unique_hash_map<Iterator,T>& M,
+                        CGAL::internal::Handle_hash_map<Iterator,T>& M,
                         Sphere_circle xycircle, Sphere_circle yzcircle,
                         bool include_equator) const
 { CGAL_NEF_TRACEN("partition_to_halfsphere ");
@@ -2048,7 +2048,7 @@ create_face_objects(SHalfedge_iterator e_start, SHalfedge_iterator e_end,
 {
   CGAL_NEF_TRACEN("create_face_objects()");
   if(e_start != e_end) {
-    CGAL::Unique_hash_map<SHalfedge_handle,int> SFaceCycle(-1);
+    CGAL::internal::Handle_hash_map<SHalfedge_handle,int> SFaceCycle(-1);
     std::vector<SHalfedge_handle>  MinimalSHalfedge;
     SHalfedge_around_sface_circulator hfc(last_out_edge(v_start)),hend(hfc);
     CGAL_NEF_TRACEN("equator cycle "<<PH(hfc));
@@ -2311,8 +2311,8 @@ void SM_overlayer<Map>::simplify()
   CGAL_NEF_TRACEN("simplifying");
 
   typedef typename CGAL::Union_find<SFace_handle>::handle Union_find_handle;
-  CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem(nullptr);
-  CGAL::Unique_hash_map< SVertex_handle, Union_find_handle> Vitem(nullptr);
+  CGAL::internal::Handle_hash_map< SFace_handle, Union_find_handle> Pitem(nullptr);
+  CGAL::internal::Handle_hash_map< SVertex_handle, Union_find_handle> Vitem(nullptr);
   CGAL::Union_find< SFace_handle> UF;
 
   SFace_iterator f;
@@ -2360,7 +2360,7 @@ void SM_overlayer<Map>::simplify()
     }
   }
 
-  CGAL::Unique_hash_map<SHalfedge_handle,bool> linked(false);
+  CGAL::internal::Handle_hash_map<SHalfedge_handle,bool> linked(false);
   for (e = this->shalfedges_begin(); e != this->shalfedges_end(); ++e) {
     if ( linked[e] ) continue;
     SHalfedge_around_sface_circulator hfc(e),hend(hfc);

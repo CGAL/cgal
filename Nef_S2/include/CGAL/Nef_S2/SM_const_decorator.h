@@ -21,7 +21,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/circulator.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_map.h>
 #include <CGAL/Nef_2/Object_index.h>
 #include <CGAL/Nef_S2/SM_iteration.h>
 #include <CGAL/Nef_S2/SM_decorator_traits.h>
@@ -379,7 +379,7 @@ SM_const_decorator<SM_>::
 number_of_sface_cycles() const
 {
   unsigned int fc_num=0;
-  CGAL::Unique_hash_map<SHalfedge_const_handle,bool> visited;
+  CGAL::internal::Handle_hash_map<SHalfedge_const_handle,bool> visited;
   SHalfedge_const_iterator e;
   CGAL_forall_shalfedges(e,*this) {
     if (visited[e]) continue;
@@ -397,7 +397,7 @@ SM_const_decorator<SM_>::
 number_of_connected_components() const
 {
   int comp_num=0;
-  CGAL::Unique_hash_map<SVertex_const_iterator,bool> visited(false);
+  CGAL::internal::Handle_hash_map<SVertex_const_iterator,bool> visited(false);
   SVertex_const_iterator v;
   CGAL_forall_svertices(v,*this) {
     if (visited[v]) continue;

@@ -110,14 +110,14 @@ struct Sort_sedges2 {
 template <typename P, typename V, typename E, typename I>
 struct Halffacet_output {
 
-Halffacet_output(CGAL::Unique_hash_map<I,E>& F, std::vector<E>& S)
+Halffacet_output(CGAL::internal::Handle_hash_map<I,E>& F, std::vector<E>& S)
   : From(F), Support(S) { edge_number=0; Support[0]=E(); }
 
 typedef P         Point;
 typedef V         Vertex_handle;
 typedef unsigned  Halfedge_handle;
 
-CGAL::Unique_hash_map<I,E>& From;
+CGAL::internal::Handle_hash_map<I,E>& From;
 std::vector<E>& Support;
 unsigned edge_number;
 
@@ -404,7 +404,7 @@ protected:
 
   Halffacet_handle determine_facet(SHalfedge_handle e,
     const std::vector<SHalfedge_handle>& MinimalEdge,
-    const CGAL::Unique_hash_map<SHalfedge_handle,int>& FacetCycle,
+    const CGAL::internal::Handle_hash_map<SHalfedge_handle,int>& FacetCycle,
     const std::vector<SHalfedge_handle>& Edge_of) const
   { CGAL_NEF_TRACEN("  determine_facet "<<debug(e));
     int fc = FacetCycle[e];
@@ -467,12 +467,12 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
   Object_list_iterator start, Object_list_iterator end) const
 { CGAL_NEF_TRACEN(">>>>>create_facet_objects "
                   << normalized(plane_supporting_facet));
-  CGAL::Unique_hash_map<SHalfedge_handle,int> FacetCycle(-1);
+  CGAL::internal::Handle_hash_map<SHalfedge_handle,int> FacetCycle(-1);
   std::vector<SHalfedge_handle> MinimalEdge;
   std::list<SHalfedge_handle> SHalfedges;
   std::list<SHalfloop_handle> SHalfloops;
 
-  CGAL::Unique_hash_map<Segment_iterator,SHalfedge_handle>  From;
+  CGAL::internal::Handle_hash_map<Segment_iterator,SHalfedge_handle>  From;
 
   Segment_list Segments;
   SHalfedge_handle e; SHalfloop_handle l;

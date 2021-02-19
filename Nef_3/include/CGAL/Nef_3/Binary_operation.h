@@ -21,7 +21,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Nef_S2/Normalizing.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_map.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_S2/SM_decorator.h>
 #include <CGAL/Nef_S2/SM_point_locator.h>
@@ -307,7 +307,7 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
       number_of_intersection_candidates=0;
 #endif
 
-    Unique_hash_map<Vertex_const_handle, bool> ignore(false);
+    CGAL::internal::Handle_hash_map<Vertex_const_handle, bool> ignore(false);
     Vertex_const_iterator v0;
 
     //    CGAL_NEF_SETDTHREAD(19*43*131);

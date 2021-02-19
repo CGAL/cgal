@@ -84,7 +84,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
 
   void remove_f_including_all_edge_uses_in_its_boundary_cycles
     ( Halffacet_handle f,
-      Unique_hash_map< SFace_handle, UFH_sface>& hash,
+      CGAL::internal::Handle_hash_map< SFace_handle, UFH_sface>& hash,
       Union_find< SFace_handle>& uf )
     /* removes f and its boundary cycles, and merges up the sphere facets
        incident to them. */ {
@@ -316,9 +316,9 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
     CGAL_NEF_TRACEN(">>> simplifying");
     SNC_decorator D(*this->sncp());
 
-    Unique_hash_map< Volume_handle, UFH_volume> hash_volume;
-    Unique_hash_map< Halffacet_handle, UFH_facet> hash_facet;
-    Unique_hash_map< SFace_handle, UFH_sface> hash_sface;
+    CGAL::internal::Handle_hash_map< Volume_handle, UFH_volume> hash_volume;
+    CGAL::internal::Handle_hash_map< Halffacet_handle, UFH_facet> hash_facet;
+    CGAL::internal::Handle_hash_map< SFace_handle, UFH_sface> hash_sface;
     Union_find< Volume_handle> uf_volume;
     Union_find< Halffacet_handle> uf_facet;
     Union_find< SFace_handle> uf_sface;
@@ -490,9 +490,9 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
    }
 
    void purge_no_find_objects(
-      Unique_hash_map< Volume_handle, UFH_volume>& hash_volume,
-      Unique_hash_map< Halffacet_handle, UFH_facet>& hash_facet,
-      Unique_hash_map< SFace_handle, UFH_sface>& hash_sface,
+      CGAL::internal::Handle_hash_map< Volume_handle, UFH_volume>& hash_volume,
+      CGAL::internal::Handle_hash_map< Halffacet_handle, UFH_facet>& hash_facet,
+      CGAL::internal::Handle_hash_map< SFace_handle, UFH_sface>& hash_sface,
       Union_find< Volume_handle>& uf_volume,
       Union_find< Halffacet_handle>& uf_facet,
       Union_find< SFace_handle>& uf_sface ) {
@@ -542,9 +542,9 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
    }
 
   void create_boundary_links_forall_sfaces(
-      Unique_hash_map< SFace_handle, UFH_sface>& hash,
+      CGAL::internal::Handle_hash_map< SFace_handle, UFH_sface>& hash,
       Union_find< SFace_handle>& uf ) {
-    Unique_hash_map< SHalfedge_handle, bool> linked(false);
+    CGAL::internal::Handle_hash_map< SHalfedge_handle, bool> linked(false);
     SNC_decorator D(*this->sncp());
     SHalfedge_iterator e;
     CGAL_forall_shalfedges(e, *this->sncp()) {
@@ -595,9 +595,9 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
   }
 
   void create_boundary_links_forall_facets(
-      Unique_hash_map< Halffacet_handle, UFH_facet>& hash,
+      CGAL::internal::Handle_hash_map< Halffacet_handle, UFH_facet>& hash,
       Union_find< Halffacet_handle>& uf) {
-    Unique_hash_map< SHalfedge_handle, bool> linked(false);
+    CGAL::internal::Handle_hash_map< SHalfedge_handle, bool> linked(false);
     SNC_decorator D(*this->sncp());
     SHalfedge_iterator u;
     CGAL_forall_shalfedges(u, *this->sncp()) {
@@ -643,10 +643,10 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
   }
 
   void create_boundary_links_forall_volumes(
-      Unique_hash_map< Volume_handle, UFH_volume>& hash,
+      CGAL::internal::Handle_hash_map< Volume_handle, UFH_volume>& hash,
       Union_find< Volume_handle>& uf) {
     typedef typename SNC_decorator::template Shell_volume_setter<SNC_decorator> Volume_setter;
-    //   typedef Unique_hash_map< SFace_handle, bool> SFace_map;
+    //   typedef CGAL::internal::Handle_hash_map< SFace_handle, bool> SFace_map;
     //  SFace_map linked(false);
 
     SNC_decorator D(*this->sncp());

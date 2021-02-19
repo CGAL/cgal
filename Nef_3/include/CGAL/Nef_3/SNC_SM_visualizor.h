@@ -146,7 +146,7 @@ void draw_map() const
 
 
   SM_Halfedge_const_iterator h;
-  Unique_hash_map<SM_Halfedge_const_iterator,bool> Done(false);
+  CGAL::internal::Handle_hash_map<SM_Halfedge_const_iterator,bool> Done(false);
   CGAL_nef3_forall_halfedges(h,T_) {
     if ( Done[h] ) continue;
     SM_Halfedge_const_iterator hn(T_.next(h)),hnn(T_.next(hn));
@@ -185,7 +185,7 @@ void draw_triangulation() const
   CGAL_nef3_forall_vertices(v,T_)
     S_.push_back(T_.point(v),CO_.color(vd,T_.mark(v)));
 
-  Unique_hash_map<SM_Halfedge_const_iterator,bool> Done(false);
+  CGAL::internal::Handle_hash_map<SM_Halfedge_const_iterator,bool> Done(false);
   CGAL_nef3_forall_halfedges(e,T_) {
     if ( Done[e] ) continue;
     SM_Halfedge_const_iterator en(T_.next(e)),enn(T_.next(en));

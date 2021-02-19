@@ -21,7 +21,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Nef_S2/Normalizing.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_map.h>
 #include <CGAL/Nef_3/SNC_iteration.h>
 #include <CGAL/Nef_3/SNC_const_decorator.h>
 #include <CGAL/Nef_S2/SM_decorator.h>
@@ -276,7 +276,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   struct Shell_volume_setter {
     const SNCD_ D;
     Volume_handle c;
-    typedef Unique_hash_map< SFace_handle, bool> SFace_map;
+    typedef CGAL::internal::Handle_hash_map< SFace_handle, bool> SFace_map;
     SFace_map linked;
     Shell_volume_setter(const SNCD_& Di)
       : D(Di), linked(false) {}
@@ -657,9 +657,9 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       valid = valid && vi->is_valid(verb, level);
 
       SM_decorator SD(&*vi);
-      Unique_hash_map<SVertex_handle, bool> SVvisited(false);
-      Unique_hash_map<SHalfedge_handle, bool> SEvisited(false);
-      Unique_hash_map<SFace_handle, bool> SFvisited(false);
+      CGAL::internal::Handle_hash_map<SVertex_handle, bool> SVvisited(false);
+      CGAL::internal::Handle_hash_map<SHalfedge_handle, bool> SEvisited(false);
+      CGAL::internal::Handle_hash_map<SFace_handle, bool> SFvisited(false);
 
       valid = valid && SD.is_valid(SVvisited,SEvisited,SFvisited, verb, level);
 
@@ -720,7 +720,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     verr << "CGAL::SNC_decorator<...>::is_valid(): structure is "
          << ( valid ? "valid." : "NOT VALID.") << std::endl;
 
-    Unique_hash_map<SHalfedge_handle, bool> SEinUniqueFC(false);
+    CGAL::internal::Handle_hash_map<SHalfedge_handle, bool> SEinUniqueFC(false);
     Halffacet_iterator hfi;
     CGAL_forall_halffacets(hfi,*this) {
       valid = valid && hfi->is_valid(verb, level);

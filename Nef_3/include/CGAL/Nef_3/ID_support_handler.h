@@ -18,8 +18,7 @@
 
 #include <CGAL/Nef_S2/ID_support_handler.h>
 #include <CGAL/Nef_3/SNC_indexed_items.h>
-#include <boost/functional/hash.hpp>
-#include <unordered_map>
+#include <CGAL/Handle_hash_map.h>
 #include <map>
 
 #undef CGAL_NEF_DEBUG
@@ -55,7 +54,7 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
       return hash;
     }
   };
-  std::unordered_map<Halffacet_pair, int, Handle_pair_hash_function> f2m;
+  CGAL::internal::Handle_hash_map<Halffacet_pair, int, Handle_pair_hash_function> f2m;
   std::map<int, int> hash;
 
  public:

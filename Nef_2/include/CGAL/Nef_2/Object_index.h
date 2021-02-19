@@ -17,7 +17,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_map.h>
 #include <string>
 #include <sstream>
 
@@ -26,7 +26,7 @@ namespace CGAL {
 template <typename I>
 class Object_index {
   char _prefix;
-  CGAL::Unique_hash_map<I,int> _index;
+  CGAL::internal::Handle_hash_map<I,int> _index;
 public:
   Object_index() : _prefix('\0'), _index(-1) {}
   Object_index(I first, I beyond, char c=' ') : _prefix(c), _index(-1)

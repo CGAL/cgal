@@ -129,7 +129,7 @@ void draw_map() const
   CGAL_forall_svertices(v,*E_)
     S_.push_back(E_->point(v),CO_.color(v,E_->mark(v)));
 
-  Unique_hash_map<SHalfedge_const_iterator,bool> Done(false);
+  CGAL::internal::Handle_hash_map<SHalfedge_const_iterator,bool> Done(false);
   CGAL_forall_shalfedges(e,*this) {
     if ( Done[e] ) continue;
     SHalfedge_const_handle en(next(e)),enn(next(en));
@@ -172,7 +172,7 @@ void draw_triangulation() const
   CGAL_forall_svertices(v,*this)
     S_.push_back(point(v),CO_.color(v,mark(v)));
 
-  Unique_hash_map<SHalfedge_const_iterator,bool> Done(false);
+  CGAL::internal::Handle_hash_map<SHalfedge_const_iterator,bool> Done(false);
   CGAL_forall_shalfedges(e,*this) {
     if ( Done[e] ) continue;
     SHalfedge_const_handle en(next(e)),enn(next(en));
