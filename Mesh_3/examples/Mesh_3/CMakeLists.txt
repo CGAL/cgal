@@ -151,7 +151,7 @@ if(TARGET CGAL::CGAL_ImageIO)
 
     create_single_source_cgal_program(
       "mesh_3D_gray_image_with_custom_initialization.cpp")
-    target_link_libraries(mesh_3D_image_with_custom_initialization
+    target_link_libraries(mesh_3D_gray_image_with_custom_initialization
                           PUBLIC CGAL::Eigen3_support)
 
     create_single_source_cgal_program("mesh_3D_image_variable_size.cpp")
