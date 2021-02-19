@@ -1619,22 +1619,26 @@ double bounded_error_Hausdorff_naive_impl(
  * the two given meshes.
  * @tparam Concurrency_tag enables sequential versus parallel algorithm.
  *                         Possible values are `Sequential_tag`
- *                         and `Parallel_tag`. Currently, parall computation is
+ *                         and `Parallel_tag`. Currently, parallel computation is
  *                         not implemented, though.
  * @tparam TriangleMesh a model of the concept `FaceListGraph`
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  * @param tm1 a triangle mesh
  * @param tm2 a second triangle mesh
  * @param error_bound Maximum bound by which the Hausdorff distance estimate is
  *                    allowed to deviate from the actual Hausdorff distance.
- * @param np1 an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
- * @param np2 an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points
- *      associated to the vertices of `tm`. If this parameter is omitted,
- *      an internal property map for `CGAL::vertex_point_t`
- *      must be available for `TriangleMesh`.
- *    \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm1` and `tm2` (`np1` and `np2`, respectively)}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     must be available in `TriangleMesh`.}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  */
 template< class Concurrency_tag,
