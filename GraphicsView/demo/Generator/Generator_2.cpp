@@ -271,7 +271,7 @@ void
 MainWindow::on_actionGeneratePolytopeInDisc_triggered()
 {
     boost::mt19937 gen;
-    gen.seed(time(0));
+    gen.seed(time(nullptr));
     std::vector<Point_2> points;
     QRectF rect = CGAL::Qt::viewportsBbox(&scene);
     CGAL::Qt::Converter<K> convert;

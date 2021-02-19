@@ -31,9 +31,9 @@ public:
   }
 
   template <typename QObjectType>
-  QObjectType* add (const char* name, const char* key = NULL)
+  QObjectType* add (const char* name, const char* key = nullptr)
   {
-    QObjectType* out = NULL;
+    QObjectType* out = nullptr;
 
     if (boost::is_same<QObjectType, QRadioButton>::value)
     {
@@ -46,7 +46,7 @@ public:
       form->addRow (QString(name), out);
     }
 
-    if (key != NULL)
+    if (key != nullptr)
       map_widgets.insert (std::make_pair (key, out));
 
     return out;
@@ -58,7 +58,7 @@ public:
     typename std::map<std::string, QWidget*>::const_iterator
       found = map_widgets.find (key);
     if (found == map_widgets.end())
-      return NULL;
+      return nullptr;
 
     QWidget* widget_out = found->second;
     return qobject_cast<QObjectType*>(widget_out);

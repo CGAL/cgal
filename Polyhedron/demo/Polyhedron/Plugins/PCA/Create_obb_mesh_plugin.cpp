@@ -92,7 +92,7 @@ void Create_obb_mesh_plugin::gather_mesh_points(std::vector<Point_3>& points)
 
     std::vector<vertex_descriptor> selected_vertices;
 
-    if(item != NULL)
+    if(item != nullptr)
     {
       FaceGraph& pmesh = *item->polyhedron();
       selected_vertices.assign(vertices(pmesh).begin(), vertices(pmesh).end());
@@ -101,7 +101,7 @@ void Create_obb_mesh_plugin::gather_mesh_points(std::vector<Point_3>& points)
         points.push_back(get(pmap, v));
 
     }
-    else if(selection_item != NULL) // using selection of faces
+    else if(selection_item != nullptr) // using selection of faces
     {
       FaceGraph& pmesh = *selection_item->polyhedron();
       for(face_descriptor f : selection_item->selected_facets)
@@ -121,7 +121,7 @@ void Create_obb_mesh_plugin::gather_mesh_points(std::vector<Point_3>& points)
   if(point_set_item)
   {
     Point_set* points_set = point_set_item->point_set();
-    if(points_set == NULL)
+    if(points_set == nullptr)
         return;
 
     std::cout << "points_set->size()= " << points_set->size() << std::endl;

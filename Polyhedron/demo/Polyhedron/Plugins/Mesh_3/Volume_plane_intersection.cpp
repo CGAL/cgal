@@ -15,7 +15,7 @@ struct Volume_plane_intersection_priv
   Volume_plane_intersection_priv(float x, float y, float z,
                                  float tx, float ty, float tz,
                                  Volume_plane_intersection* parent)
-    : a(NULL), b(NULL), c(NULL), x(x), y(y), z(z),
+    : a(nullptr), b(nullptr), c(nullptr), x(x), y(y), z(z),
       tx(tx), ty(ty), tz(tz), item(parent)
   {
     item->are_buffers_filled = false;
@@ -223,11 +223,11 @@ void Volume_plane_intersection::setY(Volume_plane_interface* x) { d->b = x; }
 void Volume_plane_intersection::setZ(Volume_plane_interface* x) { d->c = x; }
 void Volume_plane_intersection::planeRemoved(Volume_plane_interface* i) {
   if(d->a == i) {
-    d->a = NULL;
+    d->a = nullptr;
   } else if(d->b == i) {
-    d->b = NULL;
+    d->b = nullptr;
   } else if(d->c == i) {
-    d->c = NULL;
+    d->c = nullptr;
   }
 }
 

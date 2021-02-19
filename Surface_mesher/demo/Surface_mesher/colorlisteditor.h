@@ -50,7 +50,7 @@ class ColorListEditor : public QComboBox
     Q_PROPERTY(QColor color READ color WRITE setColor USER true)
 
 public:
-    ColorListEditor(QWidget *widget = 0);
+    ColorListEditor(QWidget *widget = nullptr);
 
 public:
     QColor color() const;

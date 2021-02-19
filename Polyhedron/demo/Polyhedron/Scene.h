@@ -314,7 +314,7 @@ class QAbstractProxyModel;
 class SCENE_EXPORT SceneDelegate : public QItemDelegate
 {
 public:
-  SceneDelegate(QObject * parent = 0)
+  SceneDelegate(QObject * parent = nullptr)
     : QItemDelegate(parent),
       checkOnPixmap(":/cgal/icons/check-on.png"),
       checkOffPixmap(":/cgal/icons/check-off.png")

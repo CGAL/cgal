@@ -79,7 +79,7 @@ public:
    * Then it creates and initializes the scene and do the
    * connexions with the UI. Finally it loads the plugins.*/
 
-  MainWindow(const QStringList& keywords, bool verbose = false,QWidget* parent = 0);
+  MainWindow(const QStringList& keywords, bool verbose = false,QWidget* parent = nullptr);
   ~MainWindow();
 
   /*! Finds an I/O plugin.

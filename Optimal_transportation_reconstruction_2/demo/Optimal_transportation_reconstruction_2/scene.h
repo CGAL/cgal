@@ -628,7 +628,7 @@ public:
     const float point_size, const float vertex_size,
     const float line_thickness, GlViewer* viewer)
   {
-    if (m_pwsrec == NULL) {
+    if (m_pwsrec == nullptr) {
       return;
     }
     if(!is_viewer_set)

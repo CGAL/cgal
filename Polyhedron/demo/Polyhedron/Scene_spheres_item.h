@@ -39,7 +39,7 @@ public:
 
   bool isFinite() const Q_DECL_OVERRIDE{ return true; }
   bool isEmpty() const Q_DECL_OVERRIDE{ return false; }
-  Scene_item* clone() const Q_DECL_OVERRIDE{return 0;}
+  Scene_item* clone() const Q_DECL_OVERRIDE{return nullptr;}
   QString toolTip() const Q_DECL_OVERRIDE;
   bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE{
     return (m == Gouraud || m == Wireframe);

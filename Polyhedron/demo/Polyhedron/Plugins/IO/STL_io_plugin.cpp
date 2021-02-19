@@ -140,7 +140,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   list << tr("Ascii");
   bool ok = false;
   QString choice
-    = QInputDialog::getItem(NULL, tr("Save STL file"), tr("Format"), list, 0, false, &ok);
+    = QInputDialog::getItem(nullptr, tr("Save STL file"), tr("Format"), list, 0, false, &ok);
 
   if (!ok)
     return false;

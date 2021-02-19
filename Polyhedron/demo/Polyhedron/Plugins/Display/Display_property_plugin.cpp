@@ -364,7 +364,7 @@ public:
   {
     this->scene = sc;
     this->mw = mw;
-    this->current_item = NULL;
+    this->current_item = nullptr;
 
     QAction *actionDisplayProperties= new QAction(QString("Display Properties"), mw);
     QAction *actionHeatMethod= new QAction(QString("Heat Method"), mw);
@@ -890,8 +890,8 @@ private Q_SLOTS:
       QMessageBox::warning(mw,"Error","The mesh must be triangulated.");
       return false;
     }
-    Heat_method * hm = NULL;
-    Heat_method_idt * hm_idt = NULL;
+    Heat_method * hm = nullptr;
+    Heat_method_idt * hm_idt = nullptr;
     SMesh::Property_map<vertex_descriptor, double> heat_intensity =
       mesh.add_property_map<vertex_descriptor, double>("v:heat_intensity", 0).first;
     if(! iDT){
@@ -1263,7 +1263,7 @@ private Q_SLOTS:
       if(!current_item)
         return;
       disconnect(current_item, SIGNAL(selected_vertex(void*)), this, SLOT(on_vertex_selected(void*)));
-      current_item = NULL;
+      current_item = nullptr;
     }
   }
 

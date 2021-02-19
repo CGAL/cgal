@@ -178,7 +178,7 @@ bool Values_list::enabled(const QTreeWidgetItem* item) const
 const QTreeWidgetItem* Values_list::item(const int i) const
 {
   if(i < 0 || i > treeWidget->topLevelItemCount())
-    return 0;
+    return nullptr;
   else
     return treeWidget->topLevelItem(i);
 }
@@ -269,7 +269,7 @@ const QTreeWidgetItem* Values_list::search(const double value) const
     return it->second;
   }
   else {
-    return 0;
+    return nullptr;
   }
 }
 

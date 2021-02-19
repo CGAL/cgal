@@ -111,7 +111,7 @@ bool establish_ssh_session(ssh_session &session,
     }
     ssh_key pubkey = ssh_key_new();
     ssh_pki_import_pubkey_file(pub_key_path, &pubkey);
-    res = ssh_userauth_try_publickey(session, NULL, pubkey);
+    res = ssh_userauth_try_publickey(session, nullptr, pubkey);
     ssh_key_free(pubkey);
     if(res == SSH_AUTH_AGAIN)
     {
@@ -129,14 +129,14 @@ bool establish_ssh_session(ssh_session &session,
   }
 
   ssh_key privkey = ssh_key_new();
-  res = ssh_pki_import_privkey_file(priv_key_path, priv_key_password, NULL, NULL, &privkey);
+  res = ssh_pki_import_privkey_file(priv_key_path, priv_key_password, nullptr, nullptr, &privkey);
   if (!test_result(res))
   {
     ssh_disconnect(session);
     ssh_key_free(privkey);
     return false;
   }
-  res = ssh_userauth_publickey(session, NULL, privkey);
+  res = ssh_userauth_publickey(session, nullptr, privkey);
   ssh_key_free(privkey);
   if(!test_result(res))
   {
@@ -199,7 +199,7 @@ bool establish_ssh_session_from_agent(ssh_session& session,
     }
     ssh_key pubkey = ssh_key_new();
     ssh_pki_import_pubkey_file(pub_key_path, &pubkey);
-    res = ssh_userauth_try_publickey(session, NULL, pubkey);
+    res = ssh_userauth_try_publickey(session, nullptr, pubkey);
     ssh_key_free(pubkey);
     if(res == SSH_AUTH_AGAIN)
       ssh_disconnect(session);
@@ -243,7 +243,7 @@ bool push_file(ssh_session &session,
   //copy a file
   ssh_scp scp = ssh_scp_new(
         session, SSH_SCP_WRITE | SSH_SCP_RECURSIVE, "/tmp");
-  if (scp == NULL)
+  if (scp == nullptr)
   {
     std::cerr<<"Error allocating scp session: %s\n"
             << ssh_get_error(session)<<std::endl;
@@ -326,7 +326,7 @@ bool pull_file(ssh_session &session,
 
   ssh_scp scp = ssh_scp_new(
         session, SSH_SCP_READ | SSH_SCP_RECURSIVE, from_path);
-  if (scp == NULL)
+  if (scp == nullptr)
   {
     std::cerr<<"Error allocating scp session: %s\n"
             << ssh_get_error(session)<<std::endl;
@@ -389,7 +389,7 @@ bool explore_the_galaxy(ssh_session &session,
   ssh_channel channel;
   int rc;
   channel = ssh_channel_new(session);
-  if (channel == NULL) return false;
+  if (channel == nullptr) return false;
   rc = ssh_channel_open_session(channel);
   if (rc != SSH_OK)
   {

@@ -203,7 +203,7 @@ public:
   //! A manipulated frame is an independent system that can be
   //! translated or rotated using the Ctrl key and the mouse.
   //!@returns the manipulatedFrame of the item.
-  virtual ManipulatedFrame* manipulatedFrame() { return 0; }
+  virtual ManipulatedFrame* manipulatedFrame() { return nullptr; }
 
   // Getters for the four basic properties
   //!Getter for the item's color.
@@ -482,7 +482,7 @@ protected:
   void attribBuffers(CGAL::Three::Viewer_interface*, int program_name) const;
 
   /*! Compatibility function. Calls `viewer->getShaderProgram()`. */
-  virtual QOpenGLShaderProgram* getShaderProgram(int name , CGAL::Three::Viewer_interface *viewer = 0) const;
+  virtual QOpenGLShaderProgram* getShaderProgram(int name , CGAL::Three::Viewer_interface *viewer = nullptr) const;
 public:
   //! \brief defaultSaveName returns the name to be used as default
   //! when saving this item.

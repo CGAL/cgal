@@ -72,7 +72,7 @@ struct Scene_implicit_function_item_priv
   Scene_implicit_function_item* item;
 };
 
-void Scene_implicit_function_item_priv::initialize_buffers(CGAL::Three::Viewer_interface *viewer = 0) const
+void Scene_implicit_function_item_priv::initialize_buffers(CGAL::Three::Viewer_interface *viewer = nullptr) const
 {
     item->getTriangleContainer(0)->initializeBuffers(viewer);
     item->getTriangleContainer(0)->setFlatDataSize(nb_quad);

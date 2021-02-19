@@ -104,7 +104,7 @@ public:
 
   virtual ~Volume_plane();
 
-  Volume_plane* clone() const { return NULL; }
+  Volume_plane* clone() const { return nullptr; }
 
   virtual RenderingMode renderingMode() const { return Flat; }
   bool supportsRenderingMode(RenderingMode m) const { return m == Flat; }

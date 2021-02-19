@@ -19,7 +19,7 @@ class MainWindow : public CGAL::Qt::DemosMainWindow, public Ui::MainWindow
 {
   Q_OBJECT
 public:
-  MainWindow(MainWindow* other_window = 0);
+  MainWindow(MainWindow* other_window = nullptr);
   void dragEnterEvent(QDragEnterEvent *);
   void dropEvent(QDropEvent *event);
 

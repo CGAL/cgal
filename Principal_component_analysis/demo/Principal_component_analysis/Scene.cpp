@@ -19,7 +19,7 @@
 Scene::Scene()
 {
   is_gl_init = false;
-    m_pPolyhedron = NULL;
+    m_pPolyhedron = nullptr;
 
     // view options
     m_view_polyhedron = true;
@@ -48,7 +48,7 @@ int Scene::open(QString filename)
         return -1;
     }
 
-    if(m_pPolyhedron != NULL)
+    if(m_pPolyhedron != nullptr)
         delete m_pPolyhedron;
 
     // allocate new polyhedron
@@ -60,7 +60,7 @@ int Scene::open(QString filename)
         QApplication::restoreOverrideCursor();
 
         delete m_pPolyhedron;
-        m_pPolyhedron = NULL;
+        m_pPolyhedron = nullptr;
 
         return -1;
     }
@@ -74,7 +74,7 @@ void Scene::update_bbox()
     std::cout << "Compute bbox...";
     m_bbox = Bbox();
 
-    if(m_pPolyhedron == NULL)
+    if(m_pPolyhedron == nullptr)
     {
         std::cout << "failed (no polyhedron)." << std::endl;
         return;
@@ -190,7 +190,7 @@ Vector Scene::normalize(const Vector& v)
 void Scene::render_polyhedron(Viewer *viewer)
 {
     // draw black edges
-    if(m_pPolyhedron != NULL)
+    if(m_pPolyhedron != nullptr)
     {
       typedef Kernel::Point_3 Point;
 
@@ -220,7 +220,7 @@ void Scene::render_polyhedron(Viewer *viewer)
 
 void Scene::refine_loop()
 {
-    if(m_pPolyhedron == NULL)
+    if(m_pPolyhedron == nullptr)
     {
         std::cout << "Load polyhedron first." << std::endl;
         return;

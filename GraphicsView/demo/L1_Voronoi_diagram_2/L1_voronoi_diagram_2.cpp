@@ -358,10 +358,10 @@ MainWindow::on_actionShowVoronoi_toggled(bool checked)
 
 void
 MainWindow::calculate_envelope() {
-  if (m_envelope_diagram != NULL) {
-    m_graphics_item->setArrangement(NULL);
+  if (m_envelope_diagram != nullptr) {
+    m_graphics_item->setArrangement(nullptr);
     delete m_envelope_diagram;
-    m_envelope_diagram = NULL;
+    m_envelope_diagram = nullptr;
   }
 
   m_envelope_diagram = new Envelope_diagram_2();
@@ -374,7 +374,7 @@ QRectF
 MainWindow::bounding_rect() {
   CGAL::Bbox_2 bbox(0, 0, 0, 0);
 
-  if (m_envelope_diagram != NULL) {
+  if (m_envelope_diagram != nullptr) {
     for (Envelope_diagram_2::Vertex_iterator it =
            m_envelope_diagram->vertices_begin();
          it != m_envelope_diagram->vertices_end(); ++it) {

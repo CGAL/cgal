@@ -165,20 +165,20 @@ struct lcc_priv{
       P_traits cdt_traits(f.normal);
       CDT cdt(cdt_traits);
         // (1) We insert all the edges as contraint in the CDT.
-        typename CDT::Vertex_handle previous=NULL, first=NULL;
+        typename CDT::Vertex_handle previous=nullptr, first=nullptr;
         for (unsigned int i=0; i<f.size(); ++i)
         {
           typename CDT::Vertex_handle vh = cdt.insert(f.points[i]);
-          if(first==NULL)
+          if(first==nullptr)
           { first=vh; }
           vh->info().v=f.normal;
 
-          if(previous!=NULL && previous!=vh)
+          if(previous!=nullptr && previous!=vh)
           { cdt.insert_constraint(previous, vh); }
           previous=vh;
         }
 
-        if (previous!=NULL && previous!=first)
+        if (previous!=nullptr && previous!=first)
         { cdt.insert_constraint(previous, first); }
 
         // (2) We mark all external triangles
@@ -191,8 +191,8 @@ struct lcc_priv{
         }
         // (2.2) We check if the facet is external or internal
         std::queue<typename CDT::Face_handle> face_queue;
-        typename CDT::Face_handle face_internal = NULL;
-        if (cdt.infinite_vertex()->face()!=NULL)
+        typename CDT::Face_handle face_internal = nullptr;
+        if (cdt.infinite_vertex()->face()!=nullptr)
         { face_queue.push(cdt.infinite_vertex()->face()); }
         while(!face_queue.empty())
         {
@@ -205,10 +205,10 @@ struct lcc_priv{
             {
               if(!cdt.is_constrained(std::make_pair(fh, i)))
               {
-                if (fh->neighbor(i)!=NULL)
+                if (fh->neighbor(i)!=nullptr)
                 { face_queue.push(fh->neighbor(i)); }
               }
-              else if (face_internal==NULL)
+              else if (face_internal==nullptr)
               {
                 face_internal = fh->neighbor(i);
               }
@@ -216,7 +216,7 @@ struct lcc_priv{
           }
         }
 
-        if ( face_internal!=NULL )
+        if ( face_internal!=nullptr )
         { face_queue.push(face_internal); }
 
         while(!face_queue.empty())
@@ -231,7 +231,7 @@ struct lcc_priv{
             {
               if(!cdt.is_constrained(std::make_pair(fh, i)))
               {
-                if (fh->neighbor(i)!=NULL)
+                if (fh->neighbor(i)!=nullptr)
                 { face_queue.push(fh->neighbor(i)); }
               }
             }
@@ -485,7 +485,7 @@ void Scene_lcc_item::computeElements() const
                                             static_cast<int>(d->colors.size()*sizeof(float)));
   }
   else
-    getTriangleContainer(0)->allocate(Tri::FColors, 0, 0);
+    getTriangleContainer(0)->allocate(Tri::FColors, nullptr, 0);
 
   getEdgeContainer(0)->allocate(
         Ec::Vertices, d->lines.data(),

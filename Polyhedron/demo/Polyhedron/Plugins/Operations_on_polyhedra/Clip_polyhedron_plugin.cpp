@@ -175,7 +175,7 @@ if it has a closed contour on the clipping polyhedron. Otherwise, it will be lef
 public Q_SLOTS:
   void on_plane_destroyed()
   {
-    plane = NULL;
+    plane = nullptr;
     dock_widget->hide();
   }
 

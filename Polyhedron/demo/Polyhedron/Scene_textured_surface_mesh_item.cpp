@@ -295,7 +295,7 @@ Scene_textured_surface_mesh_item::textured_face_graph() const { return d->sm; }
 
 bool
 Scene_textured_surface_mesh_item::isEmpty() const {
-  return (d->sm == 0) || d->sm->is_empty();
+  return (d->sm == nullptr) || d->sm->is_empty();
 }
 
 void

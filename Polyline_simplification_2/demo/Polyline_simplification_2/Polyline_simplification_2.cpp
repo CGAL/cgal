@@ -32,7 +32,7 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
        << "Expr: " << expr << std::endl
        << "File: " << file << std::endl
        << "Line: " << line << std::endl;
-  if ( msg != 0)
+  if ( msg != nullptr)
       std::cerr << "Explanation:" << msg << std::endl;
 
   throw std::runtime_error("CGAL Error");

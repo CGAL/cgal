@@ -113,7 +113,7 @@ struct Scene_points_with_normal_item_priv
     if(m_points)
     {
       delete m_points;
-      m_points = NULL;
+      m_points = nullptr;
     }
     delete normal_Slider;
     delete point_Slider;
@@ -551,7 +551,7 @@ void Scene_points_with_normal_item::selectDuplicates()
 // Loads point set from .LAS file
 bool Scene_points_with_normal_item::read_las_point_set(std::istream& stream)
 {
-  Q_ASSERT(d->m_points != NULL);
+  Q_ASSERT(d->m_points != nullptr);
 
   d->m_points->clear();
 
@@ -576,7 +576,7 @@ bool Scene_points_with_normal_item::read_las_point_set(std::istream& stream)
 // Write point set to .LAS file
 bool Scene_points_with_normal_item::write_las_point_set(std::ostream& stream) const
 {
-  Q_ASSERT(d->m_points != NULL);
+  Q_ASSERT(d->m_points != nullptr);
 
   d->m_points->reset_indices();
 
@@ -588,7 +588,7 @@ bool Scene_points_with_normal_item::write_las_point_set(std::ostream& stream) co
 // Loads point set from .PLY file
 bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
 {
-  Q_ASSERT(d->m_points != NULL);
+  Q_ASSERT(d->m_points != nullptr);
 
   d->m_points->clear();
 
@@ -616,7 +616,7 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
 // Write point set to .PLY file
 bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream, bool binary) const
 {
-  Q_ASSERT(d->m_points != NULL);
+  Q_ASSERT(d->m_points != nullptr);
 
   d->m_points->reset_indices();
 
@@ -632,7 +632,7 @@ bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream, bo
 // Loads point set from .OFF file
 bool Scene_points_with_normal_item::read_off_point_set(std::istream& stream)
 {
-  Q_ASSERT(d->m_points != NULL);
+  Q_ASSERT(d->m_points != nullptr);
 
   d->m_points->clear();
   bool ok = CGAL::read_OFF(stream, *(d->m_points)) && !isEmpty();
@@ -645,7 +645,7 @@ bool Scene_points_with_normal_item::read_off_point_set(std::istream& stream)
 // Write point set to .OFF file
 bool Scene_points_with_normal_item::write_off_point_set(std::ostream& stream) const
 {
-  Q_ASSERT(d->m_points != NULL);
+  Q_ASSERT(d->m_points != nullptr);
 
   d->m_points->reset_indices();
 
@@ -655,7 +655,7 @@ bool Scene_points_with_normal_item::write_off_point_set(std::ostream& stream) co
 // Loads point set from .XYZ file
 bool Scene_points_with_normal_item::read_xyz_point_set(std::istream& stream)
 {
-  Q_ASSERT(d->m_points != NULL);
+  Q_ASSERT(d->m_points != nullptr);
 
   d->m_points->clear();
 
@@ -669,7 +669,7 @@ bool Scene_points_with_normal_item::read_xyz_point_set(std::istream& stream)
 // Write point set to .XYZ file
 bool Scene_points_with_normal_item::write_xyz_point_set(std::ostream& stream) const
 {
-  Q_ASSERT(d->m_points != NULL);
+  Q_ASSERT(d->m_points != nullptr);
 
   d->m_points->reset_indices();
 
@@ -679,7 +679,7 @@ bool Scene_points_with_normal_item::write_xyz_point_set(std::ostream& stream) co
 QString
 Scene_points_with_normal_item::toolTip() const
 {
-  Q_ASSERT(d->m_points != NULL);
+  Q_ASSERT(d->m_points != nullptr);
 
   return QObject::tr("<p><b>%1</b> (color: %4)<br />"
                      "<i>Point_set_3</i></p>"
@@ -792,12 +792,12 @@ drawPoints(CGAL::Three::Viewer_interface* viewer) const
 // Gets wrapped point set
 Point_set* Scene_points_with_normal_item::point_set()
 {
-  Q_ASSERT(d->m_points != NULL);
+  Q_ASSERT(d->m_points != nullptr);
   return d->m_points;
 }
 const Point_set* Scene_points_with_normal_item::point_set() const
 {
-  Q_ASSERT(d->m_points != NULL);
+  Q_ASSERT(d->m_points != nullptr);
   return d->m_points;
 }
 
@@ -814,14 +814,14 @@ const std::string& Scene_points_with_normal_item::comments() const
 bool
 Scene_points_with_normal_item::isEmpty() const
 {
-  Q_ASSERT(d->m_points != NULL);
+  Q_ASSERT(d->m_points != nullptr);
   return d->m_points->empty();
 }
 
 void
 Scene_points_with_normal_item::compute_bbox()const
 {
-  Q_ASSERT(d->m_points != NULL);
+  Q_ASSERT(d->m_points != nullptr);
 
   Kernel::Iso_cuboid_3 bbox = d->m_points->bounding_box();
   setBbox(Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
@@ -878,7 +878,7 @@ QMenu* Scene_points_with_normal_item::contextMenu()
       if(has_normals())
       {
         QMenu *container = new QMenu(tr("Normals Length"));
-        QWidgetAction *sliderAction = new QWidgetAction(0);
+        QWidgetAction *sliderAction = new QWidgetAction(nullptr);
         if((d->nb_points)/3 <= limit_fast_drawing)
         {
           connect(d->normal_Slider, &QSlider::valueChanged, this, &Scene_points_with_normal_item::invalidateOpenGLBuffers);
@@ -895,7 +895,7 @@ QMenu* Scene_points_with_normal_item::contextMenu()
         menu->addMenu(container);
       }
         QMenu *container = new QMenu(tr("Points Size"));
-        QWidgetAction *sliderAction = new QWidgetAction(0);
+        QWidgetAction *sliderAction = new QWidgetAction(nullptr);
         connect(d->point_Slider, &QSlider::sliderPressed, this, &Scene_points_with_normal_item::pointSliderPressed);
         connect(d->point_Slider, &QSlider::sliderReleased, this, &Scene_points_with_normal_item::pointSliderReleased);
         connect(d->point_Slider, &QSlider::valueChanged, this, &Scene_points_with_normal_item::itemChanged);
@@ -951,7 +951,7 @@ void Scene_points_with_normal_item::invalidateOpenGLBuffers()
     Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
     {
       CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
-      if(viewer == NULL)
+      if(viewer == nullptr)
         continue;
       setBuffersInit(viewer, false);
     }
@@ -994,7 +994,7 @@ void Scene_points_with_normal_item::itemAboutToBeDestroyed(Scene_item *item)
   if(d && d->m_points && item == this)
   {
     delete d->m_points;
-    d->m_points = NULL;
+    d->m_points = nullptr;
   }
 }
 

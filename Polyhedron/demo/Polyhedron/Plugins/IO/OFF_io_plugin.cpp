@@ -110,7 +110,7 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
   std::ifstream in(fileinfo.filePath().toUtf8());
   if(!in) {
     std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
-    return NULL;
+    return nullptr;
   }
 
 
@@ -126,7 +126,7 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
     if(!item->read_off_point_set(in))
     {
       delete item;
-      return 0;
+      return nullptr;
     }
 
     return item;
@@ -158,7 +158,7 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
             "Cannot Open File",
             QString("Cannot open file %1").arg((const char*)fileinfo.filePath().toUtf8()));
       delete soup_item;
-      return 0;
+      return nullptr;
     }
     QApplication::restoreOverrideCursor();
     QMessageBox::information(
@@ -183,7 +183,7 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
     item->setNbIsolatedvertices(isolated_v);
     //needs two restore, it's not a typo
     QApplication::restoreOverrideCursor();
-    QMessageBox::warning((QWidget*)NULL,
+    QMessageBox::warning((QWidget*)nullptr,
                          tr("Isolated vertices"),
                          tr("%1 isolated vertices found")
                          .arg(item->getNbIsolatedvertices()));
@@ -196,7 +196,7 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
   {
 
     QApplication::restoreOverrideCursor();
-    QMessageBox::warning((QWidget*)NULL,
+    QMessageBox::warning((QWidget*)nullptr,
                          tr("Non Manifold Vertices"),
                          tr("Non-manifold vertices have been found"));
   }
@@ -212,7 +212,7 @@ Polyhedron_demo_off_plugin::load_obj(QFileInfo fileinfo) {
   std::ifstream in(fileinfo.filePath().toUtf8());
   if(!in) {
     std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
-    return NULL;
+    return nullptr;
   }
   Scene_surface_mesh_item* item = new Scene_surface_mesh_item();
   item->setName(fileinfo.baseName());

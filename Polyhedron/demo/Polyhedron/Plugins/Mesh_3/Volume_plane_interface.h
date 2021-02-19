@@ -54,7 +54,7 @@ public:
 
       if (!menuChanged) {
           QMenu *container = new QMenu(tr("Spheres Size"));
-          QWidgetAction *sliderAction = new QWidgetAction(0);
+          QWidgetAction *sliderAction = new QWidgetAction(nullptr);
           connect(sphere_Slider, &QSlider::valueChanged, this, &Volume_plane_interface::itemChanged);
 
           sliderAction->setDefaultWidget(sphere_Slider);

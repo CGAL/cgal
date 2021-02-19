@@ -94,7 +94,7 @@ public :
     //!Returns an empty Bbox to avoid disturbing the Bbox of the scene.
     Bbox bbox() const Q_DECL_OVERRIDE;
     //!Not supported.
-    Scene_item* clone() const Q_DECL_OVERRIDE {return 0;}
+    Scene_item* clone() const Q_DECL_OVERRIDE {return nullptr;}
     //! Indicates if the rendering mode is supported.
     //! \returns true for all rendering modes that are shared by
     //! all of the children.
@@ -213,7 +213,7 @@ public :
      if(isChildLocked(item))
       return;
      update_group_number(item,0);
-     item->moveToGroup(0);
+     item->moveToGroup(nullptr);
      children.removeOne(scene->item_id(item));
     }
     //!Removes a Scene_item from the list of children using its index.

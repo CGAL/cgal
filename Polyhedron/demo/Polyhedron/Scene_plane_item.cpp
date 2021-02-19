@@ -194,7 +194,7 @@ Scene_plane_item* Scene_plane_item::clone() const {
     return item;
   }
   else
-    return 0;
+    return nullptr;
 }
 
 QString Scene_plane_item::toolTip() const {

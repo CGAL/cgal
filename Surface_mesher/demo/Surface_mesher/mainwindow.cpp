@@ -30,12 +30,12 @@
 
 MainWindow::MainWindow(MainWindow* other_window /* = 0 */) :
   CGAL::Qt::DemosMainWindow(),
-  surface(0)
+  surface(nullptr)
 {
   setupUi(this);
   setAcceptDrops(true);
 
-  if(other_window != 0)
+  if(other_window != nullptr)
   {
     viewer->setCamera(other_window->viewer->camera());
     connect(other_window, SIGNAL(destroyed()),
@@ -68,9 +68,9 @@ void MainWindow::dropEvent(QDropEvent *event)
 
 void MainWindow::surface_open(const QString& filename)
 {
-  if(surface != 0) {
+  if(surface != nullptr) {
     delete surface;
-    surface = 0;
+    surface = nullptr;
   }
 #ifndef CGAL_DO_NOT_USE_POLYHEDRAL_SURFACE
   surface = new Polyhedral_surface(this);

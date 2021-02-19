@@ -1104,7 +1104,7 @@ void Volume::gl_draw_image_bbox(const float line_width,
                                const unsigned char blue)
 {
   const _image* image_ptr = m_image.image();
-  if(image_ptr == NULL)
+  if(image_ptr == nullptr)
     return;
 
   glLineWidth(line_width);

@@ -416,7 +416,7 @@ public Q_SLOTS:
   void update_plugin_from_item(Item_classification_base* classif)
   {
     disable_everything();
-    if (classif != NULL)
+    if (classif != nullptr)
       {
         enable_computation();
 
@@ -466,13 +466,13 @@ public Q_SLOTS:
       }
   }
 
-  Item_classification_base* get_classification(Scene_item* item = NULL)
+  Item_classification_base* get_classification(Scene_item* item = nullptr)
   {
     if (!item)
       item = scene->item(scene->mainSelectionIndex());
 
     if (!item)
-      return NULL;
+      return nullptr;
 
     Scene_polyhedron_selection_item* selection_item
       = qobject_cast<Scene_polyhedron_selection_item*>(item);
@@ -488,7 +488,7 @@ public Q_SLOTS:
       return it->second;
     }
 
-    return NULL;
+    return nullptr;
   }
 
 
@@ -502,7 +502,7 @@ public Q_SLOTS:
     if (points_item->point_set()->has_property_map<int> ("shape"))
     {
       QMessageBox::StandardButton reply
-        = QMessageBox::question(NULL, "Point Set Classification",
+        = QMessageBox::question(nullptr, "Point Set Classification",
                                 "This point set is divided in clusters. Do you want to classify clusters instead of points?",
                                 QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
 
@@ -945,7 +945,7 @@ public Q_SLOTS:
 
     QPushButton* label_clicked = qobject_cast<QPushButton*>(QObject::sender()->parent()->parent());
 
-    if (label_clicked == NULL)
+    if (label_clicked == nullptr)
       std::cerr << "Error" << std::endl;
     else
     {
@@ -1065,7 +1065,7 @@ public Q_SLOTS:
     if (classif->number_of_labels() != 0)
     {
       QMessageBox::StandardButton reply
-        = QMessageBox::question(NULL, "Classification",
+        = QMessageBox::question(nullptr, "Classification",
                                 "Current labels will be discarded. Continue?",
                                 QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
 
@@ -1092,7 +1092,7 @@ public Q_SLOTS:
     if (classif->number_of_labels() != 0)
     {
       QMessageBox::StandardButton reply
-        = QMessageBox::question(NULL, "Classification",
+        = QMessageBox::question(nullptr, "Classification",
                                 "Current labels will be discarded. Continue?",
                                 QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
 
@@ -1120,7 +1120,7 @@ public Q_SLOTS:
     if (classif->number_of_labels() != 0)
     {
       QMessageBox::StandardButton reply
-        = QMessageBox::question(NULL, "Classification",
+        = QMessageBox::question(nullptr, "Classification",
                                 "Current labels will be discarded. Continue?",
                                 QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
 
@@ -1161,7 +1161,7 @@ public Q_SLOTS:
     if (classif->number_of_labels() != 0)
     {
       QMessageBox::StandardButton reply
-        = QMessageBox::question(NULL, "Classification",
+        = QMessageBox::question(nullptr, "Classification",
                                 "Current labels will be discarded. Continue?",
                                 QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
 
@@ -1213,7 +1213,7 @@ public Q_SLOTS:
       }
 
     QPushButton* label_clicked = qobject_cast<QPushButton*>(QObject::sender()->parent()->parent());
-    if (label_clicked == NULL)
+    if (label_clicked == nullptr)
       std::cerr << "Error" << std::endl;
     else
     {
@@ -1486,7 +1486,7 @@ public Q_SLOTS:
       }
 
     QPushButton* label_clicked = qobject_cast<QPushButton*>(QObject::sender()->parent()->parent());
-    if (label_clicked == NULL)
+    if (label_clicked == nullptr)
       std::cerr << "Error" << std::endl;
     else
     {
@@ -1537,7 +1537,7 @@ public Q_SLOTS:
       }
 
     QPushButton* label_clicked = qobject_cast<QPushButton*>(QObject::sender()->parent()->parent());
-    if (label_clicked == NULL)
+    if (label_clicked == nullptr)
       std::cerr << "Error" << std::endl;
     else
     {
@@ -1572,7 +1572,7 @@ public Q_SLOTS:
     }
 
     QPushButton* label_clicked = qobject_cast<QPushButton*>(QObject::sender()->parent()->parent());
-    if (label_clicked == NULL)
+    if (label_clicked == nullptr)
       std::cerr << "Error" << std::endl;
     else
     {
@@ -1613,7 +1613,7 @@ public Q_SLOTS:
       }
 
     QPushButton* label_clicked = qobject_cast<QPushButton*>(QObject::sender()->parent()->parent());
-    if (label_clicked == NULL)
+    if (label_clicked == nullptr)
       std::cerr << "Error" << std::endl;
     else
     {

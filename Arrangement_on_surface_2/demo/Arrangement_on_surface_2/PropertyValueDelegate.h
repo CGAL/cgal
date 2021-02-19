@@ -22,7 +22,7 @@ class PropertyValueDelegate : public QItemDelegate
   Q_OBJECT
 
   public:
-  PropertyValueDelegate( QObject* parent = 0 );
+  PropertyValueDelegate( QObject* parent = nullptr );
 
 public:
   QWidget* createEditor( QWidget* parent, const QStyleOptionViewItem& option,

@@ -41,7 +41,7 @@ public:
       Point_property_map point_pmap, Mass_property_map mass_pmap) :
       Otr_2(input_range, point_pmap,
           mass_pmap),
-      viewer(NULL){
+      viewer(nullptr){
   }
 
   Optimal_transportation_reconstruction_kerneled_2() :

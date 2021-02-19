@@ -27,7 +27,7 @@ class SCENE_FACEGRAPH_TRANSFORM_ITEM_EXPORT Scene_facegraph_transform_item
 public:
     Scene_facegraph_transform_item(const CGAL::qglviewer::Vec& pos, FaceGraph *sm,
                                     const QString name);
-    Scene_item* clone() const{return NULL;}
+    Scene_item* clone() const{return nullptr;}
     QString toolTip() const;
     void drawEdges(CGAL::Three::Viewer_interface*) const;
     void compute_bbox() const;

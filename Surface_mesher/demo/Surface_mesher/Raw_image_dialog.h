@@ -8,7 +8,7 @@ class Raw_image_dialog : public QDialog, public Ui::Raw_image_dialog
   Q_OBJECT
 
 public:
-  Raw_image_dialog(QWidget* parent = 0);
+  Raw_image_dialog(QWidget* parent = nullptr);
 
   unsigned int image_word_size() const;
 

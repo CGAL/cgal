@@ -29,7 +29,7 @@ class SCENE_EDIT_BOX_ITEM_EXPORT Scene_edit_box_item:
     bool manipulatable() const { return true; }
     ManipulatedFrame* manipulatedFrame();
     Scene_edit_box_item* clone() const {
-      return 0;
+      return nullptr;
     }
 
     QString toolTip() const;

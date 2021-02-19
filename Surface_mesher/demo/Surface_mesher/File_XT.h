@@ -23,7 +23,7 @@ bool open_file(FILE **fin, const char* filename)
   return (fopen_s(fin, filename, "rw") == 0);
 #else
   *fin = fopen(filename, "rw");
-  return (fin != NULL);
+  return (fin != nullptr);
 #endif
 }
 

@@ -126,7 +126,7 @@ operator()(const Point_2& p, const X_monotone_curve_2& c) const
     // AlgKernel ker;
 
     int n = 100;
-    if (this->scene != NULL && this->scene->views().size() != 0)
+    if (this->scene != nullptr && this->scene->views().size() != 0)
     { // use the scene to approximate the resolution of the curve
       QGraphicsView* view = this->scene->views().first();
       CGAL::Bbox_2 bb = c.bbox(); // assumes bounded curve
