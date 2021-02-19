@@ -112,6 +112,7 @@ void collect_badly_shaped_triangles(const typename boost::graph_traits<TriangleM
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
     std::cout << "add new needle: " << edge(res[0], tmesh) << std::endl;
 #endif
+    CGAL_assertion( !get(ecm, edge(res[0], tmesh)) );
     edges_to_collapse.insert(edge(res[0], tmesh));
   }
   else // let's not make it possible to have a face be both a cap and a needle (for now)
@@ -121,6 +122,7 @@ void collect_badly_shaped_triangles(const typename boost::graph_traits<TriangleM
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
       std::cout << "add new cap: " << edge(res[1],tmesh) << std::endl;
 #endif
+      CGAL_assertion( !get(ecm, edge(res[1], tmesh)) );
       edges_to_flip.insert(edge(res[1], tmesh));
     }
   }
@@ -483,17 +485,40 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
             continue;
         }
 
+        int nb_cst=0;
+        bool too_much_constrained = false;
         for(int i=0; i<2; ++i)
         {
           if(!is_border(h, tmesh))
           {
             edge_descriptor pe = edge(prev(h, tmesh), tmesh);
+            if ( get(ecm, pe) )
+            {
+              ++nb_cst;
+              pe = edge(next(h, tmesh), tmesh);
+              if ( get(ecm, pe) )
+              {
+                too_much_constrained = true;
+                break;
+              }
+            }
+            CGAL_assertion( !get(ecm, pe) );
             edges_to_flip.erase(pe);
             next_edges_to_collapse.erase(pe);
             edges_to_collapse.erase(pe);
           }
 
           h = opposite(h, tmesh);
+        }
+
+        if ( too_much_constrained )
+        {
+#ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
+            std::cerr << "Warning: cannot collapse: too much constrained! "
+                      << tmesh.point(source(e, tmesh)) << " "
+                      << tmesh.point(target(e, tmesh)) << std::endl;
+#endif
+          continue;
         }
 
         // pick the orientation of edge to keep the vertex minimizing the volume variation
@@ -520,7 +545,8 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
         // a bad geometry because you iteratively move one point
         // auto mp = midpoint(tmesh.point(source(h, tmesh)), tmesh.point(target(h, tmesh)));
 
-        vertex_descriptor v = Euler::collapse_edge(edge(h, tmesh), tmesh);
+        vertex_descriptor v = nb_cst == 0 ? Euler::collapse_edge(edge(h, tmesh), tmesh)
+                                          : Euler::collapse_edge(edge(h, tmesh), tmesh, ecm);
 
         //tmesh.point(v) = mp;
         // examine all faces incident to the vertex kept
