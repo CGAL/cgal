@@ -525,11 +525,8 @@ bool test_data_type()
 
   typedef CGAL::Mesh_triangulation_3<MD_1, K>::Type Tr_1;
   typedef MD_homogeneous_types MD_2;
-  typedef MD_1::Subdomain_index Subdomain_index_1;
-  typedef MD_1::Surface_patch_index Surface_patch_index_1;
   typedef MD_1::Curve_index Curve_index_1;
   typedef MD_1::Corner_index Corner_index_1;
-  typedef MD_1::Index Index_1;
   typedef  Tr_1::Point Point;
   typedef  Tr_1::Vertex_handle Vertex_handle;
   typedef  Tr_1::Edge Edge;
@@ -542,11 +539,8 @@ bool test_data_type()
     Curve_index_1
     > C3t3_1;
 
-  typedef MD_2::Subdomain_index Subdomain_index_2;
-  typedef MD_2::Surface_patch_index Surface_patch_index_2;
   typedef MD_2::Curve_index Curve_index_2;
   typedef MD_2::Corner_index Corner_index_2;
-  typedef MD_2::Index Index_2;
 
   typedef CGAL::Mesh_triangulation_3<MD_2, K>::Type Tr_2;
   typedef CGAL::Mesh_complex_3_in_triangulation_3<

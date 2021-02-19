@@ -2360,7 +2360,7 @@ public:
     auto vit = vertices_begin();
     //skip infinite vertex
     ++vit;
-    for(vit; vit != vertices_end(); ++vit)
+    for(; vit != vertices_end(); ++vit)
     {
       vertex_index_map[vit] = ++i;
     }

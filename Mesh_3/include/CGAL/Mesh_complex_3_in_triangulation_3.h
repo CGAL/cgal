@@ -865,7 +865,7 @@ operator<< (std::ostream& os,
     auto vit = c3t3.triangulation().vertices_begin();
     //skip infinite vertex
     ++vit;
-    for(vit; vit != c3t3.triangulation().vertices_end(); ++vit)
+    for(; vit != c3t3.triangulation().vertices_end(); ++vit)
     {
       vertex_index_map[vit] = ++i;
     }
