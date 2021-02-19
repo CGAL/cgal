@@ -725,6 +725,13 @@ public:
   void
   update_exact() const
   {
+#ifdef CGAL_HAS_THREADS
+    // Unless we add is_lazy before call_once in Lazy_rep. This test is
+    // necessary because this class can be used either for default
+    // construction, or to store a non-lazy exact value, and only the first one
+    // should have a non-empty update_exact.
+    if(!this->is_lazy()) return;
+#endif
     auto* p = new typename Base::Indirect();
     this->set_ptr(p);
   }
@@ -732,6 +739,8 @@ public:
   Lazy_rep_0()
     : Lazy_rep<AT,ET, E2A>() {}
 
+  // TODO: the case where the exact value is provided at construction should
+  // actually use a different class from the lazy default construction.
   template<class A, class E>
   Lazy_rep_0(A&& a, E&& e)
     : Lazy_rep<AT,ET,E2A>(std::forward<A>(a), std::forward<E>(e)) {}
