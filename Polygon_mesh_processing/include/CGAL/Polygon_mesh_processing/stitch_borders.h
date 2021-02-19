@@ -332,17 +332,22 @@ void fill_pairs(const Halfedge& he,
   bool insertion_ok;
   std::tie(set_it, insertion_ok) = border_halfedge_map.emplace(he, std::make_pair(1,0));
 
-  if(!insertion_ok) // we found already a halfedge with the points
+  if(!insertion_ok) // there is already a halfedge with the points
   {
     ++set_it->second.first; // increase the multiplicity
     if(set_it->second.first == 2)
     {
+      const Halfedge other_he = set_it->first;
       set_it->second.second = halfedge_pairs.size(); // set the id of the pair in the vector
-      halfedge_pairs.emplace_back(set_it->first, he);
-      if(get(vpm, source(he,pmesh)) == get(vpm, target(set_it->first, pmesh)) &&
-         get(vpm, target(he,pmesh)) == get(vpm, source(set_it->first, pmesh)))
+      halfedge_pairs.emplace_back(other_he, he);
+      if(get(vpm, source(he,pmesh)) == get(vpm, target(other_he, pmesh)) &&
+         get(vpm, target(he,pmesh)) == get(vpm, source(other_he, pmesh)))
       {
-        manifold_halfedge_pairs.push_back(true);
+        // Even if the halfedges are compatible, refuse to stitch if that would break the graph
+        if(face(opposite(he, pmesh), pmesh) == face(opposite(other_he, pmesh), pmesh))
+          manifold_halfedge_pairs.push_back(false);
+        else
+          manifold_halfedge_pairs.push_back(true);
       }
       else
       {
