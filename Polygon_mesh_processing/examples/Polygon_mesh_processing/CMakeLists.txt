@@ -37,6 +37,7 @@ include(CGAL_Eigen3_support)
 # ##########################################################
 
 create_single_source_cgal_program("hausdorff_distance_remeshing_example.cpp")
+create_single_source_cgal_program( "hausdorff_bounded_error_distance_example.cpp")
 
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("hole_filling_example.cpp")
@@ -123,6 +124,9 @@ if(TARGET CGAL::TBB_support)
   target_link_libraries(self_intersections_example PUBLIC CGAL::TBB_support)
   target_link_libraries(hausdorff_distance_remeshing_example
                         PUBLIC CGAL::TBB_support)
+  target_link_libraries(hausdorff_bounded_error_distance_example
+                        PUBLIC CGAL::TBB_support)
+
 
   create_single_source_cgal_program("corefinement_parallel_union_meshes.cpp")
   target_link_libraries(corefinement_parallel_union_meshes PUBLIC CGAL::TBB_support)
