@@ -246,7 +246,7 @@ template<class...T>void lazy_reset_member(std::tuple<T...>&t) {
 // FIXME: CGAL_USE_SSE2 is clearly not the right condition
 #ifdef CGAL_HAS_THREADS
 template<class AT>struct Lazy_rep_selector { static constexpr int value = 0; };
-# ifdef CGAL_USE_SSE2
+# if defined CGAL_USE_SSE2 && !defined __SANITIZE_THREAD__ && !__has_feature(thread_sanitizer)
 template<bool b>struct Lazy_rep_selector<Interval_nt<b>> { static constexpr int value = 1; };
 template<bool b, int N>struct Lazy_rep_selector<std::array<Interval_nt<b>,N>> { static constexpr int value = 1; };
  // Need some declarations, including Simple_cartesian.h would also be possible.
@@ -730,6 +730,7 @@ public:
     // necessary because this class can be used either for default
     // construction, or to store a non-lazy exact value, and only the first one
     // should have a non-empty update_exact.
+    // An alternative would be to add in the constructors taking an ET: std::call_once(this->once, [](){});
     if(!this->is_lazy()) return;
 #endif
     auto* p = new typename Base::Indirect();
