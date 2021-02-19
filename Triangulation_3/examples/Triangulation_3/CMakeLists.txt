@@ -52,6 +52,11 @@ if ( CGAL_FOUND )
     message(STATUS "NOTICE: a few examples require TBB and will not be compiled.")
   endif()
 
+  if(BUILD_TESTING)
+    set_property(TEST execution___of__parallel_insertion_and_removal_in_regular_3 PROPERTY RUN_SERIAL 1)
+    set_property(TEST execution___of__parallel_insertion_in_delaunay_3 PROPERTY RUN_SERIAL 1)
+    set_property(TEST execution___of__sequential_parallel PROPERTY RUN_SERIAL 1)
+  endif()
 else()
 
     message(STATUS "This program requires the CGAL library, and will not be compiled.")

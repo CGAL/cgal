@@ -40,7 +40,11 @@ if ( CGAL_FOUND )
     endforeach()
   endif()
 
-  if(BUILD_TESTING)
+   if(BUILD_TESTING)
+    set_property(TEST execution___of__test_delaunay_3 PROPERTY RUN_SERIAL 1)
+    set_property(TEST execution___of__test_regular_3 PROPERTY RUN_SERIAL 1)
+    set_property(TEST execution___of__test_regular_insert_range_with_info PROPERTY RUN_SERIAL 1)
+    
     set_tests_properties(
         execution___of__test_delaunay_hierarchy_3
         execution___of__test_delaunay_hierarchy_3_old
@@ -53,5 +57,5 @@ if ( CGAL_FOUND )
 else()
 
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-
+    
 endif()
