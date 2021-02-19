@@ -1463,6 +1463,7 @@ double bounded_error_Hausdorff_impl(
           triangle_bounds.second,
           std::numeric_limits<double>::infinity(),
           std::numeric_limits<double>::infinity(),
+          std::numeric_limits<double>::infinity(),
           std::numeric_limits<double>::infinity()
         );
         tm2_tree.traversal_with_priority(sub_triangles[i], traversal_traits_tm2);
