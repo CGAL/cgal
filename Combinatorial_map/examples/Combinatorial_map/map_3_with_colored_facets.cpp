@@ -47,7 +47,7 @@ int main()
        it=cm.darts().begin(), itend=cm.darts().end();
        it!=itend; ++it)
   {
-    if ( cm.attribute<2>(it)==NULL )
+    if ( cm.attribute<2>(it)==nullptr )
       cm.set_attribute<2>(it, cm.create_attribute<2>());
   }
 

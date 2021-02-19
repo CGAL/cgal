@@ -8,7 +8,7 @@ typedef Eigen_solver::Vector        Eigen_vector;
 
 int main(void)
 {
-  srand(static_cast<unsigned int>(time (NULL)));
+  srand(static_cast<unsigned int>(time (nullptr)));
   std::size_t degree = 3000;
   std::size_t nb_nonzero_coef = 100;
 

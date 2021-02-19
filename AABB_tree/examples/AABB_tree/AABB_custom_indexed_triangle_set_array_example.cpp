@@ -99,7 +99,7 @@ public:
 // types
 typedef CGAL::AABB_traits<K, My_triangle_primitive> My_AABB_traits;
 typedef CGAL::AABB_tree<My_AABB_traits> Tree;
-const double* My_triangle_primitive::point_container = 0;
+const double* My_triangle_primitive::point_container = nullptr;
 
 int main()
 {
