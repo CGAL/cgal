@@ -24,6 +24,10 @@
 #define CGAL_PMP_INTERNAL_AABB_TRAVERSAL_TRAITS_WITH_HAUSDORFF_DISTANCE
 
 #include <iostream>
+#include <CGAL/internal/AABB_tree/AABB_node.h>
+#include <CGAL/AABB_face_graph_triangle_primitive.h>
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
 
 namespace CGAL {
 

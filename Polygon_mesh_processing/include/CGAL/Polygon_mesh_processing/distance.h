@@ -1652,13 +1652,13 @@ double bounded_error_Hausdorff_distance( const TriangleMesh& tm1,
    typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::const_type Vpm1;
    typedef typename GetVertexPointMap<TriangleMesh, NamedParameters2>::const_type Vpm2;
 
-   using boost::choose_param;
-   using boost::get_param;
+   using parameters::choose_parameter;
+   using parameters::get_parameter;
 
-   Vpm1 vpm1 = choose_param(get_param(np1, internal_np::vertex_point),
-                           get_const_property_map(vertex_point, tm1));
-   Vpm2 vpm2 = choose_param(get_param(np2, internal_np::vertex_point),
-                           get_const_property_map(vertex_point, tm2));
+   Vpm1 vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
+                                get_const_property_map(vertex_point, tm1));
+   Vpm2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
+                                get_const_property_map(vertex_point, tm2));
 
    return internal::bounded_error_Hausdorff_impl<Concurrency_tag, Geom_traits>(tm1, tm2, error_bound, vpm1, vpm2);
 }
@@ -1742,13 +1742,13 @@ double bounded_error_Hausdorff_distance_naive( const TriangleMesh& tm1,
    typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::const_type Vpm1;
    typedef typename GetVertexPointMap<TriangleMesh, NamedParameters2>::const_type Vpm2;
 
-   using boost::choose_param;
-   using boost::get_param;
+   using parameters::choose_parameter;
+   using parameters::get_parameter;
 
-   Vpm1 vpm1 = choose_param(get_param(np1, internal_np::vertex_point),
-                           get_const_property_map(vertex_point, tm1));
-   Vpm2 vpm2 = choose_param(get_param(np2, internal_np::vertex_point),
-                           get_const_property_map(vertex_point, tm2));
+   Vpm1 vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
+                                get_const_property_map(vertex_point, tm1));
+   Vpm2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
+                                get_const_property_map(vertex_point, tm2));
 
    return internal::bounded_error_Hausdorff_naive_impl<Concurrency_tag, Geom_traits>(tm1, tm2, error_bound, vpm1, vpm2);
 }
