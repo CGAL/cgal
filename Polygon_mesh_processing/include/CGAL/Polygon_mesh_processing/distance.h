@@ -1664,30 +1664,7 @@ double bounded_error_Hausdorff_distance( const TriangleMesh& tm1,
    return internal::bounded_error_Hausdorff_impl<Concurrency_tag, Geom_traits>(tm1, tm2, error_bound, vpm1, vpm2);
 }
 
-/**
- * \ingroup PMP_distance_grp
- * returns an estimate on the Hausdorff distance between `tm1` and `tm2` that
- * is at most `error_bound` away from the actual Hausdorff distance between
- * the two given meshes.
- * @tparam Concurrency_tag enables sequential versus parallel algorithm.
- *                         Possible values are `Sequential_tag`
- *                         and `Parallel_tag`. Currently, parall computation is
- *                         not implemented, though.
- * @tparam TriangleMesh a model of the concept `FaceListGraph`
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
- * @param tm1 a triangle mesh
- * @param tm2 a second triangle mesh
- * @param error_bound Maximum bound by which the Hausdorff distance estimate is
- *                    allowed to deviate from the actual Hausdorff distance.
- * @param np1 an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
- * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points
- *      associated to the vertices of `tm`. If this parameter is omitted,
- *      an internal property map for `CGAL::vertex_point_t`
- *      must be available for `TriangleMesh`.
- *    \cgalParamEnd
- * \cgalNamedParamsEnd
- */
+
 template< class Concurrency_tag,
           class TriangleMesh,
           class NamedParameters1>
@@ -1699,22 +1676,6 @@ double bounded_error_Hausdorff_distance( const TriangleMesh& tm1,
   return bounded_error_Hausdorff_distance<Concurrency_tag>(tm1, tm2, error_bound, np1, parameters::all_default());
 }
 
-/**
- * \ingroup PMP_distance_grp
- * returns an estimate on the Hausdorff distance between `tm1` and `tm2` that
- * is at most `error_bound` away from the actual Hausdorff distance between
- * the two given meshes.
- * @tparam Concurrency_tag enables sequential versus parallel algorithm.
- *                         Possible values are `Sequential_tag`
- *                         and `Parallel_tag`. Currently, parall computation is
- *                         not implemented, though.
- * @tparam TriangleMesh a model of the concept `FaceListGraph`
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
- * @param tm1 a triangle mesh
- * @param tm2 a second triangle mesh
- * @param error_bound Maximum bound by which the Hausdorff distance estimate is
- *                    allowed to deviate from the actual Hausdorff distance.
- */
 template< class Concurrency_tag,
           class TriangleMesh>
 double bounded_error_Hausdorff_distance( const TriangleMesh& tm1,
