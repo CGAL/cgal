@@ -16,6 +16,7 @@
 
 
 #include<CGAL/Nef_3/SNC_decorator.h>
+#include<CGAL/Unique_hash_map.h>
 #include<CGAL/Convex_decomposition_3/is_reflex_sedge.h>
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 229
