@@ -498,11 +498,24 @@ bool does_self_intersect(const FaceRange& face_range,
 {
   CGAL_precondition(CGAL::is_triangle_mesh(tmesh));
 
-  try {
+  try
+  {
     CGAL::Emptyset_iterator unused_out;
     internal::self_intersections_impl<ConcurrencyTag>(face_range, tmesh, unused_out, true /*throw*/, np);
-  } catch(const std::exception&) {
+  }
+  catch (const CGAL::internal::Throw_at_output_exception&)
+  {
     return true;
+  }
+  #if defined(CGAL_LINKED_WITH_TBB)
+  catch (tbb::captured_exception& e)
+  {
+    return true;
+  }
+  #endif
+  catch ( ... )
+  {
+    throw;
   }
   return false;
 }
