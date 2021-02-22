@@ -209,7 +209,6 @@ void test_degenerate()
   CGAL::make_triangle(Point(0,0,0), Point(1,0,0), Point(0,1,0), tm);
 
   std::size_t res = CGAL::Polygon_mesh_processing::stitch_borders(tm);
-  std::cout << "Stitched: " << res << std::endl;
   assert(res == 0);
 }
 
