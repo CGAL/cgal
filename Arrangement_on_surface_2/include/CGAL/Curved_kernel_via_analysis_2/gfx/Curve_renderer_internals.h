@@ -295,13 +295,6 @@ public:
         return y;
     }
 
-    //! \brief the same as \c evaluate but arguments are passed by value
-    //! (needed to substitute variables in bivariate polynomial)
-    inline static NT binded_eval(Poly_1 poly, NT x)
-    {
-        return evaluate(poly, x);
-    }
-
     //! \brief evalutates a polynomial at certain x-coordinate
     static NT evaluate(const Poly_1& poly, const NT& x,
         bool *error_bounds_ = nullptr)
@@ -913,10 +906,9 @@ void get_precached_poly(int var, const NT& key, int /* level */, Poly_1& poly)
 //     }
 
     if(not_cached||not_found) {
-        poly = Poly_1(::boost::make_transform_iterator(coeffs->begin(),
-                            boost::bind2nd(std::ptr_fun(binded_eval), key1)),
-                      ::boost::make_transform_iterator(coeffs->end(),
-                            boost::bind2nd(std::ptr_fun(binded_eval), key1)));
+        auto fn = [&key1](const Poly_1& poly){ return evaluate(poly, key1); };
+        poly = Poly_1(::boost::make_transform_iterator(coeffs->begin(), fn),
+                      ::boost::make_transform_iterator(coeffs->end(), fn));
         if(not_cached)
             return;
     // all available space consumed: drop the least recently used entry

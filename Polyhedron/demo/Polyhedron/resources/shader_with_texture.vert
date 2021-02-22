@@ -25,7 +25,7 @@ void main(void)
    norm_matrix_3[0] = norm_matrix[0].xyz;
    norm_matrix_3[1] = norm_matrix[1].xyz;
    norm_matrix_3[2] = norm_matrix[2].xyz;
-   fN = norm_matrix_3* normals;
+   vec3 N = norm_matrix_3* normals;
    vec3 L = light_pos.xyz - P.xyz;
    N = normalize(N);
    L = normalize(L);

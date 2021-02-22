@@ -284,7 +284,7 @@ std::size_t make_umbrella_manifold(typename boost::graph_traits<PolygonMesh>::ha
 
 /// \ingroup PMP_repairing_grp
 /// collects the non-manifold vertices (if any) present in the mesh. A non-manifold vertex `v` is returned
-/// via one incident halfedge `h` such that `target(h, pm) = v` for all the umbrellas that `v` apppears in
+/// via one incident halfedge `h` such that `target(h, pm) = v` for all the umbrellas that `v` appears in
 /// (an <i>umbrella</i> being the set of faces incident to all the halfedges reachable by walking around `v`
 /// using `hnext = prev(opposite(h, pm), pm)`, starting from `h`).
 ///

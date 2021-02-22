@@ -81,6 +81,7 @@ public:
 
   Light_MQ(const Local_map& m): m_map(m)
   {}
+  Light_MQ(const Light_MQ&) = default;
 
   const Local_map& get_local_map() const
   { return m_map; }
@@ -140,6 +141,8 @@ public:
     , m_darts_ids(darts_ids)
   #endif //CGAL_PWRLE_TURN_V2
   {}
+
+  Path_on_surface_with_rle(const Self&) = default;
 
   /// Creates a Path_on_surface_with_rle from a Path_on_surface.
   /// If use_only_positive, consider only positive flats and not negative ones.

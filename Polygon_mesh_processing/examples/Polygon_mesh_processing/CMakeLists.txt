@@ -123,6 +123,9 @@ if(TARGET CGAL::TBB_support)
   target_link_libraries(self_intersections_example PUBLIC CGAL::TBB_support)
   target_link_libraries(hausdorff_distance_remeshing_example
                         PUBLIC CGAL::TBB_support)
+
+  create_single_source_cgal_program("corefinement_parallel_union_meshes.cpp")
+  target_link_libraries(corefinement_parallel_union_meshes PUBLIC CGAL::TBB_support)
 else()
   message(
     STATUS "NOTICE: Intel TBB was not found. Sequential code will be used.")

@@ -91,8 +91,8 @@ void Scene::compile_shaders()
     //Vertex source code
     const char vertex_source[] =
     {
-        "#version 120 \n"
-        "attribute highp vec4 vertex;\n"
+        "#version 150 \n"
+        "in highp vec4 vertex;\n"
         "uniform highp mat4 mvp_matrix;\n"
         "uniform highp mat4 f_matrix;\n"
         "void main(void)\n"
@@ -103,10 +103,11 @@ void Scene::compile_shaders()
     //Vertex source code
     const char fragment_source[] =
     {
-        "#version 120 \n"
+        "#version 150 \n"
         "uniform highp vec4 color; \n"
+        "out highp vec4 out_color; \n"
         "void main(void) { \n"
-        "gl_FragColor = color; \n"
+        "out_color = color; \n"
         "} \n"
         "\n"
     };
@@ -139,26 +140,27 @@ void Scene::compile_shaders()
     //Vertex source code
     const char tex_vertex_source[] =
     {
-        "#version 120 \n"
-        "attribute highp vec4 vertex;\n"
-        "attribute highp vec2 tex_coord; \n"
+        "#version 150 \n"
+        "in highp vec4 vertex;\n"
+        "in highp vec2 tex_coord; \n"
         "uniform highp mat4 mvp_matrix;\n"
         "uniform highp mat4 f_matrix;\n"
-        "varying highp vec2 texc;\n"
+        "out highp vec2 texc;\n"
         "void main(void)\n"
         "{\n"
         "   gl_Position = mvp_matrix * f_matrix * vertex;\n"
-        "    texc = tex_coord;\n"
+        "   texc = tex_coord;\n"
         "}"
     };
     //Vertex source code
     const char tex_fragment_source[] =
     {
-        "#version 120 \n"
-        "uniform sampler2D texture;\n"
-        "varying highp vec2 texc;\n"
+        "#version 150 \n"
+        "uniform sampler2D s_texture;\n"
+        "in highp vec2 texc;\n"
+        "out highp vec4 out_color; \n"
         "void main(void) { \n"
-        "gl_FragColor = texture2D(texture, texc.st);\n"
+        "out_color = vec4(texture(s_texture, texc));\n"
         "} \n"
         "\n"
     };
@@ -1319,12 +1321,8 @@ void Scene::deactivate_cutting_plane()
 }
 void Scene::initGL()
 {
-    gl = new QOpenGLFunctions_2_1();
-   if(!gl->initializeOpenGLFunctions())
-    {
-        qFatal("ERROR : OpenGL Functions not initialized. Check your OpenGL Verison (should be >=3.3)");
-        exit(1);
-    }
+    gl = new QOpenGLFunctions();
+    gl->initializeOpenGLFunctions();
 
     gl->glGenTextures(1, &textureId);
     compile_shaders();

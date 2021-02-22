@@ -34,7 +34,6 @@ struct Transform_iterator {
   typedef std::_Unchecked_iterator_tag _Checked_iterator_category;
   typedef std::output_iterator_tag             iterator_category;
   typedef Transform_iterator< OutputIterator, Operation >   self;
-  typedef typename Operation::argument_type        argument_type;
 
   typedef typename std::iterator_traits<OutputIterator>::difference_type difference_type;
   typedef typename std::iterator_traits<OutputIterator>::value_type      value_type;
@@ -54,6 +53,7 @@ struct Transform_iterator {
 
   self& operator++( int) { return *this; }
 
+  template <typename argument_type>
   self& operator=( const argument_type& a) {
     *(o_++) = op_( a);
     return *this;

@@ -17,7 +17,7 @@ find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Widgets Svg)
+find_package(Qt5 QUIET COMPONENTS Script OpenGL Widgets Svg)
 
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)

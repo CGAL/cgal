@@ -78,7 +78,7 @@ else()
 endif()
 
 if(WITH_CGAL_Qt5)
-  find_package(Qt5 QUIET)
+  find_package(Qt5 QUIET COMPONENTS Core)
   if(Qt5_FOUND)
     create_link_to_program(CGAL_Qt5)
   endif()
