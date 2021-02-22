@@ -150,6 +150,7 @@ struct Dummy_cycle_rep_maintainer
   }
 
   // Dummies just to fit the API
+  void add_representative(const halfedge_descriptor) const { }
   void remove_representative(const halfedge_descriptor) const { }
   void clear_representatives() const { }
 
@@ -866,18 +867,19 @@ std::size_t stitch_halfedge_range_dispatcher(const HalfedgePairRange& to_stitch_
 template <typename HalfedgeRange,
           typename PolygonMesh,
           typename VPM,
-          typename HalfedgeKeeper,
-          typename MaintainerVisitor>
-std::size_t zip_boundary_cycle(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
+          typename HalfedgeKeeper>
+std::size_t zip_boundary_cycle(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor& bh,
                                const HalfedgeRange& cycle_halfedges,
                                PolygonMesh& pmesh,
                                const VPM vpm,
-                               const HalfedgeKeeper& hd_kpr,
-                               MaintainerVisitor& mv)
+                               const HalfedgeKeeper& hd_kpr)
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor           halfedge_descriptor;
 
   std::size_t stitched_boundary_cycles_n = 0;
+
+  // Zipping cannot change the topology of the hole so the maintenance is trivial
+  internal::Dummy_cycle_rep_maintainer<PolygonMesh> dummy_maintainer(pmesh);
 
   // A boundary cycle might need to be stitched starting from different extremities
   //
@@ -894,7 +896,6 @@ std::size_t zip_boundary_cycle(const typename boost::graph_traits<PolygonMesh>::
   std::set<halfedge_descriptor> unstitchable_halfedges;
 
   const halfedge_descriptor null_h = boost::graph_traits<PolygonMesh>::null_halfedge();
-  halfedge_descriptor bh = h;
   for(;;) // until there is nothing to stitch anymore
   {
     if(bh == null_h) // the complete boundary cycle is stitched
@@ -1001,9 +1002,8 @@ std::size_t zip_boundary_cycle(const typename boost::graph_traits<PolygonMesh>::
                                   << "\n\t" << target(h, pmesh) << "\t(" << get(vpm, target(h, pmesh)) << ")" << std::endl;
 #endif
 
-      mv.remove_representative(bh);
-
-      std::size_t local_stitches = internal::stitch_halfedge_range(hedges_to_stitch, cycle_halfedges, pmesh, vpm, mv);
+      std::size_t local_stitches = internal::stitch_halfedge_range(hedges_to_stitch, cycle_halfedges,
+                                                                   pmesh, vpm, dummy_maintainer);
       stitched_boundary_cycles_n += local_stitches;
 
       if(local_stitches == 0) // refused to stitch this halfedge pair range due to manifold issue
@@ -1052,20 +1052,36 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
   const Halfedge_keeper hd_kpr = choose_parameter(get_parameter(np, internal_np::halfedges_keeper),
                                                   Default_halfedges_keeper<PolygonMesh>());
 
+  halfedge_descriptor bh = h, bh_mem = bh;
+
   std::vector<halfedge_descriptor> cycle_halfedges;
   for(halfedge_descriptor h : halfedges_around_face(bh, pmesh))
     cycle_halfedges.push_back(h);
 
-  std::size_t res = internal::zip_boundary_cycle(bh, cycle_halfedges, pmesh, vpm, hd_kpr, mv);
+  std::size_t res = internal::zip_boundary_cycle(bh, cycle_halfedges, pmesh, vpm, hd_kpr);
+  if(bh == boost::graph_traits<PolygonMesh>::null_halfedge()) // stitched everything
+  {
+    cycle_reps_maintainer.remove_representative(bh);
+    return res;
+  }
+
+  // Re-compute the range if something was stitched
+  if(res != 0)
+  {
+    cycle_reps_maintainer.remove_representative(bh_mem);
+    cycle_reps_maintainer.add_representative(bh);
+
+    cycle_halfedges.clear();
+    for(halfedge_descriptor h : halfedges_around_face(bh, pmesh))
+      cycle_halfedges.push_back(h);
+  }
 
   std::vector<halfedges_pair> to_stitch;
   internal::collect_duplicated_stitchable_boundary_edges(cycle_halfedges, pmesh,
                                                          hd_kpr, false /*per cc*/,
                                                          std::back_inserter(to_stitch), np);
 
-  mv.remove_representative(bh);
-
-  res += stitch_halfedge_range(to_stitch, cycle_halfedges, pmesh, vpm, mv);
+  res += stitch_halfedge_range(to_stitch, cycle_halfedges, pmesh, vpm, cycle_reps_maintainer);
 
   return res;
 }
