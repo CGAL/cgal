@@ -503,7 +503,11 @@ bool does_self_intersect(const FaceRange& face_range,
     CGAL::Emptyset_iterator unused_out;
     internal::self_intersections_impl<ConcurrencyTag>(face_range, tmesh, unused_out, true /*throw*/, np);
   }
+  #if defined(CGAL_LINKED_WITH_TBB)
+  catch(tbb::captured_exception&)
+  #else
   catch(CGAL::internal::Throw_at_output_exception&)
+  #endif
   {
     return true;
   }
