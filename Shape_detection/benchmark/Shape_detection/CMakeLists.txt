@@ -4,8 +4,6 @@
 cmake_minimum_required(VERSION 3.1...3.15)
 project(Shape_detection_Benchmarks)
 
-set(CMAKE_CXX_STANDARD 11)
-
 find_package(CGAL REQUIRED COMPONENTS Core)
 
 include(${CGAL_USE_FILE})

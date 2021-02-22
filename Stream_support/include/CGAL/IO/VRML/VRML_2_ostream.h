@@ -21,6 +21,7 @@
 
 #include <CGAL/basic.h>
 #include <iostream>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 namespace CGAL {
 
@@ -104,6 +105,11 @@ inline VRML_2_ostream& operator<<(VRML_2_ostream& os,
   return os;
 }
 
+template<typename NP>
+void set_stream_precision_from_NP(VRML_2_ostream& os, const NP& np)
+{
+  return set_stream_precision_from_NP(os.os(), np);
+}
 } // namespace CGAL
 
 #endif // CGAL_IO_VRML_2_OSTREAM_H
@@ -315,4 +321,5 @@ operator<<(VRML_2_ostream& os,
 } //namespace CGAL
 
 #endif // CGAL_IO_VRML_VRML_2_SEGMENT_3
+
 #endif // CGAL_SPHERE_3_H

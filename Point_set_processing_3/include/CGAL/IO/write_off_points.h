@@ -66,8 +66,7 @@ bool write_OFF_PSP(std::ostream& os,
     return false;
   }
 
-  const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
-  os.precision(precision);
+  set_stream_precision_from_NP(os, np);
 
   // Write header
   os << "NOFF" << std::endl;
@@ -125,7 +124,7 @@ bool write_OFF_PSP(std::ostream& os,
     \cgalParamNBegin{stream_precision}
       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
       \cgalParamType{int}
-      \cgalParamDefault{`6`}
+      \cgalParamDefault{`the precision of the stream `os``}
     \cgalParamNEnd
    \cgalNamedParamsEnd
 
@@ -208,6 +207,7 @@ bool write_OFF(const std::string& filename,
                )
 {
   std::ofstream os(filename);
+  set_stream_precision_from_NP(os, np);
   return write_OFF(os, points, np);
 }
 

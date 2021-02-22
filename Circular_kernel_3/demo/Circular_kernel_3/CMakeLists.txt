@@ -12,7 +12,7 @@ endif()
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
-find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL)
+find_package(Qt5 QUIET COMPONENTS Script OpenGL)
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 

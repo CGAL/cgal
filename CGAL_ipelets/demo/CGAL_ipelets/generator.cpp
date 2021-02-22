@@ -110,11 +110,7 @@ void generator::protected_run(int fn)
   else
     segments.reserve(nbelements);
 
-  #ifdef CGAL_USE_IPE_7
   get_IpePage()->deselectAll();
-  #else
-  get_IpePage()->DeselectAll();
-  #endif
 
   switch(fn){
     case 0:{//random point in a circle
