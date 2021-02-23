@@ -426,7 +426,7 @@ Given a 2D point set, we detect 2D lines using the fuzzy sphere neighborhood. We
 
 The points with assigned to them normal vectors are stored in `std::vector` and the used `Kernel` is `CGAL::Simple_cartesian`, where the number type is `double`.
 
-\cgalExample{Shape_detection/region_growing_on_point_set_2.cpp}
+\cgalExample{Shape_detection/region_growing_lines_on_point_set_2.cpp}
 
 \paragraph Shape_detection_RegionGrowingPoints_example_2D_circles Detecting 2D Circles
 
@@ -441,7 +441,7 @@ and save them in a file (see Figure \cgalFigureRef{Region_growing_on_point_set_3
 
 The point set with associated normals is stored in `CGAL::Point_set_3` and the used `Kernel` is `CGAL::Exact_predicates_inexact_constructions_kernel`.
 
-\cgalExample{Shape_detection/region_growing_on_point_set_3.cpp}
+\cgalExample{Shape_detection/region_growing_planes_on_point_set_3.cpp}
 
 \paragraph Shape_detection_RegionGrowingPoints_example_3D_spheres Detecting 3D Spheres
 
@@ -542,7 +542,7 @@ a faster version of region growing, use a floating type based kernel.
 We can improve the quality of region growing by providing a different seeding order (analogously to \ref Shape_detection_RegionGrowingPoints "Point Sets") that is why in this example we also
 sort indices of input faces using the `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting` and only then detect regions.
 
-\cgalExample{Shape_detection/region_growing_on_polygon_mesh.cpp}
+\cgalExample{Shape_detection/region_growing_planes_on_polygon_mesh.cpp}
 
 
 \subsubsection Shape_detection_RegionGrowingMesh_performance Performance

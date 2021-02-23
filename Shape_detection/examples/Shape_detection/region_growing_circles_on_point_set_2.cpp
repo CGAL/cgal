@@ -34,7 +34,7 @@ using Region_growing = CGAL::Shape_detection::Region_growing
 
 int main (int argc, char** argv)
 {
-  std::ifstream ifile (argc > 1 ? argv[1] : "data/circle.ply");
+  std::ifstream ifile (argc > 1 ? argv[1] : "data/circles.ply");
   Point_set_3 points3;
   ifile >> points3;
 
