@@ -221,7 +221,7 @@ if (TESTSUITE)
     if(IS_DIRECTORY "${release_dir}/test/${d}")
       if(NOT EXISTS "${release_dir}/test/${d}/cgal_test_with_cmake")
         execute_process(
-          COMMAND ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake
+          COMMAND sh ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake
           WORKING_DIRECTORY "${release_dir}/test/${d}"
           RESULT_VARIABLE RESULT_VAR
           OUTPUT_VARIABLE OUT_VAR
@@ -247,7 +247,7 @@ if (TESTSUITE)
         file(RENAME "${release_dir}/tmp/${d}" "${release_dir}/test/${d}_Demo")
         if(NOT EXISTS "${release_dir}/test/${d}_Demo/cgal_test_with_cmake")
           execute_process(
-            COMMAND ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake --no-run
+            COMMAND sh ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake --no-run
             WORKING_DIRECTORY "${release_dir}/test/${d}_Demo"
             RESULT_VARIABLE RESULT_VAR
             OUTPUT_VARIABLE OUT_VAR
@@ -268,7 +268,7 @@ if (TESTSUITE)
       file(RENAME "${release_dir}/tmp/${d}" "${release_dir}/test/${d}_Examples")
       if(NOT EXISTS "${release_dir}/test/${d}_Examples/cgal_test_with_cmake")
         execute_process(
-          COMMAND ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake
+          COMMAND sh ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake
           WORKING_DIRECTORY "${release_dir}/test/${d}_Examples"
           RESULT_VARIABLE RESULT_VAR
           OUTPUT_VARIABLE OUT_VAR
