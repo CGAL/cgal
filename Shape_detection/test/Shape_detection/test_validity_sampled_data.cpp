@@ -20,6 +20,9 @@
 
 #include <boost/iterator/function_output_iterator.hpp>
 
+// Uncomment this line to run expensive test
+// #define CGAL_SHAPE_DETECTION_RUN_EXPENSIVE_TESTS
+
 namespace SD = CGAL::Shape_detection;
 
 using Kernel = CGAL::Simple_cartesian<double>;
@@ -64,7 +67,7 @@ int main (int argc, char** argv)
   test_copied_point_cloud (points, 2);
   test_copied_point_cloud (points, 5);
   test_copied_point_cloud (points, 10);
-#ifndef CGAL_TEST_SUITE // Disable tests too large for testsuite
+#ifdef CGAL_SHAPE_DETECTION_RUN_EXPENSIVE_TESTS
   test_copied_point_cloud (points, 20);
   test_copied_point_cloud (points, 50);
 #endif
