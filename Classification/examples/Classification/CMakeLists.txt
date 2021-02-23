@@ -46,15 +46,6 @@ if(NOT TARGET CGAL::OpenCV_support)
   )
 endif()
 
-find_package(TensorFlow QUIET)
-include(CGAL_TensorFlow_support)
-if(NOT TARGET CGAL::TensorFlow_support)
-  message(
-    STATUS
-      "NOTICE: TensorFlow was not found. TensorFlow neural network predicate for classification won't be available."
-  )
-endif()
-
 find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(NOT TARGET CGAL::Eigen3_support)
@@ -85,13 +76,6 @@ if (TARGET CGAL::OpenCV_support)
                         PUBLIC CGAL::OpenCV_support)
 endif()
 
-if(TARGET CGAL::TensorFlow_support)
-  create_single_source_cgal_program("example_tensorflow_neural_network.cpp")
-  target_link_libraries(example_opencv_random_forest
-                        PUBLIC CGAL::TensorFlow_support)
-endif()
-
-
 foreach(target
     example_classification
     example_ethz_random_forest
@@ -100,7 +84,6 @@ foreach(target
     example_mesh_classification
     example_cluster_classification
     example_opencv_random_forest
-    example_tensorflow_neural_network
     gis_tutorial_example
     example_deprecated_conversion)
   if(TARGET ${target})
