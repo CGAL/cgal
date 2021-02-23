@@ -9,8 +9,8 @@
 //
 // Author(s)     : Ilker O. Yaz
 
-#ifndef CGAL_SURFACE_MESH_SEGMENTATION_MESH_SEGMENTATION_H
-#define CGAL_SURFACE_MESH_SEGMENTATION_MESH_SEGMENTATION_H
+#ifndef CGAL_SDF_MESH_SEGMENTATION_H
+#define CGAL_SDF_MESH_SEGMENTATION_H
 
 #include <CGAL/license/Surface_mesh_segmentation.h>
 
