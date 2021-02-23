@@ -519,10 +519,6 @@ bool does_self_intersect(const FaceRange& face_range,
     else throw;
   }
   #endif
-  catch ( ... )
-  {
-    throw;
-  }
   return false;
 }
 
