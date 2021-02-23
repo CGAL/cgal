@@ -208,3 +208,4 @@ CGAL_add_named_parameter(maximum_normal_deviation_t, maximum_normal_deviation, m
 
 // Parameters for segmentation
 CGAL_add_named_parameter(min_cosinus_squared_t, min_cosinus_squared, minimum_cosinus_squared)
+CGAL_add_named_parameter(max_Frechet_distance_t, max_Frechet_distance, maximum_Frechet_distance)

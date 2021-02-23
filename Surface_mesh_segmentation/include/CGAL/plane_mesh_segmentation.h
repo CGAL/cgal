@@ -13,6 +13,7 @@
 #define CGAL_PLANE_MESH_SEGMENTATION_H
 
 #include <CGAL/license/Surface_mesh_segmentation.h>
+#include <CGAL/linear_least_squares_fitting_3.h>
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
@@ -155,11 +156,125 @@ const ECM& get_ecm(const internal_np::Param_not_found&, const TriangleMesh& tm)
   return ecm;
 }
 
+#ifndef CGAL_DO_NOT_USE_PCA
+template <typename TriangleMesh,
+          typename FaceCCIdMap,
+          typename VertexPointMap>
+typename boost::property_traits<FaceCCIdMap>::value_type
+coplanarity_segmentation_with_pca(TriangleMesh& tm,
+                                  double max_frechet_distance,
+                                  double min_cosinus_squared,
+                                  FaceCCIdMap& face_cc_ids,
+                                  const VertexPointMap& vpm)
+{
+  typedef typename Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::Kernel IK; // input kernel
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel PCA_K;
+  typedef boost::graph_traits<TriangleMesh> graph_traits;
+
+  typedef typename boost::property_traits<FaceCCIdMap>::value_type CC_ID;
+
+  std::size_t nb_faces = std::distance(faces(tm).first, faces(tm).second);
+  std::size_t faces_tagged = 0;
+  CC_ID cc_id(-1);
+  typename graph_traits::face_iterator fit_seed = boost::begin(faces(tm));
+
+  CGAL::Cartesian_converter<IK, PCA_K> to_pca_k;
+
+  const double max_squared_frechet_distance = max_frechet_distance * max_frechet_distance;
+
+  auto get_triangle = [&tm, &vpm, &to_pca_k](typename graph_traits::face_descriptor f)
+  {
+    typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
+      h = halfedge(f, tm);
+    return typename PCA_K::Triangle_3(to_pca_k(get(vpm, source(h, tm))),
+                                      to_pca_k(get(vpm, target(h, tm))),
+                                      to_pca_k(get(vpm, target(next(h, tm), tm))));
+  };
+
+  while(faces_tagged!=nb_faces)
+  {
+    CGAL_assertion(faces_tagged<=nb_faces);
+
+    while( get(face_cc_ids, *fit_seed)!=CC_ID(-1) )
+    {
+      ++fit_seed;
+      CGAL_assertion( fit_seed!=boost::end(faces(tm)) );
+    }
+    typename graph_traits::face_descriptor seed = *fit_seed;
+
+    std::vector<typename graph_traits::halfedge_descriptor> queue; /// not sorted for now @TODO
+    queue.push_back( halfedge(seed, tm) );
+    queue.push_back( next(queue.back(), tm) );
+    queue.push_back( next(queue.back(), tm) );
+
+    std::vector<typename PCA_K::Triangle_3> current_selection; /// @TODO compare lls-fitting with only points
+    current_selection.push_back(get_triangle(seed));
+    put(face_cc_ids, seed, ++cc_id);
+    ++faces_tagged;
+
+    auto does_fitting_respect_distance_bound = [&to_pca_k, &vpm, max_squared_frechet_distance](
+      std::unordered_set<typename graph_traits::vertex_descriptor>& vertices,
+      const PCA_K::Plane_3& plane)
+    {
+      typename PCA_K::Compare_squared_distance_3 compare_squared_distance;
+      for (typename graph_traits::vertex_descriptor v : vertices)
+      {
+        if (compare_squared_distance(to_pca_k(get(vpm, v)), plane, max_squared_frechet_distance) == LARGER)
+          return false;
+      }
+      return true;
+    };
+
+    std::unordered_set<typename graph_traits::vertex_descriptor> vertex_selection;
+    vertex_selection.insert(target(queue[0], tm));
+    vertex_selection.insert(target(queue[1], tm));
+    vertex_selection.insert(target(queue[2], tm));
+    while(!queue.empty())
+    {
+      typename graph_traits::halfedge_descriptor h = queue.back(),
+                                               opp = opposite(h, tm);
+      queue.pop_back();
+      if (is_border(opp, tm) || get(face_cc_ids, face(opp, tm))!=CC_ID(-1)) continue;
+      if (!CGAL::Planar_segmentation::is_edge_between_coplanar_faces(edge(h, tm), tm, min_cosinus_squared, vpm) )
+        continue;
+      current_selection.push_back(get_triangle(face(opp, tm)));
+
+      bool new_vertex_added = vertex_selection.insert(target(next(opp, tm), tm)).second;
+
+      typename PCA_K::Plane_3 plane;
+      typename PCA_K::Point_3 centroid;
+
+      linear_least_squares_fitting_3(current_selection.begin(),
+                                     current_selection.end(),
+                                     plane,
+                                     centroid,
+                                     Dimension_tag<2>());
+
+      if (!new_vertex_added || does_fitting_respect_distance_bound(vertex_selection, plane))
+      {
+        put(face_cc_ids, face(opp, tm), cc_id);
+        ++faces_tagged;
+        queue.push_back(next(opp, tm));
+        queue.push_back(prev(opp, tm));
+      }
+      else{
+        /// @TODO add an opti to avoid testing several time a face rejected
+        current_selection.pop_back();
+        vertex_selection.erase(target(next(opp, tm), tm));
+      }
+    }
+  }
+
+  return cc_id+1;
+}
+#endif
+
 } // namespace Planar_segmentation
 
 /*!
  * @TODO: Add doc with vpm, ecm, and plane per segment property map
  * ecm is both in and out
+ * @TODO ecm as input is ignored if PCA is used...
  */
 template <class TriangleMesh, class SegmentPropertyMap, class NamedParameters>
 typename boost::property_traits<SegmentPropertyMap>::value_type
@@ -193,34 +308,60 @@ segment_via_plane_fitting(const TriangleMesh& tm, SegmentPropertyMap segment_ids
   // input parameter for example (exact or approximate)
   double min_cosinus_squared = choose_parameter<double>(get_parameter(np, internal_np::min_cosinus_squared), 1);
 
-  // mark constrained edges
-  /// @TODO: hardcoded path if min_cosinus_squared == 1
-  Planar_segmentation::mark_constrained_edges(tm, ecm, min_cosinus_squared, vpm);
-
-  // segment connected components (cc) delimited by constrained edges
-  typename boost::property_traits<SegmentPropertyMap>::value_type
-    res = Polygon_mesh_processing::connected_components(
-      tm, segment_ids, parameters::edge_is_constrained_map(ecm));
-
-  // for consistency in case approximate angle is used
-  if (min_cosinus_squared!=1)
+  if ( is_default_parameter(get_parameter(np, internal_np::max_Frechet_distance)) )
   {
-    for(edge_descriptor e : edges(tm))
+
+    // mark constrained edges
+    /// @TODO: hardcoded path if min_cosinus_squared == 1
+    Planar_segmentation::mark_constrained_edges(tm, ecm, min_cosinus_squared, vpm);
+
+    // segment connected components (cc) delimited by constrained edges
+    typename boost::property_traits<SegmentPropertyMap>::value_type
+      res = Polygon_mesh_processing::connected_components(
+        tm, segment_ids, parameters::edge_is_constrained_map(ecm));
+
+    // for consistency in case approximate angle is used
+    if (min_cosinus_squared!=1)
     {
-      if (get(ecm, e) && !is_border(e, tm))
+      for(edge_descriptor e : edges(tm))
       {
-        halfedge_descriptor h = halfedge(e, tm);
-        if ( get(segment_ids, face(h, tm))==get(segment_ids, face(opposite(h, tm), tm)) )
-          put(ecm, e, false);
+        if (get(ecm, e) && !is_border(e, tm))
+        {
+          halfedge_descriptor h = halfedge(e, tm);
+          if ( get(segment_ids, face(h, tm))==get(segment_ids, face(opposite(h, tm), tm)) )
+            put(ecm, e, false);
+        }
       }
     }
+    return res;
   }
+  else
+  {
+    // use PCA version
+    double max_frechet_distance = choose_parameter<double>(get_parameter(np, internal_np::max_Frechet_distance), 33);
 
-  return res;
+    typename boost::property_traits<SegmentPropertyMap>::value_type res =
+      Planar_segmentation::coplanarity_segmentation_with_pca(tm,
+                                                              max_frechet_distance,
+                                                              min_cosinus_squared,
+                                                              segment_ids,
+                                                              vpm);
+    // mark constrained edges
+    for(edge_descriptor e : edges(tm))
+    {
+      halfedge_descriptor h = halfedge(e, tm);
+      if (is_border(e, tm) || get(segment_ids, face(h, tm)) !=
+                              get(segment_ids, face(opposite(h, tm), tm)))
+      {
+        put(ecm, e, true);
+      }
+    }
+    return res;
+  }
 }
 
 template <class TriangleMesh, class SegmentPropertyMap>
-std::size_t
+typename boost::property_traits<SegmentPropertyMap>::value_type
 segment_via_plane_fitting(const TriangleMesh& tm, SegmentPropertyMap segment_ids)
 {
   return segment_via_plane_fitting(tm, segment_ids, parameters::all_default());
