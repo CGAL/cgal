@@ -628,11 +628,17 @@ if [ -f '${LIST_TEST_PACKAGES}' ]; then
   cp '${CGAL_TEST_DIR}/makefile2'                           '${CGAL_BINARY_DIR}/test'
   cp '${CGAL_TEST_DIR}/run_testsuite_with_cmake'            '${CGAL_BINARY_DIR}/test'
 
-  for PACKAGE in \`source '${LIST_TEST_PACKAGES}' '${CGAL_ROOT}'\`; do
-
-    if [ -d "${CGAL_TEST_DIR}/\${PACKAGE}" ]; then
-      mkdir "${CGAL_BINARY_DIR}/test/\${PACKAGE}"
-      cp -r "${CGAL_TEST_DIR}/\${PACKAGE}" '${CGAL_BINARY_DIR}/test'
+  # list all packages in CGAL_TEST_DIR. If PACKAGE is found in LIST_TEST_PACKAGES,
+  # copy it, else prepare for the special "skipped" case in the table.
+  for PACKAGE in \$(ls "${CGAL_TEST_DIR}"); do
+    if [ -d "${CGAL_TEST_DIR}/\$PACKAGE" ]; then
+      if source '${LIST_TEST_PACKAGES}' '${CGAL_ROOT}' | egrep -q \$PACKAGE; then
+        mkdir "\${CGAL_BINARY_DIR}/test/\${PACKAGE}"
+        cp -r "${CGAL_TEST_DIR}/\${PACKAGE}" '${CGAL_BINARY_DIR}/test'
+      else
+        mkdir "${CGAL_BINARY_DIR}/test/\${PACKAGE}"
+        touch "${CGAL_BINARY_DIR}/test/\${PACKAGE}/skipped"
+      fi
     fi
 
   done
@@ -653,7 +659,7 @@ EOF
       cat >> "$file" <<EOF
 echo 'COLLECTING RESULTS';
 ./collect_cgal_testresults_from_cmake;
-if [ -n "\$COLLECT_DEMOS_BINARIES" ]; then
+if [ -n "\$COLLECT_DEMOS_BINARIES" ]; then 
   echo 'COLLECTING DEMOS BINARIES';
   tar czvf '${CGAL_TEST_DIR}/demos_${CGAL_TESTER}_${PLATFORM}.tar.gz' *_Demo/*.exe *_Demo/*.dll *_Demo/*/*.dll *_Demo/*/*/*.dll
 fi
@@ -791,7 +797,7 @@ put_on_web()
 # Parse command line arguments
 for arg in "$@"
 do
-  case "$arg" in
+  case "$arg" in 
     "-c")
       echo "Using latest unzipped release instead of getting a new one from the server"
       USE_LATEST_UNZIPPED="y"
@@ -837,7 +843,7 @@ LIST_TEST_PACKAGES="${CGAL_ROOT}/list_test_packages"
 ACTUAL_LOGFILE="${CGAL_ROOT}/`basename ${0}`.log"
 rm -f "${ACTUAL_LOGFILE}"
 
-echo "Running `basename ${0}` "'$Revision$' >> "${ACTUAL_LOGFILE}"
+echo "Running `basename ${0}` "'$Revision$' >> "${ACTUAL_LOGFILE}" 
 
 # Sanity checks
 if [ "${REFERENCE_PLATFORMS_DIR}" = "must_be_set_in_.autocgalrc" ]; then
@@ -865,11 +871,11 @@ fi
 # Detects cygwin
 if uname | grep -q "CYGWIN"; then
   JOM="`which jom`"
-  if [ -e "$JOM" ]; then
+  if [ -e "$JOM" ]; then 
     CMAKE_GENERATOR='-GNMake Makefiles JOM'
     MAKE_CMD='jom'
     log "${ACTUAL_LOGFILE}" "Cygwin detected, jom detected, using jom"
-  else
+  else 
     CMAKE_GENERATOR='-GNMake Makefiles'
     MAKE_CMD='nmake'
     log "${ACTUAL_LOGFILE}" "Cygwin detected, using nmake"
@@ -886,7 +892,7 @@ if [ -z "$IS_CYGWIN" ]; then
 lockfile -r 1 "$LOCK_FILE";
 if [ ${?} != 0 ]; then
   PID=`cat "$LOCK_FILE"`
-  if kill -0 "$PID"; then
+  if kill -0 "$PID"; then 
     log "${ACTUAL_LOGFILE}" "COULD NOT ACQUIRE LOCK! LOCKING PROCESS PID=$PID";
     exit 1;
   else
