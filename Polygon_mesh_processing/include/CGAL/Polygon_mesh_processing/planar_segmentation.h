@@ -22,7 +22,9 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_PLANAR_SEGMENTATION_H
 #define CGAL_POLYGON_MESH_PROCESSING_PLANAR_SEGMENTATION_H
 
-#include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
+
+#include <CGAL/plane_mesh_segmentation.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_2_projection_traits_3.h>
@@ -32,8 +34,9 @@
 #include <CGAL/linear_least_squares_fitting_3.h>
 #endif
 #include <CGAL/boost/graph/properties.h>
-#include <boost/foreach.hpp>
 #include <boost/unordered_map.hpp>
+
+
 
 #ifdef DEBUG_PCA
 #include <fstream>
@@ -45,52 +48,14 @@
 /// @TODO function to move in segmentation package: segment_via_plane_fitting(in, vci, ecm, fccid, np) (pca is a np option)
 ///       + version with a range of meshes
 /// @TODO function to move in PMP: retriangulate_planar_patches(in, out, vci, ecm, fccid, np) (pca is a np option)
-/// @TODO check if PCA performance is improved when using Eigen
+/// @TODO expose mark_corner_vertices (or make it part of segment_via_plane_fitting?)
 
 namespace CGAL{
-
-namespace Polygon_mesh_processing {
 
 /// @TODO these predicates should probably end-up in the Kernel
 namespace Predicates {
 
 // predicates
-template <typename K>
-struct Is_dihedral_angle_close_to_Pi_impl{
-  typedef bool result_type;
-
-  /// Compares the value of the dihedral angle between the triangles `pqr` and `pqs`
-  /// with the angles \$f\theta\f$ and \f$\pi + \theta\f$.
-  /// `false` is returned if the dihedral angle is less or equal to \f$\pi\f$.
-  /// If the cosinus of the dihedral angle is smaller or equal to the cosinus of \f$\theta\f$
-  /// `true` is returned and `false` otherwise. \f$theta\f$ is provided using the square of its
-  /// cosinus.
-  bool
-  operator()(const typename K::Point_3& p,
-             const typename K::Point_3& q,
-             const typename K::Point_3& r,
-             const typename K::Point_3& s,
-             const typename K::FT min_cosinus_squared) const
-  {
-    const typename K::Vector_3 pq(p,q);
-    const typename K::Vector_3 pr(p,r);
-    const typename K::Vector_3 ps(p,s);
-
-    typename K::Construct_cross_product_vector_3 cross_product =
-      K().construct_cross_product_vector_3_object();
-    const typename K::Vector_3 pqpr = cross_product(pq, pr);
-    const typename K::Vector_3 pqps = cross_product(pq, ps);
-    const typename K::FT sc_prod_1 = pqpr * pqps;
-
-    typename K::Compute_squared_length_3 squared_length = K().compute_squared_length_3_object();
-    if (sign(sc_prod_1) != NEGATIVE) return false;
-    return compare( square(sc_prod_1),
-                    min_cosinus_squared
-                      * squared_length(pqpr)
-                      * squared_length(pqps) ) != SMALLER;
-  }
-};
-
 template <typename K>
 struct Is_angle_close_to_Pi_impl{
   typedef bool result_type;
@@ -122,34 +87,6 @@ struct Is_angle_close_to_Pi_impl{
   }
 };
 
-template <typename K, template <class Kernel> class Pred>
-struct Get_filtered_predicate_RT
-{
-  typedef typename Exact_kernel_selector<K>::Exact_kernel_rt Exact_kernel_rt;
-  typedef typename Exact_kernel_selector<K>::C2E_rt C2E_rt;
-  typedef Simple_cartesian<Interval_nt_advanced>        Approximate_kernel;
-  typedef Cartesian_converter<K, Approximate_kernel>   C2F;
-
-
-  typedef Filtered_predicate<Pred<Exact_kernel_rt>,
-                             Pred<Approximate_kernel>,
-                             C2E_rt, C2F> type;
-};
-
-template<typename K, bool has_filtered_predicates = K::Has_filtered_predicates>
-struct Is_dihedral_angle_close_to_Pi
-  : public Is_dihedral_angle_close_to_Pi_impl<K>
-{
-  using Is_dihedral_angle_close_to_Pi_impl<K>::operator();
-};
-
-template<typename K>
-struct Is_dihedral_angle_close_to_Pi<K, true>
-  : public Get_filtered_predicate_RT<K, Is_dihedral_angle_close_to_Pi_impl>::type
-{
-  using Get_filtered_predicate_RT<K, Is_dihedral_angle_close_to_Pi_impl>::type::operator();
-};
-
 template<typename K, bool has_filtered_predicates = K::Has_filtered_predicates>
 struct Is_angle_close_to_Pi
   : public Is_angle_close_to_Pi_impl<K>
@@ -165,6 +102,8 @@ struct Is_angle_close_to_Pi<K, true>
 };
 
 } //end of Predicates namespace
+
+namespace Polygon_mesh_processing {
 
 #ifndef CGAL_DO_NOT_USE_PCA
 // forward declaration
@@ -228,34 +167,6 @@ struct FaceInfo2
 
 template <typename TriangleMesh,
           typename VertexPointMap,
-          typename edge_descriptor>
-bool is_edge_between_coplanar_faces(edge_descriptor e,
-                                    const TriangleMesh& tm,
-                                    double min_cosinus_squared,
-                                    const VertexPointMap& vpm)
-{
-  typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
-  typedef typename Kernel_traits<Point_3>::type K;
-  typedef typename boost::property_traits<VertexPointMap>::reference Point_ref_3;
-  if (is_border(e, tm)) return false;
-  typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
-    h =  halfedge(e, tm);
-  Point_ref_3 p = get(vpm, source(h, tm) );
-  Point_ref_3 q = get(vpm, target(h, tm) );
-  Point_ref_3 r = get(vpm, target(next(h, tm), tm) );
-  Point_ref_3 s = get(vpm, target(next(opposite(h, tm), tm), tm) );
-
-  if (min_cosinus_squared==1)
-    return coplanar(p, q, r, s);
-  else
-  {
-    Predicates::Is_dihedral_angle_close_to_Pi<K> pred;
-    return pred(p, q, r, s, min_cosinus_squared);
-  }
-}
-
-template <typename TriangleMesh,
-          typename VertexPointMap,
           typename halfedge_descriptor,
           typename EdgeIsConstrainedMap>
 bool is_target_vertex_a_corner(halfedge_descriptor h,
@@ -294,23 +205,7 @@ bool is_target_vertex_a_corner(halfedge_descriptor h,
   }
 }
 
-template <typename TriangleMesh,
-          typename EdgeIsConstrainedMap,
-          typename VertexPointMap>
-void
-mark_constrained_edges(
-  TriangleMesh& tm,
-  EdgeIsConstrainedMap edge_is_constrained,
-  double min_cosinus_squared,
-  const VertexPointMap& vpm)
-{
-  for(typename boost::graph_traits<TriangleMesh>::edge_descriptor e : edges(tm))
-  {
-    if (!get(edge_is_constrained,e))
-      if (!is_edge_between_coplanar_faces(e, tm, min_cosinus_squared, vpm))
-        put(edge_is_constrained, e, true);
-  }
-}
+
 
 template <typename TriangleMesh,
           typename VertexPointMap,
@@ -478,44 +373,6 @@ bool add_triangle_faces(const std::vector< std::pair<std::size_t, std::size_t> >
 }
 
 template <typename TriangleMesh,
-          typename EdgeIsConstrainedMap,
-          typename FaceCCIdMap>
-std::size_t connected_components_wrapper(TriangleMesh& tm,
-                                         FaceCCIdMap& face_cc_ids,
-                                         EdgeIsConstrainedMap& edge_is_constrained,
-                                         CGAL::Tag_true)
-{
-  return connected_components(tm,
-                              face_cc_ids,
-                              parameters::edge_is_constrained_map(edge_is_constrained));
-}
-
-template <typename TriangleMesh,
-          typename EdgeIsConstrainedMap,
-          typename FaceCCIdMap>
-std::size_t connected_components_wrapper(TriangleMesh& tm,
-                                         FaceCCIdMap& face_cc_ids,
-                                         EdgeIsConstrainedMap& edge_is_constrained,
-                                         CGAL::Tag_false)
-{
-  typename boost::property_map<TriangleMesh, CGAL::dynamic_face_property_t<std::size_t> >::type
-    face_id_map =  get(CGAL::dynamic_face_property_t<std::size_t>(), tm);
-
-  //init the map
-  std::size_t i=0;
-  for(typename boost::graph_traits<TriangleMesh>::face_descriptor f : faces(tm))
-    put(face_id_map, f, i++);
-
-  std::size_t res =
-    connected_components(tm,
-                         face_cc_ids,
-                         parameters::edge_is_constrained_map(edge_is_constrained).
-                         face_index_map(face_id_map));
-
-  return res;
-}
-
-template <typename TriangleMesh,
           typename VertexCornerIdMap,
           typename EdgeIsConstrainedMap,
           typename FaceCCIdMap,
@@ -528,28 +385,10 @@ tag_corners_and_constrained_edges(TriangleMesh& tm,
                                   FaceCCIdMap& face_cc_ids,
                                   const VertexPointMap& vpm)
 {
-  typedef typename boost::graph_traits<TriangleMesh> graph_traits;
-  // mark constrained edges
-  mark_constrained_edges(tm, edge_is_constrained, min_cosinus_squared, vpm);
-
-  // mark connected components (cc) delimited by constrained edges
-  std::size_t nb_cc = connected_components_wrapper(tm,
-                                           face_cc_ids,
-                                           edge_is_constrained,
-                                           CGAL::graph_has_property<TriangleMesh, face_index_t>());
-
-  if (min_cosinus_squared!=1)
-  {
-    for(typename graph_traits::edge_descriptor e : edges(tm))
-    {
-      if (get(edge_is_constrained, e) && !is_border(e, tm))
-      {
-        typename graph_traits::halfedge_descriptor h = halfedge(e, tm);
-        if ( get(face_cc_ids, face(h, tm))==get(face_cc_ids, face(opposite(h, tm), tm)) )
-          put(edge_is_constrained, e, false);
-      }
-    }
-  }
+  std::size_t nb_cc =
+    segment_via_plane_fitting(tm, face_cc_ids,
+                              parameters::edge_is_constrained_map(edge_is_constrained)
+                                         .minimum_cosinus_squared(min_cosinus_squared));
 
   std::size_t nb_corners =
     mark_corner_vertices(tm, edge_is_constrained, vertex_corner_id, min_cosinus_squared, vpm);
@@ -1224,7 +1063,7 @@ coplanarity_segmentation_with_pca(TriangleMesh& tm,
                                                opp = opposite(h, tm);
       queue.pop_back();
       if (is_border(opp, tm) || get(face_cc_ids, face(opp, tm))!=std::size_t(-1)) continue;
-      if (!Planar_segmentation::is_edge_between_coplanar_faces(edge(h, tm), tm, min_cosinus_squared, vpm) )
+      if (!CGAL::Planar_segmentation::is_edge_between_coplanar_faces(edge(h, tm), tm, min_cosinus_squared, vpm) )
         continue;
       current_selection.push_back(get_triangle(face(opp, tm)));
 
