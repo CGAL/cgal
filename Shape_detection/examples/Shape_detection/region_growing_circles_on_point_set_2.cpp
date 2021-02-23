@@ -100,7 +100,7 @@ int main (int argc, char** argv)
   std::cerr << nb_circles << " circles detected in "
             << timer.time() << " seconds" << std::endl;
 
-  // Save in colored_spheres.ply
+  // Save in colored_circles.ply
   std::ofstream out ("colored_circles.ply");
   CGAL::set_binary_mode (out);
   out << points3;

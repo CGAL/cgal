@@ -237,7 +237,7 @@ Shapes are detected by growing regions from seed items, where each region is cre
 Together with the generic algorithm's implementation `CGAL::Shape_detection::Region_growing`, three particular instances of this algorithm are provided:
 
 - Line and circle detection in a \ref Shape_detection_RegionGrowingPoints "2D point set";
-- Plane, sphere and cylinder detection in a \ref Shape_detection_RegionGrowingPoints "3D point set";
+- Plane, sphere, and cylinder detection in a \ref Shape_detection_RegionGrowingPoints "3D point set";
 - Plane detection on a \ref Shape_detection_RegionGrowingMesh "polygon mesh".
 
 Other instances can be easily added by the user, as explained below.
@@ -342,11 +342,11 @@ This class finds K (specified by the user) nearest neighbors of the query point 
 
 The component also provides
 
-- `CGAL::Shape_detection::Point_set::Least_squares_line_fit_region` - least squares line fit type of region for 2D points;
-- `CGAL::Shape_detection::Point_set::Least_squares_circle_fit_region` - least squares circle fit type of region for 2D points.
-- `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region` - least squares plane fit type of region for 3D points.
-- `CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_region` - least squares sphere fit type of region for 3D points.
-- `CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_region` - least squares cylinder fit type of region for 3D points.
+- `CGAL::Shape_detection::Point_set::Least_squares_line_fit_region` - least squares line fit type of region for 2D points
+- `CGAL::Shape_detection::Point_set::Least_squares_circle_fit_region` - least squares circle fit type of region for 2D points
+- `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region` - least squares plane fit type of region for 3D points
+- `CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_region` - least squares sphere fit type of region for 3D points
+- `CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_region` - least squares cylinder fit type of region for 3D points
 
 The program associates all points from a region to the best-fit object (2D line, 2D circle, 3D plane, 3D sphere, etc.)
 and controls the quality of this fit.
