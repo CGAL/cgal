@@ -11,7 +11,7 @@
 # GENERATE_TARBALLS=[ON/OFF] indicates if release tarballs should be created as DESTINATION
 
 cmake_minimum_required(VERSION 3.1...3.15)
-find_program(BASH bash sh)
+find_program(BASH NAMES bash sh)
 function(process_package pkg)
   if(VERBOSE)
     message(STATUS "handling ${pkg}")
