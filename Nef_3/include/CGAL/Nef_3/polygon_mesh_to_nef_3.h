@@ -212,7 +212,7 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
 
   for(vertex_descriptor pv : vertices(P) ) {
 
-    Point_3 npv = get(pmap,pv);
+    typename boost::property_traits<PMap>::reference npv = get(pmap,pv);
     Vertex_handle nv = S.new_vertex();
     nv->point() = npv;
     nv->mark() = true;
