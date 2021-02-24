@@ -30,11 +30,13 @@ TD.warning {background-color: rgb(100%,100%,50%)}
 TD.error {background-color: rgb(100%,50%,50%)}
 TD.na {background-color: white;}
 TD.requirements { background-color: rgb(65%,65%,100%) }
+TD.skip { background-color: rgb(90%,100%,100%) }
 
 TH.ok {background-color: rgb(50%,100%,50%)}
 TH.warning {background-color: rgb(100%,100%,50%)}
 TH.error {background-color: rgb(100%,50%,50%)}
 TH.requirements { background-color: rgb(65%,65%,100%) }
+TH.skip { background-color: rgb(90%,100%,100%) }
 
 TD.ok A {font-size:large; text-decoration: none}
 TD.ok A:link {color: rgb(0%,0%,100%)}
@@ -51,6 +53,7 @@ TD.error A:visited {color: rgb(80%,0%,100%)}
 TD.requirements A {font-size: large; text-decoration: none}
 TD.requirements A:link {color: rgb(0%,0%,100%)}
 TD.requirements A:visited {color: rgb(100%,100%,65%)}
+TD.skip A {font-size: large; text-decoration: none}
 
 SELECT { font-family: monospace; }
 
