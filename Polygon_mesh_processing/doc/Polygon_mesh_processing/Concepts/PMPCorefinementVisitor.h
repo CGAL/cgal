@@ -74,6 +74,7 @@ typedef unspecified_type halfedge_descriptor;
                              halfedge_descriptor h_new, TriangleMesh& tm);
   /// called when an intersection edge (represented in input meshes `tm_src1` and `tm_src2` by `h_src1` and `h_src2`
   /// respectively) is imported in `tm_tgt` as `h_tgt`. There is only one call per edge.
+  /// (Called only when an out-of-place operation is requested)
   void intersection_edge_copy(halfedge_descriptor h_src1, const TriangleMesh& tm_src1,
                               halfedge_descriptor h_src2, const TriangleMesh& tm_src2,
                               halfedge_descriptor h_tgt,  TriangleMesh& tm_tgt);

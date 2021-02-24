@@ -718,7 +718,7 @@ void import_polyline(
     h1 = next_marked_halfedge_around_target_vertex(prev1, pm1, intersection_edges1);
     h2 = next_marked_halfedge_around_target_vertex(prev2, pm2, intersection_edges2);
 
-    user_visitor.edge_copy(h1, pm1, h2, pm2, h_out, output);
+    user_visitor.intersection_edge_copy(h1, pm1, h2, pm2, h_out, output);
 
     //if this is the final segment, only create a target vertex if it does not exist
     if (i+1!=nb_segments)
