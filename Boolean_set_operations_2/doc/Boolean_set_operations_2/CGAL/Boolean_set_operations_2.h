@@ -50,19 +50,22 @@ void complement(const Polygon_2<Kernel, Container>& pgn,
                 Polygon_with_holes_2<Kernel, Container>& res);
 
 /*! computes the complement of a polygon.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundary of `pgn` is treated as a
+ *         cyclic sequence of single (\f$x\f$-monotone) segments or as a cyclic
+ *         sequence of (\f$x\f$-monotone) polylines. If substituted with
+ *         `CGAL::Tag_true`, which is the default, `pgn` is converted into a
+ *         general polygon bounded by polylines before the operation is actually
+ *         performed. Then, the resulting general polygon with holes is
+ *         converted back to a standard polygon. If substituted with
+ *         `CGAL::Tag_false`, `pgn` is used as is. Refer to \ref
+ *         bso_ssectraits_sel for more information.
  * \param pgn the input polygon.
  * \param res the resulting complement of \p pgn.
  */
-template <typename Kernel, typename Container, typename UsePolylineTraits>
+template <typename Kernel, typename Container, typename UsePolylines>
 void complement(const Polygon_2<Kernel, Container>& pgn,
                 Polygon_with_holes_2<Kernel, Container>& res,
-                UsePolylineTraits = UsePolylineTraits());
+                UsePolylines = UsePolylines());
 
 /*! computes the complement of a general polygon.
  * \param pgn the input polygon.
@@ -87,22 +90,25 @@ OutputIterator complement(const Polygon_with_holes_2<Kernel, Container>& pgn,
                           OutputIterator oi);
 
 /*! computes the complement of a polygon with holes.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of `pgn` is treated as
+ *         cyclic sequences of single (\f$x\f$-monotone) segments or as cyclic
+ *         sequences of (\f$x\f$-monotone) polylines. If substituted with
+ *         `CGAL::Tag_true`, which is the default, `pgn` is converted into a
+ *         general polygon with holes bounded by polylines before the operation
+ *         is actually performed. Then, the resulting general polygons with
+ *         holes are converted back to a standard polygon with holes. If
+ *         substituted with `CGAL::Tag_false`, `pgn` is used as is. Refer to
+ *         \ref bso_ssectraits_sel for more information.
  * \param pgn the input polygon.
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
  *             `Polygon_with_holes_2<Kernel, Container>`.
  * \return the past-the-end iterator of the output container.
  */
-template <typename Traits, typename OutputIterator, typename UsePolylineTraits>
+template <typename Traits, typename OutputIterator, typename UsePolylines>
 OutputIterator complement(const Polygon_with_holes_2<Kernel, Container>& pgn,
                           OutputIterator oi,
-                          UsePolylineTraits = UsePolylineTraits());
+                          UsePolylines = UsePolylines());
 
 /*! computes the complement of a general polygon with holes.
  * \param pgn the input polygon.
@@ -243,12 +249,16 @@ OutputIterator difference(const Polygon_2<Kernel, Container>& pgn1,
 
 /*! computes the difference of two polygons and inserts the resulting polygons
  * with holes into a container via an output iterator.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of `pgn1` and `pgn2`
+ *         are treated as cyclic sequences of single (\f$x\f$-monotone) segments
+ *         or as a cyclic sequences of (\f$x\f$-monotone) polylines. If
+ *         substituted with `CGAL::Tag_true`, which is the default, `pgn1` and
+ *         `pgn2` are converted into a general polygons bounded by polylines
+ *         before the operation is actually performed. Then, the resulting
+ *         general polygons with holes are converted back to standard
+ *         polygons with holes. If substituted with `CGAL::Tag_false`, `pgn1`
+ *         and `pgn2` are used as is. Refer to \ref bso_ssectraits_sel for more
+ *         information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param oi the output iterator for the result.
@@ -257,11 +267,11 @@ OutputIterator difference(const Polygon_2<Kernel, Container>& pgn1,
  * \return the past-the-end iterator of the output container.
  */
 template <typename Kernel, typename Container, typename OutputIterator,
-          typename UsePolylineTraits>
-OutputIterator difference(const Polygon_2<Kernel, Container>& p1,
-                          const Polygon_2<Kernel, Container>& p2,
+          typename UsePolylines>
+OutputIterator difference(const Polygon_2<Kernel, Container>& pgn1,
+                          const Polygon_2<Kernel, Container>& pgn2,
                           OutputIterator oi,
-                          UsePolylineTraits = UsePolylineTraits());
+                          UsePolylines = UsePolylines());
 
 /*! computes the difference of two polygons and inserts the resulting polygons
  * with holes into a container via an output iterator.
@@ -279,12 +289,16 @@ OutputIterator difference(const Polygon_2<Kernel, Container>& pgn1,
 
 /*! computes the difference of two polygons and inserts the resulting polygons
  * with holes into a container via an output iterator.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of `pgn1` and `pgn2`
+ *         are treated as cyclic sequences of single (\f$x\f$-monotone) segments
+ *         or as a cyclic sequences of (\f$x\f$-monotone) polylines. If
+ *         substituted with `CGAL::Tag_true`, which is the default, `pgn1` and
+ *         `pgn2` are converted into a general polygon and a general polygon
+ *         with holes, respectively, bounded by polylines before the operation
+ *         is actually performed. Then, the resulting general polygons with
+ *         holes are converted back to standard polygons with holes. If
+ *         substituted with `CGAL::Tag_false`, `pgn1` and `pgn2` are used as
+ *         is. Refer to \ref bso_ssectraits_sel for more information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param oi the output iterator for the result.
@@ -293,11 +307,11 @@ OutputIterator difference(const Polygon_2<Kernel, Container>& pgn1,
  * \return the past-the-end iterator of the output container.
  */
 template <typename Kernel, typename Container, typename OutputIterator,
-          typename UsePolylineTraits>
-OutputIterator difference(const Polygon_2<Kernel, Container>& p1,
-                          const Polygon_with_holes_2<Kernel,Container>& p2,
+          typename UsePolylines>
+OutputIterator difference(const Polygon_2<Kernel, Container>& pgn1,
+                          const Polygon_with_holes_2<Kernel,Container>& pgn2,
                           OutputIterator oi,
-                          UsePolylineTraits = UsePolylineTraits());
+                          UsePolylines = UsePolylines());
 
 /*! computes the difference of two polygons and inserts the resulting polygons
  * with holes into a container via an output iterator.
@@ -315,12 +329,16 @@ OutputIterator difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
 
 /*! computes the difference of two polygons and inserts the resulting polygons
  * with holes into a container via an output iterator.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of `pgn1` and `pgn2`
+ *         are treated as cyclic sequences of single (\f$x\f$-monotone) segments
+ *         or as a cyclic sequences of (\f$x\f$-monotone) polylines. If
+ *         substituted with `CGAL::Tag_true`, which is the default, `pgn1` and
+ *         `pgn2` are converted into a general polygon with holes and a general
+ *         polygon, respectively, bounded by polylines before the operation
+ *         is actually performed. Then, the resulting general polygons with
+ *         holes are converted back to standard polygons with holes. If
+ *         substituted with `CGAL::Tag_false`, `pgn1` and `pgn2` are used as
+ *         is. Refer to \ref bso_ssectraits_sel for more information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param oi the output iterator for the result.
@@ -329,11 +347,11 @@ OutputIterator difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  * \return the past-the-end iterator of the output container.
  */
 template <typename Kernel, typename Container, typename OutputIterator,
-          typename UsePolylineTraits>
-OutputIterator difference(const Polygon_with_holes_2<Kernel, Container>& p1,
-                          const Polygon_2<Kernel, Container>& p2,
+          typename UsePolylines>
+OutputIterator difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+                          const Polygon_2<Kernel, Container>& pgn2,
                           OutputIterator oi,
-                          UsePolylineTraits = UsePolylineTraits());
+                          UsePolylines = UsePolylines());
 
 /*! computes the difference of two polygons and inserts the resulting polygons
  * with holes into a container via an output iterator.
@@ -351,12 +369,16 @@ OutputIterator difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
 
 /*! computes the difference of two polygons and inserts the resulting polygons
  * with holes into a container via an output iterator.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of `pgn1` and `pgn2`
+ *         are treated as cyclic sequences of single (\f$x\f$-monotone) segments
+ *         or as a cyclic sequences of (\f$x\f$-monotone) polylines. If
+ *         substituted with `CGAL::Tag_true`, which is the default, `pgn1` and
+ *         `pgn2` are converted into general polygons with holes, bounded by
+ *         polylines before the operation is actually performed. Then, the
+ *         resulting general polygons with holes are converted back to standard
+ *         polygons with holes. If substituted with `CGAL::Tag_false`, `pgn1`
+ *         and `pgn2` are used as is. Refer to \ref bso_ssectraits_sel for more
+ *         information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param oi the output iterator for the result.
@@ -365,13 +387,13 @@ OutputIterator difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  * \return the past-the-end iterator of the output container.
  */
 template <typename Kernel, typename Container, typename OutputIterator,
-          typename UsePolylineTraits>
-OutputIterator difference(const Polygon_with_holes_2<Kernel, Container>& p1,
-                          const Polygon_with_holes_2<Kernel, Container>& p2,
+          typename UsePolylines>
+OutputIterator difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+                          const Polygon_with_holes_2<Kernel, Container>& pgn2,
                           OutputIterator oi,
-                          UsePolylineTraits = UsePolylineTraits());
+                          UsePolylines = UsePolylines());
 
-  /*! computes the difference of two general polygons and inserts the resulting
+/*! computes the difference of two general polygons and inserts the resulting
  * general polygons with holes into a container via an output iterator.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
@@ -644,21 +666,23 @@ bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
                   const Polygon_2<Kernel, Container>& pgn2);
 
 /*! determines whether two polygons intersect in their interior.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of `pgn1` and `pgn2`
+ *         are treated as cyclic sequences of single (\f$x\f$-monotone) segments
+ *         or as a cyclic sequences of (\f$x\f$-monotone) polylines. If
+ *         substituted with `CGAL::Tag_true`, which is the default, `pgn1` and
+ *         `pgn2` are converted into general polygons, bounded by polylines
+ *         before the operation is actually performed. If substituted with
+ *         `CGAL::Tag_false`, `pgn1` and `pgn2` are used as is. Refer to \ref
+ *         bso_ssectraits_sel for more information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
  *         otherwise.
  */
-template <typename Kernel, typename Container, typename UsePolylineTraits>
-bool do_intersect(const Polygon_2<Kernel, Container>& p1,
-                  const Polygon_2<Kernel, Container>& p2,
-                  UsePolylineTraits = UsePolylineTraits());
+template <typename Kernel, typename Container, typename UsePolylines>
+bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
+                  const Polygon_2<Kernel, Container>& pgn2,
+                  UsePolylines = UsePolylines());
 
 /*! determines whether two polygons intersect in their interior.
  * \param pgn1 the 1st input polygon.
@@ -671,21 +695,24 @@ bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
                   const Polygon_with_holes_2<Kernel, Container>& pgn2);
 
 /*! determines whether two polygons intersect in their interior.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of `pgn1` and `pgn2`
+ *         are treated as cyclic sequences of single (\f$x\f$-monotone) segments
+ *         or as a cyclic sequences of (\f$x\f$-monotone) polylines. If
+ *         substituted with `CGAL::Tag_true`, which is the default, `pgn1` and
+ *         `pgn2` are converted into a general polygon and a general polygon
+ *         with holes, respectively, bounded by polylines before the operation
+ *         is actually performed. If substituted with `CGAL::Tag_false`, `pgn1`
+ *         and `pgn2` are used as is. Refer to \ref bso_ssectraits_sel for more
+ *         information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
  *         otherwise.
  */
-template <typename Kernel, typename Container, typename UsePolylineTraits>
-bool do_intersect(const Polygon_2<Kernel, Container>& p1,
-                  const Polygon_with_holes_2<Kernel, Container>& p2,
-                  UsePolylineTraits = UsePolylineTraits());
+template <typename Kernel, typename Container, typename UsePolylines>
+bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
+                  const Polygon_with_holes_2<Kernel, Container>& pgn2,
+                  UsePolylines = UsePolylines());
 
 /*! determines whether two polygons intersect in their interior.
  * \param pgn1 the 1st input polygon.
@@ -698,21 +725,24 @@ bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                   const Polygon_2<Kernel, Container>& pgn2);
 
 /*! determines whether two polygons intersect in their interior.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of `pgn1` and `pgn2`
+ *         are treated as cyclic sequences of single (\f$x\f$-monotone) segments
+ *         or as a cyclic sequences of (\f$x\f$-monotone) polylines. If
+ *         substituted with `CGAL::Tag_true`, which is the default, `pgn1` and
+ *         `pgn2` are converted into a general polygon with holes and a general
+ *         polygon, respectively, bounded by polylines before the operation
+ *         is actually performed. If substituted with `CGAL::Tag_false`, `pgn1`
+ *         and `pgn2` are used as is. Refer to \ref bso_ssectraits_sel for more
+ *         information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
  *         otherwise.
  */
-template <typename Kernel, typename Container, typename UsePolylineTraits>
-bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& p1,
-                  const Polygon_2<Kernel, Container>& p2,
-                  UsePolylineTraits = UsePolylineTraits());
+template <typename Kernel, typename Container, typename UsePolylines>
+bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+                  const Polygon_2<Kernel, Container>& pgn2,
+                  UsePolylines = UsePolylines());
 
 /*! determines whether two polygons with holes intersect in their interior.
  * \param pgn1 the 1st input polygon.
@@ -725,21 +755,23 @@ bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                   const Polygon_with_holes_2<Kernel, Container>& pgn2);
 
 /*! determines whether two polygons with holes intersect in their interior.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of `pgn1` and `pgn2`
+ *         are treated as cyclic sequences of single (\f$x\f$-monotone) segments
+ *         or as a cyclic sequences of (\f$x\f$-monotone) polylines. If
+ *         substituted with `CGAL::Tag_true`, which is the default, `pgn1` and
+ *         `pgn2` are converted into general polygon with holes , bounded by
+ *         polylines before the operation is actually performed. If substituted
+ *         with `CGAL::Tag_false`, `pgn1` and `pgn2` are used as is. Refer to
+ *         \ref bso_ssectraits_sel for more information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
  *         otherwise.
  */
-template <typename Kernel, typename Container, typename UsePolylineTraits>
-bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& p1,
-                  const Polygon_with_holes_2<Kernel, Container>& p2,
-                  UsePolylineTraits = UsePolylineTraits());
+template <typename Kernel, typename Container, typename UsePolylines>
+bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+                  const Polygon_with_holes_2<Kernel, Container>& pgn2,
+                  UsePolylines = UsePolylines());
 
 /*! determines whether two general polygons intersect in their interior.
  * \param pgn1 the 1st input polygon.
@@ -810,12 +842,15 @@ bool do_intersect(InputIterator begin, InputIterator end);
  * of general polygons or a range of general polygons with holes) determines
  * whether the open polygons (resp. general polygons) in the range have a common
  * point.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of the polygons in the
+ *         input range are treated as cyclic sequences of single
+ *         (\f$x\f$-monotone) segments or as a cyclic sequences of
+ *         (\f$x\f$-monotone) polylines. If substituted with `CGAL::Tag_true`,
+ *         which is the default, the input polygons are converted into general
+ *         polygon with holes , bounded by polylines before the operation is
+ *         actually performed. If substituted with `CGAL::Tag_false`, `pgn1` and
+ *         `pgn2` are used as is. Refer to \ref bso_ssectraits_sel for more
+ *         information.
  * \param begin the first iterator of the input range. Its value type is
  *        either `Polygon_2` (resp. `General_polygon_2`) or
  *        `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
@@ -826,9 +861,9 @@ bool do_intersect(InputIterator begin, InputIterator end);
  *         with holes (resp. general polygons or general polygons with holes) in
  *         the range [*begin,*end) overlap, and `false` otherwise.
  */
-template <typename InputIterator, typename UsePolylineTraits>
+template <typename InputIterator, typename UsePolylines>
 bool do_intersect(InputIterator begin, InputIterator end,
-                  UsePolylineTraits = UsePolylineTraits());
+                  UsePolylines = UsePolylines());
 
 /*! Given a range of polygons (resp. general polygons) and a range of polygons
  * with holes (resp. general polygons with holes) determines whether the open
@@ -853,12 +888,15 @@ bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
 /*! Given a range of polygons (resp. general polygons) and a range of polygons
  * with holes (resp. general polygons with holes) determines whether the open
  * polygons (resp. general polygons) in the two ranges have a common point.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of the polygons in the
+ *         input ranges are treated as cyclic sequences of single
+ *         (\f$x\f$-monotone) segments or as a cyclic sequences of
+ *         (\f$x\f$-monotone) polylines. If substituted with `CGAL::Tag_true`,
+ *         which is the default, the input polygons are converted into general
+ *         polygon with holes , bounded by polylines before the operation is
+ *         actually performed. If substituted with `CGAL::Tag_false`, `pgn1` and
+ *         `pgn2` are used as is. Refer to \ref bso_ssectraits_sel for more
+ *         information.
  * \param begin1 the first iterator of the 1st input range. Its value type is
  *        `Polygon_2` (resp. `General_polygon_2`).
  * \param end1 the past-the-end iterator of the 1st input range. Its value
@@ -873,10 +911,10 @@ bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
  *        respectively, overlap, and `false` otherwise.
  */
 template <typename InputIterator1, typename InputIterator2,
-          typename UsePolylineTraits>
+          typename UsePolylines>
 bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
                   InputIterator2 begin2, InputIterator2 end2,
-                  UsePolylineTraits = UsePolylineTraits());
+                  UsePolylines = UsePolylines());
 
 //////// With Traits
 
@@ -1102,12 +1140,15 @@ OutputIterator intersection(const Polygon_2<Kernel, Container>& pgn1,
 
 /*! computes the intersection of two polygons and inserts the resulting polygons
  * with holes into a container via an output iterator.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundary of `pgn` is treated as a
+ *         cyclic sequence of single (\f$x\f$-monotone) segments or as a cyclic
+ *         sequence of (\f$x\f$-monotone) polylines. If substituted with
+ *         `CGAL::Tag_true`, which is the default, `pgn` is converted into a
+ *         general polygon bounded by polylines before the operation is actually
+ *         performed. Then, the resulting general polygon with holes is
+ *         converted back to a standard polygon. If substituted with
+ *         `CGAL::Tag_false`, `pgn` is used as is. Refer to \ref
+ *         bso_ssectraits_sel for more information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param oi the output iterator for the result.
@@ -1116,11 +1157,11 @@ OutputIterator intersection(const Polygon_2<Kernel, Container>& pgn1,
  * \return the past-the-end iterator of the output container.
  */
 template <typename Kernel, typename Container, typename OutputIterator,
-          typename UsePolylineTraits>
-OutputIterator intersection(const Polygon_2<Kernel, Container>& p1,
-                            const Polygon_2<Kernel, Container>& p2,
+          typename UsePolylines>
+OutputIterator intersection(const Polygon_2<Kernel, Container>& pgn1,
+                            const Polygon_2<Kernel, Container>& pgn2,
                             OutputIterator oi,
-                            UsePolylineTraits = UsePolylineTraits());
+                            UsePolylines = UsePolylines());
 
 /*! computes the intersection of two polygons and inserts the resulting polygons
  * with holes into a container via an output iterator.
@@ -1138,12 +1179,15 @@ OutputIterator intersection(const Polygon_2<Kernel, Container>& pgn1,
 
 /*! computes the intersection of two polygons and inserts the resulting polygons
  * with holes into a container via an output iterator.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of `pgn` is treated as
+ *         cyclic sequences of single (\f$x\f$-monotone) segments or as cyclic
+ *         sequences of (\f$x\f$-monotone) polylines. If substituted with
+ *         `CGAL::Tag_true`, which is the default, `pgn` is converted into a
+ *         general polygon with holes bounded by polylines before the operation
+ *         is actually performed. Then, the resulting general polygons with
+ *         holes are converted back to a standard polygon with holes. If
+ *         substituted with `CGAL::Tag_false`, `pgn` is used as is. Refer to
+ *         \ref bso_ssectraits_sel for more information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param oi the output iterator for the result.
@@ -1152,11 +1196,11 @@ OutputIterator intersection(const Polygon_2<Kernel, Container>& pgn1,
  * \return the past-the-end iterator of the output container.
  */
 template <typename Kernel, typename Container, typename OutputIterator,
-          typename UsePolylineTraits>
-OutputIterator intersection(const Polygon_2<Kernel, Container>& p1,
-                            const Polygon_with_holes_2<Kernel, Container>& p2,
+          typename UsePolylines>
+OutputIterator intersection(const Polygon_2<Kernel, Container>& pgn1,
+                            const Polygon_with_holes_2<Kernel, Container>& pgn2,
                             OutputIterator oi,
-                            UsePolylineTraits = UsePolylineTraits());
+                            UsePolylines = UsePolylines());
 
 /*! computes the intersection of two polygons and inserts the resulting polygons
  * with holes into a container via an output iterator.
@@ -1174,12 +1218,16 @@ OutputIterator intersection(const Polygon_with_holes_2<Kernel, Container>& pgn1,
 
 /*! computes the intersection of two polygons and inserts the resulting polygons
  * with holes into a container via an output iterator.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of `pgn1` and `pgn2`
+ *         are treated as cyclic sequences of single (\f$x\f$-monotone) segments
+ *         or as a cyclic sequences of (\f$x\f$-monotone) polylines. If
+ *         substituted with `CGAL::Tag_true`, which is the default, `pgn1` and
+ *         `pgn2` are converted into a general polygons bounded by polylines
+ *         before the operation is actually performed. Then, the resulting
+ *         general polygons with holes are converted back to standard
+ *         polygons with holes. If substituted with `CGAL::Tag_false`, `pgn1`
+ *         and `pgn2` are used as is. Refer to \ref bso_ssectraits_sel for more
+ *         information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param oi the output iterator for the result.
@@ -1188,11 +1236,11 @@ OutputIterator intersection(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  * \return the past-the-end iterator of the output container.
  */
 template <ctypename Kernel, ctypename Container, ctypename OutputIterator,
-          typename UsePolylineTraits>
-OutputIterator intersection(const Polygon_with_holes_2<Kernel, Container>& p1,
-                            const Polygon_2<Kernel, Container>& p2,
+          typename UsePolylines>
+OutputIterator intersection(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+                            const Polygon_2<Kernel, Container>& pgn2,
                             OutputIterator oi,
-                            UsePolylineTraits = UsePolylineTraits());
+                            UsePolylines = UsePolylines());
 
 /*! computes the intersection of two polygons and inserts the resulting polygons
  * with holes into a container via an output iterator.
@@ -1210,12 +1258,16 @@ OutputIterator intersection(const Polygon_with_holes_2<Kernel, Container>& pgn1,
 
 /*! computes the intersection of two polygons and inserts the resulting polygons
  * with holes into a container via an output iterator.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of `pgn1` and `pgn2`
+ *         are treated as cyclic sequences of single (\f$x\f$-monotone) segments
+ *         or as a cyclic sequences of (\f$x\f$-monotone) polylines. If
+ *         substituted with `CGAL::Tag_true`, which is the default, `pgn1` and
+ *         `pgn2` are converted into a general polygon and a general polygon
+ *         with holes, respectively, bounded by polylines before the operation
+ *         is actually performed. Then, the resulting general polygons with
+ *         holes are converted back to standard polygons with holes. If
+ *         substituted with `CGAL::Tag_false`, `pgn1` and `pgn2` are used as
+ *         is. Refer to \ref bso_ssectraits_sel for more information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param oi the output iterator for the result.
@@ -1224,11 +1276,11 @@ OutputIterator intersection(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  * \return the past-the-end iterator of the output container.
  */
 template <typename Kernel, typename Container, typename OutputIterator,
-          typename UsePolylineTraits>
-OutputIterator intersection(const Polygon_with_holes_2<Kernel, Container>& p1,
-                            const Polygon_with_holes_2<Kernel, Container>& p2,
+          typename UsePolylines>
+OutputIterator intersection(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+                            const Polygon_with_holes_2<Kernel, Container>& pgn2,
                             OutputIterator oi,
-                            UsePolylineTraits = UsePolylineTraits());
+                            UsePolylines = UsePolylines());
 
 /*! computes the intersection of two general polygons and inserts the resulting
  * general polygons with holes into a container via an output iterator.
@@ -1320,12 +1372,16 @@ OutputIterator intersection(InputIterator begin, InputIterator end,
  * intersection of all polygons in the range and inserts the resulting polygons
  * with holes (resp. general polygons with holes) into a container via an output
  * iterator.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of the polygons in the
+ *         input range are treated as cyclic sequences of single
+ *         (\f$x\f$-monotone) segments or as a cyclic sequences of
+ *         (\f$x\f$-monotone) polylines. If substituted with `CGAL::Tag_true`,
+ *         which is the default, the input polygons are converted into general
+ *         polygon with holes , bounded by polylines before the operation is
+ *         actually performed. Then, the resulting general polygons with holes
+ *         are converted back to standard polygons with holes.  If substituted
+ *         with `CGAL::Tag_false`, `pgn1` and `pgn2` are used as is. Refer to
+ *         \ref bso_ssectraits_sel for more information.
  * \param begin the first iterator of the input range. Its value type is
  *        either `Polygon_2` (resp. `General_polygon_2`) or
  *        `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
@@ -1338,10 +1394,10 @@ OutputIterator intersection(InputIterator begin, InputIterator end,
  * \return the past-the-end iterator of the output container.
  */
 template <typename InputIterator, typename OutputIterator,
-          typename UsePolylineTraits>
+          typename UsePolylines>
 OutputIterator intersection(InputIterator begin, InputIterator end,
                             OutputIterator oi,
-                            UsePolylineTraits = UsePolylineTraits());
+                            UsePolylines = UsePolylines());
 
 /*! Given a range of polygons (resp. general polygons) and a range of general
  * polygons with holes (resp. general polygons with holes) computes the
@@ -1372,12 +1428,16 @@ OutputIterator intersection(InputIterator1 begin1, InputIterator1 end1,
  * intersection of all polygons in the two ranges and inserts the resulting
  * polygons with holes (resp. general polygons with holes) into a container via
  * an output iterator.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of the polygons in the
+ *         input ranges are treated as cyclic sequences of single
+ *         (\f$x\f$-monotone) segments or as a cyclic sequences of
+ *         (\f$x\f$-monotone) polylines. If substituted with `CGAL::Tag_true`,
+ *         which is the default, the input polygons are converted into general
+ *         polygon with holes , bounded by polylines before the operation is
+ *         actually performed. Then, the resulting general polygons with holes
+ *         are converted back to standard polygons with holes.  If substituted
+ *         with `CGAL::Tag_false`, `pgn1` and `pgn2` are used as is. Refer to
+ *         \ref bso_ssectraits_sel for more information.
  * \param begin1 the first iterator of the 1st input range. Its value type is
  *        `Polygon_2` (resp. `General_polygon_2`).
  * \param end1 the past-the-end iterator of the 1st input range. Its value
@@ -1391,26 +1451,12 @@ OutputIterator intersection(InputIterator1 begin1, InputIterator1 end1,
  *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
  * \return the past-the-end iterator of the output container.
  */
-/*!
-  computes the intersection of the `Polygon_2` objects and
-  `Polygon_with_holes_2` object in the given two ranges. The result,
-  represented by a set of general polygon with holes, is written into
-  the output iterator `oi`.  The output iterator is returned. The
-  value type of the `OutputIterator` is
-  `Traits::Polygon_with_holes_2`.
-
-  \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
-  `General_polygon_set_2` is instantiated with polyline traits. If set
-  to `CGAL::Tag_false`, it uses segment traits instead. Default value is
-  `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
-  information.
-*/
 template <typename InputIterator1, typename InputIterator2,
-          typename OutputIterator, typename UsePolylineTraits>
+          typename OutputIterator, typename UsePolylines>
 OutputIterator intersection(InputIterator1 begin1, InputIterator1 end1,
                             InputIterator2 begin2, InputIterator2 end2,
                             OutputIterator oi,
-                            UsePolylineTraits = UsePolylineTraits());
+                            UsePolylines = UsePolylines());
 
 /// @}
 
@@ -1472,22 +1518,26 @@ bool join(const Polygon_2<Kernel, Container>& pgn1,
           General_polygon_with_holes_2<Polygon_2<Kernel, Container>>& res);
 
 /*! computes the union of two polygons.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of `pgn1` and `pgn2`
+ *         are treated as cyclic sequences of single (\f$x\f$-monotone) segments
+ *         or as a cyclic sequences of (\f$x\f$-monotone) polylines. If
+ *         substituted with `CGAL::Tag_true`, which is the default, `pgn1` and
+ *         `pgn2` are converted into a general polygons bounded by polylines
+ *         before the operation is actually performed. Then, the resulting
+ *         general polygons with holes are converted back to standard
+ *         polygons with holes. If substituted with `CGAL::Tag_false`, `pgn1`
+ *         and `pgn2` are used as is. Refer to \ref bso_ssectraits_sel for more
+ *         information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param res the resulting union of \p pgn1 and \p pgn2.
  * \return `true` if the two input polygons overlap.
  */
-template <typename Kernel, typename Container, typename UsePolylineTraits>
-bool join(const Polygon_2<Kernel, Container>& p1,
-          const Polygon_2<Kernel, Container>& p2,
+template <typename Kernel, typename Container, typename UsePolylines>
+bool join(const Polygon_2<Kernel, Container>& pgn1,
+          const Polygon_2<Kernel, Container>& pgn2,
           General_polygon_with_holes_2<Polygon_2<Kernel, Container>>& res,
-          UsePolylineTraits = UsePolylineTraits());
+          UsePolylines = UsePolylines());
 
 /*! computes the union of two polygons.
  * \param pgn1 the 1st input polygon.
@@ -1501,22 +1551,26 @@ bool join(const Polygon_2<Kernel, Container>& pgn1,
           General_polygon_with_holes_2<Polygon_2<Kernel, Container>>& res);
 
 /*! computes the union of two polygons.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of `pgn1` and `pgn2`
+ *         are treated as cyclic sequences of single (\f$x\f$-monotone) segments
+ *         or as a cyclic sequences of (\f$x\f$-monotone) polylines. If
+ *         substituted with `CGAL::Tag_true`, which is the default, `pgn1` and
+ *         `pgn2` are converted into a general polygon and a general polygon
+ *         with holes, respectively, bounded by polylines before the operation
+ *         is actually performed. Then, the resulting general polygons with
+ *         holes are converted back to standard polygons with holes. If
+ *         substituted with `CGAL::Tag_false`, `pgn1` and `pgn2` are used as
+ *         is. Refer to \ref bso_ssectraits_sel for more information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param res the resulting union of \p pgn1 and \p pgn2.
  * \return `true` if the two input polygons overlap.
  */
-template <typename Kernel, typename Container, typename UsePolylineTraits>
-bool join(const Polygon_2<Kernel, Container>& p1,
-          const Polygon_with_holes_2<Kernel,Container>& p2,
+template <typename Kernel, typename Container, typename UsePolylines>
+bool join(const Polygon_2<Kernel, Container>& pgn1,
+          const Polygon_with_holes_2<Kernel,Container>& pgn2,
           General_polygon_with_holes_2<Polygon_2<Kernel, Container>>& res,
-          UsePolylineTraits = UsePolylineTraits());
+          UsePolylines = UsePolylines());
 
 /*! computes the union of two polygons.
  * \param pgn1 the 1st input polygon.
@@ -1525,27 +1579,31 @@ bool join(const Polygon_2<Kernel, Container>& p1,
  * \return `true` if the two input polygons overlap.
  */
 template <typename Kernel, typename Container>
-bool join(const Polygon_with_holes_2<Kernel, Container>& pgn2,
-          const Polygon_2<Kernel, Container>& pgn1,
+bool join(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+          const Polygon_2<Kernel, Container>& pgn2,
           General_polygon_with_holes_2<Polygon_2<Kernel, Container>>& res);
 
 /*! computes the union of two polygons.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of `pgn1` and `pgn2`
+ *         are treated as cyclic sequences of single (\f$x\f$-monotone) segments
+ *         or as a cyclic sequences of (\f$x\f$-monotone) polylines. If
+ *         substituted with `CGAL::Tag_true`, which is the default, `pgn1` and
+ *         `pgn2` are converted into a general polygon with holes and a general
+ *         polygon, respectively, bounded by polylines before the operation
+ *         is actually performed. Then, the resulting general polygons with
+ *         holes are converted back to standard polygons with holes. If
+ *         substituted with `CGAL::Tag_false`, `pgn1` and `pgn2` are used as
+ *         is. Refer to \ref bso_ssectraits_sel for more information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param res the resulting union of \p pgn1 and \p pgn2.
  * \return `true` if the two input polygons overlap.
  */
-template <typename Kernel, typename Container, typename UsePolylineTraits>
-bool join(const Polygon_with_holes_2<Kernel, Container>& p2,
-          const Polygon_2<Kernel, Container>& p1,
+template <typename Kernel, typename Container, typename UsePolylines>
+bool join(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+          const Polygon_2<Kernel, Container>& pgn2,
           General_polygon_with_holes_2<Polygon_2<Kernel, Container>>& res,
-          UsePolylineTraits = UsePolylineTraits());
+          UsePolylines = UsePolylines());
 
 /*! computes the union of two polygons with holes.
  * \param pgn1 the 1st input polygon.
@@ -1554,27 +1612,31 @@ bool join(const Polygon_with_holes_2<Kernel, Container>& p2,
  * \return `true` if the two input polygons overlap.
  */
 template <typename Kernel, typename Container>
-bool join(const Polygon_with_holes_2<Kernel, Container>& pgn2,
-          const Polygon_with_holes_2<Kernel, Container>& pgn1,
+bool join(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+          const Polygon_with_holes_2<Kernel, Container>& pgn2,
           General_polygon_with_holes_2<Polygon_2<Kernel, Container>>& res);
 
 /*! computes the union of two polygons with holes.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of `pgn1` and `pgn2`
+ *         are treated as cyclic sequences of single (\f$x\f$-monotone) segments
+ *         or as a cyclic sequences of (\f$x\f$-monotone) polylines. If
+ *         substituted with `CGAL::Tag_true`, which is the default, `pgn1` and
+ *         `pgn2` are converted into general polygons with holes, bounded by
+ *         polylines before the operation is actually performed. Then, the
+ *         resulting general polygons with holes are converted back to standard
+ *         polygons with holes. If substituted with `CGAL::Tag_false`, `pgn1`
+ *         and `pgn2` are used as is. Refer to \ref bso_ssectraits_sel for more
+ *         information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param res the resulting union of \p pgn1 and \p pgn2.
  * \return `true` if the two input polygons overlap.
  */
-template <typename Kernel, typename Container, typename UsePolylineTraits>
-bool join(const Polygon_with_holes_2<Kernel, Container>& p2,
-          const Polygon_with_holes_2<Kernel, Container>& p1,
+template <typename Kernel, typename Container, typename UsePolylines>
+bool join(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+          const Polygon_with_holes_2<Kernel, Container>& pgn2,
           General_polygon_with_holes_2<Polygon_2<Kernel, Container>>& res,
-          UsePolylineTraits = UsePolylineTraits());
+          UsePolylines = UsePolylines());
 
 /*! computes the union of two general polygons.
  * \param pgn1 the 1st input polygon.
@@ -1653,12 +1715,16 @@ OutputIterator join(InputIterator begin, InputIterator end,
  * union of all polygons in the range and inserts the resulting polygons
  * with holes (resp. general polygons with holes) into a container via an output
  * iterator.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of the polygons in the
+ *         input range are treated as cyclic sequences of single
+ *         (\f$x\f$-monotone) segments or as a cyclic sequences of
+ *         (\f$x\f$-monotone) polylines. If substituted with `CGAL::Tag_true`,
+ *         which is the default, the input polygons are converted into general
+ *         polygon with holes , bounded by polylines before the operation is
+ *         actually performed. Then, the resulting general polygons with holes
+ *         are converted back to standard polygons with holes.  If substituted
+ *         with `CGAL::Tag_false`, `pgn1` and `pgn2` are used as is. Refer to
+ *         \ref bso_ssectraits_sel for more information.
  * \param begin the first iterator of the input range. Its value type is
  *        either `Polygon_2` (resp. `General_polygon_2`) or
  *        `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
@@ -1671,10 +1737,10 @@ OutputIterator join(InputIterator begin, InputIterator end,
  * \return the past-the-end iterator of the output container.
  */
 template <typename InputIterator, typename OutputIterator,
-          typename UsePolylineTraits>
+          typename UsePolylines>
 OutputIterator join(InputIterator begin, InputIterator end,
                     OutputIterator oi,
-                    UsePolylineTraits = UsePolylineTraits());
+                    UsePolylines = UsePolylines());
 
 /*! Given a range of polygons (resp. general polygons) and a range of general
  * polygons with holes (resp. general polygons with holes) computes the
@@ -1883,12 +1949,16 @@ OutputIterator join(InputIterator1 begin1, InputIterator1 end1,
  * union of all polygons in the two ranges and inserts the resulting
  * polygons with holes (resp. general polygons with holes) into a container via
  * an output iterator.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of the polygons in the
+ *         input ranges are treated as cyclic sequences of single
+ *         (\f$x\f$-monotone) segments or as a cyclic sequences of
+ *         (\f$x\f$-monotone) polylines. If substituted with `CGAL::Tag_true`,
+ *         which is the default, the input polygons are converted into general
+ *         polygon with holes , bounded by polylines before the operation is
+ *         actually performed. Then, the resulting general polygons with holes
+ *         are converted back to standard polygons with holes.  If substituted
+ *         with `CGAL::Tag_false`, `pgn1` and `pgn2` are used as is. Refer to
+ *         \ref bso_ssectraits_sel for more information.
  * \param begin1 the first iterator of the 1st input range. Its value type is
  *        `Polygon_2` (resp. `General_polygon_2`).
  * \param end1 the past-the-end iterator of the 1st input range. Its value
@@ -1900,16 +1970,15 @@ OutputIterator join(InputIterator1 begin1, InputIterator1 end1,
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
  *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
- * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  */
 template <typename InputIterator1, typename InputIterator2,
-class OutputIterator, typename UsePolylineTraits>
+class OutputIterator, typename UsePolylines>
 OutputIterator join(InputIterator1 begin1, InputIterator1 end1,
                     InputIterator2 begin2, InputIterator2 end2,
                     OutputIterator oi,
-                    UsePolylineTraits = UsePolylineTraits());
+                    UsePolylines = UsePolylines());
 
 /// @}
 } /* namespace CGAL */
@@ -1992,26 +2061,23 @@ Oriented_side oriented_side(const Polygon_2<Kernel, Container>& pgn1,
                             const Polygon_2<Kernel, Container>& pgn2);
 
 /*! computes the relative position of two polygons.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of `pgn1` and `pgn2`
+ *         are treated as cyclic sequences of single (\f$x\f$-monotone) segments
+ *         or as a cyclic sequences of (\f$x\f$-monotone) polylines. If
+ *         substituted with `CGAL::Tag_true`, which is the default, `pgn1` and
+ *         `pgn2` are converted into a general polygons bounded by polylines
+ *         before the operation is actually performed. Then, the resulting
+ *         general polygons with holes are converted back to standard
+ *         polygons with holes. If substituted with `CGAL::Tag_false`, `pgn1`
+ *         and `pgn2` are used as is. Refer to \ref bso_ssectraits_sel for more
+ *         information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  */
-/*!
-  \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
-  `General_polygon_set_2` is instantiated with polyline traits. If set
-  to `CGAL::Tag_false`, it uses segment traits instead. Default value is
-  `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
-  information.
-*/
-template <typename Kernel, typename Container, typename UsePolylineTraits>
-Oriented_side oriented_side(const Polygon_2<Kernel, Container>& p1,
-                            const Polygon_2<Kernel, Container>& p2,
-                            UsePolylineTraits = UsePolylineTraits());
+template <typename Kernel, typename Container, typename UsePolylines>
+Oriented_side oriented_side(const Polygon_2<Kernel, Container>& pgn1,
+                            const Polygon_2<Kernel, Container>& pgn2,
+                            UsePolylines = UsePolylines());
 
 /*! computes the relative position of two polygons.
  * \param pgn1 the 1st input polygon.
@@ -2023,19 +2089,24 @@ oriented_side(const Polygon_2<Kernel, Container>& pgn1,
               const Polygon_with_holes_2<Kernel, Container>& pgn2);
 
 /*! computes the relative position of two polygons.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of `pgn1` and `pgn2`
+ *         are treated as cyclic sequences of single (\f$x\f$-monotone) segments
+ *         or as a cyclic sequences of (\f$x\f$-monotone) polylines. If
+ *         substituted with `CGAL::Tag_true`, which is the default, `pgn1` and
+ *         `pgn2` are converted into a general polygon and a general polygon
+ *         with holes, respectively, bounded by polylines before the operation
+ *         is actually performed. Then, the resulting general polygons with
+ *         holes are converted back to standard polygons with holes. If
+ *         substituted with `CGAL::Tag_false`, `pgn1` and `pgn2` are used as
+ *         is. Refer to \ref bso_ssectraits_sel for more information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  */
-template <typename Kernel, typename Container, typename UsePolylineTraits>
-Oriented_side oriented_side(const Polygon_2<Kernel, Container>& p1,
-                            const Polygon_with_holes_2<Kernel, Container>& p2,
-                            UsePolylineTraits = UsePolylineTraits());
+template <typename Kernel, typename Container, typename UsePolylines>
+Oriented_side
+oriented_side(const Polygon_2<Kernel, Container>& pgn1,
+              const Polygon_with_holes_2<Kernel, Container>& pgn2,
+              UsePolylines = UsePolylines());
 
 /*! computes the relative position of two polygons.
  * \param pgn1 the 1st input polygon.
@@ -2046,26 +2117,23 @@ Oriented_side oriented_side(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                             const Polygon_2<Kernel, Container>& pgn2);
 
 /*! computes the relative position of two polygons.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of `pgn1` and `pgn2`
+ *         are treated as cyclic sequences of single (\f$x\f$-monotone) segments
+ *         or as a cyclic sequences of (\f$x\f$-monotone) polylines. If
+ *         substituted with `CGAL::Tag_true`, which is the default, `pgn1` and
+ *         `pgn2` are converted into a general polygon with holes and a general
+ *         polygon, respectively, bounded by polylines before the operation
+ *         is actually performed. Then, the resulting general polygons with
+ *         holes are converted back to standard polygons with holes. If
+ *         substituted with `CGAL::Tag_false`, `pgn1` and `pgn2` are used as
+ *         is. Refer to \ref bso_ssectraits_sel for more information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  */
-/*!
-  \tparam UsePolylineTraits if set to `CGAL::Tag_true`, the internal
-  `General_polygon_set_2` is instantiated with polyline traits. If set
-  to `CGAL::Tag_false`, it uses segment traits instead. Default value is
-  `CGAL::Tag_true`. Please refer to \ref bso_ssectraits_sel for more
-  information.
-*/
-template <typename Kernel, typename Container, typename UsePolylineTraits>
-Oriented_side oriented_side(const Polygon_with_holes_2<Kernel, Container>& p1,
-                            const Polygon_2<Kernel, Container>& p2,
-                            UsePolylineTraits = UsePolylineTraits());
+template <typename Kernel, typename Container, typename UsePolylines>
+Oriented_side oriented_side(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+                            const Polygon_2<Kernel, Container>& pgn2,
+                            UsePolylines = UsePolylines());
 
 /*! computes the relative position of two polygons.
  * \param pgn1 the 1st input polygon.
@@ -2077,19 +2145,24 @@ oriented_side(const Polygon_with_holes_2<Kernel, Container>& pgn1,
               const Polygon_with_holes_2<Kernel, Container>& pgn2);
 
 /*! computes the relative position of two polygons.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of `pgn1` and `pgn2`
+ *         are treated as cyclic sequences of single (\f$x\f$-monotone) segments
+ *         or as a cyclic sequences of (\f$x\f$-monotone) polylines. If
+ *         substituted with `CGAL::Tag_true`, which is the default, `pgn1` and
+ *         `pgn2` are converted into general polygons with holes, bounded by
+ *         polylines before the operation is actually performed. Then, the
+ *         resulting general polygons with holes are converted back to standard
+ *         polygons with holes. If substituted with `CGAL::Tag_false`, `pgn1`
+ *         and `pgn2` are used as is. Refer to \ref bso_ssectraits_sel for more
+ *         information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  */
-template <typename Kernel, typename Container, typename UsePolylineTraits>
-Oriented_side oriented_side(const Polygon_with_holes_2<Kernel, Container>& p1,
-                            const Polygon_with_holes_2<Kernel, Container>& p2,
-                            UsePolylineTraits = UsePolylineTraits());
+template <typename Kernel, typename Container, typename UsePolylines>
+Oriented_side
+oriented_side(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+              const Polygon_with_holes_2<Kernel, Container>& pgn2,
+              UsePolylines = UsePolylines());
 
 /*! computes the relative position of two polygons.
  * \param pgn1 1st the input polygon.
@@ -2384,12 +2457,16 @@ OutputIterator symmetric_difference(const Polygon_2<Kernel, Container>& pgn1,
 
 /*! computes the symmetric difference between two polygons and inserts the
  * resulting polygons with holes into a container via an output iterator.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of `pgn1` and `pgn2`
+ *         are treated as cyclic sequences of single (\f$x\f$-monotone) segments
+ *         or as a cyclic sequences of (\f$x\f$-monotone) polylines. If
+ *         substituted with `CGAL::Tag_true`, which is the default, `pgn1` and
+ *         `pgn2` are converted into a general polygons bounded by polylines
+ *         before the operation is actually performed. Then, the resulting
+ *         general polygons with holes are converted back to standard
+ *         polygons with holes. If substituted with `CGAL::Tag_false`, `pgn1`
+ *         and `pgn2` are used as is. Refer to \ref bso_ssectraits_sel for more
+ *         information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param oi the output iterator for the result.
@@ -2398,11 +2475,11 @@ OutputIterator symmetric_difference(const Polygon_2<Kernel, Container>& pgn1,
  * \return the past-the-end iterator of the output container.
  */
 template <typename Kernel, typename Container, typename OutputIterator,
-          typename UsePolylineTraits>
-OutputIterator symmetric_difference(const Polygon_2<Kernel, Container>& p1,
-                                    const Polygon_2<Kernel, Container>& p2,
+          typename UsePolylines>
+OutputIterator symmetric_difference(const Polygon_2<Kernel, Container>& pgn1,
+                                    const Polygon_2<Kernel, Container>& pgn2,
                                     OutputIterator oi,
-                                    UsePolylineTraits = UsePolylineTraits());
+                                    UsePolylines = UsePolylines());
 
 /*! computes the symmetric difference between two polygons and inserts the
  * resulting polygons with holes into a container via an output iterator.
@@ -2421,12 +2498,16 @@ symmetric_difference(const Polygon_2<Kernel, Container>& pgn1,
 
 /*! computes the symmetric difference between two polygons and inserts the
  * resulting polygons with holes into a container via an output iterator.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of `pgn1` and `pgn2`
+ *         are treated as cyclic sequences of single (\f$x\f$-monotone) segments
+ *         or as a cyclic sequences of (\f$x\f$-monotone) polylines. If
+ *         substituted with `CGAL::Tag_true`, which is the default, `pgn1` and
+ *         `pgn2` are converted into a general polygon and a general polygon
+ *         with holes, respectively, bounded by polylines before the operation
+ *         is actually performed. Then, the resulting general polygons with
+ *         holes are converted back to standard polygons with holes. If
+ *         substituted with `CGAL::Tag_false`, `pgn1` and `pgn2` are used as
+ *         is. Refer to \ref bso_ssectraits_sel for more information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param oi the output iterator for the result.
@@ -2435,12 +2516,12 @@ symmetric_difference(const Polygon_2<Kernel, Container>& pgn1,
  * \return the past-the-end iterator of the output container.
  */
 template <typename Kernel, typename Container, typename OutputIterator,
-          typename UsePolylineTraits>
+          typename UsePolylines>
 OutputIterator
-symmetric_difference(const Polygon_2<Kernel, Container>& p1,
-                     const Polygon_with_holes_2<Kernel, Container>& p2,
+symmetric_difference(const Polygon_2<Kernel, Container>& pgn1,
+                     const Polygon_with_holes_2<Kernel, Container>& pgn2,
                      OutputIterator oi,
-                     UsePolylineTraits = UsePolylineTraits());
+                     UsePolylines = UsePolylines());
 
 /*! computes the symmetric difference between two polygons and inserts the
  * resulting polygons with holes into a container via an output iterator.
@@ -2459,12 +2540,16 @@ symmetric_difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
 
 /*! computes the symmetric difference between two polygons and inserts the
  * resulting polygons with holes into a container via an output iterator.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of `pgn1` and `pgn2`
+ *         are treated as cyclic sequences of single (\f$x\f$-monotone) segments
+ *         or as a cyclic sequences of (\f$x\f$-monotone) polylines. If
+ *         substituted with `CGAL::Tag_true`, which is the default, `pgn1` and
+ *         `pgn2` are converted into a general polygon with holes and a general
+ *         polygon, respectively, bounded by polylines before the operation
+ *         is actually performed. Then, the resulting general polygons with
+ *         holes are converted back to standard polygons with holes. If
+ *         substituted with `CGAL::Tag_false`, `pgn1` and `pgn2` are used as
+ *         is. Refer to \ref bso_ssectraits_sel for more information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param oi the output iterator for the result.
@@ -2473,12 +2558,12 @@ symmetric_difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  * \return the past-the-end iterator of the output container.
  */
 template <typename Kernel, typename Container, typename OutputIterator,
-          typename UsePolylineTraits>
+          typename UsePolylines>
 OutputIterator
-symmetric_difference(const Polygon_with_holes_2<Kernel, Container>& p1,
-                     const Polygon_2<Kernel, Container>& p2,
+symmetric_difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+                     const Polygon_2<Kernel, Container>& pgn2,
                      OutputIterator oi,
-                     UsePolylineTraits = UsePolylineTraits());
+                     UsePolylines = UsePolylines());
 
 /*! computes the symmetric difference between two polygons with holes and
  * inserts the resulting polygons with holes into a container via an output
@@ -2499,12 +2584,16 @@ symmetric_difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
 /*! computes the symmetric difference between two polygons with holes and
  * inserts the resulting polygons with holes into a container via an output
  * iterator.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of `pgn1` and `pgn2`
+ *         are treated as cyclic sequences of single (\f$x\f$-monotone) segments
+ *         or as a cyclic sequences of (\f$x\f$-monotone) polylines. If
+ *         substituted with `CGAL::Tag_true`, which is the default, `pgn1` and
+ *         `pgn2` are converted into general polygons with holes, bounded by
+ *         polylines before the operation is actually performed. Then, the
+ *         resulting general polygons with holes are converted back to standard
+ *         polygons with holes. If substituted with `CGAL::Tag_false`, `pgn1`
+ *         and `pgn2` are used as is. Refer to \ref bso_ssectraits_sel for more
+ *         information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param oi the output iterator for the result.
@@ -2513,12 +2602,12 @@ symmetric_difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  * \return the past-the-end iterator of the output container.
  */
 template <typename Kernel, typename Container, typename OutputIterator,
-          typename UsePolylineTraits>
+          typename UsePolylines>
 OutputIterator
-symmetric_difference(const Polygon_with_holes_2<Kernel, Container>& p1,
-                     const Polygon_with_holes_2<Kernel, Container>& p2,
+symmetric_difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+                     const Polygon_with_holes_2<Kernel, Container>& pgn2,
                      OutputIterator oi,
-                     UsePolylineTraits = UsePolylineTraits());
+                     UsePolylines = UsePolylines());
 
 /*! computes the symmetric difference between two general polygons and inserts
  * the resulting general  polygons with holes into a container via an output
@@ -2618,12 +2707,16 @@ OutputIterator symmetric_difference(InputIterator begin, InputIterator end,
  * polygons with holes (resp. general polygons with holes) into a container via
  * an output iterator. A point is contained in the symmetric difference, if and
  * only if it is contained in an odd number of input polygons.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of the polygons in the
+ *         input range are treated as cyclic sequences of single
+ *         (\f$x\f$-monotone) segments or as a cyclic sequences of
+ *         (\f$x\f$-monotone) polylines. If substituted with `CGAL::Tag_true`,
+ *         which is the default, the input polygons are converted into general
+ *         polygon with holes , bounded by polylines before the operation is
+ *         actually performed. Then, the resulting general polygons with holes
+ *         are converted back to standard polygons with holes.  If substituted
+ *         with `CGAL::Tag_false`, `pgn1` and `pgn2` are used as is. Refer to
+ *         \ref bso_ssectraits_sel for more information.
  * \param begin the first iterator of the input range. Its value type is
  *        either `Polygon_2` (resp. `General_polygon_2`) or
  *        `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
@@ -2636,10 +2729,10 @@ OutputIterator symmetric_difference(InputIterator begin, InputIterator end,
  * \return the past-the-end iterator of the output container.
  */
 template <typename InputIterator, typename OutputIterator,
-          typename UsePolylineTraits>
+          typename UsePolylines>
 OutputIterator symmetric_difference(InputIterator begin, InputIterator end,
                                     OutputIterator oi,
-                                    UsePolylineTraits = UsePolylineTraits());
+                                    UsePolylines = UsePolylines());
 
 /*! Given a range of polygons (resp. general polygons) and a range of general
  * polygons with holes (resp. general polygons with holes) computes the
@@ -2674,12 +2767,16 @@ OutputIterator symmetric_difference(InputIterator1 begin1, InputIterator1 end1,
  * container via an output iterator. A point is contained in the symmetric
  * difference, if and only if it is contained in an odd number of input
  * polygons.
- * \tparam UsePolylineTraits determines whether a segment traits or a polyline
- *         traits is internally used. If substituted with `CGAL::Tag_true`, a
- *         polyline traits is internally used. If substituted wiyj
- *         `CGAL::Tag_false`, a segment traits is used instead. The Default is
- *         `CGAL::Tag_true`.
- *         Refer to \ref bso_ssectraits_sel for more information.
+ * \tparam UsePolylines determines whether the boundaries of the polygons in the
+ *         input ranges are treated as cyclic sequences of single
+ *         (\f$x\f$-monotone) segments or as a cyclic sequences of
+ *         (\f$x\f$-monotone) polylines. If substituted with `CGAL::Tag_true`,
+ *         which is the default, the input polygons are converted into general
+ *         polygon with holes , bounded by polylines before the operation is
+ *         actually performed. Then, the resulting general polygons with holes
+ *         are converted back to standard polygons with holes.  If substituted
+ *         with `CGAL::Tag_false`, `pgn1` and `pgn2` are used as is. Refer to
+ *         \ref bso_ssectraits_sel for more information.
  * \param begin1 the first iterator of the 1st input range. Its value type is
  *        `Polygon_2` (resp. `General_polygon_2`).
  * \param end1 the past-the-end iterator of the 1st input range. Its value
@@ -2695,11 +2792,11 @@ OutputIterator symmetric_difference(InputIterator1 begin1, InputIterator1 end1,
  */
 template <typename InputIterator1, typename InputIterator2,
           typename OutputIterator,
-          typename UsePolylineTraits>
+          typename UsePolylines>
 OutputIterator symmetric_difference(InputIterator1 begin1, InputIterator1 end1,
                                     InputIterator2 begin2, InputIterator2 end2,
                                     OutputIterator oi,
-                                    UsePolylineTraits = UsePolylineTraits());
+                                    UsePolylines = UsePolylines());
 
 //////// With Traits
 
