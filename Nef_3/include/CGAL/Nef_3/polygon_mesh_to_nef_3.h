@@ -192,21 +192,18 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
   typedef Halfedge_around_target_circulator<PolygonMesh>
                                Halfedge_around_vertex_const_circulator;
 
-  struct Face_info
-  {
-    Vector_3 normal;
-    CGAL_assertion_code(std::size_t num_edges;)
-  };
-
   PMap pmap = get(CGAL::vertex_point,P);
 
-  std::vector<Face_info> face_info(num_faces(P));
+  std::vector<Vector_3> normals(num_faces(P));
+  CGAL_assertion_code(std::vector<std::size_t>  num_edges(num_faces(P));)
 
   for(face_descriptor f : faces(P)){
     Vertex_around_face_circulator<PolygonMesh> vafc(halfedge(f,P),P), done(vafc);
     Vector_3 v;
     normal_vector_newell_3(vafc, done, pmap, v);
-    face_info[get(fimap,f)] = {-v,CGAL_assertion_code(circulator_size(vafc))};
+    int i = get(fimap,f);
+    normals[i] = -v;
+    CGAL_assertion_code(num_edges[i] = circulator_size(vafc));
   }
 
   Face_graph_index_adder<typename SNC_structure::Items,
@@ -256,11 +253,10 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
       if(is_border(pe_prev,P))
         with_border = true;
       else {
-        const Face_info& fi=face_info[get(fimap,face(pe_prev,P))];
-        Plane ss_plane( CGAL::ORIGIN, fi.normal);
+        int i = get(fimap,face(pe_prev,P));
+        Plane ss_plane( CGAL::ORIGIN, normals[i]);
         Sphere_circle ss_circle(ss_plane);
-
-        CGAL_assertion_code(if(fi.num_edges > 3) {
+        CGAL_assertion_code(if(num_edges[i] > 3) {
           CGAL_assertion(ss_circle.has_on(sp));
           CGAL_assertion(ss_circle.has_on(sv_prev->point()));
         };)
@@ -290,11 +286,11 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
       with_border = true;
       e = sv_prev->out_sedge();
     } else {
-      const Face_info& fi=face_info[get(fimap,face(pe_prev,P))];
-      Plane ss_plane( CGAL::ORIGIN, fi.normal);
+      int i = get(fimap,face(pe_prev,P));
+      Plane ss_plane( CGAL::ORIGIN, normals[i]);
       Sphere_circle ss_circle(ss_plane);
 
-      CGAL_assertion_code(if(fi.num_edges > 3) {
+      CGAL_assertion_code(if(num_edges[i] > 3) {
         CGAL_assertion(ss_circle.has_on(sp_0));
         CGAL_assertion(ss_circle.has_on(sv_prev->point()));
       };)
