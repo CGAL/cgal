@@ -176,11 +176,11 @@ struct Dummy_default_vertex_point_map
   }
 };
 
-template <class Point_3, class NamedParameter, class PolygonMesh>
+template <class Point_3, class NamedParameters, class PolygonMesh>
 struct TweakedGetVertexPointMap
 {
   typedef typename GetVertexPointMap<PolygonMesh,
-                                     NamedParameter>::type Default_map;
+                                     NamedParameters>::type Default_map;
   typedef typename boost::is_same<Point_3,
     typename boost::property_traits<Default_map>::value_type>::type Use_default_tag;
 
@@ -215,6 +215,7 @@ template <class TriangleMesh>
 struct Default_visitor{
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::face_descriptor face_descriptor;
+  typedef typename GT::halfedge_descriptor halfedge_descriptor;
 
   void before_subface_creations(face_descriptor /*f_old*/,TriangleMesh&){}
   void after_subface_creations(TriangleMesh&){}
@@ -223,6 +224,9 @@ struct Default_visitor{
   void before_face_copy(face_descriptor /*f_old*/, TriangleMesh&, TriangleMesh&){}
   void after_face_copy(face_descriptor /*f_old*/, TriangleMesh&,
                        face_descriptor /* f_new */, TriangleMesh&){}
+  void before_edge_split(halfedge_descriptor /* h */, const TriangleMesh& /* tm */){}
+  void edge_split(halfedge_descriptor /* hnew */, const TriangleMesh& /* tm */){}
+  void after_edge_split(){}
 
 // calls commented in the code and probably incomplete due to the migration
 // see NODE_VISITOR_TAG
@@ -521,28 +525,38 @@ struct Patch_container{
     typedef typename GT::face_descriptor face_descriptor;
 
     Patch_description<PolygonMesh>& patch=this->operator[](i);
-    out << "OFF\n" << patch.interior_vertices.size() +
-                      patch.shared_edges.size();
-    out << " " << patch.faces.size() << " 0\n";
+
+    std::stringstream ss;
     std::map<vertex_descriptor, int> vertexid;
     int id=0;
     for(vertex_descriptor vh : patch.interior_vertices)
     {
       vertexid[vh]=id++;
-      out << get(vertex_point, pm, vh) << "\n";
+      ss << get(vertex_point, pm, vh) << "\n";
     }
 
     for(halfedge_descriptor hh : patch.shared_edges)
     {
-      vertexid[target(hh, pm)]=id++;
-      out << get(vertex_point, pm, target(hh, pm)) << "\n";
+      if( vertexid.insert( std::make_pair(target(hh,pm), id) ).second )
+      {
+        ss << get(vertex_point, pm, target(hh, pm)) << "\n";
+        ++id;
+      }
+      if( vertexid.insert( std::make_pair(source(hh,pm), id) ).second )
+      {
+        ss << get(vertex_point, pm, source(hh, pm)) << "\n";
+        ++id;
+      }
     }
+
+    out << "OFF\n" << id << " " << patch.faces.size() << " 0\n";
+    out << ss.str();
 
     for(face_descriptor f : patch.faces)
     {
-      out << "3 " << vertexid[source(halfedge(f,pm),pm)] <<
-             " "  << vertexid[target(halfedge(f,pm),pm)] <<
-             " "  << vertexid[target(next(halfedge(f,pm),pm),pm)] << "\n";
+      out << "3 " << vertexid.at(source(halfedge(f,pm),pm)) <<
+             " "  << vertexid.at(target(halfedge(f,pm),pm)) <<
+             " "  << vertexid.at(target(next(halfedge(f,pm),pm),pm)) << "\n";
     }
 
     return out;
@@ -552,6 +566,16 @@ struct Patch_container{
   {
     for (std::size_t i=selection.find_first();
                      i < selection.npos; i = selection.find_next(i))
+    {
+      std::stringstream ss;
+      ss << prefix << "-" << i << ".off";
+      std::ofstream output(ss.str().c_str());
+      dump_patch(i, output);
+    }
+  }
+  void dump_patches(std::string prefix)
+  {
+    for (std::size_t i=0;i <patches.size() ; ++i)
     {
       std::stringstream ss;
       ss << prefix << "-" << i << ".off";
@@ -583,7 +607,8 @@ next_marked_halfedge_around_target_vertex(
 template <class PolygonMesh,
           class EdgeMap,
           class VertexMap,
-          class VertexPointMap,
+          class VertexPointMap1,
+          class VertexPointMap2,
           class VertexPointMapOut,
           class IntersectionEdgeMap>
 void import_polyline(
@@ -598,8 +623,8 @@ void import_polyline(
   VertexMap& pm1_to_output_vertices,
   const IntersectionEdgeMap& intersection_edges1,
   const IntersectionEdgeMap& intersection_edges2,
-  const VertexPointMap& vpm1,
-  const VertexPointMap& /*vpm2*/,
+  const VertexPointMap1& vpm1,
+  const VertexPointMap2& /*vpm2*/,
   const VertexPointMapOut& vpm_out,
   std::vector<typename boost::graph_traits<PolygonMesh>
                 ::edge_descriptor>& output_shared_edges)
@@ -1004,7 +1029,8 @@ void append_patches_to_triangle_mesh(
 
 template < class TriangleMesh,
            class IntersectionEdgeMap,
-           class VertexPointMap,
+           class VertexPointMap1,
+           class VertexPointMap2,
            class VertexPointMapOut,
            class EdgeMarkMap1,
            class EdgeMarkMap2,
@@ -1024,8 +1050,8 @@ void fill_new_triangle_mesh(
   const IntersectionPolylines& polylines,
   const IntersectionEdgeMap& intersection_edges1,
   const IntersectionEdgeMap& intersection_edges2,
-  const VertexPointMap& vpm1,
-  const VertexPointMap& vpm2,
+  const VertexPointMap1& vpm1,
+  const VertexPointMap2& vpm2,
   const VertexPointMapOut& vpm_out,
   const EdgeMarkMap1& edge_mark_map1,
   const EdgeMarkMap2& edge_mark_map2,
@@ -1261,7 +1287,8 @@ template <class TriangleMesh,
           class PatchContainer2,
           class IntersectionPolylines,
           class EdgeMap,
-          class VertexPointMap,
+          class VertexPointMap1,
+          class VertexPointMap2,
           class EdgeMarkMapIn1,
           class EdgeMarkMapIn2,
           class EdgeMarkMapOut,
@@ -1275,8 +1302,8 @@ void compute_inplace_operation_delay_removal_and_insideout(
   PatchContainer2& patches_of_tm2,
   bool reverse_patch_orientation_tm2,
   const IntersectionPolylines& polylines,
-  const VertexPointMap& vpm1,
-  const VertexPointMap& vpm2,
+  const VertexPointMap1& vpm1,
+  const VertexPointMap2& vpm2,
         EdgeMarkMapIn1&,
   const EdgeMarkMapIn2& edge_mark_map2,
   const EdgeMarkMapOut& edge_mark_map_out1,
@@ -1420,7 +1447,8 @@ remove_patches(TriangleMesh& tm,
 template <class TriangleMesh,
           class PatchContainer1,
           class PatchContainer2,
-          class VertexPointMap,
+          class VertexPointMap1,
+          class VertexPointMap2,
           class EdgeMarkMapIn1,
           class EdgeMarkMapIn2,
           class EdgeMarkMapOut1,
@@ -1434,8 +1462,8 @@ void compute_inplace_operation(
   PatchContainer2& patches_of_tm2,
   bool reverse_patch_orientation_tm1,
   bool reverse_patch_orientation_tm2,
-  const VertexPointMap& vpm1,
-  const VertexPointMap& vpm2,
+  const VertexPointMap1& vpm1,
+  const VertexPointMap2& vpm2,
         EdgeMarkMapIn1& edge_mark_map_in1,
   const EdgeMarkMapIn2& edge_mark_map_in2,
         EdgeMarkMapOut1& edge_mark_map_out1,
@@ -1527,7 +1555,8 @@ template <class TriangleMesh,
           class PatchContainer1,
           class PatchContainer2,
           class IntersectionPolylines,
-          class VertexPointMap,
+          class VertexPointMap1,
+          class VertexPointMap2,
           class EdgeMarkMapIn1,
           class EdgeMarkMapIn2,
           class EdgeMarkMapOut1,
@@ -1541,8 +1570,8 @@ void compute_inplace_operation(
   PatchContainer2& patches_of_tm2,
   bool reverse_patch_orientation_tm1,
   bool reverse_patch_orientation_tm2,
-  const VertexPointMap& vpm1,
-  const VertexPointMap& vpm2,
+  const VertexPointMap1& vpm1,
+  const VertexPointMap2& vpm2,
   const EdgeMarkMapIn1& edge_mark_map_in1,
   const EdgeMarkMapIn2& edge_mark_map_in2,
   const EdgeMarkMapOut1& edge_mark_map_out1,
@@ -1637,13 +1666,16 @@ void remove_unused_polylines(
 
     do{
 
-      halfedge_descriptor tmp_start = h;
+      halfedge_descriptor starter = h;
       while ( !is_border(h, tm) || is_border(opposite(h, tm), tm) )
       {
         h = opposite(next(h, tm), tm);
-        if (tmp_start==h) break;
+        if (starter==h) break; // it might happen that no update is required because
+                               // it is already closed thanks to another patch from tm'
+                               // (usually incident to coplanar patches)
+
       }
-      if( !is_border(h, tm) )
+      if( !is_border(h, tm) || is_border(opposite(h, tm), tm) )
       {
         // nothing to do: the vertex has already been updated and is now in the middle of a patch kept.
         // This function can be called after the stitching of the patches kept, the vertex halfedge

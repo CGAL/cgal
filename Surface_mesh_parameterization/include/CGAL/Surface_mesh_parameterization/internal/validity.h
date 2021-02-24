@@ -25,7 +25,7 @@
 #include <CGAL/intersections.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 #include <vector>
 
@@ -232,7 +232,7 @@ public:
   { }
 };
 
-/// Check if the 3D -> 2D mapping is one-to-one.
+/// returns whether the 3D -> 2D mapping is one-to-one.
 /// This function is stronger than "has_flips()" because the parameterized
 /// surface can loop over itself without creating any flips.
 template <typename TriangleMesh,

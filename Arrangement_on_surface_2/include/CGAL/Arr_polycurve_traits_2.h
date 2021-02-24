@@ -717,7 +717,11 @@ public:
       Comparison_result dir2 = cmp_seg_endpts(cv2[0]);
 
       std::vector<X_monotone_subcurve_2> ocv; // Used to represent overlaps.
-      const bool invert_ocv = (dir1 == LARGER && dir2 == LARGER);
+      const bool invert_ocv = ((dir1 == LARGER) && (dir2 == LARGER));
+      const bool consistent = (dir1 == dir2);
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+      CGAL_assertion(consistent);
+#endif
 
       const std::size_t n1 = cv1.number_of_subcurves();
       const std::size_t n2 = cv2.number_of_subcurves();
@@ -777,7 +781,7 @@ public:
         }
       }
 
-      // Check if the the left endpoint lies on the other polycurve.
+      // Check if the left endpoint lies on the other polycurve.
       bool left_coincides = (left_res == EQUAL);
       bool left_overlap = false;
 
@@ -848,8 +852,16 @@ public:
               boost::get<X_monotone_subcurve_2>(&item);
             if (x_seg != nullptr) {
               X_monotone_subcurve_2 seg = *x_seg;
-              if (cmp_seg_endpts(seg) == LARGER && !invert_ocv)
+              // We maintain the variant that if the input curves have opposite
+              // directions (! consistent), the overalpping curves are directed
+              // left=>right. This, however, is not guaranteed for the
+              // subcurves. Therefore, we need to enforce it. That is, we make
+              // sure the subcurves are also directed left=>right in this case.
+              if (! consistent && (cmp_seg_endpts(seg) == LARGER))
                 seg = construct_opposite(seg);
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+              CGAL_assertion(cmp_seg_endpts(seg) == SMALLER);
+#endif
               ocv.push_back(seg);
             }
 

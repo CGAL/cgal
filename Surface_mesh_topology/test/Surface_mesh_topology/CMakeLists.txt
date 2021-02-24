@@ -10,13 +10,9 @@ if(POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
 endif()
 
-find_package(CGAL COMPONENTS Qt5)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 if(CGAL_Qt5_FOUND)
-    add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
-endif()
-
-if ( NOT CGAL_FOUND )
-  message(FATAL_ERROR "This program requires the CGAL library, and will not be compiled.")
+  add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
 endif()
 
 # add_definitions(-DCGAL_TRACE_PATH_TESTS)
@@ -25,20 +21,19 @@ endif()
 # add_definitions("-D_GLIBCXX_DEBUG")
 
 set(SOURCE_FILES
-  fundamental_group_of_the_circle.cpp
-  fundamental_group_of_the_torus.cpp
-  homotopy_big_cylinder.cpp
-  homotopy_double_torus_with_holes.cpp
-  homotopy_rond_point_saucisse.cpp
-  homotopy_small_cylinder.cpp
-  path_tests.cpp
-  path_with_rle_deformation_tests.cpp
-  shortest_noncontractible_cycle_tests.cpp
-  test_homotopy.cpp
-  test_homotopy_with_polygonal_schema.cpp
-  test_shortest_cycle_non_contractible.cpp
-  tests_path_on_surface.cpp
-  )
+    fundamental_group_of_the_circle.cpp
+    fundamental_group_of_the_torus.cpp
+    homotopy_big_cylinder.cpp
+    homotopy_double_torus_with_holes.cpp
+    homotopy_rond_point_saucisse.cpp
+    homotopy_small_cylinder.cpp
+    path_tests.cpp
+    path_with_rle_deformation_tests.cpp
+    shortest_noncontractible_cycle_tests.cpp
+    test_homotopy.cpp
+    test_homotopy_with_polygonal_schema.cpp
+    test_shortest_cycle_non_contractible.cpp
+    tests_path_on_surface.cpp)
 
 foreach(cppfile ${SOURCE_FILES})
   create_single_source_cgal_program("${cppfile}")

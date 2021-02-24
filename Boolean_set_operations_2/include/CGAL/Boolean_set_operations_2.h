@@ -1106,7 +1106,7 @@ template <typename Kernel, typename Container>
 void complement(const Polygon_2<Kernel, Container>& pgn,
                 Polygon_with_holes_2<Kernel, Container>& res,
                 Tag_true = Tag_true())
-{ _complement<Kernel, Container>(pgn, res); }
+{ _complement(pgn, res); }
 
 // With Tag_false
 template <typename Kernel, typename Container>
@@ -1131,7 +1131,7 @@ OutputIterator complement(const Polygon_with_holes_2<Kernel, Container>& pgn,
 template <typename Kernel, typename Container, typename OutputIterator>
 OutputIterator complement(const Polygon_with_holes_2<Kernel, Container>& pgn,
                           OutputIterator oi, Tag_true = Tag_true())
-{ return _complement<Kernel, Container>(pgn, oi); }
+{ return _complement(pgn, oi); }
 
 // With Tag_false
 template <typename Kernel, typename Container, typename OutputIterator>
@@ -1204,61 +1204,42 @@ inline OutputIterator join(InputIterator begin, InputIterator end,
   return gps.polygons_with_holes(oi);
 }
 
-// With Tag_true
+// Without Traits
+// Tag_true => convert to polylines
 template <typename InputIterator, typename OutputIterator>
 inline OutputIterator join(InputIterator begin, InputIterator end,
                            OutputIterator oi, Tag_true = Tag_true(),
-                           unsigned int k=5)
+                           unsigned int k=5,
+                           Enable_if_Polygon_2_iterator<InputIterator>* = 0)
 {
-  typedef typename std::iterator_traits<InputIterator>::value_type  Pgn;
-  // typedef typename Gps_default_traits<Pgn>::Arr_traits          Segment_traits;
-  // typedef Arr_polyline_traits_2<Segment_traits>                 Polyline_traits;
-  // typedef Gps_traits_2<Polyline_traits>                         Traits;
-  // Traits traits;
+  typedef typename std::iterator_traits<InputIterator>::value_type InputPolygon;
+  typedef typename Kernel_traits<typename InputPolygon::Point_2>::Kernel Kernel;
+  typename Gps_default_traits<Kernel>::Traits traits;
 
-  // typedef General_polygon_2<Polyline_traits>                    General_pgn;
-  // typedef General_polygon_with_holes_2<General_pgn>             General_pwh;
-  // std::list<General_pwh> general_pwhs;
-
-  // return join(convert_polygon_iterator(begin, traits),
-  //             convert_polygon_iterator(end, traits),
-  //             convert_polygon_back(oi, *begin, traits), traits, k);
-
-  typename Gps_default_traits<Pgn>::Traits traits;
-  return join(begin, end, oi, traits, k);
+  return join(convert_polygon_iterator(begin, traits),
+              convert_polygon_iterator(end, traits),
+              convert_polygon_back(oi, *begin, traits), traits, k);
 }
 
-// With Tag_false
+// Tag_false => do not convert to polylines
 template <typename InputIterator, typename OutputIterator>
 inline OutputIterator join(InputIterator begin, InputIterator end,
-                           OutputIterator oi, Tag_false, unsigned int k=5)
+                           OutputIterator oi, Tag_false, unsigned int k=5,
+                           Enable_if_Polygon_2_iterator<InputIterator>* = 0)
 {
   typename map_iterator_to_traits<InputIterator>::Traits traits;
   return join(begin, end, oi, traits, k);
 }
 
-// template <typename InputIterator, typename OutputIterator>
-// inline OutputIterator join(InputIterator begin, InputIterator end,
-//                            OutputIterator oi, Tag_true = Tag_true(), unsigned int k=5,
-//                            Enable_if_Polygon_2_iterator<InputIterator>* = 0)
-// {
-//   typedef typename std::iterator_traits<InputIterator>::value_type InputPolygon;
-//   typedef typename Kernel_traits<typename InputPolygon::Point_2>::Kernel Kernel;
-//   typename Gps_default_traits<Kernel>::Traits traits;
-
-//   return join(convert_polygon_iterator(begin, traits),
-//               convert_polygon_iterator(end, traits),
-//               convert_polygon_back(oi, *begin, traits), traits, k);
-// }
-
-// template <typename InputIterator, typename OutputIterator>
-// inline OutputIterator join(InputIterator begin, InputIterator end,
-//                            OutputIterator oi, unsigned int k=5,
-//                            Disable_if_Polygon_2_iterator<InputIterator>* = 0)
-// {
-//   typename map_iterator_to_traits<InputIterator>::Traits traits;
-//   return join(begin, end, oi, traits, k);
-// }
+// General polygons or polygons with holes
+template <typename InputIterator, typename OutputIterator>
+inline OutputIterator join(InputIterator begin, InputIterator end,
+                           OutputIterator oi, unsigned int k=5,
+                           Disable_if_Polygon_2_iterator<InputIterator>* = 0)
+{
+  typename map_iterator_to_traits<InputIterator>::Traits traits;
+  return join(begin, end, oi, traits, k);
+}
 
 // Join two ranges of simple polygons and polygons with holes.
 // With Traits
@@ -1275,55 +1256,49 @@ inline OutputIterator join(InputIterator1 begin1, InputIterator1 end1,
 }
 
 // Without Traits
+// Tag_true => convert to polylines
 template <typename InputIterator1, typename InputIterator2,
           typename OutputIterator>
 inline OutputIterator join(InputIterator1 begin1, InputIterator1 end1,
                            InputIterator2 begin2, InputIterator2 end2,
-                           OutputIterator oi, unsigned int k=5)
+                           OutputIterator oi, Tag_true = Tag_true(),
+                           unsigned int k=5,
+                           Enable_if_Polygon_2_iterator<InputIterator1>* = 0)
+{
+  typedef typename std::iterator_traits<InputIterator1>::value_type InputPolygon;
+  typedef typename Kernel_traits<typename InputPolygon::Point_2>::Kernel Kernel;
+  typename Gps_default_traits<Kernel>::Traits traits;
+
+  return join(convert_polygon_iterator(begin1),
+              convert_polygon_iterator(end1),
+              convert_polygon_iterator(begin2),
+              convert_polygon_iterator(end2),
+              convert_polygon_back(oi), traits, k);
+}
+
+// Tag_false => do not convert to polylines
+template <typename InputIterator1, typename InputIterator2,
+          typename OutputIterator>
+inline OutputIterator join(InputIterator1 begin1, InputIterator1 end1,
+                           InputIterator2 begin2, InputIterator2 end2,
+                           OutputIterator oi, Tag_false, unsigned int k=5,
+                           Enable_if_Polygon_2_iterator<InputIterator1>* = 0)
 {
   typename map_iterator_to_traits<InputIterator1>::Traits traits;
   return join(begin1, end1, begin2, end2, oi, traits, k);
 }
 
-// template <typename InputIterator1, typename InputIterator2,
-//           typename OutputIterator>
-// inline OutputIterator join(InputIterator1 begin1, InputIterator1 end1,
-//                            InputIterator2 begin2, InputIterator2 end2,
-//                            OutputIterator oi, Tag_true = Tag_true(), unsigned int k=5,
-//                            Enable_if_Polygon_2_iterator<InputIterator1>* = 0)
-// {
-//   typedef typename std::iterator_traits<InputIterator1>::value_type InputPolygon;
-//   typedef typename Kernel_traits<typename InputPolygon::Point_2>::Kernel Kernel;
-//   typename Gps_default_traits<Kernel>::Traits traits;
-
-//   return join(convert_polygon_iterator(begin1),
-//               convert_polygon_iterator(end1),
-//               convert_polygon_iterator(begin2),
-//               convert_polygon_iterator(end2),
-//               convert_polygon_back(oi), traits, k);
-// }
-
-// template <typename InputIterator1, typename InputIterator2,
-//           typename OutputIterator>
-// inline OutputIterator join(InputIterator1 begin1, InputIterator1 end1,
-//                            InputIterator2 begin2, InputIterator2 end2,
-//                            OutputIterator oi, Tag_false, unsigned int k=5,
-//                            Enable_if_Polygon_2_iterator<InputIterator1>* = 0)
-// {
-//   typename map_iterator_to_traits<InputIterator1>::Traits traits;
-//   return join(begin1, end1, begin2, end2, oi, traits, k);
-// }
-
-// template <typename InputIterator1, typename InputIterator2,
-//           typename OutputIterator>
-// inline OutputIterator join(InputIterator1 begin1, InputIterator1 end1,
-//                            InputIterator2 begin2, InputIterator2 end2,
-//                            OutputIterator oi, unsigned int k=5,
-//                            Disable_if_Polygon_2_iterator<InputIterator1>* = 0)
-// {
-//   typename map_iterator_to_traits<InputIterator1>::Traits traits;
-//   return join(begin1, end1, begin2, end2, oi, traits, k);
-// }
+// General polygons or polygons with holes
+template <typename InputIterator1, typename InputIterator2,
+          typename OutputIterator>
+inline OutputIterator join(InputIterator1 begin1, InputIterator1 end1,
+                           InputIterator2 begin2, InputIterator2 end2,
+                           OutputIterator oi, unsigned int k=5,
+                           Disable_if_Polygon_2_iterator<InputIterator1>* = 0)
+{
+  typename map_iterator_to_traits<InputIterator1>::Traits traits;
+  return join(begin1, end1, begin2, end2, oi, traits, k);
+}
 
 //@}
 
@@ -1333,7 +1308,7 @@ inline OutputIterator join(InputIterator1 begin1, InputIterator1 end1,
 // With Traits
 template <typename InputIterator, typename OutputIterator, typename Traits>
 inline OutputIterator intersection(InputIterator begin, InputIterator end,
-                                    OutputIterator oi, Traits&, unsigned int k=5)
+                                   OutputIterator oi, Traits&, unsigned int k=5)
 {
   if (begin == end) return (oi);
   General_polygon_set_2<Traits> gps(*begin);
@@ -1341,40 +1316,48 @@ inline OutputIterator intersection(InputIterator begin, InputIterator end,
   return gps.polygons_with_holes(oi);
 }
 
-// template <typename InputIterator, typename OutputIterator>
-// inline OutputIterator intersection(InputIterator begin, InputIterator end,
-//                                     OutputIterator oi, Tag_true = Tag_true(), unsigned int k=5,
-//                                     Enable_if_Polygon_2_iterator<InputIterator>* = 0)
-// {
-//   typedef typename std::iterator_traits<InputIterator>::value_type InputPolygon;
-//   typedef typename Kernel_traits<typename InputPolygon::Point_2>::Kernel Kernel;
-//   typename Gps_default_traits<Kernel>::Traits traits;
+// Without Traits
+// Tag_true => convert to polylines
+template <typename InputIterator, typename OutputIterator>
+inline OutputIterator
+intersection(InputIterator begin, InputIterator end,
+             OutputIterator oi, Tag_true = Tag_true(),
+             unsigned int k=5,
+             Enable_if_Polygon_2_iterator<InputIterator>* = 0)
+{
+  typedef typename std::iterator_traits<InputIterator>::value_type InputPolygon;
+  typedef typename Kernel_traits<typename InputPolygon::Point_2>::Kernel Kernel;
+  typename Gps_default_traits<Kernel>::Traits traits;
 
-//   return intersection(convert_polygon_iterator(begin),
-//                       convert_polygon_iterator(end),
-//                       convert_polygon_back(oi), traits, k);
-// }
+  return intersection(convert_polygon_iterator(begin),
+                      convert_polygon_iterator(end),
+                      convert_polygon_back(oi), traits, k);
+}
 
-// template <typename InputIterator, typename OutputIterator>
-// inline OutputIterator intersection(InputIterator begin, InputIterator end,
-//                                     OutputIterator oi, Tag_false, unsigned int k=5,
-//                                     Enable_if_Polygon_2_iterator<InputIterator>* = 0)
-// {
-//   typename map_iterator_to_traits<InputIterator>::Traits traits;
-//   return intersection(begin, end, oi, traits, k);
-// }
+// Tag_false => do not convert to polylines
+template <typename InputIterator, typename OutputIterator>
+inline OutputIterator
+intersection(InputIterator begin, InputIterator end,
+             OutputIterator oi, Tag_false, unsigned int k=5,
+             Enable_if_Polygon_2_iterator<InputIterator>* = 0)
+{
+  typename map_iterator_to_traits<InputIterator>::Traits traits;
+  return intersection(begin, end, oi, traits, k);
+}
 
-// template <typename InputIterator, typename OutputIterator>
-// inline OutputIterator intersection(InputIterator begin, InputIterator end,
-//                                     OutputIterator oi, unsigned int k=5,
-//                                     typename boost::enable_if<
-//                                       typename CGAL::is_iterator<InputIterator>
-//                                     >::type* =0, // workaround to avoid ambiguous calls with kernel functions
-//                                     Disable_if_Polygon_2_iterator<InputIterator>* = 0)
-// {
-//   typename map_iterator_to_traits<InputIterator>::Traits traits;
-//   return intersection(begin, end, oi, traits, k);
-// }
+// General polygons or polygons with holes
+template <typename InputIterator, typename OutputIterator>
+inline OutputIterator
+intersection(InputIterator begin, InputIterator end,
+             OutputIterator oi, unsigned int k=5,
+             // workaround to avoid ambiguous calls with kernel functions
+             typename boost::enable_if
+               <typename CGAL::is_iterator<InputIterator>>::type* = 0,
+             Disable_if_Polygon_2_iterator<InputIterator>* = 0)
+{
+  typename map_iterator_to_traits<InputIterator>::Traits traits;
+  return intersection(begin, end, oi, traits, k);
+}
 
 // Inersect two ranges of simple polygons and polygons with holes.
 // With Traits
@@ -1392,45 +1375,52 @@ inline OutputIterator intersection(InputIterator1 begin1, InputIterator1 end1,
   return gps.polygons_with_holes(oi);
 }
 
-// template <typename InputIterator1, typename InputIterator2,
-//           typename OutputIterator>
-// inline OutputIterator intersection(InputIterator1 begin1, InputIterator1 end1,
-//                                    InputIterator2 begin2, InputIterator2 end2,
-//                                    OutputIterator oi, Tag_true = Tag_true(), unsigned int k=5,
-//                                    Enable_if_Polygon_2_iterator<InputIterator1>* = 0)
-// {
-//   typedef typename std::iterator_traits<InputIterator1>::value_type InputPolygon;
-//   typedef typename Kernel_traits<typename InputPolygon::Point_2>::Kernel Kernel;
-//   typename Gps_default_traits<Kernel>::Traits traits;
+// Without Traits
+// Tag_true => convert to polylines
+template <typename InputIterator1, typename InputIterator2,
+          typename OutputIterator>
+inline OutputIterator
+intersection(InputIterator1 begin1, InputIterator1 end1,
+             InputIterator2 begin2, InputIterator2 end2,
+             OutputIterator oi, Tag_true = Tag_true(), unsigned int k=5,
+             Enable_if_Polygon_2_iterator<InputIterator1>* = 0)
+{
+  typedef typename std::iterator_traits<InputIterator1>::value_type InputPolygon;
+  typedef typename Kernel_traits<typename InputPolygon::Point_2>::Kernel Kernel;
+  typename Gps_default_traits<Kernel>::Traits traits;
 
-//   return intersection(convert_polygon_iterator(begin1),
-//                       convert_polygon_iterator(end1),
-//                       convert_polygon_iterator(begin2),
-//                       convert_polygon_iterator(end2),
-//                       convert_polygon_back(oi), traits, k);
-// }
+  return intersection(convert_polygon_iterator(begin1),
+                      convert_polygon_iterator(end1),
+                      convert_polygon_iterator(begin2),
+                      convert_polygon_iterator(end2),
+                      convert_polygon_back(oi), traits, k);
+}
 
-// template <typename InputIterator1, typename InputIterator2,
-//           typename OutputIterator>
-// inline OutputIterator intersection(InputIterator1 begin1, InputIterator1 end1,
-//                                    InputIterator2 begin2, InputIterator2 end2,
-//                                    OutputIterator oi, Tag_false, unsigned int k=5,
-//                                    Enable_if_Polygon_2_iterator<InputIterator1>* = 0)
-// {
-//   typename map_iterator_to_traits<InputIterator1>::Traits traits;
-//   return intersection(begin1, end1, begin2, end2, oi, traits, k);
-// }
+// Tag_false => do not convert to polylines
+template <typename InputIterator1, typename InputIterator2,
+          typename OutputIterator>
+inline OutputIterator
+intersection(InputIterator1 begin1, InputIterator1 end1,
+             InputIterator2 begin2, InputIterator2 end2,
+             OutputIterator oi, Tag_false, unsigned int k=5,
+             Enable_if_Polygon_2_iterator<InputIterator1>* = 0)
+{
+  typename map_iterator_to_traits<InputIterator1>::Traits traits;
+  return intersection(begin1, end1, begin2, end2, oi, traits, k);
+}
 
-// template <typename InputIterator1, typename InputIterator2,
-//           typename OutputIterator>
-// inline OutputIterator intersection(InputIterator1 begin1, InputIterator1 end1,
-//                                    InputIterator2 begin2, InputIterator2 end2,
-//                                    OutputIterator oi, unsigned int k=5,
-//                                    Disable_if_Polygon_2_iterator<InputIterator1>* = 0)
-// {
-//   typename map_iterator_to_traits<InputIterator1>::Traits traits;
-//   return intersection(begin1, end1, begin2, end2, oi, traits, k);
-// }
+// General polygons or polygons with holes
+template <typename InputIterator1, typename InputIterator2,
+          typename OutputIterator>
+inline OutputIterator
+intersection(InputIterator1 begin1, InputIterator1 end1,
+             InputIterator2 begin2, InputIterator2 end2,
+             OutputIterator oi, unsigned int k=5,
+             Disable_if_Polygon_2_iterator<InputIterator1>* = 0)
+{
+  typename map_iterator_to_traits<InputIterator1>::Traits traits;
+  return intersection(begin1, end1, begin2, end2, oi, traits, k);
+}
 
 //@}
 
@@ -1451,40 +1441,44 @@ OutputIterator symmetric_difference(InputIterator begin, InputIterator end,
   return gps.polygons_with_holes(oi);
 }
 
-// template <typename InputIterator, typename OutputIterator>
-// inline
-// OutputIterator symmetric_difference(InputIterator begin, InputIterator end,
-//                                      OutputIterator oi, Tag_true = Tag_true(), unsigned int k=5,
-//                                      Enable_if_Polygon_2_iterator<InputIterator>* = 0)
-// {
-//   typedef typename std::iterator_traits<InputIterator>::value_type InputPolygon;
-//   typedef typename Kernel_traits<typename InputPolygon::Point_2>::Kernel Kernel;
-//   typename Gps_default_traits<Kernel>::Traits traits;
+// Without Traits
+// Tag_true => convert to polylines
+template <typename InputIterator, typename OutputIterator>
+inline OutputIterator
+symmetric_difference(InputIterator begin, InputIterator end,
+                     OutputIterator oi, Tag_true = Tag_true(), unsigned int k=5,
+                     Enable_if_Polygon_2_iterator<InputIterator>* = 0)
+{
+  typedef typename std::iterator_traits<InputIterator>::value_type InputPolygon;
+  typedef typename Kernel_traits<typename InputPolygon::Point_2>::Kernel Kernel;
+  typename Gps_default_traits<Kernel>::Traits traits;
 
-//   return symmetric_difference(convert_polygon_iterator(begin),
-//                               convert_polygon_iterator(end),
-//                               convert_polygon_back(oi), traits, k);
-// }
+  return symmetric_difference(convert_polygon_iterator(begin),
+                              convert_polygon_iterator(end),
+                              convert_polygon_back(oi), traits, k);
+}
 
-// template <typename InputIterator, typename OutputIterator>
-// inline
-// OutputIterator symmetric_difference(InputIterator begin, InputIterator end,
-//                                      OutputIterator oi, Tag_false, unsigned int k=5,
-//                                      Enable_if_Polygon_2_iterator<InputIterator>* = 0)
-// {
-//   typename map_iterator_to_traits<InputIterator>::Traits traits;
-//   return symmetric_difference(begin, end, oi, traits, k);
-// }
+// Tag_false => do not convert to polylines
+template <typename InputIterator, typename OutputIterator>
+inline OutputIterator
+symmetric_difference(InputIterator begin, InputIterator end,
+                     OutputIterator oi, Tag_false, unsigned int k=5,
+                     Enable_if_Polygon_2_iterator<InputIterator>* = 0)
+{
+  typename map_iterator_to_traits<InputIterator>::Traits traits;
+  return symmetric_difference(begin, end, oi, traits, k);
+}
 
-// template <typename InputIterator, typename OutputIterator>
-// inline
-// OutputIterator symmetric_difference(InputIterator begin, InputIterator end,
-//                                      OutputIterator oi, unsigned int k=5,
-//                                      Disable_if_Polygon_2_iterator<InputIterator>* = 0)
-// {
-//   typename map_iterator_to_traits<InputIterator>::Traits traits;
-//   return symmetric_difference(begin, end, oi, traits, k);
-// }
+// General polygons or polygons with holes
+template <typename InputIterator, typename OutputIterator>
+inline OutputIterator
+symmetric_difference(InputIterator begin, InputIterator end,
+                     OutputIterator oi, unsigned int k=5,
+                     Disable_if_Polygon_2_iterator<InputIterator>* = 0)
+{
+  typename map_iterator_to_traits<InputIterator>::Traits traits;
+  return symmetric_difference(begin, end, oi, traits, k);
+}
 
 // Xor two ranges of simple polygons and polygons with holes.
 // With Traits
@@ -1504,48 +1498,52 @@ OutputIterator symmetric_difference(InputIterator1 begin1, InputIterator1 end1,
   return gps.polygons_with_holes(oi);
 }
 
-// template <typename InputIterator1, typename InputIterator2,
-//           typename OutputIterator>
-// inline
-// OutputIterator symmetric_difference(InputIterator1 begin1, InputIterator1 end1,
-//                                      InputIterator2 begin2, InputIterator2 end2,
-//                                      OutputIterator oi, Tag_true = Tag_true(), unsigned int k=5,
-//                                      Enable_if_Polygon_2_iterator<InputIterator1>* = 0)
-// {
-//   typedef typename std::iterator_traits<InputIterator1>::value_type InputPolygon;
-//   typedef typename Kernel_traits<typename InputPolygon::Point_2>::Kernel Kernel;
-//   typename Gps_default_traits<Kernel>::Traits traits;
+// Without Traits
+// Tag_true => convert to polylines
+template <typename InputIterator1, typename InputIterator2,
+          typename OutputIterator>
+inline OutputIterator
+symmetric_difference(InputIterator1 begin1, InputIterator1 end1,
+                     InputIterator2 begin2, InputIterator2 end2,
+                     OutputIterator oi, Tag_true = Tag_true(), unsigned int k=5,
+                     Enable_if_Polygon_2_iterator<InputIterator1>* = 0)
+{
+  typedef typename std::iterator_traits<InputIterator1>::value_type InputPolygon;
+  typedef typename Kernel_traits<typename InputPolygon::Point_2>::Kernel Kernel;
+  typename Gps_default_traits<Kernel>::Traits traits;
 
-//   return symmetric_difference(convert_polygon_iterator(begin1),
-//                               convert_polygon_iterator(end1),
-//                               convert_polygon_iterator(begin2),
-//                               convert_polygon_iterator(end2),
-//                               convert_polygon_back(oi), traits, k);
-// }
+  return symmetric_difference(convert_polygon_iterator(begin1),
+                              convert_polygon_iterator(end1),
+                              convert_polygon_iterator(begin2),
+                              convert_polygon_iterator(end2),
+                              convert_polygon_back(oi), traits, k);
+}
 
-// template <typename InputIterator1, typename InputIterator2,
-//           typename OutputIterator>
-// inline
-// OutputIterator symmetric_difference(InputIterator1 begin1, InputIterator1 end1,
-//                                      InputIterator2 begin2, InputIterator2 end2,
-//                                      OutputIterator oi, Tag_false, unsigned int k=5,
-//                                      Enable_if_Polygon_2_iterator<InputIterator1>* = 0)
-// {
-//   typename map_iterator_to_traits<InputIterator1>::Traits traits;
-//   return symmetric_difference(begin1, end1, begin2, end2, oi, traits, k);
-// }
+// Tag_false => do not convert to polylines
+template <typename InputIterator1, typename InputIterator2,
+          typename OutputIterator>
+inline OutputIterator
+symmetric_difference(InputIterator1 begin1, InputIterator1 end1,
+                     InputIterator2 begin2, InputIterator2 end2,
+                     OutputIterator oi, Tag_false, unsigned int k=5,
+                     Enable_if_Polygon_2_iterator<InputIterator1>* = 0)
+{
+  typename map_iterator_to_traits<InputIterator1>::Traits traits;
+  return symmetric_difference(begin1, end1, begin2, end2, oi, traits, k);
+}
 
-// template <typename InputIterator1, typename InputIterator2,
-//           typename OutputIterator>
-// inline
-// OutputIterator symmetric_difference(InputIterator1 begin1, InputIterator1 end1,
-//                                      InputIterator2 begin2, InputIterator2 end2,
-//                                      OutputIterator oi, unsigned int k=5,
-//                                      Disable_if_Polygon_2_iterator<InputIterator1>* = 0)
-// {
-//   typename map_iterator_to_traits<InputIterator1>::Traits traits;
-//   return symmetric_difference(begin1, end1, begin2, end2, oi, traits, k);
-// }
+// General polygons or polygons with holes
+template <typename InputIterator1, typename InputIterator2,
+          typename OutputIterator>
+inline OutputIterator
+symmetric_difference(InputIterator1 begin1, InputIterator1 end1,
+                     InputIterator2 begin2, InputIterator2 end2,
+                     OutputIterator oi, unsigned int k=5,
+                     Disable_if_Polygon_2_iterator<InputIterator1>* = 0)
+{
+  typename map_iterator_to_traits<InputIterator1>::Traits traits;
+  return symmetric_difference(begin1, end1, begin2, end2, oi, traits, k);
+}
 
 //@}
 
@@ -1563,35 +1561,40 @@ inline bool do_intersect(InputIterator begin, InputIterator end, Traits& traits,
   return gps.do_intersect(++begin, end, k);
 }
 
-// template <typename InputIterator>
-// inline bool do_intersect(InputIterator begin, InputIterator end,
-//                          Tag_true = Tag_true(), unsigned int k=5,
-//                          Enable_if_Polygon_2_iterator<InputIterator>* = 0)
-// {
-//   typedef typename std::iterator_traits<InputIterator>::value_type InputPolygon;
-//   typedef typename Kernel_traits<typename InputPolygon::Point_2>::Kernel Kernel;
-//   typename Gps_default_traits<Kernel>::Traits traits;
+// Without Traits
+// Tag_true => convert to polylines
+template <typename InputIterator>
+inline bool do_intersect(InputIterator begin, InputIterator end,
+                         Tag_true = Tag_true(), unsigned int k=5,
+                         Enable_if_Polygon_2_iterator<InputIterator>* = 0)
+{
+  typedef typename std::iterator_traits<InputIterator>::value_type InputPolygon;
+  typedef typename Kernel_traits<typename InputPolygon::Point_2>::Kernel Kernel;
+  typename Gps_default_traits<Kernel>::Traits traits;
 
-//   return do_intersect(convert_polygon_iterator(begin), convert_polygon_iterator(end), traits, k);
-// }
+  return do_intersect(convert_polygon_iterator(begin),
+                      convert_polygon_iterator(end), traits, k);
+}
 
-// template <typename InputIterator>
-// inline bool do_intersect(InputIterator begin, InputIterator end,
-//                          Tag_false, unsigned int k=5,
-//                          Enable_if_Polygon_2_iterator<InputIterator>* = 0)
-// {
-//   typename map_iterator_to_traits<InputIterator>::Traits traits;
-//   return do_intersect(begin, end, traits, k);
-// }
+// Tag_false => do not convert to polylines
+template <typename InputIterator>
+inline bool do_intersect(InputIterator begin, InputIterator end,
+                         Tag_false, unsigned int k=5,
+                         Enable_if_Polygon_2_iterator<InputIterator>* = 0)
+{
+  typename map_iterator_to_traits<InputIterator>::Traits traits;
+  return do_intersect(begin, end, traits, k);
+}
 
-// template <typename InputIterator>
-// inline bool do_intersect(InputIterator begin, InputIterator end,
-//                          unsigned int k=5,
-//                          Disable_if_Polygon_2_iterator<InputIterator>* = 0)
-// {
-//   typename map_iterator_to_traits<InputIterator>::Traits traits;
-//   return do_intersect(begin, end, traits, k);
-// }
+// General polygons or polygons with holes
+template <typename InputIterator>
+inline bool do_intersect(InputIterator begin, InputIterator end,
+                         unsigned int k=5,
+                         Disable_if_Polygon_2_iterator<InputIterator>* = 0)
+{
+  typename map_iterator_to_traits<InputIterator>::Traits traits;
+  return do_intersect(begin, end, traits, k);
+}
 
 // With Traits
 template <typename InputIterator1, typename InputIterator2, typename Traits>
@@ -1605,41 +1608,45 @@ inline bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
   return gps.do_intersect(++begin1, end1, begin2, end2, k);
 }
 
-// template <typename InputIterator1, typename InputIterator2>
-// inline bool do_intersect (InputIterator1 begin1, InputIterator1 end1,
-//                           InputIterator2 begin2, InputIterator2 end2,
-//                           Tag_true = Tag_true(), unsigned int k=5,
-//                           Enable_if_Polygon_2_iterator<InputIterator1>* = 0)
-// {
-//   typedef typename std::iterator_traits<InputIterator1>::value_type InputPolygon;
-//   typedef typename Kernel_traits<typename InputPolygon::Point_2>::Kernel Kernel;
-//   typename Gps_default_traits<Kernel>::Traits traits;
+// Without Traits
+// Tag_true => convert to polylines
+template <typename InputIterator1, typename InputIterator2>
+inline bool do_intersect (InputIterator1 begin1, InputIterator1 end1,
+                          InputIterator2 begin2, InputIterator2 end2,
+                          Tag_true = Tag_true(), unsigned int k=5,
+                          Enable_if_Polygon_2_iterator<InputIterator1>* = 0)
+{
+  typedef typename std::iterator_traits<InputIterator1>::value_type InputPolygon;
+  typedef typename Kernel_traits<typename InputPolygon::Point_2>::Kernel Kernel;
+  typename Gps_default_traits<Kernel>::Traits traits;
 
-//   return do_intersect(convert_polygon_iterator(begin1),
-//                       convert_polygon_iterator(end1),
-//                       convert_polygon_iterator(begin2),
-//                       convert_polygon_iterator(end2), traits, k);
-// }
+  return do_intersect(convert_polygon_iterator(begin1),
+                      convert_polygon_iterator(end1),
+                      convert_polygon_iterator(begin2),
+                      convert_polygon_iterator(end2), traits, k);
+}
 
-// template <typename InputIterator1, typename InputIterator2>
-// inline bool do_intersect (InputIterator1 begin1, InputIterator1 end1,
-//                           InputIterator2 begin2, InputIterator2 end2,
-//                           Tag_false, unsigned int k=5,
-//                           Enable_if_Polygon_2_iterator<InputIterator1>* = 0)
-// {
-//   typename map_iterator_to_traits<InputIterator1>::Traits traits;
-//   return do_intersect(begin1, end1, begin2, end2, traits, k);
-// }
+// Tag_false => do not convert to polylines
+template <typename InputIterator1, typename InputIterator2>
+inline bool do_intersect (InputIterator1 begin1, InputIterator1 end1,
+                          InputIterator2 begin2, InputIterator2 end2,
+                          Tag_false, unsigned int k=5,
+                          Enable_if_Polygon_2_iterator<InputIterator1>* = 0)
+{
+  typename map_iterator_to_traits<InputIterator1>::Traits traits;
+  return do_intersect(begin1, end1, begin2, end2, traits, k);
+}
 
-// template <typename InputIterator1, typename InputIterator2>
-// inline bool do_intersect (InputIterator1 begin1, InputIterator1 end1,
-//                           InputIterator2 begin2, InputIterator2 end2,
-//                           unsigned int k=5,
-//                           Disable_if_Polygon_2_iterator<InputIterator1>* = 0)
-// {
-//   typename map_iterator_to_traits<InputIterator1>::Traits traits;
-//   return do_intersect(begin1, end1, begin2, end2, traits, k);
-// }
+// General polygons or polygons with holes
+template <typename InputIterator1, typename InputIterator2>
+inline bool do_intersect (InputIterator1 begin1, InputIterator1 end1,
+                          InputIterator2 begin2, InputIterator2 end2,
+                          unsigned int k=5,
+                          Disable_if_Polygon_2_iterator<InputIterator1>* = 0)
+{
+  typename map_iterator_to_traits<InputIterator1>::Traits traits;
+  return do_intersect(begin1, end1, begin2, end2, traits, k);
+}
 
 //@}
 

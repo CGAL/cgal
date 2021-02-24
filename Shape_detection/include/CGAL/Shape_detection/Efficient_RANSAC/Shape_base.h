@@ -623,10 +623,11 @@ namespace CGAL {
                                const std::ptrdiff_t n,
                                FT &low,
                                FT &high) {
-      const FT q = FT(x * n * double(UN - x) * (UN - n) / (UN - 1));
+      const FT xn = FT(double(x) * double(n));
+      const FT q = FT(xn * double(UN - x) * (UN - n) / (UN - 1));
       const FT sq = CGAL::sqrt(q);
-      low  = (x * n - sq) / UN;
-      high = (x * n + sq)/UN;
+      low  = (xn - sq) / UN;
+      high = (xn + sq)/UN;
 
       if (!is_finite<FT>(low) || !is_finite<FT>(high)) {
         low = high = 0;

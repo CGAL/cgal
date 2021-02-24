@@ -25,7 +25,6 @@
 #include <CGAL/algorithm.h>
 #include <list>
 #include <algorithm>
-#include <boost/bind.hpp>
 
 namespace CGAL {
 
@@ -45,7 +44,8 @@ ch__recursive_eddy(List& L,
 
   CGAL_ch_precondition( \
     std::find_if(a_it, b_it, \
-                 boost::bind(left_turn, *b_it, *a_it, _1)) \
+                 [&left_turn, a_it, b_it](const Point_2& p)
+                 { return left_turn(*b_it, *a_it, p); }) \
     != b_it );
 
 
@@ -53,11 +53,14 @@ ch__recursive_eddy(List& L,
   Less_dist less_dist = ch_traits.less_signed_distance_to_line_2_object();
   ListIterator
       c_it = std::min_element( f_it, b_it,  // max before
-                               boost::bind(less_dist, *a_it, *b_it, _1, _2));
+                               [&less_dist, a_it, b_it](const Point_2& p1, const Point_2& p2)
+                               { return less_dist(*a_it, *b_it, p1, p2); });
   Point_2 c = *c_it;
 
-  c_it = std::partition(f_it, b_it, boost::bind(left_turn, c, *a_it, _1));
-  f_it = std::partition(c_it, b_it, boost::bind(left_turn, *b_it, c, _1));
+  c_it = std::partition(f_it, b_it, [&left_turn, &c, a_it](const Point_2& p)
+                                    {return left_turn(c, *a_it, p);});
+  f_it = std::partition(c_it, b_it, [&left_turn, &c, b_it](const Point_2& p)
+                                    {return left_turn(*b_it, c, p);});
   c_it = L.insert(c_it, c);
   L.erase( f_it, b_it );
 
@@ -104,7 +107,8 @@ ch_eddy(InputIterator first, InputIterator last,
   L.erase(e);
 
   e = std::partition(L.begin(), L.end(),
-                     boost::bind(left_turn, ep, wp, _1) );
+                     [&left_turn, &wp, &ep](const Point_2& p)
+                     {return left_turn(ep, wp, p);} );
   L.push_front(wp);
   e = L.insert(e, ep);
 
@@ -112,7 +116,8 @@ ch_eddy(InputIterator first, InputIterator last,
   {
       ch__recursive_eddy( L, L.begin(), e, ch_traits);
   }
-  w = std::find_if( e, L.end(), boost::bind(left_turn, wp, ep, _1) );
+  w = std::find_if( e, L.end(), [&left_turn, &wp, &ep](const Point_2& p)
+                                { return left_turn(wp, ep, p); });
   if ( w == L.end() )
   {
       L.erase( ++e, L.end() );

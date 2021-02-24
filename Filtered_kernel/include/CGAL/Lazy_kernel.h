@@ -81,7 +81,7 @@ struct Lazy_result_type
 
 class Enum_holder {
 protected:
-  enum { NONE, NT, VARIANT, OBJECT, BBOX };
+  enum { NONE, NT, VARIANT, OBJECT, BBOX, OPTIONAL_ };
 };
 
 } // internal
@@ -178,6 +178,7 @@ private:
   // The case distinction goes as follows:
   // result_type == FT                              => NT
   // result_type == Object                          => Object
+  // result_type == boost::optional                 => OPTIONAL_
   // result_type == Bbox_2 || result_type == Bbox_3 => BBOX
   // default                                        => NONE
   // no result_type                                 => NONE
@@ -213,6 +214,7 @@ private:
 
   CGAL_WRAPPER_TRAIT(Intersect_2, VARIANT)
   CGAL_WRAPPER_TRAIT(Intersect_3, VARIANT)
+  CGAL_WRAPPER_TRAIT(Intersect_point_3, OPTIONAL_)
   CGAL_WRAPPER_TRAIT(Compute_squared_radius_2, NT)
   CGAL_WRAPPER_TRAIT(Compute_x_3, NT)
   CGAL_WRAPPER_TRAIT(Compute_y_3, NT)
@@ -251,6 +253,12 @@ private:
   struct Select_wrapper_impl<Construction, BBOX> {
     template<typename Kernel, typename AKC, typename EKC>
     struct apply { typedef Lazy_construction_bbox<Kernel, AKC, EKC> type; };
+  };
+
+  template <typename Construction>
+  struct Select_wrapper_impl<Construction, OPTIONAL_> {
+    template<typename Kernel, typename AKC, typename EKC>
+    struct apply { typedef Lazy_construction_optional<Kernel, AKC, EKC> type; };
   };
 
   template <typename Construction>
@@ -306,6 +314,8 @@ public:
 
   // typedef void Compute_z_3; // to detect where .z() is called
   // typedef void Construct_point_3; // to detect where the ctor is called
+
+
 
   struct Compute_weight_2 : public BaseClass::Compute_weight_2
   {

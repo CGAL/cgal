@@ -162,7 +162,7 @@ private:
       }
     }
 
-    for (const std::pair<Facet, Vector_3>& fn : fnormals)
+    for (const auto& fn : fnormals)
     {
       if(fn.second != CGAL::NULL_VECTOR)
         continue;
@@ -347,7 +347,7 @@ private:
       v->set_point(typename Tr::Point(pv + frac * move));
 
       bool valid_try = true;
-      for (const typename Tr::Cell_handle ci : inc_cells)
+      for (const typename Tr::Cell_handle& ci : inc_cells)
       {
         if (CGAL::POSITIVE != CGAL::orientation(point(ci->vertex(0)->point()),
                                                 point(ci->vertex(1)->point()),
@@ -437,6 +437,7 @@ public:
     boost::unordered_map<Vertex_handle, std::size_t> vertex_id;
     std::vector<Vector_3> smoothed_positions(nbv, CGAL::NULL_VECTOR);
     std::vector<int> neighbors(nbv, -1);
+    std::vector<bool> free_vertex(nbv, false);//are vertices free to move? indices are in `vertex_id`
 
     //collect ids
     std::size_t id = 0;
@@ -450,10 +451,14 @@ public:
     inc_cells(nbv, boost::container::small_vector<Cell_handle, 40>());
     for (const Cell_handle c : tr.finite_cell_handles())
     {
+      const bool cell_is_selected = cell_selector(c);
+
       for (int i = 0; i < 4; ++i)
       {
         const std::size_t idi = vertex_id[c->vertex(i)];
         inc_cells[idi].push_back(c);
+        if(cell_is_selected)
+          free_vertex[idi] = true;
       }
     }
 
@@ -498,6 +503,9 @@ public:
       for (Vertex_handle v : tr.finite_vertex_handles())
       {
         const std::size_t& vid = vertex_id.at(v);
+        if (!free_vertex[vid])
+          continue;
+
         if (neighbors[vid] > 1)
         {
           Vector_3 smoothed_position = smoothed_positions[vid] / neighbors[vid];
@@ -543,7 +551,7 @@ public:
           const Vector_3 current_pos(CGAL::ORIGIN, point(v->point()));
 
           const std::vector<Surface_patch_index>& v_surface_indices = vertices_surface_indices[v];
-          for (const Surface_patch_index si : v_surface_indices)
+          for (const Surface_patch_index& si : v_surface_indices)
           {
             //Check if the mls surface exists to avoid degenerated cases
 
@@ -613,10 +621,10 @@ public:
 
       for (Vertex_handle v : tr.finite_vertex_handles())
       {
-        if (v->in_dimension() != 2)
+        const std::size_t& vid = vertex_id.at(v);
+        if (!free_vertex[vid] || v->in_dimension() != 2)
           continue;
 
-        const std::size_t& vid = vertex_id.at(v);
         if (neighbors[vid] > 1)
         {
           Vector_3 smoothed_position = smoothed_positions[vid] / static_cast<FT>(neighbors[vid]);
@@ -697,6 +705,9 @@ public:
     for (Vertex_handle v : tr.finite_vertex_handles())
     {
       const std::size_t& vid = vertex_id.at(v);
+      if (!free_vertex[vid])
+        continue;
+
       if (c3t3.in_dimension(v) == 3 && neighbors[vid] > 1)
       {
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG

@@ -56,8 +56,8 @@ namespace Feature {
 template <typename GeomTraits, typename PointRange, typename PointMap>
 class Vertical_dispersion : public Feature_base
 {
-  typedef Classification::Image<compressed_float> Image_cfloat;
-  typedef Classification::Planimetric_grid<GeomTraits, PointRange, PointMap> Grid;
+  using Image_cfloat = Classification::Image<compressed_float>;
+  using Grid = Classification::Planimetric_grid<GeomTraits, PointRange, PointMap>;
 
   const Grid& grid;
   Image_cfloat Dispersion;
@@ -65,7 +65,7 @@ class Vertical_dispersion : public Feature_base
 
 public:
   /*!
-    \brief Constructs the feature.
+    \brief constructs the feature.
 
     \param input point range.
     \param point_map property map to access the input points.

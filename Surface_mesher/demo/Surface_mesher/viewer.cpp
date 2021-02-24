@@ -4,10 +4,8 @@
 #include <CGAL/Qt/manipulatedCameraFrame.h>
 
 Viewer::Viewer(QWidget* parent)
-  : CGAL::QGLViewer(parent), surface(0)
+  : CGAL::QGLViewer(parent), surface(nullptr)
 {
-  // Do not store state in a file
-  setStateFileName("");
 }
 
 void Viewer::init()

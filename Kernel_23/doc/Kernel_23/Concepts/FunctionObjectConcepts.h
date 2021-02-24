@@ -3882,8 +3882,6 @@ public:
     If `l1` and `l2` are parallel, then the bisector is defined as the line
     which has the same direction as `l1`, and which is at the same distance
     from `l1` and `l2`.
-    This function requires that `Kernel::RT` supports the `sqrt()`
-    operation.
   */
   Kernel::Line_2 operator()(const Kernel::Line_2&l1,
                             const Kernel::Line_2&l2);
@@ -3925,8 +3923,6 @@ public:
     If `h1` and `h2` are parallel, then the bisector is defined as the
     plane which has the same oriented normal vector as `h1`, and which is at
     the same distance from `h1` and `h2`.
-    This function requires that `Kernel::RT` supports the `sqrt()`
-    operation.
   */
   Kernel::Plane_3 operator()(const Kernel::Plane_3&h1,
                              const Kernel::Plane_3&h2);

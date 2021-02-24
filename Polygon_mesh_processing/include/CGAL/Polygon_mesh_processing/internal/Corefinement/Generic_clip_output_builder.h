@@ -38,7 +38,8 @@ namespace PMP=Polygon_mesh_processing;
 namespace params=PMP::parameters;
 
 template <class TriangleMesh,
-          class VertexPointMap,
+          class VertexPointMap1,
+          class VertexPointMap2,
           class Ecm1,
           class FaceIdMap1,
           class Kernel_=Default>
@@ -48,7 +49,7 @@ class Generic_clip_output_builder
   typedef typename Default::Get<
     Kernel_,
     typename Kernel_traits<
-      typename boost::property_traits<VertexPointMap>::value_type
+      typename boost::property_traits<VertexPointMap2>::value_type
     >::Kernel >::type                                           Kernel;
 
 // graph_traits typedefs
@@ -76,8 +77,8 @@ class Generic_clip_output_builder
 //Data members
   TriangleMesh &tm1, &tm2;
   // property maps of input meshes
-  const VertexPointMap vpm1;
-  const VertexPointMap vpm2;
+  const VertexPointMap1 vpm1;
+  const VertexPointMap2 vpm2;
   Ecm1 ecm1;
   FaceIdMap1 fids1;
   bool use_compact_clipper;
@@ -105,8 +106,8 @@ public:
 
   Generic_clip_output_builder(TriangleMesh& tm1,
                               TriangleMesh& tm2,
-                              const VertexPointMap vpm1,
-                              const VertexPointMap vpm2,
+                              const VertexPointMap1 vpm1,
+                              const VertexPointMap2 vpm2,
                               const Ecm1& ecm1,
                               FaceIdMap1 fids1,
                               bool use_compact_clipper)
@@ -167,7 +168,7 @@ public:
 
     typedef Side_of_triangle_mesh<TriangleMesh,
                                   Kernel,
-                                  VertexPointMap> Inside_poly_test;
+                                  VertexPointMap2> Inside_poly_test;
 
     CGAL::Bounded_side in_tm2 = is_tm2_inside_out
                               ? ON_UNBOUNDED_SIDE : ON_BOUNDED_SIDE;

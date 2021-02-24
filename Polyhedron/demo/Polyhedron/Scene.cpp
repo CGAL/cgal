@@ -1184,7 +1184,7 @@ bool Scene::sort_lists(QVector<QList<int> >&sorted_lists, bool up)
   for(int i = 0; i< sorted_lists.first().size(); ++i)
   {
     Scene_group_item* group = qobject_cast<Scene_group_item*>(this->item(sorted_lists.first()[i]));
-    if(group && ! group->getChildren().isEmpty())
+    if(group && ! group->getChildren().isEmpty() && sorted_lists.first()[i] < sorted_lists.size())
     {
       sorted_lists[sorted_lists.first()[i]].clear();
     }
@@ -1738,7 +1738,7 @@ void Scene::updatePrimitiveIds(CGAL::Three::Scene_item* it)
     }
   }
 }
-bool Scene::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer, const QVector3D& scaler)
+bool Scene::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)
 {
     CGAL::Three::Scene_item *i = item(mainSelectionIndex());
     if(!i)
@@ -1746,7 +1746,7 @@ bool Scene::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_inte
     Scene_print_item_interface* spit= qobject_cast<Scene_print_item_interface*>(i);
     if(spit && i->visible())
     {
-        bool res = spit->testDisplayId(x,y,z, viewer, scaler);
+        bool res = spit->testDisplayId(x,y,z, viewer);
         return res;
     }
     else

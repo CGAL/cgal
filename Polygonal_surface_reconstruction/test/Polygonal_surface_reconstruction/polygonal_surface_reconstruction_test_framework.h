@@ -1,8 +1,7 @@
 #ifndef POLYFIT_TEST_FRAMEWORK_H_
 #define POLYFIT_TEST_FRAMEWORK_H_
 
-#include <CGAL/IO/read_xyz_points.h>
-#include <CGAL/IO/read_ply_points.h>
+#include <CGAL/IO/read_points.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Shape_detection/Efficient_RANSAC.h>
@@ -85,7 +84,7 @@ int reconstruct(const std::string& input_file, bool force_extract_planes)
         CGAL::Timer t;
         t.start();
         if (extension == ".pwn") {
-        if (!CGAL::read_xyz_points(
+        if (!CGAL::read_XYZ(
                     input_stream,
                     std::back_inserter(points),
                     CGAL::parameters::point_map(Point_map()).normal_map(Normal_map())))
@@ -97,7 +96,7 @@ int reconstruct(const std::string& input_file, bool force_extract_planes)
                         std::cout << " Done. " << points.size() << " points. Time: " << t.time() << " sec." << std::endl;
         }
         else if (extension == ".ply") {
-        if (!CGAL::read_ply_points_with_properties(
+        if (!CGAL::read_PLY_with_properties(
                     input_stream,
                     std::back_inserter(points),
                     CGAL::make_ply_point_reader(Point_map()),

@@ -3,7 +3,7 @@
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 #include <array>
 
@@ -56,15 +56,13 @@ void test (const X_monotone_polyline& a, const X_monotone_polyline& b,
     (a, b, boost::make_function_output_iterator (Test_functor(reference)));
 }
 
-int main(int argc, char* argv[])
+int main()
 {
   Geom_traits_2 traits;
   Arrangement_2 arr(&traits);
 
   Geom_traits_2::Construct_x_monotone_curve_2 x_mono_polyline_construct =
     traits.construct_x_monotone_curve_2_object();
-
-  auto ctr_x_curve = traits.construct_x_monotone_curve_2_object();
 
   std::array<Segment_2, 2> r2l
     = { Segment_2(Point_2(1, 0), Point_2(0, 1)),

@@ -28,6 +28,7 @@ Scene::Scene()
 
 Scene::~Scene()
 {
+
     delete m_pPolyhedron;
 }
 

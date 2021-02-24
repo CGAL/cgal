@@ -65,7 +65,20 @@ inline Oriented_side _oriented_side(const Obj& obj, const Pgn& pgn, Traits& tr)
   return gps.oriented_side(obj);
 }
 
-// Without Traits
+// Without Traits (point, polygon)
+template <typename Kernel, typename Pgn>
+inline Oriented_side _oriented_side(const Point_2<Kernel>& point,
+                                    const Pgn& pgn)
+{
+  // Use the polygon to determine the (default) traits
+  typedef typename Gps_default_traits<Pgn>::Arr_traits          Segment_traits;
+  typedef Arr_polyline_traits_2<Segment_traits>                 Polyline_traits;
+  typedef Gps_traits_2<Polyline_traits>                         Traits;
+  Traits traits;
+  return _oriented_side(point, convert_polygon<Polyline_traits>(pgn), traits);
+}
+
+// Without Traits (polygon, polygon)
 template <typename Pgn1, typename Pgn2>
 inline Oriented_side _oriented_side(const Pgn1& pgn1, const Pgn2& pgn2)
 {
@@ -76,19 +89,6 @@ inline Oriented_side _oriented_side(const Pgn1& pgn1, const Pgn2& pgn2)
   Traits traits;
   return _oriented_side(convert_polygon<Polyline_traits>(pgn1),
                         convert_polygon<Polyline_traits>(pgn2), traits);
-}
-
-// Without Traits
-template <typename Kernel, typename Pgn>
-inline Oriented_side _oriented_side(const typename Kernel::Point_2& point,
-                                    const Pgn& pgn)
-{
-  // Use the polygon to determine the (default) traits
-  typedef typename Gps_default_traits<Pgn>::Arr_traits          Segment_traits;
-  typedef Arr_polyline_traits_2<Segment_traits>                 Polyline_traits;
-  typedef Gps_traits_2<Polyline_traits>                         Traits;
-  Traits traits;
-  return _oriented_side(point, convert_polygon<Polyline_traits>(pgn), traits);
 }
 
 //@}
@@ -273,10 +273,10 @@ inline OutputIterator _symmetric_difference(const Pgn1& pgn1, const Pgn2& pgn2,
 /// \name _complement() functions.
 //@{
 
-// Compute the complemenet of a (general) polygon
-template <typename Pgn, typename Traits>
-void _complement(const Pgn& pgn, typename Traits::Polygon_with_holes_2& res,
-                 Traits& tr)
+// Compute the complemenet of a polygon
+template <typename Kernel, typename Container, typename Traits>
+void _complement(const Polygon_2<Kernel, Container>& pgn,
+                 typename Traits::Polygon_with_holes_2& res, Traits& tr)
 {
   General_polygon_set_2<Traits> gps(tr);
   gps.insert(pgn);
@@ -285,12 +285,48 @@ void _complement(const Pgn& pgn, typename Traits::Polygon_with_holes_2& res,
   gps.polygons_with_holes(oi);
 }
 
-// Compute the complemenet of a (general) polygon
-template <typename Kernel, typename Container, typename Pgn, typename Pwh>
-void _complement(const Pgn& pgn, Pwh& pwh)
+// Compute the complemenet of a general polygon
+template <typename ArrTraits, typename Traits>
+void _complement(const General_polygon_2<ArrTraits>& pgn,
+                 typename Traits::Polygon_with_holes_2& res, Traits& tr)
 {
-  // Use the first polygon to determine the (default) traits
-  typedef typename Gps_default_traits<Pgn>::Arr_traits         Segment_traits;
+  General_polygon_set_2<Traits> gps(tr);
+  gps.insert(pgn);
+  gps.complement();
+  Oneset_iterator<typename Traits::Polygon_with_holes_2> oi(res);
+  gps.polygons_with_holes(oi);
+}
+
+// Compute the complemenet of a polygon with holes
+template <typename Kernel, typename Container, typename OutputIterator,
+          typename Traits>
+OutputIterator _complement(const Polygon_with_holes_2<Kernel, Container>& pgn,
+                           OutputIterator oi, Traits& traits)
+{
+  General_polygon_set_2<Traits> gps(traits);
+  gps.insert(pgn);
+  gps.complement();
+  return gps.polygons_with_holes(oi);
+}
+
+// Compute the complemenet of a general polygon with holes
+template <typename Pgn, typename OutputIterator, typename Traits>
+OutputIterator _complement(const General_polygon_with_holes_2<Pgn>& pgn,
+                           OutputIterator oi, Traits& traits)
+{
+  General_polygon_set_2<Traits> gps(traits);
+  gps.insert(pgn);
+  gps.complement();
+  return gps.polygons_with_holes(oi);
+}
+
+// Compute the complemenet of a polygon
+template <typename Kernel, typename Container, typename Pwh>
+void _complement(const Polygon_2<Kernel, Container>& pgn, Pwh& pwh)
+{
+  // Use the polygon to determine the (default) traits
+  typedef Polygon_2<Kernel, Container>                          Pgn;
+  typedef typename Gps_default_traits<Pgn>::Arr_traits          Segment_traits;
   typedef Arr_polyline_traits_2<Segment_traits>                 Polyline_traits;
   typedef Gps_traits_2<Polyline_traits>                         Traits;
   Traits traits;
@@ -303,22 +339,13 @@ void _complement(const Pgn& pgn, Pwh& pwh)
   pwh = convert_polygon_back<Kernel, Container>(general_pwh);
 }
 
-// Compute the complemenet of a (general) polygon with holes
-template <typename Pgn, typename OutputIterator, typename Traits>
-OutputIterator _complement(const Pgn& pgn, OutputIterator oi, Traits& traits)
+// Compute the complemenet of a polygon with holes
+template <typename Kernel, typename Container, typename OutputIterator>
+OutputIterator _complement(const Polygon_with_holes_2<Kernel, Container>& pgn,
+                           OutputIterator oi)
 {
-  General_polygon_set_2<Traits> gps(traits);
-  gps.insert(pgn, traits);
-  gps.complement();
-  return gps.polygons_with_holes(oi, traits);
-}
-
-// Compute the complemenet of a (general) polygon with holes
-template <typename Kernel, typename Container,
-          typename Pgn, typename OutputIterator>
-OutputIterator _complement(const Pgn& pgn, OutputIterator oi)
-{
-  // Use the first polygon to determine the (default) traits
+  // Use the polygon with holes to determine the (default) traits
+  typedef Polygon_with_holes_2<Kernel, Container>               Pgn;
   typedef typename Gps_default_traits<Pgn>::Arr_traits          Segment_traits;
   typedef Arr_polyline_traits_2<Segment_traits>                 Polyline_traits;
   typedef Gps_traits_2<Polyline_traits>                         Traits;
