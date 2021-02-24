@@ -95,7 +95,7 @@ squared_distance(const typename K::Tetrahedron_3 & t,
   }
 
   if(on_bounded_side){
-    return K::FT(0);
+    return typename K::FT(0);
   }
   return dmin;
 }
