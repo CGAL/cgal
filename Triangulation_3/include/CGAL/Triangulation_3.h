@@ -2457,8 +2457,14 @@ std::istream& operator>> (std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
   do{
     pos = is.tellg();
     std::getline(is, s);
-    if(!is)
+    if(!is){
+      if(is.eof())
+      {
+        //no extra data
+        is.clear();
+      }
       return is;
+    }
   }while(s == "");
   is.seekg(pos);
 
