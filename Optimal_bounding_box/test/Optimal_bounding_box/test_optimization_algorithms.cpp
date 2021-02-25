@@ -91,7 +91,7 @@ void test_OBB_of_mesh(const std::string fname,
   }
 
   std::vector<Point> points;
-  for(const auto v : vertices(mesh))
+  for(const auto& v : vertices(mesh))
     points.push_back(v->point());
 
   test_OBB_data(points, expected_vol);

@@ -3219,8 +3219,6 @@ void MainWindow::setDefaultSaveDir()
 
 void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer)
 {
-  // do not save the state of the viewer (anoying)
-  viewer->setStateFileName(QString());
   viewer->textRenderer()->setScene(scene);
   viewer->setScene(scene);
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
@@ -3701,12 +3699,13 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
                              "Could not find remote directory.");
       }
       QString path;
+      bool ok;
       path = QInputDialog::getItem(this,
                                    "Choose a file",
                                    tr("Choose the scene file."),
-                                   names);
+                                   names,0,true, &ok);
       filename = QString("%1/load_scene.js").arg(QDir::tempPath());
-      if(path.isEmpty())
+      if(path.isEmpty() || !ok)
       {
         ssh_free(session);
         return;

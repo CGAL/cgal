@@ -117,8 +117,7 @@ public:
     if(!m_os.good())
       return false;
 
-    const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
-    m_os.precision(precision);
+    set_stream_precision_from_NP(m_os, np);
 
     VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                get_const_property_map(CGAL::vertex_point, g));

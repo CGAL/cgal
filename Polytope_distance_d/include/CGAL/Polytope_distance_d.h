@@ -665,9 +665,8 @@ private:
   check_dimension( InputIterator first, InputIterator last)
   { return ( std::find_if
              ( first, last,
-               CGAL::compose1_1
-               ( boost::bind2nd(std::not_equal_to<int>(), d),
-                 tco.access_dimension_d_object()))
+               [this](const auto& o)
+               { return this->tco.access_dimension_d_object()(o) != this->d; })
              == last); }
 
   // compute (squared) distance

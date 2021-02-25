@@ -299,8 +299,7 @@ bool write_GOCAD(std::ostream& os,
 
   set_ascii_mode(os); // GOCAD is ASCII only
 
-  const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
-  os.precision(precision);
+  set_stream_precision_from_NP(os, np);
 
   os << "GOCAD TSurf 1\n"
         "HEADER {\n"
@@ -357,7 +356,7 @@ bool write_GOCAD(std::ostream& os,
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
- *     \cgalParamDefault{`6`}
+ *     \cgalParamDefault{`the precision of the stream `os``}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *

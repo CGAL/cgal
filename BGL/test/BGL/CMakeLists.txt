@@ -98,6 +98,8 @@ create_single_source_cgal_program(
 
 create_single_source_cgal_program( "graph_traits_inheritance.cpp" )
 
+create_single_source_cgal_program("test_deprecated_io.cpp")
+
 if(OpenMesh_FOUND)
   target_link_libraries(test_clear PRIVATE ${OPENMESH_LIBRARIES})
   target_compile_definitions(test_clear PRIVATE -DCGAL_USE_OPENMESH)
@@ -129,6 +131,8 @@ if (VTK_FOUND)
     if(VTK_LIBRARIES)
       target_link_libraries(test_bgl_read_write PRIVATE ${VTK_LIBRARIES})
       target_compile_definitions(test_bgl_read_write PRIVATE -DCGAL_USE_VTK)
+      target_link_libraries(test_deprecated_io PRIVATE ${VTK_LIBRARIES})
+      target_compile_definitions(test_deprecated_io PRIVATE -DCGAL_USE_VTK)
     else()
       message(STATUS "Tests that use VTK will not be compiled.")
     endif()

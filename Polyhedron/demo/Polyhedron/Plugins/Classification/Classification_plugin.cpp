@@ -708,7 +708,12 @@ public Q_SLOTS:
       filename = QFileDialog::getOpenFileName(mw,
                                               tr("Open ETHZ random forest configuration"),
                                               ".",
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
                                               "ETHZ random forest configuration (*.bin);Deprecated compressed ETHZ random forest configuration (*.gz);All Files (*)");
+#else
+                                              "ETHZ random forest configuration (*.bin);All Files (*)");
+#endif
+
 #ifdef CGAL_LINKED_WITH_OPENCV
     else if (classifier == CGAL_CLASSIFICATION_OPENCV_NUMBER) // Random Forest (OpenCV)
       filename = QFileDialog::getOpenFileName(mw,

@@ -334,6 +334,15 @@ void Scene_surface_mesh_item::standard_constructor(SMesh* sm)
   d->textFItems = new TextListItem(this);
   are_buffers_filled = false;
   invalidate(ALL);
+  std::size_t isolated_v = 0;
+  for(vertex_descriptor v : vertices(*sm))
+  {
+    if(sm->is_isolated(v))
+    {
+      ++isolated_v;
+    }
+  }
+  setNbIsolatedvertices(isolated_v);
 
 }
 Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)

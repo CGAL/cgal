@@ -8,10 +8,8 @@
 #include <fstream>
 #include <cassert>
 
-#if defined(CGAL_USE_BOOST_PROGRAM_OPTIONS) && ! defined(DONT_USE_BOOST_PROGRAM_OPTIONS)
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
-#endif
 
 
 typedef CGAL::Simple_cartesian<double> Kernel;

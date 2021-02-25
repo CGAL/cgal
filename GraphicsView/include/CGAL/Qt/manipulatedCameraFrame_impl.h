@@ -21,7 +21,6 @@
 #include <CGAL/number_type_config.h>
 #include <CGAL/Qt/manipulatedCameraFrame.h>
 #include <CGAL/Qt/camera.h>
-#include <CGAL/Qt/domUtils.h>
 #include <CGAL/Qt/qglviewer.h>
 
 #include <QMouseEvent>
@@ -117,69 +116,6 @@ void ManipulatedCameraFrame::updateSceneUpVector() {
   sceneUpVector_ = inverseTransformOf(Vec(0.0, 1.0, 0.0));
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//          S t a t e   s a v i n g   a n d   r e s t o r i n g               //
-////////////////////////////////////////////////////////////////////////////////
-
-/*! Returns an XML \c QDomElement that represents the ManipulatedCameraFrame.
-
- Adds to the ManipulatedFrame::domElement() the ManipulatedCameraFrame specific
- informations in a \c ManipulatedCameraParameters child QDomElement.
-
- \p name is the name of the QDomElement tag. \p doc is the \c QDomDocument
- factory used to create QDomElement.
-
- Use initFromDOMElement() to restore the ManipulatedCameraFrame state from the
- resulting \c QDomElement.
-
- See Vec::domElement() for a complete example. See also
- Quaternion::domElement(), Frame::domElement(), Camera::domElement()... */
-CGAL_INLINE_FUNCTION
-QDomElement ManipulatedCameraFrame::domElement(const QString &name,
-                                               QDomDocument &document) const {
-  QDomElement e = ManipulatedFrame::domElement(name, document);
-  QDomElement mcp = document.createElement("ManipulatedCameraParameters");
-  mcp.setAttribute("flySpeed", QString::number(flySpeed()));
-  DomUtils::setBoolAttribute(mcp, "rotatesAroundUpVector",
-                             rotatesAroundUpVector());
-  DomUtils::setBoolAttribute(mcp, "zoomsOnPivotPoint", zoomsOnPivotPoint());
-  mcp.appendChild(sceneUpVector().domElement("sceneUpVector", document));
-  e.appendChild(mcp);
-  return e;
-}
-
-/*! Restores the ManipulatedCameraFrame state from a \c QDomElement created by
-domElement().
-
-First calls ManipulatedFrame::initFromDOMElement() and then initializes
-ManipulatedCameraFrame specific parameters. */
-CGAL_INLINE_FUNCTION
-void ManipulatedCameraFrame::initFromDOMElement(const QDomElement &element) {
-  // No need to initialize, since default sceneUpVector and flySpeed are not
-  // meaningful. It's better to keep current ones. And it would destroy
-  // constraint() and referenceFrame(). *this = ManipulatedCameraFrame();
-  ManipulatedFrame::initFromDOMElement(element);
-
-  QDomElement child = element.firstChild().toElement();
-  while (!child.isNull()) {
-    if (child.tagName() == "ManipulatedCameraParameters") {
-      setFlySpeed(DomUtils::qrealFromDom(child, "flySpeed", flySpeed()));
-      setRotatesAroundUpVector(
-          DomUtils::boolFromDom(child, "rotatesAroundUpVector", false));
-      setZoomsOnPivotPoint(
-          DomUtils::boolFromDom(child, "zoomsOnPivotPoint", false));
-
-      QDomElement schild = child.firstChild().toElement();
-      while (!schild.isNull()) {
-        if (schild.tagName() == "sceneUpVector")
-          setSceneUpVector(Vec(schild));
-
-        schild = schild.nextSibling().toElement();
-      }
-    }
-    child = child.nextSibling().toElement();
-  }
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 //                 M o u s e    h a n d l i n g                               //
