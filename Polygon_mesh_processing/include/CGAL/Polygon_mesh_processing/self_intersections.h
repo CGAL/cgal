@@ -508,7 +508,7 @@ bool does_self_intersect(const FaceRange& face_range,
   {
     return true;
   }
-  #if defined(CGAL_LINKED_WITH_TBB) && defined(TBB_USE_CAPTURED_EXCEPTION)
+  #if defined(CGAL_LINKED_WITH_TBB) && TBB_USE_CAPTURED_EXCEPTION
   catch (const tbb::captured_exception& e)
   {
     const char* ti1 = e.name();
