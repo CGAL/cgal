@@ -662,7 +662,7 @@ EOF
   for demo_dir in *_Demo; do
     echo "pushd ${demo_dir}"
     pushd "${demo_dir}"
-    bash ../cgal_demo_copy_all_dlls_cygwin.sh "${demo_dir}_with_dlls \"\""
+    bash ../cgal_demo_copy_all_dlls_cygwin.sh "${demo_dir}_with_dlls" ""
     mv "${demo_dir}_with_dlls" ..
     popd
   done
