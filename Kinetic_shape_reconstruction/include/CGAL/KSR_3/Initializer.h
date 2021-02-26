@@ -450,6 +450,11 @@ private:
 
   void make_polygons_intersection_free() {
 
+    if (m_debug) {
+      std::cout << std::endl;
+      std::cout.precision(20);
+    }
+
     // First, create all transverse intersection lines.
     using Map_p2vv = std::map<std::set<std::size_t>, std::pair<IVertex, IVertex> >;
     Map_p2vv map_p2vv;

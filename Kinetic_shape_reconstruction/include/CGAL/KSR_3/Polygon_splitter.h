@@ -104,40 +104,37 @@ private:
 public:
   Polygon_splitter(Data_structure& data) :
   m_data(data),
-  m_merge_type(Planar_shape_type::CONVEX_HULL)
+  m_merge_type(Planar_shape_type::CONVEX_HULL),
+  m_verbose(m_data.is_verbose())
   { }
 
-  void split_support_plane(const std::size_t support_plane_idx) {
+  void split_support_plane(const std::size_t sp_idx) {
 
     // Preprocessing.
-    const auto all_pfaces = m_data.pfaces(support_plane_idx);
-    if (all_pfaces.size() > 1) {
-      merge_coplanar_pfaces(support_plane_idx);
-    }
+    std::cout.precision(20);
+    if (m_data.pfaces(sp_idx).size() > 1) merge_coplanar_pfaces(sp_idx);
+    CGAL_assertion_msg(m_data.pfaces(sp_idx).size() == 1,
+    "ERROR: WE CANNOT HAVE MULTIPLE COPLANAR PFACES!");
+    const auto pface = *m_data.pfaces(sp_idx).begin();
+    CGAL_assertion(pface.first == sp_idx);
+    const auto original_input = m_data.input(pface);
 
     // Create cdt.
-    std::cout.precision(20);
-    std::vector< std::vector<std::size_t> > original_input;
-    std::vector< std::vector<Point_2> > original_faces;
-    initialize_cdt(support_plane_idx, original_input, original_faces);
-    CGAL_assertion(original_faces.size() >= 1);
-    CGAL_assertion(original_input.size() == original_faces.size());
+    initialize_cdt(pface);
+    // if (pface.first >= 6) dump_cdt(m_data, pface.first, m_cdt, "0-initial-");
     tag_cdt_exterior_faces();
+    // if (pface.first >= 6) dump_cdt(m_data, pface.first, m_cdt, "1-exterior-");
     tag_cdt_interior_faces();
+    // if (pface.first >= 6) dump_cdt(m_data, pface.first, m_cdt, "2-interior-");
 
     // Split polygons using cdt.
-    m_data.clear_polygon_faces(support_plane_idx);
-    initialize_new_pfaces(
-      support_plane_idx, original_input, original_faces);
+    m_data.clear_polygon_faces(sp_idx);
+    initialize_new_pfaces(pface.first, original_input);
 
     // Set intersection adjacencies.
     reconnect_pvertices_to_ivertices();
     reconnect_pedges_to_iedges();
-    set_new_adjacencies(support_plane_idx);
-    if (original_faces.size() > 1) {
-      CGAL_assertion_msg(false,
-      "ERROR: WE CANNOT HAVE MULTIPLE COPLANAR PFACES!");
-    }
+    set_new_adjacencies(pface.first);
   }
 
   void clear() {
@@ -152,6 +149,11 @@ private:
   std::set<PVertex> m_input;
   std::map<CID, IEdge> m_map_intersections;
   const Planar_shape_type m_merge_type;
+  const bool m_verbose;
+
+  /*******************************
+  **        MERGE PFACES        **
+  ********************************/
 
   void merge_coplanar_pfaces(
     const std::size_t support_plane_idx) {
@@ -222,11 +224,11 @@ private:
       }
     }
     CGAL_assertion(merged.size() >= 3);
-    CGAL_assertion(check_merged_pface(support_plane_idx, merged));
+    CGAL_assertion(is_pface_inside_bbox(support_plane_idx, merged));
   }
 
   // Check if the newly created pface goes beyond the bbox.
-  const bool check_merged_pface(
+  const bool is_pface_inside_bbox(
     const std::size_t support_plane_idx,
     const std::vector<Point_2>& merged) const {
 
@@ -268,74 +270,58 @@ private:
     }
     CGAL_assertion(input_indices.size() == all_pfaces.size());
 
-    m_data.support_plane(support_plane_idx).clear_pfaces();
+    m_data.clear_pfaces(support_plane_idx);
     m_data.add_input_polygon(support_plane_idx, input_indices, merged);
   }
 
-  void initialize_cdt(
-    const std::size_t support_plane_idx,
-    std::vector< std::vector<std::size_t> >& original_input,
-    std::vector< std::vector<Point_2> >& original_faces) {
+  /*******************************
+  **         CREATE CDT         **
+  ********************************/
 
-    // Insert pvertices.
-    std::map<PVertex, Vertex_handle> vhs_map;
-    const auto all_pvertices = m_data.pvertices(support_plane_idx);
-    for (const auto pvertex : all_pvertices) {
+  void initialize_cdt(const PFace& pface) {
+
+    std::cout.precision(20);
+    const std::size_t sp_idx = pface.first;
+    const auto& sp = m_data.support_plane(sp_idx);
+
+    // Insert pvertices of the pface.
+    std::vector<Vertex_handle> vhs;
+    const auto pvertices = m_data.pvertices_of_pface(pface);
+    vhs.reserve(pvertices.size());
+
+    for (const auto pvertex : pvertices) {
       const auto vh = m_cdt.insert(m_data.point_2(pvertex));
       vh->info().pvertex = pvertex;
       m_input.insert(pvertex);
-      vhs_map[pvertex] = vh;
+      vhs.push_back(vh);
     }
 
-    // Insert pfaces and the corresponding constraints.
-    original_faces.clear();
-    original_input.clear();
-
-    // std::vector<Vertex_handle> vhs;
-    std::vector<Point_2> original_face;
-    const auto all_pfaces = m_data.pfaces(support_plane_idx);
-    for (const auto pface : all_pfaces) {
-      const auto pvertices = m_data.pvertices_of_pface(pface);
-
-      // vhs.clear();
-      original_face.clear();
-      for (const auto pvertex : pvertices) {
-        CGAL_assertion(vhs_map.find(pvertex) != vhs_map.end());
-        const auto vh = vhs_map.at(pvertex);
-        original_face.push_back(vh->point());
-        // vhs.push_back(vh);
-      }
-
-      original_faces.push_back(original_face);
-      original_input.push_back(m_data.input(pface));
-
-      // TODO: WHY WE CANNOT USE VHS DIRECTLY HERE? THAT SHOULD BE MORE PRECISE!
-      // vhs.push_back(vhs.front());
-      // const auto cid = m_cdt.insert_constraint(vhs.begin(), vhs.end());
-      original_face.push_back(original_face.front());
-      const auto cid = m_cdt.insert_constraint(original_face.begin(), original_face.end());
+    // Insert pedges of the pface.
+    for (std::size_t i = 0; i < vhs.size(); ++i) {
+      const std::size_t ip = (i + 1) % vhs.size();
+      const auto cid = m_cdt.insert_constraint(vhs[i], vhs[ip]);
       m_map_intersections.insert(std::make_pair(cid, m_data.null_iedge()));
     }
 
-    // Then, add intersection vertices + constraints.
-    const auto& iedges = m_data.support_plane(support_plane_idx).unique_iedges();
+    // Insert iedges.
+    const auto& iedges = sp.unique_iedges();
     for (const auto& iedge : iedges) {
-      const auto source = m_data.source(iedge);
-      const auto target = m_data.target(iedge);
+      const auto isource = m_data.source(iedge);
+      const auto itarget = m_data.target(iedge);
+      CGAL_assertion(isource != itarget);
 
-      const auto vsource = m_cdt.insert(m_data.to_2d(support_plane_idx, source));
-      vsource->info().ivertex = source;
-      const auto vtarget = m_cdt.insert(m_data.to_2d(support_plane_idx, target));
-      vtarget->info().ivertex = target;
+      const auto source = m_data.to_2d(sp_idx, isource);
+      const auto target = m_data.to_2d(sp_idx, itarget);
+      CGAL_assertion(source != target);
 
-      const auto cid = m_cdt.insert_constraint(vsource, vtarget);
+      const auto vh_source = m_cdt.insert(source);
+      vh_source->info().ivertex = isource;
+      const auto vh_target = m_cdt.insert(target);
+      vh_target->info().ivertex = itarget;
+
+      const auto cid = m_cdt.insert_constraint(vh_source, vh_target);
+      CGAL_assertion(m_map_intersections.find(cid) == m_map_intersections.end());
       m_map_intersections.insert(std::make_pair(cid, iedge));
-    }
-
-    // Finally, add original labels to the cdt.
-    if (all_pfaces.size() > 1) {
-      CGAL_assertion_msg(false,
-      "ERROR: WE CANNOT HAVE MULTIPLE COPLANAR PFACES!");
     }
   }
 
@@ -355,40 +341,13 @@ private:
       for (std::size_t i = 0; i < 3; ++i) {
         const auto next = fh->neighbor(i);
         const auto edge = std::make_pair(fh, i);
-        const bool is_border_edge = is_border(edge);
-        if (!is_border_edge) {
+        const bool is_boundary_edge = is_boundary(edge);
+        if (!is_boundary_edge) {
           todo.push(next);
         }
       }
     }
     CGAL_assertion(todo.size() == 0);
-  }
-
-  const bool is_border(const Edge& edge) const {
-
-    if (!m_cdt.is_constrained(edge)) {
-      return false;
-    }
-
-    const std::size_t im = (edge.second + 2) % 3;
-    const std::size_t ip = (edge.second + 1) % 3;
-
-    const auto vm = edge.first->vertex(im);
-    const auto vp = edge.first->vertex(ip);
-
-    const auto ctx_begin = m_cdt.contexts_begin(vp, vm);
-    const auto ctx_end = m_cdt.contexts_end(vp, vm);
-
-    for (auto cit = ctx_begin; cit != ctx_end; ++cit) {
-      const auto iter = m_map_intersections.find(cit->id());
-      if (iter == m_map_intersections.end()) {
-        continue;
-      }
-      if (iter->second == m_data.null_iedge()) {
-        return true;
-      }
-    }
-    return false;
   }
 
   // All enterior faces are tagged by face_index.
@@ -427,11 +386,30 @@ private:
     }
   }
 
-  void initialize_new_pfaces(
-    const std::size_t support_plane_idx,
-    const std::vector< std::vector<std::size_t> >& original_input,
-    const std::vector< std::vector<Point_2> >& original_faces) {
+  const bool is_boundary(const Edge& edge) const {
 
+    if (!m_cdt.is_constrained(edge)) return false;
+    const std::size_t im = (edge.second + 2) % 3;
+    const std::size_t ip = (edge.second + 1) % 3;
+
+    const auto vm = edge.first->vertex(im);
+    const auto vp = edge.first->vertex(ip);
+
+    const auto ctx_begin = m_cdt.contexts_begin(vp, vm);
+    const auto ctx_end = m_cdt.contexts_end(vp, vm);
+
+    for (auto cit = ctx_begin; cit != ctx_end; ++cit) {
+      const auto curr = m_map_intersections.find(cit->id());
+      if (curr == m_map_intersections.end()) continue;
+      if (curr->second == m_data.null_iedge()) return true;
+    }
+    return false;
+  }
+
+  void initialize_new_pfaces(
+    const std::size_t sp_idx, const std::vector<std::size_t>& original_input) {
+
+    std::size_t num_pfaces = 0;
     std::set<std::size_t> done;
     for (auto fit = m_cdt.finite_faces_begin(); fit != m_cdt.finite_faces_end(); ++fit) {
       CGAL_assertion(fit->info().index != KSR::uninitialized());
@@ -471,8 +449,7 @@ private:
         const auto source = curr_face->vertex(m_cdt.ccw(idx));
         const auto target = curr_face->vertex(m_cdt.cw (idx));
         if (source->info().pvertex == m_data.null_pvertex()) {
-          source->info().pvertex =
-            m_data.add_pvertex(support_plane_idx, source->point());
+          source->info().pvertex = m_data.add_pvertex(sp_idx, source->point());
         }
         new_pvertices.push_back(source->info().pvertex);
 
@@ -495,17 +472,14 @@ private:
       CGAL_assertion(curr == edge);
 
       // Add a new pface.
-      CGAL_assertion(original_faces.size() > 0);
-      CGAL_assertion(original_input.size() == original_faces.size());
       const auto pface = m_data.add_pface(new_pvertices);
       CGAL_assertion(pface != PFace());
+      m_data.input(pface) = original_input;
+      ++num_pfaces;
+    }
 
-      if (original_faces.size() != 1) {
-        CGAL_assertion_msg(original_faces.size() <= 1,
-        "ERROR: WE CANNOT HAVE MULTIPLE COPLANAR PFACES!");
-      } else {
-        m_data.input(pface) = original_input[0];
-      }
+    if (m_verbose) {
+      std::cout << "- number of newly inserted pfaces: " << num_pfaces << std::endl;
     }
   }
 
@@ -552,11 +526,10 @@ private:
     }
   }
 
-  void set_new_adjacencies(
-    const std::size_t support_plane_idx) {
+  void set_new_adjacencies(const std::size_t sp_idx) {
 
-    // std::cout << std::endl << "support plane idx: " << support_plane_idx << std::endl;
-    const auto all_pvertices = m_data.pvertices(support_plane_idx);
+    // std::cout << std::endl << "support plane idx: " << sp_idx << std::endl;
+    const auto all_pvertices = m_data.pvertices(sp_idx);
     for (const auto pvertex : all_pvertices) {
       // std::cout << "pvertex: " << m_data.point_3(pvertex) << std::endl;
 
@@ -633,7 +606,7 @@ private:
       }
       CGAL_assertion(future_line != Line_2());
 
-      const auto intersection_line = m_data.segment_2(support_plane_idx, iedge).supporting_line();
+      const auto intersection_line = m_data.segment_2(sp_idx, iedge).supporting_line();
       CGAL_assertion_msg(!CGAL::parallel(intersection_line, future_line),
       "TODO: POLYGON SPLITTER, HANDLE CASE WITH PARALLEL LINES!");
       const Point_2 future_point = KSR::intersection<Point_2>(intersection_line, future_line);

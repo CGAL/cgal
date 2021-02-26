@@ -894,6 +894,10 @@ public:
     return PFace(support_plane_idx, fi);
   }
 
+  void clear_pfaces(const std::size_t support_plane_idx) {
+    support_plane(support_plane_idx).clear_pfaces();
+  }
+
   void clear_polygon_faces(const std::size_t support_plane_idx) {
     Mesh& m = mesh(support_plane_idx);
     for (const auto& fi : m.faces()) {
@@ -1069,6 +1073,8 @@ public:
   const FT speed(const PVertex& pvertex) { return support_plane(pvertex).speed(pvertex.second); }
 
   const bool is_active(const PVertex& pvertex) const { return support_plane(pvertex).is_active(pvertex.second); }
+
+  const bool is_verbose() const { return m_verbose; }
 
   void deactivate(const PVertex& pvertex) {
 

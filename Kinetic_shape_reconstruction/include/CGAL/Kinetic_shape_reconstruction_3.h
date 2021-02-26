@@ -152,7 +152,7 @@ public:
     Initializer initializer(m_verbose, m_export, m_debug);
     const FT time_step = static_cast<FT>(initializer.initialize(
       input_range, polygon_map, k, CGAL::to_double(enlarge_bbox_ratio), reorient));
-    initializer.transfer_to(m_data);
+    initializer.transfer_to(m_data); // TODO: REMOVE THIS!
     m_data.set_limit_lines();
     m_data.precompute_iedge_data();
     CGAL_assertion(m_data.check_integrity());
