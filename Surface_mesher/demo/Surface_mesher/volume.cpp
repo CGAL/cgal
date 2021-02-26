@@ -1,3 +1,6 @@
+#ifdef __APPLE__
+#define GL_SILENCE_DEPRECATION
+#endif
 #include <CGAL/basic.h>
 
 #include "volume.h"
