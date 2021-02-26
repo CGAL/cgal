@@ -42,9 +42,9 @@ process_tree()
   echo $pid
   ps -a | awk '!/^ +PID/ {print $1 " " $2}' | {
       while read apid appid; do
-	  if [ "$appid" = "$pid" ]; then
-	      process_tree $apid
-	  fi
+    if [ "$appid" = "$pid" ]; then
+        process_tree $apid
+    fi
       done
   }
 }
@@ -66,13 +66,13 @@ wait_for_process()
 
         kill -CONT $pid 2>kill_output 1>/dev/null;   terminated=$?
 # But under CYGWIN the exit status is not to be trusted.
-	if [ $terminated -eq 0 ]; then
-	    if grep -i 'no such process' kill_output; then
-		terminated=1;
-	    fi
-	fi
-	rm -f kill_output
-	if [ $terminated -eq 0 ]
+  if [ $terminated -eq 0 ]; then
+      if grep -i 'no such process' kill_output; then
+    terminated=1;
+      fi
+  fi
+  rm -f kill_output
+  if [ $terminated -eq 0 ]
         then
             sleep $period
         else
@@ -82,29 +82,29 @@ wait_for_process()
     done
     if [ $terminated -eq 0 ]
     then
-    	if false; then
+      if false; then
 # Send signal Terminate (SIGTERM) to the whole process group.
 # First disable the default action (quit) for the current process.
-	    trap true TERM
-	    kill -TERM 0
-	    trap TERM
-	else
+      trap true TERM
+      kill -TERM 0
+      trap TERM
+  else
 
-	    # $pid is the PID of the forked shell that launched the command
-	    # in background, in run_local_cgal_test(). If the shell is
-	    # Bash, the Bash manual states that it ignores SIGTERM.
-	    # However, it does not catch SIGHUP. That is why the first
-	    # signal send is SIGHUP.
-	    case "`uname`" in
-		CYGWIN*)
-		    pids=`process_tree $pid`;;
-		*) pids=$pid;;
-	    esac
-	    for p in $pids; do kill -HUP $p; done
-	    sleep 10
-	    # If SIGHUP was not enough, SIGKILL will finish the job, 10s after.
-	    for p in $pids; do kill -KILL $p 2>/dev/null; done
-	fi
+      # $pid is the PID of the forked shell that launched the command
+      # in background, in run_local_cgal_test(). If the shell is
+      # Bash, the Bash manual states that it ignores SIGTERM.
+      # However, it does not catch SIGHUP. That is why the first
+      # signal send is SIGHUP.
+      case "`uname`" in
+    CYGWIN*)
+        pids=`process_tree $pid`;;
+    *) pids=$pid;;
+      esac
+      for p in $pids; do kill -HUP $p; done
+      sleep 10
+      # If SIGHUP was not enough, SIGKILL will finish the job, 10s after.
+      for p in $pids; do kill -KILL $p 2>/dev/null; done
+  fi
         return 1
     fi
     return 0
@@ -171,30 +171,30 @@ test_directory()
           run_local_cgal_test
           return_code=$?
           if [ $return_code -eq 124 ]; then
-	      echo "ERROR: cgal_test_with_cmake did not finish within the time bound set" >> "$ERRORFILE"
-	      echo "ERROR: cgal_test_with_cmake did not finish within the time bound set" >> "$ERROR_OUTPUT"
+        echo "ERROR: cgal_test_with_cmake did not finish within the time bound set" >> "$ERRORFILE"
+        echo "ERROR: cgal_test_with_cmake did not finish within the time bound set" >> "$ERROR_OUTPUT"
           else
-	      if [ -f test_failure  ] ; then
+        if [ -f test_failure  ] ; then
                   exit_failure=`cat test_failure`
-	          rm -f test_failure
-	          echo "ERROR: cgal_test_with_cmake exited with error condition $exit_value" >> "$ERRORFILE"
-	          echo "ERROR: cgal_test_with_cmake exited with error condition $exit_value" >> "$ERROR_OUTPUT"
-	      fi
+            rm -f test_failure
+            echo "ERROR: cgal_test_with_cmake exited with error condition $exit_value" >> "$ERRORFILE"
+            echo "ERROR: cgal_test_with_cmake exited with error condition $exit_value" >> "$ERROR_OUTPUT"
+        fi
           fi
       else
           run_local_cgal_test &
 
           if wait_for_process "$!" "$TIME_PERIOD" "5"
           then
-	      if [ -f test_failure  ] ; then
+        if [ -f test_failure  ] ; then
                   exit_failure=`cat test_failure`
-	          rm -f test_failure
-	          echo "ERROR: cgal_test_with_cmake exited with error condition $exit_value" >> "$ERRORFILE"
-	          echo "ERROR: cgal_test_with_cmake exited with error condition $exit_value" >> "$ERROR_OUTPUT"
-	      fi
+            rm -f test_failure
+            echo "ERROR: cgal_test_with_cmake exited with error condition $exit_value" >> "$ERRORFILE"
+            echo "ERROR: cgal_test_with_cmake exited with error condition $exit_value" >> "$ERROR_OUTPUT"
+        fi
           else
-	      echo "ERROR: cgal_test_with_cmake did not finish within the time bound set" >> "$ERRORFILE"
-	      echo "ERROR: cgal_test_with_cmake did not finish within the time bound set" >> "$ERROR_OUTPUT"
+        echo "ERROR: cgal_test_with_cmake did not finish within the time bound set" >> "$ERRORFILE"
+        echo "ERROR: cgal_test_with_cmake did not finish within the time bound set" >> "$ERROR_OUTPUT"
           fi
       fi
       STOP=`date +%s`
@@ -246,7 +246,9 @@ run_testsuite()
   esac
 
   for DIR in $TEST_DIRECTORIES ; do
-    test_directory "$DIR"
+    if [ ! -f $DIR/skipped ]; then
+      test_directory "$DIR"
+    fi
   done
 }
 
