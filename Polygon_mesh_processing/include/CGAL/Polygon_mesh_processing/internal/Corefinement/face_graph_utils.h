@@ -146,6 +146,74 @@ void copy_edge_mark(G&,
                           No_mark<G>&)
 {} // nothing to do
 
+template <class Node_id_map,
+          class VertexPointMap,
+          class NodeVector>
+struct Node_vector_exact_vertex_point_map
+{
+// map type definitions
+  typedef typename boost::property_traits<VertexPointMap>::key_type key_type;
+  typedef typename NodeVector::Exact_kernel Exact_kernel;
+  typedef typename Exact_kernel::Point_3 value_type;
+  typedef value_type reference;
+  typedef boost::readable_property_map_tag category;
+// internal type definitions
+  typedef std::size_t Node_id;
+
+  Node_vector_exact_vertex_point_map(){}
+
+  Node_vector_exact_vertex_point_map(const Node_id_map& node_ids,
+                                     const VertexPointMap& vpm,
+                                     const NodeVector& node_vector)
+    : node_ids(&node_ids)
+    , vpm(&vpm)
+    , node_vector(&node_vector)
+  {}
+
+  friend value_type get(Node_vector_exact_vertex_point_map m, key_type k)
+  {
+    typename Node_id_map::const_iterator it = m.node_ids->find(k);
+    if (it == m.node_ids->end())
+      return m.node_vector->to_exact( get(*(m.vpm), k) );
+    return m.node_vector->exact_node(it->second);
+  }
+
+  const Node_id_map* node_ids;
+  const VertexPointMap* vpm;
+  const NodeVector* node_vector;
+};
+
+template <class Node_id_map,
+          class VertexPointMap,
+          class NodeVector,
+          class Input_Kernel>
+struct Side_of_vpm_helper
+{
+  typedef Node_vector_exact_vertex_point_map<Node_id_map, VertexPointMap, NodeVector> type;
+  static
+  type get_vpm(const Node_id_map& node_ids,
+               const VertexPointMap& vpm,
+               const NodeVector& node_vector)
+  {
+    return type(node_ids, vpm, node_vector);
+  }
+};
+
+template <class Node_id_map,
+          class VertexPointMap,
+          class NodeVector>
+struct Side_of_vpm_helper<Node_id_map, VertexPointMap, NodeVector, typename NodeVector::Exact_kernel>
+{
+  typedef VertexPointMap type;
+  static
+  type get_vpm(const Node_id_map&,
+               const VertexPointMap& vpm,
+               const NodeVector&)
+  {
+    return vpm;
+  }
+};
+
 // Parts to get default property maps for output meshes based on the value type
 // of input vertex point maps.
 template <typename Point_3, typename vertex_descriptor>
