@@ -2070,7 +2070,7 @@ protected:
   {
     CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
     int j = get_next_idx_relative_to(p, i, ref);
-    return j >= 0 && j < p.size();
+    return j >= 0 && j < static_cast<int>(p.size());
   }
 
   /// Extend p[i] towards the direction of ref
