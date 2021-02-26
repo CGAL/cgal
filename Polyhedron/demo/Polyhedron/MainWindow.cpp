@@ -2988,6 +2988,11 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
         if(!rem.hasMatch())
           continue;
         ext = rem.captured(1);
+        //check if it is in a group
+        if(item->parentGroup())
+        {
+
+        }
         QList<Scene_item*>to_save;
         to_save.append(item);
         QString savename(tr("%1.%2").arg(item->name()).arg(ext));
