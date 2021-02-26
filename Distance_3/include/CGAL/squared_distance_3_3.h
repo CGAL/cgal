@@ -62,7 +62,7 @@ squared_distance(const typename K::Tetrahedron_3 & t,
       dmin = d;
       dmin_initialized = true;
     }else{
-      dmin = std::min(d,dmin);
+      dmin = (std::min)(d,dmin);
     }
   }
 
@@ -76,7 +76,7 @@ squared_distance(const typename K::Tetrahedron_3 & t,
       dmin = d;
       dmin_initialized = true;
     }else{
-      dmin = std::min(d,dmin);
+      dmin = (std::min)(d,dmin);
     }
   }
 
@@ -90,7 +90,7 @@ squared_distance(const typename K::Tetrahedron_3 & t,
       dmin = d;
       dmin_initialized = true;
     }else{
-      dmin = std::min(d,dmin);
+      dmin = (std::min)(d,dmin);
     }
   }
 
