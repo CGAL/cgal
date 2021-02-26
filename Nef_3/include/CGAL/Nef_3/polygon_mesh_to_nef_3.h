@@ -201,7 +201,7 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
     Vertex_around_face_circulator<PolygonMesh> vafc(halfedge(f,P),P), done(vafc);
     Vector_3 v;
     normal_vector_newell_3(vafc, done, pmap, v);
-    int i = get(fimap,f);
+    std::size_t i = get(fimap,f);
     normals[i] = -v;
     CGAL_assertion_code(num_edges[i] = circulator_size(vafc));
   }
@@ -253,7 +253,7 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
       if(is_border(pe_prev,P))
         with_border = true;
       else {
-        int i = get(fimap,face(pe_prev,P));
+        std::size_t i = get(fimap,face(pe_prev,P));
         Plane ss_plane( CGAL::ORIGIN, normals[i]);
         Sphere_circle ss_circle(ss_plane);
         CGAL_assertion_code(if(num_edges[i] > 3) {
@@ -286,7 +286,7 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
       with_border = true;
       e = sv_prev->out_sedge();
     } else {
-      int i = get(fimap,face(pe_prev,P));
+      std::size_t i = get(fimap,face(pe_prev,P));
       Plane ss_plane( CGAL::ORIGIN, normals[i]);
       Sphere_circle ss_circle(ss_plane);
 
