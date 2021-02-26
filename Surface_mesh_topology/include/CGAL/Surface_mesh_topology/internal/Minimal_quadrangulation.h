@@ -1950,7 +1950,7 @@ protected:
 
     std::vector<std::size_t> result(suffix_len.begin() + p.length(), suffix_len.end());
     for (std::size_t i = 0; i < result.size(); ++i) {
-      result[i] = std::min(result[i], p.length());
+      result[i] = (std::min)(result[i], p.length());
     }
     return result;
   }
@@ -2092,7 +2092,7 @@ protected:
   /// @return a unique 1-cell id for the dart
   size_type get_absolute_idx(Dart_const_handle dh) const
   {
-    return std::min(get_local_map().darts().index(dh), get_local_map().darts().index(get_local_map().opposite(dh)));
+    return (std::min)(get_local_map().darts().index(dh), get_local_map().darts().index(get_local_map().opposite(dh)));
   }
 
   /// @return true if the dart is the representative for the unique 1-cell id
