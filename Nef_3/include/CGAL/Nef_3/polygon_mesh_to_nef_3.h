@@ -148,26 +148,22 @@ public:
     for(face_descriptor fi : faces(P)) {
       Halfedge_around_facet_const_circulator
         fc(halfedge(fi,P),P), end(fc);
-      typename boost::property_traits<HalfedgeIndexMap>::value_type
-        index = get(him,*fc);
-      hash[index]->set_index();
-      hash[index]->twin()->set_index();
-      hash[index]->twin()->source()->set_index();
-      int se  = hash[index]->get_index();
-      int set = hash[index]->twin()->get_index();
-      int sv  = hash[index]->twin()->source()->get_index();
+      SHalfedge_handle s = hash[get(him,*fc)];
+      int se  = s->new_index();
+      int set = s->twin()->new_index();
+      int sv  = s->twin()->source()->new_index();
 
       ++fc;
       CGAL_For_all(fc, end) {
-        index = get(him,*fc);
-        hash[index]->set_index(se);
-        hash[index]->twin()->set_index(set);
-        hash[index]->source()->set_index(sv);
-        hash[index]->twin()->source()->set_index();
-        sv = hash[index]->twin()->source()->get_index();
+        SHalfedge_handle n = hash[get(him,*fc)];
+        n->set_index(se);
+        n->twin()->set_index(set);
+        n->source()->set_index(sv);
+        sv = n->twin()->source()->new_index();
       }
-      hash[get(him,*fc)]->source()->set_index(sv);
+      s->source()->set_index(sv);
     }
+
   }
 };
 
