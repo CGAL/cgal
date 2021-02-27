@@ -126,21 +126,21 @@ class Face_graph_index_adder<CGAL::SNC_indexed_items, PolygonMesh, SNC_structure
 
   typedef Halfedge_around_face_circulator<PolygonMesh>
     Halfedge_around_facet_const_circulator;
-    typedef std::vector<SHalfedge_handle> Hash;
+    typedef std::vector<SHalfedge_handle> SHalfedge_list;
 
   PolygonMesh& P;
   HalfedgeIndexMap him;
-  Hash hash;
+  SHalfedge_list shalfedges;
 
 public:
   Face_graph_index_adder(PolygonMesh& P_, HalfedgeIndexMap him) : P(P_), him(him)
   {
-    hash.resize(num_halfedges(P));
+    shalfedges.resize(num_halfedges(P));
   }
 
-  void set_hash(halfedge_descriptor evc,
+  void set_edge(halfedge_descriptor evc,
                 SHalfedge_handle se) {
-    hash[get(him,evc)] = se;
+    shalfedges[get(him,evc)] = se;
   }
 
   void resolve_indexes()
@@ -148,14 +148,14 @@ public:
     for(face_descriptor fi : faces(P)) {
       Halfedge_around_facet_const_circulator
         fc(halfedge(fi,P),P), end(fc);
-      SHalfedge_handle s = hash[get(him,*fc)];
+      SHalfedge_handle s = shalfedges[get(him,*fc)];
       int se  = s->new_index();
       int set = s->twin()->new_index();
       int sv  = s->twin()->source()->new_index();
 
       ++fc;
       CGAL_For_all(fc, end) {
-        SHalfedge_handle n = hash[get(him,*fc)];
+        SHalfedge_handle n = shalfedges[get(him,*fc)];
         n->set_index(se);
         n->twin()->set_index(set);
         n->source()->set_index(sv);
@@ -256,7 +256,7 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
         e->twin()->circle() = ss_circle.opposite();
         e->mark() = e->twin()->mark() = true;
 
-        index_adder.set_hash(pe_prev, e);
+        index_adder.set_edge(pe_prev, e);
       }
 
       sv_prev = sv;
@@ -288,7 +288,7 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
       e->twin()->circle() = ss_circle.opposite();
       e->mark() = e->twin()->mark() = true;
 
-      index_adder.set_hash(pe_prev, e);
+      index_adder.set_edge(pe_prev, e);
     }
 
     // create faces
