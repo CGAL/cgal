@@ -597,41 +597,43 @@ public:
 
   /*! Obtain a Curve_2 object from a range of points */
   template <typename PointRange>
-  static Curve_2 make_curve_2 (const PointRange& points,
-                               bool force_closed_polygon = false)
+  static Curve_2 make_curve_2(const PointRange& points,
+                              bool duplicate_first_point = false)
   {
-    if (force_closed_polygon)
-      return make_curve_2_impl (boost::range::join (points,
-                                                    make_single(*(points.begin()))));
+    if (duplicate_first_point)
+      return make_curve_2_impl(boost::range::join(points,
+                                                  make_single(*(points.begin()))));
     else
-      return make_curve_2_impl (points);
+      return make_curve_2_impl(points);
   }
 
+  //
   template <typename PointRange>
-  static Curve_2 make_curve_2_impl (const PointRange& points)
+  static Curve_2 make_curve_2_impl(const PointRange& points)
   {
     using Point_iterator = typename PointRange::const_iterator;
-    using Zip_iterator = boost::zip_iterator<boost::tuple<Point_iterator,
-                                                          Point_iterator> >;
+    using Zip_iterator =
+      boost::zip_iterator<boost::tuple<Point_iterator, Point_iterator> >;
 
     Point_iterator begin = points.begin();
-    Point_iterator begin_plus_1 = begin; begin_plus_1 ++;
+    Point_iterator begin_plus_1 = begin;
+    ++begin_plus_1;
     Point_iterator end = points.end();
-    Point_iterator end_minus_1 = end; end_minus_1 --;
+    Point_iterator end_minus_1 = end;
+    --end_minus_1;
 
-    auto point_pair_to_segment
-      = [](const typename Zip_iterator::reference& t)
+    auto point_pair_to_segment = [](const typename Zip_iterator::reference& t)
       -> typename Segment_traits_2::Curve_2
     {
-      return typename Segment_traits_2::Curve_2 (boost::get<0>(t), boost::get<1>(t));
+      return typename Segment_traits_2::Curve_2(boost::get<0>(t), boost::get<1>(t));
     };
 
     return Curve_2
       (boost::make_transform_iterator
-       (boost::make_zip_iterator (boost::make_tuple(begin, begin_plus_1)),
+       (boost::make_zip_iterator(boost::make_tuple(begin, begin_plus_1)),
         point_pair_to_segment),
        boost::make_transform_iterator
-       (boost::make_zip_iterator (boost::make_tuple(end_minus_1, end)),
+       (boost::make_zip_iterator(boost::make_tuple(end_minus_1, end)),
         point_pair_to_segment));
   }
 
