@@ -46,9 +46,11 @@ inline bool _do_intersect(const Pgn1& pgn1, const Pgn2& pgn2) {
   typedef typename Gps_default_traits<Pgn1>::Arr_traits         Segment_traits;
   typedef Arr_polyline_traits_2<Segment_traits>                 Polyline_traits;
   typedef Gps_traits_2<Polyline_traits>                         Traits;
+
   Traits traits;
-  return _do_intersect(convert_polygon<Polyline_traits>(pgn1),
-                       convert_polygon<Polyline_traits>(pgn2), traits);
+  Polyline_traits ptraits(traits);
+  return _do_intersect(convert_polygon(pgn1, ptraits),
+                       convert_polygon(pgn2, ptraits), traits);
 }
 
 //@}
@@ -74,8 +76,10 @@ inline Oriented_side _oriented_side(const Point_2<Kernel>& point,
   typedef typename Gps_default_traits<Pgn>::Arr_traits          Segment_traits;
   typedef Arr_polyline_traits_2<Segment_traits>                 Polyline_traits;
   typedef Gps_traits_2<Polyline_traits>                         Traits;
+
   Traits traits;
-  return _oriented_side(point, convert_polygon<Polyline_traits>(pgn), traits);
+  Polyline_traits ptraits(traits);
+  return _oriented_side(point, convert_polygon(pgn, ptraits), traits);
 }
 
 // Without Traits (polygon, polygon)
@@ -86,9 +90,11 @@ inline Oriented_side _oriented_side(const Pgn1& pgn1, const Pgn2& pgn2)
   typedef typename Gps_default_traits<Pgn1>::Arr_traits         Segment_traits;
   typedef Arr_polyline_traits_2<Segment_traits>                 Polyline_traits;
   typedef Gps_traits_2<Polyline_traits>                         Traits;
+
   Traits traits;
-  return _oriented_side(convert_polygon<Polyline_traits>(pgn1),
-                        convert_polygon<Polyline_traits>(pgn2), traits);
+  Polyline_traits ptraits(traits);
+  return _oriented_side(convert_polygon(pgn1, ptraits),
+                        convert_polygon(pgn2, ptraits), traits);
 }
 
 //@}
@@ -117,15 +123,14 @@ inline OutputIterator _intersection(const Pgn1& pgn1, const Pgn2& pgn2,
   typedef typename Gps_default_traits<Pgn1>::Arr_traits         Segment_traits;
   typedef Arr_polyline_traits_2<Segment_traits>                 Polyline_traits;
   typedef Gps_traits_2<Polyline_traits>                         Traits;
-  Traits traits;
-
   typedef General_polygon_2<Polyline_traits>                    General_pgn;
   typedef General_polygon_with_holes_2<General_pgn>             General_pwh;
-  std::list<General_pwh> general_pwhs;
 
-  _intersection(convert_polygon<Polyline_traits>(pgn1),
-                convert_polygon<Polyline_traits>(pgn2),
-               std::back_inserter(general_pwhs), traits);
+  std::list<General_pwh> general_pwhs;
+  Traits traits;
+  Polyline_traits ptraits(traits);
+  _intersection(convert_polygon(pgn1, ptraits), convert_polygon(pgn2, ptraits),
+                std::back_inserter(general_pwhs), traits);
   for (const auto& general_pwh : general_pwhs)
     *oi++ = convert_polygon_back<Kernel, Container>(general_pwh);
   return oi;
@@ -180,14 +185,14 @@ inline bool _join(const Pgn1& pgn1, const Pgn2& pgn2, Pwh& pwh)
   typedef typename Gps_default_traits<Pgn1>::Arr_traits         Segment_traits;
   typedef Arr_polyline_traits_2<Segment_traits>                 Polyline_traits;
   typedef Gps_traits_2<Polyline_traits>                         Traits;
-  Traits traits;
-
   typedef General_polygon_2<Polyline_traits>                    General_pgn;
   typedef General_polygon_with_holes_2<General_pgn>             General_pwh;
-  General_pwh general_pwh;
 
-  auto res = _join(convert_polygon<Polyline_traits>(pgn1),
-                   convert_polygon<Polyline_traits>(pgn2),
+  General_pwh general_pwh;
+  Traits traits;
+  Polyline_traits ptraits(traits);
+  auto res = _join(convert_polygon(pgn1, ptraits),
+                   convert_polygon(pgn2, ptraits),
                    general_pwh, traits);
   pwh = convert_polygon_back<Kernel, Container>(general_pwh);
   return res;
@@ -217,14 +222,13 @@ inline OutputIterator _difference(const Pgn1& pgn1, const Pgn2& pgn2,
   typedef typename Gps_default_traits<Pgn1>::Arr_traits         Segment_traits;
   typedef Arr_polyline_traits_2<Segment_traits>                 Polyline_traits;
   typedef Gps_traits_2<Polyline_traits>                         Traits;
-  Traits traits;
-
   typedef General_polygon_2<Polyline_traits>                    General_pgn;
   typedef General_polygon_with_holes_2<General_pgn>             General_pwh;
-  std::list<General_pwh> general_pwhs;
 
-  _difference(convert_polygon<Polyline_traits>(pgn1),
-              convert_polygon<Polyline_traits>(pgn2),
+  std::list<General_pwh> general_pwhs;
+  Traits traits;
+  Polyline_traits ptraits(traits);
+  _difference(convert_polygon(pgn1, ptraits), convert_polygon(pgn2, ptraits),
               std::back_inserter(general_pwhs), traits);
   for (const auto& general_pwh : general_pwhs)
     *oi++ = convert_polygon_back<Kernel, Container>(general_pwh);
@@ -254,15 +258,15 @@ inline OutputIterator _symmetric_difference(const Pgn1& pgn1, const Pgn2& pgn2,
   typedef typename Gps_default_traits<Pgn1>::Arr_traits         Segment_traits;
   typedef Arr_polyline_traits_2<Segment_traits>                 Polyline_traits;
   typedef Gps_traits_2<Polyline_traits>                         Traits;
-  Traits traits;
-
   typedef General_polygon_2<Polyline_traits>                    General_pgn;
   typedef General_polygon_with_holes_2<General_pgn>             General_pwh;
   std::list<General_pwh> general_pwhs;
 
-  _symmetric_difference(convert_polygon<Polyline_traits>(pgn1),
-                        convert_polygon<Polyline_traits>(pgn2),
-              std::back_inserter(general_pwhs), traits);
+  Traits traits;
+  Polyline_traits ptraits(traits);
+  _symmetric_difference(convert_polygon(pgn1, ptraits),
+                        convert_polygon(pgn2, ptraits),
+                        std::back_inserter(general_pwhs), traits);
   for (const auto& general_pwh : general_pwhs)
     *oi++ = convert_polygon_back<Kernel, Container>(general_pwh);
   return oi;
@@ -329,13 +333,13 @@ void _complement(const Polygon_2<Kernel, Container>& pgn, Pwh& pwh)
   typedef typename Gps_default_traits<Pgn>::Arr_traits          Segment_traits;
   typedef Arr_polyline_traits_2<Segment_traits>                 Polyline_traits;
   typedef Gps_traits_2<Polyline_traits>                         Traits;
-  Traits traits;
-
   typedef General_polygon_2<Polyline_traits>                    General_pgn;
   typedef General_polygon_with_holes_2<General_pgn>             General_pwh;
-  General_pwh general_pwh;
 
-  _complement(convert_polygon<Polyline_traits>(pgn), general_pwh, traits);
+  General_pwh general_pwh;
+  Traits traits;
+  Polyline_traits ptraits(traits);
+  _complement(convert_polygon(pgn, ptraits), general_pwh, traits);
   pwh = convert_polygon_back<Kernel, Container>(general_pwh);
 }
 
@@ -349,14 +353,14 @@ OutputIterator _complement(const Polygon_with_holes_2<Kernel, Container>& pgn,
   typedef typename Gps_default_traits<Pgn>::Arr_traits          Segment_traits;
   typedef Arr_polyline_traits_2<Segment_traits>                 Polyline_traits;
   typedef Gps_traits_2<Polyline_traits>                         Traits;
-  Traits traits;
-
   typedef General_polygon_2<Polyline_traits>                    General_pgn;
   typedef General_polygon_with_holes_2<General_pgn>             General_pwh;
-  std::list<General_pwh> general_pwhs;
 
-  complement(convert_polygon<Polyline_traits>(pgn),
-             std::back_inserter(general_pwhs), traits);
+  std::list<General_pwh> general_pwhs;
+  Traits traits;
+  Polyline_traits ptraits(traits);
+  complement(convert_polygon(pgn, ptraits), std::back_inserter(general_pwhs),
+             traits);
   for (const auto& general_pwh : general_pwhs)
     *oi++ = convert_polygon_back<Kernel, Container>(general_pwh);
   return oi;
