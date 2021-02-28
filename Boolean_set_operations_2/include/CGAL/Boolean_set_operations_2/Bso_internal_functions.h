@@ -194,7 +194,7 @@ inline bool _join(const Pgn1& pgn1, const Pgn2& pgn2, Pwh& pwh)
   auto res = _join(convert_polygon(pgn1, ptraits),
                    convert_polygon(pgn2, ptraits),
                    general_pwh, traits);
-  pwh = convert_polygon_back<Kernel, Container>(general_pwh);
+  pwh = convert_polygon_back<Kernel, Container, Polyline_traits>(general_pwh);
   return res;
 }
 
@@ -340,7 +340,7 @@ void _complement(const Polygon_2<Kernel, Container>& pgn, Pwh& pwh)
   Traits traits;
   Polyline_traits ptraits(traits);
   _complement(convert_polygon(pgn, ptraits), general_pwh, traits);
-  pwh = convert_polygon_back<Kernel, Container>(general_pwh);
+  pwh = convert_polygon_back<Kernel, Container, Polyline_traits>(general_pwh);
 }
 
 // Compute the complemenet of a polygon with holes
