@@ -1213,12 +1213,10 @@ inline OutputIterator join(InputIterator begin, InputIterator end,
                            Enable_if_Polygon_2_iterator<InputIterator>* = 0)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type InputPolygon;
-  typedef typename Kernel_traits<typename InputPolygon::Point_2>::Kernel Kernel;
-  typename Gps_default_traits<Kernel>::Traits traits;
-
+  typename Gps_default_traits<InputPolygon>::Traits traits;
   return join(convert_polygon_iterator(begin, traits),
               convert_polygon_iterator(end, traits),
-              convert_polygon_back(oi, *begin, traits), traits, k);
+              convert_polygon_back(oi), traits, k);
 }
 
 // Tag_false => do not convert to polylines
@@ -1266,9 +1264,7 @@ inline OutputIterator join(InputIterator1 begin1, InputIterator1 end1,
                            Enable_if_Polygon_2_iterator<InputIterator1>* = 0)
 {
   typedef typename std::iterator_traits<InputIterator1>::value_type InputPolygon;
-  typedef typename Kernel_traits<typename InputPolygon::Point_2>::Kernel Kernel;
-  typename Gps_default_traits<Kernel>::Traits traits;
-
+  typename Gps_default_traits<InputPolygon>::Traits traits;
   return join(convert_polygon_iterator(begin1),
               convert_polygon_iterator(end1),
               convert_polygon_iterator(begin2),
@@ -1326,9 +1322,7 @@ intersection(InputIterator begin, InputIterator end,
              Enable_if_Polygon_2_iterator<InputIterator>* = 0)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type InputPolygon;
-  typedef typename Kernel_traits<typename InputPolygon::Point_2>::Kernel Kernel;
-  typename Gps_default_traits<Kernel>::Traits traits;
-
+  typename Gps_default_traits<InputPolygon>::Traits traits;
   return intersection(convert_polygon_iterator(begin),
                       convert_polygon_iterator(end),
                       convert_polygon_back(oi), traits, k);
@@ -1386,9 +1380,7 @@ intersection(InputIterator1 begin1, InputIterator1 end1,
              Enable_if_Polygon_2_iterator<InputIterator1>* = 0)
 {
   typedef typename std::iterator_traits<InputIterator1>::value_type InputPolygon;
-  typedef typename Kernel_traits<typename InputPolygon::Point_2>::Kernel Kernel;
-  typename Gps_default_traits<Kernel>::Traits traits;
-
+  typename Gps_default_traits<InputPolygon>::Traits traits;
   return intersection(convert_polygon_iterator(begin1),
                       convert_polygon_iterator(end1),
                       convert_polygon_iterator(begin2),
@@ -1450,9 +1442,7 @@ symmetric_difference(InputIterator begin, InputIterator end,
                      Enable_if_Polygon_2_iterator<InputIterator>* = 0)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type InputPolygon;
-  typedef typename Kernel_traits<typename InputPolygon::Point_2>::Kernel Kernel;
-  typename Gps_default_traits<Kernel>::Traits traits;
-
+  typename Gps_default_traits<InputPolygon>::Traits traits;
   return symmetric_difference(convert_polygon_iterator(begin),
                               convert_polygon_iterator(end),
                               convert_polygon_back(oi), traits, k);
@@ -1509,9 +1499,7 @@ symmetric_difference(InputIterator1 begin1, InputIterator1 end1,
                      Enable_if_Polygon_2_iterator<InputIterator1>* = 0)
 {
   typedef typename std::iterator_traits<InputIterator1>::value_type InputPolygon;
-  typedef typename Kernel_traits<typename InputPolygon::Point_2>::Kernel Kernel;
-  typename Gps_default_traits<Kernel>::Traits traits;
-
+  typename Gps_default_traits<InputPolygon>::Traits traits;
   return symmetric_difference(convert_polygon_iterator(begin1),
                               convert_polygon_iterator(end1),
                               convert_polygon_iterator(begin2),
@@ -1569,9 +1557,7 @@ inline bool do_intersect(InputIterator begin, InputIterator end,
                          Enable_if_Polygon_2_iterator<InputIterator>* = 0)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type InputPolygon;
-  typedef typename Kernel_traits<typename InputPolygon::Point_2>::Kernel Kernel;
-  typename Gps_default_traits<Kernel>::Traits traits;
-
+  typename Gps_default_traits<InputPolygon>::Traits traits;
   return do_intersect(convert_polygon_iterator(begin),
                       convert_polygon_iterator(end), traits, k);
 }
@@ -1617,9 +1603,7 @@ inline bool do_intersect (InputIterator1 begin1, InputIterator1 end1,
                           Enable_if_Polygon_2_iterator<InputIterator1>* = 0)
 {
   typedef typename std::iterator_traits<InputIterator1>::value_type InputPolygon;
-  typedef typename Kernel_traits<typename InputPolygon::Point_2>::Kernel Kernel;
-  typename Gps_default_traits<Kernel>::Traits traits;
-
+  typename Gps_default_traits<InputPolygon>::Traits traits;
   return do_intersect(convert_polygon_iterator(begin1),
                       convert_polygon_iterator(end1),
                       convert_polygon_iterator(begin2),
