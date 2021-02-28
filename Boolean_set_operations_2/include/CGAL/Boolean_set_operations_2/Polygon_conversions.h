@@ -102,7 +102,7 @@ convert_polygon_iterator(InputIterator it,
   using Function_type = std::function<Return_type(Input_type)>;
 
   Function_type func =
-    std::bind (convert_polygon<Kernel>, std::placeholders::_1, std::ref(tr));
+    std::bind(convert_polygon<Kernel>, std::placeholders::_1, std::ref(tr));
 
   return boost::transform_iterator<Function_type, InputIterator>(it, func);
 }
@@ -118,34 +118,30 @@ struct Polygon_converter {
   using Output_polygon = typename Output_type::Polygon_2;
 
   OutputIterator& output;
-  Polygon_converter(OutputIterator& output) : output (output) { }
+  Polygon_converter(OutputIterator& output) : output(output) {}
 
-  void operator() (const Input_type& pwh) const {
+  void operator()(const Input_type& pwh) const {
     Output_polygon outer_boundary;
-    convert_polygon (pwh.outer_boundary(), outer_boundary);
+    convert_polygon(pwh.outer_boundary(), outer_boundary);
 
     std::vector<Output_polygon> holes;
 
     for (const Input_polygon& h : pwh.holes()) {
-      holes.emplace_back ();
-      convert_polygon (h, holes.back());
+      holes.emplace_back();
+      convert_polygon(h, holes.back());
     }
 
-    *(output ++) = Output_type(outer_boundary, holes.begin(), holes.end());
+    *(output++) = Output_type(outer_boundary, holes.begin(), holes.end());
   }
 
 private:
   void convert_polygon(const Input_polygon& input, Output_polygon& out) const {
-    for (typename Input_polygon::Curve_const_iterator it = input.curves_begin();
-         it != input.curves_end(); ++ it)
-    {
-      // Skip last point which is the repetition of the first point
-      typename Input_polygon::X_monotone_curve_2::Point_const_iterator
-        end = it->points_end();
-      -- end;
-      for (typename Input_polygon::X_monotone_curve_2::Point_const_iterator
-             it2 = it->points_begin(); it2 != end; ++ it2)
-        out.push_back (*it2);
+    for (auto cit = input.curves_begin(); cit != input.curves_end(); ++cit) {
+      auto end = cit->points_end();
+      // Skip last point, which is a duplication of the first point
+      --end;
+      for (auto pit = cit->points_begin(); pit != end; ++pit)
+        out.push_back(*pit);
     }
   }
 };
@@ -161,31 +157,38 @@ struct Polygon_converter_output_iterator :
 
   OutputIterator& output;
   Polygon_converter_output_iterator(OutputIterator& output) :
-    Base(output), output(output)
+    Base(output),
+    output(output)
   {}
 
   operator OutputIterator() const { return output; }
 };
 
-// THIS IS A TEMPORARY PLACE HOLDER AND SHOULD BE REMOVED
 // Convert General_polygon_2<Polyline_traits> to Polygon_2
 template <typename Kernel, typename Container, typename ArrTraits>
 Polygon_2<Kernel, Container>
-convert_polygon_back(const General_polygon_2<ArrTraits>& pgn)
-{
-  Polygon_2<Kernel, Container> tmp;
-  return tmp;
+convert_polygon_back(const General_polygon_2<ArrTraits>& gpgn) {
+  Polygon_2<Kernel, Container> pgn;
+  for (auto cit = gpgn.curves_begin(); cit != gpgn.curves_end(); ++cit) {
+    auto end = cit->points_end();
+    --end;      // skip last point, which is a duplication of the first point
+    for (auto pit = cit->points_begin(); pit != end; ++pit) pgn.push_back(*pit);
+  }
+  return pgn;
 }
 
-// THIS IS A TEMPORARY PLACE HOLDER AND SHOULD BE REMOVED
 // Convert General_polygon_with_holes_2<Polyline_traits> to Polygon_with_holes_2
 template <typename Kernel, typename Container, typename ArrTraits>
 Polygon_with_holes_2<Kernel, Container>
 convert_polygon_back(const General_polygon_with_holes_2
-                       <General_polygon_2<ArrTraits> >& pwh)
+                       <General_polygon_2<ArrTraits> >& gpwh)
 {
-  Polygon_with_holes_2<Kernel, Container> tmp;
-  return tmp;
+  std::vector<Polygon_2<Kernel, Container>> holes;
+  for (const auto& gh : gpwh.holes())
+    holes.emplace_back(convert_polygon_back<Kernel, Container>(gh));
+  return Polygon_with_holes_2<Kernel, Container>
+    (convert_polygon_back<Kernel, Container>(gpwh.outer_boundary()),
+     holes.begin(), holes.end());
 }
 
 // Converts General_polygon_with_holes_2<Polyline_traits> to
