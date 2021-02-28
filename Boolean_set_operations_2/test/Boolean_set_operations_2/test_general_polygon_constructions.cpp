@@ -41,10 +41,6 @@ int main()
   CGAL::General_polygon_2<Polyline_traits>gp2(curve);
 
   Polyline_traits traits;
-  CGAL::General_polygon_2<Polyline_traits>gp3(traits.make_curve_2(points));
-
-  CGAL::General_polygon_2<Polyline_traits>gp4(traits.make_curve_2(points, true));
-
   auto ctr = traits.construct_curve_2_object();
   auto gp5 = ctr(points.begin(), points.end());
 
