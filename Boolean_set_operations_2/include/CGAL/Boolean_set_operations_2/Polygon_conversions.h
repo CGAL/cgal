@@ -13,9 +13,18 @@
 #ifndef CGAL_BSO_POLYGON_CONVERSIONS_H
 #define CGAL_BSO_POLYGON_CONVERSIONS_H
 
-#include <CGAL/license/Boolean_set_operations_2.h>
+#include <boost/range/join.hpp>
+#include <boost/iterator/transform_iterator.hpp>
 
+#include <CGAL/license/Boolean_set_operations_2.h>
+#include <CGAL/Polygon_2.h>
+#include <CGAL/Polygon_with_holes_2.h>
+#include <CGAL/General_polygon_2.h>
+#include <CGAL/General_polygon_with_holes_2.h>
+#include <CGAL/Boolean_set_operations_2/Gps_default_traits.h>
 #include <CGAL/Arr_polyline_traits_2.h>
+#include <CGAL/Single.h>
+#include <CGAL/Iterator_range.h>
 
 namespace CGAL {
 
@@ -38,12 +47,12 @@ struct Is_Kernel_Polygon_2_iterator<Polygon_with_holes_2<Kernel> >
 };
 
 template <typename InputIterator>
-using Enable_if_Polygon_2_iterator
-= typename std::enable_if<Is_Kernel_Polygon_2_iterator<InputIterator>::value>::type;
+using Enable_if_Polygon_2_iterator =
+  typename std::enable_if<Is_Kernel_Polygon_2_iterator<InputIterator>::value>::type;
 
 template <typename InputIterator>
-using Disable_if_Polygon_2_iterator
-= typename std::enable_if<!Is_Kernel_Polygon_2_iterator<InputIterator>::value>::type;
+using Disable_if_Polygon_2_iterator =
+  typename std::enable_if<!Is_Kernel_Polygon_2_iterator<InputIterator>::value>::type;
 
 // Convert Polygon_2 to General_polygon_2<Polyline_traits>
 template <typename ArrTraits, typename Kernel, typename Container>
@@ -55,24 +64,44 @@ convert_polygon(const Polygon_2<Kernel, Container>& polygon)
      (CGAL::make_range(polygon.vertices_begin(), polygon.vertices_end()), true));
 }
 
+// Convert Polygon_2 to General_polygon_2<Polyline_traits>
+template <typename ArrTraits, typename Kernel, typename Container>
+General_polygon_2<ArrTraits>
+convert_polygon(const Polygon_2<Kernel, Container>& polygon,
+                const ArrTraits& traits)
+{
+  auto ctr = traits.construct_curve_2_object();
+  if (polygon.is_empty()) return General_polygon_2<ArrTraits>();
+  return ctr(boost::range::join(CGAL::make_range(polygon.vertices_begin(),
+                                                 polygon.vertices_end()),
+                                CGAL::make_single(*polygon.vertices_begin())));
+}
+
 // Convert Polygon_with_holes_2 to General_polygon_with_holes_2<Polyline_traits>
 template <typename ArrTraits, typename Kernel, typename Container>
 General_polygon_with_holes_2<General_polygon_2<ArrTraits> >
 convert_polygon(const Polygon_with_holes_2<Kernel, Container>& pwh) {
-  General_polygon_with_holes_2<General_polygon_2<ArrTraits> > out
-    (General_polygon_2<ArrTraits>
-     (ArrTraits::make_curve_2
-      (CGAL::make_range(pwh.outer_boundary().vertices_begin(),
-                        pwh.outer_boundary().vertices_end()),
-       true)));
-
+  General_polygon_with_holes_2<General_polygon_2<ArrTraits> >
+    out(convert_polygon<ArrTraits>(pwh.outer_boundary()));
   for (const Polygon_2<Kernel, Container>& h : pwh.holes())
-    out.add_hole
-      (General_polygon_2<ArrTraits>
-       (ArrTraits::make_curve_2
-        (CGAL::make_range(h.vertices_begin(), h.vertices_end()), true)));
-
+    out.add_hole(convert_polygon<ArrTraits>(h));
   return out;
+}
+
+// Convert Polygon_with_holes_2 to General_polygon_with_holes_2<Polyline_traits>
+template <typename ArrTraits, typename Kernel, typename Container>
+General_polygon_with_holes_2<General_polygon_2<ArrTraits> >
+convert_polygon(const Polygon_with_holes_2<Kernel, Container>& pwh,
+                const ArrTraits& traits) {
+  typedef General_polygon_2<ArrTraits>          General_pgn_2;
+  typedef Polygon_2<Kernel, Container>          Pgn_2;
+  auto converter = [&](const Pgn_2& pgn)->General_pgn_2 {
+    return convert_polygon(pgn, traits);
+  };
+  return General_polygon_with_holes_2<General_polygon_2<ArrTraits>>
+    (convert_polygon(pwh.outer_boundary(), traits),
+     boost::make_transform_iterator(pwh.holes().begin(), converter),
+     boost::make_transform_iterator(pwh.holes().end(), converter));
 }
 
 // The following should go away... Besides
@@ -183,17 +212,20 @@ Polygon_with_holes_2<Kernel, Container>
 convert_polygon_back(const General_polygon_with_holes_2
                        <General_polygon_2<ArrTraits> >& gpwh)
 {
-  std::vector<Polygon_2<Kernel, Container>> holes;
-  for (const auto& gh : gpwh.holes())
-    holes.emplace_back(convert_polygon_back<Kernel, Container>(gh));
+  typedef Polygon_2<Kernel, Container>                  Pgn_2;
+  typedef General_polygon_2<ArrTraits>                  General_pgn_2;
+  auto converter = [](const General_pgn_2& gpgn)->Pgn_2 {
+    return convert_polygon_back<Kernel, Container>(gpgn);
+  };
   return Polygon_with_holes_2<Kernel, Container>
     (convert_polygon_back<Kernel, Container>(gpwh.outer_boundary()),
-     holes.begin(), holes.end());
+     boost::make_transform_iterator(gpwh.holes().begin(), converter),
+     boost::make_transform_iterator(gpwh.holes().end(), converter));
 }
 
 // Converts General_polygon_with_holes_2<Polyline_traits> to
 // Polygon_with_holes_2
-template <typename OutputIterator, typename Kernel>
+template <typename Kernel, typename OutputIterator>
 Polygon_converter_output_iterator<OutputIterator, Kernel>
 convert_polygon_back(OutputIterator& output)
 { return Polygon_converter_output_iterator<OutputIterator, Kernel>(output); }
@@ -203,17 +235,21 @@ convert_polygon_back(OutputIterator& output)
 template <typename Kernel>
 Polygon_2<Kernel> test_conversion(const Polygon_2<Kernel>& polygon)
 {
-  using Polyline_traits = typename Gps_polyline_traits<Kernel>::Traits;
-  using Traits_polygon = typename Polyline_traits::Polygon_with_holes_2;
+  typedef Polygon_2<Kernel>                             Pgn;
+  typedef typename Gps_default_traits<Pgn>::Arr_traits  Segment_traits;
+  typedef Arr_polyline_traits_2<Segment_traits>         Polyline_traits;
+  typedef Gps_traits_2<Polyline_traits>                 Traits;
+
+  using Traits_polygon = typename Traits::Polygon_2;
+  using Traits_polygon_with_holes = typename Traits::Polygon_with_holes_2;
   Polyline_traits traits;
 
-  auto polygon2 = convert_polygon(polygon, traits);
-  Traits_polygon polygon3(polygon2);
+  Traits_polygon polygon2 = convert_polygon(polygon, traits);
+  Traits_polygon_with_holes polygon3(polygon2);
 
   Polygon_with_holes_2<Kernel> out;
-
   Oneset_iterator<Polygon_with_holes_2<Kernel> > iterator(out);
-  auto converter = convert_polygon_back(iterator, polygon, traits);
+  auto converter = convert_polygon_back<Kernel>(iterator);
   *converter++ = polygon3;
 
   return out.outer_boundary();
