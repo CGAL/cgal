@@ -437,17 +437,13 @@ public:
                               "Cannot construct a degenerated segment");
         return Subcurve_2(boost::get<0>(t), boost::get<1>(t));
       };
-      auto begin_plus_one(begin);
-      ++begin_plus_one;
-      auto end_minus_one(end);
-      --end_minus_one;
+      auto begin_next = std::next(begin);
+      auto end_prev = std::prev(end);
       return operator()(boost::make_transform_iterator
-                        (make_zip_iterator(boost::make_tuple(begin,
-                                                             begin_plus_one)),
+                        (make_zip_iterator(boost::make_tuple(begin, begin_next)),
                          point_pair_to_segment),
                         boost::make_transform_iterator
-                        (make_zip_iterator(boost::make_tuple(end_minus_one,
-                                                             end)),
+                        (make_zip_iterator(boost::make_tuple(end_prev, end)),
                          point_pair_to_segment));
     }
   };
