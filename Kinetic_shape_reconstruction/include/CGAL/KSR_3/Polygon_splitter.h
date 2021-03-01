@@ -81,12 +81,13 @@ private:
     { }
   };
 
-  using VBI = CGAL::Triangulation_vertex_base_with_info_2<Vertex_info, Kernel>;
-  using FBI = CGAL::Triangulation_face_base_with_info_2<Face_info, Kernel>;
-  using CFB = CGAL::Constrained_triangulation_face_base_2<Kernel, FBI>;
+  using EK = CGAL::Exact_predicates_exact_constructions_kernel;
+  using VBI = CGAL::Triangulation_vertex_base_with_info_2<Vertex_info, EK>;
+  using FBI = CGAL::Triangulation_face_base_with_info_2<Face_info, EK>;
+  using CFB = CGAL::Constrained_triangulation_face_base_2<EK, FBI>;
   using TDS = CGAL::Triangulation_data_structure_2<VBI, CFB>;
-  using TAG = CGAL::Exact_predicates_tag;
-  using CDT = CGAL::Constrained_Delaunay_triangulation_2<Kernel, TDS, TAG>;
+  using TAG = CGAL::Exact_intersections_tag;
+  using CDT = CGAL::Constrained_Delaunay_triangulation_2<EK, TDS, TAG>;
   using TRI = CGAL::Constrained_triangulation_plus_2<CDT>;
   using CID = typename TRI::Constraint_id;
 
@@ -110,6 +111,8 @@ public:
 
   void split_support_plane(const std::size_t sp_idx) {
 
+    if (sp_idx != 1) return;
+
     // Preprocessing.
     std::cout.precision(20);
     if (m_data.pfaces(sp_idx).size() > 1) merge_coplanar_pfaces(sp_idx);
@@ -121,11 +124,11 @@ public:
 
     // Create cdt.
     initialize_cdt(pface);
-    // if (pface.first >= 6) dump_cdt(m_data, pface.first, m_cdt, "0-initial-");
+    dump_cdt(m_data, pface.first, m_cdt, "0-initial-");
     tag_cdt_exterior_faces();
-    // if (pface.first >= 6) dump_cdt(m_data, pface.first, m_cdt, "1-exterior-");
+    dump_cdt(m_data, pface.first, m_cdt, "1-exterior-");
     tag_cdt_interior_faces();
-    // if (pface.first >= 6) dump_cdt(m_data, pface.first, m_cdt, "2-interior-");
+    dump_cdt(m_data, pface.first, m_cdt, "2-interior-");
 
     // Split polygons using cdt.
     m_data.clear_polygon_faces(sp_idx);
@@ -278,33 +281,66 @@ private:
   **         CREATE CDT         **
   ********************************/
 
+  template<
+  typename ForwardIt,
+  typename BinaryPredicate>
+  const ForwardIt unique_elements(
+  ForwardIt first, ForwardIt last, const BinaryPredicate& predicate) const {
+
+    if (first == last) return last;
+    ForwardIt result = first;
+    while (++first != last) {
+      if (!predicate(*result, *first)) {
+        if (++result != first) {
+          *result = std::move(*first);
+        }
+      } else {
+        auto& a = (*result).second;
+        auto& b = (*first).second;
+        if (
+          a.first != Data_structure::null_pvertex() &&
+          b.first == Data_structure::null_pvertex()) {
+          b.first = a.first;
+        }
+        if (
+          a.first == Data_structure::null_pvertex() &&
+          b.first != Data_structure::null_pvertex()) {
+          a.first = b.first;
+        }
+        if (
+          a.second != Data_structure::null_ivertex() &&
+          b.second == Data_structure::null_ivertex()) {
+          b.second = a.second;
+        }
+        if (
+          a.second == Data_structure::null_ivertex() &&
+          b.second != Data_structure::null_ivertex()) {
+          a.second = b.second;
+        }
+      }
+    }
+    return ++result;
+  }
+
   void initialize_cdt(const PFace& pface) {
 
     std::cout.precision(20);
     const std::size_t sp_idx = pface.first;
     const auto& sp = m_data.support_plane(sp_idx);
-
-    // Insert pvertices of the pface.
-    std::vector<Vertex_handle> vhs;
     const auto pvertices = m_data.pvertices_of_pface(pface);
-    vhs.reserve(pvertices.size());
+    const auto& iedges = sp.unique_iedges();
+
+    // Create unique pvertices and ivertices.
+    using Pair = std::pair<Point_2, std::pair<PVertex, IVertex> >;
+    std::vector<Pair> points;
+    points.reserve(pvertices.size() + iedges.size() * 2);
 
     for (const auto pvertex : pvertices) {
-      const auto vh = m_cdt.insert(m_data.point_2(pvertex));
-      vh->info().pvertex = pvertex;
-      m_input.insert(pvertex);
-      vhs.push_back(vh);
+      const auto point = m_data.point_2(pvertex);
+      points.push_back(std::make_pair(point,
+        std::make_pair(pvertex, m_data.null_ivertex())));
     }
 
-    // Insert pedges of the pface.
-    for (std::size_t i = 0; i < vhs.size(); ++i) {
-      const std::size_t ip = (i + 1) % vhs.size();
-      const auto cid = m_cdt.insert_constraint(vhs[i], vhs[ip]);
-      m_map_intersections.insert(std::make_pair(cid, m_data.null_iedge()));
-    }
-
-    // Insert iedges.
-    const auto& iedges = sp.unique_iedges();
     for (const auto& iedge : iedges) {
       const auto isource = m_data.source(iedge);
       const auto itarget = m_data.target(iedge);
@@ -314,15 +350,114 @@ private:
       const auto target = m_data.to_2d(sp_idx, itarget);
       CGAL_assertion(source != target);
 
-      const auto vh_source = m_cdt.insert(source);
-      vh_source->info().ivertex = isource;
-      const auto vh_target = m_cdt.insert(target);
-      vh_target->info().ivertex = itarget;
+      points.push_back(std::make_pair(source,
+        std::make_pair(m_data.null_pvertex(), isource)));
+      points.push_back(std::make_pair(target,
+        std::make_pair(m_data.null_pvertex(), itarget)));
+    }
 
-      const auto cid = m_cdt.insert_constraint(vh_source, vh_target);
+    CGAL_assertion(points.size() == (pvertices.size() + iedges.size() * 2));
+    std::cout << "- num unique before: " << points.size() << std::endl;
+
+    const FT ptol = KSR::point_tolerance<FT>();
+    const auto sort_cmp = [&](const Pair& a, const Pair& b) {
+      const auto are_equal = ( KSR::distance(a.first, b.first) < ptol );
+      if (!are_equal) return a.first < b.first;
+      return false;
+    };
+    const auto unique_cmp = [&](const Pair& a, const Pair& b) {
+      return ( KSR::distance(a.first, b.first) < ptol );
+    };
+    std::sort(points.begin(), points.end(), sort_cmp);
+    points.erase(unique_elements(
+      points.begin(), points.end(), unique_cmp), points.end());
+    std::cout << "- num unique after: " << points.size() << std::endl;
+    for (const auto& pair : points) {
+      // std::cout <<
+      // m_data.str(pair.second.first) << " : " <<
+      // m_data.str(pair.second.second) << std::endl;
+      std::cout << m_data.to_3d(sp_idx, pair.first) << std::endl;
+    }
+
+    // Insert pvertices and ivertices.
+    std::map<PVertex, Vertex_handle> vhs_pv;
+    std::map<IVertex, Vertex_handle> vhs_iv;
+    for (const auto& pair : points) {
+      const auto& point = pair.first;
+      const auto& data = pair.second;
+      CGAL_assertion(
+        data.first  != m_data.null_pvertex() ||
+        data.second != m_data.null_ivertex());
+      const auto vh = m_cdt.insert(typename EK::Point_2(
+        typename EK::FT(point.x()), typename EK::FT(point.y())));
+
+      if (data.first != m_data.null_pvertex()) {
+        vh->info().pvertex = data.first;
+        vhs_pv[vh->info().pvertex] = vh;
+      }
+
+      if (data.second != m_data.null_ivertex()) {
+        vh->info().ivertex = data.second;
+        vhs_iv[vh->info().ivertex] = vh;
+      }
+    }
+    CGAL_assertion(vhs_pv.size() >= 3);
+    CGAL_assertion(vhs_iv.size() > 0);
+    std::cout << "- num cdt verts 1: " << m_cdt.number_of_vertices() << std::endl;
+    std::cout << "- num cdt faces 1: " << m_cdt.number_of_faces()    << std::endl;
+
+    // Insert pedge constraints.
+
+    // Version 1 with the one unique null iedge.
+    std::vector<typename EK::Point_2> original_face;
+    original_face.reserve(pvertices.size());
+    for (const auto pvertex : pvertices) {
+      CGAL_assertion(vhs_pv.find(pvertex) != vhs_pv.end());
+      original_face.push_back(vhs_pv.at(pvertex)->point());
+      m_input.insert(pvertex);
+    }
+    CGAL_assertion(original_face.size() == pvertices.size());
+
+    const auto cid = m_cdt.insert_constraint(original_face.begin(), original_face.end(), true);
+    CGAL_assertion(m_map_intersections.find(cid) == m_map_intersections.end());
+    m_map_intersections.insert(std::make_pair(cid, m_data.null_iedge()));
+
+    // Version 2 with multiple null iedges.
+    // std::vector<PVertex> polygon;
+    // polygon.reserve(pvertices.size());
+    // std::copy(pvertices.begin(), pvertices.end(), std::back_inserter(polygon));
+    // CGAL_assertion(polygon.size() == pvertices.size());
+
+    // for (std::size_t i = 0; i < polygon.size(); ++i) {
+    //   const std::size_t ip = (i + 1) % polygon.size();
+    //   const auto& psource = polygon[i];
+    //   const auto& ptarget = polygon[ip];
+    //   CGAL_assertion(psource != ptarget);
+    //   CGAL_assertion(vhs_pv.find(psource) != vhs_pv.end());
+    //   CGAL_assertion(vhs_pv.find(ptarget) != vhs_pv.end());
+    //   const auto cid = m_cdt.insert_constraint(vhs_pv.at(psource), vhs_pv.at(ptarget));
+    //   CGAL_assertion(m_map_intersections.find(cid) == m_map_intersections.end());
+    //   m_map_intersections.insert(std::make_pair(cid, m_data.null_iedge()));
+    //   m_input.insert(psource);
+    // }
+
+    std::cout << "- num cdt verts 2: " << m_cdt.number_of_vertices() << std::endl;
+    std::cout << "- num cdt faces 2: " << m_cdt.number_of_faces()    << std::endl;
+
+    // Insert iedge constraints.
+    for (const auto& iedge : iedges) {
+      const auto isource = m_data.source(iedge);
+      const auto itarget = m_data.target(iedge);
+      CGAL_assertion(isource != itarget);
+      CGAL_assertion(vhs_iv.find(isource) != vhs_iv.end());
+      CGAL_assertion(vhs_iv.find(itarget) != vhs_iv.end());
+      const auto cid = m_cdt.insert_constraint(vhs_iv.at(isource), vhs_iv.at(itarget));
       CGAL_assertion(m_map_intersections.find(cid) == m_map_intersections.end());
       m_map_intersections.insert(std::make_pair(cid, iedge));
     }
+
+    std::cout << "- num cdt verts 3: " << m_cdt.number_of_vertices() << std::endl;
+    std::cout << "- num cdt faces 3: " << m_cdt.number_of_faces()    << std::endl;
   }
 
   // All exterior faces are tagged by KSR::no_element().
@@ -449,7 +584,11 @@ private:
         const auto source = curr_face->vertex(m_cdt.ccw(idx));
         const auto target = curr_face->vertex(m_cdt.cw (idx));
         if (source->info().pvertex == m_data.null_pvertex()) {
-          source->info().pvertex = m_data.add_pvertex(sp_idx, source->point());
+          const auto& p = source->point();
+          const Point_2 spoint(
+            static_cast<FT>(CGAL::to_double(p.x())),
+            static_cast<FT>(CGAL::to_double(p.y())));
+          source->info().pvertex = m_data.add_pvertex(sp_idx, spoint);
         }
         new_pvertices.push_back(source->info().pvertex);
 

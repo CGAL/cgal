@@ -1771,17 +1771,17 @@ public:
     for (std::size_t i = 0; i < 6; ++i) {
       const auto pfaces = this->pfaces(i);
       for (const auto pface : pfaces) {
-        for (const auto pedge : pedges_of_pface(pface)) {
-          if (!has_iedge(pedge)) {
-            std::cout << "debug pedge: " << segment_3(pedge) << std::endl;
-            CGAL_assertion_msg(has_iedge(pedge), "ERROR: BBOX EDGE IS MISSING AN IEDGE!");
+        for (const auto pvertex : pvertices_of_pface(pface)) {
+          if (!has_ivertex(pvertex)) {
+            std::cout << "debug pvertex: " << str(pvertex) << ", " << point_3(pvertex) << std::endl;
+            CGAL_assertion_msg(has_ivertex(pvertex), "ERROR: BBOX VERTEX IS MISSING AN IVERTEX!");
             return false;
           }
         }
-        for (const auto pvertex : pvertices_of_pface(pface)) {
-          if (!has_ivertex(pvertex)) {
-            std::cout << "debug pvertex: " << point_3(pvertex) << std::endl;
-            CGAL_assertion_msg(has_ivertex(pvertex), "ERROR: BBOX VERTEX IS MISSING AN IVERTEX!");
+        for (const auto pedge : pedges_of_pface(pface)) {
+          if (!has_iedge(pedge)) {
+            std::cout << "debug pedge: " << str(pedge) << ", " << segment_3(pedge) << std::endl;
+            CGAL_assertion_msg(has_iedge(pedge), "ERROR: BBOX EDGE IS MISSING AN IEDGE!");
             return false;
           }
         }
@@ -1795,17 +1795,17 @@ public:
     for (std::size_t i = 6; i < number_of_support_planes(); ++i) {
       const auto pfaces = this->pfaces(i);
       for (const auto pface : pfaces) {
-        for (const auto pedge : pedges_of_pface(pface)) {
-          if (!has_iedge(pedge)) {
-            std::cout << "debug pedge: " << segment_3(pedge) << std::endl;
-            CGAL_assertion_msg(has_iedge(pedge), "ERROR: INTERIOR EDGE IS MISSING AN IEDGE!");
+        for (const auto pvertex : pvertices_of_pface(pface)) {
+          if (!has_ivertex(pvertex)) {
+            std::cout << "debug pvertex: " << str(pvertex) << ", " << point_3(pvertex) << std::endl;
+            CGAL_assertion_msg(has_ivertex(pvertex), "ERROR: INTERIOR VERTEX IS MISSING AN IVERTEX!");
             return false;
           }
         }
-        for (const auto pvertex : pvertices_of_pface(pface)) {
-          if (!has_ivertex(pvertex)) {
-            std::cout << "debug pvertex: " << point_3(pvertex) << std::endl;
-            CGAL_assertion_msg(has_ivertex(pvertex), "ERROR: INTERIOR VERTEX IS MISSING AN IVERTEX!");
+        for (const auto pedge : pedges_of_pface(pface)) {
+          if (!has_iedge(pedge)) {
+            std::cout << "debug pedge: " << str(pedge) << ", " << segment_3(pedge) << std::endl;
+            CGAL_assertion_msg(has_iedge(pedge), "ERROR: INTERIOR EDGE IS MISSING AN IEDGE!");
             return false;
           }
         }

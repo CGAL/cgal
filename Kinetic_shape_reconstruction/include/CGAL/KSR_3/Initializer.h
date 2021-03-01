@@ -534,6 +534,7 @@ private:
       //   KSR_3::dump(m_data, "intersected-iter-" + std::to_string(i));
       // }
     }
+    exit(EXIT_SUCCESS);
   }
 
   void set_k_intersections(const unsigned int k) {

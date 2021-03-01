@@ -99,7 +99,7 @@ private:
   using FBI = CGAL::Triangulation_face_base_with_info_2<Face_info, Kernel>;
   using CFB = CGAL::Constrained_triangulation_face_base_2<Kernel, FBI>;
   using TDS = CGAL::Triangulation_data_structure_2<VBI, CFB>;
-  using TAG = CGAL::Exact_predicates_tag;
+  using TAG = CGAL::Exact_intersections_tag;
   using EDT = CGAL::Constrained_Delaunay_triangulation_2<Kernel, TDS, TAG>;
   using CDT = CGAL::Constrained_triangulation_plus_2<EDT>;
   using CID = typename CDT::Constraint_id;

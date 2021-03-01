@@ -749,6 +749,8 @@ template<typename DS, typename CDT>
 void dump_cdt(
   const DS& data, const std::size_t sp_idx, const CDT& cdt, std::string file_name) {
 
+  using FT            = typename DS::Kernel::FT;
+  using Point_2       = typename DS::Kernel::Point_2;
   using Point_3       = typename DS::Kernel::Point_3;
   using Vertex_handle = typename CDT::Vertex_handle;
 
@@ -764,8 +766,12 @@ void dump_cdt(
 
   std::map<Vertex_handle, VIdx> map_v2i;
   for (auto vit = cdt.finite_vertices_begin(); vit != cdt.finite_vertices_end(); ++vit) {
+    const auto& p = vit->point();
+    const Point_2 ipoint(
+      static_cast<FT>(CGAL::to_double(p.x())),
+      static_cast<FT>(CGAL::to_double(p.y())));
     map_v2i.insert(std::make_pair(
-      vit, mesh.add_vertex(data.support_plane(sp_idx).to_3d(vit->point()))));
+      vit, mesh.add_vertex(data.support_plane(sp_idx).to_3d(ipoint))));
   }
 
   for (auto fit = cdt.finite_faces_begin(); fit != cdt.finite_faces_end(); ++fit) {
