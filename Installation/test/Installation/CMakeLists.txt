@@ -56,7 +56,7 @@ if ( CGAL_FOUND )
 
   create_link_to_program(CGAL)
 
-  if ( WITH_CGAL_Core )
+  if ( CGAL_Core_FOUND )
     create_link_to_program(CGAL_Core)
   endif()
 
