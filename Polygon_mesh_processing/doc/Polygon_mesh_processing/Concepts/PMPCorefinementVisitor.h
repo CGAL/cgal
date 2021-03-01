@@ -24,9 +24,9 @@ typedef unspecified_type halfedge_descriptor;
   /// `before_subface_created()`/`after_subface_created()` will correspond to
   /// the creation of a new face of the triangulation of `f_split`.
   void before_subface_creations(face_descriptor f_split, Triangle_mesh& tm);
-  /// called when the triangulation of a face in `tm` is finished
+  /// called when the triangulation of a face in `tm` is finished.
   void after_subface_creations(Triangle_mesh& tm);
-  /// called before creating a new triangle face in `tm` to triangulate the face passed to `before_subface_creations()`
+  /// called before creating a new triangle face in `tm` to triangulate the face passed to `before_subface_creations()`.
   void before_subface_created(Triangle_mesh& tm);
   /// called after creating a new triangle face `f_new` in `tm` to triangulate the face passed to `before_subface_creations()`.
   /// Note that the call is placed just after a call to `add_face()` so the halfedge pointer is not set yet.
@@ -66,10 +66,10 @@ typedef unspecified_type halfedge_descriptor;
   void after_edge_copy(halfedge_descriptor h_src, const TriangleMesh& tm_src,
                        halfedge_descriptor h_tgt, TriangleMesh& tm_tgt);
   /// called before a patch boundary edge is duplicated to disconnect patches of `tm`
-  /// (When an in-place operation and an out-of-place are both requested)
+  /// (When an in-place operation and an out-of-place are both requested).
   void before_edge_duplicated(halfedge_descriptor h, TriangleMesh& tm);
   /// called when the edge of `h_src` has been duplicated into `h_new` in `tm`
-  /// (When an in-place operation and an out-of-place are both requested)
+  /// (When an in-place operation and an out-of-place are both requested).
   void after_edge_duplicated(halfedge_descriptor h_src,
                              halfedge_descriptor h_new, TriangleMesh& tm);
   /// called when an intersection edge (represented in input meshes `tm_src1` and `tm_src2` by `h_src1` and `h_src2`,
