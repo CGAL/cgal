@@ -45,7 +45,7 @@ typedef unspecified_type halfedge_descriptor;
   void edge_split(halfedge_descriptor hnew, TriangleMesh& tm);
   /// called when the split of the halfedge `h` passed at the later call to `before_edge_split()` is finished.
   void after_edge_split();
-  ///  called when a new after edge is added to triangulate a face. The face triangulated is `f_split`
+  ///  called when a new edge has been added to triangulate a face. The face triangulated is `f_split`
   ///  in the last call to `before_subface_creations(f_split, tm)`. There is only one call per edge.
   void add_retriangulation_edge(halfedge_descriptor h, TriangleMesh& tm);
 /// @}
@@ -59,7 +59,7 @@ typedef unspecified_type halfedge_descriptor;
   /// Note that the call is placed just after a call to `add_face()` so the halfedge pointer is not set yet.
   void after_face_copy(face_descriptor  f_src, const Triangle_mesh& tm_src,
                        face_descriptor  f_tgt, Triangle_mesh& tm_tgt);
-  /// called before importing the edge of `h_src` of `tm_src` in `tm_tgt`. There is one call per edge
+  /// called before importing the edge of `h_src` of `tm_src` in `tm_tgt`. There is one call per edge.
   void before_edge_copy(halfedge_descriptor h_src/, const TriangleMesh& tm_src, TriangleMesh& tm_tgt){}
   /// called after importing the edge of `h_src` of `tm_src` in `tm_tgt`. The corresponding new halfedge is `h_tgt`.
   /// There is only one call per edge.
@@ -72,7 +72,7 @@ typedef unspecified_type halfedge_descriptor;
   /// (When an in-place operation and an out-of-place are both requested)
   void after_edge_duplicated(halfedge_descriptor h_src,
                              halfedge_descriptor h_new, TriangleMesh& tm);
-  /// called when an intersection edge (represented in input meshes `tm_src1` and `tm_src2` by `h_src1` and `h_src2`
+  /// called when an intersection edge (represented in input meshes `tm_src1` and `tm_src2` by `h_src1` and `h_src2`,
   /// respectively) is imported in `tm_tgt` as `h_tgt`. There is only one call per edge.
   /// (Called only when an out-of-place operation is requested)
   void intersection_edge_copy(halfedge_descriptor h_src1, const TriangleMesh& tm_src1,
