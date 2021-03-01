@@ -126,11 +126,11 @@ class Face_graph_index_adder<CGAL::SNC_indexed_items, PolygonMesh, SNC_structure
 
   typedef Halfedge_around_face_circulator<PolygonMesh>
     Halfedge_around_facet_const_circulator;
-    typedef std::vector<SHalfedge_handle> SHalfedge_list;
+  typedef std::vector<SHalfedge_handle> SHalfedges;
 
   PolygonMesh& P;
   HalfedgeIndexMap him;
-  SHalfedge_list shalfedges;
+  SHalfedges shalfedges;
 
 public:
   Face_graph_index_adder(PolygonMesh& P_, HalfedgeIndexMap him) : P(P_), him(him)
