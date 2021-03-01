@@ -25,8 +25,6 @@
 #include <functional>
 #include <algorithm>
 #include <CGAL/Extremal_polygon_traits_2.h>
-#include <boost/bind.hpp>
-#include <boost/bind/make_adaptable.hpp>
 namespace CGAL {
 
 //!!! This will eventually be integrated into function_objects.h
@@ -443,8 +441,8 @@ extremal_polygon_2(
     k,
     CGAL::transform_iterator(
       o,
-      boost::make_adaptable<Point_2, int>(boost::bind(Index_operator< RandomAccessIC, int, Point_2 >(),
-                                                      points_begin, _1))),
+      std::function<Point_2(int)>([points_begin](int i)
+      { return Index_operator< RandomAccessIC, int, Point_2 >()(points_begin, i); })),
     t);
 }
 

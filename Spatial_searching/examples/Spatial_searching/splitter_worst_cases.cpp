@@ -18,7 +18,8 @@ typedef std::vector<Point_2>                          Points;
 int main()
 {
   Points sliding_worst_case;
-  for (int i = 0 ,j = 1; i < 10 ; ++i , j *= 2){
+  for (int i = 0 ,j = 1; i < 10 ; ++i , j *= 2)
+  {
     sliding_worst_case.push_back(Point_2(((double)i)/10 , 0));
     sliding_worst_case.push_back(Point_2( (double)j , 0));
   }
@@ -39,11 +40,10 @@ int main()
   tree2.clear();
 
   Points median_worst_case;
-  for(int i = 0 ; i < 19 ; ++i){
+  for(int i = 0 ; i < 19 ; ++i)
     median_worst_case.push_back(Point_2( 0 , i));
-  }
-  median_worst_case.push_back(Point_2(20,0));
 
+  median_worst_case.push_back(Point_2(20,0));
 
   Tree_median tree3(median_worst_case.begin() , median_worst_case.end() , median);
 
@@ -59,5 +59,6 @@ int main()
   tree4.build();
   tree4.statistics(std::cout);
   tree4.clear();
+
   return 0;
 }

@@ -50,6 +50,11 @@ void test(const NamedParameters& np)
   assert(get_parameter(np, CGAL::internal_np::halfedge_to_halfedge_map).v == 800000008);
   assert(get_parameter(np, CGAL::internal_np::face_to_face_map).v == 800000009);
 
+  assert(get_parameter(np, CGAL::internal_np::implementation_tag).v == 800000010);
+  assert(get_parameter(np, CGAL::internal_np::prevent_unselection).v == 800000011);
+
+  assert(get_parameter(np, CGAL::internal_np::stream_precision).v == 800000012);
+
     // Named parameters that we use in the package 'Mesh_3'
   assert(get_parameter(np, CGAL::internal_np::vertex_feature_degree).v == 9);
 
@@ -58,6 +63,7 @@ void test(const NamedParameters& np)
   assert(get_parameter(np, CGAL::internal_np::vertex_incident_patches).v == 11);
   assert(get_parameter(np, CGAL::internal_np::density_control_factor).v == 12);
   assert(get_parameter(np, CGAL::internal_np::use_delaunay_triangulation).v == 13);
+  assert(get_parameter(np, CGAL::internal_np::use_2d_constrained_delaunay_triangulation).v == 4573);
   assert(get_parameter(np, CGAL::internal_np::fairing_continuity).v == 14);
   assert(get_parameter(np, CGAL::internal_np::sparse_linear_solver).v == 15);
   assert(get_parameter(np, CGAL::internal_np::number_of_relaxation_steps).v == 16);
@@ -99,7 +105,10 @@ void test(const NamedParameters& np)
   assert(get_parameter(np, CGAL::internal_np::do_simplify_border).v == 64);
   assert(get_parameter(np, CGAL::internal_np::do_not_modify).v == 65);
   assert(get_parameter(np, CGAL::internal_np::allow_self_intersections).v == 66);
+  assert(get_parameter(np, CGAL::internal_np::polyhedral_envelope_epsilon).v == 67);
   assert(get_parameter(np, CGAL::internal_np::maximum_number_of_faces).v == 78910);
+  assert(get_parameter(np, CGAL::internal_np::non_manifold_feature_map).v == 60);
+  assert(get_parameter(np, CGAL::internal_np::filter).v == 61);
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   assert(get_parameter(np, CGAL::internal_np::get_cost_policy).v == 34);
@@ -145,6 +154,9 @@ void test(const NamedParameters& np)
   check_same_type<800000007>(get_parameter(np, CGAL::internal_np::vertex_to_vertex_map));
   check_same_type<800000008>(get_parameter(np, CGAL::internal_np::halfedge_to_halfedge_map));
   check_same_type<800000009>(get_parameter(np, CGAL::internal_np::face_to_face_map));
+  check_same_type<800000010>(get_parameter(np, CGAL::internal_np::implementation_tag));
+  check_same_type<800000011>(get_parameter(np, CGAL::internal_np::prevent_unselection));
+  check_same_type<800000012>(get_parameter(np, CGAL::internal_np::stream_precision));
 
     // Named parameters that we use in the package 'Mesh_3'
   check_same_type<9>(get_parameter(np, CGAL::internal_np::vertex_feature_degree));
@@ -154,6 +166,7 @@ void test(const NamedParameters& np)
   check_same_type<11>(get_parameter(np, CGAL::internal_np::vertex_incident_patches));
   check_same_type<12>(get_parameter(np, CGAL::internal_np::density_control_factor));
   check_same_type<13>(get_parameter(np, CGAL::internal_np::use_delaunay_triangulation));
+  check_same_type<4573>(get_parameter(np, CGAL::internal_np::use_2d_constrained_delaunay_triangulation));
   check_same_type<14>(get_parameter(np, CGAL::internal_np::fairing_continuity));
   check_same_type<15>(get_parameter(np, CGAL::internal_np::sparse_linear_solver));
   check_same_type<16>(get_parameter(np, CGAL::internal_np::number_of_relaxation_steps));
@@ -188,6 +201,7 @@ void test(const NamedParameters& np)
   check_same_type<56>(get_parameter(np, CGAL::internal_np::use_safety_constraints));
   check_same_type<65>(get_parameter(np, CGAL::internal_np::do_not_modify));
   check_same_type<66>(get_parameter(np, CGAL::internal_np::allow_self_intersections));
+  check_same_type<67>(get_parameter(np, CGAL::internal_np::polyhedral_envelope_epsilon));
 
   check_same_type<12340>(get_parameter(np, CGAL::internal_np::do_self_intersection_tests));
   check_same_type<12341>(get_parameter(np, CGAL::internal_np::do_orientation_tests));
@@ -209,6 +223,8 @@ void test(const NamedParameters& np)
   check_same_type<62>(get_parameter(np, CGAL::internal_np::halfedges_keeper));
   check_same_type<64>(get_parameter(np, CGAL::internal_np::do_simplify_border));
   check_same_type<78910>(get_parameter(np, CGAL::internal_np::maximum_number_of_faces));
+  check_same_type<60>(get_parameter(np, CGAL::internal_np::non_manifold_feature_map));
+  check_same_type<61>(get_parameter(np, CGAL::internal_np::filter));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   check_same_type<34>(get_parameter(np, CGAL::internal_np::get_cost_policy));
@@ -268,6 +284,8 @@ void test(const NamedParameters& np)
   check_same_type<9032>(get_parameter(np, CGAL::internal_np::inspector));
   check_same_type<9033>(get_parameter(np, CGAL::internal_np::logger));
   check_same_type<9034>(get_parameter(np, CGAL::internal_np::maximum_normal_deviation));
+  check_same_type<9035>(get_parameter(np, CGAL::internal_np::scan_angle_map));
+  check_same_type<9036>(get_parameter(np, CGAL::internal_np::scanline_id_map));
 }
 
 int main()
@@ -290,11 +308,15 @@ int main()
                          .vertex_to_vertex_map(A<800000007>(800000007))
                          .halfedge_to_halfedge_map(A<800000008>(800000008))
                          .face_to_face_map(A<800000009>(800000009))
+                         .implementation_tag(A<800000010>(800000010))
+                         .prevent_unselection(A<800000011>(800000011))
+                         .stream_precision(A<800000012>(800000012))
                          .vertex_feature_degree_map(A<9>(9))
                          .geom_traits(A<10>(10))
                          .vertex_incident_patches_map(A<11>(11))
                          .density_control_factor(A<12>(12))
                          .use_delaunay_triangulation(A<13>(13))
+                         .use_2d_constrained_delaunay_triangulation(A<4573>(4573))
                          .fairing_continuity(A<14>(14))
                          .sparse_linear_solver(A<15>(15))
                          .number_of_relaxation_steps(A<16>(16))
@@ -329,6 +351,8 @@ int main()
                          .throw_on_self_intersection(A<43>(43))
                          .clip_volume(A<44>(44))
                          .use_compact_clipper(A<45>(45))
+                         .non_manifold_feature_map(A<60>(60))
+                         .filter(A<61>(61))
                          .apply_per_connected_component(A<46>(46))
                          .output_iterator(A<47>(47))
                          .erase_all_duplicates(A<48>(48))
@@ -361,6 +385,7 @@ int main()
                          .do_simplify_border(A<64>(64))
                          .do_not_modify(A<65>(65))
                          .allow_self_intersections(A<66>(66))
+                         .polyhedral_envelope_epsilon(A<67>(67))
                          .point_map(A<9000>(9000))
                          .query_point_map(A<9001>(9001))
                          .normal_map(A<9002>(9002))
@@ -396,6 +421,8 @@ int main()
                          .inspector(A<9032>(9032))
                          .logger(A<9033>(9033))
                          .maximum_normal_deviation(A<9034>(9034))
+                         .scan_angle_map(A<9035>(9035))
+                         .scanline_id_map(A<9036>(9036))
                          .maximum_number_of_faces(A<78910>(78910))
        );
   return EXIT_SUCCESS;

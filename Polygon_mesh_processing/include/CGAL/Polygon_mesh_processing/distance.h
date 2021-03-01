@@ -866,8 +866,8 @@ sample_triangle_mesh(const TriangleMesh& tm,
  *
  * @tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * @tparam TriangleRange a model of the concept `RandomAccessContainer`
- *                      whose value_type is itself a model of the concept `RandomAccessContainer`
- *                      whose value_type is an unsigned integral value.
+ *                      whose `value_type` is itself a model of the concept `RandomAccessContainer`
+ *                      whose `value_type` is an unsigned integral value.
  * @tparam PointOutputIterator a model of `OutputIterator` holding objects of the same type as `PointRange`'s value type
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *

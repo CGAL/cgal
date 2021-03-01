@@ -1,12 +1,3 @@
-// STL includes.
-#include <string>
-#include <vector>
-#include <utility>
-#include <cstdlib>
-#include <fstream>
-#include <iostream>
-#include <iterator>
-
 // CGAL includes.
 #include <CGAL/array.h>
 #include <CGAL/property_map.h>
@@ -15,6 +6,15 @@
 
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
+
+// STL includes.
+#include <string>
+#include <vector>
+#include <utility>
+#include <cstdlib>
+#include <fstream>
+#include <iostream>
+#include <iterator>
 
 // Type declarations.
 using Kernel = CGAL::Simple_cartesian<double>;
@@ -162,7 +162,7 @@ int main(int argc, char *argv[]) {
     std::ofstream out(fullpath);
 
     CGAL::set_ascii_mode(out);
-    CGAL::write_ply_points_with_properties(
+    CGAL::write_PLY_with_properties(
       out, pwc,
       CGAL::make_ply_point_writer(PLY_Point_map()),
         std::make_tuple(

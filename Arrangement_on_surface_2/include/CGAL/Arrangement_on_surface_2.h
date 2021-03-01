@@ -1487,7 +1487,7 @@ public:
    * \pre cv1's source and cv2's target equal the endpoints of the curve
    *      currently assoicated with e (respectively), and cv1's target equals
    *      cv2's target, and this is the split point (ot vice versa).
-   * \return A handle for the halfedge whose source is the source of the the
+   * \return A handle for the halfedge whose source is the source of the
    *         original halfedge e, and whose target is the split point.
    */
   Halfedge_handle split_edge(Halfedge_handle e,

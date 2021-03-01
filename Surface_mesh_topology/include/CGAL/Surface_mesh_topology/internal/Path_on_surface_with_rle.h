@@ -81,6 +81,7 @@ public:
 
   Light_MQ(const Local_map& m): m_map(m)
   {}
+  Light_MQ(const Light_MQ&) = default;
 
   const Local_map& get_local_map() const
   { return m_map; }
@@ -140,6 +141,8 @@ public:
     , m_darts_ids(darts_ids)
   #endif //CGAL_PWRLE_TURN_V2
   {}
+
+  Path_on_surface_with_rle(const Self&) = default;
 
   /// Creates a Path_on_surface_with_rle from a Path_on_surface.
   /// If use_only_positive, consider only positive flats and not negative ones.
@@ -1027,7 +1030,7 @@ public:
       return;
     }
 
-    it2=next_iterator(it1); // it2 is the the next flat after it1
+    it2=next_iterator(it1); // it2 is the next flat after it1
 
     reduce_flat_from_end(it1, modified_flats); // decrease also m_length
     reduce_flat_from_beginning(it3, modified_flats);

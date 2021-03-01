@@ -31,12 +31,11 @@
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
 #include "triangulate_primitive.h"
 
+#include <CGAL/IO/OBJ.h>
 #include <CGAL/exceptions.h>
-#include <CGAL/IO/File_writer_wavefront.h>
-#include <CGAL/IO/generic_copy_OFF.h>
-#include <CGAL/IO/OBJ_reader.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/statistics_helpers.h>
 
@@ -45,6 +44,7 @@
 #include <CGAL/Three/Edge_container.h>
 #include <CGAL/Three/Point_container.h>
 #include <CGAL/Three/Three.h>
+#include <CGAL/boost/graph/io.h>
 
 #include <CGAL/Buffer_for_vao.h>
 #include <QMenu>
@@ -334,6 +334,15 @@ void Scene_surface_mesh_item::standard_constructor(SMesh* sm)
   d->textFItems = new TextListItem(this);
   are_buffers_filled = false;
   invalidate(ALL);
+  std::size_t isolated_v = 0;
+  for(vertex_descriptor v : vertices(*sm))
+  {
+    if(sm->is_isolated(v))
+    {
+      ++isolated_v;
+    }
+  }
+  setNbIsolatedvertices(isolated_v);
 
 }
 Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
@@ -1515,26 +1524,42 @@ bool
 Scene_surface_mesh_item::load_obj(std::istream& in)
 {
   typedef SMesh::Point Point;
-  std::vector<Point> points;
-  std::vector<std::vector<std::size_t> > faces;
-  bool failed = !CGAL::read_OBJ(in,points,faces);
+  bool failed = !CGAL::read_OBJ(in, *(d->smesh_));
+  if(failed)
+  {
+    in.clear();
+    in.seekg(0);
+    std::vector<Point> points;
+    std::vector<std::vector<std::size_t> > faces;
+    failed = !CGAL::read_OBJ(in, points, faces);
+    if(!failed)
+    {
+      CGAL::Polygon_mesh_processing::repair_polygon_soup(points, faces);
+      CGAL::Polygon_mesh_processing::orient_polygon_soup(points, faces);
+      CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, faces, *(d->smesh_));
+    }
+  }
 
-  CGAL::Polygon_mesh_processing::orient_polygon_soup(points,faces);
-  CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points,faces,*(d->smesh_));
-  if ( (! failed) && !isEmpty() )
+  if((!failed) && !isEmpty())
   {
     invalidate(ALL);
     return true;
   }
+
   return false;
 }
 
 bool
 Scene_surface_mesh_item::save_obj(std::ostream& out) const
 {
-  CGAL::File_writer_wavefront  writer;
-  CGAL::generic_print_surface_mesh(out, *(d->smesh_), writer);
-  return out.good();
+  SMesh::template Property_map<SMesh::Vertex_index, EPICK::Vector_3> vnormals;
+  bool has_normals = false;
+  boost::tie(vnormals, has_normals) = d->smesh_->template property_map<SMesh::Vertex_index, EPICK::Vector_3>("v:normal");
+
+  if(has_normals)
+    return CGAL::write_OBJ(out, *(d->smesh_), CGAL::parameters::vertex_normal_map(vnormals));
+  else
+    return CGAL::write_OBJ(out, *(d->smesh_));
 }
 
 void

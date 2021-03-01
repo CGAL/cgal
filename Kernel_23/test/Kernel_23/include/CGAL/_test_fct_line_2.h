@@ -18,22 +18,9 @@
 #ifndef CGAL__TEST_FCT_LINE_2_H
 #define CGAL__TEST_FCT_LINE_2_H
 
-// Accessory function testing functions that require sqrt().
-// Doesn't instantiate anything if RT doesn't support sqrt().
 template <class R>
 bool
-_test_fct_line_sqrt_2(const R&, CGAL::Tag_false)
-{
-//  bool UNTESTED_STUFF_BECAUSE_SQRT_IS_NOT_SUPPORTED;
-  std::cout << std::endl
-            << "NOTE : FT doesn't support sqrt(),"
-               " hence some functions are not tested." << std::endl;
-  return true;
-}
-
-template <class R>
-bool
-_test_fct_line_sqrt_2(const R&, CGAL::Tag_true)
+_test_fct_line_sqrt_2(const R&)
 {
  typedef typename  R::Point_2  Point_2;
  typedef typename  R::Line_2   Line_2;
@@ -66,7 +53,6 @@ _test_fct_line_2(const R& )
  std::cout << "Testing functions Line_2" ;
 
  typedef typename  R::RT       RT;
- typedef typename  R::FT       FT;
  typedef typename  R::Point_2  Point_2;
  typedef typename  R::Line_2   Line_2;
 
@@ -178,13 +164,9 @@ _test_fct_line_2(const R& )
  assert(bl1.oriented_side(p2) == CGAL::ON_POSITIVE_SIDE);
  assert( CGAL::parallel(bl1, bl2) );
 
- // More tests, that require sqrt().
- {
-     typedef ::CGAL::Algebraic_structure_traits<FT> AST;
-     static const bool has_sqrt =
-         ! ::boost::is_same< ::CGAL::Null_functor, typename AST::Sqrt >::value;
-     _test_fct_line_sqrt_2(R(), ::CGAL::Boolean_tag<has_sqrt>());
- }
+ // More tests, that require sqrt() or use approx.
+  _test_fct_line_sqrt_2(R());
+
  std::cout << "done" << std::endl;
  return true;
 }

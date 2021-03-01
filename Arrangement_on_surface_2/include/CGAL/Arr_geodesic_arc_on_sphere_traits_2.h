@@ -1689,7 +1689,7 @@ public:
      *         LARGER  - x(xcv1, ce) > x(xcv2, ce).
      * \pre the ce end of the arc xcv1 lies on a pole.
      * \pre the ce end of the arc xcv2 lies on a pole.
-     * \pre the the $x$-coordinates of xcv1 and xcv2 at their ce end are
+     * \pre the $x$-coordinates of xcv1 and xcv2 at their ce end are
      *      equal (implying that the curves overlap).
      * \pre xcv1 does not coincide with the vertical identification curve.
      * \pre xcv2 does not coincide with the vertical identification curve.

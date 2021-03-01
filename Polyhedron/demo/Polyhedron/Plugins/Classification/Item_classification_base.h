@@ -235,10 +235,12 @@ public:
         m_ethz = new ETHZ_random_forest (m_labels, m_features);
       std::ifstream f (filename, std::ios_base::in | std::ios_base::binary);
 
+#if defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION)
       // Handle deprecated files
       if (std::string(filename).find(".gz") != std::string::npos)
         m_ethz->load_deprecated_configuration(f);
       else
+#endif
         m_ethz->load_configuration (f);
     }
     else if (classifier == CGAL_CLASSIFICATION_OPENCV_NUMBER)

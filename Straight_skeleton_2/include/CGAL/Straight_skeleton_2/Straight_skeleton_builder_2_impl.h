@@ -17,7 +17,6 @@
 #include <CGAL/Real_timer.h>
 #include <CGAL/Unique_hash_map.h>
 
-#include <boost/bind.hpp>
 #include <boost/utility.hpp>
 #include <boost/version.hpp>
 #if BOOST_VERSION == 106000
@@ -88,7 +87,7 @@ Straight_skeleton_builder_2<Gt,Ss,V>::PopEventFromPQ()
 }
 
 // Tests whether there is an edge event between the 3 contour edges defining nodes 'aLnode' and 'aRNode'.
-// If such event exits and is not in the past, it's returned. Otherwise the result is null
+// If such event exits and is not in the past, it's returned. Otherwise the result is null.
 //
 template<class Gt, class Ss, class V>
 typename Straight_skeleton_builder_2<Gt,Ss,V>::EventPtr
@@ -96,11 +95,63 @@ Straight_skeleton_builder_2<Gt,Ss,V>::FindEdgeEvent( Vertex_handle aLNode, Verte
 {
   EventPtr rResult ;
 
+  CGAL_STSKEL_BUILDER_TRACE(4, "FindEdgeEvent(), Left/Right Nodes: N" << aLNode->id() << " N" << aRNode->id() ) ;
+
   Triedge lTriedge = GetVertexTriedge(aLNode) & GetVertexTriedge(aRNode) ;
 
-  if ( lTriedge.is_valid()  && lTriedge != aPrevEventTriedge )
+  if ( lTriedge.is_valid() && lTriedge != aPrevEventTriedge )
   {
     Trisegment_2_ptr lTrisegment = CreateTrisegment(lTriedge,aLNode,aRNode);
+
+    // The 02 collinearity configuration is problematic: 01 or 12 collinearity has a seed position
+    // giving the point through which the bisector passes. However, for 02, it is not a given.
+    //
+    // If the seed exists, the information is passed to the traits as the "third" child of the trisegment.
+    // Otherwise, ignore this as it should re-appear when the seed of 02 is created.
+    //
+    // Note that this is only for edge events; (pseudo-)split events are not concerned.
+    if ( lTrisegment->collinearity() == TRISEGMENT_COLLINEARITY_02 )
+    {
+      // Check in the SLAV if the seed corresponding to 02 exists
+      Vertex_handle lPrevNode = GetPrevInLAV(aLNode) ;
+      CGAL_assertion( GetEdgeStartingAt(lPrevNode) == lTriedge.e0() ) ;
+
+      if ( GetEdgeEndingAt(lPrevNode) == lTriedge.e2() )
+      {
+        // Note that this can be a contour node and in that case GetTrisegment is null and we get
+        // the middle point, but in that case e2 and e0 are consecutive in the input
+        // and the middle point is the common extremity and things are fine.
+        lTrisegment->set_child_t( GetTrisegment(lPrevNode) ) ;
+      }
+      else
+      {
+        Orientation lOrientationS = CGAL::orientation( lTrisegment->e0().source(), lTrisegment->e0().target(), lTrisegment->e1().source() ) ;
+        Orientation lOrientationT = CGAL::orientation( lTrisegment->e0().source(), lTrisegment->e0().target(), lTrisegment->e1().target() ) ;
+        if ( lOrientationS != LEFT_TURN && lOrientationT != LEFT_TURN )
+        {
+          // Reasonning is: if the middle halfedge (e1) is "below" e0 and e2, then there is some
+          // kind of concavity in between e0 and e2. This concavity will resolve itself and either:
+          // - e0 and e2 will never meet, but in that case we would not be here
+          // - e0 and e2 will meet. In that case, we can ignore all the details of the concavity
+          //   and simply consider that in the end, all that matters is the e0, e2, next(e0),
+          //   and prev(e2). In that case, we get two bisectors issued from e0 and e2, and one
+          //   bisector issued from some seed S and splitting next(e0) and prev(e2). This can also
+          //   be seen as two exterior bisectors and one interior bisector of a triangle
+          //   target(e0) -- S - source(e2). It is a known result that these three bisectors
+          //   meet in a single point. Thus, when we get here e0-e1-e2, we know that
+          //   these will meet in a single, existing point, either the left or the right child (the oldest).
+
+          if ( CompareEvents(aLNode, aRNode) == SMALLER )
+            lTrisegment->set_child_t( GetTrisegment(aRNode) ) ;
+          else
+            lTrisegment->set_child_t( GetTrisegment(aLNode) ) ;
+        }
+        else
+        {
+          return rResult;
+        }
+      }
+    }
 
     if ( ExistEvent(lTrisegment) )
     {
@@ -1529,6 +1580,10 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::Propagate()
 
         ++ mStepID ;
       }
+      else
+      {
+        CGAL_STSKEL_BUILDER_TRACE (3,"\nAlready processed") ;
+      }
     }
     else break ;
   }
@@ -1962,12 +2017,12 @@ bool Straight_skeleton_builder_2<Gt,Ss,V>::FinishUp()
 
   std::for_each( mSplitNodes.begin()
                 ,mSplitNodes.end  ()
-                ,boost::bind(&Straight_skeleton_builder_2<Gt,Ss,V>::MergeSplitNodes,this,_1)
+                ,[this](Vertex_handle_pair p){ this->MergeSplitNodes(p); }
                ) ;
 
   std::for_each( mDanglingBisectors.begin()
                 ,mDanglingBisectors.end  ()
-                ,boost::bind(&Straight_skeleton_builder_2<Gt,Ss,V>::EraseBisector,this,_1)
+                ,[this](Halfedge_handle db){ this->EraseBisector(db); }
                ) ;
 
   // MergeCoincidentNodes() locks all extremities of halfedges that have a vertex involved in a multinode.
