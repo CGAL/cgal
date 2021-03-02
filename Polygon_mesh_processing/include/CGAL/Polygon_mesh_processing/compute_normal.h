@@ -30,6 +30,7 @@
 #include <limits>
 #include <utility>
 #include <vector>
+#include <unordered_map>
 
 #ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
 # ifndef CGAL_PMP_COMPUTE_NORMAL_DEBUG
@@ -670,7 +671,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                  get_const_property_map(vertex_point, pmesh));
 
-  typedef std::map<face_descriptor, Vector_3>                                 Face_vector_map;
+  typedef std::unordered_map<face_descriptor, Vector_3>                       Face_vector_map;
   typedef boost::associative_property_map<Face_vector_map>                    Default_map;
 
   typedef typename internal_np::Lookup_named_param_def<internal_np::face_normal_t,
