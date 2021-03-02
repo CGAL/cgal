@@ -158,13 +158,10 @@ inline OutputIterator s_intersection(const Pgn1& pgn1, const Pgn2& pgn2,
   typedef General_polygon_2<Polyline_traits>                    General_pgn;
   typedef General_polygon_with_holes_2<General_pgn>             General_pwh;
 
-  std::list<General_pwh> general_pwhs;
   typename Gps_polyline_traits<Pgn1>::Traits traits;
   const Polyline_traits& ptraits(traits);
   s_intersection(convert_polygon(pgn1, ptraits), convert_polygon(pgn2, ptraits),
-                 std::back_inserter(general_pwhs), traits);
-  for (const auto& general_pwh : general_pwhs)
-    *oi++ = convert_polygon_back<Kernel, Container>(general_pwh);
+                 convert_polygon_back(oi, pgn1), traits);
   return oi;
 }
 
@@ -282,7 +279,7 @@ inline bool s_join(const Pgn1& pgn1, const Pgn2& pgn2, Pwh& pwh) {
   auto res = s_join(convert_polygon(pgn1, ptraits),
                     convert_polygon(pgn2, ptraits),
                     general_pwh, traits);
-  pwh = convert_polygon_back<Kernel, Container, Polyline_traits>(general_pwh);
+  pwh = convert_polygon_back<Kernel, Container>(general_pwh);
   return res;
 }
 
@@ -363,13 +360,10 @@ inline OutputIterator _difference(const Pgn1& pgn1, const Pgn2& pgn2,
   typedef General_polygon_2<Polyline_traits>                    General_pgn;
   typedef General_polygon_with_holes_2<General_pgn>             General_pwh;
 
-  std::list<General_pwh> general_pwhs;
   typename Gps_polyline_traits<Pgn1>::Traits traits;
   const Polyline_traits& ptraits(traits);
   _difference(convert_polygon(pgn1, ptraits), convert_polygon(pgn2, ptraits),
-              std::back_inserter(general_pwhs), traits);
-  for (const auto& general_pwh : general_pwhs)
-    *oi++ = convert_polygon_back<Kernel, Container>(general_pwh);
+              convert_polygon_back(oi, pgn1), traits);
   return oi;
 }
 
@@ -398,14 +392,11 @@ inline OutputIterator s_symmetric_difference(const Pgn1& pgn1, const Pgn2& pgn2,
   typedef typename Gps_polyline_traits<Pgn1>::Polyline_traits   Polyline_traits;
   typedef General_polygon_2<Polyline_traits>                    General_pgn;
   typedef General_polygon_with_holes_2<General_pgn>             General_pwh;
-  std::list<General_pwh> general_pwhs;
   typename Gps_polyline_traits<Pgn1>::Traits traits;
   const Polyline_traits& ptraits(traits);
   s_symmetric_difference(convert_polygon(pgn1, ptraits),
                          convert_polygon(pgn2, ptraits),
-                         std::back_inserter(general_pwhs), traits);
-  for (const auto& general_pwh : general_pwhs)
-    *oi++ = convert_polygon_back<Kernel, Container>(general_pwh);
+                         convert_polygon_back(oi, pgn1), traits);
   return oi;
 }
 
@@ -536,7 +527,7 @@ void _complement(const Polygon_2<Kernel, Container>& pgn, Pwh& pwh) {
   typename Gps_polyline_traits<Pgn>::Traits traits;
   const Polyline_traits& ptraits(traits);
   _complement(convert_polygon(pgn, ptraits), general_pwh, traits);
-  pwh = convert_polygon_back<Kernel, Container, Polyline_traits>(general_pwh);
+  pwh = convert_polygon_back<Kernel, Container>(general_pwh);
 }
 
 // Compute the complemenet of a polygon with holes
@@ -549,13 +540,10 @@ OutputIterator _complement(const Polygon_with_holes_2<Kernel, Container>& pgn,
   typedef General_polygon_2<Polyline_traits>                    General_pgn;
   typedef General_polygon_with_holes_2<General_pgn>             General_pwh;
 
-  std::list<General_pwh> general_pwhs;
   typename Gps_polyline_traits<Pgn>::Traits traits;
   const Polyline_traits& ptraits(traits);
-  complement(convert_polygon(pgn, ptraits), std::back_inserter(general_pwhs),
+  complement(convert_polygon(pgn, ptraits), convert_polygon_back(oi, pgn),
              traits);
-  for (const auto& general_pwh : general_pwhs)
-    *oi++ = convert_polygon_back<Kernel, Container>(general_pwh);
   return oi;
 }
 
