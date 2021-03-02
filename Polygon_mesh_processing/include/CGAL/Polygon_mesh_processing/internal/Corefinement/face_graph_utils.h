@@ -146,6 +146,8 @@ void copy_edge_mark(G&,
                           No_mark<G>&)
 {} // nothing to do
 
+
+// For exact side_of_triangle_mesh
 template <class Node_id_map,
           class VertexPointMap,
           class NodeVector>
@@ -183,34 +185,165 @@ struct Node_vector_exact_vertex_point_map
   const NodeVector* node_vector;
 };
 
-template <class Node_id_map,
+// For exact side_of_triangle_mesh
+template <class TriangleMesh, class PPM, class TreeTraits>
+struct Split_primitives
+{
+  Split_primitives(TriangleMesh& tm, PPM ppm)
+    : tm(tm)
+    , ppm(ppm)
+  {}
+
+  template<typename PrimitiveIterator>
+  void operator()(PrimitiveIterator first,
+                  PrimitiveIterator beyond,
+                  const CGAL::Bbox_3& bbox) const
+    {
+      typedef typename std::iterator_traits<PrimitiveIterator>::value_type Prmtv;
+      PrimitiveIterator middle = first + (beyond - first)/2;
+      typedef typename std::iterator_traits<PrimitiveIterator>::value_type Prmtv;
+      switch(TreeTraits::longest_axis(bbox))
+      {
+      case TreeTraits::CGAL_AXIS_X: // sort along x
+        std::nth_element(first, middle, beyond, [this](const Prmtv& p1, const Prmtv& p2){ return get(ppm, p1.id()).x() < get(ppm,p2.id()).x(); });
+        break;
+      case TreeTraits::CGAL_AXIS_Y: // sort along y
+        std::nth_element(first, middle, beyond, [this](const Prmtv& p1, const Prmtv& p2){ return get(ppm, p1.id()).y() < get(ppm,p2.id()).y(); });
+        break;
+      case TreeTraits::CGAL_AXIS_Z: // sort along z
+        std::nth_element(first, middle, beyond, [this](const Prmtv& p1, const Prmtv& p2){ return get(ppm, p1.id()).z() < get(ppm,p2.id()).z(); });
+        break;
+      default:
+        CGAL_error();
+      }
+    }
+  TriangleMesh& tm;
+  PPM ppm;
+};
+
+// For exact side_of_triangle_mesh
+template <class BPM>
+struct Compute_bbox {
+  Compute_bbox(const BPM& bpm)
+    : bpm(bpm)
+  {}
+
+  template<typename ConstPrimitiveIterator>
+  CGAL::Bbox_3 operator()(ConstPrimitiveIterator first,
+                          ConstPrimitiveIterator beyond) const
+  {
+    CGAL::Bbox_3 bbox = get(bpm, first->id());
+    for(++first; first != beyond; ++first)
+    {
+      bbox += get(bpm, first->id());
+    }
+    return bbox;
+  }
+  BPM bpm;
+};
+
+// For exact side_of_triangle_mesh
+template <class TriangleMesh,
+          class Node_id_map,
           class VertexPointMap,
           class NodeVector,
           class Input_Kernel>
-struct Side_of_vpm_helper
+struct Side_of_helper
 {
-  typedef Node_vector_exact_vertex_point_map<Node_id_map, VertexPointMap, NodeVector> type;
+  typedef Node_vector_exact_vertex_point_map<Node_id_map, VertexPointMap, NodeVector> VPM;
+
+  typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VPM> Primitive;
+  typedef CGAL::AABB_traits<typename NodeVector::Exact_kernel, Primitive> Traits;
+  typedef CGAL::AABB_tree<Traits> Tree_type;
+
   static
-  type get_vpm(const Node_id_map& node_ids,
+  VPM get_vpm(const Node_id_map& node_ids,
                const VertexPointMap& vpm,
                const NodeVector& node_vector)
   {
-    return type(node_ids, vpm, node_vector);
+    return VPM(node_ids, vpm, node_vector);
+  }
+
+  template <class FaceIdMap>
+  static
+  void build_tree(TriangleMesh& tm,
+                  Tree_type& tree,
+                  const Node_id_map& node_ids,
+                  FaceIdMap fid,
+                  const VertexPointMap& vpm,
+                  const NodeVector& node_vector)
+  {
+    typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+    typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+    typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+
+    // add primitives
+    tree.insert(faces(tm).begin(), faces(tm).end(), tm, get_vpm(node_ids, vpm, node_vector));
+
+    // pre-build bboxes (using approximation)
+    std::vector<Bbox_3> face_bboxes(num_faces(tm));
+
+    auto get_v_box = [&node_ids, &node_vector, &vpm](vertex_descriptor v)
+    {
+      typename Node_id_map::const_iterator it = node_ids.find(v);
+      if (it == node_ids.end())
+        return get(vpm, v).bbox();
+      return approx(node_vector.exact_node(it->second)).bbox();
+    };
+
+    for (face_descriptor f : faces(tm))
+    {
+      halfedge_descriptor h = halfedge(f, tm);
+      face_bboxes[get(fid, f)] = get_v_box( source(h, tm) ) +
+                                 get_v_box( target(h, tm) ) +
+                                 get_v_box( target(next(h, tm), tm) );
+    }
+
+    typedef CGAL::Pointer_property_map<CGAL::Bbox_3>::type Id_to_box;
+    Id_to_box id_to_box = CGAL::make_property_map(face_bboxes);
+    typedef Property_map_binder<FaceIdMap, Id_to_box> BPM;
+    BPM bpm(fid, id_to_box);
+    Compute_bbox<BPM> compute_bbox(bpm);
+
+    typedef One_point_from_face_descriptor_map<TriangleMesh, VertexPointMap> PPM;
+    PPM ppm(&tm, vpm);
+
+    Split_primitives<TriangleMesh, PPM, Traits> split_primitives(tm, ppm);
+    tree.custom_build(compute_bbox, split_primitives);
   }
 };
 
-template <class Node_id_map,
+template <class TriangleMesh,
+          class Node_id_map,
           class VertexPointMap,
           class NodeVector>
-struct Side_of_vpm_helper<Node_id_map, VertexPointMap, NodeVector, typename NodeVector::Exact_kernel>
+struct Side_of_helper<TriangleMesh, Node_id_map, VertexPointMap, NodeVector, typename NodeVector::Exact_kernel>
 {
-  typedef VertexPointMap type;
+  typedef VertexPointMap VPM;
   static
-  type get_vpm(const Node_id_map&,
-               const VertexPointMap& vpm,
-               const NodeVector&)
+  VPM get_vpm(const Node_id_map&,
+              const VertexPointMap& vpm,
+              const NodeVector&)
   {
     return vpm;
+  }
+
+  typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VPM> Primitive;
+  typedef CGAL::AABB_traits<typename NodeVector::Exact_kernel, Primitive> Traits;
+  typedef CGAL::AABB_tree<Traits> Tree_type;
+
+
+  template <class FaceIdMap>
+  static
+  void build_tree(TriangleMesh& tm,
+                  Tree_type& tree,
+                  const Node_id_map& /* node_ids */,
+                  FaceIdMap /* fid */,
+                  const VertexPointMap& vpm,
+                  const NodeVector& /* node_vector */)
+  {
+    tree.insert(faces(tm).begin(), faces(tm).end(), tm, vpm);
+    tree.build();
   }
 };
 

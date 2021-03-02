@@ -1110,13 +1110,17 @@ public:
                                 ? ON_UNBOUNDED_SIDE : ON_BOUNDED_SIDE;
 
       typedef typename Nodes_vector::Exact_kernel Exact_kernel;
-      typedef Side_of_vpm_helper<Node_id_map,
-                                 VertexPointMap2,
-                                 Nodes_vector, Kernel> VPM_helper;
-      typedef typename VPM_helper::type SOTM_vpm2;
+      typedef Side_of_helper<TriangleMesh,
+                             Node_id_map,
+                             VertexPointMap2,
+                             Nodes_vector, Kernel> VPM_helper;
+      typedef typename VPM_helper::VPM SOTM_vpm2;
+      typedef typename VPM_helper::Tree_type Tree_type;
 
       SOTM_vpm2 sotm_vpm2 = VPM_helper::get_vpm(vertex_to_node_id2, vpm2, nodes);
-      Side_of_triangle_mesh<TriangleMesh, Exact_kernel, SOTM_vpm2> inside_tm2(tm2, sotm_vpm2);
+      Tree_type tree;
+      VPM_helper::build_tree(tm2, tree, vertex_to_node_id2, fids2, vpm2, nodes);
+      Side_of_triangle_mesh<TriangleMesh, Exact_kernel, SOTM_vpm2, Tree_type> inside_tm2(tree);
 
       for(face_descriptor f : faces(tm1))
       {
@@ -1182,13 +1186,16 @@ public:
                                 ? ON_UNBOUNDED_SIDE : ON_BOUNDED_SIDE;
 
       typedef typename Nodes_vector::Exact_kernel Exact_kernel;
-      typedef Side_of_vpm_helper<Node_id_map,
-                                 VertexPointMap1,
-                                 Nodes_vector, Kernel> VPM_helper;
-      typedef typename VPM_helper::type SOTM_vpm1;
+      typedef Side_of_helper<TriangleMesh,
+                             Node_id_map,
+                             VertexPointMap1,
+                             Nodes_vector, Kernel> VPM_helper;
+      typedef typename VPM_helper::VPM SOTM_vpm1;
+      typedef typename VPM_helper::Tree_type Tree_type;
 
-      SOTM_vpm1 sotm_vpm1 = VPM_helper::get_vpm(vertex_to_node_id1, vpm1, nodes);
-      Side_of_triangle_mesh<TriangleMesh, Exact_kernel, SOTM_vpm1> inside_tm1(tm1, sotm_vpm1);
+      Tree_type tree;
+      VPM_helper::build_tree(tm1, tree, vertex_to_node_id1, fids1, vpm1, nodes);
+      Side_of_triangle_mesh<TriangleMesh, Exact_kernel, SOTM_vpm1, Tree_type> inside_tm1(tree);
 
       for(face_descriptor f : faces(tm2))
       {

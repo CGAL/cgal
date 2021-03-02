@@ -428,6 +428,11 @@ public:
   Closest_point closest_point_object() const {return Closest_point(*this);}
   Compare_distance compare_distance_object() const {return Compare_distance();}
 
+  typedef enum { CGAL_AXIS_X = 0,
+                 CGAL_AXIS_Y = 1,
+                 CGAL_AXIS_Z = 2} Axis;
+
+  static Axis longest_axis(const Bounding_box& bbox);
 
 private:
   /**
@@ -445,13 +450,6 @@ private:
   {
     return internal::Primitive_helper<AT>::get_datum(pr,*this).bbox();
   }
-
-
-  typedef enum { CGAL_AXIS_X = 0,
-                 CGAL_AXIS_Y = 1,
-                 CGAL_AXIS_Z = 2} Axis;
-
-  static Axis longest_axis(const Bounding_box& bbox);
 
   /// Comparison functions
   static bool less_x(const Primitive& pr1, const Primitive& pr2,const AABB_traits<GeomTraits,AABBPrimitive, BboxMap>& traits)
