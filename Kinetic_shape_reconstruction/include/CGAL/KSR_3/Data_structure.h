@@ -677,7 +677,7 @@ public:
       points.push_back(support_plane(support_plane_idx).to_2d(converted));
     }
 
-    remove_collinear_points(points);
+    preprocess(points);
     const auto centroid = sort_points_by_direction(points);
     std::vector<std::size_t> input_indices;
     input_indices.push_back(input_index);
@@ -691,7 +691,7 @@ public:
     const std::vector<std::size_t>& input_indices,
     std::vector<Point_2>& points) {
 
-    remove_collinear_points(points);
+    preprocess(points);
     const auto centroid = sort_points_by_direction(points);
     support_plane(support_plane_idx).
       add_input_polygon(points, centroid, input_indices);
@@ -700,8 +700,21 @@ public:
     }
   }
 
-  void remove_collinear_points(
-    std::vector<Point_2>& points, const FT min_angle = FT(10)) {
+  void preprocess(
+    std::vector<Point_2>& points,
+    const FT min_dist = KSR::tolerance<FT>(),
+    const FT min_angle = FT(10)) const {
+
+    remove_equal_points(points, min_dist);
+    remove_collinear_points(points, min_angle);
+  }
+
+  void remove_equal_points(std::vector<Point_2>& points, const FT min_dist) const {
+
+    // CGAL_assertion_msg(false, "TODO: REMOVE EQUAL POINTS!");
+  }
+
+  void remove_collinear_points(std::vector<Point_2>& points, const FT min_angle) const {
 
     // std::cout << std::endl;
     std::vector<Point_2> polygon;

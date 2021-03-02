@@ -62,7 +62,7 @@ private:
 
   using EK = CGAL::Exact_predicates_exact_constructions_kernel;
 
-  using Initializer = KSR_3::Initializer<Kernel>;
+  using Initializer = KSR_3::Initializer<EK>;
   using Propagation = KSR_3::Propagation<Kernel>;
   using Finalizer   = KSR_3::Finalizer<Kernel>;
 
@@ -159,11 +159,11 @@ public:
     timer.stop();
     const double time_to_initialize = timer.time();
 
-    if (m_verbose) {
-      std::cout << std::endl << "* initialization (sec.): " << time_to_initialize << std::endl;
-      std::cout << "INITIALIZATION SUCCESS!" << std::endl << std::endl;
-    }
-    exit(EXIT_SUCCESS);
+    // if (m_verbose) {
+    //   std::cout << std::endl << "* initialization (sec.): " << time_to_initialize << std::endl;
+    //   std::cout << "INITIALIZATION SUCCESS!" << std::endl << std::endl;
+    // }
+    // exit(EXIT_SUCCESS);
 
     // Output planes.
     // for (std::size_t i = 6; i < m_data.number_of_support_planes(); ++i) {
