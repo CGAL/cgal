@@ -168,11 +168,6 @@ convert_polygon_iterator(InputIterator it, const Traits& traits)
 // Converts General_polygon_with_holes_2<Polyline_traits> to Polygon_with_holes_2
 template <typename Kernel, typename Container, typename OutputIterator>
 struct Polygon_converter {
-  using Pgn = Polygon_2<Kernel, Container>;
-  using Polyline_traits = typename Gps_polyline_traits<Pgn>::Polyline_traits;
-  using Traits = typename Gps_polyline_traits<Pgn>::Traits;
-  using General_polygon_with_holes = typename Traits::Polygon_with_holes_2;
-
   //! The output iterator.
   OutputIterator& m_output;
 
@@ -180,7 +175,9 @@ struct Polygon_converter {
   Polygon_converter(OutputIterator& output) : m_output(output) {}
 
   // Convert and export to output iterator.
-  void operator()(const  General_polygon_with_holes& gpwh) const
+  template <typename ArrTraits>
+  void operator()(const General_polygon_with_holes_2
+                  <General_polygon_2<ArrTraits> >& gpwh) const
   { *m_output++ = convert_polygon_back<Kernel, Container>(gpwh); }
 };
 
@@ -223,34 +220,6 @@ convert_polygon_back(OutputIterator& output,
 {
   return Polygon_converter_output_iterator
     <Kernel, Container, OutputIterator>(output);
-}
-
-// Utility for checking if polygon remains the same after being
-// converted and back
-template <typename Kernel, typename Container>
-Polygon_2<Kernel, Container>
-test_conversion(const Polygon_2<Kernel, Container>& polygon)
-{
-  typedef Polygon_2<Kernel, Container>                  Pgn;
-  typedef Polygon_with_holes_2<Kernel, Container>       Pgn_with_holes;
-  typedef typename Gps_default_traits<Pgn>::Arr_traits  Segment_traits;
-  typedef Arr_polyline_traits_2<Segment_traits>         Polyline_traits;
-  typedef Gps_traits_2<Polyline_traits>                 Traits;
-
-  using General_polygon = typename Traits::Polygon_2;
-  using General_polygon_with_holes = typename Traits::Polygon_with_holes_2;
-  Polyline_traits traits;
-
-  General_polygon polygon2 = convert_polygon(polygon, traits);
-  return convert_polygon_back<Kernel, Container>(polygon2);
-  // General_polygon_with_holes polygon3(polygon2);
-
-  // Pgn_with_holes out;
-  // Oneset_iterator<Pgn_with_holes> iterator(out);
-  // auto converter = convert_polygon_back(iterator, polygon3);
-  // *converter++ = polygon3;
-
-  // return out.outer_boundary();
 }
 
 }
