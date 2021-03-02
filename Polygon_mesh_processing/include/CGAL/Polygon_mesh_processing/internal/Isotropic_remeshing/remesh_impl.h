@@ -1393,6 +1393,7 @@ private:
 
     bool collapse_would_invert_face(const halfedge_descriptor& h) const
     {
+      vertex_descriptor tv = target(h, mesh_);
       typename boost::property_traits<VertexPointMap>::reference
         s = get(vpmap_, source(h, mesh_)); //s for source
       typename boost::property_traits<VertexPointMap>::reference
@@ -1409,15 +1410,20 @@ private:
         if (face(hd, mesh_) == boost::graph_traits<PM>::null_face())
           continue;
 
+        vertex_descriptor tnhd = target(next(hd, mesh_), mesh_);
+        vertex_descriptor tnnhd = target(next(next(hd, mesh_), mesh_), mesh_);
         typename boost::property_traits<VertexPointMap>::reference
-          p = get(vpmap_, target(next(hd, mesh_), mesh_));
+          p = get(vpmap_, tnhd);
         typename boost::property_traits<VertexPointMap>::reference
-          q = get(vpmap_, target(next(next(hd, mesh_), mesh_), mesh_));
+          q = get(vpmap_, tnnhd);
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
         CGAL_assertion((Triangle_3(t, p, q).is_degenerate())
                      == GeomTraits().collinear_3_object()(t, p, q));
 #endif
+
+        if((tv == tnnhd) || (tv == tnhd))
+          continue;
 
         if ( GeomTraits().collinear_3_object()(s, p, q)
           || GeomTraits().collinear_3_object()(t, p, q))
