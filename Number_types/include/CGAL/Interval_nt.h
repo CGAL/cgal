@@ -1142,16 +1142,20 @@ namespace INTERN_INTERVAL_NT {
       // it helps significantly, it might even hurt by introducing a
       // dependency.
     }
-#else
+#else // no __AVX512F__
     // TODO: Alternative for computing CGAL_IA_SQRT_DOWN(d.inf()) exactly
     // without changing the rounding mode:
     // - compute x = CGAL_IA_SQRT(d.inf())
     // - compute y = CGAL_IA_SQUARE(x)
     // - if y==d.inf() use x, else use -CGAL_IA_SUB(CGAL_IA_MIN_DOUBLE,x)
-    FPU_set_cw(CGAL_FE_DOWNWARD);
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
     double i = (d.inf() > 0.0) ? nextafter(std::sqrt(d.inf()), 0.) : 0.0;
+#else // no CGAL_ALWAYS_ROUND_TO_NEAREST
+    FPU_set_cw(CGAL_FE_DOWNWARD);
+    double i = (d.inf() > 0.0) ? CGAL_IA_SQRT(d.inf()) : 0.0;
     FPU_set_cw(CGAL_FE_UPWARD);
-#endif
+#endif // no CGAL_ALWAYS_ROUND_TO_NEAREST
+#endif // no __AVX512F__
     return Interval_nt<Protected>(i, CGAL_IA_SQRT(d.sup()));
   }
 
