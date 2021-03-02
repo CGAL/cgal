@@ -739,7 +739,7 @@ add_face(const VertexRange& vr, Graph& g)
   typedef std::pair<halfedge_descriptor, halfedge_descriptor> NextCacheEntry;
   typedef boost::container::small_vector<NextCacheEntry,9>    NextCache;
   NextCache next_cache;
-  //next_cache.reserve(3 * n);  Unfortunately small_vector has no reserve
+  next_cache.reserve(3 * n);
 
   // re-link patches if necessary
   for (unsigned int i = 0, ii = 1; i<n; ++i, ++ii, ii %= n)
