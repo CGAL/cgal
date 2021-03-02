@@ -1563,7 +1563,7 @@ The function template is defined in the header file
 template <typename VerticalRayShooting>
 void shoot_vertical_ray(const RayShoot& vrs,
                         const typename
-			VerticalRayShooting::Arrangement_2::Point_2& q)
+                        VerticalRayShooting::Arrangement_2::Point_2& q)
 {
   typedef VerticalRayShooting                           Vertical_ray_shooting;
 
@@ -3082,7 +3082,7 @@ arr_ssectr_spherical.
 template <typename GeometryTraits>
 bool is_in_x_range(const typename GeometryTraits::X_monotone_curve_2& c,
                    const typename GeometryTraits::Point_2& point,
-		   const GeometryTraits& traits) const {
+                   const GeometryTraits& traits) const {
   CGAL_assertion(! traits.is_on_y_identification_2_object()(p));
 
   if (traits.is_on_y_identification_2_object()(c)) return false;
