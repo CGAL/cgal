@@ -1,3 +1,4 @@
+
 #ifdef CGAL_USE_SSH
 #  include "CGAL/Use_ssh.h"
 #endif
@@ -2970,6 +2971,7 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
   std::vector<int> rendering_modes;
   QStringList not_saved;
   Polyhedron_demo_io_plugin_interface* camera_plugin = nullptr;
+  QMap<QString, QVector<QString> > group_children_map;
   for(int i = 0; i < scene->numberOfEntries(); ++i)
   {
     Scene_item* item = scene->item(i);
@@ -2991,7 +2993,8 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
         //check if it is in a group
         if(item->parentGroup())
         {
-
+          group_children_map[item->parentGroup()->name()].append(item->name());
+              ;
         }
         QList<Scene_item*>to_save;
         to_save.append(item);
@@ -3055,6 +3058,28 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
   //delete temp file
   QFile tmp_file(fullpath);
   tmp_file.remove();
+  //group relations
+  if(!group_children_map.empty())
+  {
+    os << "var groups = [";
+    for(int i = 0; i< group_children_map.size() -1; ++i)
+    {
+      QString group_name = group_children_map.keys()[i];
+      os << "[\'" << group_name.toStdString().c_str()<<"\', [";
+      for(int j = 0; j<group_children_map[group_name].size()-1; ++j)
+      {
+        os << group_children_map[group_name][j].toStdString().c_str()<<", ";
+      }
+      os << group_children_map[group_name].back().toStdString().c_str()<<"]],";
+    }
+    QString group_name = group_children_map.keys().back();
+    os << "[\'" << group_name.toStdString().c_str()<<"\', [";
+    for(int j = 0; j<group_children_map[group_name].size()-1; ++j)
+    {
+      os << "\'"<<group_children_map[group_name][j].toStdString().c_str()<<"\', ";
+    }
+    os << "\'"<<group_children_map[group_name].back().toStdString().c_str()<<"\']]];\n";
+  }
   //plugin
   os << "var loaders = [";
   for(std::size_t i = 0; i< names.size() -1; ++i)
@@ -3078,6 +3103,15 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
     os << rendering_modes[i] << ", ";
   }
   os << rendering_modes.back()<<"];\n";
+  os << "function indexFromName(name) {\n";
+  os << "  for(var i = 0; i < items.length; i++){\n";
+  os << "    var itemName=items[i][1];\n";
+  os << "    if( itemName === name)\n";
+  os << "    {\n";
+  os << "        return i;\n";
+  os << "    }\n";
+  os << "  };\n";
+  os << "}\n";
   os << "items.forEach(function(item, index, array){\n";
   os<<"          var path=items[index][1];\n";
   os<<"          path+='.';\n";
@@ -3090,6 +3124,17 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
   os << "        var b = colors[index][2];\n";
   os << "        it.setRgbColor(r,g,b);\n";
   os << "        it.setRenderingMode(rendering_modes[index]);\n";
+  os << "});\n";
+  os << "groups.forEach(function(group, index, array){\n";
+  os << "    main_window.selectSceneItem(-1);\n";
+  os << "    var group_name = group[0];\n";
+  os << "    var item_list = group[1];\n";
+  os << "    main_window.makeNewGroup();\n";
+  os << "    var it = scene.item(scene.numberOfEntries-1);\n";
+  os << "    it.setName(group_name);\n";
+  os << "    item_list.forEach(function(child, index, array){\n";
+  os << "        scene.changeGroup(scene.item(indexFromName(child)), it);\n";
+  os << "    });\n";
   os << "});\n";
   os << "viewer.moveCameraToCoordinates(camera, 0.05);\n";
   if(has_camera_positions)
@@ -3642,7 +3687,6 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
 {
   bool do_download = false;
   QString filename;
-
 #ifdef CGAL_USE_SSH
   QString user = settings.value("ssh_user", QString()).toString();
 
