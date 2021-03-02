@@ -43,7 +43,7 @@ include( ${CGAL_USE_FILE} )
 
 create_single_source_cgal_program( "cyclic.cpp" )
 create_single_source_cgal_program( "Descartes.cpp" )
-if(CGAL_Core_FOUND)
+if(NOT CGAL_DISABLE_GMP)
   create_single_source_cgal_program( "Algebraic_curve_kernel_2.cpp" )
   create_single_source_cgal_program( "algebraic_curve_kernel_2_tools.cpp" )
   create_single_source_cgal_program( "Algebraic_kernel_d_1_LEDA.cpp" )

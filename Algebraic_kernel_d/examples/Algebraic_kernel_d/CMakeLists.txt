@@ -9,7 +9,7 @@ if ( CGAL_FOUND )
   find_package(MPFI QUIET)
 endif()
 
-if( CGAL_FOUND AND CGAL_Core_FOUND AND MPFI_FOUND)
+if( CGAL_FOUND AND NOT CGAL_DISABLE_GMP AND MPFI_FOUND)
 
   include( ${CGAL_USE_FILE} )
   include( ${MPFI_USE_FILE} )

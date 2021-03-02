@@ -7,7 +7,7 @@ endif()
 find_package(CGAL COMPONENTS Core)
 include(${CGAL_USE_FILE})
 
-if(CGAL_Core_FOUND)
+if(NOT CGAL_DISABLE_GMP)
   qt5_wrap_ui( segmentationUI_FILES Mesh_segmentation_widget.ui)
   polyhedron_demo_plugin(mesh_segmentation_plugin Mesh_segmentation_plugin ${segmentationUI_FILES})
   target_link_libraries(mesh_segmentation_plugin PUBLIC scene_surface_mesh_item CGAL::CGAL_Core)
