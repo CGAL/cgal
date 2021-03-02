@@ -722,6 +722,7 @@ private:
     Interval_nt
     operator/ (const Interval_nt &a, const Interval_nt & b)
     {
+      assert(FPU_get_cw() == CGAL_FE_TONEAREST);
 #if 0
       // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=88626
       if(CGAL_CST_TRUE(a.is_point()))
@@ -1148,7 +1149,7 @@ namespace INTERN_INTERVAL_NT {
     // - compute y = CGAL_IA_SQUARE(x)
     // - if y==d.inf() use x, else use -CGAL_IA_SUB(CGAL_IA_MIN_DOUBLE,x)
     FPU_set_cw(CGAL_FE_DOWNWARD);
-    double i = (d.inf() > 0.0) ? CGAL_IA_SQRT(d.inf()) : 0.0;
+    double i = (d.inf() > 0.0) ? nextafter(std::sqrt(d.inf()), 0.) : 0.0;
     FPU_set_cw(CGAL_FE_UPWARD);
 #endif
     return Interval_nt<Protected>(i, CGAL_IA_SQRT(d.sup()));

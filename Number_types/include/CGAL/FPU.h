@@ -1,3 +1,8 @@
+// TODO: Remove
+#ifndef CGAL_ALWAYS_ROUND_TO_NEAREST
+#define CGAL_ALWAYS_ROUND_TO_NEAREST
+#endif
+
 // Copyright (c) 1998-2019
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
@@ -117,7 +122,7 @@ extern "C" {
 #if defined(CGAL_HAS_SSE2) && (defined(__x86_64__) || defined(_M_X64))
 #  define CGAL_USE_SSE2 1
 #endif
-
+#undef CGAL_USE_SSE2
 #ifdef CGAL_CFG_DENORMALS_COMPILE_BUG
 double& get_static_minimin(); // Defined in Interval_arithmetic_impl.h
 #endif
@@ -347,16 +352,17 @@ inline double IA_bug_sqrt(double d)
 // With GCC, we can do slightly better : test with __builtin_constant_p()
 // that both arguments are constant before stopping one of them.
 // Use inline functions instead ?
-#define CGAL_IA_ADD(a,b) CGAL_IA_FORCE_TO_DOUBLE((a)+CGAL_IA_STOP_CPROP(b))
-#define CGAL_IA_SUB(a,b) CGAL_IA_FORCE_TO_DOUBLE(CGAL_IA_STOP_CPROP(a)-(b))
-#define CGAL_IA_MUL(a,b) CGAL_IA_FORCE_TO_DOUBLE(CGAL_IA_STOP_CPROP(a)*CGAL_IA_STOP_CPROP(b))
-#define CGAL_IA_DIV(a,b) CGAL_IA_FORCE_TO_DOUBLE(CGAL_IA_STOP_CPROP(a)/CGAL_IA_STOP_CPROP(b))
+inline double CGAL_IA_UP(double d){return nextafter(d,std::numeric_limits<double>::infinity());}
+#define CGAL_IA_ADD(a,b) CGAL_IA_UP((a)+CGAL_IA_STOP_CPROP(b))
+#define CGAL_IA_SUB(a,b) CGAL_IA_UP(CGAL_IA_STOP_CPROP(a)-(b))
+#define CGAL_IA_MUL(a,b) CGAL_IA_UP(CGAL_IA_STOP_CPROP(a)*CGAL_IA_STOP_CPROP(b))
+#define CGAL_IA_DIV(a,b) CGAL_IA_UP(CGAL_IA_STOP_CPROP(a)/CGAL_IA_STOP_CPROP(b))
 inline double CGAL_IA_SQUARE(double a){
   double b = CGAL_IA_STOP_CPROP(a); // only once
-  return CGAL_IA_FORCE_TO_DOUBLE(b*b);
+  return CGAL_IA_UP(b*b);
 }
 #define CGAL_IA_SQRT(a) \
-        CGAL_IA_FORCE_TO_DOUBLE(CGAL_BUG_SQRT(CGAL_IA_STOP_CPROP(a)))
+        CGAL_IA_UP(CGAL_BUG_SQRT(CGAL_IA_STOP_CPROP(a)))
 
 
 #if defined CGAL_SAFE_SSE2
@@ -478,6 +484,9 @@ FPU_get_cw (void)
 {
     FPU_CW_t cw;
     CGAL_IA_GETFPCW(cw);
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+    assert(cw == CGAL_FE_TONEAREST);
+#endif
     return cw;
 }
 
@@ -487,15 +496,29 @@ inline
 void
 FPU_set_cw (FPU_CW_t cw)
 {
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  assert(cw == CGAL_FE_TONEAREST);
+  assert(FPU_get_cw() == CGAL_FE_TONEAREST);
+#endif
   CGAL_IA_SETFPCW(cw);
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  assert(FPU_get_cw() == CGAL_FE_TONEAREST);
+#endif
 }
 
 inline
 FPU_CW_t
 FPU_get_and_set_cw (FPU_CW_t cw)
 {
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  assert(cw == CGAL_FE_TONEAREST);
+  assert(FPU_get_cw() == CGAL_FE_TONEAREST);
+#endif
     FPU_CW_t old = FPU_get_cw();
     FPU_set_cw(cw);
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  assert(FPU_get_cw() == CGAL_FE_TONEAREST);
+#endif
     return old;
 }
 
@@ -508,7 +531,13 @@ template <bool Protected = true> struct Protect_FPU_rounding;
 template <>
 struct Protect_FPU_rounding<true>
 {
-  Protect_FPU_rounding(FPU_CW_t r = CGAL_FE_UPWARD)
+  Protect_FPU_rounding(
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+    FPU_CW_t r = CGAL_FE_TONEAREST
+#else
+    FPU_CW_t r = CGAL_FE_UPWARD
+#endif
+  )
     : backup( FPU_get_and_set_cw(r) ) {}
 
   ~Protect_FPU_rounding()
@@ -524,7 +553,11 @@ template <>
 struct Protect_FPU_rounding<false>
 {
   Protect_FPU_rounding() {}
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  Protect_FPU_rounding(FPU_CW_t /*= CGAL_FE_TONEAREST*/) {}
+#else
   Protect_FPU_rounding(FPU_CW_t /*= CGAL_FE_UPWARD*/) {}
+#endif
 };
 
 
@@ -538,13 +571,21 @@ struct Checked_protect_FPU_rounding
 {
   Checked_protect_FPU_rounding()
   {
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+#else
     CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_UPWARD);
+#endif
   }
 
   Checked_protect_FPU_rounding(FPU_CW_t r)
     : Protect_FPU_rounding<Protected>(r)
   {
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+#else
     CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_UPWARD);
+#endif
   }
 };
 

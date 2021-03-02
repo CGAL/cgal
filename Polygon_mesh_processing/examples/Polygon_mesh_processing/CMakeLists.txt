@@ -76,6 +76,7 @@ create_single_source_cgal_program("corefinement_SM.cpp")
 create_single_source_cgal_program("corefinement_consecutive_bool_op.cpp")
 create_single_source_cgal_program("corefinement_difference_remeshed.cpp")
 create_single_source_cgal_program("corefinement_mesh_union.cpp")
+create_single_source_cgal_program("cgal.cc")
 create_single_source_cgal_program(
   "corefinement_mesh_union_and_intersection.cpp")
 create_single_source_cgal_program("corefinement_mesh_union_with_attributes.cpp")
