@@ -705,12 +705,77 @@ public:
     const FT min_dist = KSR::tolerance<FT>(),
     const FT min_angle = FT(10)) const {
 
+    // std::vector<Point_2> points;
+    // points.push_back(Point_2(0.0, 0.0));
+    // points.push_back(Point_2(0.1, 0.0));
+    // points.push_back(Point_2(0.2, 0.0));
+    // points.push_back(Point_2(0.3, 0.0));
+    // points.push_back(Point_2(0.6, 0.0));
+    // points.push_back(Point_2(0.7, 0.0));
+    // points.push_back(Point_2(0.9, 0.0));
+    // points.push_back(Point_2(1.0, 0.0));
+    // points.push_back(Point_2(1.0, 0.1));
+    // points.push_back(Point_2(1.0, 0.2));
+    // points.push_back(Point_2(1.0, 0.5));
+    // points.push_back(Point_2(1.0, 1.0));
+    // points.push_back(Point_2(0.9, 1.0));
+    // points.push_back(Point_2(0.5, 1.0));
+    // points.push_back(Point_2(0.2, 1.0));
+    // points.push_back(Point_2(0.0, 1.0));
+    // points.push_back(Point_2(0.0, 0.9));
+    // points.push_back(Point_2(0.0, 0.8));
+    // points.push_back(Point_2(0.0, 0.5));
+    // points.push_back(Point_2(0.0, 0.2));
+    // points.push_back(Point_2(0.0, 0.1));
+    // const FT min_dist = FT(15) / FT(100);
+
+    // std::cout << "before: " << points.size() << std::endl;
+    // for (const auto& point : points) {
+    //   std::cout << point << " 0 " << std::endl;
+    // }
+
     remove_equal_points(points, min_dist);
+
+    // std::cout << "after 1: " << points.size() << std::endl;
+    // for (const auto& point : points) {
+    //   std::cout << point << " 0 " << std::endl;
+    // }
+
     remove_collinear_points(points, min_angle);
+
+    // std::cout << "after 2: " << points.size() << std::endl;
+    // for (const auto& point : points) {
+    //   std::cout << point << " 0 " << std::endl;
+    // }
+    // exit(EXIT_SUCCESS);
   }
 
   void remove_equal_points(std::vector<Point_2>& points, const FT min_dist) const {
 
+    // std::cout << std::endl;
+    std::vector<Point_2> polygon;
+    const std::size_t n = points.size();
+    for (std::size_t i = 0; i < n; ++i) {
+      const auto& first = points[i];
+      polygon.push_back(first);
+
+      while (true) {
+        const auto& p = points[i];
+        const std::size_t ip = (i + 1) % n;
+        const auto& q = points[ip];
+        const FT distance = KSR::distance(p, q);
+        const bool is_small = (distance < min_dist);
+        if (ip == 0 && is_small) break;
+        if (is_small) {
+          CGAL_assertion(ip != 0);
+          i = ip; continue;
+        }
+        CGAL_assertion(!is_small);
+        break;
+      };
+    }
+    CGAL_assertion(polygon.size() >= 3);
+    points = polygon;
     // CGAL_assertion_msg(false, "TODO: REMOVE EQUAL POINTS!");
   }
 
