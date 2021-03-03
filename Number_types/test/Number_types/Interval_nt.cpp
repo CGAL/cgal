@@ -36,41 +36,71 @@ bool spiral_test()
 
 // Tests for constant propagation through intervals.
 // This must not be performed otherwise rounding modes are ignored.
-// Non-inlined operators usually stop cprop (*, /, sqrt).
+// On the other hand, if we always round to nearest, then constant propagation
+// is desirable.
+// Note: Non-inlined operators usually stop cprop (*, /, sqrt).
 template < typename IA_nt >
 bool cprop_test()
 {
   // Testing cprop through +.
   IA_nt add = IA_nt(0.00001)+10.1;
   bool good_add = !add.is_point();
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  if (good_add)
+    std::cerr << "ERROR : No constant propagation through operator+." <<std::endl;
+#else
   if (!good_add)
     std::cerr << "ERROR : Constant propagation through operator+." <<std::endl;
+#endif
 
   // Testing cprop through -.
   IA_nt sub = IA_nt(0.00001)-10.1;
   bool good_sub = !sub.is_point();
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  if (good_sub)
+    std::cerr << "ERROR : No constant propagation through operator-." <<std::endl;
+#else
   if (!good_sub)
     std::cerr << "ERROR : Constant propagation through operator-." <<std::endl;
+#endif
 
   // Testing cprop through *.
   IA_nt mul = IA_nt(0.00001)*10.1;
   bool good_mul = !mul.is_point();
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  if (good_mul)
+    std::cerr << "ERROR : No constant propagation through operator*." <<std::endl;
+#else
   if (!good_mul)
     std::cerr << "ERROR : Constant propagation through operator*." <<std::endl;
+#endif
 
   // Testing cprop through /.
   IA_nt div = IA_nt(0.00001)/10.1;
   bool good_div = !div.is_point();
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  if (good_div)
+    std::cerr << "ERROR : No constant propagation through operator/." <<std::endl;
+#else
   if (!good_div)
     std::cerr << "ERROR : Constant propagation through operator/." <<std::endl;
+#endif
 
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  // We have no expectation of propagation through sqrt.
+#else
   // Testing cprop through sqrt.
   IA_nt sqrt2 = CGAL_NTS sqrt(IA_nt(2));
   bool good_sqrt = !sqrt2.is_point();
   if (!good_sqrt)
     std::cerr << "ERROR : Constant propagation through sqrt()." <<std::endl;
+#endif
 
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  return !(good_add || good_sub || good_mul || good_div);
+#else
   return good_add && good_sub && good_mul && good_div && good_sqrt;
+#endif
 }
 
 // Here we iteratively compute sqrt(interval), where interval is [0.5;1.5]
@@ -92,12 +122,32 @@ bool square_root_test()
     a = b;
   };
   a -= 1.0;
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  DEBUG (
+  std::cout << "i          = " << i << std::endl;
+  std::cout << "sup        : " << a.sup() << std::endl;
+  std::cout << "inf        : " << a.inf() << std::endl;
+  std::cout << "width ok ? : " << (-a.inf() == 1/(double(1<<30)*(1<<22))) << std::endl;
+  ) // DEBUG
+  if (i != 54) {
+    return false;
+  }
+  // When we round to nearest it doesn't quite converge.
+  if (a.sup() > 2/(double(1<<30)*(1<<22))) {
+    return false;
+  }
+  if (-2/(double(1<<30)*(1<<22)) > a.inf()) {
+    return false;
+  }
+  return true;
+#else
   DEBUG (
   std::cout << "i          = " << i << std::endl;
   std::cout << "sup = -inf : " << (a.sup() == -a.inf()) << std::endl;
   std::cout << "width ok ? : " << (-a.inf() == 1/(double(1<<30)*(1<<22))) << std::endl;
   ) // DEBUG
   return i==54 && a.sup() == - a.inf() && a.sup() == 1/(double(1<<30)*(1<<22));
+#endif
 }
 
 
@@ -139,6 +189,15 @@ bool overflow_test()
     DEBUG( std::cout << "f = " << f << std::endl; )
   }
 
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  return a.is_same(IA_nt(std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity())) &&
+         b.is_same(IA_nt(std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity())) &&
+         c.is_same(IA_nt(-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity())) &&
+         d.is_same(IA_nt(-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity())) &&
+         e.is_same(IA_nt(-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity())) &&
+         f.is_same(IA_nt(std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity())) &&
+         g.is_same(-f);
+#else
   return a.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, std::numeric_limits<double>::infinity())) &&
          b.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, std::numeric_limits<double>::infinity())) &&
          c.is_same(IA_nt::largest()) &&
@@ -146,6 +205,7 @@ bool overflow_test()
          e.is_same(IA_nt::largest()) &&
          f.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, std::numeric_limits<double>::infinity())) &&
          g.is_same(-f);
+#endif
 }
 
 
@@ -164,9 +224,15 @@ bool underflow_test()
   for (i=0; i<20; i++) b = b * b;
   for (i=0; i<20; i++) c = CGAL_NTS square(c);
 
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  return a.is_same(IA_nt(0, 0))
+      && b.is_same(IA_nt(0, 0))
+      && c.is_same(IA_nt(0, 0));
+#else
   return a.is_same(IA_nt(0, CGAL_IA_MIN_DOUBLE))
       && b.is_same(IA_nt::smallest())
       && c.is_same(IA_nt(0, CGAL_IA_MIN_DOUBLE));
+#endif
 }
 
 
@@ -432,10 +498,17 @@ bool test ()
 
 int main()
 {
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  std::cout << "Stress-testing the class Interval_nt<> always rounding to nearest.\n";
+  bool ok = test<CGAL::Interval_nt<> >();
+  std::cout << "\nStress-testing the class Interval_nt_advanced always rounding to nearest.\n";
+  ok &= test<CGAL::Interval_nt_advanced>();
+#else
   std::cout << "Stress-testing the class Interval_nt<>.\n";
   bool ok = test<CGAL::Interval_nt<> >();
   std::cout << "\nStress-testing the class Interval_nt_advanced.\n";
   ok &= test<CGAL::Interval_nt_advanced>();
+#endif
 
   return !ok;
 }

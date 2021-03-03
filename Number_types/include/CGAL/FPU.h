@@ -1,8 +1,3 @@
-// TODO: Remove
-#ifndef CGAL_ALWAYS_ROUND_TO_NEAREST
-#define CGAL_ALWAYS_ROUND_TO_NEAREST
-#endif
-
 // Copyright (c) 1998-2019
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
@@ -122,7 +117,6 @@ extern "C" {
 #if defined(CGAL_HAS_SSE2) && (defined(__x86_64__) || defined(_M_X64))
 #  define CGAL_USE_SSE2 1
 #endif
-#undef CGAL_USE_SSE2
 #ifdef CGAL_CFG_DENORMALS_COMPILE_BUG
 double& get_static_minimin(); // Defined in Interval_arithmetic_impl.h
 #endif
@@ -352,7 +346,17 @@ inline double IA_bug_sqrt(double d)
 // With GCC, we can do slightly better : test with __builtin_constant_p()
 // that both arguments are constant before stopping one of them.
 // Use inline functions instead ?
-inline double CGAL_IA_UP(double d){return nextafter(d,std::numeric_limits<double>::infinity());}
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+inline double CGAL_IA_UP(double d)
+{
+  return nextafter(d,std::numeric_limits<double>::infinity());
+}
+#else
+inline double CGAL_IA_UP(double d)
+{
+  return d;
+}
+#endif
 #define CGAL_IA_ADD(a,b) CGAL_IA_UP((a)+CGAL_IA_STOP_CPROP(b))
 #define CGAL_IA_SUB(a,b) CGAL_IA_UP(CGAL_IA_STOP_CPROP(a)-(b))
 #define CGAL_IA_MUL(a,b) CGAL_IA_UP(CGAL_IA_STOP_CPROP(a)*CGAL_IA_STOP_CPROP(b))
@@ -496,29 +500,15 @@ inline
 void
 FPU_set_cw (FPU_CW_t cw)
 {
-#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
-  assert(cw == CGAL_FE_TONEAREST);
-  assert(FPU_get_cw() == CGAL_FE_TONEAREST);
-#endif
   CGAL_IA_SETFPCW(cw);
-#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
-  assert(FPU_get_cw() == CGAL_FE_TONEAREST);
-#endif
 }
 
 inline
 FPU_CW_t
 FPU_get_and_set_cw (FPU_CW_t cw)
 {
-#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
-  assert(cw == CGAL_FE_TONEAREST);
-  assert(FPU_get_cw() == CGAL_FE_TONEAREST);
-#endif
     FPU_CW_t old = FPU_get_cw();
     FPU_set_cw(cw);
-#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
-  assert(FPU_get_cw() == CGAL_FE_TONEAREST);
-#endif
     return old;
 }
 
@@ -526,18 +516,18 @@ FPU_get_and_set_cw (FPU_CW_t cw)
 // A class whose constructor sets the FPU mode to +inf, saves a backup of it,
 // and whose destructor resets it back to the saved state.
 
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+#define CGAL_FE_PROTECTED CGAL_FE_TONEAREST
+#else
+#define CGAL_FE_PROTECTED CGAL_FE_UPWARD
+#endif
+
 template <bool Protected = true> struct Protect_FPU_rounding;
 
 template <>
 struct Protect_FPU_rounding<true>
 {
-  Protect_FPU_rounding(
-#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
-    FPU_CW_t r = CGAL_FE_TONEAREST
-#else
-    FPU_CW_t r = CGAL_FE_UPWARD
-#endif
-  )
+  Protect_FPU_rounding(FPU_CW_t r = CGAL_FE_PROTECTED)
     : backup( FPU_get_and_set_cw(r) ) {}
 
   ~Protect_FPU_rounding()
@@ -553,11 +543,7 @@ template <>
 struct Protect_FPU_rounding<false>
 {
   Protect_FPU_rounding() {}
-#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
-  Protect_FPU_rounding(FPU_CW_t /*= CGAL_FE_TONEAREST*/) {}
-#else
-  Protect_FPU_rounding(FPU_CW_t /*= CGAL_FE_UPWARD*/) {}
-#endif
+  Protect_FPU_rounding(FPU_CW_t /*= CGAL_FE_PROTECTED */) {}
 };
 
 
@@ -571,21 +557,13 @@ struct Checked_protect_FPU_rounding
 {
   Checked_protect_FPU_rounding()
   {
-#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
-    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
-#else
-    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_UPWARD);
-#endif
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_PROTECTED);
   }
 
   Checked_protect_FPU_rounding(FPU_CW_t r)
     : Protect_FPU_rounding<Protected>(r)
   {
-#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
-    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
-#else
-    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_UPWARD);
-#endif
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_PROTECTED);
   }
 };
 
@@ -596,6 +574,8 @@ struct Checked_protect_FPU_rounding
 // Its destructor restores the FPU state as it was previously.
 // Note that this affects "long double" as well, and other potential side effects.
 // And note that it does not (cannot) "fix" the same problem for the exponent.
+//
+// (How should this interact with ALWAYS_ROUND_TO_NEAREST?)
 
 struct Set_ieee_double_precision
 #ifdef CGAL_FPU_HAS_EXCESS_PRECISION
