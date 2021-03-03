@@ -10,7 +10,7 @@ namespace CGAL {
  *
  * A function template in this group has one of the two following signatures:
  * <table cellpadding=3 border="0">
- * <tr><td align="right"><b>1.1.</b></td><td>`OutputIterator difference(const Type1& pgn1, const Type2& pgn2, OutputIterator oi, UsePolylines = UsePolylines());`</td></tr>
+ * <tr><td align="right"><b>1.1.</b></td><td>`OutputIterator difference(const Type1& pgn1, const Type2& pgn2, OutputIterator oi, UsePolylines = Tag_true());`</td></tr>
  * <tr><td align="right"><b>1.2.</b></td><td>`OutputIterator difference(const Type1& pgn1, const Type2& pgn2, OutputIterator oi);`</td></tr>
  * <tr><td align="right"><b>2.</b></td><td>`OutputIterator difference(const Type1& pgn1, const Type2& pgn2, OutputIterator oi, const GpsTraits& traits);`</td></tr>
  * </table>
@@ -23,8 +23,6 @@ namespace CGAL {
  * performed. Then, the resulting general polygons with holes are converted back
  * to standard polygons. If substituted with `CGAL::Tag_false`, the input
  * polygons are used as is. Refer to \ref bso_ssectraits_sel for more information.
- *
- * \param oi the output iterator for the result.
  *
  *   - The types `Type1` and `Type2` of the parameters must be convertible to the
  * types specified in a row in the table below, respectively.  The 3rd column
@@ -47,6 +45,10 @@ namespace CGAL {
  * <tr><td><b>8</b></td><td valign="center">`General_polygon_with_holes_2`</td><td valign="center">`General_polygon_with_holes_2`</td><td>`General_polygon_with_holes_2`</td></tr>
  * </table>
  * </div>
+ *
+ * \param pgn1,pgn2 the input polygons.
+ * \param oi the output iterator for the result.
+ * \param traits an optional traits object.
  *
  * \sa \link boolean_complement `CGAL::complement()` \endlink
  * \sa \link boolean_do_intersect `CGAL::do_intersect()` \endlink
@@ -97,7 +99,7 @@ template <typename Kernel, typename Container, typename OutputIterator,
 OutputIterator difference(const Polygon_2<Kernel, Container>& pgn1,
                           const Polygon_2<Kernel, Container>& pgn2,
                           OutputIterator oi,
-                          UsePolylines = UsePolylines());
+                          UsePolylines = Tag_true());
 
 /*! computes the difference of two polygons and inserts the resulting polygons
  * with holes into a container via an output iterator.
@@ -137,7 +139,7 @@ template <typename Kernel, typename Container, typename OutputIterator,
 OutputIterator difference(const Polygon_2<Kernel, Container>& pgn1,
                           const Polygon_with_holes_2<Kernel,Container>& pgn2,
                           OutputIterator oi,
-                          UsePolylines = UsePolylines());
+                          UsePolylines = Tag_true());
 
 /*! computes the difference of two polygons and inserts the resulting polygons
  * with holes into a container via an output iterator.
@@ -177,7 +179,7 @@ template <typename Kernel, typename Container, typename OutputIterator,
 OutputIterator difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                           const Polygon_2<Kernel, Container>& pgn2,
                           OutputIterator oi,
-                          UsePolylines = UsePolylines());
+                          UsePolylines = Tag_true());
 
 /*! computes the difference of two polygons and inserts the resulting polygons
  * with holes into a container via an output iterator.
@@ -217,7 +219,7 @@ template <typename Kernel, typename Container, typename OutputIterator,
 OutputIterator difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                           const Polygon_with_holes_2<Kernel, Container>& pgn2,
                           OutputIterator oi,
-                          UsePolylines = UsePolylines());
+                          UsePolylines = Tag_true());
 
 /*! computes the difference of two general polygons and inserts the resulting
  * general polygons with holes into a container via an output iterator.

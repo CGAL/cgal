@@ -19,9 +19,23 @@ namespace CGAL {
  *
  * A function template in this subgroup has one of the two following signatures:
  * <table cellpadding=3 border="0">
- * <tr><td align="right"><b>1.1.</b></td><td>`Oriented_side oriented_side(const Type1& pgn1, const Type2& pgn2, UsePolylines = UsePolylines());`</td></tr>
+ * <tr><td align="right"><b>1.1.</b></td><td>`Oriented_side oriented_side(const Type1& pgn1, const Type2& pgn2, UsePolylines = Tag_true());`</td></tr>
  * <tr><td align="right"><b>1.2.</b></td><td>`Oriented_side oriented_side(const Type1& pgn1, const Type2& pgn2);`</td></tr>
  * <tr><td align="right"><b>2.</b></td><td>`Oriented_side oriented_side(const Type1& pgn1, const Type2& pgn2, const GpsTraits& traits);`</td></tr>
+ * </table>
+ *
+ * \cgalHeading{Oriented Side of a Point and a Polygon}
+ *
+ * The functions in the second group accept a point `p` and a polygon `pgn`.
+ * Each function in this group returns `ON_POSITIVE_SIDE` if the point `p`
+ * is in the interior of `pgn`, `ON_NEGATIVE_SIDE` if `p` is in the exterior
+ * of `pgn`, and `ON_ORIENTED_BOUNDARY` if `p` is on the boundary of `pgn`.
+ *
+ * A function in this subgroup has one of the following signatures:
+ * <table cellpadding=3 border="0">
+ * <tr><td align="right"><b>3.1.</b></td><td>`Oriented_side oriented_side(const Point_2& p, const Type& pgn, UsePolylines = Tag_true());`</td></tr>
+ * <tr><td align="right"><b>3.2.</b></td><td>`Oriented_side oriented_side(const Point_2& p, const Type& pgn);`</td></tr>
+ * <tr><td align="right"><b>  4.</b></td><td>`Oriented_side oriented_side(const Point_2& p, const Type& pgn, const GpsTraits& traits);`</td></tr>
  * </table>
  *
  * \tparam UsePolylines determines whether the boundaries of the input polygons
@@ -31,8 +45,6 @@ namespace CGAL {
  * general polygons bounded by polylines before the operation is actually
  * performed. If substituted with `CGAL::Tag_false`, the input polygons are used
  * as is. Refer to \ref bso_ssectraits_sel for more information.
- *
- * \cgalHeading{Parameters}
  *
  *   - The types `Type1` and `Type2` of the parameters must be convertible to the
  * types specified in a row in the following table, respectively.
@@ -55,25 +67,14 @@ namespace CGAL {
  * </table>
  * </div>
  *
- * \cgalHeading{Oriented Side of a Point and a Polygon}
+ *   - In (<b>3.1.</b>) `Type` must be convertible to either `Polygon_2` or `Polygon_with_holes_2`.
+ *   - In (<b>3.2.</b>) `Type` must be convertible to either `General_polygon_2` or `General_polygon_with_holes_2`.
+ *   - In (<b>4.</b>) `Type` must be convertible to any of the four types above.
  *
- * The functions in the second group accept a point `p` and a polygon `pgn`.
- * Each function in this group returns `ON_POSITIVE_SIDE` if the point `p`
- * is in the interior of `pgn`, `ON_NEGATIVE_SIDE` if `p` is in the exterior
- * of `pgn`, and `ON_ORIENTED_BOUNDARY` if `p` is on the boundary of `pgn`.
- *
- * A function in this subgroup has one of the following signatures:
- * <table cellpadding=3 border="0">
- * <tr><td align="right"><b>1.1.</b></td><td>`Oriented_side oriented_side(const Point_2& p, const Type& pgn, UsePolylines = UsePolylines());`</td></tr>
- * <tr><td align="right"><b>1.2.</b></td><td>`Oriented_side oriented_side(const Point_2& p, const Type& pgn);`</td></tr>
- * <tr><td align="right"><b>2.</b></td><td>`Oriented_side oriented_side(const Point_2& p, const Type& pgn, const GpsTraits& traits);`</td></tr>
- * </table>
- *
- * \cgalHeading{Parameters}
- *
- *   - In (<b>1.1.</b>) `Type` must be convertible to either `Polygon_2` or `Polygon_with_holes_2`.
- *   - In (<b>1.2.</b>) `Type` must be convertible to either `General_polygon_2` or `General_polygon_with_holes_2`.
- *   - In (<b>2.</b>) `Type` must be convertible to any of the four types above.
+ * \param p the input point.
+ * \param pgn the input polygon.
+ * \param pgn1,pgn2 the input polygons.
+ * \param traits an optional traits object.
  *
  * \sa \link boolean_do_intersect `CGAL::do_intersect()` \endlink
  */
@@ -107,7 +108,7 @@ Oriented_side oriented_side(const Polygon_2<Kernel, Container>& pgn1,
 template <typename Kernel, typename Container, typename UsePolylines>
 Oriented_side oriented_side(const Polygon_2<Kernel, Container>& pgn1,
                             const Polygon_2<Kernel, Container>& pgn2,
-                            UsePolylines = UsePolylines());
+                            UsePolylines = Tag_true());
 
 /*! computes the relative position of two polygons.
  * \param pgn1 the 1st input polygon.
@@ -136,7 +137,7 @@ template <typename Kernel, typename Container, typename UsePolylines>
 Oriented_side
 oriented_side(const Polygon_2<Kernel, Container>& pgn1,
               const Polygon_with_holes_2<Kernel, Container>& pgn2,
-              UsePolylines = UsePolylines());
+              UsePolylines = Tag_true());
 
 /*! computes the relative position of two polygons.
  * \param pgn1 the 1st input polygon.
@@ -163,7 +164,7 @@ Oriented_side oriented_side(const Polygon_with_holes_2<Kernel, Container>& pgn1,
 template <typename Kernel, typename Container, typename UsePolylines>
 Oriented_side oriented_side(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                             const Polygon_2<Kernel, Container>& pgn2,
-                            UsePolylines = UsePolylines());
+                            UsePolylines = Tag_true());
 
 /*! computes the relative position of two polygons.
  * \param pgn1 the 1st input polygon.
@@ -192,7 +193,7 @@ template <typename Kernel, typename Container, typename UsePolylines>
 Oriented_side
 oriented_side(const Polygon_with_holes_2<Kernel, Container>& pgn1,
               const Polygon_with_holes_2<Kernel, Container>& pgn2,
-              UsePolylines = UsePolylines());
+              UsePolylines = Tag_true());
 
 /*! computes the relative position of two polygons.
  * \param pgn1 1st the input polygon.

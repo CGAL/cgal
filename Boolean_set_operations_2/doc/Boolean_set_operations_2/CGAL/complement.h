@@ -13,7 +13,7 @@ namespace CGAL {
  *
  * A function template in this group has one of the following signatures:
  * <table cellpadding=3 border="0">
- * <tr><td align="right"><b>1.1.</b></td><td>`void complement(const Type1& pgn, Type2& res, UsePolylines = UsePolylines());`</td></tr>
+ * <tr><td align="right"><b>1.1.</b></td><td>`void complement(const Type1& pgn, Type2& res, UsePolylines = Tag_true());`</td></tr>
  * <tr><td align="right"><b>1.2.</b></td><td>`void complement(const Type1& pgn, Type2& res);`</td></tr>
  * <tr><td align="right"><b>2.</b></td><td>`void complement(const Type1& pgn, Type2& res, const GpsTraits& traits);`</td></tr>
  * </table>
@@ -26,8 +26,6 @@ namespace CGAL {
  * performed. Then, the resulting general polygon with holes is converted back
  * to a standard polygon. If substituted with `CGAL::Tag_false`, the input
  * polygon is used as is. Refer to \ref bso_ssectraits_sel for more information.
- *
- * \cgalHeading{Parameters}
  *
  *   - The types `Type` and `Type2` of the parameters must be convertible to the
  * types specified in a row in the table below, respectively.
@@ -45,6 +43,10 @@ namespace CGAL {
  * <tr><td><b>4</b></td><td valign="center">`General_polygon_with_holes_2`</td><td valign="center">`General_polygon_with_holes_2`</td></tr>
  * </table>
  * </div>
+ *
+ * \param pgn the input polygon.
+ * \param res the resulting polygon.
+ * \param traits an optional traits object.
  *
  * \sa \link boolean_do_intersect `CGAL::do_intersect()` \endlink
  * \sa \link boolean_intersection `CGAL::intersection()` \endlink
@@ -81,7 +83,7 @@ void complement(const Polygon_2<Kernel, Container>& pgn,
 template <typename Kernel, typename Container, typename UsePolylines>
 void complement(const Polygon_2<Kernel, Container>& pgn,
                 Polygon_with_holes_2<Kernel, Container>& res,
-                UsePolylines = UsePolylines());
+                UsePolylines = Tag_true());
 
 /*! computes the complement of a general polygon.
  * \param pgn the input polygon.
@@ -124,7 +126,7 @@ OutputIterator complement(const Polygon_with_holes_2<Kernel, Container>& pgn,
 template <typename Traits, typename OutputIterator, typename UsePolylines>
 OutputIterator complement(const Polygon_with_holes_2<Kernel, Container>& pgn,
                           OutputIterator oi,
-                          UsePolylines = UsePolylines());
+                          UsePolylines = Tag_true());
 
 /*! computes the complement of a general polygon with holes.
  * \param pgn the input polygon.

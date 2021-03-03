@@ -9,9 +9,19 @@ namespace CGAL {
  *
  * A function template in this group has one of the following signatures:
  * <table cellpadding=3 border="0">
- * <tr><td align="right"><b>1.1.</b></td><td>`bool join(const Type1& pgn1, const Type2& pgn2, Type3& res, UsePolylines = UsePolylines());`</td></tr>
+ * <tr><td align="right"><b>1.1.</b></td><td>`bool join(const Type1& pgn1, const Type2& pgn2, Type3& res, UsePolylines = Tag_true());`</td></tr>
  * <tr><td align="right"><b>1.2.</b></td><td>`bool join(const Type1& pgn1, const Type2& pgn2, Type3& res);`</td></tr>
  * <tr><td align="right"><b>2.</b></td><td>`bool join(const Type1& pgn1, const Type2& pgn2, Type3& res, const GpsTraits& traits);`</td></tr>
+ * </table>
+ *
+ * There are also function templates that accept one or two ranges of input polygons:
+ * <table cellpadding=3 border="0">
+ * <tr><td align="right"><b>3.1.</b></td><td>`OutputIterator join(InputIterator begin, InputIterator end, OutputIterator oi, UsePolylines = Tag_true());`</td></tr>
+ * <tr><td align="right"><b>3.2.</b></td><td>`OutputIterator join(InputIterator begin, InputIterator end, OutputIterator oi);`</td></tr>
+ * <tr><td align="right"><b>4.</b></td><td>`OutputIterator join(InputIterator begin, InputIterator end, OutputIterator oi, const GpsTraits& traits);`</td></tr>
+ * <tr><td align="right"><b>5.1.</b></td><td>`OutputIterator join(InputIterator1 begin1, InputIterator1 end1, InputIterator2 begin2, InputIterator2 end2, OutputIterator oi, UsePolylines = Tag_true());`</td></tr>
+ * <tr><td align="right"><b>5.2.</b></td><td>`OutputIterator join(InputIterator1 begin1, InputIterator1 end1, InputIterator2 begin2, InputIterator2 end2, OutputIterator oi);`</td></tr>
+ * <tr><td align="right"><b>6.</b></td><td>`OutputIterator join(InputIterator1 begin1, InputIterator1 end1, InputIterator2 begin2, InputIterator2 end2, OutputIterator oi, const GpsTraits& traits);`</td></tr>
  * </table>
  *
  * \tparam UsePolylines determines whether the boundaries of the input polygons
@@ -23,14 +33,26 @@ namespace CGAL {
  * to a standard polygon. If substituted with `CGAL::Tag_false`, the input
  * polygons are used as is. Refer to \ref bso_ssectraits_sel for more information.
  *
- * \cgalHeading{Parameters}
+ *   - The types `Type1` and `Type2` of the parameters and of
+ *     `InputIterator1::value_type` and `InputIterator2::value_type` must be
+ *     convertible to the types specified in a row in the table below,
+ *     respectively.  The 3rd column specifies the corresponding dereference
+ *     type of the output iterator.
  *
- *   - The types `Type1`, `Type2`, and `Type3`, of the parameters must be convertible
- * to the types specified in a row in the table below, respectively.
- *   - The types that apply to signature (<b>1.1.</b>) above are restricted to those
- * listed in rows <b>1&ndash;4</b> in the table below.
- *   - The types that apply to signature (<b>1.2.</b>) above are restricted to those
- * listed in rows <b>5&ndash;8</b> in the table below.
+ *   - The types that apply to signatures (<b>1.1.</b>) and (<b>5.1.</b>) above
+ *     are restricted to those listed in rows <b>1&ndash;4</b> in the table
+ *     below.
+ *
+ *   - The types that apply to signatures (<b>1.2.</b>) and (<b>5.2.</b>) above
+ *     are restricted to those listed in rows <b>5&ndash;8</b> in the table
+ *     below.
+ *
+ *   - The type of `InputIterator::value_type` in (<b>3.1.</b>) above
+ *     must be convertible to either `Polygon_2` or `Polygon_with_holes_2`.
+ *
+ *   - The type of `InputIterator::value_type` in (<b>3.2.</b>) above must be
+ *     convertible to either `General_polygon_2` or
+ *     `General_polygon_with_holes_2`.
  *
  * <div align="left">
  * <table cellpadding=3 border="1">
@@ -45,6 +67,14 @@ namespace CGAL {
  * <tr><td><b>8</b></td><td valign="center">`General_polygon_with_holes_2`</td><td valign="center">`General_polygon_with_holes_2`</td><td>`General_polygon_with_holes_2`</td></tr>
  * </table>
  * </div>
+ *
+ * \param pgn1,pgn2 the input polygons.
+ * \param (end,begin) a range of input polygons.
+ * \param (end1,begin1) the first range of input polygons.
+ * \param (end2,begin2) the second range of input polygons.
+ * \param res the resulting polygon.
+ * \param oi the output iterator for the result.
+ * \param traits an optional traits object.
  *
  * \sa \link boolean_complement `CGAL::complement()` \endlink
  * \sa \link boolean_do_intersect `CGAL::do_intersect()` \endlink
@@ -88,7 +118,7 @@ template <typename Kernel, typename Container, typename UsePolylines>
 bool join(const Polygon_2<Kernel, Container>& pgn1,
           const Polygon_2<Kernel, Container>& pgn2,
           General_polygon_with_holes_2<Polygon_2<Kernel, Container>>& res,
-          UsePolylines = UsePolylines());
+          UsePolylines = Tag_true());
 
 /*! computes the union of two polygons.
  * \param pgn1 the 1st input polygon.
@@ -121,7 +151,7 @@ template <typename Kernel, typename Container, typename UsePolylines>
 bool join(const Polygon_2<Kernel, Container>& pgn1,
           const Polygon_with_holes_2<Kernel,Container>& pgn2,
           General_polygon_with_holes_2<Polygon_2<Kernel, Container>>& res,
-          UsePolylines = UsePolylines());
+          UsePolylines = Tag_true());
 
 /*! computes the union of two polygons.
  * \param pgn1 the 1st input polygon.
@@ -154,7 +184,7 @@ template <typename Kernel, typename Container, typename UsePolylines>
 bool join(const Polygon_with_holes_2<Kernel, Container>& pgn1,
           const Polygon_2<Kernel, Container>& pgn2,
           General_polygon_with_holes_2<Polygon_2<Kernel, Container>>& res,
-          UsePolylines = UsePolylines());
+          UsePolylines = Tag_true());
 
 /*! computes the union of two polygons with holes.
  * \param pgn1 the 1st input polygon.
@@ -187,7 +217,7 @@ template <typename Kernel, typename Container, typename UsePolylines>
 bool join(const Polygon_with_holes_2<Kernel, Container>& pgn1,
           const Polygon_with_holes_2<Kernel, Container>& pgn2,
           General_polygon_with_holes_2<Polygon_2<Kernel, Container>>& res,
-          UsePolylines = UsePolylines());
+          UsePolylines = Tag_true());
 
 /*! computes the union of two general polygons.
  * \param pgn1 the 1st input polygon.
@@ -291,7 +321,7 @@ template <typename InputIterator, typename OutputIterator,
           typename UsePolylines>
 OutputIterator join(InputIterator begin, InputIterator end,
                     OutputIterator oi,
-                    UsePolylines = UsePolylines());
+                    UsePolylines = Tag_true());
 
 /*! Given a range of polygons (resp. general polygons) and a range of general
  * polygons with holes (resp. general polygons with holes) computes the
@@ -529,7 +559,7 @@ class OutputIterator, typename UsePolylines>
 OutputIterator join(InputIterator1 begin1, InputIterator1 end1,
                     InputIterator2 begin2, InputIterator2 end2,
                     OutputIterator oi,
-                    UsePolylines = UsePolylines());
+                    UsePolylines = Tag_true());
 
 /// @}
 
