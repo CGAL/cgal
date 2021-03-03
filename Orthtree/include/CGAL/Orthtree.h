@@ -34,6 +34,7 @@
 #include <ostream>
 #include <functional>
 
+#include <bitset>
 #include <stack>
 #include <queue>
 #include <vector>
