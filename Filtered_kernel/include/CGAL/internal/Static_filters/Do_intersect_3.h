@@ -264,7 +264,7 @@ public:
         if (double_tmp_result < -eps)
           return true;
         else {
-          return true; // AF:  just to test conservative approach
+          // return true; // AF:  just to test conservative approach
           CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
           return Base::operator()(s,b);
         }
