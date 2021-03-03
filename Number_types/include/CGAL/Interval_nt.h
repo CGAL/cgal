@@ -722,7 +722,6 @@ private:
     Interval_nt
     operator/ (const Interval_nt &a, const Interval_nt & b)
     {
-      assert(FPU_get_cw() == CGAL_FE_TONEAREST);
 #if 0
       // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=88626
       if(CGAL_CST_TRUE(a.is_point()))

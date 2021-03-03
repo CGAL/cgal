@@ -127,7 +127,6 @@ bool square_root_test()
   std::cout << "i          = " << i << std::endl;
   std::cout << "sup        : " << a.sup() << std::endl;
   std::cout << "inf        : " << a.inf() << std::endl;
-  std::cout << "width ok ? : " << (-a.inf() == 1/(double(1<<30)*(1<<22))) << std::endl;
   ) // DEBUG
   if (i != 54) {
     return false;
