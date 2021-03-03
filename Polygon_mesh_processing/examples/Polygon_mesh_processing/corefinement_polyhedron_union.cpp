@@ -1,5 +1,4 @@
-// #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
 
@@ -9,8 +8,7 @@
 #include <fstream>
 #include <iostream>
 
-// typedef CGAL::Exact_predicates_inexact_constructions_kernel     K;
-typedef CGAL::Exact_predicates_exact_constructions_kernel     K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel     K;
 typedef CGAL::Polyhedron_3<K, CGAL::Polyhedron_items_with_id_3> Mesh;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
