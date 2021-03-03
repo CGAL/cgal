@@ -625,12 +625,9 @@ struct Patch_description{
 // shared_edges will be filled by halfedges pointing in the patch
 // that are inside `is_intersection_edge`, thus mesh boundary halfedges
 // are not necessarily inside.
-template <class PolygonMesh, class FaceIndexMap, class IsIntersectionEdge>
+template <class PolygonMesh, class IsIntersectionEdge>
 void extract_patch_simplices(
-  std::size_t patch_id,
   PolygonMesh& pm,
-  const FaceIndexMap fids,
-  const std::vector<std::size_t>& patch_ids,
   std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor>& patch_faces,
   std::set<typename boost::graph_traits<PolygonMesh>::vertex_descriptor>& interior_vertices,
   std::vector<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor>& interior_edges,
@@ -642,22 +639,18 @@ void extract_patch_simplices(
   typedef typename GT::vertex_descriptor vertex_descriptor;
   typedef typename GT::face_descriptor face_descriptor;
 
-  for(face_descriptor f : faces(pm))
+  for(face_descriptor f : patch_faces)
   {
-    if ( patch_ids[ get(fids, f) ]==patch_id )
+    for(halfedge_descriptor h :
+                  halfedges_around_face(halfedge(f, pm),pm))
     {
-      patch_faces.push_back( f );
-      for(halfedge_descriptor h :
-                    halfedges_around_face(halfedge(f, pm),pm))
+      if ( !is_intersection_edge.count(edge(h, pm)) )
       {
-        if ( !is_intersection_edge.count(edge(h, pm)) )
-        {
-          if ( h < opposite(h,pm) || is_border(opposite(h,pm),pm) )
-            interior_edges.push_back( h );
-        }
-        else
-          shared_edges.push_back(h);
+        if ( h < opposite(h,pm) || is_border(opposite(h,pm),pm) )
+          interior_edges.push_back( h );
       }
+      else
+        shared_edges.push_back(h);
     }
   }
 
@@ -699,14 +692,19 @@ struct Patch_container{
     , patch_ids(patch_ids)
     , fids(fids)
     , is_intersection_edge(is_intersection_edge)
-  {}
+  {
+    typedef boost::graph_traits<PolygonMesh> GT;
+    typedef typename GT::face_descriptor face_descriptor;
+
+    for(face_descriptor f : faces(pm))
+      patches[patch_ids[ get(fids, f) ]].faces.push_back( f );
+  }
 
   Patch_description<PolygonMesh>& operator[](std::size_t i) {
     if ( !patches[i].is_initialized )
     {
       extract_patch_simplices(
-        i, pm,
-        fids, patch_ids,
+        pm,
         patches[i].faces, patches[i].interior_vertices,
         patches[i].interior_edges, patches[i].shared_edges,
         is_intersection_edge
