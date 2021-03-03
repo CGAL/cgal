@@ -43,7 +43,7 @@ namespace internal {
                 {
                         d = (FT)bbox.xmin() - center.x();
                         d = square(d);
-                        if(d > sr){
+                        if(certainly(d > sr)){
                           return false;
                         }
                         distance = d;
@@ -52,7 +52,7 @@ namespace internal {
                 {
                         d = center.x() - (FT)bbox.xmax();
                         d = square(d);
-                        if(d > sr){
+                        if(certainly(d > sr)){
                           return false;
                         }
                         distance = d;
@@ -62,7 +62,7 @@ namespace internal {
                 {
                         d = (FT)bbox.ymin() - center.y();
                         d = square(d);
-                        if(d > sr){
+                        if(certainly(d > sr)){
                           return false;
                         }
                         distance += d ;
@@ -71,7 +71,7 @@ namespace internal {
                 {
                         d = center.y() - (FT)bbox.ymax();
                         d = square(d);
-                        if(d > sr){
+                        if(certainly(d > sr)){
                           return false;
                         }
                         distance += d;
