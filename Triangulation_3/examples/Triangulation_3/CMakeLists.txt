@@ -53,6 +53,14 @@ if(TARGET CGAL::TBB_support)
   target_link_libraries(parallel_insertion_in_delaunay_3
                         PUBLIC CGAL::TBB_support)
   target_link_libraries(sequential_parallel PUBLIC CGAL::TBB_support)
+
+  if(BUILD_TESTING)
+    set_property(TEST
+      execution___of__parallel_insertion_and_removal_in_regular_3
+      execution___of__parallel_insertion_in_delaunay_3
+      execution___of__sequential_parallel
+      PROPERTY RUN_SERIAL 1)
+  endif()
 else()
   message(STATUS "NOTICE: a few examples require TBB and will not be compiled.")
 endif()
