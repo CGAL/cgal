@@ -311,7 +311,7 @@ OutputIterator intersection(const General_polygon_with_holes_2<Polygon>& pgn1,
                             OutputIterator oi);
 
 
-/*! Given a range of polygons (resp. general polygons) or a range of general
+/*! Given a range of polygons (resp. general polygons) or a range of
  * polygons with holes (resp. general polygons with holes) computes the
  * intersection of all polygons in the range and inserts the resulting polygons
  * with holes (resp. general polygons with holes) into a container via an output
@@ -331,7 +331,7 @@ template <typename InputIterator, typename OutputIterator>
 OutputIterator intersection(InputIterator begin, InputIterator end,
                             OutputIterator oi);
 
-/*! Given a range of polygons (resp. general polygons) or a range of general
+/*! Given a range of polygons (resp. general polygons) or a range of
  * polygons with holes (resp. general polygons with holes) computes the
  * intersection of all polygons in the range and inserts the resulting polygons
  * with holes (resp. general polygons with holes) into a container via an output
@@ -363,7 +363,7 @@ OutputIterator intersection(InputIterator begin, InputIterator end,
                             OutputIterator oi,
                             UsePolylines = Tag_true());
 
-/*! Given a range of polygons (resp. general polygons) and a range of general
+/*! Given a range of polygons (resp. general polygons) and a range of
  * polygons with holes (resp. general polygons with holes) computes the
  * intersection of all polygons in the two ranges and inserts the resulting
  * polygons with holes (resp. general polygons with holes) into a container via
@@ -387,7 +387,7 @@ OutputIterator intersection(InputIterator1 begin1, InputIterator1 end1,
                             InputIterator2 begin2, InputIterator2 end2,
                             OutputIterator oi);
 
-/*! Given a range of polygons (resp. general polygons) and a range of general
+/*! Given a range of polygons (resp. general polygons) and a range of
  * polygons with holes (resp. general polygons with holes) computes the
  * intersection of all polygons in the two ranges and inserts the resulting
  * polygons with holes (resp. general polygons with holes) into a container via
@@ -421,6 +421,218 @@ OutputIterator intersection(InputIterator1 begin1, InputIterator1 end1,
                             InputIterator2 begin2, InputIterator2 end2,
                             OutputIterator oi,
                             UsePolylines = Tag_true());
+
+//////// With Traits
+
+/*! computes the intersection between two polygons and inserts the
+ * resulting polygons with holes into a container via an output iterator.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `Polygon_with_holes_2<Kernel, Container>`.
+ * \param traits a traits object.
+ * \return the past-the-end iterator of the output container.
+ * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
+ */
+template <typename Kernel, typename Container, typename OutputIterator,
+          typename GpsTraits>
+OutputIterator intersection(const Polygon_2<Kernel, Container>& pgn1,
+                            const Polygon_2<Kernel, Container>& pgn2,
+                            OutputIterator oi,
+                            const GpsTraits& traits);
+
+/*! computes the intersection between two polygons and inserts the
+ * resulting polygons with holes into a container via an output iterator.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `Polygon_with_holes_2<Kernel, Container>`.
+ * \param traits a traits object.
+ * \return the past-the-end iterator of the output container.
+ * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
+ */
+template <typename Kernel, typename Container, typename OutputIterator,
+          typename GpsTraits>
+OutputIterator
+intersection(const Polygon_2<Kernel, Container>& pgn1,
+             const Polygon_with_holes_2<Kernel, Container>& pgn2,
+             OutputIterator oi,
+             const GpsTraits& traits);
+
+/*! computes the intersection between two polygons and inserts the
+ * resulting polygons with holes into a container via an output iterator.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `Polygon_with_holes_2<Kernel, Container>`.
+ * \param traits a traits object.
+ * \return the past-the-end iterator of the output container.
+ * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
+ */
+template <typename Kernel, typename Container, typename OutputIterator,
+          typename GpsTraits>
+OutputIterator
+intersection(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+             const Polygon_2<Kernel, Container>& pgn2,
+             OutputIterator oi,
+             const GpsTraits& traits);
+
+
+/*! computes the intersection between two polygons with holes and
+ * inserts the resulting polygons with holes into a container via an output
+ * iterator.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `Polygon_with_holes_2<Kernel, Container>`.
+ * \param traits a traits object.
+ * \return the past-the-end iterator of the output container.
+ * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
+ */
+template <typename Kernel, typename Container, typename OutputIterator,
+          typename GpsTraits>
+OutputIterator
+intersection(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+             const Polygon_with_holes_2<Kernel, Container>& pgn2,
+             OutputIterator oi,
+             const GpsTraits& traits);
+
+/*! computes the intersection between two general polygons and inserts
+ * the resulting general  polygons with holes into a container via an output
+ * iterator.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits>>`.
+ * \param traits a traits object.
+ * \return the past-the-end iterator of the output container.
+ * \pre `%ArrTraits` must be a model of the concept
+ *      `ArrangementDirectionalXMonotoneTraits_2`.
+ * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
+ */
+template <typename ArrTraits, typename OutputIterator, typename GpsTraits>
+OutputIterator intersection(const General_polygon_2<ArrTraits>& pgn1,
+                            const General_polygon_2<ArrTraits>& pgn2,
+                            OutputIterator oi,
+                            const GpsTraits& traits);
+
+
+/*! computes the intersection between two general polygons and inserts
+ * the resulting general  polygons with holes into a container via an output
+ * iterator.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits>>`.
+ * \param traits a traits object.
+ * \return the past-the-end iterator of the output container.
+ * \pre `%ArrTraits` must be a model of the concept
+ *      `ArrangementDirectionalXMonotoneTraits_2`.
+ * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
+ */
+template <typename ArrTraits, typename OutputIterator, typename GpsTraits>
+OutputIterator
+intersection(const General_polygon_with_holes_2<General_polygon_2<ArrTraits>>& pgn1,
+             const General_polygon_2<ArrTraits>& pgn2,
+             OutputIterator oi,
+             const GpsTraits& traits);
+
+
+/*! computes the intersection between two general polygons and inserts
+ * the resulting general  polygons with holes into a container via an output
+ * iterator.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits>>`.
+ * \param traits a traits object.
+ * \return the past-the-end iterator of the output container.
+ * \pre `%ArrTraits` must be a model of the concept
+ *      `ArrangementDirectionalXMonotoneTraits_2`.
+ * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
+ */
+template <typename ArrTraits, typename OutputIterator, typename GpsTraits>
+OutputIterator
+intersection(const General_polygon_2<ArrTraits>& pgn1,
+             const General_polygon_with_holes_2<General_polygon_2<ArrTraits>>& pgn2,
+             OutputIterator oi,
+             const GpsTraits& traits);
+
+/*! computes the intersection between two general polygons and inserts
+ * the resulting general  polygons with holes into a container via an output
+ * iterator.
+ * \param pgn1 the 1st input polygon.
+ * \param pgn2 the 2nd input polygon.
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `General_polygon_with_holes_2<Polygon>`.
+ * \param traits a traits object.
+ * \return the past-the-end iterator of the output container.
+ * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
+ */
+template <typename Polygon, typename OutputIterator, typename GpsTraits>
+OutputIterator
+intersection(const General_polygon_with_holes_2<Polygon>& pgn1,
+             const General_polygon_with_holes_2<Polygon>& pgn2,
+             OutputIterator oi,
+             const GpsTraits& traits);
+
+/*! Given a range of polygons (resp. general polygons) or a range of
+ * polygons with holes (resp. general polygons with holes) computes the
+ * intersection  of all polygons in the range and inserts the resulting
+ * polygons with holes (resp. general polygons with holes) into a container via
+ * an output iterator.
+ * \param begin the first iterator of the input range. Its value type is
+ *        either `Polygon_2` (resp. `General_polygon_2`) or
+ *        `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
+ * \param end the past-the-end iterator of the input range. Its value type is
+ *        either `Polygon_2` (resp. `General_polygon_2`) or
+ *        `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
+ * \param traits a traits object.
+ * \return the past-the-end iterator of the output container.
+ * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
+ */
+template <typename InputIterator, typename OutputIterator, typename GpsTraits>
+OutputIterator intersection(InputIterator begin, InputIterator end,
+                            OutputIterator oi,
+                            const GpsTraits& traits);
+
+/*! Given a range of polygons (resp. general polygons) and a range of
+ * polygons with holes (resp. general polygons with holes) computes the
+ * intersection between all polygons in the two ranges and inserts the
+ * resulting polygons with holes (resp. general polygons with holes) into a
+ * container via an output iterator.
+ * \param begin1 the first iterator of the 1st input range. Its value type is
+ *        `Polygon_2` (resp. `General_polygon_2`).
+ * \param end1 the past-the-end iterator of the 1st input range. Its value
+ *        type is `Polygon_2` (resp. `General_polygon_2`).
+ * \param begin2 the first iterator of the 2nd input range. Its value type
+ *        is `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
+ * \param end2 the past-the-end iterator of the 2nd input range. Its value
+ *        type is `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
+ * \param oi the output iterator for the result.
+ *           Its dereference type must be convertible to
+ *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
+ * \param traits a traits object.
+ * \return the past-the-end iterator of the output container.
+ * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
+ */
+template <typename InputIterator1, typename InputIterator2,
+          typename OutputIterator, typename GpsTraits>
+OutputIterator intersection(InputIterator1 begin1, InputIterator1 end1,
+                                    InputIterator2 begin2, InputIterator2 end2,
+                                    OutputIterator oi,
+                                    const GpsTraits& traits);
 
 /// @}
 

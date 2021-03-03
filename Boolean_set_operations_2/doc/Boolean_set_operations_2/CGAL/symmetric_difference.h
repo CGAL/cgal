@@ -328,7 +328,7 @@ symmetric_difference(const General_polygon_with_holes_2<Polygon>& pgn1,
                      const General_polygon_with_holes_2<Polygon>& pgn2,
                      OutputIterator oi);
 
-/*! Given a range of polygons (resp. general polygons) or a range of general
+/*! Given a range of polygons (resp. general polygons) or a range of
  * polygons with holes (resp. general polygons with holes) computes the
  * symmetric difference  of all polygons in the range and inserts the resulting
  * polygons with holes (resp. general polygons with holes) into a container via
@@ -349,7 +349,7 @@ template <typename InputIterator, typename OutputIterator>
 OutputIterator symmetric_difference(InputIterator begin, InputIterator end,
                                     OutputIterator oi);
 
-/*! Given a range of polygons (resp. general polygons) or a range of general
+/*! Given a range of polygons (resp. general polygons) or a range of
  * polygons with holes (resp. general polygons with holes) computes the
  * symmetric difference  of all polygons in the range and inserts the resulting
  * polygons with holes (resp. general polygons with holes) into a container via
@@ -382,7 +382,7 @@ OutputIterator symmetric_difference(InputIterator begin, InputIterator end,
                                     OutputIterator oi,
                                     UsePolylines = Tag_true());
 
-/*! Given a range of polygons (resp. general polygons) and a range of general
+/*! Given a range of polygons (resp. general polygons) and a range of
  * polygons with holes (resp. general polygons with holes) computes the
  * symmetric difference between all polygons in the two ranges and inserts the
  * resulting polygons with holes (resp. general polygons with holes) into a
@@ -408,7 +408,7 @@ OutputIterator symmetric_difference(InputIterator1 begin1, InputIterator1 end1,
                                     InputIterator2 begin2, InputIterator2 end2,
                                     OutputIterator oi);
 
-/*! Given a range of polygons (resp. general polygons) and a range of general
+/*! Given a range of polygons (resp. general polygons) and a range of
  * polygons with holes (resp. general polygons with holes) computes the
  * symmetric difference between all polygons in the two ranges and inserts the
  * resulting polygons with holes (resp. general polygons with holes) into a
@@ -608,7 +608,7 @@ symmetric_difference(const General_polygon_with_holes_2<Polygon>& pgn1,
                      OutputIterator oi,
                      const GpsTraits& traits);
 
-/*! Given a range of polygons (resp. general polygons) or a range of general
+/*! Given a range of polygons (resp. general polygons) or a range of
  * polygons with holes (resp. general polygons with holes) computes the
  * symmetric difference  of all polygons in the range and inserts the resulting
  * polygons with holes (resp. general polygons with holes) into a container via
@@ -632,7 +632,7 @@ OutputIterator symmetric_difference(InputIterator begin, InputIterator end,
                                     OutputIterator oi,
                                     const GpsTraits& traits);
 
-/*! Given a range of polygons (resp. general polygons) and a range of general
+/*! Given a range of polygons (resp. general polygons) and a range of
  * polygons with holes (resp. general polygons with holes) computes the
  * symmetric difference between all polygons in the two ranges and inserts the
  * resulting polygons with holes (resp. general polygons with holes) into a

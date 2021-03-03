@@ -271,7 +271,7 @@ bool join(const General_polygon_with_holes_2<Polygon>& pgn1,
           const General_polygon_with_holes_2<Polygon>& pgn2,
           General_polygon_with_holes_2<Polygon>& res);
 
-/*! Given a range of polygons (resp. general polygons) or a range of general
+/*! Given a range of polygons (resp. general polygons) or a range of
  * polygons with holes (resp. general polygons with holes) computes the
  * union of all polygons in the range and inserts the resulting polygons
  * with holes (resp. general polygons with holes) into a container via an output
@@ -291,7 +291,7 @@ template <typename InputIterator, typename OutputIterator>
 OutputIterator join(InputIterator begin, InputIterator end,
                     OutputIterator oi);
 
-/*! Given a range of polygons (resp. general polygons) or a range of general
+/*! Given a range of polygons (resp. general polygons) or a range of
  * polygons with holes (resp. general polygons with holes) computes the
  * union of all polygons in the range and inserts the resulting polygons
  * with holes (resp. general polygons with holes) into a container via an output
@@ -323,7 +323,7 @@ OutputIterator join(InputIterator begin, InputIterator end,
                     OutputIterator oi,
                     UsePolylines = Tag_true());
 
-/*! Given a range of polygons (resp. general polygons) and a range of general
+/*! Given a range of polygons (resp. general polygons) and a range of
  * polygons with holes (resp. general polygons with holes) computes the
  * union of all polygons in the two ranges and inserts the resulting
  * polygons with holes (resp. general polygons with holes) into a container via
@@ -475,7 +475,7 @@ bool join(const General_polygon_with_holes_2<Polygon>& pgn1,
           General_polygon_with_holes_2<Polygon>& res,
           const GpsTraits& traits);
 
-/*! Given a range of polygons (resp. general polygons) or a range of general
+/*! Given a range of polygons (resp. general polygons) or a range of
  * polygons with holes (resp. general polygons with holes) computes the
  * union of all polygons in the range and inserts the resulting polygons
  * with holes (resp. general polygons with holes) into a container via an output
@@ -498,7 +498,7 @@ OutputIterator join(InputIterator begin, InputIterator end,
                     OutputIterator oi,
                     const GpsTraits& traits);
 
-/*! Given a range of polygons (resp. general polygons) and a range of general
+/*! Given a range of polygons (resp. general polygons) and a range of
  * polygons with holes (resp. general polygons with holes) computes the
  * union of all polygons in the two ranges and inserts the resulting
  * polygons with holes (resp. general polygons with holes) into a container via
@@ -525,7 +525,7 @@ OutputIterator join(InputIterator1 begin1, InputIterator1 end1,
                     OutputIterator oi,
                     const GpsTraits& traits);
 
-/*! Given a range of polygons (resp. general polygons) and a range of general
+/*! Given a range of polygons (resp. general polygons) and a range of
  * polygons with holes (resp. general polygons with holes) computes the
  * union of all polygons in the two ranges and inserts the resulting
  * polygons with holes (resp. general polygons with holes) into a container via
