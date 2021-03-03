@@ -579,7 +579,7 @@ private:
       vort = Aort - (dort)/(FT(2));
     } else {
       vpar = Apar;
-      vort = Aort - CGAL::sign(dort)*absdpar;
+      vort = Aort - int(CGAL::sign(dort))*absdpar;
     }
     vv = Point_2(vx_, vy_);
   }
@@ -684,11 +684,11 @@ private:
       vv = Point_2(is_r_horizontal ?
                      (pp.x() + qq.x()) :
                      (comp == LARGER) ?
-                       RT(2)*coordr + CGAL::sign(signrdist)*pqdist :
+                   RT(2)*coordr + int(CGAL::sign(signrdist))*pqdist :
                        coordr + pp.x(),
                    is_r_horizontal ?
                      (comp == LARGER) ?
-                       RT(2)*coordr + CGAL::sign(signrdist)*pqdist :
+                   RT(2)*coordr + int(CGAL::sign(signrdist))*pqdist :
                        coordr + pp.y() :
                      (pp.y() + qq.y()),
                    RT(2));
@@ -725,9 +725,9 @@ private:
     } else {
       vv = Point_2(is_r_horizontal ?
                    (pp.x() + qq.x()) :
-                   (RT(2)*coordr + CGAL::sign(sdistf)*pqdist),
+                   (RT(2)*coordr + int(CGAL::sign(sdistf))*pqdist),
                    is_r_horizontal ?
-                   (RT(2)*coordr + CGAL::sign(sdistf)*pqdist) :
+                   (RT(2)*coordr + int(CGAL::sign(sdistf))*pqdist) :
                    (pp.y() + qq.y()),
                    RT(2));
     }
@@ -771,8 +771,8 @@ private:
         Point_2(pcoord, lineval) : Point_2(lineval, pcoord);
       const FT sidelen = (CGAL::max)(CGAL::abs(corner.x() - q.point().x()),
                                      CGAL::abs(corner.y() - q.point().y()));
-      vv = Point_2(FT(2)*corner.x() + signla*sidelen,
-                   FT(2)*corner.y() + signlb*sidelen,
+      vv = Point_2(FT(2)*corner.x() + int(signla)*sidelen,
+                   FT(2)*corner.y() + int(signlb)*sidelen,
                    FT(2));
       return;
     }
@@ -783,8 +783,8 @@ private:
         Point_2(lineval, qcoord) : Point_2(qcoord, lineval);
       const FT sidelen = (CGAL::max)(CGAL::abs(corner.x() - p.point().x()),
                                      CGAL::abs(corner.y() - p.point().y()));
-      vv = Point_2(FT(2)*corner.x() + signla*sidelen,
-                   FT(2)*corner.y() + signlb*sidelen,
+      vv = Point_2(FT(2)*corner.x() + int(signla)*sidelen,
+                   FT(2)*corner.y() + int(signlb)*sidelen,
                    FT(2));
       return;
     }
@@ -812,8 +812,8 @@ private:
       // is shorter than Linf p, q distance
       const Point_2 corner = pos_slope?
         Point_2(pcoord, plineval) : Point_2(plineval, pcoord);
-      vv = Point_2(FT(2)*corner.x() + signla*pqdist,
-                   FT(2)*corner.y() + signlb*pqdist,
+      vv = Point_2(FT(2)*corner.x() + int(signla)*pqdist,
+                   FT(2)*corner.y() + int(signlb)*pqdist,
                    FT(2));
       return;
     }
@@ -829,8 +829,8 @@ private:
       // is shorter than Linf p, q distance
       const Point_2 corner = pos_slope?
         Point_2(qlineval, qcoord) : Point_2(qcoord, qlineval);
-      vv = Point_2(FT(2)*corner.x() + signla*pqdist,
-                   FT(2)*corner.y() + signlb*pqdist,
+      vv = Point_2(FT(2)*corner.x() + int(signla)*pqdist,
+                   FT(2)*corner.y() + int(signlb)*pqdist,
                    FT(2));
       return;
     }
@@ -1421,12 +1421,12 @@ private:
     RT ux_, uy_, uz_;
     if (cmp == LARGER) {
       ux_ = is_q_hor ? r_coord + p_coord_r : q_coord + p_coord_q;
-      uy_ = is_q_hor ? (RT(2)*q_coord + CGAL::sign(sdistq)*dx) :
-                       (RT(2)*r_coord + CGAL::sign(sdistr)*dx) ;
+      uy_ = is_q_hor ? (RT(2)*q_coord + int(CGAL::sign(sdistq))*dx) :
+                       (RT(2)*r_coord + int(CGAL::sign(sdistr))*dx) ;
     } else if (cmp == SMALLER) {
       uy_ = is_r_hor ? r_coord + p_coord_r : q_coord + p_coord_q;
-      ux_ = is_r_hor ? (RT(2)*q_coord + CGAL::sign(sdistq)*dy) :
-                       (RT(2)*r_coord + CGAL::sign(sdistr)*dy) ;
+      ux_ = is_r_hor ? (RT(2)*q_coord + int(CGAL::sign(sdistq))*dy) :
+                       (RT(2)*r_coord + int(CGAL::sign(sdistr))*dy) ;
     } else {
       ux_ = is_q_hor ? r_coord + p_coord_r : q_coord + p_coord_q;
       uy_ = is_q_hor ? q_coord + p_coord_q : r_coord + p_coord_r;
