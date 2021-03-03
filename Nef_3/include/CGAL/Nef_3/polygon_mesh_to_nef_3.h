@@ -112,7 +112,7 @@ class Face_graph_index_adder {
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
  public:
   Face_graph_index_adder(Polyhedron&, HalfedgeIndexMap ) {}
-  void set_hash(halfedge_descriptor,
+  void set_edge(halfedge_descriptor,
                 SHalfedge_handle) {}
   void resolve_indexes() {}
 };
