@@ -245,18 +245,17 @@ public:
       }
 
       double double_tmp_result = (distance - ssr);
-      double max2 = CGAL::abs(ssr);
 
-      if ((max1 < 3.33558365626356687717e-147) || (max2 < 1.11261183279326254436e-293)){
+      if ((max1 < 3.33558365626356687717e-147) || (ssr < 1.11261183279326254436e-293)){
         CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
         return Base::operator()(s,b);
       }
-      if ((max1 > 1.67597599124282407923e+153) || (max2 > 2.80889552322236673473e+306)){
+      if ((max1 > 1.67597599124282407923e+153) || (ssr > 2.80889552322236673473e+306)){
         CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
         return Base::operator()(s,b);
       }
 
-      double eps = 1.99986535548615598560e-15 * (std::max) (max2, (max1 * max1));
+      double eps = 1.99986535548615598560e-15 * (std::max) (ssr, square(max1));
 
       if (double_tmp_result > eps)
         return false;
@@ -265,6 +264,7 @@ public:
         if (double_tmp_result < -eps)
           return true;
         else {
+          return true; // AF:  just to test conservative approach
           CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
           return Base::operator()(s,b);
         }
