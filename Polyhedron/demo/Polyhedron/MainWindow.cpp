@@ -2957,6 +2957,8 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
                                             last_saved_dir,
                                             "Qt Script files (*.js)");
   }
+  if(!filename.endsWith(".js"))
+    filename.append(".js");
   std::ofstream os(filename.toUtf8(), std::ofstream::binary);
   if(!os)
     return;
