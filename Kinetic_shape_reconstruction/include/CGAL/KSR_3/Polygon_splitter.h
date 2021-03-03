@@ -66,8 +66,10 @@ private:
     IVertex ivertex;
     Vertex_info() :
     pvertex(Data_structure::null_pvertex()),
-    ivertex(Data_structure::null_ivertex())
+    ivertex(Data_structure::null_ivertex()),
+    sp_idx(KSR::no_element())
     { }
+    std::size_t sp_idx;
     std::vector<std::size_t> pedge_indices;
   };
 
@@ -111,7 +113,7 @@ public:
 
   void split_support_plane(const std::size_t sp_idx) {
 
-    // if (sp_idx != 6) return;
+    // if (sp_idx != 7) return;
 
     // Preprocessing.
     std::cout.precision(20);
@@ -121,6 +123,7 @@ public:
     const auto pface = *m_data.pfaces(sp_idx).begin();
     CGAL_assertion(pface.first == sp_idx);
     const auto original_input = m_data.input(pface);
+    CGAL_assertion(m_data.pvertices_of_pface(pface).size() >= 3);
 
     // Create cdt.
     initialize_cdt(pface);
@@ -374,9 +377,9 @@ private:
     // std::cout << "- num unique 2: " << points.size() << std::endl;
 
     // for (const auto& pair : points) {
-    //   std::cout <<
-    //   m_data.str(pair.second.first) << " : " <<
-    //   m_data.str(pair.second.second) << std::endl;
+    //   // std::cout <<
+    //   // m_data.str(pair.second.first) << " : " <<
+    //   // m_data.str(pair.second.second) << std::endl;
     //   std::cout << m_data.to_3d(sp_idx, pair.first) << std::endl;
     // }
 
@@ -390,6 +393,7 @@ private:
         data.first  != m_data.null_pvertex() ||
         data.second != m_data.null_ivertex());
       const auto vh = m_cdt.insert(point);
+      vh->info().sp_idx = pface.first;
 
       if (data.first != m_data.null_pvertex()) {
         vh->info().pvertex = data.first;
@@ -440,12 +444,13 @@ private:
       CGAL_assertion(vhs_pv.find(psource) != vhs_pv.end());
       CGAL_assertion(vhs_pv.find(ptarget) != vhs_pv.end());
 
-      const auto& vh_source = vhs_pv.at(psource);
-      const auto& vh_target = vhs_pv.at(ptarget);
+      const auto vh_source = vhs_pv.at(psource);
+      const auto vh_target = vhs_pv.at(ptarget);
       CGAL_assertion(vh_source != vh_target);
       CGAL_assertion(KSR::distance(
         vh_source->point(), vh_target->point()) >= ptol);
       m_cdt.insert_constraint(vh_source, vh_target);
+      // print_edge("original", pface.first, vh_source, vh_target);
       m_input.insert(psource);
     }
 
@@ -454,7 +459,7 @@ private:
       const std::size_t im = (i + n - 1) % n;
       const auto& pvertex = polygon[i];
       CGAL_assertion(vhs_pv.find(pvertex) != vhs_pv.end());
-      const auto& vh = vhs_pv.at(pvertex);
+      const auto vh = vhs_pv.at(pvertex);
       CGAL_assertion(vh->info().pedge_indices.size() == 0);
       vh->info().pedge_indices.push_back(im);
       vh->info().pedge_indices.push_back(i);
@@ -465,7 +470,7 @@ private:
       if (ivertices.size() == 0) continue;
       for (const auto& ivertex : ivertices) {
         CGAL_assertion(vhs_iv.find(ivertex) != vhs_iv.end());
-        const auto& vh = vhs_iv.at(ivertex);
+        const auto vh = vhs_iv.at(ivertex);
         if (vh->info().pvertex != m_data.null_pvertex()) {
           CGAL_assertion(vh->info().pedge_indices.size() == 2);
           continue;
@@ -480,6 +485,7 @@ private:
     // std::cout << "- num cdt faces 2: " << m_cdt.number_of_faces()    << std::endl;
 
     // Insert iedge constraints.
+    // std::cout << "num iedges: " << iedges.size() << std::endl;
     for (const auto& iedge : iedges) {
       const auto isource = m_data.source(iedge);
       const auto itarget = m_data.target(iedge);
@@ -488,8 +494,8 @@ private:
       CGAL_assertion(vhs_iv.find(isource) != vhs_iv.end());
       CGAL_assertion(vhs_iv.find(itarget) != vhs_iv.end());
 
-      const auto& vh_source = vhs_iv.at(isource);
-      const auto& vh_target = vhs_iv.at(itarget);
+      const auto vh_source = vhs_iv.at(isource);
+      const auto vh_target = vhs_iv.at(itarget);
       CGAL_assertion(vh_source != vh_target);
       CGAL_assertion(KSR::distance(
         vh_source->point(), vh_target->point()) >= ptol);
@@ -501,6 +507,30 @@ private:
 
     // std::cout << "- num cdt verts 3: " << m_cdt.number_of_vertices() << std::endl;
     // std::cout << "- num cdt faces 3: " << m_cdt.number_of_faces()    << std::endl;
+
+    // Add all points, which are not in unique points but in cdt.
+    for (auto vit = m_cdt.finite_vertices_begin();
+    vit != m_cdt.finite_vertices_end(); ++vit) {
+
+      if (vit->info().sp_idx != KSR::no_element()) continue;
+      if (vit->info().pvertex != m_data.null_pvertex()) continue;
+      if (vit->info().ivertex != m_data.null_ivertex()) continue;
+
+      const auto& point = vit->point();
+      CGAL_assertion(vit->info().pvertex == m_data.null_pvertex());
+      CGAL_assertion(vit->info().ivertex == m_data.null_ivertex());
+      CGAL_assertion(!is_pvertex(vhs_pv, polygon, point));
+      CGAL_assertion(!is_ivertex(pface.first, iedges, point));
+
+      const std::size_t idx = find_pedge(vhs_pv, polygon, point);
+      // std::cout << "found idx: " << idx << std::endl;
+      if (idx != KSR::no_element()) {
+        CGAL_assertion(idx < polygon.size());
+        CGAL_assertion(vit->info().pedge_indices.size() == 0);
+        vit->info().pedge_indices.push_back(idx);
+      }
+      vit->info().sp_idx = pface.first;
+    }
   }
 
   const bool is_pvertex(
@@ -511,8 +541,29 @@ private:
     const FT ptol = KSR::point_tolerance<FT>();
     for (const auto& pvertex : polygon) {
       CGAL_assertion(vhs_pv.find(pvertex) != vhs_pv.end());
-      const auto& vh = vhs_pv.at(pvertex);
+      const auto vh = vhs_pv.at(pvertex);
       const auto& point = vh->point();
+      const FT distance = KSR::distance(point, query);
+      if (distance < ptol) return true;
+    }
+    return false;
+  }
+
+  const bool is_ivertex(
+    const std::size_t sp_idx,
+    const std::set<IEdge>& iedges,
+    const Point_2& query) {
+
+    std::set<IVertex> ivertices;
+    for (const auto& iedge : iedges) {
+      ivertices.insert(m_data.source(iedge));
+      ivertices.insert(m_data.target(iedge));
+    }
+    CGAL_assertion(ivertices.size() > 0);
+
+    const FT ptol = KSR::point_tolerance<FT>();
+    for (const auto& ivertex : ivertices) {
+      const auto point = m_data.to_2d(sp_idx, ivertex);
       const FT distance = KSR::distance(point, query);
       if (distance < ptol) return true;
     }
@@ -537,8 +588,8 @@ private:
       CGAL_assertion(vhs_pv.find(psource) != vhs_pv.end());
       CGAL_assertion(vhs_pv.find(ptarget) != vhs_pv.end());
 
-      const auto& vh_source = vhs_pv.at(psource);
-      const auto& vh_target = vhs_pv.at(ptarget);
+      const auto vh_source = vhs_pv.at(psource);
+      const auto vh_target = vhs_pv.at(ptarget);
       CGAL_assertion(vh_source != vh_target);
 
       const auto& source = vh_source->point();
@@ -618,28 +669,65 @@ private:
   }
 
   const bool is_boundary(const Edge& edge) const {
+
     const auto& fh = edge.first;
     const std::size_t idx = edge.second;
+    const auto vh1 = fh->vertex( (idx + 1) % 3 );
+    const auto vh2 = fh->vertex( (idx + 2) % 3 );
 
-    const auto& vh1 = fh->vertex( (idx + 1) % 3 );
-    const auto& vh2 = fh->vertex( (idx + 2) % 3 );
+    if (m_cdt.is_infinite(vh1) || m_cdt.is_infinite(vh2)) {
+      return false;
+    }
+    CGAL_assertion(!m_cdt.is_infinite(vh1));
+    CGAL_assertion(!m_cdt.is_infinite(vh2));
+
+    if (!m_cdt.is_constrained(edge)) {
+      // print_edge("f0", vh1, vh2);
+      return false;
+    }
 
     const auto& pes1 = vh1->info().pedge_indices;
     const auto& pes2 = vh2->info().pedge_indices;
     CGAL_assertion(pes1.size() <= 2);
     CGAL_assertion(pes2.size() <= 2);
 
-    if (pes1.size() == 0) return false;
-    if (pes2.size() == 0) return false;
+    if (pes1.size() == 0 || pes2.size() == 0) {
+      // print_edge("f1", vh1, vh2);
+      return false;
+    }
     CGAL_assertion(pes1.size() > 0);
     CGAL_assertion(pes2.size() > 0);
 
     for (const std::size_t pe1 : pes1) {
       for (const std::size_t pe2 : pes2) {
-        if (pe1 == pe2) return true;
+        if (pe1 == pe2) {
+          // print_edge("t0", vh1, vh2);
+          return true;
+        }
       }
     }
+    // print_edge("f2", vh1, vh2);
     return false;
+  }
+
+  void print_edge(
+    const std::string name, const std::size_t sp_idx,
+    const Vertex_handle vh1, const Vertex_handle vh2) const {
+
+    CGAL_assertion(sp_idx != KSR::no_element());
+    std::cout << name << ": ";
+    std::cout << m_data.to_3d(sp_idx, vh1->point()) << " ";
+    std::cout << m_data.to_3d(sp_idx, vh2->point()) << std::endl;
+  }
+
+  void print_edge(
+    const std::string name, const Vertex_handle vh1, const Vertex_handle vh2) const {
+
+    CGAL_assertion(vh1->info().sp_idx != KSR::no_element());
+    CGAL_assertion(vh2->info().sp_idx != KSR::no_element());
+    std::cout << name << ": ";
+    std::cout << m_data.to_3d(vh1->info().sp_idx, vh1->point()) << " ";
+    std::cout << m_data.to_3d(vh2->info().sp_idx, vh2->point()) << std::endl;
   }
 
   void initialize_new_pfaces(
