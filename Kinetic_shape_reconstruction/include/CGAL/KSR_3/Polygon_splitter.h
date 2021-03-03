@@ -113,7 +113,7 @@ public:
 
   void split_support_plane(const std::size_t sp_idx) {
 
-    // if (sp_idx != 7) return;
+    if (sp_idx != 0) return;
 
     // Preprocessing.
     std::cout.precision(20);
@@ -127,11 +127,11 @@ public:
 
     // Create cdt.
     initialize_cdt(pface);
-    // dump_cdt(m_data, pface.first, m_cdt, "0-initial-");
+    dump_cdt(m_data, pface.first, m_cdt, "0-initial-");
     tag_cdt_exterior_faces();
-    // dump_cdt(m_data, pface.first, m_cdt, "1-exterior-");
+    dump_cdt(m_data, pface.first, m_cdt, "1-exterior-");
     tag_cdt_interior_faces();
-    // dump_cdt(m_data, pface.first, m_cdt, "2-interior-");
+    dump_cdt(m_data, pface.first, m_cdt, "2-interior-");
 
     // Split polygons using cdt.
     m_data.clear_polygon_faces(sp_idx);
@@ -344,25 +344,27 @@ private:
         std::make_pair(pvertex, m_data.null_ivertex())));
     }
 
+    std::set<IVertex> ivertices;
+    const FT ptol = KSR::point_tolerance<FT>();
     for (const auto& iedge : iedges) {
       const auto isource = m_data.source(iedge);
       const auto itarget = m_data.target(iedge);
       CGAL_assertion(isource != itarget);
-
-      const auto source = m_data.to_2d(sp_idx, isource);
-      const auto target = m_data.to_2d(sp_idx, itarget);
-      CGAL_assertion(source != target);
-
-      points.push_back(std::make_pair(source,
-        std::make_pair(m_data.null_pvertex(), isource)));
-      points.push_back(std::make_pair(target,
-        std::make_pair(m_data.null_pvertex(), itarget)));
+      CGAL_assertion(KSR::distance(
+        m_data.point_3(isource), m_data.point_3(itarget) ) >= ptol);
+      ivertices.insert(isource);
+      ivertices.insert(itarget);
     }
 
-    CGAL_assertion(points.size() == (pvertices.size() + iedges.size() * 2));
+    for (const auto& ivertex : ivertices) {
+      const auto point = m_data.to_2d(sp_idx, ivertex);
+      points.push_back(std::make_pair(point,
+        std::make_pair(m_data.null_pvertex(), ivertex)));
+    }
+
+    CGAL_assertion(points.size() == (pvertices.size() + ivertices.size()));
     // std::cout << "- num unique 1: " << points.size() << std::endl;
 
-    const FT ptol = KSR::point_tolerance<FT>();
     const auto sort_cmp = [&](const Pair& a, const Pair& b) {
       const auto are_equal = ( KSR::distance(a.first, b.first) < ptol );
       if (!are_equal) return a.first < b.first;
@@ -466,9 +468,9 @@ private:
     }
 
     for (std::size_t i = 0; i < pedge_map.size(); ++i) {
-      const auto& ivertices = pedge_map[i];
-      if (ivertices.size() == 0) continue;
-      for (const auto& ivertex : ivertices) {
+      const auto& pedge_ivertices = pedge_map[i];
+      if (pedge_ivertices.size() == 0) continue;
+      for (const auto& ivertex : pedge_ivertices) {
         CGAL_assertion(vhs_iv.find(ivertex) != vhs_iv.end());
         const auto vh = vhs_iv.at(ivertex);
         if (vh->info().pvertex != m_data.null_pvertex()) {

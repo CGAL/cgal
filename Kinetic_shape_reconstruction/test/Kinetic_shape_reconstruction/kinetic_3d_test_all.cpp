@@ -200,32 +200,32 @@ void run_all_tests() {
 
   // Edge case tests.
   // flat bbox / 2 coplanar in XY
-  // results = {7,1,12,20,11,2};
-  // assert(run_test<Traits>("data/edge-case-test/test-flat-bbox-xy.off", ks, num_iters, results, all_times, num_tests));
+  results = {7,1,12,20,11,2};
+  assert(run_test<Traits>("data/edge-case-test/test-flat-bbox-xy.off", ks, num_iters, results, all_times, num_tests));
 
-  // // flat bbox / 2 coplanar in XZ
-  // results = {7,1,12,20,11,2};
-  // assert(run_test<Traits>("data/edge-case-test/test-flat-bbox-xz.off", ks, num_iters, results, all_times, num_tests));
+  // flat bbox / 2 coplanar in XZ
+  results = {7,1,12,20,11,2};
+  assert(run_test<Traits>("data/edge-case-test/test-flat-bbox-xz.off", ks, num_iters, results, all_times, num_tests));
 
-  // // flat bbox / 2 coplanar in YZ
-  // results = {7,1,12,20,11,2};
-  // assert(run_test<Traits>("data/edge-case-test/test-flat-bbox-yz.off", ks, num_iters, results, all_times, num_tests));
+  // flat bbox / 2 coplanar in YZ
+  results = {7,1,12,20,11,2};
+  assert(run_test<Traits>("data/edge-case-test/test-flat-bbox-yz.off", ks, num_iters, results, all_times, num_tests));
 
-  // // edge touch
-  // results = {8,1,18,33,19,3};
-  // assert(run_test<Traits>("data/edge-case-test/test-2-polygons.off"  , ks, num_iters, results, all_times, num_tests));
+  // edge touch
+  results = {8,1,18,33,19,3};
+  assert(run_test<Traits>("data/edge-case-test/test-2-polygons.off"  , ks, num_iters, results, all_times, num_tests));
 
-  // // edge touch / 2 coplanar
-  // results = {9,1,24,46,27,4};
-  // assert(run_test<Traits>("data/edge-case-test/test-4-polygons.off"  , ks, num_iters, results, all_times, num_tests));
+  // edge touch / 2 coplanar
+  results = {9,1,24,46,27,4};
+  assert(run_test<Traits>("data/edge-case-test/test-4-polygons.off"  , ks, num_iters, results, all_times, num_tests));
 
-  // // edge touch / vertex touch / 2 coplanar
-  // results = {9,1,24,46,27,4};
-  // assert(run_test<Traits>("data/edge-case-test/test-5-polygons.off"  , ks, num_iters, results, all_times, num_tests));
+  // edge touch / vertex touch / 2 coplanar
+  results = {9,1,24,46,27,4};
+  assert(run_test<Traits>("data/edge-case-test/test-5-polygons.off"  , ks, num_iters, results, all_times, num_tests));
 
-  // // polygons with multiple near-collinear points
-  // results = {8,1,18,33,19,3};
-  // assert(run_test<Traits>("data/edge-case-test/test-collinear.off"   , ks, num_iters, results, all_times, num_tests));
+  // polygons with multiple near-collinear points
+  results = {8,1,18,33,19,3};
+  assert(run_test<Traits>("data/edge-case-test/test-collinear.off"   , ks, num_iters, results, all_times, num_tests));
 
   // Stress tests 0.
   results = {7,1,14,24,13,2};
@@ -262,92 +262,92 @@ void run_all_tests() {
   assert(run_test<Traits>("data/stress-test-0/test-6-polygons.off"     , ks, num_iters, results, all_times, num_tests));
 
   // Stress tests 1.
-  // results = {7,1,14,24,13,2};
-  // assert(run_test<Traits>("data/stress-test-1/test-1-rnd-polygons-1-4.off", ks, num_iters, results, all_times, num_tests));
-  // results = {7,1,14,24,13,2};
-  // assert(run_test<Traits>("data/stress-test-1/test-2-rnd-polygons-1-4.off", ks, num_iters, results, all_times, num_tests));
-  // results = {7,1,14,24,13,2};
-  // assert(run_test<Traits>("data/stress-test-1/test-3-rnd-polygons-1-4.off", ks, num_iters, results, all_times, num_tests));
-  // results = {7,1,14,24,13,2};
-  // assert(run_test<Traits>("data/stress-test-1/test-4-rnd-polygons-1-4.off", ks, num_iters, results, all_times, num_tests));
-  // results = {8,1,20,37,21,3};
-  // assert(run_test<Traits>("data/stress-test-1/test-5-rnd-polygons-2-4.off", ks, num_iters, results, all_times, num_tests));
-  // results = {8,1,19,35,20,3};
-  // assert(run_test<Traits>("data/stress-test-1/test-6-rnd-polygons-2-4.off", ks, num_iters, results, all_times, num_tests));
-  // results = {8,1,20,37,22,4};
-  // assert(run_test<Traits>("data/stress-test-1/test-7-rnd-polygons-2-4.off", ks, num_iters, results, all_times, num_tests));
-  // results = {9,1,28,56,35,6};
-  // assert(run_test<Traits>("data/stress-test-1/test-8-rnd-polygons-3-4.off", ks, num_iters, results, all_times, num_tests));
+  results = {7,1,14,24,13,2};
+  assert(run_test<Traits>("data/stress-test-1/test-1-rnd-polygons-1-4.off", ks, num_iters, results, all_times, num_tests));
+  results = {7,1,14,24,13,2};
+  assert(run_test<Traits>("data/stress-test-1/test-2-rnd-polygons-1-4.off", ks, num_iters, results, all_times, num_tests));
+  results = {7,1,14,24,13,2};
+  assert(run_test<Traits>("data/stress-test-1/test-3-rnd-polygons-1-4.off", ks, num_iters, results, all_times, num_tests));
+  results = {7,1,14,24,13,2};
+  assert(run_test<Traits>("data/stress-test-1/test-4-rnd-polygons-1-4.off", ks, num_iters, results, all_times, num_tests));
+  results = {8,1,20,37,21,3};
+  assert(run_test<Traits>("data/stress-test-1/test-5-rnd-polygons-2-4.off", ks, num_iters, results, all_times, num_tests));
+  results = {8,1,19,35,20,3};
+  assert(run_test<Traits>("data/stress-test-1/test-6-rnd-polygons-2-4.off", ks, num_iters, results, all_times, num_tests));
+  results = {8,1,20,37,22,4};
+  assert(run_test<Traits>("data/stress-test-1/test-7-rnd-polygons-2-4.off", ks, num_iters, results, all_times, num_tests));
+  results = {9,1,28,56,35,6};
+  assert(run_test<Traits>("data/stress-test-1/test-8-rnd-polygons-3-4.off", ks, num_iters, results, all_times, num_tests));
 
   // Stress tests 2.
-  // results = {7,1,14,24,13,2};
-  // assert(run_test<Traits>("data/stress-test-2/test-1-rnd-polygons-1-4.off", ks, num_iters, results, all_times, num_tests));
-  // results = {7,1,14,24,13,2};
-  // assert(run_test<Traits>("data/stress-test-2/test-2-rnd-polygons-1-4.off", ks, num_iters, results, all_times, num_tests));
-  // results = {7,1,14,24,13,2};
-  // assert(run_test<Traits>("data/stress-test-2/test-3-rnd-polygons-1-4.off", ks, num_iters, results, all_times, num_tests));
-  // results = {7,1,14,24,13,2};
-  // assert(run_test<Traits>("data/stress-test-2/test-4-rnd-polygons-1-3.off", ks, num_iters, results, all_times, num_tests));
-  // results = {8,1,19,35,20,3};
-  // assert(run_test<Traits>("data/stress-test-2/test-5-rnd-polygons-2-4.off", ks, num_iters, results, all_times, num_tests));
-  // results = {9,1,26,50,30,5};
-  // assert(run_test<Traits>("data/stress-test-2/test-6-rnd-polygons-3-4.off", ks, num_iters, results, all_times, num_tests));
+  results = {7,1,14,24,13,2};
+  assert(run_test<Traits>("data/stress-test-2/test-1-rnd-polygons-1-4.off", ks, num_iters, results, all_times, num_tests));
+  results = {7,1,14,24,13,2};
+  assert(run_test<Traits>("data/stress-test-2/test-2-rnd-polygons-1-4.off", ks, num_iters, results, all_times, num_tests));
+  results = {7,1,14,24,13,2};
+  assert(run_test<Traits>("data/stress-test-2/test-3-rnd-polygons-1-4.off", ks, num_iters, results, all_times, num_tests));
+  results = {7,1,14,24,13,2};
+  assert(run_test<Traits>("data/stress-test-2/test-4-rnd-polygons-1-3.off", ks, num_iters, results, all_times, num_tests));
+  results = {8,1,19,35,20,3};
+  assert(run_test<Traits>("data/stress-test-2/test-5-rnd-polygons-2-4.off", ks, num_iters, results, all_times, num_tests));
+  results = {9,1,26,50,30,5};
+  assert(run_test<Traits>("data/stress-test-2/test-6-rnd-polygons-3-4.off", ks, num_iters, results, all_times, num_tests));
 
   // Stress tests 3.
-  // results = {8,1,20,37,21,3};
-  // assert(run_test<Traits>("data/stress-test-3/test-1-rnd-polygons-2-3.off" , ks, num_iters, results, all_times, num_tests));
-  // results = {8,1,17,30,17,3};
-  // assert(run_test<Traits>("data/stress-test-3/test-2-rnd-polygons-2-3.off" , ks, num_iters, results, all_times, num_tests));
-  // results = {8,1,19,35,20,3};
-  // assert(run_test<Traits>("data/stress-test-3/test-3-rnd-polygons-2-3.off" , ks, num_iters, results, all_times, num_tests));
-  // results = {8,1,19,35,20,3};
-  // assert(run_test<Traits>("data/stress-test-3/test-4-rnd-polygons-2-4.off" , ks, num_iters, results, all_times, num_tests));
-  // results = {7,1,13,22,12,2};
-  // assert(run_test<Traits>("data/stress-test-3/test-5-rnd-polygons-1-3.off" , ks, num_iters, results, all_times, num_tests));
-  // results = {8,1,19,35,20,3};
-  // assert(run_test<Traits>("data/stress-test-3/test-6-rnd-polygons-2-3.off" , ks, num_iters, results, all_times, num_tests));
-  // results = {8,1,22,41,23,3};
-  // assert(run_test<Traits>("data/stress-test-3/test-7-rnd-polygons-2-4.off" , ks, num_iters, results, all_times, num_tests));
-  // results = {8,1,18,33,19,3};
-  // assert(run_test<Traits>("data/stress-test-3/test-8-rnd-polygons-2-10.off", ks, num_iters, results, all_times, num_tests));
-  // results = {10,1,39,82,50,7};
-  // assert(run_test<Traits>("data/stress-test-3/test-9-rnd-polygons-4-4.off" , ks, num_iters, results, all_times, num_tests));
-  // results = {11,1,55,119,78,13};
-  // assert(run_test<Traits>("data/stress-test-3/test-10-rnd-polygons-5-4.off", ks, num_iters, results, all_times, num_tests));
+  results = {8,1,20,37,21,3};
+  assert(run_test<Traits>("data/stress-test-3/test-1-rnd-polygons-2-3.off" , ks, num_iters, results, all_times, num_tests));
+  results = {8,1,17,30,17,3};
+  assert(run_test<Traits>("data/stress-test-3/test-2-rnd-polygons-2-3.off" , ks, num_iters, results, all_times, num_tests));
+  results = {8,1,19,35,20,3};
+  assert(run_test<Traits>("data/stress-test-3/test-3-rnd-polygons-2-3.off" , ks, num_iters, results, all_times, num_tests));
+  results = {8,1,19,35,20,3};
+  assert(run_test<Traits>("data/stress-test-3/test-4-rnd-polygons-2-4.off" , ks, num_iters, results, all_times, num_tests));
+  results = {7,1,13,22,12,2};
+  assert(run_test<Traits>("data/stress-test-3/test-5-rnd-polygons-1-3.off" , ks, num_iters, results, all_times, num_tests));
+  results = {8,1,19,35,20,3};
+  assert(run_test<Traits>("data/stress-test-3/test-6-rnd-polygons-2-3.off" , ks, num_iters, results, all_times, num_tests));
+  results = {8,1,22,41,23,3};
+  assert(run_test<Traits>("data/stress-test-3/test-7-rnd-polygons-2-4.off" , ks, num_iters, results, all_times, num_tests));
+  results = {8,1,18,33,19,3};
+  assert(run_test<Traits>("data/stress-test-3/test-8-rnd-polygons-2-10.off", ks, num_iters, results, all_times, num_tests));
+  results = {10,1,39,82,50,7};
+  assert(run_test<Traits>("data/stress-test-3/test-9-rnd-polygons-4-4.off" , ks, num_iters, results, all_times, num_tests));
+  results = {11,1,55,119,78,13};
+  assert(run_test<Traits>("data/stress-test-3/test-10-rnd-polygons-5-4.off", ks, num_iters, results, all_times, num_tests));
 
   // Stress tests 4.
-  // results = {8,1,20,37,21,3};
-  // assert(run_test<Traits>("data/stress-test-4/test-1-rnd-polygons-2-6.off" , ks, num_iters, results, all_times, num_tests));
-  // results = {9,1,29,58,36,6};
-  // assert(run_test<Traits>("data/stress-test-4/test-2-rnd-polygons-3-8.off" , ks, num_iters, results, all_times, num_tests));
-  // results = {10,1,37,76,48,8};
-  // assert(run_test<Traits>("data/stress-test-4/test-3-rnd-polygons-4-4.off" , ks, num_iters, results, all_times, num_tests));
-  // results = {10,1,37,77,46,6};
-  // assert(run_test<Traits>("data/stress-test-4/test-4-rnd-polygons-4-6.off" , ks, num_iters, results, all_times, num_tests));
-  // results = {12,2,83,191,133,24};
-  // assert(run_test<Traits>("data/stress-test-4/test-5-rnd-polygons-6-4.off" , ks, num_iters, results, all_times, num_tests));
-  // results = {11,1,50,107,71,14};
-  // assert(run_test<Traits>("data/stress-test-4/test-6-rnd-polygons-5-6.off" , ks, num_iters, results, all_times, num_tests));
-  // results = {13,2,104,246,160,23};
-  // assert(run_test<Traits>("data/stress-test-4/test-7-rnd-polygons-7-6.off" , ks, num_iters, results, all_times, num_tests));
-  // results = {13,1,69,152,100,16};
-  // assert(run_test<Traits>("data/stress-test-4/test-8-rnd-polygons-7-8.off" , ks, num_iters, results, all_times, num_tests));
-  // results = {18,3,250,629,449,76};
-  // assert(run_test<Traits>("data/stress-test-4/test-9-rnd-polygons-12-4.off", ks, num_iters, results, all_times, num_tests));
+  results = {8,1,20,37,21,3};
+  assert(run_test<Traits>("data/stress-test-4/test-1-rnd-polygons-2-6.off" , ks, num_iters, results, all_times, num_tests));
+  results = {9,1,29,58,36,6};
+  assert(run_test<Traits>("data/stress-test-4/test-2-rnd-polygons-3-8.off" , ks, num_iters, results, all_times, num_tests));
+  results = {10,1,37,76,48,8};
+  assert(run_test<Traits>("data/stress-test-4/test-3-rnd-polygons-4-4.off" , ks, num_iters, results, all_times, num_tests));
+  results = {10,1,37,77,46,6};
+  assert(run_test<Traits>("data/stress-test-4/test-4-rnd-polygons-4-6.off" , ks, num_iters, results, all_times, num_tests));
+  results = {12,2,83,191,133,24};
+  assert(run_test<Traits>("data/stress-test-4/test-5-rnd-polygons-6-4.off" , ks, num_iters, results, all_times, num_tests));
+  results = {11,1,50,107,71,14};
+  assert(run_test<Traits>("data/stress-test-4/test-6-rnd-polygons-5-6.off" , ks, num_iters, results, all_times, num_tests));
+  results = {13,2,104,246,160,23};
+  assert(run_test<Traits>("data/stress-test-4/test-7-rnd-polygons-7-6.off" , ks, num_iters, results, all_times, num_tests));
+  results = {13,1,69,152,100,16};
+  assert(run_test<Traits>("data/stress-test-4/test-8-rnd-polygons-7-8.off" , ks, num_iters, results, all_times, num_tests));
+  results = {18,3,250,629,449,76};
+  assert(run_test<Traits>("data/stress-test-4/test-9-rnd-polygons-12-4.off", ks, num_iters, results, all_times, num_tests));
 
   // Stress tests 5.
-  // results = {21,2,468,1224,723,67};
-  // assert(run_test<Traits>("data/stress-test-5/test-1-rnd-polygons-15-6.off", ks, num_iters, results, all_times, num_tests));
-  // results = {26,3,1037,2829,1693,161};
-  // assert(run_test<Traits>("data/stress-test-5/test-2-rnd-polygons-20-4.off", ks, num_iters, results, all_times, num_tests));
+  results = {21,2,468,1224,723,67};
+  assert(run_test<Traits>("data/stress-test-5/test-1-rnd-polygons-15-6.off", ks, num_iters, results, all_times, num_tests));
+  results = {26,3,1037,2829,1693,161};
+  assert(run_test<Traits>("data/stress-test-5/test-2-rnd-polygons-20-4.off", ks, num_iters, results, all_times, num_tests));
 
   // Real data tests.
-  // results = {16,1,133,315,212,34};
-  // assert(run_test<Traits>("data/real-data-test/test-10-polygons.off", ks, num_iters, results, all_times, num_tests));
-  // results = {21,3,349,899,603,81};
-  // assert(run_test<Traits>("data/real-data-test/test-15-polygons.off", ks, num_iters, results, all_times, num_tests));
-  // results = {25,3,606,1607,999,101};
-  // assert(run_test<Traits>("data/real-data-test/test-20-polygons.off", ks, num_iters, results, all_times, num_tests));
+  results = {16,1,133,315,212,34};
+  assert(run_test<Traits>("data/real-data-test/test-10-polygons.off", ks, num_iters, results, all_times, num_tests));
+  results = {21,3,349,899,603,81};
+  assert(run_test<Traits>("data/real-data-test/test-15-polygons.off", ks, num_iters, results, all_times, num_tests));
+  results = {25,3,606,1607,999,101};
+  assert(run_test<Traits>("data/real-data-test/test-20-polygons.off", ks, num_iters, results, all_times, num_tests));
 
   // Still to be done!
   // All arrive at the same time, fails for k = 1.
