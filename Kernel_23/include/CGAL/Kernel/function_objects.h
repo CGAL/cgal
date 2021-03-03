@@ -3568,8 +3568,12 @@ namespace CommonKernelFunctors {
   };
 
 
+  // This functor is not part of the documented Kernel API, but an implementation detail
+  // of Polygon_mesh_processing::Polyhedral_envelope
+  // When used with the Lazy_kernel (that is Epeck) the returned point
+  // is a singleton (so its coordinates will be changed by another call).
   template <typename K>
-  class Intersect_point_3
+  class Intersect_point_3_for_polyhedral_envelope
   {
   public:
     typedef typename K::Point_3     Point_3;
