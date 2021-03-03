@@ -672,7 +672,8 @@ struct Test {
                           P(0,1,0));
 
       check_intersection (tet, Pl(P(0,0.5,0), P(1,0.5,-5), P(0.5,0.5,0.5)),
-                          Tr(P(0.5,0.5,0), P(0,0.5,0), P(0,0.5,0.5)));
+                          Tr(P(0, 0.5, 0), P(0.5,0.5,0),  P(0,0.5,0.5)));
+
       Pl pl(P(0,0.9,0), P(0.9,0,0), P(0.9,0.01,0.06));
 
       typedef typename CGAL::Intersection_traits<K,
@@ -907,7 +908,7 @@ struct Test {
 
       //edge
       check_intersection (cub, Pl(P(1,1,1), P(1,2,1), P(1.5,0,0)),
-                          S(P(1,2,1), P(1,1,1)));
+                          S(P(1,1,1), P(1,2,1)));
 
 
       //face
@@ -924,6 +925,7 @@ struct Test {
         assert(p.x() == 1);
       }
       res = CGAL::intersection(cub, Pl(P(1,1,1), P(1,2,1), P(2,2,2)));
+
       poly = boost::get<std::vector<P> >(&*res);
       assert(poly != nullptr);
       assert(poly->size() == 4);
@@ -940,8 +942,8 @@ struct Test {
       check_intersection (cub, Pl(P(2, 1.66, 2),
                                   P(1.66,2,2),
                                   P(2,2,1.66)),
-                          Tr(P(2, 2, 1.66),
-                             P(1.66,2,2),
+                          Tr(P(1.66,2,2),
+                             P(2, 2, 1.66),
                              P(2,1.66,2)));
 
       //other edge
@@ -1100,7 +1102,7 @@ struct Test {
 
       //edge
       check_intersection (cub, Pl(P(1,1,1), P(1,2,1), P(1.5,0,0)),
-                          S(P(1,2,1), P(1,1,1)));
+                          S(P(1,1,1), P(1,2,1)));
       //face
       typedef typename CGAL::Intersection_traits<K,
           typename K::Plane_3,
@@ -1126,8 +1128,8 @@ struct Test {
       check_intersection (cub, Pl(P(2, 1.66, 2),
                                   P(1.66,2,2),
                                   P(2,2,1.66)),
-                          Tr(P(2, 2, 1.66),
-                             P(1.66,2,2),
+                          Tr(P(1.66,2,2),
+                             P(2, 2, 1.66),
                              P(2,1.66,2)));
 
       //random
