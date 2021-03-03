@@ -359,7 +359,7 @@ inline double CGAL_IA_UP(double d)
 {
   // In round-upward mode we can rely on the hardware
   // to do the job.
-  return d;
+  return CGAL_IA_FORCE_TO_DOUBLE(d);
 }
 #endif
 #define CGAL_IA_ADD(a,b) CGAL_IA_UP((a)+CGAL_IA_STOP_CPROP(b))
