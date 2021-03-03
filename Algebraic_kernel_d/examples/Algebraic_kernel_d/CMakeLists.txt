@@ -9,7 +9,7 @@ if ( CGAL_FOUND )
   find_package(MPFI QUIET)
 endif()
 
-if( CGAL_FOUND AND MPFI_FOUND)
+if( CGAL_FOUND AND NOT CGAL_DISABLE_GMP AND MPFI_FOUND)
 
   include( ${CGAL_USE_FILE} )
   include( ${MPFI_USE_FILE} )
@@ -23,6 +23,6 @@ if( CGAL_FOUND AND MPFI_FOUND)
 
 else()
 
-    message(STATUS "This program requires the CGAL library and MPFI, and will not be compiled.")
+    message(STATUS "This program requires the CGAL, CGAL_Core and MPFI libraries, and will not be compiled.")
 
 endif()
