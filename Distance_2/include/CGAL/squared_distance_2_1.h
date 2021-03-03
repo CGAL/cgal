@@ -234,7 +234,7 @@ namespace internal {
 
       c2s = CGAL::abs(wcross(seg1.source(), seg1.target(), seg2.source(), k));
       c2e = CGAL::abs(wcross(seg1.source(), seg1.target(), seg2.target(), k));
-      Comparison_result dm = compare(c2s,c2e);
+      Comparison_result dm = CGAL::compare(c2s,c2e);
 
       if (dm == SMALLER) {
         return internal::squared_distance(seg2.source(), seg1, k);
@@ -249,7 +249,7 @@ namespace internal {
     } else {
       c1s = CGAL::abs(wcross(seg2.source(), seg2.target(), seg1.source(), k));
       c1e = CGAL::abs(wcross(seg2.source(), seg2.target(), seg1.target(), k));
-      Comparison_result dm = compare(c1s,c1e);
+      Comparison_result dm = CGAL::compare(c1s,c1e);
       if (crossing2) {
         if (dm == SMALLER) {
           return internal::squared_distance(seg1.source(), seg2, k);
@@ -272,7 +272,7 @@ namespace internal {
 
         c2s = CGAL::abs(wcross(seg1.source(), seg1.target(), seg2.source(), k));
         c2e = CGAL::abs(wcross(seg1.source(), seg1.target(), seg2.target(), k));
-        dm = compare(c2s,c2e);
+        dm = CGAL::compare(c2s,c2e);
 
         if (dm == EQUAL)  // should not happen.
           return internal::squared_distance_parallel(seg1, seg2, k);
