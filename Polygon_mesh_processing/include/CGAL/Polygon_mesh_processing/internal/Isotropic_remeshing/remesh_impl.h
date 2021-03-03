@@ -43,6 +43,7 @@
 #include <boost/unordered_set.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/container/flat_set.hpp>
+#include <boost/optional.hpp>
 
 #include <map>
 #include <list>
@@ -1885,8 +1886,8 @@ private:
     bool check_normals(const HalfedgeRange& hedges) const
     {
       std::size_t nb_patches = patch_id_to_index_map.size();
+      std::vector<boost::optional<Vector_3> > normal_per_patch(nb_patches,boost::none);
 
-      std::vector< std::vector<Vector_3> > normals_per_patch(nb_patches);
       for(halfedge_descriptor hd : hedges)
       {
         Halfedge_status s = status(hd);
@@ -1898,18 +1899,15 @@ private:
         if (n == CGAL::NULL_VECTOR) //for degenerate faces
           continue;
         Patch_id pid = get_patch_id(face(hd, mesh_));
-        normals_per_patch[patch_id_to_index_map.at(pid)].push_back(n);
-      }
-
-      //on each surface patch,
-      //check all normals have same orientation
-      for (std::size_t i=0; i < nb_patches; ++i)
-      {
-        const std::vector<Vector_3>& normals = normals_per_patch[i];
-        if (normals.empty()) continue;
-
-        if (!check_orientation(normals))
-          return false;
+        std::size_t index = patch_id_to_index_map.at(pid);
+        if(normal_per_patch[index]){
+          const Vector_3& vec = *normal_per_patch[index];
+          double dot = to_double(n * vec);
+          if (dot <= 0.){
+            return false;
+          }
+        }
+        normal_per_patch[index] = boost::make_optional(n);
       }
       return true;
     }
@@ -1922,20 +1920,7 @@ private:
       Vector_3 no = compute_normal(face(opposite(h, mesh_), mesh_));
       return n * no > 0.;
     }
-
-    bool check_orientation(const std::vector<Vector_3>& normals) const
-    {
-      if (normals.size() < 2)
-        return true;
-      for (std::size_t i = 1; i < normals.size(); ++i)/*start at 1 on purpose*/
-      {
-        double dot = to_double(normals[i - 1] * normals[i]);
-        if (dot <= 0.)
-          return false;
-      }
-      return true;
-    }
-
+    
   public:
     const Triangle_list& input_triangles() const {
       return input_triangles_;
