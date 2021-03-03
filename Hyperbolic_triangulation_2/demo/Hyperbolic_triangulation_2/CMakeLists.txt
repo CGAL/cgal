@@ -30,8 +30,13 @@ if(CGAL_Qt5_FOUND
   add_executable(HDT2 HDT2.cpp ${CGAL_Qt5_RESOURCE_FILES} ${RESOURCE_FILES}
                       ${UIS})
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS HDT2)
-  target_link_libraries(HDT2 CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_Core
+  target_link_libraries(HDT2 CGAL::CGAL CGAL::CGAL_Qt5
                         Qt5::Widgets)
+                        if(CGAL_Core_FOUND)
+    target_link_libraries ( HDT2 CGAL::CGAL_Core)
+  else()
+    target_link_libraries ( HDT2 ${LEDA_LIBRARIES})
+  endif()
 else()
   message(
     STATUS
