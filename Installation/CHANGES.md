@@ -32,6 +32,9 @@ A comprehensive list of the supported file formats is available in the Stream_su
 ### 2D Regularized Boolean Set Operations
 -   Added documentation for the free functions `oriented_side(const Point_2& p, ....)` that accept a point and a polygon, and improved the documentation of all other functions
 
+### [2D Polyline Simplification](https://doc.cgal.org/5.3/Manual/packages.html#PkgPolylineSimplification2)
+-   When polylines have common subsequences of vertices these subsequences may be simplifified simultaneously.
+
 [Release 5.2](https://github.com/CGAL/cgal/releases/tag/v5.2)
 -----------
 

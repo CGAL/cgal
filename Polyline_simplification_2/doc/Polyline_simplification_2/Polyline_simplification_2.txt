@@ -167,6 +167,16 @@ over all vertices of all polyline constraints.
 
 \cgalExample{Polyline_simplification_2/simplify.cpp}
 
+Note that when polylines share subsequences of polyline vertices they can get simplified simultaneously.
+
+\cgalFigureBegin{figure_overlapping_polylines, overlapping_polylines.png}
+Simplification of overlapping subsequence of polyline vertices
+\cgalFigureEnd
+
+\cgalExample{Polyline_simplification_2/simplify_overlapping_polylines.cpp}
+
+
+
 
 \subsection Subsection_PolylineSimplification_Keeping Keeping Points While Removing Vertices
 
