@@ -25,6 +25,10 @@ A comprehensive list of the supported file formats is available in the Stream_su
 -   Added a filtering mechanism so that costly tests get only applied to the next candidate for the edge collapse.
 -   Added the class `Polyhedral_envelope_filter` that enables to perform mesh simplification inside a polyhedral envelope of the input mesh.
 
+### Surface Mesh Topology
+- Added the function `CGAL::Surface_mesh_topology::Curves_on_surface_topology::is_homotopic_to_simple_cycle()`, which can be used to determine whehter a closed path
+  on a surface mesh can be continously transformed to a cycle without self intersection.
+
 ### 2D Regularized Boolean Set Operations
 -   Added documentation for the free functions `oriented_side(const Point_2& p, ....)` that accept a point and a polygon, and improved the documentation of all other functions
 
