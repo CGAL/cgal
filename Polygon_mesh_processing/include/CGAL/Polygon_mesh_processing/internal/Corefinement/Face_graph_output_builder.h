@@ -1117,7 +1117,6 @@ public:
       typedef typename VPM_helper::VPM SOTM_vpm2;
       typedef typename VPM_helper::Tree_type Tree_type;
 
-      SOTM_vpm2 sotm_vpm2 = VPM_helper::get_vpm(vertex_to_node_id2, vpm2, nodes);
       Tree_type tree;
       VPM_helper::build_tree(tm2, tree, vertex_to_node_id2, fids2, vpm2, nodes);
       Side_of_triangle_mesh<TriangleMesh, Exact_kernel, SOTM_vpm2, Tree_type> inside_tm2(tree);
