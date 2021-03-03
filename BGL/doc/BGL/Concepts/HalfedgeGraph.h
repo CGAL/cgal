@@ -2,7 +2,7 @@
 \ingroup PkgBGLConcepts
 \cgalConcept
 
-The concept `HalfedgeGraph` is a refinement of the \sc{Bgl} concept
+The concept `HalfedgeGraph` is a refinement of the \bgl concept
 `IncidenceGraph` and adds the notion of a *halfedge*: Each edge is
 associated with two *opposite* halfedges with source and target vertices swapped.
 Furthermore, halfedges have a *successor* and *predecessor*,
