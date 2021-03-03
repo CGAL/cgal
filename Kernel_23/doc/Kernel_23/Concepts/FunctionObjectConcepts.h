@@ -9267,7 +9267,7 @@ public:
 
   /*!
     returns \ref CGAL::ON_ORIENTED_BOUNDARY,
-    \ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE,
+    \ref CGAL::ON_NEGATIVE_SIDE, or \ref CGAL::ON_POSITIVE_SIDE,
     depending on the position of `p` relative to the oriented plane `h`.
   */
   Oriented_side operator()(const Kernel::Plane_3&h,
@@ -9275,7 +9275,17 @@ public:
 
   /*!
     returns \ref CGAL::ON_ORIENTED_BOUNDARY,
-    \ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE,
+    \ref CGAL::ON_NEGATIVE_SIDE, or \ref CGAL::ON_POSITIVE_SIDE,
+    depending on the position of `p` relative to the oriented plane constructed
+    from `plane_point` and `plane_vector`.
+  */
+  Oriented_side operator()(const Kernel::Point_3& plane_point,
+                           const Kernel::Vector_3& plane_vector,
+                           const Kernel::Point_3&p);
+
+  /*!
+    returns \ref CGAL::ON_ORIENTED_BOUNDARY,
+    \ref CGAL::ON_NEGATIVE_SIDE, or \ref CGAL::ON_POSITIVE_SIDE,
     depending on the position of `p` relative to the oriented tetrahedron `t`.
   */
   Oriented_side operator()(const Kernel::Tetrahedron_3&t,
@@ -9283,7 +9293,7 @@ public:
 
   /*!
     returns \ref CGAL::ON_ORIENTED_BOUNDARY,
-    \ref CGAL::ON_NEGATIVE_SIDE, or the \ref CGAL::ON_POSITIVE_SIDE,
+    \ref CGAL::ON_NEGATIVE_SIDE, or \ref CGAL::ON_POSITIVE_SIDE,
     depending on the position of `p` relative to the oriented sphere `s`.
   */
   Oriented_side operator()(const Kernel::Sphere_3& s,
