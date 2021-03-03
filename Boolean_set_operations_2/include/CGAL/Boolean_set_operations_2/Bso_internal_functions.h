@@ -35,8 +35,7 @@ namespace CGAL {
 // With Traits
 template <typename Pgn1, class Pgn2, typename Traits>
 inline bool s_do_intersect(const Pgn1& pgn1, const Pgn2& pgn2, Traits& traits) {
-  General_polygon_set_2<Traits> gps(traits);
-  gps.insert(pgn1);
+  General_polygon_set_2<Traits> gps(pgn1, traits);
   return gps.do_intersect(pgn2);
 }
 
@@ -55,9 +54,8 @@ template <typename InputIterator, typename Traits>
 inline bool r_do_intersect(InputIterator begin, InputIterator end,
                            Traits& traits, unsigned int k=5) {
   if (begin == end) return false;
-  General_polygon_set_2<Traits> gps(traits);
-  gps.insert(*begin);
-  return gps.do_intersect(++begin, end, k);
+  General_polygon_set_2<Traits> gps(*begin, traits);
+  return gps.do_intersect(std::next(begin), end, k);
 }
 
 // Without Traits
@@ -78,9 +76,8 @@ inline bool r_do_intersect(InputIterator1 begin1, InputIterator1 end1,
                            InputIterator2 begin2, InputIterator2 end2,
                            Traits& traits, unsigned int k=5) {
   if (begin1 == end1) return do_intersect(begin2, end2, traits, k);
-  General_polygon_set_2<Traits> gps(traits);
-  gps.insert(*begin1);
-  return gps.do_intersect(++begin1, end1, begin2, end2, k);
+  General_polygon_set_2<Traits> gps(*begin1, traits);
+  return gps.do_intersect(std::next(begin1), end1, begin2, end2, k);
 }
 
 // Without Traits
@@ -106,8 +103,7 @@ inline bool r_do_intersect (InputIterator1 begin1, InputIterator1 end1,
 template <typename Obj, typename Pgn, typename Traits>
 inline Oriented_side _oriented_side(const Obj& obj, const Pgn& pgn,
                                     Traits& traits) {
-  General_polygon_set_2<Traits> gps(traits);
-  gps.insert(pgn);
+  General_polygon_set_2<Traits> gps(pgn, traits);
   return gps.oriented_side(obj);
 }
 
@@ -142,8 +138,7 @@ inline Oriented_side _oriented_side(const Pgn1& pgn1, const Pgn2& pgn2)
 template <typename Pgn1, typename Pgn2, typename OutputIterator, typename Traits>
 inline OutputIterator s_intersection(const Pgn1& pgn1, const Pgn2& pgn2,
                                      OutputIterator oi, Traits& traits) {
-  General_polygon_set_2<Traits> gps(traits);
-  gps.insert(pgn1);
+  General_polygon_set_2<Traits> gps(pgn1, traits);
   gps.intersection(pgn2);
   return gps.polygons_with_holes(oi);
 }
@@ -169,11 +164,11 @@ inline OutputIterator s_intersection(const Pgn1& pgn1, const Pgn2& pgn2,
 // With Traits
 template <typename InputIterator, typename OutputIterator, typename Traits>
 inline OutputIterator r_intersection(InputIterator begin, InputIterator end,
-                                     OutputIterator oi, Traits&,
+                                     OutputIterator oi, Traits& traits,
                                      unsigned int k=5) {
   if (begin == end) return (oi);
-  General_polygon_set_2<Traits> gps(*begin);
-  gps.intersection(++begin, end, k);
+  General_polygon_set_2<Traits> gps(*begin, traits);
+  gps.intersection(std::next(begin), end, k);
   return gps.polygons_with_holes(oi);
 }
 
@@ -198,8 +193,8 @@ inline OutputIterator r_intersection(InputIterator1 begin1, InputIterator1 end1,
                                      OutputIterator oi, Traits& traits,
                                      unsigned int k=5) {
   if (begin1 == end1) return r_intersection(begin2, end2, oi, traits, k);
-  General_polygon_set_2<Traits> gps(*begin1);
-  gps.intersection(++begin1, end1, begin2, end2, k);
+  General_polygon_set_2<Traits> gps(*begin1, traits);
+  gps.intersection(std::next(begin1), end1, begin2, end2, k);
   return gps.polygons_with_holes(oi);
 }
 
@@ -251,8 +246,7 @@ inline bool s_join(const Pgn1& pgn1, const Pgn2& pgn2,
                    typename Traits::Polygon_with_holes_2& res, Traits& traits) {
   if (_is_empty(pgn1, traits) || _is_empty(pgn2, traits)) return false;
 
-  General_polygon_set_2<Traits> gps(traits);
-  gps.insert(pgn1);
+  General_polygon_set_2<Traits> gps(pgn1, traits);
   gps.join(pgn2);
   if (gps.number_of_polygons_with_holes() == 1) {
     Oneset_iterator<typename Traits::Polygon_with_holes_2> oi(res);
@@ -287,10 +281,11 @@ inline bool s_join(const Pgn1& pgn1, const Pgn2& pgn2, Pwh& pwh) {
 // With traits
 template <typename InputIterator, typename OutputIterator, typename Traits>
 inline OutputIterator r_join(InputIterator begin, InputIterator end,
-                             OutputIterator oi, Traits&, unsigned int k=5) {
+                             OutputIterator oi, Traits& traits,
+                             unsigned int k=5) {
   if (begin == end) return oi;
-  General_polygon_set_2<Traits> gps(*begin);
-  gps.join(++begin, end, k);
+  General_polygon_set_2<Traits> gps(*begin, traits);
+  gps.join(std::next(begin), end, k);
   return gps.polygons_with_holes(oi);
 }
 
@@ -315,8 +310,8 @@ inline OutputIterator r_join(InputIterator1 begin1, InputIterator1 end1,
                              OutputIterator oi, Traits& traits,
                              unsigned int k=5) {
   if (begin1 == end1) return r_join(begin2, end2, oi, traits, k);
-  General_polygon_set_2<Traits> gps(*begin1);
-  gps.join(++begin1, end1, begin2, end2, k);
+  General_polygon_set_2<Traits> gps(*begin1, traits);
+  gps.join(std::next(begin1), end1, begin2, end2, k);
   return gps.polygons_with_holes(oi);
 }
 
@@ -344,8 +339,7 @@ inline OutputIterator r_join(InputIterator1 begin1, InputIterator1 end1,
 template <typename Pgn1, typename Pgn2, typename OutputIterator, typename Traits>
 inline OutputIterator _difference(const Pgn1& pgn1, const Pgn2& pgn2,
                                   OutputIterator oi, Traits& traits) {
-  General_polygon_set_2<Traits> gps(traits);
-  gps.insert(pgn1);
+  General_polygon_set_2<Traits> gps(pgn1, traits);
   gps.difference(pgn2);
   return gps.polygons_with_holes(oi);
 }
@@ -377,8 +371,7 @@ template <typename Pgn1, typename Pgn2, typename OutputIterator, typename Traits
 inline OutputIterator s_symmetric_difference(const Pgn1& pgn1, const Pgn2& pgn2,
                                              OutputIterator oi,
                                              Traits& traits) {
-  General_polygon_set_2<Traits> gps(traits);
-  gps.insert(pgn1);
+  General_polygon_set_2<Traits> gps(pgn1, traits);
   gps.symmetric_difference(pgn2);
   return gps.polygons_with_holes(oi);
 }
@@ -408,9 +401,8 @@ OutputIterator r_symmetric_difference(InputIterator begin, InputIterator end,
                                       OutputIterator oi, Traits& traits,
                                       unsigned int k=5) {
   if (begin == end) return (oi);
-  General_polygon_set_2<Traits> gps(traits);
-  gps.insert(*begin);
-  gps.symmetric_difference(++begin, end, k);
+  General_polygon_set_2<Traits> gps(*begin, traits);
+  gps.symmetric_difference(std::next(begin), end, k);
   return gps.polygons_with_holes(oi);
 }
 
@@ -441,9 +433,8 @@ inline OutputIterator r_symmetric_difference(InputIterator1 begin1,
                                              unsigned int k=5)
 {
   if (begin1 == end1) return r_symmetric_difference(begin2, end2, oi, traits, k);
-  General_polygon_set_2<Traits> gps(traits);
-  gps.insert(*begin1);
-  gps.symmetric_difference(++begin1, end1, begin2, end2, k);
+  General_polygon_set_2<Traits> gps(*begin1, traits);
+  gps.symmetric_difference(std::next(begin1), end1, begin2, end2, k);
   return gps.polygons_with_holes(oi);
 }
 
@@ -475,8 +466,7 @@ inline OutputIterator r_symmetric_difference(InputIterator1 begin1,
 template <typename Kernel, typename Container, typename Traits>
 void _complement(const Polygon_2<Kernel, Container>& pgn,
                  typename Traits::Polygon_with_holes_2& res, Traits& traits) {
-  General_polygon_set_2<Traits> gps(traits);
-  gps.insert(pgn);
+  General_polygon_set_2<Traits> gps(pgn, traits);
   gps.complement();
   Oneset_iterator<typename Traits::Polygon_with_holes_2> oi(res);
   gps.polygons_with_holes(oi);
@@ -486,8 +476,7 @@ void _complement(const Polygon_2<Kernel, Container>& pgn,
 template <typename ArrTraits, typename Traits>
 void _complement(const General_polygon_2<ArrTraits>& pgn,
                  typename Traits::Polygon_with_holes_2& res, Traits& traits) {
-  General_polygon_set_2<Traits> gps(traits);
-  gps.insert(pgn);
+  General_polygon_set_2<Traits> gps(pgn, traits);
   gps.complement();
   Oneset_iterator<typename Traits::Polygon_with_holes_2> oi(res);
   gps.polygons_with_holes(oi);
@@ -498,8 +487,7 @@ template <typename Kernel, typename Container, typename OutputIterator,
           typename Traits>
 OutputIterator _complement(const Polygon_with_holes_2<Kernel, Container>& pgn,
                            OutputIterator oi, Traits& traits) {
-  General_polygon_set_2<Traits> gps(traits);
-  gps.insert(pgn);
+  General_polygon_set_2<Traits> gps(pgn, traits);
   gps.complement();
   return gps.polygons_with_holes(oi);
 }
@@ -508,8 +496,7 @@ OutputIterator _complement(const Polygon_with_holes_2<Kernel, Container>& pgn,
 template <typename Pgn, typename OutputIterator, typename Traits>
 OutputIterator _complement(const General_polygon_with_holes_2<Pgn>& pgn,
                            OutputIterator oi, Traits& traits) {
-  General_polygon_set_2<Traits> gps(traits);
-  gps.insert(pgn);
+  General_polygon_set_2<Traits> gps(pgn, traits);
   gps.complement();
   return gps.polygons_with_holes(oi);
 }
