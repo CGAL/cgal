@@ -349,11 +349,16 @@ inline double IA_bug_sqrt(double d)
 #ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
 inline double CGAL_IA_UP(double d)
 {
-  return nextafter(d,std::numeric_limits<double>::infinity());
+  // In round-to-nearest mode we find the successor instead.
+  // This preserves the interval invariants, but is more
+  // expensive and conservative.
+  return nextafter(d, std::numeric_limits<double>::infinity());
 }
 #else
 inline double CGAL_IA_UP(double d)
 {
+  // In round-upward mode we can rely on the hardware
+  // to do the job.
   return d;
 }
 #endif
@@ -488,9 +493,6 @@ FPU_get_cw (void)
 {
     FPU_CW_t cw;
     CGAL_IA_GETFPCW(cw);
-#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
-    assert(cw == CGAL_FE_TONEAREST);
-#endif
     return cw;
 }
 
