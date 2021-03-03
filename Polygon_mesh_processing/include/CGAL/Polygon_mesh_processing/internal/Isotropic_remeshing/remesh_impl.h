@@ -1920,7 +1920,7 @@ private:
       Vector_3 no = compute_normal(face(opposite(h, mesh_), mesh_));
       return n * no > 0.;
     }
-    
+
   public:
     const Triangle_list& input_triangles() const {
       return input_triangles_;
