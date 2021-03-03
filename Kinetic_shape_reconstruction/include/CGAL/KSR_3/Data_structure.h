@@ -545,7 +545,8 @@ public:
     Point_3 centroid_3 = CGAL::ORIGIN;
     std::vector< std::pair<IEdge, Point_3> > intersections;
 
-    for (const IEdge iedge : m_intersection_graph.edges()) {
+    const auto iedges = m_intersection_graph.edges();
+    for (const auto iedge : iedges) {
       if (!KSR::intersection(
         support_plane(support_plane_idx).plane(), segment_3(iedge), point)) {
         continue;
@@ -554,6 +555,9 @@ public:
       centroid_3 = CGAL::barycenter(
         centroid_3, static_cast<FT>(intersections.size()), point, FT(1));
       intersections.push_back(std::make_pair(iedge, point));
+
+      // std::cout << "segment: " << segment_3(iedge) << std::endl;
+      // std::cout << "point: " << str(intersections.back().first) << ", " << point << std::endl;
     }
 
     Point_2 centroid_2 = support_plane(support_plane_idx).to_2d(centroid_3);
@@ -592,10 +596,18 @@ public:
           }
         )
       );
+
+      // point: IEdge(2,3),  0.22652587609631497090 0.83905437483295775003 -0.44852422404045111382
+      // point: IEdge(3,0), -1.05840599409982472068 0.06054398977970073398 -0.44852422404045111382
+      // point: IEdge(2,6),  0.22652587609631497090 0.83905437483295775003 -0.44852422404045055870
+      // point: IEdge(6,4),  0.22652587609631497090 0.79170179124792550152  0.59484300056700045722
+      // point: IEdge(5,7), -1.05840599409982472068 0.01319140619466854444  0.59484300056700045722
+
+      // std::cout << str(iedge0) << " : " << str(iedge1) << std::endl;
+      // std::cout << "cpi: " << common_plane_idx << std::endl;
       CGAL_assertion(common_plane_idx != KSR::no_element());
       common_planes_idx.push_back(common_plane_idx);
 
-      typename std::map<std::size_t, std::size_t>::iterator iter;
       const auto pair = map_lines_idx.insert(std::make_pair(common_plane_idx, KSR::no_element()));
       const bool is_inserted = pair.second;
       if (is_inserted) {
@@ -606,7 +618,22 @@ public:
     }
     CGAL_assertion(vertices.size() == n);
 
+    const FT ptol = KSR::point_tolerance<FT>();
     for (std::size_t i = 0; i < n; ++i) {
+
+      const auto isource = source(intersections[i].first);
+      const auto itarget = target(intersections[i].first);
+      const FT dist1 = KSR::distance(intersections[i].second, point_3(isource));
+      const FT dist2 = KSR::distance(intersections[i].second, point_3(itarget));
+      const bool is_isource = (dist1 < ptol);
+      const bool is_itarget = (dist2 < ptol);
+      if (is_isource || is_itarget) {
+
+        CGAL_assertion_msg(false, "TODO: HANDLE IVERTEX CASE!");
+        continue;
+      }
+      std::cout << "IEDGE CASE!" << std::endl;
+
       const auto& iplanes = m_intersection_graph.intersected_planes(intersections[i].first);
       for (const std::size_t sp_idx : iplanes) {
         support_plane(sp_idx).unique_iedges().erase(intersections[i].first);
