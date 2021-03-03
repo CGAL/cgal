@@ -20,7 +20,10 @@
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set/Sphere_neighbor_query.h>
 
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set/Least_squares_line_fit_region.h>
+#include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set/Least_squares_circle_fit_region.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set/Least_squares_plane_fit_region.h>
+#include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set/Least_squares_sphere_fit_region.h>
+#include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set/Least_squares_cylinder_fit_region.h>
 
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set/Least_squares_line_fit_sorting.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set/Least_squares_plane_fit_sorting.h>
