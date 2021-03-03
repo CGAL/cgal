@@ -46,7 +46,7 @@ int main() {
 
   CGAL::insert(arr, arcs.begin(), arcs.end());
   print_arrangement_size(arr);          // print the arrangement size
-  print_arrangement(arr);
+  // print_arrangement(arr);
 
   return 0;
 }
