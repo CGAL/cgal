@@ -388,11 +388,12 @@ private:
 
       for (std::size_t i = 0; i < 3; i++)
       {
-        if(minMax[3 + i] == minMax[i])
+        res[i] = (std::size_t)ceil((minMax[3 + i] - minMax[i]) / cellSize);
+        if(res[1] == 0)
           res[i] = 1;
-        else
-          res[i] = (std::size_t)ceil((minMax[3 + i] - minMax[i]) / cellSize);
+        CGAL_assertion(res[i] > 0);
       }
+
       std::size_t LUTSize = res[0] * res[1] * res[2];
       LUT.resize(LUTSize);
       LUT.assign(LUTSize, 0);
