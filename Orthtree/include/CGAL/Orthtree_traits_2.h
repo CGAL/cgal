@@ -9,8 +9,8 @@
 //
 // Author(s)     : Simon Giraudot
 
-#ifndef CGAL_ORTHTREE_TRAITS_3_H
-#define CGAL_ORTHTREE_TRAITS_3_H
+#ifndef CGAL_ORTHTREE_TRAITS_2_H
+#define CGAL_ORTHTREE_TRAITS_2_H
 
 #include <CGAL/license/Orthtree.h>
 
