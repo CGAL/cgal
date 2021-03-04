@@ -69,6 +69,7 @@ Nef_3
 Nef_S2
 NewKernel_d
 Number_types
+Octree
 OpenNL
 Optimal_bounding_box
 Optimal_transportation_reconstruction_2
