@@ -391,7 +391,6 @@ private:
         res[i] = (std::size_t)ceil((minMax[3 + i] - minMax[i]) / cellSize);
         if(res[1] == 0)
           res[i] = 1;
-        CGAL_assertion(res[i] > 0);
       }
 
       std::size_t LUTSize = res[0] * res[1] * res[2];
