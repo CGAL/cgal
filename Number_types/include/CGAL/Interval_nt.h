@@ -1147,15 +1147,9 @@ namespace INTERN_INTERVAL_NT {
     // - compute x = CGAL_IA_SQRT(d.inf())
     // - compute y = CGAL_IA_SQUARE(x)
     // - if y==d.inf() use x, else use -CGAL_IA_SUB(CGAL_IA_MIN_DOUBLE,x)
-#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
-    double i = (d.inf() > 0.0) ? nextafter(std::sqrt(d.inf()), 0.) : 0.0;
-#else // no CGAL_ALWAYS_ROUND_TO_NEAREST
-    FPU_set_cw(CGAL_FE_DOWNWARD);
-    double i = (d.inf() > 0.0) ? CGAL_IA_SQRT(d.inf()) : 0.0;
-    FPU_set_cw(CGAL_FE_UPWARD);
-#endif // no CGAL_ALWAYS_ROUND_TO_NEAREST
+    double i = IA_sqrt_toward_zero(d.inf());
 #endif // no __AVX512F__
-    return Interval_nt<Protected>(i, CGAL_IA_SQRT(d.sup()));
+    return Interval_nt<Protected>(i, IA_sqrt_up(d.sup()));
   }
 
   template <bool Protected>
