@@ -91,12 +91,16 @@ void sum_normals(const PM& pmesh,
 
   halfedge_descriptor he = halfedge(f, pmesh);
   vertex_descriptor v = source(he, pmesh);
+  vertex_descriptor the = target(he,pmesh);
+  he = next(he, pmesh);
+  vertex_descriptor tnhe = target(he,pmesh);
+
   const Point_ref pv = get(vpmap, v);
 
-  while(v != target(next(he, pmesh), pmesh))
+  while(v != tnhe)
   {
-    const Point_ref pvn = get(vpmap, target(he, pmesh));
-    const Point_ref pvnn = get(vpmap, target(next(he, pmesh), pmesh));
+    const Point_ref pvn = get(vpmap, the);
+    const Point_ref pvnn = get(vpmap, tnhe);
 
     const Vector n = internal::triangle_normal(pv, pvn, pvnn, traits);
 
@@ -107,7 +111,9 @@ void sum_normals(const PM& pmesh,
 
     sum = traits.construct_sum_of_vectors_3_object()(sum, n);
 
+    the = tnhe;
     he = next(he, pmesh);
+    tnhe = target(he,pmesh);
   }
 }
 
