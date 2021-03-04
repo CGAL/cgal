@@ -1991,19 +1991,29 @@ public:
     const std::size_t sp_idx,
     const std::vector<Pair>& points) const {
 
-    std::vector<Point_2> polygon;
+    std::vector< std::pair<Point_2, bool> > polygon;
     polygon.reserve(points.size());
     for (const auto& pair : points) {
       const auto& p = pair.first;
       const auto q = to_2d(sp_idx, p);
-      polygon.push_back(q);
+      polygon.push_back(std::make_pair(q, true));
     }
     CGAL_assertion(polygon.size() == points.size());
-    const bool is_simple = CGAL::is_simple_2(polygon.begin(), polygon.end());
-    const bool is_convex = CGAL::is_convex_2(polygon.begin(), polygon.end());
-    CGAL_assertion_msg(is_simple, "ERROR: POLYGON IS NOT SIMPLE!");
-    CGAL_assertion_msg(is_convex, "ERROR: POLYGON IS NOT CONVEX!");
-    return is_simple && is_convex;
+
+    // const bool is_simple = support_plane(sp_idx).is_simple_polygon(polygon);
+    // const bool is_convex = support_plane(sp_idx).is_convex_polygon(polygon);
+    const bool is_valid = support_plane(sp_idx).is_valid_polygon(polygon);
+
+    if (!is_valid) {
+      for (const auto& pair : polygon) {
+        std::cout << to_3d(sp_idx, pair.first) << std::endl;
+      }
+    }
+
+    // CGAL_assertion_msg(is_simple, "ERROR: POLYGON IS NOT SIMPLE!");
+    // CGAL_assertion_msg(is_convex, "ERROR: POLYGON IS NOT CONVEX!");
+    CGAL_assertion_msg(is_valid, "ERROR: POLYGON IS NOT VALID!");
+    return is_valid;
   }
 
   const bool check_bbox() const {
