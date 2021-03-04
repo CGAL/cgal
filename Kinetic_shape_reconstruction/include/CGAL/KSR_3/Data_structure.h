@@ -24,7 +24,7 @@
 // #include <CGAL/license/Kinetic_shape_reconstruction.h>
 
 // CGAL includes.
-#include <CGAL/Delaunay_triangulation_2.h>
+// #include <CGAL/Delaunay_triangulation_2.h>
 
 // Internal includes.
 #include <CGAL/KSR/enum.h>
@@ -541,25 +541,24 @@ public:
   void intersect_with_bbox(const std::size_t sp_idx) {
     if (is_bbox_support_plane(sp_idx)) return;
 
-    std::cout << "input graph: " << std::endl;
-    for (const auto iedge : m_intersection_graph.edges())
-      std::cout << "2 " << segment_3(iedge) << std::endl;
+    // std::cout << "input graph: " << std::endl;
+    // for (const auto iedge : m_intersection_graph.edges())
+    //   std::cout << "2 " << segment_3(iedge) << std::endl;
 
     // Intersect current plane with all bbox iedges.
     Point_3 point;
-    const FT ptol = KSR::point_tolerance<FT>();
+    const auto& sp = support_plane(sp_idx);
+    const auto& plane = sp.plane();
+
     using IEdge_vec = std::vector<IEdge>;
     using IPair = std::pair<IVertex, IEdge_vec>;
     using Pair = std::pair<Point_3, IPair>;
-    const auto unique_cmp = [&](const Point_3& a, const Point_3& b) {
-      return ( KSR::distance(a, b) >= ptol );
-    };
-    std::map<Point_3, IPair, decltype(unique_cmp)> unique_pts(unique_cmp);
 
-    const auto& sp = support_plane(sp_idx);
+    std::vector<Pair> polygon;
+    polygon.reserve(3);
+    const FT ptol = KSR::point_tolerance<FT>();
     const auto all_iedges = m_intersection_graph.edges();
     for (const auto iedge : all_iedges) {
-      const auto& plane = sp.plane();
       const auto segment = segment_3(iedge);
       if (!KSR::intersection(plane, segment, point)) {
         continue;
@@ -572,54 +571,36 @@ public:
       const bool is_isource = (dist1 < ptol);
       const bool is_itarget = (dist2 < ptol);
 
-      auto result = unique_pts.insert(std::make_pair(point,
-        std::make_pair(null_ivertex(), std::vector<IEdge>())));
-      const bool is_inserted = result.second;
-      if (is_inserted) {
+      std::vector<IEdge> iedges;
+      if (is_isource) {
+        CGAL_assertion(!is_itarget);
+        const auto inc_edges = m_intersection_graph.incident_edges(isource);
+        CGAL_assertion(iedges.size() == 0);
+        iedges.reserve(inc_edges.size());
+        std::copy(inc_edges.begin(), inc_edges.end(), std::back_inserter(iedges));
+        CGAL_assertion(iedges.size() == inc_edges.size());
+        polygon.push_back(std::make_pair(point, std::make_pair(isource, iedges)));
+      }
 
-        if (is_isource) {
-          CGAL_assertion(!is_itarget);
-          const auto inc_edges = m_intersection_graph.incident_edges(isource);
-          auto& item = (*(result.first)).second;
-          item.first = isource;
-          auto& vec = item.second;
-          CGAL_assertion(vec.size() == 0);
-          vec.reserve(inc_edges.size());
-          for (const auto inc_edge : inc_edges)
-            vec.push_back(inc_edge);
-        }
+      if (is_itarget) {
+        CGAL_assertion(!is_isource);
+        const auto inc_edges = m_intersection_graph.incident_edges(itarget);
+        CGAL_assertion(iedges.size() == 0);
+        iedges.reserve(inc_edges.size());
+        std::copy(inc_edges.begin(), inc_edges.end(), std::back_inserter(iedges));
+        CGAL_assertion(iedges.size() == inc_edges.size());
+        polygon.push_back(std::make_pair(point, std::make_pair(itarget, iedges)));
+      }
 
-        if (is_itarget) {
-          CGAL_assertion(!is_isource);
-          const auto inc_edges = m_intersection_graph.incident_edges(itarget);
-          auto& item = (*(result.first)).second;
-          item.first = itarget;
-          auto& vec = item.second;
-          CGAL_assertion(vec.size() == 0);
-          vec.reserve(inc_edges.size());
-          for (const auto inc_edge : inc_edges)
-            vec.push_back(inc_edge);
-        }
-
-        if (!is_isource && !is_itarget) {
-          auto& item = (*(result.first)).second;
-          auto& vec = item.second;
-          CGAL_assertion(vec.size() == 0);
-          vec.push_back(iedge);
-        }
-
-      } else {
-        CGAL_assertion(is_isource || is_itarget);
+      if (!is_isource && !is_itarget) {
+        CGAL_assertion(iedges.size() == 0);
+        iedges.push_back(iedge);
+        polygon.push_back(std::make_pair(point, std::make_pair(null_ivertex(), iedges)));
       }
     }
-    std::cout << "num intersections: " << unique_pts.size() << std::endl;
+    // std::cout << "num intersections: " << polygon.size() << std::endl;
 
     // Sort the points to get an oriented polygon.
-    std::vector<Pair> polygon;
-    polygon.reserve(unique_pts.size());
-    std::copy(unique_pts.begin(), unique_pts.end(), std::back_inserter(polygon));
-    CGAL_assertion(polygon.size() == unique_pts.size());
-
     FT x = FT(0), y = FT(0), z = FT(0);
     for (const auto& pair : polygon) {
       const auto& point = pair.first;
@@ -631,7 +612,7 @@ public:
     y /= static_cast<FT>(polygon.size());
     z /= static_cast<FT>(polygon.size());
     const Point_3 centroid_3(x, y, z);
-    std::cout << "centroid: " << centroid_3 << std::endl;
+    // std::cout << "centroid: " << centroid_3 << std::endl;
 
     Point_2 centroid_2 = sp.to_2d(centroid_3);
     std::sort(polygon.begin(), polygon.end(),
@@ -643,11 +624,19 @@ public:
       return ( Direction_2(sega) < Direction_2(segb) );
     });
 
-    std::cout << "oriented polygon: " << std::endl;
-    for (const auto& pair : polygon) {
-      const auto& item = pair.second;
-      std::cout << item.second.size() << " : " << pair.first << std::endl;
-    }
+    // std::cout << "oriented polygon: " << std::endl;
+    // for (const auto& pair : polygon) {
+    //   const auto& item = pair.second;
+    //   std::cout << item.second.size() << " : " << pair.first << std::endl;
+    // }
+
+    remove_equal_points(polygon, ptol);
+    // std::cout << "clean polygon: " << std::endl;
+    // for (const auto& pair : polygon) {
+    //   const auto& item = pair.second;
+    //   std::cout << item.second.size() << " : " << pair.first << std::endl;
+    // }
+    CGAL_assertion(is_valid_polygon(sp_idx, polygon));
 
     // Find common planes.
     std::vector<IVertex> vertices;
@@ -669,7 +658,7 @@ public:
         const auto& planes = m_intersection_graph.intersected_planes(iedge);
         iplanes.insert(planes.begin(), planes.end());
       }
-      std::cout << "num iplanes: " << iplanes.size() << std::endl;
+      // std::cout << "num iplanes: " << iplanes.size() << std::endl;
       CGAL_assertion(iplanes.size() >= 2);
       all_iplanes.push_back(iplanes);
     }
@@ -696,7 +685,7 @@ public:
         )
       );
 
-      std::cout << "cpi: " << common_plane_idx << std::endl;
+      // std::cout << "cpi: " << common_plane_idx << std::endl;
       CGAL_assertion(common_plane_idx != KSR::no_element());
       common_planes_idx.push_back(common_plane_idx);
 
@@ -763,7 +752,7 @@ public:
     // for (const auto iedge : m_intersection_graph.edges())
     //   std::cout << "2 " << segment_3(iedge) << std::endl;
 
-    exit(EXIT_SUCCESS);
+    // exit(EXIT_SUCCESS);
   }
 
   template<typename PointRange>
@@ -799,14 +788,15 @@ public:
     const PointRange& polygon, const std::size_t input_index) {
 
     const std::size_t support_plane_idx = add_support_plane(polygon);
-    std::vector<Point_2> points;
+    std::vector< std::pair<Point_2, bool> > points;
     points.reserve(polygon.size());
     for (const auto& point : polygon) {
       const Point_3 converted(
         static_cast<FT>(point.x()),
         static_cast<FT>(point.y()),
         static_cast<FT>(point.z()));
-      points.push_back(support_plane(support_plane_idx).to_2d(converted));
+      points.push_back(std::make_pair(
+        support_plane(support_plane_idx).to_2d(converted), true));
     }
 
     preprocess(points);
@@ -821,7 +811,14 @@ public:
   void add_input_polygon(
     const std::size_t support_plane_idx,
     const std::vector<std::size_t>& input_indices,
-    std::vector<Point_2>& points) {
+    std::vector<Point_2>& polygon) {
+
+    std::vector< std::pair<Point_2, bool> > points;
+    points.reserve(polygon.size());
+    for (const auto& point : polygon) {
+      points.push_back(std::make_pair(point, true));
+    }
+    CGAL_assertion(points.size() == polygon.size());
 
     preprocess(points);
     const auto centroid = sort_points_by_direction(points);
@@ -832,69 +829,71 @@ public:
     }
   }
 
+  template<typename Pair>
   void preprocess(
-    std::vector<Point_2>& points,
+    std::vector<Pair>& points,
     const FT min_dist = KSR::tolerance<FT>(),
     const FT min_angle = FT(10)) const {
 
-    // std::vector<Point_2> points;
-    // points.push_back(Point_2(0.0, 0.0));
-    // points.push_back(Point_2(0.1, 0.0));
-    // points.push_back(Point_2(0.2, 0.0));
-    // points.push_back(Point_2(0.3, 0.0));
-    // points.push_back(Point_2(0.6, 0.0));
-    // points.push_back(Point_2(0.7, 0.0));
-    // points.push_back(Point_2(0.9, 0.0));
-    // points.push_back(Point_2(1.0, 0.0));
-    // points.push_back(Point_2(1.0, 0.1));
-    // points.push_back(Point_2(1.0, 0.2));
-    // points.push_back(Point_2(1.0, 0.5));
-    // points.push_back(Point_2(1.0, 1.0));
-    // points.push_back(Point_2(0.9, 1.0));
-    // points.push_back(Point_2(0.5, 1.0));
-    // points.push_back(Point_2(0.2, 1.0));
-    // points.push_back(Point_2(0.0, 1.0));
-    // points.push_back(Point_2(0.0, 0.9));
-    // points.push_back(Point_2(0.0, 0.8));
-    // points.push_back(Point_2(0.0, 0.5));
-    // points.push_back(Point_2(0.0, 0.2));
-    // points.push_back(Point_2(0.0, 0.1));
+    // std::vector< std::pair<Point_2, true> > points;
+    // points.push_back(std::make_pair(Point_2(0.0, 0.0)));
+    // points.push_back(std::make_pair(Point_2(0.1, 0.0)));
+    // points.push_back(std::make_pair(Point_2(0.2, 0.0)));
+    // points.push_back(std::make_pair(Point_2(0.3, 0.0)));
+    // points.push_back(std::make_pair(Point_2(0.6, 0.0)));
+    // points.push_back(std::make_pair(Point_2(0.7, 0.0)));
+    // points.push_back(std::make_pair(Point_2(0.9, 0.0)));
+    // points.push_back(std::make_pair(Point_2(1.0, 0.0)));
+    // points.push_back(std::make_pair(Point_2(1.0, 0.1)));
+    // points.push_back(std::make_pair(Point_2(1.0, 0.2)));
+    // points.push_back(std::make_pair(Point_2(1.0, 0.5)));
+    // points.push_back(std::make_pair(Point_2(1.0, 1.0)));
+    // points.push_back(std::make_pair(Point_2(0.9, 1.0)));
+    // points.push_back(std::make_pair(Point_2(0.5, 1.0)));
+    // points.push_back(std::make_pair(Point_2(0.2, 1.0)));
+    // points.push_back(std::make_pair(Point_2(0.0, 1.0)));
+    // points.push_back(std::make_pair(Point_2(0.0, 0.9)));
+    // points.push_back(std::make_pair(Point_2(0.0, 0.8)));
+    // points.push_back(std::make_pair(Point_2(0.0, 0.5)));
+    // points.push_back(std::make_pair(Point_2(0.0, 0.2)));
+    // points.push_back(std::make_pair(Point_2(0.0, 0.1)));
     // const FT min_dist = FT(15) / FT(100);
 
     // std::cout << "before: " << points.size() << std::endl;
-    // for (const auto& point : points) {
-    //   std::cout << point << " 0 " << std::endl;
+    // for (const auto& pair : points) {
+    //   std::cout << pair.first << " 0 " << std::endl;
     // }
 
     remove_equal_points(points, min_dist);
 
     // std::cout << "after 1: " << points.size() << std::endl;
-    // for (const auto& point : points) {
-    //   std::cout << point << " 0 " << std::endl;
+    // for (const auto& pair : points) {
+    //   std::cout << pair.first << " 0 " << std::endl;
     // }
 
     remove_collinear_points(points, min_angle);
 
     // std::cout << "after 2: " << points.size() << std::endl;
-    // for (const auto& point : points) {
-    //   std::cout << point << " 0 " << std::endl;
+    // for (const auto& pair : points) {
+    //   std::cout << pair.first << " 0 " << std::endl;
     // }
     // exit(EXIT_SUCCESS);
   }
 
-  void remove_equal_points(std::vector<Point_2>& points, const FT min_dist) const {
+  template<typename Pair>
+  void remove_equal_points(std::vector<Pair>& points, const FT min_dist) const {
 
     // std::cout << std::endl;
-    std::vector<Point_2> polygon;
+    std::vector<Pair> polygon;
     const std::size_t n = points.size();
     for (std::size_t i = 0; i < n; ++i) {
       const auto& first = points[i];
       polygon.push_back(first);
 
       while (true) {
-        const auto& p = points[i];
+        const auto& p = points[i].first;
         const std::size_t ip = (i + 1) % n;
-        const auto& q = points[ip];
+        const auto& q = points[ip].first;
         const FT distance = KSR::distance(p, q);
         const bool is_small = (distance < min_dist);
         if (ip == 0 && is_small) break;
@@ -911,18 +910,19 @@ public:
     // CGAL_assertion_msg(false, "TODO: REMOVE EQUAL POINTS!");
   }
 
-  void remove_collinear_points(std::vector<Point_2>& points, const FT min_angle) const {
+  template<typename Pair>
+  void remove_collinear_points(std::vector<Pair>& points, const FT min_angle) const {
 
     // std::cout << std::endl;
-    std::vector<Point_2> polygon;
+    std::vector<Pair> polygon;
     const std::size_t n = points.size();
     for (std::size_t i = 0; i < n; ++i) {
       const std::size_t im = (i + n - 1) % n;
       const std::size_t ip = (i + 1) % n;
 
-      const auto& p = points[im];
-      const auto& q = points[i];
-      const auto& r = points[ip];
+      const auto& p = points[im].first;
+      const auto& q = points[i].first;
+      const auto& r = points[ip].first;
 
       Vector_2 vec1(q, r);
       Vector_2 vec2(q, p);
@@ -934,34 +934,44 @@ public:
       const FT angle = KSR::angle_2(dir1, dir2);
 
       // std::cout << "- angle: " << angle << " : " << min_angle << std::endl;
-      if (angle > min_angle) polygon.push_back(q);
+      if (angle > min_angle) polygon.push_back(points[i]);
     }
     if (polygon.size() >= 3) points = polygon;
     else remove_collinear_points(points, min_angle / FT(2));
     // CGAL_assertion_msg(false, "TODO: REMOVE COLLINEAR POINTS!");
   }
 
-  const Point_2 sort_points_by_direction(
-    std::vector<Point_2>& points) const {
+  template<typename Pair>
+  const Point_2 sort_points_by_direction(std::vector<Pair>& points) const {
 
     // Naive version.
     // const auto centroid = CGAL::centroid(points.begin(), points.end());
 
     // Better version.
-    using TRI = CGAL::Delaunay_triangulation_2<Kernel>;
-    TRI tri(points.begin(), points.end());
-    std::vector<Triangle_2> triangles;
-    triangles.reserve(tri.number_of_faces());
-    for (auto fit = tri.finite_faces_begin(); fit != tri.finite_faces_end(); ++fit) {
-      triangles.push_back(Triangle_2(
-          fit->vertex(0)->point(), fit->vertex(1)->point(), fit->vertex(2)->point()));
+    // using TRI = CGAL::Delaunay_triangulation_2<Kernel>;
+    // TRI tri(points.begin(), points.end());
+    // std::vector<Triangle_2> triangles;
+    // triangles.reserve(tri.number_of_faces());
+    // for (auto fit = tri.finite_faces_begin(); fit != tri.finite_faces_end(); ++fit) {
+    //   triangles.push_back(Triangle_2(
+    //       fit->vertex(0)->point(), fit->vertex(1)->point(), fit->vertex(2)->point()));
+    // }
+    // const auto centroid = CGAL::centroid(triangles.begin(), triangles.end());
+
+    FT x = FT(0), y = FT(0);
+    for (const auto& pair : points) {
+      const auto& point = pair.first;
+      x += point.x();
+      y += point.y();
     }
-    const auto centroid = CGAL::centroid(triangles.begin(), triangles.end());
+    x /= static_cast<FT>(points.size());
+    y /= static_cast<FT>(points.size());
+    const Point_2 centroid(x, y);
 
     std::sort(points.begin(), points.end(),
-    [&](const Point_2& a, const Point_2& b) -> bool {
-      const Segment_2 sega(centroid, a);
-      const Segment_2 segb(centroid, b);
+    [&](const Pair& a, const Pair& b) -> bool {
+      const Segment_2 sega(centroid, a.first);
+      const Segment_2 segb(centroid, b.first);
       return ( Direction_2(sega) < Direction_2(segb) );
     });
     return centroid;
@@ -1975,6 +1985,26 @@ public:
   /*******************************
   **    CHECKING PROPERTIES     **
   ********************************/
+
+  template<typename Pair>
+  const bool is_valid_polygon(
+    const std::size_t sp_idx,
+    const std::vector<Pair>& points) const {
+
+    std::vector<Point_2> polygon;
+    polygon.reserve(points.size());
+    for (const auto& pair : points) {
+      const auto& p = pair.first;
+      const auto q = to_2d(sp_idx, p);
+      polygon.push_back(q);
+    }
+    CGAL_assertion(polygon.size() == points.size());
+    const bool is_simple = CGAL::is_simple_2(polygon.begin(), polygon.end());
+    const bool is_convex = CGAL::is_convex_2(polygon.begin(), polygon.end());
+    CGAL_assertion_msg(is_simple, "ERROR: POLYGON IS NOT SIMPLE!");
+    CGAL_assertion_msg(is_convex, "ERROR: POLYGON IS NOT CONVEX!");
+    return is_simple && is_convex;
+  }
 
   const bool check_bbox() const {
 

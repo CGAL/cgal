@@ -113,7 +113,7 @@ public:
 
   void split_support_plane(const std::size_t sp_idx) {
 
-    if (sp_idx != 0) return;
+    // if (sp_idx != 0) return;
 
     // Preprocessing.
     std::cout.precision(20);
@@ -127,11 +127,11 @@ public:
 
     // Create cdt.
     initialize_cdt(pface);
-    dump_cdt(m_data, pface.first, m_cdt, "0-initial-");
+    // dump_cdt(m_data, pface.first, m_cdt, "0-initial-");
     tag_cdt_exterior_faces();
-    dump_cdt(m_data, pface.first, m_cdt, "1-exterior-");
+    // dump_cdt(m_data, pface.first, m_cdt, "1-exterior-");
     tag_cdt_interior_faces();
-    dump_cdt(m_data, pface.first, m_cdt, "2-interior-");
+    // dump_cdt(m_data, pface.first, m_cdt, "2-interior-");
 
     // Split polygons using cdt.
     m_data.clear_polygon_faces(sp_idx);

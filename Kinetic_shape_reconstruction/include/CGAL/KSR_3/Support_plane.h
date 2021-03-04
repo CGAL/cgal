@@ -335,13 +335,15 @@ public:
     return vertices;
   }
 
+  template<typename Pair>
   const std::size_t add_input_polygon(
-    const std::vector<Point_2>& points,
+    const std::vector<Pair>& points,
     const Point_2& centroid,
     const std::vector<std::size_t>& input_indices) {
 
-    CGAL_assertion(CGAL::is_simple_2(points.begin(), points.end()));
-    CGAL_assertion(CGAL::is_convex_2(points.begin(), points.end()));
+    CGAL_assertion(is_simple_polygon(points));
+    CGAL_assertion(is_convex_polygon(points));
+    CGAL_assertion(is_valid_polygon(points));
 
     std::vector<Vertex_index> vertices;
     const std::size_t n = points.size();
@@ -352,7 +354,8 @@ public:
     std::vector<Vector_2> directions;
     directions.reserve(n);
 
-    for (const auto& point : points) {
+    for (const auto& pair : points) {
+      const auto& point = pair.first;
       directions.push_back(Vector_2(centroid, point));
       const FT length = static_cast<FT>(
         CGAL::sqrt(CGAL::to_double(CGAL::abs(directions.back() * directions.back()))));
@@ -362,7 +365,7 @@ public:
     sum_length /= static_cast<FT>(n);
 
     for (std::size_t i = 0; i < n; ++i) {
-      const auto& point = points[i];
+      const auto& point = points[i].first;
       const auto vi = m_data->mesh.add_vertex(point);
       m_data->direction[vi] = directions[i] / sum_length;
       m_data->v_original_map[vi] = true;
@@ -377,6 +380,43 @@ public:
       input_vec.push_back(input_index);
     }
     return static_cast<std::size_t>(fi);
+  }
+
+  template<typename Pair>
+  const bool is_valid_polygon(const std::vector<Pair>& polygon) const {
+
+    const FT ptol = KSR::tolerance<FT>();
+    for (std::size_t i = 0; i < polygon.size(); ++i) {
+      const std::size_t ip = (i + 1) % polygon.size();
+      const auto& p = polygon[i].first;
+      const auto& q = polygon[ip].first;
+      const FT distance = KSR::distance(p, q);
+      const bool is_equal_zero = (distance < ptol);
+      CGAL_assertion_msg(!is_equal_zero,
+      "ERROR: WE HAVE EQUAL POINTS IN THE INPUT POLYGON!");
+      if (is_equal_zero) return false;
+    }
+    return true;
+  }
+
+  template<typename Pair>
+  const bool is_simple_polygon(const std::vector<Pair>& points) const {
+    std::vector<Point_2> polygon;
+    polygon.reserve(points.size());
+    for (const auto& pair : points)
+      polygon.push_back(pair.first);
+    CGAL_assertion(polygon.size() == points.size());
+    return CGAL::is_simple_2(polygon.begin(), polygon.end());
+  }
+
+  template<typename Pair>
+  const bool is_convex_polygon(const std::vector<Pair>& points) const {
+    std::vector<Point_2> polygon;
+    polygon.reserve(points.size());
+    for (const auto& pair : points)
+      polygon.push_back(pair.first);
+    CGAL_assertion(polygon.size() == points.size());
+    return CGAL::is_convex_2(polygon.begin(), polygon.end());
   }
 
   const Plane_3& plane() const { return m_data->plane; }
