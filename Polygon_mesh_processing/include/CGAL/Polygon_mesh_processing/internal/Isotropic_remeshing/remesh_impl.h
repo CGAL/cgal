@@ -1886,7 +1886,9 @@ private:
     bool check_normals(const HalfedgeRange& hedges) const
     {
       std::size_t nb_patches = patch_id_to_index_map.size();
-      std::vector<boost::optional<Vector_3> > normal_per_patch(nb_patches,boost::none);
+      //std::vector<boost::optional<Vector_3> > normal_per_patch(nb_patches,boost::none);
+      std::vector<bool> initialized(nb_patches,false);
+      std::vector<Vector_3> normal_per_patch(nb_patches);
 
       for(halfedge_descriptor hd : hedges)
       {
@@ -1900,14 +1902,17 @@ private:
           continue;
         Patch_id pid = get_patch_id(face(hd, mesh_));
         std::size_t index = patch_id_to_index_map.at(pid);
-        if(normal_per_patch[index]){
-          const Vector_3& vec = *normal_per_patch[index];
+        //if(normal_per_patch[index]){
+        if(initialized[index]){
+          const Vector_3& vec = normal_per_patch[index];
           double dot = to_double(n * vec);
           if (dot <= 0.){
             return false;
           }
         }
-        normal_per_patch[index] = boost::make_optional(n);
+        //normal_per_patch[index] = boost::make_optional(n);
+        normal_per_patch[index] = n;
+        initialized[index] = true;
       }
       return true;
     }
