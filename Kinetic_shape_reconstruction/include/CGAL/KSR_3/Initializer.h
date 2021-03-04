@@ -504,19 +504,19 @@ private:
             continue;
           }
 
-          Point_2 inter;
+          Point_2 point;
           if (!KSR::intersection(
             m_data.to_2d(common_plane_idx,
               Segment_3(m_data.point_3(it_a->second.first), m_data.point_3(it_a->second.second))),
             m_data.to_2d(common_plane_idx,
               Segment_3(m_data.point_3(it_b->second.first), m_data.point_3(it_b->second.second))),
-            inter)) {
+            point)) {
 
             continue;
           }
 
           crossed_vertices.push_back(
-            m_data.add_ivertex(m_data.to_3d(common_plane_idx, inter), union_set));
+            m_data.add_ivertex(m_data.to_3d(common_plane_idx, point), union_set));
         }
       }
       crossed_vertices.push_back(it_a->second.second);
