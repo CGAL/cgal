@@ -469,7 +469,7 @@ private:
       {
         if (vp[j] < 0)
           p[j] = 0;
-        if (vp[j] >= res[j])
+        else if (vp[j] >= res[j])
           p[j] = res[j] - 1;
         else
           p[j] = static_cast<std::size_t>(std::floor(vp[j]));
