@@ -177,6 +177,7 @@ if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TARGET CGAL::TBB_support)
     mesh_3D_image
     mesh_3D_image_variable_size
     mesh_3D_image_with_custom_initialization
+    mesh_3D_gray_image_with_custom_initialization
     mesh_3D_image_with_features
     mesh_implicit_domains
     mesh_implicit_sphere
