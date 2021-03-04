@@ -9,7 +9,7 @@ concept.
 
 It is equivalent to `HalfedgeDS_face_base< Refs, Tag_true>`
 with an added integer field which can be used to index faces
-in \sc{Bgl} algorithms.
+in \bgl algorithms.
 The class contains support for the incident halfedge pointer
 and the required type definitions.
 It can be used for deriving own faces.

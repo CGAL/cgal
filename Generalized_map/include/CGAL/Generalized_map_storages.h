@@ -13,6 +13,7 @@
 #define CGAL_GENERALIZED_MAP_STORAGES_H 1
 
 #include <CGAL/Compact_container.h>
+#include <CGAL/Concurrent_compact_container.h>
 #include <CGAL/Dart.h>
 #include <CGAL/Handle_hash_function.h>
 #include <bitset>
@@ -28,6 +29,9 @@ namespace CGAL {
   namespace internal {
     template <typename M>
     struct Combinatorial_map_helper;
+
+    template<typename Concurrent_tag, class T, class Alloc_>
+    struct Container_type;
   }
 
   /** @file Generalized_map_storages.h
@@ -35,11 +39,11 @@ namespace CGAL {
    */
 
   // Storage of darts with compact container, alpha with handles
-  template<unsigned int d_, class Items_, class Alloc_ >
+  template<unsigned int d_, class Items_, class Alloc_, class Concurrent_tag >
   class Generalized_map_storage_1
   {
   public:
-    typedef Generalized_map_storage_1<d_, Items_, Alloc_> Self;
+    typedef Generalized_map_storage_1<d_, Items_, Alloc_, Concurrent_tag> Self;
     typedef CGAL::Tag_false Use_index;
 
     typedef internal::Combinatorial_map_helper<Self>      Helper;
@@ -55,7 +59,9 @@ namespace CGAL {
     typedef std::allocator_traits<Alloc_> Allocator_traits;
     typedef typename Allocator_traits::template rebind_alloc<Dart> Dart_allocator;
 
-    typedef Compact_container<Dart, Dart_allocator>       Dart_container;
+    typedef typename internal::Container_type
+                 <Concurrent_tag, Dart, Dart_allocator>::type Dart_container;
+
 
     typedef typename Dart_container::iterator             Dart_handle;
     typedef typename Dart_container::const_iterator       Dart_const_handle;
@@ -69,7 +75,9 @@ namespace CGAL {
 
     template <typename T>
     struct Container_for_attributes :
-      public Compact_container<T, typename std::allocator_traits<Alloc_>::template rebind_alloc<T> >
+      public internal::Container_type
+                     <Concurrent_tag, T,
+                      typename std::allocator_traits<Alloc_>::template rebind_alloc<T>>::type
     {};
     /// Typedef for attributes
     typedef typename internal::template Get_attributes_tuple<Dart_wrapper>::type
@@ -412,9 +420,9 @@ namespace CGAL {
   };
 
   /// null_handle
-  template < unsigned int d_, class Items_, class Alloc_ >
-  const typename Generalized_map_storage_1<d_, Items_, Alloc_>::Null_handle_type
-  Generalized_map_storage_1<d_, Items_, Alloc_>::null_handle = nullptr;
+  template < unsigned int d_, class Items_, class Alloc_, class Concurrent_tag >
+  const typename Generalized_map_storage_1<d_, Items_, Alloc_, Concurrent_tag>::Null_handle_type
+  Generalized_map_storage_1<d_, Items_, Alloc_, Concurrent_tag>::null_handle = nullptr;
 
 } // namespace CGAL
 

@@ -31,29 +31,31 @@ endif()
 
 # include for local package
 find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
-include(CGAL_Eigen_support)
+include(CGAL_Eigen3_support)
 
 # Creating entries for all .cpp/.C files with "main" routine
 # ##########################################################
 
 create_single_source_cgal_program("hausdorff_distance_remeshing_example.cpp")
 
-if(TARGET CGAL::Eigen_support)
+if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("hole_filling_example.cpp")
-  target_link_libraries(hole_filling_example PUBLIC CGAL::Eigen_support)
+  target_link_libraries(hole_filling_example PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("hole_filling_example_SM.cpp")
-  target_link_libraries(hole_filling_example_SM PUBLIC CGAL::Eigen_support)
+  target_link_libraries(hole_filling_example_SM PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("refine_fair_example.cpp")
-  target_link_libraries(refine_fair_example PUBLIC CGAL::Eigen_support)
+  target_link_libraries(refine_fair_example PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("shape_smoothing_example.cpp")
-  target_link_libraries(shape_smoothing_example PUBLIC CGAL::Eigen_support)
+  target_link_libraries(shape_smoothing_example PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("hole_filling_example_LCC.cpp")
-  target_link_libraries(hole_filling_example_LCC PUBLIC CGAL::Eigen_support)
+  target_link_libraries(hole_filling_example_LCC PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("mesh_smoothing_example.cpp")
-  target_link_libraries(mesh_smoothing_example PUBLIC CGAL::Eigen_support)
+  target_link_libraries(mesh_smoothing_example PUBLIC CGAL::Eigen3_support)
 endif()
 
-
+create_single_source_cgal_program( "polyhedral_envelope.cpp" )
+create_single_source_cgal_program( "polyhedral_envelope_of_triangle_soup.cpp" )
+create_single_source_cgal_program( "polyhedral_envelope_mesh_containment.cpp" )
 create_single_source_cgal_program( "self_intersections_example.cpp" )
 create_single_source_cgal_program( "stitch_borders_example.cpp" )
 create_single_source_cgal_program( "compute_normals_example_Polyhedron.cpp"  CXX_FEATURES cxx_range_for )
@@ -95,9 +97,9 @@ if(OpenMesh_FOUND)
   target_link_libraries(compute_normals_example_OM
                         PRIVATE ${OPENMESH_LIBRARIES})
 
-  if(TARGET CGAL::Eigen_support)
+  if(TARGET CGAL::Eigen3_support)
     create_single_source_cgal_program("hole_filling_example_OM.cpp")
-    target_link_libraries(hole_filling_example_OM PRIVATE CGAL::Eigen_support
+    target_link_libraries(hole_filling_example_OM PRIVATE CGAL::Eigen3_support
                                                           ${OPENMESH_LIBRARIES})
   endif()
 
@@ -121,6 +123,9 @@ if(TARGET CGAL::TBB_support)
   target_link_libraries(self_intersections_example PUBLIC CGAL::TBB_support)
   target_link_libraries(hausdorff_distance_remeshing_example
                         PUBLIC CGAL::TBB_support)
+
+  create_single_source_cgal_program("corefinement_parallel_union_meshes.cpp")
+  target_link_libraries(corefinement_parallel_union_meshes PUBLIC CGAL::TBB_support)
 else()
   message(
     STATUS "NOTICE: Intel TBB was not found. Sequential code will be used.")

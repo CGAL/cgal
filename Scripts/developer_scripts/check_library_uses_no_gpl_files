@@ -70,7 +70,7 @@ rm -fr demo/[A-Z]*
 rm -fr examples/[A-Z]*
 # Somehow -DWITH_CGAL_Core=OFF is not taken into account, hence the CORE files
 # are listed in the exceptions file.
-cmake . -DBUILD_SHARED_LIBS=TRUE -DWITH_CGAL_Qt5=OFF -DWITH_CGAL_Core=OFF
+cmake .
 make | grep -C 10 "No such file" || true
 echo " done"
 echo

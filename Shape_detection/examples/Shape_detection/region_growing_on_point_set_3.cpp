@@ -7,7 +7,7 @@
 #include <iterator>
 
 // Boost includes.
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 // CGAL includes.
 #include <CGAL/Timer.h>

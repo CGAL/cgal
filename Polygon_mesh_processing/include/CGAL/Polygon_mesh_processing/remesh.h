@@ -124,7 +124,7 @@ namespace Polygon_mesh_processing {
 *   \cgalParamNBegin{face_patch_map}
 *     \cgalParamDescription{a property map with the patch id's associated to the faces of `faces`}
 *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
-*                    as key type and the desired property, model of `CopyConstructible` as value type.}
+*                    as key type and the desired property, model of `CopyConstructible` and `LessThanComparable` as value type.}
 *     \cgalParamDefault{a default property map where each face is associated with the ID of
 *                       the connected component it belongs to. Connected components are
 *                       computed with respect to the constrained edges listed in the property map

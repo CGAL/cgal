@@ -43,7 +43,7 @@ struct Wrappers_VFH:public CGAL::Polyhedron_items_3 {
   template < class Refs, class Traits > struct Face_wrapper {
     //typedef typename Traits::Vector_3 Vector_3;
     //all types needed by the facet...
-    typedef struct {
+    typedef struct FGeomTraits {
     public:
        typedef typename Traits::Vector_3 Vector_3;
      } FGeomTraits;

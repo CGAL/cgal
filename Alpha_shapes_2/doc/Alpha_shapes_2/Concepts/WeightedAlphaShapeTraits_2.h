@@ -45,7 +45,7 @@ typedef unspecified_type FT;
 /*!
 A default constructor.
 */
-  AlphaShapeTraits_2();
+  WeightedAlphaShapeTraits_2();
 
 /// @}
 

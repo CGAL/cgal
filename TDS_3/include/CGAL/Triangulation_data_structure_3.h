@@ -3669,7 +3669,7 @@ is_valid(bool verbose, int level ) const
     {
       if ( number_of_vertices() < 2 ) {
         if (verbose)
-            std::cerr << "less than 2 vertices but dimension 0" << std::endl;
+            std::cerr << "fewer than 2 vertices but dimension 0" << std::endl;
         CGAL_triangulation_assertion(false);
         return false;
       }

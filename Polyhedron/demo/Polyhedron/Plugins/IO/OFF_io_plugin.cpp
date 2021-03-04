@@ -1,25 +1,25 @@
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polygon_soup_item.h"
 #include "Scene_points_with_normal_item.h"
+
 #include <CGAL/Three/Three.h>
-#include <CGAL/Polygon_mesh_processing/repair.h>
-
-
-#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
-
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Three.h>
 
 #include <CGAL/exceptions.h>
-#include <CGAL/IO/File_scanner_OFF.h>
-#include <CGAL/IO/OBJ_reader.h>
+#include <CGAL/IO/OFF.h>
+#include <CGAL/IO/OBJ.h>
+#include <CGAL/Polygon_mesh_processing/repair.h>
+
 #include <QMessageBox>
 #include <QApplication>
 
 #include <iostream>
 #include <fstream>
+#include <limits>
 
 using namespace CGAL::Three;
+
 class Polyhedron_demo_off_plugin :
   public QObject,
   public Polyhedron_demo_io_plugin_interface
@@ -218,7 +218,16 @@ Polyhedron_demo_off_plugin::load_obj(QFileInfo fileinfo) {
   item->setName(fileinfo.baseName());
   if(item->load_obj(in))
     return item;
-  return 0;
+  //if not polygonmesh load in soup
+  std::vector<Point_3> points;
+  std::vector<std::vector<std::size_t> > polygons;
+  if(CGAL::read_OBJ(in, points, polygons))
+  {
+    Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item();
+    soup_item->load(points, polygons);
+    return soup_item;
+  }
+  return nullptr;
 }
 
 bool Polyhedron_demo_off_plugin::canSave(const CGAL::Three::Scene_item* item)
@@ -262,7 +271,8 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
     }
   }
   if(fileinfo.suffix().toLower() == "obj"){
-    bool res = (sm_item && sm_item->save_obj(out));
+    bool res = (sm_item && sm_item->save_obj(out))
+        || (soup_item && CGAL::write_OBJ(out, soup_item->points(), soup_item->polygons()));
     if(res)
     {
       items.pop_front();
