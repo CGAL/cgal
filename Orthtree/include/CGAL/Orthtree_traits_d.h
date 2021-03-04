@@ -14,6 +14,8 @@
 
 #include <CGAL/license/Orthtree.h>
 
+#include <CGAL/Dimension.h>
+
 namespace CGAL
 {
 
