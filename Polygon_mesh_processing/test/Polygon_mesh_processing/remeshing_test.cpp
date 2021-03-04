@@ -248,9 +248,9 @@ Main(int argc, char* argv[])
   }
   else if (sharp_angle > 0)
   {
-    typedef boost::property_map<Mesh, CGAL::edge_is_feature_t>::type EIFMap;
-    typedef boost::property_map<Mesh, CGAL::face_patch_id_t<int> >::type PIMap;
-    typedef boost::property_map<Mesh, CGAL::vertex_incident_patches_t<int> >::type VIMap;
+    typedef typename  boost::property_map<Mesh, CGAL::edge_is_feature_t>::type EIFMap;
+    typedef typename boost::property_map<Mesh, CGAL::face_patch_id_t<int> >::type PIMap;
+    typedef typename boost::property_map<Mesh, CGAL::vertex_incident_patches_t<int> >::type VIMap;
 
     EIFMap eif = get(CGAL::edge_is_feature, m);
     PIMap pid = get(CGAL::face_patch_id_t<int>(), m);
