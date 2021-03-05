@@ -547,43 +547,6 @@ void Scene_points_with_normal_item::selectDuplicates()
   Q_EMIT itemChanged();
 }
 
-#ifdef CGAL_LINKED_WITH_LASLIB
-// Loads point set from .LAS file
-bool Scene_points_with_normal_item::read_las_point_set(std::istream& stream)
-{
-  Q_ASSERT(d->m_points != NULL);
-
-  d->m_points->clear();
-
-  bool ok = CGAL::read_LAS (stream, *(d->m_points)) && !isEmpty();
-
-  std::cerr << d->m_points->info();
-
-  if (!d->m_points->has_normal_map())
-  {
-    setRenderingMode(Points);
-  }
-  else{
-    setRenderingMode(CGAL::Three::Three::defaultPointSetRenderingMode());
-  }
-  if (d->m_points->check_colors())
-    std::cerr << "-> Point set has colors" << std::endl;
-
-  invalidateOpenGLBuffers();
-  return ok;
-}
-
-// Write point set to .LAS file
-bool Scene_points_with_normal_item::write_las_point_set(std::ostream& stream) const
-{
-  Q_ASSERT(d->m_points != NULL);
-
-  d->m_points->reset_indices();
-
-  return CGAL::write_LAS(stream, *(d->m_points));
-}
-
-#endif // LAS
 
 // Loads point set from .PLY file
 bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
