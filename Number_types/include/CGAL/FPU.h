@@ -114,12 +114,10 @@ extern "C" {
 
 // Only define CGAL_USE_SSE2 for 64 bits where malloc has a suitable
 // alignment, 32 bits is too dangerous.
-#if defined CGAL_HAS_SSE2
-#if defined __x86_64__ || defined _M_X64
-#if !defined CGAL_ALWAYS_ROUND_TO_NEAREST
+#if defined CGAL_HAS_SSE2 && \
+  (defined __x86_64__ || defined _M_X64) && \
+  !defined CGAL_ALWAYS_ROUND_TO_NEAREST
 #  define CGAL_USE_SSE2 1
-#endif
-#endif
 #endif
 #ifdef CGAL_CFG_DENORMALS_COMPILE_BUG
 double& get_static_minimin(); // Defined in Interval_arithmetic_impl.h
