@@ -192,6 +192,10 @@ public:
     {
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
+      if ((ssr < 1.11261183279326254436e-293) || (ssr > 2.80889552322236673473e+306)){
+        CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+        return Base::operator()(s,b);
+      }
       double distance = 0;
       double max1 = 0;
 
@@ -201,6 +205,25 @@ public:
         max1 = bxmin_scx;
 
         distance = square(bxmin_scx);
+#ifdef EARLY
+        {
+          double double_tmp_result = (distance - ssr);
+
+          if (max1 < 3.33558365626356687717e-147){
+            CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+            return Base::operator()(s,b);
+          }
+          if (max1 > 1.67597599124282407923e+153){
+            CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+            return Base::operator()(s,b);
+          }
+
+          double eps = 1.99986535548615598560e-15 * (std::max) (ssr, square(max1));
+
+          if (double_tmp_result > eps)
+            return false;
+        }
+#endif
       }
       else if(scx > bxmax)
       {
@@ -208,7 +231,30 @@ public:
         max1 = scx_bxmax;
 
         distance = square(scx_bxmax);
+#ifdef EARLY
+        {
+          double double_tmp_result = (distance - ssr);
+
+          if (max1 < 3.33558365626356687717e-147){
+            CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+            return Base::operator()(s,b);
+          }
+          if (max1 > 1.67597599124282407923e+153){
+            CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+            return Base::operator()(s,b);
+          }
+
+          double eps = 1.99986535548615598560e-15 * (std::max) (ssr, square(max1));
+
+          if (double_tmp_result > eps)
+            return false;
+        }
+#endif
       }
+
+
+
+
 
       if(scy < bymin)
       {
@@ -217,6 +263,25 @@ public:
           max1 = bymin_scy;
 
         distance += square(bymin_scy);
+#ifdef EARLY
+        {
+          double double_tmp_result = (distance - ssr);
+
+          if (max1 < 3.33558365626356687717e-147){
+            CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+            return Base::operator()(s,b);
+          }
+          if ((max1 > 1.67597599124282407923e+153)){
+            CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+            return Base::operator()(s,b);
+          }
+
+          double eps = 1.99986535548615598560e-15 * (std::max) (ssr, square(max1));
+
+          if (double_tmp_result > eps)
+            return false;
+        }
+#endif
       }
       else if(scy > bymax)
       {
@@ -225,6 +290,26 @@ public:
           max1 = scy_bymax;
 
         distance += square(scy_bymax);
+#ifdef EARLY
+
+        {
+          double double_tmp_result = (distance - ssr);
+
+          if ((max1 < 3.33558365626356687717e-147)){
+            CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+            return Base::operator()(s,b);
+          }
+          if ((max1 > 1.67597599124282407923e+153)){
+            CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+            return Base::operator()(s,b);
+          }
+
+          double eps = 1.99986535548615598560e-15 * (std::max) (ssr, square(max1));
+
+          if (double_tmp_result > eps)
+            return false;
+        }
+#endif
       }
 
       if(scz < bzmin)
@@ -234,6 +319,25 @@ public:
           max1 = bzmin_scz;
 
         distance += square(bzmin_scz);
+#ifdef EARLY
+        {
+          double double_tmp_result = (distance - ssr);
+
+          if ((max1 < 3.33558365626356687717e-147)){
+            CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+            return Base::operator()(s,b);
+          }
+          if ((max1 > 1.67597599124282407923e+153)){
+            CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+            return Base::operator()(s,b);
+          }
+
+          double eps = 1.99986535548615598560e-15 * (std::max) (ssr, square(max1));
+
+          if (double_tmp_result > eps)
+            return false;
+        }
+#endif
       }
       else if(scz > bzmax)
       {
@@ -242,19 +346,39 @@ public:
           max1 = scz_bzmax;
 
         distance += square(scz_bzmax);
+#ifdef EARLY
+        {
+          double double_tmp_result = (distance - ssr);
+
+          if ((max1 < 3.33558365626356687717e-147)){
+            CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+            return Base::operator()(s,b);
+          }
+          if ((max1 > 1.67597599124282407923e+153)){
+            CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+            return Base::operator()(s,b);
+          }
+
+          double eps = 1.99986535548615598560e-15 * (std::max) (ssr, square(max1));
+
+          if (double_tmp_result > eps)
+            return false;
+        }
+#endif
       }
 
       double double_tmp_result = (distance - ssr);
 
-      if ((max1 < 3.33558365626356687717e-147) || (ssr < 1.11261183279326254436e-293)){
+#ifndef EARLY
+      if (max1 < 3.33558365626356687717e-147){
         CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
         return Base::operator()(s,b);
       }
-      if ((max1 > 1.67597599124282407923e+153) || (ssr > 2.80889552322236673473e+306)){
+      if (max1 > 1.67597599124282407923e+153){
         CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
         return Base::operator()(s,b);
       }
-
+#endif
       double eps = 1.99986535548615598560e-15 * (std::max) (ssr, square(max1));
 
       if (double_tmp_result > eps)
@@ -264,7 +388,7 @@ public:
         if (double_tmp_result < -eps)
           return true;
         else {
-          // return true; // AF:  just to test conservative approach
+          return true; // AF:  just to test conservative approach
           CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
           return Base::operator()(s,b);
         }
