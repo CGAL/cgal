@@ -2088,6 +2088,8 @@ void add_new_pfaces(
       std::cout << "- num added pfaces: " << num_added_pfaces << std::endl;
       std::cout << "- k intersections after: " << m_data.k(pvertex.first) << std::endl;
     }
+    CGAL_assertion_msg(num_added_pfaces <= 3,
+    "TODO: CHECK CASES WHERE WE HAVE MORE THAN 3 NEW PFACES!");
 
     // CGAL_assertion_msg(false, "TODO: TRAVERSE IEDGES GLOBAL!");
   }

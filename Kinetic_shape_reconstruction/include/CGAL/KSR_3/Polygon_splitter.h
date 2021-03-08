@@ -113,7 +113,7 @@ public:
 
   void split_support_plane(const std::size_t sp_idx) {
 
-    // if (sp_idx != 0) return;
+    // if (sp_idx != 17) return;
 
     // Preprocessing.
     std::cout.precision(20);
@@ -430,6 +430,10 @@ private:
 
       const std::size_t idx = find_pedge(vhs_pv, polygon, point);
       if (idx != KSR::no_element()) {
+        // std::cout <<
+        // m_data.str(data.first) << " : " <<
+        // m_data.str(data.second) << std::endl;
+        // std::cout << m_data.to_3d(sp_idx, point) << std::endl;
         CGAL_assertion(idx < pedge_map.size());
         pedge_map[idx].push_back(data.second);
       }
@@ -437,7 +441,6 @@ private:
 
     CGAL_assertion(pedge_map.size() == n);
     for (std::size_t i = 0; i < n; ++i) {
-      if (pedge_map[i].size() > 0) continue;
       const std::size_t ip = (i + 1) % n;
       const auto& psource = polygon[i];
       const auto& ptarget = polygon[ip];
@@ -451,9 +454,38 @@ private:
       CGAL_assertion(vh_source != vh_target);
       CGAL_assertion(KSR::distance(
         vh_source->point(), vh_target->point()) >= ptol);
-      m_cdt.insert_constraint(vh_source, vh_target);
-      // print_edge("original", pface.first, vh_source, vh_target);
+
       m_input.insert(psource);
+      if (pedge_map[i].size() > 0) {
+        if (pedge_map[i].size() == 1 && sp_idx >= 6) {
+          // CGAL_assertion_msg(false, "TODO: ADD TWO INTERMEDIATE IEDGES!");
+          // In this case, we are sure, we do not have iedges along polygon edges,
+          // so we simply insert missing constraints.
+
+          const auto& iv = pedge_map[i][0];
+          CGAL_assertion(vhs_iv.find(iv) != vhs_iv.end());
+          const auto vh_mid = vhs_iv.at(iv);
+          m_cdt.insert_constraint(vh_source, vh_mid);
+          m_cdt.insert_constraint(vh_mid, vh_target);
+          // print_edge("original1", pface.first, vh_source, vh_mid);
+          // print_edge("original2", pface.first, vh_mid, vh_target);
+
+        } else if (pedge_map[i].size() > 1 && sp_idx >= 6) {
+          CGAL_assertion_msg(false, "TODO: ADD MULTIPLE INTERMEDIATE IEDGES!");
+          // If this case ever happens, we need to find out, which iedges from
+          // all iedges (inserted as constraints below), are actually inserted
+          // and if necessary add missing constraints connecting these iedges
+          // to the polygon vertices, e.g. /pv/--add--/iv/--iedge--/iv/--edge--/pv/.
+        } else {
+          CGAL_assertion_msg(sp_idx < 6, "ERROR: WRONG CONSTRAINT CASE!");
+        }
+      } else {
+        // CGAL_assertion_msg(false, "TODO: ADD STANDARD CONSTRAINT CASE!");
+        // In this case, we do not have any intermediate ivertices along the pedge,
+        // so we simply insert this pedge as a constraint.
+        m_cdt.insert_constraint(vh_source, vh_target);
+        // print_edge("original", pface.first, vh_source, vh_target);
+      }
     }
 
     // Set pedge indices.
@@ -524,6 +556,7 @@ private:
       CGAL_assertion(!is_pvertex(vhs_pv, polygon, point));
       CGAL_assertion(!is_ivertex(pface.first, iedges, point));
 
+      // std::cout << m_data.to_3d(sp_idx, point) << std::endl;
       const std::size_t idx = find_pedge(vhs_pv, polygon, point);
       // std::cout << "found idx: " << idx << std::endl;
       if (idx != KSR::no_element()) {
@@ -668,6 +701,9 @@ private:
       ++face_index;
       CGAL_assertion(todo.size() == 0);
     }
+
+    CGAL_assertion(face_index > 0);
+    // std::cout << "- number of interior pfaces: " << face_index << std::endl;
   }
 
   const bool is_boundary(const Edge& edge) const {
@@ -808,6 +844,7 @@ private:
       ++num_pfaces;
     }
 
+    CGAL_assertion(num_pfaces > 0);
     if (m_verbose) {
       std::cout << "- number of newly inserted pfaces: " << num_pfaces << std::endl;
     }
@@ -941,7 +978,9 @@ private:
       const auto pinit = m_data.point_2(pvertex, FT(0));
       const Vector_2 future_direction(pinit, future_point);
       m_data.direction(pvertex) = future_direction;
-      // std::cout << "future point: " << m_data.to_3d(pvertex.first, future_point) << std::endl;
+
+      // std::cout << "curr point: " << m_data.point_3(pvertex) << std::endl;
+      // std::cout << "futr point: " << m_data.to_3d(pvertex.first, future_point) << std::endl;
     }
   }
 
