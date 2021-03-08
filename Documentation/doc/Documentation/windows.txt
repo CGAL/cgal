@@ -43,12 +43,16 @@ We refer to the
 <a href="https://github.com/microsoft/vcpkg/blob/master/docs/examples/installing-and-using-packages.md#step-2-use">official documentation</a>
 of `vcpkg` if you want to compile for an older version of a compiler.
 
+Because of a bug with gmp in vcpkg for windows, you need to install `yasm-tool` in 32 bits to be able to correctly build gmp 64bits, needed for cgal:
+
+    C:\dev\vcpkg> ./vcpkg.exe install yasm-tool:x86-windows
+
 You are now ready to install \cgal:
 
     C:\dev\vcpkg> ./vcpkg.exe install cgal
 
-This will take several minutes as it downloads \mpir (a fork of \gmp),
-\mpfr, all boost header files, and it will compile \mpir and \mpfr, as well
+This will take several minutes as it downloads  \gmp,
+\mpfr, all boost header files, and it will compile \gmp and \mpfr, as well
 as several boost libraries.
 Afterwards, you will find the include files, libraries, and dlls in the
 subdirectory `C:\dev\vcpkg\installed\x64-windows`.
