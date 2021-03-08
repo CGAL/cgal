@@ -200,16 +200,16 @@ void run_all_tests() {
 
   // Edge case tests.
   // flat bbox / 2 coplanar in XY
-  // results = {7,1,12,20,11,2};
-  // assert(run_test<Traits>("data/edge-case-test/test-flat-bbox-xy.off", ks, num_iters, results, all_times, num_tests));
+  results = {7,1,12,20,11,2};
+  assert(run_test<Traits>("data/edge-case-test/test-flat-bbox-xy.off", ks, num_iters, results, all_times, num_tests));
 
   // flat bbox / 2 coplanar in XZ
-  // results = {7,1,12,20,11,2};
-  // assert(run_test<Traits>("data/edge-case-test/test-flat-bbox-xz.off", ks, num_iters, results, all_times, num_tests));
+  results = {7,1,12,20,11,2};
+  assert(run_test<Traits>("data/edge-case-test/test-flat-bbox-xz.off", ks, num_iters, results, all_times, num_tests));
 
   // flat bbox / 2 coplanar in YZ
-  // results = {7,1,12,20,11,2};
-  // assert(run_test<Traits>("data/edge-case-test/test-flat-bbox-yz.off", ks, num_iters, results, all_times, num_tests));
+  results = {7,1,12,20,11,2};
+  assert(run_test<Traits>("data/edge-case-test/test-flat-bbox-yz.off", ks, num_iters, results, all_times, num_tests));
 
   // edge touch
   results = {8,1,18,33,19,3};

@@ -285,7 +285,7 @@ private:
 
         CGAL_assertion_msg(bbox_length_2 >= tol, "ERROR: DEGENERATED INPUT POLYGONS!");
         CGAL_assertion_msg(bbox_length_3 >= tol, "ERROR: DEGENERATED INPUT POLYGONS!");
-        const FT x = FT(2) * tol;
+        const FT x = FT(40) * tol; // 40 is a magic number but it is not a big deal in this case
 
         bbox[0] = Point_3(bbox[0].x() - x, bbox[0].y(), bbox[0].z());
         bbox[3] = Point_3(bbox[3].x() - x, bbox[3].y(), bbox[3].z());
@@ -296,12 +296,13 @@ private:
         bbox[2] = Point_3(bbox[2].x() + x, bbox[2].y(), bbox[2].z());
         bbox[7] = Point_3(bbox[7].x() + x, bbox[7].y(), bbox[7].z());
         bbox[6] = Point_3(bbox[6].x() + x, bbox[6].y(), bbox[6].z());
+        if (m_verbose) std::cout << "* setting x-based flat axis-aligned bbox" << std::endl;
 
       } else if (bbox_length_2 < tol) {
 
         CGAL_assertion_msg(bbox_length_3 >= tol, "ERROR: DEGENERATED INPUT POLYGONS!");
         CGAL_assertion_msg(bbox_length_1 >= tol, "ERROR: DEGENERATED INPUT POLYGONS!");
-        const FT y = FT(2) * tol;
+        const FT y = FT(40) * tol; // 40 is a magic number but it is not a big deal in this case
 
         bbox[0] = Point_3(bbox[0].x(), bbox[0].y() - y, bbox[0].z());
         bbox[1] = Point_3(bbox[1].x(), bbox[1].y() - y, bbox[1].z());
@@ -312,12 +313,13 @@ private:
         bbox[2] = Point_3(bbox[2].x(), bbox[2].y() + y, bbox[2].z());
         bbox[7] = Point_3(bbox[7].x(), bbox[7].y() + y, bbox[7].z());
         bbox[4] = Point_3(bbox[4].x(), bbox[4].y() + y, bbox[4].z());
+        if (m_verbose) std::cout << "* setting y-based flat axis-aligned bbox" << std::endl;
 
       } else if (bbox_length_3 < tol) {
 
         CGAL_assertion_msg(bbox_length_1 >= tol, "ERROR: DEGENERATED INPUT POLYGONS!");
         CGAL_assertion_msg(bbox_length_2 >= tol, "ERROR: DEGENERATED INPUT POLYGONS!");
-        const FT z = FT(2) * tol;
+        const FT z = FT(40) * tol; // 40 is a magic number but it is not a big deal in this case
 
         bbox[0] = Point_3(bbox[0].x(), bbox[0].y(), bbox[0].z() - z);
         bbox[1] = Point_3(bbox[1].x(), bbox[1].y(), bbox[1].z() - z);
@@ -328,6 +330,7 @@ private:
         bbox[6] = Point_3(bbox[6].x(), bbox[6].y(), bbox[6].z() + z);
         bbox[7] = Point_3(bbox[7].x(), bbox[7].y(), bbox[7].z() + z);
         bbox[4] = Point_3(bbox[4].x(), bbox[4].y(), bbox[4].z() + z);
+        if (m_verbose) std::cout << "* setting z-based flat axis-aligned bbox" << std::endl;
 
       } else {
         CGAL_assertion_msg(false, "ERROR: WRONG CASE!");
