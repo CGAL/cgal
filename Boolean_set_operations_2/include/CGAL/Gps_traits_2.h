@@ -202,7 +202,7 @@ public:
     { return m_traits.equal_2_object()(cv1, cv2); }
 
     //! Compare two general polygons
-    operator()(const General_polygon_2& pgn1, const General_polygon_2& pgn2)
+    bool operator()(const General_polygon_2& pgn1, const General_polygon_2& pgn2)
       const
     {
       if (pgn1.size() != pgn2.size()) return false;
@@ -224,8 +224,8 @@ public:
     }
 
     //! Compare two general polygons
-    operator()(const General_polygon_with_holes_2& pgn1,
-               const General_polygon_with_holes_2& pgn2) const {
+    bool operator()(const General_polygon_with_holes_2& pgn1,
+                    const General_polygon_with_holes_2& pgn2) const {
 
       if (! operator()(pgn1.outer_boundary(), pgn2.outer_boundary()))
         return false;
