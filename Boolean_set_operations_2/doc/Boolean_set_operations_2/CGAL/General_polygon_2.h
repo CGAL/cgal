@@ -45,13 +45,10 @@ typedef typename ArrTraits::Curve_2 Curve_2;
 /// \name Construction
 /// @{
 
-/*!
-constructs a `General_polygon_2` from a curve.
-
-\note The curve is divided into \f$ x\f$-monotone curves using
-`ArrTraits::Make_x_monotone_2`.
-*/
-General_polygon_2 (const Curve_2& curve);
+/*! constructs a `General_polygon_2` from a \f$X\f$-monotone curves.
+ */
+template <class CurveIterator>
+General_polygon_2(CurveIterator begin, CurveIterator end);
 
 /// @}
 

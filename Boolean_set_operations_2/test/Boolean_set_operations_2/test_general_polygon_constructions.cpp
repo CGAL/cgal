@@ -1,9 +1,10 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Polygon_2.h>
-#include <CGAL/Boolean_set_operations_2/Polygon_conversions.h>
-#include <CGAL/General_polygon_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Polygon_2.h>
+#include <CGAL/General_polygon_2.h>
+#include <CGAL/Gps_traits_2.h>
+#include <CGAL/Boolean_set_operations_2/Polygon_conversions.h>
 
 template <typename ArrTraits, typename Kernel, typename Container>
 CGAL::Polygon_2<Kernel, Container>
@@ -29,6 +30,8 @@ int main() {
   using General_pgn = Gps_traits::General_polygon_2;
   using General_pwh = Gps_traits::General_polygon_with_holes_2;
 
+  using X_monotone_curve_2 = Polyline_traits::X_monotone_curve_2;
+
   using Pgn = CGAL::Polygon_2<Kernel>;
   using Pwh = CGAL::Polygon_with_holes_2<Kernel>;
 
@@ -49,6 +52,7 @@ int main() {
   Gps_traits gtraits;
   const Polyline_traits& ptraits(gtraits);
   auto ctr = ptraits.construct_curve_2_object();
+  auto make_x_mtn = ptraits.make_x_monotone_2_object();
   auto eql = gtraits.equal_2_object();
 
   // Case 1: Segment-based GPS from Segment_2 range with transform iterator
@@ -61,15 +65,24 @@ int main() {
   auto curve2 =
     ctr(boost::range::join(CGAL::make_range(points.begin(), points.end()),
                            CGAL::make_single(*points.begin())));
-  General_pgn gpgn2(curve2);
+  General_pgn gpgn2;
+  using Make_x_monotone_result = boost::variant<Point_2, X_monotone_curve_2>;
+  make_x_mtn(curve2,
+             boost::make_function_output_iterator
+             ([&](const Make_x_monotone_result& obj)
+              { gpgn2.push_back(*(boost::get<X_monotone_curve_2>(&obj))); }));
   std::cout << "gpgn2: " << gpgn2 << std::endl;
 
   // Case 3: Polyline-based GPS from polyline of segments
   auto curve3 =
     ctr(boost::make_transform_iterator(points.begin(), point_to_segment),
         boost::make_transform_iterator(points.end(), point_to_segment));
-  General_pgn gpgn3(curve3);
-  std::cout << "gpgn2: " << gpgn3 << std::endl;
+  General_pgn gpgn3;
+  make_x_mtn(curve3,
+             boost::make_function_output_iterator
+             ([&](const Make_x_monotone_result& obj)
+              { gpgn3.push_back(*(boost::get<X_monotone_curve_2>(&obj))); }));
+  std::cout << "gpgn3: " << gpgn3 << std::endl;
 
   if (! eql(gpgn2, gpgn3)) {
     std::cerr << "Construction 1 failed\n";

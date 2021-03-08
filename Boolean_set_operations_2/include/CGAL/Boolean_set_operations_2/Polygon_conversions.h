@@ -90,9 +90,19 @@ convert_polygon(const Polygon_2<Kernel, Container>& polygon,
 {
   auto ctr = traits.construct_curve_2_object();
   if (polygon.is_empty()) return General_polygon_2<ArrTraits>();
-  return ctr(boost::range::join(CGAL::make_range(polygon.vertices_begin(),
-                                                 polygon.vertices_end()),
-                                CGAL::make_single(*polygon.vertices_begin())));
+  using Point = typename ArrTraits::Point_2;
+  using X_monotone_curve = typename ArrTraits::X_monotone_curve_2;
+  using Make_x_monotone_result = boost::variant<Point, X_monotone_curve>;
+  auto cv = ctr(boost::range::join(CGAL::make_range(polygon.vertices_begin(),
+                                                    polygon.vertices_end()),
+                                   CGAL::make_single(*polygon.vertices_begin())));
+  General_polygon_2<ArrTraits> gpgn;
+  auto make_x_mtn = traits.make_x_monotone_2_object();
+  make_x_mtn(cv,
+             boost::make_function_output_iterator
+             ([&](const Make_x_monotone_result& obj)
+              { gpgn.push_back(*(boost::get<X_monotone_curve>(&obj))); }));
+  return gpgn;
 }
 
 // Convert Polygon_with_holes_2 to General_polygon_with_holes_2<Polyline_traits>
@@ -191,13 +201,13 @@ struct Polygon_converter_output_iterator :
   using Converter = Polygon_converter<Kernel, Container, OutputIterator>;
   using Base = boost::function_output_iterator<Converter>;
 
-  OutputIterator& output;
+  OutputIterator& m_output;
   Polygon_converter_output_iterator(OutputIterator& output) :
     Base(output),
-    output(output)
+    m_output(output)
   {}
 
-  operator OutputIterator() const { return output; }
+  operator OutputIterator() const { return m_output; }
 };
 
 // Converts General_polygon2<Polyline_traits> to Polygon_2
