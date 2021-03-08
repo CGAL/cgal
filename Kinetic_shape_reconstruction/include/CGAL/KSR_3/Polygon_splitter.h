@@ -67,10 +67,12 @@ private:
     Vertex_info() :
     pvertex(Data_structure::null_pvertex()),
     ivertex(Data_structure::null_ivertex()),
-    sp_idx(KSR::no_element())
+    sp_idx(KSR::no_element()),
+    is_boundary_ivertex(false)
     { }
     std::size_t sp_idx;
     std::vector<std::size_t> pedge_indices;
+    bool is_boundary_ivertex;
   };
 
   struct Face_info {
@@ -147,6 +149,7 @@ public:
     m_cdt.clear();
     m_input.clear();
     m_map_intersections.clear();
+    m_boundary_ivertices.clear();
   }
 
 private:
@@ -154,6 +157,7 @@ private:
   TRI m_cdt;
   std::set<PVertex> m_input;
   std::map<CID, IEdge> m_map_intersections;
+  std::map<PVertex, IVertex> m_boundary_ivertices;
   const Planar_shape_type m_merge_type;
   const bool m_verbose;
 
@@ -467,6 +471,7 @@ private:
           const auto vh_mid = vhs_iv.at(iv);
           m_cdt.insert_constraint(vh_source, vh_mid);
           m_cdt.insert_constraint(vh_mid, vh_target);
+          vh_mid->info().is_boundary_ivertex = true;
           // print_edge("original1", pface.first, vh_source, vh_mid);
           // print_edge("original2", pface.first, vh_mid, vh_target);
 
@@ -816,6 +821,12 @@ private:
             static_cast<FT>(CGAL::to_double(p.x())),
             static_cast<FT>(CGAL::to_double(p.y())));
           source->info().pvertex = m_data.add_pvertex(sp_idx, spoint);
+
+          // Handle ivertices on the polygon boundary.
+          if (source->info().is_boundary_ivertex) {
+            CGAL_assertion(source->info().ivertex != m_data.null_ivertex());
+            m_boundary_ivertices[source->info().pvertex] = source->info().ivertex;
+          }
         }
         new_pvertices.push_back(source->info().pvertex);
 
@@ -933,12 +944,38 @@ private:
       }
 
       // Several incident intersections = frozen pvertex.
+      // These are intersections of several iedges.
       if (is_frozen) {
+
+        // Boundary ivertices.
+        if (m_boundary_ivertices.size() > 0) {
+          // TODO: CAN WE MAKE IT FASTER BY REMOVING THIS SEARCH?
+          // If we have only a few points like that, it is ok.
+          const auto pit = m_boundary_ivertices.find(pvertex);
+          if (pit != m_boundary_ivertices.end()) {
+
+            const auto& pair = *pit;
+            const auto& ivertex = pair.second;
+            CGAL_assertion(pvertex == pair.first);
+            std::cout << "pvertex: " << m_data.point_3(pvertex) << std::endl;
+            std::cout << "ivertex: " << m_data.point_3(ivertex) << std::endl;
+
+            CGAL_assertion_msg(false, "TODO: HANDLE BOUNDARY IVERTICES!");
+          }
+          if (m_boundary_ivertices.size() > 1) {
+            std::cout << "- num boundary ivertices: " << m_boundary_ivertices.size() << std::endl;
+            CGAL_assertion_msg(m_boundary_ivertices.size() == 1,
+            "TODO: CHECK, CAN WE HAVE MULTIPLE BOUNDARY IVERTICES? HOW MANY IN AVERAGE?");
+          }
+        }
+
+        // Interior ivertices.
         m_data.direction(pvertex) = CGAL::NULL_VECTOR;
         continue;
       }
 
       // No incident intersections = keep initial direction.
+      // These are polygon vertices.
       if (iedge == m_data.null_iedge()) {
         continue;
       }
@@ -948,6 +985,7 @@ private:
       //   neighbors.second != m_data.null_pvertex());
 
       // Set future direction.
+      // These are newly inserted points along the polygon boundary.
       bool is_first_okay = false;
       if (neighbors.first != m_data.null_pvertex()) {
         is_first_okay = update_neighbor(pvertex,   neighbors.first);

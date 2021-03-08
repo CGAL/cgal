@@ -446,17 +446,20 @@ private:
 
       const Event event = m_queue.pop();
       const FT current_time = event.time();
-      if (m_export) {
+
+      // const std::size_t sp_debug_idx = 17;
+      if (m_export /* && event.pvertex().first == sp_debug_idx */) {
         if (iteration < 10) {
           dump(m_data, "iter-0" + std::to_string(iteration));
+          // dump_2d_surface_mesh(m_data, sp_debug_idx, "iter-" + std::to_string(iteration) +
+          //   "-surface-mesh-" + std::to_string(sp_debug_idx));
           dump_event(m_data, event, "iter-0" + std::to_string(iteration));
         } else {
           dump(m_data, "iter-" + std::to_string(iteration));
+          // dump_2d_surface_mesh(m_data, sp_debug_idx, "iter-" + std::to_string(iteration) +
+          //   "-surface-mesh-" + std::to_string(sp_debug_idx));
           dump_event(m_data, event, "iter-" + std::to_string(iteration));
         }
-        // const std::size_t sp_debug_idx = 23;
-        // dump_2d_surface_mesh(m_data, sp_debug_idx, "iter-" + std::to_string(iteration) +
-        // "-surface-mesh-" + std::to_string(sp_debug_idx));
       }
 
       m_data.update_positions(current_time);
