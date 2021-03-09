@@ -480,6 +480,7 @@ public:
   }
 
   const Point_2 point_2(const Vertex_index& vi, const FT time) const {
+    CGAL_assertion(time >= FT(0));
     return m_data->mesh.point(vi) + time * m_data->direction[vi];
   }
 

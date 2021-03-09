@@ -1186,6 +1186,219 @@ public:
     return PFace(support_plane_idx, fi);
   }
 
+  void add_pfaces(
+    const PVertex& pvertex, const IVertex& ivertex,
+    const PVertex& pv_prev, const PVertex& pv_next,
+    const bool is_open, const bool reverse, const bool use_limit_lines,
+    std::vector< std::pair<IEdge, bool> >& crossed_iedges,
+    std::vector<PVertex>& new_pvertices) {
+
+    if (crossed_iedges.size() < 2) return;
+    CGAL_assertion(crossed_iedges.size() >= 2);
+    CGAL_assertion(crossed_iedges.size() == new_pvertices.size());
+    CGAL_assertion(crossed_iedges.front().first != crossed_iedges.back().first);
+
+    add_pfaces_global(
+      pvertex, ivertex, pv_prev, pv_next,
+      is_open, reverse, use_limit_lines,
+      crossed_iedges, new_pvertices);
+
+    // CGAL_assertion_msg(false, "TODO: ADD NEW PFACES!");
+  }
+
+  void add_pfaces_global(
+    const PVertex& pvertex, const IVertex& ivertex,
+    const PVertex& pv_prev, const PVertex& pv_next,
+    const bool is_open, bool reverse, const bool use_limit_lines,
+    std::vector< std::pair<IEdge, bool> >& crossed_iedges,
+    std::vector<PVertex>& new_pvertices) {
+
+    traverse_iedges_global(
+      pvertex, ivertex, pv_prev, pv_next,
+      is_open, reverse, use_limit_lines,
+      crossed_iedges, new_pvertices);
+
+    if (is_open) {
+      reverse = !reverse;
+      std::reverse(new_pvertices.begin(), new_pvertices.end());
+      std::reverse(crossed_iedges.begin(), crossed_iedges.end());
+
+      traverse_iedges_global(
+        pvertex, ivertex, pv_prev, pv_next,
+        is_open, reverse, use_limit_lines,
+        crossed_iedges, new_pvertices);
+
+      reverse = !reverse;
+      std::reverse(new_pvertices.begin(), new_pvertices.end());
+      std::reverse(crossed_iedges.begin(), crossed_iedges.end());
+    }
+
+    // CGAL_assertion_msg(false, "TODO: ADD NEW PFACES GLOBAL!");
+  }
+
+  void traverse_iedges_global(
+    const PVertex& pvertex, const IVertex& ivertex,
+    const PVertex& pv_prev, const PVertex& pv_next,
+    const bool is_open, const bool reverse, const bool use_limit_lines,
+    std::vector< std::pair<IEdge, bool> >& iedges,
+    std::vector<PVertex>& pvertices) {
+
+    if (m_verbose) {
+      std::cout << "**** traversing iedges global" << std::endl;
+      std::cout << "- k intersections before: " << this->k(pvertex.first) << std::endl;
+    }
+
+    std::size_t num_added_pfaces = 0;
+    CGAL_assertion(iedges.size() >= 2);
+    CGAL_assertion(iedges.size() == pvertices.size());
+    CGAL_assertion(pvertices.front() != null_pvertex());
+    for (std::size_t i = 0; i < iedges.size() - 1; ++i) {
+
+      if (iedges[i].second) {
+        if (m_verbose) {
+          std::cout << "- break iedge " << std::to_string(i) << std::endl;
+        } break;
+      } else {
+        if (m_verbose) {
+          std::cout << "- handle iedge " << std::to_string(i) << std::endl;
+        }
+      }
+
+      iedges[i].second = true;
+      const auto& iedge_i = iedges[i].first;
+      CGAL_assertion_msg(
+        point_2(pvertex.first, ivertex) !=
+        point_2(pvertex.first, opposite(iedge_i, ivertex)),
+      "TODO: TRAVERSE IEDGES GLOBAL, HANDLE ZERO LENGTH IEDGE I!");
+
+      bool is_occupied_iedge, is_bbox_reached;
+      std::tie(is_occupied_iedge, is_bbox_reached) = is_occupied(pvertex, ivertex, iedge_i);
+      bool is_limit_line = false;
+      if (use_limit_lines) {
+        is_limit_line = update_limit_lines_and_k(pvertex, iedge_i, is_occupied_iedge);
+      }
+
+      if (m_verbose) {
+        std::cout << "- bbox: " << is_bbox_reached  << "; " <<
+        " limit: "    << is_limit_line << "; " <<
+        " occupied: " << is_occupied_iedge << std::endl;
+      }
+
+      if (is_bbox_reached) {
+        if (m_verbose) std::cout << "- bbox, stop" << std::endl;
+        break;
+      } else if (is_limit_line) {
+        if (m_verbose) std::cout << "- limit, stop" << std::endl;
+        break;
+      } else {
+        if (m_verbose) std::cout << "- free, any k, continue" << std::endl;
+        const std::size_t ip = i + 1;
+        const auto& iedge_ip = iedges[ip].first;
+        CGAL_assertion_msg(
+          point_2(pvertex.first, ivertex) !=
+          point_2(pvertex.first, opposite(iedge_ip, ivertex)),
+        "TODO: TRAVERSE IEDGES GLOBAL, HANDLE ZERO LENGTH IEDGE IP!");
+
+        add_new_pface(pvertex, pv_prev, pv_next, is_open, reverse, i, iedge_ip, pvertices);
+        ++num_added_pfaces;
+        continue;
+      }
+    }
+
+    if (num_added_pfaces == iedges.size() - 1) {
+      iedges.back().second = true;
+    }
+
+    if (m_verbose) {
+      std::cout << "- num added pfaces: " << num_added_pfaces << std::endl;
+      std::cout << "- k intersections after: " << this->k(pvertex.first) << std::endl;
+    }
+    CGAL_assertion_msg(num_added_pfaces <= 3,
+    "TODO: CHECK CASES WHERE WE HAVE MORE THAN 3 NEW PFACES!");
+
+    // CGAL_assertion_msg(false, "TODO: TRAVERSE IEDGES GLOBAL!");
+  }
+
+  void add_new_pface(
+    const PVertex& pvertex, const PVertex& pv_prev, const PVertex& pv_next,
+    const bool is_open, const bool reverse, const std::size_t idx, const IEdge& iedge,
+    std::vector<PVertex>& pvertices) {
+
+    if (m_verbose) {
+      std::cout << "- adding new pface: " << std::endl;
+    }
+
+    // The first pvertex of the new triangle.
+    const auto& pv1 = pvertices[idx];
+    CGAL_assertion(pv1 != null_pvertex());
+    if (m_verbose) {
+      std::cout << "- pv1 " << str(pv1) << ": " << point_3(pv1) << std::endl;
+    }
+
+    // The second pvertex of the new triangle.
+    PVertex pv2 = null_pvertex();
+    const bool pv2_exists = (pvertices[idx + 1] != null_pvertex());
+    if (pv2_exists) {
+      CGAL_assertion((pvertices.size() - 1) == (idx + 1));
+      pv2 = pvertices[idx + 1];
+    } else {
+      create_new_pvertex(
+        pvertex, pv_prev, pv_next, is_open, idx + 1, iedge, pvertices);
+      pv2 = pvertices[idx + 1];
+    }
+    CGAL_assertion(pv2 != null_pvertex());
+    if (m_verbose) {
+      std::cout << "- pv2 " << str(pv2) << ": " << point_3(pv2) << std::endl;
+    }
+
+    // Adding new triangle.
+    if (reverse) add_pface(std::array<PVertex, 3>{pvertex, pv2, pv1});
+    else add_pface(std::array<PVertex, 3>{pvertex, pv1, pv2});
+    if (!pv2_exists) connect_pedge(pvertex, pv2, iedge);
+
+    // CGAL_assertion_msg(false, "TODO: ADD NEW PFACE!");
+  }
+
+  void create_new_pvertex(
+    const PVertex& pvertex, const PVertex& pv_prev, const PVertex& pv_next,
+    const bool is_open, const std::size_t idx, const IEdge& iedge,
+    std::vector<PVertex>& pvertices) {
+
+    if (m_verbose) std::cout << "- creating new pvertex" << std::endl;
+
+    bool is_parallel = false;
+    Point_2 future_point; Vector_2 future_direction;
+
+    if (!is_open) {
+      is_parallel = compute_future_point_and_direction(
+        0, pv_prev, pv_next, iedge, future_point, future_direction);
+      if (is_parallel) {
+        if (m_verbose) std::cout << "- new pvertex, back/front, parallel case" << std::endl;
+        CGAL_assertion_msg(!is_parallel,
+        "TODO: CREATE PVERTEX, BACK/FRONT, ADD PARALLEL CASE!");
+      }
+    } else {
+      is_parallel = compute_future_point_and_direction(
+        pvertex, pv_prev, pv_next, iedge, future_point, future_direction);
+      if (is_parallel) {
+        if (m_verbose) std::cout << "- new pvertex, open, parallel case" << std::endl;
+        CGAL_assertion_msg(!is_parallel,
+        "TODO: CREATE_PVERTEX, OPEN, ADD PARALLEL CASE!");
+      }
+    }
+
+    CGAL_assertion(future_direction != Vector_2());
+    const auto propagated = add_pvertex(pvertex.first, future_point);
+    direction(propagated) = future_direction;
+    CGAL_assertion(propagated != pvertex);
+
+    CGAL_assertion(idx < pvertices.size());
+    CGAL_assertion(pvertices[idx] == null_pvertex());
+    pvertices[idx] = propagated;
+
+    // CGAL_assertion_msg(false, "TODO: CREATE NEW PVERTEX!");
+  }
+
   void clear_pfaces(const std::size_t support_plane_idx) {
     support_plane(support_plane_idx).clear_pfaces();
   }
@@ -2050,6 +2263,7 @@ public:
       pairs.push_back(std::make_pair(std::make_pair(sp_idx_1, sp_idx_2), is_limit_line));
     }
     CGAL_assertion(pairs.size() <= 2);
+    CGAL_assertion(this->k(pvertex.first) >= 1);
 
     // CGAL_assertion_msg(false, "TODO: IS LIMIT LINE!");
     return is_limit_line;
@@ -2424,6 +2638,10 @@ public:
     // std::cout << "next: " << point_3(next) << std::endl;
     // std::cout << "curr: " << point_3(curr) << std::endl;
 
+    CGAL_assertion(direction(prev) != CGAL::NULL_VECTOR);
+    CGAL_assertion(direction(curr) != CGAL::NULL_VECTOR);
+    CGAL_assertion(direction(next) != CGAL::NULL_VECTOR);
+
     const Line_2 future_line_prev(
       point_2(prev, m_current_time + FT(1)),
       point_2(curr, m_current_time + FT(1)));
@@ -2557,6 +2775,8 @@ public:
     const auto curr_p = point_2(curr);
 
     const Point_2 pinit = iedge_line.projection(curr_p);
+    CGAL_assertion(direction(curr) != CGAL::NULL_VECTOR);
+    CGAL_assertion(direction(next) != CGAL::NULL_VECTOR);
 
     const Line_2 future_line_next(
       point_2(next, m_current_time + FT(1)),
@@ -2639,6 +2859,8 @@ public:
     const auto next_p = point_2(next);
     const auto curr_p = point_2(curr);
 
+    CGAL_assertion(direction(curr) != CGAL::NULL_VECTOR);
+    CGAL_assertion(direction(next) != CGAL::NULL_VECTOR);
     const Line_2 future_line_next(
       point_2(next, m_current_time + FT(1)),
       point_2(curr, m_current_time + FT(1)));

@@ -223,10 +223,6 @@ void run_all_tests() {
   results = {9,1,24,46,27,4};
   assert(run_test<Traits>("data/edge-case-test/test-5-polygons.off"  , ks, num_iters, results, all_times, num_tests));
 
-  // polygons with multiple near-collinear points
-  // results = {8,1,18,33,19,3}; // does not work in release due to the events happenning at the same time
-  // assert(run_test<Traits>("data/edge-case-test/test-collinear.off"   , ks, num_iters, results, all_times, num_tests));
-
   // Stress tests 0.
   results = {7,1,14,24,13,2};
   assert(run_test<Traits>("data/stress-test-0/test-1-polygon-a.off"    , ks, num_iters, results, all_times, num_tests));
@@ -336,8 +332,8 @@ void run_all_tests() {
   assert(run_test<Traits>("data/stress-test-4/test-9-rnd-polygons-12-4.off", ks, num_iters, results, all_times, num_tests));
 
   // Stress tests 5.
-  // results = {21,2,468,1224,723,67}; // does not work due to a missing face
-  // assert(run_test<Traits>("data/stress-test-5/test-1-rnd-polygons-15-6.off", ks, num_iters, results, all_times, num_tests));
+  results = {21,2,468,1224,723,67};
+  assert(run_test<Traits>("data/stress-test-5/test-1-rnd-polygons-15-6.off", ks, num_iters, results, all_times, num_tests));
   results = {26,3,1037,2829,1693,161};
   assert(run_test<Traits>("data/stress-test-5/test-2-rnd-polygons-20-4.off", ks, num_iters, results, all_times, num_tests));
 
@@ -350,6 +346,11 @@ void run_all_tests() {
   assert(run_test<Traits>("data/real-data-test/test-20-polygons.off", ks, num_iters, results, all_times, num_tests));
 
   // Still to be done! Do not work due to the events, which happen at the same time.
+
+  // Polygons with multiple near-collinear points, fails in release.
+  // results = {8,1,18,33,19,3};
+  // assert(run_test<Traits>("data/edge-case-test/test-collinear.off"     , ks, num_iters, results, all_times, num_tests));
+
   // All arrive at the same time, fails for k = 1.
   // results = {0,0,0,0,0,0};
   // assert(run_test<Traits>("data/edge-case-test/test-same-time.off"     , ks, num_iters, results, all_times, num_tests));
