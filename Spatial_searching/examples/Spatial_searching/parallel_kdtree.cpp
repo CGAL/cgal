@@ -47,7 +47,7 @@ int main()
                          // neighbor search returns a set of pair of
                          // point and distance <Point_3,FT>, here we
                          // keep the points only
-                         for (const Point_with_distance& pwd : search)
+                         for (const Point_with_distance pwd : search)
                            neighbors[s].push_back (pwd.first);
                        }
                      });

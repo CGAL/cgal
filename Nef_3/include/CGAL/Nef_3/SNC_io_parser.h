@@ -120,22 +120,20 @@ typename Type_converter<R>::Vector_3 get_vector(const CGAL::Vector_3<R>& v){ ret
 template<typename T>
 class moreLeft : public T {
 
-  typedef typename T::SM_decorator      SM_decorator;
   typedef typename T::SHalfedge_handle  SHalfedge_handle;
   typedef typename T::Vector_3          Vector_3;
   typedef typename T::FT                FT;
   typedef typename T::RT                RT;
 
  public:
-  moreLeft(T D) : T(D) {}
+  moreLeft(const T& D) : T(D) {}
 
-  int operator()(SHalfedge_handle se1, SHalfedge_handle se2) {
+  int operator()(SHalfedge_handle se1, SHalfedge_handle se2) const {
 
     CGAL_assertion(se1 != SHalfedge_handle());
     if(se2 == SHalfedge_handle())
       return -1;
 
-    SM_decorator SM(&*se1->source()->source());
     Vector_3 vec1 = se1->circle().orthogonal_vector();
     Vector_3 vec2 = se2->circle().orthogonal_vector();
 
@@ -181,15 +179,15 @@ class moreLeft : public T {
 };
 
 template <typename T>
-class sort_vertices : public SNC_decorator<T> {
+class sort_vertices : public SNC_const_decorator<T> {
 
   typedef T SNC_structure;
-  typedef CGAL::SNC_decorator<T>          Base;
+  typedef CGAL::SNC_const_decorator<T>    Base;
   typedef typename T::Vertex_handle Vertex_handle;
   typedef typename T::Point_3       Point_3;
 
  public:
-  sort_vertices(T& D) : Base(D) {}
+  sort_vertices(const T& D) : Base(D) {}
 
   bool operator() (Vertex_handle v1, Vertex_handle v2) const {
     return lexicographically_xyz_smaller(v1->point(), v2->point());
@@ -197,14 +195,14 @@ class sort_vertices : public SNC_decorator<T> {
 };
 
 template <typename T>
-class sort_edges : public SNC_decorator<T> {
+class sort_edges : public SNC_const_decorator<T> {
 
   typedef T SNC_structure;
-  typedef CGAL::SNC_decorator<T>            Base;
+  typedef CGAL::SNC_const_decorator<T>      Base;
   typedef typename T::Halfedge_handle Halfedge_handle;
 
  public:
-  sort_edges(T& D) : Base(D) {}
+  sort_edges(const T& D) : Base(D) {}
 
   bool operator() (Halfedge_handle e1, Halfedge_handle e2) const {
     sort_vertices<T> SORT(*this->sncp());
@@ -215,17 +213,17 @@ class sort_edges : public SNC_decorator<T> {
 };
 
 template <typename T>
-class sort_facets : public SNC_decorator<T> {
+class sort_facets : public SNC_const_decorator<T> {
 
   typedef T SNC_structure;
-  typedef SNC_decorator<T>             Base;
+  typedef SNC_const_decorator<T>       Base;
   typedef typename T::Halffacet_handle Halffacet_handle;
   typedef typename T::SHalfedge_handle SHalfedge_handle;
   typedef typename T::Vector_3         Vector_3;
   typedef typename T::Plane_3          Plane_3;
 
  public:
-  sort_facets(T& D) : Base(D) {}
+  sort_facets(const T& D) : Base(D) {}
 
   bool operator() (Halffacet_handle f1, Halffacet_handle f2) const {
 
@@ -259,17 +257,17 @@ class sort_facets : public SNC_decorator<T> {
 };
 
 template <typename T>
-class sort_sedges : public SNC_decorator<T> {
+class sort_sedges : public SNC_const_decorator<T> {
 
   typedef T SNC_structure;
-  typedef CGAL::SNC_decorator<T>             Base;
+  typedef CGAL::SNC_const_decorator<T>       Base;
   typedef CGAL::SM_decorator<T>          SM_decorator;
   typedef typename T::Vertex_handle    Vertex_handle;
   typedef typename T::SHalfedge_handle SHalfedge_handle;
   typedef typename T::Sphere_circle    Sphere_circle;
 
  public:
-  sort_sedges(T& D) : Base(D) {}
+  sort_sedges(const T& D) : Base(D) {}
 
   bool operator() (SHalfedge_handle se1, SHalfedge_handle se2) const {
     CGAL_NEF_TRACEN("sort sedges");
@@ -322,14 +320,14 @@ class sort_sedges : public SNC_decorator<T> {
 
 
 template <typename T>
-class sort_sloops : public SNC_decorator<T> {
+class sort_sloops : public SNC_const_decorator<T> {
 
   typedef T SNC_structure;
-  typedef CGAL::SNC_decorator<T>             Base;
+  typedef CGAL::SNC_const_decorator<T>       Base;
   typedef typename T::SHalfloop_handle SHalfloop_handle;
 
  public:
-  sort_sloops(T& D) : Base(D) {}
+  sort_sloops(const T& D) : Base(D) {}
 
   bool operator() (SHalfloop_handle sl1, SHalfloop_handle sl2) const {
     if(sl1 == sl2) return false;
@@ -342,10 +340,10 @@ class sort_sloops : public SNC_decorator<T> {
 };
 
 template <typename T>
-class sort_sface_cycle_entries : public SNC_decorator<T> {
+class sort_sface_cycle_entries : public SNC_const_decorator<T> {
 
   typedef T                             SNC_structure;
-  typedef CGAL::SNC_decorator<T>        Base;
+  typedef CGAL::SNC_const_decorator<T>  Base;
   typedef typename T::SM_decorator      SM_decorator;
   typedef typename T::Object_handle     Object_handle;
   typedef typename T::SVertex_handle    SVertex_handle;
@@ -356,7 +354,7 @@ class sort_sface_cycle_entries : public SNC_decorator<T> {
   typedef typename T::Vector_3          Vector_3;
 
  public:
-  sort_sface_cycle_entries(T D) : Base(D) {}
+  sort_sface_cycle_entries(const T& D) : Base(D) {}
 
   bool operator() (Object_handle o1, Object_handle o2) const {
     CGAL_NEF_TRACEN("sort sface cycles ");
@@ -414,10 +412,10 @@ class sort_sface_cycle_entries : public SNC_decorator<T> {
 };
 
 template <typename T>
-class sort_sfaces : public SNC_decorator<T> {
+class sort_sfaces : public SNC_const_decorator<T> {
 
   typedef T SNC_structure;
-  typedef CGAL::SNC_decorator<T>            Base;
+  typedef CGAL::SNC_const_decorator<T>      Base;
   typedef typename T::SM_decorator          SM_decorator;
   typedef typename T::Point_3               Point_3;
   typedef typename T::Vector_3              Vector_3;
@@ -430,7 +428,7 @@ class sort_sfaces : public SNC_decorator<T> {
                       SHalfedge_around_sface_circulator;
 
  public:
-  sort_sfaces(T& D) : Base(D) {}
+  sort_sfaces(const T& D) : Base(D) {}
 
   bool operator() (SFace_handle sf1, SFace_handle sf2) const {
     CGAL_NEF_TRACEN("sort sfaces");
@@ -442,11 +440,11 @@ class sort_sfaces : public SNC_decorator<T> {
     if(sf1->center_vertex() != sf2->center_vertex())
       return SORT(sf1->center_vertex(), sf2->center_vertex());
 
-    //    sort_sface_cycle_entries<Base> sort_cycles((Base) *this);
+    //    sort_sface_cycle_entries<Base> sort_cycles(*this);
     //    return sort_cycles(*sf1->sface_cycles_begin(), *sf2->sface_cycles_begin());
 
     SM_decorator SD(&*sf1->center_vertex());
-    moreLeft<Base> ml((Base) *this);
+    moreLeft<Base> ml(*this);
     Vector_3 plus(1,0,0);
 
     SFace_cycle_iterator fc;
@@ -530,15 +528,15 @@ class sort_sfaces : public SNC_decorator<T> {
 };
 
 template <typename T>
-class sort_volumes : public SNC_decorator<T> {
+class sort_volumes : public SNC_const_decorator<T> {
 
   typedef T SNC_structure;
-  typedef CGAL::SNC_decorator<T>    Base;
+  typedef CGAL::SNC_const_decorator<T> Base;
   typedef typename T::Volume_handle Volume_handle;
   typedef typename T::SFace_handle  SFace_handle;
 
  public:
-  sort_volumes(T& D) : Base(D) {}
+  sort_volumes(const T& D) : Base(D) {}
 
   bool operator() (Volume_handle c1, Volume_handle c2) const {
     CGAL_NEF_TRACEN("sort volumes");
@@ -563,7 +561,7 @@ class sort_facet_cycle_entries : public T {
   typedef typename T::Vector_3          Vector_3;
 
  public:
-  sort_facet_cycle_entries(T D) : T(D) {}
+  sort_facet_cycle_entries(const T& D) : T(D) {}
 
   bool operator() (Object_handle o1, Object_handle o2) const {
 
@@ -611,7 +609,7 @@ class sort_shell_entries : public T {
   typedef typename T::Point_3       Point_3;
 
  public:
-  sort_shell_entries(T D) : T(D) {}
+  sort_shell_entries(const T& D) : T(D) {}
 
   bool operator() (Object_handle o1, Object_handle o2) const {
     SFace_handle sf1, sf2;
@@ -627,10 +625,10 @@ class sort_shell_entries : public T {
 };
 
 template<typename T>
-struct find_minimal_sface_of_shell : public SNC_decorator<T> {
+struct find_minimal_sface_of_shell : public SNC_const_decorator<T> {
 
   typedef T                               SNC_structure;
-  typedef CGAL::SNC_decorator<T>          Base;
+  typedef CGAL::SNC_const_decorator<T>    Base;
   typedef typename T::Vertex_handle       Vertex_handle;
   typedef typename T::Halfedge_handle     Halfedge_handle;
   typedef typename T::Halffacet_handle    Halffacet_handle;
@@ -643,7 +641,7 @@ struct find_minimal_sface_of_shell : public SNC_decorator<T> {
   SFace_handle sf_min;
   sort_sfaces<T> SORT;
 
-  find_minimal_sface_of_shell(T& D, SFace_visited_hash& Vi)
+  find_minimal_sface_of_shell(const T& D, SFace_visited_hash& Vi)
     : Base(D), Done(Vi), SORT(D) {}
 
   void visit(SFace_handle h) {
@@ -1076,7 +1074,7 @@ public:
   { Self O(os,W, sort); O.print(); }
 
   template <typename Iter, typename Index>
-    void output_sorted_indexes(Iter begin, Iter end, Index i) const {
+    void output_sorted_indexes(Iter begin, Iter end, const Index& i) const {
     int low = i[begin];
     int high = low;
     for(Iter it=begin; it != end; it++) {
@@ -1193,7 +1191,7 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
         }
       }
       fi->plane() = normalized(fi->plane());
-      fi->boundary_entry_objects().sort(sort_facet_cycle_entries<Base>((Base) *this));
+      fi->boundary_entry_objects().sort(sort_facet_cycle_entries<Base>(*this));
     }
     FL.push_back(fi);
   }
@@ -1262,7 +1260,7 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
           *fc = make_object(se);
         }
       }
-      sfi->boundary_entry_objects().sort(sort_sface_cycle_entries<Base>((Base) *this));
+      sfi->boundary_entry_objects().sort(sort_sface_cycle_entries<Base>(*this));
     }
     SFL.push_back(sfi);
   }
@@ -1287,7 +1285,7 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
         visit_shell_objects(SFace_handle(it),findMinSF);
         *it = make_object(findMinSF.minimal_sface());
       }
-      ci->shell_entry_objects().sort(sort_shell_entries<Base>((Base)*this));
+      ci->shell_entry_objects().sort(sort_shell_entries<Base>(*this));
     }
     CL.push_back(ci);
   }

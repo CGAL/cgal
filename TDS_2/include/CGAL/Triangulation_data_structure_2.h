@@ -36,9 +36,7 @@
 #include <CGAL/Triangulation_ds_vertex_base_2.h>
 #include <CGAL/Triangulation_ds_iterators_2.h>
 #include <CGAL/Triangulation_ds_circulators_2.h>
-
-#include <CGAL/IO/File_header_OFF.h>
-#include <CGAL/IO/File_scanner_OFF.h>
+#include <CGAL/IO/io.h>
 
 namespace CGAL {
 
@@ -424,7 +422,6 @@ public:
   void file_output(std::ostream& os,
                    Vertex_handle v = Vertex_handle(),
                    bool skip_first=false) const;
-  Vertex_handle off_file_input(std::istream& is, bool verbose=false);
   void  vrml_output(std::ostream& os,
                     Vertex_handle v = Vertex_handle(),
                     bool skip_first=false) const;
@@ -2280,104 +2277,6 @@ vrml_output( std::ostream& os, Vertex_handle v, bool skip_infinite) const
    os << "}" << std::endl;
    return;
 }
-
-template < class Vb, class Fb>
-typename Triangulation_data_structure_2<Vb,Fb>::Vertex_handle
-Triangulation_data_structure_2<Vb,Fb>::
-off_file_input( std::istream& is, bool verbose)
-{
-  // input from an OFF file
-  // assume a dimension 2 triangulation
-  // create an infinite-vertex and  infinite faces with the
-  // boundary edges if any.
-  // return the infinite vertex if created
-  Vertex_handle vinf;
-  File_scanner_OFF scanner(is, verbose);
-  if (! is) {
-    if (scanner.verbose()) {
-         std::cerr << " " << std::endl;
-         std::cerr << "TDS::off_file_input" << std::endl;
-         std::cerr << " input error: file format is not OFF." << std::endl;
-    }
-    return vinf;
-  }
-
-  if(number_of_vertices() != 0)    clear();
-  int dim = 2;
-  set_dimension(dim);
-
-  std::vector<Vertex_handle > vvh(scanner.size_of_vertices());
-  std::map<Vh_pair, Edge> edge_map;
-  typedef typename Vb::Point   Point;
-
-  // read vertices
-  std::size_t i;
-  for ( i = 0; i < scanner.size_of_vertices(); i++) {
-    Point p;
-    file_scan_vertex( scanner, p);
-    vvh[i] = create_vertex();
-    vvh[i]->set_point(p);
-    scanner.skip_to_next_vertex( i);
-  }
-  if ( ! is ) {
-    is.clear( std::ios::badbit);
-    return vinf;
-  }
-  //vinf = vvh[0];
-
-  // create the facets
-  for ( i = 0; i < scanner.size_of_facets(); i++) {
-    Face_handle fh = create_face();
-    std::size_t no;
-    scanner.scan_facet( no, i);
-    if( ! is || no != 3) {
-      if ( scanner.verbose()) {
-        std::cerr << " " << std::endl;
-        std::cerr << "TDS::off_file_input" << std::endl;
-        std::cerr << "facet " << i << "does not have  3 vertices."
-                  << std::endl;
-      }
-      is.clear( std::ios::badbit);
-      return vinf;
-    }
-
-    for ( std::size_t j = 0; j < no; ++j) {
-      std::size_t index;
-      scanner.scan_facet_vertex_index( index, i);
-      fh->set_vertex(j, vvh[index]);
-      vvh[index]->set_face(fh);
-    }
-
-    for (std::size_t ih  = 0; ih < no; ++ih) {
-        set_adjacency(fh, ih, edge_map);
-    }
-  }
-
-  // deal with  boundaries
-  if ( !edge_map.empty()) {
-    vinf = create_vertex();
-    std::map<Vh_pair, Edge> inf_edge_map;
-   while (!edge_map.empty()) {
-     Face_handle fh = edge_map.begin()->second.first;
-     int ih = edge_map.begin()->second.second;
-     Face_handle fn = create_face( vinf,
-                                   fh->vertex(cw(ih)),
-                                   fh->vertex(ccw(ih)));
-     vinf->set_face(fn);
-     set_adjacency(fn, 0, fh, ih);
-     set_adjacency(fn, 1, inf_edge_map);
-     set_adjacency(fn, 2, inf_edge_map);
-     edge_map.erase(edge_map.begin());
-   }
-   CGAL_triangulation_assertion(inf_edge_map.empty());
-  }
-
-
-  // coherent orientation
-  reorient_faces();
-  return vinf;
-}
-
 
 template < class Vb, class Fb>
 void

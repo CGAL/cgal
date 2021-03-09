@@ -679,8 +679,6 @@ void Viewer::compute_elements()
     {
         pos_points.resize(0);
         pos_lines.resize(0);
-        // Restore previous viewer state.
-        restoreStateFromFile();
 
         //random generator of points within a sphere
         typedef CGAL::Creator_uniform_3<EPIC::FT,EPIC::Point_3>   Creator;

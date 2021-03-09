@@ -1,22 +1,5 @@
-cmake_minimum_required(VERSION 3.1...3.15)
-project(Polyhedron_Demo)
-
-if(NOT POLICY CMP0070 AND POLICY CMP0053)
-  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
-  cmake_policy(SET CMP0053 OLD)
-endif()
-if(POLICY CMP0071)
-  cmake_policy(SET CMP0071 NEW)
-endif()
-if(POLICY CMP0072)
-  # About the use of OpenGL
-  cmake_policy(SET CMP0072 NEW)
-endif()
-
-if(POLICY CMP0074)
-  cmake_policy(SET CMP0074 NEW)
-endif()
-
+cmake_minimum_required(VERSION 3.1...3.20)
+project( Polyhedron_Demo )
 include(FeatureSummary)
 
 # Find includes in corresponding build directories
@@ -32,10 +15,6 @@ if(has_cpp11 LESS 0)
       "NOTICE: This demo requires a C++11 compiler and will not be compiled.")
   return()
 endif()
-
-# Use C++11 for this directory and its sub-directories.
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 #Defines flags to emulate windows behavior for linking error generation
 if(CMAKE_CXX_COMPILER_ID EQUAL Clang
@@ -234,7 +213,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     Polyhedron_demo_plugin_helper.cpp
     CGAL_double_edit.cpp)
   target_link_libraries(demo_framework PUBLIC Qt5::OpenGL Qt5::Widgets Qt5::Gui
-                                              Qt5::Script)
+                                              Qt5::Script CGAL::CGAL_Qt5)
   if(TARGET Qt5::WebSockets)
     target_link_libraries(demo_framework PUBLIC Qt5::WebSockets)
     message(
@@ -247,9 +226,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   # CMake). That is to deal with the visibility of symbols of
   # `Three.h`/`Three.cpp`.
   target_compile_definitions(demo_framework PRIVATE three_EXPORTS=1)
-  if(CGAL_HEADER_ONLY)
-    target_compile_definitions(demo_framework PRIVATE -DCGAL_USE_Qt5_RESOURCES)
-  endif()
+  target_compile_definitions(demo_framework PRIVATE -DCGAL_USE_Qt5_RESOURCES)
 
   add_library(scene_basic_objects SHARED Scene_plane_item.cpp
                                          Scene_spheres_item.cpp)

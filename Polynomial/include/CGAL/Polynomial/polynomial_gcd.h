@@ -102,7 +102,7 @@ Polynomial<NT> gcd_(
 // name gcd() forwarded to the internal::gcd_() dispatch function
 /*! \ingroup CGAL_Polynomial
  *  \relates CGAL::Polynomial
- *  \brief return the greatest common divisor of \c p1 and \c p2
+ *  \brief returns the greatest common divisor of \c p1 and \c p2
  *
  *  \pre Requires \c Innermost_coefficient_type to be a \c Field or a \c UFDomain.
  */

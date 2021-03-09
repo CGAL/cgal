@@ -192,16 +192,18 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
   typedef Halfedge_around_target_circulator<PolygonMesh>
                                Halfedge_around_vertex_const_circulator;
 
-
   PMap pmap = get(CGAL::vertex_point,P);
 
   std::vector<Vector_3> normals(num_faces(P));
+  CGAL_assertion_code(std::vector<std::size_t>  num_edges(num_faces(P));)
 
   for(face_descriptor f : faces(P)){
     Vertex_around_face_circulator<PolygonMesh> vafc(halfedge(f,P),P), done(vafc);
     Vector_3 v;
     normal_vector_newell_3(vafc, done, pmap, v);
-    normals[get(fimap,f)] = - v;
+    std::size_t i = get(fimap,f);
+    normals[i] = -v;
+    CGAL_assertion_code(num_edges[i] = circulator_size(vafc));
   }
 
   Face_graph_index_adder<typename SNC_structure::Items,
@@ -209,10 +211,12 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
 
 
   for(vertex_descriptor pv : vertices(P) ) {
+
+    typename boost::property_traits<PMap>::reference npv = get(pmap,pv);
     Vertex_handle nv = S.new_vertex();
-    nv->point() = get(pmap,pv);
+    nv->point() = npv;
     nv->mark() = true;
-    CGAL_NEF_TRACEN("v "<< get(pmap,pv));
+    CGAL_NEF_TRACEN("v "<< npv);
 
     SM_decorator SM(&*nv);
     Halfedge_around_vertex_const_circulator pec(pv,P), pec_prev(pec), done(pec);
@@ -221,7 +225,7 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
     // CGAL_assertion( pe != 0 );
 
     Point_3 pe_target_0(get(pmap,target(opposite(pe,P),P)));
-    Point_3 sp_point_0(CGAL::ORIGIN+(pe_target_0 - get(pmap,pv)));
+    Point_3 sp_point_0(CGAL::ORIGIN+(pe_target_0 - npv));
     Sphere_point sp_0(sp_point_0);
     SVertex_handle sv_0 = SM.new_svertex(sp_0);
     sv_0->mark() = true;
@@ -234,11 +238,11 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
     bool with_border = false;
     do {
       CGAL_assertion(face(pe_prev,P) == face(opposite(pe,P),P));
-      CGAL_assertion(get(pmap,target(pe_prev,P)) == get(pmap,pv));
-      CGAL_assertion(get(pmap,target(pe,P)) == get(pmap,pv));
+      CGAL_assertion(get(pmap,target(pe_prev,P)) == npv);
+      CGAL_assertion(get(pmap,target(pe,P)) == npv);
 
       Point_3 pe_target = get(pmap,target(opposite(pe,P),P));
-      Point_3 sp_point = CGAL::ORIGIN+(pe_target - get(pmap,pv));
+      Point_3 sp_point = CGAL::ORIGIN+(pe_target - npv);
       Sphere_point sp(sp_point);
       SVertex_handle sv = SM.new_svertex(sp);
       sv->mark() = true;
@@ -249,11 +253,13 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
       if(is_border(pe_prev,P))
         with_border = true;
       else {
-  Plane ss_plane( CGAL::ORIGIN, normals[get(fimap,face(pe_prev,P))] );
+        std::size_t i = get(fimap,face(pe_prev,P));
+        Plane ss_plane( CGAL::ORIGIN, normals[i]);
         Sphere_circle ss_circle(ss_plane);
-
-  CGAL_assertion(ss_circle.has_on(sp));
-  CGAL_assertion(ss_circle.has_on(sv_prev->point()));
+        CGAL_assertion_code(if(num_edges[i] > 3) {
+          CGAL_assertion(ss_circle.has_on(sp));
+          CGAL_assertion(ss_circle.has_on(sv_prev->point()));
+        };)
 
         SHalfedge_handle e = SM.new_shalfedge_pair(sv_prev, sv);
         e->circle() = ss_circle;
@@ -272,20 +278,22 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
     while( pec != done );
 
     CGAL_assertion(face(pe_prev,P) == face(opposite(*pe_0,P),P));
-    CGAL_assertion(get(pmap,target(pe_prev,P)) == get(pmap,pv));
-    CGAL_assertion(get(pmap,target(*pe_0,P)) == get(pmap,pv));
+    CGAL_assertion(get(pmap,target(pe_prev,P)) == npv);
+    CGAL_assertion(get(pmap,target(*pe_0,P)) == npv);
 
     SHalfedge_handle e;
     if(is_border(pe_prev,P)) {
       with_border = true;
       e = sv_prev->out_sedge();
     } else {
-      Plane ss_plane( CGAL::ORIGIN, normals[get(fimap,face(pe_prev,P))] );
+      std::size_t i = get(fimap,face(pe_prev,P));
+      Plane ss_plane( CGAL::ORIGIN, normals[i]);
       Sphere_circle ss_circle(ss_plane);
 
-      CGAL_assertion(ss_plane.has_on(sv_prev->point()));
-      CGAL_assertion(ss_circle.has_on(sp_0));
-      CGAL_assertion(ss_circle.has_on(sv_prev->point()));
+      CGAL_assertion_code(if(num_edges[i] > 3) {
+        CGAL_assertion(ss_circle.has_on(sp_0));
+        CGAL_assertion(ss_circle.has_on(sv_prev->point()));
+      };)
 
       e = SM.new_shalfedge_pair(sv_prev, sv_0);
       e->circle() = ss_circle;

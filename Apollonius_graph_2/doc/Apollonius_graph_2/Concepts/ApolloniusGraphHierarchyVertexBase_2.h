@@ -19,17 +19,12 @@ next and previous level graphs.
 `ApolloniusGraphHierarchyVertexBase_2` does not introduce any
 types in addition to those of `ApolloniusGraphVertexBase_2`.
 
-\cgalHasModel CGAL::Apollonius_graph_hierarchy_vertex_base_2<CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden> >
+\cgalHasModel `CGAL::Apollonius_graph_hierarchy_vertex_base_2<CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden> >`
 
 \sa `ApolloniusGraphDataStructure_2`
-\sa `ApolloniusGraphVertexBase_2`
 \sa `CGAL::Apollonius_graph_hierarchy_2<Gt,Agds>`
 \sa `CGAL::Triangulation_data_structure_2<Vb,Fb>`
-\sa `CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>`
-\sa `CGAL::Apollonius_graph_hierarchy_vertex_base_2<Agvb>`
-
 */
-
 class ApolloniusGraphHierarchyVertexBase_2 {
 public:
 
@@ -37,8 +32,7 @@ public:
 /// @{
 
 /*!
-Default
-constructor.
+%Default constructor.
 */
 ApolloniusGraphHierarchyVertexBase_2();
 

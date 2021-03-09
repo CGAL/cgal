@@ -28,7 +28,7 @@ if(NOT TARGET CGAL::Eigen3_support)
 endif()
 
 # Find Qt5 itself
-find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL)
+find_package(Qt5 QUIET COMPONENTS Script OpenGL)
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 

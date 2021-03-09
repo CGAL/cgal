@@ -93,7 +93,7 @@ void test(const Mesh& mesh,
 #endif
 
   // Check sanity of output
-  for(const face_descriptor f : faces(mesh))
+  for(face_descriptor f : faces(mesh))
   {
     // tests on non triangular meshes are @todo
     if(CGAL::is_triangle(halfedge(f, mesh), mesh))
@@ -105,7 +105,7 @@ void test(const Mesh& mesh,
     }
   }
 
-  for(const vertex_descriptor v : vertices(mesh))
+  for(vertex_descriptor v : vertices(mesh))
   {
     if(get(vnormals, v) == CGAL::NULL_VECTOR)
     {
