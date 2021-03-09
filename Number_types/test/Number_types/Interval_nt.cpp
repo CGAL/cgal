@@ -31,7 +31,11 @@ bool spiral_test()
       break;
   };
 
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  return i == 365;
+#else
   return i == 396;
+#endif
 }
 
 // Tests for constant propagation through intervals.
@@ -45,62 +49,34 @@ bool cprop_test()
   // Testing cprop through +.
   IA_nt add = IA_nt(0.00001)+10.1;
   bool good_add = !add.is_point();
-#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
-  if (good_add)
-    std::cerr << "ERROR : No constant propagation through operator+." <<std::endl;
-#else
   if (!good_add)
     std::cerr << "ERROR : Constant propagation through operator+." <<std::endl;
-#endif
 
   // Testing cprop through -.
   IA_nt sub = IA_nt(0.00001)-10.1;
   bool good_sub = !sub.is_point();
-#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
-  if (good_sub)
-    std::cerr << "ERROR : No constant propagation through operator-." <<std::endl;
-#else
   if (!good_sub)
     std::cerr << "ERROR : Constant propagation through operator-." <<std::endl;
-#endif
 
   // Testing cprop through *.
   IA_nt mul = IA_nt(0.00001)*10.1;
   bool good_mul = !mul.is_point();
-#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
-  if (good_mul)
-    std::cerr << "ERROR : No constant propagation through operator*." <<std::endl;
-#else
   if (!good_mul)
     std::cerr << "ERROR : Constant propagation through operator*." <<std::endl;
-#endif
 
   // Testing cprop through /.
   IA_nt div = IA_nt(0.00001)/10.1;
   bool good_div = !div.is_point();
-#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
-  if (good_div)
-    std::cerr << "ERROR : No constant propagation through operator/." <<std::endl;
-#else
   if (!good_div)
     std::cerr << "ERROR : Constant propagation through operator/." <<std::endl;
-#endif
 
-#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
-  // We have no expectation of propagation through sqrt.
-#else
   // Testing cprop through sqrt.
   IA_nt sqrt2 = CGAL_NTS sqrt(IA_nt(2));
   bool good_sqrt = !sqrt2.is_point();
   if (!good_sqrt)
     std::cerr << "ERROR : Constant propagation through sqrt()." <<std::endl;
-#endif
 
-#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
-  return !(good_add || good_sub || good_mul || good_div);
-#else
   return good_add && good_sub && good_mul && good_div && good_sqrt;
-#endif
 }
 
 // Here we iteratively compute sqrt(interval), where interval is [0.5;1.5]
@@ -132,10 +108,10 @@ bool square_root_test()
     return false;
   }
   // When we round to nearest it doesn't quite converge.
-  if (a.sup() > 2/(double(1<<30)*(1<<22))) {
+  if (a.sup() > 3/(double(1<<30)*(1<<22))) {
     return false;
   }
-  if (-2/(double(1<<30)*(1<<22)) > a.inf()) {
+  if (-3/(double(1<<30)*(1<<22)) > a.inf()) {
     return false;
   }
   return true;
@@ -188,12 +164,12 @@ bool overflow_test()
     DEBUG( std::cout << "f = " << f << std::endl; )
   }
 
-#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST_XX
   return a.is_same(IA_nt(std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity())) &&
          b.is_same(IA_nt(std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity())) &&
-         c.is_same(IA_nt(-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity())) &&
-         d.is_same(IA_nt(-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity())) &&
-         e.is_same(IA_nt(-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity())) &&
+         c.is_same(IA_nt::largest()) &&
+         d.is_same(IA_nt::largest()) &&
+         e.is_same(IA_nt::largest()) &&
          f.is_same(IA_nt(std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity())) &&
          g.is_same(-f);
 #else
@@ -224,9 +200,9 @@ bool underflow_test()
   for (i=0; i<20; i++) c = CGAL_NTS square(c);
 
 #ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
-  return a.is_same(IA_nt(0, 0))
-      && b.is_same(IA_nt(0, 0))
-      && c.is_same(IA_nt(0, 0));
+  return a.is_same(IA_nt(-CGAL_IA_MIN_DOUBLE, CGAL_IA_MIN_DOUBLE))
+      && b.is_same(IA_nt::smallest())
+      && c.is_same(IA_nt(0, CGAL_IA_MIN_DOUBLE));
 #else
   return a.is_same(IA_nt(0, CGAL_IA_MIN_DOUBLE))
       && b.is_same(IA_nt::smallest())

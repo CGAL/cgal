@@ -486,9 +486,15 @@ inline
 FPU_CW_t
 FPU_get_cw (void)
 {
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+    FPU_CW_t cw;
+    CGAL_assertion((CGAL_IA_GETFPCW(cw), cw == CGAL_FE_TONEAREST));
+    return CGAL_FE_TONEAREST;
+#else
     FPU_CW_t cw;
     CGAL_IA_GETFPCW(cw);
     return cw;
+#endif
 }
 
 // User interface (cont):
@@ -497,16 +503,25 @@ inline
 void
 FPU_set_cw (FPU_CW_t cw)
 {
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  CGAL_assertion(cw == CGAL_FE_TONEAREST);
+#else
   CGAL_IA_SETFPCW(cw);
+#endif
 }
 
 inline
 FPU_CW_t
 FPU_get_and_set_cw (FPU_CW_t cw)
 {
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+    CGAL_assertion(cw == CGAL_FE_TONEAREST);
+    return CGAL_FE_TONEAREST;
+#else
     FPU_CW_t old = FPU_get_cw();
     FPU_set_cw(cw);
     return old;
+#endif
 }
 
 
