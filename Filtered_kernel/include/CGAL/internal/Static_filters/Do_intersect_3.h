@@ -172,7 +172,6 @@ public:
   result_type
   operator()(const Sphere_3 &s, const Bbox_3& b, bool overestimate = false) const
   {
-    std::cout << "." << std::flush;
     CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
                            std::string(CGAL_PRETTY_FUNCTION), tmp);
 
