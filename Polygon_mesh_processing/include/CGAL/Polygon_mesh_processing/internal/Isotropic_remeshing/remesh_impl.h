@@ -28,6 +28,7 @@
 #include <CGAL/AABB_triangle_primitive.h>
 
 #include <CGAL/property_map.h>
+#include <CGAL/Dynamic_property_map.h>
 #include <CGAL/iterator.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/properties.h>
@@ -826,6 +827,22 @@ namespace internal {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Equalize valences..." << std::endl;
 #endif
+
+#define VALE
+#ifdef VALE
+      typedef typename boost::property_map<PM, CGAL::dynamic_vertex_property_t<int> >::type Vertex_degree;
+      Vertex_degree degree = get(CGAL::dynamic_vertex_property_t<int>(), mesh_);
+
+      for(vertex_descriptor v : vertices(mesh_)){
+        put(degree,v,0);
+      }
+      for(halfedge_descriptor h : halfedges(mesh_))
+      {
+        vertex_descriptor t = target(h, mesh_);
+        put(degree, t, get(degree,t)+1);
+      }
+#endif
+
       unsigned int nb_flips = 0;
       for(edge_descriptor e : edges(mesh_))
       {
@@ -838,11 +855,17 @@ namespace internal {
         vertex_descriptor vb = target(he, mesh_);
         vertex_descriptor vc = target(next(he, mesh_), mesh_);
         vertex_descriptor vd = target(next(opposite(he, mesh_), mesh_), mesh_);
-
-        int vva = valence(va), tvva = target_valence(va);
-        int vvb = valence(vb), tvvb = target_valence(vb);
-        int vvc = valence(vc), tvvc = target_valence(vc);
-        int vvd = valence(vd), tvvd = target_valence(vd);
+#ifdef VALE
+        int vva = get(degree,va), tvva = target_valence(va);
+        int vvb = get(degree, vb), tvvb = target_valence(vb);
+        int vvc = get(degree,vc), tvvc = target_valence(vc);
+        int vvd = get(degree,vd), tvvd = target_valence(vd);
+#else
+  int vva = valence(va), tvva = target_valence(va);
+  int vvb = valence( vb), tvvb = target_valence(vb);
+  int vvc = valence(vc), tvvc = target_valence(vc);
+  int vvd = valence(vd), tvvd = target_valence(vd);
+#endif
         int deviation_pre = CGAL::abs(vva - tvva)
                           + CGAL::abs(vvb - tvvb)
                           + CGAL::abs(vvc - tvvc)
@@ -860,6 +883,12 @@ namespace internal {
         vvb -= 1;
         vvc += 1;
         vvd += 1;
+#ifdef VALE
+        put(degree, va, vva);
+        put(degree, vb, vvb);
+        put(degree, vc, vvc);
+        put(degree, vd, vvd);
+#endif
         ++nb_flips;
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
@@ -895,6 +924,17 @@ namespace internal {
           CGAL_assertion( is_flip_topologically_allowed(edge(he, mesh_)) );
           CGAL_assertion( !get(ecmap_, edge(he, mesh_)) );
           CGAL::Euler::flip_edge(he, mesh_);
+#ifdef VALE
+          vva += 1;
+          vvb += 1;
+          vvc -= 1;
+          vvd -= 1;
+
+        put(degree, va, vva);
+        put(degree, vb, vvb);
+        put(degree, vc, vvc);
+        put(degree, vd, vvd);
+#endif
           --nb_flips;
 
           CGAL_assertion_code(Halfedge_status s3 = status(he));
