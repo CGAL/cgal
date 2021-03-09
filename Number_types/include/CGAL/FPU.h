@@ -487,8 +487,8 @@ FPU_CW_t
 FPU_get_cw (void)
 {
 #ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
-    FPU_CW_t cw;
-    CGAL_assertion((CGAL_IA_GETFPCW(cw), cw == CGAL_FE_TONEAREST));
+    CGAL_assertion_code(FPU_CW_t cw; CGAL_IA_GETFPCW(cw);)
+    CGAL_assertion(cw == CGAL_FE_TONEAREST);
     return CGAL_FE_TONEAREST;
 #else
     FPU_CW_t cw;
