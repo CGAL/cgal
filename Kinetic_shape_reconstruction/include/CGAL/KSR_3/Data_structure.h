@@ -1044,6 +1044,78 @@ public:
     return out;
   }
 
+  const std::pair<PVertex, PVertex> front_and_back_34(const PVertex& pvertex) {
+
+    PVertex front, back;
+    const std::size_t sp_idx = pvertex.first;
+    CGAL_assertion(sp_idx != KSR::no_element());
+
+    const auto& initial = pvertex;
+    front = PVertex(sp_idx,
+    support_plane(sp_idx).duplicate_vertex(initial.second));
+    support_plane(sp_idx).set_point(
+      front.second, support_plane(sp_idx).get_point(initial.second));
+
+    back = PVertex(sp_idx,
+    support_plane(sp_idx).duplicate_vertex(front.second));
+    support_plane(sp_idx).set_point(
+      back.second, support_plane(sp_idx).get_point(front.second));
+
+    return std::make_pair(front, back);
+  }
+
+  const std::pair<PVertex, PVertex> front_and_back_5(
+    const PVertex& pvertex1, const PVertex& pvertex2) {
+
+    PVertex front, back;
+    CGAL_assertion(pvertex1.first == pvertex2.first);
+    const std::size_t sp_idx = pvertex1.first;
+    CGAL_assertion(sp_idx != KSR::no_element());
+
+    const auto& initial1 = pvertex1;
+    front = PVertex(sp_idx,
+    support_plane(sp_idx).duplicate_vertex(initial1.second));
+    support_plane(sp_idx).set_point(
+      front.second, support_plane(sp_idx).get_point(initial1.second));
+
+    const auto& initial2 = pvertex2;
+    back = PVertex(sp_idx,
+    support_plane(sp_idx).duplicate_vertex(initial2.second));
+    support_plane(sp_idx).set_point(
+      back.second, support_plane(sp_idx).get_point(initial2.second));
+
+    return std::make_pair(front, back);
+  }
+
+  void get_and_sort_all_connected_iedges(
+    const std::size_t sp_idx, const IVertex& ivertex,
+    std::vector< std::pair<IEdge, Direction_2> >& iedges) const {
+
+    auto inc_iedges = incident_iedges(ivertex);
+    std::copy(inc_iedges.begin(), inc_iedges.end(),
+      boost::make_function_output_iterator(
+        [&](const IEdge& inc_iedge) -> void {
+          const auto iplanes = intersected_planes(inc_iedge);
+          if (iplanes.find(sp_idx) == iplanes.end()) {
+            return;
+          }
+          const Direction_2 direction(
+            point_2(sp_idx, opposite(inc_iedge, ivertex)) -
+            point_2(sp_idx, ivertex));
+          iedges.push_back(std::make_pair(inc_iedge, direction));
+        }
+      )
+    );
+
+    std::sort(iedges.begin(), iedges.end(),
+      [&](const std::pair<IEdge, Direction_2>& a,
+          const std::pair<IEdge, Direction_2>& b) -> bool {
+        return a.second < b.second;
+      }
+    );
+    CGAL_assertion(iedges.size() > 0);
+  }
+
   const std::pair<PVertex, PVertex> border_prev_and_next(const PVertex& pvertex) const {
 
     // std::cout << point_3(pvertex) << std::endl;
@@ -1295,6 +1367,7 @@ public:
   const bool is_active(const PVertex& pvertex) const { return support_plane(pvertex).is_active(pvertex.second); }
 
   const bool is_verbose() const { return m_verbose; }
+  void set_verbose(const bool verbose) { m_verbose = verbose; }
 
   void deactivate(const PVertex& pvertex) {
 

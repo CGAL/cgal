@@ -1284,7 +1284,7 @@ private:
     }
 
     CGAL_assertion(pvertices.size() >= 3);
-    const std::size_t support_plane_idx = pvertices.front().first;
+    const std::size_t sp_idx = pvertices.front().first;
     const PVertex prev = pvertices.front();
     const PVertex next = pvertices.back();
     const PVertex pvertex = pvertices[1];
@@ -1304,31 +1304,10 @@ private:
     if (pvertices.size() < 3) {
       CGAL_assertion_msg(false, "ERROR: INVALID CONNECTIVITY CASE!");
     } else if (pvertices.size() == 3 || pvertices.size() == 4) {
-
-      const auto& initial = pvertex;
-      front = PVertex(support_plane_idx,
-      m_data.support_plane(support_plane_idx).duplicate_vertex(initial.second));
-      m_data.support_plane(support_plane_idx).set_point(
-        front.second, m_data.support_plane(support_plane_idx).get_point(initial.second));
-      back  = PVertex(support_plane_idx,
-      m_data.support_plane(support_plane_idx).duplicate_vertex(front.second));
-      m_data.support_plane(support_plane_idx).set_point(
-        back.second, m_data.support_plane(support_plane_idx).get_point(front.second));
-
+      std::tie(front, back) = m_data.front_and_back_34(pvertex);
     } else if (pvertices.size() >= 5) {
-
-      const auto& initial1 = pvertices[1];
-      front = PVertex(support_plane_idx,
-      m_data.support_plane(support_plane_idx).duplicate_vertex(initial1.second));
-      m_data.support_plane(support_plane_idx).set_point(
-        front.second, m_data.support_plane(support_plane_idx).get_point(initial1.second));
-
-      const auto& initial2 = pvertices[pvertices.size() - 2];
-      back  = PVertex(support_plane_idx,
-      m_data.support_plane(support_plane_idx).duplicate_vertex(initial2.second));
-      m_data.support_plane(support_plane_idx).set_point(
-        back.second, m_data.support_plane(support_plane_idx).get_point(initial2.second));
-
+      std::tie(front, back) = m_data.front_and_back_5(
+        pvertices[1], pvertices[pvertices.size() - 2]);
     } else {
       CGAL_assertion_msg(false, "ERROR: INVALID CONNECTIVITY CASE!");
     }
@@ -1342,7 +1321,7 @@ private:
     }
 
     // Freeze pvertices.
-    const Point_2 ipoint = m_data.point_2(support_plane_idx, ivertex);
+    const Point_2 ipoint = m_data.point_2(sp_idx, ivertex);
     for (std::size_t i = 1; i < pvertices.size() - 1; ++i) {
       const PVertex& curr = pvertices[i];
       m_data.support_plane(curr).direction(curr.second) = CGAL::NULL_VECTOR;
@@ -1355,36 +1334,14 @@ private:
 
     // Join pvertices.
     for (std::size_t i = 2; i < pvertices.size() - 1; ++i) {
-      const auto he = m_data.mesh(support_plane_idx).halfedge(pvertices[i].second, pvertex.second);
+      const auto he = m_data.mesh(sp_idx).halfedge(pvertices[i].second, pvertex.second);
       m_data.disconnect_ivertex(pvertices[i]);
-      CGAL::Euler::join_vertex(he, m_data.mesh(support_plane_idx));
+      CGAL::Euler::join_vertex(he, m_data.mesh(sp_idx));
     }
 
     // Get all connected iedges.
-    auto inc_iedges = m_data.incident_iedges(ivertex);
     std::vector< std::pair<IEdge, Direction_2> > iedges;
-    std::copy(inc_iedges.begin(), inc_iedges.end(),
-      boost::make_function_output_iterator(
-        [&](const IEdge& inc_iedge) -> void {
-          const auto iplanes = m_data.intersected_planes(inc_iedge);
-          if (iplanes.find(support_plane_idx) == iplanes.end()) {
-            return;
-          }
-          const Direction_2 direction(
-            m_data.point_2(support_plane_idx, m_data.opposite(inc_iedge, ivertex)) -
-            m_data.point_2(support_plane_idx, ivertex));
-          iedges.push_back(std::make_pair(inc_iedge, direction));
-        }
-      )
-    );
-
-    std::sort(iedges.begin(), iedges.end(),
-      [&](const std::pair<IEdge, Direction_2>& a,
-          const std::pair<IEdge, Direction_2>& b) -> bool {
-        return a.second < b.second;
-      }
-    );
-    CGAL_assertion(iedges.size() > 0);
+    m_data.get_and_sort_all_connected_iedges(sp_idx, ivertex, iedges);
 
     // Get sub-event type.
     bool back_constrained = false;
@@ -1439,8 +1396,8 @@ private:
         iedges, crossed_iedges, new_pvertices);
     }
 
-    m_data.support_plane(support_plane_idx).remove_vertex(front.second);
-    m_data.support_plane(support_plane_idx).remove_vertex(back.second);
+    m_data.support_plane(sp_idx).remove_vertex(front.second);
+    m_data.support_plane(sp_idx).remove_vertex(back.second);
 
     // Push also the remaining pvertex so that its events are recomputed.
     new_pvertices.push_back(pvertex);

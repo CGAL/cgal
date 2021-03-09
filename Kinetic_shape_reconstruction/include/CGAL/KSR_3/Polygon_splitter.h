@@ -857,7 +857,7 @@ private:
 
     CGAL_assertion(num_pfaces > 0);
     if (m_verbose) {
-      std::cout << "- number of newly inserted pfaces: " << num_pfaces << std::endl;
+      std::cout << "** number of newly inserted pfaces: " << num_pfaces << std::endl;
     }
   }
 
@@ -966,10 +966,32 @@ private:
     }
   }
 
-  void set_boundary_ivertex(const PVertex& pvertex, const IVertex& ivertex) {
+  void set_boundary_ivertex(const PVertex pvertex, const IVertex& ivertex) {
 
-    std::cout << "pvertex: " << m_data.point_3(pvertex) << std::endl;
-    std::cout << "ivertex: " << m_data.point_3(ivertex) << std::endl;
+    if (m_verbose) {
+      std::cout.precision(20);
+      std::cout << "*** handling boundary ivertex " << m_data.str(ivertex) <<
+      " through pvertex " << m_data.str(pvertex) << std::endl;
+      std::cout << "- ivertex: " << m_data.point_3(ivertex) << std::endl;
+      std::cout << "- pvertex: " << m_data.point_3(pvertex) << std::endl;
+    }
+
+    // Get prev and next pvertices.
+    PVertex prev, next;
+    std::tie(prev, next) = m_data.border_prev_and_next(pvertex);
+    if (m_verbose) {
+      std::cout << "prev: " << m_data.point_3(prev) << std::endl;
+      std::cout << "next: " << m_data.point_3(next) << std::endl;
+    }
+
+    // Copy front/back to remember position/direction.
+    PVertex front, back;
+    std::tie(front, back) = m_data.front_and_back_34(pvertex);
+    if (m_verbose) {
+      std::cout << "fron: " << m_data.point_3(front) << std::endl;
+      std::cout << "back: " << m_data.point_3(back)  << std::endl;
+    }
+
     CGAL_assertion_msg(false, "TODO: HANDLE BOUNDARY IVERTICES!");
   }
 
@@ -989,21 +1011,25 @@ private:
       is_n2_okay = update_neighbor(pvertex, n2);
     }
 
-    Line_2 future_line;
+    Point_2 future_point;
+    Vector_2 future_direction;
+    bool is_parallel = false;
+
+    const bool is_debug = false;
+    m_data.set_verbose(is_debug);
     if (is_n1_okay && is_n2_okay) {
-      future_line = Line_2(m_data.point_2(n1, FT(1)), m_data.point_2(n2, FT(1)));
+      is_parallel = m_data.compute_future_point_and_direction(
+        pvertex, n1, n2, iedge, future_point, future_direction);
     } else {
       CGAL_assertion(is_n1_okay && !is_n2_okay);
-      future_line = Line_2(m_data.point_2(pvertex, FT(1)), m_data.point_2(n1, FT(1)));
+      is_parallel = m_data.compute_future_point_and_direction(
+        pvertex, n1, pvertex, iedge, future_point, future_direction);
     }
-    CGAL_assertion(future_line != Line_2());
+    m_data.set_verbose(m_verbose);
 
-    const auto intersection_line = m_data.segment_2(sp_idx, iedge).supporting_line();
-    CGAL_assertion_msg(!CGAL::parallel(intersection_line, future_line),
-    "TODO: POLYGON SPLITTER, HANDLE CASE WITH PARALLEL LINES!");
-    const Point_2 future_point = KSR::intersection<Point_2>(intersection_line, future_line);
-    const auto pinit = m_data.point_2(pvertex, FT(0));
-    const Vector_2 future_direction(pinit, future_point);
+    CGAL_assertion_msg(!is_parallel,
+    "TODO: ADD PARALLEL CASE TO THE POLYGON SPLITTER!");
+    CGAL_assertion(future_direction != Vector_2());
     m_data.direction(pvertex) = future_direction;
 
     // std::cout << "curr point: " << m_data.point_3(pvertex) << std::endl;
@@ -1030,20 +1056,21 @@ private:
           CGAL_assertion(neighbors.second == m_data.null_pvertex());
           neighbors.second = opposite;
           // std::cout << "assigned second neighbor: " << m_data.point_3(opposite) << std::endl;
-          // break;
+          break;
         }
       }
     }
     return neighbors;
   }
 
+  // Set neighbor to the closest polygon vertex with the well-defined direction.
   const bool update_neighbor(
     const PVertex& pvertex, PVertex& neighbor) const {
 
-    bool is_okay = (m_input.find(neighbor) != m_input.end());
+    bool is_found = (m_input.find(neighbor) != m_input.end());
     auto last = pvertex;
     auto curr = neighbor;
-    while (!is_okay) {
+    while (!is_found) {
       PVertex next, ignored;
       std::tie(next, ignored) = m_data.border_prev_and_next(curr);
       if (next == last) {
@@ -1054,10 +1081,10 @@ private:
       last = curr; curr = next;
       if (m_input.find(curr) != m_input.end()) {
         neighbor = curr;
-        is_okay = true;
+        is_found = true;
       }
     }
-    return is_okay;
+    return is_found;
   }
 
   void create_bbox(
