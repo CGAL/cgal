@@ -414,6 +414,14 @@ public:
           CGAL::SMALLER : CGAL::LARGER;
       }
 
+    CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound) const
+      {
+          return GeomTraits().do_intersect_3_object()
+          (GeomTraits().construct_sphere_3_object()
+           (p, GeomTraits().compute_squared_distance_3_object()(p, bound)), bb,true)?
+          CGAL::SMALLER : CGAL::LARGER;
+      }
+
       template <class Solid>
       CGAL::Comparison_result operator()(const Point& p, const Solid& pr, const FT& sq_distance) const
       {
@@ -423,26 +431,7 @@ public:
           CGAL::SMALLER :
           CGAL::LARGER;
       }
-    /*
-    template <>
-      CGAL::Comparison_result operator()(const Point& p, const Bounding_box& pr, const Point& bound) const
-      {
-          return GeomTraits().do_intersect_3_object()
-          (GeomTraits().construct_sphere_3_object()
-           (p, GeomTraits().compute_squared_distance_3_object()(p, bound)).bbox(), pr)?
-          CGAL::SMALLER : CGAL::LARGER;
-      }
 
-      template <>
-      CGAL::Comparison_result operator()(const Point& p, const Bounding_box& pr, const FT& sq_distance) const
-      {
-        return GeomTraits().do_intersect_3_object()
-          (GeomTraits().construct_sphere_3_object()(p, sq_distance).bbox(),
-           pr) ?
-          CGAL::SMALLER :
-          CGAL::LARGER;
-      }
-    */
   };
 
   Closest_point closest_point_object() const {return Closest_point(*this);}

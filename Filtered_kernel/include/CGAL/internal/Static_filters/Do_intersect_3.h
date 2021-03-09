@@ -168,9 +168,11 @@ public:
     return this->operator()(s, b);
   }
 
+  // The parameter overestimate is used to avoid a filter failure in AABB_tree::closest_point()
   result_type
-  operator()(const Sphere_3 &s, const Bbox_3& b) const
+  operator()(const Sphere_3 &s, const Bbox_3& b, bool overestimate = false) const
   {
+    std::cout << "." << std::flush;
     CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
                            std::string(CGAL_PRETTY_FUNCTION), tmp);
 
@@ -388,7 +390,9 @@ public:
         if (double_tmp_result < -eps)
           return true;
         else {
-          return true; // AF:  just to test conservative approach
+          if(overestimate){
+            return true;
+          }
           CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
           return Base::operator()(s,b);
         }
