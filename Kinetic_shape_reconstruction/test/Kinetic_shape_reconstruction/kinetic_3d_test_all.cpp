@@ -332,9 +332,9 @@ void run_all_tests() {
   assert(run_test<Traits>("data/stress-test-4/test-9-rnd-polygons-12-4.off", ks, num_iters, results, all_times, num_tests));
 
   // Stress tests 5.
-  results = {21,2,468,1224,723,67};
+  results = {21,2,468,1224,720,66};
   assert(run_test<Traits>("data/stress-test-5/test-1-rnd-polygons-15-6.off", ks, num_iters, results, all_times, num_tests));
-  results = {26,3,1037,2829,1693,161};
+  results = {26,3,1037,2829,1693,161}; // sometimes fails for k = 3 in debug mode, random failure
   assert(run_test<Traits>("data/stress-test-5/test-2-rnd-polygons-20-4.off", ks, num_iters, results, all_times, num_tests));
 
   // Real data tests.
