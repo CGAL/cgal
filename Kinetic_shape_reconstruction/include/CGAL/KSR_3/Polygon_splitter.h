@@ -911,8 +911,6 @@ private:
 
       bool is_frozen = false;
       auto iedge = m_data.null_iedge();
-      std::pair<PVertex, PVertex> neighbors(
-        m_data.null_pvertex(), m_data.null_pvertex());
 
       // Search for a frozen pvertex.
       const auto pedges = m_data.pedges_around_pvertex(pvertex);
@@ -929,47 +927,27 @@ private:
             is_frozen = true;
             break;
           }
-        } else {
-          const auto opposite = m_data.opposite(pedge, pvertex);
-          if (neighbors.first == m_data.null_pvertex()) {
-            neighbors.first = opposite;
-            // std::cout << "assigned first neighbor: " << m_data.point_3(opposite) << std::endl;
-          } else {
-            CGAL_assertion(neighbors.first  != m_data.null_pvertex());
-            CGAL_assertion(neighbors.second == m_data.null_pvertex());
-            neighbors.second = opposite;
-            // std::cout << "assigned second neighbor: " << m_data.point_3(opposite) << std::endl;
-          }
         }
       }
 
-      // Several incident intersections = frozen pvertex.
+      // Several incident intersections.
       // These are intersections of several iedges.
       if (is_frozen) {
 
         // Boundary ivertices.
+        // These are not frozen since they are on the polygon boundary.
         if (m_boundary_ivertices.size() > 0) {
-          // TODO: CAN WE MAKE IT FASTER BY REMOVING THIS SEARCH?
-          // If we have only a few points like that, it is ok.
           const auto pit = m_boundary_ivertices.find(pvertex);
           if (pit != m_boundary_ivertices.end()) {
-
             const auto& pair = *pit;
             const auto& ivertex = pair.second;
             CGAL_assertion(pvertex == pair.first);
-            std::cout << "pvertex: " << m_data.point_3(pvertex) << std::endl;
-            std::cout << "ivertex: " << m_data.point_3(ivertex) << std::endl;
-
-            CGAL_assertion_msg(false, "TODO: HANDLE BOUNDARY IVERTICES!");
-          }
-          if (m_boundary_ivertices.size() > 1) {
-            std::cout << "- num boundary ivertices: " << m_boundary_ivertices.size() << std::endl;
-            CGAL_assertion_msg(m_boundary_ivertices.size() == 1,
-            "TODO: CHECK, CAN WE HAVE MULTIPLE BOUNDARY IVERTICES? HOW MANY IN AVERAGE?");
+            set_boundary_ivertex(pvertex, ivertex);
+            continue;
           }
         }
 
-        // Interior ivertices.
+        // Interior ivertices. Frozen pvertex.
         m_data.direction(pvertex) = CGAL::NULL_VECTOR;
         continue;
       }
@@ -979,47 +957,84 @@ private:
       if (iedge == m_data.null_iedge()) {
         continue;
       }
-      m_data.connect(pvertex, iedge);
-      // CGAL_assertion(
-      //   neighbors.first  != m_data.null_pvertex() &&
-      //   neighbors.second != m_data.null_pvertex());
 
       // Set future direction.
-      // These are newly inserted points along the polygon boundary.
-      bool is_first_okay = false;
-      if (neighbors.first != m_data.null_pvertex()) {
-        is_first_okay = update_neighbor(pvertex,   neighbors.first);
-      }
-
-      bool is_second_okay = false;
-      if (neighbors.second != m_data.null_pvertex()) {
-        is_second_okay = update_neighbor(pvertex, neighbors.second);
-      }
-
-      Line_2 future_line;
-      if (is_first_okay && is_second_okay) {
-        future_line = Line_2(
-          m_data.point_2(neighbors.first , FT(1)),
-          m_data.point_2(neighbors.second, FT(1)));
-      } else {
-        CGAL_assertion(is_first_okay && !is_second_okay);
-        future_line = Line_2(
-          m_data.point_2(pvertex        , FT(1)),
-          m_data.point_2(neighbors.first, FT(1)));
-      }
-      CGAL_assertion(future_line != Line_2());
-
-      const auto intersection_line = m_data.segment_2(sp_idx, iedge).supporting_line();
-      CGAL_assertion_msg(!CGAL::parallel(intersection_line, future_line),
-      "TODO: POLYGON SPLITTER, HANDLE CASE WITH PARALLEL LINES!");
-      const Point_2 future_point = KSR::intersection<Point_2>(intersection_line, future_line);
-      const auto pinit = m_data.point_2(pvertex, FT(0));
-      const Vector_2 future_direction(pinit, future_point);
-      m_data.direction(pvertex) = future_direction;
-
-      // std::cout << "curr point: " << m_data.point_3(pvertex) << std::endl;
-      // std::cout << "futr point: " << m_data.to_3d(pvertex.first, future_point) << std::endl;
+      // These are newly inserted points along the polygon boundary, which are
+      // intersection points of multiple constraints. The simply follow the given iedge.
+      m_data.connect(pvertex, iedge);
+      set_future_direction(sp_idx, pvertex, iedge);
     }
+  }
+
+  void set_boundary_ivertex(const PVertex& pvertex, const IVertex& ivertex) {
+
+    std::cout << "pvertex: " << m_data.point_3(pvertex) << std::endl;
+    std::cout << "ivertex: " << m_data.point_3(ivertex) << std::endl;
+    CGAL_assertion_msg(false, "TODO: HANDLE BOUNDARY IVERTICES!");
+  }
+
+  void set_future_direction(
+    const std::size_t sp_idx, const PVertex& pvertex, const IEdge& iedge) {
+
+    PVertex n1, n2;
+    std::tie(n1, n2) = get_neighbors(pvertex);
+
+    bool is_n1_okay = false;
+    if (n1 != m_data.null_pvertex()) {
+      is_n1_okay = update_neighbor(pvertex, n1);
+    }
+
+    bool is_n2_okay = false;
+    if (n2 != m_data.null_pvertex()) {
+      is_n2_okay = update_neighbor(pvertex, n2);
+    }
+
+    Line_2 future_line;
+    if (is_n1_okay && is_n2_okay) {
+      future_line = Line_2(m_data.point_2(n1, FT(1)), m_data.point_2(n2, FT(1)));
+    } else {
+      CGAL_assertion(is_n1_okay && !is_n2_okay);
+      future_line = Line_2(m_data.point_2(pvertex, FT(1)), m_data.point_2(n1, FT(1)));
+    }
+    CGAL_assertion(future_line != Line_2());
+
+    const auto intersection_line = m_data.segment_2(sp_idx, iedge).supporting_line();
+    CGAL_assertion_msg(!CGAL::parallel(intersection_line, future_line),
+    "TODO: POLYGON SPLITTER, HANDLE CASE WITH PARALLEL LINES!");
+    const Point_2 future_point = KSR::intersection<Point_2>(intersection_line, future_line);
+    const auto pinit = m_data.point_2(pvertex, FT(0));
+    const Vector_2 future_direction(pinit, future_point);
+    m_data.direction(pvertex) = future_direction;
+
+    // std::cout << "curr point: " << m_data.point_3(pvertex) << std::endl;
+    // std::cout << "futr point: " << m_data.to_3d(pvertex.first, future_point) << std::endl;
+  }
+
+  const std::pair<PVertex, PVertex> get_neighbors(const PVertex& pvertex) const {
+
+    std::pair<PVertex, PVertex> neighbors(
+      m_data.null_pvertex(), m_data.null_pvertex());
+    const auto pedges = m_data.pedges_around_pvertex(pvertex);
+    for (const auto pedge : pedges) {
+      // std::cout << "pedge: 2 " << m_data.segment_3(pedge) << " : "
+      // << m_data.has_iedge(pedge) << std::endl;
+
+      if (!m_data.has_iedge(pedge)) {
+        const auto opposite = m_data.opposite(pedge, pvertex);
+
+        if (neighbors.first == m_data.null_pvertex()) {
+          neighbors.first = opposite;
+          // std::cout << "assigned first neighbor: " << m_data.point_3(opposite) << std::endl;
+        } else {
+          CGAL_assertion(neighbors.first  != m_data.null_pvertex());
+          CGAL_assertion(neighbors.second == m_data.null_pvertex());
+          neighbors.second = opposite;
+          // std::cout << "assigned second neighbor: " << m_data.point_3(opposite) << std::endl;
+          // break;
+        }
+      }
+    }
+    return neighbors;
   }
 
   const bool update_neighbor(

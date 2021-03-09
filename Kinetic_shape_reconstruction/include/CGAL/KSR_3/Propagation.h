@@ -1494,6 +1494,13 @@ private:
     CGAL_assertion(prev_time < m_data.current_time());
     CGAL_assertion(prev_time >= FT(0));
 
+    if (prev_time == m_data.current_time()) {
+      std::cout << "TODO: BACK, EVENTS ARE HAPPENNING AT THE SAME TIME!" << std::endl;
+      exit(EXIT_FAILURE);
+    }
+    // std::cout << "prev time: " << prev_time << std::endl;
+    // std::cout << "curr time: " << m_data.current_time() << std::endl;
+
     const auto pp_last = m_data.point_2(prev, prev_time);
     const auto pp_curr = m_data.point_2(prev, m_data.current_time());
     const auto dirp = Vector_2(pp_last, pp_curr);
@@ -1636,6 +1643,13 @@ private:
     const FT next_time = m_data.last_event_time(next);
     CGAL_assertion(next_time < m_data.current_time());
     CGAL_assertion(next_time >= FT(0));
+
+    if (next_time == m_data.current_time()) {
+      std::cout << "TODO: FRONT, EVENTS ARE HAPPENNING AT THE SAME TIME!" << std::endl;
+      exit(EXIT_FAILURE);
+    }
+    // std::cout << "curr time: " << m_data.current_time() << std::endl;
+    // std::cout << "next time: " << next_time << std::endl;
 
     const auto pn_last = m_data.point_2(next, next_time);
     const auto pn_curr = m_data.point_2(next, m_data.current_time());
@@ -1781,6 +1795,14 @@ private:
     CGAL_assertion(next_time < m_data.current_time());
     CGAL_assertion(prev_time >= FT(0));
     CGAL_assertion(next_time >= FT(0));
+
+    if (prev_time == m_data.current_time() || next_time == m_data.current_time()) {
+      std::cout << "TODO: OPEN, EVENTS ARE HAPPENNING AT THE SAME TIME!" << std::endl;
+      exit(EXIT_FAILURE);
+    }
+    // std::cout << "prev time: " << prev_time << std::endl;
+    // std::cout << "curr time: " << m_data.current_time() << std::endl;
+    // std::cout << "next time: " << next_time << std::endl;
 
     const auto pp_last = m_data.point_2(prev, prev_time);
     const auto pp_curr = m_data.point_2(prev, m_data.current_time());

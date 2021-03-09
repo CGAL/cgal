@@ -1502,12 +1502,13 @@ private:
           return dir_edges[ip].second;
         } else {
           // return m_data.null_pface();
+          std::cout << "ERROR: WRONG ORIENTATIONS!" << std::endl;
           dump_info(m_data, pface, pedge, nfaces);
           dump_frame(points, "volumes/directions-init");
           auto extended = points;
           extended.push_back(volume_centroid);
           dump_frame(extended, "volumes/directions");
-          CGAL_assertion_msg(false, "ERROR: WRONG ORIENTATION!");
+          CGAL_assertion_msg(false, "ERROR: WRONG ORIENTATIONS!");
         }
       }
     }
