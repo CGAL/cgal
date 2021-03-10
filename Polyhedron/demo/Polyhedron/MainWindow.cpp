@@ -1,3 +1,4 @@
+
 #ifdef CGAL_USE_SSH
 #  include "CGAL/Use_ssh.h"
 #endif
@@ -1794,13 +1795,16 @@ void MainWindow::updateInfo() {
     QString item_filename = item->property("source filename").toString();
     CGAL::Bbox_3 bbox = item->bbox();
     if(bbox !=CGAL::Bbox_3())
-      item_text += QString("<div>Bounding box: min (%1,%2,%3), max (%4,%5,%6)</div>")
+      item_text += QString("<div>Bounding box: min (%1,%2,%3), max (%4,%5,%6), dimensions (%7, %8, %9)</div>")
           .arg(bbox.xmin(),0, 'g', 17)
           .arg(bbox.ymin(),0, 'g', 17)
           .arg(bbox.zmin(),0, 'g', 17)
           .arg(bbox.xmax(),0, 'g', 17)
           .arg(bbox.ymax(),0, 'g', 17)
-          .arg(bbox.zmax(),0, 'g', 17);
+          .arg(bbox.zmax(),0, 'g', 17)
+          .arg(bbox.xmax() - bbox.xmin(), 0, 'g', 17)
+          .arg(bbox.ymax() - bbox.ymin(), 0, 'g', 17)
+          .arg(bbox.zmax() - bbox.zmin(), 0, 'g', 17);
     if(!item_filename.isEmpty()) {
       item_text += QString("<div>File:<i> %1</div>").arg(item_filename);
     }
@@ -2962,13 +2966,14 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
   std::ofstream os(filename.toUtf8(), std::ofstream::binary);
   if(!os)
     return;
-  CGAL::Three::Three::CursorScopeGuard cs(Qt::WaitCursor);
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   std::vector<std::pair<QString, QString> > names;
   std::vector<std::pair<QString, QString> > loaders;
   std::vector<QColor> colors;
   std::vector<int> rendering_modes;
   QStringList not_saved;
   Polyhedron_demo_io_plugin_interface* camera_plugin = nullptr;
+  QMap<QString, QVector<QString> > group_children_map;
   for(int i = 0; i < scene->numberOfEntries(); ++i)
   {
     Scene_item* item = scene->item(i);
@@ -2987,6 +2992,12 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
         if(!rem.hasMatch())
           continue;
         ext = rem.captured(1);
+        //check if it is in a group
+        if(item->parentGroup())
+        {
+          group_children_map[item->parentGroup()->name()].append(item->name());
+              ;
+        }
         QList<Scene_item*>to_save;
         to_save.append(item);
         QString savename(tr("%1.%2").arg(item->name()).arg(ext));
@@ -3000,9 +3011,12 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
     }
     if(loader.isEmpty())
     {
+      QApplication::restoreOverrideCursor();
       QMessageBox::warning(this, "", tr("No plugin found for %1. Not saved.").arg(item->name()));
+      QApplication::setOverrideCursor(Qt::WaitCursor);
       continue;
     }
+
     loaders.push_back(std::make_pair(loader, ext));
     colors.push_back(item->color());
     rendering_modes.push_back(item->renderingMode());
@@ -3049,6 +3063,28 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
   //delete temp file
   QFile tmp_file(fullpath);
   tmp_file.remove();
+  //group relations
+  if(!group_children_map.empty())
+  {
+    os << "var groups = [";
+    for(int i = 0; i< group_children_map.size() -1; ++i)
+    {
+      QString group_name = group_children_map.keys()[i];
+      os << "[\'" << group_name.toStdString().c_str()<<"\', [";
+      for(int j = 0; j<group_children_map[group_name].size()-1; ++j)
+      {
+        os << group_children_map[group_name][j].toStdString().c_str()<<", ";
+      }
+      os << group_children_map[group_name].back().toStdString().c_str()<<"]],";
+    }
+    QString group_name = group_children_map.keys().back();
+    os << "[\'" << group_name.toStdString().c_str()<<"\', [";
+    for(int j = 0; j<group_children_map[group_name].size()-1; ++j)
+    {
+      os << "\'"<<group_children_map[group_name][j].toStdString().c_str()<<"\', ";
+    }
+    os << "\'"<<group_children_map[group_name].back().toStdString().c_str()<<"\']]];\n";
+  }
   //plugin
   os << "var loaders = [";
   for(std::size_t i = 0; i< names.size() -1; ++i)
@@ -3072,6 +3108,15 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
     os << rendering_modes[i] << ", ";
   }
   os << rendering_modes.back()<<"];\n";
+  os << "function indexFromName(name) {\n";
+  os << "  for(var i = 0; i < items.length; i++){\n";
+  os << "    var itemName=items[i][1];\n";
+  os << "    if( itemName === name)\n";
+  os << "    {\n";
+  os << "        return i;\n";
+  os << "    }\n";
+  os << "  };\n";
+  os << "}\n";
   os << "items.forEach(function(item, index, array){\n";
   os<<"          var path=items[index][1];\n";
   os<<"          path+='.';\n";
@@ -3085,6 +3130,20 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
   os << "        it.setRgbColor(r,g,b);\n";
   os << "        it.setRenderingMode(rendering_modes[index]);\n";
   os << "});\n";
+  if(!group_children_map.empty())
+  {
+    os << "groups.forEach(function(group, index, array){\n";
+    os << "    main_window.selectSceneItem(-1);\n";
+    os << "    var group_name = group[0];\n";
+    os << "    var item_list = group[1];\n";
+    os << "    main_window.makeNewGroup();\n";
+    os << "    var it = scene.item(scene.numberOfEntries-1);\n";
+    os << "    it.setName(group_name);\n";
+    os << "    item_list.forEach(function(child, index, array){\n";
+    os << "        scene.changeGroup(scene.item(indexFromName(child)), it);\n";
+    os << "    });\n";
+    os << "});\n";
+  }
   os << "viewer.moveCameraToCoordinates(camera, 0.05);\n";
   if(has_camera_positions)
   {
@@ -3093,11 +3152,14 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
     os<<"  main_window.open(fullpath,\'camera_positions_plugin\');\n";
   }
   os.close();
-  if(!not_saved.empty())
+  if(!not_saved.empty()){
+    QApplication::restoreOverrideCursor();
     QMessageBox::warning(this,
                          "Items Not  Saved",
                          QString("The following items could not be saved: %1").arg(
                            not_saved.join(", ")));
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+  }
 #ifdef CGAL_USE_SSH
   using namespace CGAL::ssh_internal;
   if(do_upload)
@@ -3139,6 +3201,7 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
         if(!ok)
         {
           ssh_free(session);
+          QApplication::restoreOverrideCursor();
           return;
         }
         pass = pass.trimmed();
@@ -3156,11 +3219,13 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
                              "Error",
                              "The SSH session could not be started.");
         ssh_free(session);
+        QApplication::restoreOverrideCursor();
         return;
       }
       res = push_file(session,path.toStdString().c_str(), filename.toStdString().c_str());
       if(!res)
       {
+        QApplication::restoreOverrideCursor();
         QMessageBox::warning(this,
                              "Error",
                              "The file could not be uploaded. Check your console for more information.");
@@ -3179,6 +3244,7 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
     }
   }
 #endif
+  QApplication::restoreOverrideCursor();
 }
 void MainWindow::setTransparencyPasses(int val)
 {
@@ -3634,7 +3700,6 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
 {
   bool do_download = false;
   QString filename;
-
 #ifdef CGAL_USE_SSH
   QString user = settings.value("ssh_user", QString()).toString();
 
