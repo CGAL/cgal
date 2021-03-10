@@ -11,41 +11,41 @@ rm -rf Interpolation_Demo
 rm -rf Triangulation_3_Geomview_demos_Demo
 
 # CGAL<=3.7
-pushd AABB_tree_Demo;                   zip ../AABB_demo.zip          *    ;      popd
-pushd Alpha_shapes_3_Demo;              zip ../alpha_shape_3.zip      *    ;      popd
-pushd Bounding_volumes_Demo;            zip ../bounding_volumes_2.zip *    ;      popd
-pushd Circular_kernel_2_Demo;           zip ../circular_kernel.zip    *    ;      popd
-pushd Periodic_3_triangulation_3_Demo;  zip ../periodic_3_triangulation_3.zip *;  popd
-pushd Periodic_Lloyd_3_Demo;            zip ../periodic_3_lloyd.zip *;            popd
-pushd Polyhedron_Demo;                  zip -r ../polyhedron_3.zip *       ;      popd
-pushd Segment_Delaunay_graph_2_Demo;    zip ../segment_voronoi_diagram_2.zip *;   popd
-pushd Surface_mesher_Demo;              zip ../surface_mesher.zip *;              popd
-pushd Triangulation_2_Demo;
-  zip ../regular_triangulation_2.zip Regular_triangulation_2.exe
-  zip ../constrained_delaunay_triangulation_2.zip Constrained_Delaunay_triangulation_2.exe
-  zip ../delaunay_triangulation_2.zip Delaunay_triangulation_2.exe
+pushd AABB_tree_Demo_with_dlls;                   zip ../AABB_demo.zip          *    ;      popd
+pushd Alpha_shapes_3_Demo_with_dlls;              zip ../alpha_shape_3.zip      *    ;      popd
+pushd Bounding_volumes_Demo_with_dlls;            zip ../bounding_volumes_2.zip *    ;      popd
+pushd Circular_kernel_2_Demo_with_dlls;           zip ../circular_kernel.zip    *    ;      popd
+pushd Periodic_3_triangulation_3_Demo_with_dlls;  zip ../periodic_3_triangulation_3.zip *;  popd
+pushd Periodic_Lloyd_3_Demo_with_dlls;            zip ../periodic_3_lloyd.zip *;            popd
+pushd Polyhedron_Demo_with_dlls;                  zip -r ../polyhedron_3.zip *       ;      popd
+pushd Segment_Delaunay_graph_2_Demo_with_dlls;    zip ../segment_voronoi_diagram_2.zip *;   popd
+pushd Surface_mesher_Demo_with_dlls;              zip ../surface_mesher.zip *;              popd
+pushd Triangulation_2_Demo_with_dlls;
+  zip ../regular_triangulation_2.zip Regular_triangulation_2.exe *.dll platforms;
+  zip ../constrained_delaunay_triangulation_2.zip Constrained_Delaunay_triangulation_2.exe *.dll platforms;
+  zip ../delaunay_triangulation_2.zip Delaunay_triangulation_2.exe *.dll platforms;
 popd
 
 # CGAL-3.8
-pushd Largest_empty_rect_2_Demo;        zip ../largest_empty_rect_2.zip *;           popd
-pushd Apollonius_graph_2_Demo;          zip ../apollonius_graph_2.zip *;             popd
-pushd Stream_lines_2_Demo;              zip ../streamlines.zip *;                    popd
-pushd Triangulation_3_Demo;             zip ../triangulation_3.zip *;                popd
-#pushd Circular_kernel_3_Demo;           zip ../triangulation_3.zip *;                popd
-pushd Alpha_shapes_2_Demo;              zip ../alpha_shapes_2.zip *;                 popd
-pushd Generator_Demo;                   zip ../generator.zip *;                      popd
-pushd L1_Voronoi_diagram_2_Demo;        zip ../l1_voronoi_diagram_2.zip *;           popd
-pushd Snap_rounding_2_Demo;             zip ../snap_rounding_2.zip *;                popd
-pushd Spatial_searching_2_Demo;         zip ../spatial_searching.zip *;              popd
+pushd Largest_empty_rect_2_Demo_with_dlls;        zip ../largest_empty_rect_2.zip *;           popd
+pushd Apollonius_graph_2_Demo_with_dlls;          zip ../apollonius_graph_2.zip *;             popd
+pushd Stream_lines_2_Demo_with_dlls;              zip ../streamlines.zip *;                    popd
+pushd Triangulation_3_Demo_with_dlls;             zip ../triangulation_3.zip *;                popd
+#pushd Circular_kernel_3_Demo_with_dlls;           zip ../triangulation_3.zip *;                popd
+pushd Alpha_shapes_2_Demo_with_dlls;              zip ../alpha_shapes_2.zip *;                 popd
+pushd Generator_Demo_with_dlls;                   zip ../generator.zip *;                      popd
+pushd L1_Voronoi_diagram_2_Demo_with_dlls;        zip ../l1_voronoi_diagram_2.zip *;           popd
+pushd Snap_rounding_2_Demo_with_dlls;             zip ../snap_rounding_2.zip *;                popd
+pushd Spatial_searching_2_Demo_with_dlls;         zip ../spatial_searching.zip *;              popd
 
 # CGAL-4.0
-pushd Linear_cell_complex_Demo;         zip ../linear_cell_complex_3.zip *;          popd
+pushd Linear_cell_complex_Demo_with_dlls;         zip ../linear_cell_complex_3.zip *;          popd
 
 # CGAL-4.2 but was forgot -> published with 4.3
-pushd Arrangement_on_surface_2_Demo;    zip ../arrangements_2.zip *;                 popd
+pushd Arrangement_on_surface_2_Demo_with_dlls;    zip ../arrangements_2.zip *;                 popd
 
 # CGAL-4.5
-pushd Periodic_2_triangulation_2_Demo;  zip ../Periodic_2_Delaunay_triangulation_2.zip *;
+pushd Periodic_2_triangulation_2_Demo_with_dlls;  zip ../Periodic_2_Delaunay_triangulation_2.zip *;
                                                                                      popd
 # probably an error, in CGAL-4.5:
 rm -rf Surface_mesh_deformation_Demo
@@ -54,18 +54,18 @@ rm -rf Surface_mesh_deformation_Demo
 rm -rf Circular_kernel_3_Demo
 
 # CGAL-4.6
-pushd Polyline_simplification_2_Demo;   zip ../polyline_simplification_2.zip *;      popd
+pushd Polyline_simplification_2_Demo_with_dlls;   zip ../polyline_simplification_2.zip *;      popd
 
 # CGAL-4.7
-pushd Segment_Delaunay_graph_Linf_2_Demo; zip ../segment_voronoi_diagram_2.zip *;    popd
+pushd Segment_Delaunay_graph_Linf_2_Demo_with_dlls; zip ../segment_voronoi_diagram_2.zip *;    popd
 
 # CGAL-4.8
-pushd Optimal_transportation_reconstruction_2_Demo; zip ../otr2.zip *;               popd
+pushd Optimal_transportation_reconstruction_2_Demo_with_dlls; zip ../otr2.zip *;               popd
 #missing demos
-pushd Polygon_Demo; zip ../polygon.zip *;               popd
-pushd Principal_component_analysis_Demo; zip ../pca.zip *;               popd
-pushd Hyperbolic_triangulation_2_Demo; zip ../Hyperbolic_Delaunay_triangulation_2.zip *;               popd
-pushd Periodic_4_hyperbolic_triangulation_2_Demo; zip ../Periodic_4_hyperbolic_Delaunay_triangulation_2.zip *;               popd
+pushd Polygon_Demo_with_dlls; zip ../polygon.zip *;               popd
+pushd Principal_component_analysis_Demo_with_dlls; zip ../pca.zip *;               popd
+pushd Hyperbolic_triangulation_2_Demo_with_dlls; zip ../Hyperbolic_Delaunay_triangulation_2.zip *;               popd
+pushd Periodic_4_hyperbolic_triangulation_2_Demo_with_dlls; zip ../Periodic_4_hyperbolic_Delaunay_triangulation_2.zip *;               popd
 
 # check
 echo CHECK now. The following lines should be empty.
