@@ -41,6 +41,9 @@ A comprehensive list of the supported file formats is available in the Stream_su
     `Weighted_alpha_shape_euclidean_traits_3`. All CGAL kernel can be used directly as models
     of the concepts of the 2D and 3D Alpha Shape packages.
 
+### [dD Triangulations](https://doc.cgal.org/5.3/Manual/packages.html#PkgTriangulations)
+- Added the function `insert_if_in_star()` to the class `CGAL::Regular_triangulation`, which enables users to insert a point `p` in a regular triangulation on the condition that `p` appears post-insertion in the star of a user-specified, existing vertex.
+
 [Release 5.2](https://github.com/CGAL/cgal/releases/tag/v5.2)
 -----------
 
