@@ -164,15 +164,6 @@ bool overflow_test()
     DEBUG( std::cout << "f = " << f << std::endl; )
   }
 
-#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST_XX
-  return a.is_same(IA_nt(std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity())) &&
-         b.is_same(IA_nt(std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity())) &&
-         c.is_same(IA_nt::largest()) &&
-         d.is_same(IA_nt::largest()) &&
-         e.is_same(IA_nt::largest()) &&
-         f.is_same(IA_nt(std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity())) &&
-         g.is_same(-f);
-#else
   return a.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, std::numeric_limits<double>::infinity())) &&
          b.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, std::numeric_limits<double>::infinity())) &&
          c.is_same(IA_nt::largest()) &&
@@ -180,7 +171,6 @@ bool overflow_test()
          e.is_same(IA_nt::largest()) &&
          f.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, std::numeric_limits<double>::infinity())) &&
          g.is_same(-f);
-#endif
 }
 
 
