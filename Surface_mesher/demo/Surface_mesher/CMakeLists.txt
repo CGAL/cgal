@@ -39,14 +39,14 @@ endforeach()
 
 include_directories(./)
 
-# QGLViwer needs Qt5 configured with QtOpenGL and QtXml support
+# QGLViewer needs Qt5 configured with QtOpenGL
 
 find_package(CGAL REQUIRED COMPONENTS ImageIO Qt5)
 if(CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
 
   add_definitions(-DQT_NO_KEYWORDS)
 
-  find_package(Qt5 QUIET COMPONENTS OpenGL Xml Svg)
+  find_package(Qt5 QUIET COMPONENTS OpenGL Svg)
   find_package(OpenGL)
 
   if(Qt5_FOUND

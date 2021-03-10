@@ -4042,7 +4042,7 @@ _defines_outer_ccb_of_new_face(const DHalfedge* he_to,
     //   - No smallest has bin recorded so far, or
     //   - The current target vertex and the recorded vertex are the same and
     //       * The current curve is smaller than the recorded curve, or
-    //   - The current curve end is smaller then the recorded curve end.
+    //   - The current curve end is smaller than the recorded curve end.
     // smaller than its source, so we should check whether it is also smaller
     // Note that we compare the vertices lexicographically: first by the
     // indices, then by x, then by y.

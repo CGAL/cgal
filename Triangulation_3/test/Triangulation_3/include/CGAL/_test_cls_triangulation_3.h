@@ -23,6 +23,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/Testsuite/use.h>
 #include <CGAL/use.h>
+#include <CGAL/Testsuite/Triangulation_23/test_move_semantic.h>
 
 template <class Triangulation, class Container>
 bool check_all_are_finite(Triangulation* tr, const Container& cont)
@@ -286,7 +287,8 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T1.number_of_vertices() == 0);
   assert(T1.is_valid());
 
-
+  namespace test_tr_23 = CGAL::Testsuite::Triangulation_23;
+  test_tr_23::test_move_semantic(T0);
 
    // Assignment
   T1=T0;
@@ -363,12 +365,14 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T2_0.dimension()==1);
   assert(T2_0.number_of_vertices()==3);
 
+  test_tr_23::test_move_semantic(T2_0);
 
   v0=T2_0.insert(p4);
   assert(T2_0.is_valid());
   assert(T2_0.dimension()==2);
   assert(T2_0.number_of_vertices()==4);
 
+  test_tr_23::test_move_semantic(T2_0);
 
   v0=T2_0.insert(p5);
   v0=T2_0.insert(p6);
@@ -379,6 +383,8 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T2_0.is_valid());
   assert(T2_0.dimension()==2);
   assert(T2_0.number_of_vertices()==8);
+
+  test_tr_23::test_move_semantic(T2_0);
 
   if (! del) // to avoid doing the following tests for both Delaunay
     // and non Delaunay triangulations
@@ -402,6 +408,8 @@ _test_cls_triangulation_3(const Triangulation &)
   assert( T2_1.number_of_vertices() == m*n );
   assert( T2_1.dimension()==2 );
   assert( T2_1.is_valid() );
+
+  test_tr_23::test_move_semantic(T2_1);
 
   std::cout << "    Constructor11 " << std::endl;
   // 3-dimensional triangulations

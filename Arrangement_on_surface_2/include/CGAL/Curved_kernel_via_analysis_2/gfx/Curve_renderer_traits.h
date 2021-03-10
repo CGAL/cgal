@@ -16,7 +16,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/function_objects.h>
-#include <boost/functional.hpp>
 
 /*! \file CGAL/Curved_kernel_via_analysis_2/gfx/Curve_renderer_traits.h
  * \brief
@@ -107,11 +106,13 @@ struct Transform {
 
     template <class X>
     OutputPoly_2 operator()(const CGAL::Polynomial<X>& p, Op op = Op()) const {
-
-        Transform<typename OutputPoly_2::NT, typename InputPoly_2::NT, Op> tr;
+        typedef typename InputPoly_2::NT NT_in;
+        typedef typename OutputPoly_2::NT NT_out;
+        Transform<NT_out, NT_in, Op> tr;
+        auto fn = [&op, &tr](const NT_in& v){ return tr(v, op); };
         return OutputPoly_2(
-            ::boost::make_transform_iterator(p.begin(), boost::bind2nd(tr, op)),
-            ::boost::make_transform_iterator(p.end(), boost::bind2nd(tr, op)));
+            ::boost::make_transform_iterator(p.begin(), fn),
+            ::boost::make_transform_iterator(p.end(), fn));
     }
 
     OutputPoly_2 operator()(

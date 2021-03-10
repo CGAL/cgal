@@ -37,6 +37,57 @@ test_copy_face_graph_nm_umbrella()
 
 template <typename T>
 void
+test_copy_face_graph_isolated_vertices()
+{
+  typedef Kernel::Point_3 Point_3;
+
+  {
+    T s, t;
+    add_vertex(s);
+    CGAL::copy_face_graph(s, t);
+  }
+
+  {
+    T s, t;
+    add_vertex(t);
+    CGAL::copy_face_graph(s, t);
+  }
+
+  {
+    T s, t;
+    CGAL::make_triangle(Point_3(), Point_3(), Point_3(), s);
+    add_vertex(s);
+    t=s;
+    CGAL::copy_face_graph(s, t);
+  }
+
+  {
+    T s, t;
+    CGAL::make_triangle(Point_3(), Point_3(), Point_3(), s);
+    add_vertex(s);
+    add_vertex(t);
+    CGAL::copy_face_graph(s, t);
+  }
+
+  {
+    T s, t;
+    CGAL::make_tetrahedron(Point_3(), Point_3(), Point_3(), Point_3(), s);
+    add_vertex(s);
+    t=s;
+    CGAL::copy_face_graph(s, t);
+  }
+
+  {
+    T s, t;
+    CGAL::make_tetrahedron(Point_3(), Point_3(), Point_3(), Point_3(), s);
+    add_vertex(s);
+    add_vertex(t);
+    CGAL::copy_face_graph(s, t);
+  }
+}
+
+template <typename T>
+void
 join_face_test()
 {
   CGAL_GRAPH_TRAITS_MEMBERS(T);
@@ -619,6 +670,7 @@ void
 test_Euler_operations()
 {
   test_copy_face_graph_nm_umbrella<Graph>();
+  test_copy_face_graph_isolated_vertices<Graph>();
   join_face_test<Graph>();
   add_vertex_and_face_to_border_test<Graph>();
   add_face_to_border_test<Graph>();

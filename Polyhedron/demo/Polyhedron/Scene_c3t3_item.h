@@ -128,6 +128,7 @@ public:
     float getShrinkFactor() const;
     bool keyPressEvent(QKeyEvent *) Q_DECL_OVERRIDE;
     bool eventFilter(QObject *, QEvent *) Q_DECL_OVERRIDE;
+    std::size_t number_of_patches() const;
   public Q_SLOTS:
 
   void on_spheres_color_changed();

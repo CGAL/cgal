@@ -1,3 +1,7 @@
+#include <algorithm>
+#include <vector>
+#include <fstream>
+
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
@@ -89,16 +93,12 @@ unsigned int intersect(const Mesh& P, const Mesh& Q) {
   Q_box_ptr.reserve(Q.number_of_faces());
 
   // build boxes and pointers to boxes
-  boost::transform(P.faces(),
-                 std::back_inserter(P_boxes),
-                 boost::bind(boost::value_factory<Box>(), _1, boost::cref(P)));
-
-
+  for(auto f : P.faces())
+    P_boxes.push_back( Box(f, P) );
   std::transform(P_boxes.begin(), P_boxes.end(), std::back_inserter(P_box_ptr),
                  &address_of_box);
-  boost::transform(Q.faces(),
-                 std::back_inserter(Q_boxes),
-                 boost::bind(boost::value_factory<Box>(), _1, boost::cref(Q)));
+  for(auto f : Q.faces())
+    Q_boxes.push_back( Box(f, Q) );
   std::transform(Q_boxes.begin(), Q_boxes.end(), std::back_inserter(Q_box_ptr),
                  &address_of_box);
 
@@ -136,5 +136,3 @@ int main(int argc, char* argv[])
 
   return 0;
 }
-
-

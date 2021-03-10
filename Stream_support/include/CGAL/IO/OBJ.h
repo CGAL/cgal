@@ -23,6 +23,7 @@
 
 #include <boost/range/value_type.hpp>
 #include <boost/utility/enable_if.hpp>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 
 #include <fstream>
 #include <iostream>
@@ -158,9 +159,9 @@ bool read_OBJ(std::istream& is,
   }
 
   if(norm_found && verbose)
-    std::cout<<"WARNING: normals were found in this file, but were discarded."<<std::endl;
+    std::cout<<"NOTE: normals were found in this file, but were discarded."<<std::endl;
   if(tex_found && verbose)
-    std::cout<<"WARNING: textures were found in this file, but were discarded."<<std::endl;
+    std::cout<<"NOTE: textures were found in this file, but were discarded."<<std::endl;
 
   if(points.empty() || polygons.empty())
   {
@@ -318,7 +319,7 @@ bool read_OBJ(const std::string& fname, PointRange& points, PolygonRange& polygo
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
- *     \cgalParamDefault{`6`}
+ *     \cgalParamDefault{`the precision of the stream `os``}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -393,6 +394,7 @@ bool write_OBJ(const std::string& fname,
 {
   std::ofstream os(fname);
   CGAL::set_mode(os, CGAL::IO::ASCII);
+
   return write_OBJ(os, points, polygons, np);
 }
 

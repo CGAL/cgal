@@ -9,8 +9,15 @@ Delaunay triangulation in three-dimensional periodic space.
 
 \tparam PT must be a model of the concept `Periodic_3DelaunayTriangulationTraits_3`.
 
-\tparam TDS must be a model of the concept `TriangulationDataStructure_3`. Its default value
-is `Triangulation_data_structure_3<Triangulation_vertex_base_3<PT,Periodic_3_triangulation_ds_vertex_base_3<>>,Triangulation_cell_base_3<PT,Periodic_3_triangulation_ds_cell_base_3<>>>`.
+\tparam TDS must be a model of the concept `TriangulationDataStructure_3` whose
+vertex and cell are models of `Periodic_3TriangulationDSVertexBase_3` and `Periodic_3TriangulationDSCellBase_3`,
+respectively.
+It defaults to:
+\code
+CGAL::Triangulation_data_structure_3<
+  CGAL::Triangulation_vertex_base_3<PT, Periodic_3_triangulation_ds_vertex_base_3<> >,
+  CGAL::Triangulation_cell_base_3<PT,Periodic_3_triangulation_ds_cell_base_3<> > >
+\endcode
 
 */
 template< typename PT, typename TDS >

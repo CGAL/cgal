@@ -19,36 +19,34 @@ find the nearest neighbor of \f$ p\f$ as in the
 we use the nearest neighbor found at level \f$ i+1\f$ to find the nearest
 neighbor at level \f$ i\f$. This is a variant of the corresponding
 hierarchy for points found in \cgalCite{d-iirdt-98}.
+
 The class has two template parameters which have essentially the same
-meaning as in the `Apollonius_graph_2<Gt,Agds>` class. The first
-template parameter must be a model of the
-`ApolloniusGraphTraits_2` concept.
-The second template parameter must be a model of the
-`ApolloniusGraphDataStructure_2` concept. However, the vertex base
-class that is to be used in the Apollonius graph data structure must
-be a model of the `ApolloniusGraphHierarchyVertexBase_2` concept.
-The second template parameter defaults to
-`Triangulation_data_structure_2< Apollonius_graph_hierarchy_vertex_base_2< Apollonius_graph_vertex_base_2<Gt,true> >, Triangulation_face_base_2<Gt> >`.
+meaning as in the `Apollonius_graph_2<Gt,Agds>` class.
+
+\tparam Gt is the geometric traits class and must be a model of `ApolloniusGraphTraits_2`.
+
+\tparam Agds is the Apollonius graph data structure and must be a model of `ApolloniusGraphDataStructure_2`
+whose vertex and face must be models of `ApolloniusGraphHierarchyVertexBase_2` and `TriangulationFaceBase_2`, respectively.
+It defaults to:
+\code
+  CGAL::Triangulation_data_structure_2<
+    CGAL::Apollonius_graph_hierarchy_vertex_base_2<CGAL::Apollonius_graph_vertex_base_2<Gt,true> >,
+    CGAL::Triangulation_face_base_2<Gt> >
+\endcode
+
+\cgalHeading{Heritage}
 
 The `Apollonius_graph_hierarchy_2` class derives publicly from the
 `Apollonius_graph_2<Gt,Agds>` class. The interface is
 the same with its base class. In the sequel only the methods
 overridden are documented.
 
-\cgalHeading{Types}
-
 `Apollonius_graph_hierarchy_2` does not introduce other types than those introduced by
 its base class `Apollonius_graph_2<Gt,Agds>`.
 
-\sa `ApolloniusGraphDataStructure_2`
-\sa `ApolloniusGraphTraits_2`
-\sa `ApolloniusGraphHierarchyVertexBase_2`
 \sa `CGAL::Apollonius_graph_2<Gt,Agds>`
-\sa `CGAL::Triangulation_data_structure_2<Vb,Fb>`
 \sa `CGAL::Apollonius_graph_traits_2<K,Method_tag>`
 \sa `CGAL::Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
-\sa `CGAL::Apollonius_graph_hierarchy_vertex_base_2<Agvb>`
-
 */
 template< typename Gt, typename Agds >
 class Apollonius_graph_hierarchy_2 : public CGAL::Apollonius_graph_2<Gt,Agds> {
@@ -61,8 +59,7 @@ public:
 Creates an hierarchy of Apollonius graphs using `gt` as
 geometric traits.
 */
-Apollonius_graph_hierarchy_2(Gt
-gt=Gt());
+Apollonius_graph_hierarchy_2(Gt gt=Gt());
 
 /*!
 Creates an Apollonius graph hierarchy using
@@ -70,17 +67,15 @@ Creates an Apollonius graph hierarchy using
 range [`first`, `beyond`).
 */
 template< class Input_iterator >
-Apollonius_graph_hierarchy_2<Gt,Agds>(Input_iterator
-first, Input_iterator beyond, Gt gt=Gt());
+Apollonius_graph_hierarchy_2(Input_iterator first, Input_iterator beyond, Gt gt=Gt());
 
 /*!
-Copy constructor. All faces, vertices and inter-level pointers
+Copy constructor. All faces, vertices, and inter-level pointers
 are duplicated. After the construction, `agh` and `other` refer
 to two different Apollonius graph hierarchies: if
 `other` is modified, `agh` is not.
 */
-Apollonius_graph_hierarchy_2<Gt,Agds>
-(Apollonius_graph_hierarchy_2<Gt,Agds> other);
+Apollonius_graph_hierarchy_2(const Apollonius_graph_hierarchy_2<Gt,Agds>& other);
 
 /*!
 Assignment. All faces, vertices and inter-level pointers
@@ -112,7 +107,7 @@ site `s` in the Apollonius graph hierarchy. If `s`
 is visible then the vertex handle of `s` is returned, otherwise
 `Vertex_handle(nullptr)` is returned.
 */
-Vertex_handle insert(Site_2 s);
+Vertex_handle insert(const Site_2& s);
 
 /*!
 Inserts `s` in the Apollonius graph hierarchy using the
@@ -124,8 +119,7 @@ A call to this method is equivalent to `agh.insert(s);` and it has
 been added for the sake of conformity with the interface of the
 `Apollonius_graph_2<Gt,Agds>` class.
 */
-Vertex_handle insert(Site_2 s, Vertex_handle
-vnear);
+Vertex_handle insert(const Site_2& s, Vertex_handle vnear);
 
 /// @}
 
@@ -152,7 +146,7 @@ arbitrarily and one of the nearest neighbors of `p` is
 returned. If there are no visible sites in the Apollonius diagram
 `Vertex_handle(nullptr)` is returned.
 */
-Vertex_handle nearest_neighbor(Point p);
+Vertex_handle nearest_neighbor(const Point_2& p) const;
 
 /*!
 Finds the nearest neighbor of the point
@@ -163,8 +157,7 @@ A call to this method is equivalent to
 conformity with the interface of the
 `Apollonius_graph_2<Gt,Agds>` class.
 */
-Vertex_handle nearest_neighbor(Point p,
-Vertex_handle vnear);
+Vertex_handle nearest_neighbor(const Point_2& p, Vertex_handle vnear) const;
 
 /// @}
 
@@ -177,7 +170,7 @@ state of the Apollonius graph hierarchy to an output stream. In particular,
 all visible and hidden sites are written as well as the
 underlying combinatorial hierarchical data structure.
 */
-void file_output(std::ostream& os);
+void file_output(std::ostream& os) const;
 
 /*!
 Reads the state of the
@@ -189,7 +182,7 @@ void file_input(std::istream& is);
 Writes the current state of the Apollonius graph hierarchy to an
 output stream.
 */
-std::ostream& operator<<(std::ostream& os, Apollonius_graph_hierarchy_2<Gt,Agds> agh);
+std::ostream& operator<<(std::ostream& os, Apollonius_graph_hierarchy_2<Gt,Agds> agh) const;
 
 /*!
 Reads the state of the Apollonius graph hierarchy from an input stream.
@@ -209,7 +202,7 @@ is validated, as well as the inter-level pointers. If `level` is
 1, then the data structure at all levels is validated, the inter-level
 pointers are validated and all levels of the Apollonius graph
 hierarchy are also validated. Negative values of `level` always
-return `true`, and values greater then 1 are equivalent to
+return `true`, and values greater than 1 are equivalent to
 `level` being 1.
 */
 bool is_valid(bool verbose = false, int level = 1) const;
@@ -227,11 +220,10 @@ void clear();
 
 /*!
 The Apollonius graph hierarchies `other` and `agh` are
-swapped. `agh`.`swap(other)` should be preferred to `agh`` =
-other` or to `agh``(other)` if `other` is deleted afterwards.
+swapped. `agh.swap(other)` should be preferred to `agh = other`
+or to `agh(other)` if `other` is deleted afterwards.
 */
-void swap(Apollonius_graph_hierarchy_2<Gt,Agds>
-other);
+void swap(Apollonius_graph_hierarchy_2<Gt,Agds>& other);
 
 /// @}
 

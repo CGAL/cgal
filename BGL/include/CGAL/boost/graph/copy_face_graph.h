@@ -25,7 +25,7 @@
 #include <CGAL/property_map.h>
 #include <boost/unordered_map.hpp>
 #include <boost/utility/enable_if.hpp>
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 namespace CGAL {
 
@@ -167,6 +167,8 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
   for(tm_vertex_descriptor v : vertices(tm))
   {
     tm_halfedge_descriptor h = halfedge(v, tm);
+    if (h==boost::graph_traits<TargetMesh>::null_halfedge())
+      continue;
     tm_halfedge_descriptor next_around_vertex=h;
     do{
       next_around_vertex=opposite(next(next_around_vertex, tm), tm);
