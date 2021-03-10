@@ -22,5 +22,4 @@
 \example Triangulation_2/segment_soup_to_polylines.cpp
 \example Triangulation_2/draw_triangulation_2.cpp
 \example Triangulation_2/low_dimensional.cpp
-\example Triangulation_2/projection_traits.cpp
 */
