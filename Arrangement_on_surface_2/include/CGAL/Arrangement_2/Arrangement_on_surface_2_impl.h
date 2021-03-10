@@ -2741,14 +2741,24 @@ _insert_at_vertices(DHalfedge* he_to,
       he1->set_inner_ccb(ic1);
       he2->set_inner_ccb(ic1);
 
-      // Make all halfedges along ic2 to point to ic1.
-      DHalfedge* curr;
+      if (m_sweep_mode)
+      {
+        // Inner CCB are obtained using Halfedge::inner_ccb() which
+        // performs path reduction and always return valid iCCB
+        CGAL_assertion(ic1->is_valid());
+        CGAL_assertion(ic2->is_valid());
+        ic2->set_next(ic1);
+      }
+      else
+      {
+        // Make all halfedges along ic2 to point to ic1.
+        DHalfedge* curr;
+        for (curr = he2->next(); curr != he1; curr = curr->next())
+          curr->set_inner_ccb(ic1);
 
-      for (curr = he2->next(); curr != he1; curr = curr->next())
-        curr->set_inner_ccb(ic1);
-
-      // Delete the redundant inner CCB.
-      _dcel().delete_inner_ccb(ic2);
+        // Delete the redundant inner CCB.
+        _dcel().delete_inner_ccb(ic2);
+      }
 
       // Notify the observers that we have merged the two inner CCBs.
       _notify_after_merge_inner_ccb(fh, (Halfedge_handle(he1))->ccb());
