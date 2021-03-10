@@ -828,8 +828,6 @@ namespace internal {
       std::cout << "Equalize valences..." << std::endl;
 #endif
 
-#define VALE
-#ifdef VALE
       typedef typename boost::property_map<PM, CGAL::dynamic_vertex_property_t<int> >::type Vertex_degree;
       Vertex_degree degree = get(CGAL::dynamic_vertex_property_t<int>(), mesh_);
 
@@ -841,7 +839,6 @@ namespace internal {
         vertex_descriptor t = target(h, mesh_);
         put(degree, t, get(degree,t)+1);
       }
-#endif
 
       unsigned int nb_flips = 0;
       for(edge_descriptor e : edges(mesh_))
@@ -855,17 +852,12 @@ namespace internal {
         vertex_descriptor vb = target(he, mesh_);
         vertex_descriptor vc = target(next(he, mesh_), mesh_);
         vertex_descriptor vd = target(next(opposite(he, mesh_), mesh_), mesh_);
-#ifdef VALE
+
         int vva = get(degree,va), tvva = target_valence(va);
         int vvb = get(degree, vb), tvvb = target_valence(vb);
         int vvc = get(degree,vc), tvvc = target_valence(vc);
         int vvd = get(degree,vd), tvvd = target_valence(vd);
-#else
-  int vva = valence(va), tvva = target_valence(va);
-  int vvb = valence( vb), tvvb = target_valence(vb);
-  int vvc = valence(vc), tvvc = target_valence(vc);
-  int vvd = valence(vd), tvvd = target_valence(vd);
-#endif
+
         int deviation_pre = CGAL::abs(vva - tvva)
                           + CGAL::abs(vvb - tvvb)
                           + CGAL::abs(vvc - tvvc)
@@ -1225,11 +1217,6 @@ private:
       std::ofstream out(filename);
       out << mesh_;
       out.close();
-    }
-
-    int valence(const vertex_descriptor& v) const
-    {
-      return static_cast<int>(degree(v, mesh_));
     }
 
     int target_valence(const vertex_descriptor& v) const
