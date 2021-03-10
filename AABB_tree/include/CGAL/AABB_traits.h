@@ -416,7 +416,7 @@ public:
           CGAL::SMALLER : CGAL::LARGER;
       }
 
-      CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound, const Tag_true&) const
+      CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound, Tag_true) const
       {
           return GeomTraits().do_intersect_3_object()
           (GeomTraits().construct_sphere_3_object()
@@ -424,7 +424,7 @@ public:
           CGAL::SMALLER : CGAL::LARGER;
       }
 
-      CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound, const Tag_false&) const
+      CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound, Tag_false) const
       {
           return GeomTraits().do_intersect_3_object()
           (GeomTraits().construct_sphere_3_object()
@@ -434,7 +434,7 @@ public:
 
       CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound) const
       {
-        return (*this)(p, bb, bound, CGAL::Boolean_tag<internal::Has_static_filters<GeomTraits>::value>());
+        return (*this)(p, bb, bound, Boolean_tag<internal::Has_static_filters<GeomTraits>::value>());
       }
 
       template <class Solid>
