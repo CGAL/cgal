@@ -81,7 +81,7 @@ compute_average_spacing(const typename NeighborQuery::Kernel::Point_3& query, //
      boost::make_function_output_iterator
      ([&](const Point& p)
       {
-        sum_distances += std::sqrt(CGAL::squared_distance (query,p));
+        sum_distances += CGAL::approximate_sqrt(CGAL::squared_distance (query,p));
         ++ i;
       }));
 
