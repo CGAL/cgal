@@ -5,7 +5,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Rineau
@@ -13,9 +13,6 @@
 
 #ifndef CGAL_INTERNAL_FILTERED_PROJECTION_TRAITS_3_H
 #define CGAL_INTERNAL_FILTERED_PROJECTION_TRAITS_3_H
-
-#include <CGAL/license/Triangulation_2.h>
-
 
 #include <CGAL/internal/Triangulation_2_projection_traits_base_3.h>
 #include <CGAL/Filtered_predicate_with_state.h>
