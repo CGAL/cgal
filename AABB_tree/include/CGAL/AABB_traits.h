@@ -24,6 +24,8 @@
 #include <CGAL/internal/AABB_tree/Has_nested_type_Shared_data.h>
 #include <CGAL/internal/AABB_tree/Is_ray_intersection_geomtraits.h>
 #include <CGAL/internal/AABB_tree/Primitive_helper.h>
+#include <CGAL/internal/Has_boolean_tags.h>
+
 
 #include <boost/optional.hpp>
 
@@ -414,7 +416,7 @@ public:
           CGAL::SMALLER : CGAL::LARGER;
       }
 
-    CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound, Tag_true&) const
+      CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound, const Tag_true&) const
       {
           return GeomTraits().do_intersect_3_object()
           (GeomTraits().construct_sphere_3_object()
@@ -422,7 +424,7 @@ public:
           CGAL::SMALLER : CGAL::LARGER;
       }
 
-    CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound, Tag_false&) const
+      CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound, const Tag_false&) const
       {
           return GeomTraits().do_intersect_3_object()
           (GeomTraits().construct_sphere_3_object()
@@ -430,10 +432,22 @@ public:
           CGAL::SMALLER : CGAL::LARGER;
       }
 
-    CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound) const
-    {
-      return (*this)(p, bb, bound, typename GeomTraits::Has_filtered_predicates_tag());
-    }
+      template <typename GT, bool HasTag = internal::Has_nested_type_Has_static_filters<GeomTraits>::value>
+      struct Use_conservative_static_filters
+      {
+        typedef CGAL::Tag_false type;
+      };
+
+      template <typename GT>
+      struct Use_conservative_static_filters<GT, true>
+      {
+        typedef CGAL::Boolean_tag<GT::Has_static_filters> type;
+      };
+
+      CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound) const
+      {
+        return (*this)(p, bb, bound, typename Use_conservative_static_filters<GeomTraits>::type());
+      }
 
       template <class Solid>
       CGAL::Comparison_result operator()(const Point& p, const Solid& pr, const FT& sq_distance) const
