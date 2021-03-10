@@ -107,6 +107,11 @@ int main (int, char**)
   point_set.add_property_map<int> ("label", 0);
   point_set.add_property_map<double> ("intensity", 0.0);
 
+  auto pnt = point_set.properties_and_types();
+  std::cerr << "Properties = " << std::endl;
+  for (const auto& p : pnt)
+    std::cerr << " * " << p.first << " with type " << p.second.name() << std::endl;
+
   test (point_set.base().n_properties() == 4, "point set should have 4 properties.");
 
   Point p_before = *(point_set.points().begin());

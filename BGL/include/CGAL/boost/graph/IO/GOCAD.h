@@ -18,7 +18,7 @@
 #include <CGAL/boost/graph/IO/Generic_facegraph_builder.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
-
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <boost/container/flat_map.hpp>
 
 #include <fstream>
@@ -271,7 +271,7 @@ bool read_GOCAD(const std::string& fname, Graph& g,
 ///   \cgalParamNBegin{stream_precision}
 ///     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
 ///     \cgalParamType{int}
-///     \cgalParamDefault{`6`}
+///     \cgalParamDefault{`the precision of the stream `os``}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
@@ -303,8 +303,7 @@ bool write_GOCAD(std::ostream& os,
   if(!os.good())
     return false;
 
-  const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
-  os.precision(precision);
+  set_stream_precision_from_NP(os, np);
 
   os << "GOCAD TSurf 1\n"
         "HEADER {\n"
@@ -380,7 +379,7 @@ bool write_GOCAD(std::ostream& os, const char* name, const Graph& g,
 ///   \cgalParamNBegin{stream_precision}
 ///     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
 ///     \cgalParamType{int}
-///     \cgalParamDefault{`6`}
+///     \cgalParamDefault{`the precision of the stream `os``}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
@@ -454,6 +453,7 @@ bool write_GOCAD(const std::string& fname,
 {
   std::ofstream os(fname);
   CGAL::set_mode(os, CGAL::IO::ASCII);
+
   return write_GOCAD(os, fname.c_str(), g, np);
 }
 

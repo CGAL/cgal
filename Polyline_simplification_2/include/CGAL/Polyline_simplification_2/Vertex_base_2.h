@@ -37,6 +37,9 @@ class Vertex_base_2
   bool m_removable;
   FT m_cost;
 
+public:
+  std::size_t ID;
+
 #ifndef DOXYGEN_RUNNING
 public:
   template < typename TDS2 >

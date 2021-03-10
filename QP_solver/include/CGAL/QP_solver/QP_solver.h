@@ -38,9 +38,6 @@
 
 #include <CGAL/IO/Verbose_ostream.h>
 
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
-
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
 #include <vector>
@@ -262,7 +259,7 @@ private:
 
   typedef  QP_matrix_accessor< A_iterator, false, true, false, false>
   A_accessor;
-  typedef  boost::function1<typename A_accessor::result_type, int>
+  typedef  std::function<typename A_accessor::result_type(int)>
   A_row_by_index_accessor;
   typedef  boost::transform_iterator
   < A_row_by_index_accessor, Index_iterator >
@@ -1500,9 +1497,12 @@ transition( Tag_false)
   inv_M_B.transition
     (boost::make_transform_iterator
      (B_O.begin(),
-      boost::bind
-      (D_transition_creator_iterator(), B_O.begin(),
-       boost::bind (D_transition_creator_accessor(), qp_D, _1))));
+      [this](int i)
+      {
+        return D_transition_creator_iterator()(
+          this->B_O.begin(),D_transition_creator_accessor()(this->qp_D, i));
+      })
+    );
 }
 
 template < typename Q, typename ET, typename Tags >  inline                                 // LP case
@@ -1597,12 +1597,10 @@ ratio_test_1__q_x_S( Tag_false)
                     A_by_index_iterator( S_B.begin(),
                                          A_by_index_accessor( *(qp_A + j))),
                     q_x_S.begin(),
-                    boost::bind(std::minus<ET>(),
-                                _1,
-                                boost::bind(std::multiplies<ET>(), d,
-                                  boost::bind(
-                                    NT_converter<RT,ET>(),
-                                    _2))));
+                    [this](const ET& n1, const RT& n2)
+                    {
+                      return std::minus<ET>()(n1,this->d * NT_converter<RT,ET>() (n2));
+                    });
   }
 
   // q_x_S = -+ ( A_S_BxB_O * q_x_O - A_S_Bxj)
@@ -1883,7 +1881,8 @@ basis_matrix_stays_regular()
   if ( has_ineq && (i >= qp_n)) {        // slack variable
     new_row = slack_A[ i-qp_n].first;
     A_row_by_index_accessor  a_accessor =
-      boost::bind (A_accessor( qp_A, 0, qp_n), _1, new_row);
+      [new_row, this](int i){ return A_accessor( this->qp_A, 0, this->qp_n)(i, new_row); };
+
     typedef typename std::iterator_traits<A_row_by_index_iterator>::value_type RT;
     std::transform(A_row_by_index_iterator( B_O.begin(), a_accessor),
                    A_row_by_index_iterator( B_O.end  (), a_accessor),
@@ -1940,17 +1939,14 @@ compute__x_B_S( Tag_false /*has_equalities_only_and_full_rank*/,
                   B_by_index_iterator( S_B.end  (), b_accessor),
                   x_B_S.begin(),
                   x_B_S.begin(),
-                  compose2_2( std::minus<ET>(),
-                              boost::bind1st( std::multiplies<ET>(), d),
-                              Identity<ET>()));
+                  [this](const ET& n1, const ET& n2)
+                  { return std::minus<ET>()(this->d * n1, n2); });
 
   // b_S_B - ( A_S_BxB_O * x_B_O) - r_S_B
   std::transform(x_B_S.begin(), x_B_S.begin()+S_B.size(),
                  r_S_B.begin(), x_B_S.begin(),
-                 compose2_2(std::minus<ET>(),
-                            Identity<ET>(),
-                            boost::bind1st( std::multiplies<ET>(), d)));
-
+                 [this](const ET& n1, const ET& n2)
+                 { return std::minus<ET>()(n1, this->d * n2); });
 
   // x_B_S = +- ( b_S_B - A_S_BxB_O * x_B_O)
   Value_iterator  x_it = x_B_S.begin();

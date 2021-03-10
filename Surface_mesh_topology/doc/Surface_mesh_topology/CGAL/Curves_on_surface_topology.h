@@ -39,6 +39,11 @@ namespace Surface_mesh_topology {
      */
     bool is_contractible(const Path_on_surface<Mesh>& p) const;
 
+    /*! returns `true` if the closed path `p` is homotopic to some simple cycle.
+     *  @pre `p` must be a closed path on `amesh`.
+     */
+    bool is_homotopic_to_simple_cycle(const Path_on_surface<Mesh>& p) const;
+
     /*!  returns a non-contractible cycle of type `Path_on_surface` with minimal number of edges. This number of edges is the edge width of the mesh.
      */
     Path_on_surface<Mesh> compute_edge_width() const;
@@ -56,6 +61,11 @@ namespace Surface_mesh_topology {
     /*! returns a vector of darts representing a non-contractible curve with a minimal number of intersection with the graph of the mesh. This curve can be described by the alternating sequence of faces and vertices it goes through, so that each dart in the returned vector belongs to both a face and the next vertex in the alternating sequence. (Here, faces and vertices are viewed as subsets of darts.) The size of the returned vector is the face width of the mesh.
      */
     std::vector<halfedge_descriptor> compute_face_width() const;
+
+    /*! set whether the function should output error message to `std::cerr` when the prerequisite of the argument(s) is not met.
+     * Affects \link Surface_mesh_topology::Curves_on_surface_topology::are_freely_homotopic `are_freely_homotopic(p1, p2)`\endlink, \link Surface_mesh_topology::Curves_on_surface_topology::are_homotopic_with_fixed_endpoints `are_homotopic_with_fixed_endpoints(p1, p2)`\endlink, \link Surface_mesh_topology::Curves_on_surface_topology::is_contractible `is_contractible(p)`\endlink, and \link Surface_mesh_topology::Curves_on_surface_topology::is_homotopic_to_simple_cycle `is_homotopic_to_simple_cycle(p)`\endlink
+     */
+    void set_verbose(bool is_verbose);
   };
 
   /*!

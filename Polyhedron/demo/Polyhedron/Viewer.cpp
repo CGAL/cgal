@@ -380,6 +380,7 @@ Viewer::Viewer(QWidget* parent,
 
 Viewer::~Viewer()
 {
+  makeCurrent();
     QSettings viewer_settings;
     viewer_settings.setValue("cam_pos",
                              QString("%1,%2,%3")

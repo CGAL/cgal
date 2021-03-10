@@ -74,7 +74,7 @@ equivalent to a two-dimensional triangulated sphere.
 
 This rules extends to lower dimensional triangulation data structure
 arising in degenerate cases or when the triangulations
-have less than three vertices.
+have fewer than three vertices.
 A one dimensional triangulation structure maintains a set of vertices
 and edges which forms a ring
 topologically equivalent to a \f$ 1\f$-sphere.

@@ -2,7 +2,7 @@
 
 #include <CGAL/Quotient.h>
 #include <CGAL/function_objects.h>
-#include <boost/bind.hpp>
+#include <functional>
 
 // functor int x int -> Quotient<int>, (a,b) -> a/b
 // ------------------------------------------------
@@ -20,14 +20,16 @@ struct Quotient_inverter
   }
 };
 
+using namespace std::placeholders;
+
 int main()
 {
   // create composed functor (a,b) -> b/a...
   // ---------------------------------------
   int three = 3;
   int two = 2;
-  std::cout << boost::bind
-    (Quotient_inverter(), boost::bind
+  std::cout << std::bind
+    (Quotient_inverter(), std::bind
      (Quotient_creator(), _1, _2))
   // ...and apply it to (3, 2)
   // -------------------------

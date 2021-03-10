@@ -13,8 +13,4 @@
 
 #include <CGAL/config.h>
 
-#ifdef CGAL_USE_IPE_7
 #include <CGAL/CGAL_Ipelet_base_v7.h>
-#else
-#include <CGAL/CGAL_Ipelet_base_v6.h>
-#endif
