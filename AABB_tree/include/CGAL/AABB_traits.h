@@ -432,21 +432,9 @@ public:
           CGAL::SMALLER : CGAL::LARGER;
       }
 
-      template <typename GT, bool HasTag = internal::Has_nested_type_Has_static_filters<GeomTraits>::value>
-      struct Use_conservative_static_filters
-      {
-        typedef CGAL::Tag_false type;
-      };
-
-      template <typename GT>
-      struct Use_conservative_static_filters<GT, true>
-      {
-        typedef CGAL::Boolean_tag<GT::Has_static_filters> type;
-      };
-
       CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound) const
       {
-        return (*this)(p, bb, bound, typename Use_conservative_static_filters<GeomTraits>::type());
+        return (*this)(p, bb, bound, CGAL::Boolean_tag<internal::Has_static_filters<GeomTraits>::value>());
       }
 
       template <class Solid>
