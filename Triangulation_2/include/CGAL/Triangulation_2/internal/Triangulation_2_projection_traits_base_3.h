@@ -279,8 +279,9 @@ public:
   typedef bool result_type;
 
   bool operator() (const Point &p, const Point &q) const {
-    return base1 * (p - q) < 0
-        || base1 * (p - q) == 0 && base2 * (p - q) < 0;
+    auto proj = base1 * (p - q);
+    return proj < 0
+        || proj == 0 && proj < 0;
   }
 }; // end class Less_along_axis
 
