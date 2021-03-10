@@ -369,6 +369,8 @@ public:
     m_ground_points.clear();
     m_boundary_points.clear();
     m_interior_points.clear();
+    m_free_form_points.clear();
+    m_region_map.clear();
     m_polygons.clear();
     m_planes.clear();
   }

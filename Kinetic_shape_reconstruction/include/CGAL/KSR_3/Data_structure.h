@@ -426,8 +426,10 @@ public:
   }
 
   template<typename DS>
-  void convert(DS& ds) {
+  void transfer_to(DS& ds) {
 
+    CGAL_assertion_msg(false,
+    "USE THIS ONLY FOR CONVERTING EXACT THIS DATA TO INEXACT DS!");
     ds.clear();
     ds.resize(number_of_support_planes());
     CGAL_assertion(ds.number_of_support_planes() == number_of_support_planes());

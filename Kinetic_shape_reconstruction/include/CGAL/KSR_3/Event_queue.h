@@ -37,16 +37,10 @@
 namespace CGAL {
 namespace KSR_3 {
 
-// TODO: DOES NOT WORK WITH EXACT KERNEL! WHY?
-// m_time for some reason evaluates to null ptr with no memory!
 template<typename Data_structure>
 class Event_queue {
 
 public:
-  // Kernel types.
-  using Kernel = typename Data_structure::Kernel;
-  using FT     = typename Kernel::FT;
-
   // Data structure types.
   using PVertex = typename Data_structure::PVertex;
   using PEdge   = typename Data_structure::PEdge;
@@ -56,6 +50,7 @@ public:
 
   // Event types.
   using Event = KSR_3::Event<Data_structure>;
+  using FT    = typename Event::FT;
 
   // Boost queue.
   using Queue = boost::multi_index_container<

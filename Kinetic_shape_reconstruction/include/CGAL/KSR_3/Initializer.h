@@ -63,8 +63,8 @@ private:
 
 public:
   Initializer(
-    const bool verbose, const bool dprint, const bool debug) :
-  m_verbose(verbose), m_export(dprint), m_debug(debug), m_data(m_debug)
+    const bool verbose, const bool dprint, const bool debug, Data_structure& data) :
+  m_verbose(verbose), m_export(dprint), m_debug(debug), m_data(data)
   { }
 
   template<
@@ -119,14 +119,20 @@ public:
     // }
 
     CGAL_assertion(m_data.check_bbox());
+    m_data.set_limit_lines();
+    m_data.precompute_iedge_data();
+    CGAL_assertion(m_data.check_integrity());
+
     return CGAL::to_double(time_step);
   }
 
   template<typename DS>
   void transfer_to(DS& ds) {
 
+    CGAL_assertion_msg(false,
+    "USE THIS ONLY FOR CONVERTING EXACT DATA TO INEXACT DS!");
     ds.clear();
-    m_data.convert(ds);
+    m_data.transfer_to(ds);
     m_data.clear();
 
     CGAL_assertion(ds.check_integrity(false));
@@ -134,14 +140,14 @@ public:
   }
 
   void clear() {
-    m_data.clear();
+    // to be added
   }
 
 private:
   const bool m_verbose;
   const bool m_export;
   const bool m_debug;
-  Data_structure m_data;
+  Data_structure& m_data;
 
   template<
   typename InputRange,

@@ -23,6 +23,10 @@
 
 // #include <CGAL/license/Kinetic_shape_reconstruction.h>
 
+// CGAL includes.
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+// Internal includes.
 #include <CGAL/KSR/utils.h>
 
 namespace CGAL {
@@ -31,12 +35,15 @@ namespace KSR_3 {
 template<typename Data_structure>
 class Event_queue;
 
+// This class works only with inexact number types because it is a base for the
+// multi index container in the Event_queue class, which cannot handle exact number types.
 template<typename Data_structure>
 class Event {
 
 public:
   // Kernel types.
-  using Kernel = typename Data_structure::Kernel;
+  using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
+  using NT     = typename Data_structure::Kernel::FT;
   using FT     = typename Kernel::FT;
 
   // Data structure types.
@@ -68,13 +75,13 @@ public:
     const bool is_constrained,
     const PVertex pvertex,
     const PVertex pother,
-    const FT time) :
+    const NT time) :
   m_is_constrained(is_constrained),
   m_pvertex(pvertex),
   m_pother(pother),
   m_ivertex(Data_structure::null_ivertex()),
   m_iedge(Data_structure::null_iedge()),
-  m_time(time),
+  m_time(static_cast<FT>(CGAL::to_double(time))),
   m_support_plane_idx(m_pvertex.first) {
 
     CGAL_assertion_msg(is_constrained,
@@ -86,13 +93,13 @@ public:
     const bool is_constrained,
     const PVertex pvertex,
     const IEdge iedge,
-    const FT time) :
+    const NT time) :
   m_is_constrained(is_constrained),
   m_pvertex(pvertex),
   m_pother(Data_structure::null_pvertex()),
   m_ivertex(Data_structure::null_ivertex()),
   m_iedge(iedge),
-  m_time(time),
+  m_time(static_cast<FT>(CGAL::to_double(time))),
   m_support_plane_idx(m_pvertex.first) {
 
     CGAL_assertion_msg(!is_constrained,
@@ -104,13 +111,13 @@ public:
     const bool is_constrained,
     const PVertex pvertex,
     const IVertex ivertex,
-    const FT time) :
+    const NT time) :
   m_is_constrained(is_constrained),
   m_pvertex(pvertex),
   m_pother(Data_structure::null_pvertex()),
   m_ivertex(ivertex),
   m_iedge(Data_structure::null_iedge()),
-  m_time(time),
+  m_time(static_cast<FT>(CGAL::to_double(time))),
   m_support_plane_idx(m_pvertex.first)
   { }
 
@@ -120,13 +127,13 @@ public:
     const PVertex pvertex,
     const PVertex pother,
     const IVertex ivertex,
-    const FT time) :
+    const NT time) :
   m_is_constrained(is_constrained),
   m_pvertex(pvertex),
   m_pother(pother),
   m_ivertex(ivertex),
   m_iedge(Data_structure::null_iedge()),
-  m_time(time),
+  m_time(static_cast<FT>(CGAL::to_double(time))),
   m_support_plane_idx(m_pvertex.first) {
 
     CGAL_assertion_msg(is_constrained,
@@ -138,7 +145,7 @@ public:
   const PVertex& pother() const { return m_pother; }
   const IVertex& ivertex() const { return m_ivertex; }
   const IEdge& iedge() const { return m_iedge; }
-  const FT time() const { return m_time; }
+  const NT time() const { return static_cast<NT>(m_time); }
   const std::size_t support_plane() const { return m_support_plane_idx; }
 
   // Predicates.

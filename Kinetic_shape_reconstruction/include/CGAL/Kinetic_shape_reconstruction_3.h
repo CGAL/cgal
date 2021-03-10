@@ -62,7 +62,7 @@ private:
 
   using EK = CGAL::Exact_predicates_exact_constructions_kernel;
 
-  using Initializer = KSR_3::Initializer<EK>;
+  using Initializer = KSR_3::Initializer<Kernel>;
   using Propagation = KSR_3::Propagation<Kernel>;
   using Finalizer   = KSR_3::Finalizer<Kernel>;
 
@@ -149,13 +149,9 @@ public:
     timer.reset();
     timer.start();
     m_data.clear();
-    Initializer initializer(m_verbose, m_export, m_debug);
+    Initializer initializer(m_verbose, m_export, m_debug, m_data);
     const FT time_step = static_cast<FT>(initializer.initialize(
       input_range, polygon_map, k, CGAL::to_double(enlarge_bbox_ratio), reorient));
-    initializer.transfer_to(m_data); // TODO: REMOVE THIS!
-    m_data.set_limit_lines();
-    m_data.precompute_iedge_data();
-    CGAL_assertion(m_data.check_integrity());
     timer.stop();
     const double time_to_initialize = timer.time();
 
