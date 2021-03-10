@@ -61,12 +61,34 @@ struct NT_converter < NT1, double >
     }
 };
 
+template < class NT1 >
+struct NT_converter < NT1, float >
+  : public CGAL::cpp98::unary_function< NT1, float >
+{
+    float
+    operator()(const NT1 &a) const
+    {
+        return static_cast<float>(to_double(a));
+    }
+};
+
 template <>
 struct NT_converter < double, double >
   : public CGAL::cpp98::unary_function< double, double >
 {
     const double &
     operator()(const double &a) const
+    {
+        return a;
+    }
+};
+
+template <>
+struct NT_converter < float, float >
+  : public CGAL::cpp98::unary_function< float, float >
+{
+    const float &
+    operator()(const float &a) const
     {
         return a;
     }
