@@ -43,7 +43,10 @@ public:
   }
 
   bool
-  operator!=(const OMesh_edge& other) { return !(*this == other); }
+  operator!=(const OMesh_edge& other) const
+  {
+    return !(*this == other);
+  }
 
   Halfedge_handle
   opposite() const { return Halfedge_handle((halfedge_.idx() & 1) ? halfedge_.idx()-1 : halfedge_.idx()+1); }

@@ -11,7 +11,6 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel EK;
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 typedef Mesh::Property_map<vertex_descriptor,EK::Point_3> Exact_point_map;
-typedef Mesh::Property_map<vertex_descriptor,bool> Exact_point_computed;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 namespace params = PMP::parameters;
