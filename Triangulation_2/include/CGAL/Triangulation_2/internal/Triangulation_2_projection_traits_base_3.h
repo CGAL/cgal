@@ -261,6 +261,30 @@ public:
 }; // end class Less_along_axis
 
 template <class Traits>
+class Less_along_2_axis
+{
+  // private members
+  typedef typename Traits::Vector_3 Vector_3;
+  typedef typename Traits::Point_2 Point;
+  Vector_3 base1;
+  Vector_3 base2;
+public:
+  Less_along_2_axis(const Vector_3& base1, const Vector_3& base2)
+    : base1(base1), base2(base2)
+  {
+    CGAL_PROFILER("Construct Less_along_axis")
+    CGAL_TIME_PROFILER("Construct Less_along_axis")
+  }
+
+  typedef bool result_type;
+
+  bool operator() (const Point &p, const Point &q) const {
+    return base1 * (p - q) < 0
+        || base1 * (p - q) == 0 && base2 * (p - q) < 0;
+  }
+}; // end class Less_along_axis
+
+template <class Traits>
 class Compare_along_axis
 {
   // private members
@@ -345,6 +369,10 @@ public:
     Less_along_axis<Self>                                    Less_x_2;
   typedef TriangulationProjectionTraitsCartesianFunctors::
     Less_along_axis<Self>                                    Less_y_2;
+  typedef TriangulationProjectionTraitsCartesianFunctors::
+    Less_along_2_axis<Self>                                  Less_xy_2;
+  typedef TriangulationProjectionTraitsCartesianFunctors::
+    Less_along_2_axis<Self>                                  Less_yx_2;
 
   typedef TriangulationProjectionTraitsCartesianFunctors::
     Projected_orientation_with_normal_3<Self>                Orientation_2;
@@ -383,6 +411,18 @@ public:
   less_y_2_object() const
   {
     return Less_y_2(this->base2());
+  }
+
+  Less_xy_2
+  less_xy_2_object() const
+  {
+    return Less_xy_2(this->base1(), this->base2());
+  }
+
+  Less_yx_2
+  less_yx_2_object() const
+  {
+    return Less_yx_2(this->base2(), this->base1());
   }
 
   Compare_x_2
