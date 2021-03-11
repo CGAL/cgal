@@ -70,7 +70,7 @@ public:
   using F_index_map    = typename Mesh::template Property_map<Face_index, std::vector<std::size_t> >;
   using F_uint_map     = typename Mesh::template Property_map<Face_index, unsigned int>;
   using V_original_map = typename Mesh::template Property_map<Vertex_index, bool>;
-  using V_time_map     = typename Mesh::template Property_map<Vertex_index, FT>;
+  using V_time_map     = typename Mesh::template Property_map<Vertex_index, std::vector<FT> >;
 
 private:
   struct Data {
@@ -159,8 +159,11 @@ public:
     m_data->v_original_map = m_data->mesh.template add_property_map<Vertex_index, bool>(
       "v:original", false).first;
 
-    m_data->v_time_map     = m_data->mesh.template add_property_map<Vertex_index, FT>(
-      "v:time", FT(0)).first;
+    // TODO: I can have a similar vector to push all ivertices/events of the polygon vertex
+    // to keep track of the path it traversed. Later, we can return this path.
+    std::vector<FT> time_vector(1, FT(0));
+    m_data->v_time_map     = m_data->mesh.template add_property_map<Vertex_index, std::vector<FT> >(
+      "v:time", time_vector).first;
   }
 
   template<typename IG, typename SP>
@@ -272,7 +275,15 @@ public:
       sp.data().v_original_map[vi] = m_data->v_original_map[vertex];
 
       // sp.data().v_time_map[vi] = converter(m_data->v_time_map[vertex]);
-      sp.data().v_time_map[vi] = static_cast<CFT>(CGAL::to_double(m_data->v_time_map[vertex]));
+      // sp.data().v_time_map[vi] = static_cast<CFT>(CGAL::to_double(m_data->v_time_map[vertex]));
+
+      sp.data().v_time_map[vi].clear();
+      sp.data().v_time_map[vi].reserve(m_data->v_time_map[vertex].size());
+      for (const auto vtime : m_data->v_time_map[vertex]) {
+        sp.data().v_time_map[vi].push_back(static_cast<CFT>(CGAL::to_double(vtime)));
+      }
+      CGAL_assertion(
+        sp.data().v_time_map[vi].size() == m_data->v_time_map[vertex].size());
     }
 
     for (const auto& edge : m_data->mesh.edges()) {
@@ -433,11 +444,27 @@ public:
   }
 
   void set_last_event_time(const Vertex_index& vi, const FT time) {
-    m_data->v_time_map[vi] = time;
+    // TODO: If we do not need the full vector, remove it.
+    m_data->v_time_map[vi].push_back(time);
   }
 
-  const FT last_event_time(const Vertex_index& vi) const {
-    return m_data->v_time_map[vi];
+  const FT last_event_time(const Vertex_index& vi, const FT /* curr_time */) const {
+
+    // FT last_time = FT(-1);
+    // const FT tol = KSR::tolerance<FT>();
+    // CGAL_assertion(m_data->v_time_map[vi].size() > 0);
+
+    // // std::cout << "----" << std::endl;
+    // for (const FT vtime : m_data->v_time_map[vi]) {
+    //   // std::cout << "vtime: " << vtime << std::endl;
+    //   const FT time_diff = CGAL::abs(curr_time - vtime);
+    //   if (time_diff < tol) continue;
+    //   last_time = vtime;
+    // }
+    // CGAL_assertion(last_time >= FT(0));
+    // return last_time;
+
+    return m_data->v_time_map[vi].back();
   }
 
   const Vertex_index prev(const Vertex_index& vi) const {

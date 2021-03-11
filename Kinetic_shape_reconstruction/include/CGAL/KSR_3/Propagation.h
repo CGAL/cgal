@@ -468,9 +468,9 @@ private:
       }
       ++iteration;
 
-      // if (iteration == 80) {
-      //   exit(EXIT_FAILURE);
-      // }
+      if (iteration == 35) {
+        exit(EXIT_FAILURE);
+      }
 
       apply(event);
       CGAL_assertion(m_data.check_integrity());
@@ -1445,23 +1445,41 @@ private:
     }
 
     // We use this modification in order to avoid collinear directions.
+    const FT tol = KSR::tolerance<FT>();
     CGAL_assertion(m_data.has_iedge(pvertex));
     const std::size_t other_side_limit = m_data.line_idx(pvertex);
     const FT prev_time = m_data.last_event_time(prev);
-    CGAL_assertion(prev_time < m_data.current_time());
-    CGAL_assertion(prev_time >= FT(0));
+    const FT curr_time = m_data.current_time();
 
-    if (prev_time == m_data.current_time()) {
-      std::cout << "TODO: BACK, EVENTS ARE HAPPENNING AT THE SAME TIME!" << std::endl;
-      exit(EXIT_FAILURE);
-    }
+    // std::cout << "min time: "  <<  min_time << std::endl;
+    // std::cout << "max time: "  <<  max_time << std::endl;
     // std::cout << "prev time: " << prev_time << std::endl;
-    // std::cout << "curr time: " << m_data.current_time() << std::endl;
+    // std::cout << "curr time: " << curr_time << std::endl;
 
-    const auto pp_last = m_data.point_2(prev, prev_time);
-    const auto pp_curr = m_data.point_2(prev, m_data.current_time());
-    const auto dirp = Vector_2(pp_last, pp_curr);
-    const auto shifted_prev = pp_curr - dirp / FT(10);
+    CGAL_assertion(prev_time >= FT(0));
+    const FT prev_diff = CGAL::abs(curr_time - prev_time);
+
+    // CGAL_assertion(prev_time >= FT(0));
+    // CGAL_assertion(prev_diff >= tol);
+    // if (prev_diff < tol) {
+    //   std::cout << "TODO: BACK, EVENTS ARE HAPPENNING AT THE SAME TIME!" << std::endl;
+    //   exit(EXIT_FAILURE);
+    // }
+
+    Point_2 shifted_prev;
+    const auto pp_curr = m_data.point_2(prev, curr_time);
+    if (prev_diff < tol) {
+      if (m_verbose) std::cout << "- back, same time events, prev" << std::endl;
+      CGAL_assertion(CGAL::abs(max_time - curr_time) >= tol);
+      const auto pp_futr = m_data.point_2(prev, max_time);
+      const auto dirp = Vector_2(pp_curr, pp_futr);
+      shifted_prev = pp_curr + dirp / FT(10);
+      // CGAL_assertion_msg(false, "TODO: BACK, ADD SHIFTED_PREV FOR SAME TIME EVENTS!");
+    } else {
+      const auto pp_last = m_data.point_2(prev, prev_time);
+      const auto dirp = Vector_2(pp_last, pp_curr);
+      shifted_prev = pp_curr - dirp / FT(10);
+    }
 
     if (m_verbose) {
       std::cout << "- shifting prev: " << m_data.to_3d(pvertex.first, shifted_prev) << std::endl;
@@ -1596,23 +1614,41 @@ private:
     }
 
     // We use this modification in order to avoid collinear directions.
+    const FT tol = KSR::tolerance<FT>();
     CGAL_assertion(m_data.has_iedge(pvertex));
     const std::size_t other_side_limit = m_data.line_idx(pvertex);
     const FT next_time = m_data.last_event_time(next);
-    CGAL_assertion(next_time < m_data.current_time());
-    CGAL_assertion(next_time >= FT(0));
+    const FT curr_time = m_data.current_time();
 
-    if (next_time == m_data.current_time()) {
-      std::cout << "TODO: FRONT, EVENTS ARE HAPPENNING AT THE SAME TIME!" << std::endl;
-      exit(EXIT_FAILURE);
-    }
-    // std::cout << "curr time: " << m_data.current_time() << std::endl;
+    // std::cout << "min time: "  <<  min_time << std::endl;
+    // std::cout << "max time: "  <<  max_time << std::endl;
     // std::cout << "next time: " << next_time << std::endl;
+    // std::cout << "curr time: " << curr_time << std::endl;
 
-    const auto pn_last = m_data.point_2(next, next_time);
-    const auto pn_curr = m_data.point_2(next, m_data.current_time());
-    const auto dirn = Vector_2(pn_last, pn_curr);
-    const auto shifted_next = pn_curr - dirn / FT(10);
+    CGAL_assertion(next_time >= FT(0));
+    const FT next_diff = CGAL::abs(curr_time - next_time);
+
+    // CGAL_assertion(next_time >= FT(0));
+    // CGAL_assertion(next_diff >= tol);
+    // if (next_diff < tol) {
+    //   std::cout << "TODO: FRONT, EVENTS ARE HAPPENNING AT THE SAME TIME!" << std::endl;
+    //   exit(EXIT_FAILURE);
+    // }
+
+    Point_2 shifted_next;
+    const auto pn_curr = m_data.point_2(next, curr_time);
+    if (next_diff < tol) {
+      if (m_verbose) std::cout << "- front, same time events, next" << std::endl;
+      CGAL_assertion(CGAL::abs(max_time - curr_time) >= tol);
+      const auto pn_futr = m_data.point_2(next, max_time);
+      const auto dirn = Vector_2(pn_curr, pn_futr);
+      shifted_next = pn_curr + dirn / FT(10);
+      // CGAL_assertion_msg(false, "TODO: FRONT, ADD SHIFTED_NEXT FOR SAME TIME EVENTS!");
+    } else {
+      const auto pn_last = m_data.point_2(next, next_time);
+      const auto dirn = Vector_2(pn_last, pn_curr);
+      shifted_next = pn_curr - dirn / FT(10);
+    }
 
     if (m_verbose) {
       std::cout << "- shifting next: " << m_data.to_3d(pvertex.first, shifted_next) << std::endl;
@@ -1749,29 +1785,57 @@ private:
 
     // We use this modification in order to avoid collinear directions.
     const FT prev_time = m_data.last_event_time(prev);
+    const FT curr_time = m_data.current_time();
     const FT next_time = m_data.last_event_time(next);
-    CGAL_assertion(prev_time < m_data.current_time());
-    CGAL_assertion(next_time < m_data.current_time());
-    CGAL_assertion(prev_time >= FT(0));
-    CGAL_assertion(next_time >= FT(0));
 
-    if (prev_time == m_data.current_time() || next_time == m_data.current_time()) {
-      std::cout << "TODO: OPEN, EVENTS ARE HAPPENNING AT THE SAME TIME!" << std::endl;
-      exit(EXIT_FAILURE);
-    }
+    // std::cout << "min time: "  <<  min_time << std::endl;
+    // std::cout << "max time: "  <<  max_time << std::endl;
     // std::cout << "prev time: " << prev_time << std::endl;
-    // std::cout << "curr time: " << m_data.current_time() << std::endl;
+    // std::cout << "curr time: " << curr_time << std::endl;
     // std::cout << "next time: " << next_time << std::endl;
 
-    const auto pp_last = m_data.point_2(prev, prev_time);
-    const auto pp_curr = m_data.point_2(prev, m_data.current_time());
-    const auto dirp = Vector_2(pp_last, pp_curr);
-    const auto shifted_prev = pp_curr - dirp / FT(10);
+    const FT tol = KSR::tolerance<FT>();
+    CGAL_assertion(prev_time >= FT(0));
+    CGAL_assertion(next_time >= FT(0));
+    const FT prev_diff = CGAL::abs(curr_time - prev_time);
+    const FT next_diff = CGAL::abs(curr_time - next_time);
 
-    const auto pn_last = m_data.point_2(next, next_time);
-    const auto pn_curr = m_data.point_2(next, m_data.current_time());
-    const auto dirn = Vector_2(pn_last, pn_curr);
-    const auto shifted_next = pn_curr - dirn / FT(10);
+    // CGAL_assertion(prev_diff >= tol);
+    // CGAL_assertion(next_diff >= tol);
+    // if (prev_diff < tol || next_diff < tol) {
+    //   std::cout << "TODO: OPEN, EVENTS ARE HAPPENNING AT THE SAME TIME!" << std::endl;
+    //   exit(EXIT_FAILURE);
+    // }
+
+    Point_2 shifted_prev;
+    const auto pp_curr = m_data.point_2(prev, curr_time);
+    if (prev_diff < tol) {
+      if (m_verbose) std::cout << "- open, same time events, prev" << std::endl;
+      CGAL_assertion(CGAL::abs(max_time - curr_time) >= tol);
+      const auto pp_futr = m_data.point_2(prev, max_time);
+      const auto dirp = Vector_2(pp_curr, pp_futr);
+      shifted_prev = pp_curr + dirp / FT(10);
+      // CGAL_assertion_msg(false, "TODO: OPEN, ADD SHIFTED_PREV FOR SAME TIME EVENTS!");
+    } else {
+      const auto pp_last = m_data.point_2(prev, prev_time);
+      const auto dirp = Vector_2(pp_last, pp_curr);
+      shifted_prev = pp_curr - dirp / FT(10);
+    }
+
+    Point_2 shifted_next;
+    const auto pn_curr = m_data.point_2(next, curr_time);
+    if (next_diff < tol) {
+      if (m_verbose) std::cout << "- open, same time events, next" << std::endl;
+      CGAL_assertion(CGAL::abs(max_time - curr_time) >= tol);
+      const auto pn_futr = m_data.point_2(next, max_time);
+      const auto dirn = Vector_2(pn_curr, pn_futr);
+      shifted_next = pn_curr + dirn / FT(10);
+      // CGAL_assertion_msg(false, "TODO: OPEN, ADD SHIFTED_NEXT FOR SAME TIME EVENTS!");
+    } else {
+      const auto pn_last = m_data.point_2(next, next_time);
+      const auto dirn = Vector_2(pn_last, pn_curr);
+      shifted_next = pn_curr - dirn / FT(10);
+    }
 
     if (m_verbose) {
       std::cout << "- shifting prev: " << m_data.to_3d(pvertex.first, shifted_prev) << std::endl;
@@ -1834,18 +1898,77 @@ private:
       }
     }
 
+    if (crossed_iedges.size() == 1) {
+
+      CGAL_assertion_msg(
+        m_data.point_2(pvertex.first, m_data.source(crossed_iedges[0].first)) !=
+        m_data.point_2(pvertex.first, m_data.target(crossed_iedges[0].first)),
+      "TODO: OPEN, 1 EDGE CASE, HANDLE ZERO-LENGTH IEDGE!");
+
+      Point_2 future_point;
+      Vector_2 future_direction;
+      const bool is_parallel = m_data.compute_future_point_and_direction(
+        pvertex, prev, next, crossed_iedges[0].first, future_point, future_direction);
+      CGAL_assertion_msg(!is_parallel,
+      "TODO: OPEN, 1 EDGE CASE, CAN WE HAVE PARALLEL LINES HERE?");
+
+      new_pvertices.clear();
+      new_pvertices.resize(crossed_iedges.size(), m_data.null_pvertex());
+
+      if (m_verbose) std::cout << "- open, 1 edge case" << std::endl;
+
+      const auto vi = pvertex.second;
+      const auto ei = m_data.mesh(pvertex).edge(
+        CGAL::Euler::split_vertex(
+          m_data.mesh(pvertex).halfedge(vi),
+          m_data.mesh(pvertex).opposite(m_data.mesh(pvertex).next(m_data.mesh(pvertex).halfedge(vi))),
+          m_data.mesh(pvertex)));
+      const PEdge pedge(pvertex.first, ei);
+      const auto pother = m_data.opposite(pedge, pvertex);
+      m_data.support_plane(pother).set_point(pother.second, ipoint);
+      m_data.direction(pother) = CGAL::NULL_VECTOR;
+      const auto cropped = pvertex;
+
+
+      // const auto cropped1 = PVertex(pvertex.first, m_data.support_plane(pvertex).split_edge(pvertex.second, next.second));
+      // const auto cropped2 = PVertex(pvertex.first, m_data.support_plane(pvertex).split_edge(pvertex.second, prev.second));
+      // m_data.add_pface(std::array<PVertex, 3>{pvertex, cropped1, cropped2});
+      // const auto he = m_data.mesh(pvertex).halfedge(cropped1.second, cropped2.second);
+      // CGAL::Euler::join_vertex(he, m_data.mesh(pvertex));
+      // const auto cropped = cropped2;
+      CGAL_assertion(cropped != m_data.null_pvertex());
+
+      // const PEdge pedge(pvertex.first, m_data.support_plane(pvertex).edge(pvertex.second, cropped.second));
+      // CGAL_assertion(cropped != pvertex);
+      new_pvertices[0] = cropped;
+
+      m_data.connect(pedge, crossed_iedges[0].first);
+      m_data.connect(cropped, crossed_iedges[0].first);
+
+      CGAL_assertion(future_direction != Vector_2());
+      m_data.support_plane(cropped).set_point(cropped.second, future_point);
+      m_data.direction(cropped) = future_direction;
+      if (m_verbose) std::cout << "- cropped: " <<
+        m_data.str(cropped) << ", " << m_data.point_3(cropped) << std::endl;
+
+      // CGAL_assertion_msg(false, "TODO: OPEN, HANDLE 1 EDGE CASE!");
+      return;
+    }
+
     // Compute future points and directions.
+    CGAL_assertion(crossed_iedges.size() >= 2);
     std::vector<Point_2> future_points(2);
     std::vector<Vector_2> future_directions(2);
     IEdge prev_iedge = m_data.null_iedge();
     IEdge next_iedge = m_data.null_iedge();
 
-    CGAL_assertion_msg(
-      m_data.point_2(pvertex.first, m_data.source(crossed_iedges.front().first)) !=
-      m_data.point_2(pvertex.first, m_data.target(crossed_iedges.front().first)),
-    "TODO: OPEN, FRONT, HANDLE ZERO-LENGTH IEDGE!");
-
     { // first future point and direction
+      CGAL_assertion_msg(
+        m_data.point_2(pvertex.first, m_data.source(crossed_iedges.front().first)) !=
+        m_data.point_2(pvertex.first, m_data.target(crossed_iedges.front().first)),
+      "TODO: OPEN, FRONT, HANDLE ZERO-LENGTH IEDGE!");
+
+      if (m_verbose) std::cout << "- getting future point and direction, front" << std::endl;
       const bool is_parallel = m_data.compute_future_point_and_direction(
         pvertex, prev, next, crossed_iedges.front().first, future_points.front(), future_directions.front());
       if (is_parallel) {
@@ -1858,12 +1981,14 @@ private:
       }
     }
 
-    CGAL_assertion_msg(
-      m_data.point_2(pvertex.first, m_data.source(crossed_iedges.back().first)) !=
-      m_data.point_2(pvertex.first, m_data.target(crossed_iedges.back().first)),
-    "TODO: OPEN, BACK, HANDLE ZERO-LENGTH IEDGE!");
+    // second future point and direction
+    {
+      CGAL_assertion_msg(
+        m_data.point_2(pvertex.first, m_data.source(crossed_iedges.back().first)) !=
+        m_data.point_2(pvertex.first, m_data.target(crossed_iedges.back().first)),
+      "TODO: OPEN, BACK, HANDLE ZERO-LENGTH IEDGE!");
 
-    { // second future point and direction
+      if (m_verbose) std::cout << "- getting future point and direction, back" << std::endl;
       const bool is_parallel = m_data.compute_future_point_and_direction(
         pvertex, prev, next, crossed_iedges.back().first, future_points.back(), future_directions.back());
       if (is_parallel) {

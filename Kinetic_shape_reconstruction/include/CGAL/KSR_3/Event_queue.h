@@ -42,6 +42,7 @@ class Event_queue {
 
 public:
   // Data structure types.
+  using FT      = typename Data_structure::Kernel::FT;
   using PVertex = typename Data_structure::PVertex;
   using PEdge   = typename Data_structure::PEdge;
   using PFace   = typename Data_structure::PFace;
@@ -50,13 +51,13 @@ public:
 
   // Event types.
   using Event = KSR_3::Event<Data_structure>;
-  using FT    = typename Event::FT;
+  using ETime = typename Event::ETime;
 
   // Boost queue.
   using Queue = boost::multi_index_container<
   Event, boost::multi_index::indexed_by<
     boost::multi_index::ordered_non_unique<
-    boost::multi_index::member<Event, FT, &Event::m_time> >,
+    boost::multi_index::member<Event, ETime, &Event::m_time> >,
     boost::multi_index::ordered_non_unique<
     boost::multi_index::member<Event, PVertex, &Event::m_pvertex> >,
     boost::multi_index::ordered_non_unique<
@@ -94,13 +95,11 @@ public:
     const Event event = *event_iterator;
     m_queue.erase(event_iterator);
 
-    if (queue_by_time().begin()->m_time == event.m_time) {
+    const FT tol = KSR::tolerance<FT>();
+    const FT time_diff = CGAL::abs(queue_by_time().begin()->time() - event.time());
+    if (time_diff < tol) {
       if (m_verbose) {
-        std::cerr << "WARNING: NEXT EVENT IS HAPPENING AT THE SAME TIME!" << std::endl;
-      }
-    } else if (CGAL::abs(queue_by_time().begin()->m_time - event.m_time) < 1e-15) {
-      if (m_verbose) {
-        std::cerr << "WARNING: NEXT EVENT IS HAPPENING AT ALMOST THE SAME TIME!" << std::endl;
+        std::cout << "WARNING: NEXT EVENT IS HAPPENNING AT THE SAME TIME!" << std::endl;
       }
     }
     return event;

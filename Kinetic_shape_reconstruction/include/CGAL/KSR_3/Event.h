@@ -57,6 +57,34 @@ public:
   using Queue = Event_queue<Data_structure>;
   friend Queue;
 
+  struct ETime {
+    ETime(const NT event_time, const PVertex& pother, const IVertex& ivertex) :
+    time(static_cast<FT>(CGAL::to_double(event_time))),
+    m_pother(pother), m_ivertex(ivertex)
+    { }
+
+    const FT time;
+    const PVertex& m_pother;
+    const IVertex& m_ivertex;
+    const bool operator<(const ETime& e) const {
+
+      const FT tol = KSR::tolerance<FT>();
+      const FT time_diff = CGAL::abs(time - e.time);
+      if (time_diff < tol) {
+        const std::size_t la =   is_pvertex_to_ivertex() ? 1 : 0;
+        const std::size_t lb = e.is_pvertex_to_ivertex() ? 1 : 0;
+        return la < lb;
+      }
+      return time < e.time;
+    }
+
+    const bool is_pvertex_to_ivertex() const {
+      return (
+        m_pother  == Data_structure::null_pvertex() &&
+        m_ivertex != Data_structure::null_ivertex());
+    }
+  };
+
   // Event types.
 
   // Empty event.
@@ -66,7 +94,7 @@ public:
     m_pother(Data_structure::null_pvertex()),
     m_ivertex(Data_structure::null_ivertex()),
     m_iedge(Data_structure::null_iedge()),
-    m_time(FT(0)),
+    m_time(ETime(0, m_pother, m_ivertex)),
     m_support_plane_idx(m_pvertex.first)
   { }
 
@@ -81,7 +109,7 @@ public:
   m_pother(pother),
   m_ivertex(Data_structure::null_ivertex()),
   m_iedge(Data_structure::null_iedge()),
-  m_time(static_cast<FT>(CGAL::to_double(time))),
+  m_time(ETime(time, m_pother, m_ivertex)),
   m_support_plane_idx(m_pvertex.first) {
 
     CGAL_assertion_msg(is_constrained,
@@ -99,7 +127,7 @@ public:
   m_pother(Data_structure::null_pvertex()),
   m_ivertex(Data_structure::null_ivertex()),
   m_iedge(iedge),
-  m_time(static_cast<FT>(CGAL::to_double(time))),
+  m_time(ETime(time, m_pother, m_ivertex)),
   m_support_plane_idx(m_pvertex.first) {
 
     CGAL_assertion_msg(!is_constrained,
@@ -117,7 +145,7 @@ public:
   m_pother(Data_structure::null_pvertex()),
   m_ivertex(ivertex),
   m_iedge(Data_structure::null_iedge()),
-  m_time(static_cast<FT>(CGAL::to_double(time))),
+  m_time(ETime(time, m_pother, m_ivertex)),
   m_support_plane_idx(m_pvertex.first)
   { }
 
@@ -133,7 +161,7 @@ public:
   m_pother(pother),
   m_ivertex(ivertex),
   m_iedge(Data_structure::null_iedge()),
-  m_time(static_cast<FT>(CGAL::to_double(time))),
+  m_time(ETime(time, m_pother, m_ivertex)),
   m_support_plane_idx(m_pvertex.first) {
 
     CGAL_assertion_msg(is_constrained,
@@ -145,7 +173,7 @@ public:
   const PVertex& pother() const { return m_pother; }
   const IVertex& ivertex() const { return m_ivertex; }
   const IEdge& iedge() const { return m_iedge; }
-  const NT time() const { return static_cast<NT>(m_time); }
+  const NT time() const { return static_cast<NT>(m_time.time); }
   const std::size_t support_plane() const { return m_support_plane_idx; }
 
   // Predicates.
@@ -166,24 +194,24 @@ public:
 
     const std::string constr_type = ( event.m_is_constrained ? "constrained " : "unconstrained " );
     if (event.is_pvertices_to_ivertex()) {
-      os << constr_type << "event at t = " << event.m_time << " between PVertex("
+      os << constr_type << "event at t = " << event.time() << " between PVertex("
          << event.m_pvertex.first << ":" << event.m_pvertex.second
          << "), PVertex(" << event.m_pother.first << ":" << event.m_pother.second
          << "), and IVertex(" << event.m_ivertex << ")";
     } else if (event.is_pvertex_to_pvertex()) {
-      os << constr_type << "event at t = " << event.m_time << " between PVertex("
+      os << constr_type << "event at t = " << event.time() << " between PVertex("
          << event.m_pvertex.first << ":" << event.m_pvertex.second
          << ") and PVertex(" << event.m_pother.first << ":" << event.m_pother.second << ")";
     } else if (event.is_pvertex_to_iedge()) {
-      os << constr_type << "event at t = " << event.m_time << " between PVertex("
+      os << constr_type << "event at t = " << event.time() << " between PVertex("
          << event.m_pvertex.first << ":" << event.m_pvertex.second
          << ") and IEdge" << event.m_iedge;
     } else if (event.is_pvertex_to_ivertex()) {
-      os << constr_type << "event at t = " << event.m_time << " between PVertex("
+      os << constr_type << "event at t = " << event.time() << " between PVertex("
          << event.m_pvertex.first << ":" << event.m_pvertex.second
          << ") and IVertex(" << event.m_ivertex << ")";
     } else {
-      os << "ERROR: INVALID EVENT at t = " << event.m_time;
+      os << "ERROR: INVALID EVENT at t = " << event.time();
     }
     return os;
   }
@@ -194,7 +222,7 @@ private:
   PVertex m_pother;
   IVertex m_ivertex;
   IEdge   m_iedge;
-  FT m_time;
+  ETime   m_time;
   std::size_t m_support_plane_idx;
 };
 

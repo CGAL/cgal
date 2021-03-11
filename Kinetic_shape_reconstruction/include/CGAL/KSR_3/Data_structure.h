@@ -478,7 +478,7 @@ public:
   }
 
   const FT last_event_time(const PVertex& pvertex) {
-    return support_plane(pvertex).last_event_time(pvertex.second);
+    return support_plane(pvertex).last_event_time(pvertex.second, current_time());
   }
 
   std::vector<Volume_cell>& volumes() { return m_volumes; }
@@ -1315,8 +1315,8 @@ public:
       std::cout << "- num added pfaces: " << num_added_pfaces << std::endl;
       std::cout << "- k intersections after: " << this->k(pvertex.first) << std::endl;
     }
-    CGAL_assertion_msg(num_added_pfaces <= 3,
-    "TODO: CHECK CASES WHERE WE HAVE MORE THAN 3 NEW PFACES!");
+    CGAL_assertion_msg(num_added_pfaces <= 1,
+    "TODO: CHECK CASES WHERE WE HAVE MORE THAN N NEW PFACES!");
 
     // CGAL_assertion_msg(false, "TODO: TRAVERSE IEDGES GLOBAL!");
   }
