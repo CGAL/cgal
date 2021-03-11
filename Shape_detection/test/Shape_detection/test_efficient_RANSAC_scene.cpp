@@ -11,6 +11,7 @@
 
 template <class K>
 bool test_scene(int argc, char** argv) {
+
   typedef typename K::FT                                      FT;
   typedef CGAL::Point_with_normal_3<K>                        Pwn;
   typedef std::vector<Pwn>                                    Pwn_vector;
@@ -143,13 +144,13 @@ int main(int argc, char** argv) {
   if (!test_scene<CGAL::Simple_cartesian<float> >(argc, argv))
     success = false;
 
-  std::cout << "test_scene<CGAL::Simple_cartesian<double>> ";
-  if (!test_scene<CGAL::Simple_cartesian<double> >(argc, argv))
-    success = false;
-
-  std::cout << "test_scene<CGAL::Exact_predicates_inexact_constructions_kernel> ";
-  if (!test_scene<CGAL::Exact_predicates_inexact_constructions_kernel>(argc, argv))
-    success = false;
+//  std::cout << "test_scene<CGAL::Simple_cartesian<double>> ";
+//  if (!test_scene<CGAL::Simple_cartesian<double> >(argc, argv))
+//    success = false;
+//
+//  std::cout << "test_scene<CGAL::Exact_predicates_inexact_constructions_kernel> ";
+//  if (!test_scene<CGAL::Exact_predicates_inexact_constructions_kernel>(argc, argv))
+//    success = false;
 
   return (success) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
