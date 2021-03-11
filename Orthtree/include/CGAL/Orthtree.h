@@ -201,10 +201,10 @@ public:
   {
     Array bbox_min;
     for (FT& f : bbox_min)
-      f = std::numeric_limits<FT>::max();
+      f = (std::numeric_limits<FT>::max)();
     Array bbox_max;
     for (FT& f : bbox_max)
-      f = -std::numeric_limits<FT>::max();
+      f = -(std::numeric_limits<FT>::max)();
 
     for (const Range_type& r : point_range)
     {
@@ -555,7 +555,7 @@ public:
   OutputIterator nearest_neighbors (const Point& query,
                                     std::size_t k,
                                     OutputIterator output) const {
-    Sphere query_sphere (query, std::numeric_limits<FT>::max());
+    Sphere query_sphere (query, (std::numeric_limits<FT>::max)());
     return nearest_k_neighbors_in_radius(query_sphere, k, output);
   }
 
@@ -573,7 +573,7 @@ public:
   OutputIterator nearest_neighbors (const Sphere& query, OutputIterator output) const {
     Sphere query_sphere = query;
     return nearest_k_neighbors_in_radius(query_sphere,
-                                         std::numeric_limits<std::size_t>::max(), output);
+                                         (std::numeric_limits<std::size_t>::max)(), output);
   }
 
   /*!
