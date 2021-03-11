@@ -43,7 +43,7 @@ public:
 
   typedef Dimension_tag<2> Dimension; ///< Dimension type.
   typedef Bbox_2 Bbox_d; ///< Bounding box type.
-  typedef typename GeomTraits::FT FT; /// Number type.
+  typedef typename GeomTraits::FT FT; ///< Number type.
   typedef typename GeomTraits::Point_2 Point_d; ///< Point type.
   typedef typename GeomTraits::Circle_2 Sphere_d; ///< Sphere type.
   typedef typename GeomTraits::Cartesian_const_iterator_2 Cartesian_const_iterator_d; ///< An iterator over the %Cartesian coordinates.

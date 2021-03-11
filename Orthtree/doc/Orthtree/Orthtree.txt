@@ -134,7 +134,7 @@ The `Node` class provides functions that enables the user to access each of its 
 
 The following example demonstrates ways of accessing different nodes of a tree, given a reference to one.
 
-From the root node, children can be accessed using [the subscript operator []](@ref CGAL::Orthtree::Node::operator[]).
+From the root node, children can be accessed using the subscript operator `CGAL::Orthtree::Node::operator[]()`.
 For an %octree, values from 0-7 provide access to the different children.
 
 For non-root nodes, it's possible to access parent nodes using the [parent()](@ref CGAL::Orthtree::Node::parent) accessor.

@@ -73,9 +73,9 @@ public:
 
   /// \name Template Types
   /// @{
-  typedef Traits_ Traits;
-  typedef PointRange_ PointRange;
-  typedef PointMap_ PointMap;
+  typedef Traits_ Traits; ///< Geometry traits
+  typedef PointRange_ PointRange; ///< Point range
+  typedef PointMap_ PointMap; ///< Point map
   /// @}
 
   /// \name Traits Types
