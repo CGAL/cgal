@@ -30,17 +30,17 @@
 namespace CGAL {
 
 template <class Point_2, class Point_3>
-Point_2 point_3_get_x_y_point_2(Point_3 p) {
+Point_2 point_3_get_x_y_point_2(const Point_3& p) {
   return( Point_2(p.hx(), p.hy(), p.hw()) );
 }
 
 template <class Point_2, class Point_3>
-Point_2 point_3_get_y_z_point_2(Point_3 p) {
+Point_2 point_3_get_y_z_point_2(const Point_3& p) {
   return( Point_2(p.hy(), p.hz(), p.hw()) );
 }
 
 template <class Point_2, class Point_3>
-Point_2 point_3_get_z_x_point_2(Point_3 p) {
+Point_2 point_3_get_z_x_point_2(const Point_3& p) {
   return( Point_2(p.hz(), p.hx(), p.hw()) );
 }
 
@@ -70,21 +70,27 @@ Bounded_side bounded_side_3(IteratorForward first,
 
 
 
+  auto apv = approx(plane.orthogonal_vector());
+
+  int dir = 0;
+  auto max = CGAL::abs(apv.x());
+  if(CGAL::abs(apv.y()) > max){
+    dir = 1;
+    max = CGAL::abs(apv.y());
+  }
+  if(CGAL::abs(apv.z()) > max){
+    dir = 2;
+  }
+
+
   CGAL_assertion(!plane.is_degenerate());
-  Point_2 (*t)(Point_3);
-  Vector_3 pv(plane.orthogonal_vector()), pxy(0,0,1), pyz(1,0,0), pzx(0,1,0);
-  CGAL_NEF_TRACEN("pv*pxz: "<<pv*pzx);
-  CGAL_NEF_TRACEN("pv*pyz: "<<pv*pyz);
-  CGAL_NEF_TRACEN("pv*pxy: "<<pv*pxy);
-  if( !CGAL_NTS is_zero(pv*pzx) )
-    /* the plane is not perpendicular to the ZX plane */
-    t = &point_3_get_z_x_point_2< Point_2, Point_3>;
-  else if( !CGAL_NTS is_zero(pv*pyz) )
-    /* the plane is not perpendicular to the YZ plane */
+  Point_2 (*t)(const Point_3&);
+
+  if(dir == 0){
     t = &point_3_get_y_z_point_2< Point_2, Point_3>;
-  else {
-    CGAL_assertion( !CGAL_NTS is_zero(pv*pxy) );
-    /* the plane is not perpendicular to the XY plane */
+  }else if(dir == 1){
+    t = &point_3_get_z_x_point_2< Point_2, Point_3>;
+  }else{
     t = &point_3_get_x_y_point_2< Point_2, Point_3>;
   }
 
@@ -95,7 +101,6 @@ Bounded_side bounded_side_3(IteratorForward first,
     points.push_back( t(*first));
   }
   Bounded_side side = bounded_side_2( points.begin(), points.end(), t(point));
-  points.clear();
   return side;
 }
 
