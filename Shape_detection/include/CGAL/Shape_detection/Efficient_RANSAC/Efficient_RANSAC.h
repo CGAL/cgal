@@ -1091,7 +1091,6 @@ private:
   const typename Octree::Node node_containing_point(const Octree *octree, const Point &p, std::size_t level) {
 
     // Find the node containing the point
-    bool upperZ, upperY, upperX;
     typename Octree::Node cur = octree->root();
     while (!cur.is_null() && cur.depth() < level) {
 
