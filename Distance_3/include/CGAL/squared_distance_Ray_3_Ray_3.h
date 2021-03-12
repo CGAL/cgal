@@ -20,6 +20,7 @@
 #include <CGAL/internal/squared_distance_utils_3.h>
 
 #include <CGAL/Plane_3.h>
+#include <CGAL/Vector_3.h>
 
 namespace CGAL {
 namespace internal {
