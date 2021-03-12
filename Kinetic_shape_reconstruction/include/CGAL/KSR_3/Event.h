@@ -73,7 +73,7 @@ public:
       if (time_diff < tol) {
         const std::size_t la =   is_pvertex_to_ivertex() ? 1 : 0;
         const std::size_t lb = e.is_pvertex_to_ivertex() ? 1 : 0;
-        return la < lb;
+        if (la != lb) return la < lb;
       }
       return time < e.time;
     }

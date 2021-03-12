@@ -155,6 +155,8 @@ private:
       return false;
     }
 
+    CGAL_assertion(
+      CGAL::abs(m_max_time - m_min_time) >= KSR::tolerance<FT>());
     const auto pv_min = m_data.point_2(pvertex, m_min_time);
     const auto pv_max = m_data.point_2(pvertex, m_max_time);
     const Segment_2 pv_segment(pv_min, pv_max);
@@ -178,7 +180,7 @@ private:
     // if (!is_event_found) return;
 
     try_pvertex_to_pvertex_constrained_event(pvertex, pv_segment, pv_bbox);
-    try_pvertex_to_ivertex_constrained_event(pvertex, pv_segment, pv_bbox);
+    try_pvertex_to_ivertex_constrained_event(pvertex, pv_segment);
   }
 
   const bool try_pvertices_to_ivertex_event(
@@ -217,21 +219,21 @@ private:
       const auto source = m_data.point_2(pvertex.first, isource);
       const auto target = m_data.point_2(pvertex.first, itarget);
 
-      const FT tol = KSR::tolerance<FT>();
+      const FT ptol = KSR::point_tolerance<FT>();
       const FT dist1 = KSR::distance(inter, source);
       const FT dist2 = KSR::distance(inter, target);
 
-      // std::cout << "tol: " << tol << std::endl;
+      // std::cout << "ptol: " << ptol << std::endl;
       // std::cout << "dist 1: " << dist1 << std::endl;
       // std::cout << "dist 2: " << dist2 << std::endl;
 
       Point_2 ipoint;
       IVertex ivertex = m_data.null_ivertex();
-      if (dist1 < tol) {
-        CGAL_assertion(dist2 >= tol);
+      if (dist1 < ptol) {
+        CGAL_assertion(dist2 >= ptol);
         ipoint = source; ivertex = isource;
-      } else if (dist2 < tol) {
-        CGAL_assertion(dist1 >= tol);
+      } else if (dist2 < ptol) {
+        CGAL_assertion(dist1 >= ptol);
         ipoint = target; ivertex = itarget;
       }
 
@@ -246,16 +248,27 @@ private:
         is_event_found = true;
         CGAL_assertion(time < m_max_time - m_min_time);
         m_queue.push(Event(true, pvertex, pother, ivertex, m_min_time + time));
-        CGAL_assertion_msg(false, "TODO: TRY PVERTICES TO IVERTEX EVENT!");
       }
     }
+
+    CGAL_assertion_msg(false, "TODO: TRY PVERTICES TO IVERTEX EVENT!");
     return is_event_found;
   }
 
   void try_pvertex_to_pvertex_constrained_event(
     const PVertex& pvertex, const Segment_2& pv_segment, const Bbox_2& pv_bbox) {
 
+    // std::cout << "min time: " << m_min_time << std::endl;
+    // std::cout << "max time: " << m_max_time << std::endl;
+    // std::cout << "pv segment: " <<
+    //   m_data.to_3d(pvertex.first, pv_segment.source()) << " " <<
+    //   m_data.to_3d(pvertex.first, pv_segment.target()) << std::endl;
+
     PVertex prev, next;
+    CGAL_assertion_msg(KSR::distance(
+      pv_segment.source(), pv_segment.target()) >= KSR::point_tolerance<FT>(),
+    "TODO: ZERO LENGTH PV_SEGMENT FOUND!");
+
     std::tie(prev, next) = m_data.prev_and_next(pvertex);
     for (const auto& pother : { prev, next }) {
       if (pother == m_data.null_pvertex()
@@ -267,8 +280,11 @@ private:
       const Segment_2 po_segment(
         m_data.point_2(pother, m_min_time),
         m_data.point_2(pother, m_max_time));
-      const auto po_bbox = po_segment.bbox();
+      CGAL_assertion_msg(KSR::distance(
+        po_segment.source(), po_segment.target()) >= KSR::point_tolerance<FT>(),
+      "TODO: ZERO LENGTH PO_SEGMENT FOUND!");
 
+      const auto po_bbox = po_segment.bbox();
       if (!do_overlap(pv_bbox, po_bbox)) {
         continue;
       }
@@ -292,30 +308,66 @@ private:
   }
 
   void try_pvertex_to_ivertex_constrained_event(
-    const PVertex& pvertex, const Segment_2& pv_segment, const Bbox_2& pv_bbox) {
+    const PVertex& pvertex, const Segment_2& pv_segment) {
 
     CGAL_assertion(m_data.has_iedge(pvertex));
     const auto iedge = m_data.iedge(pvertex);
+    const auto& source_p = pv_segment.source();
+    const auto& target_p = pv_segment.target();
+    const FT ptol = KSR::point_tolerance<FT>();
+
+    // std::cout << "iedge: "   << m_data.segment_3(iedge) << std::endl;
+    // std::cout << "pvertex: " << m_data.point_3(pvertex) << std::endl;
+    // std::cout << "pv segment: " <<
+    //   m_data.to_3d(pvertex.first, source_p) << " " <<
+    //   m_data.to_3d(pvertex.first, target_p) << std::endl;
+
+    CGAL_assertion_msg(KSR::distance(source_p, target_p) >= ptol,
+    "TODO: ZERO-LENGTH VECTOR 1 FOUND!");
+
+    CGAL_assertion_msg(KSR::distance(
+      m_data.point_3(m_data.source(iedge)),
+      m_data.point_3(m_data.target(iedge))) >= ptol,
+    "TODO: ZERO-LENGTH IEDGE FOUND!");
+
     for (const auto& ivertex : { m_data.source(iedge), m_data.target(iedge) }) {
       if (!m_data.is_active(ivertex)) {
         continue;
       }
 
       const Point_2 ipoint = m_data.to_2d(pvertex.first, ivertex);
-      const auto vec1 = pv_segment.to_vector();
-      const auto& pinit = pv_segment.source();
-      const Vector_2 vec2(pinit, ipoint);
-      const FT dot_product = vec1 * vec2;
-      if (dot_product < FT(0)) { // opposite directions
-        continue;
+      // std::cout << "po segment: " <<
+      //   m_data.to_3d(pvertex.first, source_p) << " " <<
+      //   m_data.to_3d(pvertex.first, ipoint) << std::endl;
+
+      const FT distance = KSR::distance(source_p, ipoint);
+      if (distance < ptol) {
+
+        const auto overtex = m_data.opposite(iedge, ivertex);
+        const Point_2 opoint = m_data.to_2d(pvertex.first, overtex);
+        const FT odistance = KSR::distance(source_p, opoint);
+        CGAL_assertion_msg(odistance >= ptol,
+          "TODO: ZERO-LENGTH VECTOR 2 FOUND!");
+
+        const Vector_2 vec1(source_p, target_p);
+        const Vector_2 vec2(source_p, opoint);
+        const FT dot_product = vec1 * vec2;
+        if (dot_product >= FT(0)) continue;
+
+      } else {
+
+        const Vector_2 vec1(source_p, target_p);
+        const Vector_2 vec2(source_p, ipoint);
+        const FT dot_product = vec1 * vec2;
+        if (dot_product < FT(0)) continue; // opposite directions
       }
 
-      const FT distance = KSR::distance(pinit, ipoint);
-      const FT time = distance / m_data.speed(pvertex);
-
       // Constrained pvertex to ivertex event.
+      // std::cout << "before" << std::endl;
+      const FT time = distance / m_data.speed(pvertex);
       if (time < m_max_time - m_min_time) {
 
+        // std::cout << "after" << std::endl;
         CGAL_assertion(time < m_max_time - m_min_time);
         m_queue.push(Event(true, pvertex, ivertex, m_min_time + time));
 
@@ -345,6 +397,10 @@ private:
     const std::vector<Segment_2>& segments,
     const std::vector<Bbox_2>& bboxes) {
 
+    CGAL_assertion_msg(KSR::distance(
+      pv_segment.source(), pv_segment.target()) >= KSR::point_tolerance<FT>(),
+    "TODO: ZERO LENGTH PV_SEGMENT FOUND!");
+
     const auto prev = m_data.prev(pvertex);
     const auto next = m_data.next(pvertex);
     for (std::size_t i = 0; i < iedges.size(); ++i) {
@@ -358,6 +414,10 @@ private:
       if (!m_data.is_active(iedge)) {
         continue;
       }
+
+      CGAL_assertion_msg(KSR::distance(
+        segments[i].source(), segments[i].target()) >= KSR::point_tolerance<FT>(),
+      "TODO: ZERO LENGTH PI_SEGMENT FOUND!");
 
       if (!CGAL::do_overlap(pv_bbox, bboxes[i])) {
         continue;
@@ -426,7 +486,7 @@ private:
       is_event_found = true;
     }
 
-    // CGAL_assertion_msg(false, "TODO: ADD PVERTEX TO IVERTEX UNCONSTRAINED EVENT!");
+    CGAL_assertion_msg(false, "TODO: ADD PVERTEX TO IVERTEX UNCONSTRAINED EVENT!");
     return is_event_found;
   }
 
@@ -468,7 +528,7 @@ private:
       }
       ++iteration;
 
-      // if (iteration == 35) {
+      // if (iteration == 5) {
       //   exit(EXIT_FAILURE);
       // }
 
@@ -912,10 +972,9 @@ private:
       std::cout << "- iedge: "   << m_data.segment_3(iedge) << std::endl;
     }
 
-    const FT ptol = KSR::point_tolerance<FT>();
     CGAL_assertion_msg(KSR::distance(
       m_data.point_2(pvertex.first, m_data.source(iedge)),
-      m_data.point_2(pvertex.first, m_data.target(iedge))) >= ptol,
+      m_data.point_2(pvertex.first, m_data.target(iedge))) >= KSR::point_tolerance<FT>(),
     "TODO: PVERTEX -> IEDGE, HANDLE ZERO-LENGTH IEDGE!");
 
     const PVertex prev(pvertex.first, m_data.support_plane(pvertex).prev(pvertex.second));
@@ -1011,11 +1070,10 @@ private:
       std::cout << "- iedge: "   << m_data.segment_3(iedge) << std::endl;
     }
 
-    const FT ptol = KSR::point_tolerance<FT>();
     CGAL_assertion(pvertex.first == pother.first);
     CGAL_assertion_msg(KSR::distance(
       m_data.point_2(pvertex.first, m_data.source(iedge)),
-      m_data.point_2(pvertex.first, m_data.target(iedge))) >= ptol,
+      m_data.point_2(pvertex.first, m_data.target(iedge))) >= KSR::point_tolerance<FT>(),
     "TODO: PEDGE -> IEDGE, HANDLE ZERO-LENGTH IEDGE!");
     Point_2 future_point; Vector_2 future_direction;
 
@@ -1192,8 +1250,7 @@ private:
     const auto iedge = m_data.iedge(pvertex);
     const auto source_p = m_data.point_2(pvertex.first, m_data.source(iedge));
     const auto target_p = m_data.point_2(pvertex.first, m_data.target(iedge));
-    const FT ptol = KSR::point_tolerance<FT>();
-    CGAL_assertion_msg(KSR::distance(source_p, target_p) >= ptol,
+    CGAL_assertion_msg(KSR::distance(source_p, target_p) >= KSR::point_tolerance<FT>(),
     "TODO: TRANSFER PVERTEX, HANDLE ZERO-LENGTH IEDGE!");
     const Line_2 iedge_line(source_p, target_p);
 
@@ -1476,12 +1533,27 @@ private:
       CGAL_assertion(CGAL::abs(max_time - curr_time) >= tol);
       const auto pp_futr = m_data.point_2(prev, max_time);
       const auto dirp = Vector_2(pp_curr, pp_futr);
-      shifted_prev = pp_curr + dirp / FT(10);
+
+      bool found_iedge = false;
+      for (const auto& pair : iedges) {
+        const auto& iedge = pair.first;
+        CGAL_assertion(iedge != m_data.null_iedge());
+        if (iedge == m_data.iedge(prev)) {
+          found_iedge = true; break;
+        }
+      }
+
+      if (found_iedge) {
+        shifted_prev = pp_curr + dirp / FT(10); // exclude this iedge
+        CGAL_assertion_msg(false, "TODO: CHECK THIS BACK PREV CASE!");
+      } else shifted_prev = pp_curr - dirp / FT(10); // include this iedge
+
       // CGAL_assertion_msg(false, "TODO: BACK, ADD SHIFTED_PREV FOR SAME TIME EVENTS!");
+
     } else {
       const auto pp_last = m_data.point_2(prev, prev_time);
       const auto dirp = Vector_2(pp_last, pp_curr);
-      shifted_prev = pp_curr - dirp / FT(10);
+      shifted_prev = pp_curr - dirp / FT(10); // include this iedge
     }
 
     if (m_verbose) {
@@ -1545,10 +1617,9 @@ private:
     Point_2 future_point; Vector_2 future_direction;
     IEdge prev_iedge = m_data.null_iedge();
     const auto iedge_0 = crossed_iedges[0].first;
-    const FT ptol = KSR::point_tolerance<FT>();
     CGAL_assertion_msg(KSR::distance(
       m_data.point_2(pvertex.first, m_data.source(iedge_0)),
-      m_data.point_2(pvertex.first, m_data.target(iedge_0))) >= ptol,
+      m_data.point_2(pvertex.first, m_data.target(iedge_0))) >= KSR::point_tolerance<FT>(),
     "TODO: BACK, HANDLE ZERO-LENGTH IEDGE!");
 
     { // future point and direction
@@ -1648,12 +1719,27 @@ private:
       CGAL_assertion(CGAL::abs(max_time - curr_time) >= tol);
       const auto pn_futr = m_data.point_2(next, max_time);
       const auto dirn = Vector_2(pn_curr, pn_futr);
-      shifted_next = pn_curr + dirn / FT(10);
+
+      bool found_iedge = false;
+      for (const auto& pair : iedges) {
+        const auto& iedge = pair.first;
+        CGAL_assertion(iedge != m_data.null_iedge());
+        if (iedge == m_data.iedge(next)) {
+          found_iedge = true; break;
+        }
+      }
+
+      if (found_iedge) {
+        shifted_next = pn_curr + dirn / FT(10); // exclude this iedge
+        CGAL_assertion_msg(false, "TODO: CHECK THIS FRONT NEXT CASE!");
+      } else shifted_next = pn_curr - dirn / FT(10); // include this iedge
+
       // CGAL_assertion_msg(false, "TODO: FRONT, ADD SHIFTED_NEXT FOR SAME TIME EVENTS!");
+
     } else {
       const auto pn_last = m_data.point_2(next, next_time);
       const auto dirn = Vector_2(pn_last, pn_curr);
-      shifted_next = pn_curr - dirn / FT(10);
+      shifted_next = pn_curr - dirn / FT(10); // include this iedge
     }
 
     if (m_verbose) {
@@ -1717,10 +1803,9 @@ private:
     Point_2 future_point; Vector_2 future_direction;
     IEdge next_iedge = m_data.null_iedge();
     const auto iedge_0 = crossed_iedges[0].first;
-    const FT ptol = KSR::point_tolerance<FT>();
     CGAL_assertion_msg(KSR::distance(
       m_data.point_2(pvertex.first, m_data.source(iedge_0)),
-      m_data.point_2(pvertex.first, m_data.target(iedge_0))) >= ptol,
+      m_data.point_2(pvertex.first, m_data.target(iedge_0))) >= KSR::point_tolerance<FT>(),
     "TODO: FRONT, HANDLE ZERO-LENGTH IEDGE!");
 
     { // future point and direction
@@ -1823,12 +1908,27 @@ private:
       CGAL_assertion(CGAL::abs(max_time - curr_time) >= tol);
       const auto pp_futr = m_data.point_2(prev, max_time);
       const auto dirp = Vector_2(pp_curr, pp_futr);
-      shifted_prev = pp_curr + dirp / FT(10);
+
+      bool found_iedge = false;
+      for (const auto& pair : iedges) {
+        const auto& iedge = pair.first;
+        CGAL_assertion(iedge != m_data.null_iedge());
+        if (iedge == m_data.iedge(prev)) {
+          found_iedge = true; break;
+        }
+      }
+
+      if (found_iedge) shifted_prev = pp_curr + dirp / FT(10); // exclude this iedge
+      else {
+        shifted_prev = pp_curr - dirp / FT(10); // include this iedge
+        CGAL_assertion_msg(false, "TODO: CHECK THIS OPEN PREV CASE!");
+      }
       // CGAL_assertion_msg(false, "TODO: OPEN, ADD SHIFTED_PREV FOR SAME TIME EVENTS!");
+
     } else {
       const auto pp_last = m_data.point_2(prev, prev_time);
       const auto dirp = Vector_2(pp_last, pp_curr);
-      shifted_prev = pp_curr - dirp / FT(10);
+      shifted_prev = pp_curr - dirp / FT(10); // include this iedge
     }
 
     Point_2 shifted_next;
@@ -1838,12 +1938,27 @@ private:
       CGAL_assertion(CGAL::abs(max_time - curr_time) >= tol);
       const auto pn_futr = m_data.point_2(next, max_time);
       const auto dirn = Vector_2(pn_curr, pn_futr);
-      shifted_next = pn_curr + dirn / FT(10);
+
+      bool found_iedge = false;
+      for (const auto& pair : iedges) {
+        const auto& iedge = pair.first;
+        CGAL_assertion(iedge != m_data.null_iedge());
+        if (iedge == m_data.iedge(next)) {
+          found_iedge = true; break;
+        }
+      }
+
+      if (found_iedge) shifted_next = pn_curr + dirn / FT(10); // exclude this iedge
+      else {
+        shifted_next = pn_curr - dirn / FT(10); // include this iedge
+        CGAL_assertion_msg(false, "TODO: CHECK THIS OPEN NEXT CASE!");
+      }
       // CGAL_assertion_msg(false, "TODO: OPEN, ADD SHIFTED_NEXT FOR SAME TIME EVENTS!");
+
     } else {
       const auto pn_last = m_data.point_2(next, next_time);
       const auto dirn = Vector_2(pn_last, pn_curr);
-      shifted_next = pn_curr - dirn / FT(10);
+      shifted_next = pn_curr - dirn / FT(10); // include this iedge
     }
 
     if (m_verbose) {
@@ -1907,12 +2022,11 @@ private:
       }
     }
 
-    const FT ptol = KSR::point_tolerance<FT>();
     if (crossed_iedges.size() == 1) {
 
       CGAL_assertion_msg(KSR::distance(
         m_data.point_2(pvertex.first, m_data.source(crossed_iedges[0].first)),
-        m_data.point_2(pvertex.first, m_data.target(crossed_iedges[0].first))) >= ptol,
+        m_data.point_2(pvertex.first, m_data.target(crossed_iedges[0].first))) >= KSR::point_tolerance<FT>(),
       "TODO: OPEN, 1 EDGE CASE, HANDLE ZERO-LENGTH IEDGE!");
 
       new_pvertices.clear();
@@ -1970,7 +2084,7 @@ private:
     { // first future point and direction
       CGAL_assertion_msg(KSR::distance(
         m_data.point_2(pvertex.first, m_data.source(crossed_iedges.front().first)),
-        m_data.point_2(pvertex.first, m_data.target(crossed_iedges.front().first))) >= ptol,
+        m_data.point_2(pvertex.first, m_data.target(crossed_iedges.front().first))) >= KSR::point_tolerance<FT>(),
       "TODO: OPEN, FRONT, HANDLE ZERO-LENGTH IEDGE!");
 
       if (m_verbose) std::cout << "- getting future point and direction, front" << std::endl;
@@ -1990,7 +2104,7 @@ private:
     {
       CGAL_assertion_msg(KSR::distance(
         m_data.point_2(pvertex.first, m_data.source(crossed_iedges.back().first)),
-        m_data.point_2(pvertex.first, m_data.target(crossed_iedges.back().first))) >= ptol,
+        m_data.point_2(pvertex.first, m_data.target(crossed_iedges.back().first))) >= KSR::point_tolerance<FT>(),
       "TODO: OPEN, BACK, HANDLE ZERO-LENGTH IEDGE!");
 
       if (m_verbose) std::cout << "- getting future point and direction, back" << std::endl;

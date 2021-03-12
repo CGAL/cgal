@@ -91,12 +91,15 @@ public:
   // Pop the event by the shortest time: short -> long
   const Event pop() {
 
+    // std::cout << "POPPING EVENTS: " << std::endl;
+    // print();
+
     const auto event_iterator = queue_by_time().begin();
     const Event event = *event_iterator;
     m_queue.erase(event_iterator);
 
     const FT tol = KSR::tolerance<FT>();
-    const FT time_diff = CGAL::abs(queue_by_time().begin()->time() - event.time());
+    const FT time_diff = CGAL::abs(next().time() - event.time());
     if (time_diff < tol) {
       if (m_verbose) {
         std::cout << "WARNING: NEXT EVENT IS HAPPENNING AT THE SAME TIME!" << std::endl;

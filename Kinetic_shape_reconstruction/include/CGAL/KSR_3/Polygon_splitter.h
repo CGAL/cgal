@@ -618,8 +618,6 @@ private:
     const Point_2& query) const {
 
     const FT tol = KSR::tolerance<FT>();
-    const FT ptol = KSR::point_tolerance<FT>();
-
     const std::size_t n = polygon.size();
     for (std::size_t i = 0; i < n; ++i) {
       const std::size_t ip = (i + 1) % n;
@@ -636,7 +634,7 @@ private:
 
       const auto& source = vh_source->point();
       const auto& target = vh_target->point();
-      CGAL_assertion(KSR::distance(source, target) >= ptol);
+      CGAL_assertion(KSR::distance(source, target) >= KSR::point_tolerance<FT>());
 
       const FT half = FT(1) / FT(2);
       const Vector_2 s1(query, source);
@@ -1210,10 +1208,9 @@ private:
     CGAL_assertion(sp_idx == n1.first);
     CGAL_assertion(sp_idx == n2.first);
 
-    const FT ptol = KSR::point_tolerance<FT>();
     CGAL_assertion_msg(KSR::distance(
       m_data.point_2(sp_idx, m_data.source(iedge)),
-      m_data.point_2(sp_idx, m_data.target(iedge))) >= ptol,
+      m_data.point_2(sp_idx, m_data.target(iedge))) >= KSR::point_tolerance<FT>(),
     "TODO: SET FUTURE DIRECTION, HANDLE ZERO-LENGTH IEDGE!");
 
     const bool is_debug = false;

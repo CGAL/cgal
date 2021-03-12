@@ -1254,7 +1254,6 @@ public:
     CGAL_assertion(iedges.size() >= 2);
     CGAL_assertion(iedges.size() == pvertices.size());
     CGAL_assertion(pvertices.front() != null_pvertex());
-    const FT ptol = KSR::point_tolerance<FT>();
     for (std::size_t i = 0; i < iedges.size() - 1; ++i) {
 
       if (iedges[i].second) {
@@ -1299,7 +1298,7 @@ public:
         const auto& iedge_ip = iedges[ip].first;
         CGAL_assertion_msg(KSR::distance(
           point_2(pvertex.first, ivertex),
-          point_2(pvertex.first, opposite(iedge_ip, ivertex))) >= ptol,
+          point_2(pvertex.first, opposite(iedge_ip, ivertex))) >= KSR::point_tolerance<FT>(),
         "TODO: TRAVERSE IEDGES GLOBAL, HANDLE ZERO-LENGTH IEDGE IP!");
 
         add_new_pface(pvertex, pv_prev, pv_next, is_open, reverse, i, iedge_ip, pvertices);
@@ -2646,8 +2645,7 @@ public:
 
     const auto source_p = point_2(pvertex.first, source(iedge));
     const auto target_p = point_2(pvertex.first, target(iedge));
-    const FT ptol = KSR::point_tolerance<FT>();
-    CGAL_assertion_msg(KSR::distance(source_p, target_p) >= ptol,
+    CGAL_assertion_msg(KSR::distance(source_p, target_p) >= KSR::point_tolerance<FT>(),
     "TODO: COMPUTE FUTURE POINTS AND DIRECTIONS, HANDLE ZERO-LENGTH IEDGE!");
 
     const Vector_2 iedge_vec(source_p, target_p);
@@ -2788,8 +2786,7 @@ public:
     bool is_parallel = false;
     const auto source_p = point_2(pvertex.first, source(iedge));
     const auto target_p = point_2(pvertex.first, target(iedge));
-    const FT ptol = KSR::point_tolerance<FT>();
-    CGAL_assertion_msg(KSR::distance(source_p, target_p) >= ptol,
+    CGAL_assertion_msg(KSR::distance(source_p, target_p) >= KSR::point_tolerance<FT>(),
     "TODO: COMPUTE FUTURE POINT AND DIRECTION 1, HANDLE ZERO-LENGTH IEDGE!");
 
     const Vector_2 iedge_vec(source_p, target_p);
@@ -2874,8 +2871,7 @@ public:
     bool is_parallel = false;
     const auto source_p = point_2(pvertex.first, source(iedge));
     const auto target_p = point_2(pvertex.first, target(iedge));
-    const FT ptol = KSR::point_tolerance<FT>();
-    CGAL_assertion_msg(KSR::distance(source_p, target_p) >= ptol,
+    CGAL_assertion_msg(KSR::distance(source_p, target_p) >= KSR::point_tolerance<FT>(),
     "TODO: COMPUTE FUTURE POINT AND DIRECTION 2, HANDLE ZERO-LENGTH IEDGE!");
 
     const Line_2 iedge_line(source_p, target_p);
