@@ -41,6 +41,8 @@
 #include <CGAL/squared_distance_Line_3_Line_3.h>
 #include <CGAL/squared_distance_Line_3_Plane_3.h>
 
+#include <CGAL/squared_distance_Triangle_3_Triangle_3.h>
+
 #include <CGAL/squared_distance_Plane_3_Plane_3.h>
 
 #endif // CGAL_DISTANCE_3_H
