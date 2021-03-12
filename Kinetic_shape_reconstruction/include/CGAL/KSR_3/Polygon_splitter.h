@@ -1210,9 +1210,10 @@ private:
     CGAL_assertion(sp_idx == n1.first);
     CGAL_assertion(sp_idx == n2.first);
 
-    CGAL_assertion_msg(
-      m_data.point_2(sp_idx, m_data.source(iedge)) !=
-      m_data.point_2(sp_idx, m_data.target(iedge)),
+    const FT ptol = KSR::point_tolerance<FT>();
+    CGAL_assertion_msg(KSR::distance(
+      m_data.point_2(sp_idx, m_data.source(iedge)),
+      m_data.point_2(sp_idx, m_data.target(iedge))) >= ptol,
     "TODO: SET FUTURE DIRECTION, HANDLE ZERO-LENGTH IEDGE!");
 
     const bool is_debug = false;

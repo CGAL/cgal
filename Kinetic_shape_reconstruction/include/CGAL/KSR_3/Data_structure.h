@@ -1254,6 +1254,7 @@ public:
     CGAL_assertion(iedges.size() >= 2);
     CGAL_assertion(iedges.size() == pvertices.size());
     CGAL_assertion(pvertices.front() != null_pvertex());
+    const FT ptol = KSR::point_tolerance<FT>();
     for (std::size_t i = 0; i < iedges.size() - 1; ++i) {
 
       if (iedges[i].second) {
@@ -1296,10 +1297,10 @@ public:
         if (m_verbose) std::cout << "- free, any k, continue" << std::endl;
         const std::size_t ip = i + 1;
         const auto& iedge_ip = iedges[ip].first;
-        CGAL_assertion_msg(
-          point_2(pvertex.first, ivertex) !=
-          point_2(pvertex.first, opposite(iedge_ip, ivertex)),
-        "TODO: TRAVERSE IEDGES GLOBAL, HANDLE ZERO LENGTH IEDGE IP!");
+        CGAL_assertion_msg(KSR::distance(
+          point_2(pvertex.first, ivertex),
+          point_2(pvertex.first, opposite(iedge_ip, ivertex))) >= ptol,
+        "TODO: TRAVERSE IEDGES GLOBAL, HANDLE ZERO-LENGTH IEDGE IP!");
 
         add_new_pface(pvertex, pv_prev, pv_next, is_open, reverse, i, iedge_ip, pvertices);
         ++num_added_pfaces;
@@ -1378,6 +1379,8 @@ public:
         if (m_verbose) std::cout << "- new pvertex, back/front, parallel case" << std::endl;
         CGAL_assertion_msg(!is_parallel,
         "TODO: CREATE PVERTEX, BACK/FRONT, ADD PARALLEL CASE!");
+      } else {
+        if (m_verbose) std::cout << "- new pvertex, back/front, standard case" << std::endl;
       }
     } else {
       is_parallel = compute_future_point_and_direction(
@@ -1386,6 +1389,8 @@ public:
         if (m_verbose) std::cout << "- new pvertex, open, parallel case" << std::endl;
         CGAL_assertion_msg(!is_parallel,
         "TODO: CREATE_PVERTEX, OPEN, ADD PARALLEL CASE!");
+      } else {
+        if (m_verbose) std::cout << "- new pvertex, open, standard case" << std::endl;
       }
     }
 
@@ -2399,6 +2404,28 @@ public:
     return true;
   }
 
+  const bool check_intersection_graph() const {
+
+    std::cout.precision(20);
+    const FT ptol = KSR::point_tolerance<FT>();
+    const auto iedges = m_intersection_graph.edges();
+    for (const auto iedge : iedges) {
+      const auto isource = source(iedge);
+      const auto itarget = target(iedge);
+      const auto source_p = point_3(isource);
+      const auto target_p = point_3(itarget);
+      const FT distance = KSR::distance(source_p, target_p);
+      if (distance < ptol) {
+        std::cout << "ERROR: FOUND ZERO-LENGTH IEDGE: "
+        << str(iedge) << ", " << distance << ", " << segment_3(iedge) << std::endl;
+        CGAL_assertion_msg(distance >= ptol,
+        "ERROR: INTERSECTION GRAPH HAS ZERO-LENGTH IEDGES!");
+        return false;
+      }
+    }
+    return true;
+  }
+
   const bool is_mesh_valid(
     const bool check_simplicity,
     const bool check_convexity,
@@ -2619,7 +2646,8 @@ public:
 
     const auto source_p = point_2(pvertex.first, source(iedge));
     const auto target_p = point_2(pvertex.first, target(iedge));
-    CGAL_assertion_msg(source_p != target_p,
+    const FT ptol = KSR::point_tolerance<FT>();
+    CGAL_assertion_msg(KSR::distance(source_p, target_p) >= ptol,
     "TODO: COMPUTE FUTURE POINTS AND DIRECTIONS, HANDLE ZERO-LENGTH IEDGE!");
 
     const Vector_2 iedge_vec(source_p, target_p);
@@ -2760,7 +2788,8 @@ public:
     bool is_parallel = false;
     const auto source_p = point_2(pvertex.first, source(iedge));
     const auto target_p = point_2(pvertex.first, target(iedge));
-    CGAL_assertion_msg(source_p != target_p,
+    const FT ptol = KSR::point_tolerance<FT>();
+    CGAL_assertion_msg(KSR::distance(source_p, target_p) >= ptol,
     "TODO: COMPUTE FUTURE POINT AND DIRECTION 1, HANDLE ZERO-LENGTH IEDGE!");
 
     const Vector_2 iedge_vec(source_p, target_p);
@@ -2845,7 +2874,8 @@ public:
     bool is_parallel = false;
     const auto source_p = point_2(pvertex.first, source(iedge));
     const auto target_p = point_2(pvertex.first, target(iedge));
-    CGAL_assertion_msg(source_p != target_p,
+    const FT ptol = KSR::point_tolerance<FT>();
+    CGAL_assertion_msg(KSR::distance(source_p, target_p) >= ptol,
     "TODO: COMPUTE FUTURE POINT AND DIRECTION 2, HANDLE ZERO-LENGTH IEDGE!");
 
     const Line_2 iedge_line(source_p, target_p);

@@ -122,6 +122,7 @@ public:
     m_data.set_limit_lines();
     m_data.precompute_iedge_data();
     CGAL_assertion(m_data.check_integrity());
+    CGAL_assertion(m_data.check_intersection_graph());
 
     return CGAL::to_double(time_step);
   }

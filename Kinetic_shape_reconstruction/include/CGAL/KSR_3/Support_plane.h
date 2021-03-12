@@ -396,7 +396,7 @@ public:
   template<typename Pair>
   const bool is_valid_polygon(const std::vector<Pair>& polygon) const {
 
-    const FT ptol = KSR::tolerance<FT>();
+    const FT ptol = KSR::point_tolerance<FT>();
     for (std::size_t i = 0; i < polygon.size(); ++i) {
       const std::size_t ip = (i + 1) % polygon.size();
       const auto& p = polygon[i].first;
