@@ -25,6 +25,119 @@
 #include <boost/algorithm/clamp.hpp>
 
 namespace CGAL {
+namespace Distance_3 {
+namespace internal {
+
+template <typename K>
+struct Segment_3_Segment_3_Result
+{
+  typename K::FT x, y;
+  typename K::FT squared_distance;
+};
+
+// Using Lumelsky, 'On Fast Computation of Distance Between Line Segments' 1984
+template <typename K>
+Segment_3_Segment_3_Result<K>
+squared_distance(const typename K::Segment_3& s1,
+                 const typename K::Segment_3& s2,
+                 const K& k)
+{
+  typedef typename K::FT                                                  FT;
+  typedef typename K::Point_3                                             Point_3;
+  typedef typename K::Vector_3                                            Vector_3;
+
+  typename K::Construct_vertex_3 vertex = k.construct_vertex_3_object();
+  typename K::Construct_vector_3 cv = k.construct_vector_3_object();
+  typename K::Compute_scalar_product_3 sp = k.compute_scalar_product_3_object();
+
+  Segment_3_Segment_3_Result<K> res;
+
+  const Point_3& p1 = vertex(s1, 0);
+  const Point_3& q1 = vertex(s1, 1);
+  const Point_3& p2 = vertex(s2, 0);
+  const Point_3& q2 = vertex(s2, 1);
+  const Vector_3 v1 = cv(p1, q1), v2 = cv(p2, q2);
+  const Vector_3 p1p2 = cv(p1, p2);
+
+  // @todo compute these only when needed?
+  const FT a =   sp(v1, v1);
+  const FT b = - sp(v1, v2);
+  const FT c = - b;
+  const FT d = - sp(v2, v2);
+  const FT e =   sp(v1, p1p2);
+  const FT f =   sp(v2, p1p2);
+
+  if(p1 == q1)
+  {
+    if(p2 == q2)
+    {
+      res.x = 0;
+      res.y = 0;
+      res.squared_distance = CGAL::squared_distance(p1, p2);
+      return res;
+    }
+
+    CGAL_assertion(d != 0);
+
+    res.x = 0;
+    res.y = boost::algorithm::clamp(f/d, 0, 1); // (f - x*c) / d
+    res.squared_distance = CGAL::squared_distance(p1, p2 + res.y*v2);
+
+    return res;
+  }
+  else if(p2 == q2)
+  {
+    CGAL_assertion(a != 0);
+
+    res.y = 0;
+    res.x = boost::algorithm::clamp(e/a, 0, 1); // (e + y*c) / a
+    res.squared_distance = CGAL::squared_distance(p1 + res.x*v1, p2);
+
+    return res;
+  }
+
+  CGAL_assertion(a > 0 && d < 0);
+
+  const FT det = a*d - b*c;
+  if(det == 0)
+    res.x = 0;
+  else
+    res.x = boost::algorithm::clamp((e*d - b*f) / det, 0, 1);
+
+  FT xc = res.x*c;
+  // res.y = (f - xc) / d, by definition, but building it up more efficiently
+  if(f > xc) // y < 0 <=> f - xc / d < 0 <=> f - xc > 0 (since d is -||v2||)
+  {
+    res.y = 0;
+    res.x = boost::algorithm::clamp(e/a, 0, 1); // (e + y*c) / a
+  }
+  else // y >= 0
+  {
+    FT n = f - xc; // delay the division by d
+    if(n < d) // y > 1 <=> n / d > 1 <=> n < d (once again, important to note that d is negative!)
+    {
+      res.y = 1;
+      res.x = boost::algorithm::clamp((e + c) / a, 0, 1); // (e + y*c) / a
+    }
+    else // 0 <= y <= 1
+    {
+      res.y = n / d;
+    }
+  }
+
+  CGAL_postcondition(FT(0) <= res.x && res.x <= FT(1));
+  CGAL_postcondition(FT(0) <= res.y && res.y <= FT(1));
+
+  res.squared_distance = CGAL::squared_distance(p1 + res.x*v1, p2 + res.y*v2);
+
+  CGAL_postcondition(res.squared_distance >= FT(0));
+
+  return res;
+}
+
+} // namespace internal
+} // namespace Distance_3
+
 namespace internal {
 
 template <class K>
@@ -55,117 +168,16 @@ squared_distance_parallel(const typename K::Segment_3& seg1,
   return squared_distance(seg2.source(), seg1.supporting_line(), k);
 }
 
-template <class K>
+template <typename K>
 typename K::FT
 squared_distance(const typename K::Segment_3& seg1,
                  const typename K::Segment_3& seg2,
                  const K& k)
 {
-  typedef typename K::Vector_3 Vector_3;
-  typedef typename K::Point_3 Point_3;
-  typedef typename K::RT RT;
-  typedef typename K::FT FT;
+  Distance_3::internal::Segment_3_Segment_3_Result<K> res =
+      Distance_3::internal::squared_distance(seg1, seg2, k);
 
-  typename K::Construct_vector_3 construct_vector;
-
-  const Point_3& start1 = seg1.source();
-  const Point_3& start2 = seg2.source();
-  const Point_3& end1 = seg1.target();
-  const Point_3& end2 = seg2.target();
-
-  if(start1 == end1)
-    return squared_distance(start1, seg2, k);
-  if(start2 == end2)
-    return squared_distance(start2, seg1, k);
-
-  Vector_3 dir1, dir2, normal;
-  dir1 = seg1.direction().vector();
-  dir2 = seg2.direction().vector();
-  normal = wcross(dir1, dir2, k);
-  if(is_null(normal, k))
-    return squared_distance_parallel(seg1, seg2, k);
-
-  bool crossing1, crossing2;
-  RT sdm_s1to2, sdm_e1to2, sdm_s2to1, sdm_e2to1;
-  Vector_3 perpend1, perpend2, s2mins1, e2mins1, e1mins2;
-  perpend1 = wcross(dir1, normal, k);
-  perpend2 = wcross(dir2, normal, k);
-  s2mins1 = construct_vector(start1, start2);
-  e2mins1 = construct_vector(start1, end2);
-  e1mins2 = construct_vector(start2, end1);
-  sdm_s1to2 = -RT(wdot(perpend2, s2mins1, k));
-  sdm_e1to2 = wdot(perpend2, e1mins2, k);
-  sdm_s2to1 = wdot(perpend1, s2mins1, k);
-  sdm_e2to1 = wdot(perpend1, e2mins1, k);
-
-  if(sdm_s1to2 < RT(0)) {
-    crossing1 = (sdm_e1to2 >= RT(0));
-  } else {
-    if(sdm_e1to2 <= RT(0)) {
-      crossing1 = true;
-    } else {
-      crossing1 = (sdm_s1to2 == RT(0));
-    }
-  }
-  if(sdm_s2to1 < RT(0)) {
-    crossing2 = (sdm_e2to1 >= RT(0));
-  } else {
-    if(sdm_e2to1 <= RT(0)) {
-      crossing2 = true;
-    } else {
-      crossing2 = (sdm_s2to1 == RT(0));
-    }
-  }
-
-  if(crossing1) {
-    if(crossing2) {
-      return squared_distance_to_plane(normal, s2mins1, k);
-    }
-
-    RT dm;
-    dm = distance_measure_sub(sdm_s2to1, sdm_e2to1, s2mins1, e2mins1, k);
-    if(dm < RT(0)) {
-      return squared_distance(start2, seg1, k);
-    } else {
-      if(dm > RT(0)) {
-        return squared_distance(end2, seg1, k);
-      } else {
-        // should not happen with exact arithmetic.
-        return squared_distance_parallel(seg1, seg2, k);
-      }
-    }
-  } else {
-    if(crossing2) {
-      RT dm;
-      dm =distance_measure_sub(sdm_s1to2, sdm_e1to2, s2mins1, e1mins2, k);
-      if(dm < RT(0)) {
-        return squared_distance(start1, seg2, k);
-      } else {
-        if(dm > RT(0)) {
-          return squared_distance(end1, seg2, k);
-        } else {
-          // should not happen with exact arithmetic.
-          return squared_distance_parallel(seg1, seg2, k);
-        }
-      }
-    } else {
-      FT min1, min2;
-      RT dm;
-      dm = distance_measure_sub(sdm_s1to2, sdm_e1to2, s2mins1, e1mins2, k);
-      if(dm == RT(0)) // should not happen with exact arithmetic.
-        return squared_distance_parallel(seg1, seg2, k);
-      min1 = (dm < RT(0)) ?
-               squared_distance(seg1.source(), seg2, k):
-               squared_distance(end1, seg2, k);
-      dm = distance_measure_sub(sdm_s2to1, sdm_e2to1, s2mins1, e2mins1, k);
-      if(dm == RT(0)) // should not happen with exact arithmetic.
-        return squared_distance_parallel(seg1, seg2, k);
-      min2 = (dm < RT(0)) ?
-               squared_distance(start2, seg1, k):
-               squared_distance(end2, seg1, k);
-      return (min1 < min2) ? min1 : min2;
-    }
-  }
+  return res.squared_distance;
 }
 
 } // namespace internal
