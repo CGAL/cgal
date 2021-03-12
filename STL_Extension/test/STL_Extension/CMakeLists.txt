@@ -9,6 +9,16 @@ find_package(CGAL REQUIRED)
 find_package( TBB QUIET )
 include(CGAL_TBB_support)
 
+find_package(OpenMesh QUIET)
+
+if(OpenMesh_FOUND)
+  include(UseOpenMesh)
+  add_definitions(-DCGAL_USE_OPENMESH)
+else()
+  message(STATUS "Tests that use OpenMesh will not be compiled.")
+endif()
+
+
 create_single_source_cgal_program( "test_Boolean_tag.cpp" )
 create_single_source_cgal_program( "test_Cache.cpp" )
 create_single_source_cgal_program( "test_Compact_container.cpp" )
@@ -48,4 +58,9 @@ create_single_source_cgal_program( "test_join_iterators.cpp" )
 create_single_source_cgal_program( "test_for_each.cpp" )
 if(TARGET CGAL::TBB_support)
   target_link_libraries(test_for_each PUBLIC CGAL::TBB_support)
+endif()
+
+if(OpenMesh_FOUND)
+  create_single_source_cgal_program("test_hash_OpenMesh.cpp")
+  target_link_libraries(test_hash_OpenMesh PRIVATE ${OPENMESH_LIBRARIES})
 endif()

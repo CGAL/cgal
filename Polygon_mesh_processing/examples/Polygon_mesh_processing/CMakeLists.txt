@@ -97,6 +97,10 @@ if(OpenMesh_FOUND)
   target_link_libraries(compute_normals_example_OM
                         PRIVATE ${OPENMESH_LIBRARIES})
 
+  create_single_source_cgal_program("corefinement_OM_union.cpp")
+  target_link_libraries(corefinement_OM_union
+                        PRIVATE ${OPENMESH_LIBRARIES})
+
   if(TARGET CGAL::Eigen3_support)
     create_single_source_cgal_program("hole_filling_example_OM.cpp")
     target_link_libraries(hole_filling_example_OM PRIVATE CGAL::Eigen3_support

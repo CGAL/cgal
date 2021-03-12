@@ -25,7 +25,7 @@ if(NOT TARGET CGAL::Eigen3_support)
   return()
 endif()
 
-find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
+find_package(Qt5 QUIET COMPONENTS Script OpenGL Svg)
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_USE_FILE})

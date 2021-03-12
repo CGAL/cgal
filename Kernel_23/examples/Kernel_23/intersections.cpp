@@ -2,8 +2,6 @@
 #include <CGAL/iterator.h>
 #include <CGAL/point_generators_2.h>
 
-#include <boost/bind.hpp>
-
 typedef CGAL::Exact_predicates_exact_constructions_kernel K;
 typedef K::Point_2                     Point;
 typedef K::Segment_2                   Segment;

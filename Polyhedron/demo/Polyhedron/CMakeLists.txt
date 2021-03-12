@@ -16,10 +16,6 @@ if(has_cpp11 LESS 0)
   return()
 endif()
 
-# Use C++11 for this directory and its sub-directories.
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
-
 #Defines flags to emulate windows behavior for linking error generation
 if(CMAKE_CXX_COMPILER_ID EQUAL Clang
    OR CMAKE_COMPILER_IS_GNUCC
@@ -217,7 +213,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     Polyhedron_demo_plugin_helper.cpp
     CGAL_double_edit.cpp)
   target_link_libraries(demo_framework PUBLIC Qt5::OpenGL Qt5::Widgets Qt5::Gui
-                                              Qt5::Script)
+                                              Qt5::Script CGAL::CGAL_Qt5)
   if(TARGET Qt5::WebSockets)
     target_link_libraries(demo_framework PUBLIC Qt5::WebSockets)
     message(

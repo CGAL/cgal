@@ -408,7 +408,7 @@ namespace CGAL {
       size_type number_of_subcurves() const;
 
       /*! Obtain the \f$ k\f$th subcurve of the polycurve.
-       * \pre \f$k\f$ is not greater then or equal to \f$n-1\f$, where
+       * \pre \f$k\f$ is not greater than or equal to \f$n-1\f$, where
        *      \f$n\f$ is the number of subcurves.
        */
       typename SubcurveTraits_2::X_monotone_curve_2

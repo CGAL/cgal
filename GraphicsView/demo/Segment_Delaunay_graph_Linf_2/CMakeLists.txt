@@ -20,7 +20,7 @@ set(QT_USE_QTMAIN TRUE)
 set(QT_USE_QTSCRIPT TRUE)
 set(QT_USE_QTOPENGL TRUE)
 
-find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
+find_package(Qt5 QUIET COMPONENTS Script OpenGL Svg)
 include_directories(BEFORE ./include)
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
