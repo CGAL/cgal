@@ -12,34 +12,25 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Geert-Jan Giezeman, Andreas Fabri
+// Author(s)     : Geert-Jan Giezeman
 
+#ifndef CGAL_SQUARED_DISTANCE_UTILS_3_H
+#define CGAL_SQUARED_DISTANCE_UTILS_3_H
 
-#ifndef CGAL_DISTANCE_3_0_H
-#define CGAL_DISTANCE_3_0_H
-
-#include <CGAL/kernel_assertions.h>
+#include <CGAL/determinant.h>
 #include <CGAL/enum.h>
+#include <CGAL/number_utils.h>
 #include <CGAL/wmult.h>
 
-#include <CGAL/Point_3.h>
-#include <CGAL/Weighted_point_3.h>
-#include <CGAL/Vector_3.h>
-#include <CGAL/number_utils.h>
-
 namespace CGAL {
-
-
 namespace internal {
 
 template <class K>
 bool is_null(const typename K::Vector_3 &v, const K&)
 {
-    typedef typename K::RT RT;
-    return v.hx()==RT(0) && v.hy()==RT(0) && v.hz()==RT(0);
+  typedef typename K::RT RT;
+  return v.hx() == RT(0) && v.hy() == RT(0) && v.hz() == RT(0);
 }
-
-
 
 template <class K>
 typename K::RT
@@ -47,7 +38,7 @@ wdot(const typename K::Vector_3 &u,
      const typename K::Vector_3 &v,
      const K&)
 {
-    return  (u.hx()*v.hx() + u.hy()*v.hy() + u.hz()*v.hz());
+  return  (u.hx()*v.hx() + u.hy()*v.hy() + u.hz()*v.hz());
 }
 
 template <class K>
@@ -71,12 +62,12 @@ wdot_tag(const typename K::Point_3 &p,
          const K&,
          const Homogeneous_tag&)
 {
-    return  ( (p.hx() * q.hw() - q.hx() * p.hw())
-              * (r.hx() * q.hw() - q.hx() * r.hw())
-              + (p.hy() * q.hw() - q.hy() * p.hw())
-              * (r.hy() * q.hw() - q.hy() * r.hw())
-              + (p.hz() * q.hw() - q.hz() * p.hw())
-              * (r.hz() * q.hw() - q.hz() * r.hw()));
+  return  ( (p.hx() * q.hw() - q.hx() * p.hw())
+            * (r.hx() * q.hw() - q.hx() * r.hw())
+            + (p.hy() * q.hw() - q.hy() * p.hw())
+            * (r.hy() * q.hw() - q.hy() * r.hw())
+            + (p.hz() * q.hw() - q.hz() * p.hw())
+            * (r.hz() * q.hw() - q.hz() * r.hw()));
 }
 
 template <class K>
@@ -92,9 +83,6 @@ wdot(const typename K::Point_3 &p,
   return wdot_tag(p, q, r, k, tag);
 }
 
-
-
-
 template <class K>
 typename K::Vector_3
 wcross(const typename K::Vector_3 &u,
@@ -102,12 +90,11 @@ wcross(const typename K::Vector_3 &u,
        const K&)
 {
   typedef typename K::Vector_3 Vector_3;
-    return Vector_3(
+  return Vector_3(
         u.hy()*v.hz() - u.hz()*v.hy(),
         u.hz()*v.hx() - u.hx()*v.hz(),
         u.hx()*v.hy() - u.hy()*v.hx());
 }
-
 
 template <class K>
 inline
@@ -116,8 +103,8 @@ is_acute_angle(const typename K::Vector_3 &u,
                const typename K::Vector_3 &v,
                const K& k)
 {
-    typedef typename K::RT RT;
-    return RT(wdot(u, v, k)) > RT(0) ;
+  typedef typename K::RT RT;
+  return RT(wdot(u, v, k)) > RT(0) ;
 }
 
 template <class K>
@@ -127,8 +114,8 @@ is_straight_angle(const typename K::Vector_3 &u,
                   const typename K::Vector_3 &v,
                   const K& k)
 {
-    typedef typename K::RT RT;
-    return RT(wdot(u, v, k)) == RT(0) ;
+  typedef typename K::RT RT;
+  return RT(wdot(u, v, k)) == RT(0) ;
 }
 
 template <class K>
@@ -138,8 +125,8 @@ is_obtuse_angle(const typename K::Vector_3 &u,
                 const typename K::Vector_3 &v,
                 const K& k)
 {
-    typedef typename K::RT RT;
-    return RT(wdot(u, v, k)) < RT(0) ;
+  typedef typename K::RT RT;
+  return RT(wdot(u, v, k)) < RT(0) ;
 }
 
 template <class K>
@@ -150,8 +137,8 @@ is_acute_angle(const typename K::Point_3 &p,
                const typename K::Point_3 &r,
                const K& k)
 {
-    typedef typename K::RT RT;
-    return RT(wdot(p, q, r, k)) > RT(0) ;
+  typedef typename K::RT RT;
+  return RT(wdot(p, q, r, k)) > RT(0) ;
 }
 
 template <class K>
@@ -162,8 +149,8 @@ is_straight_angle(const typename K::Point_3 &p,
                   const typename K::Point_3 &r,
                   const K& k)
 {
-    typedef typename K::RT RT;
-    return RT(wdot(p, q, r, k)) == RT(0) ;
+  typedef typename K::RT RT;
+  return RT(wdot(p, q, r, k)) == RT(0) ;
 }
 
 template <class K>
@@ -172,21 +159,11 @@ bool
 is_obtuse_angle(const typename K::Point_3 &p,
                 const typename K::Point_3 &q,
                 const typename K::Point_3 &r,
-                  const K& k)
+                const K& k)
 {
-    typedef typename K::RT RT;
-    return RT(wdot(p, q, r, k)) < RT(0) ;
+  typedef typename K::RT RT;
+  return RT(wdot(p, q, r, k)) < RT(0) ;
 }
-template <class K>
-inline
-typename K::FT
-squared_distance(const typename K::Point_3 & pt1,
-                 const typename K::Point_3 & pt2,
-                 const K& k)
-{
-  return k.compute_squared_distance_3_object()(pt1, pt2);
-}
-
 
 template <class K>
 typename K::FT
@@ -199,10 +176,8 @@ squared_distance_to_plane(const typename K::Vector_3 & normal,
   RT dot, squared_length;
   dot = wdot(normal, diff, k);
   squared_length = wdot(normal, normal, k);
-  return FT(dot*dot) /
-    FT(wmult((K*)0, squared_length, diff.hw(), diff.hw()));
+  return FT(dot*dot) / FT(wmult((K*)0, squared_length, diff.hw(), diff.hw()));
 }
-
 
 template <class K>
 typename K::FT
@@ -214,10 +189,8 @@ squared_distance_to_line(const typename K::Vector_3 & dir,
   typedef typename K::RT RT;
   typedef typename K::FT FT;
   Vector_3 wcr = wcross(dir, diff, k);
-  return FT(wcr*wcr)/FT(wmult(
-                              (K*)0, RT(wdot(dir, dir, k)), diff.hw(), diff.hw()));
+  return FT(wcr*wcr)/FT(wmult((K*)0, RT(wdot(dir, dir, k)), diff.hw(), diff.hw()));
 }
-
 
 template <class K>
 inline
@@ -246,7 +219,6 @@ same_direction_tag(const typename K::Vector_3 &u,
   }
 }
 
-
 template <class K>
 inline
 bool
@@ -274,7 +246,6 @@ same_direction_tag(const typename K::Vector_3 &u,
   }
 }
 
-
 template <class K>
 inline
 bool
@@ -287,70 +258,19 @@ same_direction(const typename K::Vector_3 &u,
   return same_direction_tag(u, v, k, tag);
 }
 
+template <class K>
+inline
+typename K::RT
+distance_measure_sub(typename K::RT startwdist, typename K::RT endwdist,
+                     const typename K::Vector_3 &start,
+                     const typename K::Vector_3 &end,
+                     const K&)
+{
+  return CGAL_NTS abs(wmult((K*)0, startwdist, end.hw())) -
+         CGAL_NTS abs(wmult((K*)0, endwdist, start.hw()));
+}
 
 } // namespace internal
+} // namespace CGAL
 
-template <class K>
-inline
-typename K::FT
-squared_distance(const Point_3<K> & pt1,
-                 const Point_3<K> & pt2)
-{
-  return internal::squared_distance(pt1,pt2, K());
-}
-
-
-template <class K>
-inline
-typename K::FT
-squared_distance(const Weighted_point_3<K> & pt1,
-                 const Weighted_point_3<K> & pt2)
-{
-  return internal::squared_distance(pt1.point(),pt2.point(), K());
-}
-
-template <class K>
-inline
-typename K::FT
-squared_distance(const Weighted_point_3<K> & pt1,
-                 const Point_3<K> & pt2)
-{
-  return internal::squared_distance(pt1.point(),pt2, K());
-}
-
-template <class K>
-inline
-typename K::FT
-squared_distance(const Point_3<K> & pt1,
-                 const Weighted_point_3<K> & pt2)
-{
-  return internal::squared_distance(pt1,pt2.point(), K());
-}
-
-
-
-template <class K>
-inline
-typename K::FT
-squared_distance_to_plane(const Vector_3<K> & normal,
-                          const Vector_3<K> & diff)
-{
-  return internal::squared_distance_to_plane(normal, diff, K());
-}
-
-
-template <class K>
-inline
-typename K::FT
-squared_distance_to_line(const Vector_3<K> & dir,
-                         const Vector_3<K> & diff)
-{
-  return internal::squared_distance_to_line(dir, diff, K());
-}
-
-
-
-} //namespace CGAL
-
-
-#endif
+#endif // CGAL_SQUARED_DISTANCE_UTILS_3_H
