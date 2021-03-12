@@ -13,7 +13,9 @@
 #ifndef CGAL_TRIANGLE_3_SPHERE_3_DO_INTERSECT_H
 #define CGAL_TRIANGLE_3_SPHERE_3_DO_INTERSECT_H
 
-#include <CGAL/squared_distance_3_2.h>
+#include <CGAL/squared_distance_Point_3_Segment_3.h>
+#include <CGAL/squared_distance_Point_3_Ray_3.h>
+#include <CGAL/squared_distance_Point_3_Line_3.h>
 #include <CGAL/Intersection_traits_3.h>
 
 namespace CGAL {
@@ -77,42 +79,42 @@ template <class K>
 inline
 typename K::Boolean
 do_intersect(const typename K::Sphere_3 &sp,
-             const typename K::Ray_3 &lin,
+             const typename K::Ray_3 &ray,
              const K & /* k */)
 {
-  return squared_distance(sp.center(), lin) <= sp.squared_radius();
+  return squared_distance(sp.center(), ray) <= sp.squared_radius();
 }
 
 
 template <class K>
 inline
 typename K::Boolean
-do_intersect(const typename K::Ray_3 &lin,
+do_intersect(const typename K::Ray_3 &ray,
              const typename K::Sphere_3 &sp,
              const K & /* k */)
 {
-  return squared_distance(sp.center(), lin) <= sp.squared_radius();
+  return squared_distance(sp.center(), ray) <= sp.squared_radius();
 }
 
 template <class K>
 inline
 typename K::Boolean
 do_intersect(const typename K::Sphere_3 &sp,
-             const typename K::Segment_3 &lin,
+             const typename K::Segment_3 &seg,
              const K & /* k */)
 {
-  return squared_distance(sp.center(), lin) <= sp.squared_radius();
+  return squared_distance(sp.center(), seg) <= sp.squared_radius();
 }
 
 
 template <class K>
 inline
 typename K::Boolean
-do_intersect(const typename K::Segment_3 &lin,
+do_intersect(const typename K::Segment_3 &seg,
              const typename K::Sphere_3 &sp,
              const K & /* k */)
 {
-  return squared_distance(sp.center(), lin) <= sp.squared_radius();
+  return squared_distance(sp.center(), seg) <= sp.squared_radius();
 }
 
 } // namespace internal
