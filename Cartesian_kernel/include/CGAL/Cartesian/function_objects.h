@@ -480,15 +480,15 @@ namespace CartesianKernelFunctors {
     {
       Vector_3 diff = construct_vector(seg1.source(), pt);
       Vector_3 segvec = construct_vector(seg1.source(), seg1.target());
-      RT d = wdot(diff,segvec, k);
+      RT d = CGAL::internal::wdot(diff,segvec, k);
       if (d <= (RT)0){
         d1 = (FT(diff*diff));
       }else{
-        RT e = wdot(segvec,segvec, k);
+        RT e = CGAL::internal::wdot(segvec,segvec, k);
         if (d > e){
-          d1 = squared_distance(pt, seg1.target(), k);
+          d1 = CGAL::internal::squared_distance(pt, seg1.target(), k);
         } else{
-          Vector_3 wcr = wcross(segvec, diff, k);
+          Vector_3 wcr = CGAL::internal::wcross(segvec, diff, k);
           d1 = FT(wcr*wcr);
           e1 = e;
         }
@@ -498,15 +498,15 @@ namespace CartesianKernelFunctors {
     {
       Vector_3 diff = construct_vector(seg2.source(), pt);
       Vector_3 segvec = construct_vector(seg2.source(), seg2.target());
-      RT d = wdot(diff,segvec, k);
+      RT d = CGAL::internal::wdot(diff,segvec, k);
       if (d <= (RT)0){
         d2 = (FT(diff*diff));
       }else{
-        RT e = wdot(segvec,segvec, k);
+        RT e = CGAL::internal::wdot(segvec,segvec, k);
         if (d > e){
-          d2 = squared_distance(pt, seg2.target(), k);
+          d2 = CGAL::internal::squared_distance(pt, seg2.target(), k);
         } else{
-          Vector_3 wcr = wcross(segvec, diff, k);
+          Vector_3 wcr = CGAL::internal::wcross(segvec, diff, k);
           d2 = FT(wcr*wcr);
           e2 = e;
         }
@@ -531,20 +531,20 @@ namespace CartesianKernelFunctors {
 
     RT e2 = RT(1);
     // assert that the segment is valid (non zero length).
-    FT d1 = squared_distance(pt, pt2, k);
+    FT d1 = CGAL::internal::squared_distance(pt, pt2, k);
     FT d2 = FT(0);
     {
       Vector_3 diff = construct_vector(seg.source(), pt);
       Vector_3 segvec = construct_vector(seg.source(), seg.target());
-      RT d = wdot(diff,segvec, k);
+      RT d = CGAL::internal::wdot(diff,segvec, k);
       if (d <= (RT)0){
         d2 = (FT(diff*diff));
       }else{
-        RT e = wdot(segvec,segvec, k);
+        RT e = CGAL::internal::wdot(segvec,segvec, k);
         if (d > e){
-          d2 = squared_distance(pt, seg.target(), k);
+          d2 = CGAL::internal::squared_distance(pt, seg.target(), k);
         } else{
-          Vector_3 wcr = wcross(segvec, diff, k);
+          Vector_3 wcr = CGAL::internal::wcross(segvec, diff, k);
           d2 = FT(wcr*wcr);
           e2 = e;
         }
