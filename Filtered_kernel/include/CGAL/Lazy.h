@@ -318,7 +318,7 @@ public:
 
   const ET & exact() const
   {
-#if defined(CGAL_HAS_THREADS) && defined(__gnu_linux__) && __GNUC__ < 11 && !defined(_REENTRANT)
+#if defined(CGAL_HAS_THREADS) && defined(__gnu_linux__) && !defined(_REENTRANT)
     // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=55394
     // -pthread or -lpthread is just needed for linking, but I can't test that here...
     // We could take the lack of _REENTRANT on that platform as forcing CGAL_HAS_NO_THREADS
