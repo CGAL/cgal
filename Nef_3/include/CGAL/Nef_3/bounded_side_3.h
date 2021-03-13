@@ -73,12 +73,12 @@ Bounded_side bounded_side_3(IteratorForward first,
   auto apv = approx(plane.orthogonal_vector());
 
   int dir = 0;
-  auto max = CGAL::abs(apv.x());
-  if(CGAL::abs(apv.y()) > max){
+  double max = CGAL::abs(apv.x().sup());
+  if(CGAL::abs(apv.y().sup()) > max){
     dir = 1;
-    max = CGAL::abs(apv.y());
+    max = CGAL::abs(apv.y().sup());
   }
-  if(CGAL::abs(apv.z()) > max){
+  if(CGAL::abs(apv.z().sup()) > max){
     dir = 2;
   }
 
