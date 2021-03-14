@@ -316,6 +316,12 @@ public:
     return ptr_.load(std::memory_order_consume)->at();
   }
 
+  const ET & exact_unsafe() const
+  {
+    CGAL_assertion(!is_lazy());
+    return static_cast<AT_ET_wrap<AT,ET>*>(ptr_.load(std::memory_order_relaxed))->et();
+  }
+
   const ET & exact() const
   {
 #if defined(CGAL_HAS_THREADS) && defined(__gnu_linux__) && !defined(_REENTRANT)
@@ -327,7 +333,7 @@ public:
     // The test is unnecessary, only use it if benchmark says so, or in order to avoid calling Lazy_exact_Ex_Cst::update_exact() (which used to contain an assertion)
     //if (is_lazy())
     std::call_once(once, [this](){this->update_exact();});
-    return static_cast<AT_ET_wrap<AT,ET>*>(ptr_.load(std::memory_order_relaxed))->et(); // call_once already synchronized memory
+    return exact_unsafe(); // call_once already synchronized memory
   }
 
   template<class A>
@@ -354,20 +360,20 @@ public:
       os << "    ";
     }
     os << "Approximation: ";
-    print_at(os, at);
+    print_at(os, approx());
     os << std::endl;
     if(! is_lazy()){
       for(int i = 0; i < level; i++){
         os << "    ";
       }
       os << "Exact: ";
-      print_at(os, *et);
+      print_at(os, exact_unsafe());
       os << std::endl;
 #ifdef CGAL_LAZY_KERNEL_DEBUG_SHOW_TYPEID
       for(int i = 0; i < level; i++){
         os << "    ";
       }
-      os << "  (type: " << typeid(*et).name() << ")" << std::endl;
+      os << "  (type: " << typeid(exact_unsafe()).name() << ")" << std::endl;
 #endif // CGAL_LAZY_KERNEL_DEBUG_SHOW_TYPEID
     }
   }
@@ -440,6 +446,11 @@ public:
   }
   void keep_at(ET*) const { }
 
+  const ET & exact_unsafe() const
+  {
+    return *ptr_.load(std::memory_order_relaxed);
+  }
+
   const ET & exact() const
   {
 #ifdef CGAL_HAS_THREADS
@@ -450,7 +461,7 @@ public:
     if (is_lazy())
       this->update_exact();
 #endif
-    return *ptr_.load(std::memory_order_relaxed); // call_once already synchronized memory
+    return exact_unsafe(); // call_once already synchronized memory
   }
 
   void set_ptr(ET* p) const {
@@ -464,20 +475,20 @@ public:
       os << "    ";
     }
     os << "Approximation: ";
-    print_at(os, at);
+    print_at(os, approx());
     os << std::endl;
     if(! is_lazy()){
       for(int i = 0; i < level; i++){
         os << "    ";
       }
       os << "Exact: ";
-      print_at(os, *et);
+      print_at(os, exact_unsafe());
       os << std::endl;
 #ifdef CGAL_LAZY_KERNEL_DEBUG_SHOW_TYPEID
       for(int i = 0; i < level; i++){
         os << "    ";
       }
-      os << "  (type: " << typeid(*et).name() << ")" << std::endl;
+      os << "  (type: " << typeid(exact_unsafe()).name() << ")" << std::endl;
 #endif // CGAL_LAZY_KERNEL_DEBUG_SHOW_TYPEID
     }
   }
@@ -540,12 +551,17 @@ public:
   }
   void keep_at(ET*) const { }
 
+  const ET & exact_unsafe() const
+  {
+    return *ptr_.load(std::memory_order_relaxed);
+  }
+
   const ET & exact() const
   {
     // The test is unnecessary, only use it if benchmark says so, or in order to avoid calling Lazy_exact_Ex_Cst::update_exact() (which used to contain an assertion)
     //if (is_lazy())
     std::call_once(once, [this](){this->update_exact();});
-    return *ptr_.load(std::memory_order_relaxed); // call_once already synchronized memory
+    return exact_unsafe(); // call_once already synchronized memory
   }
 
   void set_ptr(ET* p) const {
@@ -561,20 +577,20 @@ public:
       os << "    ";
     }
     os << "Approximation: ";
-    print_at(os, at);
+    print_at(os, approx());
     os << std::endl;
     if(! is_lazy()){
       for(int i = 0; i < level; i++){
         os << "    ";
       }
       os << "Exact: ";
-      print_at(os, *et);
+      print_at(os, exact_unsafe());
       os << std::endl;
 #ifdef CGAL_LAZY_KERNEL_DEBUG_SHOW_TYPEID
       for(int i = 0; i < level; i++){
         os << "    ";
       }
-      os << "  (type: " << typeid(*et).name() << ")" << std::endl;
+      os << "  (type: " << typeid(exact_unsafe()).name() << ")" << std::endl;
 #endif // CGAL_LAZY_KERNEL_DEBUG_SHOW_TYPEID
     }
   }
@@ -643,7 +659,7 @@ class Lazy_rep_n final :
   }
   public:
   void print_dag(std::ostream& os, int level) const {
-    print_dag_helper(os, level, std::make_index_sequence<sizeof...L>{});
+    print_dag_helper(os, level, std::make_index_sequence<sizeof...(L)>{});
   }
 #endif
 };
@@ -707,7 +723,7 @@ class Lazy_rep_optional_n :
 
   public:
   void print_dag(std::ostream& os, int level) const {
-    print_dag_helper(os, level, std::make_index_sequence<sizeof...L>{});
+    print_dag_helper(os, level, std::make_index_sequence<sizeof...(L)>{});
   }
 #endif
 };
@@ -869,7 +885,7 @@ public:
   print_dag(std::ostream& os, int level) const
   {
     this->print_at_et(os, level);
-    os << "A Lazy_rep_with_vector_1 of size " <<  this->at.size() << std::endl;
+    os << "A Lazy_rep_with_vector_1 of size " <<  this->approx().size() << std::endl;
     if(this->is_lazy()){
       CGAL::msg(os, level, "DAG with one child node:");
       CGAL::print_dag(l1_, os, level+1);
@@ -920,7 +936,7 @@ public:
   print_dag(std::ostream& os, int level) const
   {
     this->print_at_et(os, level);
-    os << "A Lazy_rep_with_vector_2 of size " <<  this->at.size() << std::endl;
+    os << "A Lazy_rep_with_vector_2 of size " <<  this->approx().size() << std::endl;
     if(this->is_lazy()){
       CGAL::msg(os, level, "DAG with two child nodes:");
       CGAL::print_dag(l1_, os, level+1);
