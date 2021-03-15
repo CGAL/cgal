@@ -566,7 +566,7 @@ bool
 Triangulation_on_sphere_2<Gt, Tds>::
 are_points_too_close(const Point& p, const Point& q, Locate_type& lt) const
 {
-  std::cout << "Are " << p << " and " << q << " too close?" << std::endl;
+  //std::cout << "Are " << p << " and " << q << " too close?" << std::endl;
 
   if(geom_traits().are_points_too_close(p, q))
   {
@@ -1014,7 +1014,7 @@ locate(const Point& p,
     return Face_handle();
   }
 
-  std::cout << "Locate " << p << ", dimension " << dimension() << std::endl;
+  //std::cout << "Locate " << p << ", dimension " << dimension() << std::endl;
 
   switch(dimension())
   {

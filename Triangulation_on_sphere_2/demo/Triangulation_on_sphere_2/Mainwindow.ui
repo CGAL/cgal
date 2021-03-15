@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="Viewer" name="viewer"/>
+     <widget class="Viewer" name="viewer" native="true"/>
     </item>
    </layout>
   </widget>
@@ -26,7 +26,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>25</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -58,14 +58,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QGLViewer</class>
-   <extends>QWidget</extends>
-   <header>QGLViewer/qglviewer.h</header>
-  </customwidget>
-  <customwidget>
    <class>Viewer</class>
-   <extends>QGLViewer</extends>
-   <header>simpleViewer.h</header>
+   <extends>QWidget</extends>
+   <header>Viewer.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

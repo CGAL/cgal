@@ -18,12 +18,12 @@
 #include <list>
 #include <fstream>
 
-#include <qapplication.h>
+#include <QApplication>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel          Kernel;
 typedef Kernel::Point_3                                              Point_3;
 
-#include "simpleViewer.h"
+#include "Viewer.h"
 #include "ui_Mainwindow.h"
 
 typedef CGAL::Projection_on_sphere_traits_3<Kernel>                  Projection_traits;
@@ -75,18 +75,14 @@ public:
 public slots:
   void open(QString filename)
   {
-    std::vector<Point_3> lst_pt;
+    std::vector<Kernel::Point_3> lst_pt;
     read_points(filename.toUtf8().data(), std::back_inserter(lst_pt));
-
-    Projection_traits::Construct_projected_point_3 cst = traits.construct_point_on_sphere_2_object();
+    auto cst = traits.construct_point_on_sphere_2_object();
     dtos.insert(boost::make_transform_iterator(lst_pt.begin(), cst),
                 boost::make_transform_iterator(lst_pt.end(), cst));
 
-    Point_3 center(0,0,0);
+    Kernel::Point_3 center(0,0,0);
     double scale = 1;
-
-    MainWindow mainWindow;
-    mainWindow.show();
 
     // Instantiate the viewer.
     viewer->open(lst_pt.begin(), lst_pt.end(), dtos, center, scale);
@@ -109,18 +105,11 @@ int main(int argc, char** argv)
 {
   // Read command lines arguments.
   QApplication application(argc,argv);
-
-  QStringList args = QApplication::arguments();
-  args.removeAt(0);
-
   MainWindow mainWindow;
-  if(!args.empty())
-    mainWindow.open(args[0]);
-
   mainWindow.show();
 
   // Run main loop.
   return application.exec();
 }
 
-#include "Mainwindow.moc"
+#include "main.moc"
