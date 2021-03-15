@@ -131,7 +131,8 @@ public:
       maxLevel = std::size_t(std::log(bbox_diagonal
                                       / cluster_epsilon_for_max_level_recomputation)
                              / std::log(2.0));
-
+      if (maxLevel == 0)
+        maxLevel = 1;
     }
 
     m_octree.refine(maxLevel, bucketSize);
