@@ -93,10 +93,16 @@ public:
   }
 
   decltype(auto)
-  min BOOST_PREVENT_MACRO_SUBSTITUTION () const;
+  min BOOST_PREVENT_MACRO_SUBSTITUTION() const {
+    typename R_::Less_xyz_3 less_xyz;
+    return less_xyz(source(), target()) ? source() : target();
+  }
 
   decltype(auto)
-  max BOOST_PREVENT_MACRO_SUBSTITUTION () const;
+  max BOOST_PREVENT_MACRO_SUBSTITUTION() const {
+    typename R_::Less_xyz_3 less_xyz;
+    return less_xyz(source(), target()) ? target() : source();
+  }
 
   decltype(auto)
   vertex(int i) const
@@ -161,24 +167,6 @@ public:
   }
 
 };
-
-template < class R_ >
-CGAL_KERNEL_INLINE
-decltype(auto)
-Segment_3<R_>::min BOOST_PREVENT_MACRO_SUBSTITUTION () const
-{
-  typename R_::Less_xyz_3 less_xyz;
-  return less_xyz(source(),target()) ? source() : target();
-}
-
-template < class R_ >
-CGAL_KERNEL_INLINE
-decltype(auto)
-Segment_3<R_>::max BOOST_PREVENT_MACRO_SUBSTITUTION () const
-{
-  typename R_::Less_xyz_3 less_xyz;
-  return less_xyz(source(),target()) ? target() : source();
-}
 
 
 template < class R >
