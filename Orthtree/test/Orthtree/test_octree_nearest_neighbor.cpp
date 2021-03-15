@@ -88,9 +88,6 @@ void naive_vs_octree(std::size_t dataset_size) {
 
   // Check that they produce the same answer
   assert(octree_nearest == naive_nearest);
-
-  // Check that the octree was faster
-  assert(octree_elapsed_time < naive_elapsed_time);
 }
 
 void kdtree_vs_octree(std::size_t dataset_size, std::size_t K) {
