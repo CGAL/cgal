@@ -475,7 +475,7 @@ public:
     bool sign = direction[0];
 
     // The first two bits indicate the dimension/axis (x, y, z)
-    uint8_t dimension = (direction >> 1).to_ulong();
+    uint8_t dimension = uint8_t((direction >> 1).to_ulong());
 
     // Create an offset so that the bit-significance lines up with the dimension (e.g. 1, 2, 4 --> 001, 010, 100)
     int8_t offset = (uint8_t) 1 << dimension;

@@ -11,7 +11,6 @@ void test()
   typedef typename Kernel::Point_3 Point;
   typedef CGAL::Point_set_3<Point> Point_set;
   typedef CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map> Octree;
-  typedef typename Octree::Node Node;
 
   Point_set points;
   CGAL::Random_points_in_cube_3<Point> generator;

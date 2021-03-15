@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
   Octree octree(points, points.point_map());
 
   // Build the octree using our custom split predicate
-  octree.refine(Split_by_ratio(2.0));
+  octree.refine(Split_by_ratio(2));
 
   // Print out the tree
   std::cout << octree;

@@ -671,7 +671,7 @@ private: // functions :
        [&](const Range_type &a) -> bool {
         // This should be done with cartesian iterator but it seems
         // complicated to do efficiently
-        return (get(m_point_map, a)[dimension] < center[dimension]);
+         return (get(m_point_map, a)[int(dimension)] < center[int(dimension)]);
       });
 
     // Further subdivide the first side of the split
