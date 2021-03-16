@@ -37,29 +37,6 @@ option(CGAL_HEADER_ONLY
 #
 #--------------------------------------------------------------------------------------------------
 
-message("== Setting paths ==")
-
-if (NOT CGAL_DATA_DIR)
-  if(DEFINED ENV{CGAL_DATA_DIR})
-    set(CGAL_DATA_DIR $ENV{CGAL_DATA_DIR})
-  else()
-    if (EXISTS "${CGAL_SOURCE_DIR}/data")
-      set(CGAL_DATA_DIR "${CGAL_SOURCE_DIR}/data")
-    else()
-      if (EXISTS "${CGAL_SOURCE_DIR}/Data/data")
-        set(CGAL_DATA_DIR "${CGAL_SOURCE_DIR}/Data/data")
-      else()
-        message("CGAL_SOURCE_DIR = ${CGAL_SOURCE_DIR}")
-        message(WARNING "CGAL_DATA_DIR cannot be deduced, set the variable CGAL_DATA_DIR to set the default value of CGAL::data_file_path()")
-      endif()
-    endif()
-  endif()
-endif()
-
-if ( NOT "${CGAL_DATA_DIR}" STREQUAL "" )
-  add_definitions(-DCGAL_DATA_DIR="${CGAL_DATA_DIR}")
-endif()
-
 if(CGAL_BRANCH_BUILD)
 
   message(
@@ -1096,6 +1073,29 @@ if(NOT RUNNING_CGAL_AUTO_TEST)
   if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/test")
     add_programs(test tests OFF)
   endif()
+endif()
+
+message("== Setting paths ==")
+
+if (NOT CGAL_DATA_DIR)
+  if(DEFINED ENV{CGAL_DATA_DIR})
+    set(CGAL_DATA_DIR $ENV{CGAL_DATA_DIR})
+  else()
+    if (EXISTS "${CGAL_SOURCE_DIR}/data")
+      set(CGAL_DATA_DIR "${CGAL_SOURCE_DIR}/data")
+    else()
+      if (EXISTS "${CGAL_SOURCE_DIR}/Data/data")
+        set(CGAL_DATA_DIR "${CGAL_SOURCE_DIR}/Data/data")
+      else()
+        message("CGAL_SOURCE_DIR = ${CGAL_SOURCE_DIR}")
+        message(WARNING "CGAL_DATA_DIR cannot be deduced, set the variable CGAL_DATA_DIR to set the default value of CGAL::data_file_path()")
+      endif()
+    endif()
+  endif()
+endif()
+
+if ( NOT "${CGAL_DATA_DIR}" STREQUAL "" )
+  target_compile_definitions(CGAL INTERFACE -DCGAL_DATA_DIR="${CGAL_DATA_DIR}")
 endif()
 
 #--------------------------------------------------------------------------------------------------
