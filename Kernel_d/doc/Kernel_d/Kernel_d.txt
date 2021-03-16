@@ -497,7 +497,7 @@ typedef Segment_d<K> Segment;
 Segment s1, s2;
 std::cin >> s1 >> s2;
 
-/* use auto */
+// use auto
 auto v = intersection(s1, s2);
 if (v) {
   // not empty
