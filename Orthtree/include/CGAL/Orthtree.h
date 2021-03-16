@@ -200,11 +200,20 @@ public:
     , m_root(Node(), 0)
   {
     Array bbox_min;
-    for (FT& f : bbox_min)
-      f = (std::numeric_limits<FT>::max)();
     Array bbox_max;
-    for (FT& f : bbox_max)
-      f = -(std::numeric_limits<FT>::max)();
+
+    // init bbox with first values found
+    for (FT& f : bbox_min)
+    {
+      const Point& p = get (m_point_map, *(point_range.begin()));
+      std::size_t i = 0;
+      for (const FT& x : cartesian_range(p))
+      {
+        bbox_min[i] = x;
+        bbox_max[i] = x;
+        ++ i;
+      }
+    }
 
     for (const Range_type& r : point_range)
     {
