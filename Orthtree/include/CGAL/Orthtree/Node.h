@@ -400,7 +400,7 @@ public:
 
     CGAL_precondition (!is_null());
     CGAL_precondition (!is_leaf());
-    CGAL_precondition (0 <= index && index < Degree::value);
+    CGAL_precondition (index < Degree::value);
 
     return (*m_data->children)[index];
   }
