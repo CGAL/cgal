@@ -570,7 +570,8 @@ void Polyhedron_demo_affine_transform_plugin::end(){
   if(transform_item)
   {
     CGAL::qglviewer::Vec c = transform_item->center();
-    FaceGraph* new_sm = new FaceGraph(*transform_item->getFaceGraph());
+    FaceGraph* new_sm = new FaceGraph();
+    CGAL::copy_face_graph(*transform_item->getFaceGraph(), *new_sm);
     typedef boost::property_map<FaceGraph,CGAL::vertex_point_t>::type VPmap;
     VPmap vpmap = get(CGAL::vertex_point, *new_sm);
 
