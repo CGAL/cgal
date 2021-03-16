@@ -201,7 +201,6 @@ private:
     out.m_data->points = m_data->points;
     out.m_data->depth = m_data->depth;
     out.m_data->global_coordinates = m_data->global_coordinates;
-    Global_coordinates global_coordinates;
     std::unique_ptr<Children> children;
     if (!is_leaf())
     {

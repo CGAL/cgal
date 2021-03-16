@@ -109,7 +109,7 @@ void kdtree_vs_octree(std::size_t dataset_size, std::size_t K) {
   Kd_tree kd_tree(points.points().begin(), points.points().end());
   kd_tree.build();
   auto kd_tree_start_time = high_resolution_clock::now();
-  Kd_tree_search search(kd_tree, random_point, K);
+  Kd_tree_search search(kd_tree, random_point, (unsigned int)(K));
   duration<float> kd_tree_elapsed_time = high_resolution_clock::now() - kd_tree_start_time;
   for (auto p : search)
     kd_tree_nearest_neighbors.push_back(p.first);
