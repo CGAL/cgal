@@ -67,7 +67,7 @@ bool do_faces_intersect(typename boost::graph_traits<TM>::halfedge_descriptor h,
                         const VPM vpmap,
                         const typename GT::Construct_segment_3& construct_segment,
                         const typename GT::Construct_triangle_3& construct_triangle,
-                        const typename GT::Do_intersect_3& do_intersect)
+                        const typename GT::Do_intersect_RT_3& do_intersect)
 {
   typedef typename boost::graph_traits<TM>::vertex_descriptor                 vertex_descriptor;
   typedef typename boost::graph_traits<TM>::halfedge_descriptor               halfedge_descriptor;
@@ -174,7 +174,7 @@ struct Strict_intersect_faces // "strict" as in "not sharing a subface"
   const VPM m_vpmap;
   typename GT::Construct_segment_3 m_construct_segment;
   typename GT::Construct_triangle_3 m_construct_triangle;
-  typename GT::Do_intersect_3 m_do_intersect;
+  typename GT::Do_intersect_RT_3 m_do_intersect;
 
   Strict_intersect_faces(const TM& tmesh, VPM vpmap, const GT& gt, OutputIterator it)
     :
@@ -183,7 +183,7 @@ struct Strict_intersect_faces // "strict" as in "not sharing a subface"
       m_vpmap(vpmap),
       m_construct_segment(gt.construct_segment_3_object()),
       m_construct_triangle(gt.construct_triangle_3_object()),
-      m_do_intersect(gt.do_intersect_3_object())
+      m_do_intersect(gt.do_intersect_RT_3_object())
   {}
 
   void operator()(const Box* b, const Box* c) const

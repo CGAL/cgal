@@ -498,6 +498,8 @@ CGAL_Kernel_pred(Do_intersect_2,
                  do_intersect_2_object)
 CGAL_Kernel_pred(Do_intersect_3,
                  do_intersect_3_object)
+CGAL_Kernel_pred_RT(Do_intersect_RT_3,
+                 do_intersect_RT_3_object)
 CGAL_Kernel_pred(Equal_xy_3,
                  equal_xy_3_object)
 CGAL_Kernel_pred(Equal_x_2,

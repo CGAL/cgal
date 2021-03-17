@@ -3002,7 +3002,7 @@ namespace CommonKernelFunctors {
   public:
     typedef typename K::Boolean     result_type;
 
-    // There are x combinaisons, so I use a template.
+    // There are x combinations, so I use a template.
     template <class T1, class T2>
     result_type
     operator()(const T1& t1, const T2& t2) const
@@ -3011,6 +3011,27 @@ namespace CommonKernelFunctors {
     result_type
     operator()(const typename K::Plane_3& pl1, const typename K::Plane_3& pl2, const typename K::Plane_3& pl3) const
     { return Intersections::internal::do_intersect(pl1, pl2, pl3, K() ); }
+
+  };
+
+
+  template <typename K>
+  class Do_intersect_RT_3
+  {
+  public:
+    typedef typename K::Boolean     result_type;
+
+    result_type
+    operator()(const typename K::Triangle_3& t1, const typename K::Triangle_3& t2) const
+    {
+      return Intersections::internal::do_intersect(t1, t2, K());
+    }
+
+    result_type
+    operator()(const typename K::Triangle_3& t, const typename K::Segment_3& s) const
+    {
+      return Intersections::internal::do_intersect(t, s, K());
+    }
 
   };
 
