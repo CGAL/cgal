@@ -509,14 +509,30 @@ public:
   Merge_2 merge_2_object() const
   { return Merge_2(); }
 
-
-  /*! Obtain a Curve_2 object from a range of points */
-  template <typename PointRange>
-  static Curve_2 make_curve_2 (const PointRange& points,
-                               bool force_closed_polygon = false)
+  class Construct_curve_2
   {
-    return Curve_2 (points.begin(), points.end(), force_closed_polygon);
-  }
+  protected:
+    using Traits = Arr_lightweight_polyline_traits_2<Kernel, Point_iterator>;
+    const Traits& m_traits;
+    Construct_curve_2(const Traits& traits) : m_traits(traits) {}
+    friend class Arr_lightweight_polyline_traits_2<Kernel, Point_iterator>;
+  public:
+
+    Curve_2 operator()(const Point_2& p, const Point_2& q) const
+    {
+      return Curve_2(p, q);
+    }
+
+    template <typename ForwardIterator>
+    Curve_2 operator()(ForwardIterator begin, ForwardIterator end) const
+    {
+      return Curve_2 (begin, end);
+    }
+  };
+
+  /*! Obtain a Construct_curve_2 functor object. */
+  Construct_curve_2 construct_curve_2_object() const
+  { return Construct_curve_2(*this); }
 };
 
 

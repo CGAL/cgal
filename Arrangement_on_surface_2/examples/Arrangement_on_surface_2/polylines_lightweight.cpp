@@ -40,12 +40,11 @@ int main()
     points.push_back(Point_2(5, 3));
     points.push_back(Point_2(4, 2));
 
-    Curve_2 curve (points.begin(), points.end());
+    auto construct_curve_2 = traits.construct_curve_2_object();
+    Curve_2 curve = construct_curve_2(points.begin(), points.end());
 
     auto make_x_monotone_2 = traits.make_x_monotone_2_object();
-
     std::vector<X_monotone_curve_2> x_monotone_curves;
-
     make_x_monotone_2
       (curve,
        boost::make_function_output_iterator
@@ -77,12 +76,11 @@ int main()
     polygon.push_back (Point_2(4, 4));
     polygon.push_back (Point_2(6, 0));
 
-    Curve_2 curve (polygon.vertices_begin(), polygon.vertices_end());
+    auto construct_curve_2 = traits.construct_curve_2_object();
+    Curve_2 curve = construct_curve_2(polygon.vertices_begin(), polygon.vertices_end());
 
     auto make_x_monotone_2 = traits.make_x_monotone_2_object();
-
     std::vector<X_monotone_curve_2> x_monotone_curves;
-
     make_x_monotone_2
       (curve,
        boost::make_function_output_iterator
