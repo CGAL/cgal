@@ -260,15 +260,18 @@ private:
 
     // std::cout << "min time: " << m_min_time << std::endl;
     // std::cout << "max time: " << m_max_time << std::endl;
+    // std::cout << "cur time: " << m_data.current_time() << std::endl;
+
+    // std::cout << "pvertex: " << m_data.str(pvertex) << std::endl;
+    // std::cout << "direction: " << m_data.direction(pvertex) << std::endl;
+    // std::cout << "p: " << m_data.point_3(pvertex, m_min_time) << std::endl;
+    // std::cout << "q: " << m_data.point_3(pvertex, m_max_time) << std::endl;
+
     // std::cout << "pv segment: " <<
-    //   m_data.to_3d(pvertex.first, pv_segment.source()) << " " <<
-    //   m_data.to_3d(pvertex.first, pv_segment.target()) << std::endl;
+    //   m_data.to_3d(pvertex.first, source_p) << " " <<
+    //   m_data.to_3d(pvertex.first, target_p) << std::endl;
 
     PVertex prev, next;
-    CGAL_assertion_msg(KSR::distance(
-      pv_segment.source(), pv_segment.target()) >= KSR::point_tolerance<FT>(),
-    "TODO: ZERO LENGTH PV_SEGMENT FOUND!");
-
     std::tie(prev, next) = m_data.prev_and_next(pvertex);
     for (const auto& pother : { prev, next }) {
       if (pother == m_data.null_pvertex()
@@ -276,6 +279,10 @@ private:
           ||  m_data.has_iedge(pother)) {
         continue;
       }
+
+      CGAL_assertion_msg(KSR::distance(
+        pv_segment.source(), pv_segment.target()) >= KSR::point_tolerance<FT>(),
+      "TODO: ZERO LENGTH PV_SEGMENT FOUND!");
 
       const Segment_2 po_segment(
         m_data.point_2(pother, m_min_time),
@@ -316,14 +323,18 @@ private:
     const auto& target_p = pv_segment.target();
     const FT ptol = KSR::point_tolerance<FT>();
 
-    // std::cout << "iedge: "   << m_data.segment_3(iedge) << std::endl;
-    // std::cout << "pvertex: " << m_data.point_3(pvertex) << std::endl;
+    // std::cout << "min time: " << m_min_time << std::endl;
+    // std::cout << "max time: " << m_max_time << std::endl;
+    // std::cout << "cur time: " << m_data.current_time() << std::endl;
+
+    // std::cout << "pvertex: " << m_data.str(pvertex) << std::endl;
+    // std::cout << "direction: " << m_data.direction(pvertex) << std::endl;
+    // std::cout << "p: " << m_data.point_3(pvertex, m_min_time) << std::endl;
+    // std::cout << "q: " << m_data.point_3(pvertex, m_max_time) << std::endl;
+
     // std::cout << "pv segment: " <<
     //   m_data.to_3d(pvertex.first, source_p) << " " <<
     //   m_data.to_3d(pvertex.first, target_p) << std::endl;
-
-    CGAL_assertion_msg(KSR::distance(source_p, target_p) >= ptol,
-    "TODO: ZERO-LENGTH VECTOR 1 FOUND!");
 
     CGAL_assertion_msg(KSR::distance(
       m_data.point_3(m_data.source(iedge)),
@@ -345,10 +356,10 @@ private:
 
         const auto overtex = m_data.opposite(iedge, ivertex);
         const Point_2 opoint = m_data.to_2d(pvertex.first, overtex);
-        const FT odistance = KSR::distance(source_p, opoint);
-        CGAL_assertion_msg(odistance >= ptol,
-          "TODO: ZERO-LENGTH VECTOR 2 FOUND!");
+        CGAL_assertion_msg(KSR::distance(source_p, opoint) >= ptol,
+          "TODO: ZERO-LENGTH VECTOR FOUND!");
 
+        // Here, in the dot product, we can have maximum 1 zero-length vector.
         const Vector_2 vec1(source_p, target_p);
         const Vector_2 vec2(source_p, opoint);
         const FT dot_product = vec1 * vec2;
@@ -356,6 +367,8 @@ private:
 
       } else {
 
+        // Here, in the dot product, we can have maximum 1 zero-length vector.
+        CGAL_assertion(distance >= ptol);
         const Vector_2 vec1(source_p, target_p);
         const Vector_2 vec2(source_p, ipoint);
         const FT dot_product = vec1 * vec2;
@@ -397,9 +410,18 @@ private:
     const std::vector<Segment_2>& segments,
     const std::vector<Bbox_2>& bboxes) {
 
-    CGAL_assertion_msg(KSR::distance(
-      pv_segment.source(), pv_segment.target()) >= KSR::point_tolerance<FT>(),
-    "TODO: ZERO LENGTH PV_SEGMENT FOUND!");
+    // std::cout << "min time: " << m_min_time << std::endl;
+    // std::cout << "max time: " << m_max_time << std::endl;
+    // std::cout << "cur time: " << m_data.current_time() << std::endl;
+
+    // std::cout << "pvertex: " << m_data.str(pvertex) << std::endl;
+    // std::cout << "direction: " << m_data.direction(pvertex) << std::endl;
+    // std::cout << "p: " << m_data.point_3(pvertex, m_min_time) << std::endl;
+    // std::cout << "q: " << m_data.point_3(pvertex, m_max_time) << std::endl;
+
+    // std::cout << "pv segment: " <<
+    //   m_data.to_3d(pvertex.first, source_p) << " " <<
+    //   m_data.to_3d(pvertex.first, target_p) << std::endl;
 
     const auto prev = m_data.prev(pvertex);
     const auto next = m_data.next(pvertex);
@@ -414,6 +436,10 @@ private:
       if (!m_data.is_active(iedge)) {
         continue;
       }
+
+      CGAL_assertion_msg(KSR::distance(
+        pv_segment.source(), pv_segment.target()) >= KSR::point_tolerance<FT>(),
+      "TODO: ZERO LENGTH PV_SEGMENT FOUND!");
 
       CGAL_assertion_msg(KSR::distance(
         segments[i].source(), segments[i].target()) >= KSR::point_tolerance<FT>(),
@@ -666,7 +692,8 @@ private:
     std::vector< std::pair<IEdge, bool> > crossed_iedges;
     const std::vector<PVertex> pvertices =
       merge_pvertices_on_ivertex(
-        m_min_time, m_max_time, ivertex, crossed_pvertices, crossed_iedges);
+        m_min_time, m_max_time, ivertex, event.pvertex(),
+        crossed_pvertices, crossed_iedges);
 
     // Remove all events of the crossed iedges.
     CGAL_assertion(crossed_iedges.size() >= 1);
@@ -1333,7 +1360,7 @@ private:
 
   const std::vector<PVertex> merge_pvertices_on_ivertex(
     const FT min_time, const FT max_time, const IVertex& ivertex,
-    const std::vector<PVertex>& pvertices,
+    const PVertex& event_pvertex, const std::vector<PVertex>& pvertices,
     std::vector< std::pair<IEdge, bool> >& crossed_iedges) {
 
     if (m_verbose) {
@@ -1380,6 +1407,11 @@ private:
       "next = " << m_data.point_3(next)  << std::endl;
     }
 
+    // Should we use here event_pvertex or pvertex?
+    // If we use pvertex, we miss important iedges!
+    std::vector<IEdge> fiedges, biedges;
+    m_data.get_iedges_front_back(event_pvertex, pvertices, fiedges, biedges);
+
     // Freeze pvertices.
     const Point_2 ipoint = m_data.point_2(sp_idx, ivertex);
     for (std::size_t i = 1; i < pvertices.size() - 1; ++i) {
@@ -1402,6 +1434,7 @@ private:
     // Get all connected iedges.
     std::vector< std::pair<IEdge, Direction_2> > iedges;
     m_data.get_and_sort_all_connected_iedges(sp_idx, ivertex, iedges);
+    CGAL_assertion(iedges.size() > 0);
 
     // Get sub-event type.
     bool back_constrained = false;
@@ -1426,7 +1459,7 @@ private:
     }
 
     if (m_verbose) {
-      std::cout << "- initial iedges: " << std::endl;
+      std::cout << "- initial iedges: " << iedges.size() << std::endl;
       for (const auto& iedge : iedges) {
         std::cout << m_data.str(iedge.first) << ": " <<
         m_data.segment_3(iedge.first) << std::endl;
@@ -1442,18 +1475,18 @@ private:
     } else if (back_constrained) {
       apply_back_border_case(
         min_time, max_time,
-        pvertex, ivertex, back, prev,
+        pvertex, ivertex, back, prev, fiedges,
         iedges, crossed_iedges, new_pvertices);
     } else if (front_constrained) {
       apply_front_border_case(
         min_time, max_time,
-        pvertex, ivertex, front, next,
+        pvertex, ivertex, front, next, biedges,
         iedges, crossed_iedges, new_pvertices);
     } else {
       apply_open_case(
         min_time, max_time,
         pvertex, ivertex, front, back, prev, next,
-        iedges, crossed_iedges, new_pvertices);
+        fiedges, biedges, iedges, crossed_iedges, new_pvertices);
     }
 
     m_data.support_plane(sp_idx).remove_vertex(front.second);
@@ -1495,6 +1528,7 @@ private:
     const FT min_time, const FT max_time,
     const PVertex& pvertex, const IVertex& ivertex,
     const PVertex& back, const PVertex& prev,
+    const std::vector<IEdge>& fiedges,
     const std::vector< std::pair<IEdge, Direction_2> >& iedges,
     std::vector< std::pair<IEdge, bool> >& crossed_iedges,
     std::vector<PVertex>& new_pvertices) {
@@ -1510,16 +1544,15 @@ private:
     const std::size_t other_side_limit = m_data.line_idx(pvertex);
     const FT prev_time = m_data.last_event_time(prev);
     const FT curr_time = m_data.current_time();
+    CGAL_assertion(prev_time >= FT(0));
+    CGAL_assertion(curr_time >= FT(0));
 
     // std::cout << "min time: "  <<  min_time << std::endl;
     // std::cout << "max time: "  <<  max_time << std::endl;
     // std::cout << "prev time: " << prev_time << std::endl;
     // std::cout << "curr time: " << curr_time << std::endl;
 
-    CGAL_assertion(prev_time >= FT(0));
     const FT prev_diff = CGAL::abs(curr_time - prev_time);
-
-    // CGAL_assertion(prev_time >= FT(0));
     // CGAL_assertion(prev_diff >= tol);
     // if (prev_diff < tol) {
     //   std::cout << "TODO: BACK, EVENTS ARE HAPPENNING AT THE SAME TIME!" << std::endl;
@@ -1534,26 +1567,35 @@ private:
       const auto pp_futr = m_data.point_2(prev, max_time);
       const auto dirp = Vector_2(pp_curr, pp_futr);
 
+      // Should we reverse fiedges to satisfy the order?
+      CGAL_assertion_msg(fiedges.size() <= 2,
+      "TODO: BACK, CAN WE HAVE MORE THAN 2 FIEDGES?");
+
       bool found_iedge = false;
       for (const auto& pair : iedges) {
         const auto& iedge = pair.first;
         CGAL_assertion(iedge != m_data.null_iedge());
-        if (iedge == m_data.iedge(prev)) {
+        // std::cout << "iedge: " << m_data.str(iedge) << ", " << m_data.segment_3(iedge) << std::endl;
+        if (fiedges.size() > 0 && iedge == fiedges.back()) {
+          if (m_verbose) std::cout << "- found same time iedge, prev" << std::endl;
           found_iedge = true; break;
         }
       }
 
       if (found_iedge) {
-        shifted_prev = pp_curr + dirp / FT(10); // exclude this iedge
-        CGAL_assertion_msg(false, "TODO: CHECK THIS BACK PREV CASE!");
-      } else shifted_prev = pp_curr - dirp / FT(10); // include this iedge
-
-      // CGAL_assertion_msg(false, "TODO: BACK, ADD SHIFTED_PREV FOR SAME TIME EVENTS!");
-
+        shifted_prev = pp_curr + dirp / FT(10);
+        if (m_verbose) std::cout << "- excluding iedge, prev" << std::endl;
+        // CGAL_assertion_msg(false, "TODO: CHECK BACK PREV CASE 1!");
+      } else {
+        shifted_prev = pp_curr - dirp / FT(10);
+        if (m_verbose) std::cout << "- including iedge, prev" << std::endl;
+        // CGAL_assertion_msg(false, "TODO: CHECK BACK PREV CASE 2!");
+      }
     } else {
       const auto pp_last = m_data.point_2(prev, prev_time);
       const auto dirp = Vector_2(pp_last, pp_curr);
-      shifted_prev = pp_curr - dirp / FT(10); // include this iedge
+      shifted_prev = pp_curr - dirp / FT(10);
+      if (m_verbose) std::cout << "- including iedge, prev" << std::endl;
     }
 
     if (m_verbose) {
@@ -1571,6 +1613,7 @@ private:
 
       const auto& i_dir  = iedges[i].second;
       const auto& ip_dir = iedges[ip].second;
+      CGAL_assertion(iedges[i].first != iedges[ip].first);
       if (ref_direction_prev.counterclockwise_in_between(ip_dir, i_dir)) {
         first_idx = ip; break;
       }
@@ -1681,6 +1724,7 @@ private:
     const FT min_time, const FT max_time,
     const PVertex& pvertex, const IVertex& ivertex,
     const PVertex& front, const PVertex& next,
+    const std::vector<IEdge>& biedges,
     const std::vector< std::pair<IEdge, Direction_2> >& iedges,
     std::vector< std::pair<IEdge, bool> >& crossed_iedges,
     std::vector<PVertex>& new_pvertices) {
@@ -1696,16 +1740,15 @@ private:
     const std::size_t other_side_limit = m_data.line_idx(pvertex);
     const FT next_time = m_data.last_event_time(next);
     const FT curr_time = m_data.current_time();
+    CGAL_assertion(next_time >= FT(0));
+    CGAL_assertion(curr_time >= FT(0));
 
     // std::cout << "min time: "  <<  min_time << std::endl;
     // std::cout << "max time: "  <<  max_time << std::endl;
     // std::cout << "next time: " << next_time << std::endl;
     // std::cout << "curr time: " << curr_time << std::endl;
 
-    CGAL_assertion(next_time >= FT(0));
     const FT next_diff = CGAL::abs(curr_time - next_time);
-
-    // CGAL_assertion(next_time >= FT(0));
     // CGAL_assertion(next_diff >= tol);
     // if (next_diff < tol) {
     //   std::cout << "TODO: FRONT, EVENTS ARE HAPPENNING AT THE SAME TIME!" << std::endl;
@@ -1720,26 +1763,34 @@ private:
       const auto pn_futr = m_data.point_2(next, max_time);
       const auto dirn = Vector_2(pn_curr, pn_futr);
 
+      CGAL_assertion_msg(biedges.size() <= 2,
+      "TODO: FRONT, CAN WE HAVE MORE THAN 2 BIEDGES?");
+
       bool found_iedge = false;
       for (const auto& pair : iedges) {
         const auto& iedge = pair.first;
         CGAL_assertion(iedge != m_data.null_iedge());
-        if (iedge == m_data.iedge(next)) {
+        // std::cout << "iedge: " << m_data.str(iedge) << ", " << m_data.segment_3(iedge) << std::endl;
+        if (biedges.size() > 0 && iedge == biedges.front()) {
+          if (m_verbose) std::cout << "- found same time iedge, next" << std::endl;
           found_iedge = true; break;
         }
       }
 
       if (found_iedge) {
-        shifted_next = pn_curr + dirn / FT(10); // exclude this iedge
-        CGAL_assertion_msg(false, "TODO: CHECK THIS FRONT NEXT CASE!");
-      } else shifted_next = pn_curr - dirn / FT(10); // include this iedge
-
-      // CGAL_assertion_msg(false, "TODO: FRONT, ADD SHIFTED_NEXT FOR SAME TIME EVENTS!");
-
+        shifted_next = pn_curr + dirn / FT(10);
+        if (m_verbose) std::cout << "- excluding iedge, next" << std::endl;
+        // CGAL_assertion_msg(false, "TODO: CHECK FRONT NEXT CASE 1!");
+      } else {
+        shifted_next = pn_curr - dirn / FT(10);
+        if (m_verbose) std::cout << "- including iedge, next" << std::endl;
+        CGAL_assertion_msg(false, "TODO: CHECK FRONT NEXT CASE 2!");
+      }
     } else {
       const auto pn_last = m_data.point_2(next, next_time);
       const auto dirn = Vector_2(pn_last, pn_curr);
-      shifted_next = pn_curr - dirn / FT(10); // include this iedge
+      shifted_next = pn_curr - dirn / FT(10);
+      if (m_verbose) std::cout << "- including iedge, next" << std::endl;
     }
 
     if (m_verbose) {
@@ -1757,6 +1808,7 @@ private:
 
       const auto& i_dir  = iedges[i].second;
       const auto& ip_dir = iedges[ip].second;
+      CGAL_assertion(iedges[i].first != iedges[ip].first);
       if (ref_direction_next.counterclockwise_in_between(i_dir, ip_dir)) {
         first_idx = ip; break;
       }
@@ -1868,6 +1920,8 @@ private:
     const PVertex& pvertex, const IVertex& ivertex,
     const PVertex& front, const PVertex& back,
     const PVertex& prev , const PVertex& next,
+    const std::vector<IEdge>& fiedges,
+    const std::vector<IEdge>& biedges,
     const std::vector< std::pair<IEdge, Direction_2> >& iedges,
     std::vector< std::pair<IEdge, bool> >& crossed_iedges,
     std::vector<PVertex>& new_pvertices) {
@@ -1890,6 +1944,7 @@ private:
 
     const FT tol = KSR::tolerance<FT>();
     CGAL_assertion(prev_time >= FT(0));
+    CGAL_assertion(curr_time >= FT(0));
     CGAL_assertion(next_time >= FT(0));
     const FT prev_diff = CGAL::abs(curr_time - prev_time);
     const FT next_diff = CGAL::abs(curr_time - next_time);
@@ -1909,26 +1964,34 @@ private:
       const auto pp_futr = m_data.point_2(prev, max_time);
       const auto dirp = Vector_2(pp_curr, pp_futr);
 
+      CGAL_assertion_msg(fiedges.size() <= 2,
+      "TODO: OPEN PREV, CAN WE HAVE MORE THAN 2 FIEDGES?");
+
       bool found_iedge = false;
       for (const auto& pair : iedges) {
         const auto& iedge = pair.first;
         CGAL_assertion(iedge != m_data.null_iedge());
-        if (iedge == m_data.iedge(prev)) {
+        // std::cout << "iedge: " << m_data.str(iedge) << ", " << m_data.segment_3(iedge) << std::endl;
+        if (fiedges.size() > 0 && iedge == fiedges.back()) {
+          if (m_verbose) std::cout << "- found same time iedge, prev" << std::endl;
           found_iedge = true; break;
         }
       }
 
-      if (found_iedge) shifted_prev = pp_curr + dirp / FT(10); // exclude this iedge
-      else {
-        shifted_prev = pp_curr - dirp / FT(10); // include this iedge
-        CGAL_assertion_msg(false, "TODO: CHECK THIS OPEN PREV CASE!");
+      if (found_iedge) {
+        shifted_prev = pp_curr + dirp / FT(10);
+        if (m_verbose) std::cout << "- excluding iedge, prev" << std::endl;
+        // CGAL_assertion_msg(false, "TODO: CHECK OPEN PREV CASE 1!");
+      } else {
+        shifted_prev = pp_curr - dirp / FT(10);
+        if (m_verbose) std::cout << "- including iedge, prev" << std::endl;
+        CGAL_assertion_msg(false, "TODO: CHECK OPEN PREV CASE 2!");
       }
-      // CGAL_assertion_msg(false, "TODO: OPEN, ADD SHIFTED_PREV FOR SAME TIME EVENTS!");
-
     } else {
       const auto pp_last = m_data.point_2(prev, prev_time);
       const auto dirp = Vector_2(pp_last, pp_curr);
-      shifted_prev = pp_curr - dirp / FT(10); // include this iedge
+      shifted_prev = pp_curr - dirp / FT(10);
+      if (m_verbose) std::cout << "- including iedge, prev" << std::endl;
     }
 
     Point_2 shifted_next;
@@ -1939,26 +2002,34 @@ private:
       const auto pn_futr = m_data.point_2(next, max_time);
       const auto dirn = Vector_2(pn_curr, pn_futr);
 
+      CGAL_assertion_msg(biedges.size() <= 2,
+      "TODO: OPEN NEXT, CAN WE HAVE MORE THAN 2 BIEDGES?");
+
       bool found_iedge = false;
       for (const auto& pair : iedges) {
         const auto& iedge = pair.first;
         CGAL_assertion(iedge != m_data.null_iedge());
-        if (iedge == m_data.iedge(next)) {
+        // std::cout << "iedge: " << m_data.str(iedge) << ", " << m_data.segment_3(iedge) << std::endl;
+        if (biedges.size() > 0 && iedge == biedges.front()) {
+          if (m_verbose) std::cout << "- found same time iedge, next" << std::endl;
           found_iedge = true; break;
         }
       }
 
-      if (found_iedge) shifted_next = pn_curr + dirn / FT(10); // exclude this iedge
-      else {
-        shifted_next = pn_curr - dirn / FT(10); // include this iedge
-        CGAL_assertion_msg(false, "TODO: CHECK THIS OPEN NEXT CASE!");
+      if (found_iedge) {
+        shifted_next = pn_curr + dirn / FT(10);
+        if (m_verbose) std::cout << "- excluding iedge, next" << std::endl;
+        // CGAL_assertion_msg(false, "TODO: CHECK OPEN NEXT CASE 1!");
+      } else {
+        shifted_next = pn_curr - dirn / FT(10);
+        if (m_verbose) std::cout << "- including iedge, next" << std::endl;
+        CGAL_assertion_msg(false, "TODO: CHECK OPEN NEXT CASE 2!");
       }
-      // CGAL_assertion_msg(false, "TODO: OPEN, ADD SHIFTED_NEXT FOR SAME TIME EVENTS!");
-
     } else {
       const auto pn_last = m_data.point_2(next, next_time);
       const auto dirn = Vector_2(pn_last, pn_curr);
-      shifted_next = pn_curr - dirn / FT(10); // include this iedge
+      shifted_next = pn_curr - dirn / FT(10);
+      if (m_verbose) std::cout << "- including iedge, next" << std::endl;
     }
 
     if (m_verbose) {
@@ -1978,6 +2049,7 @@ private:
 
       const auto& i_dir  = iedges[i].second;
       const auto& ip_dir = iedges[ip].second;
+      CGAL_assertion(iedges[i].first != iedges[ip].first);
       if (ref_direction_next.counterclockwise_in_between(i_dir, ip_dir)) {
         first_idx = ip; break;
       }

@@ -1046,8 +1046,57 @@ public:
     return out;
   }
 
+  const std::size_t get_iedges_front_back(
+    const PVertex& event_pvertex, const std::vector<PVertex>& pvertices,
+    std::vector<IEdge>& fiedges, std::vector<IEdge>& biedges) const {
+
+    fiedges.clear(); biedges.clear();
+    const auto ref_iedge = this->iedge(event_pvertex);
+    CGAL_assertion(ref_iedge != null_iedge());
+
+    std::size_t event_idx = KSR::no_element();
+    for (std::size_t i = 0; i < pvertices.size(); ++i) {
+      if (pvertices[i] == event_pvertex) {
+        event_idx = i; break;
+      }
+    }
+    CGAL_assertion(event_idx != KSR::no_element());
+
+    for (std::size_t i = 0; i < pvertices.size(); ++i) {
+      const auto iedge = this->iedge(pvertices[i]);
+      if (iedge == null_iedge()) continue;
+      CGAL_assertion(iedge != null_iedge());
+      if (iedge == ref_iedge) continue;
+      CGAL_assertion(i != event_idx);
+
+      if (i < event_idx) {
+        if (fiedges.size() > 0 && fiedges.back() == iedge) continue;
+        fiedges.push_back(iedge);
+      } else {
+        if (biedges.size() > 0 && biedges.back() == iedge) continue;
+        biedges.push_back(iedge);
+      }
+    }
+
+    if (m_verbose) {
+      std::cout << "- iedges, front: " << fiedges.size() << std::endl;
+      for (const auto& fiedge : fiedges) {
+        std::cout << str(fiedge) << ": " << segment_3(fiedge) << std::endl;
+      }
+    }
+
+    if (m_verbose ) {
+      std::cout << "- iedges, back: " << biedges.size() << std::endl;
+      for (const auto& biedge : biedges) {
+        std::cout << str(biedge) << ": " << segment_3(biedge) << std::endl;
+      }
+    }
+    return event_idx;
+  }
+
   const std::pair<PVertex, PVertex> front_and_back_34(const PVertex& pvertex) {
 
+    if (m_verbose) std::cout << "- front back 34 case" << std::endl;
     PVertex front, back;
     const std::size_t sp_idx = pvertex.first;
     CGAL_assertion(sp_idx != KSR::no_element());
@@ -1069,6 +1118,7 @@ public:
   const std::pair<PVertex, PVertex> front_and_back_5(
     const PVertex& pvertex1, const PVertex& pvertex2) {
 
+    if (m_verbose) std::cout << "- front back 5 case" << std::endl;
     PVertex front, back;
     CGAL_assertion(pvertex1.first == pvertex2.first);
     const std::size_t sp_idx = pvertex1.first;
@@ -1315,7 +1365,7 @@ public:
       std::cout << "- num added pfaces: " << num_added_pfaces << std::endl;
       std::cout << "- k intersections after: " << this->k(pvertex.first) << std::endl;
     }
-    CGAL_assertion_msg(num_added_pfaces <= 1,
+    CGAL_assertion_msg(num_added_pfaces <= 2,
     "TODO: CHECK CASES WHERE WE HAVE MORE THAN N NEW PFACES!");
 
     // CGAL_assertion_msg(false, "TODO: TRAVERSE IEDGES GLOBAL!");
@@ -2662,13 +2712,17 @@ public:
     const auto prev_p = point_2(prev);
     const auto next_p = point_2(next);
 
-    // std::cout << "prev: " << point_3(prev) << std::endl;
-    // std::cout << "next: " << point_3(next) << std::endl;
-    // std::cout << "curr: " << point_3(curr) << std::endl;
+    // std::cout << "prev p: " << point_3(prev) << std::endl;
+    // std::cout << "next p: " << point_3(next) << std::endl;
+    // std::cout << "curr p: " << point_3(curr) << std::endl;
 
     CGAL_assertion(direction(prev) != CGAL::NULL_VECTOR);
     CGAL_assertion(direction(curr) != CGAL::NULL_VECTOR);
     CGAL_assertion(direction(next) != CGAL::NULL_VECTOR);
+
+    // std::cout << "prev future: " << point_3(prev, m_current_time + FT(1)) << std::endl;
+    // std::cout << "next future: " << point_3(next, m_current_time + FT(1)) << std::endl;
+    // std::cout << "curr future: " << point_3(curr, m_current_time + FT(1)) << std::endl;
 
     const Line_2 future_line_prev(
       point_2(prev, m_current_time + FT(1)),
@@ -2707,6 +2761,7 @@ public:
       if (m_verbose) std::cout << "- prev parallel lines" << std::endl;
 
       is_parallel_prev = true;
+      // Here, in the dot product, we can have maximum 1 zero-length vector.
       const FT prev_dot = current_vec_prev * iedge_vec;
       if (prev_dot < FT(0)) {
         if (m_verbose) std::cout << "- prev moves backwards" << std::endl;
@@ -2744,6 +2799,7 @@ public:
       if (m_verbose) std::cout << "- next parallel lines" << std::endl;
 
       is_parallel_next = true;
+      // Here, in the dot product, we can have maximum 1 zero-length vector.
       const FT next_dot = current_vec_next * iedge_vec;
       if (next_dot < FT(0)) {
         if (m_verbose) std::cout << "- next moves backwards" << std::endl;
@@ -2796,8 +2852,8 @@ public:
     const auto& next = pother;
     const auto& curr = pvertex;
 
-    // std::cout << "next: " << point_3(next) << std::endl;
-    // std::cout << "curr: " << point_3(curr) << std::endl;
+    // std::cout << "next p: " << point_3(next) << std::endl;
+    // std::cout << "curr p: " << point_3(curr) << std::endl;
 
     const auto next_p = point_2(next);
     const auto curr_p = point_2(curr);
@@ -2805,6 +2861,9 @@ public:
     const Point_2 pinit = iedge_line.projection(curr_p);
     CGAL_assertion(direction(curr) != CGAL::NULL_VECTOR);
     CGAL_assertion(direction(next) != CGAL::NULL_VECTOR);
+
+    // std::cout << "next future: " << point_3(next, m_current_time + FT(1)) << std::endl;
+    // std::cout << "curr future: " << point_3(curr, m_current_time + FT(1)) << std::endl;
 
     const Line_2 future_line_next(
       point_2(next, m_current_time + FT(1)),
@@ -2833,6 +2892,7 @@ public:
       if (m_verbose) std::cout << "- back/front parallel lines" << std::endl;
 
       is_parallel = true;
+      // Here, in the dot product, we can have maximum 1 zero-length vector.
       const FT next_dot = current_vec_next * iedge_vec;
       if (next_dot < FT(0)) {
         if (m_verbose) std::cout << "- back/front moves backwards" << std::endl;
@@ -2881,14 +2941,18 @@ public:
     const Point_2 pinit = iedge_line.projection(pv_point);
 
     const auto& curr = prev;
-    // std::cout << "next: " << point_3(next) << std::endl;
-    // std::cout << "curr: " << point_3(curr) << std::endl;
+    // std::cout << "next p: " << point_3(next) << std::endl;
+    // std::cout << "curr p: " << point_3(curr) << std::endl;
 
     const auto next_p = point_2(next);
     const auto curr_p = point_2(curr);
 
     CGAL_assertion(direction(curr) != CGAL::NULL_VECTOR);
     CGAL_assertion(direction(next) != CGAL::NULL_VECTOR);
+
+    // std::cout << "next future: " << point_3(next, m_current_time + FT(1)) << std::endl;
+    // std::cout << "curr future: " << point_3(curr, m_current_time + FT(1)) << std::endl;
+
     const Line_2 future_line_next(
       point_2(next, m_current_time + FT(1)),
       point_2(curr, m_current_time + FT(1)));
