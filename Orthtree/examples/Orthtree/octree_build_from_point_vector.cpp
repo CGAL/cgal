@@ -10,7 +10,7 @@ typedef std::vector<Point> Point_vector;
 
 typedef CGAL::Octree<Kernel, Point_vector> Octree;
 
-int main(int argc, char **argv) {
+int main() {
 
   // Here, our point set is a vector
   Point_vector points;

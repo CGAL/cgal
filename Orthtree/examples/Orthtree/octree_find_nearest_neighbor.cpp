@@ -6,7 +6,7 @@
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 // Type Declarations
 typedef CGAL::Simple_cartesian<double> Kernel;
