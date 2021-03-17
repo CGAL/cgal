@@ -75,7 +75,7 @@ public:
   /*!
     \brief self typedef for convenience
    */
-  typedef Orthtree<Traits, PointRange, PointMap>::Node Self;
+  typedef typename Orthtree<Traits, PointRange, PointMap>::Node Self;
 
 
   /// \cond SKIP_IN_MANUAL
