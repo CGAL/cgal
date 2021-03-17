@@ -203,7 +203,6 @@ public:
     Array bbox_max;
 
     // init bbox with first values found
-    for (FT& f : bbox_min)
     {
       const Point& p = get (m_point_map, *(point_range.begin()));
       std::size_t i = 0;
@@ -650,7 +649,7 @@ public:
     std::size_t i = 0;
     for (const FT& f : cartesian_range(m_bbox_min))
     {
-      bary[i] = FT(node.global_coordinates()[i]) * size + size / 2.0 + f;
+      bary[i] = FT(node.global_coordinates()[i]) * size + size / FT(2) + f;
       ++ i;
     }
 

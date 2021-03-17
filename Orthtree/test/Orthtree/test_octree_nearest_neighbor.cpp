@@ -46,7 +46,7 @@ void naive_vs_octree(std::size_t dataset_size) {
   auto naive_start_time = high_resolution_clock::now();
   {
 
-    FT distance_nearest = std::numeric_limits<FT>::max();
+    FT distance_nearest = (std::numeric_limits<FT>::max)();
     for (auto &p : points.points()) {
 
       FT distance_current = CGAL::squared_distance(p, random_point);
