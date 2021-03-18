@@ -47,7 +47,7 @@
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/random.hpp>
 // local
-#include "Bvd.h"
+#include "bvd.h"
 
 // namespace definition
 namespace PMP = CGAL::Polygon_mesh_processing;
@@ -1074,14 +1074,14 @@ class Mesh_properties {
     calculate_edge_feature_intensities(*np);
     calculate_vertex_feature_intensities(*np);
     // step 2: update the feature edges (copy from input, or calculate)
-    Mesh::Property_map<halfedge_descriptor, bool> halfedge_are_creases;
+    typename Mesh::template Property_map<halfedge_descriptor, bool> halfedge_are_creases;
     bool found = false;
     boost::tie(halfedge_are_creases, found) =
-        mesh_.property_map<halfedge_descriptor, bool>("h:crease");
+        mesh_.template property_map<halfedge_descriptor, bool>("h:crease");
     if (found) {
       np->inherit_element_types = true;
       // update the halfedge_are_creases_ according to halfedge_are_creases
-      for (Mesh::Edge_range::const_iterator ei = mesh_.edges().begin();
+      for (typename Mesh::Edge_range::const_iterator ei = mesh_.edges().begin();
           ei != mesh_.edges().end(); ++ei) {
         halfedge_descriptor hd = mesh_.halfedge(*ei);
         if (get_halfedge_normal_dihedral(hd) == -1.0) {
@@ -1095,7 +1095,7 @@ class Mesh_properties {
         }
       }
     } else if (np->inherit_element_types) {
-      for (Mesh::Vertex_range::const_iterator vi = mesh_.vertices().begin();
+      for (typename Mesh::Vertex_range::const_iterator vi = mesh_.vertices().begin();
         vi != mesh_.vertices().end(); ++vi) {
         Halfedge_list effective_edges;
         collect_effective_edges_in_one_ring(np->feature_control_delta, *vi,
@@ -4616,7 +4616,7 @@ class Mesh_properties {
     CGAL::set_ascii_mode(ofs);
     // step 1: collect the crease edges
     std::vector<halfedge_descriptor> crease_halfedges;
-    for (Mesh::Edge_range::const_iterator ei = mesh_.edges().begin();
+    for (typename Mesh::Edge_range::const_iterator ei = mesh_.edges().begin();
       ei != mesh_.edges().end(); ++ei) {
       halfedge_descriptor hd = mesh_.halfedge(*ei);
       if (get_halfedge_normal_dihedral(hd) == -1.0) {
@@ -4646,13 +4646,13 @@ class Mesh_properties {
     }
     ofs << "end_header" << std::endl;
     int vertex_count = 0;
-    for (Mesh::Vertex_range::const_iterator vi = mesh_.vertices().begin();
+    for (typename Mesh::Vertex_range::const_iterator vi = mesh_.vertices().begin();
         vi != mesh_.vertices().end(); ++vi) {
       vertex_map[*vi] = vertex_count++;
       const Point &p = get_point(*vi);
       ofs << p.x() << " " << p.y() << " " << p.z() << std::endl;
     }
-    for (Mesh::Face_range::const_iterator fi = mesh_.faces().begin();
+    for (typename Mesh::Face_range::const_iterator fi = mesh_.faces().begin();
         fi != mesh_.faces().end(); ++fi) {
       halfedge_descriptor hd = mesh_.halfedge(*fi);
       vertex_descriptor vd1 = get_source_vertex(hd);

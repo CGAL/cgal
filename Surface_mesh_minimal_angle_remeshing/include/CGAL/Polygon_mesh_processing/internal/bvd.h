@@ -8,7 +8,7 @@
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Polygon_2.h>
 // local
-#include "Polygon_kernel.h"
+#include "polygon_kernel.h"
 
 template <class Kernel, class TDS>
 class CBvd : public CGAL::Delaunay_triangulation_2<Kernel, TDS> {
