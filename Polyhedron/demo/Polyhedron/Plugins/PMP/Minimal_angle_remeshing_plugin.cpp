@@ -331,10 +331,10 @@ private:
     np.optimize_strategy = ui.cb_optimize_strategy->currentIndex() == 0 ?
       OptimizeStrategy::k_approximation : OptimizeStrategy::k_interpolation;
 
-    np.face_optimize_type = ui.cb_face_optimize_type->currentIndex();
-    np.edge_optimize_type = ui.cb_edge_optimize_type->currentIndex();
-    np.vertex_optimize_type = ui.cb_vertex_optimize_type->currentIndex();
-    np.optimize_after_local_operation = ui.cb_optimize_after_local_operations->isChecked();
+    np.face_optimize_type = (OptimizeType)(ui.cb_face_optimize_type->currentIndex());
+    np.edge_optimize_type = (OptimizeType)(ui.cb_edge_optimize_type->currentIndex());
+    np.vertex_optimize_type = (OptimizeType)(ui.cb_vertex_optimize_type->currentIndex());
+    np.optimize_after_local_operations = ui.cb_optimize_after_local_operations->isChecked();
 
     return true;
   }
@@ -381,7 +381,7 @@ private:
       .face_optimize_type(np.face_optimize_type)
       .edge_optimize_type(np.edge_optimize_type)
       .vertex_optimize_type(np.vertex_optimize_type)
-      .optimize_after_local_operation(np.optimize_after_local_operation));
+      .optimize_after_local_operations(np.optimize_after_local_operations));
   }
 
 private:

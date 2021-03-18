@@ -82,7 +82,7 @@ enum OptimizeType {
 
 enum OptimizeStrategy {
   k_approximation = 0,
-  k_Interpolation
+  k_interpolation
 };
 
 enum EdgeFlipStrategy {
