@@ -38,10 +38,15 @@
 
 namespace CGAL {
 
-template <typename SubcurveTraits_2 = Arr_non_caching_segment_traits_2<> >
+template <typename SubcurveTraits_2 = Arr_non_caching_segment_traits_2<>,
+          typename XMonotoneCurve2
+          = internal::X_monotone_polycurve_2
+          <typename SubcurveTraits_2::X_monotone_curve_2,
+           typename SubcurveTraits_2::Point_2> >
 class Arr_polycurve_basic_traits_2 {
 public:
   typedef SubcurveTraits_2                                 Subcurve_traits_2;
+  typedef XMonotoneCurve2                                  X_monotone_curve_2;
 
   /// \name Types and functors inherited from the subcurve geometry traits.
   //@{
@@ -71,7 +76,7 @@ public:
   typedef X_monotone_subcurve_2                            X_monotone_segment_2;
 
 private:
-  typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>  Self;
+  typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2, X_monotone_curve_2>  Self;
 
   // Data members:
   const Subcurve_traits_2* m_subcurve_traits;  // The base segment-traits class.
@@ -127,8 +132,6 @@ public:
    * curve which is either strongly x-monotone or vertical. Again,
    * the polycurve is without degenerated subcurves.
    */
-  typedef internal::X_monotone_polycurve_2<X_monotone_subcurve_2, Point_2>
-                                                           X_monotone_curve_2;
   typedef typename X_monotone_curve_2::Size                Size;
   typedef typename X_monotone_curve_2::size_type           size_type;
 
@@ -136,7 +139,7 @@ public:
   /*! Compare the x-coordinates of two points. */
   class Compare_x_2 {
   protected:
-    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
+    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2, X_monotone_curve_2>
       Polycurve_basic_traits_2;
 
     /*! The polycurve traits (in case it has state). */
@@ -309,7 +312,7 @@ public:
   /*! Compare two curve-ends or points lexigoraphically: by x, then by y. */
   class Compare_xy_2 {
   protected:
-    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
+    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2, X_monotone_curve_2>
       Polycurve_basic_traits_2;
 
     /*! The polycurve traits (in case it has state). */
@@ -537,7 +540,7 @@ public:
 
   class Construct_min_vertex_2 {
   protected:
-    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
+    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2, X_monotone_curve_2>
       Polycurve_basic_traits_2;
 
     /*! The polycurve traits (in case it has state). */
@@ -575,7 +578,7 @@ public:
 
   class Construct_max_vertex_2 {
   protected:
-    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
+    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2, X_monotone_curve_2>
       Polycurve_basic_traits_2;
 
     /*! The polycurve traits (in case it has state). */
@@ -613,7 +616,7 @@ public:
 
   class Is_vertical_2 {
   protected:
-    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
+    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2, X_monotone_curve_2>
     Polycurve_basic_traits_2;
 
     /*! The polycurve traits (in case it has state). */
@@ -712,7 +715,7 @@ public:
     }
 
   protected:
-    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
+    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2, X_monotone_curve_2>
       Polycurve_basic_traits_2;
 
     /*! The polycurve traits (in case it has state). */
@@ -790,7 +793,7 @@ public:
 
   class Compare_y_at_x_left_2 {
   protected:
-    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
+    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2, X_monotone_curve_2>
       Polycurve_basic_traits_2;
 
     /*! The polycurve traits (in case it has state). */
@@ -836,7 +839,7 @@ public:
 
   class Compare_y_at_x_right_2 {
   protected:
-    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
+    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2, X_monotone_curve_2>
       Polycurve_basic_traits_2;
 
     /*! The polycurve traits (in case it has state). */
@@ -883,7 +886,7 @@ public:
 
   class Equal_2 {
   protected:
-    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
+    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2, X_monotone_curve_2>
       Polycurve_basic_traits_2;
 
     /*! The polycurve traits (in case it has state). */
@@ -1006,7 +1009,7 @@ public:
 
   class Compare_endpoints_xy_2 {
   protected:
-    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
+    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2, X_monotone_curve_2>
       Polycurve_basic_traits_2;
 
     /*! The traits (in case it has state). */
@@ -1042,7 +1045,7 @@ public:
 
   class Construct_opposite_2 {
   protected:
-    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
+    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2, X_monotone_curve_2>
       Polycurve_basic_traits_2;
 
     /*! The traits (in case it has state). */
@@ -1154,7 +1157,7 @@ public:
 
   class Construct_x_monotone_curve_2 {
   protected:
-    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
+    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2, X_monotone_curve_2>
       Polycurve_basic_traits_2;
 
     /*! The polycurve traits (in case it has state). */
@@ -1345,7 +1348,7 @@ public:
    */
   class Parameter_space_in_x_2 {
   protected:
-    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
+    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2, X_monotone_curve_2>
       Polycurve_basic_traits_2;
 
     /*! The polycurve traits (in case it has state). */
@@ -1410,7 +1413,7 @@ public:
    */
   class Parameter_space_in_y_2 {
   protected:
-    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
+    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2, X_monotone_curve_2>
       Polycurve_basic_traits_2;
 
     /*! The polycurve traits (in case it has state). */
@@ -1476,7 +1479,7 @@ public:
    */
   class Compare_x_on_boundary_2 {
   protected:
-    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
+    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2, X_monotone_curve_2>
       Polycurve_basic_traits_2;
 
     /*! The polycurve traits (in case it has state). */
@@ -1570,7 +1573,7 @@ public:
    */
   class Compare_x_near_boundary_2 {
   protected:
-    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
+    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2, X_monotone_curve_2>
       Polycurve_basic_traits_2;
 
     /*! The polycurve traits (in case it has state). */
@@ -1624,7 +1627,7 @@ public:
 
   class Compare_x_at_limit_2{
   protected:
-    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
+    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2, X_monotone_curve_2>
       Polycurve_basic_traits_2;
 
     /*! The polycurve traits (in case it has state). */
@@ -1696,7 +1699,7 @@ public:
 
   class Compare_x_near_limit_2{
   protected:
-    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
+    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2, X_monotone_curve_2>
       Polycurve_basic_traits_2;
 
     /*! The polycurve traits (in case it has state). */
@@ -1746,7 +1749,7 @@ public:
    */
   class Compare_y_on_boundary_2 {
   protected:
-    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
+    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2, X_monotone_curve_2>
       Polycurve_basic_traits_2;
 
     /*! The polycurve traits (in case it has state). */
@@ -1784,7 +1787,7 @@ public:
    */
   class Compare_y_near_boundary_2 {
   protected:
-    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
+    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2, X_monotone_curve_2>
       Polycurve_basic_traits_2;
 
     /*! The polycurve traits (in case it has state). */
@@ -1839,7 +1842,7 @@ public:
    */
   class Is_on_y_identification_2 {
   protected:
-    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
+    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2, X_monotone_curve_2>
       Polycurve_basic_traits_2;
 
     /*! The polycurve traits (in case it has state). */
@@ -1884,7 +1887,7 @@ public:
    */
   class Is_on_x_identification_2 {
   protected:
-    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
+    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2, X_monotone_curve_2>
       Polycurve_basic_traits_2;
 
     /*! The polycurve traits (in case it has state). */
@@ -1949,7 +1952,7 @@ public:
    */
   class Push_back_2 {
   protected:
-    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
+    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2, X_monotone_curve_2>
       Polycurve_basic_traits_2;
 
     /*! The traits (in case it has state). */
@@ -2144,7 +2147,7 @@ public:
    */
   class Push_front_2 {
   protected:
-    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
+    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2, X_monotone_curve_2>
       Polycurve_basic_traits_2;
 
     /*! The traits (in case it has state). */
@@ -2311,7 +2314,7 @@ public:
 
   class Trim_2 {
   protected:
-    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
+    typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2, X_monotone_curve_2>
       Polycurve_basic_traits_2;
 
     /* The polycurve traits (in case it has state). */
