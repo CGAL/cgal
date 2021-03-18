@@ -75,14 +75,11 @@ set_package_properties(
 include(CGAL_Eigen3_support)
 
 find_package(METIS)
+include(CGAL_METIS_support)
 set_package_properties(
   METIS PROPERTIES
   DESCRIPTION "A library for partitionning."
   PURPOSE "Requiered for the partition plugin.")
-
-if(METIS_FOUND)
-  include_directories(${METIS_INCLUDE_DIRS})
-endif()
 
 # Activate concurrency?
 option(POLYHEDRON_DEMO_ACTIVATE_CONCURRENCY "Enable concurrency" ON)
