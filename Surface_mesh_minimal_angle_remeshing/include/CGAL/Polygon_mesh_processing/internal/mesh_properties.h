@@ -3923,7 +3923,7 @@ class Mesh_properties {
     } else {
       p = new_point;
     }
-    if (np.optimize_strategy == OptimizeStrategy::k_Interpolation) {
+    if (np.optimize_strategy == OptimizeStrategy::k_interpolation) {
       p = input_face_tree.closest_point(p);
     }
     return true;

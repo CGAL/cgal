@@ -452,7 +452,7 @@ void MainWindow::on_actionMinAngle_parameter_settings_triggered() {
     m_pScene->set_vertex_optimize_ratio(ps.get_vertex_optimize_ratio());
     m_pScene->set_stencil_ring_size(ps.get_stencil_ring_size());
     os = ps.get_optimize_strategy() == 0 ? OptimizeStrategy::k_approximation :
-      OptimizeStrategy::k_Interpolation;
+      OptimizeStrategy::k_interpolation;
     m_pScene->set_optimize_strategy(os);
     ot = m_pScene->get_optimize_type(ps.get_face_optimize_type());
     m_pScene->set_face_optimize_type(ot);
