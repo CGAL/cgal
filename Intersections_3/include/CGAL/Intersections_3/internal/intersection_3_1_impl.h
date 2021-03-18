@@ -523,6 +523,7 @@ do_intersect(const typename K::Segment_3  &s1,
   return false;
 }
 
+  // AF: to be fixed
 template <class K>
 typename Intersection_traits<K, typename K::Line_3, typename K::Segment_3>::result_type
 intersection(const typename K::Line_3 &l,
@@ -971,16 +972,13 @@ do_intersect(const typename K::Plane_3 &plane,
 {
     typedef typename K::Point_3 Point_3;
 
-    typename Intersection_traits<K, typename K::Plane_3, typename K::Line_3>
-      ::result_type
-      line_intersection = internal::intersection(plane, ray.supporting_line(), k);
+    K::Oriented_side_3 oriented_side_3;
 
-    if(!line_intersection)
-        return false;
-    if(const Point_3 *isp = intersect_get<Point_3>(line_intersection))
-        return ray.collinear_has_on(*isp);
-
-    return true;
+    Oriented_side os = oriented_side_3(plane,ray.source());
+    if(os == ON_ORIENTED_BOUNDARY){
+      return true;
+    }
+    return sign(ray.to_vector()* plane.orthogonal_vector()) * os == -1;
 }
 
 
