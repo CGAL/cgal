@@ -139,7 +139,7 @@ public:
   }
 
   typename Traits::FT width() const {
-    return m_octree.bbox(m_octree.root()).xmax() - m_octree.bbox(m_octree.root()).xmin();
+    return FT(m_octree.bbox(m_octree.root()).xmax() - m_octree.bbox(m_octree.root()).xmin());
   }
 
   Node locate(const typename Traits::Point_3 &p) const {
