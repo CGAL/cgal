@@ -23,6 +23,7 @@
 #include <CGAL/General_polygon_with_holes_2.h>
 #include <CGAL/Boolean_set_operations_2/Gps_default_traits.h>
 #include <CGAL/Arr_polyline_traits_2.h>
+#include <CGAL/Arr_lightweight_polyline_traits_2.h>
 #include <CGAL/Single.h>
 #include <CGAL/Iterator_range.h>
 
@@ -82,20 +83,37 @@ using Disable_if_Polygon_2_iterator =
   <!Is_Kernel_Polygon_2
    <typename std::iterator_traits<InputIterator>::value_type>::value>::type;
 
+template <typename Kernel, typename Container, typename ArrTraits>
+typename ArrTraits::Curve_2 construct_curve (const Polygon_2<Kernel, Container>& polygon,
+                                             const ArrTraits& traits)
+{
+  auto ctr = traits.construct_curve_2_object();
+  return ctr(boost::range::join(CGAL::make_range(polygon.vertices_begin(),
+                                                 polygon.vertices_end()),
+                                CGAL::make_single(*polygon.vertices_begin())));
+}
+
+template <typename Kernel, typename Container>
+typename Arr_lightweight_polyline_traits_2<Kernel, typename Polygon_2<Kernel, Container>::Vertex_const_iterator>::Curve_2
+construct_curve (const Polygon_2<Kernel, Container>& polygon,
+                 const Arr_lightweight_polyline_traits_2<Kernel, typename Polygon_2<Kernel, Container>::Vertex_const_iterator>& traits)
+{
+  auto ctr = traits.construct_curve_2_object();
+  return ctr(polygon.vertices_begin(), polygon.vertices_end(), true);
+}
+
+
 // Convert Polygon_2 to General_polygon_2<Polyline_traits>
   template <typename Kernel, typename Container, typename ArrTraits>
 General_polygon_2<ArrTraits>
 convert_polygon(const Polygon_2<Kernel, Container>& polygon,
                 const ArrTraits& traits)
 {
-  auto ctr = traits.construct_curve_2_object();
   if (polygon.is_empty()) return General_polygon_2<ArrTraits>();
   using Point = typename ArrTraits::Point_2;
   using X_monotone_curve = typename ArrTraits::X_monotone_curve_2;
   using Make_x_monotone_result = boost::variant<Point, X_monotone_curve>;
-  auto cv = ctr(boost::range::join(CGAL::make_range(polygon.vertices_begin(),
-                                                    polygon.vertices_end()),
-                                   CGAL::make_single(*polygon.vertices_begin())));
+  auto cv = construct_curve (polygon, traits);
   General_polygon_2<ArrTraits> gpgn;
   auto make_x_mtn = traits.make_x_monotone_2_object();
   make_x_mtn(cv,

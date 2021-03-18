@@ -524,9 +524,9 @@ public:
     }
 
     template <typename ForwardIterator>
-    Curve_2 operator()(ForwardIterator begin, ForwardIterator end) const
+    Curve_2 operator()(ForwardIterator begin, ForwardIterator end, bool duplicate_first = false) const
     {
-      return Curve_2 (begin, end);
+      return Curve_2 (begin, end, true);
     }
   };
 
