@@ -94,25 +94,6 @@ struct Has_type_different_from <T, No, true>
                         enum { value=true };
         };
 
-        // like std::multiplies but allows mixing types
-        // in C++11 in doesn't need to be a template
-        template < class Ret >
-        struct multiplies {
-                template<class A,class B>
-                decltype(auto) operator()(A&&a,B&&b)const
-                {
-                        return std::forward<A>(a)*std::forward<B>(b);
-                }
-        };
-        template < class Ret >
-        struct division {
-                template<class A,class B>
-                decltype(auto) operator()(A&&a,B&&b)const
-                {
-                        return std::forward<A>(a)/std::forward<B>(b);
-                }
-        };
-
         using std::decay;
 
         template<class T,class U> struct Type_copy_ref { typedef U type; };
