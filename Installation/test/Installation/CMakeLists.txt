@@ -56,13 +56,14 @@ endif()
 
 create_link_to_program(CGAL)
 
-if(WITH_CGAL_Core)
+if ( CGAL_Core_FOUND )
   create_link_to_program(CGAL_Core)
 endif()
 
 if(WITH_CGAL_ImageIO)
   create_link_to_program(CGAL_ImageIO)
 endif()
+
 
 if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL Windows)
   add_executable(display_dll_version_info display_dll_version_info.cpp)
@@ -78,7 +79,7 @@ else()
 endif()
 
 if(WITH_CGAL_Qt5)
-  find_package(Qt5 QUIET)
+  find_package(Qt5 QUIET COMPONENTS Core)
   if(Qt5_FOUND)
     create_link_to_program(CGAL_Qt5)
   endif()

@@ -660,7 +660,7 @@ public:
                cet->source()->twin() == ce->source() )
             break;
 
-#ifndef NDEBUG
+#ifdef CGAL_USE_TRACE
       if( cet->circle() != ce->circle().opposite() )
         CGAL_NEF_TRACEN("assertion failed!");
 

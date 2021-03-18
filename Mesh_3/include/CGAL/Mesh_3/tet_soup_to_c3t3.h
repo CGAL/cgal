@@ -301,7 +301,7 @@ bool build_infinite_cells(Tr& tr,
 #endif
 
   // add the facets to the incident cells map
-  for (const Cell_handle c : infinite_cells)
+  for (const Cell_handle& c : infinite_cells)
     if(!add_infinite_facets_to_incident_cells_map<Tr>(c, 0, incident_cells_map, verbose))
       return false;
 

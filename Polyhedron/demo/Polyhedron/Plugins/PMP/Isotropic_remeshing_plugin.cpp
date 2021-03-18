@@ -342,7 +342,7 @@ public Q_SLOTS:
 
     if (poly_item || selection_item)
     {
-      if(selection_item && selection_item->selected_edges.empty())
+      if(selection_item && selection_item->selected_edges.empty() && selection_item->selected_facets.empty())
       {
         QMessageBox::warning(mw, "Empty Edges", "There are no selected edges. Aborting.");
         return;

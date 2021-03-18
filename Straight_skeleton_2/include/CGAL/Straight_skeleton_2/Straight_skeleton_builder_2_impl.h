@@ -17,7 +17,6 @@
 #include <CGAL/Real_timer.h>
 #include <CGAL/Unique_hash_map.h>
 
-#include <boost/bind.hpp>
 #include <boost/utility.hpp>
 #include <boost/version.hpp>
 #if BOOST_VERSION == 106000
@@ -2018,12 +2017,12 @@ bool Straight_skeleton_builder_2<Gt,Ss,V>::FinishUp()
 
   std::for_each( mSplitNodes.begin()
                 ,mSplitNodes.end  ()
-                ,boost::bind(&Straight_skeleton_builder_2<Gt,Ss,V>::MergeSplitNodes,this,_1)
+                ,[this](Vertex_handle_pair p){ this->MergeSplitNodes(p); }
                ) ;
 
   std::for_each( mDanglingBisectors.begin()
                 ,mDanglingBisectors.end  ()
-                ,boost::bind(&Straight_skeleton_builder_2<Gt,Ss,V>::EraseBisector,this,_1)
+                ,[this](Halfedge_handle db){ this->EraseBisector(db); }
                ) ;
 
   // MergeCoincidentNodes() locks all extremities of halfedges that have a vertex involved in a multinode.

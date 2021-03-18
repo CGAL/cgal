@@ -19,16 +19,16 @@
 #include <QApplication>
 #include <CGAL/Qt/resources.h>
 #include <QMimeData>
-
+#include <CGAL/Qt/init_ogl_context.h>
 
 int main(int argc, char **argv)
 {
-  QCoreApplication::setAttribute(::Qt::AA_UseDesktopOpenGL);
+
+  CGAL::Qt::init_ogl_context(4,3);
   QApplication app(argc, argv);
   app.setOrganizationDomain("inria.fr");
   app.setOrganizationName("INRIA");
   app.setApplicationName("AABB tree demo");
-  //for windows
 
   // Import resources from libCGALQt (Qt5).
   CGAL_QT_INIT_RESOURCES;

@@ -316,7 +316,6 @@ rectangular_p_center_2_matrix_search(
   const Traits& t)
 {
   typedef typename Traits::FT FT;
-  using std::minus;
 
   return rectangular_p_center_2_matrix_search(
     f,
@@ -325,7 +324,9 @@ rectangular_p_center_2_matrix_search(
     r,
     pf,
     t,
-    boost::bind(Max<FT>(), 0, boost::bind(minus<FT>(), _1, _2)));
+    std::function<FT(const FT&, const FT&)>(
+      [](const FT& a, const FT& b) { return Max<FT>()(0, std::minus<FT>()(a,b)); }
+    ));
 
 } // Pcenter_matrix_search( ... )
 

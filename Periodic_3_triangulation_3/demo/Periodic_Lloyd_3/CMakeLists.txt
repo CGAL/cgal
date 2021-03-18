@@ -19,7 +19,7 @@ set(CMAKE_AUTOMOC ON)
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
-find_package(Qt5 QUIET COMPONENTS Xml Script Help OpenGL Svg)
+find_package(Qt5 QUIET COMPONENTS Script Help OpenGL Svg)
 
 if(Qt5Help_VERSION VERSION_LESS 5.12)
   set(CGAL_QCOLLECTIONGENERATOR_TARGET Qt5::qcollectiongenerator)
