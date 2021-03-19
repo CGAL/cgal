@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 #include <iterator>
+#include <cassert>
 
 // CGAL includes.
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
@@ -135,6 +136,7 @@ int main() {
   Object object4;
   objects.push_back(object4);
   std::cout << "* number of input objects: " << objects.size() << std::endl;
+  assert(objects.size() == 4);
 
   // Create instances of the classes Neighbor_query and Region_type.
   Neighbor_query neighbor_query = Neighbor_query(objects);
@@ -156,5 +158,6 @@ int main() {
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
   std::cout << "* number of found regions: " << regions.size() << std::endl;
+  assert(regions.size() == 2);
   return EXIT_SUCCESS;
 }

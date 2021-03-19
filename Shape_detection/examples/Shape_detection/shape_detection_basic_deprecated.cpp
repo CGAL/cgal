@@ -4,6 +4,7 @@
 #endif
 #include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
 
+#include <cassert>
 #include <fstream>
 #include <iostream>
 #include <CGAL/property_map.h>
@@ -58,8 +59,10 @@ int run(const char* filename) {
   // Detect registered shapes with the default parameters.
   shape_detection.detect();
 
-  std::cout << "* number of found shapes: " <<
-    shape_detection.shapes().end() - shape_detection.shapes().begin() << std::endl;
+  const std::size_t number_of_shapes =
+    shape_detection.shapes().end() - shape_detection.shapes().begin();
+  std::cout << "* number of found shapes: " << number_of_shapes << std::endl;
+  assert(number_of_shapes == 7);
   return EXIT_SUCCESS;
 }
 

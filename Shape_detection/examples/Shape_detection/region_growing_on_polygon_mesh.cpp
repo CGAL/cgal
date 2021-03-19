@@ -51,6 +51,7 @@ int main(int argc, char *argv[]) {
   }
   const Face_range face_range = faces(polygon_mesh);
   std::cout << "* number of input faces: " << face_range.size() << std::endl;
+  assert(face_range.size() == 32245);
 
   // Default parameter values for the data file polygon_mesh.off.
   const FT          max_distance_to_plane = FT(1);
@@ -85,6 +86,7 @@ int main(int argc, char *argv[]) {
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
   std::cout << "* number of found regions: " << regions.size() << std::endl;
+  assert(regions.size() == 326);
 
   // Save regions to a file only if it is stored in CGAL::Surface_mesh.
   #if defined(USE_SURFACE_MESH)

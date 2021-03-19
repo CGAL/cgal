@@ -36,6 +36,7 @@ int main(int argc, char *argv[]) {
   }
   in.close();
   std::cout << "* number of input points: " << input_range.size() << std::endl;
+  assert(input_range.size() == 3634);
 
   // Default parameter values for the data file point_set_2.xyz.
   const FT          search_sphere_radius = FT(5);
@@ -62,6 +63,7 @@ int main(int argc, char *argv[]) {
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
   std::cout << "* number of found regions: " << regions.size() << std::endl;
+  assert(regions.size() == 65);
 
   // Save regions to a file.
   const std::string fullpath = (argc > 2 ? argv[2] : "regions_point_set_2.ply");

@@ -36,6 +36,7 @@ int main(int argc, char *argv[]) {
   in >> input_range;
   in.close();
   std::cout << "* number of input points: " << input_range.size() << std::endl;
+  assert(input_range.size() == 8075);
 
   // Default parameter values for the data file point_set_3.xyz.
   const std::size_t k                     = 12;
@@ -69,6 +70,7 @@ int main(int argc, char *argv[]) {
   region_growing.detect(
     boost::make_function_output_iterator(inserter));
   std::cout << "* number of found regions: " << number_of_regions << std::endl;
+  assert(number_of_regions == 7);
 
   // Save regions to a file.
   const std::string fullpath = (argc > 2 ? argv[2] : "regions_point_set_3.ply");
@@ -80,6 +82,7 @@ int main(int argc, char *argv[]) {
   std::vector<std::size_t> unassigned_items;
   region_growing.unassigned_items(std::back_inserter(unassigned_items));
   std::cout << "* number of unassigned points: " << unassigned_items.size() << std::endl;
+  assert(unassigned_items.size() == 538);
 
   // Store all unassigned points.
   std::vector<Point_3> unassigned_points;
