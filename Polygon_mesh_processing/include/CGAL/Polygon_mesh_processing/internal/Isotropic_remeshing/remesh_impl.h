@@ -875,12 +875,12 @@ namespace internal {
         vvb -= 1;
         vvc += 1;
         vvd += 1;
-#ifdef VALE
+
         put(degree, va, vva);
         put(degree, vb, vvb);
         put(degree, vc, vvc);
         put(degree, vd, vvd);
-#endif
+
         ++nb_flips;
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
@@ -916,17 +916,17 @@ namespace internal {
           CGAL_assertion( is_flip_topologically_allowed(edge(he, mesh_)) );
           CGAL_assertion( !get(ecmap_, edge(he, mesh_)) );
           CGAL::Euler::flip_edge(he, mesh_);
-#ifdef VALE
+
           vva += 1;
           vvb += 1;
           vvc -= 1;
           vvd -= 1;
 
-        put(degree, va, vva);
-        put(degree, vb, vvb);
-        put(degree, vc, vvc);
-        put(degree, vd, vvd);
-#endif
+          put(degree, va, vva);
+          put(degree, vb, vvb);
+          put(degree, vc, vvc);
+          put(degree, vd, vvd);
+
           --nb_flips;
 
           CGAL_assertion_code(Halfedge_status s3 = status(he));
