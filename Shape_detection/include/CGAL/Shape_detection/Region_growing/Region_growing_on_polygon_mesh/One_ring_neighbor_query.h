@@ -58,15 +58,16 @@ namespace Polygon_mesh {
   class One_ring_neighbor_query {
 
   public:
-
     /// \cond SKIP_IN_MANUAL
     using Face_graph = PolygonMesh;
     using Face_range = FaceRange;
-
-    using Face_to_index_map
-    = internal::Item_to_index_property_map<Face_range>;
     /// \endcond
 
+  private:
+    using Face_to_index_map
+    = internal::Item_to_index_property_map<Face_range>;
+
+  public:
     /// \name Initialization
     /// @{
 
@@ -129,12 +130,16 @@ namespace Polygon_mesh {
 
     /// @}
 
-  private:
+    /// \cond SKIP_IN_MANUAL
+    // A property map that can be used to access indices of the input faces.
+    const Face_to_index_map& face_to_index_map() const {
+      return m_face_to_index_map;
+    }
+    /// \endcond
 
-    // Fields.
+  private:
     const Face_graph& m_face_graph;
     const Face_range m_face_range;
-
     const Face_to_index_map m_face_to_index_map;
   };
 

@@ -66,14 +66,14 @@ namespace Point_set {
   class K_neighbor_query {
 
   public:
-
     /// \cond SKIP_IN_MANUAL
     using Traits = GeomTraits;
     using Input_range = InputRange;
     using Point_map = PointMap;
-
     using Point = typename Point_map::value_type;
+    /// \endcond
 
+  private:
     using Index_to_point_map =
     internal::Item_property_map<Input_range, Point_map>;
 
@@ -106,8 +106,8 @@ namespace Point_set {
 
     using Tree =
     typename Neighbor_search::Tree;
-    /// \endcond
 
+  public:
     /// \name Initialization
     /// @{
 
@@ -188,16 +188,19 @@ namespace Point_set {
 
     /// @}
 
+    /// \cond SKIP_IN_MANUAL
+    // A property map that can be used to access points when
+    // iterating over the indices counting items in the input range.
+    const Index_to_point_map& index_to_point_map() const {
+      return m_index_to_point_map;
+    }
+    /// \endcond
+
   private:
-
-    // Fields.
     const Input_range& m_input_range;
-
     const std::size_t m_number_of_neighbors;
-
     const Point_map m_point_map;
     const Index_to_point_map m_index_to_point_map;
-
     Distance m_distance;
     Tree m_tree;
   };

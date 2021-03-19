@@ -77,7 +77,6 @@ namespace Polygon_mesh {
   class Least_squares_plane_fit_sorting {
 
   public:
-
     /// \name Types
     /// @{
 
@@ -100,6 +99,15 @@ namespace Polygon_mesh {
 
     /// @}
 
+  private:
+    using ITraits = Exact_predicates_inexact_constructions_kernel;
+    using IFT = typename ITraits::FT;
+    using IPoint_3 = typename ITraits::Point_3;
+    using IPlane_3 = typename ITraits::Plane_3;
+    using IConverter = Cartesian_converter<Traits, ITraits>;
+    using Compare_scores = internal::Compare_scores<IFT>;
+
+  public:
     /// \name Initialization
     /// @{
 
@@ -127,7 +135,7 @@ namespace Polygon_mesh {
     m_neighbor_query(neighbor_query),
     m_face_range(faces(m_face_graph)),
     m_vertex_to_point_map(vertex_to_point_map),
-    m_to_local_converter() {
+    m_iconverter() {
 
       CGAL_precondition(m_face_range.size() > 0);
 
@@ -170,20 +178,18 @@ namespace Polygon_mesh {
     /// @}
 
   private:
+    const Face_graph& m_face_graph;
+    Neighbor_query& m_neighbor_query;
+    const Face_range m_face_range;
+    const Vertex_to_point_map m_vertex_to_point_map;
+    std::vector<std::size_t> m_order;
+    std::vector<IFT> m_scores;
+    const IConverter m_iconverter;
 
-    // Types.
-    using Local_traits = Exact_predicates_inexact_constructions_kernel;
-    using Local_FT = typename Local_traits::FT;
-    using Local_point_3 = typename Local_traits::Point_3;
-    using Local_plane_3 = typename Local_traits::Plane_3;
-    using To_local_converter = Cartesian_converter<Traits, Local_traits>;
-    using Compare_scores = internal::Compare_scores<Local_FT>;
-
-    // Functions.
     void compute_scores() {
 
       std::vector<std::size_t> neighbors;
-      std::vector<Local_point_3> points;
+      std::vector<IPoint_3> points;
 
       for (std::size_t i = 0; i < m_face_range.size(); ++i) {
 
@@ -202,33 +208,22 @@ namespace Polygon_mesh {
           for (const auto vertex : vertices) {
 
             const auto& tmp_point = get(m_vertex_to_point_map, vertex);
-            points.push_back(m_to_local_converter(tmp_point));
+            points.push_back(m_iconverter(tmp_point));
           }
         }
         CGAL_postcondition(points.size() > 0);
 
-        Local_plane_3 fitted_plane;
-        Local_point_3 fitted_centroid;
+        IPlane_3 fitted_plane;
+        IPoint_3 fitted_centroid;
 
         m_scores[i] = CGAL::linear_least_squares_fitting_3(
           points.begin(), points.end(),
           fitted_plane, fitted_centroid,
           CGAL::Dimension_tag<0>(),
-          Local_traits(),
-          CGAL::Eigen_diagonalize_traits<Local_FT, 3>());
+          ITraits(),
+          CGAL::Eigen_diagonalize_traits<IFT, 3>());
       }
     }
-
-    // Fields.
-    const Face_graph& m_face_graph;
-    Neighbor_query& m_neighbor_query;
-    const Face_range m_face_range;
-    const Vertex_to_point_map m_vertex_to_point_map;
-
-    std::vector<std::size_t> m_order;
-    std::vector<Local_FT> m_scores;
-
-    const To_local_converter m_to_local_converter;
   };
 
 } // namespace Polygon_mesh

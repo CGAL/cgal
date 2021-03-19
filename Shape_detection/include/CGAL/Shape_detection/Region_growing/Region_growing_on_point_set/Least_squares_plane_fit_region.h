@@ -69,7 +69,6 @@ namespace Point_set {
   class Least_squares_plane_fit_region {
 
   public:
-
     /// \name Types
     /// @{
 
@@ -83,16 +82,18 @@ namespace Point_set {
     /// Number type.
     typedef typename GeomTraits::FT FT;
 
-    /// \cond SKIP_IN_MANUAL
+    /// @}
+
+  private:
     using Point_3 = typename Traits::Point_3;
     using Vector_3 = typename Traits::Vector_3;
     using Plane_3 = typename Traits::Plane_3;
 
-    using Local_traits = Exact_predicates_inexact_constructions_kernel;
-    using Local_FT = typename Local_traits::FT;
-    using Local_point_3 = typename Local_traits::Point_3;
-    using Local_plane_3 = typename Local_traits::Plane_3;
-    using To_local_converter = Cartesian_converter<Traits, Local_traits>;
+    using ITraits = Exact_predicates_inexact_constructions_kernel;
+    using IFT = typename ITraits::FT;
+    using IPoint_3 = typename ITraits::Point_3;
+    using IPlane_3 = typename ITraits::Plane_3;
+    using IConverter = Cartesian_converter<Traits, ITraits>;
 
     using Squared_length_3 = typename Traits::Compute_squared_length_3;
     using Squared_distance_3 = typename Traits::Compute_squared_distance_3;
@@ -100,10 +101,8 @@ namespace Point_set {
 
     using Get_sqrt = internal::Get_sqrt<Traits>;
     using Sqrt = typename Get_sqrt::Sqrt;
-    /// \endcond
 
-    /// @}
-
+  public:
     /// \name Initialization
     /// @{
 
@@ -161,7 +160,7 @@ namespace Point_set {
     m_squared_distance_3(traits.compute_squared_distance_3_object()),
     m_scalar_product_3(traits.compute_scalar_product_3_object()),
     m_sqrt(Get_sqrt::sqrt_object(traits)),
-    m_to_local_converter() {
+    m_iconverter() {
 
       CGAL_precondition(input_range.size() > 0);
 
@@ -265,19 +264,19 @@ namespace Point_set {
 
       } else { // update reference plane and normal
 
-        std::vector<Local_point_3> points;
+        std::vector<IPoint_3> points;
         points.reserve(region.size());
 
         for (std::size_t i = 0; i < region.size(); ++i) {
           CGAL_precondition(region[i] < m_input_range.size());
 
           const auto& key = *(m_input_range.begin() + region[i]);
-          points.push_back(m_to_local_converter(get(m_point_map, key)));
+          points.push_back(m_iconverter(get(m_point_map, key)));
         }
         CGAL_postcondition(points.size() == region.size());
 
-        Local_plane_3 fitted_plane;
-        Local_point_3 fitted_centroid;
+        IPlane_3 fitted_plane;
+        IPoint_3 fitted_centroid;
 
         // The best fit plane will be a plane fitted to all region points with
         // its normal being perpendicular to the plane.
@@ -285,8 +284,8 @@ namespace Point_set {
           points.begin(), points.end(),
           fitted_plane, fitted_centroid,
           CGAL::Dimension_tag<0>(),
-          Local_traits(),
-          CGAL::Eigen_diagonalize_traits<Local_FT, 3>());
+          ITraits(),
+          CGAL::Eigen_diagonalize_traits<IFT, 3>());
 
         m_plane_of_best_fit =
         Plane_3(
@@ -306,8 +305,6 @@ namespace Point_set {
     /// @}
 
   private:
-
-    // Fields.
     const Input_range& m_input_range;
 
     const FT m_distance_threshold;
@@ -322,7 +319,7 @@ namespace Point_set {
     const Scalar_product_3 m_scalar_product_3;
     const Sqrt m_sqrt;
 
-    const To_local_converter m_to_local_converter;
+    const IConverter m_iconverter;
 
     Plane_3 m_plane_of_best_fit;
     Vector_3 m_normal_of_best_fit;

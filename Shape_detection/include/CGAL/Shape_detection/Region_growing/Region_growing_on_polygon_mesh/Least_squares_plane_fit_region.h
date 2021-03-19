@@ -78,22 +78,31 @@ namespace Polygon_mesh {
   class Least_squares_plane_fit_region {
 
   public:
+    /// \name Types
+    /// @{
 
     /// \cond SKIP_IN_MANUAL
     using Traits = GeomTraits;
     using Face_graph = PolygonMesh;
     using Face_range = FaceRange;
     using Vertex_to_point_map = VertexToPointMap;
+    /// \endcond
 
+    /// Number type.
+    typedef typename GeomTraits::FT FT;
+
+    /// @}
+
+  private:
     using Point_3 = typename Traits::Point_3;
     using Vector_3 = typename Traits::Vector_3;
     using Plane_3 = typename Traits::Plane_3;
 
-    using Local_traits = Exact_predicates_inexact_constructions_kernel;
-    using Local_FT = typename Local_traits::FT;
-    using Local_point_3 = typename Local_traits::Point_3;
-    using Local_plane_3 = typename Local_traits::Plane_3;
-    using To_local_converter = Cartesian_converter<Traits, Local_traits>;
+    using ITraits = Exact_predicates_inexact_constructions_kernel;
+    using IFT = typename ITraits::FT;
+    using IPoint_3 = typename ITraits::Point_3;
+    using IPlane_3 = typename ITraits::Plane_3;
+    using IConverter = Cartesian_converter<Traits, ITraits>;
 
     using Squared_length_3 = typename Traits::Compute_squared_length_3;
     using Squared_distance_3 = typename Traits::Compute_squared_distance_3;
@@ -102,16 +111,8 @@ namespace Polygon_mesh {
 
     using Get_sqrt = internal::Get_sqrt<Traits>;
     using Sqrt = typename Get_sqrt::Sqrt;
-    /// \endcond
 
-    /// \name Types
-    /// @{
-
-    /// Number type.
-    typedef typename GeomTraits::FT FT;
-
-    /// @}
-
+  public:
     /// \name Initialization
     /// @{
 
@@ -164,7 +165,7 @@ namespace Polygon_mesh {
     m_scalar_product_3(traits.compute_scalar_product_3_object()),
     m_cross_product_3(traits.construct_cross_product_vector_3_object()),
     m_sqrt(Get_sqrt::sqrt_object(traits)),
-    m_to_local_converter() {
+    m_iconverter() {
 
       CGAL_precondition(m_face_range.size() > 0);
 
@@ -266,7 +267,7 @@ namespace Polygon_mesh {
 
       } else { // update reference plane and normal
 
-        std::vector<Local_point_3> points;
+        std::vector<IPoint_3> points;
         for (std::size_t i = 0; i < region.size(); ++i) {
 
           CGAL_precondition(region[i] < m_face_range.size());
@@ -278,13 +279,13 @@ namespace Polygon_mesh {
           for (const auto vertex : vertices) {
 
             const Point_3& tmp_point = get(m_vertex_to_point_map, vertex);
-            points.push_back(m_to_local_converter(tmp_point));
+            points.push_back(m_iconverter(tmp_point));
           }
         }
         CGAL_postcondition(points.size() > 0);
 
-        Local_plane_3 fitted_plane;
-        Local_point_3 fitted_centroid;
+        IPlane_3 fitted_plane;
+        IPoint_3 fitted_centroid;
 
         // The best fit plane will be a plane fitted to all vertices of all
         // region faces with its normal being perpendicular to the plane.
@@ -299,8 +300,8 @@ namespace Polygon_mesh {
           points.begin(), points.end(),
           fitted_plane, fitted_centroid,
           CGAL::Dimension_tag<0>(),
-          Local_traits(),
-          CGAL::Eigen_diagonalize_traits<Local_FT, 3>());
+          ITraits(),
+          CGAL::Eigen_diagonalize_traits<IFT, 3>());
 
         const Plane_3 unoriented_plane_of_best_fit =
         Plane_3(
@@ -351,6 +352,25 @@ namespace Polygon_mesh {
     /// @}
 
   private:
+    const Face_graph& m_face_graph;
+    const Face_range m_face_range;
+
+    const FT m_distance_threshold;
+    const FT m_normal_threshold;
+    const std::size_t m_min_region_size;
+
+    const Vertex_to_point_map m_vertex_to_point_map;
+
+    const Squared_length_3 m_squared_length_3;
+    const Squared_distance_3 m_squared_distance_3;
+    const Scalar_product_3 m_scalar_product_3;
+    const Cross_product_3 m_cross_product_3;
+    const Sqrt m_sqrt;
+
+    const IConverter m_iconverter;
+
+    Plane_3 m_plane_of_best_fit;
+    Vector_3 m_normal_of_best_fit;
 
     template<typename Face>
     void get_face_centroid(
@@ -444,27 +464,6 @@ namespace Polygon_mesh {
 
       return max_face_distance;
     }
-
-    // Fields.
-    const Face_graph& m_face_graph;
-    const Face_range m_face_range;
-
-    const FT m_distance_threshold;
-    const FT m_normal_threshold;
-    const std::size_t m_min_region_size;
-
-    const Vertex_to_point_map m_vertex_to_point_map;
-
-    const Squared_length_3 m_squared_length_3;
-    const Squared_distance_3 m_squared_distance_3;
-    const Scalar_product_3 m_scalar_product_3;
-    const Cross_product_3 m_cross_product_3;
-    const Sqrt m_sqrt;
-
-    const To_local_converter m_to_local_converter;
-
-    Plane_3 m_plane_of_best_fit;
-    Vector_3 m_normal_of_best_fit;
   };
 
 } // namespace Polygon_mesh

@@ -108,20 +108,18 @@ namespace internal {
     using Traits = typename Kernel_traits<Plane_3>::Kernel;
     using FT = typename Traits::FT;
 
-    using Local_traits =
-    CGAL::Exact_predicates_inexact_constructions_kernel;
-    using To_local_converter =
-    Cartesian_converter<Traits, Local_traits>;
+    using ITraits = CGAL::Exact_predicates_inexact_constructions_kernel;
+    using IConverter = Cartesian_converter<Traits, ITraits>;
 
-                using Local_FT = typename Local_traits::FT;
-    using Local_point_3 = typename Local_traits::Point_3;
-                using Local_plane_3 = typename Local_traits::Plane_3;
+    using IFT = typename ITraits::FT;
+    using IPoint_3 = typename ITraits::Point_3;
+    using IPlane_3 = typename ITraits::Plane_3;
 
     planes.clear();
     planes.reserve(regions.size());
 
-    std::vector<Local_point_3> points;
-    const To_local_converter to_local_converter = To_local_converter();
+    std::vector<IPoint_3> points;
+    const IConverter iconverter = IConverter();
 
     for (const auto& region : regions) {
       CGAL_assertion(region.size() > 0);
@@ -132,21 +130,21 @@ namespace internal {
         CGAL_precondition(region[i] < input_range.size());
 
         const auto& key = *(input_range.begin() + region[i]);
-        points.push_back(to_local_converter(get(point_map, key)));
+        points.push_back(iconverter(get(point_map, key)));
       }
       CGAL_postcondition(points.size() == region.size());
 
-      Local_plane_3 fitted_plane;
-      Local_point_3 fitted_centroid;
+      IPlane_3 fitted_plane;
+      IPoint_3 fitted_centroid;
 
       CGAL::linear_least_squares_fitting_3(
         points.begin(), points.end(),
         fitted_plane, fitted_centroid,
         CGAL::Dimension_tag<0>(),
-        Local_traits(),
-        CGAL::Eigen_diagonalize_traits<Local_FT, 3>());
+        ITraits(),
+        CGAL::Eigen_diagonalize_traits<IFT, 3>());
 
-                  const Plane_3 plane = Plane_3(
+        const Plane_3 plane = Plane_3(
         static_cast<FT>(fitted_plane.a()),
         static_cast<FT>(fitted_plane.b()),
         static_cast<FT>(fitted_plane.c()),

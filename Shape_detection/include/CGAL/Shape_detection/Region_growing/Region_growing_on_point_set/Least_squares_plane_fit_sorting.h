@@ -64,7 +64,6 @@ namespace Point_set {
   class Least_squares_plane_fit_sorting {
 
   public:
-
     /// \name Types
     /// @{
 
@@ -86,6 +85,15 @@ namespace Point_set {
 
     /// @}
 
+  private:
+    using ITraits = Exact_predicates_inexact_constructions_kernel;
+    using IFT = typename ITraits::FT;
+    using IPoint_3 = typename ITraits::Point_3;
+    using IPlane_3 = typename ITraits::Plane_3;
+    using IConverter = Cartesian_converter<Traits, ITraits>;
+    using Compare_scores = internal::Compare_scores<IFT>;
+
+  public:
     /// \name Initialization
     /// @{
 
@@ -112,7 +120,7 @@ namespace Point_set {
     m_input_range(input_range),
     m_neighbor_query(neighbor_query),
     m_point_map(point_map),
-    m_to_local_converter() {
+    m_iconverter() {
 
       CGAL_precondition(input_range.size() > 0);
 
@@ -155,20 +163,17 @@ namespace Point_set {
     /// @}
 
   private:
+    const Input_range& m_input_range;
+    Neighbor_query& m_neighbor_query;
+    const Point_map m_point_map;
+    std::vector<std::size_t> m_order;
+    std::vector<IFT> m_scores;
+    const IConverter m_iconverter;
 
-    // Types.
-    using Local_traits = Exact_predicates_inexact_constructions_kernel;
-    using Local_FT = typename Local_traits::FT;
-    using Local_point_3 = typename Local_traits::Point_3;
-    using Local_plane_3 = typename Local_traits::Plane_3;
-    using To_local_converter = Cartesian_converter<Traits, Local_traits>;
-    using Compare_scores = internal::Compare_scores<Local_FT>;
-
-    // Functions.
     void compute_scores() {
 
       std::vector<std::size_t> neighbors;
-      std::vector<Local_point_3> points;
+      std::vector<IPoint_3> points;
 
       for (std::size_t i = 0; i < m_input_range.size(); ++i) {
 
@@ -181,31 +186,21 @@ namespace Point_set {
           CGAL_precondition(neighbors[j] < m_input_range.size());
 
           const auto& key = *(m_input_range.begin() + neighbors[j]);
-          points.push_back(m_to_local_converter(get(m_point_map, key)));
+          points.push_back(m_iconverter(get(m_point_map, key)));
         }
         CGAL_postcondition(points.size() == neighbors.size());
 
-        Local_plane_3 fitted_plane;
-        Local_point_3 fitted_centroid;
+        IPlane_3 fitted_plane;
+        IPoint_3 fitted_centroid;
 
         m_scores[i] = CGAL::linear_least_squares_fitting_3(
           points.begin(), points.end(),
           fitted_plane, fitted_centroid,
           CGAL::Dimension_tag<0>(),
-          Local_traits(),
-          CGAL::Eigen_diagonalize_traits<Local_FT, 3>());
+          ITraits(),
+          CGAL::Eigen_diagonalize_traits<IFT, 3>());
       }
     }
-
-    // Fields.
-    const Input_range& m_input_range;
-    Neighbor_query& m_neighbor_query;
-    const Point_map m_point_map;
-
-    std::vector<std::size_t> m_order;
-    std::vector<Local_FT> m_scores;
-
-    const To_local_converter m_to_local_converter;
   };
 
 } // namespace Point_set

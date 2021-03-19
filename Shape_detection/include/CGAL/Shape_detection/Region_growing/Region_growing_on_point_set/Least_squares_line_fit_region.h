@@ -69,7 +69,6 @@ namespace Point_set {
   class Least_squares_line_fit_region {
 
   public:
-
     /// \name Types
     /// @{
 
@@ -83,16 +82,18 @@ namespace Point_set {
     /// Number type.
     typedef typename GeomTraits::FT FT;
 
-    /// \cond SKIP_IN_MANUAL
+    /// @}
+
+  private:
     using Point_2 = typename Traits::Point_2;
     using Vector_2 = typename Traits::Vector_2;
     using Line_2 = typename Traits::Line_2;
 
-    using Local_traits = Exact_predicates_inexact_constructions_kernel;
-    using Local_FT = typename Local_traits::FT;
-    using Local_point_2 = typename Local_traits::Point_2;
-    using Local_line_2 = typename Local_traits::Line_2;
-    using To_local_converter = Cartesian_converter<Traits, Local_traits>;
+    using ITraits = Exact_predicates_inexact_constructions_kernel;
+    using IFT = typename ITraits::FT;
+    using IPoint_2 = typename ITraits::Point_2;
+    using ILine_2 = typename ITraits::Line_2;
+    using IConverter = Cartesian_converter<Traits, ITraits>;
 
     using Squared_length_2 = typename Traits::Compute_squared_length_2;
     using Squared_distance_2 = typename Traits::Compute_squared_distance_2;
@@ -100,10 +101,8 @@ namespace Point_set {
 
     using Get_sqrt = internal::Get_sqrt<Traits>;
     using Sqrt = typename Get_sqrt::Sqrt;
-    /// \endcond
 
-    /// @}
-
+  public:
     /// \name Initialization
     /// @{
 
@@ -161,7 +160,7 @@ namespace Point_set {
     m_squared_distance_2(traits.compute_squared_distance_2_object()),
     m_scalar_product_2(traits.compute_scalar_product_2_object()),
     m_sqrt(Get_sqrt::sqrt_object(traits)),
-    m_to_local_converter() {
+    m_iconverter() {
 
       CGAL_precondition(input_range.size() > 0);
 
@@ -264,19 +263,19 @@ namespace Point_set {
 
       } else { // update reference line and normal
 
-        std::vector<Local_point_2> points;
+        std::vector<IPoint_2> points;
         points.reserve(region.size());
 
         for (std::size_t i = 0; i < region.size(); ++i) {
           CGAL_precondition(region[i] < m_input_range.size());
 
           const auto& key = *(m_input_range.begin() + region[i]);
-          points.push_back(m_to_local_converter(get(m_point_map, key)));
+          points.push_back(m_iconverter(get(m_point_map, key)));
         }
         CGAL_postcondition(points.size() == region.size());
 
-        Local_line_2 fitted_line;
-        Local_point_2 fitted_centroid;
+        ILine_2 fitted_line;
+        IPoint_2 fitted_centroid;
 
         // The best fit line will be a line fitted to all region points with
         // its normal being perpendicular to the line.
@@ -284,8 +283,8 @@ namespace Point_set {
           points.begin(), points.end(),
           fitted_line, fitted_centroid,
           CGAL::Dimension_tag<0>(),
-          Local_traits(),
-          CGAL::Eigen_diagonalize_traits<Local_FT, 2>());
+          ITraits(),
+          CGAL::Eigen_diagonalize_traits<IFT, 2>());
 
         m_line_of_best_fit =
         Line_2(
@@ -305,8 +304,6 @@ namespace Point_set {
     /// @}
 
   private:
-
-    // Fields.
     const Input_range& m_input_range;
 
     const FT m_distance_threshold;
@@ -321,7 +318,7 @@ namespace Point_set {
     const Scalar_product_2 m_scalar_product_2;
     const Sqrt m_sqrt;
 
-    const To_local_converter m_to_local_converter;
+    const IConverter m_iconverter;
 
     Line_2 m_line_of_best_fit;
     Vector_2 m_normal_of_best_fit;

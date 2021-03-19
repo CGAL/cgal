@@ -67,7 +67,6 @@ namespace Point_set {
   class Sphere_neighbor_query {
 
   public:
-
     /// \name Types
     /// @{
 
@@ -75,14 +74,15 @@ namespace Point_set {
     using Traits = GeomTraits;
     using Input_range = InputRange;
     using Point_map = PointMap;
-
     using Point = typename Point_map::value_type;
     /// \endcond
 
     /// Number type.
     typedef typename GeomTraits::FT FT;
 
-    /// \cond SKIP_IN_MANUAL
+    /// @}
+
+  private:
     using Index_to_point_map =
     internal::Item_property_map<Input_range, Point_map>;
 
@@ -102,10 +102,8 @@ namespace Point_set {
 
     using Tree
     = CGAL::Kd_tree<Search_traits, Splitter, CGAL::Tag_true, CGAL::Tag_true>;
-    /// \endcond
 
-    /// @}
-
+  public:
     /// \name Initialization
     /// @{
 
@@ -185,16 +183,19 @@ namespace Point_set {
 
     /// @}
 
+    /// \cond SKIP_IN_MANUAL
+    // A property map that can be used to access points when
+    // iterating over the indices counting items in the input range.
+    const Index_to_point_map& index_to_point_map() const {
+      return m_index_to_point_map;
+    }
+    /// \endcond
+
   private:
-
-    // Fields.
     const Input_range& m_input_range;
-
     const FT m_sphere_radius;
-
     const Point_map m_point_map;
     const Index_to_point_map m_index_to_point_map;
-
     Tree m_tree;
   };
 
