@@ -1,7 +1,5 @@
-#define EARLY
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Timer.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
@@ -37,9 +35,6 @@ int main(int argc, char* argv[])
 {
   const char* filename = (argc > 1) ? argv[1] : "data/pig.off";
 
-  CGAL::Timer t;
-  t.start();
-
   Mesh mesh;
   if(!PMP::read_polygon_mesh(filename, mesh) || !CGAL::is_triangle_mesh(mesh))
   {
@@ -47,10 +42,7 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  std::cout << "Read: " << t.time() << " sec" << std::endl;
-  t.reset();
-
-  double target_edge_length = (argc > 2) ? std::stod(std::string(argv[2])) : 1.0;
+  double target_edge_length = (argc > 2) ? std::stod(std::string(argv[2])) : 0.04;
   unsigned int nb_iter = 3;
 
   std::cout << "Split border...";
@@ -60,26 +52,14 @@ int main(int argc, char* argv[])
   PMP::split_long_edges(border, target_edge_length, mesh);
 
   std::cout << "done." << std::endl;
-
-  std::cout << "took " << t.time() << " sec" << std::endl;
-  t.reset();
-
   std::cout << "Start remeshing of " << filename
     << " (" << num_faces(mesh) << " faces)..." << std::endl;
 
   PMP::isotropic_remeshing(faces(mesh), target_edge_length, mesh,
                            PMP::parameters::number_of_iterations(nb_iter)
-                                           .protect_constraints(true)); //i.e. protect border, here
+                           .protect_constraints(true)); //i.e. protect border, here
 
   std::cout << "Remeshing done." << std::endl;
-
-  std::cout << "took " << t.time() << " sec" << std::endl;
-  t.reset();
-
-  std::ofstream out("out.off");
-  out.precision(17);
-  //out << mesh << std::endl;
-  out.close();
 
   return 0;
 }
