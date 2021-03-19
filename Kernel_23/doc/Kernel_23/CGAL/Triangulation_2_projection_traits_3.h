@@ -3,7 +3,7 @@ namespace CGAL{
 /*!
  \ingroup PkgTriangulation2TriangulationClasses
 
-  The class `Triangulation_2_projection_traits_3` works similarly as the `Projection_traits_xy_3`,
+  The class `Projection_traits_3` works similarly as the `Projection_traits_xy_3`,
   `Projection_traits_xz_3` and `Projection_traits_yz_3` traits classes, by enabling
   the use of 2D algorithms on the projections of 3D data on an arbitrary plane.
 
@@ -22,7 +22,7 @@ provides exact predicates.
 
  */
 template <class K>
-class Triangulation_2_projection_traits_3
+class Projection_traits_3
 {
 public:
   ///\name Types
@@ -50,7 +50,7 @@ public:
    *
    * \param normal a vector orthogonal to the projection plane.
    */
-  Triangulation_2_projection_traits_3(const typename K::Vector_3& normal);
+  Projection_traits_3(const typename K::Vector_3& normal);
 
   ///@}
 };

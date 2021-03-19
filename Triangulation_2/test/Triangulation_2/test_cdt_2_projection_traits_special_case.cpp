@@ -1,8 +1,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Triangulation_2_projection_traits_3.h>
-#include <CGAL/Triangulation_2_projection_traits_3.h>
+#include <CGAL/Projection_traits_3.h>
+#include <CGAL/Projection_traits_3.h>
 
 #include <string>
 #include <fstream>
@@ -69,11 +69,11 @@ int main()
   bool ok = true;
   ok = ok &&
       test<CGAL::Epick,
-           CGAL::Triangulation_2_projection_traits_3<Epick> >
+           CGAL::Projection_traits_3<Epick> >
       ("CDT_2 in a 3D plane, with Epick");
   ok = ok &&
       test<CGAL::Epeck,
-           CGAL::Triangulation_2_projection_traits_3<Epeck> >
+           CGAL::Projection_traits_3<Epeck> >
       ("CDT_2 in a 3D plane, with Epeck");
   return ok ? 0 : 1;
 }

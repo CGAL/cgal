@@ -22,7 +22,7 @@
 #include <QGLBuffer>
 #include <QOpenGLShaderProgram>
 
-#include <CGAL/Triangulation_2_projection_traits_3.h>
+#include <CGAL/Projection_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -211,7 +211,7 @@ class Basic_viewer : public CGAL::QGLViewer, public QOpenGLFunctions
     bool is_process;
   };
 
-  typedef CGAL::Triangulation_2_projection_traits_3<CGAL::Exact_predicates_inexact_constructions_kernel> P_traits;
+  typedef CGAL::Projection_traits_3<CGAL::Exact_predicates_inexact_constructions_kernel> P_traits;
   typedef CGAL::Triangulation_vertex_base_with_info_2<Vertex_info, P_traits> Vb;
 
   typedef CGAL::Triangulation_face_base_with_info_2<Face_info, P_traits> Fb1;

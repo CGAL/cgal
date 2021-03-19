@@ -24,7 +24,7 @@
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Triangulation_2_projection_traits_3.h>
+#include <CGAL/Projection_traits_3.h>
 #else
 #include <CGAL/use.h>
 #endif
@@ -152,7 +152,7 @@ public:
 #ifndef CGAL_TRIANGULATE_FACES_DO_NOT_USE_CDT2
       if (use_cdt)
       {
-        typedef CGAL::Triangulation_2_projection_traits_3<Traits>   P_traits;
+        typedef CGAL::Projection_traits_3<Traits>   P_traits;
         typedef CGAL::Triangulation_vertex_base_with_info_2<halfedge_descriptor,
                                                             P_traits>        Vb;
         typedef CGAL::Triangulation_face_base_with_info_2<Face_info,
