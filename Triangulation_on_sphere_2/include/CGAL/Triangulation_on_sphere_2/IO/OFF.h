@@ -74,11 +74,14 @@ bool write_OFF(std::ostream& os,
   typedef typename Tr::Vertices_iterator                Vertex_iterator;
   typedef typename Tr::All_faces_iterator               Face_iterator;
 
+  set_stream_precision_from_NP(os, np);
+
   typename Gt::Construct_point_3 cp3 = dt.geom_traits().construct_point_3_object();
 
   const size_t n = dt.number_of_vertices();
 
   std::stringstream output;
+  set_stream_precision_from_NP(output, np);
 
   // write the vertices
   std::unordered_map<Vertex_handle, int> index_of_vertex;
