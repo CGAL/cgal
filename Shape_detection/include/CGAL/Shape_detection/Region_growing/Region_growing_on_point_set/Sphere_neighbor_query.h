@@ -49,14 +49,14 @@ namespace Point_set {
     the fixed radius centered at this point.
 
     \tparam GeomTraits
-    must be a model of `Kernel`.
+    a model of `Kernel`
 
     \tparam InputRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
 
     \tparam PointMap
-    must be an `LvaluePropertyMap` whose key type is the value type of the input
-    range and value type is `Kernel::Point_2` or `Kernel::Point_3`.
+    a model of `ReadPropertyMap` whose key type is the value type of the input
+    range and value type is `Kernel::Point_2` or `Kernel::Point_3`
 
     \cgalModels `NeighborQuery`
   */

@@ -46,18 +46,18 @@ namespace Point_set {
     otherwise rejected.
 
     \tparam GeomTraits
-    must be a model of `Kernel`.
+    a model of `Kernel`
 
     \tparam InputRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
 
     \tparam PointMap
-    must be an `LvaluePropertyMap` whose key type is the value type of the input
-    range and value type is `Kernel::Point_3`.
+    a model of `ReadPropertyMap` whose key type is the value type of the input
+    range and value type is `Kernel::Point_3`
 
     \tparam NormalMap
-    must be an `LvaluePropertyMap` whose key type is the value type of the input
-    range and value type is `Kernel::Vector_3`.
+    a model of `ReadPropertyMap` whose key type is the value type of the input
+    range and value type is `Kernel::Vector_3`
 
     \cgalModels `RegionType`
   */
@@ -133,7 +133,7 @@ namespace Point_set {
       to `Kernel::Vector_3`
 
       \param traits
-      an instance of `GeomTraits`.
+      an instance of `GeomTraits`
 
       \pre `input_range.size() > 0`
       \pre `distance_threshold >= 0`

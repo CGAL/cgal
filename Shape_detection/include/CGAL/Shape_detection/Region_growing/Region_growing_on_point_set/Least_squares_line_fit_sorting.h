@@ -44,17 +44,17 @@ namespace Point_set {
     least squares line fit applied to the neighboring points of each point.
 
     \tparam GeomTraits
-    must be a model of `Kernel`.
+    a model of `Kernel`
 
     \tparam InputRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
 
     \tparam NeighborQuery
-    must be a model of `NeighborQuery`.
+    a model of `NeighborQuery`
 
     \tparam PointMap
-    must be an `LvaluePropertyMap` whose key type is the value type of the input
-    range and value type is `Kernel::Point_2`.
+    a model of `ReadPropertyMap` whose key type is the value type of the input
+    range and value type is `Kernel::Point_2`
   */
   template<
   typename GeomTraits,
@@ -78,7 +78,7 @@ namespace Point_set {
 
     #ifdef DOXYGEN_RUNNING
       /*!
-        an `LvaluePropertyMap` whose key and value type is `std::size_t`.
+        a model of `ReadPropertyMap` whose key and value type is `std::size_t`.
         This map provides an access to the ordered indices of input points.
       */
       typedef unspecified_type Seed_map;

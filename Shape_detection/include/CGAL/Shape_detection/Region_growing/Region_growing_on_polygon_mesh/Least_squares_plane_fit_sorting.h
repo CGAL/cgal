@@ -52,21 +52,21 @@ namespace Polygon_mesh {
     least squares plane fit applied to the vertices of neighboring faces of each face.
 
     \tparam GeomTraits
-    must be a model of `Kernel`.
+    a model of `Kernel`
 
     \tparam PolygonMesh
-    must be a model of `FaceListGraph`.
+    a model of `FaceListGraph`
 
     \tparam NeighborQuery
-    must be a model of `NeighborQuery`.
+    a model of `NeighborQuery`
 
     \tparam FaceRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator` and
-    value type is the face type of a polygon mesh.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator` and
+    value type is the face type of a polygon mesh
 
     \tparam VertexToPointMap
-    must be an `LvaluePropertyMap` whose key type is the vertex type of a polygon mesh and
-    value type is `Kernel::Point_3`.
+    a model of `ReadPropertyMap` whose key type is the vertex type of a polygon mesh and
+    value type is `Kernel::Point_3`
   */
   template<
   typename GeomTraits,
@@ -92,7 +92,7 @@ namespace Polygon_mesh {
 
     #ifdef DOXYGEN_RUNNING
       /*!
-        an `LvaluePropertyMap` whose key and value type is `std::size_t`.
+        a model of `ReadPropertyMap` whose key and value type is `std::size_t`.
         This map provides an access to the ordered indices of polygon mesh faces.
       */
       typedef unspecified_type Seed_map;

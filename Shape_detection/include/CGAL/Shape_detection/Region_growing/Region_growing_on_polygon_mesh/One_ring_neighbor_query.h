@@ -44,11 +44,11 @@ namespace Polygon_mesh {
     polygon mesh being a `PolygonMesh`.
 
     \tparam PolygonMesh
-    must be a model of `FaceListGraph`.
+    a model of `FaceListGraph`
 
     \tparam FaceRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator` and
-    value type is the face type of a polygon mesh.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator` and
+    value type is the face type of a polygon mesh
 
     \cgalModels `NeighborQuery`
   */

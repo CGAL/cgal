@@ -55,18 +55,18 @@ namespace Polygon_mesh {
     otherwise rejected.
 
     \tparam GeomTraits
-    must be a model of `Kernel`.
+    a model of `Kernel`
 
     \tparam PolygonMesh
-    must be a model of `FaceListGraph`.
+    a model of `FaceListGraph`
 
     \tparam FaceRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator` and
-    value type is the face type of a polygon mesh.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator` and
+    value type is the face type of a polygon mesh
 
     \tparam VertexToPointMap
-    must be an `LvaluePropertyMap` whose key type is the vertex type of a polygon mesh and
-    value type is `Kernel::Point_3`.
+    a model of `ReadPropertyMap` whose key type is the vertex type of a polygon mesh and
+    value type is `Kernel::Point_3`
 
     \cgalModels `RegionType`
   */
