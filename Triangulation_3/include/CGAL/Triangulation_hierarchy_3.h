@@ -51,6 +51,7 @@
 #include <boost/mpl/if.hpp>
 
 #include <array>
+#include <CGAL/array.h>
 
 #endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
@@ -92,7 +93,14 @@ public:
 
 private:
 
+  void init_hierarchy() {
+    hierarchy[0] = this;
+    for(int i=1; i<maxlevel; ++i)
+      hierarchy[i] = &hierarchy_triangulations[i-1];
+  }
+
   // here is the stack of triangulations which form the hierarchy
+  std::array<Tr_Base,maxlevel-1> hierarchy_triangulations;
   std::array<Tr_Base*,maxlevel> hierarchy;
   boost::rand48  random;
 
@@ -111,24 +119,20 @@ public:
   Triangulation_hierarchy_3(Triangulation_hierarchy_3&& other)
     noexcept( noexcept(Tr_Base(std::move(other))) )
     : Tr_Base(std::move(other))
+    , hierarchy_triangulations(std::move(other.hierarchy_triangulations))
     , random(std::move(other.random))
   {
-    hierarchy[0] = this;
-    for(int i=1; i<maxlevel; ++i) {
-      hierarchy[i] = other.hierarchy[i];
-      other.hierarchy[i] = nullptr;
-    }
+    init_hierarchy();
   }
 
   template < typename InputIterator >
   Triangulation_hierarchy_3(InputIterator first, InputIterator last,
                             const Geom_traits& traits = Geom_traits())
     : Tr_Base(traits)
+    , hierarchy_triangulations(make_filled_array<maxlevel-1, Tr_Base>(traits))
   {
-      hierarchy[0] = this;
-      for(int i=1; i<maxlevel; ++i)
-          hierarchy[i] = new Tr_Base(traits);
-      insert(first, last);
+    init_hierarchy();
+    insert(first, last);
   }
 
   Triangulation_hierarchy_3 & operator=(const Triangulation_hierarchy_3& tr)
@@ -142,27 +146,17 @@ public:
     noexcept( noexcept(Triangulation_hierarchy_3(std::move(other))) )
   {
     static_cast<Tr_Base&>(*this) = std::move(other);
-    hierarchy[0] = this;
-    for(int i=1; i<maxlevel; ++i) {
-      hierarchy[i] = other.hierarchy[i];
-      other.hierarchy[i] = nullptr;
-    }
+    hierarchy_triangulations = std::move(other.hierarchy_triangulations);
     return *this;
   }
 
-  ~Triangulation_hierarchy_3()
-  {
-    clear();
-    for(int i=1; i<maxlevel; ++i) {
-      delete hierarchy[i];
-    }
-  };
+  ~Triangulation_hierarchy_3() = default;
 
   void swap(Triangulation_hierarchy_3 &tr)
   {
     Tr_Base::swap(tr);
-    for(int i=1; i<maxlevel; ++i)
-      std::swap(hierarchy[i], tr.hierarchy[i]);
+    using std::swap;
+    swap(hierarchy_triangulations, tr.hierarchy_triangulations);
   };
 
   void clear();
@@ -460,10 +454,9 @@ template <class Tr >
 Triangulation_hierarchy_3<Tr>::
 Triangulation_hierarchy_3(const Geom_traits& traits)
   : Tr_Base(traits)
+  , hierarchy_triangulations(make_filled_array<maxlevel-1, Tr_Base>(traits))
 {
-  hierarchy[0] = this;
-  for(int i=1;i<maxlevel;++i)
-    hierarchy[i] = new Tr_Base(traits);
+  init_hierarchy();
 }
 
 // copy constructor duplicates vertices and cells
@@ -471,10 +464,9 @@ template <class Tr>
 Triangulation_hierarchy_3<Tr>::
 Triangulation_hierarchy_3(const Triangulation_hierarchy_3<Tr> &tr)
     : Tr_Base(tr)
+    , hierarchy_triangulations(tr.hierarchy_triangulations)
 {
-  hierarchy[0] = this;
-  for(int i=1; i<maxlevel; ++i)
-    hierarchy[i] = new Tr_Base(*tr.hierarchy[i]);
+  init_hierarchy();
 
   // up and down have been copied in straightforward way
   // compute a map at lower level
@@ -863,7 +855,7 @@ int
 Triangulation_hierarchy_3<Tr>::
 random_level()
 {
-  boost::geometric_distribution<> proba(1.0/ratio);
+  boost::geometric_distribution<> proba(1.0/double(ratio));
   boost::variate_generator<boost::rand48&, boost::geometric_distribution<> > die(random, proba);
 
   return (std::min)(die(), (int)maxlevel)-1;

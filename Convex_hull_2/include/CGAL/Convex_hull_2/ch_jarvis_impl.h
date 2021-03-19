@@ -24,7 +24,6 @@
 #include <CGAL/Convex_hull_2/ch_assertions.h>
 #include <CGAL/ch_selected_extreme_points_2.h>
 #include <algorithm>
-#include <boost/bind.hpp>
 
 namespace CGAL {
 
@@ -65,7 +64,8 @@ ch_jarvis_march(ForwardIterator first, ForwardIterator last,
       Point previous_point = start_p; )
 
   ForwardIterator it = std::min_element( first, last,
-                                         boost::bind(rotation_predicate, boost::cref(start_p), _1, _2) );
+                                         [&start_p, &rotation_predicate](const Point& p1, const Point& p2)
+                                         {return rotation_predicate(start_p, p1, p2);} );
   while (! equal_points(*it, stop_p) )
   {
       CGAL_ch_exactness_assertion( \
@@ -80,7 +80,8 @@ ch_jarvis_march(ForwardIterator first, ForwardIterator last,
           constructed_points <= count_points + 1 );
 
       it = std::min_element( first, last,
-                             boost::bind(rotation_predicate, *it, _1, _2) );
+                             [it, &rotation_predicate](const Point& p1, const Point& p2)
+                             {return rotation_predicate(*it, p1, p2);} );
   }
   CGAL_ch_postcondition( \
       is_ccw_strongly_convex_2( res.output_so_far_begin(), \

@@ -9,8 +9,8 @@ find_package(CGAL REQUIRED)
 include(${CGAL_USE_FILE})
 
 find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
-include(CGAL_Eigen_support)
-if(NOT TARGET CGAL::Eigen_support)
+include(CGAL_Eigen3_support)
+if(NOT TARGET CGAL::Eigen3_support)
   message(
     STATUS "This project requires the Eigen library, and will not be compiled.")
   return()
@@ -21,5 +21,5 @@ create_single_source_cgal_program("test_nelder_mead.cpp")
 create_single_source_cgal_program("test_optimization_algorithms.cpp")
 
 foreach(target test_OBB_traits test_nelder_mead test_optimization_algorithms)
-  target_link_libraries(${target} PUBLIC CGAL::Eigen_support)
+  target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
 endforeach()

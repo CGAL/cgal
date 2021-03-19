@@ -171,10 +171,10 @@ void test_bgl_OFF(const char* filename)
     assert(ok);
     assert(num_vertices(fg) == 8 && num_faces(fg) == 4);
 
-    for(const auto v : vertices(fg))
+    for(auto v : vertices(fg))
       assert(get(vcm, v) != CGAL::Color());
 
-    for(const auto f : faces(fg))
+    for(auto f : faces(fg))
       assert(get(fcm, f) != CGAL::Color());
 
     // write with OFF
@@ -192,10 +192,10 @@ void test_bgl_OFF(const char* filename)
       assert(ok);
       assert(are_equal_meshes(fg, fg2));
 
-      for(const auto v : vertices(fg2))
+      for(auto v : vertices(fg2))
         assert(get(vcm2, v) != CGAL::Color());
 
-      for(const auto f : faces(fg2))
+      for(auto f : faces(fg2))
         assert(get(fcm2, f) != CGAL::Color());
     }
 
@@ -211,7 +211,7 @@ void test_bgl_OFF(const char* filename)
       assert(ok);
       assert(are_equal_meshes(fg, fg2));
 
-      for(const auto v : vertices(fg2))
+      for(auto v : vertices(fg2))
         assert(get(vcm2, v) != CGAL::Color());
     }
   }
@@ -224,7 +224,7 @@ void test_bgl_OFF(const char* filename)
     ok = CGAL::read_OFF("data/mesh_with_normals.off", fg, CGAL::parameters::vertex_normal_map(vnm));
     assert(ok);
 
-    for(const auto v : vertices(fg))
+    for(auto v : vertices(fg))
       assert(get(vnm, v) != CGAL::NULL_VECTOR);
 
     // write with OFF
@@ -240,7 +240,7 @@ void test_bgl_OFF(const char* filename)
       assert(ok);
       assert(are_equal_meshes(fg, fg2));
 
-      for(const auto v : vertices(fg2))
+      for(auto v : vertices(fg2))
         assert(get(vnm2, v) != CGAL::NULL_VECTOR);
     }
 
@@ -256,7 +256,7 @@ void test_bgl_OFF(const char* filename)
       assert(ok);
       assert(are_equal_meshes(fg, fg2));
 
-      for(const auto v : vertices(fg2))
+      for(auto v : vertices(fg2))
         assert(get(vnm2, v) != CGAL::NULL_VECTOR);
     }
   }
@@ -278,13 +278,13 @@ void test_bgl_OFF(const char* filename)
     assert(ok);
     assert(num_vertices(fg) != 0 && num_faces(fg) != 0);
 
-    for(const auto v : vertices(fg))
+    for(auto v : vertices(fg))
     {
       assert(get(vnm2, v) != CGAL::NULL_VECTOR);
       assert(get(vcm2, v) != CGAL::Color());
     }
 
-    for(const auto f : faces(fg))
+    for(auto f : faces(fg))
       assert(get(fcm2, f) != CGAL::Color());
     fg.clear();
     is.close();
@@ -301,7 +301,7 @@ void test_bgl_OFF(const char* filename)
     assert(ok);
     assert(num_vertices(fg) != 0 && num_faces(fg) != 0);
 
-    for(const auto v : vertices(fg))
+    for(auto v : vertices(fg))
     {
       assert(get(vnm, v) != CGAL::NULL_VECTOR);
       assert(get(vcm, v) != CGAL::Color());
@@ -328,13 +328,13 @@ void test_bgl_OFF(const char* filename)
       assert(ok);
       assert(are_equal_meshes(fg, fg2));
 
-      for(const auto v : vertices(fg2))
+      for(auto v : vertices(fg2))
       {
         assert(get(vnm2, v) != CGAL::NULL_VECTOR);
         assert(get(vcm2, v) != CGAL::Color());
       }
 
-      for(const auto f : faces(fg2))
+      for(auto f : faces(fg2))
         assert(get(fcm2, f) != CGAL::Color());
     }
 
@@ -359,13 +359,13 @@ void test_bgl_OFF(const char* filename)
       assert(ok);
       assert(are_equal_meshes(fg, fg2));
 
-      for(const auto v : vertices(fg2))
+      for(auto v : vertices(fg2))
       {
         assert(get(vnm2, v) != CGAL::NULL_VECTOR);
         assert(get(vcm2, v) != CGAL::Color());
       }
 
-      for(const auto f : faces(fg2))
+      for(auto f : faces(fg2))
         assert(get(fcm2, f) != CGAL::Color());
     }
   }
@@ -526,12 +526,12 @@ void test_bgl_PLY(const std::string filename,
   assert(ok);
   assert(num_vertices(fg) == 4 && num_faces(fg) == 4);
 
-  for(const auto v : vertices(fg))
+  for(auto v : vertices(fg))
   {
     assert(get(vcm, v) != CGAL::Color());
   }
 
-  for(const auto f : faces(fg))
+  for(auto f : faces(fg))
     assert(get(fcm, f) != CGAL::Color());
 
   // write with PLY
@@ -561,10 +561,10 @@ void test_bgl_PLY(const std::string filename,
     assert(are_equal_meshes(fg, fg2));
 
     // @tmp
-//    for(const auto v : vertices(fg2))
+//    for(auto v : vertices(fg2))
 //      assert(get(vcm2, v) != CGAL::Color());
 
-//    for(const auto f : faces(fg2))
+//    for(auto f : faces(fg2))
 //      assert(get(fcm2, f) != CGAL::Color());
   }
 
@@ -586,10 +586,10 @@ void test_bgl_PLY(const std::string filename,
     assert(are_equal_meshes(fg, fg2));
 
     // @tmp
-//    for(const auto v : vertices(fg2))
+//    for(auto v : vertices(fg2))
 //      assert(get(vcm2, v) != CGAL::Color());
 
-//    for(const auto f : faces(fg2))
+//    for(auto f : faces(fg2))
 //      assert(get(fcm2, f) != CGAL::Color());
   }
 

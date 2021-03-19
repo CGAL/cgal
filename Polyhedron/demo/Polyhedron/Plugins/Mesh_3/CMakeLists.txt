@@ -96,10 +96,10 @@ target_link_libraries(
 
 # Use Eigen
 find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
-include(CGAL_Eigen_support)
+include(CGAL_Eigen3_support)
 
-if(TARGET CGAL::Eigen_support)
-  target_link_libraries(mesh_3_optimization_plugin PUBLIC CGAL::Eigen_support)
+if(TARGET CGAL::Eigen3_support)
+  target_link_libraries(mesh_3_optimization_plugin PUBLIC CGAL::Eigen3_support)
 else() #eigen
   message(
     STATUS

@@ -189,7 +189,7 @@ static std::float_round_style set_default_rndmode(std::float_round_style r);
 
 /*! \name Flags
 
-\sc{Mpfr} provides some flags to know whether
+\mpfr provides some flags to know whether
 performed operations were exact or not, or they incurred in overflow
 or underflow, if the exponent is out of range, or the result was `NaN`
 (not-a-number). One can clear the flags before a set of operations and

@@ -27,15 +27,16 @@ namespace Poisson {
 
 template <class Tr>
 class Constant_sizing_field {
-  double sq_radius_bound;
+  typedef typename Tr::FT FT;
+  FT sq_radius_bound;
 public:
-  double cell_radius_bound() const { return CGAL::sqrt(sq_radius_bound); }
+  FT cell_radius_bound() const { return CGAL::approximate_sqrt(sq_radius_bound); }
 
-  Constant_sizing_field(double sq_radius_bound = 0.)
+  Constant_sizing_field(FT sq_radius_bound = 0.)
     : sq_radius_bound(sq_radius_bound) {}
 
   template <typename Point>
-  double operator()(const Point&) const { return sq_radius_bound; }
+  FT operator()(const Point&) const { return sq_radius_bound; }
 }; // end class Constant_sizing_field
 
 } // end namespace Poisson

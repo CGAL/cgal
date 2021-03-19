@@ -15,8 +15,8 @@ endif()
 find_package(CGAL REQUIRED)
 
 find_package(Eigen3 3.1.0)
-include(CGAL_Eigen_support)
-if(TARGET CGAL::Eigen_support)
+include(CGAL_Eigen3_support)
+if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("barycentric_subdivision.cpp")
   create_single_source_cgal_program("delaunay_triangulation.cpp")
   create_single_source_cgal_program("convex_hull.cpp")
@@ -34,7 +34,7 @@ if(TARGET CGAL::Eigen_support)
     triangulation
     triangulation_data_structure_dynamic
     triangulation_data_structure_static)
-    target_link_libraries(${target} PUBLIC CGAL::Eigen_support)
+    target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
   endforeach()
 else()
   message(

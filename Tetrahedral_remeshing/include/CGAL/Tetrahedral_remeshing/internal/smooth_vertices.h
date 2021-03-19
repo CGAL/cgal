@@ -162,7 +162,7 @@ private:
       }
     }
 
-    for (const std::pair<Facet, Vector_3>& fn : fnormals)
+    for (const auto& fn : fnormals)
     {
       if(fn.second != CGAL::NULL_VECTOR)
         continue;
@@ -347,7 +347,7 @@ private:
       v->set_point(typename Tr::Point(pv + frac * move));
 
       bool valid_try = true;
-      for (const typename Tr::Cell_handle ci : inc_cells)
+      for (const typename Tr::Cell_handle& ci : inc_cells)
       {
         if (CGAL::POSITIVE != CGAL::orientation(point(ci->vertex(0)->point()),
                                                 point(ci->vertex(1)->point()),

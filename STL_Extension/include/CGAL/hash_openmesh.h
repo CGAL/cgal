@@ -43,7 +43,10 @@ public:
   }
 
   bool
-  operator!=(const OMesh_edge& other) { return !(*this == other); }
+  operator!=(const OMesh_edge& other) const
+  {
+    return !(*this == other);
+  }
 
   Halfedge_handle
   opposite() const { return Halfedge_handle((halfedge_.idx() & 1) ? halfedge_.idx()-1 : halfedge_.idx()+1); }
@@ -73,7 +76,7 @@ inline std::size_t hash_value(const CGAL::internal::OMesh_edge<OpenMesh::Halfedg
 
 } // namespace OpenMesh
 
-#ifndef OM_HAS_HASH
+
 
 #include <functional>
 
@@ -86,6 +89,8 @@ namespace std {
 #endif
 
 #ifndef CGAL_CFG_NO_STD_HASH
+
+#ifndef OM_HAS_HASH
 
 template <>
 struct hash<OpenMesh::BaseHandle >
@@ -131,16 +136,6 @@ struct hash<OpenMesh::EdgeHandle >
   }
 };
 
-template <>
-struct hash<CGAL::internal::OMesh_edge<OpenMesh::HalfedgeHandle> >
-  : public CGAL::cpp98::unary_function<OpenMesh::HalfedgeHandle, std::size_t>
-{
-
-  std::size_t operator()(const CGAL::internal::OMesh_edge<OpenMesh::HalfedgeHandle>& h) const
-  {
-    return h.idx();
-  }
-};
 
 template <>
 struct hash<OpenMesh::FaceHandle >
@@ -153,6 +148,20 @@ struct hash<OpenMesh::FaceHandle >
   }
 };
 
+#endif  // OM_HAS_HASH
+
+template <typename H>
+struct hash<CGAL::internal::OMesh_edge<H> >
+  : public CGAL::cpp98::unary_function<CGAL::internal::OMesh_edge<H>, std::size_t>
+{
+
+  std::size_t operator()(const CGAL::internal::OMesh_edge<H>& h) const
+  {
+    return h.idx();
+  }
+};
+
+
 #endif // CGAL_CFG_NO_STD_HASH
 
 #if defined(BOOST_MSVC)
@@ -162,6 +171,6 @@ struct hash<OpenMesh::FaceHandle >
 } // namespace std
 
 
-#endif  // OM_HAS_HASH
+
 
 #endif // CGAL_HASH_OPENMESH_H

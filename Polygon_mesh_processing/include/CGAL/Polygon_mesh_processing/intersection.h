@@ -28,7 +28,7 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/mpl/if.hpp>
@@ -1771,6 +1771,11 @@ surface_intersection(const TriangleMesh& tm1,
 
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM1, VPM2>
     functor(tm1, tm2, vpm1, vpm2);
+
+  // Fill non-manifold feature maps if provided
+  functor.set_non_manifold_feature_map_1(parameters::get_parameter(np1, internal_np::non_manifold_feature_map));
+  functor.set_non_manifold_feature_map_2(parameters::get_parameter(np2, internal_np::non_manifold_feature_map));
+
   return functor(polyline_output, throw_on_self_intersection, true);
 }
 
