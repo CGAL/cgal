@@ -92,7 +92,7 @@ namespace CGAL {
 #endif // DOXYGEN_RUNNING
 
 /**
-  \ingroup PkgPointSetProcessingIOPly
+  \ingroup PkgPointSetProcessing3IOPly
 
   Reads user-selected points properties from a .ply stream (ASCII or
   binary).
