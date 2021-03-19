@@ -31,7 +31,7 @@
 namespace CGAL {
 
 template <typename Gt, typename Tds>
-class Delaunay_triangulation_on_sphere_2;
+class Triangulation_on_sphere_2;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -66,10 +66,10 @@ class Delaunay_triangulation_on_sphere_2;
  */
 template <typename Gt, typename Tds, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(std::ostream& os,
-               const CGAL::Delaunay_triangulation_on_sphere_2<Gt, Tds>& dt,
+               const CGAL::Triangulation_on_sphere_2<Gt, Tds>& dt,
                const CGAL_BGL_NP_CLASS& np)
 {
-  typedef Delaunay_triangulation_on_sphere_2<Gt,Tds>    Tr;
+  typedef Triangulation_on_sphere_2<Gt,Tds>    Tr;
   typedef typename Tr::Vertex_handle                    Vertex_handle;
   typedef typename Tr::Vertices_iterator                Vertex_iterator;
   typedef typename Tr::All_faces_iterator               Face_iterator;
@@ -120,7 +120,7 @@ bool write_OFF(std::ostream& os,
 /// \cond SKIP_IN_MANUAL
 
 template <typename Gt, typename Tds>
-bool write_OFF(std::ostream& os, const CGAL::Delaunay_triangulation_on_sphere_2<Gt, Tds>& dt)
+bool write_OFF(std::ostream& os, const CGAL::Triangulation_on_sphere_2<Gt, Tds>& dt)
 {
   return write_OFF(os, dt, parameters::all_default());
 }
@@ -151,16 +151,18 @@ bool write_OFF(std::ostream& os, const CGAL::Delaunay_triangulation_on_sphere_2<
   \return `true` if the writing was successful, `false` otherwise.
 */
 template <typename Gt, typename Tds, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(const std::string& fname, const CGAL::Delaunay_triangulation_on_sphere_2<Gt, Tds>& dt, const CGAL_BGL_NP_CLASS& np)
+bool write_OFF(const std::string& fname,
+               const CGAL::Triangulation_on_sphere_2<Gt, Tds>& dt,
+               const CGAL_BGL_NP_CLASS& np)
 {
-  std::ofstream os(fname);
+  std::ofstream os(fname); // stream precision will be set in the ostream overload
   return write_OFF(os, dt, np);
 }
 
 /// \cond SKIP_IN_MANUAL
 
 template <typename Gt, typename Tds>
-bool write_OFF(const std::string& fname, const CGAL::Delaunay_triangulation_on_sphere_2<Gt, Tds>& dt)
+bool write_OFF(const std::string& fname, const CGAL::Triangulation_on_sphere_2<Gt, Tds>& dt)
 {
   std::ofstream os(fname);
   return write_OFF(os, dt, parameters::all_default());
