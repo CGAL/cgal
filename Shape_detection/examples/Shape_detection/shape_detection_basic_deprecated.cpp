@@ -2,18 +2,16 @@
 #pragma warning(disable:4244) // boost::number_distance::distance()
                               // converts 64 to 32 bits integers
 #endif
-
 #include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
 
 #include <fstream>
 #include <iostream>
-
 #include <CGAL/property_map.h>
 #include <CGAL/IO/read_points.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Shape_detection_3.h>
 
-// Type declarations.
+// Typedefs.
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  Kernel;
 typedef std::pair<Kernel::Point_3, Kernel::Vector_3>         Point_with_normal;
 typedef std::vector<Point_with_normal>                       Pwn_vector;
@@ -29,7 +27,7 @@ typedef CGAL::Shape_detection_3::Region_growing_depr<Traits> Region_growing;
 typedef CGAL::Shape_detection_3::Plane<Traits>               Plane;
 
 // This program both works for RANSAC and Region Growing.
-// This example is using deprecated code!
+// This example is using the deprecated code!
 // Please update your code to the new version using other examples!
 template<typename ShapeDetection>
 int run(const char* filename) {
@@ -40,13 +38,13 @@ int run(const char* filename) {
   // Load a point set from a file.
   // read_points takes an OutputIterator for storing the points
   // and a property map to store the normal vector with each point.
+  if (!CGAL::read_points(
+    filename,
+    std::back_inserter(points),
+    CGAL::parameters::point_map(Point_map()).
+    normal_map(Normal_map()))) {
 
-  if (!CGAL::read_points(filename,
-                         std::back_inserter(points),
-                         CGAL::parameters::point_map(Point_map()).
-                         normal_map(Normal_map()))) {
-
-    std::cout << "Error: cannot read the file cube.pwn" << std::endl;
+    std::cout << "ERROR: cannot read the input file!" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -55,17 +53,13 @@ int run(const char* filename) {
 
   // Provide the input data.
   shape_detection.set_input(points);
-
   // Register planar shapes via template method.
   shape_detection.template add_shape_factory<Plane>();
-
-  // Detect registered shapes with default parameters.
+  // Detect registered shapes with the default parameters.
   shape_detection.detect();
 
-  // Print number of detected shapes.
-  std::cout << shape_detection.shapes().end() - shape_detection.shapes().begin()
-  << " shapes detected." << std::endl;
-
+  std::cout << "* number of found shapes: " <<
+    shape_detection.shapes().end() - shape_detection.shapes().begin() << std::endl;
   return EXIT_SUCCESS;
 }
 
