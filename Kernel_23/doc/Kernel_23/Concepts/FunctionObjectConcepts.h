@@ -6905,7 +6905,7 @@ public:
   /// @{
 
   /*!
-    computes the unit normal of the vectors`q-p` and `r-p`.
+    computes the unit normal of the vectors `q-p` and `r-p`.
     This requires that `Kernel::FT` supports the `sqrt` operation.
   */
   Kernel::Vector_3 operator()(const Kernel::Point_3& p,
