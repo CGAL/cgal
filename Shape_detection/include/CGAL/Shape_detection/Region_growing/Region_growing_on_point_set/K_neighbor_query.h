@@ -21,7 +21,9 @@
 #include <type_traits>
 
 // Boost includes.
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/iterator/counting_iterator.hpp>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 
 // CGAL includes.
 #include <CGAL/Kd_tree.h>
@@ -127,12 +129,12 @@ namespace Point_set {
       \pre `input_range.size() > 0`
       \pre `k > 0`
     */
+    template<typename NamedParameters>
     K_neighbor_query(
       const InputRange& input_range,
-      const std::size_t k = 12,
+      const NamedParameters& np,
       const PointMap point_map = PointMap()) :
     m_input_range(input_range),
-    m_number_of_neighbors(k),
     m_point_map(point_map),
     m_index_to_point_map(m_input_range, m_point_map),
     m_distance(m_index_to_point_map),
@@ -143,8 +145,10 @@ namespace Point_set {
       Search_traits(m_index_to_point_map)) {
 
       CGAL_precondition(input_range.size() > 0);
+      const std::size_t k = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::neighbor_radius), 12);
       CGAL_precondition(k > 0);
-
+      m_number_of_neighbors = k;
       m_tree.build();
     }
 
@@ -198,9 +202,10 @@ namespace Point_set {
 
   private:
     const Input_range& m_input_range;
-    const std::size_t m_number_of_neighbors;
     const Point_map m_point_map;
     const Index_to_point_map m_index_to_point_map;
+
+    std::size_t m_number_of_neighbors;
     Distance m_distance;
     Tree m_tree;
   };

@@ -101,13 +101,15 @@ int main(int argc, char *argv[]) {
 
   Region_type region_type(
     polygon_mesh,
-    max_distance_to_plane, max_accepted_angle, min_region_size,
+    CGAL::parameters::
+    distance_threshold(max_distance_to_plane).
+    angle_deg_threshold(max_accepted_angle).
+    min_region_size(min_region_size),
     vertex_to_point_map);
 
   // Sort face indices.
   Sorting sorting(
-    polygon_mesh, neighbor_query,
-    vertex_to_point_map);
+    polygon_mesh, neighbor_query, vertex_to_point_map);
   sorting.sort();
 
   // Create an instance of the region growing class.

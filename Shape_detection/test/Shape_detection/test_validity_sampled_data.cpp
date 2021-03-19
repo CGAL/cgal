@@ -113,8 +113,14 @@ void test_copied_point_cloud (const Point_set& original_points, std::size_t nb)
 
   CGAL::Real_timer t;
   t.start();
-  RG_query rg_query (points, parameters.cluster_epsilon);
-  RG_region rg_region (points, parameters.epsilon, parameters.normal_threshold, parameters.min_points);
+  RG_query rg_query (
+    points, CGAL::parameters::neighbor_radius(parameters.cluster_epsilon));
+  RG_region rg_region (
+    points,
+    CGAL::parameters::
+    distance_threshold(parameters.epsilon).
+    min_squared_cos(parameters.normal_threshold).
+    min_region_size(parameters.min_points));
   Region_growing region_growing (points, rg_query, rg_region);
   std::size_t nb_detected = 0;
   std::size_t nb_unassigned = 0;
@@ -167,13 +173,13 @@ void test_copied_point_cloud (const Point_set& original_points, std::size_t nb)
             << detected_ransac.front() << ";" << detected_ransac.back() << "], time["
             << times_ransac.front() << ";" << times_ransac.back() << "])" << std::endl;
 
-  // RANSAC should at least detect 75% of shapes
+  // RANSAC should detect at least 75% of shapes.
   assert (detected_ransac[detected_ransac.size() / 2] > std::size_t(0.75 * ground_truth));
 
 #ifdef CGAL_TEST_RANSAC_PROTOTYPE
   {
     CGAL::Real_timer timer;
-    double timeout = 120.; // 2 minute timeout
+    double timeout = 120.; // 2 minutes timeout
     timer.start();
     std::size_t nb_runs = 500;
     std::vector<std::size_t> detected_ransac;
@@ -198,7 +204,7 @@ void test_copied_point_cloud (const Point_set& original_points, std::size_t nb)
         proto_points.push_back(Pt);
       }
 
-      //manually set bounding box!
+      // Manually set bounding box!
       Vec3f cbbMin, cbbMax;
       cbbMin[0] = static_cast<float>(bbox.xmin());
       cbbMin[1] = static_cast<float>(bbox.ymin());

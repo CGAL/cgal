@@ -61,9 +61,9 @@ int main(int argc, char *argv[]) {
 
   // Create parameter classes.
   Neighbor_query neighbor_query(
-    input_range);
+    input_range, CGAL::parameters::all_default());
   Region_type region_type(
-    input_range);
+    input_range, CGAL::parameters::all_default());
 
   // Run region growing.
   Region_growing region_growing(

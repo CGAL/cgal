@@ -67,12 +67,14 @@ int main(int argc, char *argv[]) {
 
   // Create parameter classes.
   Neighbor_query neighbor_query(
-    input_range,
-    sphere_radius);
+    input_range, CGAL::parameters::neighbor_radius(sphere_radius));
 
   Region_type region_type(
     input_range,
-    distance_threshold, angle_threshold, min_region_size);
+    CGAL::parameters::
+    distance_threshold(distance_threshold).
+    angle_deg_threshold(angle_threshold).
+    min_region_size(min_region_size));
 
   // Sort indices.
   Sorting sorting(

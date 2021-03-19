@@ -66,7 +66,10 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
 
   Region_type region_type(
     polyhedron,
-    distance_threshold, angle_threshold, min_region_size);
+    CGAL::parameters::
+    distance_threshold(distance_threshold).
+    angle_deg_threshold(angle_threshold).
+    min_region_size(min_region_size));
 
   // Run region growing.
   Region_growing region_growing(

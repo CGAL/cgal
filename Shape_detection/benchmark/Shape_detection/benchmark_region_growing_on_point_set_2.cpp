@@ -45,12 +45,14 @@ void benchmark_region_growing_on_point_set_2(
 
   // Create instances of the parameter classes.
   Neighbor_query neighbor_query(
-    input_range,
-    sphere_radius);
+    input_range, CGAL::parameters::neighbor_radius(sphere_radius));
 
   Region_type region_type(
     input_range,
-    distance_threshold, angle_threshold, min_region_size);
+    CGAL::parameters::
+    distance_threshold(distance_threshold).
+    angle_deg_threshold(angle_threshold).
+    min_region_size(min_region_size));
 
   // Create an instance of the region growing class.
   Region_growing region_growing(

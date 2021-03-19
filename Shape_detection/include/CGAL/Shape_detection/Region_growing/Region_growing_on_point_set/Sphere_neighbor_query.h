@@ -21,7 +21,9 @@
 #include <type_traits>
 
 // Boost includes.
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/iterator/counting_iterator.hpp>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 
 // CGAL includes.
 #include <CGAL/Kd_tree.h>
@@ -124,12 +126,12 @@ namespace Point_set {
       \pre `input_range.size() > 0`
       \pre `sphere_radius > 0`
     */
+    template<typename NamedParameters>
     Sphere_neighbor_query(
       const InputRange& input_range,
-      const FT sphere_radius = FT(1),
+      const NamedParameters& np,
       const PointMap point_map = PointMap()) :
     m_input_range(input_range),
-    m_sphere_radius(sphere_radius),
     m_point_map(point_map),
     m_index_to_point_map(m_input_range, m_point_map),
     m_tree(
@@ -139,8 +141,9 @@ namespace Point_set {
       Search_traits(m_index_to_point_map)) {
 
       CGAL_precondition(input_range.size() > 0);
-      CGAL_precondition(sphere_radius > FT(0));
-
+      m_sphere_radius = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::neighbor_radius), FT(1));
+      CGAL_precondition(m_sphere_radius > FT(0));
       m_tree.build();
     }
 
@@ -193,9 +196,10 @@ namespace Point_set {
 
   private:
     const Input_range& m_input_range;
-    const FT m_sphere_radius;
     const Point_map m_point_map;
     const Index_to_point_map m_index_to_point_map;
+
+    FT m_sphere_radius;
     Tree m_tree;
   };
 

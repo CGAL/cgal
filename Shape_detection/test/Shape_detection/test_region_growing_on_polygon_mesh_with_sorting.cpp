@@ -68,7 +68,10 @@ int main(int argc, char *argv[]) {
 
   Region_type region_type(
     polygon_mesh,
-    distance_threshold, angle_threshold, min_region_size,
+    CGAL::parameters::
+    distance_threshold(distance_threshold).
+    angle_deg_threshold(angle_threshold).
+    min_region_size(min_region_size),
     vertex_to_point_map);
 
   // Sort indices.

@@ -19,6 +19,10 @@
 // STL includes.
 #include <vector>
 
+// Boost includes.
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
+
 // CGAL includes.
 #include <CGAL/assertions.h>
 #include <CGAL/number_utils.h>
@@ -139,21 +143,14 @@ namespace Point_set {
       \pre `angle_threshold >= 0 && angle_threshold <= 90`
       \pre `min_region_size > 0`
     */
+    template<typename NamedParameters>
     Least_squares_plane_fit_region(
       const InputRange& input_range,
-      const FT distance_threshold = FT(1),
-      const FT angle_threshold = FT(25),
-      const std::size_t min_region_size = 3,
+      const NamedParameters& np,
       const PointMap point_map = PointMap(),
       const NormalMap normal_map = NormalMap(),
       const GeomTraits traits = GeomTraits()) :
     m_input_range(input_range),
-    m_distance_threshold(distance_threshold),
-    m_normal_threshold(static_cast<FT>(
-      std::cos(
-        CGAL::to_double(
-          (angle_threshold * static_cast<FT>(CGAL_PI)) / FT(180))))),
-    m_min_region_size(min_region_size),
     m_point_map(point_map),
     m_normal_map(normal_map),
     m_squared_length_3(traits.compute_squared_length_3_object()),
@@ -163,10 +160,24 @@ namespace Point_set {
     m_iconverter() {
 
       CGAL_precondition(input_range.size() > 0);
+      m_distance_threshold = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::distance_threshold), FT(1));
+      CGAL_precondition(m_distance_threshold >= FT(0));
 
-      CGAL_precondition(distance_threshold >= FT(0));
-      CGAL_precondition(angle_threshold >= FT(0) && angle_threshold <= FT(90));
-      CGAL_precondition(min_region_size > 0);
+      const FT angle_deg_threshold = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::angle_deg_threshold), FT(25));
+      CGAL_precondition(angle_deg_threshold >= FT(0) && angle_deg_threshold <= FT(90));
+
+      m_min_region_size = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::min_region_size), 3);
+      CGAL_precondition(m_min_region_size > 0);
+
+      const FT normal_threshold = static_cast<FT>(std::cos(CGAL::to_double(
+        (angle_deg_threshold * static_cast<FT>(CGAL_PI)) / FT(180))));
+      const FT min_squared_cos = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::min_squared_cos), normal_threshold);
+      CGAL_precondition(min_squared_cos >= FT(0) && min_squared_cos <= FT(1));
+      m_normal_threshold = min_squared_cos;
     }
 
     /// @}
@@ -307,9 +318,9 @@ namespace Point_set {
   private:
     const Input_range& m_input_range;
 
-    const FT m_distance_threshold;
-    const FT m_normal_threshold;
-    const std::size_t m_min_region_size;
+    FT m_distance_threshold;
+    FT m_normal_threshold;
+    std::size_t m_min_region_size;
 
     const Point_map m_point_map;
     const Normal_map m_normal_map;

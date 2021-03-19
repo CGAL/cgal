@@ -111,12 +111,14 @@ int main(int argc, char *argv[]) {
 
   // Create instances of the classes Neighbor_query and Region_type.
   Neighbor_query neighbor_query(
-    input_range,
-    search_sphere_radius);
+    input_range, CGAL::parameters::neighbor_radius(search_sphere_radius));
 
   Region_type region_type(
     input_range,
-    max_distance_to_line, max_accepted_angle, min_region_size);
+    CGAL::parameters::
+    distance_threshold(max_distance_to_line).
+    angle_deg_threshold(max_accepted_angle).
+    min_region_size(min_region_size));
 
   // Create an instance of the region growing class.
   Region_growing region_growing(

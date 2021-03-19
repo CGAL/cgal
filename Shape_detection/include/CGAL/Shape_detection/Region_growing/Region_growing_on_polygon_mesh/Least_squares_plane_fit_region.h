@@ -22,6 +22,8 @@
 // Boost includes.
 #include <boost/graph/properties.hpp>
 #include <boost/graph/graph_traits.hpp>
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 
 // Face graph includes.
 #include <CGAL/boost/graph/iterator.h>
@@ -144,21 +146,14 @@ namespace Polygon_mesh {
       \pre `angle_threshold >= 0 && angle_threshold <= 90`
       \pre `min_region_size > 0`
     */
+    template<typename NamedParameters>
     Least_squares_plane_fit_region(
       const PolygonMesh& pmesh,
-      const FT distance_threshold = FT(1),
-      const FT angle_threshold = FT(25),
-      const std::size_t min_region_size = 1,
+      const NamedParameters& np,
       const VertexToPointMap vertex_to_point_map = VertexToPointMap(),
       const GeomTraits traits = GeomTraits()) :
     m_face_graph(pmesh),
     m_face_range(faces(m_face_graph)),
-    m_distance_threshold(distance_threshold),
-    m_normal_threshold(static_cast<FT>(
-      std::cos(
-        CGAL::to_double(
-          (angle_threshold * static_cast<FT>(CGAL_PI)) / FT(180))))),
-    m_min_region_size(min_region_size),
     m_vertex_to_point_map(vertex_to_point_map),
     m_squared_length_3(traits.compute_squared_length_3_object()),
     m_squared_distance_3(traits.compute_squared_distance_3_object()),
@@ -168,10 +163,24 @@ namespace Polygon_mesh {
     m_iconverter() {
 
       CGAL_precondition(m_face_range.size() > 0);
+      m_distance_threshold = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::distance_threshold), FT(1));
+      CGAL_precondition(m_distance_threshold >= FT(0));
 
-      CGAL_precondition(distance_threshold >= FT(0));
-      CGAL_precondition(angle_threshold >= FT(0) && angle_threshold <= FT(90));
-      CGAL_precondition(min_region_size > 0);
+      const FT angle_deg_threshold = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::angle_deg_threshold), FT(25));
+      CGAL_precondition(angle_deg_threshold >= FT(0) && angle_deg_threshold <= FT(90));
+
+      m_min_region_size = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::min_region_size), 1);
+      CGAL_precondition(m_min_region_size > 0);
+
+      const FT normal_threshold = static_cast<FT>(std::cos(CGAL::to_double(
+        (angle_deg_threshold * static_cast<FT>(CGAL_PI)) / FT(180))));
+      const FT min_squared_cos = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::min_squared_cos), normal_threshold);
+      CGAL_precondition(min_squared_cos >= FT(0) && min_squared_cos <= FT(1));
+      m_normal_threshold = min_squared_cos;
     }
 
     /// @}
@@ -355,9 +364,9 @@ namespace Polygon_mesh {
     const Face_graph& m_face_graph;
     const Face_range m_face_range;
 
-    const FT m_distance_threshold;
-    const FT m_normal_threshold;
-    const std::size_t m_min_region_size;
+    FT m_distance_threshold;
+    FT m_normal_threshold;
+    std::size_t m_min_region_size;
 
     const Vertex_to_point_map m_vertex_to_point_map;
 
