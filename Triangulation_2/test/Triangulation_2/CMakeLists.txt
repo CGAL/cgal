@@ -29,5 +29,6 @@ if(BUILD_TESTING)
     execution___of__test_regular_triangulation_2
     execution___of__test_const_del_triangulation_2
     execution___of__test_regular_hierarchy_2
+    execution___of__test_deprecated_projection_traits
     PROPERTIES RESOURCE_LOCK Triangulation_2_Tests_IO)
 endif()
