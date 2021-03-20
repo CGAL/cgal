@@ -36,6 +36,39 @@ public:
   typedef typename boost::property_traits<PointPropertyMap>::key_type Point_3;
   typedef typename boost::call_traits<Point_3>::param_type Arg_type;
 
+  struct Compute_x_3
+    : public Base_traits::Compute_x_3
+  {
+    Compute_x_3(const PointPropertyMap& ppmap, const typename Base_traits::Compute_x_3& base):
+      Base_traits::Compute_x_3(base), ppmap_(ppmap){}
+    const PointPropertyMap& ppmap_;
+    bool operator()(Arg_type p) const {
+      return static_cast<const typename Base_traits::Compute_x_3*>(this)->operator()(get(ppmap_,p));
+    }
+  };
+
+  struct Compute_y_3
+    : public Base_traits::Compute_y_3
+  {
+    Compute_y_3(const PointPropertyMap& ppmap, const typename Base_traits::Compute_y_3& base):
+      Base_traits::Compute_y_3(base), ppmap_(ppmap){}
+    const PointPropertyMap& ppmap_;
+    bool operator()(Arg_type p) const {
+      return static_cast<const typename Base_traits::Compute_y_3*>(this)->operator()(get(ppmap_,p));
+    }
+  };
+
+  struct Compute_z_3
+    : public Base_traits::Compute_z_3
+  {
+    Compute_z_3(const PointPropertyMap& ppmap, const typename Base_traits::Compute_z_3& base):
+      Base_traits::Compute_z_3(base), ppmap_(ppmap){}
+    const PointPropertyMap& ppmap_;
+    bool operator()(Arg_type p) const {
+      return static_cast<const typename Base_traits::Compute_z_3*>(this)->operator()(get(ppmap_,p));
+    }
+  };
+
   struct Less_x_3
     : public Base_traits::Less_x_3
   {
@@ -68,6 +101,10 @@ public:
       return static_cast<const typename Base_traits::Less_z_3*>(this)->operator()(get(ppmap_,p), get(ppmap_,q));
     }
   };
+
+  Compute_x_3 compute_x_3_object () const {return Compute_x_3(ppmap_, static_cast<const Gt*>(this)->compute_x_3_object() );}
+  Compute_y_3 compute_y_3_object () const {return Compute_y_3(ppmap_, static_cast<const Gt*>(this)->compute_y_3_object() );}
+  Compute_z_3 compute_z_3_object () const {return Compute_z_3(ppmap_, static_cast<const Gt*>(this)->compute_z_3_object() );}
 
   Less_x_3 less_x_3_object () const {return Less_x_3(ppmap_, static_cast<const Gt*>(this)->less_x_3_object() );}
   Less_y_3 less_y_3_object () const {return Less_y_3(ppmap_, static_cast<const Gt*>(this)->less_y_3_object() );}
