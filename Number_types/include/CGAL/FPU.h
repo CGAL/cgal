@@ -623,7 +623,7 @@ Originally this was:
 In the normal path, IA_up is
   return CGAL_IA_FORCE_TO_DOUBLE(d);
 
-So in the normal path this should be equivalent to 
+So in the normal path this should be equivalent to
 
 return CGAL_IA_FORCE_TO_DOUBLE(CGAL_BUG_SQRT(CGAL_IA_STOP_CPROP(a)));
 
