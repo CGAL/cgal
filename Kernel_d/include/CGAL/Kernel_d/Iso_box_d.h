@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <numeric>
 #include <cstddef>
+#include <iterator>
 
 namespace CGAL {
 
@@ -41,9 +42,11 @@ namespace CGAL {
     typedef typename Point::Cartesian_const_iterator  Iterator;
     typedef Cartesian_iterator<Point,Functor>         Self;
 
-    typedef typename Functor::result_type  value_type;
-    typedef value_type&                    reference;
-    typedef value_type*                    pointer;
+    typedef decltype(std::declval<Functor>()(
+        *std::declval<Iterator>(),
+        *std::declval<Iterator>()))        value_type;
+    typedef value_type                     reference;
+    typedef const value_type*              pointer;
     typedef std::ptrdiff_t                 difference_type;
     typedef std::input_iterator_tag        iterator_category;
 
@@ -89,7 +92,7 @@ namespace CGAL {
       return tmp;
     }
 
-    value_type operator*()  const { return f(*pb, *qb); }
+    reference  operator*()  const { return f(*pb, *qb); }
     pointer    operator->() const { return &(**this); }
 
     const Functor& functor() const { return f; }
@@ -118,9 +121,12 @@ namespace CGAL {
     typedef typename Point::Homogeneous_const_iterator  Iterator;
     typedef Homogeneous_iterator<Point,Functor>         Self;
 
-    typedef typename Functor::result_type  value_type;
-    typedef value_type&                    reference;
-    typedef value_type*                    pointer;
+    typedef typename Kernel_traits<Point>::Kernel::RT RT;
+    typedef decltype(std::declval<Functor>()(
+        *std::declval<Iterator>() * std::declval<RT>(),
+        *std::declval<Iterator>() * std::declval<RT>())) value_type;
+    typedef value_type                     reference;
+    typedef const value_type*              pointer;
     typedef std::ptrdiff_t                 difference_type;
     typedef std::input_iterator_tag        iterator_category;
 
@@ -128,7 +134,6 @@ namespace CGAL {
 
     Iterator pb, qb;
     Functor f;
-    typedef typename Kernel_traits<Point>::Kernel::RT RT;
     RT hp, hq; // homogenizing coordinates
 
   public:

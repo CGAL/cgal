@@ -42,10 +42,10 @@ public:
 /// @{
 
 /*!
-Inserts
-a degree two vertex and two faces adjacent to it that have two common
-edges. The edge defined by the face handle `f` and the integer
-`i` is duplicated. It returns a handle to the vertex created.
+inserts a degree two vertex and two faces adjacent to it that have two common edges.
+
+The edge defined by the face handle `f` and the integer `i` is duplicated. It returns a handle
+to the vertex created.
 */
 Vertex_handle insert_degree_2(Face_handle f, int i);
 

@@ -11,16 +11,18 @@ The class `Hyperbolic_Delaunay_triangulation_2` is the main class of the 2D Hype
 It is designed to represent Delaunay triangulations of sets of points in the hyperbolic plane.
 The hyperbolic plane is represented in the Poincaré disk model.
 
-\tparam Gt  must be a model of `HyperbolicDelaunayTriangulationTraits_2`.
-\tparam Tds must be a model of `TriangulationDataStructure_2`. By default, this parameter is instantiated with
-`Triangulation_data_structure_2< Triangulation_vertex_base_2<Gt>, Hyperbolic_triangulation_face_base_2<Gt> >`
+\tparam Gt is the geometric traits class and must be a model of `HyperbolicDelaunayTriangulationTraits_2`.
+\tparam Tds is the triangulation graph data structure and must be a model of `TriangulationDataStructure_2`
+whose vertex and face are models of `TriangulationVertexBase_2` and `HyperbolicTriangulationFaceBase_2`, respectively.
+It defaults to:
+\code
+CGAL::Triangulation_data_structure_2<
+  CGAL::Triangulation_vertex_base_2<Gt>,
+  CGAL::Hyperbolic_triangulation_face_base_2<Gt> >
+\endcode
 
-\sa `HyperbolicDelaunayTriangulationTraits_2`
-\sa `TriangulationDataStructure_2`
 \sa `Delaunay_triangulation_2`
-
 */
-
 template < class Gt, class Tds >
 class Hyperbolic_Delaunay_triangulation_2: private Delaunay_triangulation_2<Gt,Tds> {
 

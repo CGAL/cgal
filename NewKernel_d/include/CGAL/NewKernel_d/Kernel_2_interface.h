@@ -79,10 +79,11 @@ template <class Base_> struct Kernel_2_interface : public Base_ {
                 Side_of_oriented_circle_2(Kernel const&k):sos(k){}
                 result_type operator()(Point_2 const&a, Point_2 const&b, Point_2 const&c, Point_2 const&d) {
                         //return sos(a,b,c,d);
-                        Point_2 const* t[4]={&a,&b,&c,&d};
-                        return sos(make_transforming_iterator<Dereference_functor>(t+0),make_transforming_iterator<Dereference_functor>(t+4));
+                        Point_2 const* t[4]={&a,&b,&c};
+                        return sos(make_transforming_iterator<Dereference_functor>(t+0),make_transforming_iterator<Dereference_functor>(t+3), d);
                 }
         };
+        typedef typename Get_functor<Base, Construct_ttag<Point_tag> >::type Construct_point_2;
         Less_x_2 less_x_2_object()const{ return Less_x_2(*this); }
         Less_y_2 less_y_2_object()const{ return Less_y_2(*this); }
         Compare_x_2 compare_x_2_object()const{ return Compare_x_2(*this); }
@@ -90,6 +91,7 @@ template <class Base_> struct Kernel_2_interface : public Base_ {
         Compare_distance_2 compare_distance_2_object()const{ return Compare_distance_2(*this); }
         Orientation_2 orientation_2_object()const{ return Orientation_2(*this); }
         Side_of_oriented_circle_2 side_of_oriented_circle_2_object()const{ return Side_of_oriented_circle_2(*this); }
+        Construct_point_2 construct_point_2_object()const{ return Construct_point_2(*this); }
 };
 }
 
