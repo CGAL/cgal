@@ -19,7 +19,7 @@
 #include <CGAL/Triangulation_on_sphere_2.h>
 #include <CGAL/Triangulation_on_sphere_face_base_2.h>
 #include <CGAL/Triangulation_on_sphere_vertex_base_2.h>
-#include <CGAL/Triangulation_on_sphere_2/IO/OFF.h>
+#include <CGAL/triangulation_assertions.h>
 
 #include <CGAL/enum.h>
 #include <CGAL/Origin.h>
@@ -78,6 +78,7 @@ public:
   using Base::tds;
   using Base::dimension;
   using Base::geom_traits;
+  using Base::is_ghost;
   using Base::all_faces_begin;
   using Base::number_of_faces;
   using Base::number_of_vertices;
@@ -146,7 +147,7 @@ public:
   Oriented_side side_of_oriented_circle(const Face_handle f, const Point& p, bool perturb = false) const;
   bool test_conflict(const Point& p, Face_handle fh) const;
 
-  //INSERTION
+  // INSERTION -------------------------------------------------------------------------------------
 private:
   template <class OutputItFaces, class OutputItBoundaryEdges>
   std::pair<OutputItFaces, OutputItBoundaryEdges>
@@ -164,7 +165,7 @@ private:
       const int i = stack.top().second;
       stack.pop();
       Face_handle fn = fh->neighbor(i);
-      if(!test_conflict(p,fn))
+      if(!test_conflict(p, fn))
       {
         *(pit.second)++ = Edge(fn, fn->index(fh));
       }
@@ -225,7 +226,7 @@ public:
     CGAL_precondition(dimension() == 2);
     CGAL_precondition(test_conflict(p, fh));
 
-    *fit++ = fh; //put fh in OutputItFaces
+    *fit++ = fh;
     fh->tds_data().mark_in_conflict();
 
     std::pair<OutputItFaces, OutputItBoundaryEdges> pit = std::make_pair(fit, eit);
@@ -300,11 +301,9 @@ public:
   Arc_on_sphere_2 dual_on_sphere(const All_edges_iterator ei) const { return dual_on_sphere(*ei); }
 
   // Validity
-  void check_neighboring_faces() const;
   bool is_plane() const;
   bool is_valid(bool verbose = false, int level = 0) const;
   bool is_valid_face(Face_handle fh, bool verbose = false, int level = 0) const;
-  bool is_valid_vertex(Vertex_handle fh, bool verbose = false, int level = 0) const;
 };
 
 // ------------------------ PREDICATES / CONSTRUCTIONS --------------------------------//
@@ -320,7 +319,7 @@ side_of_oriented_circle(const Point& p0, const Point& p1, const Point& p2, const
                         bool perturb) const
 {
   // Specificity of the ToS_2: the in-circle is a call to orientation_3
-  Oriented_side os = Base::orientation(p0, p1, p2, p);
+  const Oriented_side os = Base::orientation(p0, p1, p2, p);
   if(os != ON_ORIENTED_BOUNDARY || !perturb)
     return os;
 
@@ -345,7 +344,7 @@ side_of_oriented_circle(const Point& p0, const Point& p1, const Point& p2, const
       return Oriented_side(o);
   }
 
-  CGAL_assertion(false);
+  CGAL_triangulation_assertion(false);
   return ON_NEGATIVE_SIDE;
 }
 
@@ -363,7 +362,7 @@ inline bool
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 test_conflict(const Point& p, Face_handle fh) const
 {
-  return(side_of_oriented_circle(fh, p, true) != ON_NEGATIVE_SIDE);
+  return (side_of_oriented_circle(fh, p, true) != ON_NEGATIVE_SIDE);
 }
 
 // ------------------------ INSERTION --------------------------------//
@@ -428,8 +427,7 @@ typename Triangulation_on_sphere_2<Gt, Tds>::Vertex_handle
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 insert_third(const Point& p)
 {
-  std::cout << "insert_third" << std::endl;
-  CGAL_assertion(number_of_vertices() == 2);
+  CGAL_triangulation_assertion(number_of_vertices() == 2);
 
   Vertex_handle v = vertices_begin();
   Vertex_handle u = v->face()->neighbor(0)->vertex(0);
@@ -448,12 +446,10 @@ insert_third(const Point& p)
 
   nv->set_point(p);
 
-  std::cout << "actual #faces " << tds().faces().size() << std::endl;
-
   Face_handle f = all_edges_begin()->first;
-  CGAL_assertion(orientation_on_sphere(point(f, 0),
-                                       point(f, 1),
-                                       point(f->neighbor(0), 1)) != RIGHT_TURN);
+  CGAL_triangulation_assertion(orientation_on_sphere(point(f, 0),
+                                                     point(f, 1),
+                                                     point(f->neighbor(0), 1)) != RIGHT_TURN);
 
   return nv;
 }
@@ -464,7 +460,6 @@ typename Triangulation_on_sphere_2<Gt, Tds>::Vertex_handle
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 insert_outside_affine_hull_regular(const Point& p)
 {
-  std::cout << "insert_outside_affine_hull_regular" << std::endl;
   CGAL_precondition(dimension() == 1 && number_of_vertices() >= 3);
 
   bool conform = false;
@@ -474,7 +469,7 @@ insert_outside_affine_hull_regular(const Point& p)
   const Point& p1 = point(f, 1);
   const Point& p2 = point(fn, 1);
 
-  CGAL_assertion(orientation_on_sphere(p0, p1, p2) != NEGATIVE);
+  CGAL_triangulation_assertion(orientation_on_sphere(p0, p1, p2) != NEGATIVE);
   Orientation orient2 = side_of_oriented_circle(p0, p1, p2, p);
 
   if(orient2 == POSITIVE)
@@ -545,7 +540,7 @@ insert(const Point& p, Locate_type lt, Face_handle loc, int /*li*/)
     }
   }
 
-  CGAL_assertion(false);
+  CGAL_triangulation_assertion(false);
   return v;
 }
 
@@ -790,7 +785,7 @@ test_dim_down(Vertex_handle v)
     if(it4 == vertices_end())
       break;
 
-    CGAL_assertion(it != v && it2 != v && it3 != v && it4 != v);
+    CGAL_triangulation_assertion(it != v && it2 != v && it3 != v && it4 != v);
 
     if(side_of_oriented_circle(it->point(), it2->point(), it3->point(), it4->point()) != ON_ORIENTED_BOUNDARY)
       return false;
@@ -812,10 +807,10 @@ test_dim_up(const Point& p) const
 {
   CGAL_precondition(dimension() == 1);
 
-  Face_handle f = all_edges_begin()->first;
-  Vertex_handle v1 = f->vertex(0);
-  Vertex_handle v2 = f->vertex(1);
-  Vertex_handle v3 = f->neighbor(0)->vertex(1);
+  const Face_handle f = all_edges_begin()->first;
+  const Vertex_handle v1 = f->vertex(0);
+  const Vertex_handle v2 = f->vertex(1);
+  const Vertex_handle v3 = f->neighbor(0)->vertex(1);
 
   return (side_of_oriented_circle(point(v1), point(v2), point(v3), p) != ON_ORIENTED_BOUNDARY);
 }
@@ -851,7 +846,7 @@ fill_hole_regular(std::list<Edge>& first_hole)
       {
         ff = (*hit).first;
         ii = (*hit).second;
-        hit++;
+        ++hit;
         ff->set_neighbor(ii, newf);
         newf->set_neighbor(j, ff);
         newf->set_vertex(newf->ccw(j), ff->vertex(ff->cw(ii)));
@@ -891,8 +886,8 @@ fill_hole_regular(std::list<Edge>& first_hole)
 
     while(hit != hdone)
     {
-      fn = (*hit).first;
-      in = (*hit).second;
+      fn = hit->first;
+      in = hit->second;
       vv = fn->vertex(ccw(in));
       p = point(vv);
 
@@ -902,7 +897,7 @@ fill_hole_regular(std::list<Edge>& first_hole)
         {
           v2 = vv;
           p2 = p;
-          cut_after=hit;
+          cut_after = hit;
         }
         else if(side_of_oriented_circle(p0, p1, p2, p) == ON_POSITIVE_SIDE)
         {
@@ -934,7 +929,7 @@ fill_hole_regular(std::list<Edge>& first_hole)
       newf->set_neighbor(0, fn);
       fn->set_neighbor(in, newf);
       hole.pop_front();
-      hole.push_front(Edge(newf, 1));
+      hole.emplace_front(newf, 1);
       hole_list.push_front(hole);
     }
     else
@@ -946,7 +941,7 @@ fill_hole_regular(std::list<Edge>& first_hole)
         newf->set_neighbor(1, fn);
         fn->set_neighbor(in, newf);
         hole.pop_back();
-        hole.push_back(Edge(newf, 0));
+        hole.emplace_back(newf, 0);
         hole_list.push_front(hole);
       }
       else
@@ -959,8 +954,8 @@ fill_hole_regular(std::list<Edge>& first_hole)
           hole.pop_front();
         }
 
-        hole.push_front(Edge(newf, 1));
-        new_hole.push_front(Edge(newf, 0));
+        hole.emplace_front(newf, 1);
+        new_hole.emplace_front(newf, 0);
         hole_list.push_front(hole);
         hole_list.push_front(new_hole);
       }
@@ -969,6 +964,8 @@ fill_hole_regular(std::list<Edge>& first_hole)
 }
 
 //-----------------dual------------------------
+// Following methods are used to compute the Voronoi-Diagram
+
 template<class Gt, class Tds>
 inline
 typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::Point_3
@@ -983,10 +980,33 @@ typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::Point_3
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 circumcenter(const Face_handle f) const
 {
+  CGAL_precondition(dimension() == 2);
+
   typename Geom_traits::Construct_point_3 cp3 = geom_traits().construct_point_3_object();
   return circumcenter(cp3(point(f, 0)), cp3(point(f, 1)), cp3(point(f, 2)));
 }
 
+template <typename Gt, typename Tds>
+inline
+typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::Point_3
+Delaunay_triangulation_on_sphere_2<Gt, Tds>::
+dual(const Face_handle f) const
+{
+  return circumcenter(f);
+}
+
+template <typename Gt, typename Tds>
+typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::Segment_3
+Delaunay_triangulation_on_sphere_2<Gt, Tds>::
+dual(const Edge& e) const
+{
+  CGAL_precondition(dimension() == 2);
+
+  return geom_traits().construct_segment_3_object()(dual(e.first),
+                                                    dual(e.first->neighbor(e.second)));
+}
+
+// Curved duals
 template<class Gt, class Tds>
 inline
 typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::Point
@@ -1001,7 +1021,10 @@ typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::Point
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 circumcenter_on_sphere(const Face_handle f) const
 {
-  return circumcenter(point(f, 0), point(f, 1), point(f, 2));
+  CGAL_precondition(dimension() == 2);
+  CGAL_precondition(!is_ghost(f));
+
+  return circumcenter_on_sphere(point(f, 0), point(f, 1), point(f, 2));
 }
 
 template <typename Gt, typename Tds>
@@ -1009,31 +1032,10 @@ typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::Point
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 dual_on_sphere(const Face_handle f) const
 {
-  return circumcenter_on_sphere(f);
-}
-
-// Following methods are used to compute the Voronoi-Diagram
-template <typename Gt, typename Tds>
-inline
-typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::Point_3
-Delaunay_triangulation_on_sphere_2<Gt, Tds>::
-dual(const Face_handle f) const
-{
-  CGAL_precondition(tds().is_face(f));
-  CGAL_precondition(this->dimension() == 2);
-  return circumcenter(f);
-}
-
-template <typename Gt, typename Tds>
-typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::Segment_3
-Delaunay_triangulation_on_sphere_2<Gt, Tds>::
-dual(const Edge& e) const
-{
-  CGAL_precondition(tds().is_edge(e.first, e.second));
   CGAL_precondition(dimension() == 2);
+  CGAL_precondition(!is_ghost(f));
 
-  return geom_traits().construct_segment_3_object()(dual(e.first),
-                                                    dual(e.first->neighbor(e.second)));
+  return circumcenter_on_sphere(f);
 }
 
 template <typename Gt, typename Tds>
@@ -1041,44 +1043,16 @@ typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::Arc_on_sphere_2
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 dual_on_sphere(const Edge& e) const
 {
-  CGAL_precondition(tds().is_edge(e.first, e.second));
   CGAL_precondition(dimension() == 2);
+  CGAL_precondition(!is_ghost(e));
 
-  // @fixme ensure in arc_dual and arc_segment that 'cp' and 'cq' are in the correct order
-  return geom_traits().construct_arc_on_sphere_2_object()(dual(e.first),
-                                                          dual(e.first->neighbor(e.second)));
+  return geom_traits().construct_arc_on_sphere_2_object()(dual_on_sphere(e.first),
+                                                          dual_on_sphere(e.first->neighbor(e.second)));
 }
 
 //-------------------------------------------CHECK------------------------------------------------//
-// checks whether neighboring faces are linked correctly to each other.
-template <typename Gt, typename Tds>
-void
-Delaunay_triangulation_on_sphere_2<Gt, Tds>::
-check_neighboring_faces() const
-{
-  if(dimension() == 1)
-  {
-    for(All_faces_iterator eit=all_faces_begin(); eit!=all_faces_end(); ++eit)
-    {
-      Face_handle f1 = eit->neighbor(0);
-      Face_handle f2 = eit->neighbor(1);
-      CGAL_assertion(f1->has_neighbor(eit));
-      CGAL_assertion(f2->has_neighbor(eit));
-    }
-  }
 
-  for(All_faces_iterator eit=all_faces_begin(); eit!=all_faces_end(); ++eit)
-  {
-    Face_handle f1 = eit->neighbor(0);
-    Face_handle f2 = eit->neighbor(1);
-    Face_handle f3 = eit->neighbor(2);
-    CGAL_assertion(f1->has_neighbor(eit));
-    CGAL_assertion(f2->has_neighbor(eit));
-    CGAL_assertion(f3->has_neighbor(eit));
-  }
-}
-
-//checks whether a given triangulation is plane (all points are coplanar)
+// checks whether a given triangulation is plane (all points are coplanar)
 template <typename Gt, typename Tds>
 bool
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
@@ -1114,6 +1088,32 @@ is_plane() const
 template <typename Gt, typename Tds>
 bool
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
+is_valid_face(Face_handle fh, bool verbose, int /*level*/) const
+{
+  bool result = true;
+  for(int i=0; i<3; ++i)
+  {
+    Orientation test = side_of_oriented_circle(fh, point(fh->vertex(i)));
+    result = result && test == ON_ORIENTED_BOUNDARY;
+    CGAL_triangulation_assertion(result);
+  }
+
+  if(!result)
+  {
+    if(verbose)
+    {
+      std::cerr << " from is_valid_face\n face " << std::endl;
+      show_face(fh);
+    }
+  }
+
+  CGAL_triangulation_assertion(result);
+  return result;
+}
+
+template <typename Gt, typename Tds>
+bool
+Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 is_valid(bool verbose, int level) const
 {
   bool result = true;
@@ -1123,33 +1123,33 @@ is_valid(bool verbose, int level) const
     if(verbose)
       std::cerr << "invalid data structure" << std::endl;
 
-    CGAL_assertion(false);
+    CGAL_triangulation_assertion(false);
     return false;
   }
 
   for(All_faces_iterator fit=all_faces_begin(); fit!=all_faces_end(); ++fit)
-    is_valid_face(fit, verbose, level);
+    result = result && is_valid_face(fit, verbose, level);
 
   for(Vertices_iterator vit=vertices_begin(); vit!=vertices_end(); ++vit)
-    is_valid_vertex(vit, verbose, level);
+    result = result && Base::is_valid_vertex(vit, verbose, level);
 
   switch(dimension())
   {
     case 0:
       break;
     case 1:
-      CGAL_assertion(this->is_plane());
+      CGAL_triangulation_assertion(this->is_plane());
       break;
     case 2:
       for(All_faces_iterator it=all_faces_begin(); it!=all_faces_end(); ++it)
       {
         Orientation s = orientation_on_sphere(point(it, 0), point(it, 1), point(it, 2));
         result = result && (s != NEGATIVE || it->is_ghost());
-        CGAL_assertion(result);
+        CGAL_triangulation_assertion(result);
       }
 
-      result = result && (number_of_faces() == 2*(number_of_vertices()) - 4);
-      CGAL_assertion(result);
+      result = result && (number_of_faces() == 2 * number_of_vertices() - 4);
+      CGAL_triangulation_assertion(result);
       break;
   }
 
@@ -1157,59 +1157,7 @@ is_valid(bool verbose, int level) const
   if(verbose)
     std::cerr << " number of vertices " << number_of_vertices() << "\t" << std::endl;
 
-  CGAL_assertion(result);
-  return result;
-}
-
-template <typename Gt, typename Tds>
-bool
-Delaunay_triangulation_on_sphere_2<Gt, Tds>::
-is_valid_vertex(Vertex_handle vh, bool verbose, int /*level*/) const
-{
-  bool result = vh->face()->has_vertex(vh);
-  if(!result)
-  {
-    if(verbose)
-    {
-      std::cerr << " from is_valid_vertex " << std::endl;
-      std::cerr << "normal vertex " << &(*vh) << std::endl;
-      show_vertex(vh);
-      std::cerr << "\nvh_>face " << &*(vh->face()) << " " << std::endl;
-
-      show_face(vh->face());
-    }
-
-    CGAL_assertion(false);
-    return false;
-  }
-
-  return true;
-}
-
-template <typename Gt, typename Tds>
-bool
-Delaunay_triangulation_on_sphere_2<Gt, Tds>::
-is_valid_face(Face_handle fh, bool verbose, int /*level*/) const
-{
-  bool result = true;
-  for(int i=0; i<+2; ++i)
-  {
-    Orientation test = side_of_oriented_circle(fh, point(fh->vertex(i)));
-    result = result && test == ON_ORIENTED_BOUNDARY;
-    CGAL_assertion(result);
-  }
-
-  if(!result)
-  {
-    if(verbose)
-    {
-      std::cerr << " from is_valid_face " << std::endl;
-      std::cerr << " face " << std::endl;
-      show_face(fh);
-    }
-  }
-
-  CGAL_assertion(result);
+  CGAL_triangulation_assertion(result);
   return result;
 }
 

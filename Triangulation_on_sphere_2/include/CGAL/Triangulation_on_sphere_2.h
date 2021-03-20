@@ -21,6 +21,8 @@
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Triangulation_on_sphere_vertex_base_2.h>
 #include <CGAL/Triangulation_on_sphere_face_base_2.h>
+#include <CGAL/Triangulation_on_sphere_2/IO/OFF.h>
+#include <CGAL/Triangulation_on_sphere_2/internal/arc_on_sphere_subsampling.h> // included for convenience
 
 #include <CGAL/iterator.h>
 #include <CGAL/Iterator_project.h>
@@ -71,6 +73,8 @@ public:
   typedef typename Geom_traits::Segment_3         Segment_3;
   typedef typename Geom_traits::Triangle_3        Triangle_3;
   typedef typename Geom_traits::Arc_on_sphere_2   Arc_on_sphere_2;
+
+  typedef typename Geom_traits::Construct_point_3 Construct_point_3;
 
   typedef typename Tds::size_type                 size_type;
   typedef typename Tds::difference_type           difference_type;
@@ -136,14 +140,34 @@ public:
   size_type number_of_vertices() const { return _tds.number_of_vertices(); }
   size_type number_of_edges() const { return _tds.number_of_edges(); }
   size_type number_of_faces() const { return _tds.number_of_faces(); } // total number of faces (solid + ghost)
-  size_type number_of_ghost_faces() const;
+  size_type number_of_ghost_faces() const
+  {
+    std::size_t nb = 0;
+    for(All_faces_iterator it=all_faces_begin(); it!=all_faces_end(); ++it)
+      if(is_ghost(it))
+        ++nb;
+
+    return nb;
+  }
+
   size_type number_of_solid_faces() const { return number_of_faces() - number_of_ghost_faces(); }
 
   // TDS access
-  bool is_edge(Vertex_handle va, Vertex_handle vb) const;
-  bool is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr, int& i) const;
-  bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3) const;
-  bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3, Face_handle& fr) const;
+  bool is_edge(Vertex_handle va, Vertex_handle vb) const { return _tds.is_edge(va, vb); }
+  bool is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr, int& i) const
+  {
+    return _tds.is_edge(va, vb, fr, i);
+  }
+
+  bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3) const
+  {
+    return _tds.is_face(v1, v2, v3);
+  }
+
+  bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3, Face_handle& fr) const
+  {
+    return _tds.is_face(v1, v2, v3, fr);
+  }
 
   size_type degree(Vertex_handle v) const { return _tds.degree(v); }
 
@@ -152,23 +176,41 @@ public:
   Edge mirror_edge(const Edge& e) const { return _tds.mirror_edge(e); }
 
   bool is_ghost(const Face_handle f) const { return f->is_ghost(); }
+  bool is_ghost(const Face_handle f, const int i) const
+  {
+    CGAL_precondition(dimension() == 2);
+    const bool g1 = is_ghost(f);
+    const bool g2 = is_ghost(f->neighbor(i));
+    return g1 && g2;
+  }
+
   bool is_ghost(const Edge& e) const
   {
-    Face_handle f = e.first;
-    bool g1 = is_ghost(f);
-    bool g2 = is_ghost(f->neighbor(e.second));
-    return g1 && g2;
+    return is_ghost(e.first, e.second);
+  }
+
+  bool is_contour(const Face_handle f, const int i) const
+  {
+    CGAL_precondition(dimension() == 2);
+    const bool edge1 = is_ghost(f);
+    const bool edge2 = is_ghost(f->neighbor(i));
+    return edge1 != edge2; // xor
+  }
+
+  bool is_contour(const Edge& e) const
+  {
+    return is_contour(e.first, e.second);
   }
 
   //-----------------------TRAVERSING : ITERATORS AND CIRCULATORS-----------------------------------
 
-  typedef typename Tds::Vertex_circulator         Vertex_circulator;
-  typedef typename Tds::Edge_circulator           Edge_circulator;
-  typedef typename Tds::Face_circulator           Face_circulator;
-
   typedef typename Tds::Vertex_iterator           Vertices_iterator;
   typedef typename Tds::Edge_iterator             All_edges_iterator;
   typedef typename Tds::Face_iterator             All_faces_iterator;
+
+  typedef typename Tds::Vertex_circulator         Vertex_circulator;
+  typedef typename Tds::Edge_circulator           Edge_circulator;
+  typedef typename Tds::Face_circulator           Face_circulator;
 
   // This class is used to generate the Solid*_iterators.
   class Ghost_tester
@@ -176,31 +218,23 @@ public:
     const Triangulation_on_sphere_2& tr;
 
   public:
-    Ghost_tester() { }
     Ghost_tester(const Triangulation_on_sphere_2& tr) : tr(tr) { }
 
-    bool operator()(const All_faces_iterator fit) const { return fit->is_ghost(); }
-    bool operator()(const All_edges_iterator eit) const
-    {
-      return !tr.is_ghost(*eit);
-    }
+    bool operator()(const All_faces_iterator fit) const { return tr.is_ghost(fit); }
+    bool operator()(const All_edges_iterator eit) const { return tr.is_ghost(*eit); }
   };
 
   // @todo check contour shenanigans correctness
-  class Contour_tester
+  class Non_contour_tester
   {
-    const Triangulation_on_sphere_2 *t;
+    const Triangulation_on_sphere_2& tr;
 
   public:
-    Contour_tester() { }
-    Contour_tester(const Triangulation_on_sphere_2 *tr) : t(tr) { }
+    Non_contour_tester(const Triangulation_on_sphere_2& tr) : tr(tr) { }
 
     bool operator()(const All_edges_iterator eit) const
     {
-      Face_handle f = eit->first;
-      bool edge1 = f->is_ghost();
-      bool edge2 = f->neighbor(eit->second)->is_ghost();
-      return edge1 != edge2;
+      return !tr.is_contour(*eit);
     }
   };
 
@@ -225,7 +259,7 @@ public:
   typedef Filter_iterator<All_edges_iterator, Ghost_tester>          Solid_edges_iterator;
 
   // one solid and one ghost face adjacent to this face
-  typedef Filter_iterator<All_edges_iterator, Contour_tester>        Contour_edges_iterator;
+  typedef Filter_iterator<All_edges_iterator, Non_contour_tester>    Contour_edges_iterator;
 
   typedef Iterator_range<Prevent_deref<Vertices_iterator> >          Vertex_handles;
   typedef Iterator_range<All_edges_iterator>                         All_edges;
@@ -285,14 +319,14 @@ public:
   Contour_edges_iterator contour_edges_begin() const
   {
     if(dimension() < 1)
-      return contour_edges_begin();
+      return contour_edges_end();
 
-    return CGAL::filter_iterator(all_edges_end(), Ghost_tester(*this), all_edges_begin());
+    return CGAL::filter_iterator(all_edges_end(), Non_contour_tester(*this), all_edges_begin());
   }
 
   Contour_edges_iterator contour_edges_end() const
   {
-    return CGAL::filter_iterator(all_edges_end(), Contour_tester(this));
+    return CGAL::filter_iterator(all_edges_end(), Non_contour_tester(*this));
   }
 
   All_edges_iterator all_edges_begin() const { return _tds.edges_begin(); }
@@ -340,27 +374,84 @@ public:
   const Point& point(const Vertex_handle v) const { return v->point(); }
   const Point& point(const Face_handle f, const int i) const { return point(f->vertex(i)); }
 
-  Segment_3 segment(const Edge& e) const;
-  Segment_3 segment(const Face_handle f, int i) const;
-  Arc_on_sphere_2 segment_on_sphere(const Edge& e) const; // @todo
-  Arc_on_sphere_2 segment_on_sphere(const Face_handle f, int i) const;
-  Triangle_3 triangle(const Face_handle f) const;
+  decltype(auto) construct_point(const Point& p) const
+  {
+    return geom_traits().construct_point_3_object()(p);
+  }
+
+  Segment_3 segment(const Face_handle f, int i) const
+  {
+    return geom_traits().construct_segment_3_object()(construct_point(point(f, ccw(i))),
+                                                      construct_point(point(f, cw(i))));
+  }
+
+  Segment_3 segment(const Edge& e) const
+  {
+    return segment(e.first, e.second);
+  }
+
+  Segment_3 segment(const Edge_circulator& ec) const { return segment(*ec); }
+  Segment_3 segment(const All_edges_iterator ei) const { return segment(*ei); }
+
+  Arc_on_sphere_2 segment_on_sphere(const Face_handle f, int i) const
+  {
+    CGAL_triangulation_precondition(!is_ghost(f, i));
+
+    return geom_traits().construct_arc_on_sphere_2_object()(point(f, ccw(i)), point(f, cw(i)));
+  }
+
+  Arc_on_sphere_2 segment_on_sphere(const Edge& e) const
+  {
+    return segment_on_sphere(e.first, e.second);
+  }
+
+  Triangle_3 triangle(const Face_handle f) const
+  {
+    return geom_traits().construct_triangle_3_object()(construct_point(point(f, 0)),
+                                                       construct_point(point(f, 1)),
+                                                       construct_point(point(f, 2)));
+  }
 
   //-----------------------PREDICATES---------------------------------------------------------------
-  Orientation orientation(const Point& p, const Point& q, const Point& r, const Point& s) const;
-  Orientation orientation(const Face_handle f, const Point& p) const;
+  bool are_equal(const Point& p, const Point& q) const
+  {
+    return geom_traits().equal_on_sphere_2_object()(p, q);
+  }
 
-  Orientation orientation_on_sphere(const Point& p, const Point& q, const Point& r) const;
-  Orientation orientation_on_sphere(const Face_handle f) const;
+  Comparison_result compare(const Point& p, const Point& q) const
+  {
+    return geom_traits().compare_on_sphere_2_object()(p, q);
+  }
 
-  Comparison_result compare(const Point& p, const Point& q) const;
-  bool are_equal(const Point& p, const Point& q) const;
-  bool collinear_between(const Point& p, const Point& q, const Point& r) const;
+  bool collinear_between(const Point& p, const Point& q, const Point& r) const
+  {
+    return geom_traits().collinear_are_strictly_ordered_on_great_circle_2_object()(p, q, r);
+  }
 
-  void test_distance(const Point& p, Face_handle& f, Locate_type& lt, int& li) const;
-  bool are_points_too_close(const Point& p, const Point& q, Locate_type& lt) const;
+  Orientation orientation(const Point& p, const Point& q, const Point& r, const Point& s) const
+  {
+    return geom_traits().side_of_oriented_circle_on_sphere_2_object()(p, q, r, s);
+  }
+
+  Orientation orientation(const Face_handle f, const Point& p) const
+  {
+    return orientation(point(f, 0), point(f, 1), point(f, 2), p);
+  }
+
+  Orientation orientation_on_sphere(const Point& p, const Point& q, const Point& r) const
+  {
+    return geom_traits().orientation_on_sphere_2_object()(p, q, r);
+  }
+
+  Orientation orientation_on_sphere(const Face_handle f) const
+  {
+    return orientation_on_sphere(point(f, 0), point(f, 1), point(f, 2));
+  }
 
   //-----------------------LOCATION-----------------------------------------------------------------
+  bool are_points_too_close(const Point& p, const Point& q, Locate_type& lt) const;
+  void test_distance(const Point& p, Face_handle& f, Locate_type& lt, int& li) const;
+
   Face_handle march_locate_1D(const Point& t, Locate_type& lt, int& li) const ;
   Face_handle march_locate_2D(Face_handle f, const Point& t, Locate_type& lt, int& li) const;
   Face_handle locate(const Point& p, Locate_type& lt, int& li, Face_handle start) const;
@@ -368,6 +459,9 @@ public:
   Face_handle locate_edge(const Point& p, Locate_type& lt, int& li, bool on_diametral_plane) const;
 
   //-----------------------DEBUG--------------------------------------------------------------------
+  void check_neighboring_faces() const;
+
+  bool is_valid_vertex(Vertex_handle fh, bool verbose = false, int level = 0) const;
   bool is_valid(bool verbose = false, int level = 0) const;
 
   void show_all() const;
@@ -413,151 +507,14 @@ operator=(Triangulation_on_sphere_2 tr) // intentional copy
   return *this;
 }
 
-//--------------------------CHECKING---------------------------
-
-template <typename Gt, typename Tds>
-bool
-Triangulation_on_sphere_2<Gt, Tds>::
-is_valid(bool verbose,
-         int level) const
-{
-  bool result = _tds.is_valid(verbose, level);
-  if(dimension() <= 0 || (dimension() == 1 && number_of_vertices() == 3))
-    return result;
-
-  if(dimension() == 1)
-  {
-    Vertices_iterator vit = vertices_begin();
-    // @todo
-  }
-  else // dimension() == 2
-  {
-    for(All_faces_iterator it=all_faces_begin(); it!=all_faces_end(); ++it)
-    {
-      const Orientation s = orientation_on_sphere(point(it, 0), point(it, 1), point(it, 2));
-      CGAL_assertion(s == LEFT_TURN || it->is_ghost());
-
-      result = result && (s == LEFT_TURN || it->is_ghost());
-    }
-
-    // check number of faces. This cannot be done by the TDS,
-    // which does not know the number of components nor the genus
-    result = result && (number_of_faces() == (2 * number_of_vertices() - 4));
-
-    CGAL_assertion(result);
-  }
-
-  return result;
-}
-
-template <typename Gt, typename Tds>
-inline bool
-Triangulation_on_sphere_2<Gt, Tds>::
-is_edge(Vertex_handle va,
-        Vertex_handle vb) const
-{
-  return _tds.is_edge(va, vb);
-}
-
-template <typename Gt, typename Tds>
-inline bool
-Triangulation_on_sphere_2<Gt, Tds>::
-is_edge(Vertex_handle va,
-        Vertex_handle vb,
-        Face_handle& fr,
-        int& i) const
-{
-  return _tds.is_edge(va, vb, fr, i);
-}
-
-template <typename Gt, typename Tds>
-inline bool
-Triangulation_on_sphere_2<Gt, Tds>::
-is_face(Vertex_handle v1,
-        Vertex_handle v2,
-        Vertex_handle v3) const
-{
-  return _tds.is_face(v1, v2, v3);
-}
-
-template <typename Gt, typename Tds>
-inline bool
-Triangulation_on_sphere_2<Gt, Tds>::
-is_face(Vertex_handle v1,
-        Vertex_handle v2,
-        Vertex_handle v3,
-        Face_handle& fr) const
-{
-  return _tds.is_face(v1, v2, v3, fr);
-}
-
-//---------------------- PREDICATES -------------------------------
-template <typename Gt, typename Tds>
-Comparison_result
-Triangulation_on_sphere_2< Gt,  Tds>::
-compare(const Point& p, const Point& q) const
-{
-  return geom_traits().compare_on_sphere_2_object()(p, q);
-}
-
-template <class Gt, class Tds>
-Orientation
-Triangulation_on_sphere_2<Gt, Tds>::
-orientation(const Point&p, const Point& q, const Point& r, const Point& s) const
-{
-  return geom_traits().side_of_oriented_circle_on_sphere_2_object()(p, q, r, s);
-}
-
-template <typename Gt, typename Tds>
-inline Orientation
-Triangulation_on_sphere_2<Gt, Tds>::
-orientation(const Face_handle fh, const Point& r) const
-{
-  return orientation(point(fh, 0), point(fh, 1), point(fh, 2), r);
-}
-
-template <typename Gt, typename Tds>
-inline Orientation
-Triangulation_on_sphere_2<Gt, Tds>::
-orientation_on_sphere(const Point& p, const Point& q, const Point& r) const
-{
-  return geom_traits().orientation_on_sphere_2_object()(p, q, r);
-}
-
-template <typename Gt, typename Tds>
-inline Orientation
-Triangulation_on_sphere_2<Gt, Tds>::
-orientation_on_sphere(const Face_handle f) const
-{
-  return orientation_on_sphere(point(f, 0), point(f, 1), point(f, 2));
-}
-
-template <typename Gt, typename Tds>
-inline bool
-Triangulation_on_sphere_2<Gt, Tds>::
-are_equal(const Point& p, const Point& q) const
-{
-  return geom_traits().equal_on_sphere_2_object()(p, q);
-}
-
-// return true if `r` strictly lies inside the cone defined by the center of the sphere, `p` and `q`
-template <typename Gt, typename Tds>
-bool
-Triangulation_on_sphere_2<Gt, Tds>::
-collinear_between(const Point& p, const Point& q, const Point& r) const
-{
-  return geom_traits().collinear_are_strictly_ordered_on_great_circle_2_object()(p, q, r);
-}
-
 //----------------------------------------POINT LOCATION---------------------------------------//
+
 // tests whether the two points p and q are too close according to the lemma about hidden vertices.
 template<class Gt, class Tds>
 bool
 Triangulation_on_sphere_2<Gt, Tds>::
 are_points_too_close(const Point& p, const Point& q, Locate_type& lt) const
 {
-  //std::cout << "Are " << p << " and " << q << " too close?" << std::endl;
-
   if(geom_traits().are_points_too_close(p, q))
   {
     lt = TOO_CLOSE;
@@ -568,76 +525,8 @@ are_points_too_close(const Point& p, const Point& q, Locate_type& lt) const
 }
 
 /*
- * Location for degenerated cases: locates the conflicting edge in a 1-dimensional triangulation.
- * This method is used when the new point is coplanar with the existing vertices.
- * The Boolean 'on_diametral_plane' indicates whether the points are also coplanar with the
- * center of the sphere (true) or not (false).
- */
-template <class Gt, class Tds>
-typename Triangulation_on_sphere_2<Gt, Tds>::Face_handle
-Triangulation_on_sphere_2<Gt, Tds>::
-locate_edge(const Point& p,
-            Locate_type& lt,
-            int& li,
-            const bool on_diametral_plane) const
-{
-  Face_handle loc;
-
-  if(on_diametral_plane)
-  {
-    All_edges_iterator eit;
-    for(eit=all_edges_begin(); eit!=all_edges_end(); ++eit) // @todo O(n)
-    {
-      if(!eit->first->is_ghost())
-      {
-        if(collinear_between(point(eit->first, 0), point(eit->first, 1), p))
-        {
-          Face_handle loc = eit->first;
-          test_distance(p, loc, lt, li);
-          return loc;
-        }
-      }
-      else
-      {
-        loc = eit->first;
-      }
-    }
-
-    // The new point is on the same 3D plane as the existing vertices, but not on an existing edge
-    lt = OUTSIDE_CONVEX_HULL;
-    li = 4;
-
-    test_distance(p, loc, lt, li);
-    return loc;
-  }
-  else // not coplanar with the center of the sphere
-  {
-    All_edges_iterator eit;
-    Face_handle f;
-    for(eit = all_edges_begin(); eit!=all_edges_end(); ++eit)
-    {
-      f = eit->first;
-      Vertex_handle v1 = f->vertex(0);
-      Vertex_handle v2 = f->vertex(1);
-      if(orientation_on_sphere(point(v1), point(v2), p) == RIGHT_TURN)
-      {
-        lt = EDGE;
-        li = 2;
-        test_distance(p, eit->first, lt, li);
-        return eit->first;
-      }
-    }
-
-    test_distance(p, loc, lt, li);
-    return loc;
-  }
-}
-
-/*
  calls are_points_too_close() for possible conflicts.
  If the point p is too close to an existing vertex, this vertex is returned.
-
- @todo should be replaced by a nearest neighbor search.
  */
 template <typename Gt, typename Tds>
 void
@@ -668,8 +557,10 @@ test_distance(const Point& p,
       }
       break;
     }
-    case 2: // @fixme this seems wrong, the face in conflict might not have the closest vertex
+    case 2:
     {
+      // @fixme this seems wrong, the face in conflict might not have the closest vertex
+
       const Vertex_handle v0 = f->vertex(0);
       if(are_points_too_close(point(v0), p, lt))
       {
@@ -1226,20 +1117,6 @@ show_all() const
   return;
 }
 
-// returns the number of ghost faces
-template <typename Gt, typename Tds>
-typename Triangulation_on_sphere_2<Gt, Tds>::size_type
-Triangulation_on_sphere_2<Gt, Tds>::
-number_of_ghost_faces() const
-{
-  std::size_t nb = 0;
-  for(All_faces_iterator it=all_faces_begin(); it!=all_faces_end(); ++it)
-    if(it->is_ghost())
-      ++nb;
-
-  return nb;
-}
-
 template <typename Gt, typename Tds>
 void
 Triangulation_on_sphere_2<Gt, Tds>::
@@ -1255,7 +1132,8 @@ Triangulation_on_sphere_2<Gt, Tds>::
 show_face(Face_handle fh) const
 {
   std::cerr << "face : " << (void*)&(*fh) << " => " << std::endl;
-  if(fh->is_ghost()) std::cerr << "ghost " << std::endl;
+  if(is_ghost(fh))
+    std::cerr << "ghost " << std::endl;
 
   int i = fh->dimension();
   switch(i)
@@ -1306,6 +1184,104 @@ show_face(Face_handle fh) const
   }
 }
 
+// --------------------------CHECKING---------------------------
+
+// checks whether neighboring faces are linked correctly to each other.
+template <typename Gt, typename Tds>
+void
+Triangulation_on_sphere_2<Gt, Tds>::
+check_neighboring_faces() const
+{
+  if(dimension() == 1)
+  {
+    for(All_faces_iterator eit=all_faces_begin(); eit!=all_faces_end(); ++eit)
+    {
+      CGAL_triangulation_assertion_code(const Face_handle f1 = eit->neighbor(0);)
+      CGAL_triangulation_assertion_code(const Face_handle f2 = eit->neighbor(1);)
+      CGAL_triangulation_assertion(f1->has_neighbor(eit));
+      CGAL_triangulation_assertion(f2->has_neighbor(eit));
+    }
+  }
+
+  for(All_faces_iterator eit=all_faces_begin(); eit!=all_faces_end(); ++eit)
+  {
+    CGAL_triangulation_assertion_code(const Face_handle f1 = eit->neighbor(0);)
+    CGAL_triangulation_assertion_code(const Face_handle f2 = eit->neighbor(1);)
+    CGAL_triangulation_assertion_code(const Face_handle f3 = eit->neighbor(2);)
+    CGAL_triangulation_assertion(f1->has_neighbor(eit));
+    CGAL_triangulation_assertion(f2->has_neighbor(eit));
+    CGAL_triangulation_assertion(f3->has_neighbor(eit));
+  }
+}
+
+template <typename Gt, typename Tds>
+bool
+Triangulation_on_sphere_2<Gt, Tds>::
+is_valid_vertex(Vertex_handle vh, bool verbose, int /*level*/) const
+{
+  bool result = vh->face()->has_vertex(vh);
+  if(!result)
+  {
+    if(verbose)
+    {
+      std::cerr << " from is_valid_vertex " << std::endl;
+      std::cerr << "normal vertex " << &(*vh) << std::endl;
+      show_vertex(vh);
+      std::cerr << "\nvh_>face " << &*(vh->face()) << " " << std::endl;
+
+      show_face(vh->face());
+    }
+
+    CGAL_triangulation_assertion(false);
+    return false;
+  }
+
+  return true;
+}
+
+template <typename Gt, typename Tds>
+bool
+Triangulation_on_sphere_2<Gt, Tds>::
+is_valid(bool verbose,
+         int level) const
+{
+  bool result = _tds.is_valid(verbose, level);
+  if(dimension() <= 0 || (dimension() == 1 && number_of_vertices() == 2))
+    return result;
+
+  if(dimension() == 1)
+  {
+    Vertices_iterator it1 = vertices_begin(), it2(it1), it3(it1);
+    std::advance(it2, 1);
+    std::advance(it3, 2);
+    while(it3 != vertices_end())
+    {
+      const Orientation s = orientation(point(it1), point(it2), point(it3));
+      result = result && (s == COLLINEAR);
+      CGAL_triangulation_assertion(result);
+      ++it1; ++it2; ++it3;
+    }
+  }
+  else // dimension() == 2
+  {
+    for(All_faces_iterator it=all_faces_begin(); it!=all_faces_end(); ++it)
+    {
+      const Orientation s = orientation_on_sphere(point(it, 0), point(it, 1), point(it, 2));
+      CGAL_triangulation_assertion(s == LEFT_TURN || is_ghost(it));
+
+      result = result && (s == LEFT_TURN || is_ghost(it));
+    }
+
+    // check number of faces. This cannot be done by the TDS,
+    // which does not know the number of components nor the genus
+    result = result && (number_of_faces() == (2 * number_of_vertices() - 4));
+
+    CGAL_triangulation_assertion(result);
+  }
+
+  return result;
+}
+
 // ---------------------------------I/O--------------------------- //
 
 template <typename Gt, typename Tds>
@@ -1339,7 +1315,7 @@ std::istream&
 operator>>(std::istream& is, Triangulation_on_sphere_2<Gt, Tds>& tr)
 {
   tr.file_input(is);
-  CGAL_assertion(tr.is_valid());
+  CGAL_triangulation_assertion(tr.is_valid());
   return is;
 }
 

@@ -13,6 +13,8 @@
 
 #include <CGAL/license/Triangulation_on_sphere_2.h>
 
+#include <CGAL/triangulation_assertions.h>
+
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/IO/helpers.h>
@@ -93,11 +95,10 @@ bool write_OFF(std::ostream& os,
     index_of_vertex[vh] = i;
   }
 
-  CGAL_assertion( i == n );
+  CGAL_triangulation_assertion(i == n);
 
   size_t number_of_triangles = 0;
-
-  for (Face_iterator fit = dt.all_faces_begin() ; fit != dt.all_faces_end() ; ++fit)
+  for(Face_iterator fit = dt.all_faces_begin() ; fit != dt.all_faces_end() ; ++fit)
   {
     output << "3 "
            << index_of_vertex[fit->vertex(0)] << " "
