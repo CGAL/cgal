@@ -156,7 +156,7 @@ private:
                                     std::pair<OutputItFaces,OutputItBoundaryEdges> pit) const
   {
     std::stack<std::pair<Face_handle, int> > stack;
-    stack.push(std::make_pair(fh, i));
+    stack.emplace(fh, i);
 
     while(!stack.empty())
     {
@@ -175,8 +175,8 @@ private:
 
         // In the non-recursive version, we walk via 'ccw(j)' first. Here, we are filling the stack
         // and the order is thus the opposite (we want the top element of the stack to be 'ccw(j)')
-        stack.push(std::make_pair(fn, cw(j)));
-        stack.push(std::make_pair(fn, ccw(j)));
+        stack.emplace(fn, cw(j));
+        stack.emplace(fn, ccw(j));
       }
     }
 
