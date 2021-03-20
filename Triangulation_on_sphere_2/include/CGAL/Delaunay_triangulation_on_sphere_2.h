@@ -238,6 +238,18 @@ public:
 
 public:
   Vertex_handle insert(const Point& p, Face_handle f = Face_handle());
+
+  // For convenience, when P3 != PoS2
+  template <typename P>
+  Vertex_handle insert(const P& p,
+                       Face_handle f = Face_handle(),
+                       typename std::enable_if<!std::is_same<P, Point>::value>::type* = nullptr)
+  {
+    CGAL_triangulation_assertion((std::is_same<P, Point_3>::value));
+
+    return insert(geom_traits().construct_point_on_sphere_2_object()(p), f);
+  }
+
   Vertex_handle push_back(const Point& p, Face_handle f = Face_handle()) { return insert(p, f); }
   Vertex_handle insert(const Point& p, Locate_type lt, Face_handle loc, int li);
   Vertex_handle insert_first(const Point& p);
@@ -246,37 +258,25 @@ public:
   Vertex_handle insert_outside_affine_hull_regular(const Point& p);
   Vertex_handle insert_cocircular(const Point& p, Locate_type lt, Face_handle loc);
 
-  template <typename InputIterator>
-  int insert(InputIterator first, InputIterator beyond,
-             typename std::enable_if<
-                        std::is_same<typename std::iterator_traits<InputIterator>::value_type,
-                                     Point>::value>::type* = nullptr);
+  // Range insertion
 
-  // For convenience when P3 != PoS2
-  template <typename P>
-  Vertex_handle insert(const P& p,
-                       Face_handle f = Face_handle(),
-                       typename std::enable_if<!std::is_same<P, Point>::value>::type* = nullptr)
-  {
-    return insert(geom_traits().construct_point_on_sphere_2_object()(p), f);
-  }
-
+  // Input range has value type Point, with Point != Point_3
   template <typename InputIterator>
   int insert(InputIterator first, InputIterator beyond,
              typename std::enable_if<
                         !std::is_same<typename std::iterator_traits<InputIterator>::value_type,
-                                      Point>::value>::type* = nullptr)
-  {
-    typename Geom_traits::Construct_point_on_sphere_2 cst = geom_traits().construct_point_on_sphere_2_object();
+                                      Point_3>::value>::type* = nullptr);
 
-    return insert(boost::make_transform_iterator(first, cst),
-                  boost::make_transform_iterator(beyond, cst));
-  }
+  // Input range has value type Point_3, possibly with Point == Point_3
+  template <typename InputIterator>
+  int insert(InputIterator first, InputIterator beyond,
+             typename std::enable_if<
+                        std::is_same<typename std::iterator_traits<InputIterator>::value_type,
+                                     Point_3>::value>::type* = nullptr);
 
-  bool update_ghost_faces(Vertex_handle v = Vertex_handle(), bool first = false);
+  bool update_ghost_faces(Vertex_handle v, bool first = false);
 
-  //REMOVAL
-  void remove_degree_3(Vertex_handle v, Face_handle f = Face_handle());
+  // Removal
   void remove_1D(Vertex_handle v);
   void remove_2D(Vertex_handle v);
   void remove(Vertex_handle v);
@@ -367,36 +367,6 @@ test_conflict(const Point& p, Face_handle fh) const
 }
 
 // ------------------------ INSERTION --------------------------------//
-template <typename Gt, typename Tds>
-typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::Vertex_handle
-Delaunay_triangulation_on_sphere_2<Gt, Tds>::
-insert(const Point& p, Face_handle start)
-{
-  Locate_type lt;
-  int li;
-  Face_handle loc = Base::locate(p, lt, li, start);
-
-  switch(lt)
-  {
-    case NOT_ON_SPHERE:
-      return Vertex_handle();
-    case TOO_CLOSE:
-    {
-      CGAL_assertion(loc != Face_handle());
-      return loc->vertex(li); // @todo test this for dim < 2
-    }
-    case VERTEX:
-    {
-      if(number_of_vertices() == 1)
-        return vertices_begin();
-
-      return (loc->vertex(li));
-    }
-    default: // the point can be inserted
-      return insert(p, lt, loc, li);
-  }
-}
-
 // inserts a new point to a 1d triangulation, the new point is also coplanar with the existing points.
 template <typename Gt, typename Tds>
 typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::Vertex_handle
@@ -426,7 +396,8 @@ insert_cocircular(const Point& p,
 
   tds().delete_face(loc);
 
-  update_ghost_faces(v);
+  CGAL_postcondition(dimension() == 1);
+
   return v;
 }
 
@@ -484,7 +455,6 @@ insert_third(const Point& p)
                                        point(f, 1),
                                        point(f->neighbor(0), 1)) != RIGHT_TURN);
 
-  update_ghost_faces(nv);
   return nv;
 }
 
@@ -579,6 +549,128 @@ insert(const Point& p, Locate_type lt, Face_handle loc, int /*li*/)
   return v;
 }
 
+template <typename Gt, typename Tds>
+typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::Vertex_handle
+Delaunay_triangulation_on_sphere_2<Gt, Tds>::
+insert(const Point& p, Face_handle start)
+{
+  Locate_type lt;
+  int li;
+  Face_handle loc = Base::locate(p, lt, li, start);
+
+  switch(lt)
+  {
+    case NOT_ON_SPHERE:
+      return Vertex_handle();
+    case TOO_CLOSE:
+    {
+      CGAL_triangulation_assertion(loc != Face_handle());
+      return loc->vertex(li);
+    }
+    case VERTEX:
+    {
+      if(number_of_vertices() == 1)
+        return vertices_begin();
+
+      return loc->vertex(li);
+    }
+    default: // the point can be inserted
+      return insert(p, lt, loc, li);
+  }
+}
+
+template <typename Gt, typename Tds>
+template <typename InputIterator>
+int
+Delaunay_triangulation_on_sphere_2<Gt, Tds>::
+insert(InputIterator first, InputIterator beyond,
+       typename std::enable_if<
+                  !std::is_same<typename std::iterator_traits<InputIterator>::value_type,
+                                Point_3>::value>::type*)
+{
+  CGAL_static_assertion((std::is_same<typename std::iterator_traits<InputIterator>::value_type, Point>::value));
+  CGAL_static_assertion(!(std::is_same<Point, Point_3>::value));
+
+  const int n = number_of_vertices();
+
+  // On paper, Spatial_sort_traits_adapter_3 should be used. However, it is not compatible
+  // with spatial_sort_on_sphere() because of the way Transform_coordinates_traits_3 were written:
+  // there are hard calls to x(), y(), and z() whereas it should have been calls to Compute_x_3 & such.
+
+  std::vector<Point> input_points(first, beyond);
+
+  struct Point_3_with_iterator
+    : public Point_3
+  {
+    Point_3_with_iterator(const Point& p, Self const * const tr)
+      : Point_3(tr->geom_traits().construct_point_3_object()(p)), input_point_ptr(&p)
+    { }
+
+    const Point* input_point_ptr;
+  };
+
+  std::vector<Point_3_with_iterator> p3_points;
+  p3_points.reserve(std::distance(first, beyond));
+  for(const Point& p : input_points)
+    p3_points.push_back(Point_3_with_iterator(p, this));
+
+  CGAL::cpp98::random_shuffle(p3_points.begin(), p3_points.end());
+
+  // @todo:
+  // - bench this
+  // - should points not on the sphere already be filtered because it might mess up the sort?
+  spatial_sort_on_sphere(p3_points.begin(), p3_points.end(),
+                         geom_traits(), square(geom_traits().radius()), geom_traits().center());
+
+  // Reordering could be done in-place, but not worth the hassle for now
+  std::vector<Point> points;
+  points.reserve(input_points.size());
+  for(const Point_3_with_iterator& p3wi : p3_points)
+  {
+    CGAL_triangulation_assertion(p3wi.input_point_ptr != nullptr);
+    points.push_back(*(p3wi.input_point_ptr));
+  }
+
+  Face_handle hint;
+  Vertex_handle v;
+  for(const Point& p : points)
+  {
+    v = insert(p, hint);
+    if(v != Vertex_handle()) // can happen e.g. if the point is not on the sphere
+      hint = v->face();
+  }
+
+  return number_of_vertices() - n;
+}
+
+template <typename Gt, typename Tds>
+template <typename InputIterator>
+int
+Delaunay_triangulation_on_sphere_2<Gt, Tds>::
+insert(InputIterator first, InputIterator beyond,
+       typename std::enable_if<
+                  std::is_same<typename std::iterator_traits<InputIterator>::value_type,
+                               Point_3>::value>::type*)
+{
+  const int n = number_of_vertices();
+
+  std::vector<Point_3> points(first, beyond);
+  CGAL::cpp98::random_shuffle(points.begin(), points.end());
+
+  spatial_sort_on_sphere(points.begin(), points.end(), geom_traits(),
+                         square(geom_traits().radius()), geom_traits().center());
+
+  Face_handle hint;
+  for(const Point_3& p : points)
+  {
+    Vertex_handle v = insert(p, hint);
+    if(v != Vertex_handle()) // could happen if the point is not on the sphere
+      hint = v->face();
+  }
+
+  return number_of_vertices() - n;
+}
+
 /*
  * method to test and mark faces incident to v as ghost-faces or solid-faces.
  * the Boolean 'first' defines whether the dimension of the triangulation increased
@@ -589,152 +681,57 @@ bool
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 update_ghost_faces(Vertex_handle v, bool first)
 {
-  if(number_of_vertices() < 3)
-    return false;
-
-  CGAL_assertion(dimension() >= 1);
+  CGAL_triangulation_assertion(dimension() == 2);
 
   bool ghost_found = false;
-  if(dimension() == 1)
+
+  if(first) // first time dimension 2
   {
-    All_edges_iterator eit = all_edges_begin();
-    for(; eit!=all_edges_end(); ++eit)
+    for(All_faces_iterator fi=all_faces_begin(); fi!=all_faces_end(); ++fi)
     {
-      Face_handle f = eit->first;
-      Face_handle fn = f->neighbor(0);
-      const Point& q = point(fn, 1);
-      if(this->collinear_between(point(f, 0), point(f, 1), q))
+      if(orientation_on_sphere(fi) != POSITIVE)
       {
-        f->set_ghost(true);
+        fi->set_ghost(true);
         ghost_found = true;
       }
       else
       {
-        f->set_ghost(false);
+        fi->set_ghost(false);
       }
     }
   }
-  else // dimension==2
+  else // not first
   {
-    if(first) // first time dimension 2
+    CGAL_triangulation_assertion(v != Vertex_handle());
+    Face_circulator fc = this->incident_faces(v, v->face());
+    Face_circulator done(fc);
+    do
     {
-      All_faces_iterator fi = all_faces_begin();
-      for(; fi!=all_faces_end(); fi++)
+      if(orientation_on_sphere(fc) != POSITIVE)
       {
-        if(orientation_on_sphere(fi) != POSITIVE)
-        {
-          fi->set_ghost(true);
-          ghost_found = true;
-        }
-        else
-        {
-          fi->set_ghost(false);
-        }
+        fc->set_ghost(true);
+        ghost_found = true;
+      }
+      else
+      {
+        fc->set_ghost(false);
       }
     }
-    else // not first
-    {
-      CGAL_assertion(v != Vertex_handle());
-      Face_circulator fc = this->incident_faces(v, v->face());
-      Face_circulator done(fc);
-      do
-      {
-        if(orientation_on_sphere(fc) != POSITIVE)
-        {
-          fc->set_ghost(true);
-          ghost_found = true;
-        }
-        else
-        {
-          fc->set_ghost(false);
-        }
-      }
-      while(++fc != done);
-    }
+    while(++fc != done);
   }
 
   return ghost_found;
-}
-
-template <typename Gt, typename Tds>
-template <typename InputIterator>
-int
-Delaunay_triangulation_on_sphere_2<Gt, Tds>::
-insert(InputIterator first, InputIterator beyond,
-       typename std::enable_if<
-                  std::is_same<typename std::iterator_traits<InputIterator>::value_type, Point>::value>::type*)
-{
-  int n = number_of_vertices();
-
-  std::vector<Point> points(first, beyond);
-  CGAL::cpp98::random_shuffle(points.begin(), points.end());
-
-  typename Geom_traits::Construct_point_3 cp3 = geom_traits().construct_point_3_object();
-
-  typedef typename Geom_traits::Construct_point_3 Construct_point_3;
-  typedef typename boost::result_of<const Construct_point_3(const Point&)>::type Ret;
-  typedef boost::function_property_map<Construct_point_3,Point, Ret> fpmap;
-  typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, fpmap> Search_traits_3;
-
-  // @todo:
-  // - bench this
-  // - should points not on the sphere already be filtered because it might mess up the sort?
-  spatial_sort_on_sphere(points.begin(), points.end(),
-                         Search_traits_3(
-                           boost::make_function_property_map<Point, Ret, Construct_point_3>(
-                             geom_traits().construct_point_3_object()), geom_traits()),
-                         square(geom_traits().radius()), geom_traits().center());
-
-  Face_handle hint;
-  Vertex_handle v;
-  for(typename std::vector<Point>::const_iterator p=points.begin(), end=points.end(); p!=end; ++p)
-  {
-    v = insert(*p, hint);
-    if(v != Vertex_handle()) // could happen if the point is not on the sphere
-      hint = v->face();
-  }
-
-  return number_of_vertices() - n;
 }
 
 //-------------------------------------REMOVAL----------------------------------------------------//
 template <typename Gt, typename Tds>
 void
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
-remove_degree_3(Vertex_handle v, Face_handle f)
-{
-  CGAL_precondition(v != Vertex_handle());
-
-  if(f == Face_handle())
-    f = v->face();
-
-  tds().remove_degree_3(v, f);
-}
-
-template <typename Gt, typename Tds>
-void
-Delaunay_triangulation_on_sphere_2<Gt, Tds>::
-remove(Vertex_handle v)
-{
-  CGAL_precondition(v != Vertex_handle());
-
-  if(number_of_vertices() <= 3)
-    tds().remove_dim_down(v);
-  else if(dimension() == 2)
-    remove_2D(v);
-  else
-    remove_1D(v);
-}
-
-template <typename Gt, typename Tds>
-void
-Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 remove_1D(Vertex_handle v)
 {
-  CGAL_precondition(v != Vertex_handle());
+  CGAL_triangulation_precondition(v != Vertex_handle());
 
   tds().remove_1D(v);
-  update_ghost_faces();
 }
 
 template <typename Gt, typename Tds>
@@ -747,7 +744,6 @@ remove_2D(Vertex_handle v)
   if(test_dim_down(v)) // resulting triangulation has dim 1
   {
     tds().remove_dim_down(v);
-    update_ghost_faces(); //1d triangulation, no vertex needed to update ghost-faces
   }
   else
   {
@@ -755,6 +751,21 @@ remove_2D(Vertex_handle v)
     tds().make_hole(v, hole);
     fill_hole_regular(hole);
   }
+}
+
+template <typename Gt, typename Tds>
+void
+Delaunay_triangulation_on_sphere_2<Gt, Tds>::
+remove(Vertex_handle v)
+{
+  CGAL_triangulation_precondition(v != Vertex_handle());
+
+  if(number_of_vertices() <= 3)
+    tds().remove_dim_down(v);
+  else if(dimension() == 2)
+    remove_2D(v);
+  else
+    remove_1D(v);
 }
 
 // tests whether the dimension will decrease when removing v from the triangulation.

@@ -695,22 +695,99 @@ test_distance(const Point& p,
   }
 }
 
+/*
+ * Location for degenerated cases: locates the conflicting edge in a 1-dimensional triangulation.
+ * This method is used when the new point is coplanar with the existing vertices.
+ * The Boolean 'on_diametral_plane' indicates whether the points are also coplanar with the
+ * center of the sphere (true) or not (false).
+ */
+template <class Gt, class Tds>
+typename Triangulation_on_sphere_2<Gt, Tds>::Face_handle
+Triangulation_on_sphere_2<Gt, Tds>::
+locate_edge(const Point& p,
+            Locate_type& lt,
+            int& li,
+            const bool on_diametral_plane) const
+{
+  CGAL_precondition(dimension() == 1);
+
+  Face_handle loc;
+  if(on_diametral_plane)
+  {
+    All_edges_iterator eit;
+    for(eit=all_edges_begin(); eit!=all_edges_end(); ++eit)
+    {
+      const Face_handle f = eit->first;
+      const Face_handle fn = f->neighbor(0);
+      const Point& q = point(fn, 1);
+
+      // Check if *eit is an a "ghost" edge, that is if in the diametral plane, the center
+      // of the sphere is to the right of (eit->source(); eit->target()).
+      // Note that this doesn't check if p is actually "in conflict" with that edge,
+      // so that edge is just kept in memory, and if no solid edge is found, then it has to be this edge
+      if(collinear_between(point(f, 0), point(f, 1), q))
+      {
+        // The new point is on the same 3D plane as the existing vertices, but not on an existing edge
+        loc = eit->first;
+      }
+      else
+      {
+        // not ghost, check the cone
+        if(collinear_between(point(eit->first, 0), point(eit->first, 1), p))
+        {
+          loc = eit->first;
+          lt = EDGE;
+          li = 2;
+          test_distance(p, loc, lt, li);
+          return loc;
+        }
+      }
+    }
+
+    // Couldn't find a solid edge that is in conflict with p
+    lt = OUTSIDE_CONVEX_HULL;
+    li = 4;
+
+    test_distance(p, loc, lt, li);
+    return loc;
+  }
+  else // not coplanar with the center of the sphere
+  {
+    for(All_edges_iterator eit = all_edges_begin(); eit!=all_edges_end(); ++eit)
+    {
+      // The plane going through the center of the sphere, v1, and v2 cuts the non-diametral circle
+      // in two, with the negative side of the plane corresponding to the shorter part, so
+      // if p is coplanar with all the points on that circle and on the negative side, it splits
+      // the edge v1-v2
+      if(orientation_on_sphere(point(eit->first, 0), point(eit->first, 1), p) == ON_NEGATIVE_SIDE)
+      {
+        loc = eit->first;
+        lt = EDGE;
+        li = 2;
+        test_distance(p, loc, lt, li);
+        return loc;
+      }
+    }
+
+    CGAL_assertion(false);
+    return loc;
+  }
+}
+
 template <typename Gt, typename Tds>
 typename Triangulation_on_sphere_2<Gt, Tds>::Face_handle
 Triangulation_on_sphere_2<Gt, Tds>::
 march_locate_1D(const Point& p, Locate_type& lt, int& li) const
 {
-  CGAL_assertion(dimension() == 1);
+  CGAL_triangulation_assertion(dimension() == 1);
 
-
-  // check if p is coplanar with existing points
-  // first three points of triangulation
+  // Check if p is coplanar with the existing points first three points of the triangulation
   Face_handle f = all_edges_begin()->first;
-  Vertex_handle v1 = f->vertex(0);
-  Vertex_handle v2 = f->vertex(1);
-  Vertex_handle v3 = f->neighbor(0)->vertex(1);
+  const Vertex_handle v1 = f->vertex(0);
+  const Vertex_handle v2 = f->vertex(1);
+  const Vertex_handle v3 = f->neighbor(0)->vertex(1);
 
-  Orientation orient = orientation(point(v1), point(v2), point(v3), p);
+  const Orientation orient = orientation(point(v1), point(v2), point(v3), p);
   if(orient != ON_ORIENTED_BOUNDARY)
   {
     lt = OUTSIDE_AFFINE_HULL;
@@ -719,22 +796,23 @@ march_locate_1D(const Point& p, Locate_type& lt, int& li) const
     return f;
   }
 
-  // from then on, p is coplanar with all the triangulation's points
+  // From then on, p is coplanar with all the triangulation's points
 
-  // check if p is coradial with one existing point
+  // Check if p is coradial with one existing point
   Vertices_iterator vi;
   for(vi=vertices_begin(); vi!=vertices_end(); ++vi) // @todo turns insertion into O(n)
   {
     if(are_equal(point(vi), p))
     {
       lt = VERTEX;
-      li = 1;
+      f = vi->face();
+      li = f->index(vi); // could be simply '1'
       return f;
     }
   }
 
   // v1, v2, and v3 are coplanar so this is just checking if they are coplanar with the center of the sphere
-  Orientation pqr = orientation_on_sphere(point(v1), point(v2), point(v3));
+  const Orientation pqr = orientation_on_sphere(point(v1), point(v2), point(v3));
   if(pqr == ON_ORIENTED_BOUNDARY)
     return locate_edge(p, lt, li, true /*on_diametral_plane*/);
   else
@@ -749,7 +827,8 @@ march_locate_2D(Face_handle f,
                 Locate_type& lt,
                 int& li) const
 {
-  CGAL_assertion(!f->is_ghost());
+  CGAL_triangulation_precondition(dimension() == 2);
+  CGAL_triangulation_precondition(!is_ghost(f));
 
   boost::rand48 rng;
   boost::uniform_smallint<> two(0, 1);
@@ -760,7 +839,7 @@ march_locate_2D(Face_handle f,
 
   for(;;)
   {
-    if(f->is_ghost())
+    if(is_ghost(f))
     {
       if(orientation(f, t) == ON_POSITIVE_SIDE) // conflict with the corresponding face
       {
@@ -1004,15 +1083,12 @@ locate(const Point& p,
     return Face_handle();
   }
 
-  //std::cout << "Locate " << p << ", dimension " << dimension() << std::endl;
-
   switch(dimension())
   {
     case -2: // empty triangulation
     {
       lt = OUTSIDE_AFFINE_HULL;
-      li = 4; // li should not be used in this case
-
+      li = 4;
       return Face_handle();
     }
     case -1: // 1 vertex
@@ -1026,7 +1102,6 @@ locate(const Point& p,
           lt = VERTEX;
           Face_handle f = vi->face();
           li = f->index(vi);
-
           return f;
         }
       }
@@ -1039,22 +1114,21 @@ locate(const Point& p,
 
       return f;
     }
-    case 1:
+    case 1: // 3+ coplanar vertices
     {
       return march_locate_1D(p, lt, li);
     }
   }
 
   // below is dimension() == 2
-
   if(start == Face_handle())
     start = all_faces_begin();
 
-  if(start->is_ghost())
+  if(is_ghost(start))
   {
-    for(All_faces_iterator it = this->_tds.face_iterator_base_begin(); it !=all_faces_end(); it++)
+    for(All_faces_iterator it=all_faces_begin(); it !=all_faces_end(); ++it)
     {
-      if(!it->is_ghost())
+      if(!is_ghost(it))
       {
         start = it;
         break;
@@ -1122,8 +1196,7 @@ show_all() const
   if(dimension() == 1)
   {
     std::cerr << " all edges dim 1 " << std::endl;
-    All_edges_iterator aeit;
-    for(aeit=all_edges_begin(); aeit!=all_edges_end(); ++aeit)
+    for(All_edges_iterator aeit=all_edges_begin(); aeit!=all_edges_end(); ++aeit)
     {
       show_face(aeit->first);
       std::cerr << "   ------------   " << std::endl;
@@ -1133,8 +1206,7 @@ show_all() const
   }
 
   std::cerr << " faces " << std::endl;
-  All_faces_iterator fi;
-  for(fi = all_faces_begin(); fi !=all_faces_end(); ++fi)
+  for(All_faces_iterator fi = all_faces_begin(); fi !=all_faces_end(); ++fi)
   {
     show_face(fi);
     std::cerr << "   ------------   " << std::endl;
@@ -1143,8 +1215,7 @@ show_all() const
   if(number_of_vertices() > 1)
   {
     std::cerr << "print triangulation vertices:" << std::endl;
-    Vertices_iterator vi;
-    for(vi=vertices_begin(); vi!=vertices_end(); ++vi)
+    for(Vertices_iterator vi=vertices_begin(); vi!=vertices_end(); ++vi)
     {
       show_vertex(vi);
       std::cerr << "  / associated face: " << (void*)(&(*(vi->face()))) << std::endl;;
