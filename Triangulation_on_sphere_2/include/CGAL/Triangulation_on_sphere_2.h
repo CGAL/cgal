@@ -377,16 +377,6 @@ public:
   // IN/OUT
   Vertex_handle file_input(std::istream& is);
   void file_output(std::ostream& os) const;
-
-  /*-----------------------TEMPLATE MEMBERS---------------------------*/
-public:
-  template<class FaceIt>
-  void delete_faces(FaceIt face_begin, FaceIt face_end)
-  {
-    FaceIt fit = face_begin;
-    for(; fit!=face_end; ++fit)
-      tds().delete_face(*fit);
-  }
 };
 
 // copy constructor duplicates vertices and faces

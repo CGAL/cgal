@@ -91,7 +91,6 @@ public:
   using Base::orientation_on_sphere;
   using Base::show_face;
   using Base::show_vertex;
-  using Base::delete_faces;
   using Base::compare;
   using Base::VERTEX;
   using Base::EDGE;
@@ -565,7 +564,9 @@ insert(const Point& p, Locate_type lt, Face_handle loc, int /*li*/)
 
       v = tds().star_hole(edges.begin(), edges.end());
       v->set_point(p);
-      delete_faces(faces.begin(), faces.end());
+
+      for(Face_handle f : faces)
+        tds().delete_face(f);
 
       if(lt != FACE)
         update_ghost_faces(v);
