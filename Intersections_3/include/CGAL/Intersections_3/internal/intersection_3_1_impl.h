@@ -523,7 +523,7 @@ do_intersect(const typename K::Segment_3  &s1,
   return false;
 }
 
-  // AF: to be fixed
+
 template <class K>
 typename Intersection_traits<K, typename K::Line_3, typename K::Segment_3>::result_type
 intersection(const typename K::Line_3 &l,
@@ -972,7 +972,7 @@ do_intersect(const typename K::Plane_3 &plane,
 {
     typedef typename K::Point_3 Point_3;
 
-    K::Oriented_side_3 oriented_side_3;
+    typename K::Oriented_side_3 oriented_side_3;
 
     Oriented_side os = oriented_side_3(plane,ray.source());
     if(os == ON_ORIENTED_BOUNDARY){
