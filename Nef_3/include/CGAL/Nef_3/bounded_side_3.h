@@ -21,6 +21,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/Iterator_project.h>
+#include <CGAL/representation_tags.h>
 #include <vector>
 
 #undef CGAL_NEF_DEBUG
@@ -30,18 +31,48 @@
 namespace CGAL {
 
 template <class Point_2, class Point_3>
-Point_2 point_3_get_x_y_point_2(const Point_3& p) {
+Point_2 point_3_get_x_y_point_2(const Point_3& p, const Homogeneous_tag&) {
   return( Point_2(p.hx(), p.hy(), p.hw()) );
 }
 
 template <class Point_2, class Point_3>
-Point_2 point_3_get_y_z_point_2(const Point_3& p) {
+Point_2 point_3_get_y_z_point_2(const Point_3& p, const Homogeneous_tag&) {
   return( Point_2(p.hy(), p.hz(), p.hw()) );
 }
 
 template <class Point_2, class Point_3>
-Point_2 point_3_get_z_x_point_2(const Point_3& p) {
+Point_2 point_3_get_z_x_point_2(const Point_3& p, const Homogeneous_tag&) {
   return( Point_2(p.hz(), p.hx(), p.hw()) );
+}
+
+template <class Point_2, class Point_3>
+Point_2 point_3_get_x_y_point_2(const Point_3& p, const Cartesian_tag&) {
+  return( Point_2(p.x(), p.y()) );
+}
+
+template <class Point_2, class Point_3>
+Point_2 point_3_get_y_z_point_2(const Point_3& p, const Cartesian_tag&) {
+  return( Point_2(p.y(), p.z()) );
+}
+
+template <class Point_2, class Point_3>
+Point_2 point_3_get_z_x_point_2(const Point_3& p, const Cartesian_tag&) {
+  return( Point_2(p.z(), p.x()) );
+}
+
+template <class Point_2, class Point_3, class R>
+Point_2 point_3_get_x_y_point_2(const Point_3& p) {
+    return point_3_get_x_y_point_2<Point_2,Point_3>(p,typename R::Kernel_tag());
+}
+
+template <class Point_2, class Point_3, class R>
+Point_2 point_3_get_y_z_point_2(const Point_3& p) {
+    return point_3_get_y_z_point_2<Point_2,Point_3>(p,typename R::Kernel_tag());
+}
+
+template <class Point_2, class Point_3, class R>
+Point_2 point_3_get_z_x_point_2(const Point_3& p) {
+    return point_3_get_z_x_point_2<Point_2,Point_3>(p,typename R::Kernel_tag());
 }
 
 template <class IteratorForward, class R>
@@ -87,11 +118,11 @@ Bounded_side bounded_side_3(IteratorForward first,
   Point_2 (*t)(const Point_3&);
 
   if(dir == 0){
-    t = &point_3_get_y_z_point_2< Point_2, Point_3>;
+    t = &point_3_get_y_z_point_2< Point_2, Point_3, R>;
   }else if(dir == 1){
-    t = &point_3_get_z_x_point_2< Point_2, Point_3>;
+    t = &point_3_get_z_x_point_2< Point_2, Point_3, R>;
   }else{
-    t = &point_3_get_x_y_point_2< Point_2, Point_3>;
+    t = &point_3_get_x_y_point_2< Point_2, Point_3, R>;
   }
 
   std::vector< Point_2> points;
