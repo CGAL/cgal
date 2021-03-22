@@ -827,8 +827,8 @@ centroid(const TriangleMesh& tmesh)
   * that are only in the other one, and the faces that are common to both.
   *
   * @tparam PolygonMesh a model of `HalfedgeListGraph` and `FaceListGraph`
-  * \tparam FaceRange a range of `boost::graph_traits<PolygonMesh>::%face_descriptor`
-  * @tparam FacePairRange a range of `std::pair<boost::graph_traits<PolygonMesh>::%face_descriptor, boost::graph_traits<PolygonMesh>::%face_descriptor>`
+  * \tparam FaceRange a mutable range of `boost::graph_traits<PolygonMesh>::%face_descriptor`
+  * @tparam FacePairRange a mutable range of `std::pair<boost::graph_traits<PolygonMesh>::%face_descriptor, boost::graph_traits<PolygonMesh>::%face_descriptor>`
   *
   * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
   * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
