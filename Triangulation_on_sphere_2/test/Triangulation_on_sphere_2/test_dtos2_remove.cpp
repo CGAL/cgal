@@ -79,8 +79,6 @@ void test2()
 
 int main(int, char**)
 {
-  std::cout << " test remove with dim_down" << std::endl;
-
   test1();
   test2();
 

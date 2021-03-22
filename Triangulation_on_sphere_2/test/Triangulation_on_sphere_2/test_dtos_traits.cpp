@@ -14,6 +14,10 @@ typedef CGAL::Delaunay_triangulation_on_sphere_traits_2<K>          Gt;
 typedef Gt::Orientation_on_sphere_2                                 Orientation_on_sphere_2;
 typedef Gt::Side_of_oriented_circle_on_sphere_2                     Side_of_oriented_circle_on_sphere_2;
 
+// This only tests non-trivial functions (a lot of functors are just calls to some functors
+// of the 3D linear kernel, such as:
+// typedef typename LK::Compare_xyz_3 Compare_on_sphere_2;
+
 int main(int, char**)
 {
   Point P0 (   0,    0,    0);
@@ -44,7 +48,7 @@ int main(int, char**)
   assert(traits_4.radius() == traits_5.radius());
   assert(traits_4.center() == traits_5.center());
 
-  std::cout << "Test power_test_2" << std::endl;
+  std::cout << "Test Side_of_oriented_circle_on_sphere_2" << std::endl;
   CGAL::Oriented_side result;
   result = traits.side_of_oriented_circle_on_sphere_2_object()(P1, P2, P3, P4);
   assert(result == CGAL::ON_POSITIVE_SIDE);

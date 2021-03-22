@@ -111,7 +111,7 @@ int main(int, char**)
   assert(!inside_cone(pp51, pp52, pp54));
   assert(!inside_cone(pp51, pp52, pp55));
 
-  std::cout << "Test compare_on_sphere_2" << std::endl;
+  std::cout << "Test Compare_on_sphere_2" << std::endl;
   assert(compare_on_sphere(pp31, pp31) == CGAL::EQUAL);
   assert(compare_on_sphere(pp31, pp32) == CGAL::EQUAL);
   assert(compare_on_sphere(pp31, pp33) == CGAL::SMALLER);
