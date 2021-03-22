@@ -318,33 +318,53 @@ Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 side_of_oriented_circle(const Point& p0, const Point& p1, const Point& p2, const Point& p,
                         bool perturb) const
 {
-  // Specificity of the ToS_2: the in-circle is a call to orientation_3
-  const Oriented_side os = Base::orientation(p0, p1, p2, p);
+  Oriented_side os = Base::orientation(p0, p1, p2, p);
   if(os != ON_ORIENTED_BOUNDARY || !perturb)
     return os;
 
   // We are now in a degenerate case => we do a symbolic perturbation.
-
   // We sort the points lexicographically.
-  const Point* points[4] = { &p0, &p1, &p2, &p };
-  std::sort(points, points + 4, Perturbation_order(this));
+  const Point * points[3] = { &p0, &p1, &p2 };
+  std::sort(points, points+3, Perturbation_order(this));
 
-  // @fixme revert to the former approach?
-  for(int i=3; i>0; --i)
+  if(points[0] == &p0)
   {
-    if(points[i] == &p)
-      return ON_NEGATIVE_SIDE; // since p0 p1 p2 are non collinear and positively oriented
+    if(compare(p, p0) == SMALLER)
+      return ON_POSITIVE_SIDE;
+    // In other words, coplanar_orientation(p0,p1,p,p2) == ON_NEGATIVE_SIDE
+    if(orientation_on_sphere(p0,p1,p) == - orientation_on_sphere(p0,p1,p2))
+      return ON_NEGATIVE_SIDE;
+    if(orientation_on_sphere(p0,p2,p) == - orientation_on_sphere(p0,p2,p1))
+      return ON_NEGATIVE_SIDE;
 
-    Orientation o;
-    if ((points[i] == &p2) && ((o = orientation_on_sphere(p0, p1, p)) != COLLINEAR))
-      return Oriented_side(o);
-    if ((points[i] == &p1) && ((o = orientation_on_sphere(p0, p, p2)) != COLLINEAR))
-      return Oriented_side(o);
-    if ((points[i] == &p0) && ((o = orientation_on_sphere(p, p1, p2)) != COLLINEAR))
-      return Oriented_side(o);
+    return ON_POSITIVE_SIDE;
   }
 
-  CGAL_triangulation_assertion(false);
+  if(points[0] == &p1)
+  {
+    if(compare(p, p1) == SMALLER)
+      return ON_POSITIVE_SIDE;
+    if(orientation_on_sphere(p1,p0,p) == - orientation_on_sphere(p1,p0,p2))
+      return ON_NEGATIVE_SIDE;
+    if(orientation_on_sphere(p1,p2,p) == - orientation_on_sphere(p1,p2,p0))
+      return ON_NEGATIVE_SIDE;
+
+    return ON_POSITIVE_SIDE;
+  }
+
+  if(points[0] == &p2)
+  {
+    if(compare(p, p2) == SMALLER)
+      return ON_POSITIVE_SIDE;
+    if(orientation_on_sphere(p2,p1,p) == - orientation_on_sphere(p2,p1,p0))
+      return ON_NEGATIVE_SIDE;
+    if(orientation_on_sphere(p2,p0,p1) == - orientation_on_sphere(p2,p0,p))
+      return ON_NEGATIVE_SIDE;
+
+    return ON_POSITIVE_SIDE;
+  }
+
+  CGAL_assertion(false);
   return ON_NEGATIVE_SIDE;
 }
 
