@@ -57,12 +57,12 @@ public:
     Point_d m_min, m_max;
   public:
 
-    Bbox_d (const Point_d& min, const Point_d& max)
-      : m_min (min), m_max (max)
+    Bbox_d (const Point_d& pmin, const Point_d& pmax)
+      : m_min (pmin), m_max (pmax)
     { }
 
-    const Point_d& min() { return m_min; }
-    const Point_d& max() { return m_max; }
+    const Point_d& min BOOST_PREVENT_MACRO_SUBSTITUTION () { return m_min; }
+    const Point_d& max BOOST_PREVENT_MACRO_SUBSTITUTION () { return m_max; }
   };
 #endif
 
