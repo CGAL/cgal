@@ -755,6 +755,12 @@ midpoint(const Point_2<K> &p, const Point_2<K> &q)
 }
 
 template < class K >
+inline typename K::Point_2 midpoint(const Segment_2<K> &s)
+{
+  return midpoint(s.source(), s.target());
+}
+
+template < class K >
 inline
 typename K::Point_2
 max_vertex(const Iso_rectangle_2<K> &ir)

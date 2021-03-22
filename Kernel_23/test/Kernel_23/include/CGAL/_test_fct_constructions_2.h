@@ -24,6 +24,7 @@ _test_fct_constructions_2(const R&)
 {
   typedef typename R::RT              RT;
   typedef CGAL::Point_2<R>            Point;
+  typedef CGAL::Segment_2<R>          Segment;
   typedef CGAL::Weighted_point_2<R>   Weighted_Point;
   typedef CGAL::Triangle_2<R>         Triangle;
   typedef CGAL::Vector_2<R>           Vector;
@@ -52,6 +53,7 @@ _test_fct_constructions_2(const R&)
   // midpoint
   assert( CGAL::midpoint( pne, psw) == p);
   assert( CGAL::midpoint( pnw, pse) == p);
+  assert( CGAL::midpoint( Segment{pnw, pse}) == p);
 
   // circumcenter
   assert( CGAL::circumcenter( pne, pne ) == pne);
