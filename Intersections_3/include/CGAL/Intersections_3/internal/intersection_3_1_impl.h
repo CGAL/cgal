@@ -239,7 +239,7 @@ intersection_point(const typename K::Plane_3 &plane1,
 
   const FT den = minor_0*m22 - minor_1*m12 + minor_2*m02; // determinant of M
 
-  if(den == FT(0)){
+  if(is_zero(den)){
     return boost::none;
   }
 
@@ -379,7 +379,7 @@ intersection(const typename K::Line_3 &l1,
   const Vector_3 v3v2 = cross_product(v3,v2);
   const Vector_3 v1v2 = cross_product(v1,v2);
   const FT sl = v1v2.squared_length();
-  if(certainly(sl == FT(0)))
+  if(certainly(is_zero(sl)))
     return intersection_return<typename K::Intersect_3, typename K::Line_3, typename K::Line_3>();
   const FT t = ((v3v2.x()*v1v2.x()) + (v3v2.y()*v1v2.y()) + (v3v2.z()*v1v2.z())) / sl;
 
