@@ -5,36 +5,40 @@
 
 #include <boost/iterator/transform_iterator.hpp>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel          K;
 
-typedef CGAL::Projection_on_sphere_traits_3<K> Projection_traits;
-typedef CGAL::Delaunay_triangulation_on_sphere_2<Projection_traits> Projected_DToS2;
+typedef CGAL::Projection_on_sphere_traits_3<K>                       Traits;
+typedef CGAL::Delaunay_triangulation_on_sphere_2<Traits>             DToS2;
 
-int main()
+typedef Traits::Point_3                                              Point_3;
+
+int main(int, char**)
 {
-  std::vector<K::Point_3> points;
-  points.push_back(K::Point_3( 3,  1, 1));
-  points.push_back(K::Point_3(-8,  1, 1));
-  points.push_back(K::Point_3( 1,  2, 1));
-  points.push_back(K::Point_3( 1, -2, 1));
-  points.push_back(K::Point_3( 1, 1, 10));
+  std::vector<Point_3> points;
+  points.emplace_back( 3,  1,  1);
+  points.emplace_back(-8,  1,  1);
+  points.emplace_back( 1,  2,  1);
+  points.emplace_back( 1, -2,  1);
+  points.emplace_back( 1,  1, 10);
 
-  Projection_traits traits(K::Point_3(1,1,1));
-  Projected_DToS2 dtos(traits);
+  Traits traits(Point_3(1,1,1)); // radius is 1 by default
+  DToS2 dtos(traits);
 
-  Projection_traits::Construct_point_on_sphere_2 cst =
-    traits.construct_point_on_sphere_2_object();
+  Traits::Construct_point_on_sphere_2 cst = traits.construct_point_on_sphere_2_object();
 
   for(const auto& pt : points)
   {
-    std::cout << "----- Inserting: " << pt
-              << " at distance: " << CGAL::squared_distance(pt, traits.center())
-              << " from center" << std::endl;
+    std::cout << "----- Inserting (" << pt
+              << ") at squared distance " << CGAL::squared_distance(pt, traits.center())
+              << " from the center of the sphere" << std::endl;
     dtos.insert(cst(pt));
 
-    std::cout << "dimension: " << dtos.dimension() << std::endl;
-    std::cout << dtos.number_of_vertices() << " nv" << std::endl;
-    std::cout << dtos.number_of_faces() << " nf" << std::endl;
-    std::cout << dtos.number_of_ghost_faces() << " gf" << std::endl;
+    std::cout << "The triangulation now has dimension: " << dtos.dimension() << " and\n";
+    std::cout << dtos.number_of_vertices() << " vertices" << std::endl;
+    std::cout << dtos.number_of_edges() << " edges" << std::endl;
+    std::cout << dtos.number_of_faces() << " solid faces" << std::endl;
+    std::cout << dtos.number_of_ghost_faces() << " ghost faces" << std::endl;
   }
+
+  CGAL::write_OFF("result.off", dtos, CGAL::parameters::stream_precision(17));
 }

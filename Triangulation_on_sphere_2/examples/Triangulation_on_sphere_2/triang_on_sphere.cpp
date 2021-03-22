@@ -1,43 +1,44 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Delaunay_triangulation_on_sphere_2.h>
 #include <CGAL/Delaunay_triangulation_on_sphere_traits_2.h>
+#include <CGAL/Delaunay_triangulation_on_sphere_2.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Delaunay_triangulation_on_sphere_traits_2<K>  Traits;
 typedef CGAL::Delaunay_triangulation_on_sphere_2<Traits>    DToS2;
 
-typedef Traits::Point_3                                     Point;
+typedef Traits::Point_3                                     Point_3;
 
-int main()
+int main(int, char**)
 {
-  std::vector<Point> points;
+  std::vector<Point_3> points;
   points.emplace_back( 2, 1, 1);
   points.emplace_back(-2, 1, 1); // not on the sphere
   points.emplace_back( 0, 1, 1);
   points.emplace_back( 1, 2, 1);
-  points.emplace_back( 0, 1, 1); // duplicate
+  points.emplace_back( 0, 1, 1); // duplicate of #3
   points.emplace_back( 1, 0, 1);
   points.emplace_back( 1, 1, 2);
 
-  Traits traits(Point(1, 1, 1));
+  Traits traits(Point_3(1, 1, 1), 1); // sphere center on (1,1,1), with radius 1
   DToS2 dtos(traits);
 
-  for(const Point& pt : points)
+  for(const Point_3& pt : points)
   {
-    std::cout << "Inserting: " << pt
-              << " at distance: " << CGAL::squared_distance(pt, traits.center())
-              << " from center, is on sphere? " << traits.is_on_sphere(pt) << std::endl;
+    std::cout << "Inserting (" << pt
+              << ") at squared distance " << CGAL::squared_distance(pt, traits.center())
+              << " from the center of the sphere; is it on there sphere? "
+              << (traits.is_on_sphere(pt) ? "yes" : "no") << std::endl;
     dtos.insert(pt);
 
-    std::cout << "dimension: " << dtos.dimension() << std::endl;
-    std::cout << dtos.number_of_vertices() << " nv" << std::endl;
-    std::cout << dtos.number_of_faces() << " nf" << std::endl;
-    std::cout << dtos.number_of_ghost_faces() << " gf" << std::endl;
+    std::cout << "After insertion, the dimension of the triangulation is: " << dtos.dimension() << "\n";
+    std::cout << "It has:\n";
+    std::cout << dtos.number_of_vertices() << " vertices\n";
+    std::cout << dtos.number_of_edges() << " edges\n";
+    std::cout << dtos.number_of_faces() << " solid faces\n";
+    std::cout << dtos.number_of_ghost_faces() << " ghost faces\n" << std::endl;
   }
 
-  std::ofstream out("result.off");
-  out.precision(17);
-  CGAL::write_OFF(out, dtos);
+  CGAL::write_OFF("result.off", dtos, CGAL::parameters::stream_precision(17));
 }
