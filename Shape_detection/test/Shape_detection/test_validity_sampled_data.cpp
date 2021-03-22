@@ -119,7 +119,7 @@ void test_copied_point_cloud (const Point_set& original_points, std::size_t nb)
     points,
     CGAL::parameters::
     distance_threshold(parameters.epsilon).
-    min_squared_cos(parameters.normal_threshold).
+    cos_value_threshold(parameters.normal_threshold).
     min_region_size(parameters.min_points));
   Region_growing region_growing (points, rg_query, rg_region);
   std::size_t nb_detected = 0;

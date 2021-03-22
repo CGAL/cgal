@@ -138,10 +138,8 @@ namespace Polygon_mesh {
     m_iconverter() {
 
       CGAL_precondition(m_face_range.size() > 0);
-
       m_order.resize(m_face_range.size());
-      for (std::size_t i = 0; i < m_face_range.size(); ++i)
-        m_order[i] = i;
+      std::iota(m_order.begin(), m_order.end(), 0);
       m_scores.resize(m_face_range.size());
     }
 
@@ -156,8 +154,7 @@ namespace Polygon_mesh {
     void sort() {
 
       compute_scores();
-      CGAL_postcondition(m_scores.size() > 0);
-
+      CGAL_precondition(m_scores.size() > 0);
       Compare_scores cmp(m_scores);
       std::sort(m_order.begin(), m_order.end(), cmp);
     }
@@ -188,9 +185,8 @@ namespace Polygon_mesh {
 
     void compute_scores() {
 
-      std::vector<std::size_t> neighbors;
       std::vector<IPoint_3> points;
-
+      std::vector<std::size_t> neighbors;
       for (std::size_t i = 0; i < m_face_range.size(); ++i) {
 
         neighbors.clear();
@@ -198,29 +194,26 @@ namespace Polygon_mesh {
         neighbors.push_back(i);
 
         points.clear();
-        for (std::size_t j = 0; j < neighbors.size(); ++j) {
-          CGAL_precondition(neighbors[j] < m_face_range.size());
-
-          const auto face = *(m_face_range.begin() + neighbors[j]);
+        for (const std::size_t face_index : neighbors) {
+          CGAL_precondition(face_index < m_face_range.size());
+          const auto face = *(m_face_range.begin() + face_index);
           const auto hedge = halfedge(face, m_face_graph);
 
           const auto vertices = vertices_around_face(hedge, m_face_graph);
+          CGAL_precondition(vertices.size() > 0);
           for (const auto vertex : vertices) {
-
-            const auto& tmp_point = get(m_vertex_to_point_map, vertex);
-            points.push_back(m_iconverter(tmp_point));
+            const auto& point = get(m_vertex_to_point_map, vertex);
+            points.push_back(m_iconverter(point));
           }
         }
-        CGAL_postcondition(points.size() > 0);
+        CGAL_postcondition(points.size() >= neighbors.size());
 
         IPlane_3 fitted_plane;
         IPoint_3 fitted_centroid;
-
         m_scores[i] = CGAL::linear_least_squares_fitting_3(
           points.begin(), points.end(),
           fitted_plane, fitted_centroid,
-          CGAL::Dimension_tag<0>(),
-          ITraits(),
+          CGAL::Dimension_tag<0>(), ITraits(),
           CGAL::Eigen_diagonalize_traits<IFT, 3>());
       }
     }

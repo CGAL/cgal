@@ -176,14 +176,11 @@ namespace Point_set {
       std::vector<std::size_t>& neighbors) const {
 
       CGAL_precondition(query_index < m_input_range.size());
-
       Neighbor_search neighbor_search(
         m_tree,
         get(m_index_to_point_map, query_index),
         static_cast<unsigned int>(m_number_of_neighbors),
-        0,
-        true,
-        m_distance);
+        0, true, m_distance);
 
       neighbors.clear();
       for (auto it = neighbor_search.begin(); it != neighbor_search.end(); ++it)

@@ -89,7 +89,6 @@ namespace internal {
 
       value_type i = 0;
       for (const auto& item : item_range) {
-
         m_item_map[item] = i;
         ++i;
       }
@@ -98,10 +97,8 @@ namespace internal {
     value_type operator[](const key_type& key) const {
 
       const auto& value = m_item_map.find(key);
-
       if (value == m_item_map.end())
         return value_type(-1);
-
       return value->second;
     }
 

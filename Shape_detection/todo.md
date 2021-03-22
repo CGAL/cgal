@@ -1,0 +1,10 @@
+- add new optimizaion with the min_squared_cos value
+- add full ring to the polygon mesh query
+- add sorting option to each class
+- make line fit region and sorting work both with 2D and 3D points
+- add polyline-related classes
+- add Polyline_graph that extracts the graph from the polygon mesh
+- cleanup the code
+- finish new tests
+- update the docs
+- remove sqrt

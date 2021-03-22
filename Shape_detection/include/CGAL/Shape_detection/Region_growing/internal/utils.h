@@ -90,7 +90,6 @@ namespace internal {
 
       CGAL_precondition(i < m_scores.size());
       CGAL_precondition(j < m_scores.size());
-
       return m_scores[i] > m_scores[j];
     }
   };
@@ -120,31 +119,27 @@ namespace internal {
 
     std::vector<IPoint_3> points;
     const IConverter iconverter = IConverter();
-
     for (const auto& region : regions) {
       CGAL_assertion(region.size() > 0);
 
       points.clear();
-      for (std::size_t i = 0; i < region.size(); ++i) {
-
-        CGAL_precondition(region[i] < input_range.size());
-
-        const auto& key = *(input_range.begin() + region[i]);
-        points.push_back(iconverter(get(point_map, key)));
+      for (const std::size_t point_index : region) {
+        CGAL_precondition(point_index < input_range.size());
+        const auto& key = *(input_range.begin() + point_index);
+        const auto& point = get(point_map, key);
+        points.push_back(iconverter(point));
       }
       CGAL_postcondition(points.size() == region.size());
 
       IPlane_3 fitted_plane;
       IPoint_3 fitted_centroid;
-
       CGAL::linear_least_squares_fitting_3(
         points.begin(), points.end(),
         fitted_plane, fitted_centroid,
-        CGAL::Dimension_tag<0>(),
-        ITraits(),
+        CGAL::Dimension_tag<0>(), ITraits(),
         CGAL::Eigen_diagonalize_traits<IFT, 3>());
 
-        const Plane_3 plane = Plane_3(
+      const Plane_3 plane = Plane_3(
         static_cast<FT>(fitted_plane.a()),
         static_cast<FT>(fitted_plane.b()),
         static_cast<FT>(fitted_plane.c()),

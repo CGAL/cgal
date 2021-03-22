@@ -177,12 +177,11 @@ namespace Polygon_mesh {
         parameters::get_parameter(np, internal_np::min_region_size), 1);
       CGAL_precondition(m_min_region_size > 0);
 
-      const FT normal_threshold = static_cast<FT>(std::cos(CGAL::to_double(
+      const FT cos_value_threshold = static_cast<FT>(std::cos(CGAL::to_double(
         (angle_deg_threshold * static_cast<FT>(CGAL_PI)) / FT(180))));
-      const FT min_squared_cos = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::min_squared_cos), normal_threshold);
-      CGAL_precondition(min_squared_cos >= FT(0) && min_squared_cos <= FT(1));
-      m_normal_threshold = min_squared_cos;
+      m_cos_value_threshold = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::cos_value_threshold), cos_value_threshold);
+      CGAL_precondition(m_cos_value_threshold >= FT(0) && m_cos_value_threshold <= FT(1));
     }
 
     /// @}
@@ -213,24 +212,28 @@ namespace Polygon_mesh {
       const std::vector<std::size_t>&) const {
 
       CGAL_precondition(query_index < m_face_range.size());
-
       const auto face = *(m_face_range.begin() + query_index);
+
+      const FT squared_distance_to_fitted_plane = get_max_squared_distance(face);
+      if (squared_distance_to_fitted_plane < FT(0)) return false;
+      const FT squared_distance_threshold =
+        m_distance_threshold * m_distance_threshold;
 
       Vector_3 face_normal;
       get_face_normal(face, face_normal);
-
-      const FT distance_to_fitted_plane =
-      get_max_face_distance(face);
-      if (distance_to_fitted_plane < FT(0))
-        return false;
-
       // The sign of this scalar product is important, as it indicates
       // into which side of the plane the face's normal points.
-      const FT cos_value =
-      m_scalar_product_3(face_normal, m_normal_of_best_fit);
+      const FT cos_value = m_scalar_product_3(face_normal, m_normal_of_best_fit);
+      const FT squared_cos_value = cos_value * cos_value;
 
-      return (( distance_to_fitted_plane <= m_distance_threshold ) &&
-        ( cos_value >= m_normal_threshold ));
+      FT squared_cos_value_threshold =
+        m_cos_value_threshold * m_cos_value_threshold;
+      squared_cos_value_threshold *= m_squared_length_3(face_normal);
+      squared_cos_value_threshold *= m_squared_length_3(m_normal_of_best_fit);
+
+      return (
+        ( squared_distance_to_fitted_plane <= squared_distance_threshold ) &&
+        ( squared_cos_value >= squared_cos_value_threshold ));
     }
 
     /*!
@@ -262,38 +265,35 @@ namespace Polygon_mesh {
 
       CGAL_precondition(region.size() > 0);
       if (region.size() == 1) { // create new reference plane and normal
-
-        CGAL_precondition(region[0] < m_face_range.size());
+        const std::size_t face_index = region[0];
+        CGAL_precondition(face_index < m_face_range.size());
 
         // The best fit plane will be a plane through this face centroid with
         // its normal being the face's normal.
-        const auto face = *(m_face_range.begin() + region[0]);
         Point_3 face_centroid;
-
+        const auto face = *(m_face_range.begin() + face_index);
         get_face_centroid(face, face_centroid);
         get_face_normal(face, m_normal_of_best_fit);
-
-        m_plane_of_best_fit =
-        Plane_3(face_centroid, m_normal_of_best_fit);
+        m_plane_of_best_fit = Plane_3(face_centroid, m_normal_of_best_fit);
 
       } else { // update reference plane and normal
 
         std::vector<IPoint_3> points;
-        for (std::size_t i = 0; i < region.size(); ++i) {
+        points.reserve(region.size());
+        for (const std::size_t face_index : region) {
+          CGAL_precondition(face_index < m_face_range.size());
+          const auto face = *(m_face_range.begin() + face_index);
 
-          CGAL_precondition(region[i] < m_face_range.size());
-
-          const auto face = *(m_face_range.begin() + region[i]);
           const auto hedge = halfedge(face, m_face_graph);
-
           const auto vertices = vertices_around_face(hedge, m_face_graph);
-          for (const auto vertex : vertices) {
+          CGAL_postcondition(vertices.size() > 0);
 
-            const Point_3& tmp_point = get(m_vertex_to_point_map, vertex);
-            points.push_back(m_iconverter(tmp_point));
+          for (const auto vertex : vertices) {
+            const Point_3& point = get(m_vertex_to_point_map, vertex);
+            points.push_back(m_iconverter(point));
           }
         }
-        CGAL_postcondition(points.size() > 0);
+        CGAL_postcondition(points.size() >= region.size());
 
         IPlane_3 fitted_plane;
         IPoint_3 fitted_centroid;
@@ -310,51 +310,36 @@ namespace Polygon_mesh {
         CGAL::linear_least_squares_fitting_3(
           points.begin(), points.end(),
           fitted_plane, fitted_centroid,
-          CGAL::Dimension_tag<0>(),
-          ITraits(),
+          CGAL::Dimension_tag<0>(), ITraits(),
           CGAL::Eigen_diagonalize_traits<IFT, 3>());
 
-        const Plane_3 unoriented_plane_of_best_fit =
-        Plane_3(
+        const Plane_3 unoriented_plane_of_best_fit = Plane_3(
           static_cast<FT>(fitted_plane.a()),
           static_cast<FT>(fitted_plane.b()),
           static_cast<FT>(fitted_plane.c()),
           static_cast<FT>(fitted_plane.d()));
-
-        Vector_3 unoriented_plane_normal =
-        unoriented_plane_of_best_fit.orthogonal_vector();
-
-        const FT squared_length = m_squared_length_3(unoriented_plane_normal);
-        if (squared_length != FT(0)) {
-          const FT normal_length = m_sqrt(squared_length);
-          CGAL_precondition(normal_length > FT(0));
-          unoriented_plane_normal /= normal_length;
-        }
+        const Vector_3 unoriented_plane_normal =
+          unoriented_plane_of_best_fit.orthogonal_vector();
 
         // Compute actual direction of plane's normal sign
-        // based on faces belonging to that region.
+        // based on faces, which belong to that region.
         // Approach:
         // Each face gets one vote to keep or flip the current plane normal.
         Vector_3 face_normal;
         long votes_to_keep_normal = 0;
-
         for (const std::size_t face_index : region) {
           const auto face = *(m_face_range.begin() + face_index);
-
           get_face_normal(face, face_normal);
           const bool agrees =
-          m_scalar_product_3(face_normal, unoriented_plane_normal) > FT(0);
+            m_scalar_product_3(face_normal, unoriented_plane_normal) > FT(0);
           votes_to_keep_normal += (agrees ? 1 : -1);
         }
         const bool flip_normal = (votes_to_keep_normal < 0);
 
-        m_plane_of_best_fit =
-        flip_normal
+        m_plane_of_best_fit = flip_normal
           ? unoriented_plane_of_best_fit.opposite()
           : unoriented_plane_of_best_fit;
-
-        m_normal_of_best_fit =
-        flip_normal
+        m_normal_of_best_fit = flip_normal
           ? (-1 * unoriented_plane_normal)
           : unoriented_plane_normal;
       }
@@ -367,7 +352,7 @@ namespace Polygon_mesh {
     const Face_range m_face_range;
 
     FT m_distance_threshold;
-    FT m_normal_threshold;
+    FT m_cos_value_threshold;
     std::size_t m_min_region_size;
 
     const Vertex_to_point_map m_vertex_to_point_map;
@@ -383,48 +368,35 @@ namespace Polygon_mesh {
     Plane_3 m_plane_of_best_fit;
     Vector_3 m_normal_of_best_fit;
 
+    // Compute centroid of the face.
     template<typename Face>
-    void get_face_centroid(
-      const Face& face,
-      Point_3& face_centroid) const {
+    void get_face_centroid(const Face& face, Point_3& face_centroid) const {
 
       const auto hedge = halfedge(face, m_face_graph);
       const auto vertices = vertices_around_face(hedge, m_face_graph);
+      CGAL_precondition(vertices.size() > 0);
 
-      // Compute centroid.
-      FT sum = FT(0);
-
-      FT x = FT(0);
-      FT y = FT(0);
-      FT z = FT(0);
-
+      FT sum = FT(0), x = FT(0), y = FT(0), z = FT(0);
       for (const auto vertex : vertices) {
         const Point_3& point = get(m_vertex_to_point_map, vertex);
-
         x += point.x();
         y += point.y();
         z += point.z();
-
         sum += FT(1);
       }
-
       CGAL_precondition(sum > FT(0));
       x /= sum;
       y /= sum;
       z /= sum;
-
       face_centroid = Point_3(x, y, z);
     }
 
+    // Compute normal of the face.
     template<typename Face>
-    void get_face_normal(
-      const Face& face,
-      Vector_3& face_normal) const {
+    void get_face_normal(const Face& face, Vector_3& face_normal) const {
 
-      // Compute normal of the face.
       const auto hedge = halfedge(face, m_face_graph);
       const auto vertices = vertices_around_face(hedge, m_face_graph);
-
       CGAL_precondition(vertices.size() >= 3);
 
       auto vertex = vertices.begin();
@@ -435,45 +407,33 @@ namespace Polygon_mesh {
       const Vector_3 u = point2 - point1;
       const Vector_3 v = point3 - point1;
       face_normal = m_cross_product_3(u, v);
-      const FT squared_length = m_squared_length_3(face_normal);
-      if (squared_length == FT(0))
-        return;
-
-      const FT normal_length = m_sqrt(squared_length);
-      CGAL_precondition(normal_length > FT(0));
-      face_normal /= normal_length;
+      CGAL_postcondition(face_normal != Vector_3());
     }
 
-    // The maximum distance from the vertices of the face to the best fit plane.
+    // The maximum squared distance from the vertices of the face
+    // to the best fit plane.
     template<typename Face>
-    FT get_max_face_distance(const Face& face) const {
+    const FT get_max_squared_distance(const Face& face) const {
 
+      FT max_squared_distance = -FT(1);
       const FT a = CGAL::abs(m_plane_of_best_fit.a());
       const FT b = CGAL::abs(m_plane_of_best_fit.b());
       const FT c = CGAL::abs(m_plane_of_best_fit.c());
       const FT d = CGAL::abs(m_plane_of_best_fit.d());
-
       if (a == FT(0) && b == FT(0) && c == FT(0) && d == FT(0))
-        return -FT(1);
+        return max_squared_distance;
 
       const auto hedge = halfedge(face, m_face_graph);
       const auto vertices = vertices_around_face(hedge, m_face_graph);
+      CGAL_precondition(vertices.size() > 0);
 
-      FT max_face_distance = -FT(1);
       for (const auto vertex : vertices) {
-
-        const Point_3& point =
-        get(m_vertex_to_point_map, vertex);
-
-        const FT distance =
-        m_sqrt(m_squared_distance_3(point, m_plane_of_best_fit));
-
-        max_face_distance =
-        (CGAL::max)(distance, max_face_distance);
+        const Point_3& point = get(m_vertex_to_point_map, vertex);
+        const FT squared_distance = m_squared_distance_3(point, m_plane_of_best_fit);
+        max_squared_distance = (CGAL::max)(squared_distance, max_squared_distance);
       }
-      CGAL_postcondition(max_face_distance != -FT(1));
-
-      return max_face_distance;
+      CGAL_postcondition(max_squared_distance >= FT(0));
+      return max_squared_distance;
     }
   };
 

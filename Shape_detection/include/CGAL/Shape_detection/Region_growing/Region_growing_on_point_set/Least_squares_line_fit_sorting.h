@@ -123,10 +123,8 @@ namespace Point_set {
     m_iconverter() {
 
       CGAL_precondition(input_range.size() > 0);
-
       m_order.resize(m_input_range.size());
-      for (std::size_t i = 0; i < m_input_range.size(); ++i)
-        m_order[i] = i;
+      std::iota(m_order.begin(), m_order.end(), 0);
       m_scores.resize(m_input_range.size());
     }
 
@@ -141,8 +139,7 @@ namespace Point_set {
     void sort() {
 
       compute_scores();
-      CGAL_postcondition(m_scores.size() > 0);
-
+      CGAL_precondition(m_scores.size() > 0);
       Compare_scores cmp(m_scores);
       std::sort(m_order.begin(), m_order.end(), cmp);
     }
@@ -172,9 +169,8 @@ namespace Point_set {
 
     void compute_scores() {
 
-      std::vector<std::size_t> neighbors;
       std::vector<IPoint_2> points;
-
+      std::vector<std::size_t> neighbors;
       for (std::size_t i = 0; i < m_input_range.size(); ++i) {
 
         neighbors.clear();
@@ -182,22 +178,20 @@ namespace Point_set {
         neighbors.push_back(i);
 
         points.clear();
-        for (std::size_t j = 0; j < neighbors.size(); ++j) {
-          CGAL_precondition(neighbors[j] < m_input_range.size());
-
-          const auto& key = *(m_input_range.begin() + neighbors[j]);
-          points.push_back(m_iconverter(get(m_point_map, key)));
+        for (const std::size_t point_index : neighbors) {
+          CGAL_precondition(point_index < m_input_range.size());
+          const auto& key = *(m_input_range.begin() + point_index);
+          const auto& point = get(m_point_map, key);
+          points.push_back(m_iconverter(point));
         }
         CGAL_postcondition(points.size() == neighbors.size());
 
         ILine_2  fitted_line;
         IPoint_2 fitted_centroid;
-
         m_scores[i] = CGAL::linear_least_squares_fitting_2(
           points.begin(), points.end(),
           fitted_line, fitted_centroid,
-          CGAL::Dimension_tag<0>(),
-          ITraits(),
+          CGAL::Dimension_tag<0>(), ITraits(),
           CGAL::Eigen_diagonalize_traits<IFT, 2>());
       }
     }

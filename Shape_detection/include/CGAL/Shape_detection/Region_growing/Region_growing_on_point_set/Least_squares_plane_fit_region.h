@@ -172,12 +172,11 @@ namespace Point_set {
         parameters::get_parameter(np, internal_np::min_region_size), 3);
       CGAL_precondition(m_min_region_size > 0);
 
-      const FT normal_threshold = static_cast<FT>(std::cos(CGAL::to_double(
+      const FT cos_value_threshold = static_cast<FT>(std::cos(CGAL::to_double(
         (angle_deg_threshold * static_cast<FT>(CGAL_PI)) / FT(180))));
-      const FT min_squared_cos = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::min_squared_cos), normal_threshold);
-      CGAL_precondition(min_squared_cos >= FT(0) && min_squared_cos <= FT(1));
-      m_normal_threshold = min_squared_cos;
+      m_cos_value_threshold = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::cos_value_threshold), cos_value_threshold);
+      CGAL_precondition(m_cos_value_threshold >= FT(0) && m_cos_value_threshold <= FT(1));
     }
 
     /// @}
@@ -208,23 +207,27 @@ namespace Point_set {
       const std::vector<std::size_t>&) const {
 
       CGAL_precondition(query_index < m_input_range.size());
-
       const auto& key = *(m_input_range.begin() + query_index);
       const Point_3& query_point = get(m_point_map, key);
+      const Vector_3& query_normal = get(m_normal_map, key);
 
-      const Vector_3& normal = get(m_normal_map, key);
-      const FT normal_length = m_sqrt(m_squared_length_3(normal));
-      CGAL_precondition(normal_length > FT(0));
-      const Vector_3 query_normal = normal / normal_length;
-
-      const FT distance_to_fitted_plane =
-      m_sqrt(m_squared_distance_3(query_point, m_plane_of_best_fit));
+      const FT squared_distance_to_fitted_plane =
+        m_squared_distance_3(query_point, m_plane_of_best_fit);
+      const FT squared_distance_threshold =
+        m_distance_threshold * m_distance_threshold;
 
       const FT cos_value =
-      CGAL::abs(m_scalar_product_3(query_normal, m_normal_of_best_fit));
+        m_scalar_product_3(query_normal, m_normal_of_best_fit);
+      const FT squared_cos_value = cos_value * cos_value;
 
-      return (( distance_to_fitted_plane <= m_distance_threshold ) &&
-        ( cos_value >= m_normal_threshold ));
+      FT squared_cos_value_threshold =
+        m_cos_value_threshold * m_cos_value_threshold;
+      squared_cos_value_threshold *= m_squared_length_3(query_normal);
+      squared_cos_value_threshold *= m_squared_length_3(m_normal_of_best_fit);
+
+      return (
+        ( squared_distance_to_fitted_plane <= squared_distance_threshold ) &&
+        ( squared_cos_value >= squared_cos_value_threshold ));
     }
 
     /*!
@@ -255,34 +258,27 @@ namespace Point_set {
 
       CGAL_precondition(region.size() > 0);
       if (region.size() == 1) { // create new reference plane and normal
-        CGAL_precondition(region[0] < m_input_range.size());
+        const std::size_t point_index = region[0];
+        CGAL_precondition(point_index < m_input_range.size());
 
         // The best fit plane will be a plane through this point with
         // its normal being the point's normal.
-        const auto& key = *(m_input_range.begin() + region[0]);
-
+        const auto& key = *(m_input_range.begin() + point_index);
         const Point_3& point = get(m_point_map, key);
         const Vector_3& normal = get(m_normal_map, key);
 
-        const FT normal_length = m_sqrt(m_squared_length_3(normal));
-
-        CGAL_precondition(normal_length > FT(0));
-        m_normal_of_best_fit =
-        normal / normal_length;
-
-        m_plane_of_best_fit =
-        Plane_3(point, m_normal_of_best_fit);
+        m_plane_of_best_fit = Plane_3(point, normal);
+        m_normal_of_best_fit = normal;
 
       } else { // update reference plane and normal
 
         std::vector<IPoint_3> points;
         points.reserve(region.size());
-
-        for (std::size_t i = 0; i < region.size(); ++i) {
-          CGAL_precondition(region[i] < m_input_range.size());
-
-          const auto& key = *(m_input_range.begin() + region[i]);
-          points.push_back(m_iconverter(get(m_point_map, key)));
+        for (const std::size_t point_index : region) {
+          CGAL_precondition(point_index < m_input_range.size());
+          const auto& key = *(m_input_range.begin() + point_index);
+          const Point_3& point = get(m_point_map, key);
+          points.push_back(m_iconverter(point));
         }
         CGAL_postcondition(points.size() == region.size());
 
@@ -294,22 +290,15 @@ namespace Point_set {
         CGAL::linear_least_squares_fitting_3(
           points.begin(), points.end(),
           fitted_plane, fitted_centroid,
-          CGAL::Dimension_tag<0>(),
-          ITraits(),
+          CGAL::Dimension_tag<0>(), ITraits(),
           CGAL::Eigen_diagonalize_traits<IFT, 3>());
 
-        m_plane_of_best_fit =
-        Plane_3(
+        m_plane_of_best_fit = Plane_3(
           static_cast<FT>(fitted_plane.a()),
           static_cast<FT>(fitted_plane.b()),
           static_cast<FT>(fitted_plane.c()),
           static_cast<FT>(fitted_plane.d()));
-
-        const Vector_3 normal = m_plane_of_best_fit.orthogonal_vector();
-        const FT normal_length = m_sqrt(m_squared_length_3(normal));
-
-        CGAL_precondition(normal_length > FT(0));
-        m_normal_of_best_fit = normal / normal_length;
+        m_normal_of_best_fit = m_plane_of_best_fit.orthogonal_vector();
       }
     }
 
@@ -319,7 +308,7 @@ namespace Point_set {
     const Input_range& m_input_range;
 
     FT m_distance_threshold;
-    FT m_normal_threshold;
+    FT m_cos_value_threshold;
     std::size_t m_min_region_size;
 
     const Point_map m_point_map;
