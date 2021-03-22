@@ -2,8 +2,8 @@
 #define CGAL_TOS2_INTERNAL_ARC_ON_SPHERE_SUBSAMPLING_H
 
 #ifdef CGAL_EIGEN3_ENABLED
+
 #include <CGAL/Eigen_solver_traits.h>
-#endif
 
 #include <cmath>
 #include <list>
@@ -18,9 +18,6 @@ double get_theta( typename Kernel::Point_3& pt,
                   typename Kernel::Vector_3& V2,
                   typename Kernel::Vector_3& V3)
 {
-#ifndef CGAL_EIGEN3_ENABLED
-#error subsample_arc_on_sphere_2() requires the Eigen library
-#endif
   typedef typename Kernel::FT                                        FT;
 
   typedef Eigen::Matrix<FT, 3, 3, Eigen::DontAlign>                  Matrix;
@@ -142,5 +139,7 @@ void subsample_arc_on_sphere_2(const ArcOnSphere& arc,
 } // namespace internal
 } // namespace Triangulations_on_sphere_2
 } // namespace CGAL
+
+#endif // CGAL_EIGEN3_ENABLED
 
 #endif // CGAL_TOS2_INTERNAL_ARC_ON_SPHERE_SUBSAMPLING_H

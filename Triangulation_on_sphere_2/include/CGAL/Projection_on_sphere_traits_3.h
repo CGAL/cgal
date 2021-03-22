@@ -33,22 +33,45 @@ public:
   typedef typename LK::Point_3                             Base_point;
   typedef typename LK::Vector_3                            Vector_3;
 
-public:
-  Point_with_scale() : Base_point() { }
-  Point_with_scale(const Base_point& p)
-    : Base_point(p)
-  { }
+private:
+  mutable bool cached;
+  mutable Base_point proj_pt;
 
 public:
-  Base_point project(const Base_point& center,
-                     const FT radius) const
+  Point_with_scale() : Base_point() { } // vertex base wants a default constructor
+  Point_with_scale(const Base_point& p) : Base_point(p), cached(false) { }
+
+  const Base_point& get_projection(const Base_point& center,
+                                   const FT radius,
+                                   const LK& lk) const
+  {
+    if(!cached)
+      compute_projection(center, radius, lk);
+
+    return proj_pt;
+  }
+
+  const Base_point& get_projection(const Base_point& center,
+                                   const FT radius) const
+  {
+    return get_projection(center, radius, LK());
+  }
+
+private:
+  void compute_projection(const Base_point& center,
+                          const FT radius,
+                          const LK& lk) const
   {
     CGAL_precondition(static_cast<const Base_point&>(*this) != center);
 
-    // @todo use LK
-    Vector_3 v = static_cast<const Base_point&>(*this) - center;
-    v = (radius / CGAL::approximate_sqrt(v * v)) * v;
-    return center + v;
+    Vector_3 v = lk.construct_vector_3_object()(center, static_cast<const Base_point&>(*this));
+    FT n = lk.compute_squared_length_3_object()(v);
+    CGAL_assertion(n > 0);
+    n = CGAL::sqrt(n);
+    v = lk.construct_scaled_vector_3_object()(v, radius / n);
+
+    proj_pt = lk.construct_translated_point_3_object()(center, v);
+    cached = true;
   }
 };
 
@@ -60,8 +83,6 @@ struct Construct_point_with_scale
 };
 
 // Adaptor for calling the functors with the points projected on the sphere
-//
-// @todo filter this
 template <typename LK, typename Functor_>
 class Functor_projection_adaptor
   : public Functor_
@@ -82,16 +103,29 @@ public:
   using Base::operator();
 
   decltype(auto) operator()(const Point& p0, const Point& p1)
-  { return Base::operator()(p0.project(_c, _r), p1.project(_c, _r)); }
+  {
+    return Base::operator()(p0.get_projection(_c, _r), p1.get_projection(_c, _r));
+  }
 
   decltype(auto) operator()(const Point& p0, const Point& p1, const Point& p2)
-  { return Base::operator()(p0.project(_c, _r), p1.project(_c, _r), p2.project(_c, _r)); }
+  {
+    return Base::operator()(p0.get_projection(_c, _r), p1.get_projection(_c, _r),
+                            p2.get_projection(_c, _r));
+  }
 
   decltype(auto) operator ()(const Point& p0, const Point& p1, const Point& p2, const Point& p3)
-  { return Base::operator()(p0.project(_c, _r), p1.project(_c, _r), p2.project(_c, _r), p3.project(_c, _r)); }
+  {
+    return Base::operator()(p0.get_projection(_c, _r), p1.get_projection(_c, _r),
+                            p2.get_projection(_c, _r), p3.get_projection(_c, _r));
+  }
 
-  decltype(auto) operator()(const Point& p0, const Point& p1, const Point& p2, const Point& p3, const Point& p4)
-  { return Base::operator()(p0.project(_c, _r), p1.project(_c, _r), p2.project(_c, _r), p3.project(_c, _r), p4.project(_c, _r)); }
+  decltype(auto) operator()(const Point& p0, const Point& p1, const Point& p2,
+                            const Point& p3, const Point& p4)
+  {
+    return Base::operator()(p0.get_projection(_c, _r), p1.get_projection(_c, _r),
+                            p2.get_projection(_c, _r), p3.get_projection(_c, _r),
+                            p4.get_projection(_c, _r));
+  }
 
 private:
   const Point_3& _c;
@@ -192,8 +226,8 @@ public:
 
   bool are_points_too_close(const Point_on_sphere_2& p, const Point_on_sphere_2& q) const
   {
-    return Base::are_points_too_close(p.project(Base::center(), Base::radius()),
-                                      q.project(Base::center(), Base::radius()));
+    return Base::are_points_too_close(p.get_projection(Base::center(), Base::radius(), Base::lk()),
+                                      q.get_projection(Base::center(), Base::radius(), Base::lk()));
   }
 };
 

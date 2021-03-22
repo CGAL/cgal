@@ -9,8 +9,8 @@
 //
 // Author(s)     : Mael Rouxel-Labbé
 
-#ifndef CGAL_TRIANGULATION_ON_SPHERE_PROJECTION_SPHERE_TRAITS_3_H
-#define CGAL_TRIANGULATION_ON_SPHERE_PROJECTION_SPHERE_TRAITS_3_H
+#ifndef CGAL_TRIANGULATION_ON_SPHERE_GEOGRAPHICAL_COORDINATES_TRAITS_2_H
+#define CGAL_TRIANGULATION_ON_SPHERE_GEOGRAPHICAL_COORDINATES_TRAITS_2_H
 
 #include <CGAL/license/Triangulation_on_sphere_2.h>
 
@@ -23,6 +23,7 @@
 #include <fstream>
 #include <iostream>
 
+// @todo
 // Note: this is currently undocumented because it uses a conversion to
 //       the Cartesian domain R^3 to perform predicates and constructions,
 //       losing the benefit of the exact representation on the way.
@@ -48,6 +49,7 @@ struct Geographical_coordinates
   friend std::ostream& operator<<(std::ostream& os, const Geographical_coordinates& l)
   {
     os << l._la << " " << l._lo;
+    return os;
   }
 
 private:
@@ -63,20 +65,20 @@ struct Construct_geographical_coordinates
 {
   typedef typename LK::FT                                            FT;
   typedef typename LK::Point_3                                       Point_3;
-  typedef CGAL::Geographical_coordinates<LK>                         Coordinates;
+  typedef CGAL::Geographical_coordinates<LK>                         result_type;
 
   Construct_geographical_coordinates(const Point_3& center, const FT radius)
     : _center(center), _radius(radius)
   { }
 
-  Coordinates operator()(const Point_3& pt) const
+  result_type operator()(const Point_3& pt) const
   {
-    // @fixme use _center
-    const FT r = CGAL::approximate_sqrt(square(pt.x()) + square(pt.y()) + square(pt.z()));
-    const FT la = 180. * std::asin(pt.z() / _radius) / CGAL_PI;
-    const FT lo = 180. * std::atan2(pt.y(), pt.x()) / CGAL_PI;
+    CGAL_assertion(pt != _center);
 
-    return Coordinates(la, lo);
+    const FT la = 180. * std::asin((pt.z() - _center.z()) / _radius) / CGAL_PI;
+    const FT lo = 180. * std::atan2((pt.y() - _center.y()), (pt.x() - _center.x())) / CGAL_PI;
+
+    return result_type(la, lo);
   }
 
 private:
@@ -86,7 +88,7 @@ private:
 
 template <typename LK>
 struct Construct_Cartesian_coordinates
-    : public std::unary_function<typename LK::Point_3, CGAL::Geographical_coordinates<LK> >
+  : public std::unary_function<typename LK::Point_3, CGAL::Geographical_coordinates<LK> >
 {
   typedef typename LK::FT                                            FT;
   typedef typename LK::Point_3                                       Point_3;
@@ -98,13 +100,12 @@ struct Construct_Cartesian_coordinates
 
   Point_3 operator()(const Coordinates& l) const
   {
-    // @fixme use _center
-#if 0
+#if 1
     const FT rla = CGAL_PI * l.latitude() / 180.;
     const FT rlo = CGAL_PI * l.longitude() / 180.;
-    const FT x = _radius * std::cos(rla) * std::cos(rlo);
-    const FT y = _radius * std::cos(rla) * std::sin(rlo);
-    const FT z = _radius * std::sin(rla);
+    const FT x = _center.x() + _radius * std::cos(rla) * std::cos(rlo);
+    const FT y = _center.y() + _radius * std::cos(rla) * std::sin(rlo);
+    const FT z = _center.z() + _radius * std::sin(rla);
 #else
     const FT rla = CGAL_PI * l.latitude() / 180.;
     const FT rlo = CGAL_PI * l.longitude() / 180.;
@@ -122,11 +123,11 @@ struct Construct_Cartesian_coordinates
     const FT b2 = square(_radius);
 
     // Using https://en.wikipedia.org/wiki/Geographic_coordinate_conversion#From_geodetic_to_ECEF_coordinates
-    const FT N = a2 / CGAL::approximate_sqrt(a2 * square(std::cos(rla)) + b2 * square(std::sin(rla)));
+    const FT N = a2 / sqrt(a2 * square(std::cos(rla)) + b2 * square(std::sin(rla)));
     const FT h = 0;
-    const FT x = (N + h) * std::cos(rla) * std::cos(rlo);
-    const FT y = (N + h) * std::cos(rla) * std::sin(rlo);
-    const FT z = (b2 * N / a2 + h) * std::sin(rla);
+    const FT x = _center.x() + (N + h) * std::cos(rla) * std::cos(rlo);
+    const FT y = _center.y() + (N + h) * std::cos(rla) * std::sin(rlo);
+    const FT z = _center.z() + (b2 * N / a2 + h) * std::sin(rla);
 #endif
 
     return Point_3(x, y, z);
@@ -137,24 +138,50 @@ private:
   const FT _radius;
 };
 
+template <typename LK, typename Base_functor_>
+struct Construct_circumcenter_on_geo_sphere_2
+{
+public:
+  typedef typename LK::FT                                            FT;
+  typedef typename LK::Point_3                                       Point_3;
+  typedef typename LK::Vector_3                                      Vector_3;
+  typedef Geographical_coordinates<LK>                               Point_on_sphere_2;
+  typedef Geographical_coordinates<LK>                               result_type;
+
+  Construct_circumcenter_on_geo_sphere_2( const Base_functor_ f, const Point_3& center, const FT radius)
+    : _center(center), _radius(radius), _f(f)
+  { }
+
+  result_type operator()(const Point_on_sphere_2& p, const Point_on_sphere_2& q, const Point_on_sphere_2& r) const
+  {
+    Construct_Cartesian_coordinates<LK> to_P3(_center, _radius);
+    Construct_geographical_coordinates<LK> to_PoS2(_center, _radius);
+
+    return to_PoS2(_f(to_P3(p), to_P3(q), to_P3(r)));
+  }
+
+private:
+  const Base_functor_ _f;
+  const Point_3& _center;
+  const FT _radius;
+};
+
 // Adaptor for calling the functors with the points projected on the sphere
-//
-// @todo filter this
 template <typename LK, typename Functor_>
-class Functor_projection_adaptor
+class Functor_geo_projection_adaptor
   : public Functor_
 {
-  typedef Functor_                                         Functor;
-  typedef Functor_                                         Base;
+  typedef Functor_                                                   Functor;
+  typedef Functor_                                                   Base;
 
-  typedef typename LK::FT                                  FT;
-  typedef typename LK::Point_3                             Point_3;
-  typedef Geographical_coordinates<LK>                     Point;
+  typedef typename LK::FT                                            FT;
+  typedef typename LK::Point_3                                       Point_3;
+  typedef Geographical_coordinates<LK>                               Point;
 
-  typedef Construct_Cartesian_coordinates<LK>              To_Point_3;
+  typedef Construct_Cartesian_coordinates<LK>                        To_Point_3;
 
 public:
-  Functor_projection_adaptor(const Functor& f, const Point_3& center, const FT radius)
+  Functor_geo_projection_adaptor(const Functor& f, const Point_3& center, const FT radius)
     : Base(f), to_p3(center, radius)
   { }
 
@@ -193,20 +220,20 @@ public:
   typedef Geographical_coordinates<LK>                                         Point_on_sphere_2;
 
   // predicates
-  typedef internal::Functor_projection_adaptor<LK, typename Base::Collinear_are_strictly_ordered_on_great_circle_2> Collinear_are_strictly_ordered_on_great_circle_2;
-  typedef internal::Functor_projection_adaptor<LK, typename Base::Compare_on_sphere_2> Compare_on_sphere_2;
-  typedef internal::Functor_projection_adaptor<LK, typename Base::Equal_on_sphere_2> Equal_on_sphere_2;
-  typedef internal::Functor_projection_adaptor<LK, typename Base::Orientation_on_sphere_2> Orientation_on_sphere_2;
-  typedef internal::Functor_projection_adaptor<LK, typename Base::Side_of_oriented_circle_on_sphere_2> Side_of_oriented_circle_on_sphere_2;
+  typedef internal::Functor_geo_projection_adaptor<LK, typename Base::Collinear_are_strictly_ordered_on_great_circle_2> Collinear_are_strictly_ordered_on_great_circle_2;
+  typedef internal::Functor_geo_projection_adaptor<LK, typename Base::Compare_on_sphere_2> Compare_on_sphere_2;
+  typedef internal::Functor_geo_projection_adaptor<LK, typename Base::Equal_on_sphere_2> Equal_on_sphere_2;
+  typedef internal::Functor_geo_projection_adaptor<LK, typename Base::Orientation_on_sphere_2> Orientation_on_sphere_2;
+  typedef internal::Functor_geo_projection_adaptor<LK, typename Base::Side_of_oriented_circle_on_sphere_2> Side_of_oriented_circle_on_sphere_2;
 
   // constructions
   typedef internal::Construct_geographical_coordinates<LK>                     Construct_point_on_sphere_2;
   typedef internal::Construct_Cartesian_coordinates<LK>                        Construct_point_3;
-  typedef internal::Functor_projection_adaptor<LK, typename Base::Construct_segment_3> Construct_segment_3;
-  typedef internal::Functor_projection_adaptor<LK, typename Base::Construct_triangle_3> Construct_triangle_3;
+  typedef internal::Functor_geo_projection_adaptor<LK, typename Base::Construct_segment_3> Construct_segment_3;
+  typedef internal::Functor_geo_projection_adaptor<LK, typename Base::Construct_triangle_3> Construct_triangle_3;
 
-  typedef internal::Functor_projection_adaptor<LK, typename Base::Construct_arc_on_sphere_2> Construct_arc_on_sphere_2;
-  typedef internal::Functor_projection_adaptor<LK, typename Base::Construct_circumcenter_on_sphere_2> Construct_circumcenter_on_sphere_2;
+  typedef internal::Functor_geo_projection_adaptor<LK, typename Base::Construct_arc_on_sphere_2> Construct_arc_on_sphere_2;
+  typedef internal::Construct_circumcenter_on_geo_sphere_2<LK, typename Base::Construct_circumcenter_on_sphere_2> Construct_circumcenter_on_sphere_2;
 
 public:
   Geographical_coordinates_traits_2(const Point_3& sphere = CGAL::ORIGIN,
@@ -277,4 +304,4 @@ public:
 
 } // namespace CGAL
 
-#endif // CGAL_TRIANGULATION_ON_SPHERE_PROJECTION_SPHERE_TRAITS_3_H
+#endif // CGAL_TRIANGULATION_ON_SPHERE_GEOGRAPHICAL_COORDINATES_TRAITS_2_H
