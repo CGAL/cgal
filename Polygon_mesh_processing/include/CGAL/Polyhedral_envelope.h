@@ -729,7 +729,7 @@ private:
     for (unsigned int i = 0; i < cutp.size(); i++){
       const Plane& plane_i = prism[cutp[i]];
 
-      boost::optional<ePoint_3> op = intersection_point(line, plane_i.eplane);
+      boost::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(line, plane_i.eplane);
       if(! op){
         std::cout <<  "there must be an intersection 2" << std::endl;
       }
@@ -850,8 +850,8 @@ private:
       }
 
       for (unsigned int j = 0; j < cidl.size(); j++) {
-        boost::optional<ePoint_3> op = intersection_point(line,
-                                                          halfspace[prismindex[queue[i]]][cidl[j]].eplane);
+        boost::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(line,
+                                                                                  halfspace[prismindex[queue[i]]][cidl[j]].eplane);
         const ePoint_3& ip = *op;
         inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id
           (ip, idlist, jump1, check_id);
@@ -1034,7 +1034,7 @@ private:
           const Plane& plane_i = prism[cutp[i]];
           const eLine_3& eline = *(seg[k]);
 
-          boost::optional<ePoint_3> op = intersection_point(eline, plane_i.eplane);
+          boost::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(eline, plane_i.eplane);
           if(! op){
 #ifdef CGAL_ENVELOPE_DEBUG
             std::cout <<  "there must be an intersection 6" << std::endl;
@@ -1088,7 +1088,7 @@ private:
 
             int inter = 0;
 
-            boost::optional<ePoint_3>  ipp = intersection_point(tri_eplane, prism[cutp[i]].eplane, prism[cutp[j]].eplane);
+            boost::optional<ePoint_3>  ipp = intersection_point_for_polyhedral_envelope(tri_eplane, prism[cutp[i]].eplane, prism[cutp[j]].eplane);
             if(ipp){
                 inter = is_3_triangle_cut_float_fast(tri0, tri1, tri2,
                                                      n,
@@ -1528,8 +1528,8 @@ private:
           if (!cut) continue;
 
           for (unsigned int j = 0; j < cidl.size(); j++) {
-            boost::optional<ePoint_3> op = intersection_point(eline,
-                                                              halfspace[prismindex[queue[i]]][cidl[j]].eplane);
+            boost::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(eline,
+                                                                                      halfspace[prismindex[queue[i]]][cidl[j]].eplane);
             const ePoint_3& ip = *op;
             inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id(ip, idlist, jump1, check_id);
 
@@ -1612,8 +1612,8 @@ private:
           }
           // now we know that there exists an intesection point
 
-          boost::optional<ePoint_3> op = intersection_point(eline,
-                                                            halfspace[filtered_intersection[queue[i]]][intersect_face[queue[i]][j]].eplane);
+          boost::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(eline,
+                                                                                    halfspace[filtered_intersection[queue[i]]][intersect_face[queue[i]][j]].eplane);
           const ePoint_3& ip = *op;
 
           inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id_with_face_order(ip, idlist, idlistorder, jump1, check_id);
@@ -1696,9 +1696,9 @@ private:
             // We moved the intersection here
             // In case there is no intersection point we continue
             boost::optional<ePoint_3>
-              op = intersection_point(etriangle_eplane,
-                                            halfspace[jump1][intersect_face[queue[i]][k]].eplane,
-                                            halfspace[jump2][intersect_face[queue[j]][h]].eplane);
+              op = intersection_point_for_polyhedral_envelope(etriangle_eplane,
+                                                              halfspace[jump1][intersect_face[queue[i]][k]].eplane,
+                                                              halfspace[jump2][intersect_face[queue[j]][h]].eplane);
             if(! op){
               continue;
             }

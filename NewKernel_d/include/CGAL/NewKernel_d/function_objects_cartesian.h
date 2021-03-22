@@ -1108,7 +1108,7 @@ template<class R_> struct Less_point_cartesian_coordinate : private Store_kernel
         typedef typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type Cc;
         // TODO: This is_exact thing should be reengineered.
         // the goal is to have a way to tell: don't filter this
-        typedef typename CGAL::Is_exact<Cc> Is_exact;
+        typedef typename CGAL::Uses_no_arithmetic<Cc> Uses_no_arithmetic;
 
         template<class V,class W,class I>
         result_type operator()(V const&a, W const&b, I i)const{
@@ -1128,7 +1128,7 @@ template<class R_> struct Compare_point_cartesian_coordinate : private Store_ker
         typedef typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type Cc;
         // TODO: This is_exact thing should be reengineered.
         // the goal is to have a way to tell: don't filter this
-        typedef typename CGAL::Is_exact<Cc> Is_exact;
+        typedef typename CGAL::Uses_no_arithmetic<Cc> Uses_no_arithmetic;
 
         template<class V,class W,class I>
         result_type operator()(V const&a, W const&b, I i)const{
@@ -1148,7 +1148,7 @@ template<class R_> struct Compare_lexicographically : private Store_kernel<R_> {
         typedef typename Get_functor<R, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
         // TODO: This is_exact thing should be reengineered.
         // the goal is to have a way to tell: don't filter this
-        typedef typename CGAL::Is_exact<CI> Is_exact;
+        typedef typename CGAL::Uses_no_arithmetic<CI> Uses_no_arithmetic;
 
         template<class V,class W>
         result_type operator()(V const&a, W const&b)const{
@@ -1176,7 +1176,7 @@ template<class R_> struct Less_lexicographically : private Store_kernel<R_> {
         typedef R_ R;
         typedef typename Get_type<R, Bool_tag>::type result_type;
         typedef typename Get_functor<R, Compare_lexicographically_tag>::type CL;
-        typedef typename CGAL::Is_exact<CL> Is_exact;
+        typedef typename CGAL::Uses_no_arithmetic<CL> Uses_no_arithmetic;
 
         template <class V, class W>
         result_type operator() (V const&a, W const&b) const {
@@ -1194,7 +1194,7 @@ template<class R_> struct Less_or_equal_lexicographically : private Store_kernel
         typedef R_ R;
         typedef typename Get_type<R, Bool_tag>::type result_type;
         typedef typename Get_functor<R, Compare_lexicographically_tag>::type CL;
-        typedef typename CGAL::Is_exact<CL> Is_exact;
+        typedef typename CGAL::Uses_no_arithmetic<CL> Uses_no_arithmetic;
 
         template <class V, class W>
         result_type operator() (V const&a, W const&b) const {
@@ -1214,7 +1214,7 @@ template<class R_> struct Equal_points : private Store_kernel<R_> {
         typedef typename Get_functor<R, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
         // TODO: This is_exact thing should be reengineered.
         // the goal is to have a way to tell: don't filter this
-        typedef typename CGAL::Is_exact<CI> Is_exact;
+        typedef typename CGAL::Uses_no_arithmetic<CI> Uses_no_arithmetic;
 
         template<class V,class W>
         result_type operator()(V const&a, W const&b)const{

@@ -552,6 +552,8 @@ Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::update_event(Event* e,
 template <typename OvlHlpr, typename OvlTr, typename Vis>
 void Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::after_sweep()
 {
+  Base::after_sweep();
+
   // Notify boundary vertices:
   typename Vertex_map::iterator it;
   for (it = m_vertices_map.begin(); it != m_vertices_map.end(); ++it) {

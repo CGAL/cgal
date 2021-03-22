@@ -73,7 +73,7 @@ parameter must be substituted with a type that defines a set of
 geometric-object types, such as point and curve, and a set of
 operations on objects of these types (see Section \ref
 aos_sec-geom_traits); the `Dcel` parameter must be substituted with a
-type that represents a doubly-connected edge list (\sc{Dcel}) data
+type that represents a doubly-connected edge list (\dcel) data
 structure. It defines types of topological object, such as vertices,
 edges, and faces, and the operations required to maintain the
 incidence relations among objects of these types (see Section \ref
@@ -94,7 +94,7 @@ described above; the `TopologyTraits` parameter must be substituted
 with a type that deals with the topology of the surface (see Section
 \ref aos_sec-topol_traits). In particular, it maintains a
 representation of the arrangement graph embedded in the surface using
-a doubly-connected edge list (\sc{Dcel}) data-structure suitable for
+a doubly-connected edge list (\dcel) data-structure suitable for
 the particular topology.
 
 Several member functions and nested types defined in the
@@ -196,7 +196,7 @@ embedding surface plays a significant role. In Section \ref
 arr_ssecnotif we review the notification mechanism that allows
 external classes to keep track of the changes that an arrangement
 instance goes through. Section \ref arr_ssecex_dcel explains how to
-extend the \sc{Dcel} records, to store extra data with them, and to
+extend the \dcel records, to store extra data with them, and to
 efficiently update this data.  In Section \ref arr_ssecoverlay we
 introduce the fundamental operation of overlaying two arrangements.
 Section \ref arr_ssecarr_with_hist describes a class-template that
@@ -215,7 +215,7 @@ We start with a formal definition of two-dimensional arrangements, and
 proceed with an introduction to the data structure used to represent
 the incidence relations among features of two-dimensional
 arrangements, namely, the <em>doubly-connected edge list</em>, or
-\sc{Dcel} for short. In Section \ref aos_ssec-basic-arr_class we
+\dcel for short. In Section \ref aos_ssec-basic-arr_class we
 describe a central component in the \ref PkgArrangementOnSurface2
 package, namely, the `Arrangement_2` class-template, which can be used
 to represent arrangements in the plane.
@@ -267,19 +267,19 @@ C'')\f$. There are possibly more vertices in \f$\cal A(\cal C'')\f$
 than in \f$\cal A(\cal C)\f$---the vertices where curves were cut into
 \f$x\f$-monotone (non-intersecting) pieces; accordingly there may also
 be more edges in \f$\cal A(\cal C'')\f$. This graph can be represented
-using a <em>doubly-connected edge list</em> data-structure
-(\sc{Dcel}), which consists of containers of vertices, edges and faces
-and maintains the incidence relations among these cells. It is one of
-a family of combinatorial data structures called <em>halfedge data
-structures</em> (\sc{Hds}), which are edge-centered data structures
-capable of maintaining incidence relations among cells of, for
-example, planar subdivisions, polyhedra, or other orientable,
-two-dimensional surfaces embedded in space of an arbitrary
-dimension. Geometric interpretation is added by classes built on top
-of the halfedge data structure. In our implementation and in the reset
-of this chapter we use the arrangement \f$\cal A(\cal C')\f$, which is
-equal to \f$\cal A(\cal C'')\f$.  Note that \f$\cal A(\cal C) = \cal
-A(\cal C')\f$ iff \f$\cal C' == \cal C''\f$.
+using a <em>doubly-connected edge list</em> data-structure (\dcel),
+which consists of containers of vertices, edges and faces and
+maintains the incidence relations among these cells. It is one of a
+family of combinatorial data structures called <em>halfedge data
+structures</em> (<span class="textsc">Hds</span>), which are
+edge-centered data structures capable of maintaining incidence
+relations among cells of, for example, planar subdivisions, polyhedra,
+or other orientable, two-dimensional surfaces embedded in space of an
+arbitrary dimension. Geometric interpretation is added by classes
+built on top of the halfedge data structure. In our implementation and
+in the reset of this chapter we use the arrangement \f$\cal A(\cal
+C')\f$, which is equal to \f$\cal A(\cal C'')\f$.  Note that \f$\cal
+A(\cal C) = \cal A(\cal C')\f$ iff \f$\cal C' == \cal C''\f$.
 
 \cgalAdvancedBegin
 
@@ -300,7 +300,7 @@ details.
 
 \cgalAdvancedEnd
 
-The \sc{Dcel} data-structure represents each edge using a pair of
+The \dcel data-structure represents each edge using a pair of
 directed <em>halfedges</em>, one going from the
 \f$xy\f$-lexicographically smaller (left) endpoint of the curve
 towards the \f$xy\f$-lexicographically larger (right) endpoint, and
@@ -317,7 +317,7 @@ incident halfedges.)
 
 An <em>edge</em> of an arrangement is a maximal portion of a curve
 between two vertices of the arrangement. Each edge is represented in
-the \sc{Dcel} by a pair of twin halfedges. Each halfedge \f$e\f$
+the \dcel by a pair of twin halfedges. Each halfedge \f$e\f$
 stores a pointer to its <em>incident face</em>, which is the face lying
 to its left. Moreover, every halfedge is followed by another halfedge
 sharing the same incident face, such that the target vertex of the
@@ -342,13 +342,13 @@ it may contain several faces. Every face can have several inner CCBs
 in its interior, or may not contain inner CCBs at all. In addition,
 every face may contain isolated vertices in its interior.  See
 \cgalFigureRef{aos_fig-arr_segs} for an illustration of the various
-\sc{Dcel} features. For more details on the \sc{Dcel} data structure
+\dcel features. For more details on the \dcel data structure
 see \cgalCite{bkos-cgaa-00} Chapter 2.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-arr_segs,arr_segs.png}
 An arrangement of interior-disjoint line segments with some of the
-\sc{Dcel} records that represent it. The unbounded face \f$ f_0\f$ has
+\dcel records that represent it. The unbounded face \f$ f_0\f$ has
 a single connected component that forms a hole inside it, and this
 hole is comprised of several faces. The halfedge \f$ e\f$ is directed
 from its source vertex \f$ v_1\f$ to its target vertex \f$
@@ -417,7 +417,7 @@ the `Arrangement_2` class template; their description follows.
   substituted with `Arr_default_dcel<Traits>` by default, and
   we use this default value in this and in the following three
   sections. However, in many applications it is necessary to
-  extend the \sc{Dcel} features. This is done by substituting the
+  extend the \dcel features. This is done by substituting the
   `Dcel` parameter with a different type; see Section \ref arr_ssecex_dcel
   for further explanations and examples.
 </UL>
@@ -505,7 +505,7 @@ The simplest and most fundamental arrangement operations are the
 various traversal methods, which allow users to systematically go over
 the relevant features of the arrangement at hand.
 
-As mentioned above, the arrangement is represented as a \sc{Dcel},
+As mentioned above, the arrangement is represented as a \dcel,
 which stores three containers of vertices, halfedges and faces; thus,
 the `Arrangement_2` class template supplies iterator types for these
 containers, respectively. For example, if `arr` is an `Arrangement_2`
@@ -841,7 +841,7 @@ examples.
 Illustrations of the various specialized insertion procedures. The
 inserted \f$x\f$-monotone curve is drawn as a dashed line, surrounded
 by two solid arrows that represent the pair of twin halfedges added to
-the \sc{Dcel}. Existing vertices are shown as black discs, while new
+the \dcel. Existing vertices are shown as black discs, while new
 vertices are shown as light discs. Existing halfedges that are
 affected by the insertion operations are drawn as dashed arrows.  (a)
 Inserting a curve as a new hole inside the face \f$f\f$.  (b)
@@ -1402,9 +1402,9 @@ vary according to the user choice.} for answering queries:
   of <em>landmark</em> points, the location of which in the
   arrangement is known. It employs the <em>landmark</em>
   strategy. Given a query point, it uses a nearest-neighbor
-  search-structure (a \sc{Kd}-tree is used by default) to find the
-  nearest landmark, and then traverses the straight-line segment
-  connecting this landmark to the query point.
+  search-structure (a <span class="textsc">Kd</span>-tree is used by
+  default) to find the nearest landmark, and then traverses the
+  straight-line segment connecting this landmark to the query point.
 
   There are various ways to select the landmark set in the
   arrangement. The selection is governed by the `Generator`
@@ -1476,23 +1476,24 @@ trapezoidal map RIC strategy. In addition, although both resulting
 data structures are asymptotically linear in size, the actual amount
 of memory consumed by the landmark algorithm is typically smaller than
 to the amount used by the trapezoidal map RIC algorithm, due to the
-space-efficient \sc{Kd}-tree used by the landmark algorithm as the
-nearest-neighbor search-structure.  The trapezoidal map RIC algorithm
-has expected logarithmic query time, while the query time for the
-landmark algorithm may be as large as linear. In practice however, the
-query times of both strategies are competitive. For a detailed
-experimental comparison see \cgalCite{cgal:hh-eplca-05}.
+space-efficient <span class="textsc">Kd</span>-tree used by the
+landmark algorithm as the nearest-neighbor search-structure.  The
+trapezoidal map RIC algorithm has expected logarithmic query time,
+while the query time for the landmark algorithm may be as large as
+linear. In practice however, the query times of both strategies are
+competitive. For a detailed experimental comparison see
+\cgalCite{cgal:hh-eplca-05}.
 
 Updating the auxiliary data structures of the trapezoidal map RIC
 algorithm is done very efficiently. On the other hand, updating the
 nearest-neighbor search-structure of the landmark algorithm may
 consume significant time when the arrangement changes frequently,
-especially when a \sc{Kd}-tree is used, as it must be rebuilt each
-time the arrangement changes. It is therefore recommended that the
-`Arr_landmarks_point_location` class template be used when the
-application frequently issues point-location queries on an arrangement
-that only seldom changes. If the arrangement is more dynamic and is
-frequently going through changes, the
+especially when a <span class="textsc">Kd</span>-tree is used, as it
+must be rebuilt each time the arrangement changes. It is therefore
+recommended that the `Arr_landmarks_point_location` class template be
+used when the application frequently issues point-location queries on
+an arrangement that only seldom changes. If the arrangement is more
+dynamic and is frequently going through changes, the
 `Arr_trapezoid_ric_point_location` class template should be the
 selected point-location strategy.
 
@@ -2013,7 +2014,7 @@ so it must be construct from scratch.
 (ii) The given arrangement `arr` is not empty.
 
 In the first case, we sweep over the input curves, compute their
-intersection points, and construct the \sc{Dcel} that represents their
+intersection points, and construct the \dcel that represents their
 arrangement. This process is performed in \f$O\left((n + k)\log
 n\right)\f$ time, where \f$k\f$ is the total number of intersection
 points. The running time is asymptotically better than the time needed
@@ -2301,7 +2302,7 @@ introduced.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-unb_dcel,unb_dcel.png}
-A \sc{Dcel} representing an arrangement of four lines. Halfedges are
+A \dcel representing an arrangement of four lines. Halfedges are
 drawn as thin arrows. The vertices \f$v_1, \ldots, v_8\f$ lie at
 infinity, and are not associated with valid points. The halfedges that
 connect them are fictitious, and are not associated with concrete
@@ -2314,7 +2315,7 @@ represent the four corners of the imaginary bounding rectangle.
 <!----------------------------------------------------------------------------->
 
 Instead of an explicit approach, we use an implicit bounding rectangle
-embedded in the \sc{Dcel} structure. \cgalFigureRef{aos_fig-unb_dcel}
+embedded in the \dcel structure. \cgalFigureRef{aos_fig-unb_dcel}
 shows the arrangement of four lines that subdivide the plane into
 eight unbounded faces and two bounded ones. Notice that in this case
 portions of the the unbounded faces now have outer boundaries (those
@@ -2861,10 +2862,10 @@ one pinch point, is modeled by identifying the vertical and
 identifying the horizontal sides and, in addition, contracting one of
 the pairs. However, the croissant is excluded by our definitions. All
 surfaces supported by our framework are locally homeomorphic to a
-disk, and hence an \sc{Dcel} data-structure suffices for representing
+disk, and hence an \dcel data-structure suffices for representing
 arrangements on these surfaces. The croissant is, at the pinch point,
 not locally homeomorphic to a disk, and hence a more general
-cell-tuple data structure than an \sc{Dcel} would be needed.
+cell-tuple data structure than an \dcel would be needed.
 
 A curve \f$\gamma\f$ is a continuous function \f$\gamma: I \rightarrow
 \Phi\f$, where \f$I\f$ is an open, half-open, or closed interval with
@@ -3173,12 +3174,13 @@ class, thereby extending it.
 
 A hierarchy of related concepts can be viewed as a directed acyclic
 graph, where a node of the graph represents a concept and an arc
-represents a refinement relation. An arc directed from concept \sc{A}
-to concept \sc{B} indicates that concept \sc{B} refines concept
-\sc{A}.  A rather large direccted acyclic graph is required to capture
-the entire hierarchy of the geometry traits-class concepts. In the
-following sections we review individual clusters of the graph and
-describe the relations between them.
+represents a refinement relation. An arc directed from concept <span
+class="textsc">A</span> to concept <span class="textsc">B</span>
+indicates that concept <span class="textsc">B</span> refines concept
+<span class="textsc">A</span>.  A rather large direccted acyclic graph
+is required to capture the entire hierarchy of the geometry
+traits-class concepts. In the following sections we review individual
+clusters of the graph and describe the relations between them.
 \cgalFigureRef{aos_fig-central_concept_cluster} depicts the central
 cluster.
 
@@ -3555,7 +3557,7 @@ class that models the combined concept
 \cgalFigureRef{aos_fig-open_concept_hierarchy} can handle curves that
 are open in any direction. Recall that an arrangement that supports
 unbounded \f$x\f$-monotone curves maintains an implicit bounding
-rectangle in the \sc{Dcel} structure; see Section \ref
+rectangle in the \dcel structure; see Section \ref
 aos_sec-unbounded. If some curves inserted into an arrangement object
 are expected to be unbounded; namely, there exists \f$d \in \{0,1\}\f$
 such that \f$\lim_{t \rightarrow d}x(t) = \pm\infty\f$ or \f$\lim_{t
@@ -4648,9 +4650,9 @@ these types, solving quadratic equations, and extracting the real
 roots of polynomials with integer coefficients. The use of the
 `CORE_algebraic_number_traits` class, which is included in the
 arrangement package, is highly recommended. The traits class-template
-relies on the multi-precision number types implemented in the
-\sc{Core} library and performs exact computations on the number types
-it defines.
+relies on the multi-precision number types implemented in the <span
+class="textsc">Core</span> library and performs exact computations on
+the number types it defines.
 
 </UL>
 
@@ -4658,10 +4660,11 @@ The instantiation of the conic traits class-template is slightly more
 complicated than the instantiation of the traits classes you have
 encountered so far. This instantiation is exemplified in the header
 file `arr_conics.h`. Note how we first define the rational and
-algebraic kernels using the number types given by the \sc{Core} number
-type traits-class, then use them to define the conic traits
-class-template. Also note the types defined by the rational kernels,
-which we need for conveniently constructing conic arcs.
+algebraic kernels using the number types given by the <span
+class="textsc">Core</span> number type traits-class, then use them to
+define the conic traits class-template. Also note the types defined by
+the rational kernels, which we need for conveniently constructing
+conic arcs.
 
 The `Arr_conic_traits_2` models the `ArrangementTraits_2` and
 `ArrangementLandmarkTraits_2` concepts. Its \link
@@ -5351,7 +5354,7 @@ to the geometric objects (curves and to points). The data is
 automatically manipulated by the decorators and distributed to the
 constructed geometric entities. Additional information can
 alternatively be maintained by extending the vertex, halfedge, or face
-types provided by the \sc{Dcel} class used by the arrangement; see
+types provided by the \dcel class used by the arrangement; see
 Section \ref arr_ssecex_dcel for details. In many cases, however, it is
 convenient to attach the data to the curve itself, exploiting the
 automatic proliferation of the additional data fields from each curve
@@ -5526,7 +5529,7 @@ handle these topological entities, used by the
 `Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>` class
 template and by the peripheral modules. Every topology traits class
 must model the basic concept `ArrangementBasicTopologyTraits`. A model
-of this basic concept holds the (\sc{Dcel}) data structure used to
+of this basic concept holds the (\dcel) data structure used to
 represent the arrangement cells (i.e., vertices, edges, and facets)
 and the incidence relations between them. At this point we do not
 expose the concepts that refine the basic concept. The package
@@ -5714,7 +5717,7 @@ of \f$e_v\f$.
 
 \cgalExample{Arrangement_on_surface_2/observer.cpp}
 
-Observers are especially useful when the \sc{Dcel} records are
+Observers are especially useful when the \dcel records are
 extended and store additional data-fields, since they help update
 this data stored in these fields, as the following sections reveal.
 
@@ -5732,21 +5735,21 @@ Arrangement_on_surface_2::X_monotone_curve_2
 class. Extending the geometric traits-class types by using a
 traits-class decorator, as explained in Section \ref arr_ssecmeta_tr,
 might be a sufficient solution for some applications.  However, the
-\sc{Dcel} faces are not associated with any geometric object, so
-traits-class decorators cannot help here. Extending the \sc{Dcel} face
+\dcel faces are not associated with any geometric object, so
+traits-class decorators cannot help here. Extending the \dcel face
 records comes in handy is such cases. As a matter of fact, it is
-possible to conveniently extend all \sc{Dcel} records (namely
+possible to conveniently extend all \dcel records (namely
 vertices, halfedges, and faces), which is advantageous for some
 applications.
 
-All examples presented so far use the default \sc{Dcel}; namely, they
+All examples presented so far use the default \dcel; namely, they
 employ the `Arr_default_dcel<Traits>` instance. This is done
 implicitly, as an instance of this class template serves as the
 default parameter for the `Arrangement_2` class template; see Section
-\ref aos_ssec-basic-arr_class. The default \sc{Dcel} class associates
+\ref aos_ssec-basic-arr_class. The default \dcel class associates
 points with vertices and \f$x\f$-monotone curves with halfedges, but
 nothing more.  In this section we show how to use alternative
-\sc{Dcel} types to extend the desired \sc{Dcel} records.
+\dcel types to extend the desired \dcel records.
 
 <!----------------------------------------------------------------------------->
 \subsubsection arr_sssecex_dcel_face Extending the DCEL Faces
@@ -5754,8 +5757,8 @@ nothing more.  In this section we show how to use alternative
 
 The `Arr_face_extended_dcel<Traits, FaceData>` class-template is used
 to associate auxiliary data field of type `FaceData` to each face
-record in the \sc{Dcel}.  When the `Arrangement_2<Traits,Dcel>` class
-template is instantiated, substituting the \sc{Dcel} parameter with an
+record in the \dcel.  When the `Arrangement_2<Traits,Dcel>` class
+template is instantiated, substituting the \dcel parameter with an
 instance of this class template, the interface of the nested `Face`
 type is extended with the access function `data()` and with the
 modifier `set_data()`. Using these extra functions it is
@@ -5807,15 +5810,15 @@ crucial. Perhaps less common, but also important to satisfy, is the
 need to extend the vertex and halfedge records as well. The
 `Arr_extended_dcel<Traits, VertexData, HalfedgeData, FaceData>`
 class-template is used to associate auxiliary data fields of types
-`VertexData`, `HalfedgeData`, and `FaceData` with \sc{Dcel} vertex,
+`VertexData`, `HalfedgeData`, and `FaceData` with \dcel vertex,
 halfedge, and face record types, respectively.  When the
 `Arrangement_2<Traits,Dcel>` class template is instantiated,
-substituting the `Dcel` parameter with an instance of this \sc{Dcel}
+substituting the `Dcel` parameter with an instance of this \dcel
 class-template, the interfaces of the nested types Vertex, Halfedge,
 and Face are extended with the access function `data()` and with the
 modifier `set_data()`.
 
-The next example shows how to use a \sc{Dcel} with extended vertex,
+The next example shows how to use a \dcel with extended vertex,
 halfedge, and face records. In this example each vertex is associated
 with a color, which is either blue, red, or white, depending on whether
 the vertex is isolated, represents a segment endpoint, or represents
@@ -5840,19 +5843,19 @@ arrangement object.
 
 \cgalAdvancedBegin
 
-The various \sc{Dcel} classes presented in this section are well
+The various \dcel classes presented in this section are well
 suited for most applications based on the \ref
 PkgArrangementOnSurface2 package. They are all defined using helper
-constructs, and in particular the base \sc{Dcel} class-template
+constructs, and in particular the base \dcel class-template
 `Arr_dcel_base}`.  However, there are cases where special
-requirements, not addressed by these \sc{Dcel} classes, are needed.
-In such cases you may explicitly extend the base \sc{Dcel}
+requirements, not addressed by these \dcel classes, are needed.
+In such cases you may explicitly extend the base \dcel
 class-template, as described in the next paragraph, or implement your
-own \sc{Dcel} class from scratch and use the resulting \sc{Dcel} to
+own \dcel class from scratch and use the resulting \dcel to
 instantiate the `Arrangement_2` class template. In any case such a
 class must model the concept `ArrangementDcel` or its refinement
 `ArrangementDcelWithRebind`. The latter requires a `rebind` struct
-template, which implements a policy-clone idiom. Here, the \sc{Dcel}
+template, which implements a policy-clone idiom. Here, the \dcel
 class is the policy class and the `rebind` member template struct
 is used to pass a different traits type parameter to the policy class
 template.
@@ -5878,7 +5881,7 @@ due to compiler padding.\cgalFootnote{Compilers add pad bytes into
 user-defined constructs to comply with alignment restrictions imposed
 by target microprocessors.} Moreover, the code may look cumbersome.
 
-The extended \sc{Dcel} class that addresses the problem raised above
+The extended \dcel class that addresses the problem raised above
 is listed below. Here, each feature type is explicitly extended with
 two strings, namely, `name` and `type`, eliminating the data
 constructs.
@@ -5953,7 +5956,7 @@ efficient process. For example, monochromatic intersections are not
 computed.
 
 The plane-sweep visitor that concretizes the overlay operation needs
-to construct a \sc{Dcel} that properly represents the overlay of two
+to construct a \dcel that properly represents the overlay of two
 input arrangements. A face in the overlay arrangement corresponds to
 overlapping regions of the blue and red faces. An edge in the overlay
 arrangement is due to a blue edge, a red edge, or an overlap of two
@@ -5977,10 +5980,10 @@ same geometry-traits class.
 
 The `overlay()` function template is suitable for
 arrangements that do not store any additional data with their
-\sc{Dcel} records; namely, arrangements defined using an instance of
-the default \sc{Dcel} class-template `Arr_default_dcel`. Typically,
+\dcel records; namely, arrangements defined using an instance of
+the default \dcel class-template `Arr_default_dcel`. Typically,
 the overlay arrangement in this case does not store extra data with
-its \sc{Dcel} records as well (or if it does, the additional
+its \dcel records as well (or if it does, the additional
 data-fields cannot be computed by the overlay operation). The overlay
 arrangement is equivalent to the arrangement induced by all curves of
 `arr_r` and `arr_b`. Indeed, it is possible to obtain the same result
@@ -6022,7 +6025,7 @@ We distinguish between (i) an overlay of two arrangements that store
 additional data-fields only with their faces e.g., the geographic-map
 example given at the beginning of this section) and (ii) an overlay of
 two arrangements that store additional data fields with all their
-\sc{Dcel} records (or at least not only with their faces).  The
+\dcel records (or at least not only with their faces).  The
 arrangement that results from overlaying two face-extended
 arrangements typically also stores additional data-fields with its
 faces. The types of such arrangements, for example, could be instances
@@ -6033,8 +6036,8 @@ arr_sssecex_dcel_face). The data field that is attached to an overlay
 face can be computed from the data fields of the two faces (in `arr_r`
 and `arr_b`) that induce the overlay face. Similarly, the arrangement
 that results from overlaying two arrangements that store additional
-data fields with all their \sc{Dcel} records typically also stores
-additional data-fields with all its \sc{Dcel} records. The types of
+data fields with all their \dcel records typically also stores
+additional data-fields with all its \dcel records. The types of
 such arrangements, for example, could be instances of the
 `Arrangement_2<Traits,Dcel>` class template, where the `Dcel`
 parameters are substituted with instances of the `Arr_extended_dcel`
@@ -6043,7 +6046,7 @@ attached to an overlay feature can be computed from the data fields of
 the two features (in `arr_r` and `arr_b`) that induce the overlay
 feature.
 
-As mentioned in the previous paragraph, if any of the \sc{Dcel}
+As mentioned in the previous paragraph, if any of the \dcel
 records of your arrangements are extended, you can pass a fourth
 argument to the `overlay()` call, also referred to as the overlay
 traits, to control the generation of the extended data in the
@@ -6061,8 +6064,8 @@ overlay faces.
 
 The following example shows how to compute the intersection of two
 polygons using the `overlay()` function template. It uses a
-face-extended \sc{Dcel} type to instantiate the arrangement
-classes. Each face of the the \sc{Dcel} is extended with a Boolean
+face-extended \dcel type to instantiate the arrangement
+classes. Each face of the the \dcel is extended with a Boolean
 flag. A polygon is represented as a <em>marked</em> arrangement face
 (whose flag is set). The example uses an instance of the
 `Arr_face_overlay_traits<ArrR,ArrB,ArrO,OverlayFaceData>` class
@@ -6105,8 +6108,8 @@ into strings to produce the final labels.
 \cgalExample{Arrangement_on_surface_2/overlay_unbounded.cpp}
 
 If the red and blue arrangements store additional data-fields with all
-their \sc{dcel} records, and the data associated with the overlay
-\sc{dcel} features should be computed from the red and blue \sc{dcel}
+their \dcel records, and the data associated with the overlay
+\dcel features should be computed from the red and blue \dcel
 features that induce it, then an appropriate overlay-traits argument
 must be passed to the `overlay()` call. The overlay-traits type models
 the `OverlayTraits` concept, which requires the provision of ten
@@ -6249,7 +6252,7 @@ arbitrary two-dimensional curves, you end up with a collection \f$\cal
 C''\f$ of \f$x\f$-monotone subcurves of \f$\cal C\f$ that are pairwise
 disjoint in their interior; see Section \ref aos_sec-intro. These
 subcurves are associated with the arrangement edges (more precisely,
-with pairs of \sc{Dcel} halfedges). The connection between the
+with pairs of \dcel halfedges). The connection between the
 originating input curves and the arrangement edges is lost during the
 construction process. This loss might be acceptable for some
 applications. However, in many practical cases it is important to
@@ -6272,8 +6275,8 @@ its subdivision into \link
 ArrangementBasicTraits_2::X_monotone_curve_2
 `X_monotone_curve_2`\endlink objects, among the others.  The `Dcel`
 parameter must be substituted with a model of the `ArrangementDcel`
-concept. You can use either the default \sc{Dcel} class or an extended
-\sc{Dcel} class (see Section \ref arr_ssecex_dcel) based on your
+concept. You can use either the default \dcel class or an extended
+\dcel class (see Section \ref arr_ssecex_dcel) based on your
 needs. An arrangement that support the cross-mapping mentioned above
 is referred to as an arrangement with history. In the following we use
 the `Arrangement_with_history_2<>` class template to demonstrate
@@ -6354,7 +6357,7 @@ arrangement stores a consolidated container of input curves, and
 automatically preserves the cross-mapping between the arrangement
 edges and the consolidated curve-set. You may also employ an
 overlay-traits class to maintain any type of auxiliary data stored
-with the \sc{Dcel} cells; see Section \ref arr_ssecoverlay.
+with the \dcel cells; see Section \ref arr_ssecoverlay.
 
 <!----------------------------------------------------------------------------->
 \subsubsection arr_sssecmodif_traverse Modifying an Arrangement with History
@@ -6534,7 +6537,7 @@ the arrangement features. Thus, they are ideal for arrangements
 instantiated using the `Arr_default_dcel` class.
 However, as explained in Section \ref arr_ssecex_dcel, one can easily
 extend the arrangement faces by using the `Arr_face_extended_dcel`
-template, or extend all \sc{Dcel} records by using the `Arr_extended_dcel`
+template, or extend all \dcel records by using the `Arr_extended_dcel`
 template. In such cases, it might be crucial that the auxiliary data fields
 are written to the file and read from there.
 
@@ -6551,13 +6554,13 @@ auxiliary data that may be associated with the arrangement features.
 This is the default formatter used by the arrangement inserter and the
 arrangement extractor, as defined above.
 <LI>`Arr_face_extended_text_formatter<Arrangement>` operates on
-arrangements whose \sc{Dcel} representation is based on the
+arrangements whose \dcel representation is based on the
 `Arr_face_extended_dcel<Traits,FaceData>` class (see
 Section \ref arr_sssecex_dcel_face). It supports reading and writing
 the auxiliary data objects stored with the arrangement faces provided
 that the `FaceData` class supports an inserter and an extractor.
 <LI>`Arr_extended_dcel_text_formatter<Arrangement>` operates on
-arrangements whose \sc{Dcel} representation is based on the
+arrangements whose \dcel representation is based on the
 `Arr_extended_dcel<Traits,VertexData,HalfedgeData,FaceData>` class
 (see Section \ref arr_sssecex_dcel_all). It supports reading and writing
 the auxiliary data objects stored with the arrangement vertices, edges
@@ -6625,37 +6628,40 @@ and defines a simple textual input/output format.
 \section aos_sec-bgl Adapting to Boost Graphs
 <!--=========================================================================-->
 
-\sc{Boost}\cgalFootnote{See also \sc{Boost}'s homepage at:
-<TT>www.boost.org</TT>.}  is a collection of portable \cpp libraries
-that extend the \cpp Standard Library. The \sc{Boost} Graph Library
-(\sc{bgl}), which one of the libraries in the collection, offers an
-extensive set of generic graph algorithms parameterized through
-templates.  As our arrangements are embedded as planar graphs, it is
-only natural to extend the underlying data structure with the
-interface that the <\sc{bgl} expects, and gain the ability to perform
-the operations that the \sc{bgl} supports, such as shortest-path
+<span class="textsc">Boost</span>\cgalFootnote{See also <span
+class="textsc">Boost</span>'s homepage at: <TT>www.boost.org</TT>.}
+is a collection of portable \cpp libraries that extend the \cpp
+Standard Library. The <span class="textsc">Boost</span> Graph Library
+(<span class="textsc">bgl</span>), which one of the libraries in the
+collection, offers an extensive set of generic graph algorithms
+parameterized through templates.  As our arrangements are embedded as
+planar graphs, it is only natural to extend the underlying data
+structure with the interface that the <span class="textsc">bgl</span>
+expects, and gain the ability to perform the operations that the <span
+class="textsc">bgl</span> supports, such as shortest-path
 computation. This section describes how to apply the graph algorithms
-implemented in the \sc{bgl} to `Arrangement_2` instances.
+implemented in the <span class="textsc">bgl</span> to `Arrangement_2`
+instances.
 
-An instance of `Arrangement_2` is adapted to a \sc{Boost} graph
-through the provision of a set of free functions that operate on the
-arrangement features and conform with the relevant BGL
-concepts. Besides the straightforward adaptation, which associates a
-vertex with each \sc{Dcel} vertex and an edge with each \sc{Dcel}
-halfedge, the package also offer a <em>dual</em> adaptor, which
-associates a graph vertex with each \sc{Dcel} face, such that two
-vertices are connected, iff there is a \sc{Dcel} halfedge that
+An instance of `Arrangement_2` is adapted to a <span
+class="textsc">Boost</span> graph through the provision of a set of
+free functions that operate on the arrangement features and conform
+with the relevant BGL concepts. Besides the straightforward
+adaptation, which associates a vertex with each \dcel vertex and an
+edge with each \dcel halfedge, the package also offer a <em>dual</em>
+adaptor, which associates a graph vertex with each \dcel face, such
+that two vertices are connected, iff there is a \dcel halfedge that
 connects the two corresponding faces.
 
 <!----------------------------------------------------------------------------->
 \subsection arr_ssecbgl_primal The Primal Arrangement Representation
 <!----------------------------------------------------------------------------->
 
-Arrangement instances are adapted to \sc{Boost} graphs by specializing
-the \link BGLArgtGT `boost:graph_traits` \endlink template for
-`Arrangement_2` instances. The graph-traits states the graph concepts
-that the arrangement class models (see below) and defines the types
-required by these concepts.
+Arrangement instances are adapted to <span class="textsc">Boost</span>
+graphs by specializing the \link BGLArgtGT `boost:graph_traits`
+\endlink template for `Arrangement_2` instances. The graph-traits
+states the graph concepts that the arrangement class models (see
+below) and defines the types required by these concepts.
 
 In this specialization the `Arrangement_2` vertices correspond to the
 graph vertices, where two vertices are adjacent if there is at least
@@ -6668,13 +6674,13 @@ to be directed as well. Moreover, as several interior-disjoint
 \f$x\f$-monotone curves (say circular arcs) may share two common
 endpoints, inducing an arrangement with two vertices that are
 connected with several edges, we allow parallel edges in our
-\sc{Boost} graph.
+<span class="textsc">Boost</span> graph.
 
 Given an `Arrangement_2` instance, we can efficiently traverse its
 vertices and halfedges. Thus, the arrangement graph is a model of the
-concepts `VertexListGraph` and `EdgeListGraph` introduced by the
-\sc{bgl}.  At the same time, we use an iterator adapter of the
-circulator over the halfedges incident to a vertex
+concepts `VertexListGraph` and `EdgeListGraph` introduced by the <span
+class="textsc">bgl</span>.  At the same time, we use an iterator
+adapter of the circulator over the halfedges incident to a vertex
 (`Halfedge_around_vertex_circulator` - see Section \ref
 arr_sssectr_vertex), so it is possible to go over the ingoing and
 outgoing edges of a vertex in linear time. Thus, our arrangement graph
@@ -6685,24 +6691,26 @@ edges).
 It is important to notice that the vertex descriptors we use are \link
 Arrangement_2 Vertex_handle `Vertex_handle`\endlink objects and
 <em>not</em> vertex indices. However, in order to gain more efficiency
-in most \sc{bgl} algorithms, it is better to have them indexed \f$0,
-1, \ldots, (n-1)\f$, where \f$n\f$ is the number of vertices. We
-therefore introduce the `Arr_vertex_index_map<Arrangement>`
-class-template, which maintains a mapping of vertex handles to
-indices, as required by the \sc{bgl}. An instance of this class must
-be attached to a valid arrangement vertex when it is created. It uses
-the notification mechanism (see Section \ref arr_ssecnotif) to
+in most <span class="textsc">bgl</span> algorithms, it is better to
+have them indexed \f$0, 1, \ldots, (n-1)\f$, where \f$n\f$ is the
+number of vertices. We therefore introduce the
+`Arr_vertex_index_map<Arrangement>` class-template, which maintains a
+mapping of vertex handles to indices, as required by the <span
+class="textsc">bgl</span>. An instance of this class must be attached
+to a valid arrangement vertex when it is created. It uses the
+notification mechanism (see Section \ref arr_ssecnotif) to
 automatically maintain the mapping of vertices to indices, even when
 new vertices are inserted into the arrangement or existing vertices
 are removed.
 
-In most algorithms provided by the \sc{bgl}, the output is given by
-<em>property maps</em>, such that each map entry corresponds to a
-vertex.  For example, when we compute the shortest paths from a given
-source vertex \f$s\f$ to all other vertices we can obtain a map of
-distances and a map of predecessors - namely for each \f$v\f$ vertex
-we have its distance from \f$s\f$ and a descriptor of the vertex that
-precedes \f$v\f$ in a shortest path from \f$s\f$.
+In most algorithms provided by the <span class="textsc">bgl</span>,
+the output is given by <em>property maps</em>, such that each map
+entry corresponds to a vertex.  For example, when we compute the
+shortest paths from a given source vertex \f$s\f$ to all other
+vertices we can obtain a map of distances and a map of predecessors -
+namely for each \f$v\f$ vertex we have its distance from \f$s\f$ and a
+descriptor of the vertex that precedes \f$v\f$ in a shortest path from
+\f$s\f$.
 
 If the vertex descriptors are simply indices, boost supplies tools to
 easily represent property maps using vectors.  The
@@ -6714,8 +6722,8 @@ mapping from \link Arrangement_on_surface_2::Vertex_handle
 however, that unlike the `Arr_vertex_index_map` class template, the
 vertex property-map class is not kept synchronized with the number of
 vertices in the arrangement, so it should not be reused in calls to
-\sc{bgl} functions in case the arrangement is modified in between
-these calls.
+<span class="textsc">bgl</span> functions in case the arrangement is
+modified in between these calls.
 
 The first example of this section demonstrates the application of
 Dijkstra's shortest path algorithm to compute the shortest-path length
@@ -6724,8 +6732,9 @@ other vertices. The length of a path is defined as the sum of squared
 Euclidean lengths of its segments. It uses an instance of the functor
 template `Edge_length<Arrangement>}` to compute the squared Euclidean
 length of the linear curve associated with a given halfedge of the
-arrangement. The functor implements a \sc{Boost} property-map that
-attaches square lengths to edges; when the \sc{bgl} algorithm queries
+arrangement. The functor implements a <span
+class="textsc">Boost</span> property-map that attaches square lengths
+to edges; when the <span class="textsc">bgl</span> algorithm queries
 the property map for a squared length of an edge the property map
 computes and returns it. The functor template is defined in the header
 file `Edge_length.h`.
@@ -6765,15 +6774,16 @@ An arrangement of seven line segments, as constructed by
 
 In the following example we construct an arrangement of seven line
 segments, as shown in \cgalFigureRef{aos_fig-bgl_primal_adapter}.
-Then, it uses the \sc{bgl} generic implementation of Dijkstra's
-shortest-paths algorithm to compute the sum of squared distances to
-all vertices from the lexicographically smallest vertex \f$v_0\f$ in
-the arrangement. Note the usage of the `Arr_vertex_property_map` class
-template in the call to `boost::dijkstra_shortest_paths()` and in the
-definition of the distance property-map. We instantiate a property map
-that attaches a number of type `Number_type` (which is a type of
-unlimited precision) to each vertex. The number represents the sum of
-squared distances of the vertex from $v_0$.
+Then, it uses the <span class="textsc">bgl</span> generic
+implementation of Dijkstra's shortest-paths algorithm to compute the
+sum of squared distances to all vertices from the lexicographically
+smallest vertex \f$v_0\f$ in the arrangement. Note the usage of the
+`Arr_vertex_property_map` class template in the call to
+`boost::dijkstra_shortest_paths()` and in the definition of the
+distance property-map. We instantiate a property map that attaches a
+number of type `Number_type` (which is a type of unlimited precision)
+to each vertex. The number represents the sum of squared distances of
+the vertex from $v_0$.
 
 \cgalExample{Arrangement_on_surface_2/bgl_primal_adapter.cpp}
 
@@ -6792,15 +6802,16 @@ dual interpretation to an arrangement instance.
 
 In a dual representation, \link Arrangement_on_surface_2::Face_handle
 `Face_handle`\endlink is the graph-vertex type, while \link
-Arrangement_on_surface_2::Halfedge_handle `Halfedge_handle`\endlink is the
-graph-edge type. We treat the graph edges as directed, such that a
+Arrangement_on_surface_2::Halfedge_handle `Halfedge_handle`\endlink is
+the graph-edge type. We treat the graph edges as directed, such that a
 halfedge `e` is directed from \f$f_1\f$, which is its incident face,
 to \f$f_2\f$, which is the incident face of its twin halfedge. As two
 arrangement faces may share more than a single edge on their boundary,
-we allow parallel edges (loops) in our \sc{Boost} graph. As is the
-case in the primal graph, the dual arrangement graph is also a model
-of the concepts `VertexListGraph`, `EdgeListGraph` and
-`BidirectionalGraph` (thus also of `IncidenceGraph`).
+we allow parallel edges (loops) in our <span
+class="textsc">Boost</span> graph. As is the case in the primal graph,
+the dual arrangement graph is also a model of the concepts
+`VertexListGraph`, `EdgeListGraph` and `BidirectionalGraph` (thus also
+of `IncidenceGraph`).
 
 Since we use \link Arrangement_on_surface_2::Face_handle
 `Face_handle`\endlink objects as the vertex descriptors, we define the
@@ -6859,7 +6870,7 @@ the program coded in \ref
 Arrangement_on_surface_2/bgl_primal_adapter.cpp; see
 \cgalFigureRef{aos_fig-bgl_primal_adapter}. Then, it performs a
 breadth-first search traversal on the face graph, starting from the
-unbounded face. The \sc{Dcel} faces are extended with an unsigned
+unbounded face. The \dcel faces are extended with an unsigned
 integer indicating the discovered time of the face. The code uses a
 visitor that obtains the times and writes them into a property map
 that updates the faces
@@ -6889,7 +6900,7 @@ insertion-functions instead of the general ones; e.g., `insert()`.
 
 <LI>When the curves to be inserted into an arrangement are segments that
 are pairwise disjoint in their interior, it is more efficient to use
-the traits class `Arr_non_caching_segment_traits_2` rather then
+the traits class `Arr_non_caching_segment_traits_2` rather than
 the default one (`Arr_segment_traits_2`).
 
 If the segments may intersect each other, the default traits class
@@ -6900,7 +6911,8 @@ On rare occasions the traits class `Arr_non_caching_segment_traits_2`
 exhibits slightly better performance than the default one
 (`Arr_segment_traits_2` even when the segments intersect each other,
 due to the small overhead of the latter (optimized) traits class. (For
-example, when the so-called \sc{Leda} rational kernel is used.)
+example, when the so-called <span class="textsc">Leda</span> rational
+kernel is used.)
 
 <LI>Prior knowledge of the combinatorial structure of the arrangement
 can be used to accelerate operations that insert \f$x\f$-monotone
@@ -6912,7 +6924,7 @@ the arrangement. The specialized insertion functions, i.e.,
 `Arrangement_on_surface_2::insert_at_vertices()` can be used according
 to the available information. These functions hardly involve any
 geometric operations, if at all. They accept topologically related
-parameters, and use them to operate directly on the \sc{Dcel} records,
+parameters, and use them to operate directly on the \dcel records,
 thus saving algebraic operations, which are especially expensive when
 high-degree curves are involved.
 

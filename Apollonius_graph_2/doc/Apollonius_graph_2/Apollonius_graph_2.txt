@@ -181,7 +181,7 @@ two visible circles.
 
 The 2D Apollonius graph class
 `Apollonius_graph_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>`
-follows the design of the triangulation package of \cgal. It is
+follows the design of the triangulation packages of \cgal. It is
 parametrized by two arguments:
 <UL>
 <LI>the <B>geometric traits</B> class. It provides the basic

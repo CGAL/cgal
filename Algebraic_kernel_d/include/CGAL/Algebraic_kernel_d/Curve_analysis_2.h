@@ -2007,7 +2007,7 @@ public:
      *
      * For each status line at an event and each status line that represents
      * an interval, all y-coordinates are approximated such that their
-     * isolating interval has absolute size smaller then \c precision.
+     * isolating interval has absolute size smaller than \c precision.
      */
     void refine_all(Bound precision) {
 

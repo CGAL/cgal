@@ -411,7 +411,7 @@ class Intersection_of_triangle_meshes
     }
 
     Key key(ipt.type_1, ipt.type_2, h1, h2);
-    if (&tm1==&tm2 && h1>h2)
+    if (&tm1==&tm2 && h2<h1)
       key=Key(ipt.type_2, ipt.type_1, h2, h1);
 
     std::pair<typename std::map<Key,Node_id>::iterator,bool> res=
