@@ -27,7 +27,10 @@ find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 # Find Qt5 itself
 find_package(Qt5 QUIET COMPONENTS Script OpenGL Gui Svg)
 
-if(CGAL_Qt5_FOUND AND Qt5_FOUND)
+find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+include(CGAL_Eigen3_support)
+
+if(CGAL_Qt5_FOUND AND Qt5_FOUND AND TARGET CGAL::Eigen3_support)
   # Include this package's headers first
 
   include_directories(BEFORE ./ ./include)
@@ -40,7 +43,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Triangulation_on_sphere_2_Demo )
 
-  target_link_libraries( Triangulation_on_sphere_2_Demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt5)
+  target_link_libraries( Triangulation_on_sphere_2_Demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 CGAL::Eigen3_support)
 else()
   message(STATUS "NOTICE: This demo requires CGAL, the QGLViewer, OpenGL and Qt4, and will not be compiled.")
 endif()

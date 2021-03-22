@@ -1,7 +1,4 @@
-// Author: Sebastien Loriot sebastien.loriot@sophia.inria.fr
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_spherical_kernel_3.h>
 
 #include <CGAL/Delaunay_triangulation_on_sphere_traits_2.h>
 #include <CGAL/Projection_on_sphere_traits_3.h>
@@ -10,6 +7,7 @@
 #include <CGAL/utility.h>
 #include <CGAL/Qt/DemosMainWindow.h>
 
+#include <QApplication>
 #include <QMainWindow>
 #include <QFileDialog>
 
@@ -18,32 +16,22 @@
 #include <list>
 #include <fstream>
 
-#include <QApplication>
-
 typedef CGAL::Exact_predicates_inexact_constructions_kernel          Kernel;
+typedef Kernel::FT                                                   FT;
 typedef Kernel::Point_3                                              Point_3;
-
-#include "Viewer.h"
-#include "ui_Mainwindow.h"
+typedef Kernel::Segment_3                                            Segment_3;
 
 typedef CGAL::Projection_on_sphere_traits_3<Kernel>                  Projection_traits;
 typedef CGAL::Delaunay_triangulation_on_sphere_2<Projection_traits>  Projected_DToS2;
 
-struct Cell_info
-{
-  Point_3* pt;
-  Cell_info() : pt(nullptr) { }
-  ~Cell_info() { if(pt != nullptr) delete pt; }
-};
+typedef std::list<std::vector<Point_3> >                             Subsampled_arcs;
 
-Projection_traits traits(Kernel::Point_3(0,0,0));
-Projected_DToS2 dtos(traits);
+#include "Viewer.h"
+#include "ui_Mainwindow.h"
 
 template <class Output_iterator>
-void read_points(const char* file_path,Output_iterator out)
+void read_points(const char* file_path, Output_iterator out)
 {
-  int nb;
-  double x,y,z;
   std::ifstream input(file_path);
   if(!input)
   {
@@ -51,19 +39,14 @@ void read_points(const char* file_path,Output_iterator out)
     std::exit(EXIT_FAILURE);
   }
 
-  input >> nb;
-
-  for(int i=0; i<nb; ++i)
-  {
-    // @warning tmp : must handle the sphere on which are points (parameter of the traits?)
-    input >> x >> y >> z;
-    *out++ = Point_3(x/100., y/100., z/100.);
-  }
+  double x,y,z;
+  while(input >> x >> y >> z)
+    *out++ = Point_3(x, y, z);
 }
 
-class MainWindow :
-  public CGAL::Qt::DemosMainWindow,
-  public Ui::MainWindow
+class MainWindow
+  : public CGAL::Qt::DemosMainWindow,
+    public Ui::MainWindow
 {
   Q_OBJECT
 public:
@@ -75,17 +58,18 @@ public:
 public slots:
   void open(QString filename)
   {
-    std::vector<Kernel::Point_3> lst_pt;
+    std::vector<Point_3> lst_pt;
     read_points(filename.toUtf8().data(), std::back_inserter(lst_pt));
-    auto cst = traits.construct_point_on_sphere_2_object();
-    dtos.insert(boost::make_transform_iterator(lst_pt.begin(), cst),
-                boost::make_transform_iterator(lst_pt.end(), cst));
 
-    Kernel::Point_3 center(0,0,0);
-    double scale = 1;
+    const Point_3 center(0,0,0);
+    const FT radius = 1;
+    Projection_traits traits(center, radius);
+    Projected_DToS2 dtos(lst_pt.begin(), lst_pt.end(), traits);
 
-    // Instantiate the viewer.
-    viewer->open(lst_pt.begin(), lst_pt.end(), dtos, center, scale);
+    std::cout << dtos.number_of_vertices() << " vertices" << std::endl;
+
+    // Instantiate the viewer
+    viewer->open(lst_pt.begin(), lst_pt.end(), dtos);
   }
 
   void on_action_Quit_triggered()
@@ -103,12 +87,12 @@ public slots:
 
 int main(int argc, char** argv)
 {
-  // Read command lines arguments.
+  // Read command lines arguments
   QApplication application(argc,argv);
   MainWindow mainWindow;
   mainWindow.show();
 
-  // Run main loop.
+  // Run main loop
   return application.exec();
 }
 

@@ -1,11 +1,13 @@
 #include "Viewer.h"
+
 #include <CGAL/point_generators_3.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Exact_spherical_kernel_3.h>
-#include <vector>
+
 #include <CGAL/Qt/CreateOpenGLContext.h>
 #include "create_sphere.h"
 
+#include <vector>
 
 Viewer::Viewer(QWidget* parent )
   : CGAL::QGLViewer(parent)
@@ -13,9 +15,9 @@ Viewer::Viewer(QWidget* parent )
   draw_balls = true;
   draw_inputs = false;
   create_flat_sphere(1.0f, pos_sphere, normals, 9);
-  trivial_center.push_back(0.0);
-  trivial_center.push_back(0.0);
-  trivial_center.push_back(0.0);
+  trivial_center.push_back(0.);
+  trivial_center.push_back(0.);
+  trivial_center.push_back(0.);
 }
 
 void Viewer::compile_shaders()
@@ -117,6 +119,7 @@ void Viewer::initialize_buffers()
 {
   //The big white sphere
   vao[SPHERE_VAO].bind();
+
   //points of the sphere
   buffers[SPHERE_POINTS].bind();
   buffers[SPHERE_POINTS].allocate(pos_sphere.data(),
@@ -126,6 +129,7 @@ void Viewer::initialize_buffers()
   rendering_program.enableAttributeArray(vertexLocation[0]);
   rendering_program.setAttributeBuffer(vertexLocation[0],GL_FLOAT,0,3);
   buffers[SPHERE_POINTS].release();
+
   //normals of the sphere
   buffers[SPHERE_NORMALS].bind();
   buffers[SPHERE_NORMALS].allocate(normals.data(),
@@ -135,6 +139,7 @@ void Viewer::initialize_buffers()
   rendering_program.enableAttributeArray(normalsLocation[0]);
   rendering_program.setAttributeBuffer(normalsLocation[0],GL_FLOAT,0,3);
   buffers[SPHERE_NORMALS].release();
+
   //center of the sphere
   buffers[SPHERE_CENTER].bind();
   buffers[SPHERE_CENTER].allocate(trivial_center.data(),
@@ -169,6 +174,7 @@ void Viewer::initialize_buffers()
   rendering_program.enableAttributeArray(normalsLocation[1]);
   rendering_program.setAttributeBuffer(normalsLocation[1],GL_FLOAT,0,3);
   buffers[EDGES_NORMALS].release();
+
   //center
   buffers[EDGES_CENTER].bind();
   buffers[EDGES_CENTER].allocate(trivial_center.data(),
@@ -186,6 +192,7 @@ void Viewer::initialize_buffers()
 
   //The little green spheres
   vao[POINTS_VAO].bind();
+
   //points of the spheres
   buffers[POINTS_POINTS].bind();
   buffers[POINTS_POINTS].allocate(pos_sphere_inter.data(),
@@ -195,6 +202,7 @@ void Viewer::initialize_buffers()
   rendering_program.enableAttributeArray(vertexLocation[2]);
   rendering_program.setAttributeBuffer(vertexLocation[2],GL_FLOAT,0,3);
   buffers[POINTS_POINTS].release();
+
   //normals of the sphere
   buffers[POINTS_NORMALS].bind();
   buffers[POINTS_NORMALS].allocate(normals_inter.data(),
@@ -204,6 +212,7 @@ void Viewer::initialize_buffers()
   rendering_program.enableAttributeArray(normalsLocation[2]);
   rendering_program.setAttributeBuffer(normalsLocation[2],GL_FLOAT,0,3);
   buffers[POINTS_NORMALS].release();
+
   //center of the sphere
   buffers[POINTS_CENTERS].bind();
   buffers[POINTS_CENTERS].allocate(pos_points.data(),
@@ -221,34 +230,58 @@ void Viewer::initialize_buffers()
 
 void Viewer::compute_elements()
 {
-  create_flat_sphere( 0.005f, pos_sphere_inter, normals_inter, 36);
+  create_flat_sphere(0.005f, pos_sphere_inter, normals_inter, 36);
 
   pos_points.resize(0);
   pos_lines.resize(0);
-  //draw points as small spheres
-  for (const auto& p : inputs){
+
+  std::cout << inputs.size() << " inputs to points" << std::endl;
+
+  // draw points as small spheres
+  for(const auto& p : inputs)
+  {
     pos_points.push_back(p.x());
     pos_points.push_back(p.y());
     pos_points.push_back(p.z());
   }
-}
 
+  std::cout << subsampled_arcs.size() << " edge arcs" << std::endl;
+
+  // draw the primal edges
+  std::size_t tot_size = 0;
+  for(const auto& arc : subsampled_arcs)
+    tot_size += arc.size();
+  pos_lines.reserve(2 * 3 * tot_size);
+
+  for(const auto& arc : subsampled_arcs)
+  {
+    for(std::size_t i=0; i<arc.size()-1; ++i)
+    {
+      pos_lines.push_back(arc[i].x());
+      pos_lines.push_back(arc[i].y());
+      pos_lines.push_back(arc[i].z());
+      pos_lines.push_back(arc[i+1].x());
+      pos_lines.push_back(arc[i+1].y());
+      pos_lines.push_back(arc[i+1].z());
+    }
+  }
+}
 
 void Viewer::attrib_buffers(CGAL::QGLViewer* viewer)
 {
   QMatrix4x4 mvpMatrix;
   QMatrix4x4 mvMatrix;
   double mat[16];
+
   viewer->camera()->getModelViewProjectionMatrix(mat);
   for(int i=0; i < 16; i++)
-  {
     mvpMatrix.data()[i] = (float)mat[i];
-  }
+
   viewer->camera()->getModelViewMatrix(mat);
+
   for(int i=0; i < 16; i++)
-  {
     mvMatrix.data()[i] = (float)mat[i];
-  }
+
   // define material
   QVector4D        ambient(0.1f, 0.1f, 0.1f, 1.0f);
   QVector4D        diffuse( 0.9f,
@@ -284,8 +317,6 @@ void Viewer::attrib_buffers(CGAL::QGLViewer* viewer)
   rendering_program.setUniformValue(mvLocation, mvMatrix);
 
   rendering_program.release();
-
-
 }
 
 void Viewer::draw()
@@ -293,8 +324,7 @@ void Viewer::draw()
   glEnable(GL_DEPTH_TEST);
   QColor color;
 
-  //sphere
-  if (draw_balls)
+  if(draw_balls)
   {
     vao[SPHERE_VAO].bind();
     attrib_buffers(this);
@@ -305,20 +335,22 @@ void Viewer::draw()
     rendering_program.release();
     vao[SPHERE_VAO].release();
   }
-  //intersection
-  if(draw_inputs){
+
+  if(draw_inputs)
+  {
     vao[POINTS_VAO].bind();
     attrib_buffers(this);
     color.setRgbF(0.0f, 1.0f, 0.0f);
     rendering_program.bind();
     rendering_program.setUniformValue(colorLocation, color);
-    glDrawArraysInstanced(GL_TRIANGLES, 0, static_cast<GLsizei>(pos_sphere_inter.size()/3), static_cast<GLsizei>(pos_points.size()/3));
+    glDrawArraysInstanced(GL_TRIANGLES, 0,
+                          static_cast<GLsizei>(pos_sphere_inter.size()/3),
+                          static_cast<GLsizei>(pos_points.size()/3));
     rendering_program.release();
 
     vao[POINTS_VAO].release();
   }
 
-  //circles
   vao[EDGES_VAO].bind();
   attrib_buffers(this);
   rendering_program.bind();
@@ -338,8 +370,10 @@ void Viewer::init()
     qDebug()<<"Missing OpenGL extensions. Demo not available.";
     return;
   }
+
   compile_shaders();
   compute_elements();
+
   initialize_buffers();
   glEnable(GL_BLEND);
 
@@ -369,17 +403,18 @@ QString Viewer::helpString() const
   return text;
 }
 
-void Viewer::keyPressEvent(QKeyEvent *e){
-  if (e->key()==Qt::Key_P){
-    draw_inputs=!draw_inputs;
-    //todo
+void Viewer::keyPressEvent(QKeyEvent *e)
+{
+  if(e->key() == Qt::Key_P)
+  {
+    draw_inputs = !draw_inputs;
     update();
     return;
   }
 
-  if (e->key()==Qt::Key_S){
-    draw_balls=!draw_balls;
-    //todo
+  if(e->key() == Qt::Key_S)
+  {
+    draw_balls = !draw_balls;
     update();
     return;
   }

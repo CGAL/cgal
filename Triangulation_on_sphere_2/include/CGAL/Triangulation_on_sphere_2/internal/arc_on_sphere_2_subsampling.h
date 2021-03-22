@@ -1,13 +1,12 @@
 #ifndef CGAL_TOS2_INTERNAL_ARC_ON_SPHERE_SUBSAMPLING_H
 #define CGAL_TOS2_INTERNAL_ARC_ON_SPHERE_SUBSAMPLING_H
 
-#include <CGAL/basic_classes.h>
-#include <CGAL/Linear_algebraCd.h>
+#ifdef CGAL_EIGEN3_ENABLED
+#include <CGAL/Eigen_solver_traits.h>
+#endif
 
 #include <cmath>
 #include <list>
-
-#define MIN_EDGE_SIZE 1
 
 namespace CGAL {
 namespace Triangulations_on_sphere_2 {
@@ -19,21 +18,28 @@ double get_theta( typename Kernel::Point_3& pt,
                   typename Kernel::Vector_3& V2,
                   typename Kernel::Vector_3& V3)
 {
-  typedef CGAL::Linear_algebraCd<typename Kernel::FT> LA;
+#ifndef CGAL_EIGEN3_ENABLED
+#error subsample_arc_on_sphere_2() requires the Eigen library
+#endif
+  typedef typename Kernel::FT                                        FT;
 
-  std::list<typename LA::Vector> lvect;
-  lvect.emplace_back(V1.cartesian_begin(), V1.cartesian_end());
-  lvect.emplace_back(V2.cartesian_begin(), V2.cartesian_end());
-  lvect.emplace_back(V3.cartesian_begin(), V3.cartesian_end());
+  typedef Eigen::Matrix<FT, 3, 3, Eigen::DontAlign>                  Matrix;
+  typedef Eigen::Matrix<FT, 3, 1>                                    Col;
 
-  typename LA::Matrix M(lvect.begin(), lvect.end());
+  auto V1c = V1.cartesian_begin(), V2c = V2.cartesian_begin(), V3c = V3.cartesian_begin();
 
-  typename Kernel::FT det = 1;
-  typename LA::Matrix inverse = LA::inverse(M, det);
+  Matrix M;
+  M(0, 0) = *V1c++; M(0, 1) = *V2c++; M(0, 2) = *V3c++;
+  M(1, 0) = *V1c++; M(1, 1) = *V2c++; M(1, 2) = *V3c++;
+  M(2, 0) = *V1c++; M(2, 1) = *V2c++; M(2, 2) = *V3c++;
 
-  typename LA::Vector pt_in_vect(pt.cartesian_begin(), pt.cartesian_end());
-  typename Kernel::FT X = inverse.row(0) * pt_in_vect;
-  typename Kernel::FT Y = inverse.row(1) * pt_in_vect;
+  Col pt_in_vect;
+  auto ptc = pt.cartesian_begin();
+  pt_in_vect(0) = *ptc++; pt_in_vect(1) = *ptc++; pt_in_vect(2) = *ptc++;
+
+  Matrix inverse = M.inverse();
+  FT X = inverse.row(0) * pt_in_vect;
+  FT Y = inverse.row(1) * pt_in_vect;
 
   double angle = atan2(Y*sqrt(V2.squared_length()), X*sqrt(V1.squared_length()));
 
@@ -61,19 +67,22 @@ void subsample_arc_on_sphere_2(const typename Kernel::Circle_3& circle,
                               Output_iterator out_pts,
                               double min_edge_size)
 {
-  double radius = sqrt(circle.squared_radius());
-  if (source > target)
+  if(source > target)
     target += 2*CGAL_PI;
 
-  double edge_len = (target-source) * radius;
-  int nb_of_segments = static_cast<int>(floor(edge_len/min_edge_size));
+  CGAL_triangulation_assertion(target > source);
+
+  const double radius = sqrt(circle.squared_radius());
+  const double edge_len = (target - source) * radius;
+  const int nb_of_segments = static_cast<int>(floor(edge_len / min_edge_size));
 
   *out_pts++ = compute_point<Kernel>(circle.center(), radius, source, b1, b2);
-  double step_size = (target - source) / static_cast<double>(nb_of_segments);
+  const double step_size = (target - source) / static_cast<double>(nb_of_segments);
   double current_theta = source;
   for(int i=0; i<nb_of_segments-1; ++i)
   {
-    current_theta+=step_size;
+    current_theta += step_size;
+    CGAL_triangulation_assertion(current_theta <= target);
     *out_pts++ = compute_point<Kernel>(circle.center(), radius, current_theta, b1, b2);
   }
   *out_pts++ = compute_point<Kernel>(circle.center(), radius, target, b1, b2);
@@ -83,7 +92,7 @@ void subsample_arc_on_sphere_2(const typename Kernel::Circle_3& circle,
 template <class Kernel,class Output_iterator>
 void subsample_circle_3(const typename Kernel::Circle_3& circle,
                         Output_iterator out_pts,
-                        double min_edge_size = MIN_EDGE_SIZE)
+                        double min_edge_size)
 {
   typename Kernel::Vector_3 b1 = circle.supporting_plane().base1();
   typename Kernel::Vector_3 b2 = circle.supporting_plane().base2();
@@ -98,7 +107,7 @@ void subsample_arc_on_sphere_2(const typename Kernel::Circle_3& circle,
                                const typename Kernel::Circular_arc_point_3& source,
                                const typename Kernel::Circular_arc_point_3& target,
                                Output_iterator out_pts,
-                               double min_edge_size = MIN_EDGE_SIZE)
+                               double min_edge_size)
 {
   typename Kernel::Vector_3 b1 = plane.base1();
   typename Kernel::Vector_3 b2 = plane.base2();
@@ -120,7 +129,7 @@ void subsample_arc_on_sphere_2(const typename Kernel::Circle_3& circle,
 template <class Kernel, class ArcOnSphere, class Output_iterator>
 void subsample_arc_on_sphere_2(const ArcOnSphere& arc,
                                Output_iterator out_pts,
-                               double min_edge_size = MIN_EDGE_SIZE)
+                               double min_edge_size = 0.01)
 {
   subsample_arc_on_sphere_2<Kernel>(arc.supporting_circle(),
                                     arc.supporting_circle().supporting_plane(),

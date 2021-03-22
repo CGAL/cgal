@@ -3,71 +3,98 @@
 
 #include <QMap>
 #include <CGAL/Qt/qglviewer.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <QOpenGLFunctions_2_1>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
-#include <CGAL/Exact_spherical_kernel_3.h>
-#include <CGAL/Cartesian_converter.h>
 
-#include "Circular_arc_3_subsampling.h"
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Delaunay_triangulation_on_sphere_traits_2.h>
+#include <CGAL/Projection_on_sphere_traits_3.h>
+#include <CGAL/Delaunay_triangulation_on_sphere_2.h>
 
+#include <list>
+#include <vector>
 
-
-class Viewer : public CGAL::QGLViewer
+class Viewer
+  : public CGAL::QGLViewer
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel          Kernel;
-  typedef CGAL::Exact_spherical_kernel_3 SK;
-  typedef Kernel::Point_3 Point_3;
-  typedef std::list< std::vector<Point_3> > Subsampled_arcs;
+  typedef Kernel::FT                                                   FT;
+  typedef Kernel::Point_3                                              Point_3;
+  typedef Kernel::Segment_3                                            Segment_3;
 
-  template <class Triangulation_on_sphere>
-  void build_the_boundary(const Triangulation_on_sphere& T)
+  typedef CGAL::Projection_on_sphere_traits_3<Kernel>                  Projection_traits;
+  typedef CGAL::Delaunay_triangulation_on_sphere_2<Projection_traits>  Projected_DToS2;
+
+  typedef std::list<std::vector<Point_3> >                             Subsampled_arcs;
+
+  template <class TOS>
+  void build_the_boundary(const TOS& tos)
   {
-    for (typename Triangulation_on_sphere::All_edges_iterator
-         it=T.all_edges_begin();it!=T.all_edges_end();++it)
+    typedef typename TOS::Geom_traits::SK                            Spherical_kernel;
+
+    typename TOS::Solid_edges_iterator it = tos.solid_edges_begin();
+    for (; it != tos.solid_edges_end(); ++it)
     {
-      if ( it->first->is_ghost() &&
-           it->first->neighbor(it->second)->is_ghost() )
-        continue;
+      typename TOS::Edge e = *it;
 
-      Point_3 source=it->first->vertex( (it->second+1)%3 )->point();
-      Point_3 target=it->first->vertex( (it->second+2)%3 )->point();
-      subsampled_arcs.push_front(std::vector<Kernel::Point_3>());
+      const bool diametral_edge = CGAL::collinear(tos.construct_point(tos.point(e.first, (e.second+1)%3)),
+                                                  tos.construct_point(tos.point(e.first, (e.second+2)%3)),
+                                                  tos.geom_traits().center());
 
-      Kernel::Plane_3  plane(source,target,center_);
-      Kernel::Circle_3 circle(center_,radius_,plane);
-      subsample_circular_arc_3<Kernel>(circle,plane,source,target,std::back_inserter(*subsampled_arcs.begin()),min_edge_size);
+      subsampled_arcs.emplace_front();
+
+      // primal
+      if(!diametral_edge)
+      {
+        typename TOS::Arc_on_sphere_2 as = tos.segment_on_sphere(e);
+        std::vector<typename Spherical_kernel::Point_3> discretization_points;
+        CGAL::Triangulations_on_sphere_2::internal::subsample_arc_on_sphere_2<Spherical_kernel>(
+              as, std::back_inserter(discretization_points), min_edge_size);
+
+        subsampled_arcs.begin()->reserve(discretization_points.size());
+        for(const typename Spherical_kernel::Point_3& spt : discretization_points)
+          subsampled_arcs.begin()->push_back(Point_3(spt.x(), spt.y(), spt.z()));
+      }
+      else
+      {
+        const Segment_3 s = tos.segment(e);
+        subsampled_arcs.begin()->push_back(s.source());
+        subsampled_arcs.begin()->push_back(s.target());
+      }
     }
   }
 
 public:
   Viewer(QWidget* parent = 0);
-  template <class Triangulation_on_sphere,class Iterator>
+
+  template <typename TOS, typename Iterator>
   void open(Iterator begin, Iterator end,
-            Triangulation_on_sphere& T,
-            Point_3 center,
-            double scale)
+            const TOS& tos)
   {
-    center_ = center;
-    radius_ = scale;
     draw_balls = true;
     draw_inputs = false;
-    min_edge_size = scale/100.;
+
     subsampled_arcs.clear();
     inputs.clear();
+
     pos_points.clear();
     pos_lines.clear();
     pos_sphere_inter.clear();
     normals_inter.clear();
     normals_lines.clear();
-    std::copy(begin,end,std::back_inserter(inputs));
-    build_the_boundary(T);
+
+    min_edge_size = 0.01 * tos.geom_traits().radius();
+
+    std::copy(begin, end, std::back_inserter(inputs));
+    build_the_boundary(tos);
     compute_elements();
+
     initialize_buffers();
-    qDebug()<<"done loading.";
+
+    qDebug() << "Finished loading";
   }
 
   GLuint dl_nb;
@@ -77,9 +104,9 @@ protected :
   virtual void init();
   virtual QString helpString() const;
   virtual void keyPressEvent(QKeyEvent *e);
+
 private:
   //Shaders elements
-
   int vertexLocation[3];
   int normalsLocation[3];
   int centerLocation;
@@ -89,7 +116,6 @@ private:
   int colorLocation;
   int lightLocation[5];
 
-
   std::vector<float> pos_points;
   std::vector<float> pos_lines;
   std::vector<float> pos_sphere;
@@ -98,13 +124,13 @@ private:
   std::vector<float> normals_inter;
   std::vector<float> trivial_center;
   std::vector<float> normals_lines;
+
+  double min_edge_size;
   Subsampled_arcs subsampled_arcs;
   std::vector<Point_3> inputs;
-  Point_3 center_;
-  double radius_;
-  bool draw_balls;
+
   bool draw_inputs;
-  double min_edge_size;
+  bool draw_balls;
 
   enum VBO {
     SPHERE_POINTS =0,
@@ -118,12 +144,14 @@ private:
     EDGES_CENTER,
     SIZE_OF_VBO
   };
+
   enum VAO {
     SPHERE_VAO = 0,
     POINTS_VAO,
     EDGES_VAO,
     SIZE_OF_VAO
   };
+
   QOpenGLBuffer buffers[SIZE_OF_VBO];
   QOpenGLVertexArrayObject vao[SIZE_OF_VAO];
   QOpenGLShaderProgram rendering_program;
@@ -133,10 +161,10 @@ private:
   PFNGLDRAWARRAYSINSTANCEDARBPROC glDrawArraysInstanced;
   PFNGLVERTEXATTRIBDIVISORARBPROC glVertexAttribDivisor;
 
-
   void initialize_buffers();
   void compute_elements();
   void attrib_buffers(CGAL::QGLViewer*);
   void compile_shaders();
 };
-#endif //TRIANGULATION_ON_SPHERE_2_VIEWER_H
+
+#endif // TRIANGULATION_ON_SPHERE_2_VIEWER_H
