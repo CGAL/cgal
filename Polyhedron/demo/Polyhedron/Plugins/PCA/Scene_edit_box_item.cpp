@@ -809,12 +809,14 @@ bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
             d->selected_vertices.push_back(d->faces[picked].vertices[i]);
           Kernel::Point_3 a1(d->faces[picked].vertices[1]->position()), a0(d->faces[picked].vertices[0]->position())
               ,a3(d->faces[picked].vertices[3]->position());
-          QVector3D a(a1.x()-a0.x(), a1.y()-a0.y(),a1.z()-a0.z()),b(a3.x()-a0.x(), a3.y()-a0.y(),a3.z()-a0.z());
-          QVector3D n = QVector3D::crossProduct(a,b);
+          Kernel::Vector_3 a = a1 - a0,
+                           b = a3 - a0;
+          Kernel::Vector_3 n = CGAL::cross_product(a,b);
 
           d->remodel_frame->setConstraint(&d->constraint);
           d->constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::AXIS);
           d->constraint.setTranslationConstraintDirection(CGAL::qglviewer::Vec(n.x(), n.y(), n.z()));
+
         }
 
         viewer->setManipulatedFrame(d->remodel_frame);

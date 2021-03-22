@@ -1,35 +1,33 @@
+#define CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE 1
+
 #include "Scene_polygon_soup_item.h"
 #include "Scene_surface_mesh_item.h"
+
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Triangle_container.h>
 #include <CGAL/Three/Edge_container.h>
 #include <CGAL/Three/Point_container.h>
 #include <CGAL/Three/Three.h>
 
-#include <QObject>
-#include <QApplication>
-#include <QtDebug>
+#include "triangulate_primitive.h"
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/IO/OFF_reader.h>
-#include <CGAL/IO/File_writer_OFF.h>
-#include <CGAL/version.h>
-
+#include <CGAL/array.h>
+#include <CGAL/IO/OFF.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
-
-#define CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE 1
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
-
 #include <CGAL/Polygon_2.h>
+#include <CGAL/version.h>
 
-#include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include "triangulate_primitive.h"
-#include <CGAL/array.h>
+#include <QObject>
+#include <QApplication>
+#include <QtDebug>
 
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics/stats.hpp>
@@ -347,11 +345,15 @@ Scene_polygon_soup_item::clone() const {
 bool
 Scene_polygon_soup_item::load(std::istream& in)
 {
-  if (!d->soup) d->soup=new Polygon_soup();
-  else d->soup->clear();
+  if (!d->soup)
+    d->soup = new Polygon_soup();
+  else
+    d->soup->clear();
 
   bool result = CGAL::read_OFF(in, d->soup->points, d->soup->polygons,
-                               d->soup->fcolors, d->soup->vcolors);
+                               CGAL::parameters::vertex_color_output_iterator(std::back_inserter(d->soup->vcolors))
+                                                .face_color_output_iterator(std::back_inserter(d->soup->fcolors)));
+
   invalidateOpenGLBuffers();
   return result;
 }
@@ -661,7 +663,7 @@ Scene_polygon_soup_item::new_triangle(const std::size_t i,
   d->soup->polygons.push_back(new_polygon);
 }
 
-template <class Point, class Polygon>
+template <class Point, typename Polygon>
 void Scene_polygon_soup_item::load(const std::vector<Point>& points, const std::vector<Polygon>& polygons)
 {
     if(!d->soup)
@@ -700,8 +702,8 @@ void Scene_polygon_soup_item::load(const std::vector<Point>& points, const std::
 }
 // Force the instanciation of the template function for the types used in the STL_io_plugin. This is needed
 // because the d-pointer forbid the definition in the .h for this function.
-template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<std::array<double, 3>, std::array<int, 3> >
-(const std::vector<std::array<double, 3> >& points, const std::vector<std::array<int, 3> >& polygons);
+template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<EPICK::Point_3, std::vector<int> >
+(const std::vector<EPICK::Point_3>& points, const std::vector<std::vector<int> >& polygons);
 template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<CGAL::Epick::Point_3, std::vector<std::size_t> >
 (const std::vector<CGAL::Epick::Point_3>& points, const std::vector<std::vector<std::size_t> >& polygons);
 template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<CGAL::Epick::Point_3, std::vector<std::size_t> >

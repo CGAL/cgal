@@ -290,8 +290,8 @@ bounding_box_2(ForwardIterator f, ForwardIterator l, const Traits& t)
   return rect(v(rect(*xmin, *ymin), 0), v(rect(*xmax, *ymax), 2));
 } // bounding_box_2(f, l, t)
 template < class ForwardIterator >
-inline typename
-std::iterator_traits< ForwardIterator >::value_type::R::Iso_rectangle_2
+inline
+auto
 bounding_box_2(ForwardIterator f, ForwardIterator l)
 // PRE: f != l.
 {

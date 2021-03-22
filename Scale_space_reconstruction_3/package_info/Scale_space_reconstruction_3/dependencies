@@ -8,7 +8,6 @@ Circulator
 Distance_2
 Distance_3
 Filtered_kernel
-Geomview
 HalfedgeDS
 Hash_map
 Homogeneous_kernel
@@ -25,7 +24,6 @@ Number_types
 Point_set_processing_3
 Polygon
 Polyhedron
-Polyhedron_IO
 Profiling_tools
 Property_map
 Random_numbers

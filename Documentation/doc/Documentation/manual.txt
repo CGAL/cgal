@@ -11,7 +11,7 @@ of computational geometry.
 Each part consists of several chapters,
 and each chapter is split into a *User Manual*  and a *Reference
 Manual*. The User Manual gives the general idea and comes with examples.
-The Reference Manual presents the \sc{Api} of the various classes
+The Reference Manual presents the \api of the various classes
 and functions.
 
 The manual has a \ref packages  with a short paragraph explaining

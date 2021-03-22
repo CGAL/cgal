@@ -17,7 +17,7 @@ triggers some optimizations. Or
 dimension of the simplices (full cells) is passed as an integer argument to an instance
 constructor (see `TriangulationDataStructure`).</UL>
 
-\tparam `TriangulationDSVertex_` stands for a class to
+\tparam TriangulationDSVertex_ stands for a class to
 be used as the base `Vertex` type in the triangulation data structure.
 It must be a model of the concept
 `TriangulationDSVertex`. The class template `Triangulation_data_structure` can be
@@ -26,7 +26,7 @@ only the first parameter. It also accepts the tag `CGAL::Default` as
 second parameter. In both cases, `TriangulationDSVertex_` defaults to
 `CGAL::Triangulation_ds_vertex<>`.
 
-\tparam `TriangulationDSFullCell_` stands for a class to
+\tparam TriangulationDSFullCell_ stands for a class to
 be used as the base `Full_cell` type in the triangulation data structure.
 It must be a model of the concept
 `TriangulationDSFullCell`. The class template `Triangulation_data_structure` accepts that no

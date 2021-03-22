@@ -10,6 +10,7 @@ Distance_3
 Filtered_kernel
 HalfedgeDS
 Hash_map
+Homogeneous_kernel
 Installation
 Intersections_2
 Intersections_3
@@ -23,7 +24,6 @@ Number_types
 Optimisation_basic
 Polygon
 Polyhedron
-Polyhedron_IO
 Polytope_distance_d
 Profiling_tools
 Property_map

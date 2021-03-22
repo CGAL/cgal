@@ -511,13 +511,16 @@ namespace CGAL {
 
       // Minimum number of points has been set?
       m_options.min_points =
-        (m_options.min_points >= m_num_available_points) ?
+        (m_options.min_points == (std::numeric_limits<std::size_t>::max)()) ?
           (std::size_t)((FT)0.01 * m_num_available_points) :
           m_options.min_points;
       m_options.min_points = (m_options.min_points < 10) ? 10 : m_options.min_points;
 
       // Initializing the shape index
       m_shape_index.assign(m_num_available_points, -1);
+
+      if (m_options.min_points > m_num_available_points)
+        return true;
 
       // List of all randomly drawn candidates
       // with the minimum number of points
@@ -1027,8 +1030,10 @@ namespace CGAL {
     }
 
     inline FT stop_probability(std::size_t largest_candidate, std::size_t num_pts, std::size_t num_candidates, std::size_t octree_depth) const {
-      return (std::min<FT>)(std::pow((FT) 1.f - (FT) largest_candidate
-                                     / (FT(num_pts) * (octree_depth+1) * (1 << (m_required_samples - 1))), (int) num_candidates), (FT) 1);
+      return (std::min<FT>)(std::pow(FT(1) - FT(largest_candidate)
+                                     / (FT(num_pts) * FT(octree_depth+1)
+                                        * FT(1 << (m_required_samples - 1))),
+                                     int(num_candidates)), FT(1));
     }
 
   private:

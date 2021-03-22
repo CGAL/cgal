@@ -380,6 +380,7 @@ Viewer::Viewer(QWidget* parent,
 
 Viewer::~Viewer()
 {
+  makeCurrent();
     QSettings viewer_settings;
     viewer_settings.setValue("cam_pos",
                              QString("%1,%2,%3")
@@ -940,20 +941,26 @@ void Viewer::attribBuffers(int program_name) const {
     QMatrix4x4 mv_mat;
     // transformation of the manipulated frame
     QMatrix4x4 f_mat;
+    // ModelView Matrix that is modified just for the normal matrix in case of scene scaling
+    QMatrix4x4 norm_mat;
 
     f_mat.setToIdentity();
     //fills the MVP and MV matrices.
     GLdouble d_mat[16];
-
     this->camera()->getModelViewMatrix(d_mat);
     for (int i=0; i<16; ++i)
         mv_mat.data()[i] = GLfloat(d_mat[i]);
     this->camera()->getModelViewProjectionMatrix(d_mat);
     for (int i=0; i<16; ++i)
         mvp_mat.data()[i] = GLfloat(d_mat[i]);
+
+    norm_mat = mv_mat;
+
     if(d->scene_scaling){
       mvp_mat.scale(d->scaler);
       mv_mat.scale(d->scaler);
+      QVector3D scale_norm(1.0/d->scaler.x(), 1.0/d->scaler.y(), 1.0/d->scaler.z());
+      norm_mat.scale(scale_norm);
     }
 
     QOpenGLShaderProgram* program = getShaderProgram(program_name);
@@ -1039,12 +1046,14 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_NO_INTERPOLATION:
     case PROGRAM_HEAT_INTENSITY:
       program->setUniformValue("mv_matrix", mv_mat);
+      program->setUniformValue("norm_matrix", norm_mat);
       break;
     case PROGRAM_WITHOUT_LIGHT:
     case PROGRAM_SOLID_WIREFRAME:
       break;
     case PROGRAM_WITH_TEXTURE:
       program->setUniformValue("mv_matrix", mv_mat);
+      program->setUniformValue("norm_matrix", norm_mat);
       program->setUniformValue("s_texture",0);
       program->setUniformValue("f_matrix",f_mat);
       break;

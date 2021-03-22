@@ -46,7 +46,7 @@ struct Compact_metric_point_proxy {
     // fitting center
     Vector_3 center = CGAL::NULL_VECTOR;
     FT sum_areas = FT(0.0);
-    for(const face_descriptor f : faces) {
+    for(const face_descriptor& f : faces) {
       center = center + (center_pmap[f] - CGAL::ORIGIN) * area_pmap[f];
       sum_areas += area_pmap[f];
     }

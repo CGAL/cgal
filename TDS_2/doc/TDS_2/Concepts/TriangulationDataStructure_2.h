@@ -229,7 +229,7 @@ otherwise `Vertex_handle()` is returned.
 \pre The optional argument `v` is a vertex of `tds_src` or is `Vertex_handle()`.
 */
 template <class TDS_src, class ConvertVertex, class ConvertFace>
-Vertex_handle tds.copy_tds(const TDS_src& tds_src, typename TDS_src::Vertex_handle v, const ConvertVertex& convert_vertex, const ConvertFace& convert_face);
+Vertex_handle copy_tds(const TDS_src& tds_src, typename TDS_src::Vertex_handle v, const ConvertVertex& convert_vertex, const ConvertFace& convert_face);
 
 /*!
 Swaps the triangulation data structure and `tds1`.

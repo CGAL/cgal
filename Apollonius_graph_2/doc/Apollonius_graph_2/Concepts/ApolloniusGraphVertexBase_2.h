@@ -3,8 +3,6 @@
 \ingroup PkgApolloniusGraph2Concepts
 \cgalConcept
 
-\cgalRefines `TriangulationVertexBase_2`
-
 The concept `ApolloniusGraphVertexBase_2` describes the
 requirements for the vertex base class of the
 `ApolloniusGraphDataStructure_2` concept. A vertex stores an
@@ -12,14 +10,14 @@ Apollonius site and provides access to one of its incident faces
 through a `Face_handle`. In addition, it maintains a container of
 sites. The container stores the hidden sites related to the vertex.
 
+\cgalRefines `TriangulationVertexBase_2`
+
 \cgalHasModel `CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>`
 
 \sa `ApolloniusGraphDataStructure_2`
-\sa `ApolloniusGraphTraits_2`
-\sa `CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>`
-
+\sa `CGAL::Apollonius_graph_2<Gt,Agds>`
+\sa `CGAL::Triangulation_data_structure_2<Vb,Fb>`
 */
-
 class ApolloniusGraphVertexBase_2 {
 public:
 
@@ -77,7 +75,7 @@ typedef unspecified_type Hidden_sites_iterator;
 /// @{
 
 /*!
-Default constructor.
+%Default constructor.
 */
 ApolloniusGraphVertexBase_2();
 

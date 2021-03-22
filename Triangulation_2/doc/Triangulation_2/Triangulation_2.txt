@@ -165,7 +165,7 @@ Infinite vertex and infinite faces
 
 This extends to lower dimensional triangulations
 arising in degenerate cases or when the triangulations
-as less than three vertices.
+has fewer than three vertices.
 Including the infinite faces,
 a one dimensional triangulation
 is a ring of edges and vertices

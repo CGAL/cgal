@@ -15,6 +15,7 @@
 #include <CGAL/Qt/Basic_viewer_qt.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
+#include <CGAL/Qt/init_ogl_context.h>
 
 #include <CGAL/Linear_cell_complex_operations.h>
 #include <CGAL/Random.h>
@@ -170,29 +171,27 @@ public:
     // First draw: vertices; edges, faces; multi-color; inverse normal
     Base(parent, title, true, true, true, false, false),
     lcc(alcc),
-    m_oriented_mark(lcc->get_new_mark()),
     m_nofaces(anofaces),
     m_random_face_color(false),
     m_drawing_functor(drawing_functor)
   {
-    lcc->orient(m_oriented_mark);
-    compute_elements();
+    if (lcc!=nullptr)
+    { compute_elements(); }
   }
 
   ~SimpleLCCViewerQt()
-  { lcc->free_mark(m_oriented_mark); }
+  {}
 
 protected:
   void set_lcc(const LCC* alcc, bool doredraw=true)
   {
-    if (lcc!=nullptr)
-    { lcc->free_mark(m_oriented_mark); }
+    if (lcc==alcc)
+    { return; }
 
     lcc=alcc;
-    m_oriented_mark=lcc->get_new_mark();
-    lcc->orient(m_oriented_mark);
+    if (lcc!=nullptr)
+    { compute_elements(); }
 
-    compute_elements();
     if (doredraw) { redraw(); }
   }
 
@@ -272,10 +271,13 @@ protected:
     clear();
     if (lcc==nullptr) return;
 
-    typename LCC::size_type markvolumes  = lcc->get_new_mark();
-    typename LCC::size_type markfaces    = lcc->get_new_mark();
-    typename LCC::size_type markedges    = lcc->get_new_mark();
-    typename LCC::size_type markvertices = lcc->get_new_mark();
+    typename LCC::size_type markvolumes  =lcc->get_new_mark();
+    typename LCC::size_type markfaces    =lcc->get_new_mark();
+    typename LCC::size_type markedges    =lcc->get_new_mark();
+    typename LCC::size_type markvertices =lcc->get_new_mark();
+    typename LCC::size_type oriented_mark=lcc->get_new_mark();
+
+    lcc->orient(oriented_mark);
 
     for (typename LCC::Dart_range::const_iterator it=lcc->darts().begin(),
          itend=lcc->darts().end(); it!=itend; ++it )
@@ -290,7 +292,7 @@ protected:
         {
           lcc->mark(itv, markvolumes); // To be sure that all darts of the basic iterator will be marked
           if (!lcc->is_marked(itv, markfaces) &&
-              lcc->is_marked(itv, m_oriented_mark) &&
+              lcc->is_marked(itv, oriented_mark) &&
               m_drawing_functor.draw_face(*lcc, itv))
           {
             if (!m_drawing_functor.volume_wireframe(*lcc, itv) &&
@@ -335,13 +337,14 @@ protected:
       lcc->unmark(it, markedges);
       lcc->unmark(it, markfaces);
       lcc->unmark(it, markvolumes);
-
+      lcc->unmark(it, oriented_mark);
     }
 
     lcc->free_mark(markvolumes);
     lcc->free_mark(markfaces);
     lcc->free_mark(markedges);
     lcc->free_mark(markvertices);
+    lcc->free_mark(oriented_mark);
   }
 
   virtual void init()
@@ -372,7 +375,6 @@ protected:
 
 protected:
   const LCC* lcc;
-  typename LCC::size_type m_oriented_mark;
   bool m_nofaces;
   bool m_random_face_color;
   const DrawingFunctorLCC& m_drawing_functor;
@@ -404,6 +406,7 @@ void draw(const CGAL_LCC_TYPE& alcc,
 
   if (!cgal_test_suite)
   {
+    CGAL::Qt::init_ogl_context(4,3);
     int argc=1;
     const char* argv[2]={"lccviewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));

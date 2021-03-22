@@ -669,7 +669,7 @@ public:
     /*! Operate
      * \param xcv1 the first curve
      * \param xcv2 the second curve
-     * \return true if the the two curve are mergeable and false otherwise.
+     * \return true if the two curve are mergeable and false otherwise.
      * Two curves are mergeable if they have the same underlying theoretical
      * curve
      */

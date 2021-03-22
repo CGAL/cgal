@@ -469,18 +469,18 @@ struct Constant_property_map
 
   typedef KeyType                                       key_type;
   typedef ValueType                                     value_type;
-  typedef value_type&                                   reference;
+  typedef const value_type&                             reference;
   typedef boost::read_write_property_map_tag            category;
 
   Constant_property_map(const value_type& default_value = value_type()) : default_value (default_value) { }
 
   /// Free function that returns `pm.default_value`.
-  inline friend value_type
-  get (const Constant_property_map& pm, const key_type&){ return pm.default_value; }
+  inline friend
+  const value_type& get (const Constant_property_map& pm, const key_type&) { return pm.default_value; }
 
   /// Free function that does nothing.
-  inline friend void
-  put (const Constant_property_map&, const key_type&, const value_type&) { }
+  inline friend
+  void put (const Constant_property_map&, const key_type&, const value_type&) { }
 };
 
 /// \ingroup PkgPropertyMapRef

@@ -73,6 +73,7 @@ void test_stitch_boundary_cycles()
   test_stitch_boundary_cycles<Mesh>("data_stitching/boundary_cycle.off", 4);
   test_stitch_boundary_cycles<Mesh>("data_stitching/boundary_cycle_2.off", 2);
   test_stitch_boundary_cycles<Mesh>("data_stitching/complex_hole.off", 3);
+  test_stitch_boundary_cycles<Mesh>("data_stitching/folded_cycle.off", 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -119,9 +120,9 @@ void test_stitch_borders(const char* fname,
   typedef PMP::internal::Halfedges_keeper_with_marked_edge_priority<Marked_edges, Mesh> Keeper;
 
   Marked_edges marks = get(Edge_property_tag(), mesh);
-  int id = 0;
+  int eid = 0;
   for(edge_descriptor e : edges(mesh))
-    put(marks, e, (unconstrained_edge_ids.count(id++) == 0));
+    put(marks, e, (unconstrained_edge_ids.count(eid++) == 0));
 
   Keeper kpr(marks, mesh);
 
@@ -208,7 +209,6 @@ void test_degenerate()
   CGAL::make_triangle(Point(0,0,0), Point(1,0,0), Point(0,1,0), tm);
 
   std::size_t res = CGAL::Polygon_mesh_processing::stitch_borders(tm);
-  std::cout << "Stitched: " << res << std::endl;
   assert(res == 0);
 }
 

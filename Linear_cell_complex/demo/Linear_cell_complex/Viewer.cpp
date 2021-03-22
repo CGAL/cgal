@@ -15,7 +15,7 @@
 #include <CGAL/Qt/vec.h>
 
 Viewer::Viewer(QWidget* parent) :
-    Base(parent, NULL, ""),
+    Base(parent, nullptr, ""),
     m_previous_scene_empty(true)
 {}
 
@@ -50,4 +50,3 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 
 QString Viewer::helpString() const
 { return Base::helpString("LCC Demo"); }
-

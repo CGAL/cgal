@@ -27,7 +27,7 @@ namespace Classification {
 /*!
 \ingroup PkgClassificationLabel
 
-\brief Set of `Label` used as input by classification
+\brief sets of `Label` used as input by classification
 algorithms.
 
 */
@@ -326,8 +326,6 @@ public:
   /// @}
 
 };
-
-
 
 } // namespace Classification
 

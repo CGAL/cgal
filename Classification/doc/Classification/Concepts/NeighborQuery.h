@@ -27,7 +27,7 @@ public:
 
   /*!
 
-    \brief Puts in `output` the indices of the neighbors of `query`.
+    \brief puts in `output` the indices of the neighbors of `query`.
 
     \tparam OutputIterator An output iterator accepting `std::size_t`
     values.
