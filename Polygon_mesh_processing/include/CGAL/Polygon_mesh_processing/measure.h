@@ -941,6 +941,21 @@ void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
   }
 }
 
+template<typename PolygonMesh, typename FaceRange, typename FacePairRange, typename NamedParameters>
+void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
+                    FacePairRange& common, FaceRange& m1_only, FaceRange& m2_only,
+                    const NamedParameters& np)
+{
+  compare_meshes(m1, m2, common, m1_only, m2_only, np, parameters::all_default());
+}
+
+template<typename PolygonMesh, typename FaceRange, typename FacePairRange>
+void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
+                    FacePairRange& common, FaceRange& m1_only, FaceRange& m2_only)
+{
+  compare_meshes(m1, m2, common, m1_only, m2_only, parameters::all_default(), parameters::all_default());
+}
+
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
 
