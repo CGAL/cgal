@@ -820,6 +820,127 @@ centroid(const TriangleMesh& tmesh)
   return centroid(tmesh, CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
+
+/**
+  * \ingroup measure_grp
+  * given two meshes, separates the faces that are only in one, the faces
+  * that are only in the other one, and the faces that are common to both.
+  *
+  * @tparam PolygonMesh a model of `HalfedgeListGraph` and `FaceListGraph`
+  * \tparam FaceRange a range of `boost::graph_traits<PolygonMesh>::%face_descriptor`
+  * @tparam FacePairRange a range of `std::pair<boost::graph_traits<PolygonMesh>::%face_descriptor, boost::graph_traits<PolygonMesh>::%face_descriptor>`
+  *
+  * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
+  * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
+  *
+  * @param m1 the first `PolygonMesh`
+  * @param m2 the second `PolygonMesh`
+  * @param common the range containing the faces that are common to both meshes.
+  * @param m1_only the range containing the faces that are only in `m1`
+  * @param m2_only the range containing the faces that are only in `m2`
+  * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  *
+  * \cgalNamedParamsBegin
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `m1` (`m2`)}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, m1 (m2))`}
+  *   \cgalParamNEnd
+  * \cgalNamedParamsEnd
+  *
+ */
+template<typename PolygonMesh, typename FaceRange, typename FacePairRange, typename NamedParameters1, typename NamedParameters2 >
+void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
+                    FacePairRange& common, FaceRange& m1_only, FaceRange& m2_only,
+                    const NamedParameters1& np1,const NamedParameters2& np2)
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  typedef typename GetVertexPointMap < PolygonMesh, NamedParameters1>::const_type VPMap1;
+  typedef typename GetVertexPointMap < PolygonMesh, NamedParameters2>::const_type VPMap2;
+  typedef typename GetInitializedVertexIndexMap<PolygonMesh, NamedParameters1>::type VIMap1;
+  typedef typename GetInitializedVertexIndexMap<PolygonMesh, NamedParameters2>::type VIMap2;
+  VPMap1 vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
+                                      get_const_property_map(vertex_point, m1));
+  VPMap2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
+                                      get_const_property_map(vertex_point, m2));
+  VIMap1 vim1 = get_initialized_vertex_index_map(m1, np1);
+  VIMap1 vim2 = get_initialized_vertex_index_map(m2, np2);
+  typedef typename boost::property_traits<VPMap2>::value_type Point_3;
+  typedef typename FaceRange::value_type face_descriptor;
+
+  std::map<Point_3, std::size_t> point_id_map;
+  std::vector<std::size_t> m1_vertex_id(num_vertices(m1), -1);
+  std::vector<std::size_t> m2_vertex_id(num_vertices(m2), -1);
+
+  //iterate both meshes to set ids to all points, and set vertex/point_id maps.
+  std::size_t id =0;
+  for(auto v : vertices(m1))
+  {
+    const Point_3& p = get(vpm1, v);
+    auto res = point_id_map.insert(std::make_pair(p, id));
+    if(res.second)
+      id++;
+    m1_vertex_id[(std::size_t)get(vim1, v)]=res.first->second;
+  }
+  for(auto v : vertices(m2))
+  {
+    const Point_3& p = get(vpm2, v);
+    auto res = point_id_map.insert(std::make_pair(p, id));
+    if(res.second)
+      id++;
+    m2_vertex_id[(std::size_t)get(vim2, v)]=res.first->second;
+  }
+
+  //fill a set with the "faces point-ids" of m1 and then iterate faces of m2 to compare.
+  std::set<std::vector<std::size_t> > m1_faces;
+  for(auto f : faces(m1))
+  {
+    std::vector<std::size_t> ids;
+    for(auto v : CGAL::vertices_around_face(halfedge(f, m1), m1))
+    {
+      ids.push_back(m1_vertex_id[(std::size_t)get(vim1, v)]);
+    }
+    std::sort(ids.begin(), ids.end());
+    m1_faces.insert(ids);
+  }
+  std::map<std::vector<std::size_t>, face_descriptor> m2_faces_map;
+  for(auto f : faces(m2))
+  {
+    std::vector<std::size_t> ids;
+    for(auto v : CGAL::vertices_around_face(halfedge(f, m2), m2))
+    {
+      ids.push_back(m2_vertex_id[(std::size_t)get(vim2, v)]);
+    }
+    std::sort(ids.begin(), ids.end());
+    m2_faces_map.insert({ids, f});
+    if(m1_faces.find(ids) == m1_faces.end())   {
+      m2_only.push_back(f);
+    }
+  }
+
+  for(auto f : faces(m1))
+  {
+    std::vector<std::size_t> ids;
+    for(auto v : CGAL::vertices_around_face(halfedge(f, m1), m1))
+    {
+      ids.push_back(m1_vertex_id[(std::size_t)get(vim1, v)]);
+    }
+    std::sort(ids.begin(), ids.end());
+    auto m2_face_it = m2_faces_map.find(ids);
+    if(m2_face_it == m2_faces_map.end())
+    {
+      m1_only.push_back(f);
+    }
+    else
+    {
+      common.push_back(std::make_pair(f, m2_face_it->second));
+    }
+  }
+}
+
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
 
