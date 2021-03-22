@@ -841,13 +841,14 @@ namespace internal {
 
         std::array<halfedge_descriptor, 2> r1 = PMP::internal::is_badly_shaped(
             face(he, mesh_),
-            mesh_, vpmap_, ecmap_, gt_,
+            mesh_, vpmap_, vcmap_, ecmap_, gt_,
             cap_threshold, // bound on the angle: above 160 deg => cap
             4, // bound on shortest/longest edge above 4 => needle
             0);// collapse length threshold : not needed here
         std::array<halfedge_descriptor, 2> r2 = PMP::internal::is_badly_shaped(
             face(opposite(he, mesh_), mesh_),
-            mesh_, vpmap_, ecmap_, gt_, cap_threshold, 4, 0);
+            mesh_, vpmap_, vcmap_, ecmap_, gt_, cap_threshold, 4, 0);
+
         const bool badly_shaped = (r1[0] != boost::graph_traits<PolygonMesh>::null_halfedge()//needle
                                 || r1[1] != boost::graph_traits<PolygonMesh>::null_halfedge()//cap
                                 || r2[0] != boost::graph_traits<PolygonMesh>::null_halfedge()//needle

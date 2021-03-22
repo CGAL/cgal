@@ -152,7 +152,7 @@ public:
 
 
 
-Main(int argc, char* argv[])
+Main(int argc, const char* argv[])
 {
 #ifdef CGAL_PMP_REMESHING_DEBUG
   std::cout.precision(17);
@@ -248,17 +248,16 @@ Main(int argc, char* argv[])
   }
   else if (sharp_angle > 0)
   {
-    typedef boost::property_map<Mesh, CGAL::edge_is_feature_t>::type EIFMap;
-    typedef boost::property_map<Mesh, CGAL::face_patch_id_t<int> >::type PIMap;
-    typedef boost::property_map<Mesh, CGAL::vertex_incident_patches_t<int> >::type VIMap;
+    typedef typename  boost::property_map<Mesh, CGAL::edge_is_feature_t>::type EIFMap;
+    typedef typename boost::property_map<Mesh, CGAL::face_patch_id_t<int> >::type PIMap;
+    typedef typename boost::property_map<Mesh, CGAL::vertex_incident_patches_t<int> >::type VIMap;
 
     EIFMap eif = get(CGAL::edge_is_feature, m);
     PIMap pid = get(CGAL::face_patch_id_t<int>(), m);
     VIMap vip = get(CGAL::vertex_incident_patches_t<int>(), m);
 
-    std::size_t number_of_patches;
     if (sharp_angle > 0)
-      number_of_patches = PMP::sharp_edges_segmentation(m, sharp_angle, eif, pid,
+      PMP::sharp_edges_segmentation(m, sharp_angle, eif, pid,
         PMP::parameters::vertex_incident_patches_map(vip));
 
     std::vector<edge_descriptor> sharp_edges;
@@ -310,20 +309,22 @@ Main(int argc, char* argv[])
 }
 };
 
-int main(int argc, char* argv[])
+int main(int argc, const char* argv[])
 {
   Main<Epic> m(argc,argv);
 
-  char* param[6] = { "remesh",//command
-                     "data_remeshing/cheese_transformed-facets.off",//input
-                     "0.0015", //target edge length
-                     "3",      //#iterations
-                     "0",      //selection file
-                     "60." };  //sharp angle bound
+  const char* param[6] = { "remesh",//command
+                           "data_remeshing/cheese_transformed-facets.off",//input
+                           "0.0015", //target edge length
+                           "3",      //#iterations
+                           "0",      //selection file
+                           "60." };  //sharp angle bound
   Main<Epic> sharp1(6, param);
 
-  param[1] = "data_remeshing/cheese_transformed-facets-2.off";
-  Main<Epic> sharp2(6, param);
+  const char* param_bis[6] = { param[0],
+                               "data_remeshing/cheese_transformed-facets-2.off",
+                               param[2], param[3], param[4], param[5] };
+  Main<Epic> sharp2(6, param_bis);
 
   return 0;
 }
