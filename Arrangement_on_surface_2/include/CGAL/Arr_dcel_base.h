@@ -822,28 +822,44 @@ public:
   { if (other.status == ITER_IS_NOT_SINGULAR) iter = other.iter; }
 
   /*! Obtain a halfedge along the component (const version). */
-  const Halfedge* halfedge() const { return (*iter); }
+  const Halfedge* halfedge() const
+  {
+    CGAL_assertion(is_valid());
+    return (*iter);
+  }
 
   /*! Obtain a halfedge along the component (non-const version). */
-  Halfedge* halfedge() { return (*iter); }
+  Halfedge* halfedge()
+  {
+    CGAL_assertion(is_valid());
+    return (*iter);
+  }
 
   /*! Set a representative halfedge for the component. */
   void set_halfedge(Halfedge *he)
   {
-    CGAL_assertion (is_valid());
+    CGAL_assertion(is_valid());
     *iter = he;
   }
 
   /*! Obtain the incident face (const version). */
-  const Face* face() const { return (p_f); }
+  const Face* face() const
+  {
+    CGAL_assertion(status != INVALID);
+    return f_or_icc.f;
+  }
 
   /*! Obtain the incident face (non-const version). */
-  Face* face() { return (p_f); }
+  Face* face()
+  {
+    CGAL_assertion(status != INVALID);
+    return f_or_icc.f;
+  }
 
   /*! Set the incident face. */
   void set_face(Face* f)
   {
-    CGAL_assertion (status != INVALID);
+    CGAL_assertion(status != INVALID);
     f_or_icc.f = f;
   }
 
@@ -864,7 +880,7 @@ public:
   /*! Set the inner CCB iterator. */
   void set_iterator(Inner_ccb_iterator it)
   {
-    CGAL_assertion (is_valid());
+    CGAL_assertion(is_valid());
     iter = it;
     status = ITER_IS_NOT_SINGULAR;
   }
@@ -872,10 +888,10 @@ public:
   /*! Check validity */
   bool is_valid() const { return (status != INVALID); }
 
-  /*! Get the next CCB to primary chain. */
+  /*! Obtain the next CCB to primary chain. */
   Arr_inner_ccb* next() const
   {
-    CGAL_assertion (status == INVALID);
+    CGAL_assertion(status == INVALID);
     return f_or_icc.icc;
   }
 
