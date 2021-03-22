@@ -349,6 +349,12 @@ protected:
     es.build_external_structure();
   }
 
+ private:
+  void mark_bounded_volumes() {
+    CGAL::Mark_bounded_volumes<Nef_polyhedron_3> mbv(true);
+    delegate(mbv, /*compute_external*/ false, /*simplify*/ false);
+  }
+
  public:
   /*{\Mcreation 3}*/
 
@@ -602,9 +608,8 @@ protected:
     polyhedron_3_to_nef_3
       <CGAL::Polyhedron_3<T1,T2,T3,T4>, SNC_structure>( P, snc());
     build_external_structure();
+    mark_bounded_volumes();
     simplify();
-    CGAL::Mark_bounded_volumes<Nef_polyhedron_3> mbv(true);
-    delegate(mbv);
     set_snc(snc());
   }
 
@@ -616,9 +621,8 @@ protected:
     initialize_infibox_vertices(EMPTY);
     polygon_mesh_to_nef_3<PolygonMesh, SNC_structure>(const_cast<PolygonMesh&>(pm), snc());
     build_external_structure();
+    mark_bounded_volumes();
     simplify();
-    CGAL::Mark_bounded_volumes<Nef_polyhedron_3> mbv(true);
-    delegate(mbv);
     set_snc(snc());
   }
 
@@ -637,9 +641,8 @@ protected:
     initialize_infibox_vertices(EMPTY);
     polygon_mesh_to_nef_3<PolygonMesh, SNC_structure>(const_cast<PolygonMesh&>(pm), snc(), fim, him);
     build_external_structure();
+    mark_bounded_volumes();
     simplify();
-    CGAL::Mark_bounded_volumes<Nef_polyhedron_3> mbv(true);
-    delegate(mbv);
     set_snc(snc());
   }
 
@@ -651,9 +654,8 @@ protected:
    initialize_infibox_vertices(EMPTY);
    shell_to_nef_3(N, sf, snc());
    build_external_structure();
+   mark_bounded_volumes();
    simplify();
-   CGAL::Mark_bounded_volumes<Nef_polyhedron_3> mbv(true);
-   delegate(mbv);
    set_snc(snc());
  }
 

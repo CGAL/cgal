@@ -12,7 +12,7 @@ an exact number-type `ET` has to be provided which
 exact computations.
 
 \tparam K must be a model for concept `Kernel`.
-\tparam `ET` must be a model for concept
+\tparam ET must be a model for concept
 `EuclideanRing` with exact arithmetic operations, i.e., the type
 \link AlgebraicStructureTraits::Is_exact `Algebraic_structure_traits<ET>::Is_exact` \endlink must be
 `CGAL::Tag_true` (Examples of such a

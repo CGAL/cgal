@@ -1196,7 +1196,7 @@ public:
 
   /*!
    * Split the tree such that all remaining objects are less than a given
-   * key, and all objects greater then (or equal to) this key form
+   * key, and all objects greater than (or equal to) this key form
    * a new output tree. [takes O(log n) operations]
    * \param key The split key.
    * \param comp_key A comparison functor for comparing keys and objects.

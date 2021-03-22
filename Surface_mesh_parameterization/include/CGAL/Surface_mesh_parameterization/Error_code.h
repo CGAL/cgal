@@ -38,7 +38,7 @@ enum Error_code
 };
 
 /// \ingroup PkgSurfaceMeshParameterizationEnums
-/// \brief Get the message corresponding to an error code.
+/// \brief gets the message corresponding to an error code.
 /// \param error_code The code returned by `parameterize()`
 /// \return The string describing the error code.
 inline const char* get_error_message(int error_code)

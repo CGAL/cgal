@@ -20,6 +20,7 @@ In case the surface is manifold the triangles can be oriented.
 
 \returns `true` if the surface could be written to the stream.
 
+\see \ref IOStreamOFF
 \sa `CGAL::output_surface_facets_to_polyhedron()`
 */
 

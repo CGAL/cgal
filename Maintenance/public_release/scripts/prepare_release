@@ -47,7 +47,7 @@ if ((${#files[@]} == 0)); then
     printf "ERROR: documentation files are missing\n"
     error_code=1
 else
-    rsync -a "$MANUAL_TESTS_DIR/$INTERNAL_RELEASE"/output2/* "$DEST_DIR/doc_html/"
+    rsync -a --exclude xml "$MANUAL_TESTS_DIR/$INTERNAL_RELEASE"/output2/* "$DEST_DIR/doc_html/"
     pushd "$DEST_DIR/doc_html/Manual/search"
     for i in g n c s i; do sed -i "s/..\/BGL$i/..\/BGL\/$i/g" *; done
     popd
@@ -79,6 +79,10 @@ printf "%s\n" "${INTERNAL_RELEASE}" > "$DEST_DIR/internal_release"
 printf "Create cgal_manual.zip for the Windows installer..."
 pushd "$DEST_DIR/doc_html"
 zip -q -r ../cgal_manual.zip *
+popd
+
+pushd /srv/CGAL/www/precompiled_libs/auxiliary/x64/
+cp CGAL-5.2-win64-auxiliary-libraries-gmp-mpfr.zip "$DEST_DIR/${PUBLIC_RELEASE_NAME}-win64-auxiliary-libraries-gmp-mpfr.zip"
 popd
 
 pushd "$DEST_DIR"

@@ -37,6 +37,10 @@ namespace CGAL {
 //   not, or we let all this up to the compiler optimizer to figure out ?
 // - Some caching could be done at the Point_2 level.
 
+// Protection is undocumented and currently always true, meaning that it
+// assumes a default rounding mode of round-to-nearest. false would correspond
+// to a default of round-towards-infinity, so interval arithmetic does not
+// require protection but regular code may.
 
 template <class EP, class AP, class C2E, class C2A, bool Protection = true>
 class Filtered_predicate

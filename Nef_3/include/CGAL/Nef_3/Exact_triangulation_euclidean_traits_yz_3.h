@@ -34,7 +34,10 @@ struct Exact_intersect_yz_2 <R,Cartesian_tag>
    typedef typename R::Point_3     Point_3;
    typedef typename R::Segment_3   Segment_3;
 
-   CGAL::Object operator() (Segment_3 s3, Segment_3 t3)
+   typedef  boost::variant<Point_3, Segment_3> variant_type;
+
+   boost::optional<variant_type>
+   operator() (const Segment_3& s3, const Segment_3& t3)
    {  Point_2 p2, q2;
       Point_3 p3, q3;
 
@@ -49,18 +52,22 @@ struct Exact_intersect_yz_2 <R,Cartesian_tag>
 
       // convert intersection from Object_2 to Object_3
       // Note: there is not necessarily a spartial intersection,
-      //       so all first components are faked!
-      CGAL::Object obj = intersection (s2,t2);
-      if ( CGAL::assign(p2, obj) )
-      {  obj = make_object (Point_3 (0,p2.x(),p2.y()));
+      //       so all third components are faked!
+      auto obj = intersection (s2,t2);
+      if(! obj){
+        return boost::none;
       }
-      else if ( CGAL::assign(s2, obj) )
-      {  p2 = s2.source();
-         q2 = s2.target();
-         obj = make_object( Segment_3(
-               Point_3(0,p2.x(),p2.y()), Point_3(0,q2.x(),q2.y()) ) );
+      if (const Point_2* pi =  boost::get<Point_2>(&*obj))
+      {
+        return boost::make_optional(variant_type(Point_3(0,p2.x(),p2.y())));
       }
-      return obj;
+
+      const Segment_2* si = boost::get<Segment_2>(&*obj);
+      p2 = si->source();
+      q2 = si->target();
+
+      return boost::make_optional(variant_type(Segment_3(Point_3(0,p2.x(),p2.y()),
+                                                         Point_3(0,q2.x(),q2.y()) ) ));
    }
 };
 
@@ -73,7 +80,9 @@ struct Exact_intersect_yz_2 <R,Homogeneous_tag>
    typedef typename R::Point_3     Point_3;
    typedef typename R::Segment_3   Segment_3;
 
-   CGAL::Object operator() (Segment_3 s3, Segment_3 t3)
+   typedef  boost::variant<Point_3, Segment_3> variant_type;
+
+   boost::optional<variant_type> operator() (Segment_3 s3, Segment_3 t3)
    {  Point_2 p2, q2;
       Point_3 p3, q3;
 
@@ -90,19 +99,22 @@ struct Exact_intersect_yz_2 <R,Homogeneous_tag>
 
       // convert intersection from Object_2 to Object_3
       // Note: there is not necessarily a spartial intersection,
-      //       so all first components are faked!
-      CGAL::Object obj = intersection (s2,t2);
-      if ( CGAL::assign(p2, obj) )
-      {  obj = make_object (Point_3 (0,p2.hx(),p2.hy(),p2.hw()));
+      //       so all third components are faked!
+      auto obj = intersection (s2,t2);
+      if(! obj){
+        return boost::none;
       }
-      else if ( CGAL::assign(s2, obj) )
-      {  p2 = s2.source();
-         q2 = s2.target();
-         obj = make_object( Segment_3(
-            Point_3 (0,p2.hx(),p2.hy(),p2.hw()),
-            Point_3 (0,q2.hx(),q2.hy(),q2.hw()) ) );
+      if (const Point_2* pi =  boost::get<Point_2>(&*obj))
+      {
+        return boost::make_optional(variant_type(Point_3(0,p2.hx(),p2.hy(),p2.hw())));
       }
-      return obj;
+
+      const Segment_2* si = boost::get<Segment_2>(&*obj);
+      p2 = si->source();
+      q2 = si->target();
+
+      return boost::make_optional(variant_type(Segment_3(Point_3 (0,p2.hx(),p2.hy(),p2.hw()),
+                                                         Point_3 (0,q2.hx(),q2.hy(),q2.hw())) ));
    }
 };
 

@@ -35,7 +35,7 @@ struct Vao{
   QOpenGLShaderProgram* program;
   std::vector<Vbo*> vbos;
   //!
-  //! \brief Creates a `Vao`.
+  //! \brief creates a `Vao`.
   //! \param program the `QOpenGLShaderProgram` associated with this `Vao`.
   //! \attention This must be called within a valid OpenGLContext.
   //! Most of the time, initGL() functions are safe places to do so.
@@ -48,7 +48,7 @@ struct Vao{
   }
 
   //!
-  //! \brief Creates a `Vao` from another one.
+  //! \brief creates a `Vao` from another one.
   //! \param program the `QOpenGLShaderProgram` corresponding to the one of `vao` but from
   //! the right viewer.
   //! \param vao the Vao to copy.
@@ -117,7 +117,7 @@ struct Vbo
   int stride;
   bool allocated;
   //!
-  //! \brief Creates a `Vbo`.
+  //! \brief creates a `Vbo`.
   //! \param attribute the name of the corresponding data in the shader.
   //! \param flag the flag that specifies which type of data this corresponds to.
   //! \param vbo_type is almost always `QOpenGLBuffer::VertexBuffer` but can be `QOpenGLBuffer::IndexBuffer`

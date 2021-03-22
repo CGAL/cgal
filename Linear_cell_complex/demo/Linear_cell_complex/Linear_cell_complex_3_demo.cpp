@@ -14,6 +14,7 @@
 #include <QApplication>
 #include <CGAL/Qt/resources.h>
 #include <CGAL/assertions_behaviour.h>
+#include <CGAL/Qt/init_ogl_context.h>
 
 // Global random
 CGAL::Random myrandom;
@@ -23,15 +24,12 @@ int main(int argc, char** argv)
   // std::cout<<"Size of dart: "<<sizeof(LCC::Dart)<<std::endl;
   CGAL::set_error_behaviour(CGAL::ABORT);
 
+  CGAL::Qt::init_ogl_context(4,3);
   QApplication application(argc,argv);
 
   application.setOrganizationDomain("cgal.org");
   application.setOrganizationName("CNRS and LIRIS' Establishments");
   application.setApplicationName("3D Linear Cell Complex");
-  //for windows
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
-  application.setAttribute(Qt::AA_UseDesktopOpenGL);
-#endif
 
   // Import resources from libCGALQt5
   // See https://doc.qt.io/qt-5/qdir.html#Q_INIT_RESOURCE

@@ -1,24 +1,21 @@
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+#include <OpenMesh/Core/IO/MeshIO.hh>
+#include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
+#include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
+#include <CGAL/boost/graph/properties_PolyMesh_ArrayKernelT.h>
+
+#include <CGAL/Surface_mesh_shortest_path/Surface_mesh_shortest_path_traits.h>
+#include <CGAL/Surface_mesh_shortest_path/Surface_mesh_shortest_path.h>
+#include <CGAL/Random.h>
+#include <CGAL/boost/graph/iterator.h>
+
+#include <boost/lexical_cast.hpp>
+
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <iterator>
-
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
-#include <CGAL/Random.h>
-
-#include <OpenMesh/Core/IO/MeshIO.hh>
-#include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
-
-#include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
-#include <CGAL/boost/graph/properties_PolyMesh_ArrayKernelT.h>
-
-#include <CGAL/boost/graph/iterator.h>
-
-#include <CGAL/Surface_mesh_shortest_path/Surface_mesh_shortest_path_traits.h>
-#include <CGAL/Surface_mesh_shortest_path/Surface_mesh_shortest_path.h>
-
-#include <boost/lexical_cast.hpp>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
@@ -39,6 +36,12 @@ int main(int argc, char** argv)
   Triangle_mesh tmesh;
   OpenMesh::IO::read_mesh(tmesh, (argc>1)?argv[1]:"data/elephant.off");
 
+  if(!CGAL::is_triangle_mesh(tmesh))
+  {
+    std::cerr << "Invalid input file." << std::endl;
+    return EXIT_FAILURE;
+  }
+
   // pick up a random face
   const unsigned int randSeed = argc > 2 ? boost::lexical_cast<unsigned int>(argv[2]) : 7915421;
   CGAL::Random rand(randSeed);
@@ -55,7 +58,7 @@ int main(int argc, char** argv)
   // For all vertices in the tmesh, compute the points of
   // the shortest path to the source point and write them
   // into a file readable using the CGAL Tmesh demo
-  std::ofstream output("shortest_paths_OpenMesh.cgal");
+  std::ofstream output("shortest_paths_OpenMesh.polylines.txt");
   vertex_iterator vit, vit_end;
   for ( boost::tie(vit, vit_end) = vertices(tmesh);
         vit != vit_end; ++vit)

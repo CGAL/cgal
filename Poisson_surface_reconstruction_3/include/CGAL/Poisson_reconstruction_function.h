@@ -110,18 +110,19 @@ struct Poisson_visitor {
 // The wrapper stores only pointers to the two functors.
 template <typename F1, typename F2>
 struct Special_wrapper_of_two_functions_keep_pointers {
+  typedef typename F2::FT FT;
   F1 *f1;
   F2 *f2;
   Special_wrapper_of_two_functions_keep_pointers(F1* f1, F2* f2)
     : f1(f1), f2(f2) {}
 
   template <typename X>
-  double operator()(const X& x) const {
+  FT operator()(const X& x) const {
     return (std::max)((*f1)(x), CGAL::square((*f2)(x)));
   }
 
   template <typename X>
-  double operator()(const X& x) {
+  FT operator()(const X& x) {
     return (std::max)((*f1)(x), CGAL::square((*f2)(x)));
   }
 }; // end struct Special_wrapper_of_two_functions_keep_pointers<F1, F2>
@@ -211,7 +212,7 @@ private:
   {
   private:
     std::atomic<Cache_state> m_state;
-    std::array<double, 9> m_bary;
+    std::array<FT, 9> m_bary;
   public:
     Cached_bary_coord() : m_state (UNINITIALIZED) { }
 
@@ -242,8 +243,8 @@ private:
 
     void set_initialized() { m_state = INITIALIZED; }
 
-    const double& operator[] (const std::size_t& idx) const { return m_bary[idx]; }
-    double& operator[] (const std::size_t& idx) { return m_bary[idx]; }
+    const FT& operator[] (const std::size_t& idx) const { return m_bary[idx]; }
+    FT& operator[] (const std::size_t& idx) { return m_bary[idx]; }
   };
 
   // Wrapper for thread safety of maintained cell hint for fast
