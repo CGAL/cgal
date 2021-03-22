@@ -494,8 +494,8 @@ CGAL_Kernel_pred_RT(Coplanar_3,
                  coplanar_3_object)
 CGAL_Kernel_pred(Counterclockwise_in_between_2,
                  counterclockwise_in_between_2_object)
-CGAL_Kernel_pred_RT(Do_intersect_2,
-                    do_intersect_2_object)
+CGAL_Kernel_pred(Do_intersect_2,
+                 do_intersect_2_object)
 CGAL_Kernel_pred_RT(Do_intersect_3,
                     do_intersect_3_object)
 CGAL_Kernel_pred(Equal_xy_3,
