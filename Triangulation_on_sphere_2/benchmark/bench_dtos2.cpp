@@ -1,7 +1,4 @@
-// @fixme should be in benchmarks really
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Delaunay_triangulation_on_sphere_traits_2.h>
 #include <CGAL/Delaunay_triangulation_on_sphere_2.h>
@@ -12,7 +9,7 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/point_generators_3.h>
-#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Surface_mesh.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Timer.h>
 
@@ -23,7 +20,7 @@
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel    K;
-typedef CGAL::Polyhedron_3<K>                                  Polyhedron_3;
+typedef CGAL::Surface_mesh<K>                                  Surface_mesh;
 
 typedef K::Segment_3                                           Segment_3;
 typedef CGAL::Delaunay_triangulation_3<K>                      Delaunay;
@@ -44,8 +41,10 @@ int main(int, char**)
   const std::size_t nu_of_pts = 1e7;
   const double radius = 5184.152;
 
-  CGAL::Random random(nu_of_pts);
-  CGAL::Random_points_on_sphere_3<Point, Creator> on_sphere(radius);
+  CGAL::Random random;
+  std::cout << "Seed is " << random.get_seed() << std::endl;
+
+  CGAL::Random_points_on_sphere_3<Point, Creator> on_sphere(radius, random);
 
   std::vector<Point> points;
   points.reserve(nu_of_pts);
@@ -63,7 +62,8 @@ int main(int, char**)
   dtos.insert(points.begin(), points.end());
   time.stop();
   assert(dtos.number_of_vertices() == nu_of_pts);
-  std::cout << "Triangulation sphere: " << time.time() << std::endl;
+  std::cout << "Triangulation sphere: "
+            << dtos.number_of_vertices() << " vertices in " << time.time() << " sec" << std::endl;
 
   //Triangulation with points on the sphere (projection_traits)
   Gt2 traits(K::Point_3(0, 0, 0), radius);
@@ -75,15 +75,16 @@ int main(int, char**)
   dtos2.insert(boost::make_transform_iterator(points.begin(), cst),
                boost::make_transform_iterator(points.end(), cst));
   time.stop();
-  std::cout << "Triangulation sphere projection traits: "<< time.time() << std::endl;
+  std::cout << "Triangulation w/ sphere projection traits: "
+            << dtos2.number_of_vertices() << " vertices in " << time.time() << " sec" << std::endl;
 
-  Polyhedron_3 poly;
+//  Surface_mesh sm;
 
-  time.reset();
-  time.start();
-  CGAL::convex_hull_3(points.begin(), points.end(), poly);
-  time.stop();
-  std::cout << "Convex hull: " << time.time() << " " << std::endl;
+//  time.reset();
+//  time.start();
+//  CGAL::convex_hull_3(points.begin(), points.end(), sm);
+//  time.stop();
+//  std::cout << "Convex hull 3D: " << time.time() << " " << std::endl;
 
   time.reset();
   time.start();
@@ -91,7 +92,8 @@ int main(int, char**)
   T.insert(Point(0, 0, 0));
   T.insert(points.begin(), points.end());
   time.stop();
-  std::cout << "Delaunay on sphere: " << time.time() << std::endl;
+  std::cout << "Delaunay 3D with origin: "
+            << T.number_of_vertices() << " vertices in " << time.time() << " sec" << std::endl;
 
   time.reset();
   time.start();
@@ -99,7 +101,7 @@ int main(int, char**)
   T_fast_on2.insert(Point(0, 0, 0));
   T_fast_on2.insert(points.begin(), points.end());
   time.stop();
-  std::cout << "Delaunay fast location on sphere: " << time.time() << std::endl;
+  std::cout << "Delaunay 3D with origin, fast location: " << time.time() << std::endl;
 
   return EXIT_SUCCESS;
 }
