@@ -26,6 +26,8 @@
 #include <CGAL/boost/graph/Named_function_parameters.h>
 
 // Face graph includes.
+#include <CGAL/Iterator_range.h>
+#include <CGAL/HalfedgeDS_vector.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
