@@ -24,11 +24,6 @@ Classifiers that use the ETHZ library.
 
 Classifiers that use the \ref thirdpartyOpenCV library.
 
-\defgroup PkgClassificationClassifiersTensorFlow TensorFlow
-\ingroup PkgClassificationClassifiers
-
-Classifiers that use the \ref thirdpartyTensorFlow library.
-
 \defgroup PkgClassificationDataStructures Common Data Structures
 \ingroup PkgClassificationRef
 
@@ -102,7 +97,6 @@ Data structures specialized to classify clusters.
 
 - `CGAL::Classification::ETHZ::Random_forest_classifier`
 - `CGAL::Classification::OpenCV::Random_forest_classifier`
-- `CGAL::Classification::TensorFlow::Neural_network_classifier<ActivationFunction>`
 - `CGAL::Classification::Sum_of_weighted_features_classifier`
 
 \cgalCRPSection{Common Data Structures}
