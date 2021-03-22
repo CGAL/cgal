@@ -22,7 +22,7 @@
 #include <CGAL/Triangulation_on_sphere_vertex_base_2.h>
 #include <CGAL/Triangulation_on_sphere_face_base_2.h>
 #include <CGAL/Triangulation_on_sphere_2/IO/OFF.h>
-#include <CGAL/Triangulation_on_sphere_2/internal/arc_on_sphere_subsampling.h> // included for convenience
+#include <CGAL/Triangulation_on_sphere_2/internal/arc_on_sphere_2_subsampling.h> // included for convenience
 
 #include <CGAL/iterator.h>
 #include <CGAL/Iterator_project.h>
@@ -212,7 +212,7 @@ public:
   typedef typename Tds::Edge_circulator           Edge_circulator;
   typedef typename Tds::Face_circulator           Face_circulator;
 
-  // This class is used to generate the Solid*_iterators.
+  // This class is used to generate the solid iterators
   class Ghost_tester
   {
     const Triangulation_on_sphere_2& tr;
@@ -224,7 +224,6 @@ public:
     bool operator()(const All_edges_iterator eit) const { return tr.is_ghost(*eit); }
   };
 
-  // @todo check contour shenanigans correctness
   class Non_contour_tester
   {
     const Triangulation_on_sphere_2& tr;
@@ -238,7 +237,6 @@ public:
     }
   };
 
-  // We derive in order to add a conversion to handle.
   class Solid_faces_iterator
     : public Filter_iterator<All_faces_iterator, Ghost_tester>
   {
@@ -255,16 +253,15 @@ public:
     operator const Face_handle() const { return Base::base(); }
   };
 
-  // solid edges : both adjacent faces are solid
-  typedef Filter_iterator<All_edges_iterator, Ghost_tester>          Solid_edges_iterator;
-
-  // one solid and one ghost face adjacent to this face
-  typedef Filter_iterator<All_edges_iterator, Non_contour_tester>    Contour_edges_iterator;
-
   typedef Iterator_range<Prevent_deref<Vertices_iterator> >          Vertex_handles;
   typedef Iterator_range<All_edges_iterator>                         All_edges;
   typedef Iterator_range<Prevent_deref<All_faces_iterator> >         All_face_handles;
 
+  // one solid and one ghost face incident to this edge
+  typedef Filter_iterator<All_edges_iterator, Non_contour_tester>    Contour_edges_iterator;
+
+  // solid edges: both incident faces are solid
+  typedef Filter_iterator<All_edges_iterator, Ghost_tester>          Solid_edges_iterator;
   typedef Iterator_range<Solid_edges_iterator>                       Solid_edges;
   typedef Iterator_range<Prevent_deref<Solid_faces_iterator> >       Solid_face_handles;
 
@@ -278,6 +275,19 @@ public:
   All_face_handles all_face_handles() const
   {
     return make_prevent_deref_range(all_faces_begin(), all_faces_end());
+  }
+
+  Contour_edges_iterator contour_edges_begin() const
+  {
+    if(dimension() < 1)
+      return contour_edges_end();
+
+    return CGAL::filter_iterator(all_edges_end(), Non_contour_tester(*this), all_edges_begin());
+  }
+
+  Contour_edges_iterator contour_edges_end() const
+  {
+    return CGAL::filter_iterator(all_edges_end(), Non_contour_tester(*this));
   }
 
   Solid_faces_iterator solid_faces_begin() const
@@ -314,19 +324,6 @@ public:
   Solid_edges solid_edges() const
   {
     return CGAL::make_range(solid_edges_begin(), solid_edges_end());
-  }
-
-  Contour_edges_iterator contour_edges_begin() const
-  {
-    if(dimension() < 1)
-      return contour_edges_end();
-
-    return CGAL::filter_iterator(all_edges_end(), Non_contour_tester(*this), all_edges_begin());
-  }
-
-  Contour_edges_iterator contour_edges_end() const
-  {
-    return CGAL::filter_iterator(all_edges_end(), Non_contour_tester(*this));
   }
 
   All_edges_iterator all_edges_begin() const { return _tds.edges_begin(); }
@@ -959,7 +956,7 @@ march_locate_2D(Face_handle f,
   }
 }
 
-// @todo implement new walks
+// @todo implement new, faster walks
 template <typename Gt, typename Tds>
 typename Triangulation_on_sphere_2<Gt, Tds>::Face_handle
 Triangulation_on_sphere_2<Gt, Tds>::

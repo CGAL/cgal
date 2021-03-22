@@ -386,7 +386,7 @@ test_conflict(const Point& p, Face_handle fh) const
 }
 
 // ------------------------ INSERTION --------------------------------//
-// inserts a new point to a 1d triangulation, the new point is also coplanar with the existing points.
+// inserts a new point to a 1D triangulation, the new point is also coplanar with the existing points.
 template <typename Gt, typename Tds>
 typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::Vertex_handle
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::

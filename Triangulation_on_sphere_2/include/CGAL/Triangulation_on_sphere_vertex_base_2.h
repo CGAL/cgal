@@ -19,8 +19,8 @@
 
 namespace CGAL {
 
-template < typename GT,
-           typename Vb = Triangulation_ds_vertex_base_2<> >
+template <typename GT,
+          typename Vb = Triangulation_ds_vertex_base_2<> >
 class Triangulation_on_sphere_vertex_base_2
   : public Vb
 {
@@ -54,8 +54,7 @@ public:
   // using Lutz projection scheme
   Point& point() { return _p; }
 
-  //the following trivial is_valid to allow
-  // the user of derived face base classes
+  // the following trivial is_valid to allow the user of derived face base classes
   // to add their own purpose checking
   bool is_valid(bool /* verbose */ = false, int /* level */ = 0) const {return true;}
 };
@@ -63,19 +62,19 @@ public:
 template < class GT, class Vb >
 std::istream&
 operator>>(std::istream &is, Triangulation_on_sphere_vertex_base_2<GT, Vb> &v)
-  // non combinatorial information. Default = point
 {
+  // non combinatorial information. Default = point
   return is >> static_cast<Vb&>(v) >> v.point();
 }
 
 template < class GT, class Vb >
 std::ostream&
 operator<<(std::ostream &os, const Triangulation_on_sphere_vertex_base_2<GT, Vb> &v)
-  // non combinatorial information. Default = point
 {
+  // non combinatorial information. Default = point
   return os << static_cast<const Vb&>(v) << v.point();
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif //CGAL_TRIANGULATION_ON_SPHERE_VERTEX_BASE_2_H
