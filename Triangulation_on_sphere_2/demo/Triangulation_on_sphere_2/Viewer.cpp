@@ -14,10 +14,10 @@ Viewer::Viewer(QWidget* parent )
 {
   draw_balls = true;
   draw_inputs = false;
-  create_flat_sphere(1.0f, pos_sphere, normals, 9);
   trivial_center.push_back(0.);
   trivial_center.push_back(0.);
   trivial_center.push_back(0.);
+  radius_ = 1.0;
 }
 
 void Viewer::compile_shaders()
@@ -222,6 +222,9 @@ void Viewer::compute_elements()
 {
   pos_sphere_inter.clear();
   normals_inter.clear();
+  pos_sphere.clear();
+  normals.clear();
+  create_flat_sphere(static_cast<float>(radius_), pos_sphere, normals, 9);
   create_flat_sphere(0.05f, pos_sphere_inter, normals_inter, 36);
 
   pos_points.resize(0);
@@ -256,6 +259,8 @@ void Viewer::compute_elements()
       pos_lines.push_back(arc[i+1].z());
     }
   }
+  setSceneRadius(radius_*1.3);
+  showEntireScene();
 }
 
 void Viewer::attrib_buffers(CGAL::QGLViewer* viewer)

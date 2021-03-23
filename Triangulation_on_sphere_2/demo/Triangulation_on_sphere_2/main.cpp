@@ -10,6 +10,7 @@
 #include <QApplication>
 #include <QMainWindow>
 #include <QFileDialog>
+#include <QInputDialog>
 
 #include <boost/iterator/transform_iterator.hpp>
 
@@ -62,7 +63,7 @@ public slots:
     read_points(filename.toUtf8().data(), std::back_inserter(lst_pt));
 
     const Point_3 center(0,0,0);
-    const FT radius = 1.0;
+    const FT radius = QInputDialog::getDouble(nullptr, "Radius", "Radius of the sphere", 1.0, 0.0);
     Projection_traits traits(center, radius);
     Projected_DToS2 dtos(lst_pt.begin(), lst_pt.end(), traits);
 

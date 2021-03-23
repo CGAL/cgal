@@ -89,7 +89,8 @@ public:
     normals_inter.clear();
     normals_lines.clear();
 
-    min_edge_size = 0.01 * tos.geom_traits().radius();
+    radius_ = tos.geom_traits().radius();
+    min_edge_size = 0.01 * radius_;
 
     std::copy(begin, end, std::back_inserter(inputs));
     build_the_boundary(tos);
@@ -162,6 +163,7 @@ private:
   typedef void (APIENTRYP PFNGLVERTEXATTRIBDIVISORARBPROC) (GLuint index, GLuint divisor);
   PFNGLDRAWARRAYSINSTANCEDARBPROC glDrawArraysInstanced;
   PFNGLVERTEXATTRIBDIVISORARBPROC glVertexAttribDivisor;
+  double radius_;
 
   void initialize_buffers();
   void compute_elements();
