@@ -140,7 +140,10 @@ public:
     insert(first, beyond);
   }
 
-  // @todo complete copy operators
+  Delaunay_triangulation_on_sphere_2(const Delaunay_triangulation_on_sphere_2& other)
+    : Base(static_cast<const Base&>(other))
+  {
+  }
 
   // Predicates & Constructions
   Oriented_side side_of_oriented_circle(const Point& p, const Point& q, const Point& r, const Point& s, bool perturb = false) const;

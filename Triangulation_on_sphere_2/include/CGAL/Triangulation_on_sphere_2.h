@@ -473,9 +473,11 @@ public:
 // copy constructor duplicates vertices and faces
 template <typename Gt, typename Tds>
 Triangulation_on_sphere_2<Gt, Tds>::
-Triangulation_on_sphere_2(const Triangulation_on_sphere_2& tr)
-  : _gt(tr.geom_traits()), _tds(tr.tds())
-{ }
+Triangulation_on_sphere_2(const Triangulation_on_sphere_2& other)
+  : _gt(other.geom_traits())
+{
+  _tds.copy_tds(other.tds());
+}
 
 template <typename Gt, typename Tds>
 void

@@ -35,6 +35,14 @@ int main(int, char**)
   assert(tr.geom_traits().center() == Point(1, 2, 3));
   assert(tr.geom_traits().radius() == 5);
 
+  Tr trbis(tr);
+  assert(trbis.geom_traits().center() == tr.geom_traits().center());
+  assert(trbis.geom_traits().radius() == tr.geom_traits().radius());
+  assert(trbis.number_of_vertices() == tr.number_of_vertices());
+  assert(trbis.number_of_edges() == tr.number_of_edges());
+  assert(trbis.number_of_solid_faces() == tr.number_of_solid_faces());
+  assert(trbis.number_of_ghost_faces() == tr.number_of_ghost_faces());
+
   Tr tr2(tr);
   assert(tr2.geom_traits().center() == tr.geom_traits().center());
   assert(tr2.geom_traits().radius() == tr.geom_traits().radius());
