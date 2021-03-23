@@ -185,7 +185,7 @@ compute_update_sample_point(
     if (dist2 < 1e-10) continue;
     FT dist = std::sqrt(dist2);
 
-    weight = std::exp(dist2 * iradius16) * std::pow(FT(1.0) / dist, 2); // L1
+    weight = std::exp(dist2 * iradius16) * CGAL::square(FT(1.0) / dist); // L1
 
     if (!is_sample_densities_empty)
     {
