@@ -25,7 +25,7 @@
 \cgalPkgManuals{Chapter_2D_Triangulations_on_sphere,PkgTriangulationOnSphere2Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
-\cgalPkgSince{5.2}
+\cgalPkgSince{5.3}
 \cgalPkgDependsOn{\ref PkgTDS2}
 \cgalPkgBib{cgal:rtw-tos2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
