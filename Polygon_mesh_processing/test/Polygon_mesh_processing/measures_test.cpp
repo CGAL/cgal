@@ -337,7 +337,8 @@ void test_compare()
     return;
   }
   input.close();
-  PMP::compare_meshes(mesh1, mesh2, std::back_inserter(common), std::back_inserter(m1_only), std::back_inserter(m2_only), CGAL::parameters::require_same_orientation(true), CGAL::parameters::all_default());
+  PMP::compare_meshes(mesh1, mesh2, std::back_inserter(common), std::back_inserter(m1_only),
+                      std::back_inserter(m2_only));
   assert(common.size() == 0);
   assert(m1_only.size() == 18);
   assert(m2_only.size() == 18);
@@ -346,7 +347,7 @@ void test_compare()
 
 int main(int argc, char* argv[])
 {
-/*  const char* filename_polyhedron =
+  const char* filename_polyhedron =
     (argc > 1) ? argv[1] : "data/mech-holes-shark.off";
   test_polyhedron<CGAL::Polyhedron_3<Epic>,Epic>(filename_polyhedron);
   test_polyhedron<CGAL::Polyhedron_3<Epec>,Epec>(filename_polyhedron);
@@ -359,7 +360,6 @@ int main(int argc, char* argv[])
   // It won't work with Epec for large meshes as it builds up a deep DAG
   // leading to a stackoverflow when the destructor is called.
   test_centroid<CGAL::Surface_mesh<Epic::Point_3>,Epic>(filename_surface_mesh);
-*/
   test_compare<CGAL::Polyhedron_3<Epic> >();
   test_compare<CGAL::Polyhedron_3<Epec> >();
   test_compare<CGAL::Surface_mesh<Epic::Point_3> >();
@@ -367,3 +367,4 @@ int main(int argc, char* argv[])
   std::cerr << "All done." << std::endl;
   return 0;
 }
+

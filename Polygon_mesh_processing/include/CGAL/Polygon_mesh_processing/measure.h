@@ -55,17 +55,10 @@ namespace Polygon_mesh_processing {
 
 namespace pmp_internal {
 
-inline void rearrange_face_ids(boost::container::small_vector<std::size_t, 4>& ids, bool orientation_counts)
+inline void rearrange_face_ids(boost::container::small_vector<std::size_t, 4>& ids)
 {
-  if(!orientation_counts)
-  {
-    std::sort(ids.begin(), ids.end());
-  }
-  else
-  {
     auto min_elem = std::min_element(ids.begin(), ids.end());
     std::rotate(ids.begin(), min_elem, ids.end());
-  }
 }
 }//end pmp_internal
 /**
@@ -843,6 +836,7 @@ centroid(const TriangleMesh& tmesh)
   * \ingroup measure_grp
   * given two meshes, separates the faces that are only in one, the faces
   * that are only in the other one, and the faces that are common to both.
+  * Faces with different orientations will be considered as not shared.
   *
   * @tparam PolygonMesh a model of `HalfedgeListGraph` and `FaceListGraph`
   * @tparam OutputFaceIterator model of `OutputIterator`
@@ -882,15 +876,6 @@ centroid(const TriangleMesh& tmesh)
   *                     or using an external map. The latter might result in  - slightly - worsened performance
   *                     in case of non-constant complexity for index access.}
   *   \cgalParamNEnd
-  *   \cgalParamNBegin{require_same_orientation}
-  *   \cgalParamDescription{Parameter (np1 only) to indicate if face orientation should be taken
-  *                        into account when determining whether two faces are duplicates.
-  *                        If `true`, then the triangles `0,1,2` and `0,2,1` will not be considered
-  *                        as "shared" between the two meshes.}
-  *  \cgalParamType{Boolean}
-  *  \cgalParamDefault{`false`}
-  *\cgalParamNEnd
-
   * \cgalNamedParamsEnd
   *
  */
@@ -911,7 +896,6 @@ void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
                                       get_const_property_map(vertex_point, m2));
   VIMap1 vim1 = get_initialized_vertex_index_map(m1, np1);
   VIMap1 vim2 = get_initialized_vertex_index_map(m2, np2);
-  const bool same_orientation = choose_parameter(get_parameter(np1, internal_np::require_same_orientation), false);
   typedef typename boost::property_traits<VPMap2>::value_type Point_3;
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
 
@@ -960,7 +944,7 @@ void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
     }
     if(all_shared)
     {
-      pmp_internal::rearrange_face_ids(ids, same_orientation);
+      pmp_internal::rearrange_face_ids(ids);
       m1_faces_map.insert({ids, f});
     }
     else
@@ -982,7 +966,7 @@ void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
     }
     if(all_shared)
     {
-      pmp_internal::rearrange_face_ids(ids, same_orientation);
+      pmp_internal::rearrange_face_ids(ids);
       auto it = m1_faces_map.find(ids);
       if(it != m1_faces_map.end())
       {
