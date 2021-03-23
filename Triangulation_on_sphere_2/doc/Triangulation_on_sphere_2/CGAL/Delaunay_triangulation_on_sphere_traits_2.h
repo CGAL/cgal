@@ -25,7 +25,7 @@ using the relation above to ensure that a point being inserted is either marked 
 and thus not inserted, or guaranteed to not be hidden upon insertion.
 
 \tparam LK a linear kernel type; it must be a model of `Kernel`.
-\tparam SK a spherical kernel type; it must be a model of `SphericalKernel`.
+\tparam SK a spherical kernel type; it must be a model of `SphericalKernel` refining `LK`.
 
 \cgalModels `DelaunayTriangulationOnSphereTraits_2`
 

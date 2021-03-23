@@ -7,8 +7,9 @@
 The concept `DelaunayTriangulationOnSphereTraits_2` describes the set of requirements
 to be fulfilled by any class used to instantiate the first template
 parameter of the class `CGAL::Delaunay_triangulation_on_sphere_2<Traits, Tds>`.
-This concept provides the types of the geometric primitives used in the
-triangulation and the function object types for the required predicates on those primitives.
+
+To the requirements listed within the concept `TriangulationOnSphereTraits_2`,
+this concept adds types and functors requirements related to build the dual on the sphere.
 
 \cgalHasModel `CGAL::Delaunay_triangulation_on_sphere_traits_2`
 \cgalHasModel `CGAL::Projection_on_sphere_traits_3`
@@ -25,7 +26,11 @@ public:
   /// `Point_on_sphere_2 operator()(Point_on_sphere_2 p, Point_on_sphere_2 q, Point_on_sphere_2 r)`
   ///
   /// which returns the intersection of the dual of the face defined by the three points `p`, `q`, and `r`,
-  /// and the sphere.
+  /// and the sphere, on the positive side of the plane defined by `p`, `q`, and `r`. The dual of the face
+  /// is the line orthogonal to the face, passing through the center of the smallest circumscribing sphere
+  /// of the face.
+  ///
+  /// \pre the center of the sphere is on the negative side of the plane defined by `p`, `q`, and `r`.
   ///
   /// \note This type is only required for the computation of dual objects (Voronoi vertices and edges)
   /// and a dummy type can be used otherwise.

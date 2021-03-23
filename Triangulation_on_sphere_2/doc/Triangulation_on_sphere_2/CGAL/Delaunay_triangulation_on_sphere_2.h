@@ -66,7 +66,7 @@ public:
   introduces an empty triangulation, sets the center and radius of the sphere to `c` and `r` respectively,
   and inserts the point range `[first; beyond[`.
 
-  \tparam PointOnSphereIterator must be a model of `InputIterator` with value type `Point_on_sphere_2`.
+  \tparam PointOnSphereIterator must be a model of `InputIterator` with value type `Point_on_sphere_2` or `Point_3`.
   */
   template <typename PointOnSphereIterator>
   Delaunay_triangulation_on_sphere_2(PointOnSphereIterator first, PointOnSphereIterator beyond,
@@ -78,7 +78,7 @@ public:
 
   \warning It is the user's responsability to ensure that the center and radius are set as intended in `gt`.
 
-  \tparam PointOnSphereIterator must be a model of `InputIterator` with value type `Point_on_sphere_2`.
+  \tparam PointOnSphereIterator must be a model of `InputIterator` with value type `Point_on_sphere_2` or `Point_3`.
   */
   template <typename PointOnSphereIterator>
   Delaunay_triangulation_on_sphere_2(PointOnSphereIterator first, PointOnSphereIterator beyond,
@@ -183,6 +183,9 @@ public:
   /// Two different embeddings are possible: a "straight" embedding, using line segments living
   /// in Euclidean 3D sphere, and a "curved" embedding, using arc segments on the sphere.
   ///
+  /// Note that the following operations are constructions, which should be kept in mind in the choice
+  /// of the underlying kernel.
+  ///
   /// @{
 
   // Straight
@@ -210,22 +213,30 @@ public:
   // Curved
 
   /*!
-  returns the intersection of the dual of the face `f` and the sphere
+  returns the intersection of the dual of the face `f` and the sphere.
+
+  \pre `dimension() == 2` and `f` is a solid face.
   */
   Point dual_on_sphere(const Face_handle f) const;
 
   /*!
   returns the arc of great circle with endpoints the circumcenters of the faces incident to the edge `e`.
+
+  \pre `dimension() == 2` and `e` is not a ghost edge.
   */
   Arc_on_sphere_2 dual_on_sphere(const Edge& e) const;
 
   /*!
   returns the arc of great circle with endpoints the circumcenters of the faces incident to the edge `*ec`.
+
+  \pre `dimension() == 2` and `*ec` is not a ghost edge.
   */
   Arc_on_sphere_2 dual_on_sphere(const Edge_circulator ec) const;
 
   /*!
   returns the arc of great circle with endpoints the circumcenters of the faces incident to the edge `*ei`.
+
+  \pre `dimension() == 2` and `*ei` is not a ghost edge.
   */
   Arc_on_sphere_2 dual_on_sphere(const All_edges_iterator ei) const;
 

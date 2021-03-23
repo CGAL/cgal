@@ -122,9 +122,10 @@ public:
   /// when traversing the great circle counterclockwise seen from the side of the plane
   /// of the great circle pointed by its <I>positive</I> normal vectors.
   ///
-  /// In this definition, we say that a normal vector \f$ (a,b,c)\f$  is <I>positive</I> if
+  /// In this definition, we say that a normal vector \f$ (a,b,c)\f$ is <I>positive</I> if
   /// \f$ (a,b,c)>(0,0,0)\f$ (i.e.\ \f$ (a>0) || (a==0) \&\& (b>0) || (a==0)\&\&(b==0)\&\&(c>0)\f$).
   ///
+  /// \pre `p` and `q` are not diametrically opposed.
   typedef unspecified_type Construct_arc_on_sphere_2;
 
   /// Construction object. Must provide the operator:

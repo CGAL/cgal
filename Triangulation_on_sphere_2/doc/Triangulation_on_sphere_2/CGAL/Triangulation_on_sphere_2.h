@@ -31,7 +31,7 @@ are not ghost faces <em>solid faces</em>, and edges of such faces <em>solid edge
 
 \sa `CGAL::Delaunay_triangulation_on_sphere_2<Traits, TDS>`
 */
-template< typename Traits, typename TDS >
+template <typename Traits, typename TDS>
 class Triangulation_on_sphere_2
   : public Triangulation_cw_ccw_2
 {
@@ -66,11 +66,6 @@ public:
   typedef Traits::Point_on_sphere_2 Point;
 
   /*!
-  An arc of a great circle, used to represent a curved segment (Voronoi or Delaunay edge).
-  */
-  typedef Traits::Arc_on_sphere_2 Arc_on_sphere_2;
-
-  /*!
   The 3D point type.
   */
   typedef Traits::Point_3 Point_3;
@@ -84,6 +79,11 @@ public:
   The 3D triangle type.
   */
   typedef Traits::Triangle_3 Triangle_3;
+
+  /*!
+  An arc of a great circle, used to represent a curved segment (Voronoi or Delaunay edge).
+  */
+  typedef Traits::Arc_on_sphere_2 Arc_on_sphere_2;
 
 public:
   /*!
@@ -258,12 +258,16 @@ public:
 
   /*!
   returns `true` if `f` is a ghost face, and `false` otherwise.
+
+  \pre `dimension() == 2`
   */
   bool is_ghost(const Face_handle f) const;
 
   /*!
   returns `true` if `e` is a ghost edge, that is if both its incident faces are ghost faces,
   and `false` otherwise.
+
+  \pre `dimension() == 2`
   */
   bool is_ghost(const Edge& e) const;
 
@@ -517,6 +521,8 @@ public:
 
   /*!
   Starts at an arbitrary face incident to the vertex `v`.
+
+  Note that this may contain ghost faces.
   */
   Face_circulator incident_faces(Vertex_handle v) const;
 
@@ -545,7 +551,7 @@ public:
   If `true` is returned, the edge with vertices `va` and `vb` is the edge `e=(fr,i)`
   where `fr` is a handle to the face incident to `e` and on the right side of `e` oriented from `va` to `vb`.
   */
-  bool is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr, int & i);
+  bool is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr, int& i);
 
   /*!
   returns `true` if there exists a face (ghost or solid) having `v1`, `v2` and `v3` as vertices.
@@ -556,7 +562,7 @@ public:
   returns `true` if there exists a face (ghost or solid) having `v1`, `v2` and `v3` as vertices.
   If `true` is returned, `fr` is a handle to the face with `v1`, `v2` and `v3` as vertices.
   */
-  bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3, Face_handle &fr);
+  bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3, Face_handle& fr);
 
   /// @}
 
