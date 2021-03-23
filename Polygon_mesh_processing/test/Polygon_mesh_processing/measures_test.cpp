@@ -284,6 +284,63 @@ void test_compare()
   assert(fim2[m2_only[0]] == 0);
   assert(fim2[m2_only[1]] == 3);
   assert(fim2[m2_only[2]] == 4);
+  /*************************
+   **** tri and hole****
+   * **********************/
+  CGAL::clear(mesh1);
+  CGAL::clear(mesh2);
+  common.clear();
+  m1_only.clear();
+  m2_only.clear();
+  input.open("data/tri1.off");
+  if(! (input >> mesh1))
+  {
+    std::cerr << "Invalid input." << std::endl;
+    assert (false);
+    return;
+  }
+  input.close();
+  input.open("data/tri1-hole.off");
+  if(! (input >> mesh2))
+  {
+    std::cerr << "Invalid input." << std::endl;
+    assert (false);
+    return;
+  }
+  input.close();
+  PMP::compare_meshes(mesh1, mesh2, std::back_inserter(common), std::back_inserter(m1_only), std::back_inserter(m2_only), CGAL::parameters::all_default(), CGAL::parameters::all_default());
+  assert(common.size() == 17);
+  assert(m1_only.size() == 1);
+  assert(m2_only.size() == 0);
+
+  /*************************
+   **** tri and orient****
+   * **********************/
+  CGAL::clear(mesh1);
+  CGAL::clear(mesh2);
+  common.clear();
+  m1_only.clear();
+  m2_only.clear();
+  input.open("data/tri2.off");
+  if(! (input >> mesh1))
+  {
+    std::cerr << "Invalid input." << std::endl;
+    assert (false);
+    return;
+  }
+  input.close();
+  input.open("data/tri2-out.off");
+  if(! (input >> mesh2))
+  {
+    std::cerr << "Invalid input." << std::endl;
+    assert (false);
+    return;
+  }
+  input.close();
+  PMP::compare_meshes(mesh1, mesh2, std::back_inserter(common), std::back_inserter(m1_only), std::back_inserter(m2_only), CGAL::parameters::require_same_orientation(true), CGAL::parameters::all_default());
+  assert(common.size() == 0);
+  assert(m1_only.size() == 18);
+  assert(m2_only.size() == 18);
 
 }
 
