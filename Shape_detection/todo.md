@@ -7,4 +7,4 @@
 - cleanup the code
 - finish new tests
 - update the docs
-- remove sqrt
+- do not use Plane_3 from RG namespace in the polyhedron demo

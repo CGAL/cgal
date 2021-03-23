@@ -52,15 +52,12 @@ namespace internal {
 
     reference operator[](const key_type item_index) const {
       CGAL_precondition(item_index < m_item_range.size());
-
       const auto& key = *(m_item_range.begin() + item_index);
       return get(m_property_map, key);
     }
 
     friend inline reference get(
-      const Item_property_map& item_map,
-      const key_type key) {
-
+      const Item_property_map& item_map, const key_type key) {
       return item_map[key];
     }
 
@@ -80,7 +77,7 @@ namespace internal {
 
     using value_type = std::size_t;
     using key_type = Item;
-    using category = boost::lvalue_property_map_tag;
+    using category = boost::readable_property_map_tag;
 
     using Item_map = std::map<key_type, value_type>;
 
@@ -103,9 +100,7 @@ namespace internal {
     }
 
     friend inline value_type get(
-      const Item_to_index_property_map& item_to_index_map,
-      const key_type& key) {
-
+      const Item_to_index_property_map& item_to_index_map, const key_type& key) {
       return item_to_index_map[key];
     }
 
@@ -119,7 +114,7 @@ namespace internal {
   public:
     using key_type = std::size_t;
     using value_type = std::size_t;
-    using category = boost::lvalue_property_map_tag;
+    using category = boost::readable_property_map_tag;
 
     Seed_property_map(
       const std::vector<std::size_t>& seeds) :
@@ -131,9 +126,7 @@ namespace internal {
     }
 
     friend value_type get(
-      const Seed_property_map& seed_map,
-      const key_type key) {
-
+      const Seed_property_map& seed_map, const key_type key) {
       return seed_map[key];
     }
 
@@ -141,11 +134,7 @@ namespace internal {
     const std::vector<std::size_t>& m_seeds;
   };
 
-} // namespace internal
-
-namespace RG {
-
-  class Point_to_shape_index_map {
+  class Point_to_region_index_map {
 
   public:
     using key_type = std::size_t;
@@ -153,24 +142,24 @@ namespace RG {
     using reference = value_type;
     using category = boost::readable_property_map_tag;
 
-    Point_to_shape_index_map() { }
+    Point_to_region_index_map() { }
 
     template<typename PointRange>
-    Point_to_shape_index_map(
+    Point_to_region_index_map(
       const PointRange& points,
       const std::vector< std::vector<std::size_t> >& regions) :
     m_indices(new std::vector<int>(points.size(), -1)) {
 
       for (std::size_t i = 0; i < regions.size(); ++i)
-        for (const std::size_t idx : regions[i])
-          (*m_indices)[idx] = static_cast<int>(i);
+        for (const std::size_t index : regions[i])
+          (*m_indices)[index] = static_cast<int>(i);
     }
 
     inline friend value_type get(
-      const Point_to_shape_index_map& point_to_shape_index_map,
+      const Point_to_region_index_map& point_to_region_index_map,
       const key_type key) {
 
-      const auto& indices = *(point_to_shape_index_map.m_indices);
+      const auto& indices = *(point_to_region_index_map.m_indices);
       return indices[key];
     }
 
@@ -178,7 +167,7 @@ namespace RG {
     std::shared_ptr< std::vector<int> > m_indices;
   };
 
-} // namespace RG
+} // namespace internal
 } // namespace Shape_detection
 } // namespace CGAL
 

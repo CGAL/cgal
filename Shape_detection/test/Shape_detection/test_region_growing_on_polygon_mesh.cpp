@@ -82,8 +82,8 @@ bool test_region_growing_on_polygon_mesh(int argc, char *argv[]) {
   region_growing.detect(std::back_inserter(regions));
 
   // Test data.
-  assert(regions.size() >= 324 && regions.size() <= 328);
-  if (regions.size() < 324 || regions.size() > 328)
+  assert(regions.size() >= 325 && regions.size() <= 334);
+  if (regions.size() < 325 || regions.size() > 334)
     return false;
 
   for (const auto& region : regions)
@@ -93,8 +93,8 @@ bool test_region_growing_on_polygon_mesh(int argc, char *argv[]) {
   std::vector<std::size_t> unassigned_faces;
   region_growing.unassigned_items(std::back_inserter(unassigned_faces));
 
-  assert(unassigned_faces.size() >= 904 && unassigned_faces.size() <= 924);
-  if (unassigned_faces.size() < 904 || unassigned_faces.size() > 924)
+  assert(unassigned_faces.size() >= 908 && unassigned_faces.size() <= 928);
+  if (unassigned_faces.size() < 908 || unassigned_faces.size() > 928)
     return false;
 
   return true;

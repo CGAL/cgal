@@ -69,7 +69,7 @@ namespace Polygon_mesh {
     value type is the face type of a polygon mesh
 
     \tparam VertexToPointMap
-    a model of `ReadPropertyMap` whose key type is the vertex type of a polygon mesh and
+    a model of `LValuePropertyMap` whose key type is the vertex type of a polygon mesh and
     value type is `Kernel::Point_3`
 
     \cgalModels `RegionType`
@@ -182,6 +182,9 @@ namespace Polygon_mesh {
       m_cos_value_threshold = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::cos_value_threshold), cos_value_threshold);
       CGAL_precondition(m_cos_value_threshold >= FT(0) && m_cos_value_threshold <= FT(1));
+
+      m_sort_regions = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::sort_regions), false);
     }
 
     /// @}
@@ -354,6 +357,7 @@ namespace Polygon_mesh {
     FT m_distance_threshold;
     FT m_cos_value_threshold;
     std::size_t m_min_region_size;
+    bool m_sort_regions;
 
     const Vertex_to_point_map m_vertex_to_point_map;
 

@@ -53,7 +53,7 @@ namespace Point_set {
     a model of `NeighborQuery`
 
     \tparam PointMap
-    a model of `ReadPropertyMap` whose key type is the value type of the input
+    a model of `LValuePropertyMap` whose key type is the value type of the input
     range and value type is `Kernel::Point_3`
   */
   template<
@@ -77,7 +77,7 @@ namespace Point_set {
 
     #ifdef DOXYGEN_RUNNING
       /*!
-        a model of `ReadPropertyMap` whose key and value type is `std::size_t`.
+        a model of `ReadablePropertyMap` whose key and value type is `std::size_t`.
         This map provides an access to the ordered indices of input points.
       */
       typedef unspecified_type Seed_map;

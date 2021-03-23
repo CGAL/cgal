@@ -16,17 +16,6 @@
 
 #include <CGAL/license/Shape_detection.h>
 
-// STL includes.
-#include <vector>
-#include <algorithm>
-
-// CGAL includes.
-#include <CGAL/assertions.h>
-#include <CGAL/Cartesian_converter.h>
-#include <CGAL/Eigen_diagonalize_traits.h>
-#include <CGAL/linear_least_squares_fitting_2.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
 // Internal includes.
 #include <CGAL/Shape_detection/Region_growing/internal/utils.h>
 #include <CGAL/Shape_detection/Region_growing/internal/property_map.h>
@@ -53,7 +42,7 @@ namespace Point_set {
     a model of `NeighborQuery`
 
     \tparam PointMap
-    a model of `ReadPropertyMap` whose key type is the value type of the input
+    a model of `LValuePropertyMap` whose key type is the value type of the input
     range and value type is `Kernel::Point_2`
   */
   template<
@@ -77,7 +66,7 @@ namespace Point_set {
 
     #ifdef DOXYGEN_RUNNING
       /*!
-        a model of `ReadPropertyMap` whose key and value type is `std::size_t`.
+        a model of `ReadablePropertyMap` whose key and value type is `std::size_t`.
         This map provides an access to the ordered indices of input points.
       */
       typedef unspecified_type Seed_map;
@@ -86,12 +75,9 @@ namespace Point_set {
     /// @}
 
   private:
-    using ITraits = Exact_predicates_inexact_constructions_kernel;
-    using IFT = typename ITraits::FT;
-    using IPoint_2 = typename ITraits::Point_2;
-    using ILine_2 = typename ITraits::Line_2;
-    using IConverter = Cartesian_converter<Traits, ITraits>;
-    using Compare_scores = internal::Compare_scores<IFT>;
+    using FT = typename Traits::FT;
+    using Line_2 = typename Traits::Line_2;
+    using Compare_scores = internal::Compare_scores<FT>;
 
   public:
     /// \name Initialization
@@ -119,8 +105,7 @@ namespace Point_set {
       const PointMap point_map = PointMap()) :
     m_input_range(input_range),
     m_neighbor_query(neighbor_query),
-    m_point_map(point_map),
-    m_iconverter() {
+    m_point_map(point_map) {
 
       CGAL_precondition(input_range.size() > 0);
       m_order.resize(m_input_range.size());
@@ -164,35 +149,18 @@ namespace Point_set {
     Neighbor_query& m_neighbor_query;
     const Point_map m_point_map;
     std::vector<std::size_t> m_order;
-    std::vector<IFT> m_scores;
-    const IConverter m_iconverter;
+    std::vector<FT> m_scores;
 
     void compute_scores() {
 
-      std::vector<IPoint_2> points;
+      Line_2 line;
       std::vector<std::size_t> neighbors;
       for (std::size_t i = 0; i < m_input_range.size(); ++i) {
-
         neighbors.clear();
         m_neighbor_query(i, neighbors);
         neighbors.push_back(i);
-
-        points.clear();
-        for (const std::size_t point_index : neighbors) {
-          CGAL_precondition(point_index < m_input_range.size());
-          const auto& key = *(m_input_range.begin() + point_index);
-          const auto& point = get(m_point_map, key);
-          points.push_back(m_iconverter(point));
-        }
-        CGAL_postcondition(points.size() == neighbors.size());
-
-        ILine_2  fitted_line;
-        IPoint_2 fitted_centroid;
-        m_scores[i] = CGAL::linear_least_squares_fitting_2(
-          points.begin(), points.end(),
-          fitted_line, fitted_centroid,
-          CGAL::Dimension_tag<0>(), ITraits(),
-          CGAL::Eigen_diagonalize_traits<IFT, 2>());
+        m_scores[i] = internal::create_line_from_points_2(
+          m_input_range, m_point_map, neighbors, line);
       }
     }
   };

@@ -18,6 +18,7 @@
 
 // STL includes.
 #include <vector>
+#include <algorithm>
 
 // Boost headers.
 #include <boost/mpl/has_xxx.hpp>
@@ -27,6 +28,7 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Eigen_diagonalize_traits.h>
+#include <CGAL/linear_least_squares_fitting_2.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -42,8 +44,7 @@ namespace internal {
     using FT = typename Traits::FT;
 
   public:
-    FT operator()(const FT value) const {
-
+    const FT operator()(const FT value) const {
       CGAL_precondition(value >= FT(0));
       return static_cast<FT>(CGAL::sqrt(CGAL::to_double(value)));
     }
@@ -80,14 +81,13 @@ namespace internal {
 
   template<typename FT>
   struct Compare_scores {
-    const std::vector<FT>& m_scores;
 
+    const std::vector<FT>& m_scores;
     Compare_scores(const std::vector<FT>& scores) :
     m_scores(scores)
     { }
 
     bool operator()(const std::size_t i, const std::size_t j) const {
-
       CGAL_precondition(i < m_scores.size());
       CGAL_precondition(j < m_scores.size());
       return m_scores[i] > m_scores[j];
@@ -97,12 +97,58 @@ namespace internal {
   template<
   typename InputRange,
   typename PointMap,
+  typename Line_2>
+  const typename Kernel_traits<Line_2>::Kernel::FT
+  create_line_from_points_2(
+    const InputRange& input_range, const PointMap point_map,
+    const std::vector<std::size_t>& region, Line_2& line) {
+
+    using Traits = typename Kernel_traits<Line_2>::Kernel;
+    using FT = typename Traits::FT;
+
+    using ITraits = CGAL::Exact_predicates_inexact_constructions_kernel;
+    using IConverter = Cartesian_converter<Traits, ITraits>;
+
+    using IFT = typename ITraits::FT;
+    using IPoint_2 = typename ITraits::Point_2;
+    using ILine_2 = typename ITraits::Line_2;
+
+    std::vector<IPoint_2> points;
+    CGAL_precondition(region.size() > 0);
+    points.reserve(region.size());
+    const IConverter iconverter = IConverter();
+
+    for (const std::size_t point_index : region) {
+      CGAL_precondition(point_index < input_range.size());
+      const auto& key = *(input_range.begin() + point_index);
+      const auto& point = get(point_map, key);
+      points.push_back(iconverter(point));
+    }
+    CGAL_postcondition(points.size() == region.size());
+
+    ILine_2 fitted_line;
+    IPoint_2 fitted_centroid;
+    const IFT score = CGAL::linear_least_squares_fitting_2(
+      points.begin(), points.end(),
+      fitted_line, fitted_centroid,
+      CGAL::Dimension_tag<0>(), ITraits(),
+      CGAL::Eigen_diagonalize_traits<IFT, 2>());
+
+    line = Line_2(
+      static_cast<FT>(fitted_line.a()),
+      static_cast<FT>(fitted_line.b()),
+      static_cast<FT>(fitted_line.c()));
+    return static_cast<FT>(score);
+  }
+
+  template<
+  typename InputRange,
+  typename PointMap,
   typename Plane_3>
-  void create_planes_from_points(
-    const InputRange& input_range,
-    const PointMap point_map,
-    std::vector< std::vector<std::size_t> >& regions,
-    std::vector<Plane_3>& planes) {
+  const typename Kernel_traits<Plane_3>::Kernel::FT
+  create_plane_from_points(
+    const InputRange& input_range, const PointMap point_map,
+    const std::vector<std::size_t>& region, Plane_3& plane) {
 
     using Traits = typename Kernel_traits<Plane_3>::Kernel;
     using FT = typename Traits::FT;
@@ -114,98 +160,56 @@ namespace internal {
     using IPoint_3 = typename ITraits::Point_3;
     using IPlane_3 = typename ITraits::Plane_3;
 
+    std::vector<IPoint_3> points;
+    CGAL_precondition(region.size() > 0);
+    points.reserve(region.size());
+    const IConverter iconverter = IConverter();
+
+    for (const std::size_t point_index : region) {
+      CGAL_precondition(point_index < input_range.size());
+      const auto& key = *(input_range.begin() + point_index);
+      const auto& point = get(point_map, key);
+      points.push_back(iconverter(point));
+    }
+    CGAL_postcondition(points.size() == region.size());
+
+    IPlane_3 fitted_plane;
+    IPoint_3 fitted_centroid;
+    const IFT score = CGAL::linear_least_squares_fitting_3(
+      points.begin(), points.end(),
+      fitted_plane, fitted_centroid,
+      CGAL::Dimension_tag<0>(), ITraits(),
+      CGAL::Eigen_diagonalize_traits<IFT, 3>());
+
+    plane = Plane_3(
+      static_cast<FT>(fitted_plane.a()),
+      static_cast<FT>(fitted_plane.b()),
+      static_cast<FT>(fitted_plane.c()),
+      static_cast<FT>(fitted_plane.d()));
+    return static_cast<FT>(score);
+  }
+
+  template<
+  typename InputRange,
+  typename PointMap,
+  typename Plane_3>
+  void create_planes_from_points(
+    const InputRange& input_range, const PointMap point_map,
+    std::vector< std::vector<std::size_t> >& regions,
+    std::vector<Plane_3>& planes) {
+
     planes.clear();
     planes.reserve(regions.size());
 
-    std::vector<IPoint_3> points;
-    const IConverter iconverter = IConverter();
+    Plane_3 plane;
     for (const auto& region : regions) {
-      CGAL_assertion(region.size() > 0);
-
-      points.clear();
-      for (const std::size_t point_index : region) {
-        CGAL_precondition(point_index < input_range.size());
-        const auto& key = *(input_range.begin() + point_index);
-        const auto& point = get(point_map, key);
-        points.push_back(iconverter(point));
-      }
-      CGAL_postcondition(points.size() == region.size());
-
-      IPlane_3 fitted_plane;
-      IPoint_3 fitted_centroid;
-      CGAL::linear_least_squares_fitting_3(
-        points.begin(), points.end(),
-        fitted_plane, fitted_centroid,
-        CGAL::Dimension_tag<0>(), ITraits(),
-        CGAL::Eigen_diagonalize_traits<IFT, 3>());
-
-      const Plane_3 plane = Plane_3(
-        static_cast<FT>(fitted_plane.a()),
-        static_cast<FT>(fitted_plane.b()),
-        static_cast<FT>(fitted_plane.c()),
-        static_cast<FT>(fitted_plane.d()));
+      create_plane_from_points(input_range, point_map, region, plane);
       planes.push_back(plane);
     }
     CGAL_postcondition(planes.size() == regions.size());
   }
 
 } // namespace internal
-
-namespace RG {
-
-  template<typename GeomTraits>
-  class Plane {
-
-  public:
-    using Traits = GeomTraits;
-    using FT = typename Traits::FT;
-    using Point_2 = typename Traits::Point_2;
-    using Point_3 = typename Traits::Point_3;
-    using Plane_3 = typename Traits::Plane_3;
-    using Vector_3 = typename Traits::Vector_3;
-
-    template<
-    typename Input_range,
-    typename Point_map>
-    Plane(
-      const Input_range& input_range,
-      const Point_map point_map,
-      const std::vector<std::size_t>& region,
-      const Plane_3& plane) {
-
-      FT x = FT(0), y = FT(0), z = FT(0);
-      for (const std::size_t idx : region) {
-        const auto& p = get(point_map, *(input_range.begin() + idx));
-        x += p.x();
-        y += p.y();
-        z += p.z();
-      }
-      x /= static_cast<FT>(region.size());
-      y /= static_cast<FT>(region.size());
-      z /= static_cast<FT>(region.size());
-
-      m_centroid = Point_3(x, y, z);
-      m_base1 = plane.base1() / static_cast<FT>(CGAL::sqrt(
-        CGAL::to_double(plane.base1() * plane.base1())));
-      m_base2 = plane.base2() / static_cast<FT>(CGAL::sqrt(
-        CGAL::to_double(plane.base2() * plane.base2())));
-    }
-
-    Point_2 to_2d(const Point_3& query) const {
-      const Vector_3 v(m_centroid, query);
-      return Point_2(v * m_base1, v * m_base2);
-    }
-
-    Point_3 to_3d(const Point_2& query) const {
-      return m_centroid + query.x() * m_base1 + query.y() * m_base2;
-    }
-
-  private:
-    Point_3 m_centroid;
-    Vector_3 m_base1, m_base2;
-  };
-
-} // namespace RG
 } // namespace Shape_detection
 } // namespace CGAL
 

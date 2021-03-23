@@ -56,11 +56,11 @@ namespace Point_set {
     a model of `ConstRange` whose iterator type is `RandomAccessIterator`
 
     \tparam PointMap
-    a model of `ReadPropertyMap` whose key type is the value type of the input
+    a model of `LValuePropertyMap` whose key type is the value type of the input
     range and value type is `Kernel::Point_3`
 
     \tparam NormalMap
-    a model of `ReadPropertyMap` whose key type is the value type of the input
+    a model of `LValuePropertyMap` whose key type is the value type of the input
     range and value type is `Kernel::Vector_3`
 
     \cgalModels `RegionType`
@@ -177,6 +177,9 @@ namespace Point_set {
       m_cos_value_threshold = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::cos_value_threshold), cos_value_threshold);
       CGAL_precondition(m_cos_value_threshold >= FT(0) && m_cos_value_threshold <= FT(1));
+
+      m_sort_regions = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::sort_regions), false);
     }
 
     /// @}
@@ -310,6 +313,7 @@ namespace Point_set {
     FT m_distance_threshold;
     FT m_cos_value_threshold;
     std::size_t m_min_region_size;
+    bool m_sort_regions;
 
     const Point_map m_point_map;
     const Normal_map m_normal_map;

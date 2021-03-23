@@ -16,20 +16,9 @@
 
 #include <CGAL/license/Shape_detection.h>
 
-// STL includes.
-#include <vector>
-
 // Boost includes.
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
-
-// CGAL includes.
-#include <CGAL/assertions.h>
-#include <CGAL/number_utils.h>
-#include <CGAL/Cartesian_converter.h>
-#include <CGAL/Eigen_diagonalize_traits.h>
-#include <CGAL/linear_least_squares_fitting_2.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 // Internal includes.
 #include <CGAL/Shape_detection/Region_growing/internal/utils.h>
@@ -56,11 +45,11 @@ namespace Point_set {
     a model of `ConstRange` whose iterator type is `RandomAccessIterator`
 
     \tparam PointMap
-    a model of `ReadPropertyMap` whose key type is the value type of the input
+    a model of `LValuePropertyMap` whose key type is the value type of the input
     range and value type is `Kernel::Point_2`.
 
     \tparam NormalMap
-    a model of `ReadPropertyMap` whose key type is the value type of the input
+    a model of `LValuePropertyMap` whose key type is the value type of the input
     range and value type is `Kernel::Vector_2`.
 
     \cgalModels `RegionType`
@@ -93,18 +82,9 @@ namespace Point_set {
     using Vector_2 = typename Traits::Vector_2;
     using Line_2 = typename Traits::Line_2;
 
-    using ITraits = Exact_predicates_inexact_constructions_kernel;
-    using IFT = typename ITraits::FT;
-    using IPoint_2 = typename ITraits::Point_2;
-    using ILine_2 = typename ITraits::Line_2;
-    using IConverter = Cartesian_converter<Traits, ITraits>;
-
     using Squared_length_2 = typename Traits::Compute_squared_length_2;
     using Squared_distance_2 = typename Traits::Compute_squared_distance_2;
     using Scalar_product_2 = typename Traits::Compute_scalar_product_2;
-
-    using Get_sqrt = internal::Get_sqrt<Traits>;
-    using Sqrt = typename Get_sqrt::Sqrt;
 
   public:
     /// \name Initialization
@@ -155,9 +135,7 @@ namespace Point_set {
     m_normal_map(normal_map),
     m_squared_length_2(traits.compute_squared_length_2_object()),
     m_squared_distance_2(traits.compute_squared_distance_2_object()),
-    m_scalar_product_2(traits.compute_scalar_product_2_object()),
-    m_sqrt(Get_sqrt::sqrt_object(traits)),
-    m_iconverter() {
+    m_scalar_product_2(traits.compute_scalar_product_2_object()) {
 
       CGAL_precondition(input_range.size() > 0);
       m_distance_threshold = parameters::choose_parameter(
@@ -177,6 +155,9 @@ namespace Point_set {
       m_cos_value_threshold = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::cos_value_threshold), cos_value_threshold);
       CGAL_precondition(m_cos_value_threshold >= FT(0) && m_cos_value_threshold <= FT(1));
+
+      m_sort_regions = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::sort_regions), false);
     }
 
     /// @}
@@ -272,31 +253,10 @@ namespace Point_set {
 
       } else { // update reference line and normal
 
-        std::vector<IPoint_2> points;
-        points.reserve(region.size());
-        for (const std::size_t point_index : region) {
-          CGAL_precondition(point_index < m_input_range.size());
-          const auto& key = *(m_input_range.begin() + point_index);
-          const Point_2& point = get(m_point_map, key);
-          points.push_back(m_iconverter(point));
-        }
-        CGAL_postcondition(points.size() == region.size());
-
-        ILine_2 fitted_line;
-        IPoint_2 fitted_centroid;
-
         // The best fit line will be a line fitted to all region points with
         // its normal being perpendicular to the line.
-        CGAL::linear_least_squares_fitting_2(
-          points.begin(), points.end(),
-          fitted_line, fitted_centroid,
-          CGAL::Dimension_tag<0>(), ITraits(),
-          CGAL::Eigen_diagonalize_traits<IFT, 2>());
-
-        m_line_of_best_fit = Line_2(
-          static_cast<FT>(fitted_line.a()),
-          static_cast<FT>(fitted_line.b()),
-          static_cast<FT>(fitted_line.c()));
+        internal::create_line_from_points_2(
+          m_input_range, m_point_map, region, m_line_of_best_fit);
         m_normal_of_best_fit = m_line_of_best_fit.perpendicular(
           m_line_of_best_fit.point(0)).to_vector();
       }
@@ -310,6 +270,7 @@ namespace Point_set {
     FT m_distance_threshold;
     FT m_cos_value_threshold;
     std::size_t m_min_region_size;
+    bool m_sort_regions;
 
     const Point_map m_point_map;
     const Normal_map m_normal_map;
@@ -317,9 +278,6 @@ namespace Point_set {
     const Squared_length_2 m_squared_length_2;
     const Squared_distance_2 m_squared_distance_2;
     const Scalar_product_2 m_scalar_product_2;
-    const Sqrt m_sqrt;
-
-    const IConverter m_iconverter;
 
     Line_2 m_line_of_best_fit;
     Vector_2 m_normal_of_best_fit;

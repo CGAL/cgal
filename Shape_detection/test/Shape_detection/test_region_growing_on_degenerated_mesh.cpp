@@ -83,8 +83,8 @@ bool test_region_growing_on_degenerated_mesh(int argc, char *argv[]) {
   region_growing.detect(std::back_inserter(regions));
 
   // Test data.
-  assert(regions.size() >= 265 && regions.size() <= 269);
-  if (regions.size() < 265 || regions.size() > 269)
+  assert(regions.size() >= 260 && regions.size() <= 264);
+  if (regions.size() < 260 || regions.size() > 264)
     return false;
 
   for (const auto& region : regions)
@@ -94,8 +94,8 @@ bool test_region_growing_on_degenerated_mesh(int argc, char *argv[]) {
   std::vector<std::size_t> unassigned_faces;
   region_growing.unassigned_items(std::back_inserter(unassigned_faces));
 
-  assert(unassigned_faces.size() >= 501 && unassigned_faces.size() <= 521);
-  if (unassigned_faces.size() < 501 || unassigned_faces.size() > 521)
+  assert(unassigned_faces.size() >= 493 && unassigned_faces.size() <= 513);
+  if (unassigned_faces.size() < 493 || unassigned_faces.size() > 513)
     return false;
 
   return true;
