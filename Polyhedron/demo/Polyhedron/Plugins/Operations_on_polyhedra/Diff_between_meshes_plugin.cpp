@@ -88,7 +88,7 @@ void Polyhedron_demo_diff_between_meshes_plugin::diff()
       m2=*m2_item->face_graph();
   std::vector<face_descriptor> m1_only, m2_only;
   std::vector<std::pair<face_descriptor, face_descriptor> > common;
-  CGAL::Polygon_mesh_processing::compare_meshes(m1, m2, common, m1_only, m2_only);
+  CGAL::Polygon_mesh_processing::compare_meshes(m1, m2, std::back_inserter(common), std::back_inserter(m1_only), std::back_inserter(m2_only));
 
   Filtered_graph filter1(m1, m1_only);
   SMesh mesh1_only, mesh2_only, common_mesh;

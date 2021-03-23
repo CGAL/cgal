@@ -234,7 +234,7 @@ void test_compare()
     return;
   }
   input.close();
-  PMP::compare_meshes(mesh1, mesh2, common, m1_only, m2_only, CGAL::parameters::all_default(), CGAL::parameters::all_default());
+  PMP::compare_meshes(mesh1, mesh2, std::back_inserter(common), std::back_inserter(m1_only), std::back_inserter(m2_only), CGAL::parameters::all_default(), CGAL::parameters::all_default());
   assert(common.size() == 7);
   assert(m1_only.size() == 11);
   assert(m2_only.size() == 11);
@@ -274,7 +274,7 @@ void test_compare()
   {
     fim2.insert(std::make_pair(f, id++));
   }
-  PMP::compare_meshes(mesh1, mesh2, common, m1_only, m2_only, CGAL::parameters::all_default(), CGAL::parameters::all_default());
+  PMP::compare_meshes(mesh1, mesh2, std::back_inserter(common), std::back_inserter(m1_only), std::back_inserter(m2_only), CGAL::parameters::all_default(), CGAL::parameters::all_default());
   assert(common.size() == 3);
   assert(m1_only.size() == 3);
   assert(fim1[m1_only[0]] == 0);

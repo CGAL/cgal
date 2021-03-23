@@ -830,17 +830,22 @@ centroid(const TriangleMesh& tmesh)
   * The orientation of the faces is ignored during the comparison.
   *
   * @tparam PolygonMesh a model of `HalfedgeListGraph` and `FaceListGraph`
-  * \tparam FaceRange a mutable range of `boost::graph_traits<PolygonMesh>::%face_descriptor`
-  * @tparam FacePairRange a mutable range of `std::pair<boost::graph_traits<PolygonMesh>::%face_descriptor, boost::graph_traits<PolygonMesh>::%face_descriptor>`
+  * @tparam OutputFaceIterator model of `OutputIterator`
+     holding `boost::graph_traits<PolygonMesh>::%face_descriptor`
+     for faces that are only in one mesh.
+  * @tparam OutputFacePairIterator model of `OutputIterator`
+     holding `std::pair<boost::graph_traits<PolygonMesh>::%face_descriptor,
+     boost::graph_traits<PolygonMesh>::%face_descriptor`
+     for faces that are shared by both meshes.
   *
   * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
   * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param m1 the first `PolygonMesh`
   * @param m2 the second `PolygonMesh`
-  * @param common output range containing the faces that are common to both meshes.
-  * @param m1_only output range containing the faces that are only in `m1`
-  * @param m2_only output range containing the faces that are only in `m2`
+  * @param common output iterator collecting the faces that are common to both meshes.
+  * @param m1_only output iterator collecting the faces that are only in `m1`
+  * @param m2_only output iterator collecting the faces that are only in `m2`
   * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
@@ -865,9 +870,9 @@ centroid(const TriangleMesh& tmesh)
   * \cgalNamedParamsEnd
   *
  */
-template<typename PolygonMesh, typename FaceRange, typename FacePairRange, typename NamedParameters1, typename NamedParameters2 >
+template<typename PolygonMesh, typename OutputFaceIterator, typename OutputFacePairIterator, typename NamedParameters1, typename NamedParameters2 >
 void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
-                    FacePairRange& common, FaceRange& m1_only, FaceRange& m2_only,
+                    OutputFacePairIterator common, OutputFaceIterator m1_only, OutputFaceIterator m2_only,
                     const NamedParameters1& np1,const NamedParameters2& np2)
 {
   using parameters::choose_parameter;
@@ -883,7 +888,7 @@ void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
   VIMap1 vim1 = get_initialized_vertex_index_map(m1, np1);
   VIMap1 vim2 = get_initialized_vertex_index_map(m2, np2);
   typedef typename boost::property_traits<VPMap2>::value_type Point_3;
-  typedef typename FaceRange::value_type face_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
 
   std::map<Point_3, std::size_t> point_id_map;
 
@@ -929,7 +934,7 @@ void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
     if(all_shared)
       m1_faces_map.insert({ids, f});
     else
-      m1_only.push_back(f);
+      *m1_only++ = f;
   }
   for(auto f : faces(m2))
   {
@@ -946,23 +951,23 @@ void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
     }
     std::sort(ids.begin(), ids.end());
     if(all_shared)
-      common.push_back(std::make_pair(m1_faces_map[ids], f));
+      *common++ = std::make_pair(m1_faces_map[ids], f);
     else
-      m2_only.push_back(f);
+      *m2_only++ = f;
   }
 }
 
-template<typename PolygonMesh, typename FaceRange, typename FacePairRange, typename NamedParameters>
+template<typename PolygonMesh, typename OutputFaceIterator, typename OutputFacePairIterator, typename NamedParameters>
 void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
-                    FacePairRange& common, FaceRange& m1_only, FaceRange& m2_only,
+                    OutputFacePairIterator common, OutputFaceIterator m1_only, OutputFaceIterator m2_only,
                     const NamedParameters& np)
 {
   compare_meshes(m1, m2, common, m1_only, m2_only, np, parameters::all_default());
 }
 
-template<typename PolygonMesh, typename FaceRange, typename FacePairRange>
+template<typename PolygonMesh, typename OutputFaceIterator, typename OutputFacePairIterator>
 void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
-                    FacePairRange& common, FaceRange& m1_only, FaceRange& m2_only)
+                    OutputFacePairIterator common, OutputFaceIterator m1_only, OutputFaceIterator m2_only)
 {
   compare_meshes(m1, m2, common, m1_only, m2_only, parameters::all_default(), parameters::all_default());
 }

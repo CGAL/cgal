@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
   }
   std::vector<std::pair<face_descriptor, face_descriptor> > common;
   std::vector<face_descriptor> m1_only, m2_only;
-  PMP::compare_meshes(mesh1, mesh2, common, m1_only, m2_only, CGAL::parameters::all_default(), CGAL::parameters::all_default());
+  PMP::compare_meshes(mesh1, mesh2, std::back_inserter(common), std::back_inserter(m1_only), std::back_inserter(m2_only), CGAL::parameters::all_default(), CGAL::parameters::all_default());
   std::cout<<"Faces only in m1 : "<<std::endl;
   for(const auto& f : m1_only)
   {
