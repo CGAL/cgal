@@ -882,8 +882,9 @@ centroid(const TriangleMesh& tmesh)
   *   \cgalParamNEnd
   *   \cgalParamNBegin{require_same_orientation}
   *   \cgalParamDescription{Parameter (np1 only) to indicate if face orientation should be taken
-  *                        into account when determining whether two faces are duplicates,
-  *                        that is, whether e.g. the triangles `0,1,2` and `0,2,1` are duplicates.}
+  *                        into account when determining whether two faces are duplicates.
+  *                        If `true`, then the triangles `0,1,2` and `0,2,1` will not be considered
+  *                        as "shared" between the two meshes.}
   *  \cgalParamType{Boolean}
   *  \cgalParamDefault{`false`}
   *\cgalParamNEnd
