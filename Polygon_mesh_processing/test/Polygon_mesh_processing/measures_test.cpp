@@ -212,6 +212,7 @@ void test_compare()
 
   PolygonMesh mesh1, mesh2;
   std::vector<std::pair<face_descriptor, face_descriptor> > common;
+  common.clear();
   std::vector<face_descriptor> m1_only, m2_only;
   /*************************
    * triangulated and open *
@@ -288,7 +289,7 @@ void test_compare()
 
 int main(int argc, char* argv[])
 {
-  const char* filename_polyhedron =
+/*  const char* filename_polyhedron =
     (argc > 1) ? argv[1] : "data/mech-holes-shark.off";
   test_polyhedron<CGAL::Polyhedron_3<Epic>,Epic>(filename_polyhedron);
   test_polyhedron<CGAL::Polyhedron_3<Epec>,Epec>(filename_polyhedron);
@@ -301,7 +302,7 @@ int main(int argc, char* argv[])
   // It won't work with Epec for large meshes as it builds up a deep DAG
   // leading to a stackoverflow when the destructor is called.
   test_centroid<CGAL::Surface_mesh<Epic::Point_3>,Epic>(filename_surface_mesh);
-
+*/
   test_compare<CGAL::Polyhedron_3<Epic> >();
   test_compare<CGAL::Polyhedron_3<Epec> >();
   test_compare<CGAL::Surface_mesh<Epic::Point_3> >();

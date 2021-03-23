@@ -885,6 +885,8 @@ void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
   typedef typename FaceRange::value_type face_descriptor;
 
   std::map<Point_3, std::size_t> point_id_map;
+  //0 = never seen, 1 = seen only once, 2 = seen in both meshes
+  std::vector<char> shared_vertices(num_vertices(m1) + num_vertices(m2), 0);
   std::vector<std::size_t> m1_vertex_id(num_vertices(m1), -1);
   std::vector<std::size_t> m2_vertex_id(num_vertices(m2), -1);
 
@@ -897,6 +899,7 @@ void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
     if(res.second)
       id++;
     m1_vertex_id[static_cast<std::size_t>(get(vim1, v))]=res.first->second;
+    ++shared_vertices[res.first->second];
   }
   for(auto v : vertices(m2))
   {
@@ -905,52 +908,46 @@ void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
     if(res.second)
       id++;
     m2_vertex_id[static_cast<std::size_t>(get(vim2, v))]=res.first->second;
+    ++shared_vertices[res.first->second];
   }
 
   //fill a set with the "faces point-ids" of m1 and then iterate faces of m2 to compare.
-  std::set<boost::container::small_vector<std::size_t, 4> > m1_faces;
+  std::map<boost::container::small_vector<std::size_t, 4>, face_descriptor> m1_faces_map;
   for(auto f : faces(m1))
   {
+    bool all_shared = true;
     boost::container::small_vector<std::size_t, 4> ids;
     for(auto v : CGAL::vertices_around_face(halfedge(f, m1), m1))
     {
-      ids.push_back(m1_vertex_id[static_cast<std::size_t>(get(vim1, v))]);
+       std::size_t vid = m1_vertex_id[static_cast<std::size_t>(get(vim1, v))];
+      ids.push_back(vid);
+      if(shared_vertices[vid] != 2)
+        all_shared = false;
     }
     std::sort(ids.begin(), ids.end());
-    m1_faces.insert(ids);
+    if(all_shared)
+      m1_faces_map.insert({ids, f});
+    else
+      m1_only.push_back(f);
   }
-  std::map<boost::container::small_vector<std::size_t, 4>, face_descriptor> m2_faces_map;
   for(auto f : faces(m2))
   {
     boost::container::small_vector<std::size_t, 4> ids;
+    bool all_shared = true;
     for(auto v : CGAL::vertices_around_face(halfedge(f, m2), m2))
     {
-      ids.push_back(m2_vertex_id[static_cast<std::size_t>(get(vim2, v))]);
+      std::size_t vid = m2_vertex_id[static_cast<std::size_t>(get(vim2, v))];
+      ids.push_back(vid);
+      if(shared_vertices[vid] != 2)
+      {
+        all_shared = false;
+      }
     }
     std::sort(ids.begin(), ids.end());
-    m2_faces_map.insert({ids, f});
-    if(m1_faces.find(ids) == m1_faces.end())   {
-      m2_only.push_back(f);
-    }
-  }
-
-  for(auto f : faces(m1))
-  {
-    boost::container::small_vector<std::size_t, 4> ids;
-    for(auto v : CGAL::vertices_around_face(halfedge(f, m1), m1))
-    {
-      ids.push_back(m1_vertex_id[static_cast<std::size_t>(get(vim1, v))]);
-    }
-    std::sort(ids.begin(), ids.end());
-    auto m2_face_it = m2_faces_map.find(ids);
-    if(m2_face_it == m2_faces_map.end())
-    {
-      m1_only.push_back(f);
-    }
+    if(all_shared)
+      common.push_back(std::make_pair(m1_faces_map[ids], f));
     else
-    {
-      common.push_back(std::make_pair(f, m2_face_it->second));
-    }
+      m2_only.push_back(f);
   }
 }
 
