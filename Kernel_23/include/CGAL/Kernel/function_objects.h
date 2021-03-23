@@ -49,26 +49,24 @@ namespace CommonKernelFunctors {
 
     int operator()(const Vector_3& vec) const
     {
-      int dir = -1;
       if(certainly_not(is_zero(vec.x()))){
-        dir = 0;
+        return 0;
       } else if(certainly_not(is_zero(vec.y()))){
-        dir = 1;
+        return 1;
       }else if(certainly_not(is_zero(vec.y()))){
-        dir = 2;
+        return 2;
       }
 
-      if(dir == -1){
-        if(! is_zero(vec.x())){
-          return 0;
-        } else if(! is_zero(vec.y())){
-          return 1;
-        } else if(! is_zero(vec.z())){
-          return 2;
-        }
+      if(! is_zero(vec.x())){
+        return 0;
+      } else if(! is_zero(vec.y())){
+        return 1;
+      } else if(! is_zero(vec.z())){
+        return 2;
       }
-      return dir;
-    }
+
+      return -1;
+  }
   };
 
 
