@@ -958,10 +958,24 @@ void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
     if(all_shared)
     {
       std::sort(ids.begin(), ids.end());
-      *common++ = std::make_pair(m1_faces_map[ids], f);
+      auto it = m1_faces_map.find(ids);
+      if(it != m1_faces_map.end())
+      {
+        *common++ = std::make_pair(m1_faces_map[ids], f);
+        m1_faces_map.erase(it);
+      }
+      else
+      {
+        *m2_only++ = f;
+      }
     }
     else
       *m2_only++ = f;
+  }
+  //all real shared vertices have benn removed from the map, so all that remains must go in m1_only
+  for(const auto& it : m1_faces_map)
+  {
+    *m1_only++ = it.second;
   }
 }
 
