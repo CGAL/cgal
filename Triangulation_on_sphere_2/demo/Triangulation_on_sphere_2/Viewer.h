@@ -35,6 +35,9 @@ class Viewer
   {
     typedef typename TOS::Geom_traits::SK                            Spherical_kernel;
 
+    if(tos.dimension() < 2)
+      return;
+
     typename TOS::Solid_edges_iterator it = tos.solid_edges_begin();
     for (; it != tos.solid_edges_end(); ++it)
     {
