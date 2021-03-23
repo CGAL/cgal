@@ -20,7 +20,7 @@ if(CGAL_ACTIVATE_CONCURRENT_MESH_3 OR ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3})
 endif()
 
 # Use Eigen
-find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
+find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
   find_package(VTK QUIET COMPONENTS vtkImagingGeneral vtkIOImage NO_MODULE)
