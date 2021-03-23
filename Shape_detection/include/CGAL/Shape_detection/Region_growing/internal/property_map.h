@@ -11,6 +11,9 @@
 // Author(s)     : Florent Lafarge, Simon Giraudot, Thien Hoang, Dmitry Anisimov
 //
 
+#ifndef CGAL_SHAPE_DETECTION_REGION_GROWING_INTERNAL_PROPERTY_MAP_H
+#define CGAL_SHAPE_DETECTION_REGION_GROWING_INTERNAL_PROPERTY_MAP_H
+
 #include <CGAL/license/Shape_detection.h>
 
 // STL includes.
@@ -21,9 +24,6 @@
 // CGAL includes.
 #include <CGAL/assertions.h>
 #include <CGAL/property_map.h>
-
-#ifndef CGAL_SHAPE_DETECTION_REGION_GROWING_INTERNAL_PROPERTY_MAP_H
-#define CGAL_SHAPE_DETECTION_REGION_GROWING_INTERNAL_PROPERTY_MAP_H
 
 namespace CGAL {
 namespace Shape_detection {

@@ -22,6 +22,15 @@
 
 // Boost headers.
 #include <boost/mpl/has_xxx.hpp>
+#include <boost/graph/properties.hpp>
+#include <boost/graph/graph_traits.hpp>
+
+// Face graph includes.
+#include <CGAL/Iterator_range.h>
+#include <CGAL/HalfedgeDS_vector.h>
+#include <CGAL/boost/graph/iterator.h>
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
 // CGAL includes.
 #include <CGAL/assertions.h>
@@ -95,16 +104,16 @@ namespace internal {
   };
 
   template<
+  typename Traits,
   typename InputRange,
-  typename PointMap,
-  typename Line_2>
-  const typename Kernel_traits<Line_2>::Kernel::FT
+  typename PointMap>
+  std::pair<typename Traits::Line_2, typename Traits::FT>
   create_line_from_points_2(
     const InputRange& input_range, const PointMap point_map,
-    const std::vector<std::size_t>& region, Line_2& line) {
+    const std::vector<std::size_t>& region) {
 
-    using Traits = typename Kernel_traits<Line_2>::Kernel;
     using FT = typename Traits::FT;
+    using Line_2 = typename Traits::Line_2;
 
     using ITraits = CGAL::Exact_predicates_inexact_constructions_kernel;
     using IConverter = Cartesian_converter<Traits, ITraits>;
@@ -134,24 +143,80 @@ namespace internal {
       CGAL::Dimension_tag<0>(), ITraits(),
       CGAL::Eigen_diagonalize_traits<IFT, 2>());
 
-    line = Line_2(
+    const Line_2 line(
       static_cast<FT>(fitted_line.a()),
       static_cast<FT>(fitted_line.b()),
       static_cast<FT>(fitted_line.c()));
-    return static_cast<FT>(score);
+    return std::make_pair(line, static_cast<FT>(score));
   }
 
   template<
+  typename Traits,
   typename InputRange,
-  typename PointMap,
-  typename Plane_3>
-  const typename Kernel_traits<Plane_3>::Kernel::FT
+  typename PointMap>
+  std::pair<typename Traits::Line_3, typename Traits::FT>
+  create_line_from_points_3(
+    const InputRange& input_range, const PointMap point_map,
+    const std::vector<std::size_t>& region) {
+
+    using FT = typename Traits::FT;
+    using Line_3 = typename Traits::Line_3;
+    using Point_3 = typename Traits::Point_3;
+    using Direction_3 = typename Traits::Direction_3;
+
+    using ITraits = CGAL::Exact_predicates_inexact_constructions_kernel;
+    using IConverter = Cartesian_converter<Traits, ITraits>;
+
+    using IFT = typename ITraits::FT;
+    using IPoint_3 = typename ITraits::Point_3;
+    using ILine_3 = typename ITraits::Line_3;
+
+    std::vector<IPoint_3> points;
+    CGAL_precondition(region.size() > 0);
+    points.reserve(region.size());
+    const IConverter iconverter = IConverter();
+
+    for (const std::size_t point_index : region) {
+      CGAL_precondition(point_index < input_range.size());
+      const auto& key = *(input_range.begin() + point_index);
+      const auto& point = get(point_map, key);
+      points.push_back(iconverter(point));
+    }
+    CGAL_postcondition(points.size() == region.size());
+
+    ILine_3 fitted_line;
+    IPoint_3 fitted_centroid;
+    const IFT score = CGAL::linear_least_squares_fitting_3(
+      points.begin(), points.end(),
+      fitted_line, fitted_centroid,
+      CGAL::Dimension_tag<0>(), ITraits(),
+      CGAL::Eigen_diagonalize_traits<IFT, 3>());
+
+    const auto p = fitted_line.point(0);
+    const auto d = fitted_line.direction();
+    const Point_3 init(
+      static_cast<FT>(p.x()),
+      static_cast<FT>(p.y()),
+      static_cast<FT>(p.z()));
+    const Direction_3 direction(
+      static_cast<FT>(d.dx()),
+      static_cast<FT>(d.dy()),
+      static_cast<FT>(d.dz()));
+    const Line_3 line(init, direction);
+    return std::make_pair(line, static_cast<FT>(score));
+  }
+
+  template<
+  typename Traits,
+  typename InputRange,
+  typename PointMap>
+  std::pair<typename Traits::Plane_3, typename Traits::FT>
   create_plane_from_points(
     const InputRange& input_range, const PointMap point_map,
-    const std::vector<std::size_t>& region, Plane_3& plane) {
+    const std::vector<std::size_t>& region) {
 
-    using Traits = typename Kernel_traits<Plane_3>::Kernel;
     using FT = typename Traits::FT;
+    using Plane_3 = typename Traits::Plane_3;
 
     using ITraits = CGAL::Exact_predicates_inexact_constructions_kernel;
     using IConverter = Cartesian_converter<Traits, ITraits>;
@@ -181,32 +246,70 @@ namespace internal {
       CGAL::Dimension_tag<0>(), ITraits(),
       CGAL::Eigen_diagonalize_traits<IFT, 3>());
 
-    plane = Plane_3(
+    const Plane_3 plane(
       static_cast<FT>(fitted_plane.a()),
       static_cast<FT>(fitted_plane.b()),
       static_cast<FT>(fitted_plane.c()),
       static_cast<FT>(fitted_plane.d()));
-    return static_cast<FT>(score);
+    return std::make_pair(plane, static_cast<FT>(score));
   }
 
   template<
-  typename InputRange,
-  typename PointMap,
-  typename Plane_3>
-  void create_planes_from_points(
-    const InputRange& input_range, const PointMap point_map,
-    std::vector< std::vector<std::size_t> >& regions,
-    std::vector<Plane_3>& planes) {
+  typename Traits,
+  typename FaceGraph,
+  typename FaceRange,
+  typename VertexToPointMap>
+  std::pair<typename Traits::Plane_3, typename Traits::FT>
+  create_plane_from_faces(
+    const FaceGraph& face_graph,
+    const FaceRange& face_range,
+    const VertexToPointMap vertex_to_point_map,
+    const std::vector<std::size_t>& region) {
 
-    planes.clear();
-    planes.reserve(regions.size());
+    using FT = typename Traits::FT;
+    using Plane_3 = typename Traits::Plane_3;
 
-    Plane_3 plane;
-    for (const auto& region : regions) {
-      create_plane_from_points(input_range, point_map, region, plane);
-      planes.push_back(plane);
+    using ITraits = CGAL::Exact_predicates_inexact_constructions_kernel;
+    using IConverter = Cartesian_converter<Traits, ITraits>;
+
+    using IFT = typename ITraits::FT;
+    using IPoint_3 = typename ITraits::Point_3;
+    using IPlane_3 = typename ITraits::Plane_3;
+
+    std::vector<IPoint_3> points;
+    CGAL_precondition(region.size() > 0);
+    points.reserve(region.size());
+    const IConverter iconverter = IConverter();
+
+    for (const std::size_t face_index : region) {
+      CGAL_precondition(face_index < face_range.size());
+      const auto face = *(face_range.begin() + face_index);
+
+      const auto hedge = halfedge(face, face_graph);
+      const auto vertices = vertices_around_face(hedge, face_graph);
+      CGAL_postcondition(vertices.size() > 0);
+
+      for (const auto vertex : vertices) {
+        const auto& point = get(vertex_to_point_map, vertex);
+        points.push_back(iconverter(point));
+      }
     }
-    CGAL_postcondition(planes.size() == regions.size());
+    CGAL_postcondition(points.size() >= region.size());
+
+    IPlane_3 fitted_plane;
+    IPoint_3 fitted_centroid;
+    const IFT score = CGAL::linear_least_squares_fitting_3(
+      points.begin(), points.end(),
+      fitted_plane, fitted_centroid,
+      CGAL::Dimension_tag<0>(), ITraits(),
+      CGAL::Eigen_diagonalize_traits<IFT, 3>());
+
+    const Plane_3 plane(
+      static_cast<FT>(fitted_plane.a()),
+      static_cast<FT>(fitted_plane.b()),
+      static_cast<FT>(fitted_plane.c()),
+      static_cast<FT>(fitted_plane.d()));
+    return std::make_pair(plane, static_cast<FT>(score));
   }
 
 } // namespace internal

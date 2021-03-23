@@ -155,9 +155,6 @@ namespace Point_set {
       m_cos_value_threshold = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::cos_value_threshold), cos_value_threshold);
       CGAL_precondition(m_cos_value_threshold >= FT(0) && m_cos_value_threshold <= FT(1));
-
-      m_sort_regions = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::sort_regions), false);
     }
 
     /// @}
@@ -222,7 +219,7 @@ namespace Point_set {
       \return Boolean `true` or `false`
     */
     inline bool is_valid_region(const std::vector<std::size_t>& region) const {
-      return ( region.size() >= m_min_region_size );
+      return (region.size() >= m_min_region_size);
     }
 
     /*!
@@ -252,17 +249,49 @@ namespace Point_set {
         m_normal_of_best_fit = normal;
 
       } else { // update reference line and normal
-
-        // The best fit line will be a line fitted to all region points with
-        // its normal being perpendicular to the line.
-        internal::create_line_from_points_2(
-          m_input_range, m_point_map, region, m_line_of_best_fit);
-        m_normal_of_best_fit = m_line_of_best_fit.perpendicular(
-          m_line_of_best_fit.point(0)).to_vector();
+        std::tie(m_line_of_best_fit, m_normal_of_best_fit) =
+          get_line_and_normal(region);
       }
     }
 
     /// @}
+
+    /// \cond SKIP_IN_MANUAL
+    std::pair<Line_2, Vector_2> get_line_and_normal(
+      const std::vector<std::size_t>& region) const {
+
+      // The best fit line will be a line fitted to all region points with
+      // its normal being perpendicular to the line.
+      CGAL_precondition(region.size() > 0);
+      const Line_2 unoriented_line_of_best_fit =
+        internal::create_line_from_points_2<Traits>(
+          m_input_range, m_point_map, region).first;
+      const Vector_2 unoriented_normal_of_best_fit =
+        unoriented_line_of_best_fit.perpendicular(
+          unoriented_line_of_best_fit.point(0)).to_vector();
+
+      // Flip the line's normal to agree with all input normals.
+      long votes_to_keep_normal = 0;
+      for (const std::size_t normal_index : region) {
+        CGAL_precondition(normal_index < m_input_range.size());
+        const auto& key = *(m_input_range.begin() + normal_index);
+        const Vector_2& normal = get(m_normal_map, key);
+        const bool agrees =
+          m_scalar_product_2(normal, unoriented_normal_of_best_fit) > FT(0);
+        votes_to_keep_normal += (agrees ? 1 : -1);
+      }
+      const bool flip_normal = (votes_to_keep_normal < 0);
+
+      const Line_2 line_of_best_fit = flip_normal
+        ? unoriented_line_of_best_fit.opposite()
+        : unoriented_line_of_best_fit;
+      const Vector_2 normal_of_best_fit = flip_normal
+        ? (-1 * unoriented_normal_of_best_fit)
+        : unoriented_normal_of_best_fit;
+
+      return std::make_pair(line_of_best_fit, normal_of_best_fit);
+    }
+    /// \endcond
 
   private:
     const Input_range& m_input_range;
@@ -270,7 +299,6 @@ namespace Point_set {
     FT m_distance_threshold;
     FT m_cos_value_threshold;
     std::size_t m_min_region_size;
-    bool m_sort_regions;
 
     const Point_map m_point_map;
     const Normal_map m_normal_map;

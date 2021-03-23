@@ -16,25 +16,6 @@
 
 #include <CGAL/license/Shape_detection.h>
 
-// STL includes.
-#include <vector>
-
-// Boost includes.
-#include <boost/graph/properties.hpp>
-#include <boost/graph/graph_traits.hpp>
-
-// Face graph includes.
-#include <CGAL/boost/graph/iterator.h>
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-
-// CGAL includes.
-#include <CGAL/assertions.h>
-#include <CGAL/Cartesian_converter.h>
-#include <CGAL/Eigen_diagonalize_traits.h>
-#include <CGAL/linear_least_squares_fitting_3.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
 // Internal includes.
 #include <CGAL/Shape_detection/Region_growing/internal/utils.h>
 #include <CGAL/Shape_detection/Region_growing/internal/property_map.h>
@@ -100,12 +81,9 @@ namespace Polygon_mesh {
     /// @}
 
   private:
-    using ITraits = Exact_predicates_inexact_constructions_kernel;
-    using IFT = typename ITraits::FT;
-    using IPoint_3 = typename ITraits::Point_3;
-    using IPlane_3 = typename ITraits::Plane_3;
-    using IConverter = Cartesian_converter<Traits, ITraits>;
-    using Compare_scores = internal::Compare_scores<IFT>;
+    using FT = typename Traits::FT;
+    using Plane_3 = typename Traits::Plane_3;
+    using Compare_scores = internal::Compare_scores<FT>;
 
   public:
     /// \name Initialization
@@ -134,8 +112,7 @@ namespace Polygon_mesh {
     m_face_graph(pmesh),
     m_neighbor_query(neighbor_query),
     m_face_range(faces(m_face_graph)),
-    m_vertex_to_point_map(vertex_to_point_map),
-    m_iconverter() {
+    m_vertex_to_point_map(vertex_to_point_map){
 
       CGAL_precondition(m_face_range.size() > 0);
       m_order.resize(m_face_range.size());
@@ -180,41 +157,18 @@ namespace Polygon_mesh {
     const Face_range m_face_range;
     const Vertex_to_point_map m_vertex_to_point_map;
     std::vector<std::size_t> m_order;
-    std::vector<IFT> m_scores;
-    const IConverter m_iconverter;
+    std::vector<FT> m_scores;
 
     void compute_scores() {
 
-      std::vector<IPoint_3> points;
+      Plane_3 plane;
       std::vector<std::size_t> neighbors;
       for (std::size_t i = 0; i < m_face_range.size(); ++i) {
-
         neighbors.clear();
         m_neighbor_query(i, neighbors);
         neighbors.push_back(i);
-
-        points.clear();
-        for (const std::size_t face_index : neighbors) {
-          CGAL_precondition(face_index < m_face_range.size());
-          const auto face = *(m_face_range.begin() + face_index);
-          const auto hedge = halfedge(face, m_face_graph);
-
-          const auto vertices = vertices_around_face(hedge, m_face_graph);
-          CGAL_precondition(vertices.size() > 0);
-          for (const auto vertex : vertices) {
-            const auto& point = get(m_vertex_to_point_map, vertex);
-            points.push_back(m_iconverter(point));
-          }
-        }
-        CGAL_postcondition(points.size() >= neighbors.size());
-
-        IPlane_3 fitted_plane;
-        IPoint_3 fitted_centroid;
-        m_scores[i] = CGAL::linear_least_squares_fitting_3(
-          points.begin(), points.end(),
-          fitted_plane, fitted_centroid,
-          CGAL::Dimension_tag<0>(), ITraits(),
-          CGAL::Eigen_diagonalize_traits<IFT, 3>());
+        m_scores[i] = internal::create_plane_from_faces<Traits>(
+          m_face_graph, m_face_range, m_vertex_to_point_map, neighbors).second;
       }
     }
   };

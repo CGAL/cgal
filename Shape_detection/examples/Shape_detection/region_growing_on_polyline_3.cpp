@@ -45,7 +45,6 @@ int main(int argc, char *argv[]) {
   const FT          max_distance_to_line = FT(45) / FT(10);
   const FT          max_accepted_angle   = FT(45);
   const std::size_t min_region_size      = 5;
-  const bool        sort_regions         = true;
 
   // Create instances of the classes Neighbor_query and Region_type.
   Neighbor_query neighbor_query(input_range);
@@ -55,8 +54,7 @@ int main(int argc, char *argv[]) {
     CGAL::parameters::
     distance_threshold(max_distance_to_line).
     angle_deg_threshold(max_accepted_angle).
-    min_region_size(min_region_size).
-    sort_regions(sort_regions));
+    min_region_size(min_region_size));
 
   // Create an instance of the region growing class.
   Region_growing region_growing(
@@ -67,25 +65,6 @@ int main(int argc, char *argv[]) {
   region_growing.detect(std::back_inserter(regions));
   std::cout << "* number of found regions: " << regions.size() << std::endl;
   assert(regions.size() == 9);
-
-  // Sort the output.
-  if (sort_regions) {
-    std::sort(regions.begin(), regions.end(),
-    [&](const std::vector<std::size_t>& r1, const std::vector<std::size_t>& r2) {
-      // Since all indices within each region are sorted, see the region_type,
-      // and our input is a polyline, it is enough to sort them by the first index only.
-      assert(r1.size() >= min_region_size);
-      assert(r2.size() >= min_region_size);
-      return r1.front() < r2.front();
-    });
-    for (std::size_t i = 0; i < regions.size(); ++i) {
-      std::cout << "region " << i << ": ";
-      for (const std::size_t index : regions[i]) {
-        std::cout << index << " ";
-      }
-      std::cout <<std::endl;
-    }
-  }
 
   // Save regions to a file.
   const std::string fullpath = (argc > 2 ? argv[2] : "regions_polyline_3.ply");

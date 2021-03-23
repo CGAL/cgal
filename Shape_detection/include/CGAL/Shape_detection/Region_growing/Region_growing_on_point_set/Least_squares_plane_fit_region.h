@@ -16,20 +16,9 @@
 
 #include <CGAL/license/Shape_detection.h>
 
-// STL includes.
-#include <vector>
-
 // Boost includes.
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
-
-// CGAL includes.
-#include <CGAL/assertions.h>
-#include <CGAL/number_utils.h>
-#include <CGAL/Cartesian_converter.h>
-#include <CGAL/Eigen_diagonalize_traits.h>
-#include <CGAL/linear_least_squares_fitting_3.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 // Internal includes.
 #include <CGAL/Shape_detection/Region_growing/internal/utils.h>
@@ -93,18 +82,9 @@ namespace Point_set {
     using Vector_3 = typename Traits::Vector_3;
     using Plane_3 = typename Traits::Plane_3;
 
-    using ITraits = Exact_predicates_inexact_constructions_kernel;
-    using IFT = typename ITraits::FT;
-    using IPoint_3 = typename ITraits::Point_3;
-    using IPlane_3 = typename ITraits::Plane_3;
-    using IConverter = Cartesian_converter<Traits, ITraits>;
-
     using Squared_length_3 = typename Traits::Compute_squared_length_3;
     using Squared_distance_3 = typename Traits::Compute_squared_distance_3;
     using Scalar_product_3 = typename Traits::Compute_scalar_product_3;
-
-    using Get_sqrt = internal::Get_sqrt<Traits>;
-    using Sqrt = typename Get_sqrt::Sqrt;
 
   public:
     /// \name Initialization
@@ -155,9 +135,7 @@ namespace Point_set {
     m_normal_map(normal_map),
     m_squared_length_3(traits.compute_squared_length_3_object()),
     m_squared_distance_3(traits.compute_squared_distance_3_object()),
-    m_scalar_product_3(traits.compute_scalar_product_3_object()),
-    m_sqrt(Get_sqrt::sqrt_object(traits)),
-    m_iconverter() {
+    m_scalar_product_3(traits.compute_scalar_product_3_object()) {
 
       CGAL_precondition(input_range.size() > 0);
       m_distance_threshold = parameters::choose_parameter(
@@ -177,9 +155,6 @@ namespace Point_set {
       m_cos_value_threshold = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::cos_value_threshold), cos_value_threshold);
       CGAL_precondition(m_cos_value_threshold >= FT(0) && m_cos_value_threshold <= FT(1));
-
-      m_sort_regions = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::sort_regions), false);
     }
 
     /// @}
@@ -244,7 +219,7 @@ namespace Point_set {
       \return Boolean `true` or `false`
     */
     inline bool is_valid_region(const std::vector<std::size_t>& region) const {
-      return ( region.size() >= m_min_region_size );
+      return (region.size() >= m_min_region_size);
     }
 
     /*!
@@ -274,38 +249,48 @@ namespace Point_set {
         m_normal_of_best_fit = normal;
 
       } else { // update reference plane and normal
-
-        std::vector<IPoint_3> points;
-        points.reserve(region.size());
-        for (const std::size_t point_index : region) {
-          CGAL_precondition(point_index < m_input_range.size());
-          const auto& key = *(m_input_range.begin() + point_index);
-          const Point_3& point = get(m_point_map, key);
-          points.push_back(m_iconverter(point));
-        }
-        CGAL_postcondition(points.size() == region.size());
-
-        IPlane_3 fitted_plane;
-        IPoint_3 fitted_centroid;
-
-        // The best fit plane will be a plane fitted to all region points with
-        // its normal being perpendicular to the plane.
-        CGAL::linear_least_squares_fitting_3(
-          points.begin(), points.end(),
-          fitted_plane, fitted_centroid,
-          CGAL::Dimension_tag<0>(), ITraits(),
-          CGAL::Eigen_diagonalize_traits<IFT, 3>());
-
-        m_plane_of_best_fit = Plane_3(
-          static_cast<FT>(fitted_plane.a()),
-          static_cast<FT>(fitted_plane.b()),
-          static_cast<FT>(fitted_plane.c()),
-          static_cast<FT>(fitted_plane.d()));
-        m_normal_of_best_fit = m_plane_of_best_fit.orthogonal_vector();
+        std::tie(m_plane_of_best_fit, m_normal_of_best_fit) =
+          get_plane_and_normal(region);
       }
     }
 
     /// @}
+
+    /// \cond SKIP_IN_MANUAL
+    std::pair<Plane_3, Vector_3> get_plane_and_normal(
+      const std::vector<std::size_t>& region) const {
+
+      // The best fit plane will be a plane fitted to all region points with
+      // its normal being perpendicular to the plane.
+      CGAL_precondition(region.size() > 0);
+      const Plane_3 unoriented_plane_of_best_fit =
+        internal::create_plane_from_points<Traits>(
+          m_input_range, m_point_map, region).first;
+      const Vector_3 unoriented_normal_of_best_fit =
+        unoriented_plane_of_best_fit.orthogonal_vector();
+
+      // Flip the plane's normal to agree with all input normals.
+      long votes_to_keep_normal = 0;
+      for (const std::size_t normal_index : region) {
+        CGAL_precondition(normal_index < m_input_range.size());
+        const auto& key = *(m_input_range.begin() + normal_index);
+        const Vector_3& normal = get(m_normal_map, key);
+        const bool agrees =
+          m_scalar_product_3(normal, unoriented_normal_of_best_fit) > FT(0);
+        votes_to_keep_normal += (agrees ? 1 : -1);
+      }
+      const bool flip_normal = (votes_to_keep_normal < 0);
+
+      const Plane_3 plane_of_best_fit = flip_normal
+        ? unoriented_plane_of_best_fit.opposite()
+        : unoriented_plane_of_best_fit;
+      const Vector_3 normal_of_best_fit = flip_normal
+        ? (-1 * unoriented_normal_of_best_fit)
+        : unoriented_normal_of_best_fit;
+
+      return std::make_pair(plane_of_best_fit, normal_of_best_fit);
+    }
+    /// \endcond
 
   private:
     const Input_range& m_input_range;
@@ -313,7 +298,6 @@ namespace Point_set {
     FT m_distance_threshold;
     FT m_cos_value_threshold;
     std::size_t m_min_region_size;
-    bool m_sort_regions;
 
     const Point_map m_point_map;
     const Normal_map m_normal_map;
@@ -321,9 +305,6 @@ namespace Point_set {
     const Squared_length_3 m_squared_length_3;
     const Squared_distance_3 m_squared_distance_3;
     const Scalar_product_3 m_scalar_product_3;
-    const Sqrt m_sqrt;
-
-    const IConverter m_iconverter;
 
     Plane_3 m_plane_of_best_fit;
     Vector_3 m_normal_of_best_fit;

@@ -159,8 +159,8 @@ namespace Point_set {
         neighbors.clear();
         m_neighbor_query(i, neighbors);
         neighbors.push_back(i);
-        m_scores[i] = internal::create_line_from_points_2(
-          m_input_range, m_point_map, neighbors, line);
+        m_scores[i] = internal::create_line_from_points_2<Traits>(
+          m_input_range, m_point_map, neighbors).second;
       }
     }
   };

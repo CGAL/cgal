@@ -170,9 +170,9 @@ namespace Point_set {
     void operator()(
       const std::size_t query_index,
       std::vector<std::size_t>& neighbors) const {
-      CGAL_precondition(query_index < m_input_range.size());
 
       neighbors.clear();
+      CGAL_precondition(query_index < m_input_range.size());
       const std::size_t sphere_center = query_index;
       const Fuzzy_sphere sphere(
         sphere_center, m_sphere_radius, FT(0), m_tree.traits());
