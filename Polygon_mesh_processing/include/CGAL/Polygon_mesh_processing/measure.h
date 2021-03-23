@@ -892,9 +892,9 @@ void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
 
   std::map<Point_3, std::size_t> point_id_map;
 
-  boost::dynamic_bitset<> shared_vertices(num_vertices(m1) + num_vertices(m2));
-  std::vector<std::size_t> m1_vertex_id(num_vertices(m1), -1);
-  std::vector<std::size_t> m2_vertex_id(num_vertices(m2), -1);
+  boost::dynamic_bitset<> shared_vertices(vertices(m1).size() + vertices(m2).size());
+  std::vector<std::size_t> m1_vertex_id(vertices(m1).size(), -1);
+  std::vector<std::size_t> m2_vertex_id(vertices(m2).size(), -1);
 
   //iterate both meshes to set ids to all points, and set vertex/point_id maps.
   std::size_t id =0;
@@ -904,7 +904,7 @@ void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
     auto res = point_id_map.insert(std::make_pair(p, id));
     if(res.second)
       id++;
-    m1_vertex_id[static_cast<std::size_t>(get(vim1, v))]=res.first->second;
+    m1_vertex_id[get(vim1, v)]=res.first->second;
   }
   for(auto v : vertices(m2))
   {
@@ -914,7 +914,7 @@ void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
       id++;
     else
       shared_vertices.set(res.first->second);
-    m2_vertex_id[static_cast<std::size_t>(get(vim2, v))]=res.first->second;
+    m2_vertex_id[get(vim2, v)]=res.first->second;
   }
 
   //fill a set with the "faces point-ids" of m1 and then iterate faces of m2 to compare.
@@ -925,14 +925,19 @@ void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
     boost::container::small_vector<std::size_t, 4> ids;
     for(auto v : CGAL::vertices_around_face(halfedge(f, m1), m1))
     {
-       std::size_t vid = m1_vertex_id[static_cast<std::size_t>(get(vim1, v))];
+       std::size_t vid = m1_vertex_id[get(vim1, v)];
       ids.push_back(vid);
       if(!shared_vertices.test(vid))
+      {
         all_shared = false;
+        break;
+      }
     }
-    std::sort(ids.begin(), ids.end());
     if(all_shared)
+    {
+      std::sort(ids.begin(), ids.end());
       m1_faces_map.insert({ids, f});
+    }
     else
       *m1_only++ = f;
   }
@@ -942,16 +947,19 @@ void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
     bool all_shared = true;
     for(auto v : CGAL::vertices_around_face(halfedge(f, m2), m2))
     {
-      std::size_t vid = m2_vertex_id[static_cast<std::size_t>(get(vim2, v))];
+      std::size_t vid = m2_vertex_id[get(vim2, v)];
       ids.push_back(vid);
       if(!shared_vertices.test(vid))
       {
         all_shared = false;
+        break;
       }
     }
-    std::sort(ids.begin(), ids.end());
     if(all_shared)
+    {
+      std::sort(ids.begin(), ids.end());
       *common++ = std::make_pair(m1_faces_map[ids], f);
+    }
     else
       *m2_only++ = f;
   }
