@@ -41,4 +41,6 @@ int main(int, char**)
   }
 
   CGAL::write_OFF("result.off", dtos, CGAL::parameters::stream_precision(17));
+
+  return EXIT_SUCCESS;
 }

@@ -52,4 +52,6 @@ int main(int argc, char** argv)
   std::cout << dtos.number_of_ghost_faces() << " ghost faces" << std::endl;
 
   CGAL::write_OFF("result.off", dtos, CGAL::parameters::stream_precision(17));
+
+  return EXIT_SUCCESS;
 }
