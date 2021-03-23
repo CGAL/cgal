@@ -75,6 +75,14 @@ void Polyhedron_demo_diff_between_meshes_plugin::diff()
   typedef CGAL::Face_filtered_graph<SMesh> Filtered_graph;
 
   QCursor c(Qt::WaitCursor);
+
+  QMessageBox msgBox;
+  msgBox.setText("Require the Same Orientation ?");
+  msgBox.setInformativeText("Should face orientation count for duplicate detection ?");
+  msgBox.setStandardButtons(QMessageBox::Yes| QMessageBox::No);
+  msgBox.setDefaultButton(QMessageBox::No);
+  int ret = msgBox.exec();
+  bool same_orientation = (ret == QMessageBox::Yes);
   CGAL::Three::Three::CursorScopeGuard guard(c);
 
   //Get the two meshes. No need to check their existance, applicable()
@@ -88,7 +96,13 @@ void Polyhedron_demo_diff_between_meshes_plugin::diff()
       m2=*m2_item->face_graph();
   std::vector<face_descriptor> m1_only, m2_only;
   std::vector<std::pair<face_descriptor, face_descriptor> > common;
-  CGAL::Polygon_mesh_processing::compare_meshes(m1, m2, std::back_inserter(common), std::back_inserter(m1_only), std::back_inserter(m2_only));
+  CGAL::Polygon_mesh_processing::compare_meshes(
+        m1,
+        m2,
+        std::back_inserter(common),
+        std::back_inserter(m1_only),
+        std::back_inserter(m2_only),
+        CGAL::parameters::require_same_orientation(same_orientation));
 
   Filtered_graph filter1(m1, m1_only);
   SMesh mesh1_only, mesh2_only, common_mesh;
