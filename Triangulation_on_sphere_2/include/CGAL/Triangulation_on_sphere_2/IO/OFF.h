@@ -78,6 +78,8 @@ bool write_OFF(std::ostream& os,
 
   set_stream_precision_from_NP(os, np);
 
+  const bool use_colors = parameters::choose_parameter(parameters::get_parameter(np, internal_np::output_color), true);
+
   typename Gt::Construct_point_3 cp3 = dt.geom_traits().construct_point_3_object();
 
   const size_t n = dt.number_of_vertices();
@@ -103,18 +105,28 @@ bool write_OFF(std::ostream& os,
     output << "3 "
            << index_of_vertex[fit->vertex(0)] << " "
            << index_of_vertex[fit->vertex(1)] << " "
-           << index_of_vertex[fit->vertex(2)]
-           << " ";
-    if(fit->is_ghost())
-      output << " 229 117 0\n";
+           << index_of_vertex[fit->vertex(2)];
+    if(use_colors)
+    {
+      if(fit->is_ghost())
+        output << " 229 117 0\n";
+      else
+        output << " 0 117 229\n";
+    }
     else
-      output << " 0 117 229\n";
+    {
+      output << "\n";
+    }
 
     ++number_of_triangles;
   }
 
-  os << "COFF \n"
-     << n << " "
+  if(use_colors)
+    os << "COFF \n";
+  else
+    os << "OFF \n";
+
+  os << n << " "
      << number_of_triangles << " 0\n"
      << output.str();
 
