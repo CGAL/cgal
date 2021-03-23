@@ -915,9 +915,9 @@ void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
 
   std::map<Point_3, std::size_t> point_id_map;
 
-  boost::dynamic_bitset<> shared_vertices(vertices(m1).size() + vertices(m2).size());
   std::vector<std::size_t> m1_vertex_id(vertices(m1).size(), -1);
   std::vector<std::size_t> m2_vertex_id(vertices(m2).size(), -1);
+  boost::dynamic_bitset<> shared_vertices(m1_vertex_id.size() + m2_vertex_id.size());
 
   //iterate both meshes to set ids to all points, and set vertex/point_id maps.
   std::size_t id =0;
@@ -984,7 +984,7 @@ void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
       auto it = m1_faces_map.find(ids);
       if(it != m1_faces_map.end())
       {
-        *common++ = std::make_pair(m1_faces_map[ids], f);
+        *common++ = std::make_pair(it->second, f);
         m1_faces_map.erase(it);
       }
       else
@@ -995,7 +995,7 @@ void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
     else
       *m2_only++ = f;
   }
-  //all real shared vertices have benn removed from the map, so all that remains must go in m1_only
+  //all real shared vertices have been removed from the map, so all that remains must go in m1_only
   for(const auto& it : m1_faces_map)
   {
     *m1_only++ = it.second;
