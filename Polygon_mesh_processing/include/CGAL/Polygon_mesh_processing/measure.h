@@ -52,8 +52,10 @@ public:
 };
 
 namespace Polygon_mesh_processing {
+
 namespace pmp_internal {
-void rearrange_face_ids(boost::container::small_vector<std::size_t, 4>& ids, bool orientation_counts)
+
+inline void rearrange_face_ids(boost::container::small_vector<std::size_t, 4>& ids, bool orientation_counts)
 {
   if(!orientation_counts)
   {
