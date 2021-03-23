@@ -99,8 +99,9 @@ Bounded_side bounded_side_3(IteratorForward first,
        we don't need to care about the plane orientation */
   }
 
-
-
+  typename R::Non_zero_dimension_3 non_zero_dimension_3;
+  int dir = non_zero_dimension_3(plane.orthogonal_vector());
+#if 0
   auto apv = approx(plane.orthogonal_vector());
 
   int dir = 0;
@@ -112,7 +113,7 @@ Bounded_side bounded_side_3(IteratorForward first,
   if(CGAL::abs(apv.z().sup()) > max){
     dir = 2;
   }
-
+#endif
 
   CGAL_assertion(!plane.is_degenerate());
   Point_2 (*t)(const Point_3&);

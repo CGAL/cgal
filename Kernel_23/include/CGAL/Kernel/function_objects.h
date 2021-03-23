@@ -37,6 +37,41 @@ namespace CGAL {
 
 namespace CommonKernelFunctors {
 
+
+
+  template <typename K>
+  class Non_zero_dimension_3
+  {
+    typedef typename K::Vector_3 Vector_3;
+
+  public:
+    typedef int result_type;
+
+    int operator()(const Vector_3& vec) const
+    {
+      int dir = -1;
+      if(certainly_not(is_zero(vec.x()))){
+        dir = 0;
+      } else if(certainly_not(is_zero(vec.y()))){
+        dir = 1;
+      }else if(certainly_not(is_zero(vec.y()))){
+        dir = 2;
+      }
+
+      if(dir == -1){
+        if(! is_zero(vec.x())){
+          return 0;
+        } else if(! is_zero(vec.y())){
+          return 1;
+        } else if(! is_zero(vec.z())){
+          return 2;
+        }
+      }
+      return dir;
+    }
+  };
+
+
   template <typename K>
   class Are_ordered_along_line_2
   {
