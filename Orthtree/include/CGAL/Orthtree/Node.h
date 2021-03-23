@@ -190,7 +190,7 @@ private:
         m_data->global_coordinates[i] = 0;
   }
 
-  Node deep_copy(Self parent = Node(), Local_coordinates local_coordinates = 0) const
+  Node deep_copy(Self parent = Node()) const
   {
     if (is_null())
       return Node();
@@ -206,7 +206,7 @@ private:
     {
       out.m_data->children = std::make_unique<Children>();
       for (int index = 0; index < Degree::value; index++)
-        (*out.m_data->children)[index] = (*this)[index].deep_copy(out, {Local_coordinates(index)});
+        (*out.m_data->children)[index] = (*this)[index].deep_copy(out);
     }
     return out;
   }
