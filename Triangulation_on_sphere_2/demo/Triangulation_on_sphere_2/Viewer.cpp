@@ -112,11 +112,11 @@ void Viewer::compile_shaders()
   {
     std::cerr<<"linking Program FAILED"<<std::endl;
   }
-  rendering_program.bind();
 }
 
 void Viewer::initialize_buffers()
 {
+  rendering_program.bind();
   //The big white sphere
   vao[SPHERE_VAO].bind();
 
@@ -125,7 +125,6 @@ void Viewer::initialize_buffers()
   buffers[SPHERE_POINTS].allocate(pos_sphere.data(),
                                   static_cast<int>(pos_sphere.size()*sizeof(float)));
   vertexLocation[0] = rendering_program.attributeLocation("vertex");
-  rendering_program.bind();
   rendering_program.enableAttributeArray(vertexLocation[0]);
   rendering_program.setAttributeBuffer(vertexLocation[0],GL_FLOAT,0,3);
   buffers[SPHERE_POINTS].release();
@@ -135,7 +134,6 @@ void Viewer::initialize_buffers()
   buffers[SPHERE_NORMALS].allocate(normals.data(),
                                    static_cast<int>(normals.size()*sizeof(float)));
   normalsLocation[0] = rendering_program.attributeLocation("normal");
-  rendering_program.bind();
   rendering_program.enableAttributeArray(normalsLocation[0]);
   rendering_program.setAttributeBuffer(normalsLocation[0],GL_FLOAT,0,3);
   buffers[SPHERE_NORMALS].release();
@@ -145,7 +143,6 @@ void Viewer::initialize_buffers()
   buffers[SPHERE_CENTER].allocate(trivial_center.data(),
                                   static_cast<int>(trivial_center.size()*sizeof(float)));
   trivialCenterLocation = rendering_program.attributeLocation("center");
-  rendering_program.bind();
   rendering_program.enableAttributeArray(trivialCenterLocation);
   rendering_program.setAttributeBuffer(trivialCenterLocation,GL_FLOAT,0,3);
   buffers[SPHERE_CENTER].release();
@@ -159,10 +156,9 @@ void Viewer::initialize_buffers()
   buffers[EDGES_POINTS].bind();
   buffers[EDGES_POINTS].allocate(pos_lines.data(),
                                  static_cast<int>(pos_lines.size()*sizeof(float)));
-  vertexLocation[2] = rendering_program.attributeLocation("vertex");
-  rendering_program.bind();
-  rendering_program.enableAttributeArray(vertexLocation[2]);
-  rendering_program.setAttributeBuffer(vertexLocation[2],GL_FLOAT,0,3);
+  vertexLocation[1] = rendering_program.attributeLocation("vertex");
+  rendering_program.enableAttributeArray(vertexLocation[1]);
+  rendering_program.setAttributeBuffer(vertexLocation[1],GL_FLOAT,0,3);
   buffers[EDGES_POINTS].release();
 
   //normals
@@ -170,7 +166,6 @@ void Viewer::initialize_buffers()
   buffers[EDGES_NORMALS].allocate(normals_lines.data(),
                                   static_cast<int>(normals_lines.size()*sizeof(float)));
   normalsLocation[1] = rendering_program.attributeLocation("normal");
-  rendering_program.bind();
   rendering_program.enableAttributeArray(normalsLocation[1]);
   rendering_program.setAttributeBuffer(normalsLocation[1],GL_FLOAT,0,3);
   buffers[EDGES_NORMALS].release();
@@ -180,14 +175,11 @@ void Viewer::initialize_buffers()
   buffers[EDGES_CENTER].allocate(trivial_center.data(),
                                  static_cast<int>(trivial_center.size()*sizeof(float)));
   trivialCenterLocation = rendering_program.attributeLocation("center");
-  rendering_program.bind();
   rendering_program.enableAttributeArray(trivialCenterLocation);
   rendering_program.setAttributeBuffer(trivialCenterLocation,GL_FLOAT,0,3);
   buffers[EDGES_CENTER].release();
   glVertexAttribDivisor(trivialCenterLocation, 1);
   glVertexAttribDivisor(normalsLocation[0], 0);
-  rendering_program.release();
-
   vao[EDGES_VAO].release();
 
   //The little green spheres
@@ -198,7 +190,6 @@ void Viewer::initialize_buffers()
   buffers[POINTS_POINTS].allocate(pos_sphere_inter.data(),
                                   static_cast<int>(pos_sphere_inter.size()*sizeof(float)));
   vertexLocation[2] = rendering_program.attributeLocation("vertex");
-  rendering_program.bind();
   rendering_program.enableAttributeArray(vertexLocation[2]);
   rendering_program.setAttributeBuffer(vertexLocation[2],GL_FLOAT,0,3);
   buffers[POINTS_POINTS].release();
@@ -208,7 +199,6 @@ void Viewer::initialize_buffers()
   buffers[POINTS_NORMALS].allocate(normals_inter.data(),
                                    static_cast<int>(normals_inter.size()*sizeof(float)));
   normalsLocation[2] = rendering_program.attributeLocation("normal");
-  rendering_program.bind();
   rendering_program.enableAttributeArray(normalsLocation[2]);
   rendering_program.setAttributeBuffer(normalsLocation[2],GL_FLOAT,0,3);
   buffers[POINTS_NORMALS].release();
@@ -218,25 +208,26 @@ void Viewer::initialize_buffers()
   buffers[POINTS_CENTERS].allocate(pos_points.data(),
                                    static_cast<int>(pos_points.size()*sizeof(float)));
   centerLocation = rendering_program.attributeLocation("center");
-  rendering_program.bind();
   rendering_program.enableAttributeArray(centerLocation);
   rendering_program.setAttributeBuffer(centerLocation,GL_FLOAT,0,3);
   buffers[POINTS_CENTERS].release();
 
   glVertexAttribDivisor(centerLocation, 1);
-  glVertexAttribDivisor(normalsLocation[1], 0);
+  glVertexAttribDivisor(normalsLocation[2], 0);
   vao[POINTS_VAO].release();
+  rendering_program.release();
 }
 
 void Viewer::compute_elements()
 {
-  create_flat_sphere(0.005f, pos_sphere_inter, normals_inter, 36);
+  pos_sphere_inter.clear();
+  normals_inter.clear();
+  create_flat_sphere(0.05f, pos_sphere_inter, normals_inter, 36);
 
   pos_points.resize(0);
   pos_lines.resize(0);
 
   std::cout << inputs.size() << " inputs to points" << std::endl;
-
   // draw points as small spheres
   for(const auto& p : inputs)
   {
@@ -298,7 +289,6 @@ void Viewer::attrib_buffers(CGAL::QGLViewer* viewer)
   GLfloat shininess =  1.0f;
 
 
-  rendering_program.bind();
   mvpLocation = rendering_program.uniformLocation("mvp_matrix");
   mvLocation = rendering_program.uniformLocation("mv_matrix");
   colorLocation = rendering_program.uniformLocation("color");
@@ -316,23 +306,21 @@ void Viewer::attrib_buffers(CGAL::QGLViewer* viewer)
   rendering_program.setUniformValue(mvpLocation, mvpMatrix);
   rendering_program.setUniformValue(mvLocation, mvMatrix);
 
-  rendering_program.release();
 }
 
 void Viewer::draw()
 {
   glEnable(GL_DEPTH_TEST);
   QColor color;
+  rendering_program.bind();
 
   if(draw_balls)
   {
     vao[SPHERE_VAO].bind();
     attrib_buffers(this);
-    rendering_program.bind();
     color.setRgbF(1.0f, 1.0f, 1.0f);
     rendering_program.setUniformValue(colorLocation, color);
     glDrawArraysInstanced(GL_TRIANGLES, 0, static_cast<GLsizei>(pos_sphere.size()/3), 1);
-    rendering_program.release();
     vao[SPHERE_VAO].release();
   }
 
@@ -341,24 +329,21 @@ void Viewer::draw()
     vao[POINTS_VAO].bind();
     attrib_buffers(this);
     color.setRgbF(0.0f, 1.0f, 0.0f);
-    rendering_program.bind();
     rendering_program.setUniformValue(colorLocation, color);
+
     glDrawArraysInstanced(GL_TRIANGLES, 0,
                           static_cast<GLsizei>(pos_sphere_inter.size()/3),
                           static_cast<GLsizei>(pos_points.size()/3));
-    rendering_program.release();
-
     vao[POINTS_VAO].release();
   }
 
   vao[EDGES_VAO].bind();
   attrib_buffers(this);
-  rendering_program.bind();
   color.setRgbF(1.0f, 0.0f, 0.0f);
   rendering_program.setUniformValue(colorLocation, color);
   glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_lines.size()/3));
-  rendering_program.release();
   vao[EDGES_VAO].release();
+  rendering_program.release();
 }
 
 void Viewer::init()

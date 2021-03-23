@@ -94,7 +94,6 @@ public:
     std::copy(begin, end, std::back_inserter(inputs));
     build_the_boundary(tos);
     compute_elements();
-
     initialize_buffers();
 
     qDebug() << "Finished loading";
