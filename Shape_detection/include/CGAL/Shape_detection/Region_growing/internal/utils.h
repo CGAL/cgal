@@ -19,6 +19,7 @@
 // STL includes.
 #include <vector>
 #include <algorithm>
+#include <type_traits>
 
 // Boost headers.
 #include <boost/mpl/has_xxx.hpp>
@@ -311,6 +312,74 @@ namespace internal {
       static_cast<FT>(fitted_plane.d()));
     return std::make_pair(plane, static_cast<FT>(score));
   }
+
+  template<typename GeomTraits>
+  struct Polyline_traits_2 {
+    using Point = typename GeomTraits::Point_2;
+    using Vector = typename GeomTraits::Vector_2;
+    using Line = typename GeomTraits::Line_2;
+
+    using Compute_squared_length = typename GeomTraits::Compute_squared_length_2;
+    using Compute_squared_distance = typename GeomTraits::Compute_squared_distance_2;
+    using Compute_scalar_product = typename GeomTraits::Compute_scalar_product_2;
+
+    const GeomTraits m_traits;
+    Polyline_traits_2(const GeomTraits& traits) :
+    m_traits(traits)
+    { }
+
+    decltype(auto) compute_squared_length_object() const {
+      return m_traits.compute_squared_length_2_object();
+    }
+    decltype(auto) compute_squared_distance_object() const {
+      return m_traits.compute_squared_distance_2_object();
+    }
+    decltype(auto) compute_scalar_product_object() const {
+      return m_traits.compute_scalar_product_2_object();
+    }
+
+    template<typename InputRange, typename PointMap>
+    decltype(auto) create_line_from_points(
+      const InputRange& input_range, const PointMap point_map,
+      const std::vector<std::size_t>& region) const {
+      return internal::create_line_from_points_2<GeomTraits>(
+        input_range, point_map, region);
+    }
+  };
+
+  template<typename GeomTraits>
+  struct Polyline_traits_3 {
+    using Point = typename GeomTraits::Point_3;
+    using Vector = typename GeomTraits::Vector_3;
+    using Line = typename GeomTraits::Line_3;
+
+    using Compute_squared_length = typename GeomTraits::Compute_squared_length_3;
+    using Compute_squared_distance = typename GeomTraits::Compute_squared_distance_3;
+    using Compute_scalar_product = typename GeomTraits::Compute_scalar_product_3;
+
+    const GeomTraits m_traits;
+    Polyline_traits_3(const GeomTraits& traits) :
+    m_traits(traits)
+    { }
+
+    decltype(auto) compute_squared_length_object() const {
+      return m_traits.compute_squared_length_3_object();
+    }
+    decltype(auto) compute_squared_distance_object() const {
+      return m_traits.compute_squared_distance_3_object();
+    }
+    decltype(auto) compute_scalar_product_object() const {
+      return m_traits.compute_scalar_product_3_object();
+    }
+
+    template<typename InputRange, typename PointMap>
+    decltype(auto) create_line_from_points(
+      const InputRange& input_range, const PointMap point_map,
+      const std::vector<std::size_t>& region) const {
+      return internal::create_line_from_points_3<GeomTraits>(
+        input_range, point_map, region);
+    }
+  };
 
 } // namespace internal
 } // namespace Shape_detection

@@ -39,7 +39,7 @@ namespace CGAL {
 namespace utils {
 
 template<typename Kernel, typename Input_range, typename Point_map>
-void save_point_regions(
+void save_point_regions_2(
   const Input_range& input_range,
   const std::vector< std::vector<std::size_t> >& regions,
   const std::string fullpath) {
@@ -68,6 +68,52 @@ void save_point_regions(
       const auto& key = *(input_range.begin() + index);
       const auto& point = get(Point_map(), key);
       pwc.push_back(std::make_pair(Point_3(point.x(), point.y(), 0), color));
+    }
+  }
+
+  std::ofstream out(fullpath);
+  CGAL::set_ascii_mode(out);
+  CGAL::write_PLY_with_properties(
+    out, pwc,
+    CGAL::make_ply_point_writer(PLY_Point_map()),
+      std::make_tuple(
+        PLY_Color_map(),
+        CGAL::PLY_property<unsigned char>("red"),
+        CGAL::PLY_property<unsigned char>("green"),
+        CGAL::PLY_property<unsigned char>("blue")));
+  out.close();
+}
+
+template<typename Kernel, typename Input_range, typename Point_map>
+void save_point_regions_3(
+  const Input_range& input_range,
+  const std::vector< std::vector<std::size_t> >& regions,
+  const std::string fullpath) {
+
+  using Point_3          = typename Kernel::Point_3;
+  using Color            = std::array<unsigned char, 3>;
+  using Point_with_color = std::pair<Point_3, Color>;
+  using PLY_Point_map    = CGAL::First_of_pair_property_map<Point_with_color>;
+  using PLY_Color_map    = CGAL::Second_of_pair_property_map<Point_with_color>;
+
+  std::vector<Point_with_color> pwc;
+  srand(static_cast<unsigned int>(time(NULL)));
+
+  // Iterate through all regions.
+  for (const auto& region : regions) {
+
+    // Generate a random color.
+    const Color color =
+      CGAL::make_array(
+        static_cast<unsigned char>(rand() % 256),
+        static_cast<unsigned char>(rand() % 256),
+        static_cast<unsigned char>(rand() % 256));
+
+    // Iterate through all region items.
+    for (const auto index : region) {
+      const auto& key = *(input_range.begin() + index);
+      const auto& point = get(Point_map(), key);
+      pwc.push_back(std::make_pair(point, color));
     }
   }
 

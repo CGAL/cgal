@@ -76,7 +76,6 @@ namespace Point_set {
 
   private:
     using FT = typename Traits::FT;
-    using Line_2 = typename Traits::Line_2;
     using Compare_scores = internal::Compare_scores<FT>;
 
   public:
@@ -153,7 +152,6 @@ namespace Point_set {
 
     void compute_scores() {
 
-      Line_2 line;
       std::vector<std::size_t> neighbors;
       for (std::size_t i = 0; i < m_input_range.size(); ++i) {
         neighbors.clear();

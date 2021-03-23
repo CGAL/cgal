@@ -25,9 +25,6 @@
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
-// CGAL includes.
-#include <CGAL/assertions.h>
-
 // Internal includes.
 #include <CGAL/Shape_detection/Region_growing/internal/property_map.h>
 

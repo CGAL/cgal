@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
 
   // Save regions to a file.
   const std::string fullpath = (argc > 2 ? argv[2] : "regions_point_set_2.ply");
-  utils::save_point_regions<Kernel, Input_range, Point_map>(
+  utils::save_point_regions_2<Kernel, Input_range, Point_map>(
     input_range, regions, fullpath);
   return EXIT_SUCCESS;
 }

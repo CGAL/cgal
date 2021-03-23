@@ -76,7 +76,7 @@ namespace Point_set {
     using Traits = GeomTraits;
     using Input_range = InputRange;
     using Point_map = PointMap;
-    using Point = typename Point_map::value_type;
+    using Point_type = typename Point_map::value_type;
     /// \endcond
 
     /// Number type.
@@ -89,7 +89,7 @@ namespace Point_set {
     internal::Item_property_map<Input_range, Point_map>;
 
     using Search_base = typename std::conditional<
-      std::is_same<typename Traits::Point_2, Point>::value,
+      std::is_same<typename Traits::Point_2, Point_type>::value,
       CGAL::Search_traits_2<Traits>,
       CGAL::Search_traits_3<Traits> >::type;
 

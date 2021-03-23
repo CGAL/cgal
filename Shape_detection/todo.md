@@ -1,5 +1,3 @@
-- make line fit region and sorting work both with 2D and 3D points
-- add polyline-related classes
 - add Polyline_graph that extracts the graph from the polygon mesh
 - finish new tests, clean old tests
 - cleanup the code

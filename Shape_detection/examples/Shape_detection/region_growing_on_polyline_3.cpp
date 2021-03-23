@@ -11,7 +11,7 @@ using Point_3 = typename Kernel::Point_3;
 using Input_range = std::vector<Point_3>;
 using Point_map   = CGAL::Identity_property_map<Point_3>;
 
-using Neighbor_query = CGAL::Shape_detection::Polyline::One_ring_neighbor_query<Kernel, Input_range, Point_map>;
+using Neighbor_query = CGAL::Shape_detection::Polyline::One_ring_neighbor_query<Kernel, Input_range>;
 using Region_type    = CGAL::Shape_detection::Polyline::Least_squares_line_fit_region<Kernel, Input_range, Point_map>;
 using Region_growing = CGAL::Shape_detection::Region_growing<Input_range, Neighbor_query, Region_type>;
 
@@ -37,9 +37,10 @@ int main(int argc, char *argv[]) {
       return EXIT_FAILURE;
     }
   }
+  input_range.pop_back();
   in.close();
   std::cout << "* number of input vertices: " << input_range.size() << std::endl;
-  assert(input_range.size() == 249);
+  assert(input_range.size() == 248);
 
   // Default parameter values for the data file polyline_3.polylines.txt.
   const FT          max_distance_to_line = FT(45) / FT(10);
@@ -64,11 +65,11 @@ int main(int argc, char *argv[]) {
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
   std::cout << "* number of found regions: " << regions.size() << std::endl;
-  assert(regions.size() == 9);
+  assert(regions.size() == 10);
 
   // Save regions to a file.
   const std::string fullpath = (argc > 2 ? argv[2] : "regions_polyline_3.ply");
-  utils::save_point_regions<Kernel, Input_range, Point_map>(
+  utils::save_point_regions_3<Kernel, Input_range, Point_map>(
     input_range, regions, fullpath);
   return EXIT_SUCCESS;
 }
