@@ -53,21 +53,7 @@ public:
    : Base(o3b), _dom(dom)
  { }
 
-#ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::operator();
-#else
-  result_type
-  operator()(const Vector_3& u, const Vector_3& v, const Vector_3& w) const
-  {
-    return Base::operator()(u,v,w);
-  }
-
-  result_type
-  operator()(const Sphere_3& s) const
-  {
-    return Base::operator()(s);
-  }
-#endif
 
   result_type
   operator()(const Point_3 &p, const Point_3 &q,

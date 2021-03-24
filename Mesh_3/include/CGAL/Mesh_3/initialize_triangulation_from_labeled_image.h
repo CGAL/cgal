@@ -17,6 +17,7 @@
 
 #include <CGAL/Mesh_3/search_for_connected_components_in_labeled_image.h>
 #include <CGAL/Mesh_3/squared_distance_Point_3_Triangle_3.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 
 #include <CGAL/enum.h>
@@ -31,17 +32,23 @@ template <typename Point>
 struct Get_point
 {
   const double vx, vy, vz;
+  const double tx, ty, tz;
   Get_point(const CGAL::Image_3* image)
     : vx(image->vx())
     , vy(image->vy())
     , vz(image->vz())
+    , tx(image->tx())
+    , ty(image->ty())
+    , tz(image->tz())
   {}
 
   Point operator()(const std::size_t i,
                    const std::size_t j,
                    const std::size_t k) const
   {
-    return Point(double(i) * vx, double(j) * vy, double(k) * vz);
+    return Point(double(i) * vx + tx,
+                 double(j) * vy + ty,
+                 double(k) * vz + tz);
   }
 };
 template<class C3T3, class MeshDomain, class MeshCriteria>
@@ -64,16 +71,16 @@ void init_tr_from_labeled_image_call_init_features(C3T3& c3t3,
             << " initial points on 1D-features" << std::endl;
 }
 
-
 template<class C3T3, class MeshDomain, class MeshCriteria,
-         typename Image_word_type>
+         typename Image_word_type,
+         typename TransformOperator = CGAL::Identity<Image_word_type> >
 void initialize_triangulation_from_labeled_image(C3T3& c3t3,
-                                                 const MeshDomain&   domain,
-                                                 const CGAL::Image_3& image,
-                                                 const MeshCriteria& criteria,
-                                                 Image_word_type,
-                                                 bool protect_features = false
-                                                 )
+      const MeshDomain&   domain,
+      const CGAL::Image_3& image,
+      const MeshCriteria& criteria,
+      Image_word_type,
+      bool protect_features = false,
+      TransformOperator transform = CGAL::Identity<Image_word_type>())
 {
   typedef typename C3T3::Triangulation       Tr;
   typedef typename Tr::Geom_traits           Gt;
@@ -111,11 +118,10 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
   Seeds seeds;
   Get_point<Bare_point> get_point(&image);
   std::cout << "Searching for connected components..." << std::endl;
-  CGAL::Identity<Image_word_type> no_transformation;
   search_for_connected_components_in_labeled_image(image,
                                                    std::back_inserter(seeds),
                                                    CGAL::Emptyset_iterator(),
-                                                   no_transformation,
+                                                   transform,
                                                    get_point,
                                                    Image_word_type());
   std::cout << "  " << seeds.size() << " components were found." << std::endl;

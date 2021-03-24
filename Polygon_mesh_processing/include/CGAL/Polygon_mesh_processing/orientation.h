@@ -53,8 +53,8 @@ namespace internal{
     {}
 
     typedef bool result_type;
-    template <class vertex_descriptor>
-    bool operator()(vertex_descriptor v1, vertex_descriptor v2) const
+    template <class vertex_descriptor1, class vertex_descriptor2>
+    bool operator()(vertex_descriptor1 v1, vertex_descriptor2 v2) const
     {
       return CGAL::SMALLER == compare_z(get(vpmap, v1), get(vpmap, v2));
     }
@@ -1281,7 +1281,7 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
   CGAL_precondition(is_closed(tm));
   CGAL_precondition(is_triangle_mesh(tm));
 
-  Static_property_map<face_descriptor, std::size_t> vidmap(0); // dummy map not used
+  Constant_property_map<face_descriptor, std::size_t> vidmap(0); // dummy map not used
   std::size_t res =
     volume_connected_components(tm, vidmap, np.do_orientation_tests(true)
                                               .i_used_as_a_predicate(true));
@@ -1370,7 +1370,7 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
   std::vector<std::size_t> nesting_levels;
   std::vector<bool> is_cc_outward_oriented;
-  Static_property_map<face_descriptor, std::size_t> vidmap(0); // dummy map not used
+  Constant_property_map<face_descriptor, std::size_t> vidmap(0); // dummy map not used
 
   volume_connected_components(tm, vidmap,
                               parameters::vertex_point_map(vpm)

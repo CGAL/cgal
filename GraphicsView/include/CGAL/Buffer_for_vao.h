@@ -502,11 +502,11 @@ public:
       // Is it possible that orientation==COPLANAR ? Maybe if V1 or V2 is very small ?
     }
     while(++id!=facet.size() &&
-          (orientation==CGAL::COPLANAR || orientation==CGAL::ZERO));
+          (orientation==CGAL::COPLANAR ));
 
     //Here, all orientations were COPLANAR. Not sure this case is possible,
     // but we stop here.
-    if (orientation==CGAL::COPLANAR || orientation==CGAL::ZERO)
+    if (orientation==CGAL::COPLANAR)
     { return false; }
 
     // Now we compute convexness
@@ -523,6 +523,16 @@ public:
 
       if(local_orientation!=CGAL::ZERO && local_orientation!=orientation)
       { return false; }
+      // V1 and V2 are collinear
+      if(local_orientation==CGAL::ZERO )
+      {
+        //TS and TU are opposite
+        if(CGAL::scalar_product(V1,V2) >=0)
+          return true;
+        //TS and TU have the same direction.
+        else
+          return false;
+      }
     }
     return true;
   }
@@ -898,7 +908,7 @@ protected:
   bool m_zero_y; /// True iff all points have y==0
   bool m_zero_z; /// True iff all points have z==0
 
-  bool m_inverse_normal;;
+  bool m_inverse_normal;
 
   // Local variables, used when we started a new face.g
   bool m_face_started;

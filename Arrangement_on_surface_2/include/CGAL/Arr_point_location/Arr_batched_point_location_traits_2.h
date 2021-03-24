@@ -42,6 +42,7 @@ public:
 
   typedef typename Base_traits_2::X_monotone_curve_2   Base_x_monotone_curve_2;
   typedef typename Base_traits_2::Point_2              Base_point_2;
+  typedef typename Base_traits_2::Multiplicity         Multiplicity;
 
   typedef typename Base_traits_2::Construct_min_vertex_2
                                                     Base_construct_min_vertex_2;

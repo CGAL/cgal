@@ -67,7 +67,6 @@ public:
   {
     undo_();
     item->compute_normal_maps();
-    item->polyhedron_item()->invalidateOpenGLBuffers();
     item->invalidateOpenGLBuffers();
     item->redraw();
   }
@@ -96,6 +95,7 @@ struct Scene_polyhedron_selection_item_priv{
   {
     filtered_graph = nullptr;
     item->setProperty("classname", QString("surface_mesh"));
+    keep_selection_valid = Scene_polyhedron_selection_item::None;
   }
 
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
@@ -150,6 +150,8 @@ struct Scene_polyhedron_selection_item_priv{
   Face_graph* polyhedron() { return poly; }
   const Face_graph* polyhedron()const { return poly; }
 
+  void set_num_faces(const std::size_t n) { num_faces = n; }
+
   bool canAddFace(fg_halfedge_descriptor hc, Scene_polyhedron_selection_item::fg_halfedge_descriptor t);
   bool canAddFaceAndVertex(Scene_polyhedron_selection_item::fg_halfedge_descriptor hc,
                            Scene_polyhedron_selection_item::fg_halfedge_descriptor t);
@@ -202,6 +204,7 @@ struct Scene_polyhedron_selection_item_priv{
   std::size_t num_faces;
   std::size_t num_vertices;
   std::size_t num_edges;
+  Scene_polyhedron_selection_item::SelectionTypes keep_selection_valid;
 };
 typedef Scene_polyhedron_selection_item_priv Priv;
 
@@ -696,6 +699,11 @@ void Scene_polyhedron_selection_item::inverse_selection()
   invalidateOpenGLBuffers();
 }
 
+void Scene_polyhedron_selection_item::set_num_faces(const std::size_t n)
+{
+  d->set_num_faces(n);
+}
+
 void Scene_polyhedron_selection_item::set_highlighting(bool b)
 {
   setProperty("is_highlighting", b);
@@ -853,7 +861,6 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_vertex_d
         }
       }
       return false;
-      break;
     }
       //Split vertex
     case 1:
@@ -1022,6 +1029,10 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_vertex_d
           setProperty("need_hl_restore", true);
           set_highlighting(false);
         }
+        if(property("need_invalidate_aabb_tree").toBool()){
+          polyhedron_item()->invalidate_aabb_tree();
+          setProperty("need_invalidate_aabb_tree", false);
+        }
         invalidateOpenGLBuffers();
         Q_EMIT updateInstructions("Ctrl+Right-click to move the point. \nHit Ctrl+Z to leave the selection. (2/2)");
       }
@@ -1067,7 +1078,6 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
     case -1:
     {
       return treat_classic_selection(selection);
-      break;
     }
       //Join vertex
     case 0:
@@ -1323,7 +1333,6 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_face_des
     case -1:
     {
       return treat_classic_selection(selection);
-      break;
     }
     //Split vertex
     case 1:
@@ -1948,6 +1957,7 @@ void Scene_polyhedron_selection_item::moveVertex()
     put(vpm, vh, Point_3(d->manipulated_frame->position().x-offset.x,
                          d->manipulated_frame->position().y-offset.y,
                          d->manipulated_frame->position().z-offset.z));
+    setProperty("need_invalidate_aabb_tree", true);
     invalidateOpenGLBuffers();
     poly_item->updateVertex(vh);
    // poly_item->invalidateOpenGLBuffers();
@@ -1966,6 +1976,10 @@ void Scene_polyhedron_selection_item::validateMoveVertex()
   if(property("need_hl_restore").toBool()){
     set_highlighting(true);
     setProperty("need_hl_restore", false);
+  }
+  if(property("need_invalidate_aabb_tree").toBool()){
+    polyhedron_item()->invalidate_aabb_tree();
+    setProperty("need_invalidate_aabb_tree", false);
   }
   Q_EMIT updateInstructions("Select a vertex. (1/2)");
 }
@@ -2139,6 +2153,13 @@ void Scene_polyhedron_selection_item::selected_HL(const std::set<fg_edge_descrip
   Q_EMIT itemChanged();
 }
 
+void Scene_polyhedron_selection_item::reset_numbers()
+{
+  d->num_faces = num_faces(*poly_item->polyhedron());
+  d->num_vertices = num_vertices(*poly_item->polyhedron());
+  d->num_edges = num_edges(*poly_item->polyhedron());
+}
+
 void Scene_polyhedron_selection_item::init(Scene_face_graph_item* poly_item, QMainWindow* mw)
 {
   this->poly_item = poly_item;
@@ -2173,22 +2194,26 @@ void Scene_polyhedron_selection_item::init(Scene_face_graph_item* poly_item, QMa
   connect(&k_ring_selector,SIGNAL(isCurrentlySelected(Scene_facegraph_item_k_ring_selection*)), this, SIGNAL(isCurrentlySelected(Scene_facegraph_item_k_ring_selection*)));
    k_ring_selector.init(poly_item, mw, Active_handle::VERTEX, -1);
   connect(&k_ring_selector, SIGNAL(resetIsTreated()), this, SLOT(resetIsTreated()));
+
   connect(poly_item, &Scene_surface_mesh_item::itemChanged, this, [this](){
     std::size_t new_num_faces = num_faces(*this->poly_item->face_graph());
     std::size_t new_num_vertices = num_vertices(*this->poly_item->face_graph());
     std::size_t new_num_edges = num_edges(*this->poly_item->face_graph());
 
-    if(new_num_faces != d->num_faces)
+    if(new_num_faces != d->num_faces
+       && !d->keep_selection_valid.testFlag(Facet))
     {
       selected_facets.clear();
       d->num_faces = new_num_faces ;
     }
-    if(new_num_vertices!= d->num_vertices)
+    if(new_num_vertices!= d->num_vertices
+       && !d->keep_selection_valid.testFlag(Vertex))
     {
       selected_vertices.clear();
       d->num_vertices = new_num_vertices ;
     }
-    if(new_num_edges!= d->num_edges)
+    if(new_num_edges!= d->num_edges
+       && !d->keep_selection_valid.testFlag(Edge))
     {
       selected_edges.clear();
       d->num_edges = new_num_edges ;
@@ -2236,35 +2261,35 @@ void Scene_polyhedron_selection_item::printPrimitiveId(QPoint p, CGAL::Three::Vi
 {
   d->item->polyhedron_item()->printPrimitiveId(p, viewer);
 }
+
 bool Scene_polyhedron_selection_item::printVertexIds() const
 {
   return d->item->polyhedron_item()->printVertexIds();
-  return false;
 }
+
 bool Scene_polyhedron_selection_item::printEdgeIds() const
 {
-  d->item->polyhedron_item()->printEdgeIds();
-  return false;
+  return d->item->polyhedron_item()->printEdgeIds();
 }
+
 bool Scene_polyhedron_selection_item::printFaceIds() const
 {
   return d->item->polyhedron_item()->printFaceIds();
-  return false;
 }
+
 void Scene_polyhedron_selection_item::printAllIds()
 {
   d->item->polyhedron_item()->printAllIds();
 }
+
 bool Scene_polyhedron_selection_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)const
 {
   return d->item->polyhedron_item()->testDisplayId(x, y, z, viewer);
-  return false;
 }
 
 bool Scene_polyhedron_selection_item::shouldDisplayIds(CGAL::Three::Scene_item *current_item) const
 {
   return d->item->polyhedron_item() == current_item;
-  return false;
 }
 
 void Scene_polyhedron_selection_item::select_boundary()
@@ -2291,12 +2316,12 @@ Scene_polyhedron_selection_item::toolTip() const
                      "<p>Number of vertices: %2<br />"
                      "Number of edges: %3<br />"
                      "Number of faces: %4</p>")
-    .arg(this->name())
-    .arg(selected_vertices.size())
-    .arg(selected_edges.size())
-    .arg(selected_facets.size())
-    .arg(this->renderingModeName())
-    .arg(this->color().name());
+      .arg(this->name())
+      .arg(selected_vertices.size())
+      .arg(selected_edges.size())
+      .arg(selected_facets.size())
+      .arg(this->renderingModeName())
+      .arg(this->color().name());
 }
 
 void Scene_polyhedron_selection_item::initializeBuffers(Viewer_interface *v) const
@@ -2622,4 +2647,31 @@ void Scene_polyhedron_selection_item::updateDisplayedIds(QEvent* e)
       poly_item->updateIds(vh);
     }
   }
+}
+
+void Scene_polyhedron_selection_item::poly_item_changed()
+{
+  if(d->keep_selection_valid != None)
+  {
+    Update_indices_visitor visitor(selected_vertices,
+                                   selected_edges,
+                                   selected_facets,
+                                   *polyhedron());
+    polyhedron()->collect_garbage(visitor);
+  }
+  else
+  {
+    if(!d->keep_selection_valid.testFlag(Vertex))
+      remove_erased_handles<fg_vertex_descriptor>();
+    if(!d->keep_selection_valid.testFlag(Edge))
+      remove_erased_handles<fg_edge_descriptor>();
+    if(!d->keep_selection_valid.testFlag(Facet))
+      remove_erased_handles<fg_face_descriptor>();
+  }
+  compute_normal_maps();
+}
+
+void Scene_polyhedron_selection_item::setKeepSelectionValid(SelectionTypes type)
+{
+  d->keep_selection_valid = type;
 }

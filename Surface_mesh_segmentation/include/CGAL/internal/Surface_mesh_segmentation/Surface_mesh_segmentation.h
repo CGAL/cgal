@@ -1,4 +1,3 @@
-#ifndef CGAL_SURFACE_MESH_SEGMENTATION_H
 // Copyright (c) 2014  GeometryFactory Sarl (France).
 // All rights reserved.
 //
@@ -11,6 +10,7 @@
 // Author(s)     : Ilker O. Yaz
 
 
+#ifndef CGAL_SURFACE_MESH_SEGMENTATION_H
 #define CGAL_SURFACE_MESH_SEGMENTATION_H
 
 #include <CGAL/license/Surface_mesh_segmentation.h>

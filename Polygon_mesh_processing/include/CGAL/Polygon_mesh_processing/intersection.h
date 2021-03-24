@@ -28,7 +28,7 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/mpl/if.hpp>
@@ -1487,8 +1487,8 @@ template<class TriangleMeshRange,
 struct Mesh_callback
 {
   typedef typename boost::range_value<TriangleMeshRange>::type TriangleMesh;
-  typedef typename boost::range_value<NamedParametersRange>::type NamedParameter;
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameter>::const_type VPM;
+  typedef typename boost::range_value<NamedParametersRange>::type NamedParameters;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VPM;
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VPM> Primitive;
   typedef CGAL::AABB_traits<GT, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> AABBTree;
@@ -1647,8 +1647,8 @@ template <class TriangleMeshRange,
           class NamedParametersRange>
 OutputIterator intersecting_meshes(const TriangleMeshRange& range,
                                          OutputIterator out,
-                                         NamedParameters np,
-                                         NamedParametersRange nps)
+                                   const NamedParameters& np,
+                                   const NamedParametersRange& nps)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -1686,7 +1686,7 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
 template <class TriangleMeshRange, class NamedParameters, class OutputIterator>
 OutputIterator intersecting_meshes(const TriangleMeshRange& range,
                                          OutputIterator out,
-                                         NamedParameters np)
+                                   const NamedParameters& np)
 {
   std::vector<Named_function_parameters<bool, internal_np::all_default_t> >nps(
     std::distance(range.begin(), range.end()), parameters::all_default());
@@ -1758,22 +1758,24 @@ surface_intersection(const TriangleMesh& tm1,
   const bool throw_on_self_intersection =
     parameters::choose_parameter(parameters::get_parameter(np1, internal_np::throw_on_self_intersection), false);
 
-  typedef typename GetVertexPointMap<TriangleMesh,
-                                     NamedParameters1>::const_type Vpm;
-  typedef typename GetVertexPointMap<TriangleMesh,
-                                     NamedParameters2>::const_type Vpm2;
-  CGAL_USE_TYPE(Vpm2);
-  CGAL_assertion_code(
-    static const bool same_vpm = (boost::is_same<Vpm,Vpm2>::value);)
-  CGAL_static_assertion(same_vpm);
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::const_type VPM1;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters2>::const_type VPM2;
 
-  Vpm vpm1 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::vertex_point),
-                                          get_const_property_map(CGAL::vertex_point, tm1));
-  Vpm vpm2 = parameters::choose_parameter(parameters::get_parameter(np2, internal_np::vertex_point),
-                                          get_const_property_map(CGAL::vertex_point, tm2));
+  CGAL_static_assertion((std::is_same<typename boost::property_traits<VPM1>::value_type,
+                                      typename boost::property_traits<VPM2>::value_type>::value));
 
-  Corefinement::Intersection_of_triangle_meshes<TriangleMesh,Vpm>
+  VPM1 vpm1 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::vertex_point),
+                                           get_const_property_map(CGAL::vertex_point, tm1));
+  VPM2 vpm2 = parameters::choose_parameter(parameters::get_parameter(np2, internal_np::vertex_point),
+                                           get_const_property_map(CGAL::vertex_point, tm2));
+
+  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM1, VPM2>
     functor(tm1, tm2, vpm1, vpm2);
+
+  // Fill non-manifold feature maps if provided
+  functor.set_non_manifold_feature_map_1(parameters::get_parameter(np1, internal_np::non_manifold_feature_map));
+  functor.set_non_manifold_feature_map_2(parameters::get_parameter(np2, internal_np::non_manifold_feature_map));
+
   return functor(polyline_output, throw_on_self_intersection, true);
 }
 
@@ -1814,17 +1816,14 @@ surface_self_intersection(const TriangleMesh& tm,
                          const NamedParameters& np)
 {
 // Vertex point maps
-  typedef typename GetVertexPointMap<TriangleMesh,
-                                     NamedParameters>::const_type Vpm;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VPM;
 
-  Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                                          get_const_property_map(CGAL::vertex_point, tm));
+  VPM vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
+                                         get_const_property_map(CGAL::vertex_point, tm));
 
 // surface intersection algorithm call
-  typedef Corefinement::Default_surface_intersection_visitor<TriangleMesh,
-                                                             true>      Visitor;
-  Corefinement::Intersection_of_triangle_meshes<TriangleMesh,Vpm, Visitor>
-    functor(tm, vpm);
+  typedef Corefinement::Default_surface_intersection_visitor<TriangleMesh, true> Visitor;
+  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM, VPM, Visitor> functor(tm, vpm);
 
   polyline_output=functor(polyline_output, true);
   return polyline_output;

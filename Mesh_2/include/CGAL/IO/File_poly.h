@@ -14,7 +14,7 @@
 #define CGAL_FILE_POLY_H
 
 #include <CGAL/license/Mesh_2.h>
-
+#include <CGAL/IO/OFF/File_scanner_OFF.h>
 
 namespace CGAL {
 

@@ -13,17 +13,13 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-#include <CGAL/disable_warnings.h>
+#include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
+#include <CGAL/Polygon_offset_builder_traits_2.h>
+
+#include <boost/optional/optional.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include <vector>
-#include <algorithm>
-
-#include <boost/shared_ptr.hpp>
-#include <boost/optional/optional.hpp>
-
-#include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
-
-#include <CGAL/Polygon_offset_builder_traits_2.h>
 
 namespace CGAL {
 
@@ -247,10 +243,5 @@ private:
 
 #include <CGAL/Straight_skeleton_2/Polygon_offset_builder_2_impl.h>
 
-#include <CGAL/enable_warnings.h>
-
 #endif // CGAL_POLYGON_OFFSET_BUILDER_2_H //
 // EOF //
-
-
-

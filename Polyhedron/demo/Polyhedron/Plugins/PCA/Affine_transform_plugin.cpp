@@ -501,6 +501,8 @@ void Polyhedron_demo_affine_transform_plugin::start(FaceGraph *facegraph, const 
   lastMatrix.data()[13] = y;
   lastMatrix.data()[14] = z;
   transform_item = new Scene_facegraph_transform_item(CGAL::qglviewer::Vec(x,y,z),facegraph, name);
+  connect(transform_item, &Scene_item::aboutToBeDestroyed,
+          [](){ QApplication::restoreOverrideCursor(); });
   transform_item->setManipulatable(true);
   transform_item->setColor(Qt::green);
   transform_item->setRenderingMode(Wireframe);
@@ -534,6 +536,8 @@ void Polyhedron_demo_affine_transform_plugin::start(Scene_points_with_normal_ite
   lastMatrix.data()[14] = z;
 
   transform_points_item = new Scene_transform_point_set_item(points_item,CGAL::qglviewer::Vec(x,y,z));
+  connect(transform_points_item, &Scene_item::aboutToBeDestroyed,
+          [](){ QApplication::restoreOverrideCursor(); });
   transform_points_item->setRenderingMode(Points);
   transform_points_item->setName(tr("Affine Transformation"));
   connect(transform_points_item, SIGNAL(stop()),this, SLOT(go()));
@@ -567,7 +571,8 @@ void Polyhedron_demo_affine_transform_plugin::end(){
   if(transform_item)
   {
     CGAL::qglviewer::Vec c = transform_item->center();
-    FaceGraph* new_sm = new FaceGraph(*transform_item->getFaceGraph());
+    FaceGraph* new_sm = new FaceGraph();
+    CGAL::copy_face_graph(*transform_item->getFaceGraph(), *new_sm);
     typedef boost::property_map<FaceGraph,CGAL::vertex_point_t>::type VPmap;
     VPmap vpmap = get(CGAL::vertex_point, *new_sm);
 

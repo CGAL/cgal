@@ -10,6 +10,7 @@
 #include <QColor>
 #include <QStyleFactory>
 #include <QMessageBox>
+#include <QAbstractItemView>
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
@@ -20,6 +21,7 @@
 #include "Messages_interface.h"
 #include "Scene_surface_mesh_item.h"
 #include "Color_ramp.h"
+#include "Color_map.h"
 #include <boost/unordered_map.hpp>
 #include "ui_Display_property.h"
 #include "id_printing.h"
@@ -28,9 +30,12 @@
 #include <CGAL/Buffer_for_vao.h>
 #include <CGAL/Three/Triangle_container.h>
 #include <CGAL/Dynamic_property_map.h>
+#include <type_traits>
+#include <unordered_map>
 
 #define ARBITRARY_DBL_MIN 1.0E-30
 #define ARBITRARY_DBL_MAX 1.0E+30
+
 
 
 //Item for heat values
@@ -332,10 +337,14 @@ class DisplayPropertyPlugin :
 
 public:
 
-  bool applicable(QAction*) const Q_DECL_OVERRIDE
+  bool applicable(QAction* action) const Q_DECL_OVERRIDE
   {
     CGAL::Three::Scene_item* item = scene->item(scene->mainSelectionIndex());
-    return qobject_cast<Scene_surface_mesh_item*>(item);
+    if(action == _actions.back())
+      return qobject_cast<Scene_surface_mesh_item*>(item);
+    else
+      return qobject_cast<Scene_surface_mesh_item*>(item)
+          || qobject_cast<Scene_points_with_normal_item*>(item);
   }
 
   QList<QAction*> actions() const Q_DECL_OVERRIDE
@@ -357,7 +366,7 @@ public:
     this->mw = mw;
     this->current_item = NULL;
 
-    QAction *actionDisplayAngles= new QAction(QString("Display Properties"), mw);
+    QAction *actionDisplayProperties= new QAction(QString("Display Properties"), mw);
     QAction *actionHeatMethod= new QAction(QString("Heat Method"), mw);
     actionHeatMethod->setProperty("submenuName", "Color");
 
@@ -367,10 +376,10 @@ public:
     gM = 1.0;
     bm = 0.0;
     bM = 0.0;
-    actionDisplayAngles->setProperty("submenuName", "Color");
+    actionDisplayProperties->setProperty("submenuName", "Color");
 
-    if(actionDisplayAngles) {
-      connect(actionDisplayAngles, SIGNAL(triggered()),
+    if(actionDisplayProperties) {
+      connect(actionDisplayProperties, SIGNAL(triggered()),
               this, SLOT(openDialog()));
       if(actionHeatMethod)
       {
@@ -380,7 +389,7 @@ public:
           this->dock_widget->show();
         });
       }
-      _actions << actionDisplayAngles;
+      _actions << actionDisplayProperties;
       _actions << actionHeatMethod;
 
     }
@@ -396,6 +405,12 @@ public:
     dock_widget->maxColorButton->setPalette(palette);
     dock_widget->maxColorButton->setStyle(QStyleFactory::create("Fusion"));
     dock_widget->maxColorButton->update();
+
+    palette = QPalette(Qt::green);
+    dock_widget->initColorButton->setPalette(palette);
+    dock_widget->initColorButton->setStyle(QStyleFactory::create("Fusion"));
+    dock_widget->initColorButton->update();
+
     connect(dock_widget->colorizeButton, SIGNAL(clicked(bool)),
             this, SLOT(colorize()));
 
@@ -438,6 +453,23 @@ public:
       replaceRamp();
     });
 
+    connect(dock_widget->initColorButton, &QPushButton::pressed,
+            this, [this]()
+    {
+      QColor initColor = QColorDialog::getColor();
+      if (!initColor.isValid())
+      {
+        return;
+      }
+
+      QPalette palette(initColor);
+      rI = initColor.redF();
+      gI = initColor.greenF();
+      bI = initColor.blueF();
+      dock_widget->initColorButton->setPalette(palette);
+      dock_widget->initColorButton->update();
+    });
+
     connect(dock_widget->sourcePointsButton, SIGNAL(toggled(bool)),
             this, SLOT(on_sourcePointsButton_toggled(bool)));
     connect(dock_widget->deleteButton, &QPushButton::clicked,
@@ -446,100 +478,207 @@ public:
     dock_widget->zoomToMaxButton->setEnabled(false);
     dock_widget->zoomToMinButton->setEnabled(false);
     Scene* scene_obj =static_cast<Scene*>(scene);
-    connect(scene_obj, &Scene::itemIndexSelected,
-            this, &DisplayPropertyPlugin::enableButtons);
+    connect(scene_obj, SIGNAL(itemIndexSelected(int)),
+            this,SLOT(enableButtons(int)));
+    connect(scene_obj, SIGNAL(itemIndexSelected(int)),
+            this,SLOT(detectScalarProperties(int)));
+
     on_propertyBox_currentIndexChanged(0);
 
+
+  }
+private:
+
+  void detectSMScalarProperties(SMesh* smesh)
+  {
+    std::vector<std::string> vprop = smesh->properties<vertex_descriptor>();
+    std::vector<std::string> fprop = smesh->properties<face_descriptor>();
+    for(auto s : vprop)
+      if(is_property_scalar<vertex_descriptor>(s, smesh))
+      {
+        dock_widget->propertyBox->addItem(s.c_str());
+      }
+    for(auto s : fprop)
+      if(is_property_scalar<face_descriptor>(s, smesh))
+      {
+        dock_widget->propertyBox->addItem(s.c_str());
+      }
+  }
+
+  void detectPSScalarProperties(Point_set* ps)
+  {
+    for(auto s : ps->properties())
+      if(is_property_scalar(s, ps))
+      {
+        dock_widget->propertyBox->addItem(s.c_str());
+      }
   }
 private Q_SLOTS:
+  void detectScalarProperties(int i)
+  {
+    for(int j = dock_widget->propertyBox->count(); j>=0; --j)
+      dock_widget->propertyBox->removeItem(j);
+
+    Scene_surface_mesh_item* sm_item =
+        qobject_cast<Scene_surface_mesh_item*>(scene->item(i));
+    Scene_points_with_normal_item* p_item =
+        qobject_cast<Scene_points_with_normal_item*>(scene->item(i));
+
+    if(sm_item)
+    {
+        dock_widget->propertyBox->addItem("Smallest Angle Per Face");
+        dock_widget->propertyBox->addItem("Scaled Jacobian");
+        dock_widget->propertyBox->addItem("Heat Intensity");
+        dock_widget->propertyBox->addItem("Heat Intensity (Intrinsic Delaunay)");
+      detectSMScalarProperties(sm_item->face_graph());
+
+    }
+    else if(p_item)
+    {
+      detectPSScalarProperties(p_item->point_set());
+    }
+    int width = dock_widget->propertyBox->minimumSizeHint().width();
+    dock_widget->propertyBox->view()->setMinimumWidth(width);
+  }
+
   void openDialog()
   {
     if(dock_widget->isVisible()) { dock_widget->hide(); }
     else{
-      replaceRamp();
       dock_widget->show();
       dock_widget->raise(); }
   }
 
+  void colorizePS(Scene_points_with_normal_item* ps_item)
+  {
+    ps_item->point_set()->add_colors();
+    if(!treat_point_property(dock_widget->propertyBox->currentText().toStdString(), ps_item->point_set()))
+    {
+      QApplication::restoreOverrideCursor();
+      return;
+    }
+    ps_item->setPointsMode();
+    ps_item->invalidateOpenGLBuffers();
+    ps_item->itemChanged();
+  }
   void colorize()
   {
+    Scene_points_with_normal_item* p_item =
+        qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
+    if(p_item)
+    {
+      colorizePS(p_item);
+      return;
+    }
     Scene_heat_item* h_item = nullptr;
-    Scene_surface_mesh_item* item =
+    Scene_surface_mesh_item* sm_item =
         qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
-    if(!item)
+    if(!sm_item)
     {
       h_item = qobject_cast<Scene_heat_item*>(scene->item(scene->mainSelectionIndex()));
       if(!h_item)
         return;
-      item = h_item->getParent();
+      sm_item = h_item->getParent();
     }
     QApplication::setOverrideCursor(Qt::WaitCursor);
-
-    replaceRamp();
-    item->face_graph()->collect_garbage();
+    sm_item->face_graph()->collect_garbage();
 
     switch(dock_widget->propertyBox->currentIndex()){
     case 0:
-      displayAngles(item);
+      displayAngles(sm_item);
       break;
       case 1:
-        displayScaledJacobian(item);
+        displayScaledJacobian(sm_item);
         break;
     case 2:
-      if(!displayHeatIntensity(item))
+      dock_widget->colorChoiceWidget->setCurrentIndex(0);
+      if(!displayHeatIntensity(sm_item)){
+        QApplication::restoreOverrideCursor();
         return;
-      item->setRenderingMode(Gouraud);
+      }
+      sm_item->setRenderingMode(Gouraud);
       break;
-    default:  // Heat Method (Intrinsic Delaunay)
-      if(!displayHeatIntensity(item, true))
+    case 3:// Heat Method (Intrinsic Delaunay)
+      dock_widget->colorChoiceWidget->setCurrentIndex(0);
+      if(!displayHeatIntensity(sm_item, true))
         return;
-      item->setRenderingMode(Gouraud);
+      sm_item->setRenderingMode(Gouraud);
+      break;
+    default:
+      if(dock_widget->propertyBox->currentText().contains("v:"))
+      {
+        if(!treat_sm_property<vertex_descriptor>(dock_widget->propertyBox->currentText().toStdString(), sm_item->face_graph()))
+        {
+          QApplication::restoreOverrideCursor();
+          return;
+        }
+        sm_item->setRenderingMode(Gouraud);
+      }
+      else if(dock_widget->propertyBox->currentText().contains("f:"))
+      {
+        if(!treat_sm_property<face_descriptor>(dock_widget->propertyBox->currentText().toStdString(), sm_item->face_graph()))
+        {
+          QApplication::restoreOverrideCursor();
+          return;
+        }
+        sm_item->setRenderingMode(Flat);
+      }
       break;
     }
 
-    connect(item, &Scene_surface_mesh_item::itemChanged,
-            this, [item](){
+    connect(sm_item, &Scene_surface_mesh_item::itemChanged,
+            this, [sm_item](){
       bool does_exist;
       SMesh::Property_map<face_descriptor, double> pmap;
-      boost::tie(pmap, does_exist) =
-          item->face_graph()->property_map<face_descriptor,double>("f:jacobian");
+      std::tie(pmap, does_exist) =
+          sm_item->face_graph()->property_map<face_descriptor,double>("f:jacobian");
       if(does_exist)
-        item->face_graph()->remove_property_map(pmap);
-      boost::tie(pmap, does_exist) =
-          item->face_graph()->property_map<face_descriptor,double>("f:angle");
+        sm_item->face_graph()->remove_property_map(pmap);
+      std::tie(pmap, does_exist) =
+          sm_item->face_graph()->property_map<face_descriptor,double>("f:angle");
       if(does_exist)
-        item->face_graph()->remove_property_map(pmap);
+        sm_item->face_graph()->remove_property_map(pmap);
     });
     QApplication::restoreOverrideCursor();
-    item->invalidateOpenGLBuffers();
-    item->redraw();
+    sm_item->invalidateOpenGLBuffers();
+    sm_item->redraw();
     if(dock_widget->propertyBox->currentIndex() != 2){
       dock_widget->zoomToMinButton->setEnabled(true);
       dock_widget->zoomToMaxButton->setEnabled(true);}
   }
 
-  void enableButtons()
+  void enableButtons(int i)
   {
-    Scene_surface_mesh_item* item =
-        qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
-    if(! item )
+    Scene_surface_mesh_item* sm_item =
+        qobject_cast<Scene_surface_mesh_item*>(scene->item(i));
+
+    Scene_points_with_normal_item* ps_item =
+        qobject_cast<Scene_points_with_normal_item*>(scene->item(i));
+
+    if(! sm_item && ! ps_item)
     {
       dock_widget->zoomToMinButton->setEnabled(false);
       dock_widget->zoomToMaxButton->setEnabled(false);
     }
-
-    switch(dock_widget->propertyBox->currentIndex())
+    else if(ps_item)
     {
-    case 0:
-      dock_widget->zoomToMinButton->setEnabled(angles_max.count(item)>0 );
-      dock_widget->zoomToMaxButton->setEnabled(angles_max.count(item)>0 );
-      break;
-    case 1:
-      dock_widget->zoomToMinButton->setEnabled(jacobian_max.count(item)>0);
-      dock_widget->zoomToMaxButton->setEnabled(jacobian_max.count(item)>0);
-      break;
-    default:
-      break;
+      dock_widget->zoomToMinButton->setEnabled(false);
+      dock_widget->zoomToMaxButton->setEnabled(false);
+    }
+    else if(sm_item){
+      switch(dock_widget->propertyBox->currentIndex())
+      {
+      case 0:
+        dock_widget->zoomToMinButton->setEnabled(angles_max.count(sm_item)>0 );
+        dock_widget->zoomToMaxButton->setEnabled(angles_max.count(sm_item)>0 );
+        break;
+      case 1:
+        dock_widget->zoomToMinButton->setEnabled(jacobian_max.count(sm_item)>0);
+        dock_widget->zoomToMaxButton->setEnabled(jacobian_max.count(sm_item)>0);
+        break;
+      default:
+        break;
+      }
     }
   }
 
@@ -552,13 +691,13 @@ private Q_SLOTS:
     SMesh& smesh = *item->face_graph();
     SMesh::Property_map<face_descriptor, double> jacobians;
     bool found;
-    boost::tie(jacobians, found) = smesh.property_map<face_descriptor,double>("f:jacobian");
+    std::tie(jacobians, found) = smesh.property_map<face_descriptor,double>("f:jacobian");
     if(found)
     {
       smesh.remove_property_map(jacobians);
     }
     SMesh::Property_map<face_descriptor, double> angles;
-    boost::tie(angles, found) = smesh.property_map<face_descriptor,double>("f:angle");
+    std::tie(angles, found) = smesh.property_map<face_descriptor,double>("f:angle");
     if(found)
     {
       smesh.remove_property_map(angles);
@@ -572,7 +711,7 @@ private Q_SLOTS:
     //compute and store the jacobian per face
     bool non_init;
     SMesh::Property_map<face_descriptor, double> fjacobian;
-    boost::tie(fjacobian, non_init) = smesh.add_property_map<face_descriptor, double>("f:jacobian", 0);
+    std::tie(fjacobian, non_init) = smesh.add_property_map<face_descriptor, double>("f:jacobian", 0);
     if(non_init)
     {
       double res_min = ARBITRARY_DBL_MAX,
@@ -601,29 +740,7 @@ private Q_SLOTS:
       connect(item, &Scene_surface_mesh_item::itemChanged,
               this, &DisplayPropertyPlugin::resetProperty);
     }
-    //scale a color ramp between min and max
-    double max = maxBox;
-    double min = minBox;
-    //fill f:color pmap
-    SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
-        smesh.add_property_map<face_descriptor, CGAL::Color >("f:color", CGAL::Color()).first;
-    for(boost::graph_traits<SMesh>::face_iterator fit = faces(smesh).begin();
-        fit != faces(smesh).end();
-        ++fit)
-    {
-      if(min == max)
-        --min;
-      double f = (fjacobian[*fit]-min)/(max-min);
-      if(f<min)
-        f = min;
-      if(f>max)
-        f = max;
-      CGAL::Color color(
-            255*color_ramp.r(f),
-            255*color_ramp.g(f),
-            255*color_ramp.b(f));
-      fcolors[*fit] = color;
-    }
+    treat_sm_property<face_descriptor>("f:jacobian", item->face_graph());
   }
 
   bool resetScaledJacobian(Scene_surface_mesh_item* item)
@@ -638,6 +755,7 @@ private Q_SLOTS:
     return true;
   }
 
+
   void displayAngles(Scene_surface_mesh_item* item)
   {
     SMesh& smesh = *item->face_graph();
@@ -646,7 +764,7 @@ private Q_SLOTS:
     //compute and store smallest angle per face
     bool non_init;
     SMesh::Property_map<face_descriptor, double> fangle;
-    boost::tie(fangle, non_init) = smesh.add_property_map<face_descriptor, double>("f:angle", 0);
+    std::tie(fangle, non_init) = smesh.add_property_map<face_descriptor, double>("f:angle", 0);
     if(non_init)
     {
       double res_min = ARBITRARY_DBL_MAX,
@@ -738,31 +856,7 @@ private Q_SLOTS:
       connect(item, &Scene_surface_mesh_item::itemChanged,
               this, &DisplayPropertyPlugin::resetProperty);
     }
-    //scale a color ramp between min and max
-
-    float max = maxBox;
-    float min = minBox;
-
-    //fill f:color pmap
-    SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
-        smesh.add_property_map<face_descriptor, CGAL::Color >("f:color", CGAL::Color()).first;
-    for(boost::graph_traits<SMesh>::face_iterator fit = faces(smesh).begin();
-        fit != faces(smesh).end();
-        ++fit)
-    {
-      if(min == max)
-        --min;
-      float f = (fangle[*fit]-min)/(max-min);
-      if(f<0)
-        f = 0;
-      if(f>1)
-        f = 1;
-      CGAL::Color color(
-            255*color_ramp.r(f),
-            255*color_ramp.g(f),
-            255*color_ramp.b(f));
-      fcolors[*fit] = color;
-    }
+    treat_sm_property<face_descriptor>("f:angle", item->face_graph());
   }
 
   bool resetAngles(Scene_surface_mesh_item* item)
@@ -810,6 +904,8 @@ private Q_SLOTS:
       connect(item, &Scene_surface_mesh_item::aboutToBeDestroyed,
               [this,item](){
                 auto it =  mesh_heat_method_map.find(item);
+                if(it == mesh_heat_method_map.end())
+                  return;
                 delete it->second;
                 mesh_heat_method_map.erase(it);
               }
@@ -868,7 +964,7 @@ private Q_SLOTS:
     color_ramp = Color_ramp(rm, rM, gm, gM, bm, bM);
     dock_widget->minBox->setValue(min);
     dock_widget->maxBox->setValue(max);
-
+    displayLegend();
     //}
     SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
         mesh.add_property_map<vertex_descriptor, CGAL::Color >("v:color", CGAL::Color()).first;
@@ -922,62 +1018,67 @@ private Q_SLOTS:
 
   void replaceRamp()
   {
-    color_ramp = Color_ramp(rm, rM, gm, gM, bm, bM);
-    displayLegend();
-    minBox = dock_widget->minBox->value();
-    maxBox = dock_widget->maxBox->value();
+    if(dock_widget->colorChoiceWidget->currentIndex() == 0)
+    {
+      color_ramp = Color_ramp(rm, rM, gm, gM, bm, bM);
+      displayLegend();
+      minBox = dock_widget->minBox->value();
+      maxBox = dock_widget->maxBox->value();
+    }
   }
 
   void on_propertyBox_currentIndexChanged(int)
   {
-    switch(dock_widget->propertyBox->currentIndex())
-    {
-    case 0:
-    {
-      dock_widget->groupBox->  setEnabled(true);
-      dock_widget->groupBox_3->setEnabled(true);
+    dock_widget->sourcePointsButton->setEnabled(false);
+    Scene_surface_mesh_item* item =
+        qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+    if(! item )
+      dock_widget->maxBox->setValue(180);
+    else{
+      switch(dock_widget->propertyBox->currentIndex())
+      {
+      case 0:
+      {
+        dock_widget->groupBox->  setEnabled(true);
+        dock_widget->groupBox_3->setEnabled(true);
 
-      dock_widget->sourcePointsButton->setEnabled(false);
+        dock_widget->minBox->setMinimum(0);
+        dock_widget->minBox->setMaximum(360);
+        dock_widget->minBox->setValue(0);
+        dock_widget->maxBox->setMinimum(0);
+        dock_widget->maxBox->setMaximum(360);
+        if(is_triangle_mesh(*item->face_graph()))
+          dock_widget->maxBox->setValue(60);
+        else if(is_quad_mesh(*item->face_graph()))
+          dock_widget->maxBox->setValue(90);
+        replaceRamp();
+        break;
+      }
+      case 1:
+        dock_widget->groupBox->  setEnabled(true);
+        dock_widget->groupBox_3->setEnabled(true);
 
-      dock_widget->minBox->setMinimum(0);
-      dock_widget->minBox->setMaximum(360);
-      dock_widget->minBox->setValue(0);
+        dock_widget->minBox->setMinimum(-1000);
+        dock_widget->minBox->setMaximum(1000);
+        dock_widget->minBox->setValue(0);
 
-      dock_widget->maxBox->setMinimum(0);
-      dock_widget->maxBox->setMaximum(360);
-      Scene_surface_mesh_item* item =
-          qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
-      if(! item )
-        dock_widget->maxBox->setValue(180);
-      else if(is_triangle_mesh(*item->face_graph()))
-        dock_widget->maxBox->setValue(60);
-      else if(is_quad_mesh(*item->face_graph()))
-        dock_widget->maxBox->setValue(90);
-      break;
+        dock_widget->maxBox->setMinimum(-1000);
+        dock_widget->maxBox->setMaximum(1000);
+        dock_widget->maxBox->setValue(2);
+        break;
+      case 2:
+      case 3:
+        dock_widget->sourcePointsButton->setEnabled(true);
+        CGAL_FALLTHROUGH;
+      default:
+        dock_widget->maxBox->setMinimum(-99999999);
+        dock_widget->maxBox->setMaximum(99999999);
+        dock_widget->minBox->setMinimum(-99999999);
+        dock_widget->minBox->setMaximum(99999999);
+        dock_widget->groupBox->  setEnabled(false);
+        dock_widget->groupBox_3->setEnabled(false);
+      }
     }
-    case 1:
-      dock_widget->groupBox->  setEnabled(true);
-      dock_widget->groupBox_3->setEnabled(true);
-      dock_widget->sourcePointsButton->setEnabled(false);
-
-      dock_widget->minBox->setMinimum(-1000);
-      dock_widget->minBox->setMaximum(1000);
-      dock_widget->minBox->setValue(0);
-
-      dock_widget->maxBox->setMinimum(-1000);
-      dock_widget->maxBox->setMaximum(1000);
-      dock_widget->maxBox->setValue(2);
-      break;
-    default:
-      dock_widget->maxBox->setMinimum(0);
-      dock_widget->maxBox->setMaximum(99999999);
-      dock_widget->groupBox->  setEnabled(false);
-      dock_widget->groupBox_3->setEnabled(false);
-      dock_widget->sourcePointsButton->setEnabled(true);
-
-    }
-    replaceRamp();
-    enableButtons();
   }
 
   void closure()Q_DECL_OVERRIDE
@@ -987,6 +1088,7 @@ private Q_SLOTS:
 
   void on_zoomToMinButton_pressed()
   {
+
     Scene_surface_mesh_item* item =
         qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
     if(!item)
@@ -1053,6 +1155,8 @@ private Q_SLOTS:
 
   void delete_group()
   {
+    if(scene->selectionIndices().empty())
+      return;
     Scene_item* item = scene->item(scene->selectionIndices().first());
     Scene_group_item* group = qobject_cast<Scene_group_item*>(item);
     if(!group || !group->property("heat_group").toBool())
@@ -1060,6 +1164,18 @@ private Q_SLOTS:
     for(auto child_id : group->getChildren())
     {
       if(Scene_surface_mesh_item* child = qobject_cast<Scene_surface_mesh_item*>(scene->item(child_id))){
+        auto it =  mesh_heat_method_map.find(child);
+        if(it != mesh_heat_method_map.end())
+          mesh_heat_method_map.erase(it);
+
+        auto it2 =  mesh_heat_item_map.find(child);
+        if(it2 != mesh_heat_item_map.end())
+          mesh_heat_item_map.erase(it2);
+
+        auto it3 =  mesh_heat_method_idt_map.find(child);
+        if(it3 != mesh_heat_method_idt_map.end())
+          mesh_heat_method_idt_map.erase(it3);
+
         group->unlockChild(child);
          group->removeChild(child);
          scene->addChild(child);
@@ -1069,6 +1185,7 @@ private Q_SLOTS:
       }
     }
     scene->erase(scene->item_id(group));
+    source_points = nullptr;
 
   }
 
@@ -1181,11 +1298,74 @@ private Q_SLOTS:
    source_points->itemChanged();
   }
 private:
+  template<typename PM>
+  bool displayPSProperty(Point_set* ps, PM pm);
+  template<typename PM>
+  bool displaySMProperty(SMesh& smesh, PM pm, vertex_descriptor);
+  template<typename PM>
+  bool displaySMProperty(SMesh& smesh, PM pm, face_descriptor);
+  template<typename TAG>
+  bool treat_sm_property(std::string name, SMesh* sm);
+  //cannot be treated as a sm_property because the property_map<>() function takes only 1 template arg.
+  bool treat_point_property(std::string name, Point_set* sm);
+  template<typename Simplex>
+  bool is_property_scalar(std::string name, const SMesh* sm);
+  //same problem of number of templates
+  bool is_property_scalar(std::string name, const Point_set* ps);
+  template<typename Value_type>
+  void displayMapLegend(const std::vector<Value_type>& values)
+  {
+    // Create a legend_ and display it
+    const std::size_t size = (std::min)(color_map.size(), (std::size_t)256);
+    const int text_height = 20;
+    const int height = text_height*static_cast<int>(size) + text_height;
+    const int width = 140;
+    const int cell_width = width/3;
+    const int top_margin = 15;
+    const int left_margin = 5;
+    const int drawing_height = height - text_height + top_margin;
+
+    legend_ = QPixmap(width, height );
+    legend_.fill(QColor(200, 200, 200));
+
+    QPainter painter(&legend_);
+    painter.setPen(Qt::black);
+    painter.setBrush(QColor(200, 200, 200));
+
+    int j = 0;
+    int tick_height = text_height;
+    for (std::size_t i = 0; i< size; ++i, j+=tick_height)
+    {
+      QColor color(color_map[i].red(),
+                   color_map[i].green(),
+                   color_map[i].blue());
+      painter.fillRect(left_margin,
+                       drawing_height - top_margin - j,
+                       cell_width,
+                       tick_height,
+                       color);
+      QRect text_rect(left_margin + cell_width+10, drawing_height - top_margin - j,
+                          50, text_height);
+      painter.drawText(text_rect, Qt::AlignCenter, tr("%1").arg(values[i], 0, 'f', 3, QLatin1Char(' ')));
+    }
+    if(color_map.size() > size){
+      QRect text_rect(left_margin + cell_width+10, 0,
+                          50, text_height);
+      painter.drawText(text_rect, Qt::AlignCenter, tr("[...]"));
+    }
+    // draw right vertical line
+    painter.setPen(Qt::blue);
+
+    painter.drawLine(QPoint(left_margin + cell_width+10, drawing_height - top_margin +tick_height),
+                     QPoint(left_margin + cell_width+10,
+                            drawing_height - top_margin  - static_cast<int>(size)*tick_height+tick_height));
+    dock_widget->legendLabel->setPixmap(legend_);
+  }
   void displayLegend()
   {
-    // Create an legend_ and display it
+    // Create a legend_ and display it
     const int height = 256;
-    const int width = 90;
+    const int width = 140;
     const int cell_width = width/3;
     const int top_margin = 5;
     const int left_margin = 5;
@@ -1199,14 +1379,13 @@ private:
     painter.setPen(Qt::black);
     painter.setBrush(QColor(200, 200, 200));
 
-    // Build legend_ data
     double min_value(dock_widget->minBox->value()),
         max_value(dock_widget->maxBox->value());
+    // Build legend_ data
     std::vector<double> graduations(100);
     for(int i=0; i<100; ++i)
       graduations[i] = i/100.0;
 
-    // draw
     int i=0;
     for (std::vector<double>::iterator it = graduations.begin(), end = graduations.end();
          it != end; ++it, i+=2)
@@ -1220,37 +1399,39 @@ private:
                        2,
                        color);
     }
-
     // draw right vertical line
     painter.setPen(Qt::blue);
 
-    painter.drawLine(QPoint(left_margin + cell_width+10, drawing_height - top_margin),
+    painter.drawLine(QPoint(left_margin + cell_width+10, drawing_height - top_margin + 2),
                      QPoint(left_margin + cell_width+10,
-                            drawing_height - top_margin - static_cast<int>(graduations.size())*2));
-
-
+                            drawing_height - top_margin - static_cast<int>(graduations.size())*2 + 2));
     // draw min value and max value
     painter.setPen(Qt::blue);
     QRect min_text_rect(left_margin + cell_width+10,drawing_height - top_margin,
-                        50, text_height);
+                        100, text_height);
     painter.drawText(min_text_rect, Qt::AlignCenter, tr("%1").arg(min_value, 0, 'f', 1));
 
     QRect max_text_rect(left_margin + cell_width+10, drawing_height - top_margin - 200,
-                        50, text_height);
+                        100, text_height);
     painter.drawText(max_text_rect, Qt::AlignCenter, tr("%1").arg(max_value, 0, 'f', 1));
 
     dock_widget->legendLabel->setPixmap(legend_);
   }
+
   double scaled_jacobian(const face_descriptor& f , const SMesh &mesh);
   QList<QAction*> _actions;
   Color_ramp color_ramp;
+  std::vector<QColor> color_map;
   DockWidget* dock_widget;
   double rm;
   double rM;
+  double rI;
   double gm;
   double gM;
+  double gI;
   double bm;
   double bM;
+  double bI;
   boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > jacobian_min;
   boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > jacobian_max;
 
@@ -1270,6 +1451,243 @@ private:
 
   boost::unordered_map<Scene_surface_mesh_item*, Heat_method*> mesh_heat_method_map;
   boost::unordered_map<Scene_surface_mesh_item*, Heat_method_idt*> mesh_heat_method_idt_map;
+
+  template<typename, typename, typename> friend class PropertyDisplayer;
+
+  //CRTP used to display properties of surface meshes(vertex and face) and point set.
+  template <class DataSet, class PM, class CRTP_derived_class>
+  struct PropertyDisplayer
+  {
+    typedef typename PM::value_type Value_type;
+    PropertyDisplayer(DataSet& ds, PM pm, DisplayPropertyPlugin* parent)
+      :dataset(ds), property_map(pm), parent(parent)
+    {}
+
+    virtual void fill_values(){}
+    virtual void set_colors_map(std::unordered_map<Value_type, std::size_t> &){}
+    virtual void set_colors_ramp(){}
+    bool operator()()
+    {
+      parent->minBox = ARBITRARY_DBL_MAX;
+      parent->maxBox = -ARBITRARY_DBL_MAX;
+      static_cast<CRTP_derived_class*>(this)->fill_values();
+      std::sort(values.begin(), values.end());
+      auto end = std::unique(values.begin(), values.end());
+
+
+      parent->minBox = *values.begin();
+      parent->maxBox = *(end-1);
+      parent->dock_widget->minBox->setValue(parent->minBox);
+      parent->dock_widget->maxBox->setValue(parent->maxBox);
+
+      //fill color pmap
+      if(parent->dock_widget->colorChoiceWidget->currentIndex() == 1)
+      {
+        std::unordered_map<Value_type, std::size_t> value_index_map;
+        //fill map
+        std::size_t counter = 0;
+        for(auto it = values.begin(); it != end; ++it)
+        {
+          value_index_map[*it] = counter++;
+        }
+        parent->color_map.clear();
+        compute_color_map(QColor(parent->rI, parent->gI, parent->bI),std::distance(values.begin(), end),
+                          std::back_inserter(parent->color_map));
+        static_cast<CRTP_derived_class*>(this)->set_colors_map(value_index_map);
+        parent->displayMapLegend(values);
+      }
+      else
+      {
+        //scale a color ramp between min and max
+        parent->replaceRamp();
+        static_cast<CRTP_derived_class*>(this)->set_colors_ramp();
+      }
+      return true;
+    }
+
+
+    DataSet& dataset;
+    PM property_map;
+    std::vector<Value_type> values;
+    DisplayPropertyPlugin* parent;
+  };
+
+  template <class PM>
+  struct PSDisplayer
+    : public PropertyDisplayer<Point_set, PM, PSDisplayer<PM> >
+  {
+    typedef typename PM::value_type Value_type;
+    typedef PropertyDisplayer<Point_set, PM, PSDisplayer<PM> > Base;
+    PSDisplayer(Point_set& ds, PM pm, DisplayPropertyPlugin* parent)
+      :Base(ds, pm, parent)
+    {}
+    void fill_values()
+    {
+      for(auto p : this->dataset)
+      {
+        this->values.push_back(this->property_map[p]);
+      }
+    }
+
+    void set_colors_map(std::unordered_map<Value_type, std::size_t> &value_index_map)
+    {
+      for(Point_set::iterator pit = this->dataset.begin();
+          pit != this->dataset.end();
+          ++pit)
+      {
+        CGAL::Color color(
+              this->parent->color_map[value_index_map[this->property_map[*pit]]].red(),
+              this->parent->color_map[value_index_map[this->property_map[*pit]]].green(),
+              this->parent->color_map[value_index_map[this->property_map[*pit]]].blue());
+        this->dataset.set_color(*pit, color.red(), color.green(), color.blue());
+      }
+    }
+
+    void set_colors_ramp()
+    {
+      float max = this->parent->maxBox;
+      float min = this->parent->minBox;
+      for(Point_set::iterator pit = this->dataset.begin();
+          pit != this->dataset.end();
+          ++pit)
+      {
+        if(min == max)
+          --min;
+        float f = (static_cast<float>(this->property_map[*pit])-min)/(max-min);
+        if(f<0)
+          f = 0;
+        if(f>1)
+          f = 1;
+        CGAL::Color color(
+              255*this->parent->color_ramp.r(f),
+              255*this->parent->color_ramp.g(f),
+              255*this->parent->color_ramp.b(f));
+        this->dataset.set_color(*pit, color.red(), color.green(), color.blue());
+      }
+    }
+
+  };
+
+
+  template <class PM>
+  struct SMVertexDisplayer
+    : public PropertyDisplayer<SMesh, PM, SMVertexDisplayer<PM> >
+  {
+    typedef typename PM::value_type Value_type;
+    typedef PropertyDisplayer<SMesh, PM, SMVertexDisplayer<PM> > Base;
+    SMVertexDisplayer(SMesh& ds, PM pm, DisplayPropertyPlugin* parent)
+      :Base(ds, pm, parent)
+    {}
+
+    void fill_values()
+    {
+      for(auto v : vertices(this->dataset))
+      {
+        this->values.push_back(this->property_map[v]);
+      }
+    }
+
+    void set_colors_map(std::unordered_map<Value_type, std::size_t> &value_index_map)
+    {
+      SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
+          this->dataset.template add_property_map<vertex_descriptor, CGAL::Color >("v:color", CGAL::Color()).first;
+      for(boost::graph_traits<SMesh>::vertex_iterator vit = vertices(this->dataset).begin();
+          vit != vertices(this->dataset).end();
+          ++vit)
+      {
+        CGAL::Color color(
+              this->parent->color_map[value_index_map[this->property_map[*vit]]].red(),
+              this->parent->color_map[value_index_map[this->property_map[*vit]]].green(),
+              this->parent->color_map[value_index_map[this->property_map[*vit]]].blue());
+        vcolors[*vit] = color;
+      }
+    }
+
+    void set_colors_ramp()
+    {
+      SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
+          this->dataset.template add_property_map<vertex_descriptor, CGAL::Color >("v:color", CGAL::Color()).first;
+      float max = this->parent->maxBox;
+      float min = this->parent->minBox;
+      for(boost::graph_traits<SMesh>::vertex_iterator vit = vertices(this->dataset).begin();
+          vit != vertices(this->dataset).end();
+          ++vit)
+      {
+        if(min == max)
+          --min;
+        float f = (static_cast<float>(this->property_map[*vit])-min)/(max-min);
+        if(f<0)
+          f = 0;
+        if(f>1)
+          f = 1;
+        CGAL::Color color(
+              255*this->parent->color_ramp.r(f),
+              255*this->parent->color_ramp.g(f),
+              255*this->parent->color_ramp.b(f));
+        vcolors[*vit] = color;
+      }
+    }
+  };
+
+  template <class PM>
+  struct SMFaceDisplayer
+    : public PropertyDisplayer<SMesh, PM, SMFaceDisplayer<PM> >
+  {
+    typedef PropertyDisplayer<SMesh, PM, SMFaceDisplayer<PM> > Base;
+    typedef typename PM::value_type Value_type;
+    SMFaceDisplayer(SMesh& ds, PM pm, DisplayPropertyPlugin* parent)
+      :Base(ds, pm, parent)
+    {}
+    void fill_values()
+    {
+      for(auto f : faces(this->dataset))
+      {
+        this->values.push_back(this->property_map[f]);
+      }
+    }
+
+    void set_colors_map(std::unordered_map<Value_type, std::size_t> &value_index_map)
+    {
+      SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
+          this->dataset.template add_property_map<face_descriptor, CGAL::Color >("f:color", CGAL::Color()).first;
+      for(boost::graph_traits<SMesh>::face_iterator fit = faces(this->dataset).begin();
+          fit != faces(this->dataset).end();
+          ++fit)
+      {
+        CGAL::Color color(
+              this->parent->color_map[value_index_map[this->property_map[*fit]]].red(),
+              this->parent->color_map[value_index_map[this->property_map[*fit]]].green(),
+              this->parent->color_map[value_index_map[this->property_map[*fit]]].blue());
+        fcolors[*fit] = color;
+      }
+    }
+
+    void set_colors_ramp()
+    {
+      SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
+          this->dataset.template add_property_map<face_descriptor, CGAL::Color >("f:color", CGAL::Color()).first;
+      float max = this->parent->maxBox;
+      float min = this->parent->minBox;
+      for(boost::graph_traits<SMesh>::face_iterator fit = faces(this->dataset).begin();
+          fit != faces(this->dataset).end();
+          ++fit)
+      {
+        if(min == max)
+          --min;
+        float f = (static_cast<float>(this->property_map[*fit])-min)/(max-min);
+        if(f<0)
+          f = 0;
+        if(f>1)
+          f = 1;
+        CGAL::Color color(
+              255*this->parent->color_ramp.r(f),
+              255*this->parent->color_ramp.g(f),
+              255*this->parent->color_ramp.b(f));
+        fcolors[*fit] = color;
+      }
+    }
+  };
+
 };
 
   /// Code based on the verdict module of vtk
@@ -1328,5 +1746,337 @@ private:
 
   }
 
+  bool DisplayPropertyPlugin::is_property_scalar(std::string name, const Point_set* ps)
+  {
+    if(name == "red"
+       || name == "green"
+       || name == "blue")
+    {
+      return false;
+    }
+
+    if(ps->template property_map<boost::int8_t>(name).second)
+    {
+      return true;
+    }
+    if(ps->template property_map<boost::uint8_t>(name).second)
+    {
+      return true;
+    }
+    if(ps->template property_map<boost::int16_t>(name).second)
+    {
+      return true;
+    }
+    if(ps->template property_map<boost::uint16_t>(name).second)
+    {
+      return true;
+    }
+    if(ps->template property_map<boost::int32_t>(name).second)
+    {
+      return true;
+    }
+    if(ps->template property_map<boost::uint32_t>(name).second)
+    {
+      return true;
+    }
+    if(ps->template property_map<boost::int64_t>(name).second)
+    {
+      return true;
+    }
+    if(ps->template property_map<boost::uint64_t>(name).second)
+    {
+      return true;
+    }
+    if(ps->template property_map<float>(name).second)
+    {
+      return true;
+    }
+    if(ps->template property_map<double>(name).second)
+    {
+      return true;
+    }
+    return false;
+  }
+
+  template<typename Simplex>
+  bool DisplayPropertyPlugin::is_property_scalar(std::string name, const SMesh* sm)
+  {
+
+    if(sm->template property_map<Simplex,boost::int8_t>(name).second)
+    {
+      return true;
+    }
+    if(sm->template property_map<Simplex,boost::uint8_t>(name).second)
+    {
+      return true;
+    }
+    if(sm->template property_map<Simplex,boost::int16_t>(name).second)
+    {
+      return true;
+    }
+    if(sm->template property_map<Simplex,boost::uint16_t>(name).second)
+    {
+      return true;
+    }
+    if(sm->template property_map<Simplex,boost::int32_t>(name).second)
+    {
+      return true;
+    }
+    if(sm->template property_map<Simplex,boost::uint32_t>(name).second)
+    {
+      return true;
+    }
+    if(sm->template property_map<Simplex,boost::int64_t>(name).second)
+    {
+      return true;
+    }
+    if(sm->template property_map<Simplex,boost::uint64_t>(name).second)
+    {
+      return true;
+    }
+    if(sm->template property_map<Simplex,float>(name).second)
+    {
+      return true;
+    }
+    if(sm->template property_map<Simplex,double>(name).second)
+    {
+      return true;
+    }
+    return false;
+  }
+
+  bool DisplayPropertyPlugin::treat_point_property(std::string name, Point_set* ps)
+  {
+    typedef typename Point_set::template Property_map<boost::int8_t>   Int8_map;
+    typedef typename Point_set::template Property_map<boost::uint8_t>  Uint8_map;
+    typedef typename Point_set::template Property_map<boost::int16_t>  Int16_map;
+    typedef typename Point_set::template Property_map<boost::uint16_t> Uint16_map;
+    typedef typename Point_set::template Property_map<boost::int32_t>  Int32_map;
+    typedef typename Point_set::template Property_map<boost::uint32_t> Uint32_map;
+    typedef typename Point_set::template Property_map<boost::int64_t>  Int64_map;
+    typedef typename Point_set::template Property_map<boost::uint64_t> Uint64_map;
+    typedef typename Point_set::template Property_map<float>           Float_map;
+    typedef typename Point_set::template Property_map<double>          Double_map;
+
+    bool okay = false;
+    {
+      Int8_map pmap;
+      std::tie(pmap, okay) = ps->property_map<boost::int8_t>(name);
+      if(okay)
+      {
+        return displayPSProperty(ps, pmap);
+      }
+    }
+
+    {
+      Uint8_map pmap;
+      std::tie(pmap, okay) = ps->property_map<boost::uint8_t>(name);
+      if(okay)
+      {
+        return displayPSProperty(ps, pmap);
+      }
+    }
+
+    {
+      Int16_map pmap;
+      std::tie(pmap, okay) = ps->property_map<boost::int16_t>(name);
+      if(okay)
+      {
+        return displayPSProperty(ps, pmap);
+      }
+    }
+
+    {
+      Uint16_map pmap;
+      std::tie(pmap, okay) = ps->property_map<boost::uint16_t>(name);
+      if(okay)
+      {
+        return displayPSProperty(ps, pmap);
+      }
+    }
+
+    {
+      Int32_map pmap;
+      std::tie(pmap, okay) = ps->property_map<boost::int32_t>(name);
+      if(okay)
+      {
+        return displayPSProperty(ps, pmap);
+      }
+    }
+
+    {
+      Uint32_map pmap;
+      std::tie(pmap, okay) = ps->property_map<boost::uint32_t>(name);
+      if(okay)
+      {
+        return displayPSProperty(ps, pmap);
+      }
+    }
+
+    {
+      Int64_map pmap;
+      std::tie(pmap, okay) = ps->property_map<boost::int64_t>(name);
+      if(okay)
+      {
+        return displayPSProperty(ps, pmap);
+      }
+    }
+
+    {
+      Uint64_map pmap;
+      std::tie(pmap, okay) = ps->property_map<boost::uint64_t>(name);
+      if(okay)
+      {
+        return displayPSProperty(ps, pmap);
+      }
+    }
+
+    {
+      Float_map pmap;
+      std::tie(pmap, okay) = ps->property_map<float>(name);
+      if(okay)
+      {
+        return displayPSProperty(ps, pmap);
+      }
+    }
+
+    {
+      Double_map pmap;
+      std::tie(pmap, okay) = ps->property_map<double>(name);
+      if(okay)
+      {
+        return displayPSProperty(ps, pmap);
+      }
+    }
+    return false;
+  }
+
+  template<typename TAG>
+  bool DisplayPropertyPlugin::treat_sm_property(std::string name, SMesh* sm)
+  {
+    typedef typename SMesh::template Property_map<TAG, boost::int8_t>   Int8_map;
+    typedef typename SMesh::template Property_map<TAG, boost::uint8_t>  Uint8_map;
+    typedef typename SMesh::template Property_map<TAG, boost::int16_t>  Int16_map;
+    typedef typename SMesh::template Property_map<TAG, boost::uint16_t> Uint16_map;
+    typedef typename SMesh::template Property_map<TAG, boost::int32_t>  Int32_map;
+    typedef typename SMesh::template Property_map<TAG, boost::uint32_t> Uint32_map;
+    typedef typename SMesh::template Property_map<TAG, boost::int64_t>  Int64_map;
+    typedef typename SMesh::template Property_map<TAG, boost::uint64_t> Uint64_map;
+    typedef typename SMesh::template Property_map<TAG, float>           Float_map;
+    typedef typename SMesh::template Property_map<TAG, double>          Double_map;
+
+    bool okay = false;
+    {
+      Int8_map pmap;
+      std::tie(pmap, okay) = sm->property_map<TAG,boost::int8_t>(name);
+      if(okay)
+      {
+        return displaySMProperty(*sm, pmap, TAG());
+      }
+    }
+
+    {
+      Uint8_map pmap;
+      std::tie(pmap, okay) = sm->property_map<TAG,boost::uint8_t>(name);
+      if(okay)
+      {
+        return displaySMProperty(*sm, pmap, TAG());
+      }
+    }
+
+    {
+      Int16_map pmap;
+      std::tie(pmap, okay) = sm->property_map<TAG,boost::int16_t>(name);
+      if(okay)
+      {
+        return displaySMProperty(*sm, pmap, TAG());
+      }
+    }
+
+    {
+      Uint16_map pmap;
+      std::tie(pmap, okay) = sm->property_map<TAG,boost::uint16_t>(name);
+      if(okay)
+      {
+        return displaySMProperty(*sm, pmap, TAG());
+      }
+    }
+
+    {
+      Int32_map pmap;
+      std::tie(pmap, okay) = sm->property_map<TAG,boost::int32_t>(name);
+      if(okay)
+      {
+        return displaySMProperty(*sm, pmap, TAG());
+      }
+    }
+
+    {
+      Uint32_map pmap;
+      std::tie(pmap, okay) = sm->property_map<TAG,boost::uint32_t>(name);
+      if(okay)
+      {
+        return displaySMProperty(*sm, pmap, TAG());
+      }
+    }
+
+    {
+      Int64_map pmap;
+      std::tie(pmap, okay) = sm->property_map<TAG,boost::int64_t>(name);
+      if(okay)
+      {
+        return displaySMProperty(*sm, pmap, TAG());
+      }
+    }
+
+    {
+      Uint64_map pmap;
+      std::tie(pmap, okay) = sm->property_map<TAG,boost::uint64_t>(name);
+      if(okay)
+      {
+        return displaySMProperty(*sm, pmap, TAG());
+      }
+    }
+
+    {
+      Float_map pmap;
+      std::tie(pmap, okay) = sm->property_map<TAG,float>(name);
+      if(okay)
+      {
+        return displaySMProperty(*sm, pmap, TAG());
+      }
+    }
+
+    {
+      Double_map pmap;
+      std::tie(pmap, okay) = sm->property_map<TAG,double>(name);
+      if(okay)
+      {
+        return displaySMProperty(*sm, pmap, TAG());
+      }
+    }
+    return false;
+  }
+
+  template<typename PM>
+  bool DisplayPropertyPlugin::displayPSProperty(Point_set* ps, PM pm)
+  {
+    PSDisplayer<PM> display_property(*ps, pm, this);
+    return display_property();
+  }
+
+  template<typename PM>
+  bool DisplayPropertyPlugin::displaySMProperty(SMesh& smesh, PM pm, vertex_descriptor)
+  {
+    SMVertexDisplayer<PM> display_property(smesh, pm, this);
+    return display_property();
+  }
+
+  template<typename PM>
+  bool DisplayPropertyPlugin::displaySMProperty(SMesh& smesh, PM pm, face_descriptor)
+  {
+    SMFaceDisplayer<PM> display_property(smesh, pm, this);
+    return display_property();
+  }
 
 #include "Display_property_plugin.moc"

@@ -1,5 +1,8 @@
 /*!
 
+\example Polygon_mesh_processing/polyhedral_envelope.cpp
+\example Polygon_mesh_processing/polyhedral_envelope_of_triangle_soup.cpp
+\example Polygon_mesh_processing/polyhedral_envelope_mesh_containment.cpp
 \example Polygon_mesh_processing/self_intersections_example.cpp
 \example Polygon_mesh_processing/hole_filling_example.cpp
 \example Polygon_mesh_processing/hole_filling_example_SM.cpp
@@ -19,6 +22,7 @@
 \example Poisson_surface_reconstruction_3/poisson_reconstruction_example.cpp
 \example Polygon_mesh_processing/corefinement_difference_remeshed.cpp
 \example Polygon_mesh_processing/corefinement_mesh_union.cpp
+\example Polygon_mesh_processing/corefinement_OM_union.cpp
 \example Polygon_mesh_processing/corefinement_mesh_union_and_intersection.cpp
 \example Polygon_mesh_processing/corefinement_consecutive_bool_op.cpp
 \example Polygon_mesh_processing/detect_features_example.cpp
@@ -29,4 +33,5 @@
 \example Polygon_mesh_processing/shape_smoothing_example.cpp
 \example Polygon_mesh_processing/locate_example.cpp
 \example Polygon_mesh_processing/orientation_pipeline_example.cpp
+\example Polygon_mesh_processing/triangulate_faces_split_visitor_example.cpp
 */

@@ -71,7 +71,7 @@
 #include <CGAL/internal/Static_filters/Compare_squared_radius_3.h>
 #include <CGAL/internal/Static_filters/Compare_weighted_squared_radius_3.h>
 #include <CGAL/internal/Static_filters/Power_side_of_oriented_power_sphere_3.h>
-
+#include <CGAL/internal/Static_filters/Compare_distance_3.h>
 
 // #include <CGAL/internal/Static_filters/Coplanar_orientation_3.h>
 // #include <CGAL/internal/Static_filters/Coplanar_side_of_bounded_circle_3.h>
@@ -125,6 +125,8 @@ public:
 
   typedef Static_filters_predicates::Compare_weighted_squared_radius_3<K_base>     Compare_weighted_squared_radius_3;
   typedef Static_filters_predicates::Power_side_of_oriented_power_sphere_3<K_base>                          Power_side_of_oriented_power_sphere_3;
+
+  typedef Static_filters_predicates::Compare_distance_3<K_base>             Compare_distance_3;
 
   Orientation_2
   orientation_2_object() const
@@ -195,6 +197,9 @@ public:
   compare_weighted_squared_radius_3_object() const
   { return Compare_weighted_squared_radius_3(); }
 
+  Compare_distance_3
+  compare_distance_3_object() const
+  { return Compare_distance_3();}
 
   enum { Has_static_filters = true };
 

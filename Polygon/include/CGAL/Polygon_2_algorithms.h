@@ -324,7 +324,7 @@ Bounded_side bounded_side_2(ForwardIterator first,
 /// \sa `PolygonTraits_2`
 /// \sa `CGAL::is_simple_2()`
 /// \sa `CGAL::Polygon_2`
-/// \sa `CGAL::Orientation_2`
+/// \sa `CGAL::Orientation`
 template <class ForwardIterator, class Traits>
 Orientation orientation_2(ForwardIterator first,
                           ForwardIterator last,

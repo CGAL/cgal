@@ -1,10 +1,12 @@
-#include<boost/shared_ptr.hpp>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include<CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include<CGAL/Polygon_with_holes_2.h>
-#include<CGAL/create_straight_skeleton_from_polygon_with_holes_2.h>
-
+#include <CGAL/Polygon_with_holes_2.h>
+#include <CGAL/create_straight_skeleton_from_polygon_with_holes_2.h>
 #include "print.h"
+
+#include <boost/shared_ptr.hpp>
+
+#include <cassert>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K ;
 
@@ -15,11 +17,9 @@ typedef CGAL::Straight_skeleton_2<K>  Ss ;
 
 typedef boost::shared_ptr<Ss> SsPtr ;
 
-
 int main()
 {
   Polygon_2 outer ;
-
   outer.push_back( Point(-1,-1) ) ;
   outer.push_back( Point(0,-12) ) ;
   outer.push_back( Point(1,-1) ) ;
@@ -30,18 +30,18 @@ int main()
   outer.push_back( Point(-12,0) ) ;
 
   Polygon_2 hole ;
-
   hole.push_back( Point(-1,0) ) ;
   hole.push_back( Point(0,1 ) ) ;
   hole.push_back( Point(1,0 ) ) ;
   hole.push_back( Point(0,-1) ) ;
 
-  Polygon_with_holes poly( outer ) ;
+  assert(outer.is_counterclockwise_oriented());
+  assert(hole.is_clockwise_oriented());
 
+  Polygon_with_holes poly( outer ) ;
   poly.add_hole( hole ) ;
 
   SsPtr iss = CGAL::create_interior_straight_skeleton_2(poly);
-
   print_straight_skeleton(*iss);
 
   return 0;

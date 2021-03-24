@@ -24,7 +24,6 @@
 #include <CGAL/Qt/qglviewer.h>
 #include <CGAL/Qt/manipulatedCameraFrame.h>
 #include <CGAL/Qt/camera.h>
-#include <CGAL/Qt/domUtils.h>
 #include <CGAL/Qt/keyFrameInterpolator.h>
 #include <CGAL/Qt/image_interface.h>
 
@@ -88,7 +87,7 @@ void CGAL::QGLViewer::defaultConstructor() {
 
   CGAL::QGLViewer::QGLViewerPool().append(this);
   camera_ = new qglviewer::Camera(this);
-  setCamera(camera());
+  setCamera(camera_);
 
   setDefaultShortcuts();
   setDefaultMouseBindings();
@@ -103,7 +102,6 @@ void CGAL::QGLViewer::defaultConstructor() {
   // It will be set when setFullScreen(false) is called after
   // setFullScreen(true)
 
-  // #CONNECTION# default values in initFromDOMElement()
   manipulatedFrame_ = nullptr;
   manipulatedFrameIsACamera_ = false;
   mouseGrabberIsAManipulatedFrame_ = false;
@@ -116,9 +114,7 @@ void CGAL::QGLViewer::defaultConstructor() {
 
   setSceneRadius(1.0);
   showEntireScene();
-  setStateFileName(".qglviewer.xml");
 
-  // #CONNECTION# default values in initFromDOMElement()
   setAxisIsDrawn(false);
   setGridIsDrawn(false);
   setFPSIsDisplayed(false);
@@ -155,6 +151,7 @@ void CGAL::QGLViewer::defaultConstructor() {
   is_sharing = false;
   is_linked = false;
   shared_context = nullptr;
+  _first_tick  = true;
 }
 
 CGAL_INLINE_FUNCTION
@@ -179,11 +176,6 @@ other viewer's indexes) and allocated memory is released. The camera() is
 deleted and should be copied before if it is shared by an other viewer. */
 CGAL_INLINE_FUNCTION
 CGAL::QGLViewer::~QGLViewer() {
-  // See closeEvent comment. Destructor is called (and not closeEvent) only when
-  // the widget is embedded. Hence we saveToFile here. It is however a bad idea
-  // if virtual domElement() has been overloaded ! if (parent())
-  // saveStateToFileForAllViewers();
-
   CGAL::QGLViewer::QGLViewerPool().removeAll(this);
 
   camera()->deleteLater();
@@ -216,16 +208,6 @@ void CGAL::QGLViewer::initializeGL() {
          || QCoreApplication::arguments().contains(QStringLiteral("--old")))
 
     {
-      format.setDepthBufferSize(24);
-      format.setStencilBufferSize(8);
-      format.setVersion(2,0);
-      format.setRenderableType(QSurfaceFormat::OpenGLES);
-      format.setSamples(0);
-      format.setOption(QSurfaceFormat::DebugContext);
-      QSurfaceFormat::setDefaultFormat(format);
-
-      needNewContext();
-      qDebug()<<"GL 4.3 context initialization failed. ";
       is_ogl_4_3 = false;
     }
     else
@@ -520,6 +502,7 @@ camera is manipulated) : main drawing method. Should be overloaded. \arg
 postDraw() : display of visual hints (world axis, FPS...) */
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::paintGL() {
+  makeCurrent();
   // Clears screen, set model view matrix...
   preDraw();
   // Used defined method. Default calls draw()
@@ -529,6 +512,7 @@ void CGAL::QGLViewer::paintGL() {
     draw();
   // Add visual hints: axis, camera, grid...
   postDraw();
+  doneCurrent();
   Q_EMIT drawFinished(true);
 }
 
@@ -598,6 +582,33 @@ void CGAL::QGLViewer::postDraw() {
   if (displayMessage_)
     drawText(10, height() - 10, message_);
 
+  //zoom region
+  if(camera()->frame()->action_ == qglviewer::ZOOM_ON_REGION)
+  {
+    QPainter painter(this);
+    painter.setPen(QColor(120,120,120));
+    painter.drawRect(QRect(camera()->frame()->pressPos_, mapFromGlobal(QCursor::pos())));
+    painter.end();
+  }
+
+  //zoom_fov indicator
+  if(camera()->frame()->action_ == qglviewer::ZOOM_FOV)
+  {
+    QPainter painter(this);
+    QPoint bot(width()-30,height()/2-0.33*height()),
+           top(width()-30, height()/2+0.33*height());
+    int fov_height = (top.y()-bot.y())*camera()->fieldOfView()*4.0/CGAL_PI + bot.y();
+
+
+    painter.setPen(QColor(120,120,120));
+    painter.drawLine(bot, top);
+    painter.fillRect(QRect(QPoint(width()-40, fov_height+10),
+                           QPoint(width()-20, fov_height-10)),
+                     QColor(120,120,120));
+    painter.end();
+    camera()->frame()->action_= qglviewer::NO_MOUSE_ACTION;
+  }
+  glEnable(GL_DEPTH_TEST);
 }
 
 
@@ -629,7 +640,7 @@ void CGAL::QGLViewer::setCameraIsEdited(bool edit) {
   cameraIsEdited_ = edit;
   if (edit) {
     previousCameraZClippingCoefficient_ = camera()->zClippingCoefficient();
-    // #CONNECTION# 5.0 also used in domElement() and in initFromDOMElement().
+
     camera()->setZClippingCoefficient(5.0);
   } else
     camera()->setZClippingCoefficient(previousCameraZClippingCoefficient_);
@@ -652,7 +663,6 @@ void CGAL::QGLViewer::setDefaultShortcuts() {
   setShortcut(qglviewer::FULL_SCREEN, ::Qt::ALT + ::Qt::Key_Return);
   setShortcut(qglviewer::ANIMATION, ::Qt::Key_Return);
   setShortcut(qglviewer::HELP, ::Qt::Key_H);
-  setShortcut(qglviewer::EDIT_CAMERA, ::Qt::Key_C);
   setShortcut(qglviewer::MOVE_CAMERA_LEFT, ::Qt::Key_Left);
   setShortcut(qglviewer::MOVE_CAMERA_RIGHT, ::Qt::Key_Right);
   setShortcut(qglviewer::MOVE_CAMERA_UP, ::Qt::Key_Up);
@@ -674,9 +684,6 @@ void CGAL::QGLViewer::setDefaultShortcuts() {
       tr("Opens this help window", "HELP action description");
   keyboardActionDescription_[qglviewer::ANIMATION] =
       tr("Starts/stops the animation", "ANIMATION action description");
-  keyboardActionDescription_[qglviewer::EDIT_CAMERA] =
-      tr("Toggles camera paths display",
-         "EDIT_CAMERA action description"); // TODO change
   keyboardActionDescription_[qglviewer::ENABLE_TEXT] =
       tr("Toggles the display of the text", "ENABLE_TEXT action description");
   keyboardActionDescription_[qglviewer::EXIT_VIEWER] =
@@ -725,16 +732,17 @@ void CGAL::QGLViewer::setDefaultMouseBindings() {
         (mh == qglviewer::FRAME) ? frameKeyboardModifiers : cameraKeyboardModifiers;
 
     setMouseBinding(modifiers, ::Qt::LeftButton, mh, qglviewer::ROTATE);
-    setMouseBinding(modifiers, ::Qt::MidButton, mh, qglviewer::ZOOM);
+    setMouseBinding(modifiers, ::Qt::MiddleButton, mh, qglviewer::ZOOM);
     setMouseBinding(modifiers, ::Qt::RightButton, mh, qglviewer::TRANSLATE);
 
     setMouseBinding(::Qt::Key_R, modifiers, ::Qt::LeftButton, mh, qglviewer::SCREEN_ROTATE);
 
     setWheelBinding(modifiers, mh, qglviewer::ZOOM);
   }
+  setWheelBinding(::Qt::Key_Z, ::Qt::NoModifier, qglviewer::CAMERA, qglviewer::ZOOM_FOV);
 
   // Z o o m   o n   r e g i o n
-  setMouseBinding(::Qt::ShiftModifier, ::Qt::MidButton, qglviewer::CAMERA, qglviewer::ZOOM_ON_REGION);
+  setMouseBinding(::Qt::ShiftModifier, ::Qt::MiddleButton, qglviewer::CAMERA, qglviewer::ZOOM_ON_REGION);
 
   // S e l e c t
   setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, qglviewer::SELECT);
@@ -742,7 +750,7 @@ void CGAL::QGLViewer::setDefaultMouseBindings() {
   setMouseBinding(::Qt::ShiftModifier, ::Qt::RightButton, qglviewer::RAP_FROM_PIXEL);
   // D o u b l e   c l i c k
   setMouseBinding(::Qt::NoModifier, ::Qt::LeftButton, qglviewer::ALIGN_CAMERA, true);
-  setMouseBinding(::Qt::NoModifier, ::Qt::MidButton, qglviewer::SHOW_ENTIRE_SCENE, true);
+  setMouseBinding(::Qt::NoModifier, ::Qt::MiddleButton, qglviewer::SHOW_ENTIRE_SCENE, true);
   setMouseBinding(::Qt::NoModifier, ::Qt::RightButton, qglviewer::CENTER_SCENE, true);
 
   setMouseBinding(frameKeyboardModifiers, ::Qt::LeftButton, qglviewer::ALIGN_FRAME, true);
@@ -752,6 +760,7 @@ void CGAL::QGLViewer::setDefaultMouseBindings() {
   // A c t i o n s   w i t h   k e y   m o d i f i e r s
   setMouseBinding(::Qt::Key_Z, ::Qt::NoModifier, ::Qt::LeftButton, qglviewer::ZOOM_ON_PIXEL);
   setMouseBinding(::Qt::Key_Z, ::Qt::NoModifier, ::Qt::RightButton, qglviewer::ZOOM_TO_FIT);
+
 
 #ifdef Q_OS_MAC
   // Specific Mac bindings for touchpads. Two fingers emulate a wheelEvent which
@@ -1048,46 +1057,6 @@ void CGAL::QGLViewer::stopAnimation() {
     killTimer(animationTimerId_);
 }
 
-/*! Overloading of the \c QWidget method.
-
-Saves the viewer state using saveStateToFile() and then calls
-QOpenGLWidget::closeEvent(). */
-CGAL_INLINE_FUNCTION
-void CGAL::QGLViewer::closeEvent(QCloseEvent *e) {
-  // When the user clicks on the window close (x) button:
-  // - If the viewer is a top level window, closeEvent is called and then saves
-  // to file. - Otherwise, nothing happen s:( When the user press the
-  // EXIT_VIEWER keyboard shortcut: - If the viewer is a top level window,
-  // saveStateToFile() is also called - Otherwise, closeEvent is NOT called and
-  // keyPressEvent does the job.
-
-  /* After tests:
-  E : Embedded widget
-  N : Widget created with new
-  C : closeEvent called
-  D : destructor called
-
-  E        N        C        D
-  y        y
-  y        n                y
-  n        y        y
-  n        n        y        y
-
-  closeEvent is called iif the widget is NOT embedded.
-
-  Destructor is called iif the widget is created on the stack
-  or if widget (resp. parent if embedded) is created with WDestructiveClose
-  flag.
-
-  closeEvent always before destructor.
-
-  Close using qApp->closeAllWindows or (x) is identical.
-  */
-
-  // #CONNECTION# Also done for EXIT_VIEWER in keyPressEvent().
-  saveStateToFile();
-  QOpenGLWidget::closeEvent(e);
-}
 
 /*! Simple wrapper method: calls \c select(event->pos()).
 
@@ -1208,7 +1177,7 @@ static QString mouseButtonsString(::Qt::MouseButtons b) {
     result += CGAL::QGLViewer::tr("Left", "left mouse button");
     addAmpersand = true;
   }
-  if (b & ::Qt::MidButton) {
+  if (b & ::Qt::MiddleButton) {
     if (addAmpersand)
       result += " & ";
     result += CGAL::QGLViewer::tr("Middle", "middle mouse button");
@@ -1298,6 +1267,7 @@ void CGAL::QGLViewer::mousePressEvent(QMouseEvent *e) {
   //#CONNECTION# mouseDoubleClickEvent has the same structure
   //#CONNECTION# mouseString() concatenates bindings description in inverse
   // order.
+  makeCurrent();
   ClickBindingPrivate cbp(e->modifiers(), e->button(), false,
                           (::Qt::MouseButtons)(e->buttons() & ~(e->button())),
                           currentlyPressedKey_);
@@ -1481,6 +1451,7 @@ If defined, the wheel event is sent to the mouseGrabber(). It is otherwise sent
 according to wheel bindings (see setWheelBinding()). */
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::wheelEvent(QWheelEvent *e) {
+  makeCurrent();
   if (mouseGrabber()) {
     if (mouseGrabberIsAManipulatedFrame_) {
       for (QMap<WheelBindingPrivate, MouseActionPrivate>::ConstIterator
@@ -1511,6 +1482,17 @@ void CGAL::QGLViewer::wheelEvent(QWheelEvent *e) {
       MouseActionPrivate map = wheelBinding_[wbp];
       switch (map.handler) {
       case qglviewer::CAMERA:
+        if(currentlyPressedKey_ == ::Qt::Key_Z && _first_tick)
+        {
+          _first_tick = false;
+          makeCurrent();
+          //orient camera to the cursor.
+          bool found = false;
+          qglviewer::Vec point;
+          point = camera()->pointUnderPixel(mapFromGlobal(QCursor::pos()), found);
+          if(found)
+            camera()->lookAt(point);
+        }
         camera()->frame()->startAction(map.action, map.withConstraint);
         camera()->frame()->wheelEvent(e, camera());
         break;
@@ -1636,6 +1618,8 @@ QString CGAL::QGLViewer::mouseActionString(qglviewer::MouseAction ma) {
                          "SCREEN_TRANSLATE mouse action");
   case CGAL::qglviewer::ZOOM_ON_REGION:
     return CGAL::QGLViewer::tr("Zooms on region for", "ZOOM_ON_REGION mouse action");
+  case CGAL::qglviewer::ZOOM_FOV:
+    return CGAL::QGLViewer::tr("Changes the FOV to emulate an optical zoom for ", "ZOOM_FOV mouse action");
   }
   return QString();
 }
@@ -1743,7 +1727,7 @@ Mouse tab.
 \c ::Qt::AltModifier, \c ::Qt::ShiftModifier, \c ::Qt::MetaModifier). Possibly
 combined using the \c "|" operator.
 
-\p button is one of the ::Qt::MouseButtons (\c ::Qt::LeftButton, \c ::Qt::MidButton,
+\p button is one of the ::Qt::MouseButtons (\c ::Qt::LeftButton, \c ::Qt::MiddleButton,
 \c ::Qt::RightButton...).
 
 \p doubleClick indicates whether or not the user has to double click this button
@@ -2228,8 +2212,11 @@ void CGAL::QGLViewer::keyPressEvent(QKeyEvent *e) {
 
   const ::Qt::Key key = ::Qt::Key(e->key());
 
+  if(key == ::Qt::Key_Z && ! e->isAutoRepeat())
+  {
+    _first_tick = true;
+  }
   const ::Qt::KeyboardModifiers modifiers = e->modifiers();
-
   QMap<qglviewer::KeyboardAction, unsigned int>::ConstIterator it = keyboardBinding_
                                                              .begin(),
                                                     end =
@@ -2323,7 +2310,6 @@ void CGAL::QGLViewer::handleKeyboardAction(qglviewer::KeyboardAction id) {
     toggleTextIsEnabled();
     break;
   case qglviewer::EXIT_VIEWER:
-    saveStateToFileForAllViewers();
     qApp->closeAllWindows();
     break;
   case qglviewer::FULL_SCREEN:
@@ -2722,14 +2708,16 @@ void CGAL::QGLViewer::setWheelBinding(::Qt::Key key, ::Qt::KeyboardModifiers mod
                                 bool withConstraint) {
   //#CONNECTION# ManipulatedFrame::wheelEvent and
   // ManipulatedCameraFrame::wheelEvent switches
-  if ((action != qglviewer::ZOOM) && (action != qglviewer::MOVE_FORWARD) &&
-      (action != qglviewer::MOVE_BACKWARD) && (action != qglviewer::NO_MOUSE_ACTION)) {
+  if ((action != qglviewer::ZOOM) && (action != qglviewer::ZOOM_FOV) &&
+      (action != qglviewer::MOVE_FORWARD) && (action != qglviewer::MOVE_BACKWARD)
+      && (action != qglviewer::NO_MOUSE_ACTION)) {
     qWarning("Cannot bind %s to wheel",
              mouseActionString(action).toLatin1().constData());
     return;
   }
 
-  if ((handler == qglviewer::FRAME) && (action != qglviewer::ZOOM) && (action != qglviewer::NO_MOUSE_ACTION)) {
+  if ((handler == qglviewer::FRAME) && (action != qglviewer::ZOOM)
+      && (action != qglviewer::NO_MOUSE_ACTION)) {
     qWarning("Cannot bind %s to FRAME wheel",
              mouseActionString(action).toLatin1().constData());
     return;
@@ -3018,27 +3006,27 @@ void CGAL::QGLViewer::toggleCameraMode() {
     camera()->frame()->stopSpinning();
 
     setMouseBinding(modifiers, ::Qt::LeftButton, qglviewer::CAMERA, qglviewer::MOVE_FORWARD);
-    setMouseBinding(modifiers, ::Qt::MidButton, qglviewer::CAMERA, qglviewer::LOOK_AROUND);
+    setMouseBinding(modifiers, ::Qt::MiddleButton, qglviewer::CAMERA, qglviewer::LOOK_AROUND);
     setMouseBinding(modifiers, ::Qt::RightButton, qglviewer::CAMERA, qglviewer::MOVE_BACKWARD);
 
     setMouseBinding(::Qt::Key_R, modifiers, ::Qt::LeftButton, qglviewer::CAMERA, qglviewer::ROLL);
 
     setMouseBinding(::Qt::NoModifier, ::Qt::LeftButton, qglviewer::NO_CLICK_ACTION, true);
-    setMouseBinding(::Qt::NoModifier, ::Qt::MidButton, qglviewer::NO_CLICK_ACTION, true);
+    setMouseBinding(::Qt::NoModifier, ::Qt::MiddleButton, qglviewer::NO_CLICK_ACTION, true);
     setMouseBinding(::Qt::NoModifier, ::Qt::RightButton, qglviewer::NO_CLICK_ACTION, true);
 
     setWheelBinding(modifiers, qglviewer::CAMERA, qglviewer::MOVE_FORWARD);
   } else {
     // Should stop flyTimer. But unlikely and not easy.
     setMouseBinding(modifiers, ::Qt::LeftButton, qglviewer::CAMERA, qglviewer::ROTATE);
-    setMouseBinding(modifiers, ::Qt::MidButton, qglviewer::CAMERA, qglviewer::ZOOM);
+    setMouseBinding(modifiers, ::Qt::MiddleButton, qglviewer::CAMERA, qglviewer::ZOOM);
     setMouseBinding(modifiers, ::Qt::RightButton, qglviewer::CAMERA, qglviewer::TRANSLATE);
 
     setMouseBinding(::Qt::Key_R, modifiers, ::Qt::LeftButton, qglviewer::CAMERA,
                     qglviewer::SCREEN_ROTATE);
 
     setMouseBinding(::Qt::NoModifier, ::Qt::LeftButton, qglviewer::ALIGN_CAMERA, true);
-    setMouseBinding(::Qt::NoModifier, ::Qt::MidButton, qglviewer::SHOW_ENTIRE_SCENE, true);
+    setMouseBinding(::Qt::NoModifier, ::Qt::MiddleButton, qglviewer::SHOW_ENTIRE_SCENE, true);
     setMouseBinding(::Qt::NoModifier, ::Qt::RightButton, qglviewer::CENTER_SCENE, true);
 
     setWheelBinding(modifiers, qglviewer::CAMERA, qglviewer::ZOOM);
@@ -3529,366 +3517,6 @@ void CGAL::QGLViewer::drawGrid(qreal size, int nbSubdivisions) {
 ////////////////////////////////////////////////////////////////////////////////
 //       S t a t i c    m e t h o d s   :  Q G L V i e w e r   P o o l        //
 ////////////////////////////////////////////////////////////////////////////////
-
-/*! saveStateToFile() is called on all the CGAL::QGLViewers using the QGLViewerPool().
- */
-CGAL_INLINE_FUNCTION
-void CGAL::QGLViewer::saveStateToFileForAllViewers() {
-  Q_FOREACH (CGAL::QGLViewer *viewer, CGAL::QGLViewer::QGLViewerPool()) {
-    if (viewer)
-      viewer->saveStateToFile();
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////
-//       S a v e   s t a t e   b e t w e e n    s e s s i o n s         //
-//////////////////////////////////////////////////////////////////////////
-
-/*! Returns the state file name. Default value is \c .qglviewer.xml.
-
-This is the name of the XML file where saveStateToFile() saves the viewer state
-(camera state, widget geometry, display flags... see domElement()) on exit. Use
-restoreStateFromFile() to restore this state later (usually in your init()
-method).
-
-Setting this value to \c QString() will disable the automatic state file
-saving that normally occurs on exit.
-
-If more than one viewer are created by the application, this function will
-return a numbered file name (as in ".qglviewer1.xml", ".qglviewer2.xml"... using
-QGLViewer::QGLViewerIndex()) for extra viewers. Each viewer will then read back
-its own information in restoreStateFromFile(), provided that the viewers are
-created in the same order, which is usually the case. */
-CGAL_INLINE_FUNCTION
-QString CGAL::QGLViewer::stateFileName() const {
-  QString name = stateFileName_;
-
-  if (!name.isEmpty() && QGLViewer::QGLViewerIndex(this) > 0) {
-    QFileInfo fi(name);
-    if (fi.suffix().isEmpty())
-      name += QString::number(QGLViewer::QGLViewerIndex(this));
-    else
-      name = fi.absolutePath() + '/' + fi.completeBaseName() +
-             QString::number(QGLViewer::QGLViewerIndex(this)) + "." +
-             fi.suffix();
-  }
-
-  return name;
-}
-
-/*! Saves in stateFileName() an XML representation of the CGAL::QGLViewer state,
-obtained from domElement().
-
-Use restoreStateFromFile() to restore this viewer state.
-
-This method is automatically called when a viewer is closed (using Escape or
-using the window's upper right \c x close button). setStateFileName() to \c
-QString() to prevent this. */
-CGAL_INLINE_FUNCTION
-void CGAL::QGLViewer::saveStateToFile() {
-  QString name = stateFileName();
-
-  if (name.isEmpty())
-    return;
-
-  QFileInfo fileInfo(name);
-
-  if (fileInfo.isDir()) {
-    QMessageBox::warning(
-        this, tr("Save to file error", "Message box window title"),
-        tr("State file name (%1) references a directory instead of a file.")
-            .arg(name));
-    return;
-  }
-
-  const QString dirName = fileInfo.absolutePath();
-  if (!QFileInfo(dirName).exists()) {
-    QDir dir;
-    if (!(dir.mkdir(dirName))) {
-      QMessageBox::warning(this,
-                           tr("Save to file error", "Message box window title"),
-                           tr("Unable to create directory %1").arg(dirName));
-      return;
-    }
-  }
-
-  // Write the DOM tree to file
-  QFile f(name);
-  if (f.open(QIODevice::WriteOnly)) {
-    QTextStream out(&f);
-    QDomDocument doc("QGLVIEWER");
-    doc.appendChild(domElement("CGAL::QGLViewer", doc));
-    doc.save(out, 2);
-    f.flush();
-    f.close();
-  } else
-    QMessageBox::warning(
-        this, tr("Save to file error", "Message box window title"),
-        tr("Unable to save to file %1").arg(name) + ":\n" + f.errorString());
-}
-
-/*! Restores the CGAL::QGLViewer state from the stateFileName() file using
-initFromDOMElement().
-
-States are saved using saveStateToFile(), which is automatically called on
-viewer exit.
-
-Returns \c true when the restoration is successful. Possible problems are an non
-existing or unreadable stateFileName() file, an empty stateFileName() or an XML
-syntax error.
-
-A manipulatedFrame() should be defined \e before calling this method, so that
-its state can be restored. Initialization code put \e after this function will
-override saved values: \code void Viewer::init()
-{
-// Default initialization goes here (including the declaration of a possible
-manipulatedFrame).
-
-if (!restoreStateFromFile())
-showEntireScene(); // Previous state cannot be restored: fit camera to scene.
-
-// Specific initialization that overrides file savings goes here.
-}
-\endcode */
-CGAL_INLINE_FUNCTION
-bool CGAL::QGLViewer::restoreStateFromFile() {
-  QString name = stateFileName();
-
-  if (name.isEmpty())
-    return false;
-
-  QFileInfo fileInfo(name);
-
-  if (!fileInfo.isFile())
-    // No warning since it would be displayed at first start.
-    return false;
-
-  if (!fileInfo.isReadable()) {
-    QMessageBox::warning(
-        this, tr("Problem in state restoration", "Message box window title"),
-        tr("File %1 is not readable.").arg(name));
-    return false;
-  }
-
-  // Read the DOM tree form file
-  QFile f(name);
-  if (f.open(QIODevice::ReadOnly)) {
-    QDomDocument doc;
-    doc.setContent(&f);
-    f.close();
-    QDomElement main = doc.documentElement();
-    initFromDOMElement(main);
-  } else {
-    QMessageBox::warning(
-        this, tr("Open file error", "Message box window title"),
-        tr("Unable to open file %1").arg(name) + ":\n" + f.errorString());
-    return false;
-  }
-
-  return true;
-}
-
-/*! Returns an XML \c QDomElement that represents the CGAL::QGLViewer.
-
-Used by saveStateToFile(). restoreStateFromFile() uses initFromDOMElement() to
-restore the CGAL::QGLViewer state from the resulting \c QDomElement.
-
-\p name is the name of the QDomElement tag. \p doc is the \c QDomDocument
-factory used to create QDomElement.
-
-The created QDomElement contains state values (axisIsDrawn(), FPSIsDisplayed(),
-isFullScreen()...), viewer geometry, as well as camera() (see
-CGAL::qglviewer::Camera::domElement()) and manipulatedFrame() (if defined, see
-CGAL::qglviewer::ManipulatedFrame::domElement()) states.
-
-Overload this method to add your own attributes to the state file:
-\code
-CGAL_INLINE_FUNCTION
-QDomElement Viewer::domElement(const QString& name, QDomDocument& document)
-const
-{
-// Creates a custom node for a light
-QDomElement de = document.createElement("Light");
-de.setAttribute("state", (lightIsOn()?"on":"off"));
-// Note the include of the ManipulatedFrame domElement method.
-de.appendChild(lightManipulatedFrame()->domElement("LightFrame", document));
-
-// Get default state domElement and append custom node
-CGAL_INLINE_FUNCTION
-QDomElement res = CGAL::QGLViewer::domElement(name, document);
-res.appendChild(de);
-return res;
-}
-\endcode
-See initFromDOMElement() for the associated restoration code.
-
-\attention For the manipulatedFrame(), CGAL::qglviewer::Frame::constraint() and
-CGAL::qglviewer::Frame::referenceFrame() are not saved. See
-CGAL::qglviewer::Frame::domElement(). */
-CGAL_INLINE_FUNCTION
-QDomElement CGAL::QGLViewer::domElement(const QString &name,
-                                  QDomDocument &document) const {
-  QDomElement de = document.createElement(name);
-
-  QDomElement stateNode = document.createElement("State");
-  // hasMouseTracking() is not saved
-  stateNode.appendChild(DomUtils::QColorDomElement(
-      foregroundColor(), "foregroundColor", document));
-  stateNode.appendChild(DomUtils::QColorDomElement(
-      backgroundColor(), "backgroundColor", document));
-  // Revolve or fly camera mode is not saved
-  de.appendChild(stateNode);
-
-  QDomElement displayNode = document.createElement("Display");
-  DomUtils::setBoolAttribute(displayNode, "axisIsDrawn", axisIsDrawn());
-  DomUtils::setBoolAttribute(displayNode, "gridIsDrawn", gridIsDrawn());
-  DomUtils::setBoolAttribute(displayNode, "FPSIsDisplayed", FPSIsDisplayed());
-  DomUtils::setBoolAttribute(displayNode, "cameraIsEdited", cameraIsEdited());
-  // textIsEnabled() is not saved
-  de.appendChild(displayNode);
-
-  QDomElement geometryNode = document.createElement("Geometry");
-  DomUtils::setBoolAttribute(geometryNode, "fullScreen", isFullScreen());
-  if (isFullScreen()) {
-    geometryNode.setAttribute("prevPosX", QString::number(prevPos_.x()));
-    geometryNode.setAttribute("prevPosY", QString::number(prevPos_.y()));
-  } else {
-    QWidget *tlw = topLevelWidget();
-    geometryNode.setAttribute("width", QString::number(tlw->width()));
-    geometryNode.setAttribute("height", QString::number(tlw->height()));
-    geometryNode.setAttribute("posX", QString::number(tlw->pos().x()));
-    geometryNode.setAttribute("posY", QString::number(tlw->pos().y()));
-  }
-  de.appendChild(geometryNode);
-
-  // Restore original Camera zClippingCoefficient before saving.
-  if (cameraIsEdited())
-    camera()->setZClippingCoefficient(previousCameraZClippingCoefficient_);
-  de.appendChild(camera()->domElement("Camera", document));
-  if (cameraIsEdited())
-    // #CONNECTION# 5.0 from setCameraIsEdited()
-    camera()->setZClippingCoefficient(5.0);
-
-  if (manipulatedFrame())
-    de.appendChild(
-        manipulatedFrame()->domElement("ManipulatedFrame", document));
-
-  return de;
-}
-
-/*! Restores the CGAL::QGLViewer state from a \c QDomElement created by domElement().
-
-Used by restoreStateFromFile() to restore the CGAL::QGLViewer state from a file.
-
-Overload this method to retrieve custom attributes from the CGAL::QGLViewer state
-file. This code corresponds to the one given in the domElement() documentation:
-\code
-CGAL_INLINE_FUNCTION
-void Viewer::initFromDOMElement(const QDomElement& element)
-{
-// Restore standard state
-CGAL_INLINE_FUNCTION
-CGAL::QGLViewer::initFromDOMElement(element);
-
-QDomElement child=element.firstChild().toElement();
-while (!child.isNull())
-{
-if (child.tagName() == "Light")
-{
-if (child.hasAttribute("state"))
-setLightOn(child.attribute("state").toLower() == "on");
-
-// Assumes there is only one child. Otherwise you need to parse child's children
-recursively. QDomElement lf = child.firstChild().toElement(); if (!lf.isNull()
-&& lf.tagName() == "LightFrame")
-lightManipulatedFrame()->initFromDomElement(lf);
-}
-child = child.nextSibling().toElement();
-}
-}
-\endcode
-
-CGAL_INLINE_FUNCTION
-See also CGAL::qglviewer::Camera::initFromDOMElement(),
-CGAL::qglviewer::ManipulatedFrame::initFromDOMElement().
-
-\note The manipulatedFrame() \e pointer is not modified by this method. If
-defined, its state is simply set from the \p element values. */
-CGAL_INLINE_FUNCTION
-void CGAL::QGLViewer::initFromDOMElement(const QDomElement &element) {
-  QDomElement child = element.firstChild().toElement();
-  bool tmpCameraIsEdited = cameraIsEdited();
-  while (!child.isNull()) {
-    if (child.tagName() == "State") {
-      // #CONNECTION# default values from defaultConstructor()
-      // setMouseTracking(DomUtils::boolFromDom(child, "mouseTracking", false));
-      // if ((child.attribute("cameraMode", "revolve") == "fly") &&
-      // (cameraIsInRevolveMode()))         toggleCameraMode();
-
-      QDomElement ch = child.firstChild().toElement();
-      while (!ch.isNull()) {
-        if (ch.tagName() == "foregroundColor")
-          setForegroundColor(DomUtils::QColorFromDom(ch));
-        if (ch.tagName() == "backgroundColor")
-          setBackgroundColor(DomUtils::QColorFromDom(ch));
-        ch = ch.nextSibling().toElement();
-      }
-    }
-
-    if (child.tagName() == "Display") {
-      // #CONNECTION# default values from defaultConstructor()
-      setAxisIsDrawn(DomUtils::boolFromDom(child, "axisIsDrawn", false));
-      setGridIsDrawn(DomUtils::boolFromDom(child, "gridIsDrawn", false));
-      setFPSIsDisplayed(DomUtils::boolFromDom(child, "FPSIsDisplayed", false));
-      // See comment below.
-      tmpCameraIsEdited = DomUtils::boolFromDom(child, "cameraIsEdited", false);
-      // setTextIsEnabled(DomUtils::boolFromDom(child, "textIsEnabled", true));
-    }
-
-    if (child.tagName() == "Geometry") {
-      setFullScreen(DomUtils::boolFromDom(child, "fullScreen", false));
-
-      if (isFullScreen()) {
-        prevPos_.setX(DomUtils::intFromDom(child, "prevPosX", 0));
-        prevPos_.setY(DomUtils::intFromDom(child, "prevPosY", 0));
-      } else {
-        int width = DomUtils::intFromDom(child, "width", 600);
-        int height = DomUtils::intFromDom(child, "height", 400);
-        topLevelWidget()->resize(width, height);
-        camera()->setScreenWidthAndHeight(this->width(), this->height());
-
-        QPoint pos;
-        pos.setX(DomUtils::intFromDom(child, "posX", 0));
-        pos.setY(DomUtils::intFromDom(child, "posY", 0));
-        topLevelWidget()->move(pos);
-      }
-    }
-
-    if (child.tagName() == "Camera") {
-      connectAllCameraKFIInterpolatedSignals(false);
-      camera()->initFromDOMElement(child);
-      connectAllCameraKFIInterpolatedSignals();
-    }
-
-    if ((child.tagName() == "ManipulatedFrame") && (manipulatedFrame()))
-      manipulatedFrame()->initFromDOMElement(child);
-
-    child = child.nextSibling().toElement();
-  }
-
-  // The Camera always stores its "real" zClippingCoef in domElement(). If it is
-  // edited, its "real" coef must be saved and the coef set to 5.0, as is done
-  // in setCameraIsEdited(). BUT : Camera and Display are read in an arbitrary
-  // order. We must initialize Camera's "real" coef BEFORE calling
-  // setCameraIsEdited. Hence this temp cameraIsEdited and delayed call
-  cameraIsEdited_ = tmpCameraIsEdited;
-  if (cameraIsEdited_) {
-    previousCameraZClippingCoefficient_ = camera()->zClippingCoefficient();
-    // #CONNECTION# 5.0 from setCameraIsEdited.
-    camera()->setZClippingCoefficient(5.0);
-  }
-}
-
 
 
 CGAL_INLINE_FUNCTION

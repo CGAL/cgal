@@ -37,8 +37,8 @@ licenses:
   is licensed under a MIT like license (see LICENSE.RFL).
 
 All other files that do not have an explicit copyright notice (e.g., all
-examples and some demos) are licensed under a very permissive license. The
-exact license text can be found in the file LICENSE.FREE_USE.
+examples and some demos) are licensed under the Creative Commons CC0 1.0 license. The
+exact text can be found at https://creativecommons.org/publicdomain/zero/1.0/".
 
 More information on the CGAL license can be found at
 https://www.cgal.org/license.html

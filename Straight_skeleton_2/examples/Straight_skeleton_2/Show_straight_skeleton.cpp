@@ -4,6 +4,7 @@
 #include<iomanip>
 #include<string>
 #include <fstream>
+#include <cassert>
 
 #include<boost/shared_ptr.hpp>
 
@@ -36,6 +37,13 @@ int main( int argc, char* argv[] )
     if ( is )
     {
       is >> input ;
+
+      assert(input.outer_boundary().is_counterclockwise_oriented());
+      for(Polygon_with_holes::Hole_const_iterator it = input.holes_begin();
+          it != input.holes_end();
+          ++it){
+        assert(it->is_counterclockwise_oriented());
+      }
 
       //check the validity of the input and fix orientation
       if (!input.outer_boundary().is_simple())
