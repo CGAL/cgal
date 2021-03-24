@@ -47,7 +47,7 @@ namespace CommonKernelFunctors {
   public:
     typedef int result_type;
 
-    int operator()(const Vector_3& vec) const
+    result_type operator()(const Vector_3& vec) const
     {
       if(certainly_not(is_zero(vec.x()))){
         return 0;
