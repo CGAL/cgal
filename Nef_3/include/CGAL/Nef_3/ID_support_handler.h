@@ -78,8 +78,7 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
                     << " "  << f2->plane() << &f2);
 
     if(f2m[f1][f2]==0) {
-      sv->set_index();
-      f2m[f1][f2] = sv->get_index();
+      f2m[f1][f2] = sv->new_index();
       CGAL_NEF_TRACEN("insert " << sv->point() << &*sv
                       << ": " << f2m[f1][f2]);
       CGAL_NEF_TRACEN("not defined, yet");

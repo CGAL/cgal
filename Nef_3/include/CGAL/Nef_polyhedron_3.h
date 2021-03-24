@@ -496,8 +496,7 @@ protected:
        SFace_handle sf(v->new_sface());
        SM.link_as_isolated_vertex(sv,sf);
        if(first) {
-         sv->set_index();
-         index = sv->get_index();
+         index = sv->new_index();
          first = false;
        } else
          sv->set_index(index);
@@ -518,8 +517,7 @@ protected:
        SM.link_as_isolated_vertex(sv1,sf);
        SM.link_as_isolated_vertex(sv2,sf);
        sv1->set_index(index);
-       sv2->set_index();
-       index = sv2->get_index();
+       index = sv2->new_index();
      }
  };
 
