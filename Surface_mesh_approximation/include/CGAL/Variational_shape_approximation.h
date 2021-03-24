@@ -1772,20 +1772,25 @@ private:
       for(face_descriptor f : faces_around_target(halfedge(v, *m_ptm), *m_ptm)) {
         if (f != boost::graph_traits<TriangleMesh>::null_face())
           px_set.insert(get(m_fproxy_map, f));
-        // TODO: a boundary face should count for 1
+        else
+          px_set.insert(-1);
       }
       switch (px_set.size())
       {
         case 1:
-          vertex_patches[*px_set.begin()].push_back(v);
+          if (*px_set.begin()!=-1)
+            vertex_patches[*px_set.begin()].push_back(v);
         break;
         case 2:
-          interface_patches[*px_set.begin()].push_back(v);
-          interface_patches[*std::next(px_set.begin())].push_back(v);
+          if (*px_set.begin()!=-1)
+            interface_patches[*px_set.begin()].push_back(v);
+          if (*std::next(px_set.begin())!=-1)
+            interface_patches[*std::next(px_set.begin())].push_back(v);
         break;
         default:
         for(std::size_t p : px_set)
-          anchor_patches[p].push_back(v);
+          if (p != -1)
+            anchor_patches[p].push_back(v);
       }
     }
 
