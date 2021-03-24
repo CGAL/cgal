@@ -348,60 +348,6 @@ if(CGAL_BUILD_VERSION LESS 1000)
   message(STATUS "CGAL_BUILD_VERSION=${CGAL_BUILD_VERSION}")
 endif()
 
-# SONAME, SOVERSION
-#
-# The rule is that each new release or bug fix release should increse the soversion.
-#
-# SOVERSION is $(SONAME_VERSION).$(SOVERSION_MINOR).$(SOVERSION_RELEASE)
-#
-# - If the binary interface of libraries do not change from previous release
-#   (example: most bug fix releases), increase SOVERSION_RELEASE (this third number).
-# - If the binary interface is changed, but remains compatible with
-#   previous release (example: only addition of new functions), then increase
-#   SOVERSION_MINOR (second number) and set SOVERSION_RELEASE to 0.
-# - If the binary interface is changed in an incompatible way to previous
-#   release, then increase the SONAME_VERSION, and set the two other
-#   numbers to 0.
-#
-# SOVERSION history:
-#   CGAL<=3.5  : (unversionned)
-#   CGAL-3.5   : 4.0.0
-#   CGAL-3.5.1 : 4.0.1
-#   CGAL-3.6   : 5.0.0
-#   CGAL-3.6.1 : 5.0.0 (should have been 5.0.1)
-#   CGAL-3.7   : 6.0.0 (certainly: some types have been turned from int to
-#                        std::size_t, which is different on some platforms)
-#   CGAL-3.8   : 7.0.0 (At least CGAL::Random has changed its member fields.)
-#   CGAL-3.9   : 8.0.0 (No way to check the binary compatibility.)
-#   CGAL-4.0   : 9.0.0 (No way to check the binary compatibility.)
-#   CGAL-4.1   : 10.0.0 (No way to check the binary compatibility.)
-#   CGAL-4.2   : 10.0.1 (Nothing different in CGAL compiled libraries¹.)
-#   CGAL-4.3   : 10.0.2 (Nothing different in CGAL compiled libraries¹.)
-#   CGAL-4.4   : 10.0.3 (Nothing different in CGAL compiled libraries¹.)
-#   CGAL-4.5   : 10.0.4 (Nothing different in CGAL compiled libraries¹.)
-#   CGAL-4.6   : 11.0.0 (int->size_t in CGAL_ImageIO)
-#   CGAL-4.7   : 11.0.1 (Nothing different in CGAL compiled libraries.)
-#   CGAL-4.8   : 11.0.2 (Nothing different in CGAL compiled libraries.)
-#   CGAL-4.9   : 12.0.0 (Change the API/ABI in CGAL_ImageIO, but issue with 4GB images.)
-#   CGAL-4.10  : 13.0.0 (Change the API/ABI in CGAL_ImageIO.)
-#   CGAL-4.11  : 13.0.1 (Nothing different in CGAL compiled libraries.)
-#   CGAL-4.12  : 13.0.2 (Nothing different in CGAL compiled libraries.)
-#   CGAL-4.14  : 14.0.0 , but only for CGAL_ImageIO (ABI broken in CGAL::Image_3.)
-#                              and for CGAL_Qt5 (ABI broken in DemoMainWindow)
-#   CGAL-4.14  : 13.0.3 , for other libraries
-# ¹) According to http://upstream-tracker.org/versions/cgal.html
-
-set(CGAL_SONAME_VERSION "13")
-set(CGAL_SOVERSION "13.0.3")
-set(CGAL_ImageIO_SONAME_VERSION "14")
-set(CGAL_ImageIO_SOVERSION "14.0.0")
-set(CGAL_Qt5_SONAME_VERSION "14")
-set(CGAL_Qt5_SOVERSION "14.0.0")
-
-message( STATUS "CGAL_SONAME_VERSION=${CGAL_SONAME_VERSION}" )
-message( STATUS "CGAL_SOVERSION     =${CGAL_SOVERSION}" )
-
-
 set(CGAL_VERSION_DIR CGAL-${CGAL_VERSION})
 set(CGAL_MODULES_REL_DIR cmake/modules)
 set(CGAL_MODULES_DIR ${CGAL_INSTALLATION_PACKAGE_DIR}/${CGAL_MODULES_REL_DIR})
