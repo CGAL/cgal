@@ -11,6 +11,7 @@
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QInputDialog>
+#include <CGAL/Three/Three.h>
 
 #include <boost/iterator/transform_iterator.hpp>
 
@@ -63,8 +64,34 @@ public slots:
     read_points(filename.toUtf8().data(), std::back_inserter(lst_pt));
 
     const Point_3 center(0,0,0);
-    const FT radius = QInputDialog::getDouble(nullptr, "Radius", "Radius of the sphere", 1.0, 0.0);
-    Projection_traits traits(center, radius);
+    const QString infos = QInputDialog::getText(nullptr, "Sphere", "Enter the sphere's information : (Radius center.x center.y center.z):",
+                                                QLineEdit::Normal,"100.0 0.0 0.0 0.0");
+    QStringList list = infos.split(QRegExp("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
+    if (list.isEmpty()) return;
+    if (list.size()!=4){
+      QMessageBox *msgBox = new QMessageBox;
+      msgBox->setWindowTitle("Error");
+      msgBox->setText("ERROR : Input should consists of 4 doubles: The radius first, then the coordinates of the center.");
+      msgBox->exec();
+      return;
+    }
+
+    double coords[4];
+    for(int j=0; j<4; ++j)
+    {
+      bool ok;
+      coords[j] = list.at(j).toDouble(&ok);
+      if(!ok)
+      {
+          QMessageBox *msgBox = new QMessageBox;
+          msgBox->setWindowTitle("Error");
+          msgBox->setText("ERROR : Input is invalid.");
+          msgBox->exec();
+          return;
+      }
+    }
+
+    Projection_traits traits(Point_3(coords[1], coords[2], coords[3]), coords[0]);
     Projected_DToS2 dtos(lst_pt.begin(), lst_pt.end(), traits);
 
     std::cout << dtos.number_of_vertices() << " vertices" << std::endl;

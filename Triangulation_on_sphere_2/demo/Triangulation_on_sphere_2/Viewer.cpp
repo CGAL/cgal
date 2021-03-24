@@ -18,6 +18,7 @@ Viewer::Viewer(QWidget* parent )
   trivial_center.push_back(0.);
   trivial_center.push_back(0.);
   radius_ = 1.0;
+  center_ = Point_3(0,0,0);
 }
 
 void Viewer::compile_shaders()
@@ -53,7 +54,7 @@ void Viewer::compile_shaders()
     "varying highp vec3 fN; \n"
     "void main(void)\n"
     "{\n"
-    "   fP = mv_matrix * vertex; \n"
+    "   fP = mv_matrix * (vertex+vec4(center.xyz, 0.0)); \n"
     "   fN = mat3(mv_matrix)* normal; \n"
     "   gl_Position = mvp_matrix * (vertex+vec4(center.xyz, 0.0));\n"
     "}"
@@ -112,6 +113,53 @@ void Viewer::compile_shaders()
   {
     std::cerr<<"linking Program FAILED"<<std::endl;
   }
+
+      //The edges
+
+      //Vertex source code
+      const char vertex_source_edges[] =
+      {
+        "#version 120 \n"
+        "attribute highp vec4 vertex;\n"
+        "uniform highp mat4 mvp_matrix;\n"
+        "void main(void)\n"
+        "{\n"
+        "   gl_Position = mvp_matrix * vertex;\n"
+        "}"
+      };
+      //Vertex source code
+      const char fragment_source_edges[] =
+      {
+        "#version 120 \n"
+        "void main(void) { \n"
+        "gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0); \n"
+        "} \n"
+        "\n"
+      };
+      QOpenGLShader *vertex_shader_edges = new QOpenGLShader(QOpenGLShader::Vertex);
+      if(!vertex_shader_edges->compileSourceCode(vertex_source_edges))
+      {
+        std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+      }
+
+      QOpenGLShader *fragment_shader_edges = new QOpenGLShader(QOpenGLShader::Fragment);
+      if(!fragment_shader_edges->compileSourceCode(fragment_source_edges))
+      {
+        std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+      }
+
+      if(!rendering_program_edges.addShader(vertex_shader_edges))
+      {
+        std::cerr<<"adding vertex shader FAILED"<<std::endl;
+      }
+      if(!rendering_program_edges.addShader(fragment_shader_edges))
+      {
+        std::cerr<<"adding fragment shader FAILED"<<std::endl;
+      }
+      if(!rendering_program_edges.link())
+      {
+        std::cerr<<"linking Program FAILED"<<std::endl;
+      }
 }
 
 void Viewer::initialize_buffers()
@@ -151,37 +199,6 @@ void Viewer::initialize_buffers()
   glVertexAttribDivisor(normalsLocation[0], 0);
   vao[SPHERE_VAO].release();
 
-  //The circles
-  vao[EDGES_VAO].bind();
-  buffers[EDGES_POINTS].bind();
-  buffers[EDGES_POINTS].allocate(pos_lines.data(),
-                                 static_cast<int>(pos_lines.size()*sizeof(float)));
-  vertexLocation[1] = rendering_program.attributeLocation("vertex");
-  rendering_program.enableAttributeArray(vertexLocation[1]);
-  rendering_program.setAttributeBuffer(vertexLocation[1],GL_FLOAT,0,3);
-  buffers[EDGES_POINTS].release();
-
-  //normals
-  buffers[EDGES_NORMALS].bind();
-  buffers[EDGES_NORMALS].allocate(normals_lines.data(),
-                                  static_cast<int>(normals_lines.size()*sizeof(float)));
-  normalsLocation[1] = rendering_program.attributeLocation("normal");
-  rendering_program.enableAttributeArray(normalsLocation[1]);
-  rendering_program.setAttributeBuffer(normalsLocation[1],GL_FLOAT,0,3);
-  buffers[EDGES_NORMALS].release();
-
-  //center
-  buffers[EDGES_CENTER].bind();
-  buffers[EDGES_CENTER].allocate(trivial_center.data(),
-                                 static_cast<int>(trivial_center.size()*sizeof(float)));
-  trivialCenterLocation = rendering_program.attributeLocation("center");
-  rendering_program.enableAttributeArray(trivialCenterLocation);
-  rendering_program.setAttributeBuffer(trivialCenterLocation,GL_FLOAT,0,3);
-  buffers[EDGES_CENTER].release();
-  glVertexAttribDivisor(trivialCenterLocation, 1);
-  glVertexAttribDivisor(normalsLocation[0], 0);
-  vao[EDGES_VAO].release();
-
   //The little green spheres
   vao[POINTS_VAO].bind();
 
@@ -216,6 +233,19 @@ void Viewer::initialize_buffers()
   glVertexAttribDivisor(normalsLocation[2], 0);
   vao[POINTS_VAO].release();
   rendering_program.release();
+
+  //The circles
+  rendering_program_edges.bind();
+  vao[EDGES_VAO].bind();
+  buffers[EDGES_POINTS].bind();
+  buffers[EDGES_POINTS].allocate(pos_lines.data(),
+                                 static_cast<int>(pos_lines.size()*sizeof(float)));
+  vertexLocation[1] = rendering_program_edges.attributeLocation("vertex");
+  rendering_program_edges.enableAttributeArray(vertexLocation[1]);
+  rendering_program_edges.setAttributeBuffer(vertexLocation[1],GL_FLOAT,0,3);
+  buffers[EDGES_POINTS].release();
+  vao[EDGES_VAO].release();
+  rendering_program_edges.release();
 }
 
 void Viewer::compute_elements()
@@ -224,8 +254,12 @@ void Viewer::compute_elements()
   normals_inter.clear();
   pos_sphere.clear();
   normals.clear();
+  trivial_center.clear();
+  trivial_center.push_back(static_cast<float>(center_.x()));
+  trivial_center.push_back(static_cast<float>(center_.y()));
+  trivial_center.push_back(static_cast<float>(center_.z()));
   create_flat_sphere(static_cast<float>(radius_), pos_sphere, normals, 9);
-  create_flat_sphere(0.05f, pos_sphere_inter, normals_inter, 36);
+  create_flat_sphere(0.001f*static_cast<float>(radius_), pos_sphere_inter, normals_inter, 36);
 
   pos_points.resize(0);
   pos_lines.resize(0);
@@ -260,6 +294,7 @@ void Viewer::compute_elements()
     }
   }
   setSceneRadius(radius_*1.3);
+  setSceneCenter({center_.x(), center_.y(), center_.z()});
   showEntireScene();
 }
 
@@ -310,6 +345,7 @@ void Viewer::attrib_buffers(CGAL::QGLViewer* viewer)
   rendering_program.setUniformValue(lightLocation[4], shininess);
   rendering_program.setUniformValue(mvpLocation, mvpMatrix);
   rendering_program.setUniformValue(mvLocation, mvMatrix);
+  rendering_program_edges.setUniformValue("mvp_matrix", mvpMatrix);
 
 }
 
@@ -341,14 +377,13 @@ void Viewer::draw()
                           static_cast<GLsizei>(pos_points.size()/3));
     vao[POINTS_VAO].release();
   }
-
+  rendering_program.release();
+  rendering_program_edges.bind();
   vao[EDGES_VAO].bind();
   attrib_buffers(this);
-  color.setRgbF(1.0f, 0.0f, 0.0f);
-  rendering_program.setUniformValue(colorLocation, color);
   glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_lines.size()/3));
   vao[EDGES_VAO].release();
-  rendering_program.release();
+  rendering_program_edges.release();
 }
 
 void Viewer::init()

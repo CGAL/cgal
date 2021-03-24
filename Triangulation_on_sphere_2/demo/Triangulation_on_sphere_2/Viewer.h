@@ -90,6 +90,7 @@ public:
     normals_lines.clear();
 
     radius_ = tos.geom_traits().radius();
+    center_ = tos.geom_traits().center();
     min_edge_size = 0.01 * radius_;
 
     std::copy(begin, end, std::back_inserter(inputs));
@@ -143,8 +144,6 @@ private:
     POINTS_NORMALS,
     POINTS_CENTERS,
     EDGES_POINTS,
-    EDGES_NORMALS,
-    EDGES_CENTER,
     SIZE_OF_VBO
   };
 
@@ -158,13 +157,13 @@ private:
   QOpenGLBuffer buffers[SIZE_OF_VBO];
   QOpenGLVertexArrayObject vao[SIZE_OF_VAO];
   QOpenGLShaderProgram rendering_program;
-  QOpenGLShaderProgram rendering_program_no_ext;
+  QOpenGLShaderProgram rendering_program_edges;
   typedef void (APIENTRYP PFNGLDRAWARRAYSINSTANCEDARBPROC) (GLenum mode, GLint first, GLsizei count, GLsizei primcount);
   typedef void (APIENTRYP PFNGLVERTEXATTRIBDIVISORARBPROC) (GLuint index, GLuint divisor);
   PFNGLDRAWARRAYSINSTANCEDARBPROC glDrawArraysInstanced;
   PFNGLVERTEXATTRIBDIVISORARBPROC glVertexAttribDivisor;
   double radius_;
-
+  Point_3 center_;
   void initialize_buffers();
   void compute_elements();
   void attrib_buffers(CGAL::QGLViewer*);
