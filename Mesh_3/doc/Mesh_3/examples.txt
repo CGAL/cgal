@@ -1,9 +1,11 @@
 /*!
 \example Mesh_3/implicit_functions.cpp
 \example Mesh_3/mesh_3D_image.cpp
+\example Mesh_3/mesh_3D_gray_image_with_custom_initialization.cpp
 \example Mesh_3/mesh_3D_image_with_features.cpp
 \example Mesh_3/mesh_3D_image_with_custom_initialization.cpp
 \example Mesh_3/random_labeled_image.h
+\example CGAL/Mesh_3/initialize_triangulation_from_gray_image.h
 \example CGAL/Mesh_3/initialize_triangulation_from_labeled_image.h
 \example Mesh_3/mesh_3D_image_variable_size.cpp
 \example Mesh_3/mesh_hybrid_mesh_domain.cpp
