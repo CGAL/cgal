@@ -31,7 +31,8 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
 
   using Neighbor_query = SD::Polygon_mesh::One_ring_neighbor_query<Polyhedron, Face_range>;
   using Region_type    = SD::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Polyhedron, Face_range>;
-  using Region_growing = SD::Region_growing<Face_range, Neighbor_query, Region_type>;
+  using Sorting        = SD::Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, Polyhedron, Neighbor_query, Face_range>;
+  using Region_growing = SD::Region_growing<Face_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
   // Default parameter values for the data file cube.off.
   const FT          distance_threshold = FT(1) / FT(10);
@@ -59,9 +60,14 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
     angle_deg_threshold(angle_threshold).
     min_region_size(min_region_size));
 
+  // Sort indices.
+  Sorting sorting(
+    polyhedron, neighbor_query);
+  sorting.sort();
+
   // Run region growing.
   Region_growing region_growing(
-    face_range, neighbor_query, region_type);
+    face_range, neighbor_query, region_type, sorting.seed_map());
 
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
@@ -72,38 +78,43 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
   std::vector<std::size_t> unassigned_faces;
   region_growing.unassigned_items(std::back_inserter(unassigned_faces));
   assert(unassigned_faces.size() == 0);
+
+  // test free function
+  // test randomness
+
   return true;
 }
 
 int main(int argc, char *argv[]) {
 
-  // ------>
-
-  bool cartesian_double_test_success = true;
-  if (!test_region_growing_on_cube< CGAL::Simple_cartesian<double> >(argc, argv))
-    cartesian_double_test_success = false;
-
-  std::cout << "rg_cube, cartesian_test_success: " << cartesian_double_test_success << std::endl;
-  assert(cartesian_double_test_success);
+  using SC = CGAL::Simple_cartesian<double>;
+  using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
+  using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
 
   // ------>
 
-  bool exact_inexact_test_success = true;
-  if (!test_region_growing_on_cube<CGAL::Exact_predicates_inexact_constructions_kernel>(argc, argv))
-    exact_inexact_test_success = false;
-
-  std::cout << "rg_cube, epick_test_success: " << exact_inexact_test_success << std::endl;
-  assert(exact_inexact_test_success);
+  bool sc_test_success = true;
+  if (!test_region_growing_on_cube<SC>(argc, argv))
+    sc_test_success = false;
+  std::cout << "rg_cube, sc_test_success: " << sc_test_success << std::endl;
+  assert(sc_test_success);
 
   // ------>
 
-  bool exact_exact_test_success = true;
-  if (!test_region_growing_on_cube<CGAL::Exact_predicates_exact_constructions_kernel>(argc, argv))
-    exact_exact_test_success = false;
+  bool epick_test_success = true;
+  if (!test_region_growing_on_cube<EPICK>(argc, argv))
+    epick_test_success = false;
+  std::cout << "rg_cube, epick_test_success: " << epick_test_success << std::endl;
+  assert(epick_test_success);
 
-  std::cout << "rg_cube, epeck_test_success: " << exact_exact_test_success << std::endl;
-  assert(exact_exact_test_success);
+  // ------>
 
-  const bool success = cartesian_double_test_success && exact_inexact_test_success && exact_exact_test_success;
+  bool epeck_test_success = true;
+  if (!test_region_growing_on_cube<EPECK>(argc, argv))
+    epeck_test_success = false;
+  std::cout << "rg_cube, epeck_test_success: " << epeck_test_success << std::endl;
+  assert(epeck_test_success);
+
+  const bool success = sc_test_success && epick_test_success && epeck_test_success;
   return (success) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

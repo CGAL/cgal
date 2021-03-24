@@ -72,15 +72,18 @@ int main(int argc, char *argv[]) {
 
   // Create an instance of the region growing class.
   Region_growing region_growing(
-    input_range, neighbor_query, region_type,
-    sorting.seed_map());
+    input_range, neighbor_query, region_type, sorting.seed_map());
 
   // Run the algorithm.
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
   region_growing.release_memory();
   // std::cout << regions.size() << std::endl;
-  assert(regions.size() >= 60 && regions.size() <= 64);
-  std::cout << "rg_sortpoints2, cartesian_test_success: " << true << std::endl;
+  assert(regions.size() == 62);
+
+  // test free function
+  // test randomness
+
+  std::cout << "rg_sortpoints2, sc_test_success: " << true << std::endl;
   return EXIT_SUCCESS;
 }

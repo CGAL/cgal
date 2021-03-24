@@ -258,7 +258,8 @@ namespace Point_set {
         m_normal_of_best_fit = m_plane_of_best_fit.orthogonal_vector();
 
       } else { // update reference plane and normal
-        CGAL_precondition(region.size() >= 2);
+        if (region.size() <= 3) return;
+        CGAL_precondition(region.size() >= 3);
         std::tie(m_plane_of_best_fit, m_normal_of_best_fit) =
           get_plane_and_normal(region);
       }

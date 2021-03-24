@@ -39,13 +39,13 @@ namespace Shape_detection {
     - the `SeedMap` property map enables to define the seeding order of items and skip unnecessary items.
 
     \tparam InputRange
-    a model of `ConstRange`.
+    a model of `ConstRange`
 
     \tparam NeighborQuery
-    a model of `NeighborQuery`.
+    a model of `NeighborQuery`
 
     \tparam RegionType
-    a model of `RegionType`.
+    a model of `RegionType`
 
     \tparam SeedMap
     a model of `ReadablePropertyMap` whose key and value types are `std::size_t`.
@@ -120,7 +120,7 @@ namespace Shape_detection {
       with the found regions.
 
       \tparam OutputIterator
-      must be an output iterator whose value type is `std::vector<std::size_t>`.
+      a model of output iterator whose value type is `std::vector<std::size_t>`
 
       \param regions
       an output iterator that stores regions, where each region is returned
@@ -168,7 +168,7 @@ namespace Shape_detection {
       \brief fills an output iterator with indices of all unassigned items.
 
       \tparam OutputIterator
-      must be an output iterator whose value type is `std::size_t`.
+      a model of output iterator whose value type is `std::size_t`
 
       \param output
       an output iterator that stores indices of all items, which are not assigned

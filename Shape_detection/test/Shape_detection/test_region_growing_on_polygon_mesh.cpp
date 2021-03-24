@@ -12,6 +12,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_polygon_mesh.h>
@@ -69,37 +70,47 @@ bool test_region_growing_on_polygon_mesh(int argc, char *argv[]) {
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
   // std::cout << regions.size() << std::endl;
-  assert(regions.size() >= 325 && regions.size() <= 334);
+  assert(regions.size() == 329);
   for (const auto& region : regions)
     assert(region_type.is_valid_region(region));
 
   std::vector<std::size_t> unassigned_faces;
   region_growing.unassigned_items(std::back_inserter(unassigned_faces));
   // std::cout << unassigned_faces.size() << std::endl;
-  assert(unassigned_faces.size() >= 908 && unassigned_faces.size() <= 928);
+  assert(unassigned_faces.size() == 918);
   return true;
 }
 
 int main(int argc, char *argv[]) {
 
-  // ------>
-
-  bool cartesian_double_test_success = true;
-  if (!test_region_growing_on_polygon_mesh< CGAL::Simple_cartesian<double> >(argc, argv))
-    cartesian_double_test_success = false;
-
-  std::cout << "rg_pmesh, cartesian_test_success: " << cartesian_double_test_success << std::endl;
-  assert(cartesian_double_test_success);
+  using SC = CGAL::Simple_cartesian<double>;
+  using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
+  using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
 
   // ------>
 
-  bool exact_inexact_test_success = true;
-  if (!test_region_growing_on_polygon_mesh<CGAL::Exact_predicates_inexact_constructions_kernel>(argc, argv))
-    exact_inexact_test_success = false;
+  bool sc_test_success = true;
+  if (!test_region_growing_on_polygon_mesh<SC>(argc, argv))
+    sc_test_success = false;
+  std::cout << "rg_pmesh, sc_test_success: " << sc_test_success << std::endl;
+  assert(sc_test_success);
 
-  std::cout << "rg_pmesh, epick_test_success: " << exact_inexact_test_success << std::endl;
-  assert(exact_inexact_test_success);
+  // ------>
 
-  const bool success = cartesian_double_test_success && exact_inexact_test_success;
+  bool epick_test_success = true;
+  if (!test_region_growing_on_polygon_mesh<EPICK>(argc, argv))
+    epick_test_success = false;
+  std::cout << "rg_pmesh, epick_test_success: " << epick_test_success << std::endl;
+  assert(epick_test_success);
+
+  // ------>
+
+  bool epeck_test_success = true;
+  if (!test_region_growing_on_polygon_mesh<EPECK>(argc, argv))
+    epeck_test_success = false;
+  std::cout << "rg_pmesh, epeck_test_success: " << epeck_test_success << std::endl;
+  assert(epeck_test_success);
+
+  const bool success = sc_test_success && epick_test_success && epeck_test_success;
   return (success) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

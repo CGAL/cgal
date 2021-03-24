@@ -117,7 +117,7 @@ namespace Polyline {
       const Point& input_point = get(m_point_map, key1);
       const Point& query_point = get(m_point_map, key2);
 
-      if (region.size() == 1) {
+      if (region.size() == 1) { // update new reference line and direction
         CGAL_precondition(input_point != query_point);
         m_line_of_best_fit = Line(input_point, query_point);
         m_direction_of_best_fit = m_line_of_best_fit.to_vector();
@@ -157,15 +157,15 @@ namespace Polyline {
 
     void update(const std::vector<std::size_t>& region) {
 
-      if (region.size() < 2) {
+      CGAL_precondition(region.size() > 0);
+      if (region.size() == 1) { // create new reference line and direction
         m_line_of_best_fit = Line();
         m_direction_of_best_fit = Vector();
-        return;
+      } else { // update reference line and direction
+        CGAL_precondition(region.size() >= 2);
+        std::tie(m_line_of_best_fit, m_direction_of_best_fit) =
+          get_line_and_direction(region);
       }
-
-      CGAL_precondition(region.size() >= 2);
-      std::tie(m_line_of_best_fit, m_direction_of_best_fit) =
-        get_line_and_direction(region);
     }
 
     /// @}

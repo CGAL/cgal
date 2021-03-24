@@ -67,21 +67,19 @@ int main(int argc, char *argv[]) {
 
   // Sort indices.
   Sorting sorting(
-    input_range, neighbor_query,
-    input_range.point_map());
+    input_range, neighbor_query, input_range.point_map());
   sorting.sort();
 
   // Create an instance of the region growing class.
   Region_growing region_growing(
-    input_range, neighbor_query, region_type,
-    sorting.seed_map());
+    input_range, neighbor_query, region_type, sorting.seed_map());
 
   // Run the algorithm.
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
   region_growing.release_memory();
   // std::cout << regions.size() << std::endl;
-  assert(regions.size() >= 6 && regions.size() <= 8);
+  assert(regions.size() == 7);
   std::cout << "rg_sortpoints3, epick_test_success: " << true << std::endl;
   return EXIT_SUCCESS;
 }

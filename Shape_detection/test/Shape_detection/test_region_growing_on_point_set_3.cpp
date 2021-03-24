@@ -15,6 +15,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
@@ -36,7 +37,7 @@ bool test_region_growing_on_point_set_3(int argc, char *argv[]) {
   using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type>;
 
   // Default parameter values for the data file point_set_3.xyz.
-  const FT          sphere_radius      = FT(5);
+  const FT          sphere_radius      = FT(5) / FT(100);
   const FT          distance_threshold = FT(2);
   const FT          angle_threshold    = FT(20);
   const std::size_t min_region_size    = 50;
@@ -72,37 +73,47 @@ bool test_region_growing_on_point_set_3(int argc, char *argv[]) {
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
   // std::cout << regions.size() << std::endl;
-  assert(regions.size() >= 7 && regions.size() <= 9);
+  assert(regions.size() == 9);
   for (const auto& region : regions)
     assert(region_type.is_valid_region(region));
 
   std::vector<std::size_t> unassigned_points;
   region_growing.unassigned_items(std::back_inserter(unassigned_points));
   // std::cout << unassigned_points.size() << std::endl;
-  assert(unassigned_points.size() >= 49 && unassigned_points.size() <= 69);
+  assert(unassigned_points.size() == 196);
   return true;
 }
 
 int main(int argc, char *argv[]) {
 
-  // ------>
-
-  bool cartesian_double_test_success = true;
-  if (!test_region_growing_on_point_set_3< CGAL::Simple_cartesian<double> >(argc, argv))
-    cartesian_double_test_success = false;
-
-  std::cout << "rg_points3, cartesian_test_success: " << cartesian_double_test_success << std::endl;
-  assert(cartesian_double_test_success);
+  using SC = CGAL::Simple_cartesian<double>;
+  using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
 
   // ------>
 
-  bool exact_inexact_test_success = true;
-  if (!test_region_growing_on_point_set_3<CGAL::Exact_predicates_inexact_constructions_kernel>(argc, argv))
-    exact_inexact_test_success = false;
+  bool sc_test_success = true;
+  if (!test_region_growing_on_point_set_3<SC>(argc, argv))
+    sc_test_success = false;
+  std::cout << "rg_points3, sc_test_success: " << sc_test_success << std::endl;
+  assert(sc_test_success);
 
-  std::cout << "rg_points3, epick_test_success: " << exact_inexact_test_success << std::endl;
-  assert(exact_inexact_test_success);
+  // ------>
 
-  const bool success = cartesian_double_test_success && exact_inexact_test_success;
+  bool epick_test_success = true;
+  if (!test_region_growing_on_point_set_3<EPICK>(argc, argv))
+    epick_test_success = false;
+  std::cout << "rg_points3, epick_test_success: " << epick_test_success << std::endl;
+  assert(epick_test_success);
+
+  // ------>
+
+  bool epeck_test_success = true; // turn it off, very slow
+  // using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
+  // if (!test_region_growing_on_point_set_3<EPECK>(argc, argv))
+  //   epeck_test_success = false;
+  // std::cout << "rg_points3, epeck_test_success: " << epeck_test_success << std::endl;
+  // assert(epeck_test_success);
+
+  const bool success = sc_test_success && epick_test_success && epeck_test_success;
   return (success) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

@@ -70,46 +70,47 @@ bool test_region_growing_on_degenerated_mesh(int argc, char *argv[]) {
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
   // std::cout << regions.size() << std::endl;
-  assert(regions.size() >= 260 && regions.size() <= 264);
+  assert(regions.size() == 262);
   for (const auto& region : regions)
     assert(region_type.is_valid_region(region));
 
   std::vector<std::size_t> unassigned_faces;
   region_growing.unassigned_items(std::back_inserter(unassigned_faces));
   // std::cout << unassigned_faces.size() << std::endl;
-  assert(unassigned_faces.size() >= 493 && unassigned_faces.size() <= 513);
+  assert(unassigned_faces.size() == 503);
   return true;
 }
 
 int main(int argc, char *argv[]) {
 
-  // ------>
-
-  bool cartesian_double_test_success = true;
-  if (!test_region_growing_on_degenerated_mesh< CGAL::Simple_cartesian<double> >(argc, argv))
-    cartesian_double_test_success = false;
-
-  std::cout << "rg_degmesh, cartesian_test_success: " << cartesian_double_test_success << std::endl;
-  assert(cartesian_double_test_success);
+  using SC = CGAL::Simple_cartesian<double>;
+  using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
+  using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
 
   // ------>
 
-  bool exact_inexact_test_success = true;
-  if (!test_region_growing_on_degenerated_mesh<CGAL::Exact_predicates_inexact_constructions_kernel>(argc, argv))
-    exact_inexact_test_success = false;
-
-  std::cout << "rg_degmesh, epick_test_success: " << exact_inexact_test_success << std::endl;
-  assert(exact_inexact_test_success);
+  bool sc_test_success = true;
+  if (!test_region_growing_on_degenerated_mesh<SC>(argc, argv))
+    sc_test_success = false;
+  std::cout << "rg_degmesh, sc_test_success: " << sc_test_success << std::endl;
+  assert(sc_test_success);
 
   // ------>
 
-  bool exact_exact_test_success = true;
-  if (!test_region_growing_on_degenerated_mesh<CGAL::Exact_predicates_exact_constructions_kernel>(argc, argv))
-    exact_exact_test_success = false;
+  bool epick_test_success = true;
+  if (!test_region_growing_on_degenerated_mesh<EPICK>(argc, argv))
+    epick_test_success = false;
+  std::cout << "rg_degmesh, epick_test_success: " << epick_test_success << std::endl;
+  assert(epick_test_success);
 
-  std::cout << "rg_degmesh, epeck_test_success: " << exact_exact_test_success << std::endl;
-  assert(exact_exact_test_success);
+  // ------>
 
-  const bool success = cartesian_double_test_success && exact_inexact_test_success && exact_exact_test_success;
+  bool epeck_test_success = true;
+  if (!test_region_growing_on_degenerated_mesh<EPECK>(argc, argv))
+    epeck_test_success = false;
+  std::cout << "rg_degmesh, epeck_test_success: " << epeck_test_success << std::endl;
+  assert(epeck_test_success);
+
+  const bool success = sc_test_success && epick_test_success && epeck_test_success;
   return (success) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

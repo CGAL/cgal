@@ -1,4 +1,5 @@
 - add Polyline_graph that extracts the graph from the polygon mesh
-- add new tests: polyline (2D, 3D), polyline with sorting (2D, 3D), free functions, randomness
 - update the docs
-- update polyhedron demo
+- ---- submission ----
+- update the polyhedron demo
+- add new tests: polyline (2D, 3D), polyline with sorting (2D, 3D), free functions, randomness, strict tests on the data from PMP, tests similar to the basic_example

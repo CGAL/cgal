@@ -65,21 +65,23 @@ int main(int argc, char *argv[]) {
 
   // Sort indices.
   Sorting sorting(
-    polygon_mesh, neighbor_query,
-    vertex_to_point_map);
+    polygon_mesh, neighbor_query, vertex_to_point_map);
   sorting.sort();
 
   // Create an instance of the region growing class.
   Region_growing region_growing(
-    face_range, neighbor_query, region_type,
-    sorting.seed_map());
+    face_range, neighbor_query, region_type, sorting.seed_map());
 
   // Run the algorithm.
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
   region_growing.release_memory();
   // std::cout << regions.size() << std::endl;
-  assert(regions.size() >= 324 && regions.size() <= 328);
+  assert(regions.size() == 326);
+
+  // test free function
+  // test randomness
+
   std::cout << "rg_sortfaces3, epeck_test_success: " << true << std::endl;
   return EXIT_SUCCESS;
 }

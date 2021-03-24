@@ -74,8 +74,9 @@ typename NamedParameters>
 OutputIterator region_growing_planes(
   const CGAL::Surface_mesh<PointType>& surface_mesh, OutputIterator regions, const NamedParameters& np) {
 
-  using Traits = typename Kernel_traits<PointType>::Kernel;
-  using Surface_mesh = CGAL::Surface_mesh<PointType>;
+  using Point_type = PointType;
+  using Traits = typename Kernel_traits<Point_type>::Kernel;
+  using Surface_mesh = CGAL::Surface_mesh<Point_type>;
   using Face_range = typename Surface_mesh::Face_range;
   using Neighbor_query = Polygon_mesh::One_ring_neighbor_query<Surface_mesh>;
   using Region_type = Polygon_mesh::Least_squares_plane_fit_region<Traits, Surface_mesh>;
