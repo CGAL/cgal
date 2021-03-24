@@ -258,9 +258,9 @@ public:
   /// \note A point that is not on the sphere will not be inserted in the triangulation.
   bool is_on_sphere(Point_on_sphere_2 p);
 
-  /// returns whether the points `p` and `q` are too close (see \link
-  /// https://doc.cgal.org/latest/Triangulation_on_sphere_2/classTriangulationOnSphereTraits__2.html#amgrpbc40b59d2ea2be0fc60516e5f7bb0f92
-  /// Precision predicates\endlink).
+  /// returns whether the points `p` and `q` are too close (see
+  /// <a href="https://doc.cgal.org/latest/Triangulation_on_sphere_2/classTriangulationOnSphereTraits__2.html#amgrpbc40b59d2ea2be0fc60516e5f7bb0f92">
+  /// Precision predicates</a>).
   bool are_points_too_close(Point_on_sphere_2 p, Point_on_sphere_2 q);
 
   /// @}
