@@ -375,8 +375,15 @@ protected:
   }
 
   Nef_polyhedron_3& operator=(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) {
-    Base::operator=(N1);
+    Base::operator=(N1); // copy the handle
     set_snc(snc());
+    return (*this);
+  }
+
+  Nef_polyhedron_3& operator=(Nef_polyhedron_3<Kernel,Items, Mark>&& N1) noexcept {
+    N1.set_snc(snc()); // N1.set_snc sets N1.sncp_ not N1.snc_
+    Base::operator=(std::move(N1)); // swap the handles
+    set_snc(snc()); // snc() will return N1.snc_
     return (*this);
   }
 
