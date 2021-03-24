@@ -32,7 +32,6 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
-#include <boost/graph/subgraph.hpp>
 #include <boost/optional.hpp>
 
 #include <CGAL/boost/graph/Named_function_parameters.h>
@@ -44,6 +43,8 @@
 #include <iterator>
 #include <cmath>
 #include <cstdlib>
+
+#include <boost/container/flat_set.hpp>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
@@ -1635,6 +1636,244 @@ private:
    * and attached with at least 3 anchors.
    */
   void pseudo_cdt() {
+#if 1
+    typedef boost::adjacency_list< boost::vecS, boost::vecS,
+                                   boost::undirectedS,
+                                   vertex_descriptor, double> Graph;
+    typedef typename boost::graph_traits<Graph>::vertex_descriptor g_vertex_descriptor;
+    typedef typename boost::graph_traits<Graph>::edge_descriptor g_edge_descriptor;
+
+    std::vector<std::size_t> anchor_ids(num_vertices(*m_ptm), CGAL_VSA_INVALID_TAG); //TODO dynamic property
+
+    // first do the flooding over 1D constraints. Start by building a graph
+    // of subcontraints, with a super vertex connected to all anchors
+
+    Graph constrained_graph;
+    std::vector<g_vertex_descriptor> tm_to_g_vertices(num_vertices(*m_ptm)); // TODO dynamic property
+    //~ std::map<vertex_descriptor, g_vertex_descriptor> tm_to_g_vertices; // TODO DEBUG PURPORSE
+    g_vertex_descriptor super_vertex = add_vertex(constrained_graph);
+    constrained_graph[super_vertex] = boost::graph_traits<TriangleMesh>::null_vertex();
+    for (const Anchor& a : m_anchors)
+    {
+      g_vertex_descriptor nv = add_vertex(constrained_graph);
+      constrained_graph[nv]=a.vtx;
+      tm_to_g_vertices[a.vtx] = nv;
+      g_edge_descriptor e = add_edge(nv, super_vertex, constrained_graph).first;
+      constrained_graph[e]=0;
+    }
+    
+    // loop over constrained edges
+    CGAL_assertion(m_bcycles.size()==m_proxies.size());
+
+    for(const Boundary_cycle& bcycle : m_bcycles) {
+      halfedge_descriptor he = bcycle.he_head;
+
+      do {
+        Boundary_chord chord(1, he);
+        walk_to_next_anchor(he, chord);
+
+        halfedge_descriptor oh = opposite(chord.back(), *m_ptm);
+        bool skip_chord = !is_border(oh, *m_ptm) && 
+                          get(m_fproxy_map, face(chord.back(), *m_ptm)) >
+                          get(m_fproxy_map, face(oh, *m_ptm));
+        if (skip_chord) continue; // do not report constraints twice
+
+        std::vector<g_vertex_descriptor> vrts;
+
+        vrts.push_back( tm_to_g_vertices[target(chord[0], *m_ptm)] );
+        for (std::size_t i=1; i<chord.size()-1; ++i)
+        {
+          vertex_descriptor v = target(chord[i], *m_ptm);          
+          vrts.push_back( add_vertex(constrained_graph) );
+          constrained_graph[vrts.back()]=v;
+          tm_to_g_vertices[v] = vrts.back(); // needed?
+        }
+        vrts.push_back( tm_to_g_vertices[target(chord.back(), *m_ptm)] ); // anchor
+        for (std::size_t i=0; i<vrts.size()-1; ++i)
+        {
+          g_edge_descriptor e = add_edge(vrts[i], vrts[i+1], constrained_graph).first;
+          constrained_graph[e] = CGAL::approximate_sqrt(
+            CGAL::squared_distance(m_vpoint_map[constrained_graph[vrts[i]]],
+                                   m_vpoint_map[constrained_graph[vrts[i+1]]]));
+        }
+      } while (he != bcycle.he_head);
+    }
+
+    // now do shortest path on 1D constraints
+    std::vector<g_vertex_descriptor> pred(num_vertices(constrained_graph), boost::graph_traits<Graph>::null_vertex());
+    boost::dijkstra_shortest_paths(constrained_graph, super_vertex,
+        boost::predecessor_map(CGAL::make_property_map(pred)).weight_map(get(boost::edge_bundle, constrained_graph)));
+
+    // extract info in predecessor_map: TODO avoid to be too recursive
+    for(g_vertex_descriptor gv : make_range(vertices(constrained_graph)))
+    {
+      if (gv==super_vertex) continue;
+
+      g_vertex_descriptor igv=gv;
+      while (pred[igv]!=super_vertex)
+      {
+        CGAL_assertion( igv != pred[igv] );
+        igv=pred[igv];
+      }
+      CGAL_assertion( get(m_vanchor_map, constrained_graph[igv]) != CGAL_VSA_INVALID_TAG );
+      anchor_ids[ constrained_graph[gv] ] = get(m_vanchor_map, constrained_graph[igv]);
+    };
+
+    // Now the flooding per patch
+    std::vector< std::vector<vertex_descriptor> > vertex_patches(m_proxies.size());
+    std::vector< std::vector<vertex_descriptor> > anchor_patches(m_proxies.size());
+    std::vector< std::vector<vertex_descriptor> > interface_patches(m_proxies.size());
+    for(vertex_descriptor v : vertices(*m_ptm)) {
+      boost::container::flat_set<std::size_t> px_set;
+      for(face_descriptor f : faces_around_target(halfedge(v, *m_ptm), *m_ptm)) {
+        if (f != boost::graph_traits<TriangleMesh>::null_face())
+          px_set.insert(get(m_fproxy_map, f));
+        // TODO: a boundary face should count for 1
+      }
+      switch (px_set.size())
+      {
+        case 1:
+          vertex_patches[*px_set.begin()].push_back(v);
+        break;
+        case 2:
+          interface_patches[*px_set.begin()].push_back(v);
+          interface_patches[*std::next(px_set.begin())].push_back(v);
+        break;
+        default:
+        for(std::size_t p : px_set)
+          anchor_patches[p].push_back(v);
+      }
+    }
+
+    for (std::size_t pid = 0; pid<m_proxies.size(); ++pid)
+    {
+      CGAL_assertion(anchor_patches[pid].size() >=3 || anchor_patches[pid].size() == 0);
+      // ball patch has no boundary or anchor, usually are small floating parts
+      if (anchor_patches[pid].empty()) continue;
+
+      std::vector<bool> vertex_used(num_vertices(*m_ptm), false);
+      Graph graph;
+      super_vertex = add_vertex(graph);
+      for(vertex_descriptor v : vertex_patches[pid])
+      {
+        vertex_used[v] = true;
+        g_vertex_descriptor nv = add_vertex(graph);
+        graph[nv]=v;
+        tm_to_g_vertices[v]= nv;
+      }
+      for(vertex_descriptor v : interface_patches[pid])
+      {
+        CGAL_assertion(anchor_ids[v] != CGAL_VSA_INVALID_TAG);
+        vertex_used[v] = true;
+        g_vertex_descriptor nv = add_vertex(graph);
+        graph[nv]=v;
+        tm_to_g_vertices[v] = nv;
+      }
+      for(vertex_descriptor v : anchor_patches[pid])
+      {
+        g_vertex_descriptor nv = add_vertex(graph);
+        graph[nv]=v;
+        tm_to_g_vertices[v] = nv;
+        g_edge_descriptor e = add_edge(nv, super_vertex, graph).first;
+        graph[e]=0;
+
+        for (halfedge_descriptor h : halfedges_around_target(v, *m_ptm))
+        {
+          vertex_descriptor v2 = source(h, *m_ptm);
+          if (!vertex_used[v2]) continue;
+          g_vertex_descriptor g_v2 = tm_to_g_vertices[v2];
+          CGAL_assertion(graph[g_v2]==v2);
+          
+          
+if ( anchor_ids[v2] != CGAL_VSA_INVALID_TAG && anchor_ids[v2]!=anchor_ids[v]) continue;
+          
+          
+          g_edge_descriptor e = add_edge(nv, g_v2, graph).first;
+          graph[e] =  CGAL::approximate_sqrt(
+                        CGAL::squared_distance(m_vpoint_map[source(h, *m_ptm)],
+                                               m_vpoint_map[v]));
+        }
+      }
+
+      for (vertex_descriptor v : vertex_patches[pid])
+      {
+        g_vertex_descriptor g_v1 = tm_to_g_vertices[v];
+        for (halfedge_descriptor h : halfedges_around_target(v, *m_ptm))
+        {
+          vertex_descriptor v2 = source(h, *m_ptm);
+          if (!vertex_used[v2] || v2 < v) continue;
+          g_vertex_descriptor g_v2 = tm_to_g_vertices[v2];
+          
+if ( anchor_ids[v2] != CGAL_VSA_INVALID_TAG && 
+     anchor_ids[v] != CGAL_VSA_INVALID_TAG &&
+     anchor_ids[v2]!=anchor_ids[v] ) continue;          
+          
+          g_edge_descriptor e = add_edge(g_v1, g_v2, graph).first;
+          graph[e] =  CGAL::approximate_sqrt(
+                        CGAL::squared_distance(m_vpoint_map[v],
+                                               m_vpoint_map[v2]));          
+        }
+      }
+
+      for (vertex_descriptor v : interface_patches[pid])
+      {
+        g_vertex_descriptor g_v1 = tm_to_g_vertices[v];
+        for (halfedge_descriptor h : halfedges_around_target(v, *m_ptm))
+        {
+          vertex_descriptor v2 = source(h, *m_ptm);
+          if (!vertex_used[v2] || v2 < v) continue;
+          g_vertex_descriptor g_v2 = tm_to_g_vertices[v2];
+          
+if ( anchor_ids[v2] != CGAL_VSA_INVALID_TAG && 
+     anchor_ids[v] != CGAL_VSA_INVALID_TAG &&
+     anchor_ids[v2]!=anchor_ids[v] ) continue;     
+          
+          g_edge_descriptor e = add_edge(g_v1, g_v2, graph).first;
+          graph[e] =  CGAL::approximate_sqrt(
+                        CGAL::squared_distance(m_vpoint_map[v],
+                                               m_vpoint_map[v2]));          
+        }
+      }
+      std::vector<g_vertex_descriptor> pred(num_vertices(graph), boost::graph_traits<Graph>::null_vertex());
+      boost::dijkstra_shortest_paths(graph, super_vertex,
+          boost::predecessor_map(CGAL::make_property_map(pred)).weight_map(get(boost::edge_bundle, graph)));
+
+      // extract info in predecessor_map: TODO avoid to be too recursive
+      for(g_vertex_descriptor gv : make_range(vertices(graph)))
+      {
+        if (gv==super_vertex) continue;
+        CGAL_assertion( graph[gv] != boost::graph_traits<TriangleMesh>::null_vertex() );
+        if ( anchor_ids[graph[gv]] != CGAL_VSA_INVALID_TAG ) continue; 
+
+        if (!vertex_used[ graph[gv] ]) continue;
+        
+        g_vertex_descriptor igv=gv;
+        while (pred[igv]!=super_vertex)
+        {
+          if ( igv == pred[igv] ) std::cout << "ERROR with " << m_vpoint_map[graph[igv]] << "\n";
+          CGAL_assertion( igv != pred[igv] );
+          igv=pred[igv];
+        }
+        if ( get(m_vanchor_map, graph[igv]) == CGAL_VSA_INVALID_TAG )
+        CGAL_assertion( graph[igv] != boost::graph_traits<TriangleMesh>::null_vertex() );
+        CGAL_assertion( get(m_vanchor_map, graph[igv]) != CGAL_VSA_INVALID_TAG );
+        anchor_ids[ graph[gv] ] = get(m_vanchor_map, graph[igv]);
+      };
+    }
+
+    // collect triangles
+    CGAL_assertion_code(for(vertex_descriptor v : vertices(*m_ptm)))
+      CGAL_assertion(CGAL_VSA_INVALID_TAG != anchor_ids[v]);
+
+    for(face_descriptor f : faces(*m_ptm)) {
+      halfedge_descriptor he = halfedge(f, *m_ptm);
+      std::size_t i = anchor_ids[source(he, *m_ptm)];
+      std::size_t j = anchor_ids[target(he, *m_ptm)];
+      std::size_t k = anchor_ids[target(next(he, *m_ptm), *m_ptm)];
+      if (i != j && i != k && j != k)
+        m_tris.push_back( {i,j,k} );
+    }
+#else
     // subgraph attached with vertex anchor status and edge weight
     typedef boost::property<boost::vertex_index1_t, std::size_t,
       boost::property<boost::vertex_index2_t, std::size_t> > VertexProperty;
@@ -1682,7 +1921,7 @@ private:
           px_set.insert(get(m_fproxy_map, f));
       }
       for(std::size_t p : px_set)
-        vertex_patches[p].push_back(to_sgv_map[v]);
+        vertex_patches[p].push_back(to_sgv_map[v]); // TODO: could be done directly in the loop above
     }
     for(VertexVector& vpatch : vertex_patches) {
       // add a super vertex connecting to its boundary anchors in each patch
@@ -1768,7 +2007,7 @@ private:
         }
       } while (he != bcycle.he_head);
     }
-
+std::cout << "INSIDE CDT\n";
     // collect triangles
     for(face_descriptor f : faces(*m_ptm)) {
       halfedge_descriptor he = halfedge(f, *m_ptm);
@@ -1780,9 +2019,23 @@ private:
         t[0] = i;
         t[1] = j;
         t[2] = k;
+        std::cout << "  " <<  f << "\n";
         m_tris.push_back(t);
       }
     }
+
+    std::map<std::size_t, std::vector<Point_3> > mymap;
+    for (auto v : vertices(*m_ptm))
+      mymap[global_vtag_map[to_sgv_map[v]]].push_back( m_ptm->point(v) );
+
+    auto it = mymap.begin();
+    for (std::size_t kk=0; kk<mymap.size(); ++kk)
+    {
+      std::ofstream out("anchor_region"+std::to_string(kk)+".xyz");
+      std::copy(it->second.begin(), it->second.end(), std::ostream_iterator<Point_3>(out, "\n"));
+      ++it;
+    }
+#endif
   }
 
   /*!
