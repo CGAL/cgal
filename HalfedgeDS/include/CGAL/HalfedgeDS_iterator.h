@@ -200,7 +200,7 @@ public:
     bool operator!=( const Self& i) const { return !(*this == i); }
 
     Self& operator++() {
-        this->nt = (*this->nt).next();
+        this->nt = typename It::Iterator((*this->nt).next());
         return *this;
     }
     Self  operator++(int) {
@@ -266,7 +266,7 @@ public:
     bool operator!=( const It& i) const { return !(*this == i); }
 
     Self& operator++() {
-        this->nt = (*this->nt).next();
+        this->nt = typename It::Iterator((*this->nt).next());
         return *this;
     }
     Self  operator++(int) {
@@ -325,7 +325,7 @@ public:
     bool operator!=( const Self& i) const { return !(*this == i); }
 
     Self& operator++() {
-        this->nt = (*this->nt).next()->opposite();
+        this->nt = typename It::Iterator((*this->nt).next()->opposite());
         return *this;
     }
     Self  operator++(int) {
@@ -338,7 +338,7 @@ public:
 // ---------------------------------
 
     Self& operator--() {
-        this->nt = (*this->nt).opposite()->prev();
+        this->nt = typename It::Iterator((*this->nt).opposite()->prev());
         return *this;
     }
     Self  operator--(int) {
@@ -389,7 +389,7 @@ public:
     bool operator!=( const Self& i) const { return !(*this == i); }
 
     Self& operator++() {
-        this->nt = (*this->nt).next()->opposite();
+      this->nt = typename It::Iterator((*this->nt).next()->opposite());
         return *this;
     }
     Self  operator++(int) {
@@ -402,7 +402,7 @@ public:
 // ---------------------------------
 
     Self& operator--() {
-        this->nt = (*this->nt).opposite()->prev();
+        this->nt = typename It::Iterator((*this->nt).opposite()->prev());
         return *this;
     }
     Self  operator--(int) {
