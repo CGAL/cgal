@@ -1,4 +1,5 @@
-// Copyright (c) 2021 GeometryFactory (France).  All rights reserved.
+// Copyright (c) 1997-2021 INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
