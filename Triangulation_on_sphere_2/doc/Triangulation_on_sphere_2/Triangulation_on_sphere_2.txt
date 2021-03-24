@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_2D_Triangulations_on_sphere
 
 \cgalAutoToc
@@ -236,6 +236,6 @@ was developped over the two internships of Oliver Rouiller and Claudia Werner at
 under the supervision of Monique Teillaud.
 Based on this prototype, Mael Rouxel-Labbé developped the initial version of this package.
 
-*/ 
+*/
 } /* namespace CGAL */
 
