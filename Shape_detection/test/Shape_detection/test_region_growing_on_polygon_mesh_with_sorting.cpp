@@ -17,8 +17,6 @@
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_polygon_mesh.h>
 
 namespace SD = CGAL::Shape_detection;
-
-// Type declarations.
 using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
 
 using FT      = typename Kernel::FT;
@@ -37,22 +35,13 @@ int main(int argc, char *argv[]) {
   // Load data.
   std::ifstream in(argc > 1 ? argv[1] : "data/polygon_mesh.off");
   CGAL::set_ascii_mode(in);
-
-  if (!in) {
-    std::cout <<
-    "Error: cannot read the file polygon_mesh.off!" << std::endl;
-    std::cout <<
-    "You can either create a symlink to the data folder or provide this file by hand."
-    << std::endl << std::endl;
-    assert(false);
-    return EXIT_FAILURE;
-  }
+  assert(in);
 
   Polygon_mesh polygon_mesh;
   in >> polygon_mesh;
-
   in.close();
   const Face_range face_range = faces(polygon_mesh);
+  assert(face_range.size() == 32245);
 
   // Default parameter values for the data file polygon_mesh.off.
   const FT          distance_threshold = FT(1);
@@ -88,13 +77,9 @@ int main(int argc, char *argv[]) {
   // Run the algorithm.
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
-
   region_growing.release_memory();
+  // std::cout << regions.size() << std::endl;
   assert(regions.size() >= 324 && regions.size() <= 328);
-
-  const bool exact_exact_test_success = (regions.size() >= 324 && regions.size() <= 328);
-  std::cout << "exact_exact_test_success: " << exact_exact_test_success << std::endl;
-
-  const bool success = exact_exact_test_success;
-  return (success) ? EXIT_SUCCESS : EXIT_FAILURE;
+  std::cout << "rg_sortfaces3, epeck_test_success: " << true << std::endl;
+  return EXIT_SUCCESS;
 }

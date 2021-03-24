@@ -24,19 +24,19 @@ namespace SD = CGAL::Shape_detection;
 template<class Kernel>
 bool test_region_growing_on_point_set_3(int argc, char *argv[]) {
 
-  using FT       = typename Kernel::FT;
-  using Point_3  = typename Kernel::Point_3;
+  using FT      = typename Kernel::FT;
+  using Point_3 = typename Kernel::Point_3;
 
   using Input_range = CGAL::Point_set_3<Point_3>;
   using Point_map   = typename Input_range::Point_map;
   using Normal_map  = typename Input_range::Vector_map;
 
-  using Neighbor_query = SD::Point_set::K_neighbor_query<Kernel, Input_range, Point_map>;
+  using Neighbor_query = SD::Point_set::Sphere_neighbor_query<Kernel, Input_range, Point_map>;
   using Region_type    = SD::Point_set::Least_squares_plane_fit_region<Kernel, Input_range, Point_map, Normal_map>;
   using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type>;
 
   // Default parameter values for the data file point_set_3.xyz.
-  const std::size_t k                  = 12;
+  const FT          sphere_radius      = FT(5);
   const FT          distance_threshold = FT(2);
   const FT          angle_threshold    = FT(20);
   const std::size_t min_region_size    = 50;
@@ -44,29 +44,18 @@ bool test_region_growing_on_point_set_3(int argc, char *argv[]) {
   // Load data.
   std::ifstream in(argc > 1 ? argv[1] : "data/point_set_3.xyz");
   CGAL::set_ascii_mode(in);
-
-  if (!in) {
-    std::cout <<
-    "Error: cannot read the file point_set_3.xyz!" << std::endl;
-    std::cout <<
-    "You can either create a symlink to the data folder or provide this file by hand."
-    << std::endl << std::endl;
-    return false;
-  }
+  assert(in);
 
   const bool with_normal_map = true;
   Input_range input_range(with_normal_map);
-
   in >> input_range;
   in.close();
-
   assert(input_range.size() == 8075);
-  if (input_range.size() != 8075)
-    return false;
 
   // Create parameter classes.
   Neighbor_query neighbor_query(
-    input_range, CGAL::parameters::neighbor_radius(k), input_range.point_map());
+    input_range, CGAL::parameters::neighbor_radius(sphere_radius),
+    input_range.point_map());
 
   Region_type region_type(
     input_range,
@@ -82,23 +71,15 @@ bool test_region_growing_on_point_set_3(int argc, char *argv[]) {
 
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
-
-  // Test data.
-  assert(regions.size() >= 6 && regions.size() <= 8);
-  if (regions.size() < 6 || regions.size() > 8)
-    return false;
-
+  // std::cout << regions.size() << std::endl;
+  assert(regions.size() >= 7 && regions.size() <= 9);
   for (const auto& region : regions)
-    if (!region_type.is_valid_region(region))
-      return false;
+    assert(region_type.is_valid_region(region));
 
   std::vector<std::size_t> unassigned_points;
   region_growing.unassigned_items(std::back_inserter(unassigned_points));
-
-  assert(unassigned_points.size() >= 528 && unassigned_points.size() <= 548);
-  if (unassigned_points.size() < 528 || unassigned_points.size() > 548)
-    return false;
-
+  // std::cout << unassigned_points.size() << std::endl;
+  assert(unassigned_points.size() >= 49 && unassigned_points.size() <= 69);
   return true;
 }
 
@@ -110,7 +91,7 @@ int main(int argc, char *argv[]) {
   if (!test_region_growing_on_point_set_3< CGAL::Simple_cartesian<double> >(argc, argv))
     cartesian_double_test_success = false;
 
-  std::cout << "cartesian_double_test_success: " << cartesian_double_test_success << std::endl;
+  std::cout << "rg_points3, cartesian_test_success: " << cartesian_double_test_success << std::endl;
   assert(cartesian_double_test_success);
 
   // ------>
@@ -119,7 +100,7 @@ int main(int argc, char *argv[]) {
   if (!test_region_growing_on_point_set_3<CGAL::Exact_predicates_inexact_constructions_kernel>(argc, argv))
     exact_inexact_test_success = false;
 
-  std::cout << "exact_inexact_test_success: " << exact_inexact_test_success << std::endl;
+  std::cout << "rg_points3, epick_test_success: " << exact_inexact_test_success << std::endl;
   assert(exact_inexact_test_success);
 
   const bool success = cartesian_double_test_success && exact_inexact_test_success;

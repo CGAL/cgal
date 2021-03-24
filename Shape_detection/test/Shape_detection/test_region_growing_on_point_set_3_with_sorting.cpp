@@ -19,12 +19,10 @@
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
 
 namespace SD = CGAL::Shape_detection;
-
-// Type declarations.
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 
-using FT       = typename Kernel::FT;
-using Point_3  = typename Kernel::Point_3;
+using FT      = typename Kernel::FT;
+using Point_3 = typename Kernel::Point_3;
 
 using Input_range = CGAL::Point_set_3<Point_3>;
 using Point_map   = typename Input_range::Point_map;
@@ -40,22 +38,13 @@ int main(int argc, char *argv[]) {
   // Load data.
   std::ifstream in(argc > 1 ? argv[1] : "data/point_set_3.xyz");
   CGAL::set_ascii_mode(in);
-
-  if (!in) {
-    std::cout <<
-    "Error: cannot read the file point_set_3.xyz!" << std::endl;
-    std::cout <<
-    "You can either create a symlink to the data folder or provide this file by hand."
-    << std::endl << std::endl;
-    assert(false);
-    return EXIT_FAILURE;
-  }
+  assert(in);
 
   const bool with_normal_map = true;
   Input_range input_range(with_normal_map);
-
   in >> input_range;
   in.close();
+  assert(input_range.size() == 8075);
 
   // Default parameter values for the data file point_set_3.xyz.
   const std::size_t k                  = 12;
@@ -65,7 +54,8 @@ int main(int argc, char *argv[]) {
 
   // Create parameter classes.
   Neighbor_query neighbor_query(
-    input_range, CGAL::parameters::neighbor_radius(k), input_range.point_map());
+    input_range, CGAL::parameters::neighbor_radius(k),
+    input_range.point_map());
 
   Region_type region_type(
     input_range,
@@ -89,13 +79,9 @@ int main(int argc, char *argv[]) {
   // Run the algorithm.
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
-
   region_growing.release_memory();
+  // std::cout << regions.size() << std::endl;
   assert(regions.size() >= 6 && regions.size() <= 8);
-
-  const bool exact_inexact_test_success = (regions.size() >= 6 && regions.size() <= 8);
-  std::cout << "exact_inexact_test_success: " << exact_inexact_test_success << std::endl;
-
-  const bool success = exact_inexact_test_success;
-  return (success) ? EXIT_SUCCESS : EXIT_FAILURE;
+  std::cout << "rg_sortpoints3, epick_test_success: " << true << std::endl;
+  return EXIT_SUCCESS;
 }
