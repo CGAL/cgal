@@ -31,14 +31,15 @@ OutputIterator region_growing_planes(
   const CGAL::Polyhedron_3<GeomTraits, CGAL::Polyhedron_items_3, CGAL::HalfedgeDS_vector>& polyhedron,
   OutputIterator regions, const NamedParameters& np) {
 
-  using Polyhedron     = CGAL::Polyhedron_3<GeomTraits, CGAL::Polyhedron_items_3, CGAL::HalfedgeDS_vector>;
-  using Face_range     = typename CGAL::Iterator_range<typename boost::graph_traits<Polyhedron>::face_iterator>;
+  using Traits = GeomTraits;
+  using Polyhedron = CGAL::Polyhedron_3<Traits, CGAL::Polyhedron_items_3, CGAL::HalfedgeDS_vector>;
+  using Face_range = typename CGAL::Iterator_range<typename boost::graph_traits<Polyhedron>::face_iterator>;
   using Neighbor_query = Polygon_mesh::One_ring_neighbor_query<Polyhedron, Face_range>;
-  using Region_type    = Polygon_mesh::Least_squares_plane_fit_region<GeomTraits, Polyhedron, Face_range>;
-  using Sorting        = Polygon_mesh::Least_squares_plane_fit_sorting<GeomTraits, Polyhedron, Neighbor_query, Face_range>;
+  using Region_type = Polygon_mesh::Least_squares_plane_fit_region<Traits, Polyhedron, Face_range>;
+  using Sorting = Polygon_mesh::Least_squares_plane_fit_sorting<Traits, Polyhedron, Neighbor_query, Face_range>;
 
   using Vertex_to_point_map = typename Region_type::Vertex_to_point_map;
-  using Region_growing      = Region_growing<Face_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
+  using Region_growing = Region_growing<Face_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
   const Face_range face_range = faces(polyhedron);
   const Vertex_to_point_map vertex_to_point_map(
@@ -67,22 +68,21 @@ OutputIterator region_growing_planes(
 }
 
 template<
-typename Point_3,
+typename PointType,
 typename OutputIterator,
 typename NamedParameters>
 OutputIterator region_growing_planes(
-  const CGAL::Surface_mesh<Point_3>& surface_mesh,
-  OutputIterator regions, const NamedParameters& np) {
+  const CGAL::Surface_mesh<PointType>& surface_mesh, OutputIterator regions, const NamedParameters& np) {
 
-  using GeomTraits     = typename Kernel_traits<Point_3>::Kernel;
-  using Surface_mesh   = CGAL::Surface_mesh<Point_3>;
-  using Face_range     = typename Surface_mesh::Face_range;
+  using Traits = typename Kernel_traits<PointType>::Kernel;
+  using Surface_mesh = CGAL::Surface_mesh<PointType>;
+  using Face_range = typename Surface_mesh::Face_range;
   using Neighbor_query = Polygon_mesh::One_ring_neighbor_query<Surface_mesh>;
-  using Region_type    = Polygon_mesh::Least_squares_plane_fit_region<GeomTraits, Surface_mesh>;
-  using Sorting        = Polygon_mesh::Least_squares_plane_fit_sorting<GeomTraits, Surface_mesh, Neighbor_query>;
+  using Region_type = Polygon_mesh::Least_squares_plane_fit_region<Traits, Surface_mesh>;
+  using Sorting = Polygon_mesh::Least_squares_plane_fit_sorting<Traits, Surface_mesh, Neighbor_query>;
 
   using Vertex_to_point_map = typename Region_type::Vertex_to_point_map;
-  using Region_growing      = Region_growing<Face_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
+  using Region_growing = Region_growing<Face_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
   const Face_range face_range = faces(surface_mesh);
   const Vertex_to_point_map vertex_to_point_map(
@@ -100,10 +100,10 @@ OutputIterator region_growing_planes(
 }
 
 template<
-typename Point_3,
+typename PointType,
 typename OutputIterator>
 OutputIterator region_growing_planes(
-  const CGAL::Surface_mesh<Point_3>& surface_mesh, OutputIterator regions) {
+  const CGAL::Surface_mesh<PointType>& surface_mesh, OutputIterator regions) {
 
   return region_growing_planes(
     surface_mesh, regions, CGAL::parameters::all_default());

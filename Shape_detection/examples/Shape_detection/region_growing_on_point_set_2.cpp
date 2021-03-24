@@ -10,13 +10,13 @@ using Point_2  = typename Kernel::Point_2;
 using Vector_2 = typename Kernel::Vector_2;
 
 using Point_with_normal = std::pair<Point_2, Vector_2>;
-using Input_range       = std::vector<Point_with_normal>;
+using Point_set_2       = std::vector<Point_with_normal>;
 using Point_map         = CGAL::First_of_pair_property_map<Point_with_normal>;
 using Normal_map        = CGAL::Second_of_pair_property_map<Point_with_normal>;
 
-using Neighbor_query = CGAL::Shape_detection::Point_set::Sphere_neighbor_query<Kernel, Input_range, Point_map>;
-using Region_type    = CGAL::Shape_detection::Point_set::Least_squares_line_fit_region<Kernel, Input_range, Point_map, Normal_map>;
-using Region_growing = CGAL::Shape_detection::Region_growing<Input_range, Neighbor_query, Region_type>;
+using Neighbor_query = CGAL::Shape_detection::Point_set::Sphere_neighbor_query<Kernel, Point_set_2, Point_map>;
+using Region_type    = CGAL::Shape_detection::Point_set::Least_squares_line_fit_region<Kernel, Point_set_2, Point_map, Normal_map>;
+using Region_growing = CGAL::Shape_detection::Region_growing<Point_set_2, Neighbor_query, Region_type>;
 
 int main(int argc, char *argv[]) {
 
@@ -29,14 +29,14 @@ int main(int argc, char *argv[]) {
   }
 
   FT a, b, c, d, e, f;
-  Input_range input_range;
+  Point_set_2 point_set_2;
   while (in >> a >> b >> c >> d >> e >> f) {
-    input_range.push_back(
+    point_set_2.push_back(
       std::make_pair(Point_2(a, b), Vector_2(d, e)));
   }
   in.close();
-  std::cout << "* number of input points: " << input_range.size() << std::endl;
-  assert(input_range.size() == 3634);
+  std::cout << "* number of input points: " << point_set_2.size() << std::endl;
+  assert(point_set_2.size() == 3634);
 
   // Default parameter values for the data file point_set_2.xyz.
   const FT          search_sphere_radius = FT(5);
@@ -46,10 +46,10 @@ int main(int argc, char *argv[]) {
 
   // Create instances of the classes Neighbor_query and Region_type.
   Neighbor_query neighbor_query(
-    input_range, CGAL::parameters::neighbor_radius(search_sphere_radius));
+    point_set_2, CGAL::parameters::neighbor_radius(search_sphere_radius));
 
   Region_type region_type(
-    input_range,
+    point_set_2,
     CGAL::parameters::
     distance_threshold(max_distance_to_line).
     angle_deg_threshold(max_accepted_angle).
@@ -57,7 +57,7 @@ int main(int argc, char *argv[]) {
 
   // Create an instance of the region growing class.
   Region_growing region_growing(
-    input_range, neighbor_query, region_type);
+    point_set_2, neighbor_query, region_type);
 
   // Run the algorithm.
   std::vector< std::vector<std::size_t> > regions;
@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
 
   // Save regions to a file.
   const std::string fullpath = (argc > 2 ? argv[2] : "regions_point_set_2.ply");
-  utils::save_point_regions_2<Kernel, Input_range, Point_map>(
-    input_range, regions, fullpath);
+  utils::save_point_regions_2<Kernel, Point_set_2, Point_map>(
+    point_set_2, regions, fullpath);
   return EXIT_SUCCESS;
 }

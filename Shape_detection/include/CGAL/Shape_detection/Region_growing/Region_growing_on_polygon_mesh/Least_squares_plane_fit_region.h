@@ -239,10 +239,12 @@ namespace Polygon_mesh {
         const auto face = *(m_face_range.begin() + face_index);
         const Point_3 face_centroid = get_face_centroid(face);
         const Vector_3 face_normal = get_face_normal(face);
+
         m_plane_of_best_fit = Plane_3(face_centroid, face_normal);
-        m_normal_of_best_fit = face_normal;
+        m_normal_of_best_fit = m_plane_of_best_fit.orthogonal_vector();
 
       } else { // update reference plane and normal
+        CGAL_precondition(region.size() >= 2);
         std::tie(m_plane_of_best_fit, m_normal_of_best_fit) =
           get_plane_and_normal(region);
       }

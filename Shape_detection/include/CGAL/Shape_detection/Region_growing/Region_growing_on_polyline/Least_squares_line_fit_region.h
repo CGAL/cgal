@@ -117,14 +117,20 @@ namespace Polyline {
       const Point& input_point = get(m_point_map, key1);
       const Point& query_point = get(m_point_map, key2);
 
+      if (region.size() == 1) {
+        CGAL_precondition(input_point != query_point);
+        m_line_of_best_fit = Line(input_point, query_point);
+        m_direction_of_best_fit = m_line_of_best_fit.to_vector();
+        return true;
+      }
+
+      CGAL_precondition(region.size() >= 2);
+      if (input_point == query_point) return true;
       CGAL_precondition(input_point != query_point);
       const Vector query_direction(input_point, query_point);
 
-      if (region.size() == 1) {
-        m_line_of_best_fit = Line(input_point, query_point);
-        m_direction_of_best_fit = query_direction;
-        return true;
-      }
+      CGAL_precondition(m_line_of_best_fit != Line());
+      CGAL_precondition(m_direction_of_best_fit != Vector());
 
       const FT squared_distance_to_fitted_line =
         m_squared_distance(query_point, m_line_of_best_fit);
@@ -151,29 +157,15 @@ namespace Polyline {
 
     void update(const std::vector<std::size_t>& region) {
 
-      if (region.size() < 2) return;
-      CGAL_precondition(region.size() >= 2);
-      if (region.size() == 2) { // create new reference line and direction
-        const std::size_t point_index1 = region[0];
-        const std::size_t point_index2 = region[1];
-        CGAL_precondition(point_index1 < m_input_range.size());
-        CGAL_precondition(point_index2 < m_input_range.size());
-
-        // The best fit line will be a line through the two points with
-        // its direction being the line direction.
-        const auto& key1 = *(m_input_range.begin() + point_index1);
-        const auto& key2 = *(m_input_range.begin() + point_index2);
-        const Point& point1 = get(m_point_map, key1);
-        const Point& point2 = get(m_point_map, key2);
-
-        CGAL_precondition(point1 != point2);
-        m_line_of_best_fit = Line(point1, point2);
-        m_direction_of_best_fit = m_line_of_best_fit.to_vector();
-
-      } else { // update reference line and direction
-        std::tie(m_line_of_best_fit, m_direction_of_best_fit) =
-          get_line_and_direction(region);
+      if (region.size() < 2) {
+        m_line_of_best_fit = Line();
+        m_direction_of_best_fit = Vector();
+        return;
       }
+
+      CGAL_precondition(region.size() >= 2);
+      std::tie(m_line_of_best_fit, m_direction_of_best_fit) =
+        get_line_and_direction(region);
     }
 
     /// @}
@@ -183,7 +175,7 @@ namespace Polyline {
       const std::vector<std::size_t>& region) const {
 
       // The best fit line will be a line fitted to all region points with
-      // its direction being the line direction.
+      // its direction being the line's direction.
       CGAL_precondition(region.size() > 0);
       const Line line_of_best_fit =
         m_polyline_traits.create_line_from_points(

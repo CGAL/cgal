@@ -47,8 +47,8 @@ namespace Polyline {
       std::vector<std::size_t>& neighbors) const {
 
       neighbors.clear();
+      CGAL_precondition(query_index < m_input_range.size());
       const std::size_t n = m_input_range.size();
-      CGAL_precondition(query_index < n);
       const std::size_t im = (query_index + n - 1) % n;
       const std::size_t ip = (query_index + 1) % n;
       neighbors.push_back(im);

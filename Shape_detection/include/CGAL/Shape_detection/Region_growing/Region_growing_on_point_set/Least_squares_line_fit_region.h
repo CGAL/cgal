@@ -188,6 +188,7 @@ namespace Point_set {
       const auto& key = *(m_input_range.begin() + query_index);
       const Point_2& query_point = get(m_point_map, key);
       const Vector_2& query_normal = get(m_normal_map, key);
+      CGAL_precondition(query_normal != Vector_2());
 
       const FT squared_distance_to_fitted_line =
         m_squared_distance_2(query_point, m_line_of_best_fit);
@@ -244,11 +245,14 @@ namespace Point_set {
         const auto& key = *(m_input_range.begin() + point_index);
         const Point_2& point = get(m_point_map, key);
         const Vector_2& normal = get(m_normal_map, key);
+        CGAL_precondition(normal != Vector_2());
 
         m_line_of_best_fit = Line_2(point, normal).perpendicular(point);
-        m_normal_of_best_fit = normal;
+        m_normal_of_best_fit = m_line_of_best_fit.perpendicular(
+          m_line_of_best_fit.point(0)).to_vector();
 
       } else { // update reference line and normal
+        CGAL_precondition(region.size() >= 2);
         std::tie(m_line_of_best_fit, m_normal_of_best_fit) =
           get_line_and_normal(region);
       }
@@ -276,6 +280,7 @@ namespace Point_set {
         CGAL_precondition(normal_index < m_input_range.size());
         const auto& key = *(m_input_range.begin() + normal_index);
         const Vector_2& normal = get(m_normal_map, key);
+        CGAL_precondition(normal != Vector_2());
         const bool agrees =
           m_scalar_product_2(normal, unoriented_normal_of_best_fit) > FT(0);
         votes_to_keep_normal += (agrees ? 1 : -1);

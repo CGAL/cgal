@@ -38,20 +38,17 @@ using Timer  = CGAL::Timer;
 using Region = std::vector<std::size_t>;
 
 void create_input_range(
-  const std::size_t num_copies,
-  const Input_range& input,
-  Input_range& output,
+  const std::size_t num_copies, const Input_range& input, Input_range& output,
   const bool save = false) {
 
   const Point_2 a = Point_2(-0.25147, -0.49995);
-  const Point_2 b = Point_2( 0.25147, -0.49995);
+  const Point_2 b = Point_2(+0.25147, -0.49995);
 
   output.reserve(num_copies * input.size());
   for (std::size_t i = 0; i < num_copies; ++i) {
 
     const FT x1 = i * a.x();
     const FT y1 = i * a.y();
-
     const FT x2 = i * b.x();
     const FT y2 = i * b.y();
 
@@ -60,24 +57,17 @@ void create_input_range(
 
     const Vector_2 tr = Vector_2(p1, p2);
     for (const auto& item : input) {
-
       const Point_3& p = item.first;
       const Vector_3& n = item.second;
-
-      const Point_3 q = Point_3(
-        p.x() + tr.x(),
-        p.y() + tr.y(),
-        p.z());
-
+      const Point_3 q = Point_3(p.x() + tr.x(), p.y() + tr.y(), p.z());
       output.push_back(std::make_pair(q, n));
     }
   }
 
   if (save) {
-    const std::string path =
-    "path_to_out_folder/";
-    const std::string fullpath =
-    path + "bench_point_set_3-" + std::to_string(num_copies) + ".xyz";
+    const std::string path = "path_to_out_folder/";
+    const std::string fullpath = path + "bench_point_set_3-" +
+      std::to_string(num_copies) + ".xyz";
 
     std::ofstream out(fullpath);
     for (const auto& item : output)
@@ -87,12 +77,9 @@ void create_input_range(
 }
 
 void benchmark_region_growing_on_point_set_3(
-  const std::size_t num_copies,
-  const Input_range& input,
-  const std::size_t k,
-  const FT distance_threshold,
-  const FT angle_threshold,
-  const std::size_t min_region_size) {
+  const std::size_t num_copies, const Input_range& input,
+  const std::size_t k, const FT distance_threshold,
+  const FT angle_threshold, const std::size_t min_region_size) {
 
   Input_range input_range;
   create_input_range(num_copies, input, input_range);
@@ -131,17 +118,14 @@ int main(int argc, char *argv[]) {
   CGAL::set_ascii_mode(in);
 
   if (!in) {
-    std::cout <<
-    "Error: cannot read the file point_set_3.xyz!" << std::endl;
-    std::cout <<
-    "You can either create a symlink to the data folder or provide this file by hand."
-    << std::endl << std::endl;
+    std::cout << "Error: cannot read the file point_set_3.xyz!" << std::endl;
+    std::cout << "You can either create a symlink to the data folder or provide this file by hand."
+      << std::endl << std::endl;
     return EXIT_FAILURE;
   }
 
   Input_range input;
   Point_3 p; Vector_3 n;
-
   while (in >> p >> n)
     input.push_back(std::make_pair(p, n));
   in.close();

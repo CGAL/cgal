@@ -66,22 +66,6 @@ namespace Polyline {
     /// \name Initialization
     /// @{
 
-    /*!
-      \brief initializes all internal data structures.
-
-      \param input_range
-      an instance of `InputRange` with 2D points
-
-      \param neighbor_query
-      an instance of `NeighborQuery` that is used internally to
-      access point's neighbors
-
-      \param point_map
-      an instance of `PointMap` that maps an item from `input_range`
-      to `Kernel::Point_2`
-
-      \pre `input_range.size() > 0`
-    */
     Least_squares_line_fit_sorting(
       const InputRange& input_range,
       NeighborQuery& neighbor_query,
@@ -102,9 +86,6 @@ namespace Polyline {
     /// \name Sorting
     /// @{
 
-    /*!
-      \brief sorts indices of input points.
-    */
     void sort() {
 
       compute_scores();
@@ -118,10 +99,6 @@ namespace Polyline {
     /// \name Access
     /// @{
 
-    /*!
-      \brief returns an instance of `Seed_map` to access the ordered indices
-      of input points.
-    */
     Seed_map seed_map() {
       return Seed_map(m_order);
     }

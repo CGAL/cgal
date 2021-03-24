@@ -39,16 +39,16 @@ namespace Shape_detection {
     - the `SeedMap` property map enables to define the seeding order of items and skip unnecessary items.
 
     \tparam InputRange
-    must be a model of `ConstRange`.
+    a model of `ConstRange`.
 
     \tparam NeighborQuery
-    must be a model of `NeighborQuery`.
+    a model of `NeighborQuery`.
 
     \tparam RegionType
-    must be a model of `RegionType`.
+    a model of `RegionType`.
 
     \tparam SeedMap
-    must be an `LvaluePropertyMap` whose key and value types are `std::size_t`.
+    a model of `ReadablePropertyMap` whose key and value types are `std::size_t`.
     %Default is `CGAL::Identity_property_map`.
   */
   template<
@@ -59,18 +59,19 @@ namespace Shape_detection {
   class Region_growing {
 
   public:
-
     /// \cond SKIP_IN_MANUAL
     using Input_range = InputRange;
     using Neighbor_query = NeighborQuery;
     using Region_type = RegionType;
     using Seed_map = SeedMap;
-
-    using Visited_items = std::vector<bool>;
-    using Running_queue = std::queue<std::size_t>;
-    using Indices       = std::vector<std::size_t>;
     /// \endcond
 
+  private:
+    using Visited_items = std::vector<bool>;
+    using Running_queue = std::queue<std::size_t>;
+    using Indices = std::vector<std::size_t>;
+
+  public:
     /// \name Initialization
     /// @{
 
@@ -199,19 +200,22 @@ namespace Shape_detection {
 
     /// \cond SKIP_IN_MANUAL
     void clear() {
-
       m_visited.clear();
       m_visited.resize(m_input_range.size(), false);
     }
 
     void release_memory() {
-
       m_visited.clear();
       m_visited.shrink_to_fit();
     }
     /// \endcond
 
   private:
+    const Input_range& m_input_range;
+    Neighbor_query& m_neighbor_query;
+    Region_type& m_region_type;
+    const Seed_map m_seed_map;
+    Visited_items m_visited;
 
     void propagate(const std::size_t seed_index, Indices& region) {
       region.clear();
@@ -276,14 +280,6 @@ namespace Shape_detection {
       for (const std::size_t item_index : region)
         m_visited[item_index] = false;
     }
-
-    // Fields.
-    const Input_range& m_input_range;
-    Neighbor_query& m_neighbor_query;
-    Region_type& m_region_type;
-    const Seed_map m_seed_map;
-
-    Visited_items m_visited;
   };
 
 } // namespace Shape_detection

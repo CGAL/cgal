@@ -36,12 +36,9 @@ using Timer  = CGAL::Timer;
 using Region = std::vector<std::size_t>;
 
 void benchmark_region_growing_on_point_set_2(
-  const std::size_t test_count,
-  const Input_range& input_range,
-  const FT sphere_radius,
-  const FT distance_threshold,
-  const FT angle_threshold,
-  const std::size_t min_region_size) {
+  const std::size_t test_count, const Input_range& input_range,
+  const FT sphere_radius, const FT distance_threshold,
+  const FT angle_threshold, const std::size_t min_region_size) {
 
   // Create instances of the parameter classes.
   Neighbor_query neighbor_query(
@@ -95,17 +92,14 @@ int main(int argc, char *argv[]) {
   CGAL::set_ascii_mode(in);
 
   if (!in) {
-    std::cout <<
-    "Error: cannot read the file point_set_2.xyz!" << std::endl;
-    std::cout <<
-    "You can either create a symlink to the data folder or provide this file by hand."
-    << std::endl << std::endl;
+    std::cout << "Error: cannot read the file point_set_2.xyz!" << std::endl;
+    std::cout << "You can either create a symlink to the data folder or provide this file by hand."
+      << std::endl << std::endl;
     return EXIT_FAILURE;
   }
 
-  Input_range input_range;
   FT a, b, c, d, e, f;
-
+  Input_range input_range;
   while (in >> a >> b >> c >> d >> e >> f)
     input_range.push_back(std::make_pair(Point_2(a, b), Vector_2(d, e)));
   in.close();

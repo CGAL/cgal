@@ -188,6 +188,14 @@ namespace Point_set {
       const auto& key = *(m_input_range.begin() + query_index);
       const Point_3& query_point = get(m_point_map, key);
       const Vector_3& query_normal = get(m_normal_map, key);
+      CGAL_precondition(query_normal != Vector_3());
+
+      const FT a = CGAL::abs(m_plane_of_best_fit.a());
+      const FT b = CGAL::abs(m_plane_of_best_fit.b());
+      const FT c = CGAL::abs(m_plane_of_best_fit.c());
+      const FT d = CGAL::abs(m_plane_of_best_fit.d());
+      if (a == FT(0) && b == FT(0) && c == FT(0) && d == FT(0))
+        return false;
 
       const FT squared_distance_to_fitted_plane =
         m_squared_distance_3(query_point, m_plane_of_best_fit);
@@ -244,11 +252,13 @@ namespace Point_set {
         const auto& key = *(m_input_range.begin() + point_index);
         const Point_3& point = get(m_point_map, key);
         const Vector_3& normal = get(m_normal_map, key);
+        CGAL_precondition(normal != Vector_3());
 
         m_plane_of_best_fit = Plane_3(point, normal);
-        m_normal_of_best_fit = normal;
+        m_normal_of_best_fit = m_plane_of_best_fit.orthogonal_vector();
 
       } else { // update reference plane and normal
+        CGAL_precondition(region.size() >= 2);
         std::tie(m_plane_of_best_fit, m_normal_of_best_fit) =
           get_plane_and_normal(region);
       }
@@ -275,6 +285,7 @@ namespace Point_set {
         CGAL_precondition(normal_index < m_input_range.size());
         const auto& key = *(m_input_range.begin() + normal_index);
         const Vector_3& normal = get(m_normal_map, key);
+        CGAL_precondition(normal != Vector_3());
         const bool agrees =
           m_scalar_product_3(normal, unoriented_normal_of_best_fit) > FT(0);
         votes_to_keep_normal += (agrees ? 1 : -1);

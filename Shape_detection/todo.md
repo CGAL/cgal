@@ -1,5 +1,4 @@
 - add Polyline_graph that extracts the graph from the polygon mesh
 - finish new tests, clean old tests
-- cleanup the code
 - update the docs
 - update polyhedron demo

@@ -29,23 +29,22 @@ namespace CGAL {
 namespace Shape_detection {
 
 template<
-typename Point_d,
-typename Vector_d,
+typename InputRange,
 typename OutputIterator,
 typename NamedParameters>
 OutputIterator region_growing_lines(
-  const std::vector< std::pair<Point_d, Vector_d> >& points_with_normals,
-  OutputIterator regions, const NamedParameters& np) {
+  const InputRange& points_with_normals, OutputIterator regions, const NamedParameters& np) {
 
-  using GeomTraits        = typename Kernel_traits<Point_d>::Kernel;
-  using Point_with_normal = std::pair<Point_d, Vector_d>;
-  using Input_range       = std::vector<Point_with_normal>;
-  using Point_map         = CGAL::First_of_pair_property_map<Point_with_normal>;
-  using Normal_map        = CGAL::Second_of_pair_property_map<Point_with_normal>;
+  using Input_range = InputRange;
+  using Point_with_normal = typename Input_range::value_type;
+  using Point_type = typename Point_with_normal::first_type;
+  using Traits = typename Kernel_traits<Point_type>::Kernel;
+  using Point_map = CGAL::First_of_pair_property_map<Point_with_normal>;
+  using Normal_map = CGAL::Second_of_pair_property_map<Point_with_normal>;
 
-  using Neighbor_query = Point_set::Sphere_neighbor_query<GeomTraits, Input_range, Point_map>;
-  using Region_type    = Point_set::Least_squares_line_fit_region<GeomTraits, Input_range, Point_map, Normal_map>;
-  using Sorting        = Point_set::Least_squares_line_fit_sorting<GeomTraits, Input_range, Neighbor_query, Point_map>;
+  using Neighbor_query = Point_set::Sphere_neighbor_query<Traits, Input_range, Point_map>;
+  using Region_type = Point_set::Least_squares_line_fit_region<Traits, Input_range, Point_map, Normal_map>;
+  using Sorting = Point_set::Least_squares_line_fit_sorting<Traits, Input_range, Neighbor_query, Point_map>;
   using Region_growing = Region_growing<Input_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
   Neighbor_query neighbor_query(points_with_normals, np, Point_map());
@@ -60,35 +59,32 @@ OutputIterator region_growing_lines(
 }
 
 template<
-typename Point_d,
-typename Vector_d,
+typename InputRange,
 typename OutputIterator>
 OutputIterator region_growing_lines(
-  const std::vector< std::pair<Point_d, Vector_d> >& points_with_normals,
-  OutputIterator regions) {
+  const InputRange& points_with_normals, OutputIterator regions) {
 
   return region_growing_lines(
     points_with_normals, regions, CGAL::parameters::all_default());
 }
 
 template<
-typename Point_3,
-typename Vector_3,
+typename InputRange,
 typename OutputIterator,
 typename NamedParameters>
 OutputIterator region_growing_planes(
-  const std::vector< std::pair<Point_3, Vector_3> >& points_with_normals,
-  OutputIterator regions, const NamedParameters& np) {
+  const InputRange& points_with_normals, OutputIterator regions, const NamedParameters& np) {
 
-  using GeomTraits        = typename Kernel_traits<Point_3>::Kernel;
-  using Point_with_normal = std::pair<Point_3, Vector_3>;
-  using Input_range       = std::vector<Point_with_normal>;
-  using Point_map         = CGAL::First_of_pair_property_map<Point_with_normal>;
-  using Normal_map        = CGAL::Second_of_pair_property_map<Point_with_normal>;
+  using Input_range = InputRange;
+  using Point_with_normal = typename Input_range::value_type;
+  using Point_type = typename Point_with_normal::first_type;
+  using Traits = typename Kernel_traits<Point_type>::Kernel;
+  using Point_map = CGAL::First_of_pair_property_map<Point_with_normal>;
+  using Normal_map = CGAL::Second_of_pair_property_map<Point_with_normal>;
 
-  using Neighbor_query = Point_set::Sphere_neighbor_query<GeomTraits, Input_range, Point_map>;
-  using Region_type    = Point_set::Least_squares_plane_fit_region<GeomTraits, Input_range, Point_map, Normal_map>;
-  using Sorting        = Point_set::Least_squares_plane_fit_sorting<GeomTraits, Input_range, Neighbor_query, Point_map>;
+  using Neighbor_query = Point_set::Sphere_neighbor_query<Traits, Input_range, Point_map>;
+  using Region_type = Point_set::Least_squares_plane_fit_region<Traits, Input_range, Point_map, Normal_map>;
+  using Sorting = Point_set::Least_squares_plane_fit_sorting<Traits, Input_range, Neighbor_query, Point_map>;
   using Region_growing = Region_growing<Input_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
   Neighbor_query neighbor_query(points_with_normals, np, Point_map());
@@ -103,12 +99,10 @@ OutputIterator region_growing_planes(
 }
 
 template<
-typename Point_3,
-typename Vector_3,
+typename InputRange,
 typename OutputIterator>
 OutputIterator region_growing_planes(
-  const std::vector< std::pair<Point_3, Vector_3> >& points_with_normals,
-  OutputIterator regions) {
+  const InputRange& points_with_normals, OutputIterator regions) {
 
   return region_growing_planes(
     points_with_normals, regions, CGAL::parameters::all_default());
