@@ -15,6 +15,7 @@
 
 #include <CGAL/license/Triangulation_on_sphere_2.h>
 
+#include <CGAL/double.h>
 #include <CGAL/Algebraic_structure_traits.h>
 #include <CGAL/number_utils.h>
 
