@@ -853,7 +853,7 @@ public:
         // We next check if v is a vertex on the face to avoid a geometric test
         bool v_vertex_of_f = false;
         Halffacet_cycle_iterator fci;
-        for(fci=f->facet_cycles_begin(); fci!=f->facet_cycles_end(); ++fci) {
+        for(fci=f->facet_cycles_begin(); (! v_vertex_of_f) && (fci!=f->facet_cycles_end()); ++fci) {
           if(fci.is_shalfedge()) {
             SHalfedge_around_facet_circulator sfc(fci), send(sfc);
             CGAL_For_all(sfc,send) {
