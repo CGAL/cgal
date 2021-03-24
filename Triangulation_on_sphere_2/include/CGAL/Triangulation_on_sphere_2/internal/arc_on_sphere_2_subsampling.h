@@ -13,6 +13,8 @@
 #ifndef CGAL_TOS2_INTERNAL_ARC_ON_SPHERE_SUBSAMPLING_H
 #define CGAL_TOS2_INTERNAL_ARC_ON_SPHERE_SUBSAMPLING_H
 
+#include <CGAL/license/Triangulation_on_sphere_2.h>
+
 #ifdef CGAL_EIGEN3_ENABLED
 
 #include <CGAL/Eigen_solver_traits.h>
