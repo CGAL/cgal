@@ -21,6 +21,7 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/copy_n.h>
 #include <CGAL/number_type_config.h>
+#include <CGAL/double.h>
 #include <list>
 
 namespace CGAL {
