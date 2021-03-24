@@ -1669,6 +1669,35 @@ private:
       constrained_graph[e]=0;
     }
 
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_CDT_DEBUG
+    std::ofstream debug_out("boundary_cycles.polylines.txt");
+    debug_out.precision(17);
+#endif
+
+    typedef CGAL::dynamic_halfedge_property_t<bool> Hbool_tag;
+    typename boost::property_map<TriangleMesh, Hbool_tag>::const_type
+      is_patch_border = get( Hbool_tag(), *m_ptm);
+
+    for (edge_descriptor e : edges(*m_ptm))
+    {
+      halfedge_descriptor h1 = halfedge(e, *m_ptm);
+      halfedge_descriptor h2 = opposite(h1, *m_ptm);
+
+      face_descriptor f1=face(h1, *m_ptm), f2=face(h2, *m_ptm);
+      if (f1 == boost::graph_traits<TriangleMesh>::null_face() ||
+          f2 == boost::graph_traits<TriangleMesh>::null_face() ||
+          get(m_fproxy_map, f1) != get(m_fproxy_map, f2))
+      {
+        put(is_patch_border, h1, true);
+        put(is_patch_border, h2, true);
+      }
+      else
+      {
+        put(is_patch_border, h1, false);
+        put(is_patch_border, h2, false);
+      }
+    }
+
     // loop over constrained edges
     CGAL_assertion(m_bcycles.size()==m_proxies.size());
 
@@ -1702,9 +1731,17 @@ private:
           constrained_graph[e] = CGAL::approximate_sqrt(
             CGAL::squared_distance(m_vpoint_map[constrained_graph[vrts[i]]],
                                    m_vpoint_map[constrained_graph[vrts[i+1]]]));
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_CDT_DEBUG
+          debug_out << "2 " << m_vpoint_map[constrained_graph[vrts[i]]] <<
+                       " " << m_vpoint_map[constrained_graph[vrts[i+1]]] << "\n";
+#endif
         }
       } while (he != bcycle.he_head);
     }
+
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_CDT_DEBUG
+    debug_out.close();
+#endif
 
     // now do shortest path on 1D constraints
     std::vector<g_vertex_descriptor> pred(num_vertices(constrained_graph), boost::graph_traits<Graph>::null_vertex());
@@ -1754,6 +1791,10 @@ private:
 
     for (std::size_t pid = 0; pid<m_proxies.size(); ++pid)
     {
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_CDT_DEBUG
+      std::ofstream debug_out2("flooding_graph_2.polylines.txt");
+#endif
+
       CGAL_assertion(anchor_patches[pid].size() >=3 || anchor_patches[pid].size() == 0);
       // ball patch has no boundary or anchor, usually are small floating parts
       if (anchor_patches[pid].empty()) continue;
@@ -1787,19 +1828,26 @@ private:
         for (halfedge_descriptor h : halfedges_around_target(v, *m_ptm))
         {
           vertex_descriptor v2 = source(h, *m_ptm);
-          //~ if (!vertex_used[v2]) continue;
           if (vertices_used.count(v2)==0) continue;
           g_vertex_descriptor g_v2 = get(tm_to_g_vertices, v2);
           CGAL_assertion(graph[g_v2]==v2);
 
-// HACKY
-if ( get(closest_anchor_ids, v2) != CGAL_VSA_INVALID_TAG && get(closest_anchor_ids, v2)!=get(closest_anchor_ids, v)) continue;
+// HACKY (fixes case of the issue but breaks the testsuite)
+if ( (!get(is_patch_border, h)) &&
+      get(closest_anchor_ids, v2) != CGAL_VSA_INVALID_TAG &&
+      get(closest_anchor_ids, v2)!=get(closest_anchor_ids, v)) continue;
 
 
           g_edge_descriptor e = add_edge(nv, g_v2, graph).first;
           graph[e] =  CGAL::approximate_sqrt(
                         CGAL::squared_distance(m_vpoint_map[source(h, *m_ptm)],
                                                m_vpoint_map[v]));
+
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_CDT_DEBUG
+          debug_out2 << "2 " << m_vpoint_map[source(h, *m_ptm)] <<
+                       " " << m_vpoint_map[v] << "\n";
+#endif
+
         }
       }
 
@@ -1809,11 +1857,11 @@ if ( get(closest_anchor_ids, v2) != CGAL_VSA_INVALID_TAG && get(closest_anchor_i
         for (halfedge_descriptor h : halfedges_around_target(v, *m_ptm))
         {
           vertex_descriptor v2 = source(h, *m_ptm);
-          //~ if (!vertex_used[v2] || v2 < v) continue;
           if (vertices_used.count(v2)==0 || v2 < v) continue;
           g_vertex_descriptor g_v2 = get(tm_to_g_vertices, v2);
-// HACKY
-if ( get(closest_anchor_ids, v2) != CGAL_VSA_INVALID_TAG &&
+// HACKY (fixes case of the issue but breaks the testsuite)
+if ( (!get(is_patch_border, h)) &&
+     get(closest_anchor_ids, v2) != CGAL_VSA_INVALID_TAG &&
      get(closest_anchor_ids, v) != CGAL_VSA_INVALID_TAG &&
      get(closest_anchor_ids, v2)!=get(closest_anchor_ids, v) ) continue;
 
@@ -1821,8 +1869,17 @@ if ( get(closest_anchor_ids, v2) != CGAL_VSA_INVALID_TAG &&
           graph[e] =  CGAL::approximate_sqrt(
                         CGAL::squared_distance(m_vpoint_map[v],
                                                m_vpoint_map[v2]));
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_CDT_DEBUG
+          debug_out2 << "2 " << m_vpoint_map[v] <<
+                       " " << m_vpoint_map[v2] << "\n";
+#endif
+
         }
       }
+
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_CDT_DEBUG
+      debug_out2.close();
+#endif
 
       std::vector<g_vertex_descriptor> pred(num_vertices(graph), boost::graph_traits<Graph>::null_vertex());
       boost::dijkstra_shortest_paths(graph, super_vertex,
@@ -1838,6 +1895,13 @@ if ( get(closest_anchor_ids, v2) != CGAL_VSA_INVALID_TAG &&
         g_vertex_descriptor igv=gv;
         while (pred[igv]!=super_vertex)
         {
+#ifdef CGAL_SURFACE_MESH_APPROXIMATION_CDT_DEBUG
+          if( igv == pred[igv] )
+          {
+            CGAL_assertion(igv==gv);
+            std::cerr << "ISSUE with " << m_vpoint_map[graph[gv]] << "\n";
+          }
+#endif
           CGAL_assertion( igv != pred[igv] );
           igv=pred[igv];
         }
