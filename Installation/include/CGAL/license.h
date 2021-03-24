@@ -12,7 +12,7 @@
 #ifndef CGAL_LICENSE_CHECK_H
 #define CGAL_LICENSE_CHECK_H
 
-//#define CGAL_LICENSE_WARNING  1   // in order to get a warning during compilation
+#define CGAL_LICENSE_WARNING  1   // in order to get a warning during compilation
 //#define CGAL_LICENSE_ERROR    1   // in order to get an error during compilation
 
 // if no such define exists, the package is used under the GPL or LGPL
@@ -20,5 +20,8 @@
 // Any release made b......
 // e.g.
 //#define CGAL_AABB_TREE_COMMERCIAL_LICENSE  20140101
+#define CGAL_TDS_2_COMMERCIAL_LICENSE 20310101
+#define CGAL_TRIANGULATION_ON_SPHERE_2_COMMERCIAL_LICENSE 20310101
+#define CGAL_CIRCULAR_KERNEL_3_COMMERCIAL_LICENSE 20310101
 
 #endif // CGAL_LICENSE_CHECK_H
