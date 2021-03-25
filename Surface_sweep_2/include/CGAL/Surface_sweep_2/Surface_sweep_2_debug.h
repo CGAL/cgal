@@ -143,7 +143,11 @@ void No_intersection_surface_sweep_2<Vis>::PrintEvent(const Event* e)
     Arr_parameter_space x = e->parameter_space_in_x();
     Arr_parameter_space y = e->parameter_space_in_y();
     PrintOpenBoundaryType(x, y);
-    std::cout << " with open curve: " << e->curve();
+    if (! e->is_isolated()) {
+      Arr_curve_end ce;
+      std::cout << " with open curve: " << e->boundary_touching_curve(ce)
+                << " at " << ce;
+    }
   }
 }
 
