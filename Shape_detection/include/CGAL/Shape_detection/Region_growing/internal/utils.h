@@ -17,6 +17,8 @@
 #include <CGAL/license/Shape_detection.h>
 
 // STL includes.
+#include <set>
+#include <map>
 #include <vector>
 #include <algorithm>
 #include <type_traits>

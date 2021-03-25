@@ -134,7 +134,7 @@ namespace internal {
     const std::vector<std::size_t>& m_seeds;
   };
 
-  class Point_to_region_index_map {
+  class Item_to_region_index_map {
 
   public:
     using key_type = std::size_t;
@@ -142,29 +142,33 @@ namespace internal {
     using reference = value_type;
     using category = boost::readable_property_map_tag;
 
-    Point_to_region_index_map() { }
+    Item_to_region_index_map() { }
 
-    template<typename PointRange>
-    Point_to_region_index_map(
-      const PointRange& points,
+    template<typename ItemRange>
+    Item_to_region_index_map(
+      const ItemRange& items,
       const std::vector< std::vector<std::size_t> >& regions) :
-    m_indices(new std::vector<int>(points.size(), -1)) {
+    m_indices(items.size(), -1) {
 
-      for (std::size_t i = 0; i < regions.size(); ++i)
-        for (const std::size_t index : regions[i])
-          (*m_indices)[index] = static_cast<int>(i);
+      for (std::size_t i = 0; i < regions.size(); ++i) {
+        for (const std::size_t index : regions[i]) {
+          CGAL_precondition(index < m_indices.size());
+          m_indices[index] = static_cast<int>(i);
+        }
+      }
     }
 
     inline friend value_type get(
-      const Point_to_region_index_map& point_to_region_index_map,
+      const Item_to_region_index_map& item_to_region_index_map,
       const key_type key) {
 
-      const auto& indices = *(point_to_region_index_map.m_indices);
+      const auto& indices = item_to_region_index_map.m_indices;
+      CGAL_precondition(key < indices.size());
       return indices[key];
     }
 
   private:
-    std::shared_ptr< std::vector<int> > m_indices;
+    std::vector<int> m_indices;
   };
 
 } // namespace internal
