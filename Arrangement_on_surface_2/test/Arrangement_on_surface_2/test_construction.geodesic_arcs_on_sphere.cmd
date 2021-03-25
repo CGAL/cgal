@@ -6,3 +6,6 @@
 ./data/test_construction/geodesic_arcs_on_sphere/test06.txt
 ./data/test_construction/geodesic_arcs_on_sphere/test07.txt
 ./data/test_construction/geodesic_arcs_on_sphere/test08.txt
+./data/test_construction/geodesic_arcs_on_sphere/test10.txt
+./data/test_construction/geodesic_arcs_on_sphere/test11.txt
+./data/test_construction/geodesic_arcs_on_sphere/test12.txt
