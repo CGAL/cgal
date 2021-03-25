@@ -11,7 +11,7 @@
 #define CGAL_MESH_3_MESH_COMPLEX_3_IN_TRIANGULATION_3_FWD_H
 
 /// \file Mesh_complex_3_in_triangulation_3_fwd.h
-/// Forward declarations of the Mesh_3 package.
+/// Forward declarations of the MDS_3 package.
 
 #ifndef DOXYGEN_RUNNING
 namespace CGAL {
