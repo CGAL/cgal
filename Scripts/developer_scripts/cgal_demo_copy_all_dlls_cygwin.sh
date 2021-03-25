@@ -19,7 +19,10 @@ copy_dll()
 {
   local dll_full_path=$(cygpath --unix --absolute "$1")
   echo "copy $dll_full_path to $2"
-  cp "$dll_full_path" "$2"
+  #remove all dlls from system and Visual
+  if ! [[ "$dll_full_path" =~ "Visual" ]] && ! [[ "$dll_full_path" =~ "system32" ]]; then
+    cp "$dll_full_path" "$2"
+  fi
 }
 
 
