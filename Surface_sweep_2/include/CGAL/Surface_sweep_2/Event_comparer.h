@@ -102,28 +102,22 @@ public:
         Arr_parameter_space ps_y2 = e2->parameter_space_in_y();
         return _compare_points(pt1, ps_x1, ps_y1, pt2, ps_x2, ps_y2);
       }
-      else {
-        Arr_curve_end ind2;
-        const X_monotone_curve_2& cv2 = e2->boundary_touching_curve(ind2);
-        return _compare_point_curve_end(pt1, ps_x1, ps_y1,
-                                        cv2, ind2, ps_x2, ps_y2);
-      }
+      Arr_curve_end ind2;
+      const X_monotone_curve_2& cv2 = e2->boundary_touching_curve(ind2);
+      return _compare_point_curve_end(pt1, ps_x1, ps_y1,
+                                      cv2, ind2, ps_x2, ps_y2);
     }
-    else {
-      Arr_curve_end ind1;
-      const X_monotone_curve_2& cv1 = e1->boundary_touching_curve(ind1);
-      if (is_isolated2 || is_closed_interior2) {
-        const Point_2& pt2 = e2->point();
-        return CGAL::opposite(_compare_point_curve_end(pt2, ps_x2, ps_y2,
-                                                       cv1, ind1, ps_x1, ps_y1));
-      }
-      else {
-        Arr_curve_end ind2;
-        const X_monotone_curve_2& cv2 = e2->boundary_touching_curve(ind2);
-        return _compare_curve_ends(cv1, ind1, ps_x1, ps_y1,
-                                   cv2, ind2, ps_x2, ps_y2);
-      }
+    Arr_curve_end ind1;
+    const X_monotone_curve_2& cv1 = e1->boundary_touching_curve(ind1);
+    if (is_isolated2 || is_closed_interior2) {
+      const Point_2& pt2 = e2->point();
+      return CGAL::opposite(_compare_point_curve_end(pt2, ps_x2, ps_y2,
+                                                     cv1, ind1, ps_x1, ps_y1));
     }
+    Arr_curve_end ind2;
+    const X_monotone_curve_2& cv2 = e2->boundary_touching_curve(ind2);
+    return _compare_curve_ends(cv1, ind1, ps_x1, ps_y1,
+                               cv2, ind2, ps_x2, ps_y2);
   }
 
   /*! Compare an isolated point, which should be inserted into the event queue,
@@ -423,14 +417,12 @@ private:
         //std::cout << "res2 " << res << std::endl;
         return res;
       }
-      else {
-        // at least one of pt1 or cv2 lies on a boundary
-        Comparison_result res =
-          m_traits->compare_x_point_curve_end_2_object()(pt1, cv2, ind2);
-        if (res != EQUAL) {
-          //std::cout << "res3 " << res << std::endl;
-          return res;
-        }
+      // at least one of pt1 or cv2 lies on a boundary
+      Comparison_result res =
+        m_traits->compare_x_point_curve_end_2_object()(pt1, cv2, ind2);
+      if (res != EQUAL) {
+        //std::cout << "res3 " << res << std::endl;
+        return res;
       }
     }
 
@@ -472,38 +464,43 @@ private:
 
     if (ps_x1 == ps_x2) {
       // same x-partition
-      // second point must be accessible, as pt1 is an isolated point on the SAME left/right side or INTERIOR
+      // second point must be accessible, as pt1 is an isolated point on the
+      // SAME left/right side or INTERIOR
       if (ps_x1 != ARR_INTERIOR) {
         // 1L2L, 1R2R
-        if (m_traits->is_vertical_2_object()(cv1) || m_traits->is_vertical_2_object()(cv2)) {
-          const Point_2& pt1 = m_traits->construct_vertex_at_curve_end_2_object()(cv1, ind1);
-          const Point_2& pt2 = m_traits->construct_vertex_at_curve_end_2_object()(cv2, ind2);
-          Comparison_result res = m_traits->compare_y_on_boundary_2_object() (pt1, pt2);
-          //std::cout << "res1V: " << res << std::endl;
+        auto is_vert = m_traits->is_vertical_2_object();
+        if (is_vert(cv1) || is_vert(cv2)) {
+          auto ctr = m_traits->construct_vertex_at_curve_end_2_object();
+          auto cmp = m_traits->compare_y_on_boundary_2_object();
+          const Point_2& pt1 = ctr(cv1, ind1);
+          const Point_2& pt2 = ctr(cv2, ind2);
+          Comparison_result res = cmp(pt1, pt2);
+          // std::cout << "res1V: " << res << std::endl;
           return res;
         }
         CGAL_assertion(ind1 == ind2);
-        Comparison_result res = m_traits->compare_y_curve_ends_2_object() (cv1, cv2, ind1);
+        auto cmp = m_traits->compare_y_curve_ends_2_object();
+        Comparison_result res = cmp(cv1, cv2, ind1);
         //std::cout << "res1 " << res << std::endl;
         return res;
       }
       // else both are x-interior
       if ((ps_y1 == ARR_INTERIOR) && (ps_y2 == ARR_INTERIOR)) {
         // both are y-interior, too 1I2I:
-        const Point_2& pt1 = m_traits->construct_vertex_at_curve_end_2_object()(cv1, ind1);
-        const Point_2& pt2 = m_traits->construct_vertex_at_curve_end_2_object()(cv2, ind2);
+        auto ctr = m_traits->construct_vertex_at_curve_end_2_object();
+        const Point_2& pt1 = ctr(cv1, ind1);
+        const Point_2& pt2 = ctr(cv2, ind2);
         Comparison_result res = m_traits->compare_xy_2_object()(pt1, pt2);
         //std::cout << "res2 " << res << std::endl;
         return res;
       }
-      else {
-        // at least one of pt1 or cv2 lies on a boundary
-        Comparison_result res = m_traits->compare_x_curve_ends_2_object() (cv1, ind1, cv2, ind2);
+      // at least one of pt1 or cv2 lies on a boundary
+      auto cmp = m_traits->compare_x_curve_ends_2_object();
+      Comparison_result res = cmp(cv1, ind1, cv2, ind2);
+      //std::cout << "res3 " << res << std::endl;
+      if (res != EQUAL) {
         //std::cout << "res3 " << res << std::endl;
-        if (res != EQUAL) {
-          //std::cout << "res3 " << res << std::endl;
-          return res;
-        }
+        return res;
       }
     }
 
