@@ -171,6 +171,45 @@ namespace internal {
     std::vector<int> m_indices;
   };
 
+  template<
+  typename KeyType,
+  typename VertexRange,
+  typename VertexToPointMap>
+  class Polyline_graph_point_map {
+
+  public:
+    using Key_type = KeyType;
+    using Vertex_range = VertexRange;
+    using Vertex_to_point_map = VertexToPointMap;
+
+    using value_type = typename Vertex_to_point_map::value_type;
+    using reference = const value_type&;
+    using key_type = Key_type;
+    using category = boost::lvalue_property_map_tag;
+
+    Polyline_graph_point_map(
+      const Vertex_range& vertex_range,
+      const Vertex_to_point_map& vertex_to_point_map) :
+    m_vertex_range(vertex_range),
+    m_vertex_to_point_map(vertex_to_point_map)
+    { }
+
+    reference operator[](const key_type& vertex) const {
+      CGAL_precondition(vertex.index < m_vertex_range.size());
+      const auto& key = *(m_vertex_range.begin() + vertex.index);
+      return get(m_vertex_to_point_map, key);
+    }
+
+    friend inline reference get(
+      const Polyline_graph_point_map& pgraph_map, const key_type& key) {
+      return pgraph_map[key];
+    }
+
+  private:
+    const Vertex_range& m_vertex_range;
+    const Vertex_to_point_map& m_vertex_to_point_map;
+  };
+
 } // namespace internal
 } // namespace Shape_detection
 } // namespace CGAL

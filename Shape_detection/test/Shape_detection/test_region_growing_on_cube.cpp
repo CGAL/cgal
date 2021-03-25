@@ -34,6 +34,8 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
   using Sorting        = SD::Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, Polyhedron, Neighbor_query, Face_range>;
   using Region_growing = SD::Region_growing<Face_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
+  using Vertex_to_point_map = typename Region_type::Vertex_to_point_map;
+
   // Default parameter values for the data file cube.off.
   const FT          distance_threshold = FT(1) / FT(10);
   const FT          angle_threshold    = FT(25);
@@ -52,17 +54,20 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
 
   // Create parameter classes.
   Neighbor_query neighbor_query(polyhedron);
+  const Vertex_to_point_map vertex_to_point_map(
+    get(CGAL::vertex_point, polyhedron));
 
   Region_type region_type(
     polyhedron,
     CGAL::parameters::
     distance_threshold(distance_threshold).
     angle_deg_threshold(angle_threshold).
-    min_region_size(min_region_size));
+    min_region_size(min_region_size),
+    vertex_to_point_map);
 
   // Sort indices.
   Sorting sorting(
-    polyhedron, neighbor_query);
+    polyhedron, neighbor_query, vertex_to_point_map);
   sorting.sort();
 
   // Run region growing.

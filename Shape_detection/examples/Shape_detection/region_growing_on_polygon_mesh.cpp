@@ -60,7 +60,6 @@ int main(int argc, char *argv[]) {
 
   // Create instances of the classes Neighbor_query and Region_type.
   Neighbor_query neighbor_query(polygon_mesh);
-
   const Vertex_to_point_map vertex_to_point_map(
     get(CGAL::vertex_point, polygon_mesh));
 
@@ -79,8 +78,7 @@ int main(int argc, char *argv[]) {
 
   // Create an instance of the region growing class.
   Region_growing region_growing(
-    face_range, neighbor_query, region_type,
-    sorting.seed_map());
+    face_range, neighbor_query, region_type, sorting.seed_map());
 
   // Run the algorithm.
   std::vector< std::vector<std::size_t> > regions;

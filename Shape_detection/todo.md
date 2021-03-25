@@ -1,4 +1,3 @@
-- add Polyline_graph that extracts the graph from the polygon mesh
 - update the docs
 - ---- submission ----
 - update the polyhedron demo
@@ -28,5 +27,6 @@
   - while creating vertices also insert edges with neighbor regions
   - based on the vertices and edges create oriented faces by possibly using sorting on Direction_2
   - these faces are not necessary convex
+  - move each face vertex to the position of the intersection point between all neighbor region planes
   - triangulate each face and tag exterior triangles beyond its boundaries, which are constraints in CDT
 - that gives the new simplified surface mesh

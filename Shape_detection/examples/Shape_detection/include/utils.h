@@ -42,7 +42,8 @@ template<typename Kernel, typename Input_range, typename Point_map>
 void save_point_regions_2(
   const Input_range& input_range,
   const std::vector< std::vector<std::size_t> >& regions,
-  const std::string fullpath) {
+  const std::string fullpath,
+  const Point_map point_map = Point_map()) {
 
   using Point_3          = typename Kernel::Point_3;
   using Color            = std::array<unsigned char, 3>;
@@ -66,7 +67,7 @@ void save_point_regions_2(
     // Iterate through all region items.
     for (const auto index : region) {
       const auto& key = *(input_range.begin() + index);
-      const auto& point = get(Point_map(), key);
+      const auto& point = get(point_map, key);
       pwc.push_back(std::make_pair(Point_3(point.x(), point.y(), 0), color));
     }
   }
@@ -88,7 +89,8 @@ template<typename Kernel, typename Input_range, typename Point_map>
 void save_point_regions_3(
   const Input_range& input_range,
   const std::vector< std::vector<std::size_t> >& regions,
-  const std::string fullpath) {
+  const std::string fullpath,
+  const Point_map point_map = Point_map()) {
 
   using Point_3          = typename Kernel::Point_3;
   using Color            = std::array<unsigned char, 3>;
@@ -112,7 +114,7 @@ void save_point_regions_3(
     // Iterate through all region items.
     for (const auto index : region) {
       const auto& key = *(input_range.begin() + index);
-      const auto& point = get(Point_map(), key);
+      const auto& point = get(point_map, key);
       pwc.push_back(std::make_pair(point, color));
     }
   }

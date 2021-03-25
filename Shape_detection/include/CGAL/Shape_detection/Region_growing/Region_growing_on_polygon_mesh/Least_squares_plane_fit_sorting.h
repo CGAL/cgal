@@ -107,7 +107,7 @@ namespace Polygon_mesh {
     Least_squares_plane_fit_sorting(
       const PolygonMesh& pmesh,
       NeighborQuery& neighbor_query,
-      const VertexToPointMap vertex_to_point_map = VertexToPointMap()) :
+      const VertexToPointMap vertex_to_point_map) :
     m_face_graph(pmesh),
     m_neighbor_query(neighbor_query),
     m_face_range(faces(m_face_graph)),

@@ -123,7 +123,7 @@ namespace Polygon_mesh {
     Least_squares_plane_fit_region(
       const PolygonMesh& pmesh,
       const NamedParameters& np,
-      const VertexToPointMap vertex_to_point_map = VertexToPointMap(),
+      const VertexToPointMap vertex_to_point_map,
       const GeomTraits traits = GeomTraits()) :
     m_face_graph(pmesh),
     m_face_range(faces(m_face_graph)),
