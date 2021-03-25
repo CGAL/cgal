@@ -185,22 +185,24 @@ before_handle_event(Event* event)
 
   if (event->is_isolated()) return;
 
-  // Comment: In the sweep-line event order the events of poles belong to the left and right
-  // boundary. However, here the vertices of the poles are identified by the
-  // event's trais to belong to the bottom and top boundary.
+  // In the sweep-line event order the events of poles belong to the left and
+  // right boundary. However, here the vertices of the poles are identified by
+  // the event's trais to belong to the bottom and top boundary.
 
-  if (ps_y == ARR_BOTTOM_BOUNDARY /* subsumes LEFT-BOTTOM and RIGHT-BOTTOM corner */) {
+  if (ps_y == ARR_BOTTOM_BOUNDARY) {
+    /* subsumes LEFT-BOTTOM and RIGHT-BOTTOM corner */
     // Process a non-isolated event on the bottom contracted boundary.
 
     // If a vertex on the south pole does not exists, create one.
     DVertex* dv = m_top_traits->south_pole();
-    Vertex_handle v =
-      (dv) ? Vertex_handle(dv) : m_arr_access.create_boundary_vertex(event->point(), ps_x, ps_y);
+    Vertex_handle v = (dv) ? Vertex_handle(dv) :
+      m_arr_access.create_boundary_vertex(event->point(), ps_x, ps_y);
     event->set_vertex_handle(v);
     return;
   }
 
-  if (ps_y == ARR_TOP_BOUNDARY /* subsumes LEFT-TOP and RIGHT-TOP corner */) {
+  if (ps_y == ARR_TOP_BOUNDARY) {
+    /* subsumes LEFT-TOP and RIGHT-TOP corner */
     // Process a non-isolated event on the top contracted boundary.
     // The process is more complicated than for the bottom boundary,
     // as the touching the top boundary influences the list of
@@ -253,20 +255,19 @@ before_handle_event(Event* event)
 
     // If a vertex on the line of discontinuity does not exists, create one.
     DVertex* dv = m_top_traits->discontinuity_vertex(event->point());
-    Vertex_handle v =
-      (dv) ? Vertex_handle(dv) : m_arr_access.create_boundary_vertex(event->point(), ps_x, ps_y);
+    Vertex_handle v = (dv) ? Vertex_handle(dv) :
+      m_arr_access.create_boundary_vertex(event->point(), ps_x, ps_y);
     event->set_vertex_handle(v);
     return;
   }
 
   if (ps_x == ARR_RIGHT_BOUNDARY) {
     // Process a non-isolated event on the right identified boundary.
-    // Note: cannnot be vertical, only curves approaching the right side are possible.
-
+    // Cannnot be vertical, only curves approaching the right side are possible.
     // If a vertex on the line of discontinuity does not exists, create one.
     DVertex* dv = m_top_traits->discontinuity_vertex(event->point());
-    Vertex_handle v =
-      (dv) ? Vertex_handle(dv) : m_arr_access.create_boundary_vertex(event->point(), ps_x, ps_y);
+    Vertex_handle v = (dv) ? Vertex_handle(dv) :
+      m_arr_access.create_boundary_vertex(event->point(), ps_x, ps_y);
     event->set_vertex_handle(v);
     return;
   }
