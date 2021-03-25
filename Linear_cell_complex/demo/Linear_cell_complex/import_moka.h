@@ -20,7 +20,7 @@ struct GDart
   Dart_handle dh;
   LCC::Vertex_attribute_handle vh;
 
-  GDart() : dh(NULL), vh(NULL)
+  GDart() : dh(nullptr), vh(nullptr)
   {}
 
   GDart(const GDart& adart) : dh(adart.dh),

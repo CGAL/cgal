@@ -875,6 +875,8 @@ namespace internal {
       m_ptr = nullptr;
     }
 
+    explicit CC_iterator(pointer ptr) : m_ptr(ptr) { }
+
     // Converting constructor from mutable to constant iterator
     template <bool OtherConst>
     CC_iterator(const CC_iterator<
