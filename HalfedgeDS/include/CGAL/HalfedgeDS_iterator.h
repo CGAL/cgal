@@ -213,7 +213,7 @@ public:
 // ---------------------------------
 
     Self& operator--() {
-        this->nt = (*this->nt).prev();
+        this->nt = typename It::Iterator((*this->nt).prev());
         return *this;
     }
     Self  operator--(int) {
@@ -279,7 +279,7 @@ public:
 // ---------------------------------
 
     Self& operator--() {
-        this->nt = (*this->nt).prev();
+        this->nt = typename It::Iterator((*this->nt).prev());
         return *this;
     }
     Self  operator--(int) {
