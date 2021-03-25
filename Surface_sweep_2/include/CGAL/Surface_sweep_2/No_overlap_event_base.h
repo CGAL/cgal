@@ -383,34 +383,38 @@ public:
    * \pre The event does not lie on the boundary.
    * \pre The event is not isolated.
    */
-  const X_monotone_curve_2& curve() const
-  {
-    CGAL_precondition(!this->is_on_boundary());
-    CGAL_precondition(!this->is_isolated());
-    if (has_left_curves()) return (m_left_curves.front()->last_curve());
+  const X_monotone_curve_2& curve() const {
+    // Use a right curve if exists first. A left curve might be the result of
+    // an overlap. In this case, the event currently being processed is not an
+    // endpoint of the (left) curve.
+    CGAL_precondition(! this->is_on_boundary());
+    CGAL_precondition(! this->is_isolated());
+    if (has_right_curves()) return (m_right_curves.front()->last_curve());
 
-    CGAL_assertion(has_right_curves());
-    return (m_right_curves.front()->last_curve());
+    CGAL_assertion(has_left_curves());
+    return (m_left_curves.front()->last_curve());
   }
 
-  /*!
-   * Get a curve associated with the event and writes as side-effect the respective end to \param ce
-   * (const version).
-   * \param ce reference to a curve-end that is written as side-effect.
+  /*! Obtain a curve associated with the event and returns as a side-effect the
+   * respective end to `ce` (const version).
+   * \param ce reference to a curve-end that is returned as a side-effect.
    * \pre The event lies on the boundary.
    * \pre The event is not isolated.
    */
   const X_monotone_curve_2& boundary_touching_curve(Arr_curve_end& ce) const {
+    // Use a right curve if exists first. A left curve might be the result of
+    // an overlap. In this case, the event currently being processed is not an
+    // endpoint of the (left) curve.
     CGAL_precondition(this->is_on_boundary());
-    CGAL_precondition(!this->is_isolated());
-    if (has_left_curves()) {
-      ce = ARR_MAX_END;
-      return m_left_curves.front()->last_curve();
+    CGAL_precondition(! this->is_isolated());
+    if (has_right_curves()) {
+      ce = ARR_MIN_END;
+      return m_right_curves.front()->last_curve();
     }
 
-    CGAL_assertion(has_right_curves());
-    ce = ARR_MIN_END;
-    return m_right_curves.front()->last_curve();
+    CGAL_assertion(has_left_curves());
+    ce = ARR_MAX_END;
+    return m_left_curves.front()->last_curve();
   }
 
   /*! Set the event point. */
