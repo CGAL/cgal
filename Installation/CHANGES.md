@@ -7,7 +7,7 @@ Release date: December 2021
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/5.4/Manual/packages.html#PkgPolygonMeshProcessing)
 
--   Added the function `CGAL::Polygon_mesh_processing::compare_meshes()` which allows, given two meshes, to geometrically detect which faces are only in the first, only in the second, or in both meshes.
+-   Added the function `CGAL::Polygon_mesh_processing::compare_meshes()` that given two polygon meshes identifies faces present in only one of the two meshes as well as faces present in both.
 
 
 [Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)
@@ -439,7 +439,7 @@ Release date: November 2019
   - LLVM Clang version 8.0 or later (on Linux or MacOS), and
   - Apple Clang compiler versions 7.0.2 and 10.0.1 (on MacOS).
 - Since CGAL 4.9, CGAL can be used as a header-only library, with
-  dependencies. Since CGAL 5.0, that is now the default, unless
+  dependencies. Since CGAL 5.0, that is now the default, unless
   specified differently in the (optional) CMake configuration.
 - The section "Getting Started with CGAL" of the documentation has
   been updated and reorganized.
@@ -2279,14 +2279,14 @@ Release date: October 2014
 -   Changes in the set of supported platforms:
     -   The Microsoft Windows Visual C++ compiler 2008 (VC9) is no
         longer supported since CGAL-4.5.
--   Since CGAL version 4.0, Eigen was the recommended third-party
+-   Since CGAL version 4.0, Eigen was the recommended third-party
     library to use with *Planar Parameterization of Triangulated Surface
     Meshes*, *Surface Reconstruction from Point Sets*, *Approximation of
     Ridges and Umbilics on Triangulated Surface Meshes*, and *Estimation
     of Local Differential Properties of Point-Sampled Surfaces*
-    packages. From CGAL version 4.5, Taucs, Blas and Lapack are no
+    packages. From CGAL version 4.5, Taucs, Blas and Lapack are no
     longer supported.
--   CGAL is now compatible with the new CMake version 3.0.
+-   CGAL is now compatible with the new CMake version 3.0.
 
 ### Triangulated Surface Mesh Deformation (new package)
 
@@ -2425,7 +2425,7 @@ Release date: April 2014
 
 -   Additional supported platforms:
     -   The Apple Clang compiler version 5.0 is now supported on
-        OS X Mavericks.
+        OS X Mavericks.
     -   The Microsoft Windows Visual C++ compiler 2013 (VC12) is now
         supported.
 
@@ -2563,7 +2563,7 @@ Release date: October 2013
     transparent to the user thanks to the implicit constructor added to
     `CGAL::Object`. However, it is recommended to upgrade your code. The
     previous behavior can be restored by defining the macro
-    `CGAL_INTERSECTION_VERSION` to 1.
+    `CGAL_INTERSECTION_VERSION` to 1.
 
 #### 2D Arrangements
 
@@ -2824,7 +2824,7 @@ Release date: October 2012
 
 -   Additional supported platforms:
     -   The Apple Clang compiler versions 3.1 and 3.2 are now supported
-        on Mac OS X.
+        on Mac OS X.
 -   Improved configuration for essential and optional external third
     party software
 -   Added more general script to create CMakeLists.txt files:
