@@ -41,7 +41,7 @@ void create_triangulation(const char* filename)
   std::cout << "Squared distance between points " << CGAL::squared_distance(points.back(), p) << std::endl;
   std::cout << points.size() << " points in input" << std::endl;
 
-  Traits traits(Point_3(0, 0, 0), 100);
+  Traits traits(Point_3(0, 0, 0), 100); // centered on (0,0,0), with radius 100
   DToS2 dtos(points.begin(), points.end(), traits);
 
   std::cout << dtos.number_of_vertices() << " vertices" << std::endl;

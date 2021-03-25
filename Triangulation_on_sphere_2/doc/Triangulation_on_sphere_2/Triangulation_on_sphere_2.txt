@@ -39,22 +39,22 @@ that satisfies the <em>empty circle property</em> (also called <em>Delaunay prop
 the circumscribing circle of any facet of the triangulation contains no point in its interior.
 This definition naturally extends to the two-dimensional sphere, as illustrated in the figure below.
 
-\cgalFigureBegin{fig_del_def, delaunay_on_sphere_def.png}
+\cgalFigureBegin{fig_del_def, delaunay_on_sphere_def.svg}
 Illustration of the Delaunay property: the circumscribing circle on the sphere (in green)
 of the Delaunay face \f$ p_1 p_2 p_3\f$ is empty.
 \cgalFigureEnd
 
 A particularity of Delaunay triangulations on \f$ \mathbb{S}\f$ is that the Delaunay property
 test can be reduced to a simple orientation test in the three-dimensional space: indeed, the circumscribing
-circle of a Delaunay face is the intersection of the supporting plane of the face with \f$ \mathbb{S}\f$,
-and determining whether a fourth point `q` is within the circle or not is equivalent to checking whether `q`
-is above, on, or below the supporting plane.
+circle of a Delaunay face is the intersection of the plane passing through the three vertices
+of the face with \f$ \mathbb{S}\f$, and determining whether a fourth point `q` is within the
+circumscribing circle or not is equivalent to checking whether `q` is above or below the supporting plane.
 
 \subsection Section_2D_ToS_Imprecision Representation of a Point on the Sphere
 
-The theoretical definition of Delaunay triangulations in the previous section assume that points
-in \f$ \mathcal{P}\f$ lie exactly on the sphere. In a real world however, one does not usually
-manipulate points that lie exactly on \f$ \mathbb{S}\f$ because the number type
+The theoretical definition of Delaunay triangulations in the previous section assumes that points
+in \f$ \mathcal{P}\f$ lie exactly on the sphere. In a real world however, one usually does not
+manipulate points that lie exactly on \f$ \mathbb{S}\f$ because the chosen number type
 is not able to represent square roots exactly, such as \f$ \mathtt{float}\f$, or \f$ \mathtt{double}\f$.
 Some specific number types are able to represent exactly all points on the sphere, for example
 the class `CORE::Expr`, but this comes with the drawback of a higher computational cost.
@@ -110,7 +110,7 @@ triangulation (see \ref Triangulation_2TheSetofFaces).
 On the sphere, this trick is not necessary as the triangulation itself is already a 2-manifold
 without boundary.
 
-\subsection Section_2D_ToS_Ghost Ghost faces
+\subsection Section_2D_ToS_Ghost Ghost Faces
 
 There is an exception to the previous statement: in degenerate configurations where all points
 lie on the same hemisphere, the Delaunay triangulation on the sphere theoretically has a border.
@@ -144,7 +144,7 @@ Two traits classes are offered with this package as models of the concept `Delau
       its projection on the sphere (the closest intersection with the sphere on the line between
       this point and the center of the sphere). Consequently, all points to be inserted are on the sphere.
       This can be a useful traits to manipulate points that are not on the sphere, but whose
-      triangulation on the sphere is still interesting, such as geographical coordiantes with altitude.
+      triangulation on the sphere is still interesting, such as geographical coordinates with altitude.
   </li>
 </ul>
 
@@ -164,7 +164,7 @@ is defined as follows:
   <li>`-2`, if the triangulation is empty;</li>
   <li>`-1`, if the triangulation contains a single vertex;</li>
   <li>`0`, if the triangulation contains exactly two vertices;</li>
-  <li>`1`, if the triangulation contains three (or more) coplanar vertices (which do not necessarily
+  <li>`1`, if the triangulation contains at least three coplanar vertices (which do not necessarily
            lie on a great circle);</li>
   <li>`2`, if the triangulation contains at least four non-coplanar vertices.</li>
 </ul>
@@ -233,7 +233,7 @@ which greatly speeds up the insertion.
 
 Prototype code implementing the publication of Caroli et al. \cgalCite{cgal:ccplr-redtp-10}
 was developped over the two internships of Oliver Rouiller and Claudia Werner at Inria,
-under the supervision of Monique Teillaud.
+under the supervision of Monique Teillaud and with the help of Sébastien Loriot.
 Based on this prototype, Mael Rouxel-Labbé developped the initial version of this package.
 
 */
