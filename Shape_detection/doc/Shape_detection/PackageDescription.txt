@@ -17,11 +17,23 @@ Concepts used for the parameters of the `CGAL::Shape_detection::Region_growing`.
 Models that can be used with the `CGAL::Shape_detection::Region_growing`
 for shape detection in a point set.
 
+\defgroup PkgShapeDetectionRGOnSegments Segment Set
+\ingroup PkgShapeDetectionRG
+
+Models that can be used with the `CGAL::Shape_detection::Region_growing`
+for shape detection in a segment set.
+
 \defgroup PkgShapeDetectionRGOnMesh Polygon Mesh
 \ingroup PkgShapeDetectionRG
 
 Models that can be used with the `CGAL::Shape_detection::Region_growing`
 for shape detection on a polygon mesh.
+
+\defgroup PkgShapeDetectionRGOnPolyline Polyline
+\ingroup PkgShapeDetectionRG
+
+Models that can be used with the `CGAL::Shape_detection::Region_growing`
+for shape detection on a polyline.
 
 \addtogroup PkgShapeDetectionRG
 
@@ -121,10 +133,19 @@ on a polygon mesh.}
 - `CGAL::Shape_detection::Point_set::Least_squares_line_fit_sorting<GeomTraits, InputRange, NeighborQuery, PointMap>`
 - `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting<GeomTraits, InputRange, NeighborQuery, PointMap>`
 
+### Segment Set ###
+- `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region<GeomTraits, InputRange, SegmentMap>`
+- `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_sorting<GeomTraits, InputRange, NeighborQuery, SegmentMap>`
+
 ### Polygon Mesh ###
 - `CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<PolygonMesh, FaceRange>`
 - `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<GeomTraits, PolygonMesh, FaceRange, VertexToPointMap>`
 - `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<GeomTraits, PolygonMesh, NeighborQuery, FaceRange, VertexToPointMap>`
+
+### Polyline ###
+- `CGAL::Shape_detection::Polyline::One_ring_neighbor_query<GeomTraits, InputRange>`
+- `CGAL::Shape_detection::Polyline::Least_squares_line_fit_region<GeomTraits, InputRange, PointMap>`
+- `CGAL::Shape_detection::Polyline::Least_squares_line_fit_sorting<GeomTraits, InputRange, NeighborQuery, PointMap>`
 
 ## Deprecated Components ##
 - `CGAL::Shape_detection::deprecated::Shape_detection_traits<GeomTraits, InputRange, PointMap, NormalMap>`
@@ -132,4 +153,6 @@ on a polygon mesh.}
 
 ## Functions ##
 - `CGAL::regularize_planes()`
+- `CGAL::region_growing_lines()`
+- `CGAL::region_growing_planes()`
 */

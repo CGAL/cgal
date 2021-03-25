@@ -1,3 +1,7 @@
+- add region growing on segments
+- move all free functions to the same file
+- overload the line functions
+- do we need free functions here
 - update the docs
 - ---- submission ----
 - update the polyhedron demo
@@ -30,3 +34,13 @@
   - move each face vertex to the position of the intersection point between all neighbor region planes
   - triangulate each face and tag exterior triangles beyond its boundaries, which are constraints in CDT
 - that gives the new simplified surface mesh
+
+- add region type for segments
+- the input graph can be split into polylines based on corners
+- regularize_face_selection_borders() or better apply graph cut on the computed regions to close holes
+- error in the graph cut can be controlled by the size to the ideal position of the corners
+
+- detect planes
+- regularize regions
+- decimate mesh
+- update corner positions

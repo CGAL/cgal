@@ -9,9 +9,11 @@ A region is represented by a set of `indices` of the items, which are included i
 this region.
 
 \cgalHasModel
-- `CGAL::Shape_detection::Point_set::Least_squares_line_fit_region`,
-- `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region`,
+- `CGAL::Shape_detection::Point_set::Least_squares_line_fit_region`
+- `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region`
+- `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region`
 - `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region`
+- `CGAL::Shape_detection::Polyline::Least_squares_line_fit_region`
 */
 class RegionType {
 
@@ -50,8 +52,10 @@ public:
     represented by `indices`.
 
     `CGAL::Shape_detection::Region_growing` calls this function each time when a
-    new seed item is selected. In this case, `indices.size() = 1`. This function
-    is also called periodically when enlarging the region. In this case, `indices.size() > 1`.
+    new seed item is selected. This case can be identified by checking the
+    condition `indices.size() == 1`. This function is also called periodically
+    when enlarging the region. This case can be identified by checking the
+    condition `indices.size() > 1`.
   */
   void update(
     const std::vector<std::size_t>& indices) {

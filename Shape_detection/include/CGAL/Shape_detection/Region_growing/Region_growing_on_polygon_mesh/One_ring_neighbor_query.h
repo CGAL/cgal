@@ -102,7 +102,7 @@ namespace Polygon_mesh {
       \param neighbors
       indices of faces, which are neighbors of the query face
 
-      \pre `query_index >= 0 && query_index < faces(pmesh).size()`
+      \pre `query_index < faces(pmesh).size()`
     */
     void operator()(
       const std::size_t query_index,

@@ -93,19 +93,16 @@ namespace Point_set {
     /*!
       \brief initializes all internal data structures.
 
+      \tparam NamedParameters
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+
       \param input_range
       an instance of `InputRange` with 2D points and
       corresponding 2D normal vectors
 
-      \param distance_threshold
-      the maximum distance from a point to a line. %Default is 1.
-
-      \param angle_threshold
-      the maximum accepted angle in degrees between the normal of a point and
-      the normal of a line. %Default is 25 degrees.
-
-      \param min_region_size
-      the minimum number of 2D points a region must have. %Default is 2.
+      \param np
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+      among the ones listed below
 
       \param point_map
       an instance of `PointMap` that maps an item from `input_range`
@@ -118,9 +115,35 @@ namespace Point_set {
       \param traits
       an instance of `GeomTraits`
 
+      \cgalNamedParamsBegin
+        \cgalParamNBegin{distance_threshold}
+          \cgalParamDescription{the maximum distance from a point to a line}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{1}
+        \cgalParamNEnd
+        \cgalParamNBegin{angle_deg_threshold}
+          \cgalParamDescription{the maximum accepted angle in degrees between
+          the normal of a point and the normal of a line}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{25 degrees}
+        \cgalParamNEnd
+        \cgalParamNBegin{cos_value_threshold}
+          \cgalParamDescription{the cos value computed as cos(angle_deg_threshold * PI / 180),
+          this value can be used instead of the angle_deg_threshold}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{cos(25 * PI / 180)}
+        \cgalParamNEnd
+        \cgalParamNBegin{min_region_size}
+          \cgalParamDescription{the minimum number of 2D points a region must have}
+          \cgalParamType{`std::size_t`}
+          \cgalParamDefault{2}
+        \cgalParamNEnd
+      \cgalNamedParamsEnd
+
       \pre `input_range.size() > 0`
       \pre `distance_threshold >= 0`
-      \pre `angle_threshold >= 0 && angle_threshold <= 90`
+      \pre `angle_deg_threshold >= 0 && angle_deg_threshold <= 90`
+      \pre `cos_value_threshold >= 0 && cos_value_threshold <= 1`
       \pre `min_region_size > 0`
     */
     template<typename NamedParameters>
@@ -167,7 +190,7 @@ namespace Point_set {
 
       This function controls if a point with the index `query_index` is within
       the `distance_threshold` from the corresponding line and if the angle
-      between its normal and the line's normal is within the `angle_threshold`.
+      between its normal and the line's normal is within the `angle_deg_threshold`.
       If both conditions are satisfied, it returns `true`, otherwise `false`.
 
       \param query_index
@@ -177,7 +200,7 @@ namespace Point_set {
 
       \return Boolean `true` or `false`
 
-      \pre `query_index >= 0 && query_index < input_range.size()`
+      \pre `query_index < input_range.size()`
     */
     bool is_part_of_region(
       const std::size_t,

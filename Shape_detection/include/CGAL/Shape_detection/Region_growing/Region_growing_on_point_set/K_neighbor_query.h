@@ -116,18 +116,30 @@ namespace Point_set {
     /*!
       \brief initializes a Kd-tree with input points.
 
+      \tparam NamedParameters
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+
       \param input_range
       an instance of `InputRange` with 2D or 3D points
 
-      \param k
-      the number of returned neighbors per each query point. %Default is 12.
+      \param np
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+      among the ones listed below
 
       \param point_map
       an instance of `PointMap` that maps an item from `input_range`
       to `Kernel::Point_2` or to `Kernel::Point_3`
 
+      \cgalNamedParamsBegin
+        \cgalParamNBegin{neighbor_radius}
+          \cgalParamDescription{the number of returned neighbors per each query point}
+          \cgalParamType{`std::size_t`}
+          \cgalParamDefault{12}
+        \cgalParamNEnd
+      \cgalNamedParamsEnd
+
       \pre `input_range.size() > 0`
-      \pre `k > 0`
+      \pre `K > 0`
     */
     template<typename NamedParameters>
     K_neighbor_query(
@@ -160,7 +172,7 @@ namespace Point_set {
     /*!
       \brief implements `NeighborQuery::operator()()`.
 
-      This operator finds indices of the `k` closest points to the point with
+      This operator finds indices of the `K` closest points to the point with
       the index `query_index` using a Kd-tree. These indices are returned in `neighbors`.
 
       \param query_index
@@ -169,7 +181,7 @@ namespace Point_set {
       \param neighbors
       indices of points, which are neighbors of the query point
 
-      \pre `query_index >= 0 && query_index < input_range.size()`
+      \pre `query_index < input_range.size()`
     */
     void operator()(
       const std::size_t query_index,
