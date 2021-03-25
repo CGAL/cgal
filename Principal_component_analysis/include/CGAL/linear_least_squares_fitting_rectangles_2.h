@@ -68,8 +68,8 @@ linear_least_squares_fitting_2(InputIterator first,
   typename DiagonalizeTraits::Covariance_matrix covariance = {{ 0., 0., 0. }};
 
   // assemble 2nd order moment about the origin.
-  FT temp[4] = {1/3.0, 0.25,
-                0.25,  1/3.0};
+  FT temp[4] = {FT(1/3.0), FT(0.25),
+                FT(0.25),  FT(1/3.0)};
   Matrix moment = init_matrix<FT>(2,temp);
 
   for(InputIterator it = first;
