@@ -11,7 +11,7 @@
 #include "arr_print.h"
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel         Kernel;
-typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, -11, 7> Geom_traits;
+typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel>         Geom_traits;
 typedef Geom_traits::Point_2                                      Point;
 typedef Geom_traits::Curve_2                                      Curve;
 typedef CGAL::Arr_spherical_topology_traits_2<Geom_traits>        Topol_traits;
