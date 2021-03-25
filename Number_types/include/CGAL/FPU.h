@@ -612,50 +612,9 @@ inline void force_ieee_double_precision()
 #endif
 }
 
-/*
-NOTE: Remove before merge.
-
-Originally this was:
-
-#define CGAL_IA_SQRT(a) \
-       CGAL_IA_FORCE_TO_DOUBLE(CGAL_BUG_SQRT(CGAL_IA_STOP_CPROP(a)))
-
-In the normal path, IA_up is
-  return CGAL_IA_FORCE_TO_DOUBLE(d);
-
-So in the normal path this should be equivalent to
-
-return CGAL_IA_FORCE_TO_DOUBLE(CGAL_BUG_SQRT(CGAL_IA_STOP_CPROP(a)));
-
-Unless there is some issue that I don't understand that's introduced by the function call.
-*/
-
 inline double IA_sqrt_up(double a) {
   return IA_up(CGAL_BUG_SQRT(CGAL_IA_STOP_CPROP(a)));
 }
-
-/*
-NOTE: Remove before merge.
-
-Originally this was:
-
-FPU_set_cw(CGAL_FE_DOWNWARD);
-double i = (d.inf() > 0.0) ? CGAL_IA_SQRT(d.inf()) : 0.0;
-FPU_set_cw(CGAL_FE_UPWARD);
-
-define CGAL_IA_SQRT(a) \
-        CGAL_IA_FORCE_TO_DOUBLE(CGAL_BUG_SQRT(CGAL_IA_STOP_CPROP(a)))
-
-We pass d.inf() in
-
-So this should be equivalent to
-
-double i = (d.inf() > 0.0) ? CGAL_IA_FORCE_TO_DOUBLE(CGAL_BUG_SQRT(CGAL_IA_STOP_CPROP(d))) : 0.0;
-
-but we see that the CGAL_IA_FORCE_TO_DOUBLE has been omitted.
-
-Let's remedy that and see if that addresses the test failure.
-*/
 
 inline double IA_sqrt_toward_zero(double d) {
 #ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
