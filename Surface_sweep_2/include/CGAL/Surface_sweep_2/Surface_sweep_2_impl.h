@@ -885,45 +885,44 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
   CGAL_SS_PRINT_START_EOL("creating an overlapping curve");
 
   // Get the left end of overlap_cv.
-  Event* left_event;
-
-  if (event_on_overlap!=NULL)
-  {
+  Event* left_event(nullptr);
+  if (event_on_overlap != nullptr) {
     CGAL_SS_PRINT_EVENT_INFO(event_on_overlap);
     CGAL_SS_PRINT_EOL();
-    CGAL_assertion ( this->m_queueEventLess(event_on_overlap, c1->right_event()) == SMALLER );
-    CGAL_assertion ( this->m_queueEventLess(event_on_overlap, c2->right_event()) == SMALLER );
+    CGAL_assertion(this->m_queueEventLess(event_on_overlap, c1->right_event()) == SMALLER);
+    CGAL_assertion(this->m_queueEventLess(event_on_overlap, c2->right_event()) == SMALLER);
     left_event = event_on_overlap;
   }
-  else
-  {
-    Arr_parameter_space  ps_x_l =
-      this->m_traits->parameter_space_in_x_2_object()(overlap_cv, ARR_MIN_END);
-    Arr_parameter_space  ps_y_l =
-      this->m_traits->parameter_space_in_y_2_object()(overlap_cv, ARR_MIN_END);
+  else {
+    auto psx = this->m_traits->parameter_space_in_x_2_object();
+    auto psy = this->m_traits->parameter_space_in_y_2_object();
+    Arr_parameter_space ps_x_l = psx(overlap_cv, ARR_MIN_END);
+    Arr_parameter_space ps_y_l = psy(overlap_cv, ARR_MIN_END);
     if ((ps_x_l != ARR_INTERIOR) || (ps_y_l != ARR_INTERIOR)) {
       CGAL_assertion(c1->left_event() == c2->left_event());
-      left_event=(Event*)(c1->left_event());
+      left_event = c1->left_event();
     }
-    else{
-      Point_2 left_end = this->m_traits->construct_min_vertex_2_object()(overlap_cv);
-      left_event = this->_push_event(left_end, Event::DEFAULT, ARR_INTERIOR, ARR_INTERIOR).first;
+    else {
+      Point_2 left_end =
+        this->m_traits->construct_min_vertex_2_object()(overlap_cv);
+      left_event = this->_push_event(left_end, Event::DEFAULT, ARR_INTERIOR,
+                                     ARR_INTERIOR).first;
     }
   }
 
   // Get the right end of overlap_cv.
-  Event* right_event;
-  Arr_parameter_space  ps_x_r =
-    this->m_traits->parameter_space_in_x_2_object()(overlap_cv, ARR_MAX_END);
-  Arr_parameter_space ps_y_r =
-    this->m_traits->parameter_space_in_y_2_object()(overlap_cv, ARR_MAX_END);
+  Event* right_event(nullptr);
+  auto psx = this->m_traits->parameter_space_in_x_2_object();
+  auto psy = this->m_traits->parameter_space_in_y_2_object();
+  Arr_parameter_space ps_x_r = psx(overlap_cv, ARR_MAX_END);
+  Arr_parameter_space ps_y_r = psy(overlap_cv, ARR_MAX_END);
   if ((ps_x_r != ARR_INTERIOR) || (ps_y_r != ARR_INTERIOR)) {
     CGAL_assertion(c1->right_event() == c2->right_event());
     right_event = c1->right_event();
   }
   else {
-    Point_2 right_end =
-      this->m_traits->construct_max_vertex_2_object()(overlap_cv);
+    auto max_vertex = this->m_traits->construct_max_vertex_2_object();
+    Point_2 right_end = max_vertex(overlap_cv);
     right_event = this->_push_event(right_end, Event::DEFAULT, ARR_INTERIOR,
                                     ARR_INTERIOR).first;
   }
