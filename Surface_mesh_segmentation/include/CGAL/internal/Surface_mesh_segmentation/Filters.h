@@ -30,6 +30,8 @@
 
 #include <boost/optional.hpp>
 #include <CGAL/boost/graph/iterator.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/double.h>
 namespace CGAL
 {
 
