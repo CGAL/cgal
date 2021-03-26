@@ -92,9 +92,7 @@ int main(int argc, char *argv[]) {
   CGAL::set_ascii_mode(in);
 
   if (!in) {
-    std::cout << "Error: cannot read the file point_set_2.xyz!" << std::endl;
-    std::cout << "You can either create a symlink to the data folder or provide this file by hand."
-      << std::endl << std::endl;
+    std::cout << "ERROR: cannot read the file point_set_2.xyz!" << std::endl;
     return EXIT_FAILURE;
   }
 

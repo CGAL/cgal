@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
 
   // Use a free function to get the 2D regions.
   regions.clear();
-  CGAL::Shape_detection::region_growing_polylines(
+  CGAL::Shape_detection::internal::region_growing_polylines(
     polyline_2, std::back_inserter(regions),
     CGAL::parameters::
     distance_threshold(max_distance_to_line).

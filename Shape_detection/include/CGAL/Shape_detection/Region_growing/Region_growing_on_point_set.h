@@ -29,6 +29,7 @@
 
 namespace CGAL {
 namespace Shape_detection {
+namespace internal {
 
 template<
 typename InputRange,
@@ -154,6 +155,7 @@ OutputIterator region_growing_planes(
     point_set, regions, CGAL::parameters::all_default());
 }
 
+} // namespace internal
 } // namespace Shape_detection
 } // namespace CGAL
 

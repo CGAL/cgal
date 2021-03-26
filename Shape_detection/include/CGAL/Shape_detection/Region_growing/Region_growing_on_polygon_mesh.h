@@ -16,12 +16,14 @@
 
 #include <CGAL/license/Shape_detection.h>
 
+#include <CGAL/Shape_detection/Region_growing/Region_growing_on_polygon_mesh/Polyline_graph.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_polygon_mesh/One_ring_neighbor_query.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_polygon_mesh/Least_squares_plane_fit_region.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_polygon_mesh/Least_squares_plane_fit_sorting.h>
 
 namespace CGAL {
 namespace Shape_detection {
+namespace internal {
 
 template<
 typename GeomTraits,
@@ -110,6 +112,7 @@ OutputIterator region_growing_planes(
     surface_mesh, regions, CGAL::parameters::all_default());
 }
 
+} // namespace internal
 } // namespace Shape_detection
 } // namespace CGAL
 

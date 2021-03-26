@@ -94,18 +94,15 @@ namespace Polygon_mesh {
     /*!
       \brief initializes all internal data structures.
 
+      \tparam NamedParameters
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+
       \param pmesh
       an instance of `PolygonMesh` that represents a polygon mesh
 
-      \param distance_threshold
-      the maximum distance from the furthest vertex of a face to a plane. %Default is 1.
-
-      \param angle_threshold
-      the maximum accepted angle in degrees between the normal of a face and
-      the normal of a plane. %Default is 25 degrees.
-
-      \param min_region_size
-      the minimum number of faces a region must have. %Default is 1.
+      \param np
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+      among the ones listed below
 
       \param vertex_to_point_map
       an instance of `VertexToPointMap` that maps a polygon mesh
@@ -114,9 +111,35 @@ namespace Polygon_mesh {
       \param traits
       an instance of `GeomTraits`
 
+      \cgalNamedParamsBegin
+        \cgalParamNBegin{distance_threshold}
+          \cgalParamDescription{the maximum distance from the furthest vertex of a face to a plane}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{1}
+        \cgalParamNEnd
+        \cgalParamNBegin{angle_deg_threshold}
+          \cgalParamDescription{the maximum accepted angle in degrees between
+          the normal of a face and the normal of a plane}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{25 degrees}
+        \cgalParamNEnd
+        \cgalParamNBegin{cos_value_threshold}
+          \cgalParamDescription{the cos value computed as `cos(angle_deg_threshold * PI / 180)`,
+          this parameter can be used instead of the `angle_deg_threshold`}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{`cos(25 * PI / 180)`}
+        \cgalParamNEnd
+        \cgalParamNBegin{min_region_size}
+          \cgalParamDescription{the minimum number of faces a region must have}
+          \cgalParamType{`std::size_t`}
+          \cgalParamDefault{1}
+        \cgalParamNEnd
+      \cgalNamedParamsEnd
+
       \pre `faces(pmesh).size() > 0`
       \pre `distance_threshold >= 0`
-      \pre `angle_threshold >= 0 && angle_threshold <= 90`
+      \pre `angle_deg_threshold >= 0 && angle_deg_threshold <= 90`
+      \pre `cos_value_threshold >= 0 && cos_value_threshold <= 1`
       \pre `min_region_size > 0`
     */
     template<typename NamedParameters>
@@ -163,7 +186,7 @@ namespace Polygon_mesh {
 
       This function controls if a face with the index `query_index` is within
       the `distance_threshold` from the corresponding plane and if the angle
-      between its normal and the plane's normal is within the `angle_threshold`.
+      between its normal and the plane's normal is within the `angle_deg_threshold`.
       If both conditions are satisfied, it returns `true`, otherwise `false`.
 
       \param query_index
@@ -173,7 +196,7 @@ namespace Polygon_mesh {
 
       \return Boolean `true` or `false`
 
-      \pre `query_index >= 0 && query_index < faces(pmesh).size()`
+      \pre `query_index < faces(pmesh).size()`
     */
     bool is_part_of_region(
       const std::size_t,

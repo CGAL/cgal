@@ -73,12 +73,7 @@ Deprecated components.
 \cgalPkgAuthors{Sven Oesau, Yannick Verdie, Clément Jamin, Pierre Alliez, Florent Lafarge, Simon Giraudot, Thien Hoang, and Dmitry Anisimov}
 \cgalPkgDesc{This package implements the Efficient RANSAC (RANdom SAmple Consensus) approach
 for detecting arbitrary shapes in an unorganized point set with unoriented normals
-and the Region Growing approach for detecting shapes in a set of arbitrary items.
-With the Efficient RANSAC approach, five canonical shapes can be detected: planes, spheres,
-cylinders, cones, and tori. Additional shapes can be detected, given a custom shape class by the user.
-For the Region Growing approach, this package provides three particular shape detection components:
-detecting lines in a 2D point set, detecting planes in a 3D point set, and detecting planes
-on a polygon mesh.}
+and the Region Growing approach for detecting shapes in a set of arbitrary items.}
 \cgalPkgManuals{Chapter_Shape_Detection, PkgShapeDetectionRef}
 \cgalPkgSummaryEnd
 
@@ -139,6 +134,7 @@ on a polygon mesh.}
 
 ### Polygon Mesh ###
 - `CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<PolygonMesh, FaceRange>`
+- `CGAL::Shape_detection::Polygon_mesh::Polyline_graph<GeomTraits, PolygonMesh, FaceRange, EdgeRange, VertexToPointMap>`
 - `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<GeomTraits, PolygonMesh, FaceRange, VertexToPointMap>`
 - `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<GeomTraits, PolygonMesh, NeighborQuery, FaceRange, VertexToPointMap>`
 
@@ -153,6 +149,4 @@ on a polygon mesh.}
 
 ## Functions ##
 - `CGAL::regularize_planes()`
-- `CGAL::region_growing_lines()`
-- `CGAL::region_growing_planes()`
 */

@@ -27,7 +27,7 @@ using FT      = typename Kernel::FT;
 using Point_3 = typename Kernel::Point_3;
 
 using Surface_mesh   = CGAL::Surface_mesh<Point_3>;
-using Polyline_graph = CGAL::Shape_detection::internal::Polyline_graph<Kernel, Surface_mesh>;
+using Polyline_graph = CGAL::Shape_detection::internal::Polyline_graph_points<Kernel, Surface_mesh>;
 
 using Vertex_to_point_map = typename Polyline_graph::Vertex_to_point_map;
 using PVertex_range       = typename Polyline_graph::PVertex_range;
@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
   assert(vertices(surface_mesh).size() == 3662);
 
   std::vector< std::vector<std::size_t> > regions;
-  CGAL::Shape_detection::region_growing_planes(
+  CGAL::Shape_detection::internal::region_growing_planes(
     surface_mesh, std::back_inserter(regions));
   // std::cout << "- num regions: " << regions.size() << std::endl;
   assert(regions.size() == 9);

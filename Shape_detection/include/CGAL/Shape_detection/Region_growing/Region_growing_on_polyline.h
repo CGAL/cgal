@@ -22,6 +22,7 @@
 
 namespace CGAL {
 namespace Shape_detection {
+namespace internal {
 
 template<
 typename InputRange,
@@ -61,6 +62,7 @@ OutputIterator region_growing_polylines(
     polyline, regions, CGAL::parameters::all_default());
 }
 
+} // namespace internal
 } // namespace Shape_detection
 } // namespace CGAL
 

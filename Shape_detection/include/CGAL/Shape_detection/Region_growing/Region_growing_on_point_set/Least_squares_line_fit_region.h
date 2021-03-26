@@ -128,10 +128,10 @@ namespace Point_set {
           \cgalParamDefault{25 degrees}
         \cgalParamNEnd
         \cgalParamNBegin{cos_value_threshold}
-          \cgalParamDescription{the cos value computed as cos(angle_deg_threshold * PI / 180),
-          this value can be used instead of the angle_deg_threshold}
+          \cgalParamDescription{the cos value computed as `cos(angle_deg_threshold * PI / 180)`,
+          this parameter can be used instead of the `angle_deg_threshold`}
           \cgalParamType{`GeomTraits::FT`}
-          \cgalParamDefault{cos(25 * PI / 180)}
+          \cgalParamDefault{`cos(25 * PI / 180)`}
         \cgalParamNEnd
         \cgalParamNBegin{min_region_size}
           \cgalParamDescription{the minimum number of 2D points a region must have}

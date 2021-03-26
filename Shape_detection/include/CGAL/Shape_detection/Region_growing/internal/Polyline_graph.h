@@ -11,8 +11,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_SHAPE_DETECTION_REGION_GROWING_POLYLINE_GRAPH_H
-#define CGAL_SHAPE_DETECTION_REGION_GROWING_POLYLINE_GRAPH_H
+#ifndef CGAL_SHAPE_DETECTION_REGION_GROWING_POLYGON_MESH_POLYLINE_GRAPH_POINTS_H
+#define CGAL_SHAPE_DETECTION_REGION_GROWING_POLYGON_MESH_POLYLINE_GRAPH_POINTS_H
 
 #include <CGAL/license/Shape_detection.h>
 
@@ -34,7 +34,7 @@ namespace internal {
   typename FaceRange = typename PolygonMesh::Face_range,
   typename VertexRange = typename PolygonMesh::Vertex_range,
   typename VertexToPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type>
-  class Polyline_graph {
+  class Polyline_graph_points {
 
   private:
     struct PVertex {
@@ -59,7 +59,7 @@ namespace internal {
     using Vertex_to_index_map = internal::Item_to_index_property_map<Vertex_range>;
 
   public:
-    Polyline_graph(
+    Polyline_graph_points(
       const PolygonMesh& pmesh,
       const std::vector< std::vector<std::size_t> >& regions,
       const VertexToPointMap vertex_to_point_map) :
@@ -192,4 +192,4 @@ namespace internal {
 } // namespace Shape_detection
 } // namespace CGAL
 
-#endif // CGAL_SHAPE_DETECTION_REGION_GROWING_POLYLINE_GRAPH_H
+#endif // CGAL_SHAPE_DETECTION_REGION_GROWING_POLYGON_MESH_POLYLINE_GRAPH_POINTS_H

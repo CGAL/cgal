@@ -25,7 +25,7 @@ int main() {
   assert(points_with_normals.size() == 9);
 
   std::vector< std::vector<std::size_t> > regions;
-  CGAL::Shape_detection::region_growing_planes(
+  CGAL::Shape_detection::internal::region_growing_planes(
     points_with_normals, std::back_inserter(regions));
 
   std::cout << "* number of found planar regions: " << regions.size() << std::endl;

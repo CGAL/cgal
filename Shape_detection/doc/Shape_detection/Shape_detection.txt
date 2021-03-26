@@ -234,9 +234,11 @@ Shapes are detected by growing regions from seed items, where each region is cre
 -# Repeat the procedure for all included neighbors;
 -# If no further neighbor satisfies the requirements, start a new region.
 
-Together with the generic algorithm's implementation `CGAL::Shape_detection::Region_growing`, three particular instances of this algorithm are provided:
+Together with the generic algorithm's implementation `CGAL::Shape_detection::Region_growing`, five particular instances of this algorithm are provided:
 
 - Line detection in a \ref Shape_detection_RegionGrowingPoints "2D point set";
+- Line detection in a \ref Shape_detection_RegionGrowingPoints "2D/3D segment set";
+- Line detection on a \ref Shape_detection_RegionGrowingPoints "2D/3D polyline";
 - Plane detection in a \ref Shape_detection_RegionGrowingPoints "3D point set";
 - Plane detection on a \ref Shape_detection_RegionGrowingMesh "polygon mesh".
 
@@ -298,7 +300,7 @@ This toy example shows how to define one's own \ref Shape_detection_RegionGrowin
 `CGAL::Shape_detection::Region_growing`. It also shows how to skip unnecessary items and change their default seeding order.
 
 We choose a simple custom object item. We define four such objects, where for each object, we manually
-store indices of its neighbors. The operator `NeighborQuery::operator()()` does nothing but accessing these neighbors.
+store indices of its neighbors. The operator `NeighborQuery::operator()()` does nothing but accessing those neighbors.
 The `RegionType` class defines the three necessary functions:
 
 - `RegionType::is_part_of_region()` - `true` if the first and second objects are neighbors,
@@ -364,46 +366,50 @@ to the quality of the least squares plane fit applied to the neighbors of each p
 
 The classes in Section \ref Shape_detection_RegionGrowingPoints "Region Growing On Point Set" depend on a few parameters
 that should be defined by the user. They also have default values, but these values do not necessarily guarantee
-to produce pleasant results.
+to produce pleasant results. All parameter values can be specified via the named parameters mechanism.
 
-The `NeighborQuery` related classes depend on the following parameters:
+The `NeighborQuery` related classes depend on the `neighbor_radius` parameter:
 
-- `sphere_radius` is used by the class `CGAL::Shape_detection::Point_set::Sphere_neighbor_query`
-and defines the radius of the fuzzy search sphere centered at the query point;
+- `neighbor_radius` in the class `CGAL::Shape_detection::Point_set::Sphere_neighbor_query`,
+defines the radius of the fuzzy search sphere centered at the query point;
 
-- `k` is used by the class `CGAL::Shape_detection::Point_set::K_neighbor_query`
-and defines the number K of nearest neighbors of the query point.
+- `neighbor_radius` in the class `CGAL::Shape_detection::Point_set::K_neighbor_query`,
+defines the number K of nearest neighbors of the query point.
 
-The right choice of `sphere_radius` or `k` parameters plays an important role in producing a good result.
-For example, if we consider the fuzzy sphere neighborhood, when `sphere_radius` is too large, we have fewer regions, and the details are not clearly separated.
-Meanwhile, if `sphere_radius` is too small, we produce more regions, and the point set may be over-segmented.
-Consider a 2D map of an intersection of streets in a city as in Figure \cgalFigureRef{Region_growing_parameter_sphere_radius_variation}.
-Each region is painted with a unique color. As `sphere_radius` increases, the details become less clear. When `sphere_radius` = 0.3 (c), the best visual result is produced.
+The right choice of the parameter above plays an important role in producing a good result.
+For example, if we consider the fuzzy sphere neighborhood, when `neighbor_radius` is too large, we have fewer regions,
+and the details are not clearly separated. Meanwhile, if `neighbor_radius` is too small, we produce more regions,
+and the point set may be over-segmented. Consider a 2D map of an intersection of streets in a city as
+in Figure \cgalFigureRef{Region_growing_parameter_sphere_radius_variation}. Each region is painted with
+a unique color. As `neighbor_radius` increases, the details become less clear.
+When `neighbor_radius` = 0.3 (c), the best visual result is produced.
 
 \cgalFigureBegin{Region_growing_parameter_sphere_radius_variation, Region_growing/sphere_radius_parameter_2D.png}
 (a) Input 2D point set;
-(b) 17 regions are found when `sphere_radius` = 0.1;
-(c) 8 regions are found when `sphere_radius` = 0.3;
-(d) 4 regions are found when `sphere_radius` = 1.2.
+(b) 17 regions are found when `neighbor_radius` = 0.1;
+(c) 8 regions are found when `neighbor_radius` = 0.3;
+(d) 4 regions are found when `neighbor_radius` = 1.2.
 \cgalFigureEnd
 
 The `RegionType` related classes depend on the following parameters:
 
 - `distance_threshold` - the maximum distance from a point to a line/plane;
-- `angle_threshold` - the maximum accepted angle between the normal associated with a point and the normal of a line/plane;
+- `angle_deg_threshold` - the maximum accepted angle between the normal associated with a point and the normal of a line/plane;
 - `min_region_size` - the minimum number of points a region must have.
 
-The first two parameters are used by the functions `RegionType::is_part_of_region()` and `RegionType::update()`, while the third parameter is used by the function `RegionType::is_valid_region()`
-explained in Section \ref Shape_detection_RegionGrowingFramework_conditions "Framework Region Type".
+The first two parameters are used by the functions `RegionType::is_part_of_region()` and `RegionType::update()`,
+while the third parameter is used by the function `RegionType::is_valid_region()` explained in
+Section \ref Shape_detection_RegionGrowingFramework_conditions "Framework Region Type".
 
-The right choice of `distance_threshold` and `angle_threshold` parameters is also very important.
-For example, Figure \cgalFigureRef{Region_growing_parameter_angle_threshold_variation} shows that the roof top of the house can be distinguished as two planes (painted in blue and dark red)
-when `angle_threshold` is strict enough (c), or it can be recognized as only one plane (painted in pale yellow) in the other case (b).
+The right choice of `distance_threshold` and `angle_deg_threshold` parameters is also very important.
+For example, Figure \cgalFigureRef{Region_growing_parameter_angle_threshold_variation} shows that the
+roof top of the house can be distinguished as two planes (painted in blue and dark red) when `angle_deg_threshold`
+is strict enough (c), or it can be recognized as only one plane (painted in pale yellow) in the other case (b).
 
 \cgalFigureBegin{Region_growing_parameter_angle_threshold_variation, Region_growing/angle_threshold_parameter_3D.png}
 (a) Input 3D point cloud;
-(b) Result when `angle_threshold` = 60 degrees;
-(c) Result when `angle_threshold` = 25 degrees.
+(b) Result when `angle_deg_threshold` = 60 degrees;
+(c) Result when `angle_deg_threshold` = 25 degrees.
 \cgalFigureEnd
 
 
@@ -417,29 +423,34 @@ Typical usage of the Region Growing component consists of five steps:
 -# Detect;
 -# Postprocess.
 
-Given a 2D point set, we detect 2D lines using the fuzzy sphere neighborhood. We then color all points from the found regions and save them in a file (see Figure \cgalFigureRef{Region_growing_on_point_set_2}).
+Given a 2D point set, we detect 2D lines using the fuzzy sphere neighborhood. We then color all points
+from the found regions and save them in a file (see Figure \cgalFigureRef{Region_growing_on_point_set_2}).
 
-The points with assigned to them normal vectors are stored in `std::vector` and the used `Kernel` is `CGAL::Simple_cartesian`, where the number type is `double`.
+The points with assigned to them normal vectors are stored in `std::vector` and the
+used `Kernel` is `CGAL::Simple_cartesian`, where the number type is `double`.
 
 \cgalExample{Shape_detection/region_growing_on_point_set_2.cpp}
 
-If we are given a 3D point set, then the example below shows how to detect 3D planes using the K nearest neighbors search. We color all points from the found regions
-and save them in a file (see Figure \cgalFigureRef{Region_growing_on_point_set_3}). The example also shows how to retrieve all points, which are not assigned to any region, and how to use a custom output iterator.
+If we are given a 3D point set, then the example below shows how to detect 3D planes using the K nearest neighbors search.
+We color all points from the found regions and save them in a file (see Figure \cgalFigureRef{Region_growing_on_point_set_3}).
+The example also shows how to retrieve all points, which are not assigned to any region, and how to use a custom output iterator.
 
-The point set with associated normals is stored in `CGAL::Point_set_3` and the used `Kernel` is `CGAL::Exact_predicates_inexact_constructions_kernel`.
+The point set with associated normals is stored in `CGAL::Point_set_3` and the
+used `Kernel` is `CGAL::Exact_predicates_inexact_constructions_kernel`.
 
 \cgalExample{Shape_detection/region_growing_on_point_set_3.cpp}
 
 
 \subsubsection Shape_detection_RegionGrowingPoints_performance Performance
 
-The main parameter that affects the region growing algorithm on a point set is the neighborhood size at each retrieval (`sphere_radius` or `k`).
-Larger neighbor lists are often followed by a smaller number of regions, larger coverage (the ratio between the number of points assigned to regions and the total number of input points),
-and longer running time. For example, for a test of about 70k 2D points with the fuzzy sphere neighborhood, the following table is produced:
+The main parameter that affects the region growing algorithm on a point set is the neighborhood size at each retrieval (see `neighbor_radius`).
+Larger neighbor lists are often followed by a smaller number of regions, larger coverage (the ratio between
+the number of points assigned to regions and the total number of input points), and longer running time.
+For example, for a test of about 70k 2D points with the fuzzy sphere neighborhood, the following table is produced:
 
 <table class="markdownTable" align="center">
 <tr class="markdownTableHead">
-<th class="markdownTableHeadCenter"><code>sphere_radius</code>  </th><th class="markdownTableHeadCenter">Time (in seconds)  </th><th class="markdownTableHeadCenter">Number of regions  </th><th class="markdownTableHeadCenter">Number of assigned points   </th></tr>
+<th class="markdownTableHeadCenter"><code>neighbor_radius</code>  </th><th class="markdownTableHeadCenter">Time (in seconds)  </th><th class="markdownTableHeadCenter">Number of regions  </th><th class="markdownTableHeadCenter">Number of assigned points   </th></tr>
 <tr class="markdownTableBody">
 <td class="markdownTableBodyCenter">1  </td><td class="markdownTableBodyCenter">0.138831  </td><td class="markdownTableBodyCenter">794  </td><td class="markdownTableBodyCenter">4483   </td></tr>
 <tr class="markdownTableBody">
@@ -451,8 +462,8 @@ and longer running time. For example, for a test of about 70k 2D points with the
 </table>
 
 If the neighborhood size is set too low, some points might be isolated, the region size would not reach a critical mass and so will be discarded.
-This does not only cause the latency in the program, but also reduces the coverage value, as can be seen when the `sphere_radius = 1`. A typical time measure for a 3D point set with the K nearest neighborhood
-and well-defined parameters can be found in the following table:
+This does not only cause the latency in the program, but also reduces the coverage value, as can be seen when the `neighbor_radius = 1`.
+A typical time measure for a 3D point set with the K nearest neighborhood and well-defined parameters can be found in the following table:
 
 <table class="markdownTable" align="center">
 <tr class="markdownTableHead">
@@ -478,8 +489,9 @@ In particular, it has
 - `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region` class that fits a 3D plane to the vertices of
 all mesh faces, which have been added to the region so far, and controls the quality of this fit.
 
-This component accepts any model of the concept `FaceListGraph` as a polygon mesh. A picture below gives an \ref Shape_detection_RegionGrowingMesh_examples "example"
-of the region growing algorithm for detecting 3D planes on `CGAL::Surface_mesh`.
+This component accepts any model of the concept `FaceListGraph` as a polygon mesh. A picture below
+gives an \ref Shape_detection_RegionGrowingMesh_examples "example" of the region growing algorithm
+for detecting 3D planes on `CGAL::Surface_mesh`.
 
 \cgalFigureBegin{Region_growing_on_surface_mesh, Region_growing/region_growing_on_polygon_mesh.png}
 A surface mesh depicted with one color per detected plane.
@@ -500,23 +512,26 @@ The `NeighborQuery` related class does not require any parameters, because edge-
 are found using the internal face graph connectivity, while the `RegionType` related class depends on three parameters:
 
 - `distance_threshold` - the maximum distance from the furthest face vertex to a plane;
-- `angle_threshold` - the maximum accepted angle between the face normal and the normal of a plane;
+- `angle_deg_threshold` - the maximum accepted angle between the face normal and the normal of a plane;
 - `min_region_size` - the minimum number of mesh faces a region must have.
 
-The first two parameters are used by the functions `RegionType::is_part_of_region()` and `RegionType::update()`, while the third parameter is used by the function `RegionType::is_valid_region()`
-explained in Section \ref Shape_detection_RegionGrowingFramework_conditions "Framework Regions". The right choice of these parameters is as important as the one explained
-in Section \ref Shape_detection_RegionGrowingPoints_parameters "Parameters For Region Growing On Point Set".
+The first two parameters are used by the functions `RegionType::is_part_of_region()` and `RegionType::update()`,
+while the third parameter is used by the function `RegionType::is_valid_region()` explained in
+Section \ref Shape_detection_RegionGrowingFramework_conditions "Framework Regions". The right choice of these parameters is as important
+as the one explained in Section \ref Shape_detection_RegionGrowingPoints_parameters "Parameters For Region Growing On Point Set".
 
 
 \subsubsection Shape_detection_RegionGrowingMesh_examples Examples
 
 In the example below, we show how to use region growing to detect planes on a polygon mesh that can be either stored as `CGAL::Surface_mesh` or `CGAL::Polyhedron_3`.
-If it is a surface mesh, this example also provides a way to save the result in a file (see Figure \cgalFigureRef{Region_growing_on_surface_mesh}). The used `Kernel` here is `CGAL::Exact_predicates_exact_constructions_kernel`.
-Though this exact kernel provides better quality results, please note that it may significantly slow down the execution of the program, so if you need
-a faster version of region growing, use a floating type based kernel.
+If it is a surface mesh, this example also provides a way to save the result in a file (see Figure \cgalFigureRef{Region_growing_on_surface_mesh}).
+The used `Kernel` here is `CGAL::Exact_predicates_exact_constructions_kernel`. Though this exact kernel provides better quality results,
+please note that it may significantly slow down the execution of the program, so if you need a faster version of region growing,
+use a floating type based kernel.
 
-We can improve the quality of region growing by providing a different seeding order (analogously to \ref Shape_detection_RegionGrowingPoints "Point Sets") that is why in this example we also
-sort indices of input faces using the `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting` and only then detect regions.
+We can improve the quality of region growing by providing a different seeding order (analogously to \ref Shape_detection_RegionGrowingPoints "Point Sets")
+that is why in this example we also sort indices of input faces using the `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting`
+and only then detect regions.
 
 \cgalExample{Shape_detection/region_growing_on_polygon_mesh.cpp}
 
@@ -525,6 +540,20 @@ sort indices of input faces using the `CGAL::Shape_detection::Polygon_mesh::Leas
 
 Since accessing neighbors of a face in a polygon mesh is fast, performance of the region growing on a polygon mesh
 mostly depends on the `RegionType` model's implementation, which is usually fast, too.
+
+
+\subsection Shape_detection_RegionGrowingSegments Segment Set
+
+- explain the polyline graph here
+- description (add a figure)
+- parameters
+- examples (show polyline_graph)
+
+
+\subsection Shape_detection_RegionGrowingPolyline Polyline
+
+- description
+- parameters
 
 
 \section Shape_detection_Comparison Comparison
@@ -585,7 +614,7 @@ based on the prototype version developed by Florent Lafarge.
 
 The region growing algorithm on a 3D point set was first implemented by Simon Giraudot based on the prototype version developed by Florent Lafarge
 and then generalized to arbitrary items including versions for a 2D point set, a 3D point set, and a polygon mesh by Thien Hoang during the
-Google Summer of Code 2018 under the supervision of Dmitry Anisimov.
+Google Summer of Code 2018 under the supervision of Dmitry Anisimov. The versions for segments and polylines were added later by Dmitry Anisimov.
 
 
 \section Shape_detection_Acknowledgments Acknowledgments
