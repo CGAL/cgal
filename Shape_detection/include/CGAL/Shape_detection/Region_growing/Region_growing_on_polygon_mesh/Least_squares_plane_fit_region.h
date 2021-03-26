@@ -16,10 +16,6 @@
 
 #include <CGAL/license/Shape_detection.h>
 
-// Boost includes.
-#include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
-
 // Internal includes.
 #include <CGAL/Shape_detection/Region_growing/internal/utils.h>
 

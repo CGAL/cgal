@@ -25,6 +25,9 @@
 #include <CGAL/assertions.h>
 #include <CGAL/property_map.h>
 
+// Internal includes.
+#include <CGAL/Shape_detection/Region_growing/internal/region_growing_traits.h>
+
 namespace CGAL {
 namespace Shape_detection {
 namespace internal {
@@ -207,6 +210,60 @@ namespace internal {
 
   private:
     const Vertex_range& m_vertex_range;
+    const Vertex_to_point_map& m_vertex_to_point_map;
+  };
+
+  template<
+  typename KeyType,
+  typename FaceGraph,
+  typename EdgeRange,
+  typename VertexToPointMap>
+  class Polyline_graph_segment_map {
+
+  public:
+    using Key_type = KeyType;
+    using Face_graph = FaceGraph;
+    using Edge_range = EdgeRange;
+    using Vertex_to_point_map = VertexToPointMap;
+
+    using Point_type = typename Vertex_to_point_map::value_type;
+    using Traits = typename Kernel_traits<Point_type>::Kernel;
+    using RG_traits = typename std::conditional<
+      std::is_same<typename Traits::Point_2, Point_type>::value,
+      internal::Polyline_graph_traits_2<Traits>,
+      internal::Polyline_graph_traits_3<Traits> >::type;
+
+    using value_type = typename RG_traits::Segment;
+    using reference = value_type;
+    using key_type = Key_type;
+    using category = boost::readable_property_map_tag;
+
+    Polyline_graph_segment_map(
+      const Face_graph& face_graph,
+      const Edge_range& edge_range,
+      const Vertex_to_point_map& vertex_to_point_map) :
+    m_face_graph(face_graph),
+    m_edge_range(edge_range),
+    m_vertex_to_point_map(vertex_to_point_map)
+    { }
+
+    reference operator[](const key_type& edge) const {
+      CGAL_precondition(edge.index < m_edge_range.size());
+      const auto& key = *(m_edge_range.begin() + edge.index);
+      const auto& s = get(m_vertex_to_point_map, source(key, m_face_graph));
+      const auto& t = get(m_vertex_to_point_map, target(key, m_face_graph));
+      const auto construct_segment = RG_traits().construct_segment();
+      return construct_segment(s, t);
+    }
+
+    friend inline reference get(
+      const Polyline_graph_segment_map& pgraph_map, const key_type& key) {
+      return pgraph_map[key];
+    }
+
+  private:
+    const Face_graph& m_face_graph;
+    const Edge_range& m_edge_range;
     const Vertex_to_point_map& m_vertex_to_point_map;
   };
 

@@ -16,15 +16,6 @@
 
 #include <CGAL/license/Shape_detection.h>
 
-// Boost includes.
-#include <boost/graph/properties.hpp>
-#include <boost/graph/graph_traits.hpp>
-
-// Face graph includes.
-#include <CGAL/boost/graph/iterator.h>
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-
 // Internal includes.
 #include <CGAL/Shape_detection/Region_growing/internal/property_map.h>
 

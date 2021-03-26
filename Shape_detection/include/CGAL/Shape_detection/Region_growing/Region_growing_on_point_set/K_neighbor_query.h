@@ -16,19 +16,9 @@
 
 #include <CGAL/license/Shape_detection.h>
 
-// STL includes.
-#include <typeinfo>
-#include <type_traits>
-
-// Boost includes.
-#include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/boost/iterator/counting_iterator.hpp>
-#include <CGAL/boost/graph/Named_function_parameters.h>
-
 // CGAL includes.
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Splitters.h>
-#include <CGAL/assertions.h>
 #include <CGAL/Search_traits_2.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Search_traits_adapter.h>
