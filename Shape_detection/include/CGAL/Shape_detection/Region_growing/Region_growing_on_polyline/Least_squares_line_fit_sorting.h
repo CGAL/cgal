@@ -23,6 +23,27 @@ namespace CGAL {
 namespace Shape_detection {
 namespace Polyline {
 
+  /*!
+    \ingroup PkgShapeDetectionRGOnPolyline
+
+    \brief Sorting of polyline vertices with respect to the local line fit quality.
+
+    Indices of input vertices are sorted with respect to the quality of the
+    least squares line fit applied to the neighbor vertices of each vertex.
+
+    \tparam GeomTraits
+    a model of `Kernel`
+
+    \tparam InputRange
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
+
+    \tparam NeighborQuery
+    a model of `NeighborQuery`
+
+    \tparam PointMap
+    a model of `LValuePropertyMap` whose key type is the value type of the input
+    range and value type is `Kernel::Point_2` or `Kernel::Point_3`
+  */
   template<
   typename GeomTraits,
   typename InputRange,
@@ -65,6 +86,25 @@ namespace Polyline {
     /// \name Initialization
     /// @{
 
+    /*!
+      \brief initializes all internal data structures.
+
+      \param input_range
+      an instance of `InputRange` with polyline vertices
+
+      \param neighbor_query
+      an instance of `NeighborQuery` that is used internally to
+      access vertex's neighbors
+
+      \param point_map
+      an instance of `PointMap` that maps a vertex from `input_range`
+      to `Kernel::Point_2` or `Kernel::Point_3`
+
+      \param traits
+      an instance of `GeomTraits`
+
+      \pre `input_range.size() > 0`
+    */
     Least_squares_line_fit_sorting(
       const InputRange& input_range,
       NeighborQuery& neighbor_query,
@@ -86,6 +126,9 @@ namespace Polyline {
     /// \name Sorting
     /// @{
 
+    /*!
+      \brief sorts indices of input vertices.
+    */
     void sort() {
 
       compute_scores();
@@ -99,6 +142,10 @@ namespace Polyline {
     /// \name Access
     /// @{
 
+    /*!
+      \brief returns an instance of `Seed_map` to access the ordered indices
+      of input vertices.
+    */
     Seed_map seed_map() {
       return Seed_map(m_order);
     }

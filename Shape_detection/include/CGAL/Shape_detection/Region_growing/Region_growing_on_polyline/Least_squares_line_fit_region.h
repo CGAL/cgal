@@ -23,6 +23,29 @@ namespace CGAL {
 namespace Shape_detection {
 namespace Polyline {
 
+  /*!
+    \ingroup PkgShapeDetectionRGOnPolyline
+
+    \brief Region type based on the quality of the least squares line
+    fit applied to polyline vertices.
+
+    This class fits a line, using \ref PkgPrincipalComponentAnalysisDRef "PCA",
+    to chunks of polyline vertices and controls the quality of this fit.
+    If all quality conditions are satisfied, the chunk is accepted as a valid region,
+    otherwise rejected.
+
+    \tparam GeomTraits
+    a model of `Kernel`
+
+    \tparam InputRange
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
+
+    \tparam PointMap
+    a model of `LValuePropertyMap` whose key type is the value type of the input
+    range and value type is `Kernel::Point_2` or `Kernel::Point_3`
+
+    \cgalModels `RegionType`
+  */
   template<
   typename GeomTraits,
   typename InputRange,
@@ -63,6 +86,57 @@ namespace Polyline {
     /// \name Initialization
     /// @{
 
+    /*!
+      \brief initializes all internal data structures.
+
+      \tparam NamedParameters
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+
+      \param input_range
+      an instance of `InputRange` with polyline vertices
+
+      \param np
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+      among the ones listed below
+
+      \param point_map
+      an instance of `PointMap` that maps an item from `input_range`
+      to `Kernel::Point_2` or `Kernel::Point_3`
+
+      \param traits
+      an instance of `GeomTraits`
+
+      \cgalNamedParamsBegin
+        \cgalParamNBegin{distance_threshold}
+          \cgalParamDescription{the maximum distance from a vertex to a line}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{1}
+        \cgalParamNEnd
+        \cgalParamNBegin{angle_deg_threshold}
+          \cgalParamDescription{the maximum accepted angle in degrees between
+          the direction of a polyline edge and the direction of a line}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{25 degrees}
+        \cgalParamNEnd
+        \cgalParamNBegin{cos_value_threshold}
+          \cgalParamDescription{the cos value computed as `cos(angle_deg_threshold * PI / 180)`,
+          this parameter can be used instead of the `angle_deg_threshold`}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{`cos(25 * PI / 180)`}
+        \cgalParamNEnd
+        \cgalParamNBegin{min_region_size}
+          \cgalParamDescription{the minimum number of vertices a region must have}
+          \cgalParamType{`std::size_t`}
+          \cgalParamDefault{2}
+        \cgalParamNEnd
+      \cgalNamedParamsEnd
+
+      \pre `input_range.size() > 0`
+      \pre `distance_threshold >= 0`
+      \pre `angle_deg_threshold >= 0 && angle_deg_threshold <= 90`
+      \pre `cos_value_threshold >= 0 && cos_value_threshold <= 1`
+      \pre `min_region_size > 0`
+    */
     template<typename NamedParameters>
     Least_squares_line_fit_region(
       const InputRange& input_range,
@@ -101,6 +175,29 @@ namespace Polyline {
     /// \name Access
     /// @{
 
+    /*!
+      \brief implements `RegionType::is_part_of_region()`.
+
+      This function controls if a vertex with the index `query_index` is within
+      the `distance_threshold` from the corresponding line and if the angle
+      between the direction of the inward edge and the line's direction is within the `angle_deg_threshold`.
+      If both conditions are satisfied, it returns `true`, otherwise `false`.
+
+      \param index1
+      index of the previous vertex
+
+      \param index2
+      index of the query vertex
+
+      \param region
+      indices of vertices included in the region
+
+      \return Boolean `true` or `false`
+
+      \pre `region.size() > 0`
+      \pre `index1 < input_range.size()`
+      \pre `index2 < input_range.size()`
+    */
     bool is_part_of_region(
       const std::size_t index1, const std::size_t index2,
       const std::vector<std::size_t>& region) {
@@ -147,10 +244,30 @@ namespace Polyline {
         ( squared_cos_value >= squared_cos_value_threshold ));
     }
 
+    /*!
+      \brief implements `RegionType::is_valid_region()`.
+
+      This function controls if the `region` contains at least `min_region_size` vertices.
+
+      \param region
+      indices of vertices included in the region
+
+      \return Boolean `true` or `false`
+    */
     inline bool is_valid_region(const std::vector<std::size_t>& region) const {
       return (region.size() >= m_min_region_size);
     }
 
+    /*!
+      \brief implements `RegionType::update()`.
+
+      This function fits the least squares line to all vertices from the `region`.
+
+      \param region
+      indices of vertices included in the region
+
+      \pre `region.size() > 0`
+    */
     void update(const std::vector<std::size_t>& region) {
 
       CGAL_precondition(region.size() > 0);

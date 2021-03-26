@@ -26,15 +26,44 @@ namespace CGAL {
 namespace Shape_detection {
 namespace Polyline {
 
+  /*!
+    \ingroup PkgShapeDetectionRGOnPolyline
+
+    \brief Direct neighbors connectivity in a polyline.
+
+    This class returns indices of the previous and next vertex
+    in a polyline given as `InputRange.`
+
+    \tparam GeomTraits
+    a model of `Kernel`
+
+    \tparam InputRange
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
+
+    \cgalModels `NeighborQuery`
+  */
   template<
   typename GeomTraits,
   typename InputRange>
   class One_ring_neighbor_query {
 
   public:
+    /// \cond SKIP_IN_MANUAL
     using Traits = GeomTraits;
     using Input_range = InputRange;
+    /// \endcond
 
+    /// \name Initialization
+    /// @{
+
+    /*!
+      \brief initializes all internal data structures.
+
+      \param input_range
+      an instance of `InputRange`
+
+      \pre `input_range.size() > 0`
+    */
     One_ring_neighbor_query(
       const InputRange& input_range) :
     m_input_range(input_range) {
@@ -42,6 +71,26 @@ namespace Polyline {
       CGAL_precondition(input_range.size() > 0);
     }
 
+    /// @}
+
+    /// \name Access
+    /// @{
+
+    /*!
+      \brief implements `NeighborQuery::operator()()`.
+
+      This operator retrieves indices of the previous and next vertex in a polyline
+      with respect to the vertex with the index `query_index`.
+      These indices are returned in `neighbors`.
+
+      \param query_index
+      index of the query vertex
+
+      \param neighbors
+      indices of vertices, which are direct neighbors of the query vertex
+
+      \pre `query_index < input_range.size()`
+    */
     void operator()(
       const std::size_t query_index,
       std::vector<std::size_t>& neighbors) const {
@@ -54,6 +103,8 @@ namespace Polyline {
       neighbors.push_back(im);
       neighbors.push_back(ip);
     }
+
+    /// @}
 
   private:
     const Input_range& m_input_range;

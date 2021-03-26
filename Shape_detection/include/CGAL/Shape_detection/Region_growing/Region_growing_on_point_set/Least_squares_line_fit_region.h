@@ -42,11 +42,11 @@ namespace Point_set {
 
     \tparam PointMap
     a model of `LValuePropertyMap` whose key type is the value type of the input
-    range and value type is `Kernel::Point_2`.
+    range and value type is `Kernel::Point_2`
 
     \tparam NormalMap
     a model of `LValuePropertyMap` whose key type is the value type of the input
-    range and value type is `Kernel::Vector_2`.
+    range and value type is `Kernel::Vector_2`
 
     \cgalModels `RegionType`
   */
