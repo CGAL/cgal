@@ -917,8 +917,10 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
   Arr_parameter_space ps_x_r = psx(overlap_cv, ARR_MAX_END);
   Arr_parameter_space ps_y_r = psy(overlap_cv, ARR_MAX_END);
   if ((ps_x_r != ARR_INTERIOR) || (ps_y_r != ARR_INTERIOR)) {
-    CGAL_assertion(c1->right_event() == c2->right_event());
-    right_event = c1->right_event();
+    // CGAL_assertion(c1->right_event() == c2->right_event());
+    // right_event = c1->right_event();
+    right_event = this->_push_event(overlap_cv, ARR_MAX_END, Event::DEFAULT,
+                                    ps_x_r, ps_y_r).first;
   }
   else {
     auto max_vertex = this->m_traits->construct_max_vertex_2_object();
