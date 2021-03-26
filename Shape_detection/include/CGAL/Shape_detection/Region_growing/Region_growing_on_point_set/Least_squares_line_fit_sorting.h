@@ -95,15 +95,20 @@ namespace Point_set {
       an instance of `PointMap` that maps an item from `input_range`
       to `Kernel::Point_2`
 
+      \param traits
+      an instance of `GeomTraits`
+
       \pre `input_range.size() > 0`
     */
     Least_squares_line_fit_sorting(
       const InputRange& input_range,
       NeighborQuery& neighbor_query,
-      const PointMap point_map = PointMap()) :
+      const PointMap point_map = PointMap(),
+      const GeomTraits traits = GeomTraits()) :
     m_input_range(input_range),
     m_neighbor_query(neighbor_query),
-    m_point_map(point_map) {
+    m_point_map(point_map),
+    m_traits(traits) {
 
       CGAL_precondition(input_range.size() > 0);
       m_order.resize(m_input_range.size());
@@ -146,6 +151,7 @@ namespace Point_set {
     const Input_range& m_input_range;
     Neighbor_query& m_neighbor_query;
     const Point_map m_point_map;
+    const Traits m_traits;
     std::vector<std::size_t> m_order;
     std::vector<FT> m_scores;
 
@@ -156,8 +162,8 @@ namespace Point_set {
         neighbors.clear();
         m_neighbor_query(i, neighbors);
         neighbors.push_back(i);
-        m_scores[i] = internal::create_line_from_points_2<Traits>(
-          m_input_range, m_point_map, neighbors).second;
+        m_scores[i] = internal::create_line_2(
+          m_input_range, m_point_map, neighbors, m_traits).second;
       }
     }
   };

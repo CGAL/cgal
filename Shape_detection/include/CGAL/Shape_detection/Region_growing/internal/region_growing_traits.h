@@ -51,7 +51,7 @@ namespace internal {
   };
 
   template<typename GeomTraits>
-  struct Polyline_traits_2 {
+  struct Region_growing_traits_2 {
     using Point = typename GeomTraits::Point_2;
     using Vector = typename GeomTraits::Vector_2;
     using Line = typename GeomTraits::Line_2;
@@ -60,8 +60,8 @@ namespace internal {
     using Compute_squared_distance = typename GeomTraits::Compute_squared_distance_2;
     using Compute_scalar_product = typename GeomTraits::Compute_scalar_product_2;
 
-    const GeomTraits m_traits;
-    Polyline_traits_2(const GeomTraits& traits) :
+    const GeomTraits& m_traits;
+    Region_growing_traits_2(const GeomTraits& traits) :
     m_traits(traits)
     { }
 
@@ -76,16 +76,16 @@ namespace internal {
     }
 
     template<typename InputRange, typename PointMap>
-    decltype(auto) create_line_from_points(
+    decltype(auto) create_line(
       const InputRange& input_range, const PointMap point_map,
       const std::vector<std::size_t>& region) const {
-      return internal::create_line_from_points_2<GeomTraits>(
-        input_range, point_map, region);
+      return internal::create_line_2(
+        input_range, point_map, region, m_traits);
     }
   };
 
   template<typename GeomTraits>
-  struct Polyline_traits_3 {
+  struct Region_growing_traits_3 {
     using Point = typename GeomTraits::Point_3;
     using Vector = typename GeomTraits::Vector_3;
     using Line = typename GeomTraits::Line_3;
@@ -94,8 +94,8 @@ namespace internal {
     using Compute_squared_distance = typename GeomTraits::Compute_squared_distance_3;
     using Compute_scalar_product = typename GeomTraits::Compute_scalar_product_3;
 
-    const GeomTraits m_traits;
-    Polyline_traits_3(const GeomTraits& traits) :
+    const GeomTraits& m_traits;
+    Region_growing_traits_3(const GeomTraits& traits) :
     m_traits(traits)
     { }
 
@@ -110,11 +110,11 @@ namespace internal {
     }
 
     template<typename InputRange, typename PointMap>
-    decltype(auto) create_line_from_points(
+    decltype(auto) create_line(
       const InputRange& input_range, const PointMap point_map,
       const std::vector<std::size_t>& region) const {
-      return internal::create_line_from_points_3<GeomTraits>(
-        input_range, point_map, region);
+      return internal::create_line_3(
+        input_range, point_map, region, m_traits);
     }
   };
 

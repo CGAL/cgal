@@ -147,10 +147,11 @@ namespace Polygon_mesh {
     m_face_graph(pmesh),
     m_face_range(faces(m_face_graph)),
     m_vertex_to_point_map(vertex_to_point_map),
-    m_squared_length_3(traits.compute_squared_length_3_object()),
-    m_squared_distance_3(traits.compute_squared_distance_3_object()),
-    m_scalar_product_3(traits.compute_scalar_product_3_object()),
-    m_cross_product_3(traits.construct_cross_product_vector_3_object()) {
+    m_traits(traits),
+    m_squared_length_3(m_traits.compute_squared_length_3_object()),
+    m_squared_distance_3(m_traits.compute_squared_distance_3_object()),
+    m_scalar_product_3(m_traits.compute_scalar_product_3_object()),
+    m_cross_product_3(m_traits.construct_cross_product_vector_3_object()) {
 
       CGAL_precondition(m_face_range.size() > 0);
       m_distance_threshold = parameters::choose_parameter(
@@ -285,8 +286,8 @@ namespace Polygon_mesh {
       // This fix is proposed by nh2:
       // https://github.com/CGAL/cgal/pull/4563
       const Plane_3 unoriented_plane_of_best_fit =
-        internal::create_plane_from_faces<Traits>(
-          m_face_graph, m_face_range, m_vertex_to_point_map, region).first;
+        internal::create_plane_from_faces(
+          m_face_graph, m_face_range, m_vertex_to_point_map, region, m_traits).first;
       const Vector_3 unoriented_normal_of_best_fit =
         unoriented_plane_of_best_fit.orthogonal_vector();
 
@@ -323,6 +324,7 @@ namespace Polygon_mesh {
     std::size_t m_min_region_size;
 
     const Vertex_to_point_map m_vertex_to_point_map;
+    const Traits m_traits;
 
     const Squared_length_3 m_squared_length_3;
     const Squared_distance_3 m_squared_distance_3;

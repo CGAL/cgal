@@ -101,16 +101,21 @@ namespace Polygon_mesh {
       an instance of `VertexToPointMap` that maps a polygon mesh
       vertex to `Kernel::Point_3`
 
+      \param traits
+      an instance of `GeomTraits`
+
       \pre `faces(pmesh).size() > 0`
     */
     Least_squares_plane_fit_sorting(
       const PolygonMesh& pmesh,
       NeighborQuery& neighbor_query,
-      const VertexToPointMap vertex_to_point_map) :
+      const VertexToPointMap vertex_to_point_map,
+      const GeomTraits traits = GeomTraits()) :
     m_face_graph(pmesh),
     m_neighbor_query(neighbor_query),
     m_face_range(faces(m_face_graph)),
-    m_vertex_to_point_map(vertex_to_point_map){
+    m_vertex_to_point_map(vertex_to_point_map),
+    m_traits(traits) {
 
       CGAL_precondition(m_face_range.size() > 0);
       m_order.resize(m_face_range.size());
@@ -154,6 +159,7 @@ namespace Polygon_mesh {
     Neighbor_query& m_neighbor_query;
     const Face_range m_face_range;
     const Vertex_to_point_map m_vertex_to_point_map;
+    const Traits m_traits;
     std::vector<std::size_t> m_order;
     std::vector<FT> m_scores;
 
@@ -164,8 +170,8 @@ namespace Polygon_mesh {
         neighbors.clear();
         m_neighbor_query(i, neighbors);
         neighbors.push_back(i);
-        m_scores[i] = internal::create_plane_from_faces<Traits>(
-          m_face_graph, m_face_range, m_vertex_to_point_map, neighbors).second;
+        m_scores[i] = internal::create_plane_from_faces(
+          m_face_graph, m_face_range, m_vertex_to_point_map, neighbors, m_traits).second;
       }
     }
   };

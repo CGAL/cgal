@@ -48,8 +48,8 @@ namespace Polyline {
   private:
     using Polyline_traits = typename std::conditional<
       std::is_same<typename Traits::Point_2, Point_type>::value,
-      internal::Polyline_traits_2<Traits>,
-      internal::Polyline_traits_3<Traits> >::type;
+      internal::Region_growing_traits_2<Traits>,
+      internal::Region_growing_traits_3<Traits> >::type;
 
     using Point = typename Polyline_traits::Point;
     using Vector = typename Polyline_traits::Vector;
@@ -174,7 +174,7 @@ namespace Polyline {
       // its direction being the line's direction.
       CGAL_precondition(region.size() > 0);
       const Line line_of_best_fit =
-        m_polyline_traits.create_line_from_points(
+        m_polyline_traits.create_line(
           m_input_range, m_point_map, region).first;
       const Vector direction_of_best_fit =
         line_of_best_fit.to_vector();

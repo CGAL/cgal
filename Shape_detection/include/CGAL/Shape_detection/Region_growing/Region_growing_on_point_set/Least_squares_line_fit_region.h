@@ -152,9 +152,10 @@ namespace Point_set {
     m_input_range(input_range),
     m_point_map(point_map),
     m_normal_map(normal_map),
-    m_squared_length_2(traits.compute_squared_length_2_object()),
-    m_squared_distance_2(traits.compute_squared_distance_2_object()),
-    m_scalar_product_2(traits.compute_scalar_product_2_object()) {
+    m_traits(traits),
+    m_squared_length_2(m_traits.compute_squared_length_2_object()),
+    m_squared_distance_2(m_traits.compute_squared_distance_2_object()),
+    m_scalar_product_2(m_traits.compute_scalar_product_2_object()) {
 
       CGAL_precondition(input_range.size() > 0);
       m_distance_threshold = parameters::choose_parameter(
@@ -287,8 +288,8 @@ namespace Point_set {
       // its normal being perpendicular to the line.
       CGAL_precondition(region.size() > 0);
       const Line_2 unoriented_line_of_best_fit =
-        internal::create_line_from_points_2<Traits>(
-          m_input_range, m_point_map, region).first;
+        internal::create_line_2(
+          m_input_range, m_point_map, region, m_traits).first;
       const Vector_2 unoriented_normal_of_best_fit =
         unoriented_line_of_best_fit.perpendicular(
           unoriented_line_of_best_fit.point(0)).to_vector();
@@ -326,6 +327,7 @@ namespace Point_set {
 
     const Point_map m_point_map;
     const Normal_map m_normal_map;
+    const Traits m_traits;
 
     const Squared_length_2 m_squared_length_2;
     const Squared_distance_2 m_squared_distance_2;

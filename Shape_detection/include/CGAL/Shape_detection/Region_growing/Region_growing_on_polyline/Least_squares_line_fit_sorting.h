@@ -57,8 +57,8 @@ namespace Polyline {
     using FT = typename Traits::FT;
     using Polyline_traits = typename std::conditional<
       std::is_same<typename Traits::Point_2, Point_type>::value,
-      internal::Polyline_traits_2<Traits>,
-      internal::Polyline_traits_3<Traits> >::type;
+      internal::Region_growing_traits_2<Traits>,
+      internal::Region_growing_traits_3<Traits> >::type;
     using Compare_scores = internal::Compare_scores<FT>;
 
   public:
@@ -68,11 +68,12 @@ namespace Polyline {
     Least_squares_line_fit_sorting(
       const InputRange& input_range,
       NeighborQuery& neighbor_query,
-      const PointMap point_map = PointMap()) :
+      const PointMap point_map = PointMap(),
+      const GeomTraits traits = GeomTraits()) :
     m_input_range(input_range),
     m_neighbor_query(neighbor_query),
     m_point_map(point_map),
-    m_polyline_traits(Traits()) {
+    m_polyline_traits(traits) {
 
       CGAL_precondition(input_range.size() > 0);
       m_order.resize(m_input_range.size());
@@ -119,7 +120,7 @@ namespace Polyline {
         neighbors.clear();
         m_neighbor_query(i, neighbors);
         neighbors.push_back(i);
-        m_scores[i] = m_polyline_traits.create_line_from_points(
+        m_scores[i] = m_polyline_traits.create_line(
           m_input_range, m_point_map, neighbors).second;
       }
     }

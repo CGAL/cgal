@@ -115,11 +115,11 @@ namespace internal {
   template<
   typename Traits,
   typename InputRange,
-  typename PointMap>
+  typename ItemMap>
   std::pair<typename Traits::Line_2, typename Traits::FT>
-  create_line_from_points_2(
-    const InputRange& input_range, const PointMap point_map,
-    const std::vector<std::size_t>& region) {
+  create_line_2(
+    const InputRange& input_range, const ItemMap item_map,
+    const std::vector<std::size_t>& region, const Traits& ) {
 
     using FT = typename Traits::FT;
     using Line_2 = typename Traits::Line_2;
@@ -131,23 +131,28 @@ namespace internal {
     using IPoint_2 = typename ITraits::Point_2;
     using ILine_2 = typename ITraits::Line_2;
 
-    std::vector<IPoint_2> points;
+    using Input_type = typename ItemMap::value_type;
+    using Item = typename std::conditional<
+      std::is_same<typename Traits::Point_2, Input_type>::value,
+      typename ITraits::Point_2, typename ITraits::Segment_2 >::type;
+
+    std::vector<Item> items;
     CGAL_precondition(region.size() > 0);
-    points.reserve(region.size());
+    items.reserve(region.size());
     const IConverter iconverter = IConverter();
 
-    for (const std::size_t point_index : region) {
-      CGAL_precondition(point_index < input_range.size());
-      const auto& key = *(input_range.begin() + point_index);
-      const auto& point = get(point_map, key);
-      points.push_back(iconverter(point));
+    for (const std::size_t item_index : region) {
+      CGAL_precondition(item_index < input_range.size());
+      const auto& key = *(input_range.begin() + item_index);
+      const auto& item = get(item_map, key);
+      items.push_back(iconverter(item));
     }
-    CGAL_postcondition(points.size() == region.size());
+    CGAL_postcondition(items.size() == region.size());
 
     ILine_2 fitted_line;
     IPoint_2 fitted_centroid;
     const IFT score = CGAL::linear_least_squares_fitting_2(
-      points.begin(), points.end(),
+      items.begin(), items.end(),
       fitted_line, fitted_centroid,
       CGAL::Dimension_tag<0>(), ITraits(),
       CGAL::Eigen_diagonalize_traits<IFT, 2>());
@@ -162,11 +167,11 @@ namespace internal {
   template<
   typename Traits,
   typename InputRange,
-  typename PointMap>
+  typename ItemMap>
   std::pair<typename Traits::Line_3, typename Traits::FT>
-  create_line_from_points_3(
-    const InputRange& input_range, const PointMap point_map,
-    const std::vector<std::size_t>& region) {
+  create_line_3(
+    const InputRange& input_range, const ItemMap item_map,
+    const std::vector<std::size_t>& region, const Traits& ) {
 
     using FT = typename Traits::FT;
     using Line_3 = typename Traits::Line_3;
@@ -180,23 +185,28 @@ namespace internal {
     using IPoint_3 = typename ITraits::Point_3;
     using ILine_3 = typename ITraits::Line_3;
 
-    std::vector<IPoint_3> points;
+    using Input_type = typename ItemMap::value_type;
+    using Item = typename std::conditional<
+      std::is_same<typename Traits::Point_3, Input_type>::value,
+      typename ITraits::Point_3, typename ITraits::Segment_3 >::type;
+
+    std::vector<Item> items;
     CGAL_precondition(region.size() > 0);
-    points.reserve(region.size());
+    items.reserve(region.size());
     const IConverter iconverter = IConverter();
 
-    for (const std::size_t point_index : region) {
-      CGAL_precondition(point_index < input_range.size());
-      const auto& key = *(input_range.begin() + point_index);
-      const auto& point = get(point_map, key);
-      points.push_back(iconverter(point));
+    for (const std::size_t item_index : region) {
+      CGAL_precondition(item_index < input_range.size());
+      const auto& key = *(input_range.begin() + item_index);
+      const auto& item = get(item_map, key);
+      items.push_back(iconverter(item));
     }
-    CGAL_postcondition(points.size() == region.size());
+    CGAL_postcondition(items.size() == region.size());
 
     ILine_3 fitted_line;
     IPoint_3 fitted_centroid;
     const IFT score = CGAL::linear_least_squares_fitting_3(
-      points.begin(), points.end(),
+      items.begin(), items.end(),
       fitted_line, fitted_centroid,
       CGAL::Dimension_tag<0>(), ITraits(),
       CGAL::Eigen_diagonalize_traits<IFT, 3>());
@@ -218,11 +228,11 @@ namespace internal {
   template<
   typename Traits,
   typename InputRange,
-  typename PointMap>
+  typename ItemMap>
   std::pair<typename Traits::Plane_3, typename Traits::FT>
-  create_plane_from_points(
-    const InputRange& input_range, const PointMap point_map,
-    const std::vector<std::size_t>& region) {
+  create_plane(
+    const InputRange& input_range, const ItemMap item_map,
+    const std::vector<std::size_t>& region, const Traits& ) {
 
     using FT = typename Traits::FT;
     using Plane_3 = typename Traits::Plane_3;
@@ -234,23 +244,28 @@ namespace internal {
     using IPoint_3 = typename ITraits::Point_3;
     using IPlane_3 = typename ITraits::Plane_3;
 
-    std::vector<IPoint_3> points;
+    using Input_type = typename ItemMap::value_type;
+    using Item = typename std::conditional<
+      std::is_same<typename Traits::Point_3, Input_type>::value,
+      typename ITraits::Point_3, typename ITraits::Segment_3 >::type;
+
+    std::vector<Item> items;
     CGAL_precondition(region.size() > 0);
-    points.reserve(region.size());
+    items.reserve(region.size());
     const IConverter iconverter = IConverter();
 
-    for (const std::size_t point_index : region) {
-      CGAL_precondition(point_index < input_range.size());
-      const auto& key = *(input_range.begin() + point_index);
-      const auto& point = get(point_map, key);
-      points.push_back(iconverter(point));
+    for (const std::size_t item_index : region) {
+      CGAL_precondition(item_index < input_range.size());
+      const auto& key = *(input_range.begin() + item_index);
+      const auto& item = get(item_map, key);
+      items.push_back(iconverter(item));
     }
-    CGAL_postcondition(points.size() == region.size());
+    CGAL_postcondition(items.size() == region.size());
 
     IPlane_3 fitted_plane;
     IPoint_3 fitted_centroid;
     const IFT score = CGAL::linear_least_squares_fitting_3(
-      points.begin(), points.end(),
+      items.begin(), items.end(),
       fitted_plane, fitted_centroid,
       CGAL::Dimension_tag<0>(), ITraits(),
       CGAL::Eigen_diagonalize_traits<IFT, 3>());
@@ -273,7 +288,7 @@ namespace internal {
     const FaceGraph& face_graph,
     const FaceRange& face_range,
     const VertexToPointMap vertex_to_point_map,
-    const std::vector<std::size_t>& region) {
+    const std::vector<std::size_t>& region, const Traits& ) {
 
     using FT = typename Traits::FT;
     using Plane_3 = typename Traits::Plane_3;
