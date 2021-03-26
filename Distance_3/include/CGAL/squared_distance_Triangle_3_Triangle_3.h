@@ -99,8 +99,6 @@ test_vertex_triangle(const typename K::Triangle_3& tr1,
 
   typename K::Compute_scalar_product_3 scalar_product = k.compute_scalar_product_3_object();
   typename K::Construct_cross_product_vector_3 cross_product = k.construct_cross_product_vector_3_object();
-  typename K::Construct_scaled_vector_3 scale_vector = k.construct_scaled_vector_3_object();
-  typename K::Construct_translated_point_3 translate = k.construct_translated_point_3_object();
   typename K::Construct_vector_3 vector = k.construct_vector_3_object();
   typename K::Construct_vertex_3 vertex = k.construct_vertex_3_object();
 
