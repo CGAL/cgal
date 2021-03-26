@@ -212,16 +212,16 @@ private:
 
     // coplanar segments (hardcoded)
     double z = std::sqrt(2.);
-    P p0 = p(-1, 0, z);
-    P p1 = p( 1, 0, z);
+    P p0{-1, 0, z};
+    P p1{ 1, 0, z};
 
     // translations of (0, -1, z) -- (0, 1, z) to have all variations of x&y (<0, [0;1]; >1) in the code
     for(int j=-2;j<4; j+=2)
     {
       for(int k=-3;k<3; k+=2)
       {
-        P p2 = p(j, k, z);
-        P p3 = p(j, k+2, z);
+        P p2{j,   k, z};
+        P p3{j, k+2, z};
 
         // to explicit the expected distances
         if(j == -2 && k == -3)
