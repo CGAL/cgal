@@ -37,7 +37,7 @@ namespace internal {
     using Segment = typename GeomTraits::Segment_2;
     using Construct_segment = typename GeomTraits::Construct_segment_2;
     decltype(auto) construct_segment_object() const {
-      return GeomTraits().compute_segment_2_object();
+      return GeomTraits().construct_segment_2_object();
     }
   };
 
@@ -46,13 +46,14 @@ namespace internal {
     using Segment = typename GeomTraits::Segment_3;
     using Construct_segment = typename GeomTraits::Construct_segment_3;
     decltype(auto) construct_segment_object() const {
-      return GeomTraits().compute_segment_3_object();
+      return GeomTraits().construct_segment_3_object();
     }
   };
 
   template<typename GeomTraits>
   struct Region_growing_traits_2 {
     using Point = typename GeomTraits::Point_2;
+    using Segment = typename GeomTraits::Segment_2;
     using Vector = typename GeomTraits::Vector_2;
     using Line = typename GeomTraits::Line_2;
 
@@ -75,18 +76,19 @@ namespace internal {
       return m_traits.compute_scalar_product_2_object();
     }
 
-    template<typename InputRange, typename PointMap>
+    template<typename InputRange, typename ItemMap>
     decltype(auto) create_line(
-      const InputRange& input_range, const PointMap point_map,
+      const InputRange& input_range, const ItemMap item_map,
       const std::vector<std::size_t>& region) const {
       return internal::create_line_2(
-        input_range, point_map, region, m_traits);
+        input_range, item_map, region, m_traits);
     }
   };
 
   template<typename GeomTraits>
   struct Region_growing_traits_3 {
     using Point = typename GeomTraits::Point_3;
+    using Segment = typename GeomTraits::Segment_3;
     using Vector = typename GeomTraits::Vector_3;
     using Line = typename GeomTraits::Line_3;
 
@@ -109,12 +111,12 @@ namespace internal {
       return m_traits.compute_scalar_product_3_object();
     }
 
-    template<typename InputRange, typename PointMap>
+    template<typename InputRange, typename ItemMap>
     decltype(auto) create_line(
-      const InputRange& input_range, const PointMap point_map,
+      const InputRange& input_range, const ItemMap item_map,
       const std::vector<std::size_t>& region) const {
       return internal::create_line_3(
-        input_range, point_map, region, m_traits);
+        input_range, item_map, region, m_traits);
     }
   };
 

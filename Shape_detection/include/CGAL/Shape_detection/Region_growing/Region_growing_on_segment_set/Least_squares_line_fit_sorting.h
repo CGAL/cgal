@@ -46,7 +46,7 @@ namespace Segment_set {
     #ifdef DOXYGEN_RUNNING
       /*!
         a model of `ReadablePropertyMap` whose key and value type is `std::size_t`.
-        This map provides an access to the ordered indices of input points.
+        This map provides an access to the ordered indices of input segments.
       */
       typedef unspecified_type Seed_map;
     #endif

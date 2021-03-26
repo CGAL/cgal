@@ -34,8 +34,9 @@ namespace Polygon_mesh {
   private:
     struct PEdge {
       std::size_t index = std::size_t(-1);
-      std::set<std::size_t> neighbors;
-      std::vector<std::size_t> regions;
+      std::set<std::size_t> sneighbors;
+      std::set<std::size_t> tneighbors;
+      std::pair<int, int> regions;
     };
 
   public:
@@ -88,9 +89,7 @@ namespace Polygon_mesh {
 
       for (std::size_t i = 0; i < m_pedges.size(); ++i) {
         auto& pedge = m_pedges[i];
-
-        CGAL_precondition(pedge.regions.size() == 2);
-        CGAL_precondition(pedge.regions[0] != pedge.regions[1]);
+        CGAL_precondition(pedge.regions.first != pedge.regions.second);
         CGAL_precondition(pedge.index != std::size_t(-1));
         CGAL_precondition(pedge.index < m_edge_range.size());
 
@@ -98,8 +97,8 @@ namespace Polygon_mesh {
         const auto s = source(edge, m_face_graph);
         const auto t = target(edge, m_face_graph);
 
-        add_vertex_neighbors(s, i, pedge_map, pedge.neighbors);
-        add_vertex_neighbors(t, i, pedge_map, pedge.neighbors);
+        add_vertex_neighbors(s, i, pedge_map, pedge.sneighbors);
+        add_vertex_neighbors(t, i, pedge_map, pedge.tneighbors);
       }
     }
 
@@ -110,8 +109,10 @@ namespace Polygon_mesh {
       neighbors.clear();
       CGAL_precondition(query_index < m_pedges.size());
       const auto& pedge = m_pedges[query_index];
-      for (const std::size_t neighbor : pedge.neighbors)
-        neighbors.push_back(neighbor);
+      for (const std::size_t sneighbor : pedge.sneighbors)
+        neighbors.push_back(sneighbor);
+      for (const std::size_t tneighbor : pedge.tneighbors)
+        neighbors.push_back(tneighbor);
     }
 
     const Segment_range& segment_range() const {
@@ -128,6 +129,29 @@ namespace Polygon_mesh {
 
     void release_memory() {
       m_pedges.shrink_to_fit();
+    }
+
+    const std::set<std::size_t>& source_neighbors(
+      const std::size_t query_index) const {
+      CGAL_precondition(query_index < m_pedges.size());
+      return m_pedges[query_index].sneighbors;
+    }
+
+    const std::set<std::size_t>& target_neighbors(
+      const std::size_t query_index) const {
+      CGAL_precondition(query_index < m_pedges.size());
+      return m_pedges[query_index].tneighbors;
+    }
+
+    std::size_t edge_index(const std::size_t query_index) const {
+      CGAL_precondition(query_index < m_pedges.size());
+      return m_pedges[query_index].index;
+    }
+
+    const std::pair<int, int>& edge_regions(
+      const std::size_t query_index) const {
+      CGAL_precondition(query_index < m_pedges.size());
+      return m_pedges[query_index].regions;
     }
 
   private:
@@ -170,11 +194,12 @@ namespace Polygon_mesh {
 
       PEdge pedge;
       CGAL_precondition(region1 != region2);
-      const std::size_t edge_index = get(m_edge_to_index_map, edge);
-      CGAL_precondition(edge_index != std::size_t(-1));
-      pedge.index = edge_index;
-      pedge.regions.push_back(region1);
-      pedge.regions.push_back(region2);
+      const std::size_t ei = get(m_edge_to_index_map, edge);
+      CGAL_precondition(ei != std::size_t(-1));
+
+      pedge.index = ei;
+      pedge.regions.first = region1;
+      pedge.regions.second = region2;
       CGAL_precondition(pedge.index < pedge_map.size());
       pedge_map[pedge.index] = m_pedges.size();
       m_pedges.push_back(pedge);

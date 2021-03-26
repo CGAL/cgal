@@ -252,7 +252,7 @@ namespace internal {
       const auto& key = *(m_edge_range.begin() + edge.index);
       const auto& s = get(m_vertex_to_point_map, source(key, m_face_graph));
       const auto& t = get(m_vertex_to_point_map, target(key, m_face_graph));
-      const auto construct_segment = RG_traits().construct_segment();
+      const auto construct_segment = RG_traits().construct_segment_object();
       return construct_segment(s, t);
     }
 

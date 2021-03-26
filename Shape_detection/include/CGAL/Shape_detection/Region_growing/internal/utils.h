@@ -119,7 +119,7 @@ namespace internal {
   std::pair<typename Traits::Line_2, typename Traits::FT>
   create_line_2(
     const InputRange& input_range, const ItemMap item_map,
-    const std::vector<std::size_t>& region, const Traits& ) {
+    const std::vector<std::size_t>& region, const Traits&) {
 
     using FT = typename Traits::FT;
     using Line_2 = typename Traits::Line_2;
@@ -171,7 +171,7 @@ namespace internal {
   std::pair<typename Traits::Line_3, typename Traits::FT>
   create_line_3(
     const InputRange& input_range, const ItemMap item_map,
-    const std::vector<std::size_t>& region, const Traits& ) {
+    const std::vector<std::size_t>& region, const Traits&) {
 
     using FT = typename Traits::FT;
     using Line_3 = typename Traits::Line_3;
@@ -232,7 +232,7 @@ namespace internal {
   std::pair<typename Traits::Plane_3, typename Traits::FT>
   create_plane(
     const InputRange& input_range, const ItemMap item_map,
-    const std::vector<std::size_t>& region, const Traits& ) {
+    const std::vector<std::size_t>& region, const Traits&) {
 
     using FT = typename Traits::FT;
     using Plane_3 = typename Traits::Plane_3;
@@ -288,7 +288,7 @@ namespace internal {
     const FaceGraph& face_graph,
     const FaceRange& face_range,
     const VertexToPointMap vertex_to_point_map,
-    const std::vector<std::size_t>& region, const Traits& ) {
+    const std::vector<std::size_t>& region, const Traits&) {
 
     using FT = typename Traits::FT;
     using Plane_3 = typename Traits::Plane_3;
