@@ -151,7 +151,7 @@ sub collect_results_of_platform($)
 # Create an anonymous hash that hashes packages to their result.
     my $platform_results = {};
     my $test_result="results_${platform}.txt";
-    my ($yeahs, $nays, $warnings,$reqs) = (0,0,0,0);
+    my ($yeahs, $nays, $warnings,$reqs, $skips) = (0,0,0,0,0);
     my $resulttext;
     open(TESTRESULT, $test_result) or return $platform_results;
     while (<TESTRESULT>) {
@@ -169,6 +169,9 @@ sub collect_results_of_platform($)
 	    } elsif ($2 eq 'r') {
 		$resulttext = 'r';
 		++$reqs;
+		} elsif ($2 eq 's') {
+		$resulttext = 's';
+		++$skips;
 	    } else {
 		$resulttext = ' ';
 	    }
@@ -180,6 +183,7 @@ sub collect_results_of_platform($)
     $platform_results->{"n"} = $nays;
     $platform_results->{"w"} = $warnings;
     $platform_results->{"r"} = $reqs;
+    $platform_results->{"s"} = $skips;
     return $platform_results;
 }
 
@@ -258,6 +262,8 @@ EOF
 		print OUTPUT ' class="error"';
 	    } elsif ($resulttext eq 'r') {
 		print OUTPUT ' class="requirements"';
+		} elsif ($resulttext eq 's') {
+		print OUTPUT ' class="skip"';
 	    }
 	    else {
 		print OUTPUT ' class="na"';
@@ -456,6 +462,7 @@ sub print_platform_descriptions()
 <th class="warning">w</th>
 <th class="error">n</th>
 <th class="requirements">r</th>
+<th class="skip">s</th>
 <th>CMake</th>
 <th>BOOST</th>
 <th>MPFR</th>
@@ -494,6 +501,7 @@ EOF
 	    my $countw = $testresults[$platform_num]->{"w"};
 	    my $countn = $testresults[$platform_num]->{"n"};
 	    my $countr = $testresults[$platform_num]->{"r"};
+	    my $counts = $testresults[$platform_num]->{"s"};
 
 	    my $index = 8;
 	    my @tmp;
@@ -512,6 +520,7 @@ EOF
 	    print OUTPUT "<td>$countw</td>\n";
  	    print OUTPUT "<td>$countn</td>\n";
  	    print OUTPUT "<td>$countr</td>\n";
+ 	    print OUTPUT "<td>$counts</td>\n";
 	    $index = 8;
 	    while ($index) {
 	        $index--;
@@ -602,7 +611,7 @@ sub print_little_header(){
 <a id="jump_to_results" href="#testresults">jump to results</a></h1>
 <!--#include virtual="versions.inc"-->
 <p>The results of the tests are presented in a table
-('y' = success, 'w' = warning, 'n' = failure, 'r' = a requirement is not found),
+('y' = success, 'w' = warning, 'n' = failure, 'r' = a requirement is not found, 's' = package skipped by tester),
 and the error + compiler output from each test can be retrieved by clicking
 on it.</p>
 <p><b>N.B. The detection of warnings is not exact.

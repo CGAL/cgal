@@ -246,7 +246,9 @@ run_testsuite()
   esac
 
   for DIR in $TEST_DIRECTORIES ; do
-    test_directory "$DIR"
+    if [ ! -f $DIR/skipped ]; then
+      test_directory "$DIR"
+    fi
   done
 }
 

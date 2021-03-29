@@ -628,11 +628,17 @@ if [ -f '${LIST_TEST_PACKAGES}' ]; then
   cp '${CGAL_TEST_DIR}/makefile2'                           '${CGAL_BINARY_DIR}/test'
   cp '${CGAL_TEST_DIR}/run_testsuite_with_cmake'            '${CGAL_BINARY_DIR}/test'
 
-  for PACKAGE in \`source '${LIST_TEST_PACKAGES}' '${CGAL_ROOT}'\`; do
-
-    if [ -d "${CGAL_TEST_DIR}/\${PACKAGE}" ]; then
-      mkdir "${CGAL_BINARY_DIR}/test/\${PACKAGE}"
-      cp -r "${CGAL_TEST_DIR}/\${PACKAGE}" '${CGAL_BINARY_DIR}/test'
+  # list all packages in CGAL_TEST_DIR. If PACKAGE is found in LIST_TEST_PACKAGES,
+  # copy it, else prepare for the special "skipped" case in the table.
+  for PACKAGE in \$(ls "${CGAL_TEST_DIR}"); do
+    if [ -d "${CGAL_TEST_DIR}/\$PACKAGE" ]; then
+      if source '${LIST_TEST_PACKAGES}' '${CGAL_ROOT}' | egrep -q \$PACKAGE; then
+        mkdir "\${CGAL_BINARY_DIR}/test/\${PACKAGE}"
+        cp -r "${CGAL_TEST_DIR}/\${PACKAGE}" '${CGAL_BINARY_DIR}/test'
+      else
+        mkdir "${CGAL_BINARY_DIR}/test/\${PACKAGE}"
+        touch "${CGAL_BINARY_DIR}/test/\${PACKAGE}/skipped"
+      fi
     fi
 
   done
