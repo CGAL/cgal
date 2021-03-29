@@ -60,7 +60,7 @@ namespace Polyline {
       \brief initializes all internal data structures.
 
       \param input_range
-      an instance of `InputRange`
+      an instance of `InputRange` with polyline vertices
 
       \pre `input_range.size() > 0`
     */
@@ -100,8 +100,8 @@ namespace Polyline {
       const std::size_t n = m_input_range.size();
       const std::size_t im = (query_index + n - 1) % n;
       const std::size_t ip = (query_index + 1) % n;
-      neighbors.push_back(im);
       neighbors.push_back(ip);
+      neighbors.push_back(im);
     }
 
     /// @}

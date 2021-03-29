@@ -237,8 +237,8 @@ Shapes are detected by growing regions from seed items, where each region is cre
 Together with the generic algorithm's implementation `CGAL::Shape_detection::Region_growing`, five particular instances of this algorithm are provided:
 
 - Line detection in a \ref Shape_detection_RegionGrowingPoints "2D point set";
-- Line detection in a \ref Shape_detection_RegionGrowingPoints "2D/3D segment set";
-- Line detection on a \ref Shape_detection_RegionGrowingPoints "2D/3D polyline";
+- Line detection in a \ref Shape_detection_RegionGrowingSegments "2D/3D segment set";
+- Line detection on a \ref Shape_detection_RegionGrowingPolyline "2D/3D polyline";
 - Plane detection in a \ref Shape_detection_RegionGrowingPoints "3D point set";
 - Plane detection on a \ref Shape_detection_RegionGrowingMesh "polygon mesh".
 
@@ -279,7 +279,7 @@ all necessary region requirements and can be added to a region. It is called per
 - `RegionType::is_valid_region()` This function checks if a region satisfies
 all necessary region requirements. It is called per region.
 
-- `RegionType::update()` This utility function  enables to update any information,
+- `RegionType::update()` This function enables to update any information,
 which is maintained with the region.
 
 

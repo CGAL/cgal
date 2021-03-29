@@ -147,7 +147,7 @@ namespace internal {
       const auto& item = get(item_map, key);
       items.push_back(iconverter(item));
     }
-    CGAL_postcondition(items.size() == region.size());
+    CGAL_precondition(items.size() == region.size());
 
     ILine_2 fitted_line;
     IPoint_2 fitted_centroid;
@@ -201,7 +201,7 @@ namespace internal {
       const auto& item = get(item_map, key);
       items.push_back(iconverter(item));
     }
-    CGAL_postcondition(items.size() == region.size());
+    CGAL_precondition(items.size() == region.size());
 
     ILine_3 fitted_line;
     IPoint_3 fitted_centroid;
@@ -260,7 +260,7 @@ namespace internal {
       const auto& item = get(item_map, key);
       items.push_back(iconverter(item));
     }
-    CGAL_postcondition(items.size() == region.size());
+    CGAL_precondition(items.size() == region.size());
 
     IPlane_3 fitted_plane;
     IPoint_3 fitted_centroid;
@@ -311,14 +311,14 @@ namespace internal {
 
       const auto hedge = halfedge(face, face_graph);
       const auto vertices = vertices_around_face(hedge, face_graph);
-      CGAL_postcondition(vertices.size() > 0);
+      CGAL_precondition(vertices.size() > 0);
 
       for (const auto vertex : vertices) {
         const auto& point = get(vertex_to_point_map, vertex);
         points.push_back(iconverter(point));
       }
     }
-    CGAL_postcondition(points.size() >= region.size());
+    CGAL_precondition(points.size() >= region.size());
 
     IPlane_3 fitted_plane;
     IPoint_3 fitted_centroid;

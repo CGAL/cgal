@@ -147,13 +147,14 @@ namespace Shape_detection {
 
         // Try to grow a new region from the index of the seed item.
         if (!m_visited[seed_index]) {
-          propagate(seed_index, region);
+          const bool is_success = propagate(seed_index, region);
 
           // Check global conditions.
-          if (!m_region_type.is_valid_region(region))
+          if (!is_success || !m_region_type.is_valid_region(region)) {
             revert(region);
-          else
+          } else {
             *(regions++) = region;
+          }
         }
       }
       return regions;
@@ -217,7 +218,7 @@ namespace Shape_detection {
     const Seed_map m_seed_map;
     Visited_items m_visited;
 
-    void propagate(const std::size_t seed_index, Indices& region) {
+    bool propagate(const std::size_t seed_index, Indices& region) {
       region.clear();
 
       // Use two queues, while running on this queue, push to the other queue;
@@ -232,7 +233,8 @@ namespace Shape_detection {
       region.push_back(seed_index);
 
       // Update internal properties of the region.
-      m_region_type.update(region);
+      const bool is_well_created = m_region_type.update(region);
+      if (!is_well_created) return false;
 
       Indices neighbors;
       while (
@@ -274,6 +276,7 @@ namespace Shape_detection {
           depth_index = !depth_index;
         }
       }
+      return true;
     }
 
     void revert(const Indices& region) {

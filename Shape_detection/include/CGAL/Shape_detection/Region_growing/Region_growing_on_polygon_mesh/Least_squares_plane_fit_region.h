@@ -245,9 +245,11 @@ namespace Polygon_mesh {
       \param region
       indices of faces included in the region
 
+      \return Boolean `true` if the plane fitting succeeded and `false` otherwise
+
       \pre `region.size() > 0`
     */
-    void update(const std::vector<std::size_t>& region) {
+    bool update(const std::vector<std::size_t>& region) {
 
       CGAL_precondition(region.size() > 0);
       if (region.size() == 1) { // create new reference plane and normal
@@ -259,7 +261,9 @@ namespace Polygon_mesh {
         const auto face = *(m_face_range.begin() + face_index);
         const Point_3 face_centroid = get_face_centroid(face);
         const Vector_3 face_normal = get_face_normal(face);
+        if (face_normal == CGAL::NULL_VECTOR) return false;
 
+        CGAL_precondition(face_normal != CGAL::NULL_VECTOR);
         m_plane_of_best_fit = Plane_3(face_centroid, face_normal);
         m_normal_of_best_fit = m_plane_of_best_fit.orthogonal_vector();
 
@@ -268,6 +272,7 @@ namespace Polygon_mesh {
         std::tie(m_plane_of_best_fit, m_normal_of_best_fit) =
           get_plane_and_normal(region);
       }
+      return true;
     }
 
     /// @}
@@ -373,7 +378,6 @@ namespace Polygon_mesh {
       const Vector_3 u = point2 - point1;
       const Vector_3 v = point3 - point1;
       const Vector_3 face_normal = m_cross_product_3(u, v);
-      CGAL_postcondition(face_normal != Vector_3());
       return face_normal;
     }
 
@@ -399,7 +403,7 @@ namespace Polygon_mesh {
         const FT squared_distance = m_squared_distance_3(point, m_plane_of_best_fit);
         max_squared_distance = (CGAL::max)(squared_distance, max_squared_distance);
       }
-      CGAL_postcondition(max_squared_distance >= FT(0));
+      CGAL_precondition(max_squared_distance >= FT(0));
       return max_squared_distance;
     }
   };

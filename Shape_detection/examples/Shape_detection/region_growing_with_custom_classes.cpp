@@ -71,8 +71,9 @@ namespace Custom {
       return m_is_valid;
     }
 
-    void update(const std::vector<std::size_t>&) {
+    bool update(const std::vector<std::size_t>&) {
       m_is_valid = true;
+      return m_is_valid;
     }
   };
 

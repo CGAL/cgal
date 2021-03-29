@@ -8,7 +8,7 @@ to access neighbors of an item.
 \cgalHasModel
 - `CGAL::Shape_detection::Point_set::K_neighbor_query`
 - `CGAL::Shape_detection::Point_set::Sphere_neighbor_query`
-- `CGAL::Shape_detection::Segment_set::Polyline_graph_neighbor_query`
+- `CGAL::Shape_detection::Polygon_mesh::Polyline_graph`
 - `CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query`
 - `CGAL::Shape_detection::Polyline::One_ring_neighbor_query`
 */

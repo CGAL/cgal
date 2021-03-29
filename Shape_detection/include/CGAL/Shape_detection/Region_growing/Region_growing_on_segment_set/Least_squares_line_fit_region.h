@@ -112,9 +112,7 @@ namespace Segment_set {
       const Segment& query_segment = get(m_segment_map, key);
       const Point& query_source = query_segment.source();
       const Point& query_target = query_segment.target();
-      CGAL_precondition(query_source != query_target);
       const Vector query_direction(query_source, query_target);
-      CGAL_precondition(query_direction != Vector());
 
       const FT squared_distance_to_fitted_line =
         get_max_squared_distance(query_segment);
@@ -139,7 +137,7 @@ namespace Segment_set {
       return (region.size() >= m_min_region_size);
     }
 
-    void update(const std::vector<std::size_t>& region) {
+    bool update(const std::vector<std::size_t>& region) {
 
       CGAL_precondition(region.size() > 0);
       if (region.size() == 1) { // create new reference line and direction
@@ -152,8 +150,9 @@ namespace Segment_set {
         const Segment& segment = get(m_segment_map, key);
         const Point& source = segment.source();
         const Point& target = segment.target();
-        CGAL_precondition(source != target);
+        if (source == target) return false;
 
+        CGAL_precondition(source != target);
         m_line_of_best_fit = Line(source, target);
         m_direction_of_best_fit = m_line_of_best_fit.to_vector();
 
@@ -162,6 +161,7 @@ namespace Segment_set {
         std::tie(m_line_of_best_fit, m_direction_of_best_fit) =
           get_line_and_direction(region);
       }
+      return true;
     }
 
     /// @}

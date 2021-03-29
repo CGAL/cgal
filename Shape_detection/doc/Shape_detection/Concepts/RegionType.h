@@ -56,8 +56,12 @@ public:
     condition `indices.size() == 1`. This function is also called periodically
     when enlarging the region. This case can be identified by checking the
     condition `indices.size() > 1`.
+
+    This function also returns a Boolean at the first call when a new region
+    with one seed item is being created. When it is `true`, the new region is
+    further propagated, otherwise, it is rejected.
   */
-  void update(
+  bool update(
     const std::vector<std::size_t>& indices) {
 
   }

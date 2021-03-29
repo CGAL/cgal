@@ -72,7 +72,7 @@ namespace Polygon_mesh {
     #ifdef DOXYGEN_RUNNING
       /*!
         a model of `ReadablePropertyMap` whose key and value type is `std::size_t`.
-        This map provides an access to the ordered indices of polygon mesh faces.
+        This map provides an access to the ordered indices of input faces.
       */
       typedef unspecified_type Seed_map;
     #endif
@@ -129,7 +129,7 @@ namespace Polygon_mesh {
     /// @{
 
     /*!
-      \brief sorts indices of polygon mesh faces.
+      \brief sorts indices of input faces.
     */
     void sort() {
 
@@ -146,7 +146,7 @@ namespace Polygon_mesh {
 
     /*!
       \brief returns an instance of `Seed_map` to access the ordered indices
-      of polygon mesh faces.
+      of input faces.
     */
     Seed_map seed_map() {
       return Seed_map(m_order);

@@ -120,7 +120,12 @@ namespace Segment_set {
         neighbors.clear();
         m_neighbor_query(i, neighbors);
         neighbors.push_back(i);
-        m_scores[i] = m_segment_set_traits.create_line(
+        const auto& key = *(m_input_range.begin() + i);
+        const auto& segment = get(m_segment_map, key);
+        const auto& source = segment.source();
+        const auto& target = segment.target();
+        if (source == target) m_scores[i] = FT(0); // put it at the very back
+        else m_scores[i] = m_segment_set_traits.create_line(
           m_input_range, m_segment_map, neighbors).second;
       }
     }

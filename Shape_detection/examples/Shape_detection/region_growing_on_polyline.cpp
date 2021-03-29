@@ -41,15 +41,13 @@ int main(int argc, char *argv[]) {
       return EXIT_FAILURE;
     }
   }
-  polyline_3.pop_back();
   in.close();
   std::cout << "* number of input vertices: " << polyline_3.size() << std::endl;
-  assert(polyline_3.size() == 248);
+  assert(polyline_3.size() == 249);
 
   // Default parameter values for the data file polyline_3.polylines.txt.
-  const FT          max_distance_to_line = FT(45) / FT(10);
-  const FT          max_accepted_angle   = FT(45);
-  const std::size_t min_region_size      = 5;
+  const FT max_distance_to_line = FT(45) / FT(10);
+  const FT max_accepted_angle   = FT(45);
 
   // Create instances of the classes Neighbor_query and Region_type.
   Neighbor_query neighbor_query(polyline_3);
@@ -58,8 +56,7 @@ int main(int argc, char *argv[]) {
     polyline_3,
     CGAL::parameters::
     distance_threshold(max_distance_to_line).
-    angle_deg_threshold(max_accepted_angle).
-    min_region_size(min_region_size));
+    angle_deg_threshold(max_accepted_angle));
 
   // Create an instance of the region growing class.
   Region_growing region_growing(
@@ -69,7 +66,7 @@ int main(int argc, char *argv[]) {
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
   std::cout << "* number of found 3D regions: " << regions.size() << std::endl;
-  assert(regions.size() == 10);
+  assert(regions.size() == 12);
 
   // Save 3D regions to a file.
   std::string fullpath = (argc > 2 ? argv[2] : "regions_polyline_3.ply");
@@ -98,10 +95,9 @@ int main(int argc, char *argv[]) {
     polyline_2, std::back_inserter(regions),
     CGAL::parameters::
     distance_threshold(max_distance_to_line).
-    angle_deg_threshold(max_accepted_angle).
-    min_region_size(min_region_size));
+    angle_deg_threshold(max_accepted_angle));
   std::cout << "* number of found 2D regions: " << regions.size() << std::endl;
-  assert(regions.size() == 6);
+  assert(regions.size() == 5);
 
   // Save 2D regions to a file.
   fullpath = (argc > 2 ? argv[2] : "regions_polyline_2.ply");

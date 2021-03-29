@@ -208,7 +208,6 @@ namespace Point_set {
       const auto& key = *(m_input_range.begin() + query_index);
       const Point_3& query_point = get(m_point_map, key);
       const Vector_3& query_normal = get(m_normal_map, key);
-      CGAL_precondition(query_normal != Vector_3());
 
       const FT a = CGAL::abs(m_plane_of_best_fit.a());
       const FT b = CGAL::abs(m_plane_of_best_fit.b());
@@ -258,9 +257,11 @@ namespace Point_set {
       \param region
       indices of points included in the region
 
+      \return Boolean `true` if the plane fitting succeeded and `false` otherwise
+
       \pre `region.size() > 0`
     */
-    void update(const std::vector<std::size_t>& region) {
+    bool update(const std::vector<std::size_t>& region) {
 
       CGAL_precondition(region.size() > 0);
       if (region.size() == 1) { // create new reference plane and normal
@@ -272,17 +273,19 @@ namespace Point_set {
         const auto& key = *(m_input_range.begin() + point_index);
         const Point_3& point = get(m_point_map, key);
         const Vector_3& normal = get(m_normal_map, key);
-        CGAL_precondition(normal != Vector_3());
+        if (normal == CGAL::NULL_VECTOR) return false;
 
+        CGAL_precondition(normal != CGAL::NULL_VECTOR);
         m_plane_of_best_fit = Plane_3(point, normal);
         m_normal_of_best_fit = m_plane_of_best_fit.orthogonal_vector();
 
       } else { // update reference plane and normal
-        if (region.size() <= 3) return;
+        if (region.size() < 3) return false;
         CGAL_precondition(region.size() >= 3);
         std::tie(m_plane_of_best_fit, m_normal_of_best_fit) =
           get_plane_and_normal(region);
       }
+      return true;
     }
 
     /// @}
@@ -306,7 +309,6 @@ namespace Point_set {
         CGAL_precondition(normal_index < m_input_range.size());
         const auto& key = *(m_input_range.begin() + normal_index);
         const Vector_3& normal = get(m_normal_map, key);
-        CGAL_precondition(normal != Vector_3());
         const bool agrees =
           m_scalar_product_3(normal, unoriented_normal_of_best_fit) > FT(0);
         votes_to_keep_normal += (agrees ? 1 : -1);

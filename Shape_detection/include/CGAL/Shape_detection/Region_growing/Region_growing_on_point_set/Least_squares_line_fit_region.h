@@ -208,7 +208,12 @@ namespace Point_set {
       const auto& key = *(m_input_range.begin() + query_index);
       const Point_2& query_point = get(m_point_map, key);
       const Vector_2& query_normal = get(m_normal_map, key);
-      CGAL_precondition(query_normal != Vector_2());
+
+      const FT a = CGAL::abs(m_line_of_best_fit.a());
+      const FT b = CGAL::abs(m_line_of_best_fit.b());
+      const FT c = CGAL::abs(m_line_of_best_fit.c());
+      if (a == FT(0) && b == FT(0) && c == FT(0))
+        return false;
 
       const FT squared_distance_to_fitted_line =
         m_squared_distance_2(query_point, m_line_of_best_fit);
@@ -251,9 +256,11 @@ namespace Point_set {
       \param region
       indices of points included in the region
 
+      \return Boolean `true` if the line fitting succeeded and `false` otherwise
+
       \pre `region.size() > 0`
     */
-    void update(const std::vector<std::size_t>& region) {
+    bool update(const std::vector<std::size_t>& region) {
 
       CGAL_precondition(region.size() > 0);
       if (region.size() == 1) { // create new reference line and normal
@@ -265,8 +272,9 @@ namespace Point_set {
         const auto& key = *(m_input_range.begin() + point_index);
         const Point_2& point = get(m_point_map, key);
         const Vector_2& normal = get(m_normal_map, key);
-        CGAL_precondition(normal != Vector_2());
+        if (normal == CGAL::NULL_VECTOR) return false;
 
+        CGAL_precondition(normal != CGAL::NULL_VECTOR);
         m_line_of_best_fit = Line_2(point, normal).perpendicular(point);
         m_normal_of_best_fit = m_line_of_best_fit.perpendicular(
           m_line_of_best_fit.point(0)).to_vector();
@@ -276,6 +284,7 @@ namespace Point_set {
         std::tie(m_line_of_best_fit, m_normal_of_best_fit) =
           get_line_and_normal(region);
       }
+      return true;
     }
 
     /// @}
@@ -300,7 +309,6 @@ namespace Point_set {
         CGAL_precondition(normal_index < m_input_range.size());
         const auto& key = *(m_input_range.begin() + normal_index);
         const Vector_2& normal = get(m_normal_map, key);
-        CGAL_precondition(normal != Vector_2());
         const bool agrees =
           m_scalar_product_2(normal, unoriented_normal_of_best_fit) > FT(0);
         votes_to_keep_normal += (agrees ? 1 : -1);

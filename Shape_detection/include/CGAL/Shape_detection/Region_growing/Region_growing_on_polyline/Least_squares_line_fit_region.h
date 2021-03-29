@@ -210,21 +210,22 @@ namespace Polyline {
       const Point& input_point = get(m_point_map, key1);
       const Point& query_point = get(m_point_map, key2);
 
-      if (region.size() == 1) { // update new reference line and direction
+      // Update new reference line and direction.
+      if (m_direction_of_best_fit == CGAL::NULL_VECTOR) {
+        if (input_point == query_point) return true;
         CGAL_precondition(input_point != query_point);
         m_line_of_best_fit = Line(input_point, query_point);
         m_direction_of_best_fit = m_line_of_best_fit.to_vector();
         return true;
       }
+      CGAL_precondition(m_direction_of_best_fit != CGAL::NULL_VECTOR);
 
-      CGAL_precondition(region.size() >= 2);
+      // Add equal points to the previously defined region.
       if (input_point == query_point) return true;
       CGAL_precondition(input_point != query_point);
       const Vector query_direction(input_point, query_point);
 
-      CGAL_precondition(m_line_of_best_fit != Line());
-      CGAL_precondition(m_direction_of_best_fit != Vector());
-
+      // Check real conditions.
       const FT squared_distance_to_fitted_line =
         m_squared_distance(query_point, m_line_of_best_fit);
       const FT squared_distance_threshold =
@@ -255,6 +256,8 @@ namespace Polyline {
       \return Boolean `true` or `false`
     */
     inline bool is_valid_region(const std::vector<std::size_t>& region) const {
+      if (m_direction_of_best_fit == CGAL::NULL_VECTOR)
+        return false; // all points are equal
       return (region.size() >= m_min_region_size);
     }
 
@@ -266,19 +269,23 @@ namespace Polyline {
       \param region
       indices of vertices included in the region
 
+      \return Boolean `true` if the line fitting succeeded and `false` otherwise
+
       \pre `region.size() > 0`
     */
-    void update(const std::vector<std::size_t>& region) {
+    bool update(const std::vector<std::size_t>& region) {
 
       CGAL_precondition(region.size() > 0);
       if (region.size() == 1) { // create new reference line and direction
-        m_line_of_best_fit = Line();
-        m_direction_of_best_fit = Vector();
+        m_direction_of_best_fit = CGAL::NULL_VECTOR;
       } else { // update reference line and direction
+        if (m_direction_of_best_fit == CGAL::NULL_VECTOR)
+          return false; // all points are equal
         CGAL_precondition(region.size() >= 2);
         std::tie(m_line_of_best_fit, m_direction_of_best_fit) =
           get_line_and_direction(region);
       }
+      return true;
     }
 
     /// @}
