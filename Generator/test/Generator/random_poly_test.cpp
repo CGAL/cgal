@@ -22,56 +22,82 @@
 // Random Simple Polygons: Test Program
 // ============================================================================
 
+#define CGAL_DONT_SHUFFLE_IN_RANDOM_POLYGON_2
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Homogeneous.h>
+
 #include <CGAL/point_generators_2.h>
 #include <CGAL/random_polygon_2.h>
 #include <CGAL/Polygon_2.h>
+
+#include <array>
+#include <algorithm>
+#include <iostream>
+#include <iterator>
 #include <list>
 
-typedef CGAL::Simple_cartesian< double >                    CR;
-typedef CGAL::Point_2< CR >                                 CPoint_2;
-typedef std::list<CPoint_2>                                 CContainer;
-typedef CGAL::Polygon_2<CR, CContainer>                     CPolygon_2;
-typedef CGAL::Creator_uniform_2<double, CPoint_2>           CCreator;
-typedef CGAL::Random_points_in_square_2<CPoint_2, CCreator> CPoint_generator;
+template <typename K>
+void test_fold()
+{
+  // (-5, -7) is on [(-9, 5); (-2, -16)]
+  std::array<typename K::Point_2, 4> input {typename K::Point_2{-5,-7},{7,-85},{-9,5},{-2,-16}};
 
-typedef CGAL::Homogeneous< double >                          HR;
-typedef CGAL::Point_2< HR >                                  HPoint_2;
-typedef std::list<HPoint_2>                                  HContainer;
-typedef CGAL::Polygon_2<HR, HContainer>                      HPolygon_2;
-typedef CGAL::Creator_uniform_2<double, HPoint_2>            HCreator;
-typedef CGAL::Random_points_in_square_2<HPoint_2, HCreator>  HPoint_generator;
+  int i = 0;
+  do
+  {
+    std::cout << "permutation #" << i++ << std::endl;
+    for(const auto& pt : input)
+      std::cout << " (" << pt << ")";
+    std::cout << std::endl;
 
-int main() {
+    CGAL::Polygon_2<K> polygon;
+    CGAL::random_polygon_2(input.size(), std::back_inserter(polygon), input.begin());
 
-  CPolygon_2 polygon1;
+    if (! polygon.is_simple())
+    {
+      std::cerr << "ERROR: polygon is not simple." << std::endl;
+      assert(false);
+    }
+  }
+  while(std::next_permutation(input.begin(), input.end()));
+}
+
+template <typename K>
+void test_random()
+{
+  typedef CGAL::Point_2< K >                                         Point_2;
+  typedef std::list<Point_2>                                         Container;
+  typedef CGAL::Polygon_2<K, Container>                              Polygon_2;
+  typedef CGAL::Creator_uniform_2<double, Point_2>                   Creator;
+  typedef CGAL::Random_points_in_square_2<Point_2, Creator>          Point_generator;
+
+  Polygon_2 polygon;
   int n = 50;
 
   // create a polygon
-  CGAL::random_polygon_2(n, std::back_inserter(polygon1),
-                         CPoint_generator(0.5));
+  CGAL::random_polygon_2(n, std::back_inserter(polygon), Point_generator(0.5));
 
   // make sure it is simple
-  if (! polygon1.is_simple())
+  if (! polygon.is_simple())
   {
      std::cerr << "ERROR: polygon is not simple." << std::endl;
-     return 1;
+     assert(false);
   }
-
-  HPolygon_2 polygon2;
-
-  // create a polygon
-  CGAL::random_polygon_2(n, std::back_inserter(polygon2),
-                         HPoint_generator(0.5));
-
-  // make sure it is simple
-  if (! polygon1.is_simple())
-  {
-     std::cerr << "ERROR: polygon is not simple." << std::endl;
-     return 1;
-  }
-  return 0;
 }
 
-// EOF
+int main()
+{
+  typedef CGAL::Simple_cartesian<double> CK;
+  typedef CGAL::Homogeneous<double> HK;
+
+  test_random<CK>();
+  test_random<HK>();
+
+  test_fold<CK>();
+  test_fold<HK>();
+
+  std::cout << "Done!" << std::endl;
+
+  return EXIT_SUCCESS;
+}
