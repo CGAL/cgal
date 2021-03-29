@@ -7,8 +7,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 
-#ifndef CGAL_MESH_3_MESH_COMPLEX_3_IN_TRIANGULATION_3_FWD_H
-#define CGAL_MESH_3_MESH_COMPLEX_3_IN_TRIANGULATION_3_FWD_H
+#ifndef CGAL_MDS_3_MESH_COMPLEX_3_IN_TRIANGULATION_3_FWD_H
+#define CGAL_MDS_3_MESH_COMPLEX_3_IN_TRIANGULATION_3_FWD_H
 
 /// \file Mesh_complex_3_in_triangulation_3_fwd.h
 /// Forward declarations of the MDS_3 package.
@@ -33,6 +33,6 @@ bool build_triangulation_from_file(std::istream& is,
 } // CGAL
 #endif
 
-#endif /* CGAL_MESH_3_MESH_COMPLEX_3_IN_TRIANGULATION_3_FWD_H */
+#endif /* CGAL_MDS_3_MESH_COMPLEX_3_IN_TRIANGULATION_3_FWD_H */
 
 
