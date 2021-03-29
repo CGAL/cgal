@@ -200,9 +200,9 @@ public:
       else {
         // The i'th subcurve should be split: The left part(seg1)
         // goes to xcv1, and the right part(seg2) goes to xcv2.
-        auto p_ptr = std::make_shared<Point_2>(p);
-        xcv1 = X_monotone_curve_2 (nullptr, xcv.points_begin(), xcv[i+1], p_ptr);
-        xcv2 = X_monotone_curve_2 (p_ptr, xcv[i+1], xcv.points_end(), nullptr);
+        auto p_ptr = xcv.init(p, i);
+        xcv1 = X_monotone_curve_2 (xcv.uninit(), xcv.points_begin(), xcv[i+1], p_ptr);
+        xcv2 = X_monotone_curve_2 (p_ptr, xcv[i+1], xcv.points_end(), xcv.uninit());
       }
 
       if (dir != SMALLER) std::swap(xcv1, xcv2);

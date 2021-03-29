@@ -93,10 +93,10 @@ typename ArrTraits::Curve_2 construct_curve (const Polygon_2<Kernel, Container>&
                                 CGAL::make_single(*polygon.vertices_begin())));
 }
 
-template <typename Kernel, typename Container>
-typename Arr_lightweight_polyline_traits_2<Kernel, typename Polygon_2<Kernel, Container>::Vertex_const_iterator>::Curve_2
+template <typename Kernel, typename Container, typename Iterator>
+typename Arr_lightweight_polyline_traits_2<Kernel, Iterator>::Curve_2
 construct_curve (const Polygon_2<Kernel, Container>& polygon,
-                 const Arr_lightweight_polyline_traits_2<Kernel, typename Polygon_2<Kernel, Container>::Vertex_const_iterator>& traits)
+                 const Arr_lightweight_polyline_traits_2<Kernel, Iterator>& traits)
 {
   auto ctr = traits.construct_curve_2_object();
   return ctr(polygon.vertices_begin(), polygon.vertices_end(), true);
