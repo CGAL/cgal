@@ -15,7 +15,7 @@
 \cgalPkgDescriptionBegin{2D Triangulations on Sphere,PkgTriangulationOnSphere2}
 \cgalPkgPicture{triangulation_on_sphere.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Mael Rouxel-Labbé, Monique Teillaud, and Claudia Werner}
+\cgalPkgAuthors{Mael Rouxel-Labbé, Monique Teillaud, and Claudia Werner}
 \cgalPkgDesc{This package enables the construction and manipulation of triangulations on the 2-sphere.
              Triangulations are built incrementally and can be modified by insertion or removal of vertices.
              They offer point location facilities. The package provides plain triangulation
@@ -33,7 +33,7 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-A triangulation is a 2-dimensional simplicial complex which is pure,
+A triangulation is a 2-dimensional simplicial complex that is pure,
 connected, and without singularities. It can be viewed as a collection of triangular faces,
 such that two faces either have an empty intersection or share an edge or a vertex.
 

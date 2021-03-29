@@ -40,7 +40,7 @@ the circumscribing circle of any facet of the triangulation contains no point in
 This definition naturally extends to the two-dimensional sphere, as illustrated in the figure below.
 
 \cgalFigureBegin{fig_del_def, delaunay_on_sphere_def.svg}
-Illustration of the Delaunay property: the circumscribing circle on the sphere (in green)
+Delaunay property: the circumscribing circle (in green) on the sphere
 of the Delaunay face \f$ p_1 p_2 p_3\f$ is empty.
 \cgalFigureEnd
 
@@ -48,7 +48,7 @@ A particularity of Delaunay triangulations on \f$ \mathbb{S}\f$ is that the Dela
 test can be reduced to a simple orientation test in the three-dimensional space: indeed, the circumscribing
 circle of a Delaunay face is the intersection of the plane passing through the three vertices
 of the face with \f$ \mathbb{S}\f$, and determining whether a fourth point `q` is within the
-circumscribing circle or not is equivalent to checking whether `q` is above or below the supporting plane.
+circumscribing circle or not is equivalent to checking whether `q` is above or below the said supporting plane.
 
 \subsection Section_2D_ToS_Imprecision Representation of a Point on the Sphere
 
@@ -57,13 +57,13 @@ in \f$ \mathcal{P}\f$ lie exactly on the sphere. In a real world however, one us
 manipulate points that lie exactly on \f$ \mathbb{S}\f$ because the chosen number type
 is not able to represent square roots exactly, such as \f$ \mathtt{float}\f$, or \f$ \mathtt{double}\f$.
 Some specific number types are able to represent exactly all points on the sphere, for example
-the class `CORE::Expr`, but this comes with the drawback of a higher computational cost.
+the class `CORE::Expr`, but this comes with the drawback of a substantially higher computational cost.
 
 This lack of exact representation is an obvious problem as the interpretation of the Delaunay property
 as an orientation test does not stand if points do not lie in a convex position.
 
 This gap between the theoretical and the practical settings was addressed by Caroli et al. \cgalCite{cgal:ccplr-redtp-10} :
-the trick is to use a <em>regular</em> triangulation, which is a generalization of the Delaunay triangulation
+the solution is to use a <em>regular</em> triangulation, which is a generalization of the Delaunay triangulation
 to sets of <em>weighted points</em>
 (see \link Section_2D_Triangulations_Regular 2D Regular Triangulations\endlink for more information).
 A weighted point \f$(p,w)\f$ of \f$ \mathbb{R}^2\f$ can naturally be seen as as a circle with center \f$ p\f$
@@ -76,14 +76,14 @@ and whose weights are based on the projection distance. Furthermore, they show t
 between the points of \f$ \mathcal{P}_w\f$ is sufficiently large, and if the points are sufficiently
 close to the sphere, then the Delaunay triangulation of the Delaunay triangulation of \f$ \mathcal{P}_3\f$
 is exactly the regular triangulation of \f$ \mathcal{P}_w\f$.
-A consequence of this is that one can manipulate 3D points that are not exactly on the sphere,
+As a consequence is that one can manipulate 3D points that are not exactly on the sphere,
 and it possible to build the Delaunay triangulation without taking the weights into account, as long as the
 points are sufficiently far from each other.
 
 Caroli et al. et provide bounds on this separation criterion for the case of the \f$ \mathtt{double}\f$
 number type: two points must be at least \f$ 2^{-25}r\f$ apart. This is a condition that
 is generally satisfied for most inputs: if \f$ r\f$ were for example the radius of the Earth,
-roughly 6300 kms, then the point separation requirement would be of the order of a meter.
+roughly 6300 kms, then the point separation requirement would be of the order of 1 meter.
 
 \section Section_2D_ToS_Implementation Implementation
 
@@ -115,9 +115,9 @@ without boundary.
 There is an exception to the previous statement: in degenerate configurations where all points
 lie on the same hemisphere, the Delaunay triangulation on the sphere theoretically has a border.
 Internally however, the triangulation data structure must remain a 2-manifold at all time.
-To ensure this property, fictitious faces called <i>ghost faces</i> are added.
+To ensure this property, fictitious faces referred to as <i>ghost faces</i> are added.
 These faces are characterized by the fact that the center of the sphere does not (strictly) lie
-on the positive side of the supporting plane of the face. On other hand, faces that
+on the positive side of the supporting plane of the face. Conversely, faces that
 are not ghost faces are called <em>solid faces</em>, and edges of such faces are <em>solid edges</em>.
 
 \cgalFigureAnchor{fig_TOS2_ghost}
@@ -135,16 +135,16 @@ Two traits classes are offered with this package as models of the concept `Delau
 <ul>
   <li>`CGAL::Delaunay_triangulation_on_sphere_traits_2`: This is the simplest possible traits,
       which represents points on sphere directly as 3D points. If its kernel template parameter
-      cannot represent all points on the sphere exactly, it employs the mechanisms
+      cannot represent all points on the sphere exactly, it employs the solution
       described in Section \ref Section_2D_ToS_Imprecision to determine whether a point
       should be considered on the sphere, or too close to an existing vertex.
   </li>
-  <li>`CGAL::Projection_on_sphere_traits_3`: This traits class uses a custom internal point type
-      for points on the sphere: given a point in 3D space, this traits class manipulates directly
-      its projection on the sphere (the closest intersection with the sphere on the line between
-      this point and the center of the sphere). Consequently, all points to be inserted are on the sphere.
-      This can be a useful traits to manipulate points that are not on the sphere, but whose
-      triangulation on the sphere is still interesting, such as geographical coordinates with altitude.
+  <li>`CGAL::Projection_on_sphere_traits_3`: This traits class utilizes a custom internal point type
+      for points on the sphere: given a point `p` in 3D space, this traits class manipulates directly
+      its projection on the sphere (that is, the intersection of the sphere and the segment with endpoints
+      `p` and the center of the sphere^). Consequently, all points to be inserted are on the sphere.
+      This traits enable manipulating points that are not on the sphere, but whose triangulation
+      on the sphere is still interesting, such as geographical coordinates with altitude.
   </li>
 </ul>
 
@@ -170,7 +170,7 @@ is defined as follows:
 </ul>
 
 Note that a triangulation of dimension `1` is just a polygon drawn on a circle. The polygon is
-not triangulated itself. Thus the triangulation of dimension `1` consists of one polygon and
+not triangulated itself. Thus the triangulation of dimension `1` consists of a planar polygon and
 has no faces.
 
 \subsection Section_2D_ToS_Embedding Geometric Embeddings
@@ -232,9 +232,9 @@ which greatly speeds up the insertion.
 \section Section_2D_ToS_Design Design and Implementation History
 
 Prototype code implementing the publication of Caroli et al. \cgalCite{cgal:ccplr-redtp-10}
-was developped over the two internships of Oliver Rouiller and Claudia Werner at Inria,
+was developed over the two internships of Oliver Rouiller and Claudia Werner at Inria,
 under the supervision of Monique Teillaud and with the help of Sébastien Loriot.
-Based on this prototype, Mael Rouxel-Labbé developped the initial version of this package.
+Based on this prototype, Mael Rouxel-Labbé developed the initial version of this package.
 
 */
 } /* namespace CGAL */

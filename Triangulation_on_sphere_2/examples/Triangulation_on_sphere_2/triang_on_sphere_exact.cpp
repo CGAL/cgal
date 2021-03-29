@@ -56,7 +56,7 @@ int main(int argc, char** argv)
   typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt  EPECK_w_SQRT;
 
   // This kernel CANNOT represent exactly all points of the sphere
-  // and thus a separation mecanism is needed to ensure that no points are hidden
+  // and thus a separation mechanism is needed to ensure that no points are hidden
   typedef CGAL::Exact_predicates_inexact_constructions_kernel          EPICK;
 
   const char* filename = (argc > 1) ? argv[1] : "data/poste_france.xyz";
