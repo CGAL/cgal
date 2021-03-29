@@ -23,6 +23,27 @@ namespace CGAL {
 namespace Shape_detection {
 namespace Segment_set {
 
+  /*!
+    \ingroup PkgShapeDetectionRGOnSegments
+
+    \brief Sorting of segments with respect to the local line fit quality.
+
+    Indices of input segments are sorted with respect to the quality of the
+    least squares line fit applied to the vertices of incident segments of each segment.
+
+    \tparam GeomTraits
+    a model of `Kernel`
+
+    \tparam InputRange
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
+
+    \tparam NeighborQuery
+    a model of `NeighborQuery`
+
+    \tparam SegmentMap
+    a model of `LValuePropertyMap` whose key type is the value type of the input
+    range and value type is `Kernel::Segment_2` or `Kernel::Segment_3`
+  */
   template<
   typename GeomTraits,
   typename InputRange,
@@ -65,6 +86,25 @@ namespace Segment_set {
     /// \name Initialization
     /// @{
 
+    /*!
+      \brief initializes all internal data structures.
+
+      \param input_range
+      an instance of `InputRange` with 2D or 3D segments
+
+      \param neighbor_query
+      an instance of `NeighborQuery` that is used internally to
+      access vertex's neighbors
+
+      \param segment_map
+      an instance of `SegmentMap` that maps a segment from `input_range`
+      to `Kernel::Segment_2` or `Kernel::Segment_3`
+
+      \param traits
+      an instance of `GeomTraits`
+
+      \pre `input_range.size() > 0`
+    */
     Least_squares_line_fit_sorting(
       const InputRange& input_range,
       NeighborQuery& neighbor_query,
@@ -86,6 +126,9 @@ namespace Segment_set {
     /// \name Sorting
     /// @{
 
+    /*!
+      \brief sorts indices of input segments.
+    */
     void sort() {
 
       compute_scores();
@@ -99,6 +142,10 @@ namespace Segment_set {
     /// \name Access
     /// @{
 
+    /*!
+      \brief returns an instance of `Seed_map` to access the ordered indices
+      of input segments.
+    */
     Seed_map seed_map() {
       return Seed_map(m_order);
     }

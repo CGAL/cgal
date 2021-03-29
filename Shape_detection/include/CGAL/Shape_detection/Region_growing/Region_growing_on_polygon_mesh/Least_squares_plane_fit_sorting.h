@@ -29,7 +29,7 @@ namespace Polygon_mesh {
     \brief Sorting of polygon mesh faces with respect to the local plane fit quality.
 
     Indices of faces in a polygon mesh are sorted with respect to the quality of the
-    least squares plane fit applied to the vertices of neighbor faces of each face.
+    least squares plane fit applied to the vertices of incident faces of each face.
 
     \tparam GeomTraits
     a model of `Kernel`

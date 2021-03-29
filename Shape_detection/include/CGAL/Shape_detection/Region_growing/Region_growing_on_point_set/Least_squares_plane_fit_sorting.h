@@ -29,7 +29,7 @@ namespace Point_set {
     \brief Sorting of 3D points with respect to the local plane fit quality.
 
     Indices of 3D input points are sorted with respect to the quality of the
-    least squares plane fit applied to the neighbor points of each point.
+    least squares plane fit applied to the neighboring points of each point.
 
     \tparam GeomTraits
     a model of `Kernel`

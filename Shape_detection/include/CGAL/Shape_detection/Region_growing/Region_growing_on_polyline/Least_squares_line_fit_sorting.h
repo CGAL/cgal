@@ -29,7 +29,7 @@ namespace Polyline {
     \brief Sorting of polyline vertices with respect to the local line fit quality.
 
     Indices of input vertices are sorted with respect to the quality of the
-    least squares line fit applied to the neighbor vertices of each vertex.
+    least squares line fit applied to the incident vertices of each vertex.
 
     \tparam GeomTraits
     a model of `Kernel`

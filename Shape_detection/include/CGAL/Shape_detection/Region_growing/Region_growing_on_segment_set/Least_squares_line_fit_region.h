@@ -23,6 +23,29 @@ namespace CGAL {
 namespace Shape_detection {
 namespace Segment_set {
 
+  /*!
+    \ingroup PkgShapeDetectionRGOnSegments
+
+    \brief Region type based on the quality of the least squares line
+    fit applied to a segment set.
+
+    This class fits a line, using \ref PkgPrincipalComponentAnalysisDRef "PCA",
+    to chunks of 2D or 3D segments and controls the quality of this fit.
+    If all quality conditions are satisfied, the chunk is accepted as a valid region,
+    otherwise rejected.
+
+    \tparam GeomTraits
+    a model of `Kernel`
+
+    \tparam InputRange
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
+
+    \tparam SegmentMap
+    a model of `LValuePropertyMap` whose key type is the value type of the input
+    range and value type is `Kernel::Segment_2` or `Kernel::Segment_3`
+
+    \cgalModels `RegionType`
+  */
   template<
   typename GeomTraits,
   typename InputRange,
@@ -64,6 +87,57 @@ namespace Segment_set {
     /// \name Initialization
     /// @{
 
+    /*!
+      \brief initializes all internal data structures.
+
+      \tparam NamedParameters
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+
+      \param input_range
+      an instance of `InputRange` with 2D or 3D segments
+
+      \param np
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+      among the ones listed below
+
+      \param segment_map
+      an instance of `SegmentMap` that maps an item from `input_range`
+      to `Kernel::Segment_2` or `Kernel::Segment_3`
+
+      \param traits
+      an instance of `GeomTraits`
+
+      \cgalNamedParamsBegin
+        \cgalParamNBegin{distance_threshold}
+          \cgalParamDescription{the maximum distance from the furthest vertex of a segment to a line}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{1}
+        \cgalParamNEnd
+        \cgalParamNBegin{angle_deg_threshold}
+          \cgalParamDescription{the maximum accepted angle in degrees between
+          the direction of a segment and the direction of a line}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{25 degrees}
+        \cgalParamNEnd
+        \cgalParamNBegin{cos_value_threshold}
+          \cgalParamDescription{the cos value computed as `cos(angle_deg_threshold * PI / 180)`,
+          this parameter can be used instead of the `angle_deg_threshold`}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{`cos(25 * PI / 180)`}
+        \cgalParamNEnd
+        \cgalParamNBegin{min_region_size}
+          \cgalParamDescription{the minimum number of segments a region must have}
+          \cgalParamType{`std::size_t`}
+          \cgalParamDefault{1}
+        \cgalParamNEnd
+      \cgalNamedParamsEnd
+
+      \pre `input_range.size() > 0`
+      \pre `distance_threshold >= 0`
+      \pre `angle_deg_threshold >= 0 && angle_deg_threshold <= 90`
+      \pre `cos_value_threshold >= 0 && cos_value_threshold <= 1`
+      \pre `min_region_size > 0`
+    */
     template<typename NamedParameters>
     Least_squares_line_fit_region(
       const InputRange& input_range,
@@ -102,6 +176,23 @@ namespace Segment_set {
     /// \name Access
     /// @{
 
+    /*!
+      \brief implements `RegionType::is_part_of_region()`.
+
+      This function controls if a segment with the index `query_index` is within
+      the `distance_threshold` from the corresponding line and if the angle
+      between the direction of this segment and the line's direction is within the `angle_deg_threshold`.
+      If both conditions are satisfied, it returns `true`, otherwise `false`.
+
+      \param query_index
+      index of the query segment
+
+      The first and third parameters are not used in this implementation.
+
+      \return Boolean `true` or `false`
+
+      \pre `query_index < input_range.size()`
+    */
     bool is_part_of_region(
       const std::size_t,
       const std::size_t query_index,
@@ -133,10 +224,32 @@ namespace Segment_set {
         ( squared_cos_value >= squared_cos_value_threshold ));
     }
 
+    /*!
+      \brief implements `RegionType::is_valid_region()`.
+
+      This function controls if the `region` contains at least `min_region_size` segments.
+
+      \param region
+      indices of segments included in the region
+
+      \return Boolean `true` or `false`
+    */
     inline bool is_valid_region(const std::vector<std::size_t>& region) const {
       return (region.size() >= m_min_region_size);
     }
 
+    /*!
+      \brief implements `RegionType::update()`.
+
+      This function fits the least squares line to all segments from the `region`.
+
+      \param region
+      indices of segments included in the region
+
+      \return Boolean `true` if the line fitting succeeded and `false` otherwise
+
+      \pre `region.size() > 0`
+    */
     bool update(const std::vector<std::size_t>& region) {
 
       CGAL_precondition(region.size() > 0);

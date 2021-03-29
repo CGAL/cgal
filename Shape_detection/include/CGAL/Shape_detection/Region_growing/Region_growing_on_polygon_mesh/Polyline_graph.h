@@ -23,6 +23,34 @@ namespace CGAL {
 namespace Shape_detection {
 namespace Polygon_mesh {
 
+  /*!
+    \ingroup PkgShapeDetectionRGOnMesh
+
+    \brief Polygon mesh edges connected into a graph.
+
+    This class returns all edges, which form polylines splitting the polygon mesh
+    being a `PolygonMesh` into planar regions.
+
+    \tparam GeomTraits
+    a model of `Kernel`
+
+    \tparam PolygonMesh
+    a model of `FaceListGraph`
+
+    \tparam FaceRange
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator` and
+    value type is the face type of a polygon mesh
+
+    \tparam EdgeRange
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator` and
+    value type is the edge type of a polygon mesh
+
+    \tparam VertexToPointMap
+    a model of `LValuePropertyMap` whose key type is the vertex type of a polygon mesh and
+    value type is `Kernel::Point_3`
+
+    \cgalModels `NeighborQuery`
+  */
   template<
   typename GeomTraits,
   typename PolygonMesh,
@@ -40,14 +68,30 @@ namespace Polygon_mesh {
     };
 
   public:
+    /// \name Types
+    /// @{
+
+    /// \cond SKIP_IN_MANUAL
     using Traits = GeomTraits;
     using Face_graph = PolygonMesh;
     using Face_range = FaceRange;
     using Edge_range = EdgeRange;
     using Vertex_to_point_map = VertexToPointMap;
+    /// \endcond
 
+    /*!
+      a model of `ConstRange` whose iterator type is `RandomAccessIterator` and
+      value type is the internal edge type.
+    */
     using Segment_range = std::vector<PEdge>;
+
+    /*!
+      a model of `ReadablePropertyMap` whose key type is the value type of `Segment_range`
+      and value type is `Kernel::Segment_3`.
+    */
     using Segment_map = internal::Polyline_graph_segment_map<PEdge, Face_graph, Edge_range, Vertex_to_point_map>;
+
+    /// @}
 
   private:
     using Face_to_region_map = internal::Item_to_region_index_map;
@@ -55,6 +99,27 @@ namespace Polygon_mesh {
     using Edge_to_index_map = internal::Item_to_index_property_map<Edge_range>;
 
   public:
+    /// \name Initialization
+    /// @{
+
+    /*!
+      \brief initializes all internal data structures.
+
+      \param pmesh
+      an instance of a `PolygonMesh` that represents a polygon mesh
+
+      \param regions
+      a set of regions, where each region is an `std::vector<std::size_t>` and
+      contains indices of all faces in a polygon mesh been identified as the same plane.
+
+      \param vertex_to_point_map
+      an instance of `VertexToPointMap` that maps a polygon mesh
+      vertex to `Kernel::Point_3`
+
+      \pre `faces(pmesh).size() > 0`
+      \pre `edges(pmesh).size() > 0`
+      \pre `regions.size() > 0`
+    */
     Polyline_graph(
       const PolygonMesh& pmesh,
       const std::vector< std::vector<std::size_t> >& regions,
@@ -75,6 +140,7 @@ namespace Polygon_mesh {
       build_graph();
     }
 
+    /// \cond SKIP_IN_MANUAL
     void build_graph() {
 
       clear();
@@ -101,13 +167,34 @@ namespace Polygon_mesh {
         add_vertex_neighbors(t, i, pedge_map, pedge.tneighbors);
       }
     }
+    /// \endcond
 
+    /// @}
+
+    /// \name Access
+    /// @{
+
+    /*!
+      \brief implements `NeighborQuery::operator()()`.
+
+      This operator retrieves indices of all edges from `segment_range()`,
+      which are neighbors of the edge with the index `query_index`.
+      These indices are returned in `neighbors`.
+
+      \param query_index
+      index of the query edge
+
+      \param neighbors
+      indices of edges, which are neighbors of the query edge
+
+      \pre `query_index < segment_range().size()`
+    */
     void operator()(
       const std::size_t query_index,
       std::vector<std::size_t>& neighbors) const {
 
       neighbors.clear();
-      CGAL_precondition(query_index < m_pedges.size());
+      CGAL_precondition(query_index < segment_range().size());
       const auto& pedge = m_pedges[query_index];
       for (const std::size_t sneighbor : pedge.sneighbors)
         neighbors.push_back(sneighbor);
@@ -115,14 +202,78 @@ namespace Polygon_mesh {
         neighbors.push_back(tneighbor);
     }
 
+    /*!
+      \brief returns an instance of `Segment_range` to access edges, which
+      form polylines
+    */
     const Segment_range& segment_range() const {
       return m_pedges;
     }
 
+    /*!
+      \brief returns an instance of `Segment_map` that maps an edge from `segment_range()`
+      to `Kernel::Segment_3`.
+    */
     const Segment_map& segment_map() const {
       return m_segment_map;
     }
 
+    /*!
+      \brief returns indices of all edges from `segment_range()`,
+      which are connected to the source vertex of the edge
+      with the index `query_index`.
+
+      \pre `query_index < segment_range().size()`
+    */
+    const std::set<std::size_t>& source_neighbors(
+      const std::size_t query_index) const {
+
+      CGAL_precondition(query_index < segment_range().size());
+      return m_pedges[query_index].sneighbors;
+    }
+
+    /*!
+      \brief returns indices of all edges from `segment_range()`,
+      which are connected to the target vertex of the edge
+      with the index `query_index`.
+
+      \pre `query_index < segment_range().size()`
+    */
+    const std::set<std::size_t>& target_neighbors(
+      const std::size_t query_index) const {
+
+      CGAL_precondition(query_index < segment_range().size());
+      return m_pedges[query_index].tneighbors;
+    }
+
+    /*!
+      \brief returns the edge index of the original polygon mesh edge, which
+      corresponds to the edge from `segment_range()` with the index `query_index`.
+
+      \pre `query_index < segment_range().size()`
+    */
+    std::size_t edge_index(const std::size_t query_index) const {
+
+      CGAL_precondition(query_index < segment_range().size());
+      return m_pedges[query_index].index;
+    }
+
+    /*!
+      \brief returns indices of the two distinct regions, which are shared by the edge
+      from `segment_range()` with the index `query_index`.
+
+      \pre `query_index < segment_range().size()`
+    */
+    const std::pair<int, int>& edge_regions(
+      const std::size_t query_index) const {
+
+      CGAL_precondition(query_index < segment_range().size());
+      return m_pedges[query_index].regions;
+    }
+
+    /// @}
+
+    /// \cond SKIP_IN_MANUAL
     void clear() {
       m_pedges.clear();
     }
@@ -130,29 +281,7 @@ namespace Polygon_mesh {
     void release_memory() {
       m_pedges.shrink_to_fit();
     }
-
-    const std::set<std::size_t>& source_neighbors(
-      const std::size_t query_index) const {
-      CGAL_precondition(query_index < m_pedges.size());
-      return m_pedges[query_index].sneighbors;
-    }
-
-    const std::set<std::size_t>& target_neighbors(
-      const std::size_t query_index) const {
-      CGAL_precondition(query_index < m_pedges.size());
-      return m_pedges[query_index].tneighbors;
-    }
-
-    std::size_t edge_index(const std::size_t query_index) const {
-      CGAL_precondition(query_index < m_pedges.size());
-      return m_pedges[query_index].index;
-    }
-
-    const std::pair<int, int>& edge_regions(
-      const std::size_t query_index) const {
-      CGAL_precondition(query_index < m_pedges.size());
-      return m_pedges[query_index].regions;
-    }
+    /// \endcond
 
   private:
     const Face_graph& m_face_graph;

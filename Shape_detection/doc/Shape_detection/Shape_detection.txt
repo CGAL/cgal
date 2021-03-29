@@ -544,16 +544,71 @@ mostly depends on the `RegionType` model's implementation, which is usually fast
 
 \subsection Shape_detection_RegionGrowingSegments Segment Set
 
-- explain the polyline graph here
-- description (add a figure)
-- parameters
-- examples (show polyline_graph)
+If one wants to detect lines in a segment set, this \cgal component provides the corresponding models of the concept
+\ref Shape_detection_RegionGrowingFramework_conditions "RegionType". In particular, it has
+
+- `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region` class that fits a 2D or 3D line
+to the chunks of 2D or 3D segments, respectively, and controls the quality of this fit.
+
+The quality of region growing in a segment set (2D or 3D) can be improved by slightly sacrificing the running time.
+To achieve this, one can sort indices of input segments with respect to some quality criteria. These quality criteria
+can be included through the \ref Shape_detection_RegionGrowingFramework_seeding "SeedMap" input parameter.
+We provide such a quality sorting:
+
+- `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_sorting` - indices of input segments are sorted with respect
+to the quality of the least squares line fit applied to the neighbors of each segment.
+
+If the user's input is a polygon mesh defined as a `FaceListGraph`, it is also possible to filter out all
+graph edges, which split this polygon mesh into a set of regions. To achieve that, one needs first to apply
+the region growing on a polygon mesh and extract a set of such regions and then provide these regions
+to the class:
+
+- `CGAL::Shape_detection::Polygon_mesh::Polyline_graph` - that returns a range of the corresponding edges, which
+can later be split into a set of linear regions using one of the classes from `CGAL::Shape_detection::Segment_set`,
+as shown in the example below.
+
+\cgalExample{Shape_detection/region_growing_on_polyline_graph.cpp}
+
+
+\subsubsection Shape_detection_RegionGrowingSegments_parameters Parameters
+
+The line fitting class above depends on three parameters:
+
+- `distance_threshold` - the maximum distance from the furthest segment vertex to a line;
+- `angle_deg_threshold` - the maximum accepted angle between the segment direction and the direction of a line;
+- `min_region_size` - the minimum number of segments a region must have.
+
+More details are explained in
+Section \ref Shape_detection_RegionGrowingFramework_conditions "Framework Regions".
+The right choice of these parameters is important for producing the good results.
 
 
 \subsection Shape_detection_RegionGrowingPolyline Polyline
 
-- description
-- parameters
+If one wants to detect lines along a 2D or 3D polyline,
+
+\cgalFigureBegin{Region_growing_on_polyline, Region_growing/region_growing_on_polyline.png}
+A 3D polyline depicted with one color per detected line.
+\cgalFigureEnd
+
+one can use the
+- `CGAL::Shape_detection::Polyline::Least_squares_line_fit_region` class that fits a 2D or 3D line
+to the chunks of polyline vertices, respectively, and controls the quality of this fit.
+
+As before, one can improve the quality of the region growing by using the class
+- `CGAL::Shape_detection::Polyline::Least_squares_line_fit_sorting` - indices of input vertices are sorted with respect
+to the quality of the least squares line fit applied to the neighbors of each vertex.
+
+
+\subsubsection Shape_detection_RegionGrowingPolyline_parameters Parameters
+
+The line fitting class above depends on three parameters:
+
+- `distance_threshold` - the maximum distance from the polyline vertex to a line;
+- `angle_deg_threshold` - the maximum accepted angle between the polyline edge direction and the direction of a line;
+- `min_region_size` - the minimum number of vertices a region must have.
+
+As already mentioned, the right choice of these parameters is important for producing the good results.
 
 
 \section Shape_detection_Comparison Comparison
