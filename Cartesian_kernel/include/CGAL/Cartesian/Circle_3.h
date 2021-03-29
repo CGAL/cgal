@@ -30,6 +30,7 @@ class CircleC3 {
   typedef typename R_::Direction_3              Direction_3;
   typedef typename R_::FT                       FT;
 
+  //using a boost::tuple because std::pair and tuple cannot work with incomplete types.
   typedef boost::tuple<Sphere_3, Plane_3> Rep;
 
 
