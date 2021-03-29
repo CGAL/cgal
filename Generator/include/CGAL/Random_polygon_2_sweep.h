@@ -179,6 +179,52 @@ less_than_in_tree(Vertex_index new_edge, Vertex_index tree_edge) const
                                 m_vertex_data->point(mid),
                                 m_vertex_data->point(right)));
     m_vertex_data->is_simple_result = false;
+
+    // need to handle the specific combinations:
+    // as the standard x;x+k swap (see below) will not work
+    if (m_vertex_data->edges[tree_edge.as_int()].is_left_to_right)
+    {
+      // x+1 x x+2
+      // This is actually already handled in the insertion event, when the orientation returns "COPLANAR"
+      // but leaving the code below for completion.
+      if (m_vertex_data->next(mid) == left || m_vertex_data->next(mid) == right)
+      {
+        // swap mid & left
+        m_vertex_data->conflict1 = m_vertex_data->prev(mid);
+        m_vertex_data->conflict2 = left;
+        return true;
+      }
+      // x-2 x x-1
+      else if (m_vertex_data->prev(mid) == left || m_vertex_data->prev(mid) == right)
+      {
+        // swap mid & right
+        m_vertex_data->conflict1 = left;
+        m_vertex_data->conflict2 = mid;
+        return true;
+      }
+    }
+    else // right to left
+    {
+      // x+2 x x+1
+      if (m_vertex_data->next(mid) == left || m_vertex_data->next(mid) == right)
+      {
+        // swap mid & right
+        m_vertex_data->conflict1 = m_vertex_data->prev(mid);
+        m_vertex_data->conflict2 = right;
+        return true;
+      }
+      // x-1 x x-2
+      // This is actually already handled in the insertion event, when the orientation returns "COPLANAR"
+      // but leaving the code below for completion.
+      else if (m_vertex_data->prev(mid) == left || m_vertex_data->prev(mid) == right)
+      {
+        // swap mid & left
+        m_vertex_data->conflict1 = right;
+        m_vertex_data->conflict2 = mid;
+        return true;
+      }
+    }
+
     Vertex_index mid_succ = m_vertex_data->next(mid);
     if (mid_succ.as_int() <= (std::min)(left.as_int(), right.as_int()))
     {
