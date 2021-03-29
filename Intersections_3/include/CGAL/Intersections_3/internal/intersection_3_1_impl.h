@@ -26,7 +26,7 @@
 #include <CGAL/Intersections_3/Iso_cuboid_3_Line_3.h>
 #include <CGAL/utils_classes.h>
 #include <CGAL/squared_distance_3.h>
-
+#include <CGAL/rank.h>
 #include <CGAL/Intersections_3/internal/bbox_intersection_3.h>
 namespace CGAL {
 
@@ -1681,9 +1681,33 @@ inline bool
 do_intersect(const Plane_3<R> &plane1, const Plane_3<R> &plane2,
              const Plane_3<R> &plane3, const R& r)
 {
-  return ! is_zero(determinant(plane1.a(), plane1.b(), plane1.c(),
-                     plane2.a(), plane2.b(), plane2.c(),
-                     plane3.a(), plane3.b(), plane3.c()));
+  if(! is_zero(determinant(plane1.a(), plane1.b(), plane1.c(),
+                           plane2.a(), plane2.b(), plane2.c(),
+                           plane3.a(), plane3.b(), plane3.c()))){
+    return true;
+  }
+
+  int pcount = 0;
+  bool b12, b13,b23;
+  if(b12 = parallel(plane1,plane2)) pcount++;
+  if(b13 = parallel(plane1,plane3)) pcount++;
+  if(b23 = parallel(plane2,plane3)) pcount++;
+
+  if(pcount == 3){
+    return (( (plane1 == plane2) || (plane1 == plane2.opposite())) && ( (plane1 == plane3) || (plane1 == plane3.opposite())));
+  }
+
+  if(pcount == 1){
+    if(b12 && ((plane1 == plane2)||(plane1 == plane2.opposite()  ))) return true;
+    if(b13 && ((plane1 == plane3)||(plane1 == plane3.opposite()  ))) return true;
+    if(b23 && ((plane2 == plane3)||(plane2 == plane3.opposite()  ))) return true;
+  }
+
+  int rd = rank_34(plane1.a(), plane1.b(), plane1.c(), plane1.d(),
+                   plane2.a(), plane2.b(), plane2.c(), plane2.d(),
+                   plane3.a(), plane3.b(), plane3.c(), plane3.d());
+
+  return rd == 2;
 }
 
 
