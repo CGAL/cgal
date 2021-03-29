@@ -34,8 +34,7 @@ namespace Point_set {
   /*!
     \ingroup PkgShapeDetectionRGOnPoints
 
-    \brief K nearest neighbors search in a set of `Kernel::Point_2` or
-    `Kernel::Point_3`.
+    \brief K nearest neighbors search in a set of 2D or 3D points.
 
     This class returns the K nearest neighbors of a query point in a point set.
 

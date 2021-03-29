@@ -118,30 +118,30 @@ and the Region Growing approach for detecting shapes in a set of arbitrary items
 - `RegionType`
 
 ### Algorithm ###
-- `CGAL::Shape_detection::Region_growing<InputRange, NeighborQuery, RegionType, SeedMap>`
+- `CGAL::Shape_detection::Region_growing<InputRange, %NeighborQuery, %RegionType, SeedMap>`
 
 ### Point Set ###
 - `CGAL::Shape_detection::Point_set::K_neighbor_query<GeomTraits, InputRange, PointMap>`
 - `CGAL::Shape_detection::Point_set::Sphere_neighbor_query<GeomTraits, InputRange, PointMap>`
 - `CGAL::Shape_detection::Point_set::Least_squares_line_fit_region<GeomTraits, InputRange, PointMap, NormalMap>`
 - `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region<GeomTraits, InputRange, PointMap, NormalMap>`
-- `CGAL::Shape_detection::Point_set::Least_squares_line_fit_sorting<GeomTraits, InputRange, NeighborQuery, PointMap>`
-- `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting<GeomTraits, InputRange, NeighborQuery, PointMap>`
+- `CGAL::Shape_detection::Point_set::Least_squares_line_fit_sorting<GeomTraits, InputRange, %NeighborQuery, PointMap>`
+- `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting<GeomTraits, InputRange, %NeighborQuery, PointMap>`
 
 ### Segment Set ###
 - `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region<GeomTraits, InputRange, SegmentMap>`
-- `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_sorting<GeomTraits, InputRange, NeighborQuery, SegmentMap>`
+- `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_sorting<GeomTraits, InputRange, %NeighborQuery, SegmentMap>`
 
 ### Polygon Mesh ###
 - `CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<PolygonMesh, FaceRange>`
 - `CGAL::Shape_detection::Polygon_mesh::Polyline_graph<GeomTraits, PolygonMesh, FaceRange, EdgeRange, VertexToPointMap>`
 - `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<GeomTraits, PolygonMesh, FaceRange, VertexToPointMap>`
-- `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<GeomTraits, PolygonMesh, NeighborQuery, FaceRange, VertexToPointMap>`
+- `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<GeomTraits, PolygonMesh, %NeighborQuery, FaceRange, VertexToPointMap>`
 
 ### Polyline ###
 - `CGAL::Shape_detection::Polyline::One_ring_neighbor_query<GeomTraits, InputRange>`
 - `CGAL::Shape_detection::Polyline::Least_squares_line_fit_region<GeomTraits, InputRange, PointMap>`
-- `CGAL::Shape_detection::Polyline::Least_squares_line_fit_sorting<GeomTraits, InputRange, NeighborQuery, PointMap>`
+- `CGAL::Shape_detection::Polyline::Least_squares_line_fit_sorting<GeomTraits, InputRange, %NeighborQuery, PointMap>`
 
 ## Deprecated Components ##
 - `CGAL::Shape_detection::deprecated::Shape_detection_traits<GeomTraits, InputRange, PointMap, NormalMap>`

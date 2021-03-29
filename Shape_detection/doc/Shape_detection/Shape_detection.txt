@@ -545,7 +545,7 @@ mostly depends on the `RegionType` model's implementation, which is usually fast
 \subsection Shape_detection_RegionGrowingSegments Segment Set
 
 If one wants to detect lines in a segment set, this \cgal component provides the corresponding models of the concept
-\ref Shape_detection_RegionGrowingFramework_conditions "RegionType". In particular, it has
+\ref Shape_detection_RegionGrowingFramework_conditions "RegionType". In particular, it has the
 
 - `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region` class that fits a 2D or 3D line
 to the chunks of 2D or 3D segments, respectively, and controls the quality of this fit.
@@ -559,13 +559,10 @@ We provide such a quality sorting:
 to the quality of the least squares line fit applied to the neighbors of each segment.
 
 If the user's input is a polygon mesh defined as a `FaceListGraph`, it is also possible to filter out all
-graph edges, which split this polygon mesh into a set of regions. To achieve that, one needs first to apply
+graph edges, which split this polygon mesh into a set of regions. To achieve that, one first needs to apply
 the region growing on a polygon mesh and extract a set of such regions and then provide these regions
-to the class:
-
-- `CGAL::Shape_detection::Polygon_mesh::Polyline_graph` - that returns a range of the corresponding edges, which
-can later be split into a set of linear regions using one of the classes from `CGAL::Shape_detection::Segment_set`,
-as shown in the example below.
+to the class `CGAL::Shape_detection::Polygon_mesh::Polyline_graph` that returns a range of the corresponding edges,
+which can later be split into a set of linear regions, as shown in the example below.
 
 \cgalExample{Shape_detection/region_growing_on_polyline_graph.cpp}
 

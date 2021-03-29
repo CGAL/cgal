@@ -34,8 +34,7 @@ namespace Point_set {
   /*!
     \ingroup PkgShapeDetectionRGOnPoints
 
-    \brief Fuzzy sphere neighbors search in a set of `Kernel::Point_2`
-    or `Kernel::Point_3`.
+    \brief Fuzzy sphere neighbors search in a set of 2D or 3D points.
 
     This class returns all neighbors of a query point, which fall in a sphere of
     the fixed radius centered at this point.
