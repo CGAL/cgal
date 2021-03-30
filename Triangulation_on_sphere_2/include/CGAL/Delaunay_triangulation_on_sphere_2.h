@@ -265,7 +265,19 @@ public:
   Vertex_handle insert_cocircular(const Point& p, Locate_type lt, Face_handle loc);
 
   // Range insertion
+private:
+  template <typename Tr>
+  struct Point_3_with_iterator
+    : public Point_3
+  {
+    Point_3_with_iterator(const Point& p, Tr const * const tr)
+      : Point_3(tr->geom_traits().construct_point_3_object()(p)), input_point_ptr(&p)
+    { }
 
+    const Point* input_point_ptr;
+  };
+
+public:
   // Input range has value type Point, with Point != Point_3
   template <typename InputIterator>
   size_type insert(InputIterator first, InputIterator beyond,
@@ -608,6 +620,8 @@ insert(InputIterator first, InputIterator beyond,
                   !std::is_same<typename std::iterator_traits<InputIterator>::value_type,
                                 Point_3>::value>::type*)
 {
+  typedef Point_3_with_iterator<Self>                                P3_wit;
+
   CGAL_static_assertion((std::is_same<typename std::iterator_traits<InputIterator>::value_type, Point>::value));
   CGAL_static_assertion(!(std::is_same<Point, Point_3>::value));
 
@@ -619,20 +633,10 @@ insert(InputIterator first, InputIterator beyond,
 
   std::vector<Point> input_points(first, beyond);
 
-  struct Point_3_with_iterator
-    : public Point_3
-  {
-    Point_3_with_iterator(const Point& p, Self const * const tr)
-      : Point_3(tr->geom_traits().construct_point_3_object()(p)), input_point_ptr(&p)
-    { }
-
-    const Point* input_point_ptr;
-  };
-
-  std::vector<Point_3_with_iterator> p3_points;
+  std::vector<P3_wit> p3_points;
   p3_points.reserve(std::distance(first, beyond));
   for(const Point& p : input_points)
-    p3_points.push_back(Point_3_with_iterator(p, this));
+    p3_points.push_back(P3_wit(p, this));
 
   CGAL::cpp98::random_shuffle(p3_points.begin(), p3_points.end());
 
@@ -645,7 +649,7 @@ insert(InputIterator first, InputIterator beyond,
   // Reordering could be done in-place, but not worth the hassle for now
   std::vector<Point> points;
   points.reserve(input_points.size());
-  for(const Point_3_with_iterator& p3wi : p3_points)
+  for(const P3_wit& p3wi : p3_points)
   {
     CGAL_triangulation_assertion(p3wi.input_point_ptr != nullptr);
     points.push_back(*(p3wi.input_point_ptr));
