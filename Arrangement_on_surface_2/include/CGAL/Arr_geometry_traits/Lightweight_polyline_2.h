@@ -6,11 +6,9 @@
 #include <CGAL/iterator.h>
 
 #include <boost/iterator/iterator_facade.hpp>
+#include <boost/fusion/adapted.hpp>
+#include <boost/iterator/zip_iterator.hpp>
 
-
-#ifdef CGAL_USE_LIGHTWEIGHT_POLYLINES_WITH_CACHE
-#define CGAL_LIGHTWEIGHT_POLYLINE_EMBED_CACHE
-#endif
 
 namespace CGAL {
 
@@ -19,118 +17,45 @@ namespace internal {
 template <typename Kernel_, typename Iterator>
 class Lightweight_polyline_2_iterator;
 
-template <typename Kernel_, typename IsPointIterator>
-class Lightweight_polyline_2_base;
-
-template <typename Kernel_>
-class Lightweight_polyline_2_base<Kernel_, Tag_true>
-{
-public:
-  using Kernel = Kernel_;
-  using Point_2 = typename Kernel::Point_2;
-  using Line_2 = typename Kernel::Line_2;
-
-  using Point_ref = const Point_2&;
-  using Line_ref = Line_2;
-  using Input_point = Point_2;
-  using Hanging_point = std::shared_ptr<Point_2>;
-
-  Hanging_point uninit() const { return nullptr; }
-  bool is_init (const Hanging_point& p) const { return (p != nullptr); }
-  Hanging_point init (const Input_point& p) const { return std::make_shared<Point_2>(p); }
-  Hanging_point init (const Hanging_point& p) const { return p; }
-
-  Point_ref point (const Input_point& p) const { return p; }
-  Point_ref point (const Hanging_point& p) const { return *p; }
-
-  template <typename PointA, typename PointB>
-  Line_ref line (const std::nullptr_t&, const PointA& a, const PointB& b) const { return Line_2(point(a),point(b)); }
-};
-
-template <typename Kernel_>
-class Lightweight_polyline_2_base<Kernel_, Tag_false>
-{
-public:
-  using Kernel = Kernel_;
-  using Point_2 = typename Kernel::Point_2;
-  using Line_2 = typename Kernel::Line_2;
-
-  using Point_ref = const Point_2&;
-//  using Line_ref = const Line_2&;
-  using Line_ref = Line_2;
-  using Input_point = std::pair<const Point_2&, const std::shared_ptr<Line_2>& >;
-
-  using Hanging_point = std::pair<std::shared_ptr<Point_2>, std::shared_ptr<Line_2> >;
-
-  Hanging_point uninit() const { return Hanging_point(nullptr, nullptr); }
-  bool is_init (const Hanging_point& p) const { return (p.first != nullptr); }
-  Hanging_point init (const Point_2& p) const { return Hanging_point(std::make_shared<Point_2>(p), nullptr); }
-  Hanging_point init (const Input_point& p) const { return Hanging_point(std::make_shared<Point_2>(p.first), p.second); }
-  Hanging_point init (const Hanging_point& p) const { return p; }
-
-  Point_ref point (const Point_2& p) const { return p; }
-  Point_ref point (const Input_point& p) const { return p.first; }
-  Point_ref point (const Hanging_point& p) const { return *p.first; }
-
-  template <typename PointA, typename PointB>
-  Line_ref line (std::shared_ptr<Line_2>& line, const PointA& a, const PointB& b) const
-  {
-    if (!line)
-      line = std::make_shared<Line_2>(point(a), point(b));
-    return *line;
-  }
-};
-
-
-template <typename Kernel_, typename Iterator>
+template <typename Kernel_, typename Iterator_>
 class Lightweight_polyline_2
-  : public Lightweight_polyline_2_base
-<Kernel_,
- Boolean_tag<std::is_same<typename std::iterator_traits<Iterator>::value_type,
-                          typename Kernel_::Point_2>::value> >
 {
 public:
 
   using Kernel = Kernel_;
-  using Base_iterator = Iterator;
-
-  using Is_point_iterator = Boolean_tag<std::is_same<typename std::iterator_traits<Iterator>::value_type,
-                                                     typename Kernel_::Point_2>::value>;
-  using Base = Lightweight_polyline_2_base<Kernel, Is_point_iterator>;
+  using Base_iterator = Iterator_;
   using Self = Lightweight_polyline_2<Kernel, Base_iterator>;
 
   using Point_2 = typename Kernel::Point_2;
+  using Point_ptr = std::shared_ptr<Point_2>;
   using Line_2 = typename Kernel::Line_2;
+  using Line_ptr = std::shared_ptr<Line_2>;
+  using Line_cache = std::vector<Line_ptr>;
+  using Line_cache_iterator = typename Line_cache::const_iterator;
+  using Extreme_point = std::pair<Point_ptr, Line_ptr>;
 
   using Size = std::size_t;
   using size_type = std::size_t;
 
+  using Zip_iterator = boost::zip_iterator<std::pair<Base_iterator, Line_cache_iterator> >;
+  using Internal_point = typename std::iterator_traits<Zip_iterator>::value_type;
+
   using iterator = Lightweight_polyline_2_iterator<Kernel_, Base_iterator>;
   friend iterator;
-
-  using Input_point = typename Base::Input_point;
-  using Hanging_point = typename Base::Hanging_point;
 
   using Subcurve_type_2 = iterator;
   using Subcurve_iterator = Prevent_deref<iterator>;
   using Subcurve_const_iterator = Prevent_deref<iterator>;
 
-  using Base::is_init;
-  using Base::init;
-
 protected:
 
-  Base_iterator m_begin;
-  Base_iterator m_end;
-  Hanging_point m_first;
-  Hanging_point m_last;
+  Zip_iterator m_begin;
+  Zip_iterator m_end;
+  Extreme_point m_first;
+  Extreme_point m_last;
+  std::shared_ptr<Line_cache> m_line_cache;
   bool m_reverse;
   bool m_is_directed_right;
-
-#ifdef CGAL_LIGHTWEIGHT_POLYLINE_EMBED_CACHE
-  using Line_ptr = std::shared_ptr<Line_2>;
-  std::shared_ptr<std::vector<Line_ptr> > m_cache;
-#endif
 
 public:
 
@@ -144,35 +69,19 @@ public:
     compute_direction();
   }
 
-#ifdef CGAL_LIGHTWEIGHT_POLYLINE_EMBED_CACHE
-  template <typename PointIterator>
-  Lightweight_polyline_2 (PointIterator begin, PointIterator end, bool force_closure = false)
+  Lightweight_polyline_2 (Base_iterator begin, Base_iterator end, bool force_closure = false)
     : m_reverse(false)
   {
-    m_cache = std::make_shared<std::vector<Line_ptr> >(std::distance(begin, end), nullptr);
-    m_begin = Base_iterator(std::make_pair(begin, m_cache->begin()));
-    m_end = Base_iterator(std::make_pair(end, m_cache->end()));
-    if (force_closure)
-      m_last = init(*m_begin);
-    compute_direction();
-  }
-#endif
-
-  Lightweight_polyline_2 (Base_iterator begin, Base_iterator end, bool force_closure = false)
-    : m_begin(begin), m_end(end)
-    , m_reverse(false)
-  {
-    CGAL_assertion (std::distance (begin, end) >= 2);
+    m_line_cache = std::make_shared<Line_cache>(std::distance(begin, end), nullptr);
+    m_begin = Zip_iterator(std::make_pair(begin, m_line_cache->begin()));
+    m_end = Zip_iterator(std::make_pair(end, m_line_cache->end()));
     if (force_closure)
       m_last = init(*m_begin);
     compute_direction();
   }
 
   Lightweight_polyline_2 (iterator begin, iterator end)
-    : m_reverse(false)
-#ifdef CGAL_LIGHTWEIGHT_POLYLINE_EMBED_CACHE
-    , m_cache (begin.support().m_cache)
-#endif
+    : m_line_cache (begin.support().m_line_cache), m_reverse(false)
   {
     const Self& support = begin.support();
     CGAL_assertion (&support == &end.support());
@@ -205,8 +114,8 @@ public:
     compute_direction();
   }
 
-  Lightweight_polyline_2 (Hanging_point first, iterator begin, iterator end, Hanging_point last)
-    : m_reverse(false)
+  Lightweight_polyline_2 (Extreme_point first, iterator begin, iterator end, Extreme_point last)
+    : m_line_cache (begin.support().m_line_cache), m_reverse(false)
   {
     const Self& support = begin.support();
     CGAL_assertion (&support == &end.support());
@@ -249,18 +158,15 @@ public:
     return out;
   }
 
-  Hanging_point init (const Point_2& p, std::size_t index) const
+  Extreme_point init (const Point_2& p, std::size_t index) const
   {
-    Hanging_point out = this->init(p);
-
-#ifdef CGAL_LIGHTWEIGHT_POLYLINE_EMBED_CACHE
+    Extreme_point out = this->init(p);
     if (index == 0)
       out.second = m_first.second;
     else if (index == number_of_subcurves() + 1)
       out.second = m_last.second;
     else
       out.second = (m_begin + index - 1)->second;
-#endif
     return out;
   }
 
@@ -270,7 +176,7 @@ public:
     std::size_t nb_curves = number_of_subcurves();
     if (nb_curves == 1)
     {
-      if (m_first && m_last)
+      if (is_init(m_first) && is_init(m_last))
       {
         CGAL_PROFILER ("Polyline with 1 isolated subcurve");
       }
@@ -339,13 +245,37 @@ public:
     return os;
   }
 
+  Extreme_point uninit() const { return Extreme_point(nullptr, nullptr); }
+
+private:
+
+  bool is_init (const Extreme_point& p) const { return (p.first != nullptr); }
+  Extreme_point init (const Point_2& p) const { return Extreme_point(std::make_shared<Point_2>(p), nullptr); }
+  Extreme_point init (const Internal_point& p) const { return Extreme_point(std::make_shared<Point_2>(p.first), p.second); }
+  Extreme_point init (const Extreme_point& p) const { return p; }
+
+  const Point_2& point (const Internal_point& p) const { return p.first; }
+  const Point_2& point (const Extreme_point& p) const { return *p.first; }
+
+  const Line_2& line (std::shared_ptr<Line_2>& line, const Point_2& a, const Point_2& b) const
+  {
+    CGAL_BRANCH_PROFILER("Cache acces", br);
+    if (!line)
+    {
+      CGAL_BRANCH_PROFILER_BRANCH(br);
+      line = std::make_shared<Line_2>(a, b);
+    }
+    return *line;
+  }
+
 };
 
 template <typename Kernel_, typename Iterator>
 class Lightweight_polyline_2_iterator
   : public boost::iterator_facade<Lightweight_polyline_2_iterator<Kernel_, Iterator>,
                                   typename Kernel_::Point_2,
-                                  typename std::iterator_traits<Iterator>::iterator_category>
+                                  typename std::iterator_traits
+                                  <typename Lightweight_polyline_2<Kernel_, Iterator>::Zip_iterator>::iterator_category>
 {
 public:
 
@@ -353,17 +283,15 @@ public:
   using Base_iterator = Iterator;
   using Self = Lightweight_polyline_2_iterator<Kernel, Base_iterator>;
   using Polyline = Lightweight_polyline_2<Kernel, Base_iterator>;
-  using Line_is_cached = Boolean_tag<!Polyline::Is_point_iterator::value>;
   using Point_2 = typename Kernel::Point_2;
   using Line_2 = typename Kernel::Line_2;
-  using Line_ref = typename Polyline::Line_ref;
-  using Input_point = typename Polyline::Input_point;
-  using Hanging_point = typename Polyline::Hanging_point;
+  using Zip_iterator = typename Polyline::Zip_iterator;
+
   friend Polyline;
 
 protected:
   const Polyline* m_support;
-  Base_iterator m_base;
+  Zip_iterator m_base;
 
 public:
 
@@ -415,7 +343,7 @@ public:
   { }
 
   const Polyline& support() const { return *m_support; }
-  Base_iterator base() const { return m_base; }
+  Zip_iterator base() const { return m_base; }
 
   // The iterator is also used as a wrapper for a segment (using it as
   // source and using the immediate following iterator as target)
@@ -453,12 +381,12 @@ public:
     return source();
   }
 
-  Line_ref line() const
+  const Line_2& line() const
   {
-    return m_support->line (cached_line(Line_is_cached()), source(), target());
+    return m_support->line (cached_line(), source(), target());
   }
 
-  std::shared_ptr<Line_2>& cached_line (const Tag_true&) const
+  std::shared_ptr<Line_2>& cached_line () const
   {
     CGAL_assertion (m_support != nullptr);
     if (m_base == m_support->m_begin - 1)
@@ -476,11 +404,6 @@ public:
     CGAL_assertion (std::distance (m_support->m_begin, m_base) >= 0);
     CGAL_assertion (std::distance (m_base, m_support->m_end) > 0);
     return const_cast<std::shared_ptr<Line_2>&>(m_base->second);
-  }
-
-  std::nullptr_t cached_line (const Tag_false&) const
-  {
-    return nullptr;
   }
 
 private:
