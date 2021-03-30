@@ -139,7 +139,7 @@ public:
   \tparam PointOnSphereIterator must be a model of `InputIterator` with value type `Point`.
   */
   template <class PointOnSphereIterator>
-  std::ptrdiff_t insert(PointOnSphereIterator first, PointOnSphereIterator beyond);
+  size_type insert(PointOnSphereIterator first, PointOnSphereIterator beyond);
 
   /*!
   removes the vertex `v` from the triangulation.

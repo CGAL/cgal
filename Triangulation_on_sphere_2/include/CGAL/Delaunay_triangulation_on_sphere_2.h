@@ -59,6 +59,8 @@ public:
   typedef typename Geom_traits::Segment_3         Segment_3;
   typedef typename Geom_traits::Arc_on_sphere_2   Arc_on_sphere_2;
 
+  typedef typename Base::size_type                size_type;
+
   typedef typename Base::Vertex                   Vertex;
   typedef typename Base::Vertex_handle            Vertex_handle;
   typedef typename Base::Edge                     Edge;
@@ -266,17 +268,17 @@ public:
 
   // Input range has value type Point, with Point != Point_3
   template <typename InputIterator>
-  int insert(InputIterator first, InputIterator beyond,
-             typename std::enable_if<
-                        !std::is_same<typename std::iterator_traits<InputIterator>::value_type,
-                                      Point_3>::value>::type* = nullptr);
+  size_type insert(InputIterator first, InputIterator beyond,
+                   typename std::enable_if<
+                              !std::is_same<typename std::iterator_traits<InputIterator>::value_type,
+                                            Point_3>::value>::type* = nullptr);
 
   // Input range has value type Point_3, possibly with Point == Point_3
   template <typename InputIterator>
-  int insert(InputIterator first, InputIterator beyond,
-             typename std::enable_if<
-                        std::is_same<typename std::iterator_traits<InputIterator>::value_type,
-                                     Point_3>::value>::type* = nullptr);
+  size_type insert(InputIterator first, InputIterator beyond,
+                   typename std::enable_if<
+                              std::is_same<typename std::iterator_traits<InputIterator>::value_type,
+                                           Point_3>::value>::type* = nullptr);
 
   bool update_ghost_faces(Vertex_handle v, bool first = false);
 
@@ -599,7 +601,7 @@ insert(const Point& p, Face_handle start)
 
 template <typename Gt, typename Tds>
 template <typename InputIterator>
-int
+typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::size_type
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 insert(InputIterator first, InputIterator beyond,
        typename std::enable_if<
@@ -609,7 +611,7 @@ insert(InputIterator first, InputIterator beyond,
   CGAL_static_assertion((std::is_same<typename std::iterator_traits<InputIterator>::value_type, Point>::value));
   CGAL_static_assertion(!(std::is_same<Point, Point_3>::value));
 
-  const int n = number_of_vertices();
+  const size_type n = number_of_vertices();
 
   // On paper, Spatial_sort_traits_adapter_3 should be used. However, it is not compatible
   // with spatial_sort_on_sphere() because of the way Transform_coordinates_traits_3 were written:
@@ -663,14 +665,14 @@ insert(InputIterator first, InputIterator beyond,
 
 template <typename Gt, typename Tds>
 template <typename InputIterator>
-int
+typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::size_type
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 insert(InputIterator first, InputIterator beyond,
        typename std::enable_if<
                   std::is_same<typename std::iterator_traits<InputIterator>::value_type,
                                Point_3>::value>::type*)
 {
-  const int n = number_of_vertices();
+  const size_type n = number_of_vertices();
 
   std::vector<Point_3> points(first, beyond);
   CGAL::cpp98::random_shuffle(points.begin(), points.end());
