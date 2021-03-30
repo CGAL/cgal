@@ -1781,11 +1781,11 @@ do_intersect(const Line_3<R> &line, const Iso_cuboid_3<R> &box, const R&)
                 _denum = newdenum;
             } else {
 
-              if (compare(newmin, newdenum, _min, _denum) == LARGER)
+              if (compare_quotients(newmin, newdenum, _min, _denum) == LARGER)
                     _min = newmin;
-              if (compare(newmax, newdenum, _max, _denum) == LARGER)
+              if (compare_quotients(newmax, newdenum, _max, _denum) == LARGER)
                     _max = newmax;
-              if (compare(_max, _denum, _min, _denum) == SMALLER) {
+              if (compare_quotients(_max, _denum, _min, _denum) == SMALLER) {
                   return false;
                 }
                 _denum = newdenum;

@@ -326,8 +326,8 @@ NT approximate_sqrt(const NT& nt)
 
 template <class NT>
 Comparison_result
-compare(const NT& xnum, const NT& xden,
-        const NT& ynum, const NT& yden)
+compare_quotients(const NT& xnum, const NT& xden,
+                  const NT& ynum, const NT& yden)
 {
   // No assumptions on the sign of  den  are made
 
