@@ -1681,6 +1681,8 @@ inline bool
 do_intersect(const Plane_3<R> &plane1, const Plane_3<R> &plane2,
              const Plane_3<R> &plane3, const R& r)
 {
+  typedef typename R::RT RT;
+
   if(! is_zero(determinant(plane1.a(), plane1.b(), plane1.c(),
                            plane2.a(), plane2.b(), plane2.c(),
                            plane3.a(), plane3.b(), plane3.c()))){
@@ -1703,9 +1705,9 @@ do_intersect(const Plane_3<R> &plane1, const Plane_3<R> &plane2,
     if(b23 && ((plane2 == plane3)||(plane2 == plane3.opposite()  ))) return true;
   }
 
-  int rd = rank_34(plane1.a(), plane1.b(), plane1.c(), plane1.d(),
-                   plane2.a(), plane2.b(), plane2.c(), plane2.d(),
-                   plane3.a(), plane3.b(), plane3.c(), plane3.d());
+  int rd = rank_34<RT>(plane1.a(), plane1.b(), plane1.c(), plane1.d(),
+                       plane2.a(), plane2.b(), plane2.c(), plane2.d(),
+                       plane3.a(), plane3.b(), plane3.c(), plane3.d());
 
   return rd == 2;
 }
