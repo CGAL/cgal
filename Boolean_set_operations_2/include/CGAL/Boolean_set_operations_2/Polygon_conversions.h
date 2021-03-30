@@ -99,7 +99,7 @@ construct_curve (const Polygon_2<Kernel, Container>& polygon,
                  const Arr_lightweight_polyline_traits_2<Kernel, Iterator>& traits)
 {
   auto ctr = traits.construct_curve_2_object();
-  return ctr(polygon.vertices_begin(), polygon.vertices_end(), true);
+  return ctr(polygon, true);
 }
 
 

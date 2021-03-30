@@ -14,33 +14,30 @@ namespace CGAL {
 
 namespace internal {
 
-template <typename Kernel_, typename Iterator>
+template <typename Kernel_, typename Range_>
 class Lightweight_polyline_2_iterator;
 
-template <typename Kernel_, typename Iterator_>
+template <typename Kernel_, typename Range_>
 class Lightweight_polyline_2
 {
 public:
 
   using Kernel = Kernel_;
-  using Base_iterator = Iterator_;
-  using Self = Lightweight_polyline_2<Kernel, Base_iterator>;
+  using Range = Range_;
+  using Self = Lightweight_polyline_2<Kernel, Range>;
 
   using Point_2 = typename Kernel::Point_2;
   using Point_ptr = std::shared_ptr<Point_2>;
   using Line_2 = typename Kernel::Line_2;
   using Line_ptr = std::shared_ptr<Line_2>;
   using Line_cache = std::vector<Line_ptr>;
-  using Line_cache_iterator = typename Line_cache::const_iterator;
   using Extreme_point = std::pair<Point_ptr, Line_ptr>;
 
   using Size = std::size_t;
   using size_type = std::size_t;
+  using Index = std::int32_t;
 
-  using Zip_iterator = boost::zip_iterator<std::pair<Base_iterator, Line_cache_iterator> >;
-  using Internal_point = typename std::iterator_traits<Zip_iterator>::value_type;
-
-  using iterator = Lightweight_polyline_2_iterator<Kernel_, Base_iterator>;
+  using iterator = Lightweight_polyline_2_iterator<Kernel, Range>;
   friend iterator;
 
   using Subcurve_type_2 = iterator;
@@ -49,39 +46,44 @@ public:
 
 protected:
 
-  Zip_iterator m_begin;
-  Zip_iterator m_end;
+  const Range* m_range;
+  std::shared_ptr<Line_cache> m_line_cache;
   Extreme_point m_first;
   Extreme_point m_last;
-  std::shared_ptr<Line_cache> m_line_cache;
-  bool m_reverse;
+
+  inline Index null_idx() const { return std::numeric_limits<Index>::min(); }
+
+  Index m_begin = std::numeric_limits<Index>::min();
+  Index m_end = std::numeric_limits<Index>::min();
+  bool m_reverse = false;
   bool m_is_directed_right;
 
 public:
 
-  Lightweight_polyline_2() : m_reverse(false) { }
+  Lightweight_polyline_2() { }
+
+  Lightweight_polyline_2 (const Range& range, bool force_closure = false)
+    : m_range(&range)
+  {
+    m_line_cache = std::make_shared<Line_cache>(range.size(), nullptr);
+    m_begin = 0;
+    m_end = range.size();
+    if (force_closure)
+      m_last = Extreme_point(std::make_shared<Point_2>(*range.begin()), nullptr);
+    compute_direction();
+  }
 
   Lightweight_polyline_2(const Point_2& first, const Point_2& last)
-    : m_first(init(first))
-    , m_last(init(last))
-    , m_reverse(false)
+    : m_first(std::make_shared<Point_2>(first), nullptr)
+    , m_last(std::make_shared<Point_2>(last), nullptr)
   {
     compute_direction();
   }
 
-  Lightweight_polyline_2 (Base_iterator begin, Base_iterator end, bool force_closure = false)
-    : m_reverse(false)
-  {
-    m_line_cache = std::make_shared<Line_cache>(std::distance(begin, end), nullptr);
-    m_begin = Zip_iterator(std::make_pair(begin, m_line_cache->begin()));
-    m_end = Zip_iterator(std::make_pair(end, m_line_cache->end()));
-    if (force_closure)
-      m_last = init(*m_begin);
-    compute_direction();
-  }
 
   Lightweight_polyline_2 (iterator begin, iterator end)
-    : m_line_cache (begin.support().m_line_cache), m_reverse(false)
+    : m_range (begin.support().m_range)
+    , m_line_cache (begin.support().m_line_cache)
   {
     const Self& support = begin.support();
     CGAL_assertion (&support == &end.support());
@@ -91,7 +93,7 @@ public:
 
     if (begin.base() == support.m_begin - 1)
     {
-      CGAL_assertion (is_init(support.m_first));
+      CGAL_assertion (support.m_first.first != nullptr);
       m_first = support.m_first;
       m_begin = support.m_begin;
     }
@@ -100,7 +102,7 @@ public:
 
     if (end.base() == support.m_end + 1)
     {
-      CGAL_assertion (is_init(support.m_last));
+      CGAL_assertion (support.m_last.first != nullptr);
       m_last = support.m_last;
       m_end = support.m_end;
     }
@@ -115,15 +117,16 @@ public:
   }
 
   Lightweight_polyline_2 (Extreme_point first, iterator begin, iterator end, Extreme_point last)
-    : m_line_cache (begin.support().m_line_cache), m_reverse(false)
+    : m_range (begin.support().m_range)
+    , m_line_cache (begin.support().m_line_cache)
   {
     const Self& support = begin.support();
     CGAL_assertion (&support == &end.support());
 
     if (begin.base() == support.m_begin - 1)
     {
-      CGAL_assertion (!is_init(first));
-      m_first = init(support.m_first);
+      CGAL_assertion (first.first == nullptr);
+      m_first = support.m_first;
       m_begin = support.m_begin;
     }
     else
@@ -134,8 +137,8 @@ public:
 
     if (end.base() == support.m_end + 1)
     {
-      CGAL_assertion (!is_init(last));
-      m_last = init(support.m_last);
+      CGAL_assertion (last.first == nullptr);
+      m_last = support.m_last;
       m_end = support.m_end;
     }
     else
@@ -158,39 +161,21 @@ public:
     return out;
   }
 
-  Extreme_point init (const Point_2& p, std::size_t index) const
+  Extreme_point extreme_point (const Point_2& p, std::size_t index) const
   {
-    Extreme_point out = this->init(p);
+    Index idx = Index(index - m_begin);
+    Extreme_point out (std::make_shared<Point_2>(p), nullptr);
     if (index == 0)
       out.second = m_first.second;
     else if (index == number_of_subcurves() + 1)
       out.second = m_last.second;
     else
-      out.second = (m_begin + index - 1)->second;
+      out.second = (*m_line_cache)[m_begin + index - 1];
     return out;
   }
 
   void compute_direction()
   {
-#ifdef CGAL_PROFILE
-    std::size_t nb_curves = number_of_subcurves();
-    if (nb_curves == 1)
-    {
-      if (is_init(m_first) && is_init(m_last))
-      {
-        CGAL_PROFILER ("Polyline with 1 isolated subcurve");
-      }
-      else
-      {
-        CGAL_PROFILER ("Polyline with 1 subcurve");
-      }
-    }
-    else
-    {
-      CGAL_PROFILER ("Polyline with >=2 subcurves");
-    }
-#endif
-
     // In all this class we use boost::prior instead of std::prev for compatibility with zip iterators
     m_is_directed_right = (Kernel().compare_xy_2_object()(*points_begin(), *boost::prior(points_end())) == SMALLER);
   }
@@ -221,7 +206,7 @@ public:
 
   size_type number_of_subcurves() const
   {
-    return std::distance (m_begin, m_end) + (is_init(m_first) ? 1 : 0) + (is_init(m_last) ? 1 : 0) - 1;
+    return (m_end - m_begin) + (m_first.first ? 1 : 0) + (m_last.first ? 1 : 0) - 1;
   }
 
   inline Subcurve_type_2 operator[](const std::size_t i) const
@@ -231,8 +216,8 @@ public:
 
   inline void clear()
   {
-    m_begin = Base_iterator();
-    m_end = Base_iterator();
+    m_begin = null_idx();
+    m_end = null_idx();
     m_first = nullptr;
     m_last = nullptr;
   }
@@ -245,53 +230,78 @@ public:
     return os;
   }
 
-  Extreme_point uninit() const { return Extreme_point(nullptr, nullptr); }
-
 private:
 
-  bool is_init (const Extreme_point& p) const { return (p.first != nullptr); }
-  Extreme_point init (const Point_2& p) const { return Extreme_point(std::make_shared<Point_2>(p), nullptr); }
-  Extreme_point init (const Internal_point& p) const { return Extreme_point(std::make_shared<Point_2>(p.first), p.second); }
-  Extreme_point init (const Extreme_point& p) const { return p; }
-
-  const Point_2& point (const Internal_point& p) const { return p.first; }
-  const Point_2& point (const Extreme_point& p) const { return *p.first; }
-
-  const Line_2& line (std::shared_ptr<Line_2>& line, const Point_2& a, const Point_2& b) const
+  const Point_2& point (const Index& idx) const
   {
+    if (idx == m_begin - 1)
+    {
+      CGAL_assertion (m_first.first != nullptr);
+      return *m_first.first;
+    }
+    // else
+    if (idx == m_end)
+    {
+      CGAL_assertion (m_last.first != nullptr);
+      return *m_last.first;
+    }
+    // else
+    CGAL_assertion (m_begin <= idx && idx < m_end);
+    return *std::next(m_range->begin(), idx);
+  }
+  const Line_2& line (const Index& idx) const
+  {
+    return *line_ptr(idx);
+  }
+
+  Line_ptr& line_ptr (const Index& idx) const
+  {
+    if (idx == m_begin - 1)
+      return const_cast<Line_ptr&>(m_first.second);
+    // else
+    if (idx == m_end)
+      return const_cast<Line_ptr&>(m_last.second);
+    // else
+    CGAL_assertion (m_begin <= idx && idx < m_end);
+    return const_cast<Line_ptr&>((*m_line_cache)[idx]);
+  }
+
+
+  const Line_2& line (const Index& index, const Point_2& a, const Point_2& b) const
+  {
+    Line_ptr& l = line_ptr(index);
     CGAL_BRANCH_PROFILER("Cache acces", br);
-    if (!line)
+    if (!l)
     {
       CGAL_BRANCH_PROFILER_BRANCH(br);
-      line = std::make_shared<Line_2>(a, b);
+      l = std::make_shared<Line_2>(a, b);
     }
-    return *line;
+    return *l;
   }
 
 };
 
-template <typename Kernel_, typename Iterator>
+template <typename Kernel_, typename Range_>
 class Lightweight_polyline_2_iterator
-  : public boost::iterator_facade<Lightweight_polyline_2_iterator<Kernel_, Iterator>,
+  : public boost::iterator_facade<Lightweight_polyline_2_iterator<Kernel_, Range_>,
                                   typename Kernel_::Point_2,
-                                  typename std::iterator_traits
-                                  <typename Lightweight_polyline_2<Kernel_, Iterator>::Zip_iterator>::iterator_category>
+                                  std::random_access_iterator_tag>
 {
 public:
 
   using Kernel = Kernel_;
-  using Base_iterator = Iterator;
-  using Self = Lightweight_polyline_2_iterator<Kernel, Base_iterator>;
-  using Polyline = Lightweight_polyline_2<Kernel, Base_iterator>;
+  using Range = Range_;
+  using Self = Lightweight_polyline_2_iterator<Kernel, Range>;
+  using Polyline = Lightweight_polyline_2<Kernel, Range>;
   using Point_2 = typename Kernel::Point_2;
   using Line_2 = typename Kernel::Line_2;
-  using Zip_iterator = typename Polyline::Zip_iterator;
+  using Index = typename Polyline::Index;
 
   friend Polyline;
 
 protected:
   const Polyline* m_support;
-  Zip_iterator m_base;
+  Index m_base;
 
 public:
 
@@ -302,14 +312,14 @@ public:
   {
     if (m_support->m_reverse)
     {
-      if (m_support->is_init(m_support->m_last))
+      if (m_support->m_last.first)
         m_base = m_support->m_end;
       else
         m_base = m_support->m_end - 1;
     }
     else
     {
-      if (m_support->is_init(m_support->m_first))
+      if (m_support->m_first.first)
         m_base = m_support->m_begin - 1;
       else
         m_base = m_support->m_begin;
@@ -321,14 +331,14 @@ public:
   {
     if (m_support->m_reverse)
     {
-      if (m_support->is_init(m_support->m_first))
+      if (m_support->m_first.first)
         m_base = m_support->m_begin - 2;
       else
         m_base = m_support->m_begin - 1;
     }
     else
     {
-      if (m_support->is_init(m_support->m_last))
+      if (m_support->m_last.first)
         m_base = m_support->m_end + 1;
       else
         m_base = m_support->m_end;
@@ -343,7 +353,7 @@ public:
   { }
 
   const Polyline& support() const { return *m_support; }
-  Zip_iterator base() const { return m_base; }
+  const Index& base() const { return m_base; }
 
   // The iterator is also used as a wrapper for a segment (using it as
   // source and using the immediate following iterator as target)
@@ -383,27 +393,7 @@ public:
 
   const Line_2& line() const
   {
-    return m_support->line (cached_line(), source(), target());
-  }
-
-  std::shared_ptr<Line_2>& cached_line () const
-  {
-    CGAL_assertion (m_support != nullptr);
-    if (m_base == m_support->m_begin - 1)
-    {
-      CGAL_assertion (m_support->is_init(m_support->m_first));
-      return const_cast<std::shared_ptr<Line_2>&>(m_support->m_first.second);
-    }
-    else if (m_base == m_support->m_end)
-    {
-      CGAL_assertion (m_support->is_init(m_support->m_last));
-      return const_cast<std::shared_ptr<Line_2>&>(m_support->m_last.second);
-    }
-
-    // else
-    CGAL_assertion (std::distance (m_support->m_begin, m_base) >= 0);
-    CGAL_assertion (std::distance (m_base, m_support->m_end) > 0);
-    return const_cast<std::shared_ptr<Line_2>&>(m_base->second);
+    return m_support->line (m_base, source(), target());
   }
 
 private:
@@ -443,9 +433,9 @@ private:
     CGAL_assertion (m_support != nullptr);
     CGAL_assertion (other.m_support != nullptr);
     if (m_support->m_reverse)
-      return std::distance (other.m_base, m_base);
+      return m_base - other.m_base;
     // else
-    return std::distance (m_base, other.m_base);
+    return other.m_base - m_base;
   }
 
   // interoperability
@@ -465,21 +455,7 @@ private:
   const Point_2& const_dereference() const
   {
     CGAL_assertion (m_support != nullptr);
-    if (m_base == m_support->m_begin - 1)
-    {
-      CGAL_assertion (m_support->is_init(m_support->m_first));
-      return m_support->point(m_support->m_first);
-    }
-    else if (m_base == m_support->m_end)
-    {
-      CGAL_assertion (m_support->is_init(m_support->m_last));
-      return m_support->point(m_support->m_last);
-    }
-
-    // else
-    CGAL_assertion (std::distance (m_support->m_begin, m_base) >= 0);
-    CGAL_assertion (std::distance (m_base, m_support->m_end) > 0);
-    return m_support->point(*m_base);
+    return m_support->point(m_base);
   }
 };
 

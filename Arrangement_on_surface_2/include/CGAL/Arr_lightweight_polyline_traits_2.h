@@ -19,22 +19,23 @@
 
 namespace CGAL {
 
-template <typename Kernel_, typename PointIterator>
+template <typename Kernel_, typename Range_>
 class Arr_lightweight_polyline_traits_2
   : public Arr_polycurve_basic_traits_2
-    <Arr_lightweight_polyline_subtraits_2<Kernel_, PointIterator>,
-     internal::Lightweight_polyline_2<Kernel_, PointIterator> >
+    <Arr_lightweight_polyline_subtraits_2<Kernel_, Range_>,
+     internal::Lightweight_polyline_2<Kernel_, Range_> >
 {
 public:
 
   using Kernel = Kernel_;
-  using Point_iterator = PointIterator;
-  using Subcurve_traits_2 = Arr_lightweight_polyline_subtraits_2<Kernel, Point_iterator>;
-  using Curve_2 = internal::Lightweight_polyline_2<Kernel, Point_iterator>;
+  using Range = Range_;
+  using Subcurve_traits_2 = Arr_lightweight_polyline_subtraits_2<Kernel, Range>;
+  using Curve_2 = internal::Lightweight_polyline_2<Kernel, Range>;
 
 private:
   using Base = Arr_polycurve_basic_traits_2<Subcurve_traits_2, Curve_2>;
-  using Self = Arr_lightweight_polyline_traits_2<Kernel, Point_iterator>;
+  using Self = Arr_lightweight_polyline_traits_2<Kernel, Range>;
+  using Extreme_point = typename Curve_2::Extreme_point;
 
 public:
 
@@ -101,10 +102,10 @@ public:
   class Make_x_monotone_2
   {
   protected:
-    using Traits = Arr_lightweight_polyline_traits_2<Kernel, Point_iterator>;
+    using Traits = Arr_lightweight_polyline_traits_2<Kernel, Range>;
     const Traits& m_traits;
     Make_x_monotone_2(const Traits& traits) : m_traits(traits) {}
-    friend class Arr_lightweight_polyline_traits_2<Kernel, Point_iterator>;
+    friend class Arr_lightweight_polyline_traits_2<Kernel, Range>;
   public:
     using Curve_iterator = typename Curve_2::iterator;
 
@@ -141,10 +142,10 @@ public:
   class Split_2
   {
   protected:
-    using Traits = Arr_lightweight_polyline_traits_2<Kernel, Point_iterator>;
+    using Traits = Arr_lightweight_polyline_traits_2<Kernel, Range>;
     const Traits& m_traits;
     Split_2(const Traits& traits) : m_traits(traits) {}
-    friend class Arr_lightweight_polyline_traits_2<Kernel, Point_iterator>;
+    friend class Arr_lightweight_polyline_traits_2<Kernel, Range>;
   public:
 
     void operator()(const X_monotone_curve_2& xcv, const Point_2& p,
@@ -200,9 +201,9 @@ public:
       else {
         // The i'th subcurve should be split: The left part(seg1)
         // goes to xcv1, and the right part(seg2) goes to xcv2.
-        auto p_ptr = xcv.init(p, i);
-        xcv1 = X_monotone_curve_2 (xcv.uninit(), xcv.points_begin(), xcv[i+1], p_ptr);
-        xcv2 = X_monotone_curve_2 (p_ptr, xcv[i+1], xcv.points_end(), xcv.uninit());
+        auto p_ptr = xcv.extreme_point(p, i);
+        xcv1 = X_monotone_curve_2 (Extreme_point(), xcv.points_begin(), xcv[i+1], p_ptr);
+        xcv2 = X_monotone_curve_2 (p_ptr, xcv[i+1], xcv.points_end(), Extreme_point());
       }
 
       if (dir != SMALLER) std::swap(xcv1, xcv2);
@@ -219,10 +220,10 @@ public:
   class Intersect_2
   {
   protected:
-    using Traits = Arr_lightweight_polyline_traits_2<Kernel, Point_iterator>;
+    using Traits = Arr_lightweight_polyline_traits_2<Kernel, Range>;
     const Traits& m_traits;
     Intersect_2(const Traits& traits) : m_traits(traits) {}
-    friend class Arr_lightweight_polyline_traits_2<Kernel, Point_iterator>;
+    friend class Arr_lightweight_polyline_traits_2<Kernel, Range>;
   public:
     template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& cv1,
@@ -512,21 +513,15 @@ public:
   class Construct_curve_2
   {
   protected:
-    using Traits = Arr_lightweight_polyline_traits_2<Kernel, Point_iterator>;
+    using Traits = Arr_lightweight_polyline_traits_2<Kernel, Range>;
     const Traits& m_traits;
     Construct_curve_2(const Traits& traits) : m_traits(traits) {}
-    friend class Arr_lightweight_polyline_traits_2<Kernel, Point_iterator>;
+    friend class Arr_lightweight_polyline_traits_2<Kernel, Range>;
   public:
 
-    Curve_2 operator()(const Point_2& p, const Point_2& q) const
+    Curve_2 operator()(const Range& range, bool duplicate_first = false) const
     {
-      return Curve_2(p, q);
-    }
-
-    template <typename ForwardIterator>
-    Curve_2 operator()(ForwardIterator begin, ForwardIterator end, bool duplicate_first = false) const
-    {
-      return Curve_2 (begin, end, true);
+      return Curve_2 (range, true);
     }
   };
 
