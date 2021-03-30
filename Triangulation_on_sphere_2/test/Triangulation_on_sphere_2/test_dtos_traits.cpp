@@ -3,6 +3,7 @@
 #include <CGAL/Delaunay_triangulation_on_sphere_traits_2.h>
 
 #include <CGAL/enum.h>
+#include <CGAL/Origin.h>
 
 #include <iostream>
 
@@ -37,7 +38,7 @@ int main(int, char**)
   Point P14(  -1,    0,    0);
 
   Gt traits;
-  Gt traits_2(CGAL::Origin);
+  Gt traits_2(CGAL::ORIGIN);
   Gt traits_3(Point(1, 2, 3), 15);
 
   Gt traits_4(traits_3);

@@ -14,6 +14,13 @@ typedef CGAL::Delaunay_triangulation_on_sphere_2<Traits>    DToS2;
 typedef Traits::Point_3                                     Point_3;
 typedef Traits::Point_on_sphere_2                           Point;
 
+// Note: Geographical_coordinates_traits_2 are currently undocumented because they use
+//       a conversion to the Cartesian domain R^3 to perform predicates and constructions,
+//       losing the benefit of the exact representation on the way.
+//       It can be useful on its own (especially since it contains code
+//       to handle generic convex domains), but hidden points are possible
+//       and are not handled properly.
+
 int main(int argc, char** argv)
 {
   std::cout.precision(17);
@@ -21,7 +28,6 @@ int main(int argc, char** argv)
   const char* filename = (argc > 1) ? argv[1] : "data/poste_france.xyz";
 
   Traits traits(Point_3(0, 0, 0), 100);
-
 
   std::ifstream in(filename);
   if(!in)

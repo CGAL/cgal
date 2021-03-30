@@ -80,6 +80,7 @@ int main(int, char**)
 
   tr.insert(points.begin(), points.end());
   write_OFF("test_dtos.off", tr);
+  assert(tr.is_valid());
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
   // test ranges
