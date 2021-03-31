@@ -1,12 +1,12 @@
-#include <algorithm>
-#include <vector>
-#include <fstream>
-
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/Timer.h>
+
+#include <algorithm>
+#include <vector>
+#include <fstream>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel K;
 
