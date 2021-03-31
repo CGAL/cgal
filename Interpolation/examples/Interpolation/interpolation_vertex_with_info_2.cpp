@@ -38,38 +38,6 @@ typedef CGAL::Interpolation_traits_2<K>                     Traits;
 
 typedef std::vector<std::pair<Vertex_handle, Coord_type> >  Coordinate_vector;
 
-template <typename V, typename T>
-struct Value_function
-{
-  typedef V                                                 argument_type;
-  typedef std::pair<T, bool>                                result_type;
-
-  result_type operator()(const argument_type& a) const {
-    return result_type(a->info().value, true);
-  }
-};
-
-template <typename V, typename G>
-struct Gradient_function
-  : public std::iterator<std::output_iterator_tag, void, void, void, void>
-{
-
-  typedef V                                                 argument_type;
-  typedef std::pair<G, bool>                                result_type;
-
-  result_type operator()(const argument_type& a) const {
-    return std::make_pair(a->info().gradient, a->info().gradient != CGAL::NULL_VECTOR);
-  }
-
-  const Gradient_function& operator=(const std::pair<V, G>& p) const {
-    p.first->info().gradient = p.second;
-    return *this;
-  }
-
-  const Gradient_function& operator++(int) const { return *this; }
-  const Gradient_function& operator*() const { return *this; }
-};
-
 int main()
 {
   //number of sample points:
@@ -94,9 +62,15 @@ int main()
 
   Delaunay_triangulation T;
 
-  // Note that a supported alternative to creating the functors below is to use lambdas
-  Value_function<Vertex_handle, Coord_type> value_function;
-  Gradient_function<Vertex_handle, Vector> gradient_function;
+  auto value_function = [](const Vertex_handle& a) -> std::pair<Coord_type, bool>
+  {
+    return std::make_pair(a->info().value, true);
+  };
+
+  auto gradient_function = [](const Vertex_handle& a) -> std::pair<Vector, bool>
+  {
+    return std::make_pair(a->info().gradient, a->info().gradient != CGAL::NULL_VECTOR);
+  };
 
   //parameters for quadratic function:
   Coord_type alpha = Coord_type(1.0),

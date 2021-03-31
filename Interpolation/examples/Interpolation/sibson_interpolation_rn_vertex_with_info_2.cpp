@@ -8,6 +8,8 @@
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 
+#include <boost/iterator/function_output_iterator.hpp>
+
 #include <iostream>
 #include <iterator>
 #include <utility>
@@ -38,44 +40,26 @@ typedef CGAL::Triangulation_data_structure_2<Vb, Fb>           Tds;
 typedef CGAL::Regular_triangulation_2<K, Tds>                  Regular_triangulation;
 typedef Regular_triangulation::Vertex_handle                   Vertex_handle;
 
-template <typename V, typename T>
-struct Value_function
-{
-  typedef V                                                    argument_type;
-  typedef std::pair<T, bool>                                   result_type;
-
-  result_type operator()(const argument_type& a) const {
-    return result_type(a->info().value, true);
-  }
-};
-
-template <typename V, typename G>
-struct Gradient_function
-  : public std::iterator<std::output_iterator_tag, void, void, void, void>
-{
-  typedef V                                                    argument_type;
-  typedef std::pair<G, bool>                                   result_type;
-
-  result_type operator()(const argument_type& a) const {
-    return std::make_pair(a->info().gradient, a->info().gradient != CGAL::NULL_VECTOR);
-  }
-
-  const Gradient_function& operator=(const std::pair<V, G>& p) const {
-    p.first->info().gradient = p.second;
-    return *this;
-  }
-
-  const Gradient_function& operator++(int) const { return *this; }
-  const Gradient_function& operator*() const { return *this; }
-};
-
 int main()
 {
   Regular_triangulation rt;
 
-  // Note that a supported alternative to creating the functors below is to use lambdas
-  Value_function<Vertex_handle, Coord_type> value_function;
-  Gradient_function<Vertex_handle, Vector> gradient_function;
+  auto value_function = [](const Vertex_handle& a) -> std::pair<Coord_type, bool>
+  {
+    return std::make_pair(a->info().value, true);
+  };
+
+  auto gradient_function = [](const Vertex_handle& a) -> std::pair<Vector, bool>
+  {
+    return std::make_pair(a->info().gradient, a->info().gradient != CGAL::NULL_VECTOR);
+  };
+
+  auto gradient_output_iterator
+    = boost::make_function_output_iterator
+    ([](const std::pair<Vertex_handle, Vector>& p)
+     {
+       p.first->info().gradient = p.second;
+     });
 
   // parameters for spherical function:
   Coord_type a(0.25), bx(1.3), by(-0.7), c(0.2);
@@ -89,7 +73,7 @@ int main()
   }
 
   CGAL::sibson_gradient_fitting_rn_2(rt,
-                                     gradient_function,
+                                     gradient_output_iterator,
                                      CGAL::Identity<std::pair<Vertex_handle, Vector> >(),
                                      value_function,
                                      Traits());
