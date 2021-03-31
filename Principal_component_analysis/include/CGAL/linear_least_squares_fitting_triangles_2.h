@@ -159,7 +159,7 @@ linear_least_squares_fitting_2(InputIterator first,
   // types
   typedef typename Kernel::Triangle_2 Triangle;
   typedef typename Kernel::Segment_2  Segment;
-  auto converter = [](const Triangle& t, std::size_t idx) -> Segment { return Segment(t[idx], t[(idx+1)%3]); };
+  auto converter = [](const Triangle& t, int idx) -> Segment { return Segment(t[idx], t[(idx+1)%3]); };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
@@ -189,7 +189,7 @@ linear_least_squares_fitting_2(InputIterator first,
 
   typedef typename Kernel::Triangle_2 Triangle;
   typedef typename Kernel::Point_2 Point;
-  auto converter = [](const Triangle& t, std::size_t idx) -> Point { return t[idx]; };
+  auto converter = [](const Triangle& t, int idx) -> Point { return t[idx]; };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);

@@ -75,7 +75,7 @@ linear_least_squares_fitting_3(InputIterator first,
 {
   typedef typename K::Segment_3  Segment;
   typedef typename K::Point_3  Point;
-  auto converter = [](const Segment& s, std::size_t idx) -> Point { return s[idx]; };
+  auto converter = [](const Segment& s, int idx) -> Point { return s[idx]; };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
@@ -134,7 +134,7 @@ linear_least_squares_fitting_3(InputIterator first,
 {
   typedef typename K::Segment_3  Segment;
   typedef typename K::Point_3  Point;
-  auto converter = [](const Segment& s, std::size_t idx) -> Point { return s[idx]; };
+  auto converter = [](const Segment& s, int idx) -> Point { return s[idx]; };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);

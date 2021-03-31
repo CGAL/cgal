@@ -31,12 +31,12 @@ public:
   using Input_type = typename std::iterator_traits<InputIterator>::value_type;
   using Output_type = ValueType;
 
-  using Converter = std::function<Output_type(const Input_type&, std::size_t)>;
+  using Converter = std::function<Output_type(const Input_type&, int)>;
 
 private:
 
   Converter m_converter;
-  std::size_t m_next_index;
+  int m_next_index;
   InputIterator m_base;
   mutable Output_type m_current;
 

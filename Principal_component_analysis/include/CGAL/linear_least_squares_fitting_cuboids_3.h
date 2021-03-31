@@ -113,7 +113,7 @@ linear_least_squares_fitting_3(InputIterator first,
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
 
-  auto converter = [](const Iso_cuboid& c, std::size_t idx) -> Segment
+  auto converter = [](const Iso_cuboid& c, int idx) -> Segment
     {
       if (idx < 7)
         return Segment (c[idx], c[idx+1]);
@@ -148,7 +148,7 @@ linear_least_squares_fitting_3(InputIterator first,
 {
   typedef typename K::Point_3 Point;
   typedef typename K::Iso_cuboid_3 Iso_cuboid;
-  auto converter = [](const Iso_cuboid& c, std::size_t idx) -> Point { return c[idx]; };
+  auto converter = [](const Iso_cuboid& c, int idx) -> Point { return c[idx]; };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
@@ -240,7 +240,7 @@ linear_least_squares_fitting_3(InputIterator first,
 {
   typedef typename K::Segment_3 Segment;
   typedef typename K::Iso_cuboid_3 Iso_cuboid;
-  auto converter = [](const Iso_cuboid& c, std::size_t idx) -> Segment
+  auto converter = [](const Iso_cuboid& c, int idx) -> Segment
     {
       if (idx < 7)
         return Segment (c[idx], c[idx+1]);
@@ -279,7 +279,7 @@ linear_least_squares_fitting_3(InputIterator first,
 {
   typedef typename K::Point_3 Point;
   typedef typename K::Iso_cuboid_3 Iso_cuboid;
-  auto converter = [](const Iso_cuboid& c, std::size_t idx) -> Point { return c[idx]; };
+  auto converter = [](const Iso_cuboid& c, int idx) -> Point { return c[idx]; };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);

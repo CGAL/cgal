@@ -147,7 +147,7 @@ linear_least_squares_fitting_2(InputIterator first,
   // types
   typedef typename K::Point_2  Point;
   typedef typename K::Segment_2 Segment;
-  auto converter = [](const Segment& s, std::size_t idx) -> Point { return s[idx]; };
+  auto converter = [](const Segment& s, int idx) -> Point { return s[idx]; };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);

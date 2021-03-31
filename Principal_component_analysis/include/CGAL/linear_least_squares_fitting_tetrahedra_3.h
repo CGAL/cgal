@@ -76,7 +76,7 @@ linear_least_squares_fitting_3(InputIterator first,
 {
   typedef typename K::Tetrahedron_3    Tetrahedron;
   typedef typename K::Triangle_3 Triangle;
-  auto converter = [](const Tetrahedron& t, std::size_t idx) -> Triangle
+  auto converter = [](const Tetrahedron& t, int idx) -> Triangle
     { return Triangle(t[idx], t[(idx+1)%4], t[(idx+2)%4]); };
 
   // precondition: at least one element in the container.
@@ -105,7 +105,7 @@ linear_least_squares_fitting_3(InputIterator first,
 {
   typedef typename K::Tetrahedron_3    Tetrahedron;
   typedef typename K::Segment_3 Segment;
-  auto converter = [](const Tetrahedron& t, std::size_t idx) -> Segment
+  auto converter = [](const Tetrahedron& t, int idx) -> Segment
     {
       if (idx < 4)
         return Segment (t[idx], t[(idx+1)%4]);
@@ -139,7 +139,7 @@ linear_least_squares_fitting_3(InputIterator first,
 {
   typedef typename K::Tetrahedron_3    Tetrahedron;
   typedef typename K::Point_3 Point;
-  auto converter = [](const Tetrahedron& t, std::size_t idx) -> Point { return t[idx]; };
+  auto converter = [](const Tetrahedron& t, int idx) -> Point { return t[idx]; };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
@@ -198,7 +198,7 @@ linear_least_squares_fitting_3(InputIterator first,
 {
   typedef typename K::Tetrahedron_3    Tetrahedron;
   typedef typename K::Triangle_3 Triangle;
-  auto converter = [](const Tetrahedron& t, std::size_t idx) -> Triangle
+  auto converter = [](const Tetrahedron& t, int idx) -> Triangle
     { return Triangle(t[idx], t[(idx+1)%4], t[(idx+2)%4]); };
 
   // precondition: at least one element in the container.
@@ -227,7 +227,7 @@ linear_least_squares_fitting_3(InputIterator first,
 {
   typedef typename K::Tetrahedron_3    Tetrahedron;
   typedef typename K::Segment_3 Segment;
-  auto converter = [](const Tetrahedron& t, std::size_t idx) -> Segment
+  auto converter = [](const Tetrahedron& t, int idx) -> Segment
     {
       if (idx < 4)
         return Segment (t[idx], t[(idx+1)%4]);
@@ -260,7 +260,7 @@ linear_least_squares_fitting_3(InputIterator first,
 {
   typedef typename K::Tetrahedron_3    Tetrahedron;
   typedef typename K::Point_3 Point;
-  auto converter = [](const Tetrahedron& t, std::size_t idx) -> Point { return t[idx]; };
+  auto converter = [](const Tetrahedron& t, int idx) -> Point { return t[idx]; };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);

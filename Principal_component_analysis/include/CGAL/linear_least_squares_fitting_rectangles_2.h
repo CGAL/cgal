@@ -158,7 +158,7 @@ linear_least_squares_fitting_2(InputIterator first,
   // types
   typedef typename K::Iso_rectangle_2 Iso_rectangle;
   typedef typename K::Segment_2         Segment_2;
-  auto converter = [](const Iso_rectangle& r, std::size_t idx) -> Segment_2 { return Segment_2(r[idx], r[(idx+1)%4]); };
+  auto converter = [](const Iso_rectangle& r, int idx) -> Segment_2 { return Segment_2(r[idx], r[(idx+1)%4]); };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
@@ -188,7 +188,7 @@ linear_least_squares_fitting_2(InputIterator first,
   // types
   typedef typename K::Iso_rectangle_2 Iso_rectangle;
   typedef typename K::Point_2         Point_2;
-  auto converter = [](const Iso_rectangle& r, std::size_t idx) -> Point_2 { return r[idx]; };
+  auto converter = [](const Iso_rectangle& r, int idx) -> Point_2 { return r[idx]; };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);

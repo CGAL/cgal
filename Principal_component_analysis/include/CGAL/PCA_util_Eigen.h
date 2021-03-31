@@ -220,10 +220,10 @@ assemble_covariance_matrix_3(InputIterator first,
   typedef typename K::FT              FT;
   typedef typename K::Iso_cuboid_3    Iso_cuboid;
   typedef typename K::Triangle_3      Triangle;
-  auto converter = [](const Iso_cuboid& c, std::size_t idx) -> Triangle
+  auto converter = [](const Iso_cuboid& c, int idx) -> Triangle
     {
       // Decomposition of 6 faces of the cuboid into 12 triangles
-      static constexpr std::array<std::array<std::size_t, 3>, 12 > indices
+      static constexpr std::array<std::array<int, 3>, 12 > indices
       = {{ { 0, 1, 2 }, { 0, 2, 3 }, { 2, 3, 4 }, { 2, 4, 7 },
            { 3, 4, 5 }, { 3, 5, 0 }, { 4, 5, 6 }, { 4, 6, 7 },
            { 5, 6, 1 }, { 5, 1, 0 }, { 6, 7, 2 }, { 6, 2, 1 } }};
