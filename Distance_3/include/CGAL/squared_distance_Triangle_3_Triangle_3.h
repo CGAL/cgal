@@ -126,13 +126,13 @@ test_vertex_triangle(const typename K::Triangle_3& tr1,
     return std::make_pair(0, false);
 
   std::for_each(sps.begin(), sps.end(), [](FT& v) { v = abs(v); });
-  auto min_pos = std::min_element(sps.begin(), sps.end());
-  auto min_id = std::distance(sps.begin(), min_pos);
+  const auto min_pos = std::min_element(sps.begin(), sps.end());
+  const std::size_t min_id = static_cast<std::size_t>(std::distance(sps.begin(), min_pos));
 
   if(sps[min_id] > 0)
     are_triangles_known_to_be_disjoint = true;
 
-  const Point_3& x1 = vertex(tr1, min_id);
+  const Point_3& x1 = vertex(tr1, static_cast<int>(min_id));
 
   if(on_left_of_triangle_edge(x1, n2, p2, q2, k) &&
      on_left_of_triangle_edge(x1, n2, q2, r2, k) &&
