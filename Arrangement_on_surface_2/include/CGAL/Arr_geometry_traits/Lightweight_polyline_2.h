@@ -66,6 +66,7 @@ public:
     , m_reverse(false)
   { }
 
+  // Create a lightweight polyline from a range
   Lightweight_polyline_2 (const Range& range, bool force_closure = false)
     : m_range(&range)
     , m_reverse(false)
@@ -78,6 +79,7 @@ public:
     compute_direction();
   }
 
+  // Create an isolated segment with no range support
   Lightweight_polyline_2(const Point_2& first, const Point_2& last)
     : m_first(std::make_shared<Point_2>(first), nullptr)
     , m_last(std::make_shared<Point_2>(last), nullptr)
@@ -88,7 +90,7 @@ public:
     compute_direction();
   }
 
-
+  // Create a polyline from a subset of another polyline
   Lightweight_polyline_2 (iterator begin, iterator end)
     : m_range (begin.support().m_range)
     , m_line_cache (begin.support().m_line_cache)
@@ -125,6 +127,7 @@ public:
     compute_direction();
   }
 
+  // Create a polyline from a subset of another polyline and one or two new extreme points
   Lightweight_polyline_2 (Extreme_point first, iterator begin, iterator end, Extreme_point last)
     : m_range (begin.support().m_range)
     , m_line_cache (begin.support().m_line_cache)
@@ -163,6 +166,8 @@ public:
     compute_direction();
   }
 
+
+  // Create the opposite polyline
   Lightweight_polyline_2 opposite() const
   {
     Lightweight_polyline_2 out (*this);
@@ -171,6 +176,8 @@ public:
     return out;
   }
 
+  // Create a new extreme point located on the `index`th segment of
+  // the polyline (keep cached line)
   Extreme_point extreme_point (const Point_2& p, std::size_t index) const
   {
     Index idx = Index(index - m_begin);
@@ -191,6 +198,7 @@ public:
 
   bool is_directed_right() const { return m_is_directed_right; }
 
+  // Used for assertions only
   bool is_x_monotone() const
   {
     auto compare_x_2 = Kernel().compare_x_2_object();
@@ -274,7 +282,7 @@ private:
   const Line_2& line (const Index& index, const Point_2& a, const Point_2& b) const
   {
     Line_ptr& l = line_ptr(index);
-    CGAL_BRANCH_PROFILER("Cache access", br);
+    CGAL_BRANCH_PROFILER("Lightweight polyline line-cache access", br);
     if (!l)
     {
       CGAL_BRANCH_PROFILER_BRANCH(br);
@@ -300,8 +308,6 @@ public:
   using Point_2 = typename Kernel::Point_2;
   using Line_2 = typename Kernel::Line_2;
   using Index = typename Polyline::Index;
-
-  friend Polyline;
 
 protected:
   const Polyline* m_support;
@@ -361,7 +367,6 @@ public:
 
   // The iterator is also used as a wrapper for a segment (using it as
   // source and using the immediate following iterator as target)
-
   const Point_2& source() const { return const_dereference(); }
   const Point_2& target() const { return std::next(*this).const_dereference(); }
 
@@ -403,31 +408,27 @@ public:
 private:
   friend class boost::iterator_core_access;
 
+  // bool reverse = false; -> int r = 1 - 2 * int(reverse) = 1;
+  // bool reverse = true; ->  int r = 1 - 2 * int(reverse) = -1;
   void increment()
   {
-    CGAL_assertion (m_support != nullptr);
-    if (m_support->m_reverse)
-      -- m_base;
-    else
-      ++ m_base;
+    move (1 - 2 * int(m_support->m_reverse));
   }
 
   void decrement()
   {
-    CGAL_assertion (m_support != nullptr);
-    if (m_support->m_reverse)
-      ++ m_base;
-    else
-      -- m_base;
+    move (-(1 - 2 * int(m_support->m_reverse)));
   }
 
   void advance (std::ptrdiff_t n)
   {
+    move ((1 - 2 * int(m_support->m_reverse)) * n);
+  }
+
+  void move (std::ptrdiff_t n)
+  {
     CGAL_assertion (m_support != nullptr);
-    if (m_support->m_reverse)
-      m_base -= n;
-    else
-      m_base += n;
+    m_base += n;
   }
 
   // interoperability
@@ -464,58 +465,6 @@ private:
 };
 
 } // namespace internal
-
-template <typename Curve>
-class Indexed_sweep_curve_accessor;
-
-template <typename Kernel, typename Iterator>
-class Indexed_sweep_curve_accessor<internal::Lightweight_polyline_2<Kernel, Iterator> >
-{
-private:
-
-  using Curve = internal::Lightweight_polyline_2<Kernel, Iterator>;
-  Curve* m_first;
-  std::size_t m_nb_vertices;
-
-public:
-  typedef Tag_true valid;
-
-  template <typename It>
-  Indexed_sweep_curve_accessor (It begin, It end)
-    : m_nb_vertices (std::distance(begin, end) + 1)
-    , m_first (&*begin)
-  { }
-
-  // Not used
-  std::size_t nb_vertices() const { return m_nb_vertices; }
-  std::size_t min_end_index (const Curve& c) const
-  {
-    if (c.subcurves_begin()->is_directed_right())
-      return curve_index(c);
-    // else
-    return curve_index(c) + 1;
-  }
-  std::size_t max_end_index (const Curve& c) const
-  {
-    if (c.subcurves_begin()->is_directed_right())
-      return curve_index(c) + 1;
-    // else
-    return curve_index(c);
-  }
-  const Curve& curve (const Curve& c) const { return c; }
-
-  void before_init() const { }
-  void after_init() const { }
-
-private:
-
-  std::size_t curve_index (const Curve& c) const
-  {
-    std::size_t out = std::size_t(&c - m_first);
-//    std::cerr << out << " ";
-    return out;
-  }
-};
 
 } //namespace CGAL
 
