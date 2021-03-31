@@ -295,9 +295,9 @@ before_handle_event(Event* event)
     }
     else {
       Vertex_handle invalid_v;
-      if (event->vertex_handle() != invalid_v)
-        he = split_edge(he, (*it), event->vertex_handle());
-      else he = split_edge(he, (*it), event->point());
+      he = (event->vertex_handle() != invalid_v) ?
+        this->split_edge(he, *it, event->vertex_handle()) :
+        this->split_edge(he, *it, event->point());
 
       // 'he' has the same source as the split halfedge.
       event->set_halfedge_handle(he);
@@ -333,14 +333,11 @@ bool Arr_no_intersection_insertion_ss_visitor<Hlpr, Vis>::
 add_subcurve_(const X_monotone_curve_2& cv, Subcurve* sc)
 {
   const Halfedge_handle invalid_he;
-  if (cv.halfedge_handle() == invalid_he) {
-    // The curve will be inserted into the arrangement:
-    Base::add_subcurve(cv, sc);
-    return true;
-  }
-  return false;
+  if (cv.halfedge_handle() != invalid_he) return false;
+  // Insert the curve into the arrangement
+  Base::add_subcurve(cv, sc);
+  return true;
 }
-
 
 //-----------------------------------------------------------------------------
 // A notification invoked when a new subcurve is created.
@@ -390,8 +387,7 @@ Arr_no_intersection_insertion_ss_visitor<Hlpr, Vis>::
 insert_from_left_vertex(const X_monotone_curve_2& cv, Halfedge_handle he,
                         Subcurve* sc)
 {
-  Vertex_handle curr_v =
-    this->current_event()->point().vertex_handle();
+  Vertex_handle curr_v = this->current_event()->point().vertex_handle();
   if (curr_v != Vertex_handle())
     return (this->m_arr->insert_at_vertices(cv.base(), he, curr_v));
   return (_insert_from_left_vertex(cv, he, sc));
