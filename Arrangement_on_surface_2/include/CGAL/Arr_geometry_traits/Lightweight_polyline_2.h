@@ -176,8 +176,7 @@ public:
 
   void compute_direction()
   {
-    // In all this class we use boost::prior instead of std::prev for compatibility with zip iterators
-    m_is_directed_right = (Kernel().compare_xy_2_object()(*points_begin(), *boost::prior(points_end())) == SMALLER);
+    m_is_directed_right = (Kernel().compare_xy_2_object()(*points_begin(), *std::prev(points_end())) == SMALLER);
   }
 
   bool is_directed_right() const { return m_is_directed_right; }
@@ -202,7 +201,7 @@ public:
   iterator points_end() const { return iterator (this, Tag_false()); }
 
   Subcurve_const_iterator subcurves_begin() const { return Subcurve_const_iterator(points_begin()); }
-  Subcurve_const_iterator subcurves_end() const { return Subcurve_const_iterator(boost::prior(points_end())); }
+  Subcurve_const_iterator subcurves_end() const { return Subcurve_const_iterator(std::prev(points_end())); }
 
   size_type number_of_subcurves() const
   {
@@ -249,10 +248,6 @@ private:
     CGAL_assertion (m_begin <= idx && idx < m_end);
     return *std::next(m_range->begin(), idx);
   }
-  const Line_2& line (const Index& idx) const
-  {
-    return *line_ptr(idx);
-  }
 
   Line_ptr& line_ptr (const Index& idx) const
   {
@@ -266,11 +261,10 @@ private:
     return const_cast<Line_ptr&>((*m_line_cache)[idx]);
   }
 
-
   const Line_2& line (const Index& index, const Point_2& a, const Point_2& b) const
   {
     Line_ptr& l = line_ptr(index);
-    CGAL_BRANCH_PROFILER("Cache acces", br);
+    CGAL_BRANCH_PROFILER("Cache access", br);
     if (!l)
     {
       CGAL_BRANCH_PROFILER_BRANCH(br);
