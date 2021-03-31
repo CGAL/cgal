@@ -321,6 +321,7 @@ public:
         return It::operator==( It(nullptr));
     }
     bool operator!=( std::nullptr_t p) const { return !(*this == p); }
+    bool operator==( const It& i) const { return  It::operator==(i); }
     bool operator==( const Self& i) const { return  It::operator==(i); }
     bool operator!=( const Self& i) const { return !(*this == i); }
 
