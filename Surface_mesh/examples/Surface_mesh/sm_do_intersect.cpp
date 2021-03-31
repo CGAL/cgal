@@ -8,14 +8,6 @@
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/Timer.h>
 
-#include <boost/bind.hpp>
-#include <boost/functional/value_factory.hpp>
-#include <boost/range/algorithm/transform.hpp>
-
-#include <algorithm>
-#include <vector>
-#include <fstream>
-
 typedef CGAL::Exact_predicates_exact_constructions_kernel K;
 
 typedef K::Triangle_3 Triangle_3;
