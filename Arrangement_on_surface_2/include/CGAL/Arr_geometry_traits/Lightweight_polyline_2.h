@@ -35,7 +35,7 @@ public:
 
   using Size = std::size_t;
   using size_type = std::size_t;
-  using Index = std::int32_t;
+  using Index = std::uint32_t;
 
   using iterator = Lightweight_polyline_2_iterator<Kernel, Range>;
   friend iterator;
@@ -46,24 +46,29 @@ public:
 
 protected:
 
+  // Using -2 as null index as -1 can be the index of `m_first`
+  inline Index null_idx() const { return Index(-2); }
+
   const Range* m_range;
   std::shared_ptr<Line_cache> m_line_cache;
   Extreme_point m_first;
   Extreme_point m_last;
-
-  inline Index null_idx() const { return std::numeric_limits<Index>::min(); }
-
-  Index m_begin = std::numeric_limits<Index>::min();
-  Index m_end = std::numeric_limits<Index>::min();
-  bool m_reverse = false;
+  Index m_begin;
+  Index m_end;
+  bool m_reverse;
   bool m_is_directed_right;
 
 public:
 
-  Lightweight_polyline_2() { }
+  Lightweight_polyline_2()
+    : m_begin (null_idx())
+    , m_end (null_idx())
+    , m_reverse(false)
+  { }
 
   Lightweight_polyline_2 (const Range& range, bool force_closure = false)
     : m_range(&range)
+    , m_reverse(false)
   {
     m_line_cache = std::make_shared<Line_cache>(range.size(), nullptr);
     m_begin = 0;
@@ -76,6 +81,9 @@ public:
   Lightweight_polyline_2(const Point_2& first, const Point_2& last)
     : m_first(std::make_shared<Point_2>(first), nullptr)
     , m_last(std::make_shared<Point_2>(last), nullptr)
+    , m_begin (null_idx())
+    , m_end (null_idx())
+    , m_reverse(false)
   {
     compute_direction();
   }
@@ -84,6 +92,7 @@ public:
   Lightweight_polyline_2 (iterator begin, iterator end)
     : m_range (begin.support().m_range)
     , m_line_cache (begin.support().m_line_cache)
+    , m_reverse(false)
   {
     const Self& support = begin.support();
     CGAL_assertion (&support == &end.support());
@@ -119,6 +128,7 @@ public:
   Lightweight_polyline_2 (Extreme_point first, iterator begin, iterator end, Extreme_point last)
     : m_range (begin.support().m_range)
     , m_line_cache (begin.support().m_line_cache)
+    , m_reverse(false)
   {
     const Self& support = begin.support();
     CGAL_assertion (&support == &end.support());
@@ -427,9 +437,9 @@ private:
     CGAL_assertion (m_support != nullptr);
     CGAL_assertion (other.m_support != nullptr);
     if (m_support->m_reverse)
-      return m_base - other.m_base;
+      return std::ptrdiff_t(m_base) - std::ptrdiff_t(other.m_base);
     // else
-    return other.m_base - m_base;
+    return std::ptrdiff_t(other.m_base) - std::ptrdiff_t(m_base);
   }
 
   // interoperability
