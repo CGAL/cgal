@@ -263,7 +263,7 @@ public Q_SLOTS:
                                                   .allow_self_intersections(ui_widget.do_not_modify_CheckBox->isChecked()));
             }
           }
-          catch(const GAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception&)
+          catch(const CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception&)
           {
             CGAL::Three::Three::warning(tr("The requested operation is not possible due to the presence of self-intersections in the region handled."));
           }
