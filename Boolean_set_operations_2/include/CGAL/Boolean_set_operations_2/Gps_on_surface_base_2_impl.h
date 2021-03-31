@@ -315,7 +315,7 @@ public:
 */
 template <class Traits_, class TopTraits_, class ValidationPolicy>
 void Gps_on_surface_base_2<Traits_, TopTraits_,ValidationPolicy>::
-_insert(const Polygon_2& pgn, Arrangement_on_surface_2 & arr)
+_insert(const Polygon_2& pgn, Arrangement_on_surface_2 & arr, bool is_hole)
 {
   typedef Arr_accessor<Arrangement_on_surface_2>                  Arr_accessor;
 
@@ -350,7 +350,7 @@ _insert(const Polygon_2& pgn, Arrangement_on_surface_2 & arr)
   Face_const_handle const_f;
   // face should not be contained as the pgn is completly disjoint of the
   // arrangement.
-  CGAL_assertion(CGAL::assign(const_f, obj_f) && !const_f->contained());
+  CGAL_assertion(CGAL::assign(const_f, obj_f) && const_f->contained() == is_hole);
   CGAL::assign(const_f, obj_f);
   Face_iterator f = arr.non_const_handle(const_f);
 
@@ -392,7 +392,7 @@ _insert(const Polygon_2& pgn, Arrangement_on_surface_2 & arr)
     CGAL_assertion(new_face_created);
     CGAL_assertion((he->face() != he->twin()->face()));
 
-    he->face()->set_contained(true);
+    he->face()->set_contained(!is_hole);
     return;
   }
 
@@ -428,7 +428,7 @@ _insert(const Polygon_2& pgn, Arrangement_on_surface_2 & arr)
   CGAL_assertion(new_face_created);
   CGAL_assertion((last_he->face() != last_he->twin()->face()));
 
-  last_he->face()->set_contained(true);
+  last_he->face()->set_contained(!is_hole);
 }
 
 
