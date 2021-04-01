@@ -701,7 +701,7 @@ inline OutputIterator
 difference(const Polygon_2<Kernel, Container>& pgn1,
            const Polygon_with_holes_2<Kernel, Container>& pgn2,
            OutputIterator oi, Tag_true = Tag_true())
-{ _difference<Kernel, Container>(pgn1, pgn2, oi); }
+{ return _difference<Kernel, Container>(pgn1, pgn2, oi); }
 
 // With Tag_false
 template <typename Kernel, typename Container, typename OutputIterator>
@@ -732,7 +732,7 @@ inline OutputIterator
 difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
            const Polygon_2<Kernel, Container>& pgn2,
            OutputIterator oi, Tag_true = Tag_true())
-{ _difference<Kernel, Container>(pgn1, pgn2, oi); }
+{ return _difference<Kernel, Container>(pgn1, pgn2, oi); }
 
 // With Tag_false
 template <typename Kernel, typename Container, typename OutputIterator>
@@ -759,11 +759,11 @@ difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
 
 // With Tag_true
 template <typename Kernel, typename Container, typename OutputIterator>
-inline OutputIterator
+ OutputIterator
 difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
            const Polygon_with_holes_2<Kernel, Container>& pgn2,
            OutputIterator oi, Tag_true = Tag_true())
-{ _difference<Kernel, Container>(pgn1, pgn2, oi); }
+{ return _difference<Kernel, Container>(pgn1, pgn2, oi); }
 
 // With Tag_false
 template <typename Kernel, typename Container, typename OutputIterator>
@@ -949,7 +949,7 @@ inline OutputIterator
 symmetric_difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                      const Polygon_2<Kernel, Container>& pgn2,
                      OutputIterator oi, Tag_true = Tag_true())
-{ s_symmetric_difference<Kernel, Container>(pgn1, pgn2, oi); }
+{ return s_symmetric_difference<Kernel, Container>(pgn1, pgn2, oi); }
 
 // With Tag_false
 template <typename Kernel, typename Container, typename OutputIterator>
@@ -980,7 +980,7 @@ inline OutputIterator
 symmetric_difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                      const Polygon_with_holes_2<Kernel, Container>& pgn2,
                      OutputIterator oi, Tag_true = Tag_true())
-{ s_symmetric_difference<Kernel, Container>(pgn1, pgn2, oi); }
+{ return s_symmetric_difference<Kernel, Container>(pgn1, pgn2, oi); }
 
 // With Tag_false
 template <typename Kernel, typename Container, typename OutputIterator>
@@ -1280,7 +1280,7 @@ template <typename InputIterator, typename OutputIterator, typename Traits>
 inline OutputIterator intersection(InputIterator begin, InputIterator end,
                                    OutputIterator oi, Traits& traits,
                                    unsigned int k=5)
-{ r_intersection(begin, end, oi, traits, k); }
+{ return r_intersection(begin, end, oi, traits, k); }
 
 // Without Traits
 // Tag_true => convert to polylines
@@ -1384,7 +1384,7 @@ inline OutputIterator
 symmetric_difference(InputIterator begin, InputIterator end,
                      OutputIterator oi, Tag_true = Tag_true(), unsigned int k=5,
                      Enable_if_Polygon_2_iterator<InputIterator>* = 0)
-{ r_symmetric_difference(begin, end, oi, k); }
+{ return r_symmetric_difference(begin, end, oi, k); }
 
 // Tag_false => do not convert to polylines
 template <typename InputIterator, typename OutputIterator>
