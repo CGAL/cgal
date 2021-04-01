@@ -202,7 +202,37 @@ private:
     ePlane_3 eplane;
   };
 
-  typedef std::vector<Plane> Prism;
+  struct Prism {
+
+    std::size_t size() const
+    {
+      return planes.size();
+    }
+
+    void reserve(std::size_t n)
+    {
+      planes.reserve(n);
+    }
+
+    void emplace_back(const Plane& p)
+    {
+      planes.emplace_back(p);
+    }
+
+
+    Plane& operator[](std::size_t i)
+    {
+      return planes[i];
+    }
+
+    const Plane& operator[](std::size_t i) const
+    {
+      return planes[i];
+    }
+
+    std::vector<Plane> planes;
+    int obtuse;
+  };
 
   static const bool OUT_PRISM = 1;
   static const bool IN_PRISM = 0;
@@ -1920,7 +1950,7 @@ private:
         halfspace[i].emplace_back(plane);// number 1
 
         int obtuse = obtuse_angle(ver[faces[i][0]], ver[faces[i][1]], ver[faces[i][2]]);
-
+        halfspace[i].obtuse = obtuse;
 
         edgedire = normalize(AB);
         // if (use_accurate_cross)edgenormaldist = accurate_cross_product_direction(ORIGIN, edgedire, ORIGIN, normal)*tolerance;
