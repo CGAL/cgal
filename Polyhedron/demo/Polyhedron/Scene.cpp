@@ -1099,11 +1099,13 @@ bool Scene::dropMimeData(const QMimeData * /*data*/,
       CGAL::Three::Scene_group_item* group =
           qobject_cast<CGAL::Three::Scene_group_item*>(item(i));
       if(group)
+      {
         Q_FOREACH(Item_id id, group->getChildren())
         {
           CGAL::Three::Scene_item* child = item(id);
           groups_children << item_id(child);
         }
+      }
     }
     // Insure that children of selected groups will not be added twice
     Q_FOREACH(int i, selected_items_list)
