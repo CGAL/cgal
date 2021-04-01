@@ -22,7 +22,6 @@
 #include <CGAL/General_polygon_2.h>
 #include <CGAL/General_polygon_with_holes_2.h>
 #include <CGAL/Boolean_set_operations_2/Gps_default_traits.h>
-#include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_lightweight_polyline_traits_2.h>
 #include <CGAL/Single.h>
 #include <CGAL/Iterator_range.h>
@@ -31,10 +30,22 @@ namespace CGAL {
 
 // Utility struct
 template <typename Polygon>
-struct Gps_polyline_traits {
-  typedef typename Gps_default_traits<Polygon>::Arr_traits      Segment_traits;
-  typedef Arr_polyline_traits_2<Segment_traits>                 Polyline_traits;
-  typedef Gps_traits_2<Polyline_traits>                         Traits;
+struct Gps_polyline_traits;
+
+template <class Kernel, class Container>
+struct Gps_polyline_traits<CGAL::Polygon_2<Kernel, Container> >
+{
+  typedef CGAL::Polygon_2<Kernel, Container>                 Polygon;
+  typedef Arr_lightweight_polyline_traits_2<Kernel, Polygon> Polyline_traits;
+  typedef Gps_traits_2<Polyline_traits>                      Traits;
+};
+
+template <class Kernel, class Container>
+struct Gps_polyline_traits<CGAL::Polygon_with_holes_2<Kernel, Container> >
+{
+  typedef CGAL::Polygon_2<Kernel, Container>                 Polygon;
+  typedef Arr_lightweight_polyline_traits_2<Kernel, Polygon> Polyline_traits;
+  typedef Gps_traits_2<Polyline_traits>                      Traits;
 };
 
 // Helper to map Polygon_2 -> General_polygon_2 / PWH_2 -> General_PWH_2
@@ -88,23 +99,12 @@ typename ArrTraits::Curve_2 construct_curve (const Polygon_2<Kernel, Container>&
                                              const ArrTraits& traits)
 {
   auto ctr = traits.construct_curve_2_object();
-  return ctr(boost::range::join(CGAL::make_range(polygon.vertices_begin(),
-                                                 polygon.vertices_end()),
-                                CGAL::make_single(*polygon.vertices_begin())));
-}
-
-template <typename Kernel, typename Container, typename Iterator>
-typename Arr_lightweight_polyline_traits_2<Kernel, Iterator>::Curve_2
-construct_curve (const Polygon_2<Kernel, Container>& polygon,
-                 const Arr_lightweight_polyline_traits_2<Kernel, Iterator>& traits)
-{
-  auto ctr = traits.construct_curve_2_object();
   return ctr(polygon, true);
 }
 
 
 // Convert Polygon_2 to General_polygon_2<Polyline_traits>
-  template <typename Kernel, typename Container, typename ArrTraits>
+template <typename Kernel, typename Container, typename ArrTraits>
 General_polygon_2<ArrTraits>
 convert_polygon(const Polygon_2<Kernel, Container>& polygon,
                 const ArrTraits& traits)
