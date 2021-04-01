@@ -18,7 +18,7 @@
 
 #include <CGAL/Nef_S2/ID_support_handler.h>
 #include <CGAL/Nef_3/SNC_indexed_items.h>
-#include <boost/container_hash/hash.hpp>
+#include <boost/functional/hash.hpp>
 #include <unordered_map>
 #include <map>
 
