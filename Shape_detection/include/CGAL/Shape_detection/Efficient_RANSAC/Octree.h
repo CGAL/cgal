@@ -128,9 +128,8 @@ public:
               + (m_bBox.ymax() - m_bBox.ymin()) * (m_bBox.ymax() - m_bBox.ymin())
               + (m_bBox.zmax() - m_bBox.zmin()) * (m_bBox.zmax() - m_bBox.zmin()));
 
-      maxLevel = std::size_t(std::log(bbox_diagonal
-                                      / cluster_epsilon_for_max_level_recomputation)
-                             / std::log(2.0));
+      maxLevel = std::size_t(std::log2(bbox_diagonal
+                                       / cluster_epsilon_for_max_level_recomputation));
       if (maxLevel == 0)
         maxLevel = 1;
     }

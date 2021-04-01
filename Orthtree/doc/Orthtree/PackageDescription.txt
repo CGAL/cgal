@@ -18,7 +18,7 @@
 /*!
 \addtogroup PkgOrthtreeRef
 
-\cgalPkgDescriptionBegin{Quadtree\, Octree and Orthtree,PkgOrthtree}
+\cgalPkgDescriptionBegin{Quadtrees\, Octrees and Orthtrees,PkgOrthtree}
 \cgalPkgPicture{octree_thumbnail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Jackson Campolattaro, Simon Giraudot, Cédric Portaneri, Tong Zhao, Pierre Alliez}

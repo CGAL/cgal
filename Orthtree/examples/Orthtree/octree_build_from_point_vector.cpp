@@ -6,7 +6,7 @@
 // Type Declarations
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
-typedef std::vector<Point> Point_vector;
+typedef std::list<Point> Point_vector;
 
 typedef CGAL::Octree<Kernel, Point_vector> Octree;
 

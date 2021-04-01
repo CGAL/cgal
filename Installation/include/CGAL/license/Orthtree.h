@@ -11,15 +11,15 @@
 //
 // Warning: this file is generated, see include/CGAL/licence/README.md
 
-#ifndef CGAL_LICENSE_OCTREE_H
-#define CGAL_LICENSE_OCTREE_H
+#ifndef CGAL_LICENSE_ORTHTREE_H
+#define CGAL_LICENSE_ORTHTREE_H
 
 #include <CGAL/config.h>
 #include <CGAL/license.h>
 
-#ifdef CGAL_OCTREE_COMMERCIAL_LICENSE
+#ifdef CGAL_ORTHTREE_COMMERCIAL_LICENSE
 
-#  if CGAL_OCTREE_COMMERCIAL_LICENSE < CGAL_RELEASE_DATE
+#  if CGAL_ORTHTREE_COMMERCIAL_LICENSE < CGAL_RELEASE_DATE
 
 #    if defined(CGAL_LICENSE_WARNING)
 
@@ -33,22 +33,22 @@
               You get this error, as you defined CGAL_LICENSE_ERROR."
 #    endif // CGAL_LICENSE_ERROR
 
-#  endif // CGAL_OCTREE_COMMERCIAL_LICENSE < CGAL_RELEASE_DATE
+#  endif // CGAL_ORTHTREE_COMMERCIAL_LICENSE < CGAL_RELEASE_DATE
 
-#else // no CGAL_OCTREE_COMMERCIAL_LICENSE
+#else // no CGAL_ORTHTREE_COMMERCIAL_LICENSE
 
 #  if defined(CGAL_LICENSE_WARNING)
-     CGAL_pragma_warning("\nThe macro CGAL_OCTREE_COMMERCIAL_LICENSE is not defined."
+     CGAL_pragma_warning("\nThe macro CGAL_ORTHTREE_COMMERCIAL_LICENSE is not defined."
                           "\nYou use the CGAL  package under "
                           "the terms of the GPLv3+.")
 #  endif // CGAL_LICENSE_WARNING
 
 #  ifdef CGAL_LICENSE_ERROR
-#    error "The macro CGAL_OCTREE_COMMERCIAL_LICENSE is not defined.\
+#    error "The macro CGAL_ORTHTREE_COMMERCIAL_LICENSE is not defined.\
             You use the CGAL  package under the terms of \
             the GPLv3+. You get this error, as you defined CGAL_LICENSE_ERROR."
 #  endif // CGAL_LICENSE_ERROR
 
-#endif // no CGAL_OCTREE_COMMERCIAL_LICENSE
+#endif // no CGAL_ORTHTREE_COMMERCIAL_LICENSE
 
-#endif // CGAL_LICENSE_OCTREE_H
+#endif // CGAL_LICENSE_ORTHTREE_H

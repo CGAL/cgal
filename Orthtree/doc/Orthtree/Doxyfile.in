@@ -1,6 +1,6 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Quadtree, Octree and Orthtree"
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Quadtrees, Octrees and Orthtrees"
 
 EXTRACT_ALL                =  false
 HIDE_UNDOC_MEMBERS         =  true
