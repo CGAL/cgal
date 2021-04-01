@@ -970,8 +970,6 @@ do_intersect(const typename K::Plane_3 &plane,
              const typename K::Ray_3 &ray,
              const K& k)
 {
-    typedef typename K::Point_3 Point_3;
-
     typename K::Oriented_side_3 oriented_side_3;
 
     Oriented_side os = oriented_side_3(plane,ray.source());
@@ -1718,7 +1716,6 @@ inline bool
 do_intersect(const Iso_cuboid_3<R> &icub1, const Iso_cuboid_3<R> &icub2, const R&)
 {
     typedef typename R::Point_3 Point_3;
-    typedef typename R::Iso_cuboid_3 Iso_cuboid_3;
 
     Point_3 min_points[2];
     Point_3 max_points[2];
