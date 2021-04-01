@@ -23,6 +23,7 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Shape_detection/Efficient_RANSAC/Shape_base.h>
 #include <CGAL/Shape_detection/Efficient_RANSAC/Efficient_RANSAC_traits.h>
+#include <CGAL/property_map.h>
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 
 #include <CGAL/Octree.h>
@@ -36,25 +37,6 @@ template <typename Gt, typename IR, typename IPM, typename INM>
 struct Shape_detection_traits;
 
 namespace internal {
-
-template<typename InputIterator, typename PointMap>
-struct Point_map_to_indexed_point_map {
-  typedef std::size_t key_type;
-  typedef typename boost::property_traits<PointMap>::value_type value_type;
-  typedef typename boost::property_traits<PointMap>::reference reference;
-  typedef typename boost::readable_property_map_tag category;
-
-  InputIterator begin;
-  PointMap point_map;
-
-  Point_map_to_indexed_point_map(InputIterator begin = InputIterator(),
-                                 PointMap point_map = PointMap())
-          : begin(begin), point_map(point_map) {}
-
-  friend reference get(const Point_map_to_indexed_point_map &map, std::size_t index) {
-    return get(map.point_map, *(map.begin + index));
-  }
-};
 
 template <typename Traits>
 struct Traits_base { typedef Traits type; };
@@ -72,7 +54,7 @@ class RANSAC_octree {
   typedef typename Traits::Point_map Point_map;
   typedef typename Traits::FT FT;
   typedef std::vector<std::size_t> Input_range;
-  typedef Point_map_to_indexed_point_map<Input_iterator, Point_map> Indexed_point_map;
+  typedef Random_index_access_property_map<Input_iterator, Point_map> Indexed_point_map;
 
   typedef CGAL::Octree<typename Traits_base<Traits>::type,
                        Input_range, Indexed_point_map> Octree;
