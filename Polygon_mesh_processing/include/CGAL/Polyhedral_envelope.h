@@ -1123,9 +1123,14 @@ private:
 
             int inter = 0;
 
-            if(((cutp[i] == 0)||(cutp[i] == 1)) && ( (cutp[j] == 2)||(cutp[j] == 4) ||(cutp[j] == 6) )){ // ATTENTION Only correct together with CGAL_INITIAL
-              int j0 = (cutp[j] == 2)? 0 : (cutp[j]==4)? 1 : 2;
-              int j1 = (cutp[j] == 2)? 1 : (cutp[j]==4)? 2 : 0;
+            static const int  edges[3][3] = { {2, 4, 6 }, {2, 3, 5}, {2, 4, 5} };
+
+            int ob = prism.obtuse;
+            if (ob == -1) ob = 0;
+
+            if(((cutp[i] == 0)||(cutp[i] == 1)) && ( (cutp[j] == edges[ob][0])||(cutp[j] == edges[ob][1]) ||(cutp[j] == edges[ob][2]) )){ // ATTENTION Only correct together with CGAL_INITIAL
+              int j0 = (cutp[j] == edges[ob][0])? 0 : (cutp[j]==edges[ob][1])? 1 : 2;
+              int j1 = (cutp[j] == edges[ob][0])? 1 : (cutp[j]==edges[ob][1])? 2 : 0;
               const Vector3i & v3i = env_faces[cindex];
               const Point_3& pj0 = env_vertices[v3i[j0]];
               const Point_3& pj1 = env_vertices[v3i[j1]];
