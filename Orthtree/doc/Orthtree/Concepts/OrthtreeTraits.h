@@ -37,7 +37,7 @@ public:
   typedef unspecified_type Construct_point_d_from_array;
 
   /*!
-    Functor with an operator to construct a `Bbox_d` from two `Point_d` object (minimum and maximum points).
+    Functor with an operator to construct a `Bbox_d` from two `Array` objects (coordinates of minimum and maximum points).
   */
   typedef unspecified_type Construct_bbox_d;
 

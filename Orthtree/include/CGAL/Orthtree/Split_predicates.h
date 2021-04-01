@@ -24,7 +24,8 @@ namespace Orthtrees {
   \ingroup PkgOrthtreeSplitPredicates
   \brief A class used to choose when a node should be split depending on the number of inliers.
 
-  This is bucket size predicate that splits a node if it contains more than a certain number of items.
+  This is a bucket size predicate that considers a node should be
+  split if it contains more than a certain number of items.
  */
 class Maximum_number_of_inliers {
 
@@ -50,7 +51,7 @@ public:
   \ingroup PkgOrthtreeSplitPredicates
   \brief A class used to choose when a node should be split depending on the depth.
 
-  This predicate makes a node split if its depth is lower than a certain limit.
+  This predicate makes a node be split if its depth is lower than a certain limit.
  */
 class Maximum_depth {
 
@@ -80,7 +81,7 @@ public:
   certain number of items and if its depth is lower than a certain
   limit.
 
-  The refinement is stopped as soon as one of the condition is
+  The refinement is stopped as soon as one of the conditions is
   violated: if a node has more inliers than `bucket_size` but is
   already at `max_depth`, it is not split. Similarly, a node that is
   at a depth smaller than `max_depth` but already has fewer inliers
@@ -93,8 +94,7 @@ class Maximum_depth_and_maximum_number_of_inliers {
 
 public:
 
-  /*!
-    \brief creates a predicate using minimum depth or bucket size.
+  /*!  \brief creates a predicate using maximum depth or bucket size.
    */
   Maximum_depth_and_maximum_number_of_inliers(std::size_t max_depth, std::size_t bucket_size) :
           m_max_depth(max_depth), m_bucket_size(bucket_size) {}
@@ -104,8 +104,8 @@ public:
    */
   template<typename Node>
   bool operator()(const Node &n) const {
-    size_t num_points = n.size();
-    size_t depth = n.depth();
+    std::size_t num_points = n.size();
+    std::size_t depth = n.depth();
     return (num_points > m_bucket_size && depth < m_max_depth);
   }
 };

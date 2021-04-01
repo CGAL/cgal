@@ -28,10 +28,10 @@ namespace CGAL
   \tparam GeomTraits model of `Kernel`.
   \tparam DimensionTag specialization of `CGAL::Dimension_tag`.
 
-  \cgalModels OrthtreeTraits
-  \sa Orthtree
-  \sa Orthtree_traits_2
-  \sa Orthtree_traits_3
+  \cgalModels `OrthtreeTraits`
+  \sa `CGAL::Orthtree`
+  \sa `CGAL::Orthtree_traits_2`
+  \sa `CGAL::Orthtree_traits_3`
 */
 
 template <typename GeomTraits, typename DimensionTag>
@@ -97,7 +97,7 @@ public:
 
 #ifdef DOXYGEN_RUNNING
   /*!
-    Functor with an operator to construct a `Bbox_d` from two `Point_d` object (minimum and maximum points).
+    Functor with an operator to construct a `Bbox_d` from two `Array` objects (coordinates of minimum and maximum points).
   */
   typedef unspecified_type Construct_bbox_d;
 #else

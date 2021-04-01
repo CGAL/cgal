@@ -20,6 +20,9 @@
 namespace CGAL
 {
 
+namespace Orthtrees
+{
+
 namespace internal
 {
 
@@ -53,6 +56,8 @@ struct Cartesian_ranges
 };
 
 } // namespace internal
+
+} // namespace Orthtrees
 
 } // namespace CGAL
 

@@ -17,7 +17,7 @@ exactly 8 children.
 
 We call the generalization of such data structure "orthtrees", as
 orthants are generalizations of quadrants and octants. The term
-"hyperoctree" can also be found in litterature to name such data
+"hyperoctree" can also be found in literature to name such data
 structures in dimensions 4 and higher.
 
 This package provides a general data structure `Orthtree` along with
@@ -188,14 +188,14 @@ The naive way of finding the nearest neighbor of a point requires finding the di
 An orthtree can be used to perform the same task in significantly less time.
 For large numbers of points, this can be a large enough difference to outweigh the time spent building the tree.
 
-Note that a kD-tree is expected to outperform the orthtree for this task,
+Note that a kd-tree is expected to outperform the orthtree for this task,
 it should be preferred unless features specific to the orthtree are needed.
 
 The following example illustrates how to use an octree to accelerate the search for points close to a location.
 
 Points are loaded from a file and an octree is built.
 The nearest neighbor method is invoked for several input points.
-A k value of 1 is used to find the single closest point.
+A `k` value of 1 is used to find the single closest point.
 Results are put in a vector, and then printed.
 
 \cgalExample{Orthtree/octree_find_nearest_neighbor.cpp}
@@ -224,7 +224,7 @@ The tree is printed before and after grading, so that the differences are visibl
 Tree construction benchmarks were conducted by randomly generating a collection of points,
 and then timing the process of creating a fully refined tree which contains them.
 
-Because of its simplicity, an octree can be constructed faster than a kD-tree.
+Because of its simplicity, an octree can be constructed faster than a kd-tree.
 
 \cgalFigureBegin{Orthtree_construction_benchmark_fig, construction_benchmark.png}
 %Plot of the time to construct a tree.
@@ -232,7 +232,7 @@ Because of its simplicity, an octree can be constructed faster than a kD-tree.
 
 \subsection Section_Orthtree_Performance_Nearest_Neighbors Nearest Neighbors
 
-%Orthtree nodes are uniform, so orthtrees will tend to have deeper hierarchies than equivalent kD-trees.
+%Orthtree nodes are uniform, so orthtrees will tend to have deeper hierarchies than equivalent kd-trees.
 As a result, orthtrees will generally perform worse for nearest neighbor searches.
 Both nearest neighbor algorithms have a theoretical complexity of O(log(n)),
 but the orthtree can generally be expected to have a higher coefficient.
@@ -246,7 +246,7 @@ but both algorithms compare very favorably to the linear complexity of the naive
 which involves comparing every point to the search point.
 
 Using the orthtree for nearest neighbor computations instead of the
-kD-tree can be justified either when few queries are needed (as the
+kd-tree can be justified either when few queries are needed (as the
 construction is faster) or when the orthtree is also needed for other
 purposes.
 
@@ -254,7 +254,7 @@ purposes.
 %Plot of the time to find nearest neighbors using tree methods and a naive approach.
 \cgalFigureEnd
 
-For nontrivial point counts, the naive approach's calculation time dwarfs that of either the %orthtree or kD-tree.
+For nontrivial point counts, the naive approach's calculation time dwarfs that of either the %orthtree or kd-tree.
 
 \section Section_Orthtree_History History
 

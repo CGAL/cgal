@@ -52,12 +52,12 @@ struct Node_access
 /*!
 
   \brief represents a single node of the tree. Alternatively referred
-  to as a cell, orthant, or subtree.
+  to as a cell, orthant, or sub-tree.
 
   A `Node` is a lightweight object and thus generally passed by
-  copy. It is also a `ConstRange` whose value type is `Traits::Point_d`.
+  copy. It is also a model of `ConstRange` with value type `Traits::Point_d`.
 
-  \cgalModels ConstRange
+  \cgalModels `ConstRange`
  */
 template<typename Traits, typename PointRange, typename PointMap>
 class Orthtree<Traits, PointRange, PointMap>::Node
@@ -73,33 +73,33 @@ public:
   typedef typename Enclosing::Degree Degree; ///< Degree type.
 
   /*!
-    \brief self typedef for convenience
+    \brief Self typedef for convenience.
    */
   typedef typename Orthtree<Traits, PointRange, PointMap>::Node Self;
 
 
   /// \cond SKIP_IN_MANUAL
   /*!
-   * \brief array for containing the child nodes of this node
+   * \brief Array for containing the child nodes of this node.
    */
   typedef std::array<Self, Degree::value> Children;
   /// \endcond
 
   /*!
-    \brief set of bits representing this node's relationship to its parent.
+    \brief Set of bits representing this node's relationship to its parent.
 
-    Equivalent to an array of Booleans, where index[0] is whether x
-    is greater, index[1] is whether y is greater, index[2] is whether
-    z is greater, and so on for higher dimensions if needed.
+    Equivalent to an array of Booleans, where index[0] is whether `x`
+    is greater, index[1] is whether `y` is greater, index[2] is whether
+    `z` is greater, and so on for higher dimensions if needed.
     Used to represent a node's relationship to the center of its parent.
    */
   typedef std::bitset<Dimension::value> Local_coordinates;
 
   /*!
-    \brief coordinates representing this node's relationship
+    \brief Coordinates representing this node's relationship
     with the rest of the tree.
 
-    Each value (x, y, z, ...) of global coordinates is calculated by doubling
+    Each value `(x, y, z, ...)` of global coordinates is calculated by doubling
     the parent's global coordinates and adding the local coordinates.
    */
   typedef std::array<std::uint32_t, Dimension::value> Global_coordinates;
@@ -108,7 +108,7 @@ public:
   typedef typename PointRange::const_iterator const_iterator; ///< constant iterator type.
 
   /*!
-    \brief easy access to adjacency directions.
+    \brief Adjacency directions.
    */
   typedef typename Traits::Adjacency Adjacency;
 
@@ -150,7 +150,7 @@ private:
   friend Orthtrees::Node_access;
 
   /*!
-   * \brief access to the content held by this node
+   * \brief Access to the content held by this node
    * \return a reference to the collection of point indices
    */
   Point_range &points() { return m_data->points; }
@@ -217,17 +217,17 @@ private:
   /// @{
 
   /*!
-    \brief split a node into subnodes
+    \brief splits a node into subnodes.
 
     Only leaf nodes should be split.
     When a node is split it is no longer a leaf node.
-    8 Children are constructed automatically, and their values are set.
+    A number of `Degree::value` children are constructed automatically, and their values are set.
     Contents of this node are _not_ propagated automatically.
-    It's the responsibility of the caller to redistribute the points contained by a node after splitting
+    It is the responsibility of the caller to redistribute the points contained by a node after splitting
    */
   void split() {
 
-    assert(is_leaf());
+    CGAL_precondition (is_leaf());
 
     m_data->children = std::make_unique<Children>();
     for (int index = 0; index < Degree::value; index++) {
@@ -238,10 +238,10 @@ private:
   }
 
   /*!
-   * \brief eliminate this node's children, making it a leaf node
+   * \brief eliminates this node's children, making it a leaf node.
    *
    * When a node is un-split, its children are automatically deleted.
-   * After un-splitting a node it will be considered a leaf node
+   * After un-splitting a node it will be considered a leaf node.
    */
   void unsplit() {
 
@@ -355,7 +355,7 @@ public:
     interpreted as a bitmap, where each bit matches a dimension
     (starting by the least significant bit for coordinate X).
 
-    For example, it the case of an octree (dimension 3):
+    For example, in the case of an octree (dimension 3):
 
     - index 0 (000 in binary) is the children on the "minimum corner" (xmin, ymin, zmin)
     - index 1 (001 in binary) is on (xmax, ymin, zmin)
@@ -406,7 +406,7 @@ public:
   }
 
   /*!
-    \brief find the directly adjacent node in a specific direction
+    \brief finds the directly adjacent node in a specific direction
 
     \pre `!is_null()`
     \pre `direction.to_ulong < 2 * Dimension::value`
@@ -506,7 +506,7 @@ public:
   }
 
   /*!
-    \brief equivalent to adjacent_node, with an adjacency direction
+    \brief equivalent to `adjacent_node()`, with an adjacency direction
     rather than a bitset.
    */
   Self adjacent_node(Adjacency adjacency) const {
@@ -519,7 +519,7 @@ public:
   /// @{
 
   /*!
-    \brief returns the number of points of this node.
+    \brief checks whether the node is empty of points or not.
    */
   bool empty() const {
     return m_data->points.empty();
@@ -529,7 +529,7 @@ public:
     \brief returns the number of points of this node.
    */
   std::size_t size() const {
-    return std::distance(m_data->points.begin(), m_data->points.end());
+    return std::size_t(std::distance(m_data->points.begin(), m_data->points.end()));
   }
 
   /*!
@@ -551,12 +551,12 @@ public:
   /// @{
 
   /*!
-   * \brief compare the topology of this node to another node
+   * \brief compares the topology of this node to another node.
    *
    * \todo
    *
    * \param rhs node to compare with
-   * \return whether the nodes have different topology
+   * \return whether the nodes have different topology.
    */
   bool operator==(const Self &rhs) const {
     return m_data == rhs.m_data;

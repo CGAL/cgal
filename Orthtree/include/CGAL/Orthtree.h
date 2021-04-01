@@ -40,29 +40,28 @@
 #include <vector>
 #include <math.h>
 
-using namespace std::placeholders;
-
 namespace CGAL {
 
 /*!
   \ingroup PkgOrthtreeClasses
 
-  \brief A data structure using an axis aligned hybercubic
+  \brief A data structure using an axis-aligned hybercubic
   decomposition of dD space for efficient point access and
   computations.
 
   \details It builds a hierarchy of nodes which subdivide the space
-  based on a collection of points.  Each node represents an axis
-  aligned hypercubic region of space.  A node contains the range of
-  points that are present in the region it defines, and it may contain
-  \f$2^{dim}\f$ other nodes which further subdivide the region.
+  based on a collection of points.  Each node represents an
+  axis-aligned hypercubic region of space.  A node contains the range
+  of points that are present in the region it defines, and it may
+  contain \f$2^{dim}\f$ other nodes which further subdivide the
+  region.
 
-  \sa Quadtree
-  \sa Octree
+  \sa `CGAL::Quadtree`
+  \sa `CGAL::Octree`
 
-  \tparam Traits_ is a model of `OrthtreeTraits`
-  \tparam PointRange_ is a model of range whose value type is the key type of `PointMap_`
-  \tparam PointMap_ is a model of `ReadablePropertyMap` whose value type is `Traits_::Point_d`
+  \tparam Traits_ must be a model of `OrthtreeTraits`
+  \tparam PointRange_ must be a model of range whose value type is the key type of `PointMap_`
+  \tparam PointMap_ must be a model of `ReadablePropertyMap` whose value type is `Traits_::Point_d`
  */
 template<typename Traits_, typename PointRange_,
          typename PointMap_ = Identity_property_map<typename Traits_::Point_d> >
@@ -99,22 +98,22 @@ public:
   /// @{
 
   /*!
-   * \brief self typedef for convenience
+   * \brief Self typedef for convenience.
    */
   typedef Orthtree<Traits, PointRange, PointMap> Self;
 
   /*!
-   * \brief Degree of the tree (number of children of non-leaf nodes)
+   * \brief Degree of the tree (number of children of non-leaf nodes).
    */
   typedef Dimension_tag<(2 << (Dimension::value-1))> Degree;
 
   /*!
-   * \brief The Sub-tree / Orthant type
+   * \brief The Sub-tree / Orthant type.
    */
   class Node;
 
   /*!
-   * \brief A predicate that determines whether a node must be split when refining a tree
+   * \brief A predicate that determines whether a node must be split when refining a tree.
    */
   typedef std::function<bool(Node)> Split_predicate;
 
@@ -130,7 +129,7 @@ public:
   /// \cond SKIP_IN_MANUAL
 
   /*!
-   * \brief A function that determines the next node in a traversal given the current one
+   * \brief A function that determines the next node in a traversal given the current one.
    */
   typedef std::function<Node(Node)> Node_traversal_method_const;
 
@@ -139,7 +138,7 @@ public:
   /// \cond SKIP_IN_MANUAL
   typedef typename PointRange::iterator Range_iterator;
   typedef typename std::iterator_traits<Range_iterator>::value_type Range_type;
-  typedef internal::Cartesian_ranges<Traits> Cartesian_ranges;
+  typedef Orthtrees::internal::Cartesian_ranges<Traits> Cartesian_ranges;
   /// \endcond
 
   /// @}
@@ -164,7 +163,7 @@ public:
   /// @{
 
   /*!
-    \brief Create an orthtree from a collection of points
+    \brief creates an orthtree from a collection of points.
 
     The constructed orthtree has a root node, with no children, that
     contains the points passed. That root node has a bounding box that
@@ -181,7 +180,7 @@ public:
     with all Orthtree functionality, but any performance benefits are
     unlikely to be realized until `refine()` is called.
 
-    \warning the input point range is not copied. It is used directly
+    \warning The input point range is not copied. It is used directly
     and is rearranged by the `Orthtree`. Altering the point range
     after creating the orthtree might leave it in an invalid state.
 
@@ -293,11 +292,11 @@ public:
   /*!
     \brief recursively subdivides the orthtree until it meets the given criteria.
 
-    The split predicate is a `std::function` that takes a Node and
-    returns a Boolean value (where `true` implies that a Node needs to
-    be split, `false` that the Node should be a leaf).
+    The split predicate is a `std::function` that takes a `Node` and
+    returns a Boolean value (where `true` implies that a `Node` needs to
+    be split, `false` that the `Node` should be a leaf).
 
-    This function function may be called several times with different
+    This function may be called several times with different
     predicates: in that case, nodes already split are left unaltered,
     while nodes that were not split and for which `split_predicate`
     returns `true` are split.
@@ -348,15 +347,15 @@ public:
 
   /*!
 
-    \brief convenience overload that refines an orthtree using a
+    \brief Convenience overload that refines an orthtree using a
     maximum depth and maximum number of points in a node as split
     predicate.
 
     This is equivalent to calling
-    `refine(Orthtrees::Maximum_depth_and_maximum_number_of_inliers(min_depth,
+    `refine(Orthtrees::Maximum_depth_and_maximum_number_of_inliers(max_depth,
     bucket_size))`.
 
-    The refinement is stopped as soon as one of the condition is
+    The refinement is stopped as soon as one of the conditions is
     violated: if a node has more inliers than `bucket_size` but is
     already at `max_depth`, it is not split. Similarly, a node that is
     at a depth smaller than `max_depth` but already has fewer inliers
@@ -439,7 +438,7 @@ public:
   Node root() const { return m_root; }
 
   /*!
-    \brief convenience function to access the child nodes of the root
+    \brief Convenience function to access the child nodes of the root
     node by their indices.
 
     `my_tree[5]` is equivalent to `my_tree.root()[5]`.
@@ -457,14 +456,16 @@ public:
   std::size_t depth() const { return m_side_per_depth.size() - 1; }
 
   /*!
-    \brief constructs a node range using a tree traversal function.
+    \brief constructs a node range using a tree-traversal function.
 
     This method allows to iterate on the nodes of the tree with a
-    user-selected order (preorder, postorder, leaves only, etc.).
+    user-selected order (preorder, postorder, leaves-only, etc.).
 
     \tparam Traversal model of `OrthtreeTraversal` that provides functions
     compatible with the type of the orthree
-    \param traversal
+
+    \param traversal the instance of `Traversal` used
+
     \return a forward input iterator over the nodes of the tree
    */
   template<typename Traversal>
@@ -511,7 +512,7 @@ public:
   /// @{
 
   /*!
-    \brief find the leaf node which contains the point `p`.
+    \brief finds the leaf node which contains the point `p`.
 
     Traverses the orthtree and finds the deepest cell that has a
     domain enclosing the point passed. The point passed must be within
@@ -555,9 +556,9 @@ public:
     `query`.
 
     \tparam OutputIterator a model of `OutputIterator` that accept `Point_d` objects.
-    \param query query point.
-    \param k number of neighbors.
-    \param output output iterator.
+    \param query a query point.
+    \param k the number of neighbors.
+    \param output the output iterator.
    */
   template<typename OutputIterator>
   OutputIterator nearest_neighbors (const Point& query,
@@ -585,7 +586,7 @@ public:
   }
 
   /*!
-    \brief find the leaf nodes that intersect with any primitive.
+    \brief finds the leaf nodes that intersect with any primitive.
 
     \note this function requires the function
     `bool CGAL::do_intersect(QueryType, Traits::Bbox_d)` to be defined.
@@ -608,7 +609,7 @@ public:
   /// @{
 
   /*!
-    \brief compares the topology of the orthtree with `rhs`.
+    \brief compares the topology of the orthtree with that of `rhs`.
 
     Trees may be considered equivalent even if they contain different points.
     Equivalent trees must have the same bounding box and the same node structure.
@@ -629,7 +630,7 @@ public:
   }
 
   /*!
-    \brief compares the topology of the orthtree with `rhs`.
+    \brief compares the topology of the orthtree with that of `rhs`.
    */
   bool operator!=(const Self &rhs) const {
     return !operator==(rhs);
@@ -697,7 +698,7 @@ private: // functions :
   void split(Node& node) {
 
     // Make sure the node hasn't already been split
-    assert(node.is_leaf());
+    CGAL_precondition (node.is_leaf());
 
     // Split the node to create children
     node.split();
@@ -731,6 +732,11 @@ private: // functions :
   struct Node_index_with_distance {
     typename Node::Local_coordinates index;
     FT distance;
+
+    Node_index_with_distance (const typename Node::Local_coordinates& index,
+                              const FT& distance)
+      : index(index), distance(distance)
+    { }
   };
 
   void nearest_k_neighbors_recursive(Sphere& search_bounds, const Node &node,
@@ -791,10 +797,8 @@ private: // functions :
         Node child_node = node[index];
 
         // Add a child to the list, with its distance
-        children_with_distances.push_back(
-                {typename Node::Local_coordinates(index),
-                 CGAL::squared_distance(search_bounds.center(), barycenter(child_node))}
-        );
+        children_with_distances.emplace_back(typename Node::Local_coordinates(index),
+                                             CGAL::squared_distance(search_bounds.center(), barycenter(child_node)));
       }
 
       // Sort the children by their distance from the search point
@@ -841,14 +845,14 @@ private: // functions :
     \brief finds the `k` points within a specific radius that are nearest to `query`.
 
     This function guarantees that there are no closer points than the ones returned,
-    but it does not guarantee that it will return at least K points.
-    For a query where the search radius encloses K or fewer points, all enclosed points will be returned.
+    but it does not guarantee that it will return at least `k` points.
+    For a query where the search radius encloses `k` or fewer points, all enclosed points will be returned.
     If the search radius passed is too small, no points may be returned.
     This function is useful when the user already knows how sparse the points are,
-    or if they don't care about points that are too far away.
+    or if they do not care about points that are too far away.
     Setting a small radius may have performance benefits.
 
-    \tparam Point_output_iterator an output iterator type that will accept points
+    \tparam OutputIterator must be a model of `OutputIterator` that accepts points
     \param search_point the location to find points near
     \param search_radius_squared the size of the region to search within
     \param k the number of points to find

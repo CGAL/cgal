@@ -28,10 +28,10 @@ namespace CGAL
 
   \tparam GeomTraits model of `Kernel`.
 
-  \cgalModels OrthtreeTraits
-  \sa Quadtree
-  \sa Orthtree_traits_3
-  \sa Orthtree_traits_d
+  \cgalModels `OrthtreeTraits`
+  \sa `CGAL::Quadtree`
+  \sa `CGAL::Orthtree_traits_3`
+  \sa `CGAL::Orthtree_traits_d`
 */
 template <typename GeomTraits>
 struct Orthtree_traits_2
@@ -50,9 +50,9 @@ public:
   typedef std::array<FT, Dimension::value> Array; ///< Array type.
 
   /*!
-   * \brief two directions along each axis in cartesian space, relative to a node
+   * \brief Two directions along each axis in Cartesian space, relative to a node.
    *
-   * Directions are mapped to numbers as 2-bit integers
+   * Directions are mapped to numbers as 2-bit integers.
    *
    * The first bit indicates the axis (0 = x, 1 = y),
    * the second bit indicates the direction along that axis (0 = -, 1 = +).
@@ -104,7 +104,7 @@ public:
 
 #ifdef DOXYGEN_RUNNING
   /*!
-    Functor with an operator to construct a `Bbox_d` from two `Point_d` object (minimum and maximum points).
+    Functor with an operator to construct a `Bbox_d` from two `Array` objects (coordinates of minimum and maximum points).
   */
   typedef unspecified_type Construct_bbox_d;
 #else

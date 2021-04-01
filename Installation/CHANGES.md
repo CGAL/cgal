@@ -14,7 +14,7 @@ Release date: June 2021
 
 A comprehensive list of the supported file formats is available in the Stream_support package [here](https://doc.cgal.org/5.3/Stream_support/index.html#IOstreamSupportedFormats); inversely, the following [page](https://doc.cgal.org/5.3/Stream_support/IOStreamSupportedFileFormats.html) can be used to find out which CGAL data structures can be used given a specific file format.
 
-### [Quadtrees, Octrees and Orthtrees](https://doc.cgal.org/5.3/Manual/packages.html#PkgOrthree) (new package)
+### [Quadtrees, Octrees, and Orthtrees](https://doc.cgal.org/5.3/Manual/packages.html#PkgOrthree) (new package)
 
 -   This package implements a tree data structure in which each node
     encloses a hypercubic section of space and each non-leave node has
