@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
   CGAL::Euler::add_center_vertex(*halfedges(mesh2).begin(),mesh2);
   std::vector<std::pair<face_descriptor, face_descriptor> > common;
   std::vector<face_descriptor> m1_only, m2_only;
-  PMP::compare_meshes(mesh1, mesh2, std::back_inserter(common), std::back_inserter(m1_only), std::back_inserter(m2_only));
+  PMP::match_faces(mesh1, mesh2, std::back_inserter(common), std::back_inserter(m1_only), std::back_inserter(m2_only));
   std::cout<<"Faces only in m1 : "<<std::endl;
   for(const auto& f : m1_only)
   {

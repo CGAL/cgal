@@ -878,9 +878,9 @@ centroid(const TriangleMesh& tmesh)
   *
  */
 template<typename PolygonMesh, typename FaceOutputIterator, typename FacePairOutputIterator, typename NamedParameters1, typename NamedParameters2 >
-void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
-                    FacePairOutputIterator common, FaceOutputIterator m1_only, FaceOutputIterator m2_only,
-                    const NamedParameters1& np1, const NamedParameters2& np2)
+void match_faces(const PolygonMesh& m1, const PolygonMesh& m2,
+                 FacePairOutputIterator common, FaceOutputIterator m1_only, FaceOutputIterator m2_only,
+                 const NamedParameters1& np1, const NamedParameters2& np2)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -987,18 +987,18 @@ void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
 }
 
 template<typename PolygonMesh, typename FaceOutputIterator, typename FacePairOutputIterator, typename NamedParameters>
-void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
-                    FacePairOutputIterator common, FaceOutputIterator m1_only, FaceOutputIterator m2_only,
-                    const NamedParameters& np)
+void match_faces(const PolygonMesh& m1, const PolygonMesh& m2,
+                 FacePairOutputIterator common, FaceOutputIterator m1_only, FaceOutputIterator m2_only,
+                 const NamedParameters& np)
 {
-  compare_meshes(m1, m2, common, m1_only, m2_only, np, parameters::all_default());
+  match_faces(m1, m2, common, m1_only, m2_only, np, parameters::all_default());
 }
 
 template<typename PolygonMesh, typename FaceOutputIterator, typename FacePairOutputIterator>
-void compare_meshes(const PolygonMesh& m1, const PolygonMesh& m2,
-                    FacePairOutputIterator common, FaceOutputIterator m1_only, FaceOutputIterator m2_only)
+void match_faces(const PolygonMesh& m1, const PolygonMesh& m2,
+                 FacePairOutputIterator common, FaceOutputIterator m1_only, FaceOutputIterator m2_only)
 {
-  compare_meshes(m1, m2, common, m1_only, m2_only, parameters::all_default(), parameters::all_default());
+  match_faces(m1, m2, common, m1_only, m2_only, parameters::all_default(), parameters::all_default());
 }
 
 } // namespace Polygon_mesh_processing
