@@ -70,10 +70,11 @@ bool write_OFF(std::ostream& os,
                const CGAL::Triangulation_on_sphere_2<Gt, Tds>& dt,
                const CGAL_BGL_NP_CLASS& np)
 {
-  typedef Triangulation_on_sphere_2<Gt,Tds>    Tr;
+  typedef Triangulation_on_sphere_2<Gt,Tds>             Tr;
   typedef typename Tr::Vertex_handle                    Vertex_handle;
   typedef typename Tr::Vertices_iterator                Vertex_iterator;
   typedef typename Tr::All_faces_iterator               Face_iterator;
+  typedef typename Tr::size_type                        size_type;
 
   set_stream_precision_from_NP(os, np);
 
@@ -81,14 +82,14 @@ bool write_OFF(std::ostream& os,
 
   typename Gt::Construct_point_3 cp3 = dt.geom_traits().construct_point_3_object();
 
-  const size_t n = dt.number_of_vertices();
+  const size_type n = dt.number_of_vertices();
 
   std::stringstream output;
   set_stream_precision_from_NP(output, np);
 
   // write the vertices
   std::unordered_map<Vertex_handle, int> index_of_vertex;
-  int i = 0;
+  size_type i = 0;
   for(Vertex_iterator it = dt.vertices_begin(); it != dt.vertices_end(); ++it, ++i)
   {
     Vertex_handle vh = it;
@@ -98,7 +99,7 @@ bool write_OFF(std::ostream& os,
 
   CGAL_triangulation_assertion(i == n);
 
-  size_t number_of_triangles = 0;
+  size_type number_of_triangles = 0;
   for(Face_iterator fit = dt.all_faces_begin() ; fit != dt.all_faces_end() ; ++fit)
   {
     output << "3 "

@@ -59,8 +59,6 @@ template <class Gt,
 class Triangulation_on_sphere_2
   : public Triangulation_cw_ccw_2
 {
-  friend std::istream& operator>>(std::istream& is, Triangulation_on_sphere_2& tr);
-
   typedef Triangulation_on_sphere_2<Gt, Tds>      Self;
 
 public:

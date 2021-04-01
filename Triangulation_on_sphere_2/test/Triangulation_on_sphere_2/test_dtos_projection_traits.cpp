@@ -88,8 +88,6 @@ int main(int, char**)
   Point_on_sphere_2 pp53 = cst(p53);
   Point_on_sphere_2 pp54 = cst(p54);
   Point_on_sphere_2 pp55 = cst(p55);
-  Point_on_sphere_2 pp61 = cst(p61);
-  Point_on_sphere_2 pp62 = cst(p62);
 
   std::cout << "Test Orientation" << std::endl;
   assert(orientation(pp11, pp12, pp13) == CGAL::NEGATIVE);

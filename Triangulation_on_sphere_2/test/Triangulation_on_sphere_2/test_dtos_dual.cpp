@@ -20,7 +20,6 @@ void test(const PointRange& points)
   typedef CGAL::Projection_on_sphere_traits_3<K>                      Gt;
   typedef CGAL::Delaunay_triangulation_on_sphere_2<Gt>                Dt;
 
-  typedef typename Dt::Geom_traits                                    Gt;
   typedef typename Gt::SK                                             SK;
 
   typedef typename Dt::FT                                             FT;

@@ -77,7 +77,7 @@ private:
 
 template <typename P3, typename PoS2>
 struct Construct_point_with_scale
-  : public std::unary_function<P3, PoS2>
+  : public CGAL::cpp98::unary_function<P3, PoS2>
 {
   PoS2 operator()(const P3& pt) const { return PoS2(pt); }
 };

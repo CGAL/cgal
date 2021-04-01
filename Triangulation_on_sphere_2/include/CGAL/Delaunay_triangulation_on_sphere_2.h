@@ -483,7 +483,7 @@ insert_third(const Point& p)
 
   nv->set_point(p);
 
-  Face_handle f = all_edges_begin()->first;
+  CGAL_triangulation_assertion_code(Face_handle f = all_edges_begin()->first;)
   CGAL_triangulation_assertion(orientation_on_sphere(point(f, 0),
                                                      point(f, 1),
                                                      point(f->neighbor(0), 1)) != RIGHT_TURN);
