@@ -47,11 +47,9 @@ if( NOT GMP_in_cache )
     DOC "Path to the Debug GMP library"
     )
 	
-	set(GMP_LIBRARIES "${GMP_LIBRARY_DEBUG};${GMP_LIBRARY_RELEASE}")
-  if ( GMP_LIBRARY_DEBUG )
-    get_filename_component(GMP_LIBRARIES_DIR ${GMP_LIBRARY_DEBUG} PATH CACHE )
-  elseif ( GMP_LIBRARY_RELEASE )
-  get_filename_component(GMP_LIBRARIES_DIR${GMP_LIBRARY_DEBUG} PATH CACHE )
+	set(GMP_LIBRARIES $<IF:$<CONFIG:Debug>,${GMP_LIBRARY_DEBUG},${GMP_LIBRARY_RELEASE}>)
+   if ( GMP_LIBRARIES )
+    get_filename_component(GMP_LIBRARIES_DIR ${GMP_LIBRARIES} PATH CACHE )
   endif()
 
   # Attempt to load a user-defined configuration for GMP if couldn't be found
