@@ -88,7 +88,7 @@ bool write_OFF(std::ostream& os,
   set_stream_precision_from_NP(output, np);
 
   // write the vertices
-  std::unordered_map<Vertex_handle, int> index_of_vertex;
+  std::unordered_map<Vertex_handle, size_type> index_of_vertex;
   size_type i = 0;
   for(Vertex_iterator it = dt.vertices_begin(); it != dt.vertices_end(); ++it, ++i)
   {

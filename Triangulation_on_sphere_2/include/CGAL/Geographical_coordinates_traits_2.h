@@ -61,7 +61,7 @@ namespace internal {
 
 template <typename LK>
 struct Construct_geographical_coordinates
-  : public std::unary_function<typename LK::Point_3, CGAL::Geographical_coordinates<LK> >
+  : public CGAL::cpp98::unary_function<typename LK::Point_3, CGAL::Geographical_coordinates<LK> >
 {
   typedef typename LK::FT                                            FT;
   typedef typename LK::Point_3                                       Point_3;
@@ -88,7 +88,7 @@ private:
 
 template <typename LK>
 struct Construct_Cartesian_coordinates
-  : public std::unary_function<typename LK::Point_3, CGAL::Geographical_coordinates<LK> >
+  : public CGAL::cpp98::unary_function<typename LK::Point_3, CGAL::Geographical_coordinates<LK> >
 {
   typedef typename LK::FT                                            FT;
   typedef typename LK::Point_3                                       Point_3;
