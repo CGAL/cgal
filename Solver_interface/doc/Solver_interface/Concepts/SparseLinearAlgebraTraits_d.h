@@ -1,13 +1,11 @@
 /*!
 \ingroup PkgSolverInterfaceConcepts
-
 \cgalConcept
 
 The concept `SparseLinearAlgebraTraits_d` is used to solve sparse linear systems <I>A\f$ \times \f$ X = B</I>.
 
 \cgalHasModel `CGAL::Eigen_solver_traits<T>`
 */
-
 class SparseLinearAlgebraTraits_d
 {
 public:
@@ -68,7 +66,6 @@ by a sparse matrix.
 
 \sa `SparseLinearAlgebraTraits_d`
 \sa `SparseLinearAlgebraTraits_d::Matrix`
-
 */
 class SparseLinearAlgebraTraits_d::Vector
 {
@@ -126,7 +123,6 @@ NT& operator[](Index row);
 }; /* end Vector */
 
 /*!
-
 \cgalConcept
 
 `SparseLinearAlgebraTraits_d::Matrix` is a concept of a sparse matrix class.
@@ -149,7 +145,6 @@ public:
 Index type
 */
 typedef unspecified_type Index;
-
 
 /*!
 
@@ -214,8 +209,8 @@ in the matrix by setting `new_coef` to `true`.
 void set_coef(Index row, Index column, NT value, bool new_coef = false);
 
 /*!
-swaps the content of `*this` and `m`
- */
+Swaps the content of `*this` and `m`.
+*/
 void swap(Matrix& m);
 
 /// Multiplication with a scalar.

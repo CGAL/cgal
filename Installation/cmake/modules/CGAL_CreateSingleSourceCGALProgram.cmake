@@ -57,13 +57,10 @@ function(create_single_source_cgal_program firstfile )
       set(NO_TESTING TRUE)
     endif()
 
-    if(POLICY CMP0064)
-      # CMake 3.4 or later
-      if(NOT NO_TESTING)
-        cgal_add_test(${exe_name})
-      else()
-        cgal_add_test(${exe_name} NO_EXECUTION)
-      endif()
+    if(NOT NO_TESTING)
+      cgal_add_test(${exe_name})
+    else()
+      cgal_add_test(${exe_name} NO_EXECUTION)
     endif()
 
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${exe_name} )
@@ -76,6 +73,15 @@ function(create_single_source_cgal_program firstfile )
     endforeach()
     if(CGAL_3RD_PARTY_LIBRARIES)
       target_link_libraries(${exe_name} PRIVATE ${CGAL_3RD_PARTY_LIBRARIES})
+    endif()
+
+    if(POLICY CMP0064)
+      # CMake 3.4 or later
+      if(NOT NO_TESTING)
+        cgal_add_test(${exe_name})
+      else()
+        cgal_add_test(${exe_name} NO_EXECUTION)
+      endif()
     endif()
 
   else()

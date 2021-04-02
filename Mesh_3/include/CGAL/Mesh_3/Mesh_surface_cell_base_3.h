@@ -18,7 +18,7 @@
 #ifndef CGAL_MESH_3_MESH_SURFACE_CELL_BASE_3_H
 #define CGAL_MESH_3_MESH_SURFACE_CELL_BASE_3_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Triangulation_3.h>
 
 
 #include <CGAL/Mesh_3/config.h>
@@ -97,7 +97,7 @@ public:
   {
     CGAL_precondition(facet>=0 && facet<4);
     char current_bits = bits_;
-    while (bits_.compare_and_swap(current_bits | (1 << facet), current_bits) != current_bits)
+    while (bits_.compare_exchange_weak(current_bits, current_bits | (1 << facet)) )
     {
       current_bits = bits_;
     }
@@ -108,7 +108,7 @@ public:
   {
     CGAL_precondition(facet>=0 && facet<4);
     char current_bits = bits_;
-    while (bits_.compare_and_swap(current_bits & (15 & ~(1 << facet)), current_bits) != current_bits)
+    while (bits_.compare_exchange_weak(current_bits, current_bits & (15 & ~(1 << facet))))
     {
       current_bits = bits_;
     }

@@ -29,7 +29,7 @@ namespace CGAL {
 //
 template <typename Arrangement, typename ZoneVisitor>
 void Arrangement_zone_2<Arrangement, ZoneVisitor>::
-init_with_hint(const X_monotone_curve_2& cv, const Object& obj)
+init_with_hint(const X_monotone_curve_2& cv, Pl_result_type obj)
 {
   // Set the curve and check whether its ends are bounded, therefore
   // associated with valid endpoints.
@@ -95,9 +95,8 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
   // curve (currently m_obj stores the object containing it).
   const Vertex_const_handle* vh;
   const Halfedge_const_handle* hh;
-  const Face_const_handle* fh;
 
-  if ((vh = object_cast<Vertex_const_handle>(&m_obj)) != nullptr) {
+  if ((vh = boost::get<Vertex_const_handle>(&m_obj)) != nullptr) {
     CGAL_assertion(m_has_left_pt);
 
     // The left endpoint coincides with an existing vertex:
@@ -119,7 +118,7 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
 #endif
 
   }
-  else if ((hh = object_cast<Halfedge_const_handle>(&m_obj)) != nullptr) {
+  else if ((hh = boost::get<Halfedge_const_handle>(&m_obj)) != nullptr) {
     if (m_has_left_pt) {
       // Obtain the right halfedge from the halfedge-pair containing m_left_pt
       // in their interior.
@@ -132,8 +131,8 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
         // In this case m_cv overlaps the curve associated with m_intersect_he.
         // Compute the overlapping subcurve.
         bool dummy;
-        m_obj = _compute_next_intersection(m_intersect_he, false, dummy);
-        m_overlap_cv = object_cast<X_monotone_curve_2>(m_obj);
+        auto obj = _compute_next_intersection(m_intersect_he, false, dummy);
+        m_overlap_cv = boost::get<X_monotone_curve_2>(*obj);
 
         // Remove the overlap from the map.
         _remove_next_intersection(m_intersect_he);
@@ -148,8 +147,8 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
       m_intersect_he = m_arr.non_const_handle(*hh);
 
       bool dummy;
-      m_obj = _compute_next_intersection(m_intersect_he, false, dummy);
-      m_overlap_cv = object_cast<X_monotone_curve_2>(m_obj);
+      auto obj = _compute_next_intersection(m_intersect_he, false, dummy);
+      m_overlap_cv = boost::get<X_monotone_curve_2>(*obj);
 
       // Remove the overlap from the map.
       _remove_next_intersection(m_intersect_he);
@@ -160,7 +159,7 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
   }
   else {
     // The left endpoint lies inside a face.
-    fh = object_cast<Face_const_handle>(&m_obj);
+    const Face_const_handle* fh = boost::get<Face_const_handle>(&m_obj);
 
     CGAL_assertion_msg(fh != nullptr,
                        "Invalid object returned by the point-location query.");
@@ -207,8 +206,8 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
         // In this case m_cv overlaps the curve associated with m_intersect_he.
         // Compute the overlapping subcurve to the right of curr_v.
         bool dummy;
-        m_obj = _compute_next_intersection(m_intersect_he, false, dummy);
-        m_overlap_cv = object_cast<X_monotone_curve_2>(m_obj);
+        auto obj = _compute_next_intersection(m_intersect_he, false, dummy);
+        m_overlap_cv = boost::get<X_monotone_curve_2>(*obj);
 
         // Remove the overlap from the map.
         _remove_next_intersection(m_intersect_he);
@@ -800,7 +799,7 @@ _direct_intersecting_edge_to_left(const X_monotone_curve_2& cv_ins,
 // Get the next intersection of cv with the given halfedge.
 //
 template <typename Arrangement, typename ZoneVisitor>
-CGAL::Object
+typename Arrangement_zone_2<Arrangement, ZoneVisitor>::Optional_intersection
 Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _compute_next_intersection(Halfedge_handle he,
                            bool skip_first_point,
@@ -811,7 +810,7 @@ _compute_next_intersection(Halfedge_handle he,
 
   // Try to locate the intersections with this curve in the intersections map.
   Intersect_map_iterator iter = m_inter_map.find(p_curve);
-  const Intersect_point_2* ip;
+  const Intersection_point* ip;
   const X_monotone_curve_2* icv;
   bool valid_intersection;
 
@@ -821,13 +820,13 @@ _compute_next_intersection(Halfedge_handle he,
     // Retrieve the intersections list from the map.
     Intersect_list& inter_list = iter->second;
 
-    if (inter_list.empty()) return CGAL::Object();
+    if (inter_list.empty()) return Optional_intersection();
 
     // Locate the first intersection that lies to the right of m_left_pt
     // (if the left point exists).
     while (! inter_list.empty()) {
       // Compare that current object with m_left_pt (if exists).
-      ip = object_cast<Intersect_point_2>(&(inter_list.front()));
+      ip = boost::get<Intersection_point>(&(inter_list.front()));
 
       if (m_left_on_boundary) {
         // The left end lie on the left boundary, so all intersections are
@@ -851,7 +850,7 @@ _compute_next_intersection(Halfedge_handle he,
       }
       else {
         // We have an overlapping subcurve.
-        icv = object_cast<X_monotone_curve_2>(&(inter_list.front()));
+        icv = boost::get<X_monotone_curve_2>(&(inter_list.front()));
         CGAL_assertion(icv != nullptr);
 
         if (m_geom_traits->is_closed_2_object()(*icv, ARR_MIN_END)) {
@@ -869,14 +868,14 @@ _compute_next_intersection(Halfedge_handle he,
       }
 
       // Found an intersection to m_left_pt's right.
-      if (valid_intersection) return (inter_list.front());
+      if (valid_intersection) return Optional_intersection(inter_list.front());
 
       // Discard the current intersection, which lies to m_left_pt's left.
       inter_list.pop_front();
     }
 
     // If we reached here, the list of intersections is empty:
-    return CGAL::Object();
+    return Optional_intersection();
   }
 
   // The intersections with the curve have not been computed yet, so we
@@ -894,7 +893,7 @@ _compute_next_intersection(Halfedge_handle he,
   // Discard all intersection lying to the left of m_left_pt (if exists).
   while (! inter_list.empty()) {
     // Compare that current object with m_left_pt (if exists).
-    ip = object_cast<Intersect_point_2>(&(inter_list.front()));
+    ip = boost::get<Intersection_point>(&(inter_list.front()));
 
     if (ip != nullptr) {
       // We have a simple intersection point - if we don't have to skip it,
@@ -920,7 +919,7 @@ _compute_next_intersection(Halfedge_handle he,
     }
     else {
       // We have an overlapping subcurve.
-      icv = object_cast<X_monotone_curve_2>(&(inter_list.front()));
+      icv = boost::get<X_monotone_curve_2>(&(inter_list.front()));
       CGAL_assertion(icv != nullptr);
 
       if (m_geom_traits->is_closed_2_object()(*icv, ARR_MIN_END)) {
@@ -947,8 +946,8 @@ _compute_next_intersection(Halfedge_handle he,
   m_inter_map[p_curve] = inter_list;
 
   // Return the first intersection object computed (may be empty).
-  if (inter_list.empty()) return CGAL::Object();
-  else return (inter_list.front());
+  if (inter_list.empty()) return Optional_intersection();
+  else return Optional_intersection(inter_list.front());
 }
 
 //-----------------------------------------------------------------------------
@@ -1105,14 +1104,14 @@ _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
 
   // Compute the next intersection of m_cv and the current halfedge.
   bool intersection_on_right_boundary;
-  CGAL::Object iobj =
+  Optional_intersection iobj =
     _compute_next_intersection(he_curr, left_equals_curr_endpoint,
                                intersection_on_right_boundary);
 
-  if (! iobj.is_empty()) {
+  if (iobj) {
     // We have found an intersection (either a simple point or an
     // overlapping x-monotone curve).
-    const Intersect_point_2* int_p = object_cast<Intersect_point_2>(&iobj);
+    const Intersection_point* int_p = boost::get<Intersection_point>(&*iobj);
     if (int_p != nullptr) {
       Point_2 ip = int_p->first;
 
@@ -1134,7 +1133,7 @@ _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
     else {
       // We have located an overlapping curve. Assign ip as its left
       // endpoint.
-      const X_monotone_curve_2* icv = object_cast<X_monotone_curve_2>(&iobj);
+      const X_monotone_curve_2* icv = boost::get<X_monotone_curve_2>(&*iobj);
       CGAL_assertion(icv != nullptr);
       Point_2 ip = min_vertex(*icv);
 
@@ -1514,7 +1513,7 @@ bool Arrangement_zone_2<Arrangement, ZoneVisitor>::_zone_in_overlap()
     // In this case m_overlap_cv has a finite right endpoint. In this case,
     // if the right vertex of m_intersect_he is associated with a finite point,
     // we check whether it is equal to cv_right_pt. Otherwise, we know that
-    // m_intersect_he extends to the the right of m_overlap_cv, and there is no
+    // m_intersect_he extends to the right of m_overlap_cv, and there is no
     // vertex currently associated with m_overlap_cv's right endpoint.
     if (! he_right_v->is_at_open_boundary() &&
         equal(cv_right_pt, he_right_v->point()))

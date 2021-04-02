@@ -96,7 +96,7 @@ init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Mes
   QMenu* menu = menuFile->findChild<QMenu*>("menuGenerateObject");
   if(!menu){
     QAction* actionLoad = mw->findChild<QAction*>("actionLoadPlugin");
-    menu = new QMenu(tr("Generate &Objet"), menuFile);
+    menu = new QMenu(tr("Generate &Object"), menuFile);
     menu->setObjectName("menuGenerateObject");
     menuFile->insertMenu(actionLoad, menu);
   }

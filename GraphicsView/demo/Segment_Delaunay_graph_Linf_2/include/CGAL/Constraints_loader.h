@@ -3,6 +3,7 @@
 
 #include <CGAL/config.h>
 #include <CGAL/Bbox_2.h>
+#include <CGAL/algorithm.h>
 #include <CGAL/Timer.h>
 #include <vector>
 #include <utility>
@@ -96,7 +97,7 @@ class Constraints_loader {
     for(Points_iterator it = points.begin(); it != points.end(); ++it) {
       indices.push_back(it);
     }
-    std::random_shuffle(indices.begin(), indices.end());
+    CGAL::cpp98::random_shuffle(indices.begin(), indices.end());
     CGAL::spatial_sort(indices.begin(), indices.end(),
                        sort_traits);
 

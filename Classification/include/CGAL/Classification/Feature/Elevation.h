@@ -50,11 +50,9 @@ namespace Feature {
 template <typename GeomTraits, typename PointRange, typename PointMap>
 class Elevation : public Feature_base
 {
-  typedef typename GeomTraits::Iso_cuboid_3 Iso_cuboid_3;
-
-  typedef Image<float> Image_float;
-  typedef Image<compressed_float> Image_cfloat;
-  typedef Planimetric_grid<GeomTraits, PointRange, PointMap> Grid;
+  using Image_float = Image<float>;
+  using Image_cfloat = Image<compressed_float>;
+  using Grid = Planimetric_grid<GeomTraits, PointRange, PointMap>;
 
   const PointRange& input;
   PointMap point_map;
@@ -66,7 +64,7 @@ class Elevation : public Feature_base
 
 public:
   /*!
-    \brief Constructs the feature.
+    \brief constructs the feature.
 
     \param input point range.
     \param point_map property map to access the input points.
@@ -88,7 +86,7 @@ public:
     Image_float dem(grid.width(),grid.height());
 
     z_max = 0.f;
-    z_min = std::numeric_limits<float>::max();
+    z_min = (std::numeric_limits<float>::max)();
 
     for (std::size_t j = 0; j < grid.height(); ++ j)
       for (std::size_t i = 0; i < grid.width(); ++ i)
@@ -100,8 +98,8 @@ public:
           for (typename Grid::iterator it = grid.indices_begin(i,j); it != end; ++ it)
           {
             float z = float(get(point_map, *(input.begin()+(*it))).z());
-            z_min = (std::min(z_min, z));
-            z_max = (std::max(z_max, z));
+            z_min = ((std::min)(z_min, z));
+            z_max = ((std::max)(z_max, z));
             mean += z;
             ++ nb;
           }

@@ -1,3 +1,4 @@
+
 #ifdef CGAL_USE_SSH
 #  include "CGAL/Use_ssh.h"
 #endif
@@ -9,6 +10,7 @@
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/TextRenderer.h>
 #include <CGAL/Three/exceptions.h>
+#include <CGAL/Three/Three.h>
 #include <CGAL/Qt/debug.h>
 #include <CGAL/double.h>
 
@@ -76,12 +78,6 @@
 #  include <QScriptValue>
 #include "Color_map.h"
 
-
-#ifdef CGAL_USE_WEBSOCKETS
-#include <QWebSocketServer>
-#include <QWebSocket>
-#include <QNetworkInterface>
-#endif
 
 using namespace CGAL::Three;
 QScriptValue
@@ -264,9 +260,10 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT(selectionChanged()));
   // setup menu filtering
+
   connect(sceneView->selectionModel(),
-          QOverload<const QItemSelection & , const QItemSelection &>::of(&QItemSelectionModel::selectionChanged),
-          this, [=](){filterOperations(false);});
+      QOverload<const QItemSelection & , const QItemSelection &>::of(&QItemSelectionModel::selectionChanged),
+      this, [this](){filterOperations(false);});
 
   sceneView->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(sceneView, SIGNAL(customContextMenuRequested(const QPoint & )),
@@ -369,13 +366,16 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   // Load plugins, and re-enable actions that need it.
   operationSearchBar.setPlaceholderText("Filter...");
   searchAction->setDefaultWidget(&operationSearchBar);
+
   connect(&operationSearchBar, &QLineEdit::textChanged,
-          this, [=](){filterOperations(true);});
+          this, [this](){filterOperations(true);});
+
   loadPlugins();
   accepted_keywords.clear();
 
   // Setup the submenu of the View menu that can toggle the dockwidgets
   Q_FOREACH(QDockWidget* widget, findChildren<QDockWidget*>()) {
+    widget->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetFloatable);
     ui->menuDockWindows->addAction(widget->toggleViewAction());
   }
   ui->menuDockWindows->removeAction(ui->dummyAction);
@@ -407,32 +407,25 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
                                                 objectValue);
     }
   }
+  filterOperations(true);
   // debugger->action(QScriptEngineDebugger::InterruptAction)->trigger();
 #endif
 }
 
 void addActionToMenu(QAction* action, QMenu* menu)
 {
-  bool added = false;
-  for(QAction* it : menu->actions())
-  {
-    QString atxt = action->text().remove("&"),
-        btxt = it->text().remove("&");
-    int i = 0;
-    while(atxt[i] == btxt[i]
-          && i < atxt.size()
-          && i < btxt.size())
-      ++i;
-    bool res = (atxt[i] < btxt[i]);
-    if (res)
-    {
-      menu->insertAction(it, action);
-      added = true;
-      break;
-    }
-  }
-  if(!added)
+  auto actions = menu->actions();
+  auto it = std::lower_bound(actions.begin(), actions.end(),
+                             action->text().remove("&"),
+                             [](QAction* a, QString text) {
+                               return a->text().remove("&").compare(text) < 0;
+                             });
+  if(it == actions.end()) {
     menu->addAction(action);
+  }
+  else {
+    menu->insertAction(*it, action);
+  }
 }
 
 //Recursive function that do a pass over a menu and its sub-menus(etc.) and hide them when they are empty
@@ -496,12 +489,12 @@ void MainWindow::filterOperations(bool)
         menu->removeAction(action);
     }
   }
+
   Q_FOREACH(QAction* action, action_menu_map.keys())
   {
     QMenu* menu = action_menu_map[action];
     addActionToMenu(action, menu);
   }
-
   QString filter=operationSearchBar.text();
   Q_FOREACH(const PluginNamePair& p, plugins) {
     Q_FOREACH(QAction* action, p.first->actions()) {
@@ -771,7 +764,7 @@ void MainWindow::loadPlugins()
     qputenv("PATH", new_path);
 #endif
     Q_FOREACH (QString pluginsDir,
-               env_path.split(separator, QString::SkipEmptyParts)) {
+               env_path.split(separator, CGAL_QT_SKIP_EMPTY_PARTS)) {
       QDir dir(pluginsDir);
       if(dir.isReadable())
         plugins_directories << dir;
@@ -1006,7 +999,7 @@ void MainWindow::updateViewersBboxes(bool recenter)
 
 }
 
-void MainWindow::computeViewerBBox(CGAL::qglviewer::Vec& min, CGAL::qglviewer::Vec& max)
+void MainWindow::computeViewerBBox(CGAL::qglviewer::Vec& vmin, CGAL::qglviewer::Vec& vmax)
 {
   const Scene::Bbox bbox = scene->bbox();
   const double xmin = bbox.xmin();
@@ -1018,8 +1011,8 @@ void MainWindow::computeViewerBBox(CGAL::qglviewer::Vec& min, CGAL::qglviewer::V
 
 
 
-  min = CGAL::qglviewer::Vec(xmin, ymin, zmin);
-  max= CGAL::qglviewer::Vec(xmax, ymax, zmax);
+  vmin = CGAL::qglviewer::Vec(xmin, ymin, zmin);
+  vmax= CGAL::qglviewer::Vec(xmax, ymax, zmax);
 
   CGAL::qglviewer::Vec bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
 
@@ -1033,7 +1026,7 @@ void MainWindow::computeViewerBBox(CGAL::qglviewer::Vec& min, CGAL::qglviewer::V
   double l_dist = (std::max)((std::abs)(bbox_center.x - viewer->offset().x),
                              (std::max)((std::abs)(bbox_center.y - viewer->offset().y),
                                         (std::abs)(bbox_center.z - viewer->offset().z)));
-  if((std::log2)(l_dist/bbox_diag) > 13.0 )
+  if((std::log2)(l_dist/bbox_diag) > 11.0 )
     for(int i=0; i<3; ++i)
     {
       offset[i] = -bbox_center[i];
@@ -1297,7 +1290,7 @@ QList<Scene_item*> MainWindow::loadItem(QFileInfo fileinfo,
   QCursor tmp_cursor(Qt::WaitCursor);
   CGAL::Three::Three::CursorScopeGuard guard(tmp_cursor);
   QList<Scene_item*> result = loader->load(fileinfo, ok, add_to_scene);
-  if(result.empty() || !ok)
+  if(!ok)
   {
     QApplication::restoreOverrideCursor();
       QMessageBox::warning(this, tr("Error"),
@@ -1335,6 +1328,8 @@ void MainWindow::selectSceneItem(int i)
   else {
     QItemSelection s =
         proxyModel->mapSelectionFromSource(scene->createSelection(i));
+    if(s.empty())
+      return;
     QModelIndex mi = proxyModel->mapFromSource(scene->getModelIndexFromId(i).first());
     sceneView->setCurrentIndex(mi);
     sceneView->selectionModel()->select(s,
@@ -1359,7 +1354,8 @@ void MainWindow::selectSceneItems(QList<int> is)
     sceneView->setCurrentIndex(i);
     sceneView->selectionModel()->select(s,
                                         QItemSelectionModel::ClearAndSelect);
-    sceneView->scrollTo(s.indexes().first());
+    if(!s.empty())
+      sceneView->scrollTo(s.indexes().first());
   }
 }
 
@@ -1404,10 +1400,7 @@ void MainWindow::removeSceneItemFromSelection(int i)
 
 void MainWindow::selectAll()
 {
-  QItemSelection s =
-      proxyModel->mapSelectionFromSource(scene->createSelectionAll());
-  sceneView->selectionModel()->select(s,
-                                      QItemSelectionModel::ClearAndSelect);
+  sceneView->selectAll();
 }
 
 int MainWindow::getSelectedSceneItemIndex() const
@@ -1574,7 +1567,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
             }
             else if(action->text() == QString("Line Width"))
             {
-              menu_actions["line width"] = action->menu()->actions().last();
+              menu_actions["Line width"] = action->menu()->actions().last();
             }
           }
 
@@ -1591,6 +1584,8 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
             has_stats = true;
         }
         QMenu menu;
+        menu.addAction(actionAddToGroup);
+        menu.insertSeparator(0);
         Q_FOREACH(QString name, menu_actions.keys())
         {
           if(name == QString("alpha slider")
@@ -1719,7 +1714,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
             slider->setValue(
                   qobject_cast<QSlider*>(
                     qobject_cast<QWidgetAction*>
-                    (menu_actions["line width"])->defaultWidget()
+                    (menu_actions["Line width"])->defaultWidget()
                   )->value());
             slider->setOrientation(Qt::Horizontal);
             sliderAction->setDefaultWidget(slider);
@@ -1800,13 +1795,16 @@ void MainWindow::updateInfo() {
     QString item_filename = item->property("source filename").toString();
     CGAL::Bbox_3 bbox = item->bbox();
     if(bbox !=CGAL::Bbox_3())
-      item_text += QString("<div>Bounding box: min (%1,%2,%3), max (%4,%5,%6)</div>")
-          .arg(bbox.xmin())
-          .arg(bbox.ymin())
-          .arg(bbox.zmin())
-          .arg(bbox.xmax())
-          .arg(bbox.ymax())
-          .arg(bbox.zmax());
+      item_text += QString("<div>Bounding box: min (%1,%2,%3), max (%4,%5,%6), dimensions (%7, %8, %9)</div>")
+          .arg(bbox.xmin(),0, 'g', 17)
+          .arg(bbox.ymin(),0, 'g', 17)
+          .arg(bbox.zmin(),0, 'g', 17)
+          .arg(bbox.xmax(),0, 'g', 17)
+          .arg(bbox.ymax(),0, 'g', 17)
+          .arg(bbox.zmax(),0, 'g', 17)
+          .arg(bbox.xmax() - bbox.xmin(), 0, 'g', 17)
+          .arg(bbox.ymax() - bbox.ymin(), 0, 'g', 17)
+          .arg(bbox.zmax() - bbox.zmin(), 0, 'g', 17);
     if(!item_filename.isEmpty()) {
       item_text += QString("<div>File:<i> %1</div>").arg(item_filename);
     }
@@ -2591,6 +2589,10 @@ void MainWindow::makeNewGroup()
 {
   Scene_group_item * group = new Scene_group_item();
   scene->addItem(group);
+  for(Scene::Item_id id : scene->selectionIndices())
+  {
+    scene->changeGroup(scene->item(id), group);
+  }
 }
 
 void MainWindow::on_upButton_pressed()
@@ -2892,7 +2894,7 @@ QString make_fullpath(const QString& filename, bool duplicate = false)
 }
 /*
  The two following functions allow to create files from string and strings from files.
- This is used as a workaround of the absence of stream management in our IO system.
+ This is used as a workaround of the absence of stream management in our I/O system.
  The whole to/from Base64 is used to avoid problems with binary formats. Everything is written
  as a base64 binary string, and converted back to what it was.
 */
@@ -2940,25 +2942,12 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
   bool do_upload = false;
 #ifdef CGAL_USE_SSH
   QString user = settings.value("ssh_user", QString()).toString();
-  QString pass;
   if(!user.isEmpty())
   {
     QMessageBox::StandardButton doyou =
         QMessageBox::question(this, tr("Upload ?"), tr("Do you wish to upload the scene"
                                                        " using the SSH preferences ?"));
-    bool ok;
     do_upload = (doyou == QMessageBox::Yes);
-    if(do_upload)
-    {
-      pass = QInputDialog::getText(this, "SSH Password",
-                                   "Enter ssh key password:",
-                                   QLineEdit::Password,
-                                   tr(""),
-                                   &ok);
-      if(!ok)
-        return;
-      pass = pass.trimmed();
-    }
   }
 #endif
 
@@ -2972,15 +2961,19 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
                                             last_saved_dir,
                                             "Qt Script files (*.js)");
   }
+  if(!filename.endsWith(".js"))
+    filename.append(".js");
   std::ofstream os(filename.toUtf8(), std::ofstream::binary);
   if(!os)
     return;
-  CGAL::Three::Three::CursorScopeGuard cs(Qt::WaitCursor);
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   std::vector<std::pair<QString, QString> > names;
   std::vector<std::pair<QString, QString> > loaders;
   std::vector<QColor> colors;
   std::vector<int> rendering_modes;
   QStringList not_saved;
+  Polyhedron_demo_io_plugin_interface* camera_plugin = nullptr;
+  QMap<QString, QVector<QString> > group_children_map;
   for(int i = 0; i < scene->numberOfEntries(); ++i)
   {
     Scene_item* item = scene->item(i);
@@ -2988,6 +2981,8 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
     QString ext;
     for(Polyhedron_demo_io_plugin_interface* iop : io_plugins)
     {
+      if(iop->name() == "camera_positions_plugin")
+        camera_plugin = iop;
       if(iop->isDefaultLoader(item))
       {
         QString sf = iop->saveNameFilters().split(";;").first();
@@ -2997,6 +2992,12 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
         if(!rem.hasMatch())
           continue;
         ext = rem.captured(1);
+        //check if it is in a group
+        if(item->parentGroup())
+        {
+          group_children_map[item->parentGroup()->name()].append(item->name());
+              ;
+        }
         QList<Scene_item*>to_save;
         to_save.append(item);
         QString savename(tr("%1.%2").arg(item->name()).arg(ext));
@@ -3010,12 +3011,32 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
     }
     if(loader.isEmpty())
     {
+      QApplication::restoreOverrideCursor();
       QMessageBox::warning(this, "", tr("No plugin found for %1. Not saved.").arg(item->name()));
+      QApplication::setOverrideCursor(Qt::WaitCursor);
       continue;
     }
+
     loaders.push_back(std::make_pair(loader, ext));
     colors.push_back(item->color());
     rendering_modes.push_back(item->renderingMode());
+  }
+  bool has_camera_positions = false;
+  if(camera_plugin)
+  {
+    QString fullpath = make_fullpath("camera_tmp.camera.txt");
+    QList<Scene_item*> dummy;
+    if(camera_plugin->save(QFileInfo(fullpath), dummy))
+    {
+      QByteArray item = file_to_string(fullpath.toStdString().c_str());
+      os << "var camera_positions= [\'";
+      os<<qCompress(item, 9).toBase64().toStdString().c_str();
+      os << "\']\n" ;
+      //delete temp file
+      QFile tmp_file(fullpath);
+      tmp_file.remove();
+      has_camera_positions =true;
+    }
   }
   if(loaders.empty())
     return;
@@ -3042,6 +3063,28 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
   //delete temp file
   QFile tmp_file(fullpath);
   tmp_file.remove();
+  //group relations
+  if(!group_children_map.empty())
+  {
+    os << "var groups = [";
+    for(int i = 0; i< group_children_map.size() -1; ++i)
+    {
+      QString group_name = group_children_map.keys()[i];
+      os << "[\'" << group_name.toStdString().c_str()<<"\', [";
+      for(int j = 0; j<group_children_map[group_name].size()-1; ++j)
+      {
+        os << group_children_map[group_name][j].toStdString().c_str()<<", ";
+      }
+      os << group_children_map[group_name].back().toStdString().c_str()<<"]],";
+    }
+    QString group_name = group_children_map.keys().back();
+    os << "[\'" << group_name.toStdString().c_str()<<"\', [";
+    for(int j = 0; j<group_children_map[group_name].size()-1; ++j)
+    {
+      os << "\'"<<group_children_map[group_name][j].toStdString().c_str()<<"\', ";
+    }
+    os << "\'"<<group_children_map[group_name].back().toStdString().c_str()<<"\']]];\n";
+  }
   //plugin
   os << "var loaders = [";
   for(std::size_t i = 0; i< names.size() -1; ++i)
@@ -3065,6 +3108,15 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
     os << rendering_modes[i] << ", ";
   }
   os << rendering_modes.back()<<"];\n";
+  os << "function indexFromName(name) {\n";
+  os << "  for(var i = 0; i < items.length; i++){\n";
+  os << "    var itemName=items[i][1];\n";
+  os << "    if( itemName === name)\n";
+  os << "    {\n";
+  os << "        return i;\n";
+  os << "    }\n";
+  os << "  };\n";
+  os << "}\n";
   os << "items.forEach(function(item, index, array){\n";
   os<<"          var path=items[index][1];\n";
   os<<"          path+='.';\n";
@@ -3078,13 +3130,36 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
   os << "        it.setRgbColor(r,g,b);\n";
   os << "        it.setRenderingMode(rendering_modes[index]);\n";
   os << "});\n";
+  if(!group_children_map.empty())
+  {
+    os << "groups.forEach(function(group, index, array){\n";
+    os << "    main_window.selectSceneItem(-1);\n";
+    os << "    var group_name = group[0];\n";
+    os << "    var item_list = group[1];\n";
+    os << "    main_window.makeNewGroup();\n";
+    os << "    var it = scene.item(scene.numberOfEntries-1);\n";
+    os << "    it.setName(group_name);\n";
+    os << "    item_list.forEach(function(child, index, array){\n";
+    os << "        scene.changeGroup(scene.item(indexFromName(child)), it);\n";
+    os << "    });\n";
+    os << "});\n";
+  }
   os << "viewer.moveCameraToCoordinates(camera, 0.05);\n";
+  if(has_camera_positions)
+  {
+    os<<"  var path=\"cams.camera.txt\";\n";
+    os<<"  var fullpath = main_window.write_string_to_file(camera_positions, path);\n";
+    os<<"  main_window.open(fullpath,\'camera_positions_plugin\');\n";
+  }
   os.close();
-  if(!not_saved.empty())
+  if(!not_saved.empty()){
+    QApplication::restoreOverrideCursor();
     QMessageBox::warning(this,
                          "Items Not  Saved",
                          QString("The following items could not be saved: %1").arg(
                            not_saved.join(", ")));
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+  }
 #ifdef CGAL_USE_SSH
   using namespace CGAL::ssh_internal;
   if(do_upload)
@@ -3108,30 +3183,58 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
     if(!path.contains("Polyhedron_demo_"))
       path.prepend("Polyhedron_demo_");
     try{
-      ssh_session session;
-      bool res = establish_ssh_session(session,
-                            user.toStdString().c_str(),
-                            server.toStdString().c_str(),
-                            pk.toStdString().c_str(),
-                            privK.toStdString().c_str(),
-                            pass.toStdString().c_str());
+      ssh_session session = NULL;
+      bool res = establish_ssh_session_from_agent(session,
+                                                  user.toStdString().c_str(),
+                                                  server.toStdString().c_str(),
+                                                  pk.toStdString().c_str());
+
+      if(!res)
+      {
+        bool ok;
+        QString pass;
+        pass = QInputDialog::getText(this, "SSH Password",
+                                     "Enter ssh key password:",
+                                     QLineEdit::Password,
+                                     tr(""),
+                                     &ok);
+        if(!ok)
+        {
+          ssh_free(session);
+          QApplication::restoreOverrideCursor();
+          return;
+        }
+        pass = pass.trimmed();
+        res = establish_ssh_session(session,
+                                    user.toStdString().c_str(),
+                                    server.toStdString().c_str(),
+                                    pk.toStdString().c_str(),
+                                    privK.toStdString().c_str(),
+                                    pass.toStdString().c_str());
+      }
+
       if(!res)
       {
         QMessageBox::warning(this,
                              "Error",
                              "The SSH session could not be started.");
+        ssh_free(session);
+        QApplication::restoreOverrideCursor();
         return;
       }
       res = push_file(session,path.toStdString().c_str(), filename.toStdString().c_str());
       if(!res)
       {
+        QApplication::restoreOverrideCursor();
         QMessageBox::warning(this,
                              "Error",
                              "The file could not be uploaded. Check your console for more information.");
         close_connection(session);
+        ssh_free(session);
         return;
       }
       close_connection(session);
+      ssh_free(session);
       QFile tmp_file(filename);
       tmp_file.remove();
     } catch( ssh::SshException e )
@@ -3141,6 +3244,7 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
     }
   }
 #endif
+  QApplication::restoreOverrideCursor();
 }
 void MainWindow::setTransparencyPasses(int val)
 {
@@ -3183,8 +3287,6 @@ void MainWindow::setDefaultSaveDir()
 
 void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer)
 {
-  // do not save the state of the viewer (anoying)
-  viewer->setStateFileName(QString());
   viewer->textRenderer()->setScene(scene);
   viewer->setScene(scene);
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
@@ -3244,6 +3346,13 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer)
     }
     viewer->setTotalPass(nb);
   });
+
+  action = subviewer->findChild<QAction*>("actionScaleScene");
+  action->setCheckable(true);
+  action->setChecked(false);
+  connect(action, &QAction::triggered,
+          viewer, &Viewer::scaleScene);
+
   action= subviewer->findChild<QAction*>("actionBackFrontShading");
   connect(action, SIGNAL(toggled(bool)),
           viewer, SLOT(setBackFrontShading(bool)));
@@ -3456,6 +3565,10 @@ SubViewer::SubViewer(QWidget *parent, MainWindow* mw, Viewer* mainviewer)
   actionBackFrontShading->setChecked(false);
   viewMenu->addAction(actionBackFrontShading);
 
+  QAction* actionScaleScene = new QAction("&Scale the Scene...",this);
+  actionScaleScene->setObjectName("actionScaleScene");
+  viewMenu->addAction(actionScaleScene);
+
   if(mainviewer)
     setAttribute(Qt::WA_DeleteOnClose);
   setWindowIcon(QIcon(":/cgal/icons/resources/menu.png"));
@@ -3587,28 +3700,15 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
 {
   bool do_download = false;
   QString filename;
-
 #ifdef CGAL_USE_SSH
   QString user = settings.value("ssh_user", QString()).toString();
-  QString pass;
+
   if(!user.isEmpty())
   {
     QMessageBox::StandardButton doyou =
         QMessageBox::question(this, tr("Download ?"), tr("Do you wish to download the scene"
                                                          " using the SSH preferences ?"));
-    bool ok;
     do_download= (doyou == QMessageBox::Yes);
-    if(do_download)
-    {
-      pass = QInputDialog::getText(this, "SSH Password",
-                                   "Enter ssh key password:",
-                                   QLineEdit::Password,
-                                   tr(""),
-                                   &ok);
-      if(!ok)
-        return;
-      pass = pass.trimmed();
-    }
   }
 #endif
 
@@ -3623,30 +3723,61 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
     server = server.trimmed();
     pk = pk.trimmed();
     privK=privK.trimmed();
-    QString path;
-    path = QInputDialog::getText(this,
-                                 "",
-                                 tr("Enter the name of the scene file."));
-    if(path.isEmpty())
-      return;
-    if(!path.contains("Polyhedron_demo_"))
-      path.prepend("Polyhedron_demo_");
+
     try{
-      ssh_session session;
-      bool res = establish_ssh_session(session,
-                            user.toStdString().c_str(),
-                            server.toStdString().c_str(),
-                            pk.toStdString().c_str(),
-                            privK.toStdString().c_str(),
-                            pass.toStdString().c_str());
+      ssh_session session = nullptr;
+      bool res = establish_ssh_session_from_agent(session,
+                                                  user.toStdString().c_str(),
+                                                  server.toStdString().c_str(),
+                                                  pk.toStdString().c_str());
+      if(!res){
+        bool ok;
+        QString pass= QInputDialog::getText(this, "SSH Password",
+                                     "Enter ssh key password:",
+                                     QLineEdit::Password,
+                                     tr(""),
+                                     &ok);
+        if(!ok)
+        {
+          ssh_free(session);
+          return;
+        }
+        pass = pass.trimmed();
+        res = establish_ssh_session(session,
+                                    user.toStdString().c_str(),
+                                    server.toStdString().c_str(),
+                                    pk.toStdString().c_str(),
+                                    privK.toStdString().c_str(),
+                                    pass.toStdString().c_str());
+      }
       if(!res)
       {
         QMessageBox::warning(this,
                              "Error",
                              "The SSH session could not be started.");
+        ssh_free(session);
         return;
       }
+      QStringList names;
+      if(!CGAL::ssh_internal::explore_the_galaxy(session, names))
+      {
+        QMessageBox::warning(this,
+                             "Error",
+                             "Could not find remote directory.");
+      }
+      QString path;
+      bool ok;
+      path = QInputDialog::getItem(this,
+                                   "Choose a file",
+                                   tr("Choose the scene file."),
+                                   names,0,true, &ok);
       filename = QString("%1/load_scene.js").arg(QDir::tempPath());
+      if(path.isEmpty() || !ok)
+      {
+        ssh_free(session);
+        return;
+      }
+      path.prepend("Polyhedron_demo_");
       path = tr("/tmp/%2").arg(path);
       res = pull_file(session,path.toStdString().c_str(), filename.toStdString().c_str());
       if(!res)
@@ -3655,9 +3786,11 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
                              "Error",
                              "The file could not be fetched. Check your console for more info.");
         close_connection(session);
+        ssh_free(session);
         return;
       }
       close_connection(session);
+      ssh_free(session);
     } catch( ssh::SshException e )
     {
       std::cout << "Error during connection : ";
@@ -3681,90 +3814,3 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
     tmp_file.remove();
   }
 }
-
-#ifdef CGAL_USE_WEBSOCKETS
-void MainWindow::on_action_Start_a_Session_triggered()
-{
-  QAction * action= findChild<QAction*>("action_Start_a_Session");
-  static EchoServer *server =nullptr;
-  if(action->isChecked()){
-     server = new EchoServer(1234);
-    QObject::connect(server, &EchoServer::closed, server,&EchoServer::deleteLater);
-  }
-  else
-  {
-    server->deleteLater();
-  }
-}
-
-EchoServer::EchoServer(quint16 port) :
-    QObject(CGAL::Three::Three::mainWindow()),
-    m_pWebSocketServer(new QWebSocketServer(QStringLiteral("Echo Server"),
-                                            QWebSocketServer::NonSecureMode, this))
-{
-    if (m_pWebSocketServer->listen(QHostAddress::Any, port)) {
-        connect(m_pWebSocketServer, &QWebSocketServer::newConnection,
-                this, &EchoServer::onNewConnection);
-        connect(m_pWebSocketServer, &QWebSocketServer::closed, this, &EchoServer::closed);
-    }
-    QHostAddress local_host("0.0.0.0");
-
-    //to avoid printing 127.0.0.1. Not realy sure it won't ever print the external ipv4 though.
-    const QHostAddress &localhost = QHostAddress(QHostAddress::LocalHost);
-    for (const QHostAddress &address: QNetworkInterface::allAddresses()) {
-      if (address.protocol() == QAbstractSocket::IPv4Protocol && address != localhost)
-      {
-        local_host= address;
-        break;
-      }
-    }
-    QMessageBox mb(QMessageBox::NoIcon, "WS Server",
-                   tr("WebSockets Server started.\nEnter the following address in\nyour Network Preferences to be able to join it :\n"
-                      "ws://%1:%2").arg(local_host.toString()).arg(port), QMessageBox::Ok, CGAL::Three::Three::mainWindow());
-    mb.setTextInteractionFlags(Qt::TextSelectableByMouse);
-    mb.exec();
-}
-
-EchoServer::~EchoServer()
-{
-    m_pWebSocketServer->close();
-    qDeleteAll(m_clients.begin(), m_clients.end());
-}
-
-void EchoServer::onNewConnection()
-{
-    QWebSocket *pSocket = m_pWebSocketServer->nextPendingConnection();
-
-    connect(pSocket, &QWebSocket::textMessageReceived, this, &EchoServer::processTextMessage);
-    connect(pSocket, &QWebSocket::binaryMessageReceived, this, &EchoServer::processBinaryMessage);
-    connect(pSocket, &QWebSocket::disconnected, this, &EchoServer::socketDisconnected);
-
-    m_clients << pSocket;
-}
-
-void EchoServer::processTextMessage(QString message)
-{
-    QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
-    for(auto *client : m_clients) {
-      if(client != pClient)
-        client->sendTextMessage(message);
-    }
-}
-
-void EchoServer::processBinaryMessage(QByteArray message)
-{
-    QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
-    if (pClient) {
-        pClient->sendBinaryMessage(message);
-    }
-}
-
-void EchoServer::socketDisconnected()
-{
-    QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
-    if (pClient) {
-        m_clients.removeAll(pClient);
-        pClient->deleteLater();
-    }
-}
-#endif

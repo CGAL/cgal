@@ -1,0 +1,32 @@
+name: Documentation Removal
+
+on:
+  pull_request_target:
+    types: [closed, removed]
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2.0.0
+    - name: delete directory
+      run: |
+         set -x
+         git config --global user.email "maxime.gimeno@geometryfactory.com"
+         git config --global user.name "Maxime Gimeno"
+         git clone https://maxGimeno:${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}@github.com/CGAL/cgal.github.io.git --depth=5
+         PR_NUMBER=$(python -c "import json; import os; y = json.load(open(os.environ['GITHUB_EVENT_PATH'])); print(y[\"number\"])")
+         cd cgal.github.io/
+         egrep -v " ${PR_NUMBER}\." index.html > tmp.html || true
+         if [ -n "$(diff -q ./index.html ./tmp.html)" ]; then
+           mv tmp.html index.html
+         fi
+         if [ -d ${PR_NUMBER} ]; then 
+           git rm -r ${PR_NUMBER} 
+         fi
+         #git diff exits with 1 if there is a diff
+         if ! git diff --quiet; then
+           git commit -a --amend -m"base commit" && git push -f -u origin master
+         fi
+

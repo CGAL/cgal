@@ -28,7 +28,7 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/mpl/if.hpp>
@@ -50,7 +50,6 @@ template<class TM,
          class VertexPointMap2>
 struct Intersect_faces
 {
-
   // typedefs
   typedef typename Kernel::Segment_3    Segment;
   typedef typename Kernel::Triangle_3   Triangle;
@@ -67,10 +66,6 @@ struct Intersect_faces
 
   typename Kernel::Construct_triangle_3 triangle_functor;
   typename Kernel::Do_intersect_3       do_intersect_3_functor;
-
-
-
-
 
   Intersect_faces(const TM& tm1, const TM& tm2,
                    OutputIterator it,
@@ -137,9 +132,6 @@ struct Intersect_face_polyline
   typename Kernel::Construct_triangle_3 triangle_functor;
   typename Kernel::Do_intersect_3       do_intersect_3_functor;
 
-
-
-
   Intersect_face_polyline(const TM& tm,
                            const std::vector<face_descriptor>& faces,
                            const Polyline& polyline,
@@ -193,7 +185,6 @@ struct Intersect_face_polylines
   typedef typename boost::property_map<TM, boost::vertex_point_t>::const_type Ppmap;
   typedef typename boost::property_traits<Ppmap>::value_type Point;
 
-
   // members
   const TM& m_tm;
   const std::vector<face_descriptor>& faces;
@@ -204,9 +195,6 @@ struct Intersect_face_polylines
   typename Kernel::Construct_segment_3  segment_functor;
   typename Kernel::Construct_triangle_3 triangle_functor;
   typename Kernel::Do_intersect_3       do_intersect_3_functor;
-
-
-
 
   Intersect_face_polylines(const TM& tm,
                            const std::vector<face_descriptor>& faces,
@@ -249,8 +237,6 @@ template<class Polyline,
          class OutputIterator>
 struct Intersect_polylines
 {
-
-
   // typedefs
   typedef typename Kernel::Segment_3    Segment;
   typedef typename Kernel::Point_3 Point;
@@ -263,9 +249,6 @@ struct Intersect_polylines
 
   typename Kernel::Construct_segment_3  segment_functor;
   typename Kernel::Do_intersect_3       do_intersect_3_functor;
-
-
-
 
   Intersect_polylines(const Polyline& polyline1,
                       const Polyline& polyline2,
@@ -299,8 +282,6 @@ template<class PolylineRange,
          class OutputIterator>
 struct Intersect_polyline_ranges
 {
-
-
   // typedefs
   typedef typename Kernel::Segment_3    Segment;
   typedef typename Kernel::Point_3 Point;
@@ -313,9 +294,6 @@ struct Intersect_polyline_ranges
 
   typename Kernel::Construct_segment_3  segment_functor;
   typename Kernel::Do_intersect_3       do_intersect_3_functor;
-
-
-
 
   Intersect_polyline_ranges(const PolylineRange& polyline1,
                             const PolylineRange& polyline2,
@@ -367,7 +345,7 @@ struct Throw_at_first_output {
  *  model of `RandomAccessRange`.
  * \tparam OutputIterator a model of `OutputIterator` holding objects of type
  *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
- * \tparam NamedParameters a sequence of \ref pmp_namedparameters
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param face_range1 the range of faces of `tm1` to check for intersections.
  * \param face_range2 the range of faces of `tm2` to check for intersections.
@@ -375,15 +353,29 @@ struct Throw_at_first_output {
  * \param tm2 the second triangulated surface mesh.
  * \param out output iterator to be filled with all pairs of faces that intersect.
  *  First and second element in the pairs correspond to faces of `tm1` and `tm2` respectively
- * \param np1 optional sequence of \ref pmp_namedparameters for `tm1`, among the ones listed below
- * \param np2 optional sequence of \ref pmp_namedparameters for `tm2`, among the ones listed below
+ * \param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ * \param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
- *   If this parameter is omitted, an internal property map for
- *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
- *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits` \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm1` (`tm2`)}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm1 (tm2))`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     should be available for the vertices of `tm1` (`tm2`)}
+ *     \cgalParamExtra{Both vertex point maps must have the same value type}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *     \cgalParamExtra{np1 only}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
+ *
  * \return `out`
  */
 template <class TriangleMesh,
@@ -493,20 +485,31 @@ compute_face_face_intersection(const FaceRange& face_range1,
  *  elements in their respective range. In the case of the polyline, this position is the index of
  * the segment intersecting the face (which is the index  of the first point of the
  * segment following the range order.)
- * \tparam NamedParameters a sequence of \ref pmp_namedparameters
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param face_range the range of faces of `tm` to check for intersections.
  * \param polyline the polyline to check for intersections.
  * \param tm the triangulated surface mesh to check for intersections.
  * \param out output iterator to be filled with all pairs of face-segment that intersect
- * \param np optional sequence of \ref pmp_namedparameters for `tm`, among the ones listed below
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm`.
- *   If this parameter is omitted, an internal property map for
- *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
- *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits` \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     should be available for the vertices of `tm`.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
+ *
  * \return `out`
  */
 template <class TriangleMesh,
@@ -611,19 +614,30 @@ compute_face_polyline_intersection( const FaceRange& face_range,
  *   `std::pair<std::size_t, std::pair<std::size_t, std::size_t> >`.
  * Each pair holds the index of the face and a pair containing the index of the polyline in the range and the index of
  * the first point of the segment in the polyline.
- * \tparam NamedParameters a sequence of \ref pmp_namedparameters
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param face_range the range of `tm` faces to check for intersections.
  * \param polyline_range the range of polylines to check for intersections.
  * \param tm the triangulated surface mesh to check for intersections.
  * \param out output iterator to be filled with all pairs of face-segment that intersect
- * \param np optional sequence of \ref pmp_namedparameters for `tm`, among the ones listed below
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm`.
- *   If this parameter is omitted, an internal property map for
- *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
- *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits` \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     should be available for the vertices of `tm`.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  * \return `out`
  */
@@ -921,20 +935,33 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
  * \tparam TriangleMesh a model of `FaceListGraph`
  * \tparam OutputIterator a model of `OutputIterator` holding objects of type
  *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
- * \tparam NamedParameters a sequence of \ref pmp_namedparameters
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param tm1 the first triangulated surface mesh to check for intersections
  * \param tm2 the second triangulated surface mesh to check for intersections
  * \param out output iterator to be filled with all pairs of faces that intersect
- * \param np1 optional sequence of \ref pmp_namedparameters for `tm1`, among the ones listed below
- * \param np2 optional sequence of \ref pmp_namedparameters for `tm2`, among the ones listed below
+ * \param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ * \param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
- *   If this parameter is omitted, an internal property map for
- *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
- *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits` \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm1` (`tm2`)}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm1 (tm2))`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     should be available for the vertices of `tm1` (`tm2`)}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *     \cgalParamExtra{np1 only}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
+ *
  * \return `out`
  */
 template <class TriangleMesh,
@@ -971,19 +998,30 @@ compute_face_face_intersection(const TriangleMesh& tm1,
  *  elements in their respective range. In the case of the polyline, this position is the index
  * of the segment that holds the intersection, so it is the index of the first point of the
  * segment following the range order.
- * \tparam NamedParameters a sequence of \ref pmp_namedparameters
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param tm the triangulated surface mesh to check for intersections.
  * \param polyline the polyline to check for intersections.
  * \param out output iterator to be filled with all pairs of face-segment that intersect
- * \param np optional sequence of \ref pmp_namedparameters for `tm`, among the ones listed below
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
- *   If this parameter is omitted, an internal property map for
- *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
- *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits` \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+ *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     should be available for the vertices of `tm`.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
+ *
  * \return `out`
  */
 template <class TriangleMesh,
@@ -1176,24 +1214,39 @@ bool do_intersect(const Polyline& polyline1,
  * @pre `!do_overlap_test_of_bounded_sides || CGAL::is_closed(tm2)`
  *
  * @tparam TriangleMesh a model of `FaceListGraph`
- * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters for `tm1`
- * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters for `tm2`
+ * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters" for `tm1`
+ * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters" for `tm2`
  *
  * @param tm1 the first triangulated surface mesh to check for intersections
  * @param tm2 the second triangulated surface mesh to check for intersections
- * @param np1 optional sequence of \ref pmp_namedparameters for `tm1`, among the ones listed below
- * @param np2 optional sequence of \ref pmp_namedparameters for `tm2`, among the ones listed below
+ * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm1` (`tm2`).
- *   \attention The two property maps must have the same `value_type`.
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm1` (`tm2`)}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm1 (tm2))`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     should be available for the vertices of `tm1` (`tm2`)}
+ *     \cgalParamExtra{Both vertex point maps must have the same value type}
+ *   \cgalParamNEnd
  *
- *   If this parameter is omitted, an internal property map for
- *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
- *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits` \cgalParamEnd
- *    \cgalParamBegin{do_overlap_test_of_bounded_sides} if set to `true` tests also the overlap of the bounded sides of `tm1` and `tm2`.
- *                                                      If `false` (default), only the intersection of surface triangles are tested.
- *     \cgalParamEnd
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *     \cgalParamExtra{np1 only}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{do_overlap_test_of_bounded_sides}
+ *     \cgalParamDescription{If `true`, also tests the overlap of the bounded sides of `tm1` and `tm2`.
+ *                           If `false`, only the intersection of surface triangles is tested.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  */
@@ -1265,17 +1318,27 @@ bool do_intersect(const TriangleMesh& tm1,
  * \tparam PolylineRange a `RandomAccessRange` of `RandomAccessRange` of points. The point type of the range must be the
  *  same as the value type of the vertex point map.
  * \cgalDescribePolylineType
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters
  *
  * @param tm the triangulated surface mesh to check for intersections
  * @param polylines the range of polylines to check for intersections.
- * @param np optional sequence of \ref pmp_namedparameters among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm`.
- *   If this parameter is omitted, an internal property map for
- *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
- *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits` \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+ *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     should be available for the vertices of `tm`.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  */
@@ -1320,17 +1383,27 @@ bool do_intersect(const TriangleMesh& tm,
  * \tparam Polyline a `RandomAccessRange` of points. The point type of the range must be the
  *  same as the value type of the vertex point map.
  * \cgalDescribePolylineType
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param tm the triangulated surface mesh to check for intersections
  * @param polyline the polyline to check for intersections.
- * @param np optional sequence of \ref pmp_namedparameters among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tn`.
- *   If this parameter is omitted, an internal property map for
- *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
- *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits` \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+ *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     should be available for the vertices of `tm`.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  */
@@ -1414,8 +1487,8 @@ template<class TriangleMeshRange,
 struct Mesh_callback
 {
   typedef typename boost::range_value<TriangleMeshRange>::type TriangleMesh;
-  typedef typename boost::range_value<NamedParametersRange>::type NamedParameter;
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameter>::const_type VPM;
+  typedef typename boost::range_value<NamedParametersRange>::type NamedParameters;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VPM;
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VPM> Primitive;
   typedef CGAL::AABB_traits<GT, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> AABBTree;
@@ -1530,31 +1603,41 @@ struct Mesh_callback
  *
  * \tparam TriangleMeshRange a model of `RandomAccessRange` of triangulated surface meshes model of `FaceListGraph`.
  * \tparam OutputIterator an output iterator in which `std::pair<std::size_t, std::size_t>` can be put.
- * \tparam NamedParameters a sequence of \ref pmp_namedparameters for the algorithm
- * \tparam NamedParametersRange a range of named parameters for the meshes.
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters" for the algorithm
+ * \tparam NamedParametersRange a range of \ref bgl_namedparameters "Named Parameters" for the meshes.
  *
  * \param range the range of triangulated surface meshes to be checked for intersections.
  * \param out output iterator used to collect pairs of intersecting meshes.
- * \param np an optional sequence named parameters among the one listed below
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits`.
- *                                 The default value for `geom_traits` is `CGAL::Kernel_traits<Point>::Kernel`, where `Point` is the
- *                                 value type of the vertex point map of the meshes.
- * \cgalParamEnd
- *    \cgalParamBegin{do_overlap_test_of_bounded_sides} if set to `true` reports also overlap of bounded sides of meshes.
- *                                                      If `false` (default), only the intersection of surface triangles are tested.
- *     \cgalParamEnd
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`,
+ *                       where `Point` is the value type of the vertex point map of the meshes}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{do_overlap_test_of_bounded_sides}
+ *     \cgalParamDescription{If `true`, reports also overlap of bounded sides of meshes.
+ *                           If `false`, only the intersection of surface triangles are tested.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
- * \param nps an optional range of `vertex_point_map` named parameters containing the `VertexPointMap` of each mesh in `range`, in the same order.
- * If this parameter is omitted, then an internal property map for `CGAL::vertex_point_t` must be available for every mesh in the range.
- * All the vertex point maps must be of the same type.
+ *
+ * \param nps an optional range of sequences of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of a mesh.
- *   If this parameter is omitted, an internal property map for
- *   `CGAL::vertex_point_t` must be available in the triangle mesh type used in the range
- *     \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of a mesh `tm`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     should be available for the vertices of `tm`.}
+ *     \cgalParamExtra{All vertex point maps must have the same value type}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  */
 
@@ -1564,8 +1647,8 @@ template <class TriangleMeshRange,
           class NamedParametersRange>
 OutputIterator intersecting_meshes(const TriangleMeshRange& range,
                                          OutputIterator out,
-                                         NamedParameters np,
-                                         NamedParametersRange nps)
+                                   const NamedParameters& np,
+                                   const NamedParametersRange& nps)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -1603,7 +1686,7 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
 template <class TriangleMeshRange, class NamedParameters, class OutputIterator>
 OutputIterator intersecting_meshes(const TriangleMeshRange& range,
                                          OutputIterator out,
-                                         NamedParameters np)
+                                   const NamedParameters& np)
 {
   std::vector<Named_function_parameters<bool, internal_np::all_default_t> >nps(
     std::distance(range.begin(), range.end()), parameters::all_default());
@@ -1626,8 +1709,8 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
  * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm2)` \endlink
  *
  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
- * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters"
- * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters"
+ * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
+ * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
  * @tparam OutputIterator an output iterator in which `std::vector` of points
  *                        can be put. The point type is the one from the
  *                        vertex property map
@@ -1636,19 +1719,28 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
  * @param tm2 second input triangulated surface mesh
  * @param polyline_output output iterator of polylines. Each polyline will be
  *        given as a vector of points
- * @param np1 optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
- * @param np2 optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *   \cgalParamBegin{vertex_point_map}
- *    a property map with the points associated to the vertices of `tm1`
- *    (`tm2`). The two property map types must be the same.
- *    \cgalParamEnd
- *   \cgalParamBegin{throw_on_self_intersection} if `true`, for each input triangle mesh,
- *      the set of triangles close to the intersection of `tm1` and `tm2` will be
- *      checked for self-intersection and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
- *      will be thrown if at least one is found (`np1` only).
- *   \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm1` (`tm2`)}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm1 (tm2))`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     should be available for the vertices of `tm1` (`tm2`)}
+ *     \cgalParamExtra{Both vertex point maps must have the same value type}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{throw_on_self_intersection}
+ *     \cgalParamDescription{If `true`, the set of triangles closed to the intersection of `tm1` and `tm2` will be
+ *                           checked for self-intersections and `Corefinement::Self_intersection_exception`
+ *                           will be thrown if at least one self-intersection is found.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *     \cgalParamExtra{`np1` only}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  */
@@ -1666,31 +1758,33 @@ surface_intersection(const TriangleMesh& tm1,
   const bool throw_on_self_intersection =
     parameters::choose_parameter(parameters::get_parameter(np1, internal_np::throw_on_self_intersection), false);
 
-  typedef typename GetVertexPointMap<TriangleMesh,
-                                     NamedParameters1>::const_type Vpm;
-  typedef typename GetVertexPointMap<TriangleMesh,
-                                     NamedParameters2>::const_type Vpm2;
-  CGAL_USE_TYPE(Vpm2);
-  CGAL_assertion_code(
-    static const bool same_vpm = (boost::is_same<Vpm,Vpm2>::value);)
-  CGAL_static_assertion(same_vpm);
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::const_type VPM1;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters2>::const_type VPM2;
 
-  Vpm vpm1 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::vertex_point),
-                                          get_const_property_map(CGAL::vertex_point, tm1));
-  Vpm vpm2 = parameters::choose_parameter(parameters::get_parameter(np2, internal_np::vertex_point),
-                                          get_const_property_map(CGAL::vertex_point, tm2));
+  CGAL_static_assertion((std::is_same<typename boost::property_traits<VPM1>::value_type,
+                                      typename boost::property_traits<VPM2>::value_type>::value));
 
-  Corefinement::Intersection_of_triangle_meshes<TriangleMesh,Vpm>
+  VPM1 vpm1 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::vertex_point),
+                                           get_const_property_map(CGAL::vertex_point, tm1));
+  VPM2 vpm2 = parameters::choose_parameter(parameters::get_parameter(np2, internal_np::vertex_point),
+                                           get_const_property_map(CGAL::vertex_point, tm2));
+
+  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM1, VPM2>
     functor(tm1, tm2, vpm1, vpm2);
+
+  // Fill non-manifold feature maps if provided
+  functor.set_non_manifold_feature_map_1(parameters::get_parameter(np1, internal_np::non_manifold_feature_map));
+  functor.set_non_manifold_feature_map_2(parameters::get_parameter(np2, internal_np::non_manifold_feature_map));
+
   return functor(polyline_output, throw_on_self_intersection, true);
 }
 
 namespace experimental {
 /**
  * \ingroup PMP_corefinement_grp
+ *
  * computes the autointersection of triangles of `tm`. The output is a
  * set of polylines with all vertices but endpoints being of degree 2.
- *
  *
  * @tparam TriangleMesh a model of `HalfedgeListGraph` and `FaceListGraph`
  * @tparam NamedParameters a sequence of \ref namedparameters
@@ -1701,12 +1795,15 @@ namespace experimental {
  * @param tm input triangulated surface mesh
  * @param polyline_output output iterator of polylines. Each polyline will be
  *        given as a vector of points
- * @param np optional sequence of \ref namedparameters among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *   \cgalParamBegin{vertex_point_map}
- *    a property map with the points associated to the vertices of `tm`
- *    \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  */
@@ -1719,17 +1816,14 @@ surface_self_intersection(const TriangleMesh& tm,
                          const NamedParameters& np)
 {
 // Vertex point maps
-  typedef typename GetVertexPointMap<TriangleMesh,
-                                     NamedParameters>::const_type Vpm;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VPM;
 
-  Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                                          get_const_property_map(CGAL::vertex_point, tm));
+  VPM vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
+                                         get_const_property_map(CGAL::vertex_point, tm));
 
 // surface intersection algorithm call
-  typedef Corefinement::Default_surface_intersection_visitor<TriangleMesh,
-                                                             true>      Visitor;
-  Corefinement::Intersection_of_triangle_meshes<TriangleMesh,Vpm, Visitor>
-    functor(tm, vpm);
+  typedef Corefinement::Default_surface_intersection_visitor<TriangleMesh, true> Visitor;
+  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM, VPM, Visitor> functor(tm, vpm);
 
   polyline_output=functor(polyline_output, true);
   return polyline_output;

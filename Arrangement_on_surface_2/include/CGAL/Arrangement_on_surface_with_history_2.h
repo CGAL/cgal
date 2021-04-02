@@ -557,7 +557,7 @@ public:
    * \param e The edge to split (one of the pair of twin halfedges).
    * \param p The split point.
    * \pre p lies in the interior of the curve associated with e.
-   * \return A handle for the halfedge whose source is the source of the the
+   * \return A handle for the halfedge whose source is the source of the
    *         original halfedge e, and whose target is the split point.
    */
   Halfedge_handle split_edge (Halfedge_handle e, const Point_2& p);

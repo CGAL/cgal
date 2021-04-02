@@ -26,16 +26,16 @@ namespace CGAL {
   template <class, class>
   class Concurrent_compact_container;
 
-  template<unsigned int, class, class>
+  template<unsigned int, class, class, class>
   class Combinatorial_map_storage_1;
 
-  template<unsigned int, class, class>
+  template<unsigned int, class, class, class>
   class Generalized_map_storage_1;
 
-  template<unsigned int, unsigned int, class, class, class>
+  template<unsigned int, unsigned int, class, class, class, class>
   class CMap_linear_cell_complex_storage_1;
 
-  template<unsigned int, unsigned int, class, class, class>
+  template<unsigned int, unsigned int, class, class, class, class>
   class GMap_linear_cell_complex_storage_1;
 
   namespace internal {
@@ -60,16 +60,16 @@ namespace CGAL {
   struct Dart_without_info: public Add_id<WithId>
   {
   public:
-    template<unsigned int, class, class>
+    template<unsigned int, class, class, class>
     friend class Combinatorial_map_storage_1;
 
-    template<unsigned int, class, class>
+    template<unsigned int, class, class, class>
     friend class Generalized_map_storage_1;
 
-    template<unsigned int, unsigned int, class, class, class>
+    template<unsigned int, unsigned int, class, class, class, class>
     friend class CMap_linear_cell_complex_storage_1;
 
-    template<unsigned int, unsigned int, class, class, class>
+    template<unsigned int, unsigned int, class, class, class, class>
     friend class GMap_linear_cell_complex_storage_1;
 
     template <class, class, class, class>
@@ -105,8 +105,8 @@ namespace CGAL {
 
     void * for_compact_container() const
     { return mf[0].for_compact_container(); }
-    void * & for_compact_container()
-    { return mf[0].for_compact_container(); }
+    void for_compact_container(void *p)
+    { mf[0].for_compact_container(p); }
 
     Dart_handle get_f(unsigned int i) const
     {
@@ -210,10 +210,10 @@ namespace CGAL {
   template <unsigned int d, typename Refs, class WithID=Tag_false>
   struct CGAL_DEPRECATED Dart : public Dart_without_info<d, Refs, WithID>
   {
-    template<unsigned int, class, class>
+    template<unsigned int, class, class, class>
     friend class Combinatorial_map_storage_1;
 
-    template<unsigned int, unsigned int, class, class, class>
+    template<unsigned int, unsigned int, class, class, class, class>
     friend class CMap_linear_cell_complex_storage_1;
 
     template <class, class, class, class>
@@ -310,16 +310,16 @@ namespace CGAL {
   struct Dart : public Dart_without_info<d, Refs, WithID>
   {
   public:
-    template<unsigned int, class, class>
+    template<unsigned int, class, class, class>
     friend class Combinatorial_map_storage_1;
 
-    template<unsigned int, class, class>
+    template<unsigned int, class, class, class>
     friend class Generalized_map_storage_1;
 
-    template<unsigned int, unsigned int, class, class, class>
+    template<unsigned int, unsigned int, class, class, class, class>
     friend class CMap_linear_cell_complex_storage_1;
 
-    template<unsigned int, unsigned int, class, class, class>
+    template<unsigned int, unsigned int, class, class, class, class>
     friend class GMap_linear_cell_complex_storage_1;
 
     template <class, class, class, class>

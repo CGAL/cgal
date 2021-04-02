@@ -82,7 +82,7 @@ int main(int argc, char** argv)
   // http://www.boost.org/libs/property_map/doc/vector_property_map.html
   // for details.
   boost::vector_property_map<Vector, Face_index_map>
-    normals(get(CGAL::face_index, P));
+    normals(static_cast<unsigned>(num_faces(P)), get(CGAL::face_index, P));
 
   calculate_face_normals(
     P // Graph

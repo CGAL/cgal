@@ -229,9 +229,10 @@ public:
     Vertex_handle v = this->sncp()->new_vertex(p , boundary);
     CGAL_NEF_TRACEN( v->point());
     SM_decorator SD(&*v);
-    Sphere_point sp[] = { Sphere_point(NT(-x), 0, 0),
-                          Sphere_point(0, NT(-y), 0),
-                          Sphere_point(0, 0, NT(-z)) };
+    const NT zero(0);
+    Sphere_point sp[] = { Sphere_point(NT(-x), zero, zero),
+                          Sphere_point(zero, NT(-y), zero),
+                          Sphere_point(zero, zero, NT(-z)) };
 
   /* create box vertices */
     SVertex_handle sv[3];
@@ -2128,16 +2129,14 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
 
     Halfedge_iterator e;
     CGAL_forall_edges(e, *this->sncp()) {
-      e->set_index();
-      e->twin()->set_index(e->get_index());
+      e->twin()->set_index(e->new_index());
     }
 
     Halffacet_iterator f;
     CGAL_forall_halffacets(f, *this->sncp()) {
       Halffacet_cycle_iterator fci(f->facet_cycles_begin());
       SHalfedge_handle se(fci);
-      se->set_index();
-      int index(se->get_index());
+      int index(se->new_index());
       for(; fci != f->facet_cycles_end(); ++fci) {
         if(fci.is_shalfedge()) {
           SHalfedge_around_facet_circulator c1(fci), c2(c1);

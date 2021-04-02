@@ -143,11 +143,11 @@ public:
     {
       bbox = bbox + ps.point(*it).bbox();
     }
-    CGAL::qglviewer::Vec min(bbox.xmin(),bbox.ymin(),bbox.zmin());
-    CGAL::qglviewer::Vec max(bbox.xmax(),bbox.ymax(),bbox.zmax());
+    CGAL::qglviewer::Vec v_min(bbox.xmin(),bbox.ymin(),bbox.zmin());
+    CGAL::qglviewer::Vec v_max(bbox.xmax(),bbox.ymax(),bbox.zmax());
 
-    setBbox(Bbox(min.x,min.y,min.z,
-                 max.x,max.y,max.z));
+    setBbox(Bbox(v_min.x,v_min.y,v_min.z,
+                 v_max.x,v_max.y,v_max.z));
   }
   bool isEmpty() const{return false;}
 Q_SIGNALS:
@@ -417,12 +417,9 @@ void Polyhedron_demo_affine_transform_plugin::grid()
       Scene_item::Bbox b = item->bbox();
 
 
-      double x_t(CGAL::sqrt(CGAL::squared_distance(Kernel::Point_3(b.min(0), b.min(1), b.min(2)),
-                                                   Kernel::Point_3(b.max(0), b.min(1), b.min(2))))),
-          y_t(CGAL::sqrt(CGAL::squared_distance(Kernel::Point_3(b.min(0), b.min(1), b.min(2)),
-                                                Kernel::Point_3(b.min(0), b.max(1), b.min(2))))),
-          z_t(CGAL::sqrt(CGAL::squared_distance(Kernel::Point_3(b.min(0), b.min(1), b.min(2)),
-                                                Kernel::Point_3(b.min(0), b.min(1), b.max(2)))));
+      double x_t(1.001*((b.max)(0)- (b.min)(0))),
+          y_t(1.001*((b.max)(1)- (b.min)(1))),
+          z_t(1.001*((b.max)(2)- (b.min)(2)));
 
       GridDialog dialog(mw);
       dialog.x_space_doubleSpinBox->setValue(x_t);
@@ -450,7 +447,7 @@ void Polyhedron_demo_affine_transform_plugin::grid()
             Kernel::Aff_transformation_3 trans(CGAL::TRANSLATION, Kernel::Vector_3(i*x_t,j*y_t,k*z_t));
             CGAL::Polygon_mesh_processing::transform(trans, e);
             Facegraph_item* t_item = new Facegraph_item(e);
-            t_item->setName(tr("%1 %2%3%4")
+            t_item->setName(tr("%1 %2,%3,%4")
                             .arg(item->name())
                             .arg(i)
                             .arg(j)
@@ -504,6 +501,8 @@ void Polyhedron_demo_affine_transform_plugin::start(FaceGraph *facegraph, const 
   lastMatrix.data()[13] = y;
   lastMatrix.data()[14] = z;
   transform_item = new Scene_facegraph_transform_item(CGAL::qglviewer::Vec(x,y,z),facegraph, name);
+  connect(transform_item, &Scene_item::aboutToBeDestroyed,
+          [](){ QApplication::restoreOverrideCursor(); });
   transform_item->setManipulatable(true);
   transform_item->setColor(Qt::green);
   transform_item->setRenderingMode(Wireframe);
@@ -537,6 +536,8 @@ void Polyhedron_demo_affine_transform_plugin::start(Scene_points_with_normal_ite
   lastMatrix.data()[14] = z;
 
   transform_points_item = new Scene_transform_point_set_item(points_item,CGAL::qglviewer::Vec(x,y,z));
+  connect(transform_points_item, &Scene_item::aboutToBeDestroyed,
+          [](){ QApplication::restoreOverrideCursor(); });
   transform_points_item->setRenderingMode(Points);
   transform_points_item->setName(tr("Affine Transformation"));
   connect(transform_points_item, SIGNAL(stop()),this, SLOT(go()));
@@ -570,7 +571,8 @@ void Polyhedron_demo_affine_transform_plugin::end(){
   if(transform_item)
   {
     CGAL::qglviewer::Vec c = transform_item->center();
-    FaceGraph* new_sm = new FaceGraph(*transform_item->getFaceGraph());
+    FaceGraph* new_sm = new FaceGraph();
+    CGAL::copy_face_graph(*transform_item->getFaceGraph(), *new_sm);
     typedef boost::property_map<FaceGraph,CGAL::vertex_point_t>::type VPmap;
     VPmap vpmap = get(CGAL::vertex_point, *new_sm);
 

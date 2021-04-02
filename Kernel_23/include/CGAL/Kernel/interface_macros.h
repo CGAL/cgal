@@ -116,6 +116,8 @@ CGAL_Kernel_pred_RT(Compare_power_distance_2,
                     compare_power_distance_2_object)
 CGAL_Kernel_pred_RT(Compare_power_distance_3,
                     compare_power_distance_3_object)
+CGAL_Kernel_pred(Compare_signed_distance_to_line_2,
+                 compare_signed_distance_to_line_2_object)
 CGAL_Kernel_pred(Compare_slope_2,
                  compare_slope_2_object)
 CGAL_Kernel_pred(Compare_slope_3,
@@ -540,6 +542,8 @@ CGAL_Kernel_cons(Intersect_2,
                  intersect_2_object)
 CGAL_Kernel_cons(Intersect_3,
                  intersect_3_object)
+CGAL_Kernel_cons(Intersect_point_3_for_polyhedral_envelope,
+                 intersect_point_3_for_polyhedral_envelope_object)
 CGAL_Kernel_pred(Is_degenerate_2,
                  is_degenerate_2_object)
 CGAL_Kernel_pred_RT(Is_degenerate_3,

@@ -38,7 +38,8 @@ public:
     : Base(aspect_bound), sizing_field(sf), traits(traits)
   {}
 
-  Lipschitz_sizing_field_criteria_2& operator =(const Lipschitz_sizing_field_criteria_2<CDT,SF>& c)
+  Lipschitz_sizing_field_criteria_2(const Lipschitz_sizing_field_criteria_2<CDT,SF>&) = default;
+  Lipschitz_sizing_field_criteria_2& operator=(const Lipschitz_sizing_field_criteria_2<CDT,SF>& c)
   {
     if(&c == this) return *this;
     this->sizing_field = c.sizing_field;

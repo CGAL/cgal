@@ -228,6 +228,7 @@ struct Test {
     Pl pl3(0,0,1,0);
 
     // Generic intersection.
+    assert(CGAL::do_intersect(pl1, pl2, pl3));
     CGAL::Object o = CGAL::intersection(pl1, pl2, pl3);
     P p;
     assert(assign(p, o));
@@ -236,9 +237,11 @@ struct Test {
     // Empty intersection.
     Pl pl4(1,0,0,1); // pl4 is // to pl1.
 
+    assert(!CGAL::do_intersect(pl1, pl2, pl4));
     CGAL::Object o2 = CGAL::intersection(pl1, pl2, pl4);
     assert(o2.is_empty());
 
+    assert(!CGAL::do_intersect(pl1, pl4, pl2));
     CGAL::Object o3 = CGAL::intersection(pl1, pl4, pl2);
     assert(o3.is_empty());
 
@@ -246,12 +249,14 @@ struct Test {
     Pl pl5(1,1,0,0); // pl1, pl2, pl5 intersect in the line l.
     L l;
 
+    assert(CGAL::do_intersect(pl1, pl2, pl5));
     CGAL::Object o4 = CGAL::intersection(pl1, pl2, pl5);
     assert(assign(l, o4));
 
     assert(l == L(P(0,0,0), P(0,0,1)));
 
     // Intersection in a plane.
+    assert(CGAL::do_intersect(pl1, pl1, pl1));
     CGAL::Object o5 = CGAL::intersection(pl1, pl1, pl1);
     Pl pl;
     assert(assign(pl, o5));
@@ -667,7 +672,8 @@ struct Test {
                           P(0,1,0));
 
       check_intersection (tet, Pl(P(0,0.5,0), P(1,0.5,-5), P(0.5,0.5,0.5)),
-                          Tr(P(0.5,0.5,0), P(0,0.5,0), P(0,0.5,0.5)));
+                          Tr(P(0, 0.5, 0), P(0.5,0.5,0),  P(0,0.5,0.5)));
+
       Pl pl(P(0,0.9,0), P(0.9,0,0), P(0.9,0.01,0.06));
 
       typedef typename CGAL::Intersection_traits<K,
@@ -902,7 +908,7 @@ struct Test {
 
       //edge
       check_intersection (cub, Pl(P(1,1,1), P(1,2,1), P(1.5,0,0)),
-                          S(P(1,2,1), P(1,1,1)));
+                          S(P(1,1,1), P(1,2,1)));
 
 
       //face
@@ -919,6 +925,7 @@ struct Test {
         assert(p.x() == 1);
       }
       res = CGAL::intersection(cub, Pl(P(1,1,1), P(1,2,1), P(2,2,2)));
+
       poly = boost::get<std::vector<P> >(&*res);
       assert(poly != nullptr);
       assert(poly->size() == 4);
@@ -935,8 +942,8 @@ struct Test {
       check_intersection (cub, Pl(P(2, 1.66, 2),
                                   P(1.66,2,2),
                                   P(2,2,1.66)),
-                          Tr(P(2, 2, 1.66),
-                             P(1.66,2,2),
+                          Tr(P(1.66,2,2),
+                             P(2, 2, 1.66),
                              P(2,1.66,2)));
 
       //other edge
@@ -1095,7 +1102,7 @@ struct Test {
 
       //edge
       check_intersection (cub, Pl(P(1,1,1), P(1,2,1), P(1.5,0,0)),
-                          S(P(1,2,1), P(1,1,1)));
+                          S(P(1,1,1), P(1,2,1)));
       //face
       typedef typename CGAL::Intersection_traits<K,
           typename K::Plane_3,
@@ -1121,8 +1128,8 @@ struct Test {
       check_intersection (cub, Pl(P(2, 1.66, 2),
                                   P(1.66,2,2),
                                   P(2,2,1.66)),
-                          Tr(P(2, 2, 1.66),
-                             P(1.66,2,2),
+                          Tr(P(1.66,2,2),
+                             P(2, 2, 1.66),
                              P(2,1.66,2)));
 
       //random

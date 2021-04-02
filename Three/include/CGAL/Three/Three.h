@@ -29,8 +29,15 @@
 #  define THREE_EXPORT Q_DECL_IMPORT
 #endif
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+#define CGAL_QT_SKIP_EMPTY_PARTS QString::SkipEmptyParts
+#else
+#define CGAL_QT_SKIP_EMPTY_PARTS ::Qt::SkipEmptyParts
+#endif
+
 namespace CGAL{
 namespace Three{
+//define enum depending on Qt version
 class Polyhedron_demo_plugin_interface;
 class THREE_EXPORT Three{
 public:
@@ -58,7 +65,7 @@ public:
    */
   void addDockWidget(QDockWidget* dock_widget);
 
-  /*! \brief Gets an item of the templated type.
+  /*! \brief gets an item of the templated type.
    * \returns the first `SceneType` item found in the scene's list of currently selected
    * items;
    * \returns nullptr if there is no `SceneType` in the list.

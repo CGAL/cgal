@@ -32,8 +32,9 @@
 #include <CGAL/QP_solver/QP_full_exact_pricing.h>
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
-#include <boost/functional.hpp>
 #include <CGAL/NT_converter.h>
+
+#include <functional>
 
 // here is how it works. We have d+2 variables:
 // R (big radius), r (small radius), c (center). The problem is
@@ -258,9 +259,6 @@ private:
   typedef  QP_access_by_index
   <typename std::vector<Point>::const_iterator, int> Point_by_index;
 
-  typedef  boost::binder2nd< std::divides<int> >
-  Divide;
-
   typedef  std::vector<int>           Index_vector;
 
   typedef  std::vector<NT>            NT_vector;
@@ -272,7 +270,7 @@ public:
 
   typedef  CGAL::Join_input_iterator_1<
     Basic_variable_index_iterator,
-    CGAL::Unary_compose_1<Point_by_index,Divide> >
+    std::function<Point(int)> >
   Support_point_iterator;
 
 
@@ -331,9 +329,7 @@ public:
                                     "support_points_begin: not enough points");
     return Support_point_iterator(
                                   solver->basic_original_variable_indices_begin(),
-                                  CGAL::compose1_1(
-                                                   Point_by_index( points.begin()),
-                                                   boost::bind2nd( std::divides<int>(), 2)));
+                                  [this](int i){ return Point_by_index(this->points.begin())(i/2); });
   }
 
   Support_point_iterator
@@ -342,9 +338,7 @@ public:
                                     "support_points_begin: not enough points");
     return Support_point_iterator(
                                   solver->basic_original_variable_indices_end(),
-                                  CGAL::compose1_1(
-                                                   Point_by_index( points.begin()),
-                                                   boost::bind2nd( std::divides<int>(), 2)));
+                                  [this](int i){ return Point_by_index(this->points.begin())(i/2); });
   }
 
   int  number_of_inner_support_points() const { return static_cast<int>(inner_indices.size());}
@@ -592,9 +586,7 @@ private:
   bool
   check_dimension( std::size_t  offset = 0)
   { return ( std::find_if( points.begin()+offset, points.end(),
-                           CGAL::compose1_1( boost::bind2nd(
-                                                          std::not_equal_to<int>(), d),
-                                             tco.access_dimension_d_object()))
+                          [this](const Point& p){ return this->d != this->tco.access_dimension_d_object()(p); })
              == points.end()); }
 
   // compute smallest enclosing annulus

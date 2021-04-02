@@ -63,9 +63,10 @@ int main(int argc, char*argv[])
   ///////////////////////////////////////////////////////////////////
   //! [Outlier removal]
 
-  CGAL::remove_outliers (points,
-                         24, // Number of neighbors considered for evaluation
-                         points.parameters().threshold_percent (5.0)); // Percentage of points to remove
+  CGAL::remove_outliers<CGAL::Sequential_tag>
+    (points,
+     24, // Number of neighbors considered for evaluation
+     points.parameters().threshold_percent (5.0)); // Percentage of points to remove
 
   std::cout << points.number_of_removed_points()
             << " point(s) are outliers." << std::endl;
@@ -140,7 +141,7 @@ int main(int argc, char*argv[])
 
     std::ofstream f ("out.ply", std::ios_base::binary);
     CGAL::set_binary_mode (f);
-    CGAL::write_ply (f, output_mesh);
+    CGAL::write_PLY(f, output_mesh);
     f.close ();
 
     //! [Output poisson]

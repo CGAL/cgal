@@ -26,7 +26,6 @@
 #include <boost/optional.hpp>
 
 #include <CGAL/Arr_tags.h>
-#include <CGAL/Object.h>
 
 namespace CGAL {
 
@@ -134,6 +133,8 @@ public:
   class Ex_x_monotone_curve_2 {
   public:
     typedef Base_x_monotone_curve_2             Base;
+    typedef Halfedge_handle_red HH_red;
+    typedef Halfedge_handle_blue HH_blue;
 
   protected:
     Base m_base_xcv;                              // The base curve.
@@ -345,24 +346,31 @@ public:
   class Intersect_2 {
   protected:
     //! The base traits.
-    const Arr_overlay_traits_2* m_traits;
+    const Arr_overlay_traits_2& m_traits;
 
     /*! Constructor.
      * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Intersect_2(const Arr_overlay_traits_2* traits) : m_traits(traits) {}
+    Intersect_2(const Arr_overlay_traits_2& traits) : m_traits(traits) {}
 
     //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Gt2, Ar2, Ab2>;
 
   public:
-    template<class OutputIterator>
+    template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& xcv1,
                               const X_monotone_curve_2& xcv2,
                               OutputIterator oi)
     {
+      typedef std::pair<Point_2, Multiplicity>          Intersection_point;
+      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+                                                        Intersection_result;
+      typedef std::pair<Base_point_2, Multiplicity>     Intersection_base_point;
+      typedef boost::variant<Intersection_base_point, Base_x_monotone_curve_2>
+                                                        Intersection_base_result;
+
       // In case the curves originate from the same arrangement, they are
       // obviously interior-disjoint.
       if (xcv1.color() == xcv2.color()) return oi;
@@ -396,19 +404,16 @@ public:
       // Note that we do not bother with curves whose left ends are open,
       // since such curved did not intersect before.
 
-      const std::pair<Base_point_2, unsigned int>* base_ipt;
-      const Base_x_monotone_curve_2* overlap_xcv;
       bool send_xcv1_first = true;
-      OutputIterator oi_end;
 
-      Parameter_space_in_x_2 ps_x_op = m_traits->parameter_space_in_x_2_object();
-      Parameter_space_in_y_2 ps_y_op = m_traits->parameter_space_in_y_2_object();
-      const Arr_parameter_space bx1 = ps_x_op(xcv1, ARR_MIN_END);
-      const Arr_parameter_space by1 = ps_y_op(xcv1, ARR_MIN_END);
-      const Arr_parameter_space bx2 = ps_x_op(xcv2, ARR_MIN_END);
-      const Arr_parameter_space by2 = ps_y_op(xcv2, ARR_MIN_END);
+      auto ps_x_op = m_traits.parameter_space_in_x_2_object();
+      auto ps_y_op = m_traits.parameter_space_in_y_2_object();
+      Arr_parameter_space bx1 = ps_x_op(xcv1, ARR_MIN_END);
+      Arr_parameter_space by1 = ps_y_op(xcv1, ARR_MIN_END);
+      Arr_parameter_space bx2 = ps_x_op(xcv2, ARR_MIN_END);
+      Arr_parameter_space by2 = ps_y_op(xcv2, ARR_MIN_END);
 
-      const Gt2* m_base_tr = m_traits->base_traits();
+      const Gt2* m_base_tr = m_traits.base_traits();
 
       if ((bx1 == ARR_INTERIOR) && (by1 == ARR_INTERIOR) &&
           (bx2 == ARR_INTERIOR) && (by2 == ARR_INTERIOR))
@@ -419,15 +424,17 @@ public:
             m_base_tr->construct_min_vertex_2_object()(xcv2.base())) == LARGER);
       }
 
-      oi_end = (send_xcv1_first) ?
-        m_base_tr->intersect_2_object()(xcv1.base(), xcv2.base(), oi) :
-        m_base_tr->intersect_2_object()(xcv2.base(), xcv1.base(), oi);
+      auto intersector = m_base_tr->intersect_2_object();
+      std::vector<Intersection_base_result> xections;
+      (send_xcv1_first) ?
+        intersector(xcv1.base(), xcv2.base(), std::back_inserter(xections)) :
+        intersector(xcv2.base(), xcv1.base(), std::back_inserter(xections));
 
       // Convert objects that are associated with Base_x_monotone_curve_2 to
       // the exteneded X_monotone_curve_2.
-      while (oi != oi_end) {
-        base_ipt = object_cast<std::pair<Base_point_2, unsigned int> >(&(*oi));
-
+      for (const auto& xection : xections) {
+        const Intersection_base_point* base_ipt =
+          boost::get<Intersection_base_point>(&xection);
         if (base_ipt != nullptr) {
           // We have a red-blue intersection point, so we attach the
           // intersecting red and blue halfedges to it.
@@ -451,42 +458,44 @@ public:
 
           // Create the extended point and add the multiplicity.
           Point_2 ex_point(base_ipt->first, red_cell, blue_cell);
-          *oi++ = CGAL::make_object(std::make_pair(ex_point, base_ipt->second));
+          *oi++ =
+            Intersection_result(std::make_pair(ex_point, base_ipt->second));
+          continue;
+        }
+
+        const Base_x_monotone_curve_2* overlap_xcv =
+          boost::get<Base_x_monotone_curve_2>(&xection);
+        CGAL_assertion(overlap_xcv != nullptr);
+
+        // We have a red-blue overlap, so we mark the curve accordingly.
+        Halfedge_handle_red red_he;
+        Halfedge_handle_blue blue_he;
+
+        if (xcv1.color() == RED) {
+          red_he = xcv1.red_halfedge_handle();
+
+          // Overlap can occur only between curves from a different color.
+          CGAL_assertion(xcv2.color() == BLUE);
+          blue_he = xcv2.blue_halfedge_handle();
         }
         else {
-          overlap_xcv = object_cast<Base_x_monotone_curve_2>(&(*oi));
-          CGAL_assertion(overlap_xcv != nullptr);
+          CGAL_assertion((xcv1.color() == BLUE) && (xcv2.color() == RED));
 
-          // We have a red-blue overlap, so we mark the curve accordingly.
-          Halfedge_handle_red        red_he;
-          Halfedge_handle_blue       blue_he;
-
-          if (xcv1.color() == RED) {
-            red_he = xcv1.red_halfedge_handle();
-
-            // Overlap can occur only between curves from a different color.
-            CGAL_assertion(xcv2.color() == BLUE);
-            blue_he = xcv2.blue_halfedge_handle();
-          }
-          else {
-            CGAL_assertion((xcv1.color() == BLUE) && (xcv2.color() == RED));
-
-            red_he = xcv2.red_halfedge_handle();
-            blue_he = xcv1.blue_halfedge_handle();
-          }
-
-          *oi++ = CGAL::make_object(X_monotone_curve_2(*overlap_xcv,
-                                                       red_he, blue_he));
+          red_he = xcv2.red_halfedge_handle();
+          blue_he = xcv1.blue_halfedge_handle();
         }
+
+        X_monotone_curve_2 cv(*overlap_xcv, red_he, blue_he);
+        *oi++ = Intersection_result(cv);
       }
 
       // Return the past-the-end iterator.
-      return oi_end;
+      return oi;
     }
   };
 
   /*! Obtain an Intersect_2 functor object. */
-  Intersect_2 intersect_2_object() const { return Intersect_2(this); }
+  Intersect_2 intersect_2_object() const { return Intersect_2(*this); }
 
   /*! A functor that splits an arc at a point. */
   class Split_2 {

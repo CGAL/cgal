@@ -273,8 +273,10 @@ private:
         const Point m = midpoint(a, b);
 
         typename Geom_traits::Vector_2 v = vector(a,m);
-        v = scaled_vector(v,CGAL_NTS sqrt(c.minimum_squared_length /
-                                      squared_distance(a,b)));
+        v = scaled_vector(
+            v, CGAL_NTS sqrt(CGAL_NTS to_double(c.minimum_squared_length /
+                                                squared_distance(a, b))));
+
 
         Point i = translate(a,v), i2(i);
 

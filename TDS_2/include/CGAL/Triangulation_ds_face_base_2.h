@@ -79,7 +79,7 @@ public:
 
    // For use by Compact_container.
   void * for_compact_container() const {return N[0].for_compact_container(); }
-  void * & for_compact_container()     { return N[0].for_compact_container();}
+  void for_compact_container(void* p) { N[0].for_compact_container(p);}
 
 
   static int ccw(int i) {return Triangulation_cw_ccw_2::ccw(i);}
@@ -270,9 +270,9 @@ inline void
 Triangulation_ds_face_base_2<TDS> ::
 set_neighbors(Face_handle n0,Face_handle n1, Face_handle n2)
 {
-  CGAL_triangulation_precondition( this != &*n0 );
-  CGAL_triangulation_precondition( this != &*n1 );
-  CGAL_triangulation_precondition( this != &*n2 );
+  CGAL_triangulation_precondition( this != n0.operator->() );
+  CGAL_triangulation_precondition( this != n1.operator->() );
+  CGAL_triangulation_precondition( this != n2.operator->() );
   N[0] = n0;
   N[1] = n1;
   N[2] = n2;

@@ -119,7 +119,7 @@ public:
   // ACCESS TO INFO
   //---------------
   inline const Info& info() const {
-    CGAL_precondition( info_has_been_set() );
+    CGAL_assume(info_has_been_set());
     return info_;
   }
 

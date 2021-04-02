@@ -14,6 +14,7 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#include <CGAL/Search_traits_2.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Fuzzy_sphere.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
@@ -21,7 +22,7 @@
 
 #include <CGAL/iterator.h>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 namespace CGAL {
 namespace Point_set_processing_3 {
@@ -39,7 +40,12 @@ public:
   typedef PointMap Point_map;
 
   typedef typename Kernel::FT FT;
+  typedef typename boost::property_traits<PointMap>::value_type Point;
+
+  typedef typename Kernel::Point_2 Point_2;
   typedef typename Kernel::Point_3 Point_3;
+
+  typedef std::is_same<Point, Point_2> Is_2d;
 
   typedef typename Range_iterator_type<PointRangeRef>::type input_iterator;
   typedef typename input_iterator::value_type value_type;
@@ -64,7 +70,10 @@ public:
     }
   };
 
-  typedef CGAL::Search_traits_3<Kernel> Tree_traits_base;
+  typedef typename std::conditional<Is_2d::value,
+                                    CGAL::Search_traits_2<Kernel>,
+                                    CGAL::Search_traits_3<Kernel> >::type Tree_traits_base;
+
   typedef CGAL::Search_traits_adapter<input_iterator, Deref_point_map, Tree_traits_base> Tree_traits;
   typedef CGAL::Sliding_midpoint<Tree_traits> Splitter;
   typedef CGAL::Distance_adapter<input_iterator, Deref_point_map, CGAL::Euclidean_distance<Tree_traits_base> > Distance;
@@ -102,8 +111,8 @@ public:
   PointMap point_map() const { return m_point_map; }
 
   template <typename OutputIterator>
-  void get_iterators (const Point_3& query, unsigned int k, FT neighbor_radius,
-                      OutputIterator output) const
+  void get_iterators (const Point& query, unsigned int k, FT neighbor_radius,
+                      OutputIterator output, unsigned int fallback_k_if_sphere_empty = 3) const
   {
     if (neighbor_radius != FT(0))
     {
@@ -133,11 +142,10 @@ public:
       catch (const Maximum_points_reached_exception&)
       { }
 
-      // Fallback, if less than 3 points are return, search for the 3
+      // Fallback, if not enough  points are return, search for the knn
       // first points
-      if (nb < 3)
-        k = 3;
-      // Else, no need to search for K nearest neighbors
+      if (nb < fallback_k_if_sphere_empty)
+        k = fallback_k_if_sphere_empty;
       else
         k = 0;
     }
@@ -163,15 +171,15 @@ public:
   }
 
   template <typename OutputIterator>
-  void get_points (const Point_3& query, unsigned int k, FT neighbor_radius,
-                   OutputIterator output) const
+  void get_points (const Point& query, unsigned int k, FT neighbor_radius,
+                   OutputIterator output, unsigned int fallback_k_if_sphere_empty = 3) const
   {
     return get_iterators(query, k, neighbor_radius,
                          boost::make_function_output_iterator
                          ([&](const input_iterator& it)
                           {
                             *(output ++) = get (m_point_map, *it);
-                          }));
+                          }), fallback_k_if_sphere_empty);
   }
 };
 

@@ -21,7 +21,6 @@
 
 #include <CGAL/Qt/manipulatedFrame.h>
 #include <CGAL/Qt/camera.h>
-#include <CGAL/Qt/domUtils.h>
 #include <CGAL/Qt/qglviewer.h>
 
 #include <cstdlib>
@@ -43,7 +42,6 @@ namespace qglviewer{
 CGAL_INLINE_FUNCTION
 ManipulatedFrame::ManipulatedFrame()
     : action_(NO_MOUSE_ACTION), keepsGrabbingMouse_(false) {
-  // #CONNECTION# initFromDOMElement and accessor docs
   setRotationSensitivity(1.0);
   setTranslationSensitivity(1.0);
   setSpinningSensitivity(0.3);
@@ -101,71 +99,7 @@ void ManipulatedFrame::checkIfGrabsMouse(int x, int y,
                                         (fabs(y - proj.y) < thresold)));
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//          S t a t e   s a v i n g   a n d   r e s t o r i n g               //
-////////////////////////////////////////////////////////////////////////////////
 
-/*! Returns an XML \c QDomElement that represents the ManipulatedFrame.
-
- Adds to the Frame::domElement() the ManipulatedFrame specific informations in a
- \c ManipulatedParameters child QDomElement.
-
- \p name is the name of the QDomElement tag. \p doc is the \c QDomDocument
- factory used to create QDomElement.
-
- Use initFromDOMElement() to restore the ManipulatedFrame state from the
- resulting \c QDomElement.
-
- See Vec::domElement() for a complete example. See also
- Quaternion::domElement(), Camera::domElement()... */
-CGAL_INLINE_FUNCTION
-QDomElement ManipulatedFrame::domElement(const QString &name,
-                                         QDomDocument &document) const {
-  QDomElement e = Frame::domElement(name, document);
-  QDomElement mp = document.createElement("ManipulatedParameters");
-  mp.setAttribute("rotSens", QString::number(rotationSensitivity()));
-  mp.setAttribute("transSens", QString::number(translationSensitivity()));
-  mp.setAttribute("spinSens", QString::number(spinningSensitivity()));
-  mp.setAttribute("wheelSens", QString::number(wheelSensitivity()));
-  mp.setAttribute("zoomSens", QString::number(zoomSensitivity()));
-  e.appendChild(mp);
-  return e;
-}
-
-/*! Restores the ManipulatedFrame state from a \c QDomElement created by
-domElement().
-
-Fields that are not described in \p element are set to their default values (see
-ManipulatedFrame()).
-
-First calls Frame::initFromDOMElement() and then initializes ManipulatedFrame
-specific parameters. Note that constraint() and referenceFrame() are not
-restored and are left unchanged.
-
-
-See Vec::initFromDOMElement() for a complete code example. */
-CGAL_INLINE_FUNCTION
-void ManipulatedFrame::initFromDOMElement(const QDomElement &element) {
-  // Not called since it would set constraint() and referenceFrame() to nullptr.
-  // *this = ManipulatedFrame();
-  Frame::initFromDOMElement(element);
-
-  stopSpinning();
-
-  QDomElement child = element.firstChild().toElement();
-  while (!child.isNull()) {
-    if (child.tagName() == "ManipulatedParameters") {
-      // #CONNECTION# constructor default values and accessor docs
-      setRotationSensitivity(DomUtils::qrealFromDom(child, "rotSens", 1.0));
-      setTranslationSensitivity(
-          DomUtils::qrealFromDom(child, "transSens", 1.0));
-      setSpinningSensitivity(DomUtils::qrealFromDom(child, "spinSens", 0.3));
-      setWheelSensitivity(DomUtils::qrealFromDom(child, "wheelSens", 1.0));
-      setZoomSensitivity(DomUtils::qrealFromDom(child, "zoomSens", 1.0));
-    }
-    child = child.nextSibling().toElement();
-  }
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 //                 M o u s e    h a n d l i n g                               //
@@ -295,7 +229,7 @@ qreal ManipulatedFrame::deltaWithPrevPos(QMouseEvent *const event,
 CGAL_INLINE_FUNCTION
 qreal ManipulatedFrame::wheelDelta(const QWheelEvent *event) const {
   static const qreal WHEEL_SENSITIVITY_COEF = 8E-4;
-  return event->delta() * wheelSensitivity() * WHEEL_SENSITIVITY_COEF;
+  return event->angleDelta().y() * wheelSensitivity() * WHEEL_SENSITIVITY_COEF;
 }
 
 CGAL_INLINE_FUNCTION
@@ -458,7 +392,7 @@ void ManipulatedFrame::mouseMoveEvent(QMouseEvent *const event,
     // These MouseAction values make no sense for a manipulatedFrame
     break;
 
-  case NO_MOUSE_ACTION:
+  default:
     // Possible when the ManipulatedFrame is a MouseGrabber. This method is then
     // called without startAction because of mouseTracking.
     break;

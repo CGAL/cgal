@@ -59,12 +59,12 @@ Deprecated components.
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Sven Oesau, Yannick Verdie, Clément Jamin, Pierre Alliez, Florent Lafarge, Simon Giraudot, Thien Hoang, and Dmitry Anisimov}
-\cgalPkgDesc{This CGAL package implements the Efficient RANSAC (RANdom SAmple Consensus) approach
+\cgalPkgDesc{This package implements the Efficient RANSAC (RANdom SAmple Consensus) approach
 for detecting arbitrary shapes in an unorganized point set with unoriented normals
 and the Region Growing approach for detecting shapes in a set of arbitrary items.
 With the Efficient RANSAC approach, five canonical shapes can be detected: planes, spheres,
 cylinders, cones, and tori. Additional shapes can be detected, given a custom shape class by the user.
-For the Region Growing approach, CGAL provides three particular shape detection components:
+For the Region Growing approach, this package provides three particular shape detection components:
 detecting lines in a 2D point set, detecting planes in a 3D point set, and detecting planes
 on a polygon mesh.}
 \cgalPkgManuals{Chapter_Shape_Detection, PkgShapeDetectionRef}
@@ -74,7 +74,7 @@ on a polygon mesh.}
 \cgalPkgSince{4.7}
 \cgalPkgBib{cgal:ovja-pssd}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Polyhedron demo, polyhedron_3.zip}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd

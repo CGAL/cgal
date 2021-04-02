@@ -100,8 +100,7 @@ public:
       connect(actionMesh_3_surface, SIGNAL(triggered()),
               this, SLOT(mesh_3_surface()));
     }
-
-    actionSplitPolylines = new QAction("Split polylines in a graph", mw);
+    actionSplitPolylines = new QAction("Build Features Graph for Mesh_3", mw);
     actionSplitPolylines->setProperty("subMenuName",
                                       "Tetrahedral Mesh Generation");
     connect(actionSplitPolylines, &QAction::triggered,
@@ -214,6 +213,7 @@ private:
     Scene_polylines_item* polylines_item;
   };
   struct Image_mesh_items {
+    Image_mesh_items(gsl::not_null<Scene_image_item*> ptr) : image_item(ptr) {}
     gsl::not_null<Scene_image_item*> image_item;
     Scene_polylines_item* polylines_item = nullptr;
   };

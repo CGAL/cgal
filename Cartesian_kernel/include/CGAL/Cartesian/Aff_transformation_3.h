@@ -169,6 +169,9 @@ public:
   Aff_transformation_3 operator*(const Aff_transformationC3 &t) const
   { return (*this->Ptr()) * (*t.Ptr()); }
 
+  std::ostream &
+  print(std::ostream &os) const;
+
   bool operator==(const Aff_transformationC3 &t)const
   {
     for(int i=0; i<3; ++i)
@@ -188,13 +191,21 @@ protected:
 };
 
 
+template < class R >
+std::ostream&
+Aff_transformationC3<R>::print(std::ostream &os) const
+{
+  this->Ptr()->print(os);
+  return os;
+}
+
 #ifndef CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATIONC3
 template < class R >
-std::ostream &operator<<(std::ostream &os,
-                         const Aff_transformationC3<R> &t)
+std::ostream&
+operator<<(std::ostream &os, const Aff_transformationC3<R> &t)
 {
-    t.print(os);
-    return os;
+  t.print(os);
+  return os;
 }
 #endif // CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATIONC3
 

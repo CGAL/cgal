@@ -3,12 +3,14 @@
 set -e
 setopt -o glob
 setopt -o extended_glob
+setopt -o nullglob
 
 if [ -z "$1" ]; then
   printf "Usage:\n  prepare_release <internal_release_public_dir>\n"
   exit 1
 fi
 
+error_code=0
 
 RELEASE_CANDIDATES_DIR=/srv/CGAL/www/Members/release-candidates
 MANUAL_TESTS_DIR=/srv/CGAL/www/Members/Manual_doxygen_test
@@ -25,7 +27,7 @@ PUBLIC_RELEASE_NAME=${PUBLIC_RELEASE_NAME/-library.zip/}
 PUBLIC_RELEASE_NAME=${PUBLIC_RELEASE_NAME/.zip/}
 DEST_DIR="${RELEASE_CANDIDATES_DIR}/$PUBLIC_RELEASE_NAME"
 
-if [ -z "$PUBLIC_RELEASE_NAME" ]; then 
+if [ -z "$PUBLIC_RELEASE_NAME" ]; then
     echo The first argument must be a public release directory, like CGAL-3.7-I-167-public.
     exit 1
 fi
@@ -40,30 +42,36 @@ printf "Copy documentation to doc_html/ and doc_html_online/...\n"
 [ -d "/srv/CGAL/www/${PUBLIC_RELEASE_NAME#CGAL-}/Manual" ] || mkdir -p "/srv/CGAL/www/${PUBLIC_RELEASE_NAME#CGAL-}/Manual"
 
 cp "$PUBLIC_RELEASE_DIR"/*(.) "${RELEASE_CANDIDATES_DIR}/$PUBLIC_RELEASE_NAME"
-rsync -a "$MANUAL_TESTS_DIR/$INTERNAL_RELEASE"/output2/* "$DEST_DIR/doc_html/"
-pushd "$DEST_DIR/doc_html/Manual/search"
-  for i in g n c s i; do sed -i "s/..\/BGL$i/..\/BGL\/$i/g" *; done
-popd
-rsync -a "$DEST_DIR/doc_html/" "$DEST_DIR/doc_html_online/"
+files=("$MANUAL_TESTS_DIR/$INTERNAL_RELEASE"/output2/*)
+if ((${#files[@]} == 0)); then
+    printf "ERROR: documentation files are missing\n"
+    error_code=1
+else
+    rsync -a --exclude xml "$MANUAL_TESTS_DIR/$INTERNAL_RELEASE"/output2/* "$DEST_DIR/doc_html/"
+    pushd "$DEST_DIR/doc_html/Manual/search"
+    for i in g n c s i; do sed -i "s/..\/BGL$i/..\/BGL\/$i/g" *; done
+    popd
+    rsync -a "$DEST_DIR/doc_html/" "$DEST_DIR/doc_html_online/"
 
-printf "Modify \"../../MathJax\" to MathJax CDN in doc_html...\n"
-pushd "$DEST_DIR/doc_html"
-find -name '*.html' -exec sed -i -e 's|../../MathJax|https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2|g' {} +
-popd
+    printf "Modify \"../../MathJax\" to MathJax CDN in doc_html...\n"
+    pushd "$DEST_DIR/doc_html"
+    find -name '*.html' -exec sed -i -e 's|../../MathJax|https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2|g' {} +
+    popd
 
-printf "Create doc_html tarball...\n"
-tar cf "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar" -C "$DEST_DIR" doc_html
+    printf "Create doc_html tarball...\n"
+    tar cf "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar" -C "$DEST_DIR" doc_html
 
-printf "Create doc_html zip...\n"
-pushd "$DEST_DIR"
-zip -q -r "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.zip" doc_html
-popd
+    printf "Create doc_html zip...\n"
+    pushd "$DEST_DIR"
+    zip -q -r "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.zip" doc_html
+    popd
 
-printf "xz doc_html tarball...\n"
-xz --best < "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar" > "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar.xz"
+    printf "xz doc_html tarball...\n"
+    xz --best < "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar" > "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar.xz"
 
-printf "gzip doc_html tarball...\n"
-gzip -f --best "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar"
+    printf "gzip doc_html tarball...\n"
+    gzip -f --best "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar"
+fi
 
 printf "Create the internal_release file\n"
 printf "%s\n" "${INTERNAL_RELEASE}" > "$DEST_DIR/internal_release"
@@ -71,6 +79,10 @@ printf "%s\n" "${INTERNAL_RELEASE}" > "$DEST_DIR/internal_release"
 printf "Create cgal_manual.zip for the Windows installer..."
 pushd "$DEST_DIR/doc_html"
 zip -q -r ../cgal_manual.zip *
+popd
+
+pushd /srv/CGAL/www/precompiled_libs/auxiliary/x64/
+cp CGAL-5.2-win64-auxiliary-libraries-gmp-mpfr.zip "$DEST_DIR/${PUBLIC_RELEASE_NAME}-win64-auxiliary-libraries-gmp-mpfr.zip"
 popd
 
 pushd "$DEST_DIR"
@@ -92,3 +104,4 @@ printf "DONE!\n"
 pushd "$DEST_DIR"
 ls -l
 popd
+exit $error_code

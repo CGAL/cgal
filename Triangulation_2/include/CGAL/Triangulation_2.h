@@ -37,7 +37,6 @@
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 
 #include <CGAL/double.h>
-#include <CGAL/internal/boost/function_property_map.hpp>
 
 #include <boost/utility/result_of.hpp>
 #include <boost/random/linear_congruential.hpp>
@@ -243,6 +242,7 @@ public:
   // CONSTRUCTORS
   Triangulation_2(const Geom_traits& geom_traits=Geom_traits());
   Triangulation_2(const Triangulation_2<Gt,Tds> &tr);
+  Triangulation_2(Triangulation_2&&) = default;
 
   template <class InputIterator>
   Triangulation_2(InputIterator first, InputIterator last,
@@ -255,6 +255,10 @@ public:
 
   //Assignement
   Triangulation_2 &operator=(const Triangulation_2 &tr);
+  Triangulation_2 &operator=(Triangulation_2 &&) = default;
+
+  // Destructor
+  ~Triangulation_2() = default;
 
   //Helping
   void copy_triangulation(const Triangulation_2 &tr);
@@ -629,7 +633,7 @@ std::ptrdiff_t insert(InputIterator first, InputIterator last,
          typename std::iterator_traits<InputIterator>::value_type,
          Point
          >
-         >::type* = NULL)
+         >::type* = nullptr)
 #else
   template < class InputIterator >
   std::ptrdiff_t
@@ -1017,7 +1021,7 @@ includes_edge(Vertex_handle va, Vertex_handle vb,
   Orientation orient;
   int indv;
   Edge_circulator ec = incident_edges(va), done(ec);
-  if (ec != 0) {
+  if (ec != nullptr) {
     do {
       //find the index of the other vertex of *ec
       indv = 3 - ((*ec).first)->index(va) - (*ec).second ;
@@ -2598,7 +2602,7 @@ march_locate_2D_LFC(Face_handle start,
   }else {
     lfc = Line_face_circulator(start->vertex(0), this, t);
   }
-  if(lfc==0 || lfc.collinear_outside()){
+  if(lfc==nullptr || lfc.collinear_outside()){
     // point t lies outside or on the convex hull
     // we walk on the convex hull to find it out
     Face_circulator fc = incident_faces(infinite_vertex());
@@ -2972,9 +2976,9 @@ exact_locate(const Point& p,
              Face_handle start) const
 #endif // no CGAL_NO_STRUCTURAL_FILTERING
 {
+  li = 4; //general init to avoid warnings.
+  lt = OUTSIDE_AFFINE_HULL; //same
   if (dimension() < 0) {
-    lt = OUTSIDE_AFFINE_HULL;
-    li = 4; // li should not be used in this case
     return Face_handle();
   }
   if( dimension() == 0) {
@@ -2983,10 +2987,6 @@ exact_locate(const Point& p,
     if (xy_equal(p,finite_vertex()->face()->vertex(0)->point())){
       lt = VERTEX ;
     }
-    else{
-      lt = OUTSIDE_AFFINE_HULL;
-    }
-    li = 4; // li should not be used in this case
     return Face_handle();
   }
   if(dimension() == 1){

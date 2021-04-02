@@ -20,23 +20,49 @@
 
 namespace CGAL {
 
-template < typename Base_, typename AK_, typename EK_ >
-struct Cartesian_filter_K : public Base_,
-  private Store_kernel<AK_>, private Store_kernel2<EK_>
+  // It would be nicer to write the table in the other direction: Orientation_of_points_tag is good up to 6, Side_of_oriented_sphere_tag up to 5, etc.
+template<class> struct Functors_without_division { typedef typeset<> type; };
+template<> struct Functors_without_division<Dimension_tag<1> > {
+  typedef typeset<Orientation_of_points_tag, Side_of_oriented_sphere_tag> type;
+};
+template<> struct Functors_without_division<Dimension_tag<2> > {
+  typedef typeset<Orientation_of_points_tag, Side_of_oriented_sphere_tag> type;
+};
+template<> struct Functors_without_division<Dimension_tag<3> > {
+  typedef typeset<Orientation_of_points_tag, Side_of_oriented_sphere_tag> type;
+};
+template<> struct Functors_without_division<Dimension_tag<4> > {
+  typedef typeset<Orientation_of_points_tag, Side_of_oriented_sphere_tag> type;
+};
+template<> struct Functors_without_division<Dimension_tag<5> > {
+  typedef typeset<Orientation_of_points_tag, Side_of_oriented_sphere_tag> type;
+};
+template<> struct Functors_without_division<Dimension_tag<6> > {
+  typedef typeset<Orientation_of_points_tag, Side_of_oriented_sphere_tag> type;
+};
+
+// FIXME:
+// - Uses_no_arithmetic predicates should not be filtered
+// - Functors_without_division should be defined near/in the actual functors
+
+template < typename Base_, typename AK_, typename EK_, typename Pred_list = typeset_all >
+struct Cartesian_filter_K : public Base_
 {
+    CGAL_NO_UNIQUE_ADDRESS Store_kernel<AK_> sak;
+    CGAL_NO_UNIQUE_ADDRESS Store_kernel<EK_> sek;
     constexpr Cartesian_filter_K(){}
     constexpr Cartesian_filter_K(int d):Base_(d){}
     //FIXME: or do we want an instance of AK and EK belonging to this kernel,
     //instead of a reference to external ones?
-    constexpr Cartesian_filter_K(AK_ const&a,EK_ const&b):Base_(),Store_kernel<AK_>(a),Store_kernel2<EK_>(b){}
-    constexpr Cartesian_filter_K(int d,AK_ const&a,EK_ const&b):Base_(d),Store_kernel<AK_>(a),Store_kernel2<EK_>(b){}
+    constexpr Cartesian_filter_K(AK_ const&a,EK_ const&b):Base_(),sak(a),sek(b){}
+    constexpr Cartesian_filter_K(int d,AK_ const&a,EK_ const&b):Base_(d),sak(a),sek(b){}
     typedef Base_ Kernel_base;
     typedef AK_ AK;
     typedef EK_ EK;
     typedef typename Store_kernel<AK_>::reference_type AK_rt;
-    AK_rt approximate_kernel()const{return this->kernel();}
-    typedef typename Store_kernel2<EK_>::reference2_type EK_rt;
-    EK_rt exact_kernel()const{return this->kernel2();}
+    AK_rt approximate_kernel()const{return sak.kernel();}
+    typedef typename Store_kernel<EK_>::reference_type EK_rt;
+    EK_rt exact_kernel()const{return sek.kernel();}
 
     // MSVC is too dumb to perform the empty base optimization.
     typedef boost::mpl::and_<
@@ -52,18 +78,24 @@ struct Cartesian_filter_K : public Base_,
     // TODO: only fix some types, based on some criterion?
     template<class T> struct Type : Get_type<Kernel_base,T> {};
 
-    template<class T,class D=void,class=typename Get_functor_category<Cartesian_filter_K,T>::type> struct Functor :
-      Inherit_functor<Kernel_base,T,D> {};
-    template<class T,class D> struct Functor<T,D,Predicate_tag> {
+    template<class T,class D,bool=Uses_no_arithmetic<typename Get_functor<Kernel_base,T,D>::type>::value> struct Pred_helper {
       typedef typename Get_functor<AK, T>::type AP;
       typedef typename Get_functor<EK, T>::type EP;
-      typedef Filtered_predicate2<EP,AP,C2E,C2A> type;
+      typedef Filtered_predicate2<Cartesian_filter_K,EP,AP,C2E,C2A> type;
     };
+    // Less_cartesian_coordinate doesn't usually need filtering
+    // This fixes the predicate, as opposed to Inherit_functor which would leave it open (is that good?)
+    template<class T,class D> struct Pred_helper<T,D,true> :
+      Get_functor<Kernel_base,T,D> {};
+
+    template<class T,class D=void,class=typename Get_functor_category<Cartesian_filter_K,T>::type, bool=Pred_list::template contains<T>::value> struct Functor :
+      Inherit_functor<Kernel_base,T,D> {};
+    template<class T,class D> struct Functor<T,D,Predicate_tag,true> :
+      Pred_helper<T,D> {};
+
 // TODO:
 //    template<class T> struct Functor<T,No_filter_tag,Predicate_tag> :
 //            Kernel_base::template Functor<T,No_filter_tag> {};
-// TODO:
-// detect when Less_cartesian_coordinate doesn't need filtering
 };
 
 } //namespace CGAL

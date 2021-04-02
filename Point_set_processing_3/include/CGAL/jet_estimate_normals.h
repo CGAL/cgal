@@ -70,7 +70,10 @@ jet_estimate_normal(const typename NeighborQuery::Point_3& query, ///< point to 
   typedef typename Monge_jet_fitting::Monge_form Monge_form;
 
   std::vector<Point> points;
-  neighbor_query.get_points (query, k, neighbor_radius, std::back_inserter(points));
+
+  // query using as fallback minimum requires nb points for jet fitting (d+1)*(d+2)/2
+  neighbor_query.get_points (query, k, neighbor_radius, std::back_inserter(points),
+                             (degree_fitting + 1) * (degree_fitting + 2) / 2);
 
   // performs jet fitting
   Monge_jet_fitting monge_fit;
@@ -104,33 +107,68 @@ jet_estimate_normal(const typename NeighborQuery::Point_3& query, ///< point to 
    \tparam PointRange is a model of `Range`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 
-   \param points input point range.
+   \param points input point range
    \param k number of neighbors
-   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
-     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
-     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
-     \cgalParamBegin{normal_map} a model of `ReadWritePropertyMap` with value type
-     `geom_traits::Vector_3`.\cgalParamEnd
-     \cgalParamBegin{neighbor_radius} spherical neighborhood radius. If
-     provided, the neighborhood of a query point is computed with a fixed spherical
-     radius instead of a fixed number of neighbors. In that case, the parameter
-     `k` is used as a limit on the number of points returned by each spherical
-     query (to avoid overly large number of points in high density areas). If no
-     limit is wanted, use `k=0`.\cgalParamEnd
-     \cgalParamBegin{degree_fitting} degree of jet fitting.\cgalParamEnd
-     \cgalParamBegin{svd_traits} template parameter for the class `Monge_via_jet_fitting`. If
-     \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined,
-     then `CGAL::Eigen_svd` is used.\cgalParamEnd
-     \cgalParamBegin{callback} an instance of
-      `std::function<bool(double)>`. It is called regularly when the
-      algorithm is running: the current advancement (between 0. and
-      1.) is passed as parameter. If it returns `true`, then the
-      algorithm continues its execution normally; if it returns
-      `false`, the algorithm is stopped and the remaining normals are
-      left unchanged.\cgalParamEnd
-     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange` and whose value type is `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{normal_map}
+       \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
+       \cgalParamType{a model of `WritablePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange` and whose value type is `geom_traits::Vector_3`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{neighbor_radius}
+       \cgalParamDescription{the spherical neighborhood radius}
+       \cgalParamType{floating scalar value}
+       \cgalParamDefault{`0` (no limit)}
+       \cgalParamExtra{If provided, the neighborhood of a query point is computed with a fixed spherical
+                       radius instead of a fixed number of neighbors. In that case, the parameter
+                       `k` is used as a limit on the number of points returned by each spherical
+                       query (to avoid overly large number of points in high density areas).}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{degree_fitting}
+       \cgalParamDescription{the degree of fitting}
+       \cgalParamType{unsigned int}
+       \cgalParamDefault{`2`}
+       \cgalParamExtra{see `CGAL::Monge_via_jet_fitting`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{svd_traits}
+       \cgalParamDescription{the linear algebra algorithm used in the class `CGAL::Monge_via_jet_fitting`}
+       \cgalParamType{a class fitting the requirements of `CGAL::Monge_via_jet_fitting`}
+       \cgalParamDefault{If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available
+                         and `CGAL_EIGEN3_ENABLED` is defined, then `CGAL::Eigen_svd` is used.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{callback}
+       \cgalParamDescription{a mechanism to get feedback on the advancement of the algorithm
+                             while it's running and to interrupt it if needed}
+       \cgalParamType{an instance of `std::function<bool(double)>`.}
+       \cgalParamDefault{unused}
+       \cgalParamExtra{It is called regularly when the
+                       algorithm is running: the current advancement (between 0. and
+                       1.) is passed as parameter. If it returns `true`, then the
+                       algorithm continues its execution normally; if it returns
+                       `false`, the algorithm is stopped and the remaining normals are left unchanged.}
+       \cgalParamExtra{The callback will be copied and therefore needs to be lightweight.}
+       \cgalParamExtra{When `CGAL::Parallel_tag` is used, the `callback` mechanism is called asynchronously
+                       on a separate thread and shouldn't access or modify the variables that are parameters of the algorithm.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
    \cgalNamedParamsEnd
 */
 template <typename ConcurrencyTag,

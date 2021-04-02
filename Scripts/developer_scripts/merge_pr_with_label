@@ -1,0 +1,15 @@
+#!/bin/bash
+
+: ${GITHUB_HUB:=$(which hub)}
+
+if ! [ -x "${GITHUB_HUB}" ]; then
+   echo 'Needs Github hub: https://github.com/github/hub' >&2
+   exit 1
+fi
+
+for pr in $(python3 ./Scripts/developer_scripts/list_pull_requests.py "$1" --unmerged); do
+    if ! hub merge $pr; then
+        echo $pr;
+        break
+    fi
+done

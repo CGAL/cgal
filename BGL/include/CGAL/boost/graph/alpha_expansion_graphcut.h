@@ -1,4 +1,3 @@
-#ifndef CGAL_BOOST_GRAPH_ALPHA_EXPANSION_GRAPHCUT_H
 // Copyright (c) 2014  GeometryFactory (France).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
@@ -10,6 +9,7 @@
 //
 // Author(s)     : Ilker O. Yaz, Simon Giraudot
 
+#ifndef CGAL_BOOST_GRAPH_ALPHA_EXPANSION_GRAPHCUT_H
 #define CGAL_BOOST_GRAPH_ALPHA_EXPANSION_GRAPHCUT_H
 
 #include <CGAL/Iterator_range.h>
@@ -505,27 +505,33 @@ class Alpha_expansion_MaxFlow_impl;
    vd)[label_idx]` returns the cost of vertex `vd` to belong to the
    label `label_idx`.
 
-   \param np optional sequence of named parameters among the ones listed below
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
-     \cgalParamBegin{vertex_index_map}
-       a property map providing the index of each vertex
-     \cgalParamEnd
-     \cgalParamBegin{implementation_tag}
-       tag used to select
-       which implementation of the alpha expansion should be
-       used. Available implementation tags are:
-       - `CGAL::Alpha_expansion_boost_adjacency_list` (default)
-       - `CGAL::Alpha_expansion_boost_compressed_sparse_row_tag`
-       - `CGAL::Alpha_expansion_MaxFlow_tag`
-     \cgalParamEnd
+     \cgalParamNBegin{vertex_index_map}
+       \cgalParamDescription{a property map associating to each vertex of `input_graph` a unique index between `0` and `num_vertices(input_graph) - 1`}
+       \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<InputGraph>::%vertex_descriptor`
+                      as key type and `std::size_t` as value type}
+       \cgalParamDefault{an automatically indexed internal map}
+       \cgalParamExtra{If this parameter is not passed, internal machinery will create and initialize
+                       a face index property map, either using the internal property map if it exists
+                       or using an external map. The latter might result in  - slightly - worsened performance
+                       in case of non-constant complexity for index access.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{implementation_tag}
+       \cgalParamDescription{a tag used to select which implementation of the alpha expansion should be used.
+                             Available implementation tags are:
+                             - `CGAL::Alpha_expansion_boost_adjacency_list`
+                             - `CGAL::Alpha_expansion_boost_compressed_sparse_row_tag`
+                             - `CGAL::Alpha_expansion_MaxFlow_tag`}
+       \cgalParamDefault{`CGAL::Alpha_expansion_boost_adjacency_list`}
+     \cgalParamNEnd
    \cgalNamedParamsEnd
 
    \note The `MaxFlow` implementation is provided by the \ref PkgSurfaceMeshSegmentationRef
-   under GPL license. The header
-   `<CGAL/boost/graph/Alpha_expansion_MaxFlow_tag.h>`
+   under GPL license. The header `<CGAL/boost/graph/Alpha_expansion_MaxFlow_tag.h>`
    must be included if users want to use this implementation.
-
 */
 template <typename InputGraph,
           typename EdgeCostMap,

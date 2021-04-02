@@ -27,6 +27,7 @@
 #include <CGAL/predicates/sign_of_determinant.h>
 #include <functional>
 #include <initializer_list>
+#include <vector>
 
 namespace CGAL {
 namespace CartesianDKernelFunctors {
@@ -603,25 +604,57 @@ namespace CartesianDKernelFunctors {
 template <class R_> struct Construct_circumcenter : Store_kernel<R_> {
   CGAL_FUNCTOR_INIT_STORE(Construct_circumcenter)
   typedef typename Get_type<R_, Point_tag>::type Point;
+  typedef typename Get_type<R_, Vector_tag>::type Vector;
   typedef Point result_type;
   typedef typename Get_type<R_, FT_tag>::type FT;
   template <class Iter>
   result_type operator()(Iter f, Iter e)const{
-    typedef typename Get_type<R_, Point_tag>::type      Point;
-    typedef typename R_::LA LA;
-    typename Get_functor<R_, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
-    typename Get_functor<R_, Construct_ttag<Point_tag> >::type cp(this->kernel());
     typename Get_functor<R_, Point_dimension_tag>::type pd(this->kernel());
-    typename Get_functor<R_, Squared_distance_to_origin_tag>::type sdo(this->kernel());
 
     Point const& p0=*f;
     int d = pd(p0);
-    if (d+1 == std::distance(f,e))
+    int k = static_cast<int>(std::distance(f,e));
+    // Sorted from fastest to slowest, whether the dimension is 2, 3 or 4. It may be worth checking at some point.
+    CGAL_assume(k>=1);
+    if(k==1) return p0;
+    if(k==2){
+      typename Get_functor<R_, Midpoint_tag>::type mid(this->kernel());
+      return mid(p0, *++f);
+    }
+    // TODO: check for degenerate cases in all the following cases?
+    if(k==3){
+      // Same equations as in the general case, but solved by hand (Cramer)
+      // (c-r).(p-r)=(p-r)²/2
+      // (c-r).(q-r)=(q-r)²/2
+      typename Get_functor<R_, Squared_length_tag>::type sl(this->kernel());
+      typename Get_functor<R_, Scalar_product_tag>::type sp(this->kernel());
+      typename Get_functor<R_, Scaled_vector_tag>::type sv(this->kernel());
+      typename Get_functor<R_, Difference_of_points_tag>::type dp(this->kernel());
+      typename Get_functor<R_, Translated_point_tag>::type tp(this->kernel());
+      Iter f2=f;
+      Point const& q=*++f2;
+      Point const& r=*++f2;
+      Vector u = dp(p0, r);
+      Vector v = dp(q, r);
+      FT uv = sp(u, v);
+      FT u2 = sl(u);
+      FT v2 = sl(v);
+      FT den = 2 * (u2 * v2 - CGAL::square(uv));
+      FT a = (u2 - uv) * v2 / den;
+      FT b = (v2 - uv) * u2 / den;
+      // Wasteful if we only want the radius
+      return tp(tp(r, sv(u, a)), sv(v, b));
+    }
+    if (k == d+1)
     {
       // 2*(x-y).c == x^2-y^2
+      typedef typename R_::LA LA;
       typedef typename LA::Square_matrix Matrix;
       typedef typename LA::Vector Vec;
       typedef typename LA::Construct_vector CVec;
+      typename Get_functor<R_, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
+      typename Get_functor<R_, Construct_ttag<Point_tag> >::type cp(this->kernel());
+      typename Get_functor<R_, Squared_distance_to_origin_tag>::type sdo(this->kernel());
       FT const& n0 = sdo(p0);
       Matrix m(d,d);
       Vec b = typename CVec::Dimension()(d);
@@ -635,72 +668,59 @@ template <class R_> struct Construct_circumcenter : Store_kernel<R_> {
         b[i] = sdo(p) - n0;
       }
       CGAL_assertion (i == d);
-      Vec res = typename CVec::Dimension()(d);;
-      //std::cout << "Mat: " << m << "\n Vec: " << one << std::endl;
-      LA::solve(res, std::move(m), std::move(b));
-      //std::cout << "Sol: " << res << std::endl;
+      //Vec res = typename CVec::Dimension()(d);;
+      //LA::solve(res, std::move(m), std::move(b));
+      // We already assume Eigen below...
+      Vec res=m.partialPivLu().solve(b);
       return cp(d,LA::vector_begin(res),LA::vector_end(res));
     }
-    else
+
     {
-      /*
-       * Matrix P=(p1, p2, ...) (each point as a column)
-       * Matrix Q=2*t(p2-p1,p3-p1, ...) (each vector as a line)
-       * Matrix M: QP, adding a line of 1 at the top
-       * Vector B: (1, p2^2-p1^2, p3^2-p1^2, ...)
-       * Solve ML=B, the center of the sphere is PL
-       *
-       * It would likely be faster to write P then transpose, multiply,
-       * etc instead of doing it by hand.
-       */
-      // TODO: check for degenerate cases?
-
-      typedef typename R_::Max_ambient_dimension D2;
-      typedef typename R_::LA::template Rebind_dimension<Dynamic_dimension_tag,D2>::Other LAd;
-      typedef typename LAd::Square_matrix Matrix;
-      typedef typename LAd::Vector Vec;
+      // The general case. ui=p(i+1)-p0, center-p0=c=sum ai*ui, c.ui=ui²/2, M*a=b with M symmetric
+      typedef typename Increment_dimension<typename R_::Max_ambient_dimension>::type D2;
+      typedef typename R_::LA::template Rebind_dimension<Dynamic_dimension_tag,D2>::Other LA;
+      typedef typename LA::Square_matrix Matrix;
+      typedef typename LA::Vector Vec;
+      typedef typename LA::Construct_vector CVec;
+      typename Get_functor<R_, Translated_point_tag>::type tp(this->kernel());
+      typename Get_functor<R_, Scaled_vector_tag>::type sv(this->kernel());
+      typename Get_functor<R_, Difference_of_points_tag>::type dp(this->kernel());
       typename Get_functor<R_, Scalar_product_tag>::type sp(this->kernel());
-      int k=static_cast<int>(std::distance(f,e));
-      Matrix m(k,k);
-      Vec b(k);
-      Vec l(k);
-      int j,i=0;
-      // We are doing a quadratic number of *f, which can be costly with transforming_iterator.
-      for(Iter f2=f;f2!=e;++f2,++i){
-        Point const& p2=*f2;
-        b(i)=m(i,i)=sdo(p2);
-        j=0;
-        for(Iter f3=f;f3!=e;++f3,++j){
-          m(j,i)=m(i,j)=sp(p2,*f3);
+      Matrix m(k-1,k-1);
+      Vec b = typename CVec::Dimension()(k-1);
+      std::vector<Vector> vecs; vecs.reserve(k-1);
+      while(++f!=e)
+        vecs.emplace_back(dp(*f,p0));
+      // Only need to fill the lower half
+      for(int i=0;i<k-1;++i){
+        for(int j=i;j<k-1;++j) {
+          m(j,i)=sp(vecs[i],vecs[j]);
+#if ! EIGEN_VERSION_AT_LEAST(3, 3, 5)
+          m(i,j)=m(j,i);
+#endif
         }
+        b[i]=m(i,i)/2;
       }
-      for(i=1;i<k;++i){
-        b(i)-=b(0);
-        for(j=0;j<k;++j){
-          m(i,j)=2*(m(i,j)-m(0,j));
-        }
-      }
-      for(j=0;j<k;++j) m(0,j)=1;
-      b(0)=1;
-
-      LAd::solve(l,std::move(m),std::move(b));
-
-      typename LA::Vector center=typename LA::Construct_vector::Dimension()(d);
-      for(i=0;i<d;++i) center(i)=0;
-      j=0;
-      for(Iter f2=f;f2!=e;++f2,++j){
-        for(i=0;i<d;++i){
-          center(i)+=l(j)*c(*f2,i);
-        }
-      }
-
-      return cp(LA::vector_begin(center),LA::vector_end(center));
+      // Assumes Eigen...
+#if EIGEN_VERSION_AT_LEAST(3, 3, 5)
+      Vec res=m.ldlt().solve(b);
+#else
+      // Older versions of Eigen use 1/highest as tolerance,
+      // which we have no way to set to 0 for exact types.
+      // Use something slow but that should work.
+      Vec res=m.fullPivLu().solve(b);
+#endif
+      Point center=p0;
+      // Wasteful if we only want the radius
+      for(int i=0;i<k-1;++i)
+        center=tp(center,sv(vecs[i],res[i]));
+      return center;
     }
   }
 };
 }
 
-CGAL_KD_DEFAULT_FUNCTOR(Construct_circumcenter_tag,(CartesianDKernelFunctors::Construct_circumcenter<K>),(Point_tag),(Construct_ttag<Point_tag>,Compute_point_cartesian_coordinate_tag,Scalar_product_tag,Squared_distance_to_origin_tag,Point_dimension_tag));
+CGAL_KD_DEFAULT_FUNCTOR(Construct_circumcenter_tag,(CartesianDKernelFunctors::Construct_circumcenter<K>),(Point_tag,Vector_tag),(Construct_ttag<Point_tag>,Compute_point_cartesian_coordinate_tag,Scalar_product_tag,Squared_distance_to_origin_tag,Point_dimension_tag,Translated_point_tag,Scaled_vector_tag,Difference_of_points_tag,Squared_length_tag));
 
 namespace CartesianDKernelFunctors {
 template <class R_> struct Squared_circumradius : Store_kernel<R_> {
@@ -1088,7 +1108,7 @@ template<class R_> struct Less_point_cartesian_coordinate : private Store_kernel
         typedef typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type Cc;
         // TODO: This is_exact thing should be reengineered.
         // the goal is to have a way to tell: don't filter this
-        typedef typename CGAL::Is_exact<Cc> Is_exact;
+        typedef typename CGAL::Uses_no_arithmetic<Cc> Uses_no_arithmetic;
 
         template<class V,class W,class I>
         result_type operator()(V const&a, W const&b, I i)const{
@@ -1108,7 +1128,7 @@ template<class R_> struct Compare_point_cartesian_coordinate : private Store_ker
         typedef typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type Cc;
         // TODO: This is_exact thing should be reengineered.
         // the goal is to have a way to tell: don't filter this
-        typedef typename CGAL::Is_exact<Cc> Is_exact;
+        typedef typename CGAL::Uses_no_arithmetic<Cc> Uses_no_arithmetic;
 
         template<class V,class W,class I>
         result_type operator()(V const&a, W const&b, I i)const{
@@ -1128,7 +1148,7 @@ template<class R_> struct Compare_lexicographically : private Store_kernel<R_> {
         typedef typename Get_functor<R, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
         // TODO: This is_exact thing should be reengineered.
         // the goal is to have a way to tell: don't filter this
-        typedef typename CGAL::Is_exact<CI> Is_exact;
+        typedef typename CGAL::Uses_no_arithmetic<CI> Uses_no_arithmetic;
 
         template<class V,class W>
         result_type operator()(V const&a, W const&b)const{
@@ -1156,7 +1176,7 @@ template<class R_> struct Less_lexicographically : private Store_kernel<R_> {
         typedef R_ R;
         typedef typename Get_type<R, Bool_tag>::type result_type;
         typedef typename Get_functor<R, Compare_lexicographically_tag>::type CL;
-        typedef typename CGAL::Is_exact<CL> Is_exact;
+        typedef typename CGAL::Uses_no_arithmetic<CL> Uses_no_arithmetic;
 
         template <class V, class W>
         result_type operator() (V const&a, W const&b) const {
@@ -1174,7 +1194,7 @@ template<class R_> struct Less_or_equal_lexicographically : private Store_kernel
         typedef R_ R;
         typedef typename Get_type<R, Bool_tag>::type result_type;
         typedef typename Get_functor<R, Compare_lexicographically_tag>::type CL;
-        typedef typename CGAL::Is_exact<CL> Is_exact;
+        typedef typename CGAL::Uses_no_arithmetic<CL> Uses_no_arithmetic;
 
         template <class V, class W>
         result_type operator() (V const&a, W const&b) const {
@@ -1194,7 +1214,7 @@ template<class R_> struct Equal_points : private Store_kernel<R_> {
         typedef typename Get_functor<R, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
         // TODO: This is_exact thing should be reengineered.
         // the goal is to have a way to tell: don't filter this
-        typedef typename CGAL::Is_exact<CI> Is_exact;
+        typedef typename CGAL::Uses_no_arithmetic<CI> Uses_no_arithmetic;
 
         template<class V,class W>
         result_type operator()(V const&a, W const&b)const{

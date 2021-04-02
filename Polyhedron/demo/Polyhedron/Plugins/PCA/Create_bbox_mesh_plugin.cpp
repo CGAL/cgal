@@ -116,9 +116,9 @@ bool Create_bbox_mesh_plugin::bbox(bool extended)
           bbox.zmax() + delta_z);
   }
 
-  if(bbox.min(0) > bbox.max(0) ||
-     bbox.min(1) > bbox.max(1) ||
-     bbox.min(2) > bbox.max(2))
+  if((bbox.min)(0) > (bbox.max)(0) ||
+     (bbox.min)(1) > (bbox.max)(1) ||
+     (bbox.min)(2) > (bbox.max)(2))
   {
     return false;
   }

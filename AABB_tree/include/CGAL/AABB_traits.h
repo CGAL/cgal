@@ -26,7 +26,6 @@
 #include <CGAL/internal/AABB_tree/Primitive_helper.h>
 
 #include <boost/optional.hpp>
-#include <boost/bind.hpp>
 
 /// \file AABB_traits.h
 
@@ -171,9 +170,11 @@ class AABB_tree;
 /// \sa `AABBPrimitiveWithSharedData`
 
   template<typename GeomTraits, typename AABBPrimitive, typename BboxMap = Default>
-class AABB_traits:
-  public internal::AABB_tree::AABB_traits_base<AABBPrimitive>,
+class AABB_traits
+#ifndef DOXYGEN_RUNNING
+: public internal::AABB_tree::AABB_traits_base<AABBPrimitive>,
   public internal::AABB_tree::AABB_traits_base_2<GeomTraits>
+#endif
 {
   typedef typename CGAL::Object Object;
 public:
@@ -272,13 +273,13 @@ public:
         switch(Traits::longest_axis(bbox))
         {
         case AT::CGAL_AXIS_X: // sort along x
-          std::nth_element(first, middle, beyond, boost::bind(Traits::less_x,_1,_2,m_traits));
+          std::nth_element(first, middle, beyond, [this](const Primitive& p1, const Primitive& p2){ return Traits::less_x(p1, p2, this->m_traits); });
           break;
         case AT::CGAL_AXIS_Y: // sort along y
-          std::nth_element(first, middle, beyond, boost::bind(Traits::less_y,_1,_2,m_traits));
+          std::nth_element(first, middle, beyond, [this](const Primitive& p1, const Primitive& p2){ return Traits::less_y(p1, p2, this->m_traits); });
           break;
         case AT::CGAL_AXIS_Z: // sort along z
-          std::nth_element(first, middle, beyond, boost::bind(Traits::less_z,_1,_2,m_traits));
+          std::nth_element(first, middle, beyond, [this](const Primitive& p1, const Primitive& p2){ return Traits::less_z(p1, p2, this->m_traits); });
           break;
         default:
           CGAL_error();
@@ -427,6 +428,11 @@ public:
   Closest_point closest_point_object() const {return Closest_point(*this);}
   Compare_distance compare_distance_object() const {return Compare_distance();}
 
+  typedef enum { CGAL_AXIS_X = 0,
+                 CGAL_AXIS_Y = 1,
+                 CGAL_AXIS_Z = 2} Axis;
+
+  static Axis longest_axis(const Bounding_box& bbox);
 
 private:
   /**
@@ -444,13 +450,6 @@ private:
   {
     return internal::Primitive_helper<AT>::get_datum(pr,*this).bbox();
   }
-
-
-  typedef enum { CGAL_AXIS_X = 0,
-                 CGAL_AXIS_Y = 1,
-                 CGAL_AXIS_Z = 2} Axis;
-
-  static Axis longest_axis(const Bounding_box& bbox);
 
   /// Comparison functions
   static bool less_x(const Primitive& pr1, const Primitive& pr2,const AABB_traits<GeomTraits,AABBPrimitive, BboxMap>& traits)

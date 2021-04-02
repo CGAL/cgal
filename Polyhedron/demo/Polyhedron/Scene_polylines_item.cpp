@@ -39,7 +39,7 @@ struct Scene_polylines_item_private {
     {
       nb_vertices = 0;
       nb_edges = 0;
-      min_length = std::numeric_limits<double>::max();
+      min_length = (std::numeric_limits<double>::max)();
       max_length = 0;
       mean_length = 0;
       computed_stats = false;
@@ -264,7 +264,7 @@ Scene_polylines_item_private::computeSpheres()
                     "<li>red: four incident polylines</li>"
                     "<li>fuchsia: five or more incident polylines</li>"
                     "</ul></p>"
-                    "<p>Tip: To erase this item, set its radius to 0 or less. </p>")
+                    "<p>Tip: To erase this item, set its radius to 0 or less, or select it in the itme list and press the Delete key. </p>")
                             );
       spheres->computeElements();
       QApplication::restoreOverrideCursor();
@@ -574,14 +574,16 @@ void Scene_polylines_item::change_corner_radii(double r) {
           }
           d->spheres->invalidateOpenGLBuffers();
           d->computeSpheres();
-
+          CGAL::Three::Three::mainWindow()->installEventFilter(d->spheres);
+          connect(d->spheres, &Scene_spheres_item::destroyMe, this,
+                  [this](){
+            removeEventFilter(d->spheres);
+            unlockChild(d->spheres);
+            scene->erase(scene->item_id(d->spheres));
+          });
         }
         else if(r>0 && d->spheres)
         {
-//          Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
-//          {
-//            d->spheres->gl_initialization(qobject_cast<Viewer_interface*>(v));
-//          }
           d->spheres->invalidateOpenGLBuffers();
           d->computeSpheres();
         }

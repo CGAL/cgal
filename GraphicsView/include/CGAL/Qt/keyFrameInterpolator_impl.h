@@ -19,7 +19,6 @@
 #endif
 
 #include <CGAL/Qt/keyFrameInterpolator.h>
-#include <CGAL/Qt/domUtils.h>
 
 namespace CGAL{
 namespace qglviewer{
@@ -37,7 +36,6 @@ KeyFrameInterpolator::KeyFrameInterpolator(Frame *frame)
       interpolationSpeed_(1.0), interpolationStarted_(false),
       closedPath_(false), loopInterpolation_(false), pathIsValid_(false),
       valuesAreValid_(true), currentFrameValid_(false)
-// #CONNECTION# Values cut pasted initFromDOMElement()
 {
   setFrame(frame);
   for (int i = 0; i < 4; ++i)
@@ -320,7 +318,7 @@ qreal KeyFrameInterpolator::keyFrameTime(int index) const {
 /*! Returns the duration of the KeyFrameInterpolator path, expressed in seconds.
 
  Simply corresponds to lastTime() - firstTime(). Returns 0.0 if the path has
- less than 2 keyFrames. See also keyFrameTime(). */
+ fewer than 2 keyFrames. See also keyFrameTime(). */
 CGAL_INLINE_FUNCTION
 qreal KeyFrameInterpolator::duration() const {
   return lastTime() - firstTime();
@@ -458,85 +456,6 @@ void KeyFrameInterpolator::interpolateAtTime(qreal time) {
   Q_EMIT interpolated();
 }
 
-/*! Returns an XML \c QDomElement that represents the KeyFrameInterpolator.
-
- The resulting QDomElement holds the KeyFrameInterpolator parameters as well as
- the path keyFrames (if the keyFrame is defined by a pointer to a Frame, use its
- current value).
-
- \p name is the name of the QDomElement tag. \p doc is the \c QDomDocument
- factory used to create QDomElement.
-
- Use initFromDOMElement() to restore the ManipulatedFrame state from the
- resulting QDomElement.
-
-
- See Vec::domElement() for a complete example. See also
- Quaternion::domElement(), Camera::domElement()...
-
- Note that the Camera::keyFrameInterpolator() are automatically saved by
- CGAL::QGLViewer::saveStateToFile() when a CGAL::QGLViewer is closed. */
-CGAL_INLINE_FUNCTION
-QDomElement KeyFrameInterpolator::domElement(const QString &name,
-                                             QDomDocument &document) const {
-  QDomElement de = document.createElement(name);
-  int count = 0;
-  Q_FOREACH (KeyFrame *kf, keyFrame_) {
-    Frame fr(kf->position(), kf->orientation());
-    QDomElement kfNode = fr.domElement("KeyFrame", document);
-    kfNode.setAttribute("index", QString::number(count));
-    kfNode.setAttribute("time", QString::number(kf->time()));
-    de.appendChild(kfNode);
-    ++count;
-  }
-  de.setAttribute("nbKF", QString::number(keyFrame_.count()));
-  de.setAttribute("time", QString::number(interpolationTime()));
-  de.setAttribute("speed", QString::number(interpolationSpeed()));
-  de.setAttribute("period", QString::number(interpolationPeriod()));
-  DomUtils::setBoolAttribute(de, "closedPath", closedPath());
-  DomUtils::setBoolAttribute(de, "loop", loopInterpolation());
-  return de;
-}
-
-/*! Restores the KeyFrameInterpolator state from a \c QDomElement created by
- domElement().
-
- Note that the frame() pointer is not included in the domElement(): you need to
- setFrame() after this method to attach a Frame to the KeyFrameInterpolator.
-
- See Vec::initFromDOMElement() for a complete code example.
-
- See also Camera::initFromDOMElement() and Frame::initFromDOMElement(). */
-CGAL_INLINE_FUNCTION
-void KeyFrameInterpolator::initFromDOMElement(const QDomElement &element) {
-  qDeleteAll(keyFrame_);
-  keyFrame_.clear();
-  QDomElement child = element.firstChild().toElement();
-  while (!child.isNull()) {
-    if (child.tagName() == "KeyFrame") {
-      Frame fr;
-      fr.initFromDOMElement(child);
-      qreal time = DomUtils::qrealFromDom(child, "time", 0.0);
-      addKeyFrame(fr, time);
-    }
-
-    child = child.nextSibling().toElement();
-  }
-
-  // #CONNECTION# Values cut pasted from constructor
-  setInterpolationTime(DomUtils::qrealFromDom(element, "time", 0.0));
-  setInterpolationSpeed(DomUtils::qrealFromDom(element, "speed", 1.0));
-  setInterpolationPeriod(DomUtils::intFromDom(element, "period", 40));
-  setClosedPath(DomUtils::boolFromDom(element, "closedPath", false));
-  setLoopInterpolation(DomUtils::boolFromDom(element, "loop", false));
-
-  // setFrame(nullptr);
-  pathIsValid_ = false;
-  valuesAreValid_ = false;
-  currentFrameValid_ = false;
-
-  stopInterpolation();
-}
 
 #ifndef DOXYGEN
 

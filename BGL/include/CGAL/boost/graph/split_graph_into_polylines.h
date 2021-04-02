@@ -131,7 +131,7 @@ public:
   }
 }; // end class Less_on_G_copy_vertex_descriptors
 
-// Splits a graph at vertices with degree higher than two and at vertices where `is_terminal` returns `true`
+// splits a graph at vertices with degree higher than two and at vertices where `is_terminal` returns `true`
 // The vertices are duplicated, and new incident edges created.
 // `OrigGraph` must be undirected
 template <typename Graph,
@@ -192,6 +192,7 @@ void duplicate_terminal_vertices(Graph& graph,
 
 } // namespace internal
 
+#ifndef DOXYGEN_RUNNING
 template <typename Graph,
           typename Visitor,
           typename IsTerminal,
@@ -201,9 +202,10 @@ split_graph_into_polylines(const Graph& graph,
                            Visitor& polyline_visitor,
                            IsTerminal is_terminal,
                            LessForVertexDescriptors less);
+#endif
 
 /*!
-\ingroup PkgBGLRef
+\ingroup PkgBGLPartition
 splits into polylines the graph `g` at vertices of degree greater than 2
 and at vertices for which `is_terminal(v,graph)==true`.
 The polylines are reported using a visitor.

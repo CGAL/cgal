@@ -96,8 +96,8 @@ namespace CGAL_svdlinf {
     Kernel::FT incr_len = 75;
     // slightly increase the size of the bbox
     bbox = Iso_rectangle_2(
-      bbox.min()+Kernel::Vector_2(-incr_len,-incr_len),
-      bbox.max()+Kernel::Vector_2(incr_len,incr_len));
+      (bbox.min)()+Kernel::Vector_2(-incr_len,-incr_len),
+      (bbox.max)()+Kernel::Vector_2(incr_len,incr_len));
 
     for (std::list<Segment_2>::iterator
          sit  = sg_list.begin();

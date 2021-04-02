@@ -18,7 +18,7 @@ void test_merge_duplicated_vertices_in_boundary_cycles(const char* fname,
 
   Surface_mesh mesh;
   if (!input || !(input >> mesh) || mesh.is_empty()) {
-    std::cerr << fname << " is not a valid off file.\n";
+    std::cerr << fname << " is not a valid off file." << std::endl;
     exit(1);
   }
 
@@ -32,9 +32,7 @@ void test_merge_duplicated_vertices_in_boundary_cycles(const char* fname,
   if (expected_nb_vertices==0)
   {
     std::cout << "writing output to out1.off\n";
-    std::ofstream output("out1.off");
-    output << std::setprecision(17);
-    output << mesh;
+    CGAL::write_polygon_mesh("out1.off", mesh, CGAL::parameters::stream_precision(17));
   }
 }
 

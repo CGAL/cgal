@@ -60,7 +60,7 @@ typedef unsigned char byte;
 #define COLORMAPMASK  0x80
 
 
-#define DEBUG 0
+#define CGAL_GIF_IMPL_DEBUG 0
 
 //FILE *fp;
 //int   gif89 = 0;
@@ -219,7 +219,7 @@ int   gif89 = 0;
   if (aspect) {
     if (!gif89) return(GifError("corrupt GIF file (screen descriptor)"));
     else normaspect = (float) (aspect + 15) / 64.0f;   /* gif89 aspect ratio */
-    if (DEBUG) fprintf(stderr,"GIF89 aspect = %f\n", normaspect);
+    if (CGAL_GIF_IMPL_DEBUG) fprintf(stderr,"GIF89 aspect = %f\n", normaspect);
   }
 
 
@@ -268,7 +268,7 @@ int   gif89 = 0;
       /* read extension block */
       fn = NEXTBYTE;
 
-      if (DEBUG) fprintf(stderr,"GIF extension type 0x%02x\n", fn);
+      if (CGAL_GIF_IMPL_DEBUG) fprintf(stderr,"GIF extension type 0x%02x\n", fn);
 
       if (fn == 'R') {                  /* GIF87 aspect extension */
         blocksize = NEXTBYTE;
@@ -279,7 +279,7 @@ int   gif89 = 0;
             normaspect = (float) aspnum / (float) aspden;
           else { normaspect = 1.0;  aspnum = aspden = 1; }
 
-          if (DEBUG) fprintf(stderr,"GIF87 aspect extension: %d:%d = %f\n\n",
+          if (CGAL_GIF_IMPL_DEBUG) fprintf(stderr,"GIF87 aspect extension: %d:%d = %f\n\n",
                              aspnum, aspden,normaspect);
         }
         else {
@@ -290,16 +290,16 @@ int   gif89 = 0;
       else if (fn == 0xFE) {  /* Comment Extension.  just eat it */
         int ch, j, sbsize;
 
-        if (DEBUG) fprintf(stderr,"Comment extension:  ");
+        if (CGAL_GIF_IMPL_DEBUG) fprintf(stderr,"Comment extension:  ");
         /* read (and ignore) data sub-blocks */
         do {
           j = 0;  sbsize = NEXTBYTE;
           while (j<sbsize) {
             ch = NEXTBYTE;  j++;
-            if (DEBUG) fprintf(stderr,"%c", ch);
+            if (CGAL_GIF_IMPL_DEBUG) fprintf(stderr,"%c", ch);
           }
         } while (sbsize);
-        if (DEBUG) fprintf(stderr,"\n\n");
+        if (CGAL_GIF_IMPL_DEBUG) fprintf(stderr,"\n\n");
       }
 
       else if (fn == 0x01) {  /* PlainText Extension */
@@ -321,7 +321,7 @@ int   gif89 = 0;
         i=12;
         for ( ; i<sbsize; i++) (void)NEXTBYTE;   /* read rest of first subblock */
 
-        if (DEBUG) fprintf(stderr,
+        if (CGAL_GIF_IMPL_DEBUG) fprintf(stderr,
                            "PlainText: tgrid=%d,%d %dx%d  cell=%dx%d  col=%d,%d\n",
                            tgLeft, tgTop, tgWidth, tgHeight, cWidth, cHeight,
                            fg, bg);
@@ -332,17 +332,17 @@ int   gif89 = 0;
           sbsize = NEXTBYTE;
           while (j<sbsize) {
             ch = NEXTBYTE;  j++;
-            if (DEBUG) fprintf(stderr,"%c", ch);
+            if (CGAL_GIF_IMPL_DEBUG) fprintf(stderr,"%c", ch);
           }
         } while (sbsize);
-        if (DEBUG) fprintf(stderr,"\n\n");
+        if (CGAL_GIF_IMPL_DEBUG) fprintf(stderr,"\n\n");
       }
 
 
       else if (fn == 0xF9) {  /* Graphic Control Extension */
         int j, sbsize;
 
-        if (DEBUG) fprintf(stderr,"Graphic Control extension\n\n");
+        if (CGAL_GIF_IMPL_DEBUG) fprintf(stderr,"Graphic Control extension\n\n");
 
         /*        SetISTR(ISTR_WARNING,
                 "Graphic Control Extension in GIF file.  Ignored.");*/
@@ -358,7 +358,7 @@ int   gif89 = 0;
       else { /* unknown extension */
         int j, sbsize;
 
-        if (DEBUG) fprintf(stderr,"unknown GIF extension 0x%02x\n\n", fn);
+        if (CGAL_GIF_IMPL_DEBUG) fprintf(stderr,"unknown GIF extension 0x%02x\n\n", fn);
 
         /*        SetISTR(ISTR_WARNING,
                 "Unknown extension 0x%02x in GIF file.  Ignored.",fn);*/
@@ -458,7 +458,7 @@ int   gif89 = 0;
   ImageIO_free(get_static_RawGIF());  get_static_RawGIF() = nullptr;
 
 
-  if (DEBUG) {
+  if (CGAL_GIF_IMPL_DEBUG) {
     fprintf(stderr,"xv: LoadGIF() - picture is %dx%d, %d bits, %sinterlaced\n",
             get_static_Width(), get_static_Height(), BitsPerPixel, Interlace ? "" : "non-");
   }

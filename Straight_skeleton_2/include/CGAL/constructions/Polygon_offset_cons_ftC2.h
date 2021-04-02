@@ -13,44 +13,45 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-
 #include <CGAL/constructions/Straight_skeleton_cons_ftC2.h>
+
+#include <boost/optional/optional.hpp>
+#include <boost/intrusive_ptr.hpp>
 
 namespace CGAL {
 
-namespace CGAL_SS_i
-{
+namespace CGAL_SS_i {
 
 // Given an offset distance 't' and 2 oriented line segments e0 and e1, returns the coordinates (x,y)
 // of the intersection of their offsets at the given distance.
 //
 // PRECONDITIONS:
-// The line coefficients must be normalized: a�+b�==1 and (a,b) being the leftward normal vector
+// The line coefficients must be normalized: a²+b²==1 and (a,b) being the leftward normal vector
 // The offsets at the given distance do intersect in a single point.
 //
 // POSTCONDITION: In case of overflow an empty optional is returned.
 //
-template<class K>
-optional< Point_2<K> > construct_offset_pointC2 ( typename K::FT const&                   t
-                                                , Segment_2<K> const&                     e0
-                                                , Segment_2<K> const&                     e1
-                                                , intrusive_ptr< Trisegment_2<K> > const& tri
-                                                )
+template<class K, class CoeffCache>
+boost::optional< Point_2<K> > construct_offset_pointC2 ( typename K::FT const& t,
+                                                         Segment_2_with_ID<K> const& e0,
+                                                         Segment_2_with_ID<K> const& e1,
+                                                         boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
+                                                         CoeffCache& aCoeff_cache)
 {
   typedef typename K::FT FT ;
 
   typedef Point_2<K>  Point_2 ;
   typedef Line_2<K>   Line_2 ;
 
-  typedef optional<Point_2> Optional_point_2 ;
-  typedef optional<Line_2>  Optional_line_2 ;
+  typedef boost::optional<Point_2> Optional_point_2 ;
+  typedef boost::optional<Line_2>  Optional_line_2 ;
 
   FT x(0.0),y(0.0) ;
 
   CGAL_STSKEL_TRAITS_TRACE("Constructing offset point for t=" << t << " e0=" << s2str(e0) << " e1=" << s2str(e1) << " tri=" << tri ) ;
 
-  Optional_line_2 l0 = compute_normalized_line_ceoffC2(e0) ;
-  Optional_line_2 l1 = compute_normalized_line_ceoffC2(e1) ;
+  Optional_line_2 l0 = compute_normalized_line_ceoffC2(e0, aCoeff_cache) ;
+  Optional_line_2 l1 = compute_normalized_line_ceoffC2(e1, aCoeff_cache) ;
 
   bool ok = false ;
 
@@ -74,7 +75,8 @@ optional< Point_2<K> > construct_offset_pointC2 ( typename K::FT const&         
       {
         CGAL_STSKEL_TRAITS_TRACE("  DEGENERATE case: Collinear segments involved. Seed event " << ( !tri ? " ABSENT" : " exists." ) ) ;
 
-        Optional_point_2 q = tri ? construct_offset_lines_isecC2(tri) : compute_oriented_midpoint(e0,e1) ;
+        Optional_point_2 q = tri ? construct_offset_lines_isecC2(tri, aCoeff_cache)
+                                 : compute_oriented_midpoint(e0,e1) ;
 
         if ( q )
         {

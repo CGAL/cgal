@@ -14,7 +14,7 @@
 
 
 /*! \file CGAL/Algebraic_extension_traits.h
- *  \brief Defines traits class CGAL::Algebraic_extension_traits.
+ *  \brief defines traits class CGAL::Algebraic_extension_traits.
 */
 
 #ifndef CGAL_ALGEBRAIC_NUMBER_TRAITS_H

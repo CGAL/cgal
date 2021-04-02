@@ -118,8 +118,8 @@ class Point_set_item_classification : public Item_classification_base
 
     for (std::size_t i = 0; i < m_features.size(); ++ i)
     {
-      float vmin = std::numeric_limits<float>::max();
-      float vmax = -std::numeric_limits<float>::max();
+      float vmin = (std::numeric_limits<float>::max)();
+      float vmax = -(std::numeric_limits<float>::max)();
       float vmean = 0.f;
       std::size_t nb = 0;
 
@@ -224,7 +224,8 @@ class Point_set_item_classification : public Item_classification_base
       = new Scene_points_with_normal_item;
 
     points_item->setName (QString("%1 (%2)").arg(name).arg(m_labels[label]->name().c_str()));
-    points_item->setColor (m_label_colors[label]);
+    points_item->setColor (label_qcolor (m_labels[label]));
+
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->end(); ++ it)
     {
@@ -243,7 +244,7 @@ class Point_set_item_classification : public Item_classification_base
       {
         points_item[i] = new Scene_points_with_normal_item;
         points_item[i]->setName (QString("%1 (%2)").arg(name).arg(m_labels[i]->name().c_str()));
-        points_item[i]->setColor (m_label_colors[i]);
+        points_item[i]->setColor (label_qcolor (m_labels[i]));
         items.push_back (points_item[i]);
       }
 

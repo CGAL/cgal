@@ -294,8 +294,8 @@ points of intersection. To avoid this redundancy, input points are
 stored in a container, and the various types of sites (input points
 and segments, points of intersection, subsegments with one or two
 points of intersection as endpoints) only store handles to the points
-in the container. This is achieved by the
-`Segment_Delaunay_graph_storage_site_2<Gt>` class which is a
+in the container. This is achieved with the
+`Segment_Delaunay_graph_storage_site_2<Gt>` class, which is a
 model of the corresponding concept:
 `SegmentDelaunayGraphStorageSite_2`. This concept enforces a site
 to be represented by up to 6 handles (which are very lightweight
@@ -449,9 +449,8 @@ class is used, the possible values are `Field_with_sqrt_tag` and
 
 \section secsdg2hierarchy The Segment Delaunay Graph Hierarchy
 
-The
-`Segment_Delaunay_graph_hierarchy_2<SegmentDelaunayGraphTraits_2, SSTag, SegmentDelaunayGraphDataStructure_2>` class is the analogue
-of the `Triangulation_hierarchy_2` or the
+The `Segment_Delaunay_graph_hierarchy_2<SegmentDelaunayGraphTraits_2, SegmentDelaunayGraphStorageTraits_2, SSTag, SegmentDelaunayGraphDataStructure_2>`
+class is the analogue of the `Triangulation_hierarchy_2` or the
 `Apollonius_graph_hierarchy_2` classes, applied to the segment
 Delaunay graph. It consists of a hierarchy of
 segment Delaunay graphs constructed in a manner analogous to the
@@ -480,9 +479,9 @@ Delaunay graphs. If `SSTag` is set to `true`, we have segment
 Delaunay graphs at all levels of the hierarchy.
 
 The class
-`Segment_Delaunay_graph_hierarchy_2<SegmentDelaunayGraphTraits_2, SSTag, SegmentDelaunayGraphDataStructure_2>`
+`Segment_Delaunay_graph_hierarchy_2<SegmentDelaunayGraphTraits_2, SegmentDelaunayGraphStorageTraits_2, SSTag, SegmentDelaunayGraphDataStructure_2>`
 has exactly the same interface and functionality as the
-`Segment_Delaunay_graph_2<SegmentDelaunayGraphTraits_2,SegmentDelaunayGraphDataStructure_2>`
+`Segment_Delaunay_graph_2<SegmentDelaunayGraphTraits_2,SegmentDelaunayGraphStorageTraits_2,SegmentDelaunayGraphDataStructure_2>`
 class. Using the segment Delaunay graph hierarchy involves an
 additional cost in space and time for maintaining the hierarchy. Our
 experiments have shown that it usually pays off to use the hierarchy

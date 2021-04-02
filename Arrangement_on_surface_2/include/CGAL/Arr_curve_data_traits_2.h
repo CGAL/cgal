@@ -7,8 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Ron Wein          <wein@post.tau.ac.il>
-//                 Efi Fogel         <efifogel@gmail.com>
+// Author(s): Ron Wein          <wein@post.tau.ac.il>
+//            Efi Fogel         <efifogel@gmail.com>
 
 #ifndef CGAL_ARR_CURVE_DATA_TRAITS_2_H
 #define CGAL_ARR_CURVE_DATA_TRAITS_2_H
@@ -22,11 +22,13 @@
  */
 
 #include <list>
+
+#include <boost/variant.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/mpl/has_xxx.hpp>
 
-#include <CGAL/Object.h>
 #include <CGAL/tags.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_geometry_traits/Curve_data_aux.h>
 
@@ -99,6 +101,12 @@ public:
   /// \name Overriden functors.
   //@{
 
+  //! \name Intersections & subdivisions
+  //@{
+
+  /*! \class Make_x_monotone_2
+   * A functor for subdividing a curve into x-monotone curves.
+   */
   class Make_x_monotone_2 {
   private:
     const Base_traits_2& m_base;
@@ -107,36 +115,36 @@ public:
     /*! Constructor. */
     Make_x_monotone_2(const Base_traits_2& base) : m_base(base) {}
 
-    /*! Cut the given curve into x-monotone subcurves and insert them to the
-     * given output iterator. As segments are always x_monotone, only one
-     * x-monotone curve will be contained in the iterator.
-     * \param cv The curve.
-     * \param oi The output iterator, whose value-type is X_monotone_curve_2.
-     * \return The past-the-end iterator.
+    /*! Subdivide a given curve into x-monotone subcurves and insert them into
+     * a given output iterator.
+     * \param cv the curve.
+     * \param oi the output iterator for the result. Its value type is a variant
+     *           that wraps Point_2 or an X_monotone_curve_2 objects.
+     * \return the past-the-end iterator.
      */
-    template<typename OutputIterator>
+    template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     {
+      typedef boost::variant<Point_2, Base_x_monotone_curve_2>
+        Base_make_x_monotone_result;
+      typedef boost::variant<Point_2, X_monotone_curve_2>
+        Make_x_monotone_result;
+
       // Make the original curve x-monotone.
-      std::list<CGAL::Object> base_objects;
+      std::list<Base_make_x_monotone_result> base_objects;
       m_base.make_x_monotone_2_object()(cv, std::back_inserter(base_objects));
 
       // Attach the data to each of the resulting x-monotone curves.
-      const Base_x_monotone_curve_2* base_x_curve;
       X_monotone_curve_data xdata = Convert()(cv.data());
-      for (typename std::list<CGAL::Object>::const_iterator it =
-             base_objects.begin(); it != base_objects.end(); ++it)
-      {
-        base_x_curve = object_cast<Base_x_monotone_curve_2>(&(*it));
-        if (base_x_curve != nullptr) {
-          // Current object is an x-monotone curve: Attach data to it.
-          *oi++ = make_object(X_monotone_curve_2(*base_x_curve, xdata));
+      for (const auto& base_obj : base_objects) {
+        if (const auto* bxcv = boost::get<Base_x_monotone_curve_2>(&base_obj)) {
+          *oi++ = Make_x_monotone_result(X_monotone_curve_2(*bxcv, xdata));
+          continue;
         }
-        else {
-          // Current object is an isolated point: Leave it as is.
-          CGAL_assertion(object_cast<Point_2>(&(*it)) != nullptr);
-          *oi++ = *it;
-        }
+        // Current object is an isolated point: Leave it as is.
+        const auto* bp = boost::get<Point_2>(&base_obj);
+        CGAL_assertion(bp);
+        *oi++ = Make_x_monotone_result(*bp);
       }
 
       return oi;
@@ -193,35 +201,40 @@ public:
      * \param oi The output iterator.
      * \return The past-the-end iterator.
      */
-    template<typename OutputIterator>
+    template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& cv1,
                               const X_monotone_curve_2& cv2,
                               OutputIterator oi) const
     {
+      typedef std::pair<Point_2, Multiplicity>          Intersection_point;
+      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+                                                        Intersection_result;
+      typedef boost::variant<Intersection_point, Base_x_monotone_curve_2>
+        Intersection_base_result;
+
       // Use the base functor to obtain all intersection objects.
-      std::list<CGAL::Object> base_objects;
+      std::list<Intersection_base_result> base_objects;
       m_base.intersect_2_object()(cv1, cv2, std::back_inserter(base_objects));
 
       // Stop if the list is empty:
       if (base_objects.empty()) return oi;
 
       // Go over all intersection objects and prepare the output.
-      const Base_x_monotone_curve_2* base_cv;
-      for (typename std::list<CGAL::Object>::const_iterator it =
-             base_objects.begin(); it != base_objects.end(); ++it)
-      {
-        if ((base_cv = object_cast<Base_x_monotone_curve_2>(&(*it))) != nullptr) {
+      for (const auto& item : base_objects) {
+        const Base_x_monotone_curve_2* base_cv =
+          boost::get<Base_x_monotone_curve_2>(&item);
+        if (base_cv != nullptr) {
           // The current intersection object is an overlapping x-monotone
           // curve: Merge the data fields of both intersecting curves and
           // associate the result with the overlapping curve.
-          X_monotone_curve_2 cv(*base_cv, Merge() (cv1.data(), cv2.data()));
-          *oi++ = make_object(cv);
+          X_monotone_curve_2 cv(*base_cv, Merge()(cv1.data(), cv2.data()));
+          *oi++ = Intersection_result(cv);
+          continue;
         }
-        else {
-          // The current intersection object is an intersection point:
-          // Copy it as is.
-          *oi++ = *it;
-        }
+        // The current intersection object is an intersection point:
+        // Copy it as is.
+        const Intersection_point* ip = boost::get<Intersection_point>(&item);
+        *oi++ = Intersection_result(*ip);
       }
 
       return oi;
@@ -351,6 +364,8 @@ public:
 
   /*! Obtain a Merge_2 functor object. */
   Merge_2 merge_2_object() const { return Merge_2(*this); }
+
+  //@}
 
   class Construct_x_monotone_curve_2 {
   private:

@@ -3,11 +3,8 @@
 # Should be run in the directory with the release files, and named after
 # the release name, like "CGAL-4.9.1".
 
-# Use github-release from
-#   https://github.com/aktau/github-release
+release=${${PWD:t}/CGAL-/}
+tag=v${release}
 
-source $HOME/private/github-token.txt
-
-for f in *.(zip|xz|txt|exe); do
-    github-release upload -u CGAL -r cgal -t releases/${PWD:t} --name $f -f $f;
-done
+gh release upload "$tag" *.(zip|xz|txt|exe) -R CGAL/cgal
+gh release upload "$tag" CGAL-${release}-win64-auxiliary-libraries-gmp-mpfr.zip'#GMP and MPFR libraries, for Windows 64bits' -R CGAL/cgal --clobber

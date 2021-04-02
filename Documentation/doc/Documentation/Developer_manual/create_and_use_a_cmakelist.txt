@@ -1,0 +1,49 @@
+/*!
+\page devman_create_and_use_a_cmakelist How to use %CGAL with CMake
+
+This page will explain how to manually create a `CMakeLists.txt` file to link a custom program with \cgal.
+A base can be created using the script `cgal_create_CMakeLists`. Its usage is detailed in Section \ref devman_create_cgal_CMakeLists.
+\section seclink Linking with CGAL
+To link with the \cgal library, use the following:
+\code
+find_package(CGAL)
+add_executable(my_executable my_source_file.cpp)
+target_link_libraries(my_executable CGAL::CGAL)
+\endcode
+
+Other \cgal libraries are linked similarly. For example, with `CGAL_Core`:
+
+\code
+find_package(CGAL REQUIRED COMPONENTS Core)
+target_link_libraries(my_executable CGAL::CGAL CGAL::CGAL_Core)
+\endcode
+
+There are also imported targets to link with \cgal dependencies that can be found in
+the section \subpage thirdparty.
+
+\note The \cgal targets define the following compiler flags:
+  - `-frounding-math` with gcc
+  - `/fp:strict /fp:except-` with MSVC
+
+\section secexample Minimal Example Using Qt5
+This section describes a minimal example of a program that uses \cgal and Qt5 for some GUI features.
+
+\subsection subcmake CMakeLists.txt
+\dontinclude Surface_mesh/CMakeLists.txt
+\skip cmake_minimum_required
+\until project
+
+\skip #CGAL_Qt5 is needed for the drawing.
+\until endif()
+
+\skip #create the executable of the application
+\until "draw_surface_mesh.cpp"
+
+\skip if(CGAL_Qt5_FOUND)
+\until target_link_libraries(draw_surface_mesh PUBLIC CGAL::CGAL_Qt5)
+\skip endif
+\until #end of the file
+
+\subsection subexcpp draw_surface_mesh.cpp
+\include Surface_mesh/draw_surface_mesh.cpp
+*/

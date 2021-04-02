@@ -1,5 +1,3 @@
-// =============================================================================
-//
 // Copyright (c) 2001-2007 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
@@ -11,7 +9,6 @@
 //
 // Author(s)     : Michael Hemmer    <hemmer@mpi-inf.mpg.de>
 //
-// =============================================================================
 
 #ifndef CGAL_CACHE_H
 #define CGAL_CACHE_H 1
@@ -87,7 +84,7 @@ public:
     //! default constructor with empty table
     Cache() : map() {};
 
-    /*! \brief Returns the respective object of type Output.
+    /*! \brief returns the respective object of type Output.
      *
      *  If the object is not in the cache, it is constructed form \c key and
      *  added to the cache.
@@ -130,22 +127,22 @@ public:
     //! Returns a Const_iterator pointing to the end of the cache.
     Const_iterator end() const { return map.end(); }
 
-    /*!        \brief Returns a Reverse_iterator pointing to the beginning of the
+    /*!        \brief returns a Reverse_iterator pointing to the beginning of the
      *  reversed cache.
      */
     Reverse_iterator rbegin() { return map.rbegin(); }
 
-    /*!        \brief Returns a Reverse_iterator pointing to the end of the reversed
+    /*!        \brief returns a Reverse_iterator pointing to the end of the reversed
      *  cache.
      */
     Reverse_iterator rend() { return map.rend(); }
 
-    /*!        \brief Returns a Const_reverse_iterator pointing to the beginning of
+    /*!        \brief returns a Const_reverse_iterator pointing to the beginning of
      *  the reversed cache.
      */
     Const_reverse_iterator rbegin() const { return map.rbegin(); }
 
-    /*!        \brief Returns a Const_reverse_iterator pointing to the end of the
+    /*!        \brief returns a Const_reverse_iterator pointing to the end of the
      *  reversed cache.
      */
     Const_reverse_iterator rend() const { return map.rend(); }

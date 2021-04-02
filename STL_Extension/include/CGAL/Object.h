@@ -132,10 +132,10 @@ class Object
 
 #ifndef CGAL_NO_DEPRECATED_CODE
     // The comparisons with nullptr are only there for Nef...
-    bool operator==(std::nullptr_t CGAL_assertion_code(n)) const
-    { CGAL_assertion(n == 0); return empty(); }
-    bool operator!=(std::nullptr_t CGAL_assertion_code(n)) const
-    { CGAL_assertion(n == 0); return !empty(); }
+  bool operator==(std::nullptr_t /*CGAL_assertion_code(n)*/) const
+  { /*CGAL_assertion(n == 0);*/ return empty(); }
+  bool operator!=(std::nullptr_t /*CGAL_assertion_code(n)*/) const
+  { /*CGAL_assertion(n == 0);*/ return !empty(); }
 #endif // CGAL_NO_DEPRECATED_CODE
 
 };
@@ -161,7 +161,7 @@ assign(T& t, const Object& o)
 struct Bad_object_cast
   : public std::bad_cast
 {
-    virtual const char * what() const throw()
+    virtual const char * what() const noexcept
     {
         return "CGAL::bad_object_cast: "
                "failed conversion using CGAL::object_cast";

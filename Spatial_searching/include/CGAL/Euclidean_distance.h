@@ -132,7 +132,7 @@ namespace CGAL {
         // Note: the concept SearchTraits specifies that Cartesian_const_iterator_d
         //       must be a random-access iterator
         typename SearchTraits::Cartesian_const_iterator_d qe_minus_5 = qe;
-        std::advance(qe, -5);
+        std::advance(qe_minus_5, -5);
         for (;;)
         {
           FT diff = (*qit) - (*it_coord_begin);

@@ -31,7 +31,7 @@
 #endif
 #include <CGAL/OpenNL/linear_solver.h>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 #include <boost/unordered_set.hpp>
 
 #include <vector>
@@ -75,7 +75,7 @@ namespace Surface_mesh_parameterization {
 ///         and `CGAL_EIGEN3_ENABLED` is defined, then an overload of `Eigen_solver_traits`
 ///         is provided as default parameter:
 /// \code
-///   CGAL::Eigen_solver_traits<Eigen::BICGSTAB< Eigen::SparseMatrix<double> > >
+///   CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT< Eigen::SparseMatrix<double> > >
 /// \endcode
 ///         Otherwise, it uses CGAL's wrapping function to the OpenNL library:
 /// \code
@@ -100,12 +100,7 @@ public:
   #if defined(CGAL_EIGEN3_ENABLED)
     // WARNING: at the moment, the choice of SolverTraits_ is completely
     // ignored (see LeastSquaresSolver typedef) and `OpenNL::LinearSolver<SolverTraits_>`
-    // is used anyway. If Eigen solver traits were to be used again, there is a bug
-    // in the line below to be first fixed:
-    // `Eigen_sparse_symmetric_matrix<double>::EigenType` is a NON SYMMETRIC
-    // Eigen sparse matrix, and thus SolverTraits_::Matrix will be a NON SYMMETRIC matrix
-    // and the whole symmetry aspect will be completely ignored.
-    // @fixme
+    // is always used...
     CGAL::Eigen_solver_traits<
             Eigen::SimplicialLDLT<Eigen_sparse_symmetric_matrix<double>::EigenType> >
   #else
@@ -113,24 +108,29 @@ public:
   #endif
   >::type                                                     Solver_traits;
 #else
+  /// The border parameterizer
   typedef Border_parameterizer_                               Border_parameterizer;
+
+  /// Solver traits type
   typedef SolverTraits_                                       Solver_traits;
 #endif
 
+  /// Triangle mesh type
+  typedef TriangleMesh_                                       Triangle_mesh;
+
   typedef TriangleMesh_                                       TriangleMesh;
+
+  /// Mesh halfedge type
+  typedef typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor halfedge_descriptor;
 
 // Private types
 private:
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor   vertex_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor     face_descriptor;
-
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator     vertex_iterator;
-  typedef typename boost::graph_traits<TriangleMesh>::face_iterator       face_iterator;
+  typedef typename boost::graph_traits<Triangle_mesh>::vertex_descriptor   vertex_descriptor;
+  typedef typename boost::graph_traits<Triangle_mesh>::face_descriptor     face_descriptor;
 
   // Traits subtypes:
-  typedef typename internal::Kernel_traits<TriangleMesh>::PPM       PPM;
-  typedef typename internal::Kernel_traits<TriangleMesh>::Kernel    Kernel;
+  typedef typename internal::Kernel_traits<Triangle_mesh>::PPM      PPM;
+  typedef typename internal::Kernel_traits<Triangle_mesh>::Kernel   Kernel;
   typedef typename Kernel::FT                                       NT;
   typedef typename Kernel::Point_2                                  Point_2;
   typedef typename Kernel::Point_3                                  Point_3;
@@ -155,29 +155,29 @@ public:
 
   // Default copy constructor and operator =() are fine
 
-  /// Check if the 3D -> 2D mapping is one-to-one.
+  /// returns whether the 3D -> 2D mapping is one-to-one.
   template <typename VertexUVMap>
-  bool is_one_to_one_mapping(const TriangleMesh& mesh,
+  bool is_one_to_one_mapping(const Triangle_mesh& mesh,
                              halfedge_descriptor bhd,
                              const VertexUVMap uvmap) const
   {
     return internal::is_one_to_one_mapping(mesh, bhd, uvmap);
   }
 
-  /// Compute a one-to-one mapping from a triangular 3D surface mesh
+  /// computes a one-to-one mapping from a triangular 3D surface mesh
   /// to a piece of the 2D space.
   /// The mapping is piecewise linear (linear in each triangle).
-  /// The result is the (u,v) pair image of each vertex of the 3D surface.
+  /// The result is the `(u,v)` pair image of each vertex of the 3D surface.
   ///
   /// \tparam VertexUVmap must be a model of `ReadWritePropertyMap` with
-  ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
-  ///         %Point_2 (type deduced from `TriangleMesh` using `Kernel_traits`)
+  ///         `boost::graph_traits<Triangle_mesh>::%vertex_descriptor` as key type and
+  ///         %Point_2 (type deduced from `Triangle_mesh` using `Kernel_traits`)
   ///         as value type.
   /// \tparam VertexIndexMap must be a model of `ReadablePropertyMap` with
-  ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
+  ///         `boost::graph_traits<Triangle_mesh>::%vertex_descriptor` as key type and
   ///         a unique integer as value type.
   /// \tparam VertexParameterizedMap must be a model of `ReadWritePropertyMap` with
-  ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and
+  ///         `boost::graph_traits<Triangle_mesh>::%vertex_descriptor` as key type and
   ///         a Boolean as value type.
   ///
   /// \param mesh a triangulated surface.
@@ -190,17 +190,21 @@ public:
   /// \pre The vertices must be indexed (`vimap` must be initialized).
   ///
   template <typename VertexUVmap, typename VertexIndexMap, typename VertexParameterizedMap>
-  Error_code parameterize(TriangleMesh& mesh,
+  Error_code parameterize(Triangle_mesh& mesh,
                           halfedge_descriptor bhd,
                           VertexUVmap uvmap,
                           VertexIndexMap vimap,
                           VertexParameterizedMap vpmap)
   {
+    CGAL_precondition(is_valid_polygon_mesh(mesh));
+    CGAL_precondition(is_triangle_mesh(mesh));
+    CGAL_precondition(bhd != boost::graph_traits<Triangle_mesh>::null_halfedge() && is_border(bhd, mesh));
+
     // Fill containers
     boost::unordered_set<vertex_descriptor> ccvertices;
     std::vector<face_descriptor> ccfaces;
 
-    internal::Containers_filler<TriangleMesh> fc(mesh, ccvertices, &ccfaces);
+    internal::Containers_filler<Triangle_mesh> fc(mesh, ccvertices, &ccfaces);
     Polygon_mesh_processing::connected_component(
                                       face(opposite(bhd, mesh), mesh),
                                       mesh,
@@ -340,7 +344,7 @@ private:
   // in presence of degenerate triangles
   template <typename VertexIndexMap >
   Error_code setup_triangle_relations(LeastSquaresSolver& solver,
-                                      const TriangleMesh& mesh,
+                                      const Triangle_mesh& mesh,
                                       face_descriptor facet,
                                       VertexIndexMap vimap) const
   {

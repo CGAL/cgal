@@ -3333,8 +3333,7 @@ namespace CommonKernelFunctors {
       CGAL_kernel_assertion_msg(bool(optional) == true,
                                 "the segment does not intersect the supporting"
                                 " plane");
-      using boost::get;
-      const Point_3* p = get<Point_3>(&*optional);
+      const Point_3* p = boost::get<Point_3>(&*optional);
       CGAL_kernel_assertion_msg(p != 0,
                                 "the segment intersection with the plane is "
                                 "not a point");
@@ -3568,6 +3567,34 @@ namespace CommonKernelFunctors {
     { return Intersections::internal::intersection(pl1, pl2, pl3, K() ); }
   };
 
+
+  // This functor is not part of the documented Kernel API, but an implementation detail
+  // of Polygon_mesh_processing::Polyhedral_envelope
+  // When used with the Lazy_kernel (that is Epeck) the returned point
+  // is a singleton (so its coordinates will be changed by another call).
+  template <typename K>
+  class Intersect_point_3_for_polyhedral_envelope
+  {
+  public:
+    typedef typename K::Point_3     Point_3;
+    typedef typename K::Line_3      Line_3;
+    typedef typename K::Plane_3     Plane_3;
+    typedef typename boost::optional<Point_3> result_type;
+
+    result_type
+    operator()(const Plane_3& pl1, const Plane_3& pl2, const Plane_3& pl3) const
+    {
+      return Intersections::internal::intersection_point(pl1, pl2, pl3, K() );
+    }
+
+    result_type
+    operator()(const Plane_3& plane, const Line_3& line) const
+    {
+      return Intersections::internal::intersection_point(plane, line, K() );
+    }
+  };
+
+
   template <typename K>
   class Is_degenerate_2
   {
@@ -3764,6 +3791,7 @@ namespace CommonKernelFunctors {
   class Oriented_side_3
   {
     typedef typename K::Point_3        Point_3;
+    typedef typename K::Vector_3       Vector_3;
     typedef typename K::Tetrahedron_3  Tetrahedron_3;
     typedef typename K::Plane_3        Plane_3;
     typedef typename K::Sphere_3       Sphere_3;
@@ -3777,6 +3805,12 @@ namespace CommonKernelFunctors {
     result_type
     operator()( const Plane_3& pl, const Point_3& p) const
     { return pl.rep().oriented_side(p); }
+
+    result_type
+    operator()( const Point_3& plane_pt, const Vector_3& plane_normal, const Point_3& query) const
+    {
+      return typename K::Construct_plane_3()(plane_pt, plane_normal).rep().oriented_side(query);
+    }
 
     result_type
     operator()( const Tetrahedron_3& t, const Point_3& p) const

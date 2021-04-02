@@ -1,5 +1,3 @@
-// ======================================================================
-//
 // Copyright (c) 2005-2017 GeometryFactory (France).  All Rights Reserved.
 //
 // This file is part of CGAL (www.cgal.org)
@@ -11,7 +9,6 @@
 //
 // Author(s): Le-Jeng Shiue <Andy.Shiue@gmail.com>
 //
-// ======================================================================
 
 #ifndef CGAL_SUBDIVISION_METHODS_3_H
 #define CGAL_SUBDIVISION_METHODS_3_H
@@ -102,17 +99,26 @@ void CatmullClark_subdivision(PolygonMesh& pmesh, int step) {
  * This function overwrites the control mesh `pmesh` with the subdivided mesh.
  *
  * @tparam PolygonMesh a model of `MutableFaceGraph`
- * @tparam NamedParameters a sequence of \ref sm_namedparameters "Named Parameters"
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param pmesh a polygon mesh
- * @param np optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
- *       If this parameter is omitted, an internal property map for
- *       `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
- *  \cgalParamBegin{number_of_iterations} the number of subdivision steps, by default 1.
- *     \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+ *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     should be available for the vertices of `pmesh`.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{number_of_iterations}
+ *     \cgalParamDescription{the number of subdivision steps}
+ *     \cgalParamType{unsigned int}
+ *     \cgalParamDefault{`1`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * \pre `pmesh` must be a triangle mesh.
@@ -158,17 +164,26 @@ void Loop_subdivision(PolygonMesh& pmesh, int step) {
  * This function overwrites the control mesh `pmesh` with the subdivided mesh.
 
  * @tparam PolygonMesh a model of `MutableFaceGraph`
- * @tparam NamedParameters a sequence of \ref sm_namedparameters "Named Parameters"
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param pmesh a polygon mesh
- * @param np optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
- *       If this parameter is omitted, an internal property map for
- *       `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
- *  \cgalParamBegin{number_of_iterations} the number of subdivision steps, by default 1.
- *     \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+ *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     should be available for the vertices of `pmesh`.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{number_of_iterations}
+ *     \cgalParamDescription{the number of subdivision steps}
+ *     \cgalParamType{unsigned int}
+ *     \cgalParamDefault{`1`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  **/
 template <class PolygonMesh, class NamedParameters>
@@ -212,17 +227,26 @@ void DooSabin_subdivision(PolygonMesh& pmesh, int step) {
  * This function overwrites the control mesh `pmesh` with the subdivided mesh.
 
  * @tparam PolygonMesh a model of `MutableFaceGraph`
- * @tparam NamedParameters a sequence of \ref sm_namedparameters "Named Parameters"
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param pmesh a polygon mesh
- * @param np optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
- *       If this parameter is omitted, an internal property map for
- *       `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
- *  \cgalParamBegin{number_of_iterations} the number of subdivision steps, by default 1.
- *     \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+ *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     should be available for the vertices of `pmesh`.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{number_of_iterations}
+ *     \cgalParamDescription{the number of subdivision steps}
+ *     \cgalParamType{unsigned int}
+ *     \cgalParamDefault{`1`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  **/
 template <class PolygonMesh, class NamedParameters>
@@ -269,17 +293,26 @@ void Sqrt3_subdivision(PolygonMesh& pmesh, int step) {
  *            during a <em>single</em> call of this function.
  *
  * @tparam PolygonMesh a model of `MutableFaceGraph`
- * @tparam NamedParameters a sequence of \ref sm_namedparameters "Named Parameters"
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param pmesh a polygon mesh
- * @param np optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
- *       If this parameter is omitted, an internal property map for
- *       `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
- *  \cgalParamBegin{number_of_iterations} the number of subdivision steps, by default 1.
- *     \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+ *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     should be available for the vertices of `pmesh`.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{number_of_iterations}
+ *     \cgalParamDescription{the number of subdivision steps}
+ *     \cgalParamType{unsigned int}
+ *     \cgalParamDefault{`1`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * \pre `pmesh` must be a triangle mesh.

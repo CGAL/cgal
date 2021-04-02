@@ -12,7 +12,7 @@
 #ifndef CGAL_IO_FILE_MAYA_H
 #define CGAL_IO_FILE_MAYA_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Triangulation_3.h>
 
 #include <CGAL/Time_stamper.h>
 #include <CGAL/utility.h>
@@ -25,11 +25,6 @@
 #include <sstream>
 
 namespace CGAL {
-
-//-------------------------------------------------------
-// IO functions
-//-------------------------------------------------------
-
 template <class C3T3>
 void
 output_to_maya(std::ostream& os,
