@@ -333,8 +333,10 @@ public:
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    using parameters::is_default_parameter;
 
     typedef boost::graph_traits<TriangleMesh> Graph_traits;
+    typedef typename Graph_traits::face_descriptor face_descriptor;
 
     typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
@@ -353,7 +355,7 @@ public:
     }
 
     GeomTraits gt;
-    for(typename Graph_traits::face_descriptor f : faces(tmesh)){
+    for(face_descriptor f : faces(tmesh)){
       if(! Polygon_mesh_processing::is_degenerate_triangle_face(f, tmesh, parameters::geom_traits(gt).vertex_point_map(vpm))){
         typename Graph_traits::halfedge_descriptor h = halfedge(f, tmesh);
         int i = get(vim, source(h, tmesh));
@@ -364,7 +366,26 @@ public:
         env_faces.push_back(face);
       }
     }
-    init(epsilon);
+    if (is_default_parameter(get_parameter(np, internal_np::face_epsilon_map)))
+      init(std::vector<double>(env_faces.size(), epsilon));
+    else
+    {
+      std::vector<double> epsilon_values;
+      epsilon_values.reserve(env_faces.size());
+
+      typedef typename internal_np::Lookup_named_param_def<
+        internal_np::face_epsilon_map_t,
+        NamedParameters,
+        Constant_property_map<face_descriptor, double>
+      > ::type  Epsilon_map;
+
+      Epsilon_map epsilon_map = choose_parameter(get_parameter(np, internal_np::face_epsilon_map),
+                                                 Constant_property_map<face_descriptor, double>(epsilon));
+
+      for(face_descriptor f : faces(tmesh))
+        if(! Polygon_mesh_processing::is_degenerate_triangle_face(f, tmesh, parameters::geom_traits(gt).vertex_point_map(vpm)))
+          epsilon_values.push_back( get(epsilon_map, f) );
+    }
   }
 
   /**
@@ -407,6 +428,7 @@ public:
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    using parameters::is_default_parameter;
 
     typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
@@ -442,7 +464,27 @@ public:
         env_faces.push_back(face);
       }
     }
-    init(epsilon);
+
+    if (is_default_parameter(get_parameter(np, internal_np::face_epsilon_map)))
+      init(std::vector<double>(env_faces.size(), epsilon));
+    else
+    {
+      std::vector<double> epsilon_values;
+      epsilon_values.reserve(env_faces.size());
+
+      typedef typename internal_np::Lookup_named_param_def<
+        internal_np::face_epsilon_map_t,
+        NamedParameters,
+        Constant_property_map<face_descriptor, double>
+      > ::type  Epsilon_map;
+
+      Epsilon_map epsilon_map = choose_parameter(get_parameter(np, internal_np::face_epsilon_map),
+                                                 Constant_property_map<face_descriptor, double>(epsilon));
+
+      for(face_descriptor f : face_range)
+        if(! Polygon_mesh_processing::is_degenerate_triangle_face(f, tmesh, parameters::geom_traits(gt).vertex_point_map(vpm)))
+          epsilon_values.push_back( get(epsilon_map, f) );
+    }
   }
 
   /**
@@ -499,7 +541,7 @@ public:
       Vector3i face = { int(t[0]), int(t[1]), int(t[2]) };
       env_faces.emplace_back(face);
     }
-    init(epsilon);
+    init(std::vector<double>(env_faces.size(), epsilon));
   }
 
   /// @}
@@ -530,9 +572,9 @@ public:
 
 private:
 
-  void init(double epsilon)
+  void init(const std::vector<double>& epsilon_values)
   {
-    halfspace_generation(env_vertices, env_faces, halfspace, bounding_boxes, epsilon);
+    halfspace_generation(env_vertices, env_faces, halfspace, bounding_boxes, epsilon_values);
 
     Datum_map<GeomTraits> datum_map(bounding_boxes);
     Point_map<GeomTraits> point_map(bounding_boxes);
@@ -1775,10 +1817,8 @@ private:
   void
   halfspace_generation(const std::vector<Point_3> &ver, const std::vector<Vector3i> &faces,
                        std::vector<Prism>& halfspace,
-                       std::vector<Iso_cuboid_3>& bounding_boxes, const double epsilon)
+                       std::vector<Iso_cuboid_3>& bounding_boxes, const std::vector<double>& epsilon_values)
   {
-    double tolerance = epsilon / std::sqrt(3);// the envelope thickness, to be conservative
-    double bbox_tolerance = epsilon *(1 + 1e-6);
     Vector_3 AB, AC, BC, normal;
     Plane plane;
     std::array<Vector_3, 8> box;
@@ -1804,6 +1844,10 @@ private:
     bounding_boxes.resize(faces.size());
     for (unsigned int i = 0; i < faces.size(); ++i)
       {
+        const double epsilon = epsilon_values[i];
+        double tolerance = epsilon / std::sqrt(3);// the envelope thickness, to be conservative
+        double bbox_tolerance = epsilon *(1 + 1e-6);
+
         Bbox bb = ver[faces[i][0]].bbox () + ver[faces[i][1]].bbox() + ver[faces[i][2]].bbox();
         // todo: Add a grow() function to Bbox
         bounding_boxes[i] = Iso_cuboid_3(Point_3(bb.xmin()-bbox_tolerance, bb.ymin()-bbox_tolerance, bb.zmin()-bbox_tolerance),
