@@ -321,6 +321,11 @@ public:
    *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
    *                     must be available in `TriangleMesh`.}
    *   \cgalParamNEnd
+   *   \cgalParamNBegin{face_epsilon_map}
+   *     \cgalParamDescription{a property map associating to each face of `tm` a epsilon value}
+   *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
+   *                    as key type and `double` as value type}
+   *     \cgalParamDefault{Use `epsilon` for all faces}
    * \cgalNamedParamsEnd
    *
    * \note The triangle mesh gets copied internally, that is it can be modifed after having passed as argument,
@@ -367,7 +372,7 @@ public:
       }
     }
     if (is_default_parameter(get_parameter(np, internal_np::face_epsilon_map)))
-      init(std::vector<double>(env_faces.size(), epsilon));
+      init(epsilon);
     else
     {
       std::vector<double> epsilon_values;
@@ -385,6 +390,7 @@ public:
       for(face_descriptor f : faces(tmesh))
         if(! Polygon_mesh_processing::is_degenerate_triangle_face(f, tmesh, parameters::geom_traits(gt).vertex_point_map(vpm)))
           epsilon_values.push_back( get(epsilon_map, f) );
+      init(epsilon_values);
     }
   }
 
@@ -410,6 +416,12 @@ public:
    *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
    *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
    *                     must be available in `TriangleMesh`.}
+   *   \cgalParamNEnd
+   *   \cgalParamNBegin{face_epsilon_map}
+   *     \cgalParamDescription{a property map associating to each face of `tm` a epsilon value}
+   *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
+   *                    as key type and `double` as value type}
+   *     \cgalParamDefault{Use `epsilon` for all faces}
    *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    *
@@ -466,7 +478,7 @@ public:
     }
 
     if (is_default_parameter(get_parameter(np, internal_np::face_epsilon_map)))
-      init(std::vector<double>(env_faces.size(), epsilon));
+      init(epsilon);
     else
     {
       std::vector<double> epsilon_values;
@@ -484,6 +496,7 @@ public:
       for(face_descriptor f : face_range)
         if(! Polygon_mesh_processing::is_degenerate_triangle_face(f, tmesh, parameters::geom_traits(gt).vertex_point_map(vpm)))
           epsilon_values.push_back( get(epsilon_map, f) );
+      init(epsilon_values);
     }
   }
 
@@ -541,7 +554,7 @@ public:
       Vector3i face = { int(t[0]), int(t[1]), int(t[2]) };
       env_faces.emplace_back(face);
     }
-    init(std::vector<double>(env_faces.size(), epsilon));
+    init(epsilon);
   }
 
   /// @}
@@ -572,7 +585,8 @@ public:
 
 private:
 
-  void init(const std::vector<double>& epsilon_values)
+  template <class Epsilons>
+  void init(const Epsilons& epsilon_values)
   {
     halfspace_generation(env_vertices, env_faces, halfspace, bounding_boxes, epsilon_values);
 
@@ -1812,12 +1826,22 @@ private:
     return Plane(plane0, plane1,plane2);
   }
 
+  double get_epsilon(double epsilon, std::size_t)
+  {
+    return epsilon;
+  }
+
+  double get_epsilon(const std::vector<double>& epsilon_values, std::size_t i)
+  {
+    return epsilon_values[i];
+  }
 
   // build prisms for a list of triangles. each prism is represented by 7-8 planes, which are represented by 3 points
+  template <class Epsilons>
   void
   halfspace_generation(const std::vector<Point_3> &ver, const std::vector<Vector3i> &faces,
                        std::vector<Prism>& halfspace,
-                       std::vector<Iso_cuboid_3>& bounding_boxes, const std::vector<double>& epsilon_values)
+                       std::vector<Iso_cuboid_3>& bounding_boxes, const Epsilons& epsilon_values)
   {
     Vector_3 AB, AC, BC, normal;
     Plane plane;
@@ -1844,7 +1868,7 @@ private:
     bounding_boxes.resize(faces.size());
     for (unsigned int i = 0; i < faces.size(); ++i)
       {
-        const double epsilon = epsilon_values[i];
+        const double epsilon = get_epsilon(epsilon_values,i);
         double tolerance = epsilon / std::sqrt(3);// the envelope thickness, to be conservative
         double bbox_tolerance = epsilon *(1 + 1e-6);
 
