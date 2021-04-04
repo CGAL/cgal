@@ -26,6 +26,16 @@ template <> class Algebraic_structure_traits< Gmpq >
     typedef Tag_true            Is_exact;
     typedef Tag_false            Is_numerical_sensitive;
 
+    class Is_zero
+      : public CGAL::cpp98::unary_function<Type&,
+                                bool > {
+      public:
+        bool operator()( const Type& x_) const {
+          return x_.is_zero();
+        }
+    };
+
+
     class Is_square
       : public CGAL::cpp98::binary_function< Type, Type&,
                                 bool > {
