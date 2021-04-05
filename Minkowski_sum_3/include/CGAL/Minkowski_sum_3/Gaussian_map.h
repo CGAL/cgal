@@ -81,41 +81,6 @@ class Gaussian_map :
   using Base::merge_edge_pairs_at_target;
 
   template<typename Nef_polyhedron_3>
-  class SVertex_creator2 {
-
-    typedef typename Nef_polyhedron_3::Vertex_const_handle      Vertex_const_handle;
-    typedef typename Nef_polyhedron_3::Halffacet_const_handle   Halffacet_const_handle;
-    typedef typename Nef_polyhedron_3::Halfedge_const_handle    Halfedge_const_handle;
-    typedef typename Nef_polyhedron_3::SHalfedge_const_handle   SHalfedge_const_handle;
-    typedef typename Nef_polyhedron_3::SHalfloop_const_handle   SHalfloop_const_handle;
-    typedef typename Nef_polyhedron_3::SFace_const_handle       SFace_const_handle;
-
-    typedef CGAL::Unique_hash_map<Halffacet_const_handle, SVertex_handle> Facet2SVertex_hash;
-
-    SM_decorator SM;
-    Facet2SVertex_hash& Facet2SVertex;
-
-  public:
-    SVertex_creator2(Sphere_map* smap, Facet2SVertex_hash& F2SV)
-      : SM(smap), Facet2SVertex(F2SV) {}
-
-    void visit(Vertex_const_handle) {}
-    void visit(Halfedge_const_handle) {}
-    void visit(SHalfedge_const_handle) {}
-    void visit(SHalfloop_const_handle) {}
-    void visit(SFace_const_handle) {}
-    void visit(Halffacet_const_handle f) {
-
-      CGAL_NEF_TRACEN( "SVertex_creator2 " << f->twin()->plane() );
-      SVertex_handle sv
-        (SM.new_svertex(normalized(f->twin()->plane().orthogonal_vector())));
-      sv->mark() = Mark(Point_3(0,0,0), f->mark());
-      Facet2SVertex[f] = sv;
-    }
-
-  };
-
-  template<typename Nef_polyhedron_3>
   class SVertex_creator {
 
     typedef typename Nef_polyhedron_3::Vertex_const_handle      Vertex_const_handle;
@@ -133,12 +98,12 @@ class Gaussian_map :
     typedef typename Nef_polyhedron_3::Point_3                  Point_3;
     typedef typename Nef_polyhedron_3::Sphere_point             Sphere_point;
 
-    typedef CGAL::Unique_hash_map<Halffacet_const_handle, SVertex_handle> Facet2SVertex_hash;
-    typedef CGAL::Unique_hash_map<Halffacet_const_handle, bool> Facet2bool_hash;
-    typedef CGAL::Unique_hash_map<Vertex_const_handle, bool> Vertex2bool_hash;
-    typedef CGAL::Unique_hash_map<Halfedge_const_handle, bool> Edge2bool_hash;
-    typedef CGAL::Unique_hash_map<SHalfedge_const_handle, SHalfedge_const_handle> SEdge2SEdge_hash;
-    typedef CGAL::Unique_hash_map<SFace_const_handle, bool> SFace2bool_hash;
+    typedef robin_hood::unordered_map<Halffacet_const_handle, SVertex_handle, Handle_hash_function> Facet2SVertex_hash;
+    typedef robin_hood::unordered_set<Halffacet_const_handle, Handle_hash_function> Facet2bool_hash;
+    typedef robin_hood::unordered_set<Vertex_const_handle, Handle_hash_function> Vertex2bool_hash;
+    typedef robin_hood::unordered_set<Halfedge_const_handle, Handle_hash_function> Edge2bool_hash;
+    typedef robin_hood::unordered_map<SHalfedge_const_handle, SHalfedge_const_handle, Handle_hash_function> SEdge2SEdge_hash;
+    typedef robin_hood::unordered_set<SFace_const_handle, Handle_hash_function> SFace2bool_hash;
 
     SM_decorator SM;
     Facet2SVertex_hash& Facet2SVertex;
@@ -192,7 +157,7 @@ class Gaussian_map :
         CGAL_NEF_TRACEN( "circles " << circles );
 
         if(circles < 3)
-          omit_vertex[sf->center_vertex()] = true;
+          omit_vertex.insert(sf->center_vertex());
       }
 
       void visit(Halffacet_const_handle f) {
@@ -215,13 +180,14 @@ class Gaussian_map :
             CGAL_NEF_TRACEN( "set next " << hc->source()->source()->point() << ":"
                       << hc->source()->point() << "->" << hc->twin()->source()->point() << " | "
                       << hc->snext()->source()->point() << "->" << hc->snext()->twin()->source()->point() );
-             omit_edge[hc->twin()->source()] = omit_edge[hc->twin()->source()->twin()] = true;
+             omit_edge.insert(hc->twin()->source());
+             omit_edge.insert(hc->twin()->source()->twin());
           } else
             verge_found = true;
         }
 
         if(!verge_found) {
-          omit_facet[f] = true;
+          omit_facet.insert(f);
           return;
         }
 
@@ -231,81 +197,13 @@ class Gaussian_map :
           sv->point() = normalized(sv->point());
           sv->mark() = Mark(Point_3(0,0,0), f->mark());
         } else {
-          omit_facet[f] = true;
+          omit_facet.insert(f);
           if(sv->mark().boolean() && !f->mark())
             sv->mark().set_boolean(false);
           CGAL_NEF_TRACEN("omit facet " << f->plane());
         }
         Facet2SVertex[f] = sv;
       }
-  };
-
-  template<typename Nef_polyhedron_3>
-    class SEdge_creator2 {
-
-    typedef typename Nef_polyhedron_3::Vertex_const_handle      Vertex_const_handle;
-    typedef typename Nef_polyhedron_3::Halffacet_const_handle   Halffacet_const_handle;
-    typedef typename Nef_polyhedron_3::Halfedge_const_handle    Halfedge_const_handle;
-    typedef typename Nef_polyhedron_3::SHalfedge_const_handle   SHalfedge_const_handle;
-    typedef typename Nef_polyhedron_3::SHalfloop_const_handle   SHalfloop_const_handle;
-    typedef typename Nef_polyhedron_3::SFace_const_handle       SFace_const_handle;
-
-    typedef typename SM_decorator::SHalfedge_around_svertex_circulator
-      SHalfedge_around_svertex_circulator;
-
-    typedef typename Nef_polyhedron_3::Halffacet_cycle_const_iterator
-      Halffacet_cycle_const_iterator;
-    typedef typename Nef_polyhedron_3::SHalfedge_around_facet_const_circulator
-      SHalfedge_around_facet_const_circulator;
-
-    typedef CGAL::Unique_hash_map<Halfedge_const_handle, SHalfedge_handle> Edge2SEdge_hash;
-    typedef CGAL::Unique_hash_map<Halffacet_const_handle, SVertex_handle> Facet2SVertex_hash;
-
-    SM_decorator SM;
-    Edge2SEdge_hash& Edge2SEdge;
-    Facet2SVertex_hash& Facet2SVertex;
-
-  public:
-    SEdge_creator2(Sphere_map* smap, Edge2SEdge_hash& E2SE, Facet2SVertex_hash& F2SV)
-      : SM(smap), Edge2SEdge(E2SE), Facet2SVertex(F2SV) {}
-
-  public:
-    void visit(Vertex_const_handle) {}
-    void visit(Halfedge_const_handle) {}
-    void visit(SHalfedge_const_handle) {}
-    void visit(SHalfloop_const_handle) {}
-    void visit(SFace_const_handle) {}
-
-    void visit(Halffacet_const_handle f) {
-
-      CGAL_NEF_TRACEN( "SEdge_creator2 " << f->twin()->plane() );
-      Halffacet_cycle_const_iterator fc = f->twin()->facet_cycles_begin();
-      SHalfedge_const_handle sef(fc);
-      SHalfedge_around_facet_const_circulator hc(sef), hend(hc);
-
-      CGAL_For_all(hc, hend) {
-        if(hc->sprev()->facet()->plane() ==
-           hc->facet()->plane())
-          continue;
-        SHalfedge_handle thetwin;
-        Halfedge_const_handle e(hc->source()->twin());
-        SHalfedge_handle set = Edge2SEdge[e];
-        if(set == SHalfedge_handle()) {
-          thetwin = SM.new_shalfedge_pair_at_source(Facet2SVertex[f],1);
-          CGAL_NEF_TRACEN("add stub " << Facet2SVertex[f]->point()
-                          << "->" << hc->twin()->snext()->facet()->plane().orthogonal_vector());
-        } else {
-          SM.link_as_target_and_append(Facet2SVertex[f], set);
-          set->mark() = set->twin()->mark() = Mark(Point_3(0,0,0), e->mark());
-          set->circle() = Sphere_circle(set->source()->point(), set->twin()->source()->point());
-          set->twin()->circle() = set->circle().opposite();
-          thetwin = set->twin();
-          CGAL_NEF_TRACEN("complete edge " << set->source()->point()
-                          << "->" << set->twin()->source()->point());
-        }
-        Edge2SEdge[hc->source()] = thetwin;
-      }
-    }
   };
 
   template<typename Nef_polyhedron_3>
@@ -328,11 +226,11 @@ class Gaussian_map :
 
     typedef typename Nef_polyhedron_3::Sphere_point Sphere_point;
 
-    typedef CGAL::Unique_hash_map<Halfedge_const_handle, SHalfedge_handle> Edge2SEdge_hash;
-    typedef CGAL::Unique_hash_map<Halffacet_const_handle, SVertex_handle> Facet2SVertex_hash;
-    typedef CGAL::Unique_hash_map<Halffacet_const_handle, bool> Facet2bool_hash;
-    typedef CGAL::Unique_hash_map<Halfedge_const_handle, bool> Edge2bool_hash;
-    typedef CGAL::Unique_hash_map<SHalfedge_const_handle, SHalfedge_const_handle> SEdge2SEdge_hash;
+    typedef robin_hood::unordered_map<Halfedge_const_handle, SHalfedge_handle, Handle_hash_function> Edge2SEdge_hash;
+    typedef robin_hood::unordered_map<Halffacet_const_handle, SVertex_handle, Handle_hash_function> Facet2SVertex_hash;
+    typedef robin_hood::unordered_set<Halffacet_const_handle, Handle_hash_function> Facet2bool_hash;
+    typedef robin_hood::unordered_set<Halfedge_const_handle, Handle_hash_function> Edge2bool_hash;
+    typedef robin_hood::unordered_map<SHalfedge_const_handle, SHalfedge_const_handle, Handle_hash_function> SEdge2SEdge_hash;
 
     SM_decorator SM;
     Edge2SEdge_hash& Edge2SEdge;
@@ -354,7 +252,7 @@ class Gaussian_map :
 
     void visit(Halffacet_const_handle f) {
 
-      if(omit_facet[f]) {
+      if(omit_facet.contains(f)) {
         CGAL_NEF_TRACEN( "omit facet " <<
                          normalized(Sphere_point(f->twin()->plane().orthogonal_vector())));
         return;
@@ -451,53 +349,6 @@ class Gaussian_map :
   };
 
   template<typename Nef_polyhedron_3>
-    class SFace_creator2 {
-
-    typedef typename Nef_polyhedron_3::Vertex_const_handle      Vertex_const_handle;
-    typedef typename Nef_polyhedron_3::Halffacet_const_handle   Halffacet_const_handle;
-    typedef typename Nef_polyhedron_3::Halfedge_const_handle    Halfedge_const_handle;
-    typedef typename Nef_polyhedron_3::SHalfedge_const_handle   SHalfedge_const_handle;
-    typedef typename Nef_polyhedron_3::SHalfloop_const_handle   SHalfloop_const_handle;
-    typedef typename Nef_polyhedron_3::SFace_const_handle       SFace_const_handle;
-
-    typedef typename Nef_polyhedron_3::SFace_cycle_const_iterator SFace_cycle_const_iterator;
-
-    typedef CGAL::Unique_hash_map<Halfedge_const_handle, SHalfedge_handle> Edge2SEdge_hash;
-
-    SM_decorator SM;
-    Edge2SEdge_hash& Edge2SEdge;
-
-  public:
-    SFace_creator2(Sphere_map* smap, Edge2SEdge_hash& E2SE) :
-      SM(smap), Edge2SEdge(E2SE) {}
-
-      void visit(Halfedge_const_handle ) {}
-      void visit(SHalfedge_const_handle ) {}
-      void visit(SHalfloop_const_handle ) {}
-      void visit(Halffacet_const_handle ) {}
-      void visit(Vertex_const_handle ) {}
-
-      void visit(SFace_const_handle sf) {
-        CGAL_NEF_TRACEN( "SFace_creator2 " << sf->center_vertex()->point() );
-
-        SFace_cycle_const_iterator sfc(sf->sface_cycles_begin());
-        CGAL_assertion(sfc.is_shalfedge());
-           SHalfedge_const_handle sef(sfc);
-        Halfedge_const_handle e(sef->source());
-        SHalfedge_around_sface_circulator
-          sec(Edge2SEdge[e]), send(sec);
-        CGAL_For_all(sec, send)
-          if(sec->source()->point() ==
-             sec->twin()->source()->point())
-            return;
-        SFace_handle sf_new = SM.new_sface();
-        sf_new->mark() = Mark(sf->center_vertex()->point(),
-                              sf->center_vertex()->mark());
-        SM.link_as_face_cycle(sec,sf_new);
-      }
-  };
-
-  template<typename Nef_polyhedron_3>
     class SFace_creator {
 
     typedef typename Nef_polyhedron_3::Vertex_const_handle      Vertex_const_handle;
@@ -507,19 +358,17 @@ class Gaussian_map :
     typedef typename Nef_polyhedron_3::SHalfloop_const_handle   SHalfloop_const_handle;
     typedef typename Nef_polyhedron_3::SFace_const_handle       SFace_const_handle;
 
-    typedef CGAL::Unique_hash_map<Halfedge_const_handle, SHalfedge_handle> Edge2SEdge_hash;
-    typedef CGAL::Unique_hash_map<Vertex_const_handle, bool> Vertex2bool_hash;
-    typedef CGAL::Unique_hash_map<SFace_const_handle, bool> SFace2bool_hash;
+    typedef robin_hood::unordered_map<Halfedge_const_handle, SHalfedge_handle, Handle_hash_function> Edge2SEdge_hash;
+    typedef robin_hood::unordered_set<Vertex_const_handle, Handle_hash_function> Vertex2bool_hash;
 
     const Nef_polyhedron_3& N3;
     SM_decorator SM;
     Edge2SEdge_hash& Edge2SEdge;
     Vertex2bool_hash& omit_vertex;
-    /* SFace2bool_hash& Shell; */
 
   public:
-    SFace_creator(const Nef_polyhedron_3& N, Sphere_map* smap, Edge2SEdge_hash& E2SE, Vertex2bool_hash& V2b /*, SFace2bool_hash& SHELL*/) :
-      N3(N), SM(smap), Edge2SEdge(E2SE), omit_vertex(V2b)/* , Shell(SHELL)*/ {}
+    SFace_creator(const Nef_polyhedron_3& N, Sphere_map* smap, Edge2SEdge_hash& E2SE, Vertex2bool_hash& V2b) :
+      N3(N), SM(smap), Edge2SEdge(E2SE), omit_vertex(V2b) {}
 
       void visit(Halfedge_const_handle ) {}
       void visit(SHalfedge_const_handle ) {}
@@ -531,18 +380,12 @@ class Gaussian_map :
 
         CGAL_NEF_TRACEN( "SFace_creator " << v->point() );
 
-        if(omit_vertex[v]) {
+        if(omit_vertex.contains(v)) {
           CGAL_NEF_TRACEN("omit " << v->point() );
           return;
         }
 
         typename Nef_polyhedron_3::Nef_polyhedron_S2 SD(N3.get_sphere_map(v));
-
-        /*
-        typename Nef_polyhedron_3::SFace_const_iterator sf = SD.sfaces_begin();
-        while(sf != SD.sfaces_end() && !Shell[sf]) ++sf;
-        CGAL_assertion(sf != SD.sfaces_end());
-        */
 
         typename Nef_polyhedron_3::Halfedge_const_iterator ei(SD.svertices_begin());
         SHalfedge_handle se = Edge2SEdge[ei];
@@ -788,13 +631,21 @@ class Gaussian_map :
     typedef typename Nef_polyhedron_3::SFace_const_handle
       SFace_const_handle;
 
-    Unique_hash_map<Halffacet_const_handle, SVertex_handle> Facet2SVertex;
-    Unique_hash_map<Halfedge_const_handle, SHalfedge_handle> Edge2SEdge;
-    Unique_hash_map<Halffacet_const_handle, bool> Facet2bool;
-    Unique_hash_map<Vertex_const_handle, bool> Vertex2bool(false);
-    Unique_hash_map<Halfedge_const_handle, bool> Edge2bool(false);
-    Unique_hash_map<SHalfedge_const_handle, SHalfedge_const_handle> SEdge2SEdge;
-    Unique_hash_map<SFace_const_handle, bool> Shell(false);
+    typedef robin_hood::unordered_map<Halffacet_const_handle, SVertex_handle, Handle_hash_function> Facet2SVertex_hash;
+    typedef robin_hood::unordered_set<Halffacet_const_handle, Handle_hash_function> Facet2bool_hash;
+    typedef robin_hood::unordered_set<Vertex_const_handle, Handle_hash_function> Vertex2bool_hash;
+    typedef robin_hood::unordered_set<Halfedge_const_handle, Handle_hash_function> Edge2bool_hash;
+    typedef robin_hood::unordered_map<SHalfedge_const_handle, SHalfedge_const_handle, Handle_hash_function> SEdge2SEdge_hash;
+    typedef robin_hood::unordered_set<SFace_const_handle, Handle_hash_function> SFace2bool_hash;
+    typedef robin_hood::unordered_map<Halfedge_const_handle, SHalfedge_handle, Handle_hash_function> Edge2SEdge_hash;
+
+    Facet2SVertex_hash Facet2SVertex;
+    Edge2SEdge_hash Edge2SEdge;
+    Facet2bool_hash Facet2bool;
+    Vertex2bool_hash Vertex2bool;
+    Edge2bool_hash Edge2bool;
+    SEdge2SEdge_hash SEdge2SEdge;
+    SFace2bool_hash Shell;
 
     SFace_const_handle sf = c->shells_begin();
 
@@ -1013,7 +864,7 @@ class Gaussian_map :
           CGAL_NEF_TRACEN("simplify");
 
           typedef typename CGAL::Union_find<SFace_handle>::handle Union_find_handle;
-          CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem(nullptr);
+          robin_hood::unordered_map<SFace_handle, Union_find_handle, Handle_hash_function> Pitem;
           CGAL::Union_find< SFace_handle> UF;
 
           SFace_iterator f;
@@ -1046,12 +897,12 @@ class Gaussian_map :
                   }
           }
 
-          CGAL::Unique_hash_map<SHalfedge_handle,bool> linked(false);
+          robin_hood::unordered_set<SHalfedge_handle,Handle_hash_function> linked;
           for (e = this->shalfedges_begin(); e != this->shalfedges_end(); ++e) {
-                  if ( linked[e] ) continue;
+                  if ( linked.contains(e) ) continue;
                   SHalfedge_around_sface_circulator hfc(e),hend(hfc);
                   SFace_handle f = *(UF.find( Pitem[e->incident_sface()]));
-                  CGAL_For_all(hfc,hend) {  set_face(hfc,f); linked[hfc]=true; }
+                  CGAL_For_all(hfc,hend) {  set_face(hfc,f); linked.insert(hfc); }
                   store_sm_boundary_object(e,f);
           }
 
