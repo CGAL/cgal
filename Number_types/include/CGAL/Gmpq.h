@@ -27,11 +27,10 @@ template <> class Algebraic_structure_traits< Gmpq >
     typedef Tag_false            Is_numerical_sensitive;
 
     class Is_zero
-      : public CGAL::cpp98::unary_function<Type&,
-                                bool > {
+      : public CGAL::cpp98::unary_function<Type&, bool > {
       public:
         bool operator()( const Type& x_) const {
-          return x_.is_zero();
+          return mpq_sgn(x_.mpq()) == 0;
         }
     };
 

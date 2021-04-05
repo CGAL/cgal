@@ -228,12 +228,6 @@ public:
   double to_double() const noexcept;
   Sign sign() const noexcept;
 
-  bool is_zero() const
-  {
-    const __mpz_struct* zn = mpq_numref(mpq());
-    return mpn_zero_p(zn->_mp_d, zn->_mp_size);
-  }
-
   const mpq_t & mpq() const noexcept { return Ptr()->mpQ; }
   mpq_t & mpq() noexcept { return ptr()->mpQ; }
 
