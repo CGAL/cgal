@@ -28,6 +28,7 @@
 #include <CGAL/Nef_3/SNC_io_parser.h>
 #include <CGAL/Nef_3/SNC_indexed_items.h>
 #include <CGAL/Nef_3/SNC_simplify.h>
+#include <CGAL/Tools/robin_hood.h>
 #include <map>
 #include <list>
 
@@ -39,24 +40,23 @@
 
 namespace CGAL {
 
-struct int_lt {
-  bool operator()(const int& i1, const int& i2) const { return i1<i2; }
-};
 template <typename Edge_handle>
 struct Halfedge_key_lt4 {
 
   bool operator()(const Edge_handle& e1, const Edge_handle& e2) const {
-    if(CGAL::sign(e1->point().x()) != 0) {
+    const auto& x=e1->point().x();
+    if(CGAL::sign(x) != 0) {
       if(e1->source() != e2->source())
         return CGAL::compare_x(e1->source()->point(), e2->source()->point()) < 0;
       else
-        return e1->point().x() < 0;
+        return x < 0;
     }
-    if(CGAL::sign(e1->point().y()) != 0) {
+    const auto& y=e1->point().y();
+    if(CGAL::sign(y) != 0) {
       if(e1->source() != e2->source())
         return CGAL::compare_y(e1->source()->point(), e2->source()->point()) < 0;
       else
-        return e1->point().y() < 0;
+        return y < 0;
     }
     if(e1->source() != e2->source())
       return CGAL::compare_z(e1->source()->point(), e2->source()->point()) < 0;
@@ -238,6 +238,7 @@ public:
   typedef typename SNC_structure::Direction_3 Direction_3;
   typedef typename SNC_structure::Plane_3 Plane_3;
   typedef typename SNC_structure::Ray_3 Ray_3;
+  typedef typename SNC_structure::Size_type Size_type;
 
   typedef typename SNC_structure::Sphere_point Sphere_point;
   typedef typename SNC_structure::Sphere_circle Sphere_circle;
@@ -247,12 +248,12 @@ public:
 
   SNC_point_locator* pl;
 
-  typedef CGAL::Unique_hash_map<SFace_const_handle,unsigned int>
+  typedef robin_hood::unordered_map<SFace_const_handle,unsigned int,Handle_hash_function>
                                                          Sface_shell_hash;
-  typedef CGAL::Unique_hash_map<Halffacet_const_handle,unsigned int>
+  typedef robin_hood::unordered_map<Halffacet_const_handle,unsigned int,Handle_hash_function>
                                                          Face_shell_hash;
-  typedef CGAL::Unique_hash_map<SFace_const_handle,bool> SFace_visited_hash;
-  typedef CGAL::Unique_hash_map<SFace_const_handle,bool> Shell_closed_hash;
+  typedef robin_hood::unordered_set<SFace_const_handle,Handle_hash_function> SFace_visited_hash;
+  typedef robin_hood::unordered_set<SFace_const_handle,Handle_hash_function> Shell_closed_hash;
 
   using SNC_decorator::visit_shell_objects;
   using SNC_decorator::link_as_inner_shell;
@@ -269,7 +270,7 @@ public:
     //    Shell_closed_hash& Closed;
     SFace_visited_hash& Done;
     SFace_handle sf_min;
-    int n;
+    unsigned int n;
 
     Shell_explorer(const SNC_decorator& Di, Sface_shell_hash& SSf,
                    Face_shell_hash& SF, SFace_visited_hash& Vi)
@@ -278,7 +279,7 @@ public:
     void visit(SFace_handle h) {
       CGAL_NEF_TRACEN("visit sf "<<h->center_vertex()->point());
       ShellSf[h]=n;
-      Done[h]=true;
+      Done.insert(h);
       if ( CGAL::lexicographically_xyz_smaller(h->center_vertex()->point(),
                                                sf_min->center_vertex()->point()))
         sf_min = h;
@@ -733,31 +734,6 @@ public:
       if ( sign_of(h)<0 ) continue;
       M[normalized(h)].push_back(make_object(e->twin()));
       CGAL_NEF_TRACEN(" normalized as " << normalized(h));
-      /*
-        Unique_hash_map<SHalfedge_handle, bool> Done(false);
-        SHalfedge_iterator ei;
-        CGAL_forall_sedges(ei,*this->sncp()) {
-        if(Done[ei]) continue;
-        Sphere_circle c(ei->circle());
-        Plane_3 h = c.plane_through(ei->source()->source()->point());
-        CGAL_NEF_TRACEN("\n" << ei->source()->twin()->source()->point() <<" - "
-        << ei->source()->source()->point() <<" - "<<
-                      ei->twin()->source()->twin()->source()->point() <<
-                      " has plane " << h << " has circle " << ei->circle() <<
-                      " has signum " << sign_of(h));
-      SHalfedge_handle e(ei);
-      if ( sign_of(h)<0 ) {
-        h = h.opposite();
-        e = e->twin();
-      }
-      SHalfedge_around_facet_circulator sfc(e), send(sfc);
-      CGAL_For_all(sfc, send) {
-        M[normalized(h)].push_back(make_object(e->twin()));
-        Done[sfc] = true;
-        Done[sfc->twin()] = true;
-        CGAL_NEF_TRACEN(" normalized as " << normalized(h));
-      }
-      */
     }
     SHalfloop_iterator l;
     CGAL_forall_shalfloops(l,*this->sncp()) {
@@ -796,22 +772,25 @@ public:
     //    CGAL_NEF_SETDTHREAD(37*43*503*509);
 
     CGAL_NEF_TRACEN(">>>>>create_volumes");
-    Sface_shell_hash     ShellSf(0);
-    Face_shell_hash      ShellF(0);
-    SFace_visited_hash Done(false);
+    Size_type sface_count = this->sncp()->number_of_sfaces();
+    Sface_shell_hash     ShellSf;
+    ShellSf.reserve(sface_count);
+    Face_shell_hash      ShellF;
+    ShellF.reserve(this->sncp()->number_of_halffacets());
+    SFace_visited_hash Done;
+    Done.reserve(sface_count);
     Shell_explorer V(*this,ShellSf,ShellF,Done);
     std::vector<SFace_handle> MinimalSFace;
     std::vector<SFace_handle> EntrySFace;
-    std::vector<bool> Closed;
 
     SFace_iterator f;
-    // First, we classify all the Shere Faces per Shell.  For each Shell we
-    //     determine its minimum lexicographyly vertex and we check wheter the
+    // First, we classify all the Shpere Faces per Shell. For each Shell we
+    //     determine its lexicographically minimum vertex and we check whether the
     //     Shell encloses a region (closed surface) or not.
     CGAL_forall_sfaces(f,*this->sncp()) {
       //    progress++;
       CGAL_NEF_TRACEN("sface in " << ShellSf[f]);
-      if ( Done[f] )
+      if ( Done.contains(f) )
         continue;
       V.minimal_sface() = f;
       visit_shell_objects(f,V);
@@ -824,15 +803,17 @@ public:
       CGAL_NEF_TRACEN("sface out " << ShellSf[f]);
     }
 
-    for(unsigned int i=0; i<EntrySFace.size(); ++i)
-      Closed.push_back(false);
+    std::vector<bool> Closed(EntrySFace.size(),false);
 
     Halffacet_iterator hf;
-    CGAL_forall_facets(hf,*this)
-      if(ShellF[hf] != ShellF[hf->twin()]) {
-        Closed[ShellF[hf]] = true;
-        Closed[ShellF[hf->twin()]] = true;
+    CGAL_forall_facets(hf,*this) {
+      unsigned int shell_num=ShellF[hf];
+      unsigned int twin_shell_num=ShellF[hf->twin()];
+      if(shell_num != twin_shell_num) {
+        Closed[shell_num] = true;
+        Closed[twin_shell_num] = true;
       }
+    }
 
     CGAL_assertion( pl != nullptr);
 
@@ -936,7 +917,8 @@ public:
       f_below = get_visible_facet(v, ray);
       if( f_below == Halffacet_handle()) {
         CGAL_assertion(v->sfaces_begin() == v->sfaces_last());
-        f_below = get_facet_below(MinimalSFace[Shell[v->sfaces_begin()]]->center_vertex(),
+        const unsigned int i = Shell.at(v->sfaces_begin());
+        f_below = get_facet_below(MinimalSFace[i]->center_vertex(),
                                   MinimalSFace,Shell);
       }
     }
@@ -945,7 +927,8 @@ public:
       f_below = get_visible_facet(e, ray);
       if( f_below == Halffacet_handle()) {
         CGAL_assertion(e->source()->sfaces_begin() == e->source()->sfaces_last());
-        f_below = get_facet_below(MinimalSFace[Shell[e->source()->sfaces_begin()]]->center_vertex(),
+        const unsigned int i = Shell.at(e->source()->sfaces_begin());
+        f_below = get_facet_below(MinimalSFace[i]->center_vertex(),
                                   MinimalSFace, Shell);
       }
     }
@@ -959,14 +942,15 @@ public:
   }
 
   Volume_handle determine_volume( SFace_handle sf,
-                const std::vector< SFace_handle>& MinimalSFace,
+                                  const std::vector< SFace_handle>& MinimalSFace,
                                   const Sface_shell_hash&  Shell ) const {
     //{\Mop determines the volume |C| that a shell |S| pointed by |sf|
     //  belongs to.  \precondition |S| separates the volume |C| from an enclosed
     //  volume.}
 
     CGAL_NEF_TRACEN("determine volume");
-    Vertex_handle v_min = MinimalSFace[Shell[sf]]->center_vertex();
+    const unsigned int i = Shell.at(sf);
+    Vertex_handle v_min = MinimalSFace[i]->center_vertex();
 
     Halffacet_handle f_below = get_facet_below(v_min, MinimalSFace, Shell);
     if ( f_below == Halffacet_handle())
@@ -1109,6 +1093,7 @@ public:
     SHalfedge_around_svertex_circulator;
 
   typedef typename SNC_structure::Plane_3 Plane_3;
+  typedef typename SNC_structure::Size_type Size_type;
 
   using Base::make_twins;
   using Base::link_as_prev_next_pair;
@@ -1123,11 +1108,11 @@ public:
   void pair_up_halfedges() const {
     typedef Halfedge_key_lt4<Halfedge_handle>  Halfedge_key_lt;
     typedef std::list<Halfedge_handle>  Halfedge_list;
-    typedef std::map<int, Halfedge_list, int_lt> index_map;
-
+    typedef robin_hood::unordered_map<int, Halfedge_list> index_map;
     CGAL_NEF_TRACEN("pair up by indexes");
 
     index_map i2he;
+    i2he.reserve(this->sncp()->number_of_edges());
     Halfedge_iterator ei;
     CGAL_forall_halfedges(ei, *this->sncp())
       i2he[ei->get_index()].push_back(ei);
@@ -1233,21 +1218,24 @@ public:
     CGAL_NEF_TRACEN(">>>>>categorize_facet_cycles_and_create_facets");
 
     typedef std::list<Object_handle> Object_list;
-    typedef std::map<int, Object_list>
+    typedef robin_hood::unordered_map<int, Object_list>
       Map_planes;
 
     Map_planes M;
+    M.reserve(this->sncp()->number_of_edges() + (this->sncp()->number_of_shalfloops()/2));
     SHalfedge_iterator e;
     CGAL_forall_shalfedges(e,*this->sncp()) {
-      if(e->get_index() > e->twin()->get_index())
+      int i = e->get_index();
+      if(i > e->twin()->get_index())
         continue;
-      M[e->get_index()].push_back(make_object(e));
+      M[i].push_back(make_object(e));
     }
     SHalfloop_iterator l;
     CGAL_forall_shalfloops(l,*this->sncp()) {
-      if(l->get_index() > l->twin()->get_index())
+      int i = l->get_index();
+      if(i > l->twin()->get_index())
         continue;
-      M[l->get_index()].push_back(make_object(l));
+      M[i].push_back(make_object(l));
     }
 
 #ifdef CGAL_NEF3_TIMER_PLANE_SWEEPS
@@ -1303,16 +1291,20 @@ public:
      //     O0.print();
     link_shalfedges_to_facet_cycles();
 
-    std::map<int, int> hash;
-    CGAL::Unique_hash_map<SHalfedge_handle, bool> done(false);
+    Size_type shalfedge_count = this->sncp()->number_of_shalfedges();
+    robin_hood::unordered_map<int, int> hash;
+    hash.reserve(shalfedge_count);
+    robin_hood::unordered_set<SHalfedge_handle, Handle_hash_function> done;
+    done.reserve(shalfedge_count);
 
     SHalfedge_iterator sei;
     CGAL_forall_shalfedges(sei, *this->sncp()) {
-      hash[sei->get_index()] = sei->get_index();
+      int i = sei->get_index();
+      hash.emplace(i,i);
     }
 
     CGAL_forall_shalfedges(sei, *this->sncp()) {
-      if(done[sei])
+      if(done.contains(sei))
         continue;
       SHalfedge_around_facet_circulator circ(sei), end(circ);
       int index = circ->get_index();
@@ -1324,7 +1316,7 @@ public:
       CGAL_For_all(circ, end) {
         hash[circ->get_index()] = index;
         circ->set_index(index);
-        done[circ] = true;
+        done.insert(circ);
       }
     }
 
@@ -1364,34 +1356,13 @@ public:
       sli->set_index(A.get_hash(sli->get_index()));
     }
 
-    //    CGAL_NEF_SETDTHREAD(43);
-    /*
-    {    CGAL::SNC_io_parser<SNC_structure> O
-      (std::cerr, *this->sncp(), false, true);
-      O.print();}
-    */
+
     pair_up_halfedges();
-    /*
-    {      CGAL::SNC_io_parser<SNC_structure> O
-        (std::cerr, *this->sncp(), false, true);
-      O.print();}
-    */
+
     link_shalfedges_to_facet_cycles();
 
     SNC_simplify simp(*this->sncp());
     simp.vertex_simplificationI();
-
-    //    std::map<int, int> hash;
-    CGAL::Unique_hash_map<SHalfedge_handle, bool>
-      done(false);
-
-    /*
-    SHalfedge_iterator sei;
-    CGAL_forall_shalfedges(sei, *this->sncp()) {
-      hash[sei->get_forward_index()] = sei->get_forward_index();
-      hash[sei->get_backward_index()] = sei->get_backward_index();
-    }
-    */
 
     categorize_facet_cycles_and_create_facets();
     create_volumes();
