@@ -21,7 +21,8 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Nef_S2/Normalizing.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_function.h>
+#include <CGAL/Tools/robin_hood.h>
 #include <CGAL/Nef_3/SNC_iteration.h>
 #include <CGAL/Nef_3/SNC_decorator_traits.h>
 #include <CGAL/Nef_S2/SM_point_locator.h>
@@ -562,11 +563,11 @@ visit_shell_objects(SFace_const_handle f, Visitor& V) const
 {
   std::list<SFace_const_handle> SFaceCandidates;
   std::list<Halffacet_const_handle> FacetCandidates;
-  CGAL::Unique_hash_map<SFace_const_handle,bool> DoneSF(false);
-  CGAL::Unique_hash_map<Vertex_const_handle,bool> DoneV(false);
-  CGAL::Unique_hash_map<SVertex_const_handle,bool> DoneSV(false);
-  CGAL::Unique_hash_map<Halffacet_const_handle,bool> DoneF(false);
-  SFaceCandidates.push_back(f);  DoneSF[f] = true;
+  robin_hood::unordered_set<SFace_const_handle,Handle_hash_function> DoneSF;
+  robin_hood::unordered_set<Vertex_const_handle,Handle_hash_function> DoneV;
+  robin_hood::unordered_set<SVertex_const_handle,Handle_hash_function> DoneSV;
+  robin_hood::unordered_set<Halffacet_const_handle,Handle_hash_function> DoneF;
+  SFaceCandidates.push_back(f);  DoneSF.insert(f);
   while ( true ) {
     if ( SFaceCandidates.empty() && FacetCandidates.empty() ) break;
     if ( !FacetCandidates.empty() ) {
@@ -580,16 +581,14 @@ visit_shell_objects(SFace_const_handle f, Visitor& V) const
           SHalfedge_const_handle she;
           SHalfedge_around_facet_const_circulator ec(e),ee(e);
           CGAL_For_all(ec,ee) { she = ec->twin();
-            if ( DoneSF[she->incident_sface()] ) continue;
-            SFaceCandidates.push_back(she->incident_sface());
-            DoneSF[she->incident_sface()] = true;
+            if ( DoneSF.insert(she->incident_sface()).second )
+              SFaceCandidates.push_back(she->incident_sface());
           }
         } else if (fc.is_shalfloop() ) {
           SHalfloop_const_handle l(fc);
           SHalfloop_const_handle ll = l->twin();
-          if ( DoneSF[ll->incident_sface()] ) continue;
-          SFaceCandidates.push_back(ll->incident_sface());
-          DoneSF[ll->incident_sface()] = true;
+          if ( DoneSF.insert(ll->incident_sface()).second )
+            SFaceCandidates.push_back(ll->incident_sface());
         } else CGAL_error_msg("Damn wrong handle.");
       }
     }
@@ -597,9 +596,9 @@ visit_shell_objects(SFace_const_handle f, Visitor& V) const
       SFace_const_handle sf = *SFaceCandidates.begin();
       SFaceCandidates.pop_front();
       V.visit(sf);
-      if ( !DoneV[sf->center_vertex()] )
+      if ( DoneV.insert(sf->center_vertex()).second )
         V.visit(sf->center_vertex()); // report vertex
-      DoneV[sf->center_vertex()] = true;
+
       //      SVertex_const_handle sv;
       SM_const_decorator SD(&*sf->center_vertex());
       /*
@@ -616,39 +615,30 @@ visit_shell_objects(SFace_const_handle f, Visitor& V) const
           CGAL_For_all(ec,ee) {
             V.visit(SHalfedge_const_handle(ec));
             SVertex_const_handle vv = ec->twin()->source();
-            if ( !SD.is_isolated(vv) && !DoneSV[vv] ) {
+            if ( !SD.is_isolated(vv) && DoneSV.insert(vv).second ) {
               V.visit(vv); // report edge
-              DoneSV[vv] = DoneSV[vv->twin()] = true;
+              DoneSV.insert(vv->twin());
             }
             Halffacet_const_handle f = ec->twin()->facet();
-            if ( DoneF[f] ) continue;
-            FacetCandidates.push_back(f); DoneF[f] = true;
+            if ( DoneF.insert(f).second )
+              FacetCandidates.push_back(f);
           }
         } else if (fc.is_svertex() ) {
           SVertex_const_handle v(fc);
-          if ( DoneSV[v] ) continue;
-          V.visit(v); // report edge
-          V.visit(v->twin());
-          DoneSV[v] = DoneSV[v->twin()] = true;
-          CGAL_assertion(SD.is_isolated(v));
-          SFaceCandidates.push_back(v->twin()->incident_sface());
-          DoneSF[v->twin()->incident_sface()]=true;
-          // note that v is isolated, thus twin(v) is isolated too
-          //          SM_const_decorator SD;
-          //          SFace_const_handle fo;
-          //          fo = v->twin()->incident_sface();
-          /*
-          if(SD.is_isolated(v))
-            fo = v->source()->sfaces_begin();
-          else
-            fo = v->twin()->incident_sface();
-          */
+          if ( DoneSV.insert(v).second ) {
+              V.visit(v); // report edge
+              V.visit(v->twin());
+              DoneSV.insert(v->twin());
+              CGAL_assertion(SD.is_isolated(v));
+              SFaceCandidates.push_back(v->twin()->incident_sface());
+              DoneSF.insert(v->twin()->incident_sface());
+          }
         } else if (fc.is_shalfloop() ) {
           SHalfloop_const_handle l(fc);
           V.visit(l);
           Halffacet_const_handle f = l->twin()->facet();
-          if ( DoneF[f] ) continue;
-          FacetCandidates.push_back(f);  DoneF[f] = true;
+          if ( DoneF.insert(f).second )
+            FacetCandidates.push_back(f);
         } else CGAL_error_msg("Damn wrong handle.");
       }
     }
