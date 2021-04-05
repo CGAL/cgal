@@ -19,7 +19,8 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_function.h>
+#include <CGAL/Tools/robin_hood.h>
 #include <CGAL/In_place_list.h>
 #include <CGAL/Nef_3/SNC_list.h>
 #include <CGAL/Nef_S2/Generic_handle_map.h>
@@ -36,9 +37,6 @@
 #define CGAL_NEF_DEBUG 41
 #include <CGAL/Nef_2/debug.h>
 #include <CGAL/Nef_2/Object_index.h>
-
-#include <boost/optional.hpp>
-#include <boost/none.hpp>
 
 namespace CGAL {
 
@@ -685,13 +683,13 @@ public:
   expensive operation.}*/
 
   SNC_structure() :
-    boundary_item_(boost::none), sm_boundary_item_(boost::none),
+    boundary_item_(), sm_boundary_item_(),
     vertices_(), halfedges_(), halffacets_(), volumes_(),
     shalfedges_(), shalfloops_(), sfaces_() {}
   ~SNC_structure() { CGAL_NEF_TRACEN("~SNC_structure: clearing "<<this); clear(); }
 
   SNC_structure(const Self& D) :
-    boundary_item_(boost::none), sm_boundary_item_(boost::none),
+    boundary_item_(), sm_boundary_item_(),
     vertices_(D.vertices_), halfedges_(D.halfedges_),
     halffacets_(D.halffacets_), volumes_(D.volumes_),
     shalfedges_(D.shalfedges_), shalfloops_(D.shalfloops_),
@@ -702,8 +700,8 @@ public:
     if ( this == &D )
       return *this;
     clear();
-    boundary_item_.clear(boost::none);
-    sm_boundary_item_.clear(boost::none);
+    boundary_item_.clear();
+    sm_boundary_item_.clear();
     vertices_ = D.vertices_;
     halfedges_ = D.halfedges_;
     halffacets_ = D.halffacets_;
@@ -716,17 +714,17 @@ public:
   }
 
   void clear_boundary() {
-    boundary_item_.clear(boost::none);
-    sm_boundary_item_.clear(boost::none);
+    boundary_item_.clear();
+    sm_boundary_item_.clear();
   }
 
   void clear_snc_boundary() {
-    boundary_item_.clear(boost::none);
+    boundary_item_.clear();
   }
 
   void clear() {
-    boundary_item_.clear(boost::none);
-    sm_boundary_item_.clear(boost::none);
+    boundary_item_.clear();
+    sm_boundary_item_.clear();
     vertices_.destroy();
     halfedges_.destroy();
     halffacets_.destroy();
@@ -738,33 +736,31 @@ public:
 
   template <typename H>
   bool is_boundary_object(H h)
-  { return boundary_item_[h]!=boost::none; }
+  { return boundary_item_.contains(&*h); }
   template <typename H>
   bool is_sm_boundary_object(H h)
-  { return sm_boundary_item_[h]!=boost::none; }
+  { return sm_boundary_item_.contains(&*h); }
 
   template <typename H>
   Object_iterator& boundary_item(H h)
-  { return *boundary_item_[h]; }
+  { return boundary_item_.at(&*h); }
   template <typename H>
   Object_iterator& sm_boundary_item(H h)
-  { return *sm_boundary_item_[h]; }
+  { return sm_boundary_item_.at(&*h); }
 
   template <typename H>
   void store_boundary_item(H h, Object_iterator o)
-  { boundary_item_[h] = o; }
+  { boundary_item_.emplace(&*h,o); }
   template <typename H>
   void store_sm_boundary_item(H h, Object_iterator o)
-  { sm_boundary_item_[h] = o; }
+  { sm_boundary_item_.emplace(&*h,o); }
 
   template <typename H>
   void undef_boundary_item(H h)
-  { CGAL_assertion(boundary_item_[h]!=boost::none);
-    boundary_item_[h] = boost::none; }
+  { boundary_item_.erase(&*h); }
   template <typename H>
   void undef_sm_boundary_item(H h)
-  { CGAL_assertion(sm_boundary_item_[h]!=boost::none);
-    sm_boundary_item_[h] = boost::none; }
+  { sm_boundary_item_.erase(&*h); }
 
   void reset_iterator_hash(Object_iterator it)
   { SVertex_handle sv;
@@ -1332,10 +1328,10 @@ public:
 protected:
   void pointer_update(const Self& D);
 
-  typedef boost::optional<Object_iterator> Optional_object_iterator ;
  private:
-  Generic_handle_map<Optional_object_iterator> boundary_item_;
-  Generic_handle_map<Optional_object_iterator> sm_boundary_item_;
+  typedef robin_hood::unordered_map<void*,Object_iterator,Void_handle_hash_function> Handle_to_iterator_map;
+  Handle_to_iterator_map boundary_item_;
+  Handle_to_iterator_map sm_boundary_item_;
  protected:
   Vertex_list    vertices_;
   Halfedge_list  halfedges_;
@@ -1352,37 +1348,51 @@ template <typename Kernel, typename Items, typename Mark>
 void SNC_structure<Kernel,Items,Mark>::
 pointer_update(const SNC_structure<Kernel,Items,Mark>& D)
 {
-  CGAL::Unique_hash_map<Vertex_const_handle,Vertex_handle>       VM;
-  CGAL::Unique_hash_map<Halfedge_const_handle,Halfedge_handle>   EM;
-  CGAL::Unique_hash_map<Halffacet_const_handle,Halffacet_handle> FM;
-  CGAL::Unique_hash_map<Volume_const_handle,Volume_handle>       CM;
-  CGAL::Unique_hash_map<SHalfedge_const_handle,SHalfedge_handle> SEM;
-  CGAL::Unique_hash_map<SHalfloop_const_handle,SHalfloop_handle> SLM;
-  CGAL::Unique_hash_map<SFace_const_handle,SFace_handle>         SFM;
+  robin_hood::unordered_map<Vertex_const_handle,Vertex_handle,Handle_hash_function>       VM;
+  VM.reserve(D.number_of_vertices()+1);
+  robin_hood::unordered_map<Halfedge_const_handle,Halfedge_handle,Handle_hash_function>   EM;
+  EM.reserve(D.number_of_edges()+1);
+  robin_hood::unordered_map<Halffacet_const_handle,Halffacet_handle,Handle_hash_function> FM;
+  FM.reserve(D.number_of_facets()+1);
+  robin_hood::unordered_map<Volume_const_handle,Volume_handle,Handle_hash_function>       CM;
+  CM.reserve(D.number_of_volumes()+1);
+  robin_hood::unordered_map<SHalfedge_const_handle,SHalfedge_handle,Handle_hash_function> SEM;
+  SEM.reserve(D.number_of_shalfedges()+1);
+  robin_hood::unordered_map<SHalfloop_const_handle,SHalfloop_handle,Handle_hash_function> SLM;
+  SLM.reserve(D.number_of_shalfloops()+1);
+  robin_hood::unordered_map<SFace_const_handle,SFace_handle,Handle_hash_function>         SFM;
+  SFM.reserve(D.number_of_sfaces()+1);
+
   Vertex_const_iterator vc = D.vertices_begin();
   Vertex_iterator v = vertices_begin();
   for ( ; vc != D.vertices_end(); ++vc,++v) VM[vc] = v;
   VM[D.vertices_end()] = vertices_end();
+
   Halfedge_const_iterator ec = D.halfedges_begin();
   Halfedge_iterator e = halfedges_begin();
   for ( ; ec != D.halfedges_end(); ++ec,++e) EM[ec] = e;
   EM[D.halfedges_end()] = halfedges_end();
+
   Halffacet_const_iterator fc = D.halffacets_begin();
   Halffacet_iterator f = halffacets_begin();
   for ( ; fc != D.halffacets_end(); ++fc,++f) FM[fc] = f;
   FM[D.halffacets_end()] = halffacets_end();
+
   Volume_const_iterator cc = D.volumes_begin();
   Volume_iterator c = volumes_begin();
   for ( ; cc != D.volumes_end(); ++cc,++c) CM[cc] = c;
   CM[D.volumes_end()] = volumes_end();
+
   SHalfedge_const_iterator sec = D.shalfedges_begin();
   SHalfedge_iterator se = shalfedges_begin();
   for ( ; sec != D.shalfedges_end(); ++sec,++se) SEM[sec] = se;
   SEM[D.shalfedges_end()] = shalfedges_end();
+
   SHalfloop_const_iterator slc = D.shalfloops_begin();
   SHalfloop_iterator sl = shalfloops_begin();
   for ( ; slc != D.shalfloops_end(); ++slc,++sl) SLM[slc] = sl;
   SLM[D.shalfloops_end()] = shalfloops_end();
+
   SFace_const_iterator sfc = D.sfaces_begin();
   SFace_iterator sf = sfaces_begin();
   for ( ; sfc != D.sfaces_end(); ++sfc,++sf) SFM[sfc] = sf;
