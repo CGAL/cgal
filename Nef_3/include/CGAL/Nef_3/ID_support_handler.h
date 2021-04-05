@@ -18,8 +18,7 @@
 
 #include <CGAL/Nef_S2/ID_support_handler.h>
 #include <CGAL/Nef_3/SNC_indexed_items.h>
-#include <boost/functional/hash.hpp>
-#include <unordered_map>
+#include <CGAL/Tools/robin_hood.h>
 #include <map>
 
 #undef CGAL_NEF_DEBUG
@@ -55,7 +54,7 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
       return hash;
     }
   };
-  std::unordered_map<Halffacet_pair, int, Handle_pair_hash_function> f2m;
+  robin_hood::unordered_map<Halffacet_pair, int, Handle_pair_hash_function> f2m;
   std::map<int, int> hash;
 
  public:
@@ -78,12 +77,13 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
     hash[get_hash(i)] = parent;
   }
 
+  void initialize_hash(int i) {
+    hash[i] = i;
+  }
+
   template<typename Handle>
   void initialize_hash(Handle h) {
-    hash[h->get_index()] = h->get_index();
-  }
-  void initialize_hash(int i) {
-        hash[i] = i;
+    initialize_hash(h->get_index());
   }
 
   void hash_facet_pair(SVertex_handle sv,
