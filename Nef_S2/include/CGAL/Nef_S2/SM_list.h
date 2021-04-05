@@ -20,7 +20,6 @@
 #include <CGAL/Nef_S2/SM_items.h>
 #include <CGAL/Nef_S2/Sphere_geometry.h>
 #include <CGAL/Nef_2/Object_handle.h>
-#include <CGAL/Nef_S2/Generic_handle_map.h>
 #include <CGAL/Nef_2/iterator_tools.h>
 #include <list>
 

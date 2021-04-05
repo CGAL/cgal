@@ -23,7 +23,7 @@
 #include <CGAL/Tools/robin_hood.h>
 #include <CGAL/In_place_list.h>
 #include <CGAL/Nef_3/SNC_list.h>
-#include <CGAL/Nef_S2/Generic_handle_map.h>
+#include <CGAL/Nef_S2/Void_handle_hash_function.h>
 #include <CGAL/Nef_2/Object_handle.h>
 #include <CGAL/Nef_3/SNC_iteration.h>
 #include <CGAL/Nef_2/iterator_tools.h>
