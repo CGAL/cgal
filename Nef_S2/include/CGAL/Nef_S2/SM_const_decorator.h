@@ -21,12 +21,12 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/circulator.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Tools/robin_hood.h>
 #include <CGAL/Nef_2/Object_index.h>
 #include <CGAL/Nef_S2/SM_iteration.h>
 #include <CGAL/Nef_S2/SM_decorator_traits.h>
 #include <string>
-#include <list>
+#include <queue>
 #include <sstream>
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 67
@@ -379,12 +379,13 @@ SM_const_decorator<SM_>::
 number_of_sface_cycles() const
 {
   unsigned int fc_num=0;
-  CGAL::Unique_hash_map<SHalfedge_const_handle,bool> visited;
+  robin_hood::unordered_set<SHalfedge_const_handle,Handle_hash_function> visited;
+  visited.reserve(number_of_shalfedges());
   SHalfedge_const_iterator e;
   CGAL_forall_shalfedges(e,*this) {
-    if (visited[e]) continue;
+    if (visited.contains(e)) continue;
     SHalfedge_around_sface_const_circulator hfc(e), hend(hfc);
-    CGAL_For_all(hfc,hend) visited[hfc]=true;
+    CGAL_For_all(hfc,hend) visited.insert(hfc);
     ++fc_num;
   }
   if ( has_shalfloop() ) fc_num += 2;
@@ -397,22 +398,23 @@ SM_const_decorator<SM_>::
 number_of_connected_components() const
 {
   int comp_num=0;
-  CGAL::Unique_hash_map<SVertex_const_iterator,bool> visited(false);
+  robin_hood::unordered_set<SVertex_const_iterator,Handle_hash_function> visited;
+  visited.reserve(number_of_svertices());
   SVertex_const_iterator v;
   CGAL_forall_svertices(v,*this) {
-    if (visited[v]) continue;
-    std::list<SVertex_const_iterator> L;
-    L.push_back(v); visited[v]=true;
+    if (!visited.insert(v).second) continue;
+    std::queue<SVertex_const_iterator> L;
+    L.push(v);
     /* we keep the invariant that all nodes which have been stacked
        are marked visited */
     while (!L.empty()) {
-      SVertex_const_iterator vc = L.front(); L.pop_front();
+      SVertex_const_iterator vc = L.front(); L.pop();
       if ( is_isolated(vc) ) continue;
       SHalfedge_around_svertex_const_circulator
         havc(first_out_edge(vc)), hend(havc);
       CGAL_For_all(havc,hend) {
-        if (!visited[havc->target()]) {
-          L.push_back(havc->target()); visited[havc->target()]=true;
+        if (visited.insert(havc->target()).second) {
+          L.push(havc->target());
         }
       }
     }
