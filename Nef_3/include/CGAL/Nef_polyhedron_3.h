@@ -912,11 +912,11 @@ protected:
 
     class Find_holes {
 
-      Unique_hash_map<Vertex_const_handle, bool>& omit_vertex;
+      robin_hood::unordered_set<Vertex_const_handle, Handle_hash_function>& omit_vertex;
       int nov, nof;
 
     public:
-      Find_holes(Unique_hash_map<Vertex_const_handle, bool>& omit_vertex_)
+      Find_holes(robin_hood::unordered_set<Vertex_const_handle, Handle_hash_function>& omit_vertex_)
         : omit_vertex(omit_vertex_), nov(0), nof(0) {}
 
       void visit(Halffacet_const_handle f) {
@@ -928,12 +928,12 @@ protected:
             SHalfedge_around_facet_const_circulator
               sfc(fc), send(sfc);
             CGAL_For_all(sfc, send) {
-              omit_vertex[sfc->source()->source()] = true;
+              omit_vertex.insert(sfc->source()->source());
               --nov;
             }
           } else if(fc.is_shalfloop()) {
             SHalfloop_const_handle sl(fc);
-            omit_vertex[sl->incident_sface()->center_vertex()];
+            omit_vertex.insert(sl->incident_sface()->center_vertex());
             --nov;
           } else
             CGAL_error_msg( "wrong handle type");
@@ -958,18 +958,18 @@ protected:
     class Add_vertices {
 
       Polyhedron_incremental_builder_3<HDS>& B;
-      Unique_hash_map<Vertex_const_handle, bool>& omit_vertex;
+      robin_hood::unordered_set<Vertex_const_handle, Handle_hash_function>& omit_vertex;
       Object_index<Vertex_const_iterator>& VI;
       int vertex_index;
 
     public:
       Add_vertices(Polyhedron_incremental_builder_3<HDS>& B_,
-                   Unique_hash_map<Vertex_const_handle, bool>& omit_vertex_,
+                   robin_hood::unordered_set<Vertex_const_handle, Handle_hash_function>& omit_vertex_,
                    Object_index<Vertex_const_iterator>& VI_)
         : B(B_), omit_vertex(omit_vertex_), VI(VI_), vertex_index(0) {}
 
       void visit(Vertex_const_handle v) {
-        if(omit_vertex[v]) return;
+        if(omit_vertex.contains(v)) return;
         VI[v]=vertex_index++;
         B.add_vertex(v->point());
       }
@@ -986,12 +986,12 @@ protected:
 
       const Object_index<Vertex_const_iterator>& VI;
       Polyhedron_incremental_builder_3<HDS>& B;
-      const Unique_hash_map<Vertex_const_handle, bool>& omit_vertex;
+      const robin_hood::unordered_set<Vertex_const_handle, Handle_hash_function>& omit_vertex;
       SNC_const_decorator& D;
 
     public:
       Visitor(Polyhedron_incremental_builder_3<HDS>& BB,
-              const Unique_hash_map<Vertex_const_handle, bool>& omit_vertex_,
+              const robin_hood::unordered_set<Vertex_const_handle, Handle_hash_function>& omit_vertex_,
               SNC_const_decorator& sd,
               Object_index<Vertex_const_iterator>& vi)
         : VI(vi), B(BB), omit_vertex(omit_vertex_), D(sd){}
@@ -1010,7 +1010,7 @@ protected:
         fc = f->facet_cycles_begin();
         se = SHalfedge_const_handle(fc);
         CGAL_assertion(se!=0);
-        if(omit_vertex[se->source()->source()]) return;
+        if(omit_vertex.contains(se->source()->source())) return;
         B.begin_facet();
         SHalfedge_around_facet_const_circulator hc_start(se);
         SHalfedge_around_facet_const_circulator hc_end(hc_start);
@@ -1033,7 +1033,7 @@ protected:
     SFace_const_handle sf;
     SNC_const_decorator& scd;
     Object_index<Vertex_const_iterator> VI;
-    Unique_hash_map<Vertex_const_handle, bool> omit_vertex;
+    robin_hood::unordered_set<Vertex_const_handle, Handle_hash_function> omit_vertex;
 
     Build_polyhedron2(SFace_const_handle sf_, SNC_const_decorator& s) :
       sf(sf_), scd(s), VI(s.vertices_begin(),s.vertices_end(),'V'),
