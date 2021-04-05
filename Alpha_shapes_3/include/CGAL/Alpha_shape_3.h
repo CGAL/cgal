@@ -23,7 +23,8 @@
 #include <CGAL/Compact_container.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Object.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_function.h>
+#include <CGAL/Tools/robin_hood.h>
 #ifdef CGAL_USE_GEOMVIEW
 #include <CGAL/IO/Geomview_stream.h>  // TBC
 #endif
@@ -211,7 +212,7 @@ public:
   // non-mutable. Its value-type is NT
 
 private:
-  typedef Unique_hash_map<Cell_handle, bool > Marked_cell_set;
+  typedef robin_hood::unordered_set<Cell_handle, Handle_hash_function> Marked_cell_set;
 
 private:
   NT _alpha;
@@ -1477,7 +1478,7 @@ std::ostream& operator<<(std::ostream& os,  const Alpha_shape_3<Dt,EACT>& A)
   typedef typename AS::Alpha_shape_facets_iterator
                                              Alpha_shape_facets_iterator;
 
-  Unique_hash_map< Vertex_handle, size_type > V;
+  robin_hood::unordered_map< Vertex_handle, size_type, Handle_hash_function> V;
   size_type number_of_vertices = 0;
 
   Alpha_shape_vertices_iterator vit;
@@ -1713,8 +1714,7 @@ Alpha_shape_3<Dt,EACT>::number_of_solid_components(const NT& alpha) const
     // takes time O(#alpha_shape) amortized if STL_HASH_TABLES
     //            O(#alpha_shape log n) otherwise
 {
-  typedef typename Marked_cell_set::Data Data;
-  Marked_cell_set marked_cell_set(false);
+  Marked_cell_set marked_cell_set;
   Finite_cells_iterator cell_it, done = finite_cells_end();
   size_type nb_solid_components = 0;
 
@@ -1725,10 +1725,8 @@ Alpha_shape_3<Dt,EACT>::number_of_solid_components(const NT& alpha) const
       CGAL_triangulation_assertion(pCell != nullptr);
 
       if (classify(pCell, alpha) == INTERIOR){
-        Data& data = marked_cell_set[pCell];
-        if(data == false) {
+        if(marked_cell_set.insert(pCell).second) {
           // we traverse only interior simplices
-          data = true;
           traverse(pCell, marked_cell_set, alpha);
           nb_solid_components++;
         }
@@ -1743,7 +1741,6 @@ void Alpha_shape_3<Dt,EACT>::traverse(Cell_handle pCell,
                                  Marked_cell_set& marked_cell_set,
                                  const NT alpha) const
 {
-  typedef typename Marked_cell_set::Data Data;
   std::list<Cell_handle> cells;
   cells.push_back(pCell);
   Cell_handle pNeighbor;
@@ -1756,9 +1753,7 @@ void Alpha_shape_3<Dt,EACT>::traverse(Cell_handle pCell,
         pNeighbor = pCell->neighbor(i);
         CGAL_triangulation_assertion(pNeighbor != nullptr);
         if (classify(pNeighbor, alpha) == INTERIOR){
-          Data& data = marked_cell_set[pNeighbor];
-          if(data == false){
-            data = true;
+          if(marked_cell_set.insert(pNeighbor).second) {
             cells.push_back(pNeighbor);
           }
         }
