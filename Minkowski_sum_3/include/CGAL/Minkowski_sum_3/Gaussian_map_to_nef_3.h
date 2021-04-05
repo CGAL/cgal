@@ -17,6 +17,7 @@
 
 #include <CGAL/Nef_S2/SM_decorator.h>
 #include <CGAL/Minkowski_sum_3/Gaussian_map.h>
+#include <CGAL/Tools/robin_hood.h>
 #include <CGAL/Modifier_base.h>
 
 namespace CGAL {
@@ -55,26 +56,26 @@ template<typename Nef3>
 
   void create_solid(SNC_structure& snc) {
 
-    CGAL::Unique_hash_map<SHalfedge_const_handle, int> SE2i;
+    robin_hood::unordered_map<SHalfedge_const_handle, int, Handle_hash_function> SE2i;
     SHalfedge_const_iterator sei;
     CGAL_forall_sedges(sei, G) {
-      SE2i[sei] = Index_generator::get_unique_index();
-      SE2i[sei->twin()] = SE2i[sei];
+      int idx=Index_generator::get_unique_index();
+      SE2i.emplace(sei,idx);
+      SE2i.emplace(sei->twin(),idx);
     }
 
-    CGAL::Unique_hash_map
-      <SVertex_const_handle, std::pair<int, int> > SV2i;
+    robin_hood::unordered_map<SVertex_const_handle, std::pair<int, int>, Handle_hash_function> SV2i;
     SVertex_const_iterator svi;
     CGAL_forall_svertices(svi, G)
-      SV2i[svi] = std::pair<int, int>
+      SV2i.emplace(svi,std::make_pair
       (Index_generator::get_unique_index(),
-       Index_generator::get_unique_index());
+       Index_generator::get_unique_index()));
 
-    CGAL::Unique_hash_map<SFace_const_handle, Vertex_handle> sface2vertex;
+    robin_hood::unordered_map<SFace_const_handle, Vertex_handle, Handle_hash_function> sface2vertex;
     SFace_const_iterator sfi;
     for(sfi = G.sfaces_begin(); sfi != G.sfaces_end(); ++sfi) {
-      sface2vertex[sfi] = snc.new_vertex(sfi->mark().point(),
-                                         sfi->mark().boolean());
+      sface2vertex.emplace(sfi, snc.new_vertex(sfi->mark().point(),
+                                         sfi->mark().boolean()));
     }
 
     for(sfi = G.sfaces_begin(); sfi != G.sfaces_end(); ++sfi) {
@@ -177,20 +178,20 @@ template<typename Nef3>
   }
 
   void create_single_facet(SNC_structure& snc) {
-       CGAL::Unique_hash_map<SHalfedge_const_handle, int> SE2i;
+    robin_hood::unordered_map<SHalfedge_const_handle, int, Handle_hash_function> SE2i;
     SHalfedge_const_iterator sei;
     CGAL_forall_sedges(sei, G) {
-      SE2i[sei] = Index_generator::get_unique_index();
-      SE2i[sei->twin()] = SE2i[sei];
+      int idx = Index_generator::get_unique_index();
+      SE2i.emplace(sei, idx);
+      SE2i.emplace(sei->twin(), idx);
     }
 
-    CGAL::Unique_hash_map
-      <SVertex_const_handle, std::pair<int, int> > SV2i;
+    robin_hood::unordered_map<SVertex_const_handle, std::pair<int, int>, Handle_hash_function> SV2i;
     SVertex_const_iterator svi;
     CGAL_forall_svertices(svi, G)
-      SV2i[svi] = std::pair<int, int>
+      SV2i.emplace(svi, std::make_pair
       (Index_generator::get_unique_index(),
-       Index_generator::get_unique_index());
+       Index_generator::get_unique_index()));
 
     CGAL::Unique_hash_map<SFace_const_handle, Vertex_handle> sface2vertex;
     SFace_const_iterator sfi;
