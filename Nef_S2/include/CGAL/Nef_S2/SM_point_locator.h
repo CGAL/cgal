@@ -17,7 +17,7 @@
 
 #include <vector>
 #include <CGAL/basic.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Tools/robin_hood.h>
 #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 #include <CGAL/Nef_2/geninfo.h>
 #else
@@ -254,7 +254,8 @@ public:
     // s now initialized
 
     Sphere_direction dso(s.sphere_circle().opposite());
-    Unique_hash_map<SHalfedge_handle,bool> visited(false);
+    robin_hood::unordered_set<SHalfedge_handle,Handle_hash_function> visited;
+    visited.reserve(this->number_of_shalfedges());
     CGAL_forall_svertices(v,*this) {
       Sphere_point vp = v->point();
       if ( (v == v_res) || s.has_on(vp) ) {
@@ -268,7 +269,8 @@ public:
           e_res = out_wedge(v,dso,dummy);
           SHalfedge_around_svertex_circulator el(e_res),ee(el);
           CGAL_For_all(el,ee)
-            visited[el] = visited[el->twin()] = true;
+            visited.insert(el);
+            visited.insert(el->twin());
           /* e_res is now the counterclockwise maximal halfedge out
              of v just before s */
           if ( e_res->circle().has_on_negative_side(p) )
@@ -281,7 +283,7 @@ public:
     }
 
     CGAL_forall_sedges(e,*this) {
-      if ( visited[e] ) continue;
+      if ( visited.contains(e) ) continue;
       Sphere_segment se = segment(e);
       Sphere_point p_res;
       if(e->source() == e->twin()->source()) {
@@ -293,7 +295,8 @@ public:
         }
         s = Sphere_segment(p,p_res,s.sphere_circle());
         e_res = ( e->circle().has_on_positive_side(p) ? e : e->twin() );
-        visited[e] = visited[e->twin()] = true;
+        visited.insert(e);
+        visited.insert(e->twin());
         solution = is_edge_;
         CGAL_NEF_TRACEN("  determined "<<PH(e_res)<<" "<< e_res->incident_sface()->mark());
       }
@@ -301,7 +304,8 @@ public:
           CGAL_NEF_TRACEN(" location via halfedge "<<se);
         s = Sphere_segment(p,p_res,s.sphere_circle());
         e_res = ( e->circle().has_on_positive_side(p) ? e : e->twin() );
-        visited[e] = visited[e->twin()] = true;
+        visited.insert(e);
+        visited.insert(e->twin());
         solution = is_edge_;
         CGAL_NEF_TRACEN("  determined "<<PH(e_res)<<" "<< e_res->incident_sface()->mark());
       }
@@ -319,93 +323,6 @@ public:
     CGAL_error();
     return Object_handle(); // never reached!
   }
-
-#if 0 //THIS CODE DOES NOT SEEM TO BE USED
-  template <typename Object_predicate>
-  Object_handle ray_shoot(const Sphere_point& p,
-                          const Sphere_direction& d,
-                          const Object_predicate& M) const
-  /*{\Mop returns an |Object_handle o| which can be converted to a
-  |SVertex_handle|, |SHalfedge_handle|, |SFace_handle|
-  |h| as described above.  The object predicate |M| has to have
-  function operators \\ |bool operator() (const
-  SVertex_/SHalfedge_/SHalfloop_/SFace_handle&)|.\\ The object
-  returned is intersected by |d.circle()|, has minimal distance to
-  |p|, and |M(h)| holds on the converted object. The operation returns
-  the null handle |nullptr| if the ray shoot along |s| does not hit any
-  object |h| of |M| with |M(h)|.}*/
-  {
-    Sphere_circle c(d.circle());
-    Sphere_segment s;
-    Object_handle h = locate(p);
-    SVertex_handle v;
-    SHalfedge_handle e;
-    SHalfloop_handle l;
-    SFace_handle f;
-    if ( ( CGAL::assign(v,h) && M(v) ) ||
-         ( CGAL::assign(e,h) && M(e) ) ||
-         ( CGAL::assign(l,h) && M(l) ) ||
-         ( CGAL::assign(f,h) && M(f) ) ) return h;
-    h = Object_handle();
-    CGAL_NEF_TRACEN("not contained");
-#if 0
-    HASEN: s am anfang circle, ab wann segment ?
-           wo loop ?
-    bool s_init(false);
-    CGAL_forall_svertices (v,*this) {
-      Point pv = v->point();
-      if ( !(s_init && s.has_on(pv) ||
-            !s_init && c.has_on(pv)) ) continue;
-      CGAL_NEF_TRACEN("candidate "<<pv);
-      if ( M(v) ) {
-        h = make_object(v);     // store vertex
-        s = Sphere_segment(p,pv,c); // shorten
-        continue;
-      }
-      // now we know that v is not marked but on s
-      bool collinear;
-      SHalfedge_handle e = out_wedge(v,d,collinear);
-      if ( collinear ) {
-        if ( M(e) ) {
-          h = make_object(e);
-          s = Sphere_segment(p,pv,c);
-        }
-        continue;
-      }
-      if ( M(e->incident_sface()) ) {
-        h = make_object(e->incident_sface());
-        s = Sphere_segment(p,pv,c);
-      }
-    } // all vertices
-
-    CGAL::Unique_hash_map<SHalfedge_handle,bool> visited(false);
-    SHalfedge_iterator e_res;
-    CGAL_forall_sedges(e,*this) {
-      Sphere_segment se = segment(e);
-      Sphere_point p_res;
-      if ( do_intersect_internally(se,s,p_res) ) {
-        // internal intersection
-        CGAL_NEF_TRACEN("candidate "<<se);
-        e_res = e;
-        Sphere_segment s_cand = Sphere_segment(p,p_res,c);
-        if ( s_cand.is_short() && e->circle().has_on_negative_side(p) ||
-             s_cand.is_long() && e->circle().has_on_positive_side(p) ||
-             s_cand.is_halfcircle() &&
-               strictly_ordered_ccw_at(p.antipode(),
-                                       direction(e),d,direction(e->twin())) )
-          e_res = e->twin();
-        if ( M(e_res) ) {
-          h = make_object(e_res); s = s_cand;
-        } else if ( M(face(twin(e_res))) ) {
-          h = make_object(face(twin(e_res))); s = s_cand;
-        }
-      }
-    }
-#endif
-    CGAL_error_msg("not yet correct");
-    return h;
-  }
-#endif
 
   Object_handle ray_shoot(const Sphere_point& p,
                           const Sphere_circle& c,
