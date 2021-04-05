@@ -21,7 +21,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Nef_S2/Normalizing.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Tools/robin_hood.h>
 #include <CGAL/Nef_3/SNC_iteration.h>
 #include <CGAL/Nef_3/SNC_const_decorator.h>
 #include <CGAL/Nef_S2/SM_decorator.h>
@@ -276,14 +276,16 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   struct Shell_volume_setter {
     const SNCD_ D;
     Volume_handle c;
-    typedef Unique_hash_map< SFace_handle, bool> SFace_map;
+    typedef robin_hood::unordered_set< SFace_handle,Handle_hash_function> SFace_map;
     SFace_map linked;
     Shell_volume_setter(const SNCD_& Di)
-      : D(Di), linked(false) {}
+      : D(Di), linked() {
+      linked.reserve(Di.number_of_sfaces());
+    }
     void visit(SFace_handle h) {
       CGAL_NEF_TRACEN(h->center_vertex()->point());
       D.set_volume(h, c);
-      linked[h] = true;
+      linked.insert(h);
     }
     void visit(Vertex_handle ) { /* empty */ }
     void visit(Halfedge_handle ) { /* empty */ }
@@ -291,7 +293,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     void visit(SHalfedge_handle ) {}
     void visit(SHalfloop_handle ) {}
     void set_volume(Volume_handle ci) { c = ci; }
-    bool is_linked(SFace_handle h) {return linked[h];}
+    bool is_linked(SFace_handle h) {return linked.contains(h);}
   };
 
   void link_as_outer_shell( SFace_handle f, Volume_handle c ) const {
@@ -657,9 +659,12 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       valid = valid && vi->is_valid(verb, level);
 
       SM_decorator SD(&*vi);
-      Unique_hash_map<SVertex_handle, bool> SVvisited(false);
-      Unique_hash_map<SHalfedge_handle, bool> SEvisited(false);
-      Unique_hash_map<SFace_handle, bool> SFvisited(false);
+      robin_hood::unordered_set<SVertex_handle, Handle_hash_function> SVvisited;
+      SVvisited.reserve(SD.number_of_svertices());
+      robin_hood::unordered_set<SHalfedge_handle, Handle_hash_function> SEvisited;
+      SEvisited.reserve(SD.number_of_sedges());
+      robin_hood::unordered_set<SFace_handle, Handle_hash_function> SFvisited;
+      SFvisited.reserve(SD.number_of_sfaces());
 
       valid = valid && SD.is_valid(SVvisited,SEvisited,SFvisited, verb, level);
 
@@ -720,7 +725,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     verr << "CGAL::SNC_decorator<...>::is_valid(): structure is "
          << ( valid ? "valid." : "NOT VALID.") << std::endl;
 
-    Unique_hash_map<SHalfedge_handle, bool> SEinUniqueFC(false);
+    robin_hood::unordered_set<SHalfedge_handle,Handle_hash_function> SEinUniqueFC;
     Halffacet_iterator hfi;
     CGAL_forall_halffacets(hfi,*this) {
       valid = valid && hfi->is_valid(verb, level);
@@ -736,8 +741,8 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 // TODO          valid = valid && ( is_boundary_object(sheh) );
           SHalfedge_around_facet_circulator shec1(sheh), shec2(shec1);
                  CGAL_For_all(shec1, shec2) {
-            CGAL_assertion(!SEinUniqueFC[shec1]);
-            SEinUniqueFC[shec1] = true;
+            bool inserted = SEinUniqueFC.insert(shec1).second;
+            CGAL_assertion_msg(!inserted, "SHalfedge already exists");
             Plane_3 p_ref(shec1->source()->source()->point(),shec1->circle().opposite().orthogonal_vector());
             valid = valid && Infi_box::check_point_on_plane(shec1->source()->source()->point(), hfi->plane());
             valid = valid && (normalized(hfi->plane()) == normalized(p_ref));
@@ -899,8 +904,9 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
     SHalfedge_around_sface_circulator;
   std::list<SFace_handle> SFaceCandidates;
   std::list<Halffacet_handle> FacetCandidates;
-  CGAL::Generic_handle_map<bool> Done(false);
-  SFaceCandidates.push_back(f);  Done[f] = true;
+  robin_hood::unordered_set<void*,Void_handle_hash_function> Done;
+  Done.reserve(this->number_of_sfaces() + this->number_of_facets() + this->number_of_halfedges());
+  SFaceCandidates.push_back(f);  Done.insert(&*f);
   while ( true ) {
     if ( SFaceCandidates.empty() && FacetCandidates.empty() ) break;
     if ( !FacetCandidates.empty() ) {
@@ -913,16 +919,14 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
           SHalfedge_handle e(fc);
           SHalfedge_around_facet_circulator ec(e),ee(e);
           CGAL_For_all(ec,ee) { e = ec->twin();
-            if ( Done[e->incident_sface()] ) continue;
-            SFaceCandidates.push_back(e->incident_sface());
-            Done[e->incident_sface()] = true;
+            if ( Done.insert(&*e->incident_sface()).second )
+              SFaceCandidates.push_back(e->incident_sface());
           }
         } else if (fc.is_shalfloop()) {
           SHalfloop_handle l(fc);
           l = l->twin();
-          if ( Done[l->incident_sface()] ) continue;
-          SFaceCandidates.push_back(l->incident_sface());
-          Done[l->incident_sface()] = true;
+          if ( Done.insert(&*l->incident_sface()).second )
+            SFaceCandidates.push_back(l->incident_sface());
         } else CGAL_error_msg("Damn wrong handle.");
       }
     }
@@ -930,17 +934,11 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
       SFace_handle sf = *SFaceCandidates.begin();
       SFaceCandidates.pop_front();
       V.visit(sf); // report sface
-      if ( !Done[sf->center_vertex()] )
+      if ( Done.insert(&*sf->center_vertex()).second )
         V.visit(sf->center_vertex()); // report vertex
-      Done[sf->center_vertex()] = true;
       //      SVertex_handle sv;
       SM_decorator SD(&*sf->center_vertex());
-      /*
-      CGAL_forall_svertices(sv,SD){
-        if(SD.is_isolated(sv) && !Done[sv])
-          V.visit(sv);
-      }
-      */
+
       SFace_cycle_iterator fc;
       CGAL_forall_sface_cycles_of(fc,sf) {
         if ( fc.is_shalfedge() ) {
@@ -949,41 +947,31 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
           CGAL_For_all(ec,ee) {
             V.visit(SHalfedge_handle(ec));
             SVertex_handle v = ec->twin()->source();
-            if ( !SD.is_isolated(v) && !Done[v] ) {
+            if ( !SD.is_isolated(v) && Done.insert(&*v).second ) {
               V.visit(v); // report edge
-              Done[v] = Done[v->twin()] = true;
+              Done.insert(&*v->twin());
             }
             Halffacet_handle f = ec->twin()->facet();
-            if ( Done[f] ) continue;
-            FacetCandidates.push_back(f); Done[f] = true;
+            if ( Done.insert(&*f).second )
+              FacetCandidates.push_back(f);
           }
         } else if ( fc.is_svertex() ) {
           SVertex_handle v(fc);
-          if ( Done[v] ) continue;
-          V.visit(v); // report edge
-          V.visit(v->twin());
-          Done[v] = Done[v->twin()] = true;
-          CGAL_assertion(SD.is_isolated(v));
-          SFaceCandidates.push_back(v->twin()->incident_sface());
-          Done[v->twin()->incident_sface()]=true;
-          // note that v is isolated, thus v->twin() is isolated too
-          //          SM_decorator SD;
-          //          SFace_handle fo;
-          //          fo = v->twin()->incident_sface();
-          /*
-          if(SD.is_isolated(v))
-            fo = v->source()->sfaces_begin();
-          else
-            fo = v->twin()->incident_sface();
-          */
-          //          if ( Done[fo] ) continue;
-          //          SFaceCandidates.push_back(fo); Done[fo] = true;
+          if ( Done.insert(&*v).second )
+          {
+              V.visit(v); // report edge
+              V.visit(v->twin());
+              Done.insert(&*v->twin());
+              CGAL_assertion(SD.is_isolated(v));
+              SFaceCandidates.push_back(v->twin()->incident_sface());
+              Done.insert(&*v->twin()->incident_sface());
+          }
         } else if (fc.is_shalfloop()) {
           SHalfloop_handle l(fc);
           V.visit(l);
           Halffacet_handle f = l->twin()->facet();
-          if ( Done[f] ) continue;
-          FacetCandidates.push_back(f);  Done[f] = true;
+          if ( Done.insert(&*f).second)
+            FacetCandidates.push_back(f);
         } else CGAL_error_msg("Damn wrong handle.");
       }
     }
