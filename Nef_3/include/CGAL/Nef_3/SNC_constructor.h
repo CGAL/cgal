@@ -30,6 +30,7 @@
 #include <CGAL/Nef_3/SNC_sphere_map.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
 #include <CGAL/Nef_3/SNC_external_structure.h>
+#include <CGAL/Tools/robin_hood.h>
 #ifdef SM_VISUALIZOR
 #include <CGAL/Nef_3/SNC_SM_visualizor.h>
 #endif // SM_VISUALIZOR
@@ -689,34 +690,40 @@ public:
     ++number_of_clones;
 #endif
 
-    CGAL::Unique_hash_map<SVertex_const_handle, SVertex_handle>         VM;
-    CGAL::Unique_hash_map<SHalfedge_const_handle, SHalfedge_handle>     EM;
-    CGAL::Unique_hash_map<SHalfloop_const_handle, SHalfloop_handle>     LM;
-    CGAL::Unique_hash_map<SFace_const_handle, SFace_handle>             FM;
+    robin_hood::unordered_map<SVertex_const_handle, SVertex_handle,Handle_hash_function>         VM;
+    robin_hood::unordered_map<SHalfedge_const_handle, SHalfedge_handle,Handle_hash_function>     EM;
+    robin_hood::unordered_map<SHalfloop_const_handle, SHalfloop_handle,Handle_hash_function>     LM;
+    robin_hood::unordered_map<SFace_const_handle, SFace_handle,Handle_hash_function>             FM;
 
     SM_const_decorator E(&*vin);
     Vertex_handle vout = this->sncp()->new_vertex(vin->point(), vin->mark());
     SM_decorator D(&*vout);
 
+    VM.reserve(E.number_of_svertices());
     SVertex_const_handle sv;
     CGAL_forall_svertices(sv, E) {
-      VM[sv] = D.new_svertex(sv->point());
+      VM.emplace(sv,D.new_svertex(sv->point()));
     }
 
+    EM.reserve(E.number_of_sedges());
     SHalfedge_const_handle se;
     CGAL_forall_sedges(se, E) {
-      EM[se] = D.new_shalfedge_pair();
-      EM[se->twin()] = EM[se]->twin();
+      const auto& sen = D.new_shalfedge_pair();
+      EM.emplace(se,sen);
+      EM.emplace(se->twin(),sen->twin());
     }
 
+    FM.reserve(E.number_of_sfaces()+2);
     SFace_const_handle sf;
     CGAL_forall_sfaces(sf, E)
-      FM[sf] = D.new_sface();
+      FM.emplace(sf,D.new_sface());
 
     SHalfloop_handle sl;
     if(E.has_shalfloop()) {
-      sl = LM[E.shalfloop()] = D.new_shalfloop_pair();
-      LM[E.shalfloop()->twin()] = sl->twin();
+      LM.reserve(2);
+      sl = D.new_shalfloop_pair();
+      LM.emplace(E.shalfloop(), sl);
+      LM.emplace(E.shalfloop()->twin(),sl->twin());
       D.set_face(sl, FM[E.shalfloop()->incident_sface()]);
       D.set_face(sl->twin(), FM[E.shalfloop()->twin()->incident_sface()]);
       sl->circle() = E.shalfloop()->circle();
@@ -725,30 +732,33 @@ public:
     }
 
     CGAL_forall_svertices(sv, E) {
-      D.set_first_out_edge(VM[sv], EM[E.first_out_edge(sv)]);
-      D.set_face(VM[sv], FM[sv->incident_sface()]);
-      VM[sv]->mark() = sv->mark();
+      const auto& svv = VM[sv];
+      D.set_first_out_edge(svv, EM[E.first_out_edge(sv)]);
+      D.set_face(svv, FM[sv->incident_sface()]);
+      svv->mark() = sv->mark();
     }
 
     CGAL_forall_shalfedges(se, E) {
-      EM[se]->mark() = EM[se]->twin()->mark() = se->mark();
-      D.set_source(EM[se], VM[se->source()]);
-      D.set_prev(EM[se], EM[se->sprev()]);
-      D.set_next(EM[se], EM[se->snext()]);
-      D.set_face(EM[se], FM[se->incident_sface()]);
-      EM[se]->circle() = se->circle();
+      const auto& see = EM[se];
+      see->mark() = see->twin()->mark() = se->mark();
+      D.set_source(see, VM[se->source()]);
+      D.set_prev(see, EM[se->sprev()]);
+      D.set_next(see, EM[se->snext()]);
+      D.set_face(see, FM[se->incident_sface()]);
+      see->circle() = se->circle();
     }
 
     CGAL_forall_sfaces(sf, E) {
-      FM[sf]->mark() = sf->mark();
+      const auto& sff = FM[sf];
+      sff->mark() = sf->mark();
       SFace_cycle_const_iterator sfc;
       for(sfc = sf->sface_cycles_begin(); sfc != sf->sface_cycles_end(); ++sfc) {
         if(sfc.is_svertex())
-          D.store_sm_boundary_object(VM[SVertex_const_handle(sfc)], FM[sf]);
+          D.store_sm_boundary_object(VM[SVertex_const_handle(sfc)], sff);
         else if(sfc.is_shalfedge())
-          D.store_sm_boundary_object(EM[SHalfedge_const_handle(sfc)], FM[sf]);
+          D.store_sm_boundary_object(EM[SHalfedge_const_handle(sfc)], sff);
         else if(sfc.is_shalfloop())
-          D.store_sm_boundary_object(LM[SHalfloop_const_handle(sfc)], FM[sf]);
+          D.store_sm_boundary_object(LM[SHalfloop_const_handle(sfc)], sff);
         else CGAL_error_msg("damn wrong handle.");
       }
     }
@@ -1910,37 +1920,44 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
     ++number_of_clones;
 #endif
 
-    CGAL::Unique_hash_map<SVertex_const_handle, SVertex_handle>         VM;
-    CGAL::Unique_hash_map<SHalfedge_const_handle, SHalfedge_handle>     EM;
-    CGAL::Unique_hash_map<SHalfloop_const_handle, SHalfloop_handle>     LM;
-    CGAL::Unique_hash_map<SFace_const_handle, SFace_handle>             FM;
+    robin_hood::unordered_map<SVertex_const_handle, SVertex_handle,Handle_hash_function>         VM;
+    robin_hood::unordered_map<SHalfedge_const_handle, SHalfedge_handle,Handle_hash_function>     EM;
+    robin_hood::unordered_map<SHalfloop_const_handle, SHalfloop_handle,Handle_hash_function>     LM;
+    robin_hood::unordered_map<SFace_const_handle, SFace_handle,Handle_hash_function>             FM;
 
     SM_const_decorator E(&*vin);
     Vertex_handle vout = this->sncp()->new_vertex(vin->point(), vin->mark());
     SM_decorator D(&*vout);
 
+    VM.reserve(E.number_of_svertices());
     SVertex_const_handle sv;
     CGAL_forall_svertices(sv, E) {
-      VM[sv] = D.new_svertex(sv->point());
-      VM[sv]->set_index(sv->get_index());
+      const auto& svv = D.new_svertex(sv->point());
+      VM.emplace(sv,svv);
+      svv->set_index(sv->get_index());
     }
 
+    EM.reserve(E.number_of_shalfedges());
     SHalfedge_const_handle se;
     CGAL_forall_sedges(se, E) {
-      EM[se] = D.new_shalfedge_pair();
-      EM[se->twin()] = EM[se]->twin();
-      EM[se]->set_index(se->get_index());
-      EM[se->twin()]->set_index(se->twin()->get_index());
+      const auto& sen = D.new_shalfedge_pair();
+      EM.emplace(se,sen);
+      EM.emplace(se->twin(),sen->twin());
+      sen->set_index(se->get_index());
+      sen->twin()->set_index(se->twin()->get_index());
     }
 
+    FM.reserve(E.number_of_sfaces()+2);
     SFace_const_handle sf;
     CGAL_forall_sfaces(sf, E)
-      FM[sf] = D.new_sface();
+      FM.emplace(sf,D.new_sface());
 
     SHalfloop_handle sl;
     if(E.has_shalfloop()) {
-      sl = LM[E.shalfloop()] = D.new_shalfloop_pair();
-      LM[E.shalfloop()->twin()] = sl->twin();
+      LM.reserve(2);
+      sl = D.new_shalfloop_pair();
+      LM.emplace(E.shalfloop(),sl);
+      LM.emplace(E.shalfloop()->twin(),sl->twin());
       D.set_face(sl, FM[E.shalfloop()->incident_sface()]);
       D.set_face(sl->twin(), FM[E.shalfloop()->twin()->incident_sface()]);
       sl->circle() = E.shalfloop()->circle();
@@ -1951,30 +1968,33 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
     }
 
     CGAL_forall_svertices(sv, E) {
-      D.set_first_out_edge(VM[sv], EM[E.first_out_edge(sv)]);
-      D.set_face(VM[sv], FM[sv->incident_sface()]);
-      VM[sv]->mark() = sv->mark();
+      const auto& svv = VM[sv];
+      D.set_first_out_edge(svv, EM[E.first_out_edge(sv)]);
+      D.set_face(svv, FM[sv->incident_sface()]);
+      svv->mark() = sv->mark();
     }
 
     CGAL_forall_shalfedges(se, E) {
-      EM[se]->mark() = EM[se]->twin()->mark() = se->mark();
-      D.set_source(EM[se], VM[se->source()]);
-      D.set_prev(EM[se], EM[se->sprev()]);
-      D.set_next(EM[se], EM[se->snext()]);
-      D.set_face(EM[se], FM[se->incident_sface()]);
-      EM[se]->circle() = se->circle();
+      const auto& see = EM[se];
+      see->mark() = see->twin()->mark() = se->mark();
+      D.set_source(see, VM[se->source()]);
+      D.set_prev(see, EM[se->sprev()]);
+      D.set_next(see, EM[se->snext()]);
+      D.set_face(see, FM[se->incident_sface()]);
+      see->circle() = se->circle();
     }
 
     CGAL_forall_sfaces(sf, E) {
-      FM[sf]->mark() = sf->mark();
+      const auto& sff = FM[sf];
+      sff->mark() = sf->mark();
       SFace_cycle_const_iterator sfc;
       for(sfc = sf->sface_cycles_begin(); sfc != sf->sface_cycles_end(); ++sfc) {
         if(sfc.is_svertex())
-          D.store_sm_boundary_object(VM[SVertex_const_handle(sfc)], FM[sf]);
+          D.store_sm_boundary_object(VM[SVertex_const_handle(sfc)], sff);
         else if(sfc.is_shalfedge())
-          D.store_sm_boundary_object(EM[SHalfedge_const_handle(sfc)], FM[sf]);
+          D.store_sm_boundary_object(EM[SHalfedge_const_handle(sfc)], sff);
         else if(sfc.is_shalfloop())
-          D.store_sm_boundary_object(LM[SHalfloop_const_handle(sfc)], FM[sf]);
+          D.store_sm_boundary_object(LM[SHalfloop_const_handle(sfc)], sff);
         else CGAL_error_msg("damn wrong handle.");
       }
     }
@@ -1995,7 +2015,7 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
 
     CGAL_NEF_TRACEN("edge facet overlay " << p);
 
-    Unique_hash_map<SHalfedge_handle, Mark> mark_of_right_sface;
+    robin_hood::unordered_map<SHalfedge_handle, Mark,Handle_hash_function> mark_of_right_sface;
 
     SM_decorator D(&*this->sncp()->new_vertex(p, BOP(e->mark(), f->mark())));
     SM_const_decorator E(&*e->source());
@@ -2055,6 +2075,7 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
       SFace_handle sf;
       Sphere_circle c(f->plane());
 
+      mark_of_right_sface.reserve(E.number_of_sfaces());
       SHalfedge_handle next_edge;
       SHalfedge_around_svertex_const_circulator ec(E.out_edges(e)), ee(ec);
       CGAL_For_all(ec,ee) {
@@ -2088,7 +2109,7 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
         next_edge = se2->twin();
         se1->mark() = se1->twin()->mark() = BOP(ec->mark(), faces_p->incident_volume()->mark(), inv);
         se2->mark() = se2->twin()->mark() = BOP(ec->mark(), faces_p->twin()->incident_volume()->mark(), inv);
-        mark_of_right_sface[se1] = ec->incident_sface()->mark();
+        mark_of_right_sface.emplace(se1, ec->incident_sface()->mark());
         se1->circle() = se2->circle() = ec->circle();
         se1->twin()->circle() = se2->twin()->circle() = se1->circle().opposite();
         se1->set_index(ec->get_index());
@@ -2106,7 +2127,8 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
                         " -> " << en->twin()->source()->vector());
         se1->circle() = Sphere_circle(faces_p->plane());
         se1->twin()->circle() = se1->circle().opposite();
-        se1->mark() = se1->twin()->mark() = BOP(mark_of_right_sface[ec2], faces_p->mark(), inv);
+        const auto& ec2_mark = mark_of_right_sface[ec2];
+        se1->mark() = se1->twin()->mark() = BOP(ec2_mark, faces_p->mark(), inv);
 
         Halffacet_cycle_const_iterator fci = faces_p->facet_cycles_begin();
         SHalfedge_around_facet_const_circulator sea(fci);
@@ -2114,10 +2136,10 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
         se1->twin()->set_index(sea->get_index());
 
         sf = D.new_sface();
-        sf->mark() = BOP(mark_of_right_sface[ec2], faces_p->incident_volume()->mark(), inv);
+        sf->mark() = BOP(ec2_mark, faces_p->incident_volume()->mark(), inv);
         D.link_as_face_cycle(se1,sf);
         sf = D.new_sface();
-        sf->mark() = BOP(mark_of_right_sface[ec2], faces_p->twin()->incident_volume()->mark(), inv);
+        sf->mark() = BOP(ec2_mark, faces_p->twin()->incident_volume()->mark(), inv);
         D.link_as_face_cycle(se1->twin(),sf);
       }
     }
