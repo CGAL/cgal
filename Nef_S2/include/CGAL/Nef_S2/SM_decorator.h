@@ -28,7 +28,8 @@
 #include <CGAL/Nef_S2/SM_decorator_traits.h>
 #include <CGAL/Nef_S2/Sphere_map.h>
 #include <CGAL/Nef_S2/Normalizing.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_function.h>
+#include <CGAL/Tools/robin_hood.h>
 #include <CGAL/IO/Verbose_ostream.h>
 #ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
 #include <boost/any.hpp>
@@ -821,9 +822,9 @@ void extract_boundary() {
   CGAL_forall_sfaces(sf,*this) sf->mark() = false;
 }
 
-bool is_valid( Unique_hash_map<SVertex_handle,bool>& sv_hash,
-               Unique_hash_map<SHalfedge_handle,bool>& se_hash,
-               Unique_hash_map<SFace_handle,bool>& sf_hash,
+bool is_valid( robin_hood::unordered_set<SVertex_handle,Handle_hash_function>& sv_hash,
+               robin_hood::unordered_set<SHalfedge_handle,Handle_hash_function>& se_hash,
+               robin_hood::unordered_set<SFace_handle,Handle_hash_function>& sf_hash,
                bool verb = false, int level = 0) {
 
   Verbose_ostream verr(verb);
@@ -841,8 +842,8 @@ bool is_valid( Unique_hash_map<SVertex_handle,bool>& sv_hash,
   SVertex_handle sv;
   int isolated_vertices_found = 0;
   CGAL_forall_svertices(sv,*this) {
-    valid = valid && (!sv_hash[sv]);
-    sv_hash[sv] = true;
+    bool inserted = sv_hash.insert(sv).second;
+    valid = valid && (inserted);
     if(is_isolated(sv))
       isolated_vertices_found++;
     valid = valid && (++count <= max);
@@ -860,14 +861,14 @@ bool is_valid( Unique_hash_map<SVertex_handle,bool>& sv_hash,
     valid = valid && (she->incident_sface() == she->snext()->incident_sface());
     valid = valid && (she->incident_sface() == she->sprev()->incident_sface());
 
-    valid = valid && (!se_hash[she]);
+    bool inserted = se_hash.insert(she).second;
+    valid = valid && (inserted);
 
     //    Plane_3 pl(point(she->source()),point(she->target()),Point_3(0,0,0));
     //    Sphere_point vct(pl.orthogonal_vector());
     //    valid = valid && (normalized(Sphere_point(she->circle().orthogonal_vector())) == normalized(vct) ||
     //              normalized(Sphere_point(she->circle().opposite().orthogonal_vector())) == normalized(vct));
 
-    se_hash[she] = true;
     valid = valid && (++count <= max);
   }
 
@@ -886,8 +887,8 @@ bool is_valid( Unique_hash_map<SVertex_handle,bool>& sv_hash,
   int vertex_entries_found = 0;
   CGAL_forall_sfaces(sf,*this) {
     valid = valid && sf->is_valid(verb, level);
-    valid = valid && (!sf_hash[sf]);
-    sf_hash[sf] = true;
+    bool inserted = sf_hash.insert(sf).second;
+    valid = valid && (inserted);
 
     CGAL_forall_sface_cycles_of(sfc,sf) {
       if (sfc.is_shalfloop())
