@@ -323,9 +323,8 @@ void store_sm_boundary_object(H h, SFace_handle f) {
 template <typename H>
 void undo_sm_boundary_object(H h, SFace_handle f)
 { CGAL_assertion(map()->is_sm_boundary_object(h));
-  SFace_cycle_iterator it = map()->sm_boundary_item(h);
+  f->boundary_entry_objects().erase(map()->sm_boundary_item(h));
   map()->undef_sm_boundary_item(h);
-  f->boundary_entry_objects().erase(it);
 }
 
 void link_as_face_cycle(SHalfedge_handle e, SFace_handle f)

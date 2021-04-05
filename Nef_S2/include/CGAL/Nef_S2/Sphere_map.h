@@ -18,8 +18,9 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_function.h>
 #include <CGAL/Nef_2/Object_handle.h>
+#include <CGAL/Tools/robin_hood.h>
 #include <CGAL/Nef_S2/SM_items.h>
 #include <CGAL/Nef_S2/SM_list.h>
 #include <CGAL/Nef_S2/SM_iteration.h>
@@ -30,8 +31,6 @@
 #define CGAL_NEF_DEBUG 109
 #include <CGAL/Nef_2/debug.h>
 
-#include<boost/optional.hpp>
-#include<boost/none.hpp>
 
 namespace CGAL {
 
@@ -128,8 +127,7 @@ public:
   typedef std::list<Object_handle>                     Object_list;
   typedef typename Object_list::iterator               Object_iterator;
   typedef typename Object_list::const_iterator         Object_const_iterator;
-  typedef boost::optional<Object_iterator>             Optional_object_iterator ;
-  typedef Generic_handle_map<Optional_object_iterator> Handle_to_iterator_map;
+  typedef robin_hood::unordered_map<void*,Object_iterator,Void_handle_hash_function> Handle_to_iterator_map;
 
   typedef Sphere_map*       Constructor_parameter;
   typedef const Sphere_map* Constructor_const_parameter;
@@ -226,7 +224,7 @@ public:
   construction means cloning an isomorphic structure and is thus an
   expensive operation.}*/
 
-  Sphere_map(bool = false) : boundary_item_(boost::none),
+  Sphere_map(bool = false) : boundary_item_(),
     svertices_(), sedges_(), sfaces_(), shalfloop_() {}
 
   ~Sphere_map() CGAL_NOEXCEPT(CGAL_NO_ASSERTIONS_BOOL)
@@ -236,7 +234,7 @@ public:
     );
   }
 
-  Sphere_map(const Self& D) : boundary_item_(boost::none),
+  Sphere_map(const Self& D) : boundary_item_(),
     svertices_(D.svertices_),
     sedges_(D.sedges_),
     sfaces_(D.sfaces_),
@@ -258,7 +256,7 @@ public:
 
   void clear()
   {
-    boundary_item_.clear(boost::none);
+    boundary_item_.clear();
     svertices_.destroy();
     sfaces_.destroy();
     while ( shalfedges_begin() != shalfedges_end() )
@@ -268,20 +266,19 @@ public:
 
   template <typename H>
   bool is_sm_boundary_object(H h) const
-  { return boundary_item_[h]!=boost::none; }
+  { return boundary_item_.contains(&*h); }
 
   template <typename H>
   Object_iterator& sm_boundary_item(H h)
-  { return *boundary_item_[h]; }
+  { return boundary_item_.at(&*h); }
 
   template <typename H>
   void store_sm_boundary_item(H h, Object_iterator o)
-  { boundary_item_[h] = o; }
+  { boundary_item_.emplace(&*h,o); }
 
   template <typename H>
   void undef_sm_boundary_item(H h)
-  { CGAL_assertion(boundary_item_[h]!=boost::none);
-    boundary_item_[h] = boost::none; }
+  { boundary_item_.erase(&*h); }
 
   void reset_sm_iterator_hash(Object_iterator it)
   { SVertex_handle sv;
@@ -495,10 +492,10 @@ template <typename K, typename I, typename M>
 void Sphere_map<K, I, M>::
 pointer_update(const Sphere_map<K, I, M>& D)
 {
-  CGAL::Unique_hash_map<SVertex_const_handle,SVertex_handle>     VM;
-  CGAL::Unique_hash_map<SHalfedge_const_handle,SHalfedge_handle> EM;
-  CGAL::Unique_hash_map<SHalfloop_const_handle,SHalfloop_handle> LM;
-  CGAL::Unique_hash_map<SFace_const_handle,SFace_handle>         FM;
+  robin_hood::unordered_map<SVertex_const_handle,SVertex_handle,Handle_hash_function>     VM;
+  robin_hood::unordered_map<SHalfedge_const_handle,SHalfedge_handle,Handle_hash_function> EM;
+  robin_hood::unordered_map<SHalfloop_const_handle,SHalfloop_handle,Handle_hash_function> LM;
+  robin_hood::unordered_map<SFace_const_handle,SFace_handle,Handle_hash_function>         FM;
 
   SVertex_const_iterator vc = D.svertices_begin();
   SVertex_iterator v = svertices_begin();
