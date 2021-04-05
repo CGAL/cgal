@@ -20,7 +20,8 @@
 #include <CGAL/In_place_list.h>
 #include <CGAL/HalfedgeDS_items_decorator.h>
 #include <CGAL/memory.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_function.h>
+#include <CGAL/Tools/robin_hood.h>
 #include <CGAL/N_step_adaptor_derived.h>
 #include <CGAL/iterator.h>
 #include <cstddef>
@@ -329,18 +330,20 @@ private:
         // in a halfedge data structure `hds' with lists.
         // Update own pointers assuming that they lived previously
         // in a halfedge data structure `hds' with lists.
-        typedef Unique_hash_map< Vertex_const_iterator, Vertex_iterator> V_map;
-        typedef Unique_hash_map< Halfedge_const_iterator, Halfedge_iterator>
-                                                                         H_map;
-        typedef Unique_hash_map< Face_const_iterator, Face_iterator>     F_map;
+        typedef robin_hood::unordered_map< Vertex_const_iterator, Vertex_iterator, Handle_hash_function> V_map;
+        typedef robin_hood::unordered_map< Halfedge_const_iterator, Halfedge_iterator, Handle_hash_function> H_map;
+        typedef robin_hood::unordered_map< Face_const_iterator, Face_iterator, Handle_hash_function> F_map;
         // initialize maps.
-        H_map h_map( hds.halfedges_begin(), hds.halfedges_end(),
-                     halfedges_begin(), Halfedge_iterator(),
-                     3 * hds.size_of_halfedges() / 2);
-        Vertex_iterator vii;
-        V_map v_map( vii, 3 * hds.size_of_vertices() / 2);
-        Face_iterator fii;
-        F_map f_map( fii, 3 * hds.size_of_faces() / 2);
+        H_map h_map;
+        h_map.reserve( 3 * hds.size_of_halfedges() / 2);
+        Halfedge_const_iterator oeit;
+        Halfedge_iterator eit;
+        for(oeit = hds.halfedges_begin(),eit = halfedges_begin(); oeit!=hds.halfedges_end(); ++oeit, ++eit)
+            h_map.emplace(oeit,eit);
+        V_map v_map;
+        v_map.reserve(3 * hds.size_of_vertices() / 2);
+        F_map f_map;
+        f_map.reserve(3 * hds.size_of_faces() / 2);
         // some special values
         h_map[Halfedge_const_iterator()] = Halfedge_iterator();
         h_map[hds.halfedges_end()]       = halfedges_end();
@@ -350,12 +353,16 @@ private:
         f_map[hds.faces_end()]           = faces_end();
         // vertices and faces are optional
         if ( check_tag( Supports_halfedge_vertex())) {
-            v_map.insert( hds.vertices_begin(),
-                          hds.vertices_end(),
-                          vertices_begin());
+            Vertex_const_iterator ovit;
+            Vertex_iterator vit;
+            for(ovit = hds.vertices_begin(),vit = vertices_begin(); ovit!=hds.vertices_end(); ++ovit, ++vit)
+                v_map.emplace(ovit,vit);
         }
         if ( check_tag( Supports_halfedge_face())) {
-            f_map.insert( hds.faces_begin(), hds.faces_end(), faces_begin());
+            Face_const_iterator ofit;
+            Face_iterator fit;
+            for(ofit = hds.faces_begin(),fit = faces_begin(); ofit!=hds.faces_end(); ++ofit, ++fit)
+                f_map.emplace(ofit,fit);
         }
         HalfedgeDS_items_decorator<Self> D;
         for (Halfedge_iterator h = halfedges_begin(); h!=halfedges_end(); ++h){
