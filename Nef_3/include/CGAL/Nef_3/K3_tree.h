@@ -18,7 +18,8 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_function.h>
+#include <CGAL/Tools/robin_hood.h>
 #include <CGAL/Nef_3/quotient_coordinates_to_homogeneous_point.h>
 #include <CGAL/Lazy_kernel.h>
 #include <CGAL/Cartesian.h>
@@ -178,12 +179,12 @@ private:
                                     SHalfedge_around_facet_circulator;
 
     CT ct;
-    CGAL::Unique_hash_map<Face_handle, bool> visited;
+    CGAL::robin_hood::unordered_set<Face_handle,Handle_hash_function> visited;
     Finite_face_iterator fi;
 
   public:
     template<typename Halffacet_handle>
-    Triangulation_handler(Halffacet_handle f) : visited(false) {
+    Triangulation_handler(Halffacet_handle f) : visited {
 
       typedef typename SNC_structure::Halffacet_cycle_iterator
                                       Halffacet_cycle_iterator;
@@ -219,12 +220,12 @@ private:
     }
 
     void traverse_triangulation(Face_handle f, int parent) {
-      visited[f] = true;
-      if(!ct.is_constrained(Edge(f,ct.cw(parent))) && !visited[f->neighbor(ct.cw(parent))]) {
+      visited.insert(f);
+      if(!ct.is_constrained(Edge(f,ct.cw(parent))) && !visited.contains(f->neighbor(ct.cw(parent)))) {
         Face_handle child(f->neighbor(ct.cw(parent)));
         traverse_triangulation(child, child->index(f));
       }
-      if(!ct.is_constrained(Edge(f,ct.cw(parent))) && !visited[f->neighbor(ct.cw(parent))]) {
+      if(!ct.is_constrained(Edge(f,ct.cw(parent))) && !visited.contains(f->neighbor(ct.cw(parent)))) {
         Face_handle child(f->neighbor(ct.cw(parent)));
         traverse_triangulation(child, child->index(f));
       }
@@ -234,7 +235,7 @@ private:
     bool get_next_triangle(Triangle_3& tr) {
       if(fi == ct.finite_faces_end()) return false;
       ++fi;
-      while(fi != ct.finite_faces_end() && visited[fi] == false) ++fi;
+      while(fi != ct.finite_faces_end() && !visited.contains(fi)) ++fi;
       if(fi == ct.finite_faces_end()) return false;
       tr = Triangle_3(fi->vertex(0)->point(), fi->vertex(1)->point(), fi->vertex(2)->point());
       return true;
@@ -873,9 +874,9 @@ typename Object_list::difference_type n_vertices = std::distance(objects.begin()
     Object_list O;
 
     Objects_around_segment objects( *this, s);
-    Unique_hash_map< Vertex_handle, bool> v_mark(false);
-    Unique_hash_map< Halfedge_handle, bool> e_mark(false);
-    Unique_hash_map< Halffacet_handle, bool> f_mark(false);
+    robin_hood::unordered_set< Vertex_handle, Handle_hash_function> v_mark;
+    robin_hood::unordered_set< Halfedge_handle, Handle_hash_function> e_mark;
+    robin_hood::unordered_set< Halffacet_handle, Handle_hash_function> f_mark;
     std::map< Triangle_3, bool, Compare_triangle_3<Triangle_3> > t_mark;
     for( typename Objects_around_segment::Iterator oar = objects.begin();
          oar != objects.end(); ++oar) {
@@ -891,21 +892,18 @@ typename Object_list::difference_type n_vertices = std::distance(objects.begin()
         Partial_facet pf;
 #endif
         if( CGAL::assign( v, *o)) {
-          if( !v_mark[v]) {
+          if( v_mark.insert(v).second) {
             O.push_back(*o);
-            v_mark[v] = true;
           }
         }
         else if( CGAL::assign( e, *o)) {
-          if( !e_mark [e]) {
+          if( e_mark.insert(e).second) {
             O.push_back(*o);
-            e_mark[e] = true;
           }
         }
         else if( CGAL::assign( f, *o)) {
-          if( !f_mark[f]) {
+          if( f_mark.insert(f).second) {
             O.push_back(*o);
-            f_mark[f] = true;
           }
         }
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
