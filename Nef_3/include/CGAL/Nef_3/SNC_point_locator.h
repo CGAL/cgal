@@ -20,7 +20,8 @@
 #include <CGAL/Nef_3/SNC_intersection.h>
 #include <CGAL/Nef_3/SNC_k3_tree_traits.h>
 #include <CGAL/Nef_3/K3_tree.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Handle_hash_function.h>
+#include <CGAL/Tools/robin_hood.h>
 #include <CGAL/Timer.h>
 #include <string>
 
@@ -115,10 +116,6 @@ public:
   virtual Self* clone() const = 0;
 
   virtual void transform(const Aff_transformation_3& t) = 0;
-
-  //virtual bool update( Unique_hash_map<Vertex_handle, bool>& V,
-  //                   Unique_hash_map<Halfedge_handle, bool>& E,
-  //                   Unique_hash_map<Halffacet_handle, bool>& F) = 0;
 
   virtual void add_facet(Halffacet_handle) {}
 
@@ -224,7 +221,7 @@ public:
     typedef typename CT::Edge                  Edge;
 
     CT ct;
-    CGAL::Unique_hash_map<Face_handle, bool> visited;
+    CGAL::robin_hood::unordered_set<Face_handle,Handle_hash_function> visited;
     Finite_face_iterator fi;
 
   public:
@@ -413,9 +410,9 @@ public:
     candidate_provider->transform(t);
   }
 
-  virtual bool update( Unique_hash_map<Vertex_handle, bool>& V,
-                       Unique_hash_map<Halfedge_handle, bool>& E,
-                       Unique_hash_map<Halffacet_handle, bool>& F) {
+  virtual bool update( robin_hood::unordered_set<Vertex_handle,Handle_hash_function>& V,
+                       robin_hood::unordered_set<Halfedge_handle,Handle_hash_function>& E,
+                       robin_hood::unordered_set<Halffacet_handle,Handle_hash_function>& F) {
     CGAL_NEF_TIMER(ct_t.start());
     CGAL_assertion( initialized);
     bool updated = candidate_provider->update( V, E, F);
@@ -430,125 +427,6 @@ public:
     if(initialized)
       delete candidate_provider;
   }
-
-  /*
-  template <typename Box>
-  bool point_in_box(const Box& box, const Point_3& p) {
-    if(p.x() < box.min_coord(0)) return true;
-    if(p.x() > box.max_coord(0)) return true;
-    if(p.y() < box.min_coord(1)) return true;
-    if(p.y() > box.max_coord(1)) return true;
-    if(p.z() < box.min_coord(2)) return true;
-    if(p.z() > box.max_coord(2)) return true;
-    return false;
-  }
-
-  template <typename Box>
-  bool in_range(const Box& box) const {
-    Vertex_handle v;
-    Halfedge_handle e;
-    Halffacet_handle f;
-
-    Objects_around_box oab;
-    typename Objects_around_box::Iterator
-      objects_iterator(oab.begin());
-    for( ; objects_iterator != oab.end(); ++objects_iterator) {
-      Object_list candidates = *objects_iterator;
-      Object_list_iterator o;
-      CGAL_for_each( o, candidates) {
-        if(CGAL::assign(v, *o)) {
-          if(point_in_box(box, v->point()))
-            return true;
-        } else if(CGAL::assign(e, *o)) {
-          Point_3 ip;
-          Point_3 pmin(box.min_coord(0), box.min_coord(1), box.min_coord(2));
-          Point_3 pmax(box.max_coord(0), box.max_coord(1), box.max_coord(2));
-          Segment_3 seg(e->source()->point(),
-                        e->twin()->source()->point());
-
-          Plane_3 pl(pmin, Vector_3(1,0,0));
-          Object o = intersection(pl, seg);
-          if(CGAL::assign(ip,o) && point_in_box(box, ip))
-            return true;
-          pl = Plane_3(pmin, Vector_3(0,1,0));
-          o = intersection(pl, seg);
-          if(CGAL::assign(ip,o) && point_in_box(box, ip))
-            return true;
-          pl = Plane_3(pmin, Vector_3(0,0,1));
-          o = intersection(pl, seg);
-          if(CGAL::assign(ip,o) && point_in_box(box, ip))
-            return true;
-          pl = Plane_3(pmax, Vector_3(1,0,0));
-          o = intersection(pl, seg);
-          if(CGAL::assign(ip,o) && point_in_box(box, ip))
-            return true;
-          pl = Plane_3(pmax, Vector_3(0,1,0));
-          o = intersection(pl, seg);
-          if(CGAL::assign(ip,o) && point_in_box(box, ip))
-            return true;
-          pl = Plane_3(pmax, Vector_3(0,0,1));
-          o = intersection(pl, seg);
-          if(CGAL::assign(ip,o) && point_in_box(box, ip))
-            return true;
-        } else if(CGAL::assign(f, *o)) {
-          Segment_3 seg(Point_3(box.min_coord(0), box.min_coord(1), box.min_coord(2)),
-                        Point_3(box.min_coord(0), box.min_coord(1), box.max_coord(2)));
-          if(is.does_intersect_internally(seg, f))
-            return true;
-          seg = Segment_3(Point_3(box.max_coord(0), box.min_coord(1), box.min_coord(2)),
-                          Point_3(box.max_coord(0), box.min_coord(1), box.max_coord(2)));
-          if(is.does_intersect_internally(seg, f))
-            return true;
-          seg = Segment_3(Point_3(box.min_coord(0), box.max_coord(1), box.min_coord(2)),
-                          Point_3(box.min_coord(0), box.max_coord(1), box.max_coord(2)));
-          if(is.does_intersect_internally(seg, f))
-            return true;
-          seg = Segment_3(Point_3(box.max_coord(0), box.max_coord(1), box.min_coord(2)),
-                          Point_3(box.max_coord(0), box.max_coord(1), box.max_coord(2)));
-          if(is.does_intersect_internally(seg, f))
-            return true;
-
-          seg = Segment_3(Point_3(box.min_coord(0), box.min_coord(1), box.min_coord(2)),
-                          Point_3(box.min_coord(0), box.max_coord(1), box.min_coord(2)));
-          if(is.does_intersect_internally(seg, f))
-            return true;
-          seg = Segment_3(Point_3(box.max_coord(0), box.min_coord(1), box.min_coord(2)),
-                          Point_3(box.max_coord(0), box.max_coord(1), box.min_coord(2)));
-          if(is.does_intersect_internally(seg, f))
-            return true;
-          seg = Segment_3(Point_3(box.min_coord(0), box.min_coord(1), box.max_coord(2)),
-                          Point_3(box.min_coord(0), box.max_coord(1), box.max_coord(2)));
-          if(is.does_intersect_internally(seg, f))
-            return true;
-          seg = Segment_3(Point_3(box.max_coord(0), box.min_coord(1), box.max_coord(2)),
-                          Point_3(box.max_coord(0), box.max_coord(1), box.max_coord(2)));
-          if(is.does_intersect_internally(seg, f))
-            return true;
-
-          seg = Segment_3(Point_3(box.min_coord(0), box.min_coord(1), box.min_coord(2)),
-                          Point_3(box.max_coord(0), box.min_coord(1), box.min_coord(2)));
-          if(is.does_intersect_internally(seg, f))
-            return true;
-          seg = Segment_3(Point_3(box.min_coord(0), box.max_coord(1), box.min_coord(2)),
-                          Point_3(box.max_coord(0), box.max_coord(1), box.min_coord(2)));
-          if(is.does_intersect_internally(seg, f))
-            return true;
-          seg = Segment_3(Point_3(box.min_coord(0), box.min_coord(1), box.max_coord(2)),
-                          Point_3(box.max_coord(0), box.min_coord(1), box.max_coord(2)));
-          if(is.does_intersect_internally(seg, f))
-            return true;
-          seg = Segment_3(Point_3(box.min_coord(0), box.max_coord(1), box.max_coord(2)),
-                          Point_3(box.max_coord(0), box.max_coord(1), box.max_coord(2)));
-          if(is.does_intersect_internally(seg, f))
-            return true;
-
-        } else
-          CGAL_assertion_msg(false, "wrong handle");
-      }
-    }
-    return false;
-  }
-  */
 
   virtual Object_handle shoot(const Ray_3& ray, int mask=255) const {
     CGAL_NEF_TIMER(rs_t.start());
@@ -997,7 +875,7 @@ public:
                                                          e0->twin()->source()->point()));
 
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
-    Unique_hash_map< Halffacet_triangle_handle, bool> f_mark(false);
+    robin_hood::unordered_set< Halffacet_triangle_handle,Handle_hash_function> f_mark;
 #endif // CGAL_NEF3_TRIANGULATE_FACETS
 
     Segment_3 s(Segment_3(e0->source()->point(),e0->twin()->source()->point()));
@@ -1053,7 +931,7 @@ public:
         Point_3 q;
         Triangle_3 tr = t.get_triangle();
 
-        if( f_mark[t])
+        if( f_mark.contains(t))
           continue;
         _CGAL_NEF_TRACEN("trying with triangle "<<tr);
         if( is.does_intersect( s, tr, q) &&
@@ -1061,7 +939,7 @@ public:
           q = normalized(q);
           call_back( e0, make_object(Halffacet_handle(t)), q);
           _CGAL_NEF_TRACEN("edge intersects facet triangle on plane "<<t->plane()<<" on "<<q);
-          f_mark[t] = true;
+          f_mark.insert(t);
         }
       }
 #endif // CGAL_NEF3_TRIANGULATE_FACETS
@@ -1134,7 +1012,7 @@ public:
     _CGAL_NEF_TRACEN( "intersecting edge: "<< Segment_3(e0->source()->point(),
                                                e0->twin()->source()->point()));
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
-    Unique_hash_map< Halffacet_triangle_handle, bool> f_mark(false);
+    robin_hood::unordered_set< Halffacet_triangle_handle,Handle_hash_function> f_mark;
 #endif // CGAL_NEF3_TRIANGULATE_FACETS
     Segment_3 s(Segment_3(e0->source()->point(),e0->twin()->source()->point()));
     Vertex_handle v;
@@ -1177,7 +1055,7 @@ public:
       else if( CGAL::assign( t, *o)) {
         Point_3 q;
         Triangle_3 tr = t.get_triangle();
-        if( f_mark[t])
+        if( f_mark.contains(t))
           continue;
         _CGAL_NEF_TRACEN("trying with triangle "<<tr);
         if( is.does_intersect( s, tr, q) &&
@@ -1185,7 +1063,7 @@ public:
           q = normalized(q);
           call_back( e0, make_object(Halffacet_handle(t)), q);
           _CGAL_NEF_TRACEN("edge intersects facet triangle on plane "<<t->plane()<<" on "<<q);
-          f_mark[t] = true;
+          f_mark.insert(t);
         }
       }
 #endif // CGAL_NEF3_TRIANGULATE_FACETS
@@ -1297,9 +1175,9 @@ public:
     return new Self;
   }
 
-  virtual bool update( Unique_hash_map<Vertex_handle, bool>& V,
-                       Unique_hash_map<Halfedge_handle, bool>& E,
-                       Unique_hash_map<Halffacet_handle, bool>& F) {
+  virtual bool update( robin_hood::unordered_set<Vertex_handle,Handle_hash_function>& V,
+                       robin_hood::unordered_set<Halfedge_handle,Handle_hash_function>& E,
+                       robin_hood::unordered_set<Halffacet_handle,Handle_hash_function>& F) {
     CGAL_NEF_TIMER(ct_t.start());
     CGAL_assertion( initialized);
     CGAL_NEF_TIMER(ct_t.stop());

@@ -1052,16 +1052,16 @@ std::string dump_object_list( const Object_list& O, int level = 0) {
   return os.str();
  }
 
-bool update( Unique_hash_map<Vertex_handle, bool>& V,
-             Unique_hash_map<Halfedge_handle, bool>& E,
-             Unique_hash_map<Halffacet_handle, bool>& F) {
+bool update( robin_hood::unordered_set<Vertex_handle,Handle_hash_function>& V,
+             robin_hood::unordered_set<Halfedge_handle,Handle_hash_function>& E,
+             robin_hood::unordered_set<Halffacet_handle,Handle_hash_function>& F) {
   return update( root, V, E, F);
 }
 
 bool update( Node* node,
-             Unique_hash_map<Vertex_handle, bool>& V,
-             Unique_hash_map<Halfedge_handle, bool>& E,
-             Unique_hash_map<Halffacet_handle, bool>& F) {
+             robin_hood::unordered_set<Vertex_handle,Handle_hash_function>& V,
+             robin_hood::unordered_set<Halfedge_handle,Handle_hash_function>& E,
+             robin_hood::unordered_set<Halffacet_handle,Handle_hash_function>& F) {
   CGAL_assertion( node != 0);
   if( node->is_leaf()) {
     bool updated = false;
@@ -1074,19 +1074,19 @@ bool update( Node* node,
       Halfedge_handle e;
       Halffacet_handle f;
       if( CGAL::assign( v, *o)) {
-        if( !V[v]) {
+        if( !V.contains(v)) {
           O->erase(o);
           updated = true;
         }
       }
       else if( CGAL::assign( e, *o)) {
-        if( !E[e]) {
+        if( !E.contains(e)) {
           O->erase(o);
           updated = true;
         }
       }
       else if( CGAL::assign( f, *o)) {
-        if( !F[f]) {
+        if( !F.contains(f)) {
           O->erase(o);
           updated = true;
         }
