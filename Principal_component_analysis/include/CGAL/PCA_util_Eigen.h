@@ -56,9 +56,9 @@ assemble_covariance_matrix_3(InputIterator first,
 
   // assemble 2nd order moment about the origin.
   Matrix moment;
-  moment << 1.0/12.0, 1.0/24.0, 1.0/24.0,
-            1.0/24.0, 1.0/12.0, 1.0/24.0,
-            1.0/24.0, 1.0/24.0, 1.0/12.0;
+  moment << FT(1.0/12.0), FT(1.0/24.0), FT(1.0/24.0),
+            FT(1.0/24.0), FT(1.0/12.0), FT(1.0/24.0),
+            FT(1.0/24.0), FT(1.0/24.0), FT(1.0/12.0);
 
   for(InputIterator it = first;
       it != beyond;
@@ -100,12 +100,12 @@ assemble_covariance_matrix_3(InputIterator first,
 
   // Translate the 2nd order moment calculated about the origin to
   // the center of mass to get the covariance.
-  covariance[0] += mass * (-1.0 * c.x() * c.x());
-  covariance[1] += mass * (-1.0 * c.x() * c.y());
-  covariance[2] += mass * (-1.0 * c.z() * c.x());
-  covariance[3] += mass * (-1.0 * c.y() * c.y());
-  covariance[4] += mass * (-1.0 * c.z() * c.y());
-  covariance[5] += mass * (-1.0 * c.z() * c.z());
+  covariance[0] += -mass * (c.x() * c.x());
+  covariance[1] += -mass * (c.x() * c.y());
+  covariance[2] += -mass * (c.z() * c.x());
+  covariance[3] += -mass * (c.y() * c.y());
+  covariance[4] += -mass * (c.z() * c.y());
+  covariance[5] += -mass * (c.z() * c.z());
 
 }
 
@@ -176,9 +176,9 @@ assemble_covariance_matrix_3(InputIterator first,
     transformation = volume * transformation * moment * transformation.transpose();
 
     // Translate the 2nd order moment to the minimum corner (x0,y0,z0) of the cuboid.
-    FT xav0 = (x1 - x0) / (2.0);
-    FT yav0 = (y1 - y0) / (2.0);
-    FT zav0 = (z1 - z0) / (2.0);
+    FT xav0 = (x1 - x0) / FT(2.0);
+    FT yav0 = (y1 - y0) / FT(2.0);
+    FT zav0 = (z1 - z0) / FT(2.0);
 
     // and add to covariance matrix
     covariance[0] += transformation(0,0) + volume * (2*x0*xav0 + x0*x0);
@@ -314,12 +314,12 @@ assemble_covariance_matrix_3(InputIterator first,
 
   // Translate the 2nd order moment calculated about the origin to
   // the center of mass to get the covariance.
-  covariance[0] += mass * (-1.0 * c.x() * c.x());
-  covariance[1] += mass * (-1.0 * c.x() * c.y());
-  covariance[2] += mass * (-1.0 * c.z() * c.x());
-  covariance[3] += mass * (-1.0 * c.y() * c.y());
-  covariance[4] += mass * (-1.0 * c.z() * c.y());
-  covariance[5] += mass * (-1.0 * c.z() * c.z());
+  covariance[0] += -mass * (c.x() * c.x());
+  covariance[1] += -mass * (c.x() * c.y());
+  covariance[2] += -mass * (c.z() * c.x());
+  covariance[3] += -mass * (c.y() * c.y());
+  covariance[4] += -mass * (c.z() * c.y());
+  covariance[5] += -mass * (c.z() * c.z());
 #endif
 }
 
@@ -350,9 +350,9 @@ assemble_covariance_matrix_3(InputIterator first,
 
   // assemble 2nd order moment about the origin.
   Matrix moment;
-  moment << 4.0/15.0, 0.0,      0.0,
-            0.0,      4.0/15.0, 0.0,
-            0.0,      0.0,      4.0/15.0;
+  moment << FT(4.0/15.0), FT(0.0),      FT(0.0),
+            FT(0.0),      FT(4.0/15.0), FT(0.0),
+            FT(0.0),      FT(0.0),      FT(4.0/15.0);
 
   for(InputIterator it = first;
       it != beyond;
@@ -399,12 +399,12 @@ assemble_covariance_matrix_3(InputIterator first,
 
   // Translate the 2nd order moment calculated about the origin to
   // the center of mass to get the covariance.
-  covariance[0] += mass * (-1.0 * c.x() * c.x());
-  covariance[1] += mass * (-1.0 * c.x() * c.y());
-  covariance[2] += mass * (-1.0 * c.z() * c.x());
-  covariance[3] += mass * (-1.0 * c.y() * c.y());
-  covariance[4] += mass * (-1.0 * c.z() * c.y());
-  covariance[5] += mass * (-1.0 * c.z() * c.z());
+  covariance[0] += -mass * (c.x() * c.x());
+  covariance[1] += -mass * (c.x() * c.y());
+  covariance[2] += -mass * (c.z() * c.x());
+  covariance[3] += -mass * (c.y() * c.y());
+  covariance[4] += -mass * (c.z() * c.y());
+  covariance[5] += -mass * (c.z() * c.z());
 
 }
 // assemble covariance matrix from a sphere set
@@ -434,9 +434,9 @@ assemble_covariance_matrix_3(InputIterator first,
 
   // assemble 2nd order moment about the origin.
   Matrix moment;
-  moment << 4.0/3.0, 0.0,     0.0,
-            0.0,     4.0/3.0, 0.0,
-            0.0,     0.0,     4.0/3.0;
+  moment << FT(4.0/3.0), FT(0.0),     FT(0.0),
+            FT(0.0),     FT(4.0/3.0), FT(0.0),
+            FT(0.0),     FT(0.0),     FT(4.0/3.0);
 
   for(InputIterator it = first;
       it != beyond;
@@ -484,12 +484,12 @@ assemble_covariance_matrix_3(InputIterator first,
 
   // Translate the 2nd order moment calculated about the origin to
   // the center of mass to get the covariance.
-  covariance[0] += mass * (-1.0 * c.x() * c.x());
-  covariance[1] += mass * (-1.0 * c.x() * c.y());
-  covariance[2] += mass * (-1.0 * c.z() * c.x());
-  covariance[3] += mass * (-1.0 * c.y() * c.y());
-  covariance[4] += mass * (-1.0 * c.z() * c.y());
-  covariance[5] += mass * (-1.0 * c.z() * c.z());
+  covariance[0] += -mass * (c.x() * c.x());
+  covariance[1] += -mass * (c.x() * c.y());
+  covariance[2] += -mass * (c.z() * c.x());
+  covariance[3] += -mass * (c.y() * c.y());
+  covariance[4] += -mass * (c.z() * c.y());
+  covariance[5] += -mass * (c.z() * c.z());
 
 }
 
@@ -520,9 +520,9 @@ assemble_covariance_matrix_3(InputIterator first,
   //     5
   // assemble 2nd order moment about the origin.
   Matrix moment;
-  moment << 1.0/60.0,  1.0/120.0, 1.0/120.0,
-            1.0/120.0, 1.0/60.0,  1.0/120.0,
-            1.0/120.0, 1.0/120.0, 1.0/60.0;
+  moment << FT(1.0/60.0),  FT(1.0/120.0), FT(1.0/120.0),
+            FT(1.0/120.0), FT(1.0/60.0),  FT(1.0/120.0),
+            FT(1.0/120.0), FT(1.0/120.0), FT(1.0/60.0);
 
   Matrix accum; // zero by default
   accum << 0, 0, 0, 0, 0, 0, 0, 0, 0;
@@ -597,9 +597,9 @@ assemble_covariance_matrix_3(InputIterator first,
 
   // assemble 2nd order moment about the origin.
   Matrix moment;
-  moment << 1.0/3.0, 0.5/3.0, 0.0,
-            0.5/3.0, 1.0/3.0, 0.0,
-            0.0,     0.0,     0.0;
+  moment << FT(1.0/3.0), FT(0.5/3.0), FT(0.0),
+            FT(0.5/3.0), FT(1.0/3.0), FT(0.0),
+            FT(0.0),     FT(0.0),     FT(0.0);
 
   for(InputIterator it = first;
       it != beyond;
@@ -641,12 +641,12 @@ assemble_covariance_matrix_3(InputIterator first,
 
   // Translate the 2nd order moment calculated about the origin to
   // the center of mass to get the covariance.
-  covariance[0] += mass * (-1.0 * c.x() * c.x());
-  covariance[1] += mass * (-1.0 * c.x() * c.y());
-  covariance[2] += mass * (-1.0 * c.z() * c.x());
-  covariance[3] += mass * (-1.0 * c.y() * c.y());
-  covariance[4] += mass * (-1.0 * c.z() * c.y());
-  covariance[5] += mass * (-1.0 * c.z() * c.z());
+  covariance[0] += -mass * (c.x() * c.x());
+  covariance[1] += -mass * (c.x() * c.y());
+  covariance[2] += -mass * (c.z() * c.x());
+  covariance[3] += -mass * (c.y() * c.y());
+  covariance[4] += -mass * (c.z() * c.y());
+  covariance[5] += -mass * (c.z() * c.z());
 
 }
 
