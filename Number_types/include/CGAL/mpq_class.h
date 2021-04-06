@@ -40,7 +40,6 @@
 
 namespace CGAL {
 
-
 // AST for mpq_class
 template<>
 class Algebraic_structure_traits< mpq_class  >

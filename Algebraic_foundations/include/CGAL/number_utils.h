@@ -302,19 +302,21 @@ to_interval( const Real_embeddable& x) {
 }
 
 template <typename NT>
-NT approximate_sqrt(const NT& nt, CGAL::Null_functor)
+typename Coercion_traits<double, NT>::Type
+approximate_sqrt(const NT& x, CGAL::Null_functor)
 {
-  return NT(sqrt(CGAL::to_double(nt)));
+  return sqrt(CGAL::to_double(x));
 }
 
 template <typename NT, typename Sqrt>
-NT approximate_sqrt(const NT& nt, Sqrt sqrt)
+typename Sqrt::result_type
+approximate_sqrt(const NT& nt, Sqrt sqrt)
 {
   return sqrt(nt);
 }
 
 template <typename NT>
-NT approximate_sqrt(const NT& nt)
+decltype(auto) approximate_sqrt(const NT& nt)
 {
   // the initial version of this function was using Algebraic_category
   // for the dispatch but some ring type (like Gmpz) provides a Sqrt
