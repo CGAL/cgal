@@ -24,6 +24,8 @@
 #include <CGAL/internal/AABB_tree/Has_nested_type_Shared_data.h>
 #include <CGAL/internal/AABB_tree/Is_ray_intersection_geomtraits.h>
 #include <CGAL/internal/AABB_tree/Primitive_helper.h>
+#include <CGAL/internal/Has_boolean_tags.h>
+
 
 #include <boost/optional.hpp>
 
@@ -414,6 +416,27 @@ public:
           CGAL::SMALLER : CGAL::LARGER;
       }
 
+      CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound, Tag_true) const
+      {
+          return GeomTraits().do_intersect_3_object()
+          (GeomTraits().construct_sphere_3_object()
+           (p, GeomTraits().compute_squared_distance_3_object()(p, bound)), bb,true)?
+          CGAL::SMALLER : CGAL::LARGER;
+      }
+
+      CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound, Tag_false) const
+      {
+          return GeomTraits().do_intersect_3_object()
+          (GeomTraits().construct_sphere_3_object()
+           (p, GeomTraits().compute_squared_distance_3_object()(p, bound)), bb)?
+          CGAL::SMALLER : CGAL::LARGER;
+      }
+
+      CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound) const
+      {
+        return (*this)(p, bb, bound, Boolean_tag<internal::Has_static_filters<GeomTraits>::value>());
+      }
+
       template <class Solid>
       CGAL::Comparison_result operator()(const Point& p, const Solid& pr, const FT& sq_distance) const
       {
@@ -423,6 +446,7 @@ public:
           CGAL::SMALLER :
           CGAL::LARGER;
       }
+
   };
 
   Closest_point closest_point_object() const {return Closest_point(*this);}

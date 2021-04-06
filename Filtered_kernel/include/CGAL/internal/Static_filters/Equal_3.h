@@ -82,6 +82,24 @@ public:
     return Base::operator()(p, q);
   }
 
+
+  result_type operator()(const Vector_3 &p, const Null_vector &q) const
+  {
+    CGAL_BRANCH_PROFILER(std::string("semi-static attempts/calls to   : ") +
+                         std::string(CGAL_PRETTY_FUNCTION), tmp);
+
+    Get_approx<Vector_3> get_approx; // Identity functor for all points
+                                     // but lazy points
+    double px, py, pz;
+
+    if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
+        fit_in_double(get_approx(p).z(), pz) )
+    {
+      CGAL_BRANCH_PROFILER_BRANCH(tmp);
+      return px == 0 && py == 0 && pz == 0;
+    }
+    return Base::operator()(p, q);
+  }
 }; // end class Equal_3
 
 } // end namespace Static_filters_predicates
