@@ -77,7 +77,7 @@ squared_distance(const typename K::Segment_3& s1,
       return res;
     }
 
-    CGAL_assertion(d != 0);
+    CGAL_assertion(d < 0);
 
     res.x = 0;
     res.y = boost::algorithm::clamp<FT>(f/d, 0, 1); // (f - x*c) / d
@@ -87,7 +87,7 @@ squared_distance(const typename K::Segment_3& s1,
   }
   else if(p2 == q2)
   {
-    CGAL_assertion(a != 0);
+    CGAL_assertion(a > 0);
 
     res.y = 0;
     res.x = boost::algorithm::clamp<FT>(e/a, 0, 1); // (e + y*c) / a
