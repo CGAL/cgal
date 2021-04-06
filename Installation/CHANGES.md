@@ -45,6 +45,10 @@ A comprehensive list of the supported file formats is available in the Stream_su
 ### [dD Triangulations](https://doc.cgal.org/5.3/Manual/packages.html#PkgTriangulations)
 - Added the function `insert_if_in_star()` to the class `CGAL::Regular_triangulation`, which enables users to insert a point `p` in a regular triangulation on the condition that `p` appears post-insertion in the star of a user-specified, existing vertex.
 
+### [Classification](https://doc.cgal.org/5.3/Manual/packages.html#PkgClassification)
+- **Breaking change**: the support for TensorFlow was dropped, the
+  classifier `CGAL::TensorFlow::Neural_network_classifier` was removed.
+
 [Release 5.2](https://github.com/CGAL/cgal/releases/tag/v5.2)
 -----------
 
