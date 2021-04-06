@@ -126,7 +126,8 @@ public:
 
   virtual void add_vertex(Vertex_handle) {}
 
-  virtual ~SNC_point_locator() {
+  virtual ~SNC_point_locator() CGAL_NOEXCEPT(CGAL_NO_ASSERTIONS_BOOL)
+  {
     CGAL_NEF_CLOG("");
     CGAL_NEF_CLOG("construction_time:  "<<ct_t.time());
     CGAL_NEF_CLOG("pointlocation_time: "<<pl_t.time());
@@ -422,8 +423,9 @@ public:
     return updated;
   }
 
-  virtual ~SNC_point_locator_by_spatial_subdivision() {
-    CGAL_warning(initialized ||
+  virtual ~SNC_point_locator_by_spatial_subdivision() CGAL_NOEXCEPT(CGAL_NO_ASSERTIONS_BOOL)
+  {
+    CGAL_destructor_warning(initialized ||
                  candidate_provider == 0); // required?
     if(initialized)
       delete candidate_provider;
