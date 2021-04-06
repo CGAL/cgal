@@ -75,7 +75,7 @@ private:
         return x == mean ? 1.0 : 0.0;
       }
 
-      double e_over = -0.5 * std::pow((x - mean) / deviation, 2);
+      double e_over = -0.5 * CGAL::square((x - mean) / deviation);
       return exp(e_over) / deviation;
     }
     /**
@@ -289,7 +289,7 @@ private:
       double new_deviation = 0.0;
       for(std::size_t point_i = 0; point_i < points.size(); ++point_i) {
         double membership = responsibility_matrix[center_i][point_i];
-        new_deviation += membership * std::pow(points[point_i] - new_mean, 2);
+        new_deviation += membership * CGAL::square(points[point_i] - new_mean);
       }
       new_deviation = std::sqrt(new_deviation/total_membership);
 

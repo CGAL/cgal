@@ -90,7 +90,7 @@ compute_denoise_projection(
   Vector normal_sum = CGAL::NULL_VECTOR;
 
   FT cos_sigma = cos(sharpness_angle * CGAL_PI / 180.0);
-  FT sharpness_bandwidth = std::pow((CGAL::max)(1e-8, 1 - cos_sigma), 2);
+  FT sharpness_bandwidth = CGAL::square((CGAL::max)(1e-8, 1 - cos_sigma));
 
   for (typename PointRange::iterator it : neighbor_pwns)
   {
@@ -101,7 +101,7 @@ compute_denoise_projection(
     if (dist2 < radius2)
     {
       FT theta = std::exp(dist2 * iradius16);
-      FT psi = std::exp(-std::pow(1 - get(normal_map, vt) * nn, 2)
+      FT psi = std::exp(-CGAL::square(1 - get(normal_map, vt) * nn)
         / sharpness_bandwidth);
 
       weight = theta * psi;
