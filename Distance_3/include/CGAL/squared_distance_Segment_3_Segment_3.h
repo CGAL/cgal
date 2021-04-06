@@ -80,7 +80,7 @@ squared_distance(const typename K::Segment_3& s1,
     CGAL_assertion(d != 0);
 
     res.x = 0;
-    res.y = boost::algorithm::clamp(f/d, 0, 1); // (f - x*c) / d
+    res.y = boost::algorithm::clamp<FT>(f/d, 0, 1); // (f - x*c) / d
     res.squared_distance = CGAL::squared_distance(p1, p2 + res.y*v2);
 
     return res;
@@ -90,7 +90,7 @@ squared_distance(const typename K::Segment_3& s1,
     CGAL_assertion(a != 0);
 
     res.y = 0;
-    res.x = boost::algorithm::clamp(e/a, 0, 1); // (e + y*c) / a
+    res.x = boost::algorithm::clamp<FT>(e/a, 0, 1); // (e + y*c) / a
     res.squared_distance = CGAL::squared_distance(p1 + res.x*v1, p2);
 
     return res;
@@ -102,14 +102,14 @@ squared_distance(const typename K::Segment_3& s1,
   if(det == 0)
     res.x = 0;
   else
-    res.x = boost::algorithm::clamp((e*d - b*f) / det, 0, 1);
+    res.x = boost::algorithm::clamp<FT>((e*d - b*f) / det, 0, 1);
 
   FT xc = res.x*c;
   // res.y = (f - xc) / d, by definition, but building it up more efficiently
   if(f > xc) // y < 0 <=> f - xc / d < 0 <=> f - xc > 0 (since d is -||v2||)
   {
     res.y = 0;
-    res.x = boost::algorithm::clamp(e/a, 0, 1); // (e + y*c) / a
+    res.x = boost::algorithm::clamp<FT>(e/a, 0, 1); // (e + y*c) / a
   }
   else // y >= 0
   {
@@ -117,7 +117,7 @@ squared_distance(const typename K::Segment_3& s1,
     if(n < d) // y > 1 <=> n / d > 1 <=> n < d (once again, important to note that d is negative!)
     {
       res.y = 1;
-      res.x = boost::algorithm::clamp((e + c) / a, 0, 1); // (e + y*c) / a
+      res.x = boost::algorithm::clamp<FT>((e + c) / a, 0, 1); // (e + y*c) / a
     }
     else // 0 <= y <= 1
     {
