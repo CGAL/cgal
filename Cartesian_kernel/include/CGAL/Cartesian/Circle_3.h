@@ -17,6 +17,7 @@
 #define CGAL_CARTESIAN_CIRCLEC3_H
 
 #include <CGAL/Interval_nt.h>
+#include "boost/tuple/tuple.hpp"
 
 namespace CGAL {
 
@@ -29,13 +30,9 @@ class CircleC3 {
   typedef typename R_::Direction_3              Direction_3;
   typedef typename R_::FT                       FT;
 
-  struct Rep
-  {
-    Sphere_3 first;
-    Plane_3 second;
-    Rep () : first(), second() { }
-    Rep (const Sphere_3& s, const Plane_3& p) : first(s), second(p) { }
-  };
+  //using a boost::tuple because std::pair and tuple cannot work with incomplete types.
+  typedef boost::tuple<Sphere_3, Plane_3> Rep;
+
 
   typedef typename R_::template Handle<Rep>::type  Base;
   Base base;
@@ -125,7 +122,7 @@ public:
 
   const Plane_3& supporting_plane() const
   {
-    return get_pointee_or_identity(base).second;
+    return boost::get<1>(get_pointee_or_identity(base));
   }
 
   const Sphere_3& supporting_sphere() const
@@ -145,7 +142,7 @@ public:
 
   const Sphere_3& diametral_sphere() const
   {
-    return get_pointee_or_identity(base).first;
+    return boost::get<0>(get_pointee_or_identity(base));
   }
 
   double approximate_area() const
