@@ -18,6 +18,8 @@
 #define CGAL_CARTESIAN_AFF_TRANSFORMATION_3_H
 
 #include <cmath>
+#include <memory>
+#include <mutex>
 #include <CGAL/Handle_for_virtual.h>
 
 namespace CGAL {
@@ -146,10 +148,10 @@ public:
   {
     if (is_even())
       return Plane_3(transform(p.point()),
-                 transpose().inverse().transform(p.orthogonal_direction()));
+                 transposed_inverse().transform(p.orthogonal_direction()));
     else
       return Plane_3(transform(p.point()),
-               - transpose().inverse().transform(p.orthogonal_direction()));
+               - transposed_inverse().transform(p.orthogonal_direction()));
   }
 
   Plane_3
@@ -188,8 +190,20 @@ public:
 
 protected:
   Aff_transformation_3  transpose() const { return this->Ptr()->transpose(); }
-};
 
+private:
+  mutable std::unique_ptr<Aff_transformation_3> transposed_inverse_;
+  mutable std::mutex transposed_inverse_mutex_;
+
+  const Aff_transformation_3&
+  transposed_inverse() const
+  {
+      const std::lock_guard<std::mutex> lock(transposed_inverse_mutex_);
+      if(!transposed_inverse_)
+          transposed_inverse_ = std::make_unique<Aff_transformation_3>(transpose().inverse());
+      return *transposed_inverse_;
+  }
+};
 
 template < class R >
 std::ostream&
