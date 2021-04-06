@@ -77,6 +77,7 @@ create_single_source_cgal_program("triangulate_faces_hole_filling_all_search_tes
 create_single_source_cgal_program("test_pmp_remove_border_edge.cpp")
 create_single_source_cgal_program("test_pmp_distance.cpp")
 create_single_source_cgal_program("test_corefinement_and_constraints.cpp")
+create_single_source_cgal_program("test_corefinement_and_constraints_nearest.cpp")
 create_single_source_cgal_program("test_corefinement_bool_op.cpp")
 create_single_source_cgal_program("test_corefine.cpp")
 create_single_source_cgal_program("test_coref_epic_points_identity.cpp")
