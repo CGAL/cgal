@@ -21,7 +21,6 @@
 #include <CGAL/license/Circular_kernel_2.h>
 
 
-#include <CGAL/result_of.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/enum.h>
 
@@ -72,15 +71,13 @@ public:
     : RCircular_arc_point_2(typename R::Construct_circular_arc_point_2()(p))
   {}
 
-  typename
-  cpp11::result_of<typename R::Compute_circular_x_2(Circular_arc_point_2)>::type
+  decltype(auto)
   x() const
   {
     return typename R::Compute_circular_x_2()(*this);
   }
 
-  typename
-  cpp11::result_of<typename R::Compute_circular_y_2(Circular_arc_point_2)>::type
+  decltype(auto)
   y() const
   {
     return typename R::Compute_circular_y_2()(*this);

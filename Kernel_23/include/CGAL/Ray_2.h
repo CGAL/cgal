@@ -23,7 +23,6 @@
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/Dimension.h>
-#include <CGAL/result_of.h>
 #include <CGAL/IO/io.h>
 
 namespace CGAL {
@@ -81,13 +80,13 @@ public:
     : RRay_2(typename R::Construct_ray_2()(Return_base_tag(), sp, l)) {}
 
 
-  typename cpp11::result_of<typename R_::Construct_source_2( Ray_2)>::type
+  decltype(auto)
   source() const
   {
     return R().construct_source_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R_::Construct_second_point_2( Ray_2)>::type
+  decltype(auto)
   second_point() const
   {
     return R().construct_second_point_2_object()(*this);
@@ -108,7 +107,7 @@ public:
              construct_scaled_vector(construct_vector(source(), second_point()), i));
   }
 
-  typename cpp11::result_of<typename R_::Construct_source_2( Ray_2 )>::type
+  decltype(auto)
   start() const
   {
     return source();

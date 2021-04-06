@@ -1715,8 +1715,7 @@ namespace CommonKernelFunctors {
       Line l1 = construct_line(l11, l12);
       Line l2 = construct_line(l21, l22);
 
-      typename cpp11::result_of<typename K::Intersect_3(Line,Line)>::type
-        res = typename K::Intersect_3()(l1,l2);
+      const auto res = typename K::Intersect_3()(l1,l2);
       CGAL_assertion(res!=boost::none);
       const Point* e_pt = boost::get<Point>(&(*res));
       CGAL_assertion(e_pt!=nullptr);
@@ -2115,8 +2114,7 @@ namespace CommonKernelFunctors {
       Plane plane = construct_plane(p1, p2, p3);
       Line line = construct_line( l1, l2 );
 
-      typename cpp11::result_of<typename K::Intersect_3(Plane,Line)>::type
-        res = typename K::Intersect_3()(plane,line);
+      const auto res = typename K::Intersect_3()(plane,line);
       CGAL_assertion(res!=boost::none);
       const Point* e_pt = boost::get<Point>(&(*res));
       CGAL_assertion(e_pt!=nullptr);
@@ -2129,8 +2127,7 @@ namespace CommonKernelFunctors {
     {
       Line line = construct_line( l1, l2 );
 
-      typename cpp11::result_of<typename K::Intersect_3(Plane,Line)>::type
-        res = typename K::Intersect_3()(plane,line);
+      const auto res = typename K::Intersect_3()(plane,line);
       CGAL_assertion(res!=boost::none);
       const Point* e_pt = boost::get<Point>(&(*res));
       CGAL_assertion(e_pt!=nullptr);
@@ -2593,15 +2590,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Triangle_3       Triangle_3;
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
   public:
-    template<typename>
-    struct result {
-      typedef const Point_3& type;
-    };
-
-    template<typename T>
-    struct result<T(Iso_cuboid_3, int)> {
-      typedef Point_3 type;
-    };
 
     const Point_3&
     operator()( const Segment_3& s, int i) const
@@ -3332,11 +3320,10 @@ namespace CommonKernelFunctors {
     bool operator()(const Sphere_3& s1, const Sphere_3& s2,
                     const Point_3& a, const Point_3& b) const
     {
-      typedef typename K::Circle_3    Circle_3;
-      typedef typename K::Point_3     Point_3;
-      typedef typename K::Segment_3   Segment_3;
-      typedef typename K::Plane_3     Plane_3;
-      typedef typename K::Intersect_3 Intersect_3;
+      typedef typename K::Circle_3  Circle_3;
+      typedef typename K::Point_3   Point_3;
+      typedef typename K::Segment_3 Segment_3;
+      typedef typename K::Plane_3   Plane_3;
 
       const Has_on_bounded_side_3& has_on_bounded_side = *this;
 
@@ -3356,8 +3343,7 @@ namespace CommonKernelFunctors {
       if(!K().do_intersect_3_object()(s1, s2)) return false;
       const Circle_3 circ(s1, s2);
       const Plane_3& plane = circ.supporting_plane();
-      typename CGAL::cpp11::result_of<Intersect_3(Plane_3, Segment_3)>::type
-        optional = K().intersect_3_object()(plane, Segment_3(a, b));
+      const auto optional = K().intersect_3_object()(plane, Segment_3(a, b));
       CGAL_kernel_assertion_msg(bool(optional) == true,
                                 "the segment does not intersect the supporting"
                                 " plane");
@@ -3548,17 +3534,10 @@ namespace CommonKernelFunctors {
   class Intersect_2
   {
   public:
-    template<typename>
-    struct result;
-
-    template<typename F, typename A, typename B>
-    struct result<F(A,B)> {
-      typedef typename Intersection_traits<K, A, B>::result_type type;
-    };
 
     // 25 possibilities, so I keep the template.
     template <class T1, class T2>
-    typename Intersection_traits<K, T1, T2>::result_type
+    decltype(auto)
     operator()(const T1& t1, const T2& t2) const
     { return Intersections::internal::intersection(t1, t2, K()); }
   };
@@ -3568,29 +3547,14 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Plane_3     Plane_3;
   public:
-    template<typename>
-    struct result;
-
-    template<typename F, typename A, typename B>
-    struct result<F(A, B)> {
-      typedef typename Intersection_traits<K, A, B>::result_type type;
-    };
-
-    template<typename F>
-    struct result<F(Plane_3, Plane_3, Plane_3)> {
-      typedef boost::optional<
-        boost::variant< typename K::Point_3,
-                        typename K::Line_3,
-                        typename K::Plane_3 > > type;
-    };
 
     // n possibilities, so I keep the template.
     template <class T1, class T2>
-    typename cpp11::result_of< Intersect_3(T1, T2) >::type
+    decltype(auto)
     operator()(const T1& t1, const T2& t2) const
     { return Intersections::internal::intersection(t1, t2, K() ); }
 
-    typename boost::optional< boost::variant< typename K::Point_3, typename K::Line_3, typename K::Plane_3 > >
+    decltype(auto)
     operator()(const Plane_3& pl1, const Plane_3& pl2, const Plane_3& pl3)const
     { return Intersections::internal::intersection(pl1, pl2, pl3, K() ); }
   };

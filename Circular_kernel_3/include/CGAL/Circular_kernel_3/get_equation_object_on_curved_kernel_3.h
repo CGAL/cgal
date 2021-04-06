@@ -41,33 +41,6 @@ namespace CGAL {
     typedef typename SK::Polynomials_for_circle_3 result_type_for_circle;
     //using LinearFunctors::Get_equation<SK>::operator();
 
-    template <typename>
-    struct result;
-
-    template <typename F>
-    struct result<F(typename SK::Sphere_3)>
-    {
-      typedef result_type_for_sphere type;
-    };
-
-    template <typename F>
-    struct result<F(typename SK::Plane_3)>
-    {
-      typedef result_type_for_plane type;
-    };
-
-    template <typename F>
-    struct result<F(typename SK::Line_3)>
-    {
-      typedef result_type_for_line type;
-    };
-
-    template <typename F>
-    struct result<F(typename SK::Circle_3)>
-    {
-      typedef result_type_for_circle type;
-    };
-
     result_type_for_sphere
     operator() ( const typename SK::Sphere_3 & s )
     {

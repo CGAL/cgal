@@ -787,8 +787,7 @@ public:
       pt, geom_traits().construct_vector_2_object()(pt, ps));
 
     boost::optional<FT> Dqt;
-    typename CGAL::cpp11::result_of<typename Traits_::Intersect_2(Line, Line)>::type
-      result = intersection(lab, lts);
+    const auto result = intersection(lab, lts);
     if (result)
     {
       const Point* iq = boost::get<Point>(&(*result));

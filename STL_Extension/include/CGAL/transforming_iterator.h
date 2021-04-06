@@ -12,7 +12,6 @@
 #ifndef CGAL_TRANSFORMING_ITERATOR_H
 #define CGAL_TRANSFORMING_ITERATOR_H
 #include <boost/iterator/iterator_adaptor.hpp>
-#include <boost/utility/result_of.hpp>
 #include <boost/type_traits/is_empty.hpp>
 #include <boost/type_traits/is_reference.hpp>
 #include <boost/type_traits/is_integral.hpp>

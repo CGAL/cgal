@@ -192,14 +192,14 @@ public:
   typedef typename std::pair<typename GeomTraits::Point_3, typename Primitive::Id> Point_and_primitive_id;
 
   /// `Intersection_and_primitive_id<Query>::%Type::first_type` is found according to
-  /// the result type of `GeomTraits::Intersect_3::operator()`,
-  /// (that is cpp11::result_of<GeomTraits::Intersect_3(Query, Primitive::Datum)>::type). If it is
+  /// the result type of `GeomTraits::Intersect_3::operator()`. If it is
   /// `boost::optional<T>` then it is `T`, and the result type otherwise.
   template<typename Query>
   struct Intersection_and_primitive_id {
-    typedef typename cpp11::result_of<
-      typename GeomTraits::Intersect_3(Query, typename Primitive::Datum)
-    >::type Intersection_type;
+    typedef decltype(
+      std::declval<typename GeomTraits::Intersect_3>()(
+        std::declval<Query>(),
+        std::declval<typename Primitive::Datum>())) Intersection_type;
 
     typedef std::pair<
       typename internal::AABB_tree::Remove_optional<Intersection_type>::type,
@@ -366,8 +366,7 @@ public:
     template<typename Query>
     boost::optional< typename Intersection_and_primitive_id<Query>::Type >
     operator()(const Query& query, const typename AT::Primitive& primitive) const {
-      typename cpp11::result_of<typename GeomTraits::Intersect_3(Query, typename Primitive::Datum) >::type
-        inter_res = GeomTraits().intersect_3_object()(internal::Primitive_helper<AT>::get_datum(primitive,m_traits),query);
+      auto inter_res = GeomTraits().intersect_3_object()(internal::Primitive_helper<AT>::get_datum(primitive,m_traits),query);
       if (!inter_res)
         return boost::none;
       return boost::make_optional( std::make_pair(*inter_res, primitive.id()) );
