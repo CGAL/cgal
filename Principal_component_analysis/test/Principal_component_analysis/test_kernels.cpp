@@ -5,31 +5,38 @@
 #include <CGAL/linear_least_squares_fitting_2.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 
+template <typename K>
+typename K::Point_2 point_2 (int x, int y)
+{ return typename K::Point_2 (typename K::FT(x), typename K::FT(y)); }
+template <typename K>
+typename K::Point_3 point_3 (int x, int y, int z)
+{ return typename K::Point_3 (typename K::FT(x), typename K::FT(y), typename K::FT(z)); }
+
 // Generate default objects so that the test compiles *AND* runs fine
 template <typename K, typename O> O default_object(const O&) { return O(); }
 template <typename K> typename K::Point_2 default_object(const typename K::Point_2&)
-{ return typename K::Point_2(0,0); }
+{ return point_2<K>(0,0); }
 template <typename K> typename K::Segment_2 default_object(const typename K::Segment_2&)
-{ return typename K::Segment_2(typename K::Point_2(0,0), typename K::Point_2(0,1)); }
+{ return typename K::Segment_2(point_2<K>(0,0), point_2<K>(0,1)); }
 template <typename K> typename K::Circle_2 default_object(const typename K::Circle_2&)
-{ return typename K::Circle_2(typename K::Point_2(0,0), typename K::FT(1.0)); }
+{ return typename K::Circle_2(point_2<K>(0,0), typename K::FT(1.0)); }
 template <typename K> typename K::Triangle_2 default_object(const typename K::Triangle_2&)
-{ return typename K::Triangle_2(typename K::Point_2(0,0), typename K::Point_2(0,1), typename K::Point_2(1,0)); }
+{ return typename K::Triangle_2(point_2<K>(0,0), point_2<K>(0,1), point_2<K>(1,0)); }
 template <typename K> typename K::Iso_rectangle_2 default_object(const typename K::Iso_rectangle_2&)
-{ return typename K::Iso_rectangle_2(typename K::Point_2(0,0), typename K::Point_2(1,1)); }
+{ return typename K::Iso_rectangle_2(point_2<K>(0,0), point_2<K>(1,1)); }
 template <typename K> typename K::Point_3 default_object(const typename K::Point_3&)
-{ return typename K::Point_3(0,0,0); }
+{ return point_3<K>(0,0,0); }
 template <typename K> typename K::Segment_3 default_object(const typename K::Segment_3&)
-{ return typename K::Segment_3(typename K::Point_3(0,0,0), typename K::Point_3(0,0,1)); }
+{ return typename K::Segment_3(point_3<K>(0,0,0), point_3<K>(0,0,1)); }
 template <typename K> typename K::Sphere_3 default_object(const typename K::Sphere_3&)
-{ return typename K::Sphere_3(typename K::Point_3(0,0,0), typename K::FT(1.0)); }
+{ return typename K::Sphere_3(point_3<K>(0,0,0), typename K::FT(1.0)); }
 template <typename K> typename K::Triangle_3 default_object(const typename K::Triangle_3&)
-{ return typename K::Triangle_3(typename K::Point_3(0,0,0), typename K::Point_3(0,0,1), typename K::Point_3(0,1,0)); }
+{ return typename K::Triangle_3(point_3<K>(0,0,0), point_3<K>(0,0,1), point_3<K>(0,1,0)); }
 template <typename K> typename K::Tetrahedron_3 default_object(const typename K::Tetrahedron_3&)
-{ return typename K::Tetrahedron_3(typename K::Point_3(0,0,0), typename K::Point_3(0,0,1),
-                                   typename K::Point_3(0,1,0), typename K::Point_3(1,0,0)); }
+{ return typename K::Tetrahedron_3(point_3<K>(0,0,0), point_3<K>(0,0,1),
+                                   point_3<K>(0,1,0), point_3<K>(1,0,0)); }
 template <typename K> typename K::Iso_cuboid_3 default_object(const typename K::Iso_cuboid_3&)
-{ return typename K::Iso_cuboid_3(typename K::Point_3(0,0,0), typename K::Point_3(1,1,1)); }
+{ return typename K::Iso_cuboid_3(point_3<K>(0,0,0), point_3<K>(1,1,1)); }
 
 template <typename Kernel, typename Object, int dim>
 void test_2d()
