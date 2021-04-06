@@ -954,9 +954,11 @@ private:
             ui.nbIterations_spinbox, SLOT(setDisabled(bool)));
     connect(ui.splitEdgesOnly_checkbox, SIGNAL(toggled(bool)),
             ui.protect_checkbox, SLOT(setDisabled(bool)));
-    connect(ui.protect_checkbox, SIGNAL(toggled(bool)),
+    connect(ui.splitEdgesOnly_checkbox, SIGNAL(toggled(bool)),
             ui.smooth1D_checkbox, SLOT(setDisabled(bool)));
     connect(ui.splitEdgesOnly_checkbox, SIGNAL(toggled(bool)),
+            ui.nbSmoothing_spinbox, SLOT(setDisabled(bool)));
+    connect(ui.protect_checkbox, SIGNAL(toggled(bool)),
             ui.smooth1D_checkbox, SLOT(setDisabled(bool)));
     connect(ui.preserveDuplicates_checkbox, SIGNAL(toggled(bool)),
             ui.protect_checkbox, SLOT(setChecked(bool)));
