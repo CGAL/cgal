@@ -18,12 +18,11 @@
 #include <CGAL/Polygon_mesh_processing/internal/Repair/helper.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/manifoldness.h>
-#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
-#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/repair_manifoldness.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Polygon_mesh_processing/smooth_mesh.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
+
 #ifndef CGAL_PMP_REMOVE_SELF_INTERSECTION_NO_POLYHEDRAL_ENVELOPE_CHECK
 #include <CGAL/Polyhedral_envelope.h>
 #endif
@@ -257,83 +256,6 @@ bool remove_self_intersections_with_smoothing(std::set<typename boost::graph_tra
 }
 
 // -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
-
-// Patch is not valid if:
-// - we insert the same face more than once
-// - insert (geometric) non-manifold edges
-template <typename TriangleMesh, typename Point>
-bool check_patch_sanity(const std::vector<std::vector<Point> >& patch)
-{
-  std::set<std::set<Point> > unique_faces;
-  std::map<std::set<Point>, int> unique_edges;
-
-  for(const std::vector<Point>& face : patch)
-  {
-    if(!unique_faces.emplace(face.begin(), face.end()).second) // this face had already been found
-      return false;
-
-    int i = (unique_edges.insert(std::make_pair(std::set<Point> { face[0], face[1] }, 0)).first->second)++;
-    if(i == 2) // non-manifold edge
-      return false;
-
-    i = (unique_edges.insert(std::make_pair(std::set<Point> { face[1], face[2] }, 0)).first->second)++;
-    if(i == 2) // non-manifold edge
-      return false;
-
-    i = (unique_edges.insert(std::make_pair(std::set<Point> { face[2], face[0] }, 0)).first->second)++;
-    if(i == 2) // non-manifold edge
-      return false;
-  }
-
-  // Check for self-intersections
-  // Don't know anything better than just making a mesh out of the soup for now...
-  std::vector<Point> points;
-  std::vector<std::vector<std::size_t> > faces;
-  std::map<Point, std::size_t> ids;
-
-  std::size_t c = 0;
-  for(const std::vector<Point>& face : patch)
-  {
-    std::vector<std::size_t> ps_f;
-    for(const Point& pt : face)
-    {
-      std::size_t id = c;
-      std::pair<typename std::map<Point, std::size_t>::iterator, bool> is_insert_successful =
-        ids.insert(std::make_pair(pt, c));
-      if(is_insert_successful.second) // first time we've seen that point
-      {
-        ++c;
-        points.push_back(pt);
-      }
-      else // already seen that point
-      {
-        id = is_insert_successful.first->second;
-      }
-
-      CGAL_assertion(id < points.size());
-      ps_f.push_back(id);
-    }
-
-    faces.push_back(ps_f);
-  }
-
-  TriangleMesh patch_mesh;
-  if(is_polygon_soup_a_polygon_mesh(faces))
-    polygon_soup_to_polygon_mesh(points, faces, patch_mesh);
-  else
-    return false;
-
-  if(does_self_intersect(patch_mesh))
-  {
-#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
-    std::cout << "  DEBUG: Tentative patch has self-intersections." << std::endl;
-#endif
-
-    return false;
-  }
-
-  return true;
-}
 
 // This function is only called when the hole is NOT subdivided into smaller holes
 template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>

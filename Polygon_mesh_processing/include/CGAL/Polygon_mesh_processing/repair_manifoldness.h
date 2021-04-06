@@ -26,6 +26,7 @@
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
+#include <CGAL/boost/graph/selection.h>
 #include <CGAL/Heat_method_3/Surface_mesh_geodesic_distances_3.h>
 #include <CGAL/Kernel/global_functions.h>
 #include <CGAL/utility.h>
@@ -385,6 +386,10 @@ bool treat_pinched_stars(UmbrellaContainer& umbrellas,
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor      halfedge_descriptor;
 
+#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
+  std::cout << "Treat pinched stars..." << std::endl;
+#endif
+
   bool has_pinched_nm_vertices = false;
   std::set<halfedge_descriptor> treated_umbrellas;
 
@@ -392,6 +397,10 @@ bool treat_pinched_stars(UmbrellaContainer& umbrellas,
   {
     if(!is_pinched_nm_vertex(h, pmesh))
       continue;
+
+#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
+  std::cout << "Pinched star on " << h << std::endl;
+#endif
 
     has_pinched_nm_vertices = true;
     treated_umbrellas.insert(h);
@@ -1227,7 +1236,7 @@ bool treat_umbrellas(UmbrellaContainer& umbrellas,
     dump_cc(wz.faces, pmesh, oss.str().c_str());
   }
 
-  std::ofstream("results/post_construction.off") << std::setprecision(17) << pmesh;
+  CGAL::write_polygon_mesh("results/post_construction.off", pmesh, CGAL::parameters::stream_precision(17));
 #endif
 
   if(treatment == SEPARATE)
@@ -1342,9 +1351,9 @@ void geometrically_non_manifold_vertices(NMPContainer& nm_points, // m[vertex] =
 } // namespace internal
 
 template <typename PolygonMesh, typename NamedParameters>
-void treat_non_manifold_vertices(PolygonMesh& pmesh,
-                                 const NM_TREATMENT treatment,
-                                 const NamedParameters& np)
+void repair_non_manifold_vertices(PolygonMesh& pmesh,
+                                  const NM_TREATMENT treatment,
+                                  const NamedParameters& np)
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor        vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor      halfedge_descriptor;
@@ -1372,16 +1381,19 @@ void treat_non_manifold_vertices(PolygonMesh& pmesh,
     put(nm_marks, v, false);
 
   std::unordered_map<Point, std::set<halfedge_descriptor> > nm_points;
-  internal::geometrically_non_manifold_vertices(nm_points, nm_marks, pmesh, vpm, gt);
+  internal::geometrically_non_manifold_vertices(pmesh, nm_points, nm_marks, np);
 
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
-  std::cout << nm_points.size() << " cases to treat" << std::endl;
+  std::cout << nm_points.size() << " case(s) to treat:" << std::endl;
   for(auto& e : nm_points)
-    std::cout << e.first << std::endl;
+    std::cout << "\t" << e.first << std::endl;
 #endif
 
   internal::enforce_non_manifold_vertex_separation(nm_marks, pmesh, vpm, gt);
-  std::ofstream("results/enforced_separation.off") << std::setprecision(17) << pmesh;
+
+#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
+  CGAL::write_polygon_mesh("results/enforced_separation.off", pmesh, CGAL::parameters::stream_precision(17));
+#endif
 
   for(auto& e : nm_points)
   {
@@ -1389,39 +1401,38 @@ void treat_non_manifold_vertices(PolygonMesh& pmesh,
     CGAL_assertion(!umbrellas.empty());
 
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
-    std::cout << "NM vertex at pos " << get(vpm, target(*(std::begin(umbrellas)), pmesh))
-              << " with " << umbrellas.size() << " incident umbrellas:" << std::endl;
+    std::cout << "NM vertex at pos (" << get(vpm, target(*(std::begin(umbrellas)), pmesh))
+              << ") with " << umbrellas.size() << " incident umbrella(s):" << std::endl;
     for(const halfedge_descriptor h : umbrellas)
-      std::cout << h << " (" << get(vpm, source(h, pmesh)) << " " << get(vpm, target(h, pmesh)) << ")" << std::endl;
+      std::cout << h << " (" << get(vpm, source(h, pmesh)) << ") (" << get(vpm, target(h, pmesh)) << ")" << std::endl;
 #endif
 
     internal::treat_umbrellas(umbrellas, treatment, radius, pmesh, vpm, gt);
 
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
     std::cout << "done with that nm vertex" << std::endl << std::endl;
-    std::ofstream("results/intermediary.off") << std::setprecision(17) << pmesh;
+    CGAL::write_polygon_mesh("results/intermediary.off", pmesh, CGAL::parameters::stream_precision(17));
 #endif
   }
 
   CGAL_postcondition(is_valid_polygon_mesh(pmesh, true));
 
-  std::cout << "done with all" << std::endl;
   CGAL_postcondition_code(nm_points.clear();)
-  CGAL_postcondition_code(internal::geometrically_non_manifold_vertices(nm_points, nm_marks, pmesh, vpm, gt);)
+  CGAL_postcondition_code(internal::geometrically_non_manifold_vertices(pmesh, nm_points, nm_marks, np);)
   CGAL_postcondition(nm_points.empty());
 }
 
 template <typename PolygonMesh>
-void treat_non_manifold_vertices(PolygonMesh& pmesh,
-                                 const NM_TREATMENT treatment)
+void repair_non_manifold_vertices(PolygonMesh& pmesh,
+                                  const NM_TREATMENT treatment)
 {
-  return treat_non_manifold_vertices(pmesh, treatment, parameters::all_default());
+  return repair_non_manifold_vertices(pmesh, treatment, parameters::all_default());
 }
 
 template <typename PolygonMesh>
-void treat_non_manifold_vertices(PolygonMesh& pmesh)
+void repair_non_manifold_vertices(PolygonMesh& pmesh)
 {
-  return treat_non_manifold_vertices(pmesh, MERGE, parameters::all_default());
+  return repair_non_manifold_vertices(pmesh, MERGE, parameters::all_default());
 }
 
 } // namespace Polygon_mesh_processing
