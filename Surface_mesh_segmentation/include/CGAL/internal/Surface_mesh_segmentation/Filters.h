@@ -30,6 +30,8 @@
 
 #include <boost/optional.hpp>
 #include <CGAL/boost/graph/iterator.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/double.h>
 namespace CGAL
 {
 
@@ -92,7 +94,7 @@ public:
         double deviation = 0.0;
         for(typename std::map<face_descriptor, std::size_t>::iterator it =
               neighbors.begin(); it != neighbors.end(); ++it) {
-          deviation += std::pow(get(values, it->first) - current_sdf_value, 2);
+          deviation += CGAL::square(get(values, it->first) - current_sdf_value);
         }
         deviation = std::sqrt(deviation / neighbors.size());
         if(deviation == 0.0) {
@@ -133,7 +135,7 @@ public:
 private:
   /** Gaussian function for weighting. */
   double gaussian_function(double value, double deviation) const {
-    return exp(-0.5 * (std::pow(value / deviation, 2)));
+    return exp(-0.5 * (CGAL::square(value / deviation)));
   }
 };
 

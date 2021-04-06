@@ -1030,7 +1030,7 @@ namespace CGAL {
     }
 
     inline FT stop_probability(std::size_t largest_candidate, std::size_t num_pts, std::size_t num_candidates, std::size_t octree_depth) const {
-      return (std::min<FT>)(std::pow(FT(1) - FT(largest_candidate)
+      return (std::min<FT>)((FT)std::pow(FT(1) - FT(largest_candidate)
                                      / (FT(num_pts) * FT(octree_depth+1)
                                         * FT(1 << (m_required_samples - 1))),
                                      int(num_candidates)), FT(1));
