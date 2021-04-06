@@ -134,12 +134,12 @@ test_vertex_triangle(const typename K::Triangle_3& tr1,
 
   const Point_3& x1 = vertex(tr1, static_cast<int>(min_id));
 
-  if(on_left_of_triangle_edge(x1, n2, p2, q2, k) &&
-     on_left_of_triangle_edge(x1, n2, q2, r2, k) &&
-     on_left_of_triangle_edge(x1, n2, r2, p2, k))
+  if(CGAL::internal::on_left_of_triangle_edge(x1, n2, p2, q2, k) &&
+     CGAL::internal::on_left_of_triangle_edge(x1, n2, q2, r2, k) &&
+     CGAL::internal::on_left_of_triangle_edge(x1, n2, r2, p2, k))
   {
     // the projection of `x1` is inside the triangle
-    return std::make_pair(squared_distance_to_plane(n2, vector(p2, x1), k), true);
+    return std::make_pair(CGAL::internal::squared_distance_to_plane(n2, vector(p2, x1), k), true);
   }
 
   return std::make_pair(0, false);
