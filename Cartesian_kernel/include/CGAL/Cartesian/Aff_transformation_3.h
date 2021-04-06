@@ -146,10 +146,15 @@ public:
   { return this->Ptr()->transform(p); }
 
   Plane_3
+  transform(const Plane_3& p, bool is_even, const Aff_transformation_3& transposed_inverse) const
+  { return this->Ptr()->transform(p, is_even, transposed_inverse); }
+
+  Plane_3
   operator()(const Plane_3& p) const
   { return transform(p); } // FIXME : not compiled by the test-suite !
 
   Aff_transformation_3 inverse() const { return this->Ptr()->inverse(); }
+  Aff_transformation_3 transpose() const { return this->Ptr()->transpose(); }
 
   bool is_even() const { return this->Ptr()->is_even(); }
   bool is_odd() const { return  ! (this->Ptr()->is_even()); }
@@ -183,8 +188,6 @@ public:
     return !(*this == t);
   }
 
-protected:
-  Aff_transformation_3  transpose() const { return this->Ptr()->transpose(); }
 };
 
 

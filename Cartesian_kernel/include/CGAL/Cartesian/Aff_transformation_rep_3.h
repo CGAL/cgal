@@ -40,6 +40,7 @@ public:
   virtual Vector_3    transform(const Vector_3 &v) const = 0;
   virtual Direction_3 transform(const Direction_3 &d) const = 0;
   virtual Plane_3     transform(const Plane_3& p) const = 0;
+  virtual Plane_3     transform(const Plane_3& p, bool is_even, const Aff_transformation_3& transposed_inverse) const = 0;
 
   virtual Aff_transformation_3 operator*(
                        const Aff_transformation_rep_baseC3 &t) const = 0;
@@ -133,14 +134,19 @@ public:
                        t31 * v.x() + t32 * v.y() + t33 * v.z());
   }
 
-  virtual Plane_3 transform(const Plane_3& p) const
+  virtual Plane_3 transform(const Plane_3& p, bool is_even, const Aff_transformation_3& transposed_inverse) const
   {
-      if (is_even())
+      if (is_even)
       return Plane_3(transform(p.point()),
-                 transpose().inverse().transform(p.orthogonal_direction()));
+                 transposed_inverse.transform(p.orthogonal_direction()));
     else
       return Plane_3(transform(p.point()),
-               - transpose().inverse().transform(p.orthogonal_direction()));
+               - transposed_inverse.transform(p.orthogonal_direction()));
+  }
+
+  virtual Plane_3 transform(const Plane_3& p) const
+  {
+      return transform(p, is_even(), transpose().inverse());
   }
 
 

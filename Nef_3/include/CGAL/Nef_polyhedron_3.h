@@ -1680,7 +1680,8 @@ protected:
                                  aff.hm(1,0), aff.hm(1,1), aff.hm(1,2),
                                  aff.hm(2,0), aff.hm(2,1), aff.hm(2,2),
                                  aff.hm(3,3));
-
+    const Aff_transformation_3& transposed_inverse = aff.transpose().inverse();
+    bool is_even = aff.is_even();
     SNC_constructor cstr(snc());
 
     std::list<Vertex_handle> vertex_list;
@@ -1712,7 +1713,7 @@ protected:
         vi->point() = vi->point().transform( aff);
         if(! translate){
           SM_decorator sdeco(&*vi);
-          sdeco.transform( linear);
+          sdeco.transform( linear, is_even, transposed_inverse);
         }
       }
     }
@@ -1722,7 +1723,7 @@ protected:
       CGAL_forall_facets(fi, snc()) {
         if(!is_standard(fi) || is_bounded(fi)) continue;
         Plane_3 pt = fi->plane();
-        pt = pt.transform(aff);
+        pt = pt.transform(aff, is_even, transposed_inverse);
         std::list<Point_3> points(Infi_box::find_points_of_box_with_plane(cstr,pt));
         std::list<Vertex_handle> newVertices;
         newVertices = Infi_box::create_vertices_on_infibox(cstr,
@@ -1832,7 +1833,7 @@ protected:
       Halffacet_iterator fi;
       CGAL_forall_halffacets(fi,snc()) {
         if(is_standard(fi) || ninety) {
-          fi->plane() = fi->plane().transform( aff);
+          fi->plane() = fi->plane().transform( aff, is_even, transposed_inverse);
         }
       }
 
@@ -1853,7 +1854,7 @@ protected:
            pl()->initialize(&snc());
            delete old_pl;
          }
-      else pl()->transform(aff);
+      else pl()->transform(aff, is_even, transposed_inverse);
     }
 
     SNC_constructor C(snc());
