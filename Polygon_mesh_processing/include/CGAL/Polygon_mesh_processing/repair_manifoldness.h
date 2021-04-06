@@ -1269,19 +1269,29 @@ bool treat_umbrellas(UmbrellaContainer& umbrellas,
 
 // pretty much the same as 'PMP::non_manifold_vertices()', but consider the geometry instead of the combinatorics
 // ({combinatorial non-manifold vertices} <= {geometrical non-manifold vertices}) so that creates a few changes
-template <typename NMPContainer, typename NMVM,
-          typename PolygonMesh, typename VPM, typename GeomTraits>
-void geometrically_non_manifold_vertices(NMPContainer& nm_points, // m[vertex] = {halfedges}
-                                         NMVM nm_marks,
-                                         const PolygonMesh& pmesh,
-                                         const VPM vpm,
-                                         const GeomTraits& /*gt*/)
+template <typename PolygonMesh, typename NMPContainer, typename NMVM, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+std::size_t geometrically_non_manifold_vertices(const PolygonMesh& pmesh,
+                                                NMPContainer& nm_points, // m[vertex] = {halfedges}
+                                                NMVM nm_marks,
+                                                const CGAL_PMP_NP_CLASS& np)
 {
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor          vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor        halfedge_descriptor;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
-  typedef typename boost::property_traits<VPM>::reference                       Point_ref;
-  typedef typename boost::property_traits<VPM>::value_type                      Point;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor                   vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor                 halfedge_descriptor;
+
+  typedef typename GetGeomTraits<PolygonMesh, CGAL_PMP_NP_CLASS>::type                   Geom_traits;
+//  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
+
+  typedef typename GetVertexPointMap<PolygonMesh, CGAL_PMP_NP_CLASS>::const_type         VertexPointMap;
+  VertexPointMap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                        get_const_property_map(vertex_point, pmesh));
+
+  const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
+
+  typedef typename boost::property_traits<VertexPointMap>::reference                    Point_ref;
+  typedef typename boost::property_traits<VertexPointMap>::value_type                   Point;
 
   typedef CGAL::dynamic_halfedge_property_t<bool>                                       Halfedge_property_tag;
   typedef typename boost::property_map<PolygonMesh, Halfedge_property_tag>::const_type  Visited_halfedge_map;
@@ -1310,6 +1320,9 @@ void geometrically_non_manifold_vertices(NMPContainer& nm_points, // m[vertex] =
     {
       is_non_manifold_due_to_multiple_umbrellas = true;
       put(nm_marks, v, true);
+
+      if(verbose)
+        std::cout << p << std::endl;
 
       // if this is the second time we visit that vertex and the first star was manifold, we have
       // not marked the vertex as non-manifold from the first star
@@ -1344,8 +1357,52 @@ void geometrically_non_manifold_vertices(NMPContainer& nm_points, // m[vertex] =
     {
       put(nm_marks, v, true);
       nm_points[p].insert(h); // might or might not have been an empty vector before
+
+      if(verbose)
+        std::cout << "pinched star centered at " << p << std::endl;
     }
   }
+
+  return nm_points.size();
+}
+
+template <typename PolygonMesh, typename NMVM, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+std::size_t geometrically_non_manifold_vertices(const PolygonMesh& pmesh,
+                                                NMVM& nm_points,
+                                                const CGAL_PMP_NP_CLASS& np)
+{
+  typedef CGAL::dynamic_vertex_property_t<bool>                               Mark;
+  typedef typename boost::property_map<PolygonMesh, Mark>::const_type         Marked_vertices;
+  Marked_vertices nm_marks = get(Mark(), pmesh);
+  for(auto v : vertices(pmesh))
+    put(nm_marks, v, false);
+
+  return geometrically_non_manifold_vertices(pmesh, nm_points, nm_marks, np);
+}
+
+template <typename PolygonMesh, typename NMVM>
+std::size_t geometrically_non_manifold_vertices(const PolygonMesh& pmesh,
+                                                NMVM& nm_points)
+{
+  return geometrically_non_manifold_vertices(pmesh, nm_points, parameters::all_default());
+}
+
+template <typename PolygonMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+std::size_t geometrically_non_manifold_vertices(const PolygonMesh& pmesh,
+                                                const CGAL_PMP_NP_CLASS& np)
+{
+  typedef typename property_map_selector<PolygonMesh, boost::vertex_point_t>::const_type VPM;
+  typedef typename boost::property_traits<VPM>::value_type                               Point;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor                 halfedge_descriptor;
+
+  std::unordered_map<Point, std::set<halfedge_descriptor> > nm_points;
+  return geometrically_non_manifold_vertices(pmesh, nm_points, np);
+}
+
+template <typename PolygonMesh>
+std::size_t geometrically_non_manifold_vertices(const PolygonMesh& pmesh)
+{
+  return geometrically_non_manifold_vertices(pmesh, parameters::all_default());
 }
 
 } // namespace internal
