@@ -91,11 +91,16 @@ create_single_source_cgal_program("locate_example.cpp")
 create_single_source_cgal_program("orientation_pipeline_example.cpp")
 #create_single_source_cgal_program( "self_snapping_example.cpp")
 #create_single_source_cgal_program( "snapping_example.cpp")
+create_single_source_cgal_program("compare_meshes_example.cpp")
 
 if(OpenMesh_FOUND)
 
   create_single_source_cgal_program("compute_normals_example_OM.cpp")
   target_link_libraries(compute_normals_example_OM
+                        PRIVATE ${OPENMESH_LIBRARIES})
+
+  create_single_source_cgal_program("corefinement_OM_union.cpp")
+  target_link_libraries(corefinement_OM_union
                         PRIVATE ${OPENMESH_LIBRARIES})
 
   if(TARGET CGAL::Eigen3_support)

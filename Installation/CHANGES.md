@@ -1,5 +1,14 @@
 Release History
 ===============
+[Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
+-----------
+
+Release date: December 2021
+
+### [Polygon Mesh Processing](https://doc.cgal.org/5.4/Manual/packages.html#PkgPolygonMeshProcessing)
+
+-   Added the function `CGAL::Polygon_mesh_processing::match_faces()` that given two polygon meshes identifies faces present in only one of the two meshes as well as faces present in both.
+
 
 [Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)
 -----------
@@ -25,8 +34,24 @@ A comprehensive list of the supported file formats is available in the Stream_su
 -   Added a filtering mechanism so that costly tests get only applied to the next candidate for the edge collapse.
 -   Added the class `Polyhedral_envelope_filter` that enables to perform mesh simplification inside a polyhedral envelope of the input mesh.
 
+### Surface Mesh Topology
+- Added the function `CGAL::Surface_mesh_topology::Curves_on_surface_topology::is_homotopic_to_simple_cycle()`, which can be used to determine whehter a closed path
+  on a surface mesh can be continously transformed to a cycle without self intersection.
+
 ### 2D Regularized Boolean Set Operations
 -   Added documentation for the free functions `oriented_side(const Point_2& p, ....)` that accept a point and a polygon, and improved the documentation of all other functions
+
+### [2D Polyline Simplification](https://doc.cgal.org/5.3/Manual/packages.html#PkgPolylineSimplification2)
+-   When polylines have common subsequences of vertices these subsequences may be simplifified simultaneously.
+
+### [2D and 3D Alpha Shapes](https://doc.cgal.org/5.3/Manual/packages.html#PkgAlphaShapes2)
+-   The following deprecated classes have been removed: `Alpha_shape_euclidean_traits_2`,
+    `Weighted_alpha_shape_euclidean_traits_2`, `Alpha_shape_euclidean_traits_3`, and
+    `Weighted_alpha_shape_euclidean_traits_3`. All CGAL kernel can be used directly as models
+    of the concepts of the 2D and 3D Alpha Shape packages.
+
+### [dD Triangulations](https://doc.cgal.org/5.3/Manual/packages.html#PkgTriangulations)
+- Added the function `insert_if_in_star()` to the class `CGAL::Regular_triangulation`, which enables users to insert a point `p` in a regular triangulation on the condition that `p` appears post-insertion in the star of a user-specified, existing vertex.
 
 [Release 5.2](https://github.com/CGAL/cgal/releases/tag/v5.2)
 -----------
@@ -414,7 +439,7 @@ Release date: November 2019
   - LLVM Clang version 8.0 or later (on Linux or MacOS), and
   - Apple Clang compiler versions 7.0.2 and 10.0.1 (on MacOS).
 - Since CGAL 4.9, CGAL can be used as a header-only library, with
-  dependencies. Since CGAL 5.0, that is now the default, unless
+  dependencies. Since CGAL 5.0, that is now the default, unless
   specified differently in the (optional) CMake configuration.
 - The section "Getting Started with CGAL" of the documentation has
   been updated and reorganized.
@@ -2254,14 +2279,14 @@ Release date: October 2014
 -   Changes in the set of supported platforms:
     -   The Microsoft Windows Visual C++ compiler 2008 (VC9) is no
         longer supported since CGAL-4.5.
--   Since CGAL version 4.0, Eigen was the recommended third-party
+-   Since CGAL version 4.0, Eigen was the recommended third-party
     library to use with *Planar Parameterization of Triangulated Surface
     Meshes*, *Surface Reconstruction from Point Sets*, *Approximation of
     Ridges and Umbilics on Triangulated Surface Meshes*, and *Estimation
     of Local Differential Properties of Point-Sampled Surfaces*
-    packages. From CGAL version 4.5, Taucs, Blas and Lapack are no
+    packages. From CGAL version 4.5, Taucs, Blas and Lapack are no
     longer supported.
--   CGAL is now compatible with the new CMake version 3.0.
+-   CGAL is now compatible with the new CMake version 3.0.
 
 ### Triangulated Surface Mesh Deformation (new package)
 
@@ -2400,7 +2425,7 @@ Release date: April 2014
 
 -   Additional supported platforms:
     -   The Apple Clang compiler version 5.0 is now supported on
-        OS X Mavericks.
+        OS X Mavericks.
     -   The Microsoft Windows Visual C++ compiler 2013 (VC12) is now
         supported.
 
@@ -2538,7 +2563,7 @@ Release date: October 2013
     transparent to the user thanks to the implicit constructor added to
     `CGAL::Object`. However, it is recommended to upgrade your code. The
     previous behavior can be restored by defining the macro
-    `CGAL_INTERSECTION_VERSION` to 1.
+    `CGAL_INTERSECTION_VERSION` to 1.
 
 #### 2D Arrangements
 
@@ -2799,7 +2824,7 @@ Release date: October 2012
 
 -   Additional supported platforms:
     -   The Apple Clang compiler versions 3.1 and 3.2 are now supported
-        on Mac OS X.
+        on Mac OS X.
 -   Improved configuration for essential and optional external third
     party software
 -   Added more general script to create CMakeLists.txt files:

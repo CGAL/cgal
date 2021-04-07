@@ -281,10 +281,8 @@ public:
   template <class InputIterator>
   Kd_tree(InputIterator first, InputIterator beyond,
           Splitter s = Splitter(),const SearchTraits traits=SearchTraits())
-    : traits_(traits),split(s), built_(false), removed_(false)
-  {
-    pts.insert(pts.end(), first, beyond);
-  }
+    : traits_(traits), split(s), pts(first, beyond), built_(false), removed_(false)
+  { }
 
   bool empty() const {
     return pts.empty();
