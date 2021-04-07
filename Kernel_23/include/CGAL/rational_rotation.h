@@ -74,7 +74,7 @@ rational_rotation_approximation( const NT &  dirx,     // dir.x()
       {
           p = p0 + p1;
           q = q0 + q1;
-          sin = NT(2)*square(p);
+          sin = NT(2)*p*q;
           den = square(p) + square(q);
 
       // sanity check for approximation
@@ -189,7 +189,7 @@ rational_rotation_approximation( const double& angle,
       {
           p = p0 + p1;
           q = q0 + q1;
-          isin = NT(2)* square(p);
+          isin = NT(2)*p*q;
           iden = square(p) + square(q);
 
           // XXX sanity check for approximation
