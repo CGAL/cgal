@@ -10,7 +10,9 @@
 //
 // Author(s)        :  Marc Glisse
 
-//#define CGAL_MPZF_DIVISION_OPERATOR 1
+#ifndef CGAL_NO_MPZF_DIVISION_OPERATOR
+#define CGAL_MPZF_DIVISION_OPERATOR 1
+#endif
 
 #ifndef CGAL_MPZF_H
 #define CGAL_MPZF_H
