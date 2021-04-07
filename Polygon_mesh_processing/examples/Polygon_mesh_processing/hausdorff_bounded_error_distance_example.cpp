@@ -96,7 +96,7 @@ int main(int argc, char** argv)
   // Read a real meshes given by the user, perturb it slightly and compute the
   // Hausdorff distance between the original mesh and its pertubation
 
-  std::ifstream input( argv[1] );
+  std::ifstream input( argc > 1 ? argv[1] : "data/blobby.off" );
   input >> tm1;
   std::cout << "Read a mesh with " << tm1.number_of_faces() << " triangles." << std::endl;
 
@@ -122,11 +122,11 @@ int main(int argc, char** argv)
   // given position. Move the second mesh in 300 steps away from the first one.
   // Print how the Hausdorff distance changes.
 
-  std::ifstream input1( argv[1] );
+  std::ifstream input1( argc > 1 ? argv[1] : "data/blobby.off" );
   input1 >> tm1;
   std::cout << "Read a mesh with " << tm1.number_of_faces() << " triangles." << std::endl;
 
-  std::ifstream input2( argv[2] );
+  std::ifstream input2( argc > 2 ? argv[2] : "data/blobby.off" );
   input2 >> tm2;
   std::cout << "Read a mesh with " << tm2.number_of_faces() << " triangles." << std::endl;
 

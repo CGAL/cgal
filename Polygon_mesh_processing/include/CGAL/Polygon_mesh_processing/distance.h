@@ -1343,23 +1343,11 @@ double bounded_error_Hausdorff_impl(
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Triangle_3 Triangle_3;
 
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
-
-  typedef std::pair<double, double> Hausdorff_bounds;
-  typedef CGAL::Spatial_sort_traits_adapter_3<Kernel,VPM1> Search_traits_3;
-  typedef CGAL::dynamic_vertex_property_t<std::pair<double, face_descriptor>> Vertex_property_tag;
-  typedef CGAL::dynamic_face_property_t<Hausdorff_bounds> Face_property_tag;
-
-  typedef typename boost::property_map<TriangleMesh, Vertex_property_tag>::const_type Vertex_closest_triangle_map;
-  typedef typename boost::property_map<TriangleMesh, Face_property_tag>::const_type Triangle_hausdorff_bounds;
 
   typedef std::pair<double, double> Hausdorff_bounds;
 
   typename Kernel::Compute_squared_distance_3 squared_distance;
-  typename Kernel::Construct_projected_point_3 project_point;
-  typename Kernel::FT dist;
 
   typedef
   #if BOOST_VERSION >= 105000

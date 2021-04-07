@@ -247,9 +247,9 @@ namespace CGAL {
     Hausdorff_primitive_traits_tm1(
       const AABBTraits& traits, const TM2_tree& tree, const TriangleMesh& tm1,
       const TriangleMesh& tm2 , const VPM1& vpm1, const VPM2& vpm2,
-      const Point_3 hint )
-      : m_traits(traits), m_tm2_tree(tree), m_tm1(tm1), m_tm2(tm2),
-      m_vpm1(vpm1), m_vpm2(vpm2) {
+      const Point_3& )
+      : m_traits(traits), m_tm1(tm1), m_tm2(tm2),
+      m_vpm1(vpm1), m_vpm2(vpm2), m_tm2_tree(tree) {
         // Initialize the global bounds with 0., they will only grow.
         h_lower = 0.;
         h_upper = 0.;
@@ -262,7 +262,7 @@ namespace CGAL {
     bool go_further() const { return true; }
 
     // Compute the explicit Hausdorff distance to the given primitive
-    void intersection(const Query& query, const Primitive& primitive)
+    void intersection(const Query&, const Primitive& primitive)
     {
       /* Have reached a single triangle, process it */
       m_investigated_on_tm1++;
