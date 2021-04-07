@@ -1094,22 +1094,24 @@ private:
     typename Octree::Node cur = octree->root();
     while (!cur.is_null() && cur.depth() < level) {
 
-      // Determine the coordinate of the child
-      std::bitset<3> coordinate;
-      coordinate[0] = octree->barycenter(cur).x() <= p.x();
-      coordinate[1] = octree->barycenter(cur).y() <= p.y();
-      coordinate[2] = octree->barycenter(cur).z() <= p.z();
-
       // If cur is a leaf node, its child is null
       if (cur.is_leaf())
         return typename Octree::Node();
 
-      // Otherwise, return the correct child of cur
-      cur = cur[coordinate.to_ulong()];
-
       // If that child is empty, return null
       if (cur.empty())
         return typename Octree::Node();
+
+      // Determine the coordinate of the child
+      Point center = octree->barycenter(cur);
+      std::bitset<3> coordinate;
+      coordinate[0] = center.x() <= p.x();
+      coordinate[1] = center.y() <= p.y();
+      coordinate[2] = center.z() <= p.z();
+
+      // Otherwise, return the correct child of cur
+      cur = cur[coordinate.to_ulong()];
+
     }
 
     return cur;
