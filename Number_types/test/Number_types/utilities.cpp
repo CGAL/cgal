@@ -1,10 +1,5 @@
 #include <CGAL/config.h>
 
-// TODO: solve conflict of CORE with GMPXX
-#ifdef CGAL_USE_CORE
-#undef CGAL_USE_GMPXX
-#endif
-
 #include <CGAL/Quotient.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Lazy_exact_nt.h>
