@@ -521,6 +521,10 @@ public:
     *     \cgalParamType{a model of `ReadablePropertyMap` whose value type is `Point_3` and whose key
     *                    is the value type of `PointRange::const_iterator`}
     *     \cgalParamDefault{`CGAL::Identity_property_map`}
+    *   \cgalParamNBegin{face_epsilon_map}
+    *     \cgalParamDescription{a property map associating to each triangle a epsilon value}
+    *     \cgalParamType{a class model of `ReadablePropertyMap` with `std::size_t` as key type and `double` as value type}
+    *     \cgalParamDefault{Use `epsilon` for all triangles}
     *   \cgalParamNEnd
     * \cgalNamedParamsEnd
     *
@@ -537,6 +541,7 @@ public:
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    using parameters::is_default_parameter;
 
     typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::const_type Point_map;
     Point_map pm = choose_parameter<Point_map>(get_parameter(np, internal_np::point_map));
@@ -554,7 +559,27 @@ public:
       Vector3i face = { int(t[0]), int(t[1]), int(t[2]) };
       env_faces.emplace_back(face);
     }
-    init(epsilon);
+
+    if (is_default_parameter(get_parameter(np, internal_np::face_epsilon_map)))
+      init(epsilon);
+    else
+    {
+      std::vector<double> epsilon_values;
+      epsilon_values.reserve(env_faces.size());
+
+      typedef typename internal_np::Lookup_named_param_def<
+        internal_np::face_epsilon_map_t,
+        NamedParameters,
+        Constant_property_map<std::size_t, double>
+      > ::type  Epsilon_map;
+
+      Epsilon_map epsilon_map = choose_parameter(get_parameter(np, internal_np::face_epsilon_map),
+                                                 Constant_property_map<std::size_t, double>(epsilon));
+
+      for(std::size_t i=0; i<triangles.size(); ++i)
+        epsilon_values.push_back( get(epsilon_map, i) );
+      init(epsilon_values);
+    }
   }
 
   /// @}
