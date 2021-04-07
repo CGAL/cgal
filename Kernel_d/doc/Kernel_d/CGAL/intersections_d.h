@@ -34,14 +34,16 @@ The same functionality is also available through the functor `Kernel::Intersect_
 
 The following table gives the possible values for `Type1` and `Type2`.
 
-The return type can be obtained through `cpp11::result_of<Kernel::Intersect_d(A, B)>::%type`.
-It is equivalent to `boost::optional< boost::variant< T... > >`, the last column in the table providing the template parameter pack.
-
+The return type of intersecting two objects of the types `Type1` and `Type2` can be
+specified through the placeholder type specifier `auto`. It is equivalent to
+`boost::optional< boost::variant< T... > >`, the last column in the table providing
+the template parameter pack.
 
 
 <DIV ALIGN="CENTER">
 <TABLE CELLPADDING=3 BORDER="1">
-<TR> <TH> Type1 </TH>
+<TR>
+<TH> Type1 </TH>
 <TH> Type2 </TH>
 <TH> `T...` </TH>
 </TR>
@@ -143,13 +145,8 @@ struct Intersection_visitor {
 template <class R>
 void foo(Segment_d<R> seg, Line_d<R> lin)
 {
-  // with C++11 support
-  // auto result = intersection(seg, lin);
-
-  // without C++11 support
-  typename cpp11::result_of<R::Intersect_d(Segment_d<R>, Line_d<R>)>::type
-    result = intersection(seg, lin);
-
+  // use auto
+  auto result = intersection(seg, lin);
   if(result) { boost::apply_visitor(Intersection_visitor<R>(), *result); }
   else { // no intersection
   }
@@ -160,10 +157,10 @@ void foo(Segment_d<R> seg, Line_d<R> lin)
 \sa `Kernel_d::Intersect_d`
 \sa <a HREF="https://www.boost.org/doc/libs/release/libs/optional/index.html">`boost::optional`</a>
 \sa <a HREF="https://www.boost.org/doc/html/variant.html">`boost::variant`</a>
-\sa `cpp11::result_of`
 
 */
-cpp11::result_of<R::Intersect_d(Type1<R>, Type2<R>)>::type intersection(Type1<R> f1, Type2<R> f2);
+decltype(auto)
+intersection(Type1<R> f1, Type2<R> f2);
 
 } /* namespace CGAL */
 

@@ -77,6 +77,7 @@ create_single_source_cgal_program("triangulate_faces_hole_filling_all_search_tes
 create_single_source_cgal_program("test_pmp_remove_border_edge.cpp")
 create_single_source_cgal_program("test_pmp_distance.cpp")
 create_single_source_cgal_program("test_corefinement_and_constraints.cpp")
+create_single_source_cgal_program("test_corefinement_and_constraints_nearest.cpp")
 create_single_source_cgal_program("test_corefinement_bool_op.cpp")
 create_single_source_cgal_program("test_corefine.cpp")
 create_single_source_cgal_program("test_coref_epic_points_identity.cpp")
@@ -125,14 +126,14 @@ if(OpenMesh_FOUND)
 endif()
 
 find_package(Ceres QUIET)
+include(CGAL_Ceres_support)
 
-if(TARGET ceres AND TARGET CGAL::Eigen3_support)
-  target_compile_definitions( test_mesh_smoothing PRIVATE CGAL_PMP_USE_CERES_SOLVER )
-  target_link_libraries( test_mesh_smoothing PUBLIC CGAL::Eigen3_support PRIVATE ceres )
+if(TARGET CGAL::Ceres_support AND TARGET CGAL::Eigen3_support)
+  target_link_libraries( test_mesh_smoothing PUBLIC CGAL::Eigen3_support CGAL::Ceres_support)
 
 #  target_compile_definitions( test_pmp_repair_self_intersections PRIVATE CGAL_PMP_USE_CERES_SOLVER )
 #  target_link_libraries( test_pmp_repair_self_intersections PRIVATE ceres )
-endif(TARGET ceres AND TARGET CGAL::Eigen3_support)
+endif(TARGET CGAL::Ceres_support AND TARGET CGAL::Eigen3_support)
 
 if(BUILD_TESTING)
   set_tests_properties(

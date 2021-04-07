@@ -256,27 +256,6 @@ executables should be linked with the CMake imported target
 
 The \opencv web site is <A HREF="https://opencv.org/">`https://opencv.org/`</A>.
 
-\subsection thirdpartyTensorFlow TensorFlow
-
-\tensorflow is a library designed for machine learning and deep learning.
-
-In \cgal, the C++ API of \tensorflow is used by the \ref
-PkgClassification package for neural network. The C++ API can be
-compiled using CMake: it is distributed as part of the official
-package and is located in `tensorflow/contrib/cmake`. Be sure to
-enable and compile the following targets:
-
-- `tensorflow_BUILD_ALL_KERNELS`
-- `tensorflow_BUILD_PYTHON_BINDINGS`
-- `tensorflow_BUILD_SHARED_LIB`.
-
-In order to use \tensorflow in \cgal programs, the executables
-should be linked with the CMake imported target
-`CGAL::TensorFlow_support` provided in
-`CGAL_TensorFlow_support.cmake`.
-
-The \tensorflow web site is <A HREF="https://www.tensorflow.org/">`https://www.tensorflow.org/`</A>.
-
 \subsection thirdpartyMETIS METIS
 <b>Version 5.1 or later</b>
 
@@ -309,6 +288,10 @@ requires solving complex non-linear least squares problems.
 
 Visit the official website of the library at <A HREF="http://ceres-solver.org/index.html">`ceres-solver.org`</A>
 for more information.
+
+\attention \ceres indicates that `glog` is a recommended dependency. `glog` has `libunwind` as a recommended dependency.
+On some platforms, linking with `libunwind` was responsible for an increase of the runtime of the final application.
+If you experience such an issue, we recommand to compile \ceres without `glog` support.
 
 \subsection thirdpartyGLPK GLPK
 

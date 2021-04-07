@@ -26,21 +26,6 @@ if(TARGET CGAL::Eigen3_support)
     )
   endif()
 
-  find_package(TensorFlow QUIET)
-  set_package_properties(
-    TensorFlow PROPERTIES
-    DESCRIPTION "A library for machine learning."
-    PURPOSE
-      "Enables the Neural Network predicate for the classification plugin.")
-
-  include(CGAL_TensorFlow_support)
-  if(NOT TARGET CGAL::TensorFlow_support)
-    message(
-      STATUS
-        "NOTICE: TensorFlow not found, Neural Network predicate for classification won't be available."
-    )
-  endif()
-
   qt5_wrap_ui(classificationUI_FILES Classification_widget.ui
     Classification_advanced_widget.ui)
   polyhedron_demo_plugin(
@@ -70,10 +55,6 @@ if(TARGET CGAL::Eigen3_support)
 
   if(TARGET CGAL::OpenCV_support)
     target_link_libraries(classification_plugin PUBLIC CGAL::OpenCV_support)
-  endif()
-
-  if(TARGET CGAL::TensorFlow_support)
-    target_link_libraries(classification_plugin PUBLIC CGAL::TensorFlow_support)
   endif()
 
   if(TARGET CGAL::TBB_support)

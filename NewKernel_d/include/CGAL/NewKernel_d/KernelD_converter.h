@@ -134,7 +134,7 @@ typename typeset_intersection<typename K1::Object_list, typename K2::Object_list
         KernelD_converter(){}
         KernelD_converter(K1 const&a,K2 const&b):Store_kernel<K1>(a),Store_kernel2<K2>(b){}
 
-        // For boost::result_of, used in transforming_iterator
+        // For the (not anymore used in CGAL) boost result of, used in transforming_iterator
         template<class T,int i=is_iterator<T>::value?42:0> struct result:Base::template result<T>{};
         template<class T> struct result<Final_(T),42> {
                 typedef transforming_iterator<Final_,T> type;

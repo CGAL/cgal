@@ -257,7 +257,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionAutorefine_triggered(Sce
     try{
       CGAL::Polygon_mesh_processing::experimental::autorefine(*poly_item->polyhedron());
     }
-    catch(CGAL::Polygon_mesh_processing::Corefinement::Triple_intersection_exception)
+    catch(const CGAL::Polygon_mesh_processing::Corefinement::Triple_intersection_exception&)
     {
       CGAL::Three::Three::warning(tr("The result of the requested operation is not handled (triple intersection)."));
     }
@@ -288,7 +288,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionAutorefineAndRMSelfInter
       if (!solved)
         CGAL::Three::Three::information(tr("Self-intersection could not be removed due to non-manifold edges in the output"));
     }
-    catch(CGAL::Polygon_mesh_processing::Corefinement::Triple_intersection_exception)
+    catch(const CGAL::Polygon_mesh_processing::Corefinement::Triple_intersection_exception&)
     {
       CGAL::Three::Three::warning(tr("The result of the requested operation is not handled (triple intersection)."));
     }

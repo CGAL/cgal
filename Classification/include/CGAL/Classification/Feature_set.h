@@ -228,7 +228,7 @@ public:
   {
 #ifdef CGAL_LINKED_WITH_TBB
     m_tasks->wait();
-    m_tasks.release();
+    m_tasks.reset();
     m_adders.clear();
 #endif
   }

@@ -47,7 +47,6 @@
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <boost/tuple/tuple.hpp>
-#include <boost/utility/result_of.hpp>
 #include <boost/unordered_map.hpp>
 
 #include <iostream>
@@ -650,7 +649,7 @@ public:
   // but       point()          -like functions have return type Point
 
   template<typename P> // can be Point or Point_3
-  typename boost::result_of<const typename GT::Construct_point_3(const P&)>::type
+  decltype(auto)
   construct_point(const P& p) const {
     return geom_traits().construct_point_3_object()(p);
   }
