@@ -20,6 +20,7 @@
 #include <CGAL/number_type_config.h>
 #include <CGAL/Algebraic_structure_traits.h>
 #include <CGAL/Real_embeddable_traits.h>
+#include <CGAL/Kernel/Same_uncertainty.h>
 
 namespace CGAL {
 CGAL_NTS_BEGIN_NAMESPACE
