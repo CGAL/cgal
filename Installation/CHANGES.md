@@ -6,7 +6,14 @@ Release History
 
 Release date: June 2021
 
+### Triangulations on the Sphere (new package)
+
+-   This package enables the construction and manipulation of Delaunay triangulations on the 2-sphere.
+    Triangulations are built incrementally and can be modified by insertion or removal of vertices.
+    Point location querying and primitives to build the dual Voronoi diagram are provided.
+
 ### General
+
 - Point set, polygon soup, and polygon mesh file I/O functions have been harmonized and documented:
   - Point set I/O functions can be found in the packages [Point_set_processing_3](https://doc.cgal.org/5.3/Manual/packages.html#PkgPolygonMeshProcessing), and [Point_set_3](https://doc.cgal.org/5.3/Manual/packages.html#PkgPointSet3).
   - Polygon mesh I/O functions can be found in the package [BGL](https://doc.cgal.org/5.3/Manual/packages.html#PkgBGL).
