@@ -360,6 +360,7 @@ public:
     }
 
     GeomTraits gt;
+    std::unordered_set<face_descriptor> deg_faces;
     for(face_descriptor f : faces(tmesh)){
       if(! Polygon_mesh_processing::is_degenerate_triangle_face(f, tmesh, parameters::geom_traits(gt).vertex_point_map(vpm))){
         typename Graph_traits::halfedge_descriptor h = halfedge(f, tmesh);
@@ -370,6 +371,8 @@ public:
         Vector3i face = { i, j, k };
         env_faces.push_back(face);
       }
+      else
+        deg_faces.insert(f);
     }
     if (is_default_parameter(get_parameter(np, internal_np::face_epsilon_map)))
       init(epsilon);
@@ -388,7 +391,7 @@ public:
                                                  Constant_property_map<face_descriptor, double>(epsilon));
 
       for(face_descriptor f : faces(tmesh))
-        if(! Polygon_mesh_processing::is_degenerate_triangle_face(f, tmesh, parameters::geom_traits(gt).vertex_point_map(vpm)))
+        if(deg_faces.count(f)==0)
           epsilon_values.push_back( get(epsilon_map, f) );
       init(epsilon_values);
     }
@@ -465,6 +468,7 @@ public:
       return insert_res.first->second;
     };
 
+    std::unordered_set<face_descriptor> deg_faces;
     for(face_descriptor f : face_range){
       if(! Polygon_mesh_processing::is_degenerate_triangle_face(f, tmesh, parameters::geom_traits(gt).vertex_point_map(vpm))){
         typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h = halfedge(f, tmesh);
@@ -475,6 +479,8 @@ public:
         Vector3i face = { i, j, k };
         env_faces.push_back(face);
       }
+      else
+        deg_faces.insert(f);
     }
 
     if (is_default_parameter(get_parameter(np, internal_np::face_epsilon_map)))
@@ -494,7 +500,7 @@ public:
                                                  Constant_property_map<face_descriptor, double>(epsilon));
 
       for(face_descriptor f : face_range)
-        if(! Polygon_mesh_processing::is_degenerate_triangle_face(f, tmesh, parameters::geom_traits(gt).vertex_point_map(vpm)))
+        if(deg_faces.count(f)==0)
           epsilon_values.push_back( get(epsilon_map, f) );
       init(epsilon_values);
     }
