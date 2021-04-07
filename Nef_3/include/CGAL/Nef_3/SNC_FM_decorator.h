@@ -472,7 +472,6 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
   std::list<SHalfedge_handle> SHalfedges;
   std::list<SHalfloop_handle> SHalfloops;
 
-  CGAL::Unique_hash_map<Vertex_handle,SHalfedge_handle> SHalfedgeBelow;
   CGAL::Unique_hash_map<Segment_iterator,SHalfedge_handle>  From;
 
   Segment_list Segments;
