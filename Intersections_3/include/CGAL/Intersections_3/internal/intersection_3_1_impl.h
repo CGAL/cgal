@@ -1689,9 +1689,9 @@ do_intersect(const Plane_3<R> &plane1, const Plane_3<R> &plane2,
 
   int pcount = 0;
   bool b12, b13,b23;
-  if(b12 = parallel(plane1,plane2)) pcount++;
-  if(b13 = parallel(plane1,plane3)) pcount++;
-  if(b23 = parallel(plane2,plane3)) pcount++;
+  if((b12 = parallel(plane1,plane2))) pcount++;
+  if((b13 = parallel(plane1,plane3))) pcount++;
+  if((b23 = parallel(plane2,plane3))) pcount++;
 
   if(pcount == 3){
     return (( (plane1 == plane2) || (plane1 == plane2.opposite())) && ( (plane1 == plane3) || (plane1 == plane3.opposite())));
