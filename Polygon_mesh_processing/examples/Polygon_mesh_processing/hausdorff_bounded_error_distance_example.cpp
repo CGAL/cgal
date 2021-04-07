@@ -620,20 +620,20 @@ int main(int argc, char** argv) {
   // Tests.
 
   Approximate_hd_wrapper apprx_hd(num_samples);
-  // Naive_bounded_error_hd_wrapper naive_hd(error_bound);
+  Naive_bounded_error_hd_wrapper naive_hd(error_bound);
   Bounded_error_hd_wrapper bound_hd(error_bound);
 
   // --- Testing basic properties.
 
   // test_synthetic_data(apprx_hd);
   // test_synthetic_data(naive_hd);
-  // test_synthetic_data(bound_hd);
+  test_synthetic_data(bound_hd);
 
   // --- Compare on common meshes.
 
   // test_one_versus_another(apprx_hd, naive_hd);
   // test_one_versus_another(naive_hd, bound_hd);
-  // test_one_versus_another(bound_hd, apprx_hd);
+  test_one_versus_another(bound_hd, apprx_hd);
 
   // --- Compare on real meshes.
 
