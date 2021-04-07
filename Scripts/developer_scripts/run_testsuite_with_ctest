@@ -176,7 +176,7 @@ setup_dirs()
   if [ -n "${USE_REFERENCE_PLATFORMS}" ]; then
     collect_all_reference_platforms
   fi
-  
+
   for PLATFORM in ${PLATFORMS}; do
 
     CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${PLATFORM}
@@ -226,9 +226,9 @@ publish_results()
   ${TAR} cf "test_results-${HOST}_${PLATFORM}.tar" "results_${CGAL_TESTER}_${PLATFORM}.tar.gz" "results_${CGAL_TESTER}_${PLATFORM}.txt"
   ${COMPRESSOR} -9f "test_results-${HOST}_${PLATFORM}.tar"
   COMPILER=`printf "%s" "$1" | tr -c '[A-Za-z0-9]./[=-=]*_\'\''\":?() ' 'x'`
-  
+
   FILENAME="${CGAL_RELEASE_ID}_${CGAL_TESTER}-test`datestr`-${COMPILER}-cmake.tar.gz"
-  
+
   LOGFILENAME="${CGAL_RELEASE_ID}-log`datestr`-${HOST}.gz"
   ${COMPRESSOR} -9f "${ACTUAL_LOGFILE}.test.${PLATFORM}"
   mv "${ACTUAL_LOGFILE}.test.${PLATFORM}.gz" "${LOGS_DIR}/${LOGFILENAME}"
@@ -262,7 +262,7 @@ run_test_on_platform()
   if [ ! -f "${INIT_FILE}" ]; then
     echo "error NEED A INIT FILE !"
   fi
-  cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' -DBUILD_TESTING=OFF -DWITH_tests=OFF $CGAL_DIR>installation.log 2>&1
+  cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' -DBUILD_TESTING=ON -DWITH_tests=ON -DCGAL_TEST_SUITE=ON $CGAL_DIR>installation.log 2>&1
   rm CMakeCache.txt
   CMAKE_OPTS="-DCGAL_TEST_SUITE=ON -DCMAKE_VERBOSE_MAKEFILE=ON"
   if [ -n "${SCRIPTS_DIR}" ]; then
@@ -279,7 +279,7 @@ run_test_on_platform()
   fi
   INIT=""
   for pkg in $LIST_TEST_PACKAGES; do
-    if [ -z "$INIT" ]; then 
+    if [ -z "$INIT" ]; then
       TO_TEST=$pkg
       INIT="y"
     else
@@ -313,14 +313,14 @@ run_test_on_platform()
   echo "TESTER_NAME ${CGAL_TESTER}" >> "$RESULT_FILE"
   echo "TESTER_ADDRESS ${TESTER_ADDRESS}" >> "$RESULT_FILE"
   echo "CGAL_TEST_PLATFORM ${PLATFORM}" >> "$RESULT_FILE"
-  grep -e "^-- USING " "${CGAL_BINARY_DIR}/installation.log" >> $RESULT_FILE 
+  grep -e "^-- USING " "${CGAL_BINARY_DIR}/installation.log" >> $RESULT_FILE
   echo "------------" >> "$RESULT_FILE"
   #if git branch, create empty scm file for python script
   if [ -n "${SCRIPTS_DIR}" ]; then
     touch ../../../../../.scm-branch
   fi
   python3 ${CGAL_DIR}/${TESTSUITE_DIR}test/parse-ctest-dashboard-xml.py $CGAL_TESTER $PLATFORM
-  
+
   for file in $(ls|grep _Tests); do
     mv $file "$(echo "$file" | sed 's/_Tests//g')"
   done
@@ -329,7 +329,7 @@ run_test_on_platform()
   mkdir -p Installation
   chmod 777 Installation
   cat "${CGAL_BINARY_DIR}/package_installation.log" >> "Installation/${TEST_REPORT}"
-  
+
   #call the python script to complete the results report.
   python3 ${CGAL_DIR}/${TESTSUITE_DIR}test/post_process_ctest_results.py Installation/${TEST_REPORT} ${TEST_REPORT} results_${CGAL_TESTER}_${PLATFORM}.txt
   rm -f $OUTPUT_FILE $OUTPUT_FILE.gz
@@ -351,7 +351,7 @@ run_test_on_host()
     collect_all_current_platforms "${CGAL_BINARY_DIR_BASE}"
   fi
 
-  for PLATFORM in ${PLATFORMS}; do  
+  for PLATFORM in ${PLATFORMS}; do
     run_test_on_platform "${PLATFORM}"
     publish_results "${PLATFORM}"
     if [ -z "${KEEP_TESTS}" ]; then
@@ -365,13 +365,13 @@ run_test_on_host()
 setup_dirs
 
 
-# Setup cmake 
+# Setup cmake
 if uname | grep -q "CYGWIN"; then
   JOM="`which jom`"
-  if [ -e "$JOM" ]; then 
+  if [ -e "$JOM" ]; then
     CMAKE_GENERATOR='-GNMake Makefiles JOM'
     MAKE_CMD='jom'
-  else 
+  else
     CMAKE_GENERATOR='-GNMake Makefiles'
     MAKE_CMD='nmake'
   fi

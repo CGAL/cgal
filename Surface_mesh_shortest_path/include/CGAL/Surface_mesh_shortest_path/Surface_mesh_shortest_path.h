@@ -977,8 +977,6 @@ private:
     typename Traits::Construct_point_on_2 cpo2(m_traits.construct_point_on_2_object());
     typename Traits::Compute_parametric_distance_along_segment_2 pdas2(m_traits.compute_parametric_distance_along_segment_2_object());
 
-    typedef typename cpp11::result_of<typename Traits::Intersect_2(Line_2, Line_2)>::type LineLineIntersectResult;
-
     Point_2 leftPoint;
     Point_2 rightPoint;
 
@@ -1003,7 +1001,7 @@ private:
     }
     else
     {
-      LineLineIntersectResult cgalIntersection = i2(cl2(segment), cl2(leftBoundary));
+      const auto cgalIntersection = i2(cl2(segment), cl2(leftBoundary));
 
       if (!cgalIntersection || !boost::get<Point_2>(&*cgalIntersection))
       {
@@ -1015,7 +1013,7 @@ private:
       }
       else
       {
-        Point_2* result = boost::get<Point_2>(&*cgalIntersection);
+        const Point_2* result = boost::get<Point_2>(&*cgalIntersection);
         FT t0 = pdas2(cs2(segment), ct2(segment), *result);
 
         if (t0 >= FT(1))
@@ -1061,7 +1059,7 @@ private:
     }
     else
     {
-      LineLineIntersectResult cgalIntersection = i2(cl2(segment), cl2(rightBoundary));
+      const auto cgalIntersection = i2(cl2(segment), cl2(rightBoundary));
 
       if (!cgalIntersection || !boost::get<Point_2>(&*cgalIntersection))
       {
@@ -1073,7 +1071,7 @@ private:
       }
       else
       {
-        Point_2* result = boost::get<Point_2>(&*cgalIntersection);
+        const Point_2* result = boost::get<Point_2>(&*cgalIntersection);
         FT t0 = pdas2(cs2(segment), ct2(segment), *result);
 
         if (t0 <= FT(0))
@@ -1697,8 +1695,6 @@ private:
     typename Traits::Construct_target_2 construct_target_2(m_traits.construct_target_2_object());
     typename Traits::Intersect_2 intersect_2(m_traits.intersect_2_object());
 
-    typedef typename cpp11::result_of<typename Traits::Intersect_2 (Line_2, Line_2)>::type LineLineIntersectResult;
-
     Cone_tree_node* current = startNode;
     Point_2 currentLocation(startLocation);
 
@@ -1713,7 +1709,7 @@ private:
           const Point_2& currentSourceImage = current->source_image();
           Ray_2 rayToLocation(construct_ray_2(currentSourceImage, currentLocation));
 
-          LineLineIntersectResult cgalIntersection = intersect_2(construct_line_2(entrySegment), construct_line_2(rayToLocation));
+          const auto cgalIntersection = intersect_2(construct_line_2(entrySegment), construct_line_2(rayToLocation));
 
           CGAL_assertion(bool(cgalIntersection));
 

@@ -11,8 +11,6 @@
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 
-
-
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_VERTEX_BASE_2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_VERTEX_BASE_2_H
 
@@ -21,12 +19,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
-
 #include <CGAL/Triangulation_ds_vertex_base_2.h>
-#include <CGAL/Segment_Delaunay_graph_storage_site_2.h>
-#include <CGAL/Segment_Delaunay_graph_simple_storage_site_2.h>
-
-
 
 namespace CGAL {
 

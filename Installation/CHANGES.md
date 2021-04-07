@@ -20,10 +20,34 @@ A comprehensive list of the supported file formats is available in the Stream_su
     is within a polyhedral envelope around a set of triangles. It is based on the work of
     Bolun Wang, Teseo Schneider, Yixin Hu, Marco Attene, and Daniele Panozzo.
     "Exact and efficient polyhedral envelope containment check." (ACM Trans. Graph., 39-4, July 2020).
+-   Added more functions in the visitor of the corefinement based methods to track all edge creations.
 
 ### [Surface Mesh Simplification](https://doc.cgal.org/5.3/Manual/packages.html#PkgSurfaceMeshSimplification)
 -   Added a filtering mechanism so that costly tests get only applied to the next candidate for the edge collapse.
 -   Added the class `Polyhedral_envelope_filter` that enables to perform mesh simplification inside a polyhedral envelope of the input mesh.
+
+### Surface Mesh Topology
+- Added the function `CGAL::Surface_mesh_topology::Curves_on_surface_topology::is_homotopic_to_simple_cycle()`, which can be used to determine whehter a closed path
+  on a surface mesh can be continously transformed to a cycle without self intersection.
+
+### 2D Regularized Boolean Set Operations
+-   Added documentation for the free functions `oriented_side(const Point_2& p, ....)` that accept a point and a polygon, and improved the documentation of all other functions
+
+### [2D Polyline Simplification](https://doc.cgal.org/5.3/Manual/packages.html#PkgPolylineSimplification2)
+-   When polylines have common subsequences of vertices these subsequences may be simplifified simultaneously.
+
+### [2D and 3D Alpha Shapes](https://doc.cgal.org/5.3/Manual/packages.html#PkgAlphaShapes2)
+-   The following deprecated classes have been removed: `Alpha_shape_euclidean_traits_2`,
+    `Weighted_alpha_shape_euclidean_traits_2`, `Alpha_shape_euclidean_traits_3`, and
+    `Weighted_alpha_shape_euclidean_traits_3`. All CGAL kernel can be used directly as models
+    of the concepts of the 2D and 3D Alpha Shape packages.
+
+### [dD Triangulations](https://doc.cgal.org/5.3/Manual/packages.html#PkgTriangulations)
+- Added the function `insert_if_in_star()` to the class `CGAL::Regular_triangulation`, which enables users to insert a point `p` in a regular triangulation on the condition that `p` appears post-insertion in the star of a user-specified, existing vertex.
+
+### [Classification](https://doc.cgal.org/5.3/Manual/packages.html#PkgClassification)
+- **Breaking change**: the support for TensorFlow was dropped, the
+  classifier `CGAL::TensorFlow::Neural_network_classifier` was removed.
 
 [Release 5.2](https://github.com/CGAL/cgal/releases/tag/v5.2)
 -----------

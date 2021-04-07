@@ -28,6 +28,7 @@
 #include <boost/range/size.hpp>
 #include <boost/range/value_type.hpp>
 #include <boost/range/reference.hpp>
+#include <boost/container/flat_set.hpp>
 
 #include <array>
 #include <set>
@@ -177,14 +178,16 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
   //check there is no duplicated ordered edge, and
   //check there is no polygon with twice the same vertex
   std::set<std::pair<V_ID, V_ID> > edge_set;
+  boost::container::flat_set<V_ID> polygon_vertices;
   V_ID max_id = 0;
+
   for(const Polygon& polygon : polygons)
   {
     std::size_t nb_edges = boost::size(polygon);
     if(nb_edges < 3)
       return false;
 
-    std::set<V_ID> polygon_vertices;
+    polygon_vertices.clear();
     V_ID prev = *std::prev(boost::end(polygon));
     for(V_ID id : polygon)
     {

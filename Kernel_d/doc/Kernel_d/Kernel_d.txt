@@ -480,17 +480,14 @@ that are part of flats (`R::Segment_d`, `R::Ray_d`,
 returns a `boost::optional< boost::variant< T... > >`
 where `T...` is a list of all possible resulting geometric objects.
 
-The exact result type of an intersection can be determined by using
-`cpp11::result_of<Kernel::Intersect_d(Type1, Type2)>::%type`
-where `Type1` and `Type2` are the types of the objects
-used in the intersection computation.
+The return type of intersecting two objects of the types `Type1` and `Type2` can be
+specified through the placeholder type specifier `auto`.
 
 
 \subsubsection Kernel_dExample Example
 
-In the following example, the object type is used as a return value for
-the intersection computation, as there are
-possibly different return values.
+In the following example, the `auto` is used for the intersection computation,
+as there are possibly different return values.
 
 \code{.cpp}
 typedef Cartesian_d<double> K;
@@ -500,9 +497,9 @@ typedef Segment_d<K> Segment;
 Segment s1, s2;
 std::cin >> s1 >> s2;
 
-cpp11::result_of<K::Intersect_d(Segment, Segment)>::type
-  v = intersection(s1, s2);
-if(v) {
+// use auto
+auto v = intersection(s1, s2);
+if (v) {
   // not empty
   if (const Point *p = boost::get<Point>(&*v) ) {
     // do something with *p

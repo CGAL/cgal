@@ -442,12 +442,15 @@ friend std::ostream& operator<<
 }
 
 
-~Node() {
+~Node() CGAL_NOEXCEPT(CGAL_NO_ASSERTIONS_BOOL)
+{
   CGAL_NEF_TRACEN("~Node: deleting node...");
-  if( !is_leaf()) {
-    delete left_node;
-    delete right_node;
-  }
+  CGAL_destructor_assertion_catch(
+    if( !is_leaf()) {
+      delete left_node;
+      delete right_node;
+    }
+  );
 }
 
 private:
@@ -524,19 +527,18 @@ else {
     Segment_3 s = S.front().second;
     S.pop_front();
     if( n->is_leaf()) {
-#ifndef NDEBUG
+
       CGAL_assertion_code(
-      if( first_segment) {
-        first_segment = false;
-        CGAL_NEF_TRACEN("operator++: prev_segment=(none), segment="<<s);
-      }
-      else {
-        CGAL_assertion( prev_segment.target() == s.source());
-        CGAL_assertion( prev_segment.direction() == s.direction());
-        CGAL_NEF_TRACEN("operator++: prev_segment="<<prev_segment<<", segment="<<s);
-      }
-      prev_segment = s);
-#endif
+        if( first_segment) {
+          first_segment = false;
+          CGAL_NEF_TRACEN("operator++: prev_segment=(none), segment="<<s);
+        } else {
+          CGAL_assertion( prev_segment.target() == s.source());
+          CGAL_assertion( prev_segment.direction() == s.direction());
+          CGAL_NEF_TRACEN("operator++: prev_segment="<<prev_segment<<", segment="<<s);
+        }
+        prev_segment = s);
+
       node = n;
       break;
     }
@@ -1104,9 +1106,12 @@ bool update( Node* node,
   return (left_updated || right_updated);
 }
 
-~K3_tree() {
+~K3_tree() CGAL_NOEXCEPT(CGAL_NO_ASSERTIONS_BOOL)
+{
   CGAL_NEF_TRACEN("~K3_tree: deleting root...");
-  delete root;
+  CGAL_destructor_assertion_catch(
+    delete root;
+  );
 }
 
 private:

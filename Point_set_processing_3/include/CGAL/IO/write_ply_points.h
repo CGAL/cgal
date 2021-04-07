@@ -175,7 +175,7 @@ template <typename PointRange,
      \cgalParamNBegin{stream_precision}
        \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
        \cgalParamType{int}
-       \cgalParamDefault{`6`}
+       \cgalParamDefault{`the precision of the stream `os``}
        \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
      \cgalParamNEnd
    \cgalNamedParamsEnd
@@ -212,8 +212,7 @@ bool write_PLY(std::ostream& os,
     return false;
   }
 
-  const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
-  os.precision(precision);
+  set_stream_precision_from_NP(os, np);
 
   if (has_normals)
     return write_PLY_with_properties(os, points,

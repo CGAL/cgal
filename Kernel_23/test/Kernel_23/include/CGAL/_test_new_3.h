@@ -747,6 +747,7 @@ test_new_3(const R& rep)
         = rep.oriented_side_3_object();
   Oriented_side tmp39 = oriented_side(h2,p2);
                 tmp39 = oriented_side(sp9,p2);
+                tmp39 = oriented_side(p2,v3,p2);
   (void) tmp39;
 
   typename R::Bounded_side_3 bounded_side

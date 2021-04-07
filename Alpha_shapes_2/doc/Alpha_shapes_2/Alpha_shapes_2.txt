@@ -134,9 +134,8 @@ All \cgal kernels are models of both concepts.
 
 The triangulation data structure of the triangulation
 has to be a model of the concept `TriangulationDataStructure_2`,
-and it must be parameterized with
-vertex and face classes which are models of the concepts
-`AlphaShapeVertex_2` and `AlphaShapeFace_2`.
+whose vertex and face classes are models of the concepts
+`AlphaShapeVertex_2` and `AlphaShapeFace_2`, respectively.
 The classes `Alpha_shape_vertex_base_2<Gt, Vb>` and `Alpha_shape_face_base_2<Gt, Fb>`
 are models of these concepts and can be used for all type of alpha shapes,
 provided that the template parameters `Vb` and `Fb` are appropriately chosen,

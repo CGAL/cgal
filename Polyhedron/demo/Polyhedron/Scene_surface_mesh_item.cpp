@@ -2410,7 +2410,7 @@ void Scene_surface_mesh_item::updateVertex(vertex_descriptor vh)
         getEdgeContainer(0)->getVbo(Ed::Vertices),
         new_point,id);
 
-  for(const auto & v_it : CGAL::vertices_around_target(vh, *face_graph()))
+  for(const auto v_it : CGAL::vertices_around_target(vh, *face_graph()))
   {
     EPICK::Vector_3 n = CGAL::Polygon_mesh_processing::compute_vertex_normal(v_it, *face_graph());
     cgal_gl_data new_n[3];
@@ -2430,7 +2430,7 @@ void Scene_surface_mesh_item::updateVertex(vertex_descriptor vh)
  }
 
 
-   for(const auto& f_it : CGAL::faces_around_target( halfedge(vh, *face_graph()), *face_graph()))
+   for(const auto f_it : CGAL::faces_around_target( halfedge(vh, *face_graph()), *face_graph()))
    {
      if (f_it == boost::graph_traits<SMesh>::null_face()) continue;
 

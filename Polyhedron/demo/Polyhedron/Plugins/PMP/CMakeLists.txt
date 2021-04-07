@@ -42,9 +42,9 @@ if(TARGET CGAL::Eigen3_support)
       polyhedron_demo_plugin(smoothing_plugin Smoothing_plugin ${smoothingUI_FILES})
       target_link_libraries(smoothing_plugin PUBLIC scene_surface_mesh_item scene_selection_item CGAL::Eigen3_support)
       find_package(Ceres QUIET)
-      if(TARGET ceres)
-        target_compile_definitions( smoothing_plugin PRIVATE CGAL_PMP_USE_CERES_SOLVER )
-        target_link_libraries(smoothing_plugin PUBLIC ceres)
+      include(CGAL_Ceres_support)
+      if(TARGET CGAL::Ceres_support)
+        target_link_libraries(smoothing_plugin PUBLIC CGAL::Ceres_support)
       endif()
 
       set_package_properties(

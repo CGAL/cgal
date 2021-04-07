@@ -18,7 +18,6 @@
 
 #include <CGAL/config.h>
 #include <CGAL/kernel_assertions.h>
-#include <CGAL/result_of.h>
 #include <CGAL/IO/io.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/array.h>

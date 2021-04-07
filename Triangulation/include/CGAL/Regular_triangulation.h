@@ -974,7 +974,8 @@ Regular_triangulation<Traits, TDS>
   // => we don't insert it
   if (!in_conflict)
   {
-    m_hidden_points.push_back(p);
+    if(only_if_this_vertex_is_in_the_cz == Vertex_handle())
+      m_hidden_points.push_back(p);
     return Vertex_handle();
   }
   else

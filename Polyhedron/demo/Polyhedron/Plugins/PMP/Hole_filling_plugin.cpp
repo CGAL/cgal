@@ -939,7 +939,7 @@ void Polyhedron_demo_hole_filling_plugin::hole_filling_polyline_action() {
       continue;
     }
     if(it->size() < 4) { // no triangle, skip it (needs at least 3 + 1 repeat)
-      print_message("Warning: skipping polyline which has less than 4 points!");
+      print_message("Warning: skipping polyline which has fewer than 4 points!");
       continue;
     }
 

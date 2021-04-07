@@ -318,7 +318,7 @@ qreal KeyFrameInterpolator::keyFrameTime(int index) const {
 /*! Returns the duration of the KeyFrameInterpolator path, expressed in seconds.
 
  Simply corresponds to lastTime() - firstTime(). Returns 0.0 if the path has
- less than 2 keyFrames. See also keyFrameTime(). */
+ fewer than 2 keyFrames. See also keyFrameTime(). */
 CGAL_INLINE_FUNCTION
 qreal KeyFrameInterpolator::duration() const {
   return lastTime() - firstTime();

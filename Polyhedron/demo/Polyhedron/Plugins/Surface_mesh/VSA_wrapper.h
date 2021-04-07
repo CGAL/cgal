@@ -66,7 +66,7 @@ class VSA_WRAPPER_EXPORT VSA_wrapper {
       // fitting center
       Vector_3 center = CGAL::NULL_VECTOR;
       FT area(0.0);
-      for(const face_descriptor f : faces) {
+      for(const face_descriptor& f : faces) {
         center = center + (get(center_pmap, f) - CGAL::ORIGIN) * get(area_pmap, f);
         area += get(area_pmap, f);
       }

@@ -22,7 +22,6 @@
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
-#include <boost/utility/result_of.hpp>
 
 namespace CGAL {
 namespace Wrap {

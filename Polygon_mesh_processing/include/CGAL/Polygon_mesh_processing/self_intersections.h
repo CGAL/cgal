@@ -47,6 +47,7 @@
 #include <exception>
 #include <sstream>
 #include <type_traits>
+#include <typeinfo>
 #include <vector>
 
 #ifdef DOXYGEN_RUNNING
@@ -503,11 +504,21 @@ bool does_self_intersect(const FaceRange& face_range,
     CGAL::Emptyset_iterator unused_out;
     internal::self_intersections_impl<ConcurrencyTag>(face_range, tmesh, unused_out, true /*throw*/, np);
   }
-  catch(CGAL::internal::Throw_at_output_exception&)
+  catch (const CGAL::internal::Throw_at_output_exception&)
   {
     return true;
   }
-
+  #if defined(CGAL_LINKED_WITH_TBB) && TBB_USE_CAPTURED_EXCEPTION
+  catch (const tbb::captured_exception& e)
+  {
+    const char* ti1 = e.name();
+    const char* ti2 = typeid(const CGAL::internal::Throw_at_output_exception&).name();
+    const std::string tn1(ti1);
+    const std::string tn2(ti2);
+    if (tn1 == tn2) return true;
+    else throw;
+  }
+  #endif
   return false;
 }
 

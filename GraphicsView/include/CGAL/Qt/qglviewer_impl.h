@@ -732,7 +732,7 @@ void CGAL::QGLViewer::setDefaultMouseBindings() {
         (mh == qglviewer::FRAME) ? frameKeyboardModifiers : cameraKeyboardModifiers;
 
     setMouseBinding(modifiers, ::Qt::LeftButton, mh, qglviewer::ROTATE);
-    setMouseBinding(modifiers, ::Qt::MidButton, mh, qglviewer::ZOOM);
+    setMouseBinding(modifiers, ::Qt::MiddleButton, mh, qglviewer::ZOOM);
     setMouseBinding(modifiers, ::Qt::RightButton, mh, qglviewer::TRANSLATE);
 
     setMouseBinding(::Qt::Key_R, modifiers, ::Qt::LeftButton, mh, qglviewer::SCREEN_ROTATE);
@@ -742,7 +742,7 @@ void CGAL::QGLViewer::setDefaultMouseBindings() {
   setWheelBinding(::Qt::Key_Z, ::Qt::NoModifier, qglviewer::CAMERA, qglviewer::ZOOM_FOV);
 
   // Z o o m   o n   r e g i o n
-  setMouseBinding(::Qt::ShiftModifier, ::Qt::MidButton, qglviewer::CAMERA, qglviewer::ZOOM_ON_REGION);
+  setMouseBinding(::Qt::ShiftModifier, ::Qt::MiddleButton, qglviewer::CAMERA, qglviewer::ZOOM_ON_REGION);
 
   // S e l e c t
   setMouseBinding(::Qt::ShiftModifier, ::Qt::LeftButton, qglviewer::SELECT);
@@ -750,7 +750,7 @@ void CGAL::QGLViewer::setDefaultMouseBindings() {
   setMouseBinding(::Qt::ShiftModifier, ::Qt::RightButton, qglviewer::RAP_FROM_PIXEL);
   // D o u b l e   c l i c k
   setMouseBinding(::Qt::NoModifier, ::Qt::LeftButton, qglviewer::ALIGN_CAMERA, true);
-  setMouseBinding(::Qt::NoModifier, ::Qt::MidButton, qglviewer::SHOW_ENTIRE_SCENE, true);
+  setMouseBinding(::Qt::NoModifier, ::Qt::MiddleButton, qglviewer::SHOW_ENTIRE_SCENE, true);
   setMouseBinding(::Qt::NoModifier, ::Qt::RightButton, qglviewer::CENTER_SCENE, true);
 
   setMouseBinding(frameKeyboardModifiers, ::Qt::LeftButton, qglviewer::ALIGN_FRAME, true);
@@ -1177,7 +1177,7 @@ static QString mouseButtonsString(::Qt::MouseButtons b) {
     result += CGAL::QGLViewer::tr("Left", "left mouse button");
     addAmpersand = true;
   }
-  if (b & ::Qt::MidButton) {
+  if (b & ::Qt::MiddleButton) {
     if (addAmpersand)
       result += " & ";
     result += CGAL::QGLViewer::tr("Middle", "middle mouse button");
@@ -1727,7 +1727,7 @@ Mouse tab.
 \c ::Qt::AltModifier, \c ::Qt::ShiftModifier, \c ::Qt::MetaModifier). Possibly
 combined using the \c "|" operator.
 
-\p button is one of the ::Qt::MouseButtons (\c ::Qt::LeftButton, \c ::Qt::MidButton,
+\p button is one of the ::Qt::MouseButtons (\c ::Qt::LeftButton, \c ::Qt::MiddleButton,
 \c ::Qt::RightButton...).
 
 \p doubleClick indicates whether or not the user has to double click this button
@@ -3006,27 +3006,27 @@ void CGAL::QGLViewer::toggleCameraMode() {
     camera()->frame()->stopSpinning();
 
     setMouseBinding(modifiers, ::Qt::LeftButton, qglviewer::CAMERA, qglviewer::MOVE_FORWARD);
-    setMouseBinding(modifiers, ::Qt::MidButton, qglviewer::CAMERA, qglviewer::LOOK_AROUND);
+    setMouseBinding(modifiers, ::Qt::MiddleButton, qglviewer::CAMERA, qglviewer::LOOK_AROUND);
     setMouseBinding(modifiers, ::Qt::RightButton, qglviewer::CAMERA, qglviewer::MOVE_BACKWARD);
 
     setMouseBinding(::Qt::Key_R, modifiers, ::Qt::LeftButton, qglviewer::CAMERA, qglviewer::ROLL);
 
     setMouseBinding(::Qt::NoModifier, ::Qt::LeftButton, qglviewer::NO_CLICK_ACTION, true);
-    setMouseBinding(::Qt::NoModifier, ::Qt::MidButton, qglviewer::NO_CLICK_ACTION, true);
+    setMouseBinding(::Qt::NoModifier, ::Qt::MiddleButton, qglviewer::NO_CLICK_ACTION, true);
     setMouseBinding(::Qt::NoModifier, ::Qt::RightButton, qglviewer::NO_CLICK_ACTION, true);
 
     setWheelBinding(modifiers, qglviewer::CAMERA, qglviewer::MOVE_FORWARD);
   } else {
     // Should stop flyTimer. But unlikely and not easy.
     setMouseBinding(modifiers, ::Qt::LeftButton, qglviewer::CAMERA, qglviewer::ROTATE);
-    setMouseBinding(modifiers, ::Qt::MidButton, qglviewer::CAMERA, qglviewer::ZOOM);
+    setMouseBinding(modifiers, ::Qt::MiddleButton, qglviewer::CAMERA, qglviewer::ZOOM);
     setMouseBinding(modifiers, ::Qt::RightButton, qglviewer::CAMERA, qglviewer::TRANSLATE);
 
     setMouseBinding(::Qt::Key_R, modifiers, ::Qt::LeftButton, qglviewer::CAMERA,
                     qglviewer::SCREEN_ROTATE);
 
     setMouseBinding(::Qt::NoModifier, ::Qt::LeftButton, qglviewer::ALIGN_CAMERA, true);
-    setMouseBinding(::Qt::NoModifier, ::Qt::MidButton, qglviewer::SHOW_ENTIRE_SCENE, true);
+    setMouseBinding(::Qt::NoModifier, ::Qt::MiddleButton, qglviewer::SHOW_ENTIRE_SCENE, true);
     setMouseBinding(::Qt::NoModifier, ::Qt::RightButton, qglviewer::CENTER_SCENE, true);
 
     setWheelBinding(modifiers, qglviewer::CAMERA, qglviewer::ZOOM);

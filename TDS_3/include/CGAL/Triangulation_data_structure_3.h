@@ -55,7 +55,7 @@
 #  include <tbb/scalable_allocator.h>
 #endif
 
-#include <boost/type_traits/is_convertible.hpp>
+#include <type_traits>
 
 namespace CGAL {
 
@@ -122,23 +122,27 @@ public:
   // Cells
   // N.B.: Concurrent_compact_container requires TBB
 #ifdef CGAL_LINKED_WITH_TBB
-  typedef typename boost::mpl::if_c
+  typedef typename std::conditional
   <
-    boost::is_convertible<Concurrency_tag, Parallel_tag>::value,
+    std::is_convertible<Concurrency_tag, Parallel_tag>::value,
     Concurrent_compact_container<Cell, tbb::scalable_allocator<Cell> >,
     Compact_container<Cell>
   >::type                                                Cell_range;
 
 # else
+  CGAL_static_assertion_msg
+    (!(std::is_convertible<Concurrency_tag, Parallel_tag>::value),
+     "In CGAL triangulations, `Parallel_tag` can only be used with the Intel TBB library. "
+     "Make TBB available in the build system and then define the macro `CGAL_LINKED_WITH_TBB`.");
   typedef Compact_container<Cell>                        Cell_range;
 #endif
 
   // Vertices
   // N.B.: Concurrent_compact_container requires TBB
 #ifdef CGAL_LINKED_WITH_TBB
-  typedef typename boost::mpl::if_c
+  typedef typename std::conditional
   <
-    boost::is_convertible<Concurrency_tag, Parallel_tag>::value,
+    std::is_convertible<Concurrency_tag, Parallel_tag>::value,
     Concurrent_compact_container<Vertex, tbb::scalable_allocator<Vertex> >,
     Compact_container<Vertex>
   >::type                                                Vertex_range;
@@ -3669,7 +3673,7 @@ is_valid(bool verbose, int level ) const
     {
       if ( number_of_vertices() < 2 ) {
         if (verbose)
-            std::cerr << "less than 2 vertices but dimension 0" << std::endl;
+            std::cerr << "fewer than 2 vertices but dimension 0" << std::endl;
         CGAL_triangulation_assertion(false);
         return false;
       }

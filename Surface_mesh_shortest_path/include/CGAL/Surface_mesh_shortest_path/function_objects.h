@@ -25,7 +25,6 @@
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/number_utils.h>
-#include <CGAL/result_of.h>
 #include <CGAL/Cartesian_converter.h>
 
 #include <cmath>
@@ -459,12 +458,10 @@ public:
 
   result_type operator () (const Segment_2& s1, const Line_2& l1, const Segment_2& s2, const Line_2& l2) const
   {
-    typedef typename CGAL::cpp11::result_of<Intersect_2(Line_2, Line_2)>::type LineLineIntersectResult;
-
     Line_2 s1Line(m_construct_line_2(s1));
     Line_2 s2Line(m_construct_line_2(s2));
 
-    LineLineIntersectResult intersectResult1(m_intersect_2(s1Line, l1));
+    const auto intersectResult1 = m_intersect_2(s1Line, l1);
     CGAL_assertion(bool(intersectResult1));
     if (!intersectResult1) return CGAL::SMALLER;
 
@@ -476,7 +473,7 @@ public:
     CGAL_assertion_code(FT t1 = m_parametric_distance_along_segment_2(s1, *p1_ptr);)
     CGAL_assertion(t1 >= FT(-1)/FT(100000) && t1 <= FT(1)+FT(1)/FT(100000));
 
-    LineLineIntersectResult intersectResult2 = m_intersect_2(s2Line, l2);
+    const auto intersectResult2 = m_intersect_2(s2Line, l2);
     CGAL_assertion(bool(intersectResult2));
     if (!intersectResult2) return CGAL::SMALLER;
 

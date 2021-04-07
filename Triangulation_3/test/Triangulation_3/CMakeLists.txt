@@ -35,6 +35,13 @@ if(TARGET CGAL::TBB_support)
                  test_regular_insert_range_with_info)
     target_link_libraries(${target} PUBLIC CGAL::TBB_support)
   endforeach()
+  if(BUILD_TESTING)
+    set_property(TEST
+      execution___of__test_delaunay_3
+      execution___of__test_regular_3
+      execution___of__test_regular_insert_range_with_info
+      PROPERTY RUN_SERIAL 1)
+  endif()
 endif()
 
 if(BUILD_TESTING)

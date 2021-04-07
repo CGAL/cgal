@@ -19,7 +19,7 @@
 
 // Note that this header file is intentionnaly not protected with a
 // macro (as <cassert>). Calling it a second time with another value
-// for NDEBUG for example must make a difference.
+// for CGAL_NO_ASSERTIONS for example must make a difference.
 
 #include <CGAL/assertions.h>
 
@@ -35,8 +35,7 @@
 
 #ifndef CGAL_POLYGON_ASSERTIONS_H
 #define CGAL_POLYGON_ASSERTIONS_H
-#if defined(CGAL_POLYGON_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
-|| defined(NDEBUG)
+#if defined(CGAL_POLYGON_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS)
 namespace CGAL{
 inline void set_use_polygon_assertions(bool){}
 inline bool get_use_polygon_assertions(){return true;}
@@ -57,8 +56,7 @@ inline void set_use_polygon_assertions(bool b)
 #endif
 #endif // CGAL_POLYGON_ASSERTIONS_H
 
-#if defined(CGAL_POLYGON_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
-  || defined(NDEBUG)
+#if defined(CGAL_POLYGON_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS)
 #  define CGAL_polygon_assertion(EX) (static_cast<void>(0))
 #  define CGAL_polygon_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_polygon_assertion_code(CODE)
@@ -77,8 +75,7 @@ inline void set_use_polygon_assertions(bool b)
 #undef CGAL_polygon_exactness_assertion_code
 
 #if defined(CGAL_POLYGON_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
-  || (!defined(CGAL_POLYGON_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || defined(NDEBUG)
+  || (!defined(CGAL_POLYGON_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))
 #  define CGAL_polygon_exactness_assertion(EX) (static_cast<void>(0))
 #  define CGAL_polygon_exactness_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_polygon_exactness_assertion_code(CODE)
@@ -98,8 +95,7 @@ inline void set_use_polygon_assertions(bool b)
 
 #if defined(CGAL_POLYGON_NO_ASSERTIONS) \
   || defined(CGAL_NO_ASSERTIONS) \
-  || (!defined(CGAL_POLYGON_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || (!defined(CGAL_POLYGON_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))
 #  define CGAL_polygon_expensive_assertion(EX) (static_cast<void>(0))
 #  define CGAL_polygon_expensive_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_polygon_expensive_assertion_code(CODE)
@@ -119,8 +115,7 @@ inline void set_use_polygon_assertions(bool b)
 
 #if defined(CGAL_POLYGON_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
   || (!defined(CGAL_POLYGON_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || (!defined(CGAL_POLYGON_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || (!defined(CGAL_POLYGON_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))
 #  define CGAL_polygon_expensive_exactness_assertion(EX) (static_cast<void>(0))
 #  define CGAL_polygon_expensive_exactness_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_polygon_expensive_exactness_assertion_code(CODE)
@@ -141,8 +136,7 @@ inline void set_use_polygon_assertions(bool b)
 #undef CGAL_polygon_precondition_msg
 #undef CGAL_polygon_precondition_code
 
-#if defined(CGAL_POLYGON_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS) \
-  || defined(NDEBUG)
+#if defined(CGAL_POLYGON_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS)
 #  define CGAL_polygon_precondition(EX) (static_cast<void>(0))
 #  define CGAL_polygon_precondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_polygon_precondition_code(CODE)
@@ -161,8 +155,7 @@ inline void set_use_polygon_assertions(bool b)
 #undef CGAL_polygon_exactness_precondition_code
 
 #if defined(CGAL_POLYGON_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS) \
-  || (!defined(CGAL_POLYGON_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || defined(NDEBUG)
+  || (!defined(CGAL_POLYGON_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))
 #  define CGAL_polygon_exactness_precondition(EX) (static_cast<void>(0))
 #  define CGAL_polygon_exactness_precondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_polygon_exactness_precondition_code(CODE)
@@ -181,8 +174,7 @@ inline void set_use_polygon_assertions(bool b)
 #undef CGAL_polygon_expensive_precondition_code
 
 #if defined(CGAL_POLYGON_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS) \
-  || (!defined(CGAL_POLYGON_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || (!defined(CGAL_POLYGON_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))
 #  define CGAL_polygon_expensive_precondition(EX) (static_cast<void>(0))
 #  define CGAL_polygon_expensive_precondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_polygon_expensive_precondition_code(CODE)
@@ -202,8 +194,7 @@ inline void set_use_polygon_assertions(bool b)
 
 #if defined(CGAL_POLYGON_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS) \
   || (!defined(CGAL_POLYGON_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || (!defined(CGAL_POLYGON_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || (!defined(CGAL_POLYGON_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))
 #  define CGAL_polygon_expensive_exactness_precondition(EX) (static_cast<void>(0))
 #  define CGAL_polygon_expensive_exactness_precondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_polygon_expensive_exactness_precondition_code(CODE)
@@ -224,8 +215,7 @@ inline void set_use_polygon_assertions(bool b)
 #undef CGAL_polygon_postcondition_msg
 #undef CGAL_polygon_postcondition_code
 
-#if defined(CGAL_POLYGON_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-  || defined(NDEBUG)
+#if defined(CGAL_POLYGON_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS)
 #  define CGAL_polygon_postcondition(EX) (static_cast<void>(0))
 #  define CGAL_polygon_postcondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_polygon_postcondition_code(CODE)
@@ -244,8 +234,7 @@ inline void set_use_polygon_assertions(bool b)
 #undef CGAL_polygon_exactness_postcondition_code
 
 #if defined(CGAL_POLYGON_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-  || (!defined(CGAL_POLYGON_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || defined(NDEBUG)
+  || (!defined(CGAL_POLYGON_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))
 #  define CGAL_polygon_exactness_postcondition(EX) (static_cast<void>(0))
 #  define CGAL_polygon_exactness_postcondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_polygon_exactness_postcondition_code(CODE)
@@ -264,8 +253,7 @@ inline void set_use_polygon_assertions(bool b)
 #undef CGAL_polygon_expensive_postcondition_code
 
 #if defined(CGAL_POLYGON_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-  || (!defined(CGAL_POLYGON_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || (!defined(CGAL_POLYGON_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))
 #  define CGAL_polygon_expensive_postcondition(EX) (static_cast<void>(0))
 #  define CGAL_polygon_expensive_postcondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_polygon_expensive_postcondition_code(CODE)
@@ -285,8 +273,7 @@ inline void set_use_polygon_assertions(bool b)
 
 #if defined(CGAL_POLYGON_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
   || (!defined(CGAL_POLYGON_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || (!defined(CGAL_POLYGON_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || (!defined(CGAL_POLYGON_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))
 #  define CGAL_polygon_expensive_exactness_postcondition(EX) (static_cast<void>(0))
 #  define CGAL_polygon_expensive_exactness_postcondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_polygon_expensive_exactness_postcondition_code(CODE)
@@ -307,8 +294,7 @@ inline void set_use_polygon_assertions(bool b)
 #undef CGAL_polygon_warning_msg
 #undef CGAL_polygon_warning_code
 
-#if defined(CGAL_POLYGON_NO_WARNINGS) || defined(CGAL_NO_WARNINGS) \
-  || defined(NDEBUG)
+#if defined(CGAL_POLYGON_NO_WARNINGS) || defined(CGAL_NO_WARNINGS)
 #  define CGAL_polygon_warning(EX) (static_cast<void>(0))
 #  define CGAL_polygon_warning_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_polygon_warning_code(CODE)
@@ -327,8 +313,7 @@ inline void set_use_polygon_assertions(bool b)
 #undef CGAL_polygon_exactness_warning_code
 
 #if defined(CGAL_POLYGON_NO_WARNINGS) || defined(CGAL_NO_WARNINGS) \
-  || (!defined(CGAL_POLYGON_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || defined(NDEBUG)
+  || (!defined(CGAL_POLYGON_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))
 #  define CGAL_polygon_exactness_warning(EX) (static_cast<void>(0))
 #  define CGAL_polygon_exactness_warning_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_polygon_exactness_warning_code(CODE)
@@ -347,8 +332,7 @@ inline void set_use_polygon_assertions(bool b)
 #undef CGAL_polygon_expensive_warning_code
 
 #if defined(CGAL_POLYGON_NO_WARNINGS) || defined(CGAL_NO_WARNINGS) \
-  || (!defined(CGAL_POLYGON_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || (!defined(CGAL_POLYGON_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))
 #  define CGAL_polygon_expensive_warning(EX) (static_cast<void>(0))
 #  define CGAL_polygon_expensive_warning_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_polygon_expensive_warning_code(CODE)
@@ -368,8 +352,7 @@ inline void set_use_polygon_assertions(bool b)
 
 #if defined(CGAL_POLYGON_NO_WARNINGS) || defined(CGAL_NO_WARNINGS) \
   || (!defined(CGAL_POLYGON_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || (!defined(CGAL_POLYGON_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || (!defined(CGAL_POLYGON_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))
 #  define CGAL_polygon_expensive_exactness_warning(EX) (static_cast<void>(0))
 #  define CGAL_polygon_expensive_exactness_warning_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_polygon_expensive_exactness_warning_code(CODE)

@@ -3,7 +3,7 @@
 
 \ingroup PkgBGLRef
 
-The \sc{Bgl} defines the class template
+The \bgl defines the class template
 <A HREF="https://www.boost.org/libs/graph/doc/graph_traits.html">`boost::graph_traits`</A>
 as a uniform interface to the properties and types of %graph types.
 
@@ -156,7 +156,7 @@ vertex, or walking through the faces container.
 
 The mapping between vertices, edges, and faces of the triangulation and the
 graph is rather straightforward, but there are some subtleties. The
-value type of the \sc{Bgl} iterators is the vertex or edge descriptor,
+value type of the \bgl iterators is the vertex or edge descriptor,
 whereas in \cgal all iterators and circulators are also handles and
 hence have as value type Vertex or Edge.
 
