@@ -281,7 +281,20 @@ public:
   Orthtree& operator= (const Orthtree& other) = delete;
   Orthtree& operator= (Orthtree&& other) = delete;
   // Destructor
-  ~Orthtree() { }
+  ~Orthtree()
+  {
+    std::queue<Node> nodes;
+    nodes.push(m_root);
+    while (!nodes.empty())
+    {
+      Node node = nodes.front();
+      nodes.pop();
+      if (!node.is_leaf())
+        for (std::size_t i = 0; i < Degree::value; ++ i)
+          nodes.push (node[i]);
+      node.free();
+    }
+  }
 
   // move constructor
   /// \endcond

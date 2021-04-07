@@ -137,7 +137,7 @@ private:
       : parent (parent), depth (0) { }
   };
 
-  std::shared_ptr<Data> m_data;
+  Data* m_data;
 
 
   /// \cond SKIP_IN_MANUAL
@@ -190,13 +190,15 @@ private:
         m_data->global_coordinates[i] = 0;
   }
 
+  void free() { delete m_data; }
+
   Node deep_copy(Self parent = Node()) const
   {
     if (is_null())
       return Node();
 
     Node out;
-    out.m_data = std::make_shared<Data>(parent);
+    out.m_data = new Data(parent);
 
     out.m_data->points = m_data->points;
     out.m_data->depth = m_data->depth;
