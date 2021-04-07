@@ -63,6 +63,8 @@ class RANSAC_octree {
   Input_range m_input_range;
   Indexed_point_map m_index_map;
   Octree m_octree;
+  Bbox_3 m_bBox;
+  FT m_width;
 
   std::size_t m_offset;
 
@@ -80,6 +82,8 @@ public:
                         boost::counting_iterator<std::size_t>(end - begin)),
           m_index_map(begin, point_map),
           m_octree(m_input_range, m_index_map, 1.0),
+          m_bBox (bbox_3(make_transform_iterator_from_property_map(begin, point_map),
+                         make_transform_iterator_from_property_map(end, point_map))),
           m_offset(offset) {}
 
   std::size_t index (Node node, std::size_t i) const
@@ -92,7 +96,7 @@ public:
   }
 
   std::size_t maxLevel() const {
-    return m_octree.depth() - 1;
+    return m_octree.depth();
   }
 
   std::size_t offset() const { return m_offset; }
@@ -102,8 +106,6 @@ public:
               std::size_t maxLevel = 10) {
 
     if (cluster_epsilon_for_max_level_recomputation > 0.) {
-
-      auto m_bBox = m_octree.bbox(m_octree.root());
 
       FT bbox_diagonal = (FT) CGAL::sqrt(
               (m_bBox.xmax() - m_bBox.xmin()) * (m_bBox.xmax() - m_bBox.xmin())
@@ -117,10 +119,12 @@ public:
     }
 
     m_octree.refine(maxLevel, bucketSize);
+
+    m_width = 0.5 * FT(m_octree.bbox(m_octree.root()).xmax() - m_octree.bbox(m_octree.root()).xmin());
   }
 
-  typename Traits::FT width() const {
-    return FT(m_octree.bbox(m_octree.root()).xmax() - m_octree.bbox(m_octree.root()).xmin());
+  const typename Traits::FT& width() const {
+    return m_width;
   }
 
   Node locate(const typename Traits::Point_3 &p) const {
