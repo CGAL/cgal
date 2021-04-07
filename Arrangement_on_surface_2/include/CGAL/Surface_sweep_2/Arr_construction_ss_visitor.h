@@ -350,9 +350,52 @@ move_halfedge_indices(Event* event, Status_line_iterator iter,
   // If the status line is empty, do nothing.
   if (this->is_status_line_empty()) return;
 
-  // The following can occur when the event is the right end of a curve, which
-  // implies that the curve lies entirely on the bleft boundary.
-  if (0 == event->number_of_right_curves()) return;
+  // Given a curve c, we need to record all the curves "seen" by c from above.
+  // Assume that the curve c is a chain in an outer CCB of a face f1. F1 is
+  // formed when a final curve on the CCB is added. At this point the face f1
+  // is split out of another face, say f0.  We relocate the inner CCBs of f0
+  // that are "seen" by any curve on this outer ccb (from above) as inner CCBs
+  // of f1.
+  //
+  // If the event has left curves, then it has exactly one left curve, and this
+  // curve must entirely lie on the left boundary.
+  //
+  // We are interested only in events that have at least one right curve and do
+  // not have a left curve.
+  // The following explains why events with left curves are eliminated.
+  // Consider the following case:
+  //
+  //   p0 = (0,0,-1) (the south pole)
+  //   p1 = (-1,0,0)
+  //   p2 = (0,-1,0)
+  //
+  //   c0 = p0-p2
+  //   c1 = p2-p1
+  //   c2 = p1-p0
+  //
+  // The parameter space:
+  //    o--------------------------------o
+  //    |                                |
+  //    |                                |
+  //    |                                |
+  //    |                                |
+  // p1 o--------o p2       f0           o
+  //    |        |                       |
+  //    |        |                       |
+  //    |   f1   |                       |
+  //    |        |                       |
+  //    o--------o-----------------------o <= p0
+  //  p00       p01
+  //
+  // First, c0 is inserted into the container of curves associated with the top
+  // face, as a curve that potentially can be seen later on by other curves.
+  // Then, the event associated with p1 is handled. Failing to eliminate p1,
+  // will result with the recording of c2 as "seen" by c1, which in turn will
+  // result with the relocation of the inner cbb (p1->p2->p0) from the face f0
+  // to the face f1---a clear error.
+  if ((0 == event->number_of_right_curves())  ||
+      (0 != event->number_of_left_curves()))
+    return;
 
   Status_line_iterator prev = iter;
   for (size_t i = 0; i < event->number_of_right_curves(); ++i) --prev;
@@ -363,8 +406,7 @@ move_halfedge_indices(Event* event, Status_line_iterator iter,
   list_ref.splice(list_ref.end(), m_helper.halfedge_indices_list());
 
 #if CGAL_ARR_CONSTRUCTION_SS_VISITOR_VERBOSE
-  typename Indices_list::const_iterator it;
-  for (it = list_ref.begin(); it != list_ref.end(); ++it)
+  for (auto it = list_ref.begin(); it != list_ref.end(); ++it)
     std::cout << "moved " << *it << " from top to below" << std::endl;
 #endif
 }
@@ -443,8 +485,7 @@ after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */)
 
   // Set the last event of all left subcurve (thus, this event corresponds
   // to their right endpoint).
-  Event_subcurve_iterator  left_it;
-  for (left_it = event->left_curves_begin();
+  for (auto left_it = event->left_curves_begin();
        left_it != event->left_curves_end(); ++left_it)
     (*left_it)->set_last_event(event);
 
@@ -461,8 +502,7 @@ after_handle_event(Event* event, Status_line_iterator iter, bool /* flag */)
 
   // Set the last event of all right subcurve (thus, this event corresponds
   // to their left endpoint).
-  Event_subcurve_iterator  right_it;
-  for (right_it = event->right_curves_begin();
+  for (auto right_it = event->right_curves_begin();
        right_it != event->right_curves_end(); ++right_it)
     (*right_it)->set_last_event(event);
 
@@ -915,6 +955,7 @@ relocate_in_new_face(Halfedge_handle he)
   std::cout << "m_sc_counter: " << m_sc_counter << std::endl;
   std::cout << "m_sc_he_table: " << m_sc_he_table.size() << std::endl;
 #endif
+
   do {
     // We are interested only in halfedges directed from right to left.
     if (curr_he->direction() == ARR_LEFT_TO_RIGHT) {
@@ -925,8 +966,7 @@ relocate_in_new_face(Halfedge_handle he)
     // Get the indices list associated with the current halfedges, representing
     // the halfedges and isolated vertices that "see" it from above.
     const Indices_list& indices_list = const_he_indices_table[curr_he];
-    typename Indices_list::const_iterator itr;
-    for (itr = indices_list.begin(); itr != indices_list.end(); ++itr) {
+    for (auto itr = indices_list.begin(); itr != indices_list.end(); ++itr) {
       CGAL_assertion(*itr != 0);
 #if CGAL_ARR_CONSTRUCTION_SS_VISITOR_VERBOSE
       std::cout << "itr: " << *itr << std::endl;
