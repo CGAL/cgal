@@ -512,7 +512,7 @@ OutputIterator partition_optimal_convex_2(InputIterator first,
 
 
 #if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || \
-    defined(CGAL_NO_POSTCONDITIONS)   || defined(NDEBUG)
+    defined(CGAL_NO_POSTCONDITIONS)
    OutputIterator res(result);
 #else
    typedef typename Traits::Polygon_2                      Polygon_2;
@@ -567,7 +567,7 @@ OutputIterator partition_optimal_convex_2(InputIterator first,
    }
 
 #if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || \
-    defined(CGAL_NO_POSTCONDITIONS)  || defined(NDEBUG)
+    defined(CGAL_NO_POSTCONDITIONS)
    return res;
 #else
    return res.to_output_iterator();

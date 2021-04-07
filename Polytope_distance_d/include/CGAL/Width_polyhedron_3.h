@@ -194,8 +194,7 @@ class Data_access {
     res=it->second;
   }
 
-#if !(defined(CGAL_KERNEL_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
-      || defined(NDEBUG))
+#if !(defined(CGAL_KERNEL_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS))
   int size_of_impassable() {
     return(int(impassable_halfedges.size()));
   }
