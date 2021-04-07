@@ -12,11 +12,11 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
 typedef Kernel::Point_3                                         Point_3;
 
 #if 1
-typedef CGAL::Arr_polyhedral_sgm_traits<Kernel, -8, 6>          Gm_traits;
-#elif 0
-typedef CGAL::Arr_polyhedral_sgm_traits<Kernel, -11, 7>         Gm_traits;
-#else
 typedef CGAL::Arr_polyhedral_sgm_traits<Kernel, -1, 0>          Gm_traits;
+#elif 0
+typedef CGAL::Arr_polyhedral_sgm_traits<Kernel, -8, 6>          Gm_traits;
+#else
+typedef CGAL::Arr_polyhedral_sgm_traits<Kernel, -11, 7>         Gm_traits;
 #endif
 
 typedef CGAL::Arr_polyhedral_sgm<Gm_traits>                     Gm;
