@@ -325,7 +325,7 @@ NT approximate_sqrt(const NT& nt)
 }
 
 template <class NT>
-Comparison_result
+typename Same_uncertainty_nt<Comparison_result, NT>::type
 compare_quotients(const NT& xnum, const NT& xden,
                   const NT& ynum, const NT& yden)
 {
