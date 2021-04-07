@@ -22,6 +22,7 @@ void test_API()
   CGAL::Polyhedron_3<EPIC> poly;
   PMP::polygon_soup_to_polygon_mesh(points, triangles, sm);
   PMP::polygon_soup_to_polygon_mesh(points, triangles, poly);
+  auto epsilon_map = sm.add_property_map<CGAL::Surface_mesh<EPIC::Point_3>::Face_index, double>("f:em", 0.0001).first;
 
   // build from the same kernel
   {
@@ -32,8 +33,19 @@ void test_API()
     assert(envelope(sm));
     assert(envelope(poly));
     assert(envelope(points, triangles));
+    envelope = CGAL::Polyhedral_envelope<EPIC>(sm,0, CGAL::parameters::face_epsilon_map(epsilon_map));
+    assert(!envelope.is_empty());
+    assert(envelope(sm));
+    assert(envelope(poly));
+    assert(envelope(points, triangles));
 
     envelope=CGAL::Polyhedral_envelope<EPIC>(points,triangles,0.0001);
+    assert(!envelope.is_empty());
+    assert(envelope(sm));
+    assert(envelope(poly));
+    assert(envelope(points, triangles));
+    std::vector<double> eps(triangles.size(), 0.0001);
+    envelope=CGAL::Polyhedral_envelope<EPIC>(points,triangles,0,CGAL::parameters::face_epsilon_map(CGAL::make_property_map(eps)));
     assert(!envelope.is_empty());
     assert(envelope(sm));
     assert(envelope(poly));
@@ -41,6 +53,11 @@ void test_API()
 
     std::vector<decltype(sm)::Face_index> subfaces(faces(sm).begin(), std::next(faces(sm).begin(), 150));
     envelope=CGAL::Polyhedral_envelope<EPIC>(subfaces,sm,0.0001);
+    assert(!envelope.is_empty());
+    assert(!envelope(sm));
+    assert(!envelope(poly));
+    assert(!envelope(points, triangles));
+    envelope=CGAL::Polyhedral_envelope<EPIC>(subfaces,sm,0, CGAL::parameters::face_epsilon_map(epsilon_map));
     assert(!envelope.is_empty());
     assert(!envelope(sm));
     assert(!envelope(poly));
