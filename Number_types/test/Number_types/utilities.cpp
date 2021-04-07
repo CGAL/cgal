@@ -72,7 +72,7 @@ int main()
   TESTIT(long double, "long double")
 
   // CGAL number types
-  //TESTIT(CGAL::MP_Float, "MP_Float")
+  //TESTIT(CGAL::MP_Float, "MP_Float") // CGAL::div(MP_Float, MP_Float) does not implement _integer_ division
   TESTIT(CGAL::Quotient<int>, "Quotient<int>")
   TESTIT(QMPF, "Quotient<MP_Float>")
   TESTIT(CGAL::Lazy_exact_nt<QMPF>, "Lazy_exact_nt<Quotient<MP_Float> >")
