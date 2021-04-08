@@ -1326,6 +1326,7 @@ double bounded_error_Hausdorff_impl(
   const TriangleMesh& tm1,
   const TriangleMesh& tm2,
   const typename Kernel::FT& error_bound,
+  const bool compare_meshes,
   VPM1 vpm1,
   VPM2 vpm2)
 {
@@ -1357,15 +1358,30 @@ double bounded_error_Hausdorff_impl(
   #endif
         Heap_type;
 
+  std::vector<face_descriptor> tm1_only, tm2_only;
+  std::vector< std::pair<face_descriptor, face_descriptor> > common;
+
+  TM1_tree tm1_tree;
+  TM2_tree tm2_tree;
+  if (compare_meshes) {
+    match_faces(tm1, tm2, std::back_inserter(common),
+      std::back_inserter(tm1_only), std::back_inserter(tm2_only));
+    tm1_tree.insert(tm1_only.begin(), tm1_only.end(), tm1, vpm1);
+    tm2_tree.insert(tm2_only.begin(), tm2_only.end(), tm2, vpm2);
+    CGAL_assertion_msg(false, "TODO: FINISH MATCHING!");
+  } else {
+    tm1_tree.insert(faces(tm1).begin(), faces(tm1).end(), tm1, vpm1);
+    tm2_tree.insert(faces(tm2).begin(), faces(tm2).end(), tm2, vpm2);
+  }
+
   // Build an AABB tree on tm1
-  TM1_tree tm1_tree( faces(tm1).begin(), faces(tm1).end(), tm1, vpm1 );
   tm1_tree.build();
   tm1_tree.accelerate_distance_queries();
 
   // Build an AABB tree on tm2
-  TM2_tree tm2_tree( faces(tm2).begin(), faces(tm2).end(), tm2, vpm2 );
   tm2_tree.build();
   tm2_tree.accelerate_distance_queries();
+
   std::pair<Point_3, face_descriptor> hint = tm2_tree.any_reference_point_and_id();
 
   // Build traversal traits for tm1_tree
@@ -1627,6 +1643,12 @@ double bounded_error_Hausdorff_naive_impl(
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
  *                     must be available in `TriangleMesh`.}
  *   \cgalParamNEnd
+ *   \cgalParamNBegin{match_faces}
+ *     \cgalParamDescription{a boolean tag that turns on the preprocessing step that filters out all faces,
+ *                           which belong to both meshes and hence do not contribute to the final distance}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{true}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  */
 template< class Concurrency_tag,
@@ -1642,18 +1664,25 @@ double bounded_error_Hausdorff_distance( const TriangleMesh& tm1,
   typedef typename GetGeomTraits<TriangleMesh,
                                  NamedParameters1>::type Geom_traits;
 
-   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::const_type Vpm1;
-   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters2>::const_type Vpm2;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::const_type Vpm1;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters2>::const_type Vpm2;
 
-   using parameters::choose_parameter;
-   using parameters::get_parameter;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
-   Vpm1 vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
-                                get_const_property_map(vertex_point, tm1));
-   Vpm2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
-                                get_const_property_map(vertex_point, tm2));
+  Vpm1 vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
+                              get_const_property_map(vertex_point, tm1));
+  Vpm2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
+                              get_const_property_map(vertex_point, tm2));
 
-   return internal::bounded_error_Hausdorff_impl<Concurrency_tag, Geom_traits>(tm1, tm2, error_bound, vpm1, vpm2);
+  const bool match_faces1 = parameters::choose_parameter(
+    parameters::get_parameter(np1, internal_np::match_faces), true);
+  const bool match_faces2 = parameters::choose_parameter(
+    parameters::get_parameter(np2, internal_np::match_faces), true);
+  const bool match_faces = match_faces1 && match_faces2;
+
+  return internal::bounded_error_Hausdorff_impl<Concurrency_tag, Geom_traits>(
+    tm1, tm2, error_bound, match_faces, vpm1, vpm2);
 }
 
 

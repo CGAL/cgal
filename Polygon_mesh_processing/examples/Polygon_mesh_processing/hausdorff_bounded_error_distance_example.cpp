@@ -54,7 +54,8 @@ struct Bounded_error_hd_wrapper {
   std::string name() const { return "bounded error"; }
   Bounded_error_hd_wrapper(const double error_bound) : m_error_bound(error_bound) { }
   double operator()(const Surface_mesh& tm1, const Surface_mesh& tm2) const {
-    return PMP::bounded_error_Hausdorff_distance<TAG>(tm1, tm2, m_error_bound);
+    return PMP::bounded_error_Hausdorff_distance<TAG>(tm1, tm2, m_error_bound,
+    CGAL::parameters::match_faces(false));
   }
 };
 
