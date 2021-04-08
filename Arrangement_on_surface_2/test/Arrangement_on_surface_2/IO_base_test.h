@@ -1687,7 +1687,7 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
   read_point(is, p2);
   CGAL_assertion(p1 != p2);
 
-  unsigned int flag;
+  unsigned int flag = static_cast<unsigned int>(-1);
   is >> flag;
   if (flag == 1) {
     X_monotone_curve_2::Direction_3 normal;
