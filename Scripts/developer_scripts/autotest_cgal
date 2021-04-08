@@ -380,6 +380,7 @@ setup_dirs()
   CGAL_DIR=`readlink "${CGAL_ROOT}/CGAL-I"`
 
   CGAL_TEST_DIR=${CGAL_DIR}/test
+  CGAL_DATA_DIR=${CGAL_DIR}/data
 
   if [ ! -d "${CGAL_DIR}/cmake" ]; then
     mkdir "${CGAL_DIR}/cmake"
@@ -627,6 +628,7 @@ if [ -f '${LIST_TEST_PACKAGES}' ]; then
   cp '${CGAL_TEST_DIR}/collect_cgal_testresults_from_cmake' '${CGAL_BINARY_DIR}/test'
   cp '${CGAL_TEST_DIR}/makefile2'                           '${CGAL_BINARY_DIR}/test'
   cp '${CGAL_TEST_DIR}/run_testsuite_with_cmake'            '${CGAL_BINARY_DIR}/test'
+  cp '${CGAL_DATA_DIR}'                                     '${CGAL_BINARY_DIR}'
 
   for PACKAGE in \`source '${LIST_TEST_PACKAGES}' '${CGAL_ROOT}'\`; do
 
