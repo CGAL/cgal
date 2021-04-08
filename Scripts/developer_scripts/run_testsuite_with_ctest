@@ -271,13 +271,14 @@ run_test_on_platform()
   fi
   cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DBUILD_TESTING=ON -DWITH_tests=ON -DCGAL_TEST_SUITE=ON $CGAL_DIR>installation.log 2>&1
   rm CMakeCache.txt
-  CMAKE_OPTS="-DCGAL_TEST_SUITE=ON -DCMAKE_VERBOSE_MAKEFILE=ON"
+  CMAKE_OPTS="-DCGAL_TEST_SUITE=ON -DCMAKE_VERBOSE_MAKEFILE=ON -DWITH_tests=ON"
   if [ -n "${SCRIPTS_DIR}" ]; then
     CMAKE_OPTS="${CMAKE_OPTS} -DWITH_examples=ON -DWITH_demos=ON"
   fi
   if [ -z "${SHOW_PROGRESS}" ]; then
     cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR  >package_installation.log 2>&1 
   else
+    echo "cmake ${INIT_FILE:+\"-C${INIT_FILE}\"} -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR"
     cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR 2>&1 |tee package_installation.log
   fi
   LIST_TEST_FILE="${CGAL_HOME}/list_test_packages"
@@ -298,13 +299,13 @@ run_test_on_platform()
   echo "SET(CTEST_CUSTOM_MAXIMUM_FAILED_TEST_OUTPUT_SIZE 1000000000)" >> CTestCustom.cmake
   CTEST_OPTS="-T Start -T Test --timeout 1200 -j${NUMBER_OF_PROCESSORS} ${DO_NOT_TEST:+-E execution___of__} "
   if uname | grep -q "CYGWIN"; then
-    CTEST_OPTS="-C Release ${CTEST_OPTS}"
+    CTEST_OPTS="-C Release ${CTEST_OPTS} -V"
   fi
   if [ -z "${SHOW_PROGRESS}" ]; then
-    ctest ${TO_TEST:+-L ${TO_TEST} } ${CTEST_OPTS} ${KEEP_TESTS:+-FC ${CGAL_BINARY_DIR}}> tmp.txt
+    ctest ${TO_TEST:+-L ${TO_TEST} } ${CTEST_OPTS} ${KEEP_TESTS:+-FC .}> tmp.txt
   else
-    echo "ctest ${CTEST_OPTS} ${TO_TEST:+-L ${TO_TEST}} ${KEEP_TESTS:+-FC ${CGAL_BINARY_DIR}} "
-    ctest ${CTEST_OPTS} ${TO_TEST:+-L ${TO_TEST}} ${KEEP_TESTS:+-FC ${CGAL_BINARY_DIR}}|tee tmp.txt
+    echo "ctest ${CTEST_OPTS} ${TO_TEST:+-L ${TO_TEST}} ${KEEP_TESTS:+-FC .} "
+    ctest ${TO_TEST:+-L ${TO_TEST} } ${CTEST_OPTS} ${KEEP_TESTS:+-FC .} |tee tmp.txt
   fi
   #####################
   ##   GET RESULTS   ##
