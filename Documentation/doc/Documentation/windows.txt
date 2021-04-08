@@ -279,4 +279,11 @@ you are advised to look at the `CMakeLists.txt` files in the example
 folder of the package(s) that you are using to learn how to specify \cgal and additional third party
 dependencies.
 
+\section sec-win-demo Trying CGAL algorithms using a Precompiled Demo
+\cgal provides a few demos providing a graphical user interfaces for some \cgal algorithms.
+All precompiled demos are available for download in the \ref packages page.
+Two links are provided in the column on the right: the demo itself (under **Windows Demo**) and a set of dlls (under **Common Demo Dlls**)
+that contains dlls files that must be placed in the same directory as the `.exe` of the demo.
+See for example the \ref PkgConvexHull3 package.
+
 */
