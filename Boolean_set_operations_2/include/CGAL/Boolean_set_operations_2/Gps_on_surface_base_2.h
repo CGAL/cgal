@@ -272,17 +272,18 @@ public:
   }
 
   // insert a polygon with holes
-  void insert(const Polygon_with_holes_2& pgn_with_holes)
+  void insert(const Polygon_with_holes_2& pgn_with_holes, bool use_sweep = false)
   {
     ValidationPolicy::is_valid(pgn_with_holes, *m_traits);
 
-#ifdef CGAL_ARRANGEMENT_INSERT_PWH_BY_SURFACE_SWEEP
+    if (use_sweep)
     _insert(pgn_with_holes, *m_arr);
-#else
-    _insert (pgn_with_holes.outer_boundary(), *m_arr);
-    for (auto it = pgn_with_holes.holes_begin(); it != pgn_with_holes.holes_end(); ++ it)
-      _insert (*it, *m_arr, true);
-#endif
+    else
+    {
+      _insert (pgn_with_holes.outer_boundary(), *m_arr);
+      for (auto it = pgn_with_holes.holes_begin(); it != pgn_with_holes.holes_end(); ++ it)
+        _insert (*it, *m_arr, true);
+    }
   }
 
   // insert a range of polygons that can be either simple polygons
