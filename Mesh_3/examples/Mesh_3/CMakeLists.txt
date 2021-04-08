@@ -148,6 +148,9 @@ if(TARGET CGAL::CGAL_ImageIO)
     create_single_source_cgal_program("mesh_3D_image.cpp")
     target_link_libraries(mesh_3D_image PUBLIC CGAL::Eigen3_support)
 
+    create_single_source_cgal_program("mesh_3D_weighted_image.cpp")
+    target_link_libraries(mesh_3D_weighted_image PUBLIC CGAL::Eigen3_support)
+
     create_single_source_cgal_program(
       "mesh_3D_image_with_custom_initialization.cpp")
     target_link_libraries(mesh_3D_image_with_custom_initialization
@@ -164,7 +167,7 @@ if(TARGET CGAL::CGAL_ImageIO)
   else()
     message(
       STATUS
-        "NOTICE: The examples mesh_3D_image.cpp, mesh_3D_image_variable_size.cpp, mesh_optimization_example.cpp and mesh_optimization_lloyd_example.cpp need CGAL_ImageIO to be configured with ZLIB support, and will not be compiled."
+        "NOTICE: The examples mesh_3D_image.cpp, mesh_3D_weighted_image.cpp, mesh_3D_image_variable_size.cpp, mesh_optimization_example.cpp and mesh_optimization_lloyd_example.cpp need CGAL_ImageIO to be configured with ZLIB support, and will not be compiled."
     )
   endif()
 
@@ -179,6 +182,7 @@ if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TARGET CGAL::TBB_support)
   foreach(
     target
     mesh_3D_image
+    mesh_3D_weighted_image
     mesh_3D_image_variable_size
     mesh_3D_image_with_custom_initialization
     mesh_3D_gray_image_with_custom_initialization
