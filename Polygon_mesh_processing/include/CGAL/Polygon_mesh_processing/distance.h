@@ -1334,8 +1334,8 @@ double bounded_error_Hausdorff_impl(
   CGAL_assertion_msg (is_triangle,
         "One of the meshes is not triangulated. Distance computing impossible.");
 
-  typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM1> TM1_primitive;
-  typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM2> TM2_primitive;
+  typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM1, Tag_true, Tag_true> TM1_primitive;
+  typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM2, Tag_true, Tag_true> TM2_primitive;
   typedef AABB_tree< AABB_traits<Kernel, TM1_primitive> > TM1_tree;
   typedef AABB_tree< AABB_traits<Kernel, TM2_primitive> > TM2_tree;
   typedef typename AABB_tree< AABB_traits<Kernel, TM2_primitive> >::AABB_traits Tree_traits;

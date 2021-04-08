@@ -223,7 +223,7 @@ namespace CGAL {
   template<typename AABBTraits, typename Query, typename Kernel, typename TriangleMesh, typename VPM1, typename VPM2>
   class Hausdorff_primitive_traits_tm1
   {
-    typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM2> TM2_primitive;
+    typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM2, Tag_true, Tag_true> TM2_primitive;
     typedef typename AABB_tree< AABB_traits<Kernel, TM2_primitive> >::AABB_traits Tree_traits;
     typedef typename AABBTraits::Primitive Primitive;
     typedef typename AABBTraits::Bounding_box Bounding_box;
