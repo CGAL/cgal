@@ -54,8 +54,7 @@ struct Bounded_error_hd_wrapper {
   std::string name() const { return "bounded error"; }
   Bounded_error_hd_wrapper(const double error_bound) : m_error_bound(error_bound) { }
   double operator()(const Surface_mesh& tm1, const Surface_mesh& tm2) const {
-    return PMP::bounded_error_Hausdorff_distance<TAG>(tm1, tm2, m_error_bound,
-    CGAL::parameters::match_faces(false));
+    return PMP::bounded_error_Hausdorff_distance<TAG>(tm1, tm2, m_error_bound);
   }
 };
 
@@ -656,13 +655,13 @@ int main(int argc, char** argv) {
 
   // test_synthetic_data(apprx_hd);
   // test_synthetic_data(naive_hd);
-  // test_synthetic_data(bound_hd);
+  test_synthetic_data(bound_hd);
 
   // --- Compare on common meshes.
 
   // test_one_versus_another(apprx_hd, naive_hd);
   // test_one_versus_another(naive_hd, bound_hd);
-  // test_one_versus_another(bound_hd, apprx_hd);
+  test_one_versus_another(bound_hd, apprx_hd);
 
   // --- Compare on real meshes.
 
@@ -671,7 +670,7 @@ int main(int argc, char** argv) {
 
   // test_real_meshes(filepath1, filepath2, apprx_hd, naive_hd);
   // test_real_meshes(filepath1, filepath2, naive_hd, bound_hd);
-  // test_real_meshes(filepath1, filepath2, bound_hd, apprx_hd);
+  test_real_meshes(filepath1, filepath2, bound_hd, apprx_hd);
 
   // --- Compare timings.
 

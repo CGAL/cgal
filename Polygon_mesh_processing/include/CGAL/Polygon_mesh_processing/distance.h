@@ -1361,31 +1361,45 @@ double bounded_error_Hausdorff_impl(
   std::vector<face_descriptor> tm1_only, tm2_only;
   std::vector< std::pair<face_descriptor, face_descriptor> > common;
 
+  const auto faces1 = faces(tm1);
+  const auto faces2 = faces(tm2);
+
+  CGAL_assertion(faces1.size() > 0);
+  CGAL_assertion(faces2.size() > 0);
+
   TM1_tree tm1_tree;
   TM2_tree tm2_tree;
   if (compare_meshes) {
     match_faces(tm1, tm2, std::back_inserter(common),
       std::back_inserter(tm1_only), std::back_inserter(tm2_only));
+
+    if (tm1_only.size() == 0) return 0.0;
+    if (tm2_only.size() == 0) return 0.0;
+    CGAL_assertion(tm1_only.size() > 0);
+    CGAL_assertion(tm2_only.size() > 0);
+
     tm1_tree.insert(tm1_only.begin(), tm1_only.end(), tm1, vpm1);
     tm2_tree.insert(tm2_only.begin(), tm2_only.end(), tm2, vpm2);
-    CGAL_assertion_msg(false, "TODO: FINISH MATCHING!");
   } else {
-    tm1_tree.insert(faces(tm1).begin(), faces(tm1).end(), tm1, vpm1);
-    tm2_tree.insert(faces(tm2).begin(), faces(tm2).end(), tm2, vpm2);
+    tm1_tree.insert(faces1.begin(), faces1.end(), tm1, vpm1);
+    tm2_tree.insert(faces2.begin(), faces2.end(), tm2, vpm2);
   }
 
   // Build an AABB tree on tm1
   tm1_tree.build();
-  tm1_tree.accelerate_distance_queries();
+  const bool is_tm1_memory_ok = tm1_tree.accelerate_distance_queries();
+  CGAL_assertion(is_tm1_memory_ok);
 
   // Build an AABB tree on tm2
   tm2_tree.build();
-  tm2_tree.accelerate_distance_queries();
+  const bool is_tm2_memory_ok = tm2_tree.accelerate_distance_queries();
+  CGAL_assertion(is_tm2_memory_ok);
 
   std::pair<Point_3, face_descriptor> hint = tm2_tree.any_reference_point_and_id();
 
   // Build traversal traits for tm1_tree
-  Hausdorff_primitive_traits_tm1<Tree_traits, Point_3, Kernel, TriangleMesh, VPM1, VPM2> traversal_traits_tm1( tm1_tree.traits(), tm2_tree, tm1, tm2, vpm1, vpm2, hint.first );
+  Hausdorff_primitive_traits_tm1<Tree_traits, Point_3, Kernel, TriangleMesh, VPM1, VPM2> traversal_traits_tm1(
+    tm1_tree.traits(), tm2_tree, tm1, tm2, vpm1, vpm2, hint.first );
 
   // Find candidate triangles in TM1 which might realise the Hausdorff bound
 // TODO Initialize the distances on all the vertices first and store those.
@@ -1398,12 +1412,7 @@ double bounded_error_Hausdorff_impl(
   Heap_type candidate_triangles = traversal_traits_tm1.get_candidate_triangles();
   Hausdorff_bounds global_bounds = traversal_traits_tm1.get_global_bounds();
 
-  #ifdef CGAL_HAUSDORFF_DEBUG
-    std::cout << "Culled " << traversal_traits_tm1.get_num_culled_triangles() << " out of " << tm1.num_faces() << std::endl;
-  #endif
-
   double squared_error_bound = error_bound * error_bound;
-
   while ( (global_bounds.second - global_bounds.first > error_bound) && !candidate_triangles.empty() ) {
 
     // Get the first triangle and its Hausdorff bounds from the candidate set

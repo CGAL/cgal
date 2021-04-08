@@ -254,8 +254,6 @@ namespace CGAL {
         // Initialize the global bounds with 0., they will only grow.
         h_lower = 0.;
         h_upper = 0.;
-        // Initialize number of culled triangles
-        m_investigated_on_tm1 = 0;
       }
 
     // Explore the whole tree, i.e. always enter children if the methods
@@ -265,9 +263,6 @@ namespace CGAL {
     // Compute the explicit Hausdorff distance to the given primitive
     void intersection(const Query&, const Primitive& primitive)
     {
-      /* Have reached a single triangle, process it */
-      m_investigated_on_tm1++;
-
       // Map to transform faces of TM1 to actual triangles
       Triangle_from_face_descriptor_map<TriangleMesh, VPM1> m_face_to_triangle_map( &m_tm1, m_vpm1 );
       Triangle_3 candidate_triangle = get(m_face_to_triangle_map, primitive.id());
@@ -277,9 +272,8 @@ namespace CGAL {
       // seen from the three vertices?
 
       // Call Culling on B with the single triangle found.
-      Hausdorff_primitive_traits_tm2<
-        Tree_traits, Triangle_3, Kernel, TriangleMesh, VPM2
-      > traversal_traits_tm2(
+      Hausdorff_primitive_traits_tm2<Tree_traits, Triangle_3, Kernel, TriangleMesh, VPM2>
+      traversal_traits_tm2(
         m_tm2_tree.traits(), m_tm2, m_vpm2,
         (h_upper == 0.) ? std::numeric_limits<double>::infinity() : h_upper, // Only pass current global bounds if they have been established yet
         std::numeric_limits<double>::infinity(),
@@ -304,7 +298,6 @@ namespace CGAL {
       // together with the local bounds it obtained to sind it to subdivision
       // later
       m_candidiate_triangles.push( Candidate_triangle<Kernel>(candidate_triangle, local_bounds) );
-      pq.push( Candidate_triangle<Kernel>(candidate_triangle, local_bounds) );
     }
 
     // Determine whether child nodes will still contribute to a larger
@@ -363,11 +356,6 @@ namespace CGAL {
       return Hausdorff_bounds( h_lower, h_upper );
     }
 
-    int get_num_culled_triangles()
-    {
-      return (m_tm1.num_faces() - m_investigated_on_tm1);
-    }
-
   private:
     const AABBTraits& m_traits;
     // The two triangle meshes
@@ -383,10 +371,6 @@ namespace CGAL {
     double h_upper;
     // List of candidate triangles with their Hausdorff bounds attached
     Heap_type m_candidiate_triangles;
-    // Heap of candidate triangles with their Hausdorff bounds attached
-    Heap_type pq;
-    // Number of triangles investigated in the procedure
-    int m_investigated_on_tm1;
   };
 }
 
