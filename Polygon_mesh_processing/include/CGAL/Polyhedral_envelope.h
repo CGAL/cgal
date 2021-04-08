@@ -322,7 +322,7 @@ public:
    *                     must be available in `TriangleMesh`.}
    *   \cgalParamNEnd
    *   \cgalParamNBegin{face_epsilon_map}
-   *     \cgalParamDescription{a property map associating to each face of `tm` a epsilon value}
+   *     \cgalParamDescription{a property map associating to each face of `tm` an epsilon value}
    *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
    *                    as key type and `double` as value type}
    *     \cgalParamDefault{Use `epsilon` for all faces}
@@ -421,7 +421,7 @@ public:
    *                     must be available in `TriangleMesh`.}
    *   \cgalParamNEnd
    *   \cgalParamNBegin{face_epsilon_map}
-   *     \cgalParamDescription{a property map associating to each face of `tm` a epsilon value}
+   *     \cgalParamDescription{a property map associating to each face of `tm` an epsilon value}
    *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
    *                    as key type and `double` as value type}
    *     \cgalParamDefault{Use `epsilon` for all faces}
@@ -528,7 +528,7 @@ public:
     *                    is the value type of `PointRange::const_iterator`}
     *     \cgalParamDefault{`CGAL::Identity_property_map`}
     *   \cgalParamNBegin{face_epsilon_map}
-    *     \cgalParamDescription{a property map associating to each triangle a epsilon value}
+    *     \cgalParamDescription{a property map associating to each triangle an epsilon value}
     *     \cgalParamType{a class model of `ReadablePropertyMap` with `std::size_t` as key type and `double` as value type}
     *     \cgalParamDefault{Use `epsilon` for all triangles}
     *   \cgalParamNEnd
