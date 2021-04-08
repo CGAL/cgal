@@ -306,6 +306,35 @@ split_face(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
 
 
 /**
+ * splits the halfedge `h` and afterwards:
+ * - calls `split_face()` with `prev(h, pmesh)` and `next(h, pmesh)`, if `h` is not a border halfedge
+ * - calls `split_face()` with `opposite(h, pmesh)` and `next(next(h, pmesh), pmesh)`, if `oppiste(h, pmesh)`
+ *   is not a border halfedge
+ *
+ * \tparam Graph must be a `MutableFaceGraph`
+ *
+ * \returns the halfedge `hnew` pointing to the inserted vertex in the edge split.
+ */
+template <typename PolygonMesh>
+typename boost::graph_traits<PolygonMesh>::halfedge_descriptor
+split_edge_and_incident_faces(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
+                              PolygonMesh& pmesh)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor      halfedge_descriptor;
+
+  halfedge_descriptor res = Euler::split_edge(h, pmesh);
+
+  if(!is_border(res, pmesh))
+    Euler::split_face(res, next(h, pmesh), pmesh);
+
+  halfedge_descriptor opp_h = opposite(h, pmesh);
+  if(!is_border(opp_h, pmesh))
+    Euler::split_face(opp_h, next(next(opp_h, pmesh), pmesh), pmesh);
+
+  return res;
+}
+
+/**
  * glues the cycle of halfedges of `h1` and `h2` together.
  * The vertices in the cycle of `h2` get removed.
  * If `h1` or `h2` are not border halfedges their faces get removed.
