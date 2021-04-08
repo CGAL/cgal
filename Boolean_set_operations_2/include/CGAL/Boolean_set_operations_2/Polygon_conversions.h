@@ -183,7 +183,7 @@ convert_polygon_iterator(InputIterator it, const Traits& traits)
 {
   using Input_type = typename std::iterator_traits<InputIterator>::value_type;
   using Return_type = typename General_polygon_of_polygon<Input_type>::type;
-  using Function_type = std::function<Return_type(Input_type)>;
+  using Function_type = std::function<Return_type(const Input_type&)>;
 
   Function_type func =
     [&traits](const Input_type& p)->Return_type
