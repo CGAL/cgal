@@ -263,9 +263,7 @@ public:
             p3(to_exact( get(vpm, source(h3,tm)) ),
                to_exact( get(vpm, target(h3,tm)) ),
                to_exact( get(vpm, target(next(h3,tm),tm))));
-    typename cpp11::result_of<
-      Exact_kernel::Intersect_3(Plane_3, Plane_3, Plane_3)
-    >::type inter_res = exact_intersection(p1, p2, p3);
+    const auto inter_res = exact_intersection(p1, p2, p3);
 
     CGAL_assertion(inter_res != boost::none);
     const Exact_kernel::Point_3* pt =
@@ -389,9 +387,7 @@ public:
             p3(get(vpm, source(h3,tm)),
                get(vpm, target(h3,tm)),
                get(vpm, target(next(h3,tm),tm)));
-    typename cpp11::result_of<
-      typename Exact_kernel::Intersect_3(Plane_3, Plane_3, Plane_3)
-    >::type inter_res = intersection(p1, p2, p3);
+    const auto inter_res = intersection(p1, p2, p3);
 
     CGAL_assertion(inter_res != boost::none);
     const Point_3* pt =

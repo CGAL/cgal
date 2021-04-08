@@ -20,8 +20,12 @@ if(CGAL_ACTIVATE_CONCURRENT_MESH_3 OR ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3})
 endif()
 
 # Use Eigen
-find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
+find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
 include(CGAL_Eigen3_support)
+if(NOT TARGET CGAL::Eigen3_support)
+  message( STATUS "NOTICE: All examples need the Eigen3 library, and will not be compiled." )
+  return()
+endif() #CGAL::Eigen_3_support
 
 find_package(VTK QUIET COMPONENTS vtkImagingGeneral vtkIOImage NO_MODULE)
 if(VTK_FOUND)
@@ -149,6 +153,11 @@ if(TARGET CGAL::CGAL_ImageIO)
     target_link_libraries(mesh_3D_image_with_custom_initialization
                           PUBLIC CGAL::Eigen3_support)
 
+    create_single_source_cgal_program(
+      "mesh_3D_gray_image_with_custom_initialization.cpp")
+    target_link_libraries(mesh_3D_gray_image_with_custom_initialization
+                          PUBLIC CGAL::Eigen3_support)
+
     create_single_source_cgal_program("mesh_3D_image_variable_size.cpp")
     target_link_libraries(mesh_3D_image_variable_size
                           PUBLIC CGAL::Eigen3_support)
@@ -172,6 +181,7 @@ if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TARGET CGAL::TBB_support)
     mesh_3D_image
     mesh_3D_image_variable_size
     mesh_3D_image_with_custom_initialization
+    mesh_3D_gray_image_with_custom_initialization
     mesh_3D_image_with_features
     mesh_implicit_domains
     mesh_implicit_sphere

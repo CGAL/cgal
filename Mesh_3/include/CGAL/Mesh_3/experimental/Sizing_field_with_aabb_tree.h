@@ -385,8 +385,6 @@ struct Sizing_field_with_aabb_tree
       //Compute distance to the curve on which p lies
       typedef typename GeomTraits::Segment_3                        Segment_3;
       typedef typename GeomTraits::Plane_3                          Plane_3;
-      typedef typename CGAL::cpp11::result_of<
-        typename GeomTraits::Intersect_3(Segment_3, Plane_3)>::type Intersection_result;
 
       const typename Input_curves_AABB_tree_::Point_and_primitive_id& ppid
         = domain.curves_aabb_tree().closest_point_and_primitive(p);
@@ -417,8 +415,7 @@ struct Sizing_field_with_aabb_tree
         if (curve_id != prim.id().first->first)
           continue;//don't deal with the same curves as what is done above
 
-        Intersection_result int_res
-          = CGAL::intersection(prim.datum(), curr_ortho_plane);
+        const auto int_res = CGAL::intersection(prim.datum(), curr_ortho_plane);
         if (int_res)
         {
           if (const Point_3* pp = boost::get<Point_3>(&*int_res))

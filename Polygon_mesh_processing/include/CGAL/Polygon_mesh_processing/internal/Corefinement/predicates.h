@@ -83,12 +83,7 @@ bool  sorted_around_edge(
                      || coplanar_orientation(o,o_prime,p2,q)==NEGATIVE );
 
   typename Kernel::Orientation_3 orientation;
-  typedef typename Kernel::Point_3 Point_3;
-  typedef typename cpp11::result_of<
-    typename Kernel::Orientation_3(Point_3, Point_3, Point_3, Point_3)>::type
-      Orientation;
-
-  Orientation s0 = orientation(o_prime, o, p1, p2);
+  const auto s0 = orientation(o_prime, o, p1, p2);
 
   if ( s0==COPLANAR ) {
     //o, o_prime, p1 and p2 are coplanar
@@ -98,8 +93,8 @@ bool  sorted_around_edge(
   }
 
   //o, o_prime, p1 and p2 are not coplanar
-  Orientation s1 = orientation(o_prime, o, p1, q);
-  Orientation s2 = orientation(o_prime, o, q , p2);
+  const auto s1 = orientation(o_prime, o, p1, q);
+  const auto s2 = orientation(o_prime, o, q , p2);
 
   if (s0 == POSITIVE) // the angle p1,o,p2 is smaller that Pi.
     return ( s1 == POSITIVE )

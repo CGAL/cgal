@@ -21,7 +21,6 @@
 // This file contains the definition of a kernel traits checker.
 
 #include <CGAL/basic.h>
-#include <CGAL/result_of.h>
 #include <CGAL/use.h>
 
 #include <utility>
@@ -80,19 +79,14 @@ public:
   { }
 
   template <class ... A>
-  typename Pairify<typename CGAL::cpp11::result_of<P1(const A&...)>::type,
-                   typename CGAL::cpp11::result_of<P2(const A&...)>::type>::result_type
+  decltype(auto)
   operator()(const A&... a) const
   {
-    typedef typename CGAL::cpp11::result_of<P1(const A&...)>::type result_type_1;
-    typedef typename CGAL::cpp11::result_of<P2(const A&...)>::type result_type_2;
-    result_type_1 res1 = p1(a.first...);
-    result_type_2 res2 = p2(a.second...);
-    if (! cmp(res1, res2))
-    {
-      CGAL_kernel_assertion(false);
-    }
-    return Pairify<result_type_1, result_type_2>()(res1, res2);
+    auto res1 = p1(a.first...);
+    auto res2 = p2(a.second...);
+
+    CGAL_kernel_assertion(cmp(res1, res2));
+    return Pairify<decltype(res1), decltype(res2)>()(res1, res2);
   }
 };
 

@@ -798,7 +798,7 @@ OutputIterator partition_greene_approx_convex_2(InputIterator first,
    typedef typename Traits::Polygon_2                        Polygon_2;
 
 #if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || \
-    defined(CGAL_NO_POSTCONDITIONS) || defined(NDEBUG)
+    defined(CGAL_NO_POSTCONDITIONS)
    OutputIterator res(result);
 #else
 
@@ -829,7 +829,7 @@ OutputIterator partition_greene_approx_convex_2(InputIterator first,
                                    res.output_so_far_end(), traits));
 
 #if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || \
-    defined(CGAL_NO_POSTCONDITIONS) || defined(NDEBUG)
+    defined(CGAL_NO_POSTCONDITIONS)
    return res;
 #else
    return res.to_output_iterator();

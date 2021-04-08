@@ -395,7 +395,11 @@ public:
         // halfedges, and f faces. The reservation sizes are a hint for
         // optimizing storage allocation. They are not used here.
 
-    ~HalfedgeDS_list() { clear(); }
+    ~HalfedgeDS_list() noexcept {
+      try {
+        clear();
+      } catch (...) {}
+    }
 
     HalfedgeDS_list( const Self& hds)
     :  vertices( hds.vertices),

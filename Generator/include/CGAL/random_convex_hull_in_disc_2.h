@@ -21,6 +21,7 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/copy_n.h>
 #include <CGAL/number_type_config.h>
+#include <CGAL/double.h>
 #include <list>
 
 namespace CGAL {
@@ -192,7 +193,7 @@ void random_convex_hull_in_disc_2(std::size_t n, double radius, std::list<typena
            (simulated_points < n));  // initialization such that 0 in P_n
 
   std::size_t T = n;
-  if (!fast) T = static_cast<std::size_t>(std::floor(n / std::pow(std::log(static_cast<double>(n)), 2)));
+  if (!fast) T = static_cast<std::size_t>(std::floor(n / CGAL::square(std::log(static_cast<double>(n)))));
 
   while (simulated_points < n) {
     // l is a list coming from a convex hull operation. we are moving the

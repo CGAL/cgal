@@ -316,27 +316,22 @@ template <typename PointRange, typename PolygonRange>
 std::size_t remove_invalid_polygons_in_polygon_soup(PointRange& /*points*/,
                                                     PolygonRange& polygons)
 {
-  std::vector<std::size_t> to_remove;
-  const std::size_t ini_polygons_size = polygons.size();
-  for(std::size_t polygon_index=0; polygon_index!=ini_polygons_size; ++polygon_index)
-  {
-    if(polygons[polygon_index].size() <= 2)
-    {
+  const auto rit = std::remove_if(polygons.begin(), polygons.end(),
+                                  [](auto& polygon) -> bool
+                                  {
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
-      std::cout << "Invalid polygon:";
-      print_polygon(std::cout, polygons[polygon_index]);
+                                    if(polygon.size() <= 2)
+                                    {
+                                      std::cout << "Invalid polygon:";
+                                      print_polygon(std::cout, polygon);
+                                    }
 #endif
-      to_remove.push_back(polygon_index);
-    }
-  }
+                                    return (polygon.size() <= 2);
+                                  });
 
-  while(!to_remove.empty())
-  {
-    polygons.erase(polygons.begin() + to_remove.back());
-    to_remove.pop_back();
-  }
+  const std::size_t removed_polygons_n = static_cast<std::size_t>(std::distance(rit, polygons.end()));
 
-  const std::size_t removed_polygons_n = ini_polygons_size - polygons.size();
+  polygons.erase(rit, polygons.end());
 
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
   if(removed_polygons_n > 0)

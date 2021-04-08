@@ -276,8 +276,7 @@ class Polygon_mesh_slicer
           get(m_vpmap, source(ed, m_tmesh)),
           get(m_vpmap,target(ed, m_tmesh))
         );
-        typename cpp11::result_of<typename Traits_::Intersect_3(Plane_3, Segment_3)>::type
-          inter = intersect_3(m_plane, s);
+        const auto inter = intersect_3(m_plane, s);
         CGAL_assertion(inter != boost::none);
         const Point_3* pt_ptr = boost::get<Point_3>(&(*inter));
         current_poly.push_back( *pt_ptr );

@@ -14,6 +14,7 @@
 
 #include <vector>
 #include <cstddef>
+#include <CGAL/Linear_cell_complex_base.h>
 
 namespace CGAL {
   template<class LCC, class Combinatorial_data_structure=

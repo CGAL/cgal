@@ -63,7 +63,7 @@ public:
   typedef C2E   To_exact_converter;
   typedef C2A   To_approximate_converter;
 
-  // FIXME: should use result_of, see emails by Nico
+  // FIXME: should use result_of or decltype(auto), see emails by Nico
   typedef typename EP::result_type  result_type;
   // AP::result_type must be convertible to EP::result_type.
 

@@ -3,16 +3,18 @@ namespace cpp11 {
 
   /*!
   \ingroup PkgSTLExtensionRef
-  Alias to the tr1 implementation from boost of the `result_of` mechanism.
-  When all compilers supported by %CGAL will have a Standard compliant implemention of the
-  the \cpp11 `decltype` feature, it will become an alias to <code>std::result_of</code>.
+  Alias to the implementation of the `std::result_of` mechanism. When all compilers
+  supported by \cgal have a Standard compliant implemention of the `std::invoke_result`
+  mechanism, it will become an alias to the <code>std::invoke_result</code>.
 
-  \sa <a href=https://www.boost.org/libs/utility/utility.htm#result_of><code>boost::result_of</code></a>
+  \sa <a href=https://en.cppreference.com/w/cpp/types/result_of><code>std::result_of</code></a>
   */
   template <typename F>
-  struct result_of{
-    /// starting from boost version 1.44, it is `boost::tr1_result_of<F>::%type`, and
-    /// `boost::result_of<F>::%type` otherwise.
+  struct result_of {
+
+    /*!
+      It is a type `std::result_of<F>::%type`.
+    */
     typedef unspecified_type type;
   };
 
