@@ -391,7 +391,10 @@ public:
 
       // We have discovered an overlapping segment, we simply create a
       // new polyline with 2 hanging vertices only:
-      *oi ++ = Intersection_result(Polyline(p_l, p_r));
+      if (!cv1.is_directed_right() && !cv2.is_directed_right())
+        *oi ++ = Intersection_result(Polyline(p_r, p_l));
+      else
+        *oi ++ = Intersection_result(Polyline(p_l, p_r));
       return oi;
     }
   };
