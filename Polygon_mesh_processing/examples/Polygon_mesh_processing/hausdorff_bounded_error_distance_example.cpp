@@ -58,19 +58,20 @@ struct Bounded_error_hd_wrapper {
   }
 };
 
+void get_mesh(const std::string filepath, Surface_mesh& mesh) {
+
+  mesh.clear();
+  std::ifstream input(filepath);
+  input >> mesh;
+  std::cout << "* getting mesh with " << mesh.number_of_faces() << " faces" << std::endl;
+}
+
 void get_meshes(
   const std::string filepath1, const std::string filepath2,
   Surface_mesh& mesh1, Surface_mesh& mesh2) {
 
-  mesh1.clear();
-  std::ifstream input1(filepath1);
-  input1 >> mesh1;
-  std::cout << "* getting mesh with " << mesh1.number_of_faces() << " faces" << std::endl;
-
-  mesh2.clear();
-  std::ifstream input2(filepath2);
-  input2 >> mesh2;
-  std::cout << "* getting mesh with " << mesh2.number_of_faces() << " faces" << std::endl;
+  get_mesh(filepath1, mesh1);
+  get_mesh(filepath2, mesh2);
 }
 
 void save_mesh(const Surface_mesh& mesh, const std::string filepath) {
@@ -600,13 +601,40 @@ void test_real_meshes(
   // assert(dista1 == distb1);
 }
 
+template<
+typename FunctionWrapper>
+void test_timings(const std::string filepath, const FunctionWrapper& functor) {
+
+  std::cout.precision(20);
+  std::cout << std::endl << "* testing timing: " << functor.name() << std::endl;
+
+  Timer timer;
+  Surface_mesh mesh1, mesh2;
+  get_meshes(filepath, filepath, mesh1, mesh2);
+
+  timer.reset();
+  timer.start();
+  functor(mesh1, mesh2);
+  timer.stop();
+  std::cout << "* time 0 (sec.): " << timer.time() << std::endl;
+
+  PMP::transform(Affine_transformation_3(CGAL::Translation(),
+    Vector_3(FT(0), FT(0), FT(1))), mesh2);
+
+  timer.reset();
+  timer.start();
+  functor(mesh1, mesh2);
+  timer.stop();
+  std::cout << "* time 1 (sec.): " << timer.time() << std::endl;
+}
+
 int main(int argc, char** argv) {
 
   const double error_bound = 0.05;
   const std::size_t num_samples = 1000;
   std::cout << std::endl << "* error bound: " << error_bound << std::endl;
   std::cout << std::endl << "* number of samples: " << num_samples << std::endl;
-  const std::string filepath = (argc > 1 ? argv[1] : "data/blobby.off");
+  std::string filepath = (argc > 1 ? argv[1] : "data/blobby.off");
 
   // ------------------------------------------------------------------------ //
   // Examples.
@@ -627,13 +655,13 @@ int main(int argc, char** argv) {
 
   // test_synthetic_data(apprx_hd);
   // test_synthetic_data(naive_hd);
-  test_synthetic_data(bound_hd);
+  // test_synthetic_data(bound_hd);
 
   // --- Compare on common meshes.
 
   // test_one_versus_another(apprx_hd, naive_hd);
   // test_one_versus_another(naive_hd, bound_hd);
-  test_one_versus_another(bound_hd, apprx_hd);
+  // test_one_versus_another(bound_hd, apprx_hd);
 
   // --- Compare on real meshes.
 
@@ -642,7 +670,14 @@ int main(int argc, char** argv) {
 
   // test_real_meshes(filepath1, filepath2, apprx_hd, naive_hd);
   // test_real_meshes(filepath1, filepath2, naive_hd, bound_hd);
-  test_real_meshes(filepath1, filepath2, bound_hd, apprx_hd);
+  // test_real_meshes(filepath1, filepath2, bound_hd, apprx_hd);
+
+  // --- Compare timings.
+
+  filepath = (argc > 1 ? argv[1] : "data/blobby-remeshed.off");
+  // test_timings(filepath, apprx_hd);
+  // test_timings(filepath, naive_hd);
+  test_timings(filepath, bound_hd);
 
   // ------------------------------------------------------------------------ //
   std::cout << std::endl;
