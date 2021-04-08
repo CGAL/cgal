@@ -29,6 +29,7 @@
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/dynamic_bitset.hpp>
+#include <boost/container/flat_set.hpp>
 
 #include <stdexcept>
 
@@ -192,7 +193,7 @@ class Intersection_of_triangle_meshes
   // we use Face_pair_and_int and not Face_pair to handle coplanar case.
   // Indeed the boundary of the intersection of two coplanar triangles
   // may contain several segments.
-  typedef std::map< Face_pair_and_int, Node_id_set >         Faces_to_nodes_map;
+  typedef boost::unordered_map< Face_pair_and_int, Node_id_set >    Faces_to_nodes_map;
   typedef Intersection_nodes<TriangleMesh,
                              VertexPointMap1, VertexPointMap2,
                              Predicates_on_constructions_needed>    Node_vector;
@@ -1051,7 +1052,7 @@ class Intersection_of_triangle_meshes
   }
 
   struct Graph_node{
-    std::set<Node_id> neighbors;
+    boost::container::flat_set<Node_id> neighbors;
     unsigned degree;
 
     Graph_node():degree(0){}
