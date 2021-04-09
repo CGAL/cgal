@@ -208,9 +208,6 @@ operator+=( const File_header_OFF& header) {
 // Write header.
 CGAL_INLINE_FUNCTION
 std::ostream& operator<<( std::ostream& out, const File_header_OFF& h) {
-    if ( h.comments()) {
-        out << "# Output of a CGAL tool\n";
-    }
     if ( h.has_textures())
         out << "ST";
     if ( h.has_colors())
@@ -232,10 +229,6 @@ std::ostream& operator<<( std::ostream& out, const File_header_OFF& h) {
         out << h.size_of_vertices() << ' '<< h.size_of_facets();
         if ( h.off())
             out << " 0";
-        if ( h.comments()) {
-            out << "\n\n# " << h.size_of_vertices() << " vertices\n";
-            out << "# ------------------------------------------\n";
-        }
         out << std::endl;
     }
     return out;
