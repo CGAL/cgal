@@ -368,7 +368,7 @@ test_utilities(const NT& x)
 
   // approximate_sqrt
   std::cout << "  approximate_sqrt()" << std::endl;
-  if(CGAL::approximate_sqrt(zero + one) != one) return false;
+  if(CGAL::approximate_sqrt(one) != one) return false;
 
   return true;
 }
