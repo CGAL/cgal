@@ -23,6 +23,12 @@
 
 namespace CGAL {
 
+  // Infinity.
+  template<typename FT>
+  static FT infinity_value() {
+    return FT(1000000000000);
+  }
+
   /**
    * @struct Candidate_triangle
    */
@@ -275,12 +281,12 @@ namespace CGAL {
       Hausdorff_primitive_traits_tm2<Tree_traits, Triangle_3, Kernel, TriangleMesh, VPM2>
       traversal_traits_tm2(
         m_tm2_tree.traits(), m_tm2, m_vpm2,
-        (h_upper == FT(0)) ? std::numeric_limits<FT>::infinity() : h_upper, // Only pass current global bounds if they have been established yet
-        std::numeric_limits<FT>::infinity(),
-        std::numeric_limits<FT>::infinity(),
-        std::numeric_limits<FT>::infinity(),
-        std::numeric_limits<FT>::infinity(),
-        std::numeric_limits<FT>::infinity()
+        (h_upper == FT(0)) ? infinity_value<FT>() : h_upper, // Only pass current global bounds if they have been established yet
+        infinity_value<FT>(),
+        infinity_value<FT>(),
+        infinity_value<FT>(),
+        infinity_value<FT>(),
+        infinity_value<FT>()
       );
       m_tm2_tree.traversal_with_priority(candidate_triangle, traversal_traits_tm2);
 
