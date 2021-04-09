@@ -1664,14 +1664,14 @@ struct Lazy_construction_variant {
 
       // the approximate result requires the trait with types from the AK
       AT approx_v = lazy.approx();
-      // the result we build
-      result_type res;
 
       if(!approx_v) {
         // empty
-        return res;
+        return result_type();
       }
 
+      // the result we build
+      result_type res;
       // the static visitor fills the result_type with the correct unwrapped type
       internal::Fill_lazy_variant_visitor_2< result_type, AK, LK, EK, Lazy<AT, ET, E2A> > visitor(res, lazy);
       boost::apply_visitor(visitor, *approx_v);
@@ -1682,12 +1682,12 @@ struct Lazy_construction_variant {
       Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
 
       ET exact_v = EC()(CGAL::exact(l1), CGAL::exact(l2));
-      result_type res;
 
       if(!exact_v) {
-        return res;
+        return result_type();
       }
 
+      result_type res;
       internal::Fill_lazy_variant_visitor_0<result_type, AK, LK, EK> visitor(res);
       boost::apply_visitor(visitor, *exact_v);
       return res;
@@ -1717,14 +1717,14 @@ struct Lazy_construction_variant {
 
       // the approximate result requires the trait with types from the AK
       AT approx_v = lazy.approx();
-      // the result we build
-      result_type res;
 
       if(!approx_v) {
         // empty
-        return res;
+        return result_type();
       }
 
+      // the result we build
+      result_type res;
       // the static visitor fills the result_type with the correct unwrapped type
       internal::Fill_lazy_variant_visitor_2< result_type, AK, LK, EK, Lazy<AT, ET, E2A> > visitor(res, lazy);
       boost::apply_visitor(visitor, *approx_v);
@@ -1735,12 +1735,12 @@ struct Lazy_construction_variant {
       Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
 
       ET exact_v = EC()(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3));
-      result_type res;
 
       if(!exact_v) {
-        return res;
+        return result_type();
       }
 
+      result_type res;
       internal::Fill_lazy_variant_visitor_0< result_type, AK, LK, EK> visitor(res);
       boost::apply_visitor(visitor, *exact_v);
       return res;
