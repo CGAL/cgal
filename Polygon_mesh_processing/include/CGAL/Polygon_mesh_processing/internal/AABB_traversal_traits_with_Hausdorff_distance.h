@@ -23,20 +23,19 @@
 
 namespace CGAL {
 
-  typedef std::pair<double, double> Hausdorff_bounds;
-
   /**
    * @struct Candidate_triangle
    */
   template<typename Kernel>
   struct Candidate_triangle {
+    using FT = typename Kernel::FT;
     typedef typename Kernel::Triangle_3 Triangle_3;
 
-    Candidate_triangle(const Triangle_3& triangle, const Hausdorff_bounds& bounds)
+    Candidate_triangle(const Triangle_3& triangle, const std::pair<FT, FT>& bounds)
       : m_triangle(triangle), m_bounds(bounds) {}
 
     Triangle_3 m_triangle;
-    Hausdorff_bounds m_bounds;
+    std::pair<FT, FT> m_bounds;
 
     #if BOOST_VERSION >= 105000
         bool operator<(const Candidate_triangle& other) const { return m_bounds.second < other.m_bounds.second; }
@@ -57,20 +56,20 @@ namespace CGAL {
     typedef ::CGAL::AABB_node<AABBTraits> Node;
     typedef typename AABBTraits::Bounding_box Bounding_box;
     typename Kernel::Construct_projected_point_3 project_point;
+    typedef typename Kernel::FT FT;
     typedef typename Kernel::Point_3 Point_3;
     typedef typename Kernel::Vector_3 Vector_3;
 
   public:
-    typedef double Priority;
+    typedef FT Priority;
 
     Hausdorff_primitive_traits_tm2(
       const AABBTraits& traits,
       const TriangleMesh& tm2,
       const VPM2& vpm2,
-      const double /*h_upper_current_global*/,
-      const double h_lower_init, const double h_upper_init,
-      const double h_v0_lower_init, const double h_v1_lower_init, const double h_v2_lower_init
-    )
+      const FT /*h_upper_current_global*/,
+      const FT h_lower_init, const FT h_upper_init,
+      const FT h_v0_lower_init, const FT h_v1_lower_init, const FT h_v2_lower_init)
       : m_traits(traits), m_tm2(tm2), m_vpm2(vpm2) {
         // Initialize the global and local bounds with the given values
         // h_upper_global = h_upper_current_global;
@@ -101,27 +100,27 @@ namespace CGAL {
       */
 
       // The query object is a triangle from TM1, get its vertices
-      Point_3 v0 = query.vertex(0);
-      Point_3 v1 = query.vertex(1);
-      Point_3 v2 = query.vertex(2);
+      const Point_3 v0 = query.vertex(0);
+      const Point_3 v1 = query.vertex(1);
+      const Point_3 v2 = query.vertex(2);
 
       // Compute distances of the vertices to the primitive triangle in TM2
-      Triangle_from_face_descriptor_map<TriangleMesh, VPM2> face_to_triangle_map(&m_tm2, m_vpm2);
-      double v0_dist = approximate_sqrt(squared_distance(
-        project_point( get(face_to_triangle_map, primitive.id()), v0), v0 ) );
+      const Triangle_from_face_descriptor_map<TriangleMesh, VPM2> face_to_triangle_map(&m_tm2, m_vpm2);
+      const FT v0_dist = static_cast<FT>(CGAL::sqrt(CGAL::to_double(squared_distance(
+        project_point( get(face_to_triangle_map, primitive.id()), v0), v0 ) )));
       if (v0_dist < h_v0_lower) h_v0_lower = v0_dist;
 
-      double v1_dist = approximate_sqrt(squared_distance(
-        project_point( get(face_to_triangle_map, primitive.id()), v1), v1 ) );
+      const FT v1_dist = static_cast<FT>(CGAL::sqrt(CGAL::to_double(squared_distance(
+        project_point( get(face_to_triangle_map, primitive.id()), v1), v1 ) )));
       if (v1_dist < h_v1_lower) h_v1_lower = v1_dist;
 
-      double v2_dist = approximate_sqrt(squared_distance(
-        project_point( get(face_to_triangle_map, primitive.id()), v2), v2 ) );
+      const FT v2_dist = static_cast<FT>(CGAL::sqrt(CGAL::to_double(squared_distance(
+        project_point( get(face_to_triangle_map, primitive.id()), v2), v2 ) )));
       if (v2_dist < h_v2_lower) h_v2_lower = v2_dist;
 
       // Get the distance as maximizers over all vertices
-      double distance_upper = std::max(std::max(v0_dist,v1_dist),v2_dist);
-      double distance_lower = std::max(std::max(h_v0_lower,h_v1_lower),h_v2_lower);
+      const FT distance_upper = std::max(std::max(v0_dist,v1_dist),v2_dist);
+      const FT distance_lower = std::max(std::max(h_v0_lower,h_v1_lower),h_v2_lower);
 
       // Since we are at the level of a single triangle in TM2, distance_upper is
       // actually the correct Hausdorff distance from the query triangle in
@@ -135,18 +134,18 @@ namespace CGAL {
     std::pair<bool,Priority> do_intersect_with_priority(const Query& query, const Node& node) const
     {
       // Get the bounding box of the nodes
-      Bounding_box bbox = node.bbox();
+      const Bounding_box bbox = node.bbox();
       // Get the vertices of the query triangle
-      Point_3 v0 = query.vertex(0);
-      Point_3 v1 = query.vertex(1);
-      Point_3 v2 = query.vertex(2);
+      const Point_3 v0 = query.vertex(0);
+      const Point_3 v1 = query.vertex(1);
+      const Point_3 v2 = query.vertex(2);
       // Find the axis aligned bbox of the triangle
-      Point_3 tri_min = Point_3 (
+      const Point_3 tri_min = Point_3 (
         std::min(std::min( v0.x(), v1.x()), v2.x() ),
         std::min(std::min( v0.y(), v1.y()), v2.y() ),
         std::min(std::min( v0.z(), v1.z()), v2.z() )
       );
-      Point_3 tri_max = Point_3 (
+      const Point_3 tri_max = Point_3 (
         std::max(std::max( v0.x(), v1.x()), v2.x() ),
         std::max(std::max( v0.y(), v1.y()), v2.y() ),
         std::max(std::max( v0.z(), v1.z()), v2.z() )
@@ -154,21 +153,21 @@ namespace CGAL {
 
       // Compute distance of the bounding boxes
       // Distance along the x-axis
-      double dist_x = 0.;
+      FT dist_x = FT(0);
       if ( tri_max.x() < bbox.min(0) ) {
         dist_x = bbox.min(0) - tri_max.x();
       } else if ( bbox.max(0) < tri_min.x() ) {
         dist_x = tri_min.x() - bbox.max(0);
       }
       // Distance along the y-axis
-      double dist_y = 0.;
+      FT dist_y = FT(0);
       if ( tri_max.y() < bbox.min(1) ) {
         dist_y = bbox.min(1) - tri_max.y();
       } else if ( bbox.max(1) < tri_min.y() ) {
         dist_y = tri_min.y() - bbox.max(1);
       }
       // Distance along the y-axis
-      double dist_z = 0.;
+      FT dist_z = FT(0);
       if ( tri_max.z() < bbox.min(2) ) {
         dist_z = bbox.min(2) - tri_max.z();
       } else if ( bbox.max(2) < tri_min.z() ) {
@@ -177,7 +176,7 @@ namespace CGAL {
 
       // Lower bound on the distance between the two bounding boxes is given
       // as the length of the diagonal of the bounding box between them
-      double dist = approximate_sqrt( Vector_3(dist_x,dist_y,dist_z).squared_length() );
+      const FT dist = static_cast<FT>(CGAL::sqrt( CGAL::to_double(Vector_3(dist_x,dist_y,dist_z).squared_length() )));
 
       // Check whether investigating the bbox can still lower the Hausdorff
       // distance and improve the current global bound. If so, enter the box.
@@ -185,7 +184,7 @@ namespace CGAL {
       if ( dist <= h_local_lower ) {
         return std::make_pair(true, -dist);
       } else {
-        return std::make_pair(false, 0);
+        return std::make_pair(false, FT(0));
       }
     }
 
@@ -195,9 +194,9 @@ namespace CGAL {
     }
 
     // Return the local Hausdorff bounds computed for the passed query triangle
-    Hausdorff_bounds get_local_bounds()
+    std::pair<FT, FT> get_local_bounds()
     {
-      return Hausdorff_bounds( h_local_lower, h_local_upper );
+      return std::make_pair( h_local_lower, h_local_upper );
     }
 
   private:
@@ -207,13 +206,13 @@ namespace CGAL {
     // its vertex point map
     const VPM2& m_vpm2;
     // Current global upper bound on the Hausdorff distance
-    // double h_upper_global;
+    // FT h_upper_global;
     // Local Hausdorff bounds for the query triangle
-    double h_local_upper;
-    double h_local_lower;
-    double h_v0_lower;
-    double h_v1_lower;
-    double h_v2_lower;
+    FT h_local_upper;
+    FT h_local_lower;
+    FT h_v0_lower;
+    FT h_v1_lower;
+    FT h_v2_lower;
   };
 
 
@@ -228,6 +227,7 @@ namespace CGAL {
     typedef typename AABBTraits::Primitive Primitive;
     typedef typename AABBTraits::Bounding_box Bounding_box;
     typedef ::CGAL::AABB_node<AABBTraits> Node;
+    typedef typename Kernel::FT FT;
     typedef typename Kernel::Point_3 Point_3;
     typedef typename Kernel::Vector_3 Vector_3;
     typedef typename Kernel::Triangle_3 Triangle_3;
@@ -244,7 +244,7 @@ namespace CGAL {
           Heap_type;
 
   public:
-    typedef double Priority;
+    typedef FT Priority;
     Hausdorff_primitive_traits_tm1(
       const AABBTraits& traits, const TM2_tree& tree, const TriangleMesh& tm1,
       const TriangleMesh& tm2 , const VPM1& vpm1, const VPM2& vpm2,
@@ -252,8 +252,8 @@ namespace CGAL {
       : m_traits(traits), m_tm1(tm1), m_tm2(tm2),
       m_vpm1(vpm1), m_vpm2(vpm2), m_tm2_tree(tree) {
         // Initialize the global bounds with 0., they will only grow.
-        h_lower = 0.;
-        h_upper = 0.;
+        h_lower = FT(0);
+        h_upper = FT(0);
       }
 
     // Explore the whole tree, i.e. always enter children if the methods
@@ -264,8 +264,8 @@ namespace CGAL {
     void intersection(const Query&, const Primitive& primitive)
     {
       // Map to transform faces of TM1 to actual triangles
-      Triangle_from_face_descriptor_map<TriangleMesh, VPM1> m_face_to_triangle_map( &m_tm1, m_vpm1 );
-      Triangle_3 candidate_triangle = get(m_face_to_triangle_map, primitive.id());
+      const Triangle_from_face_descriptor_map<TriangleMesh, VPM1> m_face_to_triangle_map( &m_tm1, m_vpm1 );
+      const Triangle_3 candidate_triangle = get(m_face_to_triangle_map, primitive.id());
 
       // TODO Can we initialize the bounds here, s.t. we don't start with infty?
       // Can we initialize the bounds depending on the closest points in tm2
@@ -275,17 +275,17 @@ namespace CGAL {
       Hausdorff_primitive_traits_tm2<Tree_traits, Triangle_3, Kernel, TriangleMesh, VPM2>
       traversal_traits_tm2(
         m_tm2_tree.traits(), m_tm2, m_vpm2,
-        (h_upper == 0.) ? std::numeric_limits<double>::infinity() : h_upper, // Only pass current global bounds if they have been established yet
-        std::numeric_limits<double>::infinity(),
-        std::numeric_limits<double>::infinity(),
-        std::numeric_limits<double>::infinity(),
-        std::numeric_limits<double>::infinity(),
-        std::numeric_limits<double>::infinity()
+        (h_upper == FT(0)) ? std::numeric_limits<FT>::infinity() : h_upper, // Only pass current global bounds if they have been established yet
+        std::numeric_limits<FT>::infinity(),
+        std::numeric_limits<FT>::infinity(),
+        std::numeric_limits<FT>::infinity(),
+        std::numeric_limits<FT>::infinity(),
+        std::numeric_limits<FT>::infinity()
       );
       m_tm2_tree.traversal_with_priority(candidate_triangle, traversal_traits_tm2);
 
       // Update global Hausdorff bounds according to the obtained local bounds
-      Hausdorff_bounds local_bounds = traversal_traits_tm2.get_local_bounds();
+      const auto local_bounds = traversal_traits_tm2.get_local_bounds();
 
       if (local_bounds.first > h_lower) {
         h_lower = local_bounds.first;
@@ -307,35 +307,35 @@ namespace CGAL {
     {
       /* Have reached a node, determine whether or not to enter it */
       // Get the bounding box of the nodes
-      Bounding_box bbox = node.bbox();
+      const Bounding_box bbox = node.bbox();
       // Compute its center
-      Point_3 center = Point_3(
-        (bbox.min(0) + bbox.max(0)) / 2,
-        (bbox.min(1) + bbox.max(1)) / 2,
-        (bbox.min(2) + bbox.max(2)) / 2);
+      const Point_3 center = Point_3(
+        (bbox.min(0) + bbox.max(0)) / FT(2),
+        (bbox.min(1) + bbox.max(1)) / FT(2),
+        (bbox.min(2) + bbox.max(2)) / FT(2));
       // Find the point from TM2 closest to the center
-      Point_3 closest = m_tm2_tree.closest_point(center);
+      const Point_3 closest = m_tm2_tree.closest_point(center);
       // Compute the difference vector between the bbox center and the closest
       // point in tm2
       Vector_3 difference = Vector_3( closest, center );
       // Shift the vector to be the difference between the farthest corner
       // of the bounding box away from the closest point on TM2
-      double diff_x = (bbox.max(0) - bbox.min(0)) / 2;
-      if (difference.x() < 0) diff_x = diff_x * -1.;
-      double diff_y = (bbox.max(1) - bbox.min(1)) / 2;
-      if (difference.y() < 0) diff_y = diff_y * -1.;
-      double diff_z = (bbox.max(2) - bbox.min(2)) / 2;
-      if (difference.z() < 0) diff_z = diff_z * -1.;
+      FT diff_x = (bbox.max(0) - bbox.min(0)) / FT(2);
+      if (difference.x() < 0) diff_x = diff_x * -FT(1);
+      FT diff_y = (bbox.max(1) - bbox.min(1)) / FT(2);
+      if (difference.y() < 0) diff_y = diff_y * -FT(1);
+      FT diff_z = (bbox.max(2) - bbox.min(2)) / FT(2);
+      if (difference.z() < 0) diff_z = diff_z * -FT(1);
       difference = difference + Vector_3( diff_x, diff_y, diff_z );
       // Compute distance from the farthest corner of the bbox to the closest
       // point in TM2
-      double dist = approximate_sqrt( difference.squared_length() );
+      const FT dist = static_cast<FT>(CGAL::sqrt(CGAL::to_double( difference.squared_length() )));
 
       // If the distance is larger than the global lower bound, enter the node, i.e. return true.
       if (dist > h_lower) {
           return std::make_pair(true, dist);
       } else {
-        return std::make_pair(false, 0);
+        return std::make_pair(false, FT(0));
       }
     }
 
@@ -351,9 +351,9 @@ namespace CGAL {
     }
 
     // Return the local Hausdorff bounds computed for the passed query triangle
-    Hausdorff_bounds get_global_bounds()
+    std::pair<FT, FT> get_global_bounds()
     {
-      return Hausdorff_bounds( h_lower, h_upper );
+      return std::make_pair( h_lower, h_upper );
     }
 
   private:
@@ -367,8 +367,8 @@ namespace CGAL {
     // AABB tree for the second triangle meshes
     const TM2_tree& m_tm2_tree;
     // Global Hausdorff bounds to be taken track of during the traversal
-    double h_lower;
-    double h_upper;
+    FT h_lower;
+    FT h_upper;
     // List of candidate triangles with their Hausdorff bounds attached
     Heap_type m_candidiate_triangles;
   };

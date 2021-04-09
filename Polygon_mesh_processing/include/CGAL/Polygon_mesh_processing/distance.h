@@ -1330,7 +1330,7 @@ double bounded_error_Hausdorff_impl(
   VPM1 vpm1,
   VPM2 vpm2)
 {
-  CGAL_assertion_code(  bool is_triangle = is_triangle_mesh(tm1) && is_triangle_mesh(tm2) );
+  CGAL_assertion_code( const bool is_triangle = is_triangle_mesh(tm1) && is_triangle_mesh(tm2) );
   CGAL_assertion_msg (is_triangle,
         "One of the meshes is not triangulated. Distance computing impossible.");
 
@@ -1341,12 +1341,11 @@ double bounded_error_Hausdorff_impl(
   typedef typename AABB_tree< AABB_traits<Kernel, TM2_primitive> >::AABB_traits Tree_traits;
   typedef typename Tree_traits::Point_and_primitive_id Point_and_primitive_id;
 
+  typedef typename Kernel::FT FT;
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Triangle_3 Triangle_3;
 
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
-
-  typedef std::pair<double, double> Hausdorff_bounds;
 
   typename Kernel::Compute_squared_distance_3 squared_distance;
 
@@ -1399,7 +1398,7 @@ double bounded_error_Hausdorff_impl(
   const bool is_tm2_memory_ok = tm2_tree.accelerate_distance_queries();
   CGAL_assertion(is_tm2_memory_ok);
 
-  std::pair<Point_3, face_descriptor> hint = tm2_tree.any_reference_point_and_id();
+  const auto hint = tm2_tree.any_reference_point_and_id();
 
   // Build traversal traits for tm1_tree
   Hausdorff_primitive_traits_tm1<Tree_traits, Point_3, Kernel, TriangleMesh, VPM1, VPM2> traversal_traits_tm1(
@@ -1414,13 +1413,13 @@ double bounded_error_Hausdorff_impl(
   // TODO Is there a better/faster data structure than the Heap used here?
   // Can already build a sorted structure while collecting the candidates
   Heap_type candidate_triangles = traversal_traits_tm1.get_candidate_triangles();
-  Hausdorff_bounds global_bounds = traversal_traits_tm1.get_global_bounds();
+  auto global_bounds = traversal_traits_tm1.get_global_bounds();
 
-  double squared_error_bound = error_bound * error_bound;
+  const FT squared_error_bound = error_bound * error_bound;
   while ( (global_bounds.second - global_bounds.first > error_bound) && !candidate_triangles.empty() ) {
 
     // Get the first triangle and its Hausdorff bounds from the candidate set
-    Candidate_triangle<Kernel> triangle_and_bound = candidate_triangles.top();
+    const Candidate_triangle<Kernel> triangle_and_bound = candidate_triangles.top();
     // Remove it from the candidate set as it will be processed now
     candidate_triangles.pop();
 
@@ -1428,20 +1427,20 @@ double bounded_error_Hausdorff_impl(
     // i.e. if its Upper Bound is higher than the currently known best lower bound
     // and the difference between the bounds to be obtained is larger than the
     // user given error.
-    Hausdorff_bounds triangle_bounds = triangle_and_bound.m_bounds;
+    const auto triangle_bounds = triangle_and_bound.m_bounds;
 
     if ( (triangle_bounds.second > global_bounds.first) && (triangle_bounds.second - triangle_bounds.first > error_bound) ) {
       // Get the triangle that is to be subdivided and read its vertices
-      Triangle_3 triangle_for_subdivision = triangle_and_bound.m_triangle;
-      Point_3 v0 = triangle_for_subdivision.vertex(0);
-      Point_3 v1 = triangle_for_subdivision.vertex(1);
-      Point_3 v2 = triangle_for_subdivision.vertex(2);
+      const Triangle_3 triangle_for_subdivision = triangle_and_bound.m_triangle;
+      const Point_3 v0 = triangle_for_subdivision.vertex(0);
+      const Point_3 v1 = triangle_for_subdivision.vertex(1);
+      const Point_3 v2 = triangle_for_subdivision.vertex(2);
 
       // Check second stopping condition: All three vertices of the triangle
       // are projected onto the same triangle in TM2
-      Point_and_primitive_id closest_triangle_v0 = tm2_tree.closest_point_and_primitive(v0);
-      Point_and_primitive_id closest_triangle_v1 = tm2_tree.closest_point_and_primitive(v1);
-      Point_and_primitive_id closest_triangle_v2 = tm2_tree.closest_point_and_primitive(v2);
+      const Point_and_primitive_id closest_triangle_v0 = tm2_tree.closest_point_and_primitive(v0);
+      const Point_and_primitive_id closest_triangle_v1 = tm2_tree.closest_point_and_primitive(v1);
+      const Point_and_primitive_id closest_triangle_v2 = tm2_tree.closest_point_and_primitive(v2);
       if( (closest_triangle_v0.second == closest_triangle_v1.second) && (closest_triangle_v1.second == closest_triangle_v2.second)) {
         // The upper bound of this triangle is the actual Hausdorff distance of
         // the triangle to the second mesh. Use it as new global lower bound.
@@ -1463,10 +1462,10 @@ double bounded_error_Hausdorff_impl(
       }
 
       // Subdivide the triangle into four smaller triangles
-      Point_3 v01 = midpoint( v0, v1 );
-      Point_3 v02 = midpoint( v0, v2 );
-      Point_3 v12 = midpoint( v1, v2 );
-      std::array<Triangle_3,4> sub_triangles = {
+      const Point_3 v01 = midpoint( v0, v1 );
+      const Point_3 v02 = midpoint( v0, v2 );
+      const Point_3 v12 = midpoint( v1, v2 );
+      const std::array<Triangle_3,4> sub_triangles = {
         Triangle_3( v0, v01, v02), Triangle_3( v1, v01, v12),
         Triangle_3( v2, v02, v12), Triangle_3( v01, v02, v12)
       };
@@ -1478,15 +1477,15 @@ double bounded_error_Hausdorff_impl(
           tm2_tree.traits(), tm2, vpm2,
           triangle_bounds.first,
           triangle_bounds.second,
-          std::numeric_limits<double>::infinity(),
-          std::numeric_limits<double>::infinity(),
-          std::numeric_limits<double>::infinity(),
-          std::numeric_limits<double>::infinity()
+          std::numeric_limits<FT>::infinity(),
+          std::numeric_limits<FT>::infinity(),
+          std::numeric_limits<FT>::infinity(),
+          std::numeric_limits<FT>::infinity()
         );
         tm2_tree.traversal_with_priority(sub_triangles[i], traversal_traits_tm2);
 
         // Update global lower Hausdorff bound according to the obtained local bounds
-        Hausdorff_bounds local_bounds = traversal_traits_tm2.get_local_bounds();
+        const auto local_bounds = traversal_traits_tm2.get_local_bounds();
         if (local_bounds.first > global_bounds.first) {
           global_bounds.first = local_bounds.first;
         }
@@ -1499,13 +1498,13 @@ double bounded_error_Hausdorff_impl(
       }
 
       // Update global upper Hausdorff bound after subdivision
-      double current_max = candidate_triangles.top().m_bounds.second;
+      const FT current_max = candidate_triangles.top().m_bounds.second;
       global_bounds.second = std::max(current_max, global_bounds.first);
     }
   }
 
   // Return linear interpolation between found lower and upper bound
-  return (global_bounds.first + global_bounds.second) / 2.;
+  return CGAL::to_double((global_bounds.first + global_bounds.second) / FT(2));
 
 #if !defined(CGAL_LINKED_WITH_TBB)
   CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
@@ -1518,7 +1517,7 @@ double bounded_error_Hausdorff_impl(
 template <class Point_3,
           class TM2_tree,
           class Kernel>
-double recursive_hausdorff_subdivision(
+typename Kernel::FT recursive_hausdorff_subdivision(
   const Point_3& v0,
   const Point_3& v1,
   const Point_3& v2,
@@ -1527,7 +1526,7 @@ double recursive_hausdorff_subdivision(
 {
   // If all edge lengths of the triangle are below the error_bound,
   // return maximum of the distances of the three points to TM2 (via TM2_tree).
-  double max_squared_edge_length =
+  const auto max_squared_edge_length =
   std::max(
     std::max(
       squared_distance( v0, v1 ),
@@ -1544,9 +1543,9 @@ double recursive_hausdorff_subdivision(
   }
 
   // Else subdivide the triangle and proceed recursively
-  Point_3 v01 = midpoint( v0, v1 );
-  Point_3 v02 = midpoint( v0, v2 );
-  Point_3 v12 = midpoint( v1, v2 );
+  const Point_3 v01 = midpoint( v0, v1 );
+  const Point_3 v02 = midpoint( v0, v2 );
+  const Point_3 v12 = midpoint( v1, v2 );
 
   return std::max (
       std::max(
@@ -1572,7 +1571,7 @@ double bounded_error_Hausdorff_naive_impl(
   VPM1 vpm1,
   VPM2 vpm2)
 {
-  CGAL_assertion_code(  bool is_triangle = is_triangle_mesh(tm1) && is_triangle_mesh(tm2) );
+  CGAL_assertion_code( const bool is_triangle = is_triangle_mesh(tm1) && is_triangle_mesh(tm2) );
   CGAL_assertion_msg (is_triangle,
         "One of the meshes is not triangulated. Distance computing impossible.");
 
@@ -1581,13 +1580,14 @@ double bounded_error_Hausdorff_naive_impl(
 
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
+  typedef typename Kernel::FT FT;
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Triangle_3 Triangle_3;
 
   // Initially, no lower bound is known
-  double squared_lower_bound = 0.;
+  FT squared_lower_bound = FT(0);
   // Work with squares in the following, only draw sqrt at the very end
-  double squared_error_bound = error_bound * error_bound;
+  const FT squared_error_bound = error_bound * error_bound;
 
   // Build an AABB tree on tm2
   TM2_tree tm2_tree( faces(tm2).begin(), faces(tm2).end(), tm2, vpm2 );
@@ -1595,20 +1595,21 @@ double bounded_error_Hausdorff_naive_impl(
   tm2_tree.accelerate_distance_queries();
 
   // Build a map to obtain actual triangles from the face descriptors of tm1.
-  Triangle_from_face_descriptor_map<TriangleMesh, VPM1> face_to_triangle_map( &tm1, vpm1 );
+  const Triangle_from_face_descriptor_map<TriangleMesh, VPM1> face_to_triangle_map( &tm1, vpm1 );
 
   // Iterate over the triangles of TM1.
-  for(face_descriptor fd : faces(tm1))
+  for(const face_descriptor& fd : faces(tm1))
   {
     // Get the vertices of the face and pass them on to a recursive method.
-    Triangle_3 triangle = get(face_to_triangle_map, fd);
-    Point_3 v0 = triangle.vertex(0);
-    Point_3 v1 = triangle.vertex(1);
-    Point_3 v2 = triangle.vertex(2);
+    const Triangle_3 triangle = get(face_to_triangle_map, fd);
+    const Point_3 v0 = triangle.vertex(0);
+    const Point_3 v1 = triangle.vertex(1);
+    const Point_3 v2 = triangle.vertex(2);
 
     // Recursively process the current triangle to obtain a lower bound on
     // its Hausdorff distance.
-    double triangle_bound = recursive_hausdorff_subdivision<Point_3, TM2_tree, Kernel>( v0, v1, v2, tm2_tree, squared_error_bound );
+    const FT triangle_bound = recursive_hausdorff_subdivision<Point_3, TM2_tree, Kernel>(
+      v0, v1, v2, tm2_tree, squared_error_bound );
 
     // Store the largest lower bound.
     if( triangle_bound > squared_lower_bound ) {
@@ -1617,7 +1618,7 @@ double bounded_error_Hausdorff_naive_impl(
   }
 
   // Return linear interpolation between found upper and lower bound
-  return (approximate_sqrt( squared_lower_bound ));
+  return CGAL::sqrt(CGAL::to_double( squared_lower_bound ));
 
 #if !defined(CGAL_LINKED_WITH_TBB)
   CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
@@ -1660,7 +1661,8 @@ double bounded_error_Hausdorff_naive_impl(
  *     \cgalParamDescription{a boolean tag that turns on the preprocessing step that filters out all faces,
  *                           which belong to both meshes and hence do not contribute to the final distance}
  *     \cgalParamType{Boolean}
- *     \cgalParamDefault{true}
+ *     \cgalParamDefault{false}
+ *     \cgalParamExtra{Both `np1` and `np2` must have this tag true in order to activate this preprocessing.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  */
@@ -1676,6 +1678,7 @@ double bounded_error_Hausdorff_distance( const TriangleMesh& tm1,
 {
   typedef typename GetGeomTraits<TriangleMesh,
                                  NamedParameters1>::type Geom_traits;
+  using FT = typename Geom_traits::FT;
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::const_type Vpm1;
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters2>::const_type Vpm2;
@@ -1689,13 +1692,14 @@ double bounded_error_Hausdorff_distance( const TriangleMesh& tm1,
                               get_const_property_map(vertex_point, tm2));
 
   const bool match_faces1 = parameters::choose_parameter(
-    parameters::get_parameter(np1, internal_np::match_faces), true);
+    parameters::get_parameter(np1, internal_np::match_faces), false);
   const bool match_faces2 = parameters::choose_parameter(
-    parameters::get_parameter(np2, internal_np::match_faces), true);
+    parameters::get_parameter(np2, internal_np::match_faces), false);
   const bool match_faces = match_faces1 && match_faces2;
 
+  const FT error_threshold = static_cast<FT>(error_bound);
   return internal::bounded_error_Hausdorff_impl<Concurrency_tag, Geom_traits>(
-    tm1, tm2, error_bound, match_faces, vpm1, vpm2);
+    tm1, tm2, error_threshold, match_faces, vpm1, vpm2);
 }
 
 
@@ -1734,19 +1738,22 @@ double bounded_error_Hausdorff_distance_naive( const TriangleMesh& tm1,
 {
   typedef typename GetGeomTraits<TriangleMesh,
                                  NamedParameters1>::type Geom_traits;
+  using FT = typename Geom_traits::FT;
 
-   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::const_type Vpm1;
-   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters2>::const_type Vpm2;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::const_type Vpm1;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters2>::const_type Vpm2;
 
-   using parameters::choose_parameter;
-   using parameters::get_parameter;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
-   Vpm1 vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
-                                get_const_property_map(vertex_point, tm1));
-   Vpm2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
-                                get_const_property_map(vertex_point, tm2));
+  Vpm1 vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
+                              get_const_property_map(vertex_point, tm1));
+  Vpm2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
+                              get_const_property_map(vertex_point, tm2));
 
-   return internal::bounded_error_Hausdorff_naive_impl<Concurrency_tag, Geom_traits>(tm1, tm2, error_bound, vpm1, vpm2);
+  const FT error_threshold = static_cast<FT>(error_bound);
+  return internal::bounded_error_Hausdorff_naive_impl<Concurrency_tag, Geom_traits>(
+    tm1, tm2, error_threshold, vpm1, vpm2);
 }
 
 template< class Concurrency_tag,

@@ -17,7 +17,7 @@ using SCK   = CGAL::Simple_cartesian<double>;
 using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
 
-using Kernel   = EPICK;
+using Kernel   = EPECK;
 using FT       = typename Kernel::FT;
 using Point_3  = typename Kernel::Point_3;
 using Vector_3 = typename Kernel::Vector_3;
@@ -231,8 +231,6 @@ void test_0(const FunctionWrapper& functor, const bool save = false) {
 
   std::cout << "* Hausdorff distance (expected 0): " << dista << std::endl;
   std::cout << "* HInverted distance (expected 0): " << distb << std::endl;
-  // assert(dista == 0.0);
-  // assert(dista == distb);
 }
 
 template<typename FunctionWrapper>
@@ -262,8 +260,6 @@ void test_1(const FunctionWrapper& functor, const bool save = false) {
 
   std::cout << "* Hausdorff distance (expected 1): " << dista << std::endl;
   std::cout << "* HInverted distance (expected 1): " << distb << std::endl;
-  // assert(dista == 1.0);
-  // assert(dista == distb);
 }
 
 template<typename FunctionWrapper>
@@ -293,8 +289,6 @@ void test_2(const FunctionWrapper& functor, const bool save = false) {
 
   std::cout << "* Hausdorff distance (expected 1): " << dista << std::endl;
   std::cout << "* HInverted distance (expected 1): " << distb << std::endl;
-  // assert(dista == 1.0);
-  // assert(dista == distb);
 }
 
 template<typename FunctionWrapper>
@@ -302,7 +296,7 @@ void test_3(const FunctionWrapper& functor, const bool save = false) {
 
   // One triangle is orthogonal to the other one and shares a common edge
   // that is moved 1 unit distance away.
-  // Expected distances are 1.4142135623730951455 and 2.
+  // Expected distances are sqrt(2) and 2.
 
   std::cout.precision(20);
   Surface_mesh mesh1, mesh2;
@@ -323,10 +317,8 @@ void test_3(const FunctionWrapper& functor, const bool save = false) {
   const double dista = functor(mesh1, mesh2);
   const double distb = functor(mesh2, mesh1);
 
-  std::cout << "* Hausdorff distance (expected 1.41): " << dista << std::endl;
-  std::cout << "* HInverted distance (expected 2.00): " << distb << std::endl;
-  // assert(dista == 1.4142135623730951455);
-  // assert(distb == 2.0);
+  std::cout << "* Hausdorff distance (expected sqrt(2)): " << dista << std::endl;
+  std::cout << "* HInverted distance (expected      2 ): " << distb << std::endl;
 }
 
 template<typename FunctionWrapper>
@@ -356,8 +348,6 @@ void test_4(const FunctionWrapper& functor, const bool save = false) {
 
   std::cout << "* Hausdorff distance (expected 1.22): " << dista << std::endl;
   std::cout << "* HInverted distance (expected 1.22): " << distb << std::endl;
-  // assert(dista == 1.2247448713915889407);
-  // assert(dista == distb);
 }
 
 template<typename FunctionWrapper>
@@ -388,8 +378,6 @@ void test_5(const FunctionWrapper& functor, const bool save = false) {
 
   std::cout << "* Hausdorff distance (expected 1.73): " << dista << std::endl;
   std::cout << "* HInverted distance (expected 2.12): " << distb << std::endl;
-  // assert(dista == 1.7320508075688771932);
-  // assert(distb == 2.1213203435596423851);
 }
 
 template<typename FunctionWrapper>
@@ -425,8 +413,6 @@ void test_6(const FunctionWrapper& functor, const bool save = false) {
 
   std::cout << "* Hausdorff distance (expected 0.0): " << dista << std::endl;
   std::cout << "* HInverted distance (expected 0.7): " << distb << std::endl;
-  // assert(dista == 0.0);
-  // assert(distb == 0.70710678118654757274);
 }
 
 template<typename FunctionWrapper>
@@ -462,8 +448,6 @@ void test_7(const FunctionWrapper& functor, const bool save = false) {
 
   std::cout << "* Hausdorff distance (expected 0.50): " << dista << std::endl;
   std::cout << "* HInverted distance (expected 0.86): " << distb << std::endl;
-  // assert(dista == 0.5);
-  // assert(distb == 0.86602540378443859659);
 }
 
 template<typename FunctionWrapper>
@@ -499,8 +483,6 @@ void test_8(const FunctionWrapper& functor, const bool save = false) {
 
   std::cout << "* Hausdorff distance (expected 1): " << dista << std::endl;
   std::cout << "* HInverted distance (expected 2): " << distb << std::endl;
-  // assert(dista == 1.0);
-  // assert(distb == 2.0);
 }
 
 template<typename FunctionWrapper>
@@ -508,7 +490,7 @@ void test_9(const FunctionWrapper& functor, const bool save = false) {
 
   // Two meshes partially overlap, have 2 triangles in common and each one has
   // two its own trianles. All triangles form a Z shape where the height is 1.
-  // The expected result is sqrt(2) = 1.4142135623730951455.
+  // The expected result is 1.
 
   std::cout.precision(20);
   Surface_mesh mesh1, mesh2;
@@ -541,10 +523,8 @@ void test_9(const FunctionWrapper& functor, const bool save = false) {
   const double dista = functor(mesh1, mesh2);
   const double distb = functor(mesh2, mesh1);
 
-  std::cout << "* Hausdorff distance (expected sqrt(2)): " << dista << std::endl;
-  std::cout << "* HInverted distance (expected sqrt(2)): " << distb << std::endl;
-  // assert(dista == 1.4142135623730951455);
-  // assert(distb == 1.4142135623730951455);
+  std::cout << "* Hausdorff distance (expected 1): " << dista << std::endl;
+  std::cout << "* HInverted distance (expected 1): " << distb << std::endl;
 }
 
 template<typename FunctionWrapper>
@@ -591,7 +571,6 @@ void test_one_versus_another(
   const double distb0 = functor2(mesh1, mesh2);
   std::cout << "* Hausdorff distance1: " << dista0 << std::endl;
   std::cout << "* Hausdorff distance2: " << distb0 << std::endl;
-  // assert(dista0 == distb0);
 
   std::cout << "* traslating by 1 unit ..." << std::endl;
   PMP::transform(Affine_transformation_3(CGAL::Translation(),
@@ -605,7 +584,6 @@ void test_one_versus_another(
   const double distb1 = functor2(mesh1, mesh2);
   std::cout << "* Hausdorff distance1: " << dista1 << std::endl;
   std::cout << "* Hausdorff distance2: " << distb1 << std::endl;
-  // assert(dista1 == distb1);
 }
 
 template<
@@ -642,8 +620,6 @@ void test_real_meshes(
   std::cout << std::endl;
   std::cout << "* Hausdorff distance2 f: " << distb0 << std::endl;
   std::cout << "* Hausdorff distance2 b: " << distb1 << std::endl;
-  // assert(dista0 == distb0);
-  // assert(dista1 == distb1);
 }
 
 template<
@@ -706,7 +682,7 @@ int main(int argc, char** argv) {
 
   // test_one_versus_another(apprx_hd, naive_hd);
   // test_one_versus_another(naive_hd, bound_hd);
-  test_one_versus_another(bound_hd, apprx_hd);
+  // test_one_versus_another(bound_hd, apprx_hd);
 
   // --- Compare on real meshes.
 
@@ -715,14 +691,14 @@ int main(int argc, char** argv) {
 
   // test_real_meshes(filepath1, filepath2, apprx_hd, naive_hd);
   // test_real_meshes(filepath1, filepath2, naive_hd, bound_hd);
-  test_real_meshes(filepath1, filepath2, bound_hd, apprx_hd);
+  // test_real_meshes(filepath1, filepath2, bound_hd, apprx_hd);
 
   // --- Compare timings.
 
   filepath = (argc > 1 ? argv[1] : "data/blobby-remeshed.off");
   // test_timings(filepath, apprx_hd);
   // test_timings(filepath, naive_hd);
-  test_timings(filepath, bound_hd);
+  // test_timings(filepath, bound_hd);
 
   // ------------------------------------------------------------------------ //
   std::cout << std::endl;
