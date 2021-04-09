@@ -215,7 +215,7 @@ void test_0(const FunctionWrapper& functor, const bool save = false) {
 
   std::cout.precision(20);
   Surface_mesh mesh1, mesh2;
-  std::cout << " ---- testing 0 ----" << std::endl;
+  std::cout << " ---- testing 0 ---- " << std::endl;
 
   mesh1.add_vertex(Point_3(0, 0, 0));
   mesh1.add_vertex(Point_3(2, 0, 0));
@@ -243,7 +243,7 @@ void test_1(const FunctionWrapper& functor, const bool save = false) {
 
   std::cout.precision(20);
   Surface_mesh mesh1, mesh2;
-  std::cout << " ---- testing 1 ----" << std::endl;
+  std::cout << " ---- testing 1 ---- " << std::endl;
 
   mesh1.add_vertex(Point_3(0, 0, 0));
   mesh1.add_vertex(Point_3(2, 0, 0));
@@ -274,7 +274,7 @@ void test_2(const FunctionWrapper& functor, const bool save = false) {
 
   std::cout.precision(20);
   Surface_mesh mesh1, mesh2;
-  std::cout << " ---- testing 2 ----" << std::endl;
+  std::cout << " ---- testing 2 ---- " << std::endl;
 
   mesh1.add_vertex(Point_3(0, 0, 0));
   mesh1.add_vertex(Point_3(2, 0, 0));
@@ -306,7 +306,7 @@ void test_3(const FunctionWrapper& functor, const bool save = false) {
 
   std::cout.precision(20);
   Surface_mesh mesh1, mesh2;
-  std::cout << " ---- testing 3 ----" << std::endl;
+  std::cout << " ---- testing 3 ---- " << std::endl;
 
   mesh1.add_vertex(Point_3(0, 0, 0));
   mesh1.add_vertex(Point_3(2, 0, 0));
@@ -337,7 +337,7 @@ void test_4(const FunctionWrapper& functor, const bool save = false) {
 
   std::cout.precision(20);
   Surface_mesh mesh1, mesh2;
-  std::cout << " ---- testing 4 ----" << std::endl;
+  std::cout << " ---- testing 4 ---- " << std::endl;
 
   mesh1.add_vertex(Point_3(0, 0, 0));
   mesh1.add_vertex(Point_3(2, 0, 0));
@@ -369,7 +369,7 @@ void test_5(const FunctionWrapper& functor, const bool save = false) {
 
   std::cout.precision(20);
   Surface_mesh mesh1, mesh2;
-  std::cout << " ---- testing 5 ----" << std::endl;
+  std::cout << " ---- testing 5 ---- " << std::endl;
 
   mesh1.add_vertex(Point_3(0, 0, 0));
   mesh1.add_vertex(Point_3(2, 0, 0));
@@ -401,7 +401,7 @@ void test_6(const FunctionWrapper& functor, const bool save = false) {
 
   std::cout.precision(20);
   Surface_mesh mesh1, mesh2;
-  std::cout << " ---- testing 6 ----" << std::endl;
+  std::cout << " ---- testing 6 ---- " << std::endl;
 
   mesh1.add_vertex(Point_3(0, 0, 0));
   mesh1.add_vertex(Point_3(2, 0, 0));
@@ -438,7 +438,7 @@ void test_7(const FunctionWrapper& functor, const bool save = false) {
 
   std::cout.precision(20);
   Surface_mesh mesh1, mesh2;
-  std::cout << " ---- testing 7 ----" << std::endl;
+  std::cout << " ---- testing 7 ---- " << std::endl;
 
   mesh1.add_vertex(Point_3(0, 0, 0));
   mesh1.add_vertex(Point_3(2, 0, 0));
@@ -475,7 +475,7 @@ void test_8(const FunctionWrapper& functor, const bool save = false) {
 
   std::cout.precision(20);
   Surface_mesh mesh1, mesh2;
-  std::cout << " ---- testing 8 ----" << std::endl;
+  std::cout << " ---- testing 8 ---- " << std::endl;
 
   mesh1.add_vertex(Point_3(0, 0, 0));
   mesh1.add_vertex(Point_3(2, 0, 0));
@@ -504,6 +504,50 @@ void test_8(const FunctionWrapper& functor, const bool save = false) {
 }
 
 template<typename FunctionWrapper>
+void test_9(const FunctionWrapper& functor, const bool save = false) {
+
+  // Two meshes partially overlap, have 2 triangles in common and each one has
+  // two its own trianles. All triangles form a Z shape where the height is 1.
+  // The expected result is sqrt(2) = 1.4142135623730951455.
+
+  std::cout.precision(20);
+  Surface_mesh mesh1, mesh2;
+  std::cout << " ---- testing 9 ---- " << std::endl;
+
+  auto v0 = mesh1.add_vertex(Point_3(0, 0, 0));
+  auto v1 = mesh1.add_vertex(Point_3(1, 0, 0));
+  auto v2 = mesh1.add_vertex(Point_3(0, 1, 0));
+  auto v3 = mesh1.add_vertex(Point_3(1, 1, 0));
+  auto v4 = mesh1.add_vertex(Point_3(1, 0, 1));
+  auto v5 = mesh1.add_vertex(Point_3(1, 1, 1));
+  mesh1.add_face(v0, v1, v2);
+  mesh1.add_face(v2, v1, v3);
+  mesh1.add_face(v1, v4, v3);
+  mesh1.add_face(v3, v4, v5);
+  if (save) save_mesh(mesh1, "mesh1");
+
+  v0 = mesh2.add_vertex(Point_3(2, 0, 1));
+  v1 = mesh2.add_vertex(Point_3(1, 0, 0));
+  v2 = mesh2.add_vertex(Point_3(2, 1, 1));
+  v3 = mesh2.add_vertex(Point_3(1, 1, 0));
+  v4 = mesh2.add_vertex(Point_3(1, 0, 1));
+  v5 = mesh2.add_vertex(Point_3(1, 1, 1));
+  mesh2.add_face(v1, v4, v3);
+  mesh2.add_face(v3, v4, v5);
+  mesh2.add_face(v4, v0, v5);
+  mesh2.add_face(v5, v0, v2);
+  if (save) save_mesh(mesh2, "mesh2");
+
+  const double dista = functor(mesh1, mesh2);
+  const double distb = functor(mesh2, mesh1);
+
+  std::cout << "* Hausdorff distance (expected sqrt(2)): " << dista << std::endl;
+  std::cout << "* HInverted distance (expected sqrt(2)): " << distb << std::endl;
+  // assert(dista == 1.4142135623730951455);
+  // assert(distb == 1.4142135623730951455);
+}
+
+template<typename FunctionWrapper>
 void test_synthetic_data(const FunctionWrapper& functor) {
 
   std::cout << std::endl << "* testing synthetic data:" << std::endl;
@@ -518,6 +562,7 @@ void test_synthetic_data(const FunctionWrapper& functor) {
   test_6(functor); // 1 to multiple
   test_7(functor);
   test_8(functor);
+  test_9(functor); // overlapping
 }
 
 template<
@@ -541,7 +586,7 @@ void test_one_versus_another(
   // TEST 0.
   // Load and compare.
   // The expected distance is 0.
-  std::cout << " ---- testing 0 ----" << std::endl;
+  std::cout << " ---- testing 0 ---- " << std::endl;
   const double dista0 = functor1(mesh1, mesh2);
   const double distb0 = functor2(mesh1, mesh2);
   std::cout << "* Hausdorff distance1: " << dista0 << std::endl;
@@ -555,7 +600,7 @@ void test_one_versus_another(
   // TEST 1.
   // Translate by 1 unit distance and compare.
   // The expected distance is 1.
-  std::cout << " ---- testing 1 ----" << std::endl;
+  std::cout << " ---- testing 1 ---- " << std::endl;
   const double dista1 = functor1(mesh1, mesh2);
   const double distb1 = functor2(mesh1, mesh2);
   std::cout << "* Hausdorff distance1: " << dista1 << std::endl;
@@ -586,7 +631,7 @@ void test_real_meshes(
 
   // Load and compare.
   std::cout << std::endl;
-  std::cout << " ---- testing ----" << std::endl;
+  std::cout << " ---- testing ---- " << std::endl;
   const double dista0 = functor1(mesh1, mesh2);
   const double dista1 = functor1(mesh2, mesh1);
   const double distb0 = functor2(mesh1, mesh2);

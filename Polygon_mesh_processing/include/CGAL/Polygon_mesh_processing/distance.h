@@ -1373,6 +1373,10 @@ double bounded_error_Hausdorff_impl(
     match_faces(tm1, tm2, std::back_inserter(common),
       std::back_inserter(tm1_only), std::back_inserter(tm2_only));
 
+    // std::cout << "common: " << common.size() << std::endl;
+    // std::cout << "tm1 only: " << tm1_only.size() << std::endl;
+    // std::cout << "tm2 only: " << tm2_only.size() << std::endl;
+
     if (tm1_only.size() == 0) return 0.0;
     if (tm2_only.size() == 0) return 0.0;
     CGAL_assertion(tm1_only.size() > 0);
