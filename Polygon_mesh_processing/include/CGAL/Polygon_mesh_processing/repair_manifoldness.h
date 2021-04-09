@@ -110,7 +110,7 @@ create_new_vertex_for_sector(typename boost::graph_traits<PolygonMesh>::halfedge
     else
       h = prev(opposite(h, pmesh), pmesh);
   }
-  while(h != sector_begin_h); // for safety
+  while(h != sector_begin_h); // for safety only
   CGAL_postcondition(h != sector_begin_h);
 
   return new_vd;
@@ -410,7 +410,6 @@ void treat_pinched_star(typename boost::graph_traits<PolygonMesh>::halfedge_desc
 
   if(treatment == SEPARATE)
   {
-#define CGAL_PMP_REPAIR_MANIFOLDNESS_SEPARATE_WITH_SMOOTH
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_SEPARATE_WITH_SMOOTH
     internal::Vertex_collector<PolygonMesh> dmap;
     Static_boolean_property_map<vertex_descriptor, false> cmap; // @fixme proper cmap?
@@ -491,7 +490,7 @@ bool treat_pinched_stars(UmbrellaContainer& umbrellas,
     if(!is_pinched_nm_vertex(h, pmesh))
       continue;
 
-    has_pinched_nm_vertices = true; // @tmp can be removed now?
+    has_pinched_nm_vertices = true;
     treat_pinched_star(h, treatment, pmesh, vpm, gt);
     treated_umbrellas.insert(h);
   }
@@ -729,7 +728,7 @@ void extract_border_of_work_zone(const typename boost::graph_traits<PolygonMesh>
                                  Work_zone<PolygonMesh>& wz,
                                  const PolygonMesh& pmesh,
                                  const VPM vpm,
-                                 const GeomTraits& /*gt*/) // @todo
+                                 const GeomTraits& /*gt*/) // @todo use gts properly
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor      halfedge_descriptor;
 
@@ -867,8 +866,8 @@ construct_work_zones(UmbrellaContainer& umbrellas,
     if(!wz.faces.empty())
       wzs.push_back(wz);
 
-    std::cout << "### extract border of zone incident to: " << get(vpm, source(h, pmesh)) << " " << get(vpm, target(h, pmesh)) << std::endl;
-
+    std::cout << "### extract border of zone incident to: "
+              << get(vpm, source(h, pmesh)) << " " << get(vpm, target(h, pmesh)) << std::endl;
     extract_border_of_work_zone(h, wzs.back(), pmesh, vpm, gt);
 
     std::cout << "border of zone " << wzs.size() - 1 << std::endl;
@@ -1299,6 +1298,16 @@ bool fill_zones(const WorkZoneContainer& wzs,
 }
 
 template <typename UmbrellaContainer, typename PolygonMesh, typename VPM, typename GeomTraits>
+void smooth_umbrellas(UmbrellaContainer& umbrellas,
+                      PolygonMesh& pmesh,
+                      VPM vpm,
+                      const GeomTraits& gt)
+{
+  for(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h : umbrellas)
+    adjust_vertex_position(target(h, pmesh), pmesh, vpm, gt);
+}
+
+template <typename UmbrellaContainer, typename PolygonMesh, typename VPM, typename GeomTraits>
 bool treat_umbrellas(UmbrellaContainer& umbrellas,
                      const NM_TREATMENT treatment,
                      const typename GeomTraits::FT radius,
@@ -1306,8 +1315,17 @@ bool treat_umbrellas(UmbrellaContainer& umbrellas,
                      VPM vpm,
                      const GeomTraits& gt)
 {
-  // can't merge if there were any pinched stars
+  // can't merge if there were pinched stars
   const bool can_employ_merge_strategy = !treat_pinched_stars(umbrellas, treatment, pmesh, vpm, gt);
+
+#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_SEPARATE_WITH_SMOOTH
+  // If smoothing, we don't need any particular work zones
+  if(treatment == SEPARATE)
+  {
+    smooth_umbrellas(umbrellas, pmesh, vpm, gt);
+    return true;
+  }
+#endif
 
   std::vector<Work_zone<PolygonMesh> > wzs = construct_work_zones(umbrellas, radius, pmesh, vpm, gt);
 
@@ -1325,8 +1343,12 @@ bool treat_umbrellas(UmbrellaContainer& umbrellas,
 #endif
 
   if(treatment == SEPARATE)
+  {
+    // Separate treatment here implies no smoothing but cut&fill
     return fill_zones(wzs, pmesh, vpm, gt);
+  }
 
+  // Merging is not (yet?) supported for > 2 umbrellas
   if(!can_employ_merge_strategy || wzs.size() != 2)
   {
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
@@ -1372,7 +1394,7 @@ void repair_non_manifold_vertices(PolygonMesh& pmesh,
   typedef typename Geom_traits::FT                                            FT;
   typedef typename boost::property_traits<VertexPointMap>::value_type         Point;
 
-  const FT radius = 0.3; // @todo automatic or np
+  const FT radius = 0.3; // @todo automatically computed or np
 
   // Collect the non-manifold vertices
   typedef CGAL::dynamic_vertex_property_t<bool>                               Mark;
@@ -1398,6 +1420,7 @@ void repair_non_manifold_vertices(PolygonMesh& pmesh,
 
   for(auto& e : nm_points)
   {
+    // All these umbrellas have the same center
     std::set<halfedge_descriptor>& umbrellas = e.second;
     CGAL_assertion(!umbrellas.empty());
 
