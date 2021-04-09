@@ -1334,12 +1334,11 @@ double bounded_error_Hausdorff_impl(
   CGAL_assertion_msg (is_triangle,
         "One of the meshes is not triangulated. Distance computing impossible.");
 
-  typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM1, Tag_true, Tag_true> TM1_primitive;
-  typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM2, Tag_true, Tag_true> TM2_primitive;
+  typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM1> TM1_primitive;
+  typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM2> TM2_primitive;
   typedef AABB_tree< AABB_traits<Kernel, TM1_primitive> > TM1_tree;
   typedef AABB_tree< AABB_traits<Kernel, TM2_primitive> > TM2_tree;
   typedef typename AABB_tree< AABB_traits<Kernel, TM2_primitive> >::AABB_traits Tree_traits;
-  typedef typename Tree_traits::Point_and_primitive_id Point_and_primitive_id;
 
   typedef typename Kernel::FT FT;
   typedef typename Kernel::Point_3 Point_3;
@@ -1348,14 +1347,6 @@ double bounded_error_Hausdorff_impl(
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
   typename Kernel::Compute_squared_distance_3 squared_distance;
-
-  typedef
-  #if BOOST_VERSION >= 105000
-        boost::heap::priority_queue< Candidate_triangle<Kernel>, boost::heap::compare< std::greater<Candidate_triangle<Kernel> > > >
-  #else
-        std::priority_queue< Candidate_triangle<Kernel> >
-  #endif
-        Heap_type;
 
   std::vector<face_descriptor> tm1_only, tm2_only;
   std::vector< std::pair<face_descriptor, face_descriptor> > common;
@@ -1405,14 +1396,14 @@ double bounded_error_Hausdorff_impl(
     tm1_tree.traits(), tm2_tree, tm1, tm2, vpm1, vpm2, hint.first );
 
   // Find candidate triangles in TM1 which might realise the Hausdorff bound
-// TODO Initialize the distances on all the vertices first and store those.
-// TODO Do not traverse TM1, but only TM2, i.e. reduce to Culling on TM2 (Can do this for all triangles in TM1 in parallel)
+  // TODO Initialize the distances on all the vertices first and store those.
+  // TODO Do not traverse TM1, but only TM2, i.e. reduce to Culling on TM2 (Can do this for all triangles in TM1 in parallel)
 
   tm1_tree.traversal_with_priority( Point_3(0,0,0), traversal_traits_tm1 ); // dummy point given as query as not needed
 
   // TODO Is there a better/faster data structure than the Heap used here?
   // Can already build a sorted structure while collecting the candidates
-  Heap_type candidate_triangles = traversal_traits_tm1.get_candidate_triangles();
+  auto candidate_triangles = traversal_traits_tm1.get_candidate_triangles();
   auto global_bounds = traversal_traits_tm1.get_global_bounds();
 
   const FT squared_error_bound = error_bound * error_bound;
@@ -1427,20 +1418,20 @@ double bounded_error_Hausdorff_impl(
     // i.e. if its Upper Bound is higher than the currently known best lower bound
     // and the difference between the bounds to be obtained is larger than the
     // user given error.
-    const auto triangle_bounds = triangle_and_bound.m_bounds;
+    const auto& triangle_bounds = triangle_and_bound.m_bounds;
 
     if ( (triangle_bounds.second > global_bounds.first) && (triangle_bounds.second - triangle_bounds.first > error_bound) ) {
       // Get the triangle that is to be subdivided and read its vertices
-      const Triangle_3 triangle_for_subdivision = triangle_and_bound.m_triangle;
+      const Triangle_3& triangle_for_subdivision = triangle_and_bound.m_triangle;
       const Point_3 v0 = triangle_for_subdivision.vertex(0);
       const Point_3 v1 = triangle_for_subdivision.vertex(1);
       const Point_3 v2 = triangle_for_subdivision.vertex(2);
 
       // Check second stopping condition: All three vertices of the triangle
       // are projected onto the same triangle in TM2
-      const Point_and_primitive_id closest_triangle_v0 = tm2_tree.closest_point_and_primitive(v0);
-      const Point_and_primitive_id closest_triangle_v1 = tm2_tree.closest_point_and_primitive(v1);
-      const Point_and_primitive_id closest_triangle_v2 = tm2_tree.closest_point_and_primitive(v2);
+      const auto closest_triangle_v0 = tm2_tree.closest_point_and_primitive(v0);
+      const auto closest_triangle_v1 = tm2_tree.closest_point_and_primitive(v1);
+      const auto closest_triangle_v2 = tm2_tree.closest_point_and_primitive(v2);
       if( (closest_triangle_v0.second == closest_triangle_v1.second) && (closest_triangle_v1.second == closest_triangle_v2.second)) {
         // The upper bound of this triangle is the actual Hausdorff distance of
         // the triangle to the second mesh. Use it as new global lower bound.

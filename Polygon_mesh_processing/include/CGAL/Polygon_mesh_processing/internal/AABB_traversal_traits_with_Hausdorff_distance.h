@@ -42,14 +42,8 @@ namespace CGAL {
 
     Triangle_3 m_triangle;
     std::pair<FT, FT> m_bounds;
-
-    #if BOOST_VERSION >= 105000
-        bool operator<(const Candidate_triangle& other) const { return m_bounds.second < other.m_bounds.second; }
-        bool operator>(const Candidate_triangle& other) const { return m_bounds.second > other.m_bounds.second; }
-    #else
-        bool operator>(const Candidate_triangle& other) const { return m_bounds.second < other.m_bounds.second; }
-        bool operator<(const Candidate_triangle& other) const { return m_bounds.second > other.m_bounds.second; }
-    #endif
+    bool operator>(const Candidate_triangle& other) const { return m_bounds.second < other.m_bounds.second; }
+    bool operator<(const Candidate_triangle& other) const { return m_bounds.second > other.m_bounds.second; }
   };
 
   /**
@@ -200,7 +194,7 @@ namespace CGAL {
     }
 
     // Return the local Hausdorff bounds computed for the passed query triangle
-    std::pair<FT, FT> get_local_bounds()
+    std::pair<FT, FT> get_local_bounds() const
     {
       return std::make_pair( h_local_lower, h_local_upper );
     }
@@ -228,7 +222,7 @@ namespace CGAL {
   template<typename AABBTraits, typename Query, typename Kernel, typename TriangleMesh, typename VPM1, typename VPM2>
   class Hausdorff_primitive_traits_tm1
   {
-    typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM2, Tag_true, Tag_true> TM2_primitive;
+    typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM2> TM2_primitive;
     typedef typename AABB_tree< AABB_traits<Kernel, TM2_primitive> >::AABB_traits Tree_traits;
     typedef typename AABBTraits::Primitive Primitive;
     typedef typename AABBTraits::Bounding_box Bounding_box;
@@ -241,13 +235,7 @@ namespace CGAL {
     typedef AABB_tree< AABB_traits<Kernel, TM2_primitive> > TM2_tree;
     typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
     typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
-    typedef
-    #if BOOST_VERSION >= 105000
-          boost::heap::priority_queue< Candidate_triangle<Kernel>, boost::heap::compare< std::greater<Candidate_triangle<Kernel> > > >
-    #else
-          std::priority_queue< Candidate_triangle<Kernel> >
-    #endif
-          Heap_type;
+    typedef std::priority_queue< Candidate_triangle<Kernel> > Heap_type;
 
   public:
     typedef FT Priority;
@@ -357,7 +345,7 @@ namespace CGAL {
     }
 
     // Return the local Hausdorff bounds computed for the passed query triangle
-    std::pair<FT, FT> get_global_bounds()
+    std::pair<FT, FT> get_global_bounds() const
     {
       return std::make_pair( h_lower, h_upper );
     }
@@ -368,8 +356,8 @@ namespace CGAL {
     const TriangleMesh& m_tm1;
     const TriangleMesh& m_tm2;
     // Their vertex-point-maps
-    const VPM1 m_vpm1;
-    const VPM2 m_vpm2;
+    const VPM1& m_vpm1;
+    const VPM2& m_vpm2;
     // AABB tree for the second triangle meshes
     const TM2_tree& m_tm2_tree;
     // Global Hausdorff bounds to be taken track of during the traversal
