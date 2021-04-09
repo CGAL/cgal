@@ -1403,7 +1403,7 @@ double bounded_error_Hausdorff_impl(
 
   // TODO Is there a better/faster data structure than the Heap used here?
   // Can already build a sorted structure while collecting the candidates
-  auto candidate_triangles = traversal_traits_tm1.get_candidate_triangles();
+  auto& candidate_triangles = traversal_traits_tm1.get_candidate_triangles();
   auto global_bounds = traversal_traits_tm1.get_global_bounds();
 
   const FT squared_error_bound = error_bound * error_bound;

@@ -340,7 +340,7 @@ namespace CGAL {
 
     // Return those triangles from TM1 which are candidates for including a
     // point realizing the Hausdorff distance
-    Heap_type get_candidate_triangles() {
+    Heap_type& get_candidate_triangles() {
       return m_candidiate_triangles;
     }
 
