@@ -1389,11 +1389,9 @@ double bounded_error_Hausdorff_impl(
   const bool is_tm2_memory_ok = tm2_tree.accelerate_distance_queries();
   CGAL_assertion(is_tm2_memory_ok);
 
-  const auto hint = tm2_tree.any_reference_point_and_id();
-
   // Build traversal traits for tm1_tree
   Hausdorff_primitive_traits_tm1<Tree_traits, Point_3, Kernel, TriangleMesh, VPM1, VPM2> traversal_traits_tm1(
-    tm1_tree.traits(), tm2_tree, tm1, tm2, vpm1, vpm2, hint.first );
+    tm1_tree.traits(), tm2_tree, tm1, tm2, vpm1, vpm2, error_bound );
 
   // Find candidate triangles in TM1 which might realise the Hausdorff bound
   // TODO Initialize the distances on all the vertices first and store those.
@@ -1405,6 +1403,7 @@ double bounded_error_Hausdorff_impl(
   // Can already build a sorted structure while collecting the candidates
   auto& candidate_triangles = traversal_traits_tm1.get_candidate_triangles();
   auto global_bounds = traversal_traits_tm1.get_global_bounds();
+  // std::cout << candidate_triangles.size() << std::endl;
 
   const FT squared_error_bound = error_bound * error_bound;
   while ( (global_bounds.second - global_bounds.first > error_bound) && !candidate_triangles.empty() ) {
@@ -1468,7 +1467,6 @@ double bounded_error_Hausdorff_impl(
           tm2_tree.traits(), tm2, vpm2,
           triangle_bounds.first,
           triangle_bounds.second,
-          infinity_value<FT>(),
           infinity_value<FT>(),
           infinity_value<FT>(),
           infinity_value<FT>()
@@ -1688,6 +1686,7 @@ double bounded_error_Hausdorff_distance( const TriangleMesh& tm1,
     parameters::get_parameter(np2, internal_np::match_faces), false);
   const bool match_faces = match_faces1 && match_faces2;
 
+  CGAL_precondition(error_bound >= 0.0);
   const FT error_threshold = static_cast<FT>(error_bound);
   return internal::bounded_error_Hausdorff_impl<Concurrency_tag, Geom_traits>(
     tm1, tm2, error_threshold, match_faces, vpm1, vpm2);
@@ -1742,6 +1741,7 @@ double bounded_error_Hausdorff_distance_naive( const TriangleMesh& tm1,
   Vpm2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
                               get_const_property_map(vertex_point, tm2));
 
+  CGAL_precondition(error_bound >= 0.0);
   const FT error_threshold = static_cast<FT>(error_bound);
   return internal::bounded_error_Hausdorff_naive_impl<Concurrency_tag, Geom_traits>(
     tm1, tm2, error_threshold, vpm1, vpm2);

@@ -67,12 +67,10 @@ namespace CGAL {
       const AABBTraits& traits,
       const TriangleMesh& tm2,
       const VPM2& vpm2,
-      const FT /*h_upper_current_global*/,
       const FT h_lower_init, const FT h_upper_init,
       const FT h_v0_lower_init, const FT h_v1_lower_init, const FT h_v2_lower_init)
       : m_traits(traits), m_tm2(tm2), m_vpm2(vpm2) {
         // Initialize the global and local bounds with the given values
-        // h_upper_global = h_upper_current_global;
         h_local_lower = h_lower_init;
         h_local_upper = h_upper_init;
         h_v0_lower = h_v0_lower_init;
@@ -125,8 +123,8 @@ namespace CGAL {
       // Since we are at the level of a single triangle in TM2, distance_upper is
       // actually the correct Hausdorff distance from the query triangle in
       // TM1 to the primitive triangle in TM2
-      if ( distance_upper < h_local_upper ) h_local_upper = distance_upper;
       if ( distance_lower < h_local_lower ) h_local_lower = distance_lower;
+      if ( distance_upper < h_local_upper ) h_local_upper = distance_upper;
     }
 
     // Determine whether child nodes will still contribute to a smaller
@@ -180,7 +178,6 @@ namespace CGAL {
 
       // Check whether investigating the bbox can still lower the Hausdorff
       // distance and improve the current global bound. If so, enter the box.
-      // if ( dist <= std::min(h_local_lower, h_upper_global) ) {
       if ( dist <= h_local_lower ) {
         return std::make_pair(true, -dist);
       } else {
@@ -205,11 +202,9 @@ namespace CGAL {
     const TriangleMesh& m_tm2;
     // its vertex point map
     const VPM2& m_vpm2;
-    // Current global upper bound on the Hausdorff distance
-    // FT h_upper_global;
     // Local Hausdorff bounds for the query triangle
-    FT h_local_upper;
     FT h_local_lower;
+    FT h_local_upper;
     FT h_v0_lower;
     FT h_v1_lower;
     FT h_v2_lower;
@@ -242,13 +237,15 @@ namespace CGAL {
     Hausdorff_primitive_traits_tm1(
       const AABBTraits& traits, const TM2_tree& tree, const TriangleMesh& tm1,
       const TriangleMesh& tm2 , const VPM1& vpm1, const VPM2& vpm2,
-      const Point_3& )
+      const FT& error_bound)
       : m_traits(traits), m_tm1(tm1), m_tm2(tm2),
       m_vpm1(vpm1), m_vpm2(vpm2), m_tm2_tree(tree) {
-        // Initialize the global bounds with 0., they will only grow.
-        h_lower = FT(0);
-        h_upper = FT(0);
-      }
+
+      // Initialize the global bounds with 0., they will only grow.
+      // If we leave zero here then we are very slow even for big input error bounds!
+      h_lower = error_bound; // = FT(0);
+      h_upper = error_bound; // = FT(0);
+    }
 
     // Explore the whole tree, i.e. always enter children if the methods
     // do_intersect() below determines that it is worthwhile.
@@ -269,7 +266,6 @@ namespace CGAL {
       Hausdorff_primitive_traits_tm2<Tree_traits, Triangle_3, Kernel, TriangleMesh, VPM2>
       traversal_traits_tm2(
         m_tm2_tree.traits(), m_tm2, m_vpm2,
-        (h_upper == FT(0)) ? infinity_value<FT>() : h_upper, // Only pass current global bounds if they have been established yet
         infinity_value<FT>(),
         infinity_value<FT>(),
         infinity_value<FT>(),
@@ -314,6 +310,7 @@ namespace CGAL {
       Vector_3 difference = Vector_3( closest, center );
       // Shift the vector to be the difference between the farthest corner
       // of the bounding box away from the closest point on TM2
+
       FT diff_x = (bbox.max(0) - bbox.min(0)) / FT(2);
       if (difference.x() < 0) diff_x = diff_x * -FT(1);
       FT diff_y = (bbox.max(1) - bbox.min(1)) / FT(2);
@@ -321,11 +318,13 @@ namespace CGAL {
       FT diff_z = (bbox.max(2) - bbox.min(2)) / FT(2);
       if (difference.z() < 0) diff_z = diff_z * -FT(1);
       difference = difference + Vector_3( diff_x, diff_y, diff_z );
+
       // Compute distance from the farthest corner of the bbox to the closest
       // point in TM2
       const FT dist = static_cast<FT>(CGAL::sqrt(CGAL::to_double( difference.squared_length() )));
 
       // If the distance is larger than the global lower bound, enter the node, i.e. return true.
+      // std::cout << dist << " : " << h_lower << std::endl;
       if (dist > h_lower) {
           return std::make_pair(true, dist);
       } else {

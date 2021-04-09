@@ -635,7 +635,7 @@ void test_timings(const std::string filepath, const FunctionWrapper& functor) {
 
   timer.reset();
   timer.start();
-  functor(mesh1, mesh2);
+  const double dista = functor(mesh1, mesh2);
   timer.stop();
   std::cout << "* time 0 (sec.): " << timer.time() << std::endl;
 
@@ -644,9 +644,12 @@ void test_timings(const std::string filepath, const FunctionWrapper& functor) {
 
   timer.reset();
   timer.start();
-  functor(mesh1, mesh2);
+  const double distb = functor(mesh1, mesh2);
   timer.stop();
   std::cout << "* time 1 (sec.): " << timer.time() << std::endl;
+
+  std::cout << "dista = " << dista << std::endl;
+  std::cout << "distb = " << distb << std::endl;
 }
 
 int main(int argc, char** argv) {
