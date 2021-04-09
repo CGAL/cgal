@@ -239,12 +239,12 @@ namespace CGAL {
       const TriangleMesh& tm2 , const VPM1& vpm1, const VPM2& vpm2,
       const FT& error_bound)
       : m_traits(traits), m_tm1(tm1), m_tm2(tm2),
-      m_vpm1(vpm1), m_vpm2(vpm2), m_tm2_tree(tree) {
+      m_vpm1(vpm1), m_vpm2(vpm2), m_tm2_tree(tree), m_error_bound(error_bound) {
 
       // Initialize the global bounds with 0., they will only grow.
       // If we leave zero here then we are very slow even for big input error bounds!
-      h_lower = error_bound; // = FT(0);
-      h_upper = error_bound; // = FT(0);
+      h_lower = m_error_bound; // = FT(0);
+      h_upper = m_error_bound; // = FT(0);
     }
 
     // Explore the whole tree, i.e. always enter children if the methods
@@ -325,8 +325,8 @@ namespace CGAL {
 
       // If the distance is larger than the global lower bound, enter the node, i.e. return true.
       // std::cout << dist << " : " << h_lower << std::endl;
-      if (dist > h_lower) {
-          return std::make_pair(true, dist);
+      if (dist > h_lower && (dist - h_lower) > m_error_bound) {
+        return std::make_pair(true, dist);
       } else {
         return std::make_pair(false, FT(0));
       }
@@ -360,6 +360,7 @@ namespace CGAL {
     // AABB tree for the second triangle meshes
     const TM2_tree& m_tm2_tree;
     // Global Hausdorff bounds to be taken track of during the traversal
+    const FT& m_error_bound;
     FT h_lower;
     FT h_upper;
     // List of candidate triangles with their Hausdorff bounds attached
