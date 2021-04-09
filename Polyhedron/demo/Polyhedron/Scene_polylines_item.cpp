@@ -264,7 +264,7 @@ Scene_polylines_item_private::computeSpheres()
                     "<li>red: four incident polylines</li>"
                     "<li>fuchsia: five or more incident polylines</li>"
                     "</ul></p>"
-                    "<p>Tip: To erase this item, set its radius to 0 or less, or just delete it. </p>")
+                    "<p>Tip: To remove this item, set the corner radius of its corresponding polyline to 0, or simply delete it. </p>")
                             );
       spheres->computeElements();
       QApplication::restoreOverrideCursor();
