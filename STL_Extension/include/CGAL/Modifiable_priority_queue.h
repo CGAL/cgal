@@ -102,14 +102,12 @@ public:
 
   boost::optional<value_type> extract_top()
   {
-    boost::optional<value_type> r ;
-    if ( !empty() )
-    {
-      value_type v = top();
-      pop();
-      r = boost::optional<value_type>(v) ;
-    }
-    return r ;
+    if ( empty() )
+      return boost::none;
+
+    value_type v = top();
+    pop();
+    return boost::optional<value_type>(v) ;
   }
 
   static handle null_handle() { return handle(false); }
