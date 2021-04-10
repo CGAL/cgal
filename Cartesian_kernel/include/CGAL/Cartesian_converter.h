@@ -137,12 +137,13 @@ public:
       typedef typename
         Type_mapper< boost::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >,
                      K1, K2 >::type result_type;
-      result_type res;
+
       if(!o) {
         // empty converts to empty
-        return res;
+        return boost::none;
       }
 
+      result_type res;
       internal::Converting_visitor<Self, result_type>
         conv_visitor = internal::Converting_visitor<Self, result_type>(*this, res);
       boost::apply_visitor(conv_visitor, *o);
