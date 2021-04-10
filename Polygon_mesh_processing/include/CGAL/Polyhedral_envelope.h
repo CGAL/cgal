@@ -183,7 +183,7 @@ private:
 
 
   // The class  `Plane` is used for the 7-8 walls of a prism.
-  // We store at the same  time threee points and a plane.
+  // We store at the same time three points and a plane.
   // That is easier than retrieving the 3 points of a lazy plane.
   struct Plane {
     Plane()
