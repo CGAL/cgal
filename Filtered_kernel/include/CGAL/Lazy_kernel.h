@@ -480,6 +480,18 @@ public:
 
   };
 
+  struct Less_xyz_3 : public BaseClass::Less_xyz_3
+  {
+    typedef typename Kernel_::Point_3 Point_3;
+
+    using BaseClass::Less_xyz_3::operator();
+
+    bool operator()(const Point_3& p, const Point_3& q) const
+    {
+      if (p.rep().identical(q.rep())) { return false; }
+      return BaseClass::Less_xyz_3::operator()(p,q);
+    }
+  };
 
   Construct_point_2 construct_point_2_object() const
   {
@@ -501,7 +513,6 @@ public:
   {
     return Compute_weight_3();
   }
-
 
   Assign_2
   assign_2_object() const
@@ -534,6 +545,10 @@ public:
   Compute_approximate_area_3
   compute_approximate_area_3_object() const
   { return Compute_approximate_area_3(); }
+
+  Less_xyz_3
+  less_xyz_3_object() const
+  { return Less_xyz_3(); }
 }; // end class Lazy_kernel_base<EK_, AK_, E2A_, Kernel_2>
 
 
