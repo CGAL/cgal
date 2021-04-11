@@ -31,6 +31,16 @@ namespace CGAL {
 
 namespace Polygon_mesh_processing {
 
+/*! \todo document me or merge the doc with the original overload*/
+template<typename PolygonMesh
+       , typename FaceRange
+       , typename SizingFunction
+       , typename NamedParameters>
+void isotropic_remeshing(const FaceRange& faces
+                       , const SizingFunction& sizing
+                       , PolygonMesh& pmesh
+                       , const NamedParameters& np);
+
 /*!
 * \ingroup PMP_meshing_grp
 *
@@ -200,8 +210,10 @@ void isotropic_remeshing(const FaceRange& faces
                        , PolygonMesh& pmesh
                        , const NamedParameters& np = parameters::default_values())
 {
-  isotropic_remeshing(faces,
-    CGAL::Uniform_sizing_field<PolygonMesh>(target_edge_length, pmesh),
+  typedef Uniform_sizing_field<PolygonMesh> Default_sizing;
+  isotropic_remeshing<PolygonMesh, FaceRange, Default_sizing, NamedParameters>(
+    faces,
+    Default_sizing(target_edge_length, pmesh),
     pmesh,
     np);
 }
@@ -280,12 +292,11 @@ void isotropic_remeshing(const FaceRange& faces
 #if !defined(CGAL_NO_PRECONDITIONS)
   if(protect)
   {
-    double high = 4. / 3. * target_edge_length;
     std::string msg("Isotropic remeshing : protect_constraints cannot be set to");
     msg.append(" true with constraints larger than 4/3 * target_edge_length.");
     msg.append(" Remeshing aborted.");
     CGAL_precondition_msg(
-      internal::constraints_are_short_enough(pmesh, ecmap, vpmap, fpmap, high),
+      internal::constraints_are_short_enough(pmesh, ecmap, vpmap, fpmap, sizing),
       msg.c_str());
   }
 #endif
