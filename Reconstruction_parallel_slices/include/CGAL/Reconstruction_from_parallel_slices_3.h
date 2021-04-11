@@ -1,22 +1,15 @@
 // Copyright (c) 2011  GeometryFactory (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Andreas Fabri
 //                 Sebastien Loriot
-// 
+//
 
 #ifndef CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3
 #define CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3
@@ -31,7 +24,7 @@
 // *if DO_NOT_INTERSECT_CONTOURS_WITH_MEDIAL_AXIS is not defined, we consider the Voronoi vertices to be inserted and we check those
 //  that have a dual facet which dual center is outside the cdt (where dual points should be inserted). We can define a segment (or a ray
 //  if the facet is infinite)  which is part of the medial axis. We intersect this segment/ray with the cdt while we do not reach the boundary.
-//  the edge intersection points are inserted into the cdt. If DO_NOT_FILTER_NOTCHES is not defined, only points on a constrained edges are inserted 
+//  the edge intersection points are inserted into the cdt. If DO_NOT_FILTER_NOTCHES is not defined, only points on a constrained edges are inserted
 
 /// \todo debug with ele2.cgal: one point in the first layer and one point in the last layer. (demo segfault)
 
@@ -71,7 +64,6 @@
 #include <CGAL/Triangulation_conformer_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
-//#include <CGAL/nearest_vertex.h>
 
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
@@ -102,7 +94,7 @@ struct Dummy_slice_writer_visitor{
   void one_layer_is_finished(){}
 };
 }
-  
+
 template <class t_Point_3>
 class Slice_writer_into_file{
   int m_last_point_index;
@@ -118,13 +110,13 @@ public:
     m_surface_points.push_back(p);
     ++m_last_point_index;
   }
-  
+
   void surface_indices_push_back(const cpp0x::tuple<int,int,int>& indices){
     m_surface_indices.push_back(indices);
   }
 
   int last_point_index() {return m_last_point_index;};
-  
+
   void finalize(){
     std::ofstream output(m_fname.c_str() );
     output << "OFF " << m_last_point_index+1 << " " << m_surface_indices.size() << " 0\n";
@@ -133,7 +125,7 @@ public:
           it!=m_surface_indices.end();++it)
       output << "3 " << cpp0x::get<0>(*it) << " " << cpp0x::get<1>(*it) << " " << cpp0x::get<2>(*it) << "\n";
   }
-  
+
   void finalize_layer(){}
 };
 
@@ -144,12 +136,12 @@ private:
   template <class HDS>
   class Import_modifier : public CGAL::Modifier_base<HDS> {
     typedef CGAL::Polyhedron_incremental_builder_3<HDS> IBuilder;
-    
+
 
     unsigned int m_npts, m_nfcs;
     const std::list<Point_3>& m_surface_points;
-    const std::list<cpp0x::tuple<int,int,int> >& m_surface_indices;    
-    
+    const std::list<cpp0x::tuple<int,int,int> >& m_surface_indices;
+
   public:
     Import_modifier(unsigned int npts, unsigned int nfcs,const std::list<Point_3>& surface_points,const std::list<cpp0x::tuple<int,int,int> >& surface_indices)
       :m_npts(npts), m_nfcs(nfcs), m_surface_points(surface_points), m_surface_indices(surface_indices){}
@@ -160,7 +152,7 @@ private:
       for (typename std::list<Point_3>::const_iterator it=m_surface_points.begin(),
                                                        it_end=m_surface_points.end();it!=it_end;++it)
         B.add_vertex(*it);
-      
+
       for(typename std::list<cpp0x::tuple<int,int,int> >::const_iterator it=m_surface_indices.begin(),
                                                                          it_end=m_surface_indices.end();it!=it_end; ++it)
       {
@@ -173,8 +165,7 @@ private:
       B.end_surface();
     }
   };
-  
-  
+
   int m_last_point_index;
   unsigned int m_npts, m_nfcs;
   std::list<Point_3> m_surface_points;
@@ -185,20 +176,20 @@ public:
   //Incremental_slice_writer_into_polyhedron(){}
   Incremental_slice_writer_into_polyhedron(Polyhedron& poly,Visitor visitor=Visitor()): m_last_point_index(-1),m_npts(0), m_nfcs(0), m_poly_ptr(&poly), m_visitor(visitor)
   {m_poly_ptr->clear();}
-    
+
   void surface_point_push_back(const Point_3& p){
     ++m_npts;
     m_surface_points.push_back(p);
     ++m_last_point_index;
   }
-  
+
   void surface_indices_push_back(const cpp0x::tuple<int,int,int>& indices){
     ++m_nfcs;
     m_surface_indices.push_back(indices);
   }
 
   int last_point_index() {return m_last_point_index;};
-  
+
   void finalize_layer() {
     Import_modifier<typename Polyhedron::HalfedgeDS> modif(m_npts,m_nfcs,m_surface_points,m_surface_indices);
     m_poly_ptr->delegate(modif);
@@ -206,7 +197,7 @@ public:
     m_surface_points.clear();
     m_visitor.one_layer_is_finished();
   }
-  
+
   void finalize(){}
 };
 
@@ -218,19 +209,19 @@ class Reconstruction_from_parallel_slices_3{
   #endif
   //the minimum distance to insert a point on a constraint or inside a face
   static const double m_min_point_squared_distance;
-  
+
   #ifndef DO_NOT_FILTER_NOTCHES
   //filtering of small medial axis part that can induce bad artifact on the reconstructed surface
   static const double m_bbox_ratio_ma_filtering;
   #endif
-  
-  #ifndef CGAL_NO_EDGE_EDGE_EXTRA_REMOVAL  
+
+  #ifndef CGAL_NO_EDGE_EDGE_EXTRA_REMOVAL
   //these angle bounds are used to filter out T22 cells attached by two facets to the volume to
   //remove sharp features on the surface when we expect it to be smooth
   static const double max_sharp_dihedral_angle;
   static const double min_smooth_dihedral_angle;
   #endif
-  
+
   struct VertexInfo2
   {
     VertexInfo2():on_contour(true){} //set to true by default for make_conforming_Gabriel_2
@@ -254,8 +245,8 @@ class Reconstruction_from_parallel_slices_3{
     T_FaceInfo2():other_face(NULL),other_index(-1){}
     int nesting_level;
 
-    bool in_domain() 
-    { 
+    bool in_domain()
+    {
       return nesting_level%2 == 1;
     }
     //face of the other triangulation containing the projected circumcenter of
@@ -265,7 +256,7 @@ class Reconstruction_from_parallel_slices_3{
     int other_index;
     bool dual_point_on_constraint;
   };
-  
+
   template < typename GT,
              typename Fb_ = CGAL::Triangulation_face_base_2<GT> >
   class Triangulation_face_base_with_FaceInfo2
@@ -285,14 +276,14 @@ class Reconstruction_from_parallel_slices_3{
     Triangulation_face_base_with_FaceInfo2()
       : Fb_() {}
 
-    Triangulation_face_base_with_FaceInfo2(Vertex_handle v0, 
+    Triangulation_face_base_with_FaceInfo2(Vertex_handle v0,
                                            Vertex_handle v1,
                                            Vertex_handle v2): Fb_(v0, v1, v2) {}
 
-    Triangulation_face_base_with_FaceInfo2(Vertex_handle v0, 
+    Triangulation_face_base_with_FaceInfo2(Vertex_handle v0,
                                            Vertex_handle v1,
-                                           Vertex_handle v2, 
-                                           Face_handle   n0, 
+                                           Vertex_handle v2,
+                                           Face_handle   n0,
                                            Face_handle   n1,
                                            Face_handle   n2 ) : Fb_(v0, v1, v2, n0, n1, n2) {}
 
@@ -306,12 +297,12 @@ class Reconstruction_from_parallel_slices_3{
   {
     int nesting_level;
 
-    bool in_domain() 
-    { 
+    bool in_domain()
+    {
       return nesting_level%2 == 1;
     }
   };
-#endif  
+#endif
 
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -349,12 +340,12 @@ class Reconstruction_from_parallel_slices_3{
   typedef CGAL::Cartesian_converter<Exact_kernel,K> To_input;
 
   // For triangle-vertex cells the type is TOP_TRIANGLE or BOTTOM_TRIANGLE
-  // and the cell is defined by f0 and vh 
+  // and the cell is defined by f0 and vh
   // For edge-edge cells the cell is defined by Edge(f0,i0) and Edge(f1,i1)
   struct CellInfo3 {
     enum Type { TOP_TRIANGLE, BOTTOM_TRIANGLE, EDGE_EDGE };
     Type type;
-    
+
     int index;
     Face_handle_2 f0, f1;
     int i0, i1;
@@ -376,11 +367,11 @@ class Reconstruction_from_parallel_slices_3{
       non_manifold_features=true;
       m_nmvertices.set(i);
     }
-  
+
     bool nm_vertices(int i) const{
       return m_nmvertices[i];
     }
-    
+
     template <class Cell_handle_3>
     void set_nm_edge(Cell_handle_3 cell,int i1,int i2){
       non_manifold_features=true;
@@ -388,13 +379,13 @@ class Reconstruction_from_parallel_slices_3{
       if ( cell->vertex(i1)->info().v->info().on_contour && cell->vertex(i2)->info().v->info().on_contour )
         has_a_nm_edge_with_manifold_vertices=true;
     }
-    
+
     void set_nm_edge_with_manifold_vertices(int i1,int i2){
       non_manifold_features=true;
-      nm_edges.set( CellInfo3::nm_edge_index[i1][i2] );  
+      nm_edges.set( CellInfo3::nm_edge_index[i1][i2] );
       has_a_nm_edge_with_manifold_vertices=true;
     }
-    
+
     template <class Cell_handle_3>
     void set_nm_facet(Cell_handle_3 cell) {
       CGAL_precondition( type!=EDGE_EDGE );
@@ -406,7 +397,7 @@ class Reconstruction_from_parallel_slices_3{
                                              cell->vertex(indices[1])->info().v,
                                              cell->vertex(indices[2])->info().v };
       const bool on_contour[3] = { vertices_2[0]->info().on_contour, vertices_2[1]->info().on_contour, vertices_2[2]->info().on_contour };
-      
+
 
      //collect constrained edges
       std::set< std::pair<Vertex_handle_2,Vertex_handle_2> > constrained_edges;
@@ -417,7 +408,7 @@ class Reconstruction_from_parallel_slices_3{
         isolated_triangle=true;
         return;
       }
-    
+
       //non-constrained edges are non-manifold
       //edge 01
       if ( on_contour[0] && on_contour[1] ){
@@ -446,7 +437,7 @@ class Reconstruction_from_parallel_slices_3{
       if ( !on_contour[1] ) set_nm_vertices(indices[1]);
       if ( !on_contour[2] ) set_nm_vertices(indices[2]);
     }
-    
+
     bool nm_facet() const {return m_nmfacet;}
     bool nm_edge(int i1,int i2) const { return nm_edges[ CellInfo3::nm_edge_index[i1][i2] ]; }
     #endif
@@ -457,7 +448,7 @@ class Reconstruction_from_parallel_slices_3{
     //when a bit i is set, this indicates that there exists a solid path (crossing only facets)
     //going through Facet(cell,i) to reach the bottom or the top layer
     //(we follow the strategy from INRIA RR546 p19-21)
-    std::bitset<4> out_face_status; 
+    std::bitset<4> out_face_status;
   };
 
   struct VertexInfo3
@@ -477,7 +468,7 @@ class Reconstruction_from_parallel_slices_3{
   typedef typename DT3::All_cells_iterator All_cells_iterator_3;
   typedef typename DT3::Finite_vertices_iterator Vertex_iterator_3;
   typedef typename DT3::Edge Edge_3;
-  
+
   // Index the vertices for writing polyline files
   void
   index(const CDT2& cdt)
@@ -490,10 +481,10 @@ class Reconstruction_from_parallel_slices_3{
   }
 
 
-  void 
-  mark_domains(const CDT2& ct, 
-               Face_handle_2 start, 
-               int index, 
+  void
+  mark_domains(const CDT2& ct,
+               Face_handle_2 start,
+               int index,
                std::list<Edge_2>& border )
   {
     if(start->info().nesting_level != -1){
@@ -550,7 +541,7 @@ class Reconstruction_from_parallel_slices_3{
       Exact_kernel::Construct_centroid_3() (to_exact(p1),to_exact(p2),to_exact(p3))
     );
   }
-  
+
   Point_2 circumcenter(Face_handle_2 fh) const {
     To_exact to_exact;
     To_input to_input;
@@ -573,9 +564,9 @@ class Reconstruction_from_parallel_slices_3{
         to_exact(fh->vertex(1)->point()),
         to_exact(fh->vertex(2)->point())
       )
-    ); 
+    );
   }
-  
+
   Point_2 midpoint(const Point_2& p1,const Point_2& p2) const {
     //TODO: check that the computed midpoint is really inside the edge (cmp distances)
     To_exact to_exact;
@@ -604,9 +595,9 @@ class Reconstruction_from_parallel_slices_3{
     return midpoint(v1->point(),v2->point());
   }
 
-  
+
   typedef std::map<std::pair<Vertex_handle_2,Vertex_handle_2>,std::list< std::pair<Point_2,Edge_2> > > Intersected_edges_map;
-  
+
   //predicate used to sort points along a segment, when the points are not exactly
   //on the segment.
   struct Compare_distance_to_point{
@@ -617,7 +608,7 @@ class Reconstruction_from_parallel_slices_3{
       return CGAL::has_smaller_distance_to_point(ref,p1,p2);
     }
   };
-#ifndef DO_NOT_INTERSECT_CONTOURS_WITH_MEDIAL_AXIS  
+#ifndef DO_NOT_INTERSECT_CONTOURS_WITH_MEDIAL_AXIS
   template <class RayOrSegment>
   Point_2 intersection_point(const RayOrSegment& s1,const Segment_2& s2) const {
     To_exact to_exact;
@@ -637,28 +628,28 @@ class Reconstruction_from_parallel_slices_3{
     int n_index = (v_index+1)%3; //turn around the vertex v_index
     Face_handle_2 n_f=f_start;
     int n_vi=v_index;
-    
+
     if ( n_f->is_constrained(n_index) ) return true;
-    
+
     do{
       boost::tie(n_f,n_index)=cdt.mirror_edge(Edge_2(n_f,n_index));
       n_vi=n_f->index( f_start->vertex(v_index) );
       n_index=(n_index+1)%3==n_vi?(n_index+2)%3:(n_index+1)%3;
-      
+
       if ( n_f->is_constrained(n_index) ) return true;
-      
+
       segment=Segment_2(n_f->vertex((n_vi+1)%3)->point(),n_f->vertex((n_vi+2)%3)->point());
       if ( CGAL::do_intersect(object,segment) ){
         f_start=n_f;
         v_index=n_vi;
         return false;
       }
-      
+
     }while(n_f!=f_start);
     CGAL_assertion(n_f!=f_start);
     return false;
   }
-  
+
   //start from a vertex inside a face and look for intersection points between a ray or a segment and triangulation edges.
   //we stop when we reach a constrained edge
   template <class RayOrSegment,class PointOutputIterator>
@@ -684,7 +675,7 @@ class Reconstruction_from_parallel_slices_3{
           if ( find_intersected_edge_in_vertex_link(cdt,f_in,k,segment,object) )
             return; //on a constrained edge
           ip=intersection_point(object,segment);
-          
+
           if ( ip == f_in->vertex( (k+1)%3 )->point() ) k=(k+1)%3+3;
           else if ( ip == f_in->vertex( (k+2)%3 )->point() ) k=(k+2)%3+3;
           //here it should be notice that we cannot enter an infinite loop because in
@@ -725,8 +716,8 @@ class Reconstruction_from_parallel_slices_3{
       }
       if ( f_in->is_constrained(k) ) break;
       //do not insert point that are too close from a constraint or a point
-      if ( min_distance_to_vertices(ip,f_in)   > m_min_point_squared_distance && 
-           min_distance_to_constaints(ip,f_in) > m_min_point_squared_distance 
+      if ( min_distance_to_vertices(ip,f_in)   > m_min_point_squared_distance &&
+           min_distance_to_constaints(ip,f_in) > m_min_point_squared_distance
       ) *out++=ip;
       boost::tie(f_in,k)=cdt.mirror_edge(Edge_2(f_in,k));
       int i=1;
@@ -738,14 +729,14 @@ class Reconstruction_from_parallel_slices_3{
           break;
         }
       }
-      CGAL_assertion(i!=3);      
+      CGAL_assertion(i!=3);
     }
     while(true);
 
     CGAL_assertion( f_in->is_constrained(k) );
-    
+
     if (target_on_constraint) return;
-    
+
     //insert the new point on the constraint only if not too close to an endpoint
     if ( min_distance_to_vertices(ip,f_in,k) > m_min_point_squared_distance ){
       typename Intersected_edges_map::iterator it_map=edges_intersected.insert(
@@ -755,8 +746,8 @@ class Reconstruction_from_parallel_slices_3{
       it_map->second.push_back(std::make_pair(ip,Edge_2(f_in,k)));
     }
   }
-#endif //DO_NOT_INTERSECT_CONTOURS_WITH_MEDIAL_AXIS  
-  
+#endif //DO_NOT_INTERSECT_CONTOURS_WITH_MEDIAL_AXIS
+
   //WARNING USE INTERVAL ARITHMETIC?
   double min_distance_to_vertices(const Point_2& p, Face_handle_2 fh) const {
     double d1=CGAL::squared_distance(p,fh->vertex(0)->point());
@@ -769,10 +760,10 @@ class Reconstruction_from_parallel_slices_3{
   double min_distance_to_vertices(const Point_2& p, Face_handle_2 fh,int i) const {
     return (std::min) (
       CGAL::squared_distance(p,fh->vertex((i+1)%3)->point()),
-      CGAL::squared_distance(p,fh->vertex((i+2)%3)->point()) 
+      CGAL::squared_distance(p,fh->vertex((i+2)%3)->point())
     );
   }
-  
+
 //  double min_distance_to_supporting_lines(const Point_2& p,Face_handle_2 fh) const {
 //    double dmin=(std::min) (
 //      CGAL::squared_distance(p,Line_2(fh->vertex(0)->point(),fh->vertex(1)->point())),
@@ -787,7 +778,7 @@ class Reconstruction_from_parallel_slices_3{
     return CGAL::squared_distance(p,Line_2( fh->vertex((i+1)%3)->point(),
                                             fh->vertex((i+2)%3)->point()));
   }
-  
+
   double min_distance_to_constaints(const Point_2& p, Face_handle_2 f) const {
     double min=(std::numeric_limits<double>::max)();
     for (int k=0;k<3;++k){
@@ -806,14 +797,14 @@ class Reconstruction_from_parallel_slices_3{
   void vertex_to_add(const Point_2& center,FaceInfo2&,Face_handle_2,CDT2& cdtB, std::list<Point_2>& points,Intersected_edges_map& edges_intersected)
   #else
   void vertex_to_add(const Point_2& center,FaceInfo2& A_info,Face_handle_2,CDT2& cdtB, std::list<Point_2>& points,Intersected_edges_map& edges_intersected)
-  #endif  
-  #endif  
+  #endif
+  #endif
   {
     Locate_type lt;
     int li;
     Face_handle_2 loc = cdtB.locate(center, lt, li);
     if( (lt == CDT2::FACE) && (loc->info().in_domain()) ){
-      bool do_insert =  min_distance_to_vertices(center,loc)   > m_min_point_squared_distance && 
+      bool do_insert =  min_distance_to_vertices(center,loc)   > m_min_point_squared_distance &&
                         min_distance_to_constaints(center,loc) > m_min_point_squared_distance;
       #ifndef DO_NOT_FILTER_NOTCHES
       graph_G.insert(std::make_pair(A_face,std::make_pair(center,do_insert)));
@@ -836,12 +827,12 @@ class Reconstruction_from_parallel_slices_3{
                     std::make_pair(make_sorted_pair(loc->vertex((li+1)%3),loc->vertex((li+2)%3)),
                     std::list< std::pair<Point_2,Edge_2> >())
                   ).first;
-            it_map->second.push_back(std::make_pair(center,Edge_2(loc,li)));          
+            it_map->second.push_back(std::make_pair(center,Edge_2(loc,li)));
           }
           #ifndef DO_NOT_FILTER_NOTCHES
           graph_G.insert(std::make_pair(A_face,std::make_pair(center,false)));
           #endif
-          
+
           #ifndef DO_NOT_INTERSECT_CONTOURS_WITH_MEDIAL_AXIS
           A_info.dual_point_on_constraint=true;
           #endif
@@ -853,7 +844,7 @@ class Reconstruction_from_parallel_slices_3{
             graph_G.insert(std::make_pair(A_face,std::make_pair(center,do_insert)));
             #else
             if ( do_insert ) points.push_back(center);
-            #endif            
+            #endif
             #ifndef DO_NOT_INTERSECT_CONTOURS_WITH_MEDIAL_AXIS
             A_info.other_face=loc;
             A_info.other_index=li;
@@ -874,20 +865,20 @@ class Reconstruction_from_parallel_slices_3{
 #endif
     }
   }
-  
+
 //look for outside voronoi vertices of cdtA that are inside cdtB
   void
-  vertices_to_add(const CDT2& cdtA, CDT2& cdtB, std::list<Point_2>& points) 
+  vertices_to_add(const CDT2& cdtA, CDT2& cdtB, std::list<Point_2>& points)
   {
     //we use the following map to collect points that should be inserted on a constraint.
     Intersected_edges_map edges_intersected;
-    
+
     #ifndef DO_NOT_FILTER_NOTCHES
     //used to collect points of the medial axis and their dual that should be inserted in cdtB
     typedef std::map<Face_handle_2,std::pair<Point_2,bool> > Graph_G;
     Graph_G graph_G;
     #endif
-    
+
     for(Finite_faces_iterator it = cdtA.finite_faces_begin(); it != cdtA.finite_faces_end(); ++it){
       if(! it->info().in_domain()){
 #ifndef DO_NOT_INTERSECT_CONTOURS_WITH_MEDIAL_AXIS
@@ -901,7 +892,7 @@ class Reconstruction_from_parallel_slices_3{
         vertex_to_add(center,it->info(),it,cdtB,points,edges_intersected);
         #endif
 //TODO: think about why the following is not improving the result, it correspond to a
-//medial axis point! ---> I think the angle should be less than PI        
+//medial axis point! ---> I think the angle should be less than PI
 //do not use the following if DO_NOT_FILTER_NOTCHES is not defined
 //        for (int k=0;k<3;++k){
 //          if (it->is_constrained((k+1)%3) && it->is_constrained((k+2)%3)){
@@ -909,8 +900,6 @@ class Reconstruction_from_parallel_slices_3{
 //            vertex_to_add(it->vertex(k)->point(),info,NULL,cdtB,points);
 //          }
 //        }
-          
-        
       }
     }
 
@@ -933,7 +922,7 @@ class Reconstruction_from_parallel_slices_3{
       std::list<typename Graph_G::iterator> cc_points;
       while(!heap.empty()){
         cc_points.splice(cc_points.end(),heap,heap.begin());
-        if ( cc_points.back()->first->info().dual_point_on_constraint && 
+        if ( cc_points.back()->first->info().dual_point_on_constraint &&
              cc_points.back()->first->info().nesting_level==0   ) is_connected_to_bottom_contour=true;
         for (int i=0;i<3;++i){
           Face_handle_2 neighbor=cc_points.back()->first->neighbor(i);
@@ -946,22 +935,22 @@ class Reconstruction_from_parallel_slices_3{
           heap.push_back(itn);
         }
       }
-      
+
       CGAL_assertion(!cc_points.empty());
       CGAL::Bbox_2 bbox_ma=(*cc_points.begin())->second.first.bbox();
       for (typename std::list<typename Graph_G::iterator>::iterator itp=cc_points.begin(),itp_end=cc_points.end();itp!=itp_end;++itp)
         bbox_ma=bbox_ma+(*itp)->second.first.bbox();
 
-      #ifdef CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3_DEBUG      
+      #ifdef CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3_DEBUG
       #warning Tune this parameter. Cant we use the diagonal length instead, or the area,...?
       #endif
-      
+
       if ( !is_connected_to_bottom_contour ||
-        (std::max) (bbox_ma.xmax()-bbox_ma.xmin(),bbox_ma.ymax()-bbox_ma.ymin()) > 
+        (std::max) (bbox_ma.xmax()-bbox_ma.xmin(),bbox_ma.ymax()-bbox_ma.ymin()) >
         (std::min) (bbox_cdtB.xmax()-bbox_cdtB.xmin(),bbox_cdtB.ymax()-bbox_cdtB.ymin()) / m_bbox_ratio_ma_filtering
       )
         for (typename std::list<typename Graph_G::iterator>::iterator itp=cc_points.begin(),itp_end=cc_points.end();itp!=itp_end;++itp)
-          if ( (*itp)->second.second ) 
+          if ( (*itp)->second.second )
             points.push_back((*itp)->second.first);
     }
     #endif
@@ -972,7 +961,7 @@ class Reconstruction_from_parallel_slices_3{
     //vertex projected outside the domain of cdtB. Then we look for all intersection in cdtB with
     //the dual segment or ray (and stop when a constrained edge have been found)
     for(Finite_faces_iterator it = cdtA.finite_faces_begin(); it != cdtA.finite_faces_end(); ++it){
-      if( !it->info().in_domain() && 
+      if( !it->info().in_domain() &&
           it->info().other_face != NULL )
       {
         CGAL_assertion(!it->info().dual_point_on_constraint);
@@ -1013,7 +1002,7 @@ class Reconstruction_from_parallel_slices_3{
             Point_2 c1=circumcenter(it);
             To_exact to_exact;
             To_input to_input;
-            
+
             Exact_kernel::Vector_2 ortho_vector=
               (to_exact(it->vertex((i+2)%3)->point())-to_exact(it->vertex((i+1)%3)->point())).perpendicular(CGAL::CLOCKWISE);
             K::Ray_2 ray(c1,to_input(ortho_vector));
@@ -1021,7 +1010,7 @@ class Reconstruction_from_parallel_slices_3{
             mark_edges_intersected(cdtB,f_in,it->info().other_index,ray,false,edges_intersected,std::back_inserter(points));
             #else
             //TAG-IFMA I am no longer sure that points inserted inside the contour are helpful, if yes then I need to
-            //adapt the mechanism with graph_G              
+            //adapt the mechanism with graph_G
             mark_edges_intersected(cdtB,f_in,it->info().other_index,ray,false,edges_intersected,Emptyset_iterator());
             #endif
           }
@@ -1029,8 +1018,8 @@ class Reconstruction_from_parallel_slices_3{
       }
     }
 #endif //DO_NOT_INTERSECT_CONTOURS_WITH_MEDIAL_AXIS
-    
-    //In the following we insert points that are on constraints. We first use stored face handles to unconstrain 
+
+    //In the following we insert points that are on constraints. We first use stored face handles to unconstrain
     //all edges. If several points are on the same edge, we sort them using the distance to one extremity of the edge,
     //insert sequentially the points and constrain the edges at the same time (wo do not use face handles stored that are
     //potentially invalid.
@@ -1048,7 +1037,7 @@ class Reconstruction_from_parallel_slices_3{
 //      cdtB.remove_constrained_edge(e.first,e.second,std::inserter(removed_facets,removed_facets.begin()));
       cdtB.remove_constrained_edge(e.first,e.second);
     }
-    
+
     for (typename Intersected_edges_map::iterator it=edges_intersected.begin(),end=edges_intersected.end();it!=end;++it)
     {
       if (CGAL::cpp0x::next(it->second.begin())==it->second.end()){
@@ -1096,14 +1085,14 @@ class Reconstruction_from_parallel_slices_3{
       //      build a graph and call a simplification algorithm (look at boost graph for example)
       #endif
       if ( min_distance_to_vertices(*it,fh)   < m_min_point_squared_distance ) continue;
-      
+
       Vertex_handle_2 vh = cdt.insert(*it,loc,fh,li);
       vh->info().z = z;
       vh->info().on_contour=on_constrained_edge;
     }
   }
 
-  // After refining a CDT we have to set the z values for the new vertices 
+  // After refining a CDT we have to set the z values for the new vertices
   void
   update_z(CDT2& cdt)
   {
@@ -1113,7 +1102,7 @@ class Reconstruction_from_parallel_slices_3{
     }
   }
 
-  void 
+  void
   classify(Cell_handle_3 ch, const CDT2& top, const CDT2& bottom)
   {
     Vertex_handle_2 b[3], t[3];
@@ -1190,7 +1179,7 @@ class Reconstruction_from_parallel_slices_3{
 
     CGAL_precondition(top.is_valid());
     CGAL_precondition(bottom.is_valid());
-    
+
     vertices.reserve(top.number_of_vertices()+bottom.number_of_vertices());
     for(Finite_vertices_iterator it = top.vertices_begin();
         it != top.vertices_end();
@@ -1241,7 +1230,7 @@ class Reconstruction_from_parallel_slices_3{
       do{
         new_index=(new_index+1)%4;
       }
-      while(mirror.first->vertex(new_index)==edge.first->vertex(edge.second) || 
+      while(mirror.first->vertex(new_index)==edge.first->vertex(edge.second) ||
             mirror.first->vertex(new_index)==edge.first->vertex(edge.third) );
       fcurr=Facet_3(mirror.first,new_index);
       //orient the dual edge (or delete it for the first loop)
@@ -1254,10 +1243,10 @@ class Reconstruction_from_parallel_slices_3{
         mirror.first->info().out_face_status.reset(mirror.second);//this one is not needed (since the cell is deleted)
         break;
       }
-      
-      //stop at a non deleted T1 or T2 node 
+
+      //stop at a non deleted T1 or T2 node
       if (fcurr.first->info().type!=CellInfo3::EDGE_EDGE) break;
-      
+
       mirror=delaunay_3.mirror_facet(fcurr);
       //if the edge is already oriented the opposite way
       if( mirror.first->info().out_face_status[mirror.second] ){
@@ -1265,16 +1254,16 @@ class Reconstruction_from_parallel_slices_3{
         remove_cell(fcurr.first);
         break; //the rest of the job will be done when handling fcurr.first
       }
-      
+
       //set edge orientation
       fcurr.first->info().out_face_status.set(fcurr.second);
-    }while(true);  
+    }while(true);
   }
-  
+
   //add a function that can be used to filter tetrahedra with high slope.
   //it is not used for the moment.
   bool is_T22_too_slim(Cell_handle_3 cell,double threshold=0.009) const {
-    CGAL_precondition(cell->info().type==CellInfo3::EDGE_EDGE); 
+    CGAL_precondition(cell->info().type==CellInfo3::EDGE_EDGE);
     //get the edge in P1 and the edge in P2
     int ea0=0,ea1,eb0,eb1;
     if ( cell->vertex(ea0)->point().z() == cell->vertex(1)->point().z() ){
@@ -1288,7 +1277,7 @@ class Reconstruction_from_parallel_slices_3{
         ea1=3;eb0=1;eb1=2;
       }
     }
-    
+
     double h2=CGAL::square(cell->vertex(ea0)->point().z() - cell->vertex(eb0)->point().z());
     double d2_0= (CGAL::max)(
       CGAL::squared_distance( cell->vertex(ea0)->point(),cell->vertex(eb0)->point() ),
@@ -1304,7 +1293,7 @@ class Reconstruction_from_parallel_slices_3{
   //function to remove T31 cell that are too flat and connected parts of the surface
   //that are far apart. It is not used for the moment.
   bool is_T31_too_slim(Cell_handle_3 cell,double threshold=0.07) const {
-    CGAL_precondition(cell->info().type!=CellInfo3::EDGE_EDGE); 
+    CGAL_precondition(cell->info().type!=CellInfo3::EDGE_EDGE);
     int i0=cell->info().i0;
     double h2=abs(cell->vertex(i0)->point().z() - cell->vertex((i0+1)%4)->point().z());
     #if 0
@@ -1323,7 +1312,7 @@ class Reconstruction_from_parallel_slices_3{
     return  h2/sqrt(squared_distance(center_3,cell->vertex(i0)->point())) < threshold;
     #endif
   }
-  
+
   void remove_cells()
   {
     std::list<Cell_handle_3> infinite_nodes;
@@ -1337,18 +1326,18 @@ class Reconstruction_from_parallel_slices_3{
     }
 
     std::list<Cell_handle_3> eliminated_nodes;
-    
-    // First pass: Remove cells with an edge or face outside the domain 
+
+    // First pass: Remove cells with an edge or face outside the domain
     for(Cell_iterator_3 it = delaunay_3.finite_cells_begin(); it != delaunay_3.finite_cells_end(); ++it ){
       if(it->info().type == CellInfo3::EDGE_EDGE){
-        if( ( (! it->info().f0->info().in_domain()) && (! it->info().f0->neighbor(it->info().i0)->info().in_domain()) ) || 
+        if( ( (! it->info().f0->info().in_domain()) && (! it->info().f0->neighbor(it->info().i0)->info().in_domain()) ) ||
             ( (! it->info().f1->info().in_domain()) && (! it->info().f1->neighbor(it->info().i1)->info().in_domain()) ) ){
           remove_cell(it);
           eliminated_nodes.push_back(it);
         }
       } else {
         if(! it->info().f0->info().in_domain()
-        //     || is_T31_too_slim(it,0.1) 
+        //     || is_T31_too_slim(it,0.1)
         )
         {
           remove_cell(it);
@@ -1357,7 +1346,7 @@ class Reconstruction_from_parallel_slices_3{
       }
     }
 
-    //Second pass - step 1: orient dual edges from infinite tetrahedra that are adjacent to 
+    //Second pass - step 1: orient dual edges from infinite tetrahedra that are adjacent to
     //a edge-edge tetrahedron.
     for (typename std::list<Cell_handle_3>::iterator cit=infinite_nodes.begin();cit!=infinite_nodes.end();++cit)
     {
@@ -1366,7 +1355,7 @@ class Reconstruction_from_parallel_slices_3{
       int indices[3]={(inf_index+1)%4,(inf_index+2)%4,(inf_index+3)%4};
       double z=ch->vertex( indices[0] )->point().z();
       Edge_3 edge;
-     
+
       if (z == ch->vertex( indices[1] )->point().z() ){
         if (z == ch->vertex( indices[2] )->point().z() ) continue; //non adjacent to a edge_edge tetra
         edge=Edge_3(ch,indices[0],indices[1]);
@@ -1383,17 +1372,16 @@ class Reconstruction_from_parallel_slices_3{
       //indicate that the solid path should go the other way
       orient_dual_edges(Facet_3(ch,inf_index),edge,std::back_inserter(eliminated_nodes));
     }
-     
+
     //Second pass : we repeat step 2 and final step while we remove a node in final step
     //OPTI: maintain a list a non-remove edge_edge tetrahedra
     while(!eliminated_nodes.empty()){
     //Second pass - step 2: From the list of eliminated_nodes, orient dual edges to indicate
-    //which way a facet should be crossed to follow a solid path to the top or bottom layer.      
+    //which way a facet should be crossed to follow a solid path to the top or bottom layer.
       while(!eliminated_nodes.empty()){
         Cell_handle_3 node=eliminated_nodes.front();
         eliminated_nodes.pop_front();
-        
-        
+
         if (node->info().type==CellInfo3::EDGE_EDGE)
         {
           //get the edge in P1 and the edge in P2
@@ -1409,13 +1397,13 @@ class Reconstruction_from_parallel_slices_3{
               ea1=3; eb0=1;eb1=2;
             }
           }
-          
-          CGAL_assertion(node->vertex(ea0)->point().z()==node->vertex(ea1)->point().z() && 
+
+          CGAL_assertion(node->vertex(ea0)->point().z()==node->vertex(ea1)->point().z() &&
                          node->vertex(eb0)->point().z()==node->vertex(eb1)->point().z() );
-          
+
           //delete dual edges (one way the otherway will be done in the loop)
           node->info().out_face_status.reset();
-              
+
           //turn around first edge to set dual edges orientation
           orient_dual_edges(Facet_3(node,eb0),Edge_3(node,ea0,ea1),std::back_inserter(eliminated_nodes));
           orient_dual_edges(Facet_3(node,eb1),Edge_3(node,ea0,ea1),std::back_inserter(eliminated_nodes));
@@ -1432,12 +1420,12 @@ class Reconstruction_from_parallel_slices_3{
           orient_dual_edges(Facet_3(node,indices[1]),Edge_3(node,indices[0],indices[2]),std::back_inserter(eliminated_nodes));
         }
       }
-      
+
       // Second pass - final step: Remove edge_edge cells that does not have two facets to cross to
       //reach the top and the bottom layers along a solid path
       for(Cell_iterator_3 it = delaunay_3.finite_cells_begin(); it != delaunay_3.finite_cells_end(); ++it){
         if(it->info().type == CellInfo3::EDGE_EDGE && it->info().volume){
-          
+
           //get the edge in P1 and the edge in P2
           int ea0=0,ea1,eb0,eb1;
           if ( it->vertex(0)->point().z() == it->vertex(1)->point().z() ){
@@ -1451,12 +1439,12 @@ class Reconstruction_from_parallel_slices_3{
               ea1=3; eb0=1;eb1=2;
             }
           }
-          
+
 
           if ( ( it->info().out_face_status.test(ea0) || it->info().out_face_status.test(ea1) )
              &&
                ( it->info().out_face_status.test(eb0) || it->info().out_face_status.test(eb1) )
-          ) 
+          )
           {
             continue;
           }
@@ -1475,7 +1463,7 @@ class Reconstruction_from_parallel_slices_3{
       removed=false;
       for(Cell_iterator_3 it = delaunay_3.finite_cells_begin(); it != delaunay_3.finite_cells_end(); ++it ){
         int* b_ptr=buried_edge;
-        int* e_ptr=exposed_edge;        
+        int* e_ptr=exposed_edge;
         if(it->info().type == CellInfo3::EDGE_EDGE && it->info().volume){
           int nbn=0;
           for (int k=0;k<4;++k)
@@ -1489,14 +1477,14 @@ class Reconstruction_from_parallel_slices_3{
             CGAL_assertion(nbn==2);
             //buried_edge and exposed_edge contains indices of edges in the T22 cell which
             //are exposed and buried respectively (and not a contour edge).
-            //The dihedral angle computed is the one around these two edges.            
+            //The dihedral angle computed is the one around these two edges.
             double buried_angle= Mesh_3::dihedral_angle(
                 it->vertex(DT3::next_around_edge(buried_edge[0],buried_edge[1]))->point(),
                 it->vertex(DT3::next_around_edge(buried_edge[1],buried_edge[0]))->point(),
                 it->vertex(buried_edge[1])->point(),
                 it->vertex(buried_edge[0])->point()
             );
-            
+
             double exposed_angle= Mesh_3::dihedral_angle(
                 it->vertex(DT3::next_around_edge(exposed_edge[0],exposed_edge[1]))->point(),
                 it->vertex(DT3::next_around_edge(exposed_edge[1],exposed_edge[0]))->point(),
@@ -1560,19 +1548,19 @@ class Reconstruction_from_parallel_slices_3{
     typedef bool result_type;
     typedef std::pair<Vertex_handle_3,Vertex_handle_3> Input_type;
     typedef std::pair<Vertex_handle_2,Vertex_handle_2> Sorting_type;
-    
+
     Sorting_type get_key(const Input_type& input) const {
       Vertex_handle_2 v1=input.first->info().v;
       Vertex_handle_2 v2=input.second->info().v;
       if (v1 < v2) return std::make_pair(v1,v2);
       return std::make_pair(v2,v1);
     }
-    
+
     bool operator()(const Input_type& p1,const Input_type& p2) const {
       return get_key(p1) < get_key(p2);
     }
   };
-  
+
   template <class Iterator>
   struct Cmp_deref{
     typedef bool result_type;
@@ -1580,10 +1568,10 @@ class Reconstruction_from_parallel_slices_3{
       return &(*it1)<&(*it2);
     }
   };
-  
+
   //pair must be sorted before find and insert
   typedef std::set<std::pair<Vertex_handle_2,Vertex_handle_2> > Unique_incontour_edges;
-  
+
   #ifndef CGAL_ADD_VOLUME_TO_REMOVE_NON_MANIFOLDNESS
   struct DS_for_incontour_edge_handling{
     struct Indices{
@@ -1592,7 +1580,7 @@ class Reconstruction_from_parallel_slices_3{
       Indices(int oe,int v_):opp_e(oe),mp_index(v_){}
     };
 
-    
+
     typedef std::map<std::pair<Cell_handle_3,int>,Indices> Non_planar_facets_to_split;
     //the map that associates an edge to the midpoint index in the vector
     typedef std::map<std::pair<Vertex_handle_3,Vertex_handle_3>,int> Edge_to_midpoint_index;
@@ -1607,36 +1595,36 @@ class Reconstruction_from_parallel_slices_3{
       midpoint_indices.clear();
       triangular_isolated_contours.clear();
     }
-    
+
     Non_planar_facets_to_split non_planar_facets;
     Planar_facets_to_split planar_facets;
     std::list<Cell_handle_3> triangular_isolated_contours;
-    
+
     Edge_to_vertex_index_map edge_to_vertex_index;
     std::vector<int> midpoint_indices;
     int last_vertex_index;
-    
+
     DS_for_incontour_edge_handling():last_vertex_index(0){}
     void set_non_planar_facet(const std::pair<Vertex_handle_3,Vertex_handle_3>& edge,Cell_handle_3 cell,int findex,int opp_e){
       std::pair<typename Edge_to_vertex_index_map::iterator,bool> res=edge_to_vertex_index.insert(std::make_pair(edge,last_vertex_index));
       if (res.second) ++last_vertex_index;
       non_planar_facets.insert(std::make_pair(std::make_pair(cell,findex),Indices(opp_e,res.first->second)));
     }
-    
-    
+
+
     void set_planar_facet(const std::list<std::pair<Vertex_handle_3,Vertex_handle_3> >& edges_to_split,Cell_handle_3 top_t31){
       planar_facets.push_back( std::make_pair(Edge_to_midpoint_index(),top_t31) );
       Edge_to_midpoint_index& edges_map=planar_facets.back().first;
-      for (typename std::list<std::pair<Vertex_handle_3,Vertex_handle_3> >::const_iterator 
+      for (typename std::list<std::pair<Vertex_handle_3,Vertex_handle_3> >::const_iterator
         it=edges_to_split.begin(),it_end=edges_to_split.end();it!=it_end;++it)
       {
         CGAL_assertion(it->first < it->second);
         std::pair<typename Edge_to_vertex_index_map::iterator,bool> res=edge_to_vertex_index.insert(std::make_pair(*it,last_vertex_index));
         if (res.second) ++last_vertex_index;
-        edges_map.insert(std::make_pair(*it,res.first->second)); 
+        edges_map.insert(std::make_pair(*it,res.first->second));
       }
     }
-    
+
     void prepare(){
       CGAL_assertion(midpoint_indices.empty());
       midpoint_indices=std::vector<int>(last_vertex_index,-1);
@@ -1655,7 +1643,7 @@ class Reconstruction_from_parallel_slices_3{
     Vertex_handle_3 vh[3]={top_t31->vertex(indices[0]),top_t31->vertex(indices[1]),top_t31->vertex(indices[2])};
     #if !defined(DO_NOT_HANDLE_NON_MANIFOLD_POINT)
     typename Facet_to_nm_indices::iterator fah_it=planar_facets_nm_point.find(Facet_3(top_t31,top_t31->info().i0));
-    
+
     if ( fah_it!=planar_facets_nm_point.end() ){
       for (int a=0;a<3;++a){
         if ( fah_it->second[a]!=-1 ) indices[a]=fah_it->second[a];
@@ -1676,7 +1664,7 @@ class Reconstruction_from_parallel_slices_3{
         std::swap(vh[0],vh[1]);
       }
     }
-    
+
     switch( edges_to_split.size() )
     {
       case 3:
@@ -1704,7 +1692,7 @@ class Reconstruction_from_parallel_slices_3{
           if (itmi!=edges_to_split.end()){
             mi[1]=get_vertex_index_on_edge(vp.first,vp.second,itmi->second);
             std::swap(mi[0],mi[1]);
-            k=1; 
+            k=1;
           }
           else{
             vp=make_sorted_pair(vh[2],vh[0]);
@@ -1750,15 +1738,15 @@ class Reconstruction_from_parallel_slices_3{
   //connections can happen
   void split_non_manifold_edges_between_contour_points(double topz,bool last_run){
     bool first_run=previous_layer_incontour_edges==NULL;
-    
+
     incontour_edge_ds.clear();
     Unique_incontour_edges* current_layer_incontour_edges=last_run?NULL:new Unique_incontour_edges();
-    
+
     for(Cell_iterator_3 it = delaunay_3.finite_cells_begin(); it != delaunay_3.finite_cells_end(); ++it ) {
       if(it->info().type == CellInfo3::EDGE_EDGE && !it->info().volume){
         int top_i[2];
         int bottom_i[2];
-        
+
         for (int i=0,* t_ptr=top_i,* b_ptr=bottom_i;i<4;++i)
           if ( it->vertex(i)->point().z()==topz ) *t_ptr++=i;
           else *b_ptr++=i;
@@ -1766,16 +1754,16 @@ class Reconstruction_from_parallel_slices_3{
                         it->vertex(top_i[1])->point().z()==topz );
         CGAL_assertion(it->info().f0->vertex(it->info().i0)->info().z==topz);
         CGAL_assertion(it->info().f1->vertex(it->info().i1)->info().z==it->vertex(bottom_i[0])->point().z());
-        
+
         //Looking for an edge in the top layer
-        if ( it->vertex(top_i[0])->info().v->info().on_contour && 
+        if ( it->vertex(top_i[0])->info().v->info().on_contour &&
              it->vertex(top_i[1])->info().v->info().on_contour &&
-             !it->info().f0->is_constrained(it->info().i0)     && 
+             !it->info().f0->is_constrained(it->info().i0)     &&
              it->info().f0->info().in_domain() )
         {
           CGAL_assertion( it->info().f0->neighbor(it->info().i0)->info().in_domain() );
           std::pair<Vertex_handle_2,Vertex_handle_2> vertex_pair=make_sorted_pair(it->vertex(top_i[0])->info().v,it->vertex(top_i[1])->info().v);
-          if ( first_run || 
+          if ( first_run ||
                previous_layer_incontour_edges->find(vertex_pair)!=previous_layer_incontour_edges->end() )
           {
             std::pair<Vertex_handle_3,Vertex_handle_3> vertex_pair_3(it->vertex(top_i[0]),it->vertex(top_i[1]));
@@ -1785,9 +1773,9 @@ class Reconstruction_from_parallel_slices_3{
               incontour_edge_ds.set_non_planar_facet(vertex_pair_3,it,bottom_i[1],bottom_i[0]);
           }
         }
-        
+
         //Looking for an edge in the bottom layer
-        if ( it->vertex(bottom_i[0])->info().v->info().on_contour && 
+        if ( it->vertex(bottom_i[0])->info().v->info().on_contour &&
              it->vertex(bottom_i[1])->info().v->info().on_contour &&
              !it->info().f1->is_constrained(it->info().i1) &&
              it->info().f1->info().in_domain()  )
@@ -1807,7 +1795,7 @@ class Reconstruction_from_parallel_slices_3{
         }
       }
     }
-    
+
     // split incontour edges from planar facets that are non-manifold (that might not be the most efficient.
     // if we want to do better, upon insertion of an edge in current_layer_incontour_edges, take the two planar facets incident to the edge
     // and insert them in a list to be considered for the next layer.
@@ -1823,13 +1811,13 @@ class Reconstruction_from_parallel_slices_3{
 
       std::list<std::pair<Vertex_handle_3,Vertex_handle_3> > edges_to_split;
       Face_handle_2 fh=it->info().f0;
-      
+
       bool has_only_constrained=true; //handle isolated contours made of only 3 edges
       for (int k=0;k<3;++k){
         if (!fh->is_constrained(k)) has_only_constrained=false;
-        
-        if (fh->vertex((k+1)%3)->info().on_contour && 
-            fh->vertex((k+2)%3)->info().on_contour && 
+
+        if (fh->vertex((k+1)%3)->info().on_contour &&
+            fh->vertex((k+2)%3)->info().on_contour &&
             !fh->is_constrained(k))
         {
           int i1=0,i2=0;
@@ -1846,7 +1834,7 @@ class Reconstruction_from_parallel_slices_3{
               break;
             }
           CGAL_assertion(j!=3);
-          
+
           std::pair<Vertex_handle_2,Vertex_handle_2> vertex_pair=make_sorted_pair(it->vertex(i1)->info().v,it->vertex(i2)->info().v);
           if( first_run || (last_run && it->info().type==CellInfo3::BOTTOM_TRIANGLE) ||
               previous_layer_incontour_edges->find(vertex_pair)!=previous_layer_incontour_edges->end() )
@@ -1856,7 +1844,7 @@ class Reconstruction_from_parallel_slices_3{
           }
         }
       }
-      
+
 
 
       //Write planar facets if non-manifold edges have been found
@@ -1871,12 +1859,12 @@ class Reconstruction_from_parallel_slices_3{
           planar_facets_already_handled.insert(it->info().f0); //do this to avoid printing those facets in save_surface_layer
         }
     }
-    
+
     if ( !first_run ) delete previous_layer_incontour_edges;
     previous_layer_incontour_edges=current_layer_incontour_edges;
   }
   #endif
-  
+
   void check_removed_cells(){
     for(Cell_iterator_3 it = delaunay_3.finite_cells_begin(); it != delaunay_3.finite_cells_end(); ++it ) {
       //a edge_edge tetrahedron that is in the volume must have at least one neighbor in the volume
@@ -1887,7 +1875,7 @@ class Reconstruction_from_parallel_slices_3{
             Cell_handle_3 neighbor = it->neighbor(i);
             if (neighbor->info().volume) break;
           }
-          
+
           if (i==4){
             std::cerr << "ERROR" << std::endl;
             for (i=0;i<4;++i)
@@ -1905,10 +1893,10 @@ class Reconstruction_from_parallel_slices_3{
             std::cerr << std::endl;
             for (i=0;i<4;++i)
               std::cerr << (it->vertex(0)->point().z()==it->vertex(i)->point().z());
-            std::cerr << std::endl;  
+            std::cerr << std::endl;
             for (i=0;i<4;++i)
               std::cerr << &(*it->neighbor(i)) << " ";
-            std::cerr << std::endl;            
+            std::cerr << std::endl;
               //std::cerr << it->vertex(i)->point() << std::endl;
           }
         }
@@ -1936,7 +1924,7 @@ class Reconstruction_from_parallel_slices_3{
     }
   }
 
-  
+
   void write_projected_circumcenters(std::ostream& os, const CDT2& cdt,double other_z)//DEBUG
   {
     for(Finite_faces_iterator it = cdt.finite_faces_begin(); it != cdt.finite_faces_end(); ++it){
@@ -1947,7 +1935,7 @@ class Reconstruction_from_parallel_slices_3{
       }
     }
   }
-  
+
   void write_voronoi(std::ostream& os, const CDT2& cdt)//DEBUG
   {
     double z =  cdt.finite_vertices_begin()->info().z;
@@ -1956,50 +1944,50 @@ class Reconstruction_from_parallel_slices_3{
       int fi;
       boost::tie(fh,fi) = *it;
       nh = fh->neighbor(fi);
-      
+
       //    if(fh->info().in_domain && nh->info().in_domain()){
       if(! cdt.is_infinite(fh) && ! cdt.is_infinite(nh)){
-        os << "2 " << cdt.circumcenter(fh) << " " << z+1 <<  " "  << cdt.circumcenter(nh) << " " << z+1 << std::endl;;  
+        os << "2 " << cdt.circumcenter(fh) << " " << z+1 <<  " "  << cdt.circumcenter(nh) << " " << z+1 << std::endl;;
       }
-    }  
+    }
   }
-  
+
   void write_cells(std::ostream& os) //DEBUG
-  { 
-    int fc = 0; 
-    for(Cell_iterator_3 it = delaunay_3.finite_cells_begin(); it != delaunay_3.finite_cells_end(); ++it){ 
-      if(it->info().volume){ 
-        for(int i=0; i < 4; i++){ 
-          if( (it->info().type == CellInfo3::EDGE_EDGE) || (it->info().i0 != i)){ 
+  {
+    int fc = 0;
+    for(Cell_iterator_3 it = delaunay_3.finite_cells_begin(); it != delaunay_3.finite_cells_end(); ++it){
+      if(it->info().volume){
+        for(int i=0; i < 4; i++){
+          if( (it->info().type == CellInfo3::EDGE_EDGE) || (it->info().i0 != i)){
             if(! it->neighbor(i)->info().volume){
-              ++fc; 
-            } 
-          } 
-        } 
-      } 
-    } 
-    os << "OFF\n" << delaunay_3.number_of_vertices() << " " << fc << " 0\n"; 
+              ++fc;
+            }
+          }
+        }
+      }
+    }
+    os << "OFF\n" << delaunay_3.number_of_vertices() << " " << fc << " 0\n";
 
-    int vc = 0; 
+    int vc = 0;
     std::map<Vertex_handle_3,int> vindices;
-    for(Vertex_iterator_3 it = delaunay_3.finite_vertices_begin(); it != delaunay_3.finite_vertices_end(); ++it){ 
-      vindices[it] = vc++; 
-      os << it->point() << std::endl; 
-    } 
-     
-    for(Cell_iterator_3 it = delaunay_3.finite_cells_begin(); it != delaunay_3.finite_cells_end(); ++it){    
-      if(it->info().volume){  
-        for(int i=0; i < 4; i++){ 
-          if( (it->info().type == CellInfo3::EDGE_EDGE) || (it->info().i0 != i)){ 
-            if(! it->neighbor(i)->info().volume){ 
-              int indices[3]={(i+1)%4,(i+2)%4,(i+3)%4}; 
-              if (i%2!=0) 
-                std::swap(indices[1],indices[2]); 
+    for(Vertex_iterator_3 it = delaunay_3.finite_vertices_begin(); it != delaunay_3.finite_vertices_end(); ++it){
+      vindices[it] = vc++;
+      os << it->point() << std::endl;
+    }
 
-              os << "3 "  
-                 << vindices[it->vertex(indices[0]) ]<<  " "   
-                 << vindices[it->vertex(indices[1]) ] <<  " "   
-                 << vindices[it->vertex(indices[2]) ] <<  std::endl; 
+    for(Cell_iterator_3 it = delaunay_3.finite_cells_begin(); it != delaunay_3.finite_cells_end(); ++it){
+      if(it->info().volume){
+        for(int i=0; i < 4; i++){
+          if( (it->info().type == CellInfo3::EDGE_EDGE) || (it->info().i0 != i)){
+            if(! it->neighbor(i)->info().volume){
+              int indices[3]={(i+1)%4,(i+2)%4,(i+3)%4};
+              if (i%2!=0)
+                std::swap(indices[1],indices[2]);
+
+              os << "3 "
+                 << vindices[it->vertex(indices[0]) ]<<  " "
+                 << vindices[it->vertex(indices[1]) ] <<  " "
+                 << vindices[it->vertex(indices[2]) ] <<  std::endl;
             }
           }
         }
@@ -2008,10 +1996,10 @@ class Reconstruction_from_parallel_slices_3{
   }
 
   void write_deleted_tetra()  //DEBUG
-  { 
-    static int nb = 0; 
-            
-    for(Cell_iterator_3 it = delaunay_3.finite_cells_begin(); it != delaunay_3.finite_cells_end(); ++it){ 
+  {
+    static int nb = 0;
+
+    for(Cell_iterator_3 it = delaunay_3.finite_cells_begin(); it != delaunay_3.finite_cells_end(); ++it){
       if(!it->info().volume){
 //        if (it->info().type == CellInfo3::EDGE_EDGE) continue;
 //        if (!it->info().f0->info().in_domain()) continue;
@@ -2035,22 +2023,22 @@ class Reconstruction_from_parallel_slices_3{
 
   Point_3 get_point_3(const Point_3& coords) const {
     return Point_3( coords[x_index],coords[(x_index+1)%3],coords[(x_index+2)%3] );
-  }  
+  }
 
   Point_3 get_point_3(double a,double b, double c) const {
     double coords[3]={a,b,c};
     return Point_3( coords[x_index],coords[(x_index+1)%3],coords[(x_index+2)%3] );
   }
-  
+
   int get_vertex_index(Vertex_handle_2 vh){ //OUTPUT
     if (vh->info().poly_index==-1){
       double z=vh->info().z;
       slice_writer_ptr->surface_point_push_back( get_point_3(vh->point().x(),vh->point().y(),z) );
       vh->info().poly_index=slice_writer_ptr->last_point_index();
       }
-    return vh->info().poly_index;    
+    return vh->info().poly_index;
   }
-  
+
   #ifdef CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3_DEBUG
   Point_3 get_additional_point(Vertex_handle_2 vh){ //OUTPUT
     double z=vh->info().z;
@@ -2060,8 +2048,8 @@ class Reconstruction_from_parallel_slices_3{
 
   int get_vertex_index(Vertex_handle_3 vh){ //OUTPUT
     return get_vertex_index(vh->info().v);
-  }  
-  
+  }
+
   #ifndef CGAL_ADD_VOLUME_TO_REMOVE_NON_MANIFOLDNESS
   int get_vertex_index_on_edge(Vertex_handle_3 ve1,Vertex_handle_3 ve2,int mp_vector_index){//OUTPUT
     if (incontour_edge_ds.midpoint_indices[mp_vector_index]==-1){
@@ -2093,7 +2081,7 @@ class Reconstruction_from_parallel_slices_3{
     }
     #endif
   }
-  
+
   void add_last_bottom_layer_facets_to_surface(CDT2& last_layer,bool is_increasing_z){ //OUTPUT
     #ifndef CGAL_DO_NO_WRITE_TOP_BOTTOM
     #ifndef DO_NOT_HANDLE_NON_MANIFOLD_POINT
@@ -2116,7 +2104,7 @@ class Reconstruction_from_parallel_slices_3{
     #endif
     slice_writer_ptr->finalize_layer();
   }
-  
+
   struct Cell_int_map_inserter{
     Cell_int_map_inserter(std::map<Cell_handle_3,int>& p_map):m_map(p_map){}
     std::map<Cell_handle_3,int>& m_map;
@@ -2124,7 +2112,7 @@ class Reconstruction_from_parallel_slices_3{
       m_map.insert(std::make_pair(cell,-1));
     }
   };
-  
+
   #ifdef CGAL_ADD_VOLUME_TO_REMOVE_NON_MANIFOLDNESS
   //same as cell->index(vertex) except that it returns -1 if the vertex
   //is not part of the cell
@@ -2143,7 +2131,7 @@ class Reconstruction_from_parallel_slices_3{
         Exact_kernel::Construct_barycenter_3() (to_exact(p1),to_exact(0.9),to_exact(p2))
       );
   }
-  
+
   Point_3 build_new_point_in_facet(Vertex_handle_3 v0,Vertex_handle_3 v1,Vertex_handle_3 v2){
     To_exact to_exact;
     To_input to_input;
@@ -2152,7 +2140,7 @@ class Reconstruction_from_parallel_slices_3{
     typename Exact_kernel::Vector_3 V2=to_exact(v2->point())-ev0;
     return to_input( ev0 + to_exact(0.1)* (V1+V2) );
   }
-  
+
   template <class Map>
   int get_vertex_index_on_edge(Vertex_handle_3 v1,Vertex_handle_3 v2,Map& new_vertex_on_edge){
     typedef typename Map::iterator Iterator;
@@ -2191,7 +2179,7 @@ class Reconstruction_from_parallel_slices_3{
     }
     return ires.first->second;
   }
-  
+
   //the point computed is the intersection of the segment opposite to i1 with the segment opposite to i2 in facet(cell,facet_index)
   //vertex_index is just used for the key
   template <class Map>
@@ -2205,9 +2193,9 @@ class Reconstruction_from_parallel_slices_3{
       const Point_3 p=build_new_point_in_facet(cell->vertex(vertex_index),cell->vertex(i1),cell->vertex(i2));
       slice_writer_ptr->surface_point_push_back( get_point_3(p) );
     }
-    return ires.first->second;    
+    return ires.first->second;
   }
-  
+
   void display_surface_facet_with_a_nm_edge_and_manifold_endpoints(
     Cell_handle_3 cell,
     int e1,int e2,int other,
@@ -2220,7 +2208,7 @@ class Reconstruction_from_parallel_slices_3{
       int other_e2=get_vertex_index_on_edge(cell->vertex(other),cell->vertex(e2),new_vertex_on_edge);
       slice_writer_ptr->surface_indices_push_back( cpp0x::make_tuple(get_vertex_index(cell->vertex(e1)),middle,other_e1) );
       slice_writer_ptr->surface_indices_push_back( cpp0x::make_tuple(get_vertex_index(cell->vertex(e2)),other_e2,middle) );
-      
+
       slice_writer_ptr->surface_indices_push_back( cpp0x::make_tuple(middle,other_e2,other_e1) );
     }
     else{
@@ -2228,7 +2216,7 @@ class Reconstruction_from_parallel_slices_3{
       slice_writer_ptr->surface_indices_push_back( cpp0x::make_tuple(get_vertex_index(cell->vertex(e2)),get_vertex_index(cell->vertex(other)),middle) );
     }
   }
-  
+
   void display_surface_facet_in_cells_with_non_manifold_features(
     Cell_handle_3 cell,
     std::set<Face_handle_2>& previous_layer_printed_planar_facets,
@@ -2239,14 +2227,14 @@ class Reconstruction_from_parallel_slices_3{
 
     //map storing vertex indices that are inside a facet (intersection of two edges in a boundary facet due to two non-manifold edge adjacent)
     std::map<std::pair<int,int>,int> new_vertex_in_facet;
-    
+
     //1) Handle boundary facets of a cell with non-manifold features
     for (int i=0;i<4;++i){
       if ( cell->neighbor(i)->info().volume ){
         int indices[3]={(i+1)%4,(i+2)%4,(i+3)%4};
         if (i%2==0) std::swap(indices[1],indices[2]);
-        
-        
+
+
         //special case to handle a non-manifold edge with two manifold endpoints
         if ( cell->info().has_a_nm_edge_with_manifold_vertices ){
           if ( cell->info().nm_edge(indices[0],indices[1]) && !cell->info().nm_vertices(indices[0]) && !cell->info().nm_vertices(indices[1]) )
@@ -2266,8 +2254,8 @@ class Reconstruction_from_parallel_slices_3{
             continue;
           }
         }
-        
-        
+
+
         std::vector<int> ordered_indices;
 
         //turn around the facet and consider each vertex. We collect boundary points around the current vertex.
@@ -2277,7 +2265,7 @@ class Reconstruction_from_parallel_slices_3{
           const int i_curr = indices[k];
           const int i_before = indices[(k+2)%3];
           const int i_next = indices[(k+1)%3];
-          
+
           //check if first edge is non-manifold
           if ( cell->info().nm_edge(i_curr,i_before) ){
             //check if the second edge is non-manifold
@@ -2303,7 +2291,7 @@ class Reconstruction_from_parallel_slices_3{
               continue;
             }
           }
-          
+
           if ( cell->info().nm_vertices(i_curr) ){
             ordered_indices.push_back( get_vertex_index_on_edge(cell->vertex(i_curr),cell->vertex(i_before),new_vertex_on_edge) );
             ordered_indices.push_back( get_vertex_index_on_edge(cell->vertex(i_curr),cell->vertex(i_next),new_vertex_on_edge) );
@@ -2311,23 +2299,23 @@ class Reconstruction_from_parallel_slices_3{
           else
             ordered_indices.push_back(get_vertex_index(cell->vertex(i_curr)));
         }
-        
+
         std::size_t k=ordered_indices.size()-1;
         for (std::size_t i=1;i<k;++i)
           slice_writer_ptr->surface_indices_push_back(cpp0x::make_tuple(ordered_indices[i],ordered_indices[i+1],ordered_indices[0]));
       }
       else{
         //case of a planar facet
-        
+
         if ( cell->info().type!=CellInfo3::EDGE_EDGE && cell->info().i0==i && cell->info().f0->info().in_domain() )
         {
           CGAL_assertion( cell->info().f0->info().in_domain() );
           //collect facets that have been printed to detect non-manifold facet at the next step
           previous_layer_printed_planar_facets.insert(cell->info().f0);
-          
+
           int indices[3]={(i+1)%4,(i+2)%4,(i+3)%4};
           if (i%2==0) std::swap(indices[1],indices[2]);
-          
+
           //special case of a isolated triangle
           if ( cell->info().isolated_triangle ){
             Point_3 pt=centroid( cell->vertex(indices[0])->point(), cell->vertex(indices[1])->point(), cell->vertex(indices[2])->point() );
@@ -2339,8 +2327,8 @@ class Reconstruction_from_parallel_slices_3{
             slice_writer_ptr->surface_indices_push_back( cpp0x::make_tuple( get_vertex_index(cell->vertex(indices[2])), get_vertex_index(cell->vertex(indices[0])), central ) );
             continue;
           }
-          
-          
+
+
           //special case to handle a non-manifold edge with two manifold endpoints
           if ( cell->info().has_a_nm_edge_with_manifold_vertices ){
             std::vector< int > edges; //store the first vertex (in ccw order) of a non-manifold edge with manifold endpoints
@@ -2351,11 +2339,11 @@ class Reconstruction_from_parallel_slices_3{
             { edges.push_back(1); }
             if ( cell->info().nm_edge(indices[0],indices[2]) && !cell->info().nm_vertices(indices[0]) && !cell->info().nm_vertices(indices[2]) )
             { edges.push_back(2); }
-            
+
             #ifdef CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3_DEBUG
             #warning think about what can happen if an edge incident to i0 is non-manifold. is it possible?
             #endif
-            
+
             switch (edges.size() ){
               case 3:
               {
@@ -2402,14 +2390,14 @@ class Reconstruction_from_parallel_slices_3{
                       if (!cell->info().nm_edge(indices[(edges[0]+2)%3],indices[edges[0]])){
                         int other=get_vertex_index_on_edge(cell->vertex( indices[(edges[0]+2)%3] ), cell->vertex( indices[(edges[0]+1)%3] ), new_vertex_on_edge);
                         slice_writer_ptr->surface_indices_push_back( cpp0x::make_tuple( middle, other, get_vertex_index(cell->vertex(indices[edges[0]])) ) );
-                        slice_writer_ptr->surface_indices_push_back( cpp0x::make_tuple( middle, get_vertex_index(cell->vertex(indices[(edges[0]+1)%3])), other) );                        
+                        slice_writer_ptr->surface_indices_push_back( cpp0x::make_tuple( middle, get_vertex_index(cell->vertex(indices[(edges[0]+1)%3])), other) );
                       }
                       else{
                         int e_p20=get_vertex_index_on_edge(cell->vertex( indices[(edges[0]+2)%3] ), cell->vertex( indices[edges[0]]       ), new_vertex_on_edge);
                         int e_p21=get_vertex_index_on_edge(cell->vertex( indices[(edges[0]+2)%3] ), cell->vertex( indices[(edges[0]+1)%3] ), new_vertex_on_edge);
                         slice_writer_ptr->surface_indices_push_back( cpp0x::make_tuple( middle, e_p20, get_vertex_index(cell->vertex(indices[edges[0]])) ) );
                         slice_writer_ptr->surface_indices_push_back( cpp0x::make_tuple( middle, get_vertex_index(cell->vertex(indices[(edges[0]+1)%3])), e_p21 ) );
-                        slice_writer_ptr->surface_indices_push_back( cpp0x::make_tuple( middle, e_p21, e_p20 ) );                                          
+                        slice_writer_ptr->surface_indices_push_back( cpp0x::make_tuple( middle, e_p21, e_p20 ) );
                       }
                     }
                   }
@@ -2424,16 +2412,16 @@ class Reconstruction_from_parallel_slices_3{
                 CGAL_assertion( edges.size()==0 );
             }
           }
-          
+
           //case when no non-manifold edge with manifold vertices has been found
           std::vector<int> ordered_indices;
-          
+
           for (int k=0;k<3;++k){
             const int i_curr = indices[k];
             const int i_before = indices[(k+2)%3];
             const int i_next = indices[(k+1)%3];
-            
-            //check is the edge(i,i_curr) is non-manifold edge 
+
+            //check is the edge(i,i_curr) is non-manifold edge
             if ( cell->info().nm_edge(i_curr,i) ){
               ordered_indices.push_back( get_vertex_index_in_facet(cell,i_next,i_curr,i,i_before,new_vertex_in_facet) );
               ordered_indices.push_back( get_vertex_index_in_facet(cell,i_before,i_curr,i,i_next,new_vertex_in_facet) );
@@ -2476,7 +2464,7 @@ class Reconstruction_from_parallel_slices_3{
 
     //2) handle parts added as non-manifold edges
     std::map< std::pair<int,int>, std::pair<int,int> > indices_for_edges;
-    
+
     //consider each vertex and look for its non-manifold incident edges and add parts of the cut plane
     for (int i=0;i<4;++i)
     {
@@ -2488,12 +2476,12 @@ class Reconstruction_from_parallel_slices_3{
             edges_nm.push_back((i+k)%4);
           }
         }
-        
+
         switch(edges_nm.size()){
           case 0:
           {
             if (cell->info().type!=CellInfo3::EDGE_EDGE && i!=cell->info().i0 && cell->info().nm_facet()) continue;
-            
+
             int indices[3]={(i+1)%4,(i+2)%4,(i+3)%4};
             if (i%2!=0) std::swap(indices[1],indices[2]);
             slice_writer_ptr->surface_indices_push_back(
@@ -2503,14 +2491,14 @@ class Reconstruction_from_parallel_slices_3{
                 get_vertex_index_on_edge(cell->vertex(i),cell->vertex(indices[2]),new_vertex_on_edge)
               )
             );
-            break;              
+            break;
           }
           case 1:
           {
             const int e1=i;
             const int e2=edges_nm[0];
             int indices[3]={(e2+1)%4,(e2+2)%4,(e2+3)%4};
-            if (e2%2!=0) std::swap(indices[1],indices[2]);              
+            if (e2%2!=0) std::swap(indices[1],indices[2]);
             for (int k=0;k<3;++k)
               if ( indices[k]==e1 ){
                   int i1=get_vertex_index_on_edge(cell->vertex(e1),cell->vertex(indices[(k+2)%3]),new_vertex_on_edge);
@@ -2518,17 +2506,17 @@ class Reconstruction_from_parallel_slices_3{
                   indices_for_edges[std::make_pair(e1,e2)]=std::make_pair(i1,i2);
                 break;
               }
-            break; 
+            break;
           }
           case 2:
           {
             if ( cell->info().type!=CellInfo3::EDGE_EDGE && cell->info().nm_facet() ){
               if ( edges_nm[0]+edges_nm[1]+i+cell->info().i0== 6 ) continue; //the 3 vertices corresponding to non-manifold edges are in a non-manifold facet
             }
-            
+
             const int e1=i;
             const int e2=edges_nm[0];
-            
+
             int indices[3]={(e2+1)%4,(e2+2)%4,(e2+3)%4};
             if (e2%2!=0) std::swap(indices[1],indices[2]);
             for (int k=0;k<3;++k)
@@ -2546,13 +2534,13 @@ class Reconstruction_from_parallel_slices_3{
                   indices_for_edges[std::make_pair(e1,edges_nm[1])]=std::make_pair(i2,i1);
                 break;
               }
-            break; 
+            break;
           }
           default:
           {
             CGAL_assertion(edges_nm.size()==3);
             int indices[3]={(i+1)%4,(i+2)%4,(i+3)%4};
-            if (i%2!=0) std::swap(indices[1],indices[2]);     
+            if (i%2!=0) std::swap(indices[1],indices[2]);
             int poly_indices[3]={-1,-1,-1};
             for (int k=0;k<3;++k)
               poly_indices[k]=get_vertex_index_in_facet(cell,indices[k],i,indices[(k+1)%3],indices[(k+2)%3],new_vertex_in_facet);
@@ -2572,7 +2560,7 @@ class Reconstruction_from_parallel_slices_3{
       for(int j=i+1;j<4;++j)
         if (
             (!cell->info().nm_facet() || i==cell->info().i0 || j==cell->info().i0)  //do not draw for edges of a non-manifold facet
-            && cell->info().nm_edge(i,j) 
+            && cell->info().nm_edge(i,j)
         ){
           if ( cell->info().nm_vertices(i) ){
             if ( cell->info().nm_vertices(j) ){
@@ -2580,11 +2568,11 @@ class Reconstruction_from_parallel_slices_3{
               CGAL_assertion( it_ij!=indices_for_edges.end() );
               typename std::map< std::pair<int,int>, std::pair<int,int> >::iterator it_ji=indices_for_edges.find(std::make_pair(j,i));
               CGAL_assertion( it_ji!=indices_for_edges.end() );
-              
+
               std::pair<int,int>& indices_i=it_ij->second;
               std::pair<int,int>& indices_j=it_ji->second;
               slice_writer_ptr->surface_indices_push_back( cpp0x::make_tuple(indices_j.first,indices_i.first,indices_i.second ) );
-              slice_writer_ptr->surface_indices_push_back( cpp0x::make_tuple(indices_i.first,indices_j.first,indices_j.second ) );            
+              slice_writer_ptr->surface_indices_push_back( cpp0x::make_tuple(indices_i.first,indices_j.first,indices_j.second ) );
             }
             else{
               typename std::map< std::pair<int,int>, std::pair<int,int> >::iterator it_ij=indices_for_edges.find(std::make_pair(i,j));
@@ -2633,39 +2621,39 @@ class Reconstruction_from_parallel_slices_3{
             //look whether in the neighbor whether vertex i is non-manifold
             int index_in_neigh=cell->neighbor(j)->index( cell->vertex(i) );
             if ( cell->info().nm_vertices(i) &&
-                 !cell->neighbor(j)->info().volume && 
+                 !cell->neighbor(j)->info().volume &&
                  !cell->neighbor(j)->info().nm_vertices(index_in_neigh)  ){
               //CGAL_assertion( cell->vertex(i)->info().v->info().on_contour );
               int indices[3]={(j+1)%4,(j+2)%4,(j+3)%4};
               if (j%2!=0) std::swap(indices[1],indices[2]);
               int index_of_i = 0;
               while (indices[index_of_i]!=i) ++index_of_i;
-              slice_writer_ptr->surface_indices_push_back( 
+              slice_writer_ptr->surface_indices_push_back(
                 cpp0x::make_tuple(
                   get_vertex_index( cell->vertex(i) ),
                   get_vertex_index_on_edge(cell->vertex(i),cell->vertex(indices[(index_of_i+1)%3]),new_vertex_on_edge),
                   get_vertex_index_on_edge(cell->vertex(i),cell->vertex(indices[(index_of_i+2)%3]),new_vertex_on_edge)
                 )
-              );    
+              );
             }
-            
+
             //look whether in the neighbor whether vertex j is non-manifold
             index_in_neigh=cell->neighbor(i)->index( cell->vertex(j) );
             if ( cell->info().nm_vertices(j) &&
-                 !cell->neighbor(i)->info().volume && 
+                 !cell->neighbor(i)->info().volume &&
                  !cell->neighbor(i)->info().nm_vertices(index_in_neigh)  ){
               //CGAL_assertion( cell->vertex(j)->info().v->info().on_contour );
               int indices[3]={(i+1)%4,(i+2)%4,(i+3)%4};
               if (i%2!=0) std::swap(indices[1],indices[2]);
               int index_of_j = 0;
               while (indices[index_of_j]!=j) ++index_of_j;
-              slice_writer_ptr->surface_indices_push_back( 
+              slice_writer_ptr->surface_indices_push_back(
                 cpp0x::make_tuple(
                   get_vertex_index( cell->vertex(j) ),
                   get_vertex_index_on_edge(cell->vertex(j),cell->vertex(indices[(index_of_j+1)%3]),new_vertex_on_edge),
                   get_vertex_index_on_edge(cell->vertex(j),cell->vertex(indices[(index_of_j+2)%3]),new_vertex_on_edge)
                 )
-              );    
+              );
             }
           }
       }
@@ -2675,7 +2663,7 @@ class Reconstruction_from_parallel_slices_3{
         const int i0=cell->info().i0;
         for (int i=0;i<3;++i){
           Cell_handle_3 neighbor=cell->neighbor( (i0+i+1)%4 );
-          if ( !neighbor->info().volume && 
+          if ( !neighbor->info().volume &&
                !neighbor->info().nm_facet() &&
                cell->info().nm_vertices((i0+1+(i+1)%3)%4) && cell->info().nm_vertices((i0+1+(i+2)%3)%4)
           ){
@@ -2686,7 +2674,7 @@ class Reconstruction_from_parallel_slices_3{
               CGAL_assertion( (i0+i+1)%4+i0+(i0+1+(i+1)%3)%4+(i0+1+(i+2)%3)%4==6 );
               if ( neighbor->info().nm_edge(i1,i2) ) continue;
             }
-            
+
             int i1=-1,i2=-1;
             //display a quad
             const int vi=(i0+i+1)%4;
@@ -2704,20 +2692,20 @@ class Reconstruction_from_parallel_slices_3{
             int i4=get_vertex_index_on_edge(cell->vertex(i1),cell->vertex(i0),new_vertex_on_edge);
             i1=get_vertex_index( cell->vertex(i1) );
             i2=get_vertex_index( cell->vertex(i2) );
-            slice_writer_ptr->surface_indices_push_back( cpp0x::make_tuple(i1,i2,i3) );  
-            slice_writer_ptr->surface_indices_push_back( cpp0x::make_tuple(i1,i3,i4) );  
+            slice_writer_ptr->surface_indices_push_back( cpp0x::make_tuple(i1,i2,i3) );
+            slice_writer_ptr->surface_indices_push_back( cpp0x::make_tuple(i1,i3,i4) );
           }
         }
       }
     }
-    
+
   }
   #endif
-  
+
   void save_surface_layer(bool last_run){ //OUTPUT
-   
+
     #ifndef DO_NOT_HANDLE_NON_MANIFOLD_POINT
-    
+
     #ifdef CGAL_ADD_VOLUME_TO_REMOVE_NON_MANIFOLDNESS
     double top_z = top_ptr->finite_vertices_begin()->info().z;
     bool first_run = previous_bottom_incontour_nm_vertices==NULL;
@@ -2726,24 +2714,24 @@ class Reconstruction_from_parallel_slices_3{
     //POSSIBLE OPTI: One way to directly compute incident facets is to make a pass on all cells and use a vector
     //  of size number_of_vertices containing the list of incident facets per vertex. We need to have an index in
     //  the info of the vertex for that
-    
+
   //handle facets incident to non-manifold contour and non-contour points
-    
+
     #ifndef CGAL_ADD_VOLUME_TO_REMOVE_NON_MANIFOLDNESS
     //this map type is needed because a facet can have several non-manifold vertex to duplicate
     typedef std::map<Facet_3,cpp0x::array<int,3> >  Facet_to_nm_indices;
     //map non-planar facets that have at least one non-manifold vertex to duplicate to duplicated index of vertices or default otherwise
     Facet_to_nm_indices facets_already_handled;
     //map planar facets that have at least one non-manifold vertex to duplicate to duplicated index of vertices or default otherwise.
-    Facet_to_nm_indices planar_facets_nm_point;    
+    Facet_to_nm_indices planar_facets_nm_point;
     #endif
 
-    
+
     //iterate over all vertices and look for their one neighbors. We look at the connected components
     //of tetrahedra that are outside the volume. If there is more than one such connected components, then
-    //the vertex is non-manifold. For a contour vertex, among the connected components one contains facets incident to the contour edges 
+    //the vertex is non-manifold. For a contour vertex, among the connected components one contains facets incident to the contour edges
     //the non-manifold vertex is indicent to. Other connected compondents are called umbrella and form a kind of pyramid
-    //with apex the non-manifold vertex. For each umbrella, we need to duplicate the non manifold vertex and 
+    //with apex the non-manifold vertex. For each umbrella, we need to duplicate the non manifold vertex and
     //associate it to facets in the umbrella. The same procedure is working for non-contour points, but the connected component
     //that is left as is is the first one.
     for (typename DT3::Finite_vertices_iterator vit=delaunay_3.finite_vertices_begin(),
@@ -2754,7 +2742,7 @@ class Reconstruction_from_parallel_slices_3{
       //collect tetrahedra incident to vit
       delaunay_3.incident_cells(vit,
         boost::make_function_output_iterator(Cell_int_map_inserter(incident_cells)));
-      
+
       //first pass to mark infinite cells incident to a T31;
       //in this pass we also collect the contour vertices incident to vit if vit is a contour vertex
       bool found_incident_vertices=!vertex_on_contour;
@@ -2769,7 +2757,7 @@ class Reconstruction_from_parallel_slices_3{
             rf->second=-2;
             if ( !found_incident_vertices ){
               CGAL_assertion( it->first->info().f0->vertex(0)->info().z==vit->point().z() );
-            //  turn around vit to find the two incident constrained edges 
+            //  turn around vit to find the two incident constrained edges
               Face_handle_2 fh=it->first->info().f0;
               Vertex_handle_2 vh=vit->info().v;
               int vertex_index=fh->index(vh);
@@ -2783,7 +2771,7 @@ class Reconstruction_from_parallel_slices_3{
                   if ( fh->is_constrained((vertex_index+2)%3) )
                     vhandles[++cindex]=fh->vertex( (vertex_index+1)%3 );
                 }
-                
+
                 Face_handle_2 new_fh=fh->neighbor(turn_index);
                 turn_index=new_fh->index(fh);
                 if ( new_fh->vertex((turn_index+1)%3)!=vh )   turn_index=(turn_index+1)%3;
@@ -2797,9 +2785,9 @@ class Reconstruction_from_parallel_slices_3{
           }
         }
       }
-      
+
       CGAL_precondition(found_incident_vertices);
-      
+
       #ifdef CGAL_ADD_VOLUME_TO_REMOVE_NON_MANIFOLDNESS
       std::vector< std::vector<Cell_handle_3> > incident_cells_per_cc;
       #else
@@ -2813,14 +2801,14 @@ class Reconstruction_from_parallel_slices_3{
       boundary_facets_per_cc.reserve(5);
       boundary_planar_facets_per_cc.reserve(5);
       #endif
-     
+
       #ifdef CGAL_ADD_VOLUME_TO_REMOVE_NON_MANIFOLDNESS
       //used to detect non-manifold non-planar edges: if we cut such an edge, it remains non-manifold
       std::set<Vertex_handle_3> incident_vertices;
       std::vector<Vertex_handle_3> non_manifold_edges;
       #endif
-      
-      //identify surface connected components containing vit 
+
+      //identify surface connected components containing vit
       int cc_number=0;
       int cc_to_keep=-1;
       for (typename std::map<Cell_handle_3,int>::iterator it=incident_cells.begin(),
@@ -2837,7 +2825,7 @@ class Reconstruction_from_parallel_slices_3{
         boundary_facets_per_cc.push_back(std::list<Facet_3>());
         boundary_planar_facets_per_cc.push_back(std::list<Facet_3>());
         #endif
-        
+
         std::list<Cell_handle_3> stack;
         stack.push_back(it->first);
         #ifdef CGAL_ADD_VOLUME_TO_REMOVE_NON_MANIFOLDNESS
@@ -2848,7 +2836,7 @@ class Reconstruction_from_parallel_slices_3{
         while ( !stack.empty() ){
           Cell_handle_3 cell=stack.back();
           stack.pop_back();
-          
+
           #ifdef CGAL_ADD_VOLUME_TO_REMOVE_NON_MANIFOLDNESS
           for (int iv=0;iv<4;++iv){
             Vertex_handle_3 vh=cell->vertex(iv);
@@ -2865,7 +2853,7 @@ class Reconstruction_from_parallel_slices_3{
               incident_vertices.insert(vh);
           }
           #endif
-          
+
           int index_vit=cell->index(vit);
           for (int k=0;k<4;++k){
             if (k==index_vit) continue;
@@ -2914,7 +2902,7 @@ class Reconstruction_from_parallel_slices_3{
         CGAL_assertion(!vit->info().v->info().on_contour || cc_to_keep!=-1);
         //In case the vertex is not on the contour, the first component is the one kept
         if( !vit->info().v->info().on_contour ) cc_to_keep=0;
-        
+
         #ifdef CGAL_ADD_VOLUME_TO_REMOVE_NON_MANIFOLDNESS
         //in case a non-manifold edge is found, all the components are modified because we have no guarantee that when
         //the second endpoint of the edge will be handled, the same component will be selected as the one "kept".
@@ -2947,7 +2935,7 @@ class Reconstruction_from_parallel_slices_3{
 
           std::list<Facet_3>& boundary_facets=boundary_facets_per_cc[ccn];
           std::list<Facet_3>& boundary_planar_facets=boundary_planar_facets_per_cc[ccn];
-          
+
           slice_writer_ptr->surface_point_push_back( get_point_3(vit->point()) );
           int vit_index=slice_writer_ptr->last_point_index();
 
@@ -2966,7 +2954,7 @@ class Reconstruction_from_parallel_slices_3{
             }
             CGAL_assertion(ii!=3);
           }
-         
+
           //handle planar facets in the component
           for(typename std::list<Facet_3>::iterator bf_it=boundary_planar_facets.begin(),
                                                     bf_it_end=boundary_planar_facets.end();bf_it!=bf_it_end;++bf_it)
@@ -2974,7 +2962,7 @@ class Reconstruction_from_parallel_slices_3{
             //if (!vertex_on_contour) CGAL_assertion(!"We should get here"); this can also happen for vertex inside a contour!
             CGAL_precondition(!bf_it->first->info().volume);
             //only planar facet in the domain can be in such componant (otherwise, the out-of-domain facet can be incident to a contour)
-            CGAL_precondition(bf_it->first->info().f0->info().in_domain()); 
+            CGAL_precondition(bf_it->first->info().f0->info().in_domain());
             planar_facets_already_handled.insert(bf_it->first->info().f0);
 
             #ifdef CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3_DEBUG
@@ -2986,7 +2974,7 @@ class Reconstruction_from_parallel_slices_3{
               for (int kkk=0;kkk<3;++kkk)
                 if ( bf_it->first->vertex((opposite_facet.second+kkk+1)%4)->point().z()==vit->point().z() ) fah_it_2->second[kkk]=33;
             }
-            
+
             typename Facet_to_nm_indices::iterator fah_it=planar_facets_nm_point.insert(std::make_pair(*bf_it,init_array)).first;
             int ii=0;
             for (;ii<3;++ii){
@@ -2997,7 +2985,7 @@ class Reconstruction_from_parallel_slices_3{
             }
             CGAL_assertion(ii!=3);
           }
-        }        
+        }
         #endif
       }
     }
@@ -3005,13 +2993,13 @@ class Reconstruction_from_parallel_slices_3{
     reinit_non_contour_vertices_poly_index(*top_ptr);
     #endif
     #endif //DO_NOT_HANDLE_NON_MANIFOLD_POINT
-    
+
     #if !defined(CGAL_ADD_VOLUME_TO_REMOVE_NON_MANIFOLDNESS)
     if ( split_non_manifold_incontour_edges ){
       incontour_edge_ds.prepare();//init vertex indices to -1;
-    
+
       //write planar facets having at least one non-manifold incontour edge
-      for (typename DS_for_incontour_edge_handling::Planar_facets_to_split::iterator 
+      for (typename DS_for_incontour_edge_handling::Planar_facets_to_split::iterator
         it=incontour_edge_ds.planar_facets.begin(),it_end=incontour_edge_ds.planar_facets.end();it!=it_end;++it)
       {
         #ifndef DO_NOT_HANDLE_NON_MANIFOLD_POINT
@@ -3020,7 +3008,7 @@ class Reconstruction_from_parallel_slices_3{
         write_planar_facets_with_non_manifold_incontour_edges(it->first,it->second);
         #endif
       }
-    
+
       //write the special case when a contour is made of only 3 edges and that it is isolated (both incident
       //tetrahedra have been eliminated
       for (typename std::list<Cell_handle_3>::iterator cit=incontour_edge_ds.triangular_isolated_contours.begin();
@@ -3059,33 +3047,33 @@ class Reconstruction_from_parallel_slices_3{
       }
 
       if (i%2==0) std::swap(indices[1],indices[2]);
-      slice_writer_ptr->surface_indices_push_back(cpp0x::make_tuple(indices[0],indices[1],indices[2]));                
-      
+      slice_writer_ptr->surface_indices_push_back(cpp0x::make_tuple(indices[0],indices[1],indices[2]));
+
       //TMP DEBUG
       #ifdef CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3_DEBUG
       additional_surface_points.push_back(get_additional_point(it->first.first->vertex((i+1)%4)->info().v));
       additional_surface_points.push_back(get_additional_point(it->first.first->vertex((i+2)%4)->info().v));
       additional_surface_points.push_back(get_additional_point(it->first.first->vertex((i+3)%4)->info().v));
-      additional_surface_indices.push_back(cpp0x::make_tuple(additional_index+1,additional_index+2,additional_index+3));                
+      additional_surface_indices.push_back(cpp0x::make_tuple(additional_index+1,additional_index+2,additional_index+3));
       additional_index+=3;
       #endif
     }
     #endif //!DO_NOT_HANDLE_NON_MANIFOLD_POINT
     #endif //CGAL_ADD_VOLUME_TO_REMOVE_NON_MANIFOLDNESS
-    
+
     #ifdef CGAL_ADD_VOLUME_TO_REMOVE_NON_MANIFOLDNESS
     //store indices of new points added on edges incident to a non-manifold vertex
     std::map<std::pair<Vertex_handle_3,Vertex_handle_3>,int> new_vertex_on_edge;
     //store indices of new points added in a facet, opposite to a non-manifold edge with manifold endpoints
     //two first vertices are sorted edge endpoint, third vertex is the last one in facet
     std::map< cpp0x::tuple<Vertex_handle_3,Vertex_handle_3,Vertex_handle_3>,int > new_opposite_nm_edge_vertex;
-    
+
     //sets to detect non-manifold vertices and edges
     std::set<Vertex_handle_2>* current_bottom_incontour_nm_vertices=NULL;
     if (!last_run) current_bottom_incontour_nm_vertices=new std::set<Vertex_handle_2>();
     std::set< std::pair<Vertex_handle_2,Vertex_handle_2> >* current_bottom_incontour_nm_edges=NULL;
     if (!last_run) current_bottom_incontour_nm_edges=new std::set<std::pair<Vertex_handle_2,Vertex_handle_2> >();
-    
+
     //mark planar non-manifold edges inside the contour as well as in contour vertices and non-manifold facets
     for(Cell_iterator_3 it = delaunay_3.finite_cells_begin(); it != delaunay_3.finite_cells_end(); ++it)
       if ( !it->info().volume ){
@@ -3096,7 +3084,7 @@ class Reconstruction_from_parallel_slices_3{
             int bi[2],ti[2];
             int *bi_ptr=bi, *ti_ptr=ti;
             for (int i=0;i<4;++i)
-              if (it->vertex(i)->point().z()==top_z) 
+              if (it->vertex(i)->point().z()==top_z)
                 *ti_ptr++=i;
               else
                 *bi_ptr++=i;
@@ -3105,7 +3093,7 @@ class Reconstruction_from_parallel_slices_3{
             //handle the simplices in the top layer
             if ( it->info().f0->info().in_domain() && it->info().f0->neighbor(it->info().i0)->info().in_domain() ){  //the edge is inside the domain and not on the boundary
               //handle the edge
-              if ( first_run || 
+              if ( first_run ||
                 previous_bottom_incontour_nm_edges->find( make_sorted_pair(it->vertex(ti[0])->info().v,it->vertex(ti[1])->info().v) )
                   !=previous_bottom_incontour_nm_edges->end() ||
                 previous_layer_printed_planar_facets.find(it->info().f0)!=previous_layer_printed_planar_facets.end() ||
@@ -3199,7 +3187,7 @@ class Reconstruction_from_parallel_slices_3{
     std::swap(previous_bottom_incontour_nm_vertices,current_bottom_incontour_nm_vertices);
     previous_layer_printed_planar_facets.clear();
     #endif
-    
+
     //write surface facets for the current slice
     for(Cell_iterator_3 it = delaunay_3.finite_cells_begin(); it != delaunay_3.finite_cells_end(); ++it){
       #ifdef CGAL_ADD_VOLUME_TO_REMOVE_NON_MANIFOLDNESS
@@ -3208,12 +3196,12 @@ class Reconstruction_from_parallel_slices_3{
         continue;
       }
       #endif
-      
+
       //Handle regular facets on the boundary of in volume tetrahedron
       if(it->info().volume){
         for(int i=0; i < 4; ++i){
           if( (it->info().type == CellInfo3::EDGE_EDGE) || (it->info().i0 != i)){
-            
+
             #ifdef CGAL_ADD_VOLUME_TO_REMOVE_NON_MANIFOLDNESS
             if(! it->neighbor(i)->info().volume && !it->neighbor(i)->info().non_manifold_features)
             #else
@@ -3225,20 +3213,20 @@ class Reconstruction_from_parallel_slices_3{
 
               //catch by non-manifold vertex
               #if !defined(DO_NOT_HANDLE_NON_MANIFOLD_POINT) && !defined(CGAL_ADD_VOLUME_TO_REMOVE_NON_MANIFOLDNESS)
-              typename Facet_to_nm_indices::iterator fah_it= facets_already_handled.find(mirror_facet); 
+              typename Facet_to_nm_indices::iterator fah_it= facets_already_handled.find(mirror_facet);
               if ( fah_it!=facets_already_handled.end() ){
                 //TMP DEBUG
                 #ifdef CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3_DEBUG
                 additional_surface_points.push_back(get_additional_point(it->vertex((i+1)%4)->info().v));
                 additional_surface_points.push_back(get_additional_point(it->vertex((i+2)%4)->info().v));
                 additional_surface_points.push_back(get_additional_point(it->vertex((i+3)%4)->info().v));
-                additional_surface_indices.push_back(cpp0x::make_tuple(additional_index+1,additional_index+2,additional_index+3));                
-                additional_index+=3;                
+                additional_surface_indices.push_back(cpp0x::make_tuple(additional_index+1,additional_index+2,additional_index+3));
+                additional_index+=3;
                 #endif
                 for (int a=0;a<3;++a){
                   if ( fah_it->second[a]!=-1 ) indices[a]=fah_it->second[a];
                   else indices[a]=get_vertex_index(mirror_facet.first->vertex(indices[a])->info().v);
-                }                
+                }
               }
               else
               #endif
@@ -3248,7 +3236,7 @@ class Reconstruction_from_parallel_slices_3{
                 indices[2]=get_vertex_index( mirror_facet.first->vertex(indices[2]) );
               }
               if (mirror_facet.second%2==0) std::swap(indices[1],indices[2]);
-             
+
               #ifndef CGAL_ADD_VOLUME_TO_REMOVE_NON_MANIFOLDNESS
               //split incontour non-manifold edges
               if (split_non_manifold_incontour_edges){
@@ -3285,7 +3273,7 @@ class Reconstruction_from_parallel_slices_3{
         int indices[3]={(i+1)%4,(i+2)%4,(i+3)%4};
         if (i%2==0)
           std::swap(indices[1],indices[2]);
-        
+
         if (it->info().type==CellInfo3::TOP_TRIANGLE){
           #ifndef CGAL_ADD_VOLUME_TO_REMOVE_NON_MANIFOLDNESS
           if (planar_facets_already_handled.find(it->info().f0) == planar_facets_already_handled.end() )
@@ -3300,7 +3288,7 @@ class Reconstruction_from_parallel_slices_3{
         }
         else{
           CGAL_assertion(it->info().type==CellInfo3::BOTTOM_TRIANGLE);
-          
+
           #ifndef CGAL_ADD_VOLUME_TO_REMOVE_NON_MANIFOLDNESS
           if ( planar_facets_already_handled.find(it->info().f0)==planar_facets_already_handled.end() )
           #endif
@@ -3320,12 +3308,12 @@ class Reconstruction_from_parallel_slices_3{
           if ( split_non_manifold_incontour_edges && !last_run){
             //collect facets that have been printed to detect non-manifold facet at the next step
             previous_layer_printed_planar_facets.insert(it->info().f0);
-            
+
             //add incontour edges that are in planar facets in the potental list of non-manifold edges
             Face_handle_2 fh=it->info().f0;
             for (int k=0;k<3;++k){
-              if (fh->vertex((k+1)%3)->info().on_contour && 
-                  fh->vertex((k+2)%3)->info().on_contour && 
+              if (fh->vertex((k+1)%3)->info().on_contour &&
+                  fh->vertex((k+2)%3)->info().on_contour &&
                   !fh->is_constrained(k)
                  )
               {
@@ -3343,7 +3331,7 @@ class Reconstruction_from_parallel_slices_3{
                     break;
                   }
                 CGAL_assertion(j!=3);
-                std::pair<Vertex_handle_2,Vertex_handle_2> vertex_pair=make_sorted_pair(v1->info().v,v2->info().v);               
+                std::pair<Vertex_handle_2,Vertex_handle_2> vertex_pair=make_sorted_pair(v1->info().v,v2->info().v);
                 previous_layer_incontour_edges->insert(vertex_pair);
               }
             }
@@ -3372,7 +3360,7 @@ class Reconstruction_from_parallel_slices_3{
     write_final_model(output,additional_surface_points,additional_surface_indices);
   }
   #endif
-  
+
   #ifndef DO_NOT_HANDLE_NON_MANIFOLD_POINT
   //vertices that are inside the contour are duplicated in each reconstructed slice
   void reinit_non_contour_vertices_poly_index(CDT2& cdt){
@@ -3382,7 +3370,7 @@ class Reconstruction_from_parallel_slices_3{
     }
   }
   #endif
-  
+
   void run(bool last_run){
     if (!last_run){
       CGAL::make_conforming_Gabriel_2(*next_ptr);
@@ -3403,11 +3391,11 @@ class Reconstruction_from_parallel_slices_3{
     CGAL::make_conforming_Gabriel_2(*bottom_ptr);
   //update triangles inside the contours
     mark_domains(*bottom_ptr);
-  //after refining a CDT we have to set the z values for the new vertices 
+  //after refining a CDT we have to set the z values for the new vertices
     update_z(*bottom_ptr);
   //index vertices in bottom
     index(*bottom_ptr);
-    
+
     //create a 3D Delaunay triangulation from vertices in top and bottom and
   //classify each tetrahedron:either having one face in P1, or one face in P2 or one edge in P1 and one edge in P2
     delaunay_3.clear();
@@ -3431,19 +3419,19 @@ class Reconstruction_from_parallel_slices_3{
 //    output_1.close();
 //    output_2.close();
 //    output_1.open("data/bottom-out.cgal");
-//    output_2.open("data/top-out.cgal");   
+//    output_2.open("data/top-out.cgal");
 //    write_projected_circumcenters(output_1,*bottom_ptr,top_ptr->finite_vertices_begin()->info().z);
 //    write_projected_circumcenters(output_2,*top_ptr,bottom_ptr->finite_vertices_begin()->info().z);
     #endif
     //write_voronoi(std::ofstream("bottomVoronoi.cgal"),bottom);
     //write_voronoi(std::ofstream("topVoronoi.cgal"), top);
-    
+
 //  std::ofstream output("last-graph.off");//DEBUG
 //  write_cells(output);//DEBUG
 //  write_deleted_tetra();//DEBUG
 //    bool first_run=previous_layer_incontour_edges==NULL;
     #ifndef CGAL_ADD_VOLUME_TO_REMOVE_NON_MANIFOLDNESS
-    if( split_non_manifold_incontour_edges ) 
+    if( split_non_manifold_incontour_edges )
       split_non_manifold_edges_between_contour_points(top_ptr->finite_vertices_begin()->info().z,last_run);
     #endif
     save_surface_layer(last_run);
@@ -3473,7 +3461,7 @@ class Reconstruction_from_parallel_slices_3{
 
         if (contour_made_of_one_point && p2==q2) continue;
         else contour_made_of_one_point=false;
-        
+
         vq = cdt_ptr->insert(q2, vp->face());
         vq->info().z = z;
         if (vp!=vq)
@@ -3495,7 +3483,7 @@ class Reconstruction_from_parallel_slices_3{
       else break;
     }while(true);
   }
-  
+
 public:
 
   Reconstruction_from_parallel_slices_3():
@@ -3541,7 +3529,7 @@ public:
     update_z(*bottom_ptr);
     index(*bottom_ptr);
 
-    bool is_increasing_z= bottom_ptr->vertices_begin()->info().z < 
+    bool is_increasing_z= bottom_ptr->vertices_begin()->info().z <
                           next_ptr->vertices_begin()->info().z;
     //write the planar facets from the top layer
     write_first_planar_facets(*bottom_ptr,is_increasing_z);
@@ -3573,7 +3561,7 @@ public:
     write_additional_facets(other);
     #endif
   }
-  
+
 private:
   //members
   DT3 delaunay_3;
@@ -3600,7 +3588,7 @@ private:
   #endif
 
   unsigned int x_index;
-  
+
   #ifdef CGAL_ADD_VOLUME_TO_REMOVE_NON_MANIFOLDNESS
   //use to track in-contour non-manifold points
   std::set<Vertex_handle_2>* previous_bottom_incontour_nm_vertices;
@@ -3618,7 +3606,7 @@ const int Reconstruction_from_parallel_slices_3<Slice_writer>::CellInfo3::nm_edg
   {2,4,5,-1} }; //3
 #endif
 
-  
+
 #ifndef DO_NOT_FILTER_NOTCHES
 template <class Slice_writer>
 const double Reconstruction_from_parallel_slices_3<Slice_writer>::m_bbox_ratio_ma_filtering=10;
@@ -3630,13 +3618,13 @@ const double Reconstruction_from_parallel_slices_3<Slice_writer>::m_bbox_ratio_m
 template <class Slice_writer>
 const double Reconstruction_from_parallel_slices_3<Slice_writer>::m_min_point_squared_distance=1;
 
-#ifndef CGAL_NO_EDGE_EDGE_EXTRA_REMOVAL  
+#ifndef CGAL_NO_EDGE_EDGE_EXTRA_REMOVAL
 template <class Slice_writer>
 const double Reconstruction_from_parallel_slices_3<Slice_writer>::max_sharp_dihedral_angle=90;
 template <class Slice_writer>
 const double Reconstruction_from_parallel_slices_3<Slice_writer>::min_smooth_dihedral_angle=90;
 #endif
-  
+
 } //namespace CGAL
 
 #endif //CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3
