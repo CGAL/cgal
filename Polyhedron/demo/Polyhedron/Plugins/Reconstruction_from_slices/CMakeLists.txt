@@ -1,4 +1,4 @@
 include( polyhedron_demo_macros )
 
 polyhedron_demo_plugin(reconstruction_parallel_slices_plugin Reconstruction_parallel_slices_plugin)
-target_link_libraries(reconstruction_parallel_slices_plugin scene_polyhedron_item scene_polylines_item)
+target_link_libraries(reconstruction_parallel_slices_plugin PUBLIC scene_surface_mesh_item scene_polylines_item)

@@ -1,4 +1,4 @@
-#include <QTime>
+#include <QElapsedTimer>
 #include <QApplication>
 #include <QAction>
 #include <QStringList>
@@ -7,9 +7,8 @@
 #include <QMessageBox>
 
 
-#include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 #include "Scene_polylines_item.h"
-#include "Polyhedron_type.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
@@ -19,7 +18,7 @@
 
 
 using namespace CGAL::Three;
-class Polyhedron_demo_reconstruction_parallel_slices_plugin : 
+class Polyhedron_demo_reconstruction_parallel_slices_plugin :
   public QObject,
   public Polyhedron_demo_plugin_interface
 {
@@ -30,7 +29,7 @@ class Polyhedron_demo_reconstruction_parallel_slices_plugin :
   Scene_interface* scene;
   QMainWindow* mw;
   int detect_constant_coordinate(Scene_polylines_item* polylines_item);
-  
+
 public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     QAction* actionReconstructionParallelSlices = new QAction(tr("Reconstruction from parallel slices"), mainWindow);
@@ -64,9 +63,9 @@ int Polyhedron_demo_reconstruction_parallel_slices_plugin::detect_constant_coord
   typedef std::vector<Point_3> Polyline;
   typedef std::list<Polyline> Polylines_container;
   Polylines_container& polylines=polylines_item->polylines;
-  
+
   Polylines_container::size_type nb_polylines=polylines.size();
-  
+
   switch (nb_polylines)
   {
     case 0:
@@ -82,15 +81,14 @@ int Polyhedron_demo_reconstruction_parallel_slices_plugin::detect_constant_coord
       const_coords.push_back(0);
       const_coords.push_back(1);
       const_coords.push_back(2);
-      
-      
+
       while(it_poly!=polylines.end())
       {
         Polyline& polyline = *it_poly++;
         if ( polyline.size()==1 ) continue;
-        
+
         Point_3 pt=polyline[0];
-        
+
         for (Polyline::iterator it_pt=CGAL::cpp11::next( polyline.begin() );it_pt!=polyline.end();++it_pt)
         {
           std::vector<int> to_keep;
@@ -117,25 +115,38 @@ int Polyhedron_demo_reconstruction_parallel_slices_plugin::detect_constant_coord
   }
 }
 
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Polyhedron_3<K> Polyhedron;
+
 struct Visitor_update{
-  Scene_interface* m_scene;
-  int m_item_index;
+  Scene_surface_mesh_item* m_item;
+  const Polyhedron& m_reconst; // TODO update code to directly use Surface mesh
   
-  Visitor_update(Scene_interface* scene,int item_index):m_scene(scene),m_item_index(item_index){}
-  void one_layer_is_finished() { Q_EMIT m_scene->itemChanged(m_item_index); }
+  Visitor_update(Scene_surface_mesh_item* item, const Polyhedron& reconst)
+    : m_item(item)
+    , m_reconst(reconst)
+  {}
+
+  void one_layer_is_finished() {
+    m_item->face_graph()->clear();
+    CGAL::copy_face_graph(m_reconst, *m_item->face_graph());
+
+    m_item->invalidateOpenGLBuffers();
+    Q_EMIT m_item->itemChanged();
+  }
 };
 
 void Polyhedron_demo_reconstruction_parallel_slices_plugin::on_actionReconstructionParallelSlices_triggered()
 {
-  typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+
   typedef CGAL::Polygon_as_vector_of_Point_3_in_axis_aligned_planes<K,Scene_polylines_item::Polylines_container> Contour_reader;
   typedef CGAL::Incremental_slice_writer_into_polyhedron<Polyhedron,K,Visitor_update> Slice_writer;
-  
+
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
-  Scene_polylines_item* polylines_item = 
+
+  Scene_polylines_item* polylines_item =
     qobject_cast<Scene_polylines_item*>(scene->item(index));
-  
+
   if(polylines_item)
   {
     // wait cursor
@@ -144,7 +155,7 @@ void Polyhedron_demo_reconstruction_parallel_slices_plugin::on_actionReconstruct
     std::cout << "Analysing input...";
     int cst_coord = detect_constant_coordinate(polylines_item);
     if ( cst_coord == -1 ) return;
-    
+
     switch (cst_coord)
     {
       case 0:
@@ -161,22 +172,21 @@ void Polyhedron_demo_reconstruction_parallel_slices_plugin::on_actionReconstruct
         break;
         return;
     }
-    
-    
-    QTime time;
+
+    QElapsedTimer time;
     time.start();
     std::cout << "Reconstructing ...";
 
     // add a new polyhedron
-    Polyhedron *pReconst = new Polyhedron;
+    Polyhedron reconst;
 
-    Scene_polyhedron_item* new_item = new Scene_polyhedron_item(pReconst);
+    Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item();
     new_item->setName(tr("%1 (reconstruction)").arg(polylines_item->name()));
-    int item_index=scene->addItem(new_item);    
-    
-    Visitor_update vis_update(scene,item_index);
+    int item_index=scene->addItem(new_item);
+
+    Visitor_update vis_update(new_item, reconst);
     //slice writer writing in a polyhedron
-    Slice_writer writer(*pReconst,vis_update);
+    Slice_writer writer(reconst,vis_update);
 
     Contour_reader reader(polylines_item->polylines, cst_coord);
     CGAL::Reconstruction_from_parallel_slices_3<Slice_writer> reconstruction;
@@ -186,8 +196,6 @@ void Polyhedron_demo_reconstruction_parallel_slices_plugin::on_actionReconstruct
     scene->itemChanged(item_index);
 
     std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
-
-
 
     // default cursor
     QApplication::restoreOverrideCursor();
