@@ -48,24 +48,22 @@ bool keep_facets_edge_criterium(int i,int j,Edge_map& edge_map){
 int main(int,char** argv)
 {
   std::ifstream input(argv[1]);
-  
+
   /*
   std::string OFF;
   input >> OFF;
   CGAL_assertion(OFF=="OFF");
   std::size_t nbv,nbf,nbt;
   input >> nbv >> nbf >> nbt;
-  
-  
+
   std::vector<Kernel::Point_3> points;
   points.reserve(nbv);
-  
+
   Facets facets;
-  
-  
+
   read_points(nbv,input,std::back_inserter(points));
   read_facets(nbf,input,std::back_inserter(facets));
- 
+
   Edge_map edge_map;
   Facets removed_facets;
 
@@ -86,7 +84,7 @@ int main(int,char** argv)
 
   typedef std::map<int,std::list<std::pair<Facets::iterator,int> > > Central_vertex_to_edges;
   Central_vertex_to_edges central_vertex_to_edges;
-  
+
 //remove facets that are incident to a common vertex but a the link of the facets is not connected
   bool facets_removed=true;
   while (facets_removed){
@@ -100,7 +98,7 @@ int main(int,char** argv)
         mit->second.push_back(std::make_pair(it,i));
       }
     }
-  
+
     for (Central_vertex_to_edges::iterator it=central_vertex_to_edges.begin(),end=central_vertex_to_edges.end();it!=end;++it){
       int index=it->first;
       std::list<std::pair<Facets::iterator,int> >& edges=it->second;
@@ -110,7 +108,7 @@ int main(int,char** argv)
       {
         int indices[3]={CGAL::cpp0x::get<0>(*(eit->first)),CGAL::cpp0x::get<1>(*(eit->first)),CGAL::cpp0x::get<2>(*(eit->first))};
         CGAL_assertion(index==indices[eit->second]);
-        
+
         contributing_facets
           .insert(std::make_pair(indices[(eit->second+1)%3],std::list<Facets::iterator>()))
               .first->second.push_back(eit->first);
@@ -118,14 +116,14 @@ int main(int,char** argv)
           .insert(std::make_pair(indices[(eit->second+2)%3],std::list<Facets::iterator>()))
               .first->second.push_back(eit->first);
       }
-      
+
       int nb_one=0;
       for (Contributing_facets::iterator cit=contributing_facets.begin();cit!=contributing_facets.end();++cit){
         std::size_t size_of_list=cit->second.size();
         if (size_of_list==1) ++nb_one;
         CGAL_assertion(size_of_list==2 || size_of_list==1);
       }
-      
+
       if (nb_one > 2){
         for( std::list<std::pair<Facets::iterator,int> >::iterator eit=edges.begin();eit!=edges.end();++eit )
           removed_facets.splice(removed_facets.end(),facets,eit->first);
@@ -135,16 +133,16 @@ int main(int,char** argv)
       }
     }
   }
-  
+
   input.close();
   input.open(argv[1]);
   */
-  
+
   Polyhedron_3 p;
   CGAL::scan_OFF( input, p,true);
   std::cout << p.size_of_vertices() << std::endl;
   if ( !p.is_closed () ) std::cout << "WARNING the polyhedron is not closed!!!!" << std::endl;
-  
+
   //check that there is not degenerate triangles
   std::cout << "Checking for degenerate triangles\n";
   int degen_triangle=0;
@@ -157,7 +155,7 @@ int main(int,char** argv)
     if (points.size()!=3) ++degen_triangle;
   }
   if (degen_triangle!=0) std::cout << degen_triangle << " degenerate triangles" << std::endl;
-  
+
 }
-  
+
 

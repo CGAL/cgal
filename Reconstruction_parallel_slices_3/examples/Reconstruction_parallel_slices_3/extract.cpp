@@ -24,7 +24,7 @@ void contour(int count, int n, int m, int dim)
   if(count == m){
     std::cout << n << std::endl;
   }
- 
+
   std::cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
   std::list<std::pair<Point_2,std::string> > points;
 
@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
   int m = 0;
   if(argc > 1){
     dim = boost::lexical_cast<int>(argv[1]);
-  } 
+  }
   if(argc > 2){
     m = boost::lexical_cast<int>(argv[2]);
   }

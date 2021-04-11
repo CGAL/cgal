@@ -121,7 +121,7 @@ typedef CGAL::Polyhedron_3<K> Polyhedron;
 struct Visitor_update{
   Scene_surface_mesh_item* m_item;
   const Polyhedron& m_reconst; // TODO update code to directly use Surface mesh
-  
+
   Visitor_update(Scene_surface_mesh_item* item, const Polyhedron& reconst)
     : m_item(item)
     , m_reconst(reconst)
