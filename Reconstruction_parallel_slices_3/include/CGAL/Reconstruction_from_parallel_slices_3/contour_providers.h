@@ -14,6 +14,8 @@
 #ifndef CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3_CONTOUR_PROVIDERS_H
 #define CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3_CONTOUR_PROVIDERS_H
 
+#include <CGAL/license/Reconstruction_parallel_slices_3.h>
+
 #include <CGAL/algorithm.h>
 
 namespace CGAL{

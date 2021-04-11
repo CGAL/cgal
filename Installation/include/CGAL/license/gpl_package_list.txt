@@ -62,6 +62,7 @@ Polyline_simplification_2 2D Polyline Simplification
 Polytope_distance_d Optimal Distances
 Principal_component_analysis Principal Component Analysis
 QP_solver Linear and Quadratic Programming Solver
+Reconstruction_parallel_slices_3 Reconstruction from 3D Parallel Slices
 Ridges_3 Approximation of Ridges and Umbilics on Triangulated Surface Meshes
 Scale_space_reconstruction_3 Scale-Space Surface Reconstruction
 SearchStructures dD Range and Segment Trees

@@ -14,6 +14,7 @@
 #ifndef CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3
 #define CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3
 
+#include <CGAL/license/Reconstruction_parallel_slices_3.h>
 
 //Notes:
 // *if DO_NOT_FILTER_NOTCHES is not defined, a graph of Voronoi vertices to be inserted is constructed (graph_G)

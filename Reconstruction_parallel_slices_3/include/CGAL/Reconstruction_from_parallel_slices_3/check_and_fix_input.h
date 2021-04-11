@@ -14,6 +14,8 @@
 #ifndef CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3_CHECK_AND_FIX_INPUT_H
 #define CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3_CHECK_AND_FIX_INPUT_H
 
+#include <CGAL/license/Reconstruction_parallel_slices_3.h>
+
 #include <CGAL/Polygon_2.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Bbox_2.h>
