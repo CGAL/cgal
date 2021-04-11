@@ -328,8 +328,7 @@ void isotropic_remeshing(const FaceRange& faces
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
   std::cout << std::endl;
-  std::cout << "Remeshing (size = " << target_edge_length;
-  std::cout << ", #iter = " << nb_iterations << ")..." << std::endl;
+  std::cout << "Remeshing (#iter = " << nb_iterations << ")..." << std::endl;
   t.reset(); t.start();
 #endif
 
@@ -355,8 +354,7 @@ void isotropic_remeshing(const FaceRange& faces
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
   t.stop();
-  std::cout << "Remeshing done (size = " << target_edge_length;
-  std::cout << ", #iter = " << nb_iterations;
+  std::cout << "Remeshing done (#iter = " << nb_iterations;
   std::cout << ", " << t.time() << " sec )." << std::endl;
 #endif
 }

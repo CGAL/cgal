@@ -481,7 +481,7 @@ namespace internal {
     void split_long_edges(const SizingFunction& sizing)
     {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
-      std::cout << "Split long edges (" << high << ")..." << std::endl;
+      std::cout << "Split long edges..." << std::endl;
 #endif
       //collect long edges
       typedef std::pair<halfedge_descriptor, double> H_and_sql;
@@ -629,7 +629,7 @@ namespace internal {
       typedef typename Boost_bimap::value_type                    short_edge;
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
-      std::cout << "Collapse short edges (" << low << ", " << high << ")..."
+      std::cout << "Collapse short edges..."
                 << std::endl;
 #endif
 #ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
