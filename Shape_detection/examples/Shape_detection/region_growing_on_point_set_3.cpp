@@ -24,7 +24,8 @@ using Point_inserter = utils::Insert_point_colored_by_region_index<Input_range, 
 int main(int argc, char *argv[]) {
 
   // Load xyz data either from a local folder or a user-provided file.
-  std::ifstream in(argc > 1 ? argv[1] : "data/point_set_3.xyz");
+  const bool is_default_input = argc > 1 ? false : true;
+  std::ifstream in(is_default_input ? "data/point_set_3.xyz" : argv[1]);
   CGAL::set_ascii_mode(in);
   if (!in) {
     std::cerr << "ERROR: cannot read the input file!" << std::endl;
@@ -36,7 +37,7 @@ int main(int argc, char *argv[]) {
   in >> input_range;
   in.close();
   std::cout << "* number of input points: " << input_range.size() << std::endl;
-  assert(input_range.size() == 8075);
+  assert(is_default_input && input_range.size() == 8075);
 
   // Default parameter values for the data file point_set_3.xyz.
   const std::size_t k                     = 12;
@@ -53,7 +54,7 @@ int main(int argc, char *argv[]) {
     input_range,
     CGAL::parameters::
     distance_threshold(max_distance_to_plane).
-    angle_deg_threshold(max_accepted_angle).
+    angle_threshold(max_accepted_angle).
     min_region_size(min_region_size),
     input_range.point_map(), input_range.normal_map());
 
@@ -70,7 +71,7 @@ int main(int argc, char *argv[]) {
   region_growing.detect(
     boost::make_function_output_iterator(inserter));
   std::cout << "* number of found regions: " << number_of_regions << std::endl;
-  assert(number_of_regions == 7);
+  assert(is_default_input && number_of_regions == 7);
 
   // Save regions to a file.
   const std::string fullpath = (argc > 2 ? argv[2] : "regions_point_set_3.ply");
@@ -82,7 +83,7 @@ int main(int argc, char *argv[]) {
   std::vector<std::size_t> unassigned_items;
   region_growing.unassigned_items(std::back_inserter(unassigned_items));
   std::cout << "* number of unassigned points: " << unassigned_items.size() << std::endl;
-  assert(unassigned_items.size() == 538);
+  assert(is_default_input && unassigned_items.size() == 538);
 
   // Store all unassigned points.
   std::vector<Point_3> unassigned_points;

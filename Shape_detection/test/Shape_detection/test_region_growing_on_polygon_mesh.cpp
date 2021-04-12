@@ -59,7 +59,7 @@ bool test_region_growing_on_polygon_mesh(int argc, char *argv[]) {
     surface_mesh,
     CGAL::parameters::
     distance_threshold(distance_threshold).
-    angle_deg_threshold(angle_threshold).
+    angle_threshold(angle_threshold).
     min_region_size(min_region_size),
     vertex_to_point_map);
 

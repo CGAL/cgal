@@ -217,7 +217,7 @@ A higher value for `epsilon`, that is a more tolerant error, leads to fewer but 
 \cgalFigureEnd
 
 \cgalFigureBegin{Efficient_RANSAC_performance_probability, Efficient_RANSAC/prob_graph.png}
-The graph depicts the time, coverage, and the number of detected primitives against the search endurance parameter, that is `probability` to miss the largest shape at each iteration.
+The graph depicts the runtime, coverage, and the number of detected primitives against the search endurance parameter, that is `probability` to miss the largest shape at each iteration.
 The number of shapes is stable and the coverage increases when the `probability` is lowered.
 The running time increases significantly as many more candidates are generated during each iteration of the algorithm.
 \cgalFigureEnd
@@ -352,7 +352,7 @@ and controls the quality of this fit.
 
 The quality of region growing in a point set (2D or 3D) can be improved by slightly sacrificing the running time.
 To achieve this, one can sort indices of input points with respect to some quality criteria. These quality criteria
-can be included through the \ref Shape_detection_RegionGrowingFramework_seeding "SeedMap" input parameter.
+can be included through the property map (see \ref Shape_detection_RegionGrowingFramework_seeding "SeedMap" for more details).
 We provide a quality sorting both for 2D and 3D points:
 
 - `CGAL::Shape_detection::Point_set::Least_squares_line_fit_sorting` - indices of 2D input points are sorted with respect
@@ -366,7 +366,7 @@ to the quality of the least squares plane fit applied to the neighbors of each p
 
 The classes in Section \ref Shape_detection_RegionGrowingPoints "Region Growing On Point Set" depend on a few parameters
 that should be defined by the user. They also have default values, but these values do not necessarily guarantee
-to produce pleasant results. All parameter values can be specified via the named parameters mechanism.
+to produce pleasant results. All parameter values can be specified using \ref bgl_namedparameters "Named Parameters".
 
 The `NeighborQuery` related classes depend on the `neighbor_radius` parameter:
 
@@ -394,22 +394,22 @@ When `neighbor_radius` = 0.3 (c), the best visual result is produced.
 The `RegionType` related classes depend on the following parameters:
 
 - `distance_threshold` - the maximum distance from a point to a line/plane;
-- `angle_deg_threshold` - the maximum accepted angle between the normal associated with a point and the normal of a line/plane;
+- `angle_threshold` - the maximum accepted angle in degrees between the normal associated with a point and the normal of a line/plane;
 - `min_region_size` - the minimum number of points a region must have.
 
 The first two parameters are used by the functions `RegionType::is_part_of_region()` and `RegionType::update()`,
 while the third parameter is used by the function `RegionType::is_valid_region()` explained in
 Section \ref Shape_detection_RegionGrowingFramework_conditions "Framework Region Type".
 
-The right choice of `distance_threshold` and `angle_deg_threshold` parameters is also very important.
+The right choice of `distance_threshold` and `angle_threshold` parameters is also very important.
 For example, Figure \cgalFigureRef{Region_growing_parameter_angle_threshold_variation} shows that the
-roof top of the house can be distinguished as two planes (painted in blue and dark red) when `angle_deg_threshold`
+roof top of the house can be distinguished as two planes (painted in blue and dark red) when `angle_threshold`
 is strict enough (c), or it can be recognized as only one plane (painted in pale yellow) in the other case (b).
 
 \cgalFigureBegin{Region_growing_parameter_angle_threshold_variation, Region_growing/angle_threshold_parameter_3D.png}
 (a) Input 3D point cloud;
-(b) Result when `angle_deg_threshold` = 60 degrees;
-(c) Result when `angle_deg_threshold` = 25 degrees.
+(b) Result when `angle_threshold` = 60 degrees;
+(c) Result when `angle_threshold` = 25 degrees.
 \cgalFigureEnd
 
 
@@ -425,18 +425,14 @@ Typical usage of the Region Growing component consists of five steps:
 
 Given a 2D point set, we detect 2D lines using the fuzzy sphere neighborhood. We then color all points
 from the found regions and save them in a file (see Figure \cgalFigureRef{Region_growing_on_point_set_2}).
-
-The points with assigned to them normal vectors are stored in `std::vector` and the
-used `Kernel` is `CGAL::Simple_cartesian`, where the number type is `double`.
+A point set with normals is stored in `std::vector`.
 
 \cgalExample{Shape_detection/region_growing_on_point_set_2.cpp}
 
 If we are given a 3D point set, then the example below shows how to detect 3D planes using the K nearest neighbors search.
 We color all points from the found regions and save them in a file (see Figure \cgalFigureRef{Region_growing_on_point_set_3}).
 The example also shows how to retrieve all points, which are not assigned to any region, and how to use a custom output iterator.
-
-The point set with associated normals is stored in `CGAL::Point_set_3` and the
-used `Kernel` is `CGAL::Exact_predicates_inexact_constructions_kernel`.
+A point set with normals is stored in `CGAL::Point_set_3`.
 
 \cgalExample{Shape_detection/region_growing_on_point_set_3.cpp}
 
@@ -463,7 +459,7 @@ For example, for a test of about 70k 2D points with the fuzzy sphere neighborhoo
 
 If the neighborhood size is set too low, some points might be isolated, the region size would not reach a critical mass and so will be discarded.
 This does not only cause the latency in the program, but also reduces the coverage value, as can be seen when the `neighbor_radius = 1`.
-A typical time measure for a 3D point set with the K nearest neighborhood and well-defined parameters can be found in the following table:
+A typical runtime measure for a 3D point set with the K nearest neighborhood and well-defined parameters can be found in the following table:
 
 <table class="markdownTable" align="center">
 <tr class="markdownTableHead">
@@ -489,7 +485,7 @@ In particular, it has
 - `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region` class that fits a 3D plane to the vertices of
 all mesh faces, which have been added to the region so far, and controls the quality of this fit.
 
-This component accepts any model of the concept `FaceListGraph` as a polygon mesh. A picture below
+This component accepts any model of the concept `FaceListGraph` as a polygon mesh. Figure \cgalFigureRef{Region_growing_on_surface_mesh}
 gives an \ref Shape_detection_RegionGrowingMesh_examples "example" of the region growing algorithm
 for detecting 3D planes on `CGAL::Surface_mesh`.
 
@@ -499,8 +495,8 @@ A surface mesh depicted with one color per detected plane.
 
 The quality of region growing on a polygon mesh can be improved by slightly sacrificing the running time. To achieve
 this, one can sort indices of input faces with respect to some quality criteria. These quality criteria
-can be included in region growing through the \ref Shape_detection_RegionGrowingFramework_seeding "SeedMap"
-input parameter. We provide such a quality sorting:
+can be included in region growing through the property map (see \ref Shape_detection_RegionGrowingFramework_seeding "SeedMap" for more details).
+We provide such a quality sorting:
 
 - `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting` - indices of input faces are sorted with respect
 to the quality of the least squares plane fit applied to the neighbors of each face.
@@ -512,7 +508,7 @@ The `NeighborQuery` related class does not require any parameters, because edge-
 are found using the internal face graph connectivity, while the `RegionType` related class depends on three parameters:
 
 - `distance_threshold` - the maximum distance from the furthest face vertex to a plane;
-- `angle_deg_threshold` - the maximum accepted angle between the face normal and the normal of a plane;
+- `angle_threshold` - the maximum accepted angle in degrees between the face normal and the normal of a plane;
 - `min_region_size` - the minimum number of mesh faces a region must have.
 
 The first two parameters are used by the functions `RegionType::is_part_of_region()` and `RegionType::update()`,
@@ -552,7 +548,7 @@ to the chunks of 2D or 3D segments, respectively, and controls the quality of th
 
 The quality of region growing in a segment set (2D or 3D) can be improved by slightly sacrificing the running time.
 To achieve this, one can sort indices of input segments with respect to some quality criteria. These quality criteria
-can be included through the \ref Shape_detection_RegionGrowingFramework_seeding "SeedMap" input parameter.
+can be included through the property map (see \ref Shape_detection_RegionGrowingFramework_seeding "SeedMap" for more details).
 We provide such a quality sorting:
 
 - `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_sorting` - indices of input segments are sorted with respect
@@ -572,7 +568,7 @@ which can later be split into a set of linear regions, as shown in the example b
 The line fitting class above depends on three parameters:
 
 - `distance_threshold` - the maximum distance from the furthest segment vertex to a line;
-- `angle_deg_threshold` - the maximum accepted angle between the segment direction and the direction of a line;
+- `angle_threshold` - the maximum accepted angle in degrees between the segment direction and the direction of a line;
 - `min_region_size` - the minimum number of segments a region must have.
 
 More details are explained in
@@ -602,7 +598,7 @@ to the quality of the least squares line fit applied to the neighbors of each ve
 The line fitting class above depends on three parameters:
 
 - `distance_threshold` - the maximum distance from the polyline vertex to a line;
-- `angle_deg_threshold` - the maximum accepted angle between the polyline edge direction and the direction of a line;
+- `angle_threshold` - the maximum accepted angle in degrees between the polyline edge direction and the direction of a line;
 - `min_region_size` - the minimum number of vertices a region must have.
 
 As already mentioned, the right choice of these parameters is important for producing the good results.
@@ -646,16 +642,11 @@ which are subgroups of axis-symmetric and orthogonal clusters) as described by V
 
 \section Shape_detection_DeprecatedComponents Deprecated Components
 
-The new version (see all examples above) of the class `CGAL::Shape_detection::Region_growing`
-is not compatible with the old API. For the old API, see an example below and use
-`CGAL::Shape_detection::deprecated::Region_growing_depr` instead.
-
-\cgalExample{Shape_detection/shape_detection_basic_deprecated.cpp}
-
-The old API is still supported, but will be removed in the next releases.
-In particular, the classes `CGAL::Shape_detection::deprecated::Region_growing_depr` and
-`CGAL::Shape_detection::deprecated::Shape_detection_traits` will be removed.
-Please update your code.
+This version of Region Growing deprecates the old way to specify parameters. Now, all parameters
+are provided as \ref bgl_namedparameters "Named Parameters". That means the old constructors are deprecated.
+Second, the method `update` of the \ref Shape_detection_RegionGrowingFramework_conditions "RegionType" concept
+now returns a Boolean flag. When it is `true`, the new region is further propagated, otherwise, it is rejected.
+The reason behind this change is to provide users with control for early rejection of non-valid regions.
 
 
 \section Shape_detection_History History

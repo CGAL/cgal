@@ -1,5 +1,4 @@
 #include <CGAL/IO/PLY.h>
-#include <CGAL/IO/OFF.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Iterator_range.h>
@@ -7,6 +6,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_polygon_mesh.h>
+#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 #include "include/utils.h"
 
 // Typedefs.
@@ -36,22 +36,21 @@ using Region_growing      = CGAL::Shape_detection::Region_growing<Face_range, Ne
 int main(int argc, char *argv[]) {
 
   // Load data either from a local folder or a user-provided file.
-  const std::string input_filename = (argc > 1 ? argv[1] : "data/polygon_mesh.off");
-  std::ifstream in_off(input_filename);
-  std::ifstream in_ply(input_filename);
-  CGAL::set_ascii_mode(in_off);
-  CGAL::set_ascii_mode(in_ply);
+  const bool is_default_input = argc > 1 ? false : true;
+  const std::string filename = is_default_input ? "data/polygon_mesh.off" : argv[1];
 
   Polygon_mesh polygon_mesh;
-  if (CGAL::read_OFF(in_off, polygon_mesh)) { in_off.close();
-  } else if (CGAL::read_PLY(in_ply, polygon_mesh)) { in_ply.close();
-  } else {
+  const Vertex_to_point_map vertex_to_point_map(
+    get(CGAL::vertex_point, polygon_mesh));
+
+  if (!CGAL::read_polygon_mesh(filename, polygon_mesh,
+  CGAL::parameters::vertex_point_map(vertex_to_point_map))) {
     std::cerr << "ERROR: cannot read the input file!" << std::endl;
     return EXIT_FAILURE;
   }
   const Face_range face_range = faces(polygon_mesh);
   std::cout << "* number of input faces: " << face_range.size() << std::endl;
-  assert(face_range.size() == 32245);
+  assert(is_default_input && face_range.size() == 32245);
 
   // Default parameter values for the data file polygon_mesh.off.
   const FT          max_distance_to_plane = FT(1);
@@ -60,14 +59,12 @@ int main(int argc, char *argv[]) {
 
   // Create instances of the classes Neighbor_query and Region_type.
   Neighbor_query neighbor_query(polygon_mesh);
-  const Vertex_to_point_map vertex_to_point_map(
-    get(CGAL::vertex_point, polygon_mesh));
 
   Region_type region_type(
     polygon_mesh,
     CGAL::parameters::
     distance_threshold(max_distance_to_plane).
-    angle_deg_threshold(max_accepted_angle).
+    angle_threshold(max_accepted_angle).
     min_region_size(min_region_size),
     vertex_to_point_map);
 
@@ -84,7 +81,7 @@ int main(int argc, char *argv[]) {
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
   std::cout << "* number of found regions: " << regions.size() << std::endl;
-  assert(regions.size() == 326);
+  assert(is_default_input && regions.size() == 326);
 
   // Save regions to a file only if it is stored in CGAL::Surface_mesh.
   #if defined(USE_SURFACE_MESH)

@@ -15,14 +15,19 @@ using Polyline_3  = std::vector<Point_3>;
 using Point_map_2 = CGAL::Identity_property_map<Point_2>;
 using Point_map_3 = CGAL::Identity_property_map<Point_3>;
 
-using Neighbor_query = CGAL::Shape_detection::Polyline::One_ring_neighbor_query<Kernel, Polyline_3>;
-using Region_type    = CGAL::Shape_detection::Polyline::Least_squares_line_fit_region<Kernel, Polyline_3, Point_map_3>;
-using Region_growing = CGAL::Shape_detection::Region_growing<Polyline_3, Neighbor_query, Region_type>;
+using Neighbor_query_2 = CGAL::Shape_detection::Polyline::One_ring_neighbor_query<Kernel, Polyline_2>;
+using Region_type_2    = CGAL::Shape_detection::Polyline::Least_squares_line_fit_region<Kernel, Polyline_2, Point_map_2>;
+using Region_growing_2 = CGAL::Shape_detection::Region_growing<Polyline_2, Neighbor_query_2, Region_type_2>;
+
+using Neighbor_query_3 = CGAL::Shape_detection::Polyline::One_ring_neighbor_query<Kernel, Polyline_3>;
+using Region_type_3    = CGAL::Shape_detection::Polyline::Least_squares_line_fit_region<Kernel, Polyline_3, Point_map_3>;
+using Region_growing_3 = CGAL::Shape_detection::Region_growing<Polyline_3, Neighbor_query_3, Region_type_3>;
 
 int main(int argc, char *argv[]) {
 
   // Load polyline data either from a local folder or a user-provided file.
-  std::ifstream in(argc > 1 ? argv[1] : "data/polyline_3.polylines.txt");
+  const bool is_default_input = argc > 1 ? false : true;
+  std::ifstream in(is_default_input ? "data/polyline_3.polylines.txt" : argv[1]);
   CGAL::set_ascii_mode(in);
   if (!in) {
     std::cerr << "ERROR: cannot read the input file!" << std::endl;
@@ -43,30 +48,27 @@ int main(int argc, char *argv[]) {
   }
   in.close();
   std::cout << "* number of input vertices: " << polyline_3.size() << std::endl;
-  assert(polyline_3.size() == 249);
+  assert(is_default_input && polyline_3.size() == 249);
 
   // Default parameter values for the data file polyline_3.polylines.txt.
   const FT max_distance_to_line = FT(45) / FT(10);
   const FT max_accepted_angle   = FT(45);
 
-  // Create instances of the classes Neighbor_query and Region_type.
-  Neighbor_query neighbor_query(polyline_3);
-
-  Region_type region_type(
+  // Setting up the 3D polyline algorithm.
+  Neighbor_query_3 neighbor_query_3(polyline_3);
+  Region_type_3 region_type_3(
     polyline_3,
     CGAL::parameters::
     distance_threshold(max_distance_to_line).
-    angle_deg_threshold(max_accepted_angle));
-
-  // Create an instance of the region growing class.
-  Region_growing region_growing(
-    polyline_3, neighbor_query, region_type);
+    angle_threshold(max_accepted_angle));
+  Region_growing_3 region_growing_3(
+    polyline_3, neighbor_query_3, region_type_3);
 
   // Run the algorithm on a 3D polyline.
   std::vector< std::vector<std::size_t> > regions;
-  region_growing.detect(std::back_inserter(regions));
+  region_growing_3.detect(std::back_inserter(regions));
   std::cout << "* number of found 3D regions: " << regions.size() << std::endl;
-  assert(regions.size() == 12);
+  assert(is_default_input && regions.size() == 12);
 
   // Save 3D regions to a file.
   std::string fullpath = (argc > 2 ? argv[2] : "regions_polyline_3.ply");
@@ -87,22 +89,33 @@ int main(int argc, char *argv[]) {
     const auto p2 = plane.to_2d(p3);
     polyline_2.push_back(p2);
   }
-  assert(polyline_2.size() == polyline_3.size());
+  assert(is_default_input && polyline_2.size() == polyline_3.size());
 
-  // Use a free function to get the 2D regions.
-  regions.clear();
-  CGAL::Shape_detection::internal::region_growing_polylines(
-    polyline_2, std::back_inserter(regions),
+  // Setting up the 2D polyline algorithm.
+  Neighbor_query_2 neighbor_query_2(polyline_2);
+  Region_type_2 region_type_2(
+    polyline_2,
     CGAL::parameters::
     distance_threshold(max_distance_to_line).
-    angle_deg_threshold(max_accepted_angle));
+    angle_threshold(max_accepted_angle));
+  Region_growing_2 region_growing_2(
+    polyline_2, neighbor_query_2, region_type_2);
+
+  // Run the algorithm on a 2D polyline.
+  regions.clear();
+  region_growing_2.detect(std::back_inserter(regions));
   std::cout << "* number of found 2D regions: " << regions.size() << std::endl;
-  assert(regions.size() == 5);
+  assert(is_default_input && regions.size() == 4);
 
   // Save 2D regions to a file.
+  polyline_3.clear();
+  for (const auto& p2 : polyline_2) {
+    polyline_3.push_back(plane.to_3d(p2));
+  }
+
   fullpath = (argc > 2 ? argv[2] : "regions_polyline_2.ply");
-  utils::save_point_regions_2<Kernel, Polyline_2, Point_map_2>(
-    polyline_2, regions, fullpath);
+  utils::save_point_regions_3<Kernel, Polyline_3, Point_map_3>(
+    polyline_3, regions, fullpath);
 
   return EXIT_SUCCESS;
 }

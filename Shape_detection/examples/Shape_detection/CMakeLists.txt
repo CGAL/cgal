@@ -23,7 +23,6 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("region_growing_on_polyline_graph.cpp")
   create_single_source_cgal_program("region_growing_on_polyline.cpp")
   create_single_source_cgal_program("region_growing_with_custom_classes.cpp")
-  create_single_source_cgal_program("shape_detection_basic_deprecated.cpp")
 
   foreach(
     target
@@ -36,8 +35,7 @@ if(TARGET CGAL::Eigen3_support)
     region_growing_on_polygon_mesh
     region_growing_on_polyline_graph
     region_growing_on_polyline
-    region_growing_with_custom_classes
-    shape_detection_basic_deprecated)
+    region_growing_with_custom_classes)
     target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
   endforeach()
 endif()

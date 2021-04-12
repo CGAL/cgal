@@ -21,7 +21,8 @@ using Region_growing = CGAL::Shape_detection::Region_growing<Point_set_2, Neighb
 int main(int argc, char *argv[]) {
 
   // Load xyz data either from a local folder or a user-provided file.
-  std::ifstream in(argc > 1 ? argv[1] : "data/point_set_2.xyz");
+  const bool is_default_input = argc > 1 ? false : true;
+  std::ifstream in(is_default_input ? "data/point_set_2.xyz" : argv[1]);
   CGAL::set_ascii_mode(in);
   if (!in) {
     std::cerr << "ERROR: cannot read the input file!" << std::endl;
@@ -36,7 +37,7 @@ int main(int argc, char *argv[]) {
   }
   in.close();
   std::cout << "* number of input points: " << point_set_2.size() << std::endl;
-  assert(point_set_2.size() == 3634);
+  assert(is_default_input && point_set_2.size() == 3634);
 
   // Default parameter values for the data file point_set_2.xyz.
   const FT          search_sphere_radius = FT(5);
@@ -52,7 +53,7 @@ int main(int argc, char *argv[]) {
     point_set_2,
     CGAL::parameters::
     distance_threshold(max_distance_to_line).
-    angle_deg_threshold(max_accepted_angle).
+    angle_threshold(max_accepted_angle).
     min_region_size(min_region_size));
 
   // Create an instance of the region growing class.
@@ -63,7 +64,7 @@ int main(int argc, char *argv[]) {
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
   std::cout << "* number of found regions: " << regions.size() << std::endl;
-  assert(regions.size() == 65);
+  assert(is_default_input && regions.size() == 65);
 
   // Save regions to a file.
   const std::string fullpath = (argc > 2 ? argv[2] : "regions_point_set_2.ply");

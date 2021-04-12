@@ -112,15 +112,15 @@ namespace Polyline {
           \cgalParamType{`GeomTraits::FT`}
           \cgalParamDefault{1}
         \cgalParamNEnd
-        \cgalParamNBegin{angle_deg_threshold}
+        \cgalParamNBegin{angle_threshold}
           \cgalParamDescription{the maximum accepted angle in degrees between
           the direction of a polyline edge and the direction of a line}
           \cgalParamType{`GeomTraits::FT`}
           \cgalParamDefault{25 degrees}
         \cgalParamNEnd
         \cgalParamNBegin{cos_value_threshold}
-          \cgalParamDescription{the cos value computed as `cos(angle_deg_threshold * PI / 180)`,
-          this parameter can be used instead of the `angle_deg_threshold`}
+          \cgalParamDescription{the cos value computed as `cos(angle_threshold * PI / 180)`,
+          this parameter can be used instead of the `angle_threshold`}
           \cgalParamType{`GeomTraits::FT`}
           \cgalParamDefault{`cos(25 * PI / 180)`}
         \cgalParamNEnd
@@ -133,7 +133,7 @@ namespace Polyline {
 
       \pre `input_range.size() > 0`
       \pre `distance_threshold >= 0`
-      \pre `angle_deg_threshold >= 0 && angle_deg_threshold <= 90`
+      \pre `angle_threshold >= 0 && angle_threshold <= 90`
       \pre `cos_value_threshold >= 0 && cos_value_threshold <= 1`
       \pre `min_region_size > 0`
     */
@@ -155,16 +155,16 @@ namespace Polyline {
         parameters::get_parameter(np, internal_np::distance_threshold), FT(1));
       CGAL_precondition(m_distance_threshold >= FT(0));
 
-      const FT angle_deg_threshold = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::angle_deg_threshold), FT(25));
-      CGAL_precondition(angle_deg_threshold >= FT(0) && angle_deg_threshold <= FT(90));
+      const FT angle_threshold = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::angle_threshold), FT(25));
+      CGAL_precondition(angle_threshold >= FT(0) && angle_threshold <= FT(90));
 
       m_min_region_size = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::min_region_size), 2);
       CGAL_precondition(m_min_region_size > 0);
 
       const FT cos_value_threshold = static_cast<FT>(std::cos(CGAL::to_double(
-        (angle_deg_threshold * static_cast<FT>(CGAL_PI)) / FT(180))));
+        (angle_threshold * static_cast<FT>(CGAL_PI)) / FT(180))));
       m_cos_value_threshold = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::cos_value_threshold), cos_value_threshold);
       CGAL_precondition(m_cos_value_threshold >= FT(0) && m_cos_value_threshold <= FT(1));
@@ -180,7 +180,7 @@ namespace Polyline {
 
       This function controls if a vertex with the index `query_index` is within
       the `distance_threshold` from the corresponding line and if the angle
-      between the direction of the inward edge and the line's direction is within the `angle_deg_threshold`.
+      between the direction of the inward edge and the line's direction is within the `angle_threshold`.
       If both conditions are satisfied, it returns `true`, otherwise `false`.
 
       \param index1

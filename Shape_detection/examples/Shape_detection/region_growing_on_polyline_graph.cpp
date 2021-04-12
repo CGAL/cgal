@@ -1,10 +1,10 @@
 #include <CGAL/IO/PLY.h>
-#include <CGAL/IO/OFF.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_segment_set.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_polygon_mesh.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 #include "include/utils.h"
 
 // Typedefs.
@@ -32,16 +32,15 @@ using RG_lines     = CGAL::Shape_detection::Region_growing<Segment_range, Polyli
 int main(int argc, char *argv[]) {
 
   // Load data either from a local folder or a user-provided file.
-  const std::string input_filename = (argc > 1 ? argv[1] : "data/am.off");
-  std::ifstream in_off(input_filename);
-  std::ifstream in_ply(input_filename);
-  CGAL::set_ascii_mode(in_off);
-  CGAL::set_ascii_mode(in_ply);
+  const bool is_default_input = argc > 1 ? false : true;
+  const std::string filename = is_default_input ? "data/am.off" : argv[1];
 
   Surface_mesh surface_mesh;
-  if (CGAL::read_OFF(in_off, surface_mesh)) { in_off.close();
-  } else if (CGAL::read_PLY(in_ply, surface_mesh)) { in_ply.close();
-  } else {
+  const Vertex_to_point_map vertex_to_point_map(
+    get(CGAL::vertex_point, surface_mesh));
+
+  if (!CGAL::read_polygon_mesh(filename, surface_mesh,
+  CGAL::parameters::vertex_point_map(vertex_to_point_map))) {
     std::cerr << "ERROR: cannot read the input file!" << std::endl;
     return EXIT_FAILURE;
   }
@@ -49,11 +48,8 @@ int main(int argc, char *argv[]) {
   const Edge_range edge_range = edges(surface_mesh);
   std::cout << "* number of input faces: " << face_range.size() << std::endl;
   std::cout << "* number of input edges: " << edge_range.size() << std::endl;
-  assert(face_range.size() == 7320);
-  assert(edge_range.size() == 10980);
-
-  const Vertex_to_point_map vertex_to_point_map(
-    get(CGAL::vertex_point, surface_mesh));
+  assert(is_default_input && face_range.size() == 7320);
+  assert(is_default_input && edge_range.size() == 10980);
 
   // Find planar regions.
   One_ring_query one_ring_query(surface_mesh);
@@ -64,7 +60,7 @@ int main(int argc, char *argv[]) {
   std::vector< std::vector<std::size_t> > regions;
   rg_planes.detect(std::back_inserter(regions));
   std::cout << "* number of found planar regions: " << regions.size() << std::endl;
-  assert(regions.size() == 9);
+  assert(is_default_input && regions.size() == 9);
 
   std::string fullpath = (argc > 2 ? argv[2] : "regions_sm.ply");
   utils::save_polygon_mesh_regions(surface_mesh, regions, fullpath);
@@ -86,7 +82,7 @@ int main(int argc, char *argv[]) {
   std::vector< std::vector<std::size_t> > subregions;
   rg_lines.detect(std::back_inserter(subregions));
   std::cout << "* number of found linear regions: " << subregions.size() << std::endl;
-  assert(subregions.size() == 21);
+  assert(is_default_input && subregions.size() == 21);
 
   fullpath = (argc > 2 ? argv[2] : "subregions_sm.ply");
   utils::save_segment_regions_3<Kernel, Segment_range, Segment_map>(

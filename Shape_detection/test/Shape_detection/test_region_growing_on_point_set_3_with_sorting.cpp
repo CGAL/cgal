@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
     input_range,
     CGAL::parameters::
     distance_threshold(distance_threshold).
-    angle_deg_threshold(angle_threshold).
+    angle_threshold(angle_threshold).
     min_region_size(min_region_size),
     input_range.point_map(), input_range.normal_map());
 
