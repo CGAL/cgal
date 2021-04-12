@@ -695,7 +695,7 @@ class Objects_around_box {
     const Node_handle node;
 
   public:
-    Iterator() : node(0) {}
+    Iterator() : node(nullptr) {}
 
     Iterator( const Node_handle root, const Bounding_box_3& s) {
       S.push_front( Candidate( root, s));
@@ -712,7 +712,7 @@ class Objects_around_box {
     Self& operator++() {
 
       if(S.empty())
-        node = 0; // end of the iterator
+        node = nullptr; // end of the iterator
       else {
         while( !S.empty()) {
           const Node_handle n = S.front().first;
@@ -1131,7 +1131,7 @@ private:
 
 template <typename Depth>
 Node_handle build_kdtree(Object_list& O, Object_iterator v_end,
-                   Depth depth, Node_handle parent=0, int non_efective_splits=0) {
+                   Depth depth, Node_handle parent=nullptr, int non_efective_splits=0) {
   CGAL_precondition( depth >= 0);
   CGAL_NEF_TRACEN( "build_kdtree: "<<O.size()<<" objects, "<<"depth "<<depth);
   CGAL_NEF_TRACEN( "build_kdtree: "<<dump_object_list(O,1));
