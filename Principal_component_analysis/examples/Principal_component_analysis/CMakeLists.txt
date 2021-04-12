@@ -9,6 +9,10 @@ find_package(CGAL REQUIRED)
 # Use Eigen
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
+if(NOT TARGET CGAL::Eigen3_support)
+  message(STATUS  "NOTICE: This project requires Eigen 3.1 (or greater) and will not be compiled.")
+  return()
+endif()
 
 # create a target per cppfile
 file(
@@ -17,8 +21,6 @@ file(
   ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 foreach(cppfile ${cppfiles})
   create_single_source_cgal_program("${cppfile}")
-  if(TARGET CGAL::Eigen3_support)
-    get_filename_component(target ${cppfile} NAME_WE)
-    target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
-  endif()
+  get_filename_component(target ${cppfile} NAME_WE)
+  target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
 endforeach()

@@ -34,9 +34,6 @@ Surface_mesh_item_classification::Surface_mesh_item_classification(Scene_surface
 #ifdef CGAL_LINKED_WITH_OPENCV
   m_random_forest = NULL;
 #endif
-#ifdef CGAL_LINKED_WITH_TENSORFLOW
-  m_neural_network = NULL;
-#endif
 }
 
 
@@ -49,10 +46,6 @@ Surface_mesh_item_classification::~Surface_mesh_item_classification()
 #ifdef CGAL_LINKED_WITH_OPENCV
   if (m_random_forest != NULL)
     delete m_random_forest;
-#endif
-#ifdef CGAL_LINKED_WITH_TENSORFLOW
-  if (m_neural_network != NULL)
-    delete m_neural_network;
 #endif
   if (m_generator != NULL)
     delete m_generator;
@@ -249,13 +242,6 @@ void Surface_mesh_item_classification::compute_features (std::size_t nb_scales, 
     m_random_forest = NULL;
   }
 #endif
-#ifdef CGAL_LINKED_WITH_TENSORFLOW
-  if (m_neural_network != NULL)
-  {
-    delete m_neural_network;
-    m_neural_network = NULL;
-  }
-#endif
   std::cerr << "Features = " << m_features.size() << std::endl;
 }
 
@@ -327,51 +313,6 @@ void Surface_mesh_item_classification::train (int classifier, const QMultipleInp
                                                      indices, m_label_probabilities);
 #endif
   }
-  else if (classifier == CGAL_CLASSIFICATION_TENSORFLOW_NUMBER)
-  {
-#ifdef CGAL_LINKED_WITH_TENSORFLOW
-    if (m_neural_network != NULL)
-    {
-      if (m_neural_network->initialized())
-      {
-        if (dialog.get<QCheckBox>("restart")->isChecked())
-        {
-          delete m_neural_network;
-          m_neural_network = new Neural_network (m_labels, m_features);
-        }
-      }
-      else
-      {
-        delete m_neural_network;
-        m_neural_network = new Neural_network (m_labels, m_features);
-      }
-    }
-    else
-      m_neural_network = new Neural_network (m_labels, m_features);
-
-    std::vector<std::size_t> hidden_layers;
-
-    std::string hl_input = dialog.get<QLineEdit>("hidden_layers")->text().toStdString();
-    if (hl_input != "")
-    {
-      std::istringstream iss(hl_input);
-      int s;
-      while (iss >> s)
-        hidden_layers.push_back (std::size_t(s));
-    }
-
-    m_neural_network->train (training,
-                             dialog.get<QCheckBox>("restart")->isChecked(),
-                             dialog.get<QSpinBox>("trials")->value(),
-                             dialog.get<DoubleEdit>("learning_rate")->value(),
-                             dialog.get<QSpinBox>("batch_size")->value(),
-                             hidden_layers);
-
-    CGAL::Classification::classify<Concurrency_tag> (m_mesh->polyhedron()->faces(),
-                                                     m_labels, *m_neural_network,
-                                                     indices, m_label_probabilities);
-#endif
-  }
 
   for(face_descriptor fd : faces(*(m_mesh->polyhedron())))
     m_classif[fd] = indices[fd];
@@ -409,17 +350,6 @@ bool Surface_mesh_item_classification::run (int method, int classifier,
       return false;
     }
     run (method, *m_random_forest, subdivisions, smoothing);
-#endif
-  }
-  else if (classifier == CGAL_CLASSIFICATION_TENSORFLOW_NUMBER)
-  {
-#ifdef CGAL_LINKED_WITH_TENSORFLOW
-    if (m_neural_network == NULL)
-    {
-      std::cerr << "Error: TensorFlow Neural Network must be trained or have a configuration loaded first" << std::endl;
-      return false;
-    }
-    run (method, *m_neural_network, subdivisions, smoothing);
 #endif
   }
 

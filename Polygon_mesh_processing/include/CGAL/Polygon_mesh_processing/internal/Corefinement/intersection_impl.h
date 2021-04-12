@@ -30,12 +30,27 @@
 #include <boost/unordered_set.hpp>
 #include <boost/dynamic_bitset.hpp>
 
+#include <stdexcept>
+
 namespace CGAL{
 namespace Polygon_mesh_processing {
 namespace Corefinement {
 
-struct Self_intersection_exception{};
-struct Triple_intersection_exception{};
+struct Self_intersection_exception :
+  public std::runtime_error
+{
+  Self_intersection_exception()
+    : std::runtime_error("Self-intersection detected in input mesh")
+  {}
+};
+
+struct Triple_intersection_exception :
+  public std::runtime_error
+{
+  Triple_intersection_exception()
+    : std::runtime_error("Non-handled triple intersection of input triangles")
+  {}
+};
 // This functor computes the pairwise intersection of triangle meshes.
 // Intersection are given as a set of polylines
 // The algorithm works as follow:

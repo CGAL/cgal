@@ -542,8 +542,6 @@ public Q_SLOTS:
   {
     if (classifier->text() == QString(CGAL_CLASSIFICATION_ETHZ_ID))
       return CGAL_CLASSIFICATION_ETHZ_NUMBER;
-    if (classifier->text() == QString(CGAL_CLASSIFICATION_TENSORFLOW_ID))
-      return CGAL_CLASSIFICATION_TENSORFLOW_NUMBER;
     if (classifier->text() == QString(CGAL_CLASSIFICATION_OPENCV_ID))
       return CGAL_CLASSIFICATION_OPENCV_NUMBER;
     if (classifier->text() == QString(CGAL_CLASSIFICATION_SOWF_ID))
@@ -667,13 +665,6 @@ public Q_SLOTS:
                                               .arg(CV_MAJOR_VERSION)
                                               .arg(CV_MINOR_VERSION));
 #endif
-#ifdef CGAL_LINKED_WITH_TENSORFLOW
-    else if (classifier == CGAL_CLASSIFICATION_TENSORFLOW_NUMBER) // Neural Network (TensorFlow)
-      filename = QFileDialog::getSaveFileName(mw,
-                                              tr("Save classification configuration"),
-                                              tr("%1 (CGAL Neural Network config).xml").arg(classif->item()->name()),
-                                              "CGAL TensorFlow Neural Network classification configuration (*.xml);;");
-#endif
 
     if (filename == QString())
       return;
@@ -724,13 +715,6 @@ public Q_SLOTS:
                                               tr("OpenCV %2.%3 random forest configuration (*.xml);;All Files (*)")
                                               .arg(CV_MAJOR_VERSION)
                                               .arg(CV_MINOR_VERSION));
-#endif
-#ifdef CGAL_LINKED_WITH_TENSORFLOW
-    else if (classifier == CGAL_CLASSIFICATION_TENSORFLOW_NUMBER) // Neural Network (TensorFlow)
-      filename = QFileDialog::getOpenFileName(mw,
-                                              tr("Open CGAL Neural Network classification configuration"),
-                                              ".",
-                                              tr("CGAL Neural Network classification configuration (*.xml);;All Files (*)"));
 #endif
 
     if (filename == QString())
@@ -1299,10 +1283,6 @@ public Q_SLOTS:
 
     QRadioButton* sowf = dialog.add<QRadioButton> (CGAL_CLASSIFICATION_SOWF_ID);
 
-#ifdef CGAL_LINKED_WITH_TENSORFLOW
-    QRadioButton* tensorflow = dialog.add<QRadioButton> (CGAL_CLASSIFICATION_TENSORFLOW_ID);
-#endif
-
 #ifdef CGAL_LINKED_WITH_OPENCV
     QRadioButton* opencv = dialog.add<QRadioButton> (CGAL_CLASSIFICATION_OPENCV_ID);
 #endif
@@ -1314,10 +1294,6 @@ public Q_SLOTS:
       classifier->setText(CGAL_CLASSIFICATION_ETHZ_ID);
     else if (sowf->isChecked())
       classifier->setText(CGAL_CLASSIFICATION_SOWF_ID);
-#ifdef CGAL_LINKED_WITH_TENSORFLOW
-    else if (tensorflow->isChecked())
-      classifier->setText(CGAL_CLASSIFICATION_TENSORFLOW_ID);
-#endif
 #ifdef CGAL_LINKED_WITH_OPENCV
     else if (opencv->isChecked())
       classifier->setText(CGAL_CLASSIFICATION_OPENCV_ID);
@@ -1360,21 +1336,6 @@ public Q_SLOTS:
       QSpinBox* depth = dialog.add<QSpinBox> ("Maximum depth of tree: ", "max_depth");
       depth->setRange (1, 9999);
       depth->setValue (20);
-    }
-    else if (classifier == CGAL_CLASSIFICATION_TENSORFLOW_NUMBER) // Neural Network (TensorFlow)
-    {
-      QSpinBox* trials = dialog.add<QSpinBox> ("Number of trials: ", "trials");
-      trials->setRange (1, 99999);
-      trials->setValue (500);
-      DoubleEdit* rate = dialog.add<DoubleEdit> ("Learning rate: ", "learning_rate");
-      rate->setRange (0.00001, 10000.0);
-      rate->setValue (0.001);
-      QSpinBox* batch = dialog.add<QSpinBox> ("Batch size: ", "batch_size");
-      batch->setRange (1, 2000000000);
-      batch->setValue (1000);
-      dialog.add<QLineEdit> ("Hidden layer size(s): ", "hidden_layers");
-      QCheckBox* restart = dialog.add<QCheckBox> ("Restart from scratch: ", "restart");
-      restart->setChecked (false);
     }
 
     if (dialog.exec() != QDialog::Accepted)

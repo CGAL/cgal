@@ -210,7 +210,6 @@ CGAL_INLINE_FUNCTION
 std::ostream& operator<<( std::ostream& out, const File_header_OFF& h) {
     if ( h.comments()) {
         out << "# Output of a CGAL tool\n";
-        out << static_cast<const File_header_extended_OFF&>( h);
     }
     if ( h.has_textures())
         out << "ST";
@@ -250,12 +249,8 @@ std::istream& operator>>( std::istream& in, File_header_OFF& h) {
     h.set_off_header( false);
     char c;
     while ( (in >> c) && c == '#') {
-        if ( in.get(c) && c == 'C' &&
-             in.get(c) && c == 'B' &&
-             in.get(c) && c == 'P') {
-            in >> static_cast<File_header_extended_OFF&>( h);
-        } else if ( c != '\n')
-            in >> skip_until_EOL;
+      if ( c != '\n')
+        in >> skip_until_EOL;
     }
     if ( ! in )
       return in;
