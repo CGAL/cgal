@@ -382,8 +382,10 @@ private:
             minMax[3 + j] = PN[6 * i + j];
         }
       for (std::size_t i = 0; i < 3; i++) {
-        minMax[i] *= 0.99;
-        minMax[3 + i] *= 1.01;
+        minMax[i] = (minMax[i] > 0.)
+                  ? (0.99 * minMax[i]) : (1.01 * minMax[i]);
+        minMax[3 + i] = (minMax[3+i] > 0.)
+                  ? (1.01 * minMax[3+i]) : (0.99 * minMax[3+i]);
       }
 
       for (std::size_t i = 0; i < 3; i++)
