@@ -132,7 +132,9 @@ struct Visitor_update{
     CGAL::copy_face_graph(m_reconst, *m_item->face_graph());
 
     m_item->invalidateOpenGLBuffers();
-    Q_EMIT m_item->itemChanged();
+    m_item->redraw();
+    m_item->itemChanged();
+    QApplication::processEvents();
   }
 };
 
