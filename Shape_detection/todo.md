@@ -1,8 +1,7 @@
-- update the docs
-- ---- submission ----
-- update the polyhedron demo
-- make a better version of the Polyline_graph where I return a filtered set of original edges instead of PEdge
-- add new tests: polyline (2D, 3D), polyline with sorting (2D, 3D), free functions, randomness, strict tests on the data from PMP, tests similar to the basic_example, check polylines with equal points
 - add missing deprecated constructors
-- think about changing lvalue to readable property maps
 - put all property names in the named parameters
+- make a better version of the Polyline_graph where I return a filtered set of original edges instead of PEdge
+- update the polyhedron demo
+- ---- submission ----
+- add new tests: polyline (2D, 3D), polyline with sorting (2D, 3D), free functions, randomness, strict tests on the data from PMP, tests similar to the basic_example, check polylines with equal points
+- update the docs

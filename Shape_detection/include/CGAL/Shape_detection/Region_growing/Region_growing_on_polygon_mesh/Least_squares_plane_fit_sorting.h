@@ -45,7 +45,7 @@ namespace Polygon_mesh {
     value type is the face type of a polygon mesh
 
     \tparam VertexToPointMap
-    a model of `LValuePropertyMap` whose key type is the vertex type of a polygon mesh and
+    a model of `ReadablePropertyMap` whose key type is the vertex type of a polygon mesh and
     value type is `Kernel::Point_3`
   */
   template<

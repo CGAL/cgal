@@ -41,11 +41,11 @@ namespace Point_set {
     a model of `ConstRange` whose iterator type is `RandomAccessIterator`
 
     \tparam PointMap
-    a model of `LValuePropertyMap` whose key type is the value type of the input
+    a model of `ReadablePropertyMap` whose key type is the value type of the input
     range and value type is `Kernel::Point_2`
 
     \tparam NormalMap
-    a model of `LValuePropertyMap` whose key type is the value type of the input
+    a model of `ReadablePropertyMap` whose key type is the value type of the input
     range and value type is `Kernel::Vector_2`
 
     \cgalModels `RegionType`

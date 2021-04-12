@@ -41,7 +41,7 @@ namespace Segment_set {
     a model of `NeighborQuery`
 
     \tparam SegmentMap
-    a model of `LValuePropertyMap` whose key type is the value type of the input
+    a model of `ReadablePropertyMap` whose key type is the value type of the input
     range and value type is `Kernel::Segment_2` or `Kernel::Segment_3`
   */
   template<
