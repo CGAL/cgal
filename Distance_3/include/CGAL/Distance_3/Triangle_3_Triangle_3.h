@@ -17,8 +17,8 @@
 #ifndef CGAL_DISTANCE_3_TRIANGLE_3_TRIANGLE_3_H
 #define CGAL_DISTANCE_3_TRIANGLE_3_TRIANGLE_3_H
 
-#include <CGAL/squared_distance_Point_3_Point_3.h>
-#include <CGAL/squared_distance_Segment_3_Segment_3.h>
+#include <CGAL/Distance_3/Point_3_Point_3.h>
+#include <CGAL/Distance_3/Segment_3_Segment_3.h>
 
 #include <CGAL/Triangle_3.h>
 

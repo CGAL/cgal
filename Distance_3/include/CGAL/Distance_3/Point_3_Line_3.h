@@ -14,13 +14,13 @@
 //
 // Author(s)     : Geert-Jan Giezeman, Andreas Fabri
 
-#ifndef CGAL_DISTANCE_3_POINT_3_RAY_3_H
-#define CGAL_DISTANCE_3_POINT_3_RAY_3_H
+#ifndef CGAL_DISTANCE_3_POINT_3_LINE_3_H
+#define CGAL_DISTANCE_3_POINT_3_LINE_3_H
 
-#include <CGAL/internal/squared_distance_utils_3.h>
+#include <CGAL/Distance_3/internal/squared_distance_utils_3.h>
 
+#include <CGAL/Line_3.h>
 #include <CGAL/Point_3.h>
-#include <CGAL/Ray_3.h>
 
 namespace CGAL {
 namespace internal {
@@ -28,29 +28,26 @@ namespace internal {
 template <class K>
 typename K::FT
 squared_distance(const typename K::Point_3& pt,
-                 const typename K::Ray_3& ray,
+                 const typename K::Line_3& line,
                  const K& k)
 {
   typedef typename K::Vector_3 Vector_3;
 
   typename K::Construct_vector_3 construct_vector;
+  Vector_3 dir(line.direction().vector());
+  Vector_3 diff = construct_vector(line.point(), pt);
 
-  Vector_3 diff = construct_vector(ray.source(), pt);
-  const Vector_3 &dir = ray.direction().vector();
-
-  if(!is_acute_angle(dir, diff, k))
-    return (typename K::FT)(diff*diff);
-
-  return squared_distance_to_line(dir, diff, k);
+  return internal::squared_distance_to_line(dir, diff, k);
 }
 
 template <class K>
+inline
 typename K::FT
-squared_distance(const typename K::Ray_3& ray,
+squared_distance(const typename K::Line_3& line,
                  const typename K::Point_3& pt,
                  const K& k)
 {
-  return squared_distance(pt, ray, k);
+  return squared_distance(pt, line, k);
 }
 
 } // namespace internal
@@ -59,20 +56,20 @@ template <class K>
 inline
 typename K::FT
 squared_distance(const Point_3<K>& pt,
-                 const Ray_3<K>& ray)
+                 const Line_3<K>& line)
 {
-  return internal::squared_distance(pt, ray, K());
+  return internal::squared_distance(pt, line, K());
 }
 
 template <class K>
 inline
 typename K::FT
-squared_distance(const Ray_3<K>& ray,
+squared_distance(const Line_3<K>& line,
                  const Point_3<K>& pt)
 {
-  return internal::squared_distance(pt, ray, K());
+  return internal::squared_distance(pt, line, K());
 }
 
 } // namespace CGAL
 
-#endif // CGAL_DISTANCE_3_POINT_3_RAY_3_H
+#endif // CGAL_DISTANCE_3_POINT_3_LINE_3_H

@@ -23,8 +23,8 @@
 #include <CGAL/constructions/kernel_ftC2.h>
 #include <CGAL/constructions/kernel_ftC3.h>
 #include <CGAL/Cartesian/solve_3.h>
-#include <CGAL/squared_distance_Point_3_Point_3.h>
-#include <CGAL/internal/squared_distance_utils_3.h>
+#include <CGAL/Distance_3/Point_3_Point_3.h>
+#include <CGAL/Distance_3/internal/squared_distance_utils_3.h>
 
 namespace CGAL {
 

@@ -17,8 +17,8 @@
 #ifndef CGAL_DISTANCE_3_LINE_3_PLANE_3_H
 #define CGAL_DISTANCE_3_LINE_3_PLANE_3_H
 
-#include <CGAL/internal/squared_distance_utils_3.h>
-#include <CGAL/squared_distance_Point_3_Point_3.h>
+#include <CGAL/Distance_3/internal/squared_distance_utils_3.h>
+#include <CGAL/Distance_3/Point_3_Point_3.h>
 
 #include <CGAL/Line_3.h>
 #include <CGAL/Plane_3.h>

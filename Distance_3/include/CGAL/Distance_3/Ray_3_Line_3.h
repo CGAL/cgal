@@ -17,7 +17,7 @@
 #ifndef CGAL_DISTANCE_3_RAY_3_LINE_3_H
 #define CGAL_DISTANCE_3_RAY_3_LINE_3_H
 
-#include <CGAL/internal/squared_distance_utils_3.h>
+#include <CGAL/Distance_3/internal/squared_distance_utils_3.h>
 
 #include <CGAL/Line_3.h>
 #include <CGAL/Ray_3.h>

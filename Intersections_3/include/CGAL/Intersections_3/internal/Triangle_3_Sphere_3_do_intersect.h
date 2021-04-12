@@ -13,9 +13,9 @@
 #ifndef CGAL_TRIANGLE_3_SPHERE_3_DO_INTERSECT_H
 #define CGAL_TRIANGLE_3_SPHERE_3_DO_INTERSECT_H
 
-#include <CGAL/squared_distance_Point_3_Segment_3.h>
-#include <CGAL/squared_distance_Point_3_Ray_3.h>
-#include <CGAL/squared_distance_Point_3_Line_3.h>
+#include <CGAL/Distance_3/Point_3_Segment_3.h>
+#include <CGAL/Distance_3/Point_3_Ray_3.h>
+#include <CGAL/Distance_3/Point_3_Line_3.h>
 #include <CGAL/Intersection_traits_3.h>
 
 namespace CGAL {

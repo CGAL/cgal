@@ -17,7 +17,7 @@
 #ifndef CGAL_DISTANCE_3_POINT_3_TETRAHEDRON_3_H
 #define CGAL_DISTANCE_3_POINT_3_TETRAHEDRON_3_H
 
-#include <CGAL/squared_distance_Point_3_Triangle_3.h>
+#include <CGAL/Distance_3/Point_3_Triangle_3.h>
 
 #include <CGAL/Point_3.h>
 #include <CGAL/Tetrahedron_3.h>
