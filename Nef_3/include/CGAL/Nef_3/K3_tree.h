@@ -22,7 +22,7 @@
 #include <CGAL/Nef_3/quotient_coordinates_to_homogeneous_point.h>
 #include <CGAL/Lazy_kernel.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Compact_container.h>
+#include <boost/container/deque.hpp>
 
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
 #include <CGAL/Constrained_triangulation_2.h>
@@ -289,10 +289,10 @@ typedef Smaller_than<
   Vertex_handle,
   int> Smaller_;
 
-  class Node : public Compact_container_base {
+  class Node  {
   friend class K3_tree<Traits>;
 public:
-    typedef typename Compact_container<Node>::iterator Node_handle;
+    typedef Node* Node_handle;
 
   Node( Node_handle p, Node_handle l, Node_handle r, Plane_3 pl, const Object_list& O) :
     parent_node(p), left_node(l), right_node(r), splitting_plane(pl),
@@ -308,7 +308,7 @@ public:
     return (left_node == 0 && right_node == 0);
   }
   const Node_handle parent() const { return parent_node; }
-  const Node_handle left() const { return left_node; }
+    const Node_handle left() const { return left_node; }
   const Node_handle right() const { return right_node; }
   const Plane_3& plane() const { return splitting_plane; }
   const Object_list& objects() const { return object_list; }
@@ -468,9 +468,8 @@ private:
   Object_list object_list;
 };
 
-  typedef Compact_container<Node> Node_range;
-  typedef typename Node_range::iterator Node_iterator;
-  typedef Node_iterator Node_handle;
+  typedef boost::container::deque<Node> Node_range;
+  typedef Node* Node_handle;
 
 
 public:
@@ -529,7 +528,7 @@ public:
       Self& operator++() {
 
 if( S.empty())
-  node = Node_handle(); // end of the iterator
+  node = nullptr; // end of the iterator
 else {
   while( !S.empty()) {
     Node_handle n = S.front().first;
@@ -777,7 +776,7 @@ private:
 
 
   Node_handle root;
-  Compact_container<Node> nodes;
+  boost::container::deque<Node> nodes;
 
   int max_depth;
   Bounding_box_3 bounding_box;
@@ -996,7 +995,7 @@ typename Object_list::difference_type n_vertices = std::distance(objects.begin()
 
   void transform(const Aff_transformation_3& t) {
     // TODO: Bounding box must be updated/transformed, too
-    if(root != 0)
+    if(root != nullptr)
       root->transform(t);
 
     BBox_updater bbup;
@@ -1138,7 +1137,8 @@ Node_handle build_kdtree(Object_list& O, Object_iterator v_end,
   CGAL_NEF_TRACEN( "build_kdtree: "<<dump_object_list(O,1));
   if( !can_set_be_divided(O.begin(), v_end, depth)) {
     CGAL_NEF_TRACEN("build_kdtree: set cannot be divided");
-    return nodes.insert(Node( parent, Node_handle(), Node_handle(), Plane_3(), O));
+    nodes.push_back(Node( parent, nullptr, nullptr, Plane_3(), O));
+    return &(nodes.back());
   }
   Object_iterator median;
   Plane_3 partition_plane = construct_splitting_plane(O.begin(), v_end, median, depth);
@@ -1180,7 +1180,8 @@ Node_handle build_kdtree(Object_list& O, Object_iterator v_end,
   if( !splitted) {
     CGAL_NEF_TRACEN("build_kdtree: splitting plane not found");
     //    if(depth > max_depth)
-    return nodes.insert(Node( parent, Node_handle(), Node_handle(), Plane_3(), O));
+    nodes.push_back(Node( parent, nullptr, nullptr, Plane_3(), O));
+    return &(nodes.back());
   } else {
     CGAL_NEF_TRACEN("Sizes " << O1.size() << ", " << O2.size() << ", " << O.size());
     CGAL_assertion( O1.size() <= O.size() && O2.size() <= O.size());
@@ -1193,9 +1194,11 @@ Node_handle build_kdtree(Object_list& O, Object_iterator v_end,
     non_efective_splits = 0;
   if( non_efective_splits > 2) {
     CGAL_NEF_TRACEN("build_kdtree: non efective splits reached maximum");
-    return nodes.insert(Node( parent, Node_handle(), Node_handle(), Plane_3(), O));
+    nodes.push_back(Node( parent, nullptr, nullptr, Plane_3(), O));
+    return &(nodes.back());
   }
-  Node_handle node = nodes.insert(Node( parent, Node_handle(), Node_handle(), partition_plane, Object_list()));
+  nodes.push_back(Node( parent, nullptr, nullptr, partition_plane, Object_list()));
+  Node_handle node = &(nodes.back());
   node->left_node = build_kdtree( O1, O1.begin()+v_end1, depth + 1, node, non_efective_splits);
   node->right_node = build_kdtree( O2, O2.begin()+v_end2, depth + 1, node, non_efective_splits);
   return node;
