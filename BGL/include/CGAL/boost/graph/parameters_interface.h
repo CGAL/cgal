@@ -210,6 +210,6 @@ CGAL_add_named_parameter(maximum_normal_deviation_t, maximum_normal_deviation, m
 
 // shape detection
 CGAL_add_named_parameter(distance_threshold_t, distance_threshold, distance_threshold)
-CGAL_add_named_parameter(angle_deg_threshold_t, angle_deg_threshold, angle_deg_threshold)
+CGAL_add_named_parameter(angle_threshold_t, angle_threshold, angle_threshold)
 CGAL_add_named_parameter(cos_value_threshold_t, cos_value_threshold, cos_value_threshold)
 CGAL_add_named_parameter(min_region_size_t, min_region_size, min_region_size)
