@@ -19,6 +19,7 @@
 #define CGAL_SQUARED_DISTANCE_UTILS_H
 
 #include <CGAL/determinant.h>
+#include <CGAL/number_utils.h>
 #include <CGAL/wmult.h>
 
 namespace CGAL {
