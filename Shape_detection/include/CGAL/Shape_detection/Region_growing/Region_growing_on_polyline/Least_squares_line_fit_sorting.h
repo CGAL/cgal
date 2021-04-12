@@ -89,6 +89,9 @@ namespace Polyline {
     /*!
       \brief initializes all internal data structures.
 
+      \tparam NamedParameters
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+
       \param input_range
       an instance of `InputRange` with polyline vertices
 
@@ -96,24 +99,36 @@ namespace Polyline {
       an instance of `NeighborQuery` that is used internally to
       access vertex's neighbors
 
-      \param point_map
-      an instance of `PointMap` that maps a vertex from `input_range`
-      to `Kernel::Point_2` or `Kernel::Point_3`
+      \param np
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+      among the ones listed below
 
-      \param traits
-      an instance of `GeomTraits`
+      \cgalNamedParamsBegin
+        \cgalParamNBegin{point_map}
+          \cgalParamDescription{an instance of `PointMap` that maps a vertex from `input_range`
+          to `Kernel::Point_2` or `Kernel::Point_3`}
+          \cgalParamDefault{`PointMap()`}
+        \cgalParamNEnd
+        \cgalParamNBegin{geom_traits}
+          \cgalParamDescription{an instance of `GeomTraits`}
+          \cgalParamDefault{`GeomTraits()`}
+        \cgalParamNEnd
+      \cgalNamedParamsEnd
 
       \pre `input_range.size() > 0`
     */
+    template<typename NamedParameters>
     Least_squares_line_fit_sorting(
       const InputRange& input_range,
       NeighborQuery& neighbor_query,
-      const PointMap point_map = PointMap(),
-      const GeomTraits traits = GeomTraits()) :
+      const NamedParameters& np) :
     m_input_range(input_range),
     m_neighbor_query(neighbor_query),
-    m_point_map(point_map),
-    m_polyline_traits(traits) {
+    m_point_map(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::point_map), PointMap())),
+    m_traits(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::geom_traits), GeomTraits())),
+    m_polyline_traits(m_traits) {
 
       CGAL_precondition(input_range.size() > 0);
       m_order.resize(m_input_range.size());
@@ -156,6 +171,7 @@ namespace Polyline {
     const Input_range& m_input_range;
     Neighbor_query& m_neighbor_query;
     const Point_map m_point_map;
+    const Traits m_traits;
     const Polyline_traits m_polyline_traits;
     std::vector<std::size_t> m_order;
     std::vector<FT> m_scores;

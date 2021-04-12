@@ -39,17 +39,12 @@ OutputIterator region_growing_planes(
   using Neighbor_query = Polygon_mesh::One_ring_neighbor_query<Polyhedron, Face_range>;
   using Region_type = Polygon_mesh::Least_squares_plane_fit_region<Traits, Polyhedron, Face_range>;
   using Sorting = Polygon_mesh::Least_squares_plane_fit_sorting<Traits, Polyhedron, Neighbor_query, Face_range>;
-
-  using Vertex_to_point_map = typename Region_type::Vertex_to_point_map;
   using Region_growing = Region_growing<Face_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
   const Face_range face_range = faces(polyhedron);
-  const Vertex_to_point_map vertex_to_point_map(
-    get(CGAL::vertex_point, polyhedron));
-
   Neighbor_query neighbor_query(polyhedron);
-  Region_type region_type(polyhedron, np, vertex_to_point_map);
-  Sorting sorting(polyhedron, neighbor_query, vertex_to_point_map);
+  Region_type region_type(polyhedron, np);
+  Sorting sorting(polyhedron, neighbor_query, np);
   sorting.sort();
 
   Region_growing region_growing(
@@ -83,17 +78,12 @@ OutputIterator region_growing_planes(
   using Neighbor_query = Polygon_mesh::One_ring_neighbor_query<Surface_mesh>;
   using Region_type = Polygon_mesh::Least_squares_plane_fit_region<Traits, Surface_mesh>;
   using Sorting = Polygon_mesh::Least_squares_plane_fit_sorting<Traits, Surface_mesh, Neighbor_query>;
-
-  using Vertex_to_point_map = typename Region_type::Vertex_to_point_map;
   using Region_growing = Region_growing<Face_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
   const Face_range face_range = faces(surface_mesh);
-  const Vertex_to_point_map vertex_to_point_map(
-    get(CGAL::vertex_point, surface_mesh));
-
   Neighbor_query neighbor_query(surface_mesh);
-  Region_type region_type(surface_mesh, np, vertex_to_point_map);
-  Sorting sorting(surface_mesh, neighbor_query, vertex_to_point_map);
+  Region_type region_type(surface_mesh, np);
+  Sorting sorting(surface_mesh, neighbor_query, np);
   sorting.sort();
 
   Region_growing region_growing(

@@ -99,13 +99,6 @@ namespace Polyline {
       a sequence of \ref bgl_namedparameters "Named Parameters"
       among the ones listed below
 
-      \param point_map
-      an instance of `PointMap` that maps an item from `input_range`
-      to `Kernel::Point_2` or `Kernel::Point_3`
-
-      \param traits
-      an instance of `GeomTraits`
-
       \cgalNamedParamsBegin
         \cgalParamNBegin{distance_threshold}
           \cgalParamDescription{the maximum distance from a vertex to a line}
@@ -129,6 +122,15 @@ namespace Polyline {
           \cgalParamType{`std::size_t`}
           \cgalParamDefault{2}
         \cgalParamNEnd
+        \cgalParamNBegin{point_map}
+          \cgalParamDescription{an instance of `PointMap` that maps an item from `input_range`
+          to `Kernel::Point_2` or `Kernel::Point_3`}
+          \cgalParamDefault{`PointMap()`}
+        \cgalParamNEnd
+        \cgalParamNBegin{geom_traits}
+          \cgalParamDescription{an instance of `GeomTraits`}
+          \cgalParamDefault{`GeomTraits()`}
+        \cgalParamNEnd
       \cgalNamedParamsEnd
 
       \pre `input_range.size() > 0`
@@ -140,12 +142,13 @@ namespace Polyline {
     template<typename NamedParameters>
     Least_squares_line_fit_region(
       const InputRange& input_range,
-      const NamedParameters& np,
-      const PointMap point_map = PointMap(),
-      const GeomTraits traits = GeomTraits()) :
+      const NamedParameters& np) :
     m_input_range(input_range),
-    m_point_map(point_map),
-    m_polyline_traits(traits),
+    m_point_map(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::point_map), PointMap())),
+    m_traits(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::geom_traits), GeomTraits())),
+    m_polyline_traits(m_traits),
     m_squared_length(m_polyline_traits.compute_squared_length_object()),
     m_squared_distance(m_polyline_traits.compute_squared_distance_object()),
     m_scalar_product(m_polyline_traits.compute_scalar_product_object()) {
@@ -309,13 +312,13 @@ namespace Polyline {
 
   private:
     const Input_range& m_input_range;
+    const Point_map m_point_map;
+    const Traits m_traits;
+    const Polyline_traits m_polyline_traits;
 
     FT m_distance_threshold;
     FT m_cos_value_threshold;
     std::size_t m_min_region_size;
-
-    const Point_map m_point_map;
-    const Polyline_traits m_polyline_traits;
 
     const Squared_length m_squared_length;
     const Squared_distance m_squared_distance;

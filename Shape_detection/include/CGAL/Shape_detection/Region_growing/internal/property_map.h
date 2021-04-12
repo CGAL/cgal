@@ -190,17 +190,22 @@ namespace internal {
     using key_type = Key_type;
     using category = boost::lvalue_property_map_tag;
 
+    Polyline_graph_point_map() :
+    m_vertex_range(nullptr),
+    m_vertex_to_point_map(nullptr)
+    { }
+
     Polyline_graph_point_map(
       const Vertex_range& vertex_range,
       const Vertex_to_point_map& vertex_to_point_map) :
-    m_vertex_range(vertex_range),
-    m_vertex_to_point_map(vertex_to_point_map)
+    m_vertex_range(std::make_shared<Vertex_range>(vertex_range)),
+    m_vertex_to_point_map(std::make_shared<Vertex_to_point_map>(vertex_to_point_map))
     { }
 
     reference operator[](const key_type& vertex) const {
-      CGAL_precondition(vertex.index < m_vertex_range.size());
-      const auto& key = *(m_vertex_range.begin() + vertex.index);
-      return get(m_vertex_to_point_map, key);
+      CGAL_precondition(vertex.index < m_vertex_range->size());
+      const auto& key = *(m_vertex_range->begin() + vertex.index);
+      return get(*m_vertex_to_point_map, key);
     }
 
     friend inline reference get(
@@ -209,8 +214,8 @@ namespace internal {
     }
 
   private:
-    const Vertex_range& m_vertex_range;
-    const Vertex_to_point_map& m_vertex_to_point_map;
+    const std::shared_ptr<Vertex_range> m_vertex_range;
+    const std::shared_ptr<Vertex_to_point_map> m_vertex_to_point_map;
   };
 
   template<
@@ -238,20 +243,26 @@ namespace internal {
     using key_type = Key_type;
     using category = boost::readable_property_map_tag;
 
+    Polyline_graph_segment_map() :
+    m_face_graph(nullptr),
+    m_edge_range(nullptr),
+    m_vertex_to_point_map(nullptr)
+    { }
+
     Polyline_graph_segment_map(
       const Face_graph& face_graph,
       const Edge_range& edge_range,
       const Vertex_to_point_map& vertex_to_point_map) :
-    m_face_graph(face_graph),
-    m_edge_range(edge_range),
-    m_vertex_to_point_map(vertex_to_point_map)
+    m_face_graph(std::make_shared<Face_graph>(face_graph)),
+    m_edge_range(std::make_shared<Edge_range>(edge_range)),
+    m_vertex_to_point_map(std::make_shared<Vertex_to_point_map>(vertex_to_point_map))
     { }
 
     reference operator[](const key_type& edge) const {
-      CGAL_precondition(edge.index < m_edge_range.size());
-      const auto& key = *(m_edge_range.begin() + edge.index);
-      const auto& s = get(m_vertex_to_point_map, source(key, m_face_graph));
-      const auto& t = get(m_vertex_to_point_map, target(key, m_face_graph));
+      CGAL_precondition(edge.index < m_edge_range->size());
+      const auto& key = *(m_edge_range->begin() + edge.index);
+      const auto& s = get(*m_vertex_to_point_map, source(key, *m_face_graph));
+      const auto& t = get(*m_vertex_to_point_map, target(key, *m_face_graph));
       const auto construct_segment = RG_traits().construct_segment_object();
       return construct_segment(s, t);
     }
@@ -262,9 +273,9 @@ namespace internal {
     }
 
   private:
-    const Face_graph& m_face_graph;
-    const Edge_range& m_edge_range;
-    const Vertex_to_point_map& m_vertex_to_point_map;
+    const std::shared_ptr<Face_graph> m_face_graph;
+    const std::shared_ptr<Edge_range> m_edge_range;
+    const std::shared_ptr<Vertex_to_point_map> m_vertex_to_point_map;
   };
 
 } // namespace internal

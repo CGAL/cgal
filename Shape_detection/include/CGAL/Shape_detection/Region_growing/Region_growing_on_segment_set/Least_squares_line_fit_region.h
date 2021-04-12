@@ -100,13 +100,6 @@ namespace Segment_set {
       a sequence of \ref bgl_namedparameters "Named Parameters"
       among the ones listed below
 
-      \param segment_map
-      an instance of `SegmentMap` that maps an item from `input_range`
-      to `Kernel::Segment_2` or `Kernel::Segment_3`
-
-      \param traits
-      an instance of `GeomTraits`
-
       \cgalNamedParamsBegin
         \cgalParamNBegin{distance_threshold}
           \cgalParamDescription{the maximum distance from the furthest vertex of a segment to a line}
@@ -130,6 +123,15 @@ namespace Segment_set {
           \cgalParamType{`std::size_t`}
           \cgalParamDefault{1}
         \cgalParamNEnd
+        \cgalParamNBegin{segment_map}
+          \cgalParamDescription{an instance of `SegmentMap` that maps an item from `input_range`
+          to `Kernel::Segment_2` or `Kernel::Segment_3`}
+          \cgalParamDefault{`SegmentMap()`}
+        \cgalParamNEnd
+        \cgalParamNBegin{geom_traits}
+          \cgalParamDescription{an instance of `GeomTraits`}
+          \cgalParamDefault{`GeomTraits()`}
+        \cgalParamNEnd
       \cgalNamedParamsEnd
 
       \pre `input_range.size() > 0`
@@ -141,12 +143,13 @@ namespace Segment_set {
     template<typename NamedParameters>
     Least_squares_line_fit_region(
       const InputRange& input_range,
-      const NamedParameters& np,
-      const SegmentMap segment_map = SegmentMap(),
-      const GeomTraits traits = GeomTraits()) :
+      const NamedParameters& np) :
     m_input_range(input_range),
-    m_segment_map(segment_map),
-    m_segment_set_traits(traits),
+    m_segment_map(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::segment_map), SegmentMap())),
+    m_traits(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::geom_traits), GeomTraits())),
+    m_segment_set_traits(m_traits),
     m_squared_length(m_segment_set_traits.compute_squared_length_object()),
     m_squared_distance(m_segment_set_traits.compute_squared_distance_object()),
     m_scalar_product(m_segment_set_traits.compute_scalar_product_object()) {
@@ -298,13 +301,13 @@ namespace Segment_set {
 
   private:
     const Input_range& m_input_range;
+    const Segment_map m_segment_map;
+    const Traits m_traits;
+    const Segment_set_traits m_segment_set_traits;
 
     FT m_distance_threshold;
     FT m_cos_value_threshold;
     std::size_t m_min_region_size;
-
-    const Segment_map m_segment_map;
-    const Segment_set_traits m_segment_set_traits;
 
     const Squared_length m_squared_length;
     const Squared_distance m_squared_distance;

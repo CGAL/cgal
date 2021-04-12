@@ -62,12 +62,13 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
     CGAL::parameters::
     distance_threshold(distance_threshold).
     angle_threshold(angle_threshold).
-    min_region_size(min_region_size),
-    vertex_to_point_map);
+    min_region_size(min_region_size).
+    vertex_point_map(vertex_to_point_map));
 
   // Sort indices.
   Sorting sorting(
-    polyhedron, neighbor_query, vertex_to_point_map);
+    polyhedron, neighbor_query,
+    CGAL::parameters::vertex_point_map(vertex_to_point_map));
   sorting.sort();
 
   // Run region growing.

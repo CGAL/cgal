@@ -42,8 +42,8 @@ OutputIterator region_growing_polylines(
   using Region_growing = Region_growing<Input_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
   Neighbor_query neighbor_query(polyline);
-  Region_type region_type(polyline, np, Point_map());
-  Sorting sorting(polyline, neighbor_query, Point_map());
+  Region_type region_type(polyline, np);
+  Sorting sorting(polyline, neighbor_query, np);
   sorting.sort();
 
   Region_growing region_growing(

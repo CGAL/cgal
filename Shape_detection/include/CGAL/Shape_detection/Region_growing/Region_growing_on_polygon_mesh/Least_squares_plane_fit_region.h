@@ -100,13 +100,6 @@ namespace Polygon_mesh {
       a sequence of \ref bgl_namedparameters "Named Parameters"
       among the ones listed below
 
-      \param vertex_to_point_map
-      an instance of `VertexToPointMap` that maps a polygon mesh
-      vertex to `Kernel::Point_3`
-
-      \param traits
-      an instance of `GeomTraits`
-
       \cgalNamedParamsBegin
         \cgalParamNBegin{distance_threshold}
           \cgalParamDescription{the maximum distance from the furthest vertex of a face to a plane}
@@ -130,6 +123,15 @@ namespace Polygon_mesh {
           \cgalParamType{`std::size_t`}
           \cgalParamDefault{1}
         \cgalParamNEnd
+        \cgalParamNBegin{vertex_point_map}
+          \cgalParamDescription{an instance of `VertexToPointMap` that maps a polygon mesh
+          vertex to `Kernel::Point_3`}
+          \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+        \cgalParamNEnd
+        \cgalParamNBegin{geom_traits}
+          \cgalParamDescription{an instance of `GeomTraits`}
+          \cgalParamDefault{`GeomTraits()`}
+        \cgalParamNEnd
       \cgalNamedParamsEnd
 
       \pre `faces(pmesh).size() > 0`
@@ -141,13 +143,13 @@ namespace Polygon_mesh {
     template<typename NamedParameters>
     Least_squares_plane_fit_region(
       const PolygonMesh& pmesh,
-      const NamedParameters& np,
-      const VertexToPointMap vertex_to_point_map,
-      const GeomTraits traits = GeomTraits()) :
+      const NamedParameters& np) :
     m_face_graph(pmesh),
     m_face_range(faces(m_face_graph)),
-    m_vertex_to_point_map(vertex_to_point_map),
-    m_traits(traits),
+    m_vertex_to_point_map(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, pmesh))),
+    m_traits(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::geom_traits), GeomTraits())),
     m_squared_length_3(m_traits.compute_squared_length_3_object()),
     m_squared_distance_3(m_traits.compute_squared_distance_3_object()),
     m_scalar_product_3(m_traits.compute_scalar_product_3_object()),
@@ -323,13 +325,12 @@ namespace Polygon_mesh {
   private:
     const Face_graph& m_face_graph;
     const Face_range m_face_range;
+    const Vertex_to_point_map m_vertex_to_point_map;
+    const Traits m_traits;
 
     FT m_distance_threshold;
     FT m_cos_value_threshold;
     std::size_t m_min_region_size;
-
-    const Vertex_to_point_map m_vertex_to_point_map;
-    const Traits m_traits;
 
     const Squared_length_3 m_squared_length_3;
     const Squared_distance_3 m_squared_distance_3;

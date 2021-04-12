@@ -143,10 +143,6 @@ and the Region Growing approach for detecting shapes in a set of arbitrary items
 - `CGAL::Shape_detection::Polyline::Least_squares_line_fit_region<GeomTraits, InputRange, PointMap>`
 - `CGAL::Shape_detection::Polyline::Least_squares_line_fit_sorting<GeomTraits, InputRange, %NeighborQuery, PointMap>`
 
-## Deprecated Components ##
-- `CGAL::Shape_detection::deprecated::Shape_detection_traits<GeomTraits, InputRange, PointMap, NormalMap>`
-- `CGAL::Shape_detection::deprecated::Region_growing_depr<Traits>`
-
 ## Functions ##
 - `CGAL::regularize_planes()`
 */

@@ -16,7 +16,6 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("efficient_RANSAC_basic.cpp")
   create_single_source_cgal_program("efficient_RANSAC_with_callback.cpp")
   create_single_source_cgal_program("efficient_RANSAC_and_plane_regularization.cpp")
-  create_single_source_cgal_program("region_growing_basic.cpp")
   create_single_source_cgal_program("region_growing_on_point_set_2.cpp")
   create_single_source_cgal_program("region_growing_on_point_set_3.cpp")
   create_single_source_cgal_program("region_growing_on_polygon_mesh.cpp")
@@ -29,7 +28,6 @@ if(TARGET CGAL::Eigen3_support)
     efficient_RANSAC_basic
     efficient_RANSAC_with_callback
     efficient_RANSAC_and_plane_regularization
-    region_growing_basic
     region_growing_on_point_set_2
     region_growing_on_point_set_3
     region_growing_on_polygon_mesh

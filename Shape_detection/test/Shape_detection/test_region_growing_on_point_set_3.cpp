@@ -55,16 +55,18 @@ bool test_region_growing_on_point_set_3(int argc, char *argv[]) {
 
   // Create parameter classes.
   Neighbor_query neighbor_query(
-    input_range, CGAL::parameters::neighbor_radius(sphere_radius),
-    input_range.point_map());
+    input_range, CGAL::parameters::
+    neighbor_radius(sphere_radius).
+    point_map(input_range.point_map()));
 
   Region_type region_type(
     input_range,
     CGAL::parameters::
     distance_threshold(distance_threshold).
     angle_threshold(angle_threshold).
-    min_region_size(min_region_size),
-    input_range.point_map(), input_range.normal_map());
+    min_region_size(min_region_size).
+    point_map(input_range.point_map()).
+    normal_map(input_range.normal_map()));
 
   // Run region growing.
   Region_growing region_growing(

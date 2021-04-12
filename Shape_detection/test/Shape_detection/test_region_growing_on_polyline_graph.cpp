@@ -62,13 +62,14 @@ int main(int argc, char *argv[]) {
   const Vertex_to_point_map vertex_to_point_map(
     get(CGAL::vertex_point, surface_mesh));
 
-  Polyline_graph pgraph(surface_mesh, regions, vertex_to_point_map);
+  Polyline_graph pgraph(surface_mesh, regions,
+  CGAL::parameters::vertex_point_map(vertex_to_point_map));
   const auto& point_range = pgraph.point_range();
   // std::cout << "- num extracted points: " << point_range.size() << std::endl;
 
   Region_type region_type(
-    point_range, CGAL::parameters::all_default(), pgraph.point_map());
-  Sorting sorting(point_range, pgraph, pgraph.point_map());
+    point_range, CGAL::parameters::point_map(pgraph.point_map()));
+  Sorting sorting(point_range, pgraph, CGAL::parameters::point_map(pgraph.point_map()));
   sorting.sort();
 
   Region_growing region_growing(

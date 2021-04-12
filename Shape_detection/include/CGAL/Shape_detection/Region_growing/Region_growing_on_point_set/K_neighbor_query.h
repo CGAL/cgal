@@ -115,15 +115,16 @@ namespace Point_set {
       a sequence of \ref bgl_namedparameters "Named Parameters"
       among the ones listed below
 
-      \param point_map
-      an instance of `PointMap` that maps an item from `input_range`
-      to `Kernel::Point_2` or to `Kernel::Point_3`
-
       \cgalNamedParamsBegin
         \cgalParamNBegin{neighbor_radius}
           \cgalParamDescription{the number of returned neighbors per each query point}
           \cgalParamType{`std::size_t`}
           \cgalParamDefault{12}
+        \cgalParamNEnd
+        \cgalParamNBegin{point_map}
+          \cgalParamDescription{an instance of `PointMap` that maps an item from `input_range`
+          to `Kernel::Point_2` or to `Kernel::Point_3`}
+          \cgalParamDefault{`PointMap()`}
         \cgalParamNEnd
       \cgalNamedParamsEnd
 
@@ -133,10 +134,10 @@ namespace Point_set {
     template<typename NamedParameters>
     K_neighbor_query(
       const InputRange& input_range,
-      const NamedParameters& np,
-      const PointMap point_map = PointMap()) :
+      const NamedParameters& np) :
     m_input_range(input_range),
-    m_point_map(point_map),
+    m_point_map(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::point_map), PointMap())),
     m_index_to_point_map(m_input_range, m_point_map),
     m_distance(m_index_to_point_map),
     m_tree(

@@ -56,15 +56,17 @@ namespace internal {
     using Vertex_to_index_map = internal::Item_to_index_property_map<Vertex_range>;
 
   public:
+    template<typename NamedParameters>
     Polyline_graph_points(
       const PolygonMesh& pmesh,
       const std::vector< std::vector<std::size_t> >& regions,
-      const VertexToPointMap vertex_to_point_map) :
+      const NamedParameters& np) :
     m_face_graph(pmesh),
     m_regions(regions),
     m_face_range(faces(m_face_graph)),
     m_vertex_range(vertices(m_face_graph)),
-    m_vertex_to_point_map(vertex_to_point_map),
+    m_vertex_to_point_map(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, pmesh))),
     m_face_to_region_map(m_face_range, regions),
     m_face_to_index_map(m_face_range),
     m_vertex_to_index_map(m_vertex_range),

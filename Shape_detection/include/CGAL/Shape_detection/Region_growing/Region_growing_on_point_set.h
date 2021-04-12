@@ -50,9 +50,9 @@ OutputIterator region_growing_lines(
   using Sorting = Point_set::Least_squares_line_fit_sorting<Traits, Input_range, Neighbor_query, Point_map>;
   using Region_growing = Region_growing<Input_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
-  Neighbor_query neighbor_query(points_with_normals, np, Point_map());
-  Region_type region_type(points_with_normals, np, Point_map(), Normal_map());
-  Sorting sorting(points_with_normals, neighbor_query, Point_map());
+  Neighbor_query neighbor_query(points_with_normals, np);
+  Region_type region_type(points_with_normals, np);
+  Sorting sorting(points_with_normals, neighbor_query, np);
   sorting.sort();
 
   Region_growing region_growing(
@@ -90,9 +90,9 @@ OutputIterator region_growing_planes(
   using Sorting = Point_set::Least_squares_plane_fit_sorting<Traits, Input_range, Neighbor_query, Point_map>;
   using Region_growing = Region_growing<Input_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
-  Neighbor_query neighbor_query(points_with_normals, np, Point_map());
-  Region_type region_type(points_with_normals, np, Point_map(), Normal_map());
-  Sorting sorting(points_with_normals, neighbor_query, Point_map());
+  Neighbor_query neighbor_query(points_with_normals, np);
+  Region_type region_type(points_with_normals, np);
+  Sorting sorting(points_with_normals, neighbor_query, np);
   sorting.sort();
 
   Region_growing region_growing(
@@ -132,9 +132,9 @@ OutputIterator region_growing_planes(
   using Region_growing = Region_growing<Point_set_3, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
   CGAL_precondition(point_set.has_normal_map());
-  Neighbor_query neighbor_query(point_set, np, Point_map());
-  Region_type region_type(point_set, np, Point_map(), Normal_map());
-  Sorting sorting(point_set, neighbor_query, Point_map());
+  Neighbor_query neighbor_query(point_set, np);
+  Region_type region_type(point_set, np);
+  Sorting sorting(point_set, neighbor_query, np);
   sorting.sort();
 
   Region_growing region_growing(

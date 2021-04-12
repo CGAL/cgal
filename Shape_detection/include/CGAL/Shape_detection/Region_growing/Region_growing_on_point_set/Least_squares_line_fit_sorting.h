@@ -84,6 +84,9 @@ namespace Point_set {
     /*!
       \brief initializes all internal data structures.
 
+      \tparam NamedParameters
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+
       \param input_range
       an instance of `InputRange` with 2D points
 
@@ -91,24 +94,35 @@ namespace Point_set {
       an instance of `NeighborQuery` that is used internally to
       access point's neighbors
 
-      \param point_map
-      an instance of `PointMap` that maps an item from `input_range`
-      to `Kernel::Point_2`
+      \param np
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+      among the ones listed below
 
-      \param traits
-      an instance of `GeomTraits`
+      \cgalNamedParamsBegin
+        \cgalParamNBegin{point_map}
+          \cgalParamDescription{an instance of `PointMap` that maps an item from `input_range`
+          to `Kernel::Point_2`}
+          \cgalParamDefault{`PointMap()`}
+        \cgalParamNEnd
+        \cgalParamNBegin{geom_traits}
+          \cgalParamDescription{an instance of `GeomTraits`}
+          \cgalParamDefault{`GeomTraits()`}
+        \cgalParamNEnd
+      \cgalNamedParamsEnd
 
       \pre `input_range.size() > 0`
     */
+    template<typename NamedParameters>
     Least_squares_line_fit_sorting(
       const InputRange& input_range,
       NeighborQuery& neighbor_query,
-      const PointMap point_map = PointMap(),
-      const GeomTraits traits = GeomTraits()) :
+      const NamedParameters& np) :
     m_input_range(input_range),
     m_neighbor_query(neighbor_query),
-    m_point_map(point_map),
-    m_traits(traits) {
+    m_point_map(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::point_map), PointMap())),
+    m_traits(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::geom_traits), GeomTraits())) {
 
       CGAL_precondition(input_range.size() > 0);
       m_order.resize(m_input_range.size());

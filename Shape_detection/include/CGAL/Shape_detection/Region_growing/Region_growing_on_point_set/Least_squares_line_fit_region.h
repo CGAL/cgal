@@ -100,17 +100,6 @@ namespace Point_set {
       a sequence of \ref bgl_namedparameters "Named Parameters"
       among the ones listed below
 
-      \param point_map
-      an instance of `PointMap` that maps an item from `input_range`
-      to `Kernel::Point_2`
-
-      \param normal_map
-      an instance of `NormalMap` that maps an item from `input_range`
-      to `Kernel::Vector_2`
-
-      \param traits
-      an instance of `GeomTraits`
-
       \cgalNamedParamsBegin
         \cgalParamNBegin{distance_threshold}
           \cgalParamDescription{the maximum distance from a point to a line}
@@ -134,6 +123,20 @@ namespace Point_set {
           \cgalParamType{`std::size_t`}
           \cgalParamDefault{2}
         \cgalParamNEnd
+        \cgalParamNBegin{point_map}
+          \cgalParamDescription{an instance of `PointMap` that maps an item from `input_range`
+          to `Kernel::Point_2`}
+          \cgalParamDefault{`PointMap()`}
+        \cgalParamNEnd
+        \cgalParamNBegin{normal_map}
+          \cgalParamDescription{an instance of `NormalMap` that maps an item from `input_range`
+          to `Kernel::Vector_2`}
+          \cgalParamDefault{`NormalMap()`}
+        \cgalParamNEnd
+        \cgalParamNBegin{geom_traits}
+          \cgalParamDescription{an instance of `GeomTraits`}
+          \cgalParamDefault{`GeomTraits()`}
+        \cgalParamNEnd
       \cgalNamedParamsEnd
 
       \pre `input_range.size() > 0`
@@ -145,14 +148,14 @@ namespace Point_set {
     template<typename NamedParameters>
     Least_squares_line_fit_region(
       const InputRange& input_range,
-      const NamedParameters& np,
-      const PointMap point_map = PointMap(),
-      const NormalMap normal_map = NormalMap(),
-      const GeomTraits traits = GeomTraits()) :
+      const NamedParameters& np) :
     m_input_range(input_range),
-    m_point_map(point_map),
-    m_normal_map(normal_map),
-    m_traits(traits),
+    m_point_map(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::point_map), PointMap())),
+    m_normal_map(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::normal_map), NormalMap())),
+    m_traits(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::geom_traits), GeomTraits())),
     m_squared_length_2(m_traits.compute_squared_length_2_object()),
     m_squared_distance_2(m_traits.compute_squared_distance_2_object()),
     m_scalar_product_2(m_traits.compute_scalar_product_2_object()) {
@@ -328,14 +331,13 @@ namespace Point_set {
 
   private:
     const Input_range& m_input_range;
+    const Point_map m_point_map;
+    const Normal_map m_normal_map;
+    const Traits m_traits;
 
     FT m_distance_threshold;
     FT m_cos_value_threshold;
     std::size_t m_min_region_size;
-
-    const Point_map m_point_map;
-    const Normal_map m_normal_map;
-    const Traits m_traits;
 
     const Squared_length_2 m_squared_length_2;
     const Squared_distance_2 m_squared_distance_2;

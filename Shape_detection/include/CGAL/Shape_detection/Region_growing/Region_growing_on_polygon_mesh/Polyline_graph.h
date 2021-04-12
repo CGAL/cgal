@@ -105,6 +105,9 @@ namespace Polygon_mesh {
     /*!
       \brief initializes all internal data structures.
 
+      \tparam NamedParameters
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+
       \param pmesh
       an instance of a `PolygonMesh` that represents a polygon mesh
 
@@ -112,23 +115,33 @@ namespace Polygon_mesh {
       a set of regions, where each region is an `std::vector<std::size_t>` and
       contains indices of all faces in a polygon mesh been identified as the same plane.
 
-      \param vertex_to_point_map
-      an instance of `VertexToPointMap` that maps a polygon mesh
-      vertex to `Kernel::Point_3`
+      \param np
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+      among the ones listed below
+
+      \cgalNamedParamsBegin
+        \cgalParamNBegin{vertex_point_map}
+          \cgalParamDescription{an instance of `VertexToPointMap` that maps a polygon mesh
+          vertex to `Kernel::Point_3`}
+          \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+        \cgalParamNEnd
+      \cgalNamedParamsEnd
 
       \pre `faces(pmesh).size() > 0`
       \pre `edges(pmesh).size() > 0`
       \pre `regions.size() > 0`
     */
+    template<typename NamedParameters>
     Polyline_graph(
       const PolygonMesh& pmesh,
       const std::vector< std::vector<std::size_t> >& regions,
-      const VertexToPointMap vertex_to_point_map) :
+      const NamedParameters& np) :
     m_face_graph(pmesh),
     m_regions(regions),
     m_face_range(faces(m_face_graph)),
     m_edge_range(edges(m_face_graph)),
-    m_vertex_to_point_map(vertex_to_point_map),
+    m_vertex_to_point_map(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, pmesh))),
     m_face_to_region_map(m_face_range, regions),
     m_face_to_index_map(m_face_range),
     m_edge_to_index_map(m_edge_range),

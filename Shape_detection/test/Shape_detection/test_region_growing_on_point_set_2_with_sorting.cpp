@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
 
   // Sort indices.
   Sorting sorting(
-    input_range, neighbor_query);
+    input_range, neighbor_query, CGAL::parameters::all_default());
   sorting.sort();
 
   // Create an instance of the region growing class.

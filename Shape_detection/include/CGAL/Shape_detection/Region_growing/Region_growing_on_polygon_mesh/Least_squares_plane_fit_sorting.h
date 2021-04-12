@@ -90,6 +90,9 @@ namespace Polygon_mesh {
     /*!
       \brief initializes all internal data structures.
 
+      \tparam NamedParameters
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+
       \param pmesh
       an instance of `PolygonMesh` that represents a polygon mesh
 
@@ -97,25 +100,36 @@ namespace Polygon_mesh {
       an instance of `NeighborQuery` that is used internally to
       access face's neighbors
 
-      \param vertex_to_point_map
-      an instance of `VertexToPointMap` that maps a polygon mesh
-      vertex to `Kernel::Point_3`
+      \param np
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+      among the ones listed below
 
-      \param traits
-      an instance of `GeomTraits`
+      \cgalNamedParamsBegin
+        \cgalParamNBegin{vertex_point_map}
+          \cgalParamDescription{an instance of `VertexToPointMap` that maps a polygon mesh
+          vertex to `Kernel::Point_3`}
+          \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+        \cgalParamNEnd
+        \cgalParamNBegin{geom_traits}
+          \cgalParamDescription{an instance of `GeomTraits`}
+          \cgalParamDefault{`GeomTraits()`}
+        \cgalParamNEnd
+      \cgalNamedParamsEnd
 
       \pre `faces(pmesh).size() > 0`
     */
+    template<typename NamedParameters>
     Least_squares_plane_fit_sorting(
       const PolygonMesh& pmesh,
       NeighborQuery& neighbor_query,
-      const VertexToPointMap vertex_to_point_map,
-      const GeomTraits traits = GeomTraits()) :
+      const NamedParameters& np) :
     m_face_graph(pmesh),
     m_neighbor_query(neighbor_query),
     m_face_range(faces(m_face_graph)),
-    m_vertex_to_point_map(vertex_to_point_map),
-    m_traits(traits) {
+    m_vertex_to_point_map(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, pmesh))),
+    m_traits(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::geom_traits), GeomTraits())) {
 
       CGAL_precondition(m_face_range.size() > 0);
       m_order.resize(m_face_range.size());

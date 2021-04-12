@@ -89,6 +89,9 @@ namespace Segment_set {
     /*!
       \brief initializes all internal data structures.
 
+      \tparam NamedParameters
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+
       \param input_range
       an instance of `InputRange` with 2D or 3D segments
 
@@ -96,24 +99,36 @@ namespace Segment_set {
       an instance of `NeighborQuery` that is used internally to
       access vertex's neighbors
 
-      \param segment_map
-      an instance of `SegmentMap` that maps a segment from `input_range`
-      to `Kernel::Segment_2` or `Kernel::Segment_3`
+      \param np
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+      among the ones listed below
 
-      \param traits
-      an instance of `GeomTraits`
+      \cgalNamedParamsBegin
+        \cgalParamNBegin{segment_map}
+          \cgalParamDescription{an instance of `SegmentMap` that maps a segment from `input_range`
+          to `Kernel::Segment_2` or `Kernel::Segment_3`}
+          \cgalParamDefault{`SegmentMap()`}
+        \cgalParamNEnd
+        \cgalParamNBegin{geom_traits}
+          \cgalParamDescription{an instance of `GeomTraits`}
+          \cgalParamDefault{`GeomTraits()`}
+        \cgalParamNEnd
+      \cgalNamedParamsEnd
 
       \pre `input_range.size() > 0`
     */
+    template<typename NamedParameters>
     Least_squares_line_fit_sorting(
       const InputRange& input_range,
       NeighborQuery& neighbor_query,
-      const SegmentMap segment_map = SegmentMap(),
-      const GeomTraits traits = GeomTraits()) :
+      const NamedParameters& np) :
     m_input_range(input_range),
     m_neighbor_query(neighbor_query),
-    m_segment_map(segment_map),
-    m_segment_set_traits(traits) {
+    m_segment_map(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::segment_map), SegmentMap())),
+    m_traits(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::geom_traits), GeomTraits())),
+    m_segment_set_traits(m_traits) {
 
       CGAL_precondition(input_range.size() > 0);
       m_order.resize(m_input_range.size());
@@ -156,6 +171,7 @@ namespace Segment_set {
     const Input_range& m_input_range;
     Neighbor_query& m_neighbor_query;
     const Segment_map m_segment_map;
+    const Traits m_traits;
     const Segment_set_traits m_segment_set_traits;
     std::vector<std::size_t> m_order;
     std::vector<FT> m_scores;

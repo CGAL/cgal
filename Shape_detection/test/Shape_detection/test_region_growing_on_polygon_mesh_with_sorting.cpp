@@ -60,12 +60,13 @@ int main(int argc, char *argv[]) {
     CGAL::parameters::
     distance_threshold(distance_threshold).
     angle_threshold(angle_threshold).
-    min_region_size(min_region_size),
-    vertex_to_point_map);
+    min_region_size(min_region_size).
+    vertex_point_map(vertex_to_point_map));
 
   // Sort indices.
   Sorting sorting(
-    polygon_mesh, neighbor_query, vertex_to_point_map);
+    polygon_mesh, neighbor_query,
+    CGAL::parameters::vertex_point_map(vertex_to_point_map));
   sorting.sort();
 
   // Create an instance of the region growing class.

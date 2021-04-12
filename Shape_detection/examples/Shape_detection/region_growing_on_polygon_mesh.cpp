@@ -29,9 +29,7 @@ using Point_3 = typename Kernel::Point_3;
     using Region_type    = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Polygon_mesh, Face_range>;
     using Sorting        = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, Polygon_mesh, Neighbor_query, Face_range>;
 #endif
-
-using Vertex_to_point_map = typename Region_type::Vertex_to_point_map;
-using Region_growing      = CGAL::Shape_detection::Region_growing<Face_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
+using Region_growing = CGAL::Shape_detection::Region_growing<Face_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
 int main(int argc, char *argv[]) {
 
@@ -40,11 +38,7 @@ int main(int argc, char *argv[]) {
   const std::string filename = is_default_input ? "data/polygon_mesh.off" : argv[1];
 
   Polygon_mesh polygon_mesh;
-  const Vertex_to_point_map vertex_to_point_map(
-    get(CGAL::vertex_point, polygon_mesh));
-
-  if (!CGAL::read_polygon_mesh(filename, polygon_mesh,
-  CGAL::parameters::vertex_point_map(vertex_to_point_map))) {
+  if (!CGAL::read_polygon_mesh(filename, polygon_mesh, CGAL::parameters::all_default())) {
     std::cerr << "ERROR: cannot read the input file!" << std::endl;
     return EXIT_FAILURE;
   }
@@ -65,12 +59,11 @@ int main(int argc, char *argv[]) {
     CGAL::parameters::
     distance_threshold(max_distance_to_plane).
     angle_threshold(max_accepted_angle).
-    min_region_size(min_region_size),
-    vertex_to_point_map);
+    min_region_size(min_region_size));
 
   // Sort face indices.
   Sorting sorting(
-    polygon_mesh, neighbor_query, vertex_to_point_map);
+    polygon_mesh, neighbor_query, CGAL::parameters::all_default());
   sorting.sort();
 
   // Create an instance of the region growing class.

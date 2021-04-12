@@ -62,7 +62,7 @@ int run(const char* filename) {
   const std::size_t number_of_shapes =
     shape_detection.shapes().end() - shape_detection.shapes().begin();
   std::cout << "* number of found shapes: " << number_of_shapes << std::endl;
-  assert(number_of_shapes == 7);
+  assert(number_of_shapes == 16);
   return EXIT_SUCCESS;
 }
 

@@ -19,8 +19,6 @@ using One_ring_query = CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_qu
 using Plane_region   = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Surface_mesh>;
 using RG_planes      = CGAL::Shape_detection::Region_growing<Face_range, One_ring_query, Plane_region>;
 
-using Vertex_to_point_map = typename Plane_region::Vertex_to_point_map;
-
 using Polyline_graph = CGAL::Shape_detection::Polygon_mesh::Polyline_graph<Kernel, Surface_mesh>;
 using Segment_range  = typename Polyline_graph::Segment_range;
 using Segment_map    = typename Polyline_graph::Segment_map;
@@ -36,11 +34,7 @@ int main(int argc, char *argv[]) {
   const std::string filename = is_default_input ? "data/am.off" : argv[1];
 
   Surface_mesh surface_mesh;
-  const Vertex_to_point_map vertex_to_point_map(
-    get(CGAL::vertex_point, surface_mesh));
-
-  if (!CGAL::read_polygon_mesh(filename, surface_mesh,
-  CGAL::parameters::vertex_point_map(vertex_to_point_map))) {
+  if (!CGAL::read_polygon_mesh(filename, surface_mesh, CGAL::parameters::all_default())) {
     std::cerr << "ERROR: cannot read the input file!" << std::endl;
     return EXIT_FAILURE;
   }
@@ -53,8 +47,7 @@ int main(int argc, char *argv[]) {
 
   // Find planar regions.
   One_ring_query one_ring_query(surface_mesh);
-  Plane_region plane_region(surface_mesh,
-    CGAL::parameters::all_default(), vertex_to_point_map);
+  Plane_region plane_region(surface_mesh, CGAL::parameters::all_default());
   RG_planes rg_planes(face_range, one_ring_query, plane_region);
 
   std::vector< std::vector<std::size_t> > regions;
@@ -66,14 +59,14 @@ int main(int argc, char *argv[]) {
   utils::save_polygon_mesh_regions(surface_mesh, regions, fullpath);
 
   // Find linear regions.
-  Polyline_graph pgraph(surface_mesh, regions, vertex_to_point_map);
+  Polyline_graph pgraph(surface_mesh, regions, CGAL::parameters::all_default());
   const auto& segment_range = pgraph.segment_range();
   std::cout << "* number of extracted segments: " << segment_range.size() << std::endl;
 
   Line_region line_region(
-    segment_range, CGAL::parameters::all_default(), pgraph.segment_map());
+    segment_range, CGAL::parameters::segment_map(pgraph.segment_map()));
   Line_sorting line_sorting(
-    segment_range, pgraph, pgraph.segment_map());
+    segment_range, pgraph, CGAL::parameters::segment_map(pgraph.segment_map()));
   line_sorting.sort();
 
   RG_lines rg_lines(
