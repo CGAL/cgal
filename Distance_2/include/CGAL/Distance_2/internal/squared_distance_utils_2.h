@@ -294,7 +294,6 @@ same_direction(const typename K::Vector_2 &u,
   return same_direction_tag(u,v, k, tag);
 }
 
-
 } // namespace internal
 
 } //namespace CGAL
