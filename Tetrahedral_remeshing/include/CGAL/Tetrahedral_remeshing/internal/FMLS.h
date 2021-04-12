@@ -389,7 +389,7 @@ private:
       for (std::size_t i = 0; i < 3; i++)
       {
         res[i] = (std::size_t)ceil((minMax[3 + i] - minMax[i]) / cellSize);
-        if(res[1] == 0)
+        if(res[i] == 0)
           res[i] = 1;
       }
 
