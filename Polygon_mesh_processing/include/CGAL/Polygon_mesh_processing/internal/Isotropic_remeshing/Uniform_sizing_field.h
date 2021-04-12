@@ -21,6 +21,8 @@
 
 namespace CGAL
 {
+namespace Polygon_mesh_processing
+{
 template <class PolygonMesh>
 class Uniform_sizing_field : public CGAL::Sizing_field<PolygonMesh>
 {
@@ -96,6 +98,7 @@ private:
   const PolygonMesh& m_pmesh;
 };
 
+}//end namespace Polygon_mesh_processing
 }//end namespace CGAL
 
 #endif //CGAL_PMP_REMESHING_UNIFORM_SIZING_FIELD_H
