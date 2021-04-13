@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
   }
   CGAL::Image_3 weights;
   fname = (argc>2)?argv[2]:"data/liver-weights.inr.gz";
-  if((argc == 1 || argc > 2) && !weights.read(argv[2])) {
+  if((argc == 1 || argc > 2) && !weights.read(fname)) {
     std::cerr << "Error: Cannot read file " <<  argv[2] << std::endl;
     return EXIT_FAILURE;
   }
