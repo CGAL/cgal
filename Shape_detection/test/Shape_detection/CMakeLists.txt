@@ -21,7 +21,6 @@ if(EIGEN3_FOUND)
   # create_single_source_cgal_program("test_region_growing_on_segment_set.cpp")
   create_single_source_cgal_program("test_region_growing_on_polygon_mesh.cpp")
   # create_single_source_cgal_program("test_region_growing_on_polyline.cpp")
-  create_single_source_cgal_program("test_region_growing_on_polyline_graph.cpp")
   create_single_source_cgal_program("test_region_growing_on_point_set_2_with_sorting.cpp")
   create_single_source_cgal_program("test_region_growing_on_point_set_3_with_sorting.cpp")
   # create_single_source_cgal_program("test_region_growing_on_segment_set_with_sorting.cpp")
@@ -38,7 +37,6 @@ if(EIGEN3_FOUND)
     # test_region_growing_on_segment_set
     test_region_growing_on_polygon_mesh
     # test_region_growing_on_polyline
-    test_region_growing_on_polyline_graph
     test_region_growing_on_point_set_2_with_sorting
     test_region_growing_on_point_set_3_with_sorting
     # test_region_growing_on_segment_set_with_sorting
