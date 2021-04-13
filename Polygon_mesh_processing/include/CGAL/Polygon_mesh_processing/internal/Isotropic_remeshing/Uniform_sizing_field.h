@@ -21,6 +21,8 @@
 
 namespace CGAL
 {
+  namepace Polygon_mesh_processing
+  {
 template <class PolygonMesh>
 class Uniform_sizing_field : public CGAL::Sizing_field<PolygonMesh>
 {
@@ -72,7 +74,26 @@ public:
     else
         return boost::none;
   }
+  
+   boost::optional<FT> is_protected_constraint_too_long(const halfedge_descriptor& h) const
+  {
+    const FT sqlen = 4./3. * sqlength(h);
+    if(sqlen > m_sq_long)
+      return sqlen;
+    else
+      return boost::none;
+  }
 
+  boost::optional<FT> is_protected_constraint_too_long(const vertex_descriptor& va,
+                                  const vertex_descriptor& vb) const
+  {
+    const FT sqlen = 4./3.* sqlength(va, vb);
+    if (sqlen > m_sq_long)
+      return sqlen;
+    else
+        return boost::none;
+  }
+  
   boost::optional<FT> is_too_short(const halfedge_descriptor& h) const
   {
     const FT sqlen = sqlength(h);
@@ -81,7 +102,7 @@ public:
     else
       return boost::none;
   }
-
+  
   virtual Point_3 split_placement(const halfedge_descriptor& h) const
   {
     typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type
@@ -89,6 +110,7 @@ public:
     return CGAL::midpoint(get(vpmap, target(h, m_pmesh)),
                           get(vpmap, source(h, m_pmesh)));
   }
+  
 
 private:
   FT m_sq_short;
@@ -96,6 +118,7 @@ private:
   const PolygonMesh& m_pmesh;
 };
 
+}//end namespace Polygon_mesh_processing
 }//end namespace CGAL
 
 #endif //CGAL_PMP_REMESHING_UNIFORM_SIZING_FIELD_H
