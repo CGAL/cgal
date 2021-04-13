@@ -52,9 +52,9 @@ class Nef_box : public Box_intersection_d::Box_d< double, 3 > {
 
   void extend( const Point_3& p, const Tag_false& ) {
     std::pair<double, double> q[3];
-    q[0] = CGAL::to_interval( p.x() );
-    q[1] = CGAL::to_interval( p.y() );
-    q[2] = CGAL::to_interval( p.z() );
+    q[0] = CGAL::to_interval( approx(p).x() );
+    q[1] = CGAL::to_interval( approx(p).y() );
+    q[2] = CGAL::to_interval( approx(p).z() );
     Box_intersection_d::Box_d< double, 3 >::extend(q);
   }
 
