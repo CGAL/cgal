@@ -125,6 +125,11 @@ public:
     return true;
   }
 
+  virtual bool is_translation() const
+  {
+    return true;
+  }
+
   virtual FT cartesian(int i, int j) const
   {
     if (j==i) return FT(1);

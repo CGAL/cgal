@@ -87,6 +87,9 @@ public:
 
   virtual  FT
            cartesian(int i, int j) const = 0;
+
+  virtual  bool
+           is_translation() const = 0;
 };
 
 template < class R_ >
@@ -211,6 +214,12 @@ public:
   virtual  bool
            is_even() const
            { return true; }
+
+  virtual  bool
+           is_translation() const
+           {
+             return false;
+           }
 
   virtual  RT
            homogeneous(int i, int j) const
@@ -691,6 +700,12 @@ template < class R >
 inline
 bool
 Translation_repH3<R>::is_even() const
+{ return true; }
+
+template < class R >
+inline
+bool
+Translation_repH3<R>::is_translation() const
 { return true; }
 
 template < class R >
