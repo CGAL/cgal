@@ -69,7 +69,7 @@ namespace Polygon_mesh {
       std::size_t index = std::size_t(-1);
       std::set<std::size_t> sneighbors;
       std::set<std::size_t> tneighbors;
-      std::pair<int, int> regions;
+      std::pair<long, long> regions;
     };
 
   public:
@@ -179,7 +179,7 @@ namespace Polygon_mesh {
     void build_graph() {
 
       clear();
-      int r1 = -1, r2 = -1;
+      long r1 = -1, r2 = -1;
       std::vector<std::size_t> pedge_map(
         m_edge_range.size(), std::size_t(-1));
       for (const auto& edge : m_edge_range) {
@@ -301,7 +301,7 @@ namespace Polygon_mesh {
 
       \pre `query_index < segment_range().size()`
     */
-    const std::pair<int, int>& edge_regions(
+    const std::pair<long, long>& edge_regions(
       const std::size_t query_index) const {
 
       CGAL_precondition(query_index < segment_range().size());
@@ -334,7 +334,7 @@ namespace Polygon_mesh {
     std::vector<PEdge> m_pedges;
 
     template<typename EdgeType>
-    std::pair<int, int> get_regions(const EdgeType& edge) const {
+    std::pair<long, long> get_regions(const EdgeType& edge) const {
 
       const auto hedge1 = halfedge(edge, m_face_graph);
       const auto hedge2 = opposite(hedge1, m_face_graph);
@@ -346,17 +346,17 @@ namespace Polygon_mesh {
       const std::size_t fi2 = get(m_face_to_index_map, face2);
       CGAL_precondition(fi1 != fi2);
 
-      int r1 = -1, r2 = -1;
+      long r1 = -1, r2 = -1;
       if (fi1 != std::size_t(-1))
-        r1 = get(m_face_to_region_map, fi1);
+        r1 = get(m_face_to_region_map, face1);
       if (fi2 != std::size_t(-1))
-        r2 = get(m_face_to_region_map, fi2);
+        r2 = get(m_face_to_region_map, face2);
       return std::make_pair(r1, r2);
     }
 
     template<typename EdgeType>
     void add_graph_edge(
-      const EdgeType& edge, const int region1, const int region2,
+      const EdgeType& edge, const long region1, const long region2,
       std::vector<std::size_t>& pedge_map) {
 
       PEdge pedge;

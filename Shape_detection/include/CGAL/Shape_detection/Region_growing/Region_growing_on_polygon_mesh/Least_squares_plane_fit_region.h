@@ -66,7 +66,16 @@ namespace Polygon_mesh {
     using Face_graph = PolygonMesh;
     using Face_range = FaceRange;
     using Vertex_to_point_map = VertexToPointMap;
-    using Face_to_region_map = internal::Item_to_region_index_map;
+
+    using Face_to_index_map = internal::Item_to_index_property_map<Face_range>;
+    using Face_to_region_index_map = internal::Item_to_region_index_map<Face_to_index_map>;
+
+    struct Face_to_region_map : public Face_to_region_index_map {
+      template<typename Regions>
+      Face_to_region_map(const Face_range& face_range, const Regions& regions) :
+      Face_to_region_index_map(face_range, Face_to_index_map(face_range), regions)
+      { }
+    };
     /// \endcond
 
     /// Number type.

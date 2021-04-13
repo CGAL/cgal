@@ -42,17 +42,14 @@ namespace internal {
   class Item_property_map {
 
   public:
-    using Item_range = ItemRange;
-    using Property_map = PropertyMap;
-
-    using value_type = typename Property_map::value_type;
-    using reference = const value_type&;
     using key_type = std::size_t;
+    using value_type = typename PropertyMap::value_type;
+    using reference = const value_type&;
     using category = boost::lvalue_property_map_tag;
 
     Item_property_map(
-      const Item_range& item_range,
-      const Property_map& property_map) :
+      const ItemRange& item_range,
+      const PropertyMap& property_map) :
     m_item_range(item_range),
     m_property_map(property_map)
     { }
@@ -69,26 +66,20 @@ namespace internal {
     }
 
   private:
-    const Item_range& m_item_range;
-    const Property_map& m_property_map;
+    const ItemRange& m_item_range;
+    const PropertyMap& m_property_map;
   };
 
   template<typename ItemRange>
   class Item_to_index_property_map {
 
   public:
-    using Item_range = ItemRange;
-
-    using Iterator = typename Item_range::const_iterator;
-    using Item = typename Iterator::value_type;
-
+    using key_type = typename ItemRange::const_iterator::value_type;
     using value_type = std::size_t;
-    using key_type = Item;
+    using reference = value_type;
     using category = boost::readable_property_map_tag;
 
-    using Item_map = std::map<key_type, value_type>;
-
-    Item_to_index_property_map(const Item_range& item_range) :
+    Item_to_index_property_map(const ItemRange& item_range) :
     m_item_range(item_range) {
 
       value_type i = 0;
@@ -112,8 +103,8 @@ namespace internal {
     }
 
   private:
-    const Item_range& m_item_range;
-    Item_map m_item_map;
+    const ItemRange& m_item_range;
+    std::map<key_type, value_type> m_item_map;
   };
 
   class Seed_property_map {
@@ -121,6 +112,7 @@ namespace internal {
   public:
     using key_type = std::size_t;
     using value_type = std::size_t;
+    using reference = value_type;
     using category = boost::readable_property_map_tag;
 
     Seed_property_map(
@@ -141,41 +133,52 @@ namespace internal {
     const std::vector<std::size_t>& m_seeds;
   };
 
+  template<typename ItemToIndexMap>
   class Item_to_region_index_map {
 
   public:
-    using key_type = std::size_t;
-    using value_type = int;
+    using key_type = typename ItemToIndexMap::key_type;
+    using value_type = long;
     using reference = value_type;
     using category = boost::readable_property_map_tag;
 
-    Item_to_region_index_map() { }
+    Item_to_region_index_map() :
+    m_item_to_index_map(nullptr)
+    { }
 
-    template<typename ItemRange>
+    template<typename ItemRange, typename RegionRange>
     Item_to_region_index_map(
       const ItemRange& items,
-      const std::vector< std::vector<std::size_t> >& regions) :
+      const ItemToIndexMap& item_to_index_map,
+      const RegionRange& regions) :
+    m_item_to_index_map(std::make_shared<ItemToIndexMap>(item_to_index_map)),
     m_indices(items.size(), -1) {
 
-      for (std::size_t i = 0; i < regions.size(); ++i) {
-        for (const std::size_t index : regions[i]) {
+      long region_index = 0;
+      for (const auto& region : regions) {
+        for (const auto index : region) {
           CGAL_precondition(index < m_indices.size());
-          m_indices[index] = static_cast<int>(i);
+          m_indices[index] = region_index;
         }
+        ++region_index;
       }
+      CGAL_precondition(region_index == static_cast<long>(regions.size()));
     }
 
     inline friend value_type get(
       const Item_to_region_index_map& item_to_region_index_map,
-      const key_type key) {
+      const key_type& key) {
 
       const auto& indices = item_to_region_index_map.m_indices;
-      CGAL_precondition(key < indices.size());
-      return indices[key];
+      const auto& item_to_index_map = item_to_region_index_map.m_item_to_index_map;
+      const std::size_t item_index = get(*item_to_index_map, key);
+      CGAL_precondition(item_index < indices.size());
+      return indices[item_index];
     }
 
   private:
-    std::vector<int> m_indices;
+    const std::shared_ptr<ItemToIndexMap> m_item_to_index_map;
+    std::vector<long> m_indices;
   };
 
 } // namespace internal
