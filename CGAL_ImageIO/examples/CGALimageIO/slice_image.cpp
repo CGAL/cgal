@@ -3,6 +3,10 @@
 #include <string>
 
 int main(int argc, char **argv) {
+  if (argc != 3) {
+    std::cerr << "Usage: slice_size <input> <output>\n";
+    return argc != 1;
+  }
   _image *image = ::_readImage(argv[1]);
   if (!image)
     return 2;
