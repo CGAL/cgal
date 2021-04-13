@@ -101,8 +101,8 @@ linear_least_squares_fitting_2(InputIterator first,
     transformation = area * transformation * moment * LA::transpose(transformation);
 
     // Translate the 2nd order moment to the center of the rectangle.
-    FT xav0 = (x1-x0)/2.0;
-    FT yav0 = (y2-y0)/2.0;
+    FT xav0 = (x1-x0)/FT(2);
+    FT yav0 = (y2-y0)/FT(2);
     // and add to covariance matrix
     covariance[0] += transformation[0][0] + area * (x0*xav0*2 + x0*x0);
     covariance[1] += transformation[0][1] + area * (x0*yav0 + xav0*y0 + x0*y0);
