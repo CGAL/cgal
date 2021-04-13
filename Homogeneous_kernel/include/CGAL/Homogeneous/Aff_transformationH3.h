@@ -139,6 +139,9 @@ public:
   virtual  bool
            is_even() const;
 
+  virtual  bool
+           is_translation() const;
+
   virtual  RT
            homogeneous(int i, int j) const ;
 
@@ -272,6 +275,9 @@ public:
 
   virtual  bool
            is_even() const;
+
+  virtual  bool
+           is_translation() const;
 
   virtual  RT
            homogeneous(int i, int j) const ;
@@ -547,6 +553,14 @@ Aff_transformation_repH3<R>::is_even() const
                                               t10, t11, t12,
                                               t20, t21, t22 ) ) == POSITIVE );
 }
+
+template < class R >
+CGAL_KERNEL_INLINE
+bool
+Aff_transformation_repH3<R>::is_translation() const
+  return false;
+}
+
 
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
