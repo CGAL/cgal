@@ -558,6 +558,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 bool
 Aff_transformation_repH3<R>::is_translation() const
+{
   return false;
 }
 
