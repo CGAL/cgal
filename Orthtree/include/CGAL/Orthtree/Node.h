@@ -259,7 +259,7 @@ public:
 
   /// \cond SKIP_IN_MANUAL
   // Default creates null node
-  Node() { }
+  Node() : m_data(nullptr) { }
 
   // Comparison operator
   bool operator< (const Node& other) const { return m_data < other.m_data; }
