@@ -484,8 +484,6 @@ public:
   {
     typedef typename Kernel_::Point_3 Point_3;
 
-    using BaseClass::Less_xyz_3::operator();
-
     bool operator()(const Point_3& p, const Point_3& q) const
     {
       if (p.rep().identical(q.rep())) { return false; }
