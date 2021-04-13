@@ -19,9 +19,10 @@ using One_ring_query = CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_qu
 using Plane_region   = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Surface_mesh>;
 using RG_planes      = CGAL::Shape_detection::Region_growing<Face_range, One_ring_query, Plane_region>;
 
-using Polyline_graph = CGAL::Shape_detection::Polygon_mesh::Polyline_graph<Kernel, Surface_mesh>;
-using Segment_range  = typename Polyline_graph::Segment_range;
-using Segment_map    = typename Polyline_graph::Segment_map;
+using Face_to_region_map = typename Plane_region::Face_to_region_map;
+using Polyline_graph     = CGAL::Shape_detection::Polygon_mesh::Polyline_graph<Kernel, Surface_mesh, Face_to_region_map>;
+using Segment_range      = typename Polyline_graph::Segment_range;
+using Segment_map        = typename Polyline_graph::Segment_map;
 
 using Line_region  = CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region<Kernel, Segment_range, Segment_map>;
 using Line_sorting = CGAL::Shape_detection::Segment_set::Least_squares_line_fit_sorting<Kernel, Segment_range, Polyline_graph, Segment_map>;
@@ -59,7 +60,8 @@ int main(int argc, char *argv[]) {
   utils::save_polygon_mesh_regions(surface_mesh, regions, fullpath);
 
   // Find linear regions.
-  Polyline_graph pgraph(surface_mesh, regions, CGAL::parameters::all_default());
+  const Face_to_region_map face_to_region_map(face_range, regions);
+  Polyline_graph pgraph(surface_mesh, CGAL::parameters::face_index_map(face_to_region_map));
   const auto& segment_range = pgraph.segment_range();
   std::cout << "* number of extracted segments: " << segment_range.size() << std::endl;
 

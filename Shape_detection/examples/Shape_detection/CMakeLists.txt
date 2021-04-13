@@ -19,7 +19,7 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("region_growing_on_point_set_2.cpp")
   create_single_source_cgal_program("region_growing_on_point_set_3.cpp")
   create_single_source_cgal_program("region_growing_on_polygon_mesh.cpp")
-  create_single_source_cgal_program("region_growing_on_polyline_graph.cpp")
+  create_single_source_cgal_program("region_growing_on_segment_set.cpp")
   create_single_source_cgal_program("region_growing_on_polyline.cpp")
   create_single_source_cgal_program("region_growing_with_custom_classes.cpp")
 
@@ -31,7 +31,7 @@ if(TARGET CGAL::Eigen3_support)
     region_growing_on_point_set_2
     region_growing_on_point_set_3
     region_growing_on_polygon_mesh
-    region_growing_on_polyline_graph
+    region_growing_on_segment_set
     region_growing_on_polyline
     region_growing_with_custom_classes)
     target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)

@@ -66,10 +66,20 @@ namespace Polygon_mesh {
     using Face_graph = PolygonMesh;
     using Face_range = FaceRange;
     using Vertex_to_point_map = VertexToPointMap;
+    using Face_to_region_map = internal::Item_to_region_index_map;
     /// \endcond
 
     /// Number type.
     typedef typename GeomTraits::FT FT;
+
+    #ifdef DOXYGEN_RUNNING
+      /*!
+        a model of `ReadablePropertyMap` whose key type is `boost::graph_traits<PolygonMesh>::face_descriptor`
+        and value type is `std::size_t`. This map associates each face of the input mesh
+        to the index of the planar region it belongs to.
+      */
+      typedef unspecified_type Face_to_region_map;
+    #endif
 
     /// @}
 
