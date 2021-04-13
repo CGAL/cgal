@@ -246,8 +246,7 @@ namespace internal {
             get(ecmap, e) ||
             get(fpm, face(h,pmesh))!=get(fpm, face(opposite(h,pmesh),pmesh)) )
       {
-        if (sqh < CGAL::squared_distance(get(vpmap, source(h, pmesh)),
-                                         get(vpmap, target(h, pmesh))))
+        if (sizing.is_protected_constraints_too_long(source(p,mesh), target(p,mesh))
         {
           return false;
         }
