@@ -17,7 +17,7 @@
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/function_objects.h>
-
+#include <CGAL/Image_3.h>
 
 namespace CGAL {
 
