@@ -588,6 +588,7 @@ public:
               generated_candidates++;
 
               //add candidate for each type of primitives
+              bool candidate_success = false;
               for(typename std::vector<Shape *(*)()>::iterator it =
                     m_shape_factories.begin(); it != m_shape_factories.end(); it++)        {
                 if (callback && !callback(num_invalid / double(m_num_total_points)))
@@ -611,17 +612,19 @@ public:
                       best_expected = p->expected_value();
 
                     candidates.push_back(p);
+                    candidate_success = true;
                   }
                   else {
-                    failed_candidates++;
                     delete p;
                   }
                 }
                 else {
-                  failed_candidates++;
                   delete p;
                 }
               }
+              if (!candidate_success)
+                ++ failed_candidates;
+
             }
 
             if (failed_candidates >= limit_failed_candidates)
