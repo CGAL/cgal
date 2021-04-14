@@ -13,6 +13,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
+#include <CGAL/Shape_detection/Region_growing/internal/free_functions.h>
 
 namespace SD = CGAL::Shape_detection;
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
