@@ -120,7 +120,7 @@ public:
 
     m_octree.refine(maxLevel, bucketSize);
 
-    m_width = 0.5 * FT(m_octree.bbox(m_octree.root()).xmax() - m_octree.bbox(m_octree.root()).xmin());
+    m_width = FT(0.5) * FT(m_octree.bbox(m_octree.root()).xmax() - m_octree.bbox(m_octree.root()).xmin());
   }
 
   const typename Traits::FT& width() const {
