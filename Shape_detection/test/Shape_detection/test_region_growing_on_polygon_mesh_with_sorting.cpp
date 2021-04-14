@@ -15,6 +15,7 @@
 
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_polygon_mesh.h>
+#include <CGAL/Shape_detection/Region_growing/internal/free_functions.h>
 
 namespace SD = CGAL::Shape_detection;
 using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
@@ -80,8 +81,18 @@ int main(int argc, char *argv[]) {
   // std::cout << regions.size() << std::endl;
   assert(regions.size() == 326);
 
-  // test free function
-  // test randomness
+  // Test determenistic behavior and free functions.
+  for (std::size_t k = 0; k < 3; ++k) {
+    regions.clear();
+    SD::internal::region_growing_planes(
+      polygon_mesh, std::back_inserter(regions),
+      CGAL::parameters::
+      distance_threshold(distance_threshold).
+      angle_threshold(angle_threshold).
+      min_region_size(min_region_size).
+      vertex_point_map(vertex_to_point_map));
+    assert(regions.size() == 326);
+  }
 
   std::cout << "rg_sortfaces3, epeck_test_success: " << true << std::endl;
   return EXIT_SUCCESS;

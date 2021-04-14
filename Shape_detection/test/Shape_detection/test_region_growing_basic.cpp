@@ -13,16 +13,13 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
-#include <CGAL/Shape_detection/Region_growing/internal/free_functions.h>
 
 namespace SD = CGAL::Shape_detection;
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 
 using FT       = typename Kernel::FT;
 using Point_2  = typename Kernel::Point_2;
-using Point_3  = typename Kernel::Point_3;
 using Vector_2 = typename Kernel::Vector_2;
-using Vector_3 = typename Kernel::Vector_3;
 
 using Point_with_normal = std::pair<Point_2, Vector_2>;
 using Input_range       = std::vector<Point_with_normal>;
@@ -68,30 +65,16 @@ int main(int argc, char *argv[]) {
 
   unassigned_points.clear();
   region_growing.unassigned_items(std::back_inserter(unassigned_points));
-  assert(unassigned_points.size() != 3634);
+  const std::size_t num_unassigned_points = unassigned_points.size();
+  assert(num_unassigned_points != 3634);
 
   regions.clear();
   region_growing.detect(std::back_inserter(regions));
   assert(regions.size() == num_regions);
 
-  const std::vector< std::pair<Point_3, Vector_3> > points_with_normals = {
-    std::make_pair(Point_3(0.1, 0.0, 0.0), Vector_3(0.0, 0.0, 1.0)),
-    std::make_pair(Point_3(0.5, 0.0, 0.0), Vector_3(0.0, 0.0, 1.0)),
-    std::make_pair(Point_3(0.9, 0.0, 0.0), Vector_3(0.0, 0.0, 1.0)),
-    std::make_pair(Point_3(0.1, 1.0, 0.0), Vector_3(0.0, 0.0, 1.0)),
-    std::make_pair(Point_3(0.5, 1.0, 0.0), Vector_3(0.0, 0.0, 1.0)),
-    std::make_pair(Point_3(0.9, 1.0, 0.0), Vector_3(0.0, 0.0, 1.0)),
-    std::make_pair(Point_3(0.1, 2.0, 0.0), Vector_3(0.0, 0.0, 1.0)),
-    std::make_pair(Point_3(0.5, 2.0, 0.0), Vector_3(0.0, 0.0, 1.0)),
-    std::make_pair(Point_3(0.9, 2.0, 0.0), Vector_3(0.0, 0.0, 1.0))
-  };
-  assert(points_with_normals.size() == 9);
-
-  regions.clear();
-  CGAL::Shape_detection::internal::region_growing_planes(
-    points_with_normals, std::back_inserter(regions));
-  assert(regions.size() == 1);
-  assert(regions[0].size() == 9);
+  unassigned_points.clear();
+  region_growing.unassigned_items(std::back_inserter(unassigned_points));
+  assert(unassigned_points.size() == num_unassigned_points);
 
   std::cout << "rg_basic, epick_test_success: " << true << std::endl;
   return EXIT_SUCCESS;

@@ -18,6 +18,7 @@
 
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_polygon_mesh.h>
+#include <CGAL/Shape_detection/Region_growing/internal/free_functions.h>
 
 namespace SD = CGAL::Shape_detection;
 
@@ -52,6 +53,12 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
   const Face_range face_range = faces(polyhedron);
   assert(face_range.size() == 6);
 
+  for (const auto& face : face_range) {
+    const auto he = halfedge(face, polyhedron);
+    const auto vertices = vertices_around_face(he, polyhedron);
+    assert(vertices.size() == 4);
+  }
+
   // Create parameter classes.
   Neighbor_query neighbor_query(polyhedron);
   const Vertex_to_point_map vertex_to_point_map(
@@ -77,7 +84,7 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
 
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
-  assert(regions.size() == 6);
+  assert(regions.size() == face_range.size());
   for (const auto& region : regions)
     assert(region_type.is_valid_region(region));
 
@@ -85,9 +92,18 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
   region_growing.unassigned_items(std::back_inserter(unassigned_faces));
   assert(unassigned_faces.size() == 0);
 
-  // test free function
-  // test randomness
-
+  // Test determenistic behavior and free functions.
+  for (std::size_t k = 0; k < 3; ++k) {
+    regions.clear();
+    SD::internal::region_growing_planes(
+      polyhedron, std::back_inserter(regions),
+      CGAL::parameters::
+      distance_threshold(distance_threshold).
+      angle_threshold(angle_threshold).
+      min_region_size(min_region_size).
+      vertex_point_map(vertex_to_point_map));
+    assert(regions.size() == face_range.size());
+  }
   return true;
 }
 

@@ -1,35 +1,55 @@
-#include "include/utils.h"
+// STL includes.
+#include <string>
+#include <vector>
+#include <utility>
+#include <fstream>
+#include <iostream>
+#include <iterator>
+#include <cassert>
+
+// CGAL includes.
+#include <CGAL/assertions.h>
+#include <CGAL/property_map.h>
+
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_polyline.h>
 
-// Typedefs.
-using Kernel  = CGAL::Simple_cartesian<double>;
-using FT      = typename Kernel::FT;
-using Point_2 = typename Kernel::Point_2;
-using Point_3 = typename Kernel::Point_3;
-using Plane_3 = typename Kernel::Plane_3;
+namespace SD = CGAL::Shape_detection;
 
-using Polyline_2  = std::vector<Point_2>;
-using Polyline_3  = std::vector<Point_3>;
-using Point_map_2 = CGAL::Identity_property_map<Point_2>;
-using Point_map_3 = CGAL::Identity_property_map<Point_3>;
+template<class Kernel>
+bool test_region_growing_on_polyline(int argc, char *argv[]) {
 
-using Neighbor_query = CGAL::Shape_detection::Polyline::One_ring_neighbor_query<Kernel, Polyline_3>;
-using Region_type    = CGAL::Shape_detection::Polyline::Least_squares_line_fit_region<Kernel, Polyline_3, Point_map_3>;
-using Region_growing = CGAL::Shape_detection::Region_growing<Polyline_3, Neighbor_query, Region_type>;
+  using FT      = typename Kernel::FT;
+  using Point_2 = typename Kernel::Point_2;
+  using Point_3 = typename Kernel::Point_3;
 
-int main(int argc, char *argv[]) {
+  using Polyline_2  = std::vector<Point_2>;
+  using Polyline_3  = std::vector<Point_3>;
+  using Point_map_2 = CGAL::Identity_property_map<Point_2>;
+  using Point_map_3 = CGAL::Identity_property_map<Point_3>;
 
-  // Load polyline data either from a local folder or a user-provided file.
-  const bool is_default_input = argc > 1 ? false : true;
-  std::ifstream in(is_default_input ? "data/polyline_3.polylines.txt" : argv[1]);
+  using Neighbor_query_2 = SD::Polyline::One_ring_neighbor_query<Kernel, Polyline_2>;
+  using Region_type_2    = SD::Polyline::Least_squares_line_fit_region<Kernel, Polyline_2, Point_map_2>;
+  using Region_growing_2 = SD::Region_growing<Polyline_2, Neighbor_query_2, Region_type_2>;
+
+  using Neighbor_query_3 = SD::Polyline::One_ring_neighbor_query<Kernel, Polyline_3>;
+  using Region_type_3    = SD::Polyline::Least_squares_line_fit_region<Kernel, Polyline_3, Point_map_3>;
+  using Region_growing_3 = SD::Region_growing<Polyline_3, Neighbor_query_3, Region_type_3>;
+
+  // Default parameter values for the data file polyline_3.polylines.txt.
+  const FT max_distance_to_line = FT(45) / FT(10);
+  const FT max_accepted_angle   = FT(45);
+
+  // Load data.
+  std::ifstream in(argc > 1 ? argv[1] : "data/polyline_3.polylines.txt");
   CGAL::set_ascii_mode(in);
-  if (!in) {
-    std::cerr << "ERROR: cannot read the input file!" << std::endl;
-    return EXIT_FAILURE;
-  }
+  assert(in);
 
+  // Create the 3D polyline.
   Polyline_3 polyline_3;
   std::size_t n = std::size_t(-1);
   in >> n;
@@ -37,49 +57,40 @@ int main(int argc, char *argv[]) {
   while (n--) {
     Point_3 point; in >> point;
     polyline_3.push_back(point);
-    if (!in.good()) {
-      std::cout << "ERROR: cannot load a polyline!" << std::endl;
-      return EXIT_FAILURE;
-    }
+    assert(in.good());
   }
   in.close();
-  std::cout << "* number of input vertices: " << polyline_3.size() << std::endl;
-  assert(is_default_input && polyline_3.size() == 249);
+  assert(polyline_3.size() == 249);
 
-  // Default parameter values for the data file polyline_3.polylines.txt.
-  const FT max_distance_to_line = FT(45) / FT(10);
-  const FT max_accepted_angle   = FT(45);
-
-  // Create instances of the classes Neighbor_query and Region_type.
-  Neighbor_query neighbor_query(polyline_3);
-
-  Region_type region_type(
+  // Create 3D parameter classes.
+  Neighbor_query_3 neighbor_query_3(polyline_3);
+  Region_type_3 region_type_3(
     polyline_3,
     CGAL::parameters::
     distance_threshold(max_distance_to_line).
     angle_threshold(max_accepted_angle));
 
-  // Create an instance of the region growing class.
-  Region_growing region_growing(
-    polyline_3, neighbor_query, region_type);
+  // Run 3D region growing.
+  Region_growing_3 region_growing_3(
+    polyline_3, neighbor_query_3, region_type_3);
 
-  // Run the algorithm on a 3D polyline.
   std::vector< std::vector<std::size_t> > regions;
-  region_growing.detect(std::back_inserter(regions));
-  std::cout << "* number of found 3D regions: " << regions.size() << std::endl;
-  assert(is_default_input && regions.size() == 12);
+  region_growing_3.detect(std::back_inserter(regions));
+  // std::cout << regions.size() << std::endl;
+  assert(regions.size() == 12);
+  for (const auto& region : regions)
+    assert(region_type_3.is_valid_region(region));
 
-  // Save 3D regions to a file.
-  // std::string fullpath = (argc > 2 ? argv[2] : "regions_polyline_3.ply");
-  // utils::save_point_regions_3<Kernel, Polyline_3, Point_map_3>(
-  //   polyline_3, regions, fullpath);
+  std::vector<std::size_t> unassigned_points;
+  region_growing_3.unassigned_items(std::back_inserter(unassigned_points));
+  // std::cout << unassigned_points.size() << std::endl;
+  assert(unassigned_points.size() == 0);
 
   // Create the 2D polyline.
-  Plane_3 plane; Point_3 centroid;
-  CGAL::linear_least_squares_fitting_3(
-    polyline_3.begin(), polyline_3.end(), plane, centroid,
-    CGAL::Dimension_tag<0>(), Kernel(),
-    CGAL::Eigen_diagonalize_traits<FT, 3>());
+  std::vector<std::size_t> indices(polyline_3.size());
+  std::iota(indices.begin(), indices.end(), 0);
+  const auto plane = SD::internal::create_plane(
+    polyline_3, Point_map_3(), indices, Kernel()).first;
 
   Polyline_2 polyline_2;
   polyline_2.reserve(polyline_3.size());
@@ -88,22 +99,65 @@ int main(int argc, char *argv[]) {
     const auto p2 = plane.to_2d(p3);
     polyline_2.push_back(p2);
   }
-  assert(is_default_input && polyline_2.size() == polyline_3.size());
+  assert(polyline_2.size() == polyline_3.size());
 
-  // Use a free function to get the 2D regions.
-  regions.clear();
-  CGAL::Shape_detection::internal::region_growing_polylines(
-    polyline_2, std::back_inserter(regions),
+  // Create 2D parameter classes.
+  Neighbor_query_2 neighbor_query_2(polyline_2);
+  Region_type_2 region_type_2(
+    polyline_2,
     CGAL::parameters::
     distance_threshold(max_distance_to_line).
     angle_threshold(max_accepted_angle));
-  std::cout << "* number of found 2D regions: " << regions.size() << std::endl;
-  assert(is_default_input && regions.size() == 5);
 
-  // Save 2D regions to a file.
-  // fullpath = (argc > 2 ? argv[2] : "regions_polyline_2.ply");
-  // utils::save_point_regions_2<Kernel, Polyline_2, Point_map_2>(
-  //   polyline_2, regions, fullpath);
+  // Run 2D region growing.
+  Region_growing_2 region_growing_2(
+    polyline_2, neighbor_query_2, region_type_2);
 
-  return EXIT_SUCCESS;
+  regions.clear();
+  region_growing_2.detect(std::back_inserter(regions));
+  // std::cout << regions.size() << std::endl;
+  assert(regions.size() == 4);
+  for (const auto& region : regions)
+    assert(region_type_2.is_valid_region(region));
+
+  unassigned_points.clear();
+  region_growing_2.unassigned_items(std::back_inserter(unassigned_points));
+  // std::cout << unassigned_points.size() << std::endl;
+  assert(unassigned_points.size() == 0);
+
+  return true;
+}
+
+int main(int argc, char *argv[]) {
+
+  using SC = CGAL::Simple_cartesian<double>;
+  using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
+  using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
+
+  // ------>
+
+  bool sc_test_success = true;
+  if (!test_region_growing_on_polyline<SC>(argc, argv))
+    sc_test_success = false;
+  std::cout << "rg_poly, sc_test_success: " << sc_test_success << std::endl;
+  assert(sc_test_success);
+
+  // ------>
+
+  bool epick_test_success = true;
+  if (!test_region_growing_on_polyline<EPICK>(argc, argv))
+    epick_test_success = false;
+  std::cout << "rg_poly, epick_test_success: " << epick_test_success << std::endl;
+  assert(epick_test_success);
+
+  // ------>
+
+  bool epeck_test_success = true;
+  if (!test_region_growing_on_polyline<EPECK>(argc, argv))
+    epeck_test_success = false;
+  std::cout << "rg_poly, epeck_test_success: " << epeck_test_success << std::endl;
+  assert(epeck_test_success);
+
+  const bool success = sc_test_success && epick_test_success && epeck_test_success;
+  return (success) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

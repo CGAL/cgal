@@ -14,34 +14,30 @@ find_package(Eigen3 3.1.0 QUIET) # (3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(EIGEN3_FOUND)
   create_single_source_cgal_program("test_region_growing_basic.cpp")
-  # create_single_source_cgal_program("test_region_growing_strict.cpp")
+  create_single_source_cgal_program("test_region_growing_strict.cpp")
   create_single_source_cgal_program("test_region_growing_on_cube.cpp")
   create_single_source_cgal_program("test_region_growing_on_point_set_2.cpp")
   create_single_source_cgal_program("test_region_growing_on_point_set_3.cpp")
-  # create_single_source_cgal_program("test_region_growing_on_segment_set.cpp")
   create_single_source_cgal_program("test_region_growing_on_polygon_mesh.cpp")
-  # create_single_source_cgal_program("test_region_growing_on_polyline.cpp")
+  create_single_source_cgal_program("test_region_growing_on_polyline.cpp")
   create_single_source_cgal_program("test_region_growing_on_point_set_2_with_sorting.cpp")
   create_single_source_cgal_program("test_region_growing_on_point_set_3_with_sorting.cpp")
-  # create_single_source_cgal_program("test_region_growing_on_segment_set_with_sorting.cpp")
   create_single_source_cgal_program("test_region_growing_on_polygon_mesh_with_sorting.cpp")
-  # create_single_source_cgal_program("test_region_growing_on_polyline_with_sorting.cpp")
+  create_single_source_cgal_program("test_region_growing_on_polyline_with_sorting.cpp")
   create_single_source_cgal_program("test_region_growing_on_degenerated_mesh.cpp")
   foreach(
     target
     test_region_growing_basic
-    # test_region_growing_strict
+    test_region_growing_strict
     test_region_growing_on_cube
     test_region_growing_on_point_set_2
     test_region_growing_on_point_set_3
-    # test_region_growing_on_segment_set
     test_region_growing_on_polygon_mesh
-    # test_region_growing_on_polyline
+    test_region_growing_on_polyline
     test_region_growing_on_point_set_2_with_sorting
     test_region_growing_on_point_set_3_with_sorting
-    # test_region_growing_on_segment_set_with_sorting
     test_region_growing_on_polygon_mesh_with_sorting
-    # test_region_growing_on_polyline_with_sorting
+    test_region_growing_on_polyline_with_sorting
     test_region_growing_on_degenerated_mesh)
     target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
   endforeach()

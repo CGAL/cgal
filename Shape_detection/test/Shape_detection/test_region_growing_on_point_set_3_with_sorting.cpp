@@ -17,6 +17,7 @@
 
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
+#include <CGAL/Shape_detection/Region_growing/internal/free_functions.h>
 
 namespace SD = CGAL::Shape_detection;
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
@@ -83,6 +84,21 @@ int main(int argc, char *argv[]) {
   region_growing.release_memory();
   // std::cout << regions.size() << std::endl;
   assert(regions.size() == 7);
+
+  // Test determenistic behavior and free functions.
+  for (std::size_t k = 0; k < 3; ++k) {
+    regions.clear();
+    SD::internal::region_growing_planes(
+      input_range, std::back_inserter(regions),
+      CGAL::parameters::
+      distance_threshold(distance_threshold).
+      angle_threshold(angle_threshold).
+      min_region_size(min_region_size).
+      point_map(input_range.point_map()).
+      normal_map(input_range.normal_map()));
+    assert(regions.size() == 7);
+  }
+
   std::cout << "rg_sortpoints3, epick_test_success: " << true << std::endl;
   return EXIT_SUCCESS;
 }

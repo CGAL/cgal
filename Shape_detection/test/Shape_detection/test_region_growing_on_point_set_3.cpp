@@ -109,12 +109,12 @@ int main(int argc, char *argv[]) {
 
   // ------>
 
-  bool epeck_test_success = true; // turn it off, very slow
-  // using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
-  // if (!test_region_growing_on_point_set_3<EPECK>(argc, argv))
-  //   epeck_test_success = false;
-  // std::cout << "rg_points3, epeck_test_success: " << epeck_test_success << std::endl;
-  // assert(epeck_test_success);
+  bool epeck_test_success = true; // turn it off in case it is slow
+  using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
+  if (!test_region_growing_on_point_set_3<EPECK>(argc, argv))
+    epeck_test_success = false;
+  std::cout << "rg_points3, epeck_test_success: " << epeck_test_success << std::endl;
+  assert(epeck_test_success);
 
   const bool success = sc_test_success && epick_test_success && epeck_test_success;
   return (success) ? EXIT_SUCCESS : EXIT_FAILURE;
