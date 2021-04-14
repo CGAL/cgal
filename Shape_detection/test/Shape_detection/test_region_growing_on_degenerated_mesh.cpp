@@ -32,7 +32,7 @@ bool test_region_growing_on_degenerated_mesh(int argc, char *argv[]) {
   using Region_type    = SD::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Surface_mesh>;
   using Region_growing = SD::Region_growing<Face_range, Neighbor_query, Region_type>;
 
-  // Default parameter values for the data file degenerated.off.
+  // Default parameter values.
   const FT          distance_threshold = FT(1);
   const FT          angle_threshold    = FT(45);
   const std::size_t min_region_size    = 5;
@@ -48,13 +48,12 @@ bool test_region_growing_on_degenerated_mesh(int argc, char *argv[]) {
   const Face_range face_range = faces(surface_mesh);
   assert(face_range.size() == 13477);
 
-  // Create parameter classes.
-  Neighbor_query neighbor_query(surface_mesh);
-
   using Vertex_to_point_map = typename Region_type::Vertex_to_point_map;
   const Vertex_to_point_map vertex_to_point_map(
     get(CGAL::vertex_point, surface_mesh));
 
+  // Create parameter classes.
+  Neighbor_query neighbor_query(surface_mesh);
   Region_type region_type(
     surface_mesh,
     CGAL::parameters::
@@ -69,14 +68,12 @@ bool test_region_growing_on_degenerated_mesh(int argc, char *argv[]) {
 
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
-  // std::cout << regions.size() << std::endl;
   assert(regions.size() == 262);
   for (const auto& region : regions)
     assert(region_type.is_valid_region(region));
 
   std::vector<std::size_t> unassigned_faces;
   region_growing.unassigned_items(std::back_inserter(unassigned_faces));
-  // std::cout << unassigned_faces.size() << std::endl;
   assert(unassigned_faces.size() == 503);
   return true;
 }

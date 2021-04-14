@@ -33,6 +33,11 @@ using Region_growing = SD::Region_growing<Face_range, Neighbor_query, Region_typ
 
 int main(int argc, char *argv[]) {
 
+  // Default parameter values.
+  const FT          distance_threshold = FT(1);
+  const FT          angle_threshold    = FT(45);
+  const std::size_t min_region_size    = 5;
+
   // Load data.
   std::ifstream in(argc > 1 ? argv[1] : "data/polygon_mesh.off");
   CGAL::set_ascii_mode(in);
@@ -44,18 +49,12 @@ int main(int argc, char *argv[]) {
   const Face_range face_range = faces(polygon_mesh);
   assert(face_range.size() == 32245);
 
-  // Default parameter values for the data file polygon_mesh.off.
-  const FT          distance_threshold = FT(1);
-  const FT          angle_threshold    = FT(45);
-  const std::size_t min_region_size    = 5;
-
-  // Create parameter classes.
-  Neighbor_query neighbor_query(polygon_mesh);
-
   using Vertex_to_point_map = typename Region_type::Vertex_to_point_map;
   const Vertex_to_point_map vertex_to_point_map(
     get(CGAL::vertex_point, polygon_mesh));
 
+  // Create parameter classes.
+  Neighbor_query neighbor_query(polygon_mesh);
   Region_type region_type(
     polygon_mesh,
     CGAL::parameters::
@@ -70,18 +69,16 @@ int main(int argc, char *argv[]) {
     CGAL::parameters::vertex_point_map(vertex_to_point_map));
   sorting.sort();
 
-  // Create an instance of the region growing class.
+  // Run region growing.
   Region_growing region_growing(
     face_range, neighbor_query, region_type, sorting.seed_map());
 
-  // Run the algorithm.
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
   region_growing.release_memory();
-  // std::cout << regions.size() << std::endl;
   assert(regions.size() == 326);
 
-  // Test determenistic behavior and free functions.
+  // Test free functions and stability.
   for (std::size_t k = 0; k < 3; ++k) {
     regions.clear();
     SD::internal::region_growing_planes(

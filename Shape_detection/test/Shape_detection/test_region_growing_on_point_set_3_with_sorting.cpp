@@ -36,6 +36,12 @@ using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_ty
 
 int main(int argc, char *argv[]) {
 
+  // Default parameter values.
+  const std::size_t k                  = 12;
+  const FT          distance_threshold = FT(2);
+  const FT          angle_threshold    = FT(20);
+  const std::size_t min_region_size    = 50;
+
   // Load data.
   std::ifstream in(argc > 1 ? argv[1] : "data/point_set_3.xyz");
   CGAL::set_ascii_mode(in);
@@ -46,12 +52,6 @@ int main(int argc, char *argv[]) {
   in >> input_range;
   in.close();
   assert(input_range.size() == 8075);
-
-  // Default parameter values for the data file point_set_3.xyz.
-  const std::size_t k                  = 12;
-  const FT          distance_threshold = FT(2);
-  const FT          angle_threshold    = FT(20);
-  const std::size_t min_region_size    = 50;
 
   // Create parameter classes.
   Neighbor_query neighbor_query(
@@ -74,18 +74,16 @@ int main(int argc, char *argv[]) {
     CGAL::parameters::point_map(input_range.point_map()));
   sorting.sort();
 
-  // Create an instance of the region growing class.
+  // Run region growing.
   Region_growing region_growing(
     input_range, neighbor_query, region_type, sorting.seed_map());
 
-  // Run the algorithm.
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
   region_growing.release_memory();
-  // std::cout << regions.size() << std::endl;
   assert(regions.size() == 7);
 
-  // Test determenistic behavior and free functions.
+  // Test free functions and stability.
   for (std::size_t k = 0; k < 3; ++k) {
     regions.clear();
     SD::internal::region_growing_planes(

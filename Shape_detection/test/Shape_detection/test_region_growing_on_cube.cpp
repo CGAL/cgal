@@ -35,9 +35,7 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
   using Sorting        = SD::Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, Polyhedron, Neighbor_query, Face_range>;
   using Region_growing = SD::Region_growing<Face_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
-  using Vertex_to_point_map = typename Region_type::Vertex_to_point_map;
-
-  // Default parameter values for the data file cube.off.
+  // Default parameter values.
   const FT          distance_threshold = FT(1) / FT(10);
   const FT          angle_threshold    = FT(25);
   const std::size_t min_region_size    = 1;
@@ -59,11 +57,12 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
     assert(vertices.size() == 4);
   }
 
-  // Create parameter classes.
-  Neighbor_query neighbor_query(polyhedron);
+  using Vertex_to_point_map = typename Region_type::Vertex_to_point_map;
   const Vertex_to_point_map vertex_to_point_map(
     get(CGAL::vertex_point, polyhedron));
 
+  // Create parameter classes.
+  Neighbor_query neighbor_query(polyhedron);
   Region_type region_type(
     polyhedron,
     CGAL::parameters::
@@ -92,7 +91,7 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
   region_growing.unassigned_items(std::back_inserter(unassigned_faces));
   assert(unassigned_faces.size() == 0);
 
-  // Test determenistic behavior and free functions.
+  // Test free functions and stability.
   for (std::size_t k = 0; k < 3; ++k) {
     regions.clear();
     SD::internal::region_growing_planes(

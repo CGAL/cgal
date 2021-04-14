@@ -25,14 +25,14 @@ bool test_region_growing_on_polygon_mesh(int argc, char *argv[]) {
   using FT      = typename Kernel::FT;
   using Point_3 = typename Kernel::Point_3;
 
-  using Surface_mesh = CGAL::Surface_mesh<Point_3>;
-  using Face_range   = typename Surface_mesh::Face_range;
+  using Polygon_mesh = CGAL::Surface_mesh<Point_3>;
+  using Face_range   = typename Polygon_mesh::Face_range;
 
-  using Neighbor_query = SD::Polygon_mesh::One_ring_neighbor_query<Surface_mesh>;
-  using Region_type    = SD::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Surface_mesh>;
+  using Neighbor_query = SD::Polygon_mesh::One_ring_neighbor_query<Polygon_mesh>;
+  using Region_type    = SD::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Polygon_mesh>;
   using Region_growing = SD::Region_growing<Face_range, Neighbor_query, Region_type>;
 
-  // Default parameter values for the data file polygon_mesh.off.
+  // Default parameter values.
   const FT          distance_threshold = FT(1);
   const FT          angle_threshold    = FT(45);
   const std::size_t min_region_size    = 5;
@@ -42,21 +42,20 @@ bool test_region_growing_on_polygon_mesh(int argc, char *argv[]) {
   CGAL::set_ascii_mode(in);
   assert(in);
 
-  Surface_mesh surface_mesh;
-  in >> surface_mesh;
+  Polygon_mesh polygon_mesh;
+  in >> polygon_mesh;
   in.close();
-  const Face_range face_range = faces(surface_mesh);
+  const Face_range face_range = faces(polygon_mesh);
   assert(face_range.size() == 32245);
-
-  // Create parameter classes.
-  Neighbor_query neighbor_query(surface_mesh);
 
   using Vertex_to_point_map = typename Region_type::Vertex_to_point_map;
   const Vertex_to_point_map vertex_to_point_map(
-    get(CGAL::vertex_point, surface_mesh));
+    get(CGAL::vertex_point, polygon_mesh));
 
+  // Create parameter classes.
+  Neighbor_query neighbor_query(polygon_mesh);
   Region_type region_type(
-    surface_mesh,
+    polygon_mesh,
     CGAL::parameters::
     distance_threshold(distance_threshold).
     angle_threshold(angle_threshold).
@@ -69,14 +68,12 @@ bool test_region_growing_on_polygon_mesh(int argc, char *argv[]) {
 
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
-  // std::cout << regions.size() << std::endl;
   assert(regions.size() == 329);
   for (const auto& region : regions)
     assert(region_type.is_valid_region(region));
 
   std::vector<std::size_t> unassigned_faces;
   region_growing.unassigned_items(std::back_inserter(unassigned_faces));
-  // std::cout << unassigned_faces.size() << std::endl;
   assert(unassigned_faces.size() == 918);
   return true;
 }

@@ -14,7 +14,7 @@
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
-#include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
+#include <CGAL/Shape_detection/Region_growing/Region_growing_on_polyline.h>
 #include <CGAL/Shape_detection/Region_growing/internal/free_functions.h>
 
 namespace SD = CGAL::Shape_detection;
@@ -23,7 +23,6 @@ using Kernel = CGAL::Simple_cartesian<double>;
 using FT      = typename Kernel::FT;
 using Point_2 = typename Kernel::Point_2;
 using Point_3 = typename Kernel::Point_3;
-using Plane_3 = typename Kernel::Plane_3;
 
 using Polyline_2  = std::vector<Point_2>;
 using Polyline_3  = std::vector<Point_3>;
@@ -42,7 +41,7 @@ using Region_growing_3 = SD::Region_growing<Polyline_3, Neighbor_query_3, Region
 
 int main(int argc, char *argv[]) {
 
-  // Default parameter values for the data file polyline_3.polylines.txt.
+  // Default parameter values.
   const FT max_distance_to_line = FT(45) / FT(10);
   const FT max_accepted_angle   = FT(45);
 
@@ -51,7 +50,7 @@ int main(int argc, char *argv[]) {
   CGAL::set_ascii_mode(in);
   assert(in);
 
-  // Create the 3D polyline.
+  // Create 3D polyline.
   Polyline_3 polyline_3;
   std::size_t n = std::size_t(-1);
   in >> n;
@@ -83,17 +82,15 @@ int main(int argc, char *argv[]) {
 
   std::vector< std::vector<std::size_t> > regions;
   region_growing_3.detect(std::back_inserter(regions));
-  // std::cout << regions.size() << std::endl;
   assert(regions.size() == 15);
   for (const auto& region : regions)
     assert(region_type_3.is_valid_region(region));
 
   std::vector<std::size_t> unassigned_points;
   region_growing_3.unassigned_items(std::back_inserter(unassigned_points));
-  // std::cout << unassigned_points.size() << std::endl;
   assert(unassigned_points.size() == 0);
 
-  // Test determenistic behavior and free functions.
+  // Test free functions and stability.
   for (std::size_t k = 0; k < 3; ++k) {
     regions.clear();
     SD::internal::region_growing_polylines(
@@ -104,7 +101,7 @@ int main(int argc, char *argv[]) {
     assert(regions.size() == 15);
   }
 
-  // Create the 2D polyline.
+  // Create 2D polyline.
   std::vector<std::size_t> indices(polyline_3.size());
   std::iota(indices.begin(), indices.end(), 0);
   const auto plane = SD::internal::create_plane(
@@ -138,17 +135,15 @@ int main(int argc, char *argv[]) {
 
   regions.clear();
   region_growing_2.detect(std::back_inserter(regions));
-  // std::cout << regions.size() << std::endl;
   assert(regions.size() == 5);
   for (const auto& region : regions)
     assert(region_type_2.is_valid_region(region));
 
   unassigned_points.clear();
   region_growing_2.unassigned_items(std::back_inserter(unassigned_points));
-  // std::cout << unassigned_points.size() << std::endl;
   assert(unassigned_points.size() == 0);
 
-  // Test determenistic behavior and free functions.
+  // Test free functions and stability.
   for (std::size_t k = 0; k < 3; ++k) {
     regions.clear();
     SD::internal::region_growing_polylines(

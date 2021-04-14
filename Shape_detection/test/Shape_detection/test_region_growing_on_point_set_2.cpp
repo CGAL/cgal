@@ -36,7 +36,7 @@ bool test_region_growing_on_point_set_2(int argc, char *argv[]) {
   using Region_type    = SD::Point_set::Least_squares_line_fit_region<Kernel, Input_range, Point_map, Normal_map>;
   using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type>;
 
-  // Default parameter values for the data file point_set_2.xyz.
+  // Default parameter values.
   const FT          sphere_radius      = FT(5);
   const FT          distance_threshold = FT(45) / FT(10);
   const FT          angle_threshold    = FT(45);
@@ -49,15 +49,16 @@ bool test_region_growing_on_point_set_2(int argc, char *argv[]) {
 
   FT a, b, c, d, e, f;
   Input_range input_range;
-  while (in >> a >> b >> c >> d >> e >> f)
-    input_range.push_back(std::make_pair(Point_2(a, b), Vector_2(d, e)));
+  while (in >> a >> b >> c >> d >> e >> f) {
+    input_range.push_back(
+      std::make_pair(Point_2(a, b), Vector_2(d, e)));
+  }
   in.close();
   assert(input_range.size() == 3634);
 
   // Create parameter classes.
   Neighbor_query neighbor_query(
     input_range, CGAL::parameters::neighbor_radius(sphere_radius));
-
   Region_type region_type(
     input_range,
     CGAL::parameters::
@@ -71,14 +72,12 @@ bool test_region_growing_on_point_set_2(int argc, char *argv[]) {
 
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
-  // std::cout << regions.size() << std::endl;
   assert(regions.size() == 65);
   for (const auto& region : regions)
     assert(region_type.is_valid_region(region));
 
   std::vector<std::size_t> unassigned_points;
   region_growing.unassigned_items(std::back_inserter(unassigned_points));
-  // std::cout << unassigned_points.size() << std::endl;
   assert(unassigned_points.size() == 87);
   return true;
 }

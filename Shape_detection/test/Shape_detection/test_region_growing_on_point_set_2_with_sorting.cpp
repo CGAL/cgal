@@ -36,6 +36,12 @@ using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_ty
 
 int main(int argc, char *argv[]) {
 
+  // Default parameter values.
+  const std::size_t k                  = 12;
+  const FT          distance_threshold = FT(45) / FT(10);
+  const FT          angle_threshold    = FT(45);
+  const std::size_t min_region_size    = 5;
+
   // Load data.
   std::ifstream in(argc > 1 ? argv[1] : "data/point_set_2.xyz");
   CGAL::set_ascii_mode(in);
@@ -43,22 +49,16 @@ int main(int argc, char *argv[]) {
 
   FT a, b, c, d, e, f;
   Input_range input_range;
-  while (in >> a >> b >> c >> d >> e >> f)
+  while (in >> a >> b >> c >> d >> e >> f) {
     input_range.push_back(
       std::make_pair(Point_2(a, b), Vector_2(d, e)));
+  }
   in.close();
   assert(input_range.size() == 3634);
-
-  // Default parameter values for the data file point_set_2.xyz.
-  const std::size_t k                  = 12;
-  const FT          distance_threshold = FT(45) / FT(10);
-  const FT          angle_threshold    = FT(45);
-  const std::size_t min_region_size    = 5;
 
   // Create parameter classes.
   Neighbor_query neighbor_query(
     input_range, CGAL::parameters::neighbor_radius(k));
-
   Region_type region_type(
     input_range,
     CGAL::parameters::
@@ -71,18 +71,16 @@ int main(int argc, char *argv[]) {
     input_range, neighbor_query, CGAL::parameters::all_default());
   sorting.sort();
 
-  // Create an instance of the region growing class.
+  // Run region growing.
   Region_growing region_growing(
     input_range, neighbor_query, region_type, sorting.seed_map());
 
-  // Run the algorithm.
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
   region_growing.release_memory();
-  // std::cout << regions.size() << std::endl;
   assert(regions.size() == 62);
 
-  // Test determenistic behavior and free functions.
+  // Test free functions and stability.
   for (std::size_t k = 0; k < 3; ++k) {
     regions.clear();
     SD::internal::region_growing_lines(

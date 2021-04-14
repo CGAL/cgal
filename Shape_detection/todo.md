@@ -1,2 +1,2 @@
-- add new tests: polyline (2D, 3D), polyline with sorting (2D, 3D), free functions, randomness, strict tests on the data from PMP, tests similar to the basic_example, check polylines with equal points
 - update the docs
+- get TODO done in tests
