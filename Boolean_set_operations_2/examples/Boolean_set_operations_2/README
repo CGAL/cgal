@@ -3,5 +3,4 @@ example2 - (intersection) Computing the intersection of two triangles.
 example3 - (sequence) Computing a sequence of Boolean Set-Operations.
 example4 - (circle_segment) Handling circles and linear segments concurrently.
 example5 - (traits_adaptor) Using the traits adaptor.
-example6 - (set_union) Computing the union of two sets of general polygons.
-example7 - (calc_distance) Computing the shortest distance between two polyogns
+example6 - (set_union) Computing the union of two sets of general polygons
