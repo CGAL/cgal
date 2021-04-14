@@ -459,27 +459,6 @@ public:
 
       return oi;
     }
-
-  private:
-    template <typename OutputIterator>
-    inline OutputIterator output_ocv
-    (std::vector<X_monotone_subcurve_2>& ocv, bool invert_ocv, OutputIterator oi) const
-    {
-      typedef std::pair<Point_2, Multiplicity>        Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
-                                                      Intersection_result;
-      X_monotone_curve_2 curve;
-      if (invert_ocv)
-        std::reverse (ocv.begin(), ocv.end());
-      for (X_monotone_subcurve_2& sc : ocv)
-        curve.push_back (sc);
-      *(oi ++) = Intersection_result(curve);
-
-      ocv.clear();
-
-      return oi;
-    }
-
   };
   Intersect_2 intersect_2_object() const
   { return Intersect_2(*this); }
@@ -521,7 +500,8 @@ public:
 
     Curve_2 operator()(const Range& range, bool duplicate_first = false) const
     {
-      return Curve_2 (range, true);
+      const Kernel& kernel = *m_traits.subcurve_traits_2();
+      return Curve_2 (kernel, range, true);
     }
   };
 

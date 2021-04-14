@@ -47,7 +47,7 @@ public:
 
   class Compare_x_2 {
   protected:
-    using Traits = Self;;
+    using Traits = Self;
     const Traits& m_traits;
     Compare_x_2(const Traits& traits) : m_traits(traits) {}
     friend Traits;
@@ -392,9 +392,9 @@ public:
       // We have discovered an overlapping segment, we simply create a
       // new polyline with 2 hanging vertices only:
       if (!cv1.is_directed_right() && !cv2.is_directed_right())
-        *oi ++ = Intersection_result(Polyline(p_r, p_l));
+        *oi ++ = Intersection_result(Polyline(kernel, p_r, p_l));
       else
-        *oi ++ = Intersection_result(Polyline(p_l, p_r));
+        *oi ++ = Intersection_result(Polyline(kernel, p_l, p_r));
       return oi;
     }
   };

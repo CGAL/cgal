@@ -49,6 +49,7 @@ protected:
   // Using -2 as null index as -1 can be the index of `m_first`
   inline Index null_idx() const { return Index(-2); }
 
+  const Kernel* m_traits;
   const Range* m_range;
   std::shared_ptr<Line_cache> m_line_cache;
   Extreme_point m_first;
@@ -61,14 +62,17 @@ protected:
 public:
 
   Caching_polyline_2()
-    : m_begin (null_idx())
+    : m_traits(nullptr)
+    , m_range(nullptr)
+    , m_begin (null_idx())
     , m_end (null_idx())
     , m_reverse(false)
   { }
 
   // Create a caching polyline from a range
-  Caching_polyline_2 (const Range& range, bool force_closure = false)
-    : m_range(&range)
+  Caching_polyline_2 (const Kernel& kernel, const Range& range, bool force_closure = false)
+    : m_traits(&kernel)
+    , m_range(&range)
     , m_reverse(false)
   {
     m_line_cache = std::make_shared<Line_cache>(range.size(), nullptr);
@@ -80,8 +84,9 @@ public:
   }
 
   // Create an isolated segment with no range support
-  Caching_polyline_2(const Point_2& first, const Point_2& last)
-    : m_first(std::make_shared<Point_2>(first), nullptr)
+  Caching_polyline_2(const Kernel& kernel, const Point_2& first, const Point_2& last)
+    : m_traits (&kernel)
+    , m_first(std::make_shared<Point_2>(first), nullptr)
     , m_last(std::make_shared<Point_2>(last), nullptr)
     , m_begin (null_idx())
     , m_end (null_idx())
@@ -92,7 +97,8 @@ public:
 
   // Create a polyline from a subset of another polyline
   Caching_polyline_2 (iterator begin, iterator end)
-    : m_range (begin.support().m_range)
+    : m_traits (begin.support().m_traits)
+    , m_range (begin.support().m_range)
     , m_line_cache (begin.support().m_line_cache)
     , m_reverse(false)
   {
@@ -129,7 +135,8 @@ public:
 
   // Create a polyline from a subset of another polyline and one or two new extreme points
   Caching_polyline_2 (Extreme_point first, iterator begin, iterator end, Extreme_point last)
-    : m_range (begin.support().m_range)
+    : m_traits (begin.support().m_traits)
+    , m_range (begin.support().m_range)
     , m_line_cache (begin.support().m_line_cache)
     , m_reverse(false)
   {
@@ -180,7 +187,6 @@ public:
   // the polyline (keep cached line)
   Extreme_point extreme_point (const Point_2& p, std::size_t index) const
   {
-    Index idx = Index(index - m_begin);
     Extreme_point out (std::make_shared<Point_2>(p), nullptr);
     if (index == 0)
       out.second = m_first.second;
@@ -193,7 +199,7 @@ public:
 
   void compute_direction()
   {
-    m_is_directed_right = (Kernel().compare_xy_2_object()(*points_begin(), *std::prev(points_end())) == SMALLER);
+    m_is_directed_right = (m_traits->compare_xy_2_object()(*points_begin(), *std::prev(points_end())) == SMALLER);
   }
 
   bool is_directed_right() const { return m_is_directed_right; }
@@ -201,11 +207,11 @@ public:
   // Used for assertions only
   bool is_x_monotone() const
   {
-    auto compare_x_2 = Kernel().compare_x_2_object();
+    auto compare_x_2 = m_traits->compare_x_2_object();
     iterator b = points_begin(), e = points_end() - 1;
-    Comparison_result comp = Kernel().compare_x_2_object()(*b, *(b+1));
+    Comparison_result comp = m_traits->compare_x_2_object()(*b, *(b+1));
     for (iterator it = b + 1; it < e; ++ it)
-      if (comp != Kernel().compare_x_2_object()(*it, *(it+1)))
+      if (comp != m_traits->compare_x_2_object()(*it, *(it+1)))
         return false;
     return true;
   }
@@ -286,7 +292,7 @@ private:
     if (!l)
     {
       CGAL_BRANCH_PROFILER_BRANCH(br);
-      l = std::make_shared<Line_2>(a, b);
+      l = std::make_shared<Line_2>(m_traits->construct_line_2_object()(a, b));
     }
     return *l;
   }
@@ -305,7 +311,7 @@ public:
   using Extreme_point = typename Base::Extreme_point;
 
   X_monotone_caching_polyline_2() : Base() { }
-  X_monotone_caching_polyline_2(const Point_2& first, const Point_2& last) : Base(first, last) { }
+  X_monotone_caching_polyline_2(const Kernel_& kernel, const Point_2& first, const Point_2& last) : Base(kernel, first, last) { }
   X_monotone_caching_polyline_2 (iterator begin, iterator end) : Base(begin, end) { }
   X_monotone_caching_polyline_2 (Extreme_point first, iterator begin, iterator end, Extreme_point last)
     : Base(first, begin, end, last) { }
@@ -394,12 +400,12 @@ public:
     const Point_2& ps = source();
     const Point_2& pt = target();
 
-    return (Kernel().compare_x_2_object()(ps, pt) == EQUAL);
+    return (m_support->m_traits->compare_x_2_object()(ps, pt) == EQUAL);
   }
 
   bool is_directed_right() const
   {
-    CGAL_assertion ((Kernel().compare_xy_2_object()(source(), target()) == SMALLER) == m_support->is_directed_right());
+    CGAL_assertion ((m_support->m_traits->compare_xy_2_object()(source(), target()) == SMALLER) == m_support->is_directed_right());
     return m_support->is_directed_right();
   }
 
