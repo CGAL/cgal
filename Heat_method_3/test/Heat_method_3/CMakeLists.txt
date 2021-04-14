@@ -48,3 +48,6 @@ target_link_libraries(heat_method_surface_mesh_test PUBLIC CGAL::Eigen3_support)
 create_single_source_cgal_program("heat_method_surface_mesh_direct_test.cpp")
 target_link_libraries(heat_method_surface_mesh_direct_test
                       PUBLIC CGAL::Eigen3_support)
+create_single_source_cgal_program("heat_method_surface_mesh_intrinsic_test.cpp")
+target_link_libraries(heat_method_surface_mesh_intrinsic_test
+                      PUBLIC CGAL::Eigen3_support)

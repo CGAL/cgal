@@ -30,6 +30,7 @@
 #include <limits>
 #include <utility>
 #include <vector>
+#include <unordered_map>
 
 #ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
 # ifndef CGAL_PMP_COMPUTE_NORMAL_DEBUG
@@ -90,12 +91,16 @@ void sum_normals(const PM& pmesh,
 
   halfedge_descriptor he = halfedge(f, pmesh);
   vertex_descriptor v = source(he, pmesh);
+  vertex_descriptor the = target(he,pmesh);
+  he = next(he, pmesh);
+  vertex_descriptor tnhe = target(he,pmesh);
+
   const Point_ref pv = get(vpmap, v);
 
-  while(v != target(next(he, pmesh), pmesh))
+  while(v != tnhe)
   {
-    const Point_ref pvn = get(vpmap, target(he, pmesh));
-    const Point_ref pvnn = get(vpmap, target(next(he, pmesh), pmesh));
+    const Point_ref pvn = get(vpmap, the);
+    const Point_ref pvnn = get(vpmap, tnhe);
 
     const Vector n = internal::triangle_normal(pv, pvn, pvnn, traits);
 
@@ -106,7 +111,9 @@ void sum_normals(const PM& pmesh,
 
     sum = traits.construct_sum_of_vectors_3_object()(sum, n);
 
+    the = tnhe;
     he = next(he, pmesh);
+    tnhe = target(he,pmesh);
   }
 }
 
@@ -506,6 +513,7 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
   typedef typename GT::Vector_3                                            Vector_3;
 
   std::vector<face_descriptor> incident_faces;
+  incident_faces.reserve(8);
   for(face_descriptor f : CGAL::faces_around_target(halfedge(v, pmesh), pmesh))
   {
     if(f == boost::graph_traits<PolygonMesh>::null_face())
@@ -669,7 +677,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                  get_const_property_map(vertex_point, pmesh));
 
-  typedef std::map<face_descriptor, Vector_3>                                 Face_vector_map;
+  typedef std::unordered_map<face_descriptor, Vector_3>                       Face_vector_map;
   typedef boost::associative_property_map<Face_vector_map>                    Default_map;
 
   typedef typename internal_np::Lookup_named_param_def<internal_np::face_normal_t,

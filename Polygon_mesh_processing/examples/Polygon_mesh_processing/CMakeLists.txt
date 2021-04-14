@@ -136,8 +136,7 @@ else()
 endif()
 
 find_package(Ceres QUIET)
-if(TARGET ceres)
-  target_compile_definitions(mesh_smoothing_example
-                             PRIVATE CGAL_PMP_USE_CERES_SOLVER)
-  target_link_libraries(mesh_smoothing_example PRIVATE ceres)
-endif(TARGET ceres)
+include(CGAL_Ceres_support)
+if(TARGET CGAL::Ceres_support)
+  target_link_libraries(mesh_smoothing_example PUBLIC CGAL::Ceres_support)
+endif(TARGET CGAL::Ceres_support)

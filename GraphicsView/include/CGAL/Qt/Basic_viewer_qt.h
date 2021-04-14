@@ -184,16 +184,16 @@ public:
     // Add custom mouse description
     setMouseBindingDescription(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::LeftButton, "Rotate the clipping plane when enabled");
     setMouseBindingDescription(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::RightButton, "Translate the clipping plane when enabled");
-    setMouseBindingDescription(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::MidButton, "Control the clipping plane transparency when enabled");
+    setMouseBindingDescription(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::MiddleButton, "Control the clipping plane transparency when enabled");
 
     setMouseBinding(::Qt::ControlModifier, ::Qt::LeftButton, qglviewer::FRAME, qglviewer::NO_MOUSE_ACTION);
     setMouseBinding(::Qt::ControlModifier, ::Qt::RightButton, qglviewer::FRAME, qglviewer::NO_MOUSE_ACTION);
-    setMouseBinding(::Qt::ControlModifier, ::Qt::MidButton, qglviewer::FRAME, qglviewer::NO_MOUSE_ACTION);
+    setMouseBinding(::Qt::ControlModifier, ::Qt::MiddleButton, qglviewer::FRAME, qglviewer::NO_MOUSE_ACTION);
     setWheelBinding(::Qt::ControlModifier, qglviewer::FRAME, qglviewer::NO_MOUSE_ACTION);
 
     setMouseBinding(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::LeftButton, qglviewer::FRAME, qglviewer::ROTATE);
     setMouseBinding(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::RightButton, qglviewer::FRAME, qglviewer::TRANSLATE);
-    setMouseBinding(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::MidButton, qglviewer::FRAME, qglviewer::ZOOM);
+    setMouseBinding(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::MiddleButton, qglviewer::FRAME, qglviewer::ZOOM);
     setWheelBinding(::Qt::Key_C, ::Qt::ControlModifier, qglviewer::FRAME, qglviewer::ZOOM);
 
     if (title[0]==0)

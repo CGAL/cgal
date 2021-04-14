@@ -354,15 +354,6 @@ If LASLIB is not automatically found, the following variables must be set:
 The environment variable `OPENCV_DIR` should be set to the directory
 containing the file `OpenCVConfig.cmake` provided by OpenCV.
 
-\subsection installation_TensorFlow TensorFlow library
-
-If TensorFlow is not automatically found, the following variables must be set:
-
-| Variable             | Description           | Type        |
-| :-                   | :-                    | :-             |
-| `TensorFlow_INCLUDE_DIR` | Directory containing the directories `tensorflow/core`, `tensorflow/cc`, etc. | CMake |
-| `TensorFlow_LIBRARY` | Full pathname of the compiled TensorFlow C++ library | CMake |
-
 \subsection installation_SCIP SCIP library
 
 The environment variable `SCIP_DIR` should be set to the directory
