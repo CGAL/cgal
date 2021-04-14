@@ -23,7 +23,7 @@ template <typename Kernel_, typename Range_>
 class Arr_caching_polyline_traits_2
   : public Arr_polycurve_basic_traits_2
     <Arr_caching_polyline_subtraits_2<Kernel_, Range_>,
-     internal::Caching_polyline_2<Kernel_, Range_> >
+     internal::X_monotone_caching_polyline_2<Kernel_, Range_> >
 {
 public:
 
@@ -31,9 +31,10 @@ public:
   using Range = Range_;
   using Subcurve_traits_2 = Arr_caching_polyline_subtraits_2<Kernel, Range>;
   using Curve_2 = internal::Caching_polyline_2<Kernel, Range>;
+  using X_monotone_curve_2 = internal::X_monotone_caching_polyline_2<Kernel, Range>;
 
 private:
-  using Base = Arr_polycurve_basic_traits_2<Subcurve_traits_2, Curve_2>;
+  using Base = Arr_polycurve_basic_traits_2<Subcurve_traits_2, X_monotone_curve_2>;
   using Self = Arr_caching_polyline_traits_2<Kernel, Range>;
   using Extreme_point = typename Curve_2::Extreme_point;
 
@@ -54,7 +55,6 @@ public:
   using size_type = typename Base::size_type;
 
   using Point_2 = typename Base::Point_2;
-  using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
 
   using Compare_x_2 = typename Base::Compare_x_2;
   using Compare_xy_2 = typename Base::Compare_xy_2;

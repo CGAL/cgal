@@ -19,7 +19,7 @@ public:
   using Base_iterator = PointIterator;
   using Self = Arr_caching_polyline_subtraits_2<Kernel, Base_iterator>;
 
-  using Polyline = internal::Caching_polyline_2<Kernel, Base_iterator>;
+  using Polyline = internal::X_monotone_caching_polyline_2<Kernel, Base_iterator>;
   using Polyline_iterator = typename Polyline::iterator;
 
   using FT = typename Kernel::FT;

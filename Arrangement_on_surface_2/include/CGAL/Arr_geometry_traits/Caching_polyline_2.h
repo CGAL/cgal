@@ -293,6 +293,25 @@ private:
 
 };
 
+// This derived class is just there to make sure `Curve_2` and `X_monotone_curve_2` are different types
+template <typename Kernel_, typename Range_>
+class X_monotone_caching_polyline_2 : public Caching_polyline_2<Kernel_, Range_>
+{
+public:
+  using Base = Caching_polyline_2<Kernel_, Range_>;
+  using Self = X_monotone_caching_polyline_2<Kernel_, Range_>;
+  using Point_2 = typename Base::Point_2;
+  using iterator = typename Base::iterator;
+  using Extreme_point = typename Base::Extreme_point;
+
+  X_monotone_caching_polyline_2() : Base() { }
+  X_monotone_caching_polyline_2(const Point_2& first, const Point_2& last) : Base(first, last) { }
+  X_monotone_caching_polyline_2 (iterator begin, iterator end) : Base(begin, end) { }
+  X_monotone_caching_polyline_2 (Extreme_point first, iterator begin, iterator end, Extreme_point last)
+    : Base(first, begin, end, last) { }
+};
+
+
 template <typename Kernel_, typename Range_>
 class Caching_polyline_2_iterator
   : public boost::iterator_facade<Caching_polyline_2_iterator<Kernel_, Range_>,

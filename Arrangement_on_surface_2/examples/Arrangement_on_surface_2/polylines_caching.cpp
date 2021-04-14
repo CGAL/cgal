@@ -43,21 +43,7 @@ int main()
 
     auto construct_curve_2 = traits.construct_curve_2_object();
     Curve_2 curve = construct_curve_2(points);
-
-    auto make_x_monotone_2 = traits.make_x_monotone_2_object();
-    std::vector<X_monotone_curve_2> x_monotone_curves;
-    make_x_monotone_2
-      (curve,
-       boost::make_function_output_iterator
-       ([&](const CGAL::Object& obj)
-        {
-          const X_monotone_curve_2* xc = CGAL::object_cast<X_monotone_curve_2>(&obj);
-          CGAL_assertion(xc);
-          x_monotone_curves.push_back(*xc);
-        }));
-
-    for (const X_monotone_curve_2& xc : x_monotone_curves)
-      insert (arr, xc);
+    insert (arr, curve);
   }
 
   // Using a Polygon_2
@@ -80,21 +66,7 @@ int main()
 
     auto construct_curve_2 = traits.construct_curve_2_object();
     Curve_2 curve = construct_curve_2(polygon);
-
-    auto make_x_monotone_2 = traits.make_x_monotone_2_object();
-    std::vector<X_monotone_curve_2> x_monotone_curves;
-    make_x_monotone_2
-      (curve,
-       boost::make_function_output_iterator
-       ([&](const CGAL::Object& obj)
-        {
-          const X_monotone_curve_2* xc = CGAL::object_cast<X_monotone_curve_2>(&obj);
-          CGAL_assertion(xc);
-          x_monotone_curves.push_back(*xc);
-        }));
-
-    for (const X_monotone_curve_2& xc : x_monotone_curves)
-      insert (arr, xc);
+    insert (arr, curve);
   }
 
   return EXIT_SUCCESS;
