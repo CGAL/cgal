@@ -103,7 +103,7 @@ bool test_scene(int argc, char** argv) {
     it++;
   }
 
-  // Check coverage. For this scene it should not fall below 85%.
+  // Check coverage. For this scene it should not fall below 75%.
   double coverage = double(points.size() - ransac.number_of_unassigned_points()) / double(points.size());
   if (coverage < 0.75) {
     std::cout << " failed (coverage = " << coverage << " < 0.75)" << std::endl;
@@ -114,7 +114,7 @@ bool test_scene(int argc, char** argv) {
   // Check average distance. It should not lie above 0.02.
   average_distance = average_distance / shapes.size();
   std::cout << average_distance << " " << std::endl;
-  if (average_distance > 0.01) {
+  if (average_distance > 0.02) {
     std::cout << " failed" << std::endl;
 
     return false;
