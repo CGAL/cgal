@@ -1,25 +1,25 @@
-#ifndef CGAL_ARR_LIGHTWEIGHT_POLYLINE_SUBTRAITS_2_H
-#define CGAL_ARR_LIGHTWEIGHT_POLYLINE_SUBTRAITS_2_H
+#ifndef CGAL_ARR_CACHING_POLYLINE_SUBTRAITS_2_H
+#define CGAL_ARR_CACHING_POLYLINE_SUBTRAITS_2_H
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/Arr_geometry_traits/Lightweight_polyline_2.h>
+#include <CGAL/Arr_geometry_traits/Caching_polyline_2.h>
 
 #include <boost/variant.hpp>
 
 namespace CGAL {
 
 template <typename Kernel_, typename PointIterator>
-class Arr_lightweight_polyline_subtraits_2 : public Kernel_
+class Arr_caching_polyline_subtraits_2 : public Kernel_
 {
 public:
   using Kernel = Kernel_;
   using Base_iterator = PointIterator;
-  using Self = Arr_lightweight_polyline_subtraits_2<Kernel, Base_iterator>;
+  using Self = Arr_caching_polyline_subtraits_2<Kernel, Base_iterator>;
 
-  using Polyline = internal::Lightweight_polyline_2<Kernel, Base_iterator>;
+  using Polyline = internal::Caching_polyline_2<Kernel, Base_iterator>;
   using Polyline_iterator = typename Polyline::iterator;
 
   using FT = typename Kernel::FT;
@@ -43,7 +43,7 @@ public:
 
 
 public:
-  Arr_lightweight_polyline_subtraits_2() {}
+  Arr_caching_polyline_subtraits_2() {}
 
   class Compare_x_2 {
   protected:

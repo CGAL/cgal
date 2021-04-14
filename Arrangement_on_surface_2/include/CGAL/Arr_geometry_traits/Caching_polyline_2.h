@@ -1,5 +1,5 @@
-#ifndef CGAL_LIGHTWEIGHT_POLYLINE_2_H
-#define CGAL_LIGHTWEIGHT_POLYLINE_2_H
+#ifndef CGAL_CACHING_POLYLINE_2_H
+#define CGAL_CACHING_POLYLINE_2_H
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
@@ -15,16 +15,16 @@ namespace CGAL {
 namespace internal {
 
 template <typename Kernel_, typename Range_>
-class Lightweight_polyline_2_iterator;
+class Caching_polyline_2_iterator;
 
 template <typename Kernel_, typename Range_>
-class Lightweight_polyline_2
+class Caching_polyline_2
 {
 public:
 
   using Kernel = Kernel_;
   using Range = Range_;
-  using Self = Lightweight_polyline_2<Kernel, Range>;
+  using Self = Caching_polyline_2<Kernel, Range>;
 
   using Point_2 = typename Kernel::Point_2;
   using Point_ptr = std::shared_ptr<Point_2>;
@@ -37,7 +37,7 @@ public:
   using size_type = std::size_t;
   using Index = std::uint32_t;
 
-  using iterator = Lightweight_polyline_2_iterator<Kernel, Range>;
+  using iterator = Caching_polyline_2_iterator<Kernel, Range>;
   friend iterator;
 
   using Subcurve_type_2 = iterator;
@@ -60,14 +60,14 @@ protected:
 
 public:
 
-  Lightweight_polyline_2()
+  Caching_polyline_2()
     : m_begin (null_idx())
     , m_end (null_idx())
     , m_reverse(false)
   { }
 
-  // Create a lightweight polyline from a range
-  Lightweight_polyline_2 (const Range& range, bool force_closure = false)
+  // Create a caching polyline from a range
+  Caching_polyline_2 (const Range& range, bool force_closure = false)
     : m_range(&range)
     , m_reverse(false)
   {
@@ -80,7 +80,7 @@ public:
   }
 
   // Create an isolated segment with no range support
-  Lightweight_polyline_2(const Point_2& first, const Point_2& last)
+  Caching_polyline_2(const Point_2& first, const Point_2& last)
     : m_first(std::make_shared<Point_2>(first), nullptr)
     , m_last(std::make_shared<Point_2>(last), nullptr)
     , m_begin (null_idx())
@@ -91,7 +91,7 @@ public:
   }
 
   // Create a polyline from a subset of another polyline
-  Lightweight_polyline_2 (iterator begin, iterator end)
+  Caching_polyline_2 (iterator begin, iterator end)
     : m_range (begin.support().m_range)
     , m_line_cache (begin.support().m_line_cache)
     , m_reverse(false)
@@ -128,7 +128,7 @@ public:
   }
 
   // Create a polyline from a subset of another polyline and one or two new extreme points
-  Lightweight_polyline_2 (Extreme_point first, iterator begin, iterator end, Extreme_point last)
+  Caching_polyline_2 (Extreme_point first, iterator begin, iterator end, Extreme_point last)
     : m_range (begin.support().m_range)
     , m_line_cache (begin.support().m_line_cache)
     , m_reverse(false)
@@ -168,9 +168,9 @@ public:
 
 
   // Create the opposite polyline
-  Lightweight_polyline_2 opposite() const
+  Caching_polyline_2 opposite() const
   {
-    Lightweight_polyline_2 out (*this);
+    Caching_polyline_2 out (*this);
     out.m_reverse = !out.m_reverse;
     out.m_is_directed_right = !out.m_is_directed_right;
     return out;
@@ -282,7 +282,7 @@ private:
   const Line_2& line (const Index& index, const Point_2& a, const Point_2& b) const
   {
     Line_ptr& l = line_ptr(index);
-    CGAL_BRANCH_PROFILER("Lightweight polyline line-cache access", br);
+    CGAL_BRANCH_PROFILER("Caching polyline line-cache access", br);
     if (!l)
     {
       CGAL_BRANCH_PROFILER_BRANCH(br);
@@ -294,8 +294,8 @@ private:
 };
 
 template <typename Kernel_, typename Range_>
-class Lightweight_polyline_2_iterator
-  : public boost::iterator_facade<Lightweight_polyline_2_iterator<Kernel_, Range_>,
+class Caching_polyline_2_iterator
+  : public boost::iterator_facade<Caching_polyline_2_iterator<Kernel_, Range_>,
                                   typename Kernel_::Point_2,
                                   std::random_access_iterator_tag>
 {
@@ -303,8 +303,8 @@ public:
 
   using Kernel = Kernel_;
   using Range = Range_;
-  using Self = Lightweight_polyline_2_iterator<Kernel, Range>;
-  using Polyline = Lightweight_polyline_2<Kernel, Range>;
+  using Self = Caching_polyline_2_iterator<Kernel, Range>;
+  using Polyline = Caching_polyline_2<Kernel, Range>;
   using Point_2 = typename Kernel::Point_2;
   using Line_2 = typename Kernel::Line_2;
   using Index = typename Polyline::Index;
@@ -315,9 +315,9 @@ protected:
 
 public:
 
-  Lightweight_polyline_2_iterator () = delete;
+  Caching_polyline_2_iterator () = delete;
 
-  Lightweight_polyline_2_iterator (const Polyline* support, const Tag_true&) // begin
+  Caching_polyline_2_iterator (const Polyline* support, const Tag_true&) // begin
     : m_support (support)
   {
     if (m_support->m_reverse)
@@ -336,7 +336,7 @@ public:
     }
   }
 
-  Lightweight_polyline_2_iterator (const Polyline* support, const Tag_false&) // end
+  Caching_polyline_2_iterator (const Polyline* support, const Tag_false&) // end
     : m_support (support)
   {
     if (m_support->m_reverse)
@@ -357,7 +357,7 @@ public:
 
   // interoperability
   template <typename K, typename I>
-  Lightweight_polyline_2_iterator (const Lightweight_polyline_2_iterator<K, I>& other)
+  Caching_polyline_2_iterator (const Caching_polyline_2_iterator<K, I>& other)
     : m_support (other.m_support)
     , m_base(other.m_base)
   { }
@@ -433,7 +433,7 @@ private:
 
   // interoperability
   template <typename K, typename I>
-  std::ptrdiff_t distance_to (const Lightweight_polyline_2_iterator<K,I>& other) const
+  std::ptrdiff_t distance_to (const Caching_polyline_2_iterator<K,I>& other) const
   {
     CGAL_assertion (m_support != nullptr);
     CGAL_assertion (other.m_support != nullptr);
@@ -445,7 +445,7 @@ private:
 
   // interoperability
   template <typename K, typename I>
-  bool equal (const Lightweight_polyline_2_iterator<K, I>& other) const
+  bool equal (const Caching_polyline_2_iterator<K, I>& other) const
   {
     CGAL_assertion (m_support != nullptr);
     CGAL_assertion (other.m_support != nullptr);

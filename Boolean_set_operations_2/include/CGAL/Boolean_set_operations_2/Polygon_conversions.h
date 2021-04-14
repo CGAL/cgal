@@ -22,7 +22,7 @@
 #include <CGAL/General_polygon_2.h>
 #include <CGAL/General_polygon_with_holes_2.h>
 #include <CGAL/Boolean_set_operations_2/Gps_default_traits.h>
-#include <CGAL/Arr_lightweight_polyline_traits_2.h>
+#include <CGAL/Arr_caching_polyline_traits_2.h>
 #include <CGAL/Single.h>
 #include <CGAL/Iterator_range.h>
 
@@ -36,7 +36,7 @@ template <class Kernel, class Container>
 struct Gps_polyline_traits<CGAL::Polygon_2<Kernel, Container> >
 {
   typedef CGAL::Polygon_2<Kernel, Container>                 Polygon;
-  typedef Arr_lightweight_polyline_traits_2<Kernel, Polygon> Polyline_traits;
+  typedef Arr_caching_polyline_traits_2<Kernel, Polygon> Polyline_traits;
   typedef Gps_traits_2<Polyline_traits>                      Traits;
 };
 
@@ -44,7 +44,7 @@ template <class Kernel, class Container>
 struct Gps_polyline_traits<CGAL::Polygon_with_holes_2<Kernel, Container> >
 {
   typedef CGAL::Polygon_2<Kernel, Container>                 Polygon;
-  typedef Arr_lightweight_polyline_traits_2<Kernel, Polygon> Polyline_traits;
+  typedef Arr_caching_polyline_traits_2<Kernel, Polygon> Polyline_traits;
   typedef Gps_traits_2<Polyline_traits>                      Traits;
 };
 

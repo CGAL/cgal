@@ -1,8 +1,8 @@
-//! \file examples/Arrangement_on_surface_2/polylines_lightweight.cpp
-// Constructing an arrangement of polylines with lightweight traits
+//! \file examples/Arrangement_on_surface_2/polylines_caching.cpp
+// Constructing an arrangement of polylines with caching traits
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Arr_lightweight_polyline_traits_2.h>
+#include <CGAL/Arr_caching_polyline_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Polygon_2.h>
 #include <boost/function_output_iterator.hpp>
@@ -21,7 +21,7 @@ int main()
 {
   // Using a vector of points
   {
-    using Geom_traits_2 = CGAL::Arr_lightweight_polyline_traits_2<Kernel, Point_2_vector>;
+    using Geom_traits_2 = CGAL::Arr_caching_polyline_traits_2<Kernel, Point_2_vector>;
     using Arrangement_2 = CGAL::Arrangement_2<Geom_traits_2>;
     using Curve_2 = typename Geom_traits_2::Curve_2;
     using X_monotone_curve_2 = typename Geom_traits_2::X_monotone_curve_2;
@@ -62,7 +62,7 @@ int main()
 
   // Using a Polygon_2
   {
-    using Geom_traits_2 = CGAL::Arr_lightweight_polyline_traits_2<Kernel, Polygon_2>;
+    using Geom_traits_2 = CGAL::Arr_caching_polyline_traits_2<Kernel, Polygon_2>;
     using Arrangement_2 = CGAL::Arrangement_2<Geom_traits_2>;
 
     using Curve_2 = typename Geom_traits_2::Curve_2;

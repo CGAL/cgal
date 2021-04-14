@@ -1,5 +1,5 @@
-#ifndef CGAL_ARR_LIGHTWEIGHT_POLYLINE_TRAITS_2_H
-#define CGAL_ARR_LIGHTWEIGHT_POLYLINE_TRAITS_2_H
+#ifndef CGAL_ARR_CACHING_POLYLINE_TRAITS_2_H
+#define CGAL_ARR_CACHING_POLYLINE_TRAITS_2_H
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
@@ -15,26 +15,26 @@
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
 #include <CGAL/Arr_polycurve_basic_traits_2.h>
-#include <CGAL/Arr_lightweight_polyline_subtraits_2.h>
+#include <CGAL/Arr_caching_polyline_subtraits_2.h>
 
 namespace CGAL {
 
 template <typename Kernel_, typename Range_>
-class Arr_lightweight_polyline_traits_2
+class Arr_caching_polyline_traits_2
   : public Arr_polycurve_basic_traits_2
-    <Arr_lightweight_polyline_subtraits_2<Kernel_, Range_>,
-     internal::Lightweight_polyline_2<Kernel_, Range_> >
+    <Arr_caching_polyline_subtraits_2<Kernel_, Range_>,
+     internal::Caching_polyline_2<Kernel_, Range_> >
 {
 public:
 
   using Kernel = Kernel_;
   using Range = Range_;
-  using Subcurve_traits_2 = Arr_lightweight_polyline_subtraits_2<Kernel, Range>;
-  using Curve_2 = internal::Lightweight_polyline_2<Kernel, Range>;
+  using Subcurve_traits_2 = Arr_caching_polyline_subtraits_2<Kernel, Range>;
+  using Curve_2 = internal::Caching_polyline_2<Kernel, Range>;
 
 private:
   using Base = Arr_polycurve_basic_traits_2<Subcurve_traits_2, Curve_2>;
-  using Self = Arr_lightweight_polyline_traits_2<Kernel, Range>;
+  using Self = Arr_caching_polyline_traits_2<Kernel, Range>;
   using Extreme_point = typename Curve_2::Extreme_point;
 
 public:
@@ -86,8 +86,8 @@ public:
   using Subcurve_2 = typename Subcurve_traits_2::Curve_2;
 
 
-  Arr_lightweight_polyline_traits_2() : Base() { }
-  Arr_lightweight_polyline_traits_2(const Subcurve_traits_2* geom_traits) : Base(geom_traits) { }
+  Arr_caching_polyline_traits_2() : Base() { }
+  Arr_caching_polyline_traits_2(const Subcurve_traits_2* geom_traits) : Base(geom_traits) { }
 
   class Construct_opposite_2 {
   public:
@@ -102,10 +102,10 @@ public:
   class Make_x_monotone_2
   {
   protected:
-    using Traits = Arr_lightweight_polyline_traits_2<Kernel, Range>;
+    using Traits = Arr_caching_polyline_traits_2<Kernel, Range>;
     const Traits& m_traits;
     Make_x_monotone_2(const Traits& traits) : m_traits(traits) {}
-    friend class Arr_lightweight_polyline_traits_2<Kernel, Range>;
+    friend class Arr_caching_polyline_traits_2<Kernel, Range>;
   public:
     using Curve_iterator = typename Curve_2::iterator;
 
@@ -142,10 +142,10 @@ public:
   class Split_2
   {
   protected:
-    using Traits = Arr_lightweight_polyline_traits_2<Kernel, Range>;
+    using Traits = Arr_caching_polyline_traits_2<Kernel, Range>;
     const Traits& m_traits;
     Split_2(const Traits& traits) : m_traits(traits) {}
-    friend class Arr_lightweight_polyline_traits_2<Kernel, Range>;
+    friend class Arr_caching_polyline_traits_2<Kernel, Range>;
   public:
 
     void operator()(const X_monotone_curve_2& xcv, const Point_2& p,
@@ -220,10 +220,10 @@ public:
   class Intersect_2
   {
   protected:
-    using Traits = Arr_lightweight_polyline_traits_2<Kernel, Range>;
+    using Traits = Arr_caching_polyline_traits_2<Kernel, Range>;
     const Traits& m_traits;
     Intersect_2(const Traits& traits) : m_traits(traits) {}
-    friend class Arr_lightweight_polyline_traits_2<Kernel, Range>;
+    friend class Arr_caching_polyline_traits_2<Kernel, Range>;
   public:
     template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& cv1,
@@ -325,7 +325,7 @@ public:
       // overlapping segment instantiates a new Polyline (with only 2
       // vertices), whereas it should be possible to create a unique
       // Polyline with >2 vertices. However, considering that the
-      // lightweight implementation could only handle that efficiently
+      // caching implementation could only handle that efficiently
       // if curves overlap *with common vertices only*, it seems
       // simpler to keep this current implementation for now.
 
@@ -513,10 +513,10 @@ public:
   class Construct_curve_2
   {
   protected:
-    using Traits = Arr_lightweight_polyline_traits_2<Kernel, Range>;
+    using Traits = Arr_caching_polyline_traits_2<Kernel, Range>;
     const Traits& m_traits;
     Construct_curve_2(const Traits& traits) : m_traits(traits) {}
-    friend class Arr_lightweight_polyline_traits_2<Kernel, Range>;
+    friend class Arr_caching_polyline_traits_2<Kernel, Range>;
   public:
 
     Curve_2 operator()(const Range& range, bool duplicate_first = false) const
