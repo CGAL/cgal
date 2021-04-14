@@ -256,15 +256,13 @@ run_test_on_platform()
     NUMBER_OF_PROCESSORS=1
   fi
   CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${PLATFORM}
-  echo "CGAL_BINARY_DIR=${CGAL_BINARY_DIR}"
   cd "${CGAL_BINARY_DIR}"
-  
   log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "Testing on host ${HOST} and platform ${PLATFORM}"
   
   if [ -f "${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/setup" ]; then
     source "${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/setup"
   else
-    INIT_FILE="${REFERENCE_PLATFORMS_DIR}/${PLATFORM}.cmake"
+    INIT_FILE="${CGAL_HOME}/${REFERENCE_PLATFORMS_DIR}/${PLATFORM}.cmake"
   fi
   if [ ! -f "${INIT_FILE}" ]; then
     echo "error NEED A INIT FILE !"
@@ -278,7 +276,6 @@ run_test_on_platform()
   if [ -z "${SHOW_PROGRESS}" ]; then
     cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR  >package_installation.log 2>&1 
   else
-    echo "cmake ${INIT_FILE:+\"-C${INIT_FILE}\"} -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR"
     cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR 2>&1 |tee package_installation.log
   fi
   LIST_TEST_FILE="${CGAL_HOME}/list_test_packages"
@@ -299,12 +296,11 @@ run_test_on_platform()
   echo "SET(CTEST_CUSTOM_MAXIMUM_FAILED_TEST_OUTPUT_SIZE 1000000000)" >> CTestCustom.cmake
   CTEST_OPTS="-T Start -T Test --timeout 1200 -j${NUMBER_OF_PROCESSORS} ${DO_NOT_TEST:+-E execution___of__} "
   if uname | grep -q "CYGWIN"; then
-    CTEST_OPTS="-C Release ${CTEST_OPTS} -V"
+    CTEST_OPTS="-C ${CONFIG_TYPE} ${CTEST_OPTS} -V"
   fi
   if [ -z "${SHOW_PROGRESS}" ]; then
     ctest ${TO_TEST:+-L ${TO_TEST} } ${CTEST_OPTS} ${KEEP_TESTS:+-FC .}> tmp.txt
   else
-    echo "ctest ${CTEST_OPTS} ${TO_TEST:+-L ${TO_TEST}} ${KEEP_TESTS:+-FC .} "
     ctest ${TO_TEST:+-L ${TO_TEST} } ${CTEST_OPTS} ${KEEP_TESTS:+-FC .} |tee tmp.txt
   fi
   #####################
