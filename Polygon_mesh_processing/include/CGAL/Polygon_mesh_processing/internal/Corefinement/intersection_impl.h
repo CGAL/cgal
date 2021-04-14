@@ -1148,70 +1148,70 @@ class Intersection_of_triangle_meshes
           // use lower bound to get the first entry which key is equal or larger
           // the non-coplanar entry case. That way any coplanar entry will be
           // listed afterward
-          typename Faces_to_nodes_map::iterator it_seg3 =
+          typename Faces_to_nodes_map::iterator it_seg23 =
             f_to_node.find(std::make_pair(f2, f3));
 
-          if (it_seg3!=f_to_node.end())
+          if (it_seg23!=f_to_node.end())
           {
             std::vector<std::array<std::size_t,2> > f2f3_segments;
-            it_seg3->second.get_segments(f2f3_segments);
+            it_seg23->second.get_segments(f2f3_segments);
 
             // look for edges between f1 and f2
-            typename Faces_to_nodes_map::iterator it_seg1 =
+            typename Faces_to_nodes_map::iterator it_seg12 =
               f_to_node.find(std::make_pair(f1, f2));
-            CGAL_assertion( it_seg1 != f_to_node.end() );
+            CGAL_assertion( it_seg12 != f_to_node.end() );
             std::vector<std::array<std::size_t,2> > f1f2_segments;
-            it_seg1->second.get_segments(f1f2_segments);
+            it_seg12->second.get_segments(f1f2_segments);
 
             // look for edges between f1 and f3
-            typename Faces_to_nodes_map::iterator it_seg2 =
+            typename Faces_to_nodes_map::iterator it_seg13 =
               f_to_node.find(std::make_pair(f1, f3));
-            CGAL_assertion( it_seg2 != f_to_node.end() );
+            CGAL_assertion( it_seg13 != f_to_node.end() );
             std::vector<std::array<std::size_t,2> > f1f3_segments;
-            it_seg2->second.get_segments(f1f3_segments);
+            it_seg13->second.get_segments(f1f3_segments);
 
             /// TODO AUTOREF_TAG shall we ignore tangency points?
             /// with the current code, Node_id_set::size()==1 is ignored as we only drop semgents
             /// Actually it might be that it is not a tangency point if the third segment was considered!
             /// so not handling it is a bug
 
-            for (const std::array<std::size_t,2>& ns1 : f1f2_segments)
+            for (const std::array<std::size_t,2>& ns12 : f1f2_segments)
             {
-              for (const std::array<std::size_t,2>& ns2 : f1f3_segments)
+              for (const std::array<std::size_t,2>& ns13 : f1f3_segments)
               {
                 // handle cases of segments sharing an endpoint
-                if (ns1[0]==ns2[0] || ns1[0]==ns2[1] ||
-                    ns1[1]==ns2[0] || ns1[1]==ns2[1] )
+                if (ns12[0]==ns13[0] || ns12[0]==ns13[1] ||
+                    ns12[1]==ns13[0] || ns12[1]==ns13[1] )
                 {
                   Node_id common_nid, nid1, nid2;
 
-                  if (ns1[0]==ns2[0])
+                  if (ns12[0]==ns13[0])
                   {
-                    common_nid=ns1[0];
-                    nid1=ns1[1];
-                    nid2=ns2[1];
+                    common_nid=ns12[0];
+                    nid1=ns12[1];
+                    nid2=ns13[1];
                   }
                   else
                   {
-                    if (ns1[0]==ns2[1])
+                    if (ns12[0]==ns13[1])
                     {
-                      common_nid=ns1[0];
-                      nid1=ns1[1];
-                      nid2=ns2[0];
+                      common_nid=ns12[0];
+                      nid1=ns12[1];
+                      nid2=ns13[0];
                     }
                     else
                     {
-                      if (ns1[1]==ns2[0])
+                      if (ns12[1]==ns13[0])
                       {
-                        common_nid=ns1[1];
-                        nid1=ns1[0];
-                        nid2=ns2[1];
+                        common_nid=ns12[1];
+                        nid1=ns12[0];
+                        nid2=ns13[1];
                       }
                       else
                       {
-                        common_nid=ns1[1];
-                        nid1=ns1[0];
-                        nid2=ns2[0];
+                        common_nid=ns12[1];
+                        nid1=ns12[0];
+                        nid2=ns13[0];
                       }
                     }
                   }
@@ -1237,11 +1237,11 @@ class Intersection_of_triangle_meshes
 
                 // TODO AUTOREF_TAG there might be a better test rather than relying on constructions
                 typedef typename Node_vector::Exact_kernel::Segment_3 Segment_3;
-                Segment_3 s1(nodes.exact_node(ns1[0]), nodes.exact_node(ns1[1])),
-                          s2(nodes.exact_node(ns2[0]), nodes.exact_node(ns2[1])),
-                          s3;
+                Segment_3 s12(nodes.exact_node(ns12[0]), nodes.exact_node(ns12[1])),
+                          s13(nodes.exact_node(ns13[0]), nodes.exact_node(ns13[1])),
+                          s23;
 
-                if( do_intersect(s1, s2) )
+                if( do_intersect(s12, s13) )
                 {
                   /// TODO AUTOREF_TAG it might be the end point of a segment!
                   // we need to find which segment is the third one intersecting
@@ -1250,35 +1250,35 @@ class Intersection_of_triangle_meshes
                   // first check if there is only one such edge (no test is needed then)
                   CGAL_assertion(!f2f3_segments.empty() || !"AUTOREF_TAG HANDLE ME");
 
-                  std::array<std::size_t,2> ns3 = f2f3_segments.front();
+                  std::array<std::size_t,2> ns23 = f2f3_segments.front();
 
                   if (f2f3_segments.size()!=1)
                   {
                     std::size_t k=0;
                     for (;k<f2f3_segments.size(); ++k)
                     {
-                      ns3=f2f3_segments[k];
-                      s3=Segment_3(nodes.exact_node(ns3[0]), nodes.exact_node(ns3[1]));
-                      if (do_intersect(s1, s3))
+                      ns23=f2f3_segments[k];
+                      s23=Segment_3(nodes.exact_node(ns23[0]), nodes.exact_node(ns23[1]));
+                      if (do_intersect(s12, s23))
                       {
-                        CGAL_assertion(do_intersect(s2,s3));
+                        CGAL_assertion(do_intersect(s13,s23));
                         break;
                       }
                     }
                     CGAL_assertion(k!=f2f3_segments.size());
                   }
                   else
-                    s3=Segment_3(nodes.exact_node(ns3[0]), nodes.exact_node(ns3[1]));
+                    s23=Segment_3(nodes.exact_node(ns23[0]), nodes.exact_node(ns23[1]));
 
-                  CGAL_assertion(do_intersect(s1, s3));
+                  CGAL_assertion(do_intersect(s12, s23));
 
-                  // use s3
+                  // use s23
                   ///TODO AUTOREF_TAG the collinear test could be factorized in the do-intersect
                   /// TODO AUTOREF_TAG if we don't factorise maybe checking for collinearity with
                   ///      cross product would be cheaper?
-                  if ( (collinear(s1[0], s1[1], s2[0]) && collinear(s1[0], s1[1], s2[1]) ) ||
-                       (collinear(s1[0], s1[1], s3[0]) && collinear(s1[0], s1[1], s3[1]) ) ||
-                       (collinear(s2[0], s2[1], s3[0]) && collinear(s2[0], s2[1], s3[1]) ) )
+                  if ( (collinear(s12[0], s12[1], s13[0]) && collinear(s12[0], s12[1], s13[1]) ) ||
+                       (collinear(s12[0], s12[1], s23[0]) && collinear(s12[0], s12[1], s23[1]) ) ||
+                       (collinear(s13[0], s13[1], s23[0]) && collinear(s13[0], s13[1], s23[1]) ) )
                   {
                     throw Triple_intersection_exception();
                   }
@@ -1296,9 +1296,9 @@ class Intersection_of_triangle_meshes
 #endif
                   visitor.new_node_added_triple_face(node_id, f1, f2, f3, tm);
 
-                  map_to_process[&(it_seg1->second)].push_back(std::make_pair(ns1, node_id));
-                  map_to_process[&(it_seg2->second)].push_back(std::make_pair(ns2, node_id));
-                  map_to_process[&(it_seg3->second)].push_back(std::make_pair(ns3, node_id));
+                  map_to_process[&(it_seg12->second)].push_back(std::make_pair(ns12, node_id));
+                  map_to_process[&(it_seg13->second)].push_back(std::make_pair(ns13, node_id));
+                  map_to_process[&(it_seg23->second)].push_back(std::make_pair(ns23, node_id));
                 }
               }
             }
