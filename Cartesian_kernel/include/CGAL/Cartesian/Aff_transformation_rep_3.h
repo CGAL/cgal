@@ -31,6 +31,7 @@ public:
   typedef typename R::Point_3              Point_3;
   typedef typename R::Vector_3             Vector_3;
   typedef typename R::Direction_3          Direction_3;
+  typedef typename R::Plane_3              Plane_3;
   typedef typename R::Aff_transformation_3 Aff_transformation_3;
 
   virtual ~Aff_transformation_rep_baseC3(){}
@@ -38,6 +39,7 @@ public:
   virtual Point_3     transform(const Point_3 &p) const = 0;
   virtual Vector_3    transform(const Vector_3 &v) const = 0;
   virtual Direction_3 transform(const Direction_3 &d) const = 0;
+  virtual Plane_3     transform(const Plane_3& p) const = 0;
 
   virtual Aff_transformation_3 operator*(
                        const Aff_transformation_rep_baseC3 &t) const = 0;
@@ -55,6 +57,7 @@ public:
   virtual Aff_transformation_3 transpose() const = 0;
   virtual bool                 is_even() const = 0;
   virtual bool                 is_translation() const = 0;
+  virtual bool                 is_scaling() const = 0;
   virtual FT                   cartesian(int i, int j) const = 0;
   virtual std::ostream         &print(std::ostream &os) const = 0;
 };
@@ -128,6 +131,12 @@ public:
                        t31 * v.x() + t32 * v.y() + t33 * v.z());
   }
 
+  virtual Plane_3 transform(const Plane_3& p) const
+  {
+      return p; // fix or never call
+  }
+
+
   // Note that Aff_transformation is not defined yet,
   // so the following 6 functions have to be implemented
   // outside class body
@@ -147,6 +156,11 @@ public:
 
 
   virtual bool is_translation() const
+  {
+    return false;
+  }
+
+  virtual bool is_scaling() const
   {
     return false;
   }

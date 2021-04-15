@@ -56,6 +56,11 @@ public:
     return d;
   }
 
+  virtual Plane_3 transform(const Plane_3 &d) const
+  {
+    return d;  // fix or never call it
+  }
+
   virtual Aff_transformation_3 operator*(const Transformation_base_3 &t) const
   {
     return t.compose(*this);
@@ -130,6 +135,10 @@ public:
     return true;
   }
 
+  virtual bool is_scaling() const
+  {
+    return false;
+  }
   virtual FT cartesian(int i, int j) const
   {
     if (j==i) return FT(1);
