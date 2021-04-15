@@ -34,6 +34,7 @@ public:
   typedef typename Transformation_base_3::Point_3       Point_3;
   typedef typename Transformation_base_3::Vector_3      Vector_3;
   typedef typename Transformation_base_3::Direction_3   Direction_3;
+  typedef typename Transformation_base_3::Plane_3       Plane_3;
   typedef typename Transformation_base_3::Aff_transformation_3
                                                         Aff_transformation_3;
 
