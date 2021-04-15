@@ -49,9 +49,14 @@ print_testresult()
       # or ',' or ':'. That avoids some false positives such as
       # '-read_only_relocs,warning' or '-D_CRT_SECURE_NO_WARNINGS', or
       # 'QMessageBox::warning'.
-      if grep -v -F 'CMake Warning at /usr/share/cmake/Modules/FindBoost' CompilerOutput_$1 ProgramOutput.*.$1 | grep -i "include[/\]CGAL\|cmake" | grep -i -E -q '(^|[^a-zA-Z_,:-])warning'
+      if grep -v -F 'CMake Warning at /usr/share/cmake/Modules/FindBoost' CompilerOutput_$1 ProgramOutput.*.$1 | grep -i -E -q '(^|[^a-zA-Z_,:-])warning'
       then
-        RESULT="w"
+        if grep -i "include[/\]CGAL\|cmake"
+        then
+          RESULT="w"
+        else
+          RESULT="t"
+        fi
       else
 	if grep -E -q 'NOTICE: .*(need|require|incompatible).*and.*will not be' CompilerOutput_$1
 	then
