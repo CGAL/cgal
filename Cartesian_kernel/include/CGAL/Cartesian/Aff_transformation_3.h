@@ -143,17 +143,7 @@ public:
 
   Plane_3
   transform(const Plane_3& p) const
-  {
-    if(is_scaling()){
-      return this->Ptr()->transform(p);
-    }
-    if (is_even())
-      return Plane_3(transform(p.point()),
-                 transpose().inverse().transform(p.orthogonal_direction()));
-    else
-      return Plane_3(transform(p.point()),
-               - transpose().inverse().transform(p.orthogonal_direction()));
-  }
+  { return this->Ptr()->transform(p); }
 
   Plane_3
   operator()(const Plane_3& p) const

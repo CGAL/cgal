@@ -57,9 +57,13 @@ public:
     return d;
   }
 
-  virtual Plane_3 transform(const Plane_3 &d) const
+  virtual Plane_3 transform(const Plane_3 &p) const
   {
-    return d;  // fix or never call it
+    // direction ( which is (p.a(), p.b(), p.c())) does not change
+    return Plane_3(p.a(),
+                   p.b(),
+                   p.c(),
+                   p.d()  - ( p.a()*translationvector_.x() + p.b()*translationvector_.y() + p.c()*translationvector_.z()));
   }
 
   virtual Aff_transformation_3 operator*(const Transformation_base_3 &t) const
