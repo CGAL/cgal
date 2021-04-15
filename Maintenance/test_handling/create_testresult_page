@@ -459,8 +459,8 @@ sub print_platform_descriptions()
 <th colspan="2">OS and compiler</th>
 <th>Tester</th>
 <th class="ok">y</th>
-<th class="warning">w</th>
 <th class="third_party_warning">t</th>
+<th class="warning">w</th>
 <th class="error">n</th>
 <th class="requirements">r</th>
 <th>CMake</th>
@@ -498,8 +498,8 @@ EOF
 	    my $tester_address = $_;
 
 	    my $county = $testresults[$platform_num]->{"y"};
-	    my $countw = $testresults[$platform_num]->{"w"};
 	    my $countt = $testresults[$platform_num]->{"t"};
+	    my $countw = $testresults[$platform_num]->{"w"};
 	    my $countn = $testresults[$platform_num]->{"n"};
 	    my $countr = $testresults[$platform_num]->{"r"};
 
@@ -517,8 +517,8 @@ EOF
 	    print OUTPUT "</td>\n";
 	    print OUTPUT "<td><a href=\"mailto:$tester_address\">$tester_name</a></td>\n";
 	    print OUTPUT "<td>$county</td>\n";
-	    print OUTPUT "<td>$countw</td>\n";
 	    print OUTPUT "<td>$countt</td>\n";
+	    print OUTPUT "<td>$countw</td>\n";
  	    print OUTPUT "<td>$countn</td>\n";
  	    print OUTPUT "<td>$countr</td>\n";
 	    $index = 8;
