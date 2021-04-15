@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Simon Giraudot, Florent Lafarge
 
@@ -215,7 +206,7 @@ public:
                     const Iso_cuboid_3& bbox,
                     float grid_resolution)
     : m_points (&input), m_point_map (point_map)
-    , m_bbox (bbox), m_resolution (grid_resolution), m_lower_scale(NULL), m_current_scale(0)
+    , m_bbox (bbox), m_resolution (grid_resolution), m_lower_scale(nullptr), m_current_scale(0)
   {
     m_width = (std::size_t)((bbox.xmax() - bbox.xmin()) / grid_resolution) + 1;
     m_height = (std::size_t)((bbox.ymax() - bbox.ymin()) / grid_resolution) + 1;
@@ -349,7 +340,7 @@ public:
   */
   std::size_t x(std::size_t index) const
   {
-    if (m_lower_scale == NULL)
+    if (m_lower_scale == nullptr)
     {
       const Point_3& p = get(m_point_map, *(m_points->begin()+index));
       return (std::size_t)((p.x() - m_bbox.xmin()) / m_resolution);
@@ -363,7 +354,7 @@ public:
   */
   std::size_t y(std::size_t index) const
   {
-    if (m_lower_scale == NULL)
+    if (m_lower_scale == nullptr)
     {
       const Point_3& p = get(m_point_map, *(m_points->begin()+index));
       return (std::size_t)((p.y() - m_bbox.ymin()) / m_resolution);

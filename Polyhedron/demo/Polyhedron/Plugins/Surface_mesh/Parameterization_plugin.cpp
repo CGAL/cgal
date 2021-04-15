@@ -37,7 +37,6 @@
 #include <CGAL/Surface_mesh_parameterization/parameterize.h>
 
 
-#include <boost/foreach.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/container/flat_map.hpp>
@@ -144,12 +143,17 @@ protected:
     }
     case QEvent::Wheel: {
       QWheelEvent* event = static_cast<QWheelEvent*>(ev);
-      QPointF old_pos = v->mapToScene(event->pos());
-      if(event->delta() <0)
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+      QPoint pos = event->pos();
+#else
+      QPointF pos = event->position();
+#endif
+      QPointF old_pos = v->mapToScene(pos.x(), pos.y());
+      if(event->angleDelta().y() <0)
         v->scale(1.2, 1.2);
       else
         v->scale(0.8, 0.8);
-      QPointF new_pos = v->mapToScene(event->pos());
+      QPointF new_pos = v->mapToScene(pos.x(), pos.y());
       QPointF delta = new_pos - old_pos;
       v->translate(delta.x(), delta.y());
       v->update();
@@ -266,8 +270,11 @@ public :
     pen.setWidth(0);
     painter->setPen(pen);
     painter->setBrush(brush);
-SMesh::Property_map<halfedge_descriptor,std::pair<float, float> > uv;
-uv = graph->add_property_map<halfedge_descriptor,std::pair<float, float> >("h:uv",std::make_pair(0.0f,0.0f)).first;
+    SMesh::Property_map<halfedge_descriptor,float> u,v;
+
+    u = graph->add_property_map<halfedge_descriptor,float>("h:u", 0.0f).first;
+    v = graph->add_property_map<halfedge_descriptor,float>("h:v", 0.0f).first;
+
     for( Component::iterator
          fi = components->at(m_current_component).begin();
          fi != components->at(m_current_component).end();
@@ -277,11 +284,11 @@ uv = graph->add_property_map<halfedge_descriptor,std::pair<float, float> >("h:uv
 
       QPointF points[3];
       boost::graph_traits<Base_face_graph>::halfedge_descriptor h = halfedge(f, *graph);;
-      points[0] = QPointF(get(uv, h).first, get(uv, h).second);
+      points[0] = QPointF(get(u, h), get(v, h));
       h = next(halfedge(f, *graph), *graph);
-      points[1] = QPointF(get(uv, h).first, get(uv, h).second);
+      points[1] = QPointF(get(u, h), get(v, h));
       h = next(next(halfedge(f, *graph), *graph), *graph);
-      points[2] = QPointF(get(uv, h).first, get(uv, h).second);
+      points[2] = QPointF(get(u, h), get(v, h));
       painter->drawPolygon(points,3);
     }
   }
@@ -414,11 +421,11 @@ public Q_SLOTS:
 
   void replacePolyline()
   {
-    bool is_ogl_4_3 =
-        static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->isOpenGL_4_3();
-    if(current_uv_item)
-      qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item))->add_border_edges(std::vector<float>(0),
-                                                                                                       is_ogl_4_3);
+    if(current_uv_item){
+      Scene_textured_facegraph_item* t_item =
+          qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item));
+     t_item->add_border_edges(std::vector<float>(0));
+    }
 
     int id = scene->mainSelectionIndex();
 
@@ -441,11 +448,17 @@ public Q_SLOTS:
         graphics_scene->removeItem(graphics_scene->items().first());
 
       graphics_scene->addItem(current_uv_item);
-      ui_widget.graphicsView->fitInView(current_uv_item->boundingRect(), Qt::KeepAspectRatio);
-      ui_widget.component_numberLabel->setText(QString("Component : %1/%2").arg(current_uv_item->current_component()+1).arg(current_uv_item->number_of_components()));
-      dock_widget->setWindowTitle(tr("UVMapping for %1").arg(current_uv_item->item_name()));
-      qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item))->add_border_edges(current_uv_item->concatenated_borders(),
-                                                                                                       is_ogl_4_3);
+      ui_widget.graphicsView->fitInView(current_uv_item->boundingRect(),
+                                        Qt::KeepAspectRatio);
+      ui_widget.component_numberLabel->setText(
+            QString("Component : %1/%2").arg(current_uv_item->current_component()+1)
+            .arg(current_uv_item->number_of_components()));
+      dock_widget->setWindowTitle(tr("UVMapping for %1")
+                                  .arg(current_uv_item->item_name()));
+      Scene_textured_facegraph_item* t_item =
+          qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item));
+     t_item->add_border_edges(
+            current_uv_item->concatenated_borders());
     }
   }
 
@@ -609,7 +622,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     //create a textured_polyhedron edges selection from the ids of the corresponding vertices
     typedef boost::property_map<Base_face_graph, boost::halfedge_index_t>::type HIDMap;
     HIDMap hidmap = get(boost::halfedge_index, tMesh);
-    BOOST_FOREACH(P_edge_descriptor ed, sel_item->selected_edges)
+    for(P_edge_descriptor ed : sel_item->selected_edges)
     {
       boost::graph_traits<Face_graph>::vertex_descriptor a(source(ed, *pMesh)), b(target(ed, *pMesh));
 
@@ -632,7 +645,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     }
     qDebug() << sel_item->selected_edges.size() << ", " << seam_edges.size();
     //fill seam mesh pmaps
-    BOOST_FOREACH(T_edge_descriptor ed, seam_edges)
+    for(T_edge_descriptor ed : seam_edges)
     {
       T_halfedge_descriptor hd = halfedge(ed, tMesh);
       T_vertex_descriptor svd(source(hd, tMesh)), tvd(target(hd, tMesh));
@@ -649,7 +662,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   // map the cones from the selection plugin to the textured polyhedron
   boost::unordered_set<T_vertex_descriptor> unordered_cones;
   if(method == PARAM_OTE) {
-    BOOST_FOREACH(P_vertex_descriptor vd, sel_item->selected_vertices) {
+    for(P_vertex_descriptor vd : sel_item->selected_vertices) {
       boost::graph_traits<Face_graph>::vertex_descriptor pvd(vd);
       boost::graph_traits<Textured_face_graph>::vertex_iterator it = vertices(tMesh).begin(),
           end = vertices(tMesh).end();
@@ -720,14 +733,14 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     s_halfedge_descriptor bhd; // a halfedge on the (possibly virtual) border
     boost::unordered_set<s_halfedge_descriptor> visited;
     FT result_len = 0;
-    BOOST_FOREACH(s_halfedge_descriptor hd, border)
+    for(s_halfedge_descriptor hd : border)
     {
       assert(is_border(hd, sMesh));
 
       if(visited.find(hd) == visited.end())
       {
         FT len = 0;
-        BOOST_FOREACH(s_halfedge_descriptor haf, halfedges_around_face(hd, sMesh))
+        for(s_halfedge_descriptor haf : halfedges_around_face(hd, sMesh))
         {
           len += PMP::edge_length(haf, sMesh);
           visited.insert(haf);
@@ -746,7 +759,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     VPMap vpmap =get(boost::vertex_point, tMesh);
 
     // collect the border edges for that connected component
-    BOOST_FOREACH(s_halfedge_descriptor haf, halfedges_around_face(bhd, sMesh))
+    for(s_halfedge_descriptor haf : halfedges_around_face(bhd, sMesh))
     {
         uv_borders[current_component].push_back(get(vpmap, source(haf, tMesh)).x());
         uv_borders[current_component].push_back(get(vpmap, source(haf, tMesh)).y());
@@ -899,10 +912,15 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   } //end for each component
 
   QApplication::restoreOverrideCursor();
-  QPointF min(FLT_MAX, FLT_MAX), max(-FLT_MAX, -FLT_MAX);
+  QPointF pmin(FLT_MAX, FLT_MAX), pmax(-FLT_MAX, -FLT_MAX);
 
-  SMesh::Property_map<halfedge_descriptor,std::pair<float, float> > uv;
-  uv = tMesh.add_property_map<halfedge_descriptor,std::pair<float, float> >("h:uv",std::make_pair(0.0f,0.0f)).first;
+  SMesh::Property_map<halfedge_descriptor, float> umap;
+  SMesh::Property_map<halfedge_descriptor, float> vmap;
+
+  umap = tMesh.add_property_map<halfedge_descriptor, float>("h:u", 0.0f).first;
+  vmap = tMesh.add_property_map<halfedge_descriptor, float>("h:v", 0.0f).first;
+
+  tMesh.property_stats(std::cerr);
   Base_face_graph::Halfedge_iterator it;
   for(it = tMesh.halfedges_begin();
       it != tMesh.halfedges_end();
@@ -911,15 +929,16 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     Seam_mesh::halfedge_descriptor hd(*it);
     FT u = uv_pm[target(hd, sMesh)].x();
     FT v = uv_pm[target(hd, sMesh)].y();
-    put(uv, *it, std::make_pair(static_cast<float>(u),static_cast<float>(v)));
-    if(u<min.x())
-      min.setX(u);
-    if(u>max.x())
-      max.setX(u);
-    if(v<min.y())
-      min.setY(v);
-    if(v>max.y())
-      max.setY(v);
+    put(umap, *it, static_cast<float>(u));
+    put(vmap, *it, static_cast<float>(v));
+    if(u<pmin.x())
+      pmin.setX(u);
+    if(u>pmax.x())
+      pmax.setX(u);
+    if(v<pmin.y())
+      pmin.setY(v);
+    if(v>pmax.y())
+      pmax.setY(v);
   }
 
   Components* components = new Components(0);
@@ -934,7 +953,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   }
 
   Scene_textured_facegraph_item* new_item = new Scene_textured_facegraph_item(tMesh);
-  UVItem *projection = new UVItem(components,new_item->textured_face_graph(), uv_borders, QRectF(min, max));
+  UVItem *projection = new UVItem(components,new_item->textured_face_graph(), uv_borders, QRectF(pmin, pmax));
   projection->set_item_name(new_item_name);
 
   new_item->setName(new_item_name);
@@ -949,14 +968,16 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     graphics_scene->removeItem(graphics_scene->items().first());
   graphics_scene->addItem(projection);
   projections[new_item] = projection;
-  bool is_ogl_4_3 =
-      static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->isOpenGL_4_3();
-  if(current_uv_item)
-    qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item))->add_border_edges(std::vector<float>(0),
-                                                                                                     is_ogl_4_3);
+  if(current_uv_item){
+    Scene_textured_facegraph_item* t_item =
+        qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item));
+   t_item->add_border_edges(std::vector<float>(0));
+  }
   current_uv_item = projection;
-  qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item))->add_border_edges(current_uv_item->concatenated_borders(),
-                                                                                                   is_ogl_4_3);
+  Scene_textured_facegraph_item* t_item =
+      qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item));
+  t_item->add_border_edges(
+        current_uv_item->concatenated_borders());
   if(dock_widget->isHidden()){
     dock_widget->setVisible(true);
     dock_widget->raise();

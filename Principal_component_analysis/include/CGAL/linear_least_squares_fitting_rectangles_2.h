@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Pierre Alliez and Sylvain Pion and Ankit Gupta
 
@@ -180,7 +171,8 @@ linear_least_squares_fitting_2(InputIterator first,
     segments.push_back(Segment_2(t[3],t[0]));
   }
 
-  return linear_least_squares_fitting_2(segments.begin(),segments.end(),line,c,K(),tag,
+  return linear_least_squares_fitting_2(segments.begin(),segments.end(),line,c,
+                                        (Segment_2*)nullptr, K(),tag,
                                         diagonalize_traits);
 
 } // end linear_least_squares_fitting_2 for rectangle set with 1D tag
@@ -218,7 +210,8 @@ linear_least_squares_fitting_2(InputIterator first,
     points.push_back(Point_2(t[3]));
   }
 
-  return linear_least_squares_fitting_2(points.begin(),points.end(),line,c,K(),tag,
+  return linear_least_squares_fitting_2(points.begin(),points.end(),line,c,
+                                        (Point_2*)nullptr, K(),tag,
                                         diagonalize_traits);
 
 } // end linear_least_squares_fitting_2 for rectangle set with 0D tag

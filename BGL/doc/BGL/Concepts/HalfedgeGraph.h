@@ -44,7 +44,7 @@ A model of `HalfedgeGraph` must have the interior property `vertex_point` attach
 \sa \link PkgBGLConcepts Graph Concepts \endlink
 */
 class HalfedgeGraph {
-  /// Returns a special `boost::graph_traits<HalfedgeGraph>::halfedge_descriptor` object which
+  /// Returns a special `boost::graph_traits<HalfedgeGraph>::%halfedge_descriptor` object which
   /// does not refer to any halfedge of graph object which type is `HalfedgeGraph`.
   static boost::graph_traits<HalfedgeGraph>::halfedge_descriptor null_halfedge();
 };

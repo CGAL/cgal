@@ -38,7 +38,7 @@ public:
     typedef typename Points_3::size_type size_type;
 
     for(size_type i=0; i < mesh.size(); i++){
-      CGAL::cpp11::array<typename boost::graph_traits<Facegraph>::vertex_descriptor, 3> face;
+      std::array<typename boost::graph_traits<Facegraph>::vertex_descriptor, 3> face;
       face[0] = add_vertex( meshPoints[mesh[i].template get<0>()],graph);
       face[1] = add_vertex( meshPoints[mesh[i].template get<1>()],graph);
       face[2] = add_vertex( meshPoints[mesh[i].template get<2>()],graph);

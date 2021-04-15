@@ -11,14 +11,14 @@ typedef CGAL::Surface_mesh_simplification::Edge_profile<Mesh> Profile;
 
 void naive_all_triangles(Mesh::Halfedge_index h, Mesh& m, std::set<Mesh::Face_index>& triangles)
 {
-  BOOST_FOREACH(Mesh::Halfedge_index hh, CGAL::halfedges_around_source(h, m))
+  for(Mesh::Halfedge_index hh : CGAL::halfedges_around_source(h, m))
   {
-    if (!is_border(hh, m))
+    if(!is_border(hh, m))
       triangles.insert(face(hh,m));
   }
-  BOOST_FOREACH(Mesh::Halfedge_index hh, CGAL::halfedges_around_target(h, m))
+  for(Mesh::Halfedge_index hh : CGAL::halfedges_around_target(h, m))
   {
-    if (!is_border(hh, m))
+    if(!is_border(hh, m))
       triangles.insert(face(hh,m));
   }
 }
@@ -27,15 +27,15 @@ void naive_link_vertices(Mesh::Halfedge_index h, Mesh& m,
                          const std::set<Mesh::Face_index>& triangles,
                          std::set<Mesh::Vertex_index>& link_vertices)
 {
-  BOOST_FOREACH(Mesh::Face_index f, triangles)
+  for(Mesh::Face_index f : triangles)
   {
-    BOOST_FOREACH(Mesh::Halfedge_index h, CGAL::halfedges_around_face(halfedge(f, m), m))
+    for(Mesh::Halfedge_index h : CGAL::halfedges_around_face(halfedge(f, m), m))
     {
       link_vertices.insert(target(h, m));
     }
   }
-  link_vertices.erase( source(h, m) );
-  link_vertices.erase( target(h, m) );
+  link_vertices.erase(source(h, m));
+  link_vertices.erase(target(h, m));
 }
 
 struct A{};
@@ -65,54 +65,54 @@ void test(const char* fname)
 {
   Mesh m;
   std::ifstream input(fname);
-  assert( !input.fail() );
+  assert(!input.fail());
   input >> m;
   assert(num_vertices(m)!=0);
   A a;
 
-  BOOST_FOREACH(Mesh::Halfedge_index h, halfedges(m))
+  for(Mesh::Halfedge_index h : halfedges(m))
   {
     std::set<Mesh::Face_index> triangles;
     naive_all_triangles(h, m, triangles);
 
-    Profile profile(h, m, a, get(boost::vertex_point, m), a, true);
+    Profile profile(h, m, K(), a, get(boost::vertex_point, m), a, true);
 
-    if (CGAL::Euler::does_satisfy_link_condition(edge(h, m), m))
+    if(CGAL::Euler::does_satisfy_link_condition(edge(h, m), m))
     {
       std::set<Mesh::Vertex_index> link_vertices;
       naive_link_vertices(h, m, triangles, link_vertices);
-      assert( link_vertices.size()==profile.link().size() );
-      assert( std::set<Mesh::Vertex_index>(profile.link().begin(),
+      assert(link_vertices.size()==profile.link().size());
+      assert(std::set<Mesh::Vertex_index>(profile.link().begin(),
                                            profile.link().end()).size()
-              == link_vertices.size() );
+              == link_vertices.size());
 
-      BOOST_FOREACH(const Mesh::Vertex_index& v, profile.link())
+      for(const Mesh::Vertex_index& v : profile.link())
       {
-        assert( link_vertices.count(v) == 1 );
+        assert(link_vertices.count(v) == 1);
       }
     }
 
     assert(triangles.size() == profile.triangles().size());
     std::set<boost::tuple<Mesh::Vertex_index, Mesh::Vertex_index, Mesh::Vertex_index> > triple_set;
-    BOOST_FOREACH(const Profile::Triangle& t, profile.triangles())
+    for(const Profile::Triangle& t : profile.triangles())
     {
-      triple_set.insert( make_canonical_tuple(t) );
+      triple_set.insert(make_canonical_tuple(t));
     }
-    BOOST_FOREACH(Mesh::Face_index f, triangles)
+    for(Mesh::Face_index f : triangles)
     {
-      assert( triple_set.count( make_canonical_tuple(f, m) ) == 1 );
+      assert(triple_set.count(make_canonical_tuple(f, m)) == 1);
     }
   }
 }
 
 int main(int argc, char** argv)
 {
-  for (int i=1; i<argc; ++i)
+  for(int i=1; i<argc; ++i)
   {
     std::cout << "Testing " << argv[i] << "\n";
     test(argv[i]);
   }
-  if (argc==1)
+  if(argc==1)
   {
     std::cout << "No file provided, nothing tested\n";
   }

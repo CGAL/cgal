@@ -12,7 +12,7 @@ typedef K::Point_3  Point_3;
 
 typedef CGAL::Polyhedron_3<K> Polyhedron;
 
-typedef CGAL::cpp11::array<std::size_t,3> Facet;
+typedef std::array<std::size_t,3> Facet;
 
 namespace std {
 std::ostream&

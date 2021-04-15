@@ -51,7 +51,7 @@ sub reformat_results($)
     $_ = $line;
     open (PLATFORM_INFO,">${platform}.info") or return;
     open (PLATFORM_NEW_RESULTS,">${platform}.new_results") or return;
-    my ($CGAL_VERSION,$LEDA_VERSION,$TESTER,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$MPFR,$ZLIB,$OPENGL,$BOOST,$QT,$QT4,$QT5,$CMAKE) = ("-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","no");
+    my ($CGAL_VERSION,$LEDA_VERSION,$COMPILER,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$MPFR,$ZLIB,$OPENGL,$BOOST,$QT,$QT4,$QT5,$CMAKE) = ("-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","no");
     my ($LDFLAGS,$CXXFLAGS) = ("", "");
     while (! /^------/) {
         if(/^\s*$/) {
@@ -69,8 +69,8 @@ sub reformat_results($)
 	if (/LEDAWIN_VERSION = '([^']+)'/) {
 	    $LEDA_VERSION="$LEDA_VERSION+win";
 	}
-	if (/^TESTER\s+([\w\.-]+)/) {
-	    $TESTER = $1;
+	if (/COMPILER_VERSION = '([^']+)'/) {
+	    $COMPILER = $1;
 	}
 	if (/^TESTER_NAME\s+(.*)$/) {
 	    $TESTER_NAME = $1;
@@ -140,7 +140,7 @@ NEXT:	if(! ($_= <PLATFORM_RESULTS>)) {
     rename("${platform}.new_results","${platform}.txt") or die "cannot rename!";
     print PLATFORM_INFO <<"EOF";
 $CGAL_VERSION
-$TESTER
+$COMPILER
 $TESTER_NAME
 $TESTER_ADDRESS
 $CMAKE

@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
 
   // Output all the edges of the skeleton.
   std::ofstream output("skel-sm.cgal");
-  BOOST_FOREACH(Skeleton_edge e, edges(skeleton))
+  for(Skeleton_edge e : CGAL::make_range(edges(skeleton)))
   {
     const Point& s = skeleton[source(e, skeleton)].point;
     const Point& t = skeleton[target(e, skeleton)].point;
@@ -65,8 +65,8 @@ int main(int argc, char* argv[])
 
   // Output skeleton points and the corresponding surface points
   output.open("correspondance-sm.cgal");
-  BOOST_FOREACH(Skeleton_vertex v, vertices(skeleton))
-    BOOST_FOREACH(vertex_descriptor vd, skeleton[v].vertices)
+  for(Skeleton_vertex v : CGAL::make_range(vertices(skeleton)))
+    for(vertex_descriptor vd : skeleton[v].vertices)
       output << "2 " << skeleton[v].point << "  " << get(CGAL::vertex_point, tmesh, vd)  << "\n";
 
   return EXIT_SUCCESS;

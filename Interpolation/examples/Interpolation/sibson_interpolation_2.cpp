@@ -43,9 +43,9 @@ int main()
                                CGAL:: Data_access<Point_value_map>(value_function),
                                Traits());
 
-  for(Point_vector_map::iterator it = gradient_function.begin(); it != gradient_function.end(); ++it)
+  for(const Point_vector_map::value_type& pv : gradient_function)
   {
-    std::cout << it->first << "  "  << it->second << std::endl;
+    std::cout << pv.first << "  "  << pv.second << std::endl;
   }
   // coordinate computation
   K::Point_2 p(1.6, 1.4);

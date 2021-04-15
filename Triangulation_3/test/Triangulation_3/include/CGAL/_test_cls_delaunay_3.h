@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Francois Rebufat, Monique Teillaud, Sylvain Pion
@@ -28,6 +19,7 @@
 #include <fstream>
 #include <list>
 #include <vector>
+#include <type_traits>
 
 #include <boost/mpl/identity.hpp>
 #include <boost/mpl/if.hpp>
@@ -39,6 +31,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/Testsuite/use.h>
 #include <CGAL/internal/Has_nested_type_Bare_point.h>
+#include <CGAL/Testsuite/Triangulation_23/test_move_semantic.h>
 
 // Accessory set of functions to differentiate between
 // Delaunay::nearest_vertex[_in_cell] and
@@ -179,6 +172,11 @@ _test_cls_delaunay_3(const Triangulation &)
 {
   typedef Triangulation                      Cls;
 
+  static_assert(std::is_nothrow_move_constructible<Cls>::value,
+                "move cstr is missing");
+  static_assert(std::is_nothrow_move_assignable<Cls>::value,
+                "move assignment is missing");
+
   typedef typename Test_location_policy<Cls>::Location_policy Location_policy;
 
   // We assume the traits class has been tested already
@@ -297,7 +295,7 @@ _test_cls_delaunay_3(const Triangulation &)
   /************** and I/O ****************************/
 
   std::cout << "    Constructor " << std::endl;
-  // Begining with an empty triangulation and adding point until reaching
+  // Beginning with an empty triangulation and adding point until reaching
   // 3-dimentional triangulation.
   Cls T0;
   assert(T0.dimension() == -1);
@@ -424,7 +422,8 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T1.number_of_vertices() == 0);
   assert(T1.is_valid());
 
-
+  namespace test_tr_23 = CGAL::Testsuite::Triangulation_23;
+  test_tr_23::test_move_semantic(T0);
 
    // Affectation :
   T1=T0;
@@ -457,6 +456,7 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T1_0.dimension()==1);
   assert(T1_0.number_of_vertices()==n);
   assert(T1_0.is_valid());
+  test_tr_23::test_move_semantic(T1_0);
   std::cout << "    Constructor7 " << std::endl;
   Cls T1_1;
   n = T1_1.insert(l2.begin(),l2.end());
@@ -517,6 +517,8 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T2_0.dimension()==2);
   assert(T2_0.number_of_vertices()==8);
 
+  test_tr_23::test_move_semantic(T2_0);
+
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
@@ -564,6 +566,8 @@ _test_cls_delaunay_3(const Triangulation &)
   assert(T3_0.is_valid());
   assert(T3_0.number_of_vertices()==125);
   assert(T3_0.dimension()==3);
+
+  test_tr_23::test_move_semantic(T3_0);
 
   if (del) {
     std::cout << "    deletion in Delaunay - grid case - (dim 3) " <<
@@ -1197,6 +1201,19 @@ _test_cls_delaunay_3(const Triangulation &)
                 _test_remove_cluster<Triangulation>();
   }
 
+  // Test from issue https://github.com/CGAL/cgal/issues/5396
+  {
+    auto Triangulate = []() -> Triangulation
+    {
+      Triangulation tri;
+      for (int i=0; i<10; i++)
+        tri.insert(Point(i+1, i+2, i+3));
+
+      return tri;
+    };
+    auto t = Triangulate();
+    auto t2 = std::move(t);
+  }
 }
 
 #endif // CGAL_TEST_CLS_DELAUNAY_C

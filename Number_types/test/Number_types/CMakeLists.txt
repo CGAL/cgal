@@ -3,9 +3,9 @@
 # that dependency so as to test all the number types not depending on CORE
 # when it is not installed
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Number_types_Tests )
 
-cmake_minimum_required(VERSION 3.1)
 
 
 find_package( CGAL QUIET COMPONENTS Core )
@@ -16,7 +16,6 @@ if ( CGAL_FOUND )
   include( CGAL_VersionUtils )
 
   include_directories( BEFORE include )
-
   create_single_source_cgal_program( "bench_interval.cpp" )
   create_single_source_cgal_program( "constant.cpp" )
   create_single_source_cgal_program( "CORE_BigFloat.cpp" )
@@ -26,7 +25,6 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "Counted_number.cpp" )
   create_single_source_cgal_program( "double.cpp" )
   create_single_source_cgal_program( "doubletst.cpp" )
-  create_single_source_cgal_program( "eigen.cpp" )
   create_single_source_cgal_program( "float.cpp" )
   create_single_source_cgal_program( "floattst.cpp" )
   create_single_source_cgal_program( "Gmpfr.cpp" )
@@ -69,15 +67,27 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "to_interval_test.cpp" )
   create_single_source_cgal_program( "unsigned.cpp" )
   create_single_source_cgal_program( "utilities.cpp" )
-  if( GMP_FOUND )
+  find_package( GMP )
+  if( GMP_FOUND AND NOT CGAL_DISABLE_GMP )
+    create_single_source_cgal_program( "CORE_Expr_ticket_4296.cpp" )
     find_package( MPFI )
     if( MPFI_FOUND )
       include( ${MPFI_USE_FILE} )
-    endif( MPFI_FOUND )
-  endif( GMP_FOUND )
+    endif() #MPFI_FOUND
+  endif() #GMP_FOUND AND NOT CGAL_DISABLE_GMP
+  if(NOT CGAL_DISABLE_GMP)
+    create_single_source_cgal_program( "Gmpfi.cpp" )
+    create_single_source_cgal_program( "Gmpfr_bug.cpp" )
+    create_single_source_cgal_program( "eigen.cpp" )
+    find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
+    include(CGAL_Eigen3_support)
+    if (TARGET CGAL::Eigen3_support)
+      target_link_libraries(eigen PUBLIC CGAL::Eigen3_support)
+    endif()
+  else()#NOT CGAL_DISABLE_GMP
+    message(STATUS "NOTICE: Some tests require the CGAL_Core library, and will not be compiled.")
+  endif()#NOT CGAL_DISABLE_GMP
   # all the programs below will be linked against MPFI in case it is present
-  create_single_source_cgal_program( "Gmpfi.cpp" )
-  create_single_source_cgal_program( "Gmpfr_bug.cpp" )
   create_single_source_cgal_program( "Quotient_new.cpp" )
   create_single_source_cgal_program( "test_nt_Coercion_traits.cpp" )
 

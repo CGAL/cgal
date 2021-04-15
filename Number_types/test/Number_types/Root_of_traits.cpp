@@ -9,7 +9,7 @@
 
 
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <CGAL/GMP_arithmetic_kernel.h>
 #include <CGAL/CORE_arithmetic_kernel.h>
 #include <CGAL/LEDA_arithmetic_kernel.h>

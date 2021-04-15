@@ -28,8 +28,8 @@ typedef HDS::Face_handle                              Face_handle;
 
 int main() {
     HDS hds;
-    Face_handle f = hds.faces_push_back( Face( CGAL::RED));
-    f->color = CGAL::BLUE;
-    CGAL_assertion( f->color == CGAL::BLUE);
+    Face_handle f = hds.faces_push_back( Face( CGAL::red()));
+    f->color = CGAL::blue();
+    CGAL_assertion( f->color == CGAL::blue());
     return 0;
 }

@@ -1,5 +1,5 @@
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <iostream>
 
 #ifdef CGAL_HAS_CORE_ARITHMETIC_KERNEL

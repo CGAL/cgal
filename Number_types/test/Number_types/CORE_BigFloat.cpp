@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #ifdef CGAL_USE_CORE
 
 #include <CGAL/CORE_BigFloat.h>

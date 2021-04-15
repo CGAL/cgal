@@ -37,7 +37,7 @@ bool check_strict_ordering(const std::vector<FT> &error)
   }
 
   FT pre = error.front();
-  BOOST_FOREACH(const FT &e, error) {
+  for(const FT e : error) {
     if (pre < e)
       return false;
   }
@@ -104,7 +104,7 @@ int main()
 
 
   CGAL::Bbox_3 bbox;
-  BOOST_FOREACH(const vertex_descriptor v, vertices(mesh))
+  for(const vertex_descriptor v : vertices(mesh))
     bbox += vpmap[v].bbox();
   const FT ymin = bbox.ymin(), ymax = bbox.ymax(), yrange = ymax - ymin;
   std::cout << "Range along y axis: [" << ymin << ", " << ymax << "]" << std::endl;
@@ -113,7 +113,7 @@ int main()
   std::size_t planar_pxidx = static_cast<std::size_t>(-1);
   std::size_t num_planar_faces = 0;
   bool first = true;
-  BOOST_FOREACH(const face_descriptor f, faces(mesh)) {
+  for(const face_descriptor f : faces(mesh)) {
     const halfedge_descriptor he = halfedge(f, mesh);
     const Point_3 &p0 = vpmap[source(he, mesh)];
     const Point_3 &p1 = vpmap[target(he, mesh)];

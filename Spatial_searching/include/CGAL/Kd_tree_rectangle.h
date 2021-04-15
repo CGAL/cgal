@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>)
@@ -68,8 +59,8 @@ namespace CGAL {
   private:
 
     //int dim;
-    CGAL::cpp11::array<T,D::value> lower_;
-    CGAL::cpp11::array<T,D::value> upper_;
+    std::array<T,D::value> lower_;
+    std::array<T,D::value> upper_;
     int max_span_coord_;
 
   public:
@@ -114,6 +105,7 @@ namespace CGAL {
     }
 
     Kd_tree_rectangle()
+      : max_span_coord_(-1)
     {}
 
 
@@ -147,6 +139,7 @@ namespace CGAL {
 
     template <class Construct_cartesian_const_iterator_d,class PointPointerIter> // was PointIter
     Kd_tree_rectangle(int,  PointPointerIter begin,  PointPointerIter end,const Construct_cartesian_const_iterator_d& construct_it)
+      : max_span_coord_(-1)
     {
       update_from_point_pointers<Construct_cartesian_const_iterator_d>(begin,end,construct_it);
     }
@@ -297,7 +290,7 @@ namespace CGAL {
     }
 
     Kd_tree_rectangle()
-      : coords_(0), dim(0)
+      : coords_(0), dim(0), max_span_coord_(-1)
     {
 }
 
@@ -332,7 +325,7 @@ namespace CGAL {
 
     template <class Construct_cartesian_const_iterator_d,class PointPointerIter> // was PointIter
     Kd_tree_rectangle(int d,  PointPointerIter begin,  PointPointerIter end,const Construct_cartesian_const_iterator_d& construct_it)
-      : coords_(new FT[2*d]), dim(d)
+      : coords_(new FT[2*d]), dim(d), max_span_coord_(-1)
     {
       update_from_point_pointers<Construct_cartesian_const_iterator_d>(begin,end,construct_it);
     }
@@ -352,7 +345,7 @@ namespace CGAL {
     inline FT
     min_coord(int i) const
     {
-      CGAL_assertion(coords_ != NULL);
+      CGAL_assertion(coords_ != nullptr);
       return lower()[i];
     }
 

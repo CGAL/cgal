@@ -1,6 +1,6 @@
 
 #include <iostream>
-#include <CGAL/basic.h>
+
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Get_arithmetic_kernel.h>
 #include <CGAL/use.h>

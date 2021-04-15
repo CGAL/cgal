@@ -1,20 +1,11 @@
 // Copyright (c) 2014
 // INRIA Saclay-Ile de France (France)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Marc Glisse
 
@@ -22,6 +13,7 @@
 #define CGAL_VECTOR_DET_ITER_PTS_PTS_H
 #include <CGAL/NewKernel_d/functor_tags.h>
 #include <CGAL/Dimension.h>
+#include <CGAL/use.h>
 
 namespace CGAL {
 
@@ -57,6 +49,7 @@ struct Add_determinant_of_iterator_to_points_from_points
     Vector const&a=*first; ++first;
     Vector const&b=*first; ++first;
     Vector const&c=*first; CGAL_assertion(++first==end);
+    CGAL_USE(end);
     return LA::determinant_of_points(a,b,c);
   }
   template<class Iter>
@@ -64,6 +57,7 @@ struct Add_determinant_of_iterator_to_points_from_points
     Vector const&a=*first; ++first;
     Vector const&b=*first; ++first;
     Vector const&c=*first; CGAL_assertion(++first==end);
+    CGAL_USE(end);
     return LA::sign_of_determinant_of_points(a,b,c);
   }
 };
@@ -88,6 +82,7 @@ struct Add_determinant_of_iterator_to_points_from_points
     Vector const&b=*first; ++first;
     Vector const&c=*first; ++first;
     Vector const&d=*first; CGAL_assertion(++first==end);
+    CGAL_USE(end);
     return LA::determinant_of_points(a,b,c,d);
   }
   template<class Iter>
@@ -96,6 +91,7 @@ struct Add_determinant_of_iterator_to_points_from_points
     Vector const&b=*first; ++first;
     Vector const&c=*first; ++first;
     Vector const&d=*first; CGAL_assertion(++first==end);
+    CGAL_USE(end);
     return LA::sign_of_determinant_of_points(a,b,c,d);
   }
 };
@@ -121,6 +117,7 @@ struct Add_determinant_of_iterator_to_points_from_points
     Vector const&c=*first; ++first;
     Vector const&d=*first; ++first;
     Vector const&e=*first; CGAL_assertion(++first==end);
+    CGAL_USE(end);
     return LA::determinant_of_points(a,b,c,d,e);
   }
   template<class Iter>
@@ -130,6 +127,7 @@ struct Add_determinant_of_iterator_to_points_from_points
     Vector const&c=*first; ++first;
     Vector const&d=*first; ++first;
     Vector const&e=*first; CGAL_assertion(++first==end);
+    CGAL_USE(end);
     return LA::sign_of_determinant_of_points(a,b,c,d,e);
   }
 };
@@ -156,6 +154,7 @@ struct Add_determinant_of_iterator_to_points_from_points
     Vector const&d=*first; ++first;
     Vector const&e=*first; ++first;
     Vector const&f=*first; CGAL_assertion(++first==end);
+    CGAL_USE(end);
     return LA::determinant_of_points(a,b,c,d,e,f);
   }
   template<class Iter>
@@ -166,6 +165,7 @@ struct Add_determinant_of_iterator_to_points_from_points
     Vector const&d=*first; ++first;
     Vector const&e=*first; ++first;
     Vector const&f=*first; CGAL_assertion(++first==end);
+    CGAL_USE(end);
     return LA::sign_of_determinant_of_points(a,b,c,d,e,f);
   }
 };
@@ -193,6 +193,7 @@ struct Add_determinant_of_iterator_to_points_from_points
     Vector const&e=*first; ++first;
     Vector const&f=*first; ++first;
     Vector const&g=*first; CGAL_assertion(++first==end);
+    CGAL_USE(end);
     return LA::determinant_of_points(a,b,c,d,e,f,g);
   }
   template<class Iter>
@@ -204,6 +205,7 @@ struct Add_determinant_of_iterator_to_points_from_points
     Vector const&e=*first; ++first;
     Vector const&f=*first; ++first;
     Vector const&g=*first; CGAL_assertion(++first==end);
+    CGAL_USE(end);
     return LA::sign_of_determinant_of_points(a,b,c,d,e,f,g);
   }
 };

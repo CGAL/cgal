@@ -1,5 +1,5 @@
-#include <CGAL/basic.h>
 #include <CGAL/use.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Coercion_traits.h>
 #include <cassert>
 int main(){

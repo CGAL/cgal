@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
@@ -588,7 +579,7 @@ private:
       vort = Aort - (dort)/(FT(2));
     } else {
       vpar = Apar;
-      vort = Aort - CGAL::sign(dort)*absdpar;
+      vort = Aort - int(CGAL::sign(dort))*absdpar;
     }
     vv = Point_2(vx_, vy_);
   }
@@ -693,11 +684,11 @@ private:
       vv = Point_2(is_r_horizontal ?
                      (pp.x() + qq.x()) :
                      (comp == LARGER) ?
-                       RT(2)*coordr + CGAL::sign(signrdist)*pqdist :
+                   RT(2)*coordr + int(CGAL::sign(signrdist))*pqdist :
                        coordr + pp.x(),
                    is_r_horizontal ?
                      (comp == LARGER) ?
-                       RT(2)*coordr + CGAL::sign(signrdist)*pqdist :
+                   RT(2)*coordr + int(CGAL::sign(signrdist))*pqdist :
                        coordr + pp.y() :
                      (pp.y() + qq.y()),
                    RT(2));
@@ -734,9 +725,9 @@ private:
     } else {
       vv = Point_2(is_r_horizontal ?
                    (pp.x() + qq.x()) :
-                   (RT(2)*coordr + CGAL::sign(sdistf)*pqdist),
+                   (RT(2)*coordr + int(CGAL::sign(sdistf))*pqdist),
                    is_r_horizontal ?
-                   (RT(2)*coordr + CGAL::sign(sdistf)*pqdist) :
+                   (RT(2)*coordr + int(CGAL::sign(sdistf))*pqdist) :
                    (pp.y() + qq.y()),
                    RT(2));
     }
@@ -780,8 +771,8 @@ private:
         Point_2(pcoord, lineval) : Point_2(lineval, pcoord);
       const FT sidelen = (CGAL::max)(CGAL::abs(corner.x() - q.point().x()),
                                      CGAL::abs(corner.y() - q.point().y()));
-      vv = Point_2(FT(2)*corner.x() + signla*sidelen,
-                   FT(2)*corner.y() + signlb*sidelen,
+      vv = Point_2(FT(2)*corner.x() + int(signla)*sidelen,
+                   FT(2)*corner.y() + int(signlb)*sidelen,
                    FT(2));
       return;
     }
@@ -792,8 +783,8 @@ private:
         Point_2(lineval, qcoord) : Point_2(qcoord, lineval);
       const FT sidelen = (CGAL::max)(CGAL::abs(corner.x() - p.point().x()),
                                      CGAL::abs(corner.y() - p.point().y()));
-      vv = Point_2(FT(2)*corner.x() + signla*sidelen,
-                   FT(2)*corner.y() + signlb*sidelen,
+      vv = Point_2(FT(2)*corner.x() + int(signla)*sidelen,
+                   FT(2)*corner.y() + int(signlb)*sidelen,
                    FT(2));
       return;
     }
@@ -821,8 +812,8 @@ private:
       // is shorter than Linf p, q distance
       const Point_2 corner = pos_slope?
         Point_2(pcoord, plineval) : Point_2(plineval, pcoord);
-      vv = Point_2(FT(2)*corner.x() + signla*pqdist,
-                   FT(2)*corner.y() + signlb*pqdist,
+      vv = Point_2(FT(2)*corner.x() + int(signla)*pqdist,
+                   FT(2)*corner.y() + int(signlb)*pqdist,
                    FT(2));
       return;
     }
@@ -838,8 +829,8 @@ private:
       // is shorter than Linf p, q distance
       const Point_2 corner = pos_slope?
         Point_2(qlineval, qcoord) : Point_2(qcoord, qlineval);
-      vv = Point_2(FT(2)*corner.x() + signla*pqdist,
-                   FT(2)*corner.y() + signlb*pqdist,
+      vv = Point_2(FT(2)*corner.x() + int(signla)*pqdist,
+                   FT(2)*corner.y() + int(signlb)*pqdist,
                    FT(2));
       return;
     }
@@ -1430,12 +1421,12 @@ private:
     RT ux_, uy_, uz_;
     if (cmp == LARGER) {
       ux_ = is_q_hor ? r_coord + p_coord_r : q_coord + p_coord_q;
-      uy_ = is_q_hor ? (RT(2)*q_coord + CGAL::sign(sdistq)*dx) :
-                       (RT(2)*r_coord + CGAL::sign(sdistr)*dx) ;
+      uy_ = is_q_hor ? (RT(2)*q_coord + int(CGAL::sign(sdistq))*dx) :
+                       (RT(2)*r_coord + int(CGAL::sign(sdistr))*dx) ;
     } else if (cmp == SMALLER) {
       uy_ = is_r_hor ? r_coord + p_coord_r : q_coord + p_coord_q;
-      ux_ = is_r_hor ? (RT(2)*q_coord + CGAL::sign(sdistq)*dy) :
-                       (RT(2)*r_coord + CGAL::sign(sdistr)*dy) ;
+      ux_ = is_r_hor ? (RT(2)*q_coord + int(CGAL::sign(sdistq))*dy) :
+                       (RT(2)*r_coord + int(CGAL::sign(sdistr))*dy) ;
     } else {
       ux_ = is_q_hor ? r_coord + p_coord_r : q_coord + p_coord_q;
       uy_ = is_q_hor ? q_coord + p_coord_q : r_coord + p_coord_r;
@@ -2205,6 +2196,7 @@ private:
     CGAL_precondition(
         p.is_point() && q.is_point() && r.is_segment());
     CGAL_USE(l);
+    CGAL_USE(r);
 
     Comparison_result compare_p(EQUAL);
     Comparison_result compare_q(EQUAL);
@@ -2313,6 +2305,8 @@ private:
     CGAL_precondition(
         p.is_point() && q.is_segment() && r.is_segment());
     CGAL_USE(l);
+    CGAL_USE(q);
+    CGAL_USE(r);
 
     Comparison_result compare_p(EQUAL);
     Comparison_result compare_q(EQUAL);
@@ -2432,6 +2426,9 @@ private:
     CGAL_USE(vv);
     CGAL_USE(l);
     CGAL_USE(lref);
+    CGAL_USE(p);
+    CGAL_USE(q);
+    CGAL_USE(r);
 
     Comparison_result compare_p(EQUAL);
     Comparison_result compare_q(EQUAL);
@@ -4056,11 +4053,11 @@ private:
     /*
 #ifndef CGAL_DISABLE_AM_CODE
     // code added in previous version by Andreas + Monique -- start
-    Site_2 const *pp1 = NULL;
+    Site_2 const *pp1 = nullptr;
     if ( end_pt ) pp1 = &p;
     else if ( end_qt ) pp1 = &q;
     else if ( end_rt ) pp1 = &r;
-    if ( pp1 != NULL ) {
+    if ( pp1 != nullptr ) {
       // As the Voronoi circle and the segment t touch in p1,
       // it is enough to check that the center and the non-touching
       // point of the segment

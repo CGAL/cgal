@@ -1,19 +1,10 @@
 // Copyright (c) 2014  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri
@@ -42,7 +33,7 @@ struct Edge {
   const G* g;
 
   Edge()
-    : g(NULL)
+    : g(nullptr)
   {}
 
   Edge(const G& g)
@@ -63,7 +54,7 @@ struct Opposite_edge {
   const G* g;
 
   Opposite_edge()
-    : g(NULL)
+    : g(nullptr)
   {}
 
   Opposite_edge(const G& g)
@@ -84,7 +75,7 @@ struct Opposite_halfedge {
   const G* g;
 
   Opposite_halfedge()
-    : g(NULL)
+    : g(nullptr)
   {}
 
   Opposite_halfedge(const G& g)
@@ -105,7 +96,7 @@ struct Target {
   const G* g;
 
   Target()
-    : g(NULL)
+    : g(nullptr)
   {}
 
   Target(const G& g)
@@ -126,7 +117,7 @@ struct Source {
   const G* g;
 
   Source()
-    : g(NULL)
+    : g(nullptr)
   {}
 
   Source(const G& g)
@@ -147,7 +138,7 @@ struct Face {
   const G* g;
 
   Face()
-    : g(NULL)
+    : g(nullptr)
   {}
 
   Face(const G& g)
@@ -167,7 +158,7 @@ struct Opposite_face {
   const G* g;
 
   Opposite_face()
-    : g(NULL)
+    : g(nullptr)
   {}
 
   Opposite_face(const G& g)
@@ -230,7 +221,7 @@ public:
 
   operator bool_type() const
   {
-    return (! (this->base() == NULL)) ?
+    return (! (this->base() == nullptr)) ?
       &Halfedge_around_source_iterator::this_type_does_not_support_comparisons : 0;
   }
 
@@ -245,7 +236,7 @@ public:
 
   bool operator== (void* ) const
   {
-    return g == NULL;
+    return g == nullptr;
   }
 
   reference operator*() const
@@ -330,7 +321,7 @@ public:
 
   operator bool_type() const
   {
-    return (! (this->base() == NULL)) ?
+    return (! (this->base() == nullptr)) ?
       &Halfedge_around_target_iterator::this_type_does_not_support_comparisons : 0;
   }
 
@@ -345,7 +336,7 @@ public:
 
   bool operator== (void* ) const
   {
-    return g == NULL;
+    return g == nullptr;
   }
 
   reference operator*() const
@@ -429,7 +420,7 @@ public:
 
   operator bool_type() const
   {
-    return (! (this->base() == NULL)) ?
+    return (! (this->base() == nullptr)) ?
       &Halfedge_around_face_iterator::this_type_does_not_support_comparisons : 0;
   }
 
@@ -444,7 +435,7 @@ public:
 
   Self& operator++()
   {
-    CGAL_assertion(g != NULL);
+    CGAL_assertion(g != nullptr);
     pos = next(pos,*g);
     if ( pos == anchor)
       ++winding;
@@ -453,7 +444,7 @@ public:
 
   Self operator++(int)
   {
-    CGAL_assertion(g != NULL);
+    CGAL_assertion(g != nullptr);
     Self tmp = *this;
     ++*this;
     return tmp;
@@ -461,7 +452,7 @@ public:
 
   Self& operator--()
   {
-    CGAL_assertion(g != NULL);
+    CGAL_assertion(g != nullptr);
     if ( pos == anchor)
       --winding;
 
@@ -471,7 +462,7 @@ public:
 
   Self operator--(int)
   {
-    CGAL_assertion(g != NULL);
+    CGAL_assertion(g != nullptr);
     Self tmp = *this;
     --*this;
     return tmp;
@@ -539,13 +530,13 @@ public:
 
   operator bool_type() const
   {
-    return (! (this->base_reference() == NULL)) ?
+    return (! (this->base_reference() == nullptr)) ?
       &Halfedge_around_source_circulator::this_type_does_not_support_comparisons : 0;
   }
 
   bool operator== (void*) const
   {
-    return this->base_reference() == NULL;
+    return this->base_reference() == nullptr;
   }
 
 private:
@@ -597,13 +588,13 @@ public:
 
   operator bool_type() const
   {
-    return (! (this->base_reference() == NULL)) ?
+    return (! (this->base_reference() == nullptr)) ?
       &Face_around_target_circulator::this_type_does_not_support_comparisons : 0;
   }
 
   bool operator== (void*) const
   {
-    return this->base_reference() == NULL;
+    return this->base_reference() == nullptr;
   }
 
 
@@ -672,27 +663,27 @@ public:
 
   operator bool_type() const
   {
-    return (! (g == NULL)) ?
+    return (! (g == nullptr)) ?
       &Halfedge_around_target_circulator::this_type_does_not_support_comparisons : 0;
   }
 
 
   bool operator== (void* ) const
   {
-    return g == NULL;
+    return g == nullptr;
   }
 
 
   Self& operator++()
   {
-    CGAL_assertion(g != NULL);
+    CGAL_assertion(g != nullptr);
     pos = opposite(next(pos,*g),*g);
     return *this;
   }
 
   Self operator++(int)
   {
-    CGAL_assertion(g != NULL);
+    CGAL_assertion(g != nullptr);
     Self tmp = *this;
     ++*this;
     return tmp;
@@ -700,14 +691,14 @@ public:
 
   Self& operator--()
   {
-    CGAL_assertion(g != NULL);
+    CGAL_assertion(g != nullptr);
     pos = prev(opposite(pos,*g),*g);
     return *this;
   }
 
   Self operator--(int)
   {
-    CGAL_assertion(g != NULL);
+    CGAL_assertion(g != nullptr);
     Self tmp = *this;
     --*this;
     return tmp;
@@ -769,25 +760,25 @@ public:
 
   operator bool_type() const
   {
-    return (! (g == NULL)) ?
+    return (! (g == nullptr)) ?
       &Halfedge_around_face_circulator::this_type_does_not_support_comparisons : 0;
   }
 
   bool operator== (void* ) const
   {
-    return g == NULL;
+    return g == nullptr;
   }
 
   Self& operator++()
   {
-    CGAL_assertion(g != NULL);
+    CGAL_assertion(g != nullptr);
     pos = next(pos,*g);
     return *this;
   }
 
   Self operator++(int)
   {
-    CGAL_assertion(g != NULL);
+    CGAL_assertion(g != nullptr);
     Self tmp = *this;
     ++*this;
     return tmp;
@@ -795,14 +786,14 @@ public:
 
   Self& operator--()
   {
-    CGAL_assertion(g != NULL);
+    CGAL_assertion(g != nullptr);
     pos = prev(pos,*g);
     return *this;
   }
 
   Self operator--(int)
   {
-    CGAL_assertion(g != NULL);
+    CGAL_assertion(g != nullptr);
     Self tmp = *this;
     --*this;
     return tmp;
@@ -1025,13 +1016,13 @@ public:
 
   operator bool_type() const
   {
-    return (! (this->base_reference() == NULL)) ?
+    return (! (this->base_reference() == nullptr)) ?
       &Vertex_around_face_circulator::this_type_does_not_support_comparisons : 0;
   }
 
   bool operator== (void*) const
   {
-    return this->base_reference()== NULL;
+    return this->base_reference()== nullptr;
   }
 private:
   friend class boost::iterator_core_access;
@@ -1079,13 +1070,13 @@ public:
 
   operator bool_type() const
   {
-    return (! (this->base_reference() == NULL)) ?
+    return (! (this->base_reference() == nullptr)) ?
       &Vertex_around_face_iterator::this_type_does_not_support_comparisons : 0;
   }
 
   bool operator== (void*) const
   {
-    return this->base_reference()== NULL;
+    return this->base_reference()== nullptr;
   }
 private:
   friend class boost::iterator_core_access;
@@ -1209,13 +1200,13 @@ public:
 
   operator bool_type() const
   {
-    return (! (this->base_reference() == NULL)) ?
+    return (! (this->base_reference() == nullptr)) ?
       &Vertex_around_target_circulator::this_type_does_not_support_comparisons : 0;
   }
 
   bool operator== (void*) const
   {
-    return this->base_reference()== NULL;
+    return this->base_reference()== nullptr;
   }
 
 private:
@@ -1267,7 +1258,7 @@ public:
 
   operator bool_type() const
   {
-    return (! (this->base_reference() == NULL)) ?
+    return (! (this->base_reference() == nullptr)) ?
       &Vertex_around_target_iterator::this_type_does_not_support_comparisons : 0;
   }
 private:
@@ -1354,7 +1345,7 @@ public:
 
   operator bool_type() const
   {
-    return (! (this->base_reference() == NULL)) ?
+    return (! (this->base_reference() == nullptr)) ?
       &Out_edge_iterator::this_type_does_not_support_comparisons : 0;
   }
 
@@ -1396,7 +1387,7 @@ public:
 
   operator bool_type() const
   {
-    return (! (this->base_reference() == NULL)) ?
+    return (! (this->base_reference() == nullptr)) ?
       &In_edge_iterator::this_type_does_not_support_comparisons : 0;
   }
 

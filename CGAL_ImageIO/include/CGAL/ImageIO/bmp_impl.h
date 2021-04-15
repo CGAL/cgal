@@ -1,21 +1,11 @@
 // Copyright (c) 2005-2008 ASCLEPIOS Project, INRIA Sophia-Antipolis (France)
 // All rights reserved.
 //
-// This file is part of the ImageIO Library, and as been adapted for
-// CGAL (www.cgal.org).
-// You can redistribute it and/or  modify it under the terms of the
-// GNU Lesser General Public License as published by the Free Software Foundation;
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// These files are provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of the ImageIO Library, and as been adapted for CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later
 //
 //
 // Author(s)     :  ASCLEPIOS Project (INRIA Sophia-Antipolis), Laurent Rineau
@@ -84,7 +74,7 @@ int readBmpImage( const char *name,_image *im)
   int dimx, dimy, dimv;
 
   im->data = _readBmpImage( name, &dimx,  &dimy,  &dimv );
-  if ( im->data == NULL ) {
+  if ( im->data == nullptr ) {
     fprintf( stderr, "readBmpImage: unable to read \'%s\'\n", name );
     return( -1 );
   }
@@ -109,23 +99,23 @@ void *_readBmpImage( const char *name,
                      int *dimx, int *dimy, int *dimz )
 {
   const char *proc="_readBmpImage";
-  void *buf = (void*)NULL;
-  unsigned char *myBuf = NULL;
+  void *buf = (void*)nullptr;
+  unsigned char *myBuf = nullptr;
 
-  FILE *fp = NULL;
-  RGB **argbs = NULL;
-  char **xorMasks = NULL, **andMasks = NULL;
-  CGAL_UINT32 *heights = NULL, *widths = NULL, row = 0, col = 0;
+  FILE *fp = nullptr;
+  RGB **argbs = nullptr;
+  char **xorMasks = nullptr, **andMasks = nullptr;
+  CGAL_UINT32 *heights = nullptr, *widths = nullptr, row = 0, col = 0;
   CGAL_UINT16 fileType = 0;
   long filePos = 0;
   int numImages = 0, i = 0;
   int rc = 0;
 
     fp = fopen(name, "rb");
-    if (fp == NULL) {
+    if (fp == nullptr) {
       if ( get_static_verbose_bmp() )
         fprintf( stderr, "%s: error in opening %s\n", proc, name );
-      return( (void*)NULL );
+      return( (void*)nullptr );
     }
 
 
@@ -139,7 +129,7 @@ void *_readBmpImage( const char *name,
       fclose(fp);
       if ( get_static_verbose_bmp() )
         fprintf( stderr, "%s: error in getting file type %s\n", proc, name );
-      return( (void*)NULL );
+      return( (void*)nullptr );
     }
     fseek(fp, filePos, SEEK_SET);
 
@@ -168,20 +158,20 @@ void *_readBmpImage( const char *name,
          * those arrays.
          */
         argbs = (RGB **)calloc(1, sizeof(RGB *));
-        if (argbs == NULL)
+        if (argbs == nullptr)
         {
             rc = 1005;
             break;
         }
         xorMasks = (char **)calloc(1, sizeof(char *));
-        if (xorMasks == NULL)
+        if (xorMasks == nullptr)
         {
             free(argbs);
             rc = 1005;
             break;
         }
         andMasks = (char **)calloc(1, sizeof(char *));
-        if (andMasks == NULL)
+        if (andMasks == nullptr)
         {
             free(argbs);
             free(xorMasks);
@@ -189,7 +179,7 @@ void *_readBmpImage( const char *name,
             break;
         }
         heights = (CGAL_UINT32 *)calloc(1, sizeof(CGAL_UINT32));
-        if (heights == NULL)
+        if (heights == nullptr)
         {
             free(argbs);
             free(xorMasks);
@@ -198,7 +188,7 @@ void *_readBmpImage( const char *name,
             break;
         }
         widths = (CGAL_UINT32 *)calloc(1, sizeof(CGAL_UINT32));
-        if (widths == NULL)
+        if (widths == nullptr)
         {
             free(argbs);
             free(xorMasks);
@@ -278,11 +268,11 @@ void *_readBmpImage( const char *name,
         {
             for (i=0; i<numImages; i++)
             {
-                if (argbs[i] != NULL)
+                if (argbs[i] != nullptr)
                     free(argbs[i]);
-                if (andMasks[i] != NULL)
+                if (andMasks[i] != nullptr)
                     free(andMasks[i]);
-                if (xorMasks[i] != NULL)
+                if (xorMasks[i] != nullptr)
                     free(xorMasks[i]);
             }
             free(argbs);
@@ -291,7 +281,7 @@ void *_readBmpImage( const char *name,
             free(widths);
             free(heights);
         }
-        return( (void*)NULL );
+        return( (void*)nullptr );
     }
 
 
@@ -309,19 +299,19 @@ void *_readBmpImage( const char *name,
      * just reading one bmp image
      */
     if ( (numImages > 0) &&
-         (argbs[0] != NULL) ) {
+         (argbs[0] != nullptr) ) {
 
       buf = (void*)malloc( widths[0]*heights[0]*3 * sizeof( unsigned char ) );
-      if ( buf == (void*)NULL ) {
+      if ( buf == (void*)nullptr ) {
         if ( get_static_verbose_bmp() )
           fprintf( stderr, "%s: error in allocating data buffer for %s\n", proc, name );
 
         for (i=0; i<numImages; i++) {
-          if (argbs[i] != NULL)
+          if (argbs[i] != nullptr)
             free(argbs[i]);
-          if (andMasks[i] != NULL)
+          if (andMasks[i] != nullptr)
             free(andMasks[i]);
-          if (xorMasks[i] != NULL)
+          if (xorMasks[i] != nullptr)
             free(xorMasks[i]);
         }
         free(argbs);
@@ -330,7 +320,7 @@ void *_readBmpImage( const char *name,
         free(widths);
         free(heights);
 
-        return( (void*)NULL );
+        return( (void*)nullptr );
       }
 
       myBuf = (unsigned char*)buf;
@@ -351,11 +341,11 @@ void *_readBmpImage( const char *name,
         fprintf( stderr, "%s: no image or null image\n", proc );
 
       for (i=0; i<numImages; i++) {
-        if (argbs[i] != NULL)
+        if (argbs[i] != nullptr)
           free(argbs[i]);
-        if (andMasks[i] != NULL)
+        if (andMasks[i] != nullptr)
           free(andMasks[i]);
-        if (xorMasks[i] != NULL)
+        if (xorMasks[i] != nullptr)
           free(xorMasks[i]);
       }
       free(argbs);
@@ -364,17 +354,17 @@ void *_readBmpImage( const char *name,
       free(widths);
       free(heights);
 
-      return( (void*)NULL );
+      return( (void*)nullptr );
     }
 
 
 
     for (i=0; i<numImages; i++) {
-      if (argbs[i] != NULL)
+      if (argbs[i] != nullptr)
         free(argbs[i]);
-      if (andMasks[i] != NULL)
+      if (andMasks[i] != nullptr)
         free(andMasks[i]);
-      if (xorMasks[i] != NULL)
+      if (xorMasks[i] != nullptr)
         free(xorMasks[i]);
     }
     free(argbs);
@@ -404,7 +394,7 @@ void *_readBmpImage( const char *name,
         fprintf (stderr, "%s: Image dimensions: (%ld,%ld)\n", proc, widths[i], heights[i]);
       }
 
-      if (argbs[i] != NULL) {
+      if (argbs[i] != nullptr) {
         /*
          * If the image has colors, dump them (BMP, color ICO and color
          * PTR files
@@ -432,7 +422,7 @@ void *_readBmpImage( const char *name,
 
 
 
-      if (xorMasks[i] != NULL) {
+      if (xorMasks[i] != nullptr) {
         /*
          * If the image has an xor mask, dump it.  (ICO and PTR files)
          */
@@ -455,7 +445,7 @@ void *_readBmpImage( const char *name,
 
 
 
-      if (andMasks[i] != NULL) {
+      if (andMasks[i] != nullptr) {
         /*
          * If the image has an and mask, dump it.  (ICO and PTR files)
          */
@@ -487,11 +477,11 @@ void *_readBmpImage( const char *name,
      */
     for (i=0; i<numImages; i++)
     {
-        if (argbs[i] != NULL)
+        if (argbs[i] != nullptr)
             free(argbs[i]);
-        if (andMasks[i] != NULL)
+        if (andMasks[i] != nullptr)
             free(andMasks[i]);
-        if (xorMasks[i] != NULL)
+        if (xorMasks[i] != nullptr)
             free(xorMasks[i]);
     }
     free(argbs);

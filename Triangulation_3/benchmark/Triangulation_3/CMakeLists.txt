@@ -49,14 +49,12 @@ find_package(benchmark)
 
 if(TARGET benchmark::benchmark)
   find_package(TBB REQUIRED)
-  include( CGAL_target_use_TBB )
+  include(CGAL_TBB_support)
 
   create_single_source_cgal_program( "DT3_benchmark_with_TBB.cpp" )
-  CGAL_target_use_TBB(DT3_benchmark_with_TBB)
-  target_link_libraries(DT3_benchmark_with_TBB PRIVATE benchmark::benchmark)
+  target_link_libraries(DT3_benchmark_with_TBB PRIVATE benchmark::benchmark CGAL::TBB_support)
 
   add_executable(DT3_benchmark_with_TBB_CCC_approximate_size DT3_benchmark_with_TBB.cpp)
-  CGAL_target_use_TBB(DT3_benchmark_with_TBB_CCC_approximate_size)
   target_compile_definitions(DT3_benchmark_with_TBB_CCC_approximate_size PRIVATE CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE)
-  target_link_libraries(DT3_benchmark_with_TBB_CCC_approximate_size PRIVATE CGAL::CGAL benchmark::benchmark)
+  target_link_libraries(DT3_benchmark_with_TBB_CCC_approximate_size PRIVATE CGAL::CGAL benchmark::benchmark CGAL::TBB_support)
 endif()

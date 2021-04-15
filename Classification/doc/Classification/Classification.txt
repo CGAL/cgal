@@ -21,7 +21,7 @@ This component implements the algorithm described in \cgalCite{cgal:lm-clscm-12}
 - a set of labels (for example: _ground_, _building_, _vegetation_) is defined by the user;
 - a classifier is defined and trained: from the set of values taken by the features at an input item, it measures the likelihood of this item to belong to one label or another;
 - classification is computed itemwise using the classifier;
-- additional regularization can be used by smoothing either locally or globally through a _Graph Cut_ \cgalCite{Boykov2001FastApproximate} approach.
+- additional regularization can be used by smoothing either locally or globally through a _graph cut_ \cgalCite{Boykov2001FastApproximate} approach.
 
 \cgalFigureBegin{Classification_organization_fig,organization.svg}
 Organization of the package.
@@ -160,14 +160,14 @@ Classifying clusters of items instead of raw sets of items can have several adva
 - clusters are more complex objects than raw items (isolated points or triangles of a mesh) and thus provide additional information (size of cluster, spatial consistency, etc.);
 - by construction, the output classification is less noisy (if all points of a facade are in the same cluster, then they are guaranteed to all be classified in the same label).
 
-For example, when dealing with urban scenes that typically contain large planar sections, it may be more efficient to first detect planes (with `CGAL::Shape_detection_3::Region_growing` or `CGAL::Shape_detection_3::Efficient_RANSAC` for example) and then to classify each subset of points belonging to a specific plane as clusters.
+For example, when dealing with urban scenes that typically contain large planar sections, it may be more efficient to first detect planes (with `CGAL::Shape_detection::Region_growing` or `CGAL::Shape_detection::Efficient_RANSAC` for example) and then to classify each subset of points belonging to a specific plane as clusters.
 
 \cgal provides some tools to classify clusters:
 
 - the class `CGAL::Classification::Cluster` can be used to represent a cluster of items (points, for example);
 - the function `CGAL::Classification::create_clusters_from_indices()` takes indices over items as input (for example, shape indices taken from shape detection) and generates one cluster per index.
 
-The following snippet shows how to create classification clusters from a shape detection algorithm ([Region Growing](@ref CGAL::Shape_detection_3::Region_growing)):
+The following snippet shows how to create classification clusters from a shape detection algorithm ([Region Growing](@ref CGAL::Shape_detection::Region_growing)):
 
 \snippet Classification/example_cluster_classification.cpp Cluster
 
@@ -431,7 +431,7 @@ quantifies the strengh of the regularization, \f$i \sim j\f$
 represents the pairs of neighboring items and
 \f$\mathbf{1}_{\{.\}}\f$ the characteristic function.
 
-A _Graph Cut_ based algorithm (Alpha Expansion) is used to quickly reach
+A _graph cut_ based algorithm (alpha expansion) is used to quickly reach
 an approximate solution close to the global optimum of this energy.
 
 This method allows to consistently segment the input data set in
@@ -544,7 +544,7 @@ The following example:
 - reads a point set in PLY format;
 - estimates the normal vectors of the point set;
 - automatically generates pointwise features on 5 scales;
-- detects plane using the algorithm `CGAL::Shape_detection_3::Region_growing`;
+- detects plane using the algorithm `CGAL::Shape_detection::Region_growing`;
 - creates [Cluster](@ref CGAL::Classification::Cluster) objects from these detected planes;
 - computes cluster features from the pointwise features;
 - loads a configuration file for classifier [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier);

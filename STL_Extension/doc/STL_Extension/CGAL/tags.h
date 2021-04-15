@@ -69,17 +69,24 @@ struct Null_functor {
 
 /*!
 \ingroup PkgSTLExtensionUtilities
-Tag used to enable/disable concurrency.
+Tag used to disable concurrency.
 For example, it may be used by a user to request the sequential version of an algorithm.
 */
 struct Sequential_tag {};
 
 /*!
 \ingroup PkgSTLExtensionUtilities
-Tag used to enable/disable concurrency.
+Tag used to enable concurrency.
 For example, it may be used by a user to request the parallel version of an algorithm.
 */
 struct Parallel_tag {};
+
+/*!
+\ingroup PkgSTLExtensionUtilities
+This tag is a convenience typedef to `Parallel_tag` if the third party library \ref thirdpartyTBB
+has been found and linked, and to `Sequential_tag` otherwise.
+*/
+struct Parallel_if_available_tag {};
 
 /*!
 \ingroup PkgSTLExtensionUtilities

@@ -34,8 +34,7 @@ Meshing_thread* cgal_code_mesh_3(QList<const SMesh*> pMeshes,
                                  bool protect_border,
                                  const double sharp_edges_angle,
                                  const int manifold,
-                                 const bool surface_only,
-                                 CGAL::Three::Scene_interface* scene);
+                                 const bool surface_only);
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
                                  const double facet_angle,
@@ -45,8 +44,7 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
                                  const double edge_size,
                                  const double tet_shape,
                                  const int manifold,
-                                 const bool surface_only,
-                                 CGAL::Three::Scene_interface* scene);
+                                 const bool surface_only);
 #endif
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
@@ -61,7 +59,6 @@ Meshing_thread* cgal_code_mesh_3(const CGAL::Image_3* pImage,
                                  bool protect_features,
                                  const int manifold,
                                  const bool surface_only,
-                                 CGAL::Three::Scene_interface* scene,
                                  bool detect_connected_components,
                                  bool is_gray = false,
                                  float iso_value = 3.f,

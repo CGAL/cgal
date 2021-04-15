@@ -1,19 +1,10 @@
 // Copyright (c) 2007  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola
@@ -287,7 +278,7 @@ template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 void
 set_face(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::halfedge_descriptor h
   , typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::face_descriptor f
-  , const CGAL::Polyhedron_3<Gt,I,HDS,A>&)
+  , CGAL::Polyhedron_3<Gt,I,HDS,A>&)
 {
   // set_face has become private in the halfedge provided by
   // polyhedron for unknown reasons, although it used to be public
@@ -313,7 +304,7 @@ template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 void
 set_halfedge(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::vertex_descriptor v
   , typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::halfedge_descriptor h
-  , const CGAL::Polyhedron_3<Gt,I,HDS,A>&)
+  , CGAL::Polyhedron_3<Gt,I,HDS,A>&)
 {
   typedef typename CGAL::Polyhedron_3<Gt,I,HDS,A>::Vertex::Base Sneak;
   static_cast<Sneak&>(*v).set_halfedge(h);

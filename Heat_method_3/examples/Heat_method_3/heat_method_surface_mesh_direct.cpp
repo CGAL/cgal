@@ -5,7 +5,6 @@
 #include <iostream>
 #include <fstream>
 
-#include <boost/foreach.hpp>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point_3;
@@ -38,7 +37,7 @@ int main(int argc, char* argv[])
   hm_idt.add_source(source);
   hm_idt.estimate_geodesic_distances(vertex_distance);
 
-  BOOST_FOREACH(vertex_descriptor vd , vertices(tm)){
+  for(vertex_descriptor vd : vertices(tm)){
     std::cout << vd << "  is at distance " << get(vertex_distance, vd) << " from " << source << std::endl;
   }
 

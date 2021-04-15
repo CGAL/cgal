@@ -3,16 +3,11 @@
 # refer to the root source directory of the project as ${CMAKE_SOURCE_DIR} or
 # ${CMAKE_SOURCE_DIR} and to the root binary directory of the project as
 # ${CMAKE_BINARY_DIR} or ${CMAKE_BINARY_DIR}.
-
-# Minimal version of CMake:
-cmake_minimum_required(VERSION 3.1)
-
 if(NOT PROJECT_NAME)
+  cmake_minimum_required(VERSION 3.1...3.15)
   project(CGAL CXX C)
 endif()
 
-# Tested version:
-cmake_policy(VERSION 3.1)
 
 if(POLICY CMP0056)
   # https://cmake.org/cmake/help/v3.2/policy/CMP0056.html
@@ -25,7 +20,7 @@ if(POLICY CMP0056)
   cmake_policy(SET CMP0056 NEW)
 endif()
 
-# Use GNUInstallDirst to get canonical paths
+# Use GNUInstallDirs to get canonical paths
 include(GNUInstallDirs)
 
 #--------------------------------------------------------------------------------------------------
@@ -33,7 +28,7 @@ include(GNUInstallDirs)
 #                                    -= HEADER ONLY =-
 #
 #--------------------------------------------------------------------------------------------------
-option(CGAL_HEADER_ONLY "Enable header-only mode of CGAL (no compilation of CGAL libraries)" FALSE)
+option(CGAL_HEADER_ONLY "Enable header-only mode of CGAL (no compilation of CGAL libraries)" TRUE)
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -139,10 +134,6 @@ if ( CGAL_BRANCH_BUILD )
   #
   # Create version files
   #
-
-  file(STRINGS "${CGAL_MAINTENANCE_PACKAGE_DIR}/release_building/MAJOR_NUMBER" CGAL_MAJOR_VERSION REGEX "[0-9]*")
-  file(STRINGS "${CGAL_MAINTENANCE_PACKAGE_DIR}/release_building/MINOR_NUMBER" CGAL_MINOR_VERSION REGEX "[0-9]*")
-  file(STRINGS "${CGAL_MAINTENANCE_PACKAGE_DIR}/release_building/BUGFIX_NUMBER" CGAL_BUGFIX_VERSION REGEX "[0-9]*")
 
   file(REMOVE ${CMAKE_BINARY_DIR}/VERSION)
   if (CGAL_BUGFIX_VERSION AND CGAL_BUGFIX_VERSION GREATER 0)
@@ -391,8 +382,6 @@ include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake)
 cgal_setup_module_path()
 
-message( STATUS "CGAL_REFERENCE_CACHE_DIR=${CGAL_REFERENCE_CACHE_DIR}" )
-
 if ( RUNNING_CGAL_AUTO_TEST )
   message(STATUS "Operating system:")
   execute_process(COMMAND uname -a
@@ -401,41 +390,6 @@ if ( RUNNING_CGAL_AUTO_TEST )
     ERROR_VARIABLE uname_a)
   message(STATUS "${uname_a}")
   CGAL_display_compiler_version()
-  if ( NOT "${CGAL_REFERENCE_CACHE_DIR}" STREQUAL "" )
-    if ( EXISTS ${CGAL_REFERENCE_CACHE_DIR} )
-      if ( EXISTS ${CGAL_REFERENCE_CACHE_DIR}/CMakeCache.txt )
-        message( STATUS "Loading reference cache from ${CGAL_REFERENCE_CACHE_DIR}" )
-        load_cache( ${CGAL_REFERENCE_CACHE_DIR}
-          EXCLUDE CGAL_Core_LIBRARY
-                  CGAL_CORE_PACKAGE_DIR
-                  WITH_CGAL_Core
-                  CGAL_INSTALLATION_PACKAGE_DIR
-                  CGAL_MAINTENANCE_PACKAGE_DIR
-                  CGAL_PDB_BINARY_DIR
-                  CGAL_PDB_SOURCE_DIR
-                  CGAL_BINARY_DIR
-                  CGAL_SOURCE_DIR)
-#        message("List of cache variables:")
-
-        ## The following lines removes nasty loaded cache values. We do not
-        ## want that the current build tree depends on binaries that were
-        ## build in the reference build tree.
-        get_property(cache_variables DIRECTORY PROPERTY CACHE_VARIABLES)
-        foreach(var ${cache_variables})
-#          get_property(var_value CACHE ${var} PROPERTY VALUE)
-#          get_property(type CACHE ${var} PROPERTY TYPE)
-          string(REGEX MATCH "^CGAL(_.*_(DEPENDS|BINARY_DIR)|_.*LIBRARY)$" var_name_matches ${var})
-          if(var_name_matches)
-            unset(${var} CACHE)
-#          else()
-#            message("${var}:${var_type}=${var_value}")
-          endif()
-        endforeach()
-
-
-      endif()
-    endif()
-  endif()
 endif()
 
 include(CGAL_Common)
@@ -571,12 +525,8 @@ message("== Detect external libraries ==")
 # Remarks:
 #  External libs configured when Qt5 lib of cgal are required
 #  Coin is used in KDS, but no FindCoin or FindCOIN exists
-#  There exists FindF2C, FindIPE, FindMKL, but they are only used to support supporting libs
-list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 0 GMP MPFR ZLIB OpenGL LEDA MPFI RS RS3 OpenNL Eigen3 BLAS LAPACK ESBTL Coin3D NTL IPE)
-if (NOT WIN32)
-  # GMPXX is not supported on WIN32 machines
-  list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 1 GMPXX)
-endif()
+#  There exists FindIPE, FindMKL, but they are only used to support supporting libs
+list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 0 GMP MPFR ZLIB OpenGL LEDA MPFI RS RS3 OpenNL Eigen3 ESBTL Coin3D NTL IPE)
 
 # Where CMake is run several times, to avoid duplicates
 list(REMOVE_DUPLICATES CGAL_SUPPORTING_3RD_PARTY_LIBRARIES)
@@ -614,8 +564,8 @@ if(CGAL_DISABLE_GMP)
   unset(WITH_CGAL_Core CACHE)
   unset(WITH_GMP)
   unset(WITH_GMP CACHE)
-  unset(WITH_GMPXX)
-  unset(WITH_GMPXX CACHE)
+  unset(CGAL_USE_GMP)
+  unset(CGAL_USE_GMP CACHE)
   unset(WITH_MPFR)
   unset(WITH_MPFR CACHE)
 
@@ -624,9 +574,6 @@ if(CGAL_DISABLE_GMP)
     "#error GMP is disabled by the CMake option CGAL_DISABLE_GMP")
 else()
   list(APPEND      CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES GMP MPFR)
-  if(WITH_GMPXX)
-    list(APPEND      CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES GMPXX)
-  endif()
 
   # When CMake is run several times, to avoid duplicates
   list (REMOVE_DUPLICATES CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES)
@@ -646,7 +593,7 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES})
   # add option
   list( FIND CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES "${lib}" POSITION )
   if ( "${POSITION}" STRGREATER "-1" ) # if lib is essential
-   option(WITH_${lib} "Select external library ${lib}" ON)
+    option(WITH_${lib} "Select external library ${lib}" ON)
   else()
     option(WITH_${lib} "Select external library ${lib}" OFF)
   endif()
@@ -777,11 +724,11 @@ set ( CGAL_INSTALL_CMAKE_DIR "${CGAL_INSTALL_LIB_DIR}/cmake/CGAL"
   CACHE STRING "The folder where CGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
 
-set ( CGAL_INSTALL_DOC_DIR "${CMAKE_INSTALL_DATAROOTDIR}/doc/${CGAL_VERSION_DIR}"
+set ( CGAL_INSTALL_DOC_DIR "${CMAKE_INSTALL_DOCDIR}"
   CACHE STRING "The folder where CGAL documentation and license files will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
 
-set ( CGAL_INSTALL_MAN_DIR "${CMAKE_INSTALL_DATAROOTDIR}/man/man1"
+set ( CGAL_INSTALL_MAN_DIR "${CMAKE_INSTALL_MANDIR}/man1"
   CACHE STRING "The folder where manual pages for CGAL scripts will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
 
@@ -875,6 +822,8 @@ if(NOT CGAL_HEADER_ONLY)
 else()
   configure_file("${CGAL_MODULES_DIR}/CGALConfig_binary_header_only.cmake.in"
     "${CMAKE_BINARY_DIR}/CGALConfig.cmake"  @ONLY)
+  configure_file("${CGAL_MODULES_DIR}/CGALConfigVersion_binary_header_only.cmake.in"
+    "${CMAKE_BINARY_DIR}/CGALConfigVersion.cmake"  @ONLY)
 endif()
 
 #--------------------------------------------------------------------------------------------------
@@ -894,11 +843,11 @@ endif()
 
 foreach (dir ${CGAL_CONFIGURED_PACKAGES})
   if (EXISTS ${dir}/include/CGAL)
-    install(DIRECTORY ${dir}/include/CGAL              DESTINATION ${CGAL_INSTALL_INC_DIR} PATTERN ".svn" EXCLUDE)
+    install(DIRECTORY ${dir}/include/CGAL              DESTINATION ${CGAL_INSTALL_INC_DIR} PATTERN ".svn" EXCLUDE PATTERN "Qt" EXCLUDE)
   endif()
 endforeach()
 if(EXISTS ${CMAKE_BINARY_DIR}/include/CGAL)
-  install(DIRECTORY ${CMAKE_BINARY_DIR}/include/CGAL     DESTINATION ${CGAL_INSTALL_INC_DIR} PATTERN ".svn" EXCLUDE)
+  install(DIRECTORY ${CMAKE_BINARY_DIR}/include/CGAL     DESTINATION ${CGAL_INSTALL_INC_DIR} PATTERN ".svn" EXCLUDE PATTERN "Qt" EXCLUDE)
 endif()
 
 file(GLOB scripts "scripts/*")
@@ -928,12 +877,18 @@ if(NOT CGAL_HEADER_ONLY)
     ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake
     DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 else()
-  configure_file(${CMAKE_CURRENT_LIST_DIR}/lib/cmake/CGAL/CGALConfig-installation-dirs.cmake.in
-    ${CMAKE_BINARY_DIR}/config/CGALConfig-installation-dirs.cmake)
   install(FILES
-    ${CMAKE_BINARY_DIR}/config/CGALConfig-installation-dirs.cmake
     ${CMAKE_CURRENT_LIST_DIR}/lib/cmake/CGAL/CGALConfig.cmake
-    DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
+    ${CMAKE_CURRENT_LIST_DIR}/lib/cmake/CGAL/CGALConfigBuildVersion.cmake
+    ${CMAKE_CURRENT_LIST_DIR}/lib/cmake/CGAL/CGALConfigVersion.cmake
+    DESTINATION ${CGAL_INSTALL_CMAKE_DIR})
+  if(NOT CGAL_INSTALL_CMAKE_DIR STREQUAL "${CGAL_INSTALL_LIB_DIR}/cmake/CGAL")
+    configure_file(${CMAKE_CURRENT_LIST_DIR}/lib/cmake/CGAL/CGALConfig-installation-dirs.cmake.in
+      ${CMAKE_BINARY_DIR}/config/CGALConfig-installation-dirs.cmake)
+    install(FILES
+      ${CMAKE_BINARY_DIR}/config/CGALConfig-installation-dirs.cmake
+      DESTINATION ${CGAL_INSTALL_CMAKE_DIR})
+  endif()
 endif()
 
 if(CGAL_INSTALL_MAN_DIR)
@@ -1183,7 +1138,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
     # Build the doc
     set(DOC_DIR "${CMAKE_BINARY_DIR}/build_doc")
     file(MAKE_DIRECTORY "${DOC_DIR}")
-    execute_process(COMMAND "${CMAKE_COMMAND}" -DDOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE} "${CMAKE_SOURCE_DIR}/Documentation/doc"
+    execute_process(COMMAND "${CMAKE_COMMAND}" -DCGAL_BUILD_THREE_DOC=TRUE -DDOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE} "${CMAKE_SOURCE_DIR}/Documentation/doc"
         WORKING_DIRECTORY "${DOC_DIR}"
         )
     execute_process(COMMAND "${CMAKE_COMMAND}" --build . --target "doc"
@@ -1194,7 +1149,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
   file(GLOB html_files RELATIVE "${DOC_DIR}/doc_output/" "${DOC_DIR}/doc_output/*/*.html")
   file(GLOB example_files RELATIVE "${CMAKE_SOURCE_DIR}/" "${CMAKE_SOURCE_DIR}/*/examples/*/*.cpp")
   find_program(AWK awk)
-  set(awk_arguments [=[{ match($0, /# *include *(&lt;|[<"])(CGAL\/[^>&"]*)([>"]|&gt;)/,arr); if(arr[2]!="") print arr[2] }]=])
+  set(awk_arguments [=[{ match($0, /# *include *(&lt;|[<"])(CGAL\/[^>&"]*)([>"]|&gt;)| (CGAL\/[^>&"]*\.h)/,arr); if(arr[2]!="") print arr[2]; if(arr[4]!="") print arr[4] }]=])
   message("listing headers from html files")
   foreach(f ${html_files})
     execute_process(COMMAND "${AWK}" "${awk_arguments}" "${DOC_DIR}/doc_output/${f}"
@@ -1381,4 +1336,3 @@ if(NOT CGAL_BRANCH_BUILD AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/doc")
   # in a non-branch build this is the top-level CMakeLists.txt
   add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/doc")
 endif()
-

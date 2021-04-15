@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),,
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sylvain Pion
@@ -350,9 +341,7 @@ compare_signed_distance_to_line(const typename K::Point_2& p,
                                 const typename K::Point_2& s,
                                 const K& k)
 {
-  if (k.less_signed_distance_to_line_2_object()(p, q, r, s)) return SMALLER;
-  if (k.less_signed_distance_to_line_2_object()(p, q, s, r)) return LARGER;
-  return EQUAL;
+  return k.compare_signed_distance_to_line_2_object()(p, q, r, s);
 }
 
 template <class K>
@@ -363,9 +352,7 @@ compare_signed_distance_to_line(const typename K::Line_2& l,
                                 const typename K::Point_2& q,
                                 const K& k)
 {
-  if (k.less_signed_distance_to_line_2_object()(l, p, q)) return SMALLER;
-  if (k.less_signed_distance_to_line_2_object()(l, q, p)) return LARGER;
-  return EQUAL;
+  return k.compare_signed_distance_to_line_2_object()(l, p, q);
 }
 
 template < class K >

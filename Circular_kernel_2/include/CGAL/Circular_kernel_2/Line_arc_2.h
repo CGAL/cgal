@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion, Pedro Machado
 
@@ -140,11 +131,11 @@ public:
     CGAL_assertion(bool(v));
 
     const Point_2 *pt = CGAL::Intersections::internal::intersect_get<Point_2>(v);
-    CGAL_assertion(pt != NULL);
+    CGAL_assertion(pt != nullptr);
     _begin = Circular_arc_point_2(*pt);
     v = CGAL::Intersections::internal::intersection(support, l2, CK());
     const Point_2 *pt2 = CGAL::Intersections::internal::intersect_get<Point_2>(v);
-    CGAL_assertion(pt2 != NULL);
+    CGAL_assertion(pt2 != nullptr);
     _end = Circular_arc_point_2(*pt2);
     reset_flags();
   }
@@ -289,43 +280,43 @@ public:
   typedef typename CB::Circle_2 Circle_2;
   typedef typename CB::Circular_arc_point_2 Circular_arc_point_2;
 
-  Filtered_bbox_line_arc_2_base() : P_arc(), bb(NULL) {}
+  Filtered_bbox_line_arc_2_base() : P_arc(), bb(nullptr) {}
 
-  Filtered_bbox_line_arc_2_base(const P_arc& arc) : P_arc(arc), bb(NULL) {}
+  Filtered_bbox_line_arc_2_base(const P_arc& arc) : P_arc(arc), bb(nullptr) {}
 
   Filtered_bbox_line_arc_2_base(const Line_2 &support,
                                 const Circle_2 &l1, const bool b_l1,
                                 const Circle_2 &l2, const bool b_l2)
-    : P_arc(support,l1,b_l1,l2,b_l2), bb(NULL)
+    : P_arc(support,l1,b_l1,l2,b_l2), bb(nullptr)
   {}
 
 
   Filtered_bbox_line_arc_2_base(const Line_2 &support,
                                 const Line_2 &l1,
                                 const Line_2 &l2)
-    : P_arc(support,l1,l2), bb(NULL)
+    : P_arc(support,l1,l2), bb(nullptr)
   {}
 
   Filtered_bbox_line_arc_2_base(const Line_2 &support,
                                 const Circular_arc_point_2 &begin,
                                 const Circular_arc_point_2 &end)
-    : P_arc(support, begin, end) , bb(NULL)
+    : P_arc(support, begin, end) , bb(nullptr)
   {}
 
 
   Filtered_bbox_line_arc_2_base(const Segment_2 &s)
-    : P_arc(s) , bb(NULL)
+    : P_arc(s) , bb(nullptr)
   {}
 
 
   Filtered_bbox_line_arc_2_base(const Point_2 &p1,
                                 const Point_2 &p2)
-    : P_arc(p1,p2) , bb(NULL)
+    : P_arc(p1,p2) , bb(nullptr)
   {}
 
 
   Filtered_bbox_line_arc_2_base(const Filtered_bbox_line_arc_2_base &c)
-    : P_arc(c), bb(c.bb ? new Bbox_2(*(c.bb)) : NULL)
+    : P_arc(c), bb(c.bb ? new Bbox_2(*(c.bb)) : nullptr)
   {}
 
   Filtered_bbox_line_arc_2_base& operator=(const Self& c)
@@ -334,10 +325,10 @@ public:
     {
       this->P_arc::operator=(c);
 
-      if (bb != NULL){
+      if (bb != nullptr){
         delete bb;
       }
-      bb = c.bb ? new Bbox_2(*(c.bb)) : NULL;
+      bb = c.bb ? new Bbox_2(*(c.bb)) : nullptr;
     }
     return *this;
   }
@@ -346,13 +337,13 @@ public:
 
   Bbox_2 bbox() const
   {
-    if(bb==NULL)
+    if(bb==nullptr)
       bb=new Bbox_2(P_arc::bbox());
     return *bb;
   }
 
   bool has_no_bbox() const
-  { return (bb==NULL);}
+  { return (bb==nullptr);}
 
 private:
 

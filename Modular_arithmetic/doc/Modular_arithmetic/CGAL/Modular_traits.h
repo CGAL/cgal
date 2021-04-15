@@ -14,7 +14,5 @@ template< typename T >
 class Modular_traits {
 public:
 
-/// @}
-
 }; /* end Modular_traits */
 } /* end namespace CGAL */

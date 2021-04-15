@@ -183,16 +183,6 @@ it. This is however possible only at the end of the list. `Default`
 provides a simple mechanism that performs something equivalent anywhere in the
 sequence.
 
-\section stl_wrappers C++ 11 Wrappers
-
-Wrappers for the classes `array` and `tuple` which, based on
-availability, either use the version of <I>Boost</I> or the one
-provided by the standard library are provided in the namespace
-`CGAL::cpp11`. The namespace alias `CGAL::cpp11` is provided
-for backward compatibility. Those are documented for completeness and
-implementers. They are not intended to be used by users of the
-library.
-
 \section secchecks Checks
 
 Much of the \cgal code contains checks.

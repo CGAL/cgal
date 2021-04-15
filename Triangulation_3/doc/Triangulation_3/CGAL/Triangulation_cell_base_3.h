@@ -31,7 +31,5 @@ template< typename Traits, typename TDSCb >
 class Triangulation_cell_base_3 : public TDSCb {
 public:
 
-/// @}
-
 }; /* end Triangulation_cell_base_3 */
 } /* end namespace CGAL */

@@ -62,5 +62,5 @@ public:
 /// @}
 
 }; /* end Implicit_multi_domain_to_labeling_function_wrapper */
-/// @}
+
 } /* end namespace CGAL */

@@ -9,7 +9,6 @@
 #include "Scene_polylines_item.h"
 #include "Scene_points_with_normal_item.h"
 #include "Messages_interface.h"
-#include <boost/foreach.hpp>
 
 #include <QString>
 #include <QAction>
@@ -33,7 +32,7 @@ class Polyhedron_demo_intersection_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "surface_intersection_plugin.json")
 
 public:
 

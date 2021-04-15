@@ -1,5 +1,6 @@
 /*!
 \example Convex_hull_2/array_convex_hull_2.cpp
+\example Convex_hull_2/convex_hull_indices_2.cpp
 \example Convex_hull_2/ch_from_cin_to_cout.cpp
 \example Convex_hull_2/ch_graham_anderson.cpp
 \example Convex_hull_2/ch_timing.cpp

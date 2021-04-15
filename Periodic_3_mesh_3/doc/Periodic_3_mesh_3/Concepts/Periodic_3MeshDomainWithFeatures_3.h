@@ -44,6 +44,4 @@ public:
   IndicesOutputIterator
   get_corner_incident_curves(Corner_index id, IndicesOutputIterator out);
 
-/// @}
-
 }; /* end Periodic_3MeshDomainWithFeatures_3 */

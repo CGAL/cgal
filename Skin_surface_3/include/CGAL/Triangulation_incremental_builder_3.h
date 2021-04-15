@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
@@ -77,7 +68,7 @@ private:
   typedef std::pair < Vertex_handle, Vertex_handle >    Vpair;
   typedef std::map < Vpair, Facet >                     MapPair;
   typedef typename MapPair::iterator                    MapPairIt;
-  typedef cpp11::array < Vertex_handle, 3 >             Vtriple;
+  typedef std::array < Vertex_handle, 3 >             Vtriple;
   typedef std::map < Vtriple, Facet >                   MapTriple;
   typedef typename MapTriple::iterator                  MapTripleIt;
 
@@ -122,13 +113,13 @@ typename Triangulation_incremental_builder_3< TDS_ >::Cell_handle
 Triangulation_incremental_builder_3< TDS_ >::add_cell(
   Vertex_handle vh0, Vertex_handle vh1, Vertex_handle vh2, Vertex_handle vh3)
 {
-  CGAL_assertion(vh0 != NULL); CGAL_assertion(vh1 != NULL);
-  CGAL_assertion(vh2 != NULL); CGAL_assertion(vh3 != NULL);
+  CGAL_assertion(vh0 != nullptr); CGAL_assertion(vh1 != nullptr);
+  CGAL_assertion(vh2 != nullptr); CGAL_assertion(vh3 != nullptr);
   CGAL_assertion(vh0 != vh1); CGAL_assertion(vh0 != vh2); CGAL_assertion(vh0 != vh3);
   CGAL_assertion(vh1 != vh2); CGAL_assertion(vh1 != vh3); CGAL_assertion(vh2 != vh3);
 
   Cell_handle ch =  t.tds().create_cell(vh0, vh1, vh2, vh3);
-  // Neighbors are by default set to NULL
+  // Neighbors are by default set to nullptr
   vh0->set_cell(ch); vh1->set_cell(ch);
   vh2->set_cell(ch); vh3->set_cell(ch);
 
@@ -143,10 +134,10 @@ Triangulation_incremental_builder_3< TDS_ >::add_cell(
       Facet f = (*neighbIt).second;
       glue_cells(f.first, f.second, ch, i);
       facets.erase(neighbIt);
-      CGAL_assertion(f.first->neighbor(f.second) != NULL);
-      CGAL_assertion(ch->neighbor(i) != NULL);
+      CGAL_assertion(f.first->neighbor(f.second) != nullptr);
+      CGAL_assertion(ch->neighbor(i) != nullptr);
     } else {
-      CGAL_assertion(ch->neighbor(i) == NULL);
+      CGAL_assertion(ch->neighbor(i) == nullptr);
     }
   }
 
@@ -158,14 +149,14 @@ typename Triangulation_incremental_builder_3< TDS_ >::Cell_handle
 Triangulation_incremental_builder_3< TDS_ >::add_infinite_cell(
   Cell_handle ch0, int i)
 {
-  CGAL_assertion(ch0->neighbor(i) == NULL);
+  CGAL_assertion(ch0->neighbor(i) == nullptr);
   Vertex_handle vh[4];
   vh[i] = t.infinite_vertex();
   vh[(i+1)&3] = ch0->vertex((i+1)&3);
   vh[(i+2)&3] = ch0->vertex((i+3)&3);
   vh[(i+3)&3] = ch0->vertex((i+2)&3);
   Cell_handle ch1 =  t.tds().create_cell(vh[0], vh[1], vh[2], vh[3]);
-  // Neighbors are set to NULL
+  // Neighbors are set to nullptr
   // Do not set points to the infinite cell. All finite vertices point to
   // finite cells.
   vh[i]->set_cell(ch1);
@@ -216,8 +207,8 @@ Triangulation_incremental_builder_3< TDS_ >::construct_infinite_cells()
     int ind0 = ch_facet.second;
     Cell_handle ch1 = add_infinite_cell(ch0, ind0);
     // Index of ch1 is also ind0
-    CGAL_assertion(ch0->neighbor(ind0) != NULL);
-    CGAL_assertion(ch1->neighbor(ind0) != NULL);
+    CGAL_assertion(ch0->neighbor(ind0) != nullptr);
+    CGAL_assertion(ch1->neighbor(ind0) != nullptr);
 
     for (int i=1; i<4; i++) {
       int i1 = (i==1?2:1);
@@ -234,11 +225,11 @@ Triangulation_incremental_builder_3< TDS_ >::construct_infinite_cells()
         Facet f_opp = (*ch_edge_it).second;
         glue_cells(f_opp.first, f_opp.second, ch1, (ind0+i)&3);
         ch_edges.erase(ch_edge_it);
-        CGAL_assertion(f_opp.first->neighbor(f_opp.second) != NULL);
-        CGAL_assertion(ch1->neighbor((ind0+i)&3) != NULL);
+        CGAL_assertion(f_opp.first->neighbor(f_opp.second) != nullptr);
+        CGAL_assertion(ch1->neighbor((ind0+i)&3) != nullptr);
       } else {
         ch_edges[Vpair(vh1,vh2)] = Facet(ch1, (ind0+i)&3);
-        CGAL_assertion(ch1->neighbor((ind0+i)&3) == NULL);
+        CGAL_assertion(ch1->neighbor((ind0+i)&3) == nullptr);
       }
     }
   }

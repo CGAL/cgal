@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Simon Giraudot
@@ -26,6 +17,7 @@
 
 
 #include <stack>
+#include <typeindex>
 
 #include <CGAL/Surface_mesh/Properties.h>
 
@@ -330,8 +322,8 @@ public:
   void clear()
   {
     m_base.clear();
-    boost::tie (m_indices, boost::tuples::ignore) = this->add_property_map<Index>("index", typename Index::size_type(-1));
-    boost::tie (m_points, boost::tuples::ignore) = this->add_property_map<Point>("point", Point (0., 0., 0.));
+    m_indices = this->add_property_map<Index>("index", typename Index::size_type(-1)).first;
+    m_points = this->add_property_map<Point>("point", CGAL::ORIGIN).first;
     m_nb_removed = 0;
   }
 
@@ -345,12 +337,12 @@ public:
   {
     Base other;
     other.template add<Index>("index", typename Index::size_type(-1));
-    other.template add<Point>("point", Point (0., 0., 0.));
+    other.template add<Point>("point", CGAL::ORIGIN);
     other.resize(m_base.size());
     other.transfer(m_base);
     m_base.swap(other);
-    boost::tie (m_indices, boost::tuples::ignore) = this->property_map<Index>("index");
-    boost::tie (m_points, boost::tuples::ignore) = this->property_map<Point>("point");
+    m_indices = this->property_map<Index>("index").first;
+    m_points = this->property_map<Point>("point").first;
   }
 
   /*!
@@ -799,7 +791,7 @@ public:
   {
     Property_map<T> pm;
     bool added = false;
-    boost::tie (pm, added) = m_base.template add<T> (name, t);
+    std::tie (pm, added) = m_base.template add<T> (name, t);
     return std::make_pair (pm, added);
   }
 
@@ -820,7 +812,7 @@ public:
   {
     Property_map<T> pm;
     bool okay = false;
-    boost::tie (pm, okay) = m_base.template get<T>(name);
+    std::tie (pm, okay) = m_base.template get<T>(name);
     return std::make_pair (pm, okay);
   }
 
@@ -861,10 +853,10 @@ public:
     that is `true` if the property was added and `false` if it already
     exists (and was therefore not added but only returned).
   */
-  std::pair<Vector_map, bool> add_normal_map (const Vector& default_value = Vector(0., 0., 0.))
+  std::pair<Vector_map, bool> add_normal_map (const Vector& default_value = CGAL::NULL_VECTOR)
   {
     bool out = false;
-    boost::tie (m_normals, out) = this->add_property_map<Vector> ("normal", default_value);
+    std::tie (m_normals, out) = this->add_property_map<Vector> ("normal", default_value);
     return std::make_pair (m_normals, out);
   }
   /*!
@@ -942,27 +934,26 @@ public:
   /*!
     \brief Returns a vector of pairs that describe properties and associated types.
   */
-  std::vector<std::pair<std::string, std::type_info> > properties_and_types() const
+  std::vector<std::pair<std::string, std::type_index> > properties_and_types() const
   {
     std::vector<std::string> prop = m_base.properties();
     prop.erase (prop.begin()); // remove "index"
     prop.erase (prop.begin()); // remove "point"
 
-    std::vector<std::pair<std::string, std::type_info> > out; out.reserve (prop.size());
+    std::vector<std::pair<std::string, std::type_index> > out; out.reserve (prop.size());
     for (std::size_t i = 0; i < prop.size(); ++ i)
-      out.push_back (std::make_pair (prop[i], m_base.get_type(prop[i])));
+      out.push_back (std::make_pair (prop[i], std::type_index(m_base.get_type(prop[i]))));
     return out;
   }
 
 
   /*!
-    \brief Returns a sequence of \ref psp_namedparameters "Named Parameters" for Point Set Processing algorithms.
+    \brief Returns a sequence of \ref bgl_namedparameters "Named Parameters" to be used in Point Set Processing algorithms.
 
-    \cgalNamedParamsBegin
-      \cgalParamBegin{point_map} contains the point map (see `point_map()`)\cgalParamEnd
-      \cgalParamBegin{normal_map} contains the normal map (see `normal_map()`)\cgalParamEnd
-      \cgalParamBegin{geom_traits} contains the kernel `typename Kernel_traits<Point>`::`Kernel`\cgalParamEnd
-    \cgalNamedParamsEnd
+    The following named parameters are used:
+    - `point_map`: contains the point property map (see `point_map()`)
+    - `normal_map`: contains the normal map (see `normal_map()`)
+    - `geom_traits`: contains the kernel `typename Kernel_traits<Point>`::`Kernel`
 
     \warning this method does not check if the normal map was
     instanciated or not. The normal map named parameter should not be
@@ -1041,6 +1032,7 @@ public:
     return this->range<Vector> (m_normals);
   }
 
+  /// @}
 
   /*!
     \name Push Property Maps and Inserters (Advanced)
@@ -1121,8 +1113,8 @@ public:
     Property* prop;
     mutable Index ind;
 
-    Push_property_map(Point_set* ps = NULL,
-                      Property* prop = NULL,
+    Push_property_map(Point_set* ps = nullptr,
+                      Property* prop = nullptr,
                       Index ind=Index())
       : ps(ps), prop(prop), ind(ind) {}
 

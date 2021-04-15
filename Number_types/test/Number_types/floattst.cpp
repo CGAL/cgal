@@ -1,4 +1,6 @@
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
+#include <CGAL/float.h>
+#include <CGAL/number_utils.h>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(disable:4723)

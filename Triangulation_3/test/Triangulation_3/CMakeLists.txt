@@ -2,9 +2,9 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Triangulation_3_Tests )
 
-cmake_minimum_required(VERSION 3.1)
 
 
 find_package(CGAL QUIET)
@@ -12,6 +12,7 @@ find_package(CGAL QUIET)
 if ( CGAL_FOUND )
 
   find_package( TBB QUIET )
+  include(CGAL_TBB_support)
 
   include_directories (BEFORE "include")
 
@@ -28,14 +29,23 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_simplex_3.cpp" )
   create_single_source_cgal_program( "test_static_filters.cpp" )
   create_single_source_cgal_program( "test_triangulation_3.cpp" )
+  create_single_source_cgal_program( "test_io_triangulation_3.cpp" )
 
-  if(TBB_FOUND)
+  if(TARGET CGAL::TBB_support)
     foreach(target
         test_delaunay_3
         test_regular_3
         test_regular_insert_range_with_info)
-      CGAL_target_use_TBB(${target})
+      target_link_libraries(${target} PUBLIC CGAL::TBB_support)
     endforeach()
+
+    if(BUILD_TESTING)
+      set_property(TEST
+        execution___of__test_delaunay_3
+        execution___of__test_regular_3
+        execution___of__test_regular_insert_range_with_info
+      PROPERTY RUN_SERIAL 1)
+    endif()
   endif()
 
   if(BUILD_TESTING)
@@ -53,4 +63,3 @@ else()
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
 
 endif()
-

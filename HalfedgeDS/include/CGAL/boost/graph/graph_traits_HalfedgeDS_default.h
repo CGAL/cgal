@@ -1,19 +1,10 @@
 // Copyright (c) 2018  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri
@@ -484,25 +475,19 @@ void reserve(HalfedgeDS_default<T,I,A>& p,
 }// namespace CGAL
 namespace boost {
 
-// property_map dispatcher into Polyhedron
-template<class T, class I, class A, class Tag>
-struct property_map<CGAL::HalfedgeDS_default<T,I,A>, Tag>
-{
-  typedef typename CGAL::HDS_property_map<Tag>::
-      template bind_<T,I,A> map_gen;
-  typedef typename map_gen::type       type;
-  typedef typename map_gen::const_type const_type;
+#define CGAL_PM_SPECIALIZATION(TAG) \
+template<class T, class I, class A> \
+struct property_map<CGAL::HalfedgeDS_default<T,I,A>, TAG> \
+{\
+  typedef typename CGAL::HDS_property_map<TAG>:: \
+      template bind_<T,I,A> map_gen; \
+  typedef typename map_gen::type       type; \
+  typedef typename map_gen::const_type const_type; \
 };
 
-// property_map dispatcher into const Polyhedron
-template<class T, class I, class A, class Tag>
-struct property_map<const CGAL::HalfedgeDS_default<T,I,A>, Tag>
-{
-  typedef typename CGAL::HDS_property_map<Tag>::
-      template bind_<T,I,A> map_gen;
-  typedef typename map_gen::type       type;
-  typedef typename map_gen::const_type const_type;
-};
+CGAL_PM_SPECIALIZATION(vertex_point_t)
+
+#undef CGAL_PM_SPECIALIZATION
 
 } // namespace boost
 

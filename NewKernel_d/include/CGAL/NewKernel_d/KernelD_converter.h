@@ -1,20 +1,11 @@
 // Copyright (c) 2014
 // INRIA Saclay-Ile de France (France)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Marc Glisse
 
@@ -81,7 +72,7 @@ class KernelD_converter_
         typedef typename Get_type<K2,Tag_>::type K2_Obj;
         typedef typename Get_functor<K1, Convert_ttag<Tag_> >::type K1_Conv;
         typedef KO_converter<Tag_,K1,K2> KOC;
-        typedef CGAL_BOOSTD is_same<K1_Conv, Null_functor> no_converter;
+        typedef std::is_same<K1_Conv, Null_functor> no_converter;
         typedef typename internal::Map_taglist_to_typelist<K1,Rest>::type::template contains<K1_Obj> duplicate;
 
         // Disable the conversion in some cases:
@@ -99,10 +90,10 @@ class KernelD_converter_
         //typedef typename KOC::result_type K2_Obj;
         public:
   using Base::operator(); // don't use directly, just make it accessible to the next level
-        K2_Obj helper(K1_Obj const& o,CGAL_BOOSTD true_type)const{
+        K2_Obj helper(K1_Obj const& o, std::true_type)const{
                 return KOC()(this->myself().kernel(),this->myself().kernel2(),this->myself(),o);
         }
-        K2_Obj helper(K1_Obj const& o,CGAL_BOOSTD false_type)const{
+        K2_Obj helper(K1_Obj const& o, std::false_type)const{
                 return K1_Conv(this->myself().kernel())(this->myself().kernel2(),this->myself(),o);
         }
         K2_Obj operator()(argument_type const& o)const{

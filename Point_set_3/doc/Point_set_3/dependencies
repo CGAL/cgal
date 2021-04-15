@@ -5,7 +5,7 @@ Algebraic_foundations
 Circulator
 Stream_support
 Point_set_processing_3
-Point_set_shape_detection_3
+Shape_detection
 Advancing_front_surface_reconstruction
 Surface_mesh
 BGL

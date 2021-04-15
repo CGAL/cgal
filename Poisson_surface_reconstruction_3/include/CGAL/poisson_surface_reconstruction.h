@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Simon Giraudot
 
@@ -83,7 +74,6 @@ namespace CGAL {
     \param tag surface mesher tag.
     \return `true` if reconstruction succeeded, `false` otherwise.
   */
-#if defined(DOXYGEN_RUNNING) || !defined(CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES)
   template <typename PointInputIterator,
             typename PointMap,
             typename NormalMap,
@@ -100,72 +90,14 @@ namespace CGAL {
                                            double sm_radius = 30.0,
                                            double sm_distance = 0.375,
                                            Tag tag = Tag())
-#else
-  template <typename PointInputIterator,
-            typename PointMap,
-            typename NormalMap,
-            typename PolygonMesh>
-  bool
-  poisson_surface_reconstruction_delaunay (PointInputIterator begin,
-                                           PointInputIterator end,
-                                           PointMap point_map,
-                                           NormalMap normal_map,
-                                           PolygonMesh& output_mesh,
-                                           double spacing,
-                                           double sm_angle = 20.0,
-                                           double sm_radius = 30.0,
-                                           double sm_distance = 0.375)
-  {
-    return poisson_surface_reconstruction_delaunay (begin, end, point_map, normal_map, output_mesh,
-                                                    spacing, sm_angle, sm_radius, sm_distance,
-                                                    CGAL::Manifold_with_boundary_tag());
-  }
-
-  template <typename PointInputIterator,
-            typename PointMap,
-            typename NormalMap,
-            typename PolygonMesh,
-            typename Tag>
-  bool
-  poisson_surface_reconstruction_delaunay (PointInputIterator begin,
-                                           PointInputIterator end,
-                                           PointMap point_map,
-                                           NormalMap normal_map,
-                                           PolygonMesh& output_mesh,
-                                           double spacing,
-                                           double sm_angle = 20.0,
-                                           double sm_radius = 30.0,
-                                           double sm_distance = 0.375)
-  {
-    return poisson_surface_reconstruction_delaunay (begin, end, point_map, normal_map, output_mesh,
-                                                    spacing, sm_angle, sm_radius, sm_distance,
-                                                    Tag());
-  }
-
-  template <typename PointInputIterator,
-            typename PointMap,
-            typename NormalMap,
-            typename PolygonMesh,
-            typename Tag>
-  bool
-  poisson_surface_reconstruction_delaunay (PointInputIterator begin,
-                                           PointInputIterator end,
-                                           PointMap point_map,
-                                           NormalMap normal_map,
-                                           PolygonMesh& output_mesh,
-                                           double spacing,
-                                           double sm_angle,
-                                           double sm_radius,
-                                           double sm_distance,
-                                           Tag tag)
-#endif
   {
     typedef typename boost::property_traits<PointMap>::value_type Point;
     typedef typename Kernel_traits<Point>::Kernel Kernel;
     typedef typename Kernel::Sphere_3 Sphere;
+    typedef typename Kernel::FT FT;
 
     typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_function;
-    typedef CGAL::Surface_mesh_default_triangulation_3 STr;
+    typedef typename CGAL::Surface_mesher::Surface_mesh_default_triangulation_3_generator<Kernel>::Type STr;
     typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
     typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
 
@@ -175,10 +107,10 @@ namespace CGAL {
 
     Point inner_point = function.get_inner_point();
     Sphere bsphere = function.bounding_sphere();
-    double radius = std::sqrt(bsphere.squared_radius());
+    FT radius = CGAL::approximate_sqrt(bsphere.squared_radius());
 
-    double sm_sphere_radius = 5.0 * radius;
-    double sm_dichotomy_error = sm_distance * spacing / 1000.0;
+    FT sm_sphere_radius = 5.0 * radius;
+    FT sm_dichotomy_error = sm_distance * spacing / 1000.0;
 
     Surface_3 surface(function,
                       Sphere (inner_point, sm_sphere_radius * sm_sphere_radius),

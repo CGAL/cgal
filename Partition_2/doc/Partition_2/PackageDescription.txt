@@ -74,14 +74,13 @@ original polygon).
 - `PartitionTraits_2`
 - `PartitionIsValidTraits_2`
 - `YMonotonePartitionIsValidTraits_2`
-- `YMonotonePartitionTraits_2`
 
 \cgalCRPSection{Function Object Concepts}
 - `PolygonIsValid`
 
 \cgalCRPSection{Classes}
 - `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>`
-- `CGAL::Partition_traits_2<R>`
+- `CGAL::Partition_traits_2<R,P>`
 
 
 \cgalCRPSection{Function Object Classes}

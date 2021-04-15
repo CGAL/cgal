@@ -32,7 +32,7 @@ void border_cases()
                                             sm,
                                             is_selected);
     int i=0;
-    BOOST_FOREACH(face_descriptor fh, sm.faces())
+    for(face_descriptor fh : sm.faces())
       if(!is_selected[fh]) ++i;
     assert(i==4);
   }
@@ -49,7 +49,7 @@ void border_cases()
                                             sm,
                                             is_selected);
     int i=0;
-    BOOST_FOREACH(face_descriptor fh, sm.faces())
+    for(face_descriptor fh : sm.faces())
       if(!is_selected[fh]) ++i;
 
     assert(i==1 || i==4); // depends on the start point
@@ -69,7 +69,7 @@ void border_cases()
                                             sm,
                                             is_selected);
     int i=0;
-    BOOST_FOREACH(face_descriptor fh, sm.faces())
+    for(face_descriptor fh : sm.faces())
       if(!is_selected[fh]) ++i;
     assert(i==4); // depends on the start point
   }
@@ -90,7 +90,7 @@ int main()
 
   std::vector<face_descriptor> faces_to_remove;
   int index = 0;
-  BOOST_FOREACH(face_descriptor fh, faces(sm))
+  for(face_descriptor fh : faces(sm))
   {
     if(index_set.count(index)==0)
       is_selected_map[fh]=false;
@@ -109,7 +109,7 @@ int main()
                                     boost::make_assoc_property_map(is_selected_map));
 
   index=0;
-  BOOST_FOREACH(face_descriptor fh, faces(sm))
+  for(face_descriptor fh : faces(sm))
   {
     if (is_selected_map[fh])
     {

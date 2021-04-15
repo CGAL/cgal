@@ -1,5 +1,5 @@
 export CGAL_DIR="/cygdrive/c/CGAL/CGAL-4.9/build_vs2015"
-export VC_VERSION="14"
+export VC_VERSION="14.0"
 export VC_VERSION_YEAR="2015"
 export ARCH="64"
 export QT_VERSION="5.9.1"

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>)
@@ -129,6 +120,17 @@ namespace CGAL {
     return true;
   }
 
+  template <typename Coord_iterator>
+  bool contains_point_given_as_coordinates(Coord_iterator it_coord_begin, Coord_iterator /*unused*/) const {
+          Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
+          Cartesian_const_iterator_d minit= min_begin, maxit = max_begin;
+                for (unsigned int i = 0; i < dim; ++i, ++it_coord_begin, ++minit, ++maxit) {
+                        if ( ((*it_coord_begin) < (*minit)) || ((*it_coord_begin) > (*maxit)) )
+        return false;
+    }
+    return true;
+  }
+
   bool inner_range_intersects(const Kd_tree_rectangle<FT,Dimension>& rectangle) const {
     // test whether the box eroded by 'eps' intersects 'rectangle'
     Cartesian_const_iterator_d minit= min_begin, maxit = max_begin;
@@ -139,7 +141,6 @@ namespace CGAL {
     }
     return true;
   }
-
 
   bool outer_range_contains(const Kd_tree_rectangle<FT,Dimension>& rectangle) const {
     // test whether the box dilated by 'eps' contains 'rectangle'

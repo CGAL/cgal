@@ -23,7 +23,7 @@ public:
 /*!
 
 */
-typedef CGAL::cpp11::array<AlgebraicKernel_d_1::Bound, 4> result_type;
+typedef std::array<AlgebraicKernel_d_1::Bound, 4> result_type;
 
 /// @}
 
@@ -31,7 +31,7 @@ typedef CGAL::cpp11::array<AlgebraicKernel_d_1::Bound, 4> result_type;
 /// @{
 
 /*!
-The returned `CGAL::cpp11::array` \f$ [xl,xu,yl,yu]\f$ represents an open isolating box \f$ B=(xl,xu)\times(yl,yu)\f$
+The returned `std::array` \f$ [xl,xu,yl,yu]\f$ represents an open isolating box \f$ B=(xl,xu)\times(yl,yu)\f$
 for \f$ a\f$ with respect to \f$ f\f$.
 \pre \f$ f(a)\neq0\f$
 \post \f$ a \in B\f$.
@@ -42,7 +42,7 @@ result_type
 operator()( AlgebraicKernel_d_2::Algebraic_real_2 a, AlgebraicKernel_d_2::Polynomial_2 f);
 
 /*!
-The returned `CGAL::cpp11::array` \f$ [xl,xu,yl,yu]\f$ represents an open isolating box \f$ B=(xl,xu)\times(yl,yu)\f$
+The returned `std::array` \f$ [xl,xu,yl,yu]\f$ represents an open isolating box \f$ B=(xl,xu)\times(yl,yu)\f$
 for \f$ a\f$ with respect to the common solutions of \f$ f\f$ and \f$ g\f$.
 It is not necessary that \f$ a\f$ is a common solution of \f$ f\f$ and \f$ g\f$.
 \post \f$ a \in B\f$.

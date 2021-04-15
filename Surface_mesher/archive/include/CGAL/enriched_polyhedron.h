@@ -4,19 +4,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Pierre Alliez
 
@@ -67,7 +58,7 @@ public:
 };
 
 // a refined halfedge with a general tag and
-// a binary tag to indicate wether it belongs
+// a binary tag to indicate whether it belongs
 // to the control mesh or not
 template <class Refs, class Tprev, class Tvertex, class Tface, class Norm>
 class Enriched_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs,Tprev,Tvertex,Tface>
@@ -332,13 +323,13 @@ public :
     {
       const Point& p = pVertex->point();
 
-      xmin =  std::min(xmin,p.x());
-      ymin =  std::min(ymin,p.y());
-      zmin =  std::min(zmin,p.z());
+      xmin =  (std::min)(xmin,p.x());
+      ymin =  (std::min)(ymin,p.y());
+      zmin =  (std::min)(zmin,p.z());
 
-      xmax =  std::max(xmax,p.x());
-      ymax =  std::max(ymax,p.y());
-      zmax =  std::max(zmax,p.z());
+      xmax =  (std::max)(xmax,p.x());
+      ymax =  (std::max)(ymax,p.y());
+      zmax =  (std::max)(zmax,p.z());
     }
     m_bbox = Iso_cuboid(xmin,ymin,zmin,
                         xmax,ymax,zmax);
@@ -380,7 +371,7 @@ public :
     return CGAL::circulator_size(pVertex->vertex_begin());
   }
 
-  // check wether a vertex is on a boundary or not
+  // check whether a vertex is on a boundary or not
   static bool is_border(Vertex_handle pVertex)
   {
     Halfedge_around_vertex_circulator pHalfEdge = pVertex->vertex_begin();

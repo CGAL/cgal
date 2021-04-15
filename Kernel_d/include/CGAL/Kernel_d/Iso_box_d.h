@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Authors       : Hans Tangelder <hanst@cs.uu.nl>, Michael Hoffmann
@@ -34,6 +25,7 @@
 #include <algorithm>
 #include <numeric>
 #include <cstddef>
+#include <iterator>
 
 namespace CGAL {
 
@@ -50,9 +42,11 @@ namespace CGAL {
     typedef typename Point::Cartesian_const_iterator  Iterator;
     typedef Cartesian_iterator<Point,Functor>         Self;
 
-    typedef typename Functor::result_type  value_type;
-    typedef value_type&                    reference;
-    typedef value_type*                    pointer;
+    typedef decltype(std::declval<Functor>()(
+        *std::declval<Iterator>(),
+        *std::declval<Iterator>()))        value_type;
+    typedef value_type                     reference;
+    typedef const value_type*              pointer;
     typedef std::ptrdiff_t                 difference_type;
     typedef std::input_iterator_tag        iterator_category;
 
@@ -98,7 +92,7 @@ namespace CGAL {
       return tmp;
     }
 
-    value_type operator*()  const { return f(*pb, *qb); }
+    reference  operator*()  const { return f(*pb, *qb); }
     pointer    operator->() const { return &(**this); }
 
     const Functor& functor() const { return f; }
@@ -127,9 +121,12 @@ namespace CGAL {
     typedef typename Point::Homogeneous_const_iterator  Iterator;
     typedef Homogeneous_iterator<Point,Functor>         Self;
 
-    typedef typename Functor::result_type  value_type;
-    typedef value_type&                    reference;
-    typedef value_type*                    pointer;
+    typedef typename Kernel_traits<Point>::Kernel::RT RT;
+    typedef decltype(std::declval<Functor>()(
+        *std::declval<Iterator>() * std::declval<RT>(),
+        *std::declval<Iterator>() * std::declval<RT>())) value_type;
+    typedef value_type                     reference;
+    typedef const value_type*              pointer;
     typedef std::ptrdiff_t                 difference_type;
     typedef std::input_iterator_tag        iterator_category;
 
@@ -137,7 +134,6 @@ namespace CGAL {
 
     Iterator pb, qb;
     Functor f;
-    typedef typename Kernel_traits<Point>::Kernel::RT RT;
     RT hp, hq; // homogenizing coordinates
 
   public:

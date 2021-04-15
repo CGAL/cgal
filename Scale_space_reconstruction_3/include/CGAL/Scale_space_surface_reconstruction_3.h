@@ -1,22 +1,11 @@
 // Copyright (C) 2013 INRIA - Sophia Antipolis (France).
 // Copyright (c) 2017 GeometryFactory Sarl (France).
 //
-//This program is free software: you can redistribute it and/or modify
-//it under the terms of the GNU General Public License as published by
-//the Free Software Foundation, either version 3 of the License, or
-//(at your option) any later version.
-//
-//This program is distributed in the hope that it will be useful,
-//but WITHOUT ANY WARRANTY; without even the implied warranty of
-//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//GNU General Public License for more details.
-//
-//You should have received a copy of the GNU General Public License
-//along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// This file is part of CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s):      Thijs van Lankveld, Simon Giraudot
 
@@ -61,7 +50,7 @@ public:
 
   typedef typename Geom_traits::FT              FT;                              ///< defines the field number type.
   typedef typename Geom_traits::Point_3         Point;                           ///< defines the point type.
-  typedef cpp11::array<std::size_t, 3> Facet;                           ///< defines a facet of the surface (triple of point indices).
+  typedef std::array<std::size_t, 3> Facet;                           ///< defines a facet of the surface (triple of point indices).
 
 #ifdef DOXYGEN_RUNNING
   typedef unspecified_type                      Point_iterator;         ///< defines an iterator over the points.
@@ -305,13 +294,13 @@ std::ostream& operator<< (std::ostream& os, const CGAL::Scale_space_surface_reco
 
 template< typename T >
 std::ostream&
-operator<<( std::ostream& os, const CGAL::cpp11::array< T, 3 >& t ) {
+operator<<( std::ostream& os, const std::array< T, 3 >& t ) {
     return os << t[0] << " " << t[1] << " " << t[2];
 }
 
 template< typename T >
 std::istream&
-operator>>( std::istream& is, CGAL::cpp11::array< T, 3 >& t ) {
+operator>>( std::istream& is, std::array< T, 3 >& t ) {
     return is >> get<0>(t) >> get<1>(t) >> get<2>(t);
 }
 

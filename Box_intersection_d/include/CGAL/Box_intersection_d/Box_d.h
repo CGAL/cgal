@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
@@ -33,6 +24,7 @@
 #include <CGAL/atomic.h>
 
 #include <algorithm>
+#include <array>
 
 namespace CGAL {
 
@@ -72,8 +64,9 @@ class Box_d;
 template<class NT_, int N>
 class Box_d< NT_, N, ID_NONE> {
 protected:
-    NT_ lo[N];
-    NT_ hi[N];
+    std::array<NT_,N> lo;
+    std::array<NT_,N> hi;
+
 public:
     typedef NT_         NT;
     typedef std::size_t ID;
@@ -81,8 +74,8 @@ public:
     Box_d() {}
     Box_d(bool complete) { init(complete); }
     Box_d(NT l[N], NT h[N]) {
-        std::copy( l, l + N, lo );
-        std::copy( h, h + N, hi );
+        std::copy( l, l + N, &lo[0] );
+        std::copy( h, h + N, &hi[0] );
     }
     void init (bool complete = false) {
         NT inf = box_limits<NT>::inf();

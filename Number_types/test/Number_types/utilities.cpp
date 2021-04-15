@@ -1,4 +1,4 @@
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 // TODO: solve conflict of CORE with GMPXX
 #ifdef CGAL_USE_CORE

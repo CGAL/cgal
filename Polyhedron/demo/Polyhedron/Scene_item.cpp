@@ -79,6 +79,8 @@ const char* slotName(RenderingMode mode) {
         return SLOT(setGouraudMode());
     case PointsPlusNormals:
         return SLOT(setPointsPlusNormalsMode());
+    case GouraudPlusEdges:
+        return SLOT(setGouraudPlusEdgesMode());
     default:
         Q_ASSERT(false);
         return "";

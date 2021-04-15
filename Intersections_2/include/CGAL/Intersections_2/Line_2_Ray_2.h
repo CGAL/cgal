@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Geert-Jan Giezeman
@@ -44,10 +35,13 @@ namespace internal {
 template <class K>
 class Ray_2_Line_2_pair {
 public:
-    enum Intersection_results {NO_INTERSECTION, POINT, RAY};
+    enum Intersection_results {NOT_COMPUTED_YET, NO_INTERSECTION, POINT, RAY};
+    typedef typename K::FT FT;
     Ray_2_Line_2_pair(typename K::Ray_2 const *ray,
                       typename K::Line_2 const *line)
-      : _ray(ray), _line(line), _known(false) {}
+      : _ray(ray), _line(line), _result(NOT_COMPUTED_YET),
+        _intersection_point(K().construct_point_2_object()(ORIGIN))
+    {}
 
     Intersection_results intersection_type() const;
 
@@ -56,7 +50,6 @@ public:
 protected:
     typename K::Ray_2 const *   _ray;
     typename K::Line_2 const *  _line;
-    mutable bool                    _known;
     mutable Intersection_results    _result;
     mutable typename K::Point_2         _intersection_point;
 };
@@ -103,7 +96,7 @@ intersection(const typename K::Line_2 &line,
              const typename K::Ray_2 &ray,
              const K& k)
 {
-  return internal::intersection(ray, line, k);
+    return internal::intersection(ray, line, k);
 }
 
 
@@ -124,14 +117,14 @@ template <class K>
 typename Ray_2_Line_2_pair<K>::Intersection_results
 Ray_2_Line_2_pair<K>::intersection_type() const
 {
-    if (_known)
+    if (_result != NOT_COMPUTED_YET)
         return _result;
     // The non const this pointer is used to cast away const.
-    _known = true;
     const typename K::Line_2 &l1 = _ray->supporting_line();
     Line_2_Line_2_pair<K> linepair(&l1, _line);
     switch ( linepair.intersection_type()) {
     case Line_2_Line_2_pair<K>::NO_INTERSECTION:
+    default:
         _result = NO_INTERSECTION;
         break;
     case Line_2_Line_2_pair<K>::POINT:
@@ -151,7 +144,7 @@ template <class K>
 typename K::Point_2
 Ray_2_Line_2_pair<K>::intersection_point() const
 {
-    if (!_known)
+    if (_result == NOT_COMPUTED_YET)
         intersection_type();
     CGAL_kernel_assertion(_result == POINT);
     return _intersection_point;
@@ -161,7 +154,7 @@ template <class K>
 typename K::Ray_2
 Ray_2_Line_2_pair<K>::intersection_ray() const
 {
-    if (!_known)
+    if (_result == NOT_COMPUTED_YET)
         intersection_type();
     CGAL_kernel_assertion(_result == RAY);
     return *_ray;

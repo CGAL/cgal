@@ -1,8 +1,8 @@
 # This is the CMake script for compiling this folder.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Point_set_processing_3_Tests )
 
-cmake_minimum_required(VERSION 3.1)
 
 
 # Find CGAL
@@ -27,8 +27,9 @@ if ( CGAL_FOUND )
   ADD_DEFINITIONS( "-DDEBUG_TRACE" )
 
   find_package( TBB QUIET )
+  include(CGAL_TBB_support)
 
-  # Executables that do *not* require LAPACK
+  # Executables that do *not* require Eigen
   create_single_source_cgal_program( "read_test.cpp" )
   create_single_source_cgal_program( "read_test_with_different_pmaps.cpp" )
   create_single_source_cgal_program( "analysis_test.cpp" )
@@ -38,66 +39,48 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "edge_aware_upsample_test.cpp" )
   create_single_source_cgal_program( "structuring_test.cpp" )
 
-  # Deprecated tests
-  create_single_source_cgal_program( "deprecated_read_test.cpp" )
-  create_single_source_cgal_program( "deprecated_read_test_with_different_pmaps.cpp" )
-  create_single_source_cgal_program( "deprecated_analysis_test.cpp" )
-  create_single_source_cgal_program( "deprecated_remove_outliers_test.cpp" )
-  create_single_source_cgal_program( "deprecated_wlop_simplify_and_regularize_test.cpp" )
-  create_single_source_cgal_program( "deprecated_bilateral_smoothing_test.cpp" )
-  create_single_source_cgal_program( "deprecated_edge_aware_upsample_test.cpp" )
-  create_single_source_cgal_program( "deprecated_structuring_test.cpp" )
-
-  # Use Eigen or BLAS and LAPACK (optional)
+  # Use Eigen
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-  if (NOT EIGEN3_FOUND)
-    find_package(LAPACK)
-    if(LAPACK_FOUND)
-      include( ${LAPACK_USE_FILE} )
-    endif(LAPACK_FOUND)
+  include(CGAL_Eigen3_support)
+  if (EIGEN3_FOUND)
+    # Executables that require Eigen
+    create_single_source_cgal_program( "normal_estimation_test.cpp" )
+    target_link_libraries(normal_estimation_test PUBLIC CGAL::Eigen3_support)
+
+    create_single_source_cgal_program( "hierarchy_simplification_test.cpp" )
+    target_link_libraries(hierarchy_simplification_test PUBLIC CGAL::Eigen3_support)
+
+    create_single_source_cgal_program( "smoothing_test.cpp" )
+    target_link_libraries(smoothing_test PUBLIC CGAL::Eigen3_support)
+
+    create_single_source_cgal_program( "vcm_plane_test.cpp" )
+    target_link_libraries(vcm_plane_test PUBLIC CGAL::Eigen3_support)
+
+    create_single_source_cgal_program( "vcm_all_test.cpp" )
+    target_link_libraries(vcm_all_test PUBLIC CGAL::Eigen3_support)
+
+    create_single_source_cgal_program( "jet_pointer_as_property_map.cpp" )
+    target_link_libraries(jet_pointer_as_property_map PUBLIC CGAL::Eigen3_support)
   else()
-    include( ${EIGEN3_USE_FILE} )
+    message(STATUS "NOTICE: This program requires Eigen 3.1 (or greater) and will not be compiled.")
   endif()
 
-
-  if(EIGEN3_FOUND OR LAPACK_FOUND)
-    # Executables that require Eigen or BLAS and LAPACK
-    create_single_source_cgal_program( "normal_estimation_test.cpp" )
-    create_single_source_cgal_program( "hierarchy_simplification_test.cpp" )
-    create_single_source_cgal_program( "smoothing_test.cpp" )
-    create_single_source_cgal_program( "vcm_plane_test.cpp" )
-    create_single_source_cgal_program( "vcm_all_test.cpp" )
-    create_single_source_cgal_program( "jet_pointer_as_property_map.cpp" )
-
-    # Deprecated tests
-    create_single_source_cgal_program( "deprecated_normal_estimation_test.cpp" )
-    create_single_source_cgal_program( "deprecated_hierarchy_simplification_test.cpp" )
-    create_single_source_cgal_program( "deprecated_smoothing_test.cpp" )
-    create_single_source_cgal_program( "deprecated_vcm_plane_test.cpp" )
-    create_single_source_cgal_program( "deprecated_vcm_all_test.cpp" )
-    create_single_source_cgal_program( "deprecated_jet_pointer_as_property_map.cpp" )
-
-  else(EIGEN3_FOUND OR LAPACK_FOUND)
-
-    message(STATUS "NOTICE: This program requires either Eigen 3.1 (or greater) or LAPACK, and will not be compiled.")
-
-  endif(EIGEN3_FOUND OR LAPACK_FOUND)
-
-  foreach(target
-      analysis_test
-      smoothing_test
-      bilateral_smoothing_test
-      wlop_simplify_and_regularize_test
-      edge_aware_upsample_test
-      normal_estimation_test)
-    if(TBB_FOUND AND TARGET ${target})
-      CGAL_target_use_TBB(${target})
-    endif()
-  endforeach()
+  if (TARGET CGAL::TBB_support)
+    foreach(target
+        analysis_test
+        smoothing_test
+        bilateral_smoothing_test
+        wlop_simplify_and_regularize_test
+        edge_aware_upsample_test
+        normal_estimation_test)
+      if(TARGET ${target})
+        target_link_libraries(${target} PUBLIC CGAL::TBB_support)
+      endif()
+    endforeach()
+  endif()
 
 else()
 
     message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
 
 endif()
-

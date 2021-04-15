@@ -206,6 +206,7 @@ public:
   */
   typedef Tds::difference_type difference_type;
 
+/// @}
 
   /*!
   \name Handles, Iterators and Circulators
@@ -956,11 +957,6 @@ public:
 /// \image html insert1.png "Insertion of a point on an edge."
 /// \anchor Triangulation_ref_Fig_insert2
 /// \image html insert2.png "Insertion in a face."
-/// @{
-
-
-
-/// @}
 
 /// \name
 /// \cgalAdvancedBegin

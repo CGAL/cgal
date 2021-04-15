@@ -21,7 +21,5 @@ template< typename FT >
 class Linear_algebraCd {
 public:
 
-/// @}
-
 }; /* end Linear_algebraCd */
 } /* end namespace CGAL */

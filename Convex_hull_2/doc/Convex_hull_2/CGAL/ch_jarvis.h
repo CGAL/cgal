@@ -12,12 +12,12 @@ cyclic sequence of extreme points is cut into a linear sequence.
 \pre The source range [`first`,`beyond`) does not contain `result`.
 
 The default traits class `Default_traits` is the kernel in which the
-value type of `InputIterator` is defined.
+value type of `ForwardIterator` is defined.
 
 \cgalHeading{Requirements}
 
 <OL>
-<LI>The value type of `InputIterator` and
+<LI>The value type of `ForwardIterator` and
 `OutputIterator` is equivalent to `Traits::Point_2`.
 <LI>`Traits` defines the following subset of types from
 the concept `ConvexHullTraits_2` and their corresponding member
@@ -46,10 +46,10 @@ in the worst case for \f$ n\f$ input points with \f$ h\f$ extreme points.
 
 
 */
-template <class InputIterator, class OutputIterator, class Traits>
+template <class ForwardIterator, class OutputIterator, class Traits>
 OutputIterator
-ch_jarvis( InputIterator first,
-InputIterator beyond,
+ch_jarvis( ForwardIterator first,
+ForwardIterator beyond,
 OutputIterator result,
 const Traits & ch_traits = Default_traits);
 

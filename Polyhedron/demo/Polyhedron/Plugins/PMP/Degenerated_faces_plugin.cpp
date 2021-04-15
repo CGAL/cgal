@@ -25,7 +25,7 @@ class Degenerated_faces_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "degenerated_faces_plugin.json")
 
 public:
 
@@ -75,7 +75,7 @@ bool isDegen(Mesh* mesh, std::vector<typename boost::graph_traits<Mesh>::face_de
   typedef typename boost::graph_traits<Mesh>::face_descriptor FaceDescriptor;
 
   //filter non-triangle_faces
-  BOOST_FOREACH(FaceDescriptor f, faces(*mesh))
+  for(FaceDescriptor f : faces(*mesh))
   {
     if(is_triangle(halfedge(f, *mesh), *mesh)
        && CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(f, *mesh) )
@@ -93,7 +93,7 @@ bool isDegen(Mesh* mesh, std::vector<typename boost::graph_traits<Mesh>::edge_de
   typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
   Vpm vpm = get(boost::vertex_point, *mesh);
 
-  BOOST_FOREACH(HalfedgeDescriptor h, halfedges(*mesh))
+  for(HalfedgeDescriptor h : halfedges(*mesh))
   {
     Point s(get(vpm, source(h, *mesh))),
         t(get(vpm, target(h, *mesh)));
@@ -131,7 +131,7 @@ void Degenerated_faces_plugin::on_actionDegenFaces_triggered()
       std::vector<edge_descriptor> edges;
       isDegen(pMesh, edges);
       std::vector<bool> is_degen(pMesh->number_of_edges()+pMesh->number_of_removed_edges(), false);
-      BOOST_FOREACH(edge_descriptor e, edges)
+      for(edge_descriptor e : edges)
       {
         is_degen[(std::size_t)e] = true;
       }
@@ -139,7 +139,7 @@ void Degenerated_faces_plugin::on_actionDegenFaces_triggered()
       for(std::vector<Face_descriptor>::iterator fb = facets.begin();
           fb != facets.end(); ++fb) {
         selection_item->selected_facets.insert(*fb);
-        BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(*fb, *pMesh), *pMesh))
+        for(halfedge_descriptor h : halfedges_around_face(halfedge(*fb, *pMesh), *pMesh))
         {
           edge_descriptor e = edge(h, *selection_item->polyhedron());
           selection_item->selected_edges.insert(e);

@@ -30,7 +30,5 @@ Note that it requires CORE or LEDA installed.
 class Exact_predicates_exact_constructions_kernel_with_kth_root {
 public:
 
-/// @}
-
 }; /* end Exact_predicates_exact_constructions_kernel_with_kth_root */
 } /* end namespace CGAL */

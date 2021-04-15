@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Shihao Wu, Clement Jamin, Pierre Alliez
 
@@ -156,10 +147,8 @@ update_new_point(
   typedef typename rich_grid_internal::Rich_point<Kernel> Rich_point;
 
   CGAL_assertion_code( unsigned int size = static_cast<unsigned int>(rich_point_set.size()) );
-  CGAL_point_set_processing_precondition(father_index >= 0 &&
-                                         father_index < size);
-  CGAL_point_set_processing_precondition(mother_index >= 0 &&
-                                           mother_index < size);
+  CGAL_point_set_processing_precondition(father_index < size);
+  CGAL_point_set_processing_precondition(mother_index < size);
 
   // 1, get neighbor information from the two "parent points"
   Rich_point& new_v = rich_point_set[new_point_index];
@@ -289,8 +278,8 @@ update_new_point(
    Normals of points are required as input. For more details, please refer to \cgalCite{ear-2013}.
 
    \tparam ConcurrencyTag enables sequential versus parallel versions
-   of `compute_average_spacing()` (called internally).  Possible
-   values are `Sequential_tag` and `Parallel_tag`.
+   of `compute_average_spacing()` (called internally). Possible
+   values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
    \tparam OutputIterator Type of the output iterator.
@@ -302,21 +291,61 @@ update_new_point(
 
    \param points input point range.
    \param output iterator where output points and normals are put.
-   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
-     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
-     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
-     \cgalParamBegin{normal_map} a model of `ReadablePropertyMap` with value type
-     `geom_traits::Vector_3`.\cgalParamEnd
-     \cgalParamBegin{sharpness_angle} controls the sharpness of the result.\cgalParamEnd
-     \cgalParamBegin{edge_sensitivity} controls the priority of points inserted along sharp features. See
-     section \ref Point_set_processing_3Upsample_Parameter1 for an example.\cgalParamEnd
-     \cgalParamBegin{neighbor_radius} spherical neighborhood radius.\cgalParamEnd
-     \cgalParamBegin{number_of_output_points} is the number of output points to generate.\cgalParamEnd
-     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
-   \cgalNamedParamsEnd
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange` and whose value type is `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
 
+     \cgalParamNBegin{normal_map}
+       \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
+       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange` and whose value type is `geom_traits::Vector_3`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{sharpness_angle}
+       \cgalParamDescription{controls the sharpness of the result}
+       \cgalParamType{floating scalar value}
+       \cgalParamDefault{`30.00`}
+       \cgalParamExtra{The larger the value is, the smoother the result will be.
+                       The range of possible value is `[0, 90]`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{edge_sensitivity}
+       \cgalParamDescription{controls the priority of points inserted along sharp features}
+       \cgalParamType{floating scalar value}
+       \cgalParamDefault{`1`}
+       \cgalParamExtra{Larger values of edge-sensitivity give higher priority to inserting points
+                       along sharp features. The range of possible values is `[0, 1]`.
+                       See section \ref Point_set_processing_3Upsample_Parameter1 for an example}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{number_of_output_points}
+       \cgalParamDescription{the number of output points to generate}
+       \cgalParamType{unsigned int}
+       \cgalParamDefault{`1000`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{neighbor_radius}
+       \cgalParamDescription{the spherical neighborhood radius}
+       \cgalParamType{floating scalar value}
+       \cgalParamDefault{`0` (no limit)}
+       \cgalParamExtra{If provided, the neighborhood of a query point is computed with a fixed spherical
+                       radius instead of a fixed number of neighbors. In that case, the parameter
+                       `k` is used as a limit on the number of points returned by each spherical
+                       query (to avoid overly large number of points in high density areas).}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
+   \cgalNamedParamsEnd
 */
 template <typename ConcurrencyTag,
           typename PointRange,
@@ -332,7 +361,7 @@ edge_aware_upsample_point_set(
   using parameters::get_parameter;
 
   // basic geometric types
-  typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
+  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
   typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
 
@@ -345,8 +374,8 @@ edge_aware_upsample_point_set(
   typedef typename Kernel::FT FT;
   typedef typename rich_grid_internal::Rich_point<Kernel> Rich_point;
 
-  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
-  NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
+  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+  NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
   double sharpness_angle = choose_parameter(get_parameter(np, internal_np::sharpness_angle), 30.);
   double edge_sensitivity = choose_parameter(get_parameter(np, internal_np::edge_sensitivity), 1);
   double neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius), -1);
@@ -364,7 +393,6 @@ edge_aware_upsample_point_set(
                                        &&sharpness_angle <= 90);
   CGAL_point_set_processing_precondition(edge_sensitivity >= 0
                                        &&edge_sensitivity <= 1);
-  CGAL_point_set_processing_precondition(neighbor_radius > 0);
 
   edge_sensitivity *= 10;  // just project [0, 1] to [0, 10].
 
@@ -388,7 +416,7 @@ edge_aware_upsample_point_set(
 
   // copy rich point set
   std::vector<Rich_point> rich_point_set(number_of_input);
-  CGAL::Bbox_3 bbox(0., 0., 0., 0., 0., 0.);
+  CGAL::Bbox_3 bbox;
 
   typename PointRange::const_iterator it = begin; // point iterator
   for(unsigned int i = 0; it != end; ++it, ++i)
@@ -600,117 +628,6 @@ edge_aware_upsample_point_set(
   return edge_aware_upsample_point_set<ConcurrencyTag>
     (points, output, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
-
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-// deprecated API
-template <typename ConcurrencyTag,
-          typename OutputIterator,
-          typename ForwardIterator,
-          typename PointMap,
-          typename NormalMap,
-          typename Kernel>
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::edge_aware_upsample_point_set(), please update your code")
-OutputIterator
-edge_aware_upsample_point_set(
-  ForwardIterator first,  ///< forward iterator on the first input point.
-  ForwardIterator beyond, ///< past-the-end iterator.
-  OutputIterator output,  ///< output iterator where output points and normals
-                          ///< are put.
-  PointMap point_map,   ///< point property map.
-  NormalMap normal_map, ///< vector property map.
-  const typename Kernel::FT sharpness_angle,  ///<
-                    ///< controls the preservation of sharp features.
-                    ///< The larger the value is,
-                    ///< the smoother the result will be.
-                    ///< The range of possible values is `[0, 90]`.
-                    ///< See section \ref Point_set_processing_3Upsample_Parameter2
-                    ///< for an example.
-  typename Kernel::FT edge_sensitivity,  ///<
-                    ///< larger values of edge-sensitivity give higher priority
-                    ///< to inserting points along sharp features.
-                    ///< The range of possible values is `[0, 1]`.
-                    ///< See section \ref Point_set_processing_3Upsample_Parameter1
-                    ///< for an example.
-  typename Kernel::FT neighbor_radius, ///<
-                    ///< indicates the radius of the largest hole that should be filled.
-                    ///< The default value is set to 3 times the average spacing of the point set.
-                    ///< If the value given by user is smaller than the average spacing,
-                    ///< the function will use the default value instead.
-  const std::size_t number_of_output_points,///< number of output
-                                             ///< points to generate.
-  const Kernel& /*kernel*/ ///< geometric traits.
-)
-{
-  return edge_aware_upsample_point_set<ConcurrencyTag>
-    (CGAL::make_range (first, beyond), output,
-     CGAL::parameters::point_map (point_map).
-     normal_map (normal_map).
-     sharpness_angle (sharpness_angle).
-     edge_sensitivity (edge_sensitivity).
-     neighbor_radius (neighbor_radius).
-     number_of_output_points (number_of_output_points).
-     geom_traits (Kernel()));
-}
-
-
-// deprecated API
-template <typename ConcurrencyTag,
-          typename OutputIterator,
-          typename ForwardIterator,
-          typename PointMap,
-          typename NormalMap>
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::edge_aware_upsample_point_set(), please update your code")
-OutputIterator
-edge_aware_upsample_point_set(
-  ForwardIterator first,    ///< forward iterator to the first input point.
-  ForwardIterator beyond,   ///< past-the-end iterator.
-  OutputIterator output, ///< output iterator over points.
-  PointMap point_map, ///< property map: `ForwardIterator` -> Point_3.
-  NormalMap normal_map, ///< property map: `ForwardIterator` -> Vector_3.
-  double sharpness_angle,  ///< control sharpness(0-90)
-  double edge_sensitivity,  ///< edge sensitivity(0-5)
-  double neighbor_radius, ///< initial size of neighbors.
-  const std::size_t number_of_output_points///< number of iterations.
-  )
-{
-  return edge_aware_upsample_point_set<ConcurrencyTag>
-    (CGAL::make_range (first, beyond), output,
-     CGAL::parameters::point_map (point_map).
-     normal_map (normal_map).
-     sharpness_angle (sharpness_angle).
-     edge_sensitivity (edge_sensitivity).
-     neighbor_radius (neighbor_radius).
-     number_of_output_points (number_of_output_points));
-}
-
-// deprecated API
-template <typename ConcurrencyTag,
-          typename OutputIterator,
-          typename ForwardIterator,
-          typename NormalMap>
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::edge_aware_upsample_point_set(), please update your code")
-OutputIterator
-edge_aware_upsample_point_set(
-  ForwardIterator first, ///< iterator over the first input point
-  ForwardIterator beyond, ///< past-the-end iterator
-  OutputIterator output, ///< output iterator over points.
-  NormalMap normal_map, ///< property map:  OutputIterator -> Vector_3.
-  double sharpness_angle = 30,  ///< control sharpness(0-90)
-  double edge_sensitivity = 1,  ///< edge sensitivity(0-5)
-  double neighbor_radius = -1, ///< initial size of neighbors.
-  const std::size_t number_of_output_points = 1000///< number of output points.
-  )
-{
-  return edge_aware_upsample_point_set<ConcurrencyTag>
-    (CGAL::make_range (first, beyond), output,
-     CGAL::parameters::normal_map (normal_map).
-     sharpness_angle (sharpness_angle).
-     edge_sensitivity (edge_sensitivity).
-     neighbor_radius (neighbor_radius).
-     number_of_output_points (number_of_output_points));
-}
-#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
 } //namespace CGAL

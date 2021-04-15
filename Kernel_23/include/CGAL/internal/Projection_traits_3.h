@@ -1,20 +1,11 @@
 // Copyright (c) 1997-2010, 2017  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Mariette Yvinec, Sebastien Loriot, Mael Rouxel-Labbé
 
@@ -332,9 +323,9 @@ public:
     //We know that none of the segment is degenerate
     Object o = intersection(s1_2,s2_2);
     const Point_2* pi=CGAL::object_cast<Point_2>(&o);
-    if (pi==NULL) { //case of segment or empty
+    if (pi==nullptr) { //case of segment or empty
       const Segment_2* si=CGAL::object_cast<Segment_2>(&o);
-      if (si==NULL) return Object();
+      if (si==nullptr) return Object();
       FT src[3],tgt[3];
       //the third coordinate is the midpoint between the points on s1 and s2
       FT z1 = s1.source()[dim] + ( alpha(si->source(), s1_source, s1_target) * ( s1.target()[dim] - s1.source()[dim] ));
@@ -530,7 +521,7 @@ public:
 
   Weighted_point_2 project(const Weighted_point_3& wp) const
   {
-    Point_3 p = R().construct_point_3_object()(wp);
+    const Point_3& p = R().construct_point_3_object()(wp);
     return Weighted_point_2(Point_2(x(p), y(p)), wp.weight());
   }
 
@@ -559,7 +550,7 @@ public:
 
   Weighted_point_2 project(const Weighted_point_3& wp) const
   {
-    Point_3 p = R().construct_point_3_object()(wp);
+    const Point_3& p = R().construct_point_3_object()(wp);
     return Weighted_point_2(Point_2(x(p), y(p)), wp.weight());
   }
 
@@ -586,7 +577,7 @@ public:
 
   Weighted_point_2 project(const Weighted_point_3& wp) const
   {
-    Point_3 p = R().construct_point_3_object()(wp);
+    const Point_3& p = R().construct_point_3_object()(wp);
     return Weighted_point_2(Point_2(x(p), y(p)), wp.weight());
   }
 
@@ -623,7 +614,7 @@ public:
 
   Weighted_point_2 project(const Weighted_point_3& wp) const
   {
-    Point_3 p = R().construct_point_3_object()(wp);
+    const Point_3& p = R().construct_point_3_object()(wp);
     return Weighted_point_2(Point_2(x(p), y(p)), wp.weight());
   }
 
@@ -668,7 +659,7 @@ public:
 
   Weighted_point_2 project(const Weighted_point_3& wp) const
   {
-    Point_3 p = R().construct_point_3_object()(wp);
+    const Point_3& p = R().construct_point_3_object()(wp);
     return Weighted_point_2(Point_2(x(p), y(p)), wp.weight());
   }
 
@@ -706,7 +697,7 @@ public:
 
   Weighted_point_2 project(const Weighted_point_3& wp) const
   {
-    Point_3 p = R().construct_point_3_object()(wp);
+    const Point_3& p = R().construct_point_3_object()(wp);
     return Weighted_point_2(Point_2(x(p), y(p)), wp.weight());
   }
 
@@ -748,7 +739,7 @@ public:
 
   Weighted_point_2 project(const Weighted_point_3& wp) const
   {
-    Point_3 p = R().construct_point_3_object()(wp);
+    const Point_3& p = R().construct_point_3_object()(wp);
     return Weighted_point_2(Point_2(x(p), y(p)), wp.weight());
   }
 

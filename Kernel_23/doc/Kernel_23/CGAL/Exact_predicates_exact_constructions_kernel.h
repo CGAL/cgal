@@ -27,7 +27,5 @@ constructions.
 class Exact_predicates_exact_constructions_kernel {
 public:
 
-/// @}
-
 }; /* end Exact_predicates_exact_constructions_kernel */
 } /* end namespace CGAL */

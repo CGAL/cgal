@@ -5,13 +5,6 @@ namespace CGAL {
 \anchor Chapter_3D_Boolean_Operations_on_Nef_Polyhedra
 \anchor chapterNef3
 
-<span style="display:none">
-\f$
-  \newcommand{\pyr}{\operatorname{Pyr}}
-  \newcommand{\aff}{\operatorname{aff}}
-\f$
-</span>
-
 \cgalAutoToc
 \authors Peter Hachenberger and Lutz Kettner
 
@@ -57,7 +50,7 @@ generality. Starting from halfspaces (and also directly from oriented
 2-manifolds), we can work with set union, set intersection, set
 difference, set complement, interior, exterior, boundary, closure, and
 regularization operations (see Section \ref sectoinRegularized
-for an explaination of regularized
+for an explanation of regularized
 set operations). In essence, we can evaluate a CSG-tree with
 halfspaces as primitives and convert it into a B-rep representation.
 
@@ -290,7 +283,7 @@ polynomial), and runtime performance.
 
 Since manifolds are not closed under Boolean operations, Requicha
 proposes to use <I>regularized set operations</I> \cgalCite{cgal:km-st-76},
-cgal:r-rrstm-80. A set is <I>regular</I>, if it equals the closure
+\cgalCite{cgal:r-rrstm-80}. A set is <I>regular</I>, if it equals the closure
 of its interior. A regularized set operation is defined as the
 standard set operation followed by a regularization of the result.
 Regularized sets are closed under regularized set operations.
@@ -424,6 +417,18 @@ tests whether any of the vertices is at \f$ (R,R,R)\f$. Recall that \f$ R\f$ was
 the symbolical value, large but finite, for the size of the infimaximal box.
 
 \cgalExample{Nef_3/extended_kernel.cpp}
+
+\subsection Nef_3DrawNefPolyhedron Draw a Nef Polyhedron
+
+A nef polyhedron can be visualised by calling the \link PkgDrawNef3 CGAL::draw<Nef_3>() \endlink function as shown in the following example. This function opens a new window showing the given Nef Polyhedron.
+
+\cgalExample{Nef_3/draw_nef_3.cpp}
+
+This function requires CGAL_Qt5, and is only available if the flag CGAL_USE_BASIC_VIEWER is defined at compile time.
+
+\cgalFigureBegin{fig_draw_nef_polyhedron, draw_nef_3.png}
+Result of the run  of the draw_nef_3 program. A window shows the nef polyhedron and allows to navigate through the 3D scene.
+\cgalFigureEnd
 
 \section Nef_3File File I/O
 

@@ -4,17 +4,6 @@
  * All rights reserved.
  *
  * This file is part of CGAL (www.cgal.org);
- * You can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- *
- * Licensees holding a valid commercial license may use this file in
- * accordance with the commercial license agreement provided with the
- * software.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * File: BigFloatRep.h
  * Synopsis:
@@ -30,7 +19,7 @@
  *
  * $URL$
  * $Id$
- * SPDX-License-Identifier: LGPL-3.0+
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
 
 #ifndef _CORE_BIGFLOATREP_H_
@@ -422,7 +411,7 @@ inline std::ostream& BigFloatRep::operator<<(std::ostream& o) const {
 
 /* Returns a std::string with precision and format specified
    Works as cout << with the exception that if the output
-   contains any error it returns a NULL
+   contains any error it returns a nullptr
    Joaquin Grech 31/5/03
    */
 inline std::string BigFloatRep::toString(long prec, bool sci) const {
@@ -434,7 +423,7 @@ inline std::string BigFloatRep::toString(long prec, bool sci) const {
     else
       return r.rep;
   }
-  return NULL;
+  return nullptr;
 }
 
 inline void BigFloatRep::dump() const {

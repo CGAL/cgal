@@ -59,19 +59,13 @@ Filtered_predicate<EP, FP, C2E, C2F>();
 /// @}
 
 /// \name Operations
-/// Similar function operators are defined for up to 7 arguments.
 /// @{
 
 /*!
-The unary function operator for unary predicates.
+The function operator for predicates.
 */
-template <class A1> result_type operator()(A1 a1);
+template <class ... A> result_type operator()(A a...);
 
-/*!
-The binary function operator for binary predicates.
-*/
-template <class A1, class A2>
-result_type operator()(A1 a1, A2 a2);
 
 /// @}
 

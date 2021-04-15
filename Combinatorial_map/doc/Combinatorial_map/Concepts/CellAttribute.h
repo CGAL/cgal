@@ -69,12 +69,12 @@ Cell_attribute(const Info& info);
 /// @{
 
 /*!
-Returns one dart of the cell associated to this attribute. `NULL` if \link Supports_cell_dart `Supports_cell_dart`\endlink is equal to \link CGAL::Tag_false `Tag_false`\endlink.
+Returns one dart of the cell associated to this attribute. `nullptr` if \link Supports_cell_dart `Supports_cell_dart`\endlink is equal to \link CGAL::Tag_false `Tag_false`\endlink.
 */
 Dart_handle dart();
 
 /*!
-Returns one dart of the cell associated to this attribute, when it is const. `NULL` if \link Supports_cell_dart `Supports_cell_dart`\endlink is equal to \link CGAL::Tag_false `Tag_false`\endlink.
+Returns one dart of the cell associated to this attribute, when it is const. `nullptr` if \link Supports_cell_dart `Supports_cell_dart`\endlink is equal to \link CGAL::Tag_false `Tag_false`\endlink.
 */
 Dart_const_handle dart() const;
 

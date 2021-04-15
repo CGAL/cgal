@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
@@ -65,7 +56,7 @@ template < class P, class Creator >
 void
 Random_points_in_sphere_3<P,Creator>::
 generate_point() {
-  // A strip between z and z+dz has an area independant of z
+  // A strip between z and z+dz has an area independent of z
     typedef typename Creator::argument_type T;
     double alpha = this->_rnd.get_double() * 2.0 * CGAL_PI;
     double z     = 2 * this->_rnd.get_double() - 1.0;
@@ -104,7 +95,7 @@ template < class P, class Creator >
 void
 Random_points_on_sphere_3<P,Creator>::
 generate_point() {
-  // A strip between z and z+dz has an area independant of z
+  // A strip between z and z+dz has an area independent of z
     typedef typename Creator::argument_type T;
     double alpha = this->_rnd.get_double() * 2.0 * CGAL_PI;
     double z     = 2 * this->_rnd.get_double() - 1.0;
@@ -548,6 +539,26 @@ public:
 
   const Tr& tr;
 };
+
+template<typename Triangle, typename PointRange>
+class Triangle_3_from_soup
+{
+  typedef typename boost::range_value<PointRange>::type  Point_3;
+  typedef typename Kernel_traits<Point_3>::Kernel        Kernel;
+public:
+  typedef typename Kernel::Triangle_3                    result_type;
+
+  Triangle_3_from_soup(const PointRange& pts) : points(pts) { }
+
+  result_type operator()(const Triangle& t) const
+  {
+    return result_type(points[t[0]], points[t[1]], points[t[2]]);
+  }
+
+private:
+  const PointRange& points;
+};
+
 }//end namespace internal
 
 template <class C3t3,
@@ -691,6 +702,52 @@ struct Random_points_in_triangles_3
     return *this;
   }
   This operator++(int) {
+    This tmp = *this;
+    ++(*this);
+    return tmp;
+  }
+};
+
+
+template <class PointRange,
+          class Triangle = std::vector<std::size_t>,
+          class Creator = Creator_uniform_3<
+                            typename Kernel_traits< typename PointRange::value_type >::Kernel::RT,
+                            typename PointRange::value_type> >
+struct Random_points_in_triangle_soup
+    : public Generic_random_point_generator<Triangle,
+                                            internal::Triangle_3_from_soup<Triangle, PointRange>,
+                                            Random_points_in_triangle_3<typename PointRange::value_type>,
+                                            typename PointRange::value_type>
+{
+  typedef Generic_random_point_generator<Triangle,
+                                         internal::Triangle_3_from_soup<Triangle, PointRange>,
+                                         Random_points_in_triangle_3<typename PointRange::value_type>,
+                                         typename PointRange::value_type> Base;
+  typedef typename PointRange::value_type                                 Point_3;
+  typedef typename Kernel_traits<Point_3>::Kernel                         Kernel;
+  typedef Triangle                                                        Id;
+  typedef Point_3                                                         result_type;
+  typedef Random_points_in_triangle_soup<PointRange, Triangle, Creator>   This;
+
+  template<typename TriangleRange>
+  Random_points_in_triangle_soup(const TriangleRange& triangles,
+                                 const PointRange& points,
+                                 Random& rnd = get_default_random())
+    : Base(triangles,
+           internal::Triangle_3_from_soup<Triangle, PointRange>(points),
+           internal::Apply_approx_sqrt<typename Kernel_traits<Point_3>::Kernel::Compute_squared_area_3>(),
+           rnd)
+  { }
+
+  This& operator++()
+  {
+    Base::generate_point();
+    return *this;
+  }
+
+  This operator++(int)
+  {
     This tmp = *this;
     ++(*this);
     return tmp;

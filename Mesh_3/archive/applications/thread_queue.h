@@ -143,7 +143,7 @@ std::string format(std::string input, bool remove_template)
   if ( input.at(input.size()-1) != '\n' )
     input.push_back('\n');
 
-  // Add "  ! " at the begining of each line
+  // Add "  ! " at the beginning of each line
   size_t prev = 0;
   pos = input.find("\n");
   while ( pos != std::string::npos )

@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <CGAL/test_macros.h>
 #include <CGAL/Extended_homogeneous.h>
 #include <CGAL/Filtered_extended_homogeneous.h>

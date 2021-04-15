@@ -4,17 +4,6 @@
  * All rights reserved.
  *
  * This file is part of CGAL (www.cgal.org).
- * You can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- *
- * Licensees holding a valid commercial license may use this file in
- * accordance with the commercial license agreement provided with the
- * software.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * File: CoreIO.cpp
  *
@@ -27,7 +16,7 @@
  *
  * $URL$
  * $Id$
- * SPDX-License-Identifier: LGPL-3.0+
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
 
 #ifndef _COREIO_IMPL_H_
@@ -55,7 +44,7 @@ void core_io_error_handler(const char *f, const char *m) {
 
 CGAL_INLINE_FUNCTION
 void core_io_memory_handler(char *t, const char *f, const char *m) {
-  if (t == NULL) {
+  if (t == nullptr) {
     std::cout << "\n memory_handler";
     std::cout << "::" << f << "::" << m;
     std::cout << "memory exhausted\n";
@@ -70,7 +59,7 @@ void allocate (char * &s, int old_size, int new_size) {
   if (old_size > new_size)
     old_size = new_size;
 
-  if (s == NULL)
+  if (s == nullptr)
     old_size = 0;
 
   char *t = new char[new_size];
@@ -217,7 +206,7 @@ void read_base_number(std::istream& in, BigInt& m, long length, long maxBits) {
     core_io_error_handler("CoreIO::read_from_file()","bad big number format.");
   delete[] buffer;
 
-  // shift left if neccessary
+  // shift left if necessary
   if (offset > 0 && base != 10) {
     m <<= offset;
   }

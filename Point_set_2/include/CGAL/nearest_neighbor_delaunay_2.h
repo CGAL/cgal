@@ -2,19 +2,10 @@
 // Max-Planck-Institute Saarbruecken (Germany). All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Matthias Baesken
@@ -49,7 +40,7 @@ typename Dt::Vertex_handle  nearest_neighbor(const Dt& delau, typename Dt::Verte
   typedef typename Dt::Vertex_handle                  Vertex_handle;
   typedef typename Gt::Compare_distance_2             Compare_dist_2;
 
-  if (delau.number_of_vertices() <= 1) return NULL;
+  if (delau.number_of_vertices() <= 1) return nullptr;
   Point p = v->point();
 
   Vertex_circulator vc = delau.incident_vertices(v);
@@ -85,7 +76,7 @@ typename Dt::Vertex_handle lookup(const Dt& delau, const typename Dt::Point& p)
  typedef typename Dt::Locate_type               Locate_type;
  typedef typename Dt::Face_handle               Face_handle;
 
- if (delau.number_of_vertices() == 0) return NULL;
+ if (delau.number_of_vertices() == 0) return nullptr;
 
  // locate ...
  Locate_type lt;
@@ -96,7 +87,7 @@ typename Dt::Vertex_handle lookup(const Dt& delau, const typename Dt::Point& p)
       Face f = *fh;
       return f.vertex(li);
  }
- else return NULL;
+ else return nullptr;
 }
 
 
@@ -124,7 +115,7 @@ OutputIterator   nearest_neighbors(Dt& delau, const typename Dt::Point& p, std::
    bool old_node = true;
 
    // we have to add a new vertex ...
-   if (vh == NULL){
+   if (vh == nullptr){
       vh = delau.insert(p);
       old_node = false;
       k++;

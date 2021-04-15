@@ -6,7 +6,6 @@ Circulator
 Distance_2
 Distance_3
 Filtered_kernel
-Geomview
 GraphicsView
 Hash_map
 Homogeneous_kernel
@@ -21,6 +20,7 @@ Number_types
 Polygon
 Profiling_tools
 Property_map
+Random_numbers
 STL_Extension
 Spatial_sorting
 Stream_support

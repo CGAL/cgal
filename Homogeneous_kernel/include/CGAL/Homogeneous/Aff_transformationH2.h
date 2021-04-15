@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stefan Schirra
@@ -453,14 +444,12 @@ class Reflection_repH2 : public Aff_transformation_rep_baseH2<R>
 
     virtual  Direction_2
              transform(const Direction_2 & d) const
-             { return transform( Vector_2(d) ).direction(); }
+             { return transform( d.vector() ).direction(); }
 
     virtual  Aff_transformationH2<R>
              inverse() const
              {
-               return Aff_transformationH2<R>(
-                   static_cast< Aff_transformation_rep_baseH2<R>* >
-                   ( const_cast< Reflection_repH2<R>*> (this) )  );
+               return Aff_transformationH2<R>(REFLECTION, l);
              }
 
     virtual  bool
@@ -780,6 +769,17 @@ operator*(const Aff_transformationH2<R>& right_argument) const
   return _general_transformation_composition(
                   this->Ptr()->general_form(),
                   right_argument.Ptr()->general_form() );
+}
+
+template <class R>
+std::ostream&
+operator<<(std::ostream& out, const Aff_transformationH2<R>& t)
+{
+  typename R::RT RT0(0);
+  Aff_transformation_repH2<R> r = t.Ptr()->general_form();
+  return out << "| "<< r.a << ' ' << r.b << ' ' << r.c << " |\n"
+             << "| "<< r.d << ' ' << r.e << ' ' << r.f << " |\n"
+             << "| "<< RT0 << ' ' << RT0 << ' ' << r.g << " |\n";
 }
 
 template <class R>

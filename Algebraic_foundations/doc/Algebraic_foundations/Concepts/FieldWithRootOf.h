@@ -28,7 +28,5 @@ Moreover, `CGAL::Algebraic_structure_traits< FieldWithRootOf >` is a model of `A
 class FieldWithRootOf {
 public:
 
-/// @}
-
 }; /* end FieldWithRootOf */
 

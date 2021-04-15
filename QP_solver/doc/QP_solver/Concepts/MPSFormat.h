@@ -168,7 +168,5 @@ but we don't explain this here.
 class MPSFormat {
 public:
 
-/// @}
-
 }; /* end MPSFormat */
 

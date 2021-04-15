@@ -69,6 +69,7 @@ defining `CGAL_CH_CHECK_EXPENSIVE`.
 
 - `CGAL::Convex_hull_constructive_traits_2<R>`
 - `CGAL::Convex_hull_traits_2<R>`
+- `CGAL::Convex_hull_traits_adapter_2<R,P>`
 
 \cgalCRPSection{Convex Hull Functions}
 

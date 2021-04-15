@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 
   Mesh mesh1;
   if ( !input || !(input >> mesh1) ) {
-    std::cerr << filename1 << " is not a valid off file.\n";
+    std::cerr << filename1 << " is not a valid off file." << std::endl;
     return 1;
   }
   input.close();
@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
 
   Mesh mesh2;
   if ( !input || !(input >> mesh2) ) {
-    std::cerr << filename2 << " is not a valid off file.\n";
+    std::cerr << filename2 << " is not a valid off file." << std::endl;
     return 1;
   }
 
@@ -43,7 +43,8 @@ int main(int argc, char* argv[])
 
   //dump polylines
   std::ofstream output("intersection_polylines.cgal");
-  BOOST_FOREACH(const std::vector<Point>& polyline, polylines)
+  output.precision(17);
+  for(const std::vector<Point>& polyline : polylines)
   {
     output << polyline.size() << " ";
     std::copy(polyline.begin(), polyline.end(),std::ostream_iterator<Point>(output," "));

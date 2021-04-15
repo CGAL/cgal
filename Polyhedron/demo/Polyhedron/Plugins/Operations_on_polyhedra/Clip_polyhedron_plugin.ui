@@ -120,6 +120,22 @@
            </property>
           </spacer>
          </item>
+         <item row="4" column="0">
+          <widget class="QCheckBox" name="coplanarCheckBox">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-family:'Roboto,sans-serif'; font-size:14px; color:#000000; background-color:#ffffff;&quot;&gt;If this is un-checked, the parts of &lt;/span&gt;&lt;span style=&quot; font-size:14px; color:#000000; background-color:#ffffff;&quot;&gt;the mesh that are&lt;/span&gt;&lt;span style=&quot; font-family:'Roboto,sans-serif'; font-size:14px; color:#000000; background-color:#ffffff;&quot;&gt; coplanar with the &lt;/span&gt;&lt;span style=&quot; font-size:14px; color:#000000; background-color:#ffffff;&quot;&gt;plane&lt;/span&gt;&lt;span style=&quot; font-family:'Roboto,sans-serif'; font-size:14px; color:#000000; background-color:#ffffff;&quot;&gt; will not be part of the output.&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-family:'Roboto,sans-serif'; font-size:14px; color:#000000; background-color:#ffffff;&quot;&gt;Only available in &lt;/span&gt;&lt;span style=&quot; font-family:'Roboto,sans-serif'; font-size:14px; font-style:italic; color:#000000; background-color:#ffffff;&quot;&gt;Split&lt;/span&gt;&lt;span style=&quot; font-family:'Roboto,sans-serif'; font-size:14px; color:#000000; background-color:#ffffff;&quot;&gt; mode.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Keep Coplanar Parts</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>

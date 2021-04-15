@@ -19,7 +19,7 @@
 //
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 
 #if defined(BOOST_MSVC)

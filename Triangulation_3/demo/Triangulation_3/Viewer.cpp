@@ -234,7 +234,7 @@ void Viewer::compile_shaders()
         "#version 120 \n"
         "varying highp vec4 fP; \n"
         "varying highp vec3 fN; \n"
-        "uniform vec4 color; \n"
+        "uniform highp vec4 color; \n"
         "uniform highp vec4 light_pos;  \n"
         "uniform highp vec4 light_diff; \n"
         "uniform highp vec4 light_spec; \n"
@@ -243,16 +243,16 @@ void Viewer::compile_shaders()
 
         "void main(void) { \n"
 
-        "   vec3 L = light_pos.xyz - fP.xyz; \n"
-        "   vec3 V = -fP.xyz; \n"
+        "   highp vec3 L = light_pos.xyz - fP.xyz; \n"
+        "   highp vec3 V = -fP.xyz; \n"
 
-        "   vec3 N = normalize(fN); \n"
+        "   highp vec3 N = normalize(fN); \n"
         "   L = normalize(L); \n"
         "   V = normalize(V); \n"
 
-        "   vec3 R = reflect(-L, N); \n"
-        "   vec4 diffuse = abs(dot(N,L)) * light_diff*color; \n"
-        "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
+        "   highp vec3 R = reflect(-L, N); \n"
+        "   highp vec4 diffuse = abs(dot(N,L)) * light_diff*color; \n"
+        "   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
 
         "gl_FragColor = color*light_amb + diffuse + specular; \n"
         "} \n"
@@ -304,7 +304,7 @@ void Viewer::compile_shaders()
         "void main(void)\n"
         "{\n"
         "   fP = mv_matrix * vertex; \n"
-        "   vec4 TN = transfo*vec4(normal,1.0); \n"
+        "   highp vec4 TN = transfo*vec4(normal,1.0); \n"
         "   fN = mat3(mv_matrix)* TN.xyz; \n"
         "   gl_Position =  mvp_matrix * transfo* vertex; \n"
         "}"
@@ -2151,7 +2151,7 @@ void Viewer::wheelEvent(QWheelEvent *event)
         //  note: most mouse types work in steps of 15 degrees
         //  positive value: rotate forwards away from the user;
         //  negative value: rotate backwards toward the user.
-        m_fRadius += (event->delta()*1.f / m_iStep ); // inc-/decrease by 0.1 per step
+        m_fRadius += (event->angleDelta().y()*1.f / m_iStep ); // inc-/decrease by 0.1 per step
         if( m_fRadius < 0.1f )
             m_fRadius = 0.1f;
 
@@ -2166,7 +2166,7 @@ void Viewer::wheelEvent(QWheelEvent *event)
         //  positive value: rotate forwards away from the user;
         //  negative value: rotate backwards toward the user.
         float origR = m_fRadius;
-        m_fRadius += (event->delta()*1.f / m_iStep ); // inc-/decrease by 0.1 per step
+        m_fRadius += (event->angleDelta().y()*1.f / m_iStep ); // inc-/decrease by 0.1 per step
         if( m_fRadius < 0.1f )
             m_fRadius = 0.1f;
         // update the new point and its conflict region
@@ -2185,7 +2185,7 @@ void Viewer::wheelEvent(QWheelEvent *event)
     // resize the trackball when moving a point
     else if( m_curMode == MOVE && modifiers == Qt::SHIFT && m_isMoving ) {
         float origR = m_fRadius;
-        m_fRadius += (event->delta()*1.f / m_iStep ); // inc-/decrease by 0.1 per step
+        m_fRadius += (event->angleDelta().y()*1.f / m_iStep ); // inc-/decrease by 0.1 per step
         if( m_fRadius < 0.1f )
             m_fRadius = 0.1f;
         origR = m_fRadius / origR;
@@ -2370,7 +2370,7 @@ void Viewer::toggleIncremental(bool on) {
             /* start play */
             if( m_pScene->m_dt.number_of_vertices() == 0 ) {
                 CGAL::Random_points_in_cube_3<Point_3> pts_generator(1.0);
-                CGAL::cpp11::copy_n( pts_generator, 100, std::back_inserter(m_incrementalPts) );
+                std::copy_n( pts_generator, 100, std::back_inserter(m_incrementalPts) );
             } else {
                 for(QList<Vertex_handle>::iterator vit = m_pScene->m_vhArray.begin();
                     vit < m_pScene->m_vhArray.end(); ++vit) {

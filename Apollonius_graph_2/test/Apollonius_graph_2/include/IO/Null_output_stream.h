@@ -26,8 +26,6 @@
 #ifndef CGAL_NULL_OUTPUT_STREAM_H
 #define CGAL_NULL_OUTPUT_STREAM_H
 
-#include <CGAL/basic.h>
-
 
 namespace CGAL {
 

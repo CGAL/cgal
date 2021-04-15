@@ -282,7 +282,7 @@ std::pair<double, double> parameter_range () const;
 
 }; /* end Arr_Bezier_curve_traits_2::X_monotone_curve_2 */
 
-Class Trim_2{
+class Trim_2{
 public:
 /// \name Creation
 /// @{
@@ -295,6 +295,9 @@ Trims the given x-monotone curve to an from src to tgt.
 X_monotone_curve_2(const X_monotone_curve_2& xcv,
                                 const Point_2& src,
                                 const Point_2& tgt)const
+
+/// @}
+
 }/* end Arr_Bezier_curve_traits_2::Trim_2 */
 
 }; /* end Arr_Bezier_curve_traits_2 */

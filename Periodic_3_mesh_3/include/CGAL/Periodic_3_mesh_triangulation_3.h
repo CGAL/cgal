@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Mikhail Bogdanov
 //                 Aymeric Pellé
@@ -453,10 +444,10 @@ public:
     const Bare_point cq = canonicalize_point(q);
     FT min_sq_dist = std::numeric_limits<FT>::infinity();
 
-    for(int i = 0; i < 3; ++i) {
-      for(int j = 0; j < 3; ++j) {
-        for(int k = 0; k < 3; ++k) {
-          const Bare_point tcq = construct_point(std::make_pair(cq, Offset(i-1, j-1, k-1)));
+    for(int i = -1; i < 2; ++i) {
+      for(int j = -1; j < 2; ++j) {
+        for(int k = -1; k < 2; ++k) {
+          const Bare_point tcq = construct_point(std::make_pair(cq, Offset(i, j, k)));
           FT sq_dist = geom_traits().compute_squared_distance_3_object()(p, tcq);
 
           if(sq_dist < min_sq_dist)
@@ -478,6 +469,48 @@ public:
     typename Geom_traits::Construct_weighted_point_3 cwp = geom_traits().construct_weighted_point_3_object();
 
     return cwp(get_closest_point(cp(wp), cp(wq)), cw(wq));
+  }
+
+  Triangle get_closest_triangle(const Bare_point& p, const Triangle& t) const
+  {
+    typename Geom_traits::Construct_vector_3 cv = geom_traits().construct_vector_3_object();
+    typename Geom_traits::Construct_translated_point_3 tr = geom_traits().construct_translated_point_3_object();
+    typename Geom_traits::Compute_squared_distance_3 csd = geom_traits().compute_squared_distance_3_object();
+
+    // It doesn't matter which point we use to canonicalize the triangle as P3M3 is necessarily
+    // in one cover and we have to look at all the neighboring copies anyway since we do not
+    // have control of 'p'.
+    Bare_point canon_p0 = canonicalize_point(t[0]);
+    Vector_3 move_to_canonical = cv(t[0], canon_p0);
+    const std::array<Bare_point, 3> ct = { canon_p0,
+                                           tr(t[1], move_to_canonical),
+                                           tr(t[2], move_to_canonical) };
+
+    FT min_sq_dist = std::numeric_limits<FT>::infinity();
+    Triangle rt;
+    for(int i = -1; i < 2; ++i) {
+      for(int j = -1; j < 2; ++j) {
+        for(int k = -1; k < 2; ++k) {
+
+          const Triangle tt(
+            construct_point(std::make_pair(ct[0], Offset(i, j, k))),
+            construct_point(std::make_pair(ct[1], Offset(i, j, k))),
+            construct_point(std::make_pair(ct[2], Offset(i, j, k))));
+
+          const FT sq_dist = csd(p, tt);
+
+          if(sq_dist == FT(0))
+            return rt;
+
+          if(sq_dist < min_sq_dist) {
+            rt = tt;
+            min_sq_dist = sq_dist;
+          }
+        }
+      }
+    }
+
+    return rt;
   }
 
   // Warning: This is a periodic version that computes the smallest possible
@@ -616,17 +649,17 @@ public:
 
   Cell_handle locate(const Weighted_point& p,
                      Cell_handle start = Cell_handle(),
-                     bool* CGAL_assertion_code(could_lock_zone) = NULL) const
+                     bool* CGAL_assertion_code(could_lock_zone) = nullptr) const
   {
-    CGAL_assertion(could_lock_zone == NULL);
+    CGAL_assertion(could_lock_zone == nullptr);
     return Base::locate(canonicalize_point(p), start);
   }
 
   Cell_handle locate(const Weighted_point& p,
                      Vertex_handle hint,
-                     bool* CGAL_assertion_code(could_lock_zone) = NULL) const
+                     bool* CGAL_assertion_code(could_lock_zone) = nullptr) const
   {
-    CGAL_assertion(could_lock_zone == NULL);
+    CGAL_assertion(could_lock_zone == nullptr);
     // Compared to the non-periodic version in T3, the infinite cell cannot
     // be used as default hint, so `Cell_handle()` is used instead.
     return Base::locate(canonicalize_point(p),
@@ -636,18 +669,18 @@ public:
   Cell_handle locate(const Weighted_point& p,
                      Locate_type& l, int& i, int& j,
                      Cell_handle start = Cell_handle(),
-                     bool* CGAL_assertion_code(could_lock_zone) = NULL) const
+                     bool* CGAL_assertion_code(could_lock_zone) = nullptr) const
   {
-    CGAL_assertion(could_lock_zone == NULL);
+    CGAL_assertion(could_lock_zone == nullptr);
     return Base::locate(canonicalize_point(p), l, i, j, start);
   }
 
   Cell_handle locate(const Weighted_point& p,
                      Locate_type& l, int& i, int& j,
                      Vertex_handle hint,
-                     bool* CGAL_assertion_code(could_lock_zone) = NULL) const
+                     bool* CGAL_assertion_code(could_lock_zone) = nullptr) const
   {
-    CGAL_assertion(could_lock_zone == NULL);
+    CGAL_assertion(could_lock_zone == nullptr);
     return Base::locate(canonicalize_point(p), l, i, j,
                         hint == Vertex_handle() ? Cell_handle() : hint->cell());
   }
@@ -678,11 +711,11 @@ public:
                  OutputIteratorBoundaryFacets bfit,
                  OutputIteratorCells cit,
                  OutputIteratorInternalFacets ifit,
-                 bool* CGAL_assertion_code(could_lock_zone) = NULL,
-                 const Facet* /* this_facet_must_be_in_the_cz */ = NULL,
-                 bool* /* the_facet_is_in_its_cz */ = NULL) const
+                 bool* CGAL_assertion_code(could_lock_zone) = nullptr,
+                 const Facet* /* this_facet_must_be_in_the_cz */ = nullptr,
+                 bool* /* the_facet_is_in_its_cz */ = nullptr) const
   {
-    CGAL_triangulation_precondition(could_lock_zone == NULL);
+    CGAL_triangulation_precondition(could_lock_zone == nullptr);
     CGAL_triangulation_precondition(number_of_vertices() != 0);
 
     clear_v_offsets();
@@ -729,9 +762,9 @@ public:
   find_conflicts(const Weighted_point &p, Cell_handle c,
                  OutputIteratorBoundaryFacets bfit,
                  OutputIteratorCells cit,
-                 bool* could_lock_zone = NULL) const
+                 bool* could_lock_zone = nullptr) const
   {
-    CGAL_assertion(could_lock_zone == NULL);
+    CGAL_assertion(could_lock_zone == nullptr);
 
     Triple<OutputIteratorBoundaryFacets,
            OutputIteratorCells,
@@ -771,17 +804,17 @@ public:
 
   Vertex_handle insert(const Weighted_point& p,
                        Cell_handle start = Cell_handle(),
-                       bool* CGAL_assertion_code(could_lock_zone) = NULL)
+                       bool* CGAL_assertion_code(could_lock_zone) = nullptr)
   {
-    CGAL_assertion(could_lock_zone == NULL);
+    CGAL_assertion(could_lock_zone == nullptr);
     return Base::insert(canonicalize_point(p), start);
   }
 
   Vertex_handle insert(const Weighted_point& p,
                        Vertex_handle hint,
-                       bool* CGAL_assertion_code(could_lock_zone) = NULL)
+                       bool* CGAL_assertion_code(could_lock_zone) = nullptr)
   {
-    CGAL_assertion(could_lock_zone == NULL);
+    CGAL_assertion(could_lock_zone == nullptr);
     // compared to the non-periodic version in T3, the infinite cell cannot
     // be used; `Cell_handle()` is used instead
     return Base::insert(canonicalize_point(p),
@@ -790,18 +823,18 @@ public:
 
   Vertex_handle insert(const Weighted_point& p,
                        Locate_type lt, Cell_handle loc, int li, int lj,
-                       bool* CGAL_assertion_code(could_lock_zone) = NULL)
+                       bool* CGAL_assertion_code(could_lock_zone) = nullptr)
   {
-    CGAL_assertion(could_lock_zone == NULL);
+    CGAL_assertion(could_lock_zone == nullptr);
     return Base::insert(canonicalize_point(p), lt, loc, li, lj);
   }
   /// @}
 
   /// Remove functions
   bool remove(Vertex_handle v,
-              bool* CGAL_assertion_code(could_lock_zone) = NULL)
+              bool* CGAL_assertion_code(could_lock_zone) = nullptr)
   {
-    CGAL_assertion(could_lock_zone == NULL);
+    CGAL_assertion(could_lock_zone == nullptr);
     bool b = Base::remove_if_no_cover_change(v);
     CGAL_postcondition(this->is_1_cover()); // do not ever allow cover change
     return b;

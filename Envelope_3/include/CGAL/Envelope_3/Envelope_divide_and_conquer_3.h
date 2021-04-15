@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
 //                 Baruch Zukerman        <baruchzu@post.tau.ac.il>
@@ -65,7 +56,7 @@
 // - remove edges between faces with the same envelope data, which do not
 //   contribute to the shape of the envelope (i.e. have the same envelope data
 //   as their adjacent faces)
-// - remove unneccessary vertices of two kinds:
+// - remove unnecessary vertices of two kinds:
 //   a. vertices which have degree 2, the 2 incident edges can be geometrically
 //      merged, and has the same envelope data as both these edges
 //   b. isolated vertices which have the same envelope data as their incident
@@ -641,16 +632,16 @@ public:
     // make sure the aux flags are correctly after all resolvings
     //CGAL_assertion(verify_aux_flags(result));
 
-    // finally, remove unneccessary edges, between faces  with the same surface
+    // finally, remove unnecessary edges, between faces  with the same surface
     // (and which are not degenerate)
 
-    remove_unneccessary_edges(result);
+    remove_unnecessary_edges(result);
     CGAL_expensive_assertion_msg(result.is_valid(),
                        "after remove edges result is not valid");
 
-    // also remove unneccessary vertices (that were created in the process of
+    // also remove unnecessary vertices (that were created in the process of
     // vertical decomposition but the vertical edge was removed)
-    remove_unneccessary_vertices(result);
+    remove_unnecessary_vertices(result);
     CGAL_expensive_assertion_msg(result.is_valid(),
                        "after remove vertices result is not valid");
 
@@ -728,9 +719,9 @@ protected:
     return has_eq;
   }
 
-  // Remove unneccessary edges, between faces with the same surface
+  // Remove unnecessary edges, between faces with the same surface
   // (and which are not degenerate)
-  void remove_unneccessary_edges(Minimization_diagram_2& result)
+  void remove_unnecessary_edges(Minimization_diagram_2& result)
   {
     // collect all those edges in this list, and remove them all at the end
     // (thus, not destroying the iterator)
@@ -1009,18 +1000,18 @@ protected:
     return (equal_first && equal_second);
   }
 
-  // Remove unneccessary vertices, which have degree 2, and the 2 curves
+  // Remove unnecessary vertices, which have degree 2, and the 2 curves
   // can be merged
   // (and which are not degenerate)
-  void remove_unneccessary_vertices(Minimization_diagram_2& result)
+  void remove_unnecessary_vertices(Minimization_diagram_2& result)
   {
-    // we have 2 types of unneccessary vertices: those with degree 2 (that
+    // we have 2 types of unnecessary vertices: those with degree 2 (that
     // satisfy all the conditions below), and isolated vertices that have the
     // same envelope information as the face they're contained in.
 
     // all the vertices that don't have their data set, are those vertices
     // on vertical edges, created in the decomposition process,
-    // and are not neccessary
+    // and are not necessary
 
     // also those vertices with degree 2, that can merge their 2 edges and
     // with same data as both these edges, can be removed
@@ -1640,7 +1631,7 @@ protected:
                             Self* b) :
       Md_observer(arr), base(b)
     {
-      CGAL_assertion(base != NULL);
+      CGAL_assertion(base != nullptr);
     }
 
     /* virtual void before_split_edge (Halfedge_handle e,
@@ -1785,7 +1776,7 @@ protected:
       faces(f),
       base(b)
     {
-      CGAL_assertion(base != NULL);
+      CGAL_assertion(base != nullptr);
     }
 
     // Write the discover time for a given vertex.

@@ -99,15 +99,9 @@
           </widget>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="Density_control_factor_spin_box">
-           <property name="maximum">
-            <double>96.989999999999995</double>
-           </property>
-           <property name="singleStep">
-            <double>0.200000000000000</double>
-           </property>
-           <property name="value">
-            <double>2.410000000000000</double>
+          <widget class="DoubleEdit" name="Density_control_factor_spin_box">
+           <property name="text">
+            <string>2.41</string>
            </property>
           </widget>
          </item>
@@ -139,6 +133,13 @@
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DoubleEdit</class>
+   <extends>QLineEdit</extends>
+   <header>CGAL_double_edit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

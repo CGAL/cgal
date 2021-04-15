@@ -70,7 +70,7 @@ struct TestMeshProgramInstance
   TestMeshProgramInstance()
   {
     debugMode = false;
-    randomizer = NULL;
+    randomizer = nullptr;
     numVertices = 0;
     numIterations = 1;
   }

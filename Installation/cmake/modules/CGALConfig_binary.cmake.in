@@ -12,6 +12,9 @@ get_filename_component(CGAL_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
 set(CGAL_HEADER_ONLY "@CGAL_HEADER_ONLY@" )
 
+include(CMakeFindDependencyMacro)
+find_dependency(Boost REQUIRED)
+
 # The code for including exported targets is different from
 # CGAL_Config_install.cmake. We do not have separate export files in
 # an installed version and we need to make sure that we are not
@@ -114,15 +117,6 @@ macro(check_cgal_component COMPONENT)
   if ( "${CGAL_LIB}" STREQUAL "CGAL" )
     set( CGAL_FOUND TRUE )
     set( CHECK_CGAL_ERROR_TAIL "" )
-    get_property(CGAL_CGAL_is_imported TARGET CGAL::CGAL PROPERTY IMPORTED)
-    if(CGAL_CGAL_is_imported)
-      include("${CGAL_MODULES_DIR}/CGAL_SetupBoost.cmake")
-      get_property(CGAL_requires_Boost_libs
-        GLOBAL PROPERTY CGAL_requires_Boost_Thread)
-      if(CGAL_requires_Boost_libs AND TARGET Boost::thread)
-        set_property(TARGET CGAL::CGAL APPEND PROPERTY INTERFACE_LINK_LIBRARIES Boost::thread)
-      endif()
-    endif()
   else( "${CGAL_LIB}" STREQUAL "CGAL" )
     if ( WITH_${CGAL_LIB} )
       if(TARGET CGAL::${CGAL_LIB})

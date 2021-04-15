@@ -27,7 +27,5 @@ Moreover, `CGAL::Algebraic_structure_traits< FieldWithSqrt >` is a model of `Alg
 class FieldWithSqrt {
 public:
 
-/// @}
-
 }; /* end FieldWithSqrt */
 

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s): Efi Fogel         <efif@post.tau.ac.il>
 //            Naama mayer       <naamamay@post.tau.ac.il>
@@ -524,7 +515,7 @@ public:
   /*! Constructor */
   Arr_polyhedral_sgm_initializer(PolyhedralSgm& sgm) :
     Base(sgm),
-    m_visitor(NULL),
+    m_visitor(nullptr),
     m_marked_vertex_index(0),
     m_marked_edge_index(0),
     m_marked_facet_index(0)
@@ -538,7 +529,7 @@ public:
    * \param visitor
    * \pre The polyhedron polyhedron does not have coplanar facets.
    */
-  void operator()(Polyhedron& polyhedron, Visitor* visitor = NULL)
+  void operator()(Polyhedron& polyhedron, Visitor* visitor = nullptr)
   {
 #if 0
     std::copy(polyhedron.points_begin(), polyhedron.points_end(),
@@ -568,7 +559,7 @@ public:
                   const CoordIndexIter indices_begin,
                   const CoordIndexIter indices_end,
                   size_type num_facets,
-                  Visitor* visitor = NULL)
+                  Visitor* visitor = nullptr)
   {
     m_visitor = visitor;
 

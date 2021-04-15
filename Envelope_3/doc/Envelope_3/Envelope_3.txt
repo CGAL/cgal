@@ -252,7 +252,7 @@ printing the diagrams, we just output the labels of the triangles:
 
 The next example demonstrates how to instantiate and use the
 envelope-traits class for spheres, based on the
-`Arr_conic_traits_2` class that handles the projected intersecion
+`Arr_conic_traits_2` class that handles the projected intersection
 curves. The program reads a set of spheres from an input file and
 constructs their lower envelope:
 

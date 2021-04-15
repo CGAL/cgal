@@ -279,7 +279,7 @@ computed using rings on the triangulation. Results are twofold:
 <LI>a human readable text file featuring the `::CGAL::Monge_via_jet_fitting::Monge_form` and
 numerical informations on the computation: condition number and the
 PCA basis;
-<LI>another text file that records raw data (better for a vizualization
+<LI>another text file that records raw data (better for a visualization
 post-processing).
 </UL>
 

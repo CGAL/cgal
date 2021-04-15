@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany)
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stefan Schirra, Sylvain Pion,
@@ -828,6 +819,55 @@ namespace CommonKernelFunctors {
       return CGAL::compare(squared_distance(p, q), squared_distance(r, s));
     }
   };
+
+ template <typename K>
+ class Compute_approximate_angle_3
+ {
+   typedef typename K::Point_3 Point_3;
+   typedef typename K::Vector_3 Vector_3;
+
+ public:
+   typedef typename K::FT       result_type;
+
+    result_type
+    operator()(const Vector_3& u, const Vector_3& v) const
+   {
+     K k;
+     typename K::Compute_scalar_product_3 scalar_product =
+       k.compute_scalar_product_3_object();
+
+     double product = CGAL::sqrt(to_double(scalar_product(u,u)) * to_double(scalar_product(v,v)));
+
+     if(product == 0)
+       return 0;
+
+     // cosine
+     double dot = to_double(scalar_product(u,v));
+     double cosine = dot / product;
+
+     if(cosine > 1.){
+       cosine = 1.;
+     }
+     if(cosine < -1.){
+       cosine = -1.;
+     }
+
+     return std::acos(cosine) * 180./CGAL_PI;
+   }
+
+
+   result_type
+   operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+   {
+     K k;
+     typename K::Construct_vector_3 vector = k.construct_vector_3_object();
+
+     Vector_3 u = vector(q,p);
+     Vector_3 v = vector(q,r);
+
+     return this->operator()(u,v);
+   }
+ };
 
  template <typename K>
  class Compute_approximate_dihedral_angle_3
@@ -1646,7 +1686,7 @@ namespace CommonKernelFunctors {
         res = typename K::Intersect_3()(l1,l2);
       CGAL_assertion(res!=boost::none);
       const Point* e_pt = boost::get<Point>(&(*res));
-      CGAL_assertion(e_pt!=NULL);
+      CGAL_assertion(e_pt!=nullptr);
       return *e_pt;
     }
   };
@@ -2046,7 +2086,7 @@ namespace CommonKernelFunctors {
         res = typename K::Intersect_3()(plane,line);
       CGAL_assertion(res!=boost::none);
       const Point* e_pt = boost::get<Point>(&(*res));
-      CGAL_assertion(e_pt!=NULL);
+      CGAL_assertion(e_pt!=nullptr);
       return *e_pt;
     }
 
@@ -2060,7 +2100,7 @@ namespace CommonKernelFunctors {
         res = typename K::Intersect_3()(plane,line);
       CGAL_assertion(res!=boost::none);
       const Point* e_pt = boost::get<Point>(&(*res));
-      CGAL_assertion(e_pt!=NULL);
+      CGAL_assertion(e_pt!=nullptr);
       return *e_pt;
     }
   };
@@ -2712,24 +2752,18 @@ namespace CommonKernelFunctors {
     bool
     is_inside_triangle_3(const typename K::Point_3& p,
                          const typename K::Triangle_3& t,
+                         const typename K::Vector_3& w,
                          typename K::Point_3& result,
                          const K& k)
     {
       typedef typename K::Point_3 Point_3;
-      typedef typename K::Vector_3 Vector_3;
 
-      typename K::Construct_vector_3 vector =
-        k.construct_vector_3_object();
       typename K::Construct_vertex_3 vertex_on =
         k.construct_vertex_3_object();
-      typename K::Construct_cross_product_vector_3 cross_product =
-        k.construct_cross_product_vector_3_object();
 
       const Point_3& t0 = vertex_on(t,0);
       const Point_3& t1 = vertex_on(t,1);
       const Point_3& t2 = vertex_on(t,2);
-
-      Vector_3 w = cross_product(vector(t0,t1), vector(t1,t2));
 
       bool outside = false;
       if (   is_inside_triangle_3_aux(w, t0, t1, p, result, outside, k)
@@ -2806,6 +2840,8 @@ namespace CommonKernelFunctors {
       typename K::Construct_projected_point_3 projection =
         k.construct_projected_point_3_object();
       typename K::Is_degenerate_3 is_degenerate = k.is_degenerate_3_object();
+      typename K::Construct_orthogonal_vector_3 normal =
+        k.construct_orthogonal_vector_3_object();
 
       const typename K::Plane_3 plane = supporting_plane(triangle);
       if(is_degenerate(plane)) {
@@ -2852,9 +2888,8 @@ namespace CommonKernelFunctors {
       // Project origin on triangle supporting plane
       const Point_3 proj = projection(plane, origin);
 
-
       Point_3 moved_point;
-      bool inside = is_inside_triangle_3(proj,triangle,moved_point,k);
+      bool inside = is_inside_triangle_3(proj,triangle,normal(plane),moved_point,k);
 
       // If proj is inside triangle, return it
       if ( inside )
@@ -3293,8 +3328,7 @@ namespace CommonKernelFunctors {
       CGAL_kernel_assertion_msg(bool(optional) == true,
                                 "the segment does not intersect the supporting"
                                 " plane");
-      using boost::get;
-      const Point_3* p = get<Point_3>(&*optional);
+      const Point_3* p = boost::get<Point_3>(&*optional);
       CGAL_kernel_assertion_msg(p != 0,
                                 "the segment intersection with the plane is "
                                 "not a point");
@@ -3489,11 +3523,6 @@ namespace CommonKernelFunctors {
       typedef typename Intersection_traits<K, A, B>::result_type type;
     };
 
-    // Solely to make the lazy kernel work
-    #if CGAL_INTERSECTION_VERSION < 2
-    typedef CGAL::Object result_type;
-    #endif
-
     // 25 possibilities, so I keep the template.
     template <class T1, class T2>
     typename Intersection_traits<K, T1, T2>::result_type
@@ -3522,22 +3551,13 @@ namespace CommonKernelFunctors {
                         typename K::Plane_3 > > type;
     };
 
-    // Solely to make the lazy kernel work
-    #if CGAL_INTERSECTION_VERSION < 2
-    typedef CGAL::Object result_type;
-    #endif
-
     // n possibilities, so I keep the template.
     template <class T1, class T2>
     typename cpp11::result_of< Intersect_3(T1, T2) >::type
     operator()(const T1& t1, const T2& t2) const
     { return Intersections::internal::intersection(t1, t2, K() ); }
 
-    #if CGAL_INTERSECTION_VERSION < 2
-    CGAL::Object
-    #else
     typename boost::optional< boost::variant< typename K::Point_3, typename K::Line_3, typename K::Plane_3 > >
-    #endif
     operator()(const Plane_3& pl1, const Plane_3& pl2, const Plane_3& pl3)const
     { return Intersections::internal::intersection(pl1, pl2, pl3, K() ); }
   };

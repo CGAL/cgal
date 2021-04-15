@@ -34,6 +34,7 @@ int main(int argc, char* argv[])
   std::cout << "\t Number of facets    :\t" << mesh.size_of_facets() << std::endl;
 
   std::ofstream output("mesh_stitched.off");
+  output.precision(17);
   output << std::setprecision(17) << mesh;
 
   return 0;

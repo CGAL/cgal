@@ -1,20 +1,11 @@
 // Copyright (c) 2014
 // INRIA Saclay-Ile de France (France)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Marc Glisse
 
@@ -30,6 +21,8 @@
 #include <Eigen/Dense>
 #include <CGAL/NewKernel_d/LA_eigen/constructors.h>
 #include <CGAL/iterator_from_indices.h>
+#include <CGAL/determinant.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 
@@ -58,11 +51,7 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct LA_eigen {
 #if (EIGEN_WORLD_VERSION>=3)
         typedef NT const* Vector_const_iterator;
 #else
-        typedef Iterator_from_indices<const type,const NT
-#ifndef CGAL_CXX11
-          ,NT
-#endif
-          > Vector_const_iterator;
+        typedef Iterator_from_indices<const type,const NT> Vector_const_iterator;
 #endif
 
         template<class Vec_>static Vector_const_iterator vector_begin(Vec_ const&a){
@@ -113,15 +102,72 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct LA_eigen {
                 return (int)v.cols();
         }
 
-        template<class Mat_> static NT determinant(Mat_ const&m,bool=false){
+        template<class Mat_> static NT determinant_aux [[noreturn]] (Mat_ const&, Tag_true) {
+                CGAL_error();
+        }
+        template<class Mat_> static NT determinant_aux(Mat_ const& m, Tag_false) {
                 return m.determinant();
+        }
+
+        // TODO: https://gitlab.com/libeigen/eigen/-/issues/1782
+        // Implement a version of (sign_of_)determinant that works
+        // without (inexact) division in any dimension
+        template<class Mat_> static NT determinant(Mat_ const&m,bool=false){
+          switch(m.rows()){
+            //case 0:
+            //  return 1;
+            case 1:
+              return m(0,0);
+            case 2:
+              return CGAL::determinant(
+                  m(0,0),m(0,1),
+                  m(1,0),m(1,1));
+            case 3:
+              return CGAL::determinant(
+                  m(0,0),m(0,1),m(0,2),
+                  m(1,0),m(1,1),m(1,2),
+                  m(2,0),m(2,1),m(2,2));
+            case 4:
+              return CGAL::determinant(
+                  m(0,0),m(0,1),m(0,2),m(0,3),
+                  m(1,0),m(1,1),m(1,2),m(1,3),
+                  m(2,0),m(2,1),m(2,2),m(2,3),
+                  m(3,0),m(3,1),m(3,2),m(3,3));
+            case 5:
+              return CGAL::determinant(
+                  m(0,0),m(0,1),m(0,2),m(0,3),m(0,4),
+                  m(1,0),m(1,1),m(1,2),m(1,3),m(1,4),
+                  m(2,0),m(2,1),m(2,2),m(2,3),m(2,4),
+                  m(3,0),m(3,1),m(3,2),m(3,3),m(3,4),
+                  m(4,0),m(4,1),m(4,2),m(4,3),m(4,4));
+            case 6:
+              return CGAL::determinant(
+                  m(0,0),m(0,1),m(0,2),m(0,3),m(0,4),m(0,5),
+                  m(1,0),m(1,1),m(1,2),m(1,3),m(1,4),m(1,5),
+                  m(2,0),m(2,1),m(2,2),m(2,3),m(2,4),m(2,5),
+                  m(3,0),m(3,1),m(3,2),m(3,3),m(3,4),m(3,5),
+                  m(4,0),m(4,1),m(4,2),m(4,3),m(4,4),m(4,5),
+                  m(5,0),m(5,1),m(5,2),m(5,3),m(5,4),m(5,5));
+            case 7:
+              return CGAL::determinant(
+                  m(0,0),m(0,1),m(0,2),m(0,3),m(0,4),m(0,5),m(0,6),
+                  m(1,0),m(1,1),m(1,2),m(1,3),m(1,4),m(1,5),m(1,6),
+                  m(2,0),m(2,1),m(2,2),m(2,3),m(2,4),m(2,5),m(2,6),
+                  m(3,0),m(3,1),m(3,2),m(3,3),m(3,4),m(3,5),m(3,6),
+                  m(4,0),m(4,1),m(4,2),m(4,3),m(4,4),m(4,5),m(4,6),
+                  m(5,0),m(5,1),m(5,2),m(5,3),m(5,4),m(5,5),m(5,6),
+                  m(6,0),m(6,1),m(6,2),m(6,3),m(6,4),m(6,5),m(6,6));
+            default:
+              return determinant_aux(m, Boolean_tag<(Mat_::MaxRowsAtCompileTime >= 1 && Mat_::MaxRowsAtCompileTime <= 7)>());
+
+          }
         }
 
         template<class Mat_> static typename
         Same_uncertainty_nt<CGAL::Sign, NT>::type
         sign_of_determinant(Mat_ const&m,bool=false)
         {
-                return CGAL::sign(m.determinant());
+                return CGAL::sign(LA_eigen::determinant(m));
         }
 
         template<class Mat_> static int rank(Mat_ const&m){

@@ -70,7 +70,7 @@ allows to increase it easily.
 
 Bounding volumes also define geometric "center points" of objects.
 For example, if two objects are to be matched (approximately), one
-approch is to first apply the translation that maps the centers of
+approach is to first apply the translation that maps the centers of
 their smallest enclosing spheres onto each other. Simpler centers are
 possible, of course (center of gravity, center of bounding box), but
 more advanced bounding volumes might give better results in some

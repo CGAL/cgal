@@ -35,7 +35,7 @@ int main() {
 
   std::cout <<  "The first 5 nearest neighbours with positive x-coord are: " << std::endl;
   for (int j=0; (j < 5)&&(it!=end); ++j,++it)
-    std::cout <<   (*it).first << "  at squared distance = " << (*it).second << std::endl;
+    std::cout <<   (*it).first << "  at squared distance = " << it->second << std::endl;
 
   return 0;
 }

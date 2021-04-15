@@ -4,7 +4,6 @@
 #include <iostream>
 #include <cassert>
 
-#include <CGAL/basic.h>
 #include <CGAL/MP_Float.h>
 typedef CGAL::MP_Float Rtype;
 

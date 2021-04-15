@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Pierre Alliez and Sylvain Pion and Ankit Gupta and Simon Giraudot
 
@@ -153,9 +144,9 @@ assemble_covariance_matrix_3(InputIterator first,
     FT x0 = t[0].x();
     FT y0 = t[0].y();
     FT z0 = t[0].z();
-    FT delta[9] = {t[0].x(), t[1].x(), t[2].x(),
-                   t[0].y(), t[1].y(), t[2].y(),
-                   t[0].z(), t[1].z(), t[2].z()};
+    FT delta[9] = {t[1].x()-x0, t[3].x()-x0, t[5].x()-x0,
+                   t[1].y()-y0, t[3].y()-y0, t[5].y()-y0,
+                   t[1].z()-z0, t[3].z()-z0, t[5].z()-z0};
     Matrix transformation (delta);
     FT volume = t.volume();
 
@@ -557,9 +548,9 @@ assemble_covariance_matrix_3(InputIterator first,
 
   // assemble 2nd order moment about the origin.
   Matrix moment;
-  moment << 1.0, 0.5, 0.0,
-            0.5, 1.0, 0.0,
-            0.0, 0.0, 0.0;
+  moment << 1.0/3.0, 0.5/3.0, 0.0,
+            0.5/3.0, 1.0/3.0, 0.0,
+            0.0,     0.0,     0.0;
 
   for(InputIterator it = first;
       it != beyond;

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Iordan Iordanov  <Iordan.Iordanov@loria.fr>
 //
@@ -75,9 +66,9 @@ public:
   typedef typename GT::Hyperbolic_segment_2                       Hyperbolic_segment;
   typedef typename GT::Hyperbolic_triangle_2                      Hyperbolic_triangle;
 
-  typedef std::pair<Point, Hyperbolic_translation>                Periodic_point;
-  typedef array< std::pair<Point, Hyperbolic_translation>, 2 >    Periodic_segment;
-  typedef array< std::pair<Point, Hyperbolic_translation>, 3 >    Periodic_triangle;
+  typedef std::pair<Point, Hyperbolic_translation>                     Periodic_point;
+  typedef std::array< std::pair<Point, Hyperbolic_translation>, 2 >    Periodic_segment;
+  typedef std::array< std::pair<Point, Hyperbolic_translation>, 3 >    Periodic_triangle;
 
   typedef typename TDS::Vertex                                    Vertex;
   typedef typename TDS::Edge                                      Edge;
@@ -617,15 +608,15 @@ protected:
     }
 
     // Now we know that all vertices lie in different regions.
-    Hyperbolic_translation min(7, 2, 5);
+    Hyperbolic_translation vmin(7, 2, 5);
     Hyperbolic_translation trans;
     for(int i=0; i<3; ++i)
     {
       int j = (i + 1) % 3; // the index of the 'next' vertex
       Hyperbolic_translation tmp = fh->translation(i).inverse() * fh->translation(j);
-      if(tmp < min)
+      if(tmp < vmin)
       {
-        min = tmp;
+        vmin = tmp;
         trans = fh->translation(i).inverse();
       }
     }

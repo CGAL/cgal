@@ -1,19 +1,10 @@
 // Copyright (c) 2015  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri
@@ -120,6 +111,39 @@ struct property_map<CGAL::Seam_mesh<TM, SEM, SVM>, CGAL::vertex_point_t>
   typedef CGAL::Seam_mesh<TM, SEM, SVM>                  SM;
   typedef CGAL::Seam_mesh_point_map<TM, SEM, SVM>        type;
   typedef type                                           const_type;
+};
+
+template <class TM, class SEM, class SVM, typename T>
+struct property_map<CGAL::Seam_mesh<TM, SEM, SVM>, CGAL::dynamic_vertex_property_t<T> >
+{
+  typedef typename boost::graph_traits<CGAL::Seam_mesh<TM, SEM, SVM> >::vertex_descriptor vertex_descriptor;
+  typedef CGAL::internal::Dynamic_property_map<vertex_descriptor,T> type;
+  typedef type const_type;
+};
+
+template <class TM, class SEM, class SVM, typename T>
+struct property_map<CGAL::Seam_mesh<TM, SEM, SVM>, CGAL::dynamic_halfedge_property_t<T> >
+{
+  typedef typename boost::graph_traits<CGAL::Seam_mesh<TM, SEM, SVM> >::halfedge_descriptor halfedge_descriptor;
+  typedef CGAL::internal::Dynamic_property_map<halfedge_descriptor,T> type;
+  typedef type const_type;
+};
+
+
+template <class TM, class SEM, class SVM, typename T>
+struct property_map<CGAL::Seam_mesh<TM, SEM, SVM>, CGAL::dynamic_edge_property_t<T> >
+{
+  typedef typename boost::graph_traits<CGAL::Seam_mesh<TM, SEM, SVM> >::edge_descriptor edge_descriptor;
+  typedef CGAL::internal::Dynamic_property_map<edge_descriptor,T> type;
+  typedef type const_type;
+};
+
+template <class TM, class SEM, class SVM, typename T>
+struct property_map<CGAL::Seam_mesh<TM, SEM, SVM>, CGAL::dynamic_face_property_t<T> >
+{
+  typedef typename boost::graph_traits<CGAL::Seam_mesh<TM, SEM, SVM> >::face_descriptor face_descriptor;
+  typedef CGAL::internal::Dynamic_property_map<face_descriptor,T> type;
+  typedef type const_type;
 };
 } // namespace boost
 

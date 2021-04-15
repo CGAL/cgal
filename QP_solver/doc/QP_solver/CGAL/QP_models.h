@@ -6,18 +6,6 @@ namespace CGAL {
 
   An object of class `Linear_program_from_iterators` describes a linear program of the form
 
-\f$
-\newcommand{\qprel}{\gtreqless}
-\newcommand{\qpx}{\mathbf{x}}
-\newcommand{\qpl}{\mathbf{l}}
-\newcommand{\qpu}{\mathbf{u}}
-\newcommand{\qpc}{\mathbf{c}}
-\newcommand{\qpb}{\mathbf{b}}
-\newcommand{\qpy}{\mathbf{y}}
-\newcommand{\qpw}{\mathbf{w}}
-\newcommand{\qplambda}{\mathbf{\lambda}}
-\f$
-
   \f{eqnarray*}{
   \mbox{(QP)}& \mbox{minimize}
   & \qpc^{T}\qpx+c_0 \\
@@ -277,18 +265,6 @@ make_quadratic_program_from_iterators (
 
   An object of class `Nonnegative_linear_program_from_iterators` describes a linear program of the form
 
-\f$
-\newcommand{\qprel}{\gtreqless}
-\newcommand{\qpx}{\mathbf{x}}
-\newcommand{\qpl}{\mathbf{l}}
-\newcommand{\qpu}{\mathbf{u}}
-\newcommand{\qpc}{\mathbf{c}}
-\newcommand{\qpb}{\mathbf{b}}
-\newcommand{\qpy}{\mathbf{y}}
-\newcommand{\qpw}{\mathbf{w}}
-\newcommand{\qplambda}{\mathbf{\lambda}}
-\f$
-
   \f{eqnarray*}{
   \mbox{(QP)}& \mbox{minimize}
   &\qpc^{T}\qpx+c_0 \\
@@ -368,17 +344,6 @@ public:
 
   An object of class `Nonnegative_quadratic_program_from_iterators` describes a convex quadratic program of the form
 
-\f$
-\newcommand{\qprel}{\gtreqless}
-\newcommand{\qpx}{\mathbf{x}}
-\newcommand{\qpl}{\mathbf{l}}
-\newcommand{\qpu}{\mathbf{u}}
-\newcommand{\qpc}{\mathbf{c}}
-\newcommand{\qpb}{\mathbf{b}}
-\newcommand{\qpy}{\mathbf{y}}
-\newcommand{\qpw}{\mathbf{w}}
-\newcommand{\qplambda}{\mathbf{\lambda}}
-\f$
   \f{eqnarray*}{
   \mbox{(QP)}& \mbox{minimize}
   & \qpx^{T}D\qpx+\qpc^{T}\qpx+c_0 \\
@@ -463,17 +428,6 @@ public:
 
   An object of class `Quadratic_program_from_iterators` describes a convex quadratic program of the form
 
-\f$
-\newcommand{\qprel}{\gtreqless}
-\newcommand{\qpx}{\mathbf{x}}
-\newcommand{\qpl}{\mathbf{l}}
-\newcommand{\qpu}{\mathbf{u}}
-\newcommand{\qpc}{\mathbf{c}}
-\newcommand{\qpb}{\mathbf{b}}
-\newcommand{\qpy}{\mathbf{y}}
-\newcommand{\qpw}{\mathbf{w}}
-\newcommand{\qplambda}{\mathbf{\lambda}}
-\f$
   \f{eqnarray*}{
   \mbox{(QP)}& \mbox{minimize}
   & \qpx^{T}D\qpx+\qpc^{T}\qpx+c_0 \\
@@ -567,17 +521,6 @@ public:
   An object of class `Quadratic_program_from_mps` describes a convex quadratic program of the
   general form
 
-\f$
-\newcommand{\qprel}{\gtreqless}
-\newcommand{\qpx}{\mathbf{x}}
-\newcommand{\qpl}{\mathbf{l}}
-\newcommand{\qpu}{\mathbf{u}}
-\newcommand{\qpc}{\mathbf{c}}
-\newcommand{\qpb}{\mathbf{b}}
-\newcommand{\qpy}{\mathbf{y}}
-\newcommand{\qpw}{\mathbf{w}}
-\newcommand{\qplambda}{\mathbf{\lambda}}
-\f$
   \f{eqnarray*}{
   \mbox{(QP)}& \mbox{minimize}
   & \qpx^{T}D\qpx+\qpc^{T}\qpx+c_0 \\
@@ -717,14 +660,14 @@ public:
     sets the entry \f$ A_{ij}\f$
     in column \f$ j\f$ and row \f$ i\f$ of the constraint matrix \f$ A\f$ of `qp` to
     `val`. An existing entry is overwritten. `qp` is enlarged if
-    necessary to accomodate this entry.
+    necessary to accommodate this entry.
   */
   void set_a (int j, int i, const NT& val);
 
   /*!
     sets the entry \f$ b_i\f$
     of `qp` to `val`. An existing entry is overwritten.
-    `qp` is enlarged if necessary to accomodate this entry.
+    `qp` is enlarged if necessary to accommodate this entry.
   */
   void set_b (int i, const NT& val);
 
@@ -732,28 +675,28 @@ public:
     sets the entry \f$ \qprel_i\f$ of `qp` to `rel`. `CGAL::SMALLER`
     means that the \f$ i\f$-th constraint is of type "\f$ \leq\f$", `CGAL::EQUAL`
     means "\f$ =\f$", and `CGAL::LARGER` encodes "\f$ \geq\f$". An existing entry
-    is overwritten. `qp` is enlarged if necessary to accomodate this entry.
+    is overwritten. `qp` is enlarged if necessary to accommodate this entry.
   */
   void set_r (int i, CGAL::Comparison_result rel);
 
   /*!
     if `is_finite`, this sets the entry \f$ l_j\f$ of `qp` to `val`,
     otherwise it sets \f$ l_j\f$ to \f$ -\infty\f$. An existing entry is overwritten.
-    `qp` is enlarged if necessary to accomodate this entry.
+    `qp` is enlarged if necessary to accommodate this entry.
   */
   void set_l (int j, bool is_finite, const NT& val = NT(0));
 
   /*!
     if `is_finite`, this sets the entry \f$ u_j\f$ of `qp` to `val`,
     otherwise it sets \f$ u_j\f$ to \f$ \infty\f$. An existing entry is overwritten.
-    `qp` is enlarged if necessary to accomodate this entry.
+    `qp` is enlarged if necessary to accommodate this entry.
   */
   void set_u (int j, bool is_finite, const NT& val = NT(0));
 
   /*!
     sets the entry \f$ c_j\f$
     of `qp` to `val`. An existing entry is overwritten.
-    `qp` is enlarged if necessary to accomodate this entry.
+    `qp` is enlarged if necessary to accommodate this entry.
   */
   void set_c (int j, const NT& val);
 
@@ -766,7 +709,7 @@ public:
   /*!
     sets the entries
     \f$ 2D_{ij}\f$ and \f$ 2D_{ji}\f$ of `qp` to `val`. Existing entries are
-    overwritten. `qp` is enlarged if necessary to accomodate these entries.
+    overwritten. `qp` is enlarged if necessary to accommodate these entries.
     \pre `j <= i`
   */
   void set_d (int i, int j, const NT& val);
@@ -780,18 +723,6 @@ namespace CGAL {
 
 /*!
   \ingroup PkgQPSolverClasses
-
-\f$
-\newcommand{\qprel}{\gtreqless}
-\newcommand{\qpx}{\mathbf{x}}
-\newcommand{\qpl}{\mathbf{l}}
-\newcommand{\qpu}{\mathbf{u}}
-\newcommand{\qpc}{\mathbf{c}}
-\newcommand{\qpb}{\mathbf{b}}
-\newcommand{\qpy}{\mathbf{y}}
-\newcommand{\qpw}{\mathbf{w}}
-\newcommand{\qplambda}{\mathbf{\lambda}}
-\f$
 
   An object of class `Quadratic_program` describes a convex quadratic program of the form
   \f{eqnarray*}{
@@ -921,14 +852,14 @@ public:
     sets the entry \f$ A_{ij}\f$
     in column \f$ j\f$ and row \f$ i\f$ of the constraint matrix \f$ A\f$ of `qp` to
     `val`. An existing entry is overwritten. `qp` is enlarged if
-    necessary to accomodate this entry.
+    necessary to accommodate this entry.
   */
   void set_a (int j, int i, const NT& val);
 
   /*!
     sets the entry \f$ b_i\f$
     of `qp` to `val`. An existing entry is overwritten.
-    `qp` is enlarged if necessary to accomodate this entry.
+    `qp` is enlarged if necessary to accommodate this entry.
   */
   void set_b (int i, const NT& val);
 
@@ -936,28 +867,28 @@ public:
     sets the entry \f$ \qprel_i\f$ of `qp` to `rel`. `CGAL::SMALLER`
     means that the \f$ i\f$-th constraint is of type "\f$ \leq\f$", `CGAL::EQUAL`
     means "\f$ =\f$", and `CGAL::LARGER` encodes "\f$ \geq\f$". An existing entry
-    is overwritten. `qp` is enlarged if necessary to accomodate this entry.
+    is overwritten. `qp` is enlarged if necessary to accommodate this entry.
   */
   void set_r (int i, CGAL::Comparison_result rel);
 
   /*!
     if `is_finite`, this sets the entry \f$ l_j\f$ of `qp` to `val`,
     otherwise it sets \f$ l_j\f$ to \f$ -\infty\f$. An existing entry is overwritten.
-    `qp` is enlarged if necessary to accomodate this entry.
+    `qp` is enlarged if necessary to accommodate this entry.
   */
   void set_l (int j, bool is_finite, const NT& val = NT(0));
 
   /*!
     if `is_finite`, this sets the entry \f$ u_j\f$ of `qp` to `val`,
     otherwise it sets \f$ u_j\f$ to \f$ \infty\f$. An existing entry is overwritten.
-    `qp` is enlarged if necessary to accomodate this entry.
+    `qp` is enlarged if necessary to accommodate this entry.
   */
   void set_u (int j, bool is_finite, const NT& val = NT(0));
 
   /*!
     sets the entry \f$ c_j\f$
     of `qp` to `val`. An existing entry is overwritten.
-    `qp` is enlarged if necessary to accomodate this entry.
+    `qp` is enlarged if necessary to accommodate this entry.
   */
   void set_c (int j, const NT& val);
 
@@ -970,7 +901,7 @@ public:
   /*!
     sets the entries
     \f$ 2D_{ij}\f$ and \f$ 2D_{ji}\f$ of `qp` to `val`. Existing entries are
-    overwritten. `qp` is enlarged if necessary to accomodate these entries.
+    overwritten. `qp` is enlarged if necessary to accommodate these entries.
     \pre `j <= i`
   */
   void set_d (int i, int j, const NT& val);

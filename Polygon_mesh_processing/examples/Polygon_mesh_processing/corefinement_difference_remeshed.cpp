@@ -67,6 +67,7 @@ int main(int argc, char* argv[])
   {
     std::cout << "Difference was successfully computed\n";
     std::ofstream output("difference.off");
+    output.precision(17);
     output << mesh1;
   }
   else{
@@ -77,11 +78,11 @@ int main(int argc, char* argv[])
   // collect faces incident to a constrained edge
   std::vector<face_descriptor> selected_faces;
   std::vector<bool> is_selected(num_faces(mesh1), false);
-  BOOST_FOREACH(edge_descriptor e, edges(mesh1))
+  for(edge_descriptor e : edges(mesh1))
     if (is_constrained_map[e])
     {
       // insert all faces incident to the target vertex
-      BOOST_FOREACH(halfedge_descriptor h,
+      for(halfedge_descriptor h :
                     halfedges_around_target(halfedge(e,mesh1),mesh1))
       {
         if (!is_border(h, mesh1) )
@@ -111,6 +112,7 @@ int main(int argc, char* argv[])
     params::edge_is_constrained_map(is_constrained_map) );
 
   std::ofstream output("difference_remeshed.off");
+  output.precision(17);
   output << mesh1;
 
   return 0;

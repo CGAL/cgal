@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent RINEAU, Stephane Tayeb
@@ -23,9 +14,10 @@
 #ifndef CGAL_IO_FILE_MEDIT_H
 #define CGAL_IO_FILE_MEDIT_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Triangulation_3.h>
 
 #include <CGAL/Mesh_3/config.h>
+#include <CGAL/Mesh_3/Mesh_complex_3_in_triangulation_3_fwd.h>
 
 #include <CGAL/utility.h>
 #include <CGAL/basic.h>
@@ -763,7 +755,7 @@ output_to_medit(std::ostream& os,
 
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Tr::Vertex_handle Vertex_handle;
-  typedef typename Tr::Weighted_point Weighted_point;
+  typedef typename Tr::Point Point; //can be weighted or not
 
   const Tr& tr = c3t3.triangulation();
 
@@ -792,7 +784,7 @@ output_to_medit(std::ostream& os,
        ++vit)
   {
     V[vit] = inum++;
-    Weighted_point p = tr.point(vit);
+    Point p = tr.point(vit);
     os << CGAL::to_double(p.x()) << ' '
        << CGAL::to_double(p.y()) << ' '
        << CGAL::to_double(p.z()) << ' '
@@ -900,6 +892,23 @@ output_to_medit(std::ostream& os,
     else
       Mesh_3::output_to_medit<C3T3,false,true>(os,c3t3);
   }
+}
+
+
+template<typename T3>
+void write_MEDIT(std::ostream& os, const T3& t3)
+{
+  CGAL::Mesh_complex_3_in_triangulation_3<T3, int, int> c3t3;
+  c3t3.triangulation() = t3;
+  c3t3.rescan_after_load_of_triangulation();
+  output_to_medit(os, c3t3);
+}
+
+template<typename T3>
+bool read_MEDIT(std::istream& in, T3& t3)
+{
+  CGAL_assertion(!(!in));
+  return CGAL::build_triangulation_from_file<T3, true>(in, t3);
 }
 
 } // end namespace CGAL

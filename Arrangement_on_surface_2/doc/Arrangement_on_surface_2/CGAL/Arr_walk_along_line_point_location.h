@@ -36,7 +36,5 @@ template< typename Arrangement >
 class Arr_walk_along_line_point_location {
 public:
 
-/// @}
-
 }; /* end Arr_walk_along_line_point_location */
 } /* end namespace CGAL */

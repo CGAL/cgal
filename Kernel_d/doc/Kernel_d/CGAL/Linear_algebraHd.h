@@ -22,7 +22,5 @@ template< typename RT >
 class Linear_algebraHd {
 public:
 
-/// @}
-
 }; /* end Linear_algebraHd */
 } /* end namespace CGAL */

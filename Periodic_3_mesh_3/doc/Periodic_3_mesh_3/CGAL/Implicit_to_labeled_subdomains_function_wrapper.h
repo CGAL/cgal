@@ -58,5 +58,5 @@ public:
 
 
 }; /* end Implicit_to_labeled_subdomains_function_wrapper */
-/// @}
+
 } /* end namespace CGAL */

@@ -21,7 +21,5 @@ For more details on the number types of \leda we refer to the \leda manual \cgal
 class leda_bigfloat {
 public:
 
-/// @}
-
 }; /* end leda_bigfloat */
 

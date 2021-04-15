@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Mariette Yvinec
@@ -88,7 +79,7 @@ public:
 
    // For use by Compact_container.
   void * for_compact_container() const {return N[0].for_compact_container(); }
-  void * & for_compact_container()     { return N[0].for_compact_container();}
+  void for_compact_container(void* p) { N[0].for_compact_container(p);}
 
 
   static int ccw(int i) {return Triangulation_cw_ccw_2::ccw(i);}
@@ -279,9 +270,9 @@ inline void
 Triangulation_ds_face_base_2<TDS> ::
 set_neighbors(Face_handle n0,Face_handle n1, Face_handle n2)
 {
-  CGAL_triangulation_precondition( this != &*n0 );
-  CGAL_triangulation_precondition( this != &*n1 );
-  CGAL_triangulation_precondition( this != &*n2 );
+  CGAL_triangulation_precondition( this != n0.operator->() );
+  CGAL_triangulation_precondition( this != n1.operator->() );
+  CGAL_triangulation_precondition( this != n2.operator->() );
   N[0] = n0;
   N[1] = n1;
   N[2] = n2;

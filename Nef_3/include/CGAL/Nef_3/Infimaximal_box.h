@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Peter Hachenberger    <hachenberger@mpi-sb.mpg.de>
@@ -384,24 +375,24 @@ class Infimaximal_box<Tag_true, Kernel> {
     C.create_vertices_of_box_with_plane(h, b);
   }
 
-  static void compute_min_max(const Plane_3& h, NT orth_coords[3], int& min, int& max) {
+  static void compute_min_max(const Plane_3& h, NT orth_coords[3], int& cmin, int& cmax) {
     Vector_3 orth = h.orthogonal_vector();
 
     orth_coords[0] = CGAL_NTS abs(orth.hx()[0]);
     orth_coords[1] = CGAL_NTS abs(orth.hy()[0]);
     orth_coords[2] = CGAL_NTS abs(orth.hz()[0]);
 
-    max = 0;
+    cmax = 0;
     if(orth_coords[1] > orth_coords[0])
-      max = 1;
-    if(orth_coords[2] > orth_coords[max])
-      max = 2;
+      cmax = 1;
+    if(orth_coords[2] > orth_coords[cmax])
+      cmax = 2;
 
-    min = 0;
+    cmin = 0;
     if(orth_coords[1] < orth_coords[0])
-      min = 1;
-    if(orth_coords[2] < orth_coords[min])
-      min = 2;
+      cmin = 1;
+    if(orth_coords[2] < orth_coords[cmin])
+      cmin = 2;
   }
 
   template<typename SNC_structure>

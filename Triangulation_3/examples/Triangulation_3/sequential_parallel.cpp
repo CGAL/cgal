@@ -52,7 +52,7 @@ int main()
   ParallelTriangulation T(V.begin(), V.end(), &locking_ds);
   t.stop();
   std::cerr << "Parallel construction takes " << t.time() << " sec. with "
-            << tbb::task_scheduler_init::default_num_threads() << " threads" << std::endl;
+            << std::thread::hardware_concurrency()  << " threads" << std::endl;
 #endif
 
   return 0;

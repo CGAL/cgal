@@ -83,7 +83,7 @@ r"""namespace CGAL {
 \anchor Chapter_PACKAGE_NAME
 \anchor chaptermine
 \cgalAutoToc
-\author AUTHOR1, AUTHOR2
+\author AUTHOR1, AUTHOR2, and AUTHOR3
 
 This chapter describes the ...
 
@@ -96,6 +96,12 @@ Section on definitions here ...
 \subsection myFirstExample First Example
 
 The following example shows ...
+
+\cgalExample{ }
+
+\cgalFigureBegin{figPck,bench.png}
+Left: ...
+\cgalFigureEnd
 
 */
 } /* namespace CGAL */
@@ -118,12 +124,10 @@ if re.match("^[A-Za-z_][A-Za-z0-9_]*$", packagename):
         packagepath = packagename
 
     os.mkdir(packagepath)
-    open(os.path.join(packagepath, 'dont_submit'), 'w').close()
 
     inclpath = os.path.join(packagepath, 'include', 'CGAL', packagename)
     os.makedirs(inclpath)
 
-    os.mkdir(os.path.join(packagepath, 'src'))
 
     testpath = os.path.join(packagepath, 'test', packagename)
     os.makedirs(testpath)
@@ -134,23 +138,19 @@ if re.match("^[A-Za-z_][A-Za-z0-9_]*$", packagename):
     os.makedirs(expath)
     os.mkdir(os.path.join(expath, 'data'))
     os.mkdir(os.path.join(expath, 'include'))
-    open(os.path.join(expath, 'README'), 'w').close()
 
     demopath = os.path.join(packagepath, 'demo', packagename)
     os.makedirs(demopath)
     os.mkdir(os.path.join(demopath, 'data'))
     os.mkdir(os.path.join(demopath, 'include'))
-    open(os.path.join(demopath, 'README'), 'w').close()
 
     benpath = os.path.join(packagepath, 'benchmark', packagename)
     os.makedirs(benpath)
 
-    os.mkdir(os.path.join(packagepath, 'scripts'))
-    os.mkdir(os.path.join(packagepath, 'developer_scripts'))
 
     infopath = os.path.join(packagepath, 'package_info', packagename)
     os.makedirs(infopath)
-    open(os.path.join(infopath, 'copyright.txt'), 'w').close()
+    open(os.path.join(infopath, 'copyright'), 'w').close()
     open(os.path.join(infopath, 'description.txt'), 'w').close()
     open(os.path.join(infopath, 'license.txt'), 'w').close()
     open(os.path.join(infopath, 'long_description.txt'), 'w').close()

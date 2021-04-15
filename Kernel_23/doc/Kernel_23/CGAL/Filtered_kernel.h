@@ -42,8 +42,6 @@ orientation(p,q,r); // exact
 template< typename CK >
 struct Filtered_kernel_adaptor {
 
-/// @}
-
 }; /* end Filtered_kernel_adaptor */
 } /* end namespace CGAL */
 

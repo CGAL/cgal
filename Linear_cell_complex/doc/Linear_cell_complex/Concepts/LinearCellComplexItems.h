@@ -19,7 +19,5 @@ The first type in `Attributes` tuple must be a model of the `CellAttributeWithPo
 class LinearCellComplexItems {
 public:
 
-/// @}
-
 }; /* end LinearCellComplexItems */
 

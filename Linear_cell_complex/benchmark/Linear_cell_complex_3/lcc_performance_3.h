@@ -49,7 +49,7 @@ struct MyItem
 
     typedef CGAL::Cell_attribute<Refs, Info_for_volume, CGAL::Tag_true> Vol_attribute;
 
-    typedef CGAL::cpp0x::tuple<Vertex_attribute, void, void, Vol_attribute> Attributes;
+    typedef std::tuple<Vertex_attribute, void, void, Vol_attribute> Attributes;
   };
 };
 
@@ -68,7 +68,7 @@ struct MyItem
 
     typedef CGAL::Cell_attribute_for_index<Refs, Info_for_volume, CGAL::Tag_true> Vol_attribute;
 
-    typedef CGAL::cpp0x::tuple<Vertex_attribute, void, void, Vol_attribute> Attributes;
+    typedef std::tuple<Vertex_attribute, void, void, Vol_attribute> Attributes;
   };
 };
 
@@ -319,7 +319,7 @@ private:
 
   Dart_handle getShortestEdge()
   {
-    double weight = std::numeric_limits<double>::max();
+    double weight = (std::numeric_limits<double>::max)();
     Dart_handle dart = lcc.null_dart_handle;
 
     int m=lcc.get_new_mark();

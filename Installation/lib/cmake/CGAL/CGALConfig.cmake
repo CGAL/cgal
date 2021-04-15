@@ -1,4 +1,4 @@
-# 
+#
 # This file is the CGALConfig.cmake for a header-only CGAL installation
 #
 
@@ -47,6 +47,9 @@ else()
   if(NOT _has_installation_dirs)
     set(CGAL_ROOT ${CGAL_CONFIG_DIR})
     get_filename_component(CGAL_ROOT "${CGAL_ROOT}" DIRECTORY)
+    if(NOT EXISTS ${CGAL_ROOT}/include/CGAL/config.h)
+      get_filename_component(CGAL_ROOT "${CGAL_ROOT}" DIRECTORY)
+    endif()
     if(NOT EXISTS ${CGAL_ROOT}/include/CGAL/config.h)
       get_filename_component(CGAL_ROOT "${CGAL_ROOT}" DIRECTORY)
     endif()
@@ -143,13 +146,11 @@ foreach(cgal_lib ${CGAL_LIBRARIES})
     if(NOT TARGET CGAL::${cgal_lib})
       add_library(CGAL::${cgal_lib} ALIAS ${cgal_lib})
     endif()
-    if(${cgal_lib} STREQUAL CGAL)
-      target_compile_definitions(CGAL INTERFACE CGAL_HEADER_ONLY=1)
-    endif()
     CGAL_setup_target_dependencies(${cgal_lib} INTERFACE)
   endif()
 endforeach()
 
+include(${CGAL_CONFIG_DIR}/CGALConfigVersion.cmake)
 
 #
 #
@@ -161,13 +162,9 @@ cgal_setup_module_path()
 set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_target_use_TBB.cmake)
 
-include("${CGAL_MODULES_DIR}/CGAL_parse_version_h.cmake")
-cgal_parse_version_h( "${CGAL_INSTALLATION_PACKAGE_DIR}/include/CGAL/version.h"
-  "CGAL_VERSION_NAME"
-  "CGAL_MAJOR_VERSION"
-  "CGAL_MINOR_VERSION"
-  "CGAL_BUGFIX_VERSION"
-  "CGAL_BUILD_VERSION")
-set(CGAL_VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUGFIX_VERSION}.${CGAL_BUILD_VERSION}")
+if( CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST )
+  # Do not use -isystem for CGAL include paths
+  set(CMAKE_NO_SYSTEM_FROM_IMPORTED TRUE)
+endif()
 
 include("${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake")

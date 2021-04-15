@@ -23,7 +23,5 @@ template< typename Kernel >
 class Straight_skeleton_builder_traits_2 {
 public:
 
-/// @}
-
 }; /* end Straight_skeleton_builder_traits_2 */
 } /* end namespace CGAL */

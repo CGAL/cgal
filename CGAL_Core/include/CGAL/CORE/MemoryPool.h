@@ -4,17 +4,6 @@
  * All rights reserved.
  *
  * This file is part of CGAL (www.cgal.org).
- * You can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- *
- * Licensees holding a valid commercial license may use this file in
- * accordance with the commercial license agreement provided with the
- * software.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * File: MemoryPool.h
  * Synopsis:
@@ -30,21 +19,13 @@
  *
  * $URL$
  * $Id$
- * SPDX-License-Identifier: LGPL-3.0+
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
 #ifndef _CORE_MEMORYPOOL_H_
 #define _CORE_MEMORYPOOL_H_
 
 #include <CGAL/config.h>
 #include <CGAL/tss.h>
-#include <boost/config.hpp>
-#if CGAL_STATIC_THREAD_LOCAL_USE_BOOST || (defined(CGAL_HAS_THREADS) && BOOST_GCC)
-// Force the use of Boost.Thread with g++ and C++11, because of the PR66944
-//   https://gcc.gnu.org/bugzilla/show_bug.cgi?id=66944
-// See also CGAL PR #1888
-//   https://github.com/CGAL/cgal/pull/1888#issuecomment-278284232
-#  include <boost/thread/tss.hpp>
-#endif
 
 #include <new>           // for placement new
 #include <cassert>
@@ -84,6 +65,10 @@ public:
         ::operator delete(blocks[i]);
       }
     }
+    // un-commenting the following line can help reproduce on Linux the
+    // assertion !blocks.empty() that is sometimes triggered with MSVC
+    // or AppleClang
+    // blocks.clear();
   }
 
 
@@ -92,37 +77,18 @@ public:
 
   // Access the corresponding static global allocator.
   static MemoryPool<T,nObjects>& global_allocator() {
-#if CGAL_STATIC_THREAD_LOCAL_USE_BOOST || (defined(CGAL_HAS_THREADS) && BOOST_GCC)
-    if(memPool_ptr.get() == NULL) {memPool_ptr.reset(new Self());}
-    Self& memPool =  * memPool_ptr.get();
-#endif
+#if defined(CGAL_HAS_THREADS) // use the C++11 implementation
+    static thread_local Self memPool;
+#else // not CGAL_HAS_THREADS
+    static Self memPool;
+#endif // not CGAL_HAS_THREADS
     return memPool;
   }
 
 private:
    Thunk* head; // next available block in the pool
   std::vector<void*> blocks;
-
-#if CGAL_STATIC_THREAD_LOCAL_USE_BOOST || (defined(CGAL_HAS_THREADS) && BOOST_GCC)
-  static boost::thread_specific_ptr<Self> memPool_ptr;
-#elif defined(CGAL_HAS_THREADS) // use the C++11 implementation
-  static thread_local Self memPool;
-#else // not CGAL_HAS_THREADS
-  static Self memPool;
-#endif // not CGAL_HAS_THREADS
 };
-
-#if CGAL_STATIC_THREAD_LOCAL_USE_BOOST || (defined(CGAL_HAS_THREADS) && BOOST_GCC)
-template <class T, int nObjects >
-boost::thread_specific_ptr<MemoryPool<T, nObjects> >
-MemoryPool<T, nObjects>::memPool_ptr;
-#else // use C++11 or without CGAL_HAS_THREADS
-template <class T, int nObjects >
-#  ifdef CGAL_HAS_THREADS
-thread_local
-#  endif
-MemoryPool<T, nObjects> MemoryPool<T, nObjects>::memPool;
-#endif
 
 template< class T, int nObjects >
 void* MemoryPool< T, nObjects >::allocate(std::size_t) {

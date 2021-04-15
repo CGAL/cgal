@@ -1,20 +1,11 @@
 // Copyright (c) 2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri, Sylvain Pion
@@ -55,7 +46,7 @@ public:
   typedef const value_type*               pointer;
 
   Cartesian_coordinate_iterator_2()
-    : var((const P*) NULL), index(0) {}
+    : var((const P*) nullptr), index(0) {}
 
   Cartesian_coordinate_iterator_2(const P * const p, int _index = 0)
     : var(p), index(_index) {}

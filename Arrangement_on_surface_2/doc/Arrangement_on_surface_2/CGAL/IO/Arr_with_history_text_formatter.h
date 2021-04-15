@@ -26,7 +26,5 @@ template< typename ArrFormatter >
 class Arr_with_history_text_formatter {
 public:
 
-/// @}
-
 }; /* end Arr_with_history_text_formatter */
 } /* end namespace CGAL */

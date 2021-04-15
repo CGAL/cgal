@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Frank Da, Julia Floetotto
 
@@ -99,22 +90,29 @@ natural_neighbors_2(const Dt& dt,
     Point_2 p1(v1->point()), p2(v2->point());
 
     Coord_type coef1(0);
-    Coord_type coef2(0);
     Equal_x_2 equal_x_2;
     if(!equal_x_2(p1,p2))
-    {
       coef1 = (p.x() - p2.x()) / (p1.x() - p2.x());
-      coef2 = 1 - coef1;
-      *out++ = std::make_pair(v1,coef1);
-      *out++ = std::make_pair(v2,coef2);
-    } else {
+    else
       coef1 = (p.y() - p2.y()) / (p1.y() - p2.y());
-      coef2 = 1 - coef1;
-      *out++ = std::make_pair(v1,coef1);
-      *out++ = std::make_pair(v2,coef2);
+
+    if(coef1 == 0)
+    {
+      *out++ = std::make_pair(v2, Coord_type(1));
+      return make_triple(out, Coord_type(1), true);
     }
 
-    return make_triple(out, coef1+coef2, true);
+    Coord_type coef2 = 1 - coef1;
+    if(coef2 == 0)
+    {
+      *out++ = std::make_pair(v1, Coord_type(1));
+      return make_triple(out, Coord_type(1), true);
+    }
+
+    *out++ = std::make_pair(v1,coef1);
+    *out++ = std::make_pair(v2,coef2);
+
+    return { out, coef1+coef2, true };
   }
 
   if (lt == Dt::VERTEX)
@@ -124,7 +122,7 @@ natural_neighbors_2(const Dt& dt,
   }
 
   std::list<Edge> hole;
-  dt.get_boundary_of_conflicts(p, std::back_inserter(hole), fh, false);
+  dt.get_boundary_of_conflicts(p, std::back_inserter(hole), fh);
 
   return natural_neighbors_2(dt, p, out, hole.begin(), hole.end());
 }
@@ -142,6 +140,7 @@ natural_neighbors_2(const Dt& dt,
                     EdgeIterator hole_begin, EdgeIterator hole_end)
 {
   CGAL_precondition(dt.dimension() == 2);
+
   typedef typename Dt::Geom_traits       Traits;
   typedef typename Traits::FT            Coord_type;
   typedef typename Traits::Point_2       Point_2;
@@ -187,8 +186,12 @@ natural_neighbors_2(const Dt& dt,
                                                                 p);
 
     area += polygon_area_2(vor.begin(), vor.end(), dt.geom_traits());
-    *out++ = std::make_pair(current,area);
-    area_sum += area;
+
+    if(area > 0)
+    {
+      *out++ = std::make_pair(current,area);
+      area_sum += area;
+    }
 
     //update prev and hit:
     prev = current;

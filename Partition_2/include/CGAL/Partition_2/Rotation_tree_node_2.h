@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
@@ -45,8 +36,9 @@ namespace CGAL {
 template <class Traits> class Rotation_tree_2;
 
 template <class Traits>
-class Rotation_tree_node_2 : public Traits::Point_2
+class Rotation_tree_node_2
 {
+  typename Traits::Point_2 point;
 public:
 
    typedef typename Traits::Point_2          Base_point;
@@ -56,13 +48,16 @@ public:
    typedef std::pair<Tree_iterator, bool>    Node_ref;
 
 
-   Rotation_tree_node_2(Base_point p) : Base_point(p)
+   Rotation_tree_node_2(Base_point p) : point(p)
    {
       _parent.second = false;
       _left_sibling.second = false;
       _right_sibling.second = false;
       _rightmost_child.second = false;
    }
+
+   operator Base_point() const
+   { return point;}
 
    bool has_left_sibling() const
    {  return _left_sibling.second; }

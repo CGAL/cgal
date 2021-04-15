@@ -23,7 +23,5 @@ template< typename FieldNumberType >
 class Cartesian_d {
 public:
 
-/// @}
-
 }; /* end Cartesian_d */
 } /* end namespace CGAL */

@@ -22,8 +22,8 @@ int main()
   input >> mesh;
   input.close();
 
-  BOOST_FOREACH(Triangle_mesh::Vertex_index v1, vertices(mesh))
-    BOOST_FOREACH(Triangle_mesh::Vertex_index v2, vertices(mesh))
+  for (Triangle_mesh::Vertex_index v1 : vertices(mesh))
+    for (Triangle_mesh::Vertex_index v2 : vertices(mesh))
     {
       Surface_mesh_shortest_path shortest_paths(mesh);
       shortest_paths.add_source_point(v1);

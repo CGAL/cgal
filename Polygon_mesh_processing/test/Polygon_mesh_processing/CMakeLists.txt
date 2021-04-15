@@ -1,21 +1,11 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Polygon_mesh_processing_Tests )
 
-
-cmake_minimum_required(VERSION 3.1)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
-endif()
-
-
 # CGAL and its components
-find_package( CGAL QUIET COMPONENTS  )
+find_package( CGAL QUIET COMPONENTS Core)
 
 if ( NOT CGAL_FOUND )
 
@@ -23,6 +13,8 @@ if ( NOT CGAL_FOUND )
   return()
 
 endif()
+
+include(${CGAL_USE_FILE})
 
 # Boost and its components
 find_package( Boost REQUIRED )
@@ -39,21 +31,26 @@ endif()
 
 # include for local package
 find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
+include(CGAL_Eigen3_support)
 
 find_package( TBB )
+include(CGAL_TBB_support)
 
-if (EIGEN3_FOUND)
-  include( ${EIGEN3_USE_FILE} )
-
+if (TARGET CGAL::Eigen3_support)
   # Creating entries for all .cpp/.C files with "main" routine
   # ##########################################################
   create_single_source_cgal_program("fairing_test.cpp")
+  target_link_libraries(fairing_test PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("triangulate_hole_Polyhedron_3_no_delaunay_test.cpp" )
+  target_link_libraries(triangulate_hole_Polyhedron_3_no_delaunay_test PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("triangulate_hole_Polyhedron_3_test.cpp")
-endif(EIGEN3_FOUND)
+  target_link_libraries(triangulate_hole_Polyhedron_3_test PUBLIC CGAL::Eigen3_support)
+  create_single_source_cgal_program("test_shape_smoothing.cpp")
+  target_link_libraries(test_shape_smoothing PUBLIC CGAL::Eigen3_support)
+
+endif()
 
 find_package( OpenMesh QUIET )
-
 if ( OpenMesh_FOUND )
   include( UseOpenMesh )
 else()
@@ -94,14 +91,24 @@ endif()
   create_single_source_cgal_program("test_orient_cc.cpp")
   create_single_source_cgal_program("test_pmp_transform.cpp")
   create_single_source_cgal_program("extrude_test.cpp")
+  create_single_source_cgal_program("test_split_volume.cpp")
   create_single_source_cgal_program("test_merging_border_vertices.cpp")
   create_single_source_cgal_program("test_repair_polygon_soup.cpp")
   create_single_source_cgal_program("test_shape_predicates.cpp")
   create_single_source_cgal_program("test_pmp_collision_detection.cpp")
+  create_single_source_cgal_program("test_pmp_locate.cpp")
+  create_single_source_cgal_program("test_pmp_snapping.cpp")
+  create_single_source_cgal_program("test_pmp_non_conforming_snapping.cpp")
+  create_single_source_cgal_program("test_pmp_repair_degeneracies.cpp")
   create_single_source_cgal_program("test_pmp_manifoldness.cpp")
+  create_single_source_cgal_program("test_mesh_smoothing.cpp")
+  create_single_source_cgal_program("test_remove_caps_needles.cpp")
+#  create_single_source_cgal_program("test_pmp_repair_self_intersections.cpp")
 
-  if( TBB_FOUND )
-    CGAL_target_use_TBB(test_pmp_distance)
+  if( TARGET CGAL::TBB_support )
+    target_link_libraries(test_pmp_distance PUBLIC CGAL::TBB_support)
+    target_link_libraries(orient_polygon_soup_test PUBLIC CGAL::TBB_support)
+    target_link_libraries(self_intersection_surface_mesh_test PUBLIC CGAL::TBB_support)
   else()
     message( STATUS "NOTICE: Intel TBB was not found. test_pmp_distance will use sequential code." )
   endif()
@@ -110,6 +117,15 @@ if(OpenMesh_FOUND)
   create_single_source_cgal_program("remeshing_test_P_SM_OM.cpp" )
   target_link_libraries( remeshing_test_P_SM_OM PRIVATE ${OPENMESH_LIBRARIES} )
 endif()
+
+find_package(Ceres QUIET)
+if(TARGET ceres AND TARGET CGAL::Eigen3_support)
+  target_compile_definitions( test_mesh_smoothing PRIVATE CGAL_PMP_USE_CERES_SOLVER )
+  target_link_libraries( test_mesh_smoothing PUBLIC CGAL::Eigen3_support PRIVATE ceres )
+
+#  target_compile_definitions( test_pmp_repair_self_intersections PRIVATE CGAL_PMP_USE_CERES_SOLVER )
+#  target_link_libraries( test_pmp_repair_self_intersections PRIVATE ceres )
+endif(TARGET ceres AND TARGET CGAL::Eigen3_support)
 
 if(BUILD_TESTING)
   set_tests_properties(

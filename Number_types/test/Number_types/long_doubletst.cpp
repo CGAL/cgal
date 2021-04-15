@@ -1,4 +1,6 @@
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
+#include <CGAL/long_double.h>
+#include <CGAL/number_utils.h>
 #include <CGAL/Interval_nt.h>
 
 #include <CGAL/disable_warnings.h>

@@ -34,11 +34,16 @@ and has then to be also a model of the concept
 \tparam Tds must be a model of `TriangulationDataStructure_2`or `Default`.
 
 \tparam Itag allows to select if intersecting constraints are supported and how they are handled.
-- `No_intersection_tag` if intersections of
-input constraints are disallowed,
+- `No_constraint_intersection_tag` if intersections of
+input constraints are disallowed, except for the configuration of a single common extremity;
+- `No_constraint_intersection_requiring_constructions_tag` if intersections of
+input constraints are disallowed, except if no actual construction is needed to represent the intersection.
+For example, if two constraints intersect in a 'T'-like junction, the intersection point is one of
+the constraints' extremity and as such, no construction is in fact needed. Other similar configurations include
+overlapping segments, common extremities, or equal constraints.
 - `Exact_predicates_tag` allows intersections between input
 constraints and is to be used when the traits class provides exact
-predicates but approximate constructions of the intersection points,
+predicates but approximate constructions of the intersection points;
 - `Exact_intersections_tag` allows intersections between input
 constraints and is to be used in conjunction with an exact arithmetic
 type.
@@ -71,7 +76,7 @@ the default for
 and the default for the
 triangulation data structure parameter is the class
 `Triangulation_data_structure_2< CGAL::Triangulation_vertex_base_2<Gt>, Constrained_triangulation_face_base_2<Gt> >`.
-The default intersection tag is `No_intersection_tag`.
+The default intersection tag is `No_constraint_intersection_requiring_constructions_tag`.
 
 \cgalHeading{Types}
 

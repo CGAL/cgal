@@ -1,21 +1,11 @@
 // Copyright (c) 2005-2008 ASCLEPIOS Project, INRIA Sophia-Antipolis (France)
 // All rights reserved.
 //
-// This file is part of the ImageIO Library, and as been adapted for
-// CGAL (www.cgal.org).
-// You can redistribute it and/or  modify it under the terms of the
-// GNU Lesser General Public License as published by the Free Software Foundation;
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// These files are provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of the ImageIO Library, and as been adapted for CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later
 //
 //
 // Author(s)     :  ASCLEPIOS Project (INRIA Sophia-Antipolis), Laurent Rineau
@@ -741,8 +731,8 @@ int readSingleImageBMP(FILE *fp, RGB **argb, CGAL_UINT32 *width, CGAL_UINT32 *he
 {
     Bitmapfileheader  bfh;
     BITMAPHEADER      bh;
-    RGB              *colorTable = (RGB*)NULL;
-    RGB              *image = (RGB*)NULL;
+    RGB              *colorTable = (RGB*)nullptr;
+    RGB              *image = (RGB*)nullptr;
     int               rc, depth, inverted;
     int               numColors;
     long              numPixels, endPos;
@@ -817,7 +807,7 @@ int readSingleImageBMP(FILE *fp, RGB **argb, CGAL_UINT32 *width, CGAL_UINT32 *he
     {
         numColors = 1 << depth;
         colorTable = (RGB *)calloc(numColors, sizeof(RGB));
-        if (colorTable == NULL)
+        if (colorTable == nullptr)
             return 1003;
         if (bh.size <= 12)
             rc = readColorTable(fp, colorTable, numColors, 3);
@@ -842,7 +832,7 @@ int readSingleImageBMP(FILE *fp, RGB **argb, CGAL_UINT32 *width, CGAL_UINT32 *he
      */
     numPixels = bh.width * bh.height;
     image = (RGB *)calloc(numPixels, sizeof(RGB));
-    if (image == NULL)
+    if (image == nullptr)
     {
         free (colorTable);
         return 1004;
@@ -896,7 +886,7 @@ int readSingleImageBMP(FILE *fp, RGB **argb, CGAL_UINT32 *width, CGAL_UINT32 *he
      * is because we're returning an array of RGB values for the image - such
      * a table would be redundant.
      */
-    if (colorTable != NULL)
+    if (colorTable != nullptr)
         free(colorTable);
 
     return 0;
@@ -982,10 +972,10 @@ int readSingleImageICOPTR(FILE *fp, char **xorMask, char **andMask,
      */
     numPixels = bh.width * bh.height / 2;
     mask1 = (char *)malloc(numPixels);
-    if (mask1 == NULL)
+    if (mask1 == nullptr)
         return 1004;
     mask2 = (char *)malloc(numPixels);
-    if (mask2 == NULL)
+    if (mask2 == nullptr)
     {
         free(mask1);
         return 1004;
@@ -1094,12 +1084,12 @@ int readSingleImageColorICOPTR(FILE *fp, RGB **argb, char **xorMask,
  * readMultipleImage runs down the list of images in a file and returns them
  * all.  ImageCount is the number of images in the file.  The other returned
  * values are parallel arrays.  If an element in aargb, axorMask, or aandMask
- * is NULL, then that image has no such array.  (Bitmaps have no xor or and
+ * is nullptr, then that image has no such array.  (Bitmaps have no xor or and
  * masks, monochrome icons have no color arrays.
  *
  * Note that on errors other than 1000 and 1005, the arrays will contain good
  * data - the images that have been read properly will be in the arrays.
- * Images that have not yet been read will consist of NULL pointers in the
+ * Images that have not yet been read will consist of nullptr pointers in the
  * arrays.
  */
 CGAL_INLINE_FUNCTION
@@ -1135,23 +1125,23 @@ int readMultipleImage(FILE *fp, RGB ***argbs, char ***xorMasks,
      * Allocate the arrays.  Return 1005 on any failures
      */
     *argbs = (RGB **)calloc(count, sizeof(RGB *));
-    if (*argbs == NULL)
+    if (*argbs == nullptr)
         return 1005;
     *xorMasks = (char **)calloc(count, sizeof(char *));
-    if (*xorMasks == NULL)
+    if (*xorMasks == nullptr)
     {
         free(*argbs);
         return 1005;
     }
     *andMasks = (char **)calloc(count, sizeof(char *));
-    if (*andMasks == NULL)
+    if (*andMasks == nullptr)
     {
         free(*argbs);
         free(*xorMasks);
         return 1005;
     }
     *widths = (CGAL_UINT32 *)calloc(count, sizeof(CGAL_UINT32));
-    if (*widths == NULL)
+    if (*widths == nullptr)
     {
         free(*argbs);
         free(*xorMasks);
@@ -1159,7 +1149,7 @@ int readMultipleImage(FILE *fp, RGB ***argbs, char ***xorMasks,
         return 1005;
     }
     *heights = (CGAL_UINT32 *)calloc(count, sizeof(CGAL_UINT32));
-    if (*heights == NULL)
+    if (*heights == nullptr)
     {
         free(*argbs);
         free(*xorMasks);

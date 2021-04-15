@@ -19,7 +19,5 @@ capable of storing equations of lines.
 class AlgebraicKernelForSpheres::PolynomialsForLines_3 {
 public:
 
-/// @}
-
 }; /* end AlgebraicKernelForSpheres::PolynomialsForLines_3 */
 

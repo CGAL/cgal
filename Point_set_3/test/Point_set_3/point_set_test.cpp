@@ -13,7 +13,7 @@ typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 
 typedef CGAL::Point_set_3<Point> Point_set;
-typedef CGAL::cpp11::array<unsigned char, 3> Color;
+typedef std::array<unsigned char, 3> Color;
 
 std::size_t nb_test = 0;
 std::size_t nb_success = 0;
@@ -105,6 +105,11 @@ int main (int, char**)
 
   point_set.add_property_map<int> ("label", 0);
   point_set.add_property_map<double> ("intensity", 0.0);
+
+  auto pnt = point_set.properties_and_types();
+  std::cerr << "Properties = " << std::endl;
+  for (const auto& p : pnt)
+    std::cerr << " * " << p.first << " with type " << p.second.name() << std::endl;
 
   test (point_set.base().n_properties() == 4, "point set should have 4 properties.");
 

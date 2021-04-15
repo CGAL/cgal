@@ -4,17 +4,6 @@
  * All rights reserved.
  *
  * This file is part of CGAL (www.cgal.org).
- * You can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- *
- * Licensees holding a valid commercial license may use this file in
- * accordance with the commercial license agreement provided with the
- * software.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * File: Poly.h
  *
@@ -52,7 +41,7 @@
  *
  * $URL$
  * $Id$
- * SPDX-License-Identifier: LGPL-3.0+
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
 
 #ifndef CORE_POLY_H
@@ -178,7 +167,7 @@ public:
   const NT & getTailCoeff() const;      // get last non-zero coefficient
   NT** getCoeffs() ;                // get all coefficients
   const NT& getCoeff(int i) const;      // Get single coefficient of X^i
-                                        // NULL pointer if invalid i
+                                        // nullptr pointer if invalid i
   // Set functions
   bool setCoeff(int i, const NT & cc);  // Make cc the coefficient of X^i
                                         // Return FALSE if invalid i
@@ -263,6 +252,7 @@ public:
 template < class NT >
 CORE_INLINE
 const Polynomial<NT> & Polynomial<NT>::polyZero() {
+  init_CORE();
   CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Polynomial<NT>, zeroP);
   return zeroP;
 }
@@ -270,6 +260,7 @@ const Polynomial<NT> & Polynomial<NT>::polyZero() {
 template < class NT >
 CORE_INLINE
 const Polynomial<NT> & Polynomial<NT>::polyUnity() {
+  init_CORE();
   static const NT c[] = {1};
   CGAL_STATIC_THREAD_LOCAL_VARIABLE_2(Polynomial<NT>, unityP, 0, c);
   return unityP;
@@ -407,7 +398,7 @@ NT** Polynomial<NT>::getCoeffs() {
 template < class NT >
 CORE_INLINE
 const NT& Polynomial<NT>::getCoeff(int i) const {
-  //if (i > degree) return NULL;
+  //if (i > degree) return nullptr;
   CGAL_assertion(i <= degree);
   return coeff[i];
 }

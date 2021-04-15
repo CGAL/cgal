@@ -31,7 +31,7 @@ int main()
     face_proxy_map(fpxmap)); // output face-proxy map
 
   // iterates over faces and outputs segment id to console
-  BOOST_FOREACH(face_descriptor f, faces(mesh))
+  for(face_descriptor f : faces(mesh))
     std::cout << fpxmap[f] << std::endl;
 
   return EXIT_SUCCESS;

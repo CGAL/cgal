@@ -2,9 +2,9 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Convex_hull_2_Examples )
 
-cmake_minimum_required(VERSION 3.1)
 
 find_package(CGAL QUIET)
 

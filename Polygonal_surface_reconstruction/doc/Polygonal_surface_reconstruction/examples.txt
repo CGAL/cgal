@@ -1,0 +1,6 @@
+/*!
+\example Polygonal_surface_reconstruction/polyfit_example_without_input_planes.cpp
+\example Polygonal_surface_reconstruction/polyfit_example_user_provided_planes.cpp
+\example Polygonal_surface_reconstruction/polyfit_example_model_complexty_control.cpp
+\example Polygonal_surface_reconstruction/polyfit_example_with_region_growing.cpp
+*/

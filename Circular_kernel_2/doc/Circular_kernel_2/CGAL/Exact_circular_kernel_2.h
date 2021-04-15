@@ -17,7 +17,5 @@ geometric filtering (based on bounding boxes) to gain efficiency.
 class Exact_circular_kernel_2 {
 public:
 
-/// @}
-
 }; /* end Exact_circular_kernel_2 */
 } /* end namespace CGAL */

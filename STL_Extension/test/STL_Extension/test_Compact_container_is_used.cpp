@@ -15,7 +15,7 @@ public:
   {}
 
   void *   for_compact_container() const { return p_cc; }
-  void * & for_compact_container()       { return p_cc; }
+  void for_compact_container(void *p) { p_cc = p; }
 };
 
 int main()

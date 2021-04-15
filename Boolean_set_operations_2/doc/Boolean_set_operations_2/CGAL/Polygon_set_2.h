@@ -26,7 +26,5 @@ template< typename Kernel, typename Container, typename Dcel >
 class Polygon_set_2 : public General_polygon_set_2<Gps_segment_traits_2<Kernel,Container> > {
 public:
 
-/// @}
-
 }; /* end Polygon_set_2 */
 } /* end namespace CGAL */

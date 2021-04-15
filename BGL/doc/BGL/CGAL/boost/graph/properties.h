@@ -1,5 +1,5 @@
-/// Boost Namespace
-namespace boost {
+/// CGAL Namespace
+namespace CGAL {
 
 /// \ingroup PkgBGLProperties
 /// @{
@@ -34,9 +34,6 @@ enum face_index_t { face_index };
 enum vertex_point_t { vertex_point };
 
 /// @}
-} // namespace boost
-
-namespace CGAL {
 
 /// \ingroup PkgBGLProperties
 ///

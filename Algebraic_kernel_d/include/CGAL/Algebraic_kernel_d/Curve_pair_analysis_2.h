@@ -1,20 +1,11 @@
 // Copyright (c) 2006-2009 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
@@ -1435,13 +1426,9 @@ compute_event_x_coordinates_with_event_indices() const {
                 CGAL_ACK_DEBUG_PRINT << " one curve event" << std::endl;
 #endif
 */
-#if CGAL_CXX11
             // Fix a warning by using `emplace_back()` instead of
             // copying a non-initialized `optional
             this->ptr()->event_slices.emplace_back();
-#else
-            this->ptr()->event_slices.push_back(Lazy_status_line_CPA_1());
-#endif
             switch(*(one_curve_it++)) {
             case(CGAL::internal::ROOT_OF_FIRST_SET): {
                 event_indices.push_back(Event_indices(-1,f_count,-1));
@@ -1468,11 +1455,7 @@ compute_event_x_coordinates_with_event_indices() const {
             CGAL_ACK_DEBUG_PRINT << " two curve event" << std::endl;
 #endif
 */
-#if CGAL_CXX11
             this->ptr()->event_slices.emplace_back();
-#else
-            this->ptr()->event_slices.push_back(Lazy_status_line_CPA_1());
-#endif
 
             event_indices.push_back
                 (Event_indices(inter_count,-1,-1));
@@ -1486,12 +1469,7 @@ compute_event_x_coordinates_with_event_indices() const {
                                      << std::endl;
 #endif
 */
-#if CGAL_CXX11
             this->ptr()->event_slices.emplace_back();
-#else
-            this->ptr()->event_slices.push_back(Lazy_status_line_CPA_1());
-#endif
-
 
             switch(*(one_curve_it++)) {
             case(CGAL::internal::ROOT_OF_FIRST_SET): {

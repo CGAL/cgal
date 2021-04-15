@@ -4,15 +4,6 @@
 // All rights reserved.
 //
 // This file is part of EXACUS (http://www.mpi-inf.mpg.de/projects/EXACUS/).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // ----------------------------------------------------------------------------
 //
@@ -21,7 +12,7 @@
 // SoX_release   : $Name:  $
 // Revision      : $Revision: 1.12 $
 // Revision_date : $Date: 2009-06-30 13:14:58 $
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-inf.mpg.de>
 //
@@ -479,7 +470,7 @@ void xAlci_main_window::setup(int w, int h)
     tab_widget->addTab(cad_tab,"cad");
     tab_widget->addTab(arr_tab,"arrangement");
 
-    *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor(CGAL::WHITE);
+    *widget << CGAL::LineWidth(2) << CGAL::BackgroundColor(CGAL::white());
     resize(w,h);
     double ratio = 1.0;//(double)h/w;
     widget->set_window(-1, 1, -ratio, ratio, true);

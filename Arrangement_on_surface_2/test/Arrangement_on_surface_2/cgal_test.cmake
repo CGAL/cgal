@@ -70,7 +70,11 @@ set(CGAL_GMPZ_NT 14)
 set(CORE_INT_NT 15)
 set(CORE_RAT_NT 16)
 
-if($ENV{CGAL_DISABLE_GMP})
+if(CGAL_DISABLE_GMP)
+  set(CGAL_DISABLE_GMP ON)
+endif()
+
+if(CGAL_DISABLE_GMP)
   message(STATUS "GMP is disable. Try to use LEDA instead.")
   set(GMPZ_NT ${LEDA_INT_NT})
   set(QUOTIENT_CGAL_GMPZ_NT ${LEDA_RAT_NT})
@@ -895,7 +899,7 @@ endfunction()
 #---------------------------------------------------------------------#
 function(test_polycurve_conic_traits)
 #  echo polycurve test starting
-  if($ENV{CGAL_DISABLE_GMP})
+  if(CGAL_DISABLE_GMP)
     MESSAGE(STATUS "test_polycurve_conic_traits requires CORE and will not be executed")
     return()
   endif()
@@ -907,7 +911,7 @@ function(test_polycurve_conic_traits)
   compile_test_with_flags(test_traits conic_polycurve "${flags}")
 
   # The input arguments for the execute_commands_new_structure,
-  # 1. Polycurve_conics is the directory name in "data"
+  # 1. polycurve_conics is the directory name in "data"
   # 2. polycurve_conic_traits is a string
   # Execute_command_new_structure will only run the test on functors provided as the third, fourth and so on arguments.
   # To see how the input data directory should be structured for each functor, check the execute_commands_new_structure function in this file.
@@ -943,7 +947,7 @@ function(test_polycurve_circular_arc_traits)
 
   compile_test_with_flags(test_traits circular_arc_polycurve "${flags}")
 
-  execute_commands_new_structure(Polycurves_circular_arcs polycurve_circular_arc_traits
+  execute_commands_new_structure(polycurves_circular_arcs polycurve_circular_arc_traits
     COMPARE_Y_AT_X
     EQUAL
     IS_VERTICAL
@@ -966,7 +970,7 @@ endfunction()
 # polycurve bezier traits
 #---------------------------------------------------------------------#
 function(test_polycurve_bezier_traits)
-  if($ENV{CGAL_DISABLE_GMP})
+  if(CGAL_DISABLE_GMP)
     MESSAGE(STATUS "test_polycurve_bezier_traits requires CORE and will not be executed")
     return()
   endif()
@@ -977,7 +981,7 @@ function(test_polycurve_bezier_traits)
 
   compile_test_with_flags(test_traits bezier_polycurve "${flags}")
 
-  execute_commands_new_structure(Polycurves_bezier test_polycurve_bezier_traits
+  execute_commands_new_structure(polycurves_bezier test_polycurve_bezier_traits
     MERGE
     EQUAL
     IS_VERTICAL
@@ -1075,7 +1079,7 @@ endfunction()
 # conic traits
 #---------------------------------------------------------------------#
 function(test_conic_traits)
-  if($ENV{CGAL_DISABLE_GMP})
+  if(CGAL_DISABLE_GMP)
     MESSAGE(STATUS "test_conic_traits requires CORE and will not be executed")
     return()
   endif()
@@ -1206,7 +1210,7 @@ endfunction()
 # bezier traits
 #---------------------------------------------------------------------#
 function(test_bezier_traits)
-  if($ENV{CGAL_DISABLE_GMP})
+  if(CGAL_DISABLE_GMP)
     MESSAGE(STATUS "test_bezier_traits requires CORE and will not be executed")
     return()
   endif()
@@ -1253,7 +1257,7 @@ endfunction()
 # rational arc traits
 #---------------------------------------------------------------------#
 function(test_rational_arc_traits)
-  if($ENV{CGAL_DISABLE_GMP})
+  if(CGAL_DISABLE_GMP)
     MESSAGE(STATUS "test_rational_arc_traits requires CORE and will not be executed")
     return()
   endif()
@@ -1278,7 +1282,10 @@ endfunction()
 #---------------------------------------------------------------------#
 function(test_algebraic_traits_gmp)
   #TODO: Adapt
-
+  if(CGAL_DISABLE_GMP)
+    MESSAGE(STATUS "test_traits_algebraic_traits_gmp requires GMP and will not be executed")
+    return()
+  endif()
   set(nt ${CGAL_GMPZ_NT})
   set(kernel ${UNIVARIATE_ALGEBRAIC_KERNEL})
   set(geom_traits ${ALGEBRAIC_GEOM_TRAITS})
@@ -1317,7 +1324,7 @@ endfunction()
 #---------------------------------------------------------------------#
 function(test_algebraic_traits_core)
   #TODO: Adapt
-  if($ENV{CGAL_DISABLE_GMP})
+  if(CGAL_DISABLE_GMP)
     MESSAGE(STATUS "test_algebraic_traits_core requires CORE and will not be executed")
     return()
   endif()
@@ -1415,3 +1422,11 @@ compile_and_run(test_spherical_removal)
 compile_and_run(test_io)
 
 compile_and_run(test_sgm)
+
+compile_and_run(test_polycurve_intersection)
+if(CGAL_DISABLE_GMP)
+  get_directory_property(LIST_OF_TESTS TESTS)
+  foreach(_test ${LIST_OF_TESTS})
+    set_property(TEST ${_test} APPEND PROPERTY ENVIRONMENT CGAL_DISABLE_GMP=1)
+  endforeach()
+endif()

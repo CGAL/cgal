@@ -60,7 +60,18 @@ If the traits class used holds some local state, it must also be passed to the c
 The set of source points for shortest path queries can be populated one by one or using a range.
 A source point can be specified using either a vertex of the input surface mesh or a face of the input surface mesh
 with some barycentric coordinates.
-Given a point \f$p\f$ that lies inside a triangle face \f$(A,B,C)\f$, its barycentric coordinates are a weight triple \f$(b_0,b_1,b_2)\f$ such that \f$p = b_0\cdot~A + b_1\cdot~B + b_2\cdot~C\f$, and \f$b_0 + b_1 + b_2 = 1\f$.
+Given a point \f$p\f$ that lies inside a triangle face \f$(A,B,C)\f$, its barycentric coordinates
+are a weight triple \f$(b_0,b_1,b_2)\f$ such that \f$p = b_0\cdot~A + b_1\cdot~B + b_2\cdot~C\f$,
+and \f$b_0 + b_1 + b_2 = 1\f$.
+
+For convenience, a function `Surface_mesh_shortest_path::locate()` is provided to construct face locations from geometric
+inputs:
+- given a point `p` living in 3D space, this function computes the point closest to `p` on the surface,
+and returns the face containing this point, as well as its barycentric coordinates;
+- given a ray `r` living in 3D space, this function computes the intersection of the ray with the surface,
+and (if an intersection exists) returns the face containing this point, as well as its barycentric coordinates;
+
+Usage of this function is illustrated in the example \ref Surface_mesh_shortest_path/shortest_path_with_locate.cpp.
 
 \subsubsection Surface_mesh_shortest_pathClassBuild Building the Internal Sequence Tree
 

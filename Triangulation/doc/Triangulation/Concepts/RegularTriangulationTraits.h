@@ -10,6 +10,7 @@ a regular triangulation. It corresponds to the first template parameter of the c
 \cgalRefines `TriangulationTraits`
 
 \cgalHasModel `CGAL::Epick_d<Dim>`
+\cgalHasModel `CGAL::Epeck_d<Dim>`
 
 \sa `TriangulationTraits`
 */

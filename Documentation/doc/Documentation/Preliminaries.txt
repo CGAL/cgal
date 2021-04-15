@@ -1,130 +1,12 @@
 /*!
 
-\page preliminaries Preliminaries
+\page preliminaries General Information
 \cgalAutoToc
-\author %CGAL Editorial Board
 
-This chapter lists the licenses
-under which the \cgal datastructures and algorithms are distributed.
-The chapter further explains how to control inlining, thread safety,
-code deprecation, checking of pre- and postconditions,
-and how to alter the failure behavior.
+The chapter explains some basic features of \cgal such as thread safety, code deprecation,
+checking of pre- and postconditions and altering the failure behavior, and how to control inlining.
 
-\section licenseIssues License Issues
-
-\cgal is distributed under a dual license scheme, that is under the
-\sc{Gpl}/\sc{Lgpl} open source license, as well as under commercial licenses.
-
-\cgal consists of different parts covered by different open source licenses.
-In this section we explain the essence of the different licenses, as well as
-the rationale why we have chosen them.
-
-The fact that \cgal is Open Source software does not mean that users are free
-to do whatever they want with the software. Using the software means to accept
-the license, which has the status of a contract between the user and the owner
-of the \cgal software.
-
-\subsection licensesGPL GPL
-
-The \sc{Gpl} is an Open Source license that, if you distribute your software
-based on \sc{Gpl}ed \cgal data structures,you are obliged to distribute the
-source code of your software under the \sc{Gpl}.
-
-The exact license terms can be found at the  Free Software Foundation
-web site: http://www.gnu.org/copyleft/gpl.html.
-
-\subsection licensesLGPL LGPL
-
-The \sc{Lgpl} is an Open Source license that obliges you to distribute
-modifications you make on \cgal software accessible to the users.
-In contrast to the \sc{Gpl}, there is no obligation to make the source
-code of software you build on top of \sc{Lgpl}ed \cgal data structures
-
-The exact license terms can be found at the Free Software Foundation web site:
-http://www.gnu.org/copyleft/lesser.html.
-
-\subsection licensesRationale Rationale of the License Choice
-
-We have chosen the \sc{Gpl} and the \sc{Lgpl} as they are well known
-and well understood open source licenses. The former restricts
-commercial use, and the latter allows to promote software as de facto standard
-so that people can build new higher level data structures on top.
-
-Therefore, the packages forming a foundation layer are distributed under
-the \sc{Lgpl}, and the higher level packages under the \sc{Gpl}.
-The package overview states for each package under which license
-it is distributed.
-
-\subsection licensesCommercial Commercial Licenses
-
-Users who cannot comply with the Open Source license terms can buy individual
-data structures under various commercial licenses from GeometryFactory:
-http://www.geometryfactory.com/.  License fees paid by commercial
-customers are reinvested in R\&D performed by the \cgal project partners,
-as well as in evolutive maintenance.
-
-\subsection licenseCheck License Checking
-
-Users who have a commercial license for specific packages can check that
-they do not accidentally use packages for which they do not have a commercial
-license. The same holds for users who want to be sure that they only
-use packages of \cgal released under the \sc{Lgpl}.
-
-To enable checking, users have to define one of the following macros:
-
-| Macro Name                   | Effect |
-| :---------                   | :------ |
-| `CGAL_LICENSE_WARNING`       | get a warning during the compilation  |
-| `CGAL_LICENSE_ERROR`         | get an error during the compilation  |
-
-
-The license checking is not a mean to control users as no information
-is collected or transmitted.
-
-
-
-\section markingSpecialFunctionality Marking of Special Functionality
-
-In this manual you will encounter sections marked as follows.
-
-
-\subsection advanced_features Advanced Features
-
-Some functionality is considered more advanced, for example because it is
-relatively low-level, or requires special care to be properly used.
-
-\cgalAdvancedBegin
-Such functionality is identified this way in the manual.
-\cgalAdvancedEnd
-
-\subsection debugging_support Debugging Support Features
-
-Usually related to advanced features that for example may not guarantee
-class invariants, some functionality is provided that helps debugging,
-for example by performing invariants checks on demand.
-
-\cgalDebugBegin
-Such functionality is identified this way in the manual.
-\cgalDebugEnd
-
-\subsection deprecated_code Deprecated Code
-
-Sometimes, the \cgal project decides that a feature is deprecated.  This means
-that it still works in the current release, but it will be removed in the next,
-or a subsequent release.  This can happen when we have found a better way to do
-something, and we would like to reduce the maintenance cost of \cgal at some
-point in the future.  There is a trade-off between maintaining backward
-compatibility and implementing new features more easily.
-
-In order to help users manage the changes to apply to their code, we attempt
-to make \cgal code emit warnings when deprecated code is used.  This can be
-done using some compiler specific features.  Those warnings can be disabled
-by defining the macro `CGAL_NO_DEPRECATION_WARNINGS`.  On top of this, we
-also provide a macro, `CGAL_NO_DEPRECATED_CODE`, which, when defined,
-disables all deprecated features.  This allows users to easily test if their
-code relies on deprecated features.
-
-\deprecated Such functionality is identified this way in the manual.
+These concepts are further developed in the \ref dev_manual.
 
 \section Preliminaries_namespace Namespace CGAL
 
@@ -154,19 +36,10 @@ defined, unless `BOOST_HAS_THREADS` or `_OPENMP` is defined.  It is possible
 to force its definition on the command line, and it is possible to prevent its default
 definition by setting `CGAL_HAS_NO_THREADS` from the command line.
 
+\section Preliminaries_cc0x C++14 Support
 
-\section Preliminaries_cc0x C++11 Support
-
-\cgal is based on the \CC standard released in 1998 (and later refined in 2003).
-A new major version of this standard has been released, and is refered to as \cpp11.
-Some compilers and standard library implementations already provide some of the
-functionality of this new standard, as a preview.  For example, \gcc provides
-a command-line switch (`-std=c++0x` or or `-std=c++11` depending on the compiler version)
-which enables some of those features.
-
-\cgal attempts to support this mode progressively, and already makes use of
-some of these features if they are available, although no extensive support has
-been implemented yet.
+After being based on the \CC standard released in 1998 (and later refined in 2003) for a long time,
+\cgal is now based on a newer major version of the standard, <a href="https://isocpp.org/wiki/faq/cpp14">C++14</a>.
 
 \section Preliminaries_functor Functor Return Types
 
@@ -184,40 +57,6 @@ Much of the \cgal code contains assert statements for preconditions, and postcon
 as well as in the code.  These assertions can be switched on and off per package
 and the user can change the error behaviour. For details see Section \ref secchecks
 of Chapter \ref Chapter_STL_Extensions_for_CGAL.
-
-\section seccgal_version Identifying the Version of CGAL
-
-`<CGAL/config.h>`
-
-Every release of \cgal defines the following preprocessor macros:
-
-<DL>
-<DT>`CGAL_VERSION_STR`</DT>
-<DD>a textual description of the current release (e.g., or 3.3 or 3.2.1 or 3.2.1-I-15) as a string literal</DD>
-<DT>`CGAL_VERSION_NR`</DT>
-<DD>a numerical description of the current release such that more recent
-releases have higher number.
-
-More precisely, it is defined as `1MMmmbiiii`, where `MM` is
-the major release number (e.g. 03), `mm` is the minor release
-number (e.g. 02), `b` is the bug-fix release number (e.g. 0),
-and `iiii` is the internal release number (e.g. 0001). For
-public releases, the latter is defined as 1000.  Examples: for the
-public release 3.2.4 this number is 1030241000; for internal release
-3.2-I-1, it is 1030200001.  Note that this scheme was modified around
-3.2-I-30.
-</DD>
-<DT>`CGAL_VERSION_NUMBER(M,m,b)`</DT>
-<DD>
-a function macro computing the version number macro from the
-M.m.b release version. Note that the internal release number is
-dropped here. Example: `CGAL_VERSION_NUMBER(3,2,4)` is equal to
-1030241000.
-</DD>
-</DL>
-
-The macro `CGAL_VERSION` is deprecated. It is the same as
-`CGAL_VERSION_STR`, but not as a string literal.
 
 \section Preliminaries_flags Compile-time Flags to Control Inlining
 

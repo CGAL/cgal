@@ -16,7 +16,7 @@ typedef Mesh::Property_map<vertex_descriptor,bool> Exact_point_computed;
 namespace PMP = CGAL::Polygon_mesh_processing;
 namespace params = PMP::parameters;
 
-struct Coref_point_map
+struct Exact_vertex_point_map
 {
   // typedef for the property map
   typedef boost::property_traits<Exact_point_map>::value_type value_type;
@@ -25,64 +25,39 @@ struct Coref_point_map
   typedef boost::property_traits<Exact_point_map>::key_type key_type;
 
   // exterior references
-  Exact_point_computed* exact_point_computed_ptr;
-  Exact_point_map* exact_point_ptr;
-  Mesh* mesh_ptr;
-
-  Exact_point_computed& exact_point_computed() const
-  {
-    CGAL_assertion(exact_point_computed_ptr!=NULL);
-    return *exact_point_computed_ptr;
-  }
-
-  Exact_point_map& exact_point() const
-  {
-    CGAL_assertion(exact_point_ptr!=NULL);
-    return *exact_point_ptr;
-  }
-
-  Mesh& mesh() const
-  {
-    CGAL_assertion(mesh_ptr!=NULL);
-    return *mesh_ptr;
-  }
+  Exact_point_map exact_point_map;
+  Mesh* tm_ptr;
 
   // Converters
   CGAL::Cartesian_converter<K, EK> to_exact;
   CGAL::Cartesian_converter<EK, K> to_input;
 
-  Coref_point_map()
-    : exact_point_computed_ptr(NULL)
-    , exact_point_ptr(NULL)
-    , mesh_ptr(NULL)
+  Exact_vertex_point_map()
+    : tm_ptr(nullptr)
   {}
 
-  Coref_point_map(Exact_point_map& ep,
-                  Exact_point_computed& epc,
-                  Mesh& m)
-    : exact_point_computed_ptr(&epc)
-    , exact_point_ptr(&ep)
-    , mesh_ptr(&m)
-  {}
-
-  friend
-  reference get(const Coref_point_map& map, key_type k)
+  Exact_vertex_point_map(const Exact_point_map& ep, Mesh& tm)
+    : exact_point_map(ep)
+    , tm_ptr(&tm)
   {
-    // create exact point if it does not exist
-    if (!map.exact_point_computed()[k]){
-      map.exact_point()[k]=map.to_exact(map.mesh().point(k));
-      map.exact_point_computed()[k]=true;
-    }
-    return map.exact_point()[k];
+    for (Mesh::Vertex_index v : vertices(tm))
+      exact_point_map[v]=to_exact(tm.point(v));
   }
 
   friend
-  void put(const Coref_point_map& map, key_type k, const EK::Point_3& p)
+  reference get(const Exact_vertex_point_map& map, key_type k)
   {
-    map.exact_point_computed()[k]=true;
-    map.exact_point()[k]=p;
+    CGAL_precondition(map.tm_ptr!=nullptr);
+    return map.exact_point_map[k];
+  }
+
+  friend
+  void put(const Exact_vertex_point_map& map, key_type k, const EK::Point_3& p)
+  {
+    CGAL_precondition(map.tm_ptr!=nullptr);
+    map.exact_point_map[k]=p;
     // create the input point from the exact one
-    map.mesh().point(k)=map.to_input(p);
+    map.tm_ptr->point(k)=map.to_input(p);
   }
 };
 
@@ -109,33 +84,30 @@ int main(int argc, char* argv[])
 
   Exact_point_map mesh1_exact_points =
     mesh1.add_property_map<vertex_descriptor,EK::Point_3>("e:exact_point").first;
-  Exact_point_computed mesh1_exact_points_computed =
-    mesh1.add_property_map<vertex_descriptor,bool>("e:exact_points_computed").first;
 
   Exact_point_map mesh2_exact_points =
     mesh2.add_property_map<vertex_descriptor,EK::Point_3>("e:exact_point").first;
-  Exact_point_computed mesh2_exact_points_computed =
-    mesh2.add_property_map<vertex_descriptor,bool>("e:exact_points_computed").first;
 
-  Coref_point_map mesh1_pm(mesh1_exact_points, mesh1_exact_points_computed, mesh1);
-  Coref_point_map mesh2_pm(mesh2_exact_points, mesh2_exact_points_computed, mesh2);
+  Exact_vertex_point_map mesh1_vpm(mesh1_exact_points, mesh1);
+  Exact_vertex_point_map mesh2_vpm(mesh2_exact_points, mesh2);
 
   if ( PMP::corefine_and_compute_intersection(mesh1,
                                               mesh2,
                                               mesh1,
-                                              params::vertex_point_map(mesh1_pm),
-                                              params::vertex_point_map(mesh2_pm),
-                                              params::vertex_point_map(mesh1_pm) ) )
+                                              params::vertex_point_map(mesh1_vpm),
+                                              params::vertex_point_map(mesh2_vpm),
+                                              params::vertex_point_map(mesh1_vpm) ) )
   {
     if ( PMP::corefine_and_compute_union(mesh1,
                                          mesh2,
                                          mesh2,
-                                         params::vertex_point_map(mesh1_pm),
-                                         params::vertex_point_map(mesh2_pm),
-                                         params::vertex_point_map(mesh2_pm) ) )
+                                         params::vertex_point_map(mesh1_vpm),
+                                         params::vertex_point_map(mesh2_vpm),
+                                         params::vertex_point_map(mesh2_vpm) ) )
     {
       std::cout << "Intersection and union were successfully computed\n";
       std::ofstream output("inter_union.off");
+      output.precision(17);
       output << mesh2;
       return 0;
     }

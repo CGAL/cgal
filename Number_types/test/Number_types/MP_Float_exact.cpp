@@ -1,4 +1,4 @@
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <iostream>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Test/_test_algebraic_structure.h>

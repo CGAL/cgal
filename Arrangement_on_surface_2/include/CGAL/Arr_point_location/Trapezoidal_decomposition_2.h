@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s): Oren Nechushtan <theoren@math.tau.ac.il>
 //            Iddo Hanniel <hanniel@math.tau.ac.il>
@@ -48,6 +39,111 @@
 #include <map>
 
 namespace CGAL {
+
+namespace internal{
+
+// struct used to avoid recursive deletion of elements of
+// Td_map_item. Td_active_edge and Td_active_edge_item are
+// both refering to elements of the same type creating
+// recursive call to ~Handle() if we let the regular
+// calls of destructors. Here elements are copied in
+// a vector and the true deletion is done when the vector
+// is cleared.
+template <class Traits>
+struct Non_recursive_td_map_item_destructor
+{
+  typedef typename Traits::Td_map_item Td_map_item;
+  typedef typename Traits::Td_active_trapezoid Td_active_trapezoid;
+  typedef typename Traits::Td_active_edge Td_active_edge;
+
+
+  struct Child_visitor
+  {
+    typedef void result_type;
+    std::vector<Td_map_item>& m_queue;
+
+    Child_visitor(std::vector<Td_map_item>& queue)
+      : m_queue(queue)
+    {}
+
+    void operator()(Td_active_trapezoid& item)
+    {
+      if (item.is_last_reference())
+        m_queue.push_back(item);
+    }
+
+    void operator()(Td_active_edge& item)
+    {
+      if (item.is_last_reference())
+        m_queue.push_back(item);
+    }
+
+    template <class T>
+    void operator()(T&) {} // nothing to do for the other types of the variant
+  };
+
+  struct Item_visitor
+  {
+    typedef void result_type;
+    Child_visitor& m_child_visitor;
+
+    Item_visitor(Child_visitor& child_visitor)
+      : m_child_visitor(child_visitor)
+    {}
+
+    void operator()(Td_active_trapezoid& item)
+    {
+      boost::apply_visitor(m_child_visitor, item.lb());
+      boost::apply_visitor(m_child_visitor, item.lt());
+      boost::apply_visitor(m_child_visitor, item.rb());
+      boost::apply_visitor(m_child_visitor, item.rt());
+      item.clear_neighbors();
+    }
+
+    void operator()(Td_active_edge& item)
+    {
+      boost::apply_visitor(m_child_visitor, item.next());
+      item.set_next(Td_map_item(0));
+    }
+
+    template <class T>
+    void operator()(T&) {} // nothing to do for the other types of the variant
+  };
+
+  std::vector<Td_map_item> queue;
+  Child_visitor child_visitor;
+  Item_visitor item_visitor;
+
+  Non_recursive_td_map_item_destructor(Td_active_trapezoid& item)
+    : child_visitor(queue)
+    , item_visitor(child_visitor)
+  {
+    item_visitor(item);
+
+    while (!queue.empty())
+    {
+      Td_map_item item = queue.back();
+      queue.pop_back();
+      boost::apply_visitor(item_visitor, item);
+    }
+  }
+
+  Non_recursive_td_map_item_destructor(Td_active_edge& item)
+    : child_visitor(queue)
+    , item_visitor(child_visitor)
+  {
+    item_visitor(item);
+
+    while (!queue.empty())
+    {
+      Td_map_item item = queue.back();
+      queue.pop_back();
+      boost::apply_visitor(item_visitor, item);
+    }
+  }
+};
+
+} // internal
 
 /*! \class Trapezoidal_decomposition_2
  * parameters    Traits
@@ -266,7 +362,7 @@ public:
       m_sep doesn't intersect any existing edges except possibly on common end
       points.
       postconditions:
-      if the rightmost trapezoid was traversed m_cur_item is set to NULL.
+      if the rightmost trapezoid was traversed m_cur_item is set to nullptr.
       remark:
       if the seperator is vertical, using the precondition assumptions it
       follows that there is exactly one trapezoid to travel.
@@ -277,9 +373,9 @@ public:
         return *this;// end reached, do nothing!
 
 #ifndef CGAL_TD_DEBUG
-      CGAL_warning(traits != NULL);
+      CGAL_warning(traits != nullptr);
 #else
-      CGAL_assertion(traits != NULL);
+      CGAL_assertion(traits != nullptr);
       CGAL_assertion(traits->is_active(m_cur_item));
       //m_cur_item should be a trapezoid or an edge
       CGAL_assertion(!traits->is_td_vertex(m_cur_item));
@@ -342,7 +438,7 @@ public:
 
         Td_active_edge e (boost::get<Td_active_edge>(m_cur_item));
         CGAL_assertion_code(Dag_node* tt = e.dag_node();)
-        CGAL_assertion(tt != NULL);
+        CGAL_assertion(tt != nullptr);
         CGAL_assertion(tt->is_inner_node());
 
         //go to next() of the current edge.
@@ -654,12 +750,12 @@ public:
     Dag_node* operator()(Td_nothing& /* t */) const
     {
       CGAL_assertion(false);
-      return NULL;
+      return nullptr;
     }
     Dag_node* operator()(Td_inactive_trapezoid& /* t */) const
     {
       CGAL_assertion(false);
-      return NULL;
+      return nullptr;
     }
 
     template < typename T >
@@ -985,7 +1081,7 @@ protected:
                                            const X_monotone_curve_2& cv,
                                            Comparison_result cres) const
   {
-    CGAL_assertion(traits != NULL);
+    CGAL_assertion(traits != nullptr);
     Td_map_item& item = left_cv_end_node.get_data();
     CGAL_precondition(traits->is_td_vertex(item));
     CGAL_precondition (are_equal_end_points(Curve_end(cv,ARR_MIN_END),
@@ -1359,13 +1455,13 @@ public:
   //    const Dag_node* child;
   //    CGAL_assertion(tr_copy);
   //    tr_copy->set_rt(cur->rt() ?
-  //                    htr.find(cur->rt())->second : NULL);
+  //                    htr.find(cur->rt())->second : nullptr);
   //    tr_copy->set_rb(cur->rb() ?
-  //                    htr.find(cur->rb())->second : NULL);
+  //                    htr.find(cur->rb())->second : nullptr);
   //    tr_copy->set_lt(cur->lt() ?
-  //                    htr.find(cur->lt())->second : NULL);
+  //                    htr.find(cur->lt())->second : nullptr);
   //    tr_copy->set_lb(cur->lb() ?
-  //                    htr.find(cur->lb())->second : NULL);
+  //                    htr.find(cur->lb())->second : nullptr);
 
   //    if (cur->dag_node()->is_inner_node())
   //    {
@@ -1391,7 +1487,7 @@ public:
   */
   virtual ~Trapezoidal_decomposition_2()
   {
-    CGAL_warning(m_dag_root != NULL);
+    CGAL_warning(m_dag_root != nullptr);
     if (!m_dag_root) return;
 
     delete m_dag_root;
@@ -1447,7 +1543,9 @@ public:
       {
         if (do_rebuild && not_within_limits())
         {
+#ifdef CGAL_TD_DEBUG
           std::cout << "starting over after " << number_of_curves() << std::flush;
+#endif
           start_over = true;
           clear();
           break;
@@ -1616,7 +1714,7 @@ public:
 
     //the actual locate. curr is the DAG root, the traits,
     //the end point to locate,
-    //and NULL as cv ptr - indicates point location
+    //and nullptr as cv ptr - indicates point location
     lt = search_using_dag (curr, traits, ce, Halfedge_const_handle());
 
 #ifdef CGAL_TD_DEBUG
@@ -1646,7 +1744,7 @@ public:
   //  locate call may change the class
   Td_map_item& locate( Vertex_const_handle v, Locate_type& lt) const
   {
-    CGAL_precondition(traits != NULL);
+    CGAL_precondition(traits != nullptr);
     return locate(traits->vtx_to_ce(v), lt);
   }
 
@@ -1853,14 +1951,14 @@ public:
     ds->filter(representatives, Td_active_edge_item(*traits));
 
 #ifndef CGAL_TD_DEBUG
-    CGAL_warning(sz == representatives.size());
+    CGAL_warning(sz <= representatives.size());
 #else
 
     unsigned long rep = representatives.size();
-    if (sz != rep) {
+    if (sz > rep) {
       std::cerr << "\nnumber_of_curves()=" << sz;
       std::cerr << "\nrepresentatives.size()=" << rep;
-      CGAL_assertion(number_of_curves()==representatives.size());
+      CGAL_assertion(number_of_curves()<=representatives.size());
     }
 #endif
 
@@ -1873,7 +1971,15 @@ public:
       }
     }
     if (! container.empty()) {
-      CGAL::cpp98::random_shuffle(container.begin(),container.end());
+      if (sz != representatives.size())
+      {
+        std::sort(container.begin(),container.end());
+        typename Halfedge_container::iterator last = std::unique(container.begin(), container.end());
+        container.erase(last, container.end());
+      }
+      CGAL_assertion(sz==container.size());
+
+      // CGAL::cpp98::random_shuffle(container.begin(),container.end()); // already done in insert()
     }
     return sz;
   }
@@ -1899,7 +2005,7 @@ public:
     return old;
   }
 
-  //This method occasionaly(!) checks the guarantees
+  //This method occasionally(!) checks the guarantees
   // It is currently not in use, since the guarantees are constantly checked in O(1) time
   bool needs_update()
   {

@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <CGAL/use.h>
 #include <CGAL/Algebraic_extension_traits.h>
 #include <CGAL/Sqrt_extension.h>

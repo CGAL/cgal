@@ -1,5 +1,5 @@
-#include <CGAL/basic.h>
-
+#include <CGAL/config.h>
+#include <CGAL/tags.h>
 #ifdef CGAL_USE_GMPXX
 
 #include <iostream>

@@ -29,7 +29,5 @@ template< typename Traits, typename Fb >
 class Delaunay_mesh_face_base_2 : Fb {
 public:
 
-/// @}
-
 }; /* end Delaunay_mesh_face_base_2 */
 } /* end namespace CGAL */

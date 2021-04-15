@@ -2,19 +2,10 @@
 // Max-Planck-Institute Saarbruecken (Germany). All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Matthias Baesken
@@ -126,7 +117,7 @@ public:
 
    Vertex_handle lookup(Point p) const
    {
-     if (number_of_vertices() == 0) return NULL;
+     if (number_of_vertices() == 0) return nullptr;
 
      // locate ...
      Locate_type lt;
@@ -137,20 +128,20 @@ public:
         Face f = *fh;
         return f.vertex(li);
      }
-     else return NULL;
+     else return nullptr;
    }
 
 
    Vertex_handle  nearest_neighbor(Point p)
     {
-     if (number_of_vertices() == 0) return NULL;
+     if (number_of_vertices() == 0) return nullptr;
      return nearest_vertex(p);
    }
 
 
    Vertex_handle  nearest_neighbor(Vertex_handle v) const
    {
-     if (number_of_vertices() <= 1) return NULL;
+     if (number_of_vertices() <= 1) return nullptr;
      Point p = v->point();
 
      Vertex_circulator vc = incident_vertices(v);
@@ -196,7 +187,7 @@ public:
     bool old_node = true;
 
     // we have to add a new vertex ...
-    if (vh == NULL){
+    if (vh == nullptr){
       vh = insert(p);
       old_node = false;
       k++;
@@ -379,7 +370,7 @@ public:
      Vertex_handle v = lookup(p);
      bool new_v = false;
 
-     if ( v == NULL )
+     if ( v == nullptr )
      {
        new_v = true;
        v = insert(p);

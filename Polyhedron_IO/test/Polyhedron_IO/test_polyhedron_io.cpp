@@ -64,6 +64,8 @@ const char* tetra =    "OFF\n"
                        "3  3 2 0\n"
                        "3  2 3 1\n";
 
+const char* empty=    "OFF\n"
+                       "0 0 0\n";
 
 void test_file_IO_OFF() {
     typedef Simple_cartesian<double> Kernel;
@@ -115,6 +117,14 @@ void test_file_IO_OFF() {
         P = Polyhedron();
         filein >> P;
         assert( P.is_tetrahedron( P.halfedges_begin()));
+    }
+
+    {
+      Polyhedron P;
+      std::istringstream in( ::empty);
+      read_off(in, P);
+      assert(P.empty());
+      assert(in);
     }
 }
 void test_file_IO_wavefront() {}

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>254</width>
-    <height>153</height>
+    <width>271</width>
+    <height>141</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
+    <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
@@ -24,22 +24,22 @@
       </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="m_inputOffsetRadius">
-       <property name="decimals">
-        <number>3</number>
+      <widget class="DoubleEdit" name="m_inputOffsetRadius">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
-       <property name="singleStep">
-        <double>0.050000000000000</double>
-       </property>
-       <property name="value">
-        <double>0.100000000000000</double>
+       <property name="text">
+        <string>0.100</string>
        </property>
       </widget>
      </item>
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,1">
+    <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0">
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
@@ -48,19 +48,22 @@
       </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="m_inputConvolveRadius">
-       <property name="decimals">
-        <number>3</number>
+      <widget class="DoubleEdit" name="m_inputConvolveRadius">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
-       <property name="singleStep">
-        <double>0.050000000000000</double>
+       <property name="text">
+        <string>0.00</string>
        </property>
       </widget>
      </item>
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,1">
+    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,0">
      <item>
       <widget class="QLabel" name="label_3">
        <property name="text">
@@ -69,15 +72,15 @@
       </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="m_inputFeaturesThreshold">
-       <property name="decimals">
-        <number>3</number>
+      <widget class="DoubleEdit" name="m_inputFeaturesThreshold">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
-       <property name="singleStep">
-        <double>0.020000000000000</double>
-       </property>
-       <property name="value">
-        <double>0.160000000000000</double>
+       <property name="text">
+        <string>0.160</string>
        </property>
       </widget>
      </item>
@@ -108,6 +111,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DoubleEdit</class>
+   <extends>QLineEdit</extends>
+   <header>CGAL_double_edit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

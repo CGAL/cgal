@@ -14,7 +14,7 @@ class Polyhedron_demo_triangulate_facets_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "triangulate_facets_plugin.json")
 
 public:
 
@@ -60,7 +60,6 @@ public Q_SLOTS:
       }
       if(!CGAL::Polygon_mesh_processing::triangulate_faces(*pMesh))
         CGAL::Three::Three::warning(tr("Some facets could not be triangulated."));
-
       sm_item->resetColors();
       sm_item->invalidateOpenGLBuffers();
       scene->itemChanged(sm_item);

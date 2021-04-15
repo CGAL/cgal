@@ -1,20 +1,11 @@
 // Copyright (c) 2012  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Clement Jamin
 
@@ -27,7 +18,7 @@
 
 #include <boost/bind.hpp>
 
-#include <tbb/atomic.h>
+#include <atomic>
 #if TBB_IMPLEMENT_CPP0X
 # include <tbb/compat/thread>
 #else
@@ -461,12 +452,12 @@ class Spatial_lock_grid_3<Tag_non_blocking>
 public:
   // Constructors
   Spatial_lock_grid_3(const Bbox_3 &bbox, int num_grid_cells_per_axis)
-  : Base(bbox, num_grid_cells_per_axis)
+  : Base(bbox, num_grid_cells_per_axis),
+    m_grid(num_grid_cells_per_axis*num_grid_cells_per_axis*num_grid_cells_per_axis)
   {
     int num_cells =
       num_grid_cells_per_axis*num_grid_cells_per_axis*num_grid_cells_per_axis;
 
-    m_grid.resize(num_cells);
     // Initialize grid (useless?)
     for (int i = 0 ; i < num_cells ; ++i)
       m_grid[i] = false;
@@ -484,8 +475,8 @@ public:
   template <bool no_spin>
   bool try_lock_cell_impl(int cell_index)
   {
-    bool old_value = m_grid[cell_index].compare_and_swap(true, false);
-    if (old_value == false)
+    bool v1 = true, v2 = false;
+    if(m_grid[cell_index].compare_exchange_strong(v2,v1))
     {
       get_thread_local_grid()[cell_index] = true;
       m_tls_locked_cells.local().push_back(cell_index);
@@ -501,7 +492,7 @@ public:
 
 protected:
 
-  std::vector<tbb::atomic<bool> > m_grid;
+  std::vector<std::atomic<bool> > m_grid;
 };
 
 
@@ -521,14 +512,12 @@ public:
 
   Spatial_lock_grid_3(const Bbox_3 &bbox, int num_grid_cells_per_axis)
   : Base(bbox, num_grid_cells_per_axis),
+    m_grid(num_grid_cells_per_axis*num_grid_cells_per_axis*num_grid_cells_per_axis),
     m_tls_thread_priorities(init_TLS_thread_priorities)
   {
-    int num_cells =
-      num_grid_cells_per_axis*num_grid_cells_per_axis*num_grid_cells_per_axis;
-    m_grid.resize(num_cells);
     // Explicitly initialize the atomics
-    std::vector<tbb::atomic<unsigned int> >::iterator it     = m_grid.begin();
-    std::vector<tbb::atomic<unsigned int> >::iterator it_end = m_grid.end();
+    std::vector<std::atomic<unsigned int> >::iterator it     = m_grid.begin();
+    std::vector<std::atomic<unsigned int> >::iterator it_end = m_grid.end();
     for ( ; it != it_end ; ++it)
       *it = 0;
   }
@@ -551,9 +540,8 @@ public:
     // NO SPIN
     if (no_spin)
     {
-      unsigned int old_value =
-        m_grid[cell_index].compare_and_swap(this_thread_priority, 0);
-      if (old_value == 0)
+      unsigned int old_value = 0;
+      if(m_grid[cell_index].compare_exchange_strong(old_value, this_thread_priority))
       {
         get_thread_local_grid()[cell_index] = true;
         m_tls_locked_cells.local().push_back(cell_index);
@@ -565,9 +553,8 @@ public:
     {
       for(;;)
       {
-        unsigned int old_value =
-          m_grid[cell_index].compare_and_swap(this_thread_priority, 0);
-        if (old_value == 0)
+        unsigned int old_value =0;
+        if(m_grid[cell_index].compare_exchange_weak(old_value, this_thread_priority))
         {
           get_thread_local_grid()[cell_index] = true;
           m_tls_locked_cells.local().push_back(cell_index);
@@ -596,7 +583,7 @@ public:
 private:
   static unsigned int init_TLS_thread_priorities()
   {
-    static tbb::atomic<unsigned int> last_id;
+    static std::atomic<unsigned int> last_id;
     unsigned int id = ++last_id;
     // Ensure it is > 0
     return (1 + id%((std::numeric_limits<unsigned int>::max)()));
@@ -604,7 +591,7 @@ private:
 
 protected:
 
-  std::vector<tbb::atomic<unsigned int> >               m_grid;
+  std::vector<std::atomic<unsigned int> >               m_grid;
 
   typedef tbb::enumerable_thread_specific<unsigned int> TLS_thread_uint_ids;
   TLS_thread_uint_ids                                   m_tls_thread_priorities;

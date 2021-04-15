@@ -242,6 +242,29 @@ void box_intersection_all_pairs_d(
   cutoff parameters are recommended. See also
   Section \ref secboxintersperformance .
 
+\cgalHeading{Concurrency}
+
+  The first template parameter of the function enables to choose whether
+  the algorithm is to be run in parallel, if `CGAL::Parallel_tag` is specified
+  and %CGAL has been linked with the Intel TBB library, or sequentially,
+  if `CGAL::Sequential_tag` - the default value - is specified.
+  The parallelization of the algorithm is based on a divide-and-conquer
+  approach: the two ranges are split in a number of smaller ranges, and
+  all combinations of subranges are treated in parallel. It is thus
+  recommended to use ranges of pointers to bounding boxes, to keep
+  these copies light.
+
+  \warning The parallel mode comes with a small overhead due to the
+  duplication and splitting of the input ranges. It is an improvement
+  for almost all inputs, but not all. A configuration where the two ranges
+  are small and entirely disjoint might result in a slightly worse
+  runtime when using the parallel version. Users should benchmark both
+  versions to verify that their data does not fall in this (small)
+  set of inputs.
+
+  \warning When using the parallel mode, the callback function must
+  be threadsafe.
+
 \cgalHeading{Example}
 
   The box implementation provided with
@@ -274,7 +297,8 @@ void box_intersection_all_pairs_d(
 
 
 */
-template< class RandomAccessIterator1,
+template< class ConcurrencyTag = CGAL::Sequential_tag,
+          class RandomAccessIterator1,
           class RandomAccessIterator2,
           class Callback >
 void box_intersection_d(
@@ -291,7 +315,8 @@ void box_intersection_d(
   Invocation with custom box traits.
 
 */
-template< class RandomAccessIterator1,
+template< class ConcurrencyTag = CGAL::Sequential_tag,
+          class RandomAccessIterator1,
           class RandomAccessIterator2,
           class Callback, class BoxTraits >
 void box_intersection_d(
@@ -489,8 +514,11 @@ namespace CGAL {
 
 \cgalHeading{Implementation}
 
-  See the implementation section of the `box_intersection_d()`
-  function.
+  See the implementation section of the `box_intersection_d()` function.
+
+\cgalHeading{Concurrency}
+
+  See the concurrency section of the `box_intersection_d()` function.
 
 \cgalHeading{Example}
 
@@ -520,7 +548,8 @@ namespace CGAL {
   `RandomAccessIterator`.
 
 */
-template< class RandomAccessIterator, class Callback >
+template< class ConcurrencyTag = CGAL::Sequential_tag,
+          class RandomAccessIterator, class Callback >
 void box_self_intersection_d(
   RandomAccessIterator begin, RandomAccessIterator end,
   Callback callback,
@@ -532,7 +561,8 @@ void box_self_intersection_d(
 
   Invocation with custom box traits.
 */
-template< class RandomAccessIterator,
+template< class ConcurrencyTag = CGAL::Sequential_tag
+          class RandomAccessIterator,
           class Callback, class BoxTraits >
 void box_self_intersection_d(
   RandomAccessIterator begin, RandomAccessIterator end,

@@ -1,20 +1,11 @@
 // Copyright (c) 2002-2004  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Radu Ursu
@@ -66,8 +57,8 @@ void apply_to_range(const Tr &t,
   l4 = t.line_walk(POINT(xr_left, yr_bottom), POINT(xr_left, yr_top), hface4);
 
   //test if everything is inside or outside
-  if( (l1 == (Nullptr_t) NULL) && (l2 == (Nullptr_t) NULL) &&
-      (l3 == (Nullptr_t) NULL) && (l4 == (Nullptr_t) NULL))
+  if( (l1 == nullptr) && (l2 == nullptr) &&
+      (l3 == nullptr) && (l4 == nullptr))
   {
     FVI v = t.finite_vertices_begin();
     if((*v).point().x() < xr_left || (*v).point().x() > xr_right ||
@@ -87,7 +78,7 @@ void apply_to_range(const Tr &t,
   //if we are here, then a part of the triangulation is inside, the other is outside
 
   //put all the faces on the boundaries in the stack and the map
-  if(l1 != (Nullptr_t) NULL) //found at least one face that intersect the TOP segment
+  if(l1 != nullptr) //found at least one face that intersect the TOP segment
   {
     while (t.is_infinite(l1)) l1++; //we should start with a finite face
     do{                             //put all of them in the stack;
@@ -97,7 +88,7 @@ void apply_to_range(const Tr &t,
     }while(!t.is_infinite(l1) &&
            t.triangle(l1).has_on_unbounded_side(POINT(xr_right, yr_top)));
   }
-  if(l2 != (Nullptr_t) NULL) //found at least one face that intersect the RIGHT segment
+  if(l2 != nullptr) //found at least one face that intersect the RIGHT segment
   {
     while (t.is_infinite(l2)) l2++; //we should start with a finite face
     do{                             //put all of them in the stack;
@@ -109,7 +100,7 @@ void apply_to_range(const Tr &t,
     }while(!t.is_infinite(l2) &&
            t.triangle(l2).has_on_unbounded_side(POINT(xr_right, yr_bottom)));
   }
-  if(l3 != (Nullptr_t) NULL) //found at least one face that intersect the BOTTOM segment
+  if(l3 != nullptr) //found at least one face that intersect the BOTTOM segment
   {
     while (t.is_infinite(l3)) l3++; //we should start with a finite face
     do{                             //put all of them in the stack;
@@ -121,7 +112,7 @@ void apply_to_range(const Tr &t,
     }while(!t.is_infinite(l3) &&
            t.triangle(l3).has_on_unbounded_side(POINT(xr_left, yr_bottom)));
   }
-  if(l4 != (Nullptr_t) NULL) //found at least one face that intersect the LEFT segment
+  if(l4 != nullptr) //found at least one face that intersect the LEFT segment
   {
     while (t.is_infinite(l4)) l4++; //we should start with a finite face
     do{                             //put all of them in the stack;

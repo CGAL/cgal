@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
@@ -255,11 +246,11 @@ public:
 
     if ( t.is_segment() ) {
       Point_handle_pair php =
-        this->register_input_site(t.source(), t.target());
+        this->register_input_site(t.source_of_supporting_site(), t.target_of_supporting_site());
       Storage_site_2 ss =
         this->st_.construct_storage_site_2_object()(php.first, php.second);
       Vertex_handle v =
-        insert_segment(t.source(), t.target(), ss, UNDEFINED_LEVEL);
+        insert_segment(t.source_of_supporting_site(), t.target_of_supporting_site(), ss, UNDEFINED_LEVEL);
       if ( v == Vertex_handle() ) {
         this->unregister_input_site( php.first, php.second );
       }
@@ -291,12 +282,12 @@ public:
 
     if ( t.is_segment() ) {
       Point_handle_pair php =
-        this->register_input_site(t.source(), t.target());
+        this->register_input_site(t.source_of_supporting_site(), t.target_of_supporting_site());
       Storage_site_2 ss =
         this->st_.construct_storage_site_2_object()(php.first, php.second);
       ss.set_info(info);
       Vertex_handle v =
-        insert_segment(t.source(), t.target(), ss, UNDEFINED_LEVEL);
+        insert_segment(t.source_of_supporting_site(), t.target_of_supporting_site(), ss, UNDEFINED_LEVEL);
       if ( v == Vertex_handle() ) {
         this->unregister_input_site( php.first, php.second );
       }

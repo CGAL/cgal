@@ -1,20 +1,11 @@
 // Copyright (c) 2001-2007  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sylvain Pion
@@ -36,6 +27,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <boost/operators.hpp>
 
 // MP_Float : multiprecision scaled integers.
 
@@ -115,7 +107,13 @@ MP_Float operator*(const MP_Float &a, const MP_Float &b);
 MP_Float operator%(const MP_Float &a, const MP_Float &b);
 
 
-class MP_Float
+class MP_Float : boost::totally_ordered1<MP_Float
+#ifdef _MSC_VER
+                 , boost::ordered_ring_operators2<MP_Float, int
+                 , boost::ordered_ring_operators2<MP_Float, double
+                 > >
+#endif
+                 >
 {
 public:
   typedef short          limb;
@@ -231,6 +229,22 @@ public:
   MP_Float& operator-=(const MP_Float &a) { return *this = *this - a; }
   MP_Float& operator*=(const MP_Float &a) { return *this = *this * a; }
   MP_Float& operator%=(const MP_Float &a) { return *this = *this % a; }
+
+  friend bool operator<(const MP_Float &a, const MP_Float &b)
+  { return INTERN_MP_FLOAT::compare(a, b) == SMALLER; }
+
+  friend bool operator==(const MP_Float &a, const MP_Float &b)
+  { return (a.v == b.v) && (a.v.empty() || (a.exp == b.exp)); }
+
+#ifdef _MSC_VER
+  // Needed because without /permissive-, it makes hidden friends visible (from Quotient)
+  friend bool operator==(const MP_Float &a, int    b) { return a == MP_Float(b); }
+  friend bool operator==(const MP_Float &a, double b) { return a == MP_Float(b); }
+  friend bool operator< (const MP_Float &a, int    b) { return a <  MP_Float(b); }
+  friend bool operator< (const MP_Float &a, double b) { return a <  MP_Float(b); }
+  friend bool operator> (const MP_Float &a, int    b) { return a >  MP_Float(b); }
+  friend bool operator> (const MP_Float &a, double b) { return a >  MP_Float(b); }
+#endif
 
   exponent_type max_exp() const
   {
@@ -373,30 +387,6 @@ division(const MP_Float & n, const MP_Float & d);
 inline
 void swap(MP_Float &m, MP_Float &n)
 { m.swap(n); }
-
-inline
-bool operator<(const MP_Float &a, const MP_Float &b)
-{ return INTERN_MP_FLOAT::compare(a, b) == SMALLER; }
-
-inline
-bool operator>(const MP_Float &a, const MP_Float &b)
-{ return b < a; }
-
-inline
-bool operator>=(const MP_Float &a, const MP_Float &b)
-{ return ! (a < b); }
-
-inline
-bool operator<=(const MP_Float &a, const MP_Float &b)
-{ return ! (a > b); }
-
-inline
-bool operator==(const MP_Float &a, const MP_Float &b)
-{ return (a.v == b.v) && (a.v.empty() || (a.exp == b.exp)); }
-
-inline
-bool operator!=(const MP_Float &a, const MP_Float &b)
-{ return ! (a == b); }
 
 MP_Float
 approximate_sqrt(const MP_Float &d);

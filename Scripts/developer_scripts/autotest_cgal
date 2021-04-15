@@ -60,7 +60,7 @@ WGET="wget"
 WGET_OPTS="--no-check-certificate --no-verbose"
 CURL="curl"
 CURL_OPTS="-k --remote-name --silent --location-trusted"
-CGAL_URL="https://cgal.geometryfactory.com/CGAL/Members/Releases"
+CGAL_URL="https://cgal.geometryfactory.com/CGAL/Releases"
 LATEST_LOCATION="${CGAL_URL}/LATEST"
 TAR="tar"
 GZIP="gzip"
@@ -490,13 +490,7 @@ build_cgal_on_host()
 
       CGAL_BINARY_DIR="${CGAL_BINARY_DIR_BASE}/${PLATFORM}"
 
-      if [ -d "${REFERENCE_PLATFORMS_DIR}/${PLATFORM}" ] ; then
-        CGAL_REFERENCE_CACHE_DIR="${REFERENCE_PLATFORMS_DIR}/${PLATFORM}"
-      else
-        CGAL_REFERENCE_CACHE_DIR=""
-      fi
-
-      log "${ACTUAL_LOGFILE}" "Building cgal libs on host ${HOST} and platform ${PLATFORM}\nUnder ${CGAL_BINARY_DIR}\nUsing reference cache directory ${CGAL_REFERENCE_CACHE_DIR}"
+      log "${ACTUAL_LOGFILE}" "Building cgal libs on host ${HOST} and platform ${PLATFORM}\nUnder ${CGAL_BINARY_DIR}\n"
 
       if [ -f "${CGAL_BINARY_DIR}/localbuildscript" ] ; then
         log "${ACTUAL_LOGFILE}" "WARNING! Already built on platform ${PLATFORM}."
@@ -514,19 +508,12 @@ if [ -z "\$CMAKE_GENERATOR" ]; then
   CMAKE_GENERATOR='${CMAKE_GENERATOR}';
 fi
 MAKE_CMD='${MAKE_CMD}';
-if [ -n "${IS_CYGWIN}" ]; then
-  CGAL_REFERENCE_CACHE_DIR=\$( cygpath -w '${CGAL_REFERENCE_CACHE_DIR}' );
-else
-  CGAL_REFERENCE_CACHE_DIR='${CGAL_REFERENCE_CACHE_DIR}';\
-fi
 
 export CMAKE_GENERATOR;
 export MAKE_CMD;
 export CGAL_BINARY_DIR;
-export CGAL_REFERENCE_CACHE_DIR;
 cd '${CGAL_BINARY_DIR}';
 cmake \${INIT_FILE:+"-C\${INIT_FILE}"} '${CMAKE_GENERATOR}' -DRUNNING_CGAL_AUTO_TEST=TRUE \\
-                           -DCGAL_REFERENCE_CACHE_DIR="\$CGAL_REFERENCE_CACHE_DIR" \\
                            VERBOSE=1 \\
                            ../../..;
 ${MAKE_CMD} VERBOSE=ON -k -fMakefile  ;
@@ -666,7 +653,7 @@ EOF
       cat >> "$file" <<EOF
 echo 'COLLECTING RESULTS';
 ./collect_cgal_testresults_from_cmake;
-if [ -n "\$COLLECT_DEMOS_BINARIES" ]; then 
+if [ -n "\$COLLECT_DEMOS_BINARIES" ]; then
   echo 'COLLECTING DEMOS BINARIES';
   tar czvf '${CGAL_TEST_DIR}/demos_${CGAL_TESTER}_${PLATFORM}.tar.gz' *_Demo/*.exe *_Demo/*.dll *_Demo/*/*.dll *_Demo/*/*/*.dll
 fi
@@ -804,7 +791,7 @@ put_on_web()
 # Parse command line arguments
 for arg in "$@"
 do
-  case "$arg" in 
+  case "$arg" in
     "-c")
       echo "Using latest unzipped release instead of getting a new one from the server"
       USE_LATEST_UNZIPPED="y"
@@ -850,7 +837,7 @@ LIST_TEST_PACKAGES="${CGAL_ROOT}/list_test_packages"
 ACTUAL_LOGFILE="${CGAL_ROOT}/`basename ${0}`.log"
 rm -f "${ACTUAL_LOGFILE}"
 
-echo "Running `basename ${0}` "'$Revision$' >> "${ACTUAL_LOGFILE}" 
+echo "Running `basename ${0}` "'$Revision$' >> "${ACTUAL_LOGFILE}"
 
 # Sanity checks
 if [ "${REFERENCE_PLATFORMS_DIR}" = "must_be_set_in_.autocgalrc" ]; then
@@ -878,11 +865,11 @@ fi
 # Detects cygwin
 if uname | grep -q "CYGWIN"; then
   JOM="`which jom`"
-  if [ -e "$JOM" ]; then 
+  if [ -e "$JOM" ]; then
     CMAKE_GENERATOR='-GNMake Makefiles JOM'
     MAKE_CMD='jom'
     log "${ACTUAL_LOGFILE}" "Cygwin detected, jom detected, using jom"
-  else 
+  else
     CMAKE_GENERATOR='-GNMake Makefiles'
     MAKE_CMD='nmake'
     log "${ACTUAL_LOGFILE}" "Cygwin detected, using nmake"
@@ -899,15 +886,15 @@ if [ -z "$IS_CYGWIN" ]; then
 lockfile -r 1 "$LOCK_FILE";
 if [ ${?} != 0 ]; then
   PID=`cat "$LOCK_FILE"`
-  if kill -0 "$PID"; then 
-    log "${ACTUAL_LOGFILE}" "COULD NOT AQUIRE LOCK! LOCKING PROCESS PID=$PID";
+  if kill -0 "$PID"; then
+    log "${ACTUAL_LOGFILE}" "COULD NOT ACQUIRE LOCK! LOCKING PROCESS PID=$PID";
     exit 1;
   else
     # The locking process has died without erasing the lock file
     rm -f "$LOCK_FILE"
     lockfile -r 1 "$LOCK_FILE";
     if [ ${?} != 0 ]; then
-      log "${ACTUAL_LOGFILE}" "COULD NOT AQUIRE LOCK!";
+      log "${ACTUAL_LOGFILE}" "COULD NOT ACQUIRE LOCK!";
       exit 1
     fi
   fi

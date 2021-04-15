@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Francois Rebufat
@@ -24,6 +15,7 @@
 #include <fstream>
 #include <list>
 #include <vector>
+#include <type_traits>
 
 #include "_test_cls_iterator.h"
 #include "_test_cls_circulator.h"
@@ -31,6 +23,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/Testsuite/use.h>
 #include <CGAL/use.h>
+#include <CGAL/Testsuite/Triangulation_23/test_move_semantic.h>
 
 template <class Triangulation, class Container>
 bool check_all_are_finite(Triangulation* tr, const Container& cont)
@@ -88,6 +81,11 @@ _test_cls_triangulation_3(const Triangulation &)
 {
   typedef Triangulation                      Cls;
 
+  static_assert(std::is_nothrow_move_constructible<Cls>::value,
+                "move cstr is missing");
+  static_assert(std::is_nothrow_move_assignable<Cls>::value,
+                "move assignment is missing");
+
   // We assume the traits class has been tested already
   // actually, any traits is good if it has been tested
 
@@ -116,7 +114,6 @@ _test_cls_triangulation_3(const Triangulation &)
   typedef typename Cls::Finite_edges_iterator       Finite_edges_iterator;
   typedef typename Cls::Finite_facets_iterator      Finite_facets_iterator;
   typedef typename Cls::Finite_cells_iterator       Finite_cells_iterator;
-
   CGAL_USE_TYPE(Vertex);
   CGAL_USE_TYPE(Cell);
   CGAL_USE_TYPE(difference_type);
@@ -290,7 +287,8 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T1.number_of_vertices() == 0);
   assert(T1.is_valid());
 
-
+  namespace test_tr_23 = CGAL::Testsuite::Triangulation_23;
+  test_tr_23::test_move_semantic(T0);
 
    // Assignment
   T1=T0;
@@ -367,12 +365,14 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T2_0.dimension()==1);
   assert(T2_0.number_of_vertices()==3);
 
+  test_tr_23::test_move_semantic(T2_0);
 
   v0=T2_0.insert(p4);
   assert(T2_0.is_valid());
   assert(T2_0.dimension()==2);
   assert(T2_0.number_of_vertices()==4);
 
+  test_tr_23::test_move_semantic(T2_0);
 
   v0=T2_0.insert(p5);
   v0=T2_0.insert(p6);
@@ -383,6 +383,8 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T2_0.is_valid());
   assert(T2_0.dimension()==2);
   assert(T2_0.number_of_vertices()==8);
+
+  test_tr_23::test_move_semantic(T2_0);
 
   if (! del) // to avoid doing the following tests for both Delaunay
     // and non Delaunay triangulations
@@ -406,6 +408,8 @@ _test_cls_triangulation_3(const Triangulation &)
   assert( T2_1.number_of_vertices() == m*n );
   assert( T2_1.dimension()==2 );
   assert( T2_1.is_valid() );
+
+  test_tr_23::test_move_semantic(T2_1);
 
   std::cout << "    Constructor11 " << std::endl;
   // 3-dimensional triangulations

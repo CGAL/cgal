@@ -1,7 +1,6 @@
 #ifndef SEGMENT_READER_H
 #define SEGMENT_READER_H
 
-#include <CGAL/basic.h>
 #include <CGAL/Bbox_2.h>
 #include <iostream>
 #include <fstream>

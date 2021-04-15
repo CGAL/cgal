@@ -19,7 +19,7 @@ int main()
 
   // The output will be an indexed triangle mesh
   std::vector<Kernel::Point_3> anchors;
-  std::vector<CGAL::cpp11::array<std::size_t, 3> > triangles;
+  std::vector<std::array<std::size_t, 3> > triangles;
 
   // free function interface with named parameters
   VSA::approximate_triangle_mesh(mesh,

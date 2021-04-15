@@ -1,8 +1,8 @@
 # This is the CMake script for compiling the PCA demo.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Principal_component_analysis_Demo )
 
-cmake_minimum_required(VERSION 3.1)
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
   # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
   cmake_policy(SET CMP0053 OLD)
@@ -12,11 +12,6 @@ if(POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
 endif()
 
-foreach(INCDIR ../../../STL_Extension/include ../../../GraphicsView/include ../../../filtered_kernel/include )
-  if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR}")
-    include_directories (BEFORE "${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR}")
-  endif()
-endforeach()
 
 include_directories( ./ )
 
@@ -24,9 +19,8 @@ include_directories( ./ )
 find_package(CGAL COMPONENTS Qt5)
 
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-if (EIGEN3_FOUND)
-  include( ${EIGEN3_USE_FILE} )
-else()
+include(CGAL_Eigen3_support)
+if (NOT TARGET CGAL::Eigen3_support)
   message(STATUS "NOTICE: This project requires the Eigen library, and will not be compiled.")
   return()
 endif()
@@ -54,7 +48,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND )
   add_executable  ( PCA_demo PCA_demo.cpp ${UI_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
   target_link_libraries( PCA_demo PRIVATE
-    CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui)
+    CGAL::CGAL CGAL::CGAL_Qt5 CGAL::Eigen3_support Qt5::Gui)
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS PCA_demo )
 

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)    : Samuel Hornus
 
@@ -36,6 +27,7 @@
 #include <CGAL/Default.h>
 #include <CGAL/Random.h>
 
+#include <boost/container/small_vector.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
@@ -121,7 +113,7 @@ protected:
     {
       if (current_dimension() == preset_flat_orientation_.first)
       {
-        CGAL_assertion(preset_flat_orientation_.second != NULL);
+        CGAL_assertion(preset_flat_orientation_.second != nullptr);
         flat_orientation_ = *preset_flat_orientation_.second;
       }
       else
@@ -196,7 +188,6 @@ protected: // DATA MEMBERS
     Triangulation_ds                            tds_;
     const Geom_traits                           kernel_;
     Vertex_handle                               infinity_;
-    mutable std::vector<Oriented_side>          orientations_;
     mutable boost::optional<Flat_orientation_d> flat_orientation_;
     // The user can specify a Flat_orientation_d object to be used for
     // orienting simplices of a specific dimension
@@ -244,26 +235,26 @@ public:
     // A co-dimension 2 sub-simplex. called a Rotor because we can rotate
     // the two "covertices" around the sub-simplex. Useful for traversing the
     // boundary of a hole. NOT DOCUMENTED
-    typedef cpp11::tuple<Full_cell_handle, int, int>    Rotor;
+    typedef std::tuple<Full_cell_handle, int, int>    Rotor;
 
     // Commented out because it was causing "internal compiler error" in MSVC
     /*Full_cell_handle full_cell(const Rotor & r) const // NOT DOCUMENTED
     {
-        return cpp11::get<0>(r);
+        return std::get<0>(r);
     }
     int index_of_covertex(const Rotor & r) const // NOT DOCUMENTED
     {
-        return cpp11::get<1>(r);
+        return std::get<1>(r);
     }
     int index_of_second_covertex(const Rotor & r) const // NOT DOCUMENTED
     {
-        return cpp11::get<2>(r);
+        return std::get<2>(r);
     }*/
     Rotor rotate_rotor(Rotor & r) // NOT DOCUMENTED...
     {
-        int opposite = cpp11::get<0>(r)->mirror_index(cpp11::get<1>(r));
-        Full_cell_handle s = cpp11::get<0>(r)->neighbor(cpp11::get<1>(r));
-        int new_second = s->index(cpp11::get<0>(r)->vertex(cpp11::get<2>(r)));
+        int opposite = std::get<0>(r)->mirror_index(std::get<1>(r));
+        Full_cell_handle s = std::get<0>(r)->neighbor(std::get<1>(r));
+        int new_second = s->index(std::get<0>(r)->vertex(std::get<2>(r)));
         return Rotor(s, new_second, opposite);
     }
 
@@ -274,7 +265,7 @@ public:
         , kernel_(k)
         , infinity_()
         , preset_flat_orientation_((std::numeric_limits<int>::max)(),
-                                   (Flat_orientation_d*) NULL)
+                                   (Flat_orientation_d*) nullptr)
         , rng_((long)0)
 #ifdef CGAL_TRIANGULATION_STATISTICS
         ,walk_size_(0)
@@ -309,14 +300,14 @@ public:
         , kernel_(t2.kernel_)
         , infinity_()
         , preset_flat_orientation_((std::numeric_limits<int>::max)(),
-                                   (Flat_orientation_d*) NULL)
+                                   (Flat_orientation_d*) nullptr)
         , rng_(t2.rng_)
 #ifdef CGAL_TRIANGULATION_STATISTICS
         ,walk_size_(t2.walk_size_)
 #endif
     {
         // We find the vertex at infinity by scanning the vertices of both
-        // triangulations. This works because Compact_container garantees that
+        // triangulations. This works because Compact_container guarantees that
         // the vertices in the copy (*this) are stored in the same order as in
         // the original triangulation (t2)
         infinity_ = vertices_begin();
@@ -326,8 +317,6 @@ public:
             ++infinity_;
             ++inf2;
         }
-        // A full_cell has at most 1 + maximal_dimension() facets:
-        orientations_.resize(1 + maximal_dimension());
         // Our coaffine orientation predicates HAS state member variables
         reset_flat_orientation();
     }
@@ -622,8 +611,6 @@ public:
     {
         tds_.clear();
         infinity_ = tds().insert_increase_dimension();
-        // A full_cell has at most 1 + maximal_dimension() facets:
-        orientations_.resize(1 + maximal_dimension());
         // Our coaffine orientation predicates HAS state member variables
         reset_flat_orientation();
 #ifdef CGAL_TRIANGULATION_STATISTICS
@@ -1099,6 +1086,8 @@ Triangulation<TT, TDS>
     // of one |orientation| predicate
     Full_cell_handle previous = Full_cell_handle();
     bool full_cell_not_found = true;
+    // A full_cell has at most dimension + 1 facets:
+    boost::container::small_vector<signed char, 8> orientations_ (cur_dim + 1);
     while(full_cell_not_found) // we walk until we locate the query point |p|
     {
     #ifdef CGAL_TRIANGULATION_STATISTICS

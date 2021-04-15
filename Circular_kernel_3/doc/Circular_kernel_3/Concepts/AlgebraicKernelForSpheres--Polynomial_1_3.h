@@ -20,7 +20,5 @@ coefficients are of a type that is a model of the concept
 class AlgebraicKernelForSpheres::Polynomial_1_3 {
 public:
 
-/// @}
-
 }; /* end AlgebraicKernelForSpheres::Polynomial_1_3 */
 

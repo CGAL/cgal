@@ -2,9 +2,9 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( STL_Extension_Tests )
 
-cmake_minimum_required(VERSION 3.1)
 
 
 find_package(CGAL QUIET)
@@ -12,6 +12,7 @@ find_package(CGAL QUIET)
 if ( CGAL_FOUND )
 
   find_package( TBB QUIET )
+  include(CGAL_TBB_support)
 
   create_single_source_cgal_program( "test_Boolean_tag.cpp" )
   create_single_source_cgal_program( "test_Cache.cpp" )
@@ -21,8 +22,8 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_composition.cpp" )
   create_single_source_cgal_program( "test_Concatenate_iterator.cpp" )
   create_single_source_cgal_program( "test_Concurrent_compact_container.cpp" )
-  if(TBB_FOUND)
-    CGAL_target_use_TBB(test_Concurrent_compact_container)
+  if(TARGET CGAL::TBB_support)
+    target_link_libraries(test_Concurrent_compact_container PUBLIC CGAL::TBB_support)
   endif()
   create_single_source_cgal_program( "test_dispatch_output.cpp" )
   create_single_source_cgal_program( "test_Flattening_iterator.cpp" )
@@ -33,6 +34,11 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_lexcompare_outputrange.cpp" )
   create_single_source_cgal_program( "test_Modifiable_priority_queue.cpp" )
   create_single_source_cgal_program( "test_multiset.cpp" )
+
+  add_executable( test_multiset_cc "test_multiset.cpp" )
+  target_link_libraries( test_multiset_cc PUBLIC CGAL::CGAL )
+  target_compile_options( test_multiset_cc PUBLIC -DCGAL_MULTISET_USE_COMPACT_CONTAINER_AS_DEFAULT )
+
   create_single_source_cgal_program( "test_N_tuple.cpp" )
   create_single_source_cgal_program( "test_namespaces.cpp" )
   create_single_source_cgal_program( "test_Nested_iterator.cpp" )
@@ -42,9 +48,12 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_Uncertain.cpp" )
   create_single_source_cgal_program( "test_vector.cpp" )
   create_single_source_cgal_program( "test_join_iterators.cpp" )
+  create_single_source_cgal_program( "test_for_each.cpp" )
+  if(TARGET CGAL::TBB_support)
+    target_link_libraries(test_for_each PUBLIC CGAL::TBB_support)
+  endif()
 else()
 
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
 
 endif()
-

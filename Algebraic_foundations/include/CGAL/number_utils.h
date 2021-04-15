@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stefan Schirra
@@ -311,13 +302,13 @@ to_interval( const Real_embeddable& x) {
 }
 
 template <typename NT>
-NT approximate_sqrt(const NT& nt, CGAL::Field_tag)
+NT approximate_sqrt(const NT& nt, CGAL::Null_functor)
 {
   return NT(sqrt(CGAL::to_double(nt)));
 }
 
-template <typename NT>
-NT approximate_sqrt(const NT& nt, CGAL::Field_with_sqrt_tag)
+template <typename NT, typename Sqrt>
+NT approximate_sqrt(const NT& nt, Sqrt sqrt)
 {
   return sqrt(nt);
 }
@@ -325,9 +316,12 @@ NT approximate_sqrt(const NT& nt, CGAL::Field_with_sqrt_tag)
 template <typename NT>
 NT approximate_sqrt(const NT& nt)
 {
+  // the initial version of this function was using Algebraic_category
+  // for the dispatch but some ring type (like Gmpz) provides a Sqrt
+  // functor even if not being Field_with_sqrt.
   typedef CGAL::Algebraic_structure_traits<NT> AST;
-  typedef typename AST::Algebraic_category Algebraic_category;
-  return approximate_sqrt(nt, Algebraic_category());
+  typedef typename AST::Sqrt Sqrt;
+  return approximate_sqrt(nt, Sqrt());
 }
 
 CGAL_NTS_END_NAMESPACE

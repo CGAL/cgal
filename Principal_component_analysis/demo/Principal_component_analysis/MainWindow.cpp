@@ -48,6 +48,7 @@ MainWindow::MainWindow(QWidget* parent)
 
 MainWindow::~MainWindow()
 {
+        m_pViewer->makeCurrent();
         delete ui;
 }
 

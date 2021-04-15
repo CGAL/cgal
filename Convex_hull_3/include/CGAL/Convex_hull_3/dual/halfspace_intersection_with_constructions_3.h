@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Jocelyn Meyron
@@ -35,7 +26,6 @@
 #include <CGAL/Convex_hull_3/dual/interior_polyhedron_3.h>
 #include <CGAL/internal/Exact_type_selector.h>
 
-#include <boost/foreach.hpp>
 #include <boost/unordered_map.hpp>
 #include <list>
 #include <vector>
@@ -63,7 +53,7 @@ namespace CGAL
         // from primal faces
         boost::unordered_map<face_descriptor, vertex_descriptor> extreme_points;
 
-        BOOST_FOREACH (face_descriptor fd , faces( primal)){
+        for(face_descriptor fd : faces( primal)){
           halfedge_descriptor h = halfedge(fd,primal);
           Plane_3 p (get(vpm_primal, target(h, primal)),
                      get(vpm_primal, target(next(h, primal), primal)),
@@ -79,11 +69,11 @@ namespace CGAL
         }
 
         // build faces
-        BOOST_FOREACH (vertex_descriptor vd , vertices(primal)) {
+        for(vertex_descriptor vd : vertices(primal)) {
           //CGAL_assertion (it->is_bivalent() == false);
 
           std::list<vertex_descriptor> vertices;
-          BOOST_FOREACH(face_descriptor fd, faces_around_target(halfedge(vd,primal),primal)){
+          for(face_descriptor fd : faces_around_target(halfedge(vd,primal),primal)){
             vertices.push_front(extreme_points[fd]);
           }
         Euler::add_face(vertices,dual);
@@ -152,7 +142,7 @@ namespace CGAL
                                                             boost::optional<typename Kernel_traits<typename std::iterator_traits<PlaneIterator>::value_type>::Kernel::Point_3> const& origin = boost::none) {
           typedef typename Kernel_traits<typename std::iterator_traits<PlaneIterator>::value_type>::Kernel K;
           typedef typename K::Point_3 Point_3;
-          typedef typename internal::Convex_hull_3::Default_traits_for_Chull_3<Point_3>::type Traits;
+          typedef typename Convex_hull_3::internal::Default_traits_for_Chull_3<Point_3>::type Traits;
 
           halfspace_intersection_with_constructions_3(pbegin, pend, P, origin, Traits());
         }

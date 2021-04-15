@@ -24,7 +24,5 @@ template< typename Traits, typename Cb >
 class Fixed_alpha_shape_cell_base_3 : public Cb {
 public:
 
-/// @}
-
 }; /* end Fixed_alpha_shape_cell_base_3 */
 } /* end namespace CGAL */

@@ -4,7 +4,6 @@
 #include <fstream>
 #include <iostream>
 
-#include <boost/foreach.hpp>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point_3;
@@ -39,23 +38,23 @@ int main(int argc, char* argv[])
   Point_3 sp = tm.point(source);
 
   std::cout << "source: " << sp  << " " << source << std::endl;
-  vertex_descriptor far;
+  vertex_descriptor vfar;
   double sdistance = 0;
 
-  BOOST_FOREACH(vertex_descriptor vd , vertices(tm)){
+  for(vertex_descriptor vd : vertices(tm)){
     std::cout << vd << "  is at distance " << get(vertex_distance, vd) << " to " << source << std::endl;
     if(get(vertex_distance, vd) > sdistance){
-      far = vd;
+      vfar = vd;
       sdistance = get(vertex_distance, vd);
     }
   }
 
-  std::cout << "far: " << tm.point(far) << " " << far << std::endl;
+  std::cout << "vfar: " << tm.point(vfar) << " " << vfar << std::endl;
 
-  hm.add_source(far);
+  hm.add_source(vfar);
   hm.estimate_geodesic_distances(vertex_distance);
 
-  BOOST_FOREACH(vertex_descriptor vd , vertices(tm)){
+  for(vertex_descriptor vd : vertices(tm)){
     std::cout << vd << "  is at distance " << get(vertex_distance, vd) << "to the set of two sources" << std::endl;
   }
 

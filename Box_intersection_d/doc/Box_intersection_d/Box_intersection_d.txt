@@ -459,6 +459,14 @@ stored in the `boxes` so far.
 
 \cgalExample{Box_intersection_d/proximity_custom_box_traits.cpp}
 
+\section secbox_inters_example_polylines Example for Polyline Intersection Test
+
+Given two polylines we want to know if they intersect. This implementation
+creates a box for each segment of the polyline and creates two sets of boxes.
+The callback throws an exception as soon as an intersection is detected.
+
+\cgalExample{Box_intersection_d/box_d_do_intersect_polylines.cpp}
+
 \section Box_intersection_dDesign Design and Implementation History
 
 Lutz Kettner and Andreas Meyer implemented the algorithms starting

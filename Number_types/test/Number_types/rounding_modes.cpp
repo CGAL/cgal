@@ -1,6 +1,6 @@
 // This tests the rounding mode functions.
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <CGAL/Interval_nt.h>
 #include <iostream>
 #include <cassert>

@@ -1,9 +1,10 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <array>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Shape_detection_3.h>
+#include <CGAL/Shape_detection/Efficient_RANSAC.h>
 #include <CGAL/structure_point_set.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
@@ -21,10 +22,10 @@ typedef CGAL::First_of_pair_property_map<Point_with_normal>  Point_map;
 typedef CGAL::Second_of_pair_property_map<Point_with_normal> Normal_map;
 
 // Efficient RANSAC types
-typedef CGAL::Shape_detection_3::Shape_detection_traits
-  <Kernel, Pwn_vector, Point_map, Normal_map>                Traits;
-typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits>    Efficient_ransac;
-typedef CGAL::Shape_detection_3::Plane<Traits>               Plane;
+typedef CGAL::Shape_detection::Efficient_RANSAC_traits
+  <Kernel, Pwn_vector, Point_map, Normal_map>              Traits;
+typedef CGAL::Shape_detection::Efficient_RANSAC<Traits>    Efficient_ransac;
+typedef CGAL::Shape_detection::Plane<Traits>               Plane;
 
 // Point set structuring type
 typedef CGAL::Point_set_with_structure<Kernel>               Structure;
@@ -36,7 +37,7 @@ typedef CGAL::Triangulation_data_structure_3<LVb,LCb> Tds;
 typedef CGAL::Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
 typedef Triangulation_3::Vertex_handle Vertex_handle;
 
-typedef CGAL::cpp11::array<std::size_t,3> Facet;
+typedef std::array<std::size_t,3> Facet;
 
 
 // Functor to init the advancing front algorithm with indexed points
@@ -150,8 +151,8 @@ int main (int argc, char* argv[])
                  op.cluster_epsilon,  // Same parameter as RANSAC
                  CGAL::parameters::point_map (Point_map()).
                  normal_map (Normal_map()).
-                 plane_map (CGAL::Shape_detection_3::Plane_map<Traits>()).
-                 plane_index_map(CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(points, planes)));
+                 plane_map (CGAL::Shape_detection::Plane_map<Traits>()).
+                 plane_index_map(CGAL::Shape_detection::Point_to_shape_index_map<Traits>(points, planes)));
 
 
   for (std::size_t i = 0; i < pss.size(); ++ i)

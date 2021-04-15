@@ -40,12 +40,13 @@ struct Outlier_removal_functor
   {
     // Computes outliers
     *result =
-      CGAL::remove_outliers(*points,
-                            nb_neighbors,
-                            points->parameters().
-                            threshold_percent(removed_percentage).
-                            threshold_distance(distance_threshold).
-                            callback (*(this->callback())));
+      CGAL::remove_outliers<CGAL::Parallel_if_available_tag>
+      (*points,
+       nb_neighbors,
+       points->parameters().
+       threshold_percent(removed_percentage).
+       threshold_distance(distance_threshold).
+       callback (*(this->callback())));
   }
 };
 
@@ -92,6 +93,7 @@ class Point_set_demo_outlier_removal_dialog : public QDialog, private Ui::Outlie
     Point_set_demo_outlier_removal_dialog(QWidget * /*parent*/ = 0)
     {
       setupUi(this);
+      m_distanceThreshold->setMinimum(0.0);
     }
 
     double percentage() const { return m_inputPercentage->value(); }

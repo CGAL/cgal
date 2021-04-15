@@ -1,21 +1,11 @@
 // Copyright (c) 2005-2008 ASCLEPIOS Project, INRIA Sophia-Antipolis (France)
 // All rights reserved.
 //
-// This file is part of the ImageIO Library, and as been adapted for
-// CGAL (www.cgal.org).
-// You can redistribute it and/or  modify it under the terms of the
-// GNU Lesser General Public License as published by the Free Software Foundation;
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// These files are provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of the ImageIO Library, and as been adapted for CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later
 //
 //
 // Author(s)     :  ASCLEPIOS Project (INRIA Sophia-Antipolis), Laurent Rineau
@@ -65,7 +55,7 @@ int readMincHeader(_image *im, const char* filename,
 
   /* get number of dimensions and type */
   id = ncvarid(fin, MIimage);
-  (void) ncvarinq(fin, id, NULL, &type, &ndims, dim, NULL);
+  (void) ncvarinq(fin, id, nullptr, &type, &ndims, dim, nullptr);
   if(ndims != 3) {
     fprintf(stderr, "unsupported %i dimensional minc file\n", ndims);
     return 0;
@@ -73,7 +63,7 @@ int readMincHeader(_image *im, const char* filename,
 
   /* get sign */
   if ((miattgetstr(fin, id, MIsigntype, MI_MAX_ATTSTR_LEN, sign_type)
-       == NULL) || ((strcmp(sign_type, MI_UNSIGNED)!=0) &&
+       == nullptr) || ((strcmp(sign_type, MI_UNSIGNED)!=0) &&
                     (strcmp(sign_type, MI_SIGNED)!=0))) {
     if (type == NC_BYTE)
       (void) strcpy(sign_type, MI_UNSIGNED);
@@ -252,9 +242,9 @@ int readMincHeader(_image *im, const char* filename,
   ImageIO_closeImage(im);
 
   /* order data in ZYX */
-  (void) ncdiminq(fin, dim[0], name, NULL);
+  (void) ncdiminq(fin, dim[0], name, nullptr);
   if(!strcmp(name, MIzspace)) {
-    (void) ncdiminq(fin, dim[1], name, NULL);
+    (void) ncdiminq(fin, dim[1], name, nullptr);
     /* file is ZYX */
     if(!strcmp(name, MIyspace)) {
       miclose(fin);
@@ -262,7 +252,7 @@ int readMincHeader(_image *im, const char* filename,
     }
   }
 
-  (void) ncdiminq(fin, dim[0], name, NULL);
+  (void) ncdiminq(fin, dim[0], name, nullptr);
   /* file is ZXY */
   if(!strcmp(name, MIzspace)) {
     shift[0] = 0;
@@ -275,7 +265,7 @@ int readMincHeader(_image *im, const char* filename,
   else if(!strcmp(name, MIyspace)) {
     shift[0] = 1;
     plane2 = im->xdim * im->zdim;
-    (void) ncdiminq(fin, dim[1], name, NULL);
+    (void) ncdiminq(fin, dim[1], name, nullptr);
     /* file is YXZ */
     if(!strcmp(name, MIxspace)) {
       shift[1] = 2;
@@ -293,7 +283,7 @@ int readMincHeader(_image *im, const char* filename,
   else {
     shift[0] = 2;
     plane2 = im->ydim * im->zdim;
-    (void) ncdiminq(fin, dim[1], name, NULL);
+    (void) ncdiminq(fin, dim[1], name, nullptr);
     /* file is XYZ */
     if(!strcmp(name, MIyspace)) {
       shift[1] = 1;
@@ -398,7 +388,7 @@ int writeMincFile( const _image* im, const char *filename,
 
   for(i = 0; i < 3; i++ ) {
     dim_ids[i] = micreate_std_variable( cdfid, dim_names[i], NC_DOUBLE,
-                                        0, NULL);
+                                        0, nullptr);
     if( dim_ids[i] < 0 ) return -1;
     (void) miattputdbl( cdfid, dim_ids[i], MIstep, vx[i]);
     (void) miattputdbl( cdfid, dim_ids[i], MIstart, start[i]);

@@ -32,7 +32,5 @@ for Homogeneous kernels.
 class RingNumberType {
 public:
 
-/// @}
-
 }; /* end RingNumberType */
 

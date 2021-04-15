@@ -1,3 +1,0 @@
-Point Set Shape Detection
-
-This CGAL package implements an efficient RANSAC approach for detecting shapes in an unorganized point set with unoriented normals.

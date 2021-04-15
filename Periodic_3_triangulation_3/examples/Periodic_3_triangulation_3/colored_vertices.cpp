@@ -36,7 +36,7 @@ int main(int, char**)
   P3DT3::Vertex_iterator vit;
   for (vit = T.vertices_begin(); vit != T.vertices_end(); ++vit) {
     if (T.degree(vit) == 16) {
-      vit->info() = CGAL::RED;
+      vit->info() = CGAL::red();
     }
   }
 

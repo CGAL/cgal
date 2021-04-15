@@ -46,7 +46,7 @@ struct Compact_metric_point_proxy
     // fitting center
     Vector_3 center = CGAL::NULL_VECTOR;
     FT sum_areas = FT(0.0);
-    BOOST_FOREACH(const face_descriptor &f, faces) {
+    for(const face_descriptor f : faces) {
       center = center + (center_pmap[f] - CGAL::ORIGIN) * area_pmap[f];
       sum_areas += area_pmap[f];
     }
@@ -79,7 +79,7 @@ int main()
     mesh.add_property_map<face_descriptor, FT>("f:area", FT(0.0)).first;
   Face_center_map center_pmap =
     mesh.add_property_map<face_descriptor, Point_3>("f:center", CGAL::ORIGIN).first;
-  BOOST_FOREACH (face_descriptor f, faces(mesh)) {
+  for(face_descriptor f : faces(mesh)) {
     const halfedge_descriptor he = halfedge(f, mesh);
     const Point_3 &p0 = vpmap[source(he, mesh)];
     const Point_3 &p1 = vpmap[target(he, mesh)];

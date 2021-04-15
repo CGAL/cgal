@@ -158,7 +158,6 @@ void foo(Segment_d<R> seg, Line_d<R> lin)
 
 \sa `do_intersect`
 \sa `Kernel_d::Intersect_d`
-\sa CGAL_INTERSECTION_VERSION
 \sa <a HREF="https://www.boost.org/doc/libs/release/libs/optional/index.html">`boost::optional`</a>
 \sa <a HREF="https://www.boost.org/doc/html/variant.html">`boost::variant`</a>
 \sa `cpp11::result_of`

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <boost/lexical_cast.hpp>
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 #include "test_configuration.h"
 

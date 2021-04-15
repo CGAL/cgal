@@ -14,7 +14,6 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/Polygon_2.h>
-#include <boost/foreach.hpp>
 #include <CGAL/use.h>
 
 #include <fstream>
@@ -29,7 +28,7 @@ bool is_ccw(int xi, int yi,
   CGAL::Polygon_2<K> polygon;
   if(polyline.front() == polyline.back())
   {
-    BOOST_FOREACH(const typename K::Point_3& p, polyline)
+    for(const typename K::Point_3& p : polyline)
     {
       polygon.push_back(typename K::Point_2(p[xi], p[yi]));
     }

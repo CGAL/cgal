@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
@@ -31,8 +22,8 @@ ArrangementDemoGraphicsView::ArrangementDemoGraphicsView( QWidget* parent ) :
   gridColor( ::Qt::black ),
   backgroundColor( ::Qt::white )
 {
-  QMatrix m( 1.0, 0.0, 0.0, -1.0, 0.0, 0.0 );
-  this->setMatrix( m );
+  QTransform m( 1.0, 0.0, 0.0, -1.0, 0.0, 0.0 );
+  this->setTransform( m );
   this->setBackgroundBrush( QBrush( backgroundColor ) );
 }
 
@@ -118,10 +109,10 @@ QRectF ArrangementDemoGraphicsView::getViewportRect( ) const
   QPointF p1 = this->mapToScene( 0, 0 );
   QPointF p2 = this->mapToScene( this->width( ), this->height( ) );
 
-  double xmin = std::min( p1.x( ), p2.x( ) );
-  double xmax = std::max( p1.x( ), p2.x( ) );
-  double ymin = std::min( p1.y( ), p2.y( ) );
-  double ymax = std::max( p1.y( ), p2.y( ) );
+  double xmin = (std::min)( p1.x( ), p2.x( ) );
+  double xmax = (std::max)( p1.x( ), p2.x( ) );
+  double ymin = (std::min)( p1.y( ), p2.y( ) );
+  double ymax = (std::max)( p1.y( ), p2.y( ) );
 
   QRectF res = QRectF( QPointF( xmin, ymin ), QPointF( xmax, ymax ) );
 

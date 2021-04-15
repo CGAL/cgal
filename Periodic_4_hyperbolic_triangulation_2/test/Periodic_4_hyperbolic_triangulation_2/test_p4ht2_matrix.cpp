@@ -1,4 +1,4 @@
-#include <CGAL/CORE_Expr.h>
+#include <CGAL/Exact_algebraic.h>
 #include <CGAL/internal/Exact_complex.h>
 #include <CGAL/internal/Hyperbolic_octagon_translation_matrix.h>
 #include <iostream>
@@ -7,7 +7,7 @@
 int main(int, char**)
 {
 
-  typedef CORE::Expr                                          NT;
+  typedef CGAL::Exact_algebraic                               NT;
   typedef CGAL::Exact_complex<NT>                             ECplx;
   typedef CGAL::Hyperbolic_octagon_translation_matrix<ECplx>  Matrix;
 

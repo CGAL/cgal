@@ -9,5 +9,5 @@
 source $HOME/private/github-token.txt
 
 for f in *.(zip|xz|txt|exe); do
-    github-release upload -u CGAL -r cgal -t releases/${PWD:t} --name $f -f $f;
+    github-release upload -u CGAL -r cgal -t v${${PWD:t}/CGAL-/} --name $f -f $f;
 done

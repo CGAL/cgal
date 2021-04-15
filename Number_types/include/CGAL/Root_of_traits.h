@@ -1,20 +1,11 @@
 // Copyright (c) 2005,2006  INRIA Sophia-Antipolis (France)
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sylvain Pion, Monique Teillaud, Athanasios Kakargias, Michael Hemmer
@@ -33,11 +24,12 @@ namespace CGAL {
 template < typename NT >
 struct Root_of_traits;
 
-template < class NT >
+template < class NT1, class NT2, class NT3 >
 inline
-typename Root_of_traits< NT >::Root_of_2
-make_root_of_2(const NT &a, const NT &b, const NT &c)
+auto
+make_root_of_2(const NT1 &a, const NT2 &b, const NT3 &c)
 {
+    using NT = std::common_type_t<NT1, NT2, NT3>;
     typename Root_of_traits<NT>::Make_root_of_2 make_root_of_2;
     return make_root_of_2(a,b,c);
 }

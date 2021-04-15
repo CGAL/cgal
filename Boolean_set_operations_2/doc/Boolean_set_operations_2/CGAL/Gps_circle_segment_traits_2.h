@@ -18,7 +18,5 @@ template< typename Kernel >
 class Gps_circle_segment_traits_2 {
 public:
 
-/// @}
-
 }; /* end Gps_circle_segment_traits_2 */
 } /* end namespace CGAL */

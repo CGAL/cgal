@@ -193,7 +193,7 @@ full cell. This improves speed a little, but requires more memory.
 \cgalAdvanced \cgal provides the class template
 `Triangulation_ds_full_cell<TriangulationDataStructure_,
 TriangulationDSFullCellStoragePolicy>` for representing full cells in a
-triangulation. Its second template parameter is used to specify wether
+triangulation. Its second template parameter is used to specify whether
 or not the mirror indices should be kept in memory or computed
 on-the-fly, which is the default case.  Please refer to the
 documentation of that class template for specific details.

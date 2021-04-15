@@ -91,8 +91,8 @@ int main() {
   assert(b1.bounded_side(qq1)==CGAL::ON_BOUNDARY);
   assert(b1.bounded_side(qq4)==CGAL::ON_UNBOUNDED_SIDE);
   assert(b1.bounded_side(mm1)==CGAL::ON_BOUNDED_SIDE);
-  // std::cout << "b1.min()=" << b1.min() << std::endl;
-  // std::cout << "b1.max()=" << b1.max() << std::endl;
+  // std::cout << "(b1.min)()=" << (b1.min)() << std::endl;
+  // std::cout << "(b1.max)()=" << (b1.max)() << std::endl;
   std::cout << "volume of b1=" << b1.volume() << std::endl;
   std::cout << "volume of b4=" << b4.volume() << std::endl;
   std::cout << "volume of b5=" << b5.volume() << std::endl;

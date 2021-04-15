@@ -3,9 +3,9 @@
 # Then modified by hand to add Eigen3.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( NewKernel_d_Tests )
 
-cmake_minimum_required(VERSION 3.1)
 
 if(CMAKE_COMPILER_IS_GNUCCX AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.4)
   message(STATUS "NOTICE: this directory requires a version of gcc >= 4.4, and will not be compiled.")
@@ -17,11 +17,10 @@ find_package(CGAL QUIET)
 if ( CGAL_FOUND )
 
   find_package(Eigen3)
-  if (EIGEN3_FOUND)
-    include( ${EIGEN3_USE_FILE} )
-
+  include(CGAL_Eigen3_support)
+  if (TARGET CGAL::Eigen3_support)
     create_single_source_cgal_program( "Epick_d.cpp" )
-
+    target_link_libraries(Epick_d PUBLIC CGAL::Eigen3_support)
   else()
 
     message(STATUS "NOTICE: This program requires the Eigen3 library, and will not be compiled.")
@@ -33,4 +32,3 @@ else()
     message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
 
 endif()
-

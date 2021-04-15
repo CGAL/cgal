@@ -1,8 +1,8 @@
 #version 150
 
 in vec4 vertex;
-in vec3 normal;
-in vec4 inColor;
+in vec3 normals;
+in vec4 colors;
 
 out VS_OUT
 {
@@ -16,8 +16,8 @@ uniform mat4 mv_matrix;
 
 void main(void)
 {
-   vs_out.out_color=inColor;
+   vs_out.out_color=colors;
    vs_out.fP = mv_matrix * vertex;
-   vs_out.fN = mat3(mv_matrix)* normal;
+   vs_out.fN = mat3(mv_matrix)* normals;
    gl_Position = mvp_matrix * vertex;
 }

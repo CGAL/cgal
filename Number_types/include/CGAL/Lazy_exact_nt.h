@@ -1,31 +1,17 @@
 // Copyright (c) 1999-2007  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sylvain Pion
 
 #ifndef CGAL_LAZY_EXACT_NT_H
 #define CGAL_LAZY_EXACT_NT_H
-
-#define CGAL_int(T)    typename First_if_different<int,    T>::Type
-#define CGAL_double(T) typename First_if_different<double, T>::Type
-#define CGAL_To_interval(T) To_interval<T>
-
 
 #include <CGAL/number_type_basic.h>
 #include <CGAL/assertions.h>
@@ -53,6 +39,9 @@
 
 #include <CGAL/IO/io.h>
 
+#define CGAL_int(T)    typename First_if_different<int,    T>::Type
+#define CGAL_double(T) typename First_if_different<double, T>::Type
+#define CGAL_To_interval(T) To_interval<T>
 
 /*
  * This file contains the definition of the number type Lazy_exact_nt<ET>,
@@ -164,6 +153,11 @@ struct Lazy_exact_Ex_Cst : public Lazy_exact_nt_rep<ET>
       : Lazy_exact_nt_rep<ET>(CGAL_NTS to_interval(e))
   {
     this->et = new ET(e);
+  }
+  Lazy_exact_Ex_Cst (ET&& e)
+      : Lazy_exact_nt_rep<ET>(CGAL_NTS to_interval(e))
+  {
+    this->et = new ET(std::move(e));
   }
 
   void update_exact() const { CGAL_error(); }
@@ -344,14 +338,14 @@ struct Lazy_exact_Max : public Lazy_exact_binary<ET>
 // The real number type, handle class
 template <typename ET_>
 class Lazy_exact_nt
-  : public Lazy<Interval_nt<false>, ET_, Lazy_exact_nt<ET_>, To_interval<ET_> >
+  : public Lazy<Interval_nt<false>, ET_, To_interval<ET_> >
   , boost::ordered_euclidian_ring_operators2< Lazy_exact_nt<ET_>, int >
   , boost::ordered_euclidian_ring_operators2< Lazy_exact_nt<ET_>, double >
 {
 public:
 
   typedef Lazy_exact_nt<ET_> Self;
-  typedef Lazy<Interval_nt<false>, ET_, Self, To_interval<ET_> > Base;
+  typedef Lazy<Interval_nt<false>, ET_, To_interval<ET_> > Base;
   typedef typename Base::Self_rep  Self_rep;
 
   typedef typename Base::ET ET; // undocumented
@@ -370,12 +364,14 @@ public :
   // Also check that ET and AT are constructible from T?
   template<class T>
   Lazy_exact_nt (T i, typename boost::enable_if<boost::mpl::and_<
-      boost::mpl::or_<boost::is_arithmetic<T>, cpp11::is_enum<T> >,
+      boost::mpl::or_<boost::is_arithmetic<T>, std::is_enum<T> >,
       boost::mpl::not_<boost::is_same<T,ET> > >,void*>::type=0)
     : Base(new Lazy_exact_Cst<ET,T>(i)) {}
 
   Lazy_exact_nt (const ET & e)
     : Base(new Lazy_exact_Ex_Cst<ET>(e)){}
+  Lazy_exact_nt (ET&& e)
+    : Base(new Lazy_exact_Ex_Cst<ET>(std::move(e))){}
 
   template <class ET1>
   Lazy_exact_nt (const Lazy_exact_nt<ET1> &x,
@@ -386,6 +382,9 @@ public :
   explicit Lazy_exact_nt (const Lazy_exact_nt<ET1> &x,
   typename boost::disable_if<is_implicit_convertible<ET1,ET>,int>::type=0)
     : Base(new Lazy_lazy_exact_Cst<ET, ET1>(x)){}
+
+  friend void swap(Lazy_exact_nt& a, Lazy_exact_nt& b) noexcept
+  { swap(static_cast<Base&>(a), static_cast<Base&>(b)); }
 
   Self operator+ () const
   { return *this; }
@@ -437,6 +436,69 @@ public :
   {
     CGAL_precondition(b != 0);
     return *this = new Lazy_exact_Div<ET>(*this, b);
+  }
+
+  // Mixed comparisons with int.
+  friend bool operator<(const Lazy_exact_nt& a, int b)
+  {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Uncertain<bool> res = a.approx() < b;
+    if (is_certain(res))
+      return res;
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    return a.exact() < b;
+  }
+
+  friend bool operator>(const Lazy_exact_nt& a, int b)
+  {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Uncertain<bool> res = b < a.approx();
+    if (is_certain(res))
+      return get_certain(res);
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    return b < a.exact();
+  }
+
+  friend bool operator==(const Lazy_exact_nt& a, int b)
+  {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Uncertain<bool> res = b == a.approx();
+    if (is_certain(res))
+      return get_certain(res);
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    return b == a.exact();
+  }
+
+
+  // Mixed comparisons with double.
+  friend bool operator<(const Lazy_exact_nt& a, double b)
+  {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Uncertain<bool> res = a.approx() < b;
+    if (is_certain(res))
+      return res;
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    return a.exact() < b;
+  }
+
+  friend bool operator>(const Lazy_exact_nt& a, double b)
+  {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Uncertain<bool> res = b < a.approx();
+    if (is_certain(res))
+      return res;
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    return b < a.exact();
+  }
+
+  friend bool operator==(const Lazy_exact_nt& a, double b)
+  {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Uncertain<bool> res = b == a.approx();
+    if (is_certain(res))
+      return res;
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    return b == a.exact();
   }
 
   // % kills filtering
@@ -561,84 +623,6 @@ operator%(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
   CGAL_precondition(b != 0);
   return Lazy_exact_nt<ET>(a) %= b;
 }
-
-
-
-// Mixed operators with int.
-template <typename ET>
-bool
-operator<(const Lazy_exact_nt<ET>& a, int b)
-{
-  CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-  Uncertain<bool> res = a.approx() < b;
-  if (is_certain(res))
-    return res;
-  CGAL_BRANCH_PROFILER_BRANCH(tmp);
-  return a.exact() < b;
-}
-
-template <typename ET>
-bool
-operator>(const Lazy_exact_nt<ET>& a, int b)
-{
-  CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-  Uncertain<bool> res = b < a.approx();
-  if (is_certain(res))
-    return get_certain(res);
-  CGAL_BRANCH_PROFILER_BRANCH(tmp);
-  return b < a.exact();
-}
-
-template <typename ET>
-bool
-operator==(const Lazy_exact_nt<ET>& a, int b)
-{
-  CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-  Uncertain<bool> res = b == a.approx();
-  if (is_certain(res))
-    return get_certain(res);
-  CGAL_BRANCH_PROFILER_BRANCH(tmp);
-  return b == a.exact();
-}
-
-
-// Mixed operators with double.
-template <typename ET>
-bool
-operator<(const Lazy_exact_nt<ET>& a, double b)
-{
-  CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-  Uncertain<bool> res = a.approx() < b;
-  if (is_certain(res))
-    return res;
-  CGAL_BRANCH_PROFILER_BRANCH(tmp);
-  return a.exact() < b;
-}
-
-template <typename ET>
-bool
-operator>(const Lazy_exact_nt<ET>& a, double b)
-{
-  CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-  Uncertain<bool> res = b < a.approx();
-  if (is_certain(res))
-    return res;
-  CGAL_BRANCH_PROFILER_BRANCH(tmp);
-  return b < a.exact();
-}
-
-template <typename ET>
-bool
-operator==(const Lazy_exact_nt<ET>& a, double b)
-{
-  CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-  Uncertain<bool> res = b == a.approx();
-  if (is_certain(res))
-    return res;
-  CGAL_BRANCH_PROFILER_BRANCH(tmp);
-  return b == a.exact();
-}
-
 
 
 template <typename ET1, typename ET2>

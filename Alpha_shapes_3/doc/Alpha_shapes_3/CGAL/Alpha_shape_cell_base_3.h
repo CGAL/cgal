@@ -29,8 +29,6 @@ template< typename Traits, typename Cb, typename ExactAlphaComparisonTag, typena
 class Alpha_shape_cell_base_3 : public Cb {
 public:
 
-/// @}
-
 }; /* end Alpha_shape_cell_base_3 */
 } /* end namespace CGAL */
 
@@ -109,28 +107,28 @@ void set_alpha_max(NT alpha);
 /// @{
 
 /*!
-Returns true for Gabriel faces.
+returns `true`  for Gabriel faces.
 */
 bool is_Gabriel() const ;
 
 /*!
-Returns true for convex hull faces.
+returns `true` for convex hull faces.
 */
 bool is_on_chull() const;
 
 /*!
-Returns the `alpha_min`.
-\pre `is_Gabriel()` returns false;
+returns the `alpha_min`.
+\pre `is_Gabriel()` returns `false`.
 */
 NT alpha_min() const;
 
 /*!
-Returns the `alpha_mid`.
+returns `alpha_mid`.
 */
 NT alpha_mid() const;
 
 /*!
-Returns `alpha_max`.
+returns `alpha_max`.
 \pre `is_on_chull()` returns `false`.
 */
 NT alpha_max() const;

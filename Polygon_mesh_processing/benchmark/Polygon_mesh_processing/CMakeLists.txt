@@ -1,18 +1,8 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Polygon_mesh_processing )
-
-
-cmake_minimum_required(VERSION 3.1)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
-endif()
-
 
 # CGAL and its components
 find_package( CGAL QUIET COMPONENTS  )
@@ -39,10 +29,7 @@ endif()
 
 # include for local package
 find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
-if (EIGEN3_FOUND)
-  # Executables that require Eigen 3.2
-  include( ${EIGEN3_USE_FILE} )
-endif(EIGEN3_FOUND)
+include(CGAL_Eigen3_support)
 
 # Creating entries for all .cpp/.C files with "main" routine
 # ##########################################################
@@ -51,4 +38,7 @@ create_single_source_cgal_program( "polygon_mesh_slicer.cpp" )
 
 create_single_source_cgal_program( "hole_filling.cpp" )
 
-
+if (TARGET CGAL::Eigen3_support)
+  target_link_libraries(polygon_mesh_slicer PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(hole_filling PUBLIC CGAL::Eigen3_support)
+endif()

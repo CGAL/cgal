@@ -76,6 +76,7 @@ public:
   }
 
   ~Scene() {
+    ui->viewer->makeCurrent();
     for(int i=0; i<24; i++)
         buffers[i].destroy();
     for(int i=0; i<12; i++)
@@ -116,9 +117,8 @@ public Q_SLOTS:
     Point pt = *rp+Vector(0.5,0.5,0.5);
     rp++;
     insert_point(Point(pt.x(),pt.y(),(in_plane? 0.0:pt.z())));
-    QString str;
-    ui->viewer->displayMessage(str.sprintf("Added point (%f, %f, %f)",
-           pt.x(),pt.y(),(in_plane? 0.0:pt.z())));
+    ui->viewer->displayMessage(QString("Added point (%1, %2, %3)").arg(
+           pt.x()).arg(pt.y()).arg((in_plane? 0.0:pt.z())));
     changed();
   }
   void insert_point(Point p) {

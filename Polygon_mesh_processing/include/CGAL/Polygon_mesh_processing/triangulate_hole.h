@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Ilker O. Yaz
 
@@ -59,19 +50,37 @@ namespace Polygon_mesh_processing {
   @tparam PolygonMesh a model of `MutableFaceGraph`
   @tparam OutputIterator a model of `OutputIterator`
     holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
-  @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   @param pmesh polygon mesh containing the hole
   @param border_halfedge a border halfedge incident to the hole
   @param out iterator over patch faces
-  @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
-     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-         If this parameter is omitted, an internal property map for
-         `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
-     \cgalParamBegin{use_delaunay_triangulation} if `true`, use the Delaunay triangulation facet search space \cgalParamEnd
-     \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `PolygonMesh`.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{geom_traits}
+      \cgalParamDescription{an instance of a geometric traits class}
+      \cgalParamType{a class model of `Kernel`}
+      \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{use_delaunay_triangulation}
+      \cgalParamDescription{If `true`, use the Delaunay triangulation facet search space.}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+      \cgalParamExtra{If no valid triangulation can be found in this search space, the algorithm
+                      falls back to the non-Delaunay triangulations search space to find a solution.}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   @return `out`
@@ -96,6 +105,8 @@ namespace Polygon_mesh_processing {
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
+    typedef typename GetGeomTraits<PolygonMesh,NamedParameters>::type         GeomTraits;
+
     bool use_dt3 =
 #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
       false;
@@ -110,8 +121,7 @@ namespace Polygon_mesh_processing {
       out,
       choose_parameter(get_parameter(np, internal_np::vertex_point), get_property_map(vertex_point, pmesh)),
       use_dt3,
-      choose_parameter(get_parameter(np, internal_np::geom_traits), typename GetGeomTraits<PolygonMesh,NamedParameters>::type()))
-      .first;
+      choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits))).first;
   }
 
   template<typename PolygonMesh, typename OutputIterator>
@@ -127,7 +137,7 @@ namespace Polygon_mesh_processing {
   template<typename PM, typename VertexRange>
   void test_in_edges(const PM& pmesh, const VertexRange& patch)
   {
-    BOOST_FOREACH(typename boost::graph_traits<PM>::vertex_descriptor v0, patch)
+    for(typename boost::graph_traits<PM>::vertex_descriptor v0 : patch)
     {
       typename boost::graph_traits<PM>::in_edge_iterator e, e_end;
       for (boost::tie(e, e_end) = in_edges(v0, pmesh); e != e_end; e++)
@@ -149,21 +159,45 @@ namespace Polygon_mesh_processing {
      holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
   @tparam VertexOutputIterator model of `OutputIterator`
      holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices.
-  @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   @param pmesh polygon mesh which has the hole
   @param border_halfedge a border halfedge incident to the hole
   @param face_out output iterator over patch faces
   @param vertex_out output iterator over patch vertices without including the boundary
-  @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
-     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-         If this parameter is omitted, an internal property map for
-         `CGAL::vertex_point_t` should be available in `PolygonMesh`\cgalParamEnd
-     \cgalParamBegin{density_control_factor} factor to control density of the ouput mesh, where larger values cause denser refinements, as in `refine()` \cgalParamEnd
-     \cgalParamBegin{use_delaunay_triangulation} if `true`, use the Delaunay triangulation facet search space \cgalParamEnd
-     \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `PolygonMesh`.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{geom_traits}
+      \cgalParamDescription{an instance of a geometric traits class}
+      \cgalParamType{a class model of `Kernel`}
+      \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{use_delaunay_triangulation}
+      \cgalParamDescription{If `true`, use the Delaunay triangulation facet search space.}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+      \cgalParamExtra{If no valid triangulation can be found in this search space, the algorithm
+                      falls back to the non-Delaunay triangulations search space to find a solution.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{density_control_factor}
+      \cgalParamDescription{factor to control density of the ouput mesh,
+                            where larger values cause denser refinements, as in `refine()`}
+      \cgalParamType{double}
+      \cgalParamDefault{\f$ \sqrt{2}\f$}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   @return pair of `face_out` and `vertex_out`
@@ -216,24 +250,63 @@ namespace Polygon_mesh_processing {
       holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces
   @tparam VertexOutputIterator model of `OutputIterator`
       holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices
-  @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   @param pmesh polygon mesh which has the hole
   @param border_halfedge a border halfedge incident to the hole
   @param face_out output iterator over patch faces
   @param vertex_out output iterator over patch vertices without including the boundary
-  @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
-     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-         If this parameter is omitted, an internal property map for
-         `CGAL::vertex_point_t` should be available in `PolygonMesh`
-         \cgalParamEnd
-     \cgalParamBegin{use_delaunay_triangulation} if `true`, use the Delaunay triangulation facet search space \cgalParamEnd
-     \cgalParamBegin{density_control_factor} factor to control density of the ouput mesh, where larger values cause denser refinements, as in `refine()` \cgalParamEnd
-     \cgalParamBegin{fairing_continuity} tangential continuity of the output surface patch \cgalParamEnd
-     \cgalParamBegin{sparse_linear_solver} an instance of the sparse linear solver used for fairing \cgalParamEnd
-     \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `PolygonMesh`.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{geom_traits}
+      \cgalParamDescription{an instance of a geometric traits class}
+      \cgalParamType{a class model of `Kernel`}
+      \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{use_delaunay_triangulation}
+      \cgalParamDescription{If `true`, use the Delaunay triangulation facet search space.}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+      \cgalParamExtra{If no valid triangulation can be found in this search space, the algorithm
+                      falls back to the non-Delaunay triangulations search space to find a solution.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{density_control_factor}
+      \cgalParamDescription{factor to control density of the ouput mesh,
+                            where larger values cause denser refinements, as in `refine()`}
+      \cgalParamType{double}
+      \cgalParamDefault{\f$ \sqrt{2}\f$}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{fairing_continuity}
+      \cgalParamDescription{A value controling the tangential continuity of the output surface patch.
+                            The possible values are 0, 1 and 2, refering to the  C<sup>0</sup>, C<sup>1</sup>
+                            and C<sup>2</sup> continuity.}
+      \cgalParamType{unsigned int}
+      \cgalParamDefault{`1`}
+      \cgalParamExtra{The larger `fairing_continuity` gets, the more fixed vertices are required.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{sparse_linear_solver}
+      \cgalParamDescription{an instance of the sparse linear solver used for fairing}
+      \cgalParamType{a class model of `SparseLinearAlgebraWithFactorTraits_d`}
+      \cgalParamDefault{If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and
+                        `CGAL_EIGEN3_ENABLED` is defined, then the following overload of `Eigen_solver_traits`
+                        is provided as default value:\n
+                        `CGAL::Eigen_solver_traits<Eigen::SparseLU<CGAL::Eigen_sparse_matrix<double>::%EigenType, Eigen::COLAMDOrdering<int> > >`}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   @return tuple of
@@ -251,7 +324,7 @@ namespace Polygon_mesh_processing {
            typename FaceOutputIterator,
            typename VertexOutputIterator,
            typename NamedParameters>
-  CGAL::cpp11::tuple<bool, FaceOutputIterator, VertexOutputIterator>
+  std::tuple<bool, FaceOutputIterator, VertexOutputIterator>
   triangulate_refine_and_fair_hole(PolygonMesh& pmesh,
     typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
     FaceOutputIterator face_out,
@@ -272,13 +345,13 @@ namespace Polygon_mesh_processing {
     bool fair_success = fair(pmesh, patch, np);
 
     vertex_out = std::copy(patch.begin(), patch.end(), vertex_out);
-    return CGAL::cpp11::make_tuple(fair_success, face_out, vertex_out);
+    return std::make_tuple(fair_success, face_out, vertex_out);
   }
 
   template<typename PolygonMesh,
            typename FaceOutputIterator,
            typename VertexOutputIterator>
-  CGAL::cpp11::tuple<bool, FaceOutputIterator, VertexOutputIterator>
+  std::tuple<bool, FaceOutputIterator, VertexOutputIterator>
   triangulate_refine_and_fair_hole(PolygonMesh& pmesh,
         typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
         FaceOutputIterator face_out,
@@ -313,17 +386,29 @@ namespace Polygon_mesh_processing {
      and the corresponding value type `type` must have
      a constructor `type(int p0, int p1, int p2)` available.
      The indices correspond to the ones of input points in `points`.
-  @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   @param points the range of input points
   @param third_points the range of third points
   @param out iterator over output patch triangles, described by indices of points
              in `points`
-  @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
-     \cgalParamBegin{use_delaunay_triangulation} if `true`, use the Delaunay triangulation facet search space \cgalParamEnd
-     \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+    \cgalParamNBegin{geom_traits}
+      \cgalParamDescription{an instance of a geometric traits class}
+      \cgalParamType{a class model of `Kernel`}
+      \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{use_delaunay_triangulation}
+      \cgalParamDescription{If `true`, use the Delaunay triangulation facet search space.}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+      \cgalParamExtra{If no valid triangulation can be found in this search space, the algorithm
+                      falls back to the non-Delaunay triangulations search space to find a solution.}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \todo handle islands
@@ -362,11 +447,11 @@ namespace Polygon_mesh_processing {
 
     typedef typename PointRange1::iterator InIterator;
     typedef typename std::iterator_traits<InIterator>::value_type Point;
+    typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
 
     triangulate_hole_polyline(points, third_points, tracer, WC(),
-      use_dt3,
-      choose_parameter(get_parameter(np, internal_np::geom_traits),
-        typename CGAL::Kernel_traits<Point>::Kernel()));
+                              use_dt3,
+                              choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits)));
 
     CGAL_assertion(holes.empty());
     return tracer.out;
@@ -386,7 +471,7 @@ namespace Polygon_mesh_processing {
 
   /*!
   \ingroup  hole_filling_grp
-  same as above but the range of third points is omitted. They are not
+  Same as above but the range of third points is omitted. They are not
   taken into account in the cost computation that leads the hole filling.
 */
   template <typename PointRange,

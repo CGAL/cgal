@@ -4,19 +4,11 @@
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
  This file is part of a fork of the QGLViewer library version 2.7.0.
- http://www.libqglviewer.com - contact@libqglviewer.com
-
- This file may be used under the terms of the GNU General Public License
- version 3.0 as published by the Free Software Foundation and
- appearing in the LICENSE file included in the packaging of this file.
-
- This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 *****************************************************************************/
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: GPL-3.0-only
 #ifndef QGLVIEWER_CONSTRAINT_H
 #define QGLVIEWER_CONSTRAINT_H
 
@@ -33,7 +25,7 @@ class Camera;
 
   This class defines the interface for the Constraints that can be applied to a
   Frame to limit its motion. Use Frame::setConstraint() to associate a
-  Constraint to a Frame (default is a \c NULL Frame::constraint()).
+  Constraint to a Frame (default is a \c nullptr Frame::constraint()).
 
   <h3>How does it work ?</h3>
 

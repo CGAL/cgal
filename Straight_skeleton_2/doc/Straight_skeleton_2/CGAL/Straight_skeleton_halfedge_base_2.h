@@ -26,7 +26,5 @@ template< typename Refs >
 class Straight_skeleton_halfedge_base_2 {
 public:
 
-/// @}
-
 }; /* end Straight_skeleton_halfedge_base_2 */
 } /* end namespace CGAL */

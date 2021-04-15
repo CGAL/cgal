@@ -27,7 +27,7 @@ struct Myitem
   {
     typedef CGAL::Cell_attribute<GMap, int, CGAL::Tag_true,
      Sum_functor, Divide_by_two_functor> Facet_attribute;
-    typedef CGAL::cpp11::tuple<void,void,Facet_attribute> Attributes;
+    typedef std::tuple<void,void,Facet_attribute> Attributes;
   };
 };
 

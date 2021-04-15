@@ -31,7 +31,6 @@ int main()
     Tree tree( CGAL::edges(polyhedron).first,
                CGAL::edges(polyhedron).second,
                polyhedron);
-    tree.accelerate_distance_queries();
 
     // counts #intersections with a triangle query
     Triangle triangle_query(p,q,r);

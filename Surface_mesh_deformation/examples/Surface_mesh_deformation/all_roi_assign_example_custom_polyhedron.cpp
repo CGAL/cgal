@@ -95,8 +95,8 @@ int main()
   deform_mesh.insert_roi_vertices(vb, ve);
 
   // Insert two control vertices
-  vertex_descriptor control_1 = *CGAL::cpp11::next(vb, 213);
-  vertex_descriptor control_2 = *CGAL::cpp11::next(vb, 157);
+  vertex_descriptor control_1 = *std::next(vb, 213);
+  vertex_descriptor control_2 = *std::next(vb, 157);
   deform_mesh.insert_control_vertex(control_1);
   deform_mesh.insert_control_vertex(control_2);
 
@@ -131,7 +131,7 @@ int main()
   output.close();
 
   // Add another control vertex
-  vertex_descriptor control_3 = *CGAL::cpp11::next(vb, 92);
+  vertex_descriptor control_3 = *std::next(vb, 92);
   deform_mesh.insert_control_vertex(control_3);
 
   // The prepocessing step is again needed

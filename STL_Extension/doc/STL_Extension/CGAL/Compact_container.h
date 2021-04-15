@@ -30,10 +30,9 @@ Returns the pointer necessary for `Compact_container_traits<T>`.
 void * for_compact_container() const;
 
 /*!
-Returns a reference to the pointer necessary for
-`Compact_container_traits<T>`.
+Sets the pointer necessary for `Compact_container_traits<T>` to `p`.
 */
-void * & for_compact_container();
+void for_compact_container(void* p);
 
 /// @}
 
@@ -92,7 +91,7 @@ The iterators themselves can be used as `T`, they provide the necessary
 functions to be used by `Compact_container_traits<T>`. Moreover, they
 also provide a default constructor value which is not singular: it is
 copyable, comparable, and guaranteed to be unique under comparison
-(like `NULL` for pointers). This makes them suitable for use in
+(like `nullptr` for pointers). This makes them suitable for use in
 geometric graphs like handles to vertices in triangulations.
 
 In addition, in a way inspired from the Boost.Intrusive containers, it is
@@ -507,7 +506,7 @@ returns the total number of elements that `cc` can hold without requiring
 reallocation.
 */
 size_type capacity() const;
-
+/// @}
 
 /// \name Access Member Functions
 /// @{
@@ -796,7 +795,7 @@ types `T` to make them usable with the default `Compact_container_traits`.
 
 `void * t.for_compact_container() const;`
 
-`void *& t.for_compact_container();`.
+`void t.for_compact_container(void *);`.
 
 
 */
@@ -820,11 +819,11 @@ static void * pointer(const T &t);
 /// \name Operations
 /// @{
 /*!
-Returns a reference to the pointer held by `t`.
-The template version defines this function as: `return t.for_compact_container();`
+Sets the pointer held by `t` to `p`.
+The template version defines this function as: `t.for_compact_container(p);`
 
 */
-static void * & pointer(T &t);
+  static void set_pointer(T &t, void* p);
 
 
 

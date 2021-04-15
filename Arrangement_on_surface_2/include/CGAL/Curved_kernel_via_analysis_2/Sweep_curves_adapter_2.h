@@ -1,20 +1,11 @@
 // Copyright (c) 2007,2008,2009,2010,2011 Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
@@ -66,7 +57,7 @@ public:
     //! standard constructor
     Compare_xy_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
-        CGAL_assertion(adapter != NULL);
+        CGAL_assertion(adapter != nullptr);
     }
 
     result_type operator()(const Point_2& p1, const Point_2& p2) const {
@@ -170,7 +161,7 @@ public:
     //! standard constructor
     Less_xy_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
-        CGAL_assertion(adapter != NULL);
+        CGAL_assertion(adapter != nullptr);
     }
 
     /*!
@@ -196,7 +187,7 @@ public:
     //! standard constructor
     Compare_y_at_x_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
-        CGAL_assertion(adapter != NULL);
+        CGAL_assertion(adapter != nullptr);
     }
 
     result_type operator()(const Arc_2& cv, const Point_2& p) const {
@@ -322,7 +313,7 @@ public:
     //! standard constructor
     Equal_y_at_x_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
-        CGAL_assertion(adapter != NULL);
+        CGAL_assertion(adapter != nullptr);
     }
 
     /*!
@@ -425,7 +416,7 @@ public:
     //! standard constructor
     Source_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
-        CGAL_assertion(adapter != NULL);
+        CGAL_assertion(adapter != nullptr);
     }
 
     /*!
@@ -452,7 +443,7 @@ public:
     //! standard constructor
     Target_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
-        CGAL_assertion(adapter != NULL);
+        CGAL_assertion(adapter != nullptr);
     }
 
     /*!
@@ -548,7 +539,7 @@ public:
     //! standard constructor
     New_endpoints_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
-        CGAL_assertion(adapter != NULL);
+        CGAL_assertion(adapter != nullptr);
     }
 
     /*!\brief
@@ -646,7 +637,7 @@ public:
     //! standard constructor
     Intersect_right_of_point_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
-        CGAL_assertion(adapter != NULL);
+        CGAL_assertion(adapter != nullptr);
     }
 
     /*!\brief
@@ -699,7 +690,7 @@ public:
     //! standard constructor
     Make_x_monotone_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
-        CGAL_assertion(adapter != NULL);
+        CGAL_assertion(adapter != nullptr);
     }
 
     /*!

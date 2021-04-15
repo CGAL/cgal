@@ -1,26 +1,18 @@
 // Copyright (c) 2016 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 #ifndef CGAL_GENERALIZED_MAP_H
 #define CGAL_GENERALIZED_MAP_H 1
 
+#include <CGAL/Generalized_map_fwd.h>
 #include <CGAL/internal/Combinatorial_map_utility.h>
 #include <CGAL/internal/Generalized_map_group_functors.h>
 #include <CGAL/internal/Combinatorial_map_copy_functors.h>
@@ -39,6 +31,7 @@
 #include <bitset>
 #include <vector>
 #include <deque>
+#include <tuple>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/unordered_map.hpp>
 #include <CGAL/config.h>
@@ -60,6 +53,7 @@ namespace CGAL {
    * Definition of generic dD Generalized map.
    */
 
+  struct Combinatorial_map_tag;
   struct Generalized_map_tag {};
 
   /** Generic definition of generalized map in dD.
@@ -67,10 +61,7 @@ namespace CGAL {
    * mainly to create darts, to use marks onto these darts, to get and set
    * the alpha links, and to manage enabled attributes.
    */
-  template < unsigned int d_, class Refs,
-             class Items_=Generic_map_min_items,
-             class Alloc_=CGAL_ALLOCATOR(int),
-             class Storage_= Generalized_map_storage_1<d_, Items_, Alloc_> >
+  template<unsigned int d_, class Refs_, class Items_, class Alloc_, class Storage_>
   class Generalized_map_base: public Storage_
   {
     template<typename Gmap,unsigned int i,typename Enabled>
@@ -93,9 +84,10 @@ namespace CGAL {
     typedef Generalized_map_tag Combinatorial_data_structure;
 
     /// Types definition
-    typedef Storage_                                                  Storage;
-    typedef Storage                                                   Base;
-    typedef Generalized_map_base<d_, Refs, Items_, Alloc_, Storage_ > Self;
+    typedef Storage_                                                   Storage;
+    typedef Storage                                                    Base;
+    typedef Generalized_map_base<d_, Refs_, Items_, Alloc_, Storage_ > Self;
+    typedef Refs_                                                      Refs;
 
     typedef typename Base::Dart Dart;
     typedef typename Base::Dart_handle Dart_handle;
@@ -115,7 +107,7 @@ namespace CGAL {
 
     typedef typename Base::Null_handle_type Null_handle_type;
     using Base::null_handle;
-
+    using Base::null_dart_handle;
     using Base::mdarts;
     using Base::get_alpha;
     using Base::is_free;
@@ -186,20 +178,35 @@ namespace CGAL {
     }
 
     /** Copy the given generalized map into *this.
-     *  Note that both Gmap can have different dimensions and/or non void attributes.
+     *  Note that both GMap can have different dimensions and/or non void attributes.
+     *  Here GMap2 is necessarily non const; while Dart_handle_2 can be a const or non const handle.
+     *  This is the "generic" method, called by the different variants below.
+     *  Marks reserved and automatic attributes management are not updated.
      *  @param amap the generalized map to copy.
+     *  @param origin_to_copy associative array from original darts to copy darts
+     *  @param origin_to_copy associative array from copy darts to original darts
+     *  @param converters tuple of functors, one per attribute, to transform original attributes into copies
+     *  @param dartinfoconverter functor to transform original information of darts into information of copies
+     *  @param pointconverter functor to transform points in original map into points of copies.
+     *  @param copy_perforated_darts true to copy also darts marked perforated (if any)
+     *  @param mark_perforated_darts true to mark darts wich are copies of perforated darts (if any)
      *  @post *this is valid.
      */
-    template <typename GMap2, typename Converters, typename DartInfoConverter,
+    template <typename GMap2, typename Dart_handle_2,
+              typename Converters, typename DartInfoConverter,
               typename PointConverter>
-    void copy(const GMap2& amap, const Converters& converters,
-              const DartInfoConverter& dartinfoconverter,
-              const PointConverter& pointconverter,
-              boost::unordered_map<typename GMap2::Dart_const_handle, Dart_handle>* dart_mapping=NULL)
+    void generic_copy(GMap2& amap,
+                      boost::unordered_map<Dart_handle_2, Dart_handle>* origin_to_copy,
+                      boost::unordered_map<Dart_handle, Dart_handle_2>* copy_to_origin,
+                      const Converters& converters,
+                      const DartInfoConverter& dartinfoconverter,
+                      const PointConverter& pointconverter,
+                      bool copy_perforated_darts=false,
+                      size_type mark_perforated=INVALID_MARK)
     {
       this->clear();
 
-      this->mnb_used_marks = amap.mnb_used_marks;
+      /*this->mnb_used_marks = amap.mnb_used_marks;
       this->mmask_marks    = amap.mmask_marks;
       this->automatic_attributes_management =
           amap.automatic_attributes_management;
@@ -211,121 +218,257 @@ namespace CGAL {
         this->mindex_marks[i]             = amap.mindex_marks[i];
         this->mnb_marked_darts[i]         = amap.mnb_marked_darts[i];
         this->mnb_times_reserved_marks[i] = amap.mnb_times_reserved_marks[i];
-      }
+      } */
 
       // Create an mapping between darts of the two maps (originals->copies).
       // (here we cannot use CGAL::Unique_hash_map because it does not provide
       // iterators...
-      boost::unordered_map<typename GMap2::Dart_const_handle, Dart_handle> local_dartmap;
-      if (dart_mapping==NULL)
-      { dart_mapping=&local_dartmap; }
+      boost::unordered_map<Dart_handle_2, Dart_handle> local_dartmap;
+      if (origin_to_copy==NULL) // Use local_dartmap if user does not provides its own unordered_map
+      { origin_to_copy=&local_dartmap; }
 
-
-      for (typename GMap2::Dart_const_range::const_iterator
-             it=amap.darts().begin(), itend=amap.darts().end();
-           it!=itend; ++it)
+      Dart_handle new_dart;
+      for (typename GMap2::Dart_range::iterator it=amap.darts().begin(),
+             itend=amap.darts().end(); it!=itend; ++it)
       {
-        (*dart_mapping)[it]=mdarts.emplace();
-        init_dart((*dart_mapping)[it], amap.get_marks(it));
-        internal::Copy_dart_info_functor<GMap2, Refs, DartInfoConverter>::
-          run(amap, static_cast<Refs&>(*this), it, (*dart_mapping)[it],
-              dartinfoconverter);
+        if (copy_perforated_darts || !amap.is_perforated(it))
+        {
+          new_dart=mdarts.emplace();
+          init_dart(new_dart); //, amap.get_marks(it));
+
+          if (mark_perforated!=INVALID_MARK && amap.is_perforated(it))
+          { mark(new_dart, mark_perforated); }
+
+          (*origin_to_copy)[it]=new_dart;
+          if (copy_to_origin!=NULL) { (*copy_to_origin)[new_dart]=it; }
+
+          internal::Copy_dart_info_functor
+            <typename GMap2::Refs, Refs, DartInfoConverter>::run
+            (static_cast<const typename GMap2::Refs&>(amap), static_cast<Refs&>(*this),
+             it, new_dart, dartinfoconverter);
+        }
       }
 
       unsigned int min_dim=(dimension<amap.dimension?dimension:amap.dimension);
 
-      typename boost::unordered_map<typename GMap2::Dart_const_handle,Dart_handle>
-        ::iterator dartmap_iter, dartmap_iter_end=dart_mapping->end();
-      for (dartmap_iter=dart_mapping->begin(); dartmap_iter!=dartmap_iter_end;
+      typename boost::unordered_map<Dart_handle_2, Dart_handle>::iterator
+        dartmap_iter, dartmap_iter_end=origin_to_copy->end();
+      for (dartmap_iter=origin_to_copy->begin(); dartmap_iter!=dartmap_iter_end;
            ++dartmap_iter)
       {
         for (unsigned int i=0; i<=min_dim; i++)
         {
           if (!amap.is_free(dartmap_iter->first,i) &&
-              (dartmap_iter->first)<(amap.alpha(dartmap_iter->first,i)))
+              is_free(dartmap_iter->second,i))
           {
             basic_link_alpha(dartmap_iter->second,
-                            (*dart_mapping)[amap.alpha(dartmap_iter->first,i)], i);
+                            (*origin_to_copy)[amap.alpha(dartmap_iter->first,i)], i);
           }
         }
       }
 
       /** Copy attributes */
-      for (dartmap_iter=dart_mapping->begin(); dartmap_iter!=dartmap_iter_end;
+      for (dartmap_iter=origin_to_copy->begin(); dartmap_iter!=dartmap_iter_end;
            ++dartmap_iter)
       {
         Helper::template Foreach_enabled_attributes
-          < internal::Copy_attributes_functor <GMap2, Refs, Converters,
-            PointConverter> >::
-          run(amap, static_cast<Refs&>(*this),
+          < internal::Copy_attributes_functor<typename GMap2::Refs, Refs,
+                                              Converters, PointConverter> >::
+          run(static_cast<const typename GMap2::Refs&>(amap), static_cast<Refs&>(*this),
               dartmap_iter->first, dartmap_iter->second,
               converters, pointconverter);
       }
 
-      CGAL_assertion (is_valid () == 1);
+      CGAL_assertion(is_valid());
     }
 
-    template <typename GMap2>
-    void copy(const GMap2& amap,
-              boost::unordered_map<typename GMap2::Dart_const_handle, Dart_handle>* dart_mapping=NULL)
-    {
-      CGAL::cpp11::tuple<> converters;
-      Default_converter_dart_info<GMap2, Refs> dartinfoconverter;
-      Default_converter_cmap_0attributes_with_point<GMap2, Refs> pointconverter;
-      copy(amap, converters, dartinfoconverter, pointconverter, dart_mapping);
-    }
-
-    template <typename GMap2, typename Converters>
-    void copy(const GMap2& amap, const Converters& converters,
-              boost::unordered_map<typename GMap2::Dart_const_handle, Dart_handle>* dart_mapping=NULL)
-    {
-      Default_converter_cmap_0attributes_with_point<GMap2, Refs> pointconverter;
-      Default_converter_dart_info<GMap2, Refs> dartinfoconverter;
-      copy(amap, converters, dartinfoconverter, pointconverter, dart_mapping);
-    }
-
-    template <typename GMap2, typename Converters, typename DartInfoConverter>
-    void copy(const GMap2& amap, const Converters& converters,
+    // (1a) copy(amap, converters, dartinfoconverter, pointconverter)
+    template<typename GMap2, typename Converters, typename DartInfoConverter,
+             typename PointConverter>
+    void copy(GMap2& amap,
+              boost::unordered_map
+              <typename GMap2::Dart_handle, Dart_handle>* origin_to_copy,
+              boost::unordered_map
+              <Dart_handle, typename GMap2::Dart_handle>* copy_to_origin,
+              const Converters& converters,
               const DartInfoConverter& dartinfoconverter,
-              boost::unordered_map<typename GMap2::Dart_const_handle, Dart_handle>* dart_mapping=NULL)
+              const PointConverter& pointconverter,
+              bool copy_perforated_darts=false,
+              size_type mark_perforated=INVALID_MARK)
     {
-      Default_converter_cmap_0attributes_with_point<GMap2, Refs> pointconverter;
-      copy(amap, converters, dartinfoconverter, pointconverter, dart_mapping);
+      generic_copy<GMap2, typename GMap2::Dart_handle, Converters,
+          DartInfoConverter, PointConverter>
+          (amap,  origin_to_copy, copy_to_origin,
+           converters, dartinfoconverter, pointconverter,
+           copy_perforated_darts, mark_perforated);
+    }
+
+    // (1b) copy_from_const(const amap, converters, dartinfoconverter, pointconverter)
+    template<typename GMap2, typename Converters, typename DartInfoConverter,
+             typename PointConverter>
+    void copy_from_const(const GMap2& amap,
+                         boost::unordered_map
+                         <typename GMap2::Dart_const_handle, Dart_handle>* origin_to_copy,
+                         boost::unordered_map
+                         <Dart_handle, typename GMap2::Dart_const_handle>* copy_to_origin,
+                         const Converters& converters,
+                         const DartInfoConverter& dartinfoconverter,
+                         const PointConverter& pointconverter,
+                         bool copy_perforated_darts=false,
+                         size_type mark_perforated=INVALID_MARK)
+    {
+      generic_copy<GMap2, typename GMap2::Dart_const_handle,
+          Converters, DartInfoConverter, PointConverter>
+          (const_cast<GMap2&>(amap), origin_to_copy, copy_to_origin,
+           converters, dartinfoconverter, pointconverter,
+           copy_perforated_darts, mark_perforated);
+    }
+
+    // (2a) copy(amap, converters, dartinfoconverter)
+    template<typename GMap2, typename Converters, typename DartInfoConverter>
+    void copy(GMap2& amap,
+              boost::unordered_map
+              <typename GMap2::Dart_handle, Dart_handle>* origin_to_copy,
+              boost::unordered_map
+              <Dart_handle, typename GMap2::Dart_handle>* copy_to_origin,
+              const Converters& converters,
+              const DartInfoConverter& dartinfoconverter,
+              bool copy_perforated_darts=false,
+              size_type mark_perforated=INVALID_MARK)
+    {
+      Default_converter_cmap_0attributes_with_point<typename GMap2::Refs, Refs>
+        pointconverter;
+      copy(amap, origin_to_copy, copy_to_origin, converters,
+           dartinfoconverter, pointconverter,
+           copy_perforated_darts, mark_perforated);
+    }
+
+    // (2b) copy_from_const(const amap, converters, dartinfoconverter)
+    template <typename GMap2, typename Converters, typename DartInfoConverter>
+    void copy_from_const(const GMap2& amap,
+                         boost::unordered_map
+                         <typename GMap2::Dart_const_handle, Dart_handle>* origin_to_copy,
+                         boost::unordered_map
+                         <Dart_handle, typename GMap2::Dart_const_handle>* copy_to_origin,
+                         const Converters& converters,
+                         const DartInfoConverter& dartinfoconverter,
+                         bool copy_perforated_darts=false,
+                         size_type mark_perforated=INVALID_MARK)
+    {
+      Default_converter_cmap_0attributes_with_point<typename GMap2::Refs, Refs>
+          pointconverter;
+      copy_from_const(amap, origin_to_copy, copy_to_origin, converters,
+                      dartinfoconverter, pointconverter,
+                      copy_perforated_darts, mark_perforated);
+    }
+
+    // (3a) copy(amap, converters)
+    template<typename GMap2, typename Converters>
+    void copy(GMap2& amap,
+              boost::unordered_map
+              <typename GMap2::Dart_handle, Dart_handle>* origin_to_copy,
+              boost::unordered_map
+              <Dart_handle, typename GMap2::Dart_handle>* copy_to_origin,
+              const Converters& converters,
+              bool copy_perforated_darts=false,
+              size_type mark_perforated=INVALID_MARK)
+    {
+      Default_converter_dart_info<typename GMap2::Refs, Refs> dartinfoconverter;
+      copy(amap, origin_to_copy, copy_to_origin, converters, dartinfoconverter,
+           copy_perforated_darts, mark_perforated);
+    }
+
+    // (3b) copy_from_const(const amap, converters)
+    template <typename GMap2, typename Converters>
+    void copy_from_const(const GMap2& amap,
+                         boost::unordered_map
+                         <typename GMap2::Dart_const_handle, Dart_handle>* origin_to_copy,
+                         boost::unordered_map
+                         <Dart_handle, typename GMap2::Dart_const_handle>* copy_to_origin,
+                         const Converters& converters,
+                         bool copy_perforated_darts=false,
+                         size_type mark_perforated=INVALID_MARK)
+    {
+      Default_converter_dart_info<typename GMap2::Refs, Refs> dartinfoconverter;
+      copy_from_const(amap, origin_to_copy, copy_to_origin, converters, dartinfoconverter,
+                      copy_perforated_darts, mark_perforated);
+    }
+
+    // (4a) copy(amap)
+    template<typename GMap2>
+    void copy(GMap2& amap,
+              boost::unordered_map
+              <typename GMap2::Dart_handle, Dart_handle>* origin_to_copy=nullptr,
+              boost::unordered_map
+              <Dart_handle, typename GMap2::Dart_handle>* copy_to_origin=nullptr,
+              bool copy_perforated_darts=false,
+              size_type mark_perforated=INVALID_MARK)
+    {
+      std::tuple<> converters;
+      copy(amap, origin_to_copy, copy_to_origin, converters,
+           copy_perforated_darts, mark_perforated);
+    }
+
+    // (4b) copy_from_const(const amap)
+    template <typename GMap2>
+    void copy_from_const(const GMap2& amap,
+                         boost::unordered_map
+                         <typename GMap2::Dart_const_handle, Dart_handle>* origin_to_copy=nullptr,
+                         boost::unordered_map
+                         <Dart_handle, typename GMap2::Dart_const_handle>* copy_to_origin=nullptr,
+                         bool copy_perforated_darts=false,
+                         size_type mark_perforated=INVALID_MARK)
+    {
+      std::tuple<> converters;
+      copy_from_const(amap, origin_to_copy, copy_to_origin, converters,
+                      copy_perforated_darts, mark_perforated);
     }
 
     // Copy constructor from a map having exactly the same type.
-    Generalized_map_base (const Self & amap)
-    { copy<Self>(amap); }
+    Generalized_map_base(const Self & amap) : Generalized_map_base()
+    { copy_from_const(amap); }
 
     // "Copy constructor" from a map having different type.
-    template <typename GMap2>
-    Generalized_map_base(const GMap2& amap)
-    { copy(amap); }
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
+              typename Storage2>
+    Generalized_map_base(const Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap):
+       Generalized_map_base()
+    { copy_from_const(amap); }
 
     // "Copy constructor" from a map having different type.
-    template <typename GMap2, typename Converters>
-    Generalized_map_base(const GMap2& amap, Converters& converters)
-    { copy(amap, converters); }
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
+              typename Storage2, typename Converters>
+    Generalized_map_base(const Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap,
+                         const Converters& converters): Generalized_map_base()
+    { copy_from_const(amap, nullptr, nullptr, converters); }
 
     // "Copy constructor" from a map having different type.
-    template <typename GMap2, typename Converters, typename DartInfoConverter>
-    Generalized_map_base(const GMap2& amap, Converters& converters,
-                         const DartInfoConverter& dartinfoconverter)
-    { copy(amap, converters, dartinfoconverter); }
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
+              typename Storage2,
+              typename Converters, typename DartInfoConverter>
+    Generalized_map_base(const Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap,
+                         const Converters& converters,
+                         const DartInfoConverter& dartinfoconverter):
+       Generalized_map_base()
+    { copy_from_const(amap, nullptr, nullptr, converters, dartinfoconverter); }
 
     // "Copy constructor" from a map having different type.
-    template <typename GMap2, typename Converters, typename DartInfoConverter,
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
+              typename Storage2,
+              typename Converters, typename DartInfoConverter,
               typename PointConverter>
-    Generalized_map_base(const GMap2& amap, Converters& converters,
+    Generalized_map_base(const Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap,
+                         const Converters& converters,
                          const DartInfoConverter& dartinfoconverter,
-                         const PointConverter& pointconverter)
-    { copy(amap, converters, dartinfoconverter, pointconverter); }
+                         const PointConverter& pointconverter):
+      Generalized_map_base()
+    { copy_from_const(amap, nullptr, nullptr, converters, dartinfoconverter, pointconverter); }
 
     /** Affectation operation. Copies one map to the other.
      * @param amap a generalized map.
      * @return A copy of that generalized map.
      */
-    Self & operator= (const Self & amap)
+    Self & operator=(const Self & amap)
     {
       if (this!=&amap)
       {
@@ -403,7 +546,6 @@ namespace CGAL {
      * is unmarked for all the marks.
      * @return a Dart_handle on the new dart.
      */
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
     template < typename... Args >
     Dart_handle create_dart(const Args&... args)
     {
@@ -411,90 +553,6 @@ namespace CGAL {
       init_dart(res);
       return res;
     }
-#else
-    Dart_handle create_dart()
-    {
-      Dart_handle res=mdarts.emplace();
-      init_dart(res);
-      return res;
-    }
-    template < typename T1 >
-    Dart_handle create_dart(const T1 &t1)
-    {
-      Dart_handle res=mdarts.emplace(t1);
-      init_dart(res);
-      return res;
-    }
-    template < typename T1, typename T2 >
-    Dart_handle create_dart(const T1 &t1, const T2 &t2)
-    {
-      Dart_handle res=mdarts.emplace(t1, t2);
-      init_dart(res);
-      return res;
-    }
-    template < typename T1, typename T2, typename T3 >
-    Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3)
-    {
-      Dart_handle res=mdarts.emplace(t1, t2, t3);
-      init_dart(res);
-      return res;
-    }
-    template < typename T1, typename T2, typename T3, typename T4 >
-    Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3,
-                            const T4 &t4)
-    {
-      Dart_handle res=mdarts.emplace(t1, t2, t3, t4);
-      init_dart(res);
-      return res;
-    }
-    template < typename T1, typename T2, typename T3, typename T4, typename T5 >
-    Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3,
-                            const T4 &t4, const T5 &t5)
-    {
-      Dart_handle res=mdarts.emplace(t1, t2, t3, t4, t5);
-      init_dart(res);
-      return res;
-    }
-    template < typename T1, typename T2, typename T3, typename T4, typename T5,
-               typename T6 >
-    Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3,
-                            const T4 &t4, const T5 &t5, const T6 &t6)
-    {
-      Dart_handle res=mdarts.emplace(t1, t2, t3, t4, t5, t6);
-      init_dart(res);
-      return res;
-    }
-    template < typename T1, typename T2, typename T3, typename T4, typename T5,
-               typename T6, typename T7 >
-    Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3,
-                            const T4 &t4, const T5 &t5, const T6 &t6,
-                            const T7 &t7)
-    {
-      Dart_handle res=mdarts.emplace(t1, t2, t3, t4, t5, t6, t7);
-      init_dart(res);
-      return res;
-    }
-    template < typename T1, typename T2, typename T3, typename T4, typename T5,
-               typename T6, typename T7, typename T8 >
-    Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3,
-                            const T4 &t4, const T5 &t5, const T6 &t6,
-                            const T7 &t7, const T8 &t8)
-    {
-      Dart_handle res=mdarts.emplace(t1, t2, t3, t4, t5, t6, t7, t8);
-      init_dart(res);
-      return res;
-    }
-    template < typename T1, typename T2, typename T3, typename T4, typename T5,
-               typename T6, typename T7, typename T8, typename T9 >
-    Dart_handle create_dart(const T1 &t1, const T2 &t2, const T3 &t3,
-                            const T4 &t4, const T5 &t5, const T6 &t6,
-                            const T7 &t7, const T8 &t8, const T9 &t9)
-    {
-      Dart_handle res=mdarts.emplace(t1, t2, t3, t4, t5, t6, t7, t8, t9);
-      init_dart(res);
-      return res;
-    }
-#endif
 
     /** Erase a dart from the list of darts.
      * @param adart the dart to erase.
@@ -543,6 +601,16 @@ namespace CGAL {
     { return mdarts.iterator_to(adart); }
     Dart_const_handle dart_handle(const Dart& adart) const
     { return mdarts.iterator_to(adart); }
+    Dart_handle dart_handle(size_type i)
+    {
+      CGAL_assertion(darts().is_used(i));
+      return mdarts.iterator_to(darts()[i]);
+    }
+    Dart_const_handle dart_handle(size_type i) const
+    {
+      CGAL_assertion(darts().is_used(i));
+      return mdarts.iterator_to(darts()[i]);
+    }
 
     /** Return the highest dimension for which dh is not free.
      * @param dh a dart handle
@@ -557,7 +625,7 @@ namespace CGAL {
     }
 
     /** Return a dart belonging to the same edge and to the second vertex
-     * of the current edge (NULL if such a dart does not exist).
+     * of the current edge (nullptr if such a dart does not exist).
      * @return An handle to a dart belonging to the other extremity.
      */
     Dart_handle other_extremity(Dart_handle dh)
@@ -634,7 +702,6 @@ namespace CGAL {
     /// @return the alphas of ADart (alpha are used in the same order than
     ///         they are given as parameters)
 
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
     template<typename ...Alphas>
     Dart_handle alpha(Dart_handle ADart, Alphas... alphas)
     { return CGAL::internal::Alpha_functor<Self, Dart_handle, Alphas...>::
@@ -651,119 +718,6 @@ namespace CGAL {
     Dart_const_handle alpha(Dart_const_handle ADart) const
     { return CGAL::internal::Alpha_functor_static<const Self, Dart_const_handle, Alphas...>::
         run(*this, ADart); }
-#else
-    Dart_handle alpha(Dart_handle ADart, int B1)
-    { return this->get_alpha(ADart, B1); }
-    Dart_handle alpha(Dart_handle ADart, int B1, int B2)
-    { return alpha(alpha(ADart, B1), B2); }
-    Dart_handle alpha(Dart_handle ADart, int B1, int B2, int B3)
-    { return alpha(alpha(ADart, B1), B2, B3); }
-    Dart_handle alpha(Dart_handle ADart, int B1, int B2, int B3,
-                           int B4)
-    { return alpha(alpha(ADart, B1), B2, B3, B4); }
-    Dart_handle alpha(Dart_handle ADart, int B1, int B2, int B3,
-                           int B4, int B5)
-    { return alpha(alpha(ADart, B1), B2, B3, B4, B5); }
-    Dart_handle alpha(Dart_handle ADart, int B1, int B2, int B3,
-                           int B4, int B5, int B6)
-    { return alpha(alpha(ADart, B1), B2, B3, B4, B5, B6); }
-    Dart_handle alpha(Dart_handle ADart, int B1, int B2, int B3,
-                           int B4, int B5, int B6, int B7)
-    { return alpha(alpha(ADart, B1), B2, B3, B4, B5, B6, B7); }
-    Dart_handle alpha(Dart_handle ADart, int B1, int B2, int B3,
-                           int B4, int B5, int B6, int B7, int B8)
-    { return alpha(alpha(ADart, B1), B2, B3, B4, B5, B6, B7, B8); }
-    Dart_handle alpha(Dart_handle ADart, int B1, int B2, int B3,
-                           int B4, int B5, int B6, int B7, int B8, int B9)
-    { return alpha(alpha(ADart, B1), B2, B3, B4, B5, B6, B7, B8, B9); }
-
-    template<int B1>
-    Dart_handle alpha(Dart_handle ADart)
-    { return this->template get_alpha<B1>(ADart); }
-    template<int B1, int B2>
-    Dart_handle alpha(Dart_handle ADart)
-    { return alpha<B2>(alpha<B1>(ADart)); }
-    template<int B1, int B2, int B3>
-    Dart_handle alpha(Dart_handle ADart)
-    { return alpha<B2, B3>(alpha<B1>(ADart)); }
-    template<int B1, int B2, int B3, int B4>
-    Dart_handle alpha(Dart_handle ADart)
-    { return alpha<B2, B3, B4>(alpha<B1>(ADart)); }
-    template<int B1, int B2, int B3, int B4, int B5>
-    Dart_handle alpha(Dart_handle ADart)
-    { return alpha<B2, B3, B4, B5>(alpha<B1>(ADart)); }
-    template<int B1, int B2, int B3, int B4, int B5, int B6>
-    Dart_handle alpha(Dart_handle ADart)
-    { return alpha<B2, B3, B4, B5, B6>(alpha<B1>(ADart)); }
-    template<int B1, int B2, int B3, int B4, int B5, int B6,
-             int B7>
-    Dart_handle alpha(Dart_handle ADart)
-    { return alpha<B2, B3, B4, B5, B6, B7>(alpha<B1>(ADart)); }
-    template<int B1, int B2, int B3, int B4, int B5, int B6,
-             int B7, int B8>
-    Dart_handle alpha(Dart_handle ADart)
-    { return alpha<B2, B3, B4, B5, B6, B7, B8>(alpha<B1>(ADart)); }
-    template<int B1, int B2, int B3, int B4, int B5, int B6,
-             int B7, int B8, int B9>
-     Dart_handle alpha(Dart_handle ADart)
-    { return alpha<B2, B3, B4, B5, B6, B7, B8, B9>(alpha<B1>(ADart)); }
-
-    Dart_const_handle alpha(Dart_const_handle ADart, int B1) const
-    { return this->get_alpha(ADart, B1); }
-    Dart_const_handle alpha(Dart_const_handle ADart, int B1, int B2) const
-    { return alpha(alpha(ADart, B1), B2); }
-    Dart_const_handle alpha(Dart_const_handle ADart, int B1, int B2, int B3) const
-    { return alpha(alpha(ADart, B1), B2, B3); }
-    Dart_const_handle alpha(Dart_const_handle ADart, int B1, int B2, int B3,
-                           int B4) const
-    { return alpha(alpha(ADart, B1), B2, B3, B4); }
-    Dart_const_handle alpha(Dart_const_handle ADart, int B1, int B2, int B3,
-                           int B4, int B5) const
-    { return alpha(alpha(ADart, B1), B2, B3, B4, B5); }
-    Dart_const_handle alpha(Dart_const_handle ADart, int B1, int B2, int B3,
-                           int B4, int B5, int B6) const
-    { return alpha(alpha(ADart, B1), B2, B3, B4, B5, B6); }
-    Dart_const_handle alpha(Dart_const_handle ADart, int B1, int B2, int B3,
-                           int B4, int B5, int B6, int B7) const
-    { return alpha(alpha(ADart, B1), B2, B3, B4, B5, B6, B7); }
-    Dart_const_handle alpha(Dart_const_handle ADart, int B1, int B2, int B3,
-                           int B4, int B5, int B6, int B7, int B8) const
-    { return alpha(alpha(ADart, B1), B2, B3, B4, B5, B6, B7, B8); }
-    Dart_const_handle alpha(Dart_const_handle ADart, int B1, int B2, int B3,
-                           int B4, int B5, int B6, int B7, int B8, int B9) const
-    { return alpha(alpha(ADart, B1), B2, B3, B4, B5, B6, B7, B8, B9); }
-
-    template<int B1>
-    Dart_const_handle alpha(Dart_const_handle ADart) const
-    { return this->template get_alpha<B1>(ADart); }
-    template<int B1, int B2>
-    Dart_const_handle alpha(Dart_const_handle ADart) const
-    { return alpha<B2>(alpha<B1>(ADart)); }
-    template<int B1, int B2, int B3>
-    Dart_const_handle alpha(Dart_const_handle ADart) const
-    { return alpha<B2, B3>(alpha<B1>(ADart)); }
-    template<int B1, int B2, int B3, int B4>
-    Dart_const_handle alpha(Dart_const_handle ADart) const
-    { return alpha<B2, B3, B4>(alpha<B1>(ADart)); }
-    template<int B1, int B2, int B3, int B4, int B5>
-    Dart_const_handle alpha(Dart_const_handle ADart) const
-    { return alpha<B2, B3, B4, B5>(alpha<B1>(ADart)); }
-    template<int B1, int B2, int B3, int B4, int B5, int B6>
-    Dart_const_handle alpha(Dart_const_handle ADart) const
-    { return alpha<B2, B3, B4, B5, B6>(alpha<B1>(ADart)); }
-    template<int B1, int B2, int B3, int B4, int B5, int B6,
-              int B7>
-    Dart_const_handle alpha(Dart_const_handle ADart) const
-    { return alpha<B2, B3, B4, B5, B6, B7>(alpha<B1>(ADart)); }
-    template<int B1, int B2, int B3, int B4, int B5, int B6,
-              int B7, int B8>
-    Dart_const_handle alpha(Dart_const_handle ADart) const
-    { return alpha<B2, B3, B4, B5, B6, B7, B8>(alpha<B1>(ADart)); }
-    template<int B1, int B2, int B3, int B4, int B5, int B6,
-              int B7, int B8, int B9>
-    Dart_const_handle alpha(Dart_const_handle ADart) const
-    { return alpha<B2, B3, B4, B5, B6, B7, B8, B9>(alpha<B1>(ADart)); }
-#endif
 
     // Generic function to iterate on CMap or GMap in a generic way
     bool is_previous_exist(Dart_const_handle ADart) const
@@ -786,6 +740,11 @@ namespace CGAL {
     { return this->template alpha<0, 1>(ADart); }
     Dart_const_handle next(Dart_const_handle ADart) const
     { return this->template alpha<0, 1>(ADart); }
+
+    Dart_handle opposite2(Dart_handle ADart)
+    { return this->template alpha<0, 2>(ADart); }
+    Dart_const_handle opposite2(Dart_const_handle ADart) const
+    { return this->template alpha<0, 2>(ADart); }
 
     template<unsigned int dim>
     Dart_handle opposite(Dart_handle ADart)
@@ -1055,6 +1014,52 @@ namespace CGAL {
       mindex_marks[amark] = mnb_used_marks;
 
       mnb_times_reserved_marks[amark]=0;
+    }
+
+    template <unsigned int i, unsigned int d=dimension>
+    bool belong_to_same_cell(Dart_const_handle adart1,
+                             Dart_const_handle adart2) const
+    { return CGAL::belong_to_same_cell<Self, i, d>(*this, adart1, adart2); }
+
+    template <unsigned int i, unsigned int d=dimension>
+    bool is_whole_cell_unmarked(Dart_const_handle adart, size_type amark) const
+    { return CGAL::is_whole_cell_unmarked<Self, i, d>(*this, adart, amark); }
+
+    template <unsigned int i, unsigned int d=dimension>
+    bool is_whole_cell_marked(Dart_const_handle adart, size_type amark) const
+    { return CGAL::is_whole_cell_marked<Self, i, d>(*this, adart, amark); }
+
+    template <unsigned int i, unsigned int d=dimension>
+    size_type mark_cell(Dart_const_handle adart, size_type amark) const
+    { return CGAL::mark_cell<Self, i, d>(*this, adart, amark); }
+
+    template <unsigned int i, unsigned int d=dimension>
+    size_type unmark_cell(Dart_const_handle adart, size_type amark) const
+    { return CGAL::unmark_cell<Self, i, d>(*this, adart, amark); }
+
+    template <unsigned int i, unsigned int d=dimension>
+    size_type mark_oriented_cell(Dart_const_handle adart, size_type amark,
+                                 size_type amark2=INVALID_MARK) const
+    { return CGAL::mark_oriented_cell<Self, i, d>(*this, adart, amark, amark2); }
+
+    template <unsigned int i, unsigned int d=dimension>
+    size_type unmark_oriented_cell(Dart_const_handle adart, size_type amark,
+                                 size_type amark2=INVALID_MARK) const
+    { return CGAL::unmark_oriented_cell<Self, i, d>(*this, adart, amark, amark2); }
+
+    std::size_t orient(size_type amark) const
+    {
+      size_type amark2=get_new_mark();
+      std::size_t res=0;
+      for (auto it=darts().begin(), itend=darts().end(); it!=itend; ++it)
+      {
+        if (!is_marked(it, amark2))
+        { res+=mark_oriented_cell<dimension+1>(it, amark, amark2); } // Mark the connected componend
+      }
+      CGAL_assertion(is_whole_map_marked(amark2));
+      free_mark(amark2);
+
+      return res;
     }
 
     /** Test if this map is without boundary for a given dimension.
@@ -1329,126 +1334,19 @@ namespace CGAL {
 
     /// Create a new attribute.
     /// @return a handle on the new attribute.
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
     template<unsigned int i, typename ...Args>
     typename Attribute_handle<i>::type create_attribute(const Args&... args)
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
      typename Attribute_handle<i>::type res=
-       CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+       std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).emplace(args...);
      // Reinitialize the ref counting of the new attribute. This is normally
      // not required except if create_attribute is used as "copy contructor".
      this->template init_attribute_ref_counting<i>(res);
      return res;
     }
-#else
-    template<unsigned int i>
-    typename Attribute_handle<i>::type
-    create_attribute()
-    {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-                  "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace();
-    }
-    template<unsigned int i, typename T1>
-    typename Attribute_handle<i>::type
-    create_attribute(const T1 &t1)
-    {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-                  "create_attribute<i> but i-attributes are disabled");
-     typename Attribute_handle<i>::type res=
-       CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace(t1);
-     this->template init_attribute_ref_counting<i>(res);
-     return res;
-    }
-    template<unsigned int i, typename T1, typename T2>
-    typename Attribute_handle<i>::type
-    create_attribute(const T1 &t1, const T2 &t2)
-    {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-                  "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace(t1, t2);
-    }
-    template<unsigned int i, typename T1, typename T2, typename T3>
-    typename Attribute_handle<i>::type
-    create_attribute(const T1 &t1, const T2 &t2, const T3 &t3)
-    {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-                  "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace(t1, t2, t3);
-    }
-    template<unsigned int i, typename T1, typename T2, typename T3, typename T4>
-    typename Attribute_handle<i>::type
-    create_attribute(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4)
-    {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-                  "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace(t1, t2, t3, t4);
-    }
-    template<unsigned int i, typename T1, typename T2, typename T3, typename T4,
-             typename T5>
-    typename Attribute_handle<i>::type
-    create_attribute(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-                     const T5 &t5)
-    {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-                  "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace(t1, t2, t3, t4, t5);
-    }
-    template<unsigned int i, typename T1, typename T2, typename T3, typename T4,
-             typename T5, typename T6>
-    typename Attribute_handle<i>::type
-    create_attribute(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-                     const T5 &t5, const T6 &t6)
-    {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-                  "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6);
-    }
-    template<unsigned int i, typename T1, typename T2, typename T3, typename T4,
-             typename T5, typename T6, typename T7>
-    typename Attribute_handle<i>::type
-    create_attribute(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-                     const T5 &t5, const T6 &t6, const T7 &t7)
-    {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-                  "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6, t7);
-    }
-    template<unsigned int i, typename T1, typename T2, typename T3, typename T4,
-             typename T5, typename T6, typename T7, typename T8>
-    typename Attribute_handle<i>::type
-    create_attribute(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-                     const T5 &t5, const T6 &t6, const T7 &t7, const T8 &t8)
-    {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-                  "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6, t7, t8);
-    }
-    template<unsigned int i, typename T1, typename T2, typename T3, typename T4,
-             typename T5, typename T6, typename T7, typename T8, typename T9>
-    typename Attribute_handle<i>::type
-    create_attribute(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-                     const T5 &t5, const T6 &t6, const T7 &t7, const T8 &t8,
-                     const T9 &t9)
-    {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-                  "create_attribute<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_containers).emplace(t1, t2, t3, t4, t5, t6, t7, t8, t9);
-    }
-#endif
 
     /// Erase an attribute.
     /// @param h a handle to the attribute to erase.
@@ -1457,7 +1355,7 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "erase_attribute<i> but i-attributes are disabled");
-      CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+      std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).erase(h);
     }
 
@@ -1467,7 +1365,7 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                                 "is_attribute_used<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+      return std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).is_used(ah);
     }
 
@@ -1477,7 +1375,7 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "number_of_attributes<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+      return std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).size();
     }
 
@@ -1506,7 +1404,7 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                                 "attributes<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+      return std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers);
     }
 
@@ -1515,7 +1413,7 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                                 "attributes<i> but i-attributes are disabled");
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+      return std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers);
     }
 
@@ -1531,7 +1429,7 @@ namespace CGAL {
            "onsplit_functor<i> but "
            "i-attributes are disabled");
 
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+      return std::get<Helper::template Dimension_index<i>::value>
         (m_onsplit_functors);
     }
 
@@ -1547,7 +1445,7 @@ namespace CGAL {
            "onsplit_functor<i> but "
            "i-attributes are disabled");
 
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+      return std::get<Helper::template Dimension_index<i>::value>
         (m_onsplit_functors);
     }
 
@@ -1563,7 +1461,7 @@ namespace CGAL {
            "onsplit_functor<i> but "
            "i-attributes are disabled");
 
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+      return std::get<Helper::template Dimension_index<i>::value>
         (m_onmerge_functors);
     }
     // Get the ith dynamic onmerge functor (by reference so that we can
@@ -1578,7 +1476,7 @@ namespace CGAL {
            "onsplit_functor<i> but "
            "i-attributes are disabled");
 
-      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+      return std::get<Helper::template Dimension_index<i>::value>
         (m_onmerge_functors);
     }
 
@@ -1605,10 +1503,10 @@ namespace CGAL {
       dart_link_alpha(dart2, dart1, i);
     }
 
-    /** Double link two darts, and update the NULL attributes.
+    /** Double link two darts, and update the nullptr attributes.
      * \em adart1 is i-linked to \em adart2 and \em adart2 is i-linked
-     * with \em adart1. The NULL attributes of \em adart1 are updated to
-     * non NULL attributes associated to \em adart2, and vice-versa.
+     * with \em adart1. The nullptr attributes of \em adart1 are updated to
+     * non nullptr attributes associated to \em adart2, and vice-versa.
      * If both darts have an attribute, the attribute of adart1 is
      * associated to adart2.
      * We can obtain a non-valid map with darts belonging to a same cell
@@ -1631,8 +1529,8 @@ namespace CGAL {
 
     /** Double link a dart with alphai to a second dart.
      * \em adart1 is i-linked to \em adart2 and \em adart2 is i^-1-linked
-     * with \em adart1. The NULL attributes of \em adart1 are updated to
-     * non NULL attributes associated to \em adart2, and vice-versa,
+     * with \em adart1. The nullptr attributes of \em adart1 are updated to
+     * non nullptr attributes associated to \em adart2, and vice-versa,
      * if both darts have an attribute, the attribute of adart1 is
      * associated to adart2 (only if update_attributes==true).
      * @param adart1 a first dart.
@@ -1962,6 +1860,61 @@ namespace CGAL {
     }
 
   public:
+    /// @return the positive turn between the two given darts.
+    //  @pre next(d1) and d2 must belong to the same vertex.
+    std::size_t positive_turn(Dart_const_handle d1, Dart_const_handle d2) const
+    {
+      CGAL_assertion((!this->template is_free<1>(d1)));
+      /* CGAL_assertion((belong_to_same_cell<0>(this->next(d1), d2))); */
+
+      if (d2==opposite2(d1)) { return 0; }
+
+      Dart_const_handle dd1=d1;
+      std::size_t res=1;
+      while (next(dd1)!=d2)
+      {
+        if (this->template is_free<2>(next(dd1)))
+        { return (std::numeric_limits<std::size_t>::max)(); }
+
+        ++res;
+        dd1=opposite2(next(dd1));
+
+        CGAL_assertion(!this->template is_free<1>(dd1));
+        CGAL_assertion(next(dd1)==d2 || dd1!=d1);
+      }
+      return res;
+    }
+
+    /// @return the negative turn between the two given darts.
+    //  @pre next(d1) and d2 must belong to the same vertex.
+    std::size_t negative_turn(Dart_const_handle d1, Dart_const_handle d2) const
+    {
+      CGAL_assertion((!this->template is_free<1>(d1)));
+      /* CGAL_assertion((belong_to_same_cell<0>(this->next(d1), d2))); */
+
+      if (d2==opposite2(d1)) { return 0; }
+
+      if (this->template is_free<2>(d1) || this->template is_free<2>(d2))
+      { return (std::numeric_limits<std::size_t>::max)(); }
+
+      d1=opposite2(d1);
+      d2=opposite2(d2);
+      Dart_const_handle dd1=d1;
+      std::size_t res=1;
+      while (previous(dd1)!=d2)
+      {
+        if (this->template is_free<2>(previous(dd1)))
+        { return (std::numeric_limits<std::size_t>::max)(); }
+
+        ++res;
+        dd1=opposite2(previous(dd1));
+
+        CGAL_assertion(!this->template is_free<0>(dd1));
+        CGAL_assertion(previous(dd1)==d2 || dd1!=d1);
+      }
+      return res;
+    }
+
     /** Erase marked darts from the map.
      * Marked darts are unlinked before to be removed, thus surviving darts
      * are correctly linked, but the map is not necessarily valid depending
@@ -1981,14 +1934,13 @@ namespace CGAL {
         if (is_marked(d, amark))
         {
           for ( i = 0; i <= dimension; ++i)
-          { if (!is_free(d, i)) unlink_beta(d, i); }
+          { if (!is_free(d, i)) topo_unsew(d, i); }
           erase_dart(d); ++res;
         }
       }
       return res;
     }
 
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
     //**************************************************************************
     // Dart_of_orbit_basic_range
     template<unsigned int ... Alpha>
@@ -2066,307 +2018,6 @@ namespace CGAL {
     Dart_of_orbit_basic_const_range<Alpha...>
     darts_of_orbit_basic(Dart_const_handle adart, size_type amark=INVALID_MARK) const
     { return Dart_of_orbit_basic_const_range<Alpha...>(*this,adart,amark); }
-    //**************************************************************************
-#else
-    //**************************************************************************
-    // Dart_of_orbit_basic_range
-    template<int B1=-1,int B2=-1,int B3=-1,int B4=-1,int B5=-1,
-             int B6=-1,int B7=-1,int B8=-1,int B9=-1>
-    struct Dart_of_orbit_basic_range: public CGAL::CMap_range
-    <Self, CGAL::GMap_dart_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,
-        B8,B9>,
-     CGAL::GMap_dart_const_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,
-        B8,B9> >
-    {
-      typedef CGAL::CMap_range
-      <Self, CGAL::GMap_dart_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,
-      B8,B9>,
-       CGAL::GMap_dart_const_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,
-                                               B6,B7,B8,B9> > Base;
-
-      Dart_of_orbit_basic_range(Self &amap, Dart_handle adart,
-                                size_type /*amark*/=INVALID_MARK):
-        Base(amap, adart)
-      {}
-    };
-    //**************************************************************************
-    // Dart_of_orbit_basic_const_range
-    template<int B1=-1,int B2=-1,int B3=-1,int B4=-1,int B5=-1,
-             int B6=-1,int B7=-1,int B8=-1,int B9=-1>
-    struct Dart_of_orbit_basic_const_range: public CMap_const_range
-    <Self,
-     CGAL::GMap_dart_const_iterator_basic_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,
-        B8,B9> >
-    {
-      typedef CMap_const_range
-      <Self, CGAL::GMap_dart_const_iterator_basic_of_orbit
-       <Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> > Base;
-
-      Dart_of_orbit_basic_const_range(const Self &amap,
-                                      Dart_const_handle adart, size_type amark=INVALID_MARK):
-        Base(amap, adart, amark)
-      {}
-    };
-    //**************************************************************************
-    // Dart_of_orbit_range
-    template<int B1=-1,int B2=-1,int B3=-1,int B4=-1,int B5=-1,
-             int B6=-1,int B7=-1,int B8=-1,int B9=-1>
-    struct Dart_of_orbit_range: public CGAL::CMap_range
-    <Self, CGAL::GMap_dart_iterator_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9>,
-     CGAL::GMap_dart_const_iterator_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> >
-    {
-      typedef CGAL::CMap_range
-      <Self, CGAL::GMap_dart_iterator_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,
-      B8,B9>,
-       CGAL::GMap_dart_const_iterator_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,
-      B8,B9> >
-      Base;
-
-      Dart_of_orbit_range(Self &amap, Dart_handle adart):
-        Base(amap, adart)
-      {}
-    };
-    //**************************************************************************
-    // Dart_of_orbit_const_range
-    template<int B1=-1,int B2=-1,int B3=-1,int B4=-1,int B5=-1,
-             int B6=-1,int B7=-1,int B8=-1,int B9=-1>
-    struct Dart_of_orbit_const_range: public CMap_const_range
-    <Self, CGAL::GMap_dart_const_iterator_of_orbit<Self,B1,B2,B3,B4,B5,B6,B7,
-        B8,B9> >
-    {
-      typedef CMap_const_range
-      <Self, CGAL::GMap_dart_const_iterator_of_orbit
-       <Self,B1,B2,B3,B4,B5,B6,B7,B8,B9> > Base;
-
-      Dart_of_orbit_const_range(const Self &amap, Dart_const_handle adart):
-        Base(amap, adart)
-      {}
-    };
-    //**************************************************************************
-    /// @return a range on all the darts of the given orbit
-    Dart_of_orbit_range<> darts_of_orbit(Dart_handle adart)
-    { return Dart_of_orbit_range<>(*this,adart); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1>
-    Dart_of_orbit_range<B1> darts_of_orbit(Dart_handle adart)
-    { return Dart_of_orbit_range<B1>(*this,adart); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2>
-    Dart_of_orbit_range<B1,B2> darts_of_orbit(Dart_handle adart)
-    { return Dart_of_orbit_range<B1,B2>(*this,adart); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3>
-    Dart_of_orbit_range<B1,B2,B3> darts_of_orbit(Dart_handle adart)
-    { return Dart_of_orbit_range<B1,B2,B3>(*this,adart); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4>
-    Dart_of_orbit_range<B1,B2,B3,B4> darts_of_orbit(Dart_handle adart)
-    { return Dart_of_orbit_range<B1,B2,B3,B4>(*this,adart); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-              unsigned int B5>
-    Dart_of_orbit_range<B1,B2,B3,B4,B5> darts_of_orbit(Dart_handle adart)
-    { return Dart_of_orbit_range<B1,B2,B3,B4,B5>(*this,adart); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-              unsigned int B5,unsigned int B6>
-    Dart_of_orbit_range<B1,B2,B3,B4,B5,B6> darts_of_orbit(Dart_handle adart)
-    { return Dart_of_orbit_range<B1,B2,B3,B4,B5,B6>(*this,adart); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-              unsigned int B5,unsigned int B6,unsigned int B7>
-    Dart_of_orbit_range<B1,B2,B3,B4,B5,B6,B7> darts_of_orbit(Dart_handle adart)
-    { return Dart_of_orbit_range<B1,B2,B3,B4,B5,B6,B7>(*this,adart); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-              unsigned int B5,unsigned int B6,unsigned int B7,unsigned int B8>
-    Dart_of_orbit_range<B1,B2,B3,B4,B5,B6,B7,B8> darts_of_orbit
-    (Dart_handle adart)
-    { return Dart_of_orbit_range<B1,B2,B3,B4,B5,B6,B7,B8>(*this,adart); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-              unsigned int B5,unsigned int B6,unsigned int B7,unsigned int B8,
-              unsigned int B9>
-    Dart_of_orbit_range<B1,B2,B3,B4,B5,B6,B7,B8,B9>
-    darts_of_orbit(Dart_handle adart)
-    { return Dart_of_orbit_range<B1,B2,B3,B4,B5,B6,B7,B8,B9>(*this,adart); }
-    //--------------------------------------------------------------------------
-    // Const versions.
-    Dart_of_orbit_const_range<> darts_of_orbit(Dart_const_handle adart) const
-    { return Dart_of_orbit_const_range<>(*this,adart); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1>
-    Dart_of_orbit_const_range<B1> darts_of_orbit(Dart_const_handle
-                                                 adart) const
-    { return Dart_of_orbit_const_range<B1>(*this,adart); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2>
-    Dart_of_orbit_const_range<B1,B2> darts_of_orbit(Dart_const_handle
-                                                    adart) const
-    { return Dart_of_orbit_const_range<B1,B2>(*this,adart); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3>
-    Dart_of_orbit_const_range<B1,B2,B3> darts_of_orbit
-    (Dart_const_handle adart) const
-    { return Dart_of_orbit_const_range<B1,B2,B3>(*this,adart); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4>
-    Dart_of_orbit_const_range<B1,B2,B3,B4>
-    darts_of_orbit(Dart_const_handle adart) const
-    { return Dart_of_orbit_const_range<B1,B2,B3,B4>(*this,adart); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-              unsigned int B5>
-    Dart_of_orbit_const_range<B1,B2,B3,B4,B5>
-    darts_of_orbit(Dart_const_handle adart) const
-    { return Dart_of_orbit_const_range<B1,B2,B3,B4,B5>(*this,adart); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-              unsigned int B5,unsigned int B6>
-    Dart_of_orbit_const_range<B1,B2,B3,B4,B5,B6>
-    darts_of_orbit(Dart_const_handle adart) const
-    { return Dart_of_orbit_const_range<B1,B2,B3,B4,B5,B6>(*this,adart); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-              unsigned int B5,unsigned int B6,unsigned int B7>
-    Dart_of_orbit_const_range<B1,B2,B3,B4,B5,B6,B7>
-    darts_of_orbit(Dart_const_handle adart) const
-    { return Dart_of_orbit_const_range<B1,B2,B3,B4,B5,B6,B7>(*this,adart); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-              unsigned int B5,unsigned int B6,unsigned int B7,unsigned int B8>
-    Dart_of_orbit_const_range<B1,B2,B3,B4,B5,B6,B7,B8>
-    darts_of_orbit(Dart_const_handle adart) const
-    { return Dart_of_orbit_const_range<B1,B2,B3,B4,B5,B6,B7,B8>(*this,adart); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-              unsigned int B5,unsigned int B6,unsigned int B7,unsigned int B8,
-              unsigned int B9>
-    Dart_of_orbit_const_range<B1,B2,B3,B4,B5,B6,B7,B8,B9>
-    darts_of_orbit(Dart_const_handle adart) const
-    { return Dart_of_orbit_const_range<B1,B2,B3,B4,B5,B6,B7,B8,B9>
-        (*this,adart); }
-    //--------------------------------------------------------------------------
-    // Basic versions
-    Dart_of_orbit_basic_range<> darts_of_orbit_basic(Dart_handle adart,
-                                                     size_type amark=INVALID_MARK)
-    { return Dart_of_orbit_basic_range<>(*this,adart,amark); }
-    //--------------------------------------------------------------------------
-    Dart_of_orbit_basic_const_range<> darts_of_orbit_basic
-    (Dart_const_handle adart,size_type amark=INVALID_MARK) const
-    { return Dart_of_orbit_basic_const_range<>(*this,adart,amark); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1>
-    Dart_of_orbit_basic_range<B1> darts_of_orbit_basic(Dart_handle adart,
-                                                       size_type amark=INVALID_MARK)
-    { return Dart_of_orbit_basic_range<B1>(*this,adart,amark); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1>
-    Dart_of_orbit_basic_const_range<B1> darts_of_orbit_basic
-    (Dart_const_handle adart, size_type amark=INVALID_MARK) const
-    { return Dart_of_orbit_basic_const_range<B1>(*this,adart,amark); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2>
-    Dart_of_orbit_basic_range<B1,B2> darts_of_orbit_basic(Dart_handle adart,
-                                                          size_type amark=INVALID_MARK)
-    { return Dart_of_orbit_basic_range<B1,B2>(*this,adart,amark); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2>
-    Dart_of_orbit_basic_const_range<B1,B2> darts_of_orbit_basic
-    (Dart_const_handle adart, size_type amark=INVALID_MARK) const
-    { return Dart_of_orbit_basic_const_range<B1,B2>(*this,adart,amark); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3>
-    Dart_of_orbit_basic_range<B1,B2,B3> darts_of_orbit_basic(Dart_handle adart,
-                                                             size_type amark=INVALID_MARK)
-    { return Dart_of_orbit_basic_range<B1,B2,B3>(*this,adart,amark); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3>
-    Dart_of_orbit_basic_const_range<B1,B2,B3> darts_of_orbit_basic
-    (Dart_const_handle adart, size_type amark=INVALID_MARK) const
-    { return Dart_of_orbit_basic_const_range<B1,B2,B3>(*this,adart,amark); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4>
-    Dart_of_orbit_basic_range<B1,B2,B3,B4> darts_of_orbit_basic
-    (Dart_handle adart, size_type amark=INVALID_MARK)
-    { return Dart_of_orbit_basic_range<B1,B2,B3,B4>(*this,adart,amark); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4>
-    Dart_of_orbit_basic_const_range<B1,B2,B3,B4>
-    darts_of_orbit_basic(Dart_const_handle adart, size_type amark=INVALID_MARK) const
-    { return Dart_of_orbit_basic_const_range<B1,B2,B3,B4>(*this,adart,amark); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-              unsigned int B5>
-    Dart_of_orbit_basic_range<B1,B2,B3,B4,B5> darts_of_orbit_basic
-    (Dart_handle adart, size_type amark=INVALID_MARK)
-    { return Dart_of_orbit_basic_range<B1,B2,B3,B4,B5>(*this,adart,amark); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-              unsigned int B5>
-    Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5>
-    darts_of_orbit_basic(Dart_const_handle adart, size_type amark=INVALID_MARK) const
-    { return Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5>
-        (*this,adart,amark); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-              unsigned int B5,unsigned int B6>
-    Dart_of_orbit_basic_range<B1,B2,B3,B4,B5,B6> darts_of_orbit_basic
-    (Dart_handle adart, size_type amark=INVALID_MARK)
-    { return Dart_of_orbit_basic_range<B1,B2,B3,B4,B5,B6>(*this,adart,amark); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-              unsigned int B5,unsigned int B6>
-    Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5,B6>
-    darts_of_orbit_basic(Dart_const_handle adart, size_type amark=INVALID_MARK) const
-    { return Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5,B6>
-        (*this,adart,amark); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-              unsigned int B5,unsigned int B6,unsigned int B7>
-    Dart_of_orbit_basic_range<B1,B2,B3,B4,B5,B6,B7> darts_of_orbit_basic
-    (Dart_handle adart, size_type amark=INVALID_MARK)
-    { return Dart_of_orbit_basic_range<B1,B2,B3,B4,B5,B6,B7>
-        (*this,adart,amark); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-              unsigned int B5,unsigned int B6,unsigned int B7>
-    Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5,B6,B7>
-    darts_of_orbit_basic(Dart_const_handle adart, size_type amark=INVALID_MARK) const
-    { return Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5,B6,B7>
-        (*this,adart,amark); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-              unsigned int B5,unsigned int B6,unsigned int B7,unsigned int B8>
-    Dart_of_orbit_basic_range<B1,B2,B3,B4,B5,B6,B7,B8> darts_of_orbit
-    (Dart_handle adart, size_type amark=INVALID_MARK)
-    { return Dart_of_orbit_basic_range<B1,B2,B3,B4,B5,B6,B7,B8>
-        (*this,adart,amark); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-              unsigned int B5,unsigned int B6,unsigned int B7,unsigned int B8>
-    Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5,B6,B7,B8>
-    darts_of_orbit_basic(Dart_const_handle adart, size_type amark=INVALID_MARK) const
-    { return Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5,B6,B7,B8>
-        (*this,adart,amark); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-              unsigned int B5,unsigned int B6,unsigned int B7,unsigned int B8,
-              unsigned int B9>
-    Dart_of_orbit_basic_range<B1,B2,B3,B4,B5,B6,B7,B8,B9>
-    darts_of_orbit_basic(Dart_handle adart, size_type amark=INVALID_MARK)
-    { return Dart_of_orbit_basic_range<B1,B2,B3,B4,B5,B6,B7,B8,B9>
-        (*this,adart,amark); }
-    //--------------------------------------------------------------------------
-    template <unsigned int B1,unsigned int B2,unsigned int B3,unsigned int B4,
-              unsigned int B5,unsigned int B6,unsigned int B7,unsigned int B8,
-              unsigned int B9>
-    Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5,B6,B7,B8,B9>
-    darts_of_orbit_basic(Dart_const_handle adart, size_type amark=INVALID_MARK) const
-    { return Dart_of_orbit_basic_const_range<B1,B2,B3,B4,B5,B6,B7,B8,B9>
-        (*this,adart,amark); }
-    //**************************************************************************
-#endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
     //**************************************************************************
     // Dart_of_cell_basic_range
     template<unsigned int i,int dim=Self::dimension>
@@ -2728,8 +2379,8 @@ namespace CGAL {
 
     /** Compute the dual of a Generalized_map.
      * @param amap the gmap in which we build the dual of this map.
-     * @param adart a dart of the initial map, NULL by default.
-     * @return adart of the dual map, the dual of adart if adart!=NULL,
+     * @param adart a dart of the initial map, nullptr by default.
+     * @return adart of the dual map, the dual of adart if adart!=nullptr,
      *         any dart otherwise.
      * As soon as we don't modify this map and amap map, we can iterate
      * simultaneously through all the darts of the two maps and we have
@@ -3383,12 +3034,12 @@ namespace CGAL {
            !is_face_combinatorial_polygon(d4, 3) ) return false;
 
       // TODO do better with marks (?).
-      if ( belong_to_same_cell<Self,2,1>(*this, d1, d2) ||
-           belong_to_same_cell<Self,2,1>(*this, d1, d3) ||
-           belong_to_same_cell<Self,2,1>(*this, d1, d4) ||
-           belong_to_same_cell<Self,2,1>(*this, d2, d3) ||
-           belong_to_same_cell<Self,2,1>(*this, d2, d4) ||
-           belong_to_same_cell<Self,2,1>(*this, d3, d4) ) return false;
+      if ( belong_to_same_cell<2,1>(d1, d2) ||
+           belong_to_same_cell<2,1>(d1, d3) ||
+           belong_to_same_cell<2,1>(d1, d4) ||
+           belong_to_same_cell<2,1>(d2, d3) ||
+           belong_to_same_cell<2,1>(d2, d4) ||
+           belong_to_same_cell<2,1>(d3, d4) ) return false;
 
       if ( alpha(d1, 0,1,2)!=alpha(d3,1) ||
            alpha(d4, 1,2)!=alpha(d3,0,1) ||
@@ -3464,21 +3115,21 @@ namespace CGAL {
           !is_face_combinatorial_polygon(d6, 4) ) return false;
 
       // TODO do better with marks.
-      if ( belong_to_same_cell<Self,2,1>(*this, d1, d2) ||
-           belong_to_same_cell<Self,2,1>(*this, d1, d3) ||
-           belong_to_same_cell<Self,2,1>(*this, d1, d4) ||
-           belong_to_same_cell<Self,2,1>(*this, d1, d5) ||
-           belong_to_same_cell<Self,2,1>(*this, d1, d6) ||
-           belong_to_same_cell<Self,2,1>(*this, d2, d3) ||
-           belong_to_same_cell<Self,2,1>(*this, d2, d4) ||
-           belong_to_same_cell<Self,2,1>(*this, d2, d5) ||
-           belong_to_same_cell<Self,2,1>(*this, d2, d6) ||
-           belong_to_same_cell<Self,2,1>(*this, d3, d4) ||
-           belong_to_same_cell<Self,2,1>(*this, d3, d5) ||
-           belong_to_same_cell<Self,2,1>(*this, d3, d6) ||
-           belong_to_same_cell<Self,2,1>(*this, d4, d5) ||
-           belong_to_same_cell<Self,2,1>(*this, d4, d6) ||
-           belong_to_same_cell<Self,2,1>(*this, d5, d6) )
+      if ( belong_to_same_cell<2,1>(d1, d2) ||
+           belong_to_same_cell<2,1>(d1, d3) ||
+           belong_to_same_cell<2,1>(d1, d4) ||
+           belong_to_same_cell<2,1>(d1, d5) ||
+           belong_to_same_cell<2,1>(d1, d6) ||
+           belong_to_same_cell<2,1>(d2, d3) ||
+           belong_to_same_cell<2,1>(d2, d4) ||
+           belong_to_same_cell<2,1>(d2, d5) ||
+           belong_to_same_cell<2,1>(d2, d6) ||
+           belong_to_same_cell<2,1>(d3, d4) ||
+           belong_to_same_cell<2,1>(d3, d5) ||
+           belong_to_same_cell<2,1>(d3, d6) ||
+           belong_to_same_cell<2,1>(d4, d5) ||
+           belong_to_same_cell<2,1>(d4, d6) ||
+           belong_to_same_cell<2,1>(d5, d6) )
         return false;
 
       if ( alpha(d1,2)      !=alpha(d4,1,0,1) ||
@@ -3551,7 +3202,7 @@ namespace CGAL {
     }
 
     /** Insert a vertex in a given edge.
-     * @param adart a dart of the edge (!=NULL).
+     * @param adart a dart of the edge (!=nullptr).
      * @return a dart of the new vertex.
      */
     Dart_handle insert_cell_0_in_cell_1( Dart_handle adart,
@@ -3637,7 +3288,7 @@ namespace CGAL {
       return alpha<0, 1>(adart);
     }
 
-    /** Insert a vertex in the given 2-cell which is splitted in triangles,
+    /** Insert a vertex in the given 2-cell which is split in triangles,
      * once for each inital edge of the facet.
      * @param adart a dart of the facet to triangulate.
      * @return A dart incident to the new vertex.
@@ -3776,8 +3427,8 @@ namespace CGAL {
   }
 
   /** Insert an edge in a 2-cell between two given darts.
-   * @param adart1 a first dart of the facet (!=NULL && !=null_dart_handle).
-   * @param adart2 a second dart of the facet. If NULL insert a dangling edge.
+   * @param adart1 a first dart of the facet (!=nullptr && !=null_dart_handle).
+   * @param adart2 a second dart of the facet. If nullptr insert a dangling edge.
    * @return a dart of the new edge, and not incident to the
    *         same vertex than adart1.
    */
@@ -3860,7 +3511,7 @@ namespace CGAL {
       else
       {
         if (are_attributes_automatically_managed() &&
-            update_attributes && ah!=NULL)
+            update_attributes && ah!=nullptr)
         {
           internal::Set_i_attribute_of_dart_functor<Self, 0>::run(*this, d2, ah);
           if (!isfree1)
@@ -3918,7 +3569,7 @@ namespace CGAL {
   }
 
   /** Insert a dangling edge in a 2-cell between given by a dart.
-   * @param adart1 a first dart of the facet (!=NULL && !=null_dart_handle).
+   * @param adart1 a first dart of the facet (!=nullptr && !=null_dart_handle).
    * @param update_attributes a boolean to update the enabled attributes
    * @return a dart of the new edge, not incident to the vertex of adart1.
    */
@@ -3926,11 +3577,11 @@ namespace CGAL {
                                                 typename Attribute_handle<0>::
                                                 type ah=null_handle,
                                                 bool update_attributes=true )
-  { return insert_cell_1_in_cell_2(adart1, NULL, update_attributes, ah); }
+  { return insert_cell_1_in_cell_2(adart1, nullptr, update_attributes, ah); }
 
   /** Test if a 2-cell can be inserted onto a given 3-cell along
    *  a path of edges.
-   *  @param afirst iterator on the begining of the path.
+   *  @param afirst iterator on the beginning of the path.
    *  @param alast  iterator on the end of the path.
    *  @return true iff a 2-cell can be inserted along the path.
    *          the path is a sequence of dartd, one per edge
@@ -3958,14 +3609,14 @@ namespace CGAL {
       if (prec!=null_handle)
       {
         // prec and *it must belong to the same vertex of the same volume
-        if ( !CGAL::belong_to_same_cell<Self, 0, 2>(*this,  prec, *it) )
+        if ( !belong_to_same_cell<0, 2>(prec, *it) )
           return false;
       }
       prec = this->template alpha<0>(*it);
     }
 
     // The path must be closed.
-    if (!CGAL::belong_to_same_cell<Self, 0, 2>(*this, prec, *afirst))
+    if (!belong_to_same_cell<0, 2>(prec, *afirst))
       return false;
 
     return true;
@@ -3973,7 +3624,7 @@ namespace CGAL {
 
   /** Insert a 2-cell in a given 3-cell along a path of darts.
    * @param amap the used generalized map.
-   * @param afirst iterator on the begining of the path.
+   * @param afirst iterator on the beginning of the path.
    * @param alast  iterator on the end of the path.
    *         the path is a sequence of darts, one per edge
    *         where the face will be inserted.
@@ -4048,7 +3699,7 @@ namespace CGAL {
           basic_link_alpha<2>(alpha<0>(oldb2), alpha<0>(dd));
         }
         else
-          oldb2=NULL;
+          oldb2=nullptr;
 
         basic_link_alpha<2>(*it, d);
         basic_link_alpha<2>(alpha<0>(*it), alpha<0>(d));
@@ -4086,7 +3737,7 @@ namespace CGAL {
               basic_link_alpha(dd, dddd, dim);
               basic_link_alpha(alpha<0>(dd), d0, dim);
 
-              if (oldb2!=NULL)
+              if (oldb2!=nullptr)
               {
                 basic_link_alpha<2>(alpha(oldb2, dim), dddd);
                 basic_link_alpha<2>(alpha(oldb2, 0, dim), d0);
@@ -4181,10 +3832,7 @@ namespace CGAL {
     typename Helper::Merge_functors m_onmerge_functors;
   };
 
-  template < unsigned int d_,
-             class Items_=Generic_map_min_items,
-             class Alloc_=CGAL_ALLOCATOR(int),
-             class Storage_= Generalized_map_storage_1<d_, Items_, Alloc_> >
+  template<unsigned int d_, class Items_, class Alloc_,class Storage_>
   class Generalized_map :
     public Generalized_map_base<d_,
                                   Generalized_map<d_,Items_,Alloc_, Storage_>,
@@ -4206,24 +3854,34 @@ namespace CGAL {
     Generalized_map(const Self & amap) : Base(amap)
     {}
 
-    template < class Gmap >
-    Generalized_map(const Gmap & amap) : Base(amap)
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
+              typename Storage2>
+    Generalized_map(const Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap) :
+      Base(amap)
     {}
 
-    template < class Gmap, typename Converters >
-    Generalized_map(const Gmap & amap, const Converters& converters) :
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
+              typename Storage2, typename Converters>
+    Generalized_map(const Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap,
+                    const Converters& converters) :
       Base(amap, converters)
     {}
 
-    template < class Gmap, typename Converters, typename DartInfoConverter >
-    Generalized_map(const Gmap & amap, const Converters& converters,
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
+              typename Storage2,
+              typename Converters, typename DartInfoConverter>
+    Generalized_map(const Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap,
+                    const Converters& converters,
                     const DartInfoConverter& dartinfoconverter) :
       Base(amap, converters, dartinfoconverter)
     {}
 
-    template < class Gmap, typename Converters, typename DartInfoConverter,
-               typename PointConverter >
-    Generalized_map(const Gmap & amap, const Converters& converters,
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
+              typename Storage2,
+              typename Converters, typename DartInfoConverter,
+              typename PointConverter >
+    Generalized_map(const Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap,
+                    const Converters& converters,
                     const DartInfoConverter& dartinfoconverter,
                     const PointConverter& pointconverter) :
       Base(amap, converters, dartinfoconverter, pointconverter)

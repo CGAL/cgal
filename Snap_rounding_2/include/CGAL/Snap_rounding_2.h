@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // author(s)     : Eli Packer <elip@post.tau.ac.il>
@@ -766,7 +757,7 @@ void snap_rounding_2(InputIterator begin,
   typedef std::list<Segment_data>                     Segment_data_list;
 
   Segment_data_list seg_list;
-  Multiple_kd_tree * mul_kd_tree = NULL;
+  Multiple_kd_tree * mul_kd_tree = nullptr;
 
   output_container.clear();
   // copy segments list

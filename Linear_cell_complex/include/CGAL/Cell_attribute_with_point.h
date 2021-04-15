@@ -1,20 +1,11 @@
 // Copyright (c) 2011 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -34,11 +25,11 @@ namespace CGAL {
   class Point_for_cell
   {
   public:
-    /// Contructor without parameter.
+    /// Constructor without parameter.
     Point_for_cell()
     {}
 
-    /// Contructor with a point in parameter.
+    /// Constructor with a point in parameter.
     Point_for_cell(const Point& apoint) : mpoint(apoint)
     {}
 
@@ -96,15 +87,15 @@ namespace CGAL {
     { return !operator==(other); }
 
   protected:
-    /// Default contructor.
+    /// Default constructor.
     Cell_attribute_with_point()
     {}
 
-    /// Contructor with a point in parameter.
+    /// Constructor with a point in parameter.
     Cell_attribute_with_point(const Point& apoint) : Base2(apoint)
     {}
 
-    /// Contructor with a point and an attribute in parameters.
+    /// Constructor with a point and an attribute in parameters.
     Cell_attribute_with_point(const Point& apoint, const Info& ainfo) :
       Base1(ainfo),
       Base2(apoint)
@@ -153,11 +144,11 @@ namespace CGAL {
     { return false; }
 
   protected:
-    /// Default contructor.
+    /// Default constructor.
     Cell_attribute_with_point()
     {}
 
-    /// Contructor with a point in parameter.
+    /// Constructor with a point in parameter.
     Cell_attribute_with_point(const Point& apoint) : Base2(apoint)
     {}
   };

@@ -1,20 +1,11 @@
 // Copyright (c) 2011 GeometryFactory (France). All rights reserved.
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Philipp Möller
@@ -27,8 +18,6 @@
 #include <boost/variant.hpp>
 #include <boost/optional.hpp>
 #include <vector>
-
-#if !(CGAL_INTERSECTION_VERSION < 2)
 
 namespace CGAL {
 
@@ -116,9 +105,29 @@ template<typename K>
 struct Intersection_traits<K, typename K::Triangle_2, typename K::Iso_rectangle_2>
   : public Intersection_traits<K, typename K::Iso_rectangle_2, typename K::Triangle_2> {};
 
-} // namespace CGAL
+template<typename K, class B>
+struct Intersection_traits<K, CGAL::Bbox_2, B>  {
+  typedef typename Intersection_traits<K,typename K::Iso_rectangle_2, B>::result_type result_type;
+};
 
-#endif
+template<typename K, class A>
+struct Intersection_traits<K, A, CGAL::Bbox_2>  {
+  typedef typename Intersection_traits<K,typename K::Iso_rectangle_2, A>::result_type result_type;
+};
+
+template<typename K>
+struct Intersection_traits<K, CGAL::Bbox_2, typename K::Point_2>  {
+  typedef typename boost::variant<typename K::Point_2> variant_type;
+  typedef boost::optional<variant_type> result_type;
+};
+
+template<typename K>
+struct Intersection_traits<K, typename K::Point_2, CGAL::Bbox_2>  {
+  typedef typename boost::variant<typename K::Point_2> variant_type;
+  typedef boost::optional<variant_type> result_type;
+};
+
+} // namespace CGAL
 
 #endif /* CGAL_INTERSECTION_TRAITS_2_H */
 

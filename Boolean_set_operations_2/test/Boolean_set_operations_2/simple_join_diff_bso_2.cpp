@@ -21,7 +21,7 @@ void print_polygons(std::ostream& out, const Polygon_set_2& polygon_set)
 {
   std::vector<Polygon_with_holes_2> polygons_wh(polygon_set.number_of_polygons_with_holes());
   polygon_set.polygons_with_holes(&polygons_wh[0]);
-  BOOST_FOREACH(Polygon_with_holes_2& polygon_wh, polygons_wh)
+  for(Polygon_with_holes_2& polygon_wh : polygons_wh)
   {
     print_polygon(out, polygon_wh.outer_boundary());
     for(Polygon_with_holes_2::Hole_const_iterator it=polygon_wh.holes_begin();

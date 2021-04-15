@@ -225,7 +225,7 @@ all objects, predicates and constructions with using offsets.
 The class
 `Periodic_2_Delaunay_triangulation_traits_2<Traits,Periodic_2Offset_2>`
 provides the required functionality. It expects two template
-parameters: A model of the concept `DelaunayTriangulationTraits_2`
+parameters: a model of the concept `DelaunayTriangulationTraits_2`
 and a model of the concept `Periodic_2Offset_2`. Since the concept
 `TriangulationTraits_2` refines the concept
 `DelaunayTriangulationTraits_2`, the class
@@ -393,6 +393,26 @@ in the unit rectangle. The tests were done on an Intel i7 @ 2.67GHz.
 
 \image html p2dt2_performance.png
 \image latex p2dt2_performance.png
+
+\section P2T2_Draw_Periodic_Triangulation Draw a 2D Periodic Triangulation
+
+A 2D periodic triangulation can be visualized by calling the \link PkgDrawPeriodic2Triangulation2 CGAL::draw<P2T2>() \endlink function as shown in the following example. This function opens a new window showing the given Periodic Triangulation. Elements of the periodic triangulation can be viewed in four different modes:
+
+\cgalExample{Periodic_2_triangulation_2/draw_periodic_2_triangulation_2.cpp}
+
+- <B>STORED</B> Display all geometric primitives as they are stored in Triangulation_data_structure_2;
+- <B>UNIQUE</B> Display only one representative of each geometric primitive even if the triangulation is computed in multiply sheeted covering space;
+- <B>STORED_COVER_DOMAIN</B> Same as STORED but also display  all primitives whose intersection with the original domain of the current covering space is non-empty;
+- <B>UNIQUE_COVER_DOMAIN</B> Same as UNIQUE but also display all primitives whose intersection with the original domain of the current covering space is non-empty.
+
+The domain can also be visualized by a key press. To see how to visualize the Periodic Triangulation in various modes, press key H when the viewer window is active and go to Keyboard tab. See \cgalFigureRef{P2Triangulation2figdraw1} and \cgalFigureRef{P2Triangulation2figdraw2}.
+
+\cgalFigureBegin{P2Triangulation2figdraw1, unique.png, unique-cover.png}
+Result of the run of the draw_periodic_2_triangulation_2 program for display modes Unique(left) and Unique Cover Domain(right). The window allows to navigate through the 2D scene.
+\cgalFigureEnd
+\cgalFigureBegin{P2Triangulation2figdraw2, stored.png, stored-cover.png}
+Result of the run of the draw_periodic_2_triangulation_2 program for display modes Stored(left) and Stored Cover Domain(right).
+\cgalFigureEnd
 
 \section P2T2_Design Design and Implementation History
 

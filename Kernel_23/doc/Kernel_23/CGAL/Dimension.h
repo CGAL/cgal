@@ -126,8 +126,6 @@ std::cout << get_origin(Dynamic_dimension_tag())) << std::endl;
 
 struct Dynamic_dimension_tag {
 
-/// @}
-
 }; /* end Dynamic_dimension_tag */
 
 /*!

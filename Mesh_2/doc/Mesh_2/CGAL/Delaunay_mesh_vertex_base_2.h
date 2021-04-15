@@ -24,7 +24,5 @@ template< typename Traits, typename Vb >
 class Delaunay_mesh_vertex_base_2 : Vb {
 public:
 
-/// @}
-
 }; /* end Delaunay_mesh_vertex_base_2 */
 } /* end namespace CGAL */

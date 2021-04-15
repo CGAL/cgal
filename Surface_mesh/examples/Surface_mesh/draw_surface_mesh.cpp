@@ -10,7 +10,7 @@ typedef CGAL::Surface_mesh<Point>                            Mesh;
 int main(int argc, char* argv[])
 {
   Mesh sm1;
-  std::ifstream in1((argc>1)?argv[1]:"data/triangle.off");
+  std::ifstream in1((argc>1)?argv[1]:"data/elephant.off");
   in1 >> sm1;
 
   CGAL::draw(sm1);

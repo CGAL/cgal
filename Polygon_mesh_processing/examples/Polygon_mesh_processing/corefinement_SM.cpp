@@ -41,6 +41,7 @@ int main(int argc, char* argv[])
             << num_vertices(mesh2) << "\n";
 
   std::ofstream output("mesh1_refined.off");
+  output.precision(17);
   output << mesh1;
   output.close();
   output.open("mesh2_refined.off");

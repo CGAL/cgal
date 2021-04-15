@@ -34,7 +34,5 @@ template< typename Tr, typename Edge_info = void >
 class Surface_mesh_complex_2_in_triangulation_3 {
 public:
 
-/// @}
-
 }; /* end Surface_mesh_complex_2_in_triangulation_3 */
 } /* end namespace CGAL */

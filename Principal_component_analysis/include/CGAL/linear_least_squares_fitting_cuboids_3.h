@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Pierre Alliez and Sylvain Pion and Ankit Gupta
 
@@ -61,7 +52,7 @@ linear_least_squares_fitting_3(InputIterator first,
 
   // assemble covariance matrix
   typename DiagonalizeTraits::Covariance_matrix covariance = {{ 0., 0., 0., 0., 0., 0. }};
-  assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Iso_cuboid*) NULL,tag, diagonalize_traits);
+  assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Iso_cuboid*) nullptr,tag, diagonalize_traits);
 
   // compute fitting plane
   return fitting_plane_3(covariance,c,plane,k,diagonalize_traits);
@@ -93,7 +84,7 @@ linear_least_squares_fitting_3(InputIterator first,
 
   // assemble covariance matrix
   typename DiagonalizeTraits::Covariance_matrix covariance = {{ 0., 0., 0., 0., 0., 0. }};
-  assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Iso_cuboid*) NULL,tag,diagonalize_traits);
+  assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Iso_cuboid*) nullptr,tag,diagonalize_traits);
 
   // compute fitting plane
   return fitting_plane_3(covariance,c,plane,k,diagonalize_traits);
@@ -142,7 +133,7 @@ linear_least_squares_fitting_3(InputIterator first,
   }
 
   // compute fitting plane
-  return linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,c,(Segment*)NULL,k,tag,
+  return linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,c,(Segment*)nullptr,k,tag,
                                         diagonalize_traits);
 
 } // end linear_least_squares_fitting_cuboids_3
@@ -184,7 +175,7 @@ linear_least_squares_fitting_3(InputIterator first,
   }
 
   // compute fitting plane
-  return linear_least_squares_fitting_3(points.begin(),points.end(),plane,c,(Point*)NULL,k,tag,
+  return linear_least_squares_fitting_3(points.begin(),points.end(),plane,c,(Point*)nullptr,k,tag,
                                         diagonalize_traits);
 
 } // end linear_least_squares_fitting_cuboids_3
@@ -213,7 +204,7 @@ linear_least_squares_fitting_3(InputIterator first,
 
   // assemble covariance matrix
   typename DiagonalizeTraits::Covariance_matrix covariance = {{ 0., 0., 0., 0., 0., 0. }};
-  assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Iso_cuboid*) NULL,tag,diagonalize_traits);
+  assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Iso_cuboid*) nullptr,tag,diagonalize_traits);
 
   // compute fitting line
   return fitting_line_3(covariance,c,line,k,diagonalize_traits);
@@ -244,7 +235,7 @@ linear_least_squares_fitting_3(InputIterator first,
 
   // assemble covariance matrix
   typename DiagonalizeTraits::Covariance_matrix covariance = {{ 0., 0., 0., 0., 0., 0. }};
-  assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Iso_cuboid*) NULL,tag, diagonalize_traits);
+  assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Iso_cuboid*) nullptr,tag, diagonalize_traits);
 
   // compute fitting line
   return fitting_line_3(covariance,c,line,k,diagonalize_traits);
@@ -293,7 +284,7 @@ linear_least_squares_fitting_3(InputIterator first,
   }
 
   // compute fitting line
-  return linear_least_squares_fitting_3(segments.begin(),segments.end(),line,c,(Segment*)NULL,k,tag,
+  return linear_least_squares_fitting_3(segments.begin(),segments.end(),line,c,(Segment*)nullptr,k,tag,
                                         diagonalize_traits);
 
 } // end linear_least_squares_fitting_cuboids_3
@@ -335,7 +326,7 @@ linear_least_squares_fitting_3(InputIterator first,
   }
 
   // compute fitting line
-  return linear_least_squares_fitting_3(points.begin(),points.end(),line,c,(Point*)NULL,k,tag,
+  return linear_least_squares_fitting_3(points.begin(),points.end(),line,c,(Point*)nullptr,k,tag,
                                         diagonalize_traits);
 
 } // end linear_least_squares_fitting_cuboids_3

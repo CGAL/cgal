@@ -1,7 +1,6 @@
 #ifndef CGAL_TEST_MACROS_H
 #define CGAL_TEST_MACROS_H
 
-#include <CGAL/basic.h>
 #include <iostream>
 #include <sstream>
 #include <vector>

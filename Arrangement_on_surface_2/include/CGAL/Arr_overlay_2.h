@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -48,6 +39,89 @@
 #include <CGAL/assertions.h>
 
 namespace CGAL {
+
+template <typename Arr1, typename Arr2, typename Curve>
+class Indexed_sweep_accessor
+{
+  const Arr1& arr1;
+  const Arr2& arr2;
+  mutable std::vector<void*> backup_inc;
+
+public:
+
+  Indexed_sweep_accessor (const Arr1& arr1, const Arr2& arr2)
+    : arr1(arr1), arr2(arr2) { }
+
+  std::size_t nb_vertices() const
+  {
+    return arr1.number_of_vertices() + arr2.number_of_vertices();
+  }
+
+  std::size_t min_end_index (const Curve& c) const
+  {
+    if (c.red_halfedge_handle() != typename Curve::HH_red())
+      return reinterpret_cast<std::size_t>(c.red_halfedge_handle()->target()->inc());
+    // else
+    CGAL_assertion (c.blue_halfedge_handle() != typename Curve::HH_blue());
+    return reinterpret_cast<std::size_t>(c.blue_halfedge_handle()->target()->inc());
+  }
+
+  std::size_t max_end_index (const Curve& c) const
+  {
+    if (c.red_halfedge_handle() != typename Curve::HH_red())
+      return reinterpret_cast<std::size_t>(c.red_halfedge_handle()->source()->inc());
+    // else
+    CGAL_assertion (c.blue_halfedge_handle() != typename Curve::HH_blue());
+    return reinterpret_cast<std::size_t>(c.blue_halfedge_handle()->source()->inc());
+  }
+
+  const Curve& curve (const Curve& c) const
+  {
+    return c;
+  }
+
+  // Initializes indices by squatting Vertex::inc();
+  void before_init() const
+  {
+    std::size_t idx = 0;
+    backup_inc.resize (nb_vertices());
+    for (typename Arr1::Vertex_const_iterator vit = arr1.vertices_begin();
+         vit != arr1.vertices_end(); ++vit, ++idx)
+    {
+      CGAL_assertion (idx < backup_inc.size());
+      backup_inc[idx] = vit->inc();
+      vit->set_inc (reinterpret_cast<void*>(idx));
+    }
+    for (typename Arr2::Vertex_const_iterator vit = arr2.vertices_begin();
+         vit != arr2.vertices_end(); ++vit, ++idx)
+    {
+      CGAL_assertion (idx < backup_inc.size());
+      backup_inc[idx] = vit->inc();
+      vit->set_inc (reinterpret_cast<void*>(idx));
+    }
+  }
+
+  // Restores state of arrangements before index squatting
+  void after_init() const
+  {
+    std::size_t idx = 0;
+    for (typename Arr1::Vertex_const_iterator vit = arr1.vertices_begin();
+         vit != arr1.vertices_end(); ++vit, ++idx)
+    {
+      CGAL_assertion (idx < backup_inc.size());
+      vit->set_inc (backup_inc[idx]);
+    }
+    for (typename Arr2::Vertex_const_iterator vit = arr2.vertices_begin();
+         vit != arr2.vertices_end(); ++vit, ++idx)
+    {
+      CGAL_assertion (idx < backup_inc.size());
+      vit->set_inc (backup_inc[idx]);
+    }
+  }
+
+private:
+
+};
 
 /*! Compute the overlay of two input arrangements.
  * \tparam GeometryTraitsA_2 the geometry traits of the first arrangement.
@@ -192,7 +266,14 @@ overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1
   if (total_iso_verts == 0) {
     // Clear the result arrangement and perform the sweep to construct it.
     arr.clear();
-    surface_sweep.sweep(xcvs_vec.begin(), xcvs_vec.end());
+    if (std::is_same<typename Agt2::Bottom_side_category,
+                     Arr_contracted_side_tag>::value)
+      surface_sweep.sweep (xcvs_vec.begin(), xcvs_vec.end());
+    else
+      surface_sweep.indexed_sweep (xcvs_vec,
+                                   Indexed_sweep_accessor
+                                   <Arr_a, Arr_b, Ovl_x_monotone_curve_2>
+                                   (arr1, arr2));
     xcvs_vec.clear();
     return;
   }
@@ -224,8 +305,16 @@ overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1
 
   // Clear the result arrangement and perform the sweep to construct it.
   arr.clear();
-  surface_sweep.sweep(xcvs_vec.begin(), xcvs_vec.end(),
-                      pts_vec.begin(), pts_vec.end());
+  if (std::is_same<typename Agt2::Bottom_side_category,
+      Arr_contracted_side_tag>::value)
+    surface_sweep.sweep(xcvs_vec.begin(), xcvs_vec.end(),
+                        pts_vec.begin(), pts_vec.end());
+  else
+    surface_sweep.indexed_sweep (xcvs_vec,
+                                 Indexed_sweep_accessor
+                                 <Arr_a, Arr_b, Ovl_x_monotone_curve_2>
+                                 (arr1, arr2),
+                                 pts_vec.begin(), pts_vec.end());
   xcvs_vec.clear();
   pts_vec.clear();
 }

@@ -13,6 +13,7 @@ class Viewer : public CGAL::QGLViewer
 {
 public:
     Viewer(QWidget* parent = 0);
+    ~Viewer();
   GLuint dl_nb;
 protected :
   virtual void draw();

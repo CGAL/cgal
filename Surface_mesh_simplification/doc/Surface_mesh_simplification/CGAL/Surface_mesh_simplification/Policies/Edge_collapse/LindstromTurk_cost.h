@@ -1,4 +1,3 @@
-
 namespace CGAL {
 namespace Surface_mesh_simplification {
 /*!
@@ -15,7 +14,7 @@ It computes the collapse cost following the Lindstrom-Turk strategy
 \sa `CGAL::Surface_mesh_simplification::LindstromTurk_placement<TriangleMesh>`
 
 */
-template< typename TriangleMesh >
+template <typename TriangleMesh>
 class LindstromTurk_cost {
 public:
 
@@ -26,7 +25,7 @@ public:
 Initializes the policy with the given <I>weighting unit factor</I>.
 See \ref SurfaceMeshSimplificationLindstromTurkStrategy for details on the meaning of this factor.
 */
-LindstromTurk_cost<TriangleMesh>( FT const& factor = FT(0.5) );
+LindstromTurk_cost<TriangleMesh>(const FT factor = FT(0.5));
 
 /// @}
 
@@ -37,13 +36,13 @@ LindstromTurk_cost<TriangleMesh>( FT const& factor = FT(0.5) );
 Returns the cost of collapsing the edge (represented by its profile) considering
 the new `placement` computed for it.
 */
-template <typename Profile>
-optional<typename Profile::FT>
-operator()( Profile const& profile
-            , boost::optional<typename Profile::Point> const& placement ) const;
+boost::optional<typename Edge_profile::FT>
+operator()(const Edge_profile& edge_profile,
+           const boost::optional<typename Edge_profile::Point>& placement) const;
 
 /// @}
 
-}; /* end Surface_mesh_simplification::LindstromTurk_cost */
-} /* namespace Surface_mesh_simplification */
-} /* end namespace CGAL */
+};
+
+} // namespace Surface_mesh_simplification
+} // namespace CGAL

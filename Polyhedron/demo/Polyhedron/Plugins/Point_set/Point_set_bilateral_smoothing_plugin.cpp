@@ -21,11 +21,7 @@
 #include "ui_Point_set_bilateral_smoothing_plugin.h"
 
 // Concurrency
-#ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 struct Bilateral_smoothing_functor
   : public Functor_with_signal_callback

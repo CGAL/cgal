@@ -10,20 +10,21 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Polyhedron_3<K, CGAL::Polyhedron_items_with_id_3>  Polyhedron;
+typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
 
-// Property map associating a facet with an integer as id to an
+// Property map associating a face with an integer as id to an
 // element in a vector stored internally
 template<class ValueType>
-struct Facet_with_id_pmap
+struct Face_with_id_pmap
     : public boost::put_get_helper<ValueType&,
-             Facet_with_id_pmap<ValueType> >
+             Face_with_id_pmap<ValueType> >
 {
-    typedef Polyhedron::Facet_const_handle key_type;
+    typedef face_descriptor key_type;
     typedef ValueType value_type;
     typedef value_type& reference;
     typedef boost::lvalue_property_map_tag category;
 
-    Facet_with_id_pmap(
+    Face_with_id_pmap(
       std::vector<ValueType>& internal_vector
     ) : internal_vector(internal_vector) { }
 
@@ -43,36 +44,33 @@ int main()
       return EXIT_FAILURE;
     }
 
-    // assign id field for each facet
-    std::size_t facet_id = 0;
-    for(Polyhedron::Facet_iterator facet_it = mesh.facets_begin();
-      facet_it != mesh.facets_end(); ++facet_it, ++facet_id) {
-        facet_it->id() = facet_id;
+    // assign id field for each face
+    std::size_t face_id = 0;
+    for(face_descriptor f : faces( mesh) ) {
+        f->id() = face_id++;
     }
 
     // create a property-map for SDF values
-    std::vector<double> sdf_values(mesh.size_of_facets());
-    Facet_with_id_pmap<double> sdf_property_map(sdf_values);
+    std::vector<double> sdf_values(num_faces(mesh));
+    Face_with_id_pmap<double> sdf_property_map(sdf_values);
 
     CGAL::sdf_values(mesh, sdf_property_map);
 
     // access SDF values (with constant-complexity)
-    for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin();
-      facet_it != mesh.facets_end(); ++facet_it) {
-        std::cout << sdf_property_map[facet_it] << " ";
+    for(face_descriptor f : faces(mesh)) {
+        std::cout << sdf_property_map[f] << " ";
     }
     std::cout << std::endl;
 
     // create a property-map for segment-ids
-    std::vector<std::size_t> segment_ids(mesh.size_of_facets());
-    Facet_with_id_pmap<std::size_t> segment_property_map(segment_ids);
+    std::vector<std::size_t> segment_ids(num_faces(mesh));
+    Face_with_id_pmap<std::size_t> segment_property_map(segment_ids);
 
     CGAL::segmentation_from_sdf_values(mesh, sdf_property_map, segment_property_map);
 
     // access segment-ids (with constant-complexity)
-    for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin();
-      facet_it != mesh.facets_end(); ++facet_it) {
-        std::cout << segment_property_map[facet_it] << " ";
+    for(face_descriptor f : faces(mesh)) {
+        std::cout << segment_property_map[f] << " ";
     }
     std::cout << std::endl;
     return EXIT_SUCCESS;

@@ -1,20 +1,11 @@
 // Copyright (c) 2007,2008,2009,2010,2011 Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
@@ -93,7 +84,7 @@ public:
     Curved_kernel_via_analysis_2_functor_base(
             Curved_kernel_via_analysis_2 *kernel) :
         _m_curved_kernel(kernel) {
-        CGAL_precondition(kernel != NULL);
+        CGAL_precondition(kernel != nullptr);
     }
 
     //!@}
@@ -458,6 +449,8 @@ public:
         Arc_2 arc(x, c);
         return arc;
     }
+
+    //!@}
 };
 
 /*!\brief
@@ -1466,29 +1459,24 @@ public:
     OutputIterator operator()(const Arc_2& cv1, const Arc_2& cv2,
                               OutputIterator oi) const {
 
+      typedef unsigned int                              Multiplicity;
+      typedef std::pair<Point_2, Multiplicity>          Intersection_point;
+      typedef boost::variant<Intersection_point, Arc_2> Intersection_result;
+
         CERR("\nintersect; cv1: " << cv1
              << ";\n cv2:" << cv2 << "");
 
         // if arcs overlap, just store their common part, otherwise compute
         // point-wise intersections
-        std::vector< Arc_2 > common_arcs;
-        if (cv1._trim_if_overlapped(cv2, std::back_inserter(common_arcs))) {
-            typename std::vector< Arc_2 >::const_iterator it;
-            for(it = common_arcs.begin(); it < common_arcs.end(); it++) {
-                *oi++ = CGAL::make_object(*it);
-            }
+        std::vector<Arc_2> arcs;
+        if (cv1._trim_if_overlapped(cv2, std::back_inserter(arcs))) {
+            for (const auto& item : arcs) *oi++ = Intersection_result(item);
             return oi;
         }
         // process non-ov erlapping case
-        typedef std::pair< Point_2, unsigned int > Point_and_mult;
-        typedef std::vector< Point_and_mult > Point_vector;
-        Point_vector vec;
-        typename Point_vector::const_iterator it;
+        std::vector<Intersection_point> vec;
         Arc_2::_intersection_points(cv1, cv2, std::back_inserter(vec));
-
-        for (it = vec.begin(); it != vec.end(); it++) {
-            *oi++ = CGAL::make_object(*it);
-        }
+        for (const auto& item : vec) *oi++ = Intersection_result(item);
         return oi;
     }
 
@@ -2668,7 +2656,7 @@ public:
 
     //! this instance's first template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
-
+    //!@}
 //     typedef Curved_kernel_via_analysis_2_functors<
 //         CurvedKernelViaAnalysis_2 > Functor_base;
 

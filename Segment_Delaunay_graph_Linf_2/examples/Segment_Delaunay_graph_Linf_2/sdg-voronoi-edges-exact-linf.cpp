@@ -6,41 +6,17 @@
 
 // define the kernel
 
-// choose number type
-#ifdef CGAL_USE_GMP
-
-#  include <CGAL/Gmpq.h>
-typedef CGAL::Gmpq                     exact_ring_t;
-typedef CGAL::Gmpq                     exact_field_t;
-
-//namespace CGAL {
-//// needed for the drawing methods
-//Gmpq sqrt(const Gmpq& x) {
-//  return Gmpq(  CGAL::sqrt( CGAL::to_double(x) )  );
-//}
-//
-//} //namespace CGAL
-#else
-
-#  include <CGAL/MP_Float.h>
-#  include <CGAL/Quotient.h>
-typedef CGAL::MP_Float                 exact_ring_t;
-typedef CGAL::Quotient<exact_ring_t>   exact_field_t;
-
-#endif
-
-typedef exact_field_t  field_number_t;
-
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/Segment_Delaunay_graph_Linf_2.h>
 #include <CGAL/Segment_Delaunay_graph_Linf_traits_2.h>
 
-typedef CGAL::Simple_cartesian<field_number_t> K_field;
+typedef CGAL::Simple_cartesian<CGAL::Exact_rational> Kernel;
 
 typedef CGAL::Field_tag  MTag;
 
-typedef CGAL::Segment_Delaunay_graph_Linf_traits_2<K_field,MTag> Gt;
+typedef CGAL::Segment_Delaunay_graph_Linf_traits_2<Kernel,MTag> Gt;
 typedef CGAL::Segment_Delaunay_graph_Linf_2<Gt>      SDG2;
 
 using namespace std;

@@ -1,6 +1,6 @@
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Triangulation_3_Examples )
 
-cmake_minimum_required(VERSION 3.1)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
   # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
@@ -18,6 +18,7 @@ if(CGAL_Qt5_FOUND)
 endif()
 
 if ( CGAL_FOUND )
+  create_single_source_cgal_program( "for_loop.cpp" )
   create_single_source_cgal_program( "adding_handles_3.cpp" )
   create_single_source_cgal_program( "color.cpp" )
   create_single_source_cgal_program( "copy_triangulation_3.cpp" )
@@ -38,23 +39,28 @@ if ( CGAL_FOUND )
   endif()
 
   find_package( TBB QUIET )
+  include(CGAL_TBB_support)
 
-  if( TBB_FOUND )
-    include( CGAL_target_use_TBB )
-
+  if( TARGET CGAL::TBB_support )
     create_single_source_cgal_program( "parallel_insertion_and_removal_in_regular_3.cpp" )
     create_single_source_cgal_program( "parallel_insertion_in_delaunay_3.cpp" )
     create_single_source_cgal_program( "sequential_parallel.cpp" )
-    CGAL_target_use_TBB( parallel_insertion_and_removal_in_regular_3 )
-    CGAL_target_use_TBB( parallel_insertion_in_delaunay_3 )
-    CGAL_target_use_TBB( sequential_parallel )
+    target_link_libraries( parallel_insertion_and_removal_in_regular_3 PUBLIC CGAL::TBB_support)
+    target_link_libraries( parallel_insertion_in_delaunay_3 PUBLIC CGAL::TBB_support )
+    target_link_libraries( sequential_parallel PUBLIC CGAL::TBB_support)
+
+    if(BUILD_TESTING)
+      set_property(TEST
+        execution___of__parallel_insertion_and_removal_in_regular_3
+        execution___of__parallel_insertion_in_delaunay_3
+        execution___of__sequential_parallel
+      PROPERTY RUN_SERIAL 1)
+    endif()
   else()
     message(STATUS "NOTICE: a few examples require TBB and will not be compiled.")
   endif()
-
 else()
 
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
 
 endif()
-

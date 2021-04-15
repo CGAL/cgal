@@ -22,11 +22,7 @@
 #include "ui_Point_set_simplification_plugin.h"
 
 // Concurrency
-#ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 struct Compute_average_spacing_functor
   : public Functor_with_signal_callback
@@ -134,6 +130,7 @@ class Point_set_demo_point_set_simplification_dialog : public QDialog, private U
     Point_set_demo_point_set_simplification_dialog(QWidget * /*parent*/ = 0)
     {
       setupUi(this);
+      m_maximumSurfaceVariation->setRange(0.000010, 0.33330);
     }
 
   unsigned int simplificationMethod() const

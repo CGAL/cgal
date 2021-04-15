@@ -1,5 +1,4 @@
 #include <iostream>
-#include <CGAL/basic.h>
 
 #include <CGAL/CORE_arithmetic_kernel.h>
 

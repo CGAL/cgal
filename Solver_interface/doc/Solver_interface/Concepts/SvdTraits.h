@@ -6,7 +6,6 @@
   to solve in the least square sense a linear system with a singular value decomposition
 
   \cgalHasModel `CGAL::Eigen_svd`
-  \cgalHasModel `CGAL::Lapack_svd`
 */
 class SvdTraits
 {
@@ -87,6 +86,9 @@ public:
 \cgalConcept
 Concept of matrix type used by the concept `SvdTraits`.
 
+\cgalRefines `DefaultConstructible`
+\cgalRefines `Assignable`
+
 \cgalHasModel `CGAL::Eigen_matrix<T>`
 */
 class SvdTraits::Matrix
@@ -99,12 +101,12 @@ public:
 
   /*!
     Return the number of rows of the matrix.
-   */
+  */
   size_t number_of_rows();
 
   /*!
     Return the number of columns of the matrix.
-   */
+  */
   size_t number_of_columns();
 
   /*!
@@ -118,4 +120,3 @@ public:
   */
   void set(size_t i, size_t j, const FT value);
 };
-
