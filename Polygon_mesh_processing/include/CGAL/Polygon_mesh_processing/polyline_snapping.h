@@ -59,7 +59,7 @@ bool exact_snapping (const typename Exact_kernel::Segment_3& s0,
   Vector_3 normal = CGAL::cross_product (v0, v1);
   if (normal == CGAL::NULL_VECTOR)
     return false;
-  
+
   Plane_3 plane0 (s0.source(), normal);
   Plane_3 plane1 (s1.source(), normal);
 
@@ -70,14 +70,14 @@ bool exact_snapping (const typename Exact_kernel::Segment_3& s0,
 
   CGAL_assertion (s0proj.source() != s0proj.target());
   CGAL_assertion (s1proj.source() != s1proj.target());
-  
+
   if (!CGAL::do_intersect (s0, s1proj) ||
       !CGAL::do_intersect (s1, s0proj))
     return false;
 
   Point_3 p0, p1;
-  
-  typename CGAL::cpp11::result_of<typename Exact_kernel::Intersect_3(Segment_3, Segment_3)>::type
+
+  typename std::result_of<typename Exact_kernel::Intersect_3(Segment_3, Segment_3)>::type
     intersection0 = intersection(s0, s1proj);
   if (!intersection0)
     return false;
@@ -87,7 +87,7 @@ bool exact_snapping (const typename Exact_kernel::Segment_3& s0,
   else
     return false;
 
-  typename CGAL::cpp11::result_of<typename Exact_kernel::Intersect_3(Segment_3, Segment_3)>::type
+  typename std::result_of<typename Exact_kernel::Intersect_3(Segment_3, Segment_3)>::type
     intersection1 = intersection(s1, s0proj);
   if (!intersection1)
     return false;
@@ -104,7 +104,7 @@ bool exact_snapping (const typename Exact_kernel::Segment_3& s0,
 
 template <class Kernel,
           bool Has_exact_constructions=
-          !boost::is_floating_point<typename Kernel::FT>::value >
+          !std::is_floating_point<typename Kernel::FT>::value >
 class Exact_snapping;
 
 template <class Kernel>
@@ -113,48 +113,34 @@ class Exact_snapping<Kernel,false>
 //typedefs
   typedef Kernel Input_kernel;
   typedef CGAL::Exact_predicates_exact_constructions_kernel Exact_kernel;
-  typedef CGAL::Cartesian_converter<Exact_kernel,Input_kernel> Exact_to_double;
+  typedef CGAL::Cartesian_converter<Exact_kernel, Input_kernel> Exact_to_inexact;
+  typedef CGAL::Cartesian_converter<Input_kernel, Exact_kernel> Inexact_to_exact;
 
   typedef typename Input_kernel::Point_3 Inexact_point_3;
   typedef typename Input_kernel::Line_3 Inexact_line_3;
   typedef typename Input_kernel::Segment_3 Inexact_segment_3;
-  typedef typename Exact_kernel::Point_3 Point_3;
-  typedef typename Exact_kernel::Line_3 Line_3;
-  typedef typename Exact_kernel::Segment_3 Segment_3;
-  
-  Exact_kernel ek;
-  Exact_to_double exact_to_double;
+  typedef typename Exact_kernel::Point_3 Exact_point_3;
+  typedef typename Exact_kernel::Line_3 Exact_line_3;
+  typedef typename Exact_kernel::Segment_3 Exact_segment_3;
 
-  Point_3 to_exact(const Inexact_point_3& p) const
-  {
-    return Point_3(p.x(), p.y(), p.z());
-  }
-  Inexact_point_3 to_inexact(const Point_3& p, const Exact_to_double& etd) const
-  {
-    return Inexact_point_3(etd(p.x()),
-                           etd(p.y()),
-                           etd(p.z()));
-  }
+  Exact_kernel ek;
+  Exact_to_inexact to_inexact;
+  Inexact_to_exact to_exact;
 
 public:
 
-  Exact_snapping()
-  {
-
-  }
-
   std::pair<Inexact_point_3, bool> intersection (const Inexact_segment_3& s0, const Inexact_segment_3& s1) const
   {
-    Segment_3 exact_s0 (to_exact (s0.source()), to_exact (s0.target()));
-    Segment_3 exact_s1 (to_exact (s1.source()), to_exact (s1.target()));
-    Point_3 result;
-    
+    Exact_segment_3 exact_s0 = to_exact(s0);
+    Exact_segment_3 exact_s1 = to_exact(s1);
+    Exact_point_3 result;
+
     if (exact_snapping<Exact_kernel> (exact_s0, exact_s1, result))
-      return std::make_pair (to_inexact (result, exact_to_double), true);
+      return std::make_pair (to_inexact (result), true);
 
     return std::make_pair (Inexact_point_3(), false);
   }
-  
+
 };
 
 template <class Kernel>
@@ -177,70 +163,17 @@ public:
     bool out = exact_snapping<Kernel> (s0, s1, result);
     return std::make_pair (result, out);
   }
-  
+
 };
-  
-template <typename PolylineRange,
-          typename OutputIterator,
-          typename Kernel>
-struct Intersect_polylines
-{
-  typedef typename Kernel::Point_3 Point_3;
-  typedef typename Kernel::Segment_3 Segment_3;
-  typedef typename Kernel::FT FT;
-  typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::pair<std::size_t, std::size_t> > Box;
-  
-  typedef cpp11::tuple<std::size_t, std::size_t, std::size_t, std::size_t, FT, FT> OutputType;
-  
-  const PolylineRange& polylines;
-  double squared_tolerance;
-  Exact_snapping<Kernel> exact_snapping;
-  mutable OutputIterator output;
-
-  Intersect_polylines (const PolylineRange& polylines,
-                       double tolerance,
-                       OutputIterator output)
-    : polylines (polylines)
-    , squared_tolerance (tolerance * tolerance)
-    , output (output)
-  { }
-
-  void operator()(const Box* b, const Box* c) const
-  {
-    Segment_3 s1 (polylines[b->info().first][b->info().second],
-                  polylines[b->info().first][b->info().second + 1]);
-    Segment_3 s2 (polylines[c->info().first][c->info().second],
-                  polylines[c->info().first][c->info().second + 1]);
-    if (CGAL::squared_distance (s1, s2) > squared_tolerance)
-      return;
-
-    Point_3 new_point;
-    bool okay;
-    boost::tie (new_point, okay) = exact_snapping.intersection (s1, s2);
-
-    if (!okay)
-      return;
-
-    FT coord1 = CGAL::approximate_sqrt (CGAL::squared_distance (s1.source(), s1.supporting_line().projection(new_point))
-                                        / s1.squared_length());
-    FT coord2 = CGAL::approximate_sqrt (CGAL::squared_distance (s2.source(), s2.supporting_line().projection(new_point))
-                                        / s2.squared_length());
-    
-    *(output ++) = cpp11::make_tuple (b->info().first, b->info().second,
-                                      c->info().first, c->info().second,
-                                      coord1, coord2);
-  } 
-};
-
 
 }// namespace internal
 
 
-// Note this is not officially documented  
+// Note this is not officially documented
 /*!
   Computes snapping points among a set of polylines.
 
-  The output is given as a set of `cpp11::tuple` with the following
+  The output is given as a set of `std::tuple` with the following
   elements in the following order:
 
   - index `i` of the first polyline
@@ -255,7 +188,7 @@ struct Intersect_polylines
   \tparam PolylineRange a `RandomAccessRange` of `RandomAccessRange`
   of `Kernel::Point_3`.
   \tparam OutputIterator a model of `OutputIterator` that accepts
-  objects of type `cpp11::tuple<std::size_t, std::size_t, std::size_t, std::size_t, FT, FT>`
+  objects of type `std::tuple<std::size_t, std::size_t, std::size_t, std::size_t, FT, FT>`
   \tparam Kernel a model of `Kernel`
 
   \param polylines the input polyline range.
@@ -271,12 +204,14 @@ void polyline_snapping (const PolylineRange& polylines,
                         const Kernel&)
 {
   typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::pair<std::size_t, std::size_t> > Box;
+  typedef typename Kernel::FT FT;
   typedef typename Kernel::Point_3 Point_3;
+  typedef typename Kernel::Segment_3 Segment_3;
 
   std::size_t size = 0;
   for (std::size_t i = 0; i < polylines.size(); ++ i)
     size += polylines[i].size() - 1;
-  
+
   std::vector<Box> boxes;
   boxes.reserve (size);
   for (std::size_t i = 0; i < polylines.size(); ++ i)
@@ -291,14 +226,13 @@ void polyline_snapping (const PolylineRange& polylines,
                            bbox.xmax() + tolerance / 2.,
                            bbox.ymax() + tolerance / 2.,
                            bbox.zmax() + tolerance / 2.);
-                                 
+
       boxes.push_back(Box(bbox, std::make_pair (i, j)));
     }
 
-  internal::Intersect_polylines<PolylineRange, OutputIterator, Kernel>
-    intersect_polylines(polylines, tolerance, output);
+  internal::Exact_snapping<Kernel> exact_snapping;
   std::ptrdiff_t cutoff = 2000;
-      
+
   std::size_t idx_start = 0;
   for (std::size_t i = 0; i < polylines.size() - 1; ++ i)
   {
@@ -310,9 +244,35 @@ void polyline_snapping (const PolylineRange& polylines,
        boost::make_counting_iterator<const Box*>(&boxes.back()));
     idx_start += polylines[i].size() - 1;
 
-    CGAL::box_intersection_d(box1_ptr.begin(), box1_ptr.end(),
-                             box2_ptr.begin(), box2_ptr.end(),
-                             intersect_polylines, cutoff);
+    CGAL::box_intersection_d
+      (box1_ptr.begin(), box1_ptr.end(),
+       box2_ptr.begin(), box2_ptr.end(),
+       [&](const Box* b, const Box* c)
+       {
+         Segment_3 s1 (polylines[b->info().first][b->info().second],
+                       polylines[b->info().first][b->info().second + 1]);
+         Segment_3 s2 (polylines[c->info().first][c->info().second],
+                       polylines[c->info().first][c->info().second + 1]);
+         if (CGAL::squared_distance (s1, s2) > tolerance * tolerance)
+           return;
+
+         Point_3 new_point;
+         bool okay;
+         std::tie (new_point, okay) = exact_snapping.intersection (s1, s2);
+
+         if (!okay)
+           return;
+
+         FT coord1 = CGAL::approximate_sqrt (CGAL::squared_distance (s1.source(), s1.supporting_line().projection(new_point))
+                                             / s1.squared_length());
+         FT coord2 = CGAL::approximate_sqrt (CGAL::squared_distance (s2.source(), s2.supporting_line().projection(new_point))
+                                             / s2.squared_length());
+
+         *(output ++) = std::make_tuple (b->info().first, b->info().second,
+                                         c->info().first, c->info().second,
+                                         coord1, coord2);
+       },
+       cutoff);
   }
 }
 
