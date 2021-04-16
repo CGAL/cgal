@@ -50,8 +50,7 @@ struct move_shalfedge_around_facet {
 
 template <class Object, class Hash_map, class Union_find>
 void merge_sets( Object o1, Object o2, Hash_map& hash, Union_find& uf) {
-  //CGAL_assertion( hash[o1] != 0 && hash[o2] != 0);
-  CGAL_assertion( hash.is_defined(o1) && hash.is_defined(o2));
+  CGAL_assertion( hash.contains(o1) && hash.contains(o2));
   if( !uf.same_set( hash[o1], hash[o2]))
     uf.unify_sets( hash[o1], hash[o2]);
 }

@@ -84,7 +84,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
 
   void remove_f_including_all_edge_uses_in_its_boundary_cycles
     ( Halffacet_handle f,
-      Unique_hash_map< SFace_handle, UFH_sface>& hash,
+      robin_hood::unordered_map< SFace_handle, UFH_sface,Handle_hash_function>& hash,
       Union_find< SFace_handle>& uf )
     /* removes f and its boundary cycles, and merges up the sphere facets
        incident to them. */ {
@@ -316,9 +316,9 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
     CGAL_NEF_TRACEN(">>> simplifying");
     SNC_decorator D(*this->sncp());
 
-    Unique_hash_map< Volume_handle, UFH_volume> hash_volume;
-    Unique_hash_map< Halffacet_handle, UFH_facet> hash_facet;
-    Unique_hash_map< SFace_handle, UFH_sface> hash_sface;
+    robin_hood::unordered_map< Volume_handle, UFH_volume,Handle_hash_function> hash_volume;
+    robin_hood::unordered_map< Halffacet_handle, UFH_facet,Handle_hash_function> hash_facet;
+    robin_hood::unordered_map< SFace_handle, UFH_sface,Handle_hash_function> hash_sface;
     Union_find< Volume_handle> uf_volume;
     Union_find< Halffacet_handle> uf_facet;
     Union_find< SFace_handle> uf_sface;
@@ -330,11 +330,14 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
 
     this->sncp()->clear_boundary();
 
+    hash_volume.reserve(this->sncp()->number_of_volumes());
     Volume_iterator c;
     CGAL_forall_volumes( c, *this->sncp()) {
       hash_volume[c] = uf_volume.make_set(c);
       this->sncp()->reset_object_list(c->shell_entry_objects());
     }
+
+    hash_sface.reserve(this->sncp()->number_of_sfaces());
     SFace_iterator sf;
     CGAL_forall_sfaces( sf, *this->sncp()) {
       hash_sface[sf] = uf_sface.make_set(sf);
@@ -371,6 +374,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
       f = f_next;
     }
 
+    hash_facet.reserve(this->sncp()->number_of_halffacets());
     CGAL_forall_halffacets( f, *this->sncp()) {
       hash_facet[f] = uf_facet.make_set(f);
       this->sncp()->reset_object_list(f->boundary_entry_objects());
@@ -490,9 +494,9 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
    }
 
    void purge_no_find_objects(
-      Unique_hash_map< Volume_handle, UFH_volume>& hash_volume,
-      Unique_hash_map< Halffacet_handle, UFH_facet>& hash_facet,
-      Unique_hash_map< SFace_handle, UFH_sface>& hash_sface,
+      robin_hood::unordered_map< Volume_handle, UFH_volume,Handle_hash_function>& hash_volume,
+      robin_hood::unordered_map< Halffacet_handle, UFH_facet,Handle_hash_function>& hash_facet,
+      robin_hood::unordered_map< SFace_handle, UFH_sface,Handle_hash_function>& hash_sface,
       Union_find< Volume_handle>& uf_volume,
       Union_find< Halffacet_handle>& uf_facet,
       Union_find< SFace_handle>& uf_sface ) {
@@ -542,13 +546,13 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
    }
 
   void create_boundary_links_forall_sfaces(
-      Unique_hash_map< SFace_handle, UFH_sface>& hash,
+      robin_hood::unordered_map< SFace_handle, UFH_sface,Handle_hash_function>& hash,
       Union_find< SFace_handle>& uf ) {
-    Unique_hash_map< SHalfedge_handle, bool> linked(false);
-    SNC_decorator D(*this->sncp());
+    robin_hood::unordered_set< SHalfedge_handle,Handle_hash_function> linked;
+    linked.reserve(this->sncp()->number_of_shalfedges());
     SHalfedge_iterator e;
     CGAL_forall_shalfedges(e, *this->sncp()) {
-      if( linked[e])
+      if( linked.contains(e))
         continue;
       SM_decorator SD(&*e->source()->source());
       SFace_handle sf = *(uf.find(hash[e->incident_sface()]));
@@ -556,7 +560,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
       SHalfedge_around_sface_circulator c(e), cend(c);
       CGAL_For_all( c, cend) {
         SD.set_face(c, sf);
-        linked[c] = true;
+        linked.insert(c);
       }
       SD.store_sm_boundary_object( e, sf);
     }
@@ -595,13 +599,14 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
   }
 
   void create_boundary_links_forall_facets(
-      Unique_hash_map< Halffacet_handle, UFH_facet>& hash,
+      robin_hood::unordered_map< Halffacet_handle, UFH_facet,Handle_hash_function>& hash,
       Union_find< Halffacet_handle>& uf) {
-    Unique_hash_map< SHalfedge_handle, bool> linked(false);
+    robin_hood::unordered_set< SHalfedge_handle,Handle_hash_function> linked;
+    linked.reserve(this->sncp()->number_of_shalfedges());
     SNC_decorator D(*this->sncp());
     SHalfedge_iterator u;
     CGAL_forall_shalfedges(u, *this->sncp()) {
-      if( linked[u])
+      if( linked.contains(u))
         continue;
       /* set find(f) as incident facet of every edge use on the cycle of u */
       SHalfedge_handle u_min = u;
@@ -612,7 +617,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
         if( (c != u_min) && lexicographically_xyz_smaller(c->source()->source()->point(),
                                                           u_min->source()->source()->point()))
           u_min = c;
-        linked[c] = true;
+        linked.insert(c);
       }
       /* store the edge use at the lexicographicaly minimum facet vertex, as
          a cycle entry of f.  The outermost cycle is stored at first
@@ -643,11 +648,9 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
   }
 
   void create_boundary_links_forall_volumes(
-      Unique_hash_map< Volume_handle, UFH_volume>& hash,
+      robin_hood::unordered_map< Volume_handle, UFH_volume,Handle_hash_function>& hash,
       Union_find< Volume_handle>& uf) {
     typedef typename SNC_decorator::template Shell_volume_setter<SNC_decorator> Volume_setter;
-    //   typedef Unique_hash_map< SFace_handle, bool> SFace_map;
-    //  SFace_map linked(false);
 
     SNC_decorator D(*this->sncp());
     Volume_setter setter(D);
@@ -657,7 +660,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
     CGAL_forall_sfaces(sf, *this->sncp()) {
       //      CGAL_NEF_TRACEN("SFace " << IO->index(sf));
       if( setter.is_linked(sf)) continue;
-      c = *(uf.find(hash[sf->volume()]));
+      c = *(uf.find(hash.at(sf->volume())));
       //      CGAL_NEF_TRACEN("Volume " << IO->index(c));
       setter.set_volume(c);
       D.visit_shell_objects( sf, setter );
