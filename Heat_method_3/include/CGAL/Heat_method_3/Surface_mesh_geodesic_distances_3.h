@@ -110,7 +110,7 @@ public:
     \brief Constructor
   */
   Surface_mesh_geodesic_distances_3(const TriangleMesh& tm, VertexPointMap vpm)
-    : v2v(tm), tm(tm), vpm(vpm)
+    : vertex_id_map(get(Vertex_property_tag(),tm)), face_id_map(get(Face_property_tag(),tm)), v2v(tm), tm(tm), vpm(vpm)
   {
     build();
   }
