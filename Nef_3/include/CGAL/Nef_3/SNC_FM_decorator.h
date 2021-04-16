@@ -110,14 +110,14 @@ struct Sort_sedges2 {
 template <typename P, typename V, typename E, typename I>
 struct Halffacet_output {
 
-Halffacet_output(CGAL::Unique_hash_map<I,E>& F, std::vector<E>& S)
+Halffacet_output(robin_hood::unordered_map<I,E,Handle_hash_function>& F, std::vector<E>& S)
   : From(F), Support(S) { edge_number=0; Support[0]=E(); }
 
 typedef P         Point;
 typedef V         Vertex_handle;
 typedef unsigned  Halfedge_handle;
 
-CGAL::Unique_hash_map<I,E>& From;
+robin_hood::unordered_map<I,E,Handle_hash_function>& From;
 std::vector<E>& Support;
 unsigned edge_number;
 
@@ -404,10 +404,10 @@ protected:
 
   Halffacet_handle determine_facet(SHalfedge_handle e,
     const std::vector<SHalfedge_handle>& MinimalEdge,
-    const CGAL::Unique_hash_map<SHalfedge_handle,int>& FacetCycle,
+    const robin_hood::unordered_map<SHalfedge_handle,int,Handle_hash_function>& FacetCycle,
     const std::vector<SHalfedge_handle>& Edge_of) const
   { CGAL_NEF_TRACEN("  determine_facet "<<debug(e));
-    int fc = FacetCycle[e];
+    int fc = FacetCycle.at(e);
     SHalfedge_handle e_min = MinimalEdge[fc];
     SHalfedge_handle e_below =
     #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
@@ -467,12 +467,12 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
   Object_list_iterator start, Object_list_iterator end) const
 { CGAL_NEF_TRACEN(">>>>>create_facet_objects "
                   << normalized(plane_supporting_facet));
-  CGAL::Unique_hash_map<SHalfedge_handle,int> FacetCycle(-1);
+  robin_hood::unordered_map<SHalfedge_handle,int,Handle_hash_function> FacetCycle;
   std::vector<SHalfedge_handle> MinimalEdge;
   std::list<SHalfedge_handle> SHalfedges;
   std::list<SHalfloop_handle> SHalfloops;
 
-  CGAL::Unique_hash_map<Segment_iterator,SHalfedge_handle>  From;
+  robin_hood::unordered_map<Segment_iterator,SHalfedge_handle,Handle_hash_function>  From;
 
   Segment_list Segments;
   SHalfedge_handle e; SHalfloop_handle l;
@@ -502,6 +502,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
     } else
       CGAL_error_msg("Damn wrong handle.");
   }
+  FacetCycle.reserve(SHalfedges.size() + SHalfloops.size());
 
   /* We iterate all shalfedges and assign a number for each facet
      cycle.  After that iteration for an edge |e| the number of its
@@ -512,14 +513,13 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
   SmallerXYZ<Kernel, SHalfedge_handle, Halffacet_geometry> smallerXYZ(G);
   CGAL_forall_iterators(eit,SHalfedges) {
     e = *eit;
-    if ( FacetCycle[e] >= 0 ) continue; // already assigned
+    if ( !FacetCycle.emplace(e,i).second ) continue; // already assigned
     SHalfedge_around_facet_circulator hfc(e),hend(hfc);
-    FacetCycle[hfc]=i;
     SHalfedge_handle e_min = e;
     bool init=false;
     CGAL_NEF_TRACEN("\n  facet cycle numbering (up) "<<i);
     CGAL_For_all(hfc,hend) {
-      FacetCycle[hfc]=i; // assign face cycle number
+      FacetCycle.emplace(hfc,i); // assign face cycle number
       if(smallerXYZ(hfc, e_min, init)) {
         init = true;
         e_min = hfc;
