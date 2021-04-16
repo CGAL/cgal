@@ -115,25 +115,21 @@ OutputIterator non_manifold_vertices(const PolygonMesh& pm,
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor                  vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor                halfedge_descriptor;
 
-  typedef CGAL::dynamic_vertex_property_t<bool>                                         Vertex_bool_tag;
-  typedef typename boost::property_map<PolygonMesh, Vertex_bool_tag>::const_type        Known_manifold_vertex_map;
   typedef CGAL::dynamic_vertex_property_t<halfedge_descriptor>                          Vertex_halfedge_tag;
   typedef typename boost::property_map<PolygonMesh, Vertex_halfedge_tag>::const_type    Visited_vertex_map;
   typedef CGAL::dynamic_halfedge_property_t<bool>                                       Halfedge_property_tag;
   typedef typename boost::property_map<PolygonMesh, Halfedge_property_tag>::const_type  Visited_halfedge_map;
 
-  Known_manifold_vertex_map known_nm_vertices = get(Vertex_bool_tag(), pm);
+  std::set<vertex_descriptor> known_nm_vertices;
   Visited_vertex_map visited_vertices = get(Vertex_halfedge_tag(), pm);
   Visited_halfedge_map visited_halfedges = get(Halfedge_property_tag(), pm);
 
   halfedge_descriptor null_h = boost::graph_traits<PolygonMesh>::null_halfedge();
 
-  // Dynamic pmaps do not have default initialization values (yet)
+  // Dynamic pmaps do not have default initialization values (yet).
   for(vertex_descriptor v : vertices(pm))
-  {
-    put(known_nm_vertices, v, false);
     put(visited_vertices, v, null_h);
-  }
+
   for(halfedge_descriptor h : halfedges(pm))
     put(visited_halfedges, h, false);
 
@@ -145,27 +141,27 @@ OutputIterator non_manifold_vertices(const PolygonMesh& pm,
     if(!get(visited_halfedges, h))
     {
       put(visited_halfedges, h, true);
-      bool is_non_manifold = false;
 
-      vertex_descriptor v = target(h, pm);
+      bool is_non_manifold = false;
+      const vertex_descriptor v = target(h, pm);
 
       if(get(visited_vertices, v) != null_h) // already seen this vertex, but not from this star
       {
         is_non_manifold = true;
 
-        // if this is the second time we visit that vertex and the first star was manifold, we have
-        // never reported the first star, but we must now
-        if(!get(known_nm_vertices, v))
+        // If this is the second time we visit that vertex and the first star was manifold, we have
+        // never reported the first star, but must do so now.
+        if(known_nm_vertices.count(v) == 0)
           *out++ = get(visited_vertices, v); // that's a halfedge of the first star we've seen 'v' in
       }
       else
       {
-        // first time we meet this vertex, just mark it so, and keep the halfedge we found the vertex with in memory
+        // First time we meet this vertex, only remember the halfedge we found the vertex with.
         put(visited_vertices, v, h);
       }
 
       // While walking the star of this halfedge, if we meet a border halfedge more than once,
-      // it means the mesh is pinched and we are also in the case of a non-manifold situation
+      // it means the mesh is pinched and we are also in the case of a non-manifold situation.
       halfedge_descriptor ih = h, done = ih;
       int border_counter = 0;
       do
@@ -184,7 +180,7 @@ OutputIterator non_manifold_vertices(const PolygonMesh& pm,
       if(is_non_manifold)
       {
         *out++ = h;
-        put(known_nm_vertices, v, true);
+        known_nm_vertices.insert(v);
       }
     }
   }
