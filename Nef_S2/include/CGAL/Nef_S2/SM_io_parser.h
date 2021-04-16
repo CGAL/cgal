@@ -19,6 +19,7 @@
 
 #include <CGAL/Nef_S2/SM_decorator.h>
 #include <CGAL/Nef_2/Object_index.h>
+#include <CGAL/Tools/robin_hood.h>
 #include <CGAL/Nef_S2/SM_decorator_traits.h>
 #include <vector>
 #include <iostream>
@@ -507,13 +508,13 @@ void SM_io_parser<Decorator_>::print_faces() const
   out << "SHalfedges: " << this->number_of_shalfedges() << "\n";
   out << "Loop:      " << this->number_of_shalfloops() << "\n";
   SHalfedge_iterator e;
-  Unique_hash_map<SHalfedge_iterator,bool> Done(false);
+  robin_hood::unordered_set<SHalfedge_iterator,Handle_hash_function> Done;
   CGAL_forall_shalfedges(e,*this) {
-    if ( Done[e] ) continue;
+    if ( Done.contains(e) ) continue;
     typename Base::SHalfedge_around_sface_circulator c(e), ce = c;
     out << "face cycle\n";
     CGAL_For_all(c,ce)
-    { Done[c]=true; out << "  "; debug_vertex(c->source()); }
+    { Done.insert(c); out << "  "; debug_vertex(c->source()); }
   }
   if ( this->has_shalfloop() )
     { debug_loop(this->shalfloop()); debug_loop(this->shalfloop()->twin()); }
