@@ -22,6 +22,7 @@
 
 #include <fstream>
 #include <string>
+#include <unordered_map>
 
 #ifdef DOXYGEN_RUNNING
 #define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
