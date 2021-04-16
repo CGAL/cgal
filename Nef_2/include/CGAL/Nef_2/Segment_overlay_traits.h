@@ -434,6 +434,7 @@ public:
 #include <map>
 #include <CGAL/Multiset.h>
 #include <CGAL/Unique_hash_map.h>
+#include <CGAL/Tools/robin_hood.h>
 
 namespace CGAL {
 
@@ -460,6 +461,21 @@ public:
   OUTPUT&  GO;
   const GEOMETRY& K;
 
+  template <class key_type, class mapped_type>
+  class handle_hash_map
+    : private robin_hood::unordered_node_map<key_type,mapped_type,Handle_hash_function>
+  {
+      typedef robin_hood::unordered_node_map<key_type,mapped_type,Handle_hash_function> Base;
+
+    public:
+        handle_hash_map(const mapped_type& def) : _default(def) {}
+
+        mapped_type& operator[](const key_type& key)
+        { return Base::try_emplace(key,_default).first->second; }
+
+    private:
+        mapped_type _default;
+  };
   class compare_segs_at_sweepline
   {
     const Point_2& p;
@@ -557,15 +573,15 @@ public:
   typedef std::list<ITERATOR>                            IsoList;
   typedef CGAL::Multiset<Point_2, compare_pnts_xy>       EventQueue;
   typedef typename EventQueue::iterator                  event_iterator;
-  typedef Unique_hash_map<Point_2*, IsoList*>            X2iso;
+  typedef robin_hood::unordered_map<Point_2*, IsoList*>  X2iso;
 
   typedef CGAL::Multiset<ISegment, compare_segs_at_sweepline>  SweepStatus;
   typedef typename SweepStatus::iterator                       ss_iterator;
   typedef typename SweepStatus::const_iterator                 ss_const_iterator;
-  typedef CGAL::Unique_hash_map<ISegment, event_iterator>      Y2X;
-  typedef CGAL::Unique_hash_map<ISegment, ISegment>            Y2Y;
-  typedef CGAL::Unique_hash_map<Point_2*, ss_iterator>         X2Y;
-  typedef CGAL::Unique_hash_map<ISegment, Halfedge_handle>     AssocEdgeMap;
+  typedef handle_hash_map<ISegment, event_iterator>      Y2X;
+  typedef handle_hash_map<ISegment, ISegment>            Y2Y;
+  typedef handle_hash_map<Point_2*, ss_iterator>         X2Y;
+  typedef handle_hash_map<ISegment, Halfedge_handle>     AssocEdgeMap;
 
   typedef std::pair<ISegment,ISegment>                   is_pair;
 
@@ -604,7 +620,7 @@ public:
   stl_seg_overlay_traits(const INPUT& in, OUTPUT& G, const GEOMETRY& k)
     : its(in.first), ite(in.second), GO(G), K(k),
     XS(compare_pnts_xy(K)), SLcmp(p_sweep,&sl,&sh,K), YS(SLcmp),
-    y2x(XS.end()), x2y(YS.end()), x2iso(0), y2y(&sl),
+    y2x(XS.end()), x2y(YS.end()), x2iso(), y2y(&sl),
     SQ(lt_pnts_xy(K)), Edge_of(0)
   {}
 
@@ -753,8 +769,7 @@ public:
       it2 = insertXS(K.target(s));
 
       if (it1 == it2) {
-        if ( x2iso[&*it1] == 0 ) x2iso[&*it1] = new IsoList;
-        x2iso[&*it1]->push_front(it_s);
+        x2iso.emplace(&*it1,new IsoList()).first->second->push_front(it_s);
         continue;  // ignore zero-length segments regarding YS
       }
 
@@ -941,13 +956,14 @@ public:
 
     //    CGAL_assertion( sit_pred != YS.end() );
     GO.halfedge_below(v,Edge_of[*sit_pred]);
-    if ( x2iso[&*event] != 0 ) {
-      IsoList* IL = x2iso[&*event];
+    auto isoit = x2iso.find(&*event);
+    if ( isoit != x2iso.end()) {
+      IsoList* IL = isoit->second;
       typename IsoList::const_iterator iso_it;
       for (iso_it = IL->begin(); iso_it != IL->end(); ++iso_it)
         GO.trivial_segment(v,*iso_it);
       delete IL;
-      x2iso[&*event] = 0;
+      x2iso.erase(isoit);
     }
 
     ISegment next_seg = ISegment(); // to avoid /W4 warning
