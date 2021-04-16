@@ -21,7 +21,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Nef_S2/Normalizing.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Tools/robin_hood.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_S2/SM_decorator.h>
 #include <CGAL/Nef_S2/SM_point_locator.h>
@@ -307,7 +307,7 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
       number_of_intersection_candidates=0;
 #endif
 
-    Unique_hash_map<Vertex_const_handle, bool> ignore(false);
+    robin_hood::unordered_set<Vertex_const_handle,Handle_hash_function> ignore;
     Vertex_const_iterator v0;
 
     //    CGAL_NEF_SETDTHREAD(19*43*131);
@@ -338,7 +338,7 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
       A.initialize_hash(sli);
 
     CGAL_forall_vertices( v0, snc1) {
-      CGAL_assertion(!ignore[v0]);
+      CGAL_assertion(!ignore.contains(v0));
       Point_3 p0(v0->point());
       Vertex_handle v;
       Halfedge_handle e;
@@ -361,7 +361,7 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
       if( CGAL::assign( v, o)) {
         CGAL_NEF_TRACEN("p0 found on vertex");
         binop_local_views( v0, v, BOP, *this->sncp(),A);
-        ignore[v] = true;
+        ignore.insert(v);
       }
       else if( CGAL::assign( e, o)) {
         CGAL_NEF_TRACEN("p0 found on edge");
@@ -412,7 +412,7 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
     CGAL_NEF_TRACEN("=> for all v1 in snc1, qualify v1 with respect snc0");
     CGAL_forall_vertices( v0, snc2) {
 
-      if(ignore[v0]) continue;
+      if(ignore.contains(v0)) continue;
       Point_3 p1(v0->point());
       Halfedge_handle e;
       Halffacet_handle f;
