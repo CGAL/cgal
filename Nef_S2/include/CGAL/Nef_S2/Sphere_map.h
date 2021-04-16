@@ -23,7 +23,7 @@
 #include <CGAL/Nef_S2/SM_items.h>
 #include <CGAL/Nef_S2/SM_list.h>
 #include <CGAL/Nef_S2/SM_iteration.h>
-#include <CGAL/Nef_S2/Generic_handle_map.h>
+#include <CGAL/Nef_S2/Void_handle_hash_function.h>
 #include <CGAL/Nef_2/iterator_tools.h>
 #include <list>
 #undef CGAL_NEF_DEBUG

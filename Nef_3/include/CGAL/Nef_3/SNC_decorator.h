@@ -22,6 +22,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Nef_S2/Normalizing.h>
 #include <CGAL/Unique_hash_map.h>
+#include <CGAL/Nef_S2/Void_handle_hash_function.h>
 #include <CGAL/Nef_3/SNC_iteration.h>
 #include <CGAL/Nef_3/SNC_const_decorator.h>
 #include <CGAL/Nef_S2/SM_decorator.h>
