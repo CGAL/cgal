@@ -804,10 +804,10 @@ public:
 
   template <typename Iterator>
   void subdivide_segments(Iterator start, Iterator end) const;
-  template <typename Iterator, typename T>
+  template <typename Iterator>
   void partition_to_halfsphere(Iterator start, Iterator end,
-    Seg_list& L, robin_hood::unordered_map<Iterator,T,Handle_hash_function>& M,
-    Sphere_circle xycircle, Sphere_circle yzcircle, bool include_equator) const;
+                               Seg_list& L, Seg_map& M,
+                               Sphere_circle xycircle, Sphere_circle yzcircle, bool include_equator) const;
 
   template <typename Mark_accessor>
   void merge_halfsphere_maps(SVertex_handle v1, SVertex_handle v2,
@@ -1942,14 +1942,15 @@ set_outer_face_mark(int offset, const std::vector<Mark>& mohs) {
 }
 
 template <typename Map>
-template <typename Iterator, typename T>
+template <typename Iterator>
 void SM_overlayer<Map>::
-partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
-                        robin_hood::unordered_map<Iterator,T,Handle_hash_function>& M,
+partition_to_halfsphere(Iterator start, Iterator beyond,
+                        Seg_list& L, Seg_map& M,
                         Sphere_circle xycircle, Sphere_circle yzcircle,
                         bool include_equator) const
-{ CGAL_NEF_TRACEN("partition_to_halfsphere ");
-//  CGAL_assertion(pos!=0);
+{
+  CGAL_NEF_TRACEN("partition_to_halfsphere ");
+  //  CGAL_assertion(pos!=0);
   Sphere_segment s1,s2;
   //  Sphere_circle xycircle(0,0,pos);
   if(include_equator) {
@@ -1957,7 +1958,7 @@ partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
       int i = start->intersection(xycircle,s1,s2);
       CGAL_NEF_TRACEN("segment " << start->source() << " " << start->target());
       if ( i>1 || i>0 ) {
-        const T& mstart = M[start];
+        const Seg_info& mstart = M[start];
         if (i>1) {
           L.push_back(s2); M[--L.end()] = mstart;
           CGAL_NEF_TRACEN(">1 " << s2.source() << " " << s2.target());
@@ -1996,7 +1997,7 @@ partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
       bool insert_s2 = (n1 > 1 && !s2.is_degenerate()) || (n2 > 1 && !s2.is_degenerate());
       bool insert_s1 = (n1 > 0 && !s1.is_degenerate()) || (n2 > 0 && !s1.is_degenerate());
       if(insert_s1 || insert_s2) {
-        const T& mit = M[it];
+        const Seg_info& mit = M[it];
         if (insert_s2) {
           M[ L.insert(it,s2) ] = mit;
           added=true;
