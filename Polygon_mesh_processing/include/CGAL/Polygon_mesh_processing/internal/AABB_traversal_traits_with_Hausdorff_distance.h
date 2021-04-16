@@ -29,21 +29,25 @@ namespace CGAL {
     return FT(1000000000000);
   }
 
-  /**
-   * @struct Candidate_triangle
-   */
-  template<typename Kernel>
+  // Candidate triangle.
+  template<typename Kernel, typename FaceDescriptor>
   struct Candidate_triangle {
     using FT = typename Kernel::FT;
-    typedef typename Kernel::Triangle_3 Triangle_3;
+    using Triangle_3 = typename Kernel::Triangle_3;
 
-    Candidate_triangle(const Triangle_3& triangle, const std::pair<FT, FT>& bounds)
-      : m_triangle(triangle), m_bounds(bounds) {}
+    Candidate_triangle(
+      const Triangle_3& triangle,
+      const std::pair<FT, FT>& bounds,
+      const FaceDescriptor& face) :
+    triangle(triangle), bounds(bounds), face(face)
+    { }
 
-    Triangle_3 m_triangle;
-    std::pair<FT, FT> m_bounds;
-    bool operator>(const Candidate_triangle& other) const { return m_bounds.second < other.m_bounds.second; }
-    bool operator<(const Candidate_triangle& other) const { return m_bounds.second > other.m_bounds.second; }
+    Triangle_3 triangle;
+    std::pair<FT, FT> bounds;
+    FaceDescriptor face;
+
+    bool operator>(const Candidate_triangle& other) const { return bounds.second < other.bounds.second; }
+    bool operator<(const Candidate_triangle& other) const { return bounds.second > other.bounds.second; }
   };
 
   /**
@@ -229,7 +233,8 @@ namespace CGAL {
     typedef AABB_tree< AABB_traits<Kernel, TM2_primitive> > TM2_tree;
     typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
     typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
-    typedef std::priority_queue< Candidate_triangle<Kernel> > Heap_type;
+    using Candidate = Candidate_triangle<Kernel, face_descriptor>;
+    typedef std::priority_queue<Candidate> Heap_type;
 
   public:
     typedef FT Priority;
@@ -255,7 +260,7 @@ namespace CGAL {
     {
       // Map to transform faces of TM1 to actual triangles
       const Triangle_from_face_descriptor_map<TriangleMesh, VPM1> m_face_to_triangle_map( &m_tm1, m_vpm1 );
-      const Triangle_3 candidate_triangle = get(m_face_to_triangle_map, primitive.id());
+      const Triangle_3 triangle = get(m_face_to_triangle_map, primitive.id());
 
       // TODO Can we initialize the bounds here, s.t. we don't start with infty?
       // Can we initialize the bounds depending on the closest points in tm2
@@ -271,7 +276,7 @@ namespace CGAL {
         infinity_value<FT>(),
         infinity_value<FT>()
       );
-      m_tm2_tree.traversal_with_priority(candidate_triangle, traversal_traits_tm2);
+      m_tm2_tree.traversal_with_priority(triangle, traversal_traits_tm2);
 
       // Update global Hausdorff bounds according to the obtained local bounds
       const auto local_bounds = traversal_traits_tm2.get_local_bounds();
@@ -286,7 +291,7 @@ namespace CGAL {
       // Store the triangle given as primitive here as candidate triangle
       // together with the local bounds it obtained to sind it to subdivision
       // later
-      m_candidiate_triangles.push( Candidate_triangle<Kernel>(candidate_triangle, local_bounds) );
+      m_candidiate_triangles.push( Candidate(triangle, local_bounds, primitive.id()) );
     }
 
     // Determine whether child nodes will still contribute to a larger

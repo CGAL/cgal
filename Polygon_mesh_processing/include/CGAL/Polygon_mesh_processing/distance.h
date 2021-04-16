@@ -1345,6 +1345,7 @@ double bounded_error_Hausdorff_impl(
   typedef typename Kernel::Triangle_3 Triangle_3;
 
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+  using Candidate = Candidate_triangle<Kernel, face_descriptor>;
 
   typename Kernel::Compute_squared_distance_3 squared_distance;
 
@@ -1400,13 +1401,15 @@ double bounded_error_Hausdorff_impl(
   // Can already build a sorted structure while collecting the candidates
   auto& candidate_triangles = traversal_traits_tm1.get_candidate_triangles();
   auto global_bounds = traversal_traits_tm1.get_global_bounds();
-  // std::cout << candidate_triangles.size() << std::endl;
+
+  // std::cout << "number of candidate triangles 1: " <<
+  //   candidate_triangles.size() << std::endl;
 
   const FT squared_error_bound = error_bound * error_bound;
   while ( (global_bounds.second - global_bounds.first > error_bound) && !candidate_triangles.empty() ) {
 
     // Get the first triangle and its Hausdorff bounds from the candidate set
-    const Candidate_triangle<Kernel> triangle_and_bound = candidate_triangles.top();
+    const Candidate triangle_and_bound = candidate_triangles.top();
     // Remove it from the candidate set as it will be processed now
     candidate_triangles.pop();
 
@@ -1414,11 +1417,11 @@ double bounded_error_Hausdorff_impl(
     // i.e. if its Upper Bound is higher than the currently known best lower bound
     // and the difference between the bounds to be obtained is larger than the
     // user given error.
-    const auto& triangle_bounds = triangle_and_bound.m_bounds;
+    const auto& triangle_bounds = triangle_and_bound.bounds;
 
     if ( (triangle_bounds.second > global_bounds.first) && (triangle_bounds.second - triangle_bounds.first > error_bound) ) {
       // Get the triangle that is to be subdivided and read its vertices
-      const Triangle_3& triangle_for_subdivision = triangle_and_bound.m_triangle;
+      const Triangle_3& triangle_for_subdivision = triangle_and_bound.triangle;
       const Point_3 v0 = triangle_for_subdivision.vertex(0);
       const Point_3 v1 = triangle_for_subdivision.vertex(1);
       const Point_3 v2 = triangle_for_subdivision.vertex(2);
@@ -1479,15 +1482,17 @@ double bounded_error_Hausdorff_impl(
         // TODO Additionally store the face descriptor of the parent from TM1 in the Candidate_triangle.
         // Add the subtriangle to the candidate list
         candidate_triangles.push(
-          Candidate_triangle<Kernel>(sub_triangles[i], local_bounds)
-        );
+          Candidate(sub_triangles[i], local_bounds, triangle_and_bound.face) );
       }
 
       // Update global upper Hausdorff bound after subdivision
-      const FT current_max = candidate_triangles.top().m_bounds.second;
+      const FT current_max = candidate_triangles.top().bounds.second;
       global_bounds.second = std::max(current_max, global_bounds.first);
     }
   }
+
+  // std::cout << "number of candidate triangles 2: " <<
+  //   candidate_triangles.size() << std::endl;
 
   // Return linear interpolation between found lower and upper bound
   return CGAL::to_double((global_bounds.first + global_bounds.second) / FT(2));
