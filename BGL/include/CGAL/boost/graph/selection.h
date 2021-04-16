@@ -484,7 +484,7 @@ reduce_face_selection(
     \cgalParamNEnd
 
     \cgalParamNBegin{prevent_unselection}
-      \cgalParamDescription{Boolean used to indicate if selection can be only extended or if it can also be shrinked.}
+      \cgalParamDescription{Boolean used to indicate if selection can be only expanded or if it can also be shrinked.}
       \cgalParamType{`bool`}
       \cgalParamDefault{`false`}
       \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
