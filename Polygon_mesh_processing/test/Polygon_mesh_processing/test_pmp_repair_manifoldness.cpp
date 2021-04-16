@@ -1,6 +1,8 @@
 #define CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
 #define CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
 #define CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
+#define CGAL_PMP_SMOOTHING_DEBUG
+#define CGAL_PMP_REPAIR_MANIFOLDNESS_SEPARATE_WITH_SMOOTH
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -25,58 +27,109 @@ typedef std::vector<std::vector<std::size_t> >                    Vertices_to_me
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 template <typename PolygonMesh>
-void read_mesh(const char* fname,
+void read_mesh(const std::string fname,
                PolygonMesh& mesh)
 {
-  std::ifstream input(fname);
-  if (!input || !(input >> mesh) || mesh.is_empty())
+  if(!CGAL::read_polygon_mesh(fname, mesh) || is_empty(mesh))
   {
-    std::cerr << fname << " is not a valid off file.\n";
+    std::cerr << fname << " is not a valid input file.\n";
     std::exit(1);
   }
 }
 
-template <typename PolygonMesh>
-void repair_non_manifold_vertices(const char* fname)
+std::string extract_filename(std::string fname)
 {
-  std::cout << "Test: " << fname << std::endl;
+  fname = fname.substr(fname.find_last_of("/\\") + 1);
+  auto pos = fname.find_last_of('.');
+  return fname.substr(0, pos);
+}
 
+template <typename PolygonMesh>
+std::size_t count_nm_vertices(const PolygonMesh& pmesh,
+                              const bool verbose = false)
+{
+  std::vector<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor> nm_points;
+
+  PMP::geometrically_non_manifold_vertices(pmesh, std::inserter(nm_points, nm_points.end()),
+                                           CGAL::parameters::verbose(verbose));
+
+  return nm_points.size();
+}
+
+template <typename PolygonMesh>
+void repair_nm_with_treatment(const std::string fname,
+                              const PMP::NM_TREATMENT treatment)
+{
   PolygonMesh pmesh;
   read_mesh(fname, pmesh);
 
-  PolygonMesh pmesh_cpy = pmesh;
+  const std::size_t nmn = count_nm_vertices(pmesh, true);
+  std::cout << nmn << " nm umbrellas in input" << std::endl;
 
-  // Fix manifoldness by splitting non-manifold vertices
-//  std::cout << "-- WITH MERGE --" << std::endl;
-//  PMP::treat_non_manifold_vertices(pmesh);
-//  std::ofstream("results/merged.off") << pmesh;
+  PMP::repair_non_manifoldness(pmesh, treatment);
 
-  std::cout << "-- WITH SEPARATE --" << std::endl;
-  PMP::treat_non_manifold_vertices(pmesh_cpy, PMP::SEPARATE);
-  std::ofstream("results/separated.off") << pmesh_cpy;
+  std::stringstream oss;
+  if(treatment == PMP::SEPARATE)
+    oss << "results/" << extract_filename(fname) << "_separated.off" << std::ends;
+  else if(treatment == PMP::CLIP)
+    oss << "results/" << extract_filename(fname) << "_clip.off" << std::ends;
+  else
+    oss << "results/" << extract_filename(fname) << "_merge.off" << std::ends;
+
+  std::cout << "write " << oss.str() << std::endl;
+  CGAL::write_polygon_mesh(oss.str().c_str(), pmesh, CGAL::parameters::stream_precision(17));
+
+  assert(count_nm_vertices(pmesh) == 0);
 }
 
 template <typename PolygonMesh>
-void repair_non_manifold_vertices()
+void repair_nm(const std::string fname)
 {
-  repair_non_manifold_vertices<PolygonMesh>("data_repair/nm_vertices_adjacency.off");
-  repair_non_manifold_vertices<PolygonMesh>("data_repair/nm_vertices_border.off");
-  repair_non_manifold_vertices<PolygonMesh>("data_repair/nm_vertices_simple.off");
-  repair_non_manifold_vertices<PolygonMesh>("data_repair/nm_vertices_open_star.off");
-  repair_non_manifold_vertices<PolygonMesh>("data_repair/nm_vertices_pinched.off");
-  repair_non_manifold_vertices<PolygonMesh>("data_repair/three_triangles_sharing_a_vertex.off");
+  std::cout << "Test file: " << fname << std::endl;
 
-  repair_non_manifold_vertices<PolygonMesh>("data_repair/nm_vertices_real.off");
-  repair_non_manifold_vertices<PolygonMesh>("data_repair/torso.off");
+  std::cout << "================== SEPARATION ==================" << std::endl;
+  repair_nm_with_treatment<PolygonMesh>(fname, PMP::SEPARATE);
+
+  std::cout << "================== CLIP ==================" << std::endl;
+  repair_nm_with_treatment<PolygonMesh>(fname, PMP::CLIP);
+
+  std::cout << "================== MERGE ==================" << std::endl;
+//  repair_nm_with_treatment<PolygonMesh>(fname, PMP::MERGE);
 }
 
-int main(int /*argc*/, char** /*argv*/)
+template <typename PolygonMesh>
+void repair_nm()
 {
-  std::cout << "Test Non-Manifold Vertex Repair Functions (SM)" << std::endl;
-  repair_non_manifold_vertices<Surface_mesh>();
+  repair_nm<PolygonMesh>("data_repair/nm_vertices_simple.off");
+  repair_nm<PolygonMesh>("data_repair/nm_vertices_adjacency.off");
+  repair_nm<PolygonMesh>("data_repair/nm_vertices_border.off");
+  repair_nm<PolygonMesh>("data_repair/nm_vertices_open_star.off");
+  repair_nm<PolygonMesh>("data_repair/nm_vertices_pinched.off");
+  repair_nm<PolygonMesh>("data_repair/three_triangles_sharing_a_vertex.off");
+  repair_nm<PolygonMesh>("data_repair/nm_closed_cubes.off");
 
-  std::cout << "Test Non-Manifold Vertex Repair Functions (Polyhedron)" << std::endl;
-//  repair_non_manifold_vertices<Polyhedron>();
+  repair_nm<PolygonMesh>("data_repair/nm_edges_simple.off");
+  repair_nm<PolygonMesh>("data_repair/nm_edges_triple.off");
+  repair_nm<PolygonMesh>("data_repair/nm_edges_grid.off");
+
+  repair_nm<PolygonMesh>("data_repair/nm_vertices_real.off");
+  repair_nm<PolygonMesh>("data_repair/torso_no_iv.off");
+}
+
+int main(int argc, char** argv)
+{
+  std::cout.precision(17);
+
+  if(argc > 1)
+    repair_nm<Surface_mesh>(argv[1]);
+
+  std::cout << "Test Non-Manifold Vertex Repair Functions (SM)" << std::endl;
+  repair_nm<Surface_mesh>();
+
+//  std::cout << "Test Non-Manifold Vertex Repair Functions (Polyhedron)" << std::endl;
+//  repair_nm<Polyhedron>();
+
+  std::cout << "Done!" << std::endl;
 
   return EXIT_SUCCESS;
 }
