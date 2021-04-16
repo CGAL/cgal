@@ -18,6 +18,7 @@
 
 #include <CGAL/Nef_3/Bounding_box_3.h>
 #include <CGAL/Lazy_kernel.h>
+#include <CGAL/Tools/robin_hood.h>
 #include <list>
 
 #undef CGAL_NEF_DEBUG
@@ -116,6 +117,7 @@ public:
   typedef typename SNC_structure::Partial_facet Partial_facet;
 #endif
   typedef typename SNC_structure::Object_handle Object_handle;
+  typedef typename SNC_structure::Object_list::size_type Size_type;
 
   typedef typename Decorator_traits::Halffacet_cycle_iterator
     Halffacet_cycle_iterator;
@@ -136,9 +138,20 @@ public:
 #ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
   Side_of_plane(bool rc = false) : reference_counted(rc) {}
 #else
-    Side_of_plane() {}
+  Side_of_plane() {}
 #endif
 
+  void reserve(Size_type n) {
+#ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
+    if(reference_counted) {
+      OnSideMapRC.reserve(n);
+    } else {
+#endif
+      OnSideMap.reserve(n);
+#ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
+    }
+#endif
+  }
 
   template<typename Depth> Oriented_side operator()
     ( const Point_3& pop, Object_handle o, Depth depth);
@@ -160,8 +173,10 @@ public:
   bool reference_counted;
 #endif
   SNC_decorator D;
-  Unique_hash_map<Vertex_handle, Oriented_side> OnSideMap;
-  Unique_hash_map<const RT*, Oriented_side> OnSideMapRC;
+  robin_hood::unordered_map<Vertex_handle, Oriented_side, Handle_hash_function> OnSideMap;
+#ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
+  robin_hood::unordered_map<const RT*, Oriented_side, Handle_hash_function> OnSideMapRC;
+#endif
 };
 
 template <class SNC_decorator>
@@ -376,35 +391,37 @@ Side_of_plane<SNC_decorator>::operator()
   Comparison_result cr;
 #ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
   if(reference_counted) {
-    if(!OnSideMapRC.is_defined(&(v->point().hw())))
+    auto it = OnSideMapRC.emplace(&(v->point().hw()), ZERO);
+    if(it.second)
       switch(depth%3) {
       case 0:
         cr = CGAL::compare_x(v->point(), pop);
-        OnSideMapRC[&(v->point().hw())] = cr == LARGER ? ON_POSITIVE_SIDE :
+        it.first->second = cr == LARGER ? ON_POSITIVE_SIDE :
                          cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
         break;
       case 1:
         cr = CGAL::compare_y(v->point(), pop);
-        OnSideMapRC[&(v->point().hw())] = cr == LARGER ? ON_POSITIVE_SIDE :
+        it.first->second = cr == LARGER ? ON_POSITIVE_SIDE :
                          cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
         break;
       case 2:
         cr = CGAL::compare_z(v->point(), pop);
-        OnSideMapRC[&(v->point().hw())] = cr == LARGER ? ON_POSITIVE_SIDE :
+        it.first->second = cr == LARGER ? ON_POSITIVE_SIDE :
                          cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
         break;
       default: CGAL_error_msg( "wrong value");
       }
-    return OnSideMapRC[&(v->point().hw())];
+    return it.first->second;
   } else {
 #endif
-    ComparePoints_ compare(depth%3);
-    if(!OnSideMap.is_defined(v)) {
+    auto it=OnSideMap.emplace(v, ZERO);
+    if(it.second) {
+      ComparePoints_ compare(depth%3);
       cr = compare(v->point(), pop);
-      OnSideMap[v] = cr == LARGER ? ON_POSITIVE_SIDE :
+      it.first->second = cr == LARGER ? ON_POSITIVE_SIDE :
         cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
     }
-    return OnSideMap[v];
+    return it.first->second;
 #ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
   }
 #endif

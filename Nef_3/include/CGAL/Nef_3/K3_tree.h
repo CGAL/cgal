@@ -1204,7 +1204,8 @@ bool classify_objects(Object_iterator start, Object_iterator end,
   typename Object_list::const_iterator o;
 
   Point_3 point_on_plane(partition_plane.point());
-
+  size_type object_count = std::distance(start,end);
+  sop.reserve(object_count);
   for( o = start; o != end; ++o) {
 #ifdef CGAL_NEF3_FACET_WITH_BOX
     Partial_facet pf;
@@ -1231,7 +1232,8 @@ bool classify_objects(Object_iterator start, Object_iterator end,
     if( side == ON_ORIENTED_BOUNDARY)
       ++on_oriented_boundary;
   }
-  return (on_oriented_boundary != std::distance(start,end));
+
+  return (on_oriented_boundary != object_count);
 }
 
 
