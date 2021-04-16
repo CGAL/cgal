@@ -19,6 +19,8 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Union_find.h>
+#include <CGAL/Tools/robin_hood.h>
+#include <CGAL/Handle_hash_function.h>
 #include <CGAL/Nef_2/Segment_overlay_traits.h>
 #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 #include <CGAL/Nef_2/geninfo.h>
@@ -91,8 +93,8 @@ public:
     CGAL_NEF_TRACEN("simplifying");
 
     typedef typename CGAL::Union_find<SFace_handle>::handle Union_find_handle;
-    CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem(nullptr);
-    CGAL::Unique_hash_map< SVertex_handle, Union_find_handle> Vitem(nullptr);
+    robin_hood::unordered_map< SFace_handle, Union_find_handle,Handle_hash_function> Pitem;
+    robin_hood::unordered_map< SVertex_handle, Union_find_handle,Handle_hash_function> Vitem;
     CGAL::Union_find< SFace_handle> UF;
 
     SFace_iterator f;
@@ -142,12 +144,12 @@ public:
       }
     }
 
-    CGAL::Unique_hash_map<SHalfedge_handle,bool> linked(false);
+    robin_hood::unordered_set<SHalfedge_handle,Handle_hash_function> linked;
     for (e = this->shalfedges_begin(); e != this->shalfedges_end(); ++e) {
-      if ( linked[e] ) continue;
+      if ( linked.contains(e) ) continue;
       SHalfedge_around_sface_circulator hfc(e),hend(hfc);
       SFace_handle f = *(UF.find( Pitem[e->incident_sface()]));
-      CGAL_For_all(hfc,hend) {  set_face(hfc,f); linked[hfc]=true; }
+      CGAL_For_all(hfc,hend) {  set_face(hfc,f); linked.insert(hfc); }
       store_sm_boundary_object(e,f);
     }
 
@@ -358,8 +360,10 @@ class SNC_SM_overlayer<SNC_indexed_items, SM_decorator_>
     CGAL_NEF_TRACEN("simplifying");
 
     typedef typename CGAL::Union_find<SFace_handle>::handle Union_find_handle;
-    CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem(nullptr);
-    CGAL::Unique_hash_map< SVertex_handle, Union_find_handle> Vitem(nullptr);
+    robin_hood::unordered_map< SFace_handle, Union_find_handle,Handle_hash_function> Pitem;
+    Pitem.reserve(this->number_of_sfaces());
+    robin_hood::unordered_map< SVertex_handle, Union_find_handle,Handle_hash_function> Vitem;
+    Vitem.reserve(this->number_of_svertices());
     CGAL::Union_find< SFace_handle> UF;
 
     SFace_iterator f;
@@ -409,12 +413,13 @@ class SNC_SM_overlayer<SNC_indexed_items, SM_decorator_>
       }
     }
 
-    CGAL::Unique_hash_map<SHalfedge_handle,bool> linked(false);
+    robin_hood::unordered_set<SHalfedge_handle,Handle_hash_function> linked;
+    linked.reserve(this->number_of_shalfedges());
     for (e = this->shalfedges_begin(); e != this->shalfedges_end(); ++e) {
-      if ( linked[e] ) continue;
+      if ( linked.contains(e) ) continue;
       SHalfedge_around_sface_circulator hfc(e),hend(hfc);
       SFace_handle f = *(UF.find( Pitem[e->incident_sface()]));
-      CGAL_For_all(hfc,hend) {  set_face(hfc,f); linked[hfc]=true; }
+      CGAL_For_all(hfc,hend) {  set_face(hfc,f); linked.insert(hfc); }
       store_sm_boundary_object(e,f);
     }
 
