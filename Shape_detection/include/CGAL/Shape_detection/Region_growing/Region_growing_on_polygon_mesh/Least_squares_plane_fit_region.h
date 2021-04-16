@@ -54,7 +54,7 @@ namespace Polygon_mesh {
   typename GeomTraits,
   typename PolygonMesh,
   typename FaceRange = typename PolygonMesh::Face_range,
-  typename VertexToPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type>
+  typename VertexToPointMap = typename property_map_selector<PolygonMesh, CGAL::vertex_point_t>::const_type>
   class Least_squares_plane_fit_region {
 
   public:

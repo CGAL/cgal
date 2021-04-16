@@ -204,11 +204,6 @@ namespace Shape_detection {
       m_visited.clear();
       m_visited.resize(m_input_range.size(), false);
     }
-
-    void release_memory() {
-      m_visited.clear();
-      m_visited.shrink_to_fit();
-    }
     /// \endcond
 
   private:

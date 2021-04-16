@@ -95,7 +95,24 @@ bool test_lines_polylines_3() {
 template<class Kernel>
 bool test_polylines_equal_points() {
 
-  // TODO: add polylines with repeating equal points!
+  using Point_2 = typename Kernel::Point_2;
+  const std::vector<Point_2> polyline_2 = {
+    Point_2(0.10, 0.00), Point_2(0.10, 0.00), Point_2(0.30, 0.00), Point_2(0.50, 0.00),
+    Point_2(0.90, 0.00), Point_2(0.90, 0.10), Point_2(0.90, 0.30), Point_2(0.90, 0.50),
+    Point_2(0.90, 0.50), Point_2(0.90, 0.90), Point_2(0.90, 0.90), Point_2(0.70, 0.90),
+    Point_2(0.50, 0.90), Point_2(0.10, 0.90), Point_2(0.10, 0.90), Point_2(0.10, 0.70),
+    Point_2(0.10, 0.50), Point_2(0.10, 0.30), Point_2(0.10, 0.10), Point_2(0.10, 0.00)
+  };
+
+  assert(polyline_2.size() == 20);
+  std::vector< std::vector<std::size_t> > regions;
+  CGAL::Shape_detection::internal::region_growing_polylines(
+    polyline_2, std::back_inserter(regions));
+  assert(regions.size() == 4);
+  assert(regions[0].size() == 6);
+  assert(regions[1].size() == 6);
+  assert(regions[2].size() == 4);
+  assert(regions[3].size() == 4);
   return true;
 }
 
@@ -277,28 +294,34 @@ bool test_planes_point_set() {
   points_with_normals.clear();
   assert(points_with_normals.size() == 0);
 
-  // std::vector< std::vector<std::size_t> > regions; // TODO: fix this!
-  // CGAL::Shape_detection::internal::region_growing_planes(
-  //   point_set, std::back_inserter(regions));
-  // assert(regions.size() == 1);
-  // assert(regions[0].size() == 9);
+  std::vector< std::vector<std::size_t> > regions;
+  CGAL::Shape_detection::internal::region_growing_planes(
+    point_set, std::back_inserter(regions));
+  assert(regions.size() == 1);
+  assert(regions[0].size() == 9);
   return true;
 }
 
 template<class Kernel>
 bool test_planes_polyhedron() {
 
-  // using Polyhedron = CGAL::Polyhedron_3< // TODO: fix this!
-  //   Kernel, CGAL::Polyhedron_items_3, CGAL::HalfedgeDS_vector>;
-  // Polyhedron polyhedron;
-  // const auto handle = polyhedron.make_tetrahedron();
-  // assert(polyhedron.is_tetrahedron(handle));
+  using Point_3    = typename Kernel::Point_3;
+  using Polyhedron = CGAL::Polyhedron_3<
+    Kernel, CGAL::Polyhedron_items_3, CGAL::HalfedgeDS_vector>;
 
-  // assert(polyhedron.size_of_facets() == 4);
-  // std::vector< std::vector<std::size_t> > regions;
-  // CGAL::Shape_detection::internal::region_growing_planes(
-  //   polyhedron, std::back_inserter(regions));
-  // assert(regions.size() == polyhedron.size_of_facets());
+  Polyhedron polyhedron;
+  const Point_3 p1(0, 0, 0);
+  const Point_3 p2(1, 0, 0);
+  const Point_3 p3(0, 1, 0);
+  const Point_3 p4(0, 0, 1);
+  const auto handle = polyhedron.make_tetrahedron(p1, p2, p3, p4);
+  assert(polyhedron.is_tetrahedron(handle));
+
+  assert(polyhedron.size_of_facets() == 4);
+  std::vector< std::vector<std::size_t> > regions;
+  CGAL::Shape_detection::internal::region_growing_planes(
+    polyhedron, std::back_inserter(regions));
+  assert(regions.size() == polyhedron.size_of_facets());
   return true;
 }
 

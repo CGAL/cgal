@@ -76,11 +76,11 @@ int main(int argc, char *argv[]) {
   region_growing.unassigned_items(std::back_inserter(unassigned_points));
   assert(unassigned_points.size() == num_unassigned_points);
 
-  // region_growing.release_memory(); // TODO: fix seg fault here!
+  region_growing.clear();
 
-  // unassigned_points.clear();
-  // region_growing.unassigned_items(std::back_inserter(unassigned_points));
-  // assert(unassigned_points.size() == 3634);
+  unassigned_points.clear();
+  region_growing.unassigned_items(std::back_inserter(unassigned_points));
+  assert(unassigned_points.size() == 3634);
 
   std::cout << "rg_basic, epick_test_success: " << true << std::endl;
   return EXIT_SUCCESS;

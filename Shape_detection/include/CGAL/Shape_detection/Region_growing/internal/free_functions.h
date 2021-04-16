@@ -145,13 +145,14 @@ OutputIterator region_growing_planes(
 template<
 typename PointType,
 typename VectorType,
-typename OutputIterator,
-typename NamedParameters>
+typename OutputIterator>
 OutputIterator region_growing_planes(
   const CGAL::Point_set_3<PointType, VectorType>& point_set, OutputIterator regions) {
 
   return region_growing_planes(
-    point_set, regions, CGAL::parameters::all_default());
+    point_set, regions, CGAL::parameters::
+    point_map(point_set.point_map()).
+    normal_map(point_set.normal_map()));
 }
 
 template<

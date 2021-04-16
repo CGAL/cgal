@@ -58,10 +58,10 @@ namespace Polygon_mesh {
   template<
   typename GeomTraits,
   typename PolygonMesh,
-  typename FaceToRegionMap = typename boost::property_map<PolygonMesh, CGAL::face_index_t>::type,
+  typename FaceToRegionMap = typename property_map_selector<PolygonMesh, CGAL::face_index_t>::const_type,
   typename FaceRange = typename PolygonMesh::Face_range,
   typename EdgeRange = typename PolygonMesh::Edge_range,
-  typename VertexToPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type>
+  typename VertexToPointMap = typename property_map_selector<PolygonMesh, CGAL::vertex_point_t>::const_type>
   class Polyline_graph {
 
   private:

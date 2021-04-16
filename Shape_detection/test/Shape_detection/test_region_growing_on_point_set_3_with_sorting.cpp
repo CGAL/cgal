@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
 
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
-  region_growing.release_memory();
+  region_growing.clear();
   assert(regions.size() == 7);
 
   // Test free functions and stability.
