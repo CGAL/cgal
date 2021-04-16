@@ -52,7 +52,7 @@ struct SMO_from_segs {
   typedef typename SM_decorator::SHalfedge_handle   Halfedge_handle;
   typedef typename SM_decorator::Sphere_point       Point;
   typedef typename SM_decorator::Sphere_segment     Segment;
-  typedef CGAL::Unique_hash_map<I,bool>             Iterator_map;
+  typedef robin_hood::unordered_map<I,bool,Handle_hash_function> Iterator_map;
   SM_decorator G;
   const Iterator_map& M;
   SMO_from_segs(SM_decorator Gi, const Iterator_map& Mi) : G(Gi),M(Mi) {}
@@ -76,20 +76,23 @@ struct SMO_from_segs {
     return e;
   }
 
+  bool has_item(I it) const
+  { auto f = M.find(it); return f != M.end() && f->second; }
+
   void supporting_segment(Halfedge_handle e, I it) const
-  { if ( M[it] ) e->mark() = true; }
+  { if(has_item(it)) e->mark() = true; }
 
   void trivial_segment(Vertex_handle v, I it) const
-  { if ( M[it] ) v->mark() = true; }
+  { if(has_item(it)) v->mark() = true; }
 
   void starting_segment(Vertex_handle v, I it) const
-  { if ( M[it] ) v->mark() = true; }
+  { if(has_item(it)) v->mark() = true; }
 
   void passing_segment(Vertex_handle v, I it) const
-  { if ( M[it] ) v->mark() = true; }
+  { if(has_item(it)) v->mark() = true; }
 
   void ending_segment(Vertex_handle v, I it) const
-  { if ( M[it] ) v->mark() = true; }
+  { if(has_item(it)) v->mark() = true; }
 
   void halfedge_below(Vertex_handle v, Halfedge_handle e) const
   {
@@ -159,10 +162,10 @@ struct SMO_from_sm {
   typedef typename SM_overlayer::Sphere_segment          Segment;
 
   SM_overlayer G;
-  CGAL::Unique_hash_map<IT,INFO>& M;
+  robin_hood::unordered_map<IT,INFO,Handle_hash_function>& M;
   SMO_from_sm(SM_overlayer Gi,
               SM_const_decorator* /* pGIi */,
-              CGAL::Unique_hash_map<IT,INFO>& Mi) :
+              robin_hood::unordered_map<IT,INFO,Handle_hash_function>& Mi) :
     G(Gi), M(Mi) {}
 
 Vertex_handle new_vertex(const Point& p)
@@ -532,7 +535,7 @@ public:
   typedef typename Seg_list::iterator          Seg_iterator;
   typedef std::pair<Seg_iterator,Seg_iterator> Seg_it_pair;
   typedef std::pair<Sphere_segment,Sphere_segment> Seg_pair;
-  typedef CGAL::Unique_hash_map<Seg_iterator,Seg_info> Seg_map;
+  typedef robin_hood::unordered_map<Seg_iterator,Seg_info,Handle_hash_function> Seg_map;
 
   // ---------------------------------------------------------------
 
@@ -693,10 +696,10 @@ public:
   template <typename Below_accessor>
   SFace_handle determine_face(SHalfedge_handle e,
     const std::vector<SHalfedge_handle>& MinimalSHalfedge,
-    const CGAL::Unique_hash_map<SHalfedge_handle,int>& SFaceCycle,
+    const robin_hood::unordered_map<SHalfedge_handle,int,Handle_hash_function>& SFaceCycle,
     const Below_accessor& D)
   { CGAL_NEF_TRACEN("determine_face "<<PH(e));
-    int fc = SFaceCycle[e];
+    int fc = SFaceCycle.at(e);
     SHalfedge_handle e_min = MinimalSHalfedge[fc];
     SHalfedge_handle e_below = D.halfedge_below(e_min->target());
     if(e_below == SHalfedge_handle())
@@ -803,7 +806,7 @@ public:
   void subdivide_segments(Iterator start, Iterator end) const;
   template <typename Iterator, typename T>
   void partition_to_halfsphere(Iterator start, Iterator end,
-    Seg_list& L, CGAL::Unique_hash_map<Iterator,T>& M,
+    Seg_list& L, robin_hood::unordered_map<Iterator,T,Handle_hash_function>& M,
     Sphere_circle xycircle, Sphere_circle yzcircle, bool include_equator) const;
 
   template <typename Mark_accessor>
@@ -842,9 +845,9 @@ create_from_segments(Forward_iterator start, Forward_iterator end)
 {
   CGAL_NEF_TRACEN("creating from segment iterator range");
   Seg_list L(start,end);
-  Unique_hash_map<Seg_iterator,bool> From_input(false);
+  robin_hood::unordered_map<Seg_iterator,bool,Handle_hash_function> From_input;
   Seg_iterator it;
-  CGAL_forall_iterators(it,L) From_input[it]=true;
+  CGAL_forall_iterators(it,L) From_input.emplace(it,true);
   Seg_list L_pos,L_neg;
   partition_to_halfsphere(L.begin(), L.end(), L_pos, From_input,
                           Sphere_circle(0,0,1), Sphere_circle(1,0,0), true);
@@ -910,14 +913,14 @@ create_from_circles(Forward_iterator start, Forward_iterator end)
 {
   CGAL_NEF_TRACEN("creating from circle iterator range");
   Seg_list L;
-  Unique_hash_map<Seg_iterator,bool> From_input(false);
+  robin_hood::unordered_map<Seg_iterator,bool,Handle_hash_function> From_input;
   for ( ; start != end; ++start ) {
     std::pair<Sphere_segment,Sphere_segment> spair =
       start->split_at_xy_plane();
     L.push_back(spair.first); L.push_back(spair.second);
   }
   Seg_iterator it;
-  CGAL_forall_iterators(it,L) From_input[it]=true;
+  CGAL_forall_iterators(it,L) From_input.emplace(it,true);
   Seg_list L_pos,L_neg;
   partition_to_halfsphere(L.begin(), L.end(), L_pos, From_input,
                           Sphere_circle(0,0,1), Sphere_circle(1,0,0), true);
@@ -1942,7 +1945,7 @@ template <typename Map>
 template <typename Iterator, typename T>
 void SM_overlayer<Map>::
 partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
-                        CGAL::Unique_hash_map<Iterator,T>& M,
+                        robin_hood::unordered_map<Iterator,T,Handle_hash_function>& M,
                         Sphere_circle xycircle, Sphere_circle yzcircle,
                         bool include_equator) const
 { CGAL_NEF_TRACEN("partition_to_halfsphere ");
@@ -1953,13 +1956,16 @@ partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
     while ( start != beyond) {
       int i = start->intersection(xycircle,s1,s2);
       CGAL_NEF_TRACEN("segment " << start->source() << " " << start->target());
-      if (i>1) {
-        L.push_back(s2); M[--L.end()] = M[start];
-        CGAL_NEF_TRACEN(">1 " << s2.source() << " " << s2.target());
-      }
-      if (i>0) {
-        L.push_back(s1); M[--L.end()] = M[start];
-        CGAL_NEF_TRACEN(">0 " << s1.source() << " " << s1.target());
+      if ( i>1 || i>0 ) {
+        const T& mstart = M[start];
+        if (i>1) {
+          L.push_back(s2); M[--L.end()] = mstart;
+          CGAL_NEF_TRACEN(">1 " << s2.source() << " " << s2.target());
+        }
+        if (i>0) {
+          L.push_back(s1); M[--L.end()] = mstart;
+          CGAL_NEF_TRACEN(">0 " << s1.source() << " " << s1.target());
+        }
       }
       ++start;
     }
@@ -1986,29 +1992,24 @@ partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
       CGAL_NEF_TRACEN("  splitting xy seg "<<*it);
       bool added=false;
       int n1 =  it->intersection(yzcircle,s1,s2);
-      if (n1 > 1 && !s2.is_degenerate()) {
-        M[ L.insert(it,s2) ] = M[it];
-        added=true;
-        CGAL_NEF_TRACEN(">1 " << s2.source() << " " << s2.target());
-      }
-      if (n1 > 0 && !s1.is_degenerate()) {
-        M[ L.insert(it,s1) ] = M[it];
-        added = true;
-        CGAL_NEF_TRACEN(">1 " << s1.source() << " " << s1.target());
-      }
       int n2 =  it->intersection(yzcircle.opposite(),s1,s2);
-      if (n2 > 1 && !s2.is_degenerate()) {
-        M[ L.insert(it,s2) ] = M[it];
-        added=true;
-        CGAL_NEF_TRACEN(">1 " << s2.source() << " " << s2.target());
-      }
-      if (n2 > 0 && !s1.is_degenerate()) {
-        M[ L.insert(it,s1) ] = M[it];
-        added=true;
-        CGAL_NEF_TRACEN(">1 " << s1.source() << " " << s1.target());
-      }
-      if(added) {
-        itl = it; --it; M[itl] = T(); L.erase(itl);
+      bool insert_s2 = (n1 > 1 && !s2.is_degenerate()) || (n2 > 1 && !s2.is_degenerate());
+      bool insert_s1 = (n1 > 0 && !s1.is_degenerate()) || (n2 > 0 && !s1.is_degenerate());
+      if(insert_s1 || insert_s2) {
+        const T& mit = M[it];
+        if (insert_s2) {
+          M[ L.insert(it,s2) ] = mit;
+          added=true;
+          CGAL_NEF_TRACEN(">1 " << s2.source() << " " << s2.target());
+        }
+        if (insert_s1) {
+          M[ L.insert(it,s1) ] = mit;
+          added = true;
+          CGAL_NEF_TRACEN(">1 " << s1.source() << " " << s1.target());
+        }
+        if(added) {
+          itl = it; --it; M[itl] = Seg_info(); L.erase(itl);
+        }
       }
       // at least one item was appended
     }
@@ -2048,21 +2049,21 @@ create_face_objects(SHalfedge_iterator e_start, SHalfedge_iterator e_end,
 {
   CGAL_NEF_TRACEN("create_face_objects()");
   if(e_start != e_end) {
-    CGAL::Unique_hash_map<SHalfedge_handle,int> SFaceCycle(-1);
+    robin_hood::unordered_map<SHalfedge_handle,int,Handle_hash_function> SFaceCycle;
     std::vector<SHalfedge_handle>  MinimalSHalfedge;
     SHalfedge_around_sface_circulator hfc(last_out_edge(v_start)),hend(hfc);
     CGAL_NEF_TRACEN("equator cycle "<<PH(hfc));
-    CGAL_For_all(hfc,hend) SFaceCycle[hfc]=0; // outer face cycle = 0
+    CGAL_For_all(hfc,hend) SFaceCycle.emplace(hfc,0); // outer face cycle = 0
     MinimalSHalfedge.push_back(first_out_edge(v_start)->twin());
     int i=1;
     for (SHalfedge_iterator e = e_start; e != e_end; ++e) {
-      if ( SFaceCycle[e] >= 0 ) continue; // already assigned
+      if ( SFaceCycle.contains(e) ) continue; // already assigned
       SHalfedge_around_sface_circulator hfc(e),hend(hfc);
       SHalfedge_handle e_min = e;
       CGAL_NEF_TRACEN("");
       CGAL_NEF_TRACEN("  face cycle numbering "<<i);
       CGAL_For_all(hfc,hend) {
-        SFaceCycle[hfc]=i; // assign face cycle number
+        SFaceCycle.emplace(hfc,i); // assign face cycle number
         if (hfc->twin()->source() == e_min->twin()->source()) {
           Sphere_point p1 = hfc->source()->point(),
             p2 = hfc->twin()->source()->point(),
@@ -2092,7 +2093,7 @@ create_face_objects(SHalfedge_iterator e_start, SHalfedge_iterator e_end,
 
     for (SHalfedge_iterator e = e_start; e != e_end; ++e) {
       if ( e->incident_sface() != SFace_handle() ) continue;
-      if ( SFaceCycle[e] == 0 ) continue;
+      if ( SFaceCycle.at(e) == 0 ) continue;
       CGAL_NEF_TRACEN("linking hole "<<PH(e));
       SFace_handle f = determine_face(e,MinimalSHalfedge,SFaceCycle,D);
       if(f != SFace_handle())
@@ -2311,8 +2312,8 @@ void SM_overlayer<Map>::simplify()
   CGAL_NEF_TRACEN("simplifying");
 
   typedef typename CGAL::Union_find<SFace_handle>::handle Union_find_handle;
-  CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem(nullptr);
-  CGAL::Unique_hash_map< SVertex_handle, Union_find_handle> Vitem(nullptr);
+  robin_hood::unordered_map< SFace_handle, Union_find_handle,Handle_hash_function> Pitem;
+  robin_hood::unordered_map< SVertex_handle, Union_find_handle,Handle_hash_function> Vitem;
   CGAL::Union_find< SFace_handle> UF;
 
   SFace_iterator f;
@@ -2360,12 +2361,12 @@ void SM_overlayer<Map>::simplify()
     }
   }
 
-  CGAL::Unique_hash_map<SHalfedge_handle,bool> linked(false);
+  robin_hood::unordered_set<SHalfedge_handle,Handle_hash_function> linked;
   for (e = this->shalfedges_begin(); e != this->shalfedges_end(); ++e) {
-    if ( linked[e] ) continue;
+    if ( linked.contains(e) ) continue;
     SHalfedge_around_sface_circulator hfc(e),hend(hfc);
     SFace_handle f = *(UF.find( Pitem[e->incident_sface()]));
-    CGAL_For_all(hfc,hend) {  set_face(hfc,f); linked[hfc]=true; }
+    CGAL_For_all(hfc,hend) {  set_face(hfc,f); linked.insert(hfc); }
     store_sm_boundary_object(e,f);
   }
 
