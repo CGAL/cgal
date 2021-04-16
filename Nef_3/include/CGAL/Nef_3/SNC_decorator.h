@@ -900,8 +900,8 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
     SHalfedge_around_sface_circulator;
   std::list<SFace_handle> SFaceCandidates;
   std::list<Halffacet_handle> FacetCandidates;
-  CGAL::Generic_handle_map<bool> Done(false);
-  SFaceCandidates.push_back(f);  Done[f] = true;
+  CGAL::Unique_hash_map<void*,bool,Void_handle_hash_function> Done(false);
+  SFaceCandidates.push_back(f);  Done[&*f] = true;
   while ( true ) {
     if ( SFaceCandidates.empty() && FacetCandidates.empty() ) break;
     if ( !FacetCandidates.empty() ) {
@@ -914,16 +914,16 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
           SHalfedge_handle e(fc);
           SHalfedge_around_facet_circulator ec(e),ee(e);
           CGAL_For_all(ec,ee) { e = ec->twin();
-            if ( Done[e->incident_sface()] ) continue;
+            if ( Done[&*e->incident_sface()] ) continue;
             SFaceCandidates.push_back(e->incident_sface());
-            Done[e->incident_sface()] = true;
+            Done[&*e->incident_sface()] = true;
           }
         } else if (fc.is_shalfloop()) {
           SHalfloop_handle l(fc);
           l = l->twin();
-          if ( Done[l->incident_sface()] ) continue;
+          if ( Done[&*l->incident_sface()] ) continue;
           SFaceCandidates.push_back(l->incident_sface());
-          Done[l->incident_sface()] = true;
+          Done[&*l->incident_sface()] = true;
         } else CGAL_error_msg("Damn wrong handle.");
       }
     }
@@ -931,17 +931,12 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
       SFace_handle sf = *SFaceCandidates.begin();
       SFaceCandidates.pop_front();
       V.visit(sf); // report sface
-      if ( !Done[sf->center_vertex()] )
+      if ( !Done[&*sf->center_vertex()] )
         V.visit(sf->center_vertex()); // report vertex
-      Done[sf->center_vertex()] = true;
+      Done[&*sf->center_vertex()] = true;
       //      SVertex_handle sv;
       SM_decorator SD(&*sf->center_vertex());
-      /*
-      CGAL_forall_svertices(sv,SD){
-        if(SD.is_isolated(sv) && !Done[sv])
-          V.visit(sv);
-      }
-      */
+
       SFace_cycle_iterator fc;
       CGAL_forall_sface_cycles_of(fc,sf) {
         if ( fc.is_shalfedge() ) {
@@ -950,23 +945,23 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
           CGAL_For_all(ec,ee) {
             V.visit(SHalfedge_handle(ec));
             SVertex_handle v = ec->twin()->source();
-            if ( !SD.is_isolated(v) && !Done[v] ) {
+            if ( !SD.is_isolated(v) && !Done[&*v] ) {
               V.visit(v); // report edge
-              Done[v] = Done[v->twin()] = true;
+              Done[&*v] = Done[&*v->twin()] = true;
             }
             Halffacet_handle f = ec->twin()->facet();
-            if ( Done[f] ) continue;
-            FacetCandidates.push_back(f); Done[f] = true;
+            if ( Done[&*f] ) continue;
+            FacetCandidates.push_back(f); Done[&*f] = true;
           }
         } else if ( fc.is_svertex() ) {
           SVertex_handle v(fc);
-          if ( Done[v] ) continue;
+          if ( Done[&*v] ) continue;
           V.visit(v); // report edge
           V.visit(v->twin());
-          Done[v] = Done[v->twin()] = true;
+          Done[&*v] = Done[&*v->twin()] = true;
           CGAL_assertion(SD.is_isolated(v));
           SFaceCandidates.push_back(v->twin()->incident_sface());
-          Done[v->twin()->incident_sface()]=true;
+          Done[&*v->twin()->incident_sface()]=true;
           // note that v is isolated, thus v->twin() is isolated too
           //          SM_decorator SD;
           //          SFace_handle fo;
@@ -983,8 +978,8 @@ visit_shell_objects(SFace_handle f, Visitor& V) const
           SHalfloop_handle l(fc);
           V.visit(l);
           Halffacet_handle f = l->twin()->facet();
-          if ( Done[f] ) continue;
-          FacetCandidates.push_back(f);  Done[f] = true;
+          if ( Done[&*f] ) continue;
+          FacetCandidates.push_back(f);  Done[&*f] = true;
         } else CGAL_error_msg("Damn wrong handle.");
       }
     }
