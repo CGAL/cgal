@@ -604,6 +604,10 @@ sub parselicense {
         $license = "BSL 1.0";
       }
 
+      if ($licensetext =~ /SPDX-License-Identifier MIT/i) {
+        $license = "MIT/X11 (BSD like)";
+      }
+
       if ($licensetext =~ /SPDX-License-Identifier LicenseRef-RFL/i) {
         $license = "MIT/X11 (BSD like)";
       }
