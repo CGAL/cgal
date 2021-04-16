@@ -188,13 +188,12 @@ OutputIterator non_manifold_vertices(const PolygonMesh& pm,
   return out;
 }
 
-// pretty much the same as 'PMP::non_manifold_vertices()', but consider the geometry
+// Pretty much the same as 'PMP::non_manifold_vertices()', but consider the geometry
 // instead of the combinatorics ({combinatorial non-manifold vertices} C {geometrical non-manifold vertices})
-template <typename PolygonMesh, typename NMPContainer, typename NMVM, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
-std::size_t geometrically_non_manifold_vertices(const PolygonMesh& pmesh,
-                                                NMPContainer& nm_points, // m[vertex] = {halfedges}
-                                                NMVM nm_marks,
-                                                const CGAL_PMP_NP_CLASS& np)
+template <typename PolygonMesh, typename OutputIterator, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+OutputIterator geometrically_non_manifold_vertices(const PolygonMesh& pmesh,
+                                                   OutputIterator out,
+                                                   const CGAL_PMP_NP_CLASS& np)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -217,10 +216,9 @@ std::size_t geometrically_non_manifold_vertices(const PolygonMesh& pmesh,
   typedef CGAL::dynamic_halfedge_property_t<bool>                                       Halfedge_property_tag;
   typedef typename boost::property_map<PolygonMesh, Halfedge_property_tag>::const_type  Visited_halfedge_map;
 
-  CGAL_precondition(nm_points.empty());
-
   Visited_halfedge_map visited_halfedges = get(Halfedge_property_tag(), pmesh);
   std::unordered_map<Point, halfedge_descriptor> visited_points;
+  std::set<Point> known_nm_points; // not made unordered because it should usually be small
 
   for(halfedge_descriptor h : halfedges(pmesh))
   {
@@ -232,32 +230,19 @@ std::size_t geometrically_non_manifold_vertices(const PolygonMesh& pmesh,
 
     put(visited_halfedges, h, true);
 
-    bool is_non_manifold_due_to_multiple_umbrellas = false;
+    bool is_non_manifold = false;
     const vertex_descriptor v = target(h, pmesh);
     const Point_ref p = get(vpm, v);
 
     const auto visited_itb = visited_points.emplace(p, h);
-    if(!visited_itb.second) // already seen this point, but not from this star
+    if(!visited_itb.second) // unsuccessful insertion: already seen this point, but not from this star
     {
-      is_non_manifold_due_to_multiple_umbrellas = true;
-      put(nm_marks, v, true);
+      is_non_manifold = true;
 
-      if(verbose)
-        std::cout << p << std::endl;
-
-      // if this is the second time we visit that vertex and the first star was manifold, we have
-      // not marked the vertex as non-manifold from the first star
-      const auto nm_itb = nm_points.emplace(p, std::set<halfedge_descriptor>{h});
-      if(nm_itb.second) // successful insertion
-      {
-        const halfedge_descriptor h_from_another_star = visited_itb.first->second;
-        nm_itb.first->second.insert(h_from_another_star);
-        put(nm_marks, target(h_from_another_star, pmesh), true);
-      }
-      else
-      {
-        nm_itb.first->second.insert(h);
-      }
+      // If this is the second time we visit that vertex and the first star was manifold, we have
+      // not yet marked the vertex as non-manifold from the first star, but must do so now.
+      if(known_nm_points.count(p) == 0)
+        *out++ = visited_itb.first->second;
     }
 
     // While walking the star of this halfedge, if we meet a border halfedge more than once,
@@ -274,56 +259,27 @@ std::size_t geometrically_non_manifold_vertices(const PolygonMesh& pmesh,
     }
     while(ih != done);
 
-    if(border_counter > 1 && !is_non_manifold_due_to_multiple_umbrellas)
+    if(border_counter > 1)
+      is_non_manifold = true;
+
+    if(is_non_manifold)
     {
-      put(nm_marks, v, true);
-      nm_points[p].insert(h); // might or might not have been an empty vector before
+      *out++ = h;
+      known_nm_points.insert(p);
 
       if(verbose)
-        std::cout << "pinched star centered at " << p << std::endl;
+        std::cout << "non-manifold star centered at " << p << std::endl;
     }
   }
 
-  return nm_points.size();
+  return out;
 }
 
-template <typename PolygonMesh, typename NMVM, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
-std::size_t geometrically_non_manifold_vertices(const PolygonMesh& pmesh,
-                                                NMVM& nm_points,
-                                                const CGAL_PMP_NP_CLASS& np)
+template <typename PolygonMesh, typename OutputIterator>
+OutputIterator geometrically_non_manifold_vertices(const PolygonMesh& pmesh,
+                                                   OutputIterator out)
 {
-  typedef CGAL::dynamic_vertex_property_t<bool>                               Mark;
-  typedef typename boost::property_map<PolygonMesh, Mark>::const_type         Marked_vertices;
-  Marked_vertices nm_marks = get(Mark(), pmesh);
-  for(auto v : vertices(pmesh))
-    put(nm_marks, v, false);
-
-  return geometrically_non_manifold_vertices(pmesh, nm_points, nm_marks, np);
-}
-
-template <typename PolygonMesh, typename NMVM>
-std::size_t geometrically_non_manifold_vertices(const PolygonMesh& pmesh,
-                                                NMVM& nm_points)
-{
-  return geometrically_non_manifold_vertices(pmesh, nm_points, parameters::all_default());
-}
-
-template <typename PolygonMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
-std::size_t geometrically_non_manifold_vertices(const PolygonMesh& pmesh,
-                                                const CGAL_PMP_NP_CLASS& np)
-{
-  typedef typename property_map_selector<PolygonMesh, boost::vertex_point_t>::const_type VPM;
-  typedef typename boost::property_traits<VPM>::value_type                               Point;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor                 halfedge_descriptor;
-
-  std::unordered_map<Point, std::set<halfedge_descriptor> > nm_points;
-  return geometrically_non_manifold_vertices(pmesh, nm_points, np);
-}
-
-template <typename PolygonMesh>
-std::size_t geometrically_non_manifold_vertices(const PolygonMesh& pmesh)
-{
-  return geometrically_non_manifold_vertices(pmesh, parameters::all_default());
+  return geometrically_non_manifold_vertices(pmesh, out, parameters::all_default());
 }
 
 } // namespace Polygon_mesh_processing
