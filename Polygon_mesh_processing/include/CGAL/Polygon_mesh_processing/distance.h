@@ -1363,21 +1363,18 @@ double bounded_error_Hausdorff_impl(
     match_faces(tm1, tm2, std::back_inserter(common),
       std::back_inserter(tm1_only), std::back_inserter(tm2_only));
 
-    // std::cout << "common: " << common.size() << std::endl;
+    // std::cout << "common t: " << common.size()   << std::endl;
     // std::cout << "tm1 only: " << tm1_only.size() << std::endl;
     // std::cout << "tm2 only: " << tm2_only.size() << std::endl;
 
     if (tm1_only.size() == 0) return 0.0;
-    if (tm2_only.size() == 0) return 0.0;
     CGAL_assertion(tm1_only.size() > 0);
-    CGAL_assertion(tm2_only.size() > 0);
 
     tm1_tree.insert(tm1_only.begin(), tm1_only.end(), tm1, vpm1);
-    tm2_tree.insert(tm2_only.begin(), tm2_only.end(), tm2, vpm2);
   } else {
     tm1_tree.insert(faces1.begin(), faces1.end(), tm1, vpm1);
-    tm2_tree.insert(faces2.begin(), faces2.end(), tm2, vpm2);
   }
+  tm2_tree.insert(faces2.begin(), faces2.end(), tm2, vpm2);
 
   // Build an AABB tree on tm1
   tm1_tree.build();
@@ -1650,7 +1647,7 @@ double bounded_error_Hausdorff_naive_impl(
  *     \cgalParamDescription{a boolean tag that turns on the preprocessing step that filters out all faces,
  *                           which belong to both meshes and hence do not contribute to the final distance}
  *     \cgalParamType{Boolean}
- *     \cgalParamDefault{false}
+ *     \cgalParamDefault{true}
  *     \cgalParamExtra{Both `np1` and `np2` must have this tag true in order to activate this preprocessing.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
@@ -1681,9 +1678,9 @@ double bounded_error_Hausdorff_distance( const TriangleMesh& tm1,
                               get_const_property_map(vertex_point, tm2));
 
   const bool match_faces1 = parameters::choose_parameter(
-    parameters::get_parameter(np1, internal_np::match_faces), false);
+    parameters::get_parameter(np1, internal_np::match_faces), true);
   const bool match_faces2 = parameters::choose_parameter(
-    parameters::get_parameter(np2, internal_np::match_faces), false);
+    parameters::get_parameter(np2, internal_np::match_faces), true);
   const bool match_faces = match_faces1 && match_faces2;
 
   CGAL_precondition(error_bound >= 0.0);

@@ -226,7 +226,6 @@ namespace CGAL {
     typedef typename Kernel::Point_3 Point_3;
     typedef typename Kernel::Vector_3 Vector_3;
     typedef typename Kernel::Triangle_3 Triangle_3;
-    typedef typename std::vector<Candidate_triangle<Kernel>> Candidate_set;
     typedef AABB_tree< AABB_traits<Kernel, TM2_primitive> > TM2_tree;
     typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
     typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
@@ -241,7 +240,7 @@ namespace CGAL {
       : m_traits(traits), m_tm1(tm1), m_tm2(tm2),
       m_vpm1(vpm1), m_vpm2(vpm2), m_tm2_tree(tree), m_error_bound(error_bound) {
 
-      // Initialize the global bounds with 0., they will only grow.
+      // Initialize the global bounds with 0.0, they will only grow.
       // If we leave zero here then we are very slow even for big input error bounds!
       h_lower = m_error_bound; // = FT(0);
       h_upper = m_error_bound; // = FT(0);
@@ -325,7 +324,7 @@ namespace CGAL {
 
       // If the distance is larger than the global lower bound, enter the node, i.e. return true.
       // std::cout << dist << " : " << h_lower << std::endl;
-      if (dist > h_lower && (dist - h_lower) > m_error_bound) {
+      if (dist > h_lower /* && (dist - h_lower) > m_error_bound */) {
         return std::make_pair(true, dist);
       } else {
         return std::make_pair(false, FT(0));
