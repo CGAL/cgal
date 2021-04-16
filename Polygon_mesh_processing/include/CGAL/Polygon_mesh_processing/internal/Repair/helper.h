@@ -74,8 +74,8 @@ void dump_cc(const FaceContainer& cc_faces,
 }
 
 template <typename Point>
-void dump_tentative_hole(std::vector<std::vector<Point> >& point_patch,
-                         const std::string filename)
+void dump_tentative_patch(const std::string filename,
+                          std::vector<std::vector<Point> >& point_patch)
 {
   std::ofstream out(filename);
   out << std::setprecision(17);
@@ -731,7 +731,7 @@ bool construct_tentative_hole_patch(std::vector<typename boost::graph_traits<Tri
   oss << "results/tentative_hole_" << hole_id++ << ".off" << std::ends;
   const std::string filename = oss.str().c_str();
 
-  dump_tentative_hole(to_dump, filename);
+  dump_tentative_patch(filename, to_dump);
 #endif
 
   // make sure that the hole filling is valid, we check that no
@@ -888,7 +888,7 @@ bool construct_tentative_sub_hole_patch(std::vector<std::vector<typename boost::
     return false;
   }
 
-  // @todo we don't care about those sets, so instead there could be a system of output iterators
+  // @todo we don't care about those sets, so there could be a system of output iterators
   // in construct_tentative_hole_patch() instead (and here would be emptyset iterators).
   std::set<vertex_descriptor> cc_interior_vertices;
   std::set<edge_descriptor> cc_interior_edges;
