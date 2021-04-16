@@ -14,7 +14,7 @@
 
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Tools/robin_hood.h>
 #include <CGAL/squared_distance_2_1.h>
 #include <CGAL/number_utils.h>
 #include <boost/shared_ptr.hpp>
@@ -26,7 +26,7 @@ namespace CGAL {
 
 namespace internal {
 
-template<class Handle>
+template<class Handle, class Hash_function = Handle_hash_function>
 class Polyhedron_index_map_external
   : public boost::put_get_helper<std::size_t&, Polyhedron_index_map_external<Handle> >
 {
@@ -37,20 +37,26 @@ public:
   typedef Handle                           key_type;
 
 private:
-  typedef CGAL::Unique_hash_map<key_type,std::size_t> Map;
+  typedef robin_hood::unordered_map<key_type,std::size_t,Hash_function> Map;
 
 public:
   template <typename InputIterator>
   Polyhedron_index_map_external(InputIterator begin, InputIterator end, std::size_t max)
-    : map_(new Map(begin, end, 0, std::size_t(-1), max)) {}
+    : map_(new Map())
+    {
+        map_->reserve(max);
+        value_type data=0;
+        for ( ; begin != end; (++begin, ++data))
+            map_->emplace(begin,data);
+    }
 
-  reference operator[](const key_type& k) const { return (*map_)[k]; }
+  reference operator[](const key_type& k) const { return map_->emplace(k,std::size_t(-1)).first->second; }
 private:
    boost::shared_ptr<Map> map_;
 };
 
 // Special case for edges.
-template<class Polyhedron>
+template<class Polyhedron, class Hash_function = Handle_hash_function>
 class Polyhedron_edge_index_map_external
   : public boost::put_get_helper<std::size_t, Polyhedron_edge_index_map_external<Polyhedron> >
 {
@@ -61,19 +67,20 @@ public:
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor key_type;
 
 private:
-  typedef CGAL::Unique_hash_map<key_type,std::size_t> Map;
+  typedef robin_hood::unordered_map<key_type,std::size_t,Hash_function> Map;
 
 public:
   Polyhedron_edge_index_map_external(Polyhedron& p)
-    : map_(new Map(std::size_t(-1), num_halfedges(p)))
+    : map_(new Map())
   {
+    map_->reserve(num_halfedges(p));
     unsigned int data = 0;
     typename boost::graph_traits<Polyhedron>::edge_iterator it, end;
     for(boost::tie(it, end) = edges(p); it != end; ++it, ++data)
-      (*map_)[*it] = data;
+      map_->emplace(*it,data);
   }
 
-  reference operator[](const key_type& k) const { return (*map_)[k]; }
+  reference operator[](const key_type& k) const { return map_->emplace(k,std::size_t(-1)).first->second; }
 private:
   boost::shared_ptr<Map> map_;
 };
