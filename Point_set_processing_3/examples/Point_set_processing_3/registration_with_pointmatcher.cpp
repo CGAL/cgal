@@ -109,34 +109,35 @@ int main(int argc, const char** argv)
                                                                           * */
        );
 
-  // OR call the ICP registration method from pointmatcher and apply the transformation to pwn2
-  bool converged =
-    CGAL::pointmatcher::register_point_sets
+  bool converged = false;
+  do
+  {
+    // OR call the ICP registration method from pointmatcher and apply the transformation to pwn2
+    converged =
+      CGAL::pointmatcher::register_point_sets
       (pwns1, pwns2,
        params::point_map(Point_map()).normal_map(Normal_map())
-                                     .point_set_filters(point_set_1_filters)
-                                     .matcher(matcher)
-                                     .outlier_filters(outlier_filters)
-                                     .error_minimizer(error_minimizer)
-                                     .transformation_checkers(transformation_checkers)
-                                     .inspector(inspector)
-                                     .logger(logger),
+       .point_set_filters(point_set_1_filters)
+       .matcher(matcher)
+       .outlier_filters(outlier_filters)
+       .error_minimizer(error_minimizer)
+       .transformation_checkers(transformation_checkers)
+       .inspector(inspector)
+       .logger(logger),
        params::point_map(Point_map()).normal_map(Normal_map())
-                                     .point_set_filters(point_set_2_filters)
-                                     .transformation(res.first) /* pass the above computed transformation as initial transformation.
-                                                                * as a result, the registration will require less iterations to converge.
-                                                                * */
-     );
+       .point_set_filters(point_set_2_filters)
+       .transformation(res.first) /* pass the above computed transformation as initial transformation.
+                                   * as a result, the registration will require less iterations to converge.
+                                   * */
+        );
 
-  if(converged)
-  {
-    std::cerr << "Success" << std::endl;
+    // Algorithm may randomly not converge, repeat until it does
+    if (converged)
+      std::cerr << "Success" << std::endl;
+    else
+      std::cerr << "Did not converge, try again" << std::endl;
   }
-  else
-  {
-    std::cerr << "Failure" << std::endl;
-    return EXIT_FAILURE;
-  }
+  while (!converged);
 
   if(!CGAL::write_points("pwns2_aligned.ply", pwns2,
                          CGAL::parameters::point_map(Point_map()).normal_map(Normal_map())))
