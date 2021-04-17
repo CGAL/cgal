@@ -737,33 +737,33 @@ public:
 
   template <typename H>
   bool is_boundary_object(H h)
-  { return boundary_item_[h]!=boost::none; }
+  { return boundary_item_[&*h]!=boost::none; }
   template <typename H>
   bool is_sm_boundary_object(H h)
-  { return sm_boundary_item_[h]!=boost::none; }
+  { return sm_boundary_item_[&*h]!=boost::none; }
 
   template <typename H>
   Object_iterator& boundary_item(H h)
-  { return *boundary_item_[h]; }
+  { return *boundary_item_[&*h]; }
   template <typename H>
   Object_iterator& sm_boundary_item(H h)
-  { return *sm_boundary_item_[h]; }
+  { return *sm_boundary_item_[&*h]; }
 
   template <typename H>
   void store_boundary_item(H h, Object_iterator o)
-  { boundary_item_[h] = o; }
+  { boundary_item_[&*h] = o; }
   template <typename H>
   void store_sm_boundary_item(H h, Object_iterator o)
-  { sm_boundary_item_[h] = o; }
+  { sm_boundary_item_[&*h] = o; }
 
   template <typename H>
   void undef_boundary_item(H h)
-  { CGAL_assertion(boundary_item_[h]!=boost::none);
-    boundary_item_[h] = boost::none; }
+  { CGAL_assertion(boundary_item_[&*h]!=boost::none);
+    boundary_item_[&*h] = boost::none; }
   template <typename H>
   void undef_sm_boundary_item(H h)
-  { CGAL_assertion(sm_boundary_item_[h]!=boost::none);
-    sm_boundary_item_[h] = boost::none; }
+  { CGAL_assertion(sm_boundary_item_[&*h]!=boost::none);
+    sm_boundary_item_[&*h] = boost::none; }
 
   void reset_iterator_hash(Object_iterator it)
   { SVertex_handle sv;
@@ -1333,8 +1333,8 @@ protected:
 
   typedef boost::optional<Object_iterator> Optional_object_iterator ;
  private:
-  Generic_handle_map<Optional_object_iterator> boundary_item_;
-  Generic_handle_map<Optional_object_iterator> sm_boundary_item_;
+  Unique_hash_map<void*,Optional_object_iterator,Void_handle_hash_function> boundary_item_;
+  Unique_hash_map<void*,Optional_object_iterator,Void_handle_hash_function> sm_boundary_item_;
  protected:
   Vertex_list    vertices_;
   Halfedge_list  halfedges_;
