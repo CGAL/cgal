@@ -50,8 +50,8 @@ target_link_libraries(vsa_approximation_test PUBLIC CGAL::Eigen3_support)
 create_single_source_cgal_program("vsa_segmentation_test.cpp")
 target_link_libraries(vsa_segmentation_test PUBLIC CGAL::Eigen3_support)
 
-create_single_source_cgal_program("vsa_meshing_manifold_test.cpp")
-target_link_libraries(vsa_meshing_manifold_test PUBLIC CGAL::Eigen3_support)
+#create_single_source_cgal_program("vsa_meshing_manifold_test.cpp")
+#target_link_libraries(vsa_meshing_manifold_test PUBLIC CGAL::Eigen3_support)
 
 create_single_source_cgal_program("vsa_metric_test.cpp")
 target_link_libraries(vsa_metric_test PUBLIC CGAL::Eigen3_support)
