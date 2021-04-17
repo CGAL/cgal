@@ -772,6 +772,7 @@ bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
       int type, picked;
       d->picked_pixel = e->pos();
       d->picking(type, picked, viewer);
+      viewer->makeCurrent();
       if(type !=-1)
       {
         bool found = false;
