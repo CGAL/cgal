@@ -202,7 +202,37 @@ private:
     ePlane_3 eplane;
   };
 
-  typedef std::vector<Plane> Prism;
+  struct Prism {
+
+    std::size_t size() const
+    {
+      return planes.size();
+    }
+
+    void reserve(std::size_t n)
+    {
+      planes.reserve(n);
+    }
+
+    void emplace_back(const Plane& p)
+    {
+      planes.emplace_back(p);
+    }
+
+
+    Plane& operator[](std::size_t i)
+    {
+      return planes[i];
+    }
+
+    const Plane& operator[](std::size_t i) const
+    {
+      return planes[i];
+    }
+
+    std::vector<Plane> planes;
+    int obtuse;
+  };
 
   static const bool OUT_PRISM = 1;
   static const bool IN_PRISM = 0;
@@ -936,6 +966,7 @@ private:
   {
     std::size_t facesize = halfspace[pid].size();
     if (i == j) return false;
+    if( ((i == 0) && ( j==1))  || ((i == 1) && ( j==0)) ) return false;
     if (i == 0 && j != 1) return true;
     if (i == 1 && j != 0) return true;
     if (j == 0 && i != 1) return true;
@@ -952,10 +983,14 @@ private:
                                      const Triangle& query,
                                      std::vector<unsigned int> &cid) const
   {
-    const ePoint_3 &tri0 = query.etriangle[0];
-    const ePoint_3 &tri1 = query.etriangle[1];
-    const ePoint_3 &tri2 = query.etriangle[2];
-    const ePoint_3 &n = query.n;
+    const ePoint_3 &etri0 = query.etriangle[0];
+    const ePoint_3 &etri1 = query.etriangle[1];
+    const ePoint_3 &etri2 = query.etriangle[2];
+    const ePoint_3& n = query.n;
+
+    const Point_3 &tri0 = query.triangle[0];
+    const Point_3 &tri1 = query.triangle[1];
+    const Point_3 &tri2 = query.triangle[2];
 
     const Prism& prism = halfspace[cindex];
     cid.clear();
@@ -976,9 +1011,9 @@ private:
         // As the orientation test operates on point with inf==sup of the coordinate intervals
         // we can profit from the static filters.
         // The oriented side test being made with interval arithmetic is more expensive
-        o1[i] =  orientation(plane.ep, plane.eq, plane.er, tri0);
-        o2[i] =  orientation(plane.ep, plane.eq, plane.er, tri1);
-        o3[i] =  orientation(plane.ep, plane.eq, plane.er, tri2);
+        o1[i] =  orientation(plane.ep, plane.eq, plane.er, etri0);
+        o2[i] =  orientation(plane.ep, plane.eq, plane.er, etri1);
+        o3[i] =  orientation(plane.ep, plane.eq, plane.er, etri2);
 
         if (o1[i] + o2[i] + o3[i] >= 2){ //1,1,0 case
           return 0;
@@ -1088,9 +1123,40 @@ private:
 
             int inter = 0;
 
+            static const int  edges[3][3] = { {2, 4, 6 }, {2, 3, 5}, {2, 4, 5} };
+
+            int ob = prism.obtuse;
+            if (ob == -1) ob = 0;
+
+            if(((cutp[i] == 0)||(cutp[i] == 1)) && ( (cutp[j] == edges[ob][0])||(cutp[j] == edges[ob][1]) ||(cutp[j] == edges[ob][2]) )){ // ATTENTION Only correct together with CGAL_INITIAL
+              int j0 = (cutp[j] == edges[ob][0])? 0 : (cutp[j]==edges[ob][1])? 1 : 2;
+              int j1 = (cutp[j] == edges[ob][0])? 1 : (cutp[j]==edges[ob][1])? 2 : 0;
+              const Vector3i & v3i = env_faces[cindex];
+              const Point_3& pj0 = env_vertices[v3i[j0]];
+              const Point_3& pj1 = env_vertices[v3i[j1]];
+
+              if(pj0 == tri0){
+                if((pj1 == tri1)||(pj1 == tri2)){
+                  continue;
+                }
+              }
+              if(pj0 == tri1){
+                if((pj1 == tri2)||(pj1 == tri0)){
+                  continue;
+                }
+              }
+              if(pj0 == tri2){
+                if((pj1 == tri0)||(pj1 == tri1)){
+                  continue;
+                }
+              }
+
+
+            }
+
             boost::optional<ePoint_3>  ipp = intersection_point_for_polyhedral_envelope(tri_eplane, prism[cutp[i]].eplane, prism[cutp[j]].eplane);
             if(ipp){
-                inter = is_3_triangle_cut_float_fast(tri0, tri1, tri2,
+                inter = is_3_triangle_cut_float_fast(etri0, etri1, etri2,
                                                      n,
                                                      *ipp);
             }
@@ -1889,7 +1955,7 @@ private:
         halfspace[i].emplace_back(plane);// number 1
 
         int obtuse = obtuse_angle(ver[faces[i][0]], ver[faces[i][1]], ver[faces[i][2]]);
-
+        halfspace[i].obtuse = obtuse;
 
         edgedire = normalize(AB);
         // if (use_accurate_cross)edgenormaldist = accurate_cross_product_direction(ORIGIN, edgedire, ORIGIN, normal)*tolerance;
@@ -1900,6 +1966,11 @@ private:
                       ver[faces[i][0]] + edgenormaldist + normal);
         halfspace[i].emplace_back(plane);// number 2
 
+        if (obtuse != 1) {
+          plane = get_corner_plane(ver[faces[i][1]], midpoint(ver[faces[i][0]], ver[faces[i][2]]) , normal,
+                                   tolerance, use_accurate_cross);
+          halfspace[i].emplace_back(plane);// number 3;
+        }
 
         edgedire = normalize(BC);
         // if (use_accurate_cross)edgenormaldist = accurate_cross_product_direction(ORIGIN, edgedire, ORIGIN, normal)*tolerance;
@@ -1911,6 +1982,11 @@ private:
                       ver[faces[i][1]] + edgenormaldist + normal);
         halfspace[i].emplace_back(plane);// number 4
 
+        if (obtuse != 2) {
+          plane = get_corner_plane(ver[faces[i][2]], midpoint(ver[faces[i][0]], ver[faces[i][1]]), normal,
+                                   tolerance,use_accurate_cross);
+          halfspace[i].emplace_back(plane);// number 5;
+        }
 
         edgedire = -normalize(AC);
         // if (use_accurate_cross)edgenormaldist = accurate_cross_product_direction(ORIGIN, edgedire, ORIGIN , normal)*tolerance;
@@ -1922,21 +1998,10 @@ private:
                       ver[faces[i][0]] + edgenormaldist + normal);
         halfspace[i].emplace_back(plane);// number 6
 
-
-        if (obtuse != 1) {
-          plane = get_corner_plane(ver[faces[i][1]], midpoint(ver[faces[i][0]], ver[faces[i][2]]) , normal,
-                                   tolerance, use_accurate_cross);
-          halfspace[i].emplace_back(plane);// number 3;
-        }
         if (obtuse != 0) {
           plane = get_corner_plane(ver[faces[i][0]], midpoint(ver[faces[i][1]], ver[faces[i][2]]) , normal,
                                    tolerance,use_accurate_cross);
           halfspace[i].emplace_back(plane);// number 7;
-        }
-        if (obtuse != 2) {
-          plane = get_corner_plane(ver[faces[i][2]], midpoint(ver[faces[i][0]], ver[faces[i][1]]), normal,
-                                   tolerance,use_accurate_cross);
-          halfspace[i].emplace_back(plane);// number 5;
         }
 
 #ifdef CGAL_ENVELOPE_DEBUG
