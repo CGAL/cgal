@@ -41,7 +41,7 @@ QVariant ArrangementDemoPropertiesDialog::property( int index )
   }
 
   QTableWidgetItem* item = this->ui->tableWidget->item( index, 0 );
-  if ( item == 0 )
+  if ( item == nullptr )
   {
     return res;
   }
@@ -102,17 +102,17 @@ void ArrangementDemoPropertiesDialog::setupUi( )
 */
 void ArrangementDemoPropertiesDialog::updateUi( )
 {
-  if ( this->parent == NULL )
+  if ( this->parent == nullptr )
   {
     return;
   }
   ArrangementDemoTab* currentTab = this->parent->getCurrentTab();
-  if ( currentTab == NULL )
+  if ( currentTab == nullptr )
   {
     return;
   }
   CGAL::Qt::ArrangementGraphicsItemBase* agi = currentTab->getArrangementGraphicsItem( );
-  if ( agi == NULL )
+  if ( agi == nullptr )
   {
     return;
   }

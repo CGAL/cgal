@@ -26,7 +26,7 @@ class PartitionDialog :
 {
   Q_OBJECT
 public:
-  PartitionDialog(QWidget* =0)
+  PartitionDialog(QWidget* =nullptr)
   {
     setupUi(this);
   }

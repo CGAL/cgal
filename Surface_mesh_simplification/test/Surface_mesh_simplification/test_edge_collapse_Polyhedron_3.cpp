@@ -38,7 +38,7 @@ void error_handler (char const* what, char const* expr, char const* file, int li
        << "Expr: " << expr << endl
        << "File: " << file << endl
        << "Line: " << line << endl;
-  if(msg != 0)
+  if(msg != nullptr)
     cerr << "Explanation:" << msg << endl;
 
   throw std::runtime_error(expr);

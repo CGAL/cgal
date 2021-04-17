@@ -17,7 +17,7 @@ typedef boost::graph_traits<Dual>::edge_descriptor edge_descriptor;
 
 template <typename G>
 struct noborder {
-  noborder() : g(NULL) {} // default-constructor required by filtered_graph
+  noborder() : g(nullptr) {} // default-constructor required by filtered_graph
   noborder(G& g) : g(&g) {}
 
   bool operator()(const edge_descriptor& e) const
