@@ -154,7 +154,7 @@ bool Less_segments<ForwardIterator, PolygonTraits>::
 less_than_in_tree(Vertex_index new_edge, Vertex_index tree_edge) const
 {
 #if defined(CGAL_POLY_GENERATOR_DEBUG)
-    std::cout << "less_than_in_tree" << std::endl;
+    std::cout << "less_than_in_tree; new: " << new_edge.as_int() << " tree edge: " << tree_edge.as_int() << std::endl;
 #endif
     CGAL_polygon_precondition(
        m_vertex_data->edges[tree_edge.as_int()].is_in_tree);
@@ -179,6 +179,52 @@ less_than_in_tree(Vertex_index new_edge, Vertex_index tree_edge) const
                                 m_vertex_data->point(mid),
                                 m_vertex_data->point(right)));
     m_vertex_data->is_simple_result = false;
+
+    // need to handle the specific combinations:
+    // as the standard x;x+k swap (see below) will not work
+    if (m_vertex_data->edges[tree_edge.as_int()].is_left_to_right)
+    {
+      // x+1 x x+2
+      // This is actually already handled in the insertion event, when the orientation returns "COPLANAR"
+      // but leaving the code below for completion.
+      if (m_vertex_data->next(mid) == left || m_vertex_data->next(mid) == right)
+      {
+        // swap mid & left
+        m_vertex_data->conflict1 = m_vertex_data->prev(mid);
+        m_vertex_data->conflict2 = left;
+        return true;
+      }
+      // x-2 x x-1
+      else if (m_vertex_data->prev(mid) == left || m_vertex_data->prev(mid) == right)
+      {
+        // swap mid & right
+        m_vertex_data->conflict1 = left;
+        m_vertex_data->conflict2 = mid;
+        return true;
+      }
+    }
+    else // right to left
+    {
+      // x+2 x x+1
+      if (m_vertex_data->next(mid) == left || m_vertex_data->next(mid) == right)
+      {
+        // swap mid & right
+        m_vertex_data->conflict1 = m_vertex_data->prev(mid);
+        m_vertex_data->conflict2 = right;
+        return true;
+      }
+      // x-1 x x-2
+      // This is actually already handled in the insertion event, when the orientation returns "COPLANAR"
+      // but leaving the code below for completion.
+      else if (m_vertex_data->prev(mid) == left || m_vertex_data->prev(mid) == right)
+      {
+        // swap mid & left
+        m_vertex_data->conflict1 = right;
+        m_vertex_data->conflict2 = mid;
+        return true;
+      }
+    }
+
     Vertex_index mid_succ = m_vertex_data->next(mid);
     if (mid_succ.as_int() <= (std::min)(left.as_int(), right.as_int()))
     {
@@ -515,6 +561,15 @@ check_simple_polygon(Iterator points_begin, Iterator points_end,
     typedef Iterator ForwardIterator;
     typedef std::set<i_generator_polygon::Vertex_index,
       i_generator_polygon::Less_segments<ForwardIterator,PolygonTraits> > Tree;
+
+#if defined(CGAL_POLY_GENERATOR_DEBUG)
+    Iterator it;
+    std::cout << "In check_simple_polygon the points are: " << std::endl;
+    for(it = points_begin; it != points_end; it++)
+      std::cout << *it << " ";
+    std::cout << std::endl;
+#endif
+
     i_generator_polygon::Vertex_data<ForwardIterator, PolygonTraits>
         vertex_data(points_begin, points_end, polygon_traits);
     Tree tree(&vertex_data);
@@ -556,8 +611,8 @@ void make_simple_polygon(Iterator points_begin, Iterator points_end,
         swap_interval = check_simple_polygon(points_begin,
                                              points_end, polygon_traits);
 #if defined(CGAL_POLY_GENERATOR_DEBUG)
-        std::cout << swap_interval.first << " "
-                  << swap_interval.second << std::endl;
+        std::cout << "To swap: " << swap_interval.first << " "
+                                 << swap_interval.second << std::endl;
         CGAL_polygon_assertion(swap_interval.first >= -1 &&
                                swap_interval.second >= -1 &&
                                swap_interval.first < size &&
