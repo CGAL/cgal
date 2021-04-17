@@ -92,6 +92,11 @@ When you hit the *Configure* button, you must:
 <li>select *Specify toolchain file for cross compilation* (the file `vcpkg.cmake` within the directory
 where you have installed `vcpkg`, e.g. `C:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake`).</li>
 </ul>
+
+\cgalFigureBegin{toolchain,toolchain.png}
+The box to check to get to the toolchain option
+\cgalFigureEnd
+
 Once the configuration process is done, tick *Advanced* and *Grouped* in `cmake-gui`.
 You will see entries for where header files and libraries are taken from.
 
