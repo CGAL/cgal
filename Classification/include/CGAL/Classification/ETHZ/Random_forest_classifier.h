@@ -141,7 +141,7 @@ public:
 
     \tparam ConcurrencyTag enables sequential versus parallel
     algorithm. Possible values are `Parallel_tag` (default value if
-    %CGAL is linked with TBB) or `Sequential_tag` (default value
+    \cgal is linked with TBB) or `Sequential_tag` (default value
     otherwise).
 
     \param ground_truth vector of label indices. It should contain for
