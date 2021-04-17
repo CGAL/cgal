@@ -263,7 +263,7 @@ struct Scene_edit_box_item_priv{
 
 Scene_edit_box_item::Scene_edit_box_item()
 {
-  d = NULL;
+  d = nullptr;
 }
 Scene_edit_box_item::Scene_edit_box_item(const Scene_interface *scene_interface)
 {
@@ -772,6 +772,7 @@ bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
       int type, picked;
       d->picked_pixel = e->pos();
       d->picking(type, picked, viewer);
+      viewer->makeCurrent();
       if(type !=-1)
       {
         bool found = false;

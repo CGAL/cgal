@@ -902,7 +902,7 @@ void Viewer::naive_compute_intersection_points(const std::vector<EPIC::Point_3>&
                 for (std::vector <CGAL::Object>::const_iterator it_pt=intersections.begin();it_pt!=intersections.end();++it_pt){
                     const std::pair<SK::Circular_arc_point_3,unsigned>* pt=
                             CGAL::object_cast< std::pair<SK::Circular_arc_point_3,unsigned> > (&(*it_pt));
-                    assert(pt!=NULL);
+                    assert(pt!=nullptr);
                     *out++=EPIC::Point_3( CGAL::to_double(pt->first.x()),
                                           CGAL::to_double(pt->first.y()),
                                           CGAL::to_double(pt->first.z())

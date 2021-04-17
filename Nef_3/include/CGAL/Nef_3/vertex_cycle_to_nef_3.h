@@ -35,37 +35,6 @@
 
 namespace CGAL {
 
-/*
-template<typename Items>
-class Index_assigner {
-  Index_assigner() {}
-  template<typename Handle>
-    void assign_index(Handle& ) const {}
-  template<typename Handle>
-    void assign_first_index() const {}
-  template<typename Handle>
-    void assign_new_index() {}
-};
-
-template<> class Index_assigner<CGAL::SNC_indexed_items> {
-  int first;
-  int index;
- public:
- Index_assigner() :
-  first(Index_generator::get_unique_index()), index(first) {}
-
-  template<typename Handle>
-    void assign_index(Handle& h) const
-    { h->set_index(index); }
-  template<typename Handle>
-    void assign_first_index(Handle& h) const
-    { h->set_index(first); }
-  template<typename Handle>
-    void assign_new_index(Handle& h)
-    { h->set_index(); index = h->get_index(); }
-};
-*/
-
 //template<typename Items> class Index_matcher;
 
 template<typename Vertex>
@@ -121,11 +90,10 @@ template<typename Edge, typename CompareEdges>
       h->set_index(ei->second);
       if(plusTwin) h->twin()->set_index(h->get_index()+1);
     } else {
-      int new_index = Index_generator::get_unique_index();
+      int new_index = h->new_index();
       edge2int.insert(std::make_pair(e,new_index));
-      h->set_index(new_index);
       if(plusTwin)
-        h->twin()->set_index();
+        h->twin()->new_index();
     }
   }
 };

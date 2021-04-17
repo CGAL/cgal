@@ -35,39 +35,59 @@ namespace internal {
         typedef typename K::Point_3 Point;
         FT d = FT(0);
         FT distance = FT(0);
+        FT sr = sphere.squared_radius();
+
                 Point center = sphere.center();
 
                 if(center.x() < (FT)bbox.xmin())
                 {
                         d = (FT)bbox.xmin() - center.x();
-                        distance += d * d;
+                        d = square(d);
+                        if(certainly(d > sr)){
+                          return false;
+                        }
+                        distance = d;
                 }
                 else if(center.x() > (FT)bbox.xmax())
                 {
                         d = center.x() - (FT)bbox.xmax();
-                        distance += d * d;
+                        d = square(d);
+                        if(certainly(d > sr)){
+                          return false;
+                        }
+                        distance = d;
                 }
 
                 if(center.y() < (FT)bbox.ymin())
                 {
                         d = (FT)bbox.ymin() - center.y();
-                        distance += d * d;
+                        d = square(d);
+                        if(certainly(d > sr)){
+                          return false;
+                        }
+                        distance += d ;
                 }
                 else if(center.y() > (FT)bbox.ymax())
                 {
                         d = center.y() - (FT)bbox.ymax();
-                        distance += d * d;
+                        d = square(d);
+                        if(certainly(d > sr)){
+                          return false;
+                        }
+                        distance += d;
                 }
 
                 if(center.z() < (FT)bbox.zmin())
                 {
                         d = (FT)bbox.zmin() - center.z();
-                        distance += d * d;
+                        d = square(d);
+                        distance += d;
                 }
                 else if(center.z() > (FT)bbox.zmax())
                 {
                         d = center.z() - (FT)bbox.zmax();
-                        distance += d * d;
+                        d = square(d);
+                        distance += d;
                 }
 
                 // For unknown reason this causes a syntax error on VC2005
@@ -87,7 +107,7 @@ namespace internal {
                 //        }
                 //}
 
-                return distance <= sphere.squared_radius();
+                return distance <= sr;
     }
 
     template <class K>

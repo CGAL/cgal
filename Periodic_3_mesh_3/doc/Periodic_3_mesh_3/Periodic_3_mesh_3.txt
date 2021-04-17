@@ -62,7 +62,7 @@ by a mesh optimization phase to remove slivers and provide a good quality mesh.
 
 This package is fundamentally linked to the package \ref PkgMesh3,
 which is devoted to the generation of isotropic simplicial
-meshes discretizing (non-periodic) 3D domains and to the \ref PkgPeriodic3Triangulation3 of %CGAL,
+meshes discretizing (non-periodic) 3D domains and to the \ref PkgPeriodic3Triangulation3 of \cgal,
 which are used as underlying triangulation structures of the mesh.
 
 A periodic mesh extends, by definition, infinitely in space. We consider the flat torus \f$ \mathbb T_c^3\f$,
@@ -75,7 +75,7 @@ of the periodic triangulation into the flat torus \f$ \mathbb T_c^3\f$ forms at 
 of the manual of 3D periodic triangulations).
 Thanks to this construction, the meshing process can be exclusively conducted
 within the canonical cube.
-The mesh can then be created using the \ref PkgMesh3 package of %CGAL.
+The mesh can then be created using the \ref PkgMesh3 package of \cgal.
 As this package originally aims to mesh non-periodic domains of \f$ \mathbb R^3\f$, an interface
 is necessary between the packages \ref PkgMesh3 and \ref PkgPeriodic3Triangulation3.
 This package provides this interface.

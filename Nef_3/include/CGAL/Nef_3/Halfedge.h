@@ -100,6 +100,17 @@ class Halfedge_base
           return *this;
         }
 
+      Halfedge_base<Refs>& operator=(Halfedge_base<Refs>&& e) noexcept
+        { center_vertex_ = std::move(e.center_vertex_);
+          point_ = std::move(e.point_);
+          mark_ = std::move(e.mark_);
+          twin_ = std::move(e.twin_);
+          out_sedge_ = std::move(e.out_sedge_);
+          incident_sface_ = std::move(e.incident_sface_);
+          info_ = 0;
+          return *this;
+        }
+
       Vertex_handle& center_vertex() { return center_vertex_; }
       Vertex_const_handle center_vertex() const { return center_vertex_; }
 

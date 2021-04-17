@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.14)
+cmake_minimum_required(VERSION 3.1...3.20)
 
 project(Tetrahedral_remeshing_Examples)
 
@@ -36,9 +36,14 @@ create_single_source_cgal_program( "tetrahedral_remeshing_example.cpp" )
 create_single_source_cgal_program( "tetrahedral_remeshing_with_features.cpp")
 create_single_source_cgal_program( "tetrahedral_remeshing_of_one_subdomain.cpp")
 create_single_source_cgal_program( "tetrahedral_remeshing_from_mesh.cpp")
+
+if(TARGET CGAL::Eigen3_support)
 create_single_source_cgal_program( "mesh_and_remesh_polyhedral_domain_with_features.cpp" )
-target_link_libraries(mesh_and_remesh_polyhedral_domain_with_features PUBLIC CGAL::Eigen3_support)
-if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TARGET CGAL::TBB_support)
-  target_link_libraries(mesh_and_remesh_polyhedral_domain_with_features PRIVATE CGAL::TBB_support)
+  target_link_libraries(mesh_and_remesh_polyhedral_domain_with_features PUBLIC CGAL::Eigen3_support)
+  if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TARGET CGAL::TBB_support)
+    target_link_libraries(mesh_and_remesh_polyhedral_domain_with_features PRIVATE CGAL::TBB_support)
+  endif()
+else()
+  message(STATUS "Some examples need the Eigen3 library, and will not be compiled.")
 endif()
 

@@ -445,9 +445,11 @@ public:
     (*node).prev_link = node;
     insert(begin(), x.begin(), x.end());
   }
-  ~In_place_list() {
-    erase(begin(), end());
-    put_node(node);
+  ~In_place_list() noexcept {
+    try {
+      erase(begin(), end());
+      put_node(node);
+    } catch(...) {}
   }
 
   Self& operator=(const Self& x);

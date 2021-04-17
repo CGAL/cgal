@@ -79,6 +79,7 @@ inline bool possibly(Uncertain<bool> c);
 #if defined(CGAL_NO_ASSERTIONS)
 #  define CGAL_assertion(EX) (static_cast<void>(0))
 #  define CGAL_destructor_assertion(EX) (static_cast<void>(0))
+#  define CGAL_destructor_assertion_catch(CODE) CODE
 #  define CGAL_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_assertion_code(CODE)
 #  ifdef CGAL_ASSUME
@@ -94,9 +95,11 @@ inline bool possibly(Uncertain<bool> c);
 #  if __cpp_lib_uncaught_exceptions || ( _MSVC_LANG >= 201703L )  // C++17
 #    define CGAL_destructor_assertion(EX) \
      (CGAL::possibly(EX)||(std::uncaught_exceptions() > 0)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
+#  define CGAL_destructor_assertion_catch(CODE) try{ CODE } catch(...) { if(std::uncaught_exceptions() <= 0) throw; }
 #  else // use C++03 `std::uncaught_exception()`
 #    define CGAL_destructor_assertion(EX) \
      (CGAL::possibly(EX)||std::uncaught_exception()?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
+#  define CGAL_destructor_assertion_catch(CODE) try{ CODE } catch(...) { if(!std::uncaught_exception()) throw; }
 #  endif // use C++03 `std::uncaught_exception()`
 #  define CGAL_assertion_msg(EX,MSG)                                    \
    (CGAL::possibly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
@@ -293,11 +296,19 @@ inline bool possibly(Uncertain<bool> c);
 
 #if defined(CGAL_NO_WARNINGS)
 #  define CGAL_warning(EX) (static_cast<void>(0))
+#  define CGAL_destructor_warning(EX) (static_cast<void>(0))
 #  define CGAL_warning_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_warning_code(CODE)
 #else
 #  define CGAL_warning(EX) \
    (CGAL::possibly(EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
+#  if __cpp_lib_uncaught_exceptions || ( _MSVC_LANG >= 201703L )  // C++17
+#    define CGAL_destructor_warning(EX) \
+     (CGAL::possibly(EX)||(std::uncaught_exceptions() > 0)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
+#  else // use C++03 `std::uncaught_exception()`
+#    define CGAL_destructor_warning(EX) \
+     (CGAL::possibly(EX)||std::uncaught_exception()?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
+#  endif // use C++03 `std::uncaught_exception()`
 #  define CGAL_warning_msg(EX,MSG) \
    (CGAL::possibly(EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_warning_code(CODE) CODE

@@ -1803,7 +1803,7 @@ void Scene_polyhedron_selection_item::common_constructor()
   d->is_treated = false;
   d->poly_need_update = false;
   d->are_temp_buffers_filled = false;
-  d->poly = NULL;
+  d->poly = nullptr;
   d->ready_to_move = false;
   do_process = true;
   setProperty("no_picking", true);
@@ -1825,13 +1825,13 @@ void Scene_polyhedron_selection_item::common_constructor()
 }
 
 Scene_polyhedron_selection_item::Scene_polyhedron_selection_item()
-  : Scene_polyhedron_item_decorator(NULL, false)
+  : Scene_polyhedron_item_decorator(nullptr, false)
 {
   common_constructor();
 }
 
 Scene_polyhedron_selection_item::Scene_polyhedron_selection_item(Scene_face_graph_item* poly_item, QMainWindow* mw)
-  : Scene_polyhedron_item_decorator(NULL, false)
+  : Scene_polyhedron_item_decorator(nullptr, false)
 {
   common_constructor();
   QString sf = poly_item->property("source filename").toString();
@@ -1896,7 +1896,7 @@ void Scene_polyhedron_selection_item::invalidateOpenGLBuffers() {
       {
         CGAL::Three::Viewer_interface* viewer =
             static_cast<CGAL::Three::Viewer_interface*>(v);
-        if(viewer == NULL)
+        if(viewer == nullptr)
           continue;
         setBuffersInit(viewer, false);
         viewer->update();
@@ -1970,7 +1970,7 @@ void Scene_polyhedron_selection_item::validateMoveVertex()
   temp_selected_vertices.clear();
   CGAL::QGLViewer* viewer = Three::mainViewer();
   k_ring_selector.setEditMode(true);
-  viewer->setManipulatedFrame(NULL);
+  viewer->setManipulatedFrame(nullptr);
   invalidateOpenGLBuffers();
   poly_item->itemChanged();
   if(property("need_hl_restore").toBool()){

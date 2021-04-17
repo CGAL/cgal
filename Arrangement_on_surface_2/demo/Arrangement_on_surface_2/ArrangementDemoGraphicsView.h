@@ -21,7 +21,7 @@ class QPaintEvent;
 class ArrangementDemoGraphicsView : public QGraphicsView
 {
 public:
-  ArrangementDemoGraphicsView( QWidget* parent = 0 );
+  ArrangementDemoGraphicsView( QWidget* parent = nullptr );
 
   void setBackgroundColor( QColor color );
   QColor getBackgroundColor( ) const;
