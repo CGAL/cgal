@@ -129,7 +129,7 @@ public:
   typedef typename Object_list::iterator               Object_iterator;
   typedef typename Object_list::const_iterator         Object_const_iterator;
   typedef boost::optional<Object_iterator>             Optional_object_iterator ;
-  typedef Generic_handle_map<Optional_object_iterator> Handle_to_iterator_map;
+  typedef Unique_hash_map<void*,Optional_object_iterator,Void_handle_hash_function> Handle_to_iterator_map;
 
   typedef Sphere_map*       Constructor_parameter;
   typedef const Sphere_map* Constructor_const_parameter;
@@ -268,20 +268,20 @@ public:
 
   template <typename H>
   bool is_sm_boundary_object(H h) const
-  { return boundary_item_[h]!=boost::none; }
+  { return boundary_item_[&*h]!=boost::none; }
 
   template <typename H>
   Object_iterator& sm_boundary_item(H h)
-  { return *boundary_item_[h]; }
+  { return *boundary_item_[&*h]; }
 
   template <typename H>
   void store_sm_boundary_item(H h, Object_iterator o)
-  { boundary_item_[h] = o; }
+  { boundary_item_[&*h] = o; }
 
   template <typename H>
   void undef_sm_boundary_item(H h)
-  { CGAL_assertion(boundary_item_[h]!=boost::none);
-    boundary_item_[h] = boost::none; }
+  { CGAL_assertion(boundary_item_[&*h]!=boost::none);
+    boundary_item_[&*h] = boost::none; }
 
   void reset_sm_iterator_hash(Object_iterator it)
   { SVertex_handle sv;
