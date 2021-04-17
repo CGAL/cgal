@@ -609,8 +609,8 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
       SHalfedge_around_facet_circulator c(u), cend(c);
       CGAL_For_all( c, cend) {
         D.set_facet( c, f);
-        if( lexicographically_xyz_smaller(c->source()->source()->point(),
-                                          u_min->source()->source()->point()))
+        if( (c != u_min) && lexicographically_xyz_smaller(c->source()->source()->point(),
+                                                          u_min->source()->source()->point()))
           u_min = c;
         linked[c] = true;
       }
