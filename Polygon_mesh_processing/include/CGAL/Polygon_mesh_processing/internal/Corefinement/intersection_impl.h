@@ -1584,7 +1584,7 @@ public:
     const TriangleMesh& tm2=nodes.tm2;
     const VertexPointMap1& vpm1=nodes.vpm1;
     const VertexPointMap2& vpm2=nodes.vpm2;
-    
+
     // used only if throw_on_self_intersection == true
     std::set<face_descriptor> tm1_faces;
     std::set<face_descriptor> tm2_faces;
