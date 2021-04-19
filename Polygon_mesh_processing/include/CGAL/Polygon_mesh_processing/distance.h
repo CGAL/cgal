@@ -1413,6 +1413,7 @@ double bounded_error_Hausdorff_impl(
   std::cout << "* culling rate: " <<
     FT(100) - (FT(candidate_triangles.size()) / FT(tm1_tree.size()) * FT(100)) << "%" << std::endl;
 
+  // See Section 5.1.
   const FT squared_error_bound = error_bound * error_bound;
   while ( (global_bounds.second - global_bounds.first > error_bound) && !candidate_triangles.empty() ) {
 
