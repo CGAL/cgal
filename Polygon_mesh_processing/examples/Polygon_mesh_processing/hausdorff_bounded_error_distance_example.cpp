@@ -652,9 +652,74 @@ void test_timings(const std::string filepath, const FunctionWrapper& functor) {
   std::cout << "distb = " << distb << std::endl;
 }
 
+template<
+typename FunctionWrapper>
+void test_bunny(const FunctionWrapper& functor, const bool save = false) {
+
+  std::cout.precision(20);
+  const std::string filepath1 = "data/bunny1.off"; // approx 16.3K
+  const std::string filepath2 = "data/bunny2.off"; // approx 69.4K
+
+  std::cout << std::endl << "* testing bunny:" << std::endl;
+  std::cout << "* name -> " << functor.name() << std::endl;
+
+  Surface_mesh mesh1, mesh2;
+  get_meshes(filepath1, filepath2, mesh1, mesh2);
+  if (save) save_mesh(mesh1, "mesh1");
+  if (save) save_mesh(mesh2, "mesh2");
+
+  // Get 3 times longest dimension.
+  const auto bbox = PMP::bbox(mesh2);
+  const FT dist1 = static_cast<FT>(CGAL::abs(bbox.xmax() - bbox.xmin()));
+  const FT dist2 = static_cast<FT>(CGAL::abs(bbox.ymax() - bbox.ymin()));
+  const FT dist3 = static_cast<FT>(CGAL::abs(bbox.zmax() - bbox.zmin()));
+  const FT dim = FT(3) * (CGAL::max)((CGAL::max)(dist1, dist2), dist3);
+
+  // Get timings.
+  const int n = 5; // number of steps
+  const FT t = FT(1) / static_cast<FT>(n); // step
+
+  Timer timer;
+  std::vector<double> times;
+  times.reserve(n);
+
+  for (int k = n; k >= 0; --k) {
+    auto mesh = mesh2;
+    const FT distance = k * t * dim;
+    PMP::transform(Affine_transformation_3(CGAL::Translation(),
+      Vector_3(distance, distance, distance)), mesh);
+    if (save) save_mesh(mesh, "mesh2-" + std::to_string(k));
+
+    timer.reset();
+    timer.start();
+    const double dista = functor(mesh1, mesh);
+    const double distb = functor(mesh, mesh1);
+    const double distc = (CGAL::max)(dista, distb);
+    timer.stop();
+    times.push_back(timer.time());
+    std::cout << "* distance / Hausdorff / time (sec.) " << k << " : " <<
+      distance << " / " << distc << " / " << times.back() << std::endl;
+  }
+
+  double min_time = +std::numeric_limits<double>::infinity();
+  double max_time = -std::numeric_limits<double>::infinity();
+  double avg_time = 0.0;
+  for (const double time : times) {
+    min_time = (CGAL::min)(min_time, time);
+    max_time = (CGAL::max)(max_time, time);
+    avg_time += time;
+  }
+  avg_time /= static_cast<double>(times.size());
+
+  std::cout << std::endl << "* timings (msec.): " << std::endl;
+  std::cout << "avg time: " << avg_time * 1000.0 << std::endl;
+  std::cout << "min time: " << min_time * 1000.0 << std::endl;
+  std::cout << "max time: " << max_time * 1000.0 << std::endl;
+}
+
 int main(int argc, char** argv) {
 
-  const double error_bound = 0.05;
+  const double error_bound = 1e-4;
   const std::size_t num_samples = 1000;
   std::cout << std::endl << "* error bound: " << error_bound << std::endl;
   std::cout << std::endl << "* number of samples: " << num_samples << std::endl;
@@ -702,6 +767,12 @@ int main(int argc, char** argv) {
   // test_timings(filepath, apprx_hd);
   // test_timings(filepath, naive_hd);
   test_timings(filepath, bound_hd);
+
+  // --- Compare with the paper.
+
+  // test_bunny(apprx_hd);
+  // test_bunny(naive_hd);
+  test_bunny(bound_hd);
 
   // ------------------------------------------------------------------------ //
   std::cout << std::endl;

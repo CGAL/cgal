@@ -1368,7 +1368,10 @@ double bounded_error_Hausdorff_impl(
     // std::cout << "tm1 only: " << tm1_only.size() << std::endl;
     // std::cout << "tm2 only: " << tm2_only.size() << std::endl;
 
-    if (tm1_only.size() == 0) return 0.0;
+    if (tm1_only.size() == 0) {
+      std::cout << "* culling rate: 100%" << std::endl;
+      return 0.0;
+    }
     CGAL_assertion(tm1_only.size() > 0);
 
     tm1_tree.insert(tm1_only.begin(), tm1_only.end(), tm1, vpm1);
@@ -1402,8 +1405,13 @@ double bounded_error_Hausdorff_impl(
   auto& candidate_triangles = traversal_traits_tm1.get_candidate_triangles();
   auto global_bounds = traversal_traits_tm1.get_global_bounds();
 
-  // std::cout << "number of candidate triangles 1: " <<
+  // std::cout << "* number of all triangles 1: " <<
+  //   tm1_tree.size() << std::endl;
+  // std::cout << "* number of candidate triangles 1: " <<
   //   candidate_triangles.size() << std::endl;
+
+  std::cout << "* culling rate: " <<
+    FT(100) - (FT(candidate_triangles.size()) / FT(tm1_tree.size()) * FT(100)) << "%" << std::endl;
 
   const FT squared_error_bound = error_bound * error_bound;
   while ( (global_bounds.second - global_bounds.first > error_bound) && !candidate_triangles.empty() ) {
@@ -1491,7 +1499,7 @@ double bounded_error_Hausdorff_impl(
     }
   }
 
-  // std::cout << "number of candidate triangles 2: " <<
+  // std::cout << "* number of candidate triangles 2: " <<
   //   candidate_triangles.size() << std::endl;
 
   // Return linear interpolation between found lower and upper bound
