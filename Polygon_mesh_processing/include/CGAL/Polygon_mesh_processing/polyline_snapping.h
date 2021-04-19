@@ -32,6 +32,7 @@
 #include <boost/range/const_iterator.hpp>
 #include <boost/range/value_type.hpp>
 #include <boost/foreach.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 #include <cmath>
 
@@ -276,6 +277,65 @@ void polyline_snapping (const PolylineRange& polylines,
   }
 }
 
+template <class PolylineRange, class Kernel>
+void polyline_snapping (PolylineRange& polylines,
+                        double tolerance,
+                        const Kernel&)
+{
+  using FT = typename Kernel::FT;
+  using Point_3 = typename Kernel::Point_3;
+  using Polyline = typename PolylineRange::value_type;
+
+  using Points = std::vector<std::pair<FT, Point_3> >;
+  using Segment_points = std::vector<Points>;
+  using Polyline_points = std::vector<Segment_points>;
+  using Snapping_point = std::tuple<std::size_t, std::size_t, std::size_t, std::size_t, FT, FT>;
+
+  Polyline_points polyline_points (polylines.size());
+  for (std::size_t i = 0; i < polylines.size(); ++ i)
+    polyline_points[i].resize (polylines[i].size() - 1);
+
+  polyline_snapping
+    (polylines, tolerance,
+     boost::make_function_output_iterator
+     ([&](const Snapping_point& s)
+      {
+        Point_3 a = CGAL::barycenter (polylines[get<0>(s)][get<1>(s)],     (1. - get<4>(s)),
+                                      polylines[get<0>(s)][get<1>(s) + 1],       get<4>(s));
+        Point_3 b = CGAL::barycenter (polylines[get<2>(s)][get<3>(s)],     (1. - get<5>(s)),
+                                      polylines[get<2>(s)][get<3>(s) + 1],       get<5>(s));
+
+        Point_3 p = CGAL::midpoint(a,b);
+
+        polyline_points[get<0>(s)][get<1>(s)].emplace_back(get<4>(s), p);
+        polyline_points[get<2>(s)][get<3>(s)].emplace_back(get<5>(s), p);
+      }),
+     Kernel());
+
+  for (std::size_t npoly = 0; npoly < polylines.size(); ++ npoly)
+  {
+    Polyline& input = polylines[npoly];
+    Polyline polyline;
+
+    Segment_points& seg_points = polyline_points[npoly];
+
+    for (std::size_t i = 0; i < input.size() - 1; ++ i)
+    {
+      polyline.push_back(input[i]);
+
+      Points& points = seg_points[i];
+      if (points.size() > 1)
+        std::sort (points.begin(), points.end(),
+                   [](const std::pair<FT, Point_3>& a, const std::pair<FT, Point_3>& b) -> bool
+                   { return a.first < b.first; });
+      for (const auto& p : points)
+        polyline.push_back(p.second);
+    }
+    polyline.push_back(input.back());
+
+    input.swap(polyline);
+  }
+}
 
 } } //end of namespace CGAL::Polygon_mesh_processing
 
