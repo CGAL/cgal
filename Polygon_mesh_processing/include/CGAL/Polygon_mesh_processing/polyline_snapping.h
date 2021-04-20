@@ -26,6 +26,7 @@
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/box_intersection_d.h>
+#include <CGAL/Iterator_range.h>
 #include <CGAL/tuple.h>
 
 #include <CGAL/boost/iterator/counting_iterator.hpp>
@@ -33,6 +34,7 @@
 #include <boost/range/value_type.hpp>
 #include <boost/foreach.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
+#include <boost/graph/properties.hpp>
 
 #include <cmath>
 
@@ -380,10 +382,10 @@ void polyline_snapping (Graph& graph, PointMap point_map, double tolerance)
 
   box_self_intersection_d
     (boxes.begin(), boxes.end(),
-     [&](const Box* a, const Box* b)
+     [&](const Box& a, const Box& b)
      {
-       edge_descriptor ea = a->info();
-       edge_descriptor eb = b->info();
+       edge_descriptor ea = a.info();
+       edge_descriptor eb = b.info();
 
        vertex_descriptor vas = source (ea, graph);
        vertex_descriptor vat = target (ea, graph);
@@ -392,13 +394,13 @@ void polyline_snapping (Graph& graph, PointMap point_map, double tolerance)
 
        // Skip adjacent edges
        if (vas == vbs || vat == vbs || vas == vbt || vat == vbt)
-         continue;
+         return;
 
        // Skip segments too far apart
        Segment_3 sa (get (point_map, vas), get (point_map, vat));
        Segment_3 sb (get (point_map, vbs), get (point_map, vbt));
        if (squared_distance (sa, sb) > tolerance * tolerance)
-         continue;
+         return;
 
        // Compute exact snapping point
        Point_3 new_point;
@@ -418,8 +420,8 @@ void polyline_snapping (Graph& graph, PointMap point_map, double tolerance)
                                  / sb.squared_length());
 
        // Store relative position of new vertex on edges
-       auto ma = new_vertices.insert (ea, std::vector<Vertex_position>());
-       auto mb = new_vertices.insert (eb, std::vector<Vertex_position>());
+       auto ma = new_vertices.insert (std::make_pair(ea, std::vector<Vertex_position>()));
+       auto mb = new_vertices.insert (std::make_pair(eb, std::vector<Vertex_position>()));
        ma.first->second.emplace_back (ba, vd);
        mb.first->second.emplace_back (bb, vd);
      },
@@ -442,7 +444,7 @@ void polyline_snapping (Graph& graph, PointMap point_map, double tolerance)
 
     // Add edges after subdivision
     for (std::size_t i = 0; i < vertices.size() - 1; ++ i)
-      add_edge (vertices[i], vertices[i+1], graph);
+      add_edge (vertices[i].second, vertices[i+1].second, graph);
   }
 
 }
