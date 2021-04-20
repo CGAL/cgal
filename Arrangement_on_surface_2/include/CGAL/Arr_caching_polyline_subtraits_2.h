@@ -110,7 +110,7 @@ public:
       return (m_traits.compare_x_2_object()(ps, pt) == EQUAL);
     }
   };
-  Is_vertical_2 is_vertical_2_object () const { return Is_vertical_2(*this); }
+  Is_vertical_2 is_vertical_2_object() const { return Is_vertical_2(*this); }
 
   class Compare_y_at_x_2
   {
@@ -175,8 +175,6 @@ public:
 
       return compare_slopesC2(src2.x(), src2.y(), tgt2.x(), tgt2.y(),
                               src1.x(), src1.y(), tgt1.x(), tgt1.y());
-
-//      return (kernel.compare_slope_2_object()(cv2.line(), cv1.line()));
     }
   };
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
@@ -214,8 +212,6 @@ public:
 
       return compare_slopesC2(src1.x(), src1.y(), tgt1.x(), tgt1.y(),
                               src2.x(), src2.y(), tgt2.x(), tgt2.y());
-
-//      return (kernel.compare_slope_2_object()(cv1.line(), cv2.line()));
     }
   };
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
@@ -262,23 +258,6 @@ public:
   };
   Make_x_monotone_2 make_x_monotone_2_object() const
   { return Make_x_monotone_2(); }
-
-  class Split_2
-  {
-  protected:
-    using Traits = Self;
-    const Traits& m_traits;
-    Split_2(const Traits& traits) : m_traits(traits) {}
-    friend Traits;
-
-  public:
-    void operator()(const X_monotone_curve_2& cv, const Point_2& p,
-                    X_monotone_curve_2& c1, X_monotone_curve_2& c2) const
-    {
-      CGAL_error_msg ("Split_2 not implemented");
-    }
-  };
-  Split_2 split_2_object() const { return Split_2(*this); }
 
   class Intersect_2
   {
@@ -471,115 +450,6 @@ public:
     }
   };
   Merge_2 merge_2_object() const { return Merge_2(*this); }
-
-  // using Approximate_number_type = double;
-  // class Approximate_2
-  // {
-  // public:
-  //   Approximate_number_type operator()(const Point_2& p, int i) const
-  //   {
-  //     CGAL_precondition((i == 0) || (i == 1));
-  //     return (i == 0) ? (CGAL::to_double(p.x())) : (CGAL::to_double(p.y()));
-  //   }
-  // };
-  // Approximate_2 approximate_2_object() const { return Approximate_2(); }
-
-  // class Construct_x_monotone_curve_2
-  // {
-  // protected:
-  //   using Traits = Self;
-  //   const Traits& m_traits;
-  //   Construct_x_monotone_curve_2(const Traits& traits) : m_traits(traits) {}
-  //   friend Traits;
-
-  // public:
-  //   using Segment_2 = typename Kernel::Segment_2;
-
-  //   X_monotone_curve_2 operator()(const Point_2& source,
-  //                                 const Point_2& target) const
-  //   {
-  //     const Kernel& kernel = m_traits;
-  //     auto line = kernel.construct_line_2_object()(source, target);
-  //     Comparison_result res = kernel.compare_xy_2_object()(source, target);
-  //     auto is_degen = (res == EQUAL);
-  //     auto is_directed_right = (res == SMALLER);
-  //     CGAL_precondition_msg(! is_degen,
-  //                           "Cannot construct a degenerate segment.");
-  //     auto is_vert = kernel.is_vertical_2_object()(line);
-  //     return X_monotone_curve_2(line, source, target,
-  //                               is_directed_right, is_vert, is_degen);
-  //   }
-
-  //   X_monotone_curve_2 operator()(const Segment_2& seg) const
-  //   {
-  //     const Kernel& kernel = m_traits;
-  //     auto line = kernel.construct_line_2_object()(seg);
-  //     auto vertex_ctr = kernel.construct_vertex_2_object();
-  //     auto source = vertex_ctr(seg, 0);
-  //     auto target = vertex_ctr(seg, 1);
-  //     Comparison_result res = kernel.compare_xy_2_object()(source, target);
-  //     auto is_degen = (res == EQUAL);
-  //     auto is_directed_right = (res == SMALLER);
-  //     CGAL_precondition_msg(! is_degen,
-  //                           "Cannot construct a degenerate segment.");
-  //     auto is_vert = kernel.is_vertical_2_object()(seg);
-  //     return X_monotone_curve_2(line, source, target,
-  //                               is_directed_right, is_vert, is_degen);
-  //   }
-
-  //   X_monotone_curve_2 operator()(const Line_2& line,
-  //                                 const Point_2& source,
-  //                                 const Point_2& target) const
-  //   {
-  //     const Kernel& kernel = m_traits;
-  //     auto is_vert = kernel.is_vertical_2_object()(line);
-  //     Comparison_result res = kernel.compare_xy_2_object()(source, target);
-  //     auto is_degen = (res == EQUAL);
-  //     auto is_directed_right = (res == SMALLER);
-  //     CGAL_precondition_msg(! is_degen,
-  //                           "Cannot construct a degenerate segment.");
-  //     return X_monotone_curve_2(line, source, target,
-  //                               is_directed_right, is_vert, is_degen);
-  //   }
-  // };
-  // Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const
-  // { return Construct_x_monotone_curve_2(*this); }
-
-  // class Trim_2
-  // {
-  //  protected:
-  //   using Traits = Self;
-  //   const Traits& m_traits;
-  //   Trim_2(const Traits& traits) : m_traits(traits) {}
-  //   friend Traits;
-
-  // public:
-  //   X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,
-  //                                 const Point_2& src,
-  //                                 const Point_2& tgt)const
-  //   {
-  //     CGAL_precondition_code(Equal_2 equal = m_traits.equal_2_object());
-  //     CGAL_precondition_code(Compare_y_at_x_2 compare_y_at_x =
-  //                            m_traits.compare_y_at_x_2_object());
-  //     Compare_x_2 compare_x_2 = m_traits.compare_x_2_object();
-
-  //     // check whether source and taget are two distinct points and they lie
-  //     // on the line.
-  //     CGAL_precondition(!equal(src, tgt));
-  //     CGAL_precondition(compare_y_at_x(src, xcv) == EQUAL);
-  //     CGAL_precondition(compare_y_at_x(tgt, xcv) == EQUAL);
-
-  //     // exchange src and tgt IF they do not conform with the direction
-  //     X_monotone_curve_2 trimmed_segment;
-  //     if (xcv.is_directed_right() && compare_x_2(src, tgt) == LARGER)
-  //       trimmed_segment = X_monotone_curve_2(tgt, src);
-  //     else if (! xcv.is_directed_right() && (compare_x_2(src, tgt) == SMALLER))
-  //       trimmed_segment = X_monotone_curve_2(tgt, src);
-  //     else trimmed_segment = X_monotone_curve_2(src, tgt);
-  //     return trimmed_segment;
-  //   }
-  // };
-  // Trim_2 trim_2_object() const { return Trim_2(*this); }
 
   class Compare_endpoints_xy_2
   {

@@ -122,14 +122,14 @@ public:
       Curve_iterator it_prev = start + 1;
       Curve_iterator it_curr = it_prev + 1;
 
-      Comparison_result previous_comp = compare_x_2 (*start, *it_prev);
+      Comparison_result previous_comp = compare_x_2(*start, *it_prev);
       for (; it_curr != cv.points_end(); ++ it_prev, ++ it_curr)
       {
-        Comparison_result current_comp = compare_x_2 (*it_prev, *it_curr);
+        Comparison_result current_comp = compare_x_2(*it_prev, *it_curr);
         if (current_comp != previous_comp)
         {
           previous_comp = current_comp;
-          *oi ++ = Make_x_monotone_result(X_monotone_curve_2 (kernel, start, it_curr));
+          *oi ++ = Make_x_monotone_result(X_monotone_curve_2(kernel, start, it_curr));
           start = it_prev;
         }
       }
@@ -173,7 +173,6 @@ public:
 
       // Locate the subcurve on the polycurve xcv that contains p.
       std::size_t i = m_traits.locate(xcv, p);
-//      std::cerr << "SPLIT AT " << i << "(" << (dir == SMALLER ? "smaller" : "larger") << "): ";
 
       CGAL_precondition(i != Traits::INVALID_INDEX);
 
@@ -189,31 +188,24 @@ public:
       */
 
       if (equal(max_vertex(xcv[i]), p)) {
-//        std::cerr << "Split at " << p << " (" << i << "): " << xcv << std::endl;
         // The entire i'th subcurve belongs to xcv1:
-        xcv1 = X_monotone_curve_2 (kernel, xcv.points_begin(), xcv[i+1]);
-//        std::cerr << " -> " << xcv1 << std::endl;
-        xcv2 = X_monotone_curve_2 (kernel, xcv[i], xcv.points_end());
-//        std::cerr << " -> " << xcv2 << std::endl;
+        xcv1 = X_monotone_curve_2(kernel, xcv.points_begin(), xcv[i+1]);
+        xcv2 = X_monotone_curve_2(kernel, xcv[i], xcv.points_end());
       }
       else if (equal(min_vertex(xcv[i]), p)) {
         // The entire i'th subcurves belongs to xcv2:
-        xcv1 = X_monotone_curve_2 (kernel, xcv.points_begin(), xcv[i]);
-        xcv2 = X_monotone_curve_2 (kernel, xcv[i-1], xcv.points_end());
+        xcv1 = X_monotone_curve_2(kernel, xcv.points_begin(), xcv[i]);
+        xcv2 = X_monotone_curve_2(kernel, xcv[i-1], xcv.points_end());
       }
       else {
         // The i'th subcurve should be split: The left part(seg1)
         // goes to xcv1, and the right part(seg2) goes to xcv2.
         auto p_ptr = xcv.extreme_point(p, i);
-        xcv1 = X_monotone_curve_2 (kernel, Extreme_point(), xcv.points_begin(), xcv[i+1], p_ptr);
-        xcv2 = X_monotone_curve_2 (kernel, p_ptr, xcv[i+1], xcv.points_end(), Extreme_point());
+        xcv1 = X_monotone_curve_2(kernel, Extreme_point(), xcv.points_begin(), xcv[i+1], p_ptr);
+        xcv2 = X_monotone_curve_2(kernel, p_ptr, xcv[i+1], xcv.points_end(), Extreme_point());
       }
 
       if (dir != SMALLER) std::swap(xcv1, xcv2);
-
-      // std::cerr.precision(10);
-      // std::cerr << "Splitted " << xcv << " at " << p << " into:" << std::endl
-      //           << "  * " << xcv1 << std::endl << "  * " << xcv2 << std::endl;
     }
 
   };
@@ -360,21 +352,18 @@ public:
           right_coincides =
             (cmp_y_at_x(cv2i2, ARR_MAX_END, cv1i1) == EQUAL);
 
-#if 0
-        oi = intersect (cv1i1, cv2i2, oi);
-#else
         right_overlap = false;
 
         if (! right_coincides && ! left_coincides) {
-          oi = intersect (cv1i1, cv2i2, oi);
+          oi = intersect(cv1i1, cv2i2, oi);
         }
         else if (right_coincides && left_coincides) {
           right_overlap = true;
-          oi = intersect (cv1i1, cv2i2, oi);
+          oi = intersect(cv1i1, cv2i2, oi);
         }
         else if (left_coincides && ! right_coincides) {
           if (left_overlap) {
-            oi = intersect (cv1i1, cv2i2, oi);
+            oi = intersect(cv1i1, cv2i2, oi);
           }
           else {
             if (left_res == SMALLER) {
@@ -387,7 +376,6 @@ public:
             }
           }
         }
-#endif
 
         // Proceed forward.
         if (right_res != SMALLER) {
@@ -504,7 +492,7 @@ public:
     Curve_2 operator()(const Range& range, bool duplicate_first = false) const
     {
       const Kernel& kernel = *m_traits.subcurve_traits_2();
-      return Curve_2 (kernel, range, true);
+      return Curve_2(kernel, range, true);
     }
   };
 
