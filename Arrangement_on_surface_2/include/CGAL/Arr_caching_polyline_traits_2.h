@@ -114,6 +114,8 @@ public:
     {
       using Make_x_monotone_result = boost::variant<Point_2, X_monotone_curve_2>;
 
+      const Kernel& kernel = *m_traits.subcurve_traits_2();
+
       auto compare_x_2 = m_traits.compare_x_2_object();
 
       Curve_iterator start = cv.points_begin();
@@ -127,11 +129,11 @@ public:
         if (current_comp != previous_comp)
         {
           previous_comp = current_comp;
-          *oi ++ = Make_x_monotone_result(X_monotone_curve_2 (start, it_curr));
+          *oi ++ = Make_x_monotone_result(X_monotone_curve_2 (kernel, start, it_curr));
           start = it_prev;
         }
       }
-      *oi ++ = Make_x_monotone_result(X_monotone_curve_2(start, cv.points_end()));
+      *oi ++ = Make_x_monotone_result(X_monotone_curve_2(kernel, start, cv.points_end()));
 
       return oi;
     }
@@ -152,6 +154,7 @@ public:
                     X_monotone_curve_2& xcv1, X_monotone_curve_2& xcv2) const
     {
       const Subcurve_traits_2* geom_traits = m_traits.subcurve_traits_2();
+      const Kernel& kernel = *geom_traits;
       auto min_vertex = geom_traits->construct_min_vertex_2_object();
       auto max_vertex = geom_traits->construct_max_vertex_2_object();
       auto equal = geom_traits->equal_2_object();
@@ -188,22 +191,22 @@ public:
       if (equal(max_vertex(xcv[i]), p)) {
 //        std::cerr << "Split at " << p << " (" << i << "): " << xcv << std::endl;
         // The entire i'th subcurve belongs to xcv1:
-        xcv1 = X_monotone_curve_2 (xcv.points_begin(), xcv[i+1]);
+        xcv1 = X_monotone_curve_2 (kernel, xcv.points_begin(), xcv[i+1]);
 //        std::cerr << " -> " << xcv1 << std::endl;
-        xcv2 = X_monotone_curve_2 (xcv[i], xcv.points_end());
+        xcv2 = X_monotone_curve_2 (kernel, xcv[i], xcv.points_end());
 //        std::cerr << " -> " << xcv2 << std::endl;
       }
       else if (equal(min_vertex(xcv[i]), p)) {
         // The entire i'th subcurves belongs to xcv2:
-        xcv1 = X_monotone_curve_2 (xcv.points_begin(), xcv[i]);
-        xcv2 = X_monotone_curve_2 (xcv[i-1], xcv.points_end());
+        xcv1 = X_monotone_curve_2 (kernel, xcv.points_begin(), xcv[i]);
+        xcv2 = X_monotone_curve_2 (kernel, xcv[i-1], xcv.points_end());
       }
       else {
         // The i'th subcurve should be split: The left part(seg1)
         // goes to xcv1, and the right part(seg2) goes to xcv2.
         auto p_ptr = xcv.extreme_point(p, i);
-        xcv1 = X_monotone_curve_2 (Extreme_point(), xcv.points_begin(), xcv[i+1], p_ptr);
-        xcv2 = X_monotone_curve_2 (p_ptr, xcv[i+1], xcv.points_end(), Extreme_point());
+        xcv1 = X_monotone_curve_2 (kernel, Extreme_point(), xcv.points_begin(), xcv[i+1], p_ptr);
+        xcv2 = X_monotone_curve_2 (kernel, p_ptr, xcv[i+1], xcv.points_end(), Extreme_point());
       }
 
       if (dir != SMALLER) std::swap(xcv1, xcv2);

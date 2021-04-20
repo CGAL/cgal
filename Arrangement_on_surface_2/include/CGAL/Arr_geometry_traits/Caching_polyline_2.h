@@ -49,7 +49,6 @@ protected:
   // Using -2 as null index as -1 can be the index of `m_first`
   inline Index null_idx() const { return Index(-2); }
 
-  const Kernel* m_traits;
   const Range* m_range;
   std::shared_ptr<Line_cache> m_line_cache;
   Extreme_point m_first;
@@ -62,8 +61,7 @@ protected:
 public:
 
   Caching_polyline_2()
-    : m_traits(nullptr)
-    , m_range(nullptr)
+    : m_range(nullptr)
     , m_begin (null_idx())
     , m_end (null_idx())
     , m_reverse(false)
@@ -71,8 +69,7 @@ public:
 
   // Create a caching polyline from a range
   Caching_polyline_2 (const Kernel& kernel, const Range& range, bool force_closure = false)
-    : m_traits(&kernel)
-    , m_range(&range)
+    : m_range(&range)
     , m_reverse(false)
   {
     m_line_cache = std::make_shared<Line_cache>(range.size(), nullptr);
@@ -80,25 +77,23 @@ public:
     m_end = range.size();
     if (force_closure)
       m_last = Extreme_point(std::make_shared<Point_2>(*range.begin()), nullptr);
-    compute_direction();
+    compute_direction(kernel);
   }
 
   // Create an isolated segment with no range support
   Caching_polyline_2(const Kernel& kernel, const Point_2& first, const Point_2& last)
-    : m_traits (&kernel)
-    , m_first(std::make_shared<Point_2>(first), nullptr)
+    : m_first(std::make_shared<Point_2>(first), nullptr)
     , m_last(std::make_shared<Point_2>(last), nullptr)
     , m_begin (null_idx())
     , m_end (null_idx())
     , m_reverse(false)
   {
-    compute_direction();
+    compute_direction(kernel);
   }
 
   // Create a polyline from a subset of another polyline
-  Caching_polyline_2 (iterator begin, iterator end)
-    : m_traits (begin.support().m_traits)
-    , m_range (begin.support().m_range)
+  Caching_polyline_2 (const Kernel& kernel, iterator begin, iterator end)
+    : m_range (begin.support().m_range)
     , m_line_cache (begin.support().m_line_cache)
     , m_reverse(false)
   {
@@ -127,16 +122,13 @@ public:
       m_end = end.base();
 
     CGAL_assertion (number_of_subcurves() > 0);
-    // This constructor should only create x-monotone polylines
-    CGAL_assertion (is_x_monotone());
 
-    compute_direction();
+    compute_direction(kernel);
   }
 
   // Create a polyline from a subset of another polyline and one or two new extreme points
-  Caching_polyline_2 (Extreme_point first, iterator begin, iterator end, Extreme_point last)
-    : m_traits (begin.support().m_traits)
-    , m_range (begin.support().m_range)
+  Caching_polyline_2 (const Kernel& kernel, Extreme_point first, iterator begin, iterator end, Extreme_point last)
+    : m_range (begin.support().m_range)
     , m_line_cache (begin.support().m_line_cache)
     , m_reverse(false)
   {
@@ -167,10 +159,7 @@ public:
       m_end = end.base();
     }
 
-    // This constructor should only create x-monotone polylines
-    CGAL_assertion (is_x_monotone());
-
-    compute_direction();
+    compute_direction(kernel);
   }
 
 
@@ -197,24 +186,12 @@ public:
     return out;
   }
 
-  void compute_direction()
+  void compute_direction(const Kernel& kernel)
   {
-    m_is_directed_right = (m_traits->compare_xy_2_object()(*points_begin(), *std::prev(points_end())) == SMALLER);
+    m_is_directed_right = (kernel.compare_xy_2_object()(*points_begin(), *std::prev(points_end())) == SMALLER);
   }
 
   bool is_directed_right() const { return m_is_directed_right; }
-
-  // Used for assertions only
-  bool is_x_monotone() const
-  {
-    auto compare_x_2 = m_traits->compare_x_2_object();
-    iterator b = points_begin(), e = points_end() - 1;
-    Comparison_result comp = m_traits->compare_x_2_object()(*b, *(b+1));
-    for (iterator it = b + 1; it < e; ++ it)
-      if (comp != m_traits->compare_x_2_object()(*it, *(it+1)))
-        return false;
-    return true;
-  }
 
   Bbox_2 bbox() const
   {
@@ -285,14 +262,14 @@ private:
     return const_cast<Line_ptr&>((*m_line_cache)[idx]);
   }
 
-  const Line_2& line (const Index& index, const Point_2& a, const Point_2& b) const
+  const Line_2& line (const Kernel& kernel, const Index& index, const Point_2& a, const Point_2& b) const
   {
     Line_ptr& l = line_ptr(index);
     CGAL_BRANCH_PROFILER("Caching polyline line-cache access", br);
     if (!l)
     {
       CGAL_BRANCH_PROFILER_BRANCH(br);
-      l = std::make_shared<Line_2>(m_traits->construct_line_2_object()(a, b));
+      l = std::make_shared<Line_2>(kernel.construct_line_2_object()(a, b));
     }
     return *l;
   }
@@ -311,10 +288,11 @@ public:
   using Extreme_point = typename Base::Extreme_point;
 
   X_monotone_caching_polyline_2() : Base() { }
+  X_monotone_caching_polyline_2(const Base& base) : Base(base) { }
   X_monotone_caching_polyline_2(const Kernel_& kernel, const Point_2& first, const Point_2& last) : Base(kernel, first, last) { }
-  X_monotone_caching_polyline_2 (iterator begin, iterator end) : Base(begin, end) { }
-  X_monotone_caching_polyline_2 (Extreme_point first, iterator begin, iterator end, Extreme_point last)
-    : Base(first, begin, end, last) { }
+  X_monotone_caching_polyline_2(const Kernel_& kernel, iterator begin, iterator end) : Base(kernel, begin, end) { }
+  X_monotone_caching_polyline_2(const Kernel_& kernel, Extreme_point first, iterator begin, iterator end, Extreme_point last)
+    : Base(kernel, first, begin, end, last) { }
 };
 
 
@@ -395,17 +373,8 @@ public:
   const Point_2& source() const { return const_dereference(); }
   const Point_2& target() const { return std::next(*this).const_dereference(); }
 
-  bool is_vertical() const
-  {
-    const Point_2& ps = source();
-    const Point_2& pt = target();
-
-    return (m_support->m_traits->compare_x_2_object()(ps, pt) == EQUAL);
-  }
-
   bool is_directed_right() const
   {
-    CGAL_assertion ((m_support->m_traits->compare_xy_2_object()(source(), target()) == SMALLER) == m_support->is_directed_right());
     return m_support->is_directed_right();
   }
 
@@ -425,9 +394,9 @@ public:
     return source();
   }
 
-  const Line_2& line() const
+  const Line_2& line(const Kernel& kernel) const
   {
-    return m_support->line (m_base, source(), target());
+    return m_support->line (kernel, m_base, source(), target());
   }
 
 private:

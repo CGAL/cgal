@@ -96,11 +96,21 @@ public:
 
   class Is_vertical_2
   {
+  protected:
+    using Traits = Self;
+    const Traits& m_traits;
+    Is_vertical_2(const Traits& traits) : m_traits(traits) {}
+    friend Traits;
   public:
     bool operator()(const X_monotone_curve_2& cv) const
-    { return cv.is_vertical(); }
+    {
+      const Point_2& ps = cv.source();
+      const Point_2& pt = cv.target();
+
+      return (m_traits.compare_x_2_object()(ps, pt) == EQUAL);
+    }
   };
-  Is_vertical_2 is_vertical_2_object () const { return Is_vertical_2(); }
+  Is_vertical_2 is_vertical_2_object () const { return Is_vertical_2(*this); }
 
   class Compare_y_at_x_2
   {
@@ -117,7 +127,7 @@ public:
 
       const Kernel& kernel = m_traits;
 
-      if (! cv.is_vertical()) {
+      if (! m_traits.is_vertical_2_object()(cv)) {
         // Compare p with the segment supporting line.
         CGAL_assertion_code(auto cmp_x = kernel.compare_x_2_object());
         CGAL_assertion(cmp_x(cv.left(), cv.right()) == SMALLER);
@@ -349,16 +359,16 @@ public:
       // An intersection is guaranteed.
 
       // Intersect the two supporting lines.
-      auto res = kernel.intersect_2_object()(cv1.line(), cv2.line());
+      auto res = kernel.intersect_2_object()(cv1.line(m_traits), cv2.line(m_traits));
       CGAL_assertion(bool(res));
 
       // Check if we have a single intersection point.
       const Point_2* ip = boost::get<Point_2>(&*res);
       if (ip != nullptr) {
-        CGAL_assertion(cv1.is_vertical() ?
+        CGAL_assertion(m_traits.is_vertical_2_object()(cv1) ?
                        m_traits.is_in_y_range_2_object()(cv1, *ip) :
                        m_traits.is_in_x_range_2_object()(cv1, *ip));
-        CGAL_assertion(cv2.is_vertical() ?
+        CGAL_assertion(m_traits.is_vertical_2_object()(cv2) ?
                        m_traits.is_in_y_range_2_object()(cv2, *ip) :
                        m_traits.is_in_x_range_2_object()(cv2, *ip));
         Intersection_point ip_mult(*ip, 1);
