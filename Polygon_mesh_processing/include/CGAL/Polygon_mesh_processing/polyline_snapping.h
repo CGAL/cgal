@@ -337,6 +337,117 @@ void polyline_snapping (PolylineRange& polylines,
   }
 }
 
+template <class Graph, class PointMap>
+void polyline_snapping (Graph& graph, PointMap point_map, double tolerance)
+{
+  using Point_3 = typename boost::property_traits<PointMap>::value_type;
+  using Kernel = typename Kernel_traits<Point_3>::Kernel;
+  using Segment_3 = typename Kernel::Segment_3;
+  using FT = typename Kernel::FT;
+
+  using vertex_descriptor = typename boost::graph_traits<Graph>::vertex_descriptor;
+  using edge_descriptor = typename boost::graph_traits<Graph>::edge_descriptor;
+
+  using Box = Box_intersection_d::Box_with_info_d<double, 3, edge_descriptor>;
+
+  std::vector<Box> boxes;
+  boxes.reserve (num_edges(graph));
+
+  for (edge_descriptor ed : make_range(edges(graph).first, edges(graph).second))
+  {
+    vertex_descriptor vs = source (ed, graph);
+    vertex_descriptor vt = target (ed, graph);
+
+    const Point_3& ps = get (point_map, vs);
+    const Point_3& pt = get (point_map, vt);
+
+    Bbox_3 bbox = ps.bbox() + pt.bbox();
+    bbox = Bbox_3 (bbox.xmin() - tolerance / 2.,
+                   bbox.ymin() - tolerance / 2.,
+                   bbox.zmin() - tolerance / 2.,
+                   bbox.xmax() + tolerance / 2.,
+                   bbox.ymax() + tolerance / 2.,
+                   bbox.zmax() + tolerance / 2.);
+
+    boxes.emplace_back(bbox, ed);
+  }
+
+  internal::Exact_snapping<Kernel> exact_snapping;
+  std::ptrdiff_t cutoff = 2000;
+
+  using Vertex_position = std::pair<FT, vertex_descriptor>;
+  std::map<edge_descriptor, std::vector<Vertex_position>> new_vertices;
+
+  box_self_intersection_d
+    (boxes.begin(), boxes.end(),
+     [&](const Box* a, const Box* b)
+     {
+       edge_descriptor ea = a->info();
+       edge_descriptor eb = b->info();
+
+       vertex_descriptor vas = source (ea, graph);
+       vertex_descriptor vat = target (ea, graph);
+       vertex_descriptor vbs = source (eb, graph);
+       vertex_descriptor vbt = target (eb, graph);
+
+       // Skip adjacent edges
+       if (vas == vbs || vat == vbs || vas == vbt || vat == vbt)
+         continue;
+
+       // Skip segments too far apart
+       Segment_3 sa (get (point_map, vas), get (point_map, vat));
+       Segment_3 sb (get (point_map, vbs), get (point_map, vbt));
+       if (squared_distance (sa, sb) > tolerance * tolerance)
+         continue;
+
+       // Compute exact snapping point
+       Point_3 new_point;
+       bool okay;
+       std::tie (new_point, okay) = exact_snapping.intersection (sa, sb);
+       if (!okay)
+         return;
+
+       // Create new vertex
+       vertex_descriptor vd = add_vertex(graph);
+       put (point_map, vd, new_point);
+
+       // Compute barycentric coord along each segment
+       FT ba = approximate_sqrt (squared_distance (sa.source(), sa.supporting_line().projection(new_point))
+                                 / sa.squared_length());
+       FT bb = approximate_sqrt (squared_distance (sb.source(), sb.supporting_line().projection(new_point))
+                                 / sb.squared_length());
+
+       // Store relative position of new vertex on edges
+       auto ma = new_vertices.insert (ea, std::vector<Vertex_position>());
+       auto mb = new_vertices.insert (eb, std::vector<Vertex_position>());
+       ma.first->second.emplace_back (ba, vd);
+       mb.first->second.emplace_back (bb, vd);
+     },
+     cutoff);
+
+  for (auto& m : new_vertices)
+  {
+    edge_descriptor ed = m.first;
+    std::vector<Vertex_position>& vertices = m.second;
+    vertices.emplace_back (FT(0), source(ed, graph));
+    vertices.emplace_back (FT(1), target(ed, graph));
+
+    // Sort vertices along the edge
+    std::sort (vertices.begin(), vertices.end(),
+               [](const Vertex_position& a, const Vertex_position& b) -> bool
+               { return a.first < b.first; });
+
+    // Remove current edge
+    remove_edge(ed, graph);
+
+    // Add edges after subdivision
+    for (std::size_t i = 0; i < vertices.size() - 1; ++ i)
+      add_edge (vertices[i], vertices[i+1], graph);
+  }
+
+}
+
+
 } } //end of namespace CGAL::Polygon_mesh_processing
 
 /// \endcond
