@@ -22,7 +22,7 @@ class Single
 public:
 
   typedef T* iterator;
-  typedef T* const_iterator;
+  typedef const T* const_iterator;
   typedef std::size_t size_type;
 
 private:
@@ -33,8 +33,10 @@ public:
 
   Single (T& t) : t(t) { }
 
-  iterator begin() const { return &t; }
-  iterator end()   const { return &t + 1; }
+  iterator       begin()       { return &t; }
+  iterator       end()         { return &t + 1; }
+  const_iterator begin() const { return &t; }
+  const_iterator end()   const { return &t + 1; }
 
   constexpr size_type size()  const { return 1; }
   constexpr bool      empty() const { return false; }
