@@ -241,23 +241,11 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   target_link_libraries(point_dialog PUBLIC Qt5::OpenGL Qt5::Gui Qt5::Script
                                             Qt5::Widgets)
 
-  add_custom_target(all_scene_items)
-  if(BUILD_TESTING)
-    cgal_add_compilation_test(all_scene_items)
-    set_property(
-      TEST compilation_of__all_scene_items
-      APPEND
-      PROPERTY DEPENDS compilation_of__demo_framework)
-    set_property(TEST compilation_of__all_scene_items APPEND PROPERTY TIMEOUT
-                                                                      1700)
-  endif(BUILD_TESTING)
-
   macro(add_item item_name)
     add_library(${item_name} SHARED ${ARGN})
     target_link_libraries(
       ${item_name} PUBLIC demo_framework ${CGAL_LIBRARIES} Qt5::OpenGL Qt5::Gui
                           Qt5::Script Qt5::Widgets)
-    add_dependencies(all_scene_items ${item_name})
     add_to_cached_list(CGAL_EXECUTABLE_TARGETS ${item_name})
   endmacro(add_item)
 
