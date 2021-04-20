@@ -193,10 +193,12 @@ inline bool possibly(Uncertain<bool> c);
 // -------------
 
 #if defined(CGAL_NO_PRECONDITIONS)
+#  define CGAL_preconditions false
 #  define CGAL_precondition(EX) (static_cast<void>(0))
 #  define CGAL_precondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_precondition_code(CODE)
 #else
+#  define CGAL_preconditions true
 #  define CGAL_precondition(EX) \
    (CGAL::possibly(EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_precondition_msg(EX,MSG) \
