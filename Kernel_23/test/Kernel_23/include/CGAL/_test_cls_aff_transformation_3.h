@@ -261,7 +261,7 @@ _test_cls_aff_transformation_3(const R& )
  assert( vec.transform(translate) == vec.transform(gtrans) );
  assert( dir.transform(translate) == dir.transform(gtrans) );
  assert( pnt.transform(translate) == pnt.transform(gtrans) );
- assert( pla.transform(translate) == pla.transform(gtrans) );
+ assert( pla.transform(translate) == pla.transform(gtrans) || nonexact );
 
  // xrefl
  tdir = d0.transform(xrefl);

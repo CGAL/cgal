@@ -233,7 +233,7 @@ public:
   virtual  bool
            is_scaling() const
            {
-             return false;
+             return true;
            }
 
   virtual  RT
@@ -369,6 +369,12 @@ public:
 
   bool
   is_odd()    const;
+
+  bool
+  is_scaling()    const;
+
+  bool
+  is_translation()    const;
 
   FT
   cartesian(int i, int j) const
@@ -577,6 +583,14 @@ Aff_transformation_repH3<R>::is_translation() const
   return false;
 }
 
+template < class R >
+CGAL_KERNEL_INLINE
+bool
+Aff_transformation_repH3<R>::is_scaling() const
+{
+  return false;
+}
+
 
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
@@ -737,6 +751,12 @@ inline
 bool
 Translation_repH3<R>::is_translation() const
 { return true; }
+
+template < class R >
+inline
+bool
+Translation_repH3<R>::is_scaling() const
+{ return false; }
 
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
@@ -934,6 +954,19 @@ inline
 bool
 Aff_transformationH3<R>::is_odd() const
 { return ( ! (this->Ptr()->is_even() )); }
+
+
+template < class R >
+inline
+bool
+Aff_transformationH3<R>::is_scaling() const
+{ return this->Ptr()->is_scaling(); }
+
+template < class R >
+inline
+bool
+Aff_transformationH3<R>::is_translation() const
+{ return this->Ptr()->is_translation(); }
 
 template < class R >
 CGAL_KERNEL_INLINE
