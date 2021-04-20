@@ -1,0 +1,27 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_3D_Mesh_Data_Structure
+\anchor userchaptermds3
+\authors Pierre Alliez, Clément Jamin, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec
+\cgalAutoToc
+
+\cgalFigureBegin{figuremultilabel_mesher,multilabel_mesher.jpg}
+Cut-view of a multi-domain 3D mesh generated from a segmented image.
+\cgalFigureEnd
+
+\section MDS_3_section_intro Introduction
+
+This package is devoted to the representation of 3-Dimensional Mesh Data Structures.
+The domain to be meshed is a subset of 3D space, required to be bounded.
+
+
+\subsection MDS_3ImplementationHistory Implementation History
+
+The code of the package `MDS_3` was initially part of the package `Mesh_3`.
+With the meshing processes becoming more versatile, it was moved to its own package in the
+release 5.4 of \cgal.
+
+*/
+} /* namespace CGAL */
