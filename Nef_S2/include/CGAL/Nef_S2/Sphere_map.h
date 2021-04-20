@@ -229,7 +229,7 @@ public:
   Sphere_map(bool = false) : boundary_item_(boost::none),
     svertices_(), sedges_(), sfaces_(), shalfloop_() {}
 
-  ~Sphere_map() CGAL_NOEXCEPT(CGAL_NO_ASSERTIONS_BOOL)
+  ~Sphere_map() noexcept(!CGAL_assertions)
   {
     CGAL_destructor_assertion_catch(
       clear();

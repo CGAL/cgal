@@ -73,7 +73,7 @@ class Nef_polyhedron_S2_rep {
 public:
   Nef_polyhedron_S2_rep() : sm_() {}
   Nef_polyhedron_S2_rep(const Self&) : sm_() {}
-  ~Nef_polyhedron_S2_rep() CGAL_NOEXCEPT(CGAL_NO_ASSERTIONS_BOOL)
+  ~Nef_polyhedron_S2_rep() noexcept(!CGAL_assertions)
   {
     CGAL_destructor_assertion_catch(
       sm_.clear();

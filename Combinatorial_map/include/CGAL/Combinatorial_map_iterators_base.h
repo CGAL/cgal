@@ -389,7 +389,7 @@ namespace CGAL {
     {}
 
     /// Destructor.
-    ~CMap_non_basic_iterator() CGAL_NOEXCEPT(CGAL_NO_ASSERTIONS_BOOL)
+    ~CMap_non_basic_iterator() noexcept(!CGAL_assertions)
     {
       CGAL_destructor_assertion( this->mmark_number!=Map::INVALID_MARK );
       if (this->mmap->get_number_of_times_mark_reserved

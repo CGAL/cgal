@@ -77,6 +77,7 @@ inline bool possibly(Uncertain<bool> c);
 // ----------
 
 #if defined(CGAL_NO_ASSERTIONS)
+#  define CGAL_assertions false
 #  define CGAL_assertion(EX) (static_cast<void>(0))
 #  define CGAL_destructor_assertion(EX) (static_cast<void>(0))
 #  define CGAL_destructor_assertion_catch(CODE) CODE
@@ -90,6 +91,7 @@ inline bool possibly(Uncertain<bool> c);
 #    define CGAL_assume_code(CODE) CGAL_assertion_code(CODE)
 #  endif // not def CGAL_ASSUME
 #else // no CGAL_NO_ASSERTIONS
+#  define CGAL_assertions true
 #  define CGAL_assertion(EX) \
    (CGAL::possibly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
 #  if __cpp_lib_uncaught_exceptions || ( _MSVC_LANG >= 201703L )  // C++17
