@@ -17,23 +17,38 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/internal/Repair/helper.h>
+#include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/Polygon_mesh_processing/clip.h>
+#include <CGAL/Polygon_mesh_processing/clip_self_intersecting.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/manifoldness.h>
+#include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_halfedge_graph_segment_primitive.h>
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/selection.h>
+#include <CGAL/Complex_2_in_triangulation_3.h>
 #include <CGAL/Heat_method_3/Surface_mesh_geodesic_distances_3.h>
+#include <CGAL/Implicit_surface_3.h>
+#include <CGAL/IO/facets_in_complex_2_to_triangle_mesh.h>
+#include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 #include <CGAL/Kernel/global_functions.h>
+#include <CGAL/make_surface_mesh.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Origin.h>
 #include <CGAL/property_map.h>
+#include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/utility.h>
+
+#include <boost/shared_ptr.hpp>
 
 #include <iostream>
 #include <iterator>
@@ -327,7 +342,7 @@ enum NM_TREATMENT
 {
   SEPARATE = 0,
   CLIP,
-  MERGE,
+  MERGE
 };
 
 namespace internal {
@@ -944,6 +959,178 @@ std::size_t repair_non_manifoldness(PolygonMesh& pmesh,
   CGAL_postcondition(nm_points.empty());
 
   return initial_n;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template <class TriangleMesh, class GeomTraits>
+class Offset_function
+{
+  typedef AABB_halfedge_graph_segment_primitive<TriangleMesh> Primitive;
+  typedef AABB_traits<GeomTraits, Primitive> Traits;
+  typedef AABB_tree<Traits> Tree;
+
+public:
+  template <typename EdgeRange>
+  Offset_function(TriangleMesh& tm,
+                  const EdgeRange& edges,
+                  double offset_distance)
+    : m_tree_ptr(new Tree(std::begin(edges), std::end(edges), tm) ),
+      m_offset_distance(offset_distance)
+  {}
+
+  double operator()(const typename GeomTraits::Point_3& p) const
+  {
+    typename GeomTraits::Point_3 closest_point = m_tree_ptr->closest_point(p);
+    double distance = sqrt(squared_distance(p, closest_point));
+
+    return m_offset_distance - distance;
+  }
+
+private:
+  boost::shared_ptr<Tree> m_tree_ptr;
+  double m_offset_distance;
+};
+
+template <typename PolygonMesh, typename NamedParameters>
+void repair_non_manifold_edges_with_clipping(PolygonMesh& pmesh,
+                                             const NamedParameters& np)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor      edge_descriptor;
+
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type       VertexPointMap;
+  VertexPointMap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                        get_property_map(vertex_point, pmesh));
+
+  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type           Geom_traits;
+  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
+
+  // default triangulation for Surface_mesher
+  typedef typename CGAL::Surface_mesher::Surface_mesh_default_triangulation_3_generator<Geom_traits>::Type Tr;
+
+  // c2t3
+  typedef CGAL::Complex_2_in_triangulation_3<Tr> C2t3;
+  typedef typename Geom_traits::Sphere_3 Sphere;
+  typedef typename Geom_traits::Point_3 Point;
+  typedef typename Geom_traits::FT FT;
+
+  typedef typename boost::property_traits<VertexPointMap>::reference           Point_ref;
+
+  typedef Offset_function<PolygonMesh, Geom_traits> Offset_function;
+  typedef CGAL::Implicit_surface_3<Geom_traits, Offset_function> Surface_3;
+
+  double offset_distance = 0.1;
+  double angle_bound = 20;
+  double radius_bound = 0.1;
+  double distance_bound = 0.01;
+
+  CGAL::Bbox_3 bbox = CGAL::Polygon_mesh_processing::bbox_3(pmesh);
+
+  Point center((bbox.xmax() + bbox.xmin())/2,
+               (bbox.ymax() + bbox.ymin())/2,
+               (bbox.zmax() + bbox.zmin())/2);
+  double sqrad = 0.6 * std::sqrt(CGAL::square(bbox.xmax() - bbox.xmin()) +
+                                 CGAL::square(bbox.ymax() - bbox.ymin()) +
+                                 CGAL::square(bbox.zmax() - bbox.zmin()))
+                + offset_distance;
+  sqrad = CGAL::square(sqrad);
+
+  std::cout << "Offset distance = " << offset_distance << "\n";
+  std::cout << "Bounding sphere center = " << center << "\n";
+  std::cout << "Bounding sphere squared radius = " << sqrad << "\n";
+  std::cout << "Angular bound " << angle_bound << "\n";
+  std::cout << "Radius bound " << radius_bound << "\n";
+  std::cout << "Distance bound " << distance_bound << "\n";
+
+  std::map<std::pair<Point, Point>, std::vector<halfedge_descriptor> > nm_edges;
+
+  for(const halfedge_descriptor h : halfedges(pmesh))
+  {
+    Point_ref sp = get(vpm, source(h, pmesh));
+    Point_ref tp = get(vpm, target(h, pmesh));
+
+    if(sp > tp)
+      continue;
+
+    auto is_insert_successful = nm_edges.emplace(std::make_pair(sp, tp),
+                                                 std::initializer_list<halfedge_descriptor>{h});
+
+    if(!is_insert_successful.second)
+      is_insert_successful.first->second.push_back(h);
+  }
+
+  std::cout << nm_edges.size() << " nm edges" << std::endl;
+
+  std::set<edge_descriptor> nmes;
+  for(const auto& e : nm_edges)
+  {
+    if(e.second.size() == 1)
+      continue;
+    for(const halfedge_descriptor h : e.second)
+      nmes.insert(edge(h, pmesh));
+  }
+
+  Offset_function offset_function(pmesh, nmes, offset_distance);
+
+  Tr tr;
+  C2t3 c2t3(tr);
+
+  // defining the surface
+  Surface_3 surface(offset_function, Sphere(center, sqrad)); // bounding sphere
+
+  // defining meshing criteria
+  CGAL::Surface_mesh_default_criteria_3<Tr> criteria(angle_bound, radius_bound, distance_bound);
+
+  // meshing surface
+  std::cout << nmes.size() << " nm edges" << std::endl;
+  std::cout << "Make..." << std::endl;
+  CGAL::make_surface_mesh(c2t3, surface, criteria, CGAL::Manifold_tag());
+  std::cout << "Final number of points: " << tr.number_of_vertices() << "\n";
+
+  // write to file
+  std::string output_name = "offset";
+  output_name.resize(output_name.size()-4); // strip .off
+  std::stringstream sstr;
+  sstr << "results/" << output_name << "_OD" << offset_distance
+                                    << "_AB" << angle_bound
+                                    << "_RB" << radius_bound
+                                    << "_DB" << distance_bound
+                                    << ".off";
+
+  std::cout << "Writing result in " << sstr.str() << "\n";
+
+  std::ofstream output(sstr.str().c_str());
+  CGAL::output_surface_facets_to_off(output, c2t3);
+
+  PolygonMesh nm_edge_offset;
+  CGAL::facets_in_complex_2_to_triangle_mesh(c2t3, nm_edge_offset);
+
+  if(is_outward_oriented(nm_edge_offset))
+    reverse_face_orientations(nm_edge_offset);
+
+  //extend the bbox a bit to avoid border cases
+  const double xd = (std::max)(1., 0.01 * (bbox.xmax() - bbox.xmin()));
+  const double yd = (std::max)(1., 0.01 * (bbox.ymax() - bbox.ymin()));
+  const double zd = (std::max)(1., 0.01 * (bbox.zmax() - bbox.zmin()));
+  bbox = CGAL::Bbox_3(bbox.xmin()-xd, bbox.ymin()-yd, bbox.zmin()-zd,
+                      bbox.xmax()+xd, bbox.ymax()+yd, bbox.zmax()+zd);
+
+  typename Geom_traits::Iso_cuboid_3 ic(bbox);
+  PolygonMesh bbox_mesh;
+  make_hexahedron(ic[0], ic[1], ic[2], ic[3], ic[4], ic[5], ic[6], ic[7], bbox_mesh);
+  triangulate_faces(bbox_mesh);
+
+  copy_face_graph(bbox_mesh, nm_edge_offset);
+  write_polygon_mesh("results/clipper.off", nm_edge_offset, parameters::stream_precision(17));
+
+  generic_clip(pmesh, nm_edge_offset);
+
+  write_polygon_mesh("results/clipped.off", pmesh, CGAL::parameters::stream_precision(17));
 }
 
 template <typename PolygonMesh>
