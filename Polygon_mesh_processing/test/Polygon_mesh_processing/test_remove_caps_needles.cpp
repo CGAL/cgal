@@ -4,6 +4,7 @@
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <fstream>
 #include <CGAL/Polygon_mesh_processing/repair_degeneracies.h>
+#include <CGAL/Polyhedral_envelope.h>
 
 #include <iostream>
 #include <vector>
@@ -17,20 +18,21 @@ typedef boost::graph_traits<Mesh>::face_descriptor     face_descriptor;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-int main(int argc, char** argv)
+
+void general_test(std::string filename)
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/pig.off";
+  std::cout << "Removing caps/needles no extra parameters\n";
   std::ifstream input(filename);
 
   Mesh mesh;
   if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
     std::cerr << "Not a valid input file." << std::endl;
-    return 1;
+    exit(EXIT_FAILURE);
   }
 
-  std::cout << "Input mesh has " << edges(mesh).size() << " edges\n";
+  std::cout << "  Input mesh has " << edges(mesh).size() << " edges\n";
   if (PMP::does_self_intersect(mesh))
-    std::cout << "Input mesh has self-intersections\n";
+    std::cout << "  Input mesh has self-intersections\n";
 
   PMP::experimental::remove_almost_degenerate_faces(mesh,
                                                     std::cos(160. / 180 * CGAL_PI),
@@ -40,9 +42,67 @@ int main(int argc, char** argv)
 
   CGAL::IO::write_polygon_mesh("cleaned_mesh.off", mesh, CGAL::parameters::stream_precision(17));
 
-  std::cout << "Output mesh has " << edges(mesh).size() << " edges\n";
+  std::cout << "  Output mesh has " << edges(mesh).size() << " edges\n";
   if (PMP::does_self_intersect(mesh))
-    std::cout << "Output mesh has self-intersections\n";
+    std::cout << "  Output mesh has self-intersections\n";
+}
+
+void test_with_envelope(std::string filename, double eps)
+{
+  std::cout << "Removing caps/needles with envelope, epsilon = " << eps << "\n";
+  std::ifstream input(filename);
+
+  Mesh mesh;
+  if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
+    std::cerr << "Not a valid input file." << std::endl;
+    exit(EXIT_FAILURE);
+  }
+
+  std::cout << "  Input mesh has " << edges(mesh).size() << " edges\n";
+  if (PMP::does_self_intersect(mesh))
+    std::cout << "  Input mesh has self-intersections\n";
+
+  // first a test where nothing should be done
+  struct No_modification_allowed
+  {
+    bool operator()(K::Point_3, K::Point_3, K::Point_3) const { return false; }
+  };
+  No_modification_allowed no_modif;
+  const std::size_t nbv = vertices(mesh).size();
+  PMP::experimental::remove_almost_degenerate_faces(mesh,
+                                                    std::cos(160. / 180 * CGAL_PI),
+                                                    4,
+                                                    0.14,
+                                                    CGAL::parameters::filter(no_modif));
+  assert(nbv == vertices(mesh).size());
+
+  // now the real test
+  CGAL::Polyhedral_envelope<K> envelope(mesh, eps);
+  PMP::experimental::remove_almost_degenerate_faces(mesh,
+                                                    std::cos(160. / 180 * CGAL_PI),
+                                                    4,
+                                                    0.14,
+                                                    CGAL::parameters::filter(envelope));
+
+  CGAL::write_polygon_mesh("cleaned_mesh_with_envelope.off", mesh, CGAL::parameters::stream_precision(17));
+
+  std::cout << "  Output mesh has " << edges(mesh).size() << " edges\n";
+  if (PMP::does_self_intersect(mesh))
+    std::cout << "  Output mesh has self-intersections\n";
+}
+
+
+
+int main(int argc, char** argv)
+{
+  const char* filename = (argc > 1) ? argv[1] : "data/pig.off";
+
+  general_test(filename);
+  if (argc==1)
+    test_with_envelope(filename, 0.01);
+  else
+    if (argc==3)
+      test_with_envelope(filename, atof(argv[2]));
 
   return 0;
 }
