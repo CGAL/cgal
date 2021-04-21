@@ -80,7 +80,8 @@ namespace internal {
     PATCH,       //h and hopp belong to the patch to be remeshed
     PATCH_BORDER,//h belongs to the patch, hopp is MESH
     MESH,        //h and hopp belong to the mesh, not the patch
-    MESH_BORDER  //h belongs to the mesh, face(hopp, pmesh) == null_face()
+    MESH_BORDER, //h belongs to the mesh, face(hopp, pmesh) == null_face()
+    ISOLATED_CONSTRAINT //h is constrained, and incident to faces that do not belong to a patch
   };
 
   // A property map
@@ -1525,7 +1526,8 @@ private:
       {
         halfedge_descriptor hopp = opposite(h, mesh_);
         if ( is_on_border(h) || is_on_patch_border(h)
-          || is_on_border(hopp) || is_on_patch_border(hopp))
+          || is_on_border(hopp) || is_on_patch_border(hopp)
+          || is_an_isolated_constraint(h))
           ++nb_incident_features;
         if (nb_incident_features > 2)
           return true;
@@ -1591,19 +1593,43 @@ private:
           {
             //deal with h and hopp for borders that are sharp edges to be preserved
             halfedge_descriptor h = halfedge(e, mesh_);
-            if (status(h) == PATCH){
+            Halfedge_status hs = status(h);
+            if (hs == PATCH) {
               set_status(h, PATCH_BORDER);
+              hs = PATCH_BORDER;
               has_border_ = true;
             }
 
             halfedge_descriptor hopp = opposite(h, mesh_);
-            if (status(hopp) == PATCH){
+            Halfedge_status hsopp = status(hopp);
+            if (hsopp == PATCH) {
               set_status(hopp, PATCH_BORDER);
+              hsopp = PATCH_BORDER;
               has_border_ = true;
+            }
+
+            if (hs != PATCH_BORDER && hsopp != PATCH_BORDER)
+            {
+              set_status(h, ISOLATED_CONSTRAINT);
+              set_status(hopp, ISOLATED_CONSTRAINT);
             }
           }
         }
       }
+
+      std::ofstream ofs("dump_isolated.polylines.txt");
+      for (edge_descriptor e : edges(mesh_))
+      {
+        halfedge_descriptor h = halfedge(e, mesh_);
+        if (status(h) == ISOLATED_CONSTRAINT)
+        {
+          CGAL_assertion(status(opposite(h, mesh_)) == ISOLATED_CONSTRAINT);
+          ofs << "2 " << get(vpmap_, target(h, mesh_))
+            << " " << get(vpmap_, source(h, mesh_)) << std::endl;
+        }
+      }
+      ofs.close();
+
     }
 
     Halfedge_status status(const halfedge_descriptor& h) const
@@ -1872,6 +1898,13 @@ public:
     bool is_on_mesh(const halfedge_descriptor& h) const
     {
       return status(h) == MESH;
+    }
+
+    bool is_an_isolated_constraint(const halfedge_descriptor& h) const
+    {
+      bool res = (status(h) == ISOLATED_CONSTRAINT);
+      CGAL_assertion(!res || status(opposite(h, mesh_)) == ISOLATED_CONSTRAINT);
+      return res;
     }
 
 private:

@@ -39,7 +39,7 @@ class DEMO_FRAMEWORK_EXPORT Scene_group_item : public Scene_item_rendering_helpe
     Q_OBJECT
 public :
     Scene_group_item(QString name = QString("New group"));
-    ~Scene_group_item() {}
+    ~Scene_group_item() { delete children;}
     //!Returns false to avoid disturbing the BBox of the scene.
     bool isFinite() const Q_DECL_OVERRIDE;
     //!Returns true to avoid disturbing the BBox of the scene.
@@ -196,7 +196,7 @@ public :
     //!
     //! Only returns children that have this item as a parent.
     //! Children of these children are not returned.
-    QList<Scene_interface::Item_id> getChildren() const {return children;}
+    QList<Scene_interface::Item_id> getChildren() const {return *children;}
 
     //! \brief getChildrenForSelection returns the list of
     //! children to select along with the group.
@@ -205,7 +205,7 @@ public :
     //! this function defines which of its children will be added too.
     //! Typically overriden to allow applying an operation from the
     //! Operation menu only to the parent item and not to its children.
-    virtual QList<Scene_interface::Item_id> getChildrenForSelection() const {return children;}
+    virtual QList<Scene_interface::Item_id> getChildrenForSelection() const {return *children;}
     //!Removes a Scene_item from the list of children.
     //!@see getChildren() @see addChild()
     void removeChild( Scene_item* item)
@@ -214,7 +214,7 @@ public :
       return;
      update_group_number(item,0);
      item->moveToGroup(nullptr);
-     children.removeOne(scene->item_id(item));
+     children->removeOne(scene->item_id(item));
     }
     //!Removes a Scene_item from the list of children using its index.
     //!@see getChildren() @see addChild()
@@ -243,13 +243,13 @@ public Q_SLOTS:
     //!
     void adjustIds(Scene_interface::Item_id removed_id)
     {
-      for(int i = 0; i < children.size(); ++i)
+      for(int i = 0; i < children->size(); ++i)
       {
-        if(children[i] > removed_id)
-          --children[i];
-        else if(children[i] == removed_id)//child has been removed from the scene, it doesn't exist anymore.
+        if((*children)[i] > removed_id)
+          --(*children)[i];
+        else if((*children)[i] == removed_id)//child has been removed from the scene, it doesn't exist anymore.
         {
-          children.removeAll(removed_id);
+          children->removeAll(removed_id);
         }
       }
     }
@@ -260,7 +260,7 @@ private:
 protected:
     Scene_interface *scene;
     //!Contains a reference to all the children of this group.
-    QList<Scene_interface::Item_id> children;
+    QList<Scene_interface::Item_id>* children;
 
 }; //end of class Scene_group_item
 
