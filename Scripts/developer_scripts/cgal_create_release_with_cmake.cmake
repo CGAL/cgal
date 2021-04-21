@@ -11,7 +11,7 @@
 # GENERATE_TARBALLS=[ON/OFF] indicates if release tarballs should be created as DESTINATION
 
 cmake_minimum_required(VERSION 3.1...3.15)
-
+find_program(BASH NAMES bash sh)
 function(process_package pkg)
   if(VERBOSE)
     message(STATUS "handling ${pkg}")
@@ -223,7 +223,7 @@ if (TESTSUITE)
     if(IS_DIRECTORY "${release_dir}/test/${d}")
       if(NOT EXISTS "${release_dir}/test/${d}/cgal_test_with_cmake")
         execute_process(
-          COMMAND ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake
+          COMMAND ${BASH} ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake
           WORKING_DIRECTORY "${release_dir}/test/${d}"
           RESULT_VARIABLE RESULT_VAR
           OUTPUT_VARIABLE OUT_VAR
@@ -249,7 +249,7 @@ if (TESTSUITE)
         file(RENAME "${release_dir}/tmp/${d}" "${release_dir}/test/${d}_Demo")
         if(NOT EXISTS "${release_dir}/test/${d}_Demo/cgal_test_with_cmake")
           execute_process(
-            COMMAND ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake --no-run
+            COMMAND ${BASH} ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake --no-run
             WORKING_DIRECTORY "${release_dir}/test/${d}_Demo"
             RESULT_VARIABLE RESULT_VAR
             OUTPUT_VARIABLE OUT_VAR
@@ -270,7 +270,7 @@ if (TESTSUITE)
       file(RENAME "${release_dir}/tmp/${d}" "${release_dir}/test/${d}_Examples")
       if(NOT EXISTS "${release_dir}/test/${d}_Examples/cgal_test_with_cmake")
         execute_process(
-          COMMAND ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake
+          COMMAND ${BASH} ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake
           WORKING_DIRECTORY "${release_dir}/test/${d}_Examples"
           RESULT_VARIABLE RESULT_VAR
           OUTPUT_VARIABLE OUT_VAR
