@@ -16,6 +16,7 @@
 
 #include <boost/type_traits/is_same.hpp>
 #include <boost/mpl/if.hpp>
+#include <type_traits>
 
 #define CGAL_BGL_NP_TEMPLATE_PARAMETERS T, typename Tag, typename Base
 #define CGAL_BGL_NP_CLASS CGAL::Named_function_parameters<T,Tag,Base>
@@ -38,8 +39,9 @@ enum all_default_t { all_default };
 template <typename T, typename Tag, typename Base>
 struct Named_params_impl : Base
 {
-  T v; // copy of the parameter
-  Named_params_impl(T v, const Base& b)
+  typename std::conditional<std::is_copy_constructible<T>::value,
+                            T, std::reference_wrapper<const T> >::type v; // copy of the parameter if copyable
+  Named_params_impl(const T& v, const Base& b)
     : Base(b)
     , v(v)
   {}
@@ -49,8 +51,9 @@ struct Named_params_impl : Base
 template <typename T, typename Tag>
 struct Named_params_impl<T, Tag, No_property>
 {
-  T v; // copy of the parameter
-  Named_params_impl(T v)
+  typename std::conditional<std::is_copy_constructible<T>::value,
+                            T, std::reference_wrapper<const T> >::type v; // copy of the parameter if copyable
+  Named_params_impl(const T& v)
     : v(v)
   {}
 };
@@ -68,13 +71,15 @@ struct Get_param< Named_params_impl<T, Tag, No_property>, Query_tag >
 template< typename T, typename Tag, typename Base>
 struct Get_param< Named_params_impl<T, Tag, Base>, Tag >
 {
-  typedef T type;
+  typedef typename std::conditional<std::is_copy_constructible<T>::value,
+                                    T, std::reference_wrapper<const T> >::type type;
 };
 
 template< typename T, typename Tag>
 struct Get_param< Named_params_impl<T, Tag, No_property>, Tag >
 {
-  typedef T type;
+  typedef typename std::conditional<std::is_copy_constructible<T>::value,
+                                    T, std::reference_wrapper<const T> >::type type;
 };
 
 
@@ -98,7 +103,9 @@ struct Lookup_named_param_def
 
 // helper function to extract the value from a named parameter pack given a query tag
 template <typename T, typename Tag, typename Base>
-T get_parameter_impl(const Named_params_impl<T, Tag, Base>& np, Tag)
+typename std::conditional<std::is_copy_constructible<T>::value,
+                          T, std::reference_wrapper<const T> >::type
+get_parameter_impl(const Named_params_impl<T, Tag, Base>& np, Tag)
 {
   return np.v;
 }
@@ -110,7 +117,9 @@ Param_not_found get_parameter_impl(const Named_params_impl<T, Tag, No_property>&
 }
 
 template< typename T, typename Tag>
-T get_parameter_impl(const Named_params_impl<T, Tag, No_property>& np, Tag)
+typename std::conditional<std::is_copy_constructible<T>::value,
+                          T, std::reference_wrapper<const T> >::type
+get_parameter_impl(const Named_params_impl<T, Tag, No_property>& np, Tag)
 {
   return np.v;
 };
@@ -133,8 +142,9 @@ struct Named_function_parameters
   typedef internal_np::Named_params_impl<T, Tag, Base> base;
   typedef Named_function_parameters<T, Tag, Base> self;
 
-  Named_function_parameters(T v = T()) : base(v) {}
-  Named_function_parameters(T v, const Base& b) : base(v, b) {}
+  Named_function_parameters() : base(T()) {}
+  Named_function_parameters(const T& v) : base(v) {}
+  Named_function_parameters(const T& v, const Base& b) : base(v, b) {}
 
   Named_function_parameters<bool, internal_np::all_default_t, self>
   all_default() const
@@ -178,7 +188,7 @@ inline no_parameters(Named_function_parameters<T,Tag,Base>)
 #define CGAL_add_named_parameter(X, Y, Z)        \
   template <typename K>                        \
   Named_function_parameters<K, internal_np::X>                  \
-  Z(K const& p)                                \
+  Z(const K& p)                                \
   {                                            \
     typedef Named_function_parameters<K, internal_np::X> Params;\
     return Params(p);                          \
