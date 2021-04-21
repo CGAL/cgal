@@ -121,6 +121,7 @@ CGAL_add_named_parameter(do_not_modify_t, do_not_modify, do_not_modify)
 CGAL_add_named_parameter(allow_self_intersections_t, allow_self_intersections, allow_self_intersections)
 CGAL_add_named_parameter(non_manifold_feature_map_t, non_manifold_feature_map, non_manifold_feature_map)
 CGAL_add_named_parameter(polyhedral_envelope_epsilon_t, polyhedral_envelope_epsilon, polyhedral_envelope_epsilon)
+CGAL_add_named_parameter(face_epsilon_map_t, face_epsilon_map, face_epsilon_map)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)

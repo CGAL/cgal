@@ -183,7 +183,7 @@ private:
 
 
   // The class  `Plane` is used for the 7-8 walls of a prism.
-  // We store at the same  time threee points and a plane.
+  // We store at the same time three points and a plane.
   // That is easier than retrieving the 3 points of a lazy plane.
   struct Plane {
     Plane()
@@ -351,6 +351,11 @@ public:
    *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
    *                     must be available in `TriangleMesh`.}
    *   \cgalParamNEnd
+   *   \cgalParamNBegin{face_epsilon_map}
+   *     \cgalParamDescription{a property map associating to each face of `tm` an epsilon value}
+   *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
+   *                    as key type and `double` as value type}
+   *     \cgalParamDefault{Use `epsilon` for all faces}
    * \cgalNamedParamsEnd
    *
    * \note The triangle mesh gets copied internally, that is it can be modifed after having passed as argument,
@@ -363,8 +368,10 @@ public:
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    using parameters::is_default_parameter;
 
     typedef boost::graph_traits<TriangleMesh> Graph_traits;
+    typedef typename Graph_traits::face_descriptor face_descriptor;
 
     typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
@@ -383,7 +390,8 @@ public:
     }
 
     GeomTraits gt;
-    for(typename Graph_traits::face_descriptor f : faces(tmesh)){
+    std::unordered_set<face_descriptor> deg_faces;
+    for(face_descriptor f : faces(tmesh)){
       if(! Polygon_mesh_processing::is_degenerate_triangle_face(f, tmesh, parameters::geom_traits(gt).vertex_point_map(vpm))){
         typename Graph_traits::halfedge_descriptor h = halfedge(f, tmesh);
         int i = get(vim, source(h, tmesh));
@@ -393,8 +401,30 @@ public:
         Vector3i face = { i, j, k };
         env_faces.push_back(face);
       }
+      else
+        deg_faces.insert(f);
     }
-    init(epsilon);
+    if (is_default_parameter(get_parameter(np, internal_np::face_epsilon_map)))
+      init(epsilon);
+    else
+    {
+      std::vector<double> epsilon_values;
+      epsilon_values.reserve(env_faces.size());
+
+      typedef typename internal_np::Lookup_named_param_def<
+        internal_np::face_epsilon_map_t,
+        NamedParameters,
+        Constant_property_map<face_descriptor, double>
+      > ::type  Epsilon_map;
+
+      Epsilon_map epsilon_map = choose_parameter(get_parameter(np, internal_np::face_epsilon_map),
+                                                 Constant_property_map<face_descriptor, double>(epsilon));
+
+      for(face_descriptor f : faces(tmesh))
+        if(deg_faces.count(f)==0)
+          epsilon_values.push_back( get(epsilon_map, f) );
+      init(epsilon_values);
+    }
   }
 
   /**
@@ -420,6 +450,12 @@ public:
    *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
    *                     must be available in `TriangleMesh`.}
    *   \cgalParamNEnd
+   *   \cgalParamNBegin{face_epsilon_map}
+   *     \cgalParamDescription{a property map associating to each face of `tm` an epsilon value}
+   *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
+   *                    as key type and `double` as value type}
+   *     \cgalParamDefault{Use `epsilon` for all faces}
+   *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    *
    * \note The triangle mesh gets copied internally, that is it can be modifed after having passed as argument,
@@ -437,6 +473,7 @@ public:
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    using parameters::is_default_parameter;
 
     typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
@@ -461,6 +498,7 @@ public:
       return insert_res.first->second;
     };
 
+    std::unordered_set<face_descriptor> deg_faces;
     for(face_descriptor f : face_range){
       if(! Polygon_mesh_processing::is_degenerate_triangle_face(f, tmesh, parameters::geom_traits(gt).vertex_point_map(vpm))){
         typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h = halfedge(f, tmesh);
@@ -471,8 +509,31 @@ public:
         Vector3i face = { i, j, k };
         env_faces.push_back(face);
       }
+      else
+        deg_faces.insert(f);
     }
-    init(epsilon);
+
+    if (is_default_parameter(get_parameter(np, internal_np::face_epsilon_map)))
+      init(epsilon);
+    else
+    {
+      std::vector<double> epsilon_values;
+      epsilon_values.reserve(env_faces.size());
+
+      typedef typename internal_np::Lookup_named_param_def<
+        internal_np::face_epsilon_map_t,
+        NamedParameters,
+        Constant_property_map<face_descriptor, double>
+      > ::type  Epsilon_map;
+
+      Epsilon_map epsilon_map = choose_parameter(get_parameter(np, internal_np::face_epsilon_map),
+                                                 Constant_property_map<face_descriptor, double>(epsilon));
+
+      for(face_descriptor f : face_range)
+        if(deg_faces.count(f)==0)
+          epsilon_values.push_back( get(epsilon_map, f) );
+      init(epsilon_values);
+    }
   }
 
   /**
@@ -496,6 +557,10 @@ public:
     *     \cgalParamType{a model of `ReadablePropertyMap` whose value type is `Point_3` and whose key
     *                    is the value type of `PointRange::const_iterator`}
     *     \cgalParamDefault{`CGAL::Identity_property_map`}
+    *   \cgalParamNBegin{face_epsilon_map}
+    *     \cgalParamDescription{a property map associating to each triangle an epsilon value}
+    *     \cgalParamType{a class model of `ReadablePropertyMap` with `std::size_t` as key type and `double` as value type}
+    *     \cgalParamDefault{Use `epsilon` for all triangles}
     *   \cgalParamNEnd
     * \cgalNamedParamsEnd
     *
@@ -512,6 +577,7 @@ public:
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    using parameters::is_default_parameter;
 
     typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::const_type Point_map;
     Point_map pm = choose_parameter<Point_map>(get_parameter(np, internal_np::point_map));
@@ -529,7 +595,27 @@ public:
       Vector3i face = { int(t[0]), int(t[1]), int(t[2]) };
       env_faces.emplace_back(face);
     }
-    init(epsilon);
+
+    if (is_default_parameter(get_parameter(np, internal_np::face_epsilon_map)))
+      init(epsilon);
+    else
+    {
+      std::vector<double> epsilon_values;
+      epsilon_values.reserve(env_faces.size());
+
+      typedef typename internal_np::Lookup_named_param_def<
+        internal_np::face_epsilon_map_t,
+        NamedParameters,
+        Constant_property_map<std::size_t, double>
+      > ::type  Epsilon_map;
+
+      Epsilon_map epsilon_map = choose_parameter(get_parameter(np, internal_np::face_epsilon_map),
+                                                 Constant_property_map<std::size_t, double>(epsilon));
+
+      for(std::size_t i=0; i<triangles.size(); ++i)
+        epsilon_values.push_back( get(epsilon_map, i) );
+      init(epsilon_values);
+    }
   }
 
   /// @}
@@ -560,9 +646,10 @@ public:
 
 private:
 
-  void init(double epsilon)
+  template <class Epsilons>
+  void init(const Epsilons& epsilon_values)
   {
-    halfspace_generation(env_vertices, env_faces, halfspace, bounding_boxes, epsilon);
+    halfspace_generation(env_vertices, env_faces, halfspace, bounding_boxes, epsilon_values);
 
     Datum_map<GeomTraits> datum_map(bounding_boxes);
     Point_map<GeomTraits> point_map(bounding_boxes);
@@ -1836,15 +1923,23 @@ private:
     return Plane(plane0, plane1,plane2);
   }
 
+  double get_epsilon(double epsilon, std::size_t)
+  {
+    return epsilon;
+  }
+
+  double get_epsilon(const std::vector<double>& epsilon_values, std::size_t i)
+  {
+    return epsilon_values[i];
+  }
 
   // build prisms for a list of triangles. each prism is represented by 7-8 planes, which are represented by 3 points
+  template <class Epsilons>
   void
   halfspace_generation(const std::vector<Point_3> &ver, const std::vector<Vector3i> &faces,
                        std::vector<Prism>& halfspace,
-                       std::vector<Iso_cuboid_3>& bounding_boxes, const double epsilon)
+                       std::vector<Iso_cuboid_3>& bounding_boxes, const Epsilons& epsilon_values)
   {
-    double tolerance = epsilon / std::sqrt(3);// the envelope thickness, to be conservative
-    double bbox_tolerance = epsilon *(1 + 1e-6);
     Vector_3 AB, AC, BC, normal;
     Plane plane;
     std::array<Vector_3, 8> box;
@@ -1870,6 +1965,10 @@ private:
     bounding_boxes.resize(faces.size());
     for (unsigned int i = 0; i < faces.size(); ++i)
       {
+        const double epsilon = get_epsilon(epsilon_values,i);
+        double tolerance = epsilon / std::sqrt(3);// the envelope thickness, to be conservative
+        double bbox_tolerance = epsilon *(1 + 1e-6);
+
         Bbox bb = ver[faces[i][0]].bbox () + ver[faces[i][1]].bbox() + ver[faces[i][2]].bbox();
         // todo: Add a grow() function to Bbox
         bounding_boxes[i] = Iso_cuboid_3(Point_3(bb.xmin()-bbox_tolerance, bb.ymin()-bbox_tolerance, bb.zmin()-bbox_tolerance),
