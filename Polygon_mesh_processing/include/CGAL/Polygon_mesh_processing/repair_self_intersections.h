@@ -1957,7 +1957,7 @@ bool remove_self_intersections(const FaceRange& face_range,
     Return_false//default
   > ::type  Output_iterator_predicate;
   Output_iterator_predicate out_it_predicates
-    = choose_parameter<Output_iterator_predicate>(get_parameter(np, internal_np::filter));
+    = choose_parameter<Return_false>(get_parameter(np, internal_np::filter));
 
   // use containment check
   const double containment_epsilon = choose_parameter(get_parameter(np, internal_np::polyhedral_envelope_epsilon), 0.);
