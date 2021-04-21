@@ -60,8 +60,12 @@ bool exact_snapping (const typename Exact_kernel::Segment_3& s0,
   Vector_3 v0 = s0.to_vector();
   Vector_3 v1 = s1.to_vector();
   Vector_3 normal = CGAL::cross_product (v0, v1);
+
+  // Collinear segments
   if (normal == CGAL::NULL_VECTOR)
+  {
     return false;
+  }
 
   Plane_3 plane0 (s0.source(), normal);
   Plane_3 plane1 (s1.source(), normal);
@@ -87,8 +91,10 @@ bool exact_snapping (const typename Exact_kernel::Segment_3& s0,
 
   if (const Point_3* p = boost::get<Point_3>(&*intersection0))
     p0 = *p;
-  else
+  else // Coplanar segments
+  {
     return false;
+  }
 
   typename std::result_of<typename Exact_kernel::Intersect_3(Segment_3, Segment_3)>::type
     intersection1 = intersection(s1, s0proj);
@@ -97,8 +103,10 @@ bool exact_snapping (const typename Exact_kernel::Segment_3& s0,
 
   if (const Point_3* p = boost::get<Point_3>(&*intersection1))
     p1 = *p;
-  else
+  else // Coplanar segments
+  {
     return false;
+  }
 
   result = CGAL::midpoint (p0, p1);
 
@@ -380,6 +388,7 @@ void polyline_snapping (Graph& graph, PointMap point_map, double tolerance)
   using Vertex_position = std::pair<FT, vertex_descriptor>;
   std::map<edge_descriptor, std::vector<Vertex_position>> new_vertices;
 
+  // Compute intersections
   box_self_intersection_d
     (boxes.begin(), boxes.end(),
      [&](const Box& a, const Box& b)
@@ -427,6 +436,7 @@ void polyline_snapping (Graph& graph, PointMap point_map, double tolerance)
      },
      cutoff);
 
+  // Refine edges
   for (auto& m : new_vertices)
   {
     edge_descriptor ed = m.first;
@@ -446,6 +456,53 @@ void polyline_snapping (Graph& graph, PointMap point_map, double tolerance)
     for (std::size_t i = 0; i < vertices.size() - 1; ++ i)
       add_edge (vertices[i].second, vertices[i+1].second, graph);
   }
+
+#if 0
+  // Detect edges smaller than threshold
+  using vedge = std::pair<vertex_descriptor, vertex_descriptor>;
+  std::vector<vedge> vedges;
+  for (edge_descriptor ed : make_range(edges(graph).first, edges(graph).second))
+  {
+    vertex_descriptor vs = source (ed, graph);
+    vertex_descriptor vt = target (ed, graph);
+    vedges.emplace_back (vs, vt);
+  }
+
+  // Map deleted vertex -> valid vertex
+  std::map<vertex_descriptor, vertex_descriptor> map_v2v;
+  // Map vertex -> barycenter weight
+  std::map<vertex_descriptor, std::size_t> map_v2b;
+  for (vertex_descriptor vd : make_range(vertices(graph).first, vertices(graph).second))
+  {
+    map_v2v.insert (std::make_pair(vd, vd));
+    map_v2b.insert (std::make_pair(vd, 1));
+  }
+
+  // Collapse edges
+  for (vedge ve : vedges)
+  {
+    vertex_descriptor vs = map_v2v[ve.first];
+    vertex_descriptor vt = map_v2v[ve.second];
+
+    if (vs == vt)
+      continue;
+
+    const Point_3& ps = get (point_map, vs);
+    const Point_3& pt = get (point_map, vt);
+
+    if (squared_distance(ps, ps) > tolerance * tolerance)
+      continue;
+
+    std::size_t& bs = map_v2b[vs];
+    std::size_t& bt = map_v2b[vt];
+    Point_3 bary = barycenter (ps, bs, pt, bt);
+    bs += bt;
+
+    put (point_map, vs, bary);
+
+    map_v2v[vt] = vs;
+  }
+#endif
 
 }
 

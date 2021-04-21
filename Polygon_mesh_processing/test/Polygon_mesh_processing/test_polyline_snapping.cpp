@@ -3,6 +3,7 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_mesh_processing/polyline_snapping.h>
+#include <CGAL/boost/graph/split_graph_into_polylines.h>
 
 #include <boost/graph/adjacency_list.hpp>
 
@@ -15,6 +16,34 @@ using Graph = boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS
 using vertex_descriptor = boost::graph_traits<Graph>::vertex_descriptor;
 using edge_descriptor = boost::graph_traits<Graph>::edge_descriptor;
 
+class Visitor
+{
+  const Graph& graph;
+  std::ofstream& ofile;
+  std::vector<vertex_descriptor> vertices;
+
+public:
+
+  Visitor (const Graph& graph, std::ofstream& ofile) : graph (graph), ofile(ofile) { }
+
+  void start_new_polyline()
+  {
+    vertices.clear();
+  }
+
+  void add_node (vertex_descriptor v)
+  {
+    vertices.push_back(v);
+  }
+
+  void end_polyline()
+  {
+    ofile << vertices.size();
+    for (vertex_descriptor vd : vertices)
+      ofile << " " << graph[vd].point;
+    ofile << std::endl;
+  }
+};
 
 int main (int argc, char** argv)
 {
@@ -81,10 +110,14 @@ int main (int argc, char** argv)
 
   std::cerr << "Snapping..." << std::endl;
 
-  CGAL::Polygon_mesh_processing::polyline_snapping (graph, get(&Vertex_property::point, graph), 0.001);
+  CGAL::Polygon_mesh_processing::polyline_snapping (graph, get(&Vertex_property::point, graph), 0.1);
 
   std::cerr << "  -> resulting graph has " << num_vertices(graph)
             << " vertices and " << num_edges(graph) << " edges" << std::endl;
+
+  std::ofstream ofile ("snapped.polylines.txt");
+  Visitor visitor(graph, ofile);
+  CGAL::split_graph_into_polylines (graph, visitor);
 
   return EXIT_SUCCESS;
 }
