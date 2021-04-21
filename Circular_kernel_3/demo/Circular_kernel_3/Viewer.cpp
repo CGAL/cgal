@@ -295,9 +295,6 @@ void Viewer::initialize_buffers()
         buffers[6].release();
     }
     vao[2].release();
-
-
-
 }
 
 void Viewer::compute_elements()
@@ -840,7 +837,6 @@ void Viewer::draw()
     glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_lines.size()/3));
     rendering_program.release();
     vao[1].release();
-
 
 }
 

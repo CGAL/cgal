@@ -90,6 +90,7 @@ TDS_2 2D Triangulation Data Structure
 TDS_3 3D Triangulation Data Structure
 Three Three
 Triangulation_2 2D Triangulation
+Triangulation_on_sphere_2 2D Triangulation on Sphere
 Triangulation_3 3D Triangulations
 Triangulation dD Triangulations
 Visibility_2 2D Visibility Computation
