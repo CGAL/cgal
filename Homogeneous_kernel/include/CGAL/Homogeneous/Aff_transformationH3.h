@@ -89,10 +89,10 @@ public:
            cartesian(int i, int j) const = 0;
 
   virtual  bool
-           is_translation() const = 0;
+           is_translation() const { return false; }
 
   virtual  bool
-           is_scaling() const = 0;
+           is_scaling() const { return false; }
 };
 
 template < class R_ >
@@ -141,12 +141,6 @@ public:
 
   virtual  bool
            is_even() const;
-
-  virtual  bool
-           is_translation() const;
-
-  virtual  bool
-           is_scaling() const;
 
   virtual  RT
            homogeneous(int i, int j) const ;
@@ -225,12 +219,6 @@ public:
            { return true; }
 
   virtual  bool
-           is_translation() const
-           {
-             return false;
-           }
-
-  virtual  bool
            is_scaling() const
            {
              return true;
@@ -290,9 +278,6 @@ public:
 
   virtual  bool
            is_translation() const;
-
-  virtual  bool
-           is_scaling() const;
 
   virtual  RT
            homogeneous(int i, int j) const ;
@@ -575,22 +560,6 @@ Aff_transformation_repH3<R>::is_even() const
                                               t20, t21, t22 ) ) == POSITIVE );
 }
 
-template < class R >
-CGAL_KERNEL_INLINE
-bool
-Aff_transformation_repH3<R>::is_translation() const
-{
-  return false;
-}
-
-template < class R >
-CGAL_KERNEL_INLINE
-bool
-Aff_transformation_repH3<R>::is_scaling() const
-{
-  return false;
-}
-
 
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
@@ -751,12 +720,6 @@ inline
 bool
 Translation_repH3<R>::is_translation() const
 { return true; }
-
-template < class R >
-inline
-bool
-Translation_repH3<R>::is_scaling() const
-{ return false; }
 
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
