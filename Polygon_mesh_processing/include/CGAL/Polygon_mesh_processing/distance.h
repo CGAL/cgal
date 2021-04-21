@@ -29,6 +29,7 @@
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
 #include <CGAL/spatial_sort.h>
+#include <CGAL/Real_timer.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_reduce.h>
