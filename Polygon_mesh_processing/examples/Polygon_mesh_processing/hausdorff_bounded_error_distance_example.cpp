@@ -654,7 +654,8 @@ void test_timings(const std::string filepath, const FunctionWrapper& functor) {
 
 template<
 typename FunctionWrapper>
-void test_bunny(const FunctionWrapper& functor, const bool save = false) {
+void test_bunny(
+  const FunctionWrapper& functor, const int n = 5, const bool save = false) {
 
   std::cout.precision(20);
   const std::string filepath1 = "data/bunny1.off"; // approx 16.3K
@@ -676,29 +677,47 @@ void test_bunny(const FunctionWrapper& functor, const bool save = false) {
   const FT dim = FT(3) * (CGAL::max)((CGAL::max)(dist1, dist2), dist3);
 
   // Get timings.
-  const int n = 5; // number of steps
-  const FT t = FT(1) / static_cast<FT>(n); // step
-
   Timer timer;
   std::vector<double> times;
   times.reserve(n);
 
-  for (int k = n; k >= 0; --k) {
-    auto mesh = mesh2;
-    const FT distance = k * t * dim;
-    PMP::transform(Affine_transformation_3(CGAL::Translation(),
-      Vector_3(distance, distance, distance)), mesh);
-    if (save) save_mesh(mesh, "mesh2-" + std::to_string(k));
+  if (n == 0) {
 
+    const FT distance = dim;
+    PMP::transform(Affine_transformation_3(CGAL::Translation(),
+      Vector_3(distance, distance, distance)), mesh2);
+    if (save) save_mesh(mesh2, "mesh2");
     timer.reset();
     timer.start();
-    const double dista = functor(mesh1, mesh);
-    const double distb = functor(mesh, mesh1);
+    const double dista = functor(mesh1, mesh2);
+    const double distb = functor(mesh2, mesh1);
     const double distc = (CGAL::max)(dista, distb);
     timer.stop();
     times.push_back(timer.time());
-    std::cout << "* distance / Hausdorff / time (sec.) " << k << " : " <<
+    std::cout << "* distance / Hausdorff / time (sec.) : " <<
       distance << " / " << distc << " / " << times.back() << std::endl;
+
+  } else {
+
+    // t is the step where n is the number of steps.
+    const FT t = FT(1) / static_cast<FT>(n);
+    for (int k = n; k >= 0; --k) {
+      auto mesh = mesh2;
+      const FT distance = k * t * dim;
+      PMP::transform(Affine_transformation_3(CGAL::Translation(),
+        Vector_3(distance, distance, distance)), mesh);
+      if (save) save_mesh(mesh, "mesh2-" + std::to_string(k));
+
+      timer.reset();
+      timer.start();
+      const double dista = functor(mesh1, mesh);
+      const double distb = functor(mesh, mesh1);
+      const double distc = (CGAL::max)(dista, distb);
+      timer.stop();
+      times.push_back(timer.time());
+      std::cout << "* distance / Hausdorff / time (sec.) " << k << " : " <<
+        distance << " / " << distc << " / " << times.back() << std::endl;
+    }
   }
 
   double min_time = +std::numeric_limits<double>::infinity();
@@ -718,6 +737,9 @@ void test_bunny(const FunctionWrapper& functor, const bool save = false) {
 }
 
 int main(int argc, char** argv) {
+
+  // std::string name;
+  // std::cin >> name;
 
   const double error_bound = 1e-4;
   const std::size_t num_samples = 1000;
@@ -772,7 +794,7 @@ int main(int argc, char** argv) {
 
   // test_bunny(apprx_hd);
   // test_bunny(naive_hd);
-  test_bunny(bound_hd);
+  test_bunny(bound_hd, 0);
 
   // ------------------------------------------------------------------------ //
   std::cout << std::endl;

@@ -1332,7 +1332,7 @@ double bounded_error_Hausdorff_impl(
 {
   CGAL_assertion_code( const bool is_triangle = is_triangle_mesh(tm1) && is_triangle_mesh(tm2) );
   CGAL_assertion_msg (is_triangle,
-        "One of the meshes is not triangulated. Distance computing impossible.");
+    "One of the meshes is not triangulated. Distance computing impossible.");
 
   typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM1> TM1_primitive;
   typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM2> TM2_primitive;
@@ -1344,11 +1344,11 @@ double bounded_error_Hausdorff_impl(
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Triangle_3 Triangle_3;
 
+  typename Kernel::Compute_squared_distance_3 squared_distance;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
   using Candidate = Candidate_triangle<Kernel, face_descriptor>;
 
-  typename Kernel::Compute_squared_distance_3 squared_distance;
-
+  std::cout.precision(20);
   std::vector<face_descriptor> tm1_only, tm2_only;
   std::vector< std::pair<face_descriptor, face_descriptor> > common;
 
@@ -1357,6 +1357,9 @@ double bounded_error_Hausdorff_impl(
 
   CGAL_assertion(faces1.size() > 0);
   CGAL_assertion(faces2.size() > 0);
+
+  CGAL::Real_timer timer;
+  timer.start();
 
   TM1_tree tm1_tree;
   TM2_tree tm2_tree;
@@ -1369,7 +1372,9 @@ double bounded_error_Hausdorff_impl(
     // std::cout << "tm2 only: " << tm2_only.size() << std::endl;
 
     if (tm1_only.size() == 0) {
-      std::cout << "* culling rate: 100%" << std::endl;
+      timer.stop();
+      // std::cout << "* culling rate: 100%" << std::endl;
+      // std::cout << "* AABB tree build time (sec.): " << timer.time() << std::endl;
       return 0.0;
     }
     CGAL_assertion(tm1_only.size() > 0);
@@ -1380,17 +1385,26 @@ double bounded_error_Hausdorff_impl(
   }
   tm2_tree.insert(faces2.begin(), faces2.end(), tm2, vpm2);
 
-  // Build an AABB tree on tm1
-  tm1_tree.build();
-  const bool is_tm1_memory_ok = tm1_tree.accelerate_distance_queries();
-  CGAL_assertion(is_tm1_memory_ok);
+  // Build an AABB tree on tm1.
+  // tm1_tree.build(); // by default it is also built but only in case we actually need it
+  tm1_tree.do_not_accelerate_distance_queries(); // here, we do not need that
 
-  // Build an AABB tree on tm2
-  tm2_tree.build();
+  // By default it has lazy initialization, which is slightly better, but it is off for tm1.
+  // const bool is_tm1_memory_ok = tm1_tree.accelerate_distance_queries();
+  // CGAL_assertion(is_tm1_memory_ok);
+
+  // Build an AABB tree on tm2.
+  // tm2_tree.build(); // by default it is also built but only in case we actually need it
+  // tm2_tree.do_not_accelerate_distance_queries(); // twice as slow
+
+  // Here, we explicitly accelerate because we use tm2 for distance queries.
   const bool is_tm2_memory_ok = tm2_tree.accelerate_distance_queries();
   CGAL_assertion(is_tm2_memory_ok);
 
-  // Build traversal traits for tm1_tree
+  timer.stop();
+  // std::cout << "* AABB tree build time (sec.): " << timer.time() << std::endl;
+
+  // Build traversal traits for tm1_tree.
   Hausdorff_primitive_traits_tm1<Tree_traits, Point_3, Kernel, TriangleMesh, VPM1, VPM2> traversal_traits_tm1(
     tm1_tree.traits(), tm2_tree, tm1, tm2, vpm1, vpm2, error_bound );
 
@@ -1398,7 +1412,11 @@ double bounded_error_Hausdorff_impl(
   // TODO Initialize the distances on all the vertices first and store those.
   // TODO Do not traverse TM1, but only TM2, i.e. reduce to Culling on TM2 (Can do this for all triangles in TM1 in parallel)
 
+  timer.reset();
+  timer.start();
   tm1_tree.traversal_with_priority( Point_3(0,0,0), traversal_traits_tm1 ); // dummy point given as query as not needed
+  timer.stop();
+  // std::cout << "* TM1 traversal (sec.): " << timer.time() << std::endl;
 
   // TODO Is there a better/faster data structure than the Heap used here?
   // Can already build a sorted structure while collecting the candidates
@@ -1410,8 +1428,8 @@ double bounded_error_Hausdorff_impl(
   // std::cout << "* number of candidate triangles 1: " <<
   //   candidate_triangles.size() << std::endl;
 
-  std::cout << "* culling rate: " <<
-    FT(100) - (FT(candidate_triangles.size()) / FT(tm1_tree.size()) * FT(100)) << "%" << std::endl;
+  // std::cout << "* culling rate: " <<
+  //   FT(100) - (FT(candidate_triangles.size()) / FT(tm1_tree.size()) * FT(100)) << "%" << std::endl;
 
   // See Section 5.1.
   const FT squared_error_bound = error_bound * error_bound;
