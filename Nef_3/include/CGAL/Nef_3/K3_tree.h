@@ -970,11 +970,11 @@ typename Object_list::difference_type n_vertices = std::distance(objects.begin()
 
   template <typename Visitor>
   void visit_k3tree(const Node* current, Visitor& V) const {
+    if(!current) return;
+
     V.pre_visit(current);
-    if(current->left() != 0) {
-      visit_k3tree(current->left(), V);
-      visit_k3tree(current->right(), V);
-    }
+    visit_k3tree(current->left(), V);
+    visit_k3tree(current->right(), V);
     V.post_visit(current);
   }
 
