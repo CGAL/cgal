@@ -636,7 +636,7 @@ public:
     bool operator()(const X_monotone_curve_2& cv) const
     {
       // An x-monotone polycurve can represent a vertical segment only if it
-      // is comprised of vertical segments. If the first subcurve is vertical,
+      // comprises vertical segments. If the first subcurve is vertical,
       // all subcurves are vertical in an x-monotone polycurve
       return m_poly_traits.subcurve_traits_2()->is_vertical_2_object()(cv[0]);
     }

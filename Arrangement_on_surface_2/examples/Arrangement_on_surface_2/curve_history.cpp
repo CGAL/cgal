@@ -34,7 +34,7 @@ int main() {
 
   // Print the arrangement edges along with the list of curves that
   // induce each edge.
-  std::cout << "The arrangement is comprised of "
+  std::cout << "The arrangement comprises "
             << arr.number_of_edges() << " edges:" << std::endl;
   for (auto eit = arr.edges_begin(); eit != arr.edges_end(); ++eit) {
     std::cout << "[" << eit->curve() << "]. Originating curves: ";

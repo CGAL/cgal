@@ -74,7 +74,7 @@ geometric-object types, such as point and curve, and a set of
 operations on objects of these types (see Section \ref
 aos_sec-geom_traits); the `Dcel` parameter must be substituted with a
 type that represents a doubly-connected edge list (\dcel) data
-structure. It defines types of topological object, such as vertices,
+structure. It defines types of topological objects, such as vertices,
 edges, and faces, and the operations required to maintain the
 incidence relations among objects of these types (see Section \ref
 aos_ssec-basic-dcel).
@@ -104,7 +104,7 @@ equivalent in both class templates. The names of these member
 functions and nested types typically appear in the manual without any
 scope, as each of these class templates can serve as their scope. (As
 a matter of fact, the package provides additional class templates that
-represent two-dimensional arrangement, such as the
+represent two-dimensional arrangements, such as the
 `Arrangement_with_history_2` class template, which derives from the
 class template `Arrangement_2`; these additional class templates also
 contain inherited definitions of the aforementioned member functions
@@ -119,8 +119,8 @@ class also encapsulates the number types used to represent coordinates
 of geometric objects and to carry out algebraic operations on them. It
 encapsulates the type of coordinate system used (e.g., Cartesian and
 Homogeneous), and the geometric or algebraic computation methods
-themselves. The precise minimal sets of requirements, the actual traits
-classes must conform to, are organized as a hierarchy of concepts; see
+themselves. The precise minimal sets of requirements the actual traits
+classes must conform to are organized as a hierarchy of concepts; see
 Section \ref aos_sec-geom_traits.
 
 <!----------------------------------------------------------------------------->
@@ -155,7 +155,7 @@ Remarks
   curves. Even though the package allows for self-intersecting curves,
   for most types each curve can be decomposed into a constant number
   of well-behaved curves, thus having no effect on the asymptotic
-  bounds that we cite.
+  bounds that we state.
 </li>
 
 <li> One type of curves that we deal with is special in this sense:
@@ -167,7 +167,7 @@ Remarks
   addition to the number of polylines, for example, the total number
   of segments in all the polylines together. The same holds for the
   more general type <em>polycurve</em>, which are piecewise curves
-  that are not necessarily linear; sse Section \ref
+  that are not necessarily linear; see Section \ref
   arr_sssectr_polycurves.  </li>
 
 </ol>
@@ -257,7 +257,7 @@ curve cannot be self-intersecting. Then, we decompose each curve in
 \f$\cal C'\f$ into maximal connected subcurves not intersecting any
 other curve (or point) in \f$\cal C'\f$ in its interior. The
 collection \f$\cal C''\f$ contains isolated points, if the collection
-\f$\cal C'\f$ \f$\cal C\f$ contains such points. The arrangement
+\f$\cal C'\f$ contains such points. The arrangement
 induced by the collection \f$\cal C''\f$ can be conveniently embedded
 as a planar graph, the vertices of which are associated with curve
 endpoints or with isolated points, and the edges of which are
@@ -274,16 +274,13 @@ family of combinatorial data structures called <em>halfedge data
 structures</em> (<span class="textsc">Hds</span>), which are
 edge-centered data structures capable of maintaining incidence
 relations among cells of, for example, planar subdivisions, polyhedra,
-or other orientable, two-dimensional surfaces embedded in space of an
+or other orientable, two-dimensional surfaces embedded in a space of
 arbitrary dimension. Geometric interpretation is added by classes
-built on top of the halfedge data structure. In our implementation and
-in the reset of this chapter we use the arrangement \f$\cal A(\cal
-C')\f$, which is equal to \f$\cal A(\cal C'')\f$.  Note that \f$\cal
-A(\cal C) = \cal A(\cal C')\f$ iff \f$\cal C' == \cal C''\f$.
+built on top of the halfedge data structure.
 
 \cgalAdvancedBegin
 
-The \f$x\f$-monotone curves of an arrangement are embedded in an
+The \f$x\f$-monotone curves of an arrangement are embedded in a
 rectangular two-dimensional area called the parameter space. The
 parameter space is defined as \f$ X \times Y\f$, where \f$ X\f$ and
 \f$ Y\f$ are open, half-open, or closed intervals with endpoints in
@@ -350,7 +347,7 @@ see \cgalCite{bkos-cgaa-00} Chapter 2.
 An arrangement of interior-disjoint line segments with some of the
 \dcel records that represent it. The unbounded face \f$ f_0\f$ has
 a single connected component that forms a hole inside it, and this
-hole is comprised of several faces. The halfedge \f$ e\f$ is directed
+hole comprises of several faces. The halfedge \f$ e\f$ is directed
 from its source vertex \f$ v_1\f$ to its target vertex \f$
 v_2\f$. This edge, together with its twin \f$ e'\f$, correspond to a
 line segment that connects the points associated with \f$ v_1\f$ and
@@ -359,8 +356,8 @@ predecessor \f$ e_{\rm prev}\f$ and successor \f$ e_{\rm next}\f$ of
 \f$ e\f$ are part of the chain that form the outer boundary of the
 face \f$ f_2\f$. The face \f$ f_1\f$ has a more complicated structure
 as it contains two holes in its interior: One hole consists of two
-adjacent faces \f$ f_3\f$ and \f$ f_4\f$, while the other hole is
-comprised of two edges. \f$ f_1\f$ also contains two isolated vertices
+adjacent faces \f$ f_3\f$ and \f$ f_4\f$, while the other hole
+comprises of two edges. \f$ f_1\f$ also contains two isolated vertices
 \f$ u_1\f$ and \f$ u_2\f$ in its interior.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
