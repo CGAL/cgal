@@ -2734,7 +2734,6 @@ public:
     const Vector_2 current_vec_prev(prev_p, curr_p);
     const Vector_2 current_vec_next(next_p, curr_p);
 
-    // TODO: CAN WE AVOID THIS VALUE?
     const FT tol = KSR::tolerance<FT>();
     FT m1 = FT(100000), m2 = FT(100000), m3 = FT(100000);
     // std::cout << "tol: " << tol << std::endl;
@@ -2870,7 +2869,6 @@ public:
       point_2(curr, m_current_time + FT(1)));
     const Vector_2 current_vec_next(next_p, curr_p);
 
-    // TODO: CAN WE AVOID THIS VALUE?
     const FT tol = KSR::tolerance<FT>();
     FT m2 = FT(100000), m3 = FT(100000);
     // std::cout << "tol: " << tol << std::endl;
@@ -2957,7 +2955,6 @@ public:
       point_2(next, m_current_time + FT(1)),
       point_2(curr, m_current_time + FT(1)));
 
-    // TODO: CAN WE AVOID THIS VALUE?
     const FT tol = KSR::tolerance<FT>();
     FT m2 = FT(100000), m3 = FT(100000);
     // std::cout << "tol: " << tol << std::endl;

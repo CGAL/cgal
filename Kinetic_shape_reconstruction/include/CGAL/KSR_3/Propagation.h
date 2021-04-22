@@ -1411,6 +1411,11 @@ private:
     // If we use pvertex, we miss important iedges!
     std::vector<IEdge> fiedges, biedges;
     m_data.get_iedges_front_back(event_pvertex, pvertices, fiedges, biedges);
+    const auto query_pvertex = m_data.null_pvertex();
+    // const auto query_pvertex = PVertex(sp_idx, // does not work!
+    // m_data.support_plane(sp_idx).duplicate_vertex(event_pvertex.second));
+    // m_data.support_plane(sp_idx).set_point(
+    //   query_pvertex.second, m_data.support_plane(sp_idx).get_point(event_pvertex.second));
 
     // Freeze pvertices.
     const Point_2 ipoint = m_data.point_2(sp_idx, ivertex);
@@ -1474,7 +1479,7 @@ private:
       apply_closing_case(pvertex);
     } else if (back_constrained) {
       apply_back_border_case(
-        min_time, max_time,
+        min_time, max_time, query_pvertex,
         pvertex, ivertex, back, prev, fiedges,
         iedges, crossed_iedges, new_pvertices);
     } else if (front_constrained) {
@@ -1526,6 +1531,7 @@ private:
 
   void apply_back_border_case(
     const FT min_time, const FT max_time,
+    const PVertex& event_pvertex,
     const PVertex& pvertex, const IVertex& ivertex,
     const PVertex& back, const PVertex& prev,
     const std::vector<IEdge>& fiedges,
@@ -1666,8 +1672,15 @@ private:
     "TODO: BACK, HANDLE ZERO-LENGTH IEDGE!");
 
     { // future point and direction
-      const bool is_parallel = m_data.compute_future_point_and_direction(
-        0, back, prev, iedge_0, future_point, future_direction);
+      bool is_parallel = false;
+      if (KSR::distance(m_data.point_2(back), m_data.point_2(prev)) < KSR::point_tolerance<FT>()) {
+        // is_parallel = m_data.compute_future_point_and_direction(
+        //   0, event_pvertex, prev, iedge_0, future_point, future_direction);
+        CGAL_assertion_msg(false, "TODO: BACK, FIX CASE WITH EQUAL BACK AND PREV!");
+      } else {
+        is_parallel = m_data.compute_future_point_and_direction(
+          0, back, prev, iedge_0, future_point, future_direction);
+      }
       if (is_parallel) {
         if (m_data.is_intersecting_iedge(min_time, max_time, prev, iedge_0)) {
           prev_iedge = iedge_0;
@@ -1861,6 +1874,9 @@ private:
     "TODO: FRONT, HANDLE ZERO-LENGTH IEDGE!");
 
     { // future point and direction
+      if (KSR::distance(m_data.point_2(front), m_data.point_2(next)) < KSR::point_tolerance<FT>()) {
+        CGAL_assertion_msg(false, "TODO: FRONT, FIX CASE WITH EQUAL FRONT AND NEXT!");
+      }
       const bool is_parallel = m_data.compute_future_point_and_direction(
         0, front, next, iedge_0, future_point, future_direction);
       if (is_parallel) {
@@ -2108,6 +2124,9 @@ private:
 
       Point_2 future_point;
       Vector_2 future_direction;
+      if (KSR::distance(m_data.point_2(prev), m_data.point_2(next)) < KSR::point_tolerance<FT>()) {
+        CGAL_assertion_msg(false, "TODO: OPEN, 1 EDGE CASE, FIX CASE WITH EQUAL PREV AND NEXT!");
+      }
       const bool is_parallel = m_data.compute_future_point_and_direction(
         pvertex, prev, next, crossed_iedges[0].first, future_point, future_direction);
 
@@ -2160,6 +2179,9 @@ private:
       "TODO: OPEN, FRONT, HANDLE ZERO-LENGTH IEDGE!");
 
       if (m_verbose) std::cout << "- getting future point and direction, front" << std::endl;
+      if (KSR::distance(m_data.point_2(prev), m_data.point_2(next)) < KSR::point_tolerance<FT>()) {
+        CGAL_assertion_msg(false, "TODO: OPEN, FRONT, FIX CASE WITH EQUAL PREV AND NEXT!");
+      }
       const bool is_parallel = m_data.compute_future_point_and_direction(
         pvertex, prev, next, crossed_iedges.front().first, future_points.front(), future_directions.front());
       if (is_parallel) {
@@ -2180,6 +2202,9 @@ private:
       "TODO: OPEN, BACK, HANDLE ZERO-LENGTH IEDGE!");
 
       if (m_verbose) std::cout << "- getting future point and direction, back" << std::endl;
+      if (KSR::distance(m_data.point_2(prev), m_data.point_2(next)) < KSR::point_tolerance<FT>()) {
+        CGAL_assertion_msg(false, "TODO: OPEN, BACK, FIX CASE WITH EQUAL PREV AND NEXT!");
+      }
       const bool is_parallel = m_data.compute_future_point_and_direction(
         pvertex, prev, next, crossed_iedges.back().first, future_points.back(), future_directions.back());
       if (is_parallel) {
