@@ -97,14 +97,14 @@ const std::vector<int> box_faces_to_edges(const int i) {
 
 const bool find_next_object_colliding_plane(
   const Point_3& pt_min, const Point_3& pt_max,
-	const std::vector<Point_3>& box_corners,
-	const std::vector< std::pair<std::size_t, std::size_t> >& box_edges,
-	const Plane_3& plane,
-	const std::vector<int>& vertices,
-	const std::vector<int>& edges,
-	const std::pair<bool, int>& prev_object,
-	std::pair<bool, int>& next_object,
-	Point_3& m) {
+  const std::vector<Point_3>& box_corners,
+  const std::vector< std::pair<std::size_t, std::size_t> >& box_edges,
+  const Plane_3& plane,
+  const std::vector<int>& vertices,
+  const std::vector<int>& edges,
+  const std::pair<bool, int>& prev_object,
+  std::pair<bool, int>& next_object,
+  Point_3& m) {
 
   for (std::size_t i = 0; i < vertices.size(); ++i) {
     const int v_i = vertices[i];
@@ -239,13 +239,13 @@ void construct_bounding_polygon_of_support_plane(
 
 void construct_bounding_polygon_of_support_plane(
   const Point_3& pt_min, const Point_3& pt_max,
-	const std::vector<Point_3>& box_corners,
-	const std::vector< std::pair<std::size_t, std::size_t> >& box_edges,
-	const Plane_3& plane,
-	std::list<Point_3>& bounding_polygon) {
+  const std::vector<Point_3>& box_corners,
+  const std::vector< std::pair<std::size_t, std::size_t> >& box_edges,
+  const Plane_3& plane,
+  std::list<Point_3>& bounding_polygon) {
 
   std::vector< std::list<int> > bounding_faces;
-	construct_bounding_polygon_of_support_plane(
+  construct_bounding_polygon_of_support_plane(
     pt_min, pt_max,
     box_corners, box_edges,
     plane,
@@ -259,9 +259,9 @@ void create_random_polygons(
   const double side_length,
   std::vector<Polygon_3>& polygons) {
 
-	std::default_random_engine generator(
+  std::default_random_engine generator(
     std::chrono::system_clock::now().time_since_epoch().count());
-	std::uniform_real_distribution<double> R(-1.0, 1.0);
+  std::uniform_real_distribution<double> R(-1.0, 1.0);
 
   const Point_3 pt_min(-FT(1), -FT(1), -FT(1));
   const Point_3 pt_max( FT(1),  FT(1),  FT(1));
@@ -274,7 +274,7 @@ void create_random_polygons(
     {0, 0, 1}, {1, 0, 1},
     {0, 1, 1}, {1, 1, 1}
   };
-	const std::size_t edges[12][2] = {
+  const std::size_t edges[12][2] = {
     {0, 2}, {1, 3}, {4, 6},
     {5, 7}, {0, 1}, {2, 3},
     {4, 5}, {6, 7}, {0, 4},
@@ -282,31 +282,31 @@ void create_random_polygons(
   };
 
   for (std::size_t i = 0; i < 8; ++i) {
-		const FT x = (vertices[i][0] == 0 ? pt_min.x() : pt_max.x());
-		const FT y = (vertices[i][1] == 0 ? pt_min.y() : pt_max.y());
-		const FT z = (vertices[i][2] == 0 ? pt_min.z() : pt_max.z());
-		box_corners.push_back(Point_3(x, y, z));
-	}
+    const FT x = (vertices[i][0] == 0 ? pt_min.x() : pt_max.x());
+    const FT y = (vertices[i][1] == 0 ? pt_min.y() : pt_max.y());
+    const FT z = (vertices[i][2] == 0 ? pt_min.z() : pt_max.z());
+    box_corners.push_back(Point_3(x, y, z));
+  }
 
   for (std::size_t i = 0; i < 12; ++i) {
-		box_edges.push_back(std::make_pair(edges[i][0], edges[i][1]));
-	}
+    box_edges.push_back(std::make_pair(edges[i][0], edges[i][1]));
+  }
 
   polygons.reserve(num_polygons);
-	while (polygons.size() < num_polygons) {
-		const FT x_0 = static_cast<FT>(R(generator));
+  while (polygons.size() < num_polygons) {
+    const FT x_0 = static_cast<FT>(R(generator));
     const FT y_0 = static_cast<FT>(R(generator));
     const FT z_0 = static_cast<FT>(R(generator));
-		const Point_3 center_ref(x_0, y_0, z_0);
+    const Point_3 center_ref(x_0, y_0, z_0);
 
-		const FT a = static_cast<FT>(R(generator));
+    const FT a = static_cast<FT>(R(generator));
     const FT b = static_cast<FT>(R(generator));
     const FT c = static_cast<FT>(R(generator));
-		const FT d = -(a * x_0 + b * y_0 + c * z_0);
-		const Plane_3 plane_ref(a, b, c, d);
+    const FT d = -(a * x_0 + b * y_0 + c * z_0);
+    const Plane_3 plane_ref(a, b, c, d);
 
     std::list<Point_3>   bp_ref_3d;
-		std::vector<Point_2> bp_ref_2d;
+    std::vector<Point_2> bp_ref_2d;
 
     construct_bounding_polygon_of_support_plane(
       pt_min, pt_max, box_corners, box_edges, plane_ref, bp_ref_3d);
@@ -337,17 +337,17 @@ void create_random_polygons(
       k_poly.reverse_orientation();
     }
 
-		// std::cout << "OFF" << std::endl;
-		// std::cout << "4 1 0" << std::endl;
-		// for (auto it_p = k_poly.vertices_begin(); it_p != k_poly.vertices_end(); ++it_p) {
-		// 	std::cout << *it_p << " 0" << std::endl;
-		// }
+    // std::cout << "OFF" << std::endl;
+    // std::cout << "4 1 0" << std::endl;
+    // for (auto it_p = k_poly.vertices_begin(); it_p != k_poly.vertices_end(); ++it_p) {
+    // 	std::cout << *it_p << " 0" << std::endl;
+    // }
     // std::cout << "4 0 1 2 3" << std::endl;
 
     std::list<Polygon_with_holes_2> bp_k_intersection;
-		CGAL::intersection(bp_ref, k_poly, std::back_inserter(bp_k_intersection));
+    CGAL::intersection(bp_ref, k_poly, std::back_inserter(bp_k_intersection));
 
-		if (!bp_k_intersection.empty()) {
+    if (!bp_k_intersection.empty()) {
       for (auto it_p = bp_k_intersection.begin(); it_p != bp_k_intersection.end(); ++it_p) {
         const Polygon_2 s_poly = it_p->outer_boundary();
         std::vector<Point_3> poly_generated;
