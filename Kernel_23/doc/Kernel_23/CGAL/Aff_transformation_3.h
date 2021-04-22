@@ -199,6 +199,17 @@ returns `true`, if the transformation is reflecting.
 */
 bool is_odd() const;
 
+/*!
+returns `true`, if the transformation type is the specialized scaling.
+*/
+bool is_scaling() const;
+
+/*!
+returns `true`, if the transformation type is the specialized translation.
+*/
+bool is_translation() const;
+
+
 /// @}
 
 /// \name Matrix Entry Access
