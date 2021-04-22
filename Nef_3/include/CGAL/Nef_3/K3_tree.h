@@ -307,9 +307,9 @@ public:
                     (left_node == nullptr && right_node == nullptr));
     return (left_node == nullptr && right_node == nullptr);
   }
-  const Node_handle parent() const { return parent_node; }
-    const Node_handle left() const { return left_node; }
-  const Node_handle right() const { return right_node; }
+  Node_handle parent() const { return parent_node; }
+  Node_handle left() const { return left_node; }
+  Node_handle right() const { return right_node; }
   const Plane_3& plane() const { return splitting_plane; }
   const Object_list& objects() const { return object_list; }
 
@@ -583,13 +583,13 @@ else {
         return !(*this == i);
       }
     private:
-      const Node_handle get_node() const {
+      Node_handle get_node() const {
         CGAL_assertion( node != nullptr);
         return node;
       }
 
 inline
-const Node_handle get_child_by_side( const Node_handle node, Oriented_side side) {
+Node_handle get_child_by_side( const Node_handle node, Oriented_side side) {
   CGAL_assertion( node != nullptr);
   CGAL_assertion( side != ON_ORIENTED_BOUNDARY);
   if( side == ON_NEGATIVE_SIDE) {
@@ -1275,7 +1275,7 @@ Plane_3 construct_splitting_plane(Object_iterator start, Object_iterator end,
   return Plane_3();
 }
 
-const Node_handle locate_cell_containing( const Point_3& p, const Node_handle node) const {
+Node_handle locate_cell_containing( const Point_3& p, const Node_handle node) const {
   CGAL_precondition( node != nullptr);
   if( node->is_leaf())
     return node;
