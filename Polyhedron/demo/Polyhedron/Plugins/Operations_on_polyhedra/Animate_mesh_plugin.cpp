@@ -110,17 +110,22 @@ public Q_SLOTS:
     void read_prev_frame()
     {
       typedef boost::property_map<SMesh,CGAL::vertex_point_t>::type VPmap;
+      const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
       Frame cur_frame = old_frames.back();
       old_frames.pop_back();
-      sm_item->redraw();
 
       for(auto pp : cur_frame)
       {
         SMesh::Vertex_index vh(pp.first);
         VPmap vpm = get(CGAL::vertex_point, *sm_item->face_graph());
-        put(vpm, vh, pp.second);
+        Point_3 np = pp.second;
+        put(vpm, vh, Point_3(np.x()-offset.x,
+                             np.y()-offset.y,
+                             np.z()-offset.z));
+
         sm_item->updateVertex(vh);
       }
+      sm_item->redraw();
     }
 
   void read_next_frame()
