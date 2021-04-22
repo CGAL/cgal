@@ -340,7 +340,7 @@ void create_random_polygons(
     // std::cout << "OFF" << std::endl;
     // std::cout << "4 1 0" << std::endl;
     // for (auto it_p = k_poly.vertices_begin(); it_p != k_poly.vertices_end(); ++it_p) {
-    // 	std::cout << *it_p << " 0" << std::endl;
+    //   std::cout << *it_p << " 0" << std::endl;
     // }
     // std::cout << "4 0 1 2 3" << std::endl;
 

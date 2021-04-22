@@ -40,14 +40,14 @@ namespace KSR_3 {
   public:
     using Kernel = GeomTraits;
 
-    using FT 		  	 = typename Kernel::FT;
-    using Point_3 	 = typename Kernel::Point_3;
+    using FT          = typename Kernel::FT;
+    using Point_3    = typename Kernel::Point_3;
     using Triangle_2 = typename Kernel::Triangle_2;
-    using Indices 	 = std::vector<std::size_t>;
+    using Indices    = std::vector<std::size_t>;
 
     using Data_structure = KSR_3::Data_structure<Kernel>;
     using Volume_cell    = typename Data_structure::Volume_cell;
-    using PFace 				 = typename Data_structure::PFace;
+    using PFace          = typename Data_structure::PFace;
 
     using Visibility_label = KSR::Visibility_label;
 
@@ -217,7 +217,7 @@ namespace KSR_3 {
 
     const double compute_edge_cost(const FT edge_weight) const {
 
-      CGAL_assertion(m_beta 		 >= FT(0) && m_beta 		 <= FT(1));
+      CGAL_assertion(m_beta      >= FT(0) && m_beta      <= FT(1));
       CGAL_assertion(edge_weight >= FT(0) && edge_weight <= FT(1));
       return CGAL::to_double(m_beta * edge_weight);
     }

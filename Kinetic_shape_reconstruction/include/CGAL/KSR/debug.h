@@ -540,16 +540,16 @@ private:
     const std::size_t size) const {
 
     stream <<
-    "ply" 				         +  std::string(_NL_) + ""               			 <<
-    "format ascii 1.0"     +  std::string(_NL_) + ""     			           <<
+    "ply"                  +  std::string(_NL_) + ""                      <<
+    "format ascii 1.0"     +  std::string(_NL_) + ""                      <<
     "element vertex "      << size        << "" + std::string(_NL_) + "" <<
-    "property double x"    +  std::string(_NL_) + ""    			           <<
-    "property double y"    +  std::string(_NL_) + ""    			           <<
-    "property double z"    +  std::string(_NL_) + "" 				             <<
-    "property uchar red"   +  std::string(_NL_) + "" 				             <<
-    "property uchar green" +  std::string(_NL_) + "" 				             <<
-    "property uchar blue"  +  std::string(_NL_) + "" 				             <<
-    "property uchar alpha" +  std::string(_NL_) + "" 				             <<
+    "property double x"    +  std::string(_NL_) + ""                     <<
+    "property double y"    +  std::string(_NL_) + ""                     <<
+    "property double z"    +  std::string(_NL_) + ""                      <<
+    "property uchar red"   +  std::string(_NL_) + ""                      <<
+    "property uchar green" +  std::string(_NL_) + ""                      <<
+    "property uchar blue"  +  std::string(_NL_) + ""                      <<
+    "property uchar alpha" +  std::string(_NL_) + ""                      <<
     "end_header"           +  std::string(_NL_) + "";
   }
 
@@ -558,15 +558,15 @@ private:
     const std::size_t size) const {
 
     stream <<
-    "ply" 				         +  std::string(_NL_) + ""               			 <<
-    "format ascii 1.0"     +  std::string(_NL_) + ""     			           <<
+    "ply"                  +  std::string(_NL_) + ""                      <<
+    "format ascii 1.0"     +  std::string(_NL_) + ""                      <<
     "element vertex "      << size        << "" + std::string(_NL_) + "" <<
-    "property double x"    +  std::string(_NL_) + ""    			           <<
-    "property double y"    +  std::string(_NL_) + ""    			           <<
-    "property double z"    +  std::string(_NL_) + "" 				             <<
-    "property double nx"   +  std::string(_NL_) + ""    			           <<
-    "property double ny"   +  std::string(_NL_) + ""    			           <<
-    "property double nz"   +  std::string(_NL_) + "" 				             <<
+    "property double x"    +  std::string(_NL_) + ""                     <<
+    "property double y"    +  std::string(_NL_) + ""                     <<
+    "property double z"    +  std::string(_NL_) + ""                      <<
+    "property double nx"   +  std::string(_NL_) + ""                     <<
+    "property double ny"   +  std::string(_NL_) + ""                     <<
+    "property double nz"   +  std::string(_NL_) + ""                      <<
     "end_header"           +  std::string(_NL_) + "";
   }
 
@@ -576,18 +576,18 @@ private:
     const std::size_t num_faces) const {
 
     stream <<
-    "ply" 				         +  std::string(_NL_) + ""               			<<
-    "format ascii 1.0"     +  std::string(_NL_) + ""     			          <<
+    "ply"                  +  std::string(_NL_) + ""                     <<
+    "format ascii 1.0"     +  std::string(_NL_) + ""                     <<
     "element vertex "      << num_vertices     << "" + std::string(_NL_) + "" <<
-    "property double x"    +  std::string(_NL_) + ""    			          <<
-    "property double y"    +  std::string(_NL_) + ""    			          <<
-    "property double z"    +  std::string(_NL_) + "" 				            <<
+    "property double x"    +  std::string(_NL_) + ""                    <<
+    "property double y"    +  std::string(_NL_) + ""                    <<
+    "property double z"    +  std::string(_NL_) + ""                     <<
     "element face "        << num_faces        << "" + std::string(_NL_) + "" <<
     "property list uchar int vertex_indices"         + std::string(_NL_) + "" <<
-    "property uchar red"   +  std::string(_NL_) + "" 				            <<
-    "property uchar green" +  std::string(_NL_) + "" 				            <<
-    "property uchar blue"  +  std::string(_NL_) + "" 				            <<
-    "property uchar alpha" +  std::string(_NL_) + "" 				             <<
+    "property uchar red"   +  std::string(_NL_) + ""                     <<
+    "property uchar green" +  std::string(_NL_) + ""                     <<
+    "property uchar blue"  +  std::string(_NL_) + ""                     <<
+    "property uchar alpha" +  std::string(_NL_) + ""                      <<
     "end_header"           +  std::string(_NL_) + "";
   }
 };
