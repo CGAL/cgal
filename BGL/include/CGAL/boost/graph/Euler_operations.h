@@ -1706,7 +1706,7 @@ void shift_source (typename boost::graph_traits<Graph>::halfedge_descriptor h,
 
   CGAL_assertion (f != Traits::null_face());
   CGAL_assertion (fo != Traits::null_face());
-  
+
   if (halfedge (f, g) == hp)
     set_halfedge (f, h, g);
 
@@ -1738,7 +1738,7 @@ void shift_target (typename boost::graph_traits<Graph>::halfedge_descriptor h,
 
   CGAL_assertion (f != Traits::null_face());
   CGAL_assertion (fo != Traits::null_face());
-  
+
   if (halfedge (f, g) == hn)
     set_halfedge (f, h, g);
 
