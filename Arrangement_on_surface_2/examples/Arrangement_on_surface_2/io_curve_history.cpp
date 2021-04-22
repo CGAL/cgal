@@ -25,7 +25,7 @@ int main() {
   Arr_with_hist arr1;
   insert(arr1, segs, segs + 6);
   std::cout << "Writing an arrangement of "
-            << arr1.number_of_curves() << " input segments:" << std::endl;
+            << arr1.number_of_curves() << " input segments:\n";
   print_arrangement_size(arr1);
 
   // Write the arrangement to a file.
@@ -39,7 +39,7 @@ int main() {
   in_file >> arr2;
   in_file.close();
   std::cout << "Read an arrangement of "
-            << arr2.number_of_curves() << " input segments:" << std::endl;
+            << arr2.number_of_curves() << " input segments:\n";
   print_arrangement_size(arr2);
 
   return 0;

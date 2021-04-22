@@ -358,7 +358,7 @@ face \f$ f_2\f$. The face \f$ f_1\f$ has a more complicated structure
 as it contains two holes in its interior: One hole consists of two
 adjacent faces \f$ f_3\f$ and \f$ f_4\f$, while the other hole
 comprises of two edges. \f$ f_1\f$ also contains two isolated vertices
-\f$ u_1\f$ and \f$ u_2\f$ in its interior.
+\f$ u_1\f$ and \f$ u_2\f$ in its interior (which do not count has holes).
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -399,7 +399,10 @@ the `Arrangement_2` class template; their description follows.
   In this section we always use `Arr_non_caching_segment_traits_2` as
   our traits-class model in order to construct arrangements of line
   segments. In succeeding sections we also use `Arr_segment_traits_2`
-  as our traits-class model. In Section \ref aos_sec-unbounded we use
+  as our traits-class model. These two traits trade computation time
+  and storage space. The latter tores the underlying line of every
+  segment of the arrangement to expedite certain operations on the
+  arrangement segments. In Section \ref aos_sec-unbounded we use
   `Arr_linear_traits_2` to construct arrangements of linear curves
   (i.e., lines, rays, and line segments). The \ref
   PkgArrangementOnSurface2 package contains several other traits
@@ -424,7 +427,7 @@ defined in the header file `Arr_print.h`, prints out quantitative
 measures of a given arrangement. While in what follows it is used only
 by examples, it demonstrates well the use of the member functions
 \link Arrangement_on_surface_2::number_of_vertices()
-`number_of_vertices`\endlink, \link
+`number_of_vertices()`\endlink, \link
 Arrangement_on_surface_2::number_of_edges()
 `number_of_edges()`\endlink, and \link
 Arrangement_on_surface_2::number_of_faces()

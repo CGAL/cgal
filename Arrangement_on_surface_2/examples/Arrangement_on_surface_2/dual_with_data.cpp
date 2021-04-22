@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
         std::cout << "Point no. " << k+1 << ": (" << points[k] << "), ";
         ++circ;
       }
-      std::cout << "are collinear." << std::endl;
+      std::cout << "are collinear.\n";
     }
   }
   return 0;

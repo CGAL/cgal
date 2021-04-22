@@ -7,7 +7,7 @@
 #include <iostream>
 
 int main() {
-  std::cout << "Sorry, this example needs CORE ..." << std::endl;
+  std::cout << "Sorry, this example needs CORE ...\n";
   return 0;
 }
 
@@ -52,8 +52,7 @@ int main() {
   Bezier_curve B;
 
   in_file >> n_curves;
-  size_t k;
-  for (k = 0; k < n_curves; ++k) {
+  for (size_t k = 0; k < n_curves; ++k) {
     // Read the current curve (specified by its control points).
     in_file >> B;
     // convert it into x-monotone bezier curve.
@@ -71,4 +70,5 @@ int main() {
 
   return 0;
 }
+
 #endif

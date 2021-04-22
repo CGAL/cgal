@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
   std::ifstream in_file(filename);
 
   if (! in_file.is_open()) {
-    std::cerr << "Failed to open " << filename << "!" << std::endl;
+    std::cerr << "Failed to open " << filename << "!\n";
     return 1;
   }
 
@@ -35,14 +35,14 @@ int main(int argc, char* argv[]) {
   // Construct the dual arrangement by aggregately inserting the lines.
   Arrangement arr;
   insert(arr, dual_lines.begin(), dual_lines.end());
-  std::cout << "The dual arrangement size:" << std::endl
+  std::cout << "The dual arrangement size:\n"
             << "V = " << arr.number_of_vertices()
             << " (+ " << arr.number_of_vertices_at_infinity()
             << " at infinity)"
             << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces()
             << " (" << arr.number_of_unbounded_faces()
-            << " unbounded)" << std::endl;
+            << " unbounded)\n";
 
   // Look for a vertex whose degree is greater than 4.
   bool found_collinear = false;
@@ -53,11 +53,9 @@ int main(int argc, char* argv[]) {
     }
   }
   if (found_collinear)
-    std::cout << "Found at least three collinear points in the input set."
-              << std::endl;
+    std::cout << "Found at least three collinear points in the input set.\n";
   else
-    std::cout << "No three collinear points are found in the input set."
-              << std::endl;
+    std::cout << "No three collinear points are found in the input set.\n";
 
   // Pick two points from the input set, compute their midpoint and insert
   // its dual line into the arrangement.

@@ -6,7 +6,7 @@
 #ifndef CGAL_USE_CORE
 #include <iostream>
 int main() {
-  std::cout << "Sorry, this example needs CORE ..." << std::endl;
+  std::cout << "Sorry, this example needs CORE ...\n";
   return 0;
 }
 
@@ -97,7 +97,7 @@ int main() {
   insert(arr, arcs.begin(), arcs.end());
 
   // Print the arrangement size.
-  std::cout << "The arrangement size:" << std::endl
+  std::cout << "The arrangement size:\n"
             << "   V = " << arr.number_of_vertices()
             << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;

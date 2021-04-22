@@ -12,16 +12,14 @@ class My_observer : public CGAL::Arr_observer<Arrangement> {
 public:
   My_observer(Arrangement& arr) : CGAL::Arr_observer<Arrangement>(arr) {}
 
-  virtual void before_split_face(Face_handle, Halfedge_handle e)
-  {
+  virtual void before_split_face(Face_handle, Halfedge_handle e) {
     std::cout << "-> The insertion of :  [ " << e->curve()
-              << " ]  causes a face to split." << std::endl;
+              << " ]  causes a face to split.\n";
   }
 
-  virtual void before_merge_face(Face_handle, Face_handle, Halfedge_handle e)
-  {
+  virtual void before_merge_face(Face_handle, Face_handle, Halfedge_handle e) {
     std::cout << "-> The removal of :  [ " << e->curve()
-              << " ]  causes two faces to merge." << std::endl;
+              << " ]  causes two faces to merge.\n";
   }
 };
 

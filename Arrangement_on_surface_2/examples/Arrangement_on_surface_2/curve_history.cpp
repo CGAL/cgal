@@ -27,15 +27,15 @@ int main() {
 
   // Print out the curves and the number of edges each one induces.
   std::cout << "The arrangement contains "
-            << arr.number_of_curves() << " curves:" << std::endl;
+            << arr.number_of_curves() << " curves:\n";
   for (auto cit = arr.curves_begin(); cit != arr.curves_end(); ++cit)
     std::cout << "Curve [" << *cit << "] induces "
-              << arr.number_of_induced_edges(cit) << " edges." << std::endl;
+              << arr.number_of_induced_edges(cit) << " edges.\n";
 
   // Print the arrangement edges along with the list of curves that
   // induce each edge.
   std::cout << "The arrangement comprises "
-            << arr.number_of_edges() << " edges:" << std::endl;
+            << arr.number_of_edges() << " edges:\n";
   for (auto eit = arr.edges_begin(); eit != arr.edges_end(); ++eit) {
     std::cout << "[" << eit->curve() << "]. Originating curves: ";
     for (auto ocit = arr.originating_curves_begin(eit);

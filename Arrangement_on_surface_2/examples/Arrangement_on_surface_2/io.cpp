@@ -14,7 +14,7 @@ int main() {
   // Construct the arrangement.
   Arrangement arr1;
   construct_segments_arr(arr1);
-  std::cout << "Writing" << std::endl;
+  std::cout << "Writing\n";
   print_arrangement_size(arr1);
 
   // Write the arrangement to a file.
@@ -27,7 +27,7 @@ int main() {
   std::ifstream in_file("arr_ex_io.dat");
   in_file >> arr2;
   in_file.close();
-  std::cout << "Reading" << std::endl;
+  std::cout << "Reading\n";
   print_arrangement_size(arr2);
 
   return 0;

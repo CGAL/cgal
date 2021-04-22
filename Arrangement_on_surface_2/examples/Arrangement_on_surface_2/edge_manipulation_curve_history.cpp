@@ -32,13 +32,13 @@ int main() {
   Curve_handle handles[9];
   for (size_t k = 0; k < 9; ++k) handles[k] = insert(arr, C[k]);
 
-  std::cout << "The initial arrangement size:" << std::endl;
+  std::cout << "The initial arrangement size:\n";
   print_arrangement_size(arr);
 
   // Remove the large circle C[0].
   std::cout << "Removing C[0]: ";
   std::cout << remove_curve(arr, handles[0])
-            << " edges have been removed." << std::endl;
+            << " edges have been removed.\n";
   print_arrangement_size(arr);
 
   // Locate the point q, which should be on an edge e.
@@ -51,12 +51,12 @@ int main() {
   // Split the edge e to two edges e1 and e2;
   auto e1 = arr.split_edge(arr.non_const_handle(*e), q);
   auto e2 = e1->next();
-  std::cout << "After edge split: " << std::endl;
+  std::cout << "After edge split:\n";
   print_arrangement_size(arr);
 
   // Merge back the two split edges.
   arr.merge_edge(e1, e2);
-  std::cout << "After edge merge: " << std::endl;
+  std::cout << "After edge merge:\n";
   print_arrangement_size(arr);
   return 0;
 }

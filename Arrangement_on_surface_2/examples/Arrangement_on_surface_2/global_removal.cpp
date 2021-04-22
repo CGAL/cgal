@@ -15,7 +15,7 @@ int main() {
   insert(arr, Segment(Point(1, 1), Point(1, 6)));
   insert(arr, Segment(Point(5, 1), Point(5, 6)));
 
-  std::cout << "The initial arrangement:" << std::endl;
+  std::cout << "The initial arrangement:\n";
   print_arrangement(arr);
 
   // Remove e1 and its incident vertices using the function remove_edge().
@@ -27,7 +27,7 @@ int main() {
   // Remove e2 using the free remove_edge() function.
   remove_edge(arr, e2);
 
-  std::cout << "The final arrangement:" << std::endl;
+  std::cout << "The final arrangement:\n";
   print_arrangement(arr);
   return 0;
 }

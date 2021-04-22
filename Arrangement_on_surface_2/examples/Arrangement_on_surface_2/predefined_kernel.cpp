@@ -19,8 +19,8 @@ int main (int argc, char* argv[]) {
   // Open the input file.
   std::ifstream in_file(filename);
   if (! in_file.is_open()) {
-    std::cerr << "Failed to open " << filename << " ..." << std::endl;
-    return (1);
+    std::cerr << "Failed to open " << filename << " ...\n";
+    return 1;
   }
 
   std::list<Segment> segments;
@@ -31,7 +31,7 @@ int main (int argc, char* argv[]) {
   CGAL::Timer timer;
 
   std::cout << "Performing aggregated insertion of "
-            << segments.size() << " segments." << std::endl;
+            << segments.size() << " segments.\n";
 
   timer.start();
   insert(arr, segments.begin(), segments.end());
@@ -39,8 +39,7 @@ int main (int argc, char* argv[]) {
 
   print_arrangement_size(arr);
 
-  std::cout << "Construction took " << timer.time()
-            << " seconds." << std::endl;
+  std::cout << "Construction took " << timer.time() << " seconds.\n";
 
   return 0;
 }

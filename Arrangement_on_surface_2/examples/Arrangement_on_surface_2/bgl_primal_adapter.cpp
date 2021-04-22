@@ -44,7 +44,7 @@ int main() {
 
   // Print the distance of each vertex from v0.
   std::cout << "The graph distances of the arrangement vertices from ("
-            << v0->point() << ") :" << std::endl;
+            << v0->point() << ") :\n";
   for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
     std::cout << "(" << vit->point() << ") at distance "
               << CGAL::to_double(dist_map[vit]) << std::endl;

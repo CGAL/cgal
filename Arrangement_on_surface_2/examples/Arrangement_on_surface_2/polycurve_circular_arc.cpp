@@ -7,7 +7,7 @@
 #include <iostream>
 
 int main() {
-  std::cout << "Sorry, this example needs CORE ..." << std::endl;
+  std::cout << "Sorry, this example needs CORE ...\n";
   return 0;
 }
 
@@ -108,7 +108,7 @@ int main() {
   insert(polycurve_arrangment, polycurve_1);
   insert(polycurve_arrangment, polycurve_2);
   insert(polycurve_arrangment, x_polycurve_1);
-  std::cout << "Arrangment Statistics: " << std::endl;
+  std::cout << "Arrangment Statistics:\n";
   print_arrangement(polycurve_arrangment);
 
   return 0;

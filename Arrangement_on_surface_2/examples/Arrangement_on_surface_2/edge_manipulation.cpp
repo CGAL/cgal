@@ -16,7 +16,7 @@ int main() {
   e2 = e2->twin();     // as we wish e2 to be directed from right to left
   arr.insert_at_vertices(s3, e1->target(), e2->source());
   arr.insert_at_vertices(s4, e2->target(), e1->source());
-  std::cout << "After step (a):" << std::endl;
+  std::cout << "After step (a):\n";
   print_arrangement(arr);
 
   // Step (b)---split e1 and e2 and connect the split points with a segment.
@@ -33,7 +33,7 @@ int main() {
   arr.remove_edge(e);
   arr.merge_edge(e1, e1->next(), s1);
   arr.merge_edge(e2, e2->next(), s2);
-  std::cout << std::endl << "After step (c):" << std::endl;
+  std::cout << std::endl << "After step (c):\n";
   print_arrangement(arr);
   return 0;
 }

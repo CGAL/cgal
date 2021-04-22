@@ -102,7 +102,7 @@ protected:
         boost::get<Face_const_handle>(&(it->second)))       // inside a face
       std::cout << "inside "
                 << (((*f)->is_unbounded()) ? "the unbounded" : "a bounded")
-                << " face." << std::endl;
+                << " face.\n";
     else if (const Halfedge_const_handle* e =
              boost::get<Halfedge_const_handle>(&(it->second))) // on an edge
       std::cout << "on an edge: " << (*e)->curve() << std::endl;

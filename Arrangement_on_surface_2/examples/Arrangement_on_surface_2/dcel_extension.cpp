@@ -51,13 +51,13 @@ int main() {
   // Copy the arrangement and print the vertices along with their colors.
   Ex_arrangement arr2 = arr;
 
-  std::cout << "The arrangement vertices:" << std::endl;
+  std::cout << "The arrangement vertices:\n";
   for (auto vit = arr2.vertices_begin(); vit != arr2.vertices_end(); ++vit) {
     std::cout << '(' << vit->point() << ") - ";
     switch (vit->data()) {
-      case BLUE  : std::cout << "BLUE."  << std::endl; break;
-      case RED   : std::cout << "RED."   << std::endl; break;
-      case WHITE : std::cout << "WHITE." << std::endl; break;
+      case BLUE  : std::cout << "BLUE.\n"; break;
+      case RED   : std::cout << "RED.\n"; break;
+      case WHITE : std::cout << "WHITE.\n"; break;
     }
   }
 

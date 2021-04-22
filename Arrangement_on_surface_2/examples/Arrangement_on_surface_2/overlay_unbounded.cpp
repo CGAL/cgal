@@ -59,13 +59,12 @@ int main() {
   CGAL::overlay(arr1, arr2, overlay_arr, overlay_traits);
 
   // Go over the faces of the overlay arrangement and print their labels.
-  std::cout << "The overlay faces are: " << std::endl;
+  std::cout << "The overlay faces are:\n";
   for (auto res_fit = overlay_arr.faces_begin();
        res_fit != overlay_arr.faces_end(); ++res_fit)
   {
     std::cout << "  " << res_fit->data().c_str() << " ("
-              << (res_fit->is_unbounded() ? "unbounded" : "bounded")
-              << ")." << std::endl;
+              << (res_fit->is_unbounded() ? "unbounded" : "bounded") << ").\n";
   }
   return 0;
 }

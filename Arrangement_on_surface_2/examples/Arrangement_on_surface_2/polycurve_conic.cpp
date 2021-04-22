@@ -7,7 +7,7 @@
 #include <iostream>
 
 int main() {
-  std::cout << "Sorry, this example needs CORE ..." << std::endl;
+  std::cout << "Sorry, this example needs CORE ...\n";
   return 0;
 }
 
@@ -112,13 +112,13 @@ int main() {
   Polycurve_conic_arrangment x_pc_arrangment(&traits);
   insert(x_pc_arrangment, conic_x_mono_polycurve_1);
   insert(x_pc_arrangment, conic_x_mono_polycurve_2);
-  std::cout << "X-monotone polycurve arrangement Statistics: " << std::endl;
+  std::cout << "X-monotone polycurve arrangement Statistics:\n";
   print_arrangement(x_pc_arrangment);
 
   Polycurve_conic_arrangment pc_arrangment(&traits);
   insert(pc_arrangment, conic_polycurve_1);
   insert(pc_arrangment, conic_polycurve_2);
-  std::cout << "Polycurve arrangement Statistics: " << std::endl;
+  std::cout << "Polycurve arrangement Statistics:\n";
   print_arrangement(pc_arrangment);
 
   return 0;

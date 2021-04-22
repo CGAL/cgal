@@ -40,7 +40,7 @@ int main() {
   insert(arr, Ex_polyline(ctr_curve(pts4, pts4 + 2), "D"));
 
   // Print all edges that correspond to an overlapping polyline.
-  std::cout << "The overlapping subcurves:" << std::endl;
+  std::cout << "The overlapping subcurves:\n";
   for (auto eit = arr.edges_begin(); eit != arr.edges_end(); ++eit) {
     if (eit->curve().data().length() > 1) {
       std::cout << "  [" << eit->curve() << "]  "

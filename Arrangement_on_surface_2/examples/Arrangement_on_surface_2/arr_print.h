@@ -5,10 +5,9 @@
 // Print all neighboring vertices to a given arrangement vertex.
 //
 template<class Arrangement>
-void print_neighboring_vertices(typename Arrangement::Vertex_const_handle v)
-{
+void print_neighboring_vertices(typename Arrangement::Vertex_const_handle v) {
   if (v->is_isolated()) {
-    std::cout << "The vertex (" << v->point() << ") is isolated" << std::endl;
+    std::cout << "The vertex (" << v->point() << ") is isolated\n";
     return;
   }
 
@@ -25,8 +24,7 @@ void print_neighboring_vertices(typename Arrangement::Vertex_const_handle v)
 // boundary.
 //
 template <typename Arrangement>
-void print_ccb(typename Arrangement::Ccb_halfedge_const_circulator circ)
-{
+void print_ccb(typename Arrangement::Ccb_halfedge_const_circulator circ) {
   std::cout << "(" << circ->source()->point() << ")";
   typename Arrangement::Ccb_halfedge_const_circulator curr = circ;
   do {
@@ -41,10 +39,9 @@ void print_ccb(typename Arrangement::Ccb_halfedge_const_circulator circ)
 // Print the boundary description of an arrangement face.
 //
 template <typename Arrangement>
-void print_face(typename Arrangement::Face_const_handle f)
-{
+void print_face(typename Arrangement::Face_const_handle f) {
   // Print the outer boundary.
-  if (f->is_unbounded()) std::cout << "Unbounded face." << std::endl;
+  if (f->is_unbounded()) std::cout << "Unbounded face.\n";
   else {
     std::cout << "Outer boundary: ";
     print_ccb<Arrangement>(f->outer_ccb());
@@ -71,25 +68,24 @@ void print_face(typename Arrangement::Face_const_handle f)
 // Print the given arrangement.
 //
 template <typename Arrangement>
-void print_arrangement(const Arrangement& arr)
-{
+void print_arrangement(const Arrangement& arr) {
   CGAL_precondition(arr.is_valid());
 
   // Print the arrangement vertices.
-  std::cout << arr.number_of_vertices() << " vertices:" << std::endl;
+  std::cout << arr.number_of_vertices() << " vertices:\n";
   for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
     std::cout << "(" << vit->point() << ")";
-    if (vit->is_isolated()) std::cout << " - Isolated." << std::endl;
+    if (vit->is_isolated()) std::cout << " - Isolated.\n";
     else std::cout << " - degree " << vit->degree() << std::endl;
   }
 
   // Print the arrangement edges.
-  std::cout << arr.number_of_edges() << " edges:" << std::endl;
+  std::cout << arr.number_of_edges() << " edges:\n";
   for (auto eit = arr.edges_begin(); eit != arr.edges_end(); ++eit)
-    std::cout << "[" << eit->curve() << "]" << std::endl;
+    std::cout << "[" << eit->curve() << "]\n";
 
   // Print the arrangement faces.
-  std::cout << arr.number_of_faces() << " faces:" << std::endl;
+  std::cout << arr.number_of_faces() << " faces:\n";
   for (auto fit = arr.faces_begin(); fit != arr.faces_end(); ++fit)
     print_face<Arrangement>(fit);
 }
@@ -98,9 +94,8 @@ void print_arrangement(const Arrangement& arr)
 // Print the size of the given arrangement.
 //
 template <typename Arrangement>
-void print_arrangement_size(const Arrangement& arr)
-{
-  std::cout << "The arrangement size:" << std::endl
+void print_arrangement_size(const Arrangement& arr) {
+  std::cout << "The arrangement size:\n"
             << "   |V| = " << arr.number_of_vertices()
             << ",  |E| = " << arr.number_of_edges()
             << ",  |F| = " << arr.number_of_faces() << std::endl;
@@ -110,16 +105,14 @@ void print_arrangement_size(const Arrangement& arr)
 // Print the size of the given unbounded arrangement.
 //
 template <typename Arrangement>
-void print_unbounded_arrangement_size(const Arrangement& arr)
-{
-  std::cout << "The arrangement size:" << std::endl
+void print_unbounded_arrangement_size(const Arrangement& arr) {
+  std::cout << "The arrangement size:\n"
             << "   |V| = " << arr.number_of_vertices()
             << " (plus " << arr.number_of_vertices_at_infinity()
             << " at infinity)"
             << ",  |E| = " << arr.number_of_edges()
             << ",  |F| = " << arr.number_of_faces()
-            << " (" << arr.number_of_unbounded_faces() << " unbounded)"
-            << std::endl << std::endl;
+            << " (" << arr.number_of_unbounded_faces() << " unbounded)\n\n";
 }
 
 #endif

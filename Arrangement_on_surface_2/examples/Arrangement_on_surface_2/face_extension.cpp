@@ -33,7 +33,7 @@ public:
 int main() {
   // Construct the arrangement containing two intersecting triangles.
   Ex_arrangement arr;
-  Face_index_observer  obs(arr);
+  Face_index_observer obs(arr);
   insert_non_intersecting_curve(arr, Segment(Point(4, 1), Point(7, 6)));
   insert_non_intersecting_curve(arr, Segment(Point(1, 6), Point(7, 6)));
   insert_non_intersecting_curve(arr, Segment(Point(4, 1), Point(1, 6)));
@@ -43,10 +43,10 @@ int main() {
 
   // Go over all arrangement faces and print the index of each face and its
   // outer boundary. The face index is stored in the data field.
-  std::cout << arr.number_of_faces() << " faces:" << std::endl;
+  std::cout << arr.number_of_faces() << " faces:\n";
   for (auto fit = arr.faces_begin(); fit != arr.faces_end(); ++fit) {
     std::cout << "Face no. " << fit->data() << ": ";
-    if (fit->is_unbounded()) std::cout << "Unbounded." << std::endl;
+    if (fit->is_unbounded()) std::cout << "Unbounded.\n";
     else {
       auto curr = fit->outer_ccb();
       std::cout << curr->source()->point();

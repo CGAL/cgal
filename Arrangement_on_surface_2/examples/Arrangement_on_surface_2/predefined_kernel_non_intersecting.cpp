@@ -25,8 +25,8 @@ int main(int argc, char* argv[]) {
   std::ifstream in_file(filename);
 
   if (! in_file.is_open()) {
-    std::cerr << "Failed to open " << filename << " ..." << std::endl;
-    return (1);
+    std::cerr << "Failed to open " << filename << " ...\n";
+    return 1;
   }
 
   // Read the segments from the file.
@@ -54,8 +54,7 @@ int main(int argc, char* argv[]) {
   Arrangement_2 arr;
   CGAL::Timer timer;
 
-  std::cout << "Performing aggregated insertion of "
-            << n << " segments." << std::endl;
+  std::cout << "Performing aggregated insertion of " << n << " segments.\n";
 
   timer.start();
   insert_non_intersecting_curves (arr, segments.begin(), segments.end());
@@ -66,8 +65,7 @@ int main(int argc, char* argv[]) {
             << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
 
-  std::cout << "Construction took " << timer.time()
-            << " seconds." << std::endl;
+  std::cout << "Construction took " << timer.time() << " seconds.\n";
 
   return 0;
 }

@@ -48,7 +48,7 @@ int main() {
       std::cout << "face ";
       print_ccb<Ex_arrangement>(fit->outer_ccb());
     }
-    else std::cout << "the unbounded face." << std::endl;
+    else std::cout << "the unbounded face.\n";
   }
   return 0;
 }

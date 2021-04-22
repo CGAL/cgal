@@ -44,11 +44,11 @@ int main() {
 
     std::cout << "   feature above: ";
     if (CGAL::assign(hh, curr.second))
-      std::cout << '[' << hh->curve() << ']' << std::endl;
+      std::cout << '[' << hh->curve() << ']\n';
     else if (CGAL::assign(vh, curr.second))
-      std::cout << '(' << vh->point() << ')' << std::endl;
-    else if (CGAL::assign(fh, curr.second)) std::cout << "NONE" << std::endl;
-    else std::cout << "EMPTY" << std::endl;
+      std::cout << '(' << vh->point() << ')\n';
+    else if (CGAL::assign(fh, curr.second)) std::cout << "NONE\n";
+    else std::cout << "EMPTY\n";
   }
 
   return 0;

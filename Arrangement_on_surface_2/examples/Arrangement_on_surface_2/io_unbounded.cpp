@@ -23,14 +23,13 @@ int main() {
   insert(arr, curves.begin(), curves.end());
 
   // Print out the size of the resulting arrangement.
-  std::cout << "Writing an arrangement of size:" << std::endl
+  std::cout << "Writing an arrangement of size:\n"
             << "   V = " << arr.number_of_vertices()
             << " (plus " << arr.number_of_vertices_at_infinity()
             << " at infinity)"
             << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces()
-            << " (" << arr.number_of_unbounded_faces() << " unbounded)"
-            << std::endl << std::endl;
+            << " (" << arr.number_of_unbounded_faces() << " unbounded)\n\n";
 
   // Write the arrangement to a file.
   std::ofstream out_file("arr_ex_io_unbounded.dat");
@@ -45,14 +44,13 @@ int main() {
   in_file >> arr2;
   in_file.close();
 
-  std::cout << "Read an arrangement of size:" << std::endl
+  std::cout << "Read an arrangement of size:\n"
             << "   V = " << arr2.number_of_vertices()
             << " (plus " << arr2.number_of_vertices_at_infinity()
             << " at infinity)"
             << ",  E = " << arr2.number_of_edges()
             << ",  F = " << arr2.number_of_faces()
-            << " (" << arr2.number_of_unbounded_faces() << " unbounded)"
-            << std::endl << std::endl;
+            << " (" << arr2.number_of_unbounded_faces() << " unbounded)\n\n";
 
   return 0;
 }
