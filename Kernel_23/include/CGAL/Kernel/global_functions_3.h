@@ -741,7 +741,7 @@ midpoint(const Point_3<K> &p, const Point_3<K> &q)
 template < class K >
 inline typename K::Point_3 midpoint(const Segment_3<K> &s)
 {
-  return midpoint(s.source(), s.target());
+  return internal::midpoint(s, K());
 }
 
 template < class K >
