@@ -273,6 +273,26 @@ returns `true`, if the transformation is reflecting.
 */
 bool is_odd() const;
 
+/*!
+returns `true`, if the object was constructed using the tag `CGAL::Scaling`, or is the result of the composition of only such scaling transformations objects.
+*/
+bool is_scaling() const;
+
+/*!
+returns `true`, if the object was constructed using the tag `CGAL::Translation`, or is the result of the composition of only such translation transformations objects.
+*/
+bool is_translation() const;
+
+/*!
+returns `true`, if the object was constructed using the tag `CGAL::Rotation`, or is the result of the composition of only such rotation transformations objects.
+*/
+bool is_rotation() const;
+
+/*!
+returns `true`, if the object was constructed using the tag `CGAL::Reflection`, or is the result of the composition of only such reflection transformations objects.
+*/
+bool is_reflection() const;
+
 /// @}
 
 /// \name Matrix Entry Access

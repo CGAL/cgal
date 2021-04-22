@@ -56,8 +56,9 @@ public:
   virtual Aff_transformation_3 inverse() const = 0;
   virtual Aff_transformation_3 transpose() const = 0;
   virtual bool                 is_even() const = 0;
-  virtual bool                 is_translation() const = 0;
-  virtual bool                 is_scaling() const = 0;
+
+  virtual bool                 is_translation() const { return false; }
+  virtual bool                 is_scaling() const { return false; }
   virtual FT                   cartesian(int i, int j) const = 0;
   virtual std::ostream         &print(std::ostream &os) const = 0;
 };
@@ -160,16 +161,6 @@ public:
                                   t31, t32, t33) == POSITIVE;
   }
 
-
-  virtual bool is_translation() const
-  {
-    return false;
-  }
-
-  virtual bool is_scaling() const
-  {
-    return false;
-  }
 
   virtual FT cartesian(int i, int j) const
   {

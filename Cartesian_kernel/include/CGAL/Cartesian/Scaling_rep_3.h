@@ -128,11 +128,6 @@ public:
     return true;
   }
 
-  virtual bool is_translation() const
-  {
-    return false;
-  }
-
   virtual bool is_scaling() const
   {
     return true;

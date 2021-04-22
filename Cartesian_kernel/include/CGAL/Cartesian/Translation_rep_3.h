@@ -140,10 +140,6 @@ public:
     return true;
   }
 
-  virtual bool is_scaling() const
-  {
-    return false;
-  }
   virtual FT cartesian(int i, int j) const
   {
     if (j==i) return FT(1);
