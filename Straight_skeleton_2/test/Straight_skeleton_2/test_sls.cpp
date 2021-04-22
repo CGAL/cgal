@@ -84,7 +84,7 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
        << "Expr: " << expr << std::endl
        << "File: " << file << std::endl
        << "Line: " << line << std::endl;
-  if ( msg != 0)
+  if ( msg != nullptr)
       std::cerr << "Explanation:" << msg << std::endl;
 
   if ( sAbortOnError )
@@ -1207,7 +1207,7 @@ int main( int argc, char const* argv[] )
 
                     if ( soptr != "*" )
                     {
-                      sOffsetCount = strtoul(soptr.c_str(),NULL,10) ;
+                      sOffsetCount = strtoul(soptr.c_str(),nullptr,10) ;
                       cout << "Repeared Offset set at " << sOffset << " " << sOffsetCount << " times." << endl ;
                     }
                     else

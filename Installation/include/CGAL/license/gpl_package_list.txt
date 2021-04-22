@@ -32,6 +32,7 @@ Minkowski_sum_3 3D Minkowski Sum of Polyhedra
 Nef_2 2D Boolean Operations on Nef Polygons
 Nef_3 3D Boolean Operations on Nef Polyhedra
 Nef_S2 2D Boolean Operations on Nef Polygons Embedded on the Sphere
+Orthtree Quadtrees, Octrees, and Orthrees
 Optimal_bounding_box Optimal Bounding Box
 Optimal_transportation_reconstruction_2 Optimal Transportation Curve Reconstruction
 Partition_2 2D Polygon Partitioning
@@ -89,6 +90,7 @@ TDS_2 2D Triangulation Data Structure
 TDS_3 3D Triangulation Data Structure
 Three Three
 Triangulation_2 2D Triangulation
+Triangulation_on_sphere_2 2D Triangulation on Sphere
 Triangulation_3 3D Triangulations
 Triangulation dD Triangulations
 Visibility_2 2D Visibility Computation

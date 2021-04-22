@@ -27,8 +27,6 @@
 #include <CGAL/result_of.h>
 #include <CGAL/Timer.h>
 
-#include <boost/bind.hpp>
-
 #include <iterator>
 #include <map>
 #include <set>

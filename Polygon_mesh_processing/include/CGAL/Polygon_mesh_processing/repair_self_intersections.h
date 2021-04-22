@@ -752,7 +752,7 @@ bool construct_tentative_hole_patch(std::vector<typename boost::graph_traits<Tri
   }
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
-  std::cout << hole_faces.size() << " faces in the patch" << std::endl;
+  std::cout << "  DEBUG: " << hole_faces.size() << " faces in the patch" << std::endl;
   std::vector<std::vector<Point> > to_dump;
   for(const Face_indices& face : hole_faces)
   {
@@ -1467,8 +1467,13 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
 
   std::set<face_descriptor> faces_to_remove_copy = faces_to_remove;
 
+#if defined(CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG) || defined(CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT)
+  static int call_id = -1;
+  ++call_id;
+#endif
+
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
-  std::cout << "##### running remove_self_intersections_one_step, step " << step
+  std::cout << "##### running remove_self_intersections_one_step (#" << call_id << "), step " << step
             << " with " << faces_to_remove.size() << " intersecting faces\n";
 #endif
 
@@ -1479,18 +1484,24 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
   bool topology_issue = false;
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
-  std::cout << "  DEBUG: is_valid in one_step(tmesh)? ";
+  std::cout << "  DEBUG: is_valid in one_step(tmesh)? " << is_valid_polygon_mesh(tmesh) << "\n";
   std::cout.flush();
 
   unsolved_self_intersections = 0;
 #endif
 
   CGAL_precondition(is_valid_polygon_mesh(tmesh));
+#if defined(CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG) || defined(CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT)
+  int cc_id = -1;
+#endif
 
   while(!faces_to_remove.empty())
   {
+#if defined(CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG) || defined(CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT)
+    ++cc_id;
+#endif
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
-    std::cout << "  DEBUG: --------------- " << faces_to_remove.size() << " faces to remove (step: " << step << ")\n";
+    std::cout << "  DEBUG: --------------- Removal per CC: " << faces_to_remove.size() << " remaining faces to remove (CC: " << cc_id << " - step: " << step << ")\n";
 #endif
 
     // Process a connected component of faces to remove.
@@ -1517,22 +1528,20 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
     }
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
-    std::cout << "  DEBUG: " << cc_faces.size() << " faces in CC\n";
+    std::cout << "  DEBUG: " << cc_faces.size() << " faces in the current CC\n";
     std::cout << "  DEBUG: first face: " << get(vpm, source(halfedge(*(cc_faces.begin()), tmesh), tmesh)) << " "
               << get(vpm, target(halfedge(*(cc_faces.begin()), tmesh), tmesh)) << " "
               << get(vpm, target(next(halfedge(*(cc_faces.begin()), tmesh), tmesh), tmesh)) << "\n";
 #endif
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
-    static int ini_cc_id = 0;
-    std::stringstream ini_oss, mesh_oss;
-    std::cout << "Output initial CC #" << ini_cc_id << std::endl;
-    ini_oss << "results/initial_cc_" << ini_cc_id << ".off" << std::ends;
-    dump_cc(cc_faces, tmesh, ini_oss.str().c_str());
+    std::string fname = "results/initial_r_"+std::to_string(call_id)+"_cc_" + std::to_string(cc_id)+"_s_"+std::to_string(step)+".off";
+    std::cout << "  DEBUG: Writing initial CC #" << cc_id << " in " << fname << std::endl;
+    dump_cc(cc_faces, tmesh, fname);
 
-    mesh_oss << "results/mesh_at_cc_ " << ini_cc_id++ << ".off" << std::ends;
-    std::ofstream mout(mesh_oss.str().c_str());
-    mout << std::setprecision(17) << tmesh;
+    fname="results/mesh_at_r_"+std::to_string(call_id)+"_cc_"+std::to_string(cc_id)+"_s_"+std::to_string(step)+".off";
+    std::cout << "  DEBUG: Writing current mesh in " << fname << std::endl;
+    std::ofstream mout(fname);    mout << std::setprecision(17) << tmesh;
     mout.close();
 #endif
 
@@ -1545,11 +1554,9 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
     }
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
-    static int exp_cc_id = 0;
-    std::stringstream oss;
-    std::cout << "Output expanded CC #" << exp_cc_id << std::endl;
-    oss << "results/expanded_cc_" << exp_cc_id++ << ".off" << std::ends;
-    dump_cc(cc_faces, tmesh, oss.str().c_str());
+    fname="results/expanded_r_"+std::to_string(call_id)+"_cc_"+std::to_string(cc_id)+"_s_"+std::to_string(step)+".off";
+    std::cout << "  DEBUG: Writing expanded CC #" << cc_id << " in " << fname << std::endl;
+    dump_cc(cc_faces, tmesh, fname);
 #endif
 
     // try to compactify the selection region by also selecting all the faces included
@@ -1605,7 +1612,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
     }
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
-    std::cout << "  DEBUG: " << cc_faces.size() << " faces in expanded CC\n";
+    std::cout << "  DEBUG: " << cc_faces.size() << " faces in expanded and compactified CC\n";
 #endif
 
     // remove faces from the set to process
@@ -1613,10 +1620,9 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
       faces_to_remove.erase(f);
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
-    std::stringstream ex_oss;
-    std::cout << "Output FULLY expanded CC #" << exp_cc_id-1 << std::endl;
-    ex_oss << "results/fully_expanded_cc_" << exp_cc_id-1 << ".off" << std::ends;
-    dump_cc(cc_faces, tmesh, ex_oss.str().c_str());
+    fname="results/expanded_compactified_r_"+std::to_string(call_id)+"_cc_"+std::to_string(cc_id)+"_s_"+std::to_string(step)+".off";
+    std::cout << "  DEBUG: Writing expanded and compactified CC #" << cc_id << " in " << fname << std::endl;
+    dump_cc(cc_faces, tmesh, fname);
 #endif
 
     //Check for non-manifold vertices in the selection and remove them by selecting all incident faces:
@@ -1974,6 +1980,18 @@ bool remove_self_intersections(const FaceRange& face_range,
   // detect_feature_pp NP (unused for now)
   const double weak_dihedral_angle = 0.; // choose_parameter(get_parameter(np, internal_np::weak_dihedral_angle), 20.);
 
+  struct Return_false {
+    bool operator()(std::pair<face_descriptor, face_descriptor>) const { return false; }
+  };
+
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::filter_t,
+    NamedParameters,
+    Return_false//default
+  > ::type  Output_iterator_predicate;
+  Output_iterator_predicate out_it_predicates
+    = choose_parameter<Output_iterator_predicate>(get_parameter(np, internal_np::filter));
+
   // use containment check
   const double containment_epsilon = choose_parameter(get_parameter(np, internal_np::polyhedral_envelope_epsilon), 0.);
 
@@ -2006,9 +2024,10 @@ bool remove_self_intersections(const FaceRange& face_range,
 
       // TODO : possible optimization to reduce the range to check with the bbox
       // of the previous patches or something.
-      self_intersections(working_face_range, tmesh, std::back_inserter(self_inter));
+      self_intersections(working_face_range, tmesh,
+                         CGAL::filter_output_iterator(std::back_inserter(self_inter), out_it_predicates));
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
-      std::cout << self_inter.size() << " intersecting pairs" << std::endl;
+      std::cout << "  DEBUG: " << self_inter.size() << " intersecting pairs" << std::endl;
 #endif
       for(const Face_pair& fp : self_inter)
       {

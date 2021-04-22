@@ -458,10 +458,6 @@ void DemosMainWindow::readState(QString groupname, Options /*what_to_save*/)
 
     move(pos);
   }
-  QByteArray mainWindowState = settings.value("state").toByteArray();
-  if(!mainWindowState.isNull()) {
-    this->restoreState(mainWindowState);
-  }
   settings.endGroup();
 }
 

@@ -14,7 +14,7 @@
 
 // Note that this header file is intentionnaly not protected with a
 // macro (as <cassert>). Calling it a second time with another value
-// for NDEBUG for example must make a difference.
+// for CGAL_NO_ASSERTIONS for example must make a difference.
 
 #include <CGAL/assertions.h>
 
@@ -27,8 +27,7 @@
 #undef CGAL_multiset_assertion_msg
 #undef CGAL_multiset_assertion_code
 
-#if defined(CGAL_MULTISET_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
-  || defined(NDEBUG)
+#if defined(CGAL_MULTISET_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS)
 #  define CGAL_multiset_assertion(EX) (static_cast<void>(0))
 #  define CGAL_multiset_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_multiset_assertion_code(CODE)
@@ -47,8 +46,7 @@
 #undef CGAL_multiset_exactness_assertion_code
 
 #if defined(CGAL_MULTISET_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
-  || (!defined(CGAL_MULTISET_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || defined(NDEBUG)
+  || (!defined(CGAL_MULTISET_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))
 #  define CGAL_multiset_exactness_assertion(EX) (static_cast<void>(0))
 #  define CGAL_multiset_exactness_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_multiset_exactness_assertion_code(CODE)
@@ -68,8 +66,7 @@
 
 #if defined(CGAL_MULTISET_NO_ASSERTIONS) \
   || defined(CGAL_NO_ASSERTIONS) \
-  || (!defined(CGAL_MULTISET_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || (!defined(CGAL_MULTISET_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))
 #  define CGAL_multiset_expensive_assertion(EX) (static_cast<void>(0))
 #  define CGAL_multiset_expensive_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_multiset_expensive_assertion_code(CODE)
@@ -89,8 +86,7 @@
 
 #if defined(CGAL_MULTISET_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
   || (!defined(CGAL_MULTISET_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || (!defined(CGAL_MULTISET_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || (!defined(CGAL_MULTISET_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))
 #  define CGAL_multiset_expensive_exactness_assertion(EX) (static_cast<void>(0))
 #  define CGAL_multiset_expensive_exactness_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_multiset_expensive_exactness_assertion_code(CODE)
@@ -111,8 +107,7 @@
 #undef CGAL_multiset_precondition_msg
 #undef CGAL_multiset_precondition_code
 
-#if defined(CGAL_MULTISET_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS) \
-  || defined(NDEBUG)
+#if defined(CGAL_MULTISET_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS)
 #  define CGAL_multiset_precondition(EX) (static_cast<void>(0))
 #  define CGAL_multiset_precondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_multiset_precondition_code(CODE)
@@ -131,8 +126,7 @@
 #undef CGAL_multiset_exactness_precondition_code
 
 #if defined(CGAL_MULTISET_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS) \
-  || (!defined(CGAL_MULTISET_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || defined(NDEBUG)
+  || (!defined(CGAL_MULTISET_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))
 #  define CGAL_multiset_exactness_precondition(EX) (static_cast<void>(0))
 #  define CGAL_multiset_exactness_precondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_multiset_exactness_precondition_code(CODE)
@@ -151,8 +145,7 @@
 #undef CGAL_multiset_expensive_precondition_code
 
 #if defined(CGAL_MULTISET_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS) \
-  || (!defined(CGAL_MULTISET_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || (!defined(CGAL_MULTISET_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))
 #  define CGAL_multiset_expensive_precondition(EX) (static_cast<void>(0))
 #  define CGAL_multiset_expensive_precondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_multiset_expensive_precondition_code(CODE)
@@ -172,8 +165,7 @@
 
 #if defined(CGAL_MULTISET_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS) \
   || (!defined(CGAL_MULTISET_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || (!defined(CGAL_MULTISET_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || (!defined(CGAL_MULTISET_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))
 #  define CGAL_multiset_expensive_exactness_precondition(EX) (static_cast<void>(0))
 #  define CGAL_multiset_expensive_exactness_precondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_multiset_expensive_exactness_precondition_code(CODE)
@@ -194,8 +186,7 @@
 #undef CGAL_multiset_postcondition_msg
 #undef CGAL_multiset_postcondition_code
 
-#if defined(CGAL_MULTISET_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-  || defined(NDEBUG)
+#if defined(CGAL_MULTISET_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS)
 #  define CGAL_multiset_postcondition(EX) (static_cast<void>(0))
 #  define CGAL_multiset_postcondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_multiset_postcondition_code(CODE)
@@ -214,8 +205,7 @@
 #undef CGAL_multiset_exactness_postcondition_code
 
 #if defined(CGAL_MULTISET_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-  || (!defined(CGAL_MULTISET_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || defined(NDEBUG)
+  || (!defined(CGAL_MULTISET_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))
 #  define CGAL_multiset_exactness_postcondition(EX) (static_cast<void>(0))
 #  define CGAL_multiset_exactness_postcondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_multiset_exactness_postcondition_code(CODE)
@@ -234,8 +224,7 @@
 #undef CGAL_multiset_expensive_postcondition_code
 
 #if defined(CGAL_MULTISET_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-  || (!defined(CGAL_MULTISET_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || (!defined(CGAL_MULTISET_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))
 #  define CGAL_multiset_expensive_postcondition(EX) (static_cast<void>(0))
 #  define CGAL_multiset_expensive_postcondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_multiset_expensive_postcondition_code(CODE)
@@ -255,8 +244,7 @@
 
 #if defined(CGAL_MULTISET_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
   || (!defined(CGAL_MULTISET_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || (!defined(CGAL_MULTISET_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || (!defined(CGAL_MULTISET_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))
 #  define CGAL_multiset_expensive_exactness_postcondition(EX) (static_cast<void>(0))
 #  define CGAL_multiset_expensive_exactness_postcondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_multiset_expensive_exactness_postcondition_code(CODE)
@@ -277,8 +265,7 @@
 #undef CGAL_multiset_warning_msg
 #undef CGAL_multiset_warning_code
 
-#if defined(CGAL_MULTISET_NO_WARNINGS) || defined(CGAL_NO_WARNINGS) \
-  || defined(NDEBUG)
+#if defined(CGAL_MULTISET_NO_WARNINGS) || defined(CGAL_NO_WARNINGS)
 #  define CGAL_multiset_warning(EX) (static_cast<void>(0))
 #  define CGAL_multiset_warning_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_multiset_warning_code(CODE)
@@ -297,8 +284,7 @@
 #undef CGAL_multiset_exactness_warning_code
 
 #if defined(CGAL_MULTISET_NO_WARNINGS) || defined(CGAL_NO_WARNINGS) \
-  || (!defined(CGAL_MULTISET_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || defined(NDEBUG)
+  || (!defined(CGAL_MULTISET_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))
 #  define CGAL_multiset_exactness_warning(EX) (static_cast<void>(0))
 #  define CGAL_multiset_exactness_warning_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_multiset_exactness_warning_code(CODE)
@@ -317,8 +303,7 @@
 #undef CGAL_multiset_expensive_warning_code
 
 #if defined(CGAL_MULTISET_NO_WARNINGS) || defined(CGAL_NO_WARNINGS) \
-  || (!defined(CGAL_MULTISET_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || (!defined(CGAL_MULTISET_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))
 #  define CGAL_multiset_expensive_warning(EX) (static_cast<void>(0))
 #  define CGAL_multiset_expensive_warning_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_multiset_expensive_warning_code(CODE)
@@ -338,8 +323,7 @@
 
 #if defined(CGAL_MULTISET_NO_WARNINGS) || defined(CGAL_NO_WARNINGS) \
   || (!defined(CGAL_MULTISET_CHECK_EXACTNESS) && !defined(CGAL_CHECK_EXACTNESS))\
-  || (!defined(CGAL_MULTISET_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || (!defined(CGAL_MULTISET_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))
 #  define CGAL_multiset_expensive_exactness_warning(EX) (static_cast<void>(0))
 #  define CGAL_multiset_expensive_exactness_warning_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_multiset_expensive_exactness_warning_code(CODE)

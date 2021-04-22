@@ -102,8 +102,12 @@ public :
   }
   void setColor(QColor c) Q_DECL_OVERRIDE
   {
-    qobject_cast<Scene_c3t3_item*>(this->parent())->setColor(c);
+    Scene_c3t3_item* p_item = qobject_cast<Scene_c3t3_item*>(this->parent());
+    if(p_item->number_of_patches() > 1)
+      p_item->setColor(c);
     Scene_item::setColor(c);
+    if(p_item->number_of_patches() <= 1)
+      p_item->changed();
   }
   // Indicates if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE{
@@ -1308,7 +1312,11 @@ void Scene_c3t3_item_priv::computeIntersection(const Primitive& cell)
 
   typedef unsigned char UC;
   Tr::Cell_handle ch = cell.id();
-  QColor c = this->colors_subdomains[ch->subdomain_index()].lighter(50);
+  QColor c;
+  if(surface_patch_indices_.size()>1)
+    c = this->colors_subdomains[ch->subdomain_index()].lighter(50);
+  else
+    c = intersection->color();
 
   const Tr::Bare_point& pa = wp2p(ch->vertex(0)->point());
   const Tr::Bare_point& pb = wp2p(ch->vertex(1)->point());
@@ -2117,6 +2125,9 @@ double Scene_c3t3_item::get_sharp_edges_angle() { return d->sharp_edges_angle; }
 void Scene_c3t3_item::set_detect_borders(bool b) { d->detect_borders = b;}
 bool Scene_c3t3_item::get_detect_borders() { return d->detect_borders; }
 
-
+std::size_t Scene_c3t3_item::number_of_patches() const
+{
+  return d->surface_patch_indices_.size();
+}
 #include "Scene_c3t3_item.moc"
 

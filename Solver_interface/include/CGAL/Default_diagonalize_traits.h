@@ -25,7 +25,7 @@ namespace CGAL {
 ///
 /// The class `Default_diagonalize_traits` is a wrapper designed to automatically
 /// use `Eigen_diagonalize_traits` if Eigen is available and otherwise use
-/// the fallback `Diagonalize_traits` class of %CGAL.
+/// the fallback `Diagonalize_traits` class of \cgal.
 ///
 /// \tparam FT Number type
 /// \tparam dim Dimension of the matrices and vectors

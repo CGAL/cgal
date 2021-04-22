@@ -19,6 +19,7 @@
 #include <CGAL/IO/VTK/VTK_writer.h>
 
 #include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #ifdef CGAL_USE_VTK
 #include <vtkSmartPointer.h>
@@ -373,7 +374,7 @@ void write_soup_polys_points(std::ostream& os,
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
- *     \cgalParamDefault{`6`}
+ *     \cgalParamDefault{`the precision of the stream `os``}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -393,8 +394,7 @@ bool write_VTP(std::ostream& os,
   if(!os.good())
     return false;
 
-  const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
-  os.precision(precision);
+  set_stream_precision_from_NP(os, np);
 
   os << "<?xml version=\"1.0\"?>\n"
      << "<VTKFile type=\"PolyData\" version=\"0.1\"";

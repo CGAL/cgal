@@ -181,6 +181,15 @@ public:
     box = tree.bbox();
   }
 
+  /**
+  * Constructor moving an instance of Side_of_triangle_mesh to a new memory
+  * location with minimal memory copy.
+  * @param other The instance to be moved
+  */
+  Side_of_triangle_mesh(Side_of_triangle_mesh&& other)
+  {
+    *this = std::move(other);
+  }
   ~Side_of_triangle_mesh()
   {
     if (own_tree)
@@ -192,6 +201,27 @@ public:
   }
 
 public:
+  /**
+  * Assign operator moving an instance of Side_of_triangle_mesh to this
+  * location with minimal memory copy.
+  * @param other The instance to be moved
+  * @return A reference to this
+  */
+  Side_of_triangle_mesh& operator=(Side_of_triangle_mesh&& other)
+  {
+    tm_ptr = std::move(other.tm_ptr);
+    opt_vpm = std::move(other.opt_vpm);
+    own_tree = std::move(other.own_tree);
+    box = std::move(other.box);
+    other.own_tree = false;
+    #ifdef CGAL_HAS_THREADS
+      atomic_tree_ptr = atomic_tree_ptr.load();
+    #else
+      tree_ptr = std::move(other.tree_ptr);
+    #endif
+    return *this;
+  }
+
   /**
    * returns the location of a query point
    * @param point the query point to be located with respect to the input

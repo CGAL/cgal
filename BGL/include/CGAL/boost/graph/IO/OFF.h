@@ -284,9 +284,9 @@ bool read_OFF(const std::string& fname, Graph& g,
  \deprecated This function is deprecated since \cgal 5.2, `CGAL::read_OFF()` should be used instead.
 */
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool read_off(std::ostream& os, Graph& g, const CGAL_BGL_NP_CLASS& np)
+CGAL_DEPRECATED bool read_off(std::istream& is, Graph& g, const CGAL_BGL_NP_CLASS& np)
 {
-  return read_OFF(os, g, np);
+  return read_OFF(is, g, np);
 }
 
 /*!
@@ -298,6 +298,18 @@ template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 CGAL_DEPRECATED bool read_off(const char* fname, Graph& g, const CGAL_BGL_NP_CLASS& np)
 {
  return read_OFF(fname, g, np);
+}
+
+template <typename Graph>
+CGAL_DEPRECATED bool read_off(std::istream& is, Graph& g)
+{
+  return read_off(is, g, parameters::all_default());
+}
+
+template <typename Graph>
+CGAL_DEPRECATED bool read_off(const char* fname, Graph& g)
+{
+ return read_off(fname, g, parameters::all_default());
 }
 
 #endif // CGAL_NO_DEPRECATED_CODE
@@ -374,7 +386,7 @@ bool write_OFF_BGL(std::ostream& os,
     \cgalParamNBegin{stream_precision}
       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
       \cgalParamType{int}
-      \cgalParamDefault{`6`}
+      \cgalParamDefault{`the precision of the stream `os``}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -483,6 +495,7 @@ bool write_OFF(const std::string& fname,
     std::cerr<<"Could not create file.";
     return false;
   }
+
   return write_OFF(os, g, np);
 }
 
@@ -510,6 +523,11 @@ CGAL_DEPRECATED bool write_off(std::ostream& os, const Graph& g, const CGAL_BGL_
   return write_OFF(os, g, np);
 }
 
+template <typename Graph>
+CGAL_DEPRECATED bool write_off(std::ostream& os, const Graph& g)
+{
+  return write_off(os, g, CGAL::parameters::all_default());
+}
 /*!
 \ingroup PkgBGLIOFctDeprecated
 
@@ -521,6 +539,11 @@ CGAL_DEPRECATED bool write_off(const char* fname, const Graph& g, const CGAL_BGL
  return write_OFF(fname, g, np);
 }
 
+template <typename Graph>
+CGAL_DEPRECATED bool write_off(const char* fname, const Graph& g)
+{
+  return write_off(fname, g, parameters::all_default());
+}
 #endif // CGAL_NO_DEPRECATED_CODE
 
 } // namespace CGAL

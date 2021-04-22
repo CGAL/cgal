@@ -1360,7 +1360,7 @@ public:
       }
       else
       {
-        CGAL_STSKEL_BUILDER_TRACE(0,"Degenerate contour (less than 3 non-degenerate vertices).");
+        CGAL_STSKEL_BUILDER_TRACE(0,"Degenerate contour (fewer than 3 non-degenerate vertices).");
       }
     }
     else

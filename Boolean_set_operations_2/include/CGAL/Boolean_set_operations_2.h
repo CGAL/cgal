@@ -809,7 +809,7 @@ OutputIterator complement (const Polygon_with_holes_2<Kernel, Container>& pgn,
 }
 
 template <class Arr_traits, typename OutputIterator, class Traits>
-OutputIterator complement (const General_polygon_with_holes_2<Arr_traits>& pgn,
+OutputIterator complement (const General_polygon_with_holes_2<General_polygon_2<Arr_traits> >& pgn,
                            OutputIterator oi, Traits& tr)
 {
   General_polygon_set_2<Traits> gps(tr);

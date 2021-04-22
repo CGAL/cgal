@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Periodic_4_hyperbolic_triangulation_2_Demo)
 
 # Find includes in corresponding build directories

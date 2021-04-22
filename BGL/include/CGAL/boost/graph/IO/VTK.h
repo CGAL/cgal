@@ -420,7 +420,7 @@ void write_polys_points(std::ostream& os,
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
- *     \cgalParamDefault{`6`}
+ *     \cgalParamDefault{`the precision of the stream `os``}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -439,8 +439,7 @@ bool write_VTP(std::ostream& os,
   if(!os.good())
     return false;
 
-  const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
-  os.precision(precision);
+  set_stream_precision_from_NP(os, np);
 
   os << "<?xml version=\"1.0\"?>\n"
      << "<VTKFile type=\"PolyData\" version=\"0.1\"";
@@ -539,6 +538,7 @@ bool write_VTP(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS
   }
   else
     os.open(fname);
+
   return write_VTP(os, g, np);
 }
 
@@ -562,6 +562,12 @@ template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 CGAL_DEPRECATED bool write_vtp(std::ostream& os, const Graph& g, const CGAL_BGL_NP_CLASS& np)
 {
   return write_VTP(os, g, np);
+}
+
+template <typename Graph>
+CGAL_DEPRECATED bool write_vtp(std::ostream& os, const Graph& g)
+{
+  return write_vtp(os, g, parameters::all_default());
 }
 
 #endif // CGAL_NO_DEPRECATED_CODE

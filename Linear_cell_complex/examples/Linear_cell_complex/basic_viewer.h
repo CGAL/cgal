@@ -887,7 +887,6 @@ protected:
   virtual void init()
   {
     // Restore previous viewer state.
-    restoreStateFromFile();
     initializeOpenGLFunctions();
 
     // Define 'Control+Q' as the new exit shortcut (default was 'Escape')

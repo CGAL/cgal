@@ -225,6 +225,7 @@ squared_distance_to_triangle(
     const typename K::Point_3 & t0,
     const typename K::Point_3 & t1,
     const typename K::Point_3 & t2,
+    bool & inside,
     const K& k)
 {
   typename K::Construct_vector_3 vector;
@@ -239,6 +240,7 @@ squared_distance_to_triangle(
      && on_left_of_triangle_edge(pt, normal, t2, t0, k))
       {
         // the projection of pt is inside the triangle
+        inside = true;
         return squared_distance_to_plane(normal, vector(t0, pt), k);
       }
       else {
@@ -267,10 +269,12 @@ squared_distance(
     const K& k)
 {
   typename K::Construct_vertex_3 vertex;
+  bool inside = false;
   return squared_distance_to_triangle(pt,
                                       vertex(t, 0),
                                       vertex(t, 1),
                                       vertex(t, 2),
+                                      inside,
                                       k);
 }
 

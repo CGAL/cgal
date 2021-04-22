@@ -129,7 +129,7 @@ pullout_directions
     //is true if segment_outer_circle \in [first,clock_first,clock_second]
     if (f_between_ab && s_between_ab) {
       // std::cout<<"case 1"<<std::endl<<std::endl;
-      // case 1 //surly not case 4b since [f,s] is less then a semicircle
+      // case 1 //surly not case 4b since [f,s] is less than a semicircle
       continue;
     }
     if (!f_between_ab && s_between_ab) {

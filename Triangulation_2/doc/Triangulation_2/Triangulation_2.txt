@@ -10,7 +10,7 @@ namespace CGAL {
 \image html tr1dt1.svg
 \image latex tr1dt1.png
 
-This chapter describes the two dimensional triangulations
+This chapter describes the two-dimensional triangulations
 of \cgal.
 Section \ref Section_2D_Triangulations_Definitions recalls the
 main definitions about triangulations.
@@ -46,7 +46,7 @@ and vertices.
 
 \section Section_2D_Triangulations_Definitions Definitions
 
-A two dimensional triangulation can be roughly described as a set \f$ T\f$
+A two-dimensional triangulation can be roughly described as a set \f$ T\f$
 of triangular facets such that:
 
 - two facets either are disjoint or share a lower dimensional
@@ -85,8 +85,8 @@ A point \f$ p\f$ in the domain of \f$ T\f$ is said to singular
 if its surrounding in \f$ U_T\f$
 is neither a topological ball nor a topological disc.
 
-Then, a two dimensional triangulation can be described as a
-two dimensional simplicial complex that is pure,
+Then, a two-dimensional triangulation can be described as a
+two-dimensional simplicial complex that is pure,
 connected and without singularity.
 
 Each facet of a triangulation can be given an orientation
@@ -100,7 +100,7 @@ that all pairs of incident facets have consistent orientations.
 
 The data structure underlying \cgal triangulations
 allows the user to represent the combinatorics of
-any orientable two dimensional triangulations
+any orientable two-dimensional triangulations
 without boundaries.
 On top of this data structure, the 2D triangulations classes
 take care of the geometric embedding of the triangulation
@@ -126,7 +126,7 @@ to design a face of any dimension,
 and the two-dimensional faces of a triangulation
 should be properly called <I>facets</I>.
 However, following a common usage, we hereafter often call <I>faces</I>, the facets
-of a two dimensional triangulation.
+of a two-dimensional triangulation.
 
 \section Section_2D_Triangulations_Representation Representation
 
@@ -165,7 +165,7 @@ Infinite vertex and infinite faces
 
 This extends to lower dimensional triangulations
 arising in degenerate cases or when the triangulations
-as less than three vertices.
+has fewer than three vertices.
 Including the infinite faces,
 a one dimensional triangulation
 is a ring of edges and vertices
@@ -731,7 +731,7 @@ regular triangulation of \f$ { PW}\f$.
 Alternatively, the regular triangulation
 of the weighted points set \f$ { PW}\f$
 can be obtained as the projection
-on the two dimensional plane of the convex hull of the set of three
+on the two-dimensional plane of the convex hull of the set of three
 dimensional points
 \f$ { P'}= \{ (p_i,p_i ^2 - w_i ) | i = 1, \ldots , n \}\f$.
 
@@ -759,7 +759,7 @@ they have to be stored somewhere.
 The regular triangulation store those points in special vertices, called
 hidden vertices.
 A hidden point can reappear as vertex of the triangulation
-only when the two dimensional face that hides it
+only when the two-dimensional face that hides it
 is removed from the triangulation. To deal with this feature,
 each face of a regular triangulation stores a list of hidden vertices.
 The points in those vertices

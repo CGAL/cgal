@@ -18,12 +18,9 @@
 #include <CGAL/IO/3MF.h>
 #include <CGAL/IO/OBJ.h>
 #include <CGAL/IO/OFF.h>
-// #include <CGAL/IO/OI.h>
 #include <CGAL/IO/PLY.h>
 #include <CGAL/IO/STL.h>
-// #include <CGAL/IO/VRML.h>
 #include <CGAL/IO/VTK.h>
-// #include <CGAL/IO/WKT.h>
 #include <CGAL/IO/GOCAD.h>
 
 #include <algorithm>

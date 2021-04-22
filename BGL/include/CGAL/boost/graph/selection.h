@@ -561,6 +561,9 @@ regularize_face_selection_borders(
 /// \endcond
 
 /// \cond SKIP_IN_MANUAL
+
+namespace experimental {
+
 // TODO: improve and document if useful
 //
 // Variant of regularization without graphcut but with brut-force
@@ -702,6 +705,8 @@ regularize_face_selection_borders(
     for (fg_face_descriptor fd : faces_around_target (hd, fg))
       put(is_selected, fd, true);
   }
+}
+
 }
 /// \endcond
 

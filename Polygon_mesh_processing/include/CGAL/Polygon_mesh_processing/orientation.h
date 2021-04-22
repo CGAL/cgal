@@ -53,8 +53,8 @@ namespace internal{
     {}
 
     typedef bool result_type;
-    template <class vertex_descriptor>
-    bool operator()(vertex_descriptor v1, vertex_descriptor v2) const
+    template <class vertex_descriptor1, class vertex_descriptor2>
+    bool operator()(vertex_descriptor1 v1, vertex_descriptor2 v2) const
     {
       return CGAL::SMALLER == compare_z(get(vpmap, v1), get(vpmap, v2));
     }

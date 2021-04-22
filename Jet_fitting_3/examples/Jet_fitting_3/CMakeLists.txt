@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Jet_fitting_3_Examples)
 
 find_package(CGAL REQUIRED)
@@ -12,22 +12,22 @@ include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
   # Link with Boost.ProgramOptions (optional)
   find_package(Boost QUIET COMPONENTS program_options)
+
   if(Boost_PROGRAM_OPTIONS_FOUND)
-    if(TARGET Boost::program_options)
-      set(Boost_PROGRAM_OPTIONS_LIBRARY Boost::program_options)
-    endif()
-    if(CGAL_AUTO_LINK_ENABLED)
-      message(STATUS "Boost.ProgramOptions library: found")
+    create_single_source_cgal_program("Mesh_estimation.cpp")
+    target_link_libraries(Mesh_estimation PUBLIC CGAL::Eigen3_support)
+    if(TARGET Boost::filesystem)
+      target_link_libraries(Mesh_estimation PRIVATE Boost::program_options)
     else()
-      message(
-        STATUS "Boost.ProgramOptions library: ${Boost_PROGRAM_OPTIONS_LIBRARY}")
+      target_link_libraries(Mesh_estimation PRIVATE ${Boost_PROGRAM_OPTIONS_LIBRARY})
     endif()
-    add_definitions("-DCGAL_USE_BOOST_PROGRAM_OPTIONS")
-    list(APPEND CGAL_3RD_PARTY_LIBRARIES ${Boost_PROGRAM_OPTIONS_LIBRARY})
+  else()
+    message(
+      STATUS
+        "NOTICE: This program requires Boost Program Options and will not be compiled."
+    )
   endif()
 
-  create_single_source_cgal_program("Mesh_estimation.cpp")
-  target_link_libraries(Mesh_estimation PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("Single_estimation.cpp")
   target_link_libraries(Single_estimation PUBLIC CGAL::Eigen3_support)
 

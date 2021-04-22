@@ -53,7 +53,7 @@ public:
   ~Scene();
   int addItem(CGAL::Three::Scene_item* item) Q_DECL_OVERRIDE;
   void addChild(Scene_item* item) Q_DECL_OVERRIDE;
-  void changeGroup(CGAL::Three::Scene_item* item, CGAL::Three::Scene_group_item* target_group) Q_DECL_OVERRIDE;
+  Q_INVOKABLE void changeGroup(CGAL::Three::Scene_item* item, CGAL::Three::Scene_group_item* target_group) Q_DECL_OVERRIDE;
   CGAL::Three::Scene_item* replaceItem(int index, CGAL::Three::Scene_item* item, bool emit_item_about_to_be_destroyed = false) Q_DECL_OVERRIDE;
   Q_INVOKABLE int erase(int) Q_DECL_OVERRIDE;
 
@@ -314,7 +314,7 @@ class QAbstractProxyModel;
 class SCENE_EXPORT SceneDelegate : public QItemDelegate
 {
 public:
-  SceneDelegate(QObject * parent = 0)
+  SceneDelegate(QObject * parent = nullptr)
     : QItemDelegate(parent),
       checkOnPixmap(":/cgal/icons/check-on.png"),
       checkOffPixmap(":/cgal/icons/check-off.png")

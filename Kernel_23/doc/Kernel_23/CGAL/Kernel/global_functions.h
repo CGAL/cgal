@@ -355,8 +355,10 @@ through the intersection of `l1` and `l2`.
 If `l1` and `l2` are parallel, then the bisector is defined as the line
 which has the same direction as `l1`, and which is at the same distance
 from `l1` and `l2`.
-This function requires that `Kernel::RT` supports the `sqrt()`
-operation.
+If `Kernel::FT` is not a model of `FieldWithSqrt`
+an approximation of the square root will be used in this function,
+impacting the exactness of the result even with an (exact) multiprecision
+number type.
 */
 template <typename Kernel>
 CGAL::Line_2<Kernel> bisector(const CGAL::Line_2<Kernel> &l1,
@@ -379,8 +381,10 @@ passes through the intersection of `h1` and `h2`.
 If `h1` and `h2` are parallel, then the bisector is defined as the
 plane which has the same oriented normal vector as `l1`, and which is at
 the same distance from `h1` and `h2`.
-This function requires that `Kernel::RT` supports the `sqrt()`
-operation.
+If `Kernel::FT` is not a model of `FieldWithSqrt`
+an approximation of the square root will be used in this function,
+impacting the exactness of the result even with an (exact) multiprecision
+number type.
 */
 template <typename Kernel>
 CGAL::Plane_3<Kernel> bisector(const CGAL::Plane_3<Kernel> &h1,

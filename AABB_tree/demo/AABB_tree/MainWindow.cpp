@@ -22,8 +22,6 @@ MainWindow::MainWindow(QWidget* parent)
   // saves some pointers from ui, for latter use.
   m_pViewer = ui->viewer;
 
-  // does not save the state of the viewer
-  m_pViewer->setStateFileName(QString());
 
   // accepts drop events
   setAcceptDrops(true);
@@ -156,7 +154,7 @@ void MainWindow::on_actionInside_points_triggered()
   bool ok;
 
   const unsigned int nb_points = (unsigned)
-    QInputDialog::getInt(NULL, "#Points",
+    QInputDialog::getInt(nullptr, "#Points",
     "#Points:",10000,1,100000000,9,&ok);
 
   if(!ok)
@@ -173,19 +171,19 @@ void MainWindow::on_actionPoints_in_interval_triggered()
   bool ok;
 
   const unsigned int nb_points = (unsigned)
-                QInputDialog::getInt(NULL, "#Points",
+                QInputDialog::getInt(nullptr, "#Points",
     "#Points:",10000,1,100000000,9,&ok);
 
   if(!ok)
     return;
 
   const double min =
-    QInputDialog::getDouble(NULL, "min",
+    QInputDialog::getDouble(nullptr, "min",
     "Min:",-0.1,-1000.0,1000.0,9,&ok);
   if(!ok)
     return;
   const double max =
-    QInputDialog::getDouble(NULL, "max",
+    QInputDialog::getDouble(nullptr, "max",
     "Max:",0.1,-1000.0,1000.0,9,&ok);
   if(!ok)
     return;
@@ -201,7 +199,7 @@ void MainWindow::on_actionBoundary_segments_triggered()
   bool ok;
 
   const unsigned int nb_slices = (unsigned)
-    QInputDialog::getInt(NULL, "#Slices",
+    QInputDialog::getInt(nullptr, "#Slices",
     "Slices:",100,1,1000000,8,&ok);
 
   if(!ok)
@@ -218,7 +216,7 @@ void MainWindow::on_actionBoundary_points_triggered()
   bool ok;
 
   const unsigned int nb_points = (unsigned)
-    QInputDialog::getInt(NULL, "#Points",
+    QInputDialog::getInt(nullptr, "#Points",
     "Points:",1000,1,10000000,8,&ok);
 
   if(!ok)
@@ -235,7 +233,7 @@ void MainWindow::on_actionEdge_points_triggered()
   bool ok;
 
   const unsigned int nb_points = (unsigned)
-    QInputDialog::getInt(NULL, "#Points",
+    QInputDialog::getInt(nullptr, "#Points",
     "Points:",1000,1,10000000,8,&ok);
 
   if(!ok)
@@ -250,7 +248,7 @@ void MainWindow::on_actionEdge_points_triggered()
 void MainWindow::on_actionBench_distances_triggered()
 {
   bool ok;
-  const double duration = QInputDialog::getDouble(NULL, "Duration",
+  const double duration = QInputDialog::getDouble(nullptr, "Duration",
     "Duration (s):",1.0,0.01,1000,8,&ok);
   if(!ok)
     return;
@@ -264,7 +262,7 @@ void MainWindow::on_actionBench_distances_triggered()
 void MainWindow::on_actionBench_intersections_triggered()
 {
   bool ok;
-  const double duration = QInputDialog::getDouble(NULL, "Duration",
+  const double duration = QInputDialog::getDouble(nullptr, "Duration",
     "Duration (s):",1.0,0.01,1000.0,8,&ok);
   if(!ok)
     return;
@@ -363,7 +361,7 @@ void MainWindow::on_actionRefine_bisection_triggered()
 {
   bool ok;
   const double max_len =
-    QInputDialog::getDouble(NULL, "Max edge len",
+    QInputDialog::getDouble(nullptr, "Max edge len",
     "Max edge len:",0.1,0.001,100.0,9,&ok);
   if(!ok)
     return;

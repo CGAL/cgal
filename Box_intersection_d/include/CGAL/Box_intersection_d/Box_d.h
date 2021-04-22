@@ -24,6 +24,7 @@
 #include <CGAL/atomic.h>
 
 #include <algorithm>
+#include <array>
 
 namespace CGAL {
 
@@ -63,8 +64,9 @@ class Box_d;
 template<class NT_, int N>
 class Box_d< NT_, N, ID_NONE> {
 protected:
-    NT_ lo[N];
-    NT_ hi[N];
+    std::array<NT_,N> lo;
+    std::array<NT_,N> hi;
+
 public:
     typedef NT_         NT;
     typedef std::size_t ID;
@@ -72,8 +74,8 @@ public:
     Box_d() {}
     Box_d(bool complete) { init(complete); }
     Box_d(NT l[N], NT h[N]) {
-        std::copy( l, l + N, lo );
-        std::copy( h, h + N, hi );
+        std::copy( l, l + N, &lo[0] );
+        std::copy( h, h + N, &hi[0] );
     }
     void init (bool complete = false) {
         NT inf = box_limits<NT>::inf();

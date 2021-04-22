@@ -231,7 +231,7 @@ bool read_OBJ(const std::string& fname, Graph& g,
     \cgalParamNBegin{stream_precision}
       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
       \cgalParamType{int}
-      \cgalParamDefault{`6`}
+      \cgalParamDefault{`the precision of the stream `os``}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -284,6 +284,11 @@ bool write_OBJ(std::ostream& os, const Graph& g,
       \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
       \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
                       must be available in `Graph`.}
+    \cgalParamNEnd
+    \cgalParamNBegin{stream_precision}
+      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+      \cgalParamType{int}
+      \cgalParamDefault{`6`}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 

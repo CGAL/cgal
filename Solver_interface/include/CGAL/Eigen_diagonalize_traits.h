@@ -26,9 +26,19 @@
 
 //#define DO_NOT_USE_EIGEN_COMPUTEDIRECT_FOR_DIAGONALIZATION
 
-#include <CGAL/array.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/double.h>
 
 namespace CGAL {
+
+namespace internal {
+
+template <typename FT>
+struct Restricted_FT { typedef double type; };
+template <>
+struct Restricted_FT<float> { typedef float type; };
+
+}
 
 /// \ingroup PkgSolverInterfaceRef
 ///
@@ -47,14 +57,15 @@ namespace CGAL {
 template <typename FT, unsigned int dim = 3>
 class Eigen_diagonalize_traits
 {
+  typedef typename internal::Restricted_FT<FT>::type RFT;
 public:
   typedef std::array<FT, dim>                  Vector;
   typedef std::array<FT, dim*dim>              Matrix;
   typedef std::array<FT, (dim * (dim+1) / 2)>  Covariance_matrix;
 
 private:
-  typedef Eigen::Matrix<FT, dim, dim>            EigenMatrix;
-  typedef Eigen::Matrix<FT, dim, 1>              EigenVector;
+  typedef Eigen::Matrix<RFT, dim, dim>            EigenMatrix;
+  typedef Eigen::Matrix<RFT, dim, 1>              EigenVector;
 
   /// Construct the covariance matrix
   static EigenMatrix construct_covariance_matrix(const Covariance_matrix& cov)
@@ -65,7 +76,7 @@ private:
     {
       for(std::size_t j=i; j<dim; ++j)
       {
-        m(i,j) = static_cast<float>(cov[(dim * i) + j - ((i * (i+1)) / 2)]);
+        m(i,j) = static_cast<RFT>(CGAL::to_double(cov[(dim * i) + j - ((i * (i+1)) / 2)]));
 
         if(i != j)
           m(j,i) = m(i,j);

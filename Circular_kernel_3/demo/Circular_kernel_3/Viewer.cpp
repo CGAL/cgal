@@ -295,9 +295,6 @@ void Viewer::initialize_buffers()
         buffers[6].release();
     }
     vao[2].release();
-
-
-
 }
 
 void Viewer::compute_elements()
@@ -679,8 +676,6 @@ void Viewer::compute_elements()
     {
         pos_points.resize(0);
         pos_lines.resize(0);
-        // Restore previous viewer state.
-        restoreStateFromFile();
 
         //random generator of points within a sphere
         typedef CGAL::Creator_uniform_3<EPIC::FT,EPIC::Point_3>   Creator;
@@ -843,7 +838,6 @@ void Viewer::draw()
     rendering_program.release();
     vao[1].release();
 
-
 }
 
 void Viewer::init()
@@ -908,7 +902,7 @@ void Viewer::naive_compute_intersection_points(const std::vector<EPIC::Point_3>&
                 for (std::vector <CGAL::Object>::const_iterator it_pt=intersections.begin();it_pt!=intersections.end();++it_pt){
                     const std::pair<SK::Circular_arc_point_3,unsigned>* pt=
                             CGAL::object_cast< std::pair<SK::Circular_arc_point_3,unsigned> > (&(*it_pt));
-                    assert(pt!=NULL);
+                    assert(pt!=nullptr);
                     *out++=EPIC::Point_3( CGAL::to_double(pt->first.x()),
                                           CGAL::to_double(pt->first.y()),
                                           CGAL::to_double(pt->first.z())

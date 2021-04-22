@@ -5,8 +5,9 @@ namespace CGAL {
 \ingroup PkgSegmentDelaunayGraph2Ref
 
 We provide an alternative to the class
-`Segment_Delaunay_graph_2<Gt,DS>` for the incremental
-construction of the segment Delaunay graph. The `Segment_Delaunay_graph_hierarchy_2` class
+`Segment_Delaunay_graph_2<Gt,St,DS>` for the incremental
+construction of the segment Delaunay graph.
+The `Segment_Delaunay_graph_hierarchy_2` class
 maintains a hierarchy of Delaunay graphs. There are two possibilities
 as to how this hierarchy is constructed.
 
@@ -21,44 +22,49 @@ In the second case the upper levels of the hierarchy contains not only
 points but also segments. A site that is in level \f$ i\f$, is in level
 \f$ i+1\f$ with probability \f$ 1/\beta\f$ where \f$ \beta > 1\f$ is some constant.
 
-The difference between the `Segment_Delaunay_graph_2<Gt,DS>`
+The difference between the `Segment_Delaunay_graph_2<Gt,St,DS>`
 class and the `Segment_Delaunay_graph_hierarchy_2` class (both versions of it) is on how the
 nearest neighbor location is done. Given a point \f$ p\f$ the location is
 done as follows: at the top most level we find the nearest neighbor of
-\f$ p\f$ as in the `Segment_Delaunay_graph_2<Gt,DS>` class. At
+\f$ p\f$ as in the `Segment_Delaunay_graph_2<Gt,St,DS>` class. At
 every subsequent level \f$ i\f$ we use the nearest neighbor found at level
 \f$ i+1\f$ to find the nearest neighbor at level \f$ i\f$. This is a variant of
 the corresponding hierarchy for points found in \cgalCite{cgal:d-dh-02}. The
 details are described in \cgalCite{cgal:k-reisv-04}.
 
-The class has three template parameters. The first and third
-have essentially the same semantics as in the
-`Segment_Delaunay_graph_2<Gt,DS>` class.
+The class has four template parameters. The first and fourth
+have essentially the same semantics as in the `Segment_Delaunay_graph_2<Gt,St,DS>` class.
 
 \tparam Gt must be a model of the
 `SegmentDelaunayGraphTraits_2` concept.
 
-\tparam STag The second template
+\tparam St must be a model of `SegmentDelaunayGraphStorageTraits_2`.
+        By default, the storage traits is instantiated by `Segment_Delaunay_graph_storage_traits_2<Gt>`.
+
+\tparam STag The third template
 parameter controls whether or not segments are added in the upper
 levels of the hierarchy. It's possible values are `Tag_true`
 and `Tag_false`. If it is set to `Tag_true`,
 segments are also inserted in the upper levels of the hierarchy. The
 value `Tag_false` indicates that only points are to be
 inserted in the upper levels of the hierarchy. The default value for
-the second template parameter is `Tag_false`.
+the third template parameter is `Tag_false`.
 
 \tparam DS must be a model of the
 `SegmentDelaunayGraphDataStructure_2` concept. However, the
 vertex base class that is to be used in the segment Delaunay graph
 data structure must be a model of the
 `SegmentDelaunayGraphHierarchyVertexBase_2`
-concept. The third template parameter defaults to
-`Triangulation_data_structure_2< Segment_Delaunay_graph_hierarchy_vertex_base_2< Segment_Delaunay_graph_vertex_base_2<Gt> >, Triangulation_face_base_2<Gt> >`.
-
-
+concept. The fourth template parameter defaults to:
+\code
+`CGAL::Triangulation_data_structure_2<
+          CGAL::Segment_Delaunay_graph_hierarchy_vertex_base_2<
+            CGAL::Segment_Delaunay_graph_vertex_base_2<St>,
+          CGAL::Segment_Delaunay_graph_face_base_2<Gt> >`
+\endcode
 
 The `Segment_Delaunay_graph_hierarchy_2` class derives publicly from the
-`Segment_Delaunay_graph_2<Gt,DS>` class. The interface is
+`Segment_Delaunay_graph_2<Gt,St,DS>` class. The interface is
 the same with its base class. In the sequel only additional types
 and methods defined are documented.
 
@@ -66,10 +72,7 @@ and methods defined are documented.
 \cgalModels `CopyConstructible`
 \cgalModels `Assignable`
 
-\sa `SegmentDelaunayGraphDataStructure_2`
-\sa `SegmentDelaunayGraphTraits_2`
-\sa `SegmentDelaunayGraphHierarchyVertexBase_2`
-\sa `CGAL::Segment_Delaunay_graph_2<Gt,DS>`
+\sa `CGAL::Segment_Delaunay_graph_2<Gt,St,DS>`
 \sa `CGAL::Triangulation_data_structure_2<Vb,Fb>`
 \sa `CGAL::Segment_Delaunay_graph_traits_2<K,MTag>`
 \sa `CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>`
@@ -78,14 +81,15 @@ and methods defined are documented.
 \sa `CGAL::Segment_Delaunay_graph_hierarchy_vertex_base_2<Vbb>`
 
 */
-template< typename Gt, typename STag, typename DS >
-class Segment_Delaunay_graph_hierarchy_2 : public CGAL::Segment_Delaunay_graph_2<Gt,DS> {
+template< typename Gt, typename St, typename STag, typename DS >
+class Segment_Delaunay_graph_hierarchy_2
+  : public CGAL::Segment_Delaunay_graph_2<Gt,St,DS> {
 public:
 
 /// \name Types
 /// `Segment_Delaunay_graph_hierarchy_2` introduces the following
 /// types in addition to those introduced by its base class
-/// `Segment_Delaunay_graph_2<Gt,DS>`.
+/// `Segment_Delaunay_graph_2<Gt,St,DS>`.
 /// @{
 
 /*!
@@ -97,7 +101,7 @@ typedef STag Segments_in_hierarchy_tag;
 /*!
 A type for the base class.
 */
-typedef CGAL::Segment_Delaunay_graph_2<Gt,DS> Base;
+typedef CGAL::Segment_Delaunay_graph_2<Gt,St,DS> Base;
 
 /// @}
 
@@ -110,8 +114,7 @@ typedef CGAL::Segment_Delaunay_graph_2<Gt,DS> Base;
 Creates a hierarchy of segment Delaunay graphs using
 `gt` as geometric traits.
 */
-Segment_Delaunay_graph_hierarchy_2(Gt
-gt=Gt());
+Segment_Delaunay_graph_hierarchy_2(Gt gt=Gt());
 
 /*!
 Creates a segment Delaunay graph hierarchy using
@@ -121,9 +124,7 @@ model of `InputIterator`. The value type of `Input_iterator`
 must be either `Point_2` or `Site_2`.
 */
 template< class Input_iterator >
-Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>(Input_iterator
-first, Input_iterator beyond, Gt gt=Gt());
-
+Segment_Delaunay_graph_hierarchy_2(Input_iterator first, Input_iterator beyond, Gt gt=Gt());
 
 /// @}
 
@@ -136,13 +137,13 @@ written to the stream (represented through appropriate input sites),
 as well as the underlying combinatorial hierarchical data structure.
 \relates Segment_Delaunay_graph_hierarchy_2
 */
-std::ostream& operator<<(std::ostream& os, Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS> svdh);
+std::ostream& operator<<(std::ostream& os, const Segment_Delaunay_graph_hierarchy_2<Gt,St,STag,DS>& svdh);
 
 /*!
 Reads the state of the segment Delaunay graph hierarchy from an
 input stream.
 \relates Segment_Delaunay_graph_hierarchy_2
 */
-std::istream& operator>>(std::istream& is, Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS> svdh);
+std::istream& operator>>(std::istream& is, const Segment_Delaunay_graph_hierarchy_2<Gt,St,STag,DS>& svdh);
 
 } /* end namespace CGAL */

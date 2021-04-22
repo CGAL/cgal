@@ -39,6 +39,11 @@ namespace CGAL {
 //   not, or we let all this up to the compiler optimizer to figure out ?
 // - Some caching could be done at the Point_2 level.
 
+// Protection has a different meaning than in Filtered_predicate, it says
+// whether we need to set the rounding mode: some predicates only do
+// comparisons and don't need it. Probably this should be done inside this
+// class, based on Uses_no_arithmetic, but I have some doubts about C2A,
+// converting a long long to Interval_nt requires protection.
 
 template <class K, class EP, class AP, class C2E, class C2A, bool Protection = true>
 class Filtered_predicate2
@@ -58,7 +63,7 @@ public:
   typedef C2E   To_exact_converter;
   typedef C2A   To_approximate_converter;
 
-  // FIXME: should use result_of, see emails by Nico
+  // FIXME: should use result_of or decltype(auto), see emails by Nico
   typedef typename EP::result_type  result_type;
   // AP::result_type must be convertible to EP::result_type.
 
@@ -87,7 +92,6 @@ public:
       catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
-    Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
     return ep(c2e(std::forward<Args>(args))...);
   }
 };

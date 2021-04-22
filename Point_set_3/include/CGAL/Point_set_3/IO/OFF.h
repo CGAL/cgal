@@ -134,7 +134,7 @@ CGAL_DEPRECATED bool read_off_point_set(std::istream& is,  ///< input stream.
     \cgalParamNBegin{stream_precision}
       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
       \cgalParamType{int}
-      \cgalParamDefault{`6`}
+      \cgalParamDefault{`the precision of the stream `os``}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 

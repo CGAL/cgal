@@ -284,8 +284,7 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
     internal::ch_akl_toussaint_assign_points_to_regions(std::next(std::get<3>(ranges)),last,left_turn,e,w,n,s,region1,region2,region3,region4,ch_traits);
   }
 
-  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-    || defined(NDEBUG)
+  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS)
   OutputIterator  res(result);
   #else
   Tee_for_output_iterator<OutputIterator,Point_2> res(result);
@@ -337,8 +336,7 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
           res.output_so_far_begin(), res.output_so_far_end(), \
           ch_traits)
   );
-  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-    || defined(NDEBUG)
+  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS)
   return res;
   #else
   return res.to_output_iterator();

@@ -21,6 +21,7 @@
 
 #include <CGAL/basic.h>
 #include <iostream>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 namespace CGAL {
 
@@ -29,7 +30,12 @@ class VRML_2_ostream
 public:
   VRML_2_ostream() : m_os(nullptr) {}
   VRML_2_ostream(std::ostream& o) : m_os(&o) { header(); }
-  ~VRML_2_ostream() { close(); }
+  ~VRML_2_ostream() CGAL_NOEXCEPT(CGAL_NO_ASSERTIONS_BOOL)
+  {
+    CGAL_destructor_assertion_catch(
+      close();
+    );
+  }
 
   void open(std::ostream& o) { m_os = &o; header(); }
   void close()
@@ -104,6 +110,11 @@ inline VRML_2_ostream& operator<<(VRML_2_ostream& os,
   return os;
 }
 
+template<typename NP>
+void set_stream_precision_from_NP(VRML_2_ostream& os, const NP& np)
+{
+  return set_stream_precision_from_NP(os.os(), np);
+}
 } // namespace CGAL
 
 #endif // CGAL_IO_VRML_2_OSTREAM_H
@@ -315,4 +326,5 @@ operator<<(VRML_2_ostream& os,
 } //namespace CGAL
 
 #endif // CGAL_IO_VRML_VRML_2_SEGMENT_3
+
 #endif // CGAL_SPHERE_3_H

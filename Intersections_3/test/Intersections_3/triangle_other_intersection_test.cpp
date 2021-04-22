@@ -47,8 +47,8 @@ struct Checker
 
     if ( ! result.empty() )
     {
-      assert(   NULL != CGAL::object_cast<typename K::Point_3>(&result)
-             || NULL != CGAL::object_cast<typename K::Segment_3>(&result));
+      assert(   nullptr != CGAL::object_cast<typename K::Point_3>(&result)
+             || nullptr != CGAL::object_cast<typename K::Segment_3>(&result));
     }
   }
 };
@@ -66,8 +66,8 @@ struct Checker<Epic>
     if ( ! result.empty() )
     {
       assert( CGAL::do_intersect(q, t) );
-      assert(   NULL != CGAL::object_cast<typename K::Point_3>(&result)
-             || NULL != CGAL::object_cast<typename K::Segment_3>(&result));
+      assert(   nullptr != CGAL::object_cast<typename K::Point_3>(&result)
+             || nullptr != CGAL::object_cast<typename K::Segment_3>(&result));
     }
   }
 
@@ -79,8 +79,8 @@ struct Checker<Epic>
     {
       // Here we can't check do_intersect, because there are constructions when
       // building points on line
-      assert(   NULL != CGAL::object_cast<K::Point_3>(&result)
-             || NULL != CGAL::object_cast<K::Segment_3>(&result));
+      assert(   nullptr != CGAL::object_cast<K::Point_3>(&result)
+             || nullptr != CGAL::object_cast<K::Segment_3>(&result));
     }
   }
 };
@@ -106,8 +106,8 @@ struct Checker<Epec>
       const Point_3* p = CGAL::object_cast<Point_3>(&result);
       const Segment_3* s = CGAL::object_cast<Segment_3>(&result);
 
-      assert(   (NULL!=p && t.has_on(*p) && q.has_on(*p))
-             || (NULL!=s && t.has_on(s->source()) && t.has_on(s->target())
+      assert(   (nullptr!=p && t.has_on(*p) && q.has_on(*p))
+             || (nullptr!=s && t.has_on(s->source()) && t.has_on(s->target())
                          && q.has_on(s->source()) && q.has_on(s->target())) );
     }
     else
@@ -217,7 +217,7 @@ bool test_aux(bool is_kernel_exact,
   CGAL::Object object = CGAL::intersection(t,q);
   const Result* pr = CGAL::object_cast<Result>(&object);
 
-  if ( (NULL != pr) &&
+  if ( (nullptr != pr) &&
        (is_kernel_exact ?
         (expected == *pr) :
         CGAL::to_double(CGAL::squared_distance(expected, *pr)) < sq_espilon ) )
@@ -229,7 +229,7 @@ bool test_aux(bool is_kernel_exact,
     std::cout << "ERROR: intersection(" << name
     << ") did not answer the expected result !";
 
-    if ( NULL != pr )
+    if ( nullptr != pr )
       std::cout << " (answer: ["<< *pr << "])";
 
     std::cout << std::endl;
@@ -627,7 +627,7 @@ int main()
   // -----------------------------------
   // Test random intersection
   // -----------------------------------
-  srand( static_cast<unsigned int>(time(NULL)) );
+  srand( static_cast<unsigned int>(time(nullptr)) );
   std::cout << std::endl << "Test random intersections" << std::endl;
   std::cout << "\tTesting with Simple_cartesian<float>..." << std::endl ;
   random_test<Sc_f>();

@@ -21,7 +21,7 @@
 #include <CGAL/AABB_triangle_primitive.h>
 
 #include <CGAL/Mesh_3/experimental/AABB_filtered_projection_traits.h>
-#include <CGAL/Mesh_3/experimental/Get_facet_patch_id.h>
+#include <CGAL/Mesh_3/experimental/Facet_patch_id_map.h>
 
 #include <CGAL/Mesh_3/experimental/Lipschitz_sizing_parameters.h>
 
@@ -45,7 +45,7 @@ namespace Mesh_3
 template <class Kernel, class MeshDomain
         , typename AABBTreeTemplate = CGAL::Default
 #ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
-        , typename Get_facet_patch_id_ = CGAL::Default
+        , typename Facet_patch_id_map_ = CGAL::Default
         , typename Patches_ids_ = CGAL::Default
 #endif
 >
@@ -77,12 +77,12 @@ public:
   typedef std::vector<Patches_ids>                      Patches_ids_map;
 
   typedef typename CGAL::Default::Get<
-    Get_facet_patch_id_,
-    CGAL::Mesh_3::Get_facet_patch_id<typename Tree::Primitive>
-  >::type                                               Get_facet_patch_id;
+    Facet_patch_id_map_,
+    CGAL::Mesh_3::Facet_patch_id_map<MeshDomain, typename Tree::Primitive>
+  >::type                                               Facet_patch_id_map;
 
   typedef CGAL::Mesh_3::Filtered_projection_traits<
-    typename Tree::AABB_traits, Get_facet_patch_id>     AABB_filtered_traits;
+    typename Tree::AABB_traits, Facet_patch_id_map>     AABB_filtered_traits;
 
 private:
   typedef CGAL::Search_traits_3<Kernel>                 KdTreeTraits;
@@ -106,7 +106,7 @@ private:
   //help to accelerate aabb_tree queries in m_ptree
   boost::shared_ptr<Kd_tree> m_kd_tree;
 
-  Get_facet_patch_id m_get_facet_patch_id;
+  Facet_patch_id_map m_facet_patch_id_map;
   const Patches_ids_map& patches_ids_map;
 #endif
 
@@ -136,7 +136,7 @@ public:
     , m_bbox(bbox)
     , m_domain_is_a_box(domain_is_a_box)
 #ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
-    , m_get_facet_patch_id()
+    , m_facet_patch_id_map()
     , patches_ids_map(patches_ids_map)
 #endif
   {
@@ -425,7 +425,7 @@ private:
                                         boundary_ids.begin(),
                                         boundary_ids.end(),
                                         m_ptree->traits(),
-                                        m_get_facet_patch_id);
+                                        m_facet_patch_id_map);
     kd_tree();//build it if needed
     Neighbor_search search(*m_kd_tree, p, 1);
     projection_traits.reset(search.begin()->first);

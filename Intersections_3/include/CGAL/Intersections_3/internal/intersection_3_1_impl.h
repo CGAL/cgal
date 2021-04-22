@@ -57,7 +57,7 @@ namespace CGAL {
 // the special plane_3 function
 template <class K>
 inline
-typename cpp11::result_of<typename K::Intersect_3(typename K::Plane_3, typename K::Plane_3, typename K::Plane_3)>::type
+decltype(auto)
 intersection(const Plane_3<K> &plane1, const Plane_3<K> &plane2,
              const Plane_3<K> &plane3)
 {

@@ -16,6 +16,7 @@
 
 #include <CGAL/disable_warnings.h>
 
+#include <CGAL/bounding_box.h>
 #include <CGAL/Polygon_mesh_processing/internal/Hole_filling/Triangulate_hole_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/internal/Hole_filling/Triangulate_hole_polyline.h>
 #include <CGAL/Polygon_mesh_processing/refine.h>
@@ -42,10 +43,13 @@ namespace Polygon_mesh_processing {
   /*!
   \ingroup hole_filling_grp
   triangulates a hole in a polygon mesh.
-  The hole must not contain any non-manifold vertex,
-  nor self-intersections.
-  The patch generated does not introduce non-manifold edges nor degenerate triangles.
-  If a hole cannot be triangulated, `pmesh` is not modified and nothing is recorded in `out`.
+
+  Depending on the choice of the underlying algorithm different preconditions apply.
+  When using the 2D constrained Delaunay triangulation, the border edges of the hole
+  must not intersect the surface. Otherwise, additionally, the boundary
+  of the hole must not contain any non-manifold vertex. The patch generated does not
+  introduce non-manifold edges nor degenerate triangles. If a hole cannot be triangulated,
+  `pmesh` is not modified and nothing is recorded in `out`.
 
   @tparam PolygonMesh a model of `MutableFaceGraph`
   @tparam OutputIterator a model of `OutputIterator`
@@ -81,6 +85,27 @@ namespace Polygon_mesh_processing {
       \cgalParamExtra{If no valid triangulation can be found in this search space, the algorithm
                       falls back to the non-Delaunay triangulations search space to find a solution.}
     \cgalParamNEnd
+
+    \cgalParamNBegin{use_2d_constrained_delaunay_triangulation}
+      \cgalParamDescription{If `true`, the points of the boundary of the hole are used
+                            to estimate a fitting plane and a 2D constrained Delaunay triangulation
+                            is then used to fill the hole projected in the fitting plane.}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+      \cgalParamExtra{If the boundary of the hole is not planar (according to the
+                      parameter `threshold_distance`) or if no valid 2D triangulation
+                      can be found, the algorithm falls back to the method using
+                      the 3D Delaunay triangulation. This parameter is a good choice for near planar holes.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{threshold_distance}
+      \cgalParamDescription{The maximum distance between the vertices of
+                            the hole boundary and the least squares plane fitted to this boundary.}
+      \cgalParamType{double}
+      \cgalParamDefault{one quarter of the height of the bounding box of the hole}
+      \cgalParamExtra{This parameter is used only in conjunction with
+                      the parameter `use_2d_constrained_delaunay_triangulation`.}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   @return `out`
@@ -115,13 +140,45 @@ namespace Polygon_mesh_processing {
 #endif
 
     CGAL_precondition(face(border_halfedge, pmesh) == boost::graph_traits<PolygonMesh>::null_face());
+    bool use_cdt =
+    #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
+        false;
+#else
+        choose_parameter(get_parameter(np, internal_np::use_2d_constrained_delaunay_triangulation), false);
+#endif
 
-    return internal::triangulate_hole_polygon_mesh(pmesh,
+    typename GeomTraits::FT max_squared_distance = typename GeomTraits::FT(-1);
+    if (use_cdt) {
+
+      std::vector<typename GeomTraits::Point_3> points;
+      typedef Halfedge_around_face_circulator<PolygonMesh> Hedge_around_face_circulator;
+      const auto vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point), get_property_map(vertex_point, pmesh));
+      Hedge_around_face_circulator circ(border_halfedge, pmesh), done(circ);
+      do {
+        points.push_back(get(vpmap, target(*circ, pmesh)));
+      } while (++circ != done);
+
+      const typename GeomTraits::Iso_cuboid_3 bbox = CGAL::bounding_box(points.begin(), points.end());
+      typename GeomTraits::FT default_squared_distance = CGAL::abs(CGAL::squared_distance(bbox.vertex(0), bbox.vertex(5)));
+      default_squared_distance /= typename GeomTraits::FT(16); // one quarter of the bbox height
+
+      const typename GeomTraits::FT threshold_distance = choose_parameter(
+        get_parameter(np, internal_np::threshold_distance), typename GeomTraits::FT(-1));
+      max_squared_distance = default_squared_distance;
+      if (threshold_distance >= typename GeomTraits::FT(0))
+        max_squared_distance = threshold_distance * threshold_distance;
+      CGAL_assertion(max_squared_distance >= typename GeomTraits::FT(0));
+    }
+
+    return internal::triangulate_hole_polygon_mesh(
+      pmesh,
       border_halfedge,
       out,
       choose_parameter(get_parameter(np, internal_np::vertex_point), get_property_map(vertex_point, pmesh)),
       use_dt3,
-      choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits))).first;
+      choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits)),
+      use_cdt,
+      max_squared_distance).first;
   }
 
   template<typename PolygonMesh, typename OutputIterator>
@@ -190,6 +247,27 @@ namespace Polygon_mesh_processing {
       \cgalParamDefault{`true`}
       \cgalParamExtra{If no valid triangulation can be found in this search space, the algorithm
                       falls back to the non-Delaunay triangulations search space to find a solution.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{use_2d_constrained_delaunay_triangulation}
+      \cgalParamDescription{If `true`, the points of the boundary of the hole are used
+                            to estimate a fitting plane and a 2D constrained Delaunay triangulation
+                            is then used to fill the hole projected in the fitting plane.}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+      \cgalParamExtra{If the boundary of the hole is not planar (according to the
+                      parameter `threshold_distance`) or if no valid 2D triangulation
+                      can be found, the algorithm falls back to the method using
+                      the 3D Delaunay triangulation. This parameter is a good choice for near planar holes.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{threshold_distance}
+      \cgalParamDescription{The maximum distance between the vertices of
+                            the hole boundary and the least squares plane fitted to this boundary.}
+      \cgalParamType{double}
+      \cgalParamDefault{one quarter of the height of the bounding box of the hole}
+      \cgalParamExtra{This parameter is used only in conjunction with
+                      the parameter `use_2d_constrained_delaunay_triangulation`.}
     \cgalParamNEnd
 
     \cgalParamNBegin{density_control_factor}
@@ -281,6 +359,27 @@ namespace Polygon_mesh_processing {
       \cgalParamDefault{`true`}
       \cgalParamExtra{If no valid triangulation can be found in this search space, the algorithm
                       falls back to the non-Delaunay triangulations search space to find a solution.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{use_2d_constrained_delaunay_triangulation}
+      \cgalParamDescription{If `true`, the points of the boundary of the hole are used
+                            to estimate a fitting plane and a 2D constrained Delaunay triangulation
+                            is then used to fill the hole projected in the fitting plane.}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+      \cgalParamExtra{If the boundary of the hole is not planar (according to the
+                      parameter `threshold_distance`) or if no valid 2D triangulation
+                      can be found, the algorithm falls back to the method using
+                      the 3D Delaunay triangulation. This parameter is a good choice for near planar holes.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{threshold_distance}
+      \cgalParamDescription{The maximum distance between the vertices of
+                            the hole boundary and the least squares plane fitted to this boundary.}
+      \cgalParamType{double}
+      \cgalParamDefault{one quarter of the height of the bounding box of the hole}
+      \cgalParamExtra{This parameter is used only in conjunction with
+                      the parameter `use_2d_constrained_delaunay_triangulation`.}
     \cgalParamNEnd
 
     \cgalParamNBegin{density_control_factor}
@@ -409,6 +508,27 @@ namespace Polygon_mesh_processing {
       \cgalParamExtra{If no valid triangulation can be found in this search space, the algorithm
                       falls back to the non-Delaunay triangulations search space to find a solution.}
     \cgalParamNEnd
+
+    \cgalParamNBegin{use_2d_constrained_delaunay_triangulation}
+      \cgalParamDescription{If `true`, the points of the boundary of the hole are used
+                            to estimate a fitting plane and a 2D constrained Delaunay triangulation
+                            is then used to fill the hole projected in the fitting plane.}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+      \cgalParamExtra{If the boundary of the hole is not planar (according to the
+                      parameter `threshold_distance`) or if no valid 2D triangulation
+                      can be found, the algorithm falls back to the method using
+                      the 3D Delaunay triangulation. This parameter is a good choice for near planar holes.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{threshold_distance}
+      \cgalParamDescription{The maximum distance between the vertices of
+                            the hole boundary and the least squares plane fitted to this boundary.}
+      \cgalParamType{double}
+      \cgalParamDefault{one quarter of the height of the bounding box of the hole}
+      \cgalParamExtra{This parameter is used only in conjunction with
+                      the parameter `use_2d_constrained_delaunay_triangulation`.}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \todo handle islands
@@ -426,7 +546,13 @@ namespace Polygon_mesh_processing {
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
-    bool use_dt3 =
+    bool use_cdt =
+#ifdef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
+      false;
+#else
+      choose_parameter(get_parameter(np, internal_np::use_2d_constrained_delaunay_triangulation), true);
+#endif
+bool use_dt3 =
 #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
       false;
 #else
@@ -448,7 +574,32 @@ namespace Polygon_mesh_processing {
     typedef typename PointRange1::iterator InIterator;
     typedef typename std::iterator_traits<InIterator>::value_type Point;
     typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
+#ifndef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
+    struct Always_valid{
+      bool operator()(const std::vector<Point>&, int,int,int)const
+      {return true;}
+    };
+    Always_valid is_valid;
 
+    const typename Kernel::Iso_cuboid_3 bbox = CGAL::bounding_box(points.begin(), points.end());
+    typename Kernel::FT default_squared_distance = CGAL::abs(CGAL::squared_distance(bbox.vertex(0), bbox.vertex(5)));
+    default_squared_distance /= typename Kernel::FT(16); // one quarter of the bbox height
+
+    const typename Kernel::FT threshold_distance = choose_parameter(
+      get_parameter(np, internal_np::threshold_distance), typename Kernel::FT(-1));
+    typename Kernel::FT max_squared_distance = default_squared_distance;
+    if (threshold_distance >= typename Kernel::FT(0))
+      max_squared_distance = threshold_distance * threshold_distance;
+    CGAL_assertion(max_squared_distance >= typename Kernel::FT(0));
+
+    if(!use_cdt ||
+       !triangulate_hole_polyline_with_cdt(
+         points,
+         tracer,
+         is_valid,
+         choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits)),
+         max_squared_distance))
+#endif
     triangulate_hole_polyline(points, third_points, tracer, WC(),
                               use_dt3,
                               choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits)));
