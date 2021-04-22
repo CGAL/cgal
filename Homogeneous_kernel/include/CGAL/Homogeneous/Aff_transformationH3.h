@@ -242,6 +242,8 @@ class Scaling_repH3 : public Aff_transformation_rep_baseH3<R>
     typedef typename R::Point_3      Point_3;
     typedef typename R::Vector_3     Vector_3;
     typedef typename R::Direction_3  Direction_3;
+    typedef typename R::Plane_3      Plane_3;
+    typedef typename R::Aff_transformation_3 Aff_transformation_3;
 
              Scaling_repH3()
              {}
