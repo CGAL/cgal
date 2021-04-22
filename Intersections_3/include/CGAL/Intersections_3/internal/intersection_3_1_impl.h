@@ -968,7 +968,7 @@ template <class K>
 bool
 do_intersect(const typename K::Plane_3 &plane,
              const typename K::Ray_3 &ray,
-             const K& k)
+             const K& )
 {
     typename K::Oriented_side_3 oriented_side_3;
 
