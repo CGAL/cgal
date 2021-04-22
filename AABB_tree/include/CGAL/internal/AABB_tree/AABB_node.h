@@ -187,15 +187,20 @@ AABB_node<Tr>::traversal_with_priority(const Query& query,
     std::tie(ileft,pleft) = traits.do_intersect_with_priority(query, left_child());
     std::tie(iright,pright) = traits.do_intersect_with_priority(query, right_child());
 
+    // Add an assertion, if you intersect one of the two childs,
+    // you also intersect their father.
+
     if (ileft)
     {
       if (iright)
       {
         // Both children have to be inspected
+        // You can compare pright to the updated bound, without calling the method,
+        // or if it can cull, call do_intersect() with the previous priority.
         if(pleft >= pright)
         {
           // Inspect left first, has higher priority
-          left_child().traversal_with_priority(query, traits, nb_primitives/2);
+          left_child().traversal_with_priority(query, traits, nb_primitives/2); // the bound is updated here
           if( traits.go_further() ) //&& traits.do_intersect(query, right_child()) ) // TODO shall we call again do_intersect? (Benchmarks show it slows down the Hausdorff Distance)
             right_child().traversal_with_priority(query, traits, nb_primitives-nb_primitives/2);
         }

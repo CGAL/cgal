@@ -1388,6 +1388,7 @@ double bounded_error_Hausdorff_impl(
 
   // Build an AABB tree on tm1.
   // tm1_tree.build(); // by default it is also built but only in case we actually need it
+  // It should never be called if we do not compute distance queries. Is it true?
   tm1_tree.do_not_accelerate_distance_queries(); // here, we do not need that
 
   // By default it has lazy initialization, which is slightly better, but it is off for tm1.

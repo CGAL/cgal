@@ -294,6 +294,7 @@ namespace CGAL {
     // Determine whether child nodes will still contribute to a larger
     // Hausdorff distance and thus have to be entered
     // TODO Document Query object, explain why I don't need it here.
+    // It does not depend on the error bound but it should.
     std::pair<bool,Priority> do_intersect_with_priority(const Query& /*query*/, const Node& node) const
     {
       /* Have reached a node, determine whether or not to enter it */
