@@ -37,10 +37,10 @@ namespace internal {
 template <class K>
 class Ray_2_Segment_2_pair {
 public:
-    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT};
+    enum Intersection_results {NOT_COMPUTED_YET, NO_INTERSECTION, POINT, SEGMENT};
     Ray_2_Segment_2_pair(typename K::Ray_2 const *ray,
                          typename K::Segment_2 const *seg)
-            : _ray(ray), _seg(seg), _known(false) {}
+            : _ray(ray), _seg(seg), _known(false), _result(NOT_COMPUTED_YET) {}
 
     Intersection_results intersection_type() const;
 
