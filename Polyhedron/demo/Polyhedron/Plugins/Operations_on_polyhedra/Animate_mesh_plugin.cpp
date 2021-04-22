@@ -107,7 +107,23 @@ public :
 
 public Q_SLOTS:
 
-  void read_frame()
+    void read_prev_frame()
+    {
+      typedef boost::property_map<SMesh,CGAL::vertex_point_t>::type VPmap;
+      Frame cur_frame = old_frames.back();
+      old_frames.pop_back();
+      sm_item->redraw();
+
+      for(auto pp : cur_frame)
+      {
+        SMesh::Vertex_index vh(pp.first);
+        VPmap vpm = get(CGAL::vertex_point, *sm_item->face_graph());
+        put(vpm, vh, pp.second);
+        sm_item->updateVertex(vh);
+      }
+    }
+
+  void read_next_frame()
   {
     typedef boost::property_map<SMesh,CGAL::vertex_point_t>::type VPmap;
     const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
@@ -126,7 +142,7 @@ public Q_SLOTS:
       timer.stop();
       return;
     }
-
+    Frame cur_frame;
     if(nb_verts != 0)
     {
       EPICK::FT x,y,z;
@@ -161,12 +177,14 @@ public Q_SLOTS:
         {
           SMesh::Vertex_index vh(id);
           VPmap vpm = get(CGAL::vertex_point, *sm_item->face_graph());
+          cur_frame.push_back(std::make_pair(id, get(vpm, vh)));
           put(vpm, vh, Point_3(x-offset.x,
                                y-offset.y,
                                z-offset.z));
           sm_item->updateVertex(vh);
         }
       }
+      old_frames.push_back(cur_frame);
     }
 
     sm_item->redraw();
@@ -187,7 +205,7 @@ public Q_SLOTS:
     position = frame_pos[++frame];
     dock_widget->frameSlider->setValue(frame);
     dock_widget->frameLabel->setText(QString("%1/%2").arg(frame).arg(frame_pos.size()-1));
-    read_frame();
+    read_next_frame();
   }
 
   void prev_frame()
@@ -197,7 +215,7 @@ public Q_SLOTS:
     position = frame_pos[--frame];
     dock_widget->frameSlider->setValue(frame);
     dock_widget->frameLabel->setText(QString("%1/%2").arg(frame).arg(frame_pos.size()-1));
-    read_frame();
+    read_prev_frame();
   }
 
   void start_animation()
@@ -281,7 +299,7 @@ public Q_SLOTS:
       frame = i;
       position = frame_pos[frame];
       dock_widget->frameLabel->setText(QString("%1/%2").arg(frame).arg(frame_pos.size()-1));
-      read_frame();
+      read_next_frame();
     });
 
     QApplication::restoreOverrideCursor();
@@ -297,6 +315,7 @@ public Q_SLOTS:
     sm_item=nullptr;
     position=0;
     frame_pos.clear();
+    old_frames.clear();
     filepath="";
     frame = -1;
     dock_widget->resetButton->setEnabled(false);
@@ -311,6 +330,7 @@ public Q_SLOTS:
   }
 
 private:
+  typedef std::vector<std::pair<std::size_t, Point_3> > Frame;
   QAction* actionAnimate;
   Messages_interface* messages;
   Scene_interface* scene;
@@ -319,6 +339,8 @@ private:
   std::streampos position;
   Scene_surface_mesh_item* sm_item;
   std::vector<std::streampos> frame_pos;
+  std::vector<Frame> old_frames;
+
   QTimer timer;
   int frame;
   std::vector<SMesh::Point> initial_points;
