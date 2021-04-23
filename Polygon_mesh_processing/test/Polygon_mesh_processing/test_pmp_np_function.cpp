@@ -9,8 +9,8 @@
 
 namespace CGAL {
 template <class PolygonMesh,
-          class NamedParameters>
-void np_function(PolygonMesh& mesh, const NamedParameters& np)
+          class NamedParameters = parameters::Default_named_parameters >
+void np_function(PolygonMesh& mesh, const NamedParameters& np = parameters::use_default_values())
 {
 
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type  Traits;
@@ -73,7 +73,7 @@ int main()
     fnm[f] = {0,0,1};
   typedef boost::associative_property_map<FNmap> Face_normal_pmap;
   Face_normal_pmap fn_pmap(fnm);
-  CGAL::np_function(sm, CGAL::parameters::all_default());
+  CGAL::np_function(sm);
   CGAL::np_function(sm, CGAL::parameters::face_normal_map(fn_pmap));
   return 0;
 }

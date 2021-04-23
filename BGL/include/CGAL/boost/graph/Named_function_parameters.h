@@ -268,6 +268,12 @@ inline all_default()
   return Params();
 }
 
+Named_function_parameters<bool, internal_np::all_default_t>
+inline use_default_values()
+{
+  return all_default();
+}
+
 template <typename T, typename Tag, typename Base>
 Named_function_parameters<T,Tag,Base>
 inline no_parameters(Named_function_parameters<T,Tag,Base>)

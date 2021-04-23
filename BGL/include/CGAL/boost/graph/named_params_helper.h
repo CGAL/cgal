@@ -29,6 +29,8 @@ namespace CGAL {
 
   namespace parameters
   {
+    typedef Named_function_parameters<bool, internal_np::all_default_t>  Default_named_parameters;
+
     template <class Parameter, class NamedParameters>
     struct Is_default
     {
@@ -122,7 +124,7 @@ namespace CGAL {
   };
 
   template<typename PolygonMesh,
-           typename NamedParameters = Named_function_parameters<bool, internal_np::all_default_t> >
+           typename NamedParameters = parameters::Default_named_parameters >
   class GetVertexPointMap
   {
     typedef typename property_map_selector<PolygonMesh, boost::vertex_point_t>::const_type
@@ -153,7 +155,7 @@ namespace CGAL {
   };
 
   template<typename PolygonMesh,
-           typename NamedParametersGT = Named_function_parameters<bool, internal_np::all_default_t>,
+           typename NamedParametersGT = parameters::Default_named_parameters,
            typename NamedParametersVPM = NamedParametersGT >
   class GetGeomTraits
   {
@@ -308,7 +310,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
   }
 
   template<typename PointRange,
-           typename NamedParameters = Named_function_parameters<bool, internal_np::all_default_t>,
+           typename NamedParameters = parameters::Default_named_parameters,
            bool has_nested_iterator = internal::Has_nested_type_iterator<PointRange>::value,
            typename NP_TAG = internal_np::point_t
   >
@@ -360,7 +362,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
     namespace parameters
     {
       template <typename PointRange>
-      Named_function_parameters<bool, internal_np::all_default_t>
+      CGAL::parameters::Default_named_parameters
       inline all_default(const PointRange&)
       {
         return CGAL::parameters::all_default();
