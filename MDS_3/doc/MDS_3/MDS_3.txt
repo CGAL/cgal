@@ -17,6 +17,22 @@ This package is devoted to the representation of 3-Dimensional Mesh Data Structu
 The domain to be meshed is a subset of 3D space, required to be bounded.
 
 
+//The template parameter `C3T3` is required to be a model of
+//the concept
+//`MeshComplex_3InTriangulation_3`, a data structure devised to
+//represent a three dimensional complex embedded in a 3D
+//triangulation. In both functions, an instance of type `C3T3` is used to maintain the current
+//approximating simplicial mesh
+//and to represent the final 3D mesh at the end
+//of the procedure.
+//
+//The embedding 3D triangulation is required to be the nested type
+//`CGAL::Mesh_triangulation_3::type`, provided by the class template
+//`CGAL::Mesh_triangulation_3`. The type for this triangulation is a
+//wrapper around the class `CGAL::Regular_triangulation_3` whose vertex and cell base classes
+//are respectively models of the concepts `MeshVertexBase_3` and
+//`MeshCellBase_3`.
+
 \subsection MDS_3ImplementationHistory Implementation History
 
 The code of the package `MDS_3` was initially part of the package `Mesh_3`.

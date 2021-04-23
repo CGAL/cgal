@@ -14,10 +14,10 @@
 // File Description :
 //******************************************************************************
 
-#ifndef CGAL_MESH_3_UTILITIES_H
-#define CGAL_MESH_3_UTILITIES_H
+#ifndef CGAL_MDS_3_UTILITIES_H
+#define CGAL_MDS_3_UTILITIES_H
 
-#include <CGAL/license/Triangulation_3.h>
+#include <CGAL/license/MDS_3.h>
 
 #include <CGAL/Has_timestamp.h>
 #include <iterator>
@@ -25,7 +25,7 @@
 #include <sstream>
 
 namespace CGAL {
-namespace Mesh_3 {
+namespace MDS_3 {
 namespace internal {
 
 struct Debug_messages_tools {
@@ -115,7 +115,7 @@ public:
 
 
 } // end namespace internal
-} // end namespace Mesh_3
+} // end namespace MDS_3
 } //namespace CGAL
 
-#endif // CGAL_MESH_3_UTILITIES_H
+#endif // CGAL_MDS_3_UTILITIES_H

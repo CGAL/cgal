@@ -25,7 +25,7 @@
 
 #include <CGAL/Regular_triangulation_vertex_base_3.h>
 #include <CGAL/internal/Mesh_3/indices_management.h>
-#include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/MDS_3/io_signature.h>
 #include <CGAL/Has_timestamp.h>
 #include <CGAL/tags.h>
 

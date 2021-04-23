@@ -18,7 +18,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <utility>
-#include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/MDS_3/io_signature.h>
 #include <ostream>
 #include <istream>
 #include <boost/variant.hpp>

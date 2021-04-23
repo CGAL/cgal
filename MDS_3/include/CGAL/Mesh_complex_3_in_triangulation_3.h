@@ -23,9 +23,9 @@
 #include <CGAL/MDS_3/Mesh_complex_3_in_triangulation_3_fwd.h>
 #include <CGAL/disable_warnings.h>
 #include <CGAL/iterator.h>
-#include <CGAL/Mesh_3/utilities.h>
+#include <CGAL/MDS_3/utilities.h>
 #include <CGAL/MDS_3/Mesh_complex_3_in_triangulation_3_base.h>
-#include <CGAL/internal/Mesh_3/Boundary_of_subdomain_of_complex_3_in_triangulation_3_to_off.h>
+#include <CGAL/internal/MDS_3/Boundary_of_subdomain_of_complex_3_in_triangulation_3_to_off.h>
 #include <CGAL/Time_stamper.h>
 
 #include <boost/bimap/bimap.hpp>
@@ -42,9 +42,9 @@ template <typename Tr,
           typename CornerIndex,
           typename CurveIndex>
 class Mesh_complex_3_in_triangulation_3 :
-  public Mesh_3::Mesh_complex_3_in_triangulation_3_base<
+  public MDS_3::Mesh_complex_3_in_triangulation_3_base<
     Tr, typename Tr::Concurrency_tag>
-  , public CGAL::Mesh_3::internal::Debug_messages_tools
+  , public CGAL::MDS_3::internal::Debug_messages_tools
 {
 public:
   typedef typename Tr::Concurrency_tag                   Concurrency_tag;
@@ -52,7 +52,7 @@ public:
 private:
   typedef Mesh_complex_3_in_triangulation_3<
     Tr,CornerIndex,CurveIndex>                                    Self;
-  typedef Mesh_3::Mesh_complex_3_in_triangulation_3_base<
+  typedef MDS_3::Mesh_complex_3_in_triangulation_3_base<
                                           Tr,Concurrency_tag>     Base;
 
 public:
@@ -454,7 +454,7 @@ private:
 
   // Iterator type to get the first element of pair
   typedef boost::transform_iterator <
-    Mesh_3::internal::First_of<typename Vertex_map_filter_iterator::value_type>,
+    MDS_3::internal::First_of<typename Vertex_map_filter_iterator::value_type>,
     Vertex_map_filter_iterator >                Vertex_map_iterator_first;
 
   // Iterator type to remove a level of referencing
@@ -775,7 +775,7 @@ operator<< (std::ostream& os,
   // TODO: implement edge saving
   typedef typename Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>::Concurrency_tag Concurrency_tag;
   return os << static_cast<
-    const Mesh_3::Mesh_complex_3_in_triangulation_3_base<Tr, Concurrency_tag>&>(c3t3);
+    const MDS_3::Mesh_complex_3_in_triangulation_3_base<Tr, Concurrency_tag>&>(c3t3);
 }
 
 
@@ -787,7 +787,7 @@ operator>> (std::istream& is,
   // TODO: implement edge loading
   typedef typename Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>::Concurrency_tag Concurrency_tag;
   is >> static_cast<
-    Mesh_3::Mesh_complex_3_in_triangulation_3_base<Tr, Concurrency_tag>&>(c3t3);
+    MDS_3::Mesh_complex_3_in_triangulation_3_base<Tr, Concurrency_tag>&>(c3t3);
   c3t3.rescan_after_load_of_triangulation();
   return is;
 }

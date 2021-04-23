@@ -13,13 +13,13 @@
 #ifndef CGAL_IO_FILE_BINARY_MESH_3_H
 #define CGAL_IO_FILE_BINARY_MESH_3_H
 
-#include <CGAL/license/Triangulation_3.h>
+#include <CGAL/license/MDS_3.h>
 
 
 #include <iostream>
 #include <string>
 #include <limits>
-#include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/MDS_3/io_signature.h>
 
 namespace CGAL {
 

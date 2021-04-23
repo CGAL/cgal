@@ -24,12 +24,12 @@
 
 #include <CGAL/Mesh_3/config.h>
 
-#include <CGAL/Mesh_3/utilities.h>
+#include <CGAL/MDS_3/utilities.h>
 #include <CGAL/iterator.h>
 #include <CGAL/IO/File_medit.h>
 #include <CGAL/IO/File_maya.h>
 #include <CGAL/Bbox_3.h>
-#include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/MDS_3/io_signature.h>
 #include <CGAL/Union_find.h>
 #include <CGAL/Time_stamper.h>
 
@@ -70,7 +70,7 @@ namespace CGAL {
 #endif
 
 namespace CGAL {
-namespace Mesh_3 {
+namespace MDS_3 {
 
   namespace details {
 
@@ -110,7 +110,7 @@ namespace Mesh_3 {
 
     }; // end class template C3t3_helper_class
 
-  } // end namespace Mesh_3::details
+  } // end namespace MDS_3::details
 
 /**
  * @class Mesh_complex_3_in_triangulation_3_base
@@ -675,7 +675,7 @@ private:
   // Traversal
   //-------------------------------------------------------
 private:
-  typedef Mesh_3::internal::Iterator_not_in_complex<Self> Iterator_not_in_complex;
+  typedef MDS_3::internal::Iterator_not_in_complex<Self> Iterator_not_in_complex;
 
   class Facet_iterator_not_in_complex
   {
@@ -1136,7 +1136,7 @@ rescan_after_load_of_triangulation() {
   }
 }
 
-}  // end namespace Mesh_3
+}  // end namespace MDS_3
 }  // end namespace CGAL
 
 #include <CGAL/enable_warnings.h>

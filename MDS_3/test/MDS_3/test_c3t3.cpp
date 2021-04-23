@@ -37,9 +37,9 @@ struct Tester
 
   typedef typename CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
   typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
-  typedef CGAL::Mesh_3::Mesh_complex_3_in_triangulation_3_base<Tr,
+  typedef CGAL::MDS_3::Mesh_complex_3_in_triangulation_3_base<Tr,
     CGAL::Sequential_tag> C3t3_base_sequential;
-  typedef CGAL::Mesh_3::Mesh_complex_3_in_triangulation_3_base<Tr,
+  typedef CGAL::MDS_3::Mesh_complex_3_in_triangulation_3_base<Tr,
     CGAL::Parallel_tag> C3t3_base_parallel;
 
   typedef typename Tr::Bare_point Bare_point;

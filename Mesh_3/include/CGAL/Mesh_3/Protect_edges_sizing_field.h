@@ -28,11 +28,11 @@
 #include <CGAL/disable_warnings.h>
 #include <CGAL/Mesh_3/config.h>
 
-#include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/MDS_3/io_signature.h>
 #ifdef CGAL_MESH_3_DUMP_FEATURES_PROTECTION_ITERATIONS
 #  include <CGAL/IO/File_binary_mesh_3.h>
 #endif
-#include <CGAL/Mesh_3/utilities.h>
+#include <CGAL/MDS_3/utilities.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Mesh_error_code.h>
@@ -108,7 +108,7 @@ void debug_dump_c3t3(const std::string filename, const C3t3& c3t3)
 
 template <typename C3T3, typename MeshDomain, typename SizingFunction>
 class Protect_edges_sizing_field
-  : public CGAL::Mesh_3::internal::Debug_messages_tools
+  : public CGAL::MDS_3::internal::Debug_messages_tools
 {
   typedef Protect_edges_sizing_field          Self;
 
