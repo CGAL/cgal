@@ -787,10 +787,9 @@ int main(int argc, char** argv) {
   // perturbing_mesh_example(filepath, error_bound);
   // moving_mesh_example(filepath, filepath, 5, error_bound);
 
-  match_faces_issue();
-
-  std::cout << std::endl;
-  return EXIT_SUCCESS;
+  // match_faces_issue();
+  // std::cout << std::endl;
+  // return EXIT_SUCCESS;
 
   // ------------------------------------------------------------------------ //
   // Tests.
