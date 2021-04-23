@@ -246,6 +246,8 @@ class Scaling_repH3 : public Aff_transformation_rep_baseH3<R>
     typedef typename R::Direction_3  Direction_3;
     typedef typename R::Plane_3      Plane_3;
     typedef typename R::Aff_transformation_3 Aff_transformation_3;
+    typedef Aff_transformation_rep_baseH3<R> Base;
+    typedef Scaling_repH3<R> Self;
 
              Scaling_repH3()
              {}
@@ -317,9 +319,9 @@ class Scaling_repH3 : public Aff_transformation_rep_baseH3<R>
                                                                  _sf_den );
              }
 
-  Aff_transformation_3 compose(const Aff_transformation_rep_baseH3* aff) const
+  Aff_transformation_3 compose(const Base* aff) const
   {
-    const Scaling_repH3* sr = dynamic_cast<const Scaling_repH3*>(aff);
+    const Self* sr = dynamic_cast<const Self*>(aff);
     return Aff_transformation_3(SCALING, _sf_num * sr->_sf_num, _sf_den * sr->_sf_den);
   }
 
@@ -365,6 +367,8 @@ class Translation_repH3 : public Aff_transformation_rep_baseH3<R_>
   typedef typename R_::Direction_3          Direction_3;
   typedef typename R_::Plane_3              Plane_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
+  typedef Aff_transformation_rep_baseH3<R_> Base;
+  typedef Translation_repH3<R_>             Self;
 
 public:
   typedef R_                    R;
@@ -407,9 +411,9 @@ public:
   virtual  FT
            cartesian(int i, int j) const ;
 
-  Aff_transformation_3 compose(const Aff_transformation_rep_baseH3* aff) const
+  Aff_transformation_3 compose(const Base* aff) const
   {
-    const Translation_repH3* sr = dynamic_cast<const Translation_repH3*>(aff);
+    const Self* sr = dynamic_cast<const Self*>(aff);
     return Aff_transformation_3(TRANSLATION, tv +  sr->tv);
   }
 
