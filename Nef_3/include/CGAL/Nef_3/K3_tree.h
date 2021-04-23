@@ -750,13 +750,13 @@ class Objects_around_box {
     }
 
   private:
-    const Node_handle get_node() const {
+    Node_handle get_node() const {
       CGAL_assertion( node != nullptr);
       return node;
     }
 
     inline
-    const Node_handle get_child_by_side( const Node_handle node, Oriented_side side) {
+    Node_handle get_child_by_side( const Node_handle node, Oriented_side side) {
       CGAL_assertion( node != nullptr);
       CGAL_assertion( side != ON_ORIENTED_BOUNDARY);
       if( side == ON_NEGATIVE_SIDE) {
