@@ -54,7 +54,7 @@ struct Bounded_error_hd_wrapper {
   std::string name() const { return "bounded error"; }
   Bounded_error_hd_wrapper(const double error_bound) : m_error_bound(error_bound) { }
   double operator()(const Surface_mesh& tm1, const Surface_mesh& tm2) const {
-    return PMP::bounded_error_Hausdorff_distance<TAG>(tm1, tm2, m_error_bound);
+    return PMP::bounded_error_Hausdorff_distance<TAG>(tm1, tm2, m_error_bound).first;
   }
 };
 
@@ -135,7 +135,7 @@ void remeshing_tetrahedon_example(
   timer.reset();
   timer.start();
   std::cout << "* bounded Hausdorff distance: " <<
-    PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound) << std::endl;
+    PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound).first << std::endl;
   timer.stop();
   std::cout << "* processing time: " << timer.time() << " s." << std::endl;
 }
@@ -170,7 +170,7 @@ void interior_triangle_example(
   timer.reset();
   timer.start();
   std::cout << "* bounded Hausdorff distance: " <<
-    PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound) << std::endl;
+    PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound).first << std::endl;
   timer.stop();
   std::cout << "* processing time: " << timer.time() << " s." << std::endl;
 }
@@ -197,7 +197,7 @@ void perturbing_mesh_example(
   timer.reset();
   timer.start();
   std::cout << "* bounded Hausdorff distance: " <<
-    PMP::bounded_error_Hausdorff_distance<TAG>(mesh2, mesh2, error_bound) << std::endl;
+    PMP::bounded_error_Hausdorff_distance<TAG>(mesh2, mesh2, error_bound).first << std::endl;
   timer.stop();
   std::cout << "* processing time: " << timer.time() << " s." << std::endl;
 }
@@ -232,7 +232,7 @@ void moving_mesh_example(
     timer.start();
     std::cout << "* position: " << i << std::endl;
     std::cout << "* bounded Hausdorff distance: " <<
-      PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound) << std::endl;
+      PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound).first << std::endl;
     timer.stop();
     std::cout << "* processing time: " << timer.time() << " s." << std::endl;
     if (save) save_mesh(mesh2, "mesh-" + std::to_string(i + 1));
@@ -768,6 +768,28 @@ void test_bunny(
   std::cout << "max time: " << max_time * 1000.0 << std::endl;
 }
 
+void test_realizing_triangles(
+  const double error_bound, const bool save = false) {
+
+  // Basic test.
+  std::cout.precision(20);
+  Surface_mesh mesh1, mesh2;
+
+  mesh1.add_vertex(Point_3(0, 0, 0));
+  mesh1.add_vertex(Point_3(2, 0, 0));
+  mesh1.add_vertex(Point_3(1, 1, 0));
+  mesh1.add_face(mesh1.vertices());
+  if (save) save_mesh(mesh1, "mesh1");
+
+  mesh2 = mesh1;
+  if (save) save_mesh(mesh2, "mesh2");
+
+  const auto bound_triangles =
+    PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound).second;
+  std::cout << "* f1: " << static_cast<int>(bound_triangles.first)  << std::endl;
+  std::cout << "* f2: " << static_cast<int>(bound_triangles.second) << std::endl;
+}
+
 int main(int argc, char** argv) {
 
   // std::string name;
@@ -831,6 +853,9 @@ int main(int argc, char** argv) {
   // test_bunny(apprx_hd);
   // test_bunny(naive_hd);
   test_bunny(bound_hd, 0);
+
+  // --- Testing realizing triangles.
+  test_realizing_triangles(error_bound);
 
   // ------------------------------------------------------------------------ //
   std::cout << std::endl;

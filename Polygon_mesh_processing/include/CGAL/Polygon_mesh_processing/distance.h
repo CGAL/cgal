@@ -1326,7 +1326,11 @@ class VPM1,
 class VPM2,
 class NamedParameters1,
 class NamedParameters2>
-double bounded_error_Hausdorff_impl(
+std::pair<double,
+  std::pair<
+    typename boost::graph_traits<TriangleMesh>::face_descriptor,
+    typename boost::graph_traits<TriangleMesh>::face_descriptor> >
+bounded_error_Hausdorff_impl(
   const TriangleMesh& tm1,
   const TriangleMesh& tm2,
   const typename Kernel::FT& error_bound,
@@ -1386,7 +1390,7 @@ double bounded_error_Hausdorff_impl(
       timer.stop();
       // std::cout << "* culling rate: 100%" << std::endl;
       // std::cout << "* AABB tree build time (sec.): " << timer.time() << std::endl;
-      return 0.0;
+      return std::make_pair(0.0, std::make_pair(Face_handle(), Face_handle()));
     }
     CGAL_assertion(tm1_only.size() > 0);
 
@@ -1530,7 +1534,9 @@ double bounded_error_Hausdorff_impl(
   // std::cout << "* number of candidate triangles after: " << candidate_triangles.size() << std::endl;
 
   // Return linear interpolation between the found lower and upper bounds.
-  return CGAL::to_double((global_bounds.first + global_bounds.second) / FT(2));
+  const double hdist = CGAL::to_double((global_bounds.first + global_bounds.second) / FT(2));
+  const auto realizing_triangles = std::make_pair(Face_handle(), Face_handle());
+  return std::make_pair(hdist, realizing_triangles);
 
   #if !defined(CGAL_LINKED_WITH_TBB)
     CGAL_static_assertion_msg(
@@ -1703,7 +1709,11 @@ class Concurrency_tag,
 class TriangleMesh,
 class NamedParameters1,
 class NamedParameters2>
-double bounded_error_Hausdorff_distance(
+std::pair<double,
+  std::pair<
+    typename boost::graph_traits<TriangleMesh>::face_descriptor,
+    typename boost::graph_traits<TriangleMesh>::face_descriptor> >
+bounded_error_Hausdorff_distance(
   const TriangleMesh& tm1,
   const TriangleMesh& tm2,
   const double error_bound,
@@ -1736,7 +1746,11 @@ template<
 class Concurrency_tag,
 class TriangleMesh,
 class NamedParameters1>
-double bounded_error_Hausdorff_distance(
+std::pair<double,
+  std::pair<
+    typename boost::graph_traits<TriangleMesh>::face_descriptor,
+    typename boost::graph_traits<TriangleMesh>::face_descriptor> >
+bounded_error_Hausdorff_distance(
   const TriangleMesh& tm1,
   const TriangleMesh& tm2,
   const double error_bound,
@@ -1748,7 +1762,11 @@ double bounded_error_Hausdorff_distance(
 template<
 class Concurrency_tag,
 class TriangleMesh>
-double bounded_error_Hausdorff_distance(
+std::pair<double,
+  std::pair<
+    typename boost::graph_traits<TriangleMesh>::face_descriptor,
+    typename boost::graph_traits<TriangleMesh>::face_descriptor> >
+bounded_error_Hausdorff_distance(
   const TriangleMesh& tm1,
   const TriangleMesh& tm2,
   const double error_bound) {
