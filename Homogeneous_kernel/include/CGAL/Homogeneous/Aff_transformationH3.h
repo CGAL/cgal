@@ -93,6 +93,8 @@ public:
 
   virtual  FT
            cartesian(int i, int j) const = 0;
+
+  virtual  Aff_transformation_3 compose(const Aff_transformation_rep_baseH3* aff) const { return Aff_transformation_3(); }
 };
 
 template < class R_ >
@@ -315,6 +317,12 @@ class Scaling_repH3 : public Aff_transformation_rep_baseH3<R>
                                                                  _sf_den );
              }
 
+  Aff_transformation_3 compose(const Aff_transformation_rep_baseH3* aff) const
+  {
+    const Scaling_repH3* sr = dynamic_cast<const Scaling_repH3*>(aff);
+    return Aff_transformation_3(SCALING, _sf_num * sr->_sf_num, _sf_den * sr->_sf_den);
+  }
+
     virtual  RT   homogeneous(int i, int j) const;
     virtual  FT   cartesian(int i, int j) const;
 
@@ -398,6 +406,12 @@ public:
 
   virtual  FT
            cartesian(int i, int j) const ;
+
+  Aff_transformation_3 compose(const Aff_transformation_rep_baseH3* aff) const
+  {
+    const Translation_repH3* sr = dynamic_cast<const Translation_repH3*>(aff);
+    return Aff_transformation_3(TRANSLATION, tv +  sr->tv);
+  }
 
 friend class Aff_transformationH3<R>;
 
@@ -1047,9 +1061,16 @@ Aff_transformationH3<R>
 operator*(const Aff_transformationH3<R>& left_argument,
           const Aff_transformationH3<R>& right_argument )
 {
- return _general_transformation_composition(
-              left_argument.Ptr() ->general_form(),
-              right_argument.Ptr()->general_form() );
+  if(left_argument.is_scaling() && right_argument.is_scaling()){
+    return left_argument.Ptr()->compose(right_argument.Ptr());
+  }
+
+  if(left_argument.is_translation() && right_argument.is_translation()){
+    return left_argument.Ptr()->compose(right_argument.Ptr());
+  }
+
+  return _general_transformation_composition(left_argument.Ptr() ->general_form(),
+                                             right_argument.Ptr()->general_form() );
 }
 
 template < class R >
