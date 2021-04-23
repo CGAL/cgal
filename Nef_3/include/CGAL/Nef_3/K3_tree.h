@@ -994,9 +994,10 @@ typename Object_list::difference_type n_vertices = std::distance(objects.begin()
   size_t leafs(int mask = 255, int lower_limit=0) { return root->leafs(mask, lower_limit);}
 
   void transform(const Aff_transformation_3& t) {
-    // TODO: Bounding box must be updated/transformed, too
-    if(root != nullptr)
-      root->transform(t);
+    if(root == nullptr){
+      return;
+    }
+    root->transform(t);
 
     BBox_updater bbup;
     visit_k3tree(root, bbup);
