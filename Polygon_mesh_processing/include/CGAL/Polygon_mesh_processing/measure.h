@@ -899,8 +899,8 @@ void match_faces(const PolygonMesh& m1, const PolygonMesh& m2,
 
   std::map<Point_3, std::size_t> point_id_map;
 
-  std::vector<std::size_t> m1_vertex_id(vertices(m1).size(), -1);
-  std::vector<std::size_t> m2_vertex_id(vertices(m2).size(), -1);
+  std::vector<std::size_t> m1_vertex_id(num_vertices(m1), -1);
+  std::vector<std::size_t> m2_vertex_id(num_vertices(m2), -1);
   boost::dynamic_bitset<> shared_vertices(m1_vertex_id.size() + m2_vertex_id.size());
 
   //iterate both meshes to set ids of all points, and set vertex/point_id maps.
