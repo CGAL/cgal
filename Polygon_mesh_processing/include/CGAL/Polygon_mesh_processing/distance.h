@@ -1318,22 +1318,27 @@ double approximate_symmetric_Hausdorff_distance(const TriangleMesh& tm1,
 
 namespace internal {
 
-template <class Concurrency_tag,
-          class Kernel,
-          class TriangleMesh,
-          class VPM1,
-          class VPM2>
+template<
+class Concurrency_tag,
+class Kernel,
+class TriangleMesh,
+class VPM1,
+class VPM2,
+class NamedParameters1,
+class NamedParameters2>
 double bounded_error_Hausdorff_impl(
   const TriangleMesh& tm1,
   const TriangleMesh& tm2,
   const typename Kernel::FT& error_bound,
   const bool compare_meshes,
-  VPM1 vpm1,
-  VPM2 vpm2)
-{
-  CGAL_assertion_code( const bool is_triangle = is_triangle_mesh(tm1) && is_triangle_mesh(tm2) );
-  CGAL_assertion_msg (is_triangle,
-    "One of the meshes is not triangulated. Distance computing impossible.");
+  const VPM1& vpm1, const VPM2& vpm2,
+  const NamedParameters1& np1,
+  const NamedParameters2& np2) {
+
+  CGAL_assertion_code(
+    const bool is_triangle = is_triangle_mesh(tm1) && is_triangle_mesh(tm2) );
+  CGAL_assertion_msg(is_triangle,
+    "Both meshes must be triangulated to compute this distance!");
 
   typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM1> TM1_primitive;
   typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM2> TM2_primitive;
@@ -1366,7 +1371,7 @@ double bounded_error_Hausdorff_impl(
   TM2_tree tm2_tree;
   if (compare_meshes) {
     match_faces(tm1, tm2, std::back_inserter(common),
-      std::back_inserter(tm1_only), std::back_inserter(tm2_only));
+      std::back_inserter(tm1_only), std::back_inserter(tm2_only), np1, np2);
 
     // std::cout << "common t: " << common.size()   << std::endl;
     // std::cout << "tm1 only: " << tm1_only.size() << std::endl;
@@ -1720,7 +1725,7 @@ double bounded_error_Hausdorff_distance( const TriangleMesh& tm1,
   CGAL_precondition(error_bound >= 0.0);
   const FT error_threshold = static_cast<FT>(error_bound);
   return internal::bounded_error_Hausdorff_impl<Concurrency_tag, Geom_traits>(
-    tm1, tm2, error_threshold, match_faces, vpm1, vpm2);
+    tm1, tm2, error_threshold, match_faces, vpm1, vpm2, np1, np2);
 }
 
 

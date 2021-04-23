@@ -82,8 +82,34 @@ void save_mesh(const Surface_mesh& mesh, const std::string filepath) {
   }
 }
 
+// Match faces minimum example.
+void match_faces_issue(const bool save = false) {
+
+  using Traits = CGAL::Exact_predicates_inexact_constructions_kernel;
+  using Mesh = CGAL::Surface_mesh<typename Traits::Point_3>;
+  using Face_handle = typename boost::graph_traits<Mesh>::face_descriptor;
+
+  Mesh mesh1, mesh2;
+  CGAL::make_tetrahedron(
+    Point_3(0, 0, 0), Point_3(2, 0, 0),
+    Point_3(1, 1, 1), Point_3(1, 0, 2), mesh1);
+
+  mesh2 = mesh1;
+  CGAL::PMP::isotropic_remeshing(mesh2.faces(), 0.05, mesh2);
+
+  if (save) save_mesh(mesh1, "mesh1");
+  if (save) save_mesh(mesh2, "mesh2");
+
+  std::vector<Face_handle> mesh1_only, mesh2_only;
+  std::vector< std::pair<Face_handle, Face_handle> > common;
+
+  CGAL::PMP::match_faces(mesh1, mesh2, std::back_inserter(common),
+    std::back_inserter(mesh1_only), std::back_inserter(mesh2_only));
+}
+
 // An easy example of a tetrahedron and its remeshed version.
-void remeshing_tetrahedon_example(const double error_bound) {
+void remeshing_tetrahedon_example(
+  const double error_bound, const bool save = false) {
 
   Timer timer;
   Surface_mesh mesh1, mesh2;
@@ -94,12 +120,17 @@ void remeshing_tetrahedon_example(const double error_bound) {
     Point_3(1, 1, 1), Point_3(1, 0, 2), mesh1);
   mesh2 = mesh1;
 
-  // TODO: How to preserve edges?
-  const double target_edge_length = 0.05;
-  PMP::isotropic_remeshing(mesh2.faces(), target_edge_length, mesh2);
+  using edge_descriptor = typename boost::graph_traits<Surface_mesh>::edge_descriptor;
+  Surface_mesh::Property_map<edge_descriptor, bool> is_constrained_map =
+    mesh2.add_property_map<edge_descriptor, bool>("e:is_constrained", true).first;
 
-  // save_mesh(mesh1, "1-mesh1");
-  // save_mesh(mesh2, "1-mesh2");
+  const double target_edge_length = 0.05;
+  PMP::isotropic_remeshing(
+    mesh2.faces(), target_edge_length, mesh2,
+    PMP::parameters::edge_is_constrained_map(is_constrained_map));
+
+  if (save) save_mesh(mesh1, "mesh1");
+  if (save) save_mesh(mesh2, "mesh2");
 
   timer.reset();
   timer.start();
@@ -111,7 +142,8 @@ void remeshing_tetrahedon_example(const double error_bound) {
 
 // Example with a point realizing the Hausdorff distance strictly
 // lying in the interior of a triangle.
-void interior_triangle_example(const double error_bound) {
+void interior_triangle_example(
+  const double error_bound, const bool save = false) {
 
   Timer timer;
   Surface_mesh mesh1, mesh2;
@@ -132,8 +164,8 @@ void interior_triangle_example(const double error_bound) {
   mesh2.add_face(v1, v4, v5);
   mesh2.add_face(v2, v5, v3);
 
-  // save_mesh(mesh1, "2-mesh1");
-  // save_mesh(mesh2, "2-mesh2");
+  if (save) save_mesh(mesh1, "mesh1");
+  if (save) save_mesh(mesh2, "mesh2");
 
   timer.reset();
   timer.start();
@@ -146,7 +178,7 @@ void interior_triangle_example(const double error_bound) {
 // Read a real mesh given by the user, perturb it slightly, and compute the
 // Hausdorff distance between the original mesh and its pertubation.
 void perturbing_mesh_example(
-  const std::string filepath, const double error_bound) {
+  const std::string filepath, const double error_bound, const bool save = false) {
 
   Timer timer;
   std::cout << std::endl << "* (E3) perturbing mesh example:" << std::endl;
@@ -159,8 +191,8 @@ void perturbing_mesh_example(
     mesh2.vertices(), mesh2, max_size, CGAL::parameters::do_project(false));
   std::cout << "* perturbing the second mesh" << std::endl;
 
-  // save_mesh(mesh2, "3-mesh1");
-  // save_mesh(mesh2, "3-mesh2");
+  if (save) save_mesh(mesh2, "mesh1");
+  if (save) save_mesh(mesh2, "mesh2");
 
   timer.reset();
   timer.start();
@@ -175,7 +207,7 @@ void perturbing_mesh_example(
 // Print how the Hausdorff distance changes.
 void moving_mesh_example(
   const std::string filepath1, const std::string filepath2,
-  const std::size_t n, const double error_bound) {
+  const std::size_t n, const double error_bound, const bool save = false) {
 
   Timer timer;
   std::cout << std::endl << "* (E4) moving mesh example:" << std::endl;
@@ -190,7 +222,7 @@ void moving_mesh_example(
       Point_3(bbox.xmax(), bbox.ymax(), bbox.zmax())))));
 
   const FT t = FT(1) / FT(100);
-  // save_mesh(mesh2, "4-mesh-0");
+  if (save) save_mesh(mesh2, "mesh-0");
 
   for (std::size_t i = 0; i < n; ++i) {
     PMP::transform(Affine_transformation_3(CGAL::Translation(),
@@ -203,7 +235,7 @@ void moving_mesh_example(
       PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound) << std::endl;
     timer.stop();
     std::cout << "* processing time: " << timer.time() << " s." << std::endl;
-    // save_mesh(mesh2, "4-mesh-" + std::to_string(i + 1));
+    if (save) save_mesh(mesh2, "mesh-" + std::to_string(i + 1));
   }
 }
 
@@ -755,6 +787,11 @@ int main(int argc, char** argv) {
   // perturbing_mesh_example(filepath, error_bound);
   // moving_mesh_example(filepath, filepath, 5, error_bound);
 
+  match_faces_issue();
+
+  std::cout << std::endl;
+  return EXIT_SUCCESS;
+
   // ------------------------------------------------------------------------ //
   // Tests.
 
@@ -798,4 +835,5 @@ int main(int argc, char** argv) {
 
   // ------------------------------------------------------------------------ //
   std::cout << std::endl;
+  return EXIT_SUCCESS;
 }
