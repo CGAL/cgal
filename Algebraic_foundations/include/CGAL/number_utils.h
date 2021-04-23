@@ -346,7 +346,7 @@ compare_quotients(const NT& xnum, const NT& xden,
       int msign =  sign(xden) *  sign(yden);
       NT leftop  = NT(xnum * yden * msign);
       NT rightop = NT(ynum * xden * msign);
-      return  compare(leftop, rightop);
+      return  CGAL::compare(leftop, rightop);
     }
   else
     {
