@@ -27,12 +27,12 @@ int main(int argc, char* argv[])
   typedef boost::property_map<Mesh, CGAL::edge_is_feature_t>::type EIFMap;
   typedef boost::property_map<Mesh, CGAL::face_patch_id_t<int> >::type PIMap;
   typedef boost::property_map<Mesh, CGAL::vertex_incident_patches_t<int> >::type VIMap;
-  typedef boost::property_map<Mesh, CGAL::vertex_is_constrained_map>::type VCMap
+  typedef boost::property_map<Mesh, CGAL::vertex_is_constrained_map>::type VCMap;
 
   EIFMap eif = get(CGAL::edge_is_feature, mesh);
   PIMap pid = get(CGAL::face_patch_id_t<int>(), mesh);
   VIMap vip = get(CGAL::vertex_incident_patches_t<int>(), mesh);
-  VCMap vcmap =get(CGAL::vertex_is_constrained_map,meshj);
+  VCMap vcmap =get(CGAL::vertex_is_constrained_map,mesh);
 
   std::size_t number_of_patches
     = PMP::sharp_edges_segmentation(mesh, 90, eif, pid,
@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
   for(boost::graph_traits<Mesh>::vertex_descriptor v : vertices(mesh))
   {
     if(get(vcmap, v))
-      ++sharp_corners_counter
+      ++sharp_corners_counter;
   }
       
   std::size_t nb_sharp_edges = 0;
