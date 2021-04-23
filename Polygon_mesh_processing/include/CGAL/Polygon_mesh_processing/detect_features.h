@@ -393,8 +393,6 @@ void detect_sharp_corners(PolygonMesh& pmesh,
                                       parameters::get_parameter(np,internal_np::edge_feature_degree);
 }
 
-}
-}
 
 /*!
  * \ingroup PMP_detect_features_grp
