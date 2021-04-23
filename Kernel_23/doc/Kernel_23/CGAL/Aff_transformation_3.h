@@ -200,12 +200,12 @@ returns `true`, if the transformation is reflecting.
 bool is_odd() const;
 
 /*!
-returns `true`, if the object was constructed using the tag `CGAL::Scaling`, or is the result of the composition of only such scaling transformations objects.
+returns `true`, if the object was constructed using the tag `CGAL::Scaling`, or is the result of the composition of only such scaling transformation objects.
 */
 bool is_scaling() const;
 
 /*!
-returns `true`, if the object was constructed using the tag `CGAL::Translation`, or is the result of the composition of only such translation transformations objects.
+returns `true`, if the object was constructed using the tag `CGAL::Translation`, or is the result of the composition of only such translation transformation objects.
 */
 bool is_translation() const;
 
