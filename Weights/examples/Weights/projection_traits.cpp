@@ -1,14 +1,14 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Weights/utils.h>
 #include <CGAL/Weights/mean_value_weights.h>
-#include <CGAL/Triangulation_2_projection_traits_3.h>
+#include <CGAL/Weights/internal/Projection_traits_3.h>
 
 // Typedefs.
 using Kernel   = CGAL::Simple_cartesian<double>;
 using FT       = typename Kernel::FT;
 using Point_3  = typename Kernel::Point_3;
 using Vector_3 = typename Kernel::Vector_3;
-using PTraits  = CGAL::Triangulation_2_projection_traits_3<Kernel>;
+using PTraits  = CGAL::Weights::internal::Projection_traits_3<Kernel>;
 
 int main() {
 
