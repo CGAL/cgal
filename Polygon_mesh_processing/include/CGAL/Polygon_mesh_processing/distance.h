@@ -1322,8 +1322,7 @@ template<
 class Concurrency_tag,
 class Kernel,
 class TriangleMesh,
-class VPM1,
-class VPM2,
+class VPM1, class VPM2,
 class NamedParameters1,
 class NamedParameters2>
 std::pair<double,
@@ -1333,7 +1332,7 @@ std::pair<double,
 bounded_error_Hausdorff_impl(
   const TriangleMesh& tm1,
   const TriangleMesh& tm2,
-  const typename Kernel::FT& error_bound,
+  const typename Kernel::FT error_bound,
   const bool compare_meshes,
   const VPM1& vpm1, const VPM2& vpm2,
   const NamedParameters1& np1,
@@ -1344,8 +1343,8 @@ bounded_error_Hausdorff_impl(
   CGAL_assertion_msg(is_triangle,
     "Both meshes must be triangulated to compute this distance!");
 
-  using FT = typename Kernel::FT;
-  using Point_3 = typename Kernel::Point_3;
+  using FT         = typename Kernel::FT;
+  using Point_3    = typename Kernel::Point_3;
   using Triangle_3 = typename Kernel::Triangle_3;
 
   using TM1_primitive = AABB_face_graph_triangle_primitive<TriangleMesh, VPM1>;
@@ -1361,7 +1360,7 @@ bounded_error_Hausdorff_impl(
   using TM2_hd_traits = Hausdorff_primitive_traits_tm2<TM2_traits, Triangle_3, Kernel, TriangleMesh, VPM2>;
 
   using Face_handle = typename boost::graph_traits<TriangleMesh>::face_descriptor;
-  using Candidate = Candidate_triangle<Kernel, Face_handle>;
+  using Candidate   = Candidate_triangle<Kernel, Face_handle>;
 
   std::cout.precision(20);
   std::vector<Face_handle> tm1_only, tm2_only;
@@ -1439,7 +1438,7 @@ bounded_error_Hausdorff_impl(
   // See Section 5.1 in the paper.
   const FT squared_error_bound = error_bound * error_bound;
   while (
-    (global_bounds.second - global_bounds.first > error_bound) &&
+    (global_bounds.upper - global_bounds.lower > error_bound) &&
     !candidate_triangles.empty()) {
 
     // Get the first triangle and its Hausdorff bounds from the candidate set.
@@ -1454,8 +1453,8 @@ bounded_error_Hausdorff_impl(
     const auto& triangle_bounds = triangle_and_bound.bounds;
 
     if (
-      (triangle_bounds.second > global_bounds.first) &&
-      (triangle_bounds.second - triangle_bounds.first > error_bound)) {
+      (triangle_bounds.upper > global_bounds.lower) &&
+      (triangle_bounds.upper - triangle_bounds.lower > error_bound)) {
 
       // Get the triangle that is to be subdivided and read its vertices.
       const Triangle_3& triangle_for_subdivision = triangle_and_bound.triangle;
@@ -1475,7 +1474,7 @@ bounded_error_Hausdorff_impl(
         // The upper bound of this triangle is the actual Hausdorff distance of
         // the triangle to the second mesh. Use it as new global lower bound.
         // TODO: Update the reference to the realizing triangle here as this is the best current guess.
-        global_bounds.first = triangle_bounds.second;
+        global_bounds.lower = triangle_bounds.upper;
         continue;
       }
 
@@ -1488,7 +1487,7 @@ bounded_error_Hausdorff_impl(
 
         // The upper bound of this triangle is within error tolerance of
         // the actual upper bound, use it.
-        global_bounds.first = triangle_bounds.second;
+        global_bounds.lower = triangle_bounds.upper;
         continue;
       }
 
@@ -1506,8 +1505,8 @@ bounded_error_Hausdorff_impl(
         // Call Culling on B with the single triangle found.
         TM2_hd_traits traversal_traits_tm2(
           tm2_tree.traits(), tm2, vpm2,
-          triangle_bounds.first,
-          triangle_bounds.second,
+          triangle_bounds.lower,
+          triangle_bounds.upper,
           infinity_value<FT>(),
           infinity_value<FT>(),
           infinity_value<FT>());
@@ -1515,26 +1514,25 @@ bounded_error_Hausdorff_impl(
 
         // Update global lower Hausdorff bound according to the obtained local bounds.
         const auto local_bounds = traversal_traits_tm2.get_local_bounds();
-        if (local_bounds.first > global_bounds.first) {
-          global_bounds.first = local_bounds.first;
+        if (local_bounds.lower > global_bounds.lower) {
+          global_bounds.lower = local_bounds.lower;
         }
 
         // TODO: Additionally store the face descriptor of the parent from TM1 in the Candidate_triangle.
         // Add the subtriangle to the candidate list.
-        candidate_triangles.push(
-          Candidate(sub_triangles[i], local_bounds, triangle_and_bound.face));
+        candidate_triangles.push(Candidate(sub_triangles[i], local_bounds));
       }
 
       // Update global upper Hausdorff bound after subdivision.
-      const FT current_max = candidate_triangles.top().bounds.second;
-      global_bounds.second = std::max(current_max, global_bounds.first);
+      const FT current_max = candidate_triangles.top().bounds.upper;
+      global_bounds.upper = std::max(current_max, global_bounds.lower);
     }
   }
 
   // std::cout << "* number of candidate triangles after: " << candidate_triangles.size() << std::endl;
 
   // Return linear interpolation between the found lower and upper bounds.
-  const double hdist = CGAL::to_double((global_bounds.first + global_bounds.second) / FT(2));
+  const double hdist = CGAL::to_double((global_bounds.lower + global_bounds.upper) / FT(2));
   const auto realizing_triangles = std::make_pair(Face_handle(), Face_handle());
   return std::make_pair(hdist, realizing_triangles);
 

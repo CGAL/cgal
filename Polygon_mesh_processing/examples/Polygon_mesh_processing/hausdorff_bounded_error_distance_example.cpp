@@ -17,10 +17,11 @@ using SCK   = CGAL::Simple_cartesian<double>;
 using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
 
-using Kernel   = EPICK;
-using FT       = typename Kernel::FT;
-using Point_3  = typename Kernel::Point_3;
-using Vector_3 = typename Kernel::Vector_3;
+using Kernel     = EPICK;
+using FT         = typename Kernel::FT;
+using Point_3    = typename Kernel::Point_3;
+using Vector_3   = typename Kernel::Vector_3;
+using Triangle_3 = typename Kernel::Triangle_3;
 
 using TAG                     = CGAL::Parallel_if_available_tag;
 using Surface_mesh            = CGAL::Surface_mesh<Point_3>;
@@ -768,26 +769,80 @@ void test_bunny(
   std::cout << "max time: " << max_time * 1000.0 << std::endl;
 }
 
+Triangle_3 get_triangle(const int index, const Surface_mesh& mesh) {
+
+  const auto mfaces = faces(mesh);
+  assert(index > 0);
+  assert(index < static_cast<int>(mfaces.size()));
+  const auto face = *(mfaces.begin() + index);
+
+  const auto he = halfedge(face, mesh);
+  const auto vertices = vertices_around_face(he, mesh);
+  auto vit = vertices.begin();
+  const auto& p0 = mesh.point(*vit); ++vit;
+  const auto& p1 = mesh.point(*vit); ++vit;
+  const auto& p2 = mesh.point(*vit);
+  return Triangle_3(p0, p1, p2);
+}
+
+void compute_realizing_triangles(
+  const Surface_mesh& mesh1, const Surface_mesh& mesh2, const double error_bound) {
+
+  std::cout << "* getting realizing triangles: " << std::endl;
+  const auto pair =
+    PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound);
+  const int tri1 = static_cast<int>(pair.second.first);
+  const int tri2 = static_cast<int>(pair.second.second);
+
+  std::cout << "* Hausdorff: " << pair.first << std::endl;
+  std::cout << "* f1: " << tri1 << std::endl;
+  std::cout << "* f2: " << tri2 << std::endl;
+  if (tri1 != -1) {
+    const auto triangle = get_triangle(tri1, mesh1);
+    std::cout << "* triangle1: " << triangle << std::endl;
+  }
+  if (tri2 != -1) {
+    const auto triangle = get_triangle(tri2, mesh2);
+    std::cout << "* triangle2: " << triangle << std::endl;
+  }
+}
+
 void test_realizing_triangles(
   const double error_bound, const bool save = false) {
 
-  // Basic test.
   std::cout.precision(20);
+  std::cout << std::endl << "* testing realizing triangles:" << std::endl << std::endl;
+
+  // Basic test.
+  std::cout << "... basic test ..." << std::endl;
   Surface_mesh mesh1, mesh2;
 
   mesh1.add_vertex(Point_3(0, 0, 0));
   mesh1.add_vertex(Point_3(2, 0, 0));
   mesh1.add_vertex(Point_3(1, 1, 0));
   mesh1.add_face(mesh1.vertices());
-  if (save) save_mesh(mesh1, "mesh1");
 
-  mesh2 = mesh1;
-  if (save) save_mesh(mesh2, "mesh2");
+  mesh2.add_vertex(Point_3(0, 0, 1));
+  mesh2.add_vertex(Point_3(2, 0, 1));
+  mesh2.add_vertex(Point_3(1, 1, 1));
+  mesh2.add_face(mesh2.vertices());
 
-  const auto bound_triangles =
-    PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound).second;
-  std::cout << "* f1: " << static_cast<int>(bound_triangles.first)  << std::endl;
-  std::cout << "* f2: " << static_cast<int>(bound_triangles.second) << std::endl;
+  if (save) save_mesh(mesh1, "1mesh1");
+  if (save) save_mesh(mesh2, "1mesh2");
+  compute_realizing_triangles(mesh1, mesh2, error_bound);
+
+  // Complex test.
+  std::cout << std::endl << "... complex test ..." << std::endl;
+  const std::string filepath1 = "data/tetrahedron.off";
+  const std::string filepath2 = "data/tetrahedron-remeshed.off";
+  get_meshes(filepath1, filepath2, mesh1, mesh2);
+
+  PMP::transform(Affine_transformation_3(CGAL::Translation(),
+    Vector_3(FT(0), FT(0), FT(1))), mesh2);
+
+  if (save) save_mesh(mesh1, "2mesh1");
+  if (save) save_mesh(mesh2, "2mesh2");
+  compute_realizing_triangles(mesh1, mesh2, error_bound);
 }
 
 int main(int argc, char** argv) {
@@ -855,7 +910,7 @@ int main(int argc, char** argv) {
   test_bunny(bound_hd, 0);
 
   // --- Testing realizing triangles.
-  test_realizing_triangles(error_bound);
+  test_realizing_triangles(error_bound, true);
 
   // ------------------------------------------------------------------------ //
   std::cout << std::endl;
