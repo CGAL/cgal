@@ -55,5 +55,7 @@ Here are the main concepts of this package:
 \cgalCRPSection{Input/Output Functions}
 - `CGAL::output_to_medit()`
 - `CGAL::output_to_vtu()`
+- `CGAL::output_to_tetgen()`
+- `CGAL::output_to_avizo()`
 */
 
