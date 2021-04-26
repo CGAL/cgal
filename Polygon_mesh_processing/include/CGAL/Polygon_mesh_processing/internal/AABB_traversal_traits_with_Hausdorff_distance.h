@@ -39,10 +39,12 @@ namespace CGAL {
 
     FT lower = infinity_value<FT>();
     FT upper = infinity_value<FT>();
-    Face_handle lface;
-    Face_handle uface;
-    std::pair<Face_handle, Face_handle> lpair;
-    std::pair<Face_handle, Face_handle> upair;
+    Face_handle lface = Face_handle();
+    Face_handle uface = Face_handle();
+    std::pair<Face_handle, Face_handle> lpair =
+      std::make_pair(Face_handle(), Face_handle());
+    std::pair<Face_handle, Face_handle> upair =
+      std::make_pair(Face_handle(), Face_handle());
   };
 
   // Candidate triangle.
@@ -285,6 +287,10 @@ namespace CGAL {
     // do_intersect() below determines that it is worthwhile.
     bool go_further() const { return true; }
 
+    const std::pair<Face_handle, Face_handle> default_face_pair() const {
+      return std::make_pair(Face_handle(), Face_handle());
+    }
+
     // Compute the explicit Hausdorff distance to the given primitive.
     template<typename Primitive>
     void intersection(const Query&, const Primitive& primitive) {
@@ -308,6 +314,8 @@ namespace CGAL {
 
       // Update global Hausdorff bounds according to the obtained local bounds.
       const auto local_bounds = traversal_traits_tm2.get_local_bounds();
+      CGAL_assertion(local_bounds.lpair == default_face_pair());
+      CGAL_assertion(local_bounds.upair == default_face_pair());
 
       if (local_bounds.lower > h_global_bounds.lower) { // it is (6) in the paper, see also Algorithm 1
         h_global_bounds.lower = local_bounds.lower;

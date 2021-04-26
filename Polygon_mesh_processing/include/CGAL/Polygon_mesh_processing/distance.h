@@ -1515,6 +1515,9 @@ bounded_error_Hausdorff_impl(
 
         // Update global lower Hausdorff bound according to the obtained local bounds.
         const auto local_bounds = traversal_traits_tm2.get_local_bounds();
+        CGAL_precondition(local_bounds.lpair == traversal_traits_tm1.default_face_pair());
+        CGAL_precondition(local_bounds.upair == traversal_traits_tm1.default_face_pair());
+
         if (local_bounds.lower > global_bounds.lower) {
           global_bounds.lower = local_bounds.lower;
           global_bounds.lpair.second = local_bounds.lface;
