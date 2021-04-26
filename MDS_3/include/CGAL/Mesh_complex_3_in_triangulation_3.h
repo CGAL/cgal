@@ -92,25 +92,20 @@ private:
     Tr,CornerIndex,CurveIndex>                                    Self;
   typedef MDS_3::Mesh_complex_3_in_triangulation_3_base<
                                           Tr,Concurrency_tag>     Base;
+  typedef CGAL::Hash_handles_with_or_without_timestamps   Hash_fct;
 
 public:
-  typedef typename Base::size_type                        size_type;
-
-  typedef typename Tr::Point                              Point;
-  typedef typename Base::Edge                             Edge;
-  typedef typename Base::Facet                            Facet;
-  typedef typename Base::Vertex_handle                    Vertex_handle;
-  typedef typename Base::Cell_handle                      Cell_handle;
-
-  typedef CGAL::Hash_handles_with_or_without_timestamps   Hash_fct;
+  typedef Tr                                            Triangulation;
+  typedef typename Tr::size_type                        size_type;
+  typedef typename Tr::Point                            Point;
+  typedef typename Tr::Edge                             Edge;
+  typedef typename Tr::Facet                            Facet;
+  typedef typename Tr::Vertex_handle                    Vertex_handle;
+  typedef typename Tr::Cell_handle                      Cell_handle;
 
 #ifndef CGAL_NO_DEPRECATED_CODE
   typedef CurveIndex Curve_segment_index;
 #endif
-
-  typedef typename Base::Triangulation                    Triangulation;
-
-  using Base::surface_patch_index;
 
 /// \name Types
 /// @{
@@ -136,10 +131,20 @@ public:
   typedef CurveIndex Curve_index;
 /// @}
 
+#ifndef DOXYGEN_RUNNING
   BOOST_STATIC_ASSERT(
     boost::is_same<Subdomain_index, typename Base::Subdomain_index>::value);
   BOOST_STATIC_ASSERT(
     boost::is_same<Tr, typename Base::Triangulation>::value);
+  BOOST_STATIC_ASSERT(
+    boost::is_same<Edge, typename Base::Edge>::value);
+  BOOST_STATIC_ASSERT(
+    boost::is_same<Facet, typename Base::Facet>::value);
+  BOOST_STATIC_ASSERT(
+    boost::is_same<Vertex_handle, typename Base::Vertex_handle>::value);
+  BOOST_STATIC_ASSERT(
+    boost::is_same<Cell_handle, typename Base::Cell_handle>::value);
+#endif
 
 private:
   // Type to store the edges:
@@ -163,8 +168,10 @@ private:
   typedef std::vector<Vertex_handle>                  Far_vertices_vec;
 
 public:
+/// \name Constructors
+/// @{
   /**
-   * Constructor
+   * Default constructor
    */
   Mesh_complex_3_in_triangulation_3() = default;
 
@@ -182,7 +189,10 @@ public:
     , corners_(std::move(rhs.corners_))
     , far_vertices_(std::move(rhs.far_vertices_))
   {}
+/// @}
 
+/// \name Operators
+/// @{
   /**
    * Assignement operator, also serves as move-assignement
    */
@@ -213,6 +223,7 @@ public:
     corners_.clear();
     far_vertices_.clear();
   }
+/// @}
 
   /// Import Base functions
   using Base::is_in_complex;
@@ -220,8 +231,7 @@ public:
   using Base::remove_from_complex;
   using Base::triangulation;
   using Base::set_surface_patch_index;
-
-
+  using Base::surface_patch_index;
 
   /**
    * Add edge e to complex, with Curve_index index
