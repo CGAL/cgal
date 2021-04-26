@@ -1,5 +1,5 @@
 namespace CGAL{
-//! \ingroup PkgMesh3IOFunctions
+//! \ingroup PkgMDS3IOFunctions
 //!
 //! \brief writes a tetrahedron mesh using the `UnstructuredGrid` XML format.
 //!

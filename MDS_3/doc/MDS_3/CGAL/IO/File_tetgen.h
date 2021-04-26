@@ -1,6 +1,6 @@
 namespace CGAL{
 /**
- * \ingroup PkgMesh3IOFunctions
+ * \ingroup PkgMDS3IOFunctions
  * @brief outputs a mesh complex to tetgen format
  * @param filename the path to the output file
  * @param c3t3 the mesh
