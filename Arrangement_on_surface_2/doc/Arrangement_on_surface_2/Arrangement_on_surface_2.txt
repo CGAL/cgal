@@ -438,7 +438,7 @@ edges, and faces of an arrangement, respectively.
 \code{.cpp}
 template <typename Arrangement>
 void print_arrangement_size(const Arrangement& arr) {
-  std::cout << "The arrangement size:" << std::endl
+  std::cout << "The arrangement size:\n"
             << "   |V| = " << arr.number_of_vertices()
             << ",  |E| = " << arr.number_of_edges()
             << ",  |F| = " << arr.number_of_faces() << std::endl;
@@ -522,17 +522,23 @@ Arrangement_on_surface_2::Vertex_handle `Vertex_handle`\endlink, which
 serves as a pointer to a vertex. As we show next, all functions
 related to arrangement features accept handle types as input
 parameters and return handle types as their output.
+See Chapter \ref Chapter_Handles_Ranges_and_Circulators
+"Handles and Circulators" for more information on \cgal handles.
 
 In addition to the iterators for arrangement vertices, halfedges, and
 faces, the arrangement class also provides an iterator for edges,
 namely \link Arrangement_on_surface_2::Edge_iterator
 `Edge_iterator`\endlink.  The value type of this iterator is \link
-Arrangement_on_surface_2::Halfedge `Halfedge`\endlink, which is used
-to represent one of the twin halfedges associated with the edge. The
-calls \link Arrangement_on_surface_2::edges_begin()
-`arr.edges_begin()`\endlink and \link
-Arrangement_on_surface_2::edges_end() `arr.edges_end()`\endlink return
-iterators that define the valid range of arrangement edges.
+Arrangement_on_surface_2::Halfedge `Halfedge`\endlink, which is the
+same as the value type of \link
+Arrangement_on_surface_2::Halfedge_iterator
+`Halfedge_iterator`\endlink. The calls \link
+Arrangement_on_surface_2::edges_begin() `arr.edges_begin()`\endlink
+and \link Arrangement_on_surface_2::edges_end()
+`arr.edges_end()`\endlink return iterators that define the valid range
+of arrangement edges. This range consists of half the number of
+halfedges of the arrangement, as every twin halfedges has one
+representative in this range.
 
 All iterator, circulator\cgalFootnote{A <em>circulator</em> is used to
 traverse a circular list, such as the list of halfedges incident to a
@@ -578,7 +584,7 @@ isolated or not. Recall that the halfedges incident to a non-isolated
 vertex, namely, the halfedges that share a common target vertex, form
 a circular list around this vertex. The call \link
 Arrangement_on_surface_2::Vertex::incident_halfedges()
-`v->incident_halfedges()\endlink returns a circulator of the nested
+`v->incident_halfedges()`\endlink returns a circulator of the nested
 type \link Arrangement_on_surface_2::Halfedge_around_vertex_circulator
 `Halfedge_around_vertex_circulator`\endlink that enables the traversal
 of this circular list around a given vertex \f$v\f$ in a clockwise
@@ -586,7 +592,7 @@ order. The value type of this circulator is \link
 Arrangement_on_surface_2::Halfedge `Halfedge`\endlink. By convention,
 the target of the halfedge is \f$v\f$. The call \link
 Arrangement_on_surface_2::Vertex::degree() `v->degree()`\endlink
-evaluates to the number of the halfedges incident to $v$.
+evaluates to the number of the halfedges incident to \f$v\f$.
 
 The function below prints all the halfedges incident to a given
 arrangement vertex (assuming that objects of the \link
@@ -598,7 +604,7 @@ arrangement type is the same as in the simple example above.
 template <typename Arrangement>
 void print_incident_halfedges(typename Arrangement::Vertex_const_handle v) {
   if (v->is_isolated()) {
-    std::cout << "The vertex (" << v->point() << ") is isolated" << std::endl;
+    std::cout << "The vertex (" << v->point() << ") is isolated\n";
     return;
   }
   typename Arrangement::Halfedge_around_vertex_const_circulator first, curr;
@@ -620,24 +626,26 @@ obtain the face that contains \f$v\f$.
 
 A halfedge \f$e\f$ of an arrangement induced by bounded curves is
 associated with an \link Arrangement_on_surface_2::X_monotone_curve_2
-`X_monotone_curve_2`\endlink object, which can be obtained by the
+`X_monotone_curve_2`\endlink object, which can be obtained by
 \link Arrangement_on_surface_2::Halfedge::curve()
-`he->curve()`\endlink, where `eh` identifies a handle to \f$e\f$.
+`he->curve()`\endlink, where `he` identifies a handle to \f$e\f$.
 
 The calls \link Arrangement_on_surface_2::Halfedge::source()
 `he->source()`\endlink and \link
 Arrangement_on_surface_2::Halfedge::target() `he->target()`\endlink
-return handles to the halfedge source-vertex and target-vertex,
+return handles to the halfedge's source-vertex and target-vertex,
 respectively. You can obtain a handle to the twin halfedge using \link
 Arrangement_on_surface_2::Halfedge::twin() `twin()`\endlink. Note that
 from the definition of halfedges in the `Dcel` structute, the
-following invariants always hold: <UL> <LI>`he->curve()` is equivalent
-to `he->twin()->curve()`, <LI>`e->sourceh()` is equivalent to
-`he->twin()->target()`, and <LI>`he->target()` is equivalent to
-`he->twin()->source()`.  </UL>
+following invariants always hold:
+<UL>
+<LI>\link Arrangement_on_surface_2::Halfedge::curve() `he->curve()`\endlink is equivalent to \link Arrangement_on_surface_2::Halfedge::curve() `he->twin()->curve()`\endlink,
+<LI>\link Arrangement_on_surface_2::Halfedge::source() `he->source()`\endlink is equivalent to \link Arrangement_on_surface_2::Halfedge::target() `he->twin()->target()`\endlink, and
+<LI>\link Arrangement_on_surface_2::Halfedge::target() `he->target()`\endlink is equivalent to \link Arrangement_on_surface_2::Halfedge::source() `he->twin()->source()`\endlink.
+</UL>
 
 Every halfedge has an incident face that lies to its left, which can
-be obtained by the \link Arrangement_on_surface_2::Halfedge::face()
+be obtained by \link Arrangement_on_surface_2::Halfedge::face()
 `he->face()`\endlink. Recall that a halfedge is always one link in a
 connected chain (CCB) of halfedges that share the same incident
 face. The \link Arrangement_on_surface_2::Halfedge::prev()
@@ -737,7 +745,7 @@ boundaries of a given face. It uses the function template
 template <typename Arrangement>
 void print_face(typename Arrangement::Face_const_handle f) {
   // Print the outer boundary.
-  if (f->is_unbounded()) std::cout << "Unbounded face. " << std::endl;
+  if (f->is_unbounded()) std::cout << "Unbounded face.\n";
   else {
     std::cout << "Outer boundary: ";
     print_ccb(f->outer_ccb());
@@ -756,7 +764,7 @@ void print_face(typename Arrangement::Face_const_handle f) {
        iv != f->isolated_vertices_end(); ++iv)
   {
     std::cout << " Isolated vertex #" << index++ << ": "
-              << "(" << iv->point() << ")" << std::endl;
+              << "(" << iv->point() << ")\n";
   }
 }
 \endcode
@@ -770,20 +778,20 @@ section. This concludes the preview of the various traversal methods.
 \code
 void print_arrangement (const Arrangement_2& arr) {
   // Print the arrangement vertices.
-  std::cout << arr.number_of_vertices() << " vertices:" << std::endl;
+  std::cout << arr.number_of_vertices() << " vertices:\n";
   for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
     std::cout << "(" << vit->point() << ")";
-    if (vit->is_isolated()) std::cout << " - Isolated." << std::endl;
+    if (vit->is_isolated()) std::cout << " - Isolated.\n";
     else std::cout << " - degree " << vit->degree() << std::endl;
   }
 
   // Print the arrangement edges.
-  std::cout << arr.number_of_edges() << " edges:" << std::endl;
+  std::cout << arr.number_of_edges() << " edges:\n";
   for (auto eit = arr.edges_begin(); eit != arr.edges_end(); ++eit)
-    std::cout << "[" << eit->curve() << "]" << std::endl;
+    std::cout << "[" << eit->curve() << "]\n";
 
   // Print the arrangement faces.
-  std::cout << arr.number_of_faces() << " faces:" << std::endl;
+  std::cout << arr.number_of_faces() << " faces:\n";
   for (auto fit = arr.faces_begin(); fit != arr.faces_end(); ++fit)
     print_face(fit);
 }
@@ -841,15 +849,15 @@ examples.
 Illustrations of the various specialized insertion procedures. The
 inserted \f$x\f$-monotone curve is drawn as a dashed line, surrounded
 by two solid arrows that represent the pair of twin halfedges added to
-the \dcel. Existing vertices are shown as black discs, while new
-vertices are shown as light discs. Existing halfedges that are
+the \dcel. Existing vertices are shown as red discs, while new
+vertices are shown as blue discs. Existing halfedges that are
 affected by the insertion operations are drawn as dashed arrows.  (a)
 Inserting a curve as a new hole inside the face \f$f\f$.  (b)
 Inserting a curve from an existing vertex \f$u\f$ that corresponds to
 one of its endpoints.  (c) Inserting an \f$x\f$-monotone curve, the
 endpoints of which correspond to existing vertices \f$u_1\f$ and
 \f$u_2\f$. In this case, the new pair of halfedges closes a new face
-\f$f'\f$. The hole \f$h_1\f$, which used to belonged to \f$f\f$ before
+\f$f'\f$. The hole \f$h_1\f$, which belonged to \f$f\f$ before
 the insertion, becomes a hole in this new face.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
@@ -958,14 +966,14 @@ insertion functions. It creates an arrangement of five line segments
 \cgalFigureRef{aos_fig-edge_insertion}.  \cgalFootnote{Notice that in
 all figures in the rest of this chapter the coordinate axes are drawn
 only for illustrative purposes and are <em>not</em> part of the
-arrangement.} The first line segment $s_1$ is inserted in the interior
-of the unbounded face, while the four succeeding line segments \f$s_2,
-\ldots, s_5\f$ are inserted using the vertices created by the
-insertion of preceding segments. The arrows in the figure mark the
-direction of the halfedges \f$e_1, \ldots, e_5\f$ returned from the
-insertion functions. The resulting arrangement consists of three
-faces, where the two bounded faces form together a hole in the
-unbounded face.
+arrangement.} The first line segment \f$s_1\f$ is inserted in the
+interior of the unbounded face, while the four succeeding line
+segments \f$s_2, \ldots, s_5\f$ are inserted using the vertices
+created by the insertion of preceding segments. The arrows in the
+figure mark the direction of the halfedges \f$e_1, \ldots, e_5\f$
+returned from the insertion functions. The resulting arrangement
+consists of three faces, where the two bounded faces form together a
+hole in the unbounded face.
 
 Two header files are included in the code in order to make this and
 the following examples more compact. The file
@@ -1024,7 +1032,7 @@ precondition that \f$p\f$ is really an isolated point; namely it does
 not coincide with any existing arrangement vertex and does not lie on
 any edge. As mentioned in Section \ref arr_ssectraverse, it is
 possible to obtain the face containing an isolated vertex calling the
-member function `Arrangement_on_surface_2::vertex::face()`. The member
+member function `Arrangement_on_surface_2::Vertex::face()`. The member
 function
 `Arrangement_on_surface_2::remove_isolated_vertex(Vertex_handle v)`
 accepts a handle to an isolated vertex and removes it from the
@@ -1204,7 +1212,7 @@ halfedge \f$e_{\mathrm{pred}}\f$ directed toward \f$v\f$, such that
 in the circular list of halfedges around \f$v\f$; see
 \cgalFigureRef{aos_fig-insert}. This search may take \f$O(d)\f$ time,
 where \f$d\f$ is the degree of the vertex \f$v\f$. \cgalFootnote{We
-can store the handles to the halfedges incident to $v$ in an efficient
+can store the handles to the halfedges incident to \f$v\f$ in an efficient
 search structure to obtain \f$O(\log d)\f$ access time. However, as
 \f$d\f$ is usually very small, this may lead to a waste of storage
 space without a meaningful improvement in running time in practice.}
@@ -1365,7 +1373,7 @@ void print_point_location
   if (f = boost::get<Face_const_handle>(&obj)) // located inside a face
     std::cout << "inside "
               << (((*f)->is_unbounded()) ? "the unbounded" : "a bounded")
-              << " face." << std::endl;
+              << " face.\n";
   else if (e = boost::get<Halfedge_const_handle>(&obj)) // located on an edge
     std::cout << "on an edge: " << (*e)->curve() << std::endl;
   else if (v = boost::get<Vertex_const_handle>(&obj)) // located on a vertex
@@ -1589,7 +1597,7 @@ void shoot_vertical_ray(const RayShoot& vrs,
     std::cout << "hit an edge: " << (*e)->curve() << std::endl;
   else if (f = boost::get<Face_const_handle>(&obj)) {    // we hit nothing
     CGAL_assertion((*f)->is_unbounded());
-    std::cout << "hit nothing." << std::endl;
+    std::cout << "hit nothing.\n";
   }
   else CGAL_error();
 }
@@ -1742,7 +1750,7 @@ the walk point-location type, namely, an instance of the
 insert the curve.
 
 <!----------------------------------------------------------------------------->
-\subsubsection arr_sssecinsert_x_mon Inserting \f$x\f$-Monotone Curves
+\subsubsection arr_sssecinsert_x_mon Inserting X-monotone Curves
 <!----------------------------------------------------------------------------->
 
 The time it takes to insert a curve \f$c\f$ using the
@@ -1821,8 +1829,8 @@ The free function template `CGAL::insert<>()` is overloaded. It is
 possible to another version of this function and pass a curve that is
 not necessarily \f$x\f$-monotone, but this is subject to an important
 condition. Consider the call \link CGAL::insert<>() `insert(arr, c,
-pl)`\endlink, where $c$ is not necessarily \f$x\f$-monotone. In this
-case the type of `arr` must be an instance of the
+pl)`\endlink, where \f$c\f$ is not necessarily \f$x\f$-monotone. In
+this case the type of `arr` must be an instance of the
 `Arrangement_2<Traits, Dcel>` class template, where the `Traits`
 template parameter is substituted with a traits class that models the
 concept `ArrangementTraits_2`, which refines the
@@ -2143,10 +2151,11 @@ the edge, it is removed as well.
 The following example demonstrates the usage of the free removal
 functions. It creates an arrangement of four line segment \f$s_1,
 \ldots, s_4\f$ forming an H-shape with two horizontal edges induced by
-$s_1$ and $s_2$ (drawn as dashed lines). Then it removes the two
-horizontal edges and clears all redundant vertices (drawn as lightly
-shaded discs), such that the final arrangement consists of just two
-edges associated with the vertical line segments \f$s_3\f$ and \f$s_4\f$.
+\f$s_1\f$ and \f$s_2\f$ (drawn as dashed lines). Then it removes the
+two horizontal edges and clears all redundant vertices (drawn as
+lightly shaded discs), such that the final arrangement consists of
+just two edges associated with the vertical line segments \f$s_3\f$
+and \f$s_4\f$.
 
 \cgalExample{Arrangement_on_surface_2/global_removal.cpp}
 
@@ -2460,8 +2469,8 @@ respectively.
   `is_at_open_boundary()`\endlink.  If the call \link
   Arrangement_on_surface_2::Vertex::is_at_open_boundary()
   `v->is_at_open_boundary()`\endlink predicates evaluates to `false`,
-  you can access the point associated with $v$. Otherwise, \f$v\f$ is
-  not associated with a \link Arrangement_on_surface_2::Point_2
+  you can access the point associated with \f$v\f$. Otherwise, \f$v\f$
+  is not associated with a \link Arrangement_on_surface_2::Point_2
   `Point_2`\endlink object, as it represents the unbounded end of a
   curve that approaches infinity.
 
@@ -2803,12 +2812,12 @@ curves, and not \f$y\f$-monotone curves. The four sides together form
 the boundary \f$\partial \Phi\f$.</li>
 
 <li>A point \f$p \in S\f$ is <em>regular</em> if it has only one
-pre-image. All pre-images of a non-regular point lie in the boundary
-of \f$\Phi\f$. In particular, \f$\phi_S\f$ is bijective on
-\f$(x_{\rm min},x_{\rm max})\times(y_{\rm min},y_{\rm max})\f$.
-More precisely, a non-regular point has either exactly two pre-images
-that lie on opposite sides of the domain, or all points of exactly one
-side of the domain.</li>
+pre-image under \f$\Phi\f$. All pre-images of a non-regular point lie
+in the boundary of \f$\Phi\f$. In particular, \f$\phi_S\f$ is
+bijective on \f$(x_{\rm min},x_{\rm max})\times(y_{\rm min},y_{\rm
+max})\f$.  More precisely, a non-regular point has either exactly two
+pre-images that lie on opposite sides of the domain, or all points of
+exactly one side of the domain.</li>
 
 </ul>
 
@@ -2824,7 +2833,7 @@ called an <em>identification curve</em>.
 Rectangles, strips, quadrants, half-planes, and planes can be modeled
 with \f$\phi_S \f$ being the identity mapping. For example,
 \f$\Phi_S(x, y) = (x, y, 0)\f$ with \f$X = Y =(-\infty, +\infty)\f$
-parameterizes the plane. Surfaces such as paraboloids can be
+parameterizes a plane. Surfaces such as paraboloids can be
 modeled through continuous and bijective parameterizations, for
 example, \f$\phi_S(x,y) = (x,y,x^2 + y^2)\f$, where
 \f$U = V =(-\infty, +\infty)\f$, defines a paraboloid of revolution.
@@ -2839,7 +2848,7 @@ non-regular. The north pole \f$(0,0,1)\f$ has infinitely many
 pre-images \f$(x, \pi/2)\f$ with \f$-\pi < x < \pi\f$ and so does the
 south pole \f$(0,0,-1)\f$. The points on the opposite Prime Meridian
 have two pre-images each, namely \f$(-\pi,y)\f$ and \f$(\pi,y)\f$
-with \f$-\pi/2 \leq y \leq \pi/2\f$. We say that the upper and lower
+with \f$-\pi/2 \leq y \leq \pi/2\f$. We say that the top and bottom
 side of the domain are <em>contracted</em> and the left and right sides
 are <em>identified</em>. These are exactly the kinds of non-injectivity
 that we allow.
@@ -2870,12 +2879,12 @@ cell-tuple data structure than an \dcel would be needed.
 A curve \f$\gamma\f$ is a continuous function \f$\gamma: I \rightarrow
 \Phi\f$, where \f$I\f$ is an open, half-open, or closed interval with
 endpoints 0 and 1, and \f$\gamma\f$ is injective except at a finite
-number of points. If \f$0 \not\in I\f$, \f$\lim_{t \rightarrow 0+}
-\gamma(t)\f$ exists (in the closure of \f$\Phi\f$) and lies in an open
-side of the boundary. Similarly, if \f$1 \not\in I\f$, then \f$\lim_{t
-\rightarrow 1-} \gamma(t)\f$ exists and lies in an open side of the
-boundary. A curve \f$c\f$ in \f$S\f$ is the image of a curve
-\f$\gamma\f$ in the domain.
+number of points. If \f$0 \not\in I\f$, the limit \f$\lim_{t
+\rightarrow 0+} \gamma(t)\f$ exists (in the closure of \f$\Phi\f$) and
+lies in an open side of the boundary. Similarly, if \f$1 \not\in I\f$,
+then \f$\lim_{t \rightarrow 1-} \gamma(t)\f$ exists and lies in an
+open side of the boundary. A curve \f$c\f$ in \f$S\f$ is the image of
+a curve \f$\gamma\f$ in the domain.
 
 A curve is <em>closed in the domain</em> if \f$\gamma(0) =
 \gamma(1)\f$; in particular, \f$0 \in I\f$ and \f$1 \in I\f$. A curve
@@ -3007,7 +3016,7 @@ respectively.
   identified, then `ARR_LEFT_BOUNDARY` or `ARR_RIGHT_BOUNDARY` are
   returned if the pre-image of \f$p\f$ lies on the left or the right
   side, respectively.  If the left and right sides are identified, the
-  return value is non-deterministic and can be either
+  return value is unspecified and can be either
   `ARR_LEFT_BOUNDARY` or `ARR_RIGHT_BOUNDARY`. Similarly, the call
   \link Arrangement_on_surface_2::Vertex::parameter_space_in_y()
   `v->parameter_space_in_y()`\endlink returns `ARR_INTERIOR` if the
@@ -3017,7 +3026,7 @@ respectively.
   identified, then `ARR_BOTTOM_BOUNDARY` or `ARR_TOP_BOUNDARY` are
   returned if the pre-image of \f$q\f$ lies on the bottom or the top
   side, respectively.  If the bottom and top sides are identified, the
-  return value is non-deterministic.
+  return value is unspecified.
 
   If you want to determine whether the pre-image of a point \f$p\f$
   lies on identified sides, you need to employ one of the two traits
@@ -3041,18 +3050,18 @@ respectively.
 
 <LI>A face in a planar arrangement has at most one outer CCB. However,
   a face in an arrangement embedded on a surface, such as a torus, may
-  have two outer CCBs; to this end, the methods \link
+  have two outer CCBs; to this end, the calls \link
   Arrangement_on_surface_2::Face::outer_ccbs_begin()
-  `outer_ccbs_begin()`\endlink and \link
+  `f->outer_ccbs_begin()`\endlink and \link
   Arrangement_on_surface_2::Face::outer_ccbs_end()
-  `outer_ccbs_end()`\endlink return iterators of type \link
+  `f->outer_ccbs_end()`\endlink return iterators of type \link
   Arrangement_on_surface_2::Face::Outer_ccb_iterator
   `Outer_ccb_iterator`\endlink that define a range of outer CCBs
   inside the face \f$f\f$. Similarly, the methods \link
   Arrangement_on_surface_2::Face::inner_ccbs_begin()
-  `inner_ccbs_begin()`\endlink and \link
+  `f->inner_ccbs_begin()`\endlink and \link
   Arrangement_on_surface_2::Face::inner_ccbs_end()
-  `inner_ccbs_end()`\endlink return iterators of type \link
+  `f->inner_ccbs_end()`\endlink return iterators of type \link
   Arrangement_on_surface_2::Face::Inner_ccb_iterator
   `Inner_ccb_iterator`\endlink that define a range of inner CCBs
   inside the face \f$f\f$. (The latter pair of member functions and
@@ -3482,21 +3491,24 @@ parameter-space boundary (the pre-images of their endpoints lie on
 boundary sides) or approach them (the pre-images of their endpoints
 approach boundary sides). These boundary conditions typically occur
 with unbounded curves or with arrangements embedded in curved
-surfaces. The category types
-\link ArrangementBasicTraits_2::Left_side_category `Left_side_category`\endlink,
-\link ArrangementBasicTraits_2::Right_side_category `Right_side_category`\endlink,
-\link ArrangementBasicTraits_2::Bottom_side_category `Bottom_side_category`\endlink, and
-\link ArrangementBasicTraits_2::Top_side_category `Top_side_category`\endlink,
-nested in every geometry traits class indicate
-whether the corresponding boundary side (i.e., left, right, bottom,
-and top) is open, closed, contracted, or identified, and whether this
-information is relevant at all. When all curves inserted into the
-arrangement are not expected to approach or reach that particular
-boundary side, the information is irrelevant. (Note that we explicitly
-distinguish closed-only, contracted, and identified sides, although
-the latter two are closed in the parameter space as well.) Each one of
-the categories above must be convertible to one of the tag types
-listed below according to the boundary condition that should be
+surfaces. The category types \link
+ArrangementBasicTraits_2::Left_side_category
+`Left_side_category`\endlink, \link
+ArrangementBasicTraits_2::Right_side_category
+`Right_side_category`\endlink, \link
+ArrangementBasicTraits_2::Bottom_side_category
+`Bottom_side_category`\endlink, and \link
+ArrangementBasicTraits_2::Top_side_category
+`Top_side_category`\endlink, nested in every geometry traits class
+indicate whether the corresponding boundary side (i.e., left, right,
+bottom, and top) is open, closed, contracted, or identified, and
+whether this information is relevant at all. When all curves inserted
+into the arrangement are expected to neither approach nor reach that
+particular boundary side, the information is irrelevant. (Note that we
+explicitly distinguish closed-only, contracted, and identified sides,
+although the latter two are closed in the parameter space as well.)
+Each one of the categories above must be convertible to one of the tag
+types listed below according to the boundary condition that should be
 handled.
 
 <ul>
@@ -3511,19 +3523,20 @@ handled.
 
 For each of the four sides of the parameter space there are four
 available concepts, models of which can be used to handle open,
-closed, contracted, and identified side, respectively. (When curves
-are not expected to reach or approach a particular side, no special
-handling is required; thus, there is no need for a corresponding
+closed, contracted, and identified sides, respectively. (When curves
+are expected to neither reach nor approach a particular side, special
+handling is not required; thus, there is no need for a corresponding
 concept.) For example, it is required that the category type \link
 ArrangementOpenBottomTraits_2::Bottom_side_category
 `Bottom_side_category`\endlink, nested in models of the concept
 `ArrangementOpenBottomTraits_2`, is convertible to the tag type
-`Arr_open_side_tag`.  This makes for a total of 16 such abstract
-concepts. Any one of these individual concept is useless on its own;
-only concepts that refine a combination of 0, 1, 2, 3, or 4 abstract
-concepts (which capture the conditions that occur in the four sides
-simultaneously) are purposeful. Theoretically, there are
-\f$\sum_{i=0}^4\binom{i}{4} \cdot 4^i = 5^4 = 625\f$ such
+`Arr_open_side_tag`.  This makes for a total of 16 abstract concepts
+(combine one of left, right, bottom, and top with one of open, closed,
+contracted, identified). Any one of these individual abstract concept
+is useless on its own; only concepts that refine a combination of 0,
+1, 2, 3, or 4 abstract concepts (which capture the conditions that
+occur in the four sides simultaneously) are purposeful. Theoretically,
+there are \f$\sum_{i=0}^4\binom{i}{4} \cdot 4^i = 5^4 = 625\f$ such
 concepts. However, only a subset of them is meaningful. If a side is
 identified, the opposite side must also be identified. In addition, a
 contracted side must be adjacent to two identified sides. While this
@@ -3570,7 +3583,7 @@ parameter space in this case is open and unbounded.}
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-spherical_concept_hierarchy,spherical_concept_hierarchy.png}
 Bottom portion of the refinement hierarchy of the geometry-traits
-concepts for curves embedded in a spherical-like parameterized surface
+concepts for curves embedded in a sphere-like parameterized surface
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -3621,12 +3634,12 @@ sides of the parameter space.
 <!----------------------------------------------------------------------------->
 
 Individual concepts for curves that reach the identified left side of
-the parameter space and for curves that the identified left side of
-the parameter space do not exists, because if one side is identified
-the opposide side must be identified as well. Similarly, individual
-concepts for curves that reach the identified left side of the
-parameter space and for curves that the identified left side of the
-parameter space do not exists as well. Instead, the shared
+the parameter space and for curves that reach the identified right
+side of the parameter space do not exist, because if one side is
+identified the opposide side must be identified as well. Similarly,
+individual concepts for curves that reach the identified bottom side
+of the parameter space and for curves that reach the identified top
+side of the parameter space do not exist either. Instead, the shared
 requirements for opposite identified sides are collected in two
 additional abstract concepts called
 `ArrangementIdentifiedVerticalTraits_2` and
@@ -3661,10 +3674,10 @@ determine whether \f$\lim_{t \rightarrow d} x(t)\f$ evaluates to
 is equal to \f$x_{\rm min}\f$, \f$x_{\rm max}\f$, or a value in
 between. Return `CGAL::ARR_LEFT_BOUNDARY`, `CGAL::ARR_RIGHT_BOUNDARY`,
 or `CGAL::ARR_INTERIOR`, accordingly. If \f$c\f$ is vertical and lies
-on a vertical boundary; that is, either \f$\forall p=(x_p, y_p) \in c,
-x_p = x_{\rm min}\f$ or \f$\forall p=(x_p, y_p) \in c, x_p = x_{\rm
-max}\f$, then the boundary side containing \f$c\f$ cannot be open and
-must not be identified.
+on a vertical boundary; that is, either \f$\forall p=(x_p, y_p) \in c$
+we have $x_p = x_{\rm min}\f$ or \f$\forall p=(x_p, y_p) \in c$ we
+have $x_p = x_{\rm max}\f$, then the boundary side containing \f$c\f$
+cannot be open.
 
 (ii) Given a point \f$p=(x_p, y_p)\f$, determine the location of the
 point with respect to the \f$x\f$-axis. Formally, determine whether
@@ -3724,8 +3737,8 @@ overloaded version is required only for the concepts
 
 The two symmetric predicates above determine the location of a
 curve-end in the parameter space. However, in general,
-\f$x\f$-coordinates and \f$y\f$-coordinates are differently
-handled. This asymmetry is brought on by the various algorithms
+\f$x\f$-coordinates and \f$y\f$-coordinates are handled
+differently. This asymmetry is brought on by the various algorithms
 applied to arrangements, the input and output arguments of which are
 \f$x\f$-monotone curves. Indeed, all curves maintained by any
 arrangement are continuous weakly \f$x\f$-monotone curves. A non
@@ -3767,17 +3780,17 @@ this overloaded version is required only for the concepts
 
 Given two \f$x\f$-monotone curves \f$c_1\f$ and \f$c_2\f$, and an
 enumerator \f$i\f$ that specifies either the minimum ends or the
-maximum ends of the two curves, and thus maps to parameter values \f$d
-\in \{0,1\}\f$, compare the \f$y\f$-coordinates of the curves near
-their respective ends. More precisely, compares the
-\f$y\f$-coordinates of the vertical projection of a point \f$p\f$ onto
+maximum ends of the two curves, and thus maps to a parameter value
+\f$d \in \{0,1\}\f$, compare the \f$y\f$-coordinates of the curves
+near their respective ends. More precisely, compare the
+\f$y\f$-coordinates of the vertical projections of a point \f$p\f$ onto
 \f$c_1\f$ and onto \f$c_2\f$. If the enumerator \f$i\f$ specifies the
 minimum ends, the curves must approach the left boundary-side. In this
-case \f$p\f$ is located far to the left, such that the result is
-invariant under a translation of \f$p\f$ farther to the left. If
-\f$i\f$ specifies the maximum ends, the curves must approach the right
-boundary-side. In that case \f$p\f$ is located far to the right in a
-similar manner.
+case \f$p\f$ is located sufficiently close to the left boundary-side,
+such that the result is invariant under a translation of \f$p\f$
+farther to the left. If \f$i\f$ specifies the maximum ends, the curves
+must approach the right boundary-side. In that case \f$p\f$ is located
+sufficiently close to the right boundary-side in a similar manner.
 
 </td>
 </tr>
@@ -5120,9 +5133,9 @@ An arrangement of algebraic curves of degrees \f$1\f$, \f$2\f$,
 The following examples computes the arrangement depicted in in
 \cgalFigureRef{aos_fig-algebraic_curves}. The arrangement is induced
 by four algebraic curves, \f$c_1\f$, \f$c_2\f$, \f$c_3\f$, and
-\f$c_4\f$, of degrees $1$, $2$, $3$, and $6$, respectively. For each
-curve the defining polynomial is constructed first. Then, the
-algebraic curve is constructed using the \link
+\f$c_4\f$, of degrees \f$1\f$, \f$2\f$, \f$3\f$, and \f$6\f$,
+respectively. For each curve the defining polynomial is constructed
+first. Then, the algebraic curve is constructed using the \link
 Arr_algebraic_segment_traits_2::Construct_curve_2
 `Construct_curve_2`\endlink functor.  Finally, the curve is inserted
 into the arrangement.
@@ -5170,7 +5183,7 @@ the underlying algebraic curve, the leftmost point of the segment, the
 rightmost point of the segment, and an output iterator associated with
 a container of output terminal segments. The function operator is
 overloaded. In addition to the variant above, there is one that
-accepts the underlying algebraic curve, a single point $p$, an
+accepts the underlying algebraic curve, a single point \f$p\f$, an
 enumerator that delimits the segment, and an output iterator. It
 returns the maximal \f$x\f$-monotone segment that contains
 \f$p\f$. The enumerator specifies whether \f$p\f$ is interior to the
@@ -5253,7 +5266,7 @@ represented internally using the triple described above. Although the
 \f$y\f$-coordinate of a point represented by an object of the nested
 type `Algebraic_real_1` can be obtained, we advise caution with that
 option, since computing an explicit representation of the
-$y$-coordinate can be rather expensive.
+\f$y\f$-coordinate can be rather expensive.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-algebraic_segments,algebraic_segments.png}
@@ -5315,7 +5328,7 @@ sides of the parameter space are identified and the top and bottom
 boundary sides are contracted.  The arguments that substitute the
 template parameters `X` and `Y` when
 `Arr_geodesic_arc_on_sphere_traits_2<Kernel, X, Y>` is instantiated
-determine the value of \f$\pi\f$. Essentially, overriding their default
+determine the value of \f$\tau\f$. Essentially, overriding their default
 values rotates the identification curve about the vertical axes of the
 image coordinate system (that is, the sphere coordinate system). These
 arguments must be integral values. They define a not-necessarily
@@ -6783,7 +6796,7 @@ smallest vertex \f$v_0\f$ in the arrangement. Note the usage of the
 distance property-map. We instantiate a property map that attaches a
 number of type `Number_type` (which is a type of unlimited precision)
 to each vertex. The number represents the sum of squared distances of
-the vertex from $v_0$.
+the vertex from \f$v_0\f$.
 
 \cgalExample{Arrangement_on_surface_2/bgl_primal_adapter.cpp}
 

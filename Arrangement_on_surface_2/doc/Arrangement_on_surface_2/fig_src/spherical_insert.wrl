@@ -83,6 +83,7 @@ Transform {
                         stacks 32
                       }
                     }
+
                     Shape {
                       appearance Appearance {
                         material Material {
@@ -260,13 +261,68 @@ Transform {
                     }
                    ]
                 }
+                Transform {
+                  translation -0.3 4.0 -0.5
+                  rotation 0 0 1 3.14
+                  children Transform {
+                    rotation 1 0 0 1.5708
+                    children Shape {
+                      appearance USE AXES_APP
+                      geometry Text3D {
+                        string ["Y"]
+                        fontStyle DEF FONTSTYLE FontStyle {
+                          family "Arial"
+                          style "BOLD"
+                          size 1
+                          leftToRight FALSE
+                        }
+                        depth 0.1
+                        creaseAngle 1.5
+                      }
+                    }
+                  }
+                }
                 DEF XXX3 Transform {
                   rotation 0 0 -1 1.57
-                  children [ USE CS_AXIS ]
+                  children [
+                    USE CS_AXIS
+                    Transform {
+                      translation 0.05 3.8 -0.3
+                      rotation 0 0 1 -1.5708
+                      children Transform {
+                        rotation 1 0 0 1.5708
+                        children Shape {
+                          appearance USE AXES_APP
+                          geometry Text3D {
+                            string ["X"]
+                            fontStyle USE FONTSTYLE
+                            depth 0.1
+                            creaseAngle 1.5
+                          }
+                        }
+                      }
+                    }
+                   ]
                 }
                 DEF XXX4 Transform {
                   rotation 1 0 0 1.57
-                  children [ USE CS_AXIS ]
+                  children [
+                    USE CS_AXIS
+                    Transform {
+                      translation 0.25 3.8 0
+                      children Transform {
+                        children Shape {
+                          appearance USE AXES_APP
+                          geometry Text3D {
+                            string ["Z"]
+                            fontStyle USE FONTSTYLE
+                            depth 0.1
+                            creaseAngle 1.5
+                          }
+                        }
+                      }
+                    }
+                   ]
                 }
                ]
             }
