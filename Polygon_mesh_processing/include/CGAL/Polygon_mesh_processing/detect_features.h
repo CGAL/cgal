@@ -596,6 +596,15 @@ void detect_sharp_edges(PolygonMesh& p,
   detect_sharp_edges(p, angle_in_deg, edge_is_feature_map,
                      parameters::all_default());
 }
+  
+template<typename PolygonMesh, typename VertexIsFeatureMap, typename FT>
+void detect_sharp_corners(PolygonMesh &p,
+                          FT angle_in_deg,
+                          VertexIsFeatureMap vertex_is_feature_map) 
+{
+  detect_sharp_corners(p, angle_in_deg, vertex_is_feature_map,
+                       parameters::all_default());
+}
 
 template <typename PolygonMesh, typename FT,
           typename EdgeIsFeatureMap, typename PatchIdMap>
