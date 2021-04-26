@@ -1675,13 +1675,16 @@ protected:
 
     if( this->is_shared())
       clone_rep();
+    const Aff_transformation_3& transposed_inverse = aff.transpose().inverse();
+    bool is_even = aff.is_even();
     // only linear transform for the origin-centered sphere maps
     Aff_transformation_3 linear( aff.hm(0,0), aff.hm(0,1), aff.hm(0,2),
                                  aff.hm(1,0), aff.hm(1,1), aff.hm(1,2),
                                  aff.hm(2,0), aff.hm(2,1), aff.hm(2,2),
                                  aff.hm(3,3));
-    const Aff_transformation_3& transposed_inverse = aff.transpose().inverse();
-    bool is_even = aff.is_even();
+    const Aff_transformation_3& linear_transposed_inverse = linear.transpose().inverse();
+    bool linear_is_even = linear.is_even();
+
     SNC_constructor cstr(snc());
 
     std::list<Vertex_handle> vertex_list;
@@ -1713,7 +1716,7 @@ protected:
         vi->point() = vi->point().transform( aff);
         if(! translate){
           SM_decorator sdeco(&*vi);
-          sdeco.transform( linear, is_even, transposed_inverse);
+        sdeco.transform( linear, linear_is_even, linear_transposed_inverse);
         }
       }
     }
