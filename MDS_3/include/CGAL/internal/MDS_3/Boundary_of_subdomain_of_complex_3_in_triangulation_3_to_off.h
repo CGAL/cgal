@@ -62,7 +62,7 @@ output_boundary_of_c3t3_to_off(const C3T3& c3t3,
   std::vector<Point> points;
   std::vector<Face> faces;
 
-  CGAL::Mesh_3::internal::facets_in_complex_3_to_triangle_soup(c3t3, sd_index, points, faces, normals_point_outside_of_the_subdomain);
+  CGAL::MDS_3::internal::facets_in_complex_3_to_triangle_soup(c3t3, sd_index, points, faces, normals_point_outside_of_the_subdomain);
 
   return output_polygon_soup_to_off(points, faces, out);
 }
@@ -78,7 +78,7 @@ output_facets_in_complex_to_off(const C3T3& c3t3,
   std::vector<Point> points;
   std::vector<Face> faces;
 
-  CGAL::Mesh_3::internal::facets_in_complex_3_to_triangle_soup(c3t3, points, faces);
+  CGAL::MDS_3::internal::facets_in_complex_3_to_triangle_soup(c3t3, points, faces);
 
   return output_polygon_soup_to_off(points, faces, out);
 }

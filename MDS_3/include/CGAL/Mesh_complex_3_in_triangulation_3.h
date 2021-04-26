@@ -34,10 +34,48 @@
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/unordered_map.hpp>
+#include <boost/static_assert.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
 
+/*!
+  \ingroup PkgMDS3Classes
 
+  The class `Mesh_complex_3_in_triangulation_3` implements a data structure
+  to store the 3D restricted Delaunay triangulation used by a mesh
+  generation process.
+
+  This class is a model of the concept
+  `MeshComplexWithFeatures_3InTriangulation_3`.
+
+
+  \tparam Tr can be instantiated with any 3D
+  regular triangulation of \cgal provided that its
+  vertex and cell base class are models of the concepts
+  `MeshVertexBase_3` and `MeshCellBase_3`, respectively.
+
+  \tparam  CornerIndex is the type of the indices for corners. It must match the `Corner_index` of the model
+  of the `MeshDomainWithFeatures_3` concept used for mesh generation.
+
+  \tparam CurveIndex is the type of the indices for curves.
+  It must match the `Curve_index` types of the model
+  of the `MeshDomainWithFeatures_3` concept used for mesh generation.
+
+  Those two last template parameters defaults to `int`, so that they can be ignored
+  if the domain used for mesh generation does not include 0 and 1-dimensionnal features (i.e
+  is a model of the concept `MeshDomain_3`).
+
+  \cgalModels `MeshComplexWithFeatures_3InTriangulation_3`
+
+  \sa `CGAL::make_mesh_3()`
+  \sa `CGAL::refine_mesh_3()`
+  \sa `MeshComplex_3InTriangulation_3`
+  \sa `MeshComplexWithFeatures_3InTriangulation_3`
+  \sa `MeshCellBase_3`,
+  \sa `MeshVertexBase_3`
+
+*/
 template <typename Tr,
           typename CornerIndex,
           typename CurveIndex>
@@ -63,8 +101,6 @@ public:
   typedef typename Base::Facet                            Facet;
   typedef typename Base::Vertex_handle                    Vertex_handle;
   typedef typename Base::Cell_handle                      Cell_handle;
-  typedef CornerIndex                                     Corner_index;
-  typedef CurveIndex                                      Curve_index;
 
   typedef CGAL::Hash_handles_with_or_without_timestamps   Hash_fct;
 
@@ -73,9 +109,37 @@ public:
 #endif
 
   typedef typename Base::Triangulation                    Triangulation;
-  typedef typename Base::Subdomain_index                  Subdomain_index;
 
   using Base::surface_patch_index;
+
+/// \name Types
+/// @{
+  /*!
+  Index type.
+  */
+  typedef typename Tr::Vertex::Index Index;
+  /*!
+  Surface index type.
+  */
+  typedef typename Tr::Cell::Surface_patch_index Surface_patch_index;
+  /*!
+  Subdomain index type.
+  */
+  typedef typename Tr::Cell::Subdomain_index Subdomain_index;
+  /*!
+  Corner index type.
+  */
+  typedef CornerIndex Corner_index;
+  /*!
+  Curve index type.
+  */
+  typedef CurveIndex Curve_index;
+/// @}
+
+  BOOST_STATIC_ASSERT(
+    boost::is_same<Subdomain_index, typename Base::Subdomain_index>::value);
+  BOOST_STATIC_ASSERT(
+    boost::is_same<Tr, typename Base::Triangulation>::value);
 
 private:
   // Type to store the edges:
@@ -362,6 +426,8 @@ public:
     return Corner_index();
   }
 
+  /// \name Operations
+  /// @{
   /**
    * Outputs the outer boundary of the entire domain with facets oriented outward.
    */
@@ -388,6 +454,17 @@ public:
     internal::output_facets_in_complex_to_off(*this, out);
     return out;
   }
+
+  /*!
+  Outputs the mesh to `os`
+  in Medit format.
+  */
+  void output_to_medit(std::ostream& os) const
+  {
+    Base::output_to_medit(os);
+  }
+
+  /// @}
 
   /**
    * Fills \c out with incident edges (1-dimensional features of \c v.

@@ -24,7 +24,7 @@
 
 namespace CGAL {
 
-namespace Mesh_3 {
+namespace MDS_3 {
 
 
 template <class C3T3>
@@ -137,15 +137,16 @@ output_to_avizo(std::ostream& os,
 
 } // end output_to_avizo(...)
 
-} // end namespace Mesh_3
+} // end namespace MDS_3
 
 
 
 
 /**
+ * \ingroup PkgMDS3IOFunctions
  * @brief outputs mesh to avizo format
  * @param os the stream
- * @param c3t3 the mesh
+ * @param c3t3 the mesh complex
  * \see \ref IOStreamAvizo
  */
 template <class C3T3>
@@ -153,7 +154,7 @@ void
 output_to_avizo(std::ostream& os,
                  const C3T3& c3t3)
 {
-  Mesh_3::output_to_avizo(os,c3t3);
+  MDS_3::output_to_avizo(os,c3t3);
 }
 
 } // end namespace CGAL

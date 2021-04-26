@@ -25,7 +25,7 @@
 
 namespace CGAL {
 
-namespace Mesh_3 {
+namespace MDS_3 {
 
 template <class C3T3, bool rebind, bool no_patch>
 void
@@ -189,7 +189,17 @@ output_to_tetgen(std::string filename,
 
 
 
-
+/**
+ * \ingroup PkgMDS3IOFunctions
+ * @brief outputs a mesh complex to tetgen format
+ * @param filename the path to the output file
+ * @param c3t3 the mesh
+ * @param rebind if true, labels of cells are rebinded into [1..nb_of_labels]
+ * @param show_patches if true, patches are labeled with different labels than
+ * cells. If false, each surface facet is written twice, using label of
+ * each adjacent cell.
+ * \see \ref IOStreamTetgen
+ */
 template <class C3T3>
 void
 output_to_tetgen(std::string filename,
@@ -200,16 +210,16 @@ output_to_tetgen(std::string filename,
   if ( rebind )
   {
     if ( show_patches )
-      Mesh_3::output_to_tetgen<C3T3,true,false>(filename,c3t3);
+      MDS_3::output_to_tetgen<C3T3,true,false>(filename,c3t3);
     else
-      Mesh_3::output_to_tetgen<C3T3,true,true>(filename,c3t3);
+      MDS_3::output_to_tetgen<C3T3,true,true>(filename,c3t3);
   }
   else
   {
     if ( show_patches )
-      Mesh_3::output_to_tetgen<C3T3,false,false>(filename,c3t3);
+      MDS_3::output_to_tetgen<C3T3,false,false>(filename,c3t3);
     else
-      Mesh_3::output_to_tetgen<C3T3,false,true>(filename,c3t3);
+      MDS_3::output_to_tetgen<C3T3,false,true>(filename,c3t3);
   }
 }
 

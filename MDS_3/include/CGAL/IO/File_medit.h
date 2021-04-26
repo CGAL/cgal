@@ -34,7 +34,7 @@
 
 namespace CGAL {
 
-namespace Mesh_3 {
+namespace MDS_3 {
 
 //-------------------------------------------------------
 // Needed in verbose mode
@@ -862,13 +862,15 @@ output_to_medit(std::ostream& os,
 } // end namespace Mesh_3
 
 /**
- * @brief outputs mesh to medit format
- * @param os the stream
- * @param c3t3 the mesh
- * @param rebind if true, labels of cells are rebinded into [1..nb_of_labels]
- * @param show_patches if true, patches are labeled with different labels than
- * cells. If false, each surface facet is written twice, using label of
- * each adjacent cell.
+ * @ingroup PkgMDS3IOFunctions
+ * @brief outputs a mesh complex to the medit (`.mesh`) file format.
+        See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
+ * @param os the output stream
+ * @param c3t3 the mesh complex
+ * @param rebind if `true`, labels of cells are rebinded into `[1..nb_of_labels]`
+ * @param show_patches if `true`, patches are labeled with different labels than
+ *                     cells. If `false`, each surface facet is written twice,
+ *                     using the label of each adjacent cell.
  * \see \ref IOStreamMedit
  */
 template <class C3T3>
@@ -881,16 +883,16 @@ output_to_medit(std::ostream& os,
   if ( rebind )
   {
     if ( show_patches )
-      Mesh_3::output_to_medit<C3T3,true,false>(os,c3t3);
+      MDS_3::output_to_medit<C3T3,true,false>(os,c3t3);
     else
-      Mesh_3::output_to_medit<C3T3,true,true>(os,c3t3);
+      MDS_3::output_to_medit<C3T3,true,true>(os,c3t3);
   }
   else
   {
     if ( show_patches )
-      Mesh_3::output_to_medit<C3T3,false,false>(os,c3t3);
+      MDS_3::output_to_medit<C3T3,false,false>(os,c3t3);
     else
-      Mesh_3::output_to_medit<C3T3,false,true>(os,c3t3);
+      MDS_3::output_to_medit<C3T3,false,true>(os,c3t3);
   }
 }
 
