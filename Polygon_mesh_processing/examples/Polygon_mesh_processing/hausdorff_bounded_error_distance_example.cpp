@@ -697,9 +697,9 @@ void test_bunny(
     if (save) save_mesh(mesh2, "mesh2");
     timer.reset();
     timer.start();
-    const double dista = functor(mesh1, mesh2);
+    // const double dista = functor(mesh1, mesh2);
     const double distb = functor(mesh2, mesh1);
-    const double distc = (CGAL::max)(dista, distb);
+    const double distc = distb; // (CGAL::max)(dista, distb);
     timer.stop();
     times.push_back(timer.time());
     std::cout << "* distance / Hausdorff / time (sec.) : " <<
