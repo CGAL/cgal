@@ -37,10 +37,12 @@ namespace CGAL {
   struct Bounds {
     using FT = typename Kernel::FT;
 
-    FT lower = -FT(1);
-    FT upper = -FT(1);
+    FT lower = infinity_value<FT>();
+    FT upper = infinity_value<FT>();
     Face_handle lface;
     Face_handle uface;
+    std::pair<Face_handle, Face_handle> lpair;
+    std::pair<Face_handle, Face_handle> upair;
   };
 
   // Candidate triangle.
@@ -81,13 +83,14 @@ namespace CGAL {
     Hausdorff_primitive_traits_tm2(
       const AABBTraits& traits,
       const TriangleMesh& tm2, const VPM2& vpm2,
-      const FT h_lower_init, const FT h_upper_init,
-      const FT h_v0_lower_init, const FT h_v1_lower_init, const FT h_v2_lower_init) :
-    m_traits(traits), m_tm2(tm2), m_vpm2(vpm2) {
+      const Local_bounds& local_bounds,
+      const FT h_v0_lower_init,
+      const FT h_v1_lower_init,
+      const FT h_v2_lower_init) :
+    m_traits(traits), m_tm2(tm2), m_vpm2(vpm2),
+    h_local_bounds(local_bounds) {
 
       // Initialize the global and local bounds with the given values.
-      h_local_bounds.lower = h_lower_init;
-      h_local_bounds.upper = h_upper_init;
       h_v0_lower = h_v0_lower_init;
       h_v1_lower = h_v1_lower_init;
       h_v2_lower = h_v2_lower_init;
@@ -141,9 +144,11 @@ namespace CGAL {
       // TM1 to the primitive triangle in TM2.
       if (distance_lower < h_local_bounds.lower) {
         h_local_bounds.lower = distance_lower;
+        h_local_bounds.lface = primitive.id();
       }
       if (distance_upper < h_local_bounds.upper) { // it is (10) in the paper
         h_local_bounds.upper = distance_upper;
+        h_local_bounds.uface = primitive.id();
       }
     }
 
@@ -295,8 +300,7 @@ namespace CGAL {
       // Call Culling on B with the single triangle found.
       TM2_hd_traits traversal_traits_tm2(
         m_tm2_tree.traits(), m_tm2, m_vpm2,
-        infinity_value<FT>(),
-        infinity_value<FT>(),
+        Bounds<Kernel, Face_handle>(),
         infinity_value<FT>(),
         infinity_value<FT>(),
         infinity_value<FT>());
@@ -307,9 +311,13 @@ namespace CGAL {
 
       if (local_bounds.lower > h_global_bounds.lower) { // it is (6) in the paper, see also Algorithm 1
         h_global_bounds.lower = local_bounds.lower;
+        h_global_bounds.lpair.first  = primitive.id();
+        h_global_bounds.lpair.second = local_bounds.lface;
       }
       if (local_bounds.upper > h_global_bounds.upper) { // it is (6) in the paper, see also Algorithm 1
         h_global_bounds.upper = local_bounds.upper;
+        h_global_bounds.upair.first  = primitive.id();
+        h_global_bounds.upair.second = local_bounds.uface;
       }
 
       // Store the triangle given as primitive here as candidate triangle

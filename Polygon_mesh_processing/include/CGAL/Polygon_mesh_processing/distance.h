@@ -1475,6 +1475,7 @@ bounded_error_Hausdorff_impl(
         // the triangle to the second mesh. Use it as new global lower bound.
         // TODO: Update the reference to the realizing triangle here as this is the best current guess.
         global_bounds.lower = triangle_bounds.upper;
+        global_bounds.lpair.second = triangle_bounds.uface;
         continue;
       }
 
@@ -1488,6 +1489,7 @@ bounded_error_Hausdorff_impl(
         // The upper bound of this triangle is within error tolerance of
         // the actual upper bound, use it.
         global_bounds.lower = triangle_bounds.upper;
+        global_bounds.lpair.second = triangle_bounds.uface;
         continue;
       }
 
@@ -1505,8 +1507,7 @@ bounded_error_Hausdorff_impl(
         // Call Culling on B with the single triangle found.
         TM2_hd_traits traversal_traits_tm2(
           tm2_tree.traits(), tm2, vpm2,
-          triangle_bounds.lower,
-          triangle_bounds.upper,
+          triangle_bounds,
           infinity_value<FT>(),
           infinity_value<FT>(),
           infinity_value<FT>());
@@ -1516,6 +1517,7 @@ bounded_error_Hausdorff_impl(
         const auto local_bounds = traversal_traits_tm2.get_local_bounds();
         if (local_bounds.lower > global_bounds.lower) {
           global_bounds.lower = local_bounds.lower;
+          global_bounds.lpair.second = local_bounds.lface;
         }
 
         // TODO: Additionally store the face descriptor of the parent from TM1 in the Candidate_triangle.
@@ -1525,15 +1527,29 @@ bounded_error_Hausdorff_impl(
 
       // Update global upper Hausdorff bound after subdivision.
       const FT current_max = candidate_triangles.top().bounds.upper;
-      global_bounds.upper = std::max(current_max, global_bounds.lower);
+      // global_bounds.upper = std::max(current_max, global_bounds.lower);
+
+      if (current_max > global_bounds.lower) {
+        global_bounds.upper = current_max;
+        global_bounds.upair.second = candidate_triangles.top().bounds.uface;
+      } else {
+        global_bounds.upper = global_bounds.lower;
+        global_bounds.upair.second = global_bounds.lpair.second;
+      }
     }
   }
 
   // std::cout << "* number of candidate triangles after: " << candidate_triangles.size() << std::endl;
 
+  // std::cout << "* found lface 1:" << static_cast<int>(global_bounds.lpair.first)  << std::endl;
+  // std::cout << "* found lface 2:" << static_cast<int>(global_bounds.lpair.second) << std::endl;
+
+  // std::cout << "* found uface 1:" << static_cast<int>(global_bounds.upair.first)  << std::endl;
+  // std::cout << "* found uface 2:" << static_cast<int>(global_bounds.upair.second) << std::endl;
+
   // Return linear interpolation between the found lower and upper bounds.
   const double hdist = CGAL::to_double((global_bounds.lower + global_bounds.upper) / FT(2));
-  const auto realizing_triangles = std::make_pair(Face_handle(), Face_handle());
+  const auto realizing_triangles = global_bounds.upair;
   return std::make_pair(hdist, realizing_triangles);
 
   #if !defined(CGAL_LINKED_WITH_TBB)

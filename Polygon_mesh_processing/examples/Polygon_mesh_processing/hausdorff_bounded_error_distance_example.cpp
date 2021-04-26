@@ -83,31 +83,6 @@ void save_mesh(const Surface_mesh& mesh, const std::string filepath) {
   }
 }
 
-// Match faces minimum example.
-void match_faces_issue(const bool save = false) {
-
-  using Traits = CGAL::Exact_predicates_inexact_constructions_kernel;
-  using Mesh = CGAL::Surface_mesh<typename Traits::Point_3>;
-  using Face_handle = typename boost::graph_traits<Mesh>::face_descriptor;
-
-  Mesh mesh1, mesh2;
-  CGAL::make_tetrahedron(
-    Point_3(0, 0, 0), Point_3(2, 0, 0),
-    Point_3(1, 1, 1), Point_3(1, 0, 2), mesh1);
-
-  mesh2 = mesh1;
-  CGAL::PMP::isotropic_remeshing(mesh2.faces(), 0.05, mesh2);
-
-  if (save) save_mesh(mesh1, "mesh1");
-  if (save) save_mesh(mesh2, "mesh2");
-
-  std::vector<Face_handle> mesh1_only, mesh2_only;
-  std::vector< std::pair<Face_handle, Face_handle> > common;
-
-  CGAL::PMP::match_faces(mesh1, mesh2, std::back_inserter(common),
-    std::back_inserter(mesh1_only), std::back_inserter(mesh2_only));
-}
-
 // An easy example of a tetrahedron and its remeshed version.
 void remeshing_tetrahedon_example(
   const double error_bound, const bool save = false) {
@@ -681,8 +656,8 @@ void test_timings(const std::string filepath, const FunctionWrapper& functor) {
   timer.stop();
   std::cout << "* time 1 (sec.): " << timer.time() << std::endl;
 
-  std::cout << "dista = " << dista << std::endl;
-  std::cout << "distb = " << distb << std::endl;
+  std::cout << "* dista = " << dista << std::endl;
+  std::cout << "* distb = " << distb << std::endl;
 }
 
 template<
@@ -764,15 +739,15 @@ void test_bunny(
   avg_time /= static_cast<double>(times.size());
 
   std::cout << std::endl << "* timings (msec.): " << std::endl;
-  std::cout << "avg time: " << avg_time * 1000.0 << std::endl;
-  std::cout << "min time: " << min_time * 1000.0 << std::endl;
-  std::cout << "max time: " << max_time * 1000.0 << std::endl;
+  std::cout << "* avg time: " << avg_time * 1000.0 << std::endl;
+  std::cout << "* min time: " << min_time * 1000.0 << std::endl;
+  std::cout << "* max time: " << max_time * 1000.0 << std::endl;
 }
 
 Triangle_3 get_triangle(const int index, const Surface_mesh& mesh) {
 
   const auto mfaces = faces(mesh);
-  assert(index > 0);
+  assert(index >= 0);
   assert(index < static_cast<int>(mfaces.size()));
   const auto face = *(mfaces.begin() + index);
 
@@ -786,24 +761,38 @@ Triangle_3 get_triangle(const int index, const Surface_mesh& mesh) {
 }
 
 void compute_realizing_triangles(
-  const Surface_mesh& mesh1, const Surface_mesh& mesh2, const double error_bound) {
+  const Surface_mesh& mesh1, const Surface_mesh& mesh2,
+  const double error_bound, const std::string prefix, const bool save = false) {
 
   std::cout << "* getting realizing triangles: " << std::endl;
-  const auto pair =
+  const auto data =
     PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound);
-  const int tri1 = static_cast<int>(pair.second.first);
-  const int tri2 = static_cast<int>(pair.second.second);
+  const auto& faces = data.second;
+  const int f1 = static_cast<int>(faces.first);
+  const int f2 = static_cast<int>(faces.second);
 
-  std::cout << "* Hausdorff: " << pair.first << std::endl;
-  std::cout << "* f1: " << tri1 << std::endl;
-  std::cout << "* f2: " << tri2 << std::endl;
-  if (tri1 != -1) {
-    const auto triangle = get_triangle(tri1, mesh1);
-    std::cout << "* triangle1: " << triangle << std::endl;
+  std::cout << "* Hausdorff: " << data.first << std::endl;
+  std::cout << "* f1: " << f1 << std::endl;
+  std::cout << "* f2: " << f2 << std::endl;
+
+  if (f1 != -1 && save) {
+    const auto triangle = get_triangle(f1, mesh1);
+    Surface_mesh sm1;
+    sm1.add_vertex(triangle[0]);
+    sm1.add_vertex(triangle[1]);
+    sm1.add_vertex(triangle[2]);
+    sm1.add_face(sm1.vertices());
+    save_mesh(sm1, prefix + "triangle1");
   }
-  if (tri2 != -1) {
-    const auto triangle = get_triangle(tri2, mesh2);
-    std::cout << "* triangle2: " << triangle << std::endl;
+
+  if (f2 != -1 && save) {
+    const auto triangle = get_triangle(f2, mesh2);
+    Surface_mesh sm2;
+    sm2.add_vertex(triangle[0]);
+    sm2.add_vertex(triangle[1]);
+    sm2.add_vertex(triangle[2]);
+    sm2.add_face(sm2.vertices());
+    save_mesh(sm2, prefix + "triangle2");
   }
 }
 
@@ -829,7 +818,7 @@ void test_realizing_triangles(
 
   if (save) save_mesh(mesh1, "1mesh1");
   if (save) save_mesh(mesh2, "1mesh2");
-  compute_realizing_triangles(mesh1, mesh2, error_bound);
+  compute_realizing_triangles(mesh1, mesh2, error_bound, "1", save);
 
   // Complex test.
   std::cout << std::endl << "... complex test ..." << std::endl;
@@ -842,7 +831,7 @@ void test_realizing_triangles(
 
   if (save) save_mesh(mesh1, "2mesh1");
   if (save) save_mesh(mesh2, "2mesh2");
-  compute_realizing_triangles(mesh1, mesh2, error_bound);
+  compute_realizing_triangles(mesh1, mesh2, error_bound, "2", save);
 }
 
 int main(int argc, char** argv) {
@@ -864,7 +853,6 @@ int main(int argc, char** argv) {
   // perturbing_mesh_example(filepath, error_bound);
   // moving_mesh_example(filepath, filepath, 5, error_bound);
 
-  // match_faces_issue();
   // std::cout << std::endl;
   // return EXIT_SUCCESS;
 
@@ -879,13 +867,13 @@ int main(int argc, char** argv) {
 
   // test_synthetic_data(apprx_hd);
   // test_synthetic_data(naive_hd);
-  test_synthetic_data(bound_hd);
+  // test_synthetic_data(bound_hd);
 
   // --- Compare on common meshes.
 
   // test_one_versus_another(apprx_hd, naive_hd);
   // test_one_versus_another(naive_hd, bound_hd);
-  test_one_versus_another(bound_hd, apprx_hd);
+  // test_one_versus_another(bound_hd, apprx_hd);
 
   // --- Compare on real meshes.
 
@@ -894,14 +882,14 @@ int main(int argc, char** argv) {
 
   // test_real_meshes(filepath1, filepath2, apprx_hd, naive_hd);
   // test_real_meshes(filepath1, filepath2, naive_hd, bound_hd);
-  test_real_meshes(filepath1, filepath2, bound_hd, apprx_hd);
+  // test_real_meshes(filepath1, filepath2, bound_hd, apprx_hd);
 
   // --- Compare timings.
 
   filepath = (argc > 1 ? argv[1] : "data/blobby-remeshed.off");
   // test_timings(filepath, apprx_hd);
   // test_timings(filepath, naive_hd);
-  test_timings(filepath, bound_hd);
+  // test_timings(filepath, bound_hd);
 
   // --- Compare with the paper.
 
@@ -910,7 +898,7 @@ int main(int argc, char** argv) {
   test_bunny(bound_hd, 0);
 
   // --- Testing realizing triangles.
-  test_realizing_triangles(error_bound, true);
+  // test_realizing_triangles(error_bound);
 
   // ------------------------------------------------------------------------ //
   std::cout << std::endl;
