@@ -445,7 +445,7 @@ friend std::ostream& operator<<
 }
 
     /*
-~Node() noexcept(!CGAL_assertions)
+~Node() noexcept(!CGAL_ASSERTIONS_ENABLED)
 {
   CGAL_NEF_TRACEN("~Node: deleting node...");
   CGAL_destructor_assertion_catch(
@@ -1119,7 +1119,7 @@ bool update( Node_handle node,
   return (left_updated || right_updated);
 }
   /*
-~K3_tree() noexcept(!CGAL_assertions)
+~K3_tree() noexcept(!CGAL_ASSERTIONS_ENABLED)
 {
   CGAL_NEF_TRACEN("~K3_tree: deleting root...");
   CGAL_destructor_assertion_catch(

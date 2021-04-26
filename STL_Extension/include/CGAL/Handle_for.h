@@ -102,7 +102,7 @@ public:
         ptr_ = p;
     }
 
-    Handle_for(const Handle_for& h) noexcept(!CGAL_assertions)
+    Handle_for(const Handle_for& h) noexcept(!CGAL_ASSERTIONS_ENABLED)
       : ptr_(h.ptr_)
     {
         CGAL_assume (ptr_->count > 0);
@@ -110,7 +110,7 @@ public:
     }
 
     Handle_for&
-    operator=(const Handle_for& h) noexcept(!CGAL_assertions)
+    operator=(const Handle_for& h) noexcept(!CGAL_ASSERTIONS_ENABLED)
     {
         Handle_for tmp = h;
         swap(tmp);

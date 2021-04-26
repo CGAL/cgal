@@ -590,7 +590,7 @@ public:
   /*!
    * Destructor. [takes O(n) operations]
    */
-  virtual ~Multiset () noexcept(!CGAL_assertions);
+  virtual ~Multiset () noexcept(!CGAL_ASSERTIONS_ENABLED);
 
   /*!
    * Assignment operator. [takes O(n) operations]
@@ -1565,7 +1565,7 @@ Multiset<Type, Compare, Allocator, UseCompactContainer>::Multiset (const Self& t
 // Destructor.
 //
 template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
-Multiset<Type, Compare, Allocator, UseCompactContainer>::~Multiset () noexcept(!CGAL_assertions)
+Multiset<Type, Compare, Allocator, UseCompactContainer>::~Multiset () noexcept(!CGAL_ASSERTIONS_ENABLED)
 {
   if (UseCompactContainer::value)
     return;

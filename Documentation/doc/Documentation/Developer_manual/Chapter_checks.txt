@@ -243,7 +243,7 @@ and \cgalCite{cgal:a-esgc-98} (also available at
 <A HREF="https://www.boost.org/community/exception_safety.html"><TT>https://www.boost.org/community/exception_safety.html</TT></A>).
 Any destructor which might throw an exception, including a destructor which
 uses the `CGAL_destructor_assertion` macro, should be marked with the
-`noexcept(!CGAL_assertions)`.
+`noexcept(!CGAL_ASSERTIONS_ENABLED)`.
 
 \section secchecks_req_and_rec Requirements and recommendations
 
