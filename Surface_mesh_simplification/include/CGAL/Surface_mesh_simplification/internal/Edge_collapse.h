@@ -425,7 +425,9 @@ EdgeCollapse(Triangle_mesh& tmesh,
     m_get_placement(get_placement),
     m_should_ignore(should_ignore),
     m_visitor(visitor),
-    m_has_border(!is_closed(tmesh))
+    m_has_border(!is_closed(tmesh)),
+    m_initial_edge_count(0),
+    m_current_edge_count(0)
 {
   m_max_dihedral_angle_squared_cos = CGAL::square(std::cos(1.0 * CGAL_PI / 180.0));
 
