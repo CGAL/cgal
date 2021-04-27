@@ -235,6 +235,13 @@ namespace CGAL {
       return h_local_bounds;
     }
 
+    template <class PrimitiveConstIterator>
+    void traverse_group(const Query& query, PrimitiveConstIterator group_begin, PrimitiveConstIterator group_end)
+    {
+      for (PrimitiveConstIterator it=group_begin; it!=group_end; ++it)
+        this->intersection(query, *it);
+    }
+
   private:
     // Input data.
     const AABBTraits& m_traits;
@@ -395,6 +402,13 @@ namespace CGAL {
     template<typename Node>
     bool do_intersect(const Query& query, const Node& node) const {
       return this->do_intersect_with_priority(query, node).first;
+    }
+
+    template <class PrimitiveConstIterator>
+    void traverse_group(const Query& query, PrimitiveConstIterator group_begin, PrimitiveConstIterator group_end)
+    {
+      for (PrimitiveConstIterator it=group_begin; it!=group_end; ++it)
+        this->intersection(query, *it);
     }
 
     // Return those triangles from TM1, which are candidates for including a

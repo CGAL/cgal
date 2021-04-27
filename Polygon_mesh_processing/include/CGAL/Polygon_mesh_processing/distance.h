@@ -1440,6 +1440,7 @@ bounded_error_Hausdorff_impl(
   timer.start();
   const Point_3 stub(0, 0, 0); // dummy point given as query since it is not needed
   tm1_tree.traversal_with_priority(stub, traversal_traits_tm1);
+  //tm1_tree.traversal_with_priority_and_group_traversal(stub, traversal_traits_tm1, 10); //TODO: experiment with group traversal
   timer.stop();
   // std::cout << "* TM1 traversal (sec.): " << timer.time() << std::endl;
 
@@ -1533,6 +1534,7 @@ bounded_error_Hausdorff_impl(
           infinity_value<FT>(),
           infinity_value<FT>());
         tm2_tree.traversal_with_priority(sub_triangles[i], traversal_traits_tm2);
+        //tm2_tree.traversal_with_priority_and_group_traversal(sub_triangles[i], traversal_traits_tm2, 10); //TODO: experiment with group traversal
 
         // Update global lower Hausdorff bound according to the obtained local bounds.
         const auto local_bounds = traversal_traits_tm2.get_local_bounds();
