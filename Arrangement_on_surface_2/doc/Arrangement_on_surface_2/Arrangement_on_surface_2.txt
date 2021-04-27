@@ -3831,14 +3831,15 @@ enumerator \f$i\f$ that specifies either the minimum ends or the
 maximum ends of the two curves, and thus maps to a parameter value
 \f$d \in \{0,1\}\f$, compare the \f$y\f$-coordinates of the curves
 near their respective ends. More precisely, compare the
-\f$y\f$-coordinates of the vertical projections of a point \f$p\f$ onto
-\f$c_1\f$ and onto \f$c_2\f$. If the enumerator \f$i\f$ specifies the
-minimum ends, the curves must approach the left boundary-side. In this
-case \f$p\f$ is located sufficiently close to the left boundary-side,
-such that the result is invariant under a translation of \f$p\f$
-farther to the left. If \f$i\f$ specifies the maximum ends, the curves
-must approach the right boundary-side. In that case \f$p\f$ is located
-sufficiently close to the right boundary-side in a similar manner.
+\f$y\f$-coordinates of the vertical projections of a point \f$p\f$
+onto \f$c_1\f$ and onto \f$c_2\f$. If the enumerator \f$i\f$ specifies
+the minimum ends, the curves must approach the left boundary-side. In
+this case \f$p\f$ is located sufficiently close to the left
+boundary-side, such that the result is invariant under a translation
+of \f$p\f$ closer to the left boundary-side. If \f$i\f$ specifies the
+maximum ends, the curves must approach the right boundary-side. In
+that case \f$p\f$ is located sufficiently close to the right
+boundary-side in a similar manner.
 
 </td>
 </tr>
