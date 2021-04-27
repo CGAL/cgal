@@ -1465,6 +1465,9 @@ bounded_error_Hausdorff_impl(
       const auto closest_triangle_v0 = tm2_tree.closest_point_and_primitive(v0);
       const auto closest_triangle_v1 = tm2_tree.closest_point_and_primitive(v1);
       const auto closest_triangle_v2 = tm2_tree.closest_point_and_primitive(v2);
+      CGAL_assertion(closest_triangle_v0.second != Face_handle());
+      CGAL_assertion(closest_triangle_v1.second != Face_handle());
+      CGAL_assertion(closest_triangle_v2.second != Face_handle());
       if (
         (closest_triangle_v0.second == closest_triangle_v1.second) &&
         (closest_triangle_v1.second == closest_triangle_v2.second)) {
@@ -1513,8 +1516,8 @@ bounded_error_Hausdorff_impl(
 
         // Update global lower Hausdorff bound according to the obtained local bounds.
         const auto local_bounds = traversal_traits_tm2.get_local_bounds();
-        CGAL_precondition(local_bounds.lpair == traversal_traits_tm1.default_face_pair());
-        CGAL_precondition(local_bounds.upair == traversal_traits_tm1.default_face_pair());
+        CGAL_precondition(local_bounds.lpair == local_bounds.default_face_pair());
+        CGAL_precondition(local_bounds.upair == local_bounds.default_face_pair());
 
         if (local_bounds.lower > global_bounds.lower) {
           global_bounds.lower = local_bounds.lower;
@@ -1522,7 +1525,8 @@ bounded_error_Hausdorff_impl(
         }
 
         // Add the subtriangle to the candidate list.
-        candidate_triangles.push(Candidate(sub_triangles[i], local_bounds));
+        candidate_triangles.push(
+          Candidate(sub_triangles[i], local_bounds, triangle_and_bound.face));
       }
 
       // Update global upper Hausdorff bound after subdivision.
@@ -1549,6 +1553,12 @@ bounded_error_Hausdorff_impl(
 
   // Return linear interpolation between the found lower and upper bounds.
   const double hdist = CGAL::to_double((global_bounds.lower + global_bounds.upper) / FT(2));
+
+  CGAL_precondition(global_bounds.lpair.first != Face_handle());
+  CGAL_precondition(global_bounds.lpair.second != Face_handle());
+  CGAL_precondition(global_bounds.upair.first != Face_handle());
+  CGAL_precondition(global_bounds.upair.second != Face_handle());
+
   const auto realizing_triangles = global_bounds.upair;
   return std::make_pair(hdist, realizing_triangles);
 

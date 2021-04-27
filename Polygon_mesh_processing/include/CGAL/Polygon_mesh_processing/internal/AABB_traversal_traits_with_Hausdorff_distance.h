@@ -41,10 +41,12 @@ namespace CGAL {
     FT upper = infinity_value<FT>();
     Face_handle lface = Face_handle();
     Face_handle uface = Face_handle();
-    std::pair<Face_handle, Face_handle> lpair =
-      std::make_pair(Face_handle(), Face_handle());
-    std::pair<Face_handle, Face_handle> upair =
-      std::make_pair(Face_handle(), Face_handle());
+    std::pair<Face_handle, Face_handle> lpair = default_face_pair();
+    std::pair<Face_handle, Face_handle> upair = default_face_pair();
+
+    const std::pair<Face_handle, Face_handle> default_face_pair() const {
+      return std::make_pair(Face_handle(), Face_handle());
+    }
   };
 
   // Candidate triangle.
@@ -54,12 +56,13 @@ namespace CGAL {
     using Candidate_bounds = Bounds<Kernel, Face_handle>;
 
     Candidate_triangle(
-      const Triangle_3& triangle, const Candidate_bounds& bounds) :
-    triangle(triangle), bounds(bounds)
+      const Triangle_3& triangle, const Candidate_bounds& bounds, const Face_handle& fh) :
+    triangle(triangle), bounds(bounds), face(fh)
     { }
 
     Triangle_3 triangle;
     Candidate_bounds bounds;
+    Face_handle face;
     bool operator>(const Candidate_triangle& other) const { return bounds.upper < other.bounds.upper; }
     bool operator<(const Candidate_triangle& other) const { return bounds.upper > other.bounds.upper; }
   };
@@ -72,9 +75,10 @@ namespace CGAL {
   typename TriangleMesh, typename VPM2>
   class Hausdorff_primitive_traits_tm2 {
 
-    using FT       = typename Kernel::FT;
-    using Point_3  = typename Kernel::Point_3;
-    using Vector_3 = typename Kernel::Vector_3;
+    using FT         = typename Kernel::FT;
+    using Point_3    = typename Kernel::Point_3;
+    using Vector_3   = typename Kernel::Vector_3;
+    using Triangle_3 = typename Kernel::Triangle_3;
 
     using Project_point_3 = typename Kernel::Construct_projected_point_3;
     using Face_handle     = typename boost::graph_traits<TriangleMesh>::face_descriptor;
@@ -123,22 +127,25 @@ namespace CGAL {
       const Point_3 v1 = query.vertex(1);
       const Point_3 v2 = query.vertex(2);
 
+      CGAL_assertion(primitive.id() != Face_handle());
+      const Triangle_3 triangle = get(m_face_to_triangle_map, primitive.id());
+
       // Compute distances of the vertices to the primitive triangle in TM2.
-      const FT v0_dist = static_cast<FT>(CGAL::sqrt(CGAL::to_double(squared_distance(
-        m_project_point(get(m_face_to_triangle_map, primitive.id()), v0), v0))));
+      const FT v0_dist = static_cast<FT>(CGAL::sqrt(CGAL::to_double(
+        CGAL::squared_distance(m_project_point(triangle, v0), v0))));
       if (v0_dist < h_v0_lower) h_v0_lower = v0_dist; // it is () part of (11) in the paper
 
-      const FT v1_dist = static_cast<FT>(CGAL::sqrt(CGAL::to_double(squared_distance(
-        m_project_point(get(m_face_to_triangle_map, primitive.id()), v1), v1))));
+      const FT v1_dist = static_cast<FT>(CGAL::sqrt(CGAL::to_double(
+        CGAL::squared_distance(m_project_point(triangle, v1), v1))));
       if (v1_dist < h_v1_lower) h_v1_lower = v1_dist; // it is () part of (11) in the paper
 
-      const FT v2_dist = static_cast<FT>(CGAL::sqrt(CGAL::to_double(squared_distance(
-        m_project_point(get(m_face_to_triangle_map, primitive.id()), v2), v2))));
+      const FT v2_dist = static_cast<FT>(CGAL::sqrt(CGAL::to_double(
+        CGAL::squared_distance(m_project_point(triangle, v2), v2))));
       if (v2_dist < h_v2_lower) h_v2_lower = v2_dist; // it is () part of (11) in the paper
 
       // Get the distance as maximizers over all vertices.
-      const FT distance_lower = std::max(std::max(h_v0_lower, h_v1_lower), h_v2_lower); // it is (11) in the paper
-      const FT distance_upper = std::max(std::max(v0_dist, v1_dist), v2_dist); // it is () part of (10) in the paper
+      const FT distance_lower = (CGAL::max)((CGAL::max)(h_v0_lower, h_v1_lower), h_v2_lower); // it is (11) in the paper
+      const FT distance_upper = (CGAL::max)((CGAL::max)(v0_dist, v1_dist), v2_dist); // it is () part of (10) in the paper
 
       // Since we are at the level of a single triangle in TM2, distance_upper is
       // actually the correct Hausdorff distance from the query triangle in
@@ -169,14 +176,14 @@ namespace CGAL {
 
       // Find the axis aligned bbox of the triangle.
       const Point_3 tri_min = Point_3(
-        std::min(std::min(v0.x(), v1.x()), v2.x()),
-        std::min(std::min(v0.y(), v1.y()), v2.y()),
-        std::min(std::min(v0.z(), v1.z()), v2.z()));
+        (CGAL::min)((CGAL::min)(v0.x(), v1.x()), v2.x()),
+        (CGAL::min)((CGAL::min)(v0.y(), v1.y()), v2.y()),
+        (CGAL::min)((CGAL::min)(v0.z(), v1.z()), v2.z()));
 
       const Point_3 tri_max = Point_3(
-        std::max(std::max(v0.x(), v1.x()), v2.x()),
-        std::max(std::max(v0.y(), v1.y()), v2.y()),
-        std::max(std::max(v0.z(), v1.z()), v2.z()));
+        (CGAL::max)((CGAL::max)(v0.x(), v1.x()), v2.x()),
+        (CGAL::max)((CGAL::max)(v0.y(), v1.y()), v2.y()),
+        (CGAL::max)((CGAL::max)(v0.z(), v1.z()), v2.z()));
 
       // Compute distance of the bounding boxes.
       // Distance along the x-axis.
@@ -205,8 +212,8 @@ namespace CGAL {
 
       // Lower bound on the distance between the two bounding boxes is given
       // as the length of the diagonal of the bounding box between them.
-      const FT dist = static_cast<FT>(CGAL::sqrt(
-        CGAL::to_double(Vector_3(dist_x, dist_y, dist_z).squared_length())));
+      const FT dist = static_cast<FT>(CGAL::sqrt(CGAL::to_double(
+        Vector_3(dist_x, dist_y, dist_z).squared_length())));
 
       // See Algorithm 2.
       // Check whether investigating the bbox can still lower the Hausdorff
@@ -292,25 +299,44 @@ namespace CGAL {
     // do_intersect() below determine that it is worthwhile.
     bool go_further() const { return true; }
 
-    const std::pair<Face_handle, Face_handle> default_face_pair() const {
-      return std::make_pair(Face_handle(), Face_handle());
-    }
-
     // Compute the explicit Hausdorff distance to the given primitive.
     template<typename Primitive>
     void intersection(const Query&, const Primitive& primitive) {
 
       // Map to transform faces of TM1 to actual triangles.
+      CGAL_assertion(primitive.id() != Face_handle());
       const Triangle_3 triangle = get(m_face_to_triangle_map, primitive.id());
 
-      // TODO: Can we initialize the bounds here, s.t. we don't start with infinity?
-      // Can we initialize the bounds depending on the closest points in tm2
-      // seen from the three vertices? In the paper, they start from infinity.
+      const Point_3 v0 = triangle.vertex(0);
+      const Point_3 v1 = triangle.vertex(1);
+      const Point_3 v2 = triangle.vertex(2);
+
+      const auto pair0 = m_tm2_tree.closest_point_and_primitive(v0);
+      const auto pair1 = m_tm2_tree.closest_point_and_primitive(v1);
+      const auto pair2 = m_tm2_tree.closest_point_and_primitive(v2);
+
+      const auto sq_dist0 = std::make_pair(
+        CGAL::squared_distance(v0, pair0.first), pair0.second);
+      const auto sq_dist1 = std::make_pair(
+        CGAL::squared_distance(v1, pair1.first), pair1.second);
+      const auto sq_dist2 = std::make_pair(
+        CGAL::squared_distance(v2, pair2.first), pair2.second);
+
+      const auto mdist1 = (sq_dist0.first > sq_dist1.first) ? sq_dist0 : sq_dist1;
+      const auto mdist2 = (mdist1.first > sq_dist2.first) ? mdist1 : sq_dist2;
+      const FT max_dist = static_cast<FT>(CGAL::sqrt(CGAL::to_double(mdist2.first)));
+
+      Bounds<Kernel, Face_handle> initial_bounds;
+      initial_bounds.lower = max_dist + m_error_bound;
+      initial_bounds.upper = max_dist + m_error_bound;
+      initial_bounds.lface = mdist2.second;
+      initial_bounds.uface = mdist2.second;
 
       // Call Culling on B with the single triangle found.
       TM2_hd_traits traversal_traits_tm2(
         m_tm2_tree.traits(), m_tm2, m_vpm2,
-        Bounds<Kernel, Face_handle>(),
+        initial_bounds, // tighter bounds, in the paper, they start from infinity, see below
+        // Bounds<Kernel, Face_handle>(), // starting from infinity
         infinity_value<FT>(),
         infinity_value<FT>(),
         infinity_value<FT>());
@@ -318,8 +344,8 @@ namespace CGAL {
 
       // Update global Hausdorff bounds according to the obtained local bounds.
       const auto local_bounds = traversal_traits_tm2.get_local_bounds();
-      CGAL_assertion(local_bounds.lpair == default_face_pair());
-      CGAL_assertion(local_bounds.upair == default_face_pair());
+      CGAL_assertion(local_bounds.lpair == initial_bounds.default_face_pair());
+      CGAL_assertion(local_bounds.upair == initial_bounds.default_face_pair());
 
       if (local_bounds.lower > h_global_bounds.lower) { // it is (6) in the paper, see also Algorithm 1
         h_global_bounds.lower = local_bounds.lower;
@@ -334,12 +360,11 @@ namespace CGAL {
 
       // Store the triangle given as primitive here as candidate triangle
       // together with the local bounds it obtained to send it to subdivision later.
-      m_candidiate_triangles.push(Candidate(triangle, local_bounds));
+      m_candidiate_triangles.push(Candidate(triangle, local_bounds, primitive.id()));
     }
 
     // Determine whether child nodes will still contribute to a larger
     // Hausdorff distance and thus have to be entered.
-    // TODO: It does not depend on the error bound but it should.
     template<typename Node>
     std::pair<bool, Priority>
     do_intersect_with_priority(const Query&, const Node& node) const {
@@ -371,8 +396,7 @@ namespace CGAL {
       difference = difference + Vector_3(diff_x, diff_y, diff_z); // it is (9) in the paper
 
       // Compute distance from the farthest corner of the bbox to the closest point in TM2.
-      const FT dist = static_cast<FT>(CGAL::sqrt(
-        CGAL::to_double(difference.squared_length())));
+      const FT dist = static_cast<FT>(CGAL::sqrt(CGAL::to_double(difference.squared_length())));
 
       // See Algorithm 1 here.
       // If the distance is larger than the global lower bound, enter the node, i.e. return true.
@@ -395,7 +419,8 @@ namespace CGAL {
     }
 
     // Return the global Hausdorff bounds computed for the passed query triangle.
-    Global_bounds get_global_bounds() const {
+    Global_bounds get_global_bounds() {
+      update_global_bounds();
       return h_global_bounds;
     }
 
@@ -415,6 +440,36 @@ namespace CGAL {
 
     // All candidate triangles.
     Heap_type m_candidiate_triangles;
+
+    // In case, we did not enter any loop, we set the realizing triangles here.
+    void update_global_bounds() {
+
+      if (m_candidiate_triangles.size() > 0) {
+        const auto top = m_candidiate_triangles.top();
+
+        if (h_global_bounds.lpair.first == Face_handle())
+          h_global_bounds.lpair.first = top.face;
+        if (h_global_bounds.lpair.second == Face_handle())
+          h_global_bounds.lpair.second = top.bounds.lface;
+
+        if (h_global_bounds.upair.first == Face_handle())
+          h_global_bounds.upair.first = top.face;
+        if (h_global_bounds.upair.second == Face_handle())
+          h_global_bounds.upair.second = top.bounds.uface;
+
+      } else {
+
+        if (h_global_bounds.lpair.first == Face_handle())
+          h_global_bounds.lpair.first = *(faces(m_tm1).begin());
+        if (h_global_bounds.lpair.second == Face_handle())
+          h_global_bounds.lpair.first = *(faces(m_tm2).begin());
+
+        if (h_global_bounds.upair.first == Face_handle())
+          h_global_bounds.upair.first = *(faces(m_tm1).begin());
+        if (h_global_bounds.upair.second == Face_handle())
+          h_global_bounds.upair.first = *(faces(m_tm2).begin());
+      }
+    }
   };
 }
 

@@ -638,8 +638,7 @@ void compute_realizing_triangles(
   const int f2 = static_cast<int>(faces.second);
 
   std::cout << "* Hausdorff: " << data.first << std::endl;
-  std::cout << "* f1: " << f1 << std::endl;
-  std::cout << "* f2: " << f2 << std::endl;
+  std::cout << "* f1 / f2: " << f1 << " / " << f2 << std::endl;
 
   if (f1 != -1 && save) {
     const auto triangle = get_triangle(f1, mesh1);
@@ -677,12 +676,22 @@ void test_realizing_triangles(
   mesh1.add_vertex(Point_3(1, 1, 0));
   mesh1.add_face(mesh1.vertices());
 
+  mesh2.add_vertex(Point_3(0, 0, error_bound / 2.0));
+  mesh2.add_vertex(Point_3(2, 0, error_bound / 2.0));
+  mesh2.add_vertex(Point_3(1, 1, error_bound / 2.0));
+  mesh2.add_face(mesh2.vertices());
+
+  if (save) save_mesh(mesh1, "1mesh1");
+  if (save) save_mesh(mesh2, "1mesh2");
+
+  compute_realizing_triangles(mesh1, mesh2, error_bound, "1", save);
+
+  mesh2.clear();
   mesh2.add_vertex(Point_3(0, 0, 1));
   mesh2.add_vertex(Point_3(2, 0, 1));
   mesh2.add_vertex(Point_3(1, 1, 1));
   mesh2.add_face(mesh2.vertices());
 
-  if (save) save_mesh(mesh1, "1mesh1");
   if (save) save_mesh(mesh2, "1mesh2");
   compute_realizing_triangles(mesh1, mesh2, error_bound, "1", save);
 
@@ -755,11 +764,11 @@ int main(int argc, char** argv) {
 
   // test_bunny(apprx_hd);
   // test_bunny(naive_hd);
-  test_bunny(bound_hd, 0);
+  // test_bunny(bound_hd, 3);
 
 
   // --- Test realizing triangles.
-  // test_realizing_triangles(error_bound);
+  test_realizing_triangles(error_bound);
 
 
   // ------------------------------------------------------------------------ //
