@@ -80,6 +80,8 @@ namespace CGAL {
     using Face_handle     = typename boost::graph_traits<TriangleMesh>::face_descriptor;
     using Local_bounds    = Bounds<Kernel, Face_handle>;
 
+    using TM2_face_to_triangle_map = Triangle_from_face_descriptor_map<TriangleMesh, VPM2>;
+
   public:
     using Priority = FT;
     Hausdorff_primitive_traits_tm2(
@@ -90,6 +92,7 @@ namespace CGAL {
       const FT h_v1_lower_init,
       const FT h_v2_lower_init) :
     m_traits(traits), m_tm2(tm2), m_vpm2(vpm2),
+    m_face_to_triangle_map(&m_tm2, m_vpm2),
     h_local_bounds(local_bounds) {
 
       // Initialize the global and local bounds with the given values.
@@ -106,10 +109,7 @@ namespace CGAL {
     template<typename Primitive>
     void intersection(const Query& query, const Primitive& primitive) {
 
-      /* Have reached a single triangle, process it. */
-      // TODO: Already perform these computations once we have <= k.
-
-      /*
+      /* Have reached a single triangle, process it.
       / Determine the distance according to
       /   min_{b \in primitive} ( max_{vertex in query} ( d(vertex, b) ) )
       /
@@ -124,17 +124,16 @@ namespace CGAL {
       const Point_3 v2 = query.vertex(2);
 
       // Compute distances of the vertices to the primitive triangle in TM2.
-      const Triangle_from_face_descriptor_map<TriangleMesh, VPM2> face_to_triangle_map(&m_tm2, m_vpm2);
       const FT v0_dist = static_cast<FT>(CGAL::sqrt(CGAL::to_double(squared_distance(
-        m_project_point(get(face_to_triangle_map, primitive.id()), v0), v0))));
+        m_project_point(get(m_face_to_triangle_map, primitive.id()), v0), v0))));
       if (v0_dist < h_v0_lower) h_v0_lower = v0_dist; // it is () part of (11) in the paper
 
       const FT v1_dist = static_cast<FT>(CGAL::sqrt(CGAL::to_double(squared_distance(
-        m_project_point(get(face_to_triangle_map, primitive.id()), v1), v1))));
+        m_project_point(get(m_face_to_triangle_map, primitive.id()), v1), v1))));
       if (v1_dist < h_v1_lower) h_v1_lower = v1_dist; // it is () part of (11) in the paper
 
       const FT v2_dist = static_cast<FT>(CGAL::sqrt(CGAL::to_double(squared_distance(
-        m_project_point(get(face_to_triangle_map, primitive.id()), v2), v2))));
+        m_project_point(get(m_face_to_triangle_map, primitive.id()), v2), v2))));
       if (v2_dist < h_v2_lower) h_v2_lower = v2_dist; // it is () part of (11) in the paper
 
       // Get the distance as maximizers over all vertices.
@@ -234,6 +233,7 @@ namespace CGAL {
     const AABBTraits& m_traits;
     const TriangleMesh& m_tm2;
     const VPM2& m_vpm2;
+    const TM2_face_to_triangle_map m_face_to_triangle_map;
 
     // Local Hausdorff bounds for the query triangle.
     Local_bounds h_local_bounds;
@@ -260,6 +260,8 @@ namespace CGAL {
     using TM2_tree      = AABB_tree<TM2_traits>;
     using TM2_hd_traits = Hausdorff_primitive_traits_tm2<TM2_traits, Triangle_3, Kernel, TriangleMesh, VPM2>;
 
+    using TM1_face_to_triangle_map = Triangle_from_face_descriptor_map<TriangleMesh, VPM1>;
+
     using Face_handle   = typename boost::graph_traits<TriangleMesh>::face_descriptor;
     using Global_bounds = Bounds<Kernel, Face_handle>;
     using Candidate     = Candidate_triangle<Kernel, Face_handle>;
@@ -275,16 +277,19 @@ namespace CGAL {
     m_traits(traits),
     m_tm1(tm1), m_tm2(tm2),
     m_vpm1(vpm1), m_vpm2(vpm2),
-    m_tm2_tree(tree), m_error_bound(error_bound) {
+    m_tm2_tree(tree),
+    m_face_to_triangle_map(&m_tm1, m_vpm1),
+    m_error_bound(error_bound) {
 
-      // Initialize the global bounds with 0.0, they will only grow.
+      // Initialize the global bounds with 0, they will only grow.
       // If we leave zero here, then we are very slow even for big input error bounds!
+      // The error_bound here makes the code faster for close meshes.
       h_global_bounds.lower = m_error_bound; // = FT(0);
       h_global_bounds.upper = m_error_bound; // = FT(0);
     }
 
     // Explore the whole tree, i.e. always enter children if the methods
-    // do_intersect() below determines that it is worthwhile.
+    // do_intersect() below determine that it is worthwhile.
     bool go_further() const { return true; }
 
     const std::pair<Face_handle, Face_handle> default_face_pair() const {
@@ -296,10 +301,9 @@ namespace CGAL {
     void intersection(const Query&, const Primitive& primitive) {
 
       // Map to transform faces of TM1 to actual triangles.
-      const Triangle_from_face_descriptor_map<TriangleMesh, VPM1> m_face_to_triangle_map(&m_tm1, m_vpm1);
       const Triangle_3 triangle = get(m_face_to_triangle_map, primitive.id());
 
-      // TODO Can we initialize the bounds here, s.t. we don't start with infty?
+      // TODO: Can we initialize the bounds here, s.t. we don't start with infinity?
       // Can we initialize the bounds depending on the closest points in tm2
       // seen from the three vertices? In the paper, they start from infinity.
 
@@ -335,8 +339,7 @@ namespace CGAL {
 
     // Determine whether child nodes will still contribute to a larger
     // Hausdorff distance and thus have to be entered.
-    // TODO: Document Query object, explain why I don't need it here.
-    // It does not depend on the error bound but it should.
+    // TODO: It does not depend on the error bound but it should.
     template<typename Node>
     std::pair<bool, Priority>
     do_intersect_with_priority(const Query&, const Node& node) const {
@@ -385,7 +388,7 @@ namespace CGAL {
       return this->do_intersect_with_priority(query, node).first;
     }
 
-    // Return those triangles from TM1 which are candidates for including a
+    // Return those triangles from TM1, which are candidates for including a
     // point realizing the Hausdorff distance.
     Heap_type& get_candidate_triangles() {
       return m_candidiate_triangles;
@@ -404,6 +407,7 @@ namespace CGAL {
     const VPM1& m_vpm1;
     const VPM2& m_vpm2;
     const TM2_tree& m_tm2_tree;
+    const TM1_face_to_triangle_map m_face_to_triangle_map;
 
     // Global Hausdorff bounds for the query triangle.
     const FT m_error_bound;

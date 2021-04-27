@@ -1414,8 +1414,6 @@ bounded_error_Hausdorff_impl(
     tm1_tree.traits(), tm2_tree, tm1, tm2, vpm1, vpm2, error_bound);
 
   // TODO: Initialize the distances on all the vertices first and store those.
-  // TODO: Do not traverse TM1, but only TM2, i.e. reduce to Culling on TM2.
-  // Can we do this for all triangles in TM1 in parallel?
 
   // Find candidate triangles in TM1 which might realise the Hausdorff bound.
   timer.reset();
@@ -1523,7 +1521,6 @@ bounded_error_Hausdorff_impl(
           global_bounds.lpair.second = local_bounds.lface;
         }
 
-        // TODO: Additionally store the face descriptor of the parent from TM1 in the Candidate_triangle.
         // Add the subtriangle to the candidate list.
         candidate_triangles.push(Candidate(sub_triangles[i], local_bounds));
       }
@@ -1669,13 +1666,6 @@ double bounded_error_Hausdorff_naive_impl(
 
   // Return linear interpolation between found upper and lower bound
   return CGAL::sqrt(CGAL::to_double( squared_lower_bound ));
-
-#if !defined(CGAL_LINKED_WITH_TBB)
-  CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
-                             "Parallel_tag is enabled but TBB is unavailable.");
-#else
-  // TODO implement parallelized version of the below here.
-#endif
 }
 
 } // end of namespace internal
