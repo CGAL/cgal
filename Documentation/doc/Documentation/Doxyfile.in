@@ -1,6 +1,6 @@
 # this package is a little peculiar and different from the other packages
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
-PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Manual"
+PROJECT_NAME = "C&zwj;GAL ${CGAL_DOC_VERSION} - Manual"
 PROJECT_BRIEF       =
 OUTPUT_DIRECTORY    = ${CGAL_DOC_OUTPUT_DIR}/Manual
 
