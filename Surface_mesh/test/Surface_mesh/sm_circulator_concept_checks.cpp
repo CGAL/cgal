@@ -24,7 +24,7 @@ void test()
   BOOST_CONCEPT_ASSERT((CGAL::Concepts::BidirectionalCirculator<Circ>));
   Circ circ;
   if(circ){}
-  if(circ == NULL){}
+  if(circ == nullptr){}
 }
 
 int main()

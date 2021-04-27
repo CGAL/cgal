@@ -19,6 +19,7 @@
 #include <CGAL/Random.h>
 
 #include <vector>
+#include <unordered_map>
 
 namespace CGAL {
 

@@ -57,7 +57,7 @@ struct Scene_polygon_soup_item_priv{
   typedef EPICK::Point_3 Point_3;
 
   Scene_polygon_soup_item_priv(Scene_polygon_soup_item* parent)
-    : soup(0),
+    : soup(nullptr),
       oriented(false)
   {
     item = parent;
@@ -71,7 +71,7 @@ struct Scene_polygon_soup_item_priv{
     if(soup)
     {
       delete soup;
-      soup = NULL;
+      soup = nullptr;
     }
   }
   void compute_normals_and_vertices(void) const;
@@ -528,7 +528,7 @@ Scene_polygon_soup_item::toolTip() const
 
 void
 Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface* viewer) const {
-    if(d->soup == 0) return;
+    if(d->soup == nullptr) return;
     if(!isInit(viewer))
       initGL(viewer);
     if ( getBuffersFilled() &&
@@ -563,7 +563,7 @@ Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 void
 Scene_polygon_soup_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
 
-    if(d->soup == 0) return;
+    if(d->soup == nullptr) return;
     if(!isInit(viewer))
       initGL(viewer);
     if ( getBuffersFilled() &&
@@ -583,7 +583,7 @@ Scene_polygon_soup_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
 
 void
 Scene_polygon_soup_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
-    if(d->soup == 0) return;
+    if(d->soup == nullptr) return;
     if(!isInit(viewer))
       initGL(viewer);
     if ( getBuffersFilled() &&
@@ -610,7 +610,7 @@ Scene_polygon_soup_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const 
 bool
 Scene_polygon_soup_item::isEmpty() const {
 
-  return (d->soup == 0 || d->soup->points.empty());
+  return (d->soup == nullptr || d->soup->points.empty());
 }
 void
 Scene_polygon_soup_item::invalidateOpenGLBuffers()
@@ -729,7 +729,7 @@ void Scene_polygon_soup_item::itemAboutToBeDestroyed(Scene_item *item)
     if(d->soup)
     {
       delete d->soup;
-      d->soup=NULL;
+      d->soup=nullptr;
     }
   }
 }

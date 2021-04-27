@@ -225,7 +225,7 @@ void assert_quality (const std::vector<Point_3>& points, const Fitted& fitted)
   std::cerr << "mean distance = " << mean_dist << std::endl;
 
   CGAL_assertion_code
-    (double limit = 1e-3 * std::sqrt (CGAL::squared_distance (points.front(), points.back())));
+    (double limit = 1e-5 * std::sqrt (CGAL::squared_distance (points.front(), points.back())));
   CGAL_assertion (mean_dist < limit);
 }
 

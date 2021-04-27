@@ -1,5 +1,13 @@
 include(polyhedron_demo_macros)
 
+find_package(LASLIB)
+set_package_properties(
+  LASLIB PROPERTIES
+  DESCRIPTION "A library for some I/O."
+  PURPOSE "Requiered for reading or writing LAS files.")
+
+include(CGAL_LASLIB_support)
+
 polyhedron_demo_plugin(gocad_plugin GOCAD_io_plugin KEYWORDS Viewer)
 target_link_libraries(gocad_plugin PUBLIC scene_surface_mesh_item)
 
@@ -96,6 +104,11 @@ else()
     polyhedron_demo_plugin(las_plugin LAS_io_plugin KEYWORDS Viewer PointSetProcessing Classification)
     target_link_libraries(las_plugin PUBLIC scene_points_with_normal_item CGAL::LASLIB_support)
     target_compile_features(las_plugin PRIVATE ${needed_cxx_features})
+    if(MSVC)
+      target_compile_definitions(
+        las_plugin
+        PUBLIC "-D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS")
+    endif()
   else()
     message(
       STATUS

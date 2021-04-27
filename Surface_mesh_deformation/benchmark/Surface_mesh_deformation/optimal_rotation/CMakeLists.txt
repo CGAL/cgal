@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(benchmark_for_closest_rotation)
 
 find_package(CGAL REQUIRED COMPONENTS Core)

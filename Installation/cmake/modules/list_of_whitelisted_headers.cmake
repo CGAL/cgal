@@ -1,7 +1,6 @@
 set(list_of_whitelisted_headers_txt [=[
   CGAL/SCIP_mixed_integer_program_traits.h
   CGAL/GLPK_mixed_integer_program_traits.h
-  CGAL/Classification/TensorFlow/Neural_network_classifier.h
   CGAL/Linear_cell_complex_constructors.h
   CGAL/CGAL_Ipelet_base.h
   CGAL/IO/read_las_points.h

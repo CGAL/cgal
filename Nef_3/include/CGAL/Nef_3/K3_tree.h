@@ -442,12 +442,15 @@ friend std::ostream& operator<<
 }
 
 
-~Node() {
+~Node() CGAL_NOEXCEPT(CGAL_NO_ASSERTIONS_BOOL)
+{
   CGAL_NEF_TRACEN("~Node: deleting node...");
-  if( !is_leaf()) {
-    delete left_node;
-    delete right_node;
-  }
+  CGAL_destructor_assertion_catch(
+    if( !is_leaf()) {
+      delete left_node;
+      delete right_node;
+    }
+  );
 }
 
 private:
@@ -1103,9 +1106,12 @@ bool update( Node* node,
   return (left_updated || right_updated);
 }
 
-~K3_tree() {
+~K3_tree() CGAL_NOEXCEPT(CGAL_NO_ASSERTIONS_BOOL)
+{
   CGAL_NEF_TRACEN("~K3_tree: deleting root...");
-  delete root;
+  CGAL_destructor_assertion_catch(
+    delete root;
+  );
 }
 
 private:

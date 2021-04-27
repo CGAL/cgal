@@ -107,8 +107,7 @@ class Ray_hit_generator : public Modifier_base<typename Nef_::SNC_and_PL> {
         e->twin() = svb;
 #ifndef CGAL_NEF_NO_INDEXED_ITEMS
         svb->set_index(e->get_index());
-        svf->set_index();
-        svf->twin()->set_index(svf->get_index());
+        svf->twin()->set_index(svf->new_index());
 #endif
       } else {
         svf->twin() = e;
@@ -117,8 +116,7 @@ class Ray_hit_generator : public Modifier_base<typename Nef_::SNC_and_PL> {
         e->twin() = svf;
 #ifndef CGAL_NEF_NO_INDEXED_ITEMS
         svf->set_index(e->get_index());
-        svb->set_index();
-        svb->twin()->set_index(svb->get_index());
+        svb->twin()->set_index(svb->new_index());
 #endif
       }
 
@@ -165,8 +163,7 @@ class Ray_hit_generator : public Modifier_base<typename Nef_::SNC_and_PL> {
         SM_walls smw(&*v_new);
         sv2 = smw.add_ray_svertex(Sphere_point(-dir));
 #ifndef CGAL_NEF_NO_INDEXED_ITEMS
-      sv1->set_index();
-      sv2->set_index(sv1->get_index());
+      sv2->set_index(sv1->new_index());
 #endif
       }
     }

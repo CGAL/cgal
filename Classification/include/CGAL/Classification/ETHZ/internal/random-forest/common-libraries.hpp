@@ -31,7 +31,7 @@
 #include <list>
 #include <CGAL/IO/binary_file_io.h>
 #include <boost/version.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #if BOOST_VERSION >= 104700

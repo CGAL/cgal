@@ -49,7 +49,7 @@ public:
   typedef Dimension_tag<0>  Feature_dimension;
 
   typedef typename Get_type<Kbase, Point_tag>::type      Rep;
-  //typedef typename CGAL::decay<typename boost::result_of<CPI(Rep,Begin_tag)>::type>::type Cartesian_const_iterator;
+  // typedef typename CGAL::decay<typename boost::result_of<CPI(Rep,Begin_tag)>::type>::type Cartesian_const_iterator;
 
   const Rep& rep() const noexcept
   {
