@@ -21,9 +21,9 @@ int main() {
   Segment s4(Point(0, 2), Point(6, 0));
   Segment s5(Point(3, 0), Point(5, 5));
 
-  auto he = insert_non_intersecting_curve(arr, s1, pl);
+  auto e = insert_non_intersecting_curve(arr, s1, pl);
   insert_non_intersecting_curve(arr, s2, pl);
-  insert(arr, s3, Pl_result_type(he->source()));
+  insert(arr, s3, Pl_result_type(e->source()));
   insert(arr, s4, pl);
   insert(arr, s5, pl);
   print_arrangement_size(arr);

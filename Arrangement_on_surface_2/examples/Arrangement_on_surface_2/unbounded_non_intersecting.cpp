@@ -39,12 +39,12 @@ int main() {
       std::cout << "(" << curr->source()->point() << ")";
 
     do {
-      Arrangement::Halfedge_const_handle he = curr;
-      if (! he->is_fictitious()) std::cout << " [" << he->curve() << "] ";
+      Arrangement::Halfedge_const_handle e = curr;
+      if (! e->is_fictitious()) std::cout << " [" << e->curve() << "] ";
       else std::cout << " [ ... ] ";
 
-      if (! he->target()->is_at_open_boundary())
-        std::cout << "(" << he->target()->point() << ")";
+      if (! e->target()->is_at_open_boundary())
+        std::cout << "(" << e->target()->point() << ")";
     } while (++curr != first);
     std::cout << std::endl;
   }

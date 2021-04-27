@@ -306,7 +306,7 @@ direction. As each halfedge is directed, it has a <em>source</em>
 vertex and a <em>target</em> vertex. Halfedges are used to separate
 faces, and to connect vertices, with the exception of <em>isolated
 vertices</em> (representing isolated points), which are disconnected.
-If a vertex \f$v\f$ is the target of a halfedge \f$ e\f$, we say that
+If a vertex \f$v\f$ is the target of a halfedge \f$e\f$, we say that
 \f$v\f$ and \f$e\f$ are <em>incident</em> to each other. The halfedges
 incident to a vertex \f$v\f$ form a circular list sorted in a
 clockwise order around this vertex. (An isolated vertex has no
@@ -337,10 +337,12 @@ orientation around it. Note that a hole does not necessarily
 correspond to a face at all, as it may have no area, or alternatively
 it may contain several faces. Every face can have several inner CCBs
 in its interior, or may not contain inner CCBs at all. In addition,
-every face may contain isolated vertices in its interior.  See
+every face may contain isolated vertices in its interior. We
+distinguish between isolated vertices and holes even though,
+theoretically, the former are degenerate holes. See
 \cgalFigureRef{aos_fig-arr_segs} for an illustration of the various
-\dcel features. For more details on the \dcel data structure
-see \cgalCite{bkos-cgaa-00} Chapter 2.
+\dcel features. For more details on the \dcel data structure see
+\cgalCite{bkos-cgaa-00} Chapter 2.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-arr_segs,arr_segs.png}
@@ -358,7 +360,7 @@ face \f$ f_2\f$. The face \f$ f_1\f$ has a more complicated structure
 as it contains two holes in its interior: One hole consists of two
 adjacent faces \f$ f_3\f$ and \f$ f_4\f$, while the other hole
 comprises of two edges. \f$ f_1\f$ also contains two isolated vertices
-\f$ u_1\f$ and \f$ u_2\f$ in its interior (which do not count has holes).
+\f$ u_1\f$ and \f$ u_2\f$ in its interior.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -628,35 +630,44 @@ A halfedge \f$e\f$ of an arrangement induced by bounded curves is
 associated with an \link Arrangement_on_surface_2::X_monotone_curve_2
 `X_monotone_curve_2`\endlink object, which can be obtained by
 \link Arrangement_on_surface_2::Halfedge::curve()
-`he->curve()`\endlink, where `he` identifies a handle to \f$e\f$.
+`e->curve()`\endlink, where `e` identifies a handle to \f$e\f$.
 
 The calls \link Arrangement_on_surface_2::Halfedge::source()
-`he->source()`\endlink and \link
-Arrangement_on_surface_2::Halfedge::target() `he->target()`\endlink
+`e->source()`\endlink and \link
+Arrangement_on_surface_2::Halfedge::target() `e->target()`\endlink
 return handles to the halfedge's source-vertex and target-vertex,
 respectively. You can obtain a handle to the twin halfedge using \link
-Arrangement_on_surface_2::Halfedge::twin() `twin()`\endlink. Note that
-from the definition of halfedges in the `Dcel` structute, the
+Arrangement_on_surface_2::Halfedge::twin() `e->twin()`\endlink. Note
+that from the definition of halfedges in the `Dcel` structure, the
 following invariants always hold:
 <UL>
-<LI>\link Arrangement_on_surface_2::Halfedge::curve() `he->curve()`\endlink is equivalent to \link Arrangement_on_surface_2::Halfedge::curve() `he->twin()->curve()`\endlink,
-<LI>\link Arrangement_on_surface_2::Halfedge::source() `he->source()`\endlink is equivalent to \link Arrangement_on_surface_2::Halfedge::target() `he->twin()->target()`\endlink, and
-<LI>\link Arrangement_on_surface_2::Halfedge::target() `he->target()`\endlink is equivalent to \link Arrangement_on_surface_2::Halfedge::source() `he->twin()->source()`\endlink.
+<LI>\link Arrangement_on_surface_2::Halfedge::curve()
+`e->curve()`\endlink is equivalent to \link
+Arrangement_on_surface_2::Halfedge::curve()
+`e->twin()->curve()`\endlink,
+<LI>\link Arrangement_on_surface_2::Halfedge::source()
+`e->source()`\endlink is equivalent to \link
+Arrangement_on_surface_2::Halfedge::target()
+`e->twin()->target()`\endlink, and
+<LI>\link Arrangement_on_surface_2::Halfedge::target()
+`e->target()`\endlink is equivalent to \link
+Arrangement_on_surface_2::Halfedge::source()
+`e->twin()->source()`\endlink.
 </UL>
 
 Every halfedge has an incident face that lies to its left, which can
 be obtained by \link Arrangement_on_surface_2::Halfedge::face()
-`he->face()`\endlink. Recall that a halfedge is always one link in a
+`e->face()`\endlink. Recall that a halfedge is always one link in a
 connected chain (CCB) of halfedges that share the same incident
 face. The \link Arrangement_on_surface_2::Halfedge::prev()
-`he->prev()`\endlink and \link
-Arrangement_on_surface_2::Halfedge::next() `he->next()`\endlink calls
+`e->prev()`\endlink and \link
+Arrangement_on_surface_2::Halfedge::next() `e->next()`\endlink calls
 return handles to the previous and next halfedges in the CCB,
 respectively.
 
 As the CCB is a circular list of halfedges, it is only natural to
 traverse it using a circulator. Indeed \link
-Arrangement_on_surface_2::Halfedge::ccb() `he->ccb()`\endlink returns
+Arrangement_on_surface_2::Halfedge::ccb() `e->ccb()`\endlink returns
 an \link Arrangement_on_surface_2::Ccb_halfedge_circulator
 `Ccb_halfedge_circulator`\endlink object for traversing all halfedges
 along the connected component of \f$e\f$. The value type of this
@@ -677,8 +688,8 @@ void print_ccb(typename Arrangement::Ccb_halfedge_const_circulator circ) {
   std::cout << "(" << curr->source()->point() << ")";
   do {
     typename Arrangement::Halfedge_const_handle he = curr->handle();
-    std::cout << " [" << he->curve() << "] "
-              << "(" << he->target()->point() << ")";
+    std::cout << " [" << e->curve() << "] "
+              << "(" << e->target()->point() << ")";
   } while (++curr != circ);
   std::cout << std::endl;
 }
@@ -1161,7 +1172,7 @@ c)`\endlink accepts a handle to one of the two halfedges that
 represent an edge \f$e\f$ and a reference to a curve \f$c\f$, and sets
 \f$c\f$ to be the \f$x\f$-monotone curve associated with
 \f$e\f$. (Note that both halfedges are modified; that is, both
-expressions `he->curve()` and `he->twin()->curve()` evaluate to
+expressions `e->curve()` and `e->twin()->curve()` evaluate to
 \f$c\f$ after the modification.)  These functions have preconditions
 that \f$p\f$ is geometrically equivalent to `v->point()` and \f$c\f$
 is equivalent to `e->curve()`, respectively.\cgalFootnote{Roughly
@@ -2513,12 +2524,18 @@ unbounded from the right. A point \f$p = (x_p,y_p)\f$ lies in the
 \f$p = (x_p,y_p)\f$ lies in the \f$x\f$-range of an \f$x\f$-monotone
 curve unbounded from the left if \f$x_p \leq x_r\f$. Naturally, every
 point \f$p \in \mathbb{R}^2\f$ is in the \f$x\f$-range of an
-\f$x\f$-monotone curve unbounded from the left and from the right. The
-function template `is_in_x_range()` listed below, and defined in the
-file `is_in_x_range.h`, checks whether a given point \f$p\f$ is in the
-\f$x\f$-range of the curve associated with a given halfedge
+\f$x\f$-monotone curve unbounded from the left and from the right.
+
+\cgalAdvancedBegin
+
+The function template `is_in_x_range()` listed below, and defined in
+the file `is_in_x_range.h`, checks whether a given point \f$p\f$ is in
+the \f$x\f$-range of the curve associated with a given halfedge
 \f$e\f$. The function template also exemplifies how some of the above
-functions can be used.
+functions can be used. The traits functor \link
+ArrangementBasicTraits_2::Compare_x_2 `Compare_x_2`\endlink used in
+the code is described in Section \ref
+aos_sssec-geom_traits-concepts_basic.
 
 \code
 // Check whether the given point is in the x-range of the curve associated
@@ -2531,25 +2548,27 @@ bool is_in_x_range(typename Arrangement::Halfedge_const_handle he,
   auto cmp = traits.compare_x_2_object();
 
   // Compare p with the source vertex (which may lie at x = +/- oo).
-  CGAL::Arr_parameter_space src_px = he->source()->parameter_space_in_x();
+  CGAL::Arr_parameter_space src_px = e->source()->parameter_space_in_x();
   CGAL::Comparison_result res_s =
     (src_px == CGAL::ARR_LEFT_BOUNDARY) ? CGAL::SMALLER :
     ((src_px == CGAL::ARR_RIGHT_BOUNDARY) ? CGAL::LARGER :
-     cmp(he->source()->point(), p));
+     cmp(e->source()->point(), p));
   if (res_s == CGAL::EQUAL) return true;
 
   // Compare p with the target vertex (which may lie at x = +/- oo).
-  CGAL::Arr_parameter_space trg_px = he->target()->parameter_space_in_x();
+  CGAL::Arr_parameter_space trg_px = e->target()->parameter_space_in_x();
   CGAL::Comparison_result  res_t =
     (trg_px == CGAL::ARR_LEFT_BOUNDARY) ? CGAL::SMALLER :
     ((trg_px == CGAL::ARR_RIGHT_BOUNDARY) ? CGAL::LARGER :
-     cmp(he->target()->point(), p));
+     cmp(e->target()->point(), p));
 
   // p lies in the x-range of the halfedge iff its source and target lie
   // at opposite x-positions.
   return (res_s != res_t);
 }
 \endcode
+
+\cgalAdvancedEnd
 
 It is important to observe that the call \link
 Arrangement_on_surface_2::number_of_vertices()
@@ -2928,10 +2947,10 @@ surface. The template is parameterized by template parameters
 <em>geometry traits</em> and <em>topology traits</em>. The
 topology-traits type deals with the topology of the parametric
 surface; see Section \ref aos_sec-topol_traits. As explained in the
-previous section, a parametric surface \f$S \f$ is given by a
-continuous function \f$\phi_S: \Phi \rightarrow \mathbb{R}^3\f$, where
-the domain \f$\Phi = X \times Y\f$ is a rectangular two-dimensional
-parameter space; \f$S = \phi_S(\Phi)\f$. \f$X\f$ and \f$Y\f$ are open,
+previous section, a parametric surface \f$S = \phi_S(\Phi)\f$ is given
+by a continuous function \f$\phi_S: \Phi \rightarrow \mathbb{R}^3\f$,
+where the domain \f$\Phi = X \times Y\f$ is a rectangular
+two-dimensional parameter space. \f$X\f$ and \f$Y\f$ are open,
 half-open, or closed intervals with endpoints in
 \f$\overline{\mathbb{R}}\f$.
 
@@ -2993,7 +3012,8 @@ The types \link Arrangement_on_surface_2::Vertex `Vertex`\endlink,
 Arrangement_on_surface_2::Face `Face`\endlink nested in the
 `Arrangement_on_surface_2` class template support the methods listed
 in Section \ref arr_ssectraverse and in Section \ref
-arr_sssecunb_basic.  Let \f$v\f$, \f$e\f$, and \f$f\f$ be handles to a
+arr_sssecunb_basic.  Additional methods supported by these types are
+described next. Let \f$v\f$, \f$e\f$, and \f$f\f$ be handles to a
 vertex of type \link Arrangement_on_surface_2::Vertex
 `Vertex`\endlink, a halfedge of type \link
 Arrangement_on_surface_2::Halfedge `Halfedge`\endlink, and a face of
@@ -3049,8 +3069,16 @@ respectively.
   itself.
 
 <LI>A face in a planar arrangement has at most one outer CCB. However,
-  a face in an arrangement embedded on a surface, such as a torus, may
-  have two outer CCBs; to this end, the calls \link
+  an arrangement embedded on a surface may present additional
+  scenarios. For example, a face of an arrangement embedded on a torus
+  may have two outer CCBs, and a face of an arrangement embedded on a
+  sphere might be consider a hole inside the surrounding face or vice
+  versa. To this end, outer CCBs and inner CCBs of faces of
+  arrangements embedded on surfaces are symetrically treated (while
+  maintaining the invariant that a face always lies to the left of
+  every halfedge of every CCB of the face regardless of whether the
+  CCB is inner or outer). The classification of a CCB as inner or
+  outer becomes an implementation detail.  The calls \link
   Arrangement_on_surface_2::Face::outer_ccbs_begin()
   `f->outer_ccbs_begin()`\endlink and \link
   Arrangement_on_surface_2::Face::outer_ccbs_end()
@@ -3068,10 +3096,10 @@ respectively.
   the iterator type are equivalent to the methods \link
   Arrangement_on_surface_2::Face::holes_begin()
   `holes_begin()`\endlink, \link
-  Arrangement_on_surface_2::Face::holes_end() `holes_end()`\endlink, and
-  \link Arrangement_on_surface_2::Face::Hole_iterator
-  `Hole_iterator`\endlink; see Section \ref arr_sssectr_face.) The calls
-  \link Arrangement_on_surface_2::Face::number_of_outer_ccbs()
+  Arrangement_on_surface_2::Face::holes_end() `holes_end()`\endlink,
+  and \link Arrangement_on_surface_2::Face::Hole_iterator
+  `Hole_iterator`\endlink; see Section \ref arr_sssectr_face.) The
+  calls \link Arrangement_on_surface_2::Face::number_of_outer_ccbs()
   `f->number_of_outer_ccbs()`\endlink and \link
   Arrangement_on_surface_2::Face::number_of_inner_ccbs()
   `f->number_of_inner_ccbs()`\endlink return the number of outer CCBs
@@ -3079,60 +3107,80 @@ respectively.
 
 </UL>
 
-The function template `is_in_x_range()` listed below checks whether a
-given point \f$p\f$, in the interior of the parameter space, is in
-the \f$x\f$-range of an \f$x\f$-monotone curve \f$c\f$. It assumes that
-the left and right sides of the parameter space are identified and the
-bottom and top sides are contracted, which is the settings used by the
-traits class template
+\cgalAdvancedBegin
+
+The function template `is_in_x_range()` listed below, and defined in
+the file `spherical_is_in_x_range.h` checks whether a given point
+\f$p\f$, in the interior of the parameter space, is in the
+\f$x\f$-range of an \f$x\f$-monotone curve \f$c\f$ that represents a
+great-circle arc. It assumes that the left and right sides of the
+parameter space are identified and the bottom and top sides are
+contracted, which is the settings used by the traits class template
 `Arr_geodesic_arc_on_sphere_traits_2<Kernel,X,Y>`; see Section \ref
-arr_ssectr_spherical.
+arr_ssectr_spherical. The traits functors \link
+ArrangementBasicTraits_2::Construct_min_vertex_2
+`Construct_min_vertex_2`\endlink, \link
+ArrangementBasicTraits_2::Construct_max_vertex_2
+`Construct_min_vertex_2`\endlink, and \link
+ArrangementBasicTraits_2::Compare_x_2 `Compare_x_2`\endlink used in
+the code are described is Section \ref
+aos_sssec-geom_traits-concepts_basic.  The traits functors \link
+ArrangementVerticalSideTraits_2::Parameter_space_in_x_2
+`Parameter_space_in_x_2`\endlink, \link
+ArrangementHorizontalSideTraits_2::Parameter_space_in_y_2
+`Parameter_space_in_y_2`\endlink, \link
+ArrangementIdentifiedVerticalTraits_2::Is_on_y_identification_2
+`Is_on_y_identification_2`\endlink, and \link
+ArrangementHorizontalSideTraits_2::Compare_x_on_boundary_2
+`Compare_x_on_boundary_2`\endlink, are described is Section \ref
+aos_ssec-traits-curved.
 
 \code
 template <typename GeometryTraits>
 bool is_in_x_range(const typename GeometryTraits::X_monotone_curve_2& c,
-                   const typename GeometryTraits::Point_2& point,
-                   const GeometryTraits& traits) const {
+                   const typename GeometryTraits::Point_2& p,
+                   const GeometryTraits& traits) {
   CGAL_assertion(! traits.is_on_y_identification_2_object()(p));
 
   if (traits.is_on_y_identification_2_object()(c)) return false;
 
+  // Note that a great-circle arc that is incident to a pole is vertical.
+  auto cmp_x_boundary = traits.compare_x_on_boundary_2_object();
   auto psy = traits.parameter_space_in_y_2_object();
-  auto psy_min = psy(xcv, ARR_MIN_END);
-  if (psy_min == ARR_BOTTOM_BOUNDARY)
-    return traits.compare_x_on_boundary_2_object()(p, c, ARR_MIN_END) == EQUAL;
-  auto psy_max = psy(xcv, ARR_MAX_END);
-  if (psy_max == ARR_TOP_BOUNDARY)
-    return traits.compare_x_on_boundary_2_object()(p, c, ARR_MAX_END) == EQUAL;
-
+  auto psy_min = psy(c, CGAL::ARR_MIN_END);
+  if (psy_min == CGAL::ARR_BOTTOM_BOUNDARY)
+    return cmp_x_boundary(p, c, CGAL::ARR_MIN_END) == CGAL::EQUAL;
+  auto psy_max = psy(c, CGAL::ARR_MAX_END);
+  if (psy_max == CGAL::ARR_TOP_BOUNDARY)
+    return cmp_x_boundary(p, c, CGAL::ARR_MAX_END) == CGAL::EQUAL;
   auto psx = traits.parameter_space_in_x_2_object();
-  auto psx_min = psx(xcv, ARR_MIN_END);
-  auto psx_max = psx(xcv, ARR_MAX_END);
-
-  if ((psx_min == ARR_LEFT_BOUNDARY) && (psx_min == ARR_RIGHT_BOUNDARY))
+  auto psx_min = psx(c, CGAL::ARR_MIN_END);
+  auto psx_max = psx(c, CGAL::ARR_MAX_END);
+  if ((psx_min == CGAL::ARR_LEFT_BOUNDARY) &&
+      (psx_min == CGAL::ARR_RIGHT_BOUNDARY))
     return true;
-
   auto cmp_x = traits.compare_x_2_object();
-  if (psx_min == ARR_LEFT_BOUNDARY) {
+  if (psx_min == CGAL::ARR_LEFT_BOUNDARY) {
     const auto& p_right = traits.construct_max_vertex_2_object()(c);
     auto res = cmp_x(p, p_right);
-    return ((res == SMALLER) || (res == EQUAL));
+    return ((res == CGAL::SMALLER) || (res == CGAL::EQUAL));
   }
-  if (psx_max == ARR_RIGHT_BOUNDARY) {
+  if (psx_max == CGAL::ARR_RIGHT_BOUNDARY) {
     const auto& p_left = traits.construct_min_vertex_2_object()(c);
     auto res = cmp_x(p_left, p);
-    return ((res == SMALLER) || (res == EQUAL));
+    return ((res == CGAL::SMALLER) || (res == CGAL::EQUAL));
   }
-
   const auto& p_left = traits.construct_min_vertex_2_object()(c);
   auto res = cmp_x(p_left, p);
-  if (res == LARGER) return false;
+  if (res == CGAL::LARGER) return false;
   const auto& p_right = traits.construct_max_vertex_2_object()(c);
-  auto res = cmp_x(p, p_right);
-  if (res == LARGER) return false;
+  res = cmp_x(p, p_right);
+  if (res == CGAL::LARGER) return false;
   return true;
 }
 \endcode
+
+\cgalAdvancedEnd
 
 <!--=========================================================================-->
 \section aos_sec-geom_traits The Geometry Traits

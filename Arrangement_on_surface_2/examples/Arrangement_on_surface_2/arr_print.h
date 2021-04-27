@@ -28,9 +28,9 @@ void print_ccb(typename Arrangement::Ccb_halfedge_const_circulator circ) {
   std::cout << "(" << circ->source()->point() << ")";
   typename Arrangement::Ccb_halfedge_const_circulator curr = circ;
   do {
-    typename Arrangement::Halfedge_const_handle he = curr;
-    std::cout << "   [" << he->curve() << "]   "
-              << "(" << he->target()->point() << ")";
+    typename Arrangement::Halfedge_const_handle e = curr;
+    std::cout << "   [" << e->curve() << "]   "
+              << "(" << e->target()->point() << ")";
   } while (++curr != circ);
   std::cout << std::endl;
 }
