@@ -732,14 +732,14 @@ int main(int argc, char** argv) {
 
   // test_synthetic_data(apprx_hd);
   // test_synthetic_data(naive_hd);
-  // test_synthetic_data(bound_hd);
+  test_synthetic_data(bound_hd);
 
 
   // --- Compare on common meshes.
 
   // test_one_versus_another(apprx_hd, naive_hd);
   // test_one_versus_another(naive_hd, bound_hd);
-  // test_one_versus_another(bound_hd, apprx_hd);
+  test_one_versus_another(bound_hd, apprx_hd);
 
 
   // --- Compare on real meshes.
@@ -749,7 +749,7 @@ int main(int argc, char** argv) {
 
   // test_real_meshes(filepath1, filepath2, apprx_hd, naive_hd);
   // test_real_meshes(filepath1, filepath2, naive_hd, bound_hd);
-  // test_real_meshes(filepath1, filepath2, bound_hd, apprx_hd);
+  test_real_meshes(filepath1, filepath2, bound_hd, apprx_hd);
 
 
   // --- Compare timings.
@@ -757,14 +757,14 @@ int main(int argc, char** argv) {
   filepath = (argc > 1 ? argv[1] : "data/blobby-remeshed.off");
   // test_timings(filepath, apprx_hd);
   // test_timings(filepath, naive_hd);
-  // test_timings(filepath, bound_hd);
+  test_timings(filepath, bound_hd);
 
 
   // --- Compare with the paper.
 
   // test_bunny(apprx_hd);
   // test_bunny(naive_hd);
-  // test_bunny(bound_hd, 3);
+  test_bunny(bound_hd, 3);
 
 
   // --- Test realizing triangles.

@@ -303,34 +303,17 @@ namespace CGAL {
     template<typename Primitive>
     void intersection(const Query&, const Primitive& primitive) {
 
-      // Map to transform faces of TM1 to actual triangles.
+      // Set initial tight bounds.
       CGAL_assertion(primitive.id() != Face_handle());
-      const Triangle_3 triangle = get(m_face_to_triangle_map, primitive.id());
-
-      const Point_3 v0 = triangle.vertex(0);
-      const Point_3 v1 = triangle.vertex(1);
-      const Point_3 v2 = triangle.vertex(2);
-
-      const auto pair0 = m_tm2_tree.closest_point_and_primitive(v0);
-      const auto pair1 = m_tm2_tree.closest_point_and_primitive(v1);
-      const auto pair2 = m_tm2_tree.closest_point_and_primitive(v2);
-
-      const auto sq_dist0 = std::make_pair(
-        CGAL::squared_distance(v0, pair0.first), pair0.second);
-      const auto sq_dist1 = std::make_pair(
-        CGAL::squared_distance(v1, pair1.first), pair1.second);
-      const auto sq_dist2 = std::make_pair(
-        CGAL::squared_distance(v2, pair2.first), pair2.second);
-
-      const auto mdist1 = (sq_dist0.first > sq_dist1.first) ? sq_dist0 : sq_dist1;
-      const auto mdist2 = (mdist1.first > sq_dist2.first) ? mdist1 : sq_dist2;
-      const FT max_dist = static_cast<FT>(CGAL::sqrt(CGAL::to_double(mdist2.first)));
+      std::pair<Face_handle, Face_handle> fpair;
+      const FT max_dist = get_maximum_distance(primitive.id(), fpair);
+      CGAL_assertion(fpair.first == primitive.id());
 
       Bounds<Kernel, Face_handle> initial_bounds;
       initial_bounds.lower = max_dist + m_error_bound;
       initial_bounds.upper = max_dist + m_error_bound;
-      initial_bounds.lface = mdist2.second;
-      initial_bounds.uface = mdist2.second;
+      initial_bounds.lface = fpair.second;
+      initial_bounds.uface = fpair.second;
 
       // Call Culling on B with the single triangle found.
       TM2_hd_traits traversal_traits_tm2(
@@ -340,6 +323,8 @@ namespace CGAL {
         infinity_value<FT>(),
         infinity_value<FT>(),
         infinity_value<FT>());
+
+      const Triangle_3 triangle = get(m_face_to_triangle_map, fpair.first);
       m_tm2_tree.traversal_with_priority(triangle, traversal_traits_tm2);
 
       // Update global Hausdorff bounds according to the obtained local bounds.
@@ -349,18 +334,18 @@ namespace CGAL {
 
       if (local_bounds.lower > h_global_bounds.lower) { // it is (6) in the paper, see also Algorithm 1
         h_global_bounds.lower = local_bounds.lower;
-        h_global_bounds.lpair.first  = primitive.id();
+        h_global_bounds.lpair.first  = fpair.first;
         h_global_bounds.lpair.second = local_bounds.lface;
       }
       if (local_bounds.upper > h_global_bounds.upper) { // it is (6) in the paper, see also Algorithm 1
         h_global_bounds.upper = local_bounds.upper;
-        h_global_bounds.upair.first  = primitive.id();
+        h_global_bounds.upair.first  = fpair.first;
         h_global_bounds.upair.second = local_bounds.uface;
       }
 
       // Store the triangle given as primitive here as candidate triangle
       // together with the local bounds it obtained to send it to subdivision later.
-      m_candidiate_triangles.push(Candidate(triangle, local_bounds, primitive.id()));
+      m_candidiate_triangles.push(Candidate(triangle, local_bounds, fpair.first));
     }
 
     // Determine whether child nodes will still contribute to a larger
@@ -424,6 +409,36 @@ namespace CGAL {
       return h_global_bounds;
     }
 
+    // Here, we return the maximum distance from one of the face corners
+    // to the second mesh. We also return a pair of realizing this distance faces.
+    FT get_maximum_distance(
+      const Face_handle lface,
+      std::pair<Face_handle, Face_handle>& fpair) const {
+
+      const auto triangle = get(m_face_to_triangle_map, lface);
+      const Point_3 v0 = triangle.vertex(0);
+      const Point_3 v1 = triangle.vertex(1);
+      const Point_3 v2 = triangle.vertex(2);
+
+      const auto pair0 = m_tm2_tree.closest_point_and_primitive(v0);
+      const auto pair1 = m_tm2_tree.closest_point_and_primitive(v1);
+      const auto pair2 = m_tm2_tree.closest_point_and_primitive(v2);
+
+      const auto sq_dist0 = std::make_pair(
+        CGAL::squared_distance(v0, pair0.first), pair0.second);
+      const auto sq_dist1 = std::make_pair(
+        CGAL::squared_distance(v1, pair1.first), pair1.second);
+      const auto sq_dist2 = std::make_pair(
+        CGAL::squared_distance(v2, pair2.first), pair2.second);
+
+      const auto mdist1 = (sq_dist0.first > sq_dist1.first) ? sq_dist0 : sq_dist1;
+      const auto mdist2 = (mdist1.first > sq_dist2.first) ? mdist1 : sq_dist2;
+
+      const auto uface = mdist2.second;
+      fpair = std::make_pair(lface, uface);
+      return static_cast<FT>(CGAL::sqrt(CGAL::to_double(mdist2.first)));
+    }
+
   private:
     // Input data.
     const AABBTraits& m_traits;
@@ -459,15 +474,19 @@ namespace CGAL {
 
       } else {
 
+        std::pair<Face_handle, Face_handle> fpair;
+        get_maximum_distance(*(faces(m_tm1).begin()), fpair);
+        CGAL_assertion(fpair.first == *(faces(m_tm1).begin()));
+
         if (h_global_bounds.lpair.first == Face_handle())
-          h_global_bounds.lpair.first = *(faces(m_tm1).begin());
+          h_global_bounds.lpair.first = fpair.first;
         if (h_global_bounds.lpair.second == Face_handle())
-          h_global_bounds.lpair.first = *(faces(m_tm2).begin());
+          h_global_bounds.lpair.second = fpair.second;
 
         if (h_global_bounds.upair.first == Face_handle())
-          h_global_bounds.upair.first = *(faces(m_tm1).begin());
+          h_global_bounds.upair.first = fpair.first;
         if (h_global_bounds.upair.second == Face_handle())
-          h_global_bounds.upair.first = *(faces(m_tm2).begin());
+          h_global_bounds.upair.second = fpair.second;
       }
     }
   };

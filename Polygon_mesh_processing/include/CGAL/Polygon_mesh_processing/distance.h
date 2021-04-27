@@ -1361,6 +1361,7 @@ bounded_error_Hausdorff_impl(
 
   using Face_handle = typename boost::graph_traits<TriangleMesh>::face_descriptor;
   using Candidate   = Candidate_triangle<Kernel, Face_handle>;
+  using Timer       = CGAL::Real_timer;
 
   std::cout.precision(20);
   std::vector<Face_handle> tm1_only, tm2_only;
@@ -1369,15 +1370,14 @@ bounded_error_Hausdorff_impl(
   const auto faces1 = faces(tm1);
   const auto faces2 = faces(tm2);
 
-  CGAL_assertion(faces1.size() > 0);
-  CGAL_assertion(faces2.size() > 0);
+  CGAL_precondition(faces1.size() > 0);
+  CGAL_precondition(faces2.size() > 0);
 
-  CGAL::Real_timer timer;
+  Timer timer;
   timer.start();
 
   TM1_tree tm1_tree;
-  TM2_tree tm2_tree;
-  if (compare_meshes) {
+  if (compare_meshes) { // exact check
     match_faces(tm1, tm2, std::back_inserter(common),
       std::back_inserter(tm1_only), std::back_inserter(tm2_only), np1, np2);
 
@@ -1388,8 +1388,11 @@ bounded_error_Hausdorff_impl(
     if (tm1_only.size() == 0) {
       timer.stop();
       // std::cout << "* culling rate: 100%" << std::endl;
-      // std::cout << "* AABB tree build time (sec.): " << timer.time() << std::endl;
-      return std::make_pair(0.0, std::make_pair(Face_handle(), Face_handle()));
+      // std::cout << "* preprocessing time (sec.): " << timer.time() << std::endl;
+      const auto lface = *(faces1.begin());
+      const auto uface = *(faces2.begin());
+      CGAL_assertion(lface == uface);
+      return std::make_pair(0.0, std::make_pair(lface, uface));
     }
     CGAL_assertion(tm1_only.size() > 0);
 
@@ -1397,23 +1400,40 @@ bounded_error_Hausdorff_impl(
   } else {
     tm1_tree.insert(faces1.begin(), faces1.end(), tm1, vpm1);
   }
-  tm2_tree.insert(faces2.begin(), faces2.end(), tm2, vpm2);
-
-  // We skip computing internal Kd tree because we do not compute distance queries.
-  tm1_tree.do_not_accelerate_distance_queries();
 
   // Here, we explicitly accelerate because we use tm2 for distance queries.
+  TM2_tree tm2_tree(faces2.begin(), faces2.end(), tm2, vpm2);
   const bool is_tm2_memory_ok = tm2_tree.accelerate_distance_queries();
   CGAL_assertion(is_tm2_memory_ok);
-
-  timer.stop();
-  // std::cout << "* AABB tree build time (sec.): " << timer.time() << std::endl;
 
   // Build traversal traits for tm1_tree.
   TM1_hd_traits traversal_traits_tm1(
     tm1_tree.traits(), tm2_tree, tm1, tm2, vpm1, vpm2, error_bound);
 
+  // We skip computing internal Kd tree because we do not compute distance queries.
+  tm1_tree.do_not_accelerate_distance_queries();
+
   // TODO: Initialize the distances on all the vertices first and store those.
+  if (false) { // inexact check
+    FT max_dist = -FT(1);
+    std::pair<Face_handle, Face_handle> fpair;
+    for (const auto& face1 : faces1) {
+      const FT dist = traversal_traits_tm1.get_maximum_distance(face1, fpair);
+      CGAL_assertion(fpair.first == face1);
+      max_dist = (CGAL::max)(max_dist, dist);
+    }
+
+    if (max_dist <= error_bound) {
+      timer.stop();
+      // std::cout << "* culling rate: 100%" << std::endl;
+      // std::cout << "* preprocessing time (sec.): " << timer.time() << std::endl;
+      traversal_traits_tm1.get_maximum_distance(*(faces1.begin()), fpair);
+      return std::make_pair(error_bound, fpair);
+    }
+  }
+
+  timer.stop();
+  // std::cout << "* preprocessing time (sec.): " << timer.time() << std::endl;
 
   // Find candidate triangles in TM1 which might realise the Hausdorff bound.
   timer.reset();
