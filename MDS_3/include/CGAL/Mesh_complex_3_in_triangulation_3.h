@@ -172,13 +172,6 @@ private:
   typedef CGAL::Hash_handles_with_or_without_timestamps   Hash_fct;
 
 public:
-  typedef Tr                                            Triangulation;
-  typedef typename Tr::size_type                        size_type;
-  typedef typename Tr::Point                            Point;
-  typedef typename Tr::Edge                             Edge;
-  typedef typename Tr::Facet                            Facet;
-  typedef typename Tr::Vertex_handle                    Vertex_handle;
-  typedef typename Tr::Cell_handle                      Cell_handle;
 
 #ifndef CGAL_NO_DEPRECATED_CODE
   typedef CurveIndex Curve_segment_index;
@@ -186,6 +179,13 @@ public:
 
 /// \name Types
 /// @{
+  typedef Tr                                            Triangulation;
+  typedef typename Tr::size_type                        size_type;
+  typedef typename Tr::Point                            Point;
+  typedef typename Tr::Edge                             Edge;
+  typedef typename Tr::Facet                            Facet;
+  typedef typename Tr::Vertex_handle                    Vertex_handle;
+  typedef typename Tr::Cell_handle                      Cell_handle;
   /*!
   Index type.
   */
@@ -253,9 +253,9 @@ public:
     SINGULAR      // - SINGULAR is for all other cases.
   };
 
-/// \name Constructors
+/// \name Creation
 /// @{
-  /**
+   /**
    * @brief Constructor
    * Builds an empty 3D complex.
    */
@@ -269,14 +269,10 @@ public:
    * Move constructor
    */
   Mesh_complex_3_in_triangulation_3(Self&& rhs);
-/// @}
-
-/// \name Operators
-/// @{
 
   /**
-   * Assignement operator, also serves as move-assignement
-   */
+  * Assignement operator, also serves as move-assignement
+  */
   Self& operator=(Self rhs)
   {
     swap(rhs);
@@ -298,6 +294,23 @@ public:
     far_vertices_.swap(rhs.far_vertices_);
   }
 
+/// @}
+
+/// \name Access Functions
+/// @{
+  /// Returns a const reference to the triangulation
+  const Triangulation& triangulation() const { return tr_; }
+/// @}
+
+/// \name Non const access
+/// @{
+    /// Returns the reference to the triangulation
+  Triangulation& triangulation() { return tr_; }
+/// @}
+
+
+/// \name Modifiers
+/// @{
   /**
    * Clears data of c3t3
    */
@@ -311,13 +324,6 @@ public:
     corners_.clear();
     far_vertices_.clear();
   }
-/// @}
-
-  /// Returns the reference to the triangulation
-  Triangulation& triangulation() { return tr_; }
-  /// Returns a const reference to the triangulation
-  const Triangulation& triangulation() const { return tr_; }
-
 
   /** Adds cell \c cell to the 3D complex, with subdomain index \c index
   */
@@ -416,16 +422,46 @@ public:
     v->set_dimension(-1);
   }
 
-  /** Returns the index of vertex \c v
-  */
-  Index index(const Vertex_handle& v) const { return v->index(); }
-
   /** Sets index of vertex \c vertex to \c index
   */
   void set_index(const Vertex_handle& vertex, const Index& index) const
   {
     vertex->set_index(index);
   }
+  /** Sets surface index of facet \c facet to \c index
+  */
+  void set_surface_patch_index(const Facet& f, const Surface_patch_index& index)
+  {
+    set_surface_patch_index(f.first, f.second, index);
+  }
+  /** Sets surface index of facet(\c cell, \c i) to \c index
+  */
+  void set_surface_patch_index(const Cell_handle& cell,
+    const int i,
+    const Surface_patch_index& index) const
+  {
+    cell->set_surface_patch_index(i, index);
+  }
+  /** Sets subdomain index of cell \c cell to \c index
+  */
+  void set_subdomain_index(const Cell_handle& cell,
+    const Subdomain_index& index) const
+  {
+    cell->set_subdomain_index(index);
+  }
+  /** Sets dimension of vertex \c vertex to \c dimension
+  */
+  void set_dimension(const Vertex_handle& vertex, int dimension) const
+  {
+    vertex->set_dimension(dimension);
+  }
+/// @}
+
+/// \name Queries on the identifier of the face complex including triangulation cells, facets and vertices.
+/// @{
+  /** Returns the index of vertex \c v
+  */
+  Index index(const Vertex_handle& v) const { return v->index(); }
 
   /** Returns the subdomain index of cell \c cell
   */
@@ -447,40 +483,54 @@ public:
   {
     return cell->surface_patch_index(i);
   }
-  /** Sets surface index of facet \c facet to \c index
-  */
-  void set_surface_patch_index(const Facet& f, const Surface_patch_index& index)
-  {
-    set_surface_patch_index(f.first, f.second, index);
-  }
-  /** Sets surface index of facet(\c cell, \c i) to \c index
-  */
-  void set_surface_patch_index(const Cell_handle& cell,
-                               const int i,
-                               const Surface_patch_index& index) const
-  {
-    cell->set_surface_patch_index(i, index);
-  }
-
-  /** Sets subdomain index of cell \c cell to \c index
-  */
-  void set_subdomain_index(const Cell_handle& cell,
-                           const Subdomain_index& index) const
-  {
-    cell->set_subdomain_index(index);
-  }
-
-  /** Sets dimension of vertex \c vertex to \c dimension
-  */
-  void set_dimension(const Vertex_handle& vertex, int dimension) const
-  {
-    vertex->set_dimension(dimension);
-  }
-
   /** Returns the dimension of the lowest dimensional face of the input 3D
   * complex that contains the vertex
   */
   int in_dimension(const Vertex_handle& v) const { return v->in_dimension(); }
+
+  /**
+  * Returns Curve_index of edge \c e
+  */
+  Curve_index curve_index(const Edge& e) const
+  {
+    return curve_index(e.first->vertex(e.second),
+                       e.first->vertex(e.third));
+  }
+
+  /**
+  * Returns Curve_index of the edge formed by \c v1 and \c v2
+  */
+  Curve_index curve_index(const Vertex_handle& v1,
+                          const Vertex_handle& v2) const
+  {
+    return curve_index(make_internal_edge(v1, v2));
+  }
+
+  /**
+   * Returns Corner_index of vertex \c v
+   */
+  Corner_index corner_index(const Vertex_handle& v) const
+  {
+    typename Corner_map::const_iterator it = corners_.find(v);
+    if (corners_.end() != it) { return it->second; }
+    return Corner_index();
+  }
+/// @}
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+  CGAL_DEPRECATED
+    Curve_index curve_segment_index(const Edge& e) const
+  {
+    return curve_index(e);
+  }
+
+  CGAL_DEPRECATED
+    Curve_index curve_segment_index(const Vertex_handle& v1,
+      const Vertex_handle& v2) const
+  {
+    return curve_index(v1, v2);
+  }
+#endif // CGAL_NO_DEPRECATED_CODE
 
   std::size_t number_of_far_points() const
   {
@@ -540,6 +590,10 @@ public:
     far_vertices_.clear();
   }
 
+  void rescan_after_load_of_triangulation();
+
+/// \name Queries on the faces of the embedded complex
+/// @{
   /**
   * Returns the number of cells which belongs to the 3D complex
   */
@@ -576,7 +630,6 @@ public:
   {
     return edges_.size();
   }
-
   /**
    * Returns the number of corners of c3t3
    */
@@ -591,10 +644,8 @@ public:
   {
     return corners_.size();
   }
-
-  void rescan_after_load_of_triangulation();
-
-  /** Returns \c true if cell \c cell belongs to the 3D complex
+  /**
+  * Returns \c true if cell \c cell belongs to the 3D complex
   */
   bool is_in_complex(const Cell_handle& cell) const
   {
@@ -636,48 +687,10 @@ public:
   {
     return (corners_.find(v) != corners_.end());
   }
+/// @}
 
-  /**
-   * Returns Curve_index of edge \c e
-   */
-  Curve_index curve_index(const Edge& e) const
-  {
-    return curve_index(e.first->vertex(e.second),
-                       e.first->vertex(e.third));
-  }
 
-  Curve_index curve_index(const Vertex_handle& v1,
-                          const Vertex_handle& v2) const
-  {
-    return curve_index(make_internal_edge(v1,v2));
-  }
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-  CGAL_DEPRECATED
-  Curve_index curve_segment_index(const Edge& e) const
-  {
-    return curve_index(e);
-  }
-
-  CGAL_DEPRECATED
-  Curve_index curve_segment_index(const Vertex_handle& v1,
-                                  const Vertex_handle& v2) const
-  {
-    return curve_index(v1, v2);
-  }
-#endif // CGAL_NO_DEPRECATED_CODE
-
-  /**
-   * Returns Corner_index of vertex \c v
-   */
-  Corner_index corner_index(const Vertex_handle& v) const
-  {
-    typename Corner_map::const_iterator it = corners_.find(v);
-    if ( corners_.end() != it ) { return it->second; }
-    return Corner_index();
-  }
-
-  /// \name Operations
+  /// \name I/O Functions
   /// @{
   /**
    * Outputs the outer boundary of the entire domain with facets oriented outward.
@@ -875,6 +888,8 @@ private:
   };
 
 public:
+/// \name Traversal of the complex
+/// @{
 #ifdef DOXYGEN_RUNNING
   /// Iterator type to visit the cells of the 3D complex
   typedef unspecified_type Cells_in_complex_iterator;
@@ -1040,7 +1055,7 @@ public:
   /**
    * @cond SKIP_IN_MANUAL
    * Creates an Internal_edge object (i.e a pair of ordered Vertex_handle)
-   * @endcond SKIP_IN_MANUAL
+   * @endcond
    */
   Internal_edge make_internal_edge(const Vertex_handle& v1,
                                    const Vertex_handle& v2) const
@@ -1052,7 +1067,7 @@ public:
   /**
    * @cond SKIP_IN_MANUAL
    * Returns true if \c edge is in C3T3
-   * @endcond SKIP_IN_MANUAL
+   * @endcond
    */
   bool is_in_complex(const Internal_edge& edge) const
   {
@@ -1062,7 +1077,7 @@ public:
   /**
    * @cond SKIP_IN_MANUAL
    * Add edge \c edge to complex, with `Curve_index` `index`
-   * @endcond SKIP_IN_MANUAL
+   * @endcond
    */
   void add_to_complex(const Internal_edge& edge, const Curve_index& index)
   {
@@ -1079,7 +1094,7 @@ public:
   /**
    * @cond SKIP_IN_MANUAL
    * Remove edge \c edge from complex
-   * @endcond SKIP_IN_MANUAL
+   * @endcond
    */
   void remove_from_complex(const Internal_edge& edge)
   {
@@ -1089,7 +1104,7 @@ public:
   /**
   * @cond SKIP_IN_MANUAL
   * Returns Curve_index of edge \c edge
-  * @endcond SKIP_IN_MANUAL
+  * @endcond
   */
   Curve_index curve_index(const Internal_edge& edge) const
   {
@@ -1102,7 +1117,7 @@ public:
   /// Returns `NOT_IN_COMPLEX`, `BOUNDARY`, `REGULAR`, or `SINGULAR`,
   /// depending on the number of incident facets in the complex, and the
   /// number of connected components of its link
-  /// @endcond SKIP_IN_MANUAL
+  /// @endcond
   Face_status face_status(const Vertex_handle v) const
   {
     if (!manifold_info_initialized_) init_manifold_info();
@@ -1160,7 +1175,7 @@ public:
   /// @cond SKIP_IN_MANUAL
   /// This function should be called only when incident edges
   /// are known to be REGULAR OR BOUNDARY
-  /// @endcond SKIP_IN_MANUAL
+  /// @endcond
   bool is_regular_or_boundary_for_vertices(Vertex_handle v) const {
     return union_find_of_incident_facets(v) == 1;
   }
@@ -1168,7 +1183,7 @@ public:
   /// @cond SKIP_IN_MANUAL
   /// Returns `NOT_IN_COMPLEX`, `BOUNDARY`, `REGULAR`, or `SINGULAR`,
   /// depending on the number of incident facets in the complex
-  /// @endcond SKIP_IN_MANUAL
+  /// @endcond
   Face_status face_status(const Edge& edge) const
   {
     if (!manifold_info_initialized_) init_manifold_info();
@@ -1205,7 +1220,7 @@ public:
   * @param last the iterator past the last point to insert
   *
   * InputIterator value type must be \c std::pair<Tr::Point,Index>
-  * @endcond SKIP_IN_MANUAL
+  * @endcond
   */
   template <typename InputIterator>
   void insert_surface_points(InputIterator first, InputIterator last)
@@ -1231,7 +1246,7 @@ public:
   * @param default_index the index to be used to insert points
   *
   * InputIterator value type must be \c Tr::Point
-  * @endcond SKIP_IN_MANUAL
+  * @endcond
   */
   template <typename InputIterator>
   void insert_surface_points(InputIterator first,
@@ -1282,7 +1297,7 @@ public:
 
   /** @cond SKIP_IN_MANUAL
   * Returns bbox
-  * @endcond SKIP_IN_MANUAL
+  * @endcond
   */
   Bbox_3 bbox() const;
 
