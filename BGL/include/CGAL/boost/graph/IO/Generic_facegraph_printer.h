@@ -85,7 +85,7 @@ class Generic_facegraph_printer
   typedef typename boost::graph_traits<Graph>::face_descriptor                     face_descriptor;
 
 public:
-  Generic_facegraph_printer(Stream& os) : m_os(os) { }
+  Generic_facegraph_printer(Stream& os) : m_os(os), m_writer{} { }
   Generic_facegraph_printer(Stream& os, FileWriter writer) : m_os(os), m_writer(writer) { }
 
   template <typename NamedParameters>
