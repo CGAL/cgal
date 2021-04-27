@@ -22,6 +22,7 @@
 #include <CGAL/basic.h>
 
 #include <CGAL/internal/Periodic_3_triangulation_iterators_3.h>
+#include <CGAL/result_of.h>
 #include <CGAL/Periodic_3_triangulation_ds_cell_base_3.h>
 #include <CGAL/Periodic_3_triangulation_ds_vertex_base_3.h>
 #include <CGAL/Periodic_3_triangulation_traits_3.h>

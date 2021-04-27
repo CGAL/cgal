@@ -124,7 +124,7 @@ discoverComponents(const CDT & ct,
   {
     typename CDT::Face_handle fh_loc = ct.locate(*sit);
 
-    if(fh_loc == NULL || !fh_loc->is_in_domain())
+    if(fh_loc == nullptr || !fh_loc->is_in_domain())
       continue;
 
     std::list<typename CDT::Face_handle> queue;

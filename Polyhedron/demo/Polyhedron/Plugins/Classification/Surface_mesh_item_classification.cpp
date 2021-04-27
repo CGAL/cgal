@@ -15,8 +15,8 @@
 
 Surface_mesh_item_classification::Surface_mesh_item_classification(Scene_surface_mesh_item* mesh)
   : m_mesh (mesh),
-    m_selection (NULL),
-    m_generator (NULL)
+    m_selection (nullptr),
+    m_generator (nullptr)
 {
   m_index_color = 1;
 
@@ -30,24 +30,28 @@ Surface_mesh_item_classification::Surface_mesh_item_classification(Scene_surface
   m_labels.add("facade");
 
   m_sowf = new Sum_of_weighted_features (m_labels, m_features);
-  m_ethz = NULL;
+  m_ethz = nullptr;
 #ifdef CGAL_LINKED_WITH_OPENCV
-  m_random_forest = NULL;
+  m_random_forest = nullptr;
 #endif
 }
 
 
 Surface_mesh_item_classification::~Surface_mesh_item_classification()
 {
-  if (m_sowf != NULL)
+  if (m_sowf != nullptr)
     delete m_sowf;
-  if (m_ethz != NULL)
+  if (m_ethz != nullptr)
     delete m_ethz;
 #ifdef CGAL_LINKED_WITH_OPENCV
-  if (m_random_forest != NULL)
+  if (m_random_forest != nullptr)
     delete m_random_forest;
 #endif
-  if (m_generator != NULL)
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+  if (m_neural_network != nullptr)
+    delete m_neural_network;
+#endif
+  if (m_generator != nullptr)
     delete m_generator;
 }
 
@@ -162,7 +166,7 @@ void Surface_mesh_item_classification::change_color (int index, float* vmin, flo
       float min = (std::numeric_limits<float>::max)();
       float max = -(std::numeric_limits<float>::max)();
 
-      if (vmin != NULL && vmax != NULL
+      if (vmin != nullptr && vmax != nullptr
           && *vmin != std::numeric_limits<float>::infinity()
           && *vmax != std::numeric_limits<float>::infinity())
       {
@@ -191,7 +195,7 @@ void Surface_mesh_item_classification::change_color (int index, float* vmin, flo
                                   (unsigned char)(ramp.b(v) * 255));
       }
 
-      if (vmin != NULL && vmax != NULL)
+      if (vmin != nullptr && vmax != nullptr)
       {
         *vmin = min;
         *vmax = max;
@@ -210,7 +214,7 @@ void Surface_mesh_item_classification::compute_features (std::size_t nb_scales, 
 
   m_features.clear();
 
-  if (m_generator != NULL)
+  if (m_generator != nullptr)
     delete m_generator;
 
   Face_center_map fc_map (m_mesh->polyhedron());
@@ -230,16 +234,16 @@ void Surface_mesh_item_classification::compute_features (std::size_t nb_scales, 
 
   delete m_sowf;
   m_sowf = new Sum_of_weighted_features (m_labels, m_features);
-  if (m_ethz != NULL)
+  if (m_ethz != nullptr)
   {
     delete m_ethz;
-    m_ethz = NULL;
+    m_ethz = nullptr;
   }
 #ifdef CGAL_LINKED_WITH_OPENCV
-  if (m_random_forest != NULL)
+  if (m_random_forest != nullptr)
   {
     delete m_random_forest;
-    m_random_forest = NULL;
+    m_random_forest = nullptr;
   }
 #endif
   std::cerr << "Features = " << m_features.size() << std::endl;
@@ -288,7 +292,7 @@ void Surface_mesh_item_classification::train (int classifier, const QMultipleInp
   }
   else if (classifier == CGAL_CLASSIFICATION_ETHZ_NUMBER)
   {
-    if (m_ethz != NULL)
+    if (m_ethz != nullptr)
       delete m_ethz;
     m_ethz = new ETHZ_random_forest (m_labels, m_features);
     m_ethz->train<Concurrency_tag>(training, true,
@@ -301,7 +305,7 @@ void Surface_mesh_item_classification::train (int classifier, const QMultipleInp
   else if (classifier == CGAL_CLASSIFICATION_OPENCV_NUMBER)
   {
 #ifdef CGAL_LINKED_WITH_OPENCV
-    if (m_random_forest != NULL)
+    if (m_random_forest != nullptr)
       delete m_random_forest;
     m_random_forest = new Random_forest (m_labels, m_features,
                                          dialog.get<QSpinBox>("max_depth")->value(), 5, 15,
@@ -334,7 +338,7 @@ bool Surface_mesh_item_classification::run (int method, int classifier,
     run (method, *m_sowf, subdivisions, smoothing);
   else if (classifier == CGAL_CLASSIFICATION_ETHZ_NUMBER)
   {
-    if (m_ethz == NULL)
+    if (m_ethz == nullptr)
     {
       std::cerr << "Error: ETHZ Random Forest must be trained or have a configuration loaded first" << std::endl;
       return false;
@@ -344,7 +348,7 @@ bool Surface_mesh_item_classification::run (int method, int classifier,
   else if (classifier == CGAL_CLASSIFICATION_OPENCV_NUMBER)
   {
 #ifdef CGAL_LINKED_WITH_OPENCV
-    if (m_random_forest == NULL)
+    if (m_random_forest == nullptr)
     {
       std::cerr << "Error: OpenCV Random Forest must be trained or have a configuration loaded first" << std::endl;
       return false;

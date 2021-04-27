@@ -102,7 +102,7 @@ ArrangementGraphicsItem<Arr>::paint(QPainter *painter,
                                     const QStyleOptionGraphicsItem *option,
                                     QWidget* )
 {
-  if (m_arr == NULL)
+  if (m_arr == nullptr)
     return;
 
   QRectF rect = option->exposedRect;

@@ -640,7 +640,7 @@ Periodic_tetrahedron periodic_tetrahedron(const Cell_handle c, Offset offset) co
 /// @}
 
 /// \name
-/// \warning The following functions were renamed with %CGAL 4.11 to clarify
+/// \warning The following functions were renamed with \cgal 4.11 to clarify
 /// that they return geometric objects with inner type `Point_3`.
 ///
 /// Note that a traits class providing exact constructions should be
