@@ -220,12 +220,6 @@ public:
            is_even() const
            { return true; }
 
-  virtual  bool
-           is_scaling() const
-           {
-             return true;
-           }
-
   virtual  RT
            homogeneous(int i, int j) const
            { return (i==j) ? RT(1) : RT(0); }
