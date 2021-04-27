@@ -18,7 +18,6 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/MDS_3/io_signature.h>
-#include <CGAL/MDS_3/Mesh_complex_3_in_triangulation_3_base.h>
 #include <CGAL/IO/File_medit.h>
 
 #include <CGAL/is_streamable.h>

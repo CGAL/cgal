@@ -1,16 +1,17 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 3D Mesh Data Structures"
+
+#custom options
+EXTRACT_ALL                     =  false
+HIDE_UNDOC_CLASSES      =  true
+HIDE_UNDOC_MEMBERS     =  true
+WARN_IF_UNDOCUMENTED =  false
+
 # macros to be used inside the code
 #ALIASES += "cgalDescribePolylineType=A polyline is defined as a sequence of points, each pair of contiguous points defines a segment of the polyline. If the first and last points of the polyline are identical, the polyline is closed."
 
-INPUT += \
-    ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/IO
-
-PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 3D Mesh Data Structures"
-
-EXTRACT_ALL                =  false
-HIDE_UNDOC_CLASSES         =  true
-WARN_IF_UNDOCUMENTED       =  false
+INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/IO
 
 EXCLUDE = ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/internal/MDS_3
 
