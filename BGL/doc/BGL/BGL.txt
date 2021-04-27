@@ -403,7 +403,7 @@ In the following example we construct the same arrangement as in
 example `ex_bgl_primal_adapter.cpp` (see
 \cgalFigureRef{aos_fig-bgl_primal_adapter}), and perform breadth-first
 search on the graph faces, starting from the unbounded face. We extend
-the \sc{Dcel} faces with an unsigned integer, marking the discover
+the \dcel faces with an unsigned integer, marking the discover
 time of the face and use a breadth-first-search visitor to obtain
 these times and update the faces accordingly:
 
