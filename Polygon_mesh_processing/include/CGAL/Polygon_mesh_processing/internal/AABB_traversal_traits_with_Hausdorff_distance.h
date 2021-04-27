@@ -169,12 +169,12 @@ namespace CGAL {
       const Point_3 v2 = query.vertex(2);
 
       // Find the axis aligned bbox of the triangle.
-      const Point_3 tri_min = Point_3 (
+      const Point_3 tri_min = Point_3(
         std::min(std::min(v0.x(), v1.x()), v2.x()),
         std::min(std::min(v0.y(), v1.y()), v2.y()),
         std::min(std::min(v0.z(), v1.z()), v2.z()));
 
-      const Point_3 tri_max = Point_3 (
+      const Point_3 tri_max = Point_3(
         std::max(std::max(v0.x(), v1.x()), v2.x()),
         std::max(std::max(v0.y(), v1.y()), v2.y()),
         std::max(std::max(v0.z(), v1.z()), v2.z()));

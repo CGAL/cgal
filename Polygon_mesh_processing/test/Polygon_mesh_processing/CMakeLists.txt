@@ -54,6 +54,7 @@ else()
   message(STATUS "Examples that use OpenMesh will not be compiled.")
 endif()
 
+create_single_source_cgal_program("test_hausdorff_bounded_error_distance.cpp")
 create_single_source_cgal_program("test_pmp_read_polygon_mesh.cpp")
 create_single_source_cgal_program("connected_component_polyhedron.cpp")
 create_single_source_cgal_program("connected_component_surface_mesh.cpp")
@@ -108,6 +109,7 @@ create_single_source_cgal_program("test_pmp_polyhedral_envelope.cpp")
 #  create_single_source_cgal_program("test_pmp_repair_self_intersections.cpp")
 
 if(TARGET CGAL::TBB_support)
+  target_link_libraries(test_hausdorff_bounded_error_distance PUBLIC CGAL::TBB_support)
   target_link_libraries(test_pmp_distance PUBLIC CGAL::TBB_support)
   target_link_libraries(orient_polygon_soup_test PUBLIC CGAL::TBB_support)
   target_link_libraries(self_intersection_surface_mesh_test
