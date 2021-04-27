@@ -71,18 +71,18 @@ is_sharp(PolygonMesh& polygonMesh,
 template <typename PolygonMesh, typename GT>
 bool 
 is_sharp_corner(PolygonMesh& polygonMesh,
-         const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor& he,
-         const typename GT::FT& cos_angle)
+                const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor& he,
+                const typename GT::FT& cos_angle)
 {
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
   if(is_border(edge(he,polygonMesh),polygonMesh)){
     return false;
   }
-  halfedge_descriptor h1 = halfedge(he,polygonMesh);
-  halfedge_descriptor h2 = halfedge(next(he,polygonMesh));
+  edge_descriptor e1 = edge(he,polygonMesh);
+  edge_descriptor e2 = edge(next(he,polygonMesh),polygonMesh);
 
 
-  if ( h1 * h2 <= cos_angle )
+  if ( e1 * e2 <= cos_angle )
     return true;
   else
     return false;
