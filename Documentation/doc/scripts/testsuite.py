@@ -7,11 +7,14 @@
 # $URL$
 # $Id$
 # SPDX-License-Identifier: GPL-3.0-or-later
-# 
-# 
+#
+#
 # Author(s)     : Philipp Moeller
 
-import argparse 
+#NOTE : if args.diff2 is not given, then it is considered that something went
+# wrong during the build of doxygen_master or the generation of the doc.
+
+import argparse
 import shutil
 import sys
 import subprocess
@@ -143,11 +146,10 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
             pretty_name=basename[0:-4]
             result = [(basename, pretty_name, res)]
             results_master.extend(result)
-    else:
-      results_master=[]
-      for index in range(0, len(results1)-1):
-        results_master.append('./build_logs')
-
+      else:
+        for index in range(0, len(results1)):
+          result = [('./build_logs', './build_logs', (0,1))]
+          results_master.extend(result)
     for index in range(0, len(results1)-1):
         status='class="package-good"'
         no_errors = True
@@ -293,7 +295,7 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
             log_path=version_string, test_version=args.doxygen_version1, master_version=args.master_describe)
         else:
           diff2='<p style="color:red">Documentation with the master version of Doxygen FAILED</p>'
-          
+
         d=pq(filename=publish_dir + 'index.html',parser="html")
         revs=d('#revisions tr')
         new_row='''<tr><td><a href="{revision}/index.html">{revision}</a></td><td>{date}</td>
