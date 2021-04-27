@@ -234,31 +234,37 @@ squared_distance_to_triangle(
   const Vector_3 oe3 = vector(t0, t2);
   const Vector_3 normal = wcross(e1, oe3, k);
 
-  if(normal != NULL_VECTOR
-     && on_left_of_triangle_edge(pt, normal, t0, t1, k)
-     && on_left_of_triangle_edge(pt, normal, t1, t2, k)
-     && on_left_of_triangle_edge(pt, normal, t2, t0, k))
-      {
-        // the projection of pt is inside the triangle
-        inside = true;
-        return squared_distance_to_plane(normal, vector(t0, pt), k);
-      }
-      else {
-        // The case normal==NULL_VECTOR covers the case when the triangle
-        // is colinear, or even more degenerate. In that case, we can
-        // simply take also the distance to the three segments.
-        typename K::FT d1 = squared_distance(pt,
-                                             typename K::Segment_3(t2, t0),
-                                             k);
-        typename K::FT d2 = squared_distance(pt,
-                                             typename K::Segment_3(t1, t2),
-                                             k);
-        typename K::FT d3 = squared_distance(pt,
-                                             typename K::Segment_3(t0, t1),
-                                             k);
+  if(normal == NULL_VECTOR) {
+    // The case normal==NULL_VECTOR covers the case when the triangle
+    // is colinear, or even more degenerate. In that case, we can
+    // simply take also the distance to the three segments.
+    typename K::FT d1 = squared_distance(pt, typename K::Segment_3(t2, t0), k);
+    typename K::FT d2 = squared_distance(pt, typename K::Segment_3(t1, t2), k);
 
-        return (std::min)( (std::min)(d1, d2), d3);
-      }
+    // should not be needed since at most 2 edges cover the full triangle in the degenerate case
+    typename K::FT d3 = squared_distance(pt, typename K::Segment_3(t0, t1), k);
+
+    return (std::min)( (std::min)(d1, d2), d3);
+  }
+
+  const bool b01 = on_left_of_triangle_edge(pt, normal, t0, t1, k);
+  if(!b01) {
+    return internal::squared_distance(pt, typename K::Segment_3(t0, t1), k);
+  }
+
+  const bool b12 = on_left_of_triangle_edge(pt, normal, t1, t2, k);
+  if(!b12) {
+    return internal::squared_distance(pt, typename K::Segment_3(t1, t2), k);
+  }
+
+  const bool b20 = on_left_of_triangle_edge(pt, normal, t2, t0, k);
+  if(!b20) {
+    return internal::squared_distance(pt, typename K::Segment_3(t2, t0), k);
+  }
+
+  // The projection of pt is inside the triangle
+  inside = true;
+  return squared_distance_to_plane(normal, vector(t0, pt), k);
 }
 
 template <class K>
