@@ -27,5 +27,6 @@
 
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set/Least_squares_line_fit_sorting.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set/Least_squares_plane_fit_sorting.h>
+#include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set/Least_squares_sphere_fit_sorting.h>
 
 #endif // CGAL_SHAPE_DETECTION_REGION_GROWING_POINT_SET_H

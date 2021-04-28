@@ -25,7 +25,7 @@ namespace internal {
 template <typename PointRange,
           typename Sqrt, typename Squared_distance_3,
           typename Point_3, typename FT>
-void sphere_fit (const PointRange& points,
+bool sphere_fit (const PointRange& points,
                  const Sqrt& sqrt,
                  const Squared_distance_3& squared_distance_3,
                  Point_3& center, FT& radius)
@@ -79,6 +79,10 @@ void sphere_fit (const PointRange& points,
   Diagonalize_traits::diagonalize_selfadjoint_covariance_matrix
     (A, eigenvalues, eigenvectors);
 
+  // Perfect plane case, no sphere can be fitted
+  if (eigenvectors[4] == 0)
+    return false;
+
   center = Point_3 (bbox.xmin() - FT(0.5) * (eigenvectors[1] / eigenvectors[4]),
                     bbox.ymin() - FT(0.5) * (eigenvectors[2] / eigenvectors[4]),
                     bbox.zmin() - FT(0.5) * (eigenvectors[3] / eigenvectors[4]));
@@ -87,6 +91,8 @@ void sphere_fit (const PointRange& points,
   for (const Point_3& p : points)
     radius += sqrt (squared_distance_3 (p, center));
   radius /= points.size();
+
+  return true;
 }
 
 
