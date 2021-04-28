@@ -553,7 +553,7 @@ public:
         traits.intersection(query, singleton_data());
         break;
       default: // if(size() >= 2)
-        if ( traits.do_intersect(query, *root_node()) && traits.go_further() )
+        if ( traits.do_intersect(query, *root_node()) )
           root_node()->template traversal_with_priority_and_group_traversal(m_primitives, query, traits, m_primitives.size(), 0, group_traversal_bound);
       }
     }
