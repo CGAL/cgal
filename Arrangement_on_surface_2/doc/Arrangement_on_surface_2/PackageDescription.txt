@@ -165,6 +165,7 @@ implemented as peripheral classes or as free (global) functions.
 - `CGAL::Arr_segment_traits_2<Kernel>`
 - `CGAL::Arr_non_caching_segment_traits_2<Kernel>`
 - `CGAL::Arr_linear_traits_2<Kernel>`
+- `CGAL::Arr_caching_polyline_traits_2<Kernel, Range>`
 - `CGAL::Arr_polyline_traits_2<SegmentTraits>`
 - `CGAL::Arr_circle_segment_traits_2<Kernel>`
 - `CGAL::Arr_line_arc_traits_2<CircularKernel>`
