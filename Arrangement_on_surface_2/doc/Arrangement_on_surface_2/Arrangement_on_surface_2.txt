@@ -3722,9 +3722,9 @@ determine whether \f$\lim_{t \rightarrow d} x(t)\f$ evaluates to
 is equal to \f$x_{\rm min}\f$, \f$x_{\rm max}\f$, or a value in
 between. Return `CGAL::ARR_LEFT_BOUNDARY`, `CGAL::ARR_RIGHT_BOUNDARY`,
 or `CGAL::ARR_INTERIOR`, accordingly. If \f$c\f$ is vertical and lies
-on a vertical boundary; that is, either \f$\forall p=(x_p, y_p) \in c$
-we have $x_p = x_{\rm min}\f$ or \f$\forall p=(x_p, y_p) \in c$ we
-have $x_p = x_{\rm max}\f$, then the boundary side containing \f$c\f$
+on a vertical boundary; that is, either \f$\forall p=(x_p, y_p) \in c\f$
+we have \f$x_p = x_{\rm min}\f$ or \f$\forall p=(x_p, y_p) \in c\f$ we
+have \f$x_p = x_{\rm max}\f$, then the boundary side containing \f$c\f$
 cannot be open.
 
 (ii) Given a point \f$p=(x_p, y_p)\f$, determine the location of the
