@@ -1426,11 +1426,11 @@ bounded_error_Hausdorff_impl(
   timer.reset();
   timer.start();
   const Point_3 stub(0, 0, 0); // dummy point given as query since it is not needed
-  if (group_traversal_bound > 1) {
-    tm1_tree.traversal_with_priority_and_group_traversal(stub, traversal_traits_tm1, group_traversal_bound); // with group traversal
-  } else {
+  // if (group_traversal_bound > 1) {
+  //   tm1_tree.traversal_with_priority_and_group_traversal(stub, traversal_traits_tm1, group_traversal_bound); // with group traversal
+  // } else {
     tm1_tree.traversal_with_priority(stub, traversal_traits_tm1);
-  }
+  // }
   timer.stop();
   // std::cout << "* TM1 traversal (sec.): " << timer.time() << std::endl;
 

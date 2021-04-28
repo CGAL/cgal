@@ -413,6 +413,7 @@ namespace CGAL {
 
     template<class PrimitiveConstIterator>
     void traverse_group(const Query& query, PrimitiveConstIterator group_begin, PrimitiveConstIterator group_end) {
+      CGAL_assertion_msg(false, "ERROR: we should not call the group traversal on TM1!");
       for (PrimitiveConstIterator it = group_begin; it != group_end; ++it) {
         this->intersection(query, *it);
       }
