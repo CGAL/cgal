@@ -123,6 +123,7 @@ on a polygon mesh.}
 - `CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_region<GeomTraits, InputRange, PointMap, NormalMap>`
 - `CGAL::Shape_detection::Point_set::Least_squares_line_fit_sorting<GeomTraits, InputRange, NeighborQuery, PointMap>`
 - `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting<GeomTraits, InputRange, NeighborQuery, PointMap>`
+- `CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_sorting<GeomTraits, InputRange, NeighborQuery, PointMap>`
 
 ### Polygon Mesh ###
 - `CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<PolygonMesh, FaceRange>`

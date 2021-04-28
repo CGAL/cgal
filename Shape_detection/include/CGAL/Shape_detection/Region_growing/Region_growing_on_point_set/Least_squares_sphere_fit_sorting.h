@@ -93,7 +93,7 @@ public:
     \brief initializes all internal data structures.
 
     \param input_range
-    an instance of `InputRange` with 2D points
+    an instance of `InputRange` with 3D points
 
     \param neighbor_query
     an instance of `NeighborQuery` that is used internally to
@@ -101,7 +101,7 @@ public:
 
     \param point_map
     an instance of `PointMap` that maps an item from `input_range`
-    to `Kernel::Point_2`
+    to `Kernel::Point_3`
 
     \pre `input_range.size() > 0`
   */
