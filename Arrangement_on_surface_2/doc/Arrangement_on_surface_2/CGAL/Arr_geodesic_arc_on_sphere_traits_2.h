@@ -285,16 +285,41 @@ namespace CGAL {
       /// @}
     };
 
+    /*! Construction functor of a point.
+     *
+     * \cgalModels `Assignable`
+     * \cgalModels `CopyConstructible`
+     * \cgalModels `AdaptableUnaryFunction`
+     * \cgalModels `AdaptableTernaryFunction`
+     */
     /*!
      */
     class Construct_point_2 {
     public:
       /// \name Types
       /// @{
+      typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel, X, Y>::Point_2 result_type;
+      typedef typename Kernel::FT                                FT;
+      typedef typename Kernel::Direction_3                       Direction_3;
       /// @}
 
       /// \name Operations
       /// @{
+
+      /*! Construct a point on the sphere from three coordinates, which define
+       * a (not necessarily normalized) direction.
+       * \param[in] x the x coordinate
+       * \param[in] y the y coordinate
+       * \param[in] z the z coordinate
+       */
+      Point_2 operator()(const FT& x, const FT& y, const FT& z);
+
+      /*! Construct a point on the sphere from a (not necessarily normalized)
+       * direction.
+       * \param other the other direction
+       */
+      Point_2 operator()(const Direction_3& other);
+
       /// @}
     };
 
@@ -314,9 +339,6 @@ namespace CGAL {
       typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel, X, Y>::X_monotone_curve_2 result_type;
       typedef Kernel::Direction_3 Direction_3;
       typedef Direction_3 argument_type;
-      typedef Point_2 first_argument_type;
-      typedef Point_2 second_argument_type;
-      typedef Direction_3 third_argument_type;
       /// @}
 
       /// \name Operations
@@ -355,17 +377,56 @@ namespace CGAL {
        */
       X_monotone_curve_2 operator()(const Point_2& p, const Point_2& q,
                                     const Direction_3& normal);
+
       /// @} /* end of operations */
     };
 
-    class Construct_Curve_2 {
+    /*! Construction functor of geodesic arcs.
+     *
+     * \cgalModels `Assignable`
+     * \cgalModels `CopyConstructible`
+     * \cgalModels `AdaptableBinaryFunction`
+     * \cgalModels `AdaptableTernaryFunction`
+     */
+    class Construct_curve_2 {
     public:
       /// \name Types
       /// @{
+      typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel, X, Y>::Point_2 Point_2;
+      typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel, X, Y>::Curve_2 result_type;
+      typedef Kernel::Direction_3 Direction_3;
+      typedef Direction_3 argument_type;
       /// @}
 
       /// \name Operations
       /// @{
+      /*! Construct the minor geodesic arc from two endpoints. The minor arc
+       * is the one with the smaller angle among the two geodesic arcs with
+       * the given endpoints.
+       * 1. Find out whether the arc is x-monotone.
+       * 2. If it is x-monotone,
+       *    2.1 Find out whether it is vertical, and
+       *    2.2 whether the target is larger than the source (directed right).
+       * The arc is vertical, iff
+       * 1. one of its endpoint direction pierces a pole, or
+       * 2. the projections onto the xy-plane coincide.
+       * \param[in] p the first endpoint.
+       * \param[in] q the second endpoint.
+       * \pre p and q must not coincide.
+       * \pre p and q cannot be antipodal.
+       */
+      Curve_2 operator()(const Point_2& p, const Point_2& q);
+
+      /*! Construct a geodesic arc from two endpoints contained
+       * in a plane.
+       * \param[in] p the first endpoint.
+       * \param[in] q the second endpoint.
+       * \param[in] normal the normal to the plane containing the arc.
+       * \pre Both endpoint lie on the given plane.
+       * \pre Both endpoint lie on the given plane.
+       */
+      Curve_2 operator()(const Point_2& p, const Point_2& q,
+                         const Direction_3& normal);
       /// @}
     };
 
