@@ -18,15 +18,32 @@ namespace CGAL {
  * \f$i\f$th segement of a polyline has to coincide with the source of the
  * \f$i+1\f$st segment; that is, the polyline has to be \a well-oriented.
  *
- * The traits class template uses an internal type to represent polylines, which
- * in turn uses an internal type to represent segments that compose polyline.
+ * This traits class template serves as an alternative to the more general
+ * traits class template `Arr_polyline_traits_2<SubcurveTraits_2>`, which
+ * handles polylines as well. Use this alternative when you need to construct
+ * many polylines and every polyline consists of many points. Typically
+ * (depending on the substituted Kernel) the geometric objects that compose the
+ * polylines (e.g., points) are reference counted, which implies that a copy of
+ * a single point amounts to copying a small piece of data (a handle). However,
+ * when a polyline is constructed, split, or subdivided into \f$x\f$-monotone
+ * pieces, a large number of points might be copied, which yields with a costly
+ * operation. This traits class template uses an internal type to represent
+ * polylines, which in turn uses an internal type to represent lines and points
+ * that compose polylines. Polylines in the internal representation share the
+ * geometric data; thus, only one copy of the geometric objects that compose
+ * several polylines reside in memory.  Only a shallow copy is performed to
+ * carry out each one of the operations above.
  *
- * \tparam Kernel a type that represents a geometric kernel.
- * The number type used by the injected kernel should support exact
- * rational arithmetic (that is, the number type should support the arithmetic
- * operations \f$ +\f$, \f$ -\f$, \f$ \times\f$ and \f$ \div\f$ carried out
- * without loss of precision), in order to avoid robustness problems, although
- * other inexact number types could be used at the user's own risk.
+ * CAUTION: If you construct polylines using this traits class template and
+ * then insert the polylines into an arrangement, for instance, you must retain
+ * the polyline in memory as long as the arrangement is in memory.
+ *
+ * \tparam Kernel a type that represents a geometric kernel.  The number type
+ * used by the substituted kernel should support exact rational arithmetic (that
+ * is, the number type should support the arithmetic operations \f$ +\f$, \f$
+ * -\f$, \f$ \times\f$ and \f$ \div\f$ carried out without loss of precision),
+ * in order to avoid robustness problems, although other inexact number types
+ * could be used at the user's own risk.
  *
  * \tparam Range a type that represents a valid range of points.
  *
