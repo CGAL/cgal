@@ -402,7 +402,7 @@ the `Arrangement_2` class template; their description follows.
   our traits-class model in order to construct arrangements of line
   segments. In succeeding sections we also use `Arr_segment_traits_2`
   as our traits-class model. These two traits trade computation time
-  and storage space. The latter tores the underlying line of every
+  and storage space. The latter stores the underlying line of every
   segment of the arrangement to expedite certain operations on the
   arrangement segments. In Section \ref aos_sec-unbounded we use
   `Arr_linear_traits_2` to construct arrangements of linear curves
@@ -2000,7 +2000,7 @@ especially for polyline, as two polylines may overlap in more then one
 connected component.) The generic implementation serves as the
 foundation of a family of concrete operations described in the rest of
 this section, such as aggregately constructing an arrangement induced
-by a set of curves that lie in a two-dimensional surface and ouputing
+by a set of curves that lie in a two-dimensional surface and outputting
 the overlay of two arrangements.
 
 <!----------------------------------------------------------------------------->
@@ -3234,7 +3234,7 @@ graph, where a node of the graph represents a concept and an arc
 represents a refinement relation. An arc directed from concept <span
 class="textsc">A</span> to concept <span class="textsc">B</span>
 indicates that concept <span class="textsc">B</span> refines concept
-<span class="textsc">A</span>.  A rather large direccted acyclic graph
+<span class="textsc">A</span>.  A rather large directed acyclic graph
 is required to capture the entire hierarchy of the geometry
 traits-class concepts. In the following sections we review individual
 clusters of the graph and describe the relations between them.
@@ -3676,7 +3676,7 @@ collected in two additional abstract layers called
 \cgalFigureBegin{aos_fig-identified_clusters,identified_clusters.png}
 Top portion of the refinement hierarchy of the geometry-traits
 concepts for curves that reach the identified vertical sides of the
-parameter space and for curves that reach the identified horizntal
+parameter space and for curves that reach the identified horizontal
 sides of the parameter space.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
@@ -3684,7 +3684,7 @@ sides of the parameter space.
 Individual concepts for curves that reach the identified left side of
 the parameter space and for curves that reach the identified right
 side of the parameter space do not exist, because if one side is
-identified the opposide side must be identified as well. Similarly,
+identified the opposite side must be identified as well. Similarly,
 individual concepts for curves that reach the identified bottom side
 of the parameter space and for curves that reach the identified top
 side of the parameter space do not exist either. Instead, the shared
@@ -4056,7 +4056,7 @@ types are thus convertible to one another.
 
 Computing the intersection between two segments is preceded by an
 application of an efficient predicate that tests whether an
-intersection exists at all. This optimization has negligble overhead;
+intersection exists at all. This optimization has negligible overhead;
 Thus, using an instance of the `Arr_segment_traits_2<Kernel>` class
 template is still very efficient when constructing arrangements
 induced by line segments with a large number of intersections.
