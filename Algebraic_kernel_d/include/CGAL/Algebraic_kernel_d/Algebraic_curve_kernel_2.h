@@ -49,7 +49,7 @@
 
 #include <CGAL/tss.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 
 namespace CGAL {
@@ -393,8 +393,8 @@ public:
     Algebraic_curve_kernel_2()
       : _m_gcd_cache_2(new Gcd_cache_2())
     {
-      _m_curve_cache_2 = boost::shared_ptr<Curve_cache_2>(new Curve_cache_2(this));
-      _m_curve_pair_cache_2 =  boost::shared_ptr<Curve_pair_cache_2> (new Curve_pair_cache_2(this));
+      _m_curve_cache_2 = std::shared_ptr<Curve_cache_2>(new Curve_cache_2(this));
+      _m_curve_pair_cache_2 =  std::shared_ptr<Curve_pair_cache_2> (new Curve_pair_cache_2(this));
       // std::cout << "CONSTRUCTION  Algebraic_curve_kernel_2 " << std::endl;
     }
 
@@ -2766,9 +2766,9 @@ public:
 
 protected:
 
-mutable boost::shared_ptr<Curve_cache_2> _m_curve_cache_2;
-mutable boost::shared_ptr<Curve_pair_cache_2> _m_curve_pair_cache_2;
-mutable boost::shared_ptr<Gcd_cache_2> _m_gcd_cache_2;
+mutable std::shared_ptr<Curve_cache_2> _m_curve_cache_2;
+mutable std::shared_ptr<Curve_pair_cache_2> _m_curve_pair_cache_2;
+mutable std::shared_ptr<Gcd_cache_2> _m_gcd_cache_2;
 
 
 }; // class Algebraic_curve_kernel_2

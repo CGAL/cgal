@@ -20,7 +20,7 @@
 #include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/Has_conversion.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/type_traits.hpp>
 #include <boost/optional.hpp>
 

@@ -76,8 +76,8 @@ public:
   }
 
 private:
-  boost::shared_ptr<Tree> m_tree_ptr;
-  boost::shared_ptr<Side_of> m_side_of_ptr;
+  std::shared_ptr<Tree> m_tree_ptr;
+  std::shared_ptr<Side_of> m_side_of_ptr;
   double m_offset_distance;
   bool m_is_closed;
 
