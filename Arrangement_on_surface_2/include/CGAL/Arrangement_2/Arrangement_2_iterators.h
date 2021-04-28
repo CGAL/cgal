@@ -288,6 +288,12 @@ public:
     iend (nt)
   {}
 
+  template <typename T>
+  I_Filtered_iterator (T* p) :
+    nt (pointer(p)),
+    iend (nt)
+  {}
+
   I_Filtered_iterator (Iterator it, Iterator end) :
     nt (it),
     iend (end)
@@ -303,6 +309,14 @@ public:
   {
     while (nt != iend && ! filt (*nt))
       ++nt;
+  }
+
+  template <typename P>
+  I_Filtered_iterator& operator= (const P* p)
+  {
+    nt = pointer(p);
+    iend =nt;
+    return *this;
   }
 
   /*! Access operations. */
@@ -439,6 +453,12 @@ public:
     iend (it)
   {}
 
+  template <typename T>
+  I_Filtered_const_iterator (T* p) :
+    nt (pointer(p)),
+    iend (nt)
+  {}
+
   I_Filtered_const_iterator (Iterator it, Iterator end) :
     nt (it),
     iend (end)
@@ -463,6 +483,14 @@ public:
   {
     //    while (nt != iend && ! filt (*nt))
     //      ++nt;
+  }
+
+  template <typename P>
+  I_Filtered_const_iterator& operator= (const P* p)
+  {
+    nt = pointer(p);
+    iend =nt;
+    return *this;
   }
 
   /*! Access operations. */
