@@ -234,8 +234,7 @@ AABB_node<Tr>::traversal_with_priority(const Query& query,
   }
 }
 
-
-//TODO: find a better name
+// TODO: find a better name
 template<typename Tr>
 template<class Primitive_vector, class Traversal_traits, class Query>
 void
@@ -244,10 +243,14 @@ AABB_node<Tr>::traversal_with_priority_and_group_traversal(const Primitive_vecto
                                                            Traversal_traits& traits,
                                                            const std::size_t nb_primitives,
                                                            std::size_t first_primitive_index,
-                                                           const std::size_t group_size_bound) const
+                                                           const std::size_t group_traversal_bound) const
 {
-  if (nb_primitives <= group_size_bound)
+  // Group traversal
+  CGAL_assertion(group_traversal_bound >= 2);
+  if ( nb_primitives <= group_traversal_bound )
   {
+    if ( !traits.do_intersect(query, *this) ) return;
+    CGAL_assertion(traits.do_intersect(query, *this));
     traits.traverse_group(query, primitives.begin()+first_primitive_index, primitives.begin()+first_primitive_index+nb_primitives);
     return;
   }
@@ -266,7 +269,7 @@ AABB_node<Tr>::traversal_with_priority_and_group_traversal(const Primitive_vecto
     traits.intersection(query, left_data());
     if( traits.go_further() && traits.do_intersect(query, right_child()) )
     {
-      right_child().traversal_with_priority_and_group_traversal(primitives, query, traits, 2, first_primitive_index+1, group_size_bound);
+      right_child().traversal_with_priority_and_group_traversal(primitives, query, traits, 2, first_primitive_index+1, group_traversal_bound);
     }
     break;
   default:
@@ -284,22 +287,22 @@ AABB_node<Tr>::traversal_with_priority_and_group_traversal(const Primitive_vecto
         if(pleft >= pright)
         {
           // Inspect the left child first, has higher priority.
-          left_child().traversal_with_priority_and_group_traversal(primitives,query, traits, nb_primitives/2, first_primitive_index, group_size_bound);
+          left_child().traversal_with_priority_and_group_traversal(primitives, query, traits, nb_primitives/2, first_primitive_index, group_traversal_bound);
           if( traits.go_further() )
-            right_child().traversal_with_priority_and_group_traversal(primitives,query, traits, nb_primitives-nb_primitives/2, first_primitive_index+nb_primitives/2, group_size_bound);
+            right_child().traversal_with_priority_and_group_traversal(primitives, query, traits, nb_primitives-nb_primitives/2, first_primitive_index+nb_primitives/2, group_traversal_bound);
         }
         else
         {
           // Inspect the right child first, has higher priority.
-          right_child().traversal_with_priority_and_group_traversal(primitives,query, traits, nb_primitives-nb_primitives/2, first_primitive_index+nb_primitives/2, group_size_bound);
+          right_child().traversal_with_priority_and_group_traversal(primitives, query, traits, nb_primitives-nb_primitives/2, first_primitive_index+nb_primitives/2, group_traversal_bound);
           if( traits.go_further() )
-            left_child().traversal_with_priority_and_group_traversal(primitives,query, traits, nb_primitives/2, first_primitive_index, group_size_bound);
+            left_child().traversal_with_priority_and_group_traversal(primitives, query, traits, nb_primitives/2, first_primitive_index, group_traversal_bound);
         }
       }
       else
       {
         // Only the left child has to be inspected.
-        left_child().traversal_with_priority_and_group_traversal(primitives,query, traits, nb_primitives/2, first_primitive_index, group_size_bound);
+        left_child().traversal_with_priority_and_group_traversal(primitives, query, traits, nb_primitives/2, first_primitive_index, group_traversal_bound);
       }
     }
     else
@@ -307,7 +310,7 @@ AABB_node<Tr>::traversal_with_priority_and_group_traversal(const Primitive_vecto
       if(iright)
       {
         // Only the right child has to be inspected.
-        right_child().traversal_with_priority_and_group_traversal(primitives,query, traits, nb_primitives-nb_primitives/2, first_primitive_index+nb_primitives/2, group_size_bound);
+        right_child().traversal_with_priority_and_group_traversal(primitives, query, traits, nb_primitives-nb_primitives/2, first_primitive_index+nb_primitives/2, group_traversal_bound);
       }
     }
   }

@@ -235,11 +235,11 @@ namespace CGAL {
       return h_local_bounds;
     }
 
-    template <class PrimitiveConstIterator>
-    void traverse_group(const Query& query, PrimitiveConstIterator group_begin, PrimitiveConstIterator group_end)
-    {
-      for (PrimitiveConstIterator it=group_begin; it!=group_end; ++it)
+    template<class PrimitiveConstIterator>
+    void traverse_group(const Query& query, PrimitiveConstIterator group_begin, PrimitiveConstIterator group_end) {
+      for (PrimitiveConstIterator it = group_begin; it != group_end; ++it) {
         this->intersection(query, *it);
+      }
     }
 
   private:
@@ -287,13 +287,15 @@ namespace CGAL {
       const AABBTraits& traits, const TM2_tree& tree,
       const TriangleMesh& tm1, const TriangleMesh& tm2,
       const VPM1& vpm1, const VPM2& vpm2,
-      const FT error_bound) :
+      const FT error_bound,
+      const std::size_t group_traversal_bound) :
     m_traits(traits),
     m_tm1(tm1), m_tm2(tm2),
     m_vpm1(vpm1), m_vpm2(vpm2),
     m_tm2_tree(tree),
     m_face_to_triangle_map(&m_tm1, m_vpm1),
-    m_error_bound(error_bound) {
+    m_error_bound(error_bound),
+    m_group_traversal_bound(group_traversal_bound) {
 
       // Initialize the global bounds with 0, they will only grow.
       // If we leave zero here, then we are very slow even for big input error bounds!
@@ -332,7 +334,12 @@ namespace CGAL {
         infinity_value<FT>());
 
       const Triangle_3 triangle = get(m_face_to_triangle_map, fpair.first);
-      m_tm2_tree.traversal_with_priority(triangle, traversal_traits_tm2);
+
+      if (m_group_traversal_bound > 1) {
+        m_tm2_tree.traversal_with_priority_and_group_traversal(triangle, traversal_traits_tm2, m_group_traversal_bound); // with group traversal
+      } else {
+        m_tm2_tree.traversal_with_priority(triangle, traversal_traits_tm2); // without group traversal
+      }
 
       // Update global Hausdorff bounds according to the obtained local bounds.
       const auto local_bounds = traversal_traits_tm2.get_local_bounds();
@@ -404,11 +411,11 @@ namespace CGAL {
       return this->do_intersect_with_priority(query, node).first;
     }
 
-    template <class PrimitiveConstIterator>
-    void traverse_group(const Query& query, PrimitiveConstIterator group_begin, PrimitiveConstIterator group_end)
-    {
-      for (PrimitiveConstIterator it=group_begin; it!=group_end; ++it)
+    template<class PrimitiveConstIterator>
+    void traverse_group(const Query& query, PrimitiveConstIterator group_begin, PrimitiveConstIterator group_end) {
+      for (PrimitiveConstIterator it = group_begin; it != group_end; ++it) {
         this->intersection(query, *it);
+      }
     }
 
     // Return those triangles from TM1, which are candidates for including a
@@ -465,6 +472,7 @@ namespace CGAL {
 
     // Global Hausdorff bounds for the query triangle.
     const FT m_error_bound;
+    const std::size_t m_group_traversal_bound;
     Global_bounds h_global_bounds;
 
     // All candidate triangles.

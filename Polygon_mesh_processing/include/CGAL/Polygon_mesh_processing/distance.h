@@ -1366,6 +1366,7 @@ bounded_error_Hausdorff_impl(
   std::cout.precision(20);
   std::vector<Face_handle> tm1_only, tm2_only;
   std::vector< std::pair<Face_handle, Face_handle> > common;
+  const std::size_t group_traversal_bound = 1; // TODO: Should we put it in the NP?
 
   const auto faces1 = faces(tm1);
   const auto faces2 = faces(tm2);
@@ -1408,26 +1409,35 @@ bounded_error_Hausdorff_impl(
 
   // Build traversal traits for tm1_tree.
   TM1_hd_traits traversal_traits_tm1(
-    tm1_tree.traits(), tm2_tree, tm1, tm2, vpm1, vpm2, error_bound);
+    tm1_tree.traits(), tm2_tree, tm1, tm2, vpm1, vpm2, error_bound, group_traversal_bound);
 
   // We skip computing internal Kd tree because we do not compute distance queries.
   tm1_tree.do_not_accelerate_distance_queries();
 
-  // TODO: Initialize the distances on all the vertices first and store those.
   if (false) { // inexact check
     FT max_dist = -FT(1);
-    std::pair<Face_handle, Face_handle> fpair;
-    for (const auto& face1 : faces1) {
-      const FT dist = traversal_traits_tm1.get_maximum_distance(face1, fpair);
-      CGAL_assertion(fpair.first == face1);
-      max_dist = (CGAL::max)(max_dist, dist);
+
+    // super slow version with all distances
+    if (false) {
+      std::pair<Face_handle, Face_handle> stub;
+      for (const auto& face1 : faces1) {
+        const FT dist = traversal_traits_tm1.get_maximum_distance(face1, stub);
+        max_dist = (CGAL::max)(max_dist, dist);
+      }
+    }
+
+    // fast version with bboxes only
+    if (true) {
+      CGAL_assertion_msg(false, "TODO: ADD BBOX COMPARISON!");
     }
 
     if (max_dist <= error_bound) {
       timer.stop();
       // std::cout << "* culling rate: 100%" << std::endl;
       // std::cout << "* preprocessing time (sec.): " << timer.time() << std::endl;
+      std::pair<Face_handle, Face_handle> fpair;
       traversal_traits_tm1.get_maximum_distance(*(faces1.begin()), fpair);
+      CGAL_assertion(fpair.first == *(faces1.begin()));
       return std::make_pair(error_bound, fpair);
     }
   }
@@ -1439,8 +1449,11 @@ bounded_error_Hausdorff_impl(
   timer.reset();
   timer.start();
   const Point_3 stub(0, 0, 0); // dummy point given as query since it is not needed
-  tm1_tree.traversal_with_priority(stub, traversal_traits_tm1);
-  //tm1_tree.traversal_with_priority_and_group_traversal(stub, traversal_traits_tm1, 10); //TODO: experiment with group traversal
+  if (group_traversal_bound > 1) {
+    tm1_tree.traversal_with_priority_and_group_traversal(stub, traversal_traits_tm1, group_traversal_bound); // with group traversal
+  } else {
+    tm1_tree.traversal_with_priority(stub, traversal_traits_tm1);
+  }
   timer.stop();
   // std::cout << "* TM1 traversal (sec.): " << timer.time() << std::endl;
 
@@ -1449,7 +1462,7 @@ bounded_error_Hausdorff_impl(
   auto global_bounds = traversal_traits_tm1.get_global_bounds();
 
   // std::cout << "* number of all triangles for TM1: " << tm1_tree.size() << std::endl;
-  // std::cout << "* number of candidate triangles before: " << candidate_triangles.size() << std::endl;
+  std::cout << "* number of candidate triangles before: " << candidate_triangles.size() << std::endl;
 
   // std::cout << "* culling rate: " <<
   //   FT(100) - (FT(candidate_triangles.size()) / FT(tm1_tree.size()) * FT(100)) << "%" << std::endl;
@@ -1533,8 +1546,12 @@ bounded_error_Hausdorff_impl(
           infinity_value<FT>(),
           infinity_value<FT>(),
           infinity_value<FT>());
-        tm2_tree.traversal_with_priority(sub_triangles[i], traversal_traits_tm2);
-        //tm2_tree.traversal_with_priority_and_group_traversal(sub_triangles[i], traversal_traits_tm2, 10); //TODO: experiment with group traversal
+
+        if (group_traversal_bound > 1) {
+          tm2_tree.traversal_with_priority_and_group_traversal(sub_triangles[i], traversal_traits_tm2, group_traversal_bound); // with group traversal
+        } else {
+          tm2_tree.traversal_with_priority(sub_triangles[i], traversal_traits_tm2); // without group traversal
+        }
 
         // Update global lower Hausdorff bound according to the obtained local bounds.
         const auto local_bounds = traversal_traits_tm2.get_local_bounds();

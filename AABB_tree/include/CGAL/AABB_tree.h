@@ -543,7 +543,7 @@ public:
     }
 
     template <class Query, class Traversal_traits>
-    void traversal_with_priority_and_group_traversal(const Query& query, Traversal_traits& traits, double group_traversal_bound) const
+    void traversal_with_priority_and_group_traversal(const Query& query, Traversal_traits& traits, const std::size_t group_traversal_bound) const
     {
       switch(size())
       {
@@ -553,8 +553,7 @@ public:
         traits.intersection(query, singleton_data());
         break;
       default: // if(size() >= 2)
-        if ( traits.do_intersect(query, *root_node()) )
-          root_node()->template traversal_with_priority_and_group_traversal(m_primitives, query, traits, m_primitives.size(), 0, group_traversal_bound);
+        root_node()->template traversal_with_priority_and_group_traversal(m_primitives, query, traits, m_primitives.size(), 0, group_traversal_bound);
       }
     }
 
