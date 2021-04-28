@@ -31,6 +31,10 @@
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Real_timer.h>
 
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+#include <CGAL/boost/graph/generators.h>
+#include <CGAL/Surface_mesh.h>
+
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_reduce.h>
 #include <tbb/blocked_range.h>
@@ -1393,6 +1397,7 @@ bounded_error_Hausdorff_impl(
       const auto lface = *(faces1.begin());
       const auto uface = *(faces2.begin());
       CGAL_assertion(lface == uface);
+      std::cout << "* exact check succeeded, early return" << std::endl;
       return std::make_pair(0.0, std::make_pair(lface, uface));
     }
     CGAL_assertion(tm1_only.size() > 0);
@@ -1414,34 +1419,6 @@ bounded_error_Hausdorff_impl(
   // We skip computing internal Kd tree because we do not compute distance queries.
   tm1_tree.do_not_accelerate_distance_queries();
 
-  if (false) { // inexact check
-    FT max_dist = -FT(1);
-
-    // super slow version with all distances
-    if (false) {
-      std::pair<Face_handle, Face_handle> stub;
-      for (const auto& face1 : faces1) {
-        const FT dist = traversal_traits_tm1.get_maximum_distance(face1, stub);
-        max_dist = (CGAL::max)(max_dist, dist);
-      }
-    }
-
-    // fast version with bboxes only
-    if (true) {
-      CGAL_assertion_msg(false, "TODO: ADD BBOX COMPARISON!");
-    }
-
-    if (max_dist <= error_bound) {
-      timer.stop();
-      // std::cout << "* culling rate: 100%" << std::endl;
-      // std::cout << "* preprocessing time (sec.): " << timer.time() << std::endl;
-      std::pair<Face_handle, Face_handle> fpair;
-      traversal_traits_tm1.get_maximum_distance(*(faces1.begin()), fpair);
-      CGAL_assertion(fpair.first == *(faces1.begin()));
-      return std::make_pair(error_bound, fpair);
-    }
-  }
-
   timer.stop();
   // std::cout << "* preprocessing time (sec.): " << timer.time() << std::endl;
 
@@ -1462,7 +1439,7 @@ bounded_error_Hausdorff_impl(
   auto global_bounds = traversal_traits_tm1.get_global_bounds();
 
   // std::cout << "* number of all triangles for TM1: " << tm1_tree.size() << std::endl;
-  std::cout << "* number of candidate triangles before: " << candidate_triangles.size() << std::endl;
+  // std::cout << "* number of candidate triangles before: " << candidate_triangles.size() << std::endl;
 
   // std::cout << "* culling rate: " <<
   //   FT(100) - (FT(candidate_triangles.size()) / FT(tm1_tree.size()) * FT(100)) << "%" << std::endl;
@@ -1717,6 +1694,30 @@ double bounded_error_Hausdorff_naive_impl(
   return CGAL::sqrt(CGAL::to_double( squared_lower_bound ));
 }
 
+template<typename TriangleMesh>
+bool create_mesh_from_bbox(const CGAL::Bbox_3& bbox, TriangleMesh& tm) {
+
+  if (bbox.xmax() == bbox.xmin()) return false;
+  if (bbox.ymax() == bbox.ymin()) return false;
+  if (bbox.zmax() == bbox.zmin()) return false;
+
+  using Point_3 = typename TriangleMesh::Point;
+  const Point_3 v0(bbox.xmin(), bbox.ymin(), bbox.zmin());
+  const Point_3 v1(bbox.xmax(), bbox.ymin(), bbox.zmin());
+  const Point_3 v2(bbox.xmax(), bbox.ymax(), bbox.zmin());
+  const Point_3 v3(bbox.xmin(), bbox.ymax(), bbox.zmin());
+
+  const Point_3 v4(bbox.xmin(), bbox.ymax(), bbox.zmax());
+  const Point_3 v5(bbox.xmin(), bbox.ymin(), bbox.zmax());
+  const Point_3 v6(bbox.xmax(), bbox.ymin(), bbox.zmax());
+  const Point_3 v7(bbox.xmax(), bbox.ymax(), bbox.zmax());
+
+  CGAL::make_hexahedron(v0, v1, v2, v3, v4, v5, v6, v7, tm);
+  CGAL::Polygon_mesh_processing::triangulate_faces(tm);
+  CGAL_assertion(is_triangle_mesh(tm));
+  return true;
+}
+
 } // end of namespace internal
 
 /**
@@ -1794,6 +1795,31 @@ bounded_error_Hausdorff_distance(
 
   CGAL_precondition(error_bound >= 0.0);
   const FT error_threshold = static_cast<FT>(error_bound);
+
+  // TODO: we cannot use it because two meshes can have the same bboxes but different configurations.
+  // The version with precomputing all distances from tm1 to tm2 is very slow!
+  if (false) { // inexact check
+    const auto bbox1 = bbox(tm1);
+    const auto bbox2 = bbox(tm2);
+
+    using Point_3 = typename Traits::Point_3;
+    CGAL::Surface_mesh<Point_3> bbox_tm1, bbox_tm2; // TODO: Can we avoid SM here?
+    const bool success1 = internal::create_mesh_from_bbox(bbox1, bbox_tm1);
+    const bool success2 = internal::create_mesh_from_bbox(bbox2, bbox_tm2);
+
+    if (success1 && success2) {
+      const auto bbox_vpm1 = get_const_property_map(vertex_point, bbox_tm1);
+      const auto bbox_vpm2 = get_const_property_map(vertex_point, bbox_tm2);
+
+      const auto result = internal::bounded_error_Hausdorff_impl<Concurrency_tag, Traits>(
+        bbox_tm1, bbox_tm2, error_threshold, match_faces,
+        bbox_vpm1, bbox_vpm2, CGAL::parameters::all_default(), CGAL::parameters::all_default());
+      if (result.first <= error_bound) {
+        std::cout << "* inexact check succeeded, early return" << std::endl;
+        return result;
+      }
+    }
+  }
   return internal::bounded_error_Hausdorff_impl<Concurrency_tag, Traits>(
     tm1, tm2, error_threshold, match_faces, vpm1, vpm2, np1, np2);
 }

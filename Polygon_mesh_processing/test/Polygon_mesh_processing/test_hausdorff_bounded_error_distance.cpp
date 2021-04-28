@@ -406,7 +406,7 @@ void test_9(const FunctionWrapper& functor, const bool save = false) {
 template<typename FunctionWrapper>
 void test_synthetic_data(const FunctionWrapper& functor) {
 
-  std::cout << std::endl << "-- testing synthetic data:" << std::endl;
+  std::cout << std::endl << "-- test synthetic data:" << std::endl << std::endl;
   std::cout << "* name -> " << functor.name() << std::endl;
 
   test_0(functor); // 1 parallel
@@ -432,7 +432,7 @@ void test_one_versus_another(
   const std::string filepath1 = "data/tetrahedron.off";
   const std::string filepath2 = "data/tetrahedron-remeshed.off";
 
-  std::cout << std::endl << "-- testing one versus another (tetrahedron):" << std::endl;
+  std::cout << std::endl << "-- test one versus another (tetrahedron):" << std::endl << std::endl;
   std::cout << "* name 1 -> " << functor1.name() << std::endl;
   std::cout << "* name 2 -> " << functor2.name() << std::endl;
 
@@ -472,7 +472,7 @@ void test_real_meshes(
   const FunctionWrapper2& functor2) {
 
   std::cout.precision(20);
-  std::cout << std::endl << "-- testing real meshes:" << std::endl;
+  std::cout << std::endl << "-- test real meshes:" << std::endl << std::endl;
   std::cout << "* input path 1: " << filepath1 << std::endl;
   std::cout << "* input path 2: " << filepath2 << std::endl;
 
@@ -502,7 +502,7 @@ template<typename FunctionWrapper>
 void test_timings(const std::string filepath, const FunctionWrapper& functor) {
 
   std::cout.precision(20);
-  std::cout << std::endl << "-- testing timing: " << functor.name() << std::endl;
+  std::cout << std::endl << "-- test timings: " << functor.name() << std::endl << std::endl;
 
   Timer timer;
   Surface_mesh mesh1, mesh2;
@@ -535,7 +535,7 @@ void test_bunny(
   const std::string filepath1 = "data/bunny1.off"; // approx 16.3K
   const std::string filepath2 = "data/bunny2.off"; // approx 69.4K
 
-  std::cout << std::endl << "-- testing bunny:" << std::endl;
+  std::cout << std::endl << "-- test bunny:" << std::endl << std::endl;
   std::cout << "* name -> " << functor.name() << std::endl;
 
   Surface_mesh mesh1, mesh2;
@@ -665,7 +665,7 @@ void test_realizing_triangles(
   const double error_bound, const bool save = false) {
 
   std::cout.precision(20);
-  std::cout << std::endl << "- test realizing triangles:" << std::endl << std::endl;
+  std::cout << std::endl << "-- test realizing triangles:" << std::endl << std::endl;
 
   // Basic test.
   std::cout << " ---- basic test ---- " << std::endl;
@@ -701,10 +701,19 @@ void test_realizing_triangles(
   const std::string filepath2 = "data/tetrahedron-remeshed.off";
   get_meshes(filepath1, filepath2, mesh1, mesh2);
 
+  PMP::transform(Affine_transformation_3(
+    CGAL::Translation(), Vector_3(0, 0, error_bound / 2.0)), mesh2);
+
+  if (save) save_mesh(mesh1, "2mesh1");
+  if (save) save_mesh(mesh2, "2mesh2");
+
+  compute_realizing_triangles(mesh1, mesh2, error_bound, "2", save);
+
+  mesh2.clear();
+  get_mesh(filepath2, mesh2);
   PMP::transform(Affine_transformation_3(CGAL::Translation(),
     Vector_3(FT(0), FT(0), FT(1))), mesh2);
 
-  if (save) save_mesh(mesh1, "2mesh1");
   if (save) save_mesh(mesh2, "2mesh2");
   compute_realizing_triangles(mesh1, mesh2, error_bound, "2", save);
 }
@@ -755,6 +764,7 @@ int main(int argc, char** argv) {
   // --- Compare timings.
 
   filepath = (argc > 1 ? argv[1] : "data/blobby-remeshed.off");
+  // filepath = "/Users/monet/Documents/fork/pull-requests/hausdorff/data/bunny-dense.off";
   // test_timings(filepath, apprx_hd);
   // test_timings(filepath, naive_hd);
   // test_timings(filepath, bound_hd);
