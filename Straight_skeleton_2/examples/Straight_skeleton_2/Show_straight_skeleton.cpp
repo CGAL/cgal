@@ -6,7 +6,7 @@
 #include <fstream>
 #include <cassert>
 
-#include<boost/shared_ptr.hpp>
+#include<memory>
 
 #include<CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include<CGAL/Polygon_with_holes_2.h>
@@ -21,7 +21,7 @@ typedef CGAL::Polygon_2<K>            Polygon_2 ;
 typedef CGAL::Polygon_with_holes_2<K> Polygon_with_holes ;
 typedef CGAL::Straight_skeleton_2<K>  Straight_skeleton ;
 
-typedef boost::shared_ptr<Straight_skeleton> Straight_skeleton_ptr ;
+typedef std::shared_ptr<Straight_skeleton> Straight_skeleton_ptr ;
 
 int main( int argc, char* argv[] )
 {

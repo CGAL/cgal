@@ -1,6 +1,6 @@
 #include<vector>
 
-#include<boost/shared_ptr.hpp>
+#include<memory>
 
 #include<CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include<CGAL/Polygon_2.h>
@@ -12,8 +12,8 @@ typedef K::Point_2                   Point ;
 typedef CGAL::Polygon_2<K>           Polygon_2 ;
 typedef CGAL::Straight_skeleton_2<K> Ss ;
 
-typedef boost::shared_ptr<Polygon_2> PolygonPtr ;
-typedef boost::shared_ptr<Ss> SsPtr ;
+typedef std::shared_ptr<Polygon_2> PolygonPtr ;
+typedef std::shared_ptr<Ss> SsPtr ;
 
 typedef std::vector<PolygonPtr> PolygonPtrVector ;
 

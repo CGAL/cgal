@@ -460,7 +460,7 @@ private:
         sm_item = new Scene_surface_mesh_item;
 
         using Plane = CGAL::Shape_detection::RG::Plane<Kernel>;
-        boost::shared_ptr<Plane> rg_plane(new Plane(*points, points->point_map(), regions[index], plane));
+        std::shared_ptr<Plane> rg_plane(new Plane(*points, points->point_map(), regions[index], plane));
         build_alpha_shape(
           *(point_item->point_set()), rg_plane,
           sm_item, search_sphere_radius);
@@ -668,7 +668,7 @@ private:
     std::map<Kernel::Point_3, QColor> color_map;
 
     int index = 0;
-    for(boost::shared_ptr<typename Ransac::Shape> shape : ransac.shapes())
+    for(std::shared_ptr<typename Ransac::Shape> shape : ransac.shapes())
     {
       CGAL::Shape_detection::Cylinder<Traits> *cyl;
       cyl = dynamic_cast<CGAL::Shape_detection::Cylinder<Traits> *>(shape.get());
@@ -743,8 +743,8 @@ private:
         {
           ss << item->name().toStdString() << "_plane_";
 
-          boost::shared_ptr<CGAL::Shape_detection::Plane<Traits> > pshape
-            = boost::dynamic_pointer_cast<CGAL::Shape_detection::Plane<Traits> > (shape);
+          std::shared_ptr<CGAL::Shape_detection::Plane<Traits> > pshape
+            = std::dynamic_pointer_cast<CGAL::Shape_detection::Plane<Traits> > (shape);
 
           Kernel::Point_3 ref = CGAL::ORIGIN + pshape->plane_normal ();
 
@@ -913,7 +913,7 @@ private:
   }
 
     template<typename Plane>
-    void build_alpha_shape (Point_set& points, boost::shared_ptr<Plane> plane,
+    void build_alpha_shape (Point_set& points, std::shared_ptr<Plane> plane,
                           Scene_surface_mesh_item* sm_item, double epsilon);
 
 }; // end Polyhedron_demo_point_set_shape_detection_plugin
@@ -1011,7 +1011,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 
 template<typename Plane>
 void Polyhedron_demo_point_set_shape_detection_plugin::build_alpha_shape
-(Point_set& points,  boost::shared_ptr<Plane> plane, Scene_surface_mesh_item* sm_item, double epsilon)
+(Point_set& points,  std::shared_ptr<Plane> plane, Scene_surface_mesh_item* sm_item, double epsilon)
 {
   typedef Kernel::Point_2  Point_2;
   typedef CGAL::Alpha_shape_vertex_base_2<Kernel> Vb;

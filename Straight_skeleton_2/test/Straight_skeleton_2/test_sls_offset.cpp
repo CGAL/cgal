@@ -36,7 +36,7 @@ void Straight_skeleton_traits_external_trace(std::string m)
 #include <CGAL/Polygon_2.h>
 #include <CGAL/draw_polygon_2.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <cassert>
 #include <iostream>
@@ -59,10 +59,10 @@ void test_API()
   Polygon_2 p;
   Polygon_with_holes_2 pwh;
 
-  std::vector< boost::shared_ptr<Polygon_2> > res;
-  std::vector< boost::shared_ptr<Polygon_2_EPICK> > res_EPICK;
-  std::vector< boost::shared_ptr<Polygon_with_holes_2> > res_w;
-  std::vector< boost::shared_ptr<Polygon_with_holes_2_EPICK> > res_w_EPICK;
+  std::vector< std::shared_ptr<Polygon_2> > res;
+  std::vector< std::shared_ptr<Polygon_2_EPICK> > res_EPICK;
+  std::vector< std::shared_ptr<Polygon_with_holes_2> > res_w;
+  std::vector< std::shared_ptr<Polygon_with_holes_2_EPICK> > res_w_EPICK;
 
   // First kernel is the offset construction (and thus output kernel), second kernel is the skeleton construction
 
@@ -134,7 +134,7 @@ void test_API()
 }
 
 template <typename K, typename StraightSkeleton>
-bool is_valid(const boost::shared_ptr<StraightSkeleton>& ss)
+bool is_valid(const std::shared_ptr<StraightSkeleton>& ss)
 {
   typedef typename StraightSkeleton::Traits::Point_2 Point;
 
@@ -175,7 +175,7 @@ void test_offset_square()
 
   typedef typename K::Point_2                                                  Point;
   typedef CGAL::Polygon_2<K>                                                   Polygon_2;
-  typedef boost::shared_ptr<Polygon_2>                                         Polygon_ptr;
+  typedef std::shared_ptr<Polygon_2>                                         Polygon_ptr;
   typedef std::vector<Polygon_ptr>                                             Polygon_ptr_container;
 
   typedef CGAL::Straight_skeleton_2<K>                                         Ss;
@@ -192,7 +192,7 @@ void test_offset_square()
   Skeleton_builder ssb;
   ssb.enter_contour(square.begin(), square.end());
 
-  boost::shared_ptr<Ss> ss = ssb.construct_skeleton();
+  std::shared_ptr<Ss> ss = ssb.construct_skeleton();
   assert(is_valid<K>(ss));
 
   Polygon_ptr_container offset_polys =
@@ -215,7 +215,7 @@ void test_offset_four_square_holes()
 
   typedef CGAL::Polygon_2<K>                                         Polygon_2;
   typedef CGAL::Polygon_with_holes_2<K>                              Polygon_with_holes_2;
-  typedef boost::shared_ptr<Polygon_with_holes_2>                    Polygon_with_holes_2_ptr;
+  typedef std::shared_ptr<Polygon_with_holes_2>                    Polygon_with_holes_2_ptr;
   typedef std::vector<Polygon_with_holes_2_ptr>                      Polygon_with_holes_2_ptr_container;
 
   Polygon_2 outer, hole1, hole2, hole3, hole4;
@@ -274,7 +274,7 @@ void test_offset_L()
 
   typedef typename K::Point_2                                                  Point;
   typedef CGAL::Polygon_2<K>                                                   Polygon_2;
-  typedef boost::shared_ptr<Polygon_2>                                         Polygon_ptr;
+  typedef std::shared_ptr<Polygon_2>                                         Polygon_ptr;
   typedef std::vector<Polygon_ptr>                                             Polygon_ptr_container;
 
   typedef CGAL::Straight_skeleton_2<K>                                         Ss;
@@ -295,7 +295,7 @@ void test_offset_L()
   Skeleton_builder ssb;
   ssb.enter_contour(L.begin(), L.end());
 
-  boost::shared_ptr<Ss> ss = ssb.construct_skeleton();
+  std::shared_ptr<Ss> ss = ssb.construct_skeleton();
   assert(is_valid<K>(ss));
 
   Polygon_ptr_container offset_polys =
@@ -319,7 +319,7 @@ void test_offset_polygon_with_hole()
 
   typedef CGAL::Polygon_2<K>                                         Polygon_2;
   typedef CGAL::Polygon_with_holes_2<K>                              Polygon_with_holes_2;
-  typedef boost::shared_ptr<Polygon_with_holes_2>                    Polygon_with_holes_2_ptr;
+  typedef std::shared_ptr<Polygon_with_holes_2>                    Polygon_with_holes_2_ptr;
   typedef std::vector<Polygon_with_holes_2_ptr>                      Polygon_with_holes_2_ptr_container;
 
   // Square with a non-centered square hole
@@ -408,7 +408,7 @@ void test_offset_pinched()
   typedef typename K::FT                                                       FT;
   typedef typename K::Point_2                                                  Point;
   typedef CGAL::Polygon_2<K>                                                   Polygon_2;
-  typedef boost::shared_ptr<Polygon_2>                                         Polygon_ptr;
+  typedef std::shared_ptr<Polygon_2>                                         Polygon_ptr;
   typedef std::vector<Polygon_ptr>                                             Polygon_ptrs;
 
   typedef CGAL::Straight_skeleton_2<K>                                         Ss;
@@ -446,7 +446,7 @@ void test_offset_pinched()
   Skeleton_builder ssb;
   ssb.enter_contour(input.begin(), input.end());
 
-  boost::shared_ptr<Ss> ss = ssb.construct_skeleton();
+  std::shared_ptr<Ss> ss = ssb.construct_skeleton();
   assert(is_valid<K>(ss));
 
   // The two splitting fronts meet in the middle, and at that time,
@@ -489,7 +489,7 @@ void test_offset_multiple_CCs()
   typedef typename K::FT                                                       FT;
   typedef typename K::Point_2                                                  Point_2;
   typedef CGAL::Polygon_2<K>                                                   Contour;
-  typedef boost::shared_ptr<Contour>                                           ContourPtr;
+  typedef std::shared_ptr<Contour>                                           ContourPtr;
   typedef std::vector<ContourPtr>                                              Contour_sequence;
 
   typedef CGAL::Straight_skeleton_2<K>                                         Ss;
@@ -541,7 +541,7 @@ void test_offset_multiple_CCs()
   ssb.enter_contour(frame, frame+4);
   ssb.enter_contour(input.rbegin(), input.rend());
 
-  boost::shared_ptr<Ss> ss = ssb.construct_skeleton();
+  std::shared_ptr<Ss> ss = ssb.construct_skeleton();
   assert(is_valid<K>(ss));
 
   Contour_sequence offset_contours;
@@ -563,7 +563,7 @@ void test_offset_non_manifold()
   typedef typename K::Point_2                                                  Point;
   typedef CGAL::Polygon_2<K>                                                   Polygon_2;
   typedef CGAL::Polygon_with_holes_2<K>                                        Polygon_with_holes_2;
-  typedef boost::shared_ptr<Polygon_with_holes_2>                              Polygon_with_holes_ptr;
+  typedef std::shared_ptr<Polygon_with_holes_2>                              Polygon_with_holes_ptr;
   typedef std::vector<Polygon_with_holes_ptr>                                  Polygon_with_holes_ptrs;
 
   typedef CGAL::Straight_skeleton_2<K>                                         Ss;
@@ -587,7 +587,7 @@ void test_offset_non_manifold()
   ssb.enter_contour(outer.begin(), outer.end());
   ssb.enter_contour(hole.begin(), hole.end());
 
-  boost::shared_ptr<Ss> ss = ssb.construct_skeleton();
+  std::shared_ptr<Ss> ss = ssb.construct_skeleton();
   assert(is_valid<K>(ss));
 
   // The two splitting fronts meet in the middle, and at that time,
@@ -646,7 +646,7 @@ void test_offset_non_manifold_2()
   typedef typename K::Point_2                                                  Point;
   typedef CGAL::Polygon_2<K>                                                   Polygon_2;
   typedef CGAL::Polygon_with_holes_2<K>                                        Polygon_with_holes_2;
-  typedef boost::shared_ptr<Polygon_with_holes_2>                              Polygon_with_holes_ptr;
+  typedef std::shared_ptr<Polygon_with_holes_2>                              Polygon_with_holes_ptr;
   typedef std::vector<Polygon_with_holes_ptr>                                  Polygon_with_holes_ptrs;
 
   typedef CGAL::Straight_skeleton_2<K>                                         Ss;
@@ -678,7 +678,7 @@ void test_offset_non_manifold_2()
   ssb.enter_contour(outer.begin(), outer.end());
   ssb.enter_contour(hole.begin(), hole.end());
 
-  boost::shared_ptr<Ss> ss = ssb.construct_skeleton();
+  std::shared_ptr<Ss> ss = ssb.construct_skeleton();
   assert(is_valid<K>(ss));
 
   // Similar to the previous function, a split event happens and at that particular time,
@@ -732,7 +732,7 @@ void test_offset_polygon_exterior()
 
   typedef CGAL::Polygon_2<K>                                         Polygon_2;
   typedef CGAL::Polygon_with_holes_2<K>                              Polygon_with_holes_2;
-  typedef boost::shared_ptr<Polygon_with_holes_2>                    Polygon_with_holes_2_ptr;
+  typedef std::shared_ptr<Polygon_with_holes_2>                    Polygon_with_holes_2_ptr;
   typedef std::vector<Polygon_with_holes_2_ptr>                      Polygon_with_holes_2_ptr_container;
 
   Polygon_2 poly;
@@ -819,7 +819,7 @@ void test_offset(const char* filename)
 
   typedef CGAL::Polygon_2<K>                                         Polygon_2;
   typedef CGAL::Polygon_with_holes_2<K>                              Polygon_with_holes_2;
-  typedef boost::shared_ptr<Polygon_with_holes_2>                    Polygon_with_holes_2_ptr;
+  typedef std::shared_ptr<Polygon_with_holes_2>                    Polygon_with_holes_2_ptr;
   typedef std::vector<Polygon_with_holes_2_ptr>                      Polygon_with_holes_2_ptr_container;
 
   typedef CGAL::Straight_skeleton_2<K>                               Ss;
@@ -884,7 +884,7 @@ void test_offset(const char* filename)
     ssb.enter_contour(polys[i+1].begin(), polys[i+1].end());
   }
 
-  boost::shared_ptr<Ss> ss = ssb.construct_skeleton();
+  std::shared_ptr<Ss> ss = ssb.construct_skeleton();
   assert(is_valid<K>(ss));
 
   std::set<FT> offset_times;

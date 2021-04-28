@@ -21,7 +21,7 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <type_traits>
 #include <vector>
@@ -38,7 +38,7 @@ namespace CGAL {
 // overload where PolygonWithHoles actually is a type of Polygon that supports holes
 template<class FT, class PolygonWithHoles, class OfK, class SsK,
          class OutPolygon = typename CGAL_SS_i::Default_return_polygon_type<PolygonWithHoles, OfK>::type> // Hole-less polygon type
-std::vector<boost::shared_ptr<OutPolygon> >
+std::vector<std::shared_ptr<OutPolygon> >
 inline
 create_interior_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                const PolygonWithHoles& aPoly,
@@ -57,7 +57,7 @@ create_interior_skeleton_and_offset_polygons_2(const FT& aOffset,
 // Polygon might be a Polygon with holes or not, but it returns a Polygon with holes
 template<class FT, class Polygon, class OfK, class SsK,
          class OutPolygonWithHoles = typename CGAL_SS_i::Default_return_polygon_with_holes_type<Polygon, OfK>::type>
-std::vector<boost::shared_ptr<OutPolygonWithHoles> >
+std::vector<std::shared_ptr<OutPolygonWithHoles> >
 inline
 create_interior_skeleton_and_offset_polygons_with_holes_2(const FT& aOffset,
                                                           const Polygon& aPoly,
@@ -70,7 +70,7 @@ create_interior_skeleton_and_offset_polygons_with_holes_2(const FT& aOffset,
 
 template<class FT, class Polygon, class OfK,
          class OutPolygonWithHoles = typename CGAL_SS_i::Default_return_polygon_with_holes_type<Polygon, OfK>::type>
-std::vector<boost::shared_ptr<OutPolygonWithHoles> >
+std::vector<std::shared_ptr<OutPolygonWithHoles> >
 inline
 create_interior_skeleton_and_offset_polygons_with_holes_2(const FT& aOffset,
                                                           const Polygon& aPoly,
@@ -83,7 +83,7 @@ create_interior_skeleton_and_offset_polygons_with_holes_2(const FT& aOffset,
 template<class FT, class Polygon,
          class OutPolygonWithHoles = typename CGAL_SS_i::Default_return_polygon_with_holes_type<
                                        Polygon, Exact_predicates_inexact_constructions_kernel>::type>
-std::vector<boost::shared_ptr<OutPolygonWithHoles> >
+std::vector<std::shared_ptr<OutPolygonWithHoles> >
 inline
 create_interior_skeleton_and_offset_polygons_with_holes_2(const FT& aOffset,
                                                           const Polygon& aPoly)
@@ -102,7 +102,7 @@ create_interior_skeleton_and_offset_polygons_with_holes_2(const FT& aOffset,
 // overload where PolygonWithHoles actually is a type of Polygon that supports holes
 template<class FT, class PolygonWithHoles, class OfK, class SsK,
          class OutPolygon = typename CGAL_SS_i::Default_return_polygon_type<PolygonWithHoles, OfK>::type>
-std::vector<boost::shared_ptr<OutPolygon> >
+std::vector<std::shared_ptr<OutPolygon> >
 inline
 create_exterior_skeleton_and_offset_polygons_2(const FT& aOffset,
                                                const PolygonWithHoles& aPoly,
@@ -119,7 +119,7 @@ create_exterior_skeleton_and_offset_polygons_2(const FT& aOffset,
 // Polygon might be a Polygon with holes or not, but it returns a Polygon with holes
 template<class FT, class Polygon, class OfK, class SsK,
          class OutPolygonWithHoles = typename CGAL_SS_i::Default_return_polygon_with_holes_type<Polygon, OfK>::type>
-std::vector<boost::shared_ptr<OutPolygonWithHoles> >
+std::vector<std::shared_ptr<OutPolygonWithHoles> >
 inline
 create_exterior_skeleton_and_offset_polygons_with_holes_2(const FT& aOffset,
                                                           const Polygon& aPoly,
@@ -132,7 +132,7 @@ create_exterior_skeleton_and_offset_polygons_with_holes_2(const FT& aOffset,
 
 template<class FT, class Polygon, class OfK,
          class OutPolygonWithHoles = typename CGAL_SS_i::Default_return_polygon_with_holes_type<Polygon, OfK>::type>
-std::vector<boost::shared_ptr<OutPolygonWithHoles> >
+std::vector<std::shared_ptr<OutPolygonWithHoles> >
 inline
 create_exterior_skeleton_and_offset_polygons_with_holes_2(const FT& aOffset,
                                                           const Polygon& aPoly,
@@ -145,7 +145,7 @@ create_exterior_skeleton_and_offset_polygons_with_holes_2(const FT& aOffset,
 template<class FT, class Polygon,
          class OutPolygonWithHoles = typename CGAL_SS_i::Default_return_polygon_with_holes_type<
                                     Polygon, Exact_predicates_inexact_constructions_kernel>::type>
-std::vector<boost::shared_ptr<OutPolygonWithHoles> >
+std::vector<std::shared_ptr<OutPolygonWithHoles> >
 inline
 create_exterior_skeleton_and_offset_polygons_with_holes_2(const FT& aOffset,
                                                           const Polygon& aPoly)

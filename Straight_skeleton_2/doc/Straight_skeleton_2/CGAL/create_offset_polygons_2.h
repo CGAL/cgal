@@ -25,7 +25,7 @@ of a polygon with holes, the offset polygons will be generated in its exterior.
 \sa `Polygon_offset_builder_2<Ss,Traits,Container>`
 */
 template<class OfKPolygon, class FT, class StraightSkeleton, class OfK>
-std::vector< boost::shared_ptr<OfKPolygon> >
+std::vector< std::shared_ptr<OfKPolygon> >
 create_offset_polygons_2 ( FT offset,
                            const StraightSkeleton& s,
                            OfK k = Exact_predicates_inexact_constructions_kernel ) ;
@@ -63,7 +63,7 @@ polygons to be constructed.
 \sa `Polygon_offset_builder_2<Ss,Traits,Container>`
 */
 template<class OfKPolygon, class FT, class InKPolygon, class OfK, class SsK>
-std::vector< boost::shared_ptr<OfKPolygon> >
+std::vector< std::shared_ptr<OfKPolygon> >
 create_exterior_skeleton_and_offset_polygons_2( FT offset,
                                                 const InKPolygon& poly,
                                                 OfK ofk = Exact_predicates_inexact_constructions_kernel,
@@ -100,7 +100,7 @@ and `create_offset_polygons_2()` instead.
 \sa `Polygon_offset_builder_2<Ss,Traits,Container>`
 */
 template<class OfKPolygon, class FT, class InKPolygon, class HoleIterator, class OfK, class SsK>
-std::vector< boost::shared_ptr<OfKPolygon> >
+std::vector< std::shared_ptr<OfKPolygon> >
 create_interior_skeleton_and_offset_polygons_2 ( FT offset,
                                                  const InKPolygon& outer_boundary,
                                                  HoleIterator holes_begin,
@@ -135,7 +135,7 @@ and `create_offset_polygons_2()` instead.
 \sa `Polygon_offset_builder_2<Ss,Traits,Container>`
 */
 template<class OfKPolygon, class FT, class InKPolygon, class OfK, class SsK>
-std::vector< boost::shared_ptr<OfKPolygon> >
+std::vector< std::shared_ptr<OfKPolygon> >
 create_interior_skeleton_and_offset_polygons_2 ( FT offset,
                                                  const InKPolygon& poly,
                                                  OfK ofk = CGAL::Exact_predicates_inexact_constructions_kernel,

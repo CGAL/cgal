@@ -29,7 +29,7 @@ struct Compute_average_spacing_functor
 {
   Point_set* points;
   const int nb_neighbors;
-  boost::shared_ptr<double> result;
+  std::shared_ptr<double> result;
 
   Compute_average_spacing_functor (Point_set* points, const int nb_neighbors)
     : points (points), nb_neighbors (nb_neighbors), result (new double(0)) { }
@@ -49,7 +49,7 @@ struct Grid_simplify_functor
 {
   Point_set* points;
   double grid_size;
-  boost::shared_ptr<Point_set::iterator> result;
+  std::shared_ptr<Point_set::iterator> result;
 
   Grid_simplify_functor (Point_set* points, double grid_size)
     : points (points), grid_size (grid_size), result (new Point_set::iterator) { }
@@ -69,7 +69,7 @@ struct Hierarchy_simplify_functor
   Point_set* points;
   unsigned int max_cluster_size;
   double max_surface_variation;
-  boost::shared_ptr<Point_set::iterator> result;
+  std::shared_ptr<Point_set::iterator> result;
 
   Hierarchy_simplify_functor (Point_set* points,
                               double max_cluster_size,

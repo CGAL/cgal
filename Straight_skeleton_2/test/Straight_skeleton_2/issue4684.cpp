@@ -4,7 +4,7 @@
 #include<CGAL/create_offset_polygons_2.h>
 #include<CGAL/draw_straight_skeleton_2.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <iostream>
 #include <vector>
@@ -13,7 +13,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel     K;
 typedef K::Point_2                                              Point;
 
 typedef CGAL::Polygon_2<K>                                      Polygon_2;
-typedef boost::shared_ptr<Polygon_2>                            PolygonPtr;
+typedef std::shared_ptr<Polygon_2>                            PolygonPtr;
 
 void low_precision_run()
 {

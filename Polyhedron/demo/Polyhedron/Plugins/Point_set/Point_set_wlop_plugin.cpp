@@ -27,7 +27,7 @@ struct Compute_average_spacing_functor
 {
   Point_set* points;
   const int nb_neighbors;
-  boost::shared_ptr<double> result;
+  std::shared_ptr<double> result;
 
   Compute_average_spacing_functor (Point_set* points, const int nb_neighbors)
     : points (points), nb_neighbors (nb_neighbors), result (new double(0)) { }

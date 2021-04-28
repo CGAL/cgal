@@ -45,8 +45,7 @@
 #include <boost/serialization/vector.hpp>
 #endif
 #include <boost/scoped_ptr.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
+#include <memory>
 #include <boost/unordered_set.hpp>
 #include <iostream>
 #include <cstdio>

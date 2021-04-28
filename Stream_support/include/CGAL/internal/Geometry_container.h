@@ -17,7 +17,7 @@
 #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <boost/geometry/io/wkt/write.hpp>
 #include <boost/geometry/io/wkt/read.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 struct Dummy_deleter{
   template<class T>
@@ -46,7 +46,7 @@ struct Geometry_container{
   typedef typename Range::const_reverse_iterator const_reverse_iterator;
   typedef typename Range::size_type size_type;
   typedef typename Range::value_type value_type;
-  boost::shared_ptr<Range>  range;
+  std::shared_ptr<Range>  range;
   bool must_delete;
   //
   // Default constructor.

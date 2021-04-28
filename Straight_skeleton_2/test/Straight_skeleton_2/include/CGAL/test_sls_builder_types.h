@@ -20,7 +20,7 @@
 #include <CGAL/Polygon_offset_builder_2.h>
 #include <CGAL/HalfedgeDS_const_decorator.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <vector>
 
 //typedef CGAL::Simple_cartesian<double> K ;
@@ -30,10 +30,10 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2                    Point;
 typedef CGAL::Aff_transformation_2<K> Transformation;
 typedef std::vector<Point>            Polygon_2;
-typedef boost::shared_ptr<Polygon_2>  PolygonPtr;
+typedef std::shared_ptr<Polygon_2>  PolygonPtr;
 typedef CGAL::Segment_2<K>            Segment;
 typedef std::vector<PolygonPtr>       Region ;
-typedef boost::shared_ptr<Region>     RegionPtr ;
+typedef std::shared_ptr<Region>     RegionPtr ;
 typedef std::vector<RegionPtr>        Regions ;
 typedef std::vector<double>           Doubles ;
 
@@ -50,7 +50,7 @@ typedef Sls::Vertex_const_handle   Vertex_const_handle ;
 
 typedef CGAL::HalfedgeDS_const_decorator<Sls> Sls_const_decorator ;
 
-typedef boost::shared_ptr<Sls> SlsPtr ;
+typedef std::shared_ptr<Sls> SlsPtr ;
 
 #endif
 

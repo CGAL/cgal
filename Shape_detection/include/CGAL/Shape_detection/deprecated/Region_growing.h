@@ -34,8 +34,10 @@
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
 // Boost includes.
-#include <boost/make_shared.hpp>
 #include <boost/iterator/filter_iterator.hpp>
+
+
+#include <memory>
 
 // Deprecated -->
 #define CGAL_DEPRECATED_HEADER "<CGAL/Shape_detection/deprecated/Region_growing.h>"
@@ -98,39 +100,39 @@ namespace Shape_detection {
   #ifdef DOXYGEN_RUNNING
 
     typedef unspecified_type Shape_range;
-    ///< An `Iterator_range` with a bidirectional constant iterator type with value type `boost::shared_ptr<Shape>`.
+    ///< An `Iterator_range` with a bidirectional constant iterator type with value type `std::shared_ptr<Shape>`.
 
     typedef unspecified_type Plane_range;
-    ///< An `Iterator_range` with a bidirectional constant iterator type with value type `boost::shared_ptr<Plane_shape>`.
+    ///< An `Iterator_range` with a bidirectional constant iterator type with value type `std::shared_ptr<Plane_shape>`.
 
   #else
 
     struct Shape_range : public Iterator_range<
-      typename std::vector<boost::shared_ptr<Shape> >::const_iterator> {
+      typename std::vector<std::shared_ptr<Shape> >::const_iterator> {
       typedef Iterator_range<
-        typename std::vector<boost::shared_ptr<Shape> >::const_iterator> Base;
+        typename std::vector<std::shared_ptr<Shape> >::const_iterator> Base;
 
-      Shape_range(boost::shared_ptr<std::vector<boost::shared_ptr<Shape> > >
+      Shape_range(std::shared_ptr<std::vector<std::shared_ptr<Shape> > >
       extracted_shapes) :
       Base(make_range(extracted_shapes->begin(),
       extracted_shapes->end())), m_extracted_shapes(extracted_shapes) { }
 
     private:
-      boost::shared_ptr<std::vector<boost::shared_ptr<Shape> > >
+      std::shared_ptr<std::vector<std::shared_ptr<Shape> > >
       m_extracted_shapes; // keeps a reference to the shape vector
     };
 
     struct Plane_range : public Iterator_range<
-      typename std::vector<boost::shared_ptr<Plane_shape> >::const_iterator> {
+      typename std::vector<std::shared_ptr<Plane_shape> >::const_iterator> {
       typedef Iterator_range<
-        typename std::vector<boost::shared_ptr<Plane_shape> >::const_iterator> Base;
+        typename std::vector<std::shared_ptr<Plane_shape> >::const_iterator> Base;
 
-      Plane_range(boost::shared_ptr<std::vector<boost::shared_ptr<Plane_shape> > >
+      Plane_range(std::shared_ptr<std::vector<std::shared_ptr<Plane_shape> > >
         extracted_shapes) : Base(make_range(extracted_shapes->begin(),
         extracted_shapes->end())), m_extracted_shapes(extracted_shapes) { }
 
     private:
-      boost::shared_ptr<std::vector<boost::shared_ptr<Plane_shape> > >
+      std::shared_ptr<std::vector<std::shared_ptr<Plane_shape> > >
         m_extracted_shapes; // keeps a reference to the shape vector
     };
 
@@ -233,8 +235,8 @@ namespace Shape_detection {
       My_point_map m_index_map;
       Tree& m_tree;
       FT m_cluster_epsilon;
-      mutable boost::shared_ptr<std::vector<std::size_t> > nb_points;
-      mutable boost::shared_ptr<std::vector<FT> > score;
+      mutable std::shared_ptr<std::vector<std::size_t> > nb_points;
+      mutable std::shared_ptr<std::vector<FT> > score;
 
     public:
       Sort_by_planarity (Input_iterator first,
@@ -302,7 +304,7 @@ namespace Shape_detection {
     // Give the index of the subset of point i.
     std::vector<int> m_index_subsets;
 
-    boost::shared_ptr<std::vector<boost::shared_ptr<Shape> > > m_extracted_shapes;
+    std::shared_ptr<std::vector<std::shared_ptr<Shape> > > m_extracted_shapes;
 
     std::vector<Shape *(*)()> m_shape_factories;
 
@@ -390,7 +392,7 @@ namespace Shape_detection {
         clear();
 
         m_extracted_shapes =
-          boost::make_shared<std::vector<boost::shared_ptr<Shape> > >();
+          std::make_shared<std::vector<std::shared_ptr<Shape> > >();
 
         m_num_available_points = m_num_total_points = std::distance(
           m_input_iterator_first, m_input_iterator_beyond);
@@ -466,7 +468,7 @@ namespace Shape_detection {
       std::vector<int>().swap(m_shape_index);
 
       m_extracted_shapes =
-        boost::make_shared<std::vector<boost::shared_ptr<Shape> > >();
+        std::make_shared<std::vector<std::shared_ptr<Shape> > >();
 
       m_num_available_points = m_num_total_points;
     }
@@ -506,7 +508,7 @@ namespace Shape_detection {
 
       // Reset data structures possibly used by former search.
       m_extracted_shapes =
-        boost::make_shared<std::vector<boost::shared_ptr<Shape> > >();
+        std::make_shared<std::vector<std::shared_ptr<Shape> > >();
       m_num_available_points = m_num_total_points;
 
       m_options = options;
@@ -692,7 +694,7 @@ namespace Shape_detection {
           Plane_shape* ps = dynamic_cast<Plane_shape*>(p);
           CGAL_assume (ps != nullptr);
           ps->update (optimal_plane);
-          m_extracted_shapes->push_back (boost::shared_ptr<Shape>(p));
+          m_extracted_shapes->push_back (std::shared_ptr<Shape>(p));
         }
         else
         {
@@ -712,7 +714,7 @@ namespace Shape_detection {
     /// @{
     /*!
       Returns an `Iterator_range` with a bidirectional iterator with value type
-      `boost::shared_ptr<Shape>` over the detected shapes in the order of detection.
+      `std::shared_ptr<Shape>` over the detected shapes in the order of detection.
 
       \note So far, region growing algorithm only supports plane
       detection, so this method is equivalent to `planes()` except
@@ -724,20 +726,20 @@ namespace Shape_detection {
 
     /*!
       Returns an `Iterator_range` with a bidirectional iterator with
-      value type `boost::shared_ptr<Plane_shape>` over only the
+      value type `std::shared_ptr<Plane_shape>` over only the
       detected planes in the order of detection.
     */
     Plane_range planes() const {
-      boost::shared_ptr<std::vector<boost::shared_ptr<Plane_shape> > > planes
-        = boost::make_shared<std::vector<boost::shared_ptr<Plane_shape> > >();
+      std::shared_ptr<std::vector<std::shared_ptr<Plane_shape> > > planes
+        = std::make_shared<std::vector<std::shared_ptr<Plane_shape> > >();
 
       for (std::size_t i = 0; i < m_extracted_shapes->size(); ++ i)
       {
-        boost::shared_ptr<Plane_shape> pshape
-          = boost::dynamic_pointer_cast<Plane_shape>((*m_extracted_shapes)[i]);
+        std::shared_ptr<Plane_shape> pshape
+          = std::dynamic_pointer_cast<Plane_shape>((*m_extracted_shapes)[i]);
 
         // Ignore all shapes other than plane.
-        if (pshape != boost::shared_ptr<Plane_shape>())
+        if (pshape != std::shared_ptr<Plane_shape>())
           planes->push_back (pshape);
       }
       return Plane_range(planes);

@@ -75,7 +75,7 @@ bool test_scene(int argc, char** argv) {
 
   // Iterate through all shapes and access each point.
   while (it != shapes.end()) {
-    boost::shared_ptr<typename Efficient_ransac::Shape> shape = *it;
+    std::shared_ptr<typename Efficient_ransac::Shape> shape = *it;
 
     // Sum distances of points to detected shapes.
     FT sum_distances = 0;
