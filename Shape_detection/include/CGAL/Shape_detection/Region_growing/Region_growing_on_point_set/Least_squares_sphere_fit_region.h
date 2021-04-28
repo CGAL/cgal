@@ -21,9 +21,9 @@
 #include <CGAL/assertions.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Cartesian_converter.h>
-#include <CGAL/Eigen_diagonalize_traits.h>
 
 #include <CGAL/Shape_detection/Region_growing/internal/utils.h>
+#include <CGAL/Shape_detection/Region_growing/internal/fitting.h>
 
 namespace CGAL {
 namespace Shape_detection {
@@ -287,74 +287,12 @@ public:
           return get (m_point_map, *(m_input_range.begin() + idx));
         };
 
-    // Use bbox to compute diagonalization with smaller coordinates to
-    // avoid loss of precision when inverting large coordinates
-    CGAL::Bbox_3 bbox = CGAL::bbox_3
-      (boost::make_transform_iterator
-       (region.begin(), unary_function),
-       boost::make_transform_iterator
-       (region.end(), unary_function));
-
-    using Diagonalize_traits = Eigen_diagonalize_traits<FT, 5>;
-    using Covariance_matrix = typename Diagonalize_traits::Covariance_matrix;
-    using Vector = typename Diagonalize_traits::Vector;
-    using Matrix = typename Diagonalize_traits::Matrix;
-
-    // Sphere least squares fitting
-    // (see Least_square_circle_fit_region for details about computation)
-    Covariance_matrix A
-      = { FT(0), FT(0), FT(0), FT(0), FT(0),
-          FT(0), FT(0), FT(0), FT(0), FT(0),
-          FT(0), FT(0), FT(0), FT(0), FT(0) };
-
-    A[0] = region.size();
-    for (const std::size_t& idx : region)
-    {
-      const auto& key = *(m_input_range.begin() + idx);
-      const Point_3& p = get(m_point_map, key);
-      FT x = p.x() - bbox.xmin();
-      FT y = p.y() - bbox.ymin();
-      FT z = p.z() - bbox.zmin();
-      FT r = x*x + y*y + z*z;
-      A[1] += x;
-      A[2] += y;
-      A[3] += z;
-      A[4] += r;
-      A[5] += x * x;
-      A[6] += x * y;
-      A[7] += x * z;
-      A[8] += x * r;
-      A[9] += y * y;
-      A[10] += y * z;
-      A[11] += y * r;
-      A[12] += z * z;
-      A[13] += z * r;
-      A[14] += r * r;
-    }
-
-    Vector eigenvalues = { FT(0), FT(0), FT(0), FT(0), FT(0) };
-    Matrix eigenvectors = { FT(0), FT(0), FT(0), FT(0), FT(0),
-                            FT(0), FT(0), FT(0), FT(0), FT(0),
-                            FT(0), FT(0), FT(0), FT(0), FT(0),
-                            FT(0), FT(0), FT(0), FT(0), FT(0),
-                            FT(0), FT(0), FT(0), FT(0), FT(0) };
-
-    Diagonalize_traits::diagonalize_selfadjoint_covariance_matrix
-      (A, eigenvalues, eigenvectors);
-
-    m_center = Point_3 (bbox.xmin() - FT(0.5) * (eigenvectors[1] / eigenvectors[4]),
-                        bbox.ymin() - FT(0.5) * (eigenvectors[2] / eigenvectors[4]),
-                        bbox.zmin() - FT(0.5) * (eigenvectors[3] / eigenvectors[4]));
-
-    m_radius = FT(0);
-    for (const std::size_t& idx : region)
-    {
-      const auto& key = *(m_input_range.begin() + idx);
-      const Point_3& p = get(m_point_map, key);
-      m_radius += m_sqrt (m_squared_distance_3 (p, m_center));
-    }
-
-    m_radius /= region.size();
+    internal::sphere_fit
+      (make_range (boost::make_transform_iterator
+                   (region.begin(), unary_function),
+                   boost::make_transform_iterator
+                   (region.end(), unary_function)),
+       m_sqrt, m_squared_distance_3, m_center, m_radius);
   }
 
   /// @}
