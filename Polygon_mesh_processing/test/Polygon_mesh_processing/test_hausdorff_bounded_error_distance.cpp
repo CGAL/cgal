@@ -28,6 +28,7 @@ using Surface_mesh            = CGAL::Surface_mesh<Point_3>;
 using Affine_transformation_3 = CGAL::Aff_transformation_3<Kernel>;
 using Timer                   = CGAL::Real_timer;
 
+using Face_handle = typename boost::graph_traits<Surface_mesh>::face_descriptor;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 struct Approximate_hd_wrapper {
@@ -55,7 +56,7 @@ struct Bounded_error_hd_wrapper {
   std::string name() const { return "bounded error"; }
   Bounded_error_hd_wrapper(const double error_bound) : m_error_bound(error_bound) { }
   double operator()(const Surface_mesh& tm1, const Surface_mesh& tm2) const {
-    return PMP::bounded_error_Hausdorff_distance<TAG>(tm1, tm2, m_error_bound).first;
+    return PMP::bounded_error_Hausdorff_distance<TAG>(tm1, tm2, m_error_bound);
   }
 };
 
@@ -631,8 +632,9 @@ void compute_realizing_triangles(
   const double error_bound, const std::string prefix, const bool save = false) {
 
   std::cout << "* getting realizing triangles: " << std::endl;
-  const auto data =
+  const double hdist =
     PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound);
+  const auto data = std::make_pair(hdist, std::make_pair(Face_handle(), Face_handle()));
   const auto& faces = data.second;
   const int f1 = static_cast<int>(faces.first);
   const int f2 = static_cast<int>(faces.second);
@@ -741,14 +743,14 @@ int main(int argc, char** argv) {
 
   // test_synthetic_data(apprx_hd);
   // test_synthetic_data(naive_hd);
-  // test_synthetic_data(bound_hd);
+  test_synthetic_data(bound_hd);
 
 
   // --- Compare on common meshes.
 
   // test_one_versus_another(apprx_hd, naive_hd);
   // test_one_versus_another(naive_hd, bound_hd);
-  // test_one_versus_another(bound_hd, apprx_hd);
+  test_one_versus_another(bound_hd, apprx_hd);
 
 
   // --- Compare on real meshes.
@@ -758,7 +760,7 @@ int main(int argc, char** argv) {
 
   // test_real_meshes(filepath1, filepath2, apprx_hd, naive_hd);
   // test_real_meshes(filepath1, filepath2, naive_hd, bound_hd);
-  // test_real_meshes(filepath1, filepath2, bound_hd, apprx_hd);
+  test_real_meshes(filepath1, filepath2, bound_hd, apprx_hd);
 
 
   // --- Compare timings.
@@ -767,14 +769,14 @@ int main(int argc, char** argv) {
   // filepath = "/Users/monet/Documents/fork/pull-requests/hausdorff/data/bunny-dense.off";
   // test_timings(filepath, apprx_hd);
   // test_timings(filepath, naive_hd);
-  // test_timings(filepath, bound_hd);
+  test_timings(filepath, bound_hd);
 
 
   // --- Compare with the paper.
 
   // test_bunny(apprx_hd);
   // test_bunny(naive_hd);
-  test_bunny(bound_hd, 3);
+  // test_bunny(bound_hd, 3);
 
 
   // --- Test realizing triangles.
