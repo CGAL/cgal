@@ -110,7 +110,7 @@ public:
   typedef SegmentTraits_2::X_monotone_curve_2         X_monotone_segment_2;
   /// @}
 
-  /*! The `X_monotone_curve_2` type nested within the traits class respresnts
+  /*! The `Curve_2` type nested within the traits class respresnts
    * polylines.
    */
   class Curve_2 {
