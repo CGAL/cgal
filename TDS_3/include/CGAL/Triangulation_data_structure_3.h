@@ -1924,7 +1924,7 @@ create_star_2(Vertex_handle v, Cell_handle c, int li )
     // pnew is null at the first iteration
     v1->set_cell(cnew);
     //pnew->set_neighbor( cw(pnew->index(v1)), cnew );
-    if (pnew != Cell_handle()) { pnew->set_neighbor( 1, cnew );}
+    if (pnew != nullptr) { pnew->set_neighbor( 1, cnew );}
 
     bound = cur;
     i1 = ccw(i1);
