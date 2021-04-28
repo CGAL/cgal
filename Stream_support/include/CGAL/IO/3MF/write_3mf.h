@@ -260,7 +260,7 @@ bool write_points(const PointRange& points,
     return false;
   }
 
-  //add 3 demmy vertices to be sure to have a valid triangle and accept point sets with less than 3 vertices.
+  //add 3 dummy vertices to be sure to have a valid triangle and accept point sets with fewer than 3 vertices.
   for(int i = 0; i< 3; ++i)
     pVertices.push_back(tmf_internal::fnCreateVertex(0,0,0));
 

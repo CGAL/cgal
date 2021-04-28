@@ -31,7 +31,6 @@
 #include <CGAL/tuple.h>
 #include <CGAL/Origin.h>
 
-#include <CGAL/result_of.h>
 #include <functional>
 
 #include <CGAL/internal/Mesh_3/Handle_IO_for_pair_of_int.h>
@@ -590,9 +589,7 @@ public:
     template<typename Query>
     Surface_patch clip_to_segment(const Query& query) const
     {
-      typename cpp11::result_of<typename BGT::Intersect_3(Query, Iso_cuboid_3)>::type
-        clipped = CGAL::intersection(query, r_domain_.bbox_);
-
+      const auto clipped = CGAL::intersection(query, r_domain_.bbox_);
       if(clipped)
         if(const Segment_3* s = boost::get<Segment_3>(&*clipped))
           return this->operator()(*s);
@@ -720,9 +717,7 @@ public:
     template<typename Query>
     Intersection clip_to_segment(const Query& query) const
     {
-      typename cpp11::result_of<typename BGT::Intersect_3(Query, Iso_cuboid_3)>::type
-        clipped = CGAL::intersection(query, r_domain_.bbox_);
-
+      const auto clipped = CGAL::intersection(query, r_domain_.bbox_);
       if(clipped)
         if(const Segment_3* s = boost::get<Segment_3>(&*clipped))
           return this->operator()(*s);

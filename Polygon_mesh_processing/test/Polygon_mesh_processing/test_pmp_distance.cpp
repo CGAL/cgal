@@ -169,10 +169,10 @@ struct Custom_traits_Hausdorff
     Construct_cartesian_const_iterator_3(){}
     Construct_cartesian_const_iterator_3(const Point_3&){}
     const FT* operator()(const Point_3&) const
-    { return 0; }
+    { return nullptr; }
 
     const FT* operator()(const Point_3&, int)  const
-    { return 0; }
+    { return nullptr; }
     typedef const FT* result_type;
   };
 // } end of requirements from SearchGeomTraits_3

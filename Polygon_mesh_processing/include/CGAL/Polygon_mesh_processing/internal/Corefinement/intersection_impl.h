@@ -30,12 +30,27 @@
 #include <boost/unordered_set.hpp>
 #include <boost/dynamic_bitset.hpp>
 
+#include <stdexcept>
+
 namespace CGAL{
 namespace Polygon_mesh_processing {
 namespace Corefinement {
 
-struct Self_intersection_exception{};
-struct Triple_intersection_exception{};
+struct Self_intersection_exception :
+  public std::runtime_error
+{
+  Self_intersection_exception()
+    : std::runtime_error("Self-intersection detected in input mesh")
+  {}
+};
+
+struct Triple_intersection_exception :
+  public std::runtime_error
+{
+  Triple_intersection_exception()
+    : std::runtime_error("Non-handled triple intersection of input triangles")
+  {}
+};
 // This functor computes the pairwise intersection of triangle meshes.
 // Intersection are given as a set of polylines
 // The algorithm works as follow:
@@ -203,7 +218,10 @@ class Intersection_of_triangle_meshes
                             const VPMF& vpm_f,
                             const VPME& vpm_e,
                             const Non_manifold_feature_map<TriangleMesh>& non_manifold_feature_map,
-                            bool throw_on_self_intersection)
+                            bool throw_on_self_intersection,
+                            std::set<face_descriptor>& tm_f_faces,
+                            std::set<face_descriptor>& tm_e_faces,
+                            bool run_check)
   {
     std::vector<Box> face_boxes, edge_boxes;
     std::vector<Box*> face_boxes_ptr, edge_boxes_ptr;
@@ -276,11 +294,11 @@ class Intersection_of_triangle_meshes
     #endif
     //using pointers in box_intersection_d is about 10% faster
     if (throw_on_self_intersection){
-        Callback_with_self_intersection_report<TriangleMesh, Callback> callback_si(callback);
+        Callback_with_self_intersection_report<TriangleMesh, Callback> callback_si(callback, tm_f_faces, tm_e_faces);
         CGAL::box_intersection_d( face_boxes_ptr.begin(), face_boxes_ptr.end(),
                                   edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
                                   callback_si, cutoff );
-        if (callback_si.self_intersections_found())
+        if (run_check && callback_si.self_intersections_found())
          throw Self_intersection_exception();
     }
     else {
@@ -411,7 +429,7 @@ class Intersection_of_triangle_meshes
     }
 
     Key key(ipt.type_1, ipt.type_2, h1, h2);
-    if (&tm1==&tm2 && h1>h2)
+    if (&tm1==&tm2 && h2<h1)
       key=Key(ipt.type_2, ipt.type_1, h2, h1);
 
     std::pair<typename std::map<Key,Node_id>::iterator,bool> res=
@@ -1567,8 +1585,11 @@ public:
     const VertexPointMap1& vpm1=nodes.vpm1;
     const VertexPointMap2& vpm2=nodes.vpm2;
 
-    filter_intersections(tm1, tm2, vpm1, vpm2, non_manifold_feature_map_2, throw_on_self_intersection);
-    filter_intersections(tm2, tm1, vpm2, vpm1, non_manifold_feature_map_1, throw_on_self_intersection);
+    // used only if throw_on_self_intersection == true
+    std::set<face_descriptor> tm1_faces;
+    std::set<face_descriptor> tm2_faces;
+    filter_intersections(tm1, tm2, vpm1, vpm2, non_manifold_feature_map_2, throw_on_self_intersection, tm1_faces, tm2_faces, false);
+    filter_intersections(tm2, tm1, vpm2, vpm1, non_manifold_feature_map_1, throw_on_self_intersection, tm2_faces, tm1_faces, true);
 
     Node_id current_node((std::numeric_limits<Node_id>::max)());
     CGAL_assertion(current_node+1==0);

@@ -73,7 +73,7 @@ jobs:
           wget --no-verbose cgal.github.io -O tmp.html
           if ! egrep -q "\/$PR_NUMBER\/$ROUND" tmp.html; then
             #list impacted packages
-            LIST_OF_PKGS=$(git diff --name-only HEAD^1 HEAD |cut -s -d/ -f1 |sort -u | xargs -I {} ls -d {}/package_info 2>/dev/null  |cut -d/ -f1 |egrep -v Installation||true)
+            LIST_OF_PKGS=$(git diff --name-only HEAD^1 HEAD |cut -s -d/ -f1 |sort -u | xargs -I {} echo {} && ls -d {}/package_info 2>/dev/null  |cut -d/ -f1 |egrep -v Installation||true)
             if [ "$LIST_OF_PKGS" = "" ]; then
               exit 1
             fi

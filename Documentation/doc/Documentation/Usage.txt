@@ -83,9 +83,9 @@ contains the following subdirectories:
 
 | Directory                  | Contents   |
 | :------------------------- | :----------|
-| `auxiliary` (Windows only) | precompiled \sc{Gmp} and \sc{Mpfr} for Windows |
+| `auxiliary` (Windows only) | precompiled \gmp and \mpfr for Windows |
 | `cmake/modules`            | modules for finding and using libraries |
-| `demo`                     | demo programs (most of them need \sc{Qt}, geomview or other third-party products) |
+| `demo`                     | demo programs (most of them need \qt, geomview or other third-party products) |
 | `doc_html`                 | documentation (HTML) |
 | `examples`                 | example programs |
 | `include`                  | header files |
@@ -94,13 +94,13 @@ contains the following subdirectories:
 
 The directories `include/CGAL/CORE` and `src/CGALCore` contain a
 distribution of the <a href="https://cs.nyu.edu/exact/">Core library</a> version 1.7 for
-dealing with algebraic numbers. Note that \sc{Core} is not part of \cgal and has its
+dealing with algebraic numbers. Note that \core is not part of \cgal and has its
 own license.
 
 The directory `include/CGAL/OpenNL` contains a distribution of the
 <a href="http://alice.loria.fr/index.php/software/4-library/23-opennl.html">Open Numerical Library</a>,
 which provides solvers for sparse linear systems, especially designed for the Computer Graphics community.
-\sc{OpenNL} is not part of \cgal and has its own license.
+\opennl is not part of \cgal and has its own license.
 
 The only documentation shipped within \cgal sources is the present manual.
 The \cgal manual can also be accessed online at
@@ -123,7 +123,7 @@ a standard location (such as `/usr/local/include`):
 For more advanced installations, we refer to Section \ref installation_configwithcmake.
 
 Note that even though \cgal is a header-only library, not all its dependencies
-are header-only. The libraries \sc{Gmp} and \sc{Mpfr}, for example, are not
+are header-only. The libraries \gmp and \mpfr, for example, are not
 header-only. As such, these dependencies must be built or installed independently.
 
 \section usage_configuring Configuring your Program
@@ -235,7 +235,7 @@ The results of a successful configuration are build files that control the build
 The nature of the build files depends on the generator used during configuration, but in most cases
 they contain several <I>targets</I>, such as all the examples of the Triangulation_2 package.
 
-In a \sc{Unix}-like environment the default generator produces makefiles.
+In a \unix-like environment the default generator produces makefiles.
 You can use the `make` command-line tool for the succeeding build step as follows:
 
     cd CGAL-\cgalReleaseNumber/examples/Triangulation_2

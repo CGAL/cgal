@@ -55,7 +55,6 @@
 #include <CGAL/point_generators_3.h>
 #endif
 
-#include <boost/bind.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
 #include <boost/property_map/function_property_map.hpp>

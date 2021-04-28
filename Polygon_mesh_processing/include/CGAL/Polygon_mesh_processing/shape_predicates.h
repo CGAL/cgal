@@ -358,6 +358,8 @@ is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descrip
                         const NamedParameters& np)
 {
   CGAL_precondition(threshold >= 1.);
+  CGAL_precondition(f != boost::graph_traits<TriangleMesh>::null_face());
+  CGAL_precondition(CGAL::is_triangle(halfedge(f, tm), tm));
 
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -462,7 +464,8 @@ is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor
                      const double threshold,
                      const NamedParameters& np)
 {
-  CGAL_precondition(CGAL::is_triangle_mesh(tm));
+  CGAL_precondition(f != boost::graph_traits<TriangleMesh>::null_face());
+  CGAL_precondition(CGAL::is_triangle(halfedge(f, tm), tm));
   CGAL_precondition(threshold >= -1.);
   CGAL_precondition(threshold <= 0.);
 

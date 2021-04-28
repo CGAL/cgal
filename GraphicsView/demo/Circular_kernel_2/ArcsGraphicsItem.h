@@ -69,7 +69,7 @@ protected:
 
 template <typename CK>
 ArcsGraphicsItem<CK>::ArcsGraphicsItem(std::vector<CGAL::Object>& arcs_, std::vector<CGAL::Object>& intersections_)
-  :  arcs(arcs_), intersections(intersections_), painterostream(0)
+  :  arcs(arcs_), intersections(intersections_), painterostream(nullptr)
 {
   setIntersectionsPen(QPen(::Qt::red, 3.));
   if(arcs.empty()){

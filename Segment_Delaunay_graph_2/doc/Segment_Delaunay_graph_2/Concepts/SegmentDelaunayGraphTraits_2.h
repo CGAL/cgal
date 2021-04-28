@@ -1,14 +1,15 @@
 
 /*!
 \ingroup PkgSegmentDelaunayGraph2Concepts
+
 \cgalConcept
 
 \cgalRefines `TriangulationTraits_2`
 
 The concept `SegmentDelaunayGraphTraits_2` provides the traits
-requirements for the `CGAL::Segment_Delaunay_graph_2<Gt,DS>` and
-`CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>` classes. In
-particular, it provides a type `Site_2`, which must be a model of
+requirements for the `CGAL::Segment_Delaunay_graph_2<Gt,St,DS>` and
+`CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,St,STag,DS>` classes.
+In particular, it provides a type `Site_2`, which must be a model of
 the concept `SegmentDelaunayGraphSite_2`. It also provides
 constructions for sites and several function object
 types for the predicates.
@@ -19,8 +20,8 @@ types for the predicates.
 \cgalHasModel `CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>`
 
 \sa `SegmentDelaunayGraphSite_2`
-\sa `CGAL::Segment_Delaunay_graph_2<Gt,DS>`
-\sa `CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>`
+\sa `CGAL::Segment_Delaunay_graph_2<Gt,St,DS>`
+\sa `CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,St,STag,DS>`
 \sa `CGAL::Segment_Delaunay_graph_traits_2<K,MTag>`
 \sa `CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>`
 \sa `CGAL::Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>`

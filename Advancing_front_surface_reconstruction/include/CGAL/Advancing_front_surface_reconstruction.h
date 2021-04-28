@@ -175,23 +175,42 @@ namespace CGAL {
   store handles to the vertices and faces of the 3D triangulation, which enables the user to explore the
   2D as well as 3D neighborhood of vertices and facets of the surface.
 
-  \tparam Dt must be a `Delaunay_triangulation_3` with
-  `Advancing_front_surface_reconstruction_vertex_base_3` and `Advancing_front_surface_reconstruction_cell_base_3` blended into the vertex and cell type.
-  The default uses the `Exact_predicates_inexact_constructions_kernel` as geometric traits class.
+  \tparam Dt must be a `Delaunay_triangulation_3` whose `Traits` template parameter must be a model of
+  `AdvancingFrontSurfaceReconstructionTraits_3` and whose `Tds` template parameter must be
+  a model of `TriangulationDataStructure_3` with `Advancing_front_surface_reconstruction_vertex_base_3` and
+  `Advancing_front_surface_reconstruction_cell_base_3` blended into the vertex and cell type, respectively.
+  The default value is:
+  \code
+    CGAL::Delaunay_triangulation_3<CGAL::Exact_predicates_inexact_constructions_kernel,
+                                   CGAL::Triangulation_data_structure_3<
+                                     CGAL::Advancing_front_surface_reconstruction_vertex_base_3<
+                                       CGAL::Exact_predicates_inexact_constructions_kernel>,
+                                     CGAL::Advancing_front_surface_reconstruction_cell_base_3<
+                                       CGAL::Exact_predicates_inexact_constructions_kernel> > >`
+  \endcode
 
-  \tparam P must be a functor with `double operator()(AdvancingFront,Cell_handle,int)` returning the
-  priority of the facet `(Cell_handle,int)`. This functor enables the user to choose how candidate
-  triangles are prioritized. If a facet should not appear in the output,
+  \tparam P must be a functor offering
+  \code
+    FT operator()(Advancing_front_surface_reconstruction,Cell_handle,int)
+  \endcode
+  returning the priority of the facet `(Cell_handle,int)`. This functor enables the user
+  to choose how candidate triangles are prioritized. If a facet should not appear in the output,
   `infinity()` must be returned. It defaults to a functor that returns the
   `smallest_radius_delaunay_sphere()`.
 
   */
-  template <
-    class Dt = Default,
-    class P = Default>
-  class Advancing_front_surface_reconstruction {
-
-    typedef typename Default::Get<Dt,Delaunay_triangulation_3<Exact_predicates_inexact_constructions_kernel, Triangulation_data_structure_3<Advancing_front_surface_reconstruction_vertex_base_3<Exact_predicates_inexact_constructions_kernel>, Advancing_front_surface_reconstruction_cell_base_3<Exact_predicates_inexact_constructions_kernel> > > >::type Triangulation;
+  template <class Dt = Default,
+            class P = Default>
+  class Advancing_front_surface_reconstruction
+  {
+    typedef typename Default::Get<Dt,
+                                  Delaunay_triangulation_3<
+                                    Exact_predicates_inexact_constructions_kernel,
+                                    Triangulation_data_structure_3<
+                                      Advancing_front_surface_reconstruction_vertex_base_3<
+                                        Exact_predicates_inexact_constructions_kernel>,
+                                      Advancing_front_surface_reconstruction_cell_base_3<
+                                        Exact_predicates_inexact_constructions_kernel> > > >::type Triangulation;
     typedef typename Default::Get<P,AFSR::Default_priority>::type Priority;
   public:
 
@@ -202,9 +221,9 @@ namespace CGAL {
   /*!
     The type of the 2D triangulation data structure describing the reconstructed surface, being a model of `TriangulationDataStructure_2`.
     - The type `Triangulation_data_structure_2::Vertex` is model of the concept `TriangulationDataStructure_2::Vertex` and has additionally the
-    method `vertex_3()` that returns a `#Vertex_handle` to the associated 3D vertex.
+    method `vertex_3()` that returns a `Vertex_handle` to the associated 3D vertex.
     - The type `Triangulation_data_structure_2::Face` is model of the concept `TriangulationDataStructure_2::Face` and  has additionally the
-    method `facet()` that returns the associated `#Facet`, and a method `bool is_on_surface()`
+    method `facet()` that returns the associated `Facet`, and a method `bool is_on_surface()`
     for testing if a face is part of the reconstructed surface or a face incident to a boundary edge.
 
     In case the surface has boundaries, the 2D surface has one vertex which is associated to the infinite
@@ -213,14 +232,19 @@ namespace CGAL {
     typedef unspecified_type Triangulation_data_structure_2;
 
   /*!
-  The type of the 3D triangulation.
+  The type of the 3D Delaunay triangulation (the first template parameter).
   */
     typedef unspecified_type Triangulation_3;
 
   /*!
-  The type of the facet priority functor.
+  The type of the facet priority functor (the second template parameter).
   */
     typedef unspecified_type Priority;
+
+  /*!
+  The number type.
+  */
+    typedef typename Triangulation_3::Geom_traits::FT FT;
 
   /*!
   The point type.
@@ -245,21 +269,21 @@ namespace CGAL {
   /*!
     A bidirectional iterator range which enables to enumerate all points that were removed
     from the 3D Delaunay triangulation during the surface reconstruction. The value type
-    of the iterator is `#Point`.
+    of the iterator is `Point`.
   */
     typedef unspecified_type Outlier_range;
+
+  /*!
+     A bidirectional iterator range which enables to visit all vertices on a boundary.
+     The value type of the iterator is `Vertex_handle`.
+   */
+     typedef unspecified_type Vertex_on_boundary_range;
 
   /*!
     A bidirectional iterator range which enables to visit all boundaries.
     The value type of the iterator is `Vertex_on_boundary_range`.
   */
     typedef unspecified_type Boundary_range;
-
- /*!
-    A bidirectional iterator range which enables to visit all vertices on a boundary.
-    The value type of the iterator is  `#Vertex_handle`
-  */
-    typedef unspecified_type Vertex_on_boundary_range;
   /// @}
 #endif
 
@@ -268,6 +292,7 @@ namespace CGAL {
     typedef Advancing_front_surface_reconstruction<Dt,P> Extract;
     typedef typename Triangulation_3::Geom_traits Geom_traits;
 
+    typedef typename Kernel::FT FT;
     typedef typename Kernel::FT coord_type;
 
     typedef typename Kernel::Point_3  Point;
@@ -377,7 +402,23 @@ namespace CGAL {
     std::list<Next_border_elt> nbe_pool;
     std::list<Intern_successors_type> ist_pool;
 
+  public:
+    Vector construct_vector(const Point& p, const Point& q) const
+    {
+      return T.geom_traits().construct_vector_3_object()(p, q);
+    }
 
+    Vector construct_cross_product(const Vector& v, const Vector& w) const
+    {
+      return T.geom_traits().construct_cross_product_vector_3_object()(v, w);
+    }
+
+    FT compute_scalar_product(const Vector& v, const Vector& w) const
+    {
+      return T.geom_traits().compute_scalar_product_3_object()(v, w);
+    }
+
+  private:
     Intern_successors_type* new_border()
     {
       nbe_pool.resize(nbe_pool.size()+1);
@@ -679,12 +720,14 @@ namespace CGAL {
           ++it;
         }while(collinear(p,q,it->point()));
         const Point& r = it->point();
-        Vector u = q-r;
-        Vector v = q-p;
-        Vector w = r-p;
-        Vector vw = cross_product(v,w);
-        double len = (std::max)(u*u,(std::max)(v*v,w*w));
-        Point s = p + 10* len * (vw/(vw*vw));
+        Vector u = construct_vector(r, q);
+        Vector v = construct_vector(p, q);
+        Vector w = construct_vector(p, r);
+        Vector vw = construct_cross_product(v,w);
+        double len = (std::max)(compute_scalar_product(u,u),
+                                (std::max)(compute_scalar_product(v,v),
+                                           compute_scalar_product(w,w)));
+        Point s = p + 10 * len * (vw/compute_scalar_product(vw,vw));
         added_vertex = T.insert(s);
       }
     }
@@ -736,9 +779,9 @@ namespace CGAL {
 
     \param radius_ratio_bound candidates incident to surface triangles which are not in the beta-wedge
            are discarded, if the ratio of their radius and the radius of the surface triangle is larger than `radius_ratio_bound`.
-           Described in Section \ref AFSR_Boundaries
+           Described in Section \ref AFSR_Boundaries.
     \param beta half the angle of the wedge in which only the radius of triangles counts for the plausibility of candidates.
-           Described in Section \ref AFSR_Selection
+           Described in Section \ref AFSR_Selection.
 
     */
     void run(double radius_ratio_bound=5, double beta= 0.52)
@@ -1186,7 +1229,7 @@ namespace CGAL {
     \param index index of the facet in `c`
 
     */
-    coord_type
+    FT
     smallest_radius_delaunay_sphere(const Cell_handle& c,
                                     const int& index) const
     {
@@ -1249,16 +1292,16 @@ namespace CGAL {
               const Point& pp2 = cc->vertex(i2)->point();
               const Point& pp3 = cc->vertex(i3)->point();
 
-              Sphere facet_sphere(pp1, pp2, pp3);
-              if (squared_distance(facet_sphere.center(), pp0) <
-                  facet_sphere.squared_radius())
+              Sphere facet_sphere = T.geom_traits().construct_sphere_3_object()(pp1, pp2, pp3);
+              if (squared_distance(T.geom_traits().construct_center_3_object()(facet_sphere), pp0) <
+                  T.geom_traits().compute_squared_radius_3_object()(facet_sphere))
                 {
 #ifdef AFSR_LAZY
                   value = lazy_squared_radius(cc);
 #else
                   // qualified with CGAL, to avoid a compilation error with clang
                   if(volume(pp0, pp1, pp2, pp3) != 0){
-                    value = CGAL::squared_radius(pp0, pp1, pp2, pp3);
+                    value = T.geom_traits().compute_squared_radius_3_object()(pp0, pp1, pp2, pp3);
                   } else {
                     typedef Exact_predicates_exact_constructions_kernel EK;
                     Cartesian_converter<Kernel, EK> to_exact;
@@ -1280,26 +1323,30 @@ namespace CGAL {
               cc = lazy_circumcenter(c);
               cn = lazy_circumcenter(n);
 #else
-              cc = CGAL::circumcenter(cp0, cp1, cp2, cp3);
-              cn = CGAL::circumcenter(np0, np1, np2, np3);
+              cc = T.geom_traits().construct_circumcenter_3_object()(cp0, cp1, cp2, cp3);
+              cn = T.geom_traits().construct_circumcenter_3_object()(np0, np1, np2, np3);
 #endif
               // computation of the distance of  cp1  to the  dual segment cc, cn...
-              Vector V(cc - cn), Vc(cc - cp1), Vn(cp1 - cn);
-              coord_type ac(V * Vc), an(V * Vn), norm_V(V * V);
+              Vector V = construct_vector(cn, cc),
+                     Vc = construct_vector(cp1, cc),
+                     Vn = construct_vector(cn, cp1);
+              coord_type ac = compute_scalar_product(V, Vc),
+                         an = compute_scalar_product(V, Vn),
+                         norm_V = compute_scalar_product(V, V);
               if ((ac > 0) && (an > 0))
                 {
-                  value = (Vc*Vc) - ac*ac/norm_V;
+                  value = compute_scalar_product(Vc, Vc) - ac*ac/norm_V;
                   if ((value < 0)||(norm_V > inv_eps_2)){
                     // qualified with CGAL, to avoid a compilation error with clang
-                    value = CGAL::squared_radius(cp1, cp2, cp3);
+                    value = T.geom_traits().compute_squared_radius_3_object()(cp1, cp2, cp3);
                   }
                 }
               else
                 {
                   if (ac <= 0)
-                    value = squared_distance(cc, cp1);
+                    value = T.geom_traits().compute_squared_distance_3_object()(cc, cp1);
                   else // (an <= 0)
-                    value = squared_distance(cn, cp1);
+                    value = T.geom_traits().compute_squared_distance_3_object()(cn, cp1);
                 }
             }
         }
@@ -1314,7 +1361,7 @@ namespace CGAL {
 
       returns the infinite floating value that prevents a facet to be used.
     */
-    coord_type infinity() const { return std::numeric_limits<coord_type>::infinity(); }
+    FT infinity() const { return std::numeric_limits<FT>::infinity(); }
     /// @}
 
     //---------------------------------------------------------------------
@@ -1341,9 +1388,9 @@ namespace CGAL {
       const Point& p2 = c->vertex(i2)->point();
       const Point& pc = c->vertex(i3)->point();
 
-      Vector P2P1 = p1-p2, P2Pn, PnP1;
+      Vector P2P1 = construct_vector(p2, p1), P2Pn, PnP1;
 
-      Vector v2, v1 = cross_product(pc-p2, P2P1);
+      Vector v2, v1 = construct_cross_product(construct_vector(p2, pc), P2P1);
 
       coord_type norm, norm1 = v1*v1;
       coord_type norm12 = P2P1*P2P1;
@@ -1375,12 +1422,12 @@ namespace CGAL {
                 {
                   const Point& pn = neigh->vertex(n_i3)->point();
 
-                  P2Pn = pn-p2;
-                  v2 = cross_product(P2P1,P2Pn);
+                  P2Pn = construct_vector(p2, pn);
+                  v2 = construct_cross_product(P2P1,P2Pn);
 
                   //pas necessaire de normer pour un bon echantillon:
                   //            on peut alors tester v1*v2 >= 0
-                  norm =  sqrt(norm1 * (v2*v2));
+                  norm =  sqrt(norm1 * compute_scalar_product(v2,v2));
                   pscal = v1*v2;
                   // check if the triangle will produce a sliver on the surface
                   bool sliver_facet = (pscal <= COS_ALPHA_SLIVER*norm);
@@ -1394,10 +1441,9 @@ namespace CGAL {
                           // We skip triangles having an internal angle along e
                           // whose cosinus is smaller than -DELTA
                           // that is the angle is larger than arcos(-DELTA)
-                          border_facet = !((P2P1*P2Pn >=
-                                            -DELTA*sqrt(norm12*(P2Pn*P2Pn)))&&
-                                           (P2P1*PnP1 >=
-                                            -DELTA*sqrt(norm12*(PnP1*PnP1))));
+                          border_facet =
+                            !((P2P1*P2Pn >= -DELTA*sqrt(norm12*compute_scalar_product(P2Pn,P2Pn))) &&
+                              (P2P1*PnP1 >= -DELTA*sqrt(norm12*compute_scalar_product(PnP1,PnP1))));
                           // \todo investigate why we simply do not skip this triangle
                           // but continue looking for a better candidate
                           // if (!border_facet){
@@ -1569,9 +1615,11 @@ namespace CGAL {
       int n_i3 = (6 - n_ind - n_i1 - n_i2);
 
       const Point& pn = neigh->vertex(n_i3)->point();
-      Vector v1 = cross_product(pc-p2,p1-p2),
-        v2 = cross_product(p1-p2,pn-p2);
-      coord_type norm = sqrt((v1*v1)*(v2*v2));
+      Vector v1 = construct_cross_product(construct_vector(p2, pc),
+                                          construct_vector(p2, p1)),
+             v2 = construct_cross_product(construct_vector(p2, p1),
+                                          construct_vector(p2, pn));
+      coord_type norm = sqrt(compute_scalar_product(v1, v1) * compute_scalar_product(v2, v2));
 
       if (v1*v2 > COS_BETA*norm)
         return 1; // label bonne pliure sinon:
@@ -2487,9 +2535,9 @@ namespace CGAL {
   \param out output iterator
   \param radius_ratio_bound candidates incident to surface triangles which are not in the beta-wedge
          are discarded, if the ratio of their radius and the radius of the surface triangle is larger than `radius_ratio_bound`.
-         Described in Section \ref AFSR_Boundaries
+         Described in Section \ref AFSR_Boundaries.
   \param beta half the angle of the wedge in which only the radius of triangles counts for the plausibility of candidates.
-         Described in Section \ref AFSR_Selection
+         Described in Section \ref AFSR_Selection.
 
   */
   template <typename PointInputIterator, typename IndicesOutputIterator>
@@ -2533,7 +2581,7 @@ namespace CGAL {
   be convertible to `Exact_predicates_inexact_constructions_kernel::Point_3` with the `Cartesian_converter`.
   \tparam IndicesOutputIterator must be an output iterator to which
   `std::array<std::size_t, 3>` can be assigned.
-  \tparam Priority must be a functor with `double operator()(AdvancingFront,Cell_handle,int)` returning the
+  \tparam Priority must be a functor with `double operator()(Advancing_front_surface_reconstruction,Cell_handle,int)` returning the
   priority of the facet `(Cell_handle,int)`.
 
   \param b iterator on the first point of the sequence

@@ -908,7 +908,7 @@ protected:
   bool m_zero_y; /// True iff all points have y==0
   bool m_zero_z; /// True iff all points have z==0
 
-  bool m_inverse_normal;;
+  bool m_inverse_normal;
 
   // Local variables, used when we started a new face.g
   bool m_face_started;

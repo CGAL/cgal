@@ -60,10 +60,10 @@ Note that some libraries have specific dependencies in addition to the essential
 
 | Library   | CMake Variable | Functionality | Dependencies |
 | :-------- | :------------- | :------------ | :----------- |
-| `%CGAL`   | none           | Main library  | \sc{Gmp}, \sc{Mpfr}, \sc{Boost} (headers) |
-| `CGAL_Core` | `WITH_CGAL_Core`  | The %CORE library for algebraic numbers.\cgalFootnote{CGAL_Core is not part of \cgal, but a custom version of the \sc{Core} library distributed by \cgal for the user convenience and it has it's own license.}  | \sc{Gmp} and \sc{Mpfr} |
-| `CGAL_ImageIO` | `WITH_CGAL_ImageIO` | Utilities to read and write image files  | \sc{zlib}, \sc{Vtk} (optional) |
-| `CGAL_Qt5`  | `WITH_CGAL_Qt5` | `QGraphicsView` support for \sc{Qt}5-based demos | \sc{Qt}5 |
+|   \cgal   | none           | Main library  | \gmp, \mpfr, \boost (headers) |
+| `CGAL_Core` | `WITH_CGAL_Core`  | The %CORE library for algebraic numbers.\cgalFootnote{CGAL_Core is not part of \cgal, but a custom version of the \core library distributed by \cgal for the user convenience and it has it's own license.}  | \gmp and \mpfr |
+| `CGAL_ImageIO` | `WITH_CGAL_ImageIO` | Utilities to read and write image files  | \zlib, \vtk (optional) |
+| `CGAL_Qt5`  | `WITH_CGAL_Qt5` | `QGraphicsView` support for \qt5-based demos | \qt5 |
 
 Shared libraries, also called <I>dynamic-link libraries</I>, are built by default
 (`.so` on Linux, `.dylib` on macOS). You
@@ -77,7 +77,7 @@ the \cgal libraries, unless you set the variables `WITH_examples=ON` and/or `WIT
 Additionally, even when configured with \cgal, they are not automatically built along with the libraries.
 You must build the `examples` or `demos` targets (or IDE projects) explicitly.
 
-If you do not plan to compile any demos, you may skip some of the dependencies (such as \sc{Qt}),
+If you do not plan to compile any demos, you may skip some of the dependencies (such as \qt),
 as the corresponding \cgal-libraries will not be used. Note, however, that your own demos
 might need these \cgal-libraries and thus their dependencies. See the page
 \ref secessential3rdpartysoftware for more information.
@@ -215,7 +215,7 @@ The nature of the build files depends on the generator used during configuration
 contain several <I>targets</I>, one per library, and a default global target corresponding
 to all the libraries.
 
-For example, in a \sc{Unix}-like environment the default generator produces makefiles.
+For example, in a \unix-like environment the default generator produces makefiles.
 You can use the `make` command-line tool for the succeeding build step as follows:
 
     # build all the selected libraries at once
@@ -277,7 +277,7 @@ the installation simply amounts to:
 
 \cgalAdvancedBegin
 The files are copied into a directory tree relative to the <I>installation directory</I> determined by the
-CMake variable `CMAKE_INSTALL_PREFIX`. This variable defaults to `/usr/local` under \sc{Unix}-like operating systems.
+CMake variable `CMAKE_INSTALL_PREFIX`. This variable defaults to `/usr/local` under \unix-like operating systems.
 If you want to install to a different location, you must override that CMake
 variable explicitly <I>at the configuration time</I> and not when executing the install step.
 \cgalAdvancedEnd

@@ -36,7 +36,6 @@
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
-#include <boost/bind.hpp>
 #include <boost/format.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
 #include <boost/optional.hpp>

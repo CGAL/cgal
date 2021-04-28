@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Triangulation_3_Tests)
 
 find_package(CGAL REQUIRED)
@@ -35,6 +35,13 @@ if(TARGET CGAL::TBB_support)
                  test_regular_insert_range_with_info)
     target_link_libraries(${target} PUBLIC CGAL::TBB_support)
   endforeach()
+  if(BUILD_TESTING)
+    set_property(TEST
+      execution___of__test_delaunay_3
+      execution___of__test_regular_3
+      execution___of__test_regular_insert_range_with_info
+      PROPERTY RUN_SERIAL 1)
+  endif()
 endif()
 
 if(BUILD_TESTING)

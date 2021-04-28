@@ -8,7 +8,7 @@ Given a range of `n` points:
 <OL>
 <LI>it applies `Sort` on the last `(1 - ratio) * n` points,
 <LI>it recurses on the first `ratio * n` points,
-stopping when there are less than `threshold` points.
+stopping when there are fewer than `threshold` points.
 </OL>
 
 */

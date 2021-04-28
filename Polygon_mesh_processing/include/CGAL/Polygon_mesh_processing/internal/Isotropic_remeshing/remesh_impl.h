@@ -28,6 +28,7 @@
 #include <CGAL/AABB_triangle_primitive.h>
 
 #include <CGAL/property_map.h>
+#include <CGAL/Dynamic_property_map.h>
 #include <CGAL/iterator.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/properties.h>
@@ -43,6 +44,7 @@
 #include <boost/unordered_set.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/container/flat_set.hpp>
+#include <boost/optional.hpp>
 
 #include <map>
 #include <list>
@@ -78,7 +80,8 @@ namespace internal {
     PATCH,       //h and hopp belong to the patch to be remeshed
     PATCH_BORDER,//h belongs to the patch, hopp is MESH
     MESH,        //h and hopp belong to the mesh, not the patch
-    MESH_BORDER  //h belongs to the mesh, face(hopp, pmesh) == null_face()
+    MESH_BORDER, //h belongs to the mesh, face(hopp, pmesh) == null_face()
+    ISOLATED_CONSTRAINT //h is constrained, and incident to faces that do not belong to a patch
   };
 
   // A property map
@@ -820,28 +823,63 @@ namespace internal {
     // The target valence is 6 and 4 for interior and boundary vertices, resp.
     // The algo. tentatively flips each edge `e` and checks whether the deviation
     // to the target valences decreases. If not, the edge is flipped back"
-    void equalize_valences()
+    void flip_edges_for_valence_and_shape()
     {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Equalize valences..." << std::endl;
 #endif
+
+      typedef typename boost::property_map<PM, CGAL::dynamic_vertex_property_t<int> >::type Vertex_degree;
+      Vertex_degree degree = get(CGAL::dynamic_vertex_property_t<int>(), mesh_);
+
+      for(vertex_descriptor v : vertices(mesh_)){
+        put(degree,v,0);
+      }
+      for(halfedge_descriptor h : halfedges(mesh_))
+      {
+        vertex_descriptor t = target(h, mesh_);
+        put(degree, t, get(degree,t)+1);
+      }
+
+      const double cap_threshold = std::cos(160. / 180 * CGAL_PI);
+
       unsigned int nb_flips = 0;
       for(edge_descriptor e : edges(mesh_))
       {
         //only the patch edges are allowed to be flipped
         if (!is_flip_allowed(e))
           continue;
+        //add geometric test to avoid axe cuts
+        if (!PMP::internal::should_flip(e, mesh_, vpmap_, gt_))
+          continue;
 
         halfedge_descriptor he = halfedge(e, mesh_);
+
+        std::array<halfedge_descriptor, 2> r1 = PMP::internal::is_badly_shaped(
+            face(he, mesh_),
+            mesh_, vpmap_, vcmap_, ecmap_, gt_,
+            cap_threshold, // bound on the angle: above 160 deg => cap
+            4, // bound on shortest/longest edge above 4 => needle
+            0);// collapse length threshold : not needed here
+        std::array<halfedge_descriptor, 2> r2 = PMP::internal::is_badly_shaped(
+            face(opposite(he, mesh_), mesh_),
+            mesh_, vpmap_, vcmap_, ecmap_, gt_, cap_threshold, 4, 0);
+
+        const bool badly_shaped = (r1[0] != boost::graph_traits<PolygonMesh>::null_halfedge()//needle
+                                || r1[1] != boost::graph_traits<PolygonMesh>::null_halfedge()//cap
+                                || r2[0] != boost::graph_traits<PolygonMesh>::null_halfedge()//needle
+                                || r2[1] != boost::graph_traits<PolygonMesh>::null_halfedge());//cap
+
         vertex_descriptor va = source(he, mesh_);
         vertex_descriptor vb = target(he, mesh_);
         vertex_descriptor vc = target(next(he, mesh_), mesh_);
         vertex_descriptor vd = target(next(opposite(he, mesh_), mesh_), mesh_);
 
-        int vva = valence(va), tvva = target_valence(va);
-        int vvb = valence(vb), tvvb = target_valence(vb);
-        int vvc = valence(vc), tvvc = target_valence(vc);
-        int vvd = valence(vd), tvvd = target_valence(vd);
+        int vva = get(degree,va), tvva = target_valence(va);
+        int vvb = get(degree, vb), tvvb = target_valence(vb);
+        int vvc = get(degree,vc), tvvc = target_valence(vc);
+        int vvd = get(degree,vd), tvvd = target_valence(vd);
+
         int deviation_pre = CGAL::abs(vva - tvva)
                           + CGAL::abs(vvb - tvvb)
                           + CGAL::abs(vvc - tvvc)
@@ -850,15 +888,23 @@ namespace internal {
         CGAL_assertion_code(Halfedge_status s1 = status(he));
         CGAL_assertion_code(Halfedge_status s1o = status(opposite(he, mesh_)));
 
-        Patch_id pid = get_patch_id(face(he, mesh_));
-
         CGAL_assertion( is_flip_topologically_allowed(edge(he, mesh_)) );
         CGAL_assertion( !get(ecmap_, edge(he, mesh_)) );
         CGAL::Euler::flip_edge(he, mesh_);
-        vva -= 1;
-        vvb -= 1;
-        vvc += 1;
-        vvd += 1;
+
+        if (!badly_shaped)
+        {
+          vva -= 1;
+          vvb -= 1;
+          vvc += 1;
+          vvd += 1;
+        }
+
+        put(degree, va, vva);
+        put(degree, vb, vvb);
+        put(degree, vc, vvc);
+        put(degree, vd, vvd);
+
         ++nb_flips;
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
@@ -875,14 +921,18 @@ namespace internal {
              (vc == target(he, mesh_) && vd == source(he, mesh_))
           || (vd == target(he, mesh_) && vc == source(he, mesh_)));
 
-        int deviation_post = CGAL::abs(vva - tvva)
+        int deviation_post;
+        if(!badly_shaped)
+        {
+          deviation_post = CGAL::abs(vva - tvva)
                            + CGAL::abs(vvb - tvvb)
                            + CGAL::abs(vvc - tvvc)
                            + CGAL::abs(vvd - tvvd);
+        }
 
         //check that mesh does not become non-triangle,
         //nor has inverted faces
-        if (deviation_pre <= deviation_post
+        if ((!badly_shaped && deviation_pre <= deviation_post)
           || !check_normals(he)
           || incident_to_degenerate(he)
           || incident_to_degenerate(opposite(he, mesh_))
@@ -894,6 +944,17 @@ namespace internal {
           CGAL_assertion( is_flip_topologically_allowed(edge(he, mesh_)) );
           CGAL_assertion( !get(ecmap_, edge(he, mesh_)) );
           CGAL::Euler::flip_edge(he, mesh_);
+
+          vva += 1;
+          vvb += 1;
+          vvc -= 1;
+          vvd -= 1;
+
+          put(degree, va, vva);
+          put(degree, vb, vvb);
+          put(degree, vc, vvc);
+          put(degree, vd, vvd);
+
           --nb_flips;
 
           CGAL_assertion_code(Halfedge_status s3 = status(he));
@@ -904,6 +965,7 @@ namespace internal {
             || (vb == source(he, mesh_) && va == target(he, mesh_)));
         }
 
+        Patch_id pid = get_patch_id(face(he, mesh_));
         set_patch_id(face(he, mesh_), pid);
         set_patch_id(face(opposite(he, mesh_), mesh_), pid);
       }
@@ -1182,13 +1244,9 @@ private:
     void dump(const char* filename) const
     {
       std::ofstream out(filename);
+      out.precision(18);
       out << mesh_;
       out.close();
-    }
-
-    int valence(const vertex_descriptor& v) const
-    {
-      return static_cast<int>(degree(v, mesh_));
     }
 
     int target_valence(const vertex_descriptor& v) const
@@ -1393,6 +1451,7 @@ private:
 
     bool collapse_would_invert_face(const halfedge_descriptor& h) const
     {
+      vertex_descriptor tv = target(h, mesh_);
       typename boost::property_traits<VertexPointMap>::reference
         s = get(vpmap_, source(h, mesh_)); //s for source
       typename boost::property_traits<VertexPointMap>::reference
@@ -1409,15 +1468,20 @@ private:
         if (face(hd, mesh_) == boost::graph_traits<PM>::null_face())
           continue;
 
+        vertex_descriptor tnhd = target(next(hd, mesh_), mesh_);
+        vertex_descriptor tnnhd = target(next(next(hd, mesh_), mesh_), mesh_);
         typename boost::property_traits<VertexPointMap>::reference
-          p = get(vpmap_, target(next(hd, mesh_), mesh_));
+          p = get(vpmap_, tnhd);
         typename boost::property_traits<VertexPointMap>::reference
-          q = get(vpmap_, target(next(next(hd, mesh_), mesh_), mesh_));
+          q = get(vpmap_, tnnhd);
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
         CGAL_assertion((Triangle_3(t, p, q).is_degenerate())
                      == GeomTraits().collinear_3_object()(t, p, q));
 #endif
+
+        if((tv == tnnhd) || (tv == tnhd))
+          continue;
 
         if ( GeomTraits().collinear_3_object()(s, p, q)
           || GeomTraits().collinear_3_object()(t, p, q))
@@ -1462,7 +1526,8 @@ private:
       {
         halfedge_descriptor hopp = opposite(h, mesh_);
         if ( is_on_border(h) || is_on_patch_border(h)
-          || is_on_border(hopp) || is_on_patch_border(hopp))
+          || is_on_border(hopp) || is_on_patch_border(hopp)
+          || is_an_isolated_constraint(h))
           ++nb_incident_features;
         if (nb_incident_features > 2)
           return true;
@@ -1528,19 +1593,43 @@ private:
           {
             //deal with h and hopp for borders that are sharp edges to be preserved
             halfedge_descriptor h = halfedge(e, mesh_);
-            if (status(h) == PATCH){
+            Halfedge_status hs = status(h);
+            if (hs == PATCH) {
               set_status(h, PATCH_BORDER);
+              hs = PATCH_BORDER;
               has_border_ = true;
             }
 
             halfedge_descriptor hopp = opposite(h, mesh_);
-            if (status(hopp) == PATCH){
+            Halfedge_status hsopp = status(hopp);
+            if (hsopp == PATCH) {
               set_status(hopp, PATCH_BORDER);
+              hsopp = PATCH_BORDER;
               has_border_ = true;
+            }
+
+            if (hs != PATCH_BORDER && hsopp != PATCH_BORDER)
+            {
+              set_status(h, ISOLATED_CONSTRAINT);
+              set_status(hopp, ISOLATED_CONSTRAINT);
             }
           }
         }
       }
+
+      std::ofstream ofs("dump_isolated.polylines.txt");
+      for (edge_descriptor e : edges(mesh_))
+      {
+        halfedge_descriptor h = halfedge(e, mesh_);
+        if (status(h) == ISOLATED_CONSTRAINT)
+        {
+          CGAL_assertion(status(opposite(h, mesh_)) == ISOLATED_CONSTRAINT);
+          ofs << "2 " << get(vpmap_, target(h, mesh_))
+            << " " << get(vpmap_, source(h, mesh_)) << std::endl;
+        }
+      }
+      ofs.close();
+
     }
 
     Halfedge_status status(const halfedge_descriptor& h) const
@@ -1811,6 +1900,13 @@ public:
       return status(h) == MESH;
     }
 
+    bool is_an_isolated_constraint(const halfedge_descriptor& h) const
+    {
+      bool res = (status(h) == ISOLATED_CONSTRAINT);
+      CGAL_assertion(!res || status(opposite(h, mesh_)) == ISOLATED_CONSTRAINT);
+      return res;
+    }
+
 private:
     void halfedge_added(const halfedge_descriptor& h,
                         const Halfedge_status& s)
@@ -1879,8 +1975,10 @@ private:
     bool check_normals(const HalfedgeRange& hedges) const
     {
       std::size_t nb_patches = patch_id_to_index_map.size();
+      //std::vector<boost::optional<Vector_3> > normal_per_patch(nb_patches,boost::none);
+      std::vector<bool> initialized(nb_patches,false);
+      std::vector<Vector_3> normal_per_patch(nb_patches);
 
-      std::vector< std::vector<Vector_3> > normals_per_patch(nb_patches);
       for(halfedge_descriptor hd : hedges)
       {
         Halfedge_status s = status(hd);
@@ -1892,18 +1990,18 @@ private:
         if (n == CGAL::NULL_VECTOR) //for degenerate faces
           continue;
         Patch_id pid = get_patch_id(face(hd, mesh_));
-        normals_per_patch[patch_id_to_index_map.at(pid)].push_back(n);
-      }
-
-      //on each surface patch,
-      //check all normals have same orientation
-      for (std::size_t i=0; i < nb_patches; ++i)
-      {
-        const std::vector<Vector_3>& normals = normals_per_patch[i];
-        if (normals.empty()) continue;
-
-        if (!check_orientation(normals))
-          return false;
+        std::size_t index = patch_id_to_index_map.at(pid);
+        //if(normal_per_patch[index]){
+        if(initialized[index]){
+          const Vector_3& vec = normal_per_patch[index];
+          double dot = to_double(n * vec);
+          if (dot <= 0.){
+            return false;
+          }
+        }
+        //normal_per_patch[index] = boost::make_optional(n);
+        normal_per_patch[index] = n;
+        initialized[index] = true;
       }
       return true;
     }
@@ -1915,19 +2013,6 @@ private:
       Vector_3 n = compute_normal(face(h, mesh_));
       Vector_3 no = compute_normal(face(opposite(h, mesh_), mesh_));
       return n * no > 0.;
-    }
-
-    bool check_orientation(const std::vector<Vector_3>& normals) const
-    {
-      if (normals.size() < 2)
-        return true;
-      for (std::size_t i = 1; i < normals.size(); ++i)/*start at 1 on purpose*/
-      {
-        double dot = to_double(normals[i - 1] * normals[i]);
-        if (dot <= 0.)
-          return false;
-      }
-      return true;
     }
 
   public:

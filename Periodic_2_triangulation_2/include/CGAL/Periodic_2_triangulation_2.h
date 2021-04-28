@@ -292,12 +292,12 @@ public:
   {
     return _gt;
   }
-  /// Returns the datastructure storing the triangulation.
+  /// Returns the data structure storing the triangulation.
   const Triangulation_data_structure & tds() const
   {
     return _tds;
   }
-  /// Returns the datastructure storing the triangulation.
+  /// Returns the data structure storing the triangulation.
   Triangulation_data_structure & tds()
   {
     return _tds;
@@ -357,17 +357,17 @@ public:
     else
       return _tds.number_of_faces() / 9;
   }
-  /// Returns the number of vertices stored in the datastructure.
+  /// Returns the number of vertices stored in the data structure.
   size_type number_of_stored_vertices() const
   {
     return _tds.number_of_vertices();
   }
-  /// Returns the number of edges stored in the datastructure.
+  /// Returns the number of edges stored in the data structure.
   size_type number_of_stored_edges() const
   {
     return _tds.number_of_edges();
   }
-  /// Returns the number of faces stored in the datastructure.
+  /// Returns the number of faces stored in the data structure.
   size_type number_of_stored_faces() const
   {
     return _tds.number_of_faces();
@@ -1812,7 +1812,7 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid_too_long_edges(bool verbose, 
             {
               if (too_long)
                 {
-                  if (verbose) std::cout << "1. Too long edge not in the datastructure" << std::endl;
+                  if (verbose) std::cout << "1. Too long edge not in the data structure" << std::endl;
                   result = false;
                 }
               result &= !too_long;
@@ -1826,7 +1826,7 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid_too_long_edges(bool verbose, 
                   too_long_edges++;
                   if (it2 == it->second.end())
                     {
-                      if (verbose) std::cout << "2. Too long edge not in the datastructure" << std::endl;
+                      if (verbose) std::cout << "2. Too long edge not in the data structure" << std::endl;
                       result = false;
                     }
                   CGAL_triangulation_assertion(result);
@@ -1835,7 +1835,7 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid_too_long_edges(bool verbose, 
                 {
                   if (it2 != it->second.end())
                     {
-                      if (verbose) std::cout << "Edge is not too long, but contained in the datastructure" << std::endl;
+                      if (verbose) std::cout << "Edge is not too long, but contained in the data structure" << std::endl;
                       result = false;
                     }
                   CGAL_triangulation_assertion(result);

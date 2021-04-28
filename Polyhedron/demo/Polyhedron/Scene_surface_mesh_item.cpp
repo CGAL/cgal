@@ -144,7 +144,7 @@ struct Scene_surface_mesh_item_priv{
     edges_displayed = false;
     faces_displayed = false;
     all_displayed = false;
-    alphaSlider = NULL;
+    alphaSlider = nullptr;
     has_vcolors = false;
     has_fcolors = false;
     supported_rendering_modes << FlatPlusEdges
@@ -178,7 +178,7 @@ struct Scene_surface_mesh_item_priv{
     edges_displayed = false;
     faces_displayed = false;
     all_displayed = false;
-    alphaSlider = NULL;
+    alphaSlider = nullptr;
     has_vcolors = false;
     has_fcolors = false;
     supported_rendering_modes << FlatPlusEdges
@@ -199,7 +199,7 @@ struct Scene_surface_mesh_item_priv{
     if(smesh_)
     {
       delete smesh_;
-      smesh_ = NULL;
+      smesh_ = nullptr;
     }
   }
   void killIds();
@@ -399,7 +399,7 @@ void Scene_surface_mesh_item_priv::addFlatData(Point p, EPICK::Vector_3 n, CGAL:
     flat_normals.push_back((cgal_gl_data)n.y());
     flat_normals.push_back((cgal_gl_data)n.z());
   }
-  if(c != NULL && name.testFlag(Scene_item_rendering_helper::COLORS))
+  if(c != nullptr && name.testFlag(Scene_item_rendering_helper::COLORS))
   {
     f_colors.push_back((float)c->red()/255);
     f_colors.push_back((float)c->green()/255);
@@ -494,11 +494,11 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
         }
         else if(is_convex)
         {
-          triangulate_convex_facet(fd, &fnormals, 0, &im, name, true);
+          triangulate_convex_facet(fd, &fnormals, nullptr, &im, name, true);
         }
         else
         {
-          triangulate_facet(fd, &fnormals, 0, &im, name, true);
+          triangulate_facet(fd, &fnormals, nullptr, &im, name, true);
         }
       }
     }
@@ -598,7 +598,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
         else if(has_fcolors)
           c= &fcolors[fd];
         else
-          c = 0;
+          c = nullptr;
         addFlatData(p,n,c, name);
 
         hd = next(halfedge(fd, *smesh_),*smesh_);
@@ -635,11 +635,11 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
       }
       else if(is_convex)
       {
-        triangulate_convex_facet(fd, &fnormals, &fcolors, 0, name, false);
+        triangulate_convex_facet(fd, &fnormals, &fcolors, nullptr, name, false);
       }
       else
       {
-        triangulate_facet(fd, &fnormals, &fcolors, 0, name, false);
+        triangulate_facet(fd, &fnormals, &fcolors, nullptr, name, false);
       }
     }
   }
@@ -711,14 +711,14 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
                                               static_cast<int>(f_colors.size()*sizeof(cgal_gl_data)));
     }
     else
-      item->getTriangleContainer(1)->allocate(Tri::FColors, 0, 0);
+      item->getTriangleContainer(1)->allocate(Tri::FColors, nullptr, 0);
     if(!v_colors.empty())
     {
       item->getTriangleContainer(0)->allocate(Tri::VColors, v_colors.data(),
                                               static_cast<int>(v_colors.size()*sizeof(cgal_gl_data)));
     }
     else
-      item->getTriangleContainer(0)->allocate(Tri::VColors, 0, 0);
+      item->getTriangleContainer(0)->allocate(Tri::VColors, nullptr, 0);
   }
 
   QApplication::restoreOverrideCursor();
@@ -925,7 +925,7 @@ void Scene_surface_mesh_item_priv::triangulate_convex_facet(face_descriptor fd,
       else if(has_fcolors)
         color = &(*fcolors)[fd];
       else
-        color = 0;
+        color = nullptr;
       addFlatData(p0,
                   (*fnormals)[fd],
                   color,
@@ -1017,7 +1017,7 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
       else if(has_fcolors)
         color = &(*fcolors)[fd];
       else
-        color = 0;
+        color = nullptr;
 
       addFlatData(ffit->vertex(0)->point()-offset,
                   (*fnormals)[fd],
@@ -1056,7 +1056,7 @@ void delete_aabb_tree(Scene_surface_mesh_item* item)
         Input_facets_AABB_tree* tree = static_cast<Input_facets_AABB_tree*>(ptr);
         if(tree) {
             delete tree;
-            tree = 0;
+            tree = nullptr;
         }
         item->setProperty(aabb_property_name, QVariant());
     }
@@ -1081,21 +1081,21 @@ Scene_surface_mesh_item::~Scene_surface_mesh_item()
     {
       v->textRenderer()->removeTextList(d->textVItems);
       delete d->textVItems;
-      d->textVItems=NULL;
+      d->textVItems=nullptr;
     }
     //Remove edges textitems
     if(d->textEItems)
     {
       v->textRenderer()->removeTextList(d->textEItems);
       delete d->textEItems;
-      d->textEItems=NULL;
+      d->textEItems=nullptr;
     }
     //Remove faces textitems
     if(d->textFItems)
     {
       v->textRenderer()->removeTextList(d->textFItems);
       delete d->textFItems;
-      d->textFItems=NULL;
+      d->textFItems=nullptr;
     }
   }
   delete d;
@@ -1126,7 +1126,7 @@ void Scene_surface_mesh_item::itemAboutToBeDestroyed(Scene_item *item)
   if(d && d->smesh_ && item == this)
   {
     delete d->smesh_;
-    d->smesh_ = NULL;
+    d->smesh_ = nullptr;
   }
 }
 
@@ -1178,7 +1178,7 @@ void* Scene_surface_mesh_item_priv::get_aabb_tree()
       QApplication::restoreOverrideCursor();
       return tree;
     }
-    else return 0;
+    else return nullptr;
   }
 }
 
@@ -1319,7 +1319,7 @@ void Scene_surface_mesh_item::invalidate(Gl_data_names name)
   Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
   {
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
-    if(viewer == NULL)
+    if(viewer == nullptr)
       continue;
     setBuffersInit(viewer, false);
     viewer->update();
@@ -1999,7 +1999,7 @@ QMenu* Scene_surface_mesh_item::contextMenu()
   if(!menuChanged) {
     QMenu *container = new QMenu(tr("Alpha value"));
     container->menuAction()->setProperty("is_groupable", true);
-    QWidgetAction *sliderAction = new QWidgetAction(0);
+    QWidgetAction *sliderAction = new QWidgetAction(nullptr);
     sliderAction->setDefaultWidget(d->alphaSlider);
     connect(d->alphaSlider, &QSlider::valueChanged,
             [this](){redraw();});
@@ -2410,7 +2410,7 @@ void Scene_surface_mesh_item::updateVertex(vertex_descriptor vh)
         getEdgeContainer(0)->getVbo(Ed::Vertices),
         new_point,id);
 
-  for(const auto & v_it : CGAL::vertices_around_target(vh, *face_graph()))
+  for(const auto v_it : CGAL::vertices_around_target(vh, *face_graph()))
   {
     EPICK::Vector_3 n = CGAL::Polygon_mesh_processing::compute_vertex_normal(v_it, *face_graph());
     cgal_gl_data new_n[3];
@@ -2430,7 +2430,7 @@ void Scene_surface_mesh_item::updateVertex(vertex_descriptor vh)
  }
 
 
-   for(const auto& f_it : CGAL::faces_around_target( halfedge(vh, *face_graph()), *face_graph()))
+   for(const auto f_it : CGAL::faces_around_target( halfedge(vh, *face_graph()), *face_graph()))
    {
      if (f_it == boost::graph_traits<SMesh>::null_face()) continue;
 

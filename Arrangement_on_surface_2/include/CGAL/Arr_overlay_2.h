@@ -168,7 +168,7 @@ overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1
   typedef Arrangement_on_surface_2<Rgt2, Rtt>                   Arr_res;
   typedef typename Arr_res::Allocator                           Allocator;
 
-  // some type assertions (not all, but better then nothing).
+  // some type assertions (not all, but better than nothing).
 #if !defined(CGAL_NO_ASSERTIONS)
   typedef typename Agt2::Point_2                                A_point;
   typedef typename Bgt2::Point_2                                B_point;

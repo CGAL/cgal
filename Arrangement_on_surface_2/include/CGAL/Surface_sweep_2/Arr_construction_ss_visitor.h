@@ -142,6 +142,9 @@ public:
   /* A notification issued before the sweep process starts. */
   inline void before_sweep();
 
+  /* A notification issued after the sweep process stops. */
+  inline void after_sweep();
+
   /*!
    * A notification invoked before the sweep-line starts handling the given
    * event.
@@ -267,7 +270,21 @@ private:
 // Notifies the helper that the sweep process now starts.
 template <typename Hlpr, typename Vis>
 void Arr_construction_ss_visitor<Hlpr, Vis>::before_sweep()
-{ m_helper.before_sweep(); }
+{
+  m_helper.before_sweep();
+  m_arr->set_sweep_mode(true);
+}
+
+
+//-----------------------------------------------------------------------------
+// A notification issued after the sweep process stops.
+template <typename Hlpr, typename Vis>
+void Arr_construction_ss_visitor<Hlpr, Vis>::after_sweep()
+{
+  m_arr->clean_inner_ccbs_after_sweep();
+  m_arr->set_sweep_mode(false);
+}
+
 
 //-----------------------------------------------------------------------------
 // A notification invoked before the sweep-line starts handling the given

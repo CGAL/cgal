@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Polygon_mesh_processing_Examples)
 
 # CGAL and its components
@@ -97,6 +97,10 @@ if(OpenMesh_FOUND)
   target_link_libraries(compute_normals_example_OM
                         PRIVATE ${OPENMESH_LIBRARIES})
 
+  create_single_source_cgal_program("corefinement_OM_union.cpp")
+  target_link_libraries(corefinement_OM_union
+                        PRIVATE ${OPENMESH_LIBRARIES})
+
   if(TARGET CGAL::Eigen3_support)
     create_single_source_cgal_program("hole_filling_example_OM.cpp")
     target_link_libraries(hole_filling_example_OM PRIVATE CGAL::Eigen3_support
@@ -132,8 +136,7 @@ else()
 endif()
 
 find_package(Ceres QUIET)
-if(TARGET ceres)
-  target_compile_definitions(mesh_smoothing_example
-                             PRIVATE CGAL_PMP_USE_CERES_SOLVER)
-  target_link_libraries(mesh_smoothing_example PRIVATE ceres)
-endif(TARGET ceres)
+include(CGAL_Ceres_support)
+if(TARGET CGAL::Ceres_support)
+  target_link_libraries(mesh_smoothing_example PUBLIC CGAL::Ceres_support)
+endif(TARGET CGAL::Ceres_support)

@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
   << std::endl;
 
   Pwc_vector pwc;
-  srand(static_cast<unsigned int>(time(NULL)));
+  srand(static_cast<unsigned int>(time(nullptr)));
 
   // Iterate through all regions.
   for (const auto& region : regions) {
