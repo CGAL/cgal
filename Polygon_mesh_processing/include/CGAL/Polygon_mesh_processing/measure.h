@@ -838,18 +838,21 @@ centroid(const TriangleMesh& tmesh)
   * in both polygon meshes. Two faces are identical if they have the same
   * orientation and the same points.
   *
-  * @tparam PolygonMesh a model of `HalfedgeListGraph` and `FaceListGraph`
-  * @tparam FaceOutputIterator model of `OutputIterator`
-     holding `boost::graph_traits<PolygonMesh>::%face_descriptor`.
+  * @tparam PolygonMesh1 a model of `HalfedgeListGraph` and `FaceListGraph`
+  * @tparam PolygonMesh2 a model of `HalfedgeListGraph` and `FaceListGraph`
+  * @tparam FaceOutputIterator1 model of `OutputIterator`
+     holding `boost::graph_traits<PolygonMesh1>::%face_descriptor`.
+  * @tparam FaceOutputIterator2 model of `OutputIterator`
+     holding `boost::graph_traits<PolygonMesh2>::%face_descriptor`.
   * @tparam FacePairOutputIterator model of `OutputIterator`
-     holding `std::pair<boost::graph_traits<PolygonMesh>::%face_descriptor,
-     boost::graph_traits<PolygonMesh>::%face_descriptor`.
+     holding `std::pair<boost::graph_traits<PolygonMesh1>::%face_descriptor,
+     boost::graph_traits<PolygonMesh2>::%face_descriptor`.
   *
   * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
   * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
   *
-  * @param m1 the first `PolygonMesh`
-  * @param m2 the second `PolygonMesh`
+  * @param m1 the first `PolygonMesh1`
+  * @param m2 the second `PolygonMesh2`
   * @param common output iterator collecting the faces that are common to both meshes.
   * @param m1_only output iterator collecting the faces that are only in `m1`
   * @param m2_only output iterator collecting the faces that are only in `m2`
@@ -858,36 +861,43 @@ centroid(const TriangleMesh& tmesh)
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}
-  *     \cgalParamDescription{a property map associating points to the vertices of `m1` (`m2`)}
-  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+  *     \cgalParamDescription{a property map associating points to the vertices of `m1`}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh1>::%vertex_descriptor`
   *                    as key type and `%Point_3` as value type. `%Point_3` must be LessThanComparable.}
-  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, m1 (m2))`}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, m1)`}
+  *     \cgalParamExtra{The same holds for `m2` and `PolygonMesh2` and the point type must be the same for both meshes.}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{vertex_index_map}
-  *     \cgalParamDescription{a property map associating to each vertex of `m1` (`m2`) a unique index between `0` and `num_vertices(m1 (m2)) - 1`}
+  *     \cgalParamDescription{a property map associating to each vertex of `m1` a unique index between `0` and `num_vertices(m1) - 1`, and similarly for `m2`.}
   *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
   *                    as key type and `std::size_t` as value type}
   *     \cgalParamDefault{an automatically indexed internal map}
   *     \cgalParamExtra{If this parameter is not passed, internal machinery will create and initialize
   *                     a face index property map, either using the internal property map if it exists
   *                     or using an external map. The latter might result in  - slightly - worsened performance
-  *                     in case of non-constant complexity for index access.}
+  *                     in case of non-constant complexity for index access. The same holds for `m2` and `PolygonMesh2`.}
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
  */
-template<typename PolygonMesh, typename FaceOutputIterator, typename FacePairOutputIterator, typename NamedParameters1, typename NamedParameters2 >
-void match_faces(const PolygonMesh& m1, const PolygonMesh& m2,
-                 FacePairOutputIterator common, FaceOutputIterator m1_only, FaceOutputIterator m2_only,
+template< typename PolygonMesh1,
+          typename PolygonMesh2,
+          typename FaceOutputIterator1,
+          typename FaceOutputIterator2,
+          typename FacePairOutputIterator,
+          typename NamedParameters1,
+          typename NamedParameters2 >
+void match_faces(const PolygonMesh1& m1, const PolygonMesh2& m2,
+                 FacePairOutputIterator common, FaceOutputIterator1 m1_only, FaceOutputIterator2 m2_only,
                  const NamedParameters1& np1, const NamedParameters2& np2)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  typedef typename GetVertexPointMap < PolygonMesh, NamedParameters1>::const_type VPMap1;
-  typedef typename GetVertexPointMap < PolygonMesh, NamedParameters2>::const_type VPMap2;
-  typedef typename GetInitializedVertexIndexMap<PolygonMesh, NamedParameters1>::const_type VIMap1;
-  typedef typename GetInitializedVertexIndexMap<PolygonMesh, NamedParameters2>::const_type VIMap2;
+  typedef typename GetVertexPointMap < PolygonMesh1, NamedParameters1>::const_type VPMap1;
+  typedef typename GetVertexPointMap < PolygonMesh2, NamedParameters2>::const_type VPMap2;
+  typedef typename GetInitializedVertexIndexMap<PolygonMesh1, NamedParameters1>::const_type VIMap1;
+  typedef typename GetInitializedVertexIndexMap<PolygonMesh2, NamedParameters2>::const_type VIMap2;
   VPMap1 vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
                                       get_const_property_map(vertex_point, m1));
   VPMap2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
@@ -895,7 +905,8 @@ void match_faces(const PolygonMesh& m1, const PolygonMesh& m2,
   VIMap1 vim1 = get_initialized_vertex_index_map(m1, np1);
   VIMap2 vim2 = get_initialized_vertex_index_map(m2, np2);
   typedef typename boost::property_traits<VPMap2>::value_type Point_3;
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh1>::face_descriptor face_descriptor_1;
+  typedef typename boost::graph_traits<PolygonMesh2>::face_descriptor face_descriptor_2;
 
   std::map<Point_3, std::size_t> point_id_map;
 
@@ -925,7 +936,7 @@ void match_faces(const PolygonMesh& m1, const PolygonMesh& m2,
   }
 
   //fill a set with the "faces point-ids" of m1 and then iterate faces of m2 to compare.
-  std::map<boost::container::small_vector<std::size_t, 4>, face_descriptor> m1_faces_map;
+  std::map<boost::container::small_vector<std::size_t, 4>, face_descriptor_1> m1_faces_map;
   for(auto f : faces(m1))
   {
     bool all_shared = true;
@@ -986,17 +997,17 @@ void match_faces(const PolygonMesh& m1, const PolygonMesh& m2,
   }
 }
 
-template<typename PolygonMesh, typename FaceOutputIterator, typename FacePairOutputIterator, typename NamedParameters>
-void match_faces(const PolygonMesh& m1, const PolygonMesh& m2,
-                 FacePairOutputIterator common, FaceOutputIterator m1_only, FaceOutputIterator m2_only,
+template<typename PolygonMesh1, typename PolygonMesh2, typename FaceOutputIterator1, typename FaceOutputIterator2, typename FacePairOutputIterator, typename NamedParameters>
+void match_faces(const PolygonMesh1& m1, const PolygonMesh2& m2,
+                 FacePairOutputIterator common, FaceOutputIterator1 m1_only, FaceOutputIterator2 m2_only,
                  const NamedParameters& np)
 {
   match_faces(m1, m2, common, m1_only, m2_only, np, parameters::all_default());
 }
 
-template<typename PolygonMesh, typename FaceOutputIterator, typename FacePairOutputIterator>
-void match_faces(const PolygonMesh& m1, const PolygonMesh& m2,
-                 FacePairOutputIterator common, FaceOutputIterator m1_only, FaceOutputIterator m2_only)
+template<typename PolygonMesh1, typename PolygonMesh2, typename FaceOutputIterator1, typename FaceOutputIterator2, typename FacePairOutputIterator>
+void match_faces(const PolygonMesh1& m1, const PolygonMesh2& m2,
+                 FacePairOutputIterator common, FaceOutputIterator1 m1_only, FaceOutputIterator2 m2_only)
 {
   match_faces(m1, m2, common, m1_only, m2_only, parameters::all_default(), parameters::all_default());
 }
