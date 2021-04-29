@@ -1051,7 +1051,7 @@ Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 circumcenter_on_sphere(const Face_handle f) const
 {
   CGAL_precondition(dimension() == 2);
-  CGAL_precondition(!is_ghost(f));
+//  CGAL_precondition(!is_ghost(f));
 
   return circumcenter_on_sphere(point(f, 0), point(f, 1), point(f, 2));
 }
@@ -1062,7 +1062,7 @@ Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 dual_on_sphere(const Face_handle f) const
 {
   CGAL_precondition(dimension() == 2);
-  CGAL_precondition(!is_ghost(f));
+//  CGAL_precondition(!is_ghost(f));
 
   return circumcenter_on_sphere(f);
 }
@@ -1073,7 +1073,7 @@ Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 dual_on_sphere(const Edge& e) const
 {
   CGAL_precondition(dimension() == 2);
-  CGAL_precondition(!is_ghost(e));
+//  CGAL_precondition(!is_ghost(e));
 
   return geom_traits().construct_arc_on_sphere_2_object()(dual_on_sphere(e.first),
                                                           dual_on_sphere(e.first->neighbor(e.second)));
