@@ -173,6 +173,16 @@ public:
       const Point_2& src2 = cv2.source();
       const Point_2& tgt2 = cv2.target();
 
+      /*
+        The internal function compare_slopesC2 is used to avoid paying
+        the construction of two Line_2 objects (or 2 Segment_2
+        objects). This might lead to problems if one tries to extend
+        geometric objects / kernels.
+
+        Ideally, the kernel concept Kernel::ConstructSlope_2 would
+        have an overload that takes 4 points for this optimization to
+        be clean and faithful to the documented concepts.
+       */
       return compare_slopesC2(src2.x(), src2.y(), tgt2.x(), tgt2.y(),
                               src1.x(), src1.y(), tgt1.x(), tgt1.y());
     }
@@ -210,6 +220,16 @@ public:
       const Point_2& src2 = cv2.source();
       const Point_2& tgt2 = cv2.target();
 
+      /*
+        The internal function compare_slopesC2 is used to avoid paying
+        the construction of two Line_2 objects (or 2 Segment_2
+        objects). This might lead to problems if one tries to extend
+        geometric objects / kernels.
+
+        Ideally, the kernel concept Kernel::ConstructSlope_2 would
+        have an overload that takes 4 points for this optimization to
+        be clean and faithful to the documented concepts.
+       */
       return compare_slopesC2(src1.x(), src1.y(), tgt1.x(), tgt1.y(),
                               src2.x(), src2.y(), tgt2.x(), tgt2.y());
     }
