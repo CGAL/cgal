@@ -1513,11 +1513,20 @@ bool Scene_surface_mesh_item::hasPatchIds()
 bool
 Scene_surface_mesh_item::save(std::ostream& out) const
 {
+  QMessageBox::StandardButton save_internal_properties =
+      QMessageBox::question(CGAL::Three::Three::mainWindow(), tr("Internal Properties"), tr("Do you wish to export the internal properties ?"));
   QApplication::setOverrideCursor(Qt::WaitCursor);
   out.precision(17);
+  if(save_internal_properties == QMessageBox::Yes)
+  {
     out << *(d->smesh_);
-    QApplication::restoreOverrideCursor();
-    return (bool) out;
+  }
+  else
+  {
+    CGAL::IO::internal::write_OFF_BGL(out,*d->smesh_, CGAL::parameters::all_default());
+  }
+  QApplication::restoreOverrideCursor();
+  return (bool) out;
 }
 
 bool
