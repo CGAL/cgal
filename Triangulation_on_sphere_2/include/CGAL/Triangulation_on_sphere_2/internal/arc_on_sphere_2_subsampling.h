@@ -15,9 +15,11 @@
 
 #include <CGAL/license/Triangulation_on_sphere_2.h>
 
-#ifdef CGAL_EIGEN3_ENABLED
+#include <CGAL/triangulation_assertions.h>
 
+#ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_solver_traits.h>
+#endif
 
 #include <cmath>
 #include <list>
@@ -34,8 +36,12 @@ double get_theta( typename Kernel::Point_3& pt,
 {
   typedef typename Kernel::FT                                        FT;
 
+#ifdef CGAL_EIGEN3_ENABLED
   typedef Eigen::Matrix<FT, 3, 3, Eigen::DontAlign>                  Matrix;
   typedef Eigen::Matrix<FT, 3, 1>                                    Col;
+#else
+  CGAL_static_assertion(false, "Eigen is required to perform arc subsampling!");
+#endif
 
   auto V1c = V1.cartesian_begin(), V2c = V2.cartesian_begin(), V3c = V3.cartesian_begin();
 
@@ -153,7 +159,5 @@ void subsample_arc_on_sphere_2(const ArcOnSphere& arc,
 } // namespace internal
 } // namespace Triangulations_on_sphere_2
 } // namespace CGAL
-
-#endif // CGAL_EIGEN3_ENABLED
 
 #endif // CGAL_TOS2_INTERNAL_ARC_ON_SPHERE_SUBSAMPLING_H
