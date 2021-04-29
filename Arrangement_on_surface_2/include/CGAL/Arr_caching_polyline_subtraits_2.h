@@ -451,6 +451,17 @@ public:
   };
   Merge_2 merge_2_object() const { return Merge_2(*this); }
 
+  typedef double                          Approximate_number_type;
+  class Approximate_2 {
+  public:
+    Approximate_number_type operator()(const Point_2& p, int i) const
+    {
+      CGAL_precondition((i == 0) || (i == 1));
+      return (i == 0) ? (CGAL::to_double(p.x())) : (CGAL::to_double(p.y()));
+    }
+  };
+  Approximate_2 approximate_2_object() const { return Approximate_2(); }
+
   class Compare_endpoints_xy_2
   {
   public:

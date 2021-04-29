@@ -66,7 +66,6 @@ public:
   using Compare_y_at_x_right_2 = typename Base::Compare_y_at_x_right_2;
   using Equal_2 = typename Base::Equal_2;
   using Compare_endpoints_xy_2 = typename Base::Compare_endpoints_xy_2;
-  // using Construct_opposite_2 = typename Base::Construct_opposite_2;
   using Approximate_2 = typename Base::Approximate_2;
   using Parameter_space_in_x_2 = typename Base::Parameter_space_in_x_2;
   using Parameter_space_in_y_2 = typename Base::Parameter_space_in_y_2;
