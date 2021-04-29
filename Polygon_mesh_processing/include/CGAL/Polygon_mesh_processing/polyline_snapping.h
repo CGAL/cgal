@@ -44,15 +44,36 @@ namespace CGAL {
 namespace Polygon_mesh_processing{
 namespace internal {
 
-template <typename Exact_kernel>
-bool exact_snapping (const typename Exact_kernel::Segment_3& s0,
-                     const typename Exact_kernel::Segment_3& s1,
-                     typename Exact_kernel::Point_3& result)
+template <typename Kernel>
+struct Snapping_result
 {
-  typedef typename Exact_kernel::Point_3 Point_3;
-  typedef typename Exact_kernel::Segment_3 Segment_3;
-  typedef typename Exact_kernel::Vector_3 Vector_3;
-  typedef typename Exact_kernel::Plane_3 Plane_3;
+  using Point_3 = typename Kernel::Point_3;
+  using Segment_3 = typename Kernel::Segment_3;
+  enum Type { EMPTY, POINT, SEGMENT };
+
+  Type type;
+  boost::variant<Point_3, Segment_3> first;
+  boost::variant<Point_3, Segment_3> second;
+
+  Snapping_result() : type (EMPTY) { }
+  Snapping_result (const Point_3& first, const Point_3& second)
+    : type (POINT), first (first), second (second) { }
+  Snapping_result (const Segment_3& first, const Segment_3& second)
+    : type (SEGMENT), first (first), second (second) { }
+};
+
+template <typename Exact_kernel>
+Snapping_result<Exact_kernel>
+exact_snapping (const typename Exact_kernel::Segment_3& s0,
+                const typename Exact_kernel::Segment_3& s1)
+{
+  using Point_3 = typename Exact_kernel::Point_3;
+  using Segment_3 = typename Exact_kernel::Segment_3;
+  using Line_3 = typename Exact_kernel::Line_3;
+  using Vector_3 = typename Exact_kernel::Vector_3;
+  using Plane_3 =  typename Exact_kernel::Plane_3;
+  using FT =  typename Exact_kernel::FT;
+  using Result = Snapping_result<Exact_kernel>;
 
   CGAL_assertion (s0.source() != s0.target());
   CGAL_assertion (s1.source() != s1.target());
@@ -64,7 +85,32 @@ bool exact_snapping (const typename Exact_kernel::Segment_3& s0,
   // Collinear segments
   if (normal == CGAL::NULL_VECTOR)
   {
-    return false;
+    Point_3 proj0 = v1.supporting_line().projection(s0.source());
+    Point_3 med = midpoint(s0.source(), proj0);
+    Line_3 support (med, v0);
+    Vector ref (med, support.projection(s0.target()));
+
+    std::vector<std::pair<FT, Point_3>> points_along_line;
+
+    auto create_projection = [&](const Point_3& p)
+                             {
+                               Point_3 proj = support.projection(p);
+                               Vector vec (med, proj);
+                               FT position = vec * ref;
+                               points_along_line.emplace_back(position, proj);
+                             };
+    create_projection (s0.source());
+    create_projection (s0.target());
+    create_projection (s1.source());
+    create_projection (s1.target());
+
+    std::sort (points_along_line.begin(), points_along_line.end(),
+               [](const auto& a, const auto& b) -> bool
+               {
+                 return a.first < b.first;
+               });
+
+    return Result();
   }
 
   Plane_3 plane0 (s0.source(), normal);
@@ -78,39 +124,24 @@ bool exact_snapping (const typename Exact_kernel::Segment_3& s0,
   CGAL_assertion (s0proj.source() != s0proj.target());
   CGAL_assertion (s1proj.source() != s1proj.target());
 
-  if (!CGAL::do_intersect (s0, s1proj) ||
-      !CGAL::do_intersect (s1, s0proj))
-    return false;
-
-  Point_3 p0, p1;
-
   typename std::result_of<typename Exact_kernel::Intersect_3(Segment_3, Segment_3)>::type
     intersection0 = intersection(s0, s1proj);
   if (!intersection0)
-    return false;
-
-  if (const Point_3* p = boost::get<Point_3>(&*intersection0))
-    p0 = *p;
-  else // Coplanar segments
-  {
-    return false;
-  }
+    return Result();
 
   typename std::result_of<typename Exact_kernel::Intersect_3(Segment_3, Segment_3)>::type
     intersection1 = intersection(s1, s0proj);
-  if (!intersection1)
-    return false;
+  CGAL_assertion (bool(intersection1));
 
-  if (const Point_3* p = boost::get<Point_3>(&*intersection1))
-    p1 = *p;
-  else // Coplanar segments
+  if (const Point_3* p0 = boost::get<Point_3>(&*intersection0))
   {
-    return false;
+    const Point_3* p1 = boost::get<Point_3>(&*intersection1);
+    CGAL_assertion(p1 != nullptr);
+    return Result (*p0, *p1);
   }
 
-  result = CGAL::midpoint (p0, p1);
-
-  return true;
+  // else coplanar segments
+  return Result();
 }
 
 template <class Kernel,
@@ -122,34 +153,35 @@ template <class Kernel>
 class Exact_snapping<Kernel,false>
 {
 //typedefs
-  typedef Kernel Input_kernel;
-  typedef CGAL::Exact_predicates_exact_constructions_kernel Exact_kernel;
-  typedef CGAL::Cartesian_converter<Exact_kernel, Input_kernel> Exact_to_inexact;
-  typedef CGAL::Cartesian_converter<Input_kernel, Exact_kernel> Inexact_to_exact;
+  using Exact_kernel = Exact_predicates_exact_constructions_kernel;
+  using Exact_segment_3 = typename Exact_kernel::Segment_3;
+  using Exact_point_3 = typename Exact_kernel::Point_3;
+  using Exact_result = Snapping_result<Exact_kernel>;
 
-  typedef typename Input_kernel::Point_3 Inexact_point_3;
-  typedef typename Input_kernel::Line_3 Inexact_line_3;
-  typedef typename Input_kernel::Segment_3 Inexact_segment_3;
-  typedef typename Exact_kernel::Point_3 Exact_point_3;
-  typedef typename Exact_kernel::Line_3 Exact_line_3;
-  typedef typename Exact_kernel::Segment_3 Exact_segment_3;
+  using Inexact_kernel = Kernel;
+  using Inexact_segment_3 = typename Inexact_kernel::Segment_3;
+  using Inexact_point_3 = typename Inexact_kernel::Point_3;
+  using Inexact_result = Snapping_result<Inexact_kernel>;
 
-  Exact_kernel ek;
+  using Exact_to_inexact = Cartesian_converter<Exact_kernel, Inexact_kernel>;
+  using Inexact_to_exact = Cartesian_converter<Inexact_kernel, Exact_kernel>;
+
   Exact_to_inexact to_inexact;
   Inexact_to_exact to_exact;
 
 public:
 
-  std::pair<Inexact_point_3, bool> intersection (const Inexact_segment_3& s0, const Inexact_segment_3& s1) const
+  Inexact_result intersection (const Inexact_segment_3& s0, const Inexact_segment_3& s1) const
   {
-    Exact_segment_3 exact_s0 = to_exact(s0);
-    Exact_segment_3 exact_s1 = to_exact(s1);
-    Exact_point_3 result;
-
-    if (exact_snapping<Exact_kernel> (exact_s0, exact_s1, result))
-      return std::make_pair (to_inexact (result), true);
-
-    return std::make_pair (Inexact_point_3(), false);
+    Exact_result result = exact_snapping<Exact_kernel> (to_exact(s0), to_exact(s1));
+    if (result.type == Exact_result::EMPTY)
+      return Inexact_result();
+    if (result.type == Exact_result::POINT)
+      return Inexact_result (to_inexact (get<const Exact_point_3&>(result.first)),
+                             to_inexact (get<const Exact_point_3&>(result.second)));
+    // else Segment
+    return Inexact_result (to_inexact (get<const Exact_segment_3&>(result.first)),
+                           to_inexact (get<const Exact_segment_3&>(result.second)));
   }
 
 };
@@ -157,24 +189,16 @@ public:
 template <class Kernel>
 class Exact_snapping<Kernel,true>
 {
-//typedefs
-  typedef typename Kernel::Point_3 Point_3;
-  typedef typename Kernel::Line_3 Line_3;
-  typedef typename Kernel::Segment_3 Segment_3;
+  using Segment_3 = typename Kernel::Segment_3;
+  using Point_3 = typename Kernel::Point_3;
+  using Result = Snapping_result<Kernel>;
+
 public:
 
-  Exact_snapping()
+  Result intersection (const Segment_3& s0, const Segment_3& s1) const
   {
-
+    return exact_snapping<Kernel>(s0,s1);
   }
-
-  std::pair<Point_3, bool> intersection (const Segment_3& s0, const Segment_3& s1) const
-  {
-    Point_3 result;
-    bool out = exact_snapping<Kernel> (s0, s1, result);
-    return std::make_pair (result, out);
-  }
-
 };
 
 }// namespace internal
@@ -354,6 +378,7 @@ void polyline_snapping (Graph& graph, PointMap point_map, double tolerance)
   using Kernel = typename Kernel_traits<Point_3>::Kernel;
   using Segment_3 = typename Kernel::Segment_3;
   using FT = typename Kernel::FT;
+  using Result = internal::Snapping_result<Kernel>;
 
   using vertex_descriptor = typename boost::graph_traits<Graph>::vertex_descriptor;
   using edge_descriptor = typename boost::graph_traits<Graph>::edge_descriptor;
@@ -412,27 +437,30 @@ void polyline_snapping (Graph& graph, PointMap point_map, double tolerance)
          return;
 
        // Compute exact snapping point
-       Point_3 new_point;
-       bool okay;
-       std::tie (new_point, okay) = exact_snapping.intersection (sa, sb);
-       if (!okay)
+       Result snapping = exact_snapping.intersection (sa, sb);
+       if (snapping.type == Result::EMPTY)
          return;
 
-       // Create new vertex
-       vertex_descriptor vd = add_vertex(graph);
-       put (point_map, vd, new_point);
+       if (snapping.type == Result::POINT)
+       {
+         const Point_3& a = get<const Point_3&>(snapping.first);
+         const Point_3& b = get<const Point_3&>(snapping.second);
+         Point_3 new_point = midpoint(a,b);
 
-       // Compute barycentric coord along each segment
-       FT ba = approximate_sqrt (squared_distance (sa.source(), sa.supporting_line().projection(new_point))
-                                 / sa.squared_length());
-       FT bb = approximate_sqrt (squared_distance (sb.source(), sb.supporting_line().projection(new_point))
-                                 / sb.squared_length());
+         // Create new vertex
+         vertex_descriptor vd = add_vertex(graph);
+         put (point_map, vd, new_point);
 
-       // Store relative position of new vertex on edges
-       auto ma = new_vertices.insert (std::make_pair(ea, std::vector<Vertex_position>()));
-       auto mb = new_vertices.insert (std::make_pair(eb, std::vector<Vertex_position>()));
-       ma.first->second.emplace_back (ba, vd);
-       mb.first->second.emplace_back (bb, vd);
+         // Compute barycentric coord along each segment
+         FT ba = approximate_sqrt (squared_distance (sa.source(), a) / sa.squared_length());
+         FT bb = approximate_sqrt (squared_distance (sb.source(), b) / sb.squared_length());
+
+         // Store relative position of new vertex on edges
+         auto ma = new_vertices.insert (std::make_pair(ea, std::vector<Vertex_position>()));
+         auto mb = new_vertices.insert (std::make_pair(eb, std::vector<Vertex_position>()));
+         ma.first->second.emplace_back (ba, vd);
+         mb.first->second.emplace_back (bb, vd);
+       }
      },
      cutoff);
 
