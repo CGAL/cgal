@@ -307,15 +307,28 @@ bool IO_test<Geom_traits_T>::read_xcurves(const char* filename,
       line_stream.clear();
     }
 
+#elif TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS
+    if (line[0] == 's') {
+      // The caching polyline traits does not support the construction of
+      // segments that compose the (caching) polyline.
+      CGAL_error_msg("Caching polyline traits does not support reading "
+                     "segments");
+    }
+    else {
+      std::istringstream line_stream(line);
+      typename Geom_traits::X_monotone_curve_2 xcv;
+      this->read_xcurve(line_stream, xcv);
+      xcurves.push_back(xcv);
+      line_stream.clear();
+    }
 #else
-
     std::istringstream line_stream(line);
     typename Geom_traits::X_monotone_curve_2 xcv;
     this->read_xcurve(line_stream, xcv);
     xcurves.push_back(xcv);
     line_stream.clear();
-
 #endif
+
   }
 
   xcv_stream.close();
@@ -361,7 +374,20 @@ IO_test<Geom_traits_T>::read_curves(const char* filename,
       curves.push_back(cv);
       line_stream.clear();
     }
-
+#elif TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS
+    if (line[0] == 's') {
+      // The caching polyline traits does not support the construction of
+      // segments that compose the (caching) polyline.
+      CGAL_error_msg("Caching polyline traits does not support reading "
+                     "segments");
+    }
+    else {
+      std::istringstream line_stream(line);
+      typename Geom_traits::Curve_2 cv;
+      this->read_curve(line_stream, cv);
+      curves.push_back(cv);
+      line_stream.clear();
+    }
 #else
     std::istringstream line_stream(line);
     typename Geom_traits::Curve_2 cv;

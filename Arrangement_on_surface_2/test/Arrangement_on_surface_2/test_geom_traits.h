@@ -16,6 +16,9 @@
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_segment_traits_2.h>
 
+#elif TEST_GEOM_TRAITS == CACHING_POLYLINE_GEOM_TRAITS
+#include <CGAL/Arr_caching_polyline_traits_2.h>
+
 #elif TEST_GEOM_TRAITS == NON_CACHING_POLYLINE_GEOM_TRAITS
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_non_caching_segment_traits_2.h>
@@ -58,7 +61,6 @@
 //#include <CGAL/Arr_rational_arc_traits_2.h>
 #include <CGAL/Arr_rational_function_traits_2.h>
 
-
 #elif TEST_GEOM_TRAITS == ALGEBRAIC_GEOM_TRAITS
 #include <CGAL/Arr_algebraic_segment_traits_2.h>
 
@@ -70,7 +72,6 @@
 #include <CGAL/CORE_algebraic_number_traits.h>
 #include <CGAL/Arr_polycurve_traits_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
-
 
 #elif TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS
 #include <CGAL/Arr_polycurve_traits_2.h>
@@ -104,6 +105,12 @@ typedef CGAL::Arr_polyline_traits_2<Segment_traits>     Base_geom_traits;
 typedef Base_geom_traits::Subcurve_2                    Subcurve_2;
 typedef Base_geom_traits::X_monotone_subcurve_2         X_monotone_subcurve_2;
 #define GEOM_TRAITS_TYPE "Polylines"
+
+#elif TEST_GEOM_TRAITS == CACHING_POLYLINE_GEOM_TRAITS
+typedef CGAL::Arr_caching_polyline_traits_2<Kernel,
+                                            std::vector<typename Kernel::Point_2>>
+                                                        Base_geom_traits;
+#define GEOM_TRAITS_TYPE "Caching Polylines"
 
 #elif TEST_GEOM_TRAITS == NON_CACHING_POLYLINE_GEOM_TRAITS
 typedef CGAL::Arr_non_caching_segment_traits_2<Kernel>  Segment_traits;

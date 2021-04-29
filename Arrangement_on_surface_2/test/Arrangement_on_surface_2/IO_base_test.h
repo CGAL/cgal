@@ -118,6 +118,7 @@ bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
 
 // Polyline
 #elif (TEST_GEOM_TRAITS == POLYLINE_GEOM_TRAITS) || \
+  (TEST_GEOM_TRAITS == CACHING_POLYLINE_GEOM_TRAITS) || \
   (TEST_GEOM_TRAITS == NON_CACHING_POLYLINE_GEOM_TRAITS)
 
 template <>
@@ -157,6 +158,10 @@ bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
   cv = m_geom_traits.construct_curve_2_object()(points.begin(), points.end());
   return true;
 }
+
+// The caching polyline traits does not support the construction of segments
+// that compose the (caching) polyline.
+#if (TEST_GEOM_TRAITS != CACHING_POLYLINE_GEOM_TRAITS)
 template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_segment(InputStream_& is,
@@ -170,7 +175,11 @@ bool IO_base_test<Base_geom_traits>::read_segment(InputStream_& is,
   seg = Subcurve_2(p_src, p_tgt);
   return true;
 }
+#endif
 
+// The caching polyline traits does not support the construction of segments
+// that compose the (caching) polyline.
+#if (TEST_GEOM_TRAITS != CACHING_POLYLINE_GEOM_TRAITS)
 template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_xsegment(InputStream_& is,
@@ -184,6 +193,7 @@ bool IO_base_test<Base_geom_traits>::read_xsegment(InputStream_& is,
   xseg = X_monotone_subcurve_2(p_src, p_tgt);
   return true;
 }
+#endif
 
 //polycurve_conic
 #elif TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS
@@ -427,7 +437,7 @@ bool IO_base_test<Base_geom_traits>::read_segment(InputStream_& is,
   is >> type;
   if (!read_general_curve(is, tmp_seg)) return false;
   seg = tmp_seg;
-   return true;
+  return true;
 }
 
 template <>
