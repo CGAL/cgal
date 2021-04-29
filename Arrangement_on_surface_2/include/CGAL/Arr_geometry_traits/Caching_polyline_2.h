@@ -68,14 +68,14 @@ public:
   { }
 
   // Create a caching polyline from a range
-  Caching_polyline_2(const Kernel& kernel, const Range& range, bool force_closure = false)
+  Caching_polyline_2(const Kernel& kernel, const Range& range, bool duplicate_first = false)
     : m_range(&range)
     , m_reverse(false)
   {
     m_line_cache = std::make_shared<Line_cache>(range.size(), nullptr);
     m_begin = 0;
     m_end = range.size();
-    if (force_closure)
+    if (duplicate_first)
       m_last = Extreme_point(std::make_shared<Point_2>(*range.begin()), nullptr);
     compute_direction(kernel);
   }
