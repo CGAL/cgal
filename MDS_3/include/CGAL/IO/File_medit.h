@@ -910,7 +910,7 @@ template<typename T3>
 bool read_MEDIT(std::istream& in, T3& t3)
 {
   CGAL_assertion(!(!in));
-  return CGAL::build_triangulation_from_file<T3, true>(in, t3);
+  return CGAL::MDS_3::build_triangulation_from_file(in, t3);
 }
 
 } // end namespace CGAL

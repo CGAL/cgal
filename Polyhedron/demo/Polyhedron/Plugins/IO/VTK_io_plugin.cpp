@@ -421,7 +421,7 @@ public:
         }
       }
       std::vector<typename Tr::Vertex_handle> new_vertices;
-      CGAL::build_triangulation<Tr, true>(c3t3_item->c3t3().triangulation(),
+      CGAL::MDS_3::build_triangulation(c3t3_item->c3t3().triangulation(),
         points, finite_cells, border_facets, new_vertices);
 
       for( C3t3::Triangulation::Finite_cells_iterator

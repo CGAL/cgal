@@ -22,14 +22,18 @@ template <typename Tr,
           typename CurveIndex = int>
 class Mesh_complex_3_in_triangulation_3;
 
-template<class Tr, bool c3t3_loader_failed>
-bool build_triangulation_from_file(std::istream& is,
-                                   Tr& tr,
-                                   bool replace_domain_0);
+namespace MDS_3 {
 
-template<class Tr, bool c3t3_loader_failed>
-bool build_triangulation_from_file(std::istream& is,
-                                   Tr& tr);
+  template<class Tr>
+  bool build_triangulation_from_file(std::istream& is,
+                                     Tr& tr,
+                                     bool replace_domain_0);
+  
+  template<class Tr>
+  bool build_triangulation_from_file(std::istream& is,
+                                     Tr& tr);
+
+} // MDS_3
 } // CGAL
 #endif
 

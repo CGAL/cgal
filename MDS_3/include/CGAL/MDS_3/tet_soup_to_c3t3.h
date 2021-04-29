@@ -14,8 +14,8 @@
 //
 //******************************************************************************
 
-#ifndef CGAL_MESH_3_TET_SOUP_TO_C3T3_H
-#define CGAL_MESH_3_TET_SOUP_TO_C3T3_H
+#ifndef CGAL_MDS_3_TET_SOUP_TO_C3T3_H
+#define CGAL_MDS_3_TET_SOUP_TO_C3T3_H
 
 #include <CGAL/license/Triangulation_3.h>
 
@@ -32,7 +32,8 @@
 
 namespace CGAL
 {
-
+namespace MDS_3
+{
 template<typename Vh>
 std::array<Vh, 3> make_ordered_vertex_array(const Vh vh0, const Vh vh1, const Vh vh2)
 {
@@ -335,7 +336,7 @@ bool assign_neighbors(Tr& tr,
   return true;
 }
 
-template<class Tr, bool c3t3_loader_failed>
+template<class Tr>
 bool build_triangulation(Tr& tr,
                          const std::vector<typename Tr::Point>& points,
                          const std::vector<std::array<int,5> >& finite_cells,
@@ -390,13 +391,10 @@ bool build_triangulation(Tr& tr,
   if(verbose)
     std::cout << tr.number_of_vertices() << " vertices" << std::endl;
 
-  if(c3t3_loader_failed)
-    return true;
-  else
-    return tr.tds().is_valid();
+  return tr.tds().is_valid();
 }
 
-template<class Tr, bool c3t3_loader_failed>
+template<class Tr>
 bool build_triangulation_from_file(std::istream& is,
                                    Tr& tr,
                                    bool replace_domain_0)
@@ -487,19 +485,20 @@ bool build_triangulation_from_file(std::istream& is,
     return false;
 
   std::vector<typename Tr::Vertex_handle> vertices(points.size() + 1);
-  bool is_well_built = build_triangulation<Tr, c3t3_loader_failed>(tr,
+  bool is_well_built = build_triangulation(tr,
     points, finite_cells, border_facets, vertices, false, replace_domain_0);
   return is_well_built;
 }
 
-template<class Tr, bool c3t3_loader_failed>
+template<class Tr>
 bool build_triangulation_from_file(std::istream& is,
                                    Tr& tr)
 {
-  return build_triangulation_from_file<Tr, c3t3_loader_failed>(is, tr, false);
+  return build_triangulation_from_file<Tr>(is, tr, false);
 }
+}  // namespace MDS_3
 }  // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 
-#endif // CGAL_MESH_3_TET_SOUP_TO_C3T3_H
+#endif // CGAL_MDS_3_TET_SOUP_TO_C3T3_H

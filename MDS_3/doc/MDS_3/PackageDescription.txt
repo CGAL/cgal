@@ -51,6 +51,7 @@ Here are the main concepts of this package:
 \cgalCRPSection{Function Templates}
 
 - `CGAL::facets_in_complex_3_to_triangle_mesh()`
+- `CGAL::tetrahedron_soup_to_triangulation_3()`
 
 \cgalCRPSection{Input/Output Functions}
 - `CGAL::output_to_medit()`
