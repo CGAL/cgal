@@ -491,8 +491,9 @@ void
 Triangulation_on_sphere_2<Gt, Tds>::
 swap(Triangulation_on_sphere_2& tr)
 {
+  using std::swap;
   _tds.swap(tr._tds);
-  std::swap(tr.geom_traits(), geom_traits());
+  swap(_gt, tr._gt);
 }
 
 template <typename Gt, typename Tds>
