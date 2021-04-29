@@ -493,6 +493,12 @@ public:
       const Kernel& kernel = *m_traits.subcurve_traits_2();
       return Curve_2(kernel, range, duplicate_first);
     }
+
+    Curve_2 operator()(const Point_2& a, const Point_2& b) const
+    {
+      const Kernel& kernel = *m_traits.subcurve_traits_2();
+      return Curve_2(kernel, a, b);
+    }
   };
 
   /*! Obtain a Construct_curve_2 functor object. */
@@ -508,7 +514,7 @@ public:
     friend class Arr_caching_polyline_traits_2<Kernel, Range>;
   public:
 
-    X_monotone_curve_2 operator()(const Point_2& a, const Point_2& b)
+    X_monotone_curve_2 operator()(const Point_2& a, const Point_2& b) const
     {
       const Kernel& kernel = *m_traits.subcurve_traits_2();
       return X_monotone_curve_2(kernel, a, b);
