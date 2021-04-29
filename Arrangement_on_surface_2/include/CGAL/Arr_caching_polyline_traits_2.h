@@ -68,7 +68,6 @@ public:
   using Compare_endpoints_xy_2 = typename Base::Compare_endpoints_xy_2;
   // using Construct_opposite_2 = typename Base::Construct_opposite_2;
   using Approximate_2 = typename Base::Approximate_2;
-  using Construct_x_monotone_curve_2 = typename Base::Construct_x_monotone_curve_2;
   using Parameter_space_in_x_2 = typename Base::Parameter_space_in_x_2;
   using Parameter_space_in_y_2 = typename Base::Parameter_space_in_y_2;
   using Compare_x_on_boundary_2 = typename Base::Compare_x_on_boundary_2;
@@ -499,6 +498,27 @@ public:
   /*! Obtain a Construct_curve_2 functor object. */
   Construct_curve_2 construct_curve_2_object() const
   { return Construct_curve_2(*this); }
+
+  class Construct_x_monotone_curve_2
+  {
+  protected:
+    using Traits = Arr_caching_polyline_traits_2<Kernel, Range>;
+    const Traits& m_traits;
+    Construct_x_monotone_curve_2(const Traits& traits) : m_traits(traits) {}
+    friend class Arr_caching_polyline_traits_2<Kernel, Range>;
+  public:
+
+    X_monotone_curve_2 operator()(const Point_2& a, const Point_2& b)
+    {
+      const Kernel& kernel = *m_traits.subcurve_traits_2();
+      return X_monotone_curve_2(kernel, a, b);
+    }
+  };
+
+  /*! Obtain a Construct_x_monotone_curve_2 functor object. */
+  Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const
+  { return Construct_x_monotone_curve_2(*this); }
+
 };
 
 
