@@ -555,30 +555,6 @@ public:
       return xcv;
     }
 
-    /*! Construct a full spherical_arc from a plane
-     * \param plane the containing plane.
-     * \pre the plane is not vertical
-     */
-    X_monotone_curve_2 operator()(const Direction_3& normal) const
-    {
-      X_monotone_curve_2 xcv;
-
-      xcv.set_normal(normal);
-      xcv.set_is_vertical(false);
-      xcv.set_is_directed_right(z_sign(normal) == POSITIVE);
-      xcv.set_is_full(true);
-      xcv.set_is_degenerate(false);
-      xcv.set_is_empty(false);
-
-      CGAL_precondition(z_sign(normal) != ZERO);
-
-      Direction_3 d;
-      m_traits.intersection_with_identification(xcv, d, Zero_atan_y());
-      Point_2 p(d, Point_2::MID_BOUNDARY_LOC);
-      xcv.set_source(p);
-      xcv.set_target(p);
-    }
-
     /*! Construct a spherical_arc from two endpoints directions contained
      * in a plane.
      * \param[in] plane the containing plane.
@@ -933,6 +909,26 @@ public:
       cv.set_is_x_monotone((plane_is_positive && !ccib(d, s, t)) ||
                            (!plane_is_positive && !ccib(d, t, s)));
       return cv;
+    }
+
+    /*! Construct a full spherical_arc from a plane
+     * \param plane the containing plane.
+     */
+    Curve_2 operator()(const Direction_3& normal) const {
+      Curve_2 xcv;
+
+      xcv.set_normal(normal);
+      xcv.set_is_vertical(z_sign(normal) == ZERO);
+      xcv.set_is_directed_right(z_sign(normal) == POSITIVE);
+      xcv.set_is_full(true);
+      xcv.set_is_degenerate(false);
+      xcv.set_is_empty(false);
+
+      Direction_3 d;
+      m_traits.intersection_with_identification(xcv, d, Zero_atan_y());
+      Point_2 p(d, Point_2::MID_BOUNDARY_LOC);
+      xcv.set_source(p);
+      xcv.set_target(p);
     }
   };
 
