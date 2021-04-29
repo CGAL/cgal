@@ -40,8 +40,8 @@ namespace CGAL {
     FT lower = infinity_value<FT>();
     FT upper = infinity_value<FT>();
     // TODO: update
-    Face_handle_2 lface = Face_handle_2();
-    Face_handle_2 uface = Face_handle_2();
+    Face_handle_2 tm2_lface = Face_handle_2();
+    Face_handle_2 tm2_uface = Face_handle_2();
     std::pair<Face_handle_1, Face_handle_2> lpair = default_face_pair();
     std::pair<Face_handle_1, Face_handle_2> upair = default_face_pair();
 
@@ -58,12 +58,12 @@ namespace CGAL {
 
     Candidate_triangle(
       const Triangle_3& triangle, const Candidate_bounds& bounds, const Face_handle_1& fh) :
-    triangle(triangle), bounds(bounds), face(fh)
+    triangle(triangle), bounds(bounds), tm1_face(fh)
     { }
 
     Triangle_3 triangle;
     Candidate_bounds bounds;
-    Face_handle_1 face;
+    Face_handle_1 tm1_face;
     // TODO: no need to use bounds.lower?
     bool operator>(const Candidate_triangle& other) const { return bounds.upper < other.bounds.upper; }
     bool operator<(const Candidate_triangle& other) const { return bounds.upper > other.bounds.upper; }
@@ -156,11 +156,11 @@ namespace CGAL {
       // TM1 to the primitive triangle in TM2.
       if (distance_lower < h_local_bounds.lower) {
         h_local_bounds.lower = distance_lower;
-        h_local_bounds.lface = primitive.id();
+        h_local_bounds.tm2_lface = primitive.id();
       }
       if (distance_upper < h_local_bounds.upper) { // it is (10) in the paper
         h_local_bounds.upper = distance_upper;
-        h_local_bounds.uface = primitive.id();
+        h_local_bounds.tm2_uface = primitive.id();
       }
     }
 
@@ -327,8 +327,8 @@ namespace CGAL {
       Bounds<Kernel, Face_handle_1, Face_handle_2> initial_bounds;
       initial_bounds.lower = max_dist + m_error_bound;
       initial_bounds.upper = max_dist + m_error_bound;
-      initial_bounds.lface = fpair.second;
-      initial_bounds.uface = fpair.second;
+      initial_bounds.tm2_lface = fpair.second;
+      initial_bounds.tm2_uface = fpair.second;
 
       // Call Culling on B with the single triangle found.
       TM2_hd_traits traversal_traits_tm2(
@@ -355,12 +355,12 @@ namespace CGAL {
       if (local_bounds.lower > h_global_bounds.lower) { // it is (6) in the paper, see also Algorithm 1
         h_global_bounds.lower = local_bounds.lower;
         h_global_bounds.lpair.first  = fpair.first;
-        h_global_bounds.lpair.second = local_bounds.lface;
+        h_global_bounds.lpair.second = local_bounds.tm2_lface;
       }
       if (local_bounds.upper > h_global_bounds.upper) { // it is (6) in the paper, see also Algorithm 1
         h_global_bounds.upper = local_bounds.upper;
         h_global_bounds.upair.first  = fpair.first;
-        h_global_bounds.upair.second = local_bounds.uface;
+        h_global_bounds.upair.second = local_bounds.tm2_uface;
       }
 
       // Store the triangle given as primitive here as candidate triangle
@@ -440,10 +440,10 @@ namespace CGAL {
     // Here, we return the maximum distance from one of the face corners
     // to the second mesh. We also return a pair of realizing this distance faces.
     FT get_maximum_distance(
-      const Face_handle_1 lface,
+      const Face_handle_1 tm1_lface,
       std::pair<Face_handle_1, Face_handle_2>& fpair) const {
 
-      const auto triangle = get(m_face_to_triangle_map, lface);
+      const auto triangle = get(m_face_to_triangle_map, tm1_lface);
       const Point_3 v0 = triangle.vertex(0);
       const Point_3 v1 = triangle.vertex(1);
       const Point_3 v2 = triangle.vertex(2);
@@ -462,8 +462,8 @@ namespace CGAL {
       const auto mdist1 = (sq_dist0.first > sq_dist1.first) ? sq_dist0 : sq_dist1;
       const auto mdist2 = (mdist1.first > sq_dist2.first) ? mdist1 : sq_dist2;
 
-      const auto uface = mdist2.second;
-      fpair = std::make_pair(lface, uface);
+      Face_handle_2 tm2_uface = mdist2.second;
+      fpair = std::make_pair(tm1_lface, tm2_uface);
       return static_cast<FT>(CGAL::sqrt(CGAL::to_double(mdist2.first)));
     }
 
@@ -492,14 +492,14 @@ namespace CGAL {
         const auto top = m_candidiate_triangles.top();
 
         if (h_global_bounds.lpair.first == Face_handle_1())
-          h_global_bounds.lpair.first = top.face;
+          h_global_bounds.lpair.first = top.tm1_face;
         if (h_global_bounds.lpair.second == Face_handle_2())
-          h_global_bounds.lpair.second = top.bounds.lface;
+          h_global_bounds.lpair.second = top.bounds.tm2_lface;
 
         if (h_global_bounds.upair.first == Face_handle_1())
-          h_global_bounds.upair.first = top.face;
+          h_global_bounds.upair.first = top.tm1_face;
         if (h_global_bounds.upair.second == Face_handle_2())
-          h_global_bounds.upair.second = top.bounds.uface;
+          h_global_bounds.upair.second = top.bounds.tm2_uface;
 
       } else {
 

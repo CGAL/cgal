@@ -1479,7 +1479,7 @@ double bounded_error_Hausdorff_impl(
         // the triangle to the second mesh. Use it as new global lower bound.
         // TODO: Update the reference to the realizing triangle here as this is the best current guess.
         global_bounds.lower = triangle_bounds.upper;
-        global_bounds.lpair.second = triangle_bounds.uface;
+        global_bounds.lpair.second = triangle_bounds.tm2_uface;
         continue;
       }
 
@@ -1493,7 +1493,7 @@ double bounded_error_Hausdorff_impl(
         // The upper bound of this triangle is within error tolerance of
         // the actual upper bound, use it.
         global_bounds.lower = triangle_bounds.upper;
-        global_bounds.lpair.second = triangle_bounds.uface;
+        global_bounds.lpair.second = triangle_bounds.tm2_uface;
         continue;
       }
 
@@ -1529,12 +1529,12 @@ double bounded_error_Hausdorff_impl(
 
         if (local_bounds.lower > global_bounds.lower) {
           global_bounds.lower = local_bounds.lower;
-          global_bounds.lpair.second = local_bounds.lface;
+          global_bounds.lpair.second = local_bounds.tm2_lface;
         }
 
         // Add the subtriangle to the candidate list.
         candidate_triangles.push(
-          Candidate(sub_triangles[i], local_bounds, triangle_and_bound.face));
+          Candidate(sub_triangles[i], local_bounds, triangle_and_bound.tm1_face));
       }
 
       // Update global upper Hausdorff bound after subdivision.
@@ -1543,7 +1543,7 @@ double bounded_error_Hausdorff_impl(
 
       if (current_max > global_bounds.lower) {
         global_bounds.upper = current_max;
-        global_bounds.upair.second = candidate_triangles.top().bounds.uface;
+        global_bounds.upair.second = candidate_triangles.top().bounds.tm2_uface;
       } else {
         global_bounds.upper = global_bounds.lower;
         global_bounds.upair.second = global_bounds.lpair.second;
