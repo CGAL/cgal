@@ -1513,8 +1513,30 @@ bool Scene_surface_mesh_item::hasPatchIds()
 bool
 Scene_surface_mesh_item::save(std::ostream& out) const
 {
+  std::vector<std::string> internal_properties;
+  std::vector<std::string> vprop = d->smesh_->properties<vertex_descriptor>();
+  std::vector<std::string> fprop = d->smesh_->properties<face_descriptor>();
+  for(auto s : vprop)
+     if (s.compare("v:normal") == 0
+         || s.compare("v:texcoord") == 0
+         || s.compare("v:color") == 0)
+    {
+       internal_properties.push_back(s);
+    }
+  for(auto s : fprop)
+    if(s.compare("f:color") == 0)
+    {
+      internal_properties.push_back(s);
+    }
+  QString message = tr("Do you wish to export the following internal properties ? \n");
+  for(auto s : internal_properties)
+  {
+    message.append(tr(" -"));
+    message.append(s.c_str());
+    message.append(tr("\n"));
+  }
   QMessageBox::StandardButton save_internal_properties =
-      QMessageBox::question(CGAL::Three::Three::mainWindow(), tr("Internal Properties"), tr("Do you wish to export the internal properties ?"));
+      QMessageBox::question(CGAL::Three::Three::mainWindow(), tr("Internal Properties"), message);
   QApplication::setOverrideCursor(Qt::WaitCursor);
   out.precision(17);
   if(save_internal_properties == QMessageBox::Yes)
