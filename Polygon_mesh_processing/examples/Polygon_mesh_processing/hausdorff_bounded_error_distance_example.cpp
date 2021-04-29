@@ -5,6 +5,7 @@
 #include <CGAL/IO/PLY.h>
 
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/Polygon_mesh_processing/distance.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
@@ -18,17 +19,19 @@ using Vector_3 = typename Kernel::Vector_3;
 
 using TAG                     = CGAL::Parallel_if_available_tag;
 using Surface_mesh            = CGAL::Surface_mesh<Point_3>;
+using Polyhedron              = CGAL::Polyhedron_3<Kernel>;
 using Affine_transformation_3 = CGAL::Aff_transformation_3<Kernel>;
 using Timer                   = CGAL::Real_timer;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-void get_mesh(const std::string filepath, Surface_mesh& mesh) {
+template<class Mesh>
+void get_mesh(const std::string filepath, Mesh& mesh) {
 
   mesh.clear();
   std::ifstream input(filepath);
   input >> mesh;
-  std::cout << "* getting mesh with " << mesh.number_of_faces() << " faces" << std::endl;
+  std::cout << "* getting mesh with " << num_faces(mesh) << " faces" << std::endl;
 }
 
 void get_meshes(
@@ -75,7 +78,7 @@ void remeshing_tetrahedon_example(
   timer.reset();
   timer.start();
   std::cout << "* bounded Hausdorff distance: " <<
-    PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound).first << std::endl;
+    PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound) << std::endl;
   timer.stop();
   std::cout << "* processing time: " << timer.time() << " s." << std::endl;
 }
@@ -110,7 +113,7 @@ void interior_triangle_example(
   timer.reset();
   timer.start();
   std::cout << "* bounded Hausdorff distance: " <<
-    PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound).first << std::endl;
+    PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound) << std::endl;
   timer.stop();
   std::cout << "* processing time: " << timer.time() << " s." << std::endl;
 }
@@ -131,13 +134,12 @@ void perturbing_mesh_example(
     mesh2.vertices(), mesh2, max_size, CGAL::parameters::do_project(false));
   std::cout << "* perturbing the second mesh" << std::endl;
 
-  if (save) save_mesh(mesh2, "mesh1");
   if (save) save_mesh(mesh2, "mesh2");
 
   timer.reset();
   timer.start();
   std::cout << "* bounded Hausdorff distance: " <<
-    PMP::bounded_error_Hausdorff_distance<TAG>(mesh2, mesh2, error_bound).first << std::endl;
+    PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound) << std::endl;
   timer.stop();
   std::cout << "* processing time: " << timer.time() << " s." << std::endl;
 }
@@ -172,11 +174,37 @@ void moving_mesh_example(
     timer.start();
     std::cout << "* position: " << i << std::endl;
     std::cout << "* bounded Hausdorff distance: " <<
-      PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound).first << std::endl;
+      PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound) << std::endl;
     timer.stop();
     std::cout << "* processing time: " << timer.time() << " s." << std::endl;
     if (save) save_mesh(mesh2, "mesh-" + std::to_string(i + 1));
   }
+}
+
+void perturbing_mesh_example_with_polyhedron(
+  const std::string filepath, const double error_bound) {
+
+  Timer timer;
+  std::cout << std::endl << "* (E3) perturbing mesh example:" << std::endl;
+
+  Surface_mesh mesh1;
+  Polyhedron mesh2;
+  get_mesh(filepath, mesh1);
+  get_mesh(filepath, mesh2);
+
+  const double max_size = 0.1;
+  PMP::random_perturbation(
+    vertices(mesh2), mesh2, max_size, CGAL::parameters::do_project(false));
+  std::cout << "* perturbing the second mesh" << std::endl;
+
+  timer.reset();
+  timer.start();
+  std::cout << "* bounded Hausdorff distance 1->2: " <<
+    PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound) << std::endl;
+  std::cout << "* bounded Hausdorff distance 2->1: " <<
+    PMP::bounded_error_Hausdorff_distance<TAG>(mesh2, mesh1, error_bound) << std::endl;
+  timer.stop();
+  std::cout << "* processing time: " << timer.time() << " s." << std::endl;
 }
 
 int main(int argc, char** argv) {
@@ -188,6 +216,7 @@ int main(int argc, char** argv) {
   remeshing_tetrahedon_example(error_bound);
   interior_triangle_example(error_bound);
   perturbing_mesh_example(filepath, error_bound);
+  perturbing_mesh_example_with_polyhedron(filepath, error_bound);
   moving_mesh_example(filepath, filepath, 5, error_bound);
 
   std::cout << std::endl;

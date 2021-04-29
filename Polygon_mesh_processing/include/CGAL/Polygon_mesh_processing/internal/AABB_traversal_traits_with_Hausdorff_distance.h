@@ -33,36 +33,38 @@ namespace CGAL {
   }
 
   // Bounds.
-  template<typename Kernel, typename Face_handle>
+  template<typename Kernel, typename Face_handle_1, typename Face_handle_2>
   struct Bounds {
     using FT = typename Kernel::FT;
 
     FT lower = infinity_value<FT>();
     FT upper = infinity_value<FT>();
-    Face_handle lface = Face_handle();
-    Face_handle uface = Face_handle();
-    std::pair<Face_handle, Face_handle> lpair = default_face_pair();
-    std::pair<Face_handle, Face_handle> upair = default_face_pair();
+    // TODO: update
+    Face_handle_2 lface = Face_handle_2();
+    Face_handle_2 uface = Face_handle_2();
+    std::pair<Face_handle_1, Face_handle_2> lpair = default_face_pair();
+    std::pair<Face_handle_1, Face_handle_2> upair = default_face_pair();
 
-    const std::pair<Face_handle, Face_handle> default_face_pair() const {
-      return std::make_pair(Face_handle(), Face_handle());
+    const std::pair<Face_handle_1, Face_handle_2> default_face_pair() const {
+      return std::make_pair(Face_handle_1(), Face_handle_2());
     }
   };
 
   // Candidate triangle.
-  template<typename Kernel, typename Face_handle>
+  template<typename Kernel, typename Face_handle_1, typename Face_handle_2>
   struct Candidate_triangle {
     using Triangle_3 = typename Kernel::Triangle_3;
-    using Candidate_bounds = Bounds<Kernel, Face_handle>;
+    using Candidate_bounds = Bounds<Kernel, Face_handle_1, Face_handle_2>;
 
     Candidate_triangle(
-      const Triangle_3& triangle, const Candidate_bounds& bounds, const Face_handle& fh) :
+      const Triangle_3& triangle, const Candidate_bounds& bounds, const Face_handle_1& fh) :
     triangle(triangle), bounds(bounds), face(fh)
     { }
 
     Triangle_3 triangle;
     Candidate_bounds bounds;
-    Face_handle face;
+    Face_handle_1 face;
+    // TODO: no need to use bounds.lower?
     bool operator>(const Candidate_triangle& other) const { return bounds.upper < other.bounds.upper; }
     bool operator<(const Candidate_triangle& other) const { return bounds.upper > other.bounds.upper; }
   };
@@ -72,7 +74,8 @@ namespace CGAL {
   typename AABBTraits,
   typename Query,
   typename Kernel,
-  typename TriangleMesh, typename VPM2>
+  typename TriangleMesh1,
+  typename TriangleMesh2, typename VPM2>
   class Hausdorff_primitive_traits_tm2 {
 
     using FT         = typename Kernel::FT;
@@ -81,16 +84,17 @@ namespace CGAL {
     using Triangle_3 = typename Kernel::Triangle_3;
 
     using Project_point_3 = typename Kernel::Construct_projected_point_3;
-    using Face_handle     = typename boost::graph_traits<TriangleMesh>::face_descriptor;
-    using Local_bounds    = Bounds<Kernel, Face_handle>;
+    using Face_handle_1     = typename boost::graph_traits<TriangleMesh1>::face_descriptor;
+    using Face_handle_2     = typename boost::graph_traits<TriangleMesh2>::face_descriptor;
+    using Local_bounds    = Bounds<Kernel, Face_handle_1, Face_handle_2>;
 
-    using TM2_face_to_triangle_map = Triangle_from_face_descriptor_map<TriangleMesh, VPM2>;
+    using TM2_face_to_triangle_map = Triangle_from_face_descriptor_map<TriangleMesh2, VPM2>;
 
   public:
     using Priority = FT;
     Hausdorff_primitive_traits_tm2(
       const AABBTraits& traits,
-      const TriangleMesh& tm2, const VPM2& vpm2,
+      const TriangleMesh2& tm2, const VPM2& vpm2,
       const Local_bounds& local_bounds,
       const FT h_v0_lower_init,
       const FT h_v1_lower_init,
@@ -127,7 +131,7 @@ namespace CGAL {
       const Point_3 v1 = query.vertex(1);
       const Point_3 v2 = query.vertex(2);
 
-      CGAL_assertion(primitive.id() != Face_handle());
+      CGAL_assertion(primitive.id() != Face_handle_2());
       const Triangle_3 triangle = get(m_face_to_triangle_map, primitive.id());
 
       // Compute distances of the vertices to the primitive triangle in TM2.
@@ -245,7 +249,7 @@ namespace CGAL {
   private:
     // Input data.
     const AABBTraits& m_traits;
-    const TriangleMesh& m_tm2;
+    const TriangleMesh2& m_tm2;
     const VPM2& m_vpm2;
     const TM2_face_to_triangle_map m_face_to_triangle_map;
 
@@ -260,7 +264,8 @@ namespace CGAL {
   typename AABBTraits,
   typename Query,
   typename Kernel,
-  typename TriangleMesh,
+  typename TriangleMesh1,
+  typename TriangleMesh2,
   typename VPM1, typename VPM2>
   class Hausdorff_primitive_traits_tm1 {
 
@@ -269,23 +274,24 @@ namespace CGAL {
     using Vector_3   = typename Kernel::Vector_3;
     using Triangle_3 = typename Kernel::Triangle_3;
 
-    using TM2_primitive = AABB_face_graph_triangle_primitive<TriangleMesh, VPM2>;
+    using TM2_primitive = AABB_face_graph_triangle_primitive<TriangleMesh2, VPM2>;
     using TM2_traits    = AABB_traits<Kernel, TM2_primitive>;
     using TM2_tree      = AABB_tree<TM2_traits>;
-    using TM2_hd_traits = Hausdorff_primitive_traits_tm2<TM2_traits, Triangle_3, Kernel, TriangleMesh, VPM2>;
+    using TM2_hd_traits = Hausdorff_primitive_traits_tm2<TM2_traits, Triangle_3, Kernel, TriangleMesh1, TriangleMesh2, VPM2>;
 
-    using TM1_face_to_triangle_map = Triangle_from_face_descriptor_map<TriangleMesh, VPM1>;
+    using TM1_face_to_triangle_map = Triangle_from_face_descriptor_map<TriangleMesh1, VPM1>;
 
-    using Face_handle   = typename boost::graph_traits<TriangleMesh>::face_descriptor;
-    using Global_bounds = Bounds<Kernel, Face_handle>;
-    using Candidate     = Candidate_triangle<Kernel, Face_handle>;
+    using Face_handle_1   = typename boost::graph_traits<TriangleMesh1>::face_descriptor;
+    using Face_handle_2   = typename boost::graph_traits<TriangleMesh2>::face_descriptor;
+    using Global_bounds = Bounds<Kernel, Face_handle_1, Face_handle_2>;
+    using Candidate     = Candidate_triangle<Kernel, Face_handle_1, Face_handle_2>;
     using Heap_type     = std::priority_queue<Candidate>;
 
   public:
     using Priority = FT;
     Hausdorff_primitive_traits_tm1(
       const AABBTraits& traits, const TM2_tree& tree,
-      const TriangleMesh& tm1, const TriangleMesh& tm2,
+      const TriangleMesh1& tm1, const TriangleMesh2& tm2,
       const VPM1& vpm1, const VPM2& vpm2,
       const FT error_bound,
       const std::size_t group_traversal_bound) :
@@ -313,12 +319,12 @@ namespace CGAL {
     void intersection(const Query&, const Primitive& primitive) {
 
       // Set initial tight bounds.
-      CGAL_assertion(primitive.id() != Face_handle());
-      std::pair<Face_handle, Face_handle> fpair;
+      CGAL_assertion(primitive.id() != Face_handle_1());
+      std::pair<Face_handle_1, Face_handle_2> fpair;
       const FT max_dist = get_maximum_distance(primitive.id(), fpair);
       CGAL_assertion(fpair.first == primitive.id());
 
-      Bounds<Kernel, Face_handle> initial_bounds;
+      Bounds<Kernel, Face_handle_1, Face_handle_2> initial_bounds;
       initial_bounds.lower = max_dist + m_error_bound;
       initial_bounds.upper = max_dist + m_error_bound;
       initial_bounds.lface = fpair.second;
@@ -434,8 +440,8 @@ namespace CGAL {
     // Here, we return the maximum distance from one of the face corners
     // to the second mesh. We also return a pair of realizing this distance faces.
     FT get_maximum_distance(
-      const Face_handle lface,
-      std::pair<Face_handle, Face_handle>& fpair) const {
+      const Face_handle_1 lface,
+      std::pair<Face_handle_1, Face_handle_2>& fpair) const {
 
       const auto triangle = get(m_face_to_triangle_map, lface);
       const Point_3 v0 = triangle.vertex(0);
@@ -464,8 +470,8 @@ namespace CGAL {
   private:
     // Input data.
     const AABBTraits& m_traits;
-    const TriangleMesh& m_tm1;
-    const TriangleMesh& m_tm2;
+    const TriangleMesh1& m_tm1;
+    const TriangleMesh2& m_tm2;
     const VPM1& m_vpm1;
     const VPM2& m_vpm2;
     const TM2_tree& m_tm2_tree;
@@ -485,30 +491,30 @@ namespace CGAL {
       if (m_candidiate_triangles.size() > 0) {
         const auto top = m_candidiate_triangles.top();
 
-        if (h_global_bounds.lpair.first == Face_handle())
+        if (h_global_bounds.lpair.first == Face_handle_1())
           h_global_bounds.lpair.first = top.face;
-        if (h_global_bounds.lpair.second == Face_handle())
+        if (h_global_bounds.lpair.second == Face_handle_2())
           h_global_bounds.lpair.second = top.bounds.lface;
 
-        if (h_global_bounds.upair.first == Face_handle())
+        if (h_global_bounds.upair.first == Face_handle_1())
           h_global_bounds.upair.first = top.face;
-        if (h_global_bounds.upair.second == Face_handle())
+        if (h_global_bounds.upair.second == Face_handle_2())
           h_global_bounds.upair.second = top.bounds.uface;
 
       } else {
 
-        std::pair<Face_handle, Face_handle> fpair;
+        std::pair<Face_handle_1, Face_handle_2> fpair;
         get_maximum_distance(*(faces(m_tm1).begin()), fpair);
         CGAL_assertion(fpair.first == *(faces(m_tm1).begin()));
 
-        if (h_global_bounds.lpair.first == Face_handle())
+        if (h_global_bounds.lpair.first == Face_handle_1())
           h_global_bounds.lpair.first = fpair.first;
-        if (h_global_bounds.lpair.second == Face_handle())
+        if (h_global_bounds.lpair.second == Face_handle_2())
           h_global_bounds.lpair.second = fpair.second;
 
-        if (h_global_bounds.upair.first == Face_handle())
+        if (h_global_bounds.upair.first == Face_handle_1())
           h_global_bounds.upair.first = fpair.first;
-        if (h_global_bounds.upair.second == Face_handle())
+        if (h_global_bounds.upair.second == Face_handle_2())
           h_global_bounds.upair.second = fpair.second;
       }
     }

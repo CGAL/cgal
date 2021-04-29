@@ -1321,13 +1321,14 @@ namespace internal {
 template<
 class Concurrency_tag,
 class Kernel,
-class TriangleMesh,
+class TriangleMesh1,
+class TriangleMesh2,
 class VPM1, class VPM2,
 class NamedParameters1,
 class NamedParameters2>
 double bounded_error_Hausdorff_impl(
-  const TriangleMesh& tm1,
-  const TriangleMesh& tm2,
+  const TriangleMesh1& tm1,
+  const TriangleMesh2& tm2,
   const typename Kernel::FT error_bound,
   const bool compare_meshes,
   const VPM1& vpm1, const VPM2& vpm2,
@@ -1343,8 +1344,8 @@ double bounded_error_Hausdorff_impl(
   using Point_3    = typename Kernel::Point_3;
   using Triangle_3 = typename Kernel::Triangle_3;
 
-  using TM1_primitive = AABB_face_graph_triangle_primitive<TriangleMesh, VPM1>;
-  using TM2_primitive = AABB_face_graph_triangle_primitive<TriangleMesh, VPM2>;
+  using TM1_primitive = AABB_face_graph_triangle_primitive<TriangleMesh1, VPM1>;
+  using TM2_primitive = AABB_face_graph_triangle_primitive<TriangleMesh2, VPM2>;
 
   using TM1_traits = AABB_traits<Kernel, TM1_primitive>;
   using TM2_traits = AABB_traits<Kernel, TM2_primitive>;
@@ -1352,16 +1353,19 @@ double bounded_error_Hausdorff_impl(
   using TM1_tree = AABB_tree<TM1_traits>;
   using TM2_tree = AABB_tree<TM2_traits>;
 
-  using TM1_hd_traits = Hausdorff_primitive_traits_tm1<TM1_traits, Point_3, Kernel, TriangleMesh, VPM1, VPM2>;
-  using TM2_hd_traits = Hausdorff_primitive_traits_tm2<TM2_traits, Triangle_3, Kernel, TriangleMesh, VPM2>;
+  using TM1_hd_traits = Hausdorff_primitive_traits_tm1<TM1_traits, Point_3, Kernel, TriangleMesh1, TriangleMesh2, VPM1, VPM2>;
+  using TM2_hd_traits = Hausdorff_primitive_traits_tm2<TM2_traits, Triangle_3, Kernel, TriangleMesh1, TriangleMesh2, VPM2>;
 
-  using Face_handle = typename boost::graph_traits<TriangleMesh>::face_descriptor;
-  using Candidate   = Candidate_triangle<Kernel, Face_handle>;
+  using Face_handle_1 = typename boost::graph_traits<TriangleMesh1>::face_descriptor;
+  using Face_handle_2 = typename boost::graph_traits<TriangleMesh2>::face_descriptor;
+  using Candidate   = Candidate_triangle<Kernel, Face_handle_1, Face_handle_2>;
   using Timer       = CGAL::Real_timer;
 
   std::cout.precision(20);
-  std::vector<Face_handle> tm1_only, tm2_only;
-  std::vector< std::pair<Face_handle, Face_handle> > common;
+  std::vector<Face_handle_1> tm1_only;
+  std::vector<Face_handle_2> tm2_only;
+
+  std::vector< std::pair<Face_handle_1, Face_handle_2> > common;
   const std::size_t group_traversal_bound = 1;
 
   const auto faces1 = faces(tm1);
@@ -1386,11 +1390,6 @@ double bounded_error_Hausdorff_impl(
       timer.stop();
       // std::cout << "* culling rate: 100%" << std::endl;
       // std::cout << "* preprocessing time (sec.): " << timer.time() << std::endl;
-      const auto lface = *(faces1.begin());
-      const auto uface = *(faces2.begin());
-      CGAL_assertion(lface == uface);
-      std::cout << "* exact check succeeded, early return" << std::endl;
-      // return std::make_pair(0.0, std::make_pair(lface, uface)); // off for the moment
       return 0.0;
     }
     CGAL_assertion(tm1_only.size() > 0);
@@ -1469,9 +1468,9 @@ double bounded_error_Hausdorff_impl(
       const auto closest_triangle_v0 = tm2_tree.closest_point_and_primitive(v0);
       const auto closest_triangle_v1 = tm2_tree.closest_point_and_primitive(v1);
       const auto closest_triangle_v2 = tm2_tree.closest_point_and_primitive(v2);
-      CGAL_assertion(closest_triangle_v0.second != Face_handle());
-      CGAL_assertion(closest_triangle_v1.second != Face_handle());
-      CGAL_assertion(closest_triangle_v2.second != Face_handle());
+      CGAL_assertion(closest_triangle_v0.second != boost::graph_traits<TriangleMesh2>::null_face());
+      CGAL_assertion(closest_triangle_v1.second != boost::graph_traits<TriangleMesh2>::null_face());
+      CGAL_assertion(closest_triangle_v2.second != boost::graph_traits<TriangleMesh2>::null_face());
       if (
         (closest_triangle_v0.second == closest_triangle_v1.second) &&
         (closest_triangle_v1.second == closest_triangle_v2.second)) {
@@ -1563,10 +1562,10 @@ double bounded_error_Hausdorff_impl(
   // Return linear interpolation between the found lower and upper bounds.
   const double hdist = CGAL::to_double((global_bounds.lower + global_bounds.upper) / FT(2));
 
-  CGAL_precondition(global_bounds.lpair.first != Face_handle());
-  CGAL_precondition(global_bounds.lpair.second != Face_handle());
-  CGAL_precondition(global_bounds.upair.first != Face_handle());
-  CGAL_precondition(global_bounds.upair.second != Face_handle());
+  CGAL_precondition(global_bounds.lpair.first != boost::graph_traits<TriangleMesh1>::null_face());
+  CGAL_precondition(global_bounds.lpair.second != boost::graph_traits<TriangleMesh2>::null_face());
+  CGAL_precondition(global_bounds.upair.first != boost::graph_traits<TriangleMesh1>::null_face());
+  CGAL_precondition(global_bounds.upair.second != boost::graph_traits<TriangleMesh2>::null_face());
 
   // Off for the moment.
   // const auto realizing_triangles = global_bounds.upair;
@@ -1578,13 +1577,14 @@ double bounded_error_Hausdorff_impl(
 template<
 class Concurrency_tag,
 class Kernel,
-class TriangleMesh,
+class TriangleMesh1,
+class TriangleMesh2,
 class VPM1, class VPM2,
 class NamedParameters1,
 class NamedParameters2>
 double bounded_error_symmetric_Hausdorff_impl(
-  const TriangleMesh& tm1,
-  const TriangleMesh& tm2,
+  const TriangleMesh1& tm1,
+  const TriangleMesh2& tm2,
   const typename Kernel::FT error_bound,
   const bool compare_meshes,
   const VPM1& vpm1, const VPM2& vpm2,
@@ -1645,12 +1645,13 @@ typename Kernel::FT recursive_hausdorff_subdivision(
 
 template <class Concurrency_tag,
           class Kernel,
-          class TriangleMesh,
+          class TriangleMesh1,
+          class TriangleMesh2,
           class VPM1,
           class VPM2>
 double bounded_error_Hausdorff_naive_impl(
-  const TriangleMesh& tm1,
-  const TriangleMesh& tm2,
+  const TriangleMesh1& tm1,
+  const TriangleMesh2& tm2,
   const typename Kernel::FT& error_bound,
   VPM1 vpm1,
   VPM2 vpm2)
@@ -1659,10 +1660,10 @@ double bounded_error_Hausdorff_naive_impl(
   CGAL_assertion_msg (is_triangle,
         "One of the meshes is not triangulated. Distance computing impossible.");
 
-  typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM2> TM2_primitive;
+  typedef AABB_face_graph_triangle_primitive<TriangleMesh2, VPM2> TM2_primitive;
   typedef AABB_tree< AABB_traits<Kernel, TM2_primitive> > TM2_tree;
 
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh1>::face_descriptor face_descriptor_1;
 
   typedef typename Kernel::FT FT;
   typedef typename Kernel::Point_3 Point_3;
@@ -1679,10 +1680,10 @@ double bounded_error_Hausdorff_naive_impl(
   tm2_tree.accelerate_distance_queries();
 
   // Build a map to obtain actual triangles from the face descriptors of tm1.
-  const Triangle_from_face_descriptor_map<TriangleMesh, VPM1> face_to_triangle_map( &tm1, vpm1 );
+  const Triangle_from_face_descriptor_map<TriangleMesh1, VPM1> face_to_triangle_map( &tm1, vpm1 );
 
   // Iterate over the triangles of TM1.
-  for(const face_descriptor& fd : faces(tm1))
+  for(face_descriptor_1 fd : faces(tm1))
   {
     // Get the vertices of the face and pass them on to a recursive method.
     const Triangle_3 triangle = get(face_to_triangle_map, fd);
@@ -1717,7 +1718,8 @@ double bounded_error_Hausdorff_naive_impl(
  *                         Possible values are `Sequential_tag` and `Parallel_tag`.
  *                         Currently, parallel computation is not implemented, though.
  *
- * @tparam TriangleMesh a model of the concept `FaceListGraph`
+ * @tparam TriangleMesh1 a model of the concept `FaceListGraph`
+ * @tparam TriangleMesh2 a model of the concept `FaceListGraph`
  *
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
@@ -1733,11 +1735,11 @@ double bounded_error_Hausdorff_naive_impl(
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
  *     \cgalParamDescription{a property map associating points to the vertices of `tm1` and `tm2` (`np1` and `np2`, respectively)}
- *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMeshX>::%vertex_descriptor`
  *                    as key type and `%Point_3` as value type}
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                     must be available in `TriangleMesh`.}
+ *                     must be available in `TriangleMeshX`.}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{match_faces}
  *     \cgalParamDescription{a boolean tag that turns on the preprocessing step that filters out all faces,
@@ -1750,19 +1752,20 @@ double bounded_error_Hausdorff_naive_impl(
  *
  * @return the one-sided Hausdorff distance
  */
-template<
-class Concurrency_tag,
-class TriangleMesh,
-class NamedParameters1,
-class NamedParameters2>
+template< class Concurrency_tag,
+          class TriangleMesh1,
+          class TriangleMesh2,
+          class NamedParameters1,
+          class NamedParameters2 >
 double bounded_error_Hausdorff_distance(
-  const TriangleMesh& tm1,
-  const TriangleMesh& tm2,
+  const TriangleMesh1& tm1,
+  const TriangleMesh2& tm2,
   const double error_bound,
   const NamedParameters1& np1,
-  const NamedParameters2& np2) {
+  const NamedParameters2& np2)
+{
 
-  using Traits = typename GetGeomTraits<TriangleMesh, NamedParameters1>::type;
+  using Traits = typename GetGeomTraits<TriangleMesh1, NamedParameters1>::type;
   using FT = typename Traits::FT;
 
   const auto vpm1 = parameters::choose_parameter(
@@ -1792,26 +1795,28 @@ double bounded_error_Hausdorff_distance(
   #endif
 }
 
-template<
-class Concurrency_tag,
-class TriangleMesh,
-class NamedParameters1>
+template< class Concurrency_tag,
+          class TriangleMesh1,
+          class TriangleMesh2,
+          class NamedParameters1 >
 double bounded_error_Hausdorff_distance(
-  const TriangleMesh& tm1,
-  const TriangleMesh& tm2,
+  const TriangleMesh1& tm1,
+  const TriangleMesh2& tm2,
   const double error_bound,
-  const NamedParameters1& np1) {
+  const NamedParameters1& np1)
+{
   return bounded_error_Hausdorff_distance<Concurrency_tag>(
     tm1, tm2, error_bound, np1, parameters::all_default());
 }
 
-template<
-class Concurrency_tag,
-class TriangleMesh>
+template< class Concurrency_tag,
+          class TriangleMesh1,
+          class TriangleMesh2 >
 double bounded_error_Hausdorff_distance(
-  const TriangleMesh& tm1,
-  const TriangleMesh& tm2,
-  const double error_bound) {
+  const TriangleMesh1& tm1,
+  const TriangleMesh2& tm2,
+  const double error_bound)
+{
   return bounded_error_Hausdorff_distance<Concurrency_tag>(
     tm1, tm2, error_bound, parameters::all_default());
 }
@@ -1826,19 +1831,19 @@ double bounded_error_Hausdorff_distance(
  *
  * @return the symmetric Hausdorff distance
  */
-template<
-class Concurrency_tag,
-class TriangleMesh,
-class NamedParameters1,
-class NamedParameters2>
+template< class Concurrency_tag,
+          class TriangleMesh1,
+          class TriangleMesh2,
+          class NamedParameters1,
+          class NamedParameters2 >
 double bounded_error_symmetric_Hausdorff_distance(
-  const TriangleMesh& tm1,
-  const TriangleMesh& tm2,
+  const TriangleMesh1& tm1,
+  const TriangleMesh2& tm2,
   const double error_bound,
   const NamedParameters1& np1,
-  const NamedParameters2& np2) {
-
-  using Traits = typename GetGeomTraits<TriangleMesh, NamedParameters1>::type;
+  const NamedParameters2& np2)
+{
+  using Traits = typename GetGeomTraits<TriangleMesh1, NamedParameters1>::type;
   using FT = typename Traits::FT;
 
   const auto vpm1 = parameters::choose_parameter(
@@ -1868,25 +1873,27 @@ double bounded_error_symmetric_Hausdorff_distance(
   #endif
 }
 
-template<
-class Concurrency_tag,
-class TriangleMesh,
-class NamedParameters1>
+template< class Concurrency_tag,
+          class TriangleMesh1,
+          class TriangleMesh2,
+          class NamedParameters1 >
 double bounded_error_symmetric_Hausdorff_distance(
-  const TriangleMesh& tm1,
-  const TriangleMesh& tm2,
+  const TriangleMesh1& tm1,
+  const TriangleMesh2& tm2,
   const double error_bound,
-  const NamedParameters1& np1) {
+  const NamedParameters1& np1)
+{
   return bounded_error_symmetric_Hausdorff_distance<Concurrency_tag>(
     tm1, tm2, error_bound, np1, parameters::all_default());
 }
 
 template<
 class Concurrency_tag,
-class TriangleMesh>
+class TriangleMesh1,
+class TriangleMesh2>
 double bounded_error_symmetric_Hausdorff_distance(
-  const TriangleMesh& tm1,
-  const TriangleMesh& tm2,
+  const TriangleMesh1& tm1,
+  const TriangleMesh2& tm2,
   const double error_bound) {
   return bounded_error_symmetric_Hausdorff_distance<Concurrency_tag>(
     tm1, tm2, error_bound, parameters::all_default());
@@ -1896,21 +1903,22 @@ double bounded_error_symmetric_Hausdorff_distance(
  * Implementation of naive Bounded Hausdorff distance computation.
  */
 template< class Concurrency_tag,
-          class TriangleMesh,
+          class TriangleMesh1,
+          class TriangleMesh2,
           class NamedParameters1,
           class NamedParameters2>
-double bounded_error_Hausdorff_distance_naive( const TriangleMesh& tm1,
-                                         const TriangleMesh& tm2,
-                                         double error_bound,
-                                         const NamedParameters1& np1,
-                                         const NamedParameters2& np2)
+double bounded_error_Hausdorff_distance_naive( const TriangleMesh1& tm1,
+                                               const TriangleMesh2& tm2,
+                                               double error_bound,
+                                               const NamedParameters1& np1,
+                                               const NamedParameters2& np2)
 {
-  typedef typename GetGeomTraits<TriangleMesh,
+  typedef typename GetGeomTraits<TriangleMesh1,
                                  NamedParameters1>::type Geom_traits;
   using FT = typename Geom_traits::FT;
 
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::const_type Vpm1;
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters2>::const_type Vpm2;
+  typedef typename GetVertexPointMap<TriangleMesh1, NamedParameters1>::const_type Vpm1;
+  typedef typename GetVertexPointMap<TriangleMesh2, NamedParameters2>::const_type Vpm2;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -1927,21 +1935,23 @@ double bounded_error_Hausdorff_distance_naive( const TriangleMesh& tm1,
 }
 
 template< class Concurrency_tag,
-          class TriangleMesh,
+          class TriangleMesh1,
+          class TriangleMesh2,
           class NamedParameters1>
-double bounded_error_Hausdorff_distance_naive( const TriangleMesh& tm1,
-                                         const TriangleMesh& tm2,
-                                         double error_bound,
-                                         const NamedParameters1& np1)
+double bounded_error_Hausdorff_distance_naive( const TriangleMesh1& tm1,
+                                               const TriangleMesh2& tm2,
+                                               double error_bound,
+                                               const NamedParameters1& np1)
 {
   return bounded_error_Hausdorff_distance_naive<Concurrency_tag>(tm1, tm2, error_bound, np1, parameters::all_default());
 }
 
 template< class Concurrency_tag,
-          class TriangleMesh>
-double bounded_error_Hausdorff_distance_naive( const TriangleMesh& tm1,
-                                         const TriangleMesh& tm2,
-                                         double error_bound)
+          class TriangleMesh1,
+          class TriangleMesh2>
+double bounded_error_Hausdorff_distance_naive( const TriangleMesh1& tm1,
+                                               const TriangleMesh2& tm2,
+                                               double error_bound)
 {
   return bounded_error_Hausdorff_distance_naive<Concurrency_tag>(tm1, tm2, error_bound, parameters::all_default() );
 }
