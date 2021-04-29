@@ -906,7 +906,6 @@ void match_faces(const PolygonMesh1& m1, const PolygonMesh2& m2,
   VIMap2 vim2 = get_initialized_vertex_index_map(m2, np2);
   typedef typename boost::property_traits<VPMap2>::value_type Point_3;
   typedef typename boost::graph_traits<PolygonMesh1>::face_descriptor face_descriptor_1;
-  typedef typename boost::graph_traits<PolygonMesh2>::face_descriptor face_descriptor_2;
 
   std::map<Point_3, std::size_t> point_id_map;
 
