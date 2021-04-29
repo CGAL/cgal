@@ -21,6 +21,7 @@
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/aff_transformation_tags.h>
+#include <CGAL/property_map.h>
 
 #include <boost/type_traits/is_same.hpp>
 
@@ -590,6 +591,11 @@ compute_registration_transformation (const PointRange1& point_set_1, const Point
 
   namespace PSP = CGAL::Point_set_processing_3;
 
+  // basic types
+  typedef typename PSP::GetK<PointRange1, NamedParameters1>::Kernel Kernel;
+  typedef typename Kernel::FT Scalar;
+  typedef typename Kernel::Aff_transformation_3 Transformation;
+
   // property map types
   typedef typename CGAL::GetPointMap<PointRange1, NamedParameters1>::type PointMap1;
   typedef typename CGAL::GetPointMap<PointRange2, NamedParameters2>::type PointMap2;
@@ -603,22 +609,22 @@ compute_registration_transformation (const PointRange1& point_set_1, const Point
                                              typename boost::property_traits<NormalMap2>::value_type> ::value),
                             "The vector type of input ranges must be the same");
 
-  typedef typename PSP::GetScalarMap<PointRange1, NamedParameters1>::type WeightMap1;
-  typedef typename PSP::GetScalarMap<PointRange2, NamedParameters2>::type WeightMap2;
-  CGAL_static_assertion_msg((boost::is_same< typename boost::property_traits<WeightMap1>::value_type,
-                                             typename boost::property_traits<WeightMap2>::value_type> ::value),
-                            "The scalar type of input ranges must be the same");
+  typedef typename std::iterator_traits<typename PointRange1::iterator>::value_type key_type1;
+  typedef typename std::iterator_traits<typename PointRange2::iterator>::value_type key_type2;
 
-  typedef typename PSP::GetK<PointRange1, NamedParameters1>::Kernel Kernel;
-  typedef typename Kernel::FT Scalar;
-  typedef typename Kernel::Aff_transformation_3 Transformation;
+  typedef typename CGAL::Constant_property_map<key_type1, Scalar> DefaultWeightMap1;
+  typedef typename CGAL::Constant_property_map<key_type2, Scalar> DefaultWeightMap2;
 
   PointMap1 point_map1 = choose_parameter(get_parameter(np1, internal_np::point_map), PointMap1());
   NormalMap1 normal_map1 = choose_parameter(get_parameter(np1, internal_np::normal_map), NormalMap1());
-  WeightMap1 weight_map1 = choose_parameter(get_parameter(np1, internal_np::scalar_map), WeightMap1());
+  auto weight_map1 = choose_parameter(get_parameter(np1, internal_np::scalar_map), DefaultWeightMap1(Scalar(1)));
   PointMap2 point_map2 = choose_parameter(get_parameter(np2, internal_np::point_map), PointMap2());
   NormalMap2 normal_map2 = choose_parameter(get_parameter(np2, internal_np::normal_map), NormalMap2());
-  WeightMap2 weight_map2 = choose_parameter(get_parameter(np2, internal_np::scalar_map), WeightMap2());
+  auto weight_map2 = choose_parameter(get_parameter(np2, internal_np::scalar_map), DefaultWeightMap2(Scalar(1)));
+
+  CGAL_static_assertion_msg((boost::is_same< typename boost::property_traits<decltype(weight_map1)>::value_type,
+                                             typename boost::property_traits<decltype(weight_map2)>::value_type> ::value),
+                            "The scalar type of input ranges must be the same");
 
   // initial transformation
   Transformation initial_transformation

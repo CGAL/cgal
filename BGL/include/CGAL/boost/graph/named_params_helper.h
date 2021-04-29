@@ -435,30 +435,6 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
         > ::type  type;
     };
 
-    template<typename PointRange, typename NamedParameters>
-    class GetScalarMap
-    {
-      struct DummyScalarMap
-      {
-        typedef typename std::iterator_traits<typename PointRange::iterator>::value_type key_type;
-        typedef typename GetK<PointRange, NamedParameters>::Kernel::FT value_type;
-        typedef value_type reference;
-        typedef boost::read_write_property_map_tag category;
-
-        typedef DummyScalarMap Self;
-        friend reference get(const Self&, const key_type&) { return value_type(1); }
-        friend void put(const Self&, const key_type&, const value_type&) { }
-      };
-
-    public:
-      typedef DummyScalarMap NoMap;
-      typedef typename internal_np::Lookup_named_param_def <
-        internal_np::scalar_t,
-        NamedParameters,
-        DummyScalarMap // default
-        > ::type  type;
-    };
-
     template<typename PlaneRange, typename NamedParameters>
     class GetPlaneMap
     {
