@@ -327,6 +327,7 @@ namespace CGAL {
      *
      * \cgalModels `Assignable`
      * \cgalModels `CopyConstructible`
+     * \cgalModels `AdaptableUnaryFunction`
      * \cgalModels `AdaptableBinaryFunction`
      * \cgalModels `AdaptableTernaryFunction`
      */
@@ -359,6 +360,12 @@ namespace CGAL {
        * \pre p and q cannot be antipodal.
        */
       X_monotone_curve_2 operator()(const Point_2& p, const Point_2& q);
+
+      /*! Construct a full great circle from a normal to a plane.
+       * \param normal the normal to the plane containing the great circle.
+       * \pre the plane is not vertical.
+       */
+      X_monotone_curve_2 operator()(const Direction_3& normal);
 
       /*! Construct a geodesic arc from two endpoints contained
        * in a plane.
