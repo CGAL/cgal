@@ -26,19 +26,19 @@
 
 namespace CGAL {
 
-  // Infinity.
-  template<typename FT>
-  static FT infinity_value() {
-    return FT(1000000000000);
-  }
-
   // Bounds.
-  template<typename Kernel, typename Face_handle_1, typename Face_handle_2>
+  template< class Kernel,
+            class Face_handle_1,
+            class Face_handle_2>
   struct Bounds {
     using FT = typename Kernel::FT;
 
-    FT lower = infinity_value<FT>();
-    FT upper = infinity_value<FT>();
+    FT m_infinity_value = -FT(1);
+    Bounds(const FT infinity_value) :
+    m_infinity_value(infinity_value) { }
+
+    FT lower = m_infinity_value;
+    FT upper = m_infinity_value;
     // TODO: update
     Face_handle_2 tm2_lface = Face_handle_2();
     Face_handle_2 tm2_uface = Face_handle_2();
@@ -51,8 +51,11 @@ namespace CGAL {
   };
 
   // Candidate triangle.
-  template<typename Kernel, typename Face_handle_1, typename Face_handle_2>
+  template< class Kernel,
+            class Face_handle_1,
+            class Face_handle_2>
   struct Candidate_triangle {
+    using FT = typename Kernel::FT;
     using Triangle_3 = typename Kernel::Triangle_3;
     using Candidate_bounds = Bounds<Kernel, Face_handle_1, Face_handle_2>;
 
@@ -65,27 +68,35 @@ namespace CGAL {
     Candidate_bounds bounds;
     Face_handle_1 tm1_face;
     // TODO: no need to use bounds.lower?
-    bool operator>(const Candidate_triangle& other) const { return bounds.upper < other.bounds.upper; }
-    bool operator<(const Candidate_triangle& other) const { return bounds.upper > other.bounds.upper; }
+    bool operator>(const Candidate_triangle& other) const {
+      CGAL_assertion(bounds.upper >= FT(0));
+      CGAL_assertion(other.bounds.upper >= FT(0));
+      return bounds.upper < other.bounds.upper;
+    }
+    bool operator<(const Candidate_triangle& other) const {
+      CGAL_assertion(bounds.upper >= FT(0));
+      CGAL_assertion(other.bounds.upper >= FT(0));
+      return bounds.upper > other.bounds.upper;
+    }
   };
 
   // Hausdorff primitive traits on TM2.
-  template<
-  typename AABBTraits,
-  typename Query,
-  typename Kernel,
-  typename TriangleMesh1,
-  typename TriangleMesh2, typename VPM2>
-  class Hausdorff_primitive_traits_tm2 {
-
+  template< class AABBTraits,
+            class Query,
+            class Kernel,
+            class TriangleMesh1,
+            class TriangleMesh2,
+            class VPM2>
+  class Hausdorff_primitive_traits_tm2
+  {
     using FT         = typename Kernel::FT;
     using Point_3    = typename Kernel::Point_3;
     using Vector_3   = typename Kernel::Vector_3;
     using Triangle_3 = typename Kernel::Triangle_3;
 
     using Project_point_3 = typename Kernel::Construct_projected_point_3;
-    using Face_handle_1     = typename boost::graph_traits<TriangleMesh1>::face_descriptor;
-    using Face_handle_2     = typename boost::graph_traits<TriangleMesh2>::face_descriptor;
+    using Face_handle_1   = typename boost::graph_traits<TriangleMesh1>::face_descriptor;
+    using Face_handle_2   = typename boost::graph_traits<TriangleMesh2>::face_descriptor;
     using Local_bounds    = Bounds<Kernel, Face_handle_1, Face_handle_2>;
 
     using TM2_face_to_triangle_map = Triangle_from_face_descriptor_map<TriangleMesh2, VPM2>;
@@ -114,7 +125,7 @@ namespace CGAL {
     bool go_further() const { return true; }
 
     // Compute the explicit Hausdorff distance to the given primitive.
-    template<typename Primitive>
+    template<class Primitive>
     void intersection(const Query& query, const Primitive& primitive) {
 
       /* Have reached a single triangle, process it.
@@ -154,10 +165,12 @@ namespace CGAL {
       // Since we are at the level of a single triangle in TM2, distance_upper is
       // actually the correct Hausdorff distance from the query triangle in
       // TM1 to the primitive triangle in TM2.
+      CGAL_assertion(h_local_bounds.lower >= FT(0));
       if (distance_lower < h_local_bounds.lower) {
         h_local_bounds.lower = distance_lower;
         h_local_bounds.tm2_lface = primitive.id();
       }
+      CGAL_assertion(h_local_bounds.upper >= FT(0));
       if (distance_upper < h_local_bounds.upper) { // it is (10) in the paper
         h_local_bounds.upper = distance_upper;
         h_local_bounds.tm2_uface = primitive.id();
@@ -166,7 +179,7 @@ namespace CGAL {
 
     // Determine whether child nodes will still contribute to a smaller
     // Hausdorff distance and thus have to be entered.
-    template<typename Node>
+    template<class Node>
     std::pair<bool, Priority>
     do_intersect_with_priority(const Query& query, const Node& node) const {
 
@@ -222,6 +235,7 @@ namespace CGAL {
       // See Algorithm 2.
       // Check whether investigating the bbox can still lower the Hausdorff
       // distance and improve the current global bound. If so, enter the box.
+      CGAL_assertion(h_local_bounds.lower >= FT(0));
       if (dist <= h_local_bounds.lower) {
         return std::make_pair(true , -dist);
       } else {
@@ -229,7 +243,7 @@ namespace CGAL {
       }
     }
 
-    template<typename Node>
+    template<class Node>
     bool do_intersect(const Query& query, const Node& node) const {
       return this->do_intersect_with_priority(query, node).first;
     }
@@ -260,15 +274,15 @@ namespace CGAL {
   };
 
   // Hausdorff primitive traits on TM1.
-  template<
-  typename AABBTraits,
-  typename Query,
-  typename Kernel,
-  typename TriangleMesh1,
-  typename TriangleMesh2,
-  typename VPM1, typename VPM2>
-  class Hausdorff_primitive_traits_tm1 {
-
+  template< class AABBTraits,
+            class Query,
+            class Kernel,
+            class TriangleMesh1,
+            class TriangleMesh2,
+            class VPM1,
+            class VPM2>
+  class Hausdorff_primitive_traits_tm1
+  {
     using FT         = typename Kernel::FT;
     using Point_3    = typename Kernel::Point_3;
     using Vector_3   = typename Kernel::Vector_3;
@@ -294,6 +308,7 @@ namespace CGAL {
       const TriangleMesh1& tm1, const TriangleMesh2& tm2,
       const VPM1& vpm1, const VPM2& vpm2,
       const FT error_bound,
+      const FT infinity_value,
       const std::size_t group_traversal_bound) :
     m_traits(traits),
     m_tm1(tm1), m_tm2(tm2),
@@ -301,11 +316,14 @@ namespace CGAL {
     m_tm2_tree(tree),
     m_face_to_triangle_map(&m_tm1, m_vpm1),
     m_error_bound(error_bound),
-    m_group_traversal_bound(group_traversal_bound) {
+    m_infinity_value(infinity_value),
+    m_group_traversal_bound(group_traversal_bound),
+    h_global_bounds(m_infinity_value) {
 
       // Initialize the global bounds with 0, they will only grow.
       // If we leave zero here, then we are very slow even for big input error bounds!
       // The error_bound here makes the code faster for close meshes.
+      CGAL_assertion(m_error_bound >= FT(0));
       h_global_bounds.lower = m_error_bound; // = FT(0);
       h_global_bounds.upper = m_error_bound; // = FT(0);
     }
@@ -315,16 +333,17 @@ namespace CGAL {
     bool go_further() const { return true; }
 
     // Compute the explicit Hausdorff distance to the given primitive.
-    template<typename Primitive>
+    template<class Primitive>
     void intersection(const Query&, const Primitive& primitive) {
 
       // Set initial tight bounds.
       CGAL_assertion(primitive.id() != Face_handle_1());
       std::pair<Face_handle_1, Face_handle_2> fpair;
       const FT max_dist = get_maximum_distance(primitive.id(), fpair);
+      CGAL_assertion(max_dist >= FT(0));
       CGAL_assertion(fpair.first == primitive.id());
 
-      Bounds<Kernel, Face_handle_1, Face_handle_2> initial_bounds;
+      Bounds<Kernel, Face_handle_1, Face_handle_2> initial_bounds(m_infinity_value);
       initial_bounds.lower = max_dist + m_error_bound;
       initial_bounds.upper = max_dist + m_error_bound;
       initial_bounds.tm2_lface = fpair.second;
@@ -334,10 +353,10 @@ namespace CGAL {
       TM2_hd_traits traversal_traits_tm2(
         m_tm2_tree.traits(), m_tm2, m_vpm2,
         initial_bounds, // tighter bounds, in the paper, they start from infinity, see below
-        // Bounds<Kernel, Face_handle>(), // starting from infinity
-        infinity_value<FT>(),
-        infinity_value<FT>(),
-        infinity_value<FT>());
+        // Bounds<Kernel, Face_handle_1, Face_handle_2>(m_infinity_value), // starting from infinity
+        m_infinity_value,
+        m_infinity_value,
+        m_infinity_value);
 
       const Triangle_3 triangle = get(m_face_to_triangle_map, fpair.first);
 
@@ -349,14 +368,19 @@ namespace CGAL {
 
       // Update global Hausdorff bounds according to the obtained local bounds.
       const auto local_bounds = traversal_traits_tm2.get_local_bounds();
+
+      CGAL_assertion(local_bounds.lower >= FT(0));
+      CGAL_assertion(local_bounds.upper >= FT(0));
       CGAL_assertion(local_bounds.lpair == initial_bounds.default_face_pair());
       CGAL_assertion(local_bounds.upair == initial_bounds.default_face_pair());
 
+      CGAL_assertion(h_global_bounds.lower >= FT(0));
       if (local_bounds.lower > h_global_bounds.lower) { // it is (6) in the paper, see also Algorithm 1
         h_global_bounds.lower = local_bounds.lower;
         h_global_bounds.lpair.first  = fpair.first;
         h_global_bounds.lpair.second = local_bounds.tm2_lface;
       }
+      CGAL_assertion(h_global_bounds.upper >= FT(0));
       if (local_bounds.upper > h_global_bounds.upper) { // it is (6) in the paper, see also Algorithm 1
         h_global_bounds.upper = local_bounds.upper;
         h_global_bounds.upair.first  = fpair.first;
@@ -370,7 +394,7 @@ namespace CGAL {
 
     // Determine whether child nodes will still contribute to a larger
     // Hausdorff distance and thus have to be entered.
-    template<typename Node>
+    template<class Node>
     std::pair<bool, Priority>
     do_intersect_with_priority(const Query&, const Node& node) const {
 
@@ -405,6 +429,7 @@ namespace CGAL {
 
       // See Algorithm 1 here.
       // If the distance is larger than the global lower bound, enter the node, i.e. return true.
+      CGAL_assertion(h_global_bounds.lower >= FT(0));
       if (dist > h_global_bounds.lower) {
         return std::make_pair(true , +dist);
       } else {
@@ -412,7 +437,7 @@ namespace CGAL {
       }
     }
 
-    template<typename Node>
+    template<class Node>
     bool do_intersect(const Query& query, const Node& node) const {
       return this->do_intersect_with_priority(query, node).first;
     }
@@ -477,8 +502,9 @@ namespace CGAL {
     const TM2_tree& m_tm2_tree;
     const TM1_face_to_triangle_map m_face_to_triangle_map;
 
-    // Global Hausdorff bounds for the query triangle.
+    // Internal bounds and values.
     const FT m_error_bound;
+    const FT m_infinity_value;
     const std::size_t m_group_traversal_bound;
     Global_bounds h_global_bounds;
 

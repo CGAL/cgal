@@ -84,7 +84,7 @@ void save_mesh(const Surface_mesh& mesh, const std::string filepath) {
   }
 }
 
-template<typename FunctionWrapper>
+template<class FunctionWrapper>
 void test_0(const FunctionWrapper& functor, const bool save = false) {
 
   // The same triangle.
@@ -110,7 +110,7 @@ void test_0(const FunctionWrapper& functor, const bool save = false) {
   std::cout << "* HInverted distance (expected 0): " << distb << std::endl;
 }
 
-template<typename FunctionWrapper>
+template<class FunctionWrapper>
 void test_1(const FunctionWrapper& functor, const bool save = false) {
 
   // Two triangles are parallel and 1 unit distance away from each other.
@@ -139,7 +139,7 @@ void test_1(const FunctionWrapper& functor, const bool save = false) {
   std::cout << "* HInverted distance (expected 1): " << distb << std::endl;
 }
 
-template<typename FunctionWrapper>
+template<class FunctionWrapper>
 void test_2(const FunctionWrapper& functor, const bool save = false) {
 
   // One triangle is orthogonal to the other one and shares a common edge.
@@ -168,7 +168,7 @@ void test_2(const FunctionWrapper& functor, const bool save = false) {
   std::cout << "* HInverted distance (expected 1): " << distb << std::endl;
 }
 
-template<typename FunctionWrapper>
+template<class FunctionWrapper>
 void test_3(const FunctionWrapper& functor, const bool save = false) {
 
   // One triangle is orthogonal to the other one and shares a common edge
@@ -198,7 +198,7 @@ void test_3(const FunctionWrapper& functor, const bool save = false) {
   std::cout << "* HInverted distance (expected      2 ): " << distb << std::endl;
 }
 
-template<typename FunctionWrapper>
+template<class FunctionWrapper>
 void test_4(const FunctionWrapper& functor, const bool save = false) {
 
   // One triangle is orthogonal to the other one and shares a common vertex.
@@ -227,7 +227,7 @@ void test_4(const FunctionWrapper& functor, const bool save = false) {
   std::cout << "* HInverted distance (expected 1.22): " << distb << std::endl;
 }
 
-template<typename FunctionWrapper>
+template<class FunctionWrapper>
 void test_5(const FunctionWrapper& functor, const bool save = false) {
 
   // One triangle is orthogonal to the other one and shares a common vertex
@@ -257,7 +257,7 @@ void test_5(const FunctionWrapper& functor, const bool save = false) {
   std::cout << "* HInverted distance (expected 2.12): " << distb << std::endl;
 }
 
-template<typename FunctionWrapper>
+template<class FunctionWrapper>
 void test_6(const FunctionWrapper& functor, const bool save = false) {
 
   // The first and second mesh have different number of triangles.
@@ -292,7 +292,7 @@ void test_6(const FunctionWrapper& functor, const bool save = false) {
   std::cout << "* HInverted distance (expected 0.7): " << distb << std::endl;
 }
 
-template<typename FunctionWrapper>
+template<class FunctionWrapper>
 void test_7(const FunctionWrapper& functor, const bool save = false) {
 
   // One triangle is moved to 0.5 unit distance away from 3 other triangles.
@@ -327,7 +327,7 @@ void test_7(const FunctionWrapper& functor, const bool save = false) {
   std::cout << "* HInverted distance (expected 0.86): " << distb << std::endl;
 }
 
-template<typename FunctionWrapper>
+template<class FunctionWrapper>
 void test_8(const FunctionWrapper& functor, const bool save = false) {
 
   // One mesh has one triangle at zero level, another mesh has two triangles
@@ -362,7 +362,7 @@ void test_8(const FunctionWrapper& functor, const bool save = false) {
   std::cout << "* HInverted distance (expected 2): " << distb << std::endl;
 }
 
-template<typename FunctionWrapper>
+template<class FunctionWrapper>
 void test_9(const FunctionWrapper& functor, const bool save = false) {
 
   // Two meshes partially overlap, have 2 triangles in common and each one has
@@ -404,7 +404,7 @@ void test_9(const FunctionWrapper& functor, const bool save = false) {
   std::cout << "* HInverted distance (expected 1): " << distb << std::endl;
 }
 
-template<typename FunctionWrapper>
+template<class FunctionWrapper>
 void test_synthetic_data(const FunctionWrapper& functor) {
 
   std::cout << std::endl << "-- test synthetic data:" << std::endl << std::endl;
@@ -499,7 +499,7 @@ void test_real_meshes(
   std::cout << "* Hausdorff distance2 b: " << distb1 << std::endl;
 }
 
-template<typename FunctionWrapper>
+template<class FunctionWrapper>
 void test_timings(const std::string filepath, const FunctionWrapper& functor) {
 
   std::cout.precision(20);
@@ -528,7 +528,7 @@ void test_timings(const std::string filepath, const FunctionWrapper& functor) {
   std::cout << "* distb = " << distb << std::endl;
 }
 
-template<typename FunctionWrapper>
+template<class FunctionWrapper>
 void test_bunny(
   const FunctionWrapper& functor, const int n = 5, const bool save = false) {
 
@@ -776,7 +776,7 @@ int main(int argc, char** argv) {
 
   // test_bunny(apprx_hd);
   // test_bunny(naive_hd);
-  // test_bunny(bound_hd, 3);
+  test_bunny(bound_hd, 3);
 
 
   // --- Test realizing triangles.

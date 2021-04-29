@@ -124,7 +124,7 @@ void perturbing_mesh_example(
   const std::string filepath, const double error_bound, const bool save = false) {
 
   Timer timer;
-  std::cout << std::endl << "* (E3) perturbing mesh example:" << std::endl;
+  std::cout << std::endl << "* (E3) perturbing mesh example (Surface Mesh):" << std::endl;
 
   Surface_mesh mesh1, mesh2;
   get_meshes(filepath, filepath, mesh1, mesh2);
@@ -140,6 +140,34 @@ void perturbing_mesh_example(
   timer.start();
   std::cout << "* bounded Hausdorff distance: " <<
     PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound) << std::endl;
+  timer.stop();
+  std::cout << "* processing time: " << timer.time() << " s." << std::endl;
+}
+
+// Read two meshes and store them in two different face graph containers,
+// perturb the second mesh, and compute the Hausdorff distance.
+void perturbing_mesh_example_with_polyhedron(
+  const std::string filepath, const double error_bound) {
+
+  Timer timer;
+  std::cout << std::endl << "* (E3) perturbing mesh example (Polyhedron):" << std::endl;
+
+  Surface_mesh mesh1;
+  Polyhedron mesh2;
+  get_mesh(filepath, mesh1);
+  get_mesh(filepath, mesh2);
+
+  const double max_size = 0.1;
+  PMP::random_perturbation(
+    vertices(mesh2), mesh2, max_size, CGAL::parameters::do_project(false));
+  std::cout << "* perturbing the second mesh" << std::endl;
+
+  timer.reset();
+  timer.start();
+  std::cout << "* bounded Hausdorff distance 1->2: " <<
+    PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound) << std::endl;
+  std::cout << "* bounded Hausdorff distance 2->1: " <<
+    PMP::bounded_error_Hausdorff_distance<TAG>(mesh2, mesh1, error_bound) << std::endl;
   timer.stop();
   std::cout << "* processing time: " << timer.time() << " s." << std::endl;
 }
@@ -179,32 +207,6 @@ void moving_mesh_example(
     std::cout << "* processing time: " << timer.time() << " s." << std::endl;
     if (save) save_mesh(mesh2, "mesh-" + std::to_string(i + 1));
   }
-}
-
-void perturbing_mesh_example_with_polyhedron(
-  const std::string filepath, const double error_bound) {
-
-  Timer timer;
-  std::cout << std::endl << "* (E3) perturbing mesh example:" << std::endl;
-
-  Surface_mesh mesh1;
-  Polyhedron mesh2;
-  get_mesh(filepath, mesh1);
-  get_mesh(filepath, mesh2);
-
-  const double max_size = 0.1;
-  PMP::random_perturbation(
-    vertices(mesh2), mesh2, max_size, CGAL::parameters::do_project(false));
-  std::cout << "* perturbing the second mesh" << std::endl;
-
-  timer.reset();
-  timer.start();
-  std::cout << "* bounded Hausdorff distance 1->2: " <<
-    PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound) << std::endl;
-  std::cout << "* bounded Hausdorff distance 2->1: " <<
-    PMP::bounded_error_Hausdorff_distance<TAG>(mesh2, mesh1, error_bound) << std::endl;
-  timer.stop();
-  std::cout << "* processing time: " << timer.time() << " s." << std::endl;
 }
 
 int main(int argc, char** argv) {
