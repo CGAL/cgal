@@ -305,7 +305,8 @@ namespace CGAL {
       const TriangleMesh1& tm1, const TriangleMesh2& tm2,
       const VPM1& vpm1, const VPM2& vpm2,
       const FT error_bound,
-      const FT infinity_value) :
+      const FT infinity_value,
+      const FT initial_lower_bound) :
     m_traits(traits),
     m_tm1(tm1), m_tm2(tm2),
     m_vpm1(vpm1), m_vpm2(vpm2),
@@ -317,10 +318,12 @@ namespace CGAL {
 
       // Initialize the global bounds with 0, they will only grow.
       // If we leave zero here, then we are very slow even for big input error bounds!
-      // The error_bound here makes the code faster for close meshes.
+      // Instead, we can use m_error_bound as our initial guess to filter out all pairs,
+      // which are already within this bound. It makes the code faster for close meshes.
+      // We also use initial_lower_bound here to accelerate the symmetric distance computation.
       CGAL_assertion(m_error_bound >= FT(0));
-      h_global_bounds.lower = m_error_bound; // = FT(0);
-      h_global_bounds.upper = m_error_bound; // = FT(0);
+      h_global_bounds.lower = initial_lower_bound; // = FT(0);
+      h_global_bounds.upper = m_error_bound;       // = FT(0);
     }
 
     // Explore the whole tree, i.e. always enter children if the methods

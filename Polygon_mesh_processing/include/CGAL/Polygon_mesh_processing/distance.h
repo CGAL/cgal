@@ -1440,6 +1440,7 @@ double bounded_error_Hausdorff_impl(
   const VPM1& vpm1,
   const VPM2& vpm2,
   const typename Kernel::FT infinity_value,
+  const typename Kernel::FT initial_lower_bound,
   TM1Tree& tm1_tree,
   TM2Tree& tm2_tree)
 {
@@ -1470,7 +1471,8 @@ double bounded_error_Hausdorff_impl(
 
   // Build traversal traits for tm1_tree.
   TM1_hd_traits traversal_traits_tm1(
-    tm1_tree.traits(), tm2_tree, tm1, tm2, vpm1, vpm2, error_bound, infinity_value);
+    tm1_tree.traits(), tm2_tree, tm1, tm2, vpm1, vpm2,
+    error_bound, infinity_value, initial_lower_bound);
 
   // Find candidate triangles in TM1, which might realise the Hausdorff bound.
   // We build a sorted structure while collecting the candidates.
@@ -1686,8 +1688,11 @@ double bounded_error_one_sided_Hausdorff_impl(
     // std::cout << "* culling rate: 100%" << std::endl;
     return 0.0; // TM1 is part of TM2 so the distance is zero
   }
+
+  const FT initial_lower_bound = error_bound;
   return bounded_error_Hausdorff_impl<Concurrency_tag, Kernel>(
-    tm1, tm2, error_bound, vpm1, vpm2, infinity_value, tm1_tree, tm2_tree);
+    tm1, tm2, error_bound, vpm1, vpm2,
+    infinity_value, initial_lower_bound, tm1_tree, tm2_tree);
 }
 
 template< class Concurrency_tag,
