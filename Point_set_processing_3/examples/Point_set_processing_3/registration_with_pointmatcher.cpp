@@ -83,7 +83,7 @@ int main(int argc, const char** argv)
   outlier_filters.push_back( ICP_config { /*.name=*/"GenericDescriptorOutlierFilter", /*.params=*/{ {"descName", "weights" }}  } );
 
   // Prepare error minimizer
-  ICP_config error_minimizer { /*.name=*/"PointToPointErrorMinimizer"};
+  ICP_config error_minimizer { /*.name=*/"PointToPointErrorMinimizer", /*.params=*/{ } };
 
   // Prepare transformation checker
   std::vector<ICP_config> transformation_checkers;
@@ -93,10 +93,10 @@ int main(int argc, const char** argv)
                                                                                                        {"smoothLength"   , "4"     } }
                                                 } );
   // Prepare inspector
-  ICP_config inspector { /*.name=*/"NullInspector" };
+  ICP_config inspector { /*.name=*/"NullInspector", /*.params=*/{ } };
 
   // Prepare logger
-  ICP_config logger { /*.name=*/"FileLogger" };
+  ICP_config logger { /*.name=*/"FileLogger", /*.params=*/{ } };
 
   const K::Aff_transformation_3 identity_transform = K::Aff_transformation_3(CGAL::Identity_transformation());
 
