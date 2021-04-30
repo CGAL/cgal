@@ -15,12 +15,11 @@
 
 #include <CGAL/license/Voronoi_diagram_2.h>
 
-
 #include <CGAL/Voronoi_diagram_2/basic.h>
 
 namespace CGAL {
-
-namespace VoronoiDiagram_2 { namespace Internal {
+namespace VoronoiDiagram_2 {
+namespace Internal {
 
 //=========================================================================
 //=========================================================================
@@ -71,10 +70,32 @@ struct Point_accessor
 };
 
 //=========================================================================
+
+template <typename DTOS>
+struct DToS2_Point_accessor
+{
+private:
+  typedef typename DTOS::Geom_traits::Point_on_sphere_2      Point_on_sphere_2;
+
+public:
+  typedef const Point_on_sphere_2&                           result_type;
+  typedef typename DTOS::Vertex_handle                       Vertex_handle;
+
+  DToS2_Point_accessor(const DTOS& dtos) : dtos(dtos) { }
+
+  result_type operator()(const Vertex_handle v) const
+  {
+    return dtos.point(v);
+  }
+
+private:
+  const DTOS& dtos;
+};
+
 //=========================================================================
 
-} } //namespace VoronoiDiagram_2::Internal
-
-} //namespace CGAL
+} // namespace Internal
+} // namespace VoronoiDiagram_2
+} // namespace CGAL
 
 #endif // CGAL_VORONOI_DIAGRAM_2_SITE_ACCESSORS_H
