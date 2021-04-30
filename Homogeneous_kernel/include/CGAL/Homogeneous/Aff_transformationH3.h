@@ -94,7 +94,9 @@ public:
   virtual  FT
            cartesian(int i, int j) const = 0;
 
-  virtual  Aff_transformation_3 compose(const Aff_transformation_rep_baseH3* aff) const { return Aff_transformation_3(); }
+  // this function has a default here as it is only used for "pure" scaling and translation
+  // and not for the other types (Identity and general case)
+  virtual  Aff_transformation_3 compose(const Aff_transformation_rep_baseH3*) const { return Aff_transformation_3(); }
 };
 
 template < class R_ >
