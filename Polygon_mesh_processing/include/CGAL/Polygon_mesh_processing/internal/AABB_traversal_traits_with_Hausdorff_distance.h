@@ -291,8 +291,9 @@ namespace CGAL {
 
     using TM1_face_to_triangle_map = Triangle_from_face_descriptor_map<TriangleMesh1, VPM1>;
 
-    using Face_handle_1   = typename boost::graph_traits<TriangleMesh1>::face_descriptor;
-    using Face_handle_2   = typename boost::graph_traits<TriangleMesh2>::face_descriptor;
+    using Face_handle_1 = typename boost::graph_traits<TriangleMesh1>::face_descriptor;
+    using Face_handle_2 = typename boost::graph_traits<TriangleMesh2>::face_descriptor;
+
     using Global_bounds = Bounds<Kernel, Face_handle_1, Face_handle_2>;
     using Candidate     = Candidate_triangle<Kernel, Face_handle_1, Face_handle_2>;
     using Heap_type     = std::priority_queue<Candidate>;
@@ -304,8 +305,7 @@ namespace CGAL {
       const TriangleMesh1& tm1, const TriangleMesh2& tm2,
       const VPM1& vpm1, const VPM2& vpm2,
       const FT error_bound,
-      const FT infinity_value,
-      const std::size_t group_traversal_bound) :
+      const FT infinity_value) :
     m_traits(traits),
     m_tm1(tm1), m_tm2(tm2),
     m_vpm1(vpm1), m_vpm2(vpm2),
@@ -313,7 +313,6 @@ namespace CGAL {
     m_face_to_triangle_map(&m_tm1, m_vpm1),
     m_error_bound(error_bound),
     m_infinity_value(infinity_value),
-    m_group_traversal_bound(group_traversal_bound),
     h_global_bounds(m_infinity_value) {
 
       // Initialize the global bounds with 0, they will only grow.
@@ -355,12 +354,7 @@ namespace CGAL {
         m_infinity_value);
 
       const Triangle_3 triangle = get(m_face_to_triangle_map, fpair.first);
-
-      if (m_group_traversal_bound > 1) {
-        m_tm2_tree.traversal_with_priority_and_group_traversal(triangle, traversal_traits_tm2, m_group_traversal_bound); // with group traversal
-      } else {
-        m_tm2_tree.traversal_with_priority(triangle, traversal_traits_tm2); // without group traversal
-      }
+      m_tm2_tree.traversal_with_priority(triangle, traversal_traits_tm2);
 
       // Update global Hausdorff bounds according to the obtained local bounds.
       const auto local_bounds = traversal_traits_tm2.get_local_bounds();
@@ -501,7 +495,6 @@ namespace CGAL {
     // Internal bounds and values.
     const FT m_error_bound;
     const FT m_infinity_value;
-    const std::size_t m_group_traversal_bound;
     Global_bounds h_global_bounds;
 
     // All candidate triangles.

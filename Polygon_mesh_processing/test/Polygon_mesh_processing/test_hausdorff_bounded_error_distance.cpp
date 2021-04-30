@@ -40,6 +40,11 @@ struct Approximate_hd_wrapper {
       PMP::parameters::number_of_points_per_area_unit(m_num_samples),
       PMP::parameters::number_of_points_per_area_unit(m_num_samples));
   }
+  double symmetric(const Surface_mesh& tm1, const Surface_mesh& tm2) const {
+    return PMP::approximate_symmetric_Hausdorff_distance<TAG>(tm1, tm2,
+      PMP::parameters::number_of_points_per_area_unit(m_num_samples),
+      PMP::parameters::number_of_points_per_area_unit(m_num_samples));
+  }
 };
 
 struct Naive_bounded_error_hd_wrapper {
@@ -49,6 +54,11 @@ struct Naive_bounded_error_hd_wrapper {
   double operator()(const Surface_mesh& tm1, const Surface_mesh& tm2) const {
     return PMP::bounded_error_Hausdorff_distance_naive<TAG>(tm1, tm2, m_error_bound);
   }
+  double symmetric(const Surface_mesh& tm1, const Surface_mesh& tm2) const {
+    const double dista = operator()(tm1, tm2);
+    const double distb = operator()(tm2, tm1);
+    return (CGAL::max)(dista, distb);
+  }
 };
 
 struct Bounded_error_hd_wrapper {
@@ -57,6 +67,9 @@ struct Bounded_error_hd_wrapper {
   Bounded_error_hd_wrapper(const double error_bound) : m_error_bound(error_bound) { }
   double operator()(const Surface_mesh& tm1, const Surface_mesh& tm2) const {
     return PMP::bounded_error_Hausdorff_distance<TAG>(tm1, tm2, m_error_bound);
+  }
+  double symmetric(const Surface_mesh& tm1, const Surface_mesh& tm2) const {
+    return PMP::bounded_error_symmetric_Hausdorff_distance<TAG>(tm1, tm2, m_error_bound);
   }
 };
 
@@ -106,8 +119,13 @@ void test_0(const FunctionWrapper& functor, const bool save = false) {
   const double dista = functor(mesh1, mesh2);
   const double distb = functor(mesh2, mesh1);
 
+  const double naive = (CGAL::max)(dista, distb);
+  const double distc = functor.symmetric(mesh1, mesh2);
+  assert(distc == naive);
+
   std::cout << "* Hausdorff distance (expected 0): " << dista << std::endl;
   std::cout << "* HInverted distance (expected 0): " << distb << std::endl;
+  std::cout << "* Symmetric distance (expected 0): " << distc << std::endl;
 }
 
 template<class FunctionWrapper>
@@ -135,8 +153,13 @@ void test_1(const FunctionWrapper& functor, const bool save = false) {
   const double dista = functor(mesh1, mesh2);
   const double distb = functor(mesh2, mesh1);
 
+  const double naive = (CGAL::max)(dista, distb);
+  const double distc = functor.symmetric(mesh1, mesh2);
+  assert(distc == naive);
+
   std::cout << "* Hausdorff distance (expected 1): " << dista << std::endl;
   std::cout << "* HInverted distance (expected 1): " << distb << std::endl;
+  std::cout << "* Symmetric distance (expected 1): " << distc << std::endl;
 }
 
 template<class FunctionWrapper>
@@ -164,8 +187,13 @@ void test_2(const FunctionWrapper& functor, const bool save = false) {
   const double dista = functor(mesh1, mesh2);
   const double distb = functor(mesh2, mesh1);
 
+  const double naive = (CGAL::max)(dista, distb);
+  const double distc = functor.symmetric(mesh1, mesh2);
+  assert(distc == naive);
+
   std::cout << "* Hausdorff distance (expected 1): " << dista << std::endl;
   std::cout << "* HInverted distance (expected 1): " << distb << std::endl;
+  std::cout << "* Symmetric distance (expected 1): " << distc << std::endl;
 }
 
 template<class FunctionWrapper>
@@ -194,8 +222,13 @@ void test_3(const FunctionWrapper& functor, const bool save = false) {
   const double dista = functor(mesh1, mesh2);
   const double distb = functor(mesh2, mesh1);
 
+  const double naive = (CGAL::max)(dista, distb);
+  const double distc = functor.symmetric(mesh1, mesh2);
+  assert(distc == naive);
+
   std::cout << "* Hausdorff distance (expected sqrt(2)): " << dista << std::endl;
   std::cout << "* HInverted distance (expected      2 ): " << distb << std::endl;
+  std::cout << "* Symmetric distance (expected      2 ): " << distc << std::endl;
 }
 
 template<class FunctionWrapper>
@@ -223,8 +256,13 @@ void test_4(const FunctionWrapper& functor, const bool save = false) {
   const double dista = functor(mesh1, mesh2);
   const double distb = functor(mesh2, mesh1);
 
+  const double naive = (CGAL::max)(dista, distb);
+  const double distc = functor.symmetric(mesh1, mesh2);
+  assert(distc == naive);
+
   std::cout << "* Hausdorff distance (expected 1.22): " << dista << std::endl;
   std::cout << "* HInverted distance (expected 1.22): " << distb << std::endl;
+  std::cout << "* Symmetric distance (expected 1.22): " << distc << std::endl;
 }
 
 template<class FunctionWrapper>
@@ -253,8 +291,13 @@ void test_5(const FunctionWrapper& functor, const bool save = false) {
   const double dista = functor(mesh1, mesh2);
   const double distb = functor(mesh2, mesh1);
 
+  const double naive = (CGAL::max)(dista, distb);
+  const double distc = functor.symmetric(mesh1, mesh2);
+  assert(distc == naive);
+
   std::cout << "* Hausdorff distance (expected 1.73): " << dista << std::endl;
   std::cout << "* HInverted distance (expected 2.12): " << distb << std::endl;
+  std::cout << "* Symmetric distance (expected 2.12): " << distc << std::endl;
 }
 
 template<class FunctionWrapper>
@@ -288,8 +331,13 @@ void test_6(const FunctionWrapper& functor, const bool save = false) {
   const double dista = functor(mesh1, mesh2);
   const double distb = functor(mesh2, mesh1);
 
+  const double naive = (CGAL::max)(dista, distb);
+  const double distc = functor.symmetric(mesh1, mesh2);
+  assert(distc == naive);
+
   std::cout << "* Hausdorff distance (expected 0.0): " << dista << std::endl;
   std::cout << "* HInverted distance (expected 0.7): " << distb << std::endl;
+  std::cout << "* Symmetric distance (expected 0.7): " << distc << std::endl;
 }
 
 template<class FunctionWrapper>
@@ -323,8 +371,13 @@ void test_7(const FunctionWrapper& functor, const bool save = false) {
   const double dista = functor(mesh1, mesh2);
   const double distb = functor(mesh2, mesh1);
 
+  const double naive = (CGAL::max)(dista, distb);
+  const double distc = functor.symmetric(mesh1, mesh2);
+  assert(distc == naive);
+
   std::cout << "* Hausdorff distance (expected 0.50): " << dista << std::endl;
   std::cout << "* HInverted distance (expected 0.86): " << distb << std::endl;
+  std::cout << "* Symmetric distance (expected 0.86): " << distc << std::endl;
 }
 
 template<class FunctionWrapper>
@@ -358,8 +411,13 @@ void test_8(const FunctionWrapper& functor, const bool save = false) {
   const double dista = functor(mesh1, mesh2);
   const double distb = functor(mesh2, mesh1);
 
+  const double naive = (CGAL::max)(dista, distb);
+  const double distc = functor.symmetric(mesh1, mesh2);
+  assert(distc == naive);
+
   std::cout << "* Hausdorff distance (expected 1): " << dista << std::endl;
   std::cout << "* HInverted distance (expected 2): " << distb << std::endl;
+  std::cout << "* Symmetric distance (expected 2): " << distc << std::endl;
 }
 
 template<class FunctionWrapper>
@@ -400,8 +458,13 @@ void test_9(const FunctionWrapper& functor, const bool save = false) {
   const double dista = functor(mesh1, mesh2);
   const double distb = functor(mesh2, mesh1);
 
+  const double naive = (CGAL::max)(dista, distb);
+  const double distc = functor.symmetric(mesh1, mesh2);
+  assert(distc == naive);
+
   std::cout << "* Hausdorff distance (expected 1): " << dista << std::endl;
   std::cout << "* HInverted distance (expected 1): " << distb << std::endl;
+  std::cout << "* Symmetric distance (expected 1): " << distc << std::endl;
 }
 
 template<class FunctionWrapper>
