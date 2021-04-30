@@ -186,10 +186,9 @@ void moving_mesh_example(
   get_meshes(filepath1, filepath2, mesh1, mesh2);
 
   const auto bbox = PMP::bbox(mesh2);
-  const FT distance = static_cast<FT>(CGAL::sqrt(CGAL::to_double(
-    CGAL::squared_distance(
+  const FT distance = CGAL::approximate_sqrt(CGAL::squared_distance(
       Point_3(bbox.xmin(), bbox.ymin(), bbox.zmin()),
-      Point_3(bbox.xmax(), bbox.ymax(), bbox.zmax())))));
+      Point_3(bbox.xmax(), bbox.ymax(), bbox.zmax())));
 
   const FT t = FT(1) / FT(100);
   if (save) save_mesh(mesh2, "mesh-0");
