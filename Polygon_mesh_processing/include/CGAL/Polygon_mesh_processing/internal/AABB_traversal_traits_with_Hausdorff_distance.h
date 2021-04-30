@@ -316,12 +316,15 @@ namespace CGAL {
     m_infinity_value(infinity_value),
     h_global_bounds(m_infinity_value) {
 
+      CGAL_precondition(m_error_bound >= FT(0));
+      CGAL_precondition(m_infinity_value > FT(0));
+      CGAL_precondition(initial_lower_bound >= m_error_bound);
+
       // Initialize the global bounds with 0, they will only grow.
       // If we leave zero here, then we are very slow even for big input error bounds!
       // Instead, we can use m_error_bound as our initial guess to filter out all pairs,
       // which are already within this bound. It makes the code faster for close meshes.
       // We also use initial_lower_bound here to accelerate the symmetric distance computation.
-      CGAL_assertion(m_error_bound >= FT(0));
       h_global_bounds.lower = initial_lower_bound; // = FT(0);
       h_global_bounds.upper = m_error_bound;       // = FT(0);
     }

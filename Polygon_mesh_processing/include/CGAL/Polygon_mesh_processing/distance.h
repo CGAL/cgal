@@ -1398,17 +1398,22 @@ std::pair<typename Kernel::FT, bool> preprocess_bounded_error_Hausdorff_impl(
 
       if (tm1_only.size() == 0 && tm2_only.size() == 0) { // do not create trees
         infinity_value = -FT(1);
+      } else if (common.size() == 0) { // create full TM1 and TM2
+        tm1_tree.insert(faces1.begin(), faces1.end(), tm1, vpm1);
+        tm2_tree.insert(faces2.begin(), faces2.end(), tm2, vpm2);
       } else if (tm1_only.size() == 0) { // create TM2 and full TM1
         CGAL_assertion(tm2_only.size() > 0);
+        CGAL_assertion(tm2_only.size() < faces2.size());
         tm1_tree.insert(faces1.begin(), faces1.end(), tm1, vpm1);
         tm2_tree.insert(tm2_only.begin(), tm2_only.end(), tm2, vpm2);
       } else if (tm2_only.size() == 0) { // create TM1 and full TM2
         CGAL_assertion(tm1_only.size() > 0);
+        CGAL_assertion(tm1_only.size() < faces1.size());
         tm1_tree.insert(tm1_only.begin(), tm1_only.end(), tm1, vpm1);
         tm2_tree.insert(faces2.begin(), faces2.end(), tm2, vpm2);
       } else { // create TM1 and full TM2 and set tag to rebuild them later
         CGAL_assertion(tm1_only.size() > 0);
-        CGAL_assertion(tm2_only.size() > 0);
+        CGAL_assertion(tm1_only.size() < faces1.size());
         tm1_tree.insert(tm1_only.begin(), tm1_only.end(), tm1, vpm1);
         tm2_tree.insert(faces2.begin(), faces2.end(), tm2, vpm2);
         rebuild = true;
@@ -1462,7 +1467,11 @@ double bounded_error_Hausdorff_impl(
 
   using Candidate = Candidate_triangle<Kernel, Face_handle_1, Face_handle_2>;
   using Timer     = CGAL::Real_timer;
+
   std::cout.precision(20);
+  CGAL_precondition(error_bound >= FT(0));
+  CGAL_precondition(tm1_tree.size() > 0);
+  CGAL_precondition(tm2_tree.size() > 0);
 
   // First, we apply culling.
 
@@ -1540,7 +1549,7 @@ double bounded_error_Hausdorff_impl(
 
         // The upper bound of this triangle is the actual Hausdorff distance of
         // the triangle to the second mesh. Use it as new global lower bound.
-        // TODO: Update the reference to the realizing triangle here as this is the best current guess.
+        // TODO: update the reference to the realizing triangle here as this is the best current guess.
         global_bounds.lower = triangle_bounds.upper;
         global_bounds.lpair.second = triangle_bounds.tm2_uface;
         continue;
@@ -1688,6 +1697,7 @@ double bounded_error_one_sided_Hausdorff_impl(
     // std::cout << "* culling rate: 100%" << std::endl;
     return 0.0; // TM1 is part of TM2 so the distance is zero
   }
+  CGAL_assertion(infinity_value > FT(0));
 
   const FT initial_lower_bound = error_bound;
   return bounded_error_Hausdorff_impl<Concurrency_tag, Kernel>(
@@ -1712,13 +1722,81 @@ double bounded_error_symmetric_Hausdorff_impl(
   const NamedParameters2& np2)
 {
   // Naive version.
-  const double hdist1 = bounded_error_one_sided_Hausdorff_impl<Concurrency_tag, Kernel>(
-    tm1, tm2, error_bound, compare_meshes, vpm1, vpm2, np1, np2);
-  const double hdist2 = bounded_error_one_sided_Hausdorff_impl<Concurrency_tag, Kernel>(
-    tm2, tm1, error_bound, compare_meshes, vpm2, vpm1, np2, np1);
-  return (CGAL::max)(hdist1, hdist2);
+  // const double hdist1 = bounded_error_one_sided_Hausdorff_impl<Concurrency_tag, Kernel>(
+  //   tm1, tm2, error_bound, compare_meshes, vpm1, vpm2, np1, np2);
+  // const double hdist2 = bounded_error_one_sided_Hausdorff_impl<Concurrency_tag, Kernel>(
+  //   tm2, tm1, error_bound, compare_meshes, vpm2, vpm1, np2, np1);
+  // return (CGAL::max)(hdist1, hdist2);
 
-  // return -1.0;
+  // Optimized version.
+  // -- We compare meshes only if it is required.
+  // -- We first build trees and rebuild them only if it is required.
+  // -- We provide better initial lower bound in the second call to the Hausdorff distance.
+  using FT = typename Kernel::FT;
+
+  using TM1_primitive = AABB_face_graph_triangle_primitive<TriangleMesh1, VPM1>;
+  using TM2_primitive = AABB_face_graph_triangle_primitive<TriangleMesh2, VPM2>;
+
+  using TM1_traits = AABB_traits<Kernel, TM1_primitive>;
+  using TM2_traits = AABB_traits<Kernel, TM2_primitive>;
+
+  using TM1_tree = AABB_tree<TM1_traits>;
+  using TM2_tree = AABB_tree<TM2_traits>;
+
+  using Face_handle_1 = typename boost::graph_traits<TriangleMesh1>::face_descriptor;
+  using Face_handle_2 = typename boost::graph_traits<TriangleMesh2>::face_descriptor;
+
+  std::cout.precision(20);
+  std::vector<Face_handle_1> tm1_only;
+  std::vector<Face_handle_2> tm2_only;
+
+  TM1_tree tm1_tree;
+  TM2_tree tm2_tree;
+  FT infinity_value = -FT(1);
+  bool rebuild = false;
+  std::tie(infinity_value, rebuild) = preprocess_bounded_error_Hausdorff_impl<Kernel>(
+    tm1, tm2, compare_meshes, vpm1, vpm2, np1, np2, false, tm1_tree, tm2_tree, tm1_only, tm2_only);
+
+  if (infinity_value < FT(0)) {
+    // std::cout << "* culling rate: 100%" << std::endl;
+    return 0.0; // TM1 and TM2 are equal so the distance is zero
+  }
+  CGAL_assertion(infinity_value > FT(0));
+
+  // Compute the first one-sided distance.
+  FT initial_lower_bound = error_bound;
+  double dista = CGAL::to_double(error_bound);
+
+  if (!compare_meshes || (compare_meshes && tm1_only.size() > 0)) {
+    dista = bounded_error_Hausdorff_impl<Concurrency_tag, Kernel>(
+      tm1, tm2, error_bound, vpm1, vpm2,
+      infinity_value, initial_lower_bound, tm1_tree, tm2_tree);
+  }
+
+  // In case this is true, we need to rebuild trees in order to accelerate
+  // computations for the second call.
+  if (rebuild) {
+    CGAL_assertion(compare_meshes);
+    tm1_tree.clear();
+    tm2_tree.clear();
+    CGAL_assertion(tm2_only.size() > 0);
+    CGAL_assertion(tm2_only.size() < faces(tm2).size());
+    tm1_tree.insert(faces(tm1).begin(), faces(tm1).end(), tm1, vpm1);
+    tm2_tree.insert(tm2_only.begin(), tm2_only.end(), tm2, vpm2);
+  }
+
+  // Compute the second one-sided distance.
+  initial_lower_bound = static_cast<FT>(dista); // TODO: we should better test this optimization!
+  double distb = CGAL::to_double(error_bound);
+
+  if (!compare_meshes || (compare_meshes && tm2_only.size() > 0)) {
+    distb = bounded_error_Hausdorff_impl<Concurrency_tag, Kernel>(
+      tm2, tm1, error_bound, vpm2, vpm1,
+      infinity_value, initial_lower_bound, tm2_tree, tm1_tree);
+  }
+
+  // Return the maximum.
+  return (CGAL::max)(dista, distb);
 }
 
 template <class Point_3,

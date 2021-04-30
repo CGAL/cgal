@@ -574,21 +574,56 @@ void test_timings(const std::string filepath, const FunctionWrapper& functor) {
 
   timer.reset();
   timer.start();
-  const double dista = functor(mesh1, mesh2);
+  const double dista1 = functor(mesh1, mesh2);
   timer.stop();
-  std::cout << "* time 0 (sec.): " << timer.time() << std::endl;
+  double timea = timer.time();
+
+  timer.reset();
+  timer.start();
+  const double distb1 = functor(mesh2, mesh1);
+  timer.stop();
+  double timeb = timer.time();
+
+  timer.reset();
+  timer.start();
+  const double distc1 = functor.symmetric(mesh1, mesh2);
+  timer.stop();
+  double timeab = timer.time();
+
+  std::cout << "* time a1 (sec.): " << timea << std::endl;
+  std::cout << "* time b1 (sec.): " << timeb << std::endl;
+  std::cout << "* time ab1 naive (sec.): " << timea + timeb << std::endl;
+  std::cout << "* time ab1 optimized (sec.): " << timeab << std::endl;
 
   PMP::transform(Affine_transformation_3(CGAL::Translation(),
     Vector_3(FT(0), FT(0), FT(1))), mesh2);
 
   timer.reset();
   timer.start();
-  const double distb = functor(mesh1, mesh2);
+  const double dista2 = functor(mesh1, mesh2);
   timer.stop();
-  std::cout << "* time 1 (sec.): " << timer.time() << std::endl;
+  timea = timer.time();
 
-  std::cout << "* dista = " << dista << std::endl;
-  std::cout << "* distb = " << distb << std::endl;
+  timer.reset();
+  timer.start();
+  const double distb2 = functor(mesh2, mesh1);
+  timer.stop();
+  timeb = timer.time();
+
+  timer.reset();
+  timer.start();
+  const double distc2 = functor.symmetric(mesh1, mesh2);
+  timer.stop();
+  timeab = timer.time();
+
+  std::cout << "* time a2 (sec.): " << timea << std::endl;
+  std::cout << "* time b2 (sec.): " << timeb << std::endl;
+  std::cout << "* time ab2 naive (sec.): " << timea + timeb << std::endl;
+  std::cout << "* time ab2 optimized (sec.): " << timeab << std::endl;
+
+  std::cout << "* dista  = " << dista1 << " , " << dista2 << std::endl;
+  std::cout << "* distb  = " << distb1 << " , " << distb2 << std::endl;
+  std::cout << "* distab = " << distc1 << " , " << distc2 << std::endl;
 }
 
 template<class FunctionWrapper>
@@ -802,20 +837,17 @@ int main(int argc, char** argv) {
   Naive_bounded_error_hd_wrapper naive_hd(error_bound);
   Bounded_error_hd_wrapper bound_hd(error_bound);
 
-
   // --- Testing basic properties.
 
   // test_synthetic_data(apprx_hd);
   // test_synthetic_data(naive_hd);
   test_synthetic_data(bound_hd);
 
-
   // --- Compare on common meshes.
 
   // test_one_versus_another(apprx_hd, naive_hd);
   // test_one_versus_another(naive_hd, bound_hd);
-  test_one_versus_another(bound_hd, apprx_hd);
-
+  // test_one_versus_another(bound_hd, apprx_hd);
 
   // --- Compare on real meshes.
 
@@ -824,8 +856,7 @@ int main(int argc, char** argv) {
 
   // test_real_meshes(filepath1, filepath2, apprx_hd, naive_hd);
   // test_real_meshes(filepath1, filepath2, naive_hd, bound_hd);
-  test_real_meshes(filepath1, filepath2, bound_hd, apprx_hd);
-
+  // test_real_meshes(filepath1, filepath2, bound_hd, apprx_hd);
 
   // --- Compare timings.
 
@@ -835,17 +866,14 @@ int main(int argc, char** argv) {
   // test_timings(filepath, naive_hd);
   test_timings(filepath, bound_hd);
 
-
   // --- Compare with the paper.
 
   // test_bunny(apprx_hd);
   // test_bunny(naive_hd);
-  test_bunny(bound_hd, 3);
-
+  // test_bunny(bound_hd, 3);
 
   // --- Test realizing triangles.
   // test_realizing_triangles(error_bound);
-
 
   // ------------------------------------------------------------------------ //
 
