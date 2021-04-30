@@ -734,6 +734,7 @@ int main(int argc, char** argv) {
   // ------------------------------------------------------------------------ //
   // Tests.
 
+  // Approximate_hd_wrapper does not work with EPECK!
   Approximate_hd_wrapper apprx_hd(num_samples);
   Naive_bounded_error_hd_wrapper naive_hd(error_bound);
   Bounded_error_hd_wrapper bound_hd(error_bound);

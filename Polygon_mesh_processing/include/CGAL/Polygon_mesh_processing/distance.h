@@ -1413,7 +1413,7 @@ double bounded_error_Hausdorff_impl(
   const FT sq_dist = CGAL::squared_distance(
     Point_3(bb.xmin(), bb.ymin(), bb.zmin()),
     Point_3(bb.xmax(), bb.ymax(), bb.zmax()));
-  const FT dist = static_cast<FT>(CGAL::sqrt(CGAL::to_double(sq_dist)));
+  const FT dist = CGAL::approximate_sqrt(sq_dist);
   const FT infinity_value = dist * FT(2);
 
   // Build traversal traits for tm1_tree.

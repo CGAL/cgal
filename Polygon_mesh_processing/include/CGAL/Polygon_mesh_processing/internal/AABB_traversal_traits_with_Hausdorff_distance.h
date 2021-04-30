@@ -146,16 +146,13 @@ namespace CGAL {
       const Triangle_3 triangle = get(m_face_to_triangle_map, primitive.id());
 
       // Compute distances of the vertices to the primitive triangle in TM2.
-      const FT v0_dist = static_cast<FT>(CGAL::sqrt(CGAL::to_double(
-        CGAL::squared_distance(m_project_point(triangle, v0), v0))));
+      const FT v0_dist = CGAL::approximate_sqrt(CGAL::squared_distance(m_project_point(triangle, v0), v0));
       if (v0_dist < h_v0_lower) h_v0_lower = v0_dist; // it is () part of (11) in the paper
 
-      const FT v1_dist = static_cast<FT>(CGAL::sqrt(CGAL::to_double(
-        CGAL::squared_distance(m_project_point(triangle, v1), v1))));
+      const FT v1_dist = CGAL::approximate_sqrt(CGAL::squared_distance(m_project_point(triangle, v1), v1));
       if (v1_dist < h_v1_lower) h_v1_lower = v1_dist; // it is () part of (11) in the paper
 
-      const FT v2_dist = static_cast<FT>(CGAL::sqrt(CGAL::to_double(
-        CGAL::squared_distance(m_project_point(triangle, v2), v2))));
+      const FT v2_dist = CGAL::approximate_sqrt(CGAL::squared_distance(m_project_point(triangle, v2), v2));
       if (v2_dist < h_v2_lower) h_v2_lower = v2_dist; // it is () part of (11) in the paper
 
       // Get the distance as maximizers over all vertices.
@@ -229,8 +226,7 @@ namespace CGAL {
 
       // Lower bound on the distance between the two bounding boxes is given
       // as the length of the diagonal of the bounding box between them.
-      const FT dist = static_cast<FT>(CGAL::sqrt(CGAL::to_double(
-        Vector_3(dist_x, dist_y, dist_z).squared_length())));
+      const FT dist = CGAL::approximate_sqrt(Vector_3(dist_x, dist_y, dist_z).squared_length());
 
       // See Algorithm 2.
       // Check whether investigating the bbox can still lower the Hausdorff
@@ -425,7 +421,7 @@ namespace CGAL {
       difference = difference + Vector_3(diff_x, diff_y, diff_z); // it is (9) in the paper
 
       // Compute distance from the farthest corner of the bbox to the closest point in TM2.
-      const FT dist = static_cast<FT>(CGAL::sqrt(CGAL::to_double(difference.squared_length())));
+      const FT dist = CGAL::approximate_sqrt(difference.squared_length());
 
       // See Algorithm 1 here.
       // If the distance is larger than the global lower bound, enter the node, i.e. return true.
@@ -489,7 +485,7 @@ namespace CGAL {
 
       Face_handle_2 tm2_uface = mdist2.second;
       fpair = std::make_pair(tm1_lface, tm2_uface);
-      return static_cast<FT>(CGAL::sqrt(CGAL::to_double(mdist2.first)));
+      return CGAL::approximate_sqrt(mdist2.first);
     }
 
   private:
