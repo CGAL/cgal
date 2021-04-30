@@ -794,7 +794,9 @@ output_to_medit(std::ostream& os,
   //-------------------------------------------------------
   // Facets
   //-------------------------------------------------------
-  typename C3T3::size_type number_of_triangles = c3t3.number_of_facets_in_complex();
+  typename C3T3::size_type number_of_triangles
+    = std::distance(c3t3.facets_in_complex_begin(),
+                    c3t3.facets_in_complex_end());
 
   if ( print_each_facet_twice )
     number_of_triangles += number_of_triangles;
@@ -839,8 +841,11 @@ output_to_medit(std::ostream& os,
   //-------------------------------------------------------
   // Tetrahedra
   //-------------------------------------------------------
+  typename C3T3::size_type number_of_cells
+    = std::distance(c3t3.cells_in_complex_begin(),
+                    c3t3.cells_in_complex_end());
   os << "Tetrahedra\n"
-     << c3t3.number_of_cells_in_complex() << '\n';
+     << number_of_cells << '\n';
 
   for( Cell_iterator cit = c3t3.cells_in_complex_begin() ;
        cit != c3t3.cells_in_complex_end() ;
