@@ -1531,14 +1531,14 @@ Scene_surface_mesh_item::save(std::ostream& out) const
     }
     else if(s.compare("v:color") == 0)
     {
-      message.append(tr(" - Vertex Color\n"));
+      message.append(tr(" - Vertex Colors\n"));
     }
   }
   for(auto s : fprop)
   {
     if(s.compare("f:color") == 0)
     {
-      message.append(tr(" - Face Color\n"));
+      message.append(tr(" - Face Colors\n"));
     }
   }
   QMessageBox::StandardButton save_internal_properties =
