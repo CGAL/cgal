@@ -376,6 +376,17 @@ compare_slope(const typename K::Segment_2 &s1,
 template < class K >
 inline
 typename K::Comparison_result
+compare_slope(const typename K::Point_2 &s1s,
+              const typename K::Point_2 &s1t,
+	      const typename K::Point_2 &s2s,
+              const typename K::Point_2 &s2t,const K& k)
+{
+  return k.compare_slope_2_object()(s1s, s1t, s2s, s2t);
+}
+
+template < class K >
+inline
+typename K::Comparison_result
 compare_x(const typename K::Point_2 &p,
           const typename K::Point_2 &q, const K& k)
 {
