@@ -13,6 +13,9 @@
 #include <CGAL/Polygon_mesh_processing/random_perturbation.h>
 #include <CGAL/Polygon_mesh_processing/transform.h>
 
+#include <CGAL/boost/graph/partition.h> // METIS related
+#include <CGAL/boost/graph/Face_filtered_graph.h>
+
 using SCK   = CGAL::Simple_cartesian<double>;
 using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
@@ -818,6 +821,141 @@ void test_realizing_triangles(
   compute_realizing_triangles(mesh1, mesh2, error_bound, "2", save);
 }
 
+// TODO: in case we keep it, put this test and all METIS-related stuff in a separate
+// file or exclude it from this test suite if METIS is unavailable!
+double bounded_error_Hausdorff_distance_parallel(
+  const Surface_mesh& tm1, const Surface_mesh& /* tm2 */,
+  const double /* error_bound */, const int nb_cores = 4) {
+
+  Timer timer;
+
+  // (1) -- Create partition of tm1.
+  std::cout << "* computing partition ... " << std::endl;
+
+  timer.reset();
+  timer.start();
+  using Face_property_tag = CGAL::dynamic_face_property_t<int>;
+  auto partition_id_map = get(Face_property_tag(), tm1);
+
+  // Set some custom options for METIS.
+  idx_t options[METIS_NOPTIONS];
+
+  // Set all options to default ahead of manually editing some values.
+  METIS_SetDefaultOptions(options);
+
+  // See METIS documentation for details on these options.
+  options[METIS_OPTION_PTYPE]   = METIS_PTYPE_KWAY;
+  options[METIS_OPTION_OBJTYPE] = METIS_OBJTYPE_VOL;
+  options[METIS_OPTION_CTYPE]   = METIS_CTYPE_SHEM;
+  options[METIS_OPTION_NCUTS]   = 3;
+  options[METIS_OPTION_NITER]   = 10;
+  options[METIS_OPTION_SEED]    = 12345;
+  options[METIS_OPTION_MINCONN] = 1;
+  options[METIS_OPTION_CONTIG]  = 1;
+  options[METIS_OPTION_UFACTOR] = 25;
+
+  // Partition the mesh and output its parts.
+  CGAL::METIS::partition_graph(
+    tm1, nb_cores, CGAL::parameters::
+    face_partition_id_map(partition_id_map).
+    METIS_options(&options));
+
+  int max_id = 0;
+  for (const auto& face : faces(tm1)) {
+    const auto id = get(partition_id_map, face);
+    max_id = (CGAL::max)(max_id, id);
+  }
+  assert(nb_cores == (max_id + 1));
+  timer.stop();
+  const double time1 = timer.time();
+  std::cout << " ... done in " << time1 << " sec." << std::endl;
+  std::cout << "* number of detected parts: " << max_id + 1 << std::endl;
+
+  // (2) -- Create a face filtered graph for each part.
+  std::cout << "* creating graphs ... " << std::endl;
+
+  timer.reset();
+  timer.start();
+
+  std::vector<Surface_mesh> graphs(nb_cores);
+  using Filtered_graph = CGAL::Face_filtered_graph<Surface_mesh>;
+
+  Filtered_graph graph(tm1, 0 /* id of the part */, partition_id_map);
+  CGAL_assertion(graph.is_selection_valid());
+  Surface_mesh part_sm;
+  CGAL::copy_face_graph(graph, graphs[0]); // TODO: do not copy in the future
+  // finish
+
+  timer.stop();
+  const double time2 = timer.time();
+  std::cout << " ... done in " << time2 << " sec." << std::endl;
+
+  // (3) -- Run all parts in parallel.
+  std::cout << "* computing distance for all graphs in parallel ... " << std::endl;
+
+  timer.reset();
+  timer.start();
+  std::vector<double> all_dists(nb_cores, -1.0);
+  // todo
+  timer.stop();
+  const double time3 = timer.time();
+  std::cout << " ... done in " << time3 << " sec." << std::endl;
+
+  // (4) -- Find the max distance among the given distances.
+  std::cout << "* computing the final distance ... " << std::endl;
+
+  timer.reset();
+  timer.start();
+  double hdist = -1.0;
+  assert(all_dists.size() == static_cast<std::size_t>(nb_cores));
+  for (int i = 0; i < nb_cores; ++i) {
+    hdist = (CGAL::max)(hdist, all_dists[i]);
+  }
+  assert(hdist >= 0.0);
+  timer.stop();
+  const double time4 = timer.time();
+  std::cout << " ... done in " << time4 << " sec." << std::endl;
+
+  return hdist;
+}
+
+void test_parallel_version(
+  const std::string filepath, const double error_bound) {
+
+  std::cout.precision(20);
+  std::cout << std::endl << "-- test parallel version:" << std::endl << std::endl;
+
+  Timer timer;
+  Surface_mesh mesh1, mesh2;
+  get_meshes(filepath, filepath, mesh1, mesh2);
+
+  // One-sided distance.
+  std::cout << " ---- one-sided distance ---- " << std::endl;
+
+  PMP::transform(Affine_transformation_3(CGAL::Translation(),
+    Vector_3(FT(0), FT(0), FT(1))), mesh2);
+
+  timer.reset();
+  timer.start();
+  const double dista = PMP::bounded_error_Hausdorff_distance<CGAL::Sequential_tag>(
+    mesh1, mesh2, error_bound);
+  timer.stop();
+  const double timea = timer.time();
+
+  timer.reset();
+  timer.start();
+  const double distb = bounded_error_Hausdorff_distance_parallel(
+    mesh1, mesh2, error_bound);
+  timer.stop();
+  const double timeb = timer.time();
+
+  std::cout << "* time a (sec.): " << timea << std::endl;
+  std::cout << "* time b (sec.): " << timeb << std::endl;
+
+  std::cout << "* dista  = " << dista << std::endl;
+  std::cout << "* distb  = " << distb << std::endl;
+}
+
 int main(int argc, char** argv) {
 
   // std::string name;
@@ -864,7 +1002,7 @@ int main(int argc, char** argv) {
   // filepath = "/Users/monet/Documents/fork/pull-requests/hausdorff/data/bunny-dense.off";
   // test_timings(filepath, apprx_hd);
   // test_timings(filepath, naive_hd);
-  test_timings(filepath, bound_hd);
+  // test_timings(filepath, bound_hd);
 
   // --- Compare with the paper.
 
@@ -874,6 +1012,9 @@ int main(int argc, char** argv) {
 
   // --- Test realizing triangles.
   // test_realizing_triangles(error_bound);
+
+  // --- Test parallelization.
+  // test_parallel_version(filepath, error_bound);
 
   // ------------------------------------------------------------------------ //
 
