@@ -124,7 +124,7 @@ int main()
        // TEST Sqrt_extension
 #ifdef CGAL_USE_GMP
       typedef CGAL::Sqrt_extension<int,int> Ext_int;
-      TESTIT(Ext_int     , "CGAL::Sqrt_extension<CGAL::Gmpz,CGAL::Gmpz>");
+      TESTIT(Ext_int     , "CGAL::Sqrt_extension<int,int>");
       typedef CGAL::Sqrt_extension<CGAL::Gmpz,CGAL::Gmpz> Ext_int_int;
       TESTIT(Ext_int_int , "CGAL::Sqrt_extension<CGAL::Gmpz,CGAL::Gmpz>");
       typedef CGAL::Sqrt_extension<CGAL::Gmpq,CGAL::Gmpz> Ext_rat_int;
