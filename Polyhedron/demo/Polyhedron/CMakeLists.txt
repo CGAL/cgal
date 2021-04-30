@@ -338,23 +338,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
                           PUBLIC CGAL::Eigen3_support)
   endif()
 
-  find_package(LASLIB)
-  set_package_properties(
-    LASLIB PROPERTIES
-    DESCRIPTION "A library for some I/O."
-    PURPOSE "Requiered for reading or writing LAS files.")
-
-  include(CGAL_LASLIB_support)
-  if(TARGET CGAL::LASLIB_support)
-    target_link_libraries(scene_points_with_normal_item
-                          PUBLIC CGAL::LASLIB_support)
-    if(MSVC)
-      target_compile_definitions(
-        scene_points_with_normal_item
-        PUBLIC "-D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS")
-    endif()
-  endif()
-
   if(TBB_FOUND)
     target_link_libraries(scene_points_with_normal_item
                           PUBLIC CGAL::TBB_support)

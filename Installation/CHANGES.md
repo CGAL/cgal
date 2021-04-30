@@ -20,6 +20,7 @@ A comprehensive list of the supported file formats is available in the Stream_su
     is within a polyhedral envelope around a set of triangles. It is based on the work of
     Bolun Wang, Teseo Schneider, Yixin Hu, Marco Attene, and Daniele Panozzo.
     "Exact and efficient polyhedral envelope containment check." (ACM Trans. Graph., 39-4, July 2020).
+-   Added more functions in the visitor of the corefinement based methods to track all edge creations.
 
 ### [Surface Mesh Simplification](https://doc.cgal.org/5.3/Manual/packages.html#PkgSurfaceMeshSimplification)
 -   Added a filtering mechanism so that costly tests get only applied to the next candidate for the edge collapse.
