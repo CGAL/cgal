@@ -30,6 +30,12 @@ void my_function_with_named_parameters(PolygonMesh& mesh, const NamedParameters&
   typedef typename Graph_traits::edge_descriptor edge_descriptor;
   typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
 
+  //in the case no helper function exists, this is how you get a type from a NP
+  typedef Static_boolean_property_map<vertex_descriptor, false>                 Default_VCM;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_is_constrained_t,
+                                                       NamedParameters,
+                                                       Default_VCM>::type       VCM;
+
   using parameters::choose_parameter;
   using parameters::get_parameter;
   using parameters::is_default_parameter;
@@ -49,6 +55,8 @@ void my_function_with_named_parameters(PolygonMesh& mesh, const NamedParameters&
   //boolean NP example. Default value is `false`
   bool do_project = choose_parameter(get_parameter(np, internal_np::do_project), false);
 
+  VCM vcm_np = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained), Default_VCM());
+
 
   //demonstrates usage for those values.
   if(has_fnm)
@@ -56,9 +64,10 @@ void my_function_with_named_parameters(PolygonMesh& mesh, const NamedParameters&
     {
       std::cout<<get(fnm, f)<<std::endl;
     }
+
   for(auto v : vertices(mesh))
   {
-    std::cout<<"vertex #"<<get(vim, v)<<" : "<<get(vpm, v)<<std::endl;
+    std::cout<<"vertex #"<<get(vim, v)<<" : "<<get(vpm, v)<<" : "<<get(vcm_np, v)<<std::endl;
   }
 
   if(do_project)
@@ -91,8 +100,21 @@ int main()
     fnm[f] = {0,0,1};
   typedef boost::associative_property_map<FNmap> Face_normal_pmap;
   Face_normal_pmap fn_pmap(fnm);
+
+  typedef std::map<boost::graph_traits<SMesh>::vertex_descriptor,bool> VCmap;
+  VCmap vcm;
+  for(auto v : vertices(sm))
+  {
+    if ((int)v %2 ==0)
+      vcm[v] = true;
+    else
+      vcm[v] = false;
+  }
+  typedef boost::associative_property_map<VCmap> Vertex_constrained_pmap;
+  Vertex_constrained_pmap vcm_pmap(vcm);
   CGAL::my_function_with_named_parameters(sm);
   CGAL::my_function_with_named_parameters(sm, CGAL::parameters::face_normal_map(fn_pmap)
+                                          .vertex_is_constrained_map(vcm_pmap)
                                           .do_project(true));
   return 0;
 }
