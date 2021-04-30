@@ -341,7 +341,6 @@ bool build_triangulation(Tr& tr,
                          const std::vector<typename Tr::Point>& points,
                          const std::vector<std::array<int,5> >& finite_cells,
                          const std::map<std::array<int,3>, typename Tr::Cell::Surface_patch_index>& border_facets,
-                         std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
                          const bool verbose = false,
                          bool replace_domain_0 = false)
 {
@@ -354,6 +353,7 @@ bool build_triangulation(Tr& tr,
   typedef boost::unordered_map<Facet_vvv, std::vector<Incident_cell> >  Incident_cells_map;
 
   Incident_cells_map incident_cells_map;
+  std::vector<Vertex_handle> vertex_handle_vector;
   vertex_handle_vector.resize(points.size() + 1); // id to vertex_handle
                                         //index 0 is for infinite vertex
                                         // 1 to n for points in `points`
@@ -484,9 +484,8 @@ bool build_triangulation_from_file(std::istream& is,
   if(finite_cells.empty())
     return false;
 
-  std::vector<typename Tr::Vertex_handle> vertices(points.size() + 1);
   bool is_well_built = build_triangulation(tr,
-    points, finite_cells, border_facets, vertices, false, replace_domain_0);
+    points, finite_cells, border_facets, false, replace_domain_0);
   return is_well_built;
 }
 
