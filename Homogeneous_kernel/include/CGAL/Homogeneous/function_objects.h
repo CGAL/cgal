@@ -845,7 +845,7 @@ namespace HomogeneousKernelFunctors {
     operator()(const Segment_2& s1, const Segment_2& s2) const
     {
       return (*this)(s1.source(), s1.target(),
-		     s2.source(), s2.target());
+                     s2.source(), s2.target());
     }
 
     result_type

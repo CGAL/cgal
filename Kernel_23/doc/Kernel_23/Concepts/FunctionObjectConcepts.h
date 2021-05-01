@@ -1048,7 +1048,7 @@ public:
   */
   Comparison_result operator()(const Kernel::Point_2& s1s,
                                const Kernel::Point_2& s1t,
-			       const Kernel::Point_2& s2s,
+                               const Kernel::Point_2& s2s,
                                const Kernel::Point_2& s2t));
 
   /// @}
@@ -9712,7 +9712,6 @@ public:
                            const Kernel::Point_3&r,
                            const Kernel::Point_3&s,
                            const Kernel::Point_3&t);
-
 
   /// @}
 

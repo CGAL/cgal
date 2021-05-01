@@ -631,9 +631,9 @@ namespace CartesianKernelFunctors {
     operator()(const Point_2& s1s, const Point_2& s1t, const Point_2& s2s, const Point_2& s2t) const
     {
       return compare_slopesC2(s1s.x(), s1s.y(),
-			      s1t.x(), s1t.y(),
-			      s2s.x(), s2s.y(),
-			      s2t.x(), s2t.y());
+                              s1t.x(), s1t.y(),
+                              s2s.x(), s2s.y(),
+                              s2t.x(), s2t.y());
     }
   };
 

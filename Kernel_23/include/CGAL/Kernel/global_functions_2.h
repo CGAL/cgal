@@ -351,7 +351,7 @@ template < class K >
 inline
 typename K::Comparison_result
 compare_slope(const Point_2<K> &s1s, const Point_2<K> &s1t,
-	      const Point_2<K> &s2s, const Point_2<K> &s2t)
+              const Point_2<K> &s2s, const Point_2<K> &s2t)
 {
   return internal::compare_slope(s1s, s1t, s2s, s2t, K());
 }
