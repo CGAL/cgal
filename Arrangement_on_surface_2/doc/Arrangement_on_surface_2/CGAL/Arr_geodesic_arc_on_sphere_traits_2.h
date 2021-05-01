@@ -141,7 +141,7 @@ namespace CGAL {
        * \param[in] is_full is the arc a full great circle?
        * \param[in] is_degenerate is the arc degenerate (single point)?
        * \param[in] is_empty is the arc empty?
-       * \pre Both endpoint lie on the given plane.
+       * \pre Both endpoints lie on the given plane.
        */
       X_monotone_curve_2(const Point_2& source,
                          const Point_2& target,
@@ -156,7 +156,7 @@ namespace CGAL {
        * \param[in] normal the normal of the plane containing the arc.
        * \param[in] source the source-point direction.
        * \param[in] target the target-point direction.
-       * \pre Both endpoint lie on the given plane.
+       * \pre Both endpoints lie on the given plane.
        */
       X_monotone_curve_2(const Point_2& source,
                          const Point_2& target,
@@ -351,9 +351,10 @@ namespace CGAL {
        * 2. If it is x-monotone,
        *    2.1 Find out whether it is vertical, and
        *    2.2 whether the target is larger than the source (directed right).
-       * The arc is vertical, iff
+       *
+       * An arc is vertical, iff
        * 1. one of its endpoint direction pierces a pole, or
-       * 2. the projections onto the xy-plane coincide.
+       * 2. the projections of the endpoint directions onto the xy-plane coincide.
        * \param[in] p the first endpoint.
        * \param[in] q the second endpoint.
        * \pre p and q must not coincide.
@@ -367,13 +368,11 @@ namespace CGAL {
        */
       X_monotone_curve_2 operator()(const Direction_3& normal);
 
-      /*! Construct a geodesic arc from two endpoints contained
-       * in a plane.
+      /*! Construct a geodesic arc from two endpoints contained in a plane.
        * \param[in] p the first endpoint.
        * \param[in] q the second endpoint.
        * \param[in] normal the normal to the plane containing the arc.
-       * \pre Both endpoint lie on the given plane.
-       * \pre Both endpoint lie on the given plane.
+       * \pre Both endpoints lie on the given plane.
        */
       X_monotone_curve_2 operator()(const Point_2& p, const Point_2& q,
                                     const Direction_3& normal);
@@ -431,8 +430,7 @@ namespace CGAL {
        * \param[in] p the first endpoint.
        * \param[in] q the second endpoint.
        * \param[in] normal the normal to the plane containing the arc.
-       * \pre Both endpoint lie on the given plane.
-       * \pre Both endpoint lie on the given plane.
+       * \pre Both endpoints lie on the given plane.
        */
       Curve_2 operator()(const Point_2& p, const Point_2& q,
                          const Direction_3& normal);
