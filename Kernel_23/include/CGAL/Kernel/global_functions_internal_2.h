@@ -378,7 +378,7 @@ inline
 typename K::Comparison_result
 compare_slope(const typename K::Point_2 &s1s,
               const typename K::Point_2 &s1t,
-	      const typename K::Point_2 &s2s,
+              const typename K::Point_2 &s2s,
               const typename K::Point_2 &s2t,const K& k)
 {
   return k.compare_slope_2_object()(s1s, s1t, s2s, s2t);
