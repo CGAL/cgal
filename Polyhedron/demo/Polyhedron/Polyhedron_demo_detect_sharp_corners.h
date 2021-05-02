@@ -1,5 +1,4 @@
 #pragma once
-#include "detect_sharp_corners.h"
 #include <CGAL/Polygon_mesh_processing/detect_features.h>
 
 namespace CGAL
