@@ -26,12 +26,14 @@ using Point_3    = typename Kernel::Point_3;
 using Vector_3   = typename Kernel::Vector_3;
 using Triangle_3 = typename Kernel::Triangle_3;
 
-using TAG                     = CGAL::Parallel_if_available_tag;
+using TAG                     = CGAL::Parallel_tag;
 using Surface_mesh            = CGAL::Surface_mesh<Point_3>;
 using Affine_transformation_3 = CGAL::Aff_transformation_3<Kernel>;
 using Timer                   = CGAL::Real_timer;
 
 using Face_handle = typename boost::graph_traits<Surface_mesh>::face_descriptor;
+using Face_index  = typename Surface_mesh::Face_index;
+
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 struct Approximate_hd_wrapper {
@@ -821,11 +823,59 @@ void test_realizing_triangles(
   compute_realizing_triangles(mesh1, mesh2, error_bound, "2", save);
 }
 
+#if defined(CGAL_LINKED_WITH_TBB)
+template<class TriangleMesh1, class TriangleMesh2>
+struct Bounded_error_distance_computation {
+
+  const std::vector<TriangleMesh1>& tm1_parts;
+  const TriangleMesh2& tm2;
+  const double error_bound;
+  double distance;
+
+  // Constructor.
+  Bounded_error_distance_computation(
+    const std::vector<TriangleMesh1>& tm1_parts,
+    const TriangleMesh2& tm2,
+    const double error_bound) :
+  tm1_parts(tm1_parts), tm2(tm2),
+  error_bound(error_bound), distance(-1.0)
+  { }
+
+  // Split constructor.
+  Bounded_error_distance_computation(
+    Bounded_error_distance_computation& s, tbb::split) :
+  tm1_parts(s.tm1_parts), tm2(s.tm2),
+  error_bound(s.error_bound), distance(-1.0)
+  { }
+
+  void operator()(const tbb::blocked_range<std::size_t>& range) {
+
+    // std::cout << "* range size: " << range.size() << std::endl;
+    double hdist = 0.0;
+    for (std::size_t i = range.begin(); i != range.end(); ++i) {
+      CGAL_assertion(i < tm1_parts.size());
+      const auto& tm1 = tm1_parts[i];
+      // std::cout << "part size: " << tm1.number_of_faces() << std::endl;
+      const double dist = PMP::bounded_error_Hausdorff_distance<TAG>(
+        tm1, tm2, error_bound,
+        CGAL::parameters::match_faces(false),
+        CGAL::parameters::match_faces(false));
+      if (dist > hdist) hdist = dist;
+    }
+    if (hdist > distance) distance = hdist;
+  }
+
+  void join(Bounded_error_distance_computation& rhs) {
+    distance = (CGAL::max)(rhs.distance, distance);
+  }
+};
+#endif
+
 // TODO: in case we keep it, put this test and all METIS-related stuff in a separate
 // file or exclude it from this test suite if METIS is unavailable!
 double bounded_error_Hausdorff_distance_parallel(
-  const Surface_mesh& tm1, const Surface_mesh& /* tm2 */,
-  const double /* error_bound */, const int nb_cores = 4) {
+  Surface_mesh& tm1, const Surface_mesh& tm2,
+  const double error_bound, const int nb_cores = 4) {
 
   Timer timer;
 
@@ -834,35 +884,16 @@ double bounded_error_Hausdorff_distance_parallel(
 
   timer.reset();
   timer.start();
-  using Face_property_tag = CGAL::dynamic_face_property_t<int>;
-  auto partition_id_map = get(Face_property_tag(), tm1);
-
-  // Set some custom options for METIS.
-  idx_t options[METIS_NOPTIONS];
-
-  // Set all options to default ahead of manually editing some values.
-  METIS_SetDefaultOptions(options);
-
-  // See METIS documentation for details on these options.
-  options[METIS_OPTION_PTYPE]   = METIS_PTYPE_KWAY;
-  options[METIS_OPTION_OBJTYPE] = METIS_OBJTYPE_VOL;
-  options[METIS_OPTION_CTYPE]   = METIS_CTYPE_SHEM;
-  options[METIS_OPTION_NCUTS]   = 3;
-  options[METIS_OPTION_NITER]   = 10;
-  options[METIS_OPTION_SEED]    = 12345;
-  options[METIS_OPTION_MINCONN] = 1;
-  options[METIS_OPTION_CONTIG]  = 1;
-  options[METIS_OPTION_UFACTOR] = 25;
 
   // Partition the mesh and output its parts.
+  auto face_pid_map = tm1.add_property_map<Face_index, std::size_t>("f:pid").first;
   CGAL::METIS::partition_graph(
     tm1, nb_cores, CGAL::parameters::
-    face_partition_id_map(partition_id_map).
-    METIS_options(&options));
+    face_partition_id_map(face_pid_map));
 
   int max_id = 0;
   for (const auto& face : faces(tm1)) {
-    const auto id = get(partition_id_map, face);
+    const int id = static_cast<int>(get(face_pid_map, face));
     max_id = (CGAL::max)(max_id, id);
   }
   assert(nb_cores == (max_id + 1));
@@ -877,14 +908,15 @@ double bounded_error_Hausdorff_distance_parallel(
   timer.reset();
   timer.start();
 
-  std::vector<Surface_mesh> graphs(nb_cores);
   using Filtered_graph = CGAL::Face_filtered_graph<Surface_mesh>;
-
-  Filtered_graph graph(tm1, 0 /* id of the part */, partition_id_map);
-  CGAL_assertion(graph.is_selection_valid());
-  Surface_mesh part_sm;
-  CGAL::copy_face_graph(graph, graphs[0]); // TODO: do not copy in the future
-  // finish
+  std::vector<Surface_mesh> tm1_parts(nb_cores);
+  for (int i = 0; i < nb_cores; ++i) {
+    // std::cout << "selection " << i << std::endl;
+    Filtered_graph tm1_part(tm1, i, face_pid_map);
+    CGAL_assertion(tm1_part.is_selection_valid());
+    CGAL::copy_face_graph(tm1_part, tm1_parts[i]); // TODO: do not copy in the future
+    std::cout << "part " << i << " size: " << tm1_parts[i].number_of_faces() << std::endl;
+  }
 
   timer.stop();
   const double time2 = timer.time();
@@ -895,27 +927,33 @@ double bounded_error_Hausdorff_distance_parallel(
 
   timer.reset();
   timer.start();
-  std::vector<double> all_dists(nb_cores, -1.0);
-  // todo
+
+  std::atomic<double> hdist;
+  #if !defined(CGAL_LINKED_WITH_TBB)
+    CGAL_static_assertion_msg(
+      !(boost::is_convertible<TAG, CGAL::Parallel_tag>::value),
+      "Parallel_tag is enabled but TBB is unavailable.");
+    hdist = -1.0;
+  #else
+    if (boost::is_convertible<TAG, CGAL::Parallel_tag>::value) {
+      std::cout << "* executing parallel version " << std::endl;
+      Bounded_error_distance_computation<Surface_mesh, Surface_mesh> f(
+        tm1_parts, tm2, error_bound);
+      tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, tm1_parts.size()), f);
+      hdist = f.distance;
+    } else
+  #endif
+    {
+      std::cout << "* executing sequential version " << std::endl;
+      hdist = PMP::bounded_error_Hausdorff_distance<TAG>(
+        tm1, tm2, error_bound,
+        CGAL::parameters::match_faces(false),
+        CGAL::parameters::match_faces(false));
+    }
+
   timer.stop();
   const double time3 = timer.time();
   std::cout << " ... done in " << time3 << " sec." << std::endl;
-
-  // (4) -- Find the max distance among the given distances.
-  std::cout << "* computing the final distance ... " << std::endl;
-
-  timer.reset();
-  timer.start();
-  double hdist = -1.0;
-  assert(all_dists.size() == static_cast<std::size_t>(nb_cores));
-  for (int i = 0; i < nb_cores; ++i) {
-    hdist = (CGAL::max)(hdist, all_dists[i]);
-  }
-  assert(hdist >= 0.0);
-  timer.stop();
-  const double time4 = timer.time();
-  std::cout << " ... done in " << time4 << " sec." << std::endl;
-
   return hdist;
 }
 
@@ -938,7 +976,9 @@ void test_parallel_version(
   timer.reset();
   timer.start();
   const double dista = PMP::bounded_error_Hausdorff_distance<CGAL::Sequential_tag>(
-    mesh1, mesh2, error_bound);
+    mesh1, mesh2, error_bound,
+    CGAL::parameters::match_faces(false),
+    CGAL::parameters::match_faces(false));
   timer.stop();
   const double timea = timer.time();
 
@@ -949,11 +989,11 @@ void test_parallel_version(
   timer.stop();
   const double timeb = timer.time();
 
-  std::cout << "* time a (sec.): " << timea << std::endl;
-  std::cout << "* time b (sec.): " << timeb << std::endl;
+  std::cout << "* time a seq (sec.): " << timea << std::endl;
+  std::cout << "* time b par (sec.): " << timeb << std::endl;
 
-  std::cout << "* dista  = " << dista << std::endl;
-  std::cout << "* distb  = " << distb << std::endl;
+  std::cout << "* dista seq = " << dista << std::endl;
+  std::cout << "* distb par = " << distb << std::endl;
 }
 
 int main(int argc, char** argv) {
@@ -979,7 +1019,7 @@ int main(int argc, char** argv) {
 
   // test_synthetic_data(apprx_hd);
   // test_synthetic_data(naive_hd);
-  test_synthetic_data(bound_hd);
+  // test_synthetic_data(bound_hd);
 
   // --- Compare on common meshes.
 
@@ -1014,7 +1054,7 @@ int main(int argc, char** argv) {
   // test_realizing_triangles(error_bound);
 
   // --- Test parallelization.
-  // test_parallel_version(filepath, error_bound);
+  test_parallel_version(filepath, error_bound);
 
   // ------------------------------------------------------------------------ //
 
