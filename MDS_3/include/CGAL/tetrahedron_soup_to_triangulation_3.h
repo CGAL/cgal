@@ -21,6 +21,7 @@
 #include <CGAL/license/MDS_3.h>
 
 #include <CGAL/MDS_3/tet_soup_to_c3t3.h>
+#include <CGAL/internal/MDS_3/MDS_3_helper.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <vector>
@@ -30,14 +31,19 @@
 namespace CGAL {
 
   /** \ingroup PkgMDS3Functions
-   * builds a 3D triangulation from a soup of tetrahedra.
-   *
-   * @tparam TetrahedronRange
-   * @tparam Triangulation model of
-   * @param tets
-   * @param tr
-   *
-   * @pre convex volume
+  * builds a 3D triangulation from a soup of tetrahedra.
+  *
+  * @tparam TetrahedronRange a model of `Range` whose value type is
+  * a `Tetrahedron_3`
+  * @tparam Triangulation a valid triangulation class that has
+  * a vertex base model of `MeshVertexBase_3`
+  * and a cell base model of `MeshCellBase_3`
+  *
+  * @param tets each element in the range is the geometric description of the
+  * corresponding cell in `tr`
+  * @param tr the 3D triangulation to be built
+  *
+  * @post the output triangulation should be a triangulation of the convex hull of `tets`
   */
   template<typename TetrahedronRange, typename Triangulation>
   void tetrahedron_soup_to_triangulation_3(const TetrahedronRange& tets,
@@ -77,6 +83,8 @@ namespace CGAL {
     }
 
     CGAL::MDS_3::build_triangulation(tr, points, finite_cells, border_facets);
+
+    CGAL_assertion(CGAL::MDS_3::internal::is_convex(tr));
   }
 
   /** \ingroup PkgMDS3Functions
@@ -86,6 +94,10 @@ namespace CGAL {
   * whose value type is the point type
   * @tparam TetrahedronRange a model of the concept `RandomAccessContainer` whose
   * value type is a model of the concept `RandomAccessContainer` whose value type is `std::size_t`
+  * @tparam Triangulation a valid triangulation class that has
+  * a vertex base model of `MeshVertexBase_3`
+  * and a cell base model of `MeshCellBase_3`
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param points points of the soup of tetrahedra
   * @param tets each element in the range describes a tetrahedron using the indices of the points
@@ -107,6 +119,7 @@ namespace CGAL {
   * \cgalNamedParamsEnd
   *
   * @pre `points` contains each point only once
+  * @post the output triangulation should be a triangulation of the convex hull of `points`
   *
   * @sa `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
   */
@@ -127,6 +140,8 @@ namespace CGAL {
     auto facets = choose_parameter(get_parameter(np, internal_np::surface_facets), empty_map);
 
     CGAL::MDS_3::build_triangulation(tr, points, tets, facets);
+
+    CGAL_assertion(CGAL::MDS_3::internal::is_convex(tr));
   }
 
   template<typename PointRange,
