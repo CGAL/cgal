@@ -850,19 +850,26 @@ struct Bounded_error_distance_computation {
 
   void operator()(const tbb::blocked_range<std::size_t>& range) {
 
+    Timer timer;
+    timer.reset();
+    timer.start();
+
     // std::cout << "* range size: " << range.size() << std::endl;
     double hdist = 0.0;
     for (std::size_t i = range.begin(); i != range.end(); ++i) {
       CGAL_assertion(i < tm1_parts.size());
       const auto& tm1 = tm1_parts[i];
       // std::cout << "part size: " << tm1.number_of_faces() << std::endl;
-      const double dist = PMP::bounded_error_Hausdorff_distance<TAG>(
+      const double dist = PMP::bounded_error_Hausdorff_distance<CGAL::Sequential_tag>(
         tm1, tm2, error_bound,
         CGAL::parameters::match_faces(false),
         CGAL::parameters::match_faces(false));
       if (dist > hdist) hdist = dist;
     }
     if (hdist > distance) distance = hdist;
+
+    timer.stop();
+    std::cout << "* time operator() (sec.): " << timer.time() << std::endl;
   }
 
   void join(Bounded_error_distance_computation& rhs) {
@@ -954,6 +961,18 @@ double bounded_error_Hausdorff_distance_parallel(
   timer.stop();
   const double time3 = timer.time();
   std::cout << " ... done in " << time3 << " sec." << std::endl;
+
+  for (const auto& tm1_part : tm1_parts) {
+    timer.reset();
+    timer.start();
+    hdist = PMP::bounded_error_Hausdorff_distance<CGAL::Sequential_tag>(
+      tm1_part, tm2, error_bound,
+      CGAL::parameters::match_faces(false),
+      CGAL::parameters::match_faces(false));
+    timer.stop();
+    std::cout << "* manual call seq. time (sec.): " << timer.time() << std::endl;
+  }
+
   return hdist;
 }
 
@@ -1038,8 +1057,8 @@ int main(int argc, char** argv) {
 
   // --- Compare timings.
 
-  filepath = (argc > 1 ? argv[1] : "data/blobby-remeshed.off");
-  // filepath = "/Users/monet/Documents/fork/pull-requests/hausdorff/data/bunny-dense.off";
+  // filepath = (argc > 1 ? argv[1] : "data/blobby-remeshed.off");
+  filepath = "/Users/monet/Documents/fork/pull-requests/hausdorff/data/bunny-dense.off";
   // test_timings(filepath, apprx_hd);
   // test_timings(filepath, naive_hd);
   // test_timings(filepath, bound_hd);
