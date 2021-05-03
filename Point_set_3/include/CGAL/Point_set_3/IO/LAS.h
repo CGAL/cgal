@@ -32,6 +32,8 @@ class Point_set_3;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Read
 
+namespace IO {
+
 namespace internal {
 
 template <typename PointSet, typename PropertyMap>
@@ -162,6 +164,8 @@ bool read_LAS(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_
   return read_LAS(is, point_set);
 }
 
+} // namespace IO
+
 #ifndef CGAL_NO_DEPRECATED_CODE
 
 /*!
@@ -174,7 +178,7 @@ template <typename Point, typename Vector>
 CGAL_DEPRECATED bool read_las_point_set(std::istream& is, ///< input stream.
                                         CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
 {
-  return read_LAS(is, point_set);
+  return IO::read_LAS(is, point_set);
 }
 
 #endif // CGAL_NO_DEPRECATED_CODE
@@ -182,6 +186,8 @@ CGAL_DEPRECATED bool read_las_point_set(std::istream& is, ///< input stream.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
+
+namespace IO {
 
 /*!
   \ingroup PkgPointSet3IOLAS
@@ -394,6 +400,8 @@ bool write_LAS(const std::string& fname,
   return write_LAS(os, point_set);
 }
 
+} // namespace IO
+
 #ifndef CGAL_NO_DEPRECATED_CODE
 
 /*!
@@ -406,7 +414,7 @@ template <typename Point, typename Vector>
 CGAL_DEPRECATED bool write_las_point_set(std::ostream& os, ///< output stream.
                                          CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set
 {
-  return write_LAS(os, point_set);
+  return IO::write_LAS(os, point_set);
 }
 
 #endif // CGAL_NO_DEPRECATED_CODE

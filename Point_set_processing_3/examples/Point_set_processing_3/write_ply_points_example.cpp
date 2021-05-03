@@ -56,14 +56,14 @@ int main(int, char**)
   std::ofstream f("out.ply", std::ios::binary);
   CGAL::set_binary_mode(f); // The PLY file will be written in the binary format
 
-  CGAL::write_PLY_with_properties(f, points,
-                                  CGAL::make_ply_point_writer (Point_map()),
-                                  std::make_tuple(Color_map(),
-                                                  CGAL::PLY_property<unsigned char>("red"),
-                                                  CGAL::PLY_property<unsigned char>("green"),
-                                                  CGAL::PLY_property<unsigned char>("blue"),
-                                                  CGAL::PLY_property<unsigned char>("alpha")),
-                                  std::make_pair(Intensity_map(), CGAL::PLY_property<int>("intensity")));
+  CGAL::IO::write_PLY_with_properties(f, points,
+                                      CGAL::make_ply_point_writer (Point_map()),
+                                      std::make_tuple(Color_map(),
+                                                      CGAL::IO::PLY_property<unsigned char>("red"),
+                                                      CGAL::IO::PLY_property<unsigned char>("green"),
+                                                      CGAL::IO::PLY_property<unsigned char>("blue"),
+                                                      CGAL::IO::PLY_property<unsigned char>("alpha")),
+                                  std::make_pair(Intensity_map(), CGAL::IO::PLY_property<int>("intensity")));
 
   return EXIT_SUCCESS;
 }

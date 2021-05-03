@@ -86,14 +86,14 @@ bool test_points_with_np(std::string s)
   points.push_back(std::make_pair(Point_3(0,0,1), Vector_3(0,0,1)));
   points.push_back(std::make_pair(Point_3(1,1,1), Vector_3(1,1,1)));
 
-  bool ok = CGAL::write_points(s, points,
-                               CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
-                                                .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
+  bool ok = CGAL::IO::write_points(s, points,
+                                   CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
+                                                    .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
   assert(ok);
   std::vector<PointVectorPair> pv_pairs;
-  ok = CGAL::read_points(s, std::back_inserter(pv_pairs),
-                         CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
-                                          .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
+  ok = CGAL::IO::read_points(s, std::back_inserter(pv_pairs),
+                             CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
+                                              .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
   assert(ok);
   assert(pv_pairs[0] == std::make_pair(Point_3(0,0,0), Vector_3(0,0,0)));
   assert(pv_pairs[1] == std::make_pair(Point_3(1,0,0), Vector_3(1,0,0)));
@@ -109,47 +109,47 @@ void test_##TYPE(const std::string& s)                                          
 {                                                                                                  \
   std::cout << "Test Point_set_3: " << s << " extension: " << #TYPE << std::endl;                  \
   CGAL::Point_set_3<Point_3, Vector_3> ps;                                                         \
-  bool ok = CGAL::read_##TYPE(s, ps);                                                              \
+  bool ok = CGAL::IO::read_##TYPE(s, ps);                                                              \
   assert(ok);                                                                                      \
   ps.clear();                                                                                      \
-  ok = CGAL::read_##TYPE(s.c_str(), ps);                                                           \
+  ok = CGAL::IO::read_##TYPE(s.c_str(), ps);                                                           \
   assert(ok);                                                                                      \
   ps.clear();                                                                                      \
   std::ifstream in(s);                                                                             \
-  ok = CGAL::read_##TYPE(in, ps);                                                                  \
+  ok = CGAL::IO::read_##TYPE(in, ps);                                                                  \
   assert(ok);                                                                                      \
   const char* ext = type;                                                                          \
   std::string fname = "tmp.";                                                                      \
   fname.append(ext);                                                                               \
-  ok = CGAL::write_##TYPE(fname, ps);                                                              \
+  ok = CGAL::IO::write_##TYPE(fname, ps);                                                              \
   assert(ok);                                                                                      \
-  ok = CGAL::write_##TYPE(fname, ps, CGAL::parameters::stream_precision(10));                      \
+  ok = CGAL::IO::write_##TYPE(fname, ps, CGAL::parameters::stream_precision(10));                      \
   assert(ok);                                                                                      \
-  ok = CGAL::write_##TYPE(fname.c_str(), ps);                                                      \
+  ok = CGAL::IO::write_##TYPE(fname.c_str(), ps);                                                      \
   assert(ok);                                                                                      \
-  ok = CGAL::write_##TYPE(fname.c_str(), ps, CGAL::parameters::stream_precision(10));              \
+  ok = CGAL::IO::write_##TYPE(fname.c_str(), ps, CGAL::parameters::stream_precision(10));              \
   assert(ok);                                                                                      \
   std::ofstream out(fname);                                                                        \
-  ok = CGAL::write_##TYPE(out, ps);                                                                \
+  ok = CGAL::IO::write_##TYPE(out, ps);                                                                \
   assert(ok);                                                                                      \
   std::ofstream out2(fname);                                                                       \
-  ok = CGAL::write_##TYPE(out2, ps, CGAL::parameters::stream_precision(10));                       \
+  ok = CGAL::IO::write_##TYPE(out2, ps, CGAL::parameters::stream_precision(10));                       \
   assert(ok);                                                                                      \
   CGAL::Point_set_3<Point_3, Vector_3> ps2;                                                        \
   std::ifstream is(fname);                                                                         \
-  ok = CGAL::read_##TYPE(is, ps2);                                                                 \
+  ok = CGAL::IO::read_##TYPE(is, ps2);                                                                 \
   assert(ok);                                                                                      \
   assert(ps_are_equal(ps, ps2));                                                                   \
-  ok = CGAL::write_point_set(fname, ps2);                                                          \
+  ok = CGAL::IO::write_point_set(fname, ps2);                                                          \
   assert(ok);                                                                                      \
-  ok = CGAL::write_point_set(fname, ps2, CGAL::parameters::stream_precision(10));                  \
+  ok = CGAL::IO::write_point_set(fname, ps2, CGAL::parameters::stream_precision(10));                  \
   assert(ok);                                                                                      \
-  ok = CGAL::write_point_set(fname.c_str(), ps2);                                                  \
+  ok = CGAL::IO::write_point_set(fname.c_str(), ps2);                                                  \
   assert(ok);                                                                                      \
-  ok = CGAL::write_point_set(fname.c_str(), ps2, CGAL::parameters::stream_precision(10));          \
+  ok = CGAL::IO::write_point_set(fname.c_str(), ps2, CGAL::parameters::stream_precision(10));          \
   assert(ok);                                                                                      \
   ps2.clear();                                                                                     \
-  ok = CGAL::read_point_set(fname, ps2);                                                           \
+  ok = CGAL::IO::read_point_set(fname, ps2);                                                           \
   assert(ok);                                                                                      \
   assert(ps_are_equal(ps, ps2));                                                                   \
   }
@@ -162,44 +162,44 @@ void test_LAS(const std::string& s)
 {
   std::cout << "Test Point_set_3: " << s << " extension: las" <<std::endl;
   CGAL::Point_set_3<Point_3, Vector_3> ps;
-  bool ok = CGAL::read_LAS(s, ps);
+  bool ok = CGAL::IO::read_LAS(s, ps);
   assert(ok);
   ps.clear();
-  ok = CGAL::read_LAS(s.c_str(), ps);
+  ok = CGAL::IO::read_LAS(s.c_str(), ps);
   assert(ok);
   ps.clear();
   std::ifstream in(s, std::ios::binary);
   CGAL::set_mode(in, CGAL::IO::BINARY);
-  ok = CGAL::read_LAS(in, ps);
+  ok = CGAL::IO::read_LAS(in, ps);
   assert(ok);
   const char* ext = "las";
   std::string fname = "tmp.";
   fname.append(ext);
-  ok = CGAL::write_LAS(fname, ps);
+  ok = CGAL::IO::write_LAS(fname, ps);
   assert(ok);
-  ok = CGAL::write_LAS(fname.c_str(), ps);
+  ok = CGAL::IO::write_LAS(fname.c_str(), ps);
   assert(ok);
   std::ofstream out(fname, std::ios::binary);
   CGAL::set_mode(out, CGAL::IO::BINARY);
-  ok = CGAL::write_LAS(out, ps);
+  ok = CGAL::IO::write_LAS(out, ps);
   assert(ok);
   CGAL::Point_set_3<Point_3, Vector_3> ps2;
 
   std::ifstream is(fname, std::ios::binary);
   CGAL::set_mode(is, CGAL::IO::BINARY);
-  ok = CGAL::read_LAS(is, ps2);
+  ok = CGAL::IO::read_LAS(is, ps2);
   assert(ok);
   assert(ps_are_equal(ps, ps2));
-  ok = CGAL::write_point_set(fname, ps2);
+  ok = CGAL::IO::write_point_set(fname, ps2);
   assert(ok);
-  ok = CGAL::write_point_set(fname, ps2, CGAL::parameters::stream_precision(10));
+  ok = CGAL::IO::write_point_set(fname, ps2, CGAL::parameters::stream_precision(10));
   assert(ok);
-  ok = CGAL::write_point_set(fname.c_str(), ps2);
+  ok = CGAL::IO::write_point_set(fname.c_str(), ps2);
   assert(ok);
-  ok = CGAL::write_point_set(fname.c_str(), ps2, CGAL::parameters::stream_precision(10));
+  ok = CGAL::IO::write_point_set(fname.c_str(), ps2, CGAL::parameters::stream_precision(10));
   assert(ok);
   ps2.clear();
-  ok = CGAL::read_point_set(fname, ps2);
+  ok = CGAL::IO::read_point_set(fname, ps2);
   assert(ok);
   assert(ps_are_equal(ps, ps2));
   }
@@ -212,41 +212,41 @@ void test_points_##TYPE(const std::string& s)                                   
 {                                                                                                  \
   std::cout << "Test points: " << s << " extension: " << #TYPE << std::endl;                       \
   std::vector<Point_3> ps;                                                                         \
-  bool ok = CGAL::read_##TYPE(s, std::back_inserter(ps));                                          \
+  bool ok = CGAL::IO::read_##TYPE(s, std::back_inserter(ps));                                          \
   assert(ok);                                                                                      \
   ps.clear();                                                                                      \
-  ok = CGAL::read_##TYPE(s.c_str(), std::back_inserter(ps));                                       \
+  ok = CGAL::IO::read_##TYPE(s.c_str(), std::back_inserter(ps));                                       \
   assert(ok);                                                                                      \
   ps.clear();                                                                                      \
   std::ifstream in(s);                                                                             \
-  ok = CGAL::read_##TYPE(in, std::back_inserter(ps));                                              \
+  ok = CGAL::IO::read_##TYPE(in, std::back_inserter(ps));                                              \
   assert(ok);                                                                                      \
   const char* ext = type;                                                                          \
   std::string fname = "tmp.";                                                                      \
   fname.append(ext);                                                                               \
-  ok = CGAL::write_##TYPE(fname, ps);                                                              \
+  ok = CGAL::IO::write_##TYPE(fname, ps);                                                              \
   assert(ok);                                                                                      \
-  ok = CGAL::write_##TYPE(fname, ps, CGAL::parameters::stream_precision(10));                      \
+  ok = CGAL::IO::write_##TYPE(fname, ps, CGAL::parameters::stream_precision(10));                      \
   assert(ok);                                                                                      \
-  ok = CGAL::write_##TYPE(fname.c_str(), ps);                                                      \
+  ok = CGAL::IO::write_##TYPE(fname.c_str(), ps);                                                      \
   assert(ok);                                                                                      \
-  ok = CGAL::write_##TYPE(fname.c_str(), ps, CGAL::parameters::stream_precision(10));              \
+  ok = CGAL::IO::write_##TYPE(fname.c_str(), ps, CGAL::parameters::stream_precision(10));              \
   assert(ok);                                                                                      \
   std::ofstream out(fname);                                                                        \
-  ok = CGAL::write_##TYPE(out, ps);                                                                \
+  ok = CGAL::IO::write_##TYPE(out, ps);                                                                \
   assert(ok);                                                                                      \
   std::ofstream out2(fname);                                                                       \
-  ok = CGAL::write_##TYPE(out2, ps, CGAL::parameters::stream_precision(10));                       \
+  ok = CGAL::IO::write_##TYPE(out2, ps, CGAL::parameters::stream_precision(10));                       \
   assert(ok);                                                                                      \
   std::vector<Point_3> ps2;                                                                        \
   std::ifstream is(fname);                                                                         \
-  ok = CGAL::read_##TYPE(is, std::back_inserter(ps2));                                             \
+  ok = CGAL::IO::read_##TYPE(is, std::back_inserter(ps2));                                             \
   assert(ok);                                                                                      \
   assert(points_are_equal(ps, ps2));                                                               \
-  ok = CGAL::write_points(fname, ps2);                                                             \
+  ok = CGAL::IO::write_points(fname, ps2);                                                             \
   assert(ok);                                                                                      \
   ps2.clear();                                                                                     \
-  ok = CGAL::read_points(fname, std::back_inserter(ps2));                                          \
+  ok = CGAL::IO::read_points(fname, std::back_inserter(ps2));                                          \
   assert(ok);                                                                                      \
   assert(points_are_equal(ps, ps2));                                                               \
   }
@@ -259,41 +259,41 @@ void test_points_LAS(const std::string& s)
 {
   std::cout << "Test points: " << s << " extension: LAS "<< std::endl;
   std::vector<Point_3> ps;
-  bool ok = CGAL::read_LAS(s, std::back_inserter(ps));
+  bool ok = CGAL::IO::read_LAS(s, std::back_inserter(ps));
   assert(ok);
   ps.clear();
-  ok = CGAL::read_LAS(s.c_str(), std::back_inserter(ps));
+  ok = CGAL::IO::read_LAS(s.c_str(), std::back_inserter(ps));
   assert(ok);
   ps.clear();
   std::ifstream in(s, std::ios::binary);
-  ok = CGAL::read_LAS(in, std::back_inserter(ps));
+  ok = CGAL::IO::read_LAS(in, std::back_inserter(ps));
   assert(ok);
   const char* ext = "las";
   std::string fname = "tmp.";
   fname.append(ext);
-  ok = CGAL::write_LAS(fname, ps);
+  ok = CGAL::IO::write_LAS(fname, ps);
   assert(ok);
-  ok = CGAL::write_LAS(fname, ps, CGAL::parameters::stream_precision(10));
+  ok = CGAL::IO::write_LAS(fname, ps, CGAL::parameters::stream_precision(10));
   assert(ok);
-  ok = CGAL::write_LAS(fname.c_str(), ps);
+  ok = CGAL::IO::write_LAS(fname.c_str(), ps);
   assert(ok);
-  ok = CGAL::write_LAS(fname.c_str(), ps, CGAL::parameters::stream_precision(10));
+  ok = CGAL::IO::write_LAS(fname.c_str(), ps, CGAL::parameters::stream_precision(10));
   assert(ok);
   std::ofstream out(fname, std::ios::binary);
-  ok = CGAL::write_LAS(out, ps);
+  ok = CGAL::IO::write_LAS(out, ps);
   assert(ok);
   std::ofstream out2(fname, std::ios::binary);
-  ok = CGAL::write_LAS(out2, ps, CGAL::parameters::stream_precision(10));
+  ok = CGAL::IO::write_LAS(out2, ps, CGAL::parameters::stream_precision(10));
   assert(ok);
   std::vector<Point_3> ps2;
   std::ifstream is(fname, std::ios::binary);
-  ok = CGAL::read_LAS(is, std::back_inserter(ps2));
+  ok = CGAL::IO::read_LAS(is, std::back_inserter(ps2));
   assert(ok);
   assert(points_are_equal(ps, ps2));
-  ok = CGAL::write_points(fname, ps2);
+  ok = CGAL::IO::write_points(fname, ps2);
   assert(ok);
   ps2.clear();
-  ok = CGAL::read_points(fname, std::back_inserter(ps2));
+  ok = CGAL::IO::read_points(fname, std::back_inserter(ps2));
   assert(ok);
   assert(points_are_equal(ps, ps2));
   }

@@ -36,6 +36,8 @@ class Point_set_3;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Read
 
+namespace IO {
+
 /*!
   \ingroup PkgPointSet3IOXYZ
 
@@ -54,9 +56,9 @@ bool read_XYZ(std::istream& is,
 {
   point_set.add_normal_map();
 
-  bool out = CGAL::read_XYZ(is, point_set.index_back_inserter(),
-                            CGAL::parameters::point_map(point_set.point_push_map())
-                                             .normal_map(point_set.normal_push_map()));
+  bool out = CGAL::IO::read_XYZ(is, point_set.index_back_inserter(),
+                                CGAL::parameters::point_map(point_set.point_push_map())
+                                                 .normal_map(point_set.normal_push_map()));
 
   bool has_normals = false;
   for(typename CGAL::Point_set_3<Point, Vector>::const_iterator it=point_set.begin(); it!=point_set.end(); ++it)
@@ -93,6 +95,8 @@ bool read_XYZ(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_
   return read_XYZ(is, point_set);
 }
 
+} // namespace IO
+
 #ifndef CGAL_NO_DEPRECATED_CODE
 
 /*!
@@ -104,7 +108,7 @@ bool read_XYZ(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool read_xyz_point_set(std::istream& is, CGAL::Point_set_3<Point, Vector>& point_set)
 {
-  return read_XYZ(is, point_set);
+  return IO::read_XYZ(is, point_set);
 }
 
 #endif // CGAL_NO_DEPRECATED_CODE
@@ -112,6 +116,8 @@ CGAL_DEPRECATED bool read_xyz_point_set(std::istream& is, CGAL::Point_set_3<Poin
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
+
+namespace IO {
 
 /*!
   \ingroup PkgPointSet3IOXYZ
@@ -204,6 +210,8 @@ bool write_XYZ(const std::string& fname, const CGAL::Point_set_3<Point, Vector>&
 
 /// \endcond
 
+} // namespace IO
+
 #ifndef CGAL_NO_DEPRECATED_CODE
 
 /*!
@@ -215,7 +223,7 @@ bool write_XYZ(const std::string& fname, const CGAL::Point_set_3<Point, Vector>&
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool write_xyz_point_set(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_set)
 {
-  return write_XYZ(os, point_set);
+  return IO::write_XYZ(os, point_set);
 }
 
 #endif // CGAL_NO_DEPRECATED_CODE
