@@ -626,7 +626,7 @@ namespace CartesianKernelFunctors {
                               s2.source().x(), s2.source().y(),
                               s2.target().x(), s2.target().y());
     }
-    
+
     result_type
     operator()(const Point_2& s1s, const Point_2& s1t, const Point_2& s2s, const Point_2& s2t) const
     {
