@@ -1337,7 +1337,7 @@ refine_balls()
     std::ostringstream oss;
     oss << "dump_protecting_balls_" << refine_balls_iteration_nb << ".cgal";
     std::ofstream outfile(oss.str().c_str(), std::ios_base::binary | std::ios_base::out);
-    CGAL::Mesh_3::save_binary_file(outfile, c3t3_, true);
+    CGAL::IO::save_binary_file(outfile, c3t3_, true);
     outfile.close();
 #endif //CGAL_MESH_3_DUMP_FEATURES_PROTECTION_ITERATIONS
 

@@ -248,7 +248,7 @@ save(QFileInfo fileinfo, QList<Scene_item *> &items)
   else if (fileinfo.suffix() == "am")
   {
     std::ofstream avizo_file (qPrintable(path));
-    CGAL::output_to_avizo(avizo_file, c3t3_item->c3t3());
+    CGAL::IO::output_to_avizo(avizo_file, c3t3_item->c3t3());
     items.pop_front();
     return true;
   }

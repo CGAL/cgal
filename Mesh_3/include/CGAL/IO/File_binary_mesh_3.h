@@ -23,7 +23,7 @@
 
 namespace CGAL {
 
-namespace Mesh_3 {
+namespace IO {
 
 template <class C3T3>
 bool
@@ -77,7 +77,15 @@ bool load_binary_file(std::istream& is, C3T3& c3t3)
   // call operator!() twice, because operator bool() is C++11
 }
 
-} // end namespace Mesh_3
+} // end namespace IO
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+namespace Mesh_3 {
+using IO::save_binary_file;
+using IO::load_binary_file;
+}
+#endif
+
 } // end namespace CGAL
 
 #endif // CGAL_IO_FILE_BINARY_MESH_3_H

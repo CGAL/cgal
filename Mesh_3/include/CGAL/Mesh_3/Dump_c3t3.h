@@ -45,7 +45,7 @@ struct Dump_c3t3 {
     std::clog<<"======dump c3t3===== to: " << prefix << std::endl;
     std::ofstream medit_file((prefix+".mesh").c_str());
     medit_file.precision(17);
-    CGAL::output_to_medit(medit_file, c3t3, false /*rebind*/, true /*show_patches*/);
+    CGAL::IO::output_to_medit(medit_file, c3t3, false /*rebind*/, true /*show_patches*/);
     medit_file.close();
 
     std::string bin_filename = prefix;

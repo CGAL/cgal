@@ -34,7 +34,7 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangulation_3_cell_primitive.h>
-#include <CGAL/IO/facets_in_complex_3_to_triangle_mesh.h>
+#include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
 
 #include "Scene_polygon_soup_item.h"
 
@@ -1530,7 +1530,7 @@ void Scene_c3t3_item_priv::computeElements()
 
 bool Scene_c3t3_item::load_binary(std::istream& is)
 {
-  if(!CGAL::Mesh_3::load_binary_file(is, c3t3())) return false;
+  if(!CGAL::IO::load_binary_file(is, c3t3())) return false;
   if(is && d->frame == 0) {
     d->frame = new CGAL::qglviewer::ManipulatedFrame();
   }

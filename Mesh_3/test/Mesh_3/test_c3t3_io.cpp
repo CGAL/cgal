@@ -367,9 +367,9 @@ struct Test_c3t3_io {
                            ( binary ?
                              (std::ios_base::in | std::ios_base::binary)
                              : std::ios_base::in));
-      CGAL::Mesh_3::save_binary_file(ss, c3t3, binary);
+      CGAL::IO::save_binary_file(ss, c3t3, binary);
       assert(ss);
-      CGAL::Mesh_3::load_binary_file(ss, c3t3_bis);
+      CGAL::IO::load_binary_file(ss, c3t3_bis);
       assert(ss);
     }
     if(!check_equality(c3t3, c3t3_bis)) return false;
@@ -392,7 +392,7 @@ struct Test_c3t3_io {
       std::ofstream output(filename.c_str(),
                            binary ? (std::ios_base::out | std::ios_base::binary)
                            : std::ios_base::out);
-      CGAL::Mesh_3::save_binary_file(output, c3t3_bis, binary);
+      CGAL::IO::save_binary_file(output, c3t3_bis, binary);
     }
 
     c3t3_bis.clear();
@@ -401,7 +401,7 @@ struct Test_c3t3_io {
                           binary ? (std::ios_base::in | std::ios_base::binary)
                           : std::ios_base::in);
       assert(input);
-      CGAL::Mesh_3::load_binary_file(input, c3t3_bis);
+      CGAL::IO::load_binary_file(input, c3t3_bis);
       assert(input);
     }
     if(!check_equality(c3t3, c3t3_bis)) return false;

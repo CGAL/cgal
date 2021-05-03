@@ -350,13 +350,12 @@ void output_to_vtu_with_attributes(std::ostream& os,
 }
 
 } // namespace internal
-} // namespace IO
 
 //public API
 template <class C3T3>
 void output_to_vtu(std::ostream& os,
                const C3T3& c3t3,
-               IO::Mode mode = IO::BINARY)
+               Mode mode = BINARY)
 {
   typedef typename C3T3::Cells_in_complex_iterator Cell_iterator;
   std::vector<double> mids;
@@ -368,11 +367,17 @@ void output_to_vtu(std::ostream& os,
     mids.push_back(v);
   }
 
-  std::vector<std::pair<const char*, IO::internal::Vtu_attributes > > atts;
-  IO::internal::Vtu_attributes v = &mids;
+  std::vector<std::pair<const char*, internal::Vtu_attributes > > atts;
+  internal::Vtu_attributes v = &mids;
   atts.push_back(std::make_pair("MeshDomain", v));
-  IO::internal::output_to_vtu_with_attributes(os, c3t3, atts, mode);
+  internal::output_to_vtu_with_attributes(os, c3t3, atts, mode);
 }
+
+} // namespace IO
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+using IO::output_to_vtu;
+#endif
 
 } // namespace CGAL
 

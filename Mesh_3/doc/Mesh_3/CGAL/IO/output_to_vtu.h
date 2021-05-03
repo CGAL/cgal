@@ -1,4 +1,5 @@
 namespace CGAL{
+namespace IO {
 //! \ingroup PkgMesh3IOFunctions
 //!
 //! \brief writes a tetrahedron mesh using the `UnstructuredGrid` XML format.
@@ -14,4 +15,4 @@ template <class C3T3>
 void output_to_vtu(std::ostream& os,
                    const C3T3& c3t3,
                    IO::Mode mode = IO::BINARY);
-}
+} }
