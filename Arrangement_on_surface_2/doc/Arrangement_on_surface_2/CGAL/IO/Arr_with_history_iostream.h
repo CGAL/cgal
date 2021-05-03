@@ -1,5 +1,7 @@
 namespace CGAL {
 
+namespace OI {
+
 /*!
 \ingroup PkgArrangementOnSurface2Read
 
@@ -25,6 +27,8 @@ template<typename Traits, typename Dcel,
 std::ostream& write (const Arrangement_with_history_2<Traits,Dcel>& arr,
                      std::ostream& os,
                      WithHistoryFormatter& formatter);
+
+} // namespace IO
 
 /*!
 \ingroup PkgArrangementOnSurface2op_left_shift
