@@ -297,7 +297,7 @@ iterator over finite vertices.
 typedef unspecified_type Finite_vertices_iterator;
 
 /*!
-iterator over the points corresponding the
+iterator over the points corresponding to the
 finite vertices of the triangulation.
 */
 typedef unspecified_type Point_iterator;
@@ -305,7 +305,7 @@ typedef unspecified_type Point_iterator;
 
 /*!
 range type for iterating over all faces (including infinite faces),  with a nested
-type `iterator` that has as value type `Face_handle`
+type `iterator` that has as value type `Face_handle`.
 */
 typedef Iterator_range<unspecified_type> All_face_handles;
 
@@ -317,14 +317,14 @@ typedef Iterator_range<All_edges_iterator> All_edges;
 
 /*!
 range type for iterating over all vertices (including the infinite vertex), with a nested
-type `iterator` that has as value type `Vertex_handle`
+type `iterator` that has as value type `Vertex_handle`.
 */
 typedef Iterator_range<unspecified_type> All_vertex_handles;
 
 
 /*!
 range type for iterating over finite faces, with a nested
-type `iterator` that has as value type `Face_handle`
+type `iterator` that has as value type `Face_handle`.
 */
 typedef Iterator_range<unspecified_type> Finite_face_handles;
 
@@ -336,7 +336,7 @@ typedef Iterator_range<Finite_edges_iterator> Finite_edges;
 
 /*!
 range type for iterating over finite vertices, with a nested
-type `iterator` that has as value type `Vertex_handle`
+type `iterator` that has as value type `Vertex_handle`.
 */
 typedef Iterator_range<unspecified_type> Finite_vertex_handles;
 
@@ -929,7 +929,7 @@ Point_iterator points_end() const;
 /*!
 returns a range of iterators over finite vertices.
 \note While the value type of `Finite_vertices_iterator` is `Vertex`, the value type of
-      `Finite_vertex_handles::iterator` is `Vertex_handle`
+      `Finite_vertex_handles::iterator` is `Vertex_handle`.
 */
 Finite_vertex_handles finite_vertex_handles() const;
 
@@ -941,7 +941,7 @@ Finite_edges finite_edges() const;
 /*!
 returns a range of iterators over finite faces.
 \note While the value type of `Finite_faces_iterator` is `Face`, the value type of
-      `Finite_face_handles::iterator` is `Face_handle`
+      `Finite_face_handles::iterator` is `Face_handle`.
 */
 Finite_face_handles finite_face_handles() const;
 
@@ -995,7 +995,7 @@ All_faces_iterator all_faces_end() const;
 /*!
 returns a range of iterators over all vertices.
 \note While the value type of `All_vertices_iterator` is `Vertex`, the value type of
-      `All_vertex_handles::iterator` is `Vertex_handle`
+      `All_vertex_handles::iterator` is `Vertex_handle`.
 */
 All_vertex_handles all_vertex_handles() const;
 
@@ -1007,7 +1007,7 @@ All_edges all_edges() const;
 /*!
 returns a range of iterators over all faces.
 \note While the value type of `All_faces_iterator` is `Face`, the value type of
-      `All_face_handles::iterator` is `Face_handle`
+      `All_face_handles::iterator` is `Face_handle`.
 */
 All_face_handles all_face_handles() const;
 

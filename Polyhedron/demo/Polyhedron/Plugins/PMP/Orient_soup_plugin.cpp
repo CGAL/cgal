@@ -397,7 +397,7 @@ class RepairDialog :
 {
   Q_OBJECT
 public:
-  RepairDialog(QWidget* =0)
+  RepairDialog(QWidget* =nullptr)
   {
     setupUi(this);
   }

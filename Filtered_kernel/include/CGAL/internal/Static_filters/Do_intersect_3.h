@@ -79,6 +79,13 @@ public:
   }
 
   result_type
+  operator()(const Triangle_3 &t0, const Triangle_3& t1) const
+  {
+    return Intersections::internal::do_intersect(t0,t1, SFK());
+  }
+
+
+  result_type
   operator()(const Bbox_3& b, const Segment_3 &s) const
   {
     return this->operator()(s, b);

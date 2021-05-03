@@ -24,6 +24,7 @@
 #include <CGAL/config.h>
 #include <CGAL/assertions.h>
 
+#include <iterator>
 #include <typeinfo>
 
 #include <boost/variant.hpp>

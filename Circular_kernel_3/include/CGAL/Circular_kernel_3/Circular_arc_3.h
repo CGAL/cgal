@@ -73,8 +73,8 @@ namespace CGAL {
       : _full(false)
       {
         // l must pass through s and t, and s != t
-        CGAL_kernel_precondition(SK().has_on_3_object()(c,s));
-        CGAL_kernel_precondition(SK().has_on_3_object()(c,t));
+//        CGAL_kernel_precondition(SK().has_on_3_object()(c,s));
+//        CGAL_kernel_precondition(SK().has_on_3_object()(c,t));
         CGAL_kernel_precondition(s != t);
         base = Rep(c,s,t);
         // we can optimize the computations of the sign (for the has_on functor),

@@ -3837,9 +3837,9 @@ namespace HomogeneousKernelFunctors {
       // p,q,r supposed to be non collinear
       // tests whether s is on the same side of p,q as r
       // returns :
-      // COLLINEAR if pqr collinear
-      // POSITIVE if qrp and qrs have the same orientation
-      // NEGATIVE if qrp and qrs have opposite orientations
+      // COLLINEAR if qps collinear
+      // POSITIVE if qpr and qps have the same orientation
+      // NEGATIVE if qpr and qps have opposite orientations
       CGAL_kernel_exactness_precondition( ! cl(p, q, r) );
       CGAL_kernel_exactness_precondition( cp(p, q, r, s) );
 

@@ -44,13 +44,13 @@ public:
   void backup_existing_colors_and_add_new();
 
   CGAL::Three::Scene_item* item() { return m_mesh; }
-  void erase_item() { m_mesh = NULL; }
+  void erase_item() { m_mesh = nullptr; }
 
   void compute_features (std::size_t nb_scales, float voxel_size);
 
   void add_selection_to_training_set (std::size_t label)
   {
-    if (m_selection == NULL)
+    if (m_selection == nullptr)
       return;
 
     for (Selection::iterator it = m_selection->selected_facets.begin();
@@ -101,7 +101,7 @@ public:
   }
   void validate_selection ()
   {
-    if (m_selection == NULL)
+    if (m_selection == nullptr)
       return;
 
     for (Selection::iterator it = m_selection->selected_facets.begin();
@@ -116,13 +116,13 @@ public:
   bool run (int method, int classifier, std::size_t subdivisions, double smoothing);
 
   void update_color() { change_color (m_index_color); }
-  void change_color (int index, float* vmin = NULL, float* vmax = NULL);
+  void change_color (int index, float* vmin = nullptr, float* vmax = nullptr);
   CGAL::Three::Scene_item* generate_one_item (const char* /* name */,
                                               int /* label */) const
   {
     // TODO
     std::cerr << "Warning: operation not yet available for meshes." << std::endl;
-    return NULL;
+    return nullptr;
   }
   void generate_one_item_per_label(std::vector<CGAL::Three::Scene_item*>&,
                                    const char*) const

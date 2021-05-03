@@ -1,5 +1,8 @@
 // 3D intersection tests.
 
+// We want to check that no division is performed for interface macro Do_intersect_3_RT
+#define CGAL_NO_MPZF_DIVISION_OPERATOR
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/MP_Float.h>

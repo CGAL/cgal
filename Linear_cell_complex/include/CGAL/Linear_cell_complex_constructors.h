@@ -249,6 +249,9 @@ namespace CGAL {
       {
         std::size_t index;
         scanner.scan_facet_vertex_index(index, j+1, i);
+        if(! in){
+          return false;
+        }
         B.add_vertex_to_facet(index);
       }
       B.end_facet();

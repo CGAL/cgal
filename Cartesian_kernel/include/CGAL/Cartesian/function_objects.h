@@ -253,18 +253,18 @@ namespace CartesianKernelFunctors {
     result_type
     operator()( const Tetrahedron_3& t, const Point_3& p) const
     {
-      FT alpha, beta, gamma;
+      FT alpha, beta, gamma, denom;
 
       Cartesian_internal::solve(t.vertex(1)-t.vertex(0),
                                 t.vertex(2)-t.vertex(0),
                                 t.vertex(3)-t.vertex(0),
-                                p - t.vertex(0), alpha, beta, gamma);
+                                p - t.vertex(0), alpha, beta, gamma, denom);
       if (   (alpha < 0) || (beta < 0) || (gamma < 0)
-          || (alpha + beta + gamma > 1) )
+          || (alpha + beta + gamma > denom) )
           return ON_UNBOUNDED_SIDE;
 
       if (   (alpha == 0) || (beta == 0) || (gamma == 0)
-          || (alpha+beta+gamma == 1) )
+          || (alpha+beta+gamma == denom) )
         return ON_BOUNDARY;
 
       return ON_BOUNDED_SIDE;
@@ -3692,9 +3692,9 @@ namespace CartesianKernelFunctors {
       // p,q,r supposed to be non collinear
       // tests whether s is on the same side of p,q as r
       // returns :
-      // COLLINEAR if pqr collinear
-      // POSITIVE if qrp and qrs have the same orientation
-      // NEGATIVE if qrp and qrs have opposite orientations
+      // COLLINEAR if qps collinear
+      // POSITIVE if qpr and qps have the same orientation
+      // NEGATIVE if qpr and qps have opposite orientations
       CGAL_kernel_exactness_precondition( ! cl(p, q, r) );
       CGAL_kernel_exactness_precondition( cp(p, q, r, s) );
       return coplanar_orientationC3(p.x(), p.y(), p.z(),
@@ -3860,10 +3860,10 @@ namespace CartesianKernelFunctors {
                v1 = t.vertex(1)-o,
                v2 = t.vertex(2)-o;
 
-      FT alpha, beta, gamma;
-      Cartesian_internal::solve(v0, v1, v2, p-o, alpha, beta, gamma);
+      FT alpha, beta, gamma, denum;
+      Cartesian_internal::solve(v0, v1, v2, p-o, alpha, beta, gamma, denum);
       return (alpha >= FT(0)) && (beta >= FT(0)) && (gamma >= FT(0))
-          && ((alpha+beta+gamma == FT(1)));
+          && ((alpha+beta+gamma == denum));
     }
 
     result_type

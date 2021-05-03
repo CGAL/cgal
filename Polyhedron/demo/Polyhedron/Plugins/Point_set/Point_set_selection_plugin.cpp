@@ -336,7 +336,7 @@ class Neighborhood
 
 public:
 
-  Neighborhood () : points_item (NULL)
+  Neighborhood () : points_item (nullptr)
   {
   }
 
@@ -601,8 +601,8 @@ public:
     }
   );
 
-    visualizer = NULL;
-    edit_box = NULL;
+    visualizer = nullptr;
+    edit_box = nullptr;
     shift_pressing = false;
     ctrl_pressing = false;
 
@@ -698,7 +698,7 @@ protected:
         // Cancel selection
         else if (mouseEvent->button() == Qt::RightButton && visualizer)
           {
-            visualizer = NULL;
+            visualizer = nullptr;
             QApplication::restoreOverrideCursor();
             return true;
           }
@@ -720,7 +720,7 @@ protected:
       {
         visualizer->apply_path();
         select_points();
-        visualizer = NULL;
+        visualizer = nullptr;
         QApplication::restoreOverrideCursor();
         getActiveViewer()->set2DSelectionMode(false);
         return true;
@@ -963,7 +963,7 @@ public Q_SLOTS:
     {
       if(edit_box)
         scene->erase(scene->item_id(edit_box));
-      edit_box = NULL;
+      edit_box = nullptr;
       add_box->setEnabled(false);
     }
 
@@ -973,7 +973,7 @@ public Q_SLOTS:
 
   void reset_editbox()
   {
-    edit_box = NULL;
+    edit_box = nullptr;
   }
 
 private:

@@ -1,7 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
 
-#define CGAL_RANSAC_EXPERIMENTAL_FIXES
-#define USE_WEIGHTED_LEVELS
 #include <CGAL/Shape_detection/Efficient_RANSAC.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
@@ -65,9 +63,9 @@ int main (int argc, char** argv)
 
   test_copied_point_cloud (points, 1);
   test_copied_point_cloud (points, 2);
+#ifdef CGAL_SHAPE_DETECTION_RUN_EXPENSIVE_TESTS
   test_copied_point_cloud (points, 5);
   test_copied_point_cloud (points, 10);
-#ifdef CGAL_SHAPE_DETECTION_RUN_EXPENSIVE_TESTS
   test_copied_point_cloud (points, 20);
   test_copied_point_cloud (points, 50);
 #endif
@@ -131,12 +129,12 @@ void test_copied_point_cloud (const Point_set& original_points, std::size_t nb)
 
   assert (nb_detected == ground_truth);
 
-#ifdef CGAL_TEST_SUITE
-  double timeout = 60; // 1 minute timeout
-  std::size_t nb_runs = 20; //
-#else
+#ifdef CGAL_SHAPE_DETECTION_RUN_EXPENSIVE_TESTS
   double timeout = 120; // 2 minutes timeout
   std::size_t nb_runs = 500;
+#else
+  double timeout = 60; // 1 minute timeout
+  std::size_t nb_runs = 20; //
 #endif
 
   CGAL::Real_timer timer;

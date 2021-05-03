@@ -11,7 +11,7 @@ class Node_1
 
 public:
 
-  Node_1() : p(NULL)
+  Node_1() : p(nullptr)
   {}
 
   void *   for_compact_container() const { return p_cc; }

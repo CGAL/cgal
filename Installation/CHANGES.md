@@ -6,13 +6,33 @@ Release History
 
 Release date: June 2021
 
+### Triangulations on the Sphere (new package)
+
+-   This package enables the construction and manipulation of Delaunay triangulations on the 2-sphere.
+    Triangulations are built incrementally and can be modified by insertion or removal of vertices.
+    Point location querying and primitives to build the dual Voronoi diagram are provided.
+
 ### General
+
+- Cmake minimal version is now `3.14`.
+
+### File Input / Output
+
 - Point set, polygon soup, and polygon mesh file I/O functions have been harmonized and documented:
   - Point set I/O functions can be found in the packages [Point_set_processing_3](https://doc.cgal.org/5.3/Manual/packages.html#PkgPolygonMeshProcessing), and [Point_set_3](https://doc.cgal.org/5.3/Manual/packages.html#PkgPointSet3).
   - Polygon mesh I/O functions can be found in the package [BGL](https://doc.cgal.org/5.3/Manual/packages.html#PkgBGL).
   - Polygon soup I/O can be found in the package [Stream_support](https://doc.cgal.org/5.3/Manual/packages.html#PkgStreamSupport).
 
 A comprehensive list of the supported file formats is available in the Stream_support package [here](https://doc.cgal.org/5.3/Stream_support/index.html#IOstreamSupportedFormats); inversely, the following [page](https://doc.cgal.org/5.3/Stream_support/IOStreamSupportedFileFormats.html) can be used to find out which CGAL data structures can be used given a specific file format.
+
+### [Quadtrees, Octrees, and Orthtrees](https://doc.cgal.org/5.3/Manual/packages.html#PkgOrthree) (new package)
+
+-   This package implements a tree data structure in which each node
+    encloses a hypercubic section of space and each non-leave node has
+    hypercubic children whose edge lengths are half its edge
+    length. Such a data structure is known as a quadtree in 2D, an
+    octree in 3D, and is generalized as an "orthtree" in higher
+    dimensions.
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/5.3/Manual/packages.html#PkgPolygonMeshProcessing)
 

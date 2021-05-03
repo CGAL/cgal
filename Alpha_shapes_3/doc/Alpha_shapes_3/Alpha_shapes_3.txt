@@ -71,7 +71,7 @@ meaning in particular that the alpha complex may have
 singular faces. For \f$ 0 \leq k \leq d-1\f$,
 a \f$ k\f$-simplex of the alpha complex is said to be
 singular if it is not a facet of a \f$ (k+1)\f$-simplex of the complex.
-%CGAL provides two versions of alpha shapes. In the general mode,
+\cgal provides two versions of alpha shapes. In the general mode,
 the alpha shapes correspond strictly to the above definition.
 The regularized mode provides a regularized version of the alpha shapes.
 It corresponds to the domain covered by a regularized version
