@@ -288,11 +288,26 @@ public:
   using Extreme_point = typename Base::Extreme_point;
 
   X_monotone_caching_polyline_2() : Base() { }
+
   X_monotone_caching_polyline_2(const Base& base) : Base(base) { }
-  X_monotone_caching_polyline_2(const Kernel_& kernel, const Point_2& first, const Point_2& last) : Base(kernel, first, last) { }
-  X_monotone_caching_polyline_2(const Kernel_& kernel, iterator begin, iterator end) : Base(kernel, begin, end) { }
-  X_monotone_caching_polyline_2(const Kernel_& kernel, Extreme_point first, iterator begin, iterator end, Extreme_point last)
-    : Base(kernel, first, begin, end, last) { }
+
+  X_monotone_caching_polyline_2(const Kernel_& kernel, const Point_2& first,
+                                const Point_2& last) : Base(kernel, first, last)
+  { }
+
+  X_monotone_caching_polyline_2(const Kernel_& kernel, iterator begin,
+                                iterator end) : Base(kernel, begin, end)
+  { }
+
+  X_monotone_caching_polyline_2(const Kernel_& kernel, Extreme_point first,
+                                iterator begin, iterator end,
+                                Extreme_point last) :
+    Base(kernel, first, begin, end, last)
+  { }
+
+  X_monotone_caching_polyline_2(const Kernel_& kernel, const Range_& range) :
+    Base(kernel, range)
+  { }
 };
 
 

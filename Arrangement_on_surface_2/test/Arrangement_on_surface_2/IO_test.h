@@ -195,9 +195,10 @@ bool IO_test<Geom_traits_T>::init()
 }
 
 /*! Clear the data structures */
-template <typename Geom_traits_T>
-void IO_test<Geom_traits_T>::clear()
-{
+template <typename GeomTraits>
+void IO_test<GeomTraits>::clear() {
+  typedef GeomTraits            Geom_traits;
+
   m_filename_points.clear();
   m_filename_xcurves.clear();
   m_filename_curves.clear();
@@ -205,6 +206,8 @@ void IO_test<Geom_traits_T>::clear()
   m_points.clear();
   m_curves.clear();
   m_xcurves.clear();
+
+  IO_base_test<Geom_traits>::clear();
 }
 
 /*!
