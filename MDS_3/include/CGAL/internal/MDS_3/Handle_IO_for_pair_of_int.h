@@ -13,7 +13,7 @@
 #ifndef CGAL_INTERNAL_MESH_3_INTERNAL_HANDLE_IO_FOR_PAIR_OF_INT_H
 #define CGAL_INTERNAL_MESH_3_INTERNAL_HANDLE_IO_FOR_PAIR_OF_INT_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/MDS_3.h>
 
 #include <CGAL/disable_warnings.h>
 
