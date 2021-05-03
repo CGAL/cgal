@@ -120,7 +120,6 @@ public:
    * oveloaded to support various input types.
    */
   class Construct_x_monotone_curve_2 {
-  };
   public:
     /// \name Operations
     /// @{
@@ -137,12 +136,14 @@ public:
      *
      * \param range a range of points.
      * \pre contains no duplicated points.
+     * \pre `range` define an x-monotone polyline.
      * \return an x-monotone polyline that comprises the given range of points.
      */
     template <typename Range>
     X_monotone_curve_2 operator()(const Range& range) const;
 
     /// @} /* end of operations */
+  };
 
   /// \name Accessing Functor Objects
   /// @{
