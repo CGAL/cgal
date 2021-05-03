@@ -1040,7 +1040,7 @@ public:
   */
   Comparison_result operator()(const Kernel::Segment_2& s1,
                                const Kernel::Segment_2& s2);
-  
+
   /*!
     compares the slopes of the segments `(s1s,s1t)` and `(s2s,s2t)`,
     where the slope is the variation of the `y`-coordinate
