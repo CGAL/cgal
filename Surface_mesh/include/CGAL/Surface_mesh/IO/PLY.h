@@ -1140,6 +1140,11 @@ CGAL_DEPRECATED bool write_ply(std::ostream& os, const Surface_mesh<P>& sm, cons
   return write_PLY(os, sm, comments);
 }
 
+template <typename P>
+CGAL_DEPRECATED bool write_ply(std::ostream& os, const Surface_mesh<P>& sm)
+{
+  return write_PLY(os, sm, "");
+}
 #endif // CGAL_NO_DEPRECATED_CODE
 
 } // namespace CGAL

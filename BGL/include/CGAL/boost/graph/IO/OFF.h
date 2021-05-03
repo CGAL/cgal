@@ -312,6 +312,12 @@ CGAL_DEPRECATED bool read_off(const char* fname, Graph& g)
  return read_off(fname, g, parameters::all_default());
 }
 
+template <typename Graph>
+CGAL_DEPRECATED bool read_off(const std::string& fname, Graph& g)
+{
+ return read_off(fname.c_str(), g, parameters::all_default());
+}
+
 #endif // CGAL_NO_DEPRECATED_CODE
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
