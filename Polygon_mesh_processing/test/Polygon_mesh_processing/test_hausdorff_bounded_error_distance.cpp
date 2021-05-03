@@ -869,7 +869,7 @@ struct Bounded_error_distance_computation {
     if (hdist > distance) distance = hdist;
 
     timer.stop();
-    std::cout << "* time operator() (sec.): " << timer.time() << std::endl;
+    // std::cout << "* time operator() (sec.): " << timer.time() << std::endl;
   }
 
   void join(Bounded_error_distance_computation& rhs) {
@@ -962,16 +962,16 @@ double bounded_error_Hausdorff_distance_parallel(
   const double time3 = timer.time();
   std::cout << " ... done in " << time3 << " sec." << std::endl;
 
-  for (const auto& tm1_part : tm1_parts) {
-    timer.reset();
-    timer.start();
-    hdist = PMP::bounded_error_Hausdorff_distance<CGAL::Sequential_tag>(
-      tm1_part, tm2, error_bound,
-      CGAL::parameters::match_faces(false),
-      CGAL::parameters::match_faces(false));
-    timer.stop();
-    std::cout << "* manual call seq. time (sec.): " << timer.time() << std::endl;
-  }
+  // for (const auto& tm1_part : tm1_parts) {
+  //   timer.reset();
+  //   timer.start();
+  //   hdist = PMP::bounded_error_Hausdorff_distance<CGAL::Sequential_tag>(
+  //     tm1_part, tm2, error_bound,
+  //     CGAL::parameters::match_faces(false),
+  //     CGAL::parameters::match_faces(false));
+  //   timer.stop();
+  //   std::cout << "* manual call seq. time (sec.): " << timer.time() << std::endl;
+  // }
 
   return hdist;
 }
@@ -1057,8 +1057,8 @@ int main(int argc, char** argv) {
 
   // --- Compare timings.
 
-  // filepath = (argc > 1 ? argv[1] : "data/blobby-remeshed.off");
-  filepath = "/Users/monet/Documents/fork/pull-requests/hausdorff/data/bunny-dense.off";
+  filepath = (argc > 1 ? argv[1] : "data/blobby-remeshed.off");
+  // filepath = "/Users/monet/Documents/fork/pull-requests/hausdorff/data/bunny-dense.off";
   // test_timings(filepath, apprx_hd);
   // test_timings(filepath, naive_hd);
   // test_timings(filepath, bound_hd);

@@ -1424,6 +1424,9 @@ std::pair<typename Kernel::FT, bool> preprocess_bounded_error_Hausdorff_impl(
     tm2_tree.insert(faces2.begin(), faces2.end(), tm2, vpm2);
   }
 
+  // tm1_tree.build();
+  // tm2_tree.build();
+
   timer.stop();
   // std::cout << "* .... end preprocessing" << std::endl;
   // std::cout << "* preprocessing time (sec.): " << timer.time() << std::endl;
