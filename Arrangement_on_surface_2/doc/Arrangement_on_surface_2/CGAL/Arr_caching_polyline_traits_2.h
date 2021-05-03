@@ -21,7 +21,7 @@ namespace CGAL {
  * This traits class template serves as an alternative to the more general
  * traits class template `Arr_polyline_traits_2<SubcurveTraits_2>`, which
  * handles polylines as well. Use this alternative when you need to construct
- * many polylines and every polyline consists of many points. Typically
+ * many polylines and every polyline comprises many points. Typically
  * (depending on the substituted Kernel) the geometric objects that compose the
  * polylines (e.g., points) are reference counted, which implies that a copy of
  * a single point amounts to copying a small piece of data (a handle). However,
@@ -97,7 +97,7 @@ public:
      * \param p the first point.
      * \param q the second point.
      * \pre `p` and `q` are distinct.
-     * \return a polyline that consists of a single segment connecting `p` and
+     * \return a polyline that comprises a single segment connecting `p` and
      *         `q`.
      */
     Curve_2 operator()(const Point_2& p, const Point_2& q) const;
@@ -108,7 +108,7 @@ public:
      * \param duplicate_first indicates whether the first point should be
      *        duplicated to construct a closed polyline.
      * \pre contains no duplicated points.
-     * \return a polyline that consists of the given range of points.
+     * \return a polyline that comprises the given range of points.
      */
     template <typename Range>
     Curve_2 operator()(const Range& range, bool duplicate_first = false) const;
@@ -129,22 +129,18 @@ public:
      * \param p the first point.
      * \param q the second point.
      * \pre `p` and `q` are distinct.
-     * \return a polyline that consists of a single segment connecting `p` and
-     *         `q`.
+     * \return a polyline that comprises a single segment connecting `p` and `q`.
      */
     X_monotone_curve_2 operator()(const Point_2& p, const Point_2& q) const;
 
     /*! Construct a well-oriented polyline from a range of points.
      *
      * \param range a range of points.
-     * \param duplicate_first indicates whether the first point should be
-     *        duplicated to construct a closed polyline.
      * \pre contains no duplicated points.
-     * \return a polyline that consists of the given range of points.
+     * \return an x-monotone polyline that comprises the given range of points.
      */
     template <typename Range>
-    X_monotone_curve_2 operator()(const Range& range,
-                                  bool duplicate_first = false) const;
+    X_monotone_curve_2 operator()(const Range& range) const;
 
     /// @} /* end of operations */
 

@@ -229,7 +229,7 @@ public:
      */
     Curve_2 operator()(const Point_2& p, const Point_2& q) const;
 
-    /*! Obtain a polyline that comprises of one given segment.
+    /*! Obtain a polyline that comprises one given segment.
      * \param seg input segment
      * \pre `seg` is not degenerated (not tested)
      * \return A polyline with one segment, namely `seg`.
