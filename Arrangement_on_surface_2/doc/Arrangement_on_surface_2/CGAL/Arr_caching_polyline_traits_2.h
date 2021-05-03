@@ -72,17 +72,15 @@ public:
   /// @{
   /*!
    */
-  typedef typename Kernel::Point_2                                Point_2;
+  typedef typename Kernel::Point_2      Point_2;
 
   /*!
    */
-  typedef internal::X_monotone_caching_polyline_2<Kernel, Range>
-    X_monotone_curve_2;
+  typedef unspecified_type              X_monotone_curve_2;
 
   /*!
    */
-  typedef internal::X_monotone_caching_polyline_2<Kernel, Range>  Curve_2;
-  typedef
+  typedef unspecified_type              Curve_2;
   /// @}
 
   /*! Construction functor of a polyline. Its `operator()` is oveloaded to
