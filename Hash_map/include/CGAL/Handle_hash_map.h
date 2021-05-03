@@ -76,6 +76,11 @@ public:
         insert(key_begin,key_end,values_begin);
     }
 
+    void reserve(size_type n)
+    {
+        Base::reserve(n);
+    }
+
     void clear()
     {
         Base::clear();
