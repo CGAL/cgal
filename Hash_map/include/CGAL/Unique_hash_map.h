@@ -57,7 +57,7 @@ public:
 
     Unique_hash_map() { m_map.xdef() = Data(); }
 
-    Unique_hash_map( const Data& deflt, std::size_t table_size = 1)
+    Unique_hash_map( const Data& deflt, std::size_t table_size = Map::min_size)
         : m_map( table_size) { m_map.xdef() = deflt; }
 
     Unique_hash_map( const Data& deflt,
@@ -71,12 +71,15 @@ public:
     }
     Unique_hash_map( Key first1, Key beyond1, Data first2,
                      const Data& deflt,
-                     std::size_t table_size   = 1,
+                     std::size_t table_size   = Map::min_size,
                      const Hash_function& fct = Hash_function())
     : m_hash_function(fct), m_map( table_size) {
         m_map.xdef() = deflt;
         insert( first1, beyond1, first2);
     }
+
+    void reserve(std::size_t n)
+    { m_map.reserve(n); }
 
     Data default_value() const { return m_map.cxdef(); }
 
