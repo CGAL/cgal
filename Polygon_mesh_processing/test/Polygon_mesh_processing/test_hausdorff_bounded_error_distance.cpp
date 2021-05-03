@@ -26,14 +26,12 @@ using Point_3    = typename Kernel::Point_3;
 using Vector_3   = typename Kernel::Vector_3;
 using Triangle_3 = typename Kernel::Triangle_3;
 
-using TAG                     = CGAL::Parallel_tag;
+using TAG                     = CGAL::Parallel_if_available_tag;
 using Surface_mesh            = CGAL::Surface_mesh<Point_3>;
 using Affine_transformation_3 = CGAL::Aff_transformation_3<Kernel>;
 using Timer                   = CGAL::Real_timer;
 
 using Face_handle = typename boost::graph_traits<Surface_mesh>::face_descriptor;
-using Face_index  = typename Surface_mesh::Face_index;
-
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 struct Approximate_hd_wrapper {
@@ -823,6 +821,7 @@ void test_realizing_triangles(
   compute_realizing_triangles(mesh1, mesh2, error_bound, "2", save);
 }
 
+// TODO: remove that!
 #if defined(CGAL_LINKED_WITH_TBB)
 template<class TriangleMesh1, class TriangleMesh2>
 struct Bounded_error_distance_computation {
@@ -878,8 +877,7 @@ struct Bounded_error_distance_computation {
 };
 #endif
 
-// TODO: in case we keep it, put this test and all METIS-related stuff in a separate
-// file or exclude it from this test suite if METIS is unavailable!
+// TODO: remove that!
 double bounded_error_Hausdorff_distance_parallel(
   Surface_mesh& tm1, const Surface_mesh& tm2,
   const double error_bound, const int nb_cores = 4) {
@@ -893,6 +891,7 @@ double bounded_error_Hausdorff_distance_parallel(
   timer.start();
 
   // Partition the mesh and output its parts.
+  using Face_index  = typename Surface_mesh::Face_index;
   auto face_pid_map = tm1.add_property_map<Face_index, std::size_t>("f:pid").first;
   CGAL::METIS::partition_graph(
     tm1, nb_cores, CGAL::parameters::
@@ -921,7 +920,7 @@ double bounded_error_Hausdorff_distance_parallel(
     // std::cout << "selection " << i << std::endl;
     Filtered_graph tm1_part(tm1, i, face_pid_map);
     CGAL_assertion(tm1_part.is_selection_valid());
-    CGAL::copy_face_graph(tm1_part, tm1_parts[i]); // TODO: do not copy in the future
+    CGAL::copy_face_graph(tm1_part, tm1_parts[i]); // TODO: do not copy in the future!
     std::cout << "part " << i << " size: " << tm1_parts[i].number_of_faces() << std::endl;
   }
 
@@ -1003,8 +1002,10 @@ void test_parallel_version(
 
   timer.reset();
   timer.start();
-  const double distb = bounded_error_Hausdorff_distance_parallel(
-    mesh1, mesh2, error_bound);
+  const double distb = 0.0; // PMP::bounded_error_Hausdorff_distance<CGAL::Parallel_tag>(
+  //   mesh1, mesh2, error_bound,
+  //   CGAL::parameters::match_faces(false),
+  //   CGAL::parameters::match_faces(false));
   timer.stop();
   const double timeb = timer.time();
 
