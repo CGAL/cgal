@@ -361,16 +361,21 @@ void write_vtu_with_attributes(std::ostream& os,
 }
 
 } // namespace internal
-} // namespace CGAL
 
 template <class CDT>
 void write_vtu(std::ostream& os,
                const CDT& tr,
-               IO::Mode mode = IO::BINARY)
+               IO::Mode mode = BINARY)
 {
   std::vector<std::pair<const char*, const std::vector<double>*> > dummy_atts;
-  IO::internal::write_vtu_with_attributes(os, tr, dummy_atts, mode);
+  internal::write_vtu_with_attributes(os, tr, dummy_atts, mode);
 }
+
+} // namespace IO
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+using write_vtu;
+#endif
 
 } //end CGAL
 #endif // CGAL_WRITE_VTU_H

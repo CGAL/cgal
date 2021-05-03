@@ -1,4 +1,5 @@
 namespace CGAL{
+namespace IO {
 //!\ingroup PkgMesh2IO
 //! \brief writes the faces of a domain and its constrained edges embedded in
 //! a 2D constrained Delaunay triangulation using the `PolyData` XML format.
@@ -16,4 +17,4 @@ template <class CDT>
 void write_vtu(std::ostream& os,
                const CDT& tr,
                IO::Mode mode = IO::BINARY);
-}
+} }
