@@ -222,17 +222,18 @@ public:
     /// @{
 
     /*! Obtain a polyline connecting the two given endpoints.
-     * \param p The first point.
-     * \param q The second point.
+     * \param p the first point.
+     * \param q the second point.
      * \pre `p` and `q` are distinct.
-     * \return A segment connecting `p` and `q`.
+     * \return a polyline that comprises a single segment connecting `p` and
+     *         `q`.
      */
     Curve_2 operator()(const Point_2& p, const Point_2& q) const;
 
     /*! Obtain a polyline that comprises one given segment.
-     * \param seg input segment
+     * \param seg the input segment
      * \pre `seg` is not degenerated (not tested)
-     * \return A polyline with one segment, namely `seg`.
+     * \return a polyline that comprises a single segment.
      */
     Curve_2 operator()(const Segment_2& seg) const;
 
@@ -243,8 +244,9 @@ public:
      * \param end iterator pointing to the past-the-end element in the range.
      * \pre The given range form a continuous and well-oriented polyline
      *      (not tested).
-     * \pre Contains no degenerated segments (not tested)
-     * \return A polyline using the corresponding construction implementation.
+     * \pre the range contains no degenerate segments (not tested)
+     * \return a polyline that comprises the given range of
+     *         elements.
      */
     template <typename ForwardIterator>
     Curve_2 operator()(ForwardIterator begin, ForwardIterator end) const;
@@ -255,14 +257,15 @@ public:
   /*! Construction functor of \f$x\f$-monotone polyline.
    *
    * Similar to `Construct_curve_2`, only returns \f$x\f$-monotone
-   * polylines.  Thus, have the same overloads of the
-   * `operator()`. Note that when constructing `X_monotone_curve_2`
+   * polylines.  Thus, have the same overloads of `operator()`.
+   * Note that when constructing an object of type `X_monotone_curve_2`
    * all preconditions are tested.
-
+   *
    * If `CGAL_ALWAYS_LEFT_TO_RIGHT` is defined, then the resulting
    * \f$x\f$-monotone polyline will be oriented from left-to-right.
    */
   class Construct_x_monotone_curve_2 {
+  public:
     /// \name Operations
     /// @{
 
@@ -270,21 +273,25 @@ public:
      * \param p the first point.
      * \param q the second point.
      * \pre `p` and `q` are distinct.
-     * \return a (x-monotone) polyline that comprises a single segment.
+     * \return an (\f$x\f$-monotone) polyline that comprises a single segment
+     *         connecting `p` and `q`.
      */
     X_monotone_curve_2 operator()(const Point_2& p, const Point_2& q) const;
 
     /*! Obtain an x-monotone polyline that consists of one given segment.
      * \param seg input segment.
      * \pre `seg` is not degenerated.
-     * \return an (x-monotone) polyline that comprises a single segment.
+     * \return an (\f$x\f$-monotone) polyline that comprises a single segment.
      */
     X_monotone_curve_2 operator()(const X_monotone_subcurve_2& seg) const;
 
-    /*! Construct an x-monotone polyline from a range of either points or
-     * sements.
+    /*! Construct an \f$x\f$-monotone polyline from a range of either
+     * `SegmentTraits_2::Point_2` or `SegmentTraits_2::Segment_2`.
+     *
      * \param begin an iterator pointing to the first element in the range.
      * \param end an iterator pointing to the past-the-end element in the range.
+     * \return an \f$x\f$-monotone polyline that comprises the given range of
+     *         elements.
      * \pre the range should comprise a continuous well-oriented x-monotone
      *      polyline.
      */

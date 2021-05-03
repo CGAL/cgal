@@ -126,7 +126,8 @@ public:
      * \param p the first point.
      * \param q the second point.
      * \pre `p` and `q` are distinct.
-     * \return a polyline that comprises a single segment connecting `p` and `q`.
+     * \return an (\f$x\f$-monotone) polyline that comprises a single segment
+     *         connecting `p` and `q`.
      */
     X_monotone_curve_2 operator()(const Point_2& p, const Point_2& q) const;
 
@@ -135,7 +136,8 @@ public:
      * \param range a range of points.
      * \pre contains no duplicated points.
      * \pre `range` define an x-monotone polyline.
-     * \return an x-monotone polyline that comprises the given range of points.
+     * \return an \f$x\f$-monotone polyline that comprises the given range of
+     *         points.
      */
     template <typename Range>
     X_monotone_curve_2 operator()(const Range& range) const;
