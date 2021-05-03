@@ -28,7 +28,7 @@ namespace MDS_3 {
   bool build_triangulation_from_file(std::istream& is,
                                      Tr& tr,
                                      bool replace_domain_0);
-  
+
   template<class Tr>
   bool build_triangulation_from_file(std::istream& is,
                                      Tr& tr);

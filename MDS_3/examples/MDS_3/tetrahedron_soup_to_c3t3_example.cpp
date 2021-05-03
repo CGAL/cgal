@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
   std::vector<DT3::Point>          points(nbv);
   std::vector<Tetrahedron_3>       tetrahedra;
   std::vector<std::array<int, 5> > tets_by_indices;
-  
+
   //insert random points
   CGAL::Random_points_in_cube_3<Point_3> randp(2.);
   int i = 0;

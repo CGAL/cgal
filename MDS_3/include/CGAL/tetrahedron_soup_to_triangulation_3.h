@@ -36,7 +36,7 @@ namespace CGAL {
    * @tparam Triangulation model of
    * @param tets
    * @param tr
-   * 
+   *
    * @pre convex volume
   */
   template<typename TetrahedronRange, typename Triangulation>
