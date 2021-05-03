@@ -262,7 +262,38 @@ public:
    * If `CGAL_ALWAYS_LEFT_TO_RIGHT` is defined, then the resulting
    * \f$x\f$-monotone polyline will be oriented from left-to-right.
    */
-  class Construct_x_monotone_curve_2 {};
+  class Construct_x_monotone_curve_2 {
+    /// \name Operations
+    /// @{
+
+    /*! Obtain a polyline connecting the two given endpoints.
+     * \param p the first point.
+     * \param q the second point.
+     * \pre `p` and `q` are distinct.
+     * \return a (x-monotone) polyline that comprises a single segment.
+     */
+    X_monotone_curve_2 operator()(const Point_2& p, const Point_2& q) const;
+
+    /*! Obtain an x-monotone polyline that consists of one given segment.
+     * \param seg input segment.
+     * \pre `seg` is not degenerated.
+     * \return an (x-monotone) polyline that comprises a single segment.
+     */
+    X_monotone_curve_2 operator()(const X_monotone_subcurve_2& seg) const;
+
+    /*! Construct an x-monotone polyline from a range of either points or
+     * sements.
+     * \param begin an iterator pointing to the first element in the range.
+     * \param end an iterator pointing to the past-the-end element in the range.
+     * \pre the range should comprise a continuous well-oriented x-monotone
+     *      polyline.
+     */
+    template <typename ForwardIterator>
+    X_monotone_curve_2 operator()(ForwardIterator begin, ForwardIterator end)
+      const;
+
+    /// @} /* end of operations */
+  };
 
   /*! Functor to augment a polyline by either adding a vertex or a segment
    * at the back.
