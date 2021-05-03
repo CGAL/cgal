@@ -518,6 +518,11 @@ public:
       const Kernel& kernel = *m_traits.subcurve_traits_2();
       return X_monotone_curve_2(kernel, a, b);
     }
+
+    X_monotone_curve_2 operator()(const Range& range) const {
+      const Kernel& kernel = *m_traits.subcurve_traits_2();
+      return X_monotone_curve_2(kernel, range);
+    }
   };
 
   /*! Obtain a Construct_x_monotone_curve_2 functor object. */
