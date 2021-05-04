@@ -276,7 +276,6 @@ bool read_GOCAD(const std::string& fname, PointRange& points, PolygonRange& poly
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
 
-namespace IO {
 namespace internal {
 
 template <typename PointRange,
@@ -335,7 +334,6 @@ bool write_GOCAD(std::ostream& os,
 }
 
 } // namespace internal
-} // namespace IO
 
 /*!
  * \ingroup PkgStreamSupportIoFuncsGOCAD
