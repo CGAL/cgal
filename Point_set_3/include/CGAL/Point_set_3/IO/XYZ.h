@@ -102,7 +102,7 @@ bool read_XYZ(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_
 /*!
   \ingroup PkgPointSet3IODeprecated
 
-  \deprecated This function is deprecated since \cgal 5.2,
+  \deprecated This function is deprecated since \cgal 5.3,
               \link PkgPointSet3IO `CGAL::IO::read_XYZ()` \endlink  should be used instead.
  */
 template <typename Point, typename Vector>
@@ -217,7 +217,7 @@ bool write_XYZ(const std::string& fname, const CGAL::Point_set_3<Point, Vector>&
 /*!
   \ingroup PkgPointSet3IODeprecated
 
-  \deprecated This function is deprecated since \cgal 5.2,
+  \deprecated This function is deprecated since \cgal 5.3,
               \link PkgPointSet3IO `CGAL::IO::write_XYZ()` \endlink  should be used instead.
  */
 template <typename Point, typename Vector>

@@ -391,7 +391,7 @@ bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_
 /*!
   \ingroup PkgPointSet3IODeprecated
 
-  \deprecated This function is deprecated since \cgal 5.2,
+  \deprecated This function is deprecated since \cgal 5.3,
               \link PkgPointSet3IO `CGAL::IO::read_PLY()` \endlink  should be used instead.
 
   \brief reads a point set with properties from an input stream in ASCII or Binary PLY format.
@@ -791,7 +791,7 @@ bool write_PLY(const std::string& fname, const CGAL::Point_set_3<Point, Vector>&
 /*!
   \ingroup PkgPointSet3IODeprecated
 
-  \deprecated This function is deprecated since \cgal 5.2,
+  \deprecated This function is deprecated since \cgal 5.3,
               \link PkgPointSet3IO `CGAL::IO::write_PLY()` \endlink  should be used instead.
  */
 template <typename Point, typename Vector>

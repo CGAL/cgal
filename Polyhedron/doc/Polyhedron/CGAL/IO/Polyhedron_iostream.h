@@ -36,7 +36,7 @@ bool read_OFF( std::istream& in, Polyhedron_3<Traits>& P);
 
 /*!
 \relates Polyhedron_3
-\deprecated This function is deprecated since \cgal 5.2,
+\deprecated This function is deprecated since \cgal 5.3,
             \link PkgPolyhedronIOFunc `CGAL::IO::read_OFF(std::ostream&, Polyhedron_3<Traits>&)` \endlink should be used instead.
 */
 template <class Traits>
@@ -79,7 +79,7 @@ bool write_OFF( std::ostream& out, Polyhedron_3<Traits>& P);
 
 /*!
 \relates Polyhedron_3
-\deprecated This function is deprecated since \cgal 5.2,
+\deprecated This function is deprecated since \cgal 5.3,
             \link PkgPolyhedronIOFunc `CGAL::IO::write_OFF(std::ostream&, Polyhedron_3<Traits>&)` \endlink should be used instead.
 */
 template <class Traits>

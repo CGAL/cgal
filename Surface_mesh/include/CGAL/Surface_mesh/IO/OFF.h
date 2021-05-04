@@ -351,7 +351,7 @@ bool read_OFF(std::istream& is,
 
 /*!
   \ingroup PkgSurfaceMeshIOFuncDeprecated
-  \deprecated This function is deprecated since \cgal 5.2, `CGAL::IO::read_OFF(std::istream&, const Surface_mesh<Point>&)` should be used instead.
+  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::read_OFF(std::istream&, const Surface_mesh<Point>&)` should be used instead.
 */
 template <typename Point, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 CGAL_DEPRECATED bool read_off(std::istream& is, Surface_mesh<Point>& sm, const CGAL_BGL_NP_CLASS& np)
@@ -361,7 +361,7 @@ CGAL_DEPRECATED bool read_off(std::istream& is, Surface_mesh<Point>& sm, const C
 
 /*!
   \ingroup PkgSurfaceMeshIOFuncDeprecated
-  \deprecated This function is deprecated since \cgal 5.2, `CGAL::IO::read_OFF(std::istream&, const Surface_mesh<Point>&)` should be used instead.
+  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::read_OFF(std::istream&, const Surface_mesh<Point>&)` should be used instead.
 */
 template <typename Point>
 CGAL_DEPRECATED bool read_off(std::istream& is, Surface_mesh<Point>& sm)
@@ -371,7 +371,7 @@ CGAL_DEPRECATED bool read_off(std::istream& is, Surface_mesh<Point>& sm)
 
 /*!
   \ingroup PkgSurfaceMeshIOFuncDeprecated
-  \deprecated This function is deprecated since \cgal 5.2, `CGAL::IO::read_OFF(std::istream&, const Surface_mesh<Point>&)` should be used instead.
+  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::read_OFF(std::istream&, const Surface_mesh<Point>&)` should be used instead.
 */
 template <typename Point>
 CGAL_DEPRECATED bool read_off(Surface_mesh<Point>& sm, const std::string& filename)
@@ -583,7 +583,7 @@ bool write_OFF(std::ostream& os,
 
 /*!
   \ingroup PkgSurfaceMeshIOFuncDeprecated
-  \deprecated This function is deprecated since \cgal 5.2, `CGAL::IO::write_OFF(std::ostream&, const Surface_mesh<Point>&)` should be used instead.
+  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::write_OFF(std::ostream&, const Surface_mesh<Point>&)` should be used instead.
 */
 template <typename Point, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 CGAL_DEPRECATED bool write_off(std::ostream& os, const Surface_mesh<Point>& sm, const CGAL_BGL_NP_CLASS& np)
@@ -593,7 +593,7 @@ CGAL_DEPRECATED bool write_off(std::ostream& os, const Surface_mesh<Point>& sm, 
 
 /*!
   \ingroup PkgSurfaceMeshIOFuncDeprecated
-  \deprecated This function is deprecated since \cgal 5.2, `CGAL::IO::write_OFF(std::ostream&, const Surface_mesh<Point>&)` should be used instead.
+  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::write_OFF(std::ostream&, const Surface_mesh<Point>&)` should be used instead.
 */
 template <typename Point>
 CGAL_DEPRECATED bool write_off(std::ostream& os, const Surface_mesh<Point>& sm)
@@ -603,7 +603,7 @@ CGAL_DEPRECATED bool write_off(std::ostream& os, const Surface_mesh<Point>& sm)
 
 /*!
   \ingroup PkgSurfaceMeshIOFuncDeprecated
-  \deprecated This function is deprecated since \cgal 5.2, `CGAL::IO::write_OFF(std::ostream&, const Surface_mesh<Point>&)` should be used instead.
+  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::write_OFF(std::ostream&, const Surface_mesh<Point>&)` should be used instead.
 */
 template <typename Point>
 CGAL_DEPRECATED bool write_off(const Surface_mesh<Point>& sm, const std::string& filename)
