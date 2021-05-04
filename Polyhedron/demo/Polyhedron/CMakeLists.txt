@@ -217,7 +217,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
       STATUS "Qt5WebSockets was found. Using WebSockets is therefore possible.")
   endif()
 
-  cgal_add_compilation_test(demo_framework)
+  #compilation_of__demo_framework is defined in polyhedron_demo_macros.cmake
   # Let's define `three_EXPORT` during the compilation of `demo_framework`,
   # in addition of `demo_framework_EXPORT` (defined automatically by
   # CMake). That is to deal with the visibility of symbols of

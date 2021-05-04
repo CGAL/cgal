@@ -7,5 +7,7 @@ polyhedron_demo_plugin(camera_positions_plugin
     ${cameraUI_FILES}
     KEYWORDS Viewer)
 
+add_dependencies(camera_positions_plugin demo_framework)
 target_link_libraries( camera_positions_plugin PUBLIC demo_framework)
 target_link_libraries(camera_positions_plugin PUBLIC demo_framework)
+

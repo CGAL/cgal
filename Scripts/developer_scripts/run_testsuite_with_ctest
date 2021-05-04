@@ -258,7 +258,7 @@ run_test_on_platform()
   CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${PLATFORM}
   cd "${CGAL_BINARY_DIR}"
   log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "Testing on host ${HOST} and platform ${PLATFORM}"
-  
+
   if [ -f "${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/setup" ]; then
     source "${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/setup"
   else
@@ -274,7 +274,7 @@ run_test_on_platform()
     CMAKE_OPTS="${CMAKE_OPTS} -DWITH_examples=ON -DWITH_demos=ON"
   fi
   if [ -z "${SHOW_PROGRESS}" ]; then
-    cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR  >package_installation.log 2>&1 
+    cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR  >package_installation.log 2>&1
   else
     cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR 2>&1 |tee package_installation.log
   fi
@@ -294,14 +294,28 @@ run_test_on_platform()
   #unsets the limit of 1024 bits for the logs through ssh
   echo "SET(CTEST_CUSTOM_MAXIMUM_PASSED_TEST_OUTPUT_SIZE 1000000000)" > CTestCustom.cmake
   echo "SET(CTEST_CUSTOM_MAXIMUM_FAILED_TEST_OUTPUT_SIZE 1000000000)" >> CTestCustom.cmake
-  CTEST_OPTS="-T Start -T Test --timeout 1200 -j${NUMBER_OF_PROCESSORS} ${DO_NOT_TEST:+-E execution___of__} "
+
+  CTEST_OPTS="-T Start -T Test --timeout 1200  ${DO_NOT_TEST:+-E execution___of__}"
+  FULL_OPTS=${CTEST_OPTS}
+  echo "NUMBER_OF_PROCESSORS = ${NUMBER_OF_PROCESSORS}"
   if uname | grep -q "CYGWIN"; then
-    CTEST_OPTS="-C ${CONFIG_TYPE} ${CTEST_OPTS} -V"
+    CTEST_OPTS="-C ${CONFIG_TYPE} ${CTEST_OPTS}"
+    FULL_OPTS="${CTEST_OPTS} -LE Polyhedron_Demo -V"
   fi
   if [ -z "${SHOW_PROGRESS}" ]; then
-    ctest ${TO_TEST:+-L ${TO_TEST} } ${CTEST_OPTS} ${KEEP_TESTS:+-FC .}> tmp.txt
+    ctest ${TO_TEST:+-L ${TO_TEST} } ${FULL_OPTS} -j${NUMBER_OF_PROCESSORS} ${KEEP_TESTS:+-FC .}> tmp.txt
+    if uname | grep -q "CYGWIN"; then
+          if [[ $TO_TEST == *"Polyhedron_Demo"* ]]; then
+        ctest ${CTEST_OPTS} -L Polyhedron_Demo ${KEEP_TESTS:+-FC .}>> tmp.txt
+      fi
+    fi
   else
-    ctest ${TO_TEST:+-L ${TO_TEST} } ${CTEST_OPTS} ${KEEP_TESTS:+-FC .} |tee tmp.txt
+    ctest ${TO_TEST:+-L ${TO_TEST} } -j${NUMBER_OF_PROCESSORS} ${FULL_OPTS} ${KEEP_TESTS:+-FC .} |tee tmp.txt
+    if uname | grep -q "CYGWIN"; then
+          if [[ $TO_TEST == *"Polyhedron_Demo"* ]]; then
+        ctest ${CTEST_OPTS} -L Polyhedron_Demo ${KEEP_TESTS:+-FC .} |tee -a tmp.txt
+          fi
+    fi
   fi
   #####################
   ##   GET RESULTS   ##
@@ -373,7 +387,7 @@ run_test_on_host()
 setup_dirs
 
 
-# Setup cmake 
+# Setup cmake
 log "${ACTUAL_LOGFILE}" "running the testsuites"
 if [ -n "${CONSOLE_OUTPUT}" ]; then
     printf "\n-------------------------------------------------------\n"
