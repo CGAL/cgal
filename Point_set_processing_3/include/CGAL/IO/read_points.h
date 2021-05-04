@@ -90,7 +90,7 @@ bool read_points(const std::string& fname,
                  PointOutputIterator output,
                  const NamedParameters& np)
 {
-  const std::string ext = IO::internal::get_file_extension(fname);
+  const std::string ext = internal::get_file_extension(fname);
 
   if(ext == "xyz" || ext == "pwn")
     return read_XYZ<OutputIteratorValueType>(fname, output, np);

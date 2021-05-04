@@ -150,7 +150,7 @@ bool read_PLY_with_properties(std::istream& is,
   if(!is)
     return false;
 
-  IO::internal::PLY_reader reader(true);
+  internal::PLY_reader reader(true);
 
   if(!(reader.init(is)))
   {
@@ -160,13 +160,13 @@ bool read_PLY_with_properties(std::istream& is,
 
   for(std::size_t i = 0; i < reader.number_of_elements(); ++ i)
   {
-    IO::internal::PLY_element& element = reader.element(i);
+    internal::PLY_element& element = reader.element(i);
 
     for(std::size_t j = 0; j < element.number_of_items(); ++ j)
     {
       for(std::size_t k = 0; k < element.number_of_properties(); ++ k)
       {
-        IO::internal::PLY_read_number* property = element.property(k);
+        internal::PLY_read_number* property = element.property(k);
         property->get(is);
 
         if(is.fail())
@@ -176,7 +176,7 @@ bool read_PLY_with_properties(std::istream& is,
       if(element.name() == "vertex" || element.name() == "vertices")
       {
         OutputValueType new_element;
-        IO::internal::process_properties(element, new_element, std::forward<PropertyHandler>(properties)...);
+        internal::process_properties(element, new_element, std::forward<PropertyHandler>(properties)...);
         *(output ++) = new_element;
       }
     }

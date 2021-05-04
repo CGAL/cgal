@@ -304,7 +304,7 @@ template <class CDT>
 void write_VTU_with_attributes(std::ostream& os,
                const CDT& tr,
                std::vector<std::pair<const char*, const std::vector<double>*> >& attributes,
-               IO::Mode mode = BINARY)
+               Mode mode = BINARY)
 {
   typedef typename CDT::Vertex_handle Vertex_handle;
   std::map<Vertex_handle, std::size_t> V;

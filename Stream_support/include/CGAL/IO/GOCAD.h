@@ -376,7 +376,7 @@ bool write_GOCAD(std::ostream& os,
 #endif
                  )
 {
-  return IO::internal::write_GOCAD(os, "anonymous", points, polygons, np);
+  return internal::write_GOCAD(os, "anonymous", points, polygons, np);
 }
 
 /// \cond SKIP_IN_MANUAL
@@ -385,7 +385,7 @@ template <typename PointRange, typename PolygonRange>
 bool write_GOCAD(std::ostream& os, const PointRange& points, const PolygonRange& polygons,
                  typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr)
 {
-  return IO::internal::write_GOCAD(os, "anonymous", points, polygons, parameters::all_default());
+  return internal::write_GOCAD(os, "anonymous", points, polygons, parameters::all_default());
 }
 
 /// \endcond
@@ -431,7 +431,7 @@ bool write_GOCAD(const std::string& fname,
 {
   std::ofstream os(fname);
   CGAL::set_mode(os, CGAL::IO::ASCII);
-  return IO::internal::write_GOCAD(os, fname.c_str(), points, polygons, np);
+  return internal::write_GOCAD(os, fname.c_str(), points, polygons, np);
 }
 
 /// \cond SKIP_IN_MANUAL
