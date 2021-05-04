@@ -45,8 +45,8 @@ int main(int argc, char* argv[])
     if(get(vif, v))
       ++sharp_corners_counter;
   }
-  
-  PMP:detect_sharp_edges(mesh, 60, eif);  
+
+  PMP::detect_sharp_edges(mesh, 60, eif);
   std::size_t nb_sharp_edges = 0;
   for(boost::graph_traits<Mesh>::edge_descriptor e : edges(mesh))
   {
