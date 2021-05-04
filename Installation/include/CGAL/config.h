@@ -623,7 +623,6 @@ using std::max;
 #  include <unordered_set>
 #  include <unordered_map>
 #  include <functional>
-#  include <CGAL/result_of.h>
 //
 namespace CGAL {
 //
@@ -642,6 +641,13 @@ namespace CGAL {
     using std::is_enum;
     using std::unordered_set;
     using std::unordered_map;
+#if CGAL_CXX20 || __cpp_lib_is_invocable>=201703L
+    template<typename Signature> class result_of;
+    template<typename F, typename... Args>
+    class result_of<F(Args...)> : public std::invoke_result<F, Args...> { };
+#else
+    using std::result_of;
+#endif
   }
 //
   namespace cpp0x = cpp11;
