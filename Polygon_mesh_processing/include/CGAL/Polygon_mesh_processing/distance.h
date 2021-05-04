@@ -1850,7 +1850,7 @@ double bounded_error_one_sided_Hausdorff_impl(
     for (int i = 0; i < nb_cores; ++i) {
       tm1_parts.emplace_back(tm1, i, face_pid_map);
       CGAL_assertion(tm1_parts.back().is_selection_valid());
-      std::cout << "* part " << i << " size: " << tm1_parts.back().number_of_faces() << std::endl;
+      std::cout << "- part " << i << " size: " << tm1_parts.back().number_of_faces() << std::endl;
     }
     CGAL_assertion(tm1_parts.size() == nb_cores);
     timer.stop();

@@ -903,8 +903,8 @@ int main(int argc, char** argv) {
 
   // --- Compare timings.
 
-  filepath = (argc > 1 ? argv[1] : "data/blobby-remeshed.off");
-  // filepath = "/Users/monet/Documents/fork/pull-requests/hausdorff/data/bunny-dense.off";
+  // filepath = (argc > 1 ? argv[1] : "data/blobby-remeshed.off");
+  filepath = "/Users/monet/Documents/fork/pull-requests/hausdorff/data/bunny-dense.off";
   // test_timings(filepath, apprx_hd);
   // test_timings(filepath, naive_hd);
   // test_timings(filepath, bound_hd);
