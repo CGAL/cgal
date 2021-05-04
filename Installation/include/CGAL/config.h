@@ -744,11 +744,11 @@ namespace CGAL {
 // otherwise it is empty (and thus returns filename unmodified).
 inline std::string data_file_path(const std::string& filename)
 {
-  const char* cgal_dir=nullptr;
-
 #ifdef _MSC_VER
+  char* cgal_dir=nullptr;
   _dupenv_s( &cgal_dir, nullptr, "CGAL_DATA_DIR");
 #else
+  const char* cgal_dir=nullptr;
   cgal_dir=getenv("CGAL_DATA_DIR");
 #endif
 
