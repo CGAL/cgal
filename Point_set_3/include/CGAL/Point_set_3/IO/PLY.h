@@ -97,7 +97,7 @@ public:
 
     for(std::size_t j=0; j<element.number_of_properties(); ++j)
     {
-      IO::internal::PLY_read_number* property = element.property(j);
+      internal::PLY_read_number* property = element.property(j);
 
       const std::string& name = property->name();
       if(name == "x" ||
@@ -253,8 +253,8 @@ bool read_PLY(std::istream& is,
     return false;
   }
 
-  IO::internal::PLY_reader reader(true);
-  IO::internal::Point_set_3_filler<Point, Vector> filler(point_set);
+  internal::PLY_reader reader(true);
+  internal::Point_set_3_filler<Point, Vector> filler(point_set);
 
   if(!(reader.init(is)))
   {
@@ -266,7 +266,7 @@ bool read_PLY(std::istream& is,
 
   for(std::size_t i=0; i<reader.number_of_elements(); ++i)
   {
-    IO::internal::PLY_element& element = reader.element(i);
+    internal::PLY_element& element = reader.element(i);
 
     bool is_vertex = (element.name() == "vertex" || element.name() == "vertices");
     if(is_vertex)
@@ -279,7 +279,7 @@ bool read_PLY(std::istream& is,
     {
       for(std::size_t k=0; k<element.number_of_properties(); ++k)
       {
-        IO::internal::PLY_read_number* property = element.property(k);
+        internal::PLY_read_number* property = element.property(k);
         property->get(is);
         if(is.fail())
           return false;
@@ -392,7 +392,7 @@ bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_
   \ingroup PkgPointSet3IODeprecated
 
   \deprecated This function is deprecated since \cgal 5.2,
-              \link PkgPointSet3IO `CGAL::read_PLY()` \endlink  should be used instead.
+              \link PkgPointSet3IO `CGAL::IO::read_PLY()` \endlink  should be used instead.
 
   \brief reads a point set with properties from an input stream in ASCII or Binary PLY format.
 
@@ -792,7 +792,7 @@ bool write_PLY(const std::string& fname, const CGAL::Point_set_3<Point, Vector>&
   \ingroup PkgPointSet3IODeprecated
 
   \deprecated This function is deprecated since \cgal 5.2,
-              \link PkgPointSet3IO `CGAL::write_PLY()` \endlink  should be used instead.
+              \link PkgPointSet3IO `CGAL::IO::write_PLY()` \endlink  should be used instead.
  */
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool write_ply_point_set(std::ostream& os,

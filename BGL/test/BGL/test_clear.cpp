@@ -7,7 +7,7 @@ void test()
 {
   const std::string fname = "data/7_faces_triangle.off";
   Mesh m;
-  if(!CGAL::read_OFF(fname, m))
+  if(!CGAL::IO::read_OFF(fname, m))
     std::cout << "Error reading file: " << fname << std::endl;
 
   assert(CGAL::is_valid_polygon_mesh(m));

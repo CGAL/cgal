@@ -78,7 +78,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
   }
   std::vector<EPICK::Point_3> points;
   std::vector<std::vector<int> > triangles;
-  if (!CGAL::read_polygon_soup(fileinfo.filePath().toUtf8().toStdString(), points, triangles))
+  if (!CGAL::IO::read_polygon_soup(fileinfo.filePath().toUtf8().toStdString(), points, triangles))
   {
     std::cerr << "Error: invalid STL file" << std::endl;
     ok = false;
@@ -156,7 +156,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
 
   if (sm_item)
   {
-    CGAL::write_STL(out, *sm_item->face_graph());
+    CGAL::IO::write_STL(out, *sm_item->face_graph());
     items.pop_front();
     return true;
   }

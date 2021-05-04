@@ -554,7 +554,7 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
 
   d->m_points->clear();
 
-  bool ok = CGAL::read_PLY(stream, *(d->m_points), d->m_comments) && !isEmpty();
+  bool ok = CGAL::IO::read_PLY(stream, *(d->m_points), d->m_comments) && !isEmpty();
 
   d->point_Slider->setValue(CGAL::Three::Three::getDefaultPointSize());
   std::cerr << d->m_points->info();
@@ -588,7 +588,7 @@ bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream, bo
   if (binary)
     CGAL::set_binary_mode (stream);
 
-  return CGAL::write_PLY(stream, *(d->m_points), d->m_comments);
+  return CGAL::IO::write_PLY(stream, *(d->m_points), d->m_comments);
 }
 
 // Loads point set from .OFF file
@@ -597,7 +597,7 @@ bool Scene_points_with_normal_item::read_off_point_set(std::istream& stream)
   Q_ASSERT(d->m_points != nullptr);
 
   d->m_points->clear();
-  bool ok = CGAL::read_OFF(stream, *(d->m_points)) && !isEmpty();
+  bool ok = CGAL::IO::read_OFF(stream, *(d->m_points)) && !isEmpty();
 
   d->point_Slider->setValue(CGAL::Three::Three::getDefaultPointSize());
   invalidateOpenGLBuffers();
@@ -611,7 +611,7 @@ bool Scene_points_with_normal_item::write_off_point_set(std::ostream& stream) co
 
   d->m_points->reset_indices();
 
-  return CGAL::write_OFF(stream, *(d->m_points));
+  return CGAL::IO::write_OFF(stream, *(d->m_points));
 }
 
 // Loads point set from .XYZ file
@@ -621,7 +621,7 @@ bool Scene_points_with_normal_item::read_xyz_point_set(std::istream& stream)
 
   d->m_points->clear();
 
-  bool ok = CGAL::read_XYZ (stream, *(d->m_points)) && !isEmpty();
+  bool ok = CGAL::IO::read_XYZ (stream, *(d->m_points)) && !isEmpty();
 
   d->point_Slider->setValue(CGAL::Three::Three::getDefaultPointSize());
   invalidateOpenGLBuffers();
@@ -635,7 +635,7 @@ bool Scene_points_with_normal_item::write_xyz_point_set(std::ostream& stream) co
 
   d->m_points->reset_indices();
 
-  return CGAL::write_XYZ(stream, *(d->m_points));
+  return CGAL::IO::write_XYZ(stream, *(d->m_points));
 }
 
 QString

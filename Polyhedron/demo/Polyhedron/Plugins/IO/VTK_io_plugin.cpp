@@ -241,7 +241,7 @@ public:
         std::ofstream os(output_filename.data());
         os << std::setprecision(16);
         //write header
-        CGAL::write_VTP(os, *mesh);
+        CGAL::IO::write_VTP(os, *mesh);
       }
     }
     else

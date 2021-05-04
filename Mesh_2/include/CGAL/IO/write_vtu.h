@@ -374,7 +374,7 @@ void write_vtu(std::ostream& os,
 } // namespace IO
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-using write_vtu;
+using IO::write_vtu;
 #endif
 
 } //end CGAL

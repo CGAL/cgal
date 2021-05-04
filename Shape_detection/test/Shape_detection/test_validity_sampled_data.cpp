@@ -49,7 +49,7 @@ int main (int argc, char** argv)
   std::ifstream ifile(ifilename);
 
   if (!ifile ||
-      !CGAL::read_XYZ(
+      !CGAL::IO::read_XYZ(
       ifile,
       std::back_inserter(points),
       CGAL::parameters::point_map(Point_map()).

@@ -17,7 +17,7 @@ int main(int argc, char** argv)
   int number_of_parts = (argc>2) ? atoi(argv[2]) : 8;
 
   SM sm;
-  if(!CGAL::read_polygon_mesh(filename, sm))
+  if(!CGAL::IO::read_polygon_mesh(filename, sm))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;
@@ -44,7 +44,7 @@ int main(int argc, char** argv)
   CGAL::copy_face_graph(filtered_sm, part_sm);
 
   // Output the mesh extracted from subpart n°0
-  CGAL::write_polygon_mesh("sm_part_0.off", part_sm, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_mesh("sm_part_0.off", part_sm, CGAL::parameters::stream_precision(17));
 
   // Output all the vertices that are in the part n°0
   std::ofstream outxyz("out.xyz");

@@ -18,7 +18,7 @@ int main(int argc, char** argv)
   std::vector<Point> points;
   std::vector<Face> polygons;
 
-  bool ok = CGAL::read_PLY(ply_file, points, polygons);
+  bool ok = CGAL::IO::read_PLY(ply_file, points, polygons);
   assert(ok);
   std::cout << points.size() << " points and " << polygons.size() << " polygons" << std::endl;
 
@@ -28,33 +28,33 @@ int main(int argc, char** argv)
   points.clear();
   polygons.clear();
   std::string ply_string(ply_file);
-  ok = CGAL::read_PLY(ply_string, points, polygons);
+  ok = CGAL::IO::read_PLY(ply_string, points, polygons);
   assert(ok);
 
   points.clear();
   polygons.clear();
 
   std::ifstream is(ply_file);
-  ok = CGAL::read_PLY(is, points, polygons);
+  ok = CGAL::IO::read_PLY(is, points, polygons);
   assert(ok);
   is.close();
   points.clear();
   polygons.clear();
 
   is.open(ply_file, std::ios::binary);
-  ok = CGAL::read_PLY(is, points, polygons);
+  ok = CGAL::IO::read_PLY(is, points, polygons);
   assert(ok);
   is.close();
 
-  ok = CGAL::write_PLY("tmp.ply", points, polygons);
+  ok = CGAL::IO::write_PLY("tmp.ply", points, polygons);
   assert(ok);
 
-  ok = CGAL::write_polygon_soup("tmp.ply", points, polygons);
+  ok = CGAL::IO::write_polygon_soup("tmp.ply", points, polygons);
   assert(ok);
 
   std::ofstream os("tmp.ply");
   CGAL::set_binary_mode(os);
-  ok = CGAL::write_PLY(os, points, polygons);
+  ok = CGAL::IO::write_PLY(os, points, polygons);
   assert(ok);
   os.close();
 
@@ -63,7 +63,7 @@ int main(int argc, char** argv)
   points.clear();
   polygons.clear();
 
-  ok = CGAL::read_polygon_soup("tmp.ply", points, polygons);
+  ok = CGAL::IO::read_polygon_soup("tmp.ply", points, polygons);
   assert(ok);
 
   assert(points.size() == pts_backup.size());

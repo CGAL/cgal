@@ -416,7 +416,7 @@ This section presents various use cases of the periodic mesh generator.
 \subsection Periodic_3_mesh_3SubMultipleCopies Visualizing Multiple Copies of a Periodic Mesh
 
 Generated meshes can be output to the `.mesh` file format, which can be visualized with the demo
-of the package \ref PkgPolyhedron. The function \link PkgPeriodic3Mesh3IOFunctions `CGAL::output_periodic_mesh_to_medit()` \endlink
+of the package \ref PkgPolyhedron. The function \link PkgPeriodic3Mesh3IOFunctions `CGAL::IO::output_periodic_mesh_to_medit()` \endlink
 takes a stream, a mesh complex, and - optionally - the number of periodic copies that should be drawn,
 making it easier to observe the periodicity of the result.
 \cgalFigureRef{Periodic_3_mesh_3Periodic_copies} illustrates the different output

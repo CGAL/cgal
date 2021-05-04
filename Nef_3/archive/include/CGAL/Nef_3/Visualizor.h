@@ -278,9 +278,9 @@ namespace OGL {
 
     void draw(Vertex_iterator v) const
     { CGAL_NEF_TRACEN("drawing vertex "<<*v);
-      CGAL::Color cf(CGAL_NEF3_MARKED_VERTEX_COLOR),
+      CGAL::IO::Color cf(CGAL_NEF3_MARKED_VERTEX_COLOR),
         ct(CGAL_NEF3_UNMARKED_VERTEX_COLOR); // more blue-ish
-      CGAL::Color c = v->mark() ? ct : cf;
+      CGAL::IO::Color c = v->mark() ? ct : cf;
       glPointSize(10);
       glColor3ub(c.red(), c.green(), c.blue());
       glBegin(GL_POINTS);
@@ -291,9 +291,9 @@ namespace OGL {
     void draw(Edge_iterator e) const
     { CGAL_NEF_TRACEN("drawing edge "<<*e);
       Double_point p = e->source(), q = e->target();
-      CGAL::Color cf(CGAL_NEF3_MARKED_EDGE_COLOR),
+      CGAL::IO::Color cf(CGAL_NEF3_MARKED_EDGE_COLOR),
         ct(CGAL_NEF3_UNMARKED_EDGE_COLOR); // more blue-ish
-      CGAL::Color c = e->mark() ? ct : cf;
+      CGAL::IO::Color c = e->mark() ? ct : cf;
       glLineWidth(5);
       glColor3ub(c.red(),c.green(),c.blue());
       glBegin(GL_LINE_STRIP);
@@ -317,9 +317,9 @@ namespace OGL {
                       GLU_TESS_WINDING_POSITIVE);
 
       DFacet::Coord_const_iterator cit;
-      CGAL::Color cf(CGAL_NEF3_MARKED_FACET_COLOR),
+      CGAL::IO::Color cf(CGAL_NEF3_MARKED_FACET_COLOR),
         ct(CGAL_NEF3_UNMARKED_FACET_COLOR); // more blue-ish
-      CGAL::Color c = (f->mark() ? ct : cf);
+      CGAL::IO::Color c = (f->mark() ? ct : cf);
       glColor3ub(c.red(),c.green(),c.blue());
       gluTessBeginPolygon(tess_,f->normal());
       CGAL_NEF_TRACEN(" ");

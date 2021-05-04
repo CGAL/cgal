@@ -67,7 +67,7 @@ the printing mode.
 - \link PkgStreamSupportEnumRef `CGAL::IO::Mode` \endlink
 
 \cgalCRPSection{Classes}
-- `CGAL::Color`
+- `CGAL::IO::Color`
 - `CGAL::Istream_iterator<T,Stream>`
 - `CGAL::Ostream_iterator<T,Stream>`
 - `CGAL::Verbose_ostream`
@@ -89,8 +89,8 @@ the printing mode.
 - `CGAL::oformat()`
 
 \cgalCRPSection{I/O Functions}
-- `CGAL::read_polygon_soup()`
-- `CGAL::write_polygon_soup()`
+- `CGAL::IO::read_polygon_soup()`
+- `CGAL::IO::write_polygon_soup()`
 - \link PkgStreamSupportIoFuncsSTL I/O for STL files \endlink
 - \link PkgStreamSupportIoFuncsPLY I/O for PLY files \endlink
 - \link PkgStreamSupportIoFuncsOBJ I/O for OBJ files \endlink

@@ -17,7 +17,7 @@ void test_API()
   std::vector<EPIC::Point_3> points;
   std::vector<std::array<int, 3> > triangles;
   std::ifstream in("data/eight.off");
-  CGAL::read_OFF(in, points, triangles);
+  CGAL::IO::read_OFF(in, points, triangles);
   CGAL::Surface_mesh<EPIC::Point_3> sm;
   CGAL::Polyhedron_3<EPIC> poly;
   PMP::polygon_soup_to_polygon_mesh(points, triangles, sm);

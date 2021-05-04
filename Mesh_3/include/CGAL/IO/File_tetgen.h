@@ -215,7 +215,7 @@ output_to_tetgen(std::string filename,
 } // namespace IO
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-using output_to_tetgen;
+using IO::output_to_tetgen;
 #endif
 
 } // end namespace CGAL

@@ -91,7 +91,7 @@ protected:
 
     if (p2.outer_boundary().is_empty()) return;
 
-    CGAL::Color c(75,160,255);
+    CGAL::IO::Color c(75,160,255);
     face_begin(c);
 
     compute_one_loop_elements(p2.outer_boundary(), false);

@@ -430,7 +430,7 @@ faces but would be for vertices - and add the color attribute.
 
 template <class Refs>
 struct My_face : public CGAL::HalfedgeDS_face_base<Refs> {
-CGAL::Color color;
+CGAL::IO::Color color;
 };
 
 \endcode

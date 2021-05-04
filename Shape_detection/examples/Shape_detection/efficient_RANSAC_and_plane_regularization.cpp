@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
 
   Pwn_vector points;
 
-  if (!CGAL::read_points(
+  if (!CGAL::IO::read_points(
       (argc > 1 ? argv[1] : "data/cube.pwn"),
       std::back_inserter(points),
       CGAL::parameters::point_map(Point_map()).

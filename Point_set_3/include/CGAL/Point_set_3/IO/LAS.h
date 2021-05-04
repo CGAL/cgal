@@ -172,7 +172,7 @@ bool read_LAS(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_
   \ingroup PkgPointSet3IODeprecated
 
   \deprecated This function is deprecated since \cgal 5.2,
-              \link PkgPointSet3IO `CGAL::read_LAS()` \endlink should be used instead.
+              \link PkgPointSet3IO `CGAL::IO::read_LAS()` \endlink should be used instead.
  */
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool read_las_point_set(std::istream& is, ///< input stream.
@@ -408,7 +408,7 @@ bool write_LAS(const std::string& fname,
   \ingroup PkgPointSet3IODeprecated
 
   \deprecated This function is deprecated since \cgal 5.2,
-              \link PkgPointSet3IO `CGAL::write_LAS()` \endlink should be used instead.
+              \link PkgPointSet3IO `CGAL::IO::write_LAS()` \endlink should be used instead.
  */
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool write_las_point_set(std::ostream& os, ///< output stream.

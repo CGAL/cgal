@@ -408,7 +408,7 @@ bool write_las_points(std::ostream& os, ///< output stream.
 /**
   \ingroup PkgPointSetProcessing3IODeprecated
 
-  \deprecated This function is deprecated since \cgal 5.2, `CGAL::write_LAS_with_properties()` should be used instead.
+  \deprecated This function is deprecated since \cgal 5.2, `CGAL::IO::write_LAS_with_properties()` should be used instead.
 */
 template <typename PointRange,
           typename PointMap,
@@ -427,7 +427,7 @@ CGAL_DEPRECATED bool write_las_points_with_properties(std::ostream& os,
 /**
    \ingroup PkgPointSetProcessing3IODeprecated
 
-  \deprecated This function is deprecated since \cgal 5.2, `CGAL::write_LAS()` should be used instead.
+  \deprecated This function is deprecated since \cgal 5.2, `CGAL::IO::write_LAS()` should be used instead.
 */
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_las_points(std::ostream& os, const PointRange& points, const CGAL_BGL_NP_CLASS& np)

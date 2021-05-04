@@ -25,7 +25,7 @@ using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
 using FT      = typename Kernel::FT;
 using Point_3 = typename Kernel::Point_3;
 
-using Color = CGAL::Color;
+using Color = CGAL::IO::Color;
 
 // Choose the type of a container for a polygon mesh.
 #define USE_SURFACE_MESH

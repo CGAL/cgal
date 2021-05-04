@@ -32,7 +32,7 @@ int main(int argc, char** argv)
   // Read the data.
   std::cerr << "Reading " << std::flush;
   Point_set points;
-  if(!CGAL::read_point_set(argv[1], points))
+  if(!CGAL::IO::read_point_set(argv[1], points))
   {
     std::cerr << "Error: cannot read file" << std::endl;
     return EXIT_FAILURE;

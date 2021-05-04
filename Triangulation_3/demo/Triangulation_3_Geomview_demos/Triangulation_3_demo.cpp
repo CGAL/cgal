@@ -95,7 +95,7 @@ void visu_vertex(CGAL::Geomview_stream & os, const TRIANGULATION & T,
 int main()
 {
   CGAL::Geomview_stream gv(CGAL::Bbox_3(0,0,0, 2, 2, 2));
-  gv.set_bg_color(CGAL::Color(0, 200, 200));
+  gv.set_bg_color(CGAL::IO::Color(0, 200, 200));
   gv.clear();
 
   Triangulation  T;

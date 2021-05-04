@@ -88,7 +88,7 @@ void Polyhedron_scan_OFF<HDS>:: operator()(HDS& target)
     B.add_vertex( p);
     if(scanner.has_vcolors())
     {
-      Color c;
+      IO::Color c;
       file_scan_color(scanner, c);
     }
       scanner.skip_to_next_vertex(i);

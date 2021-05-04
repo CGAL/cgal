@@ -318,7 +318,7 @@ int main(int argc, char** argv)
   std::vector<std::vector<std::size_t> > faces;
   std::vector<K::Point_3> points;
   input.open(argv[1]);
-  CGAL::read_OFF(input, points, faces);
+  CGAL::IO::read_OFF(input, points, faces);
   input.close();
 
   std::vector<K::Point_3> samples;

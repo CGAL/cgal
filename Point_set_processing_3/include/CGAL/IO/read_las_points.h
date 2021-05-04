@@ -609,7 +609,7 @@ bool read_las_points(std::istream& is, ///< input stream.
 /**
  \ingroup PkgPointSetProcessing3IODeprecated
 
- \deprecated This function is deprecated since \cgal 5.2, `CGAL::read_LAS_with_properties()` should be used instead.
+ \deprecated This function is deprecated since \cgal 5.2, `CGAL::IO::read_LAS_with_properties()` should be used instead.
 */
 template <typename OutputIteratorValueType,
           typename OutputIterator,
@@ -637,7 +637,7 @@ CGAL_DEPRECATED bool read_las_points_with_properties(std::istream& is,
 /**
  \ingroup PkgPointSetProcessing3IODeprecated
 
- \deprecated This function is deprecated since \cgal 5.2, `CGAL::read_LAS()` should be used instead.
+ \deprecated This function is deprecated since \cgal 5.2, `CGAL::IO::read_LAS()` should be used instead.
 */
 template <typename OutputIteratorValueType,
           typename OutputIterator,

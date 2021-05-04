@@ -628,7 +628,7 @@ inline void read(std::istream& is, T& t)
   read(is, t, typename Io_traits<T>::Io_tag());
 }
 
-inline std::ostream& operator<<( std::ostream& out, const Color& col)
+inline std::ostream& operator<<( std::ostream& out, const IO::Color& col)
 {
   switch(get_mode(out))
   {
@@ -648,7 +648,7 @@ inline std::ostream& operator<<( std::ostream& out, const Color& col)
   }
 }
 
-inline std::istream &operator>>(std::istream &is, Color& col)
+inline std::istream &operator>>(std::istream &is, IO::Color& col)
 {
   unsigned char r = 0, g = 0, b = 0, a = 0;
   int ir = 0, ig = 0, ib = 0, ia = 0;
@@ -674,7 +674,7 @@ inline std::istream &operator>>(std::istream &is, Color& col)
       break;
   }
 
-  col = Color(r,g,b,a);
+  col = IO::Color(r,g,b,a);
   return is;
 }
 

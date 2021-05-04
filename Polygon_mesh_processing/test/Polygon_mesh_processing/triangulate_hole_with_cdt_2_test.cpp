@@ -64,7 +64,7 @@ void test_triangulate_hole_with_cdt_2(
   std::string path = "data/" + file_name + ".off";
   std::ifstream in(path.c_str(), std::ios_base::in);
   CGAL::set_ascii_mode(in);
-  CGAL::read_OFF(in, pmesh);
+  CGAL::IO::read_OFF(in, pmesh);
   in.close();
   if (verbose) {
     std::cout << "* finished reading the file" << std::endl;
@@ -109,7 +109,7 @@ void test_triangulate_hole_with_cdt_2(
     path += "4464_" + file_name + ".off";
     std::ofstream out(path.c_str(), std::ios_base::out);
     CGAL::set_ascii_mode(out);
-    CGAL::write_OFF(out, pmesh);
+    CGAL::IO::write_OFF(out, pmesh);
     out.close();
     std::cout << "* finished writing the file" << std::endl;
   }

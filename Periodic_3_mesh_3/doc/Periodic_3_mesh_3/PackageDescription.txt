@@ -101,6 +101,6 @@ Many classes and functions used by this package are defined within the package
 and \ref PkgMesh3Parameters.
 
 \cgalCRPSection{Input/Output Functions}
-- \link PkgPeriodic3Mesh3IOFunctions `CGAL::output_periodic_mesh_to_medit()` \endlink
+- \link PkgPeriodic3Mesh3IOFunctions `CGAL::IO::output_periodic_mesh_to_medit()` \endlink
 
 */

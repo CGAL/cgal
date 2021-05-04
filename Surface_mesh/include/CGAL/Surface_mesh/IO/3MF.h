@@ -30,6 +30,8 @@
 
 namespace CGAL {
 
+namespace IO {
+
 // @todo generalize it to any model of `FaceGraph` and put it in BGL/IO (see read_OFF for the face color map)
 
 /*!
@@ -60,9 +62,9 @@ bool read_3MF(const std::string& filename,
   std::vector<PointRange> all_points;
   std::vector<TriangleRange> all_triangles;
   std::vector<std::string> names;
-  std::vector<std::vector<CGAL::Color> > all_colors;
+  std::vector<std::vector<CGAL::IO::Color> > all_colors;
 
-  const bool success = CGAL::read_3MF(filename, all_points, all_triangles, all_colors, names);
+  const bool success = CGAL::IO::read_3MF(filename, all_points, all_triangles, all_colors, names);
   if(!success)
   {
     std::cerr << "Error in reading meshes." << std::endl;
@@ -79,7 +81,7 @@ bool read_3MF(const std::string& filename,
     SMesh sm;
     TriangleRange triangles = all_triangles[i];
     PointRange points = all_points[i];
-    std::vector<CGAL::Color> colors = all_colors[i];
+    std::vector<CGAL::IO::Color> colors = all_colors[i];
 
     // Create the surface mesh from scratch
     std::size_t n(points.size());
@@ -119,8 +121,8 @@ bool read_3MF(const std::string& filename,
 
     if(need_pmap)
     {
-      typename SMesh::template Property_map<Face_index, CGAL::Color> fcolor =
-          sm.template add_property_map<Face_index,CGAL::Color>("f:color", first).first;
+      typename SMesh::template Property_map<Face_index, CGAL::IO::Color> fcolor =
+          sm.template add_property_map<Face_index,CGAL::IO::Color>("f:color", first).first;
 
       for(std::size_t pid=0, cs=colors.size(); pid<cs; ++pid)
         put(fcolor, Face_index(pid), colors[pid]); // there can't have any deleted face yet
@@ -133,16 +135,18 @@ bool read_3MF(const std::string& filename,
   return true;
 }
 
+} // namespace IO
+
 #ifndef CGAL_NO_DEPRECATED_CODE
 
 /*!
   \ingroup PkgSurfaceMeshIOFuncDeprecated
-  \deprecated This function is deprecated since \cgal 5.2, `CGAL::read_3MF()` should be used instead.
+  \deprecated This function is deprecated since \cgal 5.2, `CGAL::IO::read_3MF()` should be used instead.
 */
 template<typename Point>
 CGAL_DEPRECATED int read_3mf(const std::string& filename, std::vector<CGAL::Surface_mesh<Point> >& output)
 {
-  return read_3MF(filename, output);
+  return IO::read_3MF(filename, output);
 }
 
 #endif // CGAL_NO_DEPRECATED_CODE

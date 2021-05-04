@@ -324,7 +324,7 @@ bool write_off_points(std::ostream& os, ///< output stream.
   \ingroup PkgPointSetProcessing3IODeprecated
 
   \deprecated This function is deprecated since \cgal 5.2,
-              \link PkgPointSetProcessing3IOOff `CGAL::write_OFF()` \endlink should be used instead.
+              \link PkgPointSetProcessing3IOOff `CGAL::IO::write_OFF()` \endlink should be used instead.
 */
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 CGAL_DEPRECATED bool write_off_points(std::ostream& os, const PointRange& points, const CGAL_BGL_NP_CLASS& np)

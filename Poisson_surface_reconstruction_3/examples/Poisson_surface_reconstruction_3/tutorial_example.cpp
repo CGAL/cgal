@@ -141,7 +141,7 @@ int main(int argc, char*argv[])
 
     std::ofstream f ("out.ply", std::ios_base::binary);
     CGAL::set_binary_mode (f);
-    CGAL::write_PLY(f, output_mesh);
+    CGAL::IO::write_PLY(f, output_mesh);
     f.close ();
 
     //! [Output poisson]

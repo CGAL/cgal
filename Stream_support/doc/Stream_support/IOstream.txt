@@ -448,7 +448,7 @@ See the reference manual of each data structure for more information.
 
 The functions above require the input to represent a 2-manifold surface (possibly with boundaries).
 If this is not the case, the package \ref PkgPolygonMeshProcessing offers the function
-\link PMP_IO_grp `CGAL::Polygon_mesh_processing::read_polygon_mesh()` \endlink
+\link PMP_IO_grp `CGAL::Polygon_mesh_processing::IO::read_polygon_mesh()` \endlink
 which can perform some combinatorial repairing to ensure the input data is a 2-manifold.
 
 \subsection IOstream2DGeo Simple 2D Geometry IO

@@ -63,7 +63,6 @@ public:
 };
 
 } // namespace internal
-} // namespace IO
 
 /*!
   \ingroup PkgBGLIoFuncsSTL
@@ -113,7 +112,7 @@ bool read_STL(std::istream& is,
   typedef typename boost::property_traits<VPM>::value_type                      Point;
   if(!is.good())
     return false;
-  IO::internal::STL_builder<Graph, Point> builder(is);
+  internal::STL_builder<Graph, Point> builder(is);
   return builder(g, np);
 }
 
@@ -264,7 +263,7 @@ bool write_STL(std::ostream& os,
 
   set_stream_precision_from_NP(os, np);
 
-  if(get_mode(os) == IO::BINARY)
+  if(get_mode(os) == BINARY)
   {
     os << "FileType: Binary                                                                ";
     const boost::uint32_t N32 = static_cast<boost::uint32_t>(faces(g).size());
@@ -385,6 +384,6 @@ bool write_STL(const std::string& fname, const Graph& g) { return write_STL(fnam
 
 /// \endcond
 
-} // namespace CGAL
+}} // namespace CGAL::IO
 
 #endif // CGAL_BGL_IO_STL_H

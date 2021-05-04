@@ -76,7 +76,6 @@ public:
 };
 
 } // namespace internal
-} // namespace IO
 
 /// \ingroup PkgBGLIoFuncsGOCAD
 ///
@@ -120,14 +119,14 @@ bool read_GOCAD(std::istream& is,
                 Graph& g,
                 const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-                , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+                , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
                 )
 {
   typedef typename CGAL::GetVertexPointMap<Graph, CGAL_BGL_NP_CLASS>::type     VPM;
   typedef typename boost::property_traits<VPM>::value_type                     Point;
 
-  IO::internal::GOCAD_builder<Graph, Point> builder(is);
+  internal::GOCAD_builder<Graph, Point> builder(is);
   if(!builder(g, np))
     return false;
 
@@ -141,14 +140,14 @@ bool read_GOCAD(std::istream& is,
 
 template <typename Graph>
 bool read_GOCAD(std::istream& is, std::pair<std::string, std::string>& name_and_color, Graph& g,
-                typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+                typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
   return read_GOCAD(is, name_and_color, g, parameters::all_default());
 }
 
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_GOCAD(std::istream& is, Graph& g, const CGAL_BGL_NP_CLASS& np,
-                typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+                typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
   std::pair<std::string, std::string> dummy;
   return read_GOCAD(is, dummy, g, np);
@@ -156,7 +155,7 @@ bool read_GOCAD(std::istream& is, Graph& g, const CGAL_BGL_NP_CLASS& np,
 
 template <typename Graph>
 bool read_GOCAD(std::istream& is, Graph& g,
-                typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+                typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
   return read_GOCAD(is, g, parameters::all_default());
 }
@@ -207,7 +206,7 @@ bool read_GOCAD(const std::string& fname,
                 Graph& g,
                 const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-                , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+                , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
                 )
 {
@@ -220,14 +219,14 @@ bool read_GOCAD(const std::string& fname,
 
 template <typename Graph>
 bool read_GOCAD(const std::string& fname, std::pair<std::string, std::string>& name_and_color, Graph& g,
-                typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+                typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
   return read_GOCAD(fname, name_and_color, g, parameters::all_default());
 }
 
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_GOCAD(const std::string& fname, Graph& g, const CGAL_BGL_NP_CLASS& np,
-                typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+                typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
   std::pair<std::string, std::string> dummy;
   return read_GOCAD(fname, dummy, g, np);
@@ -235,7 +234,7 @@ bool read_GOCAD(const std::string& fname, Graph& g, const CGAL_BGL_NP_CLASS& np,
 
 template <typename Graph>
 bool read_GOCAD(const std::string& fname, Graph& g,
-                typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+                typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
   return read_GOCAD(fname, g, parameters::all_default());
 }
@@ -284,7 +283,7 @@ bool write_GOCAD(std::ostream& os,
                  const Graph& g,
                  const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-                 , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+                 , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
                  )
 {
@@ -346,7 +345,7 @@ bool write_GOCAD(std::ostream& os,
 
 template <typename Graph>
 bool write_GOCAD(std::ostream& os, const char* name, const Graph& g,
-                 typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+                 typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
   return write_GOCAD(os, name, g, parameters::all_default());
 }
@@ -391,7 +390,7 @@ bool write_GOCAD(std::ostream& os,
                  const Graph& g,
                  const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-                 , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+                 , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
                  )
 {
@@ -402,7 +401,7 @@ bool write_GOCAD(std::ostream& os,
 
 template <typename Graph>
 bool write_GOCAD(std::ostream& os, const Graph& g,
-                 typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+                 typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
   return write_GOCAD(os, g, parameters::all_default());
 }
@@ -447,7 +446,7 @@ bool write_GOCAD(const std::string& fname,
                  const Graph& g,
                  const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-                 , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+                 , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
                  )
 {
@@ -461,13 +460,13 @@ bool write_GOCAD(const std::string& fname,
 
 template <typename Graph>
 bool write_GOCAD(const std::string& fname, const Graph& g,
-                 typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+                 typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
   return write_GOCAD(fname, g, parameters::all_default());
 }
 
 /// \endcond
 
-} // namespace CGAL
+}} // namespace CGAL::IO
 
 #endif // CGAL_BGL_IO_GOCAD_H

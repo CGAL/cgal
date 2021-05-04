@@ -102,7 +102,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
     // First try mesh
     std::string comments;
     Scene_surface_mesh_item* sm_item = new Scene_surface_mesh_item();
-    if (CGAL::read_PLY(in, *sm_item->face_graph(), comments))
+    if (CGAL::IO::read_PLY(in, *sm_item->face_graph(), comments))
     {
       if(sm_item->face_graph()->property_map<face_descriptor, int >("f:patch_id").second)
       {
@@ -129,10 +129,10 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
     // else try polygon soup
     std::vector<Kernel::Point_3> points;
     std::vector<std::vector<std::size_t> > polygons;
-    std::vector<CGAL::Color> fcolors;
-    std::vector<CGAL::Color> vcolors;
+    std::vector<CGAL::IO::Color> fcolors;
+    std::vector<CGAL::IO::Color> vcolors;
 
-    if (!(CGAL::read_PLY (in, points, polygons, fcolors, vcolors)))
+    if (!(CGAL::IO::read_PLY (in, points, polygons, fcolors, vcolors)))
     {
       QApplication::restoreOverrideCursor();
       ok = false;
@@ -227,7 +227,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   if (soup_item)
   {
     bool res =
-        CGAL::write_PLY (out, soup_item->points(), soup_item->polygons());
+        CGAL::IO::write_PLY (out, soup_item->points(), soup_item->polygons());
     if(res)
       items.pop_front();
     return res;
@@ -239,7 +239,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   if (sm_item)
   {
     bool res =
-        CGAL::write_PLY(out, *(sm_item->polyhedron()), sm_item->comments());
+        CGAL::IO::write_PLY(out, *(sm_item->polyhedron()), sm_item->comments());
     if(res)
       items.pop_front();
     return res;
@@ -251,7 +251,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   if (stm_item)
   {
     bool res =
-        CGAL::write_PLY(out, *(stm_item->textured_face_graph()));
+        CGAL::IO::write_PLY(out, *(stm_item->textured_face_graph()));
     if(res)
       items.pop_front();
     return res;

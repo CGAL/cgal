@@ -39,6 +39,7 @@
 #include <string>
 
 namespace CGAL {
+namespace IO {
 namespace internal {
 
 template <typename K>
@@ -127,7 +128,7 @@ bool read_multi_point_WKT(std::istream& in,
   if(!in.good())
     return false;
 
-  internal::Geometry_container<MultiPoint, boost::geometry::multi_point_tag> gc(mp);
+  CGAL::internal::Geometry_container<MultiPoint, boost::geometry::multi_point_tag> gc(mp);
   std::string line;
   while(std::getline(in, line))
   {
@@ -173,7 +174,7 @@ bool read_linestring_WKT(std::istream& in,
   if(!in.good())
     return false;
 
-  internal::Geometry_container<LineString, boost::geometry::linestring_tag> gc(polyline);
+  CGAL::internal::Geometry_container<LineString, boost::geometry::linestring_tag> gc(polyline);
   std::string line;
   while(std::getline(in, line))
   {
@@ -218,10 +219,10 @@ bool read_multi_linestring_WKT(std::istream& in,
     return false;
 
   typedef typename MultiLineString::value_type                                      PointRange;
-  typedef internal::Geometry_container<PointRange, boost::geometry::linestring_tag> LineString;
+  typedef CGAL::internal::Geometry_container<PointRange, boost::geometry::linestring_tag> LineString;
 
   std::vector<LineString> pr_range;
-  internal::Geometry_container<std::vector<LineString>, boost::geometry::multi_linestring_tag> gc(pr_range);
+  CGAL::internal::Geometry_container<std::vector<LineString>, boost::geometry::multi_linestring_tag> gc(pr_range);
   std::string line;
   while(std::getline(in, line))
   {
@@ -316,7 +317,7 @@ bool read_multi_polygon_WKT(std::istream& in,
   if(!in.good())
     return false;
 
-  internal::Geometry_container<MultiPolygon, boost::geometry::multi_polygon_tag> gc(polygons);
+  CGAL::internal::Geometry_container<MultiPolygon, boost::geometry::multi_polygon_tag> gc(polygons);
   std::string line;
   while(std::getline(in, line))
   {
@@ -336,7 +337,7 @@ bool read_multi_polygon_WKT(std::istream& in,
         return false;
       };
 
-      for(typename internal::Geometry_container<MultiPolygon, boost::geometry::multi_polygon_tag>::iterator it = gc.begin(); it != gc.end(); ++it)
+      for(typename CGAL::internal::Geometry_container<MultiPolygon, boost::geometry::multi_polygon_tag>::iterator it = gc.begin(); it != gc.end(); ++it)
         internal::pop_back_if_equal_to_front(*it);
 
       break;
@@ -402,7 +403,7 @@ std::ostream& write_linestring_WKT(std::ostream& out,
   if(!out.good())
     return out;
 
-  internal::Geometry_container<LineString, boost::geometry::linestring_tag> gc(ls);
+  CGAL::internal::Geometry_container<LineString, boost::geometry::linestring_tag> gc(ls);
   out << boost::geometry::wkt(gc) << std::endl;
   return out;
 }
@@ -423,7 +424,7 @@ std::ostream& write_multi_point_WKT(std::ostream& out,
   if(!out.good())
     return out;
 
-  internal::Geometry_container<MultiPoint, boost::geometry::multi_point_tag> gc(mp);
+  CGAL::internal::Geometry_container<MultiPoint, boost::geometry::multi_point_tag> gc(mp);
   out << boost::geometry::wkt(gc) << std::endl;
   return out;
 }
@@ -444,7 +445,7 @@ std::ostream& write_multi_polygon_WKT(std::ostream& out,
   if(!out.good())
     return out;
 
-  internal::Geometry_container<MultiPolygon, boost::geometry::multi_polygon_tag> gc(polygons);
+  CGAL::internal::Geometry_container<MultiPolygon, boost::geometry::multi_polygon_tag> gc(polygons);
   out << boost::geometry::wkt(gc) << std::endl;
   return out;
 }
@@ -457,7 +458,7 @@ std::ostream& write_multi_polygon_WKT(std::ostream& out,
 //!
 //! \attention Only Cartesian Kernels with double or float  as `FT` are supported.
 //!
-//! \see `CGAL::write_linestring_WKT()`
+//! \see `CGAL::IO::write_linestring_WKT()`
 template<typename MultiLineString>
 std::ostream& write_multi_linestring_WKT(std::ostream& out,
                                          MultiLineString& mls)
@@ -466,7 +467,7 @@ std::ostream& write_multi_linestring_WKT(std::ostream& out,
     return out;
 
   typedef typename MultiLineString::value_type                                      PointRange;
-  typedef internal::Geometry_container<PointRange, boost::geometry::linestring_tag> LineString;
+  typedef CGAL::internal::Geometry_container<PointRange, boost::geometry::linestring_tag> LineString;
 
   std::vector<LineString> pr_range;
   for(PointRange& pr : mls)
@@ -475,7 +476,7 @@ std::ostream& write_multi_linestring_WKT(std::ostream& out,
     pr_range.push_back(ls);
   }
 
-  internal::Geometry_container<std::vector<LineString>, boost::geometry::multi_linestring_tag> gc(pr_range);
+  CGAL::internal::Geometry_container<std::vector<LineString>, boost::geometry::multi_linestring_tag> gc(pr_range);
   out << boost::geometry::wkt(gc) << std::endl;
 
   return out;
@@ -492,7 +493,7 @@ std::ostream& write_multi_linestring_WKT(std::ostream& out,
 //!
 //! \attention Only Cartesian Kernels with double or float  as `FT` are supported.
 //!
-//! \see `CGAL::read_linestring_WKT()`
+//! \see `CGAL::IO::read_linestring_WKT()`
 template<typename MultiPoint,
          typename MultiLineString,
          typename MultiPolygon>
@@ -531,40 +532,40 @@ bool read_WKT(std::istream& is,
     if(type == "POINT")
     {
       Point p;
-      CGAL::read_point_WKT(is, p);
+      CGAL::IO::read_point_WKT(is, p);
       points.push_back(p);
     }
     else if(type == "LINESTRING")
     {
       LineString l;
-      CGAL::read_linestring_WKT(is, l);
+      CGAL::IO::read_linestring_WKT(is, l);
       polylines.push_back(l);
     }
     else if(type == "POLYGON")
     {
       Polygon p;
-      CGAL::read_polygon_WKT(is, p);
+      CGAL::IO::read_polygon_WKT(is, p);
       if(!p.outer_boundary().is_empty())
         polygons.push_back(p);
     }
     else if(type == "MULTIPOINT")
     {
       MultiPoint mp;
-      CGAL::read_multi_point_WKT(is, mp);
+      CGAL::IO::read_multi_point_WKT(is, mp);
       for(const Point& point : mp)
         points.push_back(point);
     }
     else if(type == "MULTILINESTRING")
     {
       MultiLineString mls;
-      CGAL::read_multi_linestring_WKT(is, mls);
+      CGAL::IO::read_multi_linestring_WKT(is, mls);
       for(const LineString& ls : mls)
         polylines.push_back(ls);
     }
     else if(type == "MULTIPOLYGON")
     {
       MultiPolygon mp;
-      CGAL::read_multi_polygon_WKT(is, mp);
+      CGAL::IO::read_multi_polygon_WKT(is, mp);
       for(const Polygon& poly : mp)
         polygons.push_back(poly);
     }
@@ -573,6 +574,8 @@ bool read_WKT(std::istream& is,
 
   return !is.fail();
 }
+
+} // namespace IO
 
 } // namespace CGAL
 

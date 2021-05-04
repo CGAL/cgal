@@ -186,7 +186,7 @@ public :
   }
 
   void addTriangle(const Tr::Bare_point& pa, const Tr::Bare_point& pb,
-                   const Tr::Bare_point& pc, const CGAL::Color color)
+                   const Tr::Bare_point& pc, const CGAL::IO::Color color)
   {
     const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
     Geom_traits::Vector_3 n = cross_product(pb - pa, pc - pa);
@@ -1323,7 +1323,7 @@ void Scene_c3t3_item_priv::computeIntersection(const Primitive& cell)
   const Tr::Bare_point& pc = wp2p(ch->vertex(2)->point());
   const Tr::Bare_point& pd = wp2p(ch->vertex(3)->point());
 
-  CGAL::Color color(UC(c.red()), UC(c.green()), UC(c.blue()));
+  CGAL::IO::Color color(UC(c.red()), UC(c.green()), UC(c.blue()));
 
   intersection->addTriangle(pb, pa, pc, color);
   intersection->addTriangle(pa, pb, pd, color);
@@ -1415,7 +1415,7 @@ void Scene_c3t3_item_priv::computeSpheres()
     typedef unsigned char UC;
     tr_vertices.push_back(*vit);
     spheres->add_sphere(Geom_traits::Sphere_3(center, radius),s_id++,
-                        CGAL::Color(UC(c.red()), UC(c.green()), UC(c.blue())));
+                        CGAL::IO::Color(UC(c.red()), UC(c.green()), UC(c.blue())));
 
   }
   spheres->invalidateOpenGLBuffers();

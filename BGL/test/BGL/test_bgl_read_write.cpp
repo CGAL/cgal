@@ -118,35 +118,35 @@ void test_bgl_OFF(const char* filename)
   // read with OFF
   Mesh fg;
   std::ifstream is(filename);
-  bool ok = CGAL::read_OFF(is, fg);
+  bool ok = CGAL::IO::read_OFF(is, fg);
   assert(ok);
   assert(num_vertices(fg) != 0 && num_faces(fg) != 0);
   is.close();
   fg.clear();
 
   is.open(filename, std::ios::binary);
-  ok = CGAL::read_OFF(is, fg);
+  ok = CGAL::IO::read_OFF(is, fg);
   assert(ok);
   assert(num_vertices(fg) != 0 && num_faces(fg) != 0);
   // write with OFF
   {
     std::ofstream os("tmp.off");
-    ok = CGAL::write_OFF(os, fg);
+    ok = CGAL::IO::write_OFF(os, fg);
     assert(ok);
 
     Mesh fg2;
-    ok = CGAL::read_OFF("tmp.off", fg2);
+    ok = CGAL::IO::read_OFF("tmp.off", fg2);
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
   }
 
   // write with PM
   {
-    ok = CGAL::write_polygon_mesh("tmp.obj.off", fg);
+    ok = CGAL::IO::write_polygon_mesh("tmp.obj.off", fg);
     assert(ok);
 
     Mesh fg2;
-    ok = CGAL::read_polygon_mesh("tmp.obj.off", fg2);
+    ok = CGAL::IO::read_polygon_mesh("tmp.obj.off", fg2);
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
   }
@@ -156,63 +156,63 @@ void test_bgl_OFF(const char* filename)
   typedef typename K::Point_2                                                                Point_2;
   typedef typename K::Vector_3                                                               Vector;
   typedef typename boost::property_map<Mesh, CGAL::dynamic_vertex_property_t<Vector> >::type VertexNormalMap;
-  typedef typename boost::property_map<Mesh, CGAL::dynamic_vertex_property_t<CGAL::Color> >::type VertexColorMap;
+  typedef typename boost::property_map<Mesh, CGAL::dynamic_vertex_property_t<CGAL::IO::Color> >::type VertexColorMap;
   typedef typename boost::property_map<Mesh, CGAL::dynamic_vertex_property_t<Point_2> >::type VertexTextureMap;
-  typedef typename boost::property_map<Mesh, CGAL::dynamic_face_property_t<CGAL::Color> >::type FaceColorMap;
+  typedef typename boost::property_map<Mesh, CGAL::dynamic_face_property_t<CGAL::IO::Color> >::type FaceColorMap;
 
   // COFF
   {
     CGAL::clear(fg);
-    VertexColorMap vcm = get(CGAL::dynamic_vertex_property_t<CGAL::Color>(), fg);
-    FaceColorMap fcm = get(CGAL::dynamic_face_property_t<CGAL::Color>(), fg);
+    VertexColorMap vcm = get(CGAL::dynamic_vertex_property_t<CGAL::IO::Color>(), fg);
+    FaceColorMap fcm = get(CGAL::dynamic_face_property_t<CGAL::IO::Color>(), fg);
 
-    ok = CGAL::read_OFF("data/mesh_with_colors.off", fg, CGAL::parameters::vertex_color_map(vcm)
-                                                                          .face_color_map(fcm));
+    ok = CGAL::IO::read_OFF("data/mesh_with_colors.off", fg, CGAL::parameters::vertex_color_map(vcm)
+                                                                              .face_color_map(fcm));
     assert(ok);
     assert(num_vertices(fg) == 8 && num_faces(fg) == 4);
 
     for(auto v : vertices(fg))
-      assert(get(vcm, v) != CGAL::Color());
+      assert(get(vcm, v) != CGAL::IO::Color());
 
     for(auto f : faces(fg))
-      assert(get(fcm, f) != CGAL::Color());
+      assert(get(fcm, f) != CGAL::IO::Color());
 
     // write with OFF
     {
-      ok = CGAL::write_OFF("tmp.off", fg, CGAL::parameters::vertex_color_map(vcm)
-                                                           .face_color_map(fcm));
+      ok = CGAL::IO::write_OFF("tmp.off", fg, CGAL::parameters::vertex_color_map(vcm)
+                                                               .face_color_map(fcm));
       assert(ok);
 
       Mesh fg2;
-      VertexColorMap vcm2 = get(CGAL::dynamic_vertex_property_t<CGAL::Color>(), fg2);
-      FaceColorMap fcm2 = get(CGAL::dynamic_face_property_t<CGAL::Color>(), fg2);
+      VertexColorMap vcm2 = get(CGAL::dynamic_vertex_property_t<CGAL::IO::Color>(), fg2);
+      FaceColorMap fcm2 = get(CGAL::dynamic_face_property_t<CGAL::IO::Color>(), fg2);
 
-      ok = CGAL::read_polygon_mesh("tmp.off", fg2, CGAL::parameters::vertex_color_map(vcm2)
-                                                                    .face_color_map(fcm2));
+      ok = CGAL::IO::read_polygon_mesh("tmp.off", fg2, CGAL::parameters::vertex_color_map(vcm2)
+                                                                        .face_color_map(fcm2));
       assert(ok);
       assert(are_equal_meshes(fg, fg2));
 
       for(auto v : vertices(fg2))
-        assert(get(vcm2, v) != CGAL::Color());
+        assert(get(vcm2, v) != CGAL::IO::Color());
 
       for(auto f : faces(fg2))
-        assert(get(fcm2, f) != CGAL::Color());
+        assert(get(fcm2, f) != CGAL::IO::Color());
     }
 
     // write with PM
     {
-      ok = CGAL::write_polygon_mesh("tmp.off", fg, CGAL::parameters::vertex_color_map(vcm));
+      ok = CGAL::IO::write_polygon_mesh("tmp.off", fg, CGAL::parameters::vertex_color_map(vcm));
       assert(ok);
 
       Mesh fg2;
-      VertexColorMap vcm2 = get(CGAL::dynamic_vertex_property_t<CGAL::Color>(), fg2);
+      VertexColorMap vcm2 = get(CGAL::dynamic_vertex_property_t<CGAL::IO::Color>(), fg2);
 
-      ok = CGAL::read_polygon_mesh("tmp.off", fg2, CGAL::parameters::vertex_color_map(vcm2));
+      ok = CGAL::IO::read_polygon_mesh("tmp.off", fg2, CGAL::parameters::vertex_color_map(vcm2));
       assert(ok);
       assert(are_equal_meshes(fg, fg2));
 
       for(auto v : vertices(fg2))
-        assert(get(vcm2, v) != CGAL::Color());
+        assert(get(vcm2, v) != CGAL::IO::Color());
     }
   }
 
@@ -221,7 +221,7 @@ void test_bgl_OFF(const char* filename)
     CGAL::clear(fg);
     VertexNormalMap vnm = get(CGAL::dynamic_vertex_property_t<Vector>(), fg);
 
-    ok = CGAL::read_OFF("data/mesh_with_normals.off", fg, CGAL::parameters::vertex_normal_map(vnm));
+    ok = CGAL::IO::read_OFF("data/mesh_with_normals.off", fg, CGAL::parameters::vertex_normal_map(vnm));
     assert(ok);
 
     for(auto v : vertices(fg))
@@ -230,13 +230,13 @@ void test_bgl_OFF(const char* filename)
     // write with OFF
     {
       std::ofstream os("tmp.off");
-      ok = CGAL::write_OFF("tmp.off", fg, CGAL::parameters::vertex_normal_map(vnm));
+      ok = CGAL::IO::write_OFF("tmp.off", fg, CGAL::parameters::vertex_normal_map(vnm));
       assert(ok);
 
       Mesh fg2;
       VertexNormalMap vnm2 = get(CGAL::dynamic_vertex_property_t<Vector>(), fg2);
 
-      ok = CGAL::read_polygon_mesh("tmp.off", fg2, CGAL::parameters::vertex_normal_map(vnm2));
+      ok = CGAL::IO::read_polygon_mesh("tmp.off", fg2, CGAL::parameters::vertex_normal_map(vnm2));
       assert(ok);
       assert(are_equal_meshes(fg, fg2));
 
@@ -246,13 +246,13 @@ void test_bgl_OFF(const char* filename)
 
     // write with PM
     {
-      ok = CGAL::write_polygon_mesh("tmp.off", fg, CGAL::parameters::vertex_normal_map(vnm));
+      ok = CGAL::IO::write_polygon_mesh("tmp.off", fg, CGAL::parameters::vertex_normal_map(vnm));
       assert(ok);
 
       Mesh fg2;
       VertexNormalMap vnm2 = get(CGAL::dynamic_vertex_property_t<Vector>(), fg2);
 
-      ok = CGAL::read_polygon_mesh("tmp.off", fg2, CGAL::parameters::vertex_normal_map(vnm2));
+      ok = CGAL::IO::read_polygon_mesh("tmp.off", fg2, CGAL::parameters::vertex_normal_map(vnm2));
       assert(ok);
       assert(are_equal_meshes(fg, fg2));
 
@@ -267,121 +267,121 @@ void test_bgl_OFF(const char* filename)
     std::ifstream is("data/full.off", std::ios::binary);
 
     VertexNormalMap vnm2 = get(CGAL::dynamic_vertex_property_t<Vector>(), fg);
-    VertexColorMap vcm2 = get(CGAL::dynamic_vertex_property_t<CGAL::Color>(), fg);
+    VertexColorMap vcm2 = get(CGAL::dynamic_vertex_property_t<CGAL::IO::Color>(), fg);
     VertexTextureMap vtm2 = get(CGAL::dynamic_vertex_property_t<Point_2>(), fg);
-    FaceColorMap fcm2 = get(CGAL::dynamic_face_property_t<CGAL::Color>(), fg);
+    FaceColorMap fcm2 = get(CGAL::dynamic_face_property_t<CGAL::IO::Color>(), fg);
 
-    ok = CGAL::read_OFF(is, fg, CGAL::parameters::vertex_normal_map(vnm2)
-                                                 .vertex_color_map(vcm2)
-                                                 .vertex_texture_map(vtm2)
-                                                 .face_color_map(fcm2));
+    ok = CGAL::IO::read_OFF(is, fg, CGAL::parameters::vertex_normal_map(vnm2)
+                                                     .vertex_color_map(vcm2)
+                                                     .vertex_texture_map(vtm2)
+                                                     .face_color_map(fcm2));
     assert(ok);
     assert(num_vertices(fg) != 0 && num_faces(fg) != 0);
 
     for(auto v : vertices(fg))
     {
       assert(get(vnm2, v) != CGAL::NULL_VECTOR);
-      assert(get(vcm2, v) != CGAL::Color());
+      assert(get(vcm2, v) != CGAL::IO::Color());
     }
 
     for(auto f : faces(fg))
-      assert(get(fcm2, f) != CGAL::Color());
+      assert(get(fcm2, f) != CGAL::IO::Color());
     fg.clear();
     is.close();
 
     is.open("data/full.off");
     VertexNormalMap vnm = get(CGAL::dynamic_vertex_property_t<Vector>(), fg);
-    VertexColorMap vcm = get(CGAL::dynamic_vertex_property_t<CGAL::Color>(), fg);
+    VertexColorMap vcm = get(CGAL::dynamic_vertex_property_t<CGAL::IO::Color>(), fg);
     VertexTextureMap vtm = get(CGAL::dynamic_vertex_property_t<Point_2>(), fg);
-    FaceColorMap fcm = get(CGAL::dynamic_face_property_t<CGAL::Color>(), fg);
-    ok = CGAL::read_OFF(is, fg, CGAL::parameters::vertex_normal_map(vnm)
-                                                 .vertex_color_map(vcm)
-                                                 .vertex_texture_map(vtm)
-                                                 .face_color_map(fcm));
+    FaceColorMap fcm = get(CGAL::dynamic_face_property_t<CGAL::IO::Color>(), fg);
+    ok = CGAL::IO::read_OFF(is, fg, CGAL::parameters::vertex_normal_map(vnm)
+                                                     .vertex_color_map(vcm)
+                                                     .vertex_texture_map(vtm)
+                                                     .face_color_map(fcm));
     assert(ok);
     assert(num_vertices(fg) != 0 && num_faces(fg) != 0);
 
     for(auto v : vertices(fg))
     {
       assert(get(vnm, v) != CGAL::NULL_VECTOR);
-      assert(get(vcm, v) != CGAL::Color());
+      assert(get(vcm, v) != CGAL::IO::Color());
     }
     // write with OFF
     {
       std::ofstream os("tmp.off");
-      ok = CGAL::write_OFF("tmp.off", fg, CGAL::parameters::vertex_normal_map(vnm)
-                                                           .vertex_color_map(vcm)
-                                                           .vertex_texture_map(vtm)
-                                                           .face_color_map(fcm));
+      ok = CGAL::IO::write_OFF("tmp.off", fg, CGAL::parameters::vertex_normal_map(vnm)
+                                                               .vertex_color_map(vcm)
+                                                               .vertex_texture_map(vtm)
+                                                               .face_color_map(fcm));
       assert(ok);
 
       Mesh fg2;
       VertexNormalMap vnm2 = get(CGAL::dynamic_vertex_property_t<Vector>(), fg2);
-      VertexColorMap vcm2 = get(CGAL::dynamic_vertex_property_t<CGAL::Color>(), fg2);
+      VertexColorMap vcm2 = get(CGAL::dynamic_vertex_property_t<CGAL::IO::Color>(), fg2);
       VertexTextureMap vtm2 = get(CGAL::dynamic_vertex_property_t<Point_2>(), fg2);
-      FaceColorMap fcm2 = get(CGAL::dynamic_face_property_t<CGAL::Color>(), fg2);
+      FaceColorMap fcm2 = get(CGAL::dynamic_face_property_t<CGAL::IO::Color>(), fg2);
 
-      ok = CGAL::read_polygon_mesh("tmp.off", fg2, CGAL::parameters::vertex_normal_map(vnm2)
-                                                                    .vertex_color_map(vcm2)
-                                                                    .vertex_texture_map(vtm2)
-                                                                    .face_color_map(fcm2));
+      ok = CGAL::IO::read_polygon_mesh("tmp.off", fg2, CGAL::parameters::vertex_normal_map(vnm2)
+                                                                        .vertex_color_map(vcm2)
+                                                                        .vertex_texture_map(vtm2)
+                                                                        .face_color_map(fcm2));
       assert(ok);
       assert(are_equal_meshes(fg, fg2));
 
       for(auto v : vertices(fg2))
       {
         assert(get(vnm2, v) != CGAL::NULL_VECTOR);
-        assert(get(vcm2, v) != CGAL::Color());
+        assert(get(vcm2, v) != CGAL::IO::Color());
       }
 
       for(auto f : faces(fg2))
-        assert(get(fcm2, f) != CGAL::Color());
+        assert(get(fcm2, f) != CGAL::IO::Color());
     }
 
     // write with PM
     {
-      ok = CGAL::write_polygon_mesh("tmp.off", fg, CGAL::parameters::vertex_normal_map(vnm)
-                                    .vertex_color_map(vcm)
-                                    .vertex_texture_map(vtm)
-                                    .face_color_map(fcm));
+      ok = CGAL::IO::write_polygon_mesh("tmp.off", fg, CGAL::parameters::vertex_normal_map(vnm)
+                                                                        .vertex_color_map(vcm)
+                                                                        .vertex_texture_map(vtm)
+                                                                        .face_color_map(fcm));
       assert(ok);
 
       Mesh fg2;
       VertexNormalMap vnm2 = get(CGAL::dynamic_vertex_property_t<Vector>(), fg2);
-      VertexColorMap vcm2 = get(CGAL::dynamic_vertex_property_t<CGAL::Color>(), fg2);
+      VertexColorMap vcm2 = get(CGAL::dynamic_vertex_property_t<CGAL::IO::Color>(), fg2);
       VertexTextureMap vtm2 = get(CGAL::dynamic_vertex_property_t<Point_2>(), fg2);
-      FaceColorMap fcm2 = get(CGAL::dynamic_face_property_t<CGAL::Color>(), fg2);
+      FaceColorMap fcm2 = get(CGAL::dynamic_face_property_t<CGAL::IO::Color>(), fg2);
 
-      ok = CGAL::read_polygon_mesh("tmp.off", fg2, CGAL::parameters::vertex_normal_map(vnm2)
-                                                                    .vertex_color_map(vcm2)
-                                                                    .vertex_texture_map(vtm2)
-                                                                    .face_color_map(fcm2));
+      ok = CGAL::IO::read_polygon_mesh("tmp.off", fg2, CGAL::parameters::vertex_normal_map(vnm2)
+                                                                        .vertex_color_map(vcm2)
+                                                                        .vertex_texture_map(vtm2)
+                                                                        .face_color_map(fcm2));
       assert(ok);
       assert(are_equal_meshes(fg, fg2));
 
       for(auto v : vertices(fg2))
       {
         assert(get(vnm2, v) != CGAL::NULL_VECTOR);
-        assert(get(vcm2, v) != CGAL::Color());
+        assert(get(vcm2, v) != CGAL::IO::Color());
       }
 
       for(auto f : faces(fg2))
-        assert(get(fcm2, f) != CGAL::Color());
+        assert(get(fcm2, f) != CGAL::IO::Color());
     }
   }
   //@todo test multi objects in a single file
 
   // test wrong inputs
   std::cerr << " ########### Error text is expected to follow." << std::endl;
-  ok = CGAL::read_OFF("data/mesh_that_doesnt_exist.off", fg);
+  ok = CGAL::IO::read_OFF("data/mesh_that_doesnt_exist.off", fg);
   assert(!ok);
-  ok = CGAL::read_OFF("data/invalid_cut.off", fg); // cut in half
+  ok = CGAL::IO::read_OFF("data/invalid_cut.off", fg); // cut in half
   assert(!ok);
-  ok = CGAL::read_OFF("data/invalid_nv.off", fg); // wrong number of points
+  ok = CGAL::IO::read_OFF("data/invalid_nv.off", fg); // wrong number of points
   assert(!ok);
-  ok = CGAL::read_OFF("data/sphere.obj", fg);
+  ok = CGAL::IO::read_OFF("data/sphere.obj", fg);
   assert(!ok);
-  ok = CGAL::read_OFF("data/pig.stl", fg);
+  ok = CGAL::IO::read_OFF("data/pig.stl", fg);
   assert(!ok);
   std::cerr << " ########### No more error text from here." << std::endl;
 }
@@ -394,72 +394,72 @@ void test_bgl_OBJ(const std::string filename)
   Mesh fg;
 
   std::ifstream is(filename);
-  bool ok = CGAL::read_OBJ(is, fg, CGAL::parameters::verbose(true));
+  bool ok = CGAL::IO::read_OBJ(is, fg, CGAL::parameters::verbose(true));
   assert(ok);
   assert(filename != "data/sphere.obj" || (num_vertices(fg) == 272 && num_faces(fg) == 540));
 
   // write with OBJ
   {
     std::ofstream os("tmp.obj");
-    ok = CGAL::write_OBJ(os, fg);
+    ok = CGAL::IO::write_OBJ(os, fg);
     assert(ok);
 
     Mesh fg2;
-    ok = CGAL::read_OBJ("tmp.obj", fg2);
+    ok = CGAL::IO::read_OBJ("tmp.obj", fg2);
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
   }
 
   // write with PM
   {
-    ok = CGAL::write_polygon_mesh("tmp.obj", fg);
+    ok = CGAL::IO::write_polygon_mesh("tmp.obj", fg);
     assert(ok);
 
     Mesh fg2;
-    ok = CGAL::read_polygon_mesh("tmp.obj", fg2);
+    ok = CGAL::IO::read_polygon_mesh("tmp.obj", fg2);
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
   }
 
   // Test NPs
   CGAL::clear(fg);
-  ok = CGAL::read_OBJ("data/sphere.obj", fg);
+  ok = CGAL::IO::read_OBJ("data/sphere.obj", fg);
   assert(ok);
   assert(num_vertices(fg) == 272 && num_faces(fg) == 540);
 
   // write with OBJ
   {
     std::ofstream os("tmp.obj");
-    ok = CGAL::write_OBJ("tmp.obj", fg);
+    ok = CGAL::IO::write_OBJ("tmp.obj", fg);
     assert(ok);
 
     Mesh fg2;
-    ok = CGAL::read_polygon_mesh("tmp.obj", fg2);
+    ok = CGAL::IO::read_polygon_mesh("tmp.obj", fg2);
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
   }
 
   // write with PM
   {
-    ok = CGAL::write_polygon_mesh("tmp.obj", fg);
+    ok = CGAL::IO::write_polygon_mesh("tmp.obj", fg);
     assert(ok);
 
     Mesh fg2;
 
-    ok = CGAL::read_polygon_mesh("tmp.obj", fg2);
+    ok = CGAL::IO::read_polygon_mesh("tmp.obj", fg2);
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
   }
 
   // test wrong inputs
   std::cerr << " ########### Error text is expected to follow." << std::endl;
-  ok = CGAL::read_OBJ("data/mesh_that_doesnt_exist.obj", fg);
+  ok = CGAL::IO::read_OBJ("data/mesh_that_doesnt_exist.obj", fg);
   assert(!ok);
-  ok = CGAL::read_OBJ("data/invalid_cut.obj", fg); // invalid vertex ids
+  ok = CGAL::IO::read_OBJ("data/invalid_cut.obj", fg); // invalid vertex ids
   assert(!ok);
-  ok = CGAL::read_OBJ("data/genus3.off", fg); // wrong extension
+  ok = CGAL::IO::read_OBJ("data/genus3.off", fg); // wrong extension
   assert(!ok);
-  ok = CGAL::read_OBJ("data/pig.stl", fg);
+  ok = CGAL::IO::read_OBJ("data/pig.stl", fg);
   assert(!ok);
   std::cerr << " ########### No more error text from here." << std::endl;
 }
@@ -472,7 +472,7 @@ void test_bgl_PLY(const std::string filename,
 
   Mesh fg;
   std::ifstream is(filename);
-  bool ok = CGAL::read_PLY(is, fg, CGAL::parameters::use_binary_mode(false));
+  bool ok = CGAL::IO::read_PLY(is, fg, CGAL::parameters::use_binary_mode(false));
   is.close();
   assert(ok);
   assert(filename != "data/colored_tetra.ply" || (num_vertices(fg) == 4 && num_faces(fg) == 4));
@@ -480,7 +480,7 @@ void test_bgl_PLY(const std::string filename,
    {
      fg.clear();
      is.open(filename, std::ios::binary);
-     bool ok = CGAL::read_PLY(is, fg, CGAL::parameters::use_binary_mode(false));
+     bool ok = CGAL::IO::read_PLY(is, fg, CGAL::parameters::use_binary_mode(false));
      is.close();
      assert(ok);
      assert(filename != "data/colored_tetra.ply" || (num_vertices(fg) == 4 && num_faces(fg) == 4));
@@ -499,51 +499,51 @@ void test_bgl_PLY(const std::string filename,
       os.open("tmp.ply");
     }
 
-    ok = CGAL::write_PLY(os, fg);
+    ok = CGAL::IO::write_PLY(os, fg);
     assert(ok);
 
-    ok = CGAL::write_PLY(os, fg, "test");
+    ok = CGAL::IO::write_PLY(os, fg, "test");
     assert(ok);
 
     Mesh fg2;
-    ok = CGAL::read_PLY("tmp.ply", fg2);
+    ok = CGAL::IO::read_PLY("tmp.ply", fg2);
 
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
   }
 
   // test NPs
-  typedef typename boost::property_map<Mesh, CGAL::dynamic_vertex_property_t<CGAL::Color> >::type VertexColorMap;
-  typedef typename boost::property_map<Mesh, CGAL::dynamic_face_property_t<CGAL::Color> >::type FaceColorMap;
+  typedef typename boost::property_map<Mesh, CGAL::dynamic_vertex_property_t<CGAL::IO::Color> >::type VertexColorMap;
+  typedef typename boost::property_map<Mesh, CGAL::dynamic_face_property_t<CGAL::IO::Color> >::type FaceColorMap;
 
   CGAL::clear(fg);
-  VertexColorMap vcm = get(CGAL::dynamic_vertex_property_t<CGAL::Color>(), fg);
-  FaceColorMap fcm = get(CGAL::dynamic_face_property_t<CGAL::Color>(), fg);
+  VertexColorMap vcm = get(CGAL::dynamic_vertex_property_t<CGAL::IO::Color>(), fg);
+  FaceColorMap fcm = get(CGAL::dynamic_face_property_t<CGAL::IO::Color>(), fg);
 
   std::ifstream is_c("data/colored_tetra.ply"); // ASCII
-  ok = CGAL::read_PLY(is_c, fg, CGAL::parameters::vertex_color_map(vcm)
-                                                 .face_color_map(fcm));
+  ok = CGAL::IO::read_PLY(is_c, fg, CGAL::parameters::vertex_color_map(vcm)
+                                                    .face_color_map(fcm));
   assert(ok);
   assert(num_vertices(fg) == 4 && num_faces(fg) == 4);
 
   for(auto v : vertices(fg))
   {
-    assert(get(vcm, v) != CGAL::Color());
+    assert(get(vcm, v) != CGAL::IO::Color());
   }
 
   for(auto f : faces(fg))
-    assert(get(fcm, f) != CGAL::Color());
+    assert(get(fcm, f) != CGAL::IO::Color());
 
   // write with PLY
   {
-    ok = CGAL::write_PLY("tmp.ply", fg, CGAL::parameters::vertex_color_map(vcm)
-                                                         .face_color_map(fcm)
-                                                         .use_binary_mode(binary));
+    ok = CGAL::IO::write_PLY("tmp.ply", fg, CGAL::parameters::vertex_color_map(vcm)
+                                                             .face_color_map(fcm)
+                                                             .use_binary_mode(binary));
     assert(ok);
 
     Mesh fg2;
-    VertexColorMap vcm2 = get(CGAL::dynamic_vertex_property_t<CGAL::Color>(), fg2);
-    FaceColorMap fcm2 = get(CGAL::dynamic_face_property_t<CGAL::Color>(), fg2);
+    VertexColorMap vcm2 = get(CGAL::dynamic_vertex_property_t<CGAL::IO::Color>(), fg2);
+    FaceColorMap fcm2 = get(CGAL::dynamic_face_property_t<CGAL::IO::Color>(), fg2);
 
     std::ifstream is_rpm;
     if(binary)
@@ -555,57 +555,57 @@ void test_bgl_PLY(const std::string filename,
     {
       is_rpm.open("tmp.ply");
     }
-    ok = CGAL::read_PLY(is_rpm, fg2, CGAL::parameters::vertex_color_map(vcm2)
-                                                      .face_color_map(fcm2));
+    ok = CGAL::IO::read_PLY(is_rpm, fg2, CGAL::parameters::vertex_color_map(vcm2)
+                                                          .face_color_map(fcm2));
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
 
     // @tmp
 //    for(auto v : vertices(fg2))
-//      assert(get(vcm2, v) != CGAL::Color());
+//      assert(get(vcm2, v) != CGAL::IO::Color());
 
 //    for(auto f : faces(fg2))
-//      assert(get(fcm2, f) != CGAL::Color());
+//      assert(get(fcm2, f) != CGAL::IO::Color());
   }
 
   // write with PM
   {
-    ok = CGAL::write_polygon_mesh("tmp.ply", fg, CGAL::parameters::vertex_color_map(vcm)
-                                                                  .face_color_map(fcm)
-                                                                  .use_binary_mode(binary));
+    ok = CGAL::IO::write_polygon_mesh("tmp.ply", fg, CGAL::parameters::vertex_color_map(vcm)
+                                                                      .face_color_map(fcm)
+                                                                      .use_binary_mode(binary));
     assert(ok);
 
     Mesh fg2;
-    VertexColorMap vcm2 = get(CGAL::dynamic_vertex_property_t<CGAL::Color>(), fg2);
-    FaceColorMap fcm2 = get(CGAL::dynamic_face_property_t<CGAL::Color>(), fg2);
+    VertexColorMap vcm2 = get(CGAL::dynamic_vertex_property_t<CGAL::IO::Color>(), fg2);
+    FaceColorMap fcm2 = get(CGAL::dynamic_face_property_t<CGAL::IO::Color>(), fg2);
 
-    ok = CGAL::read_polygon_mesh("tmp.ply", fg2, CGAL::parameters::vertex_color_map(vcm2)
-                                                                  .face_color_map(fcm2)
-                                                                  .use_binary_mode(binary));
+    ok = CGAL::IO::read_polygon_mesh("tmp.ply", fg2, CGAL::parameters::vertex_color_map(vcm2)
+                                                                      .face_color_map(fcm2)
+                                                                      .use_binary_mode(binary));
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
 
     // @tmp
 //    for(auto v : vertices(fg2))
-//      assert(get(vcm2, v) != CGAL::Color());
+//      assert(get(vcm2, v) != CGAL::IO::Color());
 
 //    for(auto f : faces(fg2))
-//      assert(get(fcm2, f) != CGAL::Color());
+//      assert(get(fcm2, f) != CGAL::IO::Color());
   }
 
   // test wrong inputs
   std::cerr << " ########### Error text is expected to follow." << std::endl;
-  ok = CGAL::read_PLY("data/mesh_that_doesnt_exist.ply", fg);
+  ok = CGAL::IO::read_PLY("data/mesh_that_doesnt_exist.ply", fg);
   assert(!ok);
-  ok = CGAL::read_PLY("data/invalid_cut.ply", fg); // cut in half
+  ok = CGAL::IO::read_PLY("data/invalid_cut.ply", fg); // cut in half
   assert(!ok);
-  ok = CGAL::read_PLY("data/invalid_nv.ply", fg); // broken formatting
+  ok = CGAL::IO::read_PLY("data/invalid_nv.ply", fg); // broken formatting
   assert(!ok);
-  ok = CGAL::read_PLY("data/binary_cut.ply", fg); // broken binary
+  ok = CGAL::IO::read_PLY("data/binary_cut.ply", fg); // broken binary
   assert(!ok);
-  ok = CGAL::read_PLY("data/cube.off", fg);
+  ok = CGAL::IO::read_PLY("data/cube.off", fg);
   assert(!ok);
-  ok = CGAL::read_PLY("data/pig.stl", fg);
+  ok = CGAL::IO::read_PLY("data/pig.stl", fg);
   assert(!ok);
   std::cerr << " ########### No more error text from here." << std::endl;
 }
@@ -635,18 +635,18 @@ void test_bgl_STL(const std::string filename)
 {
   Mesh fg;
 
-  bool ok = CGAL::read_STL(filename, fg);
+  bool ok = CGAL::IO::read_STL(filename, fg);
   assert(ok);
-  ok = CGAL::write_STL("tmp.stl", fg);
+  ok = CGAL::IO::write_STL("tmp.stl", fg);
   assert(ok);
 
   // write with ASCII in binary mode
   {
-    ok = CGAL::write_polygon_mesh("ascii.stl", fg, CGAL::parameters::use_binary_mode(false));
+    ok = CGAL::IO::write_polygon_mesh("ascii.stl", fg, CGAL::parameters::use_binary_mode(false));
     assert(ok);
     std::ifstream test_ascii("ascii.stl", std::ios::binary);
     Mesh fg2;
-    ok = CGAL::read_STL(test_ascii, fg2, CGAL::parameters::use_binary_mode(false));
+    ok = CGAL::IO::read_STL(test_ascii, fg2, CGAL::parameters::use_binary_mode(false));
     test_ascii.close();
     assert(ok);
     assert(num_vertices(fg) == num_vertices(fg2) && num_faces(fg) == num_faces(fg2));
@@ -659,7 +659,7 @@ void test_bgl_STL(const std::string filename)
 
   std::ifstream is(filename, std::ios::binary);
   CGAL::set_mode(is, CGAL::IO::BINARY);
-  ok = CGAL::read_STL(is, fg, CGAL::parameters::vertex_point_map(cvpm));
+  ok = CGAL::IO::read_STL(is, fg, CGAL::parameters::vertex_point_map(cvpm));
   assert(ok);
   assert(filename != "data/pig.stl" || (num_vertices(fg) == 8642 && num_faces(fg) == 16848));
   assert(filename != "data/pig.stl" || cpoints.size() == 8642);
@@ -667,36 +667,36 @@ void test_bgl_STL(const std::string filename)
   // write with STL
   {
     std::ofstream os("tmp.stl");
-    ok = CGAL::write_STL(os, fg, CGAL::parameters::vertex_point_map(cvpm));
+    ok = CGAL::IO::write_STL(os, fg, CGAL::parameters::vertex_point_map(cvpm));
     assert(ok);
 
     Mesh fg2;
-    ok = CGAL::read_STL("tmp.stl", fg2, CGAL::parameters::vertex_point_map(cvpm));
+    ok = CGAL::IO::read_STL("tmp.stl", fg2, CGAL::parameters::vertex_point_map(cvpm));
     assert(ok);
     assert(num_vertices(fg) == num_vertices(fg2) && num_faces(fg) == num_faces(fg2));
   }
 
   // write with PM
   {
-    ok = CGAL::write_polygon_mesh("tmp.stl", fg, CGAL::parameters::vertex_point_map(cvpm));
+    ok = CGAL::IO::write_polygon_mesh("tmp.stl", fg, CGAL::parameters::vertex_point_map(cvpm));
     assert(ok);
     cpoints.clear();
     Mesh fg2;
-    ok = CGAL::read_polygon_mesh("tmp.stl", fg2, CGAL::parameters::vertex_point_map(cvpm));
+    ok = CGAL::IO::read_polygon_mesh("tmp.stl", fg2, CGAL::parameters::vertex_point_map(cvpm));
     assert(ok);
     assert(num_vertices(fg) == num_vertices(fg2) && num_faces(fg) == num_faces(fg2));
   }
 
   std::cerr << " ########### Error text is expected to follow." << std::endl;
-  ok = CGAL::read_STL("data/mesh_that_doesnt_exist.stl", fg);
+  ok = CGAL::IO::read_STL("data/mesh_that_doesnt_exist.stl", fg);
   assert(!ok);
-  ok = CGAL::read_STL("data/invalid_cut.stl", fg); // cut in half
+  ok = CGAL::IO::read_STL("data/invalid_cut.stl", fg); // cut in half
   assert(!ok);
-  ok = CGAL::read_STL("data/invalid_header.stl", fg); // missing solid
+  ok = CGAL::IO::read_STL("data/invalid_header.stl", fg); // missing solid
   assert(!ok);
-  ok = CGAL::read_STL("data/sphere.obj", fg);
+  ok = CGAL::IO::read_STL("data/sphere.obj", fg);
   assert(!ok);
-  ok = CGAL::read_STL("data/full.off", fg);
+  ok = CGAL::IO::read_STL("data/full.off", fg);
   assert(!ok);
   std::cerr << " ########### No more error text from here." << std::endl;
 }
@@ -706,7 +706,7 @@ void test_bgl_GOCAD(const char* filename)
 {
   Mesh fg;
   std::ifstream is(filename);
-  bool ok = CGAL::read_GOCAD(is, fg);
+  bool ok = CGAL::IO::read_GOCAD(is, fg);
   assert(ok);
   assert(num_vertices(fg) != 0 && num_faces(fg) != 0);
 
@@ -714,19 +714,19 @@ void test_bgl_GOCAD(const char* filename)
   fg.clear();
   CGAL::clear(fg);
   std::pair<std::string, std::string> name_and_color;
-  ok = CGAL::read_GOCAD(is, name_and_color, fg);
+  ok = CGAL::IO::read_GOCAD(is, name_and_color, fg);
   assert(ok);
   assert(num_vertices(fg) != 0 && num_faces(fg) != 0);
 
   // write with GOCAD
   {
     std::ofstream os("tmp.ts");
-    bool ok = CGAL::write_GOCAD(os, "tetrahedron", fg);
+    bool ok = CGAL::IO::write_GOCAD(os, "tetrahedron", fg);
     assert(ok);
 
     Mesh fg2;
     std::pair<std::string, std::string> cnn;
-    ok = CGAL::read_GOCAD("tmp.ts", cnn, fg2);
+    ok = CGAL::IO::read_GOCAD("tmp.ts", cnn, fg2);
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
     assert(cnn.first == "tetrahedron");
@@ -734,11 +734,11 @@ void test_bgl_GOCAD(const char* filename)
 
   // write with PM
   {
-    ok = CGAL::write_polygon_mesh("tmp.ts", fg, CGAL::parameters::stream_precision(10));
+    ok = CGAL::IO::write_polygon_mesh("tmp.ts", fg, CGAL::parameters::stream_precision(10));
     assert(ok);
 
     Mesh fg2;
-    ok = CGAL::read_polygon_mesh("tmp.ts", fg2);
+    ok = CGAL::IO::read_polygon_mesh("tmp.ts", fg2);
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
   }
@@ -749,7 +749,7 @@ void test_bgl_GOCAD(const char* filename)
   VertexPointMap vpm = get(CGAL::vertex_point, fg);
 
   std::ostringstream out;
-  ok = CGAL::write_GOCAD(out, "tetrahedron", fg, CGAL::parameters::vertex_point_map(vpm));
+  ok = CGAL::IO::write_GOCAD(out, "tetrahedron", fg, CGAL::parameters::vertex_point_map(vpm));
   assert(ok);
 
   {
@@ -757,7 +757,7 @@ void test_bgl_GOCAD(const char* filename)
     VertexPointMap vpm2 = get(CGAL::vertex_point, fg2);
     std::istringstream is(out.str());
     std::pair<std::string, std::string> cnn;
-    ok = CGAL::read_GOCAD(is, cnn, fg2, CGAL::parameters::vertex_point_map(vpm2));
+    ok = CGAL::IO::read_GOCAD(is, cnn, fg2, CGAL::parameters::vertex_point_map(vpm2));
     assert(ok);
     assert(cnn.second.empty());
     assert(num_vertices(fg2) == 12491);
@@ -765,15 +765,15 @@ void test_bgl_GOCAD(const char* filename)
   }
 
   std::cerr << " ########### Error text is expected to follow." << std::endl;
-  ok = CGAL::read_GOCAD("data/mesh_that_doesnt_exist.ts", fg);
+  ok = CGAL::IO::read_GOCAD("data/mesh_that_doesnt_exist.ts", fg);
   assert(!ok);
-  ok = CGAL::read_GOCAD("data/invalid_cut.ts", fg); // cut in half
+  ok = CGAL::IO::read_GOCAD("data/invalid_cut.ts", fg); // cut in half
   assert(!ok);
-  ok = CGAL::read_GOCAD("data/invalid_header.ts", fg); // missing header
+  ok = CGAL::IO::read_GOCAD("data/invalid_header.ts", fg); // missing header
   assert(!ok);
-  ok = CGAL::read_GOCAD("data/sphere.obj", fg);
+  ok = CGAL::IO::read_GOCAD("data/sphere.obj", fg);
   assert(!ok);
-  ok = CGAL::read_GOCAD("data/full.off", fg);
+  ok = CGAL::IO::read_GOCAD("data/full.off", fg);
   assert(!ok);
   std::cerr << " ########### No more error text from here." << std::endl;
 }
@@ -785,7 +785,7 @@ void test_bgl_VTP(const char* filename,
                   const bool binary = false)
 {
   Mesh fg;
-  bool ok = CGAL::read_VTP(filename, fg);
+  bool ok = CGAL::IO::read_VTP(filename, fg);
   assert(ok);
   assert(std::string(filename) != "data/bones.vtp" ||
          (num_vertices(fg) == 2154 && num_faces(fg) == 4204));
@@ -799,11 +799,11 @@ void test_bgl_VTP(const char* filename,
     }
     else
       os.open("tmp.vtp");
-    ok = CGAL::write_VTP(os, fg, CGAL::parameters::use_binary_mode(binary));
+    ok = CGAL::IO::write_VTP(os, fg, CGAL::parameters::use_binary_mode(binary));
     assert(ok);
 
     Mesh fg2;
-    ok = CGAL::read_VTP("tmp.vtp", fg2, CGAL::parameters::use_binary_mode(binary));
+    ok = CGAL::IO::read_VTP("tmp.vtp", fg2, CGAL::parameters::use_binary_mode(binary));
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
   }
@@ -811,13 +811,13 @@ void test_bgl_VTP(const char* filename,
   // write with PM
   {
     if(binary)
-      ok = CGAL::write_polygon_mesh("tmp.vtp", fg);
+      ok = CGAL::IO::write_polygon_mesh("tmp.vtp", fg);
     else
-      ok = CGAL::write_polygon_mesh("tmp.vtp", fg, CGAL::parameters::use_binary_mode(false));
+      ok = CGAL::IO::write_polygon_mesh("tmp.vtp", fg, CGAL::parameters::use_binary_mode(false));
     assert(ok);
 
     Mesh fg2;
-    ok = CGAL::read_polygon_mesh("tmp.vtp", fg2, CGAL::parameters::use_binary_mode(binary));
+    ok = CGAL::IO::read_polygon_mesh("tmp.vtp", fg2, CGAL::parameters::use_binary_mode(binary));
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
   }
@@ -828,14 +828,14 @@ void test_bgl_VTP(const char* filename,
   {
     CGAL::clear(fg);
 
-    ok = CGAL::read_VTP("data/bones.vtp", fg);
+    ok = CGAL::IO::read_VTP("data/bones.vtp", fg);
     assert(ok);
     assert(num_vertices(fg) == 2154 && num_faces(fg) == 4204);
 
     Mesh fg2;
 
     VertexPointMap vpm2 = get(CGAL::dynamic_vertex_property_t<Point>(), fg2);
-    ok = CGAL::read_VTP("data/bones.vtp", fg2, CGAL::parameters::vertex_point_map(vpm2));
+    ok = CGAL::IO::read_VTP("data/bones.vtp", fg2, CGAL::parameters::vertex_point_map(vpm2));
     assert(ok);
     typedef typename CGAL::GetInitializedVertexIndexMap<Mesh>::const_type      VIM;
     VIM vim1 = CGAL::get_initialized_vertex_index_map(fg);
@@ -855,12 +855,12 @@ void test_bgl_VTP(const char* filename,
     {
       os.open("tmp.vtp");
     }
-    ok = CGAL::write_VTP(os, fg, CGAL::parameters::use_binary_mode(binary));
+    ok = CGAL::IO::write_VTP(os, fg, CGAL::parameters::use_binary_mode(binary));
     assert(ok);
 
     Mesh fg2;
 
-    ok = CGAL::read_polygon_mesh("tmp.vtp", fg2, CGAL::parameters::use_binary_mode(binary));
+    ok = CGAL::IO::read_polygon_mesh("tmp.vtp", fg2, CGAL::parameters::use_binary_mode(binary));
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
   }
@@ -868,33 +868,33 @@ void test_bgl_VTP(const char* filename,
   // write with PM
   {
     if(binary)
-      ok = CGAL::write_polygon_mesh("tmp.vtp", fg);
+      ok = CGAL::IO::write_polygon_mesh("tmp.vtp", fg);
     else
-      ok = CGAL::write_polygon_mesh("tmp.vtp", fg, CGAL::parameters::use_binary_mode(false));
+      ok = CGAL::IO::write_polygon_mesh("tmp.vtp", fg, CGAL::parameters::use_binary_mode(false));
     assert(ok);
 
     Mesh fg2;
 
-    ok = CGAL::read_polygon_mesh("tmp.vtp", fg2, CGAL::parameters::use_binary_mode(binary));
+    ok = CGAL::IO::read_polygon_mesh("tmp.vtp", fg2, CGAL::parameters::use_binary_mode(binary));
     assert(ok);
     assert(are_equal_meshes(fg, fg2));
   }
 
   // test wrong inputs
   std::cerr << " ########### Error text is expected to follow." << std::endl;
-  ok = CGAL::read_VTP("data/mesh_that_doesnt_exist.vtp", fg);
+  ok = CGAL::IO::read_VTP("data/mesh_that_doesnt_exist.vtp", fg);
   assert(!ok);
-  ok = CGAL::read_VTP("data/invalid_cut.vtp", fg); // cut in half
+  ok = CGAL::IO::read_VTP("data/invalid_cut.vtp", fg); // cut in half
   assert(!ok);
-  ok = CGAL::read_VTP("data/invalid_header.vtp", fg); // missing header
+  ok = CGAL::IO::read_VTP("data/invalid_header.vtp", fg); // missing header
   assert(!ok);
-  ok = CGAL::read_VTP("data/wrong_nb_points.vtp", fg); // wrong number of points
+  ok = CGAL::IO::read_VTP("data/wrong_nb_points.vtp", fg); // wrong number of points
   assert(!ok);
-  ok = CGAL::read_VTP("data/sphere.obj", fg);
+  ok = CGAL::IO::read_VTP("data/sphere.obj", fg);
   assert(!ok);
-  ok = CGAL::read_VTP("data/full.off", fg);
+  ok = CGAL::IO::read_VTP("data/full.off", fg);
   assert(!ok);
-  ok = CGAL::read_VTP("corrupted_bin.vtp", fg);
+  ok = CGAL::IO::read_VTP("corrupted_bin.vtp", fg);
   assert(!ok);
   std::cerr << " ########### No more error text from here." << std::endl;
 }
@@ -909,21 +909,21 @@ int main(int argc, char** argv)
 
   test_bgl_OFF<Polyhedron, Kernel>(off_file);
   Polyhedron fg;
-  bool ok = CGAL::read_OFF("data/invalid_header.off", fg); // wrong header (NOFF but no normals)
+  bool ok = CGAL::IO::read_OFF("data/invalid_header.off", fg); // wrong header (NOFF but no normals)
   assert(ok);
 
   test_bgl_OFF<SM, Kernel>(off_file);
   SM sm;
-  ok = CGAL::read_OFF("data/invalid_header.off", sm); // wrong header (NOFF but no normals)
+  ok = CGAL::IO::read_OFF("data/invalid_header.off", sm); // wrong header (NOFF but no normals)
   assert(!ok);
   test_bgl_OFF<LCC, Kernel>(off_file);
   LCC lcc;
-  ok = CGAL::read_OFF("data/invalid_header.off", lcc); // wrong header (NOFF but no normals)
+  ok = CGAL::IO::read_OFF("data/invalid_header.off", lcc); // wrong header (NOFF but no normals)
   assert(!ok);
 #ifdef CGAL_USE_OPENMESH
   test_bgl_OFF<OMesh, EPICK>(off_file);
   OMesh om;
-  ok = CGAL::read_OFF("data/invalid_header.off", om); // wrong header (NOFF but no normals)
+  ok = CGAL::IO::read_OFF("data/invalid_header.off", om); // wrong header (NOFF but no normals)
   assert(!ok);
 #endif
   // OBJ
