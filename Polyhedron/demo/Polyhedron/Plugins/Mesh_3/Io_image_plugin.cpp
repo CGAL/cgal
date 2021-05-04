@@ -57,7 +57,7 @@
 #include <fstream>
 #include <cstdlib>
 #ifdef CGAL_USE_VTK
-#include <CGAL/read_vtk_image_data.h>
+#include <CGAL/IO/read_vtk_image_data.h>
 
 #include <vtkNew.h>
 #include <vtkImageData.h>
@@ -1312,7 +1312,7 @@ Image* Io_image_plugin::createDCMImage(QString dirname)
   auto vtk_image = smoother->GetOutput();
   vtk_image->Print(std::cerr);
   image = new Image;
-  *image = CGAL::read_vtk_image_data(vtk_image); // copy the image data
+  *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the image data
 #else
   CGAL::Three::Three::warning("You need VTK to read a DCM file");
   CGAL_USE(dirname);
