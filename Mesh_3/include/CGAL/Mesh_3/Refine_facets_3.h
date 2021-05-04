@@ -41,7 +41,6 @@
 #include <CGAL/Mesh_3/Dump_c3t3.h>
 
 #include <CGAL/Object.h>
-#include <CGAL/atomic.h>
 
 #include <boost/format.hpp>
 #include <boost/optional.hpp>

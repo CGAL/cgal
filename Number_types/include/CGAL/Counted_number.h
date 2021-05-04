@@ -19,7 +19,6 @@
 #define CGAL_COUNTED_NUMBER_H
 
 #include <CGAL/number_type_basic.h>
-#include <CGAL/atomic.h>
 #include <CGAL/boost/iterator/transform_iterator.hpp> // for Root_of_selector
 #include <iostream>
 

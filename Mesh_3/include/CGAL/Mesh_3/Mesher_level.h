@@ -23,7 +23,6 @@
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
 
-#include <CGAL/atomic.h>
 #include <CGAL/Mesh_3/Worksharing_data_structures.h>
 
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING

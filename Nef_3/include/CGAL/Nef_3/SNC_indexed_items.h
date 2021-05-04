@@ -15,9 +15,6 @@
 
 #include <CGAL/license/Nef_3.h>
 
-
-#include <CGAL/atomic.h>
-
 #include <CGAL/Nef_3/Vertex.h>
 #include <CGAL/Nef_3/Halfedge.h>
 #include <CGAL/Nef_3/Halffacet.h>

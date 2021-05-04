@@ -645,6 +645,9 @@ using std::max;
 #  include <unordered_set>
 #  include <unordered_map>
 #  include <functional>
+#  include <thread>
+#  include <chrono>
+#  include <atomic>
 //
 namespace CGAL {
 //
@@ -663,6 +666,16 @@ namespace CGAL {
     using std::is_enum;
     using std::unordered_set;
     using std::unordered_map;
+    using std::atomic;
+    using std::memory_order_relaxed;
+    using std::memory_order_consume;
+    using std::memory_order_acquire;
+    using std::memory_order_release;
+    using std::memory_order_acq_rel;
+    using std::memory_order_seq_cst;
+    using std::atomic_thread_fence;
+    using std::thread;
+
   }
 //
   namespace cpp0x = cpp11;

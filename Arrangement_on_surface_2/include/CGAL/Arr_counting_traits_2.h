@@ -28,7 +28,6 @@
 #include <string.h>
 
 #include <CGAL/basic.h>
-#include <CGAL/atomic.h>
 #include <CGAL/Arr_enums.h>
 #include <CGAL/Arr_tags.h>
 

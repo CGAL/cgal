@@ -3,7 +3,6 @@
 
 #include <QProgressDialog>
 #include <CGAL/Real_timer.h>
-#include <CGAL/thread.h>
 
 #include "Callback_signaler.h"
 

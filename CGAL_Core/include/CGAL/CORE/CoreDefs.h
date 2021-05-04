@@ -29,7 +29,6 @@
 #define _CORE_COREDEFS_H_
 
 #include <CGAL/CORE/extLong.h>
-#include <CGAL/atomic.h>
 #include <CGAL/disable_warnings.h>
 
 #ifdef CGAL_HEADER_ONLY

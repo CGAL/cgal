@@ -36,7 +36,6 @@
 #include <CGAL/Mesher_level_visitors.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/point_generators_3.h>
-#include <CGAL/atomic.h>
 
 #ifdef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
 #include <CGAL/Surface_mesher/Surface_mesher_visitor.h>

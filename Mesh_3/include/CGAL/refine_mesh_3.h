@@ -28,7 +28,6 @@
 #include <CGAL/Mesh_3/Mesher_3.h>
 #include <CGAL/Mesh_error_code.h>
 #include <CGAL/optimize_mesh_3.h>
-#include <CGAL/atomic.h>
 
 #include <boost/parameter/preprocessor.hpp>
 

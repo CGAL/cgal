@@ -19,7 +19,6 @@
 
 
 #include <CGAL/Apollonius_graph_2/basic.h>
-#include <CGAL/atomic.h>
 
 namespace CGAL {
 

@@ -26,7 +26,6 @@
   #include <tbb/blocked_range.h>
   #include <tbb/parallel_for.h>
 #endif
-#include <CGAL/atomic.h>
 
 #include <CGAL/Meshes/Filtered_deque_container.h>
 #include <CGAL/Meshes/Filtered_multimap_container.h>

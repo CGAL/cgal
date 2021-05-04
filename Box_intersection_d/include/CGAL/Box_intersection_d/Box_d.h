@@ -21,7 +21,6 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Box_intersection_d/box_limits.h>
-#include <CGAL/atomic.h>
 
 #include <algorithm>
 #include <array>

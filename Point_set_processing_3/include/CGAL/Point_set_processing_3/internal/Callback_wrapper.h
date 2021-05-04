@@ -16,7 +16,6 @@
 
 #include <functional>
 
-#include <CGAL/thread.h>
 
 namespace CGAL {
 namespace Point_set_processing_3 {

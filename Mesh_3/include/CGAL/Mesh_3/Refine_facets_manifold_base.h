@@ -19,7 +19,6 @@
 
 #include <CGAL/Mesh_facet_topology.h>
 
-#include <CGAL/atomic.h>
 #include <CGAL/utility.h>
 #include <CGAL/Time_stamper.h>
 
