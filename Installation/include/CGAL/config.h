@@ -623,6 +623,7 @@ using std::max;
 #  include <unordered_set>
 #  include <unordered_map>
 #  include <functional>
+#  include <CGAL/result_of.h>
 //
 namespace CGAL {
 //
@@ -641,7 +642,6 @@ namespace CGAL {
     using std::is_enum;
     using std::unordered_set;
     using std::unordered_map;
-    using std::result_of;
   }
 //
   namespace cpp0x = cpp11;
