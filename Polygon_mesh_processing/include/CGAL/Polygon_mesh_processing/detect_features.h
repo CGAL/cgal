@@ -261,9 +261,9 @@ void sharp_corner_call(const PolygonMesh& pmesh,
   FT cos_angle ( std::cos(CGAL::to_double(angle_in_deg) * CGAL_PI / 180.) );
 
   // Detect sharp corners
-  for(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex : vertices(pmesh))
+  for(typename boost::graph_traits<PolygonMesh>::edge_descriptor ed : edges(pmesh))
   {
-    typename boost::graph_traits<PolygonMesh>::halfedge_descriptor he = halfedge(vertex,pmesh);
+    typename boost::graph_traits<PolygonMesh>::halfedge_descriptor he = halfedge(ed,pmesh);
     if(angle_in_deg != FT(180) && internal::is_sharp_corner<PolygonMesh, GT>(he,cos_angle,pmesh))
       )
     {
@@ -286,14 +286,14 @@ template<typename GT,
                         const internal_np::Param_not_found&)
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor   vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor     edge_descriptor;
 
   FT cos_angle ( std::cos(CGAL::to_double(angle_in_deg) * CGAL_PI / 180.) );
 
   // Detect sharp corners
-  for(vertex_descriptor vertex : vertices(pmesh))
+  for(edge_descriptor ed : edges(pmesh))
   {
-    halfedge_descriptor he = halfedge(vertex,pmesh);
+    halfedge_descriptor he = halfedge(ed,pmesh);
     if(angle_in_deg != FT(180) && internal::is_sharp_corner<PolygonMesh, GT>(he,cos_angle,pmesh))
       )
     {
@@ -378,14 +378,14 @@ void detect_sharp_corners(
 #ifdef DOXYGEN_RUNNING
                           FT angle_in_deg,
 #else
-                          typename GetGeomTraits<const PolygonMesh, NamedParameters>::type::FT angle_in_deg,
+                          typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT angle_in_deg,
 #endif
                           VertexIsFeatureMap vertex_is_feature_map,
                           const PolygonMesh& pmesh,
                           const NamedParameters& np)
 {
 
-  typedef typename GetGeomTraits<const PolygonMesh, NamedParameters>::type GT;
+  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
   typedef typename GT::FT                      FT;
 
   internal::sharp_corner_call<GT, FT>(pmesh, angle_in_deg,vertex_is_feature_map,
