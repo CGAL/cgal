@@ -380,7 +380,8 @@ setup_dirs()
   CGAL_DIR=`readlink "${CGAL_ROOT}/CGAL-I"`
 
   CGAL_TEST_DIR=${CGAL_DIR}/test
-  export CGAL_DATA_DIR=${CGAL_DIR}/data
+  CGAL_DATA_DIR=${CGAL_DIR}/data
+  export CGAL_DATA_DIR=$(echo "$CGAL_DATA_DIR" | sed -E 's/\/cygdrive\/([a-z])\//\U\1:\//')
 
   if [ ! -d "${CGAL_DIR}/cmake" ]; then
     mkdir "${CGAL_DIR}/cmake"
