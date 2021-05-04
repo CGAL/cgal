@@ -78,6 +78,7 @@ int main(int argc, const char** argv)
   ICP_config matcher { /*.name=*/"KDTreeMatcher", /*.params=*/{ {"knn", "1"}, {"epsilon", "3.16"} } };
 
   // Prepare outlier filters
+  // NOTE: `GenericDescriptorOutlierFilter` supports only one `descName` that is `weights`!
   std::vector<ICP_config> outlier_filters;
   outlier_filters.push_back( ICP_config { /*.name=*/"TrimmedDistOutlierFilter", /*.params=*/{ {"ratio", "0.75" }}  } );
   outlier_filters.push_back( ICP_config { /*.name=*/"GenericDescriptorOutlierFilter", /*.params=*/{ {"descName", "weights" }}  } );

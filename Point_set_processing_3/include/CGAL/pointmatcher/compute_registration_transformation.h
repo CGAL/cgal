@@ -406,6 +406,9 @@ compute_registration_transformation(const PointRange1& range1, const PointRange2
        \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
                       of the iterator of `PointRange1` and whose value type is `geom_traits::FT`}
        \cgalParamDefault{`CGAL::Constant_property_map` with the value = 1 for all scalars}
+        \cgalParamExtra{These scalars, sometimes called weights, can be provided through the `GenericDescriptorOutlierFilter`
+                        of \ref thirdpartylibpointmatcher library, where the `descName = weights`.
+                        See `outlier_filters` below and `registration_with_pointmatcher.cpp` for more details.}
      \cgalParamNEnd
 
      \cgalParamNBegin{point_set_filters}
@@ -538,6 +541,8 @@ compute_registration_transformation(const PointRange1& range1, const PointRange2
        \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
                       of the iterator of `PointRange2` and whose value type is `geom_traits::FT`}
        \cgalParamDefault{`CGAL::Constant_property_map` with the value = 1 for all scalars}
+       \cgalParamExtra{These scalars, sometimes called weights, can be provided through the `GenericDescriptorOutlierFilter`
+                       of \ref thirdpartylibpointmatcher library, where the `descName = weights`.}
      \cgalParamNEnd
 
      \cgalParamNBegin{point_set_filters}
