@@ -474,7 +474,7 @@ A precise specification of those formats is available at
 The following \cgal data structures can be exported into the `.VTU` file format:
 
 - `CGAL::Mesh_complex_3_in_triangulation_3`, using \link PkgMesh3IOFunctions `CGAL::IO::output_to_vtu()` \endlink
-- `CGAL::Constrained_Delaunay_triangulation_2`, using the function \link PkgMesh2IO `CGAL::IO::write_vtu()` \endlink
+- `CGAL::Constrained_Delaunay_triangulation_2`, using the function \link PkgMesh2IO `CGAL::IO::write_VTU()` \endlink
 
 
 \section IOStreamAvizo Avizo File Format

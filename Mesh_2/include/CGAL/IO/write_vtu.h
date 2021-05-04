@@ -301,10 +301,10 @@ write_attributes_2(std::ostream& os,
 }
 
 template <class CDT>
-void write_vtu_with_attributes(std::ostream& os,
+void write_VTU_with_attributes(std::ostream& os,
                const CDT& tr,
                std::vector<std::pair<const char*, const std::vector<double>*> >& attributes,
-               IO::Mode mode = IO::BINARY)
+               IO::Mode mode = BINARY)
 {
   typedef typename CDT::Vertex_handle Vertex_handle;
   std::map<Vertex_handle, std::size_t> V;
@@ -336,7 +336,7 @@ void write_vtu_with_attributes(std::ostream& os,
   os << "  <Piece NumberOfPoints=\"" << tr.number_of_vertices()
      << "\" NumberOfCells=\"" << number_of_triangles + std::distance(tr.constrained_edges_begin(), tr.constrained_edges_end()) << "\">\n";
   std::size_t offset = 0;
-  const bool binary = (mode == IO::BINARY);
+  const bool binary = (mode == BINARY);
   write_cdt_points_tag(os,tr,V,binary,offset);
   write_cells_tag_2(os,tr,number_of_triangles, V,binary,offset);
   if(attributes.empty())
@@ -363,18 +363,24 @@ void write_vtu_with_attributes(std::ostream& os,
 } // namespace internal
 
 template <class CDT>
-void write_vtu(std::ostream& os,
+void write_VTU(std::ostream& os,
                const CDT& tr,
-               IO::Mode mode = BINARY)
+               Mode mode = BINARY)
 {
   std::vector<std::pair<const char*, const std::vector<double>*> > dummy_atts;
-  internal::write_vtu_with_attributes(os, tr, dummy_atts, mode);
+  internal::write_VTU_with_attributes(os, tr, dummy_atts, mode);
 }
 
 } // namespace IO
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-using IO::write_vtu;
+template <class CDT>
+void write_vtu(std::ostream& os,
+               const CDT& tr,
+               IO::Mode mode = IO::BINARY)
+{
+  IO::write_VTU(os, tr, mode);
+}
 #endif
 
 } //end CGAL
