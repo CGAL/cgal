@@ -744,7 +744,14 @@ namespace CGAL {
 // otherwise it is empty (and thus returns filename unmodified).
 inline std::string data_file_path(const std::string& filename)
 {
- const char *cgal_dir=std::getenv("CGAL_DATA_DIR");
+  const char* cgal_dir=nullptr;
+
+#ifdef _MSC_VER
+  _dupenv_s( &cgal_dir, nullptr, "CGAL_DATA_DIR");
+#else
+  cgal_dir=getenv("CGAL_DATA_DIR");
+#endif
+
 #ifdef CGAL_DATA_DIR
  if (cgal_dir==nullptr)
  { cgal_dir=CGAL_DATA_DIR; }
@@ -766,6 +773,11 @@ inline std::string data_file_path(const std::string& filename)
    std::cerr<<"[WARNING] file "<<res<<" does not exist or cannot be read "
             <<"(CGAL_DATA_DIR='"<<cgal_dir_string<<"')."<<std::endl;
  }
+
+#ifdef _MSC_VER
+ if (cgal_dir!=nullptr)
+ { free(cgal_dir); }
+#endif
 
  return res;
 }
