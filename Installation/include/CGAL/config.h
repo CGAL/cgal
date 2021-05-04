@@ -745,9 +745,12 @@ namespace CGAL {
 inline std::string data_file_path(const std::string& filename)
 {
   const char* cgal_dir=nullptr;
-
+  
 #ifdef _MSC_VER
-  _dupenv_s( &cgal_dir, nullptr, "CGAL_DATA_DIR");
+  char* cgal_dir_windows=nullptr;
+  _dupenv_s( &cgal_dir_windows, nullptr, "CGAL_DATA_DIR");
+  if (cgal_dir_windows!=nullptr)
+  { cgal_dir=cgal_dir_windows; }
 #else
   cgal_dir=getenv("CGAL_DATA_DIR");
 #endif
@@ -775,8 +778,8 @@ inline std::string data_file_path(const std::string& filename)
  }
 
 #ifdef _MSC_VER
- if (cgal_dir!=nullptr)
- { free(cgal_dir); }
+ if (cgal_dir_windows!=nullptr)
+ { free(cgal_dir_windows); }
 #endif
 
  return res;
