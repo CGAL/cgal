@@ -21,9 +21,9 @@
 #include <CGAL/assertions.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Cartesian_converter.h>
-#include <CGAL/Eigen_diagonalize_traits.h>
 
 #include <CGAL/Shape_detection/Region_growing/internal/utils.h>
+#include <CGAL/Shape_detection/Region_growing/internal/fitting.h>
 
 namespace CGAL {
 namespace Shape_detection {

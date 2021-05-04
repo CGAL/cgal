@@ -23,7 +23,6 @@
 // CGAL includes.
 #include <CGAL/assertions.h>
 #include <CGAL/Cartesian_converter.h>
-#include <CGAL/Eigen_diagonalize_traits.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 // Internal includes.

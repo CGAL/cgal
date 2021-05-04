@@ -23,13 +23,12 @@
 // CGAL includes.
 #include <CGAL/assertions.h>
 #include <CGAL/Cartesian_converter.h>
-#include <CGAL/Eigen_diagonalize_traits.h>
-#include <CGAL/linear_least_squares_fitting_2.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 // Internal includes.
 #include <CGAL/Shape_detection/Region_growing/internal/utils.h>
 #include <CGAL/Shape_detection/Region_growing/internal/property_map.h>
+#include <CGAL/Shape_detection/Region_growing/internal/fitting.h>
 
 namespace CGAL {
 namespace Shape_detection {
