@@ -64,6 +64,8 @@
 
 namespace CGAL {
 
+namespace IO {
+
 /// \cond SKIP_IN_MANUAL
 namespace LAS_property {
 namespace Id {
@@ -124,8 +126,6 @@ typedef Base<unsigned short, Id::B> B;
 typedef Base<unsigned short, Id::I> I;
 }
 /// \endcond
-
-namespace IO {
 
 /**
    \ingroup PkgPointSetProcessing3IOLas
@@ -581,6 +581,7 @@ bool read_LAS(const std::string& fname, OutputIterator output)
 /// \cond SKIP_IN_MANUAL
 
 using IO::make_las_point_reader;
+namespace LAS_property = IO::LAS_property;
 
 template <typename OutputIteratorValueType,
           typename OutputIterator,

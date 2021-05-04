@@ -37,9 +37,9 @@ int main (int argc, char** argv)
       (ifile, std::back_inserter (points),
        CGAL::IO::make_las_point_reader (Point_map()),
        std::make_pair (Scan_angle_map(),
-                       CGAL::LAS_property::Scan_angle()),
+                       CGAL::IO::LAS_property::Scan_angle()),
        std::make_pair (Scanline_id_map(),
-                       CGAL::LAS_property::Scan_direction_flag())))
+                       CGAL::IO::LAS_property::Scan_direction_flag())))
   {
     std::cerr << "Can't read " << fname << std::endl;
     return EXIT_FAILURE;

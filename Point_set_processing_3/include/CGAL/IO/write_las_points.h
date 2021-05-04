@@ -416,9 +416,9 @@ template <typename PointRange,
 CGAL_DEPRECATED bool write_las_points_with_properties(std::ostream& os,
                                                       const PointRange& points,
                                                       std::tuple<PointMap,
-                                                      LAS_property::X,
-                                                      LAS_property::Y,
-                                                      LAS_property::Z> point_property,
+                                                      IO::LAS_property::X,
+                                                      IO::LAS_property::Y,
+                                                      IO::LAS_property::Z> point_property,
                                                       PropertyHandler&& ... properties)
 {
   return IO::write_LAS_with_properties(os, points, point_property, std::forward<PropertyHandler>(properties)...);

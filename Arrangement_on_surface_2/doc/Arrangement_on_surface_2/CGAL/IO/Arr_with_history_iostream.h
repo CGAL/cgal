@@ -1,6 +1,6 @@
 namespace CGAL {
 
-namespace OI {
+namespace IO {
 
 /*!
 \ingroup PkgArrangementOnSurface2Read
