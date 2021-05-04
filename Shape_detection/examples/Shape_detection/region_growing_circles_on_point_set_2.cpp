@@ -29,8 +29,10 @@ using Neighbor_query = Shape_detection::K_neighbor_query
   <Kernel, Point_set_2, Point_map>;
 using Region_type = Shape_detection::Least_squares_circle_fit_region
   <Kernel, Point_set_2, Point_map, Normal_map>;
+using Sorting = Shape_detection::Least_squares_circle_fit_sorting
+  <Kernel, Point_set_2, Neighbor_query, Point_map>;
 using Region_growing = CGAL::Shape_detection::Region_growing
-  <Point_set_2, Neighbor_query, Region_type>;
+  <Point_set_2, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
 int main (int argc, char** argv)
 {
@@ -66,7 +68,12 @@ int main (int argc, char** argv)
   Region_type region_type(points, tolerance, max_angle, min_region_size,
                           min_radius, max_radius,
                           points.point_map(), points.normal_map());
-  Region_growing region_growing(points, neighbor_query, region_type);
+
+  // Sort indices
+  Sorting sorting(points, neighbor_query, points.point_map());
+  sorting.sort();
+
+  Region_growing region_growing(points, neighbor_query, region_type, sorting.seed_map());
 
   // Add maps to get colored output
   Point_set_3::Property_map<unsigned char>

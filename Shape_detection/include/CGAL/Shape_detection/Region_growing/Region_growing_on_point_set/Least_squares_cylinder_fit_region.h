@@ -279,77 +279,25 @@ public:
   {
     CGAL_precondition(region.size() > 0);
 
-    Vector_3 mean_axis = CGAL::NULL_VECTOR;
-    std::size_t nb = 0;
     // Shuffle to avoid always picking 2 close points
     std::vector<std::size_t>& aregion
       = const_cast<std::vector<std::size_t>&>(region);
     cpp98::random_shuffle (aregion.begin(), aregion.end());
 
-    const Point_3& ref = get(m_point_map, *(m_input_range.begin() + region.front()));
+    using VT = typename std::iterator_traits<typename InputRange::const_iterator>::value_type;
+    auto unary_function
+      = [&](const std::size_t& idx) -> VT
+        {
+          return *(m_input_range.begin() + idx);
+        };
 
-    m_radius = FT(0);
-    Point_3 point_on_axis = CGAL::ORIGIN;
-    for (std::size_t i = 0; i < aregion.size() - 1; ++ i)
-    {
-      Vector_3 v0 = get(m_normal_map, *(m_input_range.begin() + aregion[i]));
-      v0 = v0 / CGAL::sqrt(v0*v0);
-      Vector_3 v1 = get(m_normal_map, *(m_input_range.begin() + aregion[i+1]));
-      v1 = v1 / CGAL::sqrt(v1*v1);
-      Vector_3 axis = CGAL::cross_product (v0, v1);
-      if (CGAL::sqrt(axis.squared_length()) < (FT)(0.01))
-        continue;
-      axis = axis / CGAL::sqrt(axis * axis);
-
-      const Point_3& p0 = get(m_point_map, *(m_input_range.begin() + aregion[i]));
-      const Point_3& p1 = get(m_point_map, *(m_input_range.begin() + aregion[i+1]));
-
-      Vector_3 xdir = v0 - axis * (v0 * axis);
-      xdir = xdir / CGAL::sqrt (xdir * xdir);
-
-      Vector_3 ydir = CGAL::cross_product (axis, xdir);
-      ydir = ydir / CGAL::sqrt (ydir * ydir);
-
-      FT v1x = v1 * ydir;
-      FT v1y = -v1 * xdir;
-
-      Vector_3 d (p0, p1);
-
-      FT ox = xdir * d;
-      FT oy = ydir * d;
-      FT ldist = v1x * ox + v1y * oy;
-
-      FT radius = ldist / v1x;
-
-      Point_3 point = p0 + xdir * radius;
-      Line_3 line (point, axis);
-      point = line.projection(ref);
-
-      point_on_axis = CGAL::barycenter (point_on_axis, nb, point, 1);
-
-      m_radius += CGAL::abs(radius);
-
-      if (nb != 0 && axis * mean_axis < 0)
-        axis = -axis;
-
-      mean_axis = mean_axis + axis;
-      ++ nb;
-    }
-
-    if (nb == 0)
-      return;
-
-    mean_axis = mean_axis / CGAL::sqrt(mean_axis * mean_axis);
-    m_axis = Line_3 (point_on_axis, mean_axis);
-    m_radius /= nb;
-
-    m_radius = FT(0);
-    for (std::size_t i = 0; i < aregion.size(); ++ i)
-    {
-      const Point_3& p0 = get(m_point_map, *(m_input_range.begin() + aregion[i]));
-      m_radius += m_sqrt(m_squared_distance_3(p0, m_axis));
-    }
-    m_radius /= aregion.size();
+    internal::cylinder_fit
+      (make_range (boost::make_transform_iterator
+                   (region.begin(), unary_function),
+                   boost::make_transform_iterator
+                   (region.end(), unary_function)),
+       m_point_map, m_normal_map, m_sqrt, m_squared_distance_3,
+       m_axis, m_radius);
   }
   /// @}
 

@@ -35,9 +35,12 @@ using Plane_region = SD::Point_set::Least_squares_plane_fit_region<Kernel, Input
 using Plane_sorting = SD::Point_set::Least_squares_plane_fit_sorting<Kernel, Input_range, Neighbor_query, Point_map>;
 using Sphere_region = SD::Point_set::Least_squares_sphere_fit_region<Kernel, Input_range, Point_map, Normal_map>;
 using Sphere_sorting = SD::Point_set::Least_squares_sphere_fit_sorting<Kernel, Input_range, Neighbor_query, Point_map>;
+using Cylinder_region = SD::Point_set::Least_squares_cylinder_fit_region<Kernel, Input_range, Point_map, Normal_map>;
+using Cylinder_sorting = SD::Point_set::Least_squares_cylinder_fit_sorting<Kernel, Input_range, Neighbor_query, Point_map, Normal_map>;
 
-template <typename Region_type, typename Sorting, typename RegionCode, typename AssertionCode>
-bool test (int argc, char** argv, const RegionCode& reg, const AssertionCode& assertion)
+template <typename Region_type, typename Sorting, typename SortingCode,
+          typename RegionCode, typename AssertionCode>
+bool test (int argc, char** argv, const SortingCode& sc, const RegionCode& reg, const AssertionCode& assertion)
 {
   using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
@@ -71,9 +74,7 @@ bool test (int argc, char** argv, const RegionCode& reg, const AssertionCode& as
   Region_type region_type = reg(input_range);
 
   // Sort indices.
-  Sorting sorting(
-    input_range, neighbor_query,
-    input_range.point_map());
+  Sorting sorting = sc(input_range, neighbor_query);
   sorting.sort();
 
   // Create an instance of the region growing class.
@@ -98,6 +99,11 @@ int main(int argc, char *argv[]) {
   bool success =
     test<Plane_region, Plane_sorting>
     (argc, argv,
+     [](const auto& input_range, auto& neighbor_query) -> Plane_sorting
+     {
+       return Plane_sorting (input_range, neighbor_query,
+                             input_range.point_map());
+     },
      [](const auto& input_range) -> Plane_region
      {
        // Default parameter values for the data file point_set_3.xyz.
@@ -116,9 +122,13 @@ int main(int argc, char *argv[]) {
   success =
     test<Sphere_region, Sphere_sorting>
     (argc, argv,
+     [](const auto& input_range, auto& neighbor_query) -> Sphere_sorting
+     {
+       return Sphere_sorting (input_range, neighbor_query,
+                              input_range.point_map());
+     },
      [](const auto& input_range) -> Sphere_region
      {
-       // Default parameters for data/spheres.ply
        const double tolerance = 0.01;
        const double max_angle = 10.;
        const std::size_t min_region_size = 50;
@@ -130,7 +140,32 @@ int main(int argc, char *argv[]) {
           min_radius, max_radius,
           input_range.point_map(), input_range.normal_map());
      },
-     [](const auto& r) -> bool { std::cerr << r.size() << " regions" << std::endl; return true; });
+     [](const auto& r) -> bool { return (r.size() > 30 && r.size() < 40); });
+  if (!success)
+    return EXIT_FAILURE;
+
+  success =
+    test<Cylinder_region, Cylinder_sorting>
+    (argc, argv,
+     [](const auto& input_range, auto& neighbor_query) -> Cylinder_sorting
+     {
+       return Cylinder_sorting (input_range, neighbor_query,
+                                input_range.point_map(), input_range.normal_map());
+     },
+     [](const auto& input_range) -> Cylinder_region
+     {
+       const double tolerance = 0.05;
+       const double max_angle = 5.;
+       const std::size_t min_region_size = 200;
+       // No constraint on radius
+       const double min_radius = 0.;
+       const double max_radius = std::numeric_limits<double>::infinity();
+       return Cylinder_region
+         (input_range, tolerance, max_angle, min_region_size,
+          min_radius, max_radius,
+          input_range.point_map(), input_range.normal_map());
+     },
+     [](const auto& r) -> bool { return (r.size() > 5 && r.size() < 10); });
   if (!success)
     return EXIT_FAILURE;
 

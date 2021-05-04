@@ -359,9 +359,17 @@ We provide a quality sorting both for 2D and 3D points:
 - `CGAL::Shape_detection::Point_set::Least_squares_line_fit_sorting` - indices of 2D input points are sorted with respect
 to the quality of the least squares line fit applied to the neighbors of each point;
 
+- `CGAL::Shape_detection::Point_set::Least_squares_circle_fit_sorting` - indices of 2D input points are sorted with respect
+to the quality of the least squares circle fit applied to the neighbors of each point;
+
 - `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting` - indices of 3D input points are sorted with respect
 to the quality of the least squares plane fit applied to the neighbors of each point.
 
+- `CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_sorting` - indices of 3D input points are sorted with respect
+to the quality of the least squares sphere fit applied to the neighbors of each point.
+
+- `CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_sorting` - indices of 3D input points are sorted with respect
+to the quality of the least squares cylinder fit applied to the neighbors of each point.
 
 \subsubsection Shape_detection_RegionGrowingPoints_parameters Parameters
 
@@ -430,7 +438,7 @@ The points with assigned to them normal vectors are stored in `std::vector` and 
 
 \paragraph Shape_detection_RegionGrowingPoints_example_2D_circles Detecting 2D Circles
 
-The following example shows a similar example, this time detecting circles instead of lines.
+The following example shows a similar example, this time detecting circles instead of lines. In that case, we also preprocess points so that they are sorted according to their likelyhood of belonging to a circle:
 
 \cgalExample{Shape_detection/region_growing_circles_on_point_set_2.cpp}
 

@@ -31,11 +31,17 @@ using Point_map         = CGAL::First_of_pair_property_map<Point_with_normal>;
 using Normal_map        = CGAL::Second_of_pair_property_map<Point_with_normal>;
 
 using Neighbor_query = SD::Point_set::Sphere_neighbor_query<Kernel, Input_range, Point_map>;
-using Region_type    = SD::Point_set::Least_squares_line_fit_region<Kernel, Input_range, Point_map, Normal_map>;
-using Sorting        = SD::Point_set::Least_squares_line_fit_sorting<Kernel, Input_range, Neighbor_query, Point_map>;
+using Line_region    = SD::Point_set::Least_squares_line_fit_region<Kernel, Input_range, Point_map, Normal_map>;
+using Line_sorting   = SD::Point_set::Least_squares_line_fit_sorting<Kernel, Input_range, Neighbor_query, Point_map>;
+using Circle_region  = SD::Point_set::Least_squares_circle_fit_region<Kernel, Input_range, Point_map, Normal_map>;
+using Circle_sorting = SD::Point_set::Least_squares_circle_fit_sorting<Kernel, Input_range, Neighbor_query, Point_map>;
+
 using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
-int main(int argc, char *argv[]) {
+template <typename Region_type, typename Sorting, typename RegionCode, typename AssertionCode>
+bool test (int argc, char** argv, const SortingCode& sc, const RegionCode& reg, const AssertionCode& assertion)
+{
+  using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
   // Load data.
   std::ifstream in(argc > 1 ? argv[1] : "data/point_set_2.xyz");
@@ -95,5 +101,9 @@ int main(int argc, char *argv[]) {
   std::cout << "cartesian_double_test_success: " << cartesian_double_test_success << std::endl;
 
   const bool success = cartesian_double_test_success;
+}
+
+int main(int argc, char *argv[]) {
+
   return (success) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
