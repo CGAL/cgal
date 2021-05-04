@@ -15,6 +15,7 @@
 #include <CGAL/license/Classification.h>
 #include <CGAL/IO/Color.h>
 
+#include <string>
 #include <memory>
 
 namespace CGAL {
