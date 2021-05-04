@@ -20,6 +20,8 @@
 #include <CGAL/Mesh_2/Uniform_sizing_field_2.h>
 #include <CGAL/Constrained_voronoi_diagram_2.h>
 
+#include <thread>
+
 namespace CGAL
 {
 namespace Mesh_2

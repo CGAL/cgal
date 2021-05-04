@@ -38,6 +38,9 @@
 #include <boost/format.hpp>
 #include <boost/math/constants/constants.hpp>
 
+#include <thread>
+#include <future>
+
 namespace CGAL {
 
 namespace Mesh_2 {
@@ -147,7 +150,9 @@ public:
       this->before_move();
 
       // Compute move for each vertex
-      Moves_vector moves = compute_moves(moving_vertices);
+      // Previous single thread version
+      //Moves_vector moves = compute_moves(moving_vertices);
+      Moves_vector moves = compute_moves_threaded(moving_vertices);
 
       //Pb with Freeze : sometimes a few vertices continue moving indefinitely
       //if the nb of moving vertices is < 2% of total nb AND does not decrease
@@ -221,6 +226,126 @@ public:
   }
 
 private:
+  // just for simplify notations
+  typedef typename Vertex_set::const_iterator VERTEXSET_ITERATOR;
+
+  std::mutex mtx;           // mutex for critical section
+
+  /// computes move for each thread
+  ///
+  /// tid: thread id
+  /// begin, end: iterator for locating vertices on the set. Deletions are
+  /// critical while computing the moves
+  /// moving_vertices: set of vertices that may move
+  Moves_vector threaded_move(int tid,
+			     VERTEXSET_ITERATOR begin, VERTEXSET_ITERATOR end,
+			     Vertex_set &moving_vertices)
+  {
+    typename Gt::Construct_translated_point_2 translate =
+      Gt().construct_translated_point_2_object();
+   
+    Moves_vector moves;
+    // Get move for each moving vertex
+    VERTEXSET_ITERATOR vit;
+    for ( vit = begin ;
+	  vit != end ;
+	  )
+      {
+	Vertex_handle oldv = *vit;
+	
+	Vector_2 move = compute_move(oldv);
+	vit++;
+
+	if ( CGAL::NULL_VECTOR != move )
+	  {
+	   
+	    Point_2 new_position = translate(oldv->point(), move);
+	   
+	    moves.push_back(std::make_pair(oldv, new_position));
+	  }
+	else if(sq_freeze_ratio_ > 0.) //freezing ON
+	  moving_vertices.erase(oldv);
+
+	// Stop if time_limit_ is reached
+	if ( is_time_limit_reached() )
+	  break;
+      }
+    return moves;
+  }
+
+  /**
+   * Split the vertices into subsets in order to dispatch the computation to multiple threads
+   *
+   */
+  Moves_vector compute_moves_threaded(Vertex_set moving_vertices)
+  {
+
+    // hard coded for testing purposes
+    int n_threads = 2;
+    
+    typedef std::future<Moves_vector > TYPE_THREAD;
+    std::vector<TYPE_THREAD> vectorOfThreads;
+    
+    typename Gt::Construct_translated_point_2 translate =
+      Gt().construct_translated_point_2_object();
+       
+    // Store new location of points which have to move
+    Moves_vector moves;
+    moves.reserve(moving_vertices.size());
+
+    // reset worst_move list
+    std::fill(big_moves_.begin(), big_moves_.end(), FT(0));
+
+    // nb of vertices by thread
+    int n_vertices = moving_vertices.size();
+    
+    int n_vertices_by_thread=0;
+    if (n_threads < n_vertices)
+      n_vertices_by_thread = n_vertices / n_threads + 1;
+    else
+      {
+	n_vertices_by_thread = n_vertices;
+	n_threads = 1;
+      }
+
+    // split vertices into different threads
+    for (int t=0; t<n_threads; ++t)
+      {
+	int begin = t*n_vertices_by_thread;
+	int end   = begin + n_vertices_by_thread;
+	if (end >= n_vertices)
+	  end = n_vertices;
+
+	VERTEXSET_ITERATOR itBegin = std::next(moving_vertices.begin(), begin);
+	VERTEXSET_ITERATOR itEnd   = std::next(moving_vertices.begin(), end);
+	if (end == n_vertices)
+	  {
+	    itEnd = moving_vertices.end();
+	  }
+
+	// create and start thread
+	TYPE_THREAD th = std::async(&Mesh_global_optimizer_2::threaded_move, this,
+				    t, std::ref(itBegin), std::ref(itEnd),
+				    std::ref(moving_vertices));
+
+	// store the thread for later use
+	vectorOfThreads.push_back(std::move(th));
+      }
+
+    // Get results in random order, wait for each thread to complete
+    for (auto &th : vectorOfThreads )
+      {
+    	Moves_vector moves_th = th.get(); // wait
+
+    	// agregation
+    	moves.insert(moves.end(), moves_th.begin(), moves_th.end());
+    	
+      }
+
+    return moves;
+  }
+  
+  
   /**
    * Returns moves for vertices of set \c moving_vertices
    */
