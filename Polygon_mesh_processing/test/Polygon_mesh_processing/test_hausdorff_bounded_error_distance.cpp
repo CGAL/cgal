@@ -991,6 +991,7 @@ void test_parallel_version(
   PMP::transform(Affine_transformation_3(CGAL::Translation(),
     Vector_3(FT(0), FT(0), FT(1))), mesh2);
 
+  std::cout << " ---- SEQUENTIAL ---- " << std::endl;
   timer.reset();
   timer.start();
   const double dista = PMP::bounded_error_Hausdorff_distance<CGAL::Sequential_tag>(
@@ -1000,12 +1001,13 @@ void test_parallel_version(
   timer.stop();
   const double timea = timer.time();
 
+  std::cout << " ---- PARALLEL ---- " << std::endl;
   timer.reset();
   timer.start();
-  const double distb = 0.0; // PMP::bounded_error_Hausdorff_distance<CGAL::Parallel_tag>(
-  //   mesh1, mesh2, error_bound,
-  //   CGAL::parameters::match_faces(false),
-  //   CGAL::parameters::match_faces(false));
+  const double distb = PMP::bounded_error_Hausdorff_distance<CGAL::Parallel_tag>(
+    mesh1, mesh2, error_bound,
+    CGAL::parameters::match_faces(false),
+    CGAL::parameters::match_faces(false));
   timer.stop();
   const double timeb = timer.time();
 
