@@ -13,9 +13,6 @@
 #include <CGAL/Polygon_mesh_processing/random_perturbation.h>
 #include <CGAL/Polygon_mesh_processing/transform.h>
 
-#include <CGAL/boost/graph/partition.h> // METIS related
-#include <CGAL/boost/graph/Face_filtered_graph.h>
-
 using SCK   = CGAL::Simple_cartesian<double>;
 using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
@@ -26,7 +23,7 @@ using Point_3    = typename Kernel::Point_3;
 using Vector_3   = typename Kernel::Vector_3;
 using Triangle_3 = typename Kernel::Triangle_3;
 
-using TAG                     = CGAL::Parallel_if_available_tag;
+using TAG                     = CGAL::Sequential_tag;
 using Surface_mesh            = CGAL::Surface_mesh<Point_3>;
 using Affine_transformation_3 = CGAL::Aff_transformation_3<Kernel>;
 using Timer                   = CGAL::Real_timer;
@@ -819,160 +816,6 @@ void test_realizing_triangles(
 
   if (save) save_mesh(mesh2, "2mesh2");
   compute_realizing_triangles(mesh1, mesh2, error_bound, "2", save);
-}
-
-// TODO: remove that!
-#if defined(CGAL_LINKED_WITH_TBB)
-template<class TriangleMesh1, class TriangleMesh2>
-struct Bounded_error_distance_computation {
-
-  const std::vector<TriangleMesh1>& tm1_parts;
-  const TriangleMesh2& tm2;
-  const double error_bound;
-  double distance;
-
-  // Constructor.
-  Bounded_error_distance_computation(
-    const std::vector<TriangleMesh1>& tm1_parts,
-    const TriangleMesh2& tm2,
-    const double error_bound) :
-  tm1_parts(tm1_parts), tm2(tm2),
-  error_bound(error_bound), distance(-1.0)
-  { }
-
-  // Split constructor.
-  Bounded_error_distance_computation(
-    Bounded_error_distance_computation& s, tbb::split) :
-  tm1_parts(s.tm1_parts), tm2(s.tm2),
-  error_bound(s.error_bound), distance(-1.0)
-  { }
-
-  void operator()(const tbb::blocked_range<std::size_t>& range) {
-
-    Timer timer;
-    timer.reset();
-    timer.start();
-
-    // std::cout << "* range size: " << range.size() << std::endl;
-    double hdist = 0.0;
-    for (std::size_t i = range.begin(); i != range.end(); ++i) {
-      CGAL_assertion(i < tm1_parts.size());
-      const auto& tm1 = tm1_parts[i];
-      // std::cout << "part size: " << tm1.number_of_faces() << std::endl;
-      const double dist = PMP::bounded_error_Hausdorff_distance<CGAL::Sequential_tag>(
-        tm1, tm2, error_bound,
-        CGAL::parameters::match_faces(false),
-        CGAL::parameters::match_faces(false));
-      if (dist > hdist) hdist = dist;
-    }
-    if (hdist > distance) distance = hdist;
-
-    timer.stop();
-    // std::cout << "* time operator() (sec.): " << timer.time() << std::endl;
-  }
-
-  void join(Bounded_error_distance_computation& rhs) {
-    distance = (CGAL::max)(rhs.distance, distance);
-  }
-};
-#endif
-
-// TODO: remove that!
-double bounded_error_Hausdorff_distance_parallel(
-  Surface_mesh& tm1, const Surface_mesh& tm2,
-  const double error_bound, const int nb_cores = 4) {
-
-  Timer timer;
-
-  // (1) -- Create partition of tm1.
-  std::cout << "* computing partition ... " << std::endl;
-
-  timer.reset();
-  timer.start();
-
-  // Partition the mesh and output its parts.
-  using Face_index  = typename Surface_mesh::Face_index;
-  auto face_pid_map = tm1.add_property_map<Face_index, std::size_t>("f:pid").first;
-  CGAL::METIS::partition_graph(
-    tm1, nb_cores, CGAL::parameters::
-    face_partition_id_map(face_pid_map));
-
-  int max_id = 0;
-  for (const auto& face : faces(tm1)) {
-    const int id = static_cast<int>(get(face_pid_map, face));
-    max_id = (CGAL::max)(max_id, id);
-  }
-  assert(nb_cores == (max_id + 1));
-  timer.stop();
-  const double time1 = timer.time();
-  std::cout << " ... done in " << time1 << " sec." << std::endl;
-  std::cout << "* number of detected parts: " << max_id + 1 << std::endl;
-
-  // (2) -- Create a face filtered graph for each part.
-  std::cout << "* creating graphs ... " << std::endl;
-
-  timer.reset();
-  timer.start();
-
-  using Filtered_graph = CGAL::Face_filtered_graph<Surface_mesh>;
-  std::vector<Surface_mesh> tm1_parts(nb_cores);
-  for (int i = 0; i < nb_cores; ++i) {
-    // std::cout << "selection " << i << std::endl;
-    Filtered_graph tm1_part(tm1, i, face_pid_map);
-    CGAL_assertion(tm1_part.is_selection_valid());
-    CGAL::copy_face_graph(tm1_part, tm1_parts[i]); // TODO: do not copy in the future!
-    std::cout << "part " << i << " size: " << tm1_parts[i].number_of_faces() << std::endl;
-  }
-
-  timer.stop();
-  const double time2 = timer.time();
-  std::cout << " ... done in " << time2 << " sec." << std::endl;
-
-  // (3) -- Run all parts in parallel.
-  std::cout << "* computing distance for all graphs in parallel ... " << std::endl;
-
-  timer.reset();
-  timer.start();
-
-  std::atomic<double> hdist;
-  #if !defined(CGAL_LINKED_WITH_TBB)
-    CGAL_static_assertion_msg(
-      !(boost::is_convertible<TAG, CGAL::Parallel_tag>::value),
-      "Parallel_tag is enabled but TBB is unavailable.");
-    hdist = -1.0;
-  #else
-    if (boost::is_convertible<TAG, CGAL::Parallel_tag>::value) {
-      std::cout << "* executing parallel version " << std::endl;
-      Bounded_error_distance_computation<Surface_mesh, Surface_mesh> f(
-        tm1_parts, tm2, error_bound);
-      tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, tm1_parts.size()), f);
-      hdist = f.distance;
-    } else
-  #endif
-    {
-      std::cout << "* executing sequential version " << std::endl;
-      hdist = PMP::bounded_error_Hausdorff_distance<TAG>(
-        tm1, tm2, error_bound,
-        CGAL::parameters::match_faces(false),
-        CGAL::parameters::match_faces(false));
-    }
-
-  timer.stop();
-  const double time3 = timer.time();
-  std::cout << " ... done in " << time3 << " sec." << std::endl;
-
-  // for (const auto& tm1_part : tm1_parts) {
-  //   timer.reset();
-  //   timer.start();
-  //   hdist = PMP::bounded_error_Hausdorff_distance<CGAL::Sequential_tag>(
-  //     tm1_part, tm2, error_bound,
-  //     CGAL::parameters::match_faces(false),
-  //     CGAL::parameters::match_faces(false));
-  //   timer.stop();
-  //   std::cout << "* manual call seq. time (sec.): " << timer.time() << std::endl;
-  // }
-
-  return hdist;
 }
 
 void test_parallel_version(

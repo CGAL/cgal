@@ -1325,6 +1325,8 @@ template< class Kernel,
           class TriangleMesh2,
           class VPM1,
           class VPM2,
+          class NamedParameters1,
+          class NamedParameters2,
           class TM1Tree,
           class TM2Tree,
           class FaceHandle1,
@@ -1336,6 +1338,8 @@ std::pair<typename Kernel::FT, bool> preprocess_bounded_error_Hausdorff_impl(
   const VPM1& vpm1,
   const VPM2& vpm2,
   const bool is_one_sided_distance,
+  const NamedParameters1& np1,
+  const NamedParameters2& np2,
   TM1Tree& tm1_tree,
   TM2Tree& tm2_tree,
   std::vector<FaceHandle1>& tm1_only,
@@ -1376,7 +1380,7 @@ std::pair<typename Kernel::FT, bool> preprocess_bounded_error_Hausdorff_impl(
   bool rebuild = false;
   if (compare_meshes) { // exact check
     match_faces(tm1, tm2, std::back_inserter(common),
-      std::back_inserter(tm1_only), std::back_inserter(tm2_only));
+      std::back_inserter(tm1_only), std::back_inserter(tm2_only), np1, np2);
 
     // std::cout << "-   common: " <<   common.size() << std::endl;
     // std::cout << "- tm1 only: " << tm1_only.size() << std::endl;
@@ -1651,83 +1655,50 @@ double bounded_error_Hausdorff_impl(
   return hdist;
 }
 
-#if defined(CGAL_LINKED_WITH_TBB) // TODO: && METIS!
-
+// TODO: && METIS!
+#if defined(CGAL_LINKED_WITH_TBB)
 template< class TriangleMesh1,
-          class TriangleMesh2,
           class VPM1,
-          class VPM2,
           class TM1Tree,
-          class TM2Tree,
           class Kernel>
 struct Bounded_error_preprocessing {
 
-  using FT = typename Kernel::FT;
   using Timer = CGAL::Real_timer;
-
-  using Face_handle_1 = typename boost::graph_traits<TriangleMesh1>::face_descriptor;
-  using Face_handle_2 = typename boost::graph_traits<TriangleMesh2>::face_descriptor;
-
-  const std::vector<TriangleMesh1>& tm1_parts; const TriangleMesh2& tm2;
-  const bool compare_meshes; const VPM1& vpm1; const VPM2& vpm2;
-  const bool is_one_sided_distance;
-  std::vector<TM1Tree>& tm1_trees;
-  FT infinity_value;
+  const std::vector<TriangleMesh1>& tm1_parts;
+  const VPM1& vpm1; std::vector<TM1Tree>& tm1_trees;
 
   // Constructor.
   Bounded_error_preprocessing(
-    const std::vector<TriangleMesh1>& tm1_parts, const TriangleMesh2& tm2,
-    const bool compare_meshes, const VPM1& vpm1, const VPM2& vpm2,
-    const bool is_one_sided_distance,
+    const std::vector<TriangleMesh1>& tm1_parts, const VPM1& vpm1,
     std::vector<TM1Tree>& tm1_trees) :
-  tm1_parts(tm1_parts), tm2(tm2),
-  compare_meshes(compare_meshes), vpm1(vpm1), vpm2(vpm2),
-  is_one_sided_distance(is_one_sided_distance),
-  tm1_trees(tm1_trees),
-  infinity_value(-FT(1))
-  { }
+  tm1_parts(tm1_parts), vpm1(vpm1), tm1_trees(tm1_trees) {
+    CGAL_assertion(tm1_parts.size() == tm1_trees.size());
+  }
 
   // Split constructor.
   Bounded_error_preprocessing(
     Bounded_error_preprocessing& s, tbb::split) :
-  tm1_parts(s.tm1_parts), tm2(s.tm2),
-  compare_meshes(s.compare_meshes), vpm1(s.vpm1), vpm2(s.vpm2),
-  is_one_sided_distance(s.is_one_sided_distance),
-  tm1_trees(s.tm1_trees),
-  infinity_value(s.infinity_value)
-  { }
+  tm1_parts(s.tm1_parts), vpm1(s.vpm1), tm1_trees(s.tm1_trees) {
+    CGAL_assertion(tm1_parts.size() == tm1_trees.size());
+  }
 
   void operator()(const tbb::blocked_range<std::size_t>& range) {
-
-    TM2Tree tm2_tree;
-    std::vector<Face_handle_1> tm1_only;
-    std::vector<Face_handle_2> tm2_only;
-    CGAL_assertion(tm1_parts.size() == tm1_trees.size());
-
     Timer timer;
     timer.reset();
     timer.start();
-    FT max_inf_value = -FT(1);
     for (std::size_t i = range.begin(); i != range.end(); ++i) {
       CGAL_assertion(i < tm1_parts.size());
       CGAL_assertion(i < tm1_trees.size());
-      tm1_only.clear();
-      tm2_only.clear();
-      tm2_tree.clear();
-      const auto tm1_part_vpm = get_const_property_map(CGAL::vertex_point, tm1_parts[i]);
-      const FT inf_value = preprocess_bounded_error_Hausdorff_impl<Kernel>(
-        tm1_parts[i], tm2, compare_meshes, tm1_part_vpm, vpm2, is_one_sided_distance,
-        tm1_trees[i], tm2_tree, tm1_only, tm2_only).first;
-      if (inf_value > max_inf_value) max_inf_value = inf_value;
+      const auto& tm1 = tm1_parts[i];
+      auto& tm1_tree = tm1_trees[i];
+      tm1_tree.insert(faces(tm1).begin(), faces(tm1).end(), tm1, vpm1);
+      tm1_tree.build();
     }
-    if (max_inf_value > infinity_value) infinity_value = max_inf_value;
     timer.stop();
     // std::cout << "* time operator() preprocessing (sec.): " << timer.time() << std::endl;
   }
 
-  void join(Bounded_error_preprocessing& rhs) {
-    infinity_value = (CGAL::max)(rhs.infinity_value, infinity_value);
-  }
+  void join(Bounded_error_preprocessing&) { }
 };
 
 template< class TriangleMesh1,
@@ -1757,8 +1728,9 @@ struct Bounded_error_distance_computation {
   tm1_parts(tm1_parts), tm2(tm2),
   error_bound(error_bound), vpm1(vpm1), vpm2(vpm2),
   infinity_value(infinity_value), initial_lower_bound(initial_lower_bound),
-  tm1_trees(tm1_trees), tm2_tree(tm2_tree), distance(-1.0)
-  { }
+  tm1_trees(tm1_trees), tm2_tree(tm2_tree), distance(-1.0) {
+    CGAL_assertion(tm1_parts.size() == tm1_trees.size());
+  }
 
   // Split constructor.
   Bounded_error_distance_computation(
@@ -1766,25 +1738,23 @@ struct Bounded_error_distance_computation {
   tm1_parts(s.tm1_parts), tm2(s.tm2),
   error_bound(s.error_bound), vpm1(s.vpm1), vpm2(s.vpm2),
   infinity_value(s.infinity_value), initial_lower_bound(s.initial_lower_bound),
-  tm1_trees(s.tm1_trees), tm2_tree(s.tm2_tree), distance(-1.0)
-  { }
+  tm1_trees(s.tm1_trees), tm2_tree(s.tm2_tree), distance(-1.0) {
+    CGAL_assertion(tm1_parts.size() == tm1_trees.size());
+  }
 
   void operator()(const tbb::blocked_range<std::size_t>& range) {
-    CGAL_assertion(tm1_parts.size() == tm1_trees.size());
-
     Timer timer;
     timer.reset();
     timer.start();
     double hdist = -1.0;
-    // std::cout << "* range size: " << range.size() << std::endl;
     for (std::size_t i = range.begin(); i != range.end(); ++i) {
       CGAL_assertion(i < tm1_parts.size());
       CGAL_assertion(i < tm1_trees.size());
-      // std::cout << "* part " << i << " size: " << tm1_parts[i].number_of_faces() << std::endl;
-      const auto tm1_part_vpm = get_const_property_map(CGAL::vertex_point, tm1_parts[i]);
+      const auto& tm1 = tm1_parts[i];
+      const auto& tm1_tree = tm1_trees[i];
       const double dist = bounded_error_Hausdorff_impl<Kernel>(
-        tm1_parts[i], tm2, error_bound, tm1_part_vpm, vpm2,
-        infinity_value, initial_lower_bound, tm1_trees[i], tm2_tree);
+        tm1, tm2, error_bound, vpm1, vpm2,
+        infinity_value, initial_lower_bound, tm1_tree, tm2_tree);
       if (dist > hdist) hdist = dist;
     }
     if (hdist > distance) distance = hdist;
@@ -1796,7 +1766,6 @@ struct Bounded_error_distance_computation {
     distance = (CGAL::max)(rhs.distance, distance);
   }
 };
-
 #endif // defined(CGAL_LINKED_WITH_TBB) && METIS
 
 template< class Concurrency_tag,
@@ -1804,28 +1773,46 @@ template< class Concurrency_tag,
           class TriangleMesh1,
           class TriangleMesh2,
           class VPM1,
-          class VPM2>
+          class VPM2,
+          class NamedParameters1,
+          class NamedParameters2>
 double bounded_error_one_sided_Hausdorff_impl(
   const TriangleMesh1& tm1,
   const TriangleMesh2& tm2,
   const typename Kernel::FT error_bound,
   const bool compare_meshes,
   const VPM1& vpm1,
-  const VPM2& vpm2)
+  const VPM2& vpm2,
+  const NamedParameters1& np1,
+  const NamedParameters2& np2)
 {
-  using FT = typename Kernel::FT;
+  #if !defined(CGAL_LINKED_WITH_TBB)
+  CGAL_static_assertion_msg(
+    !(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value),
+    "Parallel_tag is enabled but TBB is unavailable.");
+  #endif
 
-  using TM1_primitive = AABB_face_graph_triangle_primitive<TriangleMesh1, VPM1>;
-  using TM2_primitive = AABB_face_graph_triangle_primitive<TriangleMesh2, VPM2>;
+  using FT      = typename Kernel::FT;
+  using Point_3 = typename Kernel::Point_3;
+
+  using TM1 = TriangleMesh1;
+  using TM2 = TriangleMesh2;
+  using TMF = CGAL::Face_filtered_graph<TM1>;
+
+  using TM1_primitive = AABB_face_graph_triangle_primitive<TM1, VPM1>;
+  using TM2_primitive = AABB_face_graph_triangle_primitive<TM2, VPM2>;
+  using TMF_primitive = AABB_face_graph_triangle_primitive<TMF, VPM1>;
 
   using TM1_traits = AABB_traits<Kernel, TM1_primitive>;
   using TM2_traits = AABB_traits<Kernel, TM2_primitive>;
+  using TMF_traits = AABB_traits<Kernel, TMF_primitive>;
 
   using TM1_tree = AABB_tree<TM1_traits>;
   using TM2_tree = AABB_tree<TM2_traits>;
+  using TMF_tree = AABB_tree<TMF_traits>;
 
-  using Face_handle_1 = typename boost::graph_traits<TriangleMesh1>::face_descriptor;
-  using Face_handle_2 = typename boost::graph_traits<TriangleMesh2>::face_descriptor;
+  using Face_handle_1 = typename boost::graph_traits<TM1>::face_descriptor;
+  using Face_handle_2 = typename boost::graph_traits<TM2>::face_descriptor;
 
   using Timer = CGAL::Real_timer;
 
@@ -1834,24 +1821,14 @@ double bounded_error_one_sided_Hausdorff_impl(
 
   const int nb_cores = 4; // TODO: add to NP!
 
+  TM1_tree tm1_tree;
   TM2_tree tm2_tree;
-  std::vector<TM1_tree> tm1_trees;
-  std::vector<TriangleMesh1> tm1_parts;
-  std::atomic<FT> infinity_value;
+  std::vector<TMF> tm1_parts;
+  std::vector<TMF_tree> tm1_trees;
+  FT infinity_value = -FT(1);
 
-  bool rebuild = false;
-  std::vector<Face_handle_1> tm1_only;
-  std::vector<Face_handle_2> tm2_only;
-
-  #if !defined(CGAL_LINKED_WITH_TBB) // TODO: && METIS!
-
-  CGAL_static_assertion_msg(
-    !(boost::is_convertible<TAG, CGAL::Parallel_tag>::value),
-    "Parallel_tag is enabled but TBB is unavailable.");
-  infinity_value = -FT(1);
-
-  #else
-
+  // TODO: && METIS!
+  #if defined(CGAL_LINKED_WITH_TBB)
   if (boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value && nb_cores > 1) {
 
     // (1) -- Create partition of tm1.
@@ -1863,69 +1840,67 @@ double bounded_error_one_sided_Hausdorff_impl(
       tm1, nb_cores, CGAL::parameters::
       face_partition_id_map(face_pid_map));
     timer.stop();
-    std::cout << "* computing partition time (sec.): " << timer.time() << std::endl;
+    const double time1 = timer.time();
+    std::cout << "- computing partition time (sec.): " << time1 << std::endl;
 
     // (2) -- Create a filtered face graph for each part.
     timer.reset();
     timer.start();
-    using Filtered_graph = CGAL::Face_filtered_graph<TriangleMesh1>;
-    tm1_parts.resize(nb_cores);
+    tm1_parts.reserve(nb_cores);
     for (int i = 0; i < nb_cores; ++i) {
-      Filtered_graph tm1_part(tm1, i, face_pid_map);
-      CGAL_assertion(tm1_part.is_selection_valid());
-      CGAL::copy_face_graph(tm1_part, tm1_parts[i]); // TODO: do not copy in the future!
-      std::cout << "* part " << i << " size: " << tm1_parts[i].number_of_faces() << std::endl;
+      tm1_parts.emplace_back(tm1, i, face_pid_map);
+      CGAL_assertion(tm1_parts.back().is_selection_valid());
+      std::cout << "* part " << i << " size: " << tm1_parts.back().number_of_faces() << std::endl;
     }
+    CGAL_assertion(tm1_parts.size() == nb_cores);
     timer.stop();
-    std::cout << "* creating graphs time (sec.): " << timer.time() << std::endl;
+    const double time2 = timer.time();
+    std::cout << "- creating graphs time (sec.): " << time2 << std::endl;
 
     // (3) -- Preprocess all input data.
     timer.reset();
     timer.start();
-    // std::cout << "* preprocessing parallel version " << std::endl;
     tm1_trees.resize(tm1_parts.size());
 
-    FT inf_value = -FT(1);
-    const auto tm1_part_vpm = get_const_property_map(CGAL::vertex_point, tm1_parts[0]);
-    std::tie(inf_value, rebuild) = preprocess_bounded_error_Hausdorff_impl<Kernel>(
-      tm1_parts[0], tm2, compare_meshes, tm1_part_vpm, vpm2,
-      true, tm1_trees[0], tm2_tree, tm1_only, tm2_only);
-    CGAL_assertion(!rebuild);
+    // Compute infinity value.
+    const auto bbox1 = bbox(tm1);
+    const auto bbox2 = bbox(tm2);
+    const auto bb = bbox1 + bbox2;
+    const FT sq_dist = CGAL::squared_distance(
+      Point_3(bb.xmin(), bb.ymin(), bb.zmin()),
+      Point_3(bb.xmax(), bb.ymax(), bb.zmax()));
+    infinity_value = CGAL::approximate_sqrt(sq_dist) * FT(2);
 
-    Bounded_error_preprocessing<TriangleMesh1, TriangleMesh2, VPM1, VPM2, TM1_tree, TM2_tree, Kernel> bep(
-      tm1_parts, tm2, compare_meshes, vpm1, vpm2, true, tm1_trees);
-    tbb::parallel_reduce(tbb::blocked_range<std::size_t>(1, tm1_parts.size()), bep);
-    infinity_value = (CGAL::max)(inf_value, bep.infinity_value);
-
+    Bounded_error_preprocessing<TMF, VPM1, TMF_tree, Kernel> bep(tm1_parts, vpm1, tm1_trees);
+    tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, tm1_parts.size()), bep);
+    tm2_tree.insert(faces(tm2).begin(), faces(tm2).end(), tm2, vpm2);
     tm2_tree.build();
-    for (auto& tm1_tree : tm1_trees) tm1_tree.build();
 
     timer.stop();
-    std::cout << "* preprocessing parallel time (sec.) " << timer.time() << std::endl;
+    const double time3 = timer.time();
+    std::cout << "- creating trees time (sec.) " << time3 << std::endl;
+    std::cout << "* preprocessing parallel time (sec.) " << time1 + time2 + time3 << std::endl;
 
   } else // sequential version
-
   #endif // defined(CGAL_LINKED_WITH_TBB) && METIS
-
   {
     // std::cout << "* preprocessing sequential version " << std::endl;
     timer.reset();
     timer.start();
-    tm1_trees.resize(1);
+    bool rebuild = false;
+    std::vector<Face_handle_1> tm1_only;
+    std::vector<Face_handle_2> tm2_only;
     std::tie(infinity_value, rebuild) = preprocess_bounded_error_Hausdorff_impl<Kernel>(
-      tm1, tm2, compare_meshes, vpm1, vpm2,
-      true, tm1_trees[0], tm2_tree, tm1_only, tm2_only);
+      tm1, tm2, compare_meshes, vpm1, vpm2, true, np1, np2,
+      tm1_tree, tm2_tree, tm1_only, tm2_only);
     CGAL_assertion(!rebuild);
-
+    tm1_tree.build();
     tm2_tree.build();
-    tm1_trees[0].build();
-
     timer.stop();
     std::cout << "* preprocessing sequential time (sec.) " << timer.time() << std::endl;
   }
 
-  // std::cout << "* infinity_value: " << infinity_value << std::endl;
-
+  std::cout << "* infinity_value: " << infinity_value << std::endl;
   if (infinity_value < FT(0)) {
     // std::cout << "* culling rate: 100%" << std::endl;
     return 0.0; // TM1 is part of TM2 so the distance is zero
@@ -1938,31 +1913,24 @@ double bounded_error_one_sided_Hausdorff_impl(
   timer.reset();
   timer.start();
 
-  #if !defined(CGAL_LINKED_WITH_TBB) // TODO: && METIS!
-
-  CGAL_static_assertion_msg(
-    !(boost::is_convertible<TAG, CGAL::Parallel_tag>::value),
-    "Parallel_tag is enabled but TBB is unavailable.");
-  hdist = -1.0;
-
-  #else
-
+  // TODO: && METIS!
+  #if defined(CGAL_LINKED_WITH_TBB)
   if (boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value && nb_cores > 1) {
+
     std::cout << "* executing parallel version " << std::endl;
-    Bounded_error_distance_computation<TriangleMesh1, TriangleMesh2, VPM1, VPM2, TM1_tree, TM2_tree, Kernel> bedc(
+    Bounded_error_distance_computation<TMF, TM2, VPM1, VPM2, TMF_tree, TM2_tree, Kernel> bedc(
       tm1_parts, tm2, error_bound, vpm1, vpm2,
       infinity_value, initial_lower_bound, tm1_trees, tm2_tree);
     tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, tm1_parts.size()), bedc);
     hdist = bedc.distance;
-  } else
 
+  } else // sequential version
   #endif // defined(CGAL_LINKED_WITH_TBB) && METIS
-
   {
     std::cout << "* executing sequential version " << std::endl;
     hdist = bounded_error_Hausdorff_impl<Kernel>(
       tm1, tm2, error_bound, vpm1, vpm2,
-      infinity_value, initial_lower_bound, tm1_trees[0], tm2_tree);
+      infinity_value, initial_lower_bound, tm1_tree, tm2_tree);
   }
 
   timer.stop();
@@ -1977,20 +1945,24 @@ template< class Concurrency_tag,
           class TriangleMesh1,
           class TriangleMesh2,
           class VPM1,
-          class VPM2>
+          class VPM2,
+          class NamedParameters1,
+          class NamedParameters2>
 double bounded_error_symmetric_Hausdorff_impl(
   const TriangleMesh1& tm1,
   const TriangleMesh2& tm2,
   const typename Kernel::FT error_bound,
   const bool compare_meshes,
   const VPM1& vpm1,
-  const VPM2& vpm2)
+  const VPM2& vpm2,
+  const NamedParameters1& np1,
+  const NamedParameters2& np2)
 {
   // Naive version.
   // const double hdist1 = bounded_error_one_sided_Hausdorff_impl<Concurrency_tag, Kernel>(
-  //   tm1, tm2, error_bound, compare_meshes, vpm1, vpm2);
+  //   tm1, tm2, error_bound, compare_meshes, vpm1, vpm2, np1, np2);
   // const double hdist2 = bounded_error_one_sided_Hausdorff_impl<Concurrency_tag, Kernel>(
-  //   tm2, tm1, error_bound, compare_meshes, vpm2, vpm1);
+  //   tm2, tm1, error_bound, compare_meshes, vpm2, vpm1, np1, np2);
   // return (CGAL::max)(hdist1, hdist2);
 
   // Optimized version.
@@ -2020,8 +1992,8 @@ double bounded_error_symmetric_Hausdorff_impl(
   FT infinity_value = -FT(1);
   bool rebuild = false;
   std::tie(infinity_value, rebuild) = preprocess_bounded_error_Hausdorff_impl<Kernel>(
-    tm1, tm2, compare_meshes, vpm1, vpm2,
-    false, tm1_tree, tm2_tree, tm1_only, tm2_only);
+    tm1, tm2, compare_meshes, vpm1, vpm2, false, np1, np2,
+    tm1_tree, tm2_tree, tm1_only, tm2_only);
 
   if (infinity_value < FT(0)) {
     // std::cout << "* culling rate: 100%" << std::endl;
@@ -2260,7 +2232,7 @@ double bounded_error_Hausdorff_distance(
   CGAL_precondition(error_bound >= 0.0);
   const FT error_threshold = static_cast<FT>(error_bound);
   return internal::bounded_error_one_sided_Hausdorff_impl<Concurrency_tag, Traits>(
-    tm1, tm2, error_threshold, match_faces, vpm1, vpm2);
+    tm1, tm2, error_threshold, match_faces, vpm1, vpm2, np1, np2);
 }
 
 template< class Concurrency_tag,
@@ -2335,7 +2307,7 @@ double bounded_error_symmetric_Hausdorff_distance(
   CGAL_precondition(error_bound >= 0.0);
   const FT error_threshold = static_cast<FT>(error_bound);
   return internal::bounded_error_symmetric_Hausdorff_impl<Concurrency_tag, Traits>(
-    tm1, tm2, error_threshold, match_faces, vpm1, vpm2);
+    tm1, tm2, error_threshold, match_faces, vpm1, vpm2, np1, np2);
 }
 
 template< class Concurrency_tag,
