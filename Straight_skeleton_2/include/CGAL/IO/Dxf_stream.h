@@ -73,7 +73,7 @@ protected:
       return Color_value(a) < Color_value(b);
     }
 
-    static int Color_value ( Color const& c )
+    static int Color_value ( IO::Color const& c )
     {
       return ( int(c.r()) << 16 ) + ( int(c.g()) << 8  ) + ( int(c.b()) ) ;
     }
@@ -103,7 +103,7 @@ public:
     mWriter          (out)
    ,mDefaultDxfColor (255)
    ,mDxfColor        (255)
-    ,mCgalColor       (white())
+    ,mCgalColor       (IO::white())
    ,mLayer           ("0")
   {
     setup_initial_color_table();
