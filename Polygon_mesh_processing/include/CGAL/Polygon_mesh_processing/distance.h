@@ -1474,7 +1474,7 @@ double bounded_error_Hausdorff_impl(
   CGAL_precondition(tm2_tree.size() > 0);
 
   // First, we apply culling.
-  std::cout << "- applying culling" << std::endl;
+  // std::cout << "- applying culling" << std::endl;
 
   Timer timer;
   timer.start();
@@ -1500,7 +1500,7 @@ double bounded_error_Hausdorff_impl(
   // std::cout << "* culling (sec.): " << timer.time() << std::endl;
 
   // Second, we apply subdivision.
-  std::cout << "- applying subdivision" << std::endl;
+  // std::cout << "- applying subdivision" << std::endl;
 
   timer.reset();
   timer.start();
@@ -1714,8 +1714,9 @@ struct Bounded_error_preprocessing {
       tm1_only.clear();
       tm2_only.clear();
       tm2_tree.clear();
+      const auto tm1_part_vpm = get_const_property_map(CGAL::vertex_point, tm1_parts[i]);
       const FT inf_value = preprocess_bounded_error_Hausdorff_impl<Kernel>(
-        tm1_parts[i], tm2, compare_meshes, vpm1, vpm2, is_one_sided_distance,
+        tm1_parts[i], tm2, compare_meshes, tm1_part_vpm, vpm2, is_one_sided_distance,
         tm1_trees[i], tm2_tree, tm1_only, tm2_only).first;
       if (inf_value > max_inf_value) max_inf_value = inf_value;
     }
@@ -1780,8 +1781,9 @@ struct Bounded_error_distance_computation {
       CGAL_assertion(i < tm1_parts.size());
       CGAL_assertion(i < tm1_trees.size());
       // std::cout << "* part " << i << " size: " << tm1_parts[i].number_of_faces() << std::endl;
+      const auto tm1_part_vpm = get_const_property_map(CGAL::vertex_point, tm1_parts[i]);
       const double dist = bounded_error_Hausdorff_impl<Kernel>(
-        tm1_parts[i], tm2, error_bound, vpm1, vpm2,
+        tm1_parts[i], tm2, error_bound, tm1_part_vpm, vpm2,
         infinity_value, initial_lower_bound, tm1_trees[i], tm2_tree);
       if (dist > hdist) hdist = dist;
     }
@@ -1884,8 +1886,9 @@ double bounded_error_one_sided_Hausdorff_impl(
     tm1_trees.resize(tm1_parts.size());
 
     FT inf_value = -FT(1);
+    const auto tm1_part_vpm = get_const_property_map(CGAL::vertex_point, tm1_parts[0]);
     std::tie(inf_value, rebuild) = preprocess_bounded_error_Hausdorff_impl<Kernel>(
-      tm1_parts[0], tm2, compare_meshes, vpm1, vpm2,
+      tm1_parts[0], tm2, compare_meshes, tm1_part_vpm, vpm2,
       true, tm1_trees[0], tm2_tree, tm1_only, tm2_only);
     CGAL_assertion(!rebuild);
 
