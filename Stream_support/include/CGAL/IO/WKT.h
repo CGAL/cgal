@@ -577,6 +577,22 @@ bool read_WKT(std::istream& is,
 
 } // namespace IO
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+using IO::read_linestring_WKT;
+using IO::read_multi_linestring_WKT;
+using IO::read_multi_point_WKT;
+using IO::read_multi_polygon_WKT;
+using IO::read_point_WKT;
+using IO::read_polygon_WKT;
+using IO::read_WKT;
+using IO::write_linestring_WKT;
+using IO::write_multi_linestring_WKT;
+using IO::write_multi_point_WKT;
+using IO::write_multi_polygon_WKT;
+using IO::write_point_WKT;
+using IO::write_polygon_WKT;
+#endif
+
 } // namespace CGAL
 
 #endif // BOOST VERSION CHECKS
