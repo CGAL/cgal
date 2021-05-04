@@ -17,6 +17,7 @@
 #include <CGAL/license/Shape_detection.h>
 
 #include <CGAL/Eigen_diagonalize_traits.h>
+#include <CGAL/property_map.h>
 
 namespace CGAL {
 namespace Shape_detection {
