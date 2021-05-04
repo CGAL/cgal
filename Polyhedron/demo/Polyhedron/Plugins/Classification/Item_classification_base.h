@@ -68,7 +68,7 @@ public:
   virtual bool run (int method, int classifier, std::size_t subdivisions, double smoothing) = 0;
 
   virtual void update_color () = 0;
-  virtual void change_color (int index, float* vmin = NULL, float* vmax = NULL) = 0;
+  virtual void change_color (int index, float* vmin = nullptr, float* vmax = nullptr) = 0;
   virtual CGAL::Three::Scene_item* generate_one_item (const char* name,
                                                       int label) const = 0;
   virtual void generate_one_item_per_label(std::vector<CGAL::Three::Scene_item*>& items,
@@ -201,7 +201,7 @@ public:
     }
     else if (classifier == CGAL_CLASSIFICATION_ETHZ_NUMBER)
     {
-      if (m_ethz == NULL)
+      if (m_ethz == nullptr)
         m_ethz = new ETHZ_random_forest (m_labels, m_features);
       std::ifstream f (filename, std::ios_base::in | std::ios_base::binary);
 

@@ -60,7 +60,7 @@ Note that some libraries have specific dependencies in addition to the essential
 
 | Library   | CMake Variable | Functionality | Dependencies |
 | :-------- | :------------- | :------------ | :----------- |
-| `%CGAL`   | none           | Main library  | \gmp, \mpfr, \boost (headers) |
+|   \cgal   | none           | Main library  | \gmp, \mpfr, \boost (headers) |
 | `CGAL_Core` | `WITH_CGAL_Core`  | The %CORE library for algebraic numbers.\cgalFootnote{CGAL_Core is not part of \cgal, but a custom version of the \core library distributed by \cgal for the user convenience and it has it's own license.}  | \gmp and \mpfr |
 | `CGAL_ImageIO` | `WITH_CGAL_ImageIO` | Utilities to read and write image files  | \zlib, \vtk (optional) |
 | `CGAL_Qt5`  | `WITH_CGAL_Qt5` | `QGraphicsView` support for \qt5-based demos | \qt5 |

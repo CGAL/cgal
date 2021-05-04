@@ -60,8 +60,6 @@ public:
 
   void write_footer()
   {
-    if(m_header.ascii() && m_header.comments())
-      out() << "\n\n# End of OFF #";
     out() << std::endl;
   }
 
@@ -124,17 +122,7 @@ public:
   {
     if(m_header.ascii())
     {
-      if(m_header.no_comments())
-      {
-        out() << '\n';
-      }
-      else
-      {
-        out() << "\n\n# " << m_header.size_of_facets()
-              << " facets\n";
-        out() << "# ------------------------------------------"
-                 "\n\n";
-      }
+      out() << '\n';
     }
   }
 

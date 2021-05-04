@@ -33,7 +33,7 @@ Scene::Scene()
     , m_grid_size(slow_distance_grid_size)
     , m_cut_plane(NONE)
 {
-    m_pPolyhedron = NULL;
+    m_pPolyhedron = nullptr;
 
     // view options
     m_view_points = true;
@@ -541,7 +541,7 @@ int Scene::open(QString filename)
         return -1;
     }
 
-    if(m_pPolyhedron != NULL)
+    if(m_pPolyhedron != nullptr)
         delete m_pPolyhedron;
 
     // allocate new polyhedron
@@ -553,7 +553,7 @@ int Scene::open(QString filename)
         QApplication::restoreOverrideCursor();
 
         delete m_pPolyhedron;
-        m_pPolyhedron = NULL;
+        m_pPolyhedron = nullptr;
 
         return -1;
     }
@@ -571,7 +571,7 @@ void Scene::update_bbox()
     std::cout << "Compute bbox...";
     m_bbox = Bbox();
 
-    if(m_pPolyhedron == NULL)
+    if(m_pPolyhedron == nullptr)
     {
         std::cout << "failed (no polyhedron)." << std::endl;
         return;
@@ -794,7 +794,7 @@ FT Scene::bbox_diag() const
 
 void Scene::build_facet_tree()
 {
-    if ( NULL == m_pPolyhedron )
+    if ( nullptr == m_pPolyhedron )
     {
         std::cerr << "Build facet tree failed: load polyhedron first." << std::endl;
         return;
@@ -813,7 +813,7 @@ void Scene::build_facet_tree()
 
 void Scene::build_edge_tree()
 {
-    if ( NULL == m_pPolyhedron )
+    if ( nullptr == m_pPolyhedron )
     {
         std::cerr << "Build edge tree failed: load polyhedron first." << std::endl;
         return;
@@ -860,7 +860,7 @@ void Scene::generate_points_in(const unsigned int nb_points,
                                const double vmin,
                                const double vmax)
 {
-    if(m_pPolyhedron == NULL)
+    if(m_pPolyhedron == nullptr)
     {
         std::cout << "Load polyhedron first." << std::endl;
         return;
@@ -913,7 +913,7 @@ void Scene::generate_points_in(const unsigned int nb_points,
 
 void Scene::generate_inside_points(const unsigned int nb_points)
 {
-    if(m_pPolyhedron == NULL)
+    if(m_pPolyhedron == nullptr)
     {
         std::cout << "Load polyhedron first." << std::endl;
         return;
@@ -955,7 +955,7 @@ void Scene::generate_inside_points(const unsigned int nb_points)
 
 void Scene::generate_boundary_segments(const unsigned int nb_slices)
 {
-    if(m_pPolyhedron == NULL)
+    if(m_pPolyhedron == nullptr)
     {
         std::cout << "Load polyhedron first." << std::endl;
         return;
@@ -1005,7 +1005,7 @@ void Scene::generate_boundary_segments(const unsigned int nb_slices)
 
 void Scene::generate_boundary_points(const unsigned int nb_points)
 {
-    if(m_pPolyhedron == NULL)
+    if(m_pPolyhedron == nullptr)
     {
         std::cout << "Load polyhedron first." << std::endl;
         return;
@@ -1055,7 +1055,7 @@ void Scene::generate_boundary_points(const unsigned int nb_points)
 
 void Scene::generate_edge_points(const unsigned int nb_points)
 {
-    if(m_pPolyhedron == NULL)
+    if(m_pPolyhedron == nullptr)
     {
         std::cout << "Load polyhedron first." << std::endl;
         return;
@@ -1219,7 +1219,7 @@ void Scene::cut_segment_plane()
     {
         const Segment* inter_seg = CGAL::object_cast<Segment>(&(it->first));
 
-        if ( NULL != inter_seg )
+        if ( nullptr != inter_seg )
         {
             m_cut_segments.push_back(*inter_seg);
         }
@@ -1280,7 +1280,7 @@ void Scene::toggle_view_plane()
 
 void Scene::refine_bisection(const FT max_sqlen)
 {
-    if(m_pPolyhedron == NULL)
+    if(m_pPolyhedron == nullptr)
     {
         std::cout << "Load polyhedron first." << std::endl;
         return;
@@ -1295,7 +1295,7 @@ void Scene::refine_bisection(const FT max_sqlen)
 
 void Scene::refine_loop()
 {
-    if(m_pPolyhedron == NULL)
+    if(m_pPolyhedron == nullptr)
     {
         std::cout << "Load polyhedron first." << std::endl;
         return;

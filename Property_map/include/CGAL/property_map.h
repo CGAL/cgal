@@ -615,6 +615,44 @@ make_counting_range (const SizeType begin, const SizeType end)
 
 /// \endcond
 
+/// \cond SKIP_IN_MANUAL
+/*
+  This property map is used to turn a property map using the value
+  type of a random access iterator as key type to the same property
+  map but using the index of the element iterated to.
+
+  It basically allows, when accessing the ith element of a range, to
+  do `get(map, i)` instead of `get(map, range[i])`.
+ */
+template<typename RandomAccessIterator, typename PropertyMap>
+struct Random_index_access_property_map
+{
+  typedef std::size_t key_type;
+  typedef typename boost::property_traits<PropertyMap>::value_type value_type;
+  typedef typename boost::property_traits<PropertyMap>::reference reference;
+  typedef typename boost::property_traits<PropertyMap>::category category;
+
+  RandomAccessIterator m_begin;
+  PropertyMap m_map;
+
+  Random_index_access_property_map (RandomAccessIterator begin = RandomAccessIterator(),
+                                    PropertyMap map = PropertyMap())
+    : m_begin(begin), m_map(map) {}
+
+  friend reference get (const Random_index_access_property_map& map, const key_type& index,
+                        typename std::enable_if<std::is_convertible<category, boost::readable_property_map_tag>::value>::type* = 0)
+  {
+    return get(map.m_map, *std::next(map.m_begin, index));
+  }
+
+  friend void put (Random_index_access_property_map& map, const key_type& index, const value_type& value,
+                   typename std::enable_if<std::is_convertible<category, boost::writable_property_map_tag>::value>::type* = 0)
+  {
+    put (map.m_map, *std::next(map.m_begin, index), value);
+  }
+};
+/// \endcond
+
 } // namespace CGAL
 
 

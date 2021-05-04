@@ -125,7 +125,7 @@ MainWindow::MainWindow()
 
   this->graphicsView->setAcceptDrops(false);
 
-  minkgi = 0;
+  minkgi = nullptr;
   // Add a GraphicItem for the Polygon2
   pgi = new CGAL::Qt::PolygonGraphicsItem<Polygon2>(&poly);
 
@@ -557,10 +557,10 @@ MainWindow::clearPartition()
 void
 MainWindow::clearMinkowski()
 {
-  if(minkgi != 0){
+  if(minkgi != nullptr){
     scene.removeItem(minkgi);
     delete minkgi;
-    minkgi = 0;
+    minkgi = nullptr;
   }
 }
 

@@ -496,7 +496,7 @@ Other data structures of \cgal have their own I/O functions, see their respectiv
 
 \subsection IOstreamOther Reading Unsupported Formats
 
-If %CGAL does not support the file format of your data, the
+If \cgal does not support the file format of your data, the
 <a href="https://www.boost.org/doc/libs/release/libs/property_tree/">`boost::property_tree`</a>
 might come in handy if your data has a simple-enough structure.
 The following small example shows how to parse an <a href="https://en.wikipedia.org/wiki/XML">XML</a> file,

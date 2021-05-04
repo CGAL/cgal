@@ -36,7 +36,8 @@ if(NOT CGAL_DISABLE_GMP)
   polyhedron_demo_plugin(offset_meshing_plugin Offset_meshing_plugin
                          ${remeshingUI_FILES})
   target_link_libraries(offset_meshing_plugin PUBLIC scene_surface_mesh_item
-                                                   scene_polygon_soup_item)
+                                                     scene_polygon_soup_item
+                                                     scene_polylines_item)
   if(TARGET CGAL::Eigen3_support)
     target_link_libraries(offset_meshing_plugin PUBLIC CGAL::Eigen3_support)
   endif()

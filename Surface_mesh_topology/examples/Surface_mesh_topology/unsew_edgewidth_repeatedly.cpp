@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
   std::cout<<"File '"<<filename<<"' loaded. Running the main program..."<<std::endl;
 
   boost::unordered_map<Dart_handle, Dart_handle> origin_to_copy;
-  lcccopy.copy(lccoriginal, &origin_to_copy, NULL);
+  lcccopy.copy(lccoriginal, &origin_to_copy, nullptr);
 
   LCC_3::size_type is_root=lccoriginal.get_new_mark();
   LCC_3::size_type belong_to_cycle=lccoriginal.get_new_mark();
