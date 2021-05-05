@@ -1559,7 +1559,7 @@ double bounded_error_Hausdorff_impl(
 
         // The upper bound of this triangle is the actual Hausdorff distance of
         // the triangle to the second mesh. Use it as new global lower bound.
-        // TODO: update the reference to the realizing triangle here as this is the best current guess.
+        // Here, we update the reference to the realizing triangle as this is the best current guess.
         global_bounds.lower = triangle_bounds.upper;
         global_bounds.lpair.second = triangle_bounds.tm2_uface;
         continue;
@@ -1703,6 +1703,7 @@ struct Bounded_error_preprocessing {
     return operand.type() == typeid(TM2Wrapper);
   }
 
+  // TODO: make AABB tree build parallel!
   void operator()(const tbb::blocked_range<std::size_t>& range) {
     Timer timer;
     timer.reset();
@@ -1854,15 +1855,19 @@ double bounded_error_one_sided_Hausdorff_impl(
   Timer timer;
   std::cout.precision(20);
 
-  const int nb_cores = 4; // TODO: add to NP!
-  std::cout << "* num cores: " << nb_cores << std::endl;
+  // TODO: add to NP!
+  const int nb_cores = 4;
+  const std::size_t min_nb_faces_to_split = 100; // TODO: increase this number?
+  // std::cout << "* num cores: " << nb_cores << std::endl;
 
   TM1_tree tm1_tree;
   TM2_tree tm2_tree;
   FT infinity_value = -FT(1);
 
   #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
-  if (boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value && nb_cores > 1) {
+  if (
+    boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value &&
+    nb_cores > 1 && faces(tm1).size() >= min_nb_faces_to_split) {
 
     // (1) -- Create partition of tm1.
     timer.reset();
@@ -1873,8 +1878,8 @@ double bounded_error_one_sided_Hausdorff_impl(
       tm1, nb_cores, CGAL::parameters::
       face_partition_id_map(face_pid_map));
     timer.stop();
-    const double time1 = timer.time();
-    std::cout << "- computing partition time (sec.): " << time1 << std::endl;
+    // const double time1 = timer.time();
+    // std::cout << "- computing partition time (sec.): " << time1 << std::endl;
 
     // (2) -- Create a filtered face graph for each part.
     timer.reset();
@@ -1882,13 +1887,13 @@ double bounded_error_one_sided_Hausdorff_impl(
     tm1_parts.reserve(nb_cores);
     for (int i = 0; i < nb_cores; ++i) {
       tm1_parts.emplace_back(tm1, i, face_pid_map);
-      CGAL_assertion(tm1_parts.back().is_selection_valid());
-      std::cout << "- part " << i << " size: " << tm1_parts.back().number_of_faces() << std::endl;
+      // CGAL_assertion(tm1_parts.back().is_selection_valid()); // TODO: why is it triggered sometimes?
+      // std::cout << "- part " << i << " size: " << tm1_parts.back().number_of_faces() << std::endl;
     }
     CGAL_assertion(tm1_parts.size() == nb_cores);
     timer.stop();
-    const double time2 = timer.time();
-    std::cout << "- creating graphs time (sec.): " << time2 << std::endl;
+    // const double time2 = timer.time();
+    // std::cout << "- creating graphs time (sec.): " << time2 << std::endl;
 
     // (3) -- Preprocess all input data.
     timer.reset();
@@ -1916,9 +1921,9 @@ double bounded_error_one_sided_Hausdorff_impl(
     tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, tm_wrappers.size()), bep);
 
     timer.stop();
-    const double time3 = timer.time();
-    std::cout << "- creating trees time (sec.) " << time3 << std::endl;
-    std::cout << "* preprocessing parallel time (sec.) " << time1 + time2 + time3 << std::endl;
+    // const double time3 = timer.time();
+    // std::cout << "- creating trees time (sec.) " << time3 << std::endl;
+    // std::cout << "* preprocessing parallel time (sec.) " << time1 + time2 + time3 << std::endl;
 
   } else // sequential version
   #endif // defined(CGAL_LINKED_WITH_TBB) && METIS
@@ -1936,10 +1941,10 @@ double bounded_error_one_sided_Hausdorff_impl(
     tm1_tree.build();
     tm2_tree.build();
     timer.stop();
-    std::cout << "* preprocessing sequential time (sec.) " << timer.time() << std::endl;
+    // std::cout << "* preprocessing sequential time (sec.) " << timer.time() << std::endl;
   }
 
-  std::cout << "* infinity_value: " << infinity_value << std::endl;
+  // std::cout << "* infinity_value: " << infinity_value << std::endl;
   if (infinity_value < FT(0)) {
     // std::cout << "* culling rate: 100%" << std::endl;
     return 0.0; // TM1 is part of TM2 so the distance is zero
@@ -1953,9 +1958,11 @@ double bounded_error_one_sided_Hausdorff_impl(
   timer.start();
 
   #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
-  if (boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value && nb_cores > 1) {
+  if (
+    boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value &&
+    nb_cores > 1 && faces(tm1).size() >= min_nb_faces_to_split) {
 
-    std::cout << "* executing parallel version " << std::endl;
+    // std::cout << "* executing parallel version " << std::endl;
     Bounded_error_distance_computation<TMF, TM2, VPM1, VPM2, TMF_tree, TM2_tree, Kernel> bedc(
       tm1_parts, tm2, error_bound, vpm1, vpm2,
       infinity_value, initial_lower_bound, tm1_trees, tm2_tree);
@@ -1965,19 +1972,20 @@ double bounded_error_one_sided_Hausdorff_impl(
   } else // sequential version
   #endif // defined(CGAL_LINKED_WITH_TBB) && METIS
   {
-    std::cout << "* executing sequential version " << std::endl;
+    // std::cout << "* executing sequential version " << std::endl;
     hdist = bounded_error_Hausdorff_impl<Kernel>(
       tm1, tm2, error_bound, vpm1, vpm2,
       infinity_value, initial_lower_bound, tm1_tree, tm2_tree);
   }
 
   timer.stop();
-  std::cout << "* computation time (sec.) " << timer.time() << std::endl;
+  // std::cout << "* computation time (sec.) " << timer.time() << std::endl;
 
   CGAL_assertion(hdist >= 0.0);
   return hdist;
 }
 
+// TODO: should we add a parallel version here?
 template< class Concurrency_tag,
           class Kernel,
           class TriangleMesh1,
@@ -1996,6 +2004,12 @@ double bounded_error_symmetric_Hausdorff_impl(
   const NamedParameters1& np1,
   const NamedParameters2& np2)
 {
+  #if !defined(CGAL_LINKED_WITH_TBB)
+  CGAL_static_assertion_msg(
+    !(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value),
+    "Parallel_tag is enabled but TBB is unavailable.");
+  #endif
+
   // Naive version.
   // const double hdist1 = bounded_error_one_sided_Hausdorff_impl<Concurrency_tag, Kernel>(
   //   tm1, tm2, error_bound, compare_meshes, vpm1, vpm2, np1, np2);

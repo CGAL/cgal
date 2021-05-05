@@ -17,7 +17,7 @@ using FT       = typename Kernel::FT;
 using Point_3  = typename Kernel::Point_3;
 using Vector_3 = typename Kernel::Vector_3;
 
-using TAG                     = CGAL::Parallel_if_available_tag;
+using TAG                     = CGAL::Sequential_tag;
 using Surface_mesh            = CGAL::Surface_mesh<Point_3>;
 using Polyhedron              = CGAL::Polyhedron_3<Kernel>;
 using Affine_transformation_3 = CGAL::Aff_transformation_3<Kernel>;

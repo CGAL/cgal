@@ -861,6 +861,17 @@ void test_parallel_version(
   std::cout << "* distb par = " << distb << std::endl;
 }
 
+void test_early_quit(
+  const std::string filepath, const double /*error_bound*/, const double /*max_distance*/) {
+
+  std::cout.precision(20);
+  std::cout << std::endl << "-- test early quit:" << std::endl << std::endl;
+
+  Timer timer;
+  Surface_mesh mesh1, mesh2;
+  get_meshes(filepath, filepath, mesh1, mesh2);
+}
+
 int main(int argc, char** argv) {
 
   // std::string name;
@@ -868,8 +879,10 @@ int main(int argc, char** argv) {
 
   const double error_bound = 1e-4;
   const std::size_t num_samples = 1000;
+  const double max_distance = 1.0;
   std::cout << std::endl << "* error bound: " << error_bound << std::endl;
   std::cout << std::endl << "* number of samples: " << num_samples << std::endl;
+  std::cout << std::endl << "* max distance: " << max_distance << std::endl;
   std::string filepath = (argc > 1 ? argv[1] : "data/blobby.off");
 
   // ------------------------------------------------------------------------ //
@@ -884,7 +897,7 @@ int main(int argc, char** argv) {
 
   // test_synthetic_data(apprx_hd);
   // test_synthetic_data(naive_hd);
-  // test_synthetic_data(bound_hd);
+  test_synthetic_data(bound_hd);
 
   // --- Compare on common meshes.
 
@@ -903,8 +916,8 @@ int main(int argc, char** argv) {
 
   // --- Compare timings.
 
-  // filepath = (argc > 1 ? argv[1] : "data/blobby-remeshed.off");
-  filepath = "/Users/monet/Documents/fork/pull-requests/hausdorff/data/bunny-dense.off";
+  filepath = (argc > 1 ? argv[1] : "data/blobby-remeshed.off");
+  // filepath = "/Users/monet/Documents/fork/pull-requests/hausdorff/data/bunny-dense.off";
   // test_timings(filepath, apprx_hd);
   // test_timings(filepath, naive_hd);
   // test_timings(filepath, bound_hd);
@@ -919,7 +932,10 @@ int main(int argc, char** argv) {
   // test_realizing_triangles(error_bound);
 
   // --- Test parallelization.
-  test_parallel_version(filepath, error_bound);
+  // test_parallel_version(filepath, error_bound);
+
+  // --- Test early quit.
+  test_early_quit(filepath, error_bound, max_distance);
 
   // ------------------------------------------------------------------------ //
 
