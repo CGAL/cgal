@@ -31,12 +31,13 @@
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Real_timer.h>
 
+#include <CGAL/boost/graph/partition.h> // METIS related
+#include <CGAL/boost/graph/Face_filtered_graph.h>
+
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_reduce.h>
 #include <tbb/blocked_range.h>
 #include <atomic>
-#include <CGAL/boost/graph/partition.h> // METIS related
-#include <CGAL/boost/graph/Face_filtered_graph.h>
 #endif // CGAL_LINKED_WITH_TBB
 
 #include <boost/unordered_set.hpp>
