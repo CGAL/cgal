@@ -94,7 +94,7 @@ namespace IO {
    user wants to write a complex object as several %PLY
    properties. In that case, a specialization of `Output_rep` must
    be provided for `PropertyMap::value_type` that handles both ASCII
-   and binary output (see `CGAL::get_mode()`).
+   and binary output (see `CGAL::IO::get_mode()`).
 
    \attention When writing to a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
 
@@ -298,13 +298,13 @@ bool write_PLY(const std::string& filename,
   if(binary)
   {
     std::ofstream os(filename, std::ios::binary);
-    CGAL::set_mode(os, CGAL::IO::BINARY);
+    CGAL::IO::set_mode(os, CGAL::IO::BINARY);
     return write_PLY(os, points, np);
   }
   else
   {
     std::ofstream os(filename);
-    CGAL::set_mode(os, CGAL::IO::ASCII);
+    CGAL::IO::set_mode(os, CGAL::IO::ASCII);
     return write_PLY(os, points, np);
   }
 }

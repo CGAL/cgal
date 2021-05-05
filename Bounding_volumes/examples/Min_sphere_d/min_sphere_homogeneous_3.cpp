@@ -25,7 +25,7 @@ main ()
 
   Min_sphere  ms (P, P+n);             // smallest enclosing sphere
 
-  CGAL::set_pretty_mode (std::cout);
+  CGAL::IO::set_pretty_mode (std::cout);
   std::cout << ms;                     // output the sphere
 
   return 0;

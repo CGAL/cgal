@@ -31,7 +31,7 @@ struct Output_rep< ::Color, F > {
   { }
   std::ostream& operator() (std::ostream& out) const
   {
-    if (is_ascii(out))
+    if (IO::is_ascii(out))
       out << int(c[0]) << " " << int(c[1]) << " " << int(c[2]) << " " << int(c[3]);
     else
       out.write(reinterpret_cast<const char*>(&c), sizeof(c));
@@ -54,7 +54,7 @@ int main(int, char**)
                                                i));
 
   std::ofstream f("out.ply", std::ios::binary);
-  CGAL::set_binary_mode(f); // The PLY file will be written in the binary format
+  CGAL::IO::set_binary_mode(f); // The PLY file will be written in the binary format
 
   CGAL::IO::write_PLY_with_properties(f, points,
                                       CGAL::make_ply_point_writer (Point_map()),

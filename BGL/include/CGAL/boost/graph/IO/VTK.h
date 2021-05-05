@@ -531,7 +531,7 @@ bool write_VTP(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS
   std::ofstream os;
   if(binary){
     os.open(fname, std::ios::binary);
-    CGAL::set_mode(os, CGAL::IO::BINARY);
+    CGAL::IO::set_mode(os, CGAL::IO::BINARY);
   }
   else
     os.open(fname);

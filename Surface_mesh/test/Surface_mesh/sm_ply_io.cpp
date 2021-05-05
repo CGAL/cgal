@@ -40,7 +40,7 @@ int main()
   CGAL::IO::read_PLY(in2, mesh);
 
   std::ofstream out("out.ply");
-//  CGAL::set_binary_mode(out);
+//  CGAL::IO::set_binary_mode(out);
   CGAL::IO::write_PLY(out, mesh);
 
   return 0;

@@ -647,8 +647,8 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
     ss1 >> PT1r;
     ss3 >> PT3r;
 
-    assert(CGAL::is_ascii(ss1));
-    assert(CGAL::is_ascii(ss3));
+    assert(CGAL::IO::is_ascii(ss1));
+    assert(CGAL::IO::is_ascii(ss3));
     if (!ex) assert(PT1 == PT1r);
     if (!ex) assert(PT3 == PT3r);
 
@@ -659,15 +659,15 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
     if (!ex) {
       std::stringstream ss1b;
       std::stringstream ss3b;
-      CGAL::set_binary_mode(ss1b);
-      CGAL::set_binary_mode(ss3b);
+      CGAL::IO::set_binary_mode(ss1b);
+      CGAL::IO::set_binary_mode(ss3b);
       ss1b << PT1;
       ss3b << PT3;
 
       ss1b >> PT1r;
       ss3b >> PT3r;
-      assert(CGAL::is_binary(ss1b));
-      assert(CGAL::is_binary(ss3b));
+      assert(CGAL::IO::is_binary(ss1b));
+      assert(CGAL::IO::is_binary(ss3b));
 
       assert(PT1 == PT1r);
       assert(PT3 == PT3r);
@@ -679,12 +679,12 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
     PT3r.clear();
     std::stringstream ss1p;
     std::stringstream ss3p;
-    CGAL::set_pretty_mode(ss1p);
-    CGAL::set_pretty_mode(ss3p);
+    CGAL::IO::set_pretty_mode(ss1p);
+    CGAL::IO::set_pretty_mode(ss3p);
     ss1p << PT1;
     ss3p << PT3;
 
-    assert(CGAL::is_pretty(ss1p));
-    assert(CGAL::is_pretty(ss3p));
+    assert(CGAL::IO::is_pretty(ss1p));
+    assert(CGAL::IO::is_pretty(ss3p));
   }
 }

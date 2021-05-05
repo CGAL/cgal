@@ -172,7 +172,7 @@ bool read_STL(const std::string& fname,
   if(binary)
   {
     std::ifstream is(fname, std::ios::binary);
-    CGAL::set_mode(is, CGAL::IO::BINARY);
+    CGAL::IO::set_mode(is, CGAL::IO::BINARY);
     if(read_STL(is, g, np))
     {
       return true;
@@ -180,7 +180,7 @@ bool read_STL(const std::string& fname,
     g.clear();
   }
   std::ifstream is(fname);
-  CGAL::set_mode(is, CGAL::IO::ASCII);
+  CGAL::IO::set_mode(is, CGAL::IO::ASCII);
 
   typedef typename CGAL::GetVertexPointMap<Graph, CGAL_BGL_NP_CLASS>::type      VPM;
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
@@ -363,13 +363,13 @@ bool write_STL(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS
   if(binary)
   {
     std::ofstream os(fname, std::ios::binary);
-    CGAL::set_mode(os, CGAL::IO::BINARY);
+    CGAL::IO::set_mode(os, CGAL::IO::BINARY);
     return write_STL(os, g, np);
   }
   else
   {
     std::ofstream os(fname);
-    CGAL::set_mode(os, CGAL::IO::ASCII);
+    CGAL::IO::set_mode(os, CGAL::IO::ASCII);
 
     return write_STL(os, g, np);
   }

@@ -147,10 +147,10 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
 
   std::ofstream out(fileinfo.filePath().toUtf8(), std::ios::out | std::ios::binary);
   if ( choice == tr("Binary") )
-    CGAL::set_mode(out, CGAL::IO::BINARY);
+    CGAL::IO::set_mode(out, CGAL::IO::BINARY);
   else
   {
-    CGAL::set_mode(out, CGAL::IO::ASCII);
+    CGAL::IO::set_mode(out, CGAL::IO::ASCII);
     out.precision (std::numeric_limits<double>::digits10 + 2);
   }
 

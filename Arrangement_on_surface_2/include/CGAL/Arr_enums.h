@@ -155,7 +155,7 @@ OutputStream& operator<<(
         OutputStream& os,
         const Arr_parameter_space& ps) {
 
-  switch (::CGAL::get_mode(os)) {
+  switch (::CGAL::IO::get_mode(os)) {
   case ::CGAL::IO::PRETTY:
     switch(ps) {
     case CGAL::ARR_LEFT_BOUNDARY:
@@ -195,7 +195,7 @@ InputStream& operator>>(
     InputStream& is,
     Arr_parameter_space& ps) {
 
-  CGAL_precondition(CGAL::is_ascii(is));
+  CGAL_precondition(CGAL::IO::is_ascii(is));
 
   int i;
   is >> i;

@@ -205,7 +205,7 @@ inline
 std::ostream&
 operator<<(std::ostream &os, const Bbox_3& b)
 {
-  switch(get_mode(os))
+  switch(IO::get_mode(os))
   {
     case IO::ASCII :
         return os << b.xmin() << ' ' << b.ymin() << ' ' << b.zmin()
@@ -241,11 +241,11 @@ operator>>(std::istream &is, Bbox_3& b)
     double ymax = 0;
     double zmax = 0;
 
-  switch(get_mode(is))
+  switch(IO::get_mode(is))
   {
     case IO::ASCII :
-      is >> iformat(xmin) >> iformat(ymin) >> iformat(zmin)
-         >> iformat(xmax) >> iformat(ymax) >> iformat(zmax);
+      is >> IO::iformat(xmin) >> IO::iformat(ymin) >> IO::iformat(zmin)
+         >> IO::iformat(xmax) >> IO::iformat(ymax) >> IO::iformat(zmax);
         break;
     case IO::BINARY :
         read(is, xmin);

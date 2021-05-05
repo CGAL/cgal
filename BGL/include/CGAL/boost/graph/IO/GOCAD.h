@@ -211,7 +211,7 @@ bool read_GOCAD(const std::string& fname,
                 )
 {
   std::ifstream is(fname);
-  CGAL::set_mode(is, CGAL::IO::ASCII);
+  CGAL::IO::set_mode(is, CGAL::IO::ASCII);
   return read_GOCAD(is, name_and_color, g, np);
 }
 
@@ -451,7 +451,7 @@ bool write_GOCAD(const std::string& fname,
                  )
 {
   std::ofstream os(fname);
-  CGAL::set_mode(os, CGAL::IO::ASCII);
+  CGAL::IO::set_mode(os, CGAL::IO::ASCII);
 
   return write_GOCAD(os, fname.c_str(), g, np);
 }

@@ -256,7 +256,7 @@ bool read_GOCAD(const std::string& fname,
                 )
 {
   std::ifstream is(fname);
-  CGAL::set_mode(is, CGAL::IO::ASCII);
+  CGAL::IO::set_mode(is, CGAL::IO::ASCII);
   std::pair<std::string, std::string> dummy;
   return read_GOCAD(is, dummy, points, polygons, np);
 }
@@ -428,7 +428,7 @@ bool write_GOCAD(const std::string& fname,
                  )
 {
   std::ofstream os(fname);
-  CGAL::set_mode(os, CGAL::IO::ASCII);
+  CGAL::IO::set_mode(os, CGAL::IO::ASCII);
   return internal::write_GOCAD(os, fname.c_str(), points, polygons, np);
 }
 

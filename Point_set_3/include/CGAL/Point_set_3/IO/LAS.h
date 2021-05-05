@@ -160,7 +160,7 @@ template <typename Point, typename Vector>
 bool read_LAS(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set)
 {
   std::ifstream is(fname, std::ios::binary);
-  CGAL::set_mode(is, CGAL::IO::BINARY);
+  CGAL::IO::set_mode(is, CGAL::IO::BINARY);
   return read_LAS(is, point_set);
 }
 
@@ -396,7 +396,7 @@ bool write_LAS(const std::string& fname,
                CGAL::Point_set_3<Point, Vector>& point_set)
 {
   std::ofstream os(fname, std::ios::binary);
-  CGAL::set_mode(os, CGAL::IO::BINARY);
+  CGAL::IO::set_mode(os, CGAL::IO::BINARY);
   return write_LAS(os, point_set);
 }
 

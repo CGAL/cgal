@@ -217,7 +217,7 @@ int main (int argc, char** argv)
   Mesh dsm_mesh;
   CGAL::copy_face_graph (dsm, dsm_mesh);
   std::ofstream dsm_ofile ("dsm.ply", std::ios_base::binary);
-  CGAL::set_binary_mode (dsm_ofile);
+  CGAL::IO::set_binary_mode (dsm_ofile);
   CGAL::IO::write_PLY (dsm_ofile, dsm_mesh);
   dsm_ofile.close();
 
@@ -322,7 +322,7 @@ int main (int argc, char** argv)
                            })));
 
   std::ofstream tin_colored_ofile ("colored_tin.ply", std::ios_base::binary);
-  CGAL::set_binary_mode (tin_colored_ofile);
+  CGAL::IO::set_binary_mode (tin_colored_ofile);
   CGAL::IO::write_PLY (tin_colored_ofile, tin_colored_mesh);
   tin_colored_ofile.close();
 
@@ -415,7 +415,7 @@ int main (int argc, char** argv)
 
   // Save original DTM
   std::ofstream dtm_ofile ("dtm.ply", std::ios_base::binary);
-  CGAL::set_binary_mode (dtm_ofile);
+  CGAL::IO::set_binary_mode (dtm_ofile);
   CGAL::IO::write_PLY (dtm_ofile, dtm_mesh);
   dtm_ofile.close();
 
@@ -439,7 +439,7 @@ int main (int argc, char** argv)
 
   // Save filtered DTM
   std::ofstream dtm_holes_ofile ("dtm_with_holes.ply", std::ios_base::binary);
-  CGAL::set_binary_mode (dtm_holes_ofile);
+  CGAL::IO::set_binary_mode (dtm_holes_ofile);
   CGAL::IO::write_PLY (dtm_holes_ofile, dtm_mesh);
   dtm_holes_ofile.close();
 
@@ -477,7 +477,7 @@ int main (int argc, char** argv)
 
   // Save DTM with holes filled
   std::ofstream dtm_filled_ofile ("dtm_filled.ply", std::ios_base::binary);
-  CGAL::set_binary_mode (dtm_filled_ofile);
+  CGAL::IO::set_binary_mode (dtm_filled_ofile);
   CGAL::IO::write_PLY (dtm_filled_ofile, dtm_mesh);
   dtm_filled_ofile.close();
 
@@ -490,7 +490,7 @@ int main (int argc, char** argv)
   CGAL::Polygon_mesh_processing::isotropic_remeshing (faces(dtm_mesh), spacing, dtm_mesh);
 
   std::ofstream dtm_remeshed_ofile ("dtm_remeshed.ply", std::ios_base::binary);
-  CGAL::set_binary_mode (dtm_remeshed_ofile);
+  CGAL::IO::set_binary_mode (dtm_remeshed_ofile);
   CGAL::IO::write_PLY (dtm_remeshed_ofile, dtm_mesh);
   dtm_remeshed_ofile.close();
 
@@ -736,7 +736,7 @@ int main (int argc, char** argv)
 
     // Save the classified point set
     std::ofstream classified_ofile ("classified.ply");
-    CGAL::set_binary_mode (classified_ofile);
+    CGAL::IO::set_binary_mode (classified_ofile);
     classified_ofile << points;
     classified_ofile.close();
   }

@@ -586,7 +586,7 @@ bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream, bo
     return false;
 
   if (binary)
-    CGAL::set_binary_mode (stream);
+    CGAL::IO::set_binary_mode (stream);
 
   return CGAL::IO::write_PLY(stream, *(d->m_points), d->m_comments);
 }

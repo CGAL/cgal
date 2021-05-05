@@ -53,7 +53,7 @@ int main(int argc, char** argv)
   assert(ok);
 
   std::ofstream os("tmp.ply");
-  CGAL::set_binary_mode(os);
+  CGAL::IO::set_binary_mode(os);
   ok = CGAL::IO::write_PLY(os, points, polygons);
   assert(ok);
   os.close();

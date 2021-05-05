@@ -492,7 +492,7 @@ void test_bgl_PLY(const std::string filename,
     if(binary)
     {
       os.open("tmp.ply", std::ios::binary);
-      CGAL::set_mode(os, CGAL::IO::BINARY);
+      CGAL::IO::set_mode(os, CGAL::IO::BINARY);
     }
     else
     {
@@ -549,7 +549,7 @@ void test_bgl_PLY(const std::string filename,
     if(binary)
     {
       is_rpm.open("tmp.ply", std::ios::binary);
-      CGAL::set_mode(is_rpm, CGAL::IO::BINARY);
+      CGAL::IO::set_mode(is_rpm, CGAL::IO::BINARY);
     }
     else
     {
@@ -658,7 +658,7 @@ void test_bgl_STL(const std::string filename)
   Custom_VPM<Mesh> cvpm(cpoints);
 
   std::ifstream is(filename, std::ios::binary);
-  CGAL::set_mode(is, CGAL::IO::BINARY);
+  CGAL::IO::set_mode(is, CGAL::IO::BINARY);
   ok = CGAL::IO::read_STL(is, fg, CGAL::parameters::vertex_point_map(cvpm));
   assert(ok);
   assert(filename != "data/pig.stl" || (num_vertices(fg) == 8642 && num_faces(fg) == 16848));
@@ -795,7 +795,7 @@ void test_bgl_VTP(const char* filename,
     std::ofstream os;
     if(binary){
       os.open("tmp.vtp", std::ios::binary);
-      CGAL::set_mode(os, CGAL::IO::BINARY);
+      CGAL::IO::set_mode(os, CGAL::IO::BINARY);
     }
     else
       os.open("tmp.vtp");
@@ -849,7 +849,7 @@ void test_bgl_VTP(const char* filename,
     if(binary)
     {
       os.open("tmp.vtp", std::ios::binary);
-      CGAL::set_mode(os, CGAL::IO::BINARY);
+      CGAL::IO::set_mode(os, CGAL::IO::BINARY);
     }
     else
     {

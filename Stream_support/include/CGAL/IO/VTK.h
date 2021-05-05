@@ -485,13 +485,13 @@ bool write_VTP(const std::string& fname,
   if(binary)
   {
     std::ofstream os(fname, std::ios::binary);
-    CGAL::set_mode(os, CGAL::IO::BINARY);
+    CGAL::IO::set_mode(os, CGAL::IO::BINARY);
     return write_VTP(os, points, polygons, np);
   }
   else
   {
     std::ofstream os(fname);
-    CGAL::set_mode(os, CGAL::IO::ASCII);
+    CGAL::IO::set_mode(os, CGAL::IO::ASCII);
     return write_VTP(os, points, polygons, np);
   }
 }

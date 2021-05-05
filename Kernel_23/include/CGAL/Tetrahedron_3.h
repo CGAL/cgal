@@ -147,7 +147,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Tetrahedron_3<R> &t)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << t[0] << ' ' << t[1] << ' ' << t[2] << ' ' << t[3];
     case IO::BINARY :

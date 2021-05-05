@@ -348,7 +348,7 @@ bool write_LAS(const std::string& filename,
                )
 {
   std::ofstream os(filename, std::ios::binary);
-  CGAL::set_mode(os, CGAL::IO::BINARY);
+  CGAL::IO::set_mode(os, CGAL::IO::BINARY);
   return write_LAS(os, points, np);
 }
 
@@ -367,7 +367,7 @@ bool write_LAS(const std::string& filename, const PointRange& points,
                typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr)
 {
   std::ofstream os(filename, std::ios::binary);
-  CGAL::set_mode(os, CGAL::IO::BINARY);
+  CGAL::IO::set_mode(os, CGAL::IO::BINARY);
   return write_LAS(os, points, parameters::all_default());
 }
 

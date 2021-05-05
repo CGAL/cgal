@@ -56,9 +56,9 @@ public:
     Output_rep(const T& tt) : t(tt) {}
     std::ostream& operator () (std::ostream& out) const {
         if ( needs_parens_as_product(t)) {
-            return out << "(" << oformat(t) << ")";
+            return out << "(" << IO::oformat(t) << ")";
         } else {
-            return out << oformat(t);
+            return out << IO::oformat(t);
         }
     }
 };

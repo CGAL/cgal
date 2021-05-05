@@ -108,7 +108,7 @@ int main(int argc, char** argv)
   assert(ok);
 
   std::ofstream os("tmp.stl");
-  CGAL::set_binary_mode(os);
+  CGAL::IO::set_binary_mode(os);
   ok = CGAL::IO::write_STL(os, points, polygons);
   assert(ok);
   os.close();

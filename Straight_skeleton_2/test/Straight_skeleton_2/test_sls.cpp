@@ -223,7 +223,7 @@ IRegionPtr load_region( string file, int aShift, int& rStatus )
     ifstream in(file.c_str());
     if ( in )
     {
-      CGAL::set_ascii_mode(in);
+      CGAL::IO::set_ascii_mode(in);
 
       rRegion = IRegionPtr( new IRegion() ) ;
 

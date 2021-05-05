@@ -78,9 +78,9 @@ is in <span class="textsc">Ascii</span> mode.
 
 \code{.cpp}
 IO::Mode set_mode(std::ios& s, IO::Mode m);
-IO::Mode set_ascii_mode(std::ios& s);
-IO::Mode set_binary_mode(std::ios& s);
-IO::Mode set_pretty_mode(std::ios& s);
+IO::Mode IO::set_ascii_mode(std::ios& s);
+IO::Mode IO::set_binary_mode(std::ios& s);
+IO::Mode IO::set_pretty_mode(std::ios& s);
 \endcode
 
 The following functions enable testing whether a stream is in a certain mode:
@@ -120,11 +120,11 @@ main()
   Point p, q;
   Segment s;
 
-  CGAL::set_ascii_mode(std::cin);
+  CGAL::IO::set_ascii_mode(std::cin);
   std::cin >> p >> q;
 
   std::ifstream f("data.txt");
-  CGAL::set_binary_mode(f);
+  CGAL::IO::set_binary_mode(f);
   f >> s >> p;
 
   return 1;
@@ -161,11 +161,11 @@ int main()
   Point p(0,1), q(2,2);
   Segment s(p,q);
 
-  CGAL::set_pretty_mode(std::cout);
+  CGAL::IO::set_pretty_mode(std::cout);
   std::cout << p << std::endl << q << std::endl;
 
   std::ofstream f("data.txt");
-  CGAL::set_binary_mode(f);
+  CGAL::IO::set_binary_mode(f);
   f << s << p ;
 
   return 1;
@@ -181,12 +181,12 @@ For types with a `Output_rep` specialization, the respective output routine of `
 will be called by `oformat()`. Otherwise, the stream output operator will be called.
 
 \code{.cpp}
-std::cout << CGAL::oformat( myobject );
+std::cout << CGAL::IO::oformat( myobject );
 \endcode
 
 Optionally, you can provide a second template parameter `F` as a formatting tag:
 \code{.cpp}
-std::cout << CGAL::oformat( myobject, My_formatting_tag() );
+std::cout << CGAL::IO::oformat( myobject, My_formatting_tag() );
 \endcode
 
 For a list of formatting tags supported by the type `T`, please

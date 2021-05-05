@@ -756,7 +756,7 @@ get_positions_with_vertex_at_extremity(const Bare_point& known_point,
 {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 2
   std::cerr << "get_positions_with_vertex_at_extremity()" << std::endl
-            << "known_point: " << known_point << " on curve " << CGAL::oformat(curve_index)
+            << "known_point: " << known_point << " on curve " << CGAL::IO::oformat(curve_index)
             << " orientation: " << orientation
             << " inverted order ? " << std::boolalpha << inverted_return_order << std::endl;
 #endif
@@ -1391,7 +1391,7 @@ insert_corners()
     Index p_index = domain_.index_from_corner_index(corner_index);
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-    std::cerr << "** treat corner #" << CGAL::oformat(p_index) << std::endl;
+    std::cerr << "** treat corner #" << CGAL::IO::oformat(p_index) << std::endl;
 #endif
 
     // Get weight (the ball radius is given by the 'query_size' function)
@@ -1476,7 +1476,7 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
   std::cerr << "insert_point()" << std::endl;
   std::cerr << "pos: " << p << " weight: " << w
-            << " dim: " << dim << " index: " << CGAL::oformat(index) << std::endl;
+            << " dim: " << dim << " index: " << CGAL::IO::oformat(index) << std::endl;
 #endif
 
   using CGAL::Mesh_3::internal::weight_modifier;
@@ -1540,7 +1540,7 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
     std::cerr << " ERROR dim=" << dim << " index=";
   }
 
-  std::cerr << CGAL::oformat(index) << std::endl;
+  std::cerr << CGAL::IO::oformat(index) << std::endl;
   if(v == Vertex_handle())
     std::cerr << "  HIDDEN!\n";
   std::cerr << "The weight was " << w << std::endl;
@@ -1569,7 +1569,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
   std::cerr << "smart_insert_point((" << p
             << "), w=" << w
             << ", dim=" << dim
-            << ", index=" << CGAL::oformat(index) << ")\n";
+            << ", index=" << CGAL::IO::oformat(index) << ")\n";
 #endif
   const Tr& tr = c3t3_.triangulation();
 
@@ -2452,7 +2452,7 @@ change_ball_size(Vertex_handle& v, const FT squared_size, const bool special_bal
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
   std::cerr << "change_ball_size(v=" << disp_vert(v)
             << " dim=" << c3t3_.in_dimension(v)
-            << " index=" << CGAL::oformat(c3t3_.index(v))
+            << " index=" << CGAL::IO::oformat(c3t3_.index(v))
             << " ,\n"
             << "                 (squared) size=" << w
             << ", special_ball=" << std::boolalpha << special_ball << std::endl;
@@ -2622,7 +2622,7 @@ check_and_fix_vertex_along_edge(const Vertex_handle& v, ErasedVeOutIt out)
   std::cerr << "check_and_fix_vertex_along_edge("
             << disp_vert(v)
             << " dim=" << get_dimension(v)
-            << " index=" << CGAL::oformat(c3t3_.index(v))
+            << " index=" << CGAL::IO::oformat(c3t3_.index(v))
             << " special=" << std::boolalpha << is_special(v)
             << ")\n";
 #endif
@@ -2930,7 +2930,7 @@ repopulate(InputIterator begin, InputIterator last,
   std::cerr << "repopulate(begin=" << disp_vert(*begin) << "\n"
             << "           last=" << disp_vert(*last)  << "\n"
             << "           distance(begin, last)=" << std::distance(begin, last) << ",\n"
-            << "           curve_index=" << CGAL::oformat(curve_index) << ",\n"
+            << "           curve_index=" << CGAL::IO::oformat(curve_index) << ",\n"
             << "           orientation=" << orientation << ")\n";
 #endif
   CGAL_assertion(std::distance(begin,last) >= 0);
@@ -2972,7 +2972,7 @@ repopulate(InputIterator begin, InputIterator last,
     default:
       std::cerr << " ERROR dim=" << get_dimension(*current)  << " curve_index=";
     }
-    std::cerr  << CGAL::oformat(c3t3_.index(*current)) << std::endl;
+    std::cerr  << CGAL::IO::oformat(c3t3_.index(*current)) << std::endl;
 #endif // CGAL_MESH_3_PROTECTION_DEBUG
     *out++ = *current;
     remove_from_correspondence_map(*current, curve_index);
@@ -2997,7 +2997,7 @@ analyze_and_repopulate(InputIterator begin, InputIterator last,
   std::cerr << "analyze_and_repopulate(begin=" << disp_vert(*begin) << "\n"
             << "                       last=" << disp_vert(*last) << "\n"
             << "                       distance(begin, last)=" << std::distance(begin, last) << ",\n"
-            << "                       curve_index=" << CGAL::oformat(curve_index) << ",\n"
+            << "                       curve_index=" << CGAL::IO::oformat(curve_index) << ",\n"
             << "                       orientation=" << orientation << ")\n";
 #endif
   CGAL_assertion(std::distance(begin,last) >= 0);

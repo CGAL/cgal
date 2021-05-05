@@ -74,7 +74,7 @@ public:
   void write_vertex( const double x, const double y, const double z)
   {
     out() << "                                "
-          << oformat(x) << ' ' << oformat(y) << ' ' << oformat(z) << ',' << '\n';
+          << IO::oformat(x) << ' ' << IO::oformat(y) << ' ' << IO::oformat(z) << ',' << '\n';
   }
   void write_vertex_normal(const double, const double, const double) { }
   void write_vertex_color(const double, const double, const double) { }

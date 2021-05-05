@@ -393,13 +393,13 @@ bool read_PLY(const std::string& fname,
   if(binary)
   {
     std::ifstream is(fname, std::ios::binary);
-    CGAL::set_mode(is, CGAL::IO::BINARY);
+    CGAL::IO::set_mode(is, CGAL::IO::BINARY);
     return read_PLY(is, points, polygons, np);
   }
   else
   {
     std::ifstream is(fname);
-    CGAL::set_mode(is, CGAL::IO::ASCII);
+    CGAL::IO::set_mode(is, CGAL::IO::ASCII);
     return read_PLY(is, points, polygons, np);
   }
 }
@@ -555,13 +555,13 @@ bool write_PLY(const std::string& fname,
   if(binary)
   {
     std::ofstream os(fname, std::ios::binary);
-    CGAL::set_mode(os, CGAL::IO::BINARY);
+    CGAL::IO::set_mode(os, CGAL::IO::BINARY);
     return write_PLY(os, points, polygons, np);
   }
   else
   {
     std::ofstream os(fname);
-    CGAL::set_mode(os, CGAL::IO::ASCII);
+    CGAL::IO::set_mode(os, CGAL::IO::ASCII);
     return write_PLY(os, points, polygons, np);
   }
 }

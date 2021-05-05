@@ -90,7 +90,7 @@ public:
       std::istringstream issline(line);
       entries.clear();
       double d;
-      while(issline >> iformat(d)){
+      while(issline >> IO::iformat(d)){
         entries.push_back(d);
       }
 
@@ -704,7 +704,7 @@ public:
       std::istringstream issline(line);
       entries.clear();
       double d;
-      while(issline >> iformat(d)){
+      while(issline >> IO::iformat(d)){
         entries.push_back(d);
       }
       if(entries.empty())

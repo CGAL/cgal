@@ -186,7 +186,7 @@ bool read_OBJ(const std::string& fname,
               )
 {
   std::ifstream is(fname);
-  CGAL::set_mode(is, CGAL::IO::ASCII);
+  CGAL::IO::set_mode(is, CGAL::IO::ASCII);
   return read_OBJ(is, g, np);
 }
 
@@ -306,7 +306,7 @@ bool write_OBJ(const std::string& fname,
                )
 {
   std::ofstream os(fname);
-  CGAL::set_mode(os, CGAL::IO::ASCII);
+  CGAL::IO::set_mode(os, CGAL::IO::ASCII);
   return write_OBJ(os, g, np);
 }
 

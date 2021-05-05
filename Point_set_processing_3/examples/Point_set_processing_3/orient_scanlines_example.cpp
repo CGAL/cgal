@@ -16,7 +16,7 @@ using Scanline_id_map = CGAL::Nth_of_tuple_property_map<3, Point_with_info>;
 void dump (const char* filename, const std::vector<Point_with_info>& points)
 {
   std::ofstream ofile (filename, std::ios::binary);
-  CGAL::set_binary_mode(ofile);
+  CGAL::IO::set_binary_mode(ofile);
   CGAL::IO::write_PLY
     (ofile, points,
      CGAL::parameters::point_map (Point_map()).

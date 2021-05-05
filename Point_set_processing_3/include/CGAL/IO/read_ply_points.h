@@ -340,13 +340,13 @@ bool read_PLY(const std::string& fname,
   if(binary)
   {
     std::ifstream is(fname, std::ios::binary);
-    CGAL::set_mode(is, CGAL::IO::BINARY);
+    CGAL::IO::set_mode(is, CGAL::IO::BINARY);
     return read_PLY<OutputIteratorValueType>(is, output, np);
   }
   else
   {
     std::ifstream is(fname);
-    CGAL::set_mode(is, CGAL::IO::ASCII);
+    CGAL::IO::set_mode(is, CGAL::IO::ASCII);
     return read_PLY<OutputIteratorValueType>(is, output, np);
   }
 }

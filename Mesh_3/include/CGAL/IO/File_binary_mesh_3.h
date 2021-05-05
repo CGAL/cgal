@@ -35,9 +35,9 @@ save_binary_file(std::ostream& os,
   if(binary) os << "binary ";
   os << "CGAL c3t3 " << CGAL::Get_io_signature<C3T3>()() << "\n";
   if(binary) {
-    CGAL::set_binary_mode(os);
+    CGAL::IO::set_binary_mode(os);
   } else {
-    CGAL::set_ascii_mode(os);
+    CGAL::IO::set_ascii_mode(os);
     os.precision(std::numeric_limits<FT>::digits10+2);
   }
   return !!(os << c3t3);
@@ -71,7 +71,7 @@ bool load_binary_file(std::istream& is, C3T3& c3t3)
       return false;
     }
   }
-  if(binary) CGAL::set_binary_mode(is);
+  if(binary) CGAL::IO::set_binary_mode(is);
   is >> c3t3;
   return !!is;
   // call operator!() twice, because operator bool() is C++11

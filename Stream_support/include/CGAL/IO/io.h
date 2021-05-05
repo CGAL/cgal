@@ -70,14 +70,14 @@ would be `PointC2(0.0, 0.0)`.  At the moment \cgal does not
 provide input operations for pretty printed data. By default a stream
 is in <span class="textsc">Ascii</span> mode.
 
-\sa `CGAL::set_mode()`
-\sa `CGAL::set_ascii_mode()`
-\sa `CGAL::set_binary_mode()`
-\sa `CGAL::set_pretty_mode()`
-\sa `CGAL::get_mode()`
-\sa `CGAL::is_ascii()`
-\sa `CGAL::is_binary()`
-\sa `CGAL::is_pretty()`
+\sa `CGAL::IO::set_mode()`
+\sa `CGAL::IO::set_ascii_mode()`
+\sa `CGAL::IO::set_binary_mode()`
+\sa `CGAL::IO::set_pretty_mode()`
+\sa `CGAL::IO::get_mode()`
+\sa `CGAL::IO::is_ascii()`
+\sa `CGAL::IO::is_binary()`
+\sa `CGAL::IO::is_pretty()`
 */
 enum Mode {ASCII = 0, PRETTY, BINARY};
 
@@ -94,14 +94,14 @@ as `cout` or `cerr`, as well as to `std::ostringstream`
 and `std::ofstream`.
 The output operator is defined for all classes in the \cgal `Kernel` and for the class `Color` as well.
 
-\sa `CGAL::set_mode()`
-\sa `CGAL::set_ascii_mode()`
-\sa `CGAL::set_binary_mode()`
-\sa `CGAL::set_pretty_mode()`
-\sa `CGAL::get_mode()`
-\sa `CGAL::is_ascii()`
-\sa `CGAL::is_binary()`
-\sa `CGAL::is_pretty()`
+\sa `CGAL::IO::set_mode()`
+\sa `CGAL::IO::set_ascii_mode()`
+\sa `CGAL::IO::set_binary_mode()`
+\sa `CGAL::IO::set_pretty_mode()`
+\sa `CGAL::IO::get_mode()`
+\sa `CGAL::IO::is_ascii()`
+\sa `CGAL::IO::is_binary()`
+\sa `CGAL::IO::is_pretty()`
 */
 ostream& operator<<(ostream& os, Class c);
 
@@ -113,14 +113,14 @@ from the class `istream`. This allows to read from istreams
 as `std::cin`, as well as from `std::istringstream` and `std::ifstream`.
 The input operator is defined for all classes in the \cgal `Kernel`.
 
-\sa `CGAL::set_mode()`
-\sa `CGAL::set_ascii_mode()`
-\sa `CGAL::set_binary_mode()`
-\sa `CGAL::set_pretty_mode()`
-\sa `CGAL::get_mode()`
-\sa `CGAL::is_ascii()`
-\sa `CGAL::is_binary()`
-\sa `CGAL::is_pretty()`
+\sa `CGAL::IO::set_mode()`
+\sa `CGAL::IO::set_ascii_mode()`
+\sa `CGAL::IO::set_binary_mode()`
+\sa `CGAL::IO::set_pretty_mode()`
+\sa `CGAL::IO::get_mode()`
+\sa `CGAL::IO::is_ascii()`
+\sa `CGAL::IO::is_binary()`
+\sa `CGAL::IO::is_pretty()`
 */
 istream& operator>>(istream& is, Class c);
 #endif
@@ -199,6 +199,8 @@ public:
 template <class T, class F>
 std::ostream& operator<<( std::ostream& out, Output_rep<T,F> rep) { return rep( out); }
 
+namespace IO {
+
 /*!
 \ingroup PkgStreamSupportRef
 
@@ -218,6 +220,8 @@ Generic IO for type `T` with formatting tag.
 */
 template <class T, class F>
 Output_rep<T,F> oformat( const T& t, F) { return Output_rep<T,F>(t); }
+
+} // namespace IO
 
 /*!
 \ingroup PkgStreamSupportRef
@@ -394,6 +398,8 @@ The input operator is defined for all classes in the \cgal `Kernel`.
 template <class T>
 std::istream& operator>>( std::istream& in, Input_rep<T> rep) { return rep(in); }
 
+namespace IO {
+
 /*!
 \ingroup PkgStreamSupportRef
 
@@ -401,6 +407,8 @@ The definition of this function is completely symmetric to `oformat()`.
 */
 template <class T>
 Input_rep<T> iformat( T& t) { return Input_rep<T>(t); }
+
+} // namespace IO
 
 template <class T, class F = Null_tag >
 class Benchmark_rep
@@ -420,6 +428,8 @@ public:
 template <class T, class F>
 std::ostream& operator<<( std::ostream& out, Benchmark_rep<T,F> rep) { return rep( out); }
 
+namespace IO {
+
 template <class T>
 Benchmark_rep<T> bmformat( const T& t) { return Benchmark_rep<T>(t); }
 
@@ -432,82 +442,82 @@ Benchmark_rep<T,F> bmformat( const T& t, F) { return Benchmark_rep<T,F>(t); }
 returns the printing mode of the %IO stream `s`.
 
 \link PkgStreamSupportEnumRef `CGAL::IO::Mode`\endlink
-\sa `CGAL::set_mode()`
-\sa `CGAL::set_ascii_mode()`
-\sa `CGAL::set_binary_mode()`
-\sa `CGAL::set_pretty_mode()`
-\sa `CGAL::is_ascii()`
-\sa `CGAL::is_binary()`
-\sa `CGAL::is_pretty()`
+\sa `CGAL::IO::set_mode()`
+\sa `CGAL::IO::set_ascii_mode()`
+\sa `CGAL::IO::set_binary_mode()`
+\sa `CGAL::IO::set_pretty_mode()`
+\sa `CGAL::IO::is_ascii()`
+\sa `CGAL::IO::is_binary()`
+\sa `CGAL::IO::is_pretty()`
 */
-inline IO::Mode get_mode(std::ios& i)
+inline Mode get_mode(std::ios& i)
 {
-  return static_cast<IO::Mode>(i.iword(IO::Static::get_mode()));
+  return static_cast<Mode>(i.iword(Static::get_mode()));
 }
 
 /*!
 \ingroup PkgStreamSupportRef
 
-sets the mode of the %IO stream `s` to be the `IO::ASCII` mode.
+sets the mode of the %IO stream `s` to be the `ASCII` mode.
 Returns the previous mode of `s`.
 
 \link PkgStreamSupportEnumRef `CGAL::IO::Mode`\endlink
-\sa `CGAL::set_mode()`
-\sa `CGAL::set_binary_mode()`
-\sa `CGAL::set_pretty_mode()`
-\sa `CGAL::get_mode()`
-\sa `CGAL::is_ascii()`
-\sa `CGAL::is_binary()`
-\sa `CGAL::is_pretty()`
+\sa `CGAL::IO::set_mode()`
+\sa `CGAL::IO::set_binary_mode()`
+\sa `CGAL::IO::set_pretty_mode()`
+\sa `CGAL::IO::get_mode()`
+\sa `CGAL::IO::is_ascii()`
+\sa `CGAL::IO::is_binary()`
+\sa `CGAL::IO::is_pretty()`
 */
-inline IO::Mode set_ascii_mode(std::ios& i)
+inline Mode set_ascii_mode(std::ios& i)
 {
-  IO::Mode m = get_mode(i);
-  i.iword(IO::Static::get_mode()) = IO::ASCII;
+  Mode m = get_mode(i);
+  i.iword(Static::get_mode()) = ASCII;
   return m;
 }
 
 /*!
 \ingroup PkgStreamSupportRef
 
-sets the mode of the %IO stream `s` to be the `IO::BINARY` mode.
+sets the mode of the %IO stream `s` to be the `BINARY` mode.
 Returns the previous mode of `s`.
 
 \link PkgStreamSupportEnumRef `CGAL::IO::Mode`\endlink
-\sa `CGAL::set_mode()`
-\sa `CGAL::set_ascii_mode()`
-\sa `CGAL::set_pretty_mode()`
-\sa `CGAL::get_mode()`
-\sa `CGAL::is_ascii()`
-\sa `CGAL::is_binary()`
-\sa `CGAL::is_pretty()`
+\sa `CGAL::IO::set_mode()`
+\sa `CGAL::IO::set_ascii_mode()`
+\sa `CGAL::IO::set_pretty_mode()`
+\sa `CGAL::IO::get_mode()`
+\sa `CGAL::IO::is_ascii()`
+\sa `CGAL::IO::is_binary()`
+\sa `CGAL::IO::is_pretty()`
 */
-inline IO::Mode set_binary_mode(std::ios& i)
+inline Mode set_binary_mode(std::ios& i)
 {
-  IO::Mode m = get_mode(i);
-  i.iword(IO::Static::get_mode()) = IO::BINARY;
+  Mode m = get_mode(i);
+  i.iword(Static::get_mode()) = BINARY;
   return m;
 }
 
 /*!
 \ingroup PkgStreamSupportRef
 
-sets the mode of the %IO stream `s` to be the `IO::PRETTY` mode.
+sets the mode of the %IO stream `s` to be the `PRETTY` mode.
 Returns the previous mode of `s`.
 
 \link PkgStreamSupportEnumRef `CGAL::IO::Mode`\endlink
-\sa `CGAL::set_mode()`
-\sa `CGAL::set_ascii_mode()`
-\sa `CGAL::set_binary_mode()`
-\sa `CGAL::get_mode()`
-\sa `CGAL::is_ascii()`
-\sa `CGAL::is_binary()`
-\sa `CGAL::is_pretty()`
+\sa `CGAL::IO::set_mode()`
+\sa `CGAL::IO::set_ascii_mode()`
+\sa `CGAL::IO::set_binary_mode()`
+\sa `CGAL::IO::get_mode()`
+\sa `CGAL::IO::is_ascii()`
+\sa `CGAL::IO::is_binary()`
+\sa `CGAL::IO::is_pretty()`
 */
-inline IO::Mode set_pretty_mode(std::ios& i)
+inline Mode set_pretty_mode(std::ios& i)
 {
-  IO::Mode m = get_mode(i);
-  i.iword(IO::Static::get_mode()) = IO::PRETTY;
+  Mode m = get_mode(i);
+  i.iword(Static::get_mode()) = PRETTY;
   return m;
 }
 
@@ -517,68 +527,70 @@ inline IO::Mode set_pretty_mode(std::ios& i)
 sets the printing mode of the %IO stream `s`.
 
 \link PkgStreamSupportEnumRef `CGAL::IO::Mode`\endlink
-\sa `CGAL::set_ascii_mode()`
-\sa `CGAL::set_binary_mode()`
-\sa `CGAL::set_pretty_mode()`
-\sa `CGAL::get_mode()`
-\sa `CGAL::is_ascii()`
-\sa `CGAL::is_binary()`
-\sa `CGAL::is_pretty()`
+\sa `CGAL::IO::set_ascii_mode()`
+\sa `CGAL::IO::set_binary_mode()`
+\sa `CGAL::IO::set_pretty_mode()`
+\sa `CGAL::IO::get_mode()`
+\sa `CGAL::IO::is_ascii()`
+\sa `CGAL::IO::is_binary()`
+\sa `CGAL::IO::is_pretty()`
 */
-inline IO::Mode set_mode(std::ios& i, IO::Mode m)
+inline Mode set_mode(std::ios& i, Mode m)
 {
-  IO::Mode old = get_mode(i);
-  i.iword(IO::Static::get_mode()) = m;
+  Mode old = get_mode(i);
+  i.iword(Static::get_mode()) = m;
   return old;
 }
 
 /*!
 \ingroup PkgStreamSupportRef
 
-checks if the %IO stream `s` is in `IO::PRETTY` mode.
+checks if the %IO stream `s` is in `PRETTY` mode.
 
 \link PkgStreamSupportEnumRef `CGAL::IO::Mode`\endlink
-\sa `CGAL::set_mode()`
-\sa `CGAL::set_ascii_mode()`
-\sa `CGAL::set_binary_mode()`
-\sa `CGAL::set_pretty_mode()`
-\sa `CGAL::get_mode()`
-\sa `CGAL::is_ascii()`
-\sa `CGAL::is_binary()`
+\sa `CGAL::IO::set_mode()`
+\sa `CGAL::IO::set_ascii_mode()`
+\sa `CGAL::IO::set_binary_mode()`
+\sa `CGAL::IO::set_pretty_mode()`
+\sa `CGAL::IO::get_mode()`
+\sa `CGAL::IO::is_ascii()`
+\sa `CGAL::IO::is_binary()`
 */
-inline bool is_pretty(std::ios& i) { return i.iword(IO::Static::get_mode()) == IO::PRETTY; }
+inline bool is_pretty(std::ios& i) { return i.iword(Static::get_mode()) == PRETTY; }
 
 /*!
 \ingroup PkgStreamSupportRef
 
-checks if the %IO stream `s` is in `IO::ASCII` mode.
+checks if the %IO stream `s` is in `ASCII` mode.
 
 \link PkgStreamSupportEnumRef `CGAL::IO::Mode`\endlink
-\sa `CGAL::set_mode()`
-\sa `CGAL::set_ascii_mode()`
-\sa `CGAL::set_binary_mode()`
-\sa `CGAL::set_pretty_mode()`
-\sa `CGAL::get_mode()`
-\sa `CGAL::is_binary()`
-\sa `CGAL::is_pretty()`
+\sa `CGAL::IO::set_mode()`
+\sa `CGAL::IO::set_ascii_mode()`
+\sa `CGAL::IO::set_binary_mode()`
+\sa `CGAL::IO::set_pretty_mode()`
+\sa `CGAL::IO::get_mode()`
+\sa `CGAL::IO::is_binary()`
+\sa `CGAL::IO::is_pretty()`
 */
-inline bool is_ascii(std::ios& i) { return i.iword(IO::Static::get_mode()) == IO::ASCII; }
+inline bool is_ascii(std::ios& i) { return i.iword(Static::get_mode()) == ASCII; }
 
 /*!
 \ingroup PkgStreamSupportRef
 
-checks if the %IO stream `s` is in `IO::BINARY` mode.
+checks if the %IO stream `s` is in `BINARY` mode.
 
 \link PkgStreamSupportEnumRef `CGAL::IO::Mode`\endlink
-\sa `CGAL::set_mode()`
-\sa `CGAL::set_ascii_mode()`
-\sa `CGAL::set_binary_mode()`
-\sa `CGAL::set_pretty_mode()`
-\sa `CGAL::get_mode()`
-\sa `CGAL::is_ascii()`
-\sa `CGAL::is_pretty()`
+\sa `CGAL::IO::set_mode()`
+\sa `CGAL::IO::set_ascii_mode()`
+\sa `CGAL::IO::set_binary_mode()`
+\sa `CGAL::IO::set_pretty_mode()`
+\sa `CGAL::IO::get_mode()`
+\sa `CGAL::IO::is_ascii()`
+\sa `CGAL::IO::is_pretty()`
 */
-inline bool is_binary(std::ios& i) { return i.iword(IO::Static::get_mode()) == IO::BINARY; }
+inline bool is_binary(std::ios& i) { return i.iword(Static::get_mode()) == BINARY; }
+
+} // namespace IO
 
 template < class T >
 inline void write(std::ostream& os, const T& t, const io_Read_write&)
@@ -589,7 +601,7 @@ inline void write(std::ostream& os, const T& t, const io_Read_write&)
 template < class T >
 inline void write(std::ostream& os, const T& t, const io_Operator&)
 {
-  os << oformat(t);
+  os << IO::oformat(t);
 }
 
 template < class T >
@@ -613,7 +625,7 @@ inline void read(std::istream& is, T& t, const io_Read_write&)
 template < class T >
 inline void read(std::istream& is, T& t, const io_Operator&)
 {
-  is >> iformat(t);
+  is >> IO::iformat(t);
 }
 
 template < class T >
@@ -628,16 +640,18 @@ inline void read(std::istream& is, T& t)
   read(is, t, typename Io_traits<T>::Io_tag());
 }
 
-inline std::ostream& operator<<( std::ostream& out, const IO::Color& col)
+namespace IO {
+
+inline std::ostream& operator<<( std::ostream& out, const Color& col)
 {
   switch(get_mode(out))
   {
-    case IO::ASCII :
+    case ASCII :
       return out << static_cast<int>(col.red())   << ' '
                  << static_cast<int>(col.green()) << ' '
                  << static_cast<int>(col.blue()) << ' '
                  << static_cast<int>(col.alpha());
-    case IO::BINARY :
+    case BINARY :
       out.write(reinterpret_cast<const char*>(col.to_rgba().data()), 4);
       return out;
     default:
@@ -648,21 +662,21 @@ inline std::ostream& operator<<( std::ostream& out, const IO::Color& col)
   }
 }
 
-inline std::istream &operator>>(std::istream &is, IO::Color& col)
+inline std::istream &operator>>(std::istream &is, Color& col)
 {
   unsigned char r = 0, g = 0, b = 0, a = 0;
   int ir = 0, ig = 0, ib = 0, ia = 0;
 
   switch(get_mode(is))
   {
-    case IO::ASCII :
+    case ASCII :
       is >> ir >> ig >> ib >> ia;
       r = (unsigned char)ir;
       g = (unsigned char)ig;
       b = (unsigned char)ib;
       a = (unsigned char)ia;
       break;
-    case IO::BINARY :
+    case BINARY :
       read(is, r);
       read(is, g);
       read(is, b);
@@ -674,7 +688,7 @@ inline std::istream &operator>>(std::istream &is, IO::Color& col)
       break;
   }
 
-  col = IO::Color(r,g,b,a);
+  col = Color(r,g,b,a);
   return is;
 }
 
@@ -684,6 +698,23 @@ inline const char* mode_name( IO::Mode m )
   CGAL_assertion( IO::ASCII <= m && m <= IO::BINARY );
   return names[m];
 }
+
+} // IO namespace
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+using IO::oformat;
+using IO::iformat;
+using IO::bmformat;
+using IO::get_mode;
+using IO::set_ascii_mode;
+using IO::set_binary_mode;
+using IO::set_pretty_mode;
+using IO::set_mode;
+using IO::is_pretty;
+using IO::is_ascii;
+using IO::is_binary;
+using IO::mode_name;
+#endif
 
 // From polynomial.h TODO: Where to put this?
 inline void swallow(std::istream &is, char d)

@@ -92,7 +92,7 @@ void test_algebraic_curve_kernel_2() {
 
     Poly_2 polys[ACK_2_n_polys];
 
-    ::CGAL::set_mode(std::cerr, ::CGAL::IO::PRETTY);
+    ::CGAL::IO::set_mode(std::cerr, ::CGAL::IO::PRETTY);
 
     //std::cerr << "constructing curves..\n";
     for(int i = 0; i < ACK_2_n_polys; i++) {

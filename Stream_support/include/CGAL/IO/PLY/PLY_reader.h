@@ -195,7 +195,7 @@ public:
 
   void read_ascii(std::istream& stream, float& t) const
   {
-    if(!(stream >> iformat(t)))
+    if(!(stream >> IO::iformat(t)))
       stream.clear(std::ios::badbit);
   }
 

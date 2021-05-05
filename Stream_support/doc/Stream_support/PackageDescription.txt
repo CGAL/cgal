@@ -75,18 +75,18 @@ the printing mode.
 - `CGAL::Output_rep<T,F>`
 
 \cgalCRPSection{Functions}
-- `CGAL::get_mode()`
-- `CGAL::is_ascii()`
-- `CGAL::is_binary()`
-- `CGAL::is_pretty()`
-- `CGAL::set_mode()`
-- `CGAL::set_ascii_mode()`
-- `CGAL::set_binary_mode()`
-- `CGAL::set_pretty_mode()`
+- `CGAL::IO::get_mode()`
+- `CGAL::IO::is_ascii()`
+- `CGAL::IO::is_binary()`
+- `CGAL::IO::is_pretty()`
+- `CGAL::IO::set_mode()`
+- `CGAL::IO::set_ascii_mode()`
+- `CGAL::IO::set_binary_mode()`
+- `CGAL::IO::set_pretty_mode()`
 - \link IOstreamOperators `CGAL::operator>>()` \endlink
 - \link IOstreamOperators `CGAL::operator<<()` \endlink
-- `CGAL::iformat()`
-- `CGAL::oformat()`
+- `CGAL::IO::iformat()`
+- `CGAL::IO::oformat()`
 
 \cgalCRPSection{I/O Functions}
 - `CGAL::IO::read_polygon_soup()`

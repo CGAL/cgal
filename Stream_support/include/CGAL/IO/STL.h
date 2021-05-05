@@ -234,7 +234,7 @@ bool read_STL(const std::string& fname,
   if(binary)
   {
     std::ifstream is(fname, std::ios::binary);
-    CGAL::set_mode(is, BINARY);
+    CGAL::IO::set_mode(is, BINARY);
     if(read_STL(is, points, facets, np))
     {
       return true;
@@ -243,7 +243,7 @@ bool read_STL(const std::string& fname,
     facets.clear();
   }
   std::ifstream is(fname);
-  CGAL::set_mode(is, CGAL::IO::ASCII);
+  CGAL::IO::set_mode(is, CGAL::IO::ASCII);
   bool v = choose_parameter(get_parameter(np, internal_np::verbose),
                             false);
   return read_STL(is, points, facets, CGAL::parameters::verbose(v).use_binary_mode(false));
@@ -427,13 +427,13 @@ bool write_STL(const std::string& fname,
   if(binary)
   {
     std::ofstream os(fname, std::ios::binary);
-    CGAL::set_mode(os, CGAL::IO::BINARY);
+    CGAL::IO::set_mode(os, CGAL::IO::BINARY);
     return write_STL(os, points, facets, np);
   }
   else
   {
     std::ofstream os(fname);
-    CGAL::set_mode(os, CGAL::IO::ASCII);
+    CGAL::IO::set_mode(os, CGAL::IO::ASCII);
     return write_STL(os, points, facets, np);
   }
 }

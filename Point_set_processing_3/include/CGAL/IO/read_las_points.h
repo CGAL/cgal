@@ -546,7 +546,7 @@ bool read_LAS(const std::string& filename,
               const CGAL_BGL_NP_CLASS& np)
 {
   std::ifstream is(filename, std::ios::binary);
-  CGAL::set_mode(is, CGAL::IO::BINARY);
+  CGAL::IO::set_mode(is, CGAL::IO::BINARY);
   return read_LAS<OutputIteratorValueType>(is, output, np);
 }
 
@@ -556,7 +556,7 @@ template <typename OutputIterator,typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_LAS(const std::string& fname, OutputIterator output, const CGAL_BGL_NP_CLASS& np)
 {
   std::ifstream is(fname, std::ios::binary);
-  CGAL::set_mode(is, CGAL::IO::BINARY);
+  CGAL::IO::set_mode(is, CGAL::IO::BINARY);
   return read_LAS<typename value_type_traits<OutputIterator>::type>(is, output, np);
 }
 

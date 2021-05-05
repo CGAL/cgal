@@ -63,7 +63,7 @@ void test_triangulate_hole_with_cdt_2(
   PolygonMesh pmesh;
   std::string path = "data/" + file_name + ".off";
   std::ifstream in(path.c_str(), std::ios_base::in);
-  CGAL::set_ascii_mode(in);
+  CGAL::IO::set_ascii_mode(in);
   CGAL::IO::read_OFF(in, pmesh);
   in.close();
   if (verbose) {
@@ -108,7 +108,7 @@ void test_triangulate_hole_with_cdt_2(
     if (argc > 1) path = std::string(argv[1]);
     path += "4464_" + file_name + ".off";
     std::ofstream out(path.c_str(), std::ios_base::out);
-    CGAL::set_ascii_mode(out);
+    CGAL::IO::set_ascii_mode(out);
     CGAL::IO::write_OFF(out, pmesh);
     out.close();
     std::cout << "* finished writing the file" << std::endl;

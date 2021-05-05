@@ -168,16 +168,16 @@ bool read_OFF(std::istream& is,
       // Reads position + normal...
       double x,y,z;
       double nx,ny,nz;
-      if (iss >> iformat(x) >> iformat(y) >> iformat(z))
+      if (iss >> IO::iformat(x) >> IO::iformat(y) >> IO::iformat(z))
       {
         //the extra `()` seem to fix a very strange bug. Without them, the put() won't compile.
         Point point((FT(x)), (FT(y)), (FT(z)));
         Vector normal = CGAL::NULL_VECTOR;
         // ... + normal...
-        if (iss >> iformat(nx))
+        if (iss >> IO::iformat(nx))
         {
           // In case we could read one number, we expect that there are two more
-          if(iss  >> iformat(ny) >> iformat(nz)){
+          if(iss  >> IO::iformat(ny) >> IO::iformat(nz)){
             normal = Vector(FT(nx),FT(ny),FT(nz));
           } else {
             std::cerr << "Error line " << lineNumber << " of file" << std::endl;
