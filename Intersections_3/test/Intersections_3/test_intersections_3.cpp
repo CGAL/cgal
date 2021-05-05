@@ -184,12 +184,12 @@ struct Test {
     assert(do_intersect(sph, L(q,r)));
     assert(do_intersect(sph, L(s,q)));
     assert(! do_intersect(sph, L(s,r)));
-    /*
+    
     assert(do_intersect(sph, R(p,r)));
     assert(do_intersect(sph, R(q,r)));
     assert(do_intersect(sph, R(s,q)));
     assert(! do_intersect(sph, R(s,r)));
-    */
+    
   }  
 
 
