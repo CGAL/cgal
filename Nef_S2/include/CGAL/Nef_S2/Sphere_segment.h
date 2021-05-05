@@ -18,6 +18,8 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
+#include <CGAL/Nef_S2/Sphere_point.h>
+#include <CGAL/Nef_S2/Sphere_circle.h>
 #include <vector>
 
 namespace CGAL {
