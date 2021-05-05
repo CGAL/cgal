@@ -77,27 +77,27 @@ public:
 
 //=========================================================================
 
-template<class DTOS>
+template<class DToS2>
 struct DToS2_Voronoi_point_2
 {
 private:
-  typedef typename DTOS::Geom_traits                       Geom_traits;
+  typedef typename DToS2::Geom_traits                      Geom_traits;
   typedef typename Geom_traits::Point_on_sphere_2          Point_on_sphere_2;
 
 public:
+  typedef typename DToS2::Face_handle                      Face_handle;
   typedef Point_on_sphere_2                                result_type;
-  typedef typename DTOS::Face_handle                       Face_handle;
 
-  DToS2_Voronoi_point_2(const DTOS& dtos) : dtos(dtos) { }
+  DToS2_Voronoi_point_2(const Geom_traits& gt) : gt(gt) { }
 
   result_type operator()(const Face_handle f) const
   {
-    return dtos.geom_traits().construct_circumcenter_on_sphere_2_object()(
-             dtos.point(f, 0), dtos.point(f, 1), dtos.point(f, 2));
+    return gt.construct_circumcenter_on_sphere_2_object()(
+             f->vertex(0)->point(), f->vertex(1)->point(), f->vertex(2)->point());
   }
 
 private:
-  const DTOS& dtos;
+  const Geom_traits& gt;
 };
 
 //=========================================================================

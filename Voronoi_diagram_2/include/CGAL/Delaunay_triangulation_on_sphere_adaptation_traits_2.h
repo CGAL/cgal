@@ -22,15 +22,17 @@
 
 namespace CGAL {
 
-template <typename DTOS>
+template <typename DToS2>
 struct Delaunay_triangulation_on_sphere_adaptation_traits_2
 {
 public:
-  typedef DTOS                                                       Delaunay_graph;
-  typedef typename Delaunay_graph::Geom_traits                       Geom_traits;
+  typedef DToS2                                                      Delaunay_graph;
+  typedef typename DToS2::Geom_traits                                Geom_traits;
+  typedef typename Geom_traits::Point_on_sphere_2                    Point_2;
+  typedef Point_2                                                    Site_2;
 
-  typedef CGAL_VORONOI_DIAGRAM_2_INS::DToS2_Point_accessor<DTOS>     Access_site_2;
-  typedef CGAL_VORONOI_DIAGRAM_2_INS::DToS2_Voronoi_point_2<DTOS>    Construct_Voronoi_point_2;
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::Point_accessor<Point_2,DToS2,Tag_true> Access_site_2;
+  typedef CGAL_VORONOI_DIAGRAM_2_INS::DToS2_Voronoi_point_2<DToS2>   Construct_Voronoi_point_2;
 
   typedef typename Delaunay_graph::Vertex_handle                     Delaunay_vertex_handle;
   typedef typename Delaunay_graph::Edge                              Delaunay_edge;
@@ -39,22 +41,19 @@ public:
   typedef CGAL::Tag_false                                            Has_nearest_site_2;
   typedef CGAL_VORONOI_DIAGRAM_2_INS::Null_functor                   Nearest_site_2;
 
-  Delaunay_triangulation_on_sphere_adaptation_traits_2(const DTOS& dtos) : dtos(dtos) { }
+  Delaunay_triangulation_on_sphere_adaptation_traits_2(const Geom_traits& gt) : gt(gt) { }
 
   Access_site_2 access_site_2_object() const
-  { return Access_site_2(dtos); }
+  { return Access_site_2(gt); }
 
   Construct_Voronoi_point_2 construct_Voronoi_point_2_object() const
-  { return Construct_Voronoi_point_2(dtos); }
+  { return Construct_Voronoi_point_2(gt); }
 
   Nearest_site_2 nearest_site_2_object() const
   { return Nearest_site_2(); }
 
-  typedef typename Geom_traits::Point_on_sphere_2                    Point_2;
-  typedef Point_2                                                    Site_2;
-
 private:
-  const DTOS& dtos;
+  const Geom_traits gt; // intentional copy
 };
 
 } //namespace CGAL
