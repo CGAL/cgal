@@ -1818,32 +1818,38 @@ double bounded_error_one_sided_Hausdorff_impl(
     "Parallel_tag is enabled but TBB is unavailable.");
   #endif
 
-  using FT      = typename Kernel::FT;
-  using Point_3 = typename Kernel::Point_3;
+  using FT = typename Kernel::FT;
 
   using TM1 = TriangleMesh1;
   using TM2 = TriangleMesh2;
-  using TMF = CGAL::Face_filtered_graph<TM1>;
 
   using TM1_primitive = AABB_face_graph_triangle_primitive<TM1, VPM1>;
   using TM2_primitive = AABB_face_graph_triangle_primitive<TM2, VPM2>;
-  using TMF_primitive = AABB_face_graph_triangle_primitive<TMF, VPM1>;
 
   using TM1_traits = AABB_traits<Kernel, TM1_primitive>;
   using TM2_traits = AABB_traits<Kernel, TM2_primitive>;
-  using TMF_traits = AABB_traits<Kernel, TMF_primitive>;
 
   using TM1_tree = AABB_tree<TM1_traits>;
   using TM2_tree = AABB_tree<TM2_traits>;
-  using TMF_tree = AABB_tree<TMF_traits>;
 
   using Face_handle_1 = typename boost::graph_traits<TM1>::face_descriptor;
   using Face_handle_2 = typename boost::graph_traits<TM2>::face_descriptor;
 
   using Timer = CGAL::Real_timer;
 
-  using TM1_wrapper = Triangle_mesh_wrapper<TMF, VPM1, TMF_tree>;
-  using TM2_wrapper = Triangle_mesh_wrapper<TM2, VPM2, TM2_tree>;
+  #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
+  using Point_3       = typename Kernel::Point_3;
+  using TMF           = CGAL::Face_filtered_graph<TM1>;
+  using TMF_primitive = AABB_face_graph_triangle_primitive<TMF, VPM1>;
+  using TMF_traits    = AABB_traits<Kernel, TMF_primitive>;
+  using TMF_tree      = AABB_tree<TMF_traits>;
+  using TM1_wrapper   = Triangle_mesh_wrapper<TMF, VPM1, TMF_tree>;
+  using TM2_wrapper   = Triangle_mesh_wrapper<TM2, VPM2, TM2_tree>;
+
+  std::vector<TMF> tm1_parts;
+  std::vector<TMF_tree> tm1_trees;
+  std::vector<boost::any> tm_wrappers;
+  #endif // defined(CGAL_LINKED_WITH_TBB) && METIS
 
   Timer timer;
   std::cout.precision(20);
@@ -1853,9 +1859,6 @@ double bounded_error_one_sided_Hausdorff_impl(
 
   TM1_tree tm1_tree;
   TM2_tree tm2_tree;
-  std::vector<TMF> tm1_parts;
-  std::vector<TMF_tree> tm1_trees;
-  std::vector<boost::any> tm_wrappers;
   FT infinity_value = -FT(1);
 
   #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
