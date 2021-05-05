@@ -31,8 +31,10 @@
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Real_timer.h>
 
-#include <CGAL/boost/graph/partition.h> // METIS related
 #include <CGAL/boost/graph/Face_filtered_graph.h>
+#if defined(CGAL_METIS_ENABLED)
+#include <CGAL/boost/graph/partition.h>
+#endif // CGAL_METIS_ENABLED
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_reduce.h>
@@ -41,6 +43,7 @@
 #endif // CGAL_LINKED_WITH_TBB
 
 #include <boost/unordered_set.hpp>
+#include <boost/any.hpp>
 
 #include <algorithm>
 #include <array>
@@ -1656,31 +1659,48 @@ double bounded_error_Hausdorff_impl(
   return hdist;
 }
 
-// TODO: && METIS!
-#if defined(CGAL_LINKED_WITH_TBB)
-template< class TriangleMesh1,
-          class VPM1,
-          class TM1Tree,
-          class Kernel>
+#if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
+
+template<class TriangleMesh, class VPM, class TMTree>
+struct Triangle_mesh_wrapper {
+
+  const TriangleMesh& tm; const VPM& vpm;
+  const bool is_tm2; TMTree& tm_tree;
+  Triangle_mesh_wrapper(
+    const TriangleMesh& tm, const VPM& vpm,
+    const bool is_tm2, TMTree& tm_tree) :
+  tm(tm), vpm(vpm), is_tm2(is_tm2), tm_tree(tm_tree) { }
+
+  void build_tree() {
+    tm_tree.insert(faces(tm).begin(), faces(tm).end(), tm, vpm);
+    tm_tree.build();
+    if (is_tm2) tm_tree.accelerate_distance_queries();
+    else tm_tree.do_not_accelerate_distance_queries();
+  }
+};
+
+template<class TM1Wrapper, class TM2Wrapper>
 struct Bounded_error_preprocessing {
 
   using Timer = CGAL::Real_timer;
-  const std::vector<TriangleMesh1>& tm1_parts;
-  const VPM1& vpm1; std::vector<TM1Tree>& tm1_trees;
+  std::vector<boost::any>& tm_wrappers;
 
   // Constructor.
   Bounded_error_preprocessing(
-    const std::vector<TriangleMesh1>& tm1_parts, const VPM1& vpm1,
-    std::vector<TM1Tree>& tm1_trees) :
-  tm1_parts(tm1_parts), vpm1(vpm1), tm1_trees(tm1_trees) {
-    CGAL_assertion(tm1_parts.size() == tm1_trees.size());
-  }
+    std::vector<boost::any>& tm_wrappers) :
+  tm_wrappers(tm_wrappers) { }
 
   // Split constructor.
   Bounded_error_preprocessing(
     Bounded_error_preprocessing& s, tbb::split) :
-  tm1_parts(s.tm1_parts), vpm1(s.vpm1), tm1_trees(s.tm1_trees) {
-    CGAL_assertion(tm1_parts.size() == tm1_trees.size());
+  tm_wrappers(s.tm_wrappers) { }
+
+  bool is_tm1_wrapper(const boost::any& operand) const {
+    return operand.type() == typeid(TM1Wrapper);
+  }
+
+  bool is_tm2_wrapper(const boost::any& operand) const {
+    return operand.type() == typeid(TM2Wrapper);
   }
 
   void operator()(const tbb::blocked_range<std::size_t>& range) {
@@ -1688,12 +1708,17 @@ struct Bounded_error_preprocessing {
     timer.reset();
     timer.start();
     for (std::size_t i = range.begin(); i != range.end(); ++i) {
-      CGAL_assertion(i < tm1_parts.size());
-      CGAL_assertion(i < tm1_trees.size());
-      const auto& tm1 = tm1_parts[i];
-      auto& tm1_tree = tm1_trees[i];
-      tm1_tree.insert(faces(tm1).begin(), faces(tm1).end(), tm1, vpm1);
-      tm1_tree.build();
+      CGAL_assertion(i < tm_wrappers.size());
+      auto& tm_wrapper = tm_wrappers[i];
+      if (is_tm1_wrapper(tm_wrapper)) {
+        TM1Wrapper& object = boost::any_cast<TM1Wrapper&>(tm_wrapper);
+        object.build_tree();
+      } else if (is_tm2_wrapper(tm_wrapper)) {
+        TM2Wrapper& object = boost::any_cast<TM2Wrapper&>(tm_wrapper);
+        object.build_tree();
+      } else {
+        CGAL_assertion_msg(false, "Error: wrong boost any type!");
+      }
     }
     timer.stop();
     // std::cout << "* time operator() preprocessing (sec.): " << timer.time() << std::endl;
@@ -1817,19 +1842,23 @@ double bounded_error_one_sided_Hausdorff_impl(
 
   using Timer = CGAL::Real_timer;
 
+  using TM1_wrapper = Triangle_mesh_wrapper<TMF, VPM1, TMF_tree>;
+  using TM2_wrapper = Triangle_mesh_wrapper<TM2, VPM2, TM2_tree>;
+
   Timer timer;
   std::cout.precision(20);
 
   const int nb_cores = 4; // TODO: add to NP!
+  std::cout << "* num cores: " << nb_cores << std::endl;
 
   TM1_tree tm1_tree;
   TM2_tree tm2_tree;
   std::vector<TMF> tm1_parts;
   std::vector<TMF_tree> tm1_trees;
+  std::vector<boost::any> tm_wrappers;
   FT infinity_value = -FT(1);
 
-  // TODO: && METIS!
-  #if defined(CGAL_LINKED_WITH_TBB)
+  #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
   if (boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value && nb_cores > 1) {
 
     // (1) -- Create partition of tm1.
@@ -1872,10 +1901,16 @@ double bounded_error_one_sided_Hausdorff_impl(
       Point_3(bb.xmax(), bb.ymax(), bb.zmax()));
     infinity_value = CGAL::approximate_sqrt(sq_dist) * FT(2);
 
-    Bounded_error_preprocessing<TMF, VPM1, TMF_tree, Kernel> bep(tm1_parts, vpm1, tm1_trees);
-    tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, tm1_parts.size()), bep);
-    tm2_tree.insert(faces(tm2).begin(), faces(tm2).end(), tm2, vpm2);
-    tm2_tree.build();
+    CGAL_assertion(tm1_trees.size() == tm1_parts.size());
+    tm_wrappers.reserve(tm1_parts.size() + 1);
+    for (std::size_t i = 0; i < tm1_parts.size(); ++i) {
+      tm_wrappers.push_back(TM1_wrapper(tm1_parts[i], vpm1, false, tm1_trees[i]));
+    }
+    tm_wrappers.push_back(TM2_wrapper(tm2, vpm2, true, tm2_tree));
+    CGAL_assertion(tm_wrappers.size() == tm1_parts.size() + 1);
+
+    Bounded_error_preprocessing<TM1_wrapper, TM2_wrapper> bep(tm_wrappers);
+    tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, tm_wrappers.size()), bep);
 
     timer.stop();
     const double time3 = timer.time();
@@ -1914,8 +1949,7 @@ double bounded_error_one_sided_Hausdorff_impl(
   timer.reset();
   timer.start();
 
-  // TODO: && METIS!
-  #if defined(CGAL_LINKED_WITH_TBB)
+  #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
   if (boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value && nb_cores > 1) {
 
     std::cout << "* executing parallel version " << std::endl;
