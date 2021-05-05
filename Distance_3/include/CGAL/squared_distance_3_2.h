@@ -262,6 +262,65 @@ squared_distance_to_triangle(
 }
 
 template <class K>
+inline void
+squared_distance_to_triangle_RT(
+    const typename K::Point_3 & pt,
+    const typename K::Point_3 & t0,
+    const typename K::Point_3 & t1,
+    const typename K::Point_3 & t2,
+    bool & inside,
+    typename K::RT& num,
+    typename K::RT& den,
+    const K& k)
+{
+  typename K::Construct_vector_3 vector;
+  typedef typename K::Vector_3 Vector_3;
+  const Vector_3 e1 = vector(t0, t1);
+  const Vector_3 oe3 = vector(t0, t2);
+  const Vector_3 normal = wcross(e1, oe3, k);
+
+  if(normal != NULL_VECTOR
+     && on_left_of_triangle_edge(pt, normal, t0, t1, k)
+     && on_left_of_triangle_edge(pt, normal, t1, t2, k)
+     && on_left_of_triangle_edge(pt, normal, t2, t0, k))
+      {
+        // the projection of pt is inside the triangle
+        inside = true;
+        return squared_distance_to_plane_RT(normal, vector(t0, pt), num, den, k);
+      }
+      else {
+        // The case normal==NULL_VECTOR covers the case when the triangle
+        // is colinear, or even more degenerate. In that case, we can
+        // simply take also the distance to the three segments.
+
+        squared_distance_RT(pt,
+                           typename K::Segment_3(t2, t0),
+                           num,
+                           den,
+                           k);
+        typename K::RT num2, den2;
+        squared_distance_RT(pt,
+                            typename K::Segment_3(t1, t2),
+                            num2,
+                            den2,
+                            k);
+        if(compare_quotients(num2,den2,num,den) == SMALLER){
+          num =  num2;
+          den = den2;
+        }
+        squared_distance_RT(pt,
+                            typename K::Segment_3(t0, t1),
+                            num2,
+                            den2,
+                            k);
+        if(compare_quotients(num2,den2,num,den) == SMALLER){
+          num =  num2;
+          den = den2;
+        }
+      }
+}
+
+template <class K>
 inline typename K::FT
 squared_distance(
     const typename K::Point_3 & pt,
@@ -276,6 +335,27 @@ squared_distance(
                                       vertex(t, 2),
                                       inside,
                                       k);
+}
+
+template <class K>
+void
+squared_distance_RT(
+    const typename K::Point_3 & pt,
+    const typename K::Triangle_3 & t,
+    typename K::RT& num,
+    typename K::RT& den,
+    const K& k)
+{
+  typename K::Construct_vertex_3 vertex;
+  bool inside = false;
+  squared_distance_to_triangle_RT(pt,
+                                  vertex(t, 0),
+                                  vertex(t, 1),
+                                  vertex(t, 2),
+                                  inside,
+                                  num,
+                                  den,
+                                  k);
 }
 
 } // namespace internal

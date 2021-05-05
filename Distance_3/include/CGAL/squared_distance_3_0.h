@@ -202,6 +202,23 @@ squared_distance_to_plane(const typename K::Vector_3 & normal,
   return FT(dot*dot) /
     FT(wmult((K*)0, squared_length, diff.hw(), diff.hw()));
 }
+  
+template <class K>
+void
+squared_distance_to_plane_RT(const typename K::Vector_3 & normal,
+                             const typename K::Vector_3 & diff,
+                             typename K::RT& num,
+                             typename K::RT& den,
+                             const K& k)
+{
+  typedef typename K::RT RT;
+  typedef typename K::FT FT;
+  RT dot, squared_length;
+  dot = wdot(normal, diff, k);
+  squared_length = wdot(normal, normal, k);
+  num =  square(dot);
+  den = wmult((K*)0, squared_length, diff.hw(), diff.hw());
+}
 
 
 template <class K>
@@ -218,7 +235,55 @@ squared_distance_to_line(const typename K::Vector_3 & dir,
                               (K*)0, RT(wdot(dir, dir, k)), diff.hw(), diff.hw()));
 }
 
+template <class K>
+void
+squared_distance_to_line_RT(const typename K::Vector_3 & dir,
+                            const typename K::Vector_3 & diff,
+                            typename K::RT& num,
+                            typename K::RT& den,
+                            const K& k,
+                            Cartesian_tag)
+{
+  typedef typename K::Vector_3 Vector_3;
+  typedef typename K::RT RT;
+  typedef typename K::FT FT;
+  Vector_3 wcr = wcross(dir, diff, k);
+  num = wcr*wcr;
+  den = wmult((K*)0, RT(wdot(dir, dir, k)), diff.hw(), diff.hw());
+}
 
+template <class K>
+void
+squared_distance_to_line_RT(const typename K::Vector_3 & dir,
+                            const typename K::Vector_3 & diff,
+                            typename K::RT& num,
+                            typename K::RT& den,
+                            const K& k,
+                            Homogeneous_tag)
+{
+  typedef typename K::Vector_3 Vector_3;
+  typedef typename K::RT RT;
+  typedef typename K::FT FT;
+  Vector_3 wcr = wcross(dir, diff, k);
+  FT ft = FT(wcr*wcr)/FT(wmult(
+                               (K*)0, RT(wdot(dir, dir, k)), diff.hw(), diff.hw()));
+  num = Rational_traits<FT>().numerator(ft);
+  den = Rational_traits<FT>().denominator(ft);
+}
+
+template <class K>
+void
+squared_distance_to_line_RT(const typename K::Vector_3 & dir,
+                            const typename K::Vector_3 & diff,
+                            typename K::RT& num,
+                            typename K::RT& den,
+                            const K& k)
+{
+  typedef typename K::Kernel_tag Tag;
+  Tag tag;
+  squared_distance_to_line_RT(dir,diff,num,den,k,tag);
+}
+                                       
 template <class K>
 inline
 bool

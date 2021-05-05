@@ -43,6 +43,22 @@ squared_distance(
   Vector_3 diff = construct_vector(line.point(), pt);
   return internal::squared_distance_to_line(dir, diff, k);
 }
+  
+template <class K>
+void
+squared_distance_RT(
+    const typename K::Point_3 &pt,
+    const typename K::Line_3 &line,
+    typename K::RT num,
+    typename K::RT den,
+    const K& k)
+{
+  typedef typename K::Vector_3 Vector_3;
+  typename K::Construct_vector_3 construct_vector;
+  Vector_3 dir(line.direction().vector());
+  Vector_3 diff = construct_vector(line.point(), pt);
+  return internal::squared_distance_to_line_RT(dir, diff, num, den, k);
+}
 
 template <class K>
 inline
@@ -73,6 +89,70 @@ squared_distance(
     return squared_distance_to_line(dir, diff, k);
 }
 
+template <class K>
+void
+squared_distance_RT(
+    const typename K::Point_3 &pt,
+    const typename K::Ray_3 &ray,
+    typename K::RT num,
+    typename K::RT den,
+    const K& k,
+    Homogeneous_tag&)
+{
+  typename K::Construct_vector_3 construct_vector;
+  typedef typename K::Vector_3 Vector_3;
+  typedef typename K::RT RT;
+  typedef typename K::FT FT;
+  
+    Vector_3 diff = construct_vector(ray.source(), pt);
+    const Vector_3 &dir = ray.direction().vector();
+    if (!is_acute_angle(dir,diff, k) ){
+      FT ft = diff*diff;
+      num = Rational_traits<FT>().numerator(ft);
+      den = Rational_traits<FT>().denominator(ft);
+      return;
+    }
+    squared_distance_to_line_RT(dir, diff, num, den, k);
+}
+
+template <class K>
+void
+squared_distance_RT(
+    const typename K::Point_3 &pt,
+    const typename K::Ray_3 &ray,
+    typename K::RT num,
+    typename K::RT den,
+    const K& k,
+    Cartesian_tag& )
+{
+  typename K::Construct_vector_3 construct_vector;
+  typedef typename K::Vector_3 Vector_3;
+  typedef typename K::RT RT;
+  
+    Vector_3 diff = construct_vector(ray.source(), pt);
+    const Vector_3 &dir = ray.direction().vector();
+    if (!is_acute_angle(dir,diff, k) ){
+         num = diff*diff;
+         den =  RT(1);
+         return;
+    }
+    squared_distance_to_line_RT(dir, diff, num, den, k);
+}
+
+template <class K>
+void
+squared_distance_RT(
+    const typename K::Point_3 &pt,
+    const typename K::Ray_3 &ray,
+    typename K::RT num,
+    typename K::RT den,
+    const K& k)
+{
+  typedef typename K::Kernel_tag Tag;
+  Tag tag;
+  squared_distance_RT(pt,ray,num,den,k,tag);
+}
+  
 
 template <class K>
 inline
@@ -115,6 +195,42 @@ squared_distance(
 }
 
 template <class K>
+void
+squared_distance_RT(
+    const typename K::Point_3 &pt,
+    const typename K::Segment_3 &seg,
+    typename K::RT& num,
+    typename K::RT& den,
+    const K& k,
+    const Homogeneous_tag)
+{
+    typename K::Construct_vector_3 construct_vector;
+    typedef typename K::Vector_3 Vector_3;
+    typedef typename K::RT RT;
+    typedef typename K::FT FT;
+    // assert that the segment is valid (non zero length).
+    Vector_3 diff = construct_vector(seg.source(), pt);
+    Vector_3 segvec = construct_vector(seg.source(), seg.target());
+    RT d = wdot(diff,segvec, k);
+    if (d <= (RT)0){
+      FT ft = FT(diff*diff);
+      num = Rational_traits<FT>().numerator(ft);
+      den = Rational_traits<FT>().denominator(ft);
+    }
+    RT e = wdot(segvec,segvec, k);
+    if ( (d * segvec.hw()) > (e * diff.hw())){
+      FT sd = squared_distance(pt, seg.target(), k);
+      num = Rational_traits<FT>().numerator(sd);
+      den = Rational_traits<FT>().denominator(sd);
+      return;
+    }
+    Vector_3 wcr = wcross(segvec, diff, k);
+    FT ft((wcr*wcr)/FT(e * diff.hw() * diff.hw()));
+    num = Rational_traits<FT>().numerator(ft);
+    den = Rational_traits<FT>().denominator(ft);
+}
+
+template <class K>
 typename K::FT
 squared_distance(
     const typename K::Point_3 &pt,
@@ -140,6 +256,54 @@ squared_distance(
     return FT(wcr*wcr)/e;
 }
 
+template <class K>
+void
+squared_distance_RT(
+    const typename K::Point_3 &pt,
+    const typename K::Segment_3 &seg,
+    typename K::RT& num,
+    typename K::RT& den,
+    const K& k,
+    const Cartesian_tag&)
+{
+    typename K::Construct_vector_3 construct_vector;
+    typedef typename K::Vector_3 Vector_3;
+    typedef typename K::RT RT;
+    typedef typename K::FT FT;
+    // assert that the segment is valid (non zero length).
+    Vector_3 diff = construct_vector(seg.source(), pt);
+    Vector_3 segvec = construct_vector(seg.source(), seg.target());
+    RT d = wdot(diff,segvec, k);
+    if (d <= (RT)0){
+      num = diff*diff;
+      den = RT(1);
+      return;
+    }
+    RT e = wdot(segvec,segvec, k);
+    if (d > e){
+      num = squared_distance(pt, seg.target(), k);
+      den = RT(1);
+      return;
+    }
+    Vector_3 wcr = wcross(segvec, diff, k);
+    num = wcr*wcr;
+    den = e;
+}
+
+template <class K>
+inline
+void
+squared_distance_RT(
+    const typename K::Point_3 &pt,
+    const typename K::Segment_3 &seg,
+    typename K::RT& num,
+    typename K::RT& den,
+    const K& k)
+{
+  typedef typename K::Kernel_tag Tag;
+  Tag tag;
+  return squared_distance_RT(pt, seg, num, den, k, tag);
+}
 
 template <class K>
 inline
