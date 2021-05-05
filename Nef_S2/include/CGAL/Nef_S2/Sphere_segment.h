@@ -37,14 +37,14 @@ Sphere_segment_rep() { ps_ = pt_ = Point(); c_ = Circle(); }
 
 Sphere_segment_rep(const Point& p1, const Point& p2,
                    bool shorter_arc=true) :
-  ps_(p1), pt_(p2), c_(Plane_3(p1,p2,Point_3(0,0,0)))
+  ps_(p1), pt_(p2), c_(Plane_3(p1,p2,Point_3(CGAL::ORIGIN)))
 { // warning stays as reminder that one gets an arbitrary plane equation
   // in this degenerate case
   CGAL_warning(p1 != p2.antipode());
   CGAL_assertion(p1 != p2.antipode());
   if ( p1 == p2 ) {
-    Plane_3 h(Point_3(0,0,0),(p1-CGAL::ORIGIN));
-    c_ = Sphere_circle<R_>(Plane_3(Point_3(0,0,0),h.base1()));
+    Plane_3 h(Point_3(CGAL::ORIGIN),(p1-CGAL::ORIGIN));
+    c_ = Sphere_circle<R_>(Plane_3(Point_3(CGAL::ORIGIN),h.base1()));
   }
   if (!shorter_arc) c_ = c_.opposite();
   CGAL_exactness_assertion(c_.has_on(p1) && c_.has_on(p2));
@@ -59,7 +59,7 @@ Sphere_segment_rep(const Circle& c1,
 { CGAL_assertion(!equal_as_sets(c1,c2));
   ps_ = intersection(c1,c2);
   pt_ = ps_.antipode();
-  if ( R_::orientation(Point_3(0,0,0),ps_,pt_,
+  if ( R_::orientation(Point_3(CGAL::ORIGIN),ps_,pt_,
                    CGAL::ORIGIN + c_.orthogonal_vector()) !=
        CGAL::POSITIVE ) std::swap(ps_,pt_);
 }
@@ -176,7 +176,7 @@ void split_halfcircle(Sphere_segment<R>& s1,
 /*{\Mop splits a halfcircle into two equally sized segments.
 \precond |\Mvar| is a halfcircle.}*/
 { CGAL_assertion( is_halfcircle() );
-  Plane_3 h(Point_3(0,0,0),(target()-CGAL::ORIGIN));
+  Plane_3 h(Point_3(CGAL::ORIGIN),(target()-CGAL::ORIGIN));
   Sphere_point<R> p =
     CGAL::intersection(sphere_circle(),Sphere_circle<R>(h));
   if ( !has_on_after_intersection(p) ) p = p.antipode();
@@ -187,7 +187,7 @@ void split_halfcircle(Sphere_segment<R>& s1,
 bool is_short() const
 /*{\Mop a segment is short iff it is shorter than a halfcircle.}*/
 {
-  return R().orientation_3_object()(Point_3(0,0,0),
+  return R().orientation_3_object()(Point_3(CGAL::ORIGIN),
                                     Point_3(source()),
                                     Point_3(target()),
                                     pole())
@@ -195,7 +195,7 @@ bool is_short() const
 
 bool is_long() const
 /*{\Mop a segment is long iff it is longer than a halfcircle.}*/
-{ return R().orientation_3_object()(Point_3(0,0,0),
+{ return R().orientation_3_object()(Point_3(CGAL::ORIGIN),
                                     Point_3(source()),
                                     Point_3(target()),
                                     pole())
