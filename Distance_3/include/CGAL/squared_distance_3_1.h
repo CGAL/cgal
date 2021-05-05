@@ -49,8 +49,8 @@ void
 squared_distance_RT(
     const typename K::Point_3 &pt,
     const typename K::Line_3 &line,
-    typename K::RT num,
-    typename K::RT den,
+    typename K::RT& num,
+    typename K::RT& den,
     const K& k)
 {
   typedef typename K::Vector_3 Vector_3;
@@ -94,8 +94,8 @@ void
 squared_distance_RT(
     const typename K::Point_3 &pt,
     const typename K::Ray_3 &ray,
-    typename K::RT num,
-    typename K::RT den,
+    typename K::RT& num,
+    typename K::RT& den,
     const K& k,
     Homogeneous_tag&)
 {
@@ -120,8 +120,8 @@ void
 squared_distance_RT(
     const typename K::Point_3 &pt,
     const typename K::Ray_3 &ray,
-    typename K::RT num,
-    typename K::RT den,
+    typename K::RT& num,
+    typename K::RT& den,
     const K& k,
     Cartesian_tag& )
 {
@@ -144,8 +144,8 @@ void
 squared_distance_RT(
     const typename K::Point_3 &pt,
     const typename K::Ray_3 &ray,
-    typename K::RT num,
-    typename K::RT den,
+    typename K::RT& num,
+    typename K::RT& den,
     const K& k)
 {
   typedef typename K::Kernel_tag Tag;
