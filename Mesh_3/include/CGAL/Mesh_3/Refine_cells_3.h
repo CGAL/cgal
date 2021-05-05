@@ -40,7 +40,7 @@
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <sstream>
-
+#include <atomic>
 
 namespace CGAL {
 
@@ -318,7 +318,7 @@ public:
                  C3T3& c3t3,
                  std::size_t maximal_number_of_vertices
 #ifndef CGAL_NO_ATOMIC
-                , CGAL::cpp11::atomic<bool>* stop_ptr
+                , std::atomic<bool>* stop_ptr
 #endif
                 );
   // For parallel
@@ -331,7 +331,7 @@ public:
                  WorksharingDataStructureType *worksharing_ds,
                  std::size_t maximal_number_of_vertices
 #ifndef CGAL_NO_ATOMIC
-                , CGAL::cpp11::atomic<bool>* stop_ptr
+                , std::atomic<bool>* stop_ptr
 #endif
                 );
 
@@ -572,7 +572,7 @@ private:
 
 #ifndef CGAL_NO_ATOMIC
   /// Pointer to the atomic Boolean that can stop the process
-  CGAL::cpp11::atomic<bool>* const m_stop_ptr;
+  std::atomic<bool>* const m_stop_ptr;
 #endif
 private:
   // Disabled copy constructor
@@ -594,7 +594,7 @@ Refine_cells_3(Tr& triangulation,
                C3T3& c3t3,
                std::size_t maximal_number_of_vertices
 #ifndef CGAL_NO_ATOMIC
-               , CGAL::cpp11::atomic<bool>* stop_ptr
+               , std::atomic<bool>* stop_ptr
 #endif
                )
   : Mesher_level<Tr, Self, Cell_handle, P_,
@@ -627,7 +627,7 @@ Refine_cells_3(Tr& triangulation,
                WorksharingDataStructureType *worksharing_ds,
                std::size_t maximal_number_of_vertices
 #ifndef CGAL_NO_ATOMIC
-               , CGAL::cpp11::atomic<bool>* stop_ptr
+               , std::atomic<bool>* stop_ptr
 #endif
                )
   : Mesher_level<Tr, Self, Cell_handle, P_,

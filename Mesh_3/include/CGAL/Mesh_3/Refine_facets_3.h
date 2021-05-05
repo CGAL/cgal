@@ -50,6 +50,7 @@
 #include <CGAL/tuple.h>
 #include <boost/type_traits/is_convertible.hpp>
 #include <sstream>
+#include <atomic>
 
 namespace CGAL {
 
@@ -254,7 +255,7 @@ public:
                        const Criteria& criteria,
                        std::size_t maximal_number_of_vertices
 #ifndef CGAL_NO_ATOMIC
-                       , CGAL::cpp11::atomic<bool>* stop_ptr
+                       , std::atomic<bool>* stop_ptr
 #endif
                        )
     : r_tr_(tr)
@@ -608,7 +609,7 @@ protected:
   std::size_t m_maximal_number_of_vertices_;
 #ifndef CGAL_NO_ATOMIC
   /// Pointer to the atomic Boolean that can stop the process
-  CGAL::cpp11::atomic<bool>* const m_stop_ptr;
+  std::atomic<bool>* const m_stop_ptr;
 #endif
 }; // end class template Refine_facets_3_base
 
@@ -776,7 +777,7 @@ public:
                   int mesh_topology,
                   std::size_t maximal_number_of_vertices
 #ifndef CGAL_NO_ATOMIC
-                  , CGAL::cpp11::atomic<bool>* stop_ptr
+                  , std::atomic<bool>* stop_ptr
 #endif
                   );
   // For parallel
@@ -789,7 +790,7 @@ public:
                   WorksharingDataStructureType *worksharing_ds,
                   std::size_t maximal_number_of_vertices
 #ifndef CGAL_NO_ATOMIC
-                  , CGAL::cpp11::atomic<bool>* stop_ptr
+                  , std::atomic<bool>* stop_ptr
 #endif
                   );
 
@@ -909,7 +910,7 @@ Refine_facets_3(Tr& triangulation,
                 int mesh_topology,
                 std::size_t maximal_number_of_vertices
 #ifndef CGAL_NO_ATOMIC
-                , CGAL::cpp11::atomic<bool>* stop_ptr
+                , std::atomic<bool>* stop_ptr
 #endif
                 )
   : Rf_base(triangulation, c3t3, oracle, criteria, mesh_topology,
@@ -938,7 +939,7 @@ Refine_facets_3(Tr& triangulation,
                 WorksharingDataStructureType *worksharing_ds,
                 std::size_t maximal_number_of_vertices
 #ifndef CGAL_NO_ATOMIC
-                , CGAL::cpp11::atomic<bool>* stop_ptr
+                , std::atomic<bool>* stop_ptr
 #endif
                 )
   : Rf_base(triangulation, c3t3, oracle, criteria, maximal_number_of_vertices

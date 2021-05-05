@@ -55,6 +55,7 @@
 #include <boost/format.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <string>
+#include <atomic>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -212,7 +213,7 @@ public:
            std::size_t maximal_number_of_vertices = 0,
            Mesh_error_code* error_code = 0
 #ifndef CGAL_NO_ATOMIC
-           , CGAL::cpp11::atomic<bool>* stop_ptr = 0
+           , std::atomic<bool>* stop_ptr = 0
 #endif
            );
 
@@ -284,7 +285,7 @@ private:
 
 #ifndef CGAL_NO_ATOMIC
   /// Pointer to the atomic Boolean that can stop the process
-  CGAL::cpp11::atomic<bool>* const stop_ptr;
+  std::atomic<bool>* const stop_ptr;
 #endif
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -343,7 +344,7 @@ Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
                                std::size_t maximal_number_of_vertices,
                                Mesh_error_code* error_code
 #ifndef CGAL_NO_ATOMIC
-                               , CGAL::cpp11::atomic<bool>* stop_ptr
+                               , std::atomic<bool>* stop_ptr
 #endif
                                )
 : Base(c3t3.bbox(),

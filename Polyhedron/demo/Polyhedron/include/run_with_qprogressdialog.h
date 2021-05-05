@@ -6,6 +6,8 @@
 
 #include "Callback_signaler.h"
 
+#include <atomic>
+
 typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 class Signal_callback
@@ -111,7 +113,7 @@ void run_with_qprogressdialog (Functor& functor,
 #ifdef CGAL_HAS_STD_THREADS
   if (boost::is_convertible<ConcurrencyTag, CGAL::Parallel_tag>::value)
   {
-    CGAL::cpp11::thread thread (functor);
+    std::thread thread (functor);
 
     while (*signal_callback->latest_adv != 1. &&
            *signal_callback->state)

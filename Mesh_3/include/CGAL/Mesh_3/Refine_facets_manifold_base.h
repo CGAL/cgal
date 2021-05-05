@@ -30,6 +30,7 @@
 
 #include <set>
 #include <vector>
+#include <atomic>
 
 namespace CGAL {
 
@@ -307,7 +308,7 @@ public:
                               int mesh_topology,
                               std::size_t maximal_number_of_vertices
 #ifndef CGAL_NO_ATOMIC
-                              , CGAL::cpp11::atomic<bool>* stop_ptr
+                              , std::atomic<bool>* stop_ptr
 #endif
                               )
     : Base(triangulation,

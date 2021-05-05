@@ -24,6 +24,7 @@
 
 #include <algorithm>
 #include <array>
+#include <atomic>
 
 namespace CGAL {
 
@@ -37,7 +38,7 @@ struct Unique_numbers {
 #ifdef CGAL_NO_ATOMIC
       static std::size_t n = 0;
 #else
-      static CGAL::cpp11::atomic<std::size_t> n; // initialized to 0
+      static std::atomic<std::size_t> n; // initialized to 0
 #endif
       i = n++;
     }

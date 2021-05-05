@@ -31,6 +31,8 @@
 
 #include <boost/parameter/preprocessor.hpp>
 
+#include <atomic>
+
 namespace CGAL {
 
 namespace details {
@@ -195,7 +197,7 @@ struct Manifold_options {
 // Various Mesh_3 option
 struct Mesh_3_options {
 #ifndef CGAL_NO_ATOMIC
-      typedef CGAL::cpp11::atomic<bool>* Pointer_to_stop_atomic_boolean_t;
+      typedef std::atomic<bool>* Pointer_to_stop_atomic_boolean_t;
 #else
       typedef bool* Pointer_to_stop_atomic_boolean_t;
 #endif

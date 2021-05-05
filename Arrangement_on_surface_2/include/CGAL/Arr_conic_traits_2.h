@@ -23,6 +23,7 @@
  */
 
 #include <fstream>
+#include <atomic>
 
 #include <CGAL/tags.h>
 #include <CGAL/Arr_tags.h>
@@ -107,7 +108,7 @@ public:
 #ifdef CGAL_NO_ATOMIC
     static unsigned int index;
 #else
-    static CGAL::cpp11::atomic<unsigned int> index;
+    static std::atomic<unsigned int> index;
 #endif
     return (++index);
   }

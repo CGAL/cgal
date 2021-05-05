@@ -36,7 +36,7 @@
 # include <tbb/task.h>
 #endif
 
-#include <string>
+#include <atomic>
 
 namespace CGAL { namespace Mesh_3 {
 
@@ -676,7 +676,7 @@ public:
   void set_lock_ds(Lock_data_structure *) {}
   void set_worksharing_ds(WorksharingDataStructureType *) {}
 #ifndef CGAL_NO_ATOMIC
-  void set_stop_pointer(CGAL::cpp11::atomic<bool>*) {}
+  void set_stop_pointer(std::atomic<bool>*) {}
 #endif
 
 protected:
@@ -1148,7 +1148,7 @@ public:
   }
 
 #ifndef CGAL_NO_ATOMIC
-  void set_stop_pointer(CGAL::cpp11::atomic<bool>* stop_ptr)
+  void set_stop_pointer(std::atomic<bool>* stop_ptr)
   {
     m_stop_ptr = stop_ptr;
   }
@@ -1178,7 +1178,7 @@ protected:
 
   tbb::task *m_empty_root_task;
 #ifndef CGAL_NO_ATOMIC
-  CGAL::cpp11::atomic<bool>* m_stop_ptr;
+  std::atomic<bool>* m_stop_ptr;
 #endif
 
 private:

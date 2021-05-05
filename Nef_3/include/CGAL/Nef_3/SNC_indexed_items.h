@@ -23,6 +23,8 @@
 #include <CGAL/Nef_3/SHalfloop.h>
 #include <CGAL/Nef_3/SFace.h>
 
+#include <atomic>
+
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 83
 #include <CGAL/Nef_2/debug.h>
@@ -39,7 +41,7 @@ class Index_generator {
 #ifdef CGAL_NO_ATOMIC
     static int unique;
 #else
-    static CGAL::cpp11::atomic<int> unique;
+    static std::atomic<int> unique;
 #endif
     return unique++;
   }
