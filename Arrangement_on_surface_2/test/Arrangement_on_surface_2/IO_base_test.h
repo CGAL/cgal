@@ -1675,13 +1675,12 @@ template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
                                                  X_monotone_curve_2& xcv)
 {
+  unsigned int flag;
+  is >> flag;
   Point_2 p1, p2;
   read_point(is, p1);
   read_point(is, p2);
   assert(p1 != p2);
-
-  unsigned int flag;
-  is >> flag;
   if (flag == 1) {
     X_monotone_curve_2::Direction_3 normal;
     is >> normal;
@@ -1697,19 +1696,25 @@ template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
 {
+  unsigned int flag;
+  is >> flag;
+  if (flag == 2) {
+    Curve_2::Direction_3 normal;
+    is >> normal;
+    cv = m_geom_traits.construct_curve_2_object()(normal);
+    return true;
+  }
   Point_2 p1, p2;
   read_point(is, p1);
   read_point(is, p2);
   assert(p1 != p2);
-  unsigned int flag;
-  is >> flag;
   if (flag == 1) {
-    X_monotone_curve_2::Direction_3 normal;
+    Curve_2::Direction_3 normal;
     is >> normal;
     cv = m_geom_traits.construct_curve_2_object()(p1, p2, normal);
+    return true;
   }
-  else
-    cv = m_geom_traits.construct_curve_2_object()(p1, p2);
+  cv = m_geom_traits.construct_curve_2_object()(p1, p2);
   return true;
 }
 

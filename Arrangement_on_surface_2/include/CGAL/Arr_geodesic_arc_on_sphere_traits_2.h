@@ -939,14 +939,15 @@ public:
      * \param plane the containing plane.
      */
     Curve_2 operator()(const Direction_3& normal) const {
-      Curve_2 xcv;
-
-      xcv.set_normal(normal);
-      xcv.set_is_vertical(z_sign(normal) == ZERO);
-      xcv.set_is_directed_right(z_sign(normal) == POSITIVE);
-      xcv.set_is_full(true);
-      xcv.set_is_degenerate(false);
-      xcv.set_is_empty(false);
+      Curve_2 cv;
+      cv.set_normal(normal);
+      cv.set_is_x_monotone(false);
+      cv.set_is_vertical(z_sign(normal) == ZERO);
+      cv.set_is_directed_right(z_sign(normal) == POSITIVE);
+      cv.set_is_full(true);
+      cv.set_is_degenerate(false);
+      cv.set_is_empty(false);
+      return cv;
     }
   };
 
@@ -995,7 +996,7 @@ protected:
    */
   inline static const Point_2& pos_pole()
   {
-    static const Point_2 p(Direction_3(0, 0, 1), Point_2::MIN_BOUNDARY_LOC);
+    static const Point_2 p(Direction_3(0, 0, 1), Point_2::MAX_BOUNDARY_LOC);
     return p;
   }
 
@@ -2023,11 +2024,12 @@ public:
      * \return the past-the-end iterator.
      */
     template <typename OutputIterator>
-    OutputIterator operator()(const Curve_2& c, OutputIterator oi) const
-    {
+    OutputIterator operator()(const Curve_2& c, OutputIterator oi) const {
       typedef boost::variant<Point_2, X_monotone_curve_2>
         Make_x_monotone_result;
-
+      // std::cout << "full: " << c.is_full() << std::endl;
+      // std::cout << "vert: " << c.is_vertical() << std::endl;
+      // std::cout << "xmon: " << c.is_x_monotone() << std::endl;
       if (c.is_degenerate()) {
         // The spherical_arc is a degenerate point - wrap it with an object:
         *oi++ = Make_x_monotone_result(c.right());
@@ -2063,9 +2065,8 @@ public:
         // Split the arc at the intersection point with the complement of the
         // discontinuity arc:
         Direction_3 normal = c.normal();
-        bool directed_right = Traits::x_sign(normal) == POSITIVE;
-        typename Traits::Construct_point_2 ctr_p =
-          m_traits.construct_point_2_object();
+        bool directed_right = Traits::z_sign(normal) == POSITIVE;
+        auto ctr_p = m_traits.construct_point_2_object();
         Point_2 p1 = ctr_p(Direction_3(-(normal.dz()), 0, normal.dx()));
         Point_2 p2 = ctr_p(Direction_3(normal.dz(), 0, -(normal.dx())));
         X_monotone_curve_2 xc1(p1, p2, normal, false, directed_right);
@@ -3755,8 +3756,8 @@ public:
                       (!plane_is_positive && !ccib(d, t, s)));
   }
 
-  /*! Construct a full spherical_arc from a plane.
-   * \param plane the containing plane.
+  /*! Construct a full spherical_arc from a normal to a plane.
+   * \param normal the normal to the plane containing the arc.
    */
   Arr_geodesic_arc_on_sphere_3(const Direction_3& normal)
   {
