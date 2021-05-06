@@ -1263,6 +1263,9 @@ private:
       if (is_on_mesh(he) && is_on_mesh(hopp))
         return false;
 
+      if (is_an_isolated_constraint(he) || is_an_isolated_constraint(hopp))
+        return false;
+
       if ( (protect_constraints_ || !collapse_constraints) && is_constrained(e))
         return false;
       if (is_on_patch(he)) //hopp is also on patch
