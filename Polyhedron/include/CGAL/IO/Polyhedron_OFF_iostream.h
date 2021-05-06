@@ -99,6 +99,28 @@ bool read_OFF(std::istream& in, Polyhedron_3<Traits, Items, HDS, Alloc>& P)
   return read_OFF(in, P, parameters::all_default());
 }
 
+template <class Traits,
+          class Items,
+          template < class T, class I, class A> class HDS,
+          class Alloc, class CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_OFF(const std::string& fname,
+              Polyhedron_3<Traits, Items, HDS, Alloc>& P,
+              const CGAL_BGL_NP_CLASS& np)
+{
+  std::ifstream in(fname);
+  return read_OFF(in, P, np);
+}
+
+template <class Traits,
+          class Items,
+          template < class T, class I, class A> class HDS,
+          class Alloc>
+bool read_OFF(const std::string& fname, Polyhedron_3<Traits, Items, HDS, Alloc>& P)
+{
+  std::ifstream in(fname);
+  return read_OFF(in, P, parameters::all_default());
+}
+
 } // namespace IO
 
 template <class Traits,
