@@ -40,7 +40,7 @@ do_intersect(const typename K::Sphere_3 &sp,
 {
   typedef typename K::RT RT;
   RT num, den;
-  
+
   CGAL::internal::squared_distance_RT(sp.center(), tr, num, den, k);
   return ! (compare_quotients<RT>(num, den,
                                   Rational_traits<typename K::FT>().numerator(sp.squared_radius()),
@@ -54,7 +54,7 @@ do_intersect(const typename K::Triangle_3 &tr,
              const typename K::Sphere_3 &sp,
              const K & k)
 {
-  return do_intersect(sp, tr, k); 
+  return do_intersect(sp, tr, k);
 }
 
 
@@ -67,14 +67,14 @@ do_intersect(const typename K::Line_3 &lin,
 {
   typedef typename K::RT RT;
   RT num, den;
-  
+
   CGAL::internal::squared_distance_RT(sp.center(), lin, num, den, k);
   return ! (compare_quotients<RT>(num, den,
                                   Rational_traits<typename K::FT>().numerator(sp.squared_radius()),
                                   Rational_traits<typename K::FT>().denominator(sp.squared_radius())) == LARGER);
 
 }
-  
+
 template <class K>
 inline
 typename K::Boolean
@@ -96,7 +96,7 @@ do_intersect(const typename K::Sphere_3 &sp,
 {
   typedef typename K::RT RT;
   RT num, den;
-  
+
   CGAL::internal::squared_distance_RT(sp.center(), ray, num, den, k);
   return ! (compare_quotients<RT>(num, den,
                                   Rational_traits<typename K::FT>().numerator(sp.squared_radius()),
@@ -123,7 +123,7 @@ do_intersect(const typename K::Sphere_3 &sp,
 {
   typedef typename K::RT RT;
   RT num, den;
-  
+
   CGAL::internal::squared_distance_RT(sp.center(), seg, num, den, k);
   return ! (compare_quotients<RT>(num, den,
                                   Rational_traits<typename K::FT>().numerator(sp.squared_radius()),

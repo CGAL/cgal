@@ -43,7 +43,7 @@ squared_distance(
   Vector_3 diff = construct_vector(line.point(), pt);
   return internal::squared_distance_to_line(dir, diff, k);
 }
-  
+
 template <class K>
 void
 squared_distance_RT(
@@ -103,7 +103,7 @@ squared_distance_RT(
   typedef typename K::Vector_3 Vector_3;
   typedef typename K::RT RT;
   typedef typename K::FT FT;
-  
+
     Vector_3 diff = construct_vector(ray.source(), pt);
     const Vector_3 &dir = ray.direction().vector();
     if (!is_acute_angle(dir,diff, k) ){
@@ -128,7 +128,7 @@ squared_distance_RT(
   typename K::Construct_vector_3 construct_vector;
   typedef typename K::Vector_3 Vector_3;
   typedef typename K::RT RT;
-  
+
     Vector_3 diff = construct_vector(ray.source(), pt);
     const Vector_3 &dir = ray.direction().vector();
     if (!is_acute_angle(dir,diff, k) ){
@@ -152,7 +152,7 @@ squared_distance_RT(
   Tag tag;
   squared_distance_RT(pt,ray,num,den,k,tag);
 }
-  
+
 
 template <class K>
 inline

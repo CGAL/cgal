@@ -202,7 +202,7 @@ squared_distance_to_plane(const typename K::Vector_3 & normal,
   return FT(dot*dot) /
     FT(wmult((K*)0, squared_length, diff.hw(), diff.hw()));
 }
-  
+
 template <class K>
 void
 squared_distance_to_plane_RT(const typename K::Vector_3 & normal,
@@ -283,7 +283,7 @@ squared_distance_to_line_RT(const typename K::Vector_3 & dir,
   Tag tag;
   squared_distance_to_line_RT(dir,diff,num,den,k,tag);
 }
-                                       
+
 template <class K>
 inline
 bool
