@@ -161,8 +161,8 @@ write_triangle_poly_file(const CDT& t, std::ostream &f)
 } // namespace IO
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-using read_triangle_poly_file;
-using write_triangle_poly_file;
+using IO::read_triangle_poly_file;
+using IO::write_triangle_poly_file;
 #endif
 
 } // end namespace CGAL
