@@ -216,6 +216,7 @@ squared_distance_RT(
       FT ft = FT(diff*diff);
       num = Rational_traits<FT>().numerator(ft);
       den = Rational_traits<FT>().denominator(ft);
+      return;
     }
     RT e = wdot(segvec,segvec, k);
     if ( (d * segvec.hw()) > (e * diff.hw())){

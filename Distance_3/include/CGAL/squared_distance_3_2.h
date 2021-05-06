@@ -286,7 +286,7 @@ squared_distance_to_triangle_RT(
       {
         // the projection of pt is inside the triangle
         inside = true;
-        return squared_distance_to_plane_RT(normal, vector(t0, pt), num, den, k);
+        squared_distance_to_plane_RT(normal, vector(t0, pt), num, den, k);
       }
       else {
         // The case normal==NULL_VECTOR covers the case when the triangle
