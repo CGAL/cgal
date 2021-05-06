@@ -174,23 +174,23 @@ struct Test {
     assert(! do_intersect(sph, Tr(r,s,t)));
 
     assert(! do_intersect(sph, Tr(s,s2,s3)));
-    
+
     assert(do_intersect(sph, S(p,r)));
     assert(do_intersect(sph, S(q,r)));
     assert(do_intersect(sph, S(s,q)));
     assert(! do_intersect(sph, S(s,r)));
-    
+
     assert(do_intersect(sph, L(p,r)));
     assert(do_intersect(sph, L(q,r)));
     assert(do_intersect(sph, L(s,q)));
     assert(! do_intersect(sph, L(s,r)));
-    
+
     assert(do_intersect(sph, R(p,r)));
     assert(do_intersect(sph, R(q,r)));
     assert(do_intersect(sph, R(s,q)));
     assert(! do_intersect(sph, R(s,r)));
-    
-  }  
+
+  }
 
 
   void Cub_Cub()
