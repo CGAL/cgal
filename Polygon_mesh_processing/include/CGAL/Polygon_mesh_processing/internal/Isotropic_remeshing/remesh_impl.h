@@ -1564,19 +1564,22 @@ private:
         }
       }
 
+#ifdef CGAL_PMP_REMESHING_DEBUG
       std::ofstream ofs("dump_isolated.polylines.txt");
       for (edge_descriptor e : edges(mesh_))
       {
         halfedge_descriptor h = halfedge(e, mesh_);
-        if (status(h) == ISOLATED_CONSTRAINT)
-        {
-          CGAL_assertion(status(opposite(h, mesh_)) == ISOLATED_CONSTRAINT);
+        Halfedge_status so = status(opposite(h, mesh_));
+        bool isolated = (status(h) == ISOLATED_CONSTRAINT || so == ISOLATED_CONSTRAINT);
+        CGAL_assertion(!isolated
+                    || so == ISOLATED_CONSTRAINT
+                    || so == MESH_BORDER);
+        if(isolated)
           ofs << "2 " << get(vpmap_, target(h, mesh_))
-            << " " << get(vpmap_, source(h, mesh_)) << std::endl;
-        }
+              << " " << get(vpmap_, source(h, mesh_)) << std::endl;
       }
       ofs.close();
-
+#endif
     }
 
     Halfedge_status status(const halfedge_descriptor& h) const
