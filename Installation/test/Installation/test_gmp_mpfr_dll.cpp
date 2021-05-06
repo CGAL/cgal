@@ -7,6 +7,8 @@ int main() {
 
 #define GMP_SONAME "libgmp-10"
 #define MPFR_SONAME "libmpfr-4"
+#define GMP_SONAME_BACKUP"gmp"
+#define MPFR_SONAME_BACKUP "mpfr-6"
 #define GMP_MAJOR 5
 #define MPFR_MAJOR 3
 
@@ -63,7 +65,9 @@ int main() {
   std::cout << "Hello MPFR version " << mpfr_get_version() << std::endl;
   int major, minor, patch, build;
   if(!get_version_info(GMP_SONAME, major, minor, patch, build)) {
-    return 1;
+    if(!get_version_info(GMP_SONAME_BACKUP, major, minor, patch, build)) {
+      return 1;
+    }
   }
 
   std::cout << "GMP version "
@@ -74,7 +78,9 @@ int main() {
   assert(major==GMP_MAJOR);
   major = 0;
   if(!get_version_info(MPFR_SONAME, major, minor, patch, build)) {
-    return 1;
+    if(!get_version_info(MPFR_SONAME_BACKUP, major, minor, patch, build)) {
+      return 1;
+    }
   }
   std::cout << "MPFR version "
             << major << "."
