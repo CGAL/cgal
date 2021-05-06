@@ -351,24 +351,6 @@ bool read_OFF(std::istream& is,
 {
   return read_OFF(is, sm, parameters::all_default());
 }
-template <typename Point,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(const char* fname,
-              Surface_mesh<Point>& sm,
-              const CGAL_BGL_NP_CLASS& np)
-{
-  std::ifstream in(fname);
-  return read_OFF(in, sm, np);
-}
-
-template <typename Point,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(const char* fname,
-              Surface_mesh<Point>& sm)
-{
-  return read_OFF(fname, sm, parameters::all_default());
-}
-
 
 template <typename Point,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -376,7 +358,8 @@ bool read_OFF(std::string& fname,
               Surface_mesh<Point>& sm,
               const CGAL_BGL_NP_CLASS& np)
 {
-  return read_OFF(fname.c_str(), sm, np);
+  std::ifstream in(fname.c_str());
+  return read_OFF(in, sm, np);
 }
 
 template <typename Point,
