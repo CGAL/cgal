@@ -28,12 +28,18 @@ both their geometry and connectivity, using the
 the `3D Triangulation` and `3D Triangulation  Data Structure` packages.
 
 We introduce the concept of "mesh complex", that encodes extra information
-on top of a 3D triangulation.
+on top of a 3D triangulation. A mesh complex describes one sub-complex
+of the support 3D triangulation per dimension from 0 to 3 :
+- corner vertices in 0D,
+- feature edges in 1D,
+- surface facets in 2D,
+- domain cells in 3D.
 
+The concept `MeshComplex_3InTriangulation_3` is a data structure devised to
+represent a three dimensional complex embedded in a 3D
+triangulation.
 
-`MeshComplex_3InTriangulation_3`, a data structure devised to
-//represent a three dimensional complex embedded in a 3D
-//triangulation. In both functions, an instance of type `C3T3` is used to maintain the current
+//In both functions, an instance of type `C3T3` is used to maintain the current
 //approximating simplicial mesh
 //and to represent the final 3D mesh at the end
 //of the procedure.
