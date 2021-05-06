@@ -1509,21 +1509,23 @@ private:
       }
 
       //tag PATCH,       //h and hopp belong to the patch to be remeshed
+      std::vector<halfedge_descriptor> patch_halfedges;
       for(face_descriptor f : face_range)
       {
         for(halfedge_descriptor h :
             halfedges_around_face(halfedge(f, mesh_), mesh_))
         {
           set_status(h, PATCH);
+          patch_halfedges.push_back(h);
         }
       }
 
       // tag patch border halfedges
-      for(halfedge_descriptor h : halfedges(mesh_))
+      for(halfedge_descriptor h : patch_halfedges)
       {
-        if (status(h) == PATCH
-          && (   status(opposite(h, mesh_)) != PATCH
-              || get_patch_id(face(h, mesh_)) != get_patch_id(face(opposite(h, mesh_), mesh_))))
+        CGAL_assertion(status(h) == PATCH);
+        if( status(opposite(h, mesh_)) != PATCH
+         || get_patch_id(face(h, mesh_)) != get_patch_id(face(opposite(h, mesh_), mesh_)))
         {
           set_status(h, PATCH_BORDER);
           has_border_ = true;
