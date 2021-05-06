@@ -67,7 +67,6 @@ is_sharp(PolygonMesh& polygonMesh,
     return false;
 }
 
-
 template <typename PolygonMesh, typename GT, typename NamedParameters>
 bool
 is_sharp_corner(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor& he,
@@ -89,8 +88,7 @@ is_sharp_corner(const typename boost::graph_traits<PolygonMesh>::halfedge_descri
   
   const FT a = CGAL::Polygon_mesh_processing::edge_length(e1,polygonMesh);
   const FT b = CGAL::Polygon_mesh_processing::edge_length(e2,polygonMesh);
-  const FT c = CGAL::approximate_sqrt(CGAL::squared_distance(get(vpm, source(e1, polygonMesh)),get(vpm, target(e2, polygonMesh))));
-  
+  const FT c = CGAL::approximate_sqrt(CGAL::squared_distance(get(vpm, source(e1, polygonMesh)),get(vpm, target(e2, polygonMesh))));  
   const FT edge_cosine = (CGAL::square(a)+CGAL::square(b)-CGAL::square(c))/(2*a*b);
         
   if ( edge_cosine <= cos_angle )
@@ -98,7 +96,6 @@ is_sharp_corner(const typename boost::graph_traits<PolygonMesh>::halfedge_descri
   else
     return false;
 }
-
 
 //wrapper for patchid map.
 template<typename PatchIdMap,
@@ -255,6 +252,7 @@ template<typename GT,
   }
 }
 
+  
 template<typename GT,
          typename FT,
          typename PolygonMesh,
@@ -286,12 +284,10 @@ void sharp_corner_call(const PolygonMesh& pmesh,
 }
 
 
-
 template<typename GT,
          typename FT,
          typename PolygonMesh,
          typename VIFMap>
-
  void sharp_corner_call(const PolygonMesh& pmesh,
                         FT& angle_in_deg,
                         VIFMap vertex_is_feature_map,
@@ -376,6 +372,8 @@ void detect_sharp_edges(PolygonMesh& pmesh,
   internal::sharp_call<GT, FT>(pmesh, angle_in_deg, edge_is_feature_map,
                                parameters::get_parameter(np, internal_np::vertex_feature_degree));
 }
+  
+  
 /*
 */
 #ifdef DOXYGEN_RUNNING
@@ -384,18 +382,17 @@ template <typename PolygonMesh, typename FT,
 #else
 template <typename PolygonMesh, typename VertexIsFeatureMap, typename NamedParameters>
 #endif
-
 void detect_sharp_corners(
 #ifdef DOXYGEN_RUNNING
-                          FT angle_in_deg,
+    FT angle_in_deg,
 #else
-                          typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT angle_in_deg,
+    typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT angle_in_deg,
 #endif
-                          VertexIsFeatureMap vertex_is_feature_map,
-                          const PolygonMesh& pmesh,
-                          const NamedParameters& np)
+    VertexIsFeatureMap vertex_is_feature_map,
+    const PolygonMesh& pmesh,
+    const NamedParameters& np)
 {
-
+  //extract types from named NPs
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
   typedef typename GT::FT                      FT;
 
