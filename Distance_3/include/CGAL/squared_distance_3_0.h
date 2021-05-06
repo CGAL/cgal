@@ -26,6 +26,7 @@
 #include <CGAL/Weighted_point_3.h>
 #include <CGAL/Vector_3.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/Rational_traits.h>
 
 namespace CGAL {
 
