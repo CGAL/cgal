@@ -123,7 +123,7 @@ public:
 
 
 /// Utility class for grid_simplify_point_set():
-/// 3D points set which allows at most 1 point per cell
+/// 3D points set which allows at most 1 (or N) point per cell
 /// of a grid of cell size = epsilon.
 ///
 /// Warning:
@@ -154,14 +154,14 @@ private:
                         internal::Hash_epsilon_points_3<Point_3, PointMap>,
                         internal::Equal_epsilon_points_3<Point_3, PointMap> > >::type;
 
-  std::size_t min_points_per_cells;
+  std::size_t min_points_per_cell;
 
 public:
 
-  Epsilon_point_set_3 (double epsilon, PointMap point_map, std::size_t min_points_per_cells = 1)
+  Epsilon_point_set_3 (double epsilon, PointMap point_map, std::size_t min_points_per_cell = 1)
     : Base(10, internal::Hash_epsilon_points_3<Point_3, PointMap>(epsilon, point_map),
            internal::Equal_epsilon_points_3<Point_3, PointMap>(epsilon, point_map))
-    , min_points_per_cells (min_points_per_cells)
+    , min_points_per_cell (min_points_per_cell)
   {
     CGAL_point_set_processing_precondition(epsilon > 0);
   }
@@ -177,7 +177,7 @@ private:
   {
     auto iter = Base::insert(std::make_pair (p, 0));
     iter.first->second ++;
-    return iter.first->second == min_points_per_cells;
+    return iter.first->second == min_points_per_cell;
   }
 
   bool insert (const Point_3& p, const Tag_false&)
@@ -215,6 +215,16 @@ private:
        \cgalParamType{a model of `ReadWritePropertyMap` whose key type is the value type
                       of the iterator of `PointRange` and whose value type is `geom_traits::Point_3`}
        \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{min_points_per_cell}
+       \cgalParamDescription{minimum number of points in a cell such
+       that a point in this cell is kept after simplification}
+       \cgalParamType{unsigned int}
+       \cgalParamDefault{1}
+       \cgalParamExtra{If a value greater than 1 is used, the
+       algorithm also acts an outlier filtering algorithm, by removing
+       low-density areas.}
      \cgalParamNEnd
 
      \cgalParamNBegin{callback}
