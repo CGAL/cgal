@@ -1764,21 +1764,43 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
     std::cout << "  DEBUG: Trying hole-filling based approach\n";
 #endif
 
-    if(!is_selection_a_topological_disk(cc_faces, tmesh))
+    int selection_chi = euler_characteristic_of_selection(cc_faces, tmesh);
+
+    if( selection_chi!=1 ) // not a topological disk
     {
-      // check if the selection contains cycles of border halfedges
-      bool only_border_edges = true;
+      if (preserve_genus)
+      {
+#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
+        std::cout << "  DEBUG: CC not handled, selection is not a topological disk (preserve_genus=true)\n";
+        ++unsolved_self_intersections;
+#endif
+        topology_issue = true;
+        continue;
+      }
+
+      // check if the topological issue is created by border edges
+      std::vector<halfedge_descriptor> mesh_non_border_hedges;
       std::set<halfedge_descriptor> mesh_border_hedge;
 
       for(halfedge_descriptor h : cc_border_hedges)
       {
         if(!is_border(opposite(h, tmesh), tmesh))
-          only_border_edges = false;
+          mesh_non_border_hedges.push_back(h);
         else
           mesh_border_hedge.insert(opposite(h, tmesh));
       }
 
-      int nb_cycles = 0;
+      if (mesh_border_hedge.empty())
+      {
+#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
+        std::cout << "  DEBUG: CC not handled, selection is not a topological disk (preserve_genus=false)\n";
+        ++unsolved_self_intersections;
+#endif
+        topology_issue = true;
+        continue;
+      }
+
+      // we look for cycles of border halfedges and update selection_chi
       while(!mesh_border_hedge.empty())
       {
         // we must count the number of cycle of boundary edges
@@ -1790,14 +1812,14 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
           if(h == h_b)
           {
             // found a cycle
-            ++nb_cycles;
+            selection_chi += 1;
             break;
           }
           else
           {
             typename std::set<halfedge_descriptor>::iterator it = mesh_border_hedge.find(h);
             if(it == mesh_border_hedge.end())
-              break; // not a cycle
+              break; // not a cycle does not count
 
             mesh_border_hedge.erase(it);
           }
@@ -1805,29 +1827,19 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
         while(true);
       }
 
-      if(nb_cycles > (only_border_edges ? 1 : 0))
+      if(selection_chi!=1)
       {
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
-        std::cout << "  DEBUG: CC not handled due to the presence of "
-                  << nb_cycles << " of boundary edges\n";
-     ++unsolved_self_intersections;
+        std::cout << "  DEBUG: CC not handled, selection is not a topological disk even if"
+                  << " boundary cycles are removed: chi=" << selection_chi << "\n";
+      ++unsolved_self_intersections;
 #endif
-
         topology_issue = true;
         continue;
       }
       else
       {
-        if(preserve_genus)
-        {
-#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
-          std::cout << "  DEBUG: CC not handled because it is not a topological disk (preserve_genus=true)\n";
-          ++unsolved_self_intersections;
-#endif
-
-          all_fixed = false;
-          continue;
-        }
+        cc_border_hedges.swap(mesh_non_border_hedges);
 
         // count the number of cycles of halfedges of the boundary
         std::map<vertex_descriptor, vertex_descriptor> bhs;
