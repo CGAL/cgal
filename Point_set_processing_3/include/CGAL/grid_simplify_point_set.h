@@ -31,6 +31,7 @@
 #include <algorithm>
 #include <cmath>
 #include <unordered_set>
+#include <unordered_map>
 
 namespace CGAL {
 
@@ -129,29 +130,60 @@ public:
 /// This class is a container sorted wrt points position
 /// => you should not modify directly the order or the position of points.
 
-template <class Point_3, class PointMap>
+template <class Point_3, class PointMap, class UseMap>
 class Epsilon_point_set_3
-  : public std::unordered_set<Point_3,
-                                internal::Hash_epsilon_points_3<Point_3, PointMap>,
-                                internal::Equal_epsilon_points_3<Point_3, PointMap> >
+  : public std::conditional
+<std::is_same<UseMap, Tag_true>::value,
+ std::unordered_map<Point_3, std::size_t,
+                    internal::Hash_epsilon_points_3<Point_3, PointMap>,
+                    internal::Equal_epsilon_points_3<Point_3, PointMap> >,
+ std::unordered_set<Point_3,
+                    internal::Hash_epsilon_points_3<Point_3, PointMap>,
+                    internal::Equal_epsilon_points_3<Point_3, PointMap> > >::type
+
 {
 private:
 
-    // superclass
-    typedef std::unordered_set<Point_3,
-                                internal::Hash_epsilon_points_3<Point_3, PointMap>,
-                                internal::Equal_epsilon_points_3<Point_3, PointMap> > Base;
+  // superclass
+  using Base = typename std::conditional
+    <std::is_same<UseMap, Tag_true>::value,
+     std::unordered_map<Point_3, std::size_t,
+                        internal::Hash_epsilon_points_3<Point_3, PointMap>,
+                        internal::Equal_epsilon_points_3<Point_3, PointMap> >,
+     std::unordered_set<Point_3,
+                        internal::Hash_epsilon_points_3<Point_3, PointMap>,
+                        internal::Equal_epsilon_points_3<Point_3, PointMap> > >::type;
+
+  std::size_t min_points_per_cells;
 
 public:
 
-    Epsilon_point_set_3 (double epsilon, PointMap point_map)
-        : Base(10, internal::Hash_epsilon_points_3<Point_3, PointMap>(epsilon, point_map),
-               internal::Equal_epsilon_points_3<Point_3, PointMap>(epsilon, point_map))
-    {
-        CGAL_point_set_processing_precondition(epsilon > 0);
-    }
+  Epsilon_point_set_3 (double epsilon, PointMap point_map, std::size_t min_points_per_cells = 1)
+    : Base(10, internal::Hash_epsilon_points_3<Point_3, PointMap>(epsilon, point_map),
+           internal::Equal_epsilon_points_3<Point_3, PointMap>(epsilon, point_map))
+    , min_points_per_cells (min_points_per_cells)
+  {
+    CGAL_point_set_processing_precondition(epsilon > 0);
+  }
 
-    // default copy constructor, operator =() and destructor are fine.
+  bool insert (const Point_3& p)
+  {
+    return insert (p, UseMap());
+  }
+
+private:
+
+  bool insert (const Point_3& p, const Tag_true&)
+  {
+    auto iter = Base::insert(std::make_pair (p, 0));
+    iter.first->second ++;
+    return iter.first->second == min_points_per_cells;
+  }
+
+  bool insert (const Point_3& p, const Tag_false&)
+  {
+    return Base::insert (p).second;
+  }
 };
 
 /// \endcond
@@ -222,32 +254,25 @@ grid_simplify_point_set(
   const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                  std::function<bool(double)>());
 
+  unsigned int min_points_per_cell = choose_parameter(get_parameter(np, internal_np::min_points_per_cell), 1);
+
   // actual type of input points
   typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Enriched_point;
 
   CGAL_point_set_processing_precondition(epsilon > 0);
 
-  // Merges points which belong to the same cell of a grid of cell size = epsilon.
-  // points_to_keep[] will contain 1 point per cell; the others will be in points_to_remove[].
-  Epsilon_point_set_3<Enriched_point, PointMap> points_to_keep(epsilon, point_map);
-  std::deque<Enriched_point> points_to_remove;
-  std::size_t nb = 0, nb_points = points.size();
-  for (typename PointRange::iterator it = points.begin(); it != points.end(); it++, ++ nb)
+  if (min_points_per_cell == 1)
   {
-    std::pair<typename Epsilon_point_set_3<Enriched_point, PointMap>::iterator,bool> result;
-    result = points_to_keep.insert(*it);
-    if (!result.second) // if not inserted
-      points_to_remove.push_back(*it);
-    if (callback && !callback ((nb+1) / double(nb_points)))
-      break;
+    // Merges points which belong to the same cell of a grid of cell size = epsilon.
+    // Keep 1 point per occupied cell
+    Epsilon_point_set_3<Enriched_point, PointMap, Tag_false> point_set(epsilon, point_map);
+    return std::partition (points.begin(), points.end(), [&](const auto& p) -> bool { return point_set.insert(p); });
   }
-
-  // Replaces `[first, beyond)` range by the content of points_to_keep, then points_to_remove.
-  typename PointRange::iterator first_point_to_remove =
-    std::copy(points_to_keep.begin(), points_to_keep.end(), points.begin());
-    std::copy(points_to_remove.begin(), points_to_remove.end(), first_point_to_remove);
-
-  return first_point_to_remove;
+  // else
+  // Merges points which belong to the same cell of a grid of cell size = epsilon.
+  // Keep 1 point per cell occupied by at least `min_points_per_cell` points
+  Epsilon_point_set_3<Enriched_point, PointMap, Tag_true> point_set(epsilon, point_map, min_points_per_cell);
+  return std::partition (points.begin(), points.end(), [&](const auto& p) -> bool { return point_set.insert(p); });
 }
 
 /// \cond SKIP_IN_MANUAL
