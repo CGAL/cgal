@@ -39,12 +39,12 @@ namespace CGAL
   template<typename Polyhedron>
   void detect_sharp_corners(Polyhedron* pMesh, const double angle)
   {
-    reset_sharp_edges(pMesh);
+    reset_sharp_corners(pMesh);
 
     // Detect corners in current polyhedron
     typename boost::property_map<Polyhedron,vertex_is_feature_t>::type vif =
         get(CGAL::vertex_is_feature, *pMesh);
-    CGAL::Polygon_mesh_processing::detect_sharp_corners(angle, vif,*pmesh);
+    CGAL::Polygon_mesh_processing::detect_sharp_corners(angle, vif,*pMesh);
   }
 
 }//end namespace CGAL
