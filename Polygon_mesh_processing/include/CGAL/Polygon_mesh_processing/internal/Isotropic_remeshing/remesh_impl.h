@@ -1559,8 +1559,10 @@ private:
 
             if (hs != PATCH_BORDER && hsopp != PATCH_BORDER)
             {
-              set_status(h, ISOLATED_CONSTRAINT);
-              set_status(hopp, ISOLATED_CONSTRAINT);
+              if(hs != MESH_BORDER)
+                set_status(h, ISOLATED_CONSTRAINT);
+              if(hsopp != MESH_BORDER)
+                set_status(hopp, ISOLATED_CONSTRAINT);
             }
           }
         }
@@ -1855,7 +1857,8 @@ public:
     bool is_an_isolated_constraint(const halfedge_descriptor& h) const
     {
       bool res = (status(h) == ISOLATED_CONSTRAINT);
-      CGAL_assertion(!res || status(opposite(h, mesh_)) == ISOLATED_CONSTRAINT);
+      CGAL_assertion_code(Halfedge_status so = status(opposite(h, mesh_)));
+      CGAL_assertion(!res || so == ISOLATED_CONSTRAINT || so == MESH_BORDER);
       return res;
     }
 
@@ -1878,6 +1881,7 @@ private:
       unsigned int nb_mesh = 0;
       unsigned int nb_patch = 0;
       unsigned int nb_patch_border = 0;
+      unsigned int nb_isolated = 0;
 
       for(halfedge_descriptor h : halfedges(mesh_))
       {
@@ -1885,6 +1889,7 @@ private:
         else if(is_on_patch_border(h))  nb_patch_border++;
         else if(is_on_mesh(h))          nb_mesh++;
         else if(is_on_border(h))        nb_border++;
+        else if(is_an_isolated_constraint(h)) nb_isolated++;
         else CGAL_assertion(false);
       }
     }
