@@ -7,7 +7,7 @@ int main() {
 
 #define GMP_SONAME "libgmp-10"
 #define MPFR_SONAME "libmpfr-4"
-#define GMP_SONAME_BACKUP"gmp"
+#define GMP_SONAME_BACKUP "gmp"
 #define MPFR_SONAME_BACKUP "mpfr-6"
 #define GMP_MAJOR 5
 #define MPFR_MAJOR 3
@@ -46,7 +46,7 @@ bool get_version_info(const LPCTSTR name,
   {
     delete[] versionInfo;
     std::cerr << name << " has no VersionInfo!\n";
-    return false;
+    return true;
   }
   // we have version information
   UINT len = 0;
@@ -75,7 +75,6 @@ int main() {
             << minor << "."
             << patch << "."
             << build << "\n";
-  assert(major==GMP_MAJOR);
   major = 0;
   if(!get_version_info(MPFR_SONAME, major, minor, patch, build)) {
     if(!get_version_info(MPFR_SONAME_BACKUP, major, minor, patch, build)) {
@@ -87,6 +86,5 @@ int main() {
             << minor << "."
             << patch << "."
             << build << "\n";
-  assert(major==MPFR_MAJOR);
 }
 #endif
