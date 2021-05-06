@@ -153,3 +153,6 @@ polyhedron_demo_plugin(engrave_text_plugin Engrave_text_plugin
 target_link_libraries(
   engrave_text_plugin PUBLIC scene_surface_mesh_item scene_selection_item
                              scene_polylines_item)
+
+polyhedron_demo_plugin(snap_polylines_plugin Snap_polylines_plugin)
+target_link_libraries(snap_polylines_plugin PUBLIC scene_polylines_item)

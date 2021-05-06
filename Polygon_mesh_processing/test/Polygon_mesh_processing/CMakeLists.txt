@@ -106,6 +106,7 @@ create_single_source_cgal_program("test_remove_caps_needles.cpp")
 create_single_source_cgal_program("test_simplify_polylines_pmp.cpp")
 create_single_source_cgal_program("triangulate_hole_with_cdt_2_test.cpp")
 create_single_source_cgal_program("test_pmp_polyhedral_envelope.cpp")
+create_single_source_cgal_program("test_polyline_snapping.cpp")
 #  create_single_source_cgal_program("test_pmp_repair_self_intersections.cpp")
 
 if(TARGET CGAL::TBB_support)
