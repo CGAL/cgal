@@ -1247,6 +1247,8 @@ private:
           return false;
         else if (is_on_mesh(hopp) && is_on_border(h))
           return false;
+        else if (is_an_isolated_constraint(h))
+          return false;
         else
           return true;
       }
