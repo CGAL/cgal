@@ -18,11 +18,28 @@
 #define CGAL_DISTANCE_3_PLANE_3_PLANE_3_H
 
 #include <CGAL/Distance_3/internal/squared_distance_utils_3.h>
-#include <CGAL/Distance_3/Point_3_Plane_3.h>
 
 #include <CGAL/Plane_3.h>
 
 namespace CGAL {
+namespace internal {
+
+template <class K>
+inline typename K::FT
+squared_distance(const typename K::Plane_3& plane1,
+                 const typename K::Plane_3& plane2,
+                 const K& k)
+{
+  typename K::Construct_orthogonal_vector_3 ortho_vec = k.construct_orthogonal_vector_3_object();
+  typename K::Compute_squared_distance_3 sq_dist = k.compute_squared_distance_3_object();
+
+  if(!is_null(wcross(ortho_vec(plane1), ortho_vec(plane2), k), k))
+    return typename K::FT(0);
+  else
+    return sq_dist(plane1.point(), plane2);
+}
+
+} // namespace internal
 
 template <class K>
 inline
@@ -30,13 +47,7 @@ typename K::FT
 squared_distance(const Plane_3<K>& plane1,
                  const Plane_3<K>& plane2)
 {
-  K k;
-  typename K::Construct_orthogonal_vector_3 ortho_vec = k.construct_orthogonal_vector_3_object();
-
-  if (!internal::is_null(internal::wcross(ortho_vec(plane1), ortho_vec(plane2), k), k))
-    return typename K::FT(0);
-  else
-    return internal::squared_distance(plane1.point(), plane2, k);
+  return K().compute_squared_distance_3_object()(plane1, plane2);
 }
 
 } // namespace CGAL

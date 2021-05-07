@@ -132,7 +132,7 @@ typename K::FT
 squared_distance(const Tetrahedron_3<K>& tet,
                  const Point_3<K>& pt)
 {
-  return internal::squared_distance(pt, tet, K());
+  return K().compute_squared_distance_3_object()(tet, pt);
 }
 
 template <class K>
@@ -140,7 +140,7 @@ typename K::FT
 squared_distance(const Point_3<K>& pt,
                  const Tetrahedron_3<K>& tet)
 {
-  return internal::squared_distance(pt, tet, K());
+  return K().compute_squared_distance_3_object()(pt, tet);
 }
 
 } // namespace CGAL

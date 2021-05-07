@@ -161,7 +161,7 @@ squared_distance(const typename K::Triangle_3& tr1,
   typename K::Construct_vertex_3 vertex = k.construct_vertex_3_object();
 
   // ideally just limits<FT>::infinity|max(), but it is not available for exact NTs...
-  FT global_min_sqd = CGAL::squared_distance(vertex(tr1, 0), vertex(tr2, 0));
+  FT global_min_sqd = squared_distance(vertex(tr1, 0), vertex(tr2, 0));
 
   bool are_triangles_known_to_be_disjoint = false;
   std::pair<Distance_3::internal::Segment_3_Segment_3_Result<K>, bool> ss_res;
@@ -221,7 +221,7 @@ typename K::FT
 squared_distance(const Triangle_3<K>& tr1,
                  const Triangle_3<K>& tr2)
 {
-  return internal::squared_distance(tr1, tr2, K());
+  return K().compute_squared_distance_3_object()(tr1, tr2);
 }
 
 } // namespace CGAL

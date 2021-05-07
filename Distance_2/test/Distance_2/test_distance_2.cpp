@@ -1,12 +1,12 @@
-// 2D distance tests.
-
 #ifdef NDEBUG
 #undef NDEBUG //this testsuite requires NDEBUG to be not defined
 #endif
 
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Simple_homogeneous.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Homogeneous.h>
 
 #include <vector>
 #include <iostream>
@@ -268,7 +268,8 @@ struct Test {
 
   void run()
   {
-    std::cout << "2D Distance tests\n";
+    std::cout << "-- Kernel: " << typeid(K).name() << std::endl;
+
     P_P();
     P_S();
     P_R();
@@ -293,8 +294,12 @@ struct Test {
 
 int main()
 {
-  Test< CGAL::Simple_cartesian<double>   >().run();
-  Test< CGAL::Simple_homogeneous<double> >().run();
+  std::cout << "2D Distance tests\n";
 
-  // TODO : test more kernels.
+  Test<CGAL::Simple_cartesian<double> >().run();
+  Test<CGAL::Simple_homogeneous<double> >().run();
+
+  Test<CGAL::Homogeneous<CGAL::Epeck_ft> >().run();
+  Test<CGAL::Exact_predicates_inexact_constructions_kernel>().run();
+  Test<CGAL::Exact_predicates_exact_constructions_kernel>().run();
 }

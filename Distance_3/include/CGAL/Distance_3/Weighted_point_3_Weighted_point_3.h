@@ -17,9 +17,7 @@
 #ifndef CGAL_DISTANCE_3_WEIGHTED_POINT_3_WEIGHTED_POINT_3_H
 #define CGAL_DISTANCE_3_WEIGHTED_POINT_3_WEIGHTED_POINT_3_H
 
-#include <CGAL/Distance_3/Point_3_Point_3.h>
-
-#include <CGAL/Point_3.h>
+#include <CGAL/Weighted_point_3.h>
 
 namespace CGAL {
 
@@ -29,7 +27,7 @@ typename K::FT
 squared_distance(const Weighted_point_3<K>& wpt1,
                  const Weighted_point_3<K>& wpt2)
 {
-  return internal::squared_distance(wpt1.point(), wpt2.point(), K());
+  return K().compute_squared_distance_3_object()(wpt1.point(), wpt2.point());
 }
 
 } // namespace CGAL

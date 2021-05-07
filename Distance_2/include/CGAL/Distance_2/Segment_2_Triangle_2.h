@@ -20,6 +20,7 @@
 #define CGAL_DISTANCE_2_SEGMENT_2_TRIANGLE_2_H
 
 #include <CGAL/Distance_2/internal/squared_distance_utils_2.h>
+#include <CGAL/Distance_2/Point_2_Triangle_2.h>
 
 #include <CGAL/Segment_2.h>
 #include <CGAL/Triangle_2.h>
@@ -79,7 +80,7 @@ squared_distance(const typename K::Segment_2& seg,
     // the triangle segment.
     const Point_2 &vt1 = triangle.vertex(ind_tr1);
     const Point_2 &vt2 = triangle.vertex(ind_tr2);
-    Orientation or_s = orientation(vt1, vt2, seg.source());
+    const Orientation or_s = orientation(vt1, vt2, seg.source());
     if(orientation(vt1, vt2, seg.target()) != or_s)
       mindist = FT(0);
   }
@@ -87,9 +88,9 @@ squared_distance(const typename K::Segment_2& seg,
   {
     // Check if all the triangle vertices lie
     // at the same side of the segment.
-    const Point_2 &vt1 = seg.source();
-    const Point_2 &vt2 = seg.target();
-    Orientation or_s = orientation(vt1, vt2, triangle.vertex(0));
+    const Point_2& vt1 = seg.source();
+    const Point_2& vt2 = seg.target();
+    const Orientation or_s = orientation(vt1, vt2, triangle.vertex(0));
     for(i=1; i<3; ++i)
     {
       if(orientation(vt1, vt2, triangle.vertex(i)) != or_s)
@@ -119,7 +120,7 @@ inline typename K::FT
 squared_distance(const Segment_2<K>& seg,
                  const Triangle_2<K>& triangle)
 {
-  return internal::squared_distance(seg, triangle, K());
+  return K().compute_squared_distance_2_object()(seg, triangle);
 }
 
 template <class K>
@@ -127,7 +128,7 @@ inline typename K::FT
 squared_distance(const Triangle_2<K>& triangle,
                  const Segment_2<K>& seg)
 {
-  return internal::squared_distance(seg, triangle, K());
+  return K().compute_squared_distance_2_object()(triangle, seg);
 }
 
 } // namespace CGAL

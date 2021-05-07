@@ -72,7 +72,7 @@ inline typename K::FT
 squared_distance(const Line_2<K>& line,
                  const Ray_2<K>& ray)
 {
-  return internal::squared_distance(line, ray, K());
+  return K().compute_squared_distance_2_object()(line, ray);
 }
 
 template <class K>
@@ -80,7 +80,7 @@ inline typename K::FT
 squared_distance(const Ray_2<K>& ray,
                  const Line_2<K>& line)
 {
-  return internal::squared_distance(line, ray, K());
+  return K().compute_squared_distance_2_object()(ray, line);
 }
 
 } // namespace CGAL

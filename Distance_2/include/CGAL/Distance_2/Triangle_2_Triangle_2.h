@@ -21,6 +21,7 @@
 
 #include <CGAL/Distance_2/internal/squared_distance_utils_2.h>
 #include <CGAL/Distance_2/Point_2_Point_2.h>
+#include <CGAL/Distance_2/Point_2_Triangle_2.h>
 
 #include <CGAL/Triangle_2.h>
 
@@ -68,8 +69,7 @@ squared_distance(const typename K::Triangle_2& triangle1,
     }
   }
 
-  // now check if all vertices are on the right side of the
-  // separating line.
+  // now check if all vertices are on the right side of the separating line.
   if(ind1_2 == -1 && ind2_2 == -1)
     return mindist;
 
@@ -80,7 +80,7 @@ squared_distance(const typename K::Triangle_2& triangle1,
   {
     const Point_2& vt1 = triangle1.vertex(ind1_1);
     const Point_2& vt2 = triangle1.vertex(ind1_2);
-    Orientation or_s = orientation(vt1, vt2, triangle2.vertex(0));
+    const Orientation or_s = orientation(vt1, vt2, triangle2.vertex(0));
     for(int i=1; i<3; ++i)
     {
       if(orientation(vt1, vt2, triangle2.vertex(i)) != or_s)
@@ -94,7 +94,7 @@ squared_distance(const typename K::Triangle_2& triangle1,
   {
     const Point_2& vt1 = triangle2.vertex(ind2_1);
     const Point_2& vt2 = triangle2.vertex(ind2_2);
-    Orientation or_s = orientation(vt1, vt2, triangle1.vertex(0));
+    const Orientation or_s = orientation(vt1, vt2, triangle1.vertex(0));
     for(int i=1; i<3; ++i)
     {
       if(orientation(vt1, vt2, triangle1.vertex(i)) != or_s)
@@ -115,7 +115,7 @@ inline typename K::FT
 squared_distance(const Triangle_2<K>& triangle1,
                  const Triangle_2<K>& triangle2)
 {
-  return internal::squared_distance(triangle1, triangle2, K());
+  return K().compute_squared_distance_2_object()(triangle1, triangle2);
 }
 
 } // namespace CGAL

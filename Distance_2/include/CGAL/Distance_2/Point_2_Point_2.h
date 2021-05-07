@@ -41,7 +41,7 @@ inline typename K::FT
 squared_distance(const Point_2<K>& pt1,
                  const Point_2<K>& pt2)
 {
-  return internal::squared_distance(pt1, pt2, K());
+  return K().compute_squared_distance_2_object()(pt1, pt2);
 }
 
 } // namespace CGAL

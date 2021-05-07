@@ -31,51 +31,50 @@ squared_distance(const typename K::Segment_3& seg,
                  const typename K::Line_3& line,
                  const K& k)
 {
-  typedef typename K::Vector_3 Vector_3;
-  typedef typename K::Point_3 Point_3;
   typedef typename K::RT RT;
+  typedef typename K::Point_3 Point_3;
+  typedef typename K::Vector_3 Vector_3;
 
   typename K::Construct_vector_3 vector = k.construct_vector_3_object();
+  typename K::Compute_squared_distance_3 sq_dist = k.compute_squared_distance_3_object();
 
   const Point_3& linepoint = line.point();
   const Point_3& start = seg.source();
   const Point_3& end = seg.target();
 
-  if (start == end)
-    return squared_distance(start, line, k);
+  if(start == end)
+    return sq_dist(start, line);
 
-  Vector_3 linedir = line.direction().vector();
-  Vector_3 segdir = seg.direction().vector();
-  Vector_3 normal = wcross(segdir, linedir, k);
+  const Vector_3 linedir = line.direction().vector();
+  const Vector_3 segdir = seg.direction().vector();
+  const Vector_3 normal = wcross(segdir, linedir, k);
 
-  if (is_null(normal, k))
+  if(is_null(normal, k))
     return squared_distance_to_line(linedir, vector(linepoint,start), k);
 
   bool crossing;
-  RT sdm_ss2l, sdm_se2l;
-  Vector_3 perpend2line, start_min_lp, end_min_lp;
-  perpend2line = wcross(linedir, normal, k);
-  start_min_lp = vector(linepoint, start);
-  end_min_lp = vector(linepoint, end);
-  sdm_ss2l = wdot(perpend2line, start_min_lp, k);
-  sdm_se2l = wdot(perpend2line, end_min_lp, k);
 
-  if (sdm_ss2l < RT(0)) {
+  const Vector_3 perpend2line = wcross(linedir, normal, k);
+  const Vector_3 start_min_lp = vector(linepoint, start);
+  const Vector_3 end_min_lp = vector(linepoint, end);
+  const RT sdm_ss2l = wdot(perpend2line, start_min_lp, k);
+  const RT sdm_se2l = wdot(perpend2line, end_min_lp, k);
+
+  if(sdm_ss2l < RT(0)) {
     crossing = (sdm_se2l >= RT(0));
   } else {
-    if (sdm_se2l <= RT(0)) {
+    if(sdm_se2l <= RT(0)) {
       crossing = true;
     } else {
       crossing = (sdm_ss2l == RT(0));
     }
   }
 
-  if (crossing) {
+  if(crossing) {
     return squared_distance_to_plane(normal, start_min_lp, k);
   } else {
-    RT dm;
-    dm = distance_measure_sub(sdm_ss2l, sdm_se2l, start_min_lp, end_min_lp, k);
-    if (dm <= RT(0)) {
+    const RT dm = distance_measure_sub(sdm_ss2l, sdm_se2l, start_min_lp, end_min_lp, k);
+    if(dm <= RT(0)) {
       return squared_distance_to_line(linedir, start_min_lp, k);
     } else {
       return squared_distance_to_line(linedir, end_min_lp, k);
@@ -100,7 +99,7 @@ typename K::FT
 squared_distance(const Segment_3<K>& seg,
                  const Line_3<K>& line)
 {
-  return internal::squared_distance(seg, line, K());
+  return K().compute_squared_distance_3_object()(seg, line);
 }
 
 template <class K>
@@ -109,7 +108,7 @@ typename K::FT
 squared_distance(const Line_3<K>& line,
                  const Segment_3<K>& seg)
 {
-  return internal::squared_distance(seg, line, K());
+  return K().compute_squared_distance_3_object()(line, seg);
 }
 
 } // namespace CGAL

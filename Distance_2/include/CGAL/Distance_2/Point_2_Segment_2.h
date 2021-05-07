@@ -20,8 +20,6 @@
 #define CGAL_DISTANCE_2_POINT_2_SEGMENT_2_H
 
 #include <CGAL/Distance_2/internal/squared_distance_utils_2.h>
-#include <CGAL/Distance_2/Point_2_Point_2.h>
-#include <CGAL/Distance_2/Point_2_Line_2.h>
 
 #include <CGAL/Point_2.h>
 #include <CGAL/Segment_2.h>
@@ -57,11 +55,15 @@ squared_distance_indexed(const typename K::Point_2 &pt,
                          int ind,
                          const K& k)
 {
+  typename K::Compute_squared_distance_2 sq_dist = k.compute_squared_distance_2_object();
+
   if(ind == 0)
-    return internal::squared_distance(pt, seg.source(), k);
+    return sq_dist(pt, seg.source());
+
   if(ind == 1)
-    return internal::squared_distance(pt, seg.target(), k);
-  return internal::squared_distance(pt, seg.supporting_line(), k);
+    return sq_dist(pt, seg.target());
+
+  return sq_dist(pt, seg.supporting_line());
 }
 
 template <class K>
@@ -73,21 +75,23 @@ squared_distance(const typename K::Point_2& pt,
   typedef typename K::Vector_2 Vector_2;
   typedef typename K::RT RT;
 
-  typename K::Construct_vector_2 construct_vector = k.construct_vector_2_object();
+  typename K::Construct_vector_2 vector = k.construct_vector_2_object();
+  typename K::Compute_squared_length_2 sq_length = k.compute_squared_length_2_object();
+  typename K::Compute_squared_distance_2 sq_dist = k.compute_squared_distance_2_object();
 
   // assert that the segment is valid (non zero length).
-  Vector_2 diff = construct_vector(seg.source(), pt);
-  Vector_2 segvec = construct_vector(seg.source(), seg.target());
+  const Vector_2 diff = vector(seg.source(), pt);
+  const Vector_2 segvec = vector(seg.source(), seg.target());
 
-  RT d = wdot(diff, segvec, k);
+  const RT d = wdot(diff, segvec, k);
   if(d <= RT(0))
-    return k.compute_squared_length_2_object()(diff);
+    return sq_length(diff);
 
-  RT e = wdot(segvec,segvec, k);
+  const RT e = wdot(segvec,segvec, k);
   if(wmult((K*)0 ,d, segvec.hw()) > wmult((K*)0, e, diff.hw()))
-    return internal::squared_distance(pt, seg.target(), k);
+    return sq_dist(pt, seg.target());
 
-  return internal::squared_distance(pt, seg.supporting_line(), k);
+  return sq_dist(pt, seg.supporting_line());
 }
 
 template <class K>
@@ -106,7 +110,7 @@ inline typename K::FT
 squared_distance(const Point_2<K>& pt,
                  const Segment_2<K>& seg)
 {
-  return internal::squared_distance(pt, seg, K());
+  return K().compute_squared_distance_2_object()(pt, seg);
 }
 
 template <class K>
@@ -114,7 +118,7 @@ inline typename K::FT
 squared_distance(const Segment_2<K>& seg,
                  const Point_2<K>& pt)
 {
-  return internal::squared_distance(pt, seg, K());
+  return K().compute_squared_distance_2_object()(seg, pt);
 }
 
 } // namespace CGAL

@@ -31,24 +31,27 @@ squared_distance(const typename K::Segment_3 &seg,
                  const typename K::Plane_3 &plane,
                  const K& k)
 {
-  typedef typename K::Point_3 Point_3;
-  typedef typename K::Vector_3 Vector_3;
   typedef typename K::RT RT;
   typedef typename K::FT FT;
+  typedef typename K::Vector_3 Vector_3;
+  typedef typename K::Point_3 Point_3;
 
-  typename K::Construct_vector_3 construct_vector;
+  typename K::Construct_vector_3 vector = k.construct_vector_3_object();
 
-  const Point_3 &start = seg.start();
-  const Point_3 &end = seg.end();
+  const Point_3& start = seg.start();
+  const Point_3& end = seg.end();
+
   if (start == end)
     return squared_distance(start, plane, k);
 
-  const Point_3 &planepoint = plane.point();
-  Vector_3 start_min_pp = construct_vector(planepoint, start);
-  Vector_3 end_min_pp = construct_vector(planepoint, end);
-  const Vector_3 &normal = plane.orthogonal_vector();
-  RT sdm_ss2pp = wdot(normal, start_min_pp, k);
-  RT sdm_se2pp = wdot(normal, end_min_pp, k);
+  const Point_3& planepoint = plane.point();
+  const Vector_3 start_min_pp = vector(planepoint, start);
+  const Vector_3 end_min_pp = vector(planepoint, end);
+  const Vector_3& normal = plane.orthogonal_vector();
+
+  const RT sdm_ss2pp = wdot(normal, start_min_pp, k);
+  const RT sdm_se2pp = wdot(normal, end_min_pp, k);
+
   switch (CGAL_NTS sign(sdm_ss2pp))
   {
     case -1:
@@ -64,7 +67,7 @@ squared_distance(const typename K::Segment_3 &seg,
     case 1:
       if (sdm_se2pp <= RT(0))
         return FT(0);
-      if (sdm_ss2pp  * end_min_pp.hw() <= sdm_se2pp * start_min_pp.hw())
+      if (sdm_ss2pp * end_min_pp.hw() <= sdm_se2pp * start_min_pp.hw())
         return squared_distance_to_plane(normal, start_min_pp, k);
       else
         return squared_distance_to_plane(normal, end_min_pp, k);
@@ -88,7 +91,7 @@ typename K::FT
 squared_distance(const Segment_3<K>& seg,
                  const Plane_3<K>& plane)
 {
-  return internal::squared_distance(seg, plane, K());
+  return K().compute_squared_distance_3_object()(seg, plane);
 }
 
 template <class K>
@@ -97,7 +100,7 @@ typename K::FT
 squared_distance(const Plane_3<K>& plane,
                  const Segment_3<K>& seg)
 {
-  return internal::squared_distance(seg, plane, K());
+  return K().compute_squared_distance_3_object()(plane, seg);
 }
 
 } // namespace CGAL

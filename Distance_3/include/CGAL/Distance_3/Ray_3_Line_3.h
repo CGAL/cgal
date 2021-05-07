@@ -27,49 +27,54 @@ namespace internal {
 
 template <class K>
 typename K::FT
-squared_distance(const typename K::Line_3& line,
-                 const typename K::Ray_3& ray,
+squared_distance(const typename K::Ray_3& ray,
+                 const typename K::Line_3& line,
                  const K& k)
 {
   typedef typename K::Vector_3 Vector_3;
   typedef typename K::Point_3 Point_3;
   typedef typename K::RT RT;
 
-  typename K::Construct_vector_3 construct_vector;
+  typename K::Construct_vector_3 vector = k.construct_vector_3_object();
 
   const Point_3& rs = ray.source();
 
-  Vector_3 raydir, linedir, normal;
-  linedir = line.direction().vector();
-  raydir = ray.direction().vector();
-  normal = wcross(raydir, linedir, k);
+  const Vector_3 linedir = line.direction().vector();
+  const Vector_3 raydir = ray.direction().vector();
+  const Vector_3 normal = wcross(raydir, linedir, k);
 
-  Vector_3 rs_min_lp = construct_vector(line.point(), rs);
-  if (is_null(normal, k))
+  const Vector_3 rs_min_lp = vector(line.point(), rs);
+  if(is_null(normal, k))
     return squared_distance_to_line(linedir, rs_min_lp, k);
 
   bool crossing;
-  RT sdm_sr_l;
-  Vector_3 perpend2l;
-  perpend2l = wcross(linedir, normal, k);
-
-  sdm_sr_l = wdot(perpend2l, rs_min_lp, k);
-  if (sdm_sr_l < RT(0))
+  const Vector_3 perpend2l = wcross(linedir, normal, k);
+  const RT sdm_sr_l = wdot(perpend2l, rs_min_lp, k);
+  if(sdm_sr_l < RT(0))
   {
-    crossing = (RT(wdot(perpend2l, raydir, k)) >= RT(0));
+    crossing = (wdot(perpend2l, raydir, k) >= RT(0));
   }
   else
   {
-    if (RT(wdot(perpend2l, raydir, k)) <= RT(0))
+    if(wdot(perpend2l, raydir, k) <= RT(0))
       crossing = true;
     else
       crossing = (sdm_sr_l == RT(0));
   }
 
-  if (crossing)
+  if(crossing)
     return squared_distance_to_plane(normal, rs_min_lp, k);
   else
     return squared_distance_to_line(linedir, rs_min_lp, k);
+}
+
+template <class K>
+typename K::FT
+squared_distance(const typename K::Line_3& line,
+                 const typename K::Ray_3& ray,
+                 const K& k)
+{
+  return squared_distance(ray, line, k);
 }
 
 } // namespace internal
@@ -77,10 +82,10 @@ squared_distance(const typename K::Line_3& line,
 template <class K>
 inline
 typename K::FT
-squared_distance(const Line_3<K> &line,
-                 const Ray_3<K> &ray)
+squared_distance(const Line_3<K>& line,
+                 const Ray_3<K>& ray)
 {
-  return internal::squared_distance(line, ray, K());
+  return K().compute_squared_distance_3_object()(line, ray);
 }
 
 template <class K>
@@ -89,7 +94,7 @@ typename K::FT
 squared_distance(const Ray_3<K>& ray,
                  const Line_3<K>& line)
 {
-  return internal::squared_distance(line, ray, K());
+  return K().compute_squared_distance_3_object()(ray, line);
 }
 
 } // namespace CGAL

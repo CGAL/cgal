@@ -2,6 +2,7 @@
 #include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Homogeneous.h>
 
 #include <CGAL/squared_distance_3.h>
 
@@ -252,9 +253,9 @@ private:
       P p2 = random_point();
       P p3 = random_point();
       p0 = CGAL::midpoint(p0, p1);
-      p1 = p0 + 0.1 * (p1 - p0);
-      p2 = p2 + (p2 - CGAL::ORIGIN) / CGAL::approximate_sqrt(CGAL::square(p2.x()) + CGAL::square(p2.y()) + CGAL::square(p2.z()) + 3);
-      p3 = p3 + (p3 - CGAL::ORIGIN) * std::cos(1.3);
+      p1 = p0 + FT(0.1) * V{p1 - p0};
+      p2 = p2 + V{p2 - CGAL::ORIGIN} / CGAL::approximate_sqrt(CGAL::square(p2.x()) + CGAL::square(p2.y()) + CGAL::square(p2.z()) + 3);
+      p3 = p3 + V{p3 - CGAL::ORIGIN} * FT(std::cos(1.3));
 
       // degenerate inputs
       check_squared_distance(S{p0, p0}, S{p0, p0}, 0); // both degen
@@ -273,9 +274,9 @@ private:
 
       // collinear segments
       const double lambda_4 = r.get_double(0, 1);
-      const P p4 = p2 + lambda_4 * (p3 - p2);
+      const P p4 = p2 + FT(lambda_4) * V{p3 - p2};
       const double lambda_5 = r.get_double(0, 1);
-      const P p5 = p2 + lambda_5 * (p3 - p2);
+      const P p5 = p2 + FT(lambda_5) * V{p3 - p2};
 
       // [p2;p3) fully contains [p4;p5]
       check_squared_distance(S{p2, p3}, S{p4, p5}, 0);
@@ -284,8 +285,7 @@ private:
       check_squared_distance(S{p3, p2}, S{p4, p5}, 0);
 
       const double lambda_6 = r.get_double(0, 1);
-      const P p6 = p3 + lambda_6 * (p3 - p2);
-
+      const P p6 = p3 + FT(lambda_6) * V{p3 - p2};
       // [p2;p3] overlaps [p5;p6]
       check_squared_distance(S{p2, p3}, S{p6, p5}, 0);
       check_squared_distance(S{p2, p3}, S{p5, p6}, 0);
@@ -293,7 +293,7 @@ private:
       check_squared_distance(S{p3, p2}, S{p6, p5}, 0);
 
       const double lambda_7 = r.get_double(1, 2);
-      const P p7 = p3 + lambda_7 * (p3 - p2);
+      const P p7 = p3 + FT(lambda_7) * V{p3 - p2};
 
       // [p2;p3] disjoint && left of [p6;p7]
       check_squared_distance(S{p2, p3}, S{p6, p7}, CGAL::squared_distance(p3, p6));
@@ -303,9 +303,9 @@ private:
 
       // Generic collinear
       const double lambda_8 = r.get_double(-M, M);
-      const P p8 = p2 + lambda_8 * (p3 - p2);
+      const P p8 = p2 + FT(lambda_8) * V{p3 - p2};
       const double lambda_9 = r.get_double(-M, M);
-      const P p9 = p2 + lambda_9 * (p3 - p2);
+      const P p9 = p2 + FT(lambda_9) * V{p3 - p2};
 
       S s89(p8, p9);
       S s32(p3, p2);
@@ -364,7 +364,7 @@ private:
 
       FT upper_bound = CGAL::squared_distance(p0, p2);
 
-      V p01 = V{p0, p1} / N;
+      V p01 = V{p0, p1} / FT(N);
       for(int l=0; l<N; ++l)
       {
         P tp = p0 + FT(l) * p01;
@@ -505,13 +505,13 @@ private:
 
       // these are still exact with EPECK
       p0 = CGAL::midpoint(p0, p1);
-      p1 = p0 + 0.1 * (p1 - p0);
-      p2 = p2 + (p2 - p0) / CGAL_PI;
+      p1 = p0 + FT(0.1) * V{p1 - p0};
+      p2 = p2 + V{p2 - p0} / FT(CGAL_PI);
 
       // this is still exact with EPECK_with_sqrt
-      p4 = p4 + (p4 - CGAL::ORIGIN) / CGAL::approximate_sqrt(CGAL::square(p4.x()) + CGAL::square(p4.y()) + CGAL::square(p4.z()) + 3);
+      p4 = p4 + V{p4 - CGAL::ORIGIN} / CGAL::approximate_sqrt(CGAL::square(p4.x()) + CGAL::square(p4.y()) + CGAL::square(p4.z()) + 3);
 
-      p5 = p5 + (p5 - CGAL::ORIGIN) * std::cos(1.3);
+      p5 = p5 + V{p5 - CGAL::ORIGIN} * FT(std::cos(1.3));
 
       // degenerate inputs
       check_squared_distance(T{p3, p3, p3}, T{p3, p3, p3}, 0); // both degen
@@ -669,6 +669,8 @@ int main()
 //  Test<CGAL::Simple_cartesian<double> >(r, 1e-5).run();
 //  Test<CGAL::Simple_homogeneous<double> >(r, 1e-5).run();
 //  Test<CGAL::Simple_cartesian<CGAL::Interval_nt<true> > >(r, 1e-5).run();
+
+  Test<CGAL::Homogeneous<CGAL::Epeck_ft> >(r, 0).run();
 
   const double epick_eps = 10 * std::numeric_limits<double>::epsilon();
   Test<CGAL::Exact_predicates_inexact_constructions_kernel>(r, epick_eps).run();

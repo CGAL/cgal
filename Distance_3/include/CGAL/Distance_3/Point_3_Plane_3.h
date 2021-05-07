@@ -56,7 +56,7 @@ typename K::FT
 squared_distance(const Point_3<K>& pt,
                  const Plane_3<K>& plane)
 {
-  return internal::squared_distance(pt, plane, K());
+  return K().compute_squared_distance_3_object()(pt, plane);
 }
 
 template <class K>
@@ -65,7 +65,7 @@ typename K::FT
 squared_distance(const Plane_3<K>& plane,
                  const Point_3<K>& pt)
 {
-  return internal::squared_distance(pt, plane, K());
+  return K().compute_squared_distance_3_object()(plane, pt);
 }
 
 } // namespace CGAL

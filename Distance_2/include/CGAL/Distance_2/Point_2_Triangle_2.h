@@ -212,13 +212,15 @@ squared_distance_indexed(const typename K::Point_2& pt,
   typedef typename K::FT      FT;
   typedef typename K::Line_2  Line_2;
 
+  typename K::Compute_squared_distance_2 sq_dist = k.compute_squared_distance_2_object();
+
   if(ind1 == -1)
     return FT(0);
 
   if(ind2 == -1)
-    return internal::squared_distance(pt, triangle.vertex(ind1), k);
+    return sq_dist(pt, triangle.vertex(ind1));
 
-  return internal::squared_distance(pt, Line_2(triangle.vertex(ind1), triangle.vertex(ind2)), k);
+  return sq_dist(pt, Line_2{triangle.vertex(ind1), triangle.vertex(ind2)});
 }
 
 template <class K>
@@ -248,7 +250,7 @@ inline typename K::FT
 squared_distance(const Point_2<K>& pt,
                  const Triangle_2<K>& triangle)
 {
-  return internal::squared_distance(pt, triangle, K());
+  return K().compute_squared_distance_2_object()(pt, triangle);
 }
 
 template <class K>
@@ -256,7 +258,7 @@ inline typename K::FT
 squared_distance(const Triangle_2<K>& triangle,
                  const Point_2<K>& pt)
 {
-  return internal::squared_distance(pt, triangle, K());
+  return K().compute_squared_distance_2_object()(triangle, pt);
 }
 
 } // namespace CGAL

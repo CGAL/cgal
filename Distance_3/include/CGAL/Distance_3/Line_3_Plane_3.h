@@ -18,7 +18,6 @@
 #define CGAL_DISTANCE_3_LINE_3_PLANE_3_H
 
 #include <CGAL/Distance_3/internal/squared_distance_utils_3.h>
-#include <CGAL/Distance_3/Point_3_Point_3.h>
 
 #include <CGAL/Line_3.h>
 #include <CGAL/Plane_3.h>
@@ -45,8 +44,10 @@ squared_distance(const typename K::Line_3& l,
 {
   typedef typename K::FT FT;
 
-  if (contains_vector(pl, l.direction().vector(), k))
-    return squared_distance(pl, l.point(), k);
+  typename K::Compute_squared_distance_3 sq_dist = k.compute_squared_distance_3_object();
+
+  if(contains_vector(pl, l.direction().vector(), k))
+    return sq_dist(pl, l.point());
 
   return FT(0);
 }
@@ -68,7 +69,7 @@ typename K::FT
 squared_distance(const Line_3<K>& line,
                  const Plane_3<K>& plane)
 {
-  return internal::squared_distance(line, plane, K());
+  return K().compute_squared_distance_3_object()(line, plane);
 }
 
 template <class K>
@@ -77,7 +78,7 @@ typename K::FT
 squared_distance(const Plane_3<K>& plane,
                  const Line_3<K>& line)
 {
-  return internal::squared_distance(line, plane, K());
+  return K().compute_squared_distance_3_object()(plane, line);
 }
 
 } // namespace CGAL

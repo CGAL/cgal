@@ -33,13 +33,13 @@ squared_distance(const typename K::Point_3& pt,
 {
   typedef typename K::Vector_3 Vector_3;
 
-  typename K::Construct_vector_3 construct_vector;
+  typename K::Construct_vector_3 vector = k.construct_vector_3_object();
 
-  Vector_3 diff = construct_vector(ray.source(), pt);
-  const Vector_3 &dir = ray.direction().vector();
+  const Vector_3 diff = vector(ray.source(), pt);
+  const Vector_3 dir = ray.direction().vector();
 
   if(!is_acute_angle(dir, diff, k))
-    return (typename K::FT)(diff*diff);
+    return diff*diff;
 
   return squared_distance_to_line(dir, diff, k);
 }
@@ -61,7 +61,7 @@ typename K::FT
 squared_distance(const Point_3<K>& pt,
                  const Ray_3<K>& ray)
 {
-  return internal::squared_distance(pt, ray, K());
+  return K().compute_squared_distance_3_object()(pt, ray);
 }
 
 template <class K>
@@ -70,7 +70,7 @@ typename K::FT
 squared_distance(const Ray_3<K>& ray,
                  const Point_3<K>& pt)
 {
-  return internal::squared_distance(pt, ray, K());
+  return K().compute_squared_distance_3_object()(ray, pt);
 }
 
 } // namespace CGAL

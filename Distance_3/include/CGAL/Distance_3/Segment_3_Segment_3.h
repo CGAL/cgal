@@ -18,7 +18,6 @@
 #define CGAL_DISTANCE_3_SEGMENT_3_SEGMENT_3_H
 
 #include <CGAL/Distance_3/internal/squared_distance_utils_3.h>
-#include <CGAL/Distance_3/Point_3_Point_3.h>
 
 #include <CGAL/Segment_3.h>
 
@@ -49,6 +48,7 @@ squared_distance(const typename K::Segment_3& s1,
   typename K::Construct_vertex_3 vertex = k.construct_vertex_3_object();
   typename K::Construct_vector_3 cv = k.construct_vector_3_object();
   typename K::Compute_scalar_product_3 sp = k.compute_scalar_product_3_object();
+  typename K::Compute_squared_distance_3 sq_dist = k.compute_squared_distance_3_object();
 
   Segment_3_Segment_3_Result<K> res;
 
@@ -73,7 +73,7 @@ squared_distance(const typename K::Segment_3& s1,
     {
       res.x = 0;
       res.y = 0;
-      res.squared_distance = CGAL::squared_distance(p1, p2);
+      res.squared_distance = sq_dist(p1, p2);
       return res;
     }
 
@@ -81,7 +81,7 @@ squared_distance(const typename K::Segment_3& s1,
 
     res.x = 0;
     res.y = boost::algorithm::clamp<FT>(f/d, 0, 1); // (f - x*c) / d
-    res.squared_distance = CGAL::squared_distance(p1, p2 + res.y*v2);
+    res.squared_distance = sq_dist(p1, p2 + res.y*v2);
 
     return res;
   }
@@ -91,7 +91,7 @@ squared_distance(const typename K::Segment_3& s1,
 
     res.y = 0;
     res.x = boost::algorithm::clamp<FT>(e/a, 0, 1); // (e + y*c) / a
-    res.squared_distance = CGAL::squared_distance(p1 + res.x*v1, p2);
+    res.squared_distance = sq_dist(p1 + res.x*v1, p2);
 
     return res;
   }
@@ -128,7 +128,7 @@ squared_distance(const typename K::Segment_3& s1,
   CGAL_postcondition(FT(0) <= res.x && res.x <= FT(1));
   CGAL_postcondition(FT(0) <= res.y && res.y <= FT(1));
 
-  res.squared_distance = CGAL::squared_distance(p1 + res.x*v1, p2 + res.y*v2);
+  res.squared_distance = sq_dist(p1 + res.x*v1, p2 + res.y*v2);
 
   CGAL_postcondition(res.squared_distance >= FT(0));
 
@@ -148,24 +148,27 @@ squared_distance_parallel(const typename K::Segment_3& seg1,
 {
   typedef typename K::Vector_3 Vector_3;
 
-  const Vector_3& dir1 = seg1.direction().vector();
-  const Vector_3& dir2 = seg2.direction().vector();
+  typename K::Compute_squared_distance_3 sq_dist = k.compute_squared_distance_3_object();
+
+  const Vector_3 dir1 = seg1.direction().vector();
+  const Vector_3 dir2 = seg2.direction().vector();
 
   if(same_direction(dir1, dir2, k))
   {
     if(!is_acute_angle(seg1.source(), seg1.target(), seg2.source(), k))
-      return squared_distance(seg1.target(), seg2.source(), k);
+      return sq_dist(seg1.target(), seg2.source(), k);
     if(!is_acute_angle(seg1.target(), seg1.source(), seg2.target(), k))
-      return squared_distance(seg1.source(), seg2.target(), k);
+      return sq_dist(seg1.source(), seg2.target(), k);
   }
   else
   {
     if(!is_acute_angle(seg1.source(), seg1.target(), seg2.target(), k))
-      return squared_distance(seg1.target(), seg2.target(), k);
+      return sq_dist(seg1.target(), seg2.target(), k);
     if(!is_acute_angle(seg1.target(), seg1.source(), seg2.source(), k))
-      return squared_distance(seg1.source(), seg2.source(), k);
+      return sq_dist(seg1.source(), seg2.source(), k);
   }
-  return squared_distance(seg2.source(), seg1.supporting_line(), k);
+
+  return sq_dist(seg2.source(), seg1.supporting_line(), k);
 }
 
 template <typename K>
@@ -197,7 +200,7 @@ typename K::FT
 squared_distance(const Segment_3<K>& seg1,
                  const Segment_3<K>& seg2)
 {
-  return internal::squared_distance(seg1, seg2, K());
+  return K().compute_squared_distance_3_object()(seg1, seg2);
 }
 
 } // namespace CGAL

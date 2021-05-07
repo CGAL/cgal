@@ -34,11 +34,11 @@ squared_distance(const typename K::Line_3& line1,
 
   typename K::Construct_vector_3 vector = k.construct_vector_3_object();
 
-  Vector_3 dir1, dir2, normal, diff;
-  dir1 = line1.direction().vector();
-  dir2 = line2.direction().vector();
-  normal = wcross(dir1, dir2, k);
-  diff = vector(line1.point(), line2.point());
+  const Vector_3 dir1 = line1.direction().vector();
+  const Vector_3 dir2 = line2.direction().vector();
+  const Vector_3 normal = wcross(dir1, dir2, k);
+  const Vector_3 diff = vector(line1.point(), line2.point());
+
   if (is_null(normal, k))
     return squared_distance_to_line(dir2, diff, k);
 
@@ -53,7 +53,7 @@ typename K::FT
 squared_distance(const Line_3<K>& line1,
                  const Line_3<K>& line2)
 {
-  return internal::squared_distance(line1, line2, K());
+  return K().compute_squared_distance_3_object()(line1, line2);
 }
 
 } // namespace CGAL

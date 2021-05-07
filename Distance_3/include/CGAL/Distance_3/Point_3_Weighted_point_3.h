@@ -30,7 +30,7 @@ typename K::FT
 squared_distance(const Weighted_point_3<K>& wpt,
                  const Point_3<K>& pt)
 {
-  return internal::squared_distance(wpt.point(), pt, K());
+  return K().compute_squared_distance_3_object()(wpt.point(), pt);
 }
 
 template <class K>
@@ -39,7 +39,7 @@ typename K::FT
 squared_distance(const Point_3<K>& pt,
                  const Weighted_point_3<K>& wpt)
 {
-  return internal::squared_distance(pt, wpt.point(), K());
+  return K().compute_squared_distance_3_object()(pt, wpt.point());
 }
 
 } // namespace CGAL

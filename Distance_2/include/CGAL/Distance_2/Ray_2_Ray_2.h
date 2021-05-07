@@ -46,7 +46,7 @@ ray_ray_squared_distance_parallel(const typename K::Vector_2& ray1dir,
   RT wcr = wcross(ray1dir, from1to2, k);
   RT w = from1to2.hw();
 
-  return (square(wcr) / FT(wmult((K*)0, RT(wdot(ray1dir, ray1dir, k)), w, w)));
+  return (square(wcr) / FT(wmult((K*)0, wdot(ray1dir, ray1dir, k), w, w)));
 }
 
 template <class K>
@@ -58,11 +58,12 @@ squared_distance(const typename K::Ray_2& ray1,
   typedef typename K::Vector_2 Vector_2;
   typedef typename K::FT FT;
 
-  typename K::Construct_vector_2 construct_vector = k.construct_vector_2_object();
+  typename K::Construct_vector_2 vector = k.construct_vector_2_object();
+  typename K::Compute_squared_distance_2 sq_dist = k.compute_squared_distance_2_object();
 
-  const Vector_2& ray1dir = ray1.direction().vector();
-  const Vector_2& ray2dir = ray2.direction().vector();
-  Vector_2 diffvec(construct_vector(ray1.source(),ray2.source()));
+  const Vector_2 ray1dir = ray1.direction().vector();
+  const Vector_2 ray2dir = ray2.direction().vector();
+  const Vector_2 diffvec = vector(ray1.source(),ray2.source());
 
   bool crossing1, crossing2;
   switch(orientation(ray1dir, ray2dir, k))
@@ -83,18 +84,18 @@ squared_distance(const typename K::Ray_2& ray1,
   {
     if(crossing2)
       return FT(0);
-    return internal::squared_distance(ray2.source(), ray1, k);
+    return sq_dist(ray2.source(), ray1);
   }
   else
   {
     if(crossing2)
     {
-      return internal::squared_distance(ray1.source(), ray2, k);
+      return sq_dist(ray1.source(), ray2);
     }
     else
     {
-      FT min1 = internal::squared_distance(ray1.source(), ray2, k);
-      FT min2 = internal::squared_distance(ray2.source(), ray1, k);
+      FT min1 = sq_dist(ray1.source(), ray2);
+      FT min2 = sq_dist(ray2.source(), ray1);
       return (min1 < min2) ? min1 : min2;
     }
   }
@@ -106,7 +107,7 @@ template <class K>
 inline typename K::FT
 squared_distance(const Ray_2<K> &ray1, const Ray_2<K> &ray2)
 {
-  return internal::squared_distance(ray1, ray2, K());
+  return K().compute_squared_distance_2_object()(ray1, ray2);
 }
 
 } // namespace CGAL

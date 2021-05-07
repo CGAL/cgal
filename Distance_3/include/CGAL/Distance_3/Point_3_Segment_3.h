@@ -37,21 +37,22 @@ squared_distance(const typename K::Point_3& pt,
   typedef typename K::RT RT;
   typedef typename K::FT FT;
 
-  typename K::Construct_vector_3 construct_vector;
+  typename K::Construct_vector_3 vector = k.construct_vector_3_object();
+  typename K::Compute_squared_distance_3 sq_dist = k.compute_squared_distance_3_object();
 
   // assert that the segment is valid (non zero length).
-  Vector_3 diff = construct_vector(seg.source(), pt);
-  Vector_3 segvec = construct_vector(seg.source(), seg.target());
+  Vector_3 diff = vector(seg.source(), pt);
+  Vector_3 segvec = vector(seg.source(), seg.target());
 
   RT d = wdot(diff,segvec, k);
   if(d <= RT(0))
-    return FT(diff*diff);
+    return diff*diff;
   RT e = wdot(segvec,segvec, k);
   if((d * segvec.hw()) > (e * diff.hw()))
-    return squared_distance(pt, seg.target(), k);
+    return sq_dist(pt, seg.target());
 
   Vector_3 wcr = wcross(segvec, diff, k);
-  return FT(wcr*wcr)/FT(e * diff.hw() * diff.hw());
+  return FT(wcr*wcr) / FT(e * diff.hw() * diff.hw());
 }
 
 template <class K>
@@ -65,19 +66,20 @@ squared_distance(const typename K::Point_3& pt,
   typedef typename K::RT RT;
   typedef typename K::FT FT;
 
-  typename K::Construct_vector_3 construct_vector;
+  typename K::Construct_vector_3 vector = k.construct_vector_3_object();
+  typename K::Compute_squared_distance_3 sqd = k.compute_squared_distance_3_object();
 
   // assert that the segment is valid (non zero length).
-  Vector_3 diff = construct_vector(seg.source(), pt);
-  Vector_3 segvec = construct_vector(seg.source(), seg.target());
+  Vector_3 diff = vector(seg.source(), pt);
+  Vector_3 segvec = vector(seg.source(), seg.target());
 
   RT d = wdot(diff,segvec, k);
   if(d <= RT(0))
-    return (FT(diff*diff));
+    return diff*diff;
 
   RT e = wdot(segvec,segvec, k);
   if(d > e)
-    return squared_distance(pt, seg.target(), k);
+    return sqd(pt, seg.target());
 
   Vector_3 wcr = wcross(segvec, diff, k);
   return FT(wcr*wcr)/e;
@@ -113,7 +115,7 @@ typename K::FT
 squared_distance(const Point_3<K>& pt,
                  const Segment_3<K>& seg)
 {
-  return internal::squared_distance(pt, seg, K());
+  return K().compute_squared_distance_3_object()(pt, seg);
 }
 
 template <class K>
@@ -122,7 +124,7 @@ typename K::FT
 squared_distance(const Segment_3<K>& seg,
                  const Point_3<K>& pt)
 {
-  return internal::squared_distance(pt, seg, K());
+  return K().compute_squared_distance_3_object()(seg, pt);
 }
 
 } // namespace CGAL

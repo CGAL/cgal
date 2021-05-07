@@ -20,7 +20,6 @@
 #define CGAL_DISTANCE_2_LINE_2_LINE_2_H
 
 #include <CGAL/Distance_2/internal/squared_distance_utils_2.h>
-#include <CGAL/Distance_2/Point_2_Line_2.h>
 
 #include <CGAL/Kernel/global_functions.h>
 #include <CGAL/Line_2.h>
@@ -35,8 +34,11 @@ squared_distance(const typename K::Line_2& line1,
                  const K& k)
 {
   typedef typename K::FT FT;
+
+  typename K::Compute_squared_distance_2 sq_dist = k.compute_squared_distance_2_object();
+
   if(internal::parallel(line1, line2, k))
-    return internal::squared_distance(line1.point(), line2, k);
+    return sq_dist(line1.point(), line2);
   else
     return FT(0);
 }
@@ -48,7 +50,7 @@ inline typename K::FT
 squared_distance(const Line_2<K>& line1,
                  const Line_2<K>& line2)
 {
-  return internal::squared_distance(line1, line2, K());
+  return K().compute_squared_distance_2_object()(line1, line2);
 }
 
 } // namespace CGAL

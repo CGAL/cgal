@@ -20,7 +20,6 @@
 #define CGAL_DISTANCE_2_LINE_2_TRIANGLE_2_H
 
 #include <CGAL/Distance_2/internal/squared_distance_utils_2.h>
-#include <CGAL/Distance_2/Point_2_Line_2.h>
 
 #include <CGAL/enum.h>
 
@@ -38,17 +37,19 @@ squared_distance(const typename K::Line_2& line,
 {
   typedef typename K::FT FT;
 
-  Oriented_side side0 = line.oriented_side(triangle.vertex(0));
+  typename K::Compute_squared_distance_2 sq_dist = k.compute_squared_distance_2_object();
+
+  const Oriented_side side0 = line.oriented_side(triangle.vertex(0));
   if(line.oriented_side(triangle.vertex(1)) != side0)
     return FT(0);
 
   if(line.oriented_side(triangle.vertex(2)) != side0)
     return FT(0);
 
-  FT mindist = internal::squared_distance(triangle.vertex(0), line, k);
+  FT mindist = sq_dist(triangle.vertex(0), line);
   for(int i=1; i<3; ++i)
   {
-    FT dist = internal::squared_distance(triangle.vertex(i), line, k);
+    FT dist = sq_dist(triangle.vertex(i), line);
     if(dist < mindist)
       mindist = dist;
   }
@@ -72,7 +73,7 @@ inline typename K::FT
 squared_distance(const Line_2<K>& line,
                  const Triangle_2<K>& triangle)
 {
-  return internal::squared_distance(line, triangle, K());
+  return K().compute_squared_distance_2_object()(line, triangle);
 }
 
 template <class K>
@@ -80,7 +81,7 @@ inline typename K::FT
 squared_distance(const Triangle_2<K>& triangle,
                  const Line_2<K>& line)
 {
-  return internal::squared_distance(line, triangle, K());
+  return K().compute_squared_distance_2_object()(triangle, line);
 }
 
 } // namespace CGAL

@@ -21,6 +21,7 @@
 
 #include <CGAL/Distance_2/internal/squared_distance_utils_2.h>
 #include <CGAL/Distance_2/Point_2_Line_2.h>
+#include <CGAL/Distance_2/Segment_2_Ray_2.h>
 
 #include <CGAL/number_utils.h>
 #include <CGAL/Rational_traits.h>
@@ -56,20 +57,20 @@ squared_distance(const typename K::Segment_2& seg,
   typedef typename K::Vector_2 Vector_2;
   typedef typename K::Point_2  Point_2;
 
-  typename K::Construct_vector_2 construct_vector = k.construct_vector_2_object();
+  typename K::Construct_vector_2 vector = k.construct_vector_2_object();
+  typename K::Compute_squared_distance_2 sq_dist = k.compute_squared_distance_2_object();
 
-  const Vector_2 &linedir = line.direction().vector();
-  const Point_2 &linepoint = line.point();
-  Vector_2 startvec(construct_vector(linepoint, seg.source()));
-  Vector_2 endvec(construct_vector(linepoint, seg.target()));
+  const Vector_2 linedir = line.direction().vector();
+  const Point_2& linepoint = line.point();
+  const Vector_2 startvec = vector(linepoint, seg.source());
+  const Vector_2 endvec = vector(linepoint, seg.target());
+
+  if(seg.source() == seg.target())
+    return sq_dist(seg.source(), line);
 
   bool crossing1;
-  RT c1s, c1e;
-  if(seg.source() == seg.target())
-    return internal::squared_distance(seg.source(), line, k);
-
-  c1s = wcross(linedir, startvec, k);
-  c1e = wcross(linedir, endvec, k);
+  const RT c1s = wcross(linedir, startvec, k);
+  const RT c1e = wcross(linedir, endvec, k);
   if(c1s < RT(0))
   {
     crossing1 = (c1e >= RT(0));
@@ -88,8 +89,7 @@ squared_distance(const typename K::Segment_2& seg,
   }
   else
   {
-    RT dm;
-    dm = _distance_measure_sub<K>(c1s, c1e, startvec, endvec);
+    const RT dm = _distance_measure_sub<K>(c1s, c1e, startvec, endvec);
     if(dm <= RT(0))
       return _sqd_to_line<K>(startvec, c1s, linedir);
      else
@@ -113,7 +113,7 @@ inline typename K::FT
 squared_distance(const Segment_2<K>& seg,
                  const Line_2<K>& line)
 {
-  return internal::squared_distance(seg, line, K());
+  return K().compute_squared_distance_2_object()(seg, line);
 }
 
 template <class K>
@@ -121,7 +121,7 @@ inline typename K::FT
 squared_distance(const Line_2<K>& line,
                  const Segment_2<K>& seg)
 {
-  return internal::squared_distance(seg, line, K());
+  return K().compute_squared_distance_2_object()(line, seg);
 }
 
 } // namespace CGAL

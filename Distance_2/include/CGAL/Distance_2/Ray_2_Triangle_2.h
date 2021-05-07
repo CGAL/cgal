@@ -20,6 +20,7 @@
 #define CGAL_DISTANCE_2_RAY_2_TRIANGLE_2_H
 
 #include <CGAL/Distance_2/internal/squared_distance_utils_2.h>
+#include <CGAL/Distance_2/Point_2_Triangle_2.h>
 
 #include <CGAL/Ray_2.h>
 #include <CGAL/Triangle_2.h>
@@ -64,11 +65,10 @@ squared_distance(const typename K::Ray_2& ray,
   {
     // Check if all the segment vertices lie at the same side of
     // the triangle segment.
-    const Point_2 &vt1 = triangle.vertex(ind_tr1);
-    const Point_2 &vt2 = triangle.vertex(ind_tr2);
+    const Point_2& vt1 = triangle.vertex(ind_tr1);
+    const Point_2& vt2 = triangle.vertex(ind_tr2);
     if(clockwise(ray.direction().vector(), vt2-vt1, k))
       mindist = FT(0);
-
   }
   else
   {
@@ -105,7 +105,7 @@ inline typename K::FT
 squared_distance(const Ray_2<K>& ray,
                  const Triangle_2<K>& triangle)
 {
-  return internal::squared_distance(ray, triangle, K());
+  return K().compute_squared_distance_2_object()(ray, triangle);
 }
 
 template <class K>
@@ -113,7 +113,7 @@ inline typename K::FT
 squared_distance(const Triangle_2<K>& triangle,
                  const Ray_2<K>& ray)
 {
-  return internal::squared_distance(ray, triangle, K());
+  return K().compute_squared_distance_2_object()(triangle, ray);
 }
 
 } // namespace CGAL
