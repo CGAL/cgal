@@ -31,7 +31,7 @@ both the geometry and connectivity of a 3D simplicial complex made
 of triangles, implemented in the
 the \ref PkgTriangulation3 and \ref PkgTDS3 packages.
 
-We introduce the concept of "mesh complex", that encodes extra information
+We introduce the concept of \em mesh \em complex, that encodes extra information
 on top of a 3D triangulation to represent a complete simplicial
 complex. A mesh complex describes four sub-complexes
 of simplices
@@ -44,7 +44,7 @@ of the support 3D triangulation per dimension from 0 to 3 :
 The concept `MeshComplex_3InTriangulation_3` is a data structure devised to
 represent the three dimensional complexes embedded in a `Triangulation_3`.
 
-@todo add figure
+\todo add figure
 
 
 \section MDS_3_section_examples Examples
