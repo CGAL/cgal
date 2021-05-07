@@ -81,7 +81,7 @@ public:
   }
 
 protected:
-  typedef tbb::atomic<unsigned int> Erase_counter_type;
+  typedef std::atomic<unsigned int> Erase_counter_type;
   Erase_counter_type                m_erase_counter;
 
 };
