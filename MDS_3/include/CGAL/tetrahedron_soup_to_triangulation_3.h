@@ -103,7 +103,7 @@ namespace CGAL {
   * @param tets each element in the range describes a tetrahedron using the indices of the points
   * in `points` (indices 0 to 3), and the associated `Subdomain_index` (index 4)
   * @param tr the 3D triangulation to be built
-  * @param np an optional sequence of \ref mds3_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{surface_facets}

@@ -21,14 +21,20 @@ and consistent discretization.
 In this chapter, we describe higher-level data structures available
 for the description of such meshes.
 
-\section MDS_3_section_c3t3
+\section MDS_3_section_c3t3 Mesh Complex
 
-CGAL provides 3D triangulations, that are described by
-both their geometry and connectivity, using the
-the `3D Triangulation` and `3D Triangulation  Data Structure` packages.
+A 3D simplicial complex is composed of points, line segments, polygons,
+polyhedral, and the combinatorial description of their n-dimension counterparts
+(namely vertices, edges, faces and cells).
+CGAL provides 3D triangulations, that describe
+both the geometry and connectivity of a 3D simplicial complex made
+of triangles, implemented in the
+the \ref PkgTriangulation3 and \ref PkgTDS3 packages.
 
 We introduce the concept of "mesh complex", that encodes extra information
-on top of a 3D triangulation. A mesh complex describes one sub-complex
+on top of a 3D triangulation to represent a complete simplicial
+complex. A mesh complex describes four sub-complexes
+of simplices
 of the support 3D triangulation per dimension from 0 to 3 :
 - corner vertices in 0D,
 - feature edges in 1D,
@@ -36,25 +42,48 @@ of the support 3D triangulation per dimension from 0 to 3 :
 - domain cells in 3D.
 
 The concept `MeshComplex_3InTriangulation_3` is a data structure devised to
-represent a three dimensional complex embedded in a 3D
-triangulation.
+represent the three dimensional complexes embedded in a `Triangulation_3`.
 
-//In both functions, an instance of type `C3T3` is used to maintain the current
-//approximating simplicial mesh
-//and to represent the final 3D mesh at the end
-//of the procedure.
-//
-//The embedding 3D triangulation is required to be the nested type
-//`CGAL::Mesh_triangulation_3::type`, provided by the class template
-//`CGAL::Mesh_triangulation_3`. The type for this triangulation is a
-//wrapper around the class `CGAL::Regular_triangulation_3` whose vertex and cell base classes
-//are respectively models of the concepts `MeshVertexBase_3` and
-//`MeshCellBase_3`.
+@todo add figure
 
-\subsection MDS_3ImplementationHistory Implementation History
 
-The code of the package `MDS_3` was initially part of the package `Mesh_3`.
-With the meshing processes becoming more versatile, it was moved to its own package in the
+\section MDS_3_section_examples Examples
+
+\subsection TetSoupExample From Tetrahedron Soup to `Triangulation_3`
+
+In the example first example of this section, we build a random
+`Delaunay_triangulation_3` and use it to build a consistent though
+connectivity-free tetrahedron soup.
+The tetrahedron soup is then put back together in a
+`CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3` before
+being set as the reference triangulation of a `Mesh_complex_3_in_triangulation_3`.
+
+\cgalExample{MDS_3/tetrahedron_soup_to_c3t3_example.cpp}
+
+
+\subsection IOExample Input/Output Example
+
+The example below illustrates how to use the IO functions
+for reading and writing a triangulation with the `Medit` file format.
+
+\cgalExample{MDS_3/c3t3_example.cpp}
+
+
+\subsection MoreExamples More Examples in other packages
+
+The `Mesh_complex_3_in_triangulation_3` is widely used in the \ref PkgMesh3 package.
+Numerous more usage examples can be found in its \ref Mesh_3_section_examples section.
+
+The package \ref PkgTetrahedralRemeshing also makes use of the
+`Mesh_complex_3_in_triangulation_3`, since it serves as a post-processing for
+tetrahedral mesh generation. Some examples can be found in the \ref secTetRemeshingExamples
+section.
+
+
+\section MDS_3History Implementation History
+
+The code of the `MeshComplex_3InTriangulation_3` and its variants was initially part of the package `Mesh_3`.
+With the meshing and remeshing processes becoming more versatile, it was moved to its own package in the
 release 5.4 of \cgal.
 
 */
