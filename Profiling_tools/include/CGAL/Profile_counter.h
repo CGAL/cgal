@@ -48,6 +48,7 @@
 #include <iomanip>
 #include <string>
 #include <map>
+#include <atomic>
 
 #include <CGAL/disable_warnings.h>
 

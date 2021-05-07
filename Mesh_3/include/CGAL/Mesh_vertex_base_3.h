@@ -28,6 +28,7 @@
 #include <CGAL/Mesh_3/io_signature.h>
 #include <CGAL/Has_timestamp.h>
 #include <CGAL/tags.h>
+#include <atomic>
 
 namespace CGAL {
 
