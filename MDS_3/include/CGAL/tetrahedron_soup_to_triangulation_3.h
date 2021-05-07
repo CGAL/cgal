@@ -9,7 +9,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     :  Mael Rouxel-Labbé, Maxime Gimeno, Jane Tournois
+// Author(s)     :  Mael Rouxel-LabbÃ©, Maxime Gimeno, Jane Tournois
 //
 //******************************************************************************
 // File Description :
