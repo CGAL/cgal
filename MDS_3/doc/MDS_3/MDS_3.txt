@@ -4,7 +4,7 @@ namespace CGAL {
 \mainpage User Manual
 \anchor Chapter_3D_Mesh_Data_Structure
 \anchor userchaptermds3
-\authors Pierre Alliez, Clément Jamin, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec
+\authors Pierre Alliez, ClÃ©ment Jamin, Laurent Rineau, StÃ©phane Tayeb, Jane Tournois, Mariette Yvinec
 \cgalAutoToc
 
 \cgalFigureBegin{figuremultilabel_mesher,multilabel_mesher.jpg}

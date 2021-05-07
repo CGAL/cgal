@@ -23,7 +23,7 @@
 \todo add pkg picture
 \cgalPkgPicture{MDS_3/fig/c3t3.jpg}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Pierre Alliez, Clément Jamin, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec}
+\cgalPkgAuthors{Pierre Alliez, ClÃ©ment Jamin, Laurent Rineau, StÃ©phane Tayeb, Jane Tournois, Mariette Yvinec}
 \cgalPkgDesc{This package is devoted to the description of 3D Mesh Data Structures.}
 \cgalPkgManuals{Chapter_3D_Mesh_Data_Structures,PkgMDS3Ref}
 \cgalPkgSummaryEnd
