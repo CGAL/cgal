@@ -156,6 +156,8 @@ void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
  *
  * @param c3t3 an instance of `C3T3`.
  * @param graph an instance of `TriangleMesh`.
+ *
+ * @todo get the surface patch ids from `c3t3` to `graph`
 */
 template<class C3T3, class TriangleMesh>
 void facets_in_complex_3_to_triangle_mesh(const C3T3& c3t3, TriangleMesh& graph)
