@@ -168,7 +168,9 @@ public:
         *m_interrupted = true;
       if (*m_interrupted)
         return;
-      cpp11::sleep_for (0.00001);
+      typedef std::chrono::nanoseconds nanoseconds;
+      nanoseconds ns (nanoseconds::rep (1000000000.0 * 0.00001));
+      std::this_thread::sleep_for(ns);
     }
     if (m_callback)
       m_callback (1.);
