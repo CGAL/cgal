@@ -62,9 +62,10 @@ class Shell_to_nef_3
 
  private:
   SNC_structure& S;
+  bool with_marks;
  public:
 
-  Shell_to_nef_3(SNC_structure& S_) : S(S_) {}
+  Shell_to_nef_3(SNC_structure& S_, bool m_) : S(S_), with_marks(m_) {}
 
   void visit(Vertex_const_handle ) {}
   void visit(Halfedge_const_handle ) {}
@@ -83,7 +84,7 @@ class Shell_to_nef_3
     Vertex_const_handle pv = sf->center_vertex();
     Vertex_handle nv = S.new_vertex();
     nv->point() = pv->point();
-    nv->mark() = true;
+    nv->mark() = with_marks ? pv->mark() : true;
 
     SM_decorator SM(&*nv);
     SHalfedge_around_sface_const_circulator
@@ -91,7 +92,7 @@ class Shell_to_nef_3
 
     SVertex_handle sv_0 =
       SM.new_svertex(pe->source()->point());
-    sv_0->mark() = true;
+    sv_0->mark() = with_marks ? pe->source()->mark() : true;
 #ifndef CGAL_NEF_NO_INDEXED_ITEMS
     sv_0->set_index(pe->source()->get_index());
 #endif
@@ -100,7 +101,7 @@ class Shell_to_nef_3
 
     do {
       SVertex_handle sv = SM.new_svertex(pe->source()->point());
-      sv->mark() = true;
+      sv->mark() = with_marks ? pe->source()->mark() : true;
 #ifndef CGAL_NEF_NO_INDEXED_ITEMS
       sv->set_index(pe->source()->get_index());
 #endif
@@ -108,7 +109,8 @@ class Shell_to_nef_3
       SHalfedge_handle e = SM.new_shalfedge_pair(sv_prev, sv);
       e->circle() = pe_prev->circle();
       e->twin()->circle() = pe_prev->twin()->circle();
-      e->mark() = e->twin()->mark() = true;
+      e->mark() = with_marks ? pe_prev->mark() : true;
+      e->twin()->mark() = with_marks ? pe_prev->twin()->mark() : true;
 #ifndef CGAL_NEF_NO_INDEXED_ITEMS
       e->set_index(pe_prev->get_index());
       e->twin()->set_index(pe_prev->twin()->get_index());
@@ -123,7 +125,8 @@ class Shell_to_nef_3
     e = SM.new_shalfedge_pair(sv_prev, sv_0);
     e->circle() = pe_prev->circle();
     e->twin()->circle() = pe_prev->twin()->circle();
-    e->mark() = e->twin()->mark() = true;
+    e->mark() = with_marks ? pe_prev->mark() : true;
+    e->twin()->mark() = with_marks ? pe_prev->twin()->mark() : true;
 #ifndef CGAL_NEF_NO_INDEXED_ITEMS
     e->set_index(pe_prev->get_index());
     e->twin()->set_index(pe_prev->twin()->get_index());
@@ -144,9 +147,10 @@ class Shell_to_nef_3
 template <class Nef_polyhedron>
 void shell_to_nef_3(const Nef_polyhedron& N,
                     typename Nef_polyhedron::SFace_const_handle sf,
-                    typename Nef_polyhedron::SNC_structure& S)
+                    typename Nef_polyhedron::SNC_structure& S,
+                    bool with_marks = false)
 {
-  Shell_to_nef_3<typename Nef_polyhedron::SNC_structure> s2n(S);
+  Shell_to_nef_3<typename Nef_polyhedron::SNC_structure> s2n(S,with_marks);
   N.visit_shell_objects(sf, s2n);
 }
 
