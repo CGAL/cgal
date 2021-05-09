@@ -489,54 +489,6 @@ public:
     return f_visible;
   }
 
-  /*
-  Halffacet_const_handle get_visible_facet( const Halfedge_const_handle e,
-                                      const Segment_3& ray) const {
-    //{\Mop when one shoot a ray |ray| in order to find the facet below to
-    //  an object, and an edge |e| is hit, we need to choose one of the two
-   //   facets in the adjacency list of |e| that could be 'seen'  from the
-   //   piercing point of the |ray| on the local (virtual) view  of |e|
-   //   \precondition |ray| target belongs to |e|. }
-
-    CGAL_error();
-
-    SM_const_decorator SD;
-    if( SD.is_isolated(e))
-      return Halffacet_const_handle();
-
-    Halffacet_const_handle res = facet(sh);
-
-    Vector_3 ed(segment(e).to_vector());
-    Vector_3 ev(segment(e).to_vector()), rv(ray.to_vector());
-    SHalfedge_around_svertex_const_circulator sh(SD.first_out_edge(e)), send(sh);
-    Vector_3 vec0(cross_product(ev,res->plane().orthogonal_vector()));
-    CGAL_NEF_TRACEN("initial face candidate "<< res->plane());
-
-    sh++;
-    CGAL_For_all(sh,send) {
-    Vector_3 vec1(cross_product(ev,sh->plane().orthogonal_vector()));
-      RT sk0(rv*vec0),  sk1(rv*vec1);
-      if(sk0<0 && sk1>0)
-        continue;
-      if(sk0>0 && sk1<0) {
-        res = facet(sh);
-        continue;
-      }
-
-      RT len0 = vec0.x()*vec0.x()+vec0.y()*vec0.y()+vec0.z()*vec0.z();
-      RT len1 = vec1.x()*vec1.x()+vec1.y()*vec1.y()+vec1.z()*vec1.z();
-      RT sq0 = sk0 * sk0;
-      RT sq1 = sk1 * sk1;
-      RT diff = len0*sq1 - len1*sq0;
-
-      if((sk0 > 0 && diff<0) || (sk0 < 0 && diff>0))
-        res = facet(sh);
-    }
-
-    return Halffacet_const_handle(); // never reached
-  }
-  */
-
   Halffacet_const_handle get_visible_facet( const Halffacet_const_handle f,
                                       const Segment_3& ray) const
     //{\Mop when one shoot a ray |ray| in order to find the facet below to
