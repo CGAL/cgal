@@ -1323,6 +1323,9 @@ double approximate_symmetric_Hausdorff_distance(const TriangleMesh& tm1,
 
 ////////////////////////////////////////////////////////////////////////
 
+// Use this def in order to get back the parallel version of the one-sided Hausdorff code!
+// #define USE_PARALLEL_BEHD
+
 namespace internal {
 
 template< class Kernel,
@@ -1588,10 +1591,10 @@ double bounded_error_Hausdorff_impl(
         Triangle_3(v0, v01, v02), Triangle_3(v1 , v01, v12),
         Triangle_3(v2, v02, v12), Triangle_3(v01, v02, v12) };
 
-      // Send each of the four triangles to Culling on B with the bounds of the parent triangle.
+      // Send each of the four triangles to culling on B with the bounds of the parent triangle.
       for (std::size_t i = 0; i < 4; ++i) {
 
-        // Call Culling on B with the single triangle found.
+        // Call culling on B with the single triangle found.
         TM2_hd_traits traversal_traits_tm2(
           tm2_tree.traits(), tm2, vpm2,
           triangle_bounds,
@@ -1660,7 +1663,7 @@ double bounded_error_Hausdorff_impl(
   return hdist;
 }
 
-#if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
+#if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED) && defined(USE_PARALLEL_BEHD)
 
 template<class TriangleMesh, class VPM, class TMTree>
 struct Triangle_mesh_wrapper {
@@ -1795,7 +1798,8 @@ struct Bounded_error_distance_computation {
     distance = (CGAL::max)(rhs.distance, distance);
   }
 };
-#endif // defined(CGAL_LINKED_WITH_TBB) && METIS
+
+#endif // defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
 
 template< class Concurrency_tag,
           class Kernel,
@@ -1840,7 +1844,7 @@ double bounded_error_one_sided_Hausdorff_impl(
 
   using Timer = CGAL::Real_timer;
 
-  #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
+  #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED) && defined(USE_PARALLEL_BEHD)
   using Point_3       = typename Kernel::Point_3;
   using TMF           = CGAL::Face_filtered_graph<TM1>;
   using TMF_primitive = AABB_face_graph_triangle_primitive<TMF, VPM1>;
@@ -1852,21 +1856,21 @@ double bounded_error_one_sided_Hausdorff_impl(
   std::vector<TMF> tm1_parts;
   std::vector<TMF_tree> tm1_trees;
   std::vector<boost::any> tm_wrappers;
-  #endif // defined(CGAL_LINKED_WITH_TBB) && METIS
+  #endif // defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
 
   Timer timer;
   std::cout.precision(20);
-
-  // TODO: add to NP!
-  const int nb_cores = 4;
-  const std::size_t min_nb_faces_to_split = 100; // TODO: increase this number?
-  // std::cout << "* num cores: " << nb_cores << std::endl;
 
   TM1_tree tm1_tree;
   TM2_tree tm2_tree;
   FT infinity_value = -FT(1);
 
-  #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
+  #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED) && defined(USE_PARALLEL_BEHD)
+  // TODO: add to NP!
+  const int nb_cores = 4;
+  const std::size_t min_nb_faces_to_split = 100; // TODO: increase this number?
+  // std::cout << "* num cores: " << nb_cores << std::endl;
+
   if (
     boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value &&
     nb_cores > 1 && faces(tm1).size() >= min_nb_faces_to_split) {
@@ -1928,7 +1932,7 @@ double bounded_error_one_sided_Hausdorff_impl(
     // std::cout << "* preprocessing parallel time (sec.) " << time1 + time2 + time3 << std::endl;
 
   } else // sequential version
-  #endif // defined(CGAL_LINKED_WITH_TBB) && METIS
+  #endif // defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
   {
     // std::cout << "* preprocessing sequential version " << std::endl;
     timer.reset();
@@ -1959,7 +1963,7 @@ double bounded_error_one_sided_Hausdorff_impl(
   timer.reset();
   timer.start();
 
-  #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
+  #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED) && defined(USE_PARALLEL_BEHD)
   if (
     boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value &&
     nb_cores > 1 && faces(tm1).size() >= min_nb_faces_to_split) {
@@ -1972,7 +1976,7 @@ double bounded_error_one_sided_Hausdorff_impl(
     hdist = bedc.distance;
 
   } else // sequential version
-  #endif // defined(CGAL_LINKED_WITH_TBB) && METIS
+  #endif // defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
   {
     // std::cout << "* executing sequential version " << std::endl;
     hdist = bounded_error_Hausdorff_impl<Kernel>(
@@ -2006,10 +2010,10 @@ double bounded_error_symmetric_Hausdorff_impl(
   const NamedParameters1& np1,
   const NamedParameters2& np2)
 {
-  #if !defined(CGAL_LINKED_WITH_TBB)
+  #if !defined(CGAL_LINKED_WITH_TBB) || !defined(CGAL_METIS_ENABLED)
   CGAL_static_assertion_msg(
     !(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value),
-    "Parallel_tag is enabled but TBB is unavailable.");
+    "Parallel_tag is enabled but at least TBB or METIS is unavailable.");
   #endif
 
   // Naive version.

@@ -818,6 +818,7 @@ void test_realizing_triangles(
   compute_realizing_triangles(mesh1, mesh2, error_bound, "2", save);
 }
 
+#if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED) && defined(USE_PARALLEL_BEHD)
 void test_parallel_version(
   const std::string filepath, const double error_bound) {
 
@@ -860,6 +861,7 @@ void test_parallel_version(
   std::cout << "* dista seq = " << dista << std::endl;
   std::cout << "* distb par = " << distb << std::endl;
 }
+#endif // defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
 
 void test_early_quit(
   const std::string filepath, const double /*error_bound*/, const double /*max_distance*/) {
@@ -931,8 +933,10 @@ int main(int argc, char** argv) {
   // --- Test realizing triangles.
   // test_realizing_triangles(error_bound);
 
+  #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED) && defined(USE_PARALLEL_BEHD)
   // --- Test parallelization.
   // test_parallel_version(filepath, error_bound);
+  #endif // defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
 
   // --- Test early quit.
   test_early_quit(filepath, error_bound, max_distance);
