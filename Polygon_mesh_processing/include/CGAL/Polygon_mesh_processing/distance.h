@@ -18,6 +18,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/mesh_to_point_set_hausdorff_distance.h>
 #include <CGAL/Polygon_mesh_processing/internal/AABB_traversal_traits_with_Hausdorff_distance.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
+#include <CGAL/Polygon_mesh_processing/bbox.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -1774,6 +1775,7 @@ struct Bounded_error_distance_computation {
     timer.reset();
     timer.start();
     double hdist = -1.0;
+
     for (std::size_t i = range.begin(); i != range.end(); ++i) {
       CGAL_assertion(i < tm1_parts.size());
       CGAL_assertion(i < tm1_trees.size());
@@ -1813,10 +1815,10 @@ double bounded_error_one_sided_Hausdorff_impl(
   const NamedParameters1& np1,
   const NamedParameters2& np2)
 {
-  #if !defined(CGAL_LINKED_WITH_TBB)
+  #if !defined(CGAL_LINKED_WITH_TBB) || !defined(CGAL_METIS_ENABLED)
   CGAL_static_assertion_msg(
     !(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value),
-    "Parallel_tag is enabled but TBB is unavailable.");
+    "Parallel_tag is enabled but at least TBB or METIS is unavailable.");
   #endif
 
   using FT = typename Kernel::FT;
