@@ -863,8 +863,7 @@ void test_parallel_version(
 }
 #endif // defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
 
-void test_early_quit(
-  const std::string filepath, const double /*error_bound*/, const double /*max_distance*/) {
+void test_early_quit(const std::string filepath) {
 
   std::cout.precision(20);
   std::cout << std::endl << "-- test early quit:" << std::endl << std::endl;
@@ -872,6 +871,48 @@ void test_early_quit(
   Timer timer;
   Surface_mesh mesh1, mesh2;
   get_meshes(filepath, filepath, mesh1, mesh2);
+
+  std::cout << std::endl;
+  std::cout << " ---- distance 0.0 = 0.0 ---- " << std::endl;
+  timer.reset();
+  timer.start();
+  assert(PMP::are_within_tolerance<TAG>(mesh1, mesh2, 0.0));
+  timer.stop();
+  const double timea = timer.time();
+
+  PMP::transform(Affine_transformation_3(CGAL::Translation(),
+    Vector_3(0.0, 0.0, 0.5)), mesh2);
+
+  std::cout << " ---- distance 0.5 < 0.8 ---- " << std::endl;
+  timer.reset();
+  timer.start();
+  assert(PMP::are_within_tolerance<TAG>(mesh1, mesh2, 0.8));
+  timer.stop();
+  const double timeb = timer.time();
+  std::cout << " ---- distance 0.5 < 0.6 ---- " << std::endl;
+  timer.reset();
+  timer.start();
+  assert(PMP::are_within_tolerance<TAG>(mesh1, mesh2, 0.6));
+  timer.stop();
+  const double timec = timer.time();
+  std::cout << " ---- distance 0.5 > 0.4 ---- " << std::endl;
+  timer.reset();
+  timer.start();
+  assert(!PMP::are_within_tolerance<TAG>(mesh1, mesh2, 0.4));
+  timer.stop();
+  const double timed = timer.time();
+  std::cout << " ---- distance 0.5 > 0.2 ---- " << std::endl;
+  timer.reset();
+  timer.start();
+  assert(!PMP::are_within_tolerance<TAG>(mesh1, mesh2, 0.2));
+  timer.stop();
+  const double timee = timer.time();
+
+  std::cout << "* timea 0.0 = 0.0 = " << timea << std::endl;
+  std::cout << "* timeb 0.5 < 0.8 = " << timeb << std::endl;
+  std::cout << "* timec 0.5 < 0.6 = " << timec << std::endl;
+  std::cout << "* timed 0.5 > 0.4 = " << timed << std::endl;
+  std::cout << "* timee 0.5 > 0.2 = " << timee << std::endl;
 }
 
 int main(int argc, char** argv) {
@@ -881,10 +922,8 @@ int main(int argc, char** argv) {
 
   const double error_bound = 1e-4;
   const std::size_t num_samples = 1000;
-  const double max_distance = 1.0;
   std::cout << std::endl << "* error bound: " << error_bound << std::endl;
-  std::cout << std::endl << "* number of samples: " << num_samples << std::endl;
-  std::cout << std::endl << "* max distance: " << max_distance << std::endl;
+  // std::cout << std::endl << "* number of samples: " << num_samples << std::endl;
   std::string filepath = (argc > 1 ? argv[1] : "data/blobby.off");
 
   // ------------------------------------------------------------------------ //
@@ -899,7 +938,7 @@ int main(int argc, char** argv) {
 
   // test_synthetic_data(apprx_hd);
   // test_synthetic_data(naive_hd);
-  test_synthetic_data(bound_hd);
+  // test_synthetic_data(bound_hd);
 
   // --- Compare on common meshes.
 
@@ -939,7 +978,7 @@ int main(int argc, char** argv) {
   #endif // defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
 
   // --- Test early quit.
-  test_early_quit(filepath, error_bound, max_distance);
+  test_early_quit(filepath);
 
   // ------------------------------------------------------------------------ //
 
