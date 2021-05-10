@@ -30,6 +30,7 @@
 \cgalPkgShortInfoBegin
 \cgalPkgSince{5.4}
 \cgalPkgDependsOn{\ref PkgTriangulation3}
+\cgalPkgBib{cgal:ajrtty-mds3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
