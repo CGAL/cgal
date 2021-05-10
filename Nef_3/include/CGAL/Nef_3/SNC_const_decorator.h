@@ -162,8 +162,8 @@ public:
   { return Segment_3(e->source()->point(),
                      e->twin()->source()->point()); }
 
-  template <typename Visitor>
-  void visit_shell_objects(SFace_const_handle f, Visitor& V) const;
+  template <typename Visitor, typename Traits = Self::Decorator_traits>
+  void visit_shell_objects(typename Traits::SFace_handle f, Visitor& V) const;
 
   Vertex_const_iterator   vertices_begin() const {
     return this->sncp()->vertices_begin(); }
@@ -555,84 +555,116 @@ public:
     }
 };
 
+/* visiting shell objects:
+
+Objects are marked as done, when placed in the output list.  We have
+to maintain a stack of sface candidates (the spherical rubber sectors
+that provide connectivity at the local graphs of vertices) and facet
+candiates (the plane pieces in three space also providing
+connectivity). Note that we have to take care about the orientation of
+sobjects and facets. We have to take care that (1) the search along
+the shell extends along the whole shell structure (2) does not visit
+any object twice, and (3) all 3-space objects have to be reported and
+this also just once.
+
+The facets and sfaces are marked |done| when they are put into their
+corresponding queues thus each such object is visited exactly once
+when taken out of the queue.
+
+When an sface |sf| is taken out of the queue |SFaceCandiates| its
+boundary structure is examined and all 2-skeleton objects (vertices
+and edges of 3-space) that are incident to the volume represented by
+|sf| are reported. Facets are reported when they are taken out of
+|FacetCandiates|.
+
+*/
 template <typename EW>
-template <typename Visitor>
+template <typename Visitor, typename Traits>
 void SNC_const_decorator<EW>::
-visit_shell_objects(SFace_const_handle f, Visitor& V) const
+visit_shell_objects(typename Traits::SFace_handle f, Visitor& V) const
 {
-  std::list<SFace_const_handle> SFaceCandidates;
-  std::list<Halffacet_const_handle> FacetCandidates;
-  CGAL::Unique_hash_map<SFace_const_handle,bool> DoneSF(false);
-  CGAL::Unique_hash_map<Vertex_const_handle,bool> DoneV(false);
-  CGAL::Unique_hash_map<SVertex_const_handle,bool> DoneSV(false);
-  CGAL::Unique_hash_map<Halffacet_const_handle,bool> DoneF(false);
-  SFaceCandidates.push_back(f);  DoneSF[f] = true;
+  typedef typename Traits::Halffacet_cycle_iterator Halffacet_cycle_iterator;
+  typedef typename Traits::Halffacet_handle Halffacet_handle;
+  typedef typename Traits::SFace_cycle_iterator SFace_cycle_iterator;
+  typedef typename Traits::SFace_handle SFace_handle;
+  typedef typename Traits::SHalfedge_around_facet_circulator SHalfedge_around_facet_circulator;
+  typedef typename Traits::SHalfedge_around_sface_circulator SHalfedge_around_sface_circulator;
+  typedef typename Traits::SHalfedge_handle SHalfedge_handle;
+  typedef typename Traits::SHalfloop_handle SHalfloop_handle;
+  typedef typename Traits::SM_decorator SM_decorator;
+  typedef typename Traits::SVertex_handle SVertex_handle;
+
+  std::list<SFace_handle> SFaceCandidates;
+  std::list<Halffacet_handle> FacetCandidates;
+  CGAL::Generic_handle_map<bool> Done(false);
+
+  SFaceCandidates.push_back(f);  Done[f] = true;
   while ( true ) {
     if ( SFaceCandidates.empty() && FacetCandidates.empty() ) break;
     if ( !FacetCandidates.empty() ) {
-      Halffacet_const_handle f = *FacetCandidates.begin();
+      Halffacet_handle f = *FacetCandidates.begin();
       FacetCandidates.pop_front();
       V.visit(f); // report facet
-      Halffacet_cycle_const_iterator fc;
+      Halffacet_cycle_iterator fc;
       CGAL_forall_facet_cycles_of(fc,f) {
         if (fc.is_shalfedge() ) {
-          SHalfedge_const_handle e(fc);
-          SHalfedge_const_handle she;
-          SHalfedge_around_facet_const_circulator ec(e),ee(e);
+          SHalfedge_handle e(fc);
+          SHalfedge_handle she;
+          SHalfedge_around_facet_circulator ec(e),ee(e);
           CGAL_For_all(ec,ee) { she = ec->twin();
-            if ( DoneSF[she->incident_sface()] ) continue;
+            if ( Done[she->incident_sface()] ) continue;
             SFaceCandidates.push_back(she->incident_sface());
-            DoneSF[she->incident_sface()] = true;
+            Done[she->incident_sface()] = true;
           }
         } else if (fc.is_shalfloop() ) {
-          SHalfloop_const_handle l(fc);
-          SHalfloop_const_handle ll = l->twin();
-          if ( DoneSF[ll->incident_sface()] ) continue;
+          SHalfloop_handle l(fc);
+          SHalfloop_handle ll = l->twin();
+          if ( Done[ll->incident_sface()] ) continue;
           SFaceCandidates.push_back(ll->incident_sface());
-          DoneSF[ll->incident_sface()] = true;
+          Done[ll->incident_sface()] = true;
         } else CGAL_error_msg("Damn wrong handle.");
       }
     }
     if ( !SFaceCandidates.empty() ) {
-      SFace_const_handle sf = *SFaceCandidates.begin();
+      SFace_handle sf = *SFaceCandidates.begin();
       SFaceCandidates.pop_front();
       V.visit(sf);
-      if ( !DoneV[sf->center_vertex()] )
+      if ( !Done[sf->center_vertex()] )
         V.visit(sf->center_vertex()); // report vertex
-      DoneV[sf->center_vertex()] = true;
+      Done[sf->center_vertex()] = true;
       //      SVertex_const_handle sv;
-      SM_const_decorator SD(&*sf->center_vertex());
+      SM_decorator SD(&*sf->center_vertex());
       /*
       CGAL_forall_svertices(sv,SD){
         if(SD.is_isolated(sv) && !DoneSV[sv])
           V.visit(sv);
       }
       */
-      SFace_cycle_const_iterator fc;
+      SFace_cycle_iterator fc;
       CGAL_forall_sface_cycles_of(fc,sf) {
         if (fc.is_shalfedge() ) {
-          SHalfedge_const_handle e(fc);
-          SHalfedge_around_sface_const_circulator ec(e),ee(e);
+          SHalfedge_handle e(fc);
+          SHalfedge_around_sface_circulator ec(e),ee(e);
           CGAL_For_all(ec,ee) {
-            V.visit(SHalfedge_const_handle(ec));
-            SVertex_const_handle vv = ec->twin()->source();
-            if ( !SD.is_isolated(vv) && !DoneSV[vv] ) {
+            V.visit(SHalfedge_handle(ec));
+            SVertex_handle vv = ec->twin()->source();
+            if ( !SD.is_isolated(vv) && !Done[vv] ) {
               V.visit(vv); // report edge
-              DoneSV[vv] = DoneSV[vv->twin()] = true;
+              Done[vv] = Done[vv->twin()] = true;
             }
-            Halffacet_const_handle f = ec->twin()->facet();
-            if ( DoneF[f] ) continue;
-            FacetCandidates.push_back(f); DoneF[f] = true;
+            Halffacet_handle f = ec->twin()->facet();
+            if ( Done[f] ) continue;
+            FacetCandidates.push_back(f); Done[f] = true;
           }
         } else if (fc.is_svertex() ) {
-          SVertex_const_handle v(fc);
-          if ( DoneSV[v] ) continue;
+          SVertex_handle v(fc);
+          if ( Done[v] ) continue;
           V.visit(v); // report edge
           V.visit(v->twin());
-          DoneSV[v] = DoneSV[v->twin()] = true;
+          Done[v] = Done[v->twin()] = true;
           CGAL_assertion(SD.is_isolated(v));
           SFaceCandidates.push_back(v->twin()->incident_sface());
-          DoneSF[v->twin()->incident_sface()]=true;
+          Done[v->twin()->incident_sface()]=true;
           // note that v is isolated, thus twin(v) is isolated too
           //          SM_const_decorator SD;
           //          SFace_const_handle fo;
@@ -644,11 +676,11 @@ visit_shell_objects(SFace_const_handle f, Visitor& V) const
             fo = v->twin()->incident_sface();
           */
         } else if (fc.is_shalfloop() ) {
-          SHalfloop_const_handle l(fc);
+          SHalfloop_handle l(fc);
           V.visit(l);
-          Halffacet_const_handle f = l->twin()->facet();
-          if ( DoneF[f] ) continue;
-          FacetCandidates.push_back(f);  DoneF[f] = true;
+          Halffacet_handle f = l->twin()->facet();
+          if ( Done[f] ) continue;
+          FacetCandidates.push_back(f);  Done[f] = true;
         } else CGAL_error_msg("Damn wrong handle.");
       }
     }
