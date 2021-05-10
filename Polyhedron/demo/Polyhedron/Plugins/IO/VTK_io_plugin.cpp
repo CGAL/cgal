@@ -420,9 +420,9 @@ public:
           std::swap(finite_cells[i][1], finite_cells[i][3]);
         }
       }
-      std::vector<typename Tr::Vertex_handle> new_vertices;
+
       CGAL::MDS_3::build_triangulation(c3t3_item->c3t3().triangulation(),
-        points, finite_cells, border_facets, new_vertices);
+        points, finite_cells, border_facets);
 
       for( C3t3::Triangulation::Finite_cells_iterator
            cit = c3t3_item->c3t3().triangulation().finite_cells_begin();
