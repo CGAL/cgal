@@ -2385,6 +2385,9 @@ double bounded_error_symmetric_Hausdorff_distance(
     tm1, tm2, error_bound, parameters::all_default());
 }
 
+// TODO: Find better name!
+// TODO: Should we use one-sided or symmetric distance here?
+
 /**
  * \ingroup PMP_distance_grp
  * returns `true` if two meshes are within the user-defined max distance,
@@ -2403,13 +2406,53 @@ template< class Concurrency_tag,
           class NamedParameters1,
           class NamedParameters2 >
 bool are_within_tolerance(
-  const TriangleMesh1& /* tm1 */,
-  const TriangleMesh2& /* tm2 */,
-  const double /* max_distance */,
-  const double /* error_bound */,
-  const NamedParameters1& /* np1 */,
-  const NamedParameters2& /* np2 */)
+  const TriangleMesh1& tm1,
+  const TriangleMesh2& tm2,
+  const double max_distance,
+  const double error_bound,
+  const NamedParameters1& np1,
+  const NamedParameters2& np2)
 {
+  CGAL_assertion_code(
+    const bool is_triangle = is_triangle_mesh(tm1) && is_triangle_mesh(tm2));
+  CGAL_assertion_msg(is_triangle,
+    "Both meshes must be triangulated in order to be compared!");
+
+  using Traits = typename GetGeomTraits<TriangleMesh1, NamedParameters1>::type;
+  using FT = typename Traits::FT;
+
+  const auto vpm1 = parameters::choose_parameter(
+    parameters::get_parameter(np1, internal_np::vertex_point),
+    get_const_property_map(vertex_point, tm1));
+  const auto vpm2 = parameters::choose_parameter(
+    parameters::get_parameter(np2, internal_np::vertex_point),
+    get_const_property_map(vertex_point, tm2));
+
+  const bool match_faces1 = parameters::choose_parameter(
+    parameters::get_parameter(np1, internal_np::match_faces), true);
+  const bool match_faces2 = parameters::choose_parameter(
+    parameters::get_parameter(np2, internal_np::match_faces), true);
+  const bool match_faces = match_faces1 && match_faces2;
+
+  // Naive version.
+  const bool use_one_sided = true; // TODO: Put in the NP!
+  CGAL_precondition(error_bound >= 0.0);
+  const FT error_threshold = static_cast<FT>(error_bound);
+
+  double hdist = -1.0;
+  if (use_one_sided) {
+    hdist = internal::bounded_error_one_sided_Hausdorff_impl<Concurrency_tag, Traits>(
+      tm1, tm2, error_threshold, match_faces, vpm1, vpm2, np1, np2);
+  } else {
+    hdist = internal::bounded_error_symmetric_Hausdorff_impl<Concurrency_tag, Traits>(
+      tm1, tm2, error_threshold, match_faces, vpm1, vpm2, np1, np2);
+  }
+  CGAL_assertion(hdist >= 0.0);
+
+  std::cout << "- fin distance: " << hdist << std::endl;
+  std::cout << "- max distance: " << max_distance << std::endl;
+  // return hdist <= max_distance;
+
   CGAL_assertion_msg(false, "TODO: FINISH THE DISTANCE TOLERANCE FUNCTION!");
   return false;
 }

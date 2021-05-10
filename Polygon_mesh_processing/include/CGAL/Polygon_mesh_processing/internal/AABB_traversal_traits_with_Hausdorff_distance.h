@@ -426,6 +426,8 @@ namespace CGAL {
       // See Algorithm 1 here.
       // If the distance is larger than the global lower bound, enter the node, i.e. return true.
       CGAL_assertion(h_global_bounds.lower >= FT(0));
+      // const FT hdist = (h_global_bounds.lower + h_global_bounds.upper) / FT(2);
+      // std::cout << "- distance: " << hdist << std::endl;
       if (dist > h_global_bounds.lower) {
         return std::make_pair(true , +dist);
       } else {
