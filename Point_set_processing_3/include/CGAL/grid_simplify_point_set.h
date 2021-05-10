@@ -146,11 +146,11 @@ private:
   // superclass
   using Base = internal::Epsilon_point_set_3_base<Point_3, PointMap, UseMap>;
 
-  std::size_t min_points_per_cell;
+  unsigned int min_points_per_cell;
 
 public:
 
-  Epsilon_point_set_3 (double epsilon, PointMap point_map, std::size_t min_points_per_cell = 1)
+  Epsilon_point_set_3 (double epsilon, PointMap point_map, unsigned int min_points_per_cell = 1)
     : Base(10, internal::Hash_epsilon_points_3<Point_3, PointMap>(epsilon, point_map),
            internal::Equal_epsilon_points_3<Point_3, PointMap>(epsilon, point_map))
     , min_points_per_cell (min_points_per_cell)
