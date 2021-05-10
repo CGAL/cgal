@@ -118,9 +118,16 @@ public:
     }
 };
 
-
-} /* namespace internal */
-
+template <typename Point_3, typename PointMap, typename UseMap>
+using Epsilon_point_set_3_base
+= typename std::conditional
+  <UseMap::value,
+   std::unordered_map<Point_3, std::size_t,
+                      internal::Hash_epsilon_points_3<Point_3, PointMap>,
+                      internal::Equal_epsilon_points_3<Point_3, PointMap> >,
+   std::unordered_set<Point_3,
+                      internal::Hash_epsilon_points_3<Point_3, PointMap>,
+                      internal::Equal_epsilon_points_3<Point_3, PointMap> > >::type;
 
 /// Utility class for grid_simplify_point_set():
 /// 3D points set which allows at most 1 (or N) point per cell
@@ -131,28 +138,13 @@ public:
 /// => you should not modify directly the order or the position of points.
 
 template <class Point_3, class PointMap, class UseMap>
-class Epsilon_point_set_3
-  : public std::conditional
-<std::is_same<UseMap, Tag_true>::value,
- std::unordered_map<Point_3, std::size_t,
-                    internal::Hash_epsilon_points_3<Point_3, PointMap>,
-                    internal::Equal_epsilon_points_3<Point_3, PointMap> >,
- std::unordered_set<Point_3,
-                    internal::Hash_epsilon_points_3<Point_3, PointMap>,
-                    internal::Equal_epsilon_points_3<Point_3, PointMap> > >::type
+class Epsilon_point_set_3 : public internal::Epsilon_point_set_3_base<Point_3, PointMap, UseMap>
 
 {
 private:
 
   // superclass
-  using Base = typename std::conditional
-    <std::is_same<UseMap, Tag_true>::value,
-     std::unordered_map<Point_3, std::size_t,
-                        internal::Hash_epsilon_points_3<Point_3, PointMap>,
-                        internal::Equal_epsilon_points_3<Point_3, PointMap> >,
-     std::unordered_set<Point_3,
-                        internal::Hash_epsilon_points_3<Point_3, PointMap>,
-                        internal::Equal_epsilon_points_3<Point_3, PointMap> > >::type;
+  using Base = internal::Epsilon_point_set_3_base<Point_3, PointMap, UseMap>;
 
   std::size_t min_points_per_cell;
 
@@ -185,6 +177,8 @@ private:
     return Base::insert (p).second;
   }
 };
+
+} /* namespace internal */
 
 /// \endcond
 
@@ -275,13 +269,13 @@ grid_simplify_point_set(
   {
     // Merges points which belong to the same cell of a grid of cell size = epsilon.
     // Keep 1 point per occupied cell
-    Epsilon_point_set_3<Enriched_point, PointMap, Tag_false> point_set(epsilon, point_map);
+    internal::Epsilon_point_set_3<Enriched_point, PointMap, Tag_false> point_set(epsilon, point_map);
     return std::partition (points.begin(), points.end(), [&](const auto& p) -> bool { return point_set.insert(p); });
   }
   // else
   // Merges points which belong to the same cell of a grid of cell size = epsilon.
   // Keep 1 point per cell occupied by at least `min_points_per_cell` points
-  Epsilon_point_set_3<Enriched_point, PointMap, Tag_true> point_set(epsilon, point_map, min_points_per_cell);
+  internal::Epsilon_point_set_3<Enriched_point, PointMap, Tag_true> point_set(epsilon, point_map, min_points_per_cell);
   return std::partition (points.begin(), points.end(), [&](const auto& p) -> bool { return point_set.insert(p); });
 }
 
