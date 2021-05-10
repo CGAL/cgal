@@ -217,7 +217,7 @@ private:
        \cgalParamType{unsigned int}
        \cgalParamDefault{1}
        \cgalParamExtra{If a value greater than 1 is used, the
-       algorithm also acts an outlier filtering algorithm, by removing
+       algorithm also acts as an outlier filtering algorithm, by removing
        low-density areas.}
      \cgalParamNEnd
 
