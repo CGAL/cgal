@@ -852,18 +852,12 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     return c->shells_end();
   }
 
-  Size_type number_of_vertices() const
-  { return sncp()->number_of_vertices(); }
-  Size_type number_of_halfedges() const
-  { return sncp()->number_of_halfedges(); }
-  Size_type number_of_edges() const
-  { return sncp()->number_of_edges(); }
-  Size_type number_of_halffacets() const
-  { return sncp()->number_of_halffacets();}
-  Size_type number_of_facets() const
-  { return sncp()->number_of_facets();}
-  Size_type number_of_volumes() const
-  { return sncp()->number_of_volumes();}
+  using Base::number_of_vertices;
+  using Base::number_of_halfedges;
+  using Base::number_of_edges;
+  using Base::number_of_halffacets;
+  using Base::number_of_facets;
+  using Base::number_of_volumes;
 
 };
 
