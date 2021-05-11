@@ -101,7 +101,11 @@ public:
     CGAL_assertion(&support == &end.support());
 
     if (std::distance(begin, end) < 2) // Polyline with less than 2 points is empty
+    {
+      m_begin = null_idx();
+      m_end = null_idx();
       return;
+    }
 
     if (begin.base() == support.m_begin - 1)
     {
@@ -206,6 +210,8 @@ public:
 
   size_type number_of_subcurves() const
   {
+    if (m_begin == null_idx())
+      return 0;
     return (m_end - m_begin) + (m_first.first ? 1 : 0) + (m_last.first ? 1 : 0) - 1;
   }
 

@@ -153,8 +153,6 @@ public:
     {
       const Subcurve_traits_2* geom_traits = m_traits.subcurve_traits_2();
       const Kernel& kernel = *geom_traits;
-      auto min_vertex = geom_traits->construct_min_vertex_2_object();
-      auto max_vertex = geom_traits->construct_max_vertex_2_object();
       auto equal = geom_traits->equal_2_object();
       auto cmp_seg_endpts = geom_traits->compare_endpoints_xy_2_object();
 
@@ -185,15 +183,15 @@ public:
       2 = C D E F (i-> end)
       */
 
-      if (equal(max_vertex(xcv[i]), p)) {
+      if (equal(xcv[i].target(), p)) {
         // The entire i'th subcurve belongs to xcv1:
+        xcv1 = X_monotone_curve_2(kernel, xcv.points_begin(), xcv[i+2]);
+        xcv2 = X_monotone_curve_2(kernel, xcv[i+1], xcv.points_end());
+      }
+      else if (equal(xcv[i].source(), p)) {
+        // The entire i'th subcurves belongs to xcv2:
         xcv1 = X_monotone_curve_2(kernel, xcv.points_begin(), xcv[i+1]);
         xcv2 = X_monotone_curve_2(kernel, xcv[i], xcv.points_end());
-      }
-      else if (equal(min_vertex(xcv[i]), p)) {
-        // The entire i'th subcurves belongs to xcv2:
-        xcv1 = X_monotone_curve_2(kernel, xcv.points_begin(), xcv[i]);
-        xcv2 = X_monotone_curve_2(kernel, xcv[i-1], xcv.points_end());
       }
       else {
         // The i'th subcurve should be split: The left part(seg1)
@@ -395,6 +393,7 @@ public:
           (right_res == LARGER) ? SMALLER : EQUAL;
 
         left_coincides = right_coincides;
+        left_overlap = right_overlap;
       } // END of while loop
 
 
