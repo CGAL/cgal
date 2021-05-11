@@ -1,6 +1,8 @@
 #ifndef CGAL_IO_BASE_TEST_H
 #define CGAL_IO_BASE_TEST_H
 
+#include <list>
+
 template <typename GeomTraits_>
 class IO_base_test {
   IO_base_test<GeomTraits_>& operator=(const IO_base_test<GeomTraits_>&);
@@ -47,7 +49,9 @@ protected:
 #if TEST_GEOM_TRAITS == CACHING_POLYLINE_GEOM_TRAITS
   // When using the Arr_caching_polyline_traits_2 traits class, the points that
   // define a polyline must be retain in memory as long as the traits is used.
-  std::vector<Point_2> m_points;
+  // We use a list to avoid resizing, which copies the points, and invalidates
+  // pointers to them (as they point to addresses of the old points).
+  std::list<std::vector<Point_2>> m_cached_points;
 #endif
 };
 
@@ -64,7 +68,8 @@ IO_base_test<GeomTraits_>::IO_base_test(const GeomTraits_& geom_traits) :
 template <typename GeomTraits>
 void IO_base_test<GeomTraits>::clear() {
 #if (TEST_GEOM_TRAITS == CACHING_POLYLINE_GEOM_TRAITS)
-  m_points.clear();
+  for (auto& l : m_cached_points) l.clear();
+  m_cached_points.clear();
 #endif
 }
 
@@ -211,30 +216,32 @@ template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
                                                  X_monotone_curve_2& xcv) {
+  m_cached_points.push_back(std::vector<Point_2>{});
+  auto& points = m_cached_points.back();
   size_t num_points;
   is >> num_points;
-  m_points.clear();
   for (size_t j = 0; j < num_points; ++j) {
     Basic_number_type x, y;
     is >> x >> y;
-    m_points.emplace_back(x, y);
+    points.emplace_back(x, y);
   }
-  xcv = m_geom_traits.construct_x_monotone_curve_2_object()(m_points);
+  xcv = m_geom_traits.construct_x_monotone_curve_2_object()(points);
   return true;
 }
 
 template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv) {
+  m_cached_points.push_back(std::vector<Point_2>{});
+  auto& points = m_cached_points.back();
   size_t num_points;
   is >> num_points;
-  m_points.clear();
   for (size_t j = 0; j < num_points; ++j) {
     Basic_number_type x, y;
     is >> x >> y;
-    m_points.emplace_back(x, y);
+    points.emplace_back(x, y);
   }
-  cv = m_geom_traits.construct_curve_2_object()(m_points);
+  cv = m_geom_traits.construct_curve_2_object()(points);
   return true;
 }
 
