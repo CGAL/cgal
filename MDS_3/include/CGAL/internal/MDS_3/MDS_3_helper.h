@@ -33,6 +33,8 @@ namespace internal {
     typedef typename Triangulation::Geom_traits::Point_3 Point_3;
     typename Triangulation::Geom_traits::Construct_point_3 cp
       = tr.geom_traits().construct_point_3_object();
+    typename Triangulation::Geom_traits::Orientation_3 orientation =
+      tr.geom_traits().orientation_3_object();
 
     std::vector<Cell_handle> infcells;
     tr.incident_cells(tr.infinite_vertex(), std::back_inserter(infcells));
@@ -44,15 +46,15 @@ namespace internal {
       const std::array<Point_3, 3> pfacet = { cp(neigh->vertex((i + 1) % 4)->point()),
                                               cp(neigh->vertex((i + 2) % 4)->point()),
                                               cp(neigh->vertex((i + 3) % 4)->point())};
-      const CGAL::Orientation o = CGAL::orientation(
+      const CGAL::Orientation o = orientation(
           pfacet[0], pfacet[1], pfacet[2], cp(neigh->vertex(i)->point()));
 
       for (Vertex_handle v : tr.finite_vertex_handles())
       {
         if (c->has_vertex(v))
           continue;
-        if (o != CGAL::orientation(pfacet[0], pfacet[1], pfacet[2],
-                                   cp(neigh->vertex(i)->point())))
+        if (o != orientation(pfacet[0], pfacet[1], pfacet[2],
+                             cp(neigh->vertex(i)->point())))
           return false;
       }
     }
