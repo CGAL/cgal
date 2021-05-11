@@ -1434,9 +1434,6 @@ std::pair<typename Kernel::FT, bool> preprocess_bounded_error_Hausdorff_impl(
     tm2_tree.insert(faces2.begin(), faces2.end(), tm2, vpm2);
   }
 
-  // tm1_tree.build();
-  // tm2_tree.build();
-
   timer.stop();
   // std::cout << "* .... end preprocessing" << std::endl;
   // std::cout << "* preprocessing time (sec.): " << timer.time() << std::endl;
@@ -1457,7 +1454,8 @@ double bounded_error_Hausdorff_impl(
   const VPM1& vpm1,
   const VPM2& vpm2,
   const typename Kernel::FT infinity_value,
-  const typename Kernel::FT initial_lower_bound,
+  const typename Kernel::FT initial_bound,
+  const typename Kernel::FT distance_bound,
   const TM1Tree& tm1_tree,
   const TM2Tree& tm2_tree)
 {
@@ -1494,7 +1492,7 @@ double bounded_error_Hausdorff_impl(
   // Build traversal traits for tm1_tree.
   TM1_hd_traits traversal_traits_tm1(
     tm1_tree.traits(), tm2_tree, tm1, tm2, vpm1, vpm2,
-    error_bound, infinity_value, initial_lower_bound);
+    error_bound, infinity_value, initial_bound, distance_bound);
 
   // Find candidate triangles in TM1, which might realise the Hausdorff bound.
   // We build a sorted structure while collecting the candidates.
@@ -1750,7 +1748,7 @@ struct Bounded_error_distance_computation {
 
   const std::vector<TriangleMesh1>& tm1_parts; const TriangleMesh2& tm2;
   const FT error_bound; const VPM1& vpm1; const VPM2& vpm2;
-  const FT infinity_value; const FT initial_lower_bound;
+  const FT infinity_value; const FT initial_bound;
   const std::vector<TM1Tree>& tm1_trees; const TM2Tree& tm2_tree;
   double distance;
 
@@ -1758,11 +1756,11 @@ struct Bounded_error_distance_computation {
   Bounded_error_distance_computation(
     const std::vector<TriangleMesh1>& tm1_parts, const TriangleMesh2& tm2,
     const FT error_bound, const VPM1& vpm1, const VPM2& vpm2,
-    const FT infinity_value, const FT initial_lower_bound,
+    const FT infinity_value, const FT initial_bound,
     const std::vector<TM1Tree>& tm1_trees, const TM2Tree& tm2_tree) :
   tm1_parts(tm1_parts), tm2(tm2),
   error_bound(error_bound), vpm1(vpm1), vpm2(vpm2),
-  infinity_value(infinity_value), initial_lower_bound(initial_lower_bound),
+  infinity_value(infinity_value), initial_bound(initial_bound),
   tm1_trees(tm1_trees), tm2_tree(tm2_tree), distance(-1.0) {
     CGAL_assertion(tm1_parts.size() == tm1_trees.size());
   }
@@ -1772,7 +1770,7 @@ struct Bounded_error_distance_computation {
     Bounded_error_distance_computation& s, tbb::split) :
   tm1_parts(s.tm1_parts), tm2(s.tm2),
   error_bound(s.error_bound), vpm1(s.vpm1), vpm2(s.vpm2),
-  infinity_value(s.infinity_value), initial_lower_bound(s.initial_lower_bound),
+  infinity_value(s.infinity_value), initial_bound(s.initial_bound),
   tm1_trees(s.tm1_trees), tm2_tree(s.tm2_tree), distance(-1.0) {
     CGAL_assertion(tm1_parts.size() == tm1_trees.size());
   }
@@ -1788,9 +1786,12 @@ struct Bounded_error_distance_computation {
       CGAL_assertion(i < tm1_trees.size());
       const auto& tm1 = tm1_parts[i];
       const auto& tm1_tree = tm1_trees[i];
+      // TODO: add distance_bound (now it is -FT(1)) in case we use parallel
+      // for checking if two meshes are close.
       const double dist = bounded_error_Hausdorff_impl<Kernel>(
         tm1, tm2, error_bound, vpm1, vpm2,
-        infinity_value, initial_lower_bound, tm1_tree, tm2_tree);
+        infinity_value, initial_bound, -FT(1),
+        tm1_tree, tm2_tree);
       if (dist > hdist) hdist = dist;
     }
     if (hdist > distance) distance = hdist;
@@ -1817,6 +1818,7 @@ double bounded_error_one_sided_Hausdorff_impl(
   const TriangleMesh1& tm1,
   const TriangleMesh2& tm2,
   const typename Kernel::FT error_bound,
+  const typename Kernel::FT distance_bound,
   const bool compare_meshes,
   const VPM1& vpm1,
   const VPM2& vpm2,
@@ -1879,6 +1881,21 @@ double bounded_error_one_sided_Hausdorff_impl(
     boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value &&
     nb_cores > 1 && faces(tm1).size() >= min_nb_faces_to_split) {
 
+    // (0) -- Compute infinity value.
+    timer.reset();
+    timer.start();
+    const auto bbox1 = bbox(tm1);
+    const auto bbox2 = bbox(tm2);
+    const auto bb = bbox1 + bbox2;
+    const FT sq_dist = CGAL::squared_distance(
+      Point_3(bb.xmin(), bb.ymin(), bb.zmin()),
+      Point_3(bb.xmax(), bb.ymax(), bb.zmax()));
+    infinity_value = CGAL::approximate_sqrt(sq_dist) * FT(2);
+    CGAL_assertion(infinity_value >= FT(0));
+    timer.stop();
+    // const double time0 = timer.time();
+    // std::cout << "- computing infinity (sec.): " << time0 << std::endl;
+
     // (1) -- Create partition of tm1.
     timer.reset();
     timer.start();
@@ -1909,31 +1926,21 @@ double bounded_error_one_sided_Hausdorff_impl(
     timer.reset();
     timer.start();
     tm1_trees.resize(tm1_parts.size());
-
-    // Compute infinity value.
-    const auto bbox1 = bbox(tm1);
-    const auto bbox2 = bbox(tm2);
-    const auto bb = bbox1 + bbox2;
-    const FT sq_dist = CGAL::squared_distance(
-      Point_3(bb.xmin(), bb.ymin(), bb.zmin()),
-      Point_3(bb.xmax(), bb.ymax(), bb.zmax()));
-    infinity_value = CGAL::approximate_sqrt(sq_dist) * FT(2);
-
-    CGAL_assertion(tm1_trees.size() == tm1_parts.size());
     tm_wrappers.reserve(tm1_parts.size() + 1);
     for (std::size_t i = 0; i < tm1_parts.size(); ++i) {
       tm_wrappers.push_back(TM1_wrapper(tm1_parts[i], vpm1, false, tm1_trees[i]));
     }
     tm_wrappers.push_back(TM2_wrapper(tm2, vpm2, true, tm2_tree));
     CGAL_assertion(tm_wrappers.size() == tm1_parts.size() + 1);
-
     Bounded_error_preprocessing<TM1_wrapper, TM2_wrapper> bep(tm_wrappers);
     tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, tm_wrappers.size()), bep);
-
     timer.stop();
     // const double time3 = timer.time();
     // std::cout << "- creating trees time (sec.) " << time3 << std::endl;
-    // std::cout << "* preprocessing parallel time (sec.) " << time1 + time2 + time3 << std::endl;
+
+    // Final timing.
+    // std::cout << "* preprocessing parallel time (sec.) " <<
+    //   time0 + time1 + time2 + time3 << std::endl;
 
   } else // sequential version
   #endif // defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
@@ -1948,8 +1955,12 @@ double bounded_error_one_sided_Hausdorff_impl(
       tm1, tm2, compare_meshes, vpm1, vpm2, true, np1, np2,
       tm1_tree, tm2_tree, tm1_only, tm2_only);
     CGAL_assertion(!rebuild);
-    tm1_tree.build();
-    tm2_tree.build();
+    if (infinity_value >= FT(0)) {
+      tm1_tree.build();
+      tm2_tree.build();
+      tm1_tree.do_not_accelerate_distance_queries();
+      tm2_tree.accelerate_distance_queries();
+    }
     timer.stop();
     // std::cout << "* preprocessing sequential time (sec.) " << timer.time() << std::endl;
   }
@@ -1961,7 +1972,7 @@ double bounded_error_one_sided_Hausdorff_impl(
   }
   CGAL_assertion(error_bound >= FT(0));
   CGAL_assertion(infinity_value > FT(0));
-  const FT initial_lower_bound = error_bound;
+  const FT initial_bound = error_bound;
   std::atomic<double> hdist;
 
   timer.reset();
@@ -1975,7 +1986,7 @@ double bounded_error_one_sided_Hausdorff_impl(
     // std::cout << "* executing parallel version " << std::endl;
     Bounded_error_distance_computation<TMF, TM2, VPM1, VPM2, TMF_tree, TM2_tree, Kernel> bedc(
       tm1_parts, tm2, error_bound, vpm1, vpm2,
-      infinity_value, initial_lower_bound, tm1_trees, tm2_tree);
+      infinity_value, initial_bound, tm1_trees, tm2_tree);
     tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, tm1_parts.size()), bedc);
     hdist = bedc.distance;
 
@@ -1985,7 +1996,8 @@ double bounded_error_one_sided_Hausdorff_impl(
     // std::cout << "* executing sequential version " << std::endl;
     hdist = bounded_error_Hausdorff_impl<Kernel>(
       tm1, tm2, error_bound, vpm1, vpm2,
-      infinity_value, initial_lower_bound, tm1_tree, tm2_tree);
+      infinity_value, initial_bound, distance_bound,
+      tm1_tree, tm2_tree);
   }
 
   timer.stop();
@@ -2008,6 +2020,7 @@ double bounded_error_symmetric_Hausdorff_impl(
   const TriangleMesh1& tm1,
   const TriangleMesh2& tm2,
   const typename Kernel::FT error_bound,
+  const typename Kernel::FT distance_bound,
   const bool compare_meshes,
   const VPM1& vpm1,
   const VPM2& vpm2,
@@ -2021,10 +2034,11 @@ double bounded_error_symmetric_Hausdorff_impl(
   #endif
 
   // Naive version.
+  // TODO: we can use it for parallel version to simplify our life.
   // const double hdist1 = bounded_error_one_sided_Hausdorff_impl<Concurrency_tag, Kernel>(
-  //   tm1, tm2, error_bound, compare_meshes, vpm1, vpm2, np1, np2);
+  //   tm1, tm2, error_bound, distance_bound, compare_meshes, vpm1, vpm2, np1, np2);
   // const double hdist2 = bounded_error_one_sided_Hausdorff_impl<Concurrency_tag, Kernel>(
-  //   tm2, tm1, error_bound, compare_meshes, vpm2, vpm1, np1, np2);
+  //   tm2, tm1, error_bound, distance_bound, compare_meshes, vpm2, vpm1, np1, np2);
   // return (CGAL::max)(hdist1, hdist2);
 
   // Optimized version.
@@ -2049,6 +2063,7 @@ double bounded_error_symmetric_Hausdorff_impl(
   std::vector<Face_handle_1> tm1_only;
   std::vector<Face_handle_2> tm2_only;
 
+  // All trees below are built and/or accelerated lazily.
   TM1_tree tm1_tree;
   TM2_tree tm2_tree;
   FT infinity_value = -FT(1);
@@ -2064,16 +2079,14 @@ double bounded_error_symmetric_Hausdorff_impl(
   CGAL_assertion(infinity_value > FT(0));
 
   // Compute the first one-sided distance.
-  FT initial_lower_bound = error_bound;
+  FT initial_bound = error_bound;
   double dista = CGAL::to_double(error_bound);
-
-  tm1_tree.build();
-  tm2_tree.build();
 
   if (!compare_meshes || (compare_meshes && tm1_only.size() > 0)) {
     dista = bounded_error_Hausdorff_impl<Kernel>(
       tm1, tm2, error_bound, vpm1, vpm2,
-      infinity_value, initial_lower_bound, tm1_tree, tm2_tree);
+      infinity_value, initial_bound, distance_bound,
+      tm1_tree, tm2_tree);
   }
 
   // In case this is true, we need to rebuild trees in order to accelerate
@@ -2086,18 +2099,17 @@ double bounded_error_symmetric_Hausdorff_impl(
     CGAL_assertion(tm2_only.size() < faces(tm2).size());
     tm1_tree.insert(faces(tm1).begin(), faces(tm1).end(), tm1, vpm1);
     tm2_tree.insert(tm2_only.begin(), tm2_only.end(), tm2, vpm2);
-    tm1_tree.build();
-    tm2_tree.build();
   }
 
   // Compute the second one-sided distance.
-  initial_lower_bound = static_cast<FT>(dista); // TODO: we should better test this optimization!
+  initial_bound = static_cast<FT>(dista); // TODO: we should better test this optimization!
   double distb = CGAL::to_double(error_bound);
 
   if (!compare_meshes || (compare_meshes && tm2_only.size() > 0)) {
     distb = bounded_error_Hausdorff_impl<Kernel>(
       tm2, tm1, error_bound, vpm2, vpm1,
-      infinity_value, initial_lower_bound, tm2_tree, tm1_tree);
+      infinity_value, initial_bound, distance_bound,
+      tm2_tree, tm1_tree);
   }
 
   // Return the maximum.
@@ -2285,7 +2297,7 @@ double bounded_error_Hausdorff_distance(
   CGAL_precondition(error_bound >= 0.0);
   const FT error_threshold = static_cast<FT>(error_bound);
   return internal::bounded_error_one_sided_Hausdorff_impl<Concurrency_tag, Traits>(
-    tm1, tm2, error_threshold, match_faces, vpm1, vpm2, np1, np2);
+    tm1, tm2, error_threshold, -FT(1), match_faces, vpm1, vpm2, np1, np2);
 }
 
 template< class Concurrency_tag,
@@ -2360,7 +2372,7 @@ double bounded_error_symmetric_Hausdorff_distance(
   CGAL_precondition(error_bound >= 0.0);
   const FT error_threshold = static_cast<FT>(error_bound);
   return internal::bounded_error_symmetric_Hausdorff_impl<Concurrency_tag, Traits>(
-    tm1, tm2, error_threshold, match_faces, vpm1, vpm2, np1, np2);
+    tm1, tm2, error_threshold, -FT(1), match_faces, vpm1, vpm2, np1, np2);
 }
 
 template< class Concurrency_tag,
@@ -2412,7 +2424,7 @@ template< class Concurrency_tag,
 bool are_within_tolerance(
   const TriangleMesh1& tm1,
   const TriangleMesh2& tm2,
-  const double max_distance,
+  const double distance_bound,
   const double error_bound,
   const NamedParameters1& np1,
   const NamedParameters2& np2)
@@ -2438,24 +2450,25 @@ bool are_within_tolerance(
     parameters::get_parameter(np2, internal_np::match_faces), true);
   const bool match_faces = match_faces1 && match_faces2;
 
-  // Naive version.
   const bool use_one_sided = true; // TODO: Put in the NP!
   CGAL_precondition(error_bound >= 0.0);
   const FT error_threshold = static_cast<FT>(error_bound);
+  CGAL_precondition(distance_bound >= 0.0);
+  const FT distance_threshold = static_cast<FT>(distance_bound);
 
   double hdist = -1.0;
   if (use_one_sided) {
     hdist = internal::bounded_error_one_sided_Hausdorff_impl<Concurrency_tag, Traits>(
-      tm1, tm2, error_threshold, match_faces, vpm1, vpm2, np1, np2);
+      tm1, tm2, error_threshold, distance_threshold, match_faces, vpm1, vpm2, np1, np2);
   } else {
     hdist = internal::bounded_error_symmetric_Hausdorff_impl<Concurrency_tag, Traits>(
-      tm1, tm2, error_threshold, match_faces, vpm1, vpm2, np1, np2);
+      tm1, tm2, error_threshold, distance_threshold, match_faces, vpm1, vpm2, np1, np2);
   }
   CGAL_assertion(hdist >= 0.0);
 
   std::cout << "- fin distance: " << hdist << std::endl;
-  std::cout << "- max distance: " << max_distance << std::endl;
-  // return hdist <= max_distance;
+  std::cout << "- max distance: " << distance_bound << std::endl;
+  // return hdist <= distance_bound;
 
   CGAL_assertion_msg(false, "TODO: FINISH THE DISTANCE TOLERANCE FUNCTION!");
   return false;

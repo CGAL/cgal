@@ -1,3 +1,6 @@
+// Use it to include parallel computations in the bounded error Hausdorff distance.
+// #define USE_PARALLEL_BEHD
+
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/Simple_cartesian.h>

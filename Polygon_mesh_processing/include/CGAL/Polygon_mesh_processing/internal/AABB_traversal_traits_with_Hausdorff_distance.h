@@ -311,7 +311,8 @@ namespace CGAL {
       const VPM1& vpm1, const VPM2& vpm2,
       const FT error_bound,
       const FT infinity_value,
-      const FT initial_lower_bound) :
+      const FT initial_bound,
+      const FT distance_bound) :
     m_traits(traits),
     m_tm1(tm1), m_tm2(tm2),
     m_vpm1(vpm1), m_vpm2(vpm2),
@@ -319,19 +320,21 @@ namespace CGAL {
     m_face_to_triangle_map(&m_tm1, m_vpm1),
     m_error_bound(error_bound),
     m_infinity_value(infinity_value),
+    m_initial_bound(initial_bound),
+    m_distance_bound(distance_bound),
     h_global_bounds(m_infinity_value) {
 
       CGAL_precondition(m_error_bound >= FT(0));
       CGAL_precondition(m_infinity_value >= FT(0));
-      CGAL_precondition(m_error_bound <= initial_lower_bound);
+      CGAL_precondition(m_initial_bound >= m_error_bound);
 
       // Initialize the global bounds with 0, they will only grow.
       // If we leave zero here, then we are very slow even for big input error bounds!
       // Instead, we can use m_error_bound as our initial guess to filter out all pairs,
       // which are already within this bound. It makes the code faster for close meshes.
       // We also use initial_lower_bound here to accelerate the symmetric distance computation.
-      h_global_bounds.lower = initial_lower_bound; // = FT(0);
-      h_global_bounds.upper = initial_lower_bound; // = FT(0);
+      h_global_bounds.lower = m_initial_bound; // = FT(0);
+      h_global_bounds.upper = m_initial_bound; // = FT(0);
     }
 
     // Explore the whole tree, i.e. always enter children if the methods
@@ -518,6 +521,8 @@ namespace CGAL {
     // Internal bounds and values.
     const FT m_error_bound;
     const FT m_infinity_value;
+    const FT m_initial_bound;
+    const FT m_distance_bound;
     Global_bounds h_global_bounds;
 
     // All candidate triangles.
