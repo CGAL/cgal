@@ -17,7 +17,7 @@
 #ifndef CGAL_MDS_3_TET_SOUP_TO_C3T3_H
 #define CGAL_MDS_3_TET_SOUP_TO_C3T3_H
 
-#include <CGAL/license/Triangulation_3.h>
+#include <CGAL/license/MDS_3.h>
 
 #include <CGAL/disable_warnings.h>
 #include <CGAL/assertions.h>
@@ -119,6 +119,8 @@ bool build_finite_cells(Tr& tr,
   CGAL_assertion_code(
     typename Tr::Geom_traits::Construct_point_3 cp =
       tr.geom_traits().construct_point_3_object();
+    typename Tr::Geom_traits::Orientation_3 orientation =
+      tr.geom_traits().orientation_3_object();
   )
   int max_domain = 0;
   if(replace_domain_0)
@@ -146,8 +148,8 @@ bool build_finite_cells(Tr& tr,
     }
 
     // this assertion also tests for degeneracy
-    CGAL_assertion(CGAL::orientation(cp(tr.point(vs[0])), cp(tr.point(vs[1])),
-                                     cp(tr.point(vs[2])), cp(tr.point(vs[3])))
+    CGAL_assertion(orientation(cp(tr.point(vs[0])), cp(tr.point(vs[1])),
+                               cp(tr.point(vs[2])), cp(tr.point(vs[3])))
                      == POSITIVE);
 
     Cell_handle c = tr.tds().create_cell(vs[0], vs[1], vs[2], vs[3]);
