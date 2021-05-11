@@ -257,10 +257,9 @@ public:
     Infi_box::set_size_of_infimaximal_box(size);
   }
 
-  typedef CGAL::SM_point_locator<SM_const_decorator>         SM_point_locator;
-
-  Halffacet_const_handle get_visible_facet( const Vertex_const_handle v,
-                                      const Ray_3& ray) const
+  template <typename Traits = Self::Decorator_traits>
+  typename Traits::Halffacet_handle get_visible_facet( const typename Traits::Vertex_handle v,
+                                                       const Ray_3& ray) const
     /*{\Mop when one shoot a ray |ray| in order to find the facet below to
       an object, and vertex |v| is hit, we need to choose one of the facets
       in the adjacency list of |v| such that it could be 'seen' from the
@@ -268,9 +267,17 @@ public:
       locating the sphere facet |sf| pierced by |ray| and taking the adjacent
       facet to one of the sphere segments on the boundary of |sf|.
       \precondition |ray| target is on |v| and the intersection between
-      |ray| and the 2-skeleton incident to v is empty. }*/ {
+      |ray| and the 2-skeleton incident to v is empty. }*/
+  {
 
-    Halffacet_const_handle f_visible;
+    typedef typename Traits::Halffacet_handle Halffacet_handle;
+    typedef typename Traits::SFace_handle SFace_handle;
+    typedef typename Traits::SHalfedge_handle SHalfedge_handle;
+    typedef typename Traits::SFace_cycle_iterator SFace_cycle_iterator;
+    typedef typename Traits::SHalfloop_handle SHalfloop_handle;
+    typedef CGAL::SM_point_locator<typename Traits::SM_decorator> SM_point_locator;
+
+    Halffacet_handle f_visible;
     CGAL_assertion( ray.source() != v->point());
     CGAL_assertion( ray.has_on(v->point()));
     Sphere_point sp(ray.source() - v->point());
@@ -284,28 +291,21 @@ public:
     SM_point_locator L(&*v);
     Object_handle o = L.locate(sp);
 
-    SFace_const_handle sf;
+    SFace_handle sf;
     if(!CGAL::assign(sf,o)) {
-      SHalfedge_const_handle se;
-      if(CGAL::assign(se,o))
-        std::cerr << "on sedge " << PH(se)
-                  << " on facet " << se->facet()->plane() << std::endl;
-      SVertex_const_handle sv;
-      if(CGAL::assign(sv,o))
-        std::cerr << "on svertex " << sv->point() << std::endl;
       CGAL_error_msg( "it is not possible to decide which one is a visible facet (if any)");
-      return Halffacet_const_handle();
+      return Halffacet_handle();
     }
 
-    SFace_cycle_const_iterator fc = sf->sface_cycles_begin(),
+    SFace_cycle_iterator fc = sf->sface_cycles_begin(),
       fce = sf->sface_cycles_end();
     if( is_empty_range( fc, fce)) {
         CGAL_NEF_TRACEN( "no adjacent facet found.");
-        f_visible =  Halffacet_const_handle();
+        f_visible =  Halffacet_handle();
     }
     else {
       if (fc.is_shalfedge()) {
-        SHalfedge_const_handle se(fc);
+        SHalfedge_handle se(fc);
         CGAL_NEF_TRACEN( "adjacent facet found (SEdges cycle).");
         CGAL_NEF_TRACEN("se"<<PH(se));
         CGAL_NEF_TRACEN(se->facet()->plane() <<"/"<<
@@ -315,8 +315,7 @@ public:
         CGAL_NEF_TRACEN("f_visible"<< f_visible->plane());
       }
       else if (fc.is_shalfloop()) {
-        SHalfloop_const_handle sl(fc);
-        SM_const_decorator SD;
+        SHalfloop_handle sl(fc);
         CGAL_NEF_TRACEN( "adjacent facet found (SHalfloop cycle)."<< sl->circle()
                          << " with facet "<< sl->facet()->plane());
         f_visible = sl->twin()->facet();
@@ -329,7 +328,7 @@ public:
         ++fc; while( fc != fce)  { CGAL_assertion( fc.is_svertex()); ++fc; }
 #endif
         CGAL_NEF_TRACEN( "no adjacent facets were found (but incident edge(s)).");
-        f_visible = Halffacet_const_handle();
+        f_visible = Halffacet_handle();
       }
       else
         CGAL_error_msg("Damn wrong handle");
@@ -337,17 +336,22 @@ public:
     return f_visible;
   }
 
-  Halffacet_const_handle get_visible_facet( const Halfedge_const_handle e,
-                                      const Ray_3& ray) const {
+  template <typename Traits = Self::Decorator_traits>
+  typename Traits::Halffacet_handle get_visible_facet( const typename Traits::Halfedge_handle e,
+                                                       const Ray_3& ray) const
    //{\Mop when one shoot a ray |ray| in order to find the facet below to
    //  an object, and an edge |e| is hit, we need to choose one of the two
    //  facets in the adjacency list of |e| that could be 'seen'  from the
    //  piercing point of the |ray| on the local (virtual) view  of |e|
    //  \precondition |ray| target belongs to |e|. }
+  {
+    typedef typename Traits::SM_decorator SM_decorator;
+    typedef typename Traits::Halffacet_handle Halffacet_handle;
+    typedef typename Traits::SHalfedge_around_svertex_circulator SHalfedge_around_svertex_circulator;
 
-    SM_const_decorator SD(&*e->source());
+    SM_decorator SD(&*e->source());
     if( SD.is_isolated(e))
-      return Halffacet_const_handle();
+      return Halffacet_handle();
 
     // We search for the plane in the adjacency list of e, which is closest
     // to the ray. The cross product of the direction of e and the orthogonal
@@ -355,8 +359,8 @@ public:
     // and orthogonal to e, pointing inside of the facet.
 
     Vector_3 ev(segment(e).to_vector()), rv(ray.to_vector());
-    SHalfedge_around_svertex_const_circulator sh(SD.first_out_edge(e));
-    Halffacet_const_handle res = sh->facet();
+    SHalfedge_around_svertex_circulator sh(SD.first_out_edge(e));
+    Halffacet_handle res = sh->facet();
     Vector_3 vec0(cross_product(ev,res->plane().orthogonal_vector()));
     /* // probably incorrect assertion
     CGAL_assertion_code
@@ -365,7 +369,7 @@ public:
                             SD.circle(sh)));
     CGAL_assertion( _ess.has_on(vec0));
     */
-    SHalfedge_around_svertex_const_circulator send(sh);
+    SHalfedge_around_svertex_circulator send(sh);
     CGAL_NEF_TRACEN("initial face candidate "<< res->plane()<<" with vector  "<<vec0);
 
     // We compare the vectors vec0/vec1 of the facets. The one that is nearest
@@ -415,16 +419,19 @@ public:
     return res; // never reached
   }
 
-  Halffacet_const_handle get_visible_facet(Halffacet_const_handle f,
-                                      const Ray_3& ray) const
+  template <typename Traits = Self::Decorator_traits>
+  typename Traits::Halffacet_handle get_visible_facet( const typename Traits::Halffacet_handle f,
+                                                       const Ray_3& ray) const
     /*{\Mop when one shoot a ray |ray| in order to find the facet below to
       an object, and a facet |f| is hit, we need to choose the right facet
       from the halffacet pair |f| that  could be 'seen'  from the
       piercing point of the |ray| on the local (virtual) view  of |f|.
       \precondition |ray| target belongs to |f| and the intersection between
-      |ray| and is not coplanar with |f|. }*/ {
+      |ray| and is not coplanar with |f|. }*/
+  {
+    typedef typename Traits::Halffacet_handle Halffacet_handle;
 
-    Halffacet_const_handle f_visible = f;
+    Halffacet_handle f_visible = f;
     if( f_visible->plane().has_on_negative_side(ray.source()))
       f_visible = f_visible->twin();
     CGAL_assertion( f_visible->plane().has_on_positive_side(ray.source()));
@@ -441,6 +448,8 @@ public:
       facet to one of the sphere segments on the boundary of |sf|.
       \precondition |ray| target is on |v| and the intersection between
       |ray| and the 2-skeleton incident to v is empty. }*/ {
+
+    typedef CGAL::SM_point_locator<SM_const_decorator> SM_point_locator;
 
     Halffacet_const_handle f_visible;
     CGAL_assertion( ray.source() != v->point());
