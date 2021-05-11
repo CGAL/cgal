@@ -38,6 +38,12 @@ public:
       connect(actionSharEdges, SIGNAL(triggered()),
               this, SLOT(detectSharpEdgesWithInputDialog()));
     }
+
+    actionSharpCorners = new QAction("Detect Sharp Corners", mw);
+    actionSharpCorners->setObjectName("detectSharpCornersAction");
+    if (actionSharpCorners)
+      connect(actionSharpCorners, SIGNAL(triggered()),
+              this, SLOT(detectSharpCornersWithInputDialog()));
   }
 
   bool applicable(QAction*) const {
@@ -51,12 +57,14 @@ public:
   }
 
   QList<QAction*> actions() const {
-    return QList<QAction*>() << actionSharEdges;
+    return QList<QAction*>() << actionSharEdges
+                             << actionSharpCorners;
   }
 
 public Q_SLOTS:
   void detectSharpEdges(bool input_dialog = false, double angle = 60);
   void detectSharpEdgesWithInputDialog();
+  void detectSharpCornersWithInputDialog();
 
 protected:
   Kernel::Vector_3 facet_normal(face_descriptor f);
@@ -64,6 +72,7 @@ protected:
 
 private:
   QAction* actionSharEdges;
+  QAction* actionSharpCorners;
   CGAL::Three::Scene_interface* scene;
   QMainWindow* mw;
 }; // end Polyhedron_demo_detect_sharp_edges_plugin
@@ -142,6 +151,11 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dial
 
   // default cursor
   QApplication::restoreOverrideCursor();
+}
+
+void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpCornersWithInputDialog()
+{
+  //todo
 }
 
 #include "Detect_sharp_edges_plugin.moc"
