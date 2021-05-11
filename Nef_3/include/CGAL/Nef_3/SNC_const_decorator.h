@@ -135,26 +135,6 @@ public:
  public:
   const SNC_structure* sncp() const { return sncp_; }
 
-  SFace_const_handle adjacent_sface(Halffacet_const_handle f) const {
-    Halffacet_cycle_const_iterator fc(f->facet_cycles_begin());
-    CGAL_assertion( fc != f->facet_cycles_end());
-
-    if ( fc.is_shalfedge() ) {
-      SHalfedge_const_handle se(fc);
-      CGAL_assertion( facet(se) == f);
-      CGAL_assertion( sface(se) != SFace_const_handle());
-      CGAL_assertion( volume(sface(se->twin())) == f->incident_volume());
-      return sface(se->twin());
-    }
-    else
-      CGAL_error_msg( "Facet outer cycle entry point"
-                             "is not an SHalfedge? ");
-    return SFace_const_handle(); // never reached
-  }
-
-  //  static const Point_3& point(Vertex_const_handle v)
-  //  { return v->point(); }
-
   static Vector_3 vector(Halfedge_const_handle e)
   { return Vector_3(e->point()-CGAL::ORIGIN); }
 
