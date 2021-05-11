@@ -40,7 +40,7 @@ double get_theta( typename Kernel::Point_3& pt,
   typedef Eigen::Matrix<FT, 3, 3, Eigen::DontAlign>                  Matrix;
   typedef Eigen::Matrix<FT, 3, 1>                                    Col;
 #else
-  CGAL_static_assertion(false, "Eigen is required to perform arc subsampling!");
+  CGAL_static_assertion_msg(false, "Eigen is required to perform arc subsampling!");
 #endif
 
   auto V1c = V1.cartesian_begin(), V2c = V2.cartesian_begin(), V3c = V3.cartesian_begin();
