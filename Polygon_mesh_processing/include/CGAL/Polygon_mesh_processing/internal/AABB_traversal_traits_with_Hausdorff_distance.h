@@ -322,7 +322,8 @@ namespace CGAL {
     m_infinity_value(infinity_value),
     m_initial_bound(initial_bound),
     m_distance_bound(distance_bound),
-    h_global_bounds(m_infinity_value) {
+    h_global_bounds(m_infinity_value),
+    m_early_quit(false) {
 
       CGAL_precondition(m_error_bound >= FT(0));
       CGAL_precondition(m_infinity_value >= FT(0));
@@ -402,7 +403,23 @@ namespace CGAL {
     // Hausdorff distance and thus have to be entered.
     template<class Node>
     std::pair<bool, Priority>
-    do_intersect_with_priority(const Query&, const Node& node) const {
+    do_intersect_with_priority(const Query&, const Node& node) {
+
+      // Check if we can stop already here. Since our bounds only grow, in case, we are
+      // above the user-defined max distance bound, we return. This way, the user can
+      // early detect that he is behind his thresholds.
+      if (m_distance_bound >= FT(0) && !m_early_quit) {
+
+        CGAL_assertion(h_global_bounds.lower >= FT(0));
+        CGAL_assertion(h_global_bounds.upper >= FT(0));
+        CGAL_assertion(h_global_bounds.upper >= h_global_bounds.lower);
+
+        const FT hdist = (h_global_bounds.lower + h_global_bounds.upper) / FT(2);
+        m_early_quit = (hdist >= m_distance_bound);
+        // std::cout << "- hdist: " <<  hdist << std::endl;
+        // std::cout << "- early quit: " << m_early_quit << std::endl;
+      }
+      if (m_early_quit) return std::make_pair(false, FT(0));
 
       // Have reached a node, determine whether or not to enter it.
       // Get the bounding box of the nodes.
@@ -435,11 +452,6 @@ namespace CGAL {
 
       // See Algorithm 1 here.
       // If the distance is larger than the global lower bound, enter the node, i.e. return true.
-
-      // CGAL_assertion(h_global_bounds.upper >= h_global_bounds.lower);
-      // const FT hdist = (h_global_bounds.lower + h_global_bounds.upper) / FT(2);
-      // std::cout << "- distance: " << hdist << std::endl;
-
       CGAL_assertion(h_global_bounds.lower >= FT(0));
       if (dist > h_global_bounds.lower) {
         return std::make_pair(true , +dist);
@@ -449,7 +461,7 @@ namespace CGAL {
     }
 
     template<class Node>
-    bool do_intersect(const Query& query, const Node& node) const {
+    bool do_intersect(const Query& query, const Node& node) {
       return this->do_intersect_with_priority(query, node).first;
     }
 
@@ -459,6 +471,10 @@ namespace CGAL {
       for (PrimitiveConstIterator it = group_begin; it != group_end; ++it) {
         this->intersection(query, *it);
       }
+    }
+
+    bool early_quit() const {
+      return m_early_quit;
     }
 
     // Return those triangles from TM1, which are candidates for including a
@@ -524,6 +540,7 @@ namespace CGAL {
     const FT m_initial_bound;
     const FT m_distance_bound;
     Global_bounds h_global_bounds;
+    bool m_early_quit;
 
     // All candidate triangles.
     Heap_type m_candidiate_triangles;

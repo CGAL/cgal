@@ -1509,6 +1509,18 @@ double bounded_error_Hausdorff_impl(
   timer.stop();
   // std::cout << "* culling (sec.): " << timer.time() << std::endl;
 
+  CGAL_assertion(global_bounds.lower >= FT(0));
+  CGAL_assertion(global_bounds.upper >= FT(0));
+  CGAL_assertion(global_bounds.upper >= global_bounds.lower);
+
+  // If we already reached the user-defined max distance bound, we quit.
+  if (traversal_traits_tm1.early_quit()) {
+    CGAL_assertion(distance_bound >= FT(0));
+    const double hdist = CGAL::to_double((global_bounds.lower + global_bounds.upper) / FT(2));
+    return hdist;
+  }
+  CGAL_assertion(!traversal_traits_tm1.early_quit());
+
   // Second, we apply subdivision.
   // std::cout << "- applying subdivision" << std::endl;
 
@@ -1516,13 +1528,17 @@ double bounded_error_Hausdorff_impl(
   timer.start();
 
   // See Section 5.1 in the paper.
-  CGAL_assertion(global_bounds.lower >= FT(0));
-  CGAL_assertion(global_bounds.upper >= FT(0));
-  CGAL_assertion(global_bounds.upper >= global_bounds.lower);
   const FT squared_error_bound = error_bound * error_bound;
   while (
     (global_bounds.upper - global_bounds.lower > error_bound) &&
     !candidate_triangles.empty()) {
+
+    // Check if we can early quit.
+    if (distance_bound >= FT(0)) {
+      const FT hdist = (global_bounds.lower + global_bounds.upper) / FT(2);
+      const bool early_quit = (hdist >= distance_bound);
+      if (early_quit) break;
+    }
 
     // Get the first triangle and its Hausdorff bounds from the candidate set.
     const Candidate triangle_and_bound = candidate_triangles.top();
@@ -2466,12 +2482,9 @@ bool are_within_tolerance(
   }
   CGAL_assertion(hdist >= 0.0);
 
-  std::cout << "- fin distance: " << hdist << std::endl;
-  std::cout << "- max distance: " << distance_bound << std::endl;
-  // return hdist <= distance_bound;
-
-  CGAL_assertion_msg(false, "TODO: FINISH THE DISTANCE TOLERANCE FUNCTION!");
-  return false;
+  // std::cout << "- fin distance: " << hdist << std::endl;
+  // std::cout << "- max distance: " << distance_bound << std::endl;
+  return hdist <= distance_bound;
 }
 
 template< class Concurrency_tag,

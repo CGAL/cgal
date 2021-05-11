@@ -879,7 +879,7 @@ void test_early_quit(const std::string filepath) {
   std::cout << " ---- distance 0.0 = 0.0 ---- " << std::endl;
   timer.reset();
   timer.start();
-  // assert(PMP::are_within_tolerance<TAG>(mesh1, mesh2, 0.0));
+  assert(PMP::are_within_tolerance<TAG>(mesh1, mesh2, 0.0));
   timer.stop();
   const double timea = timer.time();
 
@@ -895,19 +895,19 @@ void test_early_quit(const std::string filepath) {
   std::cout << " ---- distance 0.5 < 0.6 ---- " << std::endl;
   timer.reset();
   timer.start();
-  // assert(PMP::are_within_tolerance<TAG>(mesh1, mesh2, 0.6));
+  assert(PMP::are_within_tolerance<TAG>(mesh1, mesh2, 0.6));
   timer.stop();
   const double timec = timer.time();
   std::cout << " ---- distance 0.5 > 0.4 ---- " << std::endl;
   timer.reset();
   timer.start();
-  // assert(!PMP::are_within_tolerance<TAG>(mesh1, mesh2, 0.4));
+  assert(!PMP::are_within_tolerance<TAG>(mesh1, mesh2, 0.4));
   timer.stop();
   const double timed = timer.time();
   std::cout << " ---- distance 0.5 > 0.2 ---- " << std::endl;
   timer.reset();
   timer.start();
-  // assert(!PMP::are_within_tolerance<TAG>(mesh1, mesh2, 0.2));
+  assert(!PMP::are_within_tolerance<TAG>(mesh1, mesh2, 0.2));
   timer.stop();
   const double timee = timer.time();
 
