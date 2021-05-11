@@ -31,6 +31,7 @@
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Real_timer.h>
+#include <CGAL/iterator.h>
 
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #if defined(CGAL_METIS_ENABLED)
@@ -1372,6 +1373,7 @@ std::pair<typename Kernel::FT, bool> preprocess_bounded_error_Hausdorff_impl(
     Point_3(bb.xmin(), bb.ymin(), bb.zmin()),
     Point_3(bb.xmax(), bb.ymax(), bb.zmax()));
   FT infinity_value = CGAL::approximate_sqrt(sq_dist) * FT(2);
+  CGAL_assertion(infinity_value >= FT(0));
 
   // Compare meshes and build trees.
   tm1_only.clear();
@@ -1446,7 +1448,8 @@ template< class Kernel,
           class VPM1,
           class VPM2,
           class TM1Tree,
-          class TM2Tree >
+          class TM2Tree,
+          class OutputIterator >
 double bounded_error_Hausdorff_impl(
   const TriangleMesh1& tm1,
   const TriangleMesh2& tm2,
@@ -1457,7 +1460,8 @@ double bounded_error_Hausdorff_impl(
   const typename Kernel::FT initial_bound,
   const typename Kernel::FT distance_bound,
   const TM1Tree& tm1_tree,
-  const TM2Tree& tm2_tree)
+  const TM2Tree& tm2_tree,
+  OutputIterator& out)
 {
   using FT         = typename Kernel::FT;
   using Point_3    = typename Kernel::Point_3;
@@ -1674,9 +1678,9 @@ double bounded_error_Hausdorff_impl(
   CGAL_assertion(global_bounds.upair.first != boost::graph_traits<TriangleMesh1>::null_face());
   CGAL_assertion(global_bounds.upair.second != boost::graph_traits<TriangleMesh2>::null_face());
 
-  // Off for the moment.
-  // const auto realizing_triangles = global_bounds.upair;
-  // return std::make_pair(hdist, realizing_triangles);
+  // Output face pairs, which realize the Hausdorff distance.
+  *out++ = global_bounds.lpair;
+  *out++ = global_bounds.upair;
 
   return hdist;
 }
@@ -1796,6 +1800,7 @@ struct Bounded_error_distance_computation {
     timer.reset();
     timer.start();
     double hdist = -1.0;
+    auto stub = CGAL::Emptyset_iterator();
 
     for (std::size_t i = range.begin(); i != range.end(); ++i) {
       CGAL_assertion(i < tm1_parts.size());
@@ -1807,7 +1812,7 @@ struct Bounded_error_distance_computation {
       const double dist = bounded_error_Hausdorff_impl<Kernel>(
         tm1, tm2, error_bound, vpm1, vpm2,
         infinity_value, initial_bound, -FT(1),
-        tm1_tree, tm2_tree);
+        tm1_tree, tm2_tree, stub);
       if (dist > hdist) hdist = dist;
     }
     if (hdist > distance) distance = hdist;
@@ -1829,7 +1834,8 @@ template< class Concurrency_tag,
           class VPM1,
           class VPM2,
           class NamedParameters1,
-          class NamedParameters2 >
+          class NamedParameters2,
+          class OutputIterator >
 double bounded_error_one_sided_Hausdorff_impl(
   const TriangleMesh1& tm1,
   const TriangleMesh2& tm2,
@@ -1839,7 +1845,8 @@ double bounded_error_one_sided_Hausdorff_impl(
   const VPM1& vpm1,
   const VPM2& vpm2,
   const NamedParameters1& np1,
-  const NamedParameters2& np2)
+  const NamedParameters2& np2,
+  OutputIterator& out)
 {
   #if !defined(CGAL_LINKED_WITH_TBB) || !defined(CGAL_METIS_ENABLED)
   CGAL_static_assertion_msg(
@@ -1984,6 +1991,10 @@ double bounded_error_one_sided_Hausdorff_impl(
   // std::cout << "* infinity_value: " << infinity_value << std::endl;
   if (infinity_value < FT(0)) {
     // std::cout << "* culling rate: 100%" << std::endl;
+    const auto face1 = *(faces(tm1).begin());
+    const auto face2 = *(faces(tm2).begin());
+    *out++ = std::make_pair(face1, face2);
+    *out++ = std::make_pair(face1, face2);
     return 0.0; // TM1 is part of TM2 so the distance is zero
   }
   CGAL_assertion(error_bound >= FT(0));
@@ -2013,7 +2024,7 @@ double bounded_error_one_sided_Hausdorff_impl(
     hdist = bounded_error_Hausdorff_impl<Kernel>(
       tm1, tm2, error_bound, vpm1, vpm2,
       infinity_value, initial_bound, distance_bound,
-      tm1_tree, tm2_tree);
+      tm1_tree, tm2_tree, out);
   }
 
   timer.stop();
@@ -2031,7 +2042,9 @@ template< class Concurrency_tag,
           class VPM1,
           class VPM2,
           class NamedParameters1,
-          class NamedParameters2 >
+          class NamedParameters2,
+          class OutputIterator1,
+          class OutputIterator2 >
 double bounded_error_symmetric_Hausdorff_impl(
   const TriangleMesh1& tm1,
   const TriangleMesh2& tm2,
@@ -2041,7 +2054,9 @@ double bounded_error_symmetric_Hausdorff_impl(
   const VPM1& vpm1,
   const VPM2& vpm2,
   const NamedParameters1& np1,
-  const NamedParameters2& np2)
+  const NamedParameters2& np2,
+  OutputIterator1& out1,
+  OutputIterator2& out2)
 {
   #if !defined(CGAL_LINKED_WITH_TBB) || !defined(CGAL_METIS_ENABLED)
   CGAL_static_assertion_msg(
@@ -2052,9 +2067,9 @@ double bounded_error_symmetric_Hausdorff_impl(
   // Naive version.
   // TODO: we can use it for parallel version to simplify our life.
   // const double hdist1 = bounded_error_one_sided_Hausdorff_impl<Concurrency_tag, Kernel>(
-  //   tm1, tm2, error_bound, distance_bound, compare_meshes, vpm1, vpm2, np1, np2);
+  //   tm1, tm2, error_bound, distance_bound, compare_meshes, vpm1, vpm2, np1, np2, out1);
   // const double hdist2 = bounded_error_one_sided_Hausdorff_impl<Concurrency_tag, Kernel>(
-  //   tm2, tm1, error_bound, distance_bound, compare_meshes, vpm2, vpm1, np1, np2);
+  //   tm2, tm1, error_bound, distance_bound, compare_meshes, vpm2, vpm1, np1, np2, out2);
   // return (CGAL::max)(hdist1, hdist2);
 
   // Optimized version.
@@ -2090,6 +2105,12 @@ double bounded_error_symmetric_Hausdorff_impl(
 
   if (infinity_value < FT(0)) {
     // std::cout << "* culling rate: 100%" << std::endl;
+    const auto face1 = *(faces(tm1).begin());
+    const auto face2 = *(faces(tm2).begin());
+    *out1++ = std::make_pair(face1, face2);
+    *out1++ = std::make_pair(face1, face2);
+    *out2++ = std::make_pair(face2, face1);
+    *out2++ = std::make_pair(face2, face1);
     return 0.0; // TM1 and TM2 are equal so the distance is zero
   }
   CGAL_assertion(infinity_value > FT(0));
@@ -2102,7 +2123,7 @@ double bounded_error_symmetric_Hausdorff_impl(
     dista = bounded_error_Hausdorff_impl<Kernel>(
       tm1, tm2, error_bound, vpm1, vpm2,
       infinity_value, initial_bound, distance_bound,
-      tm1_tree, tm2_tree);
+      tm1_tree, tm2_tree, out1);
   }
 
   // In case this is true, we need to rebuild trees in order to accelerate
@@ -2125,7 +2146,7 @@ double bounded_error_symmetric_Hausdorff_impl(
     distb = bounded_error_Hausdorff_impl<Kernel>(
       tm2, tm1, error_bound, vpm2, vpm1,
       infinity_value, initial_bound, distance_bound,
-      tm2_tree, tm1_tree);
+      tm2_tree, tm1_tree, out2);
   }
 
   // Return the maximum.
@@ -2310,10 +2331,14 @@ double bounded_error_Hausdorff_distance(
     parameters::get_parameter(np2, internal_np::match_faces), true);
   const bool match_faces = match_faces1 && match_faces2;
 
+  auto out = parameters::choose_parameter(
+    parameters::get_parameter(np1, internal_np::output_iterator),
+    CGAL::Emptyset_iterator());
+
   CGAL_precondition(error_bound >= 0.0);
   const FT error_threshold = static_cast<FT>(error_bound);
   return internal::bounded_error_one_sided_Hausdorff_impl<Concurrency_tag, Traits>(
-    tm1, tm2, error_threshold, -FT(1), match_faces, vpm1, vpm2, np1, np2);
+    tm1, tm2, error_threshold, -FT(1), match_faces, vpm1, vpm2, np1, np2, out);
 }
 
 template< class Concurrency_tag,
@@ -2385,10 +2410,18 @@ double bounded_error_symmetric_Hausdorff_distance(
     parameters::get_parameter(np2, internal_np::match_faces), true);
   const bool match_faces = match_faces1 && match_faces2;
 
+  // TODO: should we return a union of these realizing triangles?
+  auto out1 = parameters::choose_parameter(
+    parameters::get_parameter(np1, internal_np::output_iterator),
+    CGAL::Emptyset_iterator());
+  auto out2 = parameters::choose_parameter(
+    parameters::get_parameter(np2, internal_np::output_iterator),
+    CGAL::Emptyset_iterator());
+
   CGAL_precondition(error_bound >= 0.0);
   const FT error_threshold = static_cast<FT>(error_bound);
   return internal::bounded_error_symmetric_Hausdorff_impl<Concurrency_tag, Traits>(
-    tm1, tm2, error_threshold, -FT(1), match_faces, vpm1, vpm2, np1, np2);
+    tm1, tm2, error_threshold, -FT(1), match_faces, vpm1, vpm2, np1, np2, out1, out2);
 }
 
 template< class Concurrency_tag,
@@ -2471,14 +2504,15 @@ bool is_further_than(
   const FT error_threshold = static_cast<FT>(error_bound);
   CGAL_precondition(distance_bound >= 0.0);
   const FT distance_threshold = static_cast<FT>(distance_bound);
+  auto stub = CGAL::Emptyset_iterator();
 
   double hdist = -1.0;
   if (use_one_sided) {
     hdist = internal::bounded_error_one_sided_Hausdorff_impl<Concurrency_tag, Traits>(
-      tm1, tm2, error_threshold, distance_threshold, match_faces, vpm1, vpm2, np1, np2);
+      tm1, tm2, error_threshold, distance_threshold, match_faces, vpm1, vpm2, np1, np2, stub);
   } else {
     hdist = internal::bounded_error_symmetric_Hausdorff_impl<Concurrency_tag, Traits>(
-      tm1, tm2, error_threshold, distance_threshold, match_faces, vpm1, vpm2, np1, np2);
+      tm1, tm2, error_threshold, distance_threshold, match_faces, vpm1, vpm2, np1, np2, stub, stub);
   }
   CGAL_assertion(hdist >= 0.0);
 

@@ -733,14 +733,15 @@ void compute_realizing_triangles(
   const double error_bound, const std::string prefix, const bool save = false) {
 
   std::cout << "* getting realizing triangles: " << std::endl;
+  std::vector< std::pair<Face_handle, Face_handle> > fpairs;
   const double hdist =
-    PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound);
-  const auto data = std::make_pair(hdist, std::make_pair(Face_handle(), Face_handle()));
-  const auto& faces = data.second;
-  const int f1 = static_cast<int>(faces.first);
-  const int f2 = static_cast<int>(faces.second);
+    PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound,
+    CGAL::parameters::output_iterator(std::back_inserter(fpairs)));
+  assert(fpairs.size() == 2); // lower bound face pair + upper bound face pair
+  const int f1 = static_cast<int>(fpairs.back().first);  // f1 / f2: upper bound
+  const int f2 = static_cast<int>(fpairs.back().second);
 
-  std::cout << "* Hausdorff: " << data.first << std::endl;
+  std::cout << "* Hausdorff: " << hdist << std::endl;
   std::cout << "* f1 / f2: " << f1 << " / " << f2 << std::endl;
 
   if (f1 != -1 && save) {
@@ -941,13 +942,13 @@ int main(int argc, char** argv) {
 
   // test_synthetic_data(apprx_hd);
   // test_synthetic_data(naive_hd);
-  // test_synthetic_data(bound_hd);
+  test_synthetic_data(bound_hd);
 
   // --- Compare on common meshes.
 
   // test_one_versus_another(apprx_hd, naive_hd);
   // test_one_versus_another(naive_hd, bound_hd);
-  // test_one_versus_another(bound_hd, apprx_hd);
+  test_one_versus_another(bound_hd, apprx_hd);
 
   // --- Compare on real meshes.
 
@@ -956,7 +957,7 @@ int main(int argc, char** argv) {
 
   // test_real_meshes(filepath1, filepath2, apprx_hd, naive_hd);
   // test_real_meshes(filepath1, filepath2, naive_hd, bound_hd);
-  // test_real_meshes(filepath1, filepath2, bound_hd, apprx_hd);
+  test_real_meshes(filepath1, filepath2, bound_hd, apprx_hd);
 
   // --- Compare timings.
 
@@ -964,24 +965,24 @@ int main(int argc, char** argv) {
   // filepath = "/Users/monet/Documents/fork/pull-requests/hausdorff/data/bunny-dense.off";
   // test_timings(filepath, apprx_hd);
   // test_timings(filepath, naive_hd);
-  // test_timings(filepath, bound_hd);
+  test_timings(filepath, bound_hd);
 
   // --- Compare with the paper.
 
   // test_bunny(apprx_hd);
   // test_bunny(naive_hd);
-  // test_bunny(bound_hd, 3);
+  test_bunny(bound_hd, 3);
 
   // --- Test realizing triangles.
   test_realizing_triangles(error_bound);
 
   #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED) && defined(USE_PARALLEL_BEHD)
   // --- Test parallelization.
-  // test_parallel_version(filepath, error_bound);
+  test_parallel_version(filepath, error_bound);
   #endif // defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
 
   // --- Test early quit.
-  // test_early_quit(filepath);
+  test_early_quit(filepath);
 
   // ------------------------------------------------------------------------ //
 
