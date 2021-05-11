@@ -879,43 +879,43 @@ void test_early_quit(const std::string filepath) {
   std::cout << " ---- distance 0.0 = 0.0 ---- " << std::endl;
   timer.reset();
   timer.start();
-  assert(PMP::are_within_tolerance<TAG>(mesh1, mesh2, 0.0));
+  assert(!PMP::is_further_than<TAG>(mesh1, mesh2, 0.0));
   timer.stop();
   const double timea = timer.time();
 
   PMP::transform(Affine_transformation_3(CGAL::Translation(),
     Vector_3(0.0, 0.0, 0.5)), mesh2);
 
-  std::cout << " ---- distance 0.5 < 0.8 ---- " << std::endl;
+  std::cout << " ---- distance 0.5 < 1.0 ---- " << std::endl;
   timer.reset();
   timer.start();
-  assert(PMP::are_within_tolerance<TAG>(mesh1, mesh2, 0.8));
+  assert(!PMP::is_further_than<TAG>(mesh1, mesh2, 1.0));
   timer.stop();
   const double timeb = timer.time();
   std::cout << " ---- distance 0.5 < 0.6 ---- " << std::endl;
   timer.reset();
   timer.start();
-  assert(PMP::are_within_tolerance<TAG>(mesh1, mesh2, 0.6));
+  assert(!PMP::is_further_than<TAG>(mesh1, mesh2, 0.6));
   timer.stop();
   const double timec = timer.time();
   std::cout << " ---- distance 0.5 > 0.4 ---- " << std::endl;
   timer.reset();
   timer.start();
-  assert(!PMP::are_within_tolerance<TAG>(mesh1, mesh2, 0.4));
+  assert(PMP::is_further_than<TAG>(mesh1, mesh2, 0.4));
   timer.stop();
   const double timed = timer.time();
-  std::cout << " ---- distance 0.5 > 0.2 ---- " << std::endl;
+  std::cout << " ---- distance 0.5 > 0.0 ---- " << std::endl;
   timer.reset();
   timer.start();
-  assert(!PMP::are_within_tolerance<TAG>(mesh1, mesh2, 0.2));
+  assert(PMP::is_further_than<TAG>(mesh1, mesh2, 0.0));
   timer.stop();
   const double timee = timer.time();
 
   std::cout << "* timea 0.0 = 0.0 = " << timea << std::endl;
-  std::cout << "* timeb 0.5 < 0.8 = " << timeb << std::endl;
+  std::cout << "* timeb 0.5 < 1.0 = " << timeb << std::endl;
   std::cout << "* timec 0.5 < 0.6 = " << timec << std::endl;
   std::cout << "* timed 0.5 > 0.4 = " << timed << std::endl;
-  std::cout << "* timee 0.5 > 0.2 = " << timee << std::endl;
+  std::cout << "* timee 0.5 > 0.0 = " << timee << std::endl;
 }
 
 int main(int argc, char** argv) {
@@ -973,7 +973,7 @@ int main(int argc, char** argv) {
   // test_bunny(bound_hd, 3);
 
   // --- Test realizing triangles.
-  // test_realizing_triangles(error_bound);
+  test_realizing_triangles(error_bound);
 
   #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED) && defined(USE_PARALLEL_BEHD)
   // --- Test parallelization.
@@ -981,7 +981,7 @@ int main(int argc, char** argv) {
   #endif // defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
 
   // --- Test early quit.
-  test_early_quit(filepath);
+  // test_early_quit(filepath);
 
   // ------------------------------------------------------------------------ //
 

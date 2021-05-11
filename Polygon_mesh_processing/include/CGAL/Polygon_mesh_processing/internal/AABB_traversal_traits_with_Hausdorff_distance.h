@@ -340,11 +340,15 @@ namespace CGAL {
 
     // Explore the whole tree, i.e. always enter children if the methods
     // do_intersect() below determine that it is worthwhile.
-    bool go_further() const { return true; }
+    bool go_further() const {
+      return !m_early_quit;
+    }
 
     // Compute the explicit Hausdorff distance to the given primitive.
     template<class Primitive>
     void intersection(const Query&, const Primitive& primitive) {
+
+      if (m_early_quit) return;
 
       // Set initial tight bounds.
       CGAL_assertion(primitive.id() != Face_handle_1());

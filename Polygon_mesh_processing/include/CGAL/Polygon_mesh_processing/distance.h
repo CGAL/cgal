@@ -2422,13 +2422,13 @@ double bounded_error_symmetric_Hausdorff_distance(
 
 /**
  * \ingroup PMP_distance_grp
- * returns `true` if two meshes are within the user-defined max distance,
- * otherwise it returns `false`. The distance used to compute the proximity
- * of the meshes is the `bounded_error_Hausdorff_distance`.
+ * returns `true` if the Hausdorff distance between two meshes is larger than
+ * the user-defined max distance, otherwise it returns `false`. The distance used
+ * to compute the proximity of the meshes is the `bounded_error_Hausdorff_distance`.
  *
  * Instead of computing the full distance and checking it against the user-provided
  * value, this function early quits in case certain criteria show that the meshes
- * do not satisfy the provided max distance.
+ * do not satisfy the provided distance bound.
  *
  * @return Boolean `true` or `false`
  */
@@ -2437,7 +2437,7 @@ template< class Concurrency_tag,
           class TriangleMesh2,
           class NamedParameters1,
           class NamedParameters2 >
-bool are_within_tolerance(
+bool is_further_than(
   const TriangleMesh1& tm1,
   const TriangleMesh2& tm2,
   const double distance_bound,
@@ -2484,34 +2484,34 @@ bool are_within_tolerance(
 
   // std::cout << "- fin distance: " << hdist << std::endl;
   // std::cout << "- max distance: " << distance_bound << std::endl;
-  return hdist <= distance_bound;
+  return hdist > distance_bound;
 }
 
 template< class Concurrency_tag,
           class TriangleMesh1,
           class TriangleMesh2,
           class NamedParameters1 >
-double are_within_tolerance(
+double is_further_than(
   const TriangleMesh1& tm1,
   const TriangleMesh2& tm2,
   const double max_distance,
   const double error_bound,
   const NamedParameters1& np1)
 {
-  return are_within_tolerance<Concurrency_tag>(
+  return is_further_than<Concurrency_tag>(
     tm1, tm2, max_distance, error_bound, np1, parameters::all_default());
 }
 
 template< class Concurrency_tag,
           class TriangleMesh1,
           class TriangleMesh2 >
-double are_within_tolerance(
+double is_further_than(
   const TriangleMesh1& tm1,
   const TriangleMesh2& tm2,
   const double max_distance = 1.0,
   const double error_bound = 0.0001)
 {
-  return are_within_tolerance<Concurrency_tag>(
+  return is_further_than<Concurrency_tag>(
     tm1, tm2, max_distance, error_bound, parameters::all_default());
 }
 
