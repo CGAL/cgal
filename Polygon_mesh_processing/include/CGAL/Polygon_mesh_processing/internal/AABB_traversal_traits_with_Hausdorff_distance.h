@@ -159,6 +159,10 @@ namespace CGAL {
       const FT distance_lower = (CGAL::max)((CGAL::max)(h_v0_lower, h_v1_lower), h_v2_lower); // it is (11) in the paper
       const FT distance_upper = (CGAL::max)((CGAL::max)(v0_dist, v1_dist), v2_dist); // it is () part of (10) in the paper
 
+      CGAL_assertion(distance_lower >= FT(0));
+      CGAL_assertion(distance_upper >= FT(0));
+      CGAL_assertion(distance_upper >= distance_lower);
+
       // Since we are at the level of a single triangle in TM2, distance_upper is
       // actually the correct Hausdorff distance from the query triangle in
       // TM1 to the primitive triangle in TM2.
@@ -172,6 +176,7 @@ namespace CGAL {
         h_local_bounds.upper = distance_upper;
         h_local_bounds.tm2_uface = primitive.id();
       }
+      CGAL_assertion(h_local_bounds.upper >= h_local_bounds.lower);
     }
 
     // Determine whether child nodes will still contribute to a smaller
@@ -317,8 +322,8 @@ namespace CGAL {
     h_global_bounds(m_infinity_value) {
 
       CGAL_precondition(m_error_bound >= FT(0));
-      CGAL_precondition(m_infinity_value > FT(0));
-      CGAL_precondition(initial_lower_bound >= m_error_bound);
+      CGAL_precondition(m_infinity_value >= FT(0));
+      CGAL_precondition(m_error_bound <= initial_lower_bound);
 
       // Initialize the global bounds with 0, they will only grow.
       // If we leave zero here, then we are very slow even for big input error bounds!
@@ -326,7 +331,7 @@ namespace CGAL {
       // which are already within this bound. It makes the code faster for close meshes.
       // We also use initial_lower_bound here to accelerate the symmetric distance computation.
       h_global_bounds.lower = initial_lower_bound; // = FT(0);
-      h_global_bounds.upper = m_error_bound;       // = FT(0);
+      h_global_bounds.upper = initial_lower_bound; // = FT(0);
     }
 
     // Explore the whole tree, i.e. always enter children if the methods
@@ -367,6 +372,7 @@ namespace CGAL {
 
       CGAL_assertion(local_bounds.lower >= FT(0));
       CGAL_assertion(local_bounds.upper >= FT(0));
+      CGAL_assertion(local_bounds.upper >= local_bounds.lower);
       CGAL_assertion(local_bounds.lpair == initial_bounds.default_face_pair());
       CGAL_assertion(local_bounds.upair == initial_bounds.default_face_pair());
 
@@ -382,6 +388,7 @@ namespace CGAL {
         h_global_bounds.upair.first  = fpair.first;
         h_global_bounds.upair.second = local_bounds.tm2_uface;
       }
+      CGAL_assertion(h_global_bounds.upper >= h_global_bounds.lower);
 
       // Store the triangle given as primitive here as candidate triangle
       // together with the local bounds it obtained to send it to subdivision later.
@@ -425,9 +432,12 @@ namespace CGAL {
 
       // See Algorithm 1 here.
       // If the distance is larger than the global lower bound, enter the node, i.e. return true.
-      CGAL_assertion(h_global_bounds.lower >= FT(0));
+
+      // CGAL_assertion(h_global_bounds.upper >= h_global_bounds.lower);
       // const FT hdist = (h_global_bounds.lower + h_global_bounds.upper) / FT(2);
       // std::cout << "- distance: " << hdist << std::endl;
+
+      CGAL_assertion(h_global_bounds.lower >= FT(0));
       if (dist > h_global_bounds.lower) {
         return std::make_pair(true , +dist);
       } else {
@@ -456,6 +466,11 @@ namespace CGAL {
 
     // Return the global Hausdorff bounds computed for the passed query triangle.
     Global_bounds get_global_bounds() {
+
+      CGAL_assertion(h_global_bounds.lower >= FT(0));
+      CGAL_assertion(h_global_bounds.upper >= FT(0));
+      CGAL_assertion(h_global_bounds.upper >= h_global_bounds.lower);
+
       update_global_bounds();
       return h_global_bounds;
     }

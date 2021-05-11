@@ -1520,6 +1520,7 @@ double bounded_error_Hausdorff_impl(
   // See Section 5.1 in the paper.
   CGAL_assertion(global_bounds.lower >= FT(0));
   CGAL_assertion(global_bounds.upper >= FT(0));
+  CGAL_assertion(global_bounds.upper >= global_bounds.lower);
   const FT squared_error_bound = error_bound * error_bound;
   while (
     (global_bounds.upper - global_bounds.lower > error_bound) &&
@@ -1538,6 +1539,7 @@ double bounded_error_Hausdorff_impl(
 
     CGAL_assertion(triangle_bounds.lower >= FT(0));
     CGAL_assertion(triangle_bounds.upper >= FT(0));
+    CGAL_assertion(triangle_bounds.upper >= triangle_bounds.lower);
 
     if (
       (triangle_bounds.upper > global_bounds.lower) &&
@@ -1608,9 +1610,10 @@ double bounded_error_Hausdorff_impl(
 
         CGAL_assertion(local_bounds.lower >= FT(0));
         CGAL_assertion(local_bounds.upper >= FT(0));
+        CGAL_assertion(local_bounds.upper >= local_bounds.lower);
 
-        CGAL_precondition(local_bounds.lpair == local_bounds.default_face_pair());
-        CGAL_precondition(local_bounds.upair == local_bounds.default_face_pair());
+        CGAL_assertion(local_bounds.lpair == local_bounds.default_face_pair());
+        CGAL_assertion(local_bounds.upair == local_bounds.default_face_pair());
 
         if (local_bounds.lower > global_bounds.lower) {
           global_bounds.lower = local_bounds.lower;
@@ -1642,6 +1645,7 @@ double bounded_error_Hausdorff_impl(
   // Compute linear interpolation between the found lower and upper bounds.
   CGAL_assertion(global_bounds.lower >= FT(0));
   CGAL_assertion(global_bounds.upper >= FT(0));
+  CGAL_assertion(global_bounds.upper >= global_bounds.lower);
   const double hdist = CGAL::to_double((global_bounds.lower + global_bounds.upper) / FT(2));
 
   // Get realizing triangles.
@@ -1651,10 +1655,10 @@ double bounded_error_Hausdorff_impl(
   // std::cout << "- found uface 1:" << static_cast<int>(global_bounds.upair.first)  << std::endl;
   // std::cout << "- found uface 2:" << static_cast<int>(global_bounds.upair.second) << std::endl;
 
-  CGAL_precondition(global_bounds.lpair.first != boost::graph_traits<TriangleMesh1>::null_face());
-  CGAL_precondition(global_bounds.lpair.second != boost::graph_traits<TriangleMesh2>::null_face());
-  CGAL_precondition(global_bounds.upair.first != boost::graph_traits<TriangleMesh1>::null_face());
-  CGAL_precondition(global_bounds.upair.second != boost::graph_traits<TriangleMesh2>::null_face());
+  CGAL_assertion(global_bounds.lpair.first != boost::graph_traits<TriangleMesh1>::null_face());
+  CGAL_assertion(global_bounds.lpair.second != boost::graph_traits<TriangleMesh2>::null_face());
+  CGAL_assertion(global_bounds.upair.first != boost::graph_traits<TriangleMesh1>::null_face());
+  CGAL_assertion(global_bounds.upair.second != boost::graph_traits<TriangleMesh2>::null_face());
 
   // Off for the moment.
   // const auto realizing_triangles = global_bounds.upair;
