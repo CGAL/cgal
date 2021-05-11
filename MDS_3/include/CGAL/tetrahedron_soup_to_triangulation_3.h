@@ -57,6 +57,11 @@ namespace CGAL {
     std::map<std::array<int, 3>, typename Tr::Cell::Surface_patch_index> border_facets;
     std::map<Point, int> p2i;
 
+    CGAL_assertion_code(
+      typename Triangulation::Geom_traits::Orientation_3 orientation =
+      tr.geom_traits().orientation_3_object();
+    );
+
     for (typename TetrahedronRange::value_type tet : tets)
     {
       CGAL_assertion(tet.orientation() == CGAL::POSITIVE);
@@ -68,15 +73,16 @@ namespace CGAL {
         if (p2i.find(pi) == p2i.end())
         {
           points.push_back(pi);
-          p2i.insert(std::make_pair(pi, points.size() - 1));
-          cell[i] = static_cast<int>(points.size() - 1);
+          int index = static_cast<int>(points.size() - 1);
+          p2i.insert(std::make_pair(pi, index));
+          cell[i] = index;
         }
         else
           cell[i] = p2i.at(pi);
       }
       cell[4] = 1;
 
-      CGAL_assertion(CGAL::orientation(points[cell[0]],
+      CGAL_assertion(orientation(points[cell[0]],
         points[cell[1]], points[cell[2]], points[cell[3]]) == CGAL::POSITIVE);
 
       finite_cells.push_back(cell);
