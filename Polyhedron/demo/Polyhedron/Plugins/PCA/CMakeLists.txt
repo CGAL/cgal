@@ -38,7 +38,7 @@ target_link_libraries(
   PUBLIC scene_surface_mesh_item scene_points_with_normal_item
          scene_polylines_item)
 
-     if(BUILD_TESTING)
+     if(BUILD_TESTING AND NOT CGAL_WIN32_CMAKE_ON_CYGWIN)
        set_tests_properties(
          compilation_of__create_obb_mesh_plugin
          PROPERTIES RESOURCE_LOCK Selection_test_resources)

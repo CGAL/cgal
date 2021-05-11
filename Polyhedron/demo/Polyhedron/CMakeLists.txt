@@ -48,7 +48,7 @@ include(${CGAL_USE_FILE})
 
 find_package(
   Qt5 QUIET
-  COMPONENTS OpenGL Script
+  COMPONENTS OpenGL Script Widgets
   OPTIONAL_COMPONENTS ScriptTools WebSockets)
 
 set_package_properties(
@@ -424,7 +424,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   #WS Server
   if(TARGET Qt5::WebSockets)
     add_executable(WS_server Server_ws.cpp)
-    target_link_libraries(WS_server PUBLIC Qt5::WebSockets)
+    target_link_libraries(WS_server PUBLIC Qt5::WebSockets Qt5::Widgets Qt5::Network)
     message(
       STATUS "Qt5WebSockets was found. Using WebSockets is therefore possible.")
   endif()

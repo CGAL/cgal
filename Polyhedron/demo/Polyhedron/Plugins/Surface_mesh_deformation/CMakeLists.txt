@@ -10,7 +10,7 @@ else()
       "NOTICE: The polyhedron edit plugin require Eigen 3.2 (or higher) and will not be available."
   )
 
-if(BUILD_TESTING)
+if(BUILD_TESTING AND NOT CGAL_WIN32_CMAKE_ON_CYGWIN)
   set_tests_properties(
     compilation_of__edit_plugin
     PROPERTIES RESOURCE_LOCK Selection_test_resources)

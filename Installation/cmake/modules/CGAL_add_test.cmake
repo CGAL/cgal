@@ -32,6 +32,9 @@ if(CGAL_RUN_TESTS_THROUGH_SSH)
   find_program(scp_executable scp)
 endif()
 
+if(CGAL_WIN32_CMAKE_ON_CYGWIN)
+  find_program(MSBUILD_CMD NAMES msbuild.exe)
+endif()
 # Process a list, and replace items contains a file pattern (like
 # `*.off`) by the sublist that corresponds to the globbing of the
 # pattern in the directory `${CMAKE_CURRENT_SOURCE_DIR}`.
@@ -74,13 +77,26 @@ function(expand_list_with_globbing list_name)
 endfunction()
 
 function(cgal_add_compilation_test exe_name)
-  if(TEST compilation_of__${exe_name})
-    return()
-  endif()
-  add_test(NAME "compilation_of__${exe_name}"
-    COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${exe_name}" --config "$<CONFIG>")
-  set_property(TEST "compilation_of__${exe_name}"
-    APPEND PROPERTY LABELS "${PROJECT_NAME}")
+  if(NOT CGAL_WIN32_CMAKE_ON_CYGWIN)
+    if(TEST compilation_of__${exe_name})
+      return()
+    endif()
+    add_test(NAME "compilation_of__${exe_name}"
+      COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${exe_name}" --config "$<CONFIG>")
+    set_property(TEST "compilation_of__${exe_name}"
+      APPEND PROPERTY LABELS "${PROJECT_NAME}")
+    set_property(TEST "compilation_of__${exe_name}"
+      APPEND PROPERTY FIXTURES_REQUIRED "check_build_system_SetupFixture")
+  elseif(NOT TEST compilation_of__${PROJECT_NAME})#CGAL_WIN32_CMAKE_ON_CYGWIN
+    add_test(NAME "compilation_of__${PROJECT_NAME}"
+      COMMAND ${TIME_COMMAND} "${MSBUILD_CMD}" "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.sln" "-m:$ENV{NUMBER_OF_PROCESSORS}" "/t:Build" "/p:Configuration=$<CONFIG>")
+    set_property(TEST "compilation_of__${PROJECT_NAME}"
+      APPEND PROPERTY LABELS "${PROJECT_NAME}")
+    set_property(TEST "compilation_of__${PROJECT_NAME}"
+      APPEND PROPERTY FIXTURES_REQUIRED "check_build_system_SetupFixture")
+    set_tests_properties("compilation_of__${PROJECT_NAME}"
+      PROPERTIES RUN_SERIAL TRUE)
+  endif()#CGAL_WIN32_CMAKE_ON_CYGWIN
   if(NOT TARGET ALL_CGAL_TARGETS)
     add_custom_target( ALL_CGAL_TARGETS )
   endif()
@@ -94,8 +110,6 @@ function(cgal_add_compilation_test exe_name)
     set_property(TEST "check_build_system"
        PROPERTY FIXTURES_SETUP "check_build_system_SetupFixture")
   endif()
-  set_property(TEST "compilation_of__${exe_name}"
-    APPEND PROPERTY FIXTURES_REQUIRED "check_build_system_SetupFixture")
   if(TARGET CGAL_Qt5_moc_and_resources) # if CGAL_Qt5 was searched, and is header-only
     get_property(linked_libraries TARGET "${exe_name}" PROPERTY LINK_LIBRARIES)
     #  message(STATUS "${exe_name} depends on ${linked_libraries}")
@@ -135,8 +149,13 @@ function(cgal_setup_test_properties test_name)
   endif()
 
   if(exe_name)
-    set_property(TEST "${test_name}"
-      APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
+    if(NOT CGAL_WIN32_CMAKE_ON_CYGWIN)
+      set_property(TEST "${test_name}"
+        APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
+    else()#CGAL_WIN32_CMAKE_ON_CYGWIN
+      set_property(TEST "${test_name}"
+        APPEND PROPERTY DEPENDS "compilation_of__${PROJECT_NAME}")
+    endif()#CGAL_WIN32_CMAKE_ON_CYGWIN
   endif()
 
   get_filename_component(_source_dir_abs ${CMAKE_CURRENT_SOURCE_DIR} ABSOLUTE)
@@ -217,8 +236,13 @@ function(cgal_setup_test_properties test_name)
     if(exe_name)
       set_property(TEST ${test_name}
         APPEND PROPERTY FIXTURES_REQUIRED "${exe_name}")
-      set_property(TEST "compilation_of__${exe_name}"
-        PROPERTY FIXTURES_SETUP "${exe_name}")
+      if(NOT CGAL_WIN32_CMAKE_ON_CYGWIN)
+        set_property(TEST "compilation_of__${exe_name}"
+          PROPERTY FIXTURES_SETUP "${exe_name}")
+      else()#CGAL_WIN32_CMAKE_ON_CYGWIN
+        set_property(TEST "compilation_of__${PROJECT_NAME}"
+          PROPERTY FIXTURES_SETUP "${exe_name}")
+      endif()#CGAL_WIN32_CMAKE_ON_CYGWIN
       if((ANDROID OR CGAL_RUN_TESTS_THROUGH_SSH) AND NOT TEST push_of__${exe_name})
         if(ANDROID)
           add_test(NAME "push_of__${exe_name}"
