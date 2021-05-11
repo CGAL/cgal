@@ -487,7 +487,7 @@ public:
     friend class Arr_caching_polyline_traits_2<Kernel, Range>;
   public:
 
-    Curve_2 operator()(const Range& range, bool duplicate_first = true) const
+    Curve_2 operator()(const Range& range, bool duplicate_first = false) const
     {
       const Kernel& kernel = *m_traits.subcurve_traits_2();
       return Curve_2(kernel, range, duplicate_first);
