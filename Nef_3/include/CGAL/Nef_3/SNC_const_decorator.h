@@ -411,64 +411,6 @@ public:
     return f_visible;
   }
 
-  Halffacet_const_handle get_visible_facet( const Vertex_const_handle v,
-                                      const Segment_3& ray) const
-    /*{\Mop when one shoots a ray |ray| in order to find the facet below to
-      an object, and vertex |v| is hit, we need to choose one of the facets
-      in the adjacency list of |v| such that it could be 'seen' from the
-      piercing point of the |ray| on the sphere map on |v|.  We make it just
-      locating the sphere facet |sf| pierced by |ray| and taking the adjacent
-      facet to one of the sphere segments on the boundary of |sf|.
-      \precondition |ray| target is on |v| and the intersection between
-      |ray| and the 2-skeleton incident to v is empty. }*/ {
-
-    Halffacet_const_handle f_visible;
-    CGAL_assertion( ray.source() != v->point());
-    CGAL_assertion( ray.has_on(v->point()));
-    Sphere_point sp(ray.source() - v->point());
-    CGAL_NEF_TRACEN( "Locating "<<sp <<" in "<<v->point());
-    CGAL_assertion(Infi_box::degree(sp.hx()) < 2 &&
-                   Infi_box::degree(sp.hy()) < 2 &&
-                   Infi_box::degree(sp.hz()) < 2 &&
-                   Infi_box::degree(sp.hw()) == 0);
-    sp = Infi_box::simplify(sp);
-    CGAL_NEF_TRACEN( "Locating "<<sp <<" in "<<v->point());
-    SM_point_locator L(v);
-    Object_handle o = L.locate(sp);
-
-    SFace_const_handle sf;
-    CGAL_assertion(CGAL::assign(sf,o));
-    CGAL::assign( sf, o);
-
-    SFace_cycle_const_iterator fc = sf->sface_cycles_begin(),
-      fce = sf->sface_cycles_end();
-    if( is_empty_range( fc, fce)) {
-        CGAL_NEF_TRACEN( "no adjacent facets were found.");
-        f_visible =  Halffacet_const_handle();
-    }
-    else {
-      if (fc.is_shalfedge()) {
-      SHalfedge_const_handle se(fc);
-      CGAL_NEF_TRACEN( "adjacent facet found (SEdges cycle).");
-        CGAL_NEF_TRACEN("se"<<PH(se));
-        f_visible = se->twin()->facet();
-        CGAL_NEF_TRACEN("f_visible"<<&f_visible);
-      }
-      else if (fc.is_shalfloop()) {
-      SHalfloop_const_handle sl(fc);
-      CGAL_NEF_TRACEN( "adjacent facet found (SHalfloop cycle).");
-      f_visible = sl->twin()->facet();
-      }
-      else if(fc.is_svertex()) {
-        CGAL_NEF_TRACEN( "no adjacent facets were found (but incident edge(s)).");
-        f_visible = Halffacet_const_handle();
-      }
-      else
-        CGAL_error_msg("Damn wrong handle");
-    }
-    return f_visible;
-  }
-
   Halffacet_const_handle get_visible_facet( const Halffacet_const_handle f,
                                       const Segment_3& ray) const
     //{\Mop when one shoot a ray |ray| in order to find the facet below to

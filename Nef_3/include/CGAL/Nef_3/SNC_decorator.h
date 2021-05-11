@@ -509,22 +509,6 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     return f_visible;
   }
 
-  Halffacet_handle get_visible_facet( const Halffacet_handle f,
-                                      const Segment_3& ray) const
-    //{\Mop when one shoot a ray |ray| in order to find the facet below to
-    //  an object, and a facet |f| is hit, we need to choose the right facet
-    //  from the halffacet pair |f| that  could be 'seen'  from the
-    //  piercing point of the |ray| on the local (virtual) view  of |f|.
-    //  \precondition |ray| target belongs to |f| and the intersection between
-    //  |ray| and is not coplanar with |f|. }
-    {
-      Halffacet_handle f_visible = f;
-      CGAL_assertion( !f_visible()->plane().has_on(ray.source()));
-      if( f_visible()->plane().has_on_negative_side(ray.source()))
-        f_visible = f->twin();
-      CGAL_assertion( f_visible()->plane().has_on_positive_side(ray.source()));
-      return f_visible;
-    }
 
   bool is_valid( bool verb = false, int level = 0) {
 
