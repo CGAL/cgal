@@ -66,6 +66,13 @@ template <>
 class Mesh_vertex_base_3_base<Parallel_tag>
 {
 public:
+  Mesh_vertex_base_3_base()
+  {}
+
+  Mesh_vertex_base_3_base( const Mesh_vertex_base_3_base& c)
+  {
+    m_erase_counter.store(c.erase_counter());
+  }
 
   // Erase counter (cf. Compact_container)
   unsigned int erase_counter() const
