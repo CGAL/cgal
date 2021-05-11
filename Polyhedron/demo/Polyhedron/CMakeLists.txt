@@ -49,7 +49,7 @@ include(${CGAL_USE_FILE})
 find_package(
   Qt5 QUIET
   COMPONENTS OpenGL Script Widgets
-  OPTIONAL_COMPONENTS ScriptTools WebSockets)
+  OPTIONAL_COMPONENTS ScriptTools WebSockets Network)
 
 set_package_properties(
   Qt5 PROPERTIES
@@ -422,7 +422,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGAL_PMP)
 
   #WS Server
-  if(TARGET Qt5::WebSockets)
+  if(TARGET Qt5::WebSockets AND TARGET Qt5::Network)
     add_executable(WS_server Server_ws.cpp)
     target_link_libraries(WS_server PUBLIC Qt5::WebSockets Qt5::Widgets Qt5::Network)
     message(

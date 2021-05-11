@@ -15,6 +15,7 @@ if(NOT CGAL_DISABLE_GMP)
     target_link_libraries(
       parameterization_plugin PUBLIC scene_surface_mesh_item scene_textured_item
                                      scene_selection_item CGAL::Eigen3_support)
+
     if(BUILD_TESTING AND NOT CGAL_WIN32_CMAKE_ON_CYGWIN)
       set_tests_properties(
         compilation_of__parameterization_plugin
@@ -32,6 +33,7 @@ if(NOT CGAL_DISABLE_GMP)
   polyhedron_demo_plugin(mesh_segmentation_plugin Mesh_segmentation_plugin
                          ${segmentationUI_FILES})
   target_link_libraries(mesh_segmentation_plugin PUBLIC scene_surface_mesh_item)
+
   if(BUILD_TESTING AND NOT CGAL_WIN32_CMAKE_ON_CYGWIN)
     set_tests_properties(
       compilation_of__mesh_segmentation_plugin

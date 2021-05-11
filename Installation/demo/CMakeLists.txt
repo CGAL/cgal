@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.12...3.20)
 project(CGAL_DEMOS)
+
 if(CGAL_BRANCH_BUILD)
 
   foreach(package ${CGAL_CONFIGURED_PACKAGES})
