@@ -35,7 +35,7 @@ include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
     if(TARGET demo_framework)
       target_link_libraries( ${plugin_name} PUBLIC demo_framework)
       add_dependencies(${plugin_name} demo_framework)
-      if(BUILD_TESTING AND NOT CGAL_WIN32_CMAKE_ON_CYGWIN)
+      if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
         if(NOT TARGET compilation_of__demo_framework)
               # This custom target is useless. It is used only as a flag to
               # detect that the test has already been created.

@@ -5,7 +5,7 @@ if(EIGEN3_FOUND AND "${EIGEN3_VERSION}" VERSION_GREATER "3.1.90")
   target_link_libraries(edit_plugin PUBLIC scene_surface_mesh_item
                                            scene_edit_item scene_selection_item)
 
-  if(BUILD_TESTING AND NOT CGAL_WIN32_CMAKE_ON_CYGWIN)
+  if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
     set_tests_properties(
       compilation_of__edit_plugin
       PROPERTIES RESOURCE_LOCK Selection_test_resources)

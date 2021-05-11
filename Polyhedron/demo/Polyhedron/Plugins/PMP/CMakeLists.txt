@@ -53,7 +53,7 @@ if(TARGET CGAL::Eigen3_support)
         PURPOSE "Can be used as a solver in the smoothing plugin.")
         target_link_libraries(extrude_plugin PUBLIC CGAL::Eigen3_support)
 
-        if(BUILD_TESTING AND NOT CGAL_WIN32_CMAKE_ON_CYGWIN)
+        if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
           set_tests_properties(
             compilation_of__extrude_plugin
             compilation_of__fairing_plugin
@@ -165,7 +165,7 @@ target_link_libraries(
   engrave_text_plugin PUBLIC scene_surface_mesh_item scene_selection_item
                              scene_polylines_item)
 
-if(BUILD_TESTING AND NOT CGAL_WIN32_CMAKE_ON_CYGWIN)
+if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
   set_tests_properties(
     compilation_of__join_and_split_plugin
     compilation_of__selection_plugin

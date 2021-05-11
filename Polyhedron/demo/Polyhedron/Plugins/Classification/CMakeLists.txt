@@ -47,7 +47,7 @@ if(TARGET CGAL::Eigen3_support)
     scene_color_ramp
     CGAL::Eigen3_support)
 
-    if(BUILD_TESTING AND NOT CGAL_WIN32_CMAKE_ON_CYGWIN)
+    if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
       set_tests_properties(
         compilation_of__classification_plugin
         PROPERTIES RESOURCE_LOCK Selection_test_resources)
