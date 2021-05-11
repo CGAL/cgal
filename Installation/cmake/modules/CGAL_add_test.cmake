@@ -32,9 +32,6 @@ if(CGAL_RUN_TESTS_THROUGH_SSH)
   find_program(scp_executable scp)
 endif()
 
-if(CMAKE_VS_MSBUILD_COMMAND)
-  find_program(MSBUILD_CMD NAMES msbuild.exe)
-endif()
 # Process a list, and replace items contains a file pattern (like
 # `*.off`) by the sublist that corresponds to the globbing of the
 # pattern in the directory `${CMAKE_CURRENT_SOURCE_DIR}`.
@@ -89,7 +86,7 @@ function(cgal_add_compilation_test exe_name)
       APPEND PROPERTY FIXTURES_REQUIRED "check_build_system_SetupFixture")
   elseif(NOT TEST compilation_of__${PROJECT_NAME})#CMAKE_VS_MSBUILD_COMMAND
     add_test(NAME "compilation_of__${PROJECT_NAME}"
-      COMMAND ${TIME_COMMAND} "${MSBUILD_CMD}" "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.sln" "-m:$ENV{NUMBER_OF_PROCESSORS}" "/t:Build" "/p:Configuration=$<CONFIG>")
+      COMMAND ${TIME_COMMAND} "${CMAKE_VS_MSBUILD_COMMAND}" "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.sln" "-m:$ENV{NUMBER_OF_PROCESSORS}" "/t:Build" "/p:Configuration=$<CONFIG>")
     set_property(TEST "compilation_of__${PROJECT_NAME}"
       APPEND PROPERTY LABELS "${PROJECT_NAME}")
     set_property(TEST "compilation_of__${PROJECT_NAME}"
