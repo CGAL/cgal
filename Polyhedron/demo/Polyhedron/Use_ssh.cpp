@@ -303,7 +303,7 @@ bool push_file(ssh_session &session,
   //This is the case for the official version on Ubuntu 18.04
   std::chrono::duration<int, std::micro> timespan(size);
   typedef std::chrono::nanoseconds nanoseconds;
-  nanoseconds ns (nanoseconds::rep (1000000000.0 * timespan));
+  nanoseconds ns (nanoseconds::rep (1000000000 * timespan));
   std::this_thread::sleep_for(ns);
   if (res != SSH_OK)
   {
