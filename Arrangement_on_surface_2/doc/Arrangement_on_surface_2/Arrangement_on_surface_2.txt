@@ -5407,6 +5407,34 @@ identification curve is drawn as a gray tube.
 
 \cgalExample{Arrangement_on_surface_2/spherical_insert.cpp}
 
+Use the `Arr_geodesic_arc_on_sphere_traits_2::Construct_point_2`,
+`Arr_geodesic_arc_on_sphere_traits_2::Construct_x_monotone_curve_2`,
+and `Arr_geodesic_arc_on_sphere_traits_2::Construct_curve_2` functors
+to construct a point, an \f$X\f$-monotone curve and a curve objects,
+respectively. Observe that an \f$X\f$-monotone curve cannot intersect
+the identification curve in its interior. A curve can be constructed
+from either (i) two endpoints, (ii) two endpoints and a normal, or
+(iii) a normal. The two endpoints determine the plane. The normal
+determines the orientation of the plane and the final arc (whether it
+is the minor arc or the major arc). If the normal is not provided, the
+minor arc is constructed. If a curve is constructed and only the
+normal is provided a full great circle is constructed. If an
+\f$X\f$-monotone curve is constructed and only the normal is provided
+an arc that resembles a full circle is constructed; this arc has one
+endpoint that lies on the identification curve; this point is
+considered both the source and target (and also the left and right)
+point of the arc. See \cgalFigureRef{aos_fig-right_hand_rule} for an
+illustration of the right-hand rule, which depicts the relation
+between the arc and the normal.
+
+<!----------------------------------------------------------------------------->
+\cgalFigureBegin{aos_fig-right_hand_rule,right_hand_rule.png}
+To use the right hand rule, point your right thumb in the direction of
+the normal and curl your fingers in the direction of the arc starting
+with source pendpoint and endding at the target endpoint.
+\cgalFigureEnd
+<!----------------------------------------------------------------------------->
+
 <!----------------------------------------------------------------------------->
 \subsection arr_ssecmeta_tr Traits-Class Decorators
 <!----------------------------------------------------------------------------->

@@ -359,20 +359,29 @@ namespace CGAL {
        * \param[in] q the second endpoint.
        * \pre p and q must not coincide.
        * \pre p and q cannot be antipodal.
+       * \pre The constructed minor arc does not intersect the identification
+       *      curve in its interior.
        */
       X_monotone_curve_2 operator()(const Point_2& p, const Point_2& q);
 
       /*! Construct a full great circle from a normal to a plane.
+       * Observe that the constrcted arc has one endpoint that lies on
+       * the identification curve. This point is considered both the source and
+       * target (and also the left and right) point of the arc.
        * \param normal the normal to the plane containing the great circle.
        * \pre the plane is not vertical.
        */
       X_monotone_curve_2 operator()(const Direction_3& normal);
 
-      /*! Construct a geodesic arc from two endpoints contained in a plane.
+      /*! Construct a geodesic arc from two endpoints and a normal to the plane
+       * containing the arc. The two endpoints determine the plane. The normal
+       * determines the orientation of the plane and the final arc (whether its
+       * the minor arc or the major arc). The right-hand rule can be used
+       * to select the appropriate normal.
        * \param[in] p the first endpoint.
        * \param[in] q the second endpoint.
-       * \param[in] normal the normal to the plane containing the arc.
-       * \pre Both endpoints lie on the given plane.
+       * \param[in] normal the normal to the oriented plane containing the arc.
+       * \pre Both endpoints lie on the given oriented plane.
        */
       X_monotone_curve_2 operator()(const Point_2& p, const Point_2& q,
                                     const Direction_3& normal);
