@@ -489,7 +489,7 @@ using std::max;
 
 // Macro CGAL_ASSUME
 // Call a builtin of the compiler to pass a hint to the compiler
-#if __has_builtin(__builtin_unreachable) || (CGAL_GCC_VERSION >= 40500 && !__STRICT_ANSI__)
+#if __has_builtin(__builtin_unreachable) || (!__STRICT_ANSI__)
 // From g++ 4.5, there exists a __builtin_unreachable()
 // Also in LLVM/clang
 #  define CGAL_ASSUME(EX) if(!(EX)) { __builtin_unreachable(); }
@@ -509,20 +509,20 @@ using std::max;
 #endif
 
 #if __has_feature(cxx_thread_local) || \
-    ( (__GNUC__ * 100 + __GNUC_MINOR__) >= 408 && __cplusplus >= 201103L ) || \
+    ( defined(__GNUC__) && __cplusplus >= 201103L ) || \
     ( _MSC_VER >= 1900 )
 // see also Installation/cmake/modules/config/support/CGAL_test_cpp_version.cpp
 #define CGAL_CAN_USE_CXX11_THREAD_LOCAL
 #endif
 
 #if (__has_include(<mutex>) && __cplusplus >= 201103L ) | \
-    ( (__GNUC__ * 100 + __GNUC_MINOR__) >= 408 && __cplusplus >= 201103L ) || \
+    ( defined(__GNUC__) && __cplusplus >= 201103L ) || \
     ( _MSC_VER >= 1700 )
 #define CGAL_CAN_USE_CXX11_MUTEX
 #endif
 
 #if (__has_include(<atomic>) && __cplusplus >= 201103L ) || \
-    ( (__GNUC__ * 100 + __GNUC_MINOR__) >= 408 && __cplusplus >= 201103L ) || \
+    ( defined(__GNUC__) && __cplusplus >= 201103L ) || \
     ( _MSC_VER >= 1700 )
 #define CGAL_CAN_USE_CXX11_ATOMIC
 #endif
@@ -537,7 +537,7 @@ using std::max;
 #define LEDA_NUMBERS_DLL 1
 
 // Helper macros to disable macros
-#if defined(__clang__) || (BOOST_GCC >= 40600)
+#if defined(__clang__) || defined(BOOST_GCC)
 #  define CGAL_PRAGMA_DIAG_PUSH _Pragma("GCC diagnostic push")
 #  define CGAL_PRAGMA_DIAG_POP  _Pragma("GCC diagnostic pop")
 #else

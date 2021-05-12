@@ -172,7 +172,7 @@ inline double IA_opacify(double x)
   // Intel has a bug where -mno-sse still defines __SSE__ and __SSE2__
   // (-mno-sse2 works though), no work-around for now.
 # if defined __SSE2_MATH__ || (defined __INTEL_COMPILER && defined __SSE2__)
-#  if __GNUC__ * 100 + __GNUC_MINOR__ >= 409
+#  if defined(__GNUC__)
   // ICEs in reload/LRA with older versions.
   asm volatile ("" : "+gx"(x) );
 #  else
@@ -275,8 +275,7 @@ inline __m128d IA_opacify128_weak(__m128d x)
 inline __m128d swap_m128d(__m128d x){
 # ifdef __llvm__
   return __builtin_shufflevector(x, x, 1, 0);
-# elif defined __GNUC__ && !defined __INTEL_COMPILER \
-  && __GNUC__ * 100 + __GNUC_MINOR__ >= 407
+# elif defined __GNUC__ && !defined __INTEL_COMPILER
   return __builtin_shuffle(x, (__m128i){ 1, 0 });
 # else
   return _mm_shuffle_pd(x, x, 1);

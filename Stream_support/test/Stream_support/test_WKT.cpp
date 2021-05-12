@@ -1,6 +1,5 @@
 #include <iostream>
 
-#if (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <CGAL/IO/WKT.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -279,9 +278,4 @@ int main()
 
   return EXIT_SUCCESS;
 }
-#else
-int main(int, char**)
-{
-  return EXIT_SUCCESS;
-}
-#endif
+

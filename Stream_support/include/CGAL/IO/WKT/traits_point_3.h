@@ -15,8 +15,6 @@
 #ifndef CGAL_IO_WKT_TRAITS_POINT_3_H
 #define CGAL_IO_WKT_TRAITS_POINT_3_H
 
-#if(! defined(BOOST_GCC) || BOOST_GCC >= 40500)
-
 #include <CGAL/number_utils.h>
 #include <CGAL/Point_3.h>
 
@@ -76,5 +74,4 @@ struct access<CGAL::Point_3<K>, 2>
 } // namespace geometry
 } // namespace boost
 
-#endif // BOOST VERSION CHECKS
 #endif // CGAL_IO_WKT_TRAITS_POINT_3_H
