@@ -3074,7 +3074,7 @@ respectively.
   may have two outer CCBs, and a face of an arrangement embedded on a
   sphere might be consider a hole inside the surrounding face or vice
   versa. To this end, outer CCBs and inner CCBs of faces of
-  arrangements embedded on surfaces are symetrically treated (while
+  arrangements embedded on surfaces are symmetrically treated (while
   maintaining the invariant that a face always lies to the left of
   every halfedge of every CCB of the face regardless of whether the
   CCB is inner or outer). The classification of a CCB as inner or
@@ -5431,7 +5431,7 @@ between the arc and the normal.
 \cgalFigureBegin{aos_fig-right_hand_rule,right_hand_rule.png}
 To use the right hand rule, point your right thumb in the direction of
 the normal and curl your fingers in the direction of the arc starting
-with source pendpoint and endding at the target endpoint.
+with source endpoint and ending at the target endpoint.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
