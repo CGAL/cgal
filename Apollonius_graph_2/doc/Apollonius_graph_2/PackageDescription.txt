@@ -1,0 +1,63 @@
+/// \defgroup PkgApolloniusGraph2Ref 2D Apollonius Graphs (Delaunay Graphs of Disks) Reference
+/// \defgroup PkgApolloniusGraph2Concepts Concepts
+/// \ingroup PkgApolloniusGraph2Ref
+/*!
+\addtogroup PkgApolloniusGraph2Ref
+\todo check generated documentation
+\cgalPkgDescriptionBegin{2D Apollonius Graphs (Delaunay Graphs of Disks),PkgApolloniusGraph2}
+\cgalPkgPicture{CircleVoronoi.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Menelaos Karavelas and Mariette Yvinec}
+\cgalPkgDesc{Algorithms for computing the Apollonius graph in two dimensions. The Apollonius graph is the dual of the Apollonius diagram, also known as the <I>additively weighted Voronoi diagram</I>. The latter can be thought of as the Voronoi diagram of a set of disks under the Euclidean metric, and it is a generalization of the standard Voronoi diagram for points. The algorithms provided are dynamic.}
+\cgalPkgManuals{Chapter_2D_Apollonius_Graphs,PkgApolloniusGraph2Ref}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.0}
+\cgalPkgDependsOn{\ref PkgTDS2}
+\cgalPkgBib{cgal:ky-ag2}
+\cgalPkgLicense{\ref licensesGPL  "GPL"}
+\cgalPkgDemo{2D Apollonius Graph,apollonius_graph_2.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+An Apollonius graph is the dual of the Apollonius diagram, also known
+as the <I>additively weighted Voronoi diagram</I>. It is essentially the
+Voronoi diagram of a set of disks, where the distance of a
+point of the plane from a disk is defined as the Euclidean
+distance of the point and the center of the circle, minus the radius
+of the disk.
+
+\cgal provides the class `CGAL::Apollonius_graph_2<Gt,Agds>` for
+computing the 2D Apollonius graph. The two template parameters must be
+models of the `ApolloniusGraphTraits_2` and
+`ApolloniusGraphDataStructure_2` concepts. The first concept is
+related to the geometric objects and predicates associated with
+Apollonius graphs, whereas the second concept refers to the data
+structure used to represent the Apollonius graph. The classes
+`Apollonius_graph_traits_2<K,Method_tag>` and
+`Triangulation_data_structure_2<Vb,Fb>` are models of the
+aforementioned concepts.
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+
+- `ApolloniusSite_2`
+- `ApolloniusGraphTraits_2`
+- `ApolloniusGraphDataStructure_2`
+- `ApolloniusGraphVertexBase_2`
+- `ApolloniusGraphHierarchyVertexBase_2`
+
+\cgalCRPSection{Classes}
+
+- `CGAL::Apollonius_graph_2<Gt,Agds>`
+- `CGAL::Apollonius_site_2<K>`
+- `CGAL::Apollonius_graph_traits_2<K,Method_tag>`
+- `CGAL::Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
+- `CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>`
+- `CGAL::Apollonius_graph_hierarchy_2<Gt,Agds>`
+- `CGAL::Apollonius_graph_hierarchy_vertex_base_2<Agvb>`
+
+
+*/
+
