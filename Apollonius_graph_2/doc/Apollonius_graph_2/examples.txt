@@ -1,6 +1,0 @@
-/*!
-\example Apollonius_graph_2/ag2_exact_traits.cpp
-\example Apollonius_graph_2/ag2_exact_traits_sqrt.cpp
-\example Apollonius_graph_2/ag2_filtered_traits_no_hidden.cpp
-\example Apollonius_graph_2/ag2_hierarchy.cpp
-*/

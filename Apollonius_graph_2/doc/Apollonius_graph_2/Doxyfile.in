@@ -1,9 +1,0 @@
-@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
-
-PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 2D Apollonius Graphs (Delaunay Graphs of Disks)"
-EXCLUDE_SYMBOLS +=  Agvb
-
-            
-
-
-

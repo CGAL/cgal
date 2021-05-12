@@ -1,3 +1,0 @@
-This package offers a dynamic algorithm for the construction of the
-Apollonius graph in 2D which is the dual of the Apollonius diagram
-(also known as the Additively weighted Voronoi diagram).
