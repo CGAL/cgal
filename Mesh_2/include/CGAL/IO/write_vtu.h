@@ -87,6 +87,17 @@ write_cells_tag_2(std::ostream& os,
         os << V[fit->vertex(1)] << " ";
       }
     }
+    for(typename CDT::Constrained_edges_iterator
+          cei = tr.constrained_edges_begin(),
+          end = tr.constrained_edges_end();
+        cei != end; ++cei)
+    {
+      for(int i=0; i<3; ++i)
+      {
+        if(i != cei->second)
+          os << V[cei->first->vertex(i)] << " ";
+      }
+    }
     os << "      </DataArray>\n";
   }
 
@@ -115,6 +126,13 @@ write_cells_tag_2(std::ostream& os,
         os << cells_offset << " ";
       }
     }
+    for(std::size_t i = 0, end = std::distance(tr.constrained_edges_begin(),
+                                               tr.constrained_edges_end());
+        i < end; ++i)
+    {
+      cells_offset += 2;
+      os << cells_offset << " ";
+    }
     os << "      </DataArray>\n";
   }
 
@@ -141,6 +159,12 @@ write_cells_tag_2(std::ostream& os,
       {
         os << "5 ";
       }
+    }
+    for(std::size_t i = 0, end = std::distance(tr.constrained_edges_begin(),
+                                               tr.constrained_edges_end());
+        i < end; ++i)
+    {
+      os << "3 ";
     }
     os << "      </DataArray>\n";
   }
