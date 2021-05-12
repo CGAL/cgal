@@ -237,12 +237,8 @@ public:
 
   double max_flow()
   {
-#if BOOST_VERSION >= 104400
     return boost::boykov_kolmogorov_max_flow(graph, cluster_source,
                                                       cluster_sink);
-#else
-    return boost::kolmogorov_max_flow(graph, cluster_source, cluster_sink);
-#endif
   }
 
   template <typename VertexLabelMap, typename InputVertexDescriptor>
@@ -347,13 +343,8 @@ public:
 
   void init_vertices()
   {
-#if BOOST_VERSION >= 104000
     graph = Graph(boost::edges_are_unsorted, edge_map.begin(), edge_map.end(),
                   edge_map_weights.begin(), nb_vertices);
-#else
-    graph= Graph(edge_map.begin(), edge_map.end(),
-                 edge_map_weights.begin(), nb_vertices);
-#endif
 
     // PERFORMANCE PROBLEM
     // need to set reverse edge map, I guess there is no way to do that before creating the graph
@@ -374,7 +365,6 @@ public:
 
   double max_flow()
   {
-#if BOOST_VERSION >= 104400
     // since properties are bundled, defaults does not work need to specify them
     return boost::boykov_kolmogorov_max_flow
       (graph,
@@ -387,19 +377,6 @@ public:
        boost::get(boost::vertex_index,
                   graph), // this is not bundled, get it from graph (CRS provides one)
        0, 1);
-#else
-    return boost::kolmogorov_max_flow
-       (graph,
-        boost::get(&EdgeP::edge_capacity, graph),
-        boost::get(&EdgeP::edge_residual_capacity, graph),
-        boost::get(&EdgeP::edge_reverse, graph),
-        boost::get(&VertexP::vertex_predecessor, graph),
-        boost::get(&VertexP::vertex_color, graph),
-        boost::get(&VertexP::vertex_distance_t, graph),
-        boost::get(boost::vertex_index,
-                   graph), // this is not bundled, get it from graph
-        0, 1);
-#endif
   }
 
   template <typename VertexLabelMap, typename InputVertexDescriptor>
