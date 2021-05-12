@@ -80,9 +80,9 @@ class Refine_edges_base_with_clusters :
   Cluster ca, cb;
   clusters_iterator ca_it, cb_it;
 
+public:
   using Super::triangulation_ref_impl;
 
-public:
   /** \name CONSTRUCTORS */
 
   Refine_edges_base_with_clusters(Tr& tr_, Clusters<Tr>& c_) 
@@ -100,6 +100,11 @@ public:
 
     this->va = edge.first->vertex(Tr::cw (edge.second));
     this->vb = edge.first->vertex(Tr::ccw(edge.second));
+#ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
+    std::cerr << "refinement_point_impl("
+              << "#" << this->va->time_stamp() << ": " << this->va->point() << ", "
+              << "#" << this->vb->time_stamp() << ": " << this->vb->point() << ") = ";
+#endif // CGAL_MESH_2_DEBUG_BAD_FACES
 
 //     std::cerr << "refinement_point_impl\n" << this->va->point() << " / "
 //               << this->vb->point() << std::endl;
@@ -119,17 +124,32 @@ public:
           std::cerr << "midpoint(" << this->va->point()
                     << " , " << this->vb->point() << ")\n";
 #endif // CGAL_MESH_2_DEBUG_CLUSTERS
+#ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
+          auto p = midpoint(this->va->point(), this->vb->point());
+          std::cerr << p << '\n';
+          return p;
+#endif // CGAL_MESH_2_DEBUG_BAD_FACES
           return midpoint(this->va->point(), this->vb->point());
         }
       else {
         // va only is a cluster
         va_has_a_cluster = true;
+#ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
+        auto p = split_cluster_point(this->va,this->vb,ca);
+        std::cerr << p << '\n';
+        return p;
+#endif // CGAL_MESH_2_DEBUG_BAD_FACES
         return split_cluster_point(this->va,this->vb,ca);
       }
     } else
     if( clusters.get_cluster(this->vb,this->va,cb,cb_it) ){
       // vb only is a cluster
       vb_has_a_cluster = true;
+#ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
+      auto p = split_cluster_point(this->vb,this->va,cb);
+      std::cerr << p << '\n';
+      return p;
+#endif // CGAL_MESH_2_DEBUG_BAD_FACES
       return split_cluster_point(this->vb,this->va,cb);
     }else{
       // no cluster
@@ -137,6 +157,11 @@ public:
       std::cerr << "midpoint(" << this->va->point()
                 << " , " << this->vb->point() << ")\n";
 #endif // CGAL_MESH_2_DEBUG_CLUSTERS
+#ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
+      auto p = midpoint(this->va->point(), this->vb->point());
+      std::cerr << p << '\n';
+      return p;
+#endif // CGAL_MESH_2_DEBUG_BAD_FACES
       return midpoint(this->va->point(), this->vb->point());
     }
   };

@@ -24,7 +24,7 @@
 
 #include <CGAL/license/Mesh_2.h>
 
-
+#include <CGAL/Meshes/Triangulation_mesher_level_traits_2.h>
 #include <CGAL/Mesh_2/Face_badness.h>
 #include <CGAL/Double_map.h>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
@@ -90,7 +90,7 @@ protected: // --- PROTECTED TYPES ---
   typedef CGAL::Double_map<Face_handle, Quality, Face_compare> Bad_faces;
 
 protected:
-  // --- PROTECTED MEMBER DATAS ---
+  // --- PROTECTED MEMBER DATA ---
 
   Criteria& criteria; /**<The meshing criteria */
   Previous& previous;
@@ -187,6 +187,15 @@ public:
   /** Returns the circumcenter of the face. */
   Point refinement_point_impl(const Face_handle& f) const
   {
+#ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
+    std::cerr << "refinement_point_impl("
+              << "#" << f->vertex(0)->time_stamp() << ": " << f->vertex(0)->point() << ", "
+              << "#" << f->vertex(1)->time_stamp() << ": " << f->vertex(1)->point() << ", "
+              << "#" << f->vertex(2)->time_stamp() << ": " << f->vertex(2)->point() << ") = ";
+    auto p = triangulation_ref_impl().circumcenter(f);
+    std::cerr << p << '\n';
+    return p;
+#endif // CGAL_MESH_2_DEBUG_BAD_FACES
     return triangulation_ref_impl().circumcenter(f);
   }
 
