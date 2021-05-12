@@ -191,9 +191,8 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
       Halffacet_handle f;
 
       Point_3 p(normalized(ip));
-
+#ifdef CGAL_USE_TRACE
       CGAL_NEF_TRACEN("Intersection_call_back: intersection reported on " << p << " (normalized: " << normalized(p) << " )");
-#ifdef CGAL_NEF_DEBUG
       CGAL_NEF_TRACEN("edge 0 has source " << e0->source()->point() << " and direction " << e0->vector());
       if( CGAL::assign( e, o1)) {
         CGAL_NEF_TRACEN("edge 1 has source " << e->source()->point() << " and direction " << e->vector());

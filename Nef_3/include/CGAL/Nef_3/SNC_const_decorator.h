@@ -323,12 +323,12 @@ public:
         CGAL_NEF_TRACEN("f_visible"<< f_visible->plane());
       }
       else if(fc.is_svertex()) {
-#ifdef CGAL_NEF_DEBUG
+#ifdef CGAL_USE_TRACE
         // TODO: is there any warranty that the outter facet cycle enty point is always at first
         // in the cycles list?
         ++fc; while( fc != fce)  { CGAL_assertion( fc.is_svertex()); ++fc; }
-#endif
         CGAL_NEF_TRACEN( "no adjacent facets were found (but incident edge(s)).");
+#endif
         f_visible = Halffacet_const_handle();
       }
       else
