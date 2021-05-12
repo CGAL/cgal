@@ -382,6 +382,8 @@ namespace CGAL {
        * \param[in] q the second endpoint.
        * \param[in] normal the normal to the oriented plane containing the arc.
        * \pre Both endpoints lie on the given oriented plane.
+       * \pre The constructed arc does not intersect the identification curve
+       *      in its interior.
        */
       X_monotone_curve_2 operator()(const Point_2& p, const Point_2& q,
                                     const Direction_3& normal);
@@ -434,12 +436,15 @@ namespace CGAL {
        */
       Curve_2 operator()(const Point_2& p, const Point_2& q);
 
-      /*! Construct a geodesic arc from two endpoints contained
-       * in a plane.
+      /*! Construct a geodesic arc from two endpoints and a normal to the plane
+       * containing the arc. The two endpoints determine the plane. The normal
+       * determines the orientation of the plane and the final arc (whether its
+       * the minor arc or the major arc). The right-hand rule can be used
+       * to select the appropriate normal.
        * \param[in] p the first endpoint.
        * \param[in] q the second endpoint.
-       * \param[in] normal the normal to the plane containing the arc.
-       * \pre Both endpoints lie on the given plane.
+       * \param[in] normal the normal to the oriented plane containing the arc.
+       * \pre Both endpoints lie on the given oriented plane.
        */
       Curve_2 operator()(const Point_2& p, const Point_2& q,
                          const Direction_3& normal);
