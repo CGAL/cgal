@@ -226,15 +226,6 @@ bool run_mst_orient_normals(PointList& points, // input points + input/output no
                             unsigned int nb_neighbors_mst, // number of neighbors
                             const std::vector<Vector>& original_normals) // may be empty
 {
-#if (BOOST_VERSION / 100) == 1054
-  std::cerr <<
-    "In run_mst_orient_normals():\n"
-    "NOTICE: This function is incompatible with Boost 1.54, "
-    "and will not be tested. See the following bug:\n"
-    "  https://svn.boost.org/trac/boost/ticket/9012\n";
-  return true;
-#endif // Boost version is 1.54
-
   std::cerr << "Orients Normals with a Minimum Spanning Tree (k="<< nb_neighbors_mst << ")...\n";
   CGAL::Timer task_timer; task_timer.start();
 

@@ -17,7 +17,7 @@
 // GraphicsView items and event filters (input classes)
 #include <CGAL/Qt/PointsInKdTreeGraphicsItem.h>
 #include <CGAL/Qt/utility.h>
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+#if (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <CGAL/IO/WKT.h>
 #endif
 
@@ -249,7 +249,7 @@ MainWindow::on_actionLoadPoints_triggered()
                                                   tr("Open Points file"),
                                                   ".",
                                                   tr("CGAL files (*.pts.cgal);;"
-                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+                                                   #if (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                                                      "WKT files (*.wkt *.WKT);;"
                                                    #endif
                                                      "All files (*)"));
@@ -271,7 +271,7 @@ MainWindow::open(QString fileName)
   std::vector<K::Point_2> points;
   if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
   {
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+#if (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
     CGAL::read_multi_point_WKT(ifs, points);
 #endif
   }

@@ -7,7 +7,7 @@
 #include <CGAL/Apollonius_graph_hierarchy_2.h>
 #include <CGAL/Apollonius_graph_filtered_traits_2.h>
 #include <CGAL/point_generators_2.h>
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+#if (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <CGAL/IO/WKT.h>
 #endif
 
@@ -220,7 +220,7 @@ MainWindow::on_actionLoadPoints_triggered()
                                                   tr("Open Points file"),
                                                   ".",
                                                   tr("CGAL files (*.wpts.cgal);;"
-                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+                                                   #if (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                                                      "WKT files (*.wkt *.WKT);;"
                                                    #endif
                                                      "All files (*)"));
@@ -241,7 +241,7 @@ MainWindow::open(QString fileName)
     std::vector<Apollonius_site_2> points;
     if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
     {
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+#if (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
       std::vector<K::Point_3> point_3_s;
       CGAL::read_multi_point_WKT(ifs, point_3_s);
       for(const K::Point_3& point_3 : point_3_s)
@@ -270,7 +270,7 @@ MainWindow::on_actionSavePoints_triggered()
                                                   tr("Save points"),
                                                   ".reg.cgal",
                                                   tr("Weighted Points (*.wpts.cgal);;"
-                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+                                                   #if (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                                                      "WKT files(*.wkt *.WKT);;"
                                                    #endif
                                                      "All (*)"));
@@ -278,7 +278,7 @@ MainWindow::on_actionSavePoints_triggered()
     std::ofstream ofs(qPrintable(fileName));
     if(fileName.endsWith(".wkt",Qt::CaseInsensitive))
     {
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+#if (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
       std::vector<K::Point_3> points;
       for(Apollonius::Sites_iterator
           vit = ag.sites_begin(),

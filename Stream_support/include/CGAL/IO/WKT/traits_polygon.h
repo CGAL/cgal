@@ -15,7 +15,7 @@
 #ifndef CGAL_IO_WKT_TRAITS_POLYGON_H
 #define CGAL_IO_WKT_TRAITS_POLYGON_H
 
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+#if(! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>

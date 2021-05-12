@@ -1009,9 +1009,7 @@ public:
     Vertex_extractor(Vertex_handle _v, OutputIterator _output, const Tds* _t, Filter _filter):
     v(_v), treat(_output), t(_t), filter(_filter)
     {
-#if ( BOOST_VERSION >= 105000 )
       tmp_vertices.reserve(64);
-#endif
     }
 
     void operator()(Cell_handle c) {

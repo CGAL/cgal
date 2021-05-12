@@ -25,7 +25,7 @@
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Timer.h>
 #include <CGAL/IO/write_vtu.h>
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+#if (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <CGAL/IO/WKT.h>
 #endif
 
@@ -528,7 +528,7 @@ MainWindow::open(QString fileName)
     } else if(fileName.endsWith(".poly")){
       loadPolyConstraints(fileName);
     } else if(fileName.endsWith(".wkt")){
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+#if (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
       loadWKT(fileName);
 #endif
     }
@@ -549,7 +549,7 @@ MainWindow::on_actionLoadConstraints_triggered()
                                                      "Poly files (*.poly);;"
                                                      "Plg files (*.plg);;"
                                                      "CGAL files (*.cpts.cgal);;"
-                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+                                                   #if (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                                                      "WKT files (*.WKT *.wkt);;"
                                                    #endif
                                                      "All (*)"));
@@ -558,12 +558,12 @@ MainWindow::on_actionLoadConstraints_triggered()
 
 void
 MainWindow::loadWKT(QString
-                    #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+                    #if (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                     filename
                     #endif
                     )
 {
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+#if (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
   //Polygons todo : make it multipolygons
   std::ifstream ifs(qPrintable(filename));
   do

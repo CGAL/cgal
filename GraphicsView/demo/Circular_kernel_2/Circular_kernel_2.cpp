@@ -10,7 +10,7 @@
 #include <CGAL/intersections.h>
 #include <CGAL/Circular_kernel_2.h>
 #include <CGAL/Object.h>
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+#if (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <CGAL/IO/WKT.h>
 #endif
 
@@ -216,7 +216,7 @@ MainWindow::on_actionLoadLineAndCircularArcs_triggered()
                                                   tr("Open Line and Circular Arc File"),
                                                   ".",
                                                   tr("Edge files (*.arc)\n"
-                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+                                                   #if (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                                                      "WKT files (*.wkt *.WKT)\n"
                                                    #endif
                                                      ));
@@ -236,7 +236,7 @@ MainWindow::open(QString fileName)
     double x,y;
     if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
     {
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+#if (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
       //read pairs as Line_arc_2 and triplets as circular_arc_2
       do
       {

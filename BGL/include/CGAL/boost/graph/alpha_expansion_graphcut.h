@@ -27,12 +27,7 @@
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/compressed_sparse_row_graph.hpp>
-
-#if BOOST_VERSION >= 104400 // at this version kolmogorov_max_flow become depricated.
-#  include <boost/graph/boykov_kolmogorov_max_flow.hpp>
-#else
-#  include <boost/graph/kolmogorov_max_flow.hpp>
-#endif
+#include <boost/graph/boykov_kolmogorov_max_flow.hpp>
 
 #include <vector>
 

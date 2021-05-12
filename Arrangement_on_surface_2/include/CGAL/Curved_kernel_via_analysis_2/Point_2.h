@@ -738,35 +738,12 @@ public:
 
     // read values
     is >> rep._m_xy;
-#if BOOST_VERSION < 104300
-    // EBEB: This fixes a bug in optional_io.hpp, reported to Fernando on
-    //       April 27, 2010, don't know whether the fix makes it into
-    //       boost 1_43.
-    if (!rep._m_xy) {
-      swallow(is, '-');
-    }
-#endif
     swallow(is, ',');
     is >> rep._m_x;
-#if BOOST_VERSION < 104300
-    if (!rep._m_x) {
-      swallow(is, '-');
-    }
-#endif
     swallow(is, ',');
     is >> rep._m_curve;
-#if BOOST_VERSION < 104300
-    if (!rep._m_curve) {
-      swallow(is, '-');
-    }
-#endif
     swallow(is, ',');
     is >> rep._m_arcno;
-#if BOOST_VERSION < 104300
-    if (!rep._m_arcno) {
-      swallow(is, '-');
-    }
-#endif
     swallow(is, ',');
     is >> rep._m_location;
 
