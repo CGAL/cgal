@@ -16,6 +16,7 @@
 #include <CGAL/license/Triangulation_on_sphere_2.h>
 
 #include <CGAL/triangulation_assertions.h>
+#include <CGAL/Default.h>
 
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_solver_traits.h>
@@ -28,20 +29,35 @@ namespace CGAL {
 namespace Triangulations_on_sphere_2 {
 namespace internal {
 
-template <class Kernel>
-double get_theta( typename Kernel::Point_3& pt,
-                  typename Kernel::Vector_3& V1,
-                  typename Kernel::Vector_3& V2,
-                  typename Kernel::Vector_3& V3)
+template <class Kernel,
+          class Matrix_ = Default,
+          class Col_ = Default,
+          class EigenlessDefault = void>
+double get_theta(typename Kernel::Point_3& pt,
+                 typename Kernel::Vector_3& V1,
+                 typename Kernel::Vector_3& V2,
+                 typename Kernel::Vector_3& V3)
 {
   typedef typename Kernel::FT                                        FT;
 
+  typedef typename Default::Get<Matrix_,
 #ifdef CGAL_EIGEN3_ENABLED
-  typedef Eigen::Matrix<FT, 3, 3, Eigen::DontAlign>                  Matrix;
-  typedef Eigen::Matrix<FT, 3, 1>                                    Col;
+                                Eigen::Matrix<FT, 3, 3, Eigen::DontAlign>
 #else
-  CGAL_static_assertion_msg(false, "Eigen is required to perform arc subsampling!");
+                                EigenlessDefault
 #endif
+                                >::type                              Matrix;
+
+  typedef typename Default::Get<Col_,
+#ifdef CGAL_EIGEN3_ENABLED
+                                Eigen::Matrix<FT, 3, 1>
+#else
+                                EigenlessDefault
+#endif
+                                >::type                              Col;
+
+  CGAL_static_assertion_msg(!(std::is_same<Matrix, EigenlessDefault>::value),
+                            "Eigen is required to perform arc subsampling!");
 
   auto V1c = V1.cartesian_begin(), V2c = V2.cartesian_begin(), V3c = V3.cartesian_begin();
 
