@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
 //                 Miguel Granados <granados@mpi-sb.mpg.de>
@@ -30,6 +21,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/Iterator_project.h>
+#include <CGAL/representation_tags.h>
 #include <vector>
 
 #undef CGAL_NEF_DEBUG
@@ -38,31 +30,60 @@
 
 namespace CGAL {
 
-template <class Point_2, class Point_3> 
-Point_2 point_3_get_x_y_point_2(Point_3 p) {
+template <class Point_2, class Point_3>
+Point_2 point_3_get_x_y_point_2(const Point_3& p, const Homogeneous_tag&) {
   return( Point_2(p.hx(), p.hy(), p.hw()) );
 }
 
-template <class Point_2, class Point_3> 
-Point_2 point_3_get_y_z_point_2(Point_3 p) {
+template <class Point_2, class Point_3>
+Point_2 point_3_get_y_z_point_2(const Point_3& p, const Homogeneous_tag&) {
   return( Point_2(p.hy(), p.hz(), p.hw()) );
 }
 
-template <class Point_2, class Point_3> 
-Point_2 point_3_get_z_x_point_2(Point_3 p) {
+template <class Point_2, class Point_3>
+Point_2 point_3_get_z_x_point_2(const Point_3& p, const Homogeneous_tag&) {
   return( Point_2(p.hz(), p.hx(), p.hw()) );
+}
+
+template <class Point_2, class Point_3>
+Point_2 point_3_get_x_y_point_2(const Point_3& p, const Cartesian_tag&) {
+  return( Point_2(p.x(), p.y()) );
+}
+
+template <class Point_2, class Point_3>
+Point_2 point_3_get_y_z_point_2(const Point_3& p, const Cartesian_tag&) {
+  return( Point_2(p.y(), p.z()) );
+}
+
+template <class Point_2, class Point_3>
+Point_2 point_3_get_z_x_point_2(const Point_3& p, const Cartesian_tag&) {
+  return( Point_2(p.z(), p.x()) );
+}
+
+template <class Point_2, class Point_3, class R>
+Point_2 point_3_get_x_y_point_2(const Point_3& p) {
+    return point_3_get_x_y_point_2<Point_2,Point_3>(p,typename R::Kernel_tag());
+}
+
+template <class Point_2, class Point_3, class R>
+Point_2 point_3_get_y_z_point_2(const Point_3& p) {
+    return point_3_get_y_z_point_2<Point_2,Point_3>(p,typename R::Kernel_tag());
+}
+
+template <class Point_2, class Point_3, class R>
+Point_2 point_3_get_z_x_point_2(const Point_3& p) {
+    return point_3_get_z_x_point_2<Point_2,Point_3>(p,typename R::Kernel_tag());
 }
 
 template <class IteratorForward, class R>
 Bounded_side bounded_side_3(IteratorForward first,
-			    IteratorForward last,
+                            IteratorForward last,
                             const Point_3<R>& point,
                             typename R::Plane_3 plane = typename R::Plane_3(0,0,0,0)) {
   typedef typename R::Point_2 Point_2;
   typedef typename R::Point_3 Point_3;
-  typedef typename R::Vector_3 Vector_3;
   typedef typename R::Plane_3 Plane_3;
-  
+
   if(plane == Plane_3(0,0,0,0)) {
     // TO TEST: code never tested
     IteratorForward p(first);
@@ -77,24 +98,19 @@ Bounded_side bounded_side_3(IteratorForward first,
        we don't need to care about the plane orientation */
   }
 
+  typename R::Non_zero_dimension_3 non_zero_dimension_3;
+  int dir = non_zero_dimension_3(plane.orthogonal_vector());
 
 
   CGAL_assertion(!plane.is_degenerate());
-  Point_2 (*t)(Point_3);
-  Vector_3 pv(plane.orthogonal_vector()), pxy(0,0,1), pyz(1,0,0), pzx(0,1,0);
-  CGAL_NEF_TRACEN("pv*pxz: "<<pv*pzx);
-  CGAL_NEF_TRACEN("pv*pyz: "<<pv*pyz);
-  CGAL_NEF_TRACEN("pv*pxy: "<<pv*pxy);
-  if( !CGAL_NTS is_zero(pv*pzx) )
-    /* the plane is not perpendicular to the ZX plane */
-    t = &point_3_get_z_x_point_2< Point_2, Point_3>;
-  else if( !CGAL_NTS is_zero(pv*pyz) )
-    /* the plane is not perpendicular to the YZ plane */
-    t = &point_3_get_y_z_point_2< Point_2, Point_3>;
-  else {
-    CGAL_assertion( !CGAL_NTS is_zero(pv*pxy) );
-    /* the plane is not perpendicular to the XY plane */
-    t = &point_3_get_x_y_point_2< Point_2, Point_3>;
+  Point_2 (*t)(const Point_3&);
+
+  if(dir == 0){
+    t = &point_3_get_y_z_point_2< Point_2, Point_3, R>;
+  }else if(dir == 1){
+    t = &point_3_get_z_x_point_2< Point_2, Point_3, R>;
+  }else{
+    t = &point_3_get_x_y_point_2< Point_2, Point_3, R>;
   }
 
   std::vector< Point_2> points;
@@ -104,100 +120,10 @@ Bounded_side bounded_side_3(IteratorForward first,
     points.push_back( t(*first));
   }
   Bounded_side side = bounded_side_2( points.begin(), points.end(), t(point));
-  points.clear();
-  return side;  
+  return side;
 }
 
 } //namespace CGAL
 
-#ifdef WRONG_IMPLEMENTATION
-/* The following code is wrong since Proyector_.. structures must not return
-   references to temporal objects */
-template < class Point_2, class Point_3> 
-struct Project_XY {
-  typedef Point_3                  argument_type;
-  typedef Point_2                  result_type;
-  Point_2 operator()( Point_3& p) const { 
-    return Point_2(p.hx(), p.hy(), p.hw());
-  }
-  const Point_2 operator()( const Point_3& p) const { 
-    return Point_2(p.hx(), p.hy(), p.hw());
-  }
-};
-
-template < class Point_2, class Point_3> 
-struct Project_YZ {
-  typedef Point_3                  argument_type;
-  typedef Point_2                  result_type;
-  Point_2 operator()( Point_3& p) const { 
-    return Point_2(p.hy(), p.hz(), p.hw());
-  }
-  const Point_2 operator()( const Point_3& p) const { 
-    return Point_2(p.hy(), p.hz(), p.hw());
-  }
-};
-
-template < class Point_2, class Point_3> 
-struct Project_XZ {
-  typedef Point_3                  argument_type;
-  typedef Point_2                  result_type;
-  Point_2 operator()( Point_3& p) const { 
-    return Point_2(p.hx(), p.hz(), p.hw());
-  }
-  const Point_2 operator()( const Point_3& p) const { 
-    return Point_2(p.hx(), p.hz(), p.hw());
-  }
-};
-
-template <class IC, class R>
-Bounded_side bounded_side_3(IC first,
-			    IC last,
-			    const Point_3<R>& point,
-			    Plane_3<R> plane = Plane_3<R>(0,0,0,0)) {
-
-  typedef typename R::Point_2 Point_2;
-  typedef typename R::Point_3 Point_3;
-  typedef typename R::Vector_3 Vector_3;
-  typedef typename R::Plane_3 Plane_3;
-
-  CGAL_assertion( !CGAL::is_empty_range( first, last));
-
-  if(plane == Plane_3(0,0,0,0)) {
-    Vector_3 hv;
-    normal_vector_newell_3( first, last, hv);
-    plane = Plane_3( *first, Vector_3(hv));
-  }
-  CGAL_assertion(!plane.is_degenerate());
-  Vector_3 pd(plane.orthogonal_vector()), pyz(1,0,0), pxz(0,1,0);
-  if(pd == pyz || pd == -pyz) {
-    /* the plane is parallel to the YZ plane */
-    typedef Project_YZ< Point_2, Point_3>                  Project_YZ;
-    typedef Iterator_project< IC, Project_YZ> Iterator_YZ;
-    Project_YZ project;
-    Point_2 p = project(point);
-    Iterator_YZ pfirst(first), plast(last);
-    return bounded_side_2(pfirst, plast, p);
-  }
-  else if(pd == pxz || pd ==- pxz) {
-    /* the plane is parallel to the XZ plane */
-    typedef Project_XZ< Point_2, Point_3>                  Project_XZ;
-    typedef Iterator_project< IC, Project_XZ> Iterator_XZ;
-    Project_XZ project;
-    Point_2 p = project(point);
-    Iterator_XZ pfirst(first), plast(last);
-    return bounded_side_2(pfirst, plast, p);
-  }
-  else {
-    CGAL_assertion(cross_product(pd.vector(), Vector_3(0,0,1)) == NULL_VECTOR);
-    /* the plane is not perpendicular to the XY plane */
-    typedef Project_XY< Point_2, Point_3>                  Project_XY;
-    typedef Iterator_project< IC, Project_XY> Iterator_XY;
-    Project_XY project;
-    Point_2 p = project(point);
-    Iterator_XY pfirst(first), plast(last);
-    return bounded_side_2(pfirst, plast, p);
-  }
-}
-#endif // WRONG_IMPLEMENTATION
 
 #endif // CGAL_BOUNDED_SIDE_3_H

@@ -1,40 +1,33 @@
-#include <vector>
-#include <queue>
+#define CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE 1
 
 #include "Scene_polygon_soup_item.h"
 #include "Scene_surface_mesh_item.h"
+
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Triangle_container.h>
 #include <CGAL/Three/Edge_container.h>
 #include <CGAL/Three/Point_container.h>
 #include <CGAL/Three/Three.h>
 
-#include <QObject>
-#include <QApplication>
-#include <QtDebug>
+#include "triangulate_primitive.h"
 
-#include <set>
-#include <stack>
-#include <algorithm>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/IO/OFF_reader.h>
-#include <CGAL/IO/File_writer_OFF.h>
-#include <CGAL/version.h> 
-
+#include <CGAL/array.h>
+#include <CGAL/IO/OFF.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
-
-#define CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE 1
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
-
 #include <CGAL/Polygon_2.h>
+#include <CGAL/version.h>
 
-#include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include "triangulate_primitive.h"
-#include <CGAL/array.h>
+#include <QObject>
+#include <QApplication>
+#include <QtDebug>
 
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics/stats.hpp>
@@ -43,8 +36,14 @@
 #include <boost/accumulators/statistics/max.hpp>
 #include <boost/accumulators/statistics/median.hpp>
 
+#include <algorithm>
+#include <iostream>
 #include <map>
+#include <queue>
+#include <set>
+#include <stack>
 #include <streambuf>
+#include <vector>
 
 using namespace CGAL::Three;
 typedef Viewer_interface Vi;
@@ -58,7 +57,7 @@ struct Scene_polygon_soup_item_priv{
   typedef EPICK::Point_3 Point_3;
 
   Scene_polygon_soup_item_priv(Scene_polygon_soup_item* parent)
-    : soup(0),
+    : soup(nullptr),
       oriented(false)
   {
     item = parent;
@@ -72,7 +71,7 @@ struct Scene_polygon_soup_item_priv{
     if(soup)
     {
       delete soup;
-      soup = NULL;
+      soup = nullptr;
     }
   }
   void compute_normals_and_vertices(void) const;
@@ -90,7 +89,7 @@ struct Scene_polygon_soup_item_priv{
     Edges = 0,
     NM_edges
   };
-  
+
   Polygon_soup* soup;
   bool oriented;
   mutable std::vector<float> positions_poly;
@@ -105,7 +104,7 @@ struct Scene_polygon_soup_item_priv{
   bool is_triangle, is_quad, stats_computed;
   double minl, maxl, meanl, midl, mini, maxi, ave;
   std::size_t nb_null_edges, nb_degen_faces;
-  
+
   Scene_polygon_soup_item* item;
 
 };
@@ -121,7 +120,7 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
 {
   const CGAL::qglviewer::Vec off = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   EPICK::Vector_3 offset(off.x,off.y,off.z);
-  
+
     //Computes the normal of the facet
     Traits::Vector_3 normal = CGAL::NULL_VECTOR;
 
@@ -136,7 +135,7 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
     }
     if (normal == CGAL::NULL_VECTOR) // No normal could be computed, return
       return;
-    
+
     typedef FacetTriangulator<SMesh, EPICK, std::size_t> FT;
 
     std::size_t it = 0;
@@ -311,7 +310,7 @@ Scene_polygon_soup_item_priv::compute_normals_and_vertices() const{
         positions_nm_lines.push_back(b.y()+offset.y);
         positions_nm_lines.push_back(b.z()+offset.z);
     }
-    
+
 }
 
 
@@ -334,7 +333,7 @@ Scene_polygon_soup_item::~Scene_polygon_soup_item()
   delete d;
 }
 
-Scene_polygon_soup_item* 
+Scene_polygon_soup_item*
 Scene_polygon_soup_item::clone() const {
   Scene_polygon_soup_item* new_soup = new Scene_polygon_soup_item();
   new_soup->d->soup = d->soup->clone();
@@ -346,11 +345,15 @@ Scene_polygon_soup_item::clone() const {
 bool
 Scene_polygon_soup_item::load(std::istream& in)
 {
-  if (!d->soup) d->soup=new Polygon_soup();
-  else d->soup->clear();
+  if (!d->soup)
+    d->soup = new Polygon_soup();
+  else
+    d->soup->clear();
 
   bool result = CGAL::read_OFF(in, d->soup->points, d->soup->polygons,
-                               d->soup->fcolors, d->soup->vcolors);
+                               CGAL::parameters::vertex_color_output_iterator(std::back_inserter(d->soup->vcolors))
+                                                .face_color_output_iterator(std::back_inserter(d->soup->fcolors)));
+
   invalidateOpenGLBuffers();
   return result;
 }
@@ -366,39 +369,13 @@ void Scene_polygon_soup_item::init_polygon_soup(std::size_t nb_pts, std::size_t 
   d->oriented = false;
 }
 
-
-#include <iostream>
 template<class PolygonMesh>
 void polygon_mesh_to_soup(PolygonMesh& mesh, Polygon_soup& soup)
 {
   soup.clear();
-  typedef typename boost::property_map<PolygonMesh, boost::vertex_point_t>::type VPMap;
-  VPMap vpmap = get(boost::vertex_point, mesh);
-  std::map<typename boost::graph_traits<PolygonMesh>::vertex_descriptor, int> vim;
-  int index=0;
-  //fill points
-  for(typename boost::graph_traits<PolygonMesh>::vertex_iterator vit =
-      vertices(mesh).begin(); vit != vertices(mesh).end(); ++vit)
-  {
-    soup.points.push_back(get(vpmap, *vit));
-    vim.insert(std::make_pair(*vit, index++));
-  }
-  //fill triangles
-  for(typename boost::graph_traits<PolygonMesh>::face_iterator fit =
-      faces(mesh).begin(); fit != faces(mesh).end(); ++fit)
-  {
-    Polygon_soup::Polygon_3 polygon;
-    for(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor hd :
-                  CGAL::halfedges_around_face(halfedge(*fit, mesh), mesh))
-    {
-      polygon.push_back(vim[target(hd, mesh)]);
-    }
-    soup.polygons.push_back(polygon);
-  }
+  CGAL::Polygon_mesh_processing::polygon_mesh_to_polygon_soup(mesh, soup.points, soup.polygons);
   soup.fill_edges();
-
 }
-
 
 void Scene_polygon_soup_item::load(Scene_surface_mesh_item* sm_item) {
   if(!sm_item) return;
@@ -442,7 +419,7 @@ void Scene_polygon_soup_item::inside_out()
   invalidateOpenGLBuffers();
 }
 
-bool 
+bool
 Scene_polygon_soup_item::orient()
 {
 
@@ -480,7 +457,7 @@ Scene_polygon_soup_item::orient()
 }
 
 
-bool 
+bool
 Scene_polygon_soup_item::save(std::ostream& out) const
 {
 
@@ -529,7 +506,7 @@ Scene_polygon_soup_item::exportAsSurfaceMesh(SMesh *out_surface_mesh)
   }
   return false;
 }
-QString 
+QString
 Scene_polygon_soup_item::toolTip() const
 {
 
@@ -537,7 +514,7 @@ Scene_polygon_soup_item::toolTip() const
     return QString();
 
   QString str = QObject::tr("<p><b>%1</b> (mode: %5, color: %6)<br />"
-                     "<i>Polygons soup</i></p>"
+                     "<i>Polygon soup</i></p>"
                      "<p>Number of vertices: %2<br />"
                      "Number of polygons: %3</p>")
     .arg(this->name())
@@ -551,7 +528,7 @@ Scene_polygon_soup_item::toolTip() const
 
 void
 Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface* viewer) const {
-    if(d->soup == 0) return;
+    if(d->soup == nullptr) return;
     if(!isInit(viewer))
       initGL(viewer);
     if ( getBuffersFilled() &&
@@ -565,26 +542,28 @@ Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface* viewer) const {
       computeElements();
       initializeBuffers(viewer);
     }
-    
+
     if(renderingMode() == Flat || renderingMode() == FlatPlusEdges)
     {
-    
+
       if(d->soup->fcolors.empty())
         getTriangleContainer(Priv::Flat_facets)->setColor(this->color());
+      getTriangleContainer(Priv::Flat_facets)->setAlpha(alpha());
       getTriangleContainer(Priv::Flat_facets)->draw(viewer, d->soup->fcolors.empty());
     }
     else if(renderingMode() == Gouraud)
     {
       if(d->soup->vcolors.empty())
         getTriangleContainer(Priv::Smooth_facets)->setColor(this->color());
+      getTriangleContainer(Priv::Smooth_facets)->setAlpha(alpha());
       getTriangleContainer(Priv::Smooth_facets)->draw(viewer, d->soup->vcolors.empty());
     }
   }
 
 void
 Scene_polygon_soup_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
-    
-    if(d->soup == 0) return;
+
+    if(d->soup == nullptr) return;
     if(!isInit(viewer))
       initGL(viewer);
     if ( getBuffersFilled() &&
@@ -604,7 +583,7 @@ Scene_polygon_soup_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
 
 void
 Scene_polygon_soup_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
-    if(d->soup == 0) return;
+    if(d->soup == nullptr) return;
     if(!isInit(viewer))
       initGL(viewer);
     if ( getBuffersFilled() &&
@@ -631,7 +610,7 @@ Scene_polygon_soup_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const 
 bool
 Scene_polygon_soup_item::isEmpty() const {
 
-  return (d->soup == 0 || d->soup->points.empty());
+  return (d->soup == nullptr || d->soup->points.empty());
 }
 void
 Scene_polygon_soup_item::invalidateOpenGLBuffers()
@@ -662,7 +641,7 @@ void Scene_polygon_soup_item::compute_bbox() const {
                bbox.xmax(),bbox.ymax(),bbox.zmax()));
 }
 
-void 
+void
 Scene_polygon_soup_item::new_vertex(const double& x,
                                     const double& y,
                                     const double& z)
@@ -670,8 +649,8 @@ Scene_polygon_soup_item::new_vertex(const double& x,
 
     d->soup->points.push_back(Point_3(x, y, z));
 }
-                               
-void 
+
+void
 Scene_polygon_soup_item::new_triangle(const std::size_t i,
                                       const std::size_t j,
                                       const std::size_t k)
@@ -684,7 +663,7 @@ Scene_polygon_soup_item::new_triangle(const std::size_t i,
   d->soup->polygons.push_back(new_polygon);
 }
 
-template <class Point, class Polygon>
+template <class Point, typename Polygon>
 void Scene_polygon_soup_item::load(const std::vector<Point>& points, const std::vector<Polygon>& polygons)
 {
     if(!d->soup)
@@ -717,14 +696,14 @@ void Scene_polygon_soup_item::load(const std::vector<Point>& points, const std::
 
     d->soup->fcolors.reserve (fcolors.size());
     std::copy (fcolors.begin(), fcolors.end(), std::back_inserter (d->soup->fcolors));
-    
+
     d->soup->vcolors.reserve (vcolors.size());
     std::copy (vcolors.begin(), vcolors.end(), std::back_inserter (d->soup->vcolors));
 }
 // Force the instanciation of the template function for the types used in the STL_io_plugin. This is needed
 // because the d-pointer forbid the definition in the .h for this function.
-template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<std::array<double, 3>, std::array<int, 3> >
-(const std::vector<std::array<double, 3> >& points, const std::vector<std::array<int, 3> >& polygons);
+template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<EPICK::Point_3, std::vector<int> >
+(const std::vector<EPICK::Point_3>& points, const std::vector<std::vector<int> >& polygons);
 template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<CGAL::Epick::Point_3, std::vector<std::size_t> >
 (const std::vector<CGAL::Epick::Point_3>& points, const std::vector<std::vector<std::size_t> >& polygons);
 template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<CGAL::Epick::Point_3, std::vector<std::size_t> >
@@ -750,12 +729,12 @@ void Scene_polygon_soup_item::itemAboutToBeDestroyed(Scene_item *item)
     if(d->soup)
     {
       delete d->soup;
-      d->soup=NULL;
+      d->soup=nullptr;
     }
   }
 }
 
-const Polygon_soup::Edges& 
+const Polygon_soup::Edges&
 Scene_polygon_soup_item::non_manifold_edges() const
 {
   return d->soup->non_manifold_edges;
@@ -765,19 +744,19 @@ void Scene_polygon_soup_item::initializeBuffers(Viewer_interface *v) const
 {
   getTriangleContainer(Priv::Flat_facets)->initializeBuffers(v);
   getTriangleContainer(Priv::Flat_facets)->setFlatDataSize(d->nb_polys);
-  
+
   getTriangleContainer(Priv::Smooth_facets)->initializeBuffers(v);
   getTriangleContainer(Priv::Smooth_facets)->setFlatDataSize(d->nb_polys);
-  
+
   getEdgeContainer(Priv::Edges)->initializeBuffers(v);
   getEdgeContainer(Priv::Edges)->setFlatDataSize(d->nb_lines);
-  
+
   getEdgeContainer(Priv::NM_edges)->initializeBuffers(v);
   getEdgeContainer(Priv::NM_edges)->setFlatDataSize(d->nb_nm_edges);
-  
+
   getPointContainer(0)->initializeBuffers(v);
   getPointContainer(0)->setFlatDataSize(d->nb_lines);
-  
+
   d->normals.resize(0);
   d->positions_poly.resize(0);
   d->normals.shrink_to_fit();
@@ -791,15 +770,15 @@ void Scene_polygon_soup_item::initializeBuffers(Viewer_interface *v) const
 }
 
 void Scene_polygon_soup_item::computeElements() const
-{ 
+{
   QApplication::setOverrideCursor(Qt::WaitCursor);
   d->compute_normals_and_vertices();
-  
+
   getTriangleContainer(Priv::Flat_facets)->allocate(
         Tc::Flat_vertices,
         d->positions_poly.data(),
         static_cast<int>(d->positions_poly.size()*sizeof(float)));
-  
+
   getTriangleContainer(Priv::Flat_facets)->allocate(
         Tc::Flat_normals,
         d->normals.data(),
@@ -815,12 +794,12 @@ void Scene_polygon_soup_item::computeElements() const
         Tc::Flat_vertices,
         d->positions_poly.data(),
         static_cast<int>(d->positions_poly.size()*sizeof(float)));
-    
+
   getTriangleContainer(Priv::Smooth_facets)->allocate(
         Tc::Flat_normals,
         d->normals.data(),
         static_cast<int>(d->normals.size()*sizeof(float)));
-  
+
   if(!d->v_colors.empty())
   {
     getTriangleContainer(Priv::Smooth_facets)->allocate(
@@ -828,28 +807,28 @@ void Scene_polygon_soup_item::computeElements() const
           d->v_colors.data(),
           static_cast<int>(d->v_colors.size()*sizeof(float)));
   }
-  
+
   d->nb_polys = d->positions_poly.size();
-  
+
   getEdgeContainer(Priv::Edges)->allocate(
         Ec::Vertices,
         d->positions_lines.data(),
         static_cast<int>(d->positions_lines.size()*sizeof(float)));
-  
+
   getPointContainer(0)->allocate(
         Pc::Vertices,
         d->positions_lines.data(),
         static_cast<int>(d->positions_lines.size()*sizeof(float)));
-  
-  
+
+
   getEdgeContainer(Priv::NM_edges)->allocate(
         Ec::Vertices,
         d->positions_nm_lines.data(),
         static_cast<int>(d->positions_nm_lines.size()*sizeof(float)));
-  
+
   d->nb_nm_edges = d->positions_nm_lines.size();
   d->nb_lines = d->positions_lines.size();
-  
+
   setBuffersFilled(true);
   QApplication::restoreOverrideCursor();
 }
@@ -881,19 +860,19 @@ CGAL::Three::Scene_item::Header_data Scene_polygon_soup_item::header() const
 
   //titles
   data.titles.append(QString("#Points"));
-  
+
   data.titles.append(QString("#Polygons"));
   data.titles.append(QString("Pure Triangle"));
   data.titles.append(QString("Pure Quad"));
   data.titles.append(QString("#Degenerate Polygons"));
-  
+
   data.titles.append(QString("#Edges"));
   data.titles.append(QString("Minimum Length"));
   data.titles.append(QString("Maximum Length"));
   data.titles.append(QString("Median Length"));
   data.titles.append(QString("Mean Length"));
   data.titles.append(QString("#Degenerate Edges"));
-  
+
   data.titles.append(QString("Minimum"));
   data.titles.append(QString("Maximum"));
   data.titles.append(QString("Average"));
@@ -904,7 +883,7 @@ QString Scene_polygon_soup_item::computeStats(int type)
 {
   if(!d->stats_computed)
     d->compute_stats();
-        
+
   switch(type)
   {
   case NB_VERTICES:
@@ -913,7 +892,7 @@ QString Scene_polygon_soup_item::computeStats(int type)
     return QString::number(d->soup->polygons.size());
   case NB_EDGES:
     return QString::number(d->nb_lines/6);
-    
+
   case NB_DEGENERATED_FACES:
   {
     if(d->is_triangle)
@@ -923,7 +902,7 @@ QString Scene_polygon_soup_item::computeStats(int type)
     else
       return QString("n/a");
   }
-    
+
   case MIN_LENGTH:
     return QString::number(d->minl);
   case MAX_LENGTH:
@@ -934,14 +913,14 @@ QString Scene_polygon_soup_item::computeStats(int type)
     return QString::number(d->meanl);
   case NB_NULL_LENGTH:
     return QString::number(d->nb_null_edges);
-    
+
   case MIN_ANGLE:
     return QString::number(d->mini);
   case MAX_ANGLE:
     return QString::number(d->maxi);
   case MEAN_ANGLE:
     return QString::number(d->ave);
-    
+
   case IS_PURE_TRIANGLE:
     if(d->is_triangle)
       return QString("yes");
@@ -984,8 +963,8 @@ Scene_polygon_soup_item_priv::compute_stats()
   accumulator_set< double,
     features< tag::min, tag::max, tag::mean > > angles_acc;
   double rad_to_deg = 180. / CGAL_PI;
-  
-  
+
+
   for(auto poly : soup->polygons)
   {
     if(poly.size() != 3)
@@ -997,7 +976,7 @@ Scene_polygon_soup_item_priv::compute_stats()
       Polygon_soup::Point_3 a(soup->points[poly[i]]),
           b(soup->points[poly[(i+1)%poly.size()]]),
           c(soup->points[poly[(i+2)%poly.size()]]);
-      if (a == b) 
+      if (a == b)
         ++nb_null_edges;
       edges_acc(CGAL::sqrt(CGAL::squared_distance(a, b)));
       typename Traits::Vector_3 ba(b, a);
@@ -1017,6 +996,6 @@ Scene_polygon_soup_item_priv::compute_stats()
   mini = extract_result< tag::min >(angles_acc);
   maxi = extract_result< tag::max >(angles_acc);
   ave = extract_result< tag::mean >(angles_acc);
-  
+
   stats_computed = true;
 }

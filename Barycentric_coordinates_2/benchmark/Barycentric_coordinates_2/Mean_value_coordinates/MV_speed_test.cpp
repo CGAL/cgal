@@ -65,6 +65,6 @@ int main()
 
     cout.precision(10);
     cout << endl << "CPU time to compute Mean Value coordinates (4 vertices) = " << mean_time << " seconds." << endl << endl;
-    
+
     return EXIT_SUCCESS;
 }

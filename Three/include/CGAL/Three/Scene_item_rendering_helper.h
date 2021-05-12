@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Maxime Gimeno
 
@@ -81,14 +72,14 @@ public:
   QMenu* contextMenu() Q_DECL_OVERRIDE;
 
   /*!
-     * \brief processData calls `computeElements()` 
-     * 
+     * \brief processData calls `computeElements()`
+     *
      * @todo in a dedicated thread so the
      * application does not get stuck while the processing is performed.
      * Emits `dataProcessed()`.
      */
    virtual void processData(Gl_data_names name) const;
-   
+
   //!
   //! \brief setAlpha sets the integer value of the alpha channel of this item.
   //! Also updates the slider value.
@@ -134,7 +125,7 @@ public:
   //!
   void setEdgeContainer(std::size_t id,
                         Edge_container* tc);
-  
+
   //!
   //! \brief setPointContainer sets the `id`th `Point_container` to `tc`.
   //!
@@ -176,7 +167,7 @@ public:
   //! This function should be called in the drawing functions, when `getBuffersFilled()` is `true`.
   //!
   void setBuffersInit(Viewer_interface *viewer, bool val) const;
-  
+
   //! \brief the item's bounding box's diagonal length.
   //!
   //! If the diagonal's length has never been computed, computes it and
@@ -220,7 +211,7 @@ protected:
   //! \param b
   //!
   void setBbox(Bbox b)const ;
-  
+
   virtual void computeElements()const{}
 protected:
   friend struct PRIV;

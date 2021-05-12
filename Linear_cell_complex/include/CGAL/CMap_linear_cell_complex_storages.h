@@ -1,20 +1,11 @@
 // Copyright (c) 2013 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -22,6 +13,7 @@
 #define CGAL_CMAP_LINEAR_CELL_COMPLEX_STORAGES_H 1
 
 #include <CGAL/Compact_container.h>
+#include <CGAL/Concurrent_compact_container.h>
 #include <CGAL/Dart.h>
 #include <CGAL/Handle_hash_function.h>
 #include <bitset>
@@ -37,6 +29,9 @@ namespace CGAL {
   namespace internal {
     template <typename M>
     struct Combinatorial_map_helper;
+
+    template<typename Concurrent_tag, class T, class Alloc_>
+    struct Container_type;
   }
 
   /** @file CMap_linear_cell_complex_storages.h
@@ -49,7 +44,7 @@ namespace CGAL {
   // as template parameter of Dart_wrapper. If we inherit, Self is not
   // the correct type).
   template<unsigned int d_, unsigned int ambient_dim,
-           class Traits_, class Items_, class Alloc_ >
+           class Traits_, class Items_, class Alloc_, class Concurrent_tag >
   class CMap_linear_cell_complex_storage_1
   {
   public:
@@ -58,7 +53,7 @@ namespace CGAL {
     typedef typename Traits_::FT     FT;
 
     typedef CMap_linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
-    Items_, Alloc_> Self;
+    Items_, Alloc_, Concurrent_tag> Self;
     typedef CGAL::Tag_false Use_index;
 
     typedef internal::Combinatorial_map_helper<Self>      Helper;
@@ -78,7 +73,8 @@ namespace CGAL {
     typedef std::allocator_traits<Alloc_> Allocator_traits;
     typedef typename Allocator_traits::template rebind_alloc<Dart> Dart_allocator;
 
-    typedef Compact_container<Dart, Dart_allocator>        Dart_container;
+    typedef typename internal::Container_type
+                 <Concurrent_tag, Dart, Dart_allocator>::type Dart_container;
 
     typedef typename Dart_container::iterator              Dart_handle;
     typedef typename Dart_container::const_iterator        Dart_const_handle;
@@ -89,12 +85,12 @@ namespace CGAL {
 
     typedef Items_ Items;
     typedef Alloc_ Alloc;
-
     template <typename T>
     struct Container_for_attributes :
-      public Compact_container<T, typename std::allocator_traits<Alloc_>::template rebind_alloc<T> >
+      public internal::Container_type
+                     <Concurrent_tag, T,
+                      typename std::allocator_traits<Alloc_>::template rebind_alloc<T>>::type
     {};
-    
     /// Typedef for attributes
     typedef typename internal::template Get_attributes_tuple<Dart_wrapper>::type
                                    Attributes;
@@ -159,6 +155,8 @@ namespace CGAL {
       CGAL_assertion(i <= dimension);
       return dh->mf[i]==null_dart_handle;
     }
+    bool is_perforated(Dart_const_handle /*dh*/) const
+    { return false; }
 
     /// Set simultaneously all the marks of this dart to a given value.
     void set_dart_marks(Dart_const_handle ADart,
@@ -258,7 +256,7 @@ namespace CGAL {
       CGAL_assertion( ah!=nullptr );
       return ah->is_valid();
     }
-    
+
     // accessors and modifiers to the attribute ref counting given its handle
     template<unsigned int i>
     std::size_t get_attribute_ref_counting
@@ -470,11 +468,11 @@ namespace CGAL {
 
   /// null_handle
   template<unsigned int d_, unsigned int ambient_dim,
-           class Traits_, class Items_, class Alloc_ >
+           class Traits_, class Items_, class Alloc_, class Concurrent_tag >
   const typename CMap_linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
-                                         Items_, Alloc_>::Null_handle_type
+                                         Items_, Alloc_, Concurrent_tag>::Null_handle_type
   CMap_linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
-                                Items_, Alloc_>::null_handle = nullptr;
+                                Items_, Alloc_, Concurrent_tag>::null_handle = nullptr;
 
 } // namespace CGAL
 

@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -80,7 +71,7 @@ private:
 
   bool is_degenerate(const Site_2& s) const
   {
-    CGAL_precondition( s.is_segment() );    
+    CGAL_precondition( s.is_segment() );
     return same_points( s.source_site(), s.target_site() );
   }
 
@@ -88,14 +79,14 @@ private:
 
   Comparison_result
   compare_distances_pp(const Site_2& p1, const Site_2& p2,
-		       const Site_2& q) const
+                       const Site_2& q) const
   {
     CGAL_precondition( p1.is_point() && p2.is_point() );
     CGAL_precondition( !same_points(p1,p2) );
 
     if ( same_points(q, p1) ) { return SMALLER; }
     if ( same_points(q, p2) ) { return LARGER; }
-    
+
     return
       compare_distance_to_point(q.point(), p1.point(), p2.point());
   }
@@ -104,7 +95,7 @@ private:
 
   Comparison_result
   compare_distances_sp(const Site_2& s, const Site_2& p,
-		       const Site_2& q) const
+                       const Site_2& q) const
   {
     CGAL_precondition( s.is_segment() && p.is_point() );
     CGAL_precondition( !is_degenerate(s) );
@@ -122,17 +113,17 @@ private:
       Line_2 lp = compute_perpendicular(ls, p.point());
 
       if ( is_trg ) {
-	lp = opposite_line(lp);
+        lp = opposite_line(lp);
       }
 
       Oriented_side os = oriented_side_of_line(lp, q.point());
 
       if ( os == ON_POSITIVE_SIDE ) {
-	return LARGER;
+        return LARGER;
       } else if ( os == ON_NEGATIVE_SIDE) {
-	return SMALLER;
+        return SMALLER;
       } else {
-	return EQUAL;
+        return EQUAL;
       }
     }
 
@@ -166,7 +157,7 @@ private:
 
   Comparison_result
   compare_distances_ss(const Site_2& s1, const Site_2& s2,
-		       const Site_2& q) const
+                       const Site_2& q) const
   {
     CGAL_precondition( s1.is_segment() && s2.is_segment() );
     CGAL_precondition( !is_degenerate(s1) );
@@ -189,7 +180,7 @@ private:
 
 
     Point_2 qq = q.point();
-    
+
     Point_2 ssrc1 = s1.source(), strg1 = s1.target();
 
     Line_2 ls1 = compute_supporting_line(s1.supporting_site());
@@ -203,7 +194,7 @@ private:
     Line_2 ltrg2 = compute_perpendicular(ls2, strg2);
 
     // idx1 and idx2 indicate if q is to the left (source endpoint
-    // side), the right side (target endpoint side) or inside 
+    // side), the right side (target endpoint side) or inside
     // the band of s1 and s2 respectively; if q is on the boundary of
     // the band we assign it to the adjacent halfplane; for left
     // halfplane the value is -1; for the band the value is 0; for the
@@ -216,7 +207,7 @@ private:
     } else {
       Oriented_side os_trg1 = oriented_side_of_line(ltrg1, qq);
       if ( os_trg1 != ON_POSITIVE_SIDE ) {
-	idx1 = 1;
+        idx1 = 1;
       }
     }
 
@@ -226,7 +217,7 @@ private:
     } else {
       Oriented_side os_trg2 = oriented_side_of_line(ltrg2, qq);
       if ( os_trg2 != ON_POSITIVE_SIDE ) {
-	idx2 = 1;
+        idx2 = 1;
       }
     }
 
@@ -236,38 +227,38 @@ private:
     if ( idx1 == -1 ) {
       RT d2_s1 = compute_squared_distance(qq, ssrc1);
       if ( idx2 == -1 ) {
-	if ( same_points(s1.source_site(), s2.source_site()) ) {
-	  return EQUAL;
-	}
-	RT d2_s2 = compute_squared_distance(qq, ssrc2);
-	return CGAL::compare(d2_s1, d2_s2);
+        if ( same_points(s1.source_site(), s2.source_site()) ) {
+          return EQUAL;
+        }
+        RT d2_s2 = compute_squared_distance(qq, ssrc2);
+        return CGAL::compare(d2_s1, d2_s2);
       } else if ( idx2 == 1 ) {
-	if ( same_points(s1.source_site(), s2.target_site()) ) {
-	  return EQUAL;
-	}
-	RT d2_s2 = compute_squared_distance(qq, strg2);
-	return CGAL::compare(d2_s1, d2_s2);
+        if ( same_points(s1.source_site(), s2.target_site()) ) {
+          return EQUAL;
+        }
+        RT d2_s2 = compute_squared_distance(qq, strg2);
+        return CGAL::compare(d2_s1, d2_s2);
       } else {
-	std::pair<RT,RT> d2_s2 = compute_squared_distance(qq, ls2);
-	return CGAL::compare(d2_s1 * d2_s2.second, d2_s2.first);
+        std::pair<RT,RT> d2_s2 = compute_squared_distance(qq, ls2);
+        return CGAL::compare(d2_s1 * d2_s2.second, d2_s2.first);
       }
     } else if ( idx1 == 1 ) {
       RT d2_s1 = compute_squared_distance(qq, strg1);
       if ( idx2 == -1 ) {
-	if ( same_points(s1.target_site(), s2.source_site()) ) {
-	  return EQUAL;
-	}
-	RT d2_s2 = compute_squared_distance(qq, ssrc2);
-	return CGAL::compare(d2_s1, d2_s2);
+        if ( same_points(s1.target_site(), s2.source_site()) ) {
+          return EQUAL;
+        }
+        RT d2_s2 = compute_squared_distance(qq, ssrc2);
+        return CGAL::compare(d2_s1, d2_s2);
       } else if ( idx2 == 1 ) {
-	if ( same_points(s1.target_site(), s2.target_site()) ) {
-	  return EQUAL;
-	}
-	RT d2_s2 = compute_squared_distance(qq, strg2);
-	return CGAL::compare(d2_s1, d2_s2);
+        if ( same_points(s1.target_site(), s2.target_site()) ) {
+          return EQUAL;
+        }
+        RT d2_s2 = compute_squared_distance(qq, strg2);
+        return CGAL::compare(d2_s1, d2_s2);
       } else {
-	std::pair<RT,RT> d2_s2 = compute_squared_distance(qq, ls2);
-	return CGAL::compare(d2_s1 * d2_s2.second, d2_s2.first);
+        std::pair<RT,RT> d2_s2 = compute_squared_distance(qq, ls2);
+        return CGAL::compare(d2_s1 * d2_s2.second, d2_s2.first);
       }
     }
 
@@ -284,7 +275,7 @@ private:
     CGAL_assertion( idx2 == 0 );
     std::pair<RT,RT> d2_s2 = compute_squared_distance(qq, ls2);
     return CGAL::compare(d2_s1.first * d2_s2.second,
-			 d2_s2.first * d2_s1.second);
+                         d2_s2.first * d2_s1.second);
   }
 
   //-----------------------------------------------------------------
@@ -292,7 +283,7 @@ private:
 
   Oriented_side
   compare_distances(const Site_2& t1, const Site_2& t2,
-		    const Site_2& q) const
+                    const Site_2& q) const
   {
     Comparison_result r;
 

@@ -2,20 +2,8 @@
 /*
  * author:  Bruno Levy, INRIA, project ALICE
  * website: http://www.loria.fr/~levy/software
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation, either version 3
- * of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * This file is part of CGAL (www.cgal.org)
  *
  * Scientific work that use this software can reference the website and
  * the following publication:
@@ -37,7 +25,7 @@
  *
  * $URL$
  * $Id$
- * SPDX-License-Identifier: LGPL-3.0+
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
 #ifndef __OPENNL_BICGSTAB__
@@ -66,7 +54,7 @@ namespace OpenNL {
  *
  * @param A generic square matrix; a function
  *   mult(const MATRIX& M, const double* x, double* y)
- * and a member function 
+ * and a member function
  *   int dimension() const
  * must to be defined.
  * @param b right hand side of the system.
@@ -93,7 +81,7 @@ public:
     void set_max_iter(unsigned int max_iter) { max_iter_ = max_iter ; }
 
     // Solve the sparse linear system "A*x = b". Return true on success.
-    bool solve(const MATRIX &A, const VECTOR& b, VECTOR& x) 
+    bool solve(const MATRIX &A, const VECTOR& b, VECTOR& x)
     {
 #ifdef DEBUG_TRACE
         std::cerr << "  Call BICGSTAB" << std::endl;
@@ -154,17 +142,17 @@ public:
 #ifdef DEBUG_TRACE
                 std::cerr << "  BICGSTAB: omega=0" << std::endl;
 #endif
-                break;                                          
+                break;
             }
             if (rTh == 0.0)                                     // stop if rTh==0 (failure)
             {
 #ifdef DEBUG_TRACE
                 std::cerr << "  BICGSTAB: rTh=0" << std::endl;
 #endif
-                break;                                          
+                break;
             }
             beta=(alpha/omega)/rTh;                             // beta = (rTh/"old rTh") * (alpha/omega)
-            rTh=BLAS<Vector>::dot(rT,h); 
+            rTh=BLAS<Vector>::dot(rT,h);
             beta*=rTh;
             BLAS<Vector>::scal(beta,d);
             BLAS<Vector>::axpy(1,h,d);
@@ -201,7 +189,7 @@ private:
  *
  * @param A generic square matrix; a function
  *   mult(const MATRIX& M, const double* x, double* y)
- * and a member function 
+ * and a member function
  *   int dimension() const
  * must to be defined.
  * @param C preconditioner; a function
@@ -213,8 +201,8 @@ private:
  * @param max_iter maximum number of iterations.
  */
 
-template< class MATRIX, class PC_MATRIX, class VECTOR > 
-class Solver_preconditioned_BICGSTAB 
+template< class MATRIX, class PC_MATRIX, class VECTOR >
+class Solver_preconditioned_BICGSTAB
 {
 public:
     typedef MATRIX Matrix ;
@@ -234,7 +222,7 @@ public:
     void set_max_iter(unsigned int max_iter) { max_iter_ = max_iter ; }
 
     // Solve the sparse linear system "A*x = b". Return true on success.
-    bool solve(const MATRIX &A, const PC_MATRIX &C, const VECTOR& b, VECTOR& x) 
+    bool solve(const MATRIX &A, const PC_MATRIX &C, const VECTOR& b, VECTOR& x)
     {
 #ifdef DEBUG_TRACE
         std::cerr << "  Call BICGSTAB with preconditioner" << std::endl;
@@ -277,7 +265,7 @@ public:
 #ifdef DEBUG_TRACE
                 std::cerr << "  BICGSTAB with preconditioner: rTSd=0" << std::endl;
 #endif
-                break;                                          
+                break;
             }
             alpha=rTh/rTSd;
             BLAS<Vector>::axpy(-alpha,aux,r);
@@ -304,17 +292,17 @@ public:
 #ifdef DEBUG_TRACE
                 std::cerr << "  BICGSTAB with preconditioner: omega=0" << std::endl;
 #endif
-                break;                                          
+                break;
             }
             if (rTh == 0.0)                                     // stop if rTh==0 (failure)
             {
 #ifdef DEBUG_TRACE
                 std::cerr << "  BICGSTAB with preconditioner: rTh=0" << std::endl;
 #endif
-                break;                                          
+                break;
             }
             beta=(alpha/omega)/rTh;                             // beta = (rTh/"old rTh") * (alpha/omega)
-            rTh=BLAS<Vector>::dot(rT,h); 
+            rTh=BLAS<Vector>::dot(rT,h);
             beta*=rTh;
             BLAS<Vector>::scal(beta,d);                         // d = h + beta * (d - omega * Sd);
             BLAS<Vector>::axpy(1,h,d);

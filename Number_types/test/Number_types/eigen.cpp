@@ -34,7 +34,7 @@ void check_(){
   v << 1, 2, 3;
   NT t=v.dot(v);
   v+=d*m*(t*v);
-  int si=v.size();
+  std::ptrdiff_t si=v.size();
   CGAL_USE(si);
 }
 template <class NT>
@@ -59,7 +59,7 @@ int main(){
   //check<CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> > >();
   check<CGAL::Sqrt_extension<double,double> >();
 #ifdef CGAL_USE_GMP
-  check<CGAL::Gmpz>();
+//  check<CGAL::Gmpz>();
   check<CGAL::Gmpq>();
   check<CGAL::Gmpfr>();
   check<CGAL::Quotient<CGAL::Gmpz> >();
@@ -69,7 +69,7 @@ int main(){
   check<CGAL::Gmpfi>();
 #endif
 #ifdef CGAL_USE_CORE
-  check<CORE::BigInt>();
+//  check<CORE::BigInt>();
   check<CORE::BigRat>();
   check<CORE::BigFloat>();
   check<CORE::Expr>();

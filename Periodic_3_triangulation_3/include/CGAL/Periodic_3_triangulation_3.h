@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
@@ -30,12 +21,8 @@
 
 #include <CGAL/basic.h>
 
-#include <boost/tuple/tuple.hpp>
-#include <boost/random/linear_congruential.hpp>
-#include <boost/random/uniform_smallint.hpp>
-#include <boost/random/variate_generator.hpp>
-#include <boost/unordered_map.hpp>
 #include <CGAL/internal/Periodic_3_triangulation_iterators_3.h>
+#include <CGAL/result_of.h>
 #include <CGAL/Periodic_3_triangulation_ds_cell_base_3.h>
 #include <CGAL/Periodic_3_triangulation_ds_vertex_base_3.h>
 #include <CGAL/Periodic_3_triangulation_traits_3.h>
@@ -56,6 +43,12 @@
 #include <CGAL/Triangulation_structural_filtering_traits.h>
 #include <CGAL/determinant.h>
 #endif // no CGAL_NO_STRUCTURAL_FILTERING
+
+#include <boost/random/linear_congruential.hpp>
+#include <boost/random/uniform_smallint.hpp>
+#include <boost/random/variate_generator.hpp>
+#include <boost/tuple/tuple.hpp>
+#include <boost/unordered_map.hpp>
 
 #include <iostream>
 #include <algorithm>
@@ -99,7 +92,7 @@ struct Periodic_structural_filtering_selector_3<true>
 
 /**\class Periodic_3_triangulation_3
  *
- * \brief Implements functionality for computing in periodic space.
+ * \brief implements functionality for computing in periodic space.
  *
  * There are several things that are special to computing in $\mathbb{T}^3$
  * such as
@@ -657,7 +650,8 @@ public:
   // but       point()          -like functions have return type Point
 
   template<typename P> // can be Point or Point_3
-  Point_3 construct_point(const P& p) const {
+  decltype(auto)
+  construct_point(const P& p) const {
     return geom_traits().construct_point_3_object()(p);
   }
 
@@ -2504,7 +2498,7 @@ inline Bounded_side Periodic_3_triangulation_3<GT,TDS>::side_of_cell(
   }
 } // side_of_cell
 
-/*! \brief Insert point.
+/*! \brief inserts point.
 *
 * Inserts the point p into the triangulation. It assumes that
 * the cell c containing p is already known.
@@ -2835,7 +2829,7 @@ find_conflicts(Cell_handle d, const Offset& current_off,
   return it;
 }
 
-/*! \brief Insert point into triangulation.
+/*! \brief inserts point into triangulation.
  *
  * Inserts the point p into the triangulation. It expects
  * - a cell to start the point location
@@ -2945,7 +2939,7 @@ inline bool Periodic_3_triangulation_3<GT,TDS>::has_self_edges(Cell_handle c) co
       (c->vertex(2) == c->vertex(3)));
 }
 
-/*! \brief Tests if the triangulation is valid.
+/*! \brief tests if the triangulation is valid.
  *
  * A triangulation is valid if
  * - A cell is not its own neighbor.
@@ -3093,7 +3087,7 @@ inline void Periodic_3_triangulation_3<GT,TDS>::make_hole(Vertex_handle v,
   }
 }
 
-/*! \brief Remove a vertex from the triangulation.
+/*! \brief removes a vertex from the triangulation.
  *
  * Removes vertex v from the triangulation.
  */
@@ -3134,7 +3128,7 @@ remove(Vertex_handle v, PointRemover& r, Conflict_tester& t, CoverManager& cover
   }
 }
 
-/*! \brief Remove a vertex from the triangulation.
+/*! \brief removes a vertex from the triangulation.
  *
  * Removes vertex v from the triangulation.
  * It expects a reference to an instance of a PointRemover.
@@ -3346,7 +3340,7 @@ periodic_remove(Vertex_handle v, PointRemover& remover, CoverManager& cover_mana
 // ############################################################################
 // ############################################################################
 
-/** \brief Delete each redundant cell and the not anymore needed data
+/** \brief deletes each redundant cell and the not anymore needed data
  *  structures.
  *
  *  This function consists of four iterations over all cells and one
@@ -3865,7 +3859,7 @@ Periodic_3_triangulation_3<GT,TDS>::get_cell(const Vertex_handle* vh) const
   return Cell_handle();
 }
 
-/*! \brief Get the offset of tester.point() such that
+/*! \brief gets the offset of tester.point() such that
  * this point is in conflict with c w.r.t tester.get_offset().
  *
  * Implementation: Just try all eight possibilities.

@@ -4,29 +4,18 @@
  * All rights reserved.
  *
  * This file is part of CGAL (www.cgal.org).
- * You can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- *
- * Licensees holding a valid commercial license may use this file in
- * accordance with the commercial license agreement provided with the
- * software.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * File: Expr.h
  * Synopsis: a class of Expression in Level 3
- * 
- * Written by 
+ *
+ * Written by
  *       Koji Ouchi <ouchi@simulation.nyu.edu>
  *       Chee Yap <yap@cs.nyu.edu>
  *       Igor Pechtchanski <pechtcha@cs.nyu.edu>
  *       Vijay Karamcheti <vijayk@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
- *       Sylvain Pion <pion@cs.nyu.edu> 
+ *       Sylvain Pion <pion@cs.nyu.edu>
  *       Vikram Sharma<sharma@cs.nyu.edu>
  *
  * WWW URL: http://cs.nyu.edu/exact/
@@ -34,7 +23,7 @@
  *
  * $URL$
  * $Id$
- * SPDX-License-Identifier: LGPL-3.0+
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
 
 // We need to include BigFloat.h here because there is a circular dependency
@@ -47,7 +36,7 @@
 #include <CGAL/CORE/ExprRep.h>
 #include <CGAL/assertions.h>
 
-namespace CORE { 
+namespace CORE {
 
 /// \class Expr Expr.h
 /// \brief Expr is a class of Expression in Level 3
@@ -72,12 +61,12 @@ public:
   Expr(unsigned long ul) : RCExpr(new ConstRealRep(Real(ul))) {}
 
   /// constructor for <tt>float</tt>
-  /** \note the results of this constructor may appear unpredictable to the 
+  /** \note the results of this constructor may appear unpredictable to the
    *  user.  E.g.,  one may assume that new Expr(.1) is exactly equal to .1,
    *  but it will be print as
    *      .1000000000000000055511151231257827021181583404541015625.
    *  This is so because .1 cannot be represented exactly as a double
-   *  (or, for that matter, as a binary fraction of any finite length). 
+   *  (or, for that matter, as a binary fraction of any finite length).
    *  The value is the closest double value determined by the compiler.
    */
   Expr(float f) : RCExpr(nullptr) { // check for valid numbers
@@ -363,7 +352,7 @@ inline std::istream& operator>>(std::istream& i, Expr& e) {
   Real rVal;
   i >> rVal; // precision is = get_static_defInputDigits()
   if (i)
-    e = rVal;		// only assign when reading is successful.
+    e = rVal;                // only assign when reading is successful.
   return i;
 }
 
@@ -480,7 +469,7 @@ inline Expr power(const Expr& e, unsigned long p) {
 /** We do not check if e2 is 0.
  * */
 // NOTE:  The name "isDivisible" is not consistent
-// 		with the analogous "divisible" predicate in BigInt!
+//                 with the analogous "divisible" predicate in BigInt!
 inline bool isDivisible(const Expr& e1, const Expr& e2) {
   Expr result;
   floor(e1/e2, result);
@@ -521,7 +510,7 @@ inline Expr rootOf(const Polynomial<NT>& p, const BFInterval& I) {
 /// helper function for constructing Polynomial node with pair of BigFloats
 template <class NT>
 inline Expr rootOf(const Polynomial<NT>& p, const BigFloat& x,
-		const BigFloat& y) {
+                const BigFloat& y) {
   return Expr(p, BFInterval(x, y) );
 }
 /// helper function for constructing Polynomial node with pair of doubles

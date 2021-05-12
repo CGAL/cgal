@@ -4,9 +4,9 @@ namespace CGAL {
 /*!
 \ingroup PkgNef2Ref
 
-The class `Extended_cartesian` serves as a traits class for the class 
-`Nef_polyhedron_2<T>`. It uses a polynomial component 
-representation based on a field number type `FT`. 
+The class `Extended_cartesian` serves as a traits class for the class
+`Nef_polyhedron_2<T>`. It uses a polynomial component
+representation based on a field number type `FT`.
 
 \cgalModels `ExtendedKernelTraits_2`
 
@@ -14,21 +14,21 @@ representation based on a field number type `FT`.
 
 
 
-\sa `CGAL::Extended_homogeneous<RT>` 
-\sa `CGAL::Filtered_extended_homogeneous<RT>` 
+\sa `CGAL::Extended_homogeneous<RT>`
+\sa `CGAL::Filtered_extended_homogeneous<RT>`
 
 */
 template< typename FT >
 class Extended_cartesian {
 public:
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
-default constructor. 
-*/ 
-Extended_cartesian(); 
+default constructor.
+*/
+Extended_cartesian();
 
 /// @}
 

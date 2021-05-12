@@ -12,7 +12,7 @@
 #include <QApplication>
 #include <QMainWindow>
 #include <QInputDialog>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QAction>
 #include <QDebug>
 #include <QObject>

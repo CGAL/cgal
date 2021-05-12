@@ -99,7 +99,7 @@ void test_iterators(ListPolygon& p, const ListPolygon& q)
     is_input_iterator(ic1);
 
     VC vstart(v);
-    if (v != 0)
+    if (v != nullptr)
       do {
         cout << *v << endl;
         ++v;
@@ -113,7 +113,7 @@ void test_iterators(ListPolygon& p, const ListPolygon& q)
     is_input_iterator(ic2);
 
     EC estart(e);
-    if (e != 0)
+    if (e != nullptr)
       do {
         cout << *e << endl;
         ++e;
@@ -132,7 +132,7 @@ void test_iterators(ListPolygon& p, const ListPolygon& q)
     is_input_iterator(ic3);
 
     VCC vstart(v);
-    if (v != 0)
+    if (v != nullptr)
       do {
         cout << *v << endl;
         ++v;
@@ -146,7 +146,7 @@ void test_iterators(ListPolygon& p, const ListPolygon& q)
     is_input_iterator(ic4);
 
     EC estart(e);
-    if (e != 0)
+    if (e != nullptr)
       do {
         cout << *e << endl;
         ++e;
@@ -283,7 +283,7 @@ void test_update_operations(const ListPolygon& p,
 
   VC c = q.vertices_circulator();
   q.set(c, *middle);
-  q.insert(c, Point(2,3)); 
+  q.insert(c, Point(2,3));
   q.erase(q.vertices_circulator());
 
   pgn.push_back(Point(pgn.vertices_begin()->x(), 3));

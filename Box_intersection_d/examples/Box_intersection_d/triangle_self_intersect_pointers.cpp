@@ -43,12 +43,12 @@ int main(int argc, char*argv[])
   std::vector<Box> boxes;
   for ( Iterator i = triangles.begin(); i != triangles.end(); ++i)
     boxes.push_back( Box( i->bbox(), i));
-  
+
   // Create the corresponding vector of pointers to bounding boxes
   std::vector<Box *> ptr;
   for ( std::vector<Box>::iterator i = boxes.begin(); i != boxes.end(); ++i)
     ptr.push_back( &*i);
-  
+
   // Run the self intersection algorithm with all defaults on the
   // indirect pointers to bounding boxes. Avoids copying the boxes.
   CGAL::box_self_intersection_d( ptr.begin(), ptr.end(), Report(triangles));

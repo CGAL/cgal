@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -31,7 +22,7 @@ namespace CGAL {
 namespace Mesh_2 {
 
 /**
- * This class is the visitor needed when Refine_edges<Tr> if called from 
+ * This class is the visitor needed when Refine_edges<Tr> if called from
  * Refine_faces<Tr>.
  * \param Faces_mesher should be instanciated with Refine_face_base<Tr>.
  */
@@ -59,7 +50,7 @@ private:
 
 public:
   Refine_edges_visitor(Faces_mesher& faces_mesher_,
-		       Edges_mesher& edges_mesher_,
+                       Edges_mesher& edges_mesher_,
                        Null_mesh_visitor& null)
     : faces_mesher(faces_mesher_),
       edges_mesher(edges_mesher_),
@@ -72,8 +63,8 @@ public:
   }
 
   Null_mesh_visitor previous_level() const { return null_mesh_visitor; }
-  
-  /** 
+
+  /**
    * Store vertex handles and markers at left and right of the edge \c e.
    */
   void before_conflicts(const Edge& e, const Point&)
@@ -83,7 +74,7 @@ public:
 
     va = fh->vertex(Tr::cw (edge_index));
     vb = fh->vertex(Tr::ccw(edge_index));
-    
+
     mark_at_right = fh->is_in_domain();
     mark_at_left = fh->neighbor(edge_index)->is_in_domain();
   }
@@ -147,7 +138,7 @@ private:
 public:
 
   Refine_edges_visitor_from_faces(Faces_mesher& faces_mesher,
-				  Edges_mesher& edges_mesher,
+                                  Edges_mesher& edges_mesher,
                                   Null_mesh_visitor& null)
     : previous(faces_mesher, edges_mesher, null)
   {

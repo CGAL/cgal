@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -33,12 +24,13 @@
 
 #include <CGAL/Mesh_3/C3T3_helpers.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
+#include <CGAL/Time_stamper.h>
 
 #ifdef CGAL_MESH_3_PERTURBER_VERBOSE
   #include <CGAL/Timer.h>
   #ifdef CGAL_LINKED_WITH_TBB
     #include <tbb/enumerable_thread_specific.h>
-    #include <tbb/atomic.h>
+    #include <atomic>
   #endif
 #endif
 
@@ -201,7 +193,7 @@ public:
 #endif
   {
 #ifdef CGAL_MESH_3_PERTURBER_VERBOSE
-    // Initialized here in case it's some tbb::atomic
+    // Initialized here in case it's some std::atomic
     total_counter_ = 0;
     total_time_ = 0;
 #endif
@@ -362,8 +354,8 @@ private:
   mutable int counter_;
 #ifdef CGAL_LINKED_WITH_TBB
   mutable tbb::enumerable_thread_specific<CGAL::Timer> timer_;
-  tbb::atomic<int> total_counter_;
-  tbb::atomic<std::size_t> total_time_;
+  std::atomic<int> total_counter_;
+  std::atomic<std::size_t> total_time_;
 #else
   mutable CGAL::Timer timer_;
   int total_counter_;

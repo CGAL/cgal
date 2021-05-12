@@ -1,25 +1,16 @@
-#ifndef CGAL_SURFACE_MESH_SEGMENTATION_K_MEANS_CLUSTERING_H
 // Copyright (c) 2014  GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Ilker O. Yaz
 
 
+#ifndef CGAL_SURFACE_MESH_SEGMENTATION_K_MEANS_CLUSTERING_H
 #define CGAL_SURFACE_MESH_SEGMENTATION_K_MEANS_CLUSTERING_H
 
 #include <CGAL/license/Surface_mesh_segmentation.h>
@@ -132,7 +123,7 @@ public:
       double cumulative_distance_square = 0.0;
       // distance_square holds closest distance that points have, so just test new coming center (i.e. centers.back())
       for(std::size_t j = 0; j < points.size(); ++j) {
-        double new_distance = std::pow(centers.back() - points[j], 2);
+        double new_distance = CGAL::square(centers.back() - points[j]);
         if(new_distance < distance_square[j]) {
           distance_square[j] = new_distance;
         }
@@ -431,7 +422,7 @@ private:
     double sum = 0.0;
     for(std::vector<K_means_point>::const_iterator point_it = points.begin();
         point_it != points.end(); ++point_it) {
-      sum += std::pow(centers[point_it->center_id].mean - point_it->data, 2);
+      sum += CGAL::square(centers[point_it->center_id].mean - point_it->data);
     }
     return sum;
   }

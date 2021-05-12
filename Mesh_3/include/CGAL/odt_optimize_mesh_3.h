@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -46,7 +37,7 @@ namespace CGAL {
 #  pragma warning(push)
 #  pragma warning(disable:4003) // not enough actual parameters for macro
 #endif
-  
+
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
 // see <CGAL/boost/parameter.h>
@@ -69,14 +60,14 @@ BOOST_PARAMETER_FUNCTION(
                                   time_limit_, max_iteration_number_,
                                   convergence_, freeze_bound_
                                   , do_freeze_ );
-} 
+}
 CGAL_PRAGMA_DIAG_POP
 
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)
 #endif
 
-template <typename C3T3, typename MeshDomain> 
+template <typename C3T3, typename MeshDomain>
 Mesh_optimization_return_code
 odt_optimize_mesh_3_impl(C3T3& c3t3,
                          const MeshDomain& domain,
@@ -90,10 +81,10 @@ odt_optimize_mesh_3_impl(C3T3& c3t3,
     !Mesh_3::internal::has_non_protecting_weights(c3t3.triangulation(), domain));
 
   typedef typename C3T3::Triangulation  Tr;
-  
+
   typedef Mesh_3::Mesh_sizing_field<Tr>             Sizing;
   typedef typename Mesh_3::Odt_move<C3T3,Sizing>    Move;
-  
+
   typedef typename
     Mesh_3::Mesh_global_optimizer<C3T3,MeshDomain,Move> Odt_optimizer;
 
@@ -103,14 +94,14 @@ odt_optimize_mesh_3_impl(C3T3& c3t3,
                     freeze_ratio,
                     do_freeze,
                     convergence);
-  
+
   // Set max time
   opt.set_time_limit(time_limit);
-  
+
   // 1000 iteration max to avoid infinite loops
   if ( 0 == max_iteration_number )
     max_iteration_number = 1000;
-  
+
   // Launch optimization
   return opt(static_cast<int>(max_iteration_number));
 }

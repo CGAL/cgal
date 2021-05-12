@@ -1,25 +1,16 @@
-// Copyright (c) 2000,2001  
+// Copyright (c) 2000,2001
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 // Author(s)     : Michael Seel
 
 #ifndef CGAL_HYPERPLANECD_H
@@ -33,10 +24,10 @@ namespace CGAL {
 template <class FT, class LA>
 std::istream& operator>>(std::istream&, HyperplaneCd<FT,LA>&);
 template <class FT, class LA>
-std::ostream& operator<<(std::ostream&, const HyperplaneCd<FT,LA>&); 
+std::ostream& operator<<(std::ostream&, const HyperplaneCd<FT,LA>&);
 
 template <class _FT, class _LA>
-class HyperplaneCd : public Handle_for< Tuple_d<_FT,_LA> > { 
+class HyperplaneCd : public Handle_for< Tuple_d<_FT,_LA> > {
   typedef Tuple_d<_FT,_LA> Tuple;
   typedef Handle_for<Tuple> Base;
   typedef HyperplaneCd<_FT,_LA> Self;
@@ -48,7 +39,7 @@ _FT& entry(int i) { return ptr()->v[i]; }
 const _FT& entry(int i) const { return ptr()->v[i]; }
 void invert_rep() { ptr()->invert(); }
 
-public: 
+public:
 typedef _FT RT;
 typedef _FT FT;
 typedef _LA LA;
@@ -64,14 +55,14 @@ template <class InputIterator>
 HyperplaneCd(int d, InputIterator first, InputIterator last)
   : Base( Tuple(d+1,first,last) ) {}
 
-template <class ForwardIterator> 
+template <class ForwardIterator>
 void
-construct_from_points(ForwardIterator first, ForwardIterator last, 
-		      const PointCd<FT,LA>& o, Oriented_side side)
-{ 
+construct_from_points(ForwardIterator first, ForwardIterator last,
+                      const PointCd<FT,LA>& o, Oriented_side side)
+{
   // inline due to template parameter
   TUPLE_DIM_CHECK(first,last,hyperplane::construction);
-  CGAL_assertion_msg((first->dimension()==o.dimension()), 
+  CGAL_assertion_msg((first->dimension()==o.dimension()),
   "hyperplane::construction: dimensions disagree.");
 
   int d = first->dimension(); // we are in $d$ - dimensional space
@@ -79,7 +70,7 @@ construct_from_points(ForwardIterator first, ForwardIterator last,
   typename LA::Matrix A(m,d + 1);
 
   for (int i = 0; i < m; i++) {  /* define $i$-th equation */
-    for (int j = 0; j < d; j++)  
+    for (int j = 0; j < d; j++)
       A(i,j) = first->cartesian(j); // $j$ - th coord of $i$-th point
     A(i,d) = 1;
     ++first;
@@ -90,11 +81,11 @@ construct_from_points(ForwardIterator first, ForwardIterator last,
   CGAL_assertion_msg(dim != 0,
    "HyperplaneCd::constructor: set P is full dimensional.");
 
-  if (side == ON_ORIENTED_BOUNDARY) 
+  if (side == ON_ORIENTED_BOUNDARY)
   { ptr()->v = spanning_vecs.column(0); return; }
 
   FT sum = 0; int j;
-  for (j = 0; j < dim; j++) { 
+  for (j = 0; j < dim; j++) {
     for (int i = 0; i < d; i++)
       sum += spanning_vecs(i,j)*o.cartesian(i);
     sum += spanning_vecs(d,j);
@@ -111,46 +102,46 @@ construct_from_points(ForwardIterator first, ForwardIterator last,
 }
 
 template <class ForwardIterator>
-HyperplaneCd(ForwardIterator first, ForwardIterator last, 
+HyperplaneCd(ForwardIterator first, ForwardIterator last,
              const PointCd<FT,LA>& o,
              Oriented_side side = ON_ORIENTED_BOUNDARY)
-  : Base( Tuple(o.dimension()+1) ) 
+  : Base( Tuple(o.dimension()+1) )
 { construct_from_points(first,last,o,side); }
 
-HyperplaneCd(const PointCd<FT,LA>& p, const DirectionCd<FT,LA>& dir) 
-  : Base( Tuple(p.dimension()+1) ) 
-{ 
-  int d = p.dimension(); 
-  CGAL_assertion_msg((dir.dimension() == d), 
+HyperplaneCd(const PointCd<FT,LA>& p, const DirectionCd<FT,LA>& dir)
+  : Base( Tuple(p.dimension()+1) )
+{
+  int d = p.dimension();
+  CGAL_assertion_msg((dir.dimension() == d),
     "HyperplaneCd::constructor: parameter dimensions disagree.");
 
-  FT sum = 0; 
-  for (int i = 0; i < d; i++) { 
+  FT sum = 0;
+  for (int i = 0; i < d; i++) {
     sum += dir.delta(i)*p.cartesian(i);
     entry(i) = dir.delta(i);
   }
   entry(d) = -sum;
 }
 
-HyperplaneCd(const FT& a, const FT& b, const FT& c) : 
-  Base( Tuple(a,b,c,MatchHelper()) ) {} 
+HyperplaneCd(const FT& a, const FT& b, const FT& c) :
+  Base( Tuple(a,b,c,MatchHelper()) ) {}
 
-HyperplaneCd(int a, int b, int c) : 
-  Base( Tuple(FT(a),FT(b),FT(c),MatchHelper()) ) {} 
+HyperplaneCd(int a, int b, int c) :
+  Base( Tuple(FT(a),FT(b),FT(c),MatchHelper()) ) {}
 
 HyperplaneCd(const FT& a, const FT& b, const FT& c, const FT& d) :
-  Base( Tuple(a,b,c,d) ) {} 
+  Base( Tuple(a,b,c,d) ) {}
 
-HyperplaneCd(int a, int b, int c, int d) : 
-  Base( Tuple(FT(a),FT(b),FT(c),FT(d)) ) {} 
+HyperplaneCd(int a, int b, int c, int d) :
+  Base( Tuple(FT(a),FT(b),FT(c),FT(d)) ) {}
 
-~HyperplaneCd()  {}    
+~HyperplaneCd()  {}
 
 int dimension() const { return ptr()->size()-1; }
 
 FT operator[](int i) const
-{ CGAL_assertion_msg((0<=i && i<=(dimension())), 
-  "HyperplaneCd::op[]: index out of range."); 
+{ CGAL_assertion_msg((0<=i && i<=(dimension())),
+  "HyperplaneCd::op[]: index out of range.");
   return entry(i); }
 
 FT coefficient(int i) const { return entry(i); }
@@ -158,43 +149,43 @@ FT coefficient(int i) const { return entry(i); }
 const typename LA::Vector& coefficient_vector() const
 { return vector_rep(); }
 
-Coefficient_const_iterator coefficients_begin() const 
+Coefficient_const_iterator coefficients_begin() const
 { return ptr()->begin(); }
 Coefficient_const_iterator coefficients_end() const
 { return ptr()->end(); }
 
-inline VectorCd<FT,LA> orthogonal_vector() const; 
+inline VectorCd<FT,LA> orthogonal_vector() const;
 
-DirectionCd<FT,LA> orthogonal_direction() const 
+DirectionCd<FT,LA> orthogonal_direction() const
 { return orthogonal_vector().direction(); }
 
 FT value_at(const PointCd<FT,LA>& p) const
 { CGAL_assertion_msg((dimension()==p.dimension()),
     "HyperplaneCd::value_at: dimensions disagree.");
   FT res(0);
-  for (int i=0; i<dimension(); ++i) 
+  for (int i=0; i<dimension(); ++i)
     res += coefficient(i)*p.cartesian(i);
   res += coefficient(dimension());
   return res;
 }
 
-Oriented_side oriented_side(const PointCd<FT,LA>& p) const 
-{ 
-  CGAL_assertion_msg(dimension()==p.dimension(), 
-    "HyperplaneCd::oriented_side: dimensions do not agree."); 
+Oriented_side oriented_side(const PointCd<FT,LA>& p) const
+{
+  CGAL_assertion_msg(dimension()==p.dimension(),
+    "HyperplaneCd::oriented_side: dimensions do not agree.");
   return CGAL_NTS sign(value_at(p));
 }
 
-bool has_on(const PointCd<FT,LA>& p) const 
+bool has_on(const PointCd<FT,LA>& p) const
 { return (oriented_side(p) == ON_ORIENTED_BOUNDARY); }
 
-bool has_on_boundary(const PointCd<FT,LA>& p) const 
+bool has_on_boundary(const PointCd<FT,LA>& p) const
 { return (oriented_side(p) == ON_ORIENTED_BOUNDARY); }
 
-bool has_on_positive_side(const PointCd<FT,LA>& p) const 
+bool has_on_positive_side(const PointCd<FT,LA>& p) const
 { return (oriented_side(p) == ON_POSITIVE_SIDE); }
 
-bool has_on_negative_side(const PointCd<FT,LA>& p) const 
+bool has_on_negative_side(const PointCd<FT,LA>& p) const
 { return (oriented_side(p) == ON_NEGATIVE_SIDE); }
 
 HyperplaneCd<FT,LA> transform(const Aff_transformationCd<FT,LA>& t) const
@@ -216,9 +207,9 @@ bool operator==(const HyperplaneCd<FT,LA>& h2) const
 bool operator!=(const HyperplaneCd<FT,LA>& h2) const
 { return !operator==(h2); }
 
-friend std::istream& operator>> <> 
+friend std::istream& operator>> <>
   (std::istream&, HyperplaneCd<FT,LA>&);
-friend std::ostream& operator<< <> 
+friend std::ostream& operator<< <>
   (std::ostream&, const HyperplaneCd<FT,LA>&);
 
 }; // end of class HyperplaneCd

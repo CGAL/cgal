@@ -158,13 +158,14 @@ Meshing the bear model with decreasing target error drop.
 From left to right, the target error drop are 6\%, 4\% and 2\% to the initial error respectively, the output mesh densifies. Notice the boundary subdivision in the black rectangle area.
 \cgalFigureEnd
 
-As there is no guarantee that the output mesh is 2-manifold and oriented, the main input is an indexed triangle set. We can use \ref PolygonSoups to build the triangle soup into a valid polygon mesh.
+As there is no guarantee that the output mesh is 2-manifold and oriented, the main input is an indexed triangle set.
+We can use \ref PMPPolygonSoups to build the triangle soup into a valid polygon mesh.
 
 \subsection sma_api API
 
 This package can be used with any class model of the concept `FaceListGraph` described in \ref PkgBGL "CGAL and the Boost Graph Library".
 
-Free function with \ref vsa_namedparameters options.
+Free function with \ref bgl_namedparameters options.
 - `CGAL::Surface_mesh_approximation::approximate_triangle_mesh()`: given a triangle mesh, approximate the geometry with default \f$ \mathcal{L}^{2,1} \f$ metric.
 
 Class interface:
@@ -184,7 +185,7 @@ The following example calls the free function `CGAL::Surface_mesh_approximation:
 
 \cgalExample{Surface_mesh_approximation/vsa_approximation_example.cpp}
 
-The function parameters are provided through \ref vsa_namedparameters. Setting the non-default parameter values requires calling the functions with the required parameters, connected by a dot and in an arbitrary order. The following example shows a different configuration of parameters and retrieves the indexed face proxy map and the proxies:
+The function parameters are provided through \ref bgl_namedparameters "Named Parameters". Setting the non-default parameter values requires calling the functions with the required parameters, connected by a dot and in an arbitrary order. The following example shows a different configuration of parameters and retrieves the indexed face proxy map and the proxies:
 
 \cgalExample{Surface_mesh_approximation/vsa_approximation_2_example.cpp}
 

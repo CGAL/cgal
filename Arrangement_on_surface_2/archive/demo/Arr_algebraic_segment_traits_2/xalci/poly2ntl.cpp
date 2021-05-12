@@ -4,15 +4,6 @@
 // All rights reserved.
 //
 // This file is part of EXACUS (http://www.mpi-inf.mpg.de/projects/EXACUS/).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // ----------------------------------------------------------------------------
 //
@@ -21,14 +12,14 @@
 // NiX_release   : $Name:  $
 // Revision      : $Revision: 1.1 $
 // Revision_date : $Date: 2009-06-30 13:14:58 $
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : ... ?
 //
 // ============================================================================
 
 /*! \file NiX/poly2ntl.C
- *  
+ *
  *  Conversion of polynomials to NTL format & back
  */
 
@@ -61,7 +52,7 @@ namespace CGAL {
 
 // namespace internal {
 // int *primes = CGAL::CGALi::primes;
-// }  
+// }
 
 struct NTL_bigint_rep {
     long alloc;
@@ -86,9 +77,9 @@ void poly2ntl(const Poly_1& p, NTL::ZZX& q) {
 //         //special handling
 //         //a is zero if a.rep.length() == 0;
 //         q = NTL::ZZX();
-//     } 
+//     }
     q.rep.SetLength(p.degree() + 1);
-    
+
     int i;
     Poly_1::const_iterator pit;
     for(i = 0, pit = p.begin(); pit != p.end(); pit++, i++) {
@@ -100,7 +91,7 @@ void poly2ntl(const Poly_1& p, NTL::ZZX& q) {
             continue;
         if(sz < 0)
             sz = -sz;
-        
+
         zz.SetSize(sz);
         NTL_bigint_rep *rep = (NTL_bigint_rep *)zz.rep;
         rep->size = tmp->_mp_size;
@@ -141,7 +132,7 @@ Poly_1& Poly_1::operator *= (const Poly_1& p2) {
         Poly_1 p(TAG, p1.degree() + p2.degree() + 1);
         for (int i=0; i <= p1.degree(); ++i)
           for (int j=0; j <= p2.degree(); ++j)
-            p.coeff(i+j) += (p1[i]*p2[j]); 
+            p.coeff(i+j) += (p1[i]*p2[j]);
         p.reduce();
 //         std::cout << "mul usual: " << p << "\n\n";;
         return (*this) = p ;
@@ -165,33 +156,33 @@ Poly_1& Poly_1::operator *= (const Poly_1& p2) {
     mpz_t tmp;
      mpz_init(tmp);
     for(int i = 0; i <= d; i++) {
-        
+
         const NTL::ZZ& zz = q.rep[i];
         if(NTL::IsZero(zz)) {
             coeff(i) = Integer(0);
             continue;
-        } 
+        }
 
         NTL_bigint_rep *rep = (NTL_bigint_rep *)zz.rep;
         int sz = rep->size;
         if(sz < 0)
             sz = -sz;
-         
+
         mpz_realloc2(tmp, sz * GMP_NUMB_BITS);
         tmp->_mp_size = rep->size;
         memcpy(tmp->_mp_d, &rep->data, sz*sizeof(mp_limb_t));
-         
+
 //         coeff(i).makeCopy();
 //         mpz_ptr mpd = coeff(i).get_mp();
 //         mpd->_mp_size = rep->size;
 //         mpz_realloc2(mpd, sz * GMP_NUMB_BITS);
 //         memcpy(mpd->_mp_d, &rep->data, sz*sizeof(mp_limb_t));
         coeff(i) = Integer(tmp);
-    
+
 //          mpz_init_set(coeff(i).get_mp(), tmp);
     }
     mpz_clear(tmp);
-   
+
 //         CGALi::Creation_tag TAG;
 //         Poly_1 p(TAG, p1.degree() + p2.degree() + 1);
 //         for (int i=0; i <= p1.degree(); ++i)
@@ -214,7 +205,7 @@ Poly_1& Poly_1::operator *= (const Poly_1& p2) {
     return (*this);// = pp;
 }
 
-template <> 
+template <>
 Integer prs_resultant_ufd< Integer >(Poly_1 A, Poly_1 B) {
 
 #ifdef CGAL_ACK_BENCHMARK_RES
@@ -238,14 +229,14 @@ res_tm.start();
 
     if(NTL::IsZero(zz))
         return Integer(0);
-    
+
     Integer res;
     NTL_bigint_rep *rep = (NTL_bigint_rep *)zz.rep;
     int sz = rep->size;
     if(sz < 0)
         sz = -sz;
-       
-    mpz_ptr tmp = res.get_mp();  
+
+    mpz_ptr tmp = res.get_mp();
     mpz_realloc2(tmp, sz * GMP_NUMB_BITS);
     tmp->_mp_size = rep->size;
     memcpy(tmp->_mp_d, &rep->data, sz*sizeof(mp_limb_t));
@@ -262,7 +253,7 @@ res_tm.stop();
 #else // CGAL_POLYNOMIAL_USE_NTL_MUL
 
 #if 0
-template <> 
+template <>
 Integer prs_resultant_ufd< Integer >(Poly_1 A, Poly_1 B) {
 
 #ifdef CGAL_ACK_BENCHMARK_RES
@@ -296,7 +287,7 @@ res_tm.start();
         delta = A.degree() - B.degree();
         typedef CGAL::Algebraic_structure_traits<NT>::Is_exact
           Is_exact;
-    
+
         A = B;
         B = R / (g * CGAL::ipower(h, delta));
         g = A.lcoeff();

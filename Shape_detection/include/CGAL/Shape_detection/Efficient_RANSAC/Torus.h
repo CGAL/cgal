@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sven Oesau, Yannick Verdie, Clément Jamin, Pierre Alliez
@@ -37,7 +28,7 @@ namespace CGAL {
       \ingroup PkgShapeDetectionRANSACShapes
       \brief Torus implements Shape_base. The torus is represented by the
       symmetry axis, its center on the axis, and the major and minor radii.
-     \tparam Traits must be a model of `EfficientRANSACTraits` with the additional 
+     \tparam Traits must be a model of `EfficientRANSACTraits` with the additional
              requirement for tori (see `EfficientRANSACTraits` documentation).
      */
   template <class Traits>
@@ -63,7 +54,7 @@ namespace CGAL {
     /// \endcond
 
     Torus() : Shape_base<Traits>() {}
-      
+
     /*!
       Direction of symmetry axis.
      */
@@ -77,14 +68,14 @@ namespace CGAL {
     Point_3 center() const {
       return m_center;
     }
-      
+
     /*!
       Major radius of the torus.
      */
     FT major_radius() const {
       return m_majorRad;
     }
-      
+
     /*!
       Minor radius of the torus.
       */
@@ -114,7 +105,7 @@ namespace CGAL {
       */
     FT squared_distance(const Point_3 &p) const {
       const Vector_3 d = this->constr_vec(m_center, p);
-      
+
       // height over symmetry plane
       const FT height = this->scalar_pdct(d, m_axis);
 
@@ -309,7 +300,7 @@ namespace CGAL {
       }
     }
 
-    virtual void cos_to_normal(const std::vector<std::size_t> &indices, 
+    virtual void cos_to_normal(const std::vector<std::size_t> &indices,
                                std::vector<FT> &angles) const {
       for (std::size_t i = 0;i<indices.size();i++) {
         Vector_3 d = this->constr_vec(m_center, this->point(indices[i]));
@@ -343,7 +334,7 @@ namespace CGAL {
                                            this->cross_pdct(m_axis, d));
       if (this->scalar_pdct(in_plane, d) < 0)
         in_plane = -in_plane;
-      
+
       float length = CGAL::sqrt(this->sqlen(in_plane));
 
       // If length is 0 the point is on the axis, maybe in the apex. We
@@ -359,7 +350,7 @@ namespace CGAL {
 
       return CGAL::abs(d * n);
     }
-      
+
     virtual std::size_t minimum_sample_size() const {
         return 4;
     }

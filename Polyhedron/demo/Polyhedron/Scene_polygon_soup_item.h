@@ -23,13 +23,15 @@ struct Polygon_soup
     typedef std::vector<CGAL::Color> Colors;
     typedef std::set<Edge> Edges;
     typedef Polygons::size_type size_type;
-    Points points;
-    Polygons polygons;
+
+
     Edges_map edges;
     Colors fcolors;
     Colors vcolors;
     Edges non_manifold_edges;
     bool display_non_manifold_edges;
+    Points points;
+    Polygons polygons;
 
     Polygon_soup():
         display_non_manifold_edges(false){}
@@ -97,11 +99,11 @@ struct Polygon_soup
 
 class Scene_surface_mesh_item;
 
-class SCENE_POLYGON_SOUP_ITEM_EXPORT Scene_polygon_soup_item 
+class SCENE_POLYGON_SOUP_ITEM_EXPORT Scene_polygon_soup_item
         : public CGAL::Three::Scene_item_rendering_helper
 {
     Q_OBJECT
-public:  
+public:
     typedef EPICK::Point_3 Point_3;
     typedef Polygon_soup::Points Points;
     typedef Polygon_soup::Polygons Polygons;
@@ -113,9 +115,9 @@ public:
 
     Scene_polygon_soup_item* clone() const Q_DECL_OVERRIDE;
 
-    template <class Point, class Polygon>
+    template <class Point, typename Polygon>
     void load(const std::vector<Point>& points, const std::vector<Polygon>& polygons);
-    
+
     template <class Point, class Polygon>
     void load(const std::vector<Point>& points, const std::vector<Polygon>& polygons,
               const std::vector<CGAL::Color>& fcolors,

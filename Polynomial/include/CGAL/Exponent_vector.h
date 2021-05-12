@@ -1,21 +1,12 @@
 // Copyright (c) 2008 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Hemmer
 //
@@ -38,13 +29,13 @@
 namespace CGAL {
 
 
-class Exponent_vector :  
+class Exponent_vector :
   public boost::less_than_comparable1< Exponent_vector >,
   public boost::equality_comparable1< Exponent_vector >
 {
-  std::vector<int> v; 
+  std::vector<int> v;
 public:
-  typedef  Exponent_vector Self; 
+  typedef  Exponent_vector Self;
 
   Exponent_vector(){};
 
@@ -52,7 +43,7 @@ public:
     v[0]=e0;
   };
   Exponent_vector(int e0, int e1): v(2) {
-    v[0]=e0; v[1]=e1; 
+    v[0]=e0; v[1]=e1;
   };
   Exponent_vector(int e0, int e1, int e2): v(3) {
     v[0]=e0; v[1]=e1; v[2]=e2;
@@ -60,7 +51,7 @@ public:
   Exponent_vector(int e0, int e1, int e2, int e3): v(4) {
     v[0]=e0; v[1]=e1; v[2]=e2; v[3]=e3;
   };
-    
+
   Exponent_vector(const std::vector<int>& v_): v(v_){};
 
   template <class InputIterator>
@@ -72,11 +63,11 @@ public:
   }
 
 
-  // mirror vector functions 
-  typedef  std::vector<int>::value_type value_type; 
+  // mirror vector functions
+  typedef  std::vector<int>::value_type value_type;
   typedef  std::vector<int>::pointer pointer;
-  typedef  std::vector<int>::const_pointer const_pointer; 
-  typedef  std::vector<int>::reference reference; 
+  typedef  std::vector<int>::const_pointer const_pointer;
+  typedef  std::vector<int>::reference reference;
   typedef  std::vector<int>::const_reference const_reference;
   typedef  std::vector<int>::size_type size_type;
   typedef  std::vector<int>::difference_type difference_type;
@@ -90,9 +81,9 @@ public:
   const_iterator begin() const {return v.begin();}
   const_iterator end() const {return v.end();}
   reverse_iterator rbegin() {return v.rbegin();}
-  reverse_iterator rend(){return v.rend();} 
+  reverse_iterator rend(){return v.rend();}
   const_reverse_iterator rbegin() const {return v.rbegin();}
-  const_reverse_iterator rend() const {return v.rend();} 
+  const_reverse_iterator rend() const {return v.rend();}
   size_type size() const {return v.size();}
   size_type max_size() const {return v.max_size();}
   size_type capacity() const {return v.capacity();}
@@ -100,7 +91,7 @@ public:
   reference operator[](size_type n) { return v[n]; }
   const_reference operator[](size_type n) const {return v[n];}
   // vector& operator=(const vector&)
-  
+
   void reserve(size_t s){v.reserve(s);}
   reference front(){return v.front();}
   const_reference front() const {return v.front();}
@@ -110,7 +101,7 @@ public:
   void pop_back() {v.pop_back();}
   void swap(Self& ev) {v.swap(ev.v);}
   iterator insert(iterator pos, const int& x){return v.insert(pos,x);}
-  
+
   template <class InputIterator>
   void insert(iterator pos,InputIterator f, InputIterator l){
     v.insert(pos,f,l);
@@ -124,18 +115,18 @@ public:
   void resize(size_type n, int t = 0){v.resize(n,t);}
   bool operator==(const Self& ev) const { return v == ev.v; }
 
-  // this is the actual change 
+  // this is the actual change
   bool operator<( const Exponent_vector& ev ) const {
     return std::lexicographical_compare (
-        this->rbegin(), this->rend(),  ev.rbegin(), ev.rend()); 
+        this->rbegin(), this->rend(),  ev.rbegin(), ev.rend());
 }
-  
+
   void output_benchmark( std::ostream& os ) const {
     os << "( ";
     for( unsigned i = 0; i < size(); ++i ) {
       if( i != 0 )
         os << ", ";
-      os << v.at(i); 
+      os << v.at(i);
     }
     os << " )";
   }
@@ -147,7 +138,7 @@ inline bool is_valid(const Exponent_vector& ev) {
   for(it = ev.begin(); it != ev.end();it++){
     if (CGAL::is_negative(*it)) return false;
   }
-  return true; 
+  return true;
 }
 
 inline std::ostream& operator << (std::ostream& os, const Exponent_vector& ev) {
@@ -168,7 +159,7 @@ inline std::ostream& operator << (std::ostream& os, const Exponent_vector& ev) {
 } //namespace CGAL
 
 namespace std{
-template <> inline 
+template <> inline
 void swap(CGAL::Exponent_vector& ev1, CGAL::Exponent_vector& ev2)
   CGAL_NOEXCEPT(std::is_nothrow_move_constructible<CGAL::Exponent_vector>::value
                 && std::is_nothrow_move_assignable<CGAL::Exponent_vector>::value)

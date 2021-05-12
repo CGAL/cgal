@@ -40,7 +40,7 @@ int main (int argc, char* argv[])
 {
   const double eps = 0.0001;
 
-  // Read the input file. Because of the structure of the *.cmd file 
+  // Read the input file. Because of the structure of the *.cmd file
   // (which is concatenated to the command line) we need to get all the
   // inputs in one command line. This is the reason we read triplets/pairs of
   // arguments. Each triplet/double is one input for the program.
@@ -56,7 +56,7 @@ int main (int argc, char* argv[])
     Polygon_2   pgn;
     const char* filename = argv[i];
     read_polygon (filename, pgn);
-    
+
     // Read the offset radius.
     Rational r;
     std::istringstream iss (argv[i+1], std::istringstream::in);
@@ -69,28 +69,28 @@ int main (int argc, char* argv[])
     bool use_opt = true;
     bool use_hm = true;
     bool use_greene = true;
-    
+
     if (((i+2) < argc) && (argv[i+2][0] == '-')) {
-      use_ssab = (std::strchr (argv[i+2], 's') != NULL);
-      use_opt = (std::strchr (argv[i+2], 'o') != NULL);
-      use_hm = (std::strchr (argv[i+2], 'h') != NULL);
-      use_greene = (std::strchr (argv[i+2], 'g') != NULL);
+      use_ssab = (std::strchr (argv[i+2], 's') != nullptr);
+      use_opt = (std::strchr (argv[i+2], 'o') != nullptr);
+      use_hm = (std::strchr (argv[i+2], 'h') != nullptr);
+      use_greene = (std::strchr (argv[i+2], 'g') != nullptr);
     }
-    
+
     // Compute the Minkowski sum using the convolution method.
     Offset_polygon_with_holes_2 offset_conv;
-    
+
     std::cout << "Using the convolution method ... ";
     offset_conv = approximated_offset_2 (pgn, r, eps);
     std::cout << "Done." << std::endl;
-    
+
     // Define auxiliary polygon-decomposition objects.
     CGAL::Small_side_angle_bisector_decomposition_2<Kernel> ssab_decomp;
     CGAL::Optimal_convex_decomposition_2<Kernel>            opt_decomp;
     CGAL::Hertel_Mehlhorn_convex_decomposition_2<Kernel>    hm_approx_decomp;
     CGAL::Greene_convex_decomposition_2<Kernel>             greene_decomp;
     Offset_polygon_with_holes_2                             offset_decomp;
-    
+
     if (use_ssab) {
       std::cout << "Using the small-side angle-bisector decomposition ... ";
       offset_decomp = approximated_offset_2 (pgn, r, eps, ssab_decomp);
@@ -99,7 +99,7 @@ int main (int argc, char* argv[])
       else
         std::cout << "ERROR (different result)." << std::endl;
     }
-    
+
     if (use_opt) {
       std::cout << "Using the optimal convex decomposition ... ";
       offset_decomp = approximated_offset_2 (pgn, r, eps, opt_decomp);
@@ -108,7 +108,7 @@ int main (int argc, char* argv[])
       else
         std::cout << "ERROR (different result)." << std::endl;
     }
-    
+
     if (use_hm) {
       std::cout << "Using the Hertel--Mehlhorn decomposition ... ";
       offset_decomp = approximated_offset_2 (pgn, r, eps, hm_approx_decomp);
@@ -117,7 +117,7 @@ int main (int argc, char* argv[])
       else
         std::cout << "ERROR (different result)." << std::endl;
     }
-    
+
     if (use_greene) {
       std::cout << "Using the Greene decomposition ... ";
       offset_decomp = approximated_offset_2 (pgn, r, eps, greene_decomp);
@@ -126,9 +126,9 @@ int main (int argc, char* argv[])
       else
         std::cout << "ERROR (different result)." << std::endl;
     }
-    
+
     i += (((i+2) < argc) && (argv[i+2][0] == '-')) ? 3 : 2;
   }
-  
+
   return 0;
 }

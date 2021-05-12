@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
   Cost cost;
   std::deque<Point_2> result;
   PS::simplify(polyline.begin(), polyline.end(), cost, Stop(0.5), std::back_inserter(result));
-  
+
   std::cout.precision(12);
   for(std::size_t i=0; i < result.size(); ++i){
     std::cout << result[i] << std::endl;

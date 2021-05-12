@@ -45,43 +45,43 @@ void MainWindow::connectActions()
 {
   // Edit menu actions
   QObject::connect(this->actionIncremental_Construct, SIGNAL(toggled(bool)),
-	   this->viewer, SLOT(toggleIncremental(bool)));
+           this->viewer, SLOT(toggleIncremental(bool)));
   QObject::connect(this->actionStop_Animation, SIGNAL(triggered()),
-	   this->viewer, SLOT(stopIncremental()));
+           this->viewer, SLOT(stopIncremental()));
   QObject::connect(this->viewer, SIGNAL(stopIncAnimation()),
-	   this, SLOT(stopAnimation()));
+           this, SLOT(stopAnimation()));
 
   // Show menu actions
   QObject::connect(this->actionShow_Axis, SIGNAL(toggled(bool)),
-	   this->viewer, SLOT(toggleShowAxis(bool)));
+           this->viewer, SLOT(toggleShowAxis(bool)));
   QObject::connect(this->actionShow_Vertex, SIGNAL(toggled(bool)),
-	   this->viewer, SLOT(toggleShowVertex(bool)));
+           this->viewer, SLOT(toggleShowVertex(bool)));
   QObject::connect(this->actionShow_DEdge, SIGNAL(toggled(bool)),
-	   this->viewer, SLOT(toggleShowDEdge(bool)));
+           this->viewer, SLOT(toggleShowDEdge(bool)));
   QObject::connect(this->actionShow_VEdge, SIGNAL(toggled(bool)),
-	   this->viewer, SLOT(toggleShowVEdge(bool)));
+           this->viewer, SLOT(toggleShowVEdge(bool)));
   QObject::connect(this->actionShow_Facet, SIGNAL(toggled(bool)),
-	   this->viewer, SLOT(toggleShowFacet(bool)));
+           this->viewer, SLOT(toggleShowFacet(bool)));
   QObject::connect(this->actionFlat, SIGNAL(toggled(bool)),
-	   this->viewer, SLOT(toggleFlat(bool)));
+           this->viewer, SLOT(toggleFlat(bool)));
 
   // Preferences
   QObject::connect(this->actionPreferences, SIGNAL(triggered()),
-	   this->viewer, SLOT(setPreferences()));
+           this->viewer, SLOT(setPreferences()));
 
   // Help menu actions
   QObject::connect(this->actionDemo_Help, SIGNAL(triggered()),
-	   this->viewer, SLOT(help()));
+           this->viewer, SLOT(help()));
   QObject::connect(this->actionAbout_T3_demo, SIGNAL(triggered()),
        this, SLOT(popupAboutDemo()));
 
   // Quit
   QObject::connect(this->actionQuit, SIGNAL(triggered()),
-	   qApp, SLOT(closeAllWindows()));
+           qApp, SLOT(closeAllWindows()));
 
   // Viewer signals
   QObject::connect(this, SIGNAL(sceneChanged()),
-	   this->viewer, SLOT(update()));
+           this->viewer, SLOT(update()));
 }
 
 void MainWindow::closeEvent(QCloseEvent * /*event*/)
@@ -113,9 +113,9 @@ void MainWindow::setMode(QAction *action)
 void MainWindow::on_actionLoad_Points_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
-		     tr("Open an file"),	// dialog caption
-		     ".",	// initial directory
-		     tr("OFF files (*.off);;XYZ files (*.xyz);;All files (*.*)"));	// selection filter
+                     tr("Open an file"),        // dialog caption
+                     ".",        // initial directory
+                     tr("OFF files (*.off);;XYZ files (*.xyz);;All files (*.*)"));        // selection filter
   if( fileName.isEmpty() )  return;
 
   // erase old data
@@ -149,9 +149,9 @@ void MainWindow::on_actionSave_Points_triggered()
   }
 
   QString fileName = QFileDialog::getSaveFileName(this,
-		     tr("Save an file"),	// dialog caption
-		     ".",	// initial directory
-		     tr("OFF files (*.off);;XYZ files (*.xyz);;All files (*.*)"));	// selection filter
+                     tr("Save an file"),        // dialog caption
+                     ".",        // initial directory
+                     tr("OFF files (*.off);;XYZ files (*.xyz);;All files (*.*)"));        // selection filter
   if( fileName.isEmpty() )  return;
 
   // parse fileName to get the file type
@@ -170,9 +170,9 @@ void MainWindow::on_actionSave_Points_triggered()
 void MainWindow::on_actionGenerate_Points_triggered()
 {
   bool isOk;
- 
+
   int nPoints = QInputDialog::getInt(this,
-              "3D Triangulation demo", "Number of points: ",	// caption and label
+              "3D Triangulation demo", "Number of points: ",        // caption and label
               100, // default value
               4, // min value
               2147483647, // max value
@@ -184,7 +184,7 @@ void MainWindow::on_actionGenerate_Points_triggered()
     // erase old data
     viewer->clear();
 
-  	// generate points
+          // generate points
     m_scene.generatePoints(nPoints);
     // set selectBuffer size (if necessary)
     viewer->setSelBuffSize();

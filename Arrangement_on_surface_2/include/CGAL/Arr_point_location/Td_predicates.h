@@ -2,23 +2,14 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)	 : Oren Nechushtan <theoren@math.tau.ac.il>
-//		   Iddo Hanniel <hanniel@math.tau.ac.il>
+//
+// Author(s)         : Oren Nechushtan <theoren@math.tau.ac.il>
+//                   Iddo Hanniel <hanniel@math.tau.ac.il>
 #ifndef CGAL_TD_PREDICATES_H
 #define CGAL_TD_PREDICATES_H
 
@@ -45,7 +36,7 @@ template < class Td_traits> class Trapezoidal_decomposition_2;
 
 ////MICHAL: not in use
 //template <class X_trapezoid,class Traits>
-//struct Td_active_non_degenerate_trapezoid : 
+//struct Td_active_non_degenerate_trapezoid :
 //public CGAL::cpp98::unary_function<X_trapezoid,bool>
 //{
 //  Td_active_non_degenerate_trapezoid(Traits& t) : traits(t) {}
@@ -73,7 +64,7 @@ struct Td_active_edge_item:
 template <class _Tp>
 struct Td_map_item_handle_less : public CGAL::cpp98::binary_function<_Tp, _Tp, bool>
 {
-  bool operator()(const _Tp& __x, const _Tp& __y) const { 
+  bool operator()(const _Tp& __x, const _Tp& __y) const {
     return __x->id() < __y->id(); }
 };
 /* Return if two trapezoids are the same */

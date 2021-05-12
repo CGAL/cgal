@@ -5,7 +5,7 @@
 # to native line endings on checkout.
 *.cpp text
 *.c text
-*.h text
+*.h text linguist-language=C++
 *.hpp text
 *.tex text
 *.txt text
@@ -18,7 +18,6 @@
 *.js text
 *.hmtl text
 *.bib text
-*.sh text
 *.css text
 *.ui text
 *.qrc text
@@ -29,13 +28,18 @@
 *.xyz text
 *.qhcp text
 *.qhp text
-*.pwn text
+*.pwn text linguist-detectable=false
 *.poly text
 *.rb text
 *.perl text
 *.pdb text
 
+# Nef_3 data files
+*.EH linguist-detectable=false
+*.SH linguist-detectable=false
+
 # Declare files that will always have LF line endings on checkout.
+*.sh text eol=lf
 Documentation/Doxyfile text eol=lf
 Documentation/pkglist_filter text eol=lf
 Installation/update_CHANGES text eol=lf

@@ -1,25 +1,16 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
@@ -31,6 +22,7 @@
 #include <CGAL/memory.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/N_step_adaptor_derived.h>
+#include <CGAL/iterator.h>
 #include <cstddef>
 
 namespace CGAL {
@@ -46,9 +38,9 @@ public:
     HalfedgeDS_in_place_list_vertex() {}
     HalfedgeDS_in_place_list_vertex( const VertexBase& v)   // down cast
         : VertexBase(v) {}
-  
+
     HalfedgeDS_in_place_list_vertex(const HalfedgeDS_in_place_list_vertex&)=default;
-  
+
     Self& operator=( const Self& v) {
         // This self written assignment avoids that assigning vertices will
         // overwrite the list linking of the target vertex.
@@ -69,9 +61,9 @@ public:
     HalfedgeDS_in_place_list_halfedge() {}                   // down cast
     HalfedgeDS_in_place_list_halfedge( const HalfedgeBase& h)
         : HalfedgeBase(h) {}
-  
+
     HalfedgeDS_in_place_list_halfedge(const HalfedgeDS_in_place_list_halfedge&)=default;
-  
+
     Self& operator=( const Self& h) {
         // This self written assignment avoids that assigning halfedges will
         // overwrite the list linking of the target halfedge.
@@ -90,9 +82,9 @@ public:
     typedef typename FaceBase::Face_const_handle Face_const_handle;
     HalfedgeDS_in_place_list_face() {}                   // down cast
     HalfedgeDS_in_place_list_face( const FaceBase& f) : FaceBase(f) {}
-  
+
     HalfedgeDS_in_place_list_face(const HalfedgeDS_in_place_list_face&)=default;
-  
+
     Self& operator=( const Self& f) {
         // This self written assignment avoids that assigning faces will
         // overwrite the list linking of the target face.
@@ -113,7 +105,7 @@ public:
 
     typedef typename Items::template Vertex_wrapper<Self,Traits>
                                                        Vertex_wrapper;
-    typedef typename Items::template Halfedge_wrapper<Self,Traits> 
+    typedef typename Items::template Halfedge_wrapper<Self,Traits>
                                                        Halfedge_wrapper;
     typedef typename Items::template Face_wrapper<Self,Traits>
                                                        Face_wrapper;
@@ -146,7 +138,7 @@ public:
                                                        Edge_iterator;
     typedef N_step_adaptor_derived<Halfedge_const_iterator, 2>
                                                        Edge_const_iterator;
-  
+
     typedef In_place_list<Face,false,Face_allocator>   Face_list;
     typedef typename Face_list::iterator               Face_handle;
     typedef typename Face_list::const_iterator         Face_const_handle;
@@ -194,7 +186,7 @@ public:
     }
 };
 
-template < class Traits_, class HalfedgeDSItems, 
+template < class Traits_, class HalfedgeDSItems,
            class Alloc = CGAL_ALLOCATOR(int)>
 class HalfedgeDS_list
     : public HalfedgeDS_list_types<Traits_, HalfedgeDSItems, Alloc> {
@@ -218,6 +210,9 @@ public:
     typedef typename Types::Vertex_iterator            Vertex_iterator;
     typedef typename Types::Vertex_const_iterator      Vertex_const_iterator;
 
+    typedef Iterator_range< Prevent_deref<Vertex_iterator> >       Vertex_handles;
+    typedef Iterator_range< Prevent_deref<Vertex_const_iterator> > Vertex_const_handles;
+
     typedef typename Types::Halfedge_allocator         Halfedge_allocator;
     typedef typename Types::Halfedge_list              Halfedge_list;
     typedef typename Types::Halfedge_handle            Halfedge_handle;
@@ -225,12 +220,18 @@ public:
     typedef typename Types::Halfedge_iterator          Halfedge_iterator;
     typedef typename Types::Halfedge_const_iterator    Halfedge_const_iterator;
 
+    typedef Iterator_range< Prevent_deref<Halfedge_iterator> >       Halfedge_handles;
+    typedef Iterator_range< Prevent_deref<Halfedge_const_iterator> > Halfedge_const_handles;
+
     typedef typename Types::Face_allocator             Face_allocator;
     typedef typename Types::Face_list                  Face_list;
     typedef typename Types::Face_handle                Face_handle;
     typedef typename Types::Face_const_handle          Face_const_handle;
     typedef typename Types::Face_iterator              Face_iterator;
     typedef typename Types::Face_const_iterator        Face_const_iterator;
+
+    typedef Iterator_range< Prevent_deref<Face_iterator> >       Face_handles;
+    typedef Iterator_range< Prevent_deref<Face_const_iterator> > Face_const_handles;
 
     typedef typename Types::size_type                  size_type;
     typedef typename Types::difference_type            difference_type;
@@ -334,7 +335,7 @@ private:
         typedef Unique_hash_map< Face_const_iterator, Face_iterator>     F_map;
         // initialize maps.
         H_map h_map( hds.halfedges_begin(), hds.halfedges_end(),
-                     halfedges_begin(), Halfedge_iterator(), 
+                     halfedges_begin(), Halfedge_iterator(),
                      3 * hds.size_of_halfedges() / 2);
         Vertex_iterator vii;
         V_map v_map( vii, 3 * hds.size_of_vertices() / 2);
@@ -394,7 +395,11 @@ public:
         // halfedges, and f faces. The reservation sizes are a hint for
         // optimizing storage allocation. They are not used here.
 
-    ~HalfedgeDS_list() { clear(); }
+    ~HalfedgeDS_list() noexcept {
+      try {
+        clear();
+      } catch (...) {}
+    }
 
     HalfedgeDS_list( const Self& hds)
     :  vertices( hds.vertices),
@@ -462,19 +467,25 @@ public:
 
     Vertex_iterator   vertices_begin()   { return vertices.begin();}
     Vertex_iterator   vertices_end()     { return vertices.end();}
+    Vertex_handles    vertex_handles()   { return make_prevent_deref_range(vertices_begin(), vertices_end());}
     Halfedge_iterator halfedges_begin()  { return halfedges.begin();}
     Halfedge_iterator halfedges_end()    { return halfedges.end();}
+    Halfedge_handles  halfedge_handles() { return make_prevent_deref_range(halfedges_begin(), halfedges_end());}
     Face_iterator     faces_begin()      { return faces.begin();}
     Face_iterator     faces_end()        { return faces.end();}
+    Face_handles      face_handles()     { return make_prevent_deref_range(faces_begin(), faces_end());}
 
     // The constant iterators and circulators.
 
-    Vertex_const_iterator   vertices_begin()  const{ return vertices.begin();}
-    Vertex_const_iterator   vertices_end()    const{ return vertices.end();}
-    Halfedge_const_iterator halfedges_begin() const{ return halfedges.begin();}
-    Halfedge_const_iterator halfedges_end()   const{ return halfedges.end();}
-    Face_const_iterator     faces_begin()     const{ return faces.begin();}
-    Face_const_iterator     faces_end()       const{ return faces.end();}
+    Vertex_const_iterator   vertices_begin()   const{ return vertices.begin();}
+    Vertex_const_iterator   vertices_end()     const{ return vertices.end();}
+    Vertex_const_handles    vertex_handles()   const{ return make_prevent_deref_range(vertices_begin(), vertices_end());}
+    Halfedge_const_iterator halfedges_begin()  const{ return halfedges.begin();}
+    Halfedge_const_iterator halfedges_end()    const{ return halfedges.end();}
+    Halfedge_const_handles  halfedge_handles() const{ return make_prevent_deref_range(halfedges_begin(), halfedges_end());}
+    Face_const_iterator     faces_begin()      const{ return faces.begin();}
+    Face_const_iterator     faces_end()        const{ return faces.end();}
+    Face_const_handles      face_handles()     const{ return make_prevent_deref_range(faces_begin(), faces_end());}
 
 // Insertion
 //

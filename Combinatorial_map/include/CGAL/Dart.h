@@ -1,20 +1,11 @@
 // Copyright (c) 2010-2011 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -35,16 +26,16 @@ namespace CGAL {
   template <class, class>
   class Concurrent_compact_container;
 
-  template<unsigned int, class, class>
+  template<unsigned int, class, class, class>
   class Combinatorial_map_storage_1;
 
-  template<unsigned int, class, class>
+  template<unsigned int, class, class, class>
   class Generalized_map_storage_1;
 
-  template<unsigned int, unsigned int, class, class, class>
+  template<unsigned int, unsigned int, class, class, class, class>
   class CMap_linear_cell_complex_storage_1;
 
-  template<unsigned int, unsigned int, class, class, class>
+  template<unsigned int, unsigned int, class, class, class, class>
   class GMap_linear_cell_complex_storage_1;
 
   namespace internal {
@@ -69,16 +60,16 @@ namespace CGAL {
   struct Dart_without_info: public Add_id<WithId>
   {
   public:
-    template<unsigned int, class, class>
+    template<unsigned int, class, class, class>
     friend class Combinatorial_map_storage_1;
 
-    template<unsigned int, class, class>
+    template<unsigned int, class, class, class>
     friend class Generalized_map_storage_1;
 
-    template<unsigned int, unsigned int, class, class, class>
+    template<unsigned int, unsigned int, class, class, class, class>
     friend class CMap_linear_cell_complex_storage_1;
 
-    template<unsigned int, unsigned int, class, class, class>
+    template<unsigned int, unsigned int, class, class, class, class>
     friend class GMap_linear_cell_complex_storage_1;
 
     template <class, class, class, class>
@@ -114,15 +105,15 @@ namespace CGAL {
 
     void * for_compact_container() const
     { return mf[0].for_compact_container(); }
-    void * & for_compact_container()
-    { return mf[0].for_compact_container(); }
+    void for_compact_container(void *p)
+    { mf[0].for_compact_container(p); }
 
     Dart_handle get_f(unsigned int i) const
     {
       assert(i<=dimension);
       return mf[i];
     }
-    
+
   protected:
     /** Default constructor: no real initialisation,
      *  because this is done in the combinatorial map class.
@@ -219,10 +210,10 @@ namespace CGAL {
   template <unsigned int d, typename Refs, class WithID=Tag_false>
   struct CGAL_DEPRECATED Dart : public Dart_without_info<d, Refs, WithID>
   {
-    template<unsigned int, class, class>
+    template<unsigned int, class, class, class>
     friend class Combinatorial_map_storage_1;
 
-    template<unsigned int, unsigned int, class, class, class>
+    template<unsigned int, unsigned int, class, class, class, class>
     friend class CMap_linear_cell_complex_storage_1;
 
     template <class, class, class, class>
@@ -319,16 +310,16 @@ namespace CGAL {
   struct Dart : public Dart_without_info<d, Refs, WithID>
   {
   public:
-    template<unsigned int, class, class>
+    template<unsigned int, class, class, class>
     friend class Combinatorial_map_storage_1;
 
-    template<unsigned int, class, class>
+    template<unsigned int, class, class, class>
     friend class Generalized_map_storage_1;
 
-    template<unsigned int, unsigned int, class, class, class>
+    template<unsigned int, unsigned int, class, class, class, class>
     friend class CMap_linear_cell_complex_storage_1;
 
-    template<unsigned int, unsigned int, class, class, class>
+    template<unsigned int, unsigned int, class, class, class, class>
     friend class GMap_linear_cell_complex_storage_1;
 
     template <class, class, class, class>

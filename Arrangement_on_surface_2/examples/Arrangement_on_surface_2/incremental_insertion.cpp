@@ -25,7 +25,7 @@ int main()
 
   Segment_2      s1(Point_2(1, 0), Point_2(2, 4));
   Segment_2      s2(Point_2(5, 0), Point_2(5, 5));
-  Segment_2      s3(Point_2(1, 0), Point_2(5, 3));  
+  Segment_2      s3(Point_2(1, 0), Point_2(5, 3));
   Segment_2      s4(Point_2(0, 2), Point_2(6, 0));
   Segment_2      s5(Point_2(3, 0), Point_2(5, 5));
 
@@ -45,7 +45,7 @@ int main()
   // the boundary of the face that contains it.
   Point_2 q(4, 1);
   Walk_pl::result_type obj = pl.locate(q);
-  
+
   Arrangement_2::Face_const_handle  f;
   CGAL_assertion_code(bool success =) CGAL::assign(f, obj);
 

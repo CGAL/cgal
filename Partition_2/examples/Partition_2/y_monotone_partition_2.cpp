@@ -47,11 +47,11 @@ int main( )
       assert(CGAL::is_y_monotone_2((*poly_it).vertices_begin(),
                                    (*poly_it).vertices_end()));
    }
-   
+
    assert(CGAL::partition_is_valid_2(polygon.vertices_begin(),
                                      polygon.vertices_end(),
                                      partition_polys.begin(),
                                      partition_polys.end()));
-   
+
    return 0;
 }

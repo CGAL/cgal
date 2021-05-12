@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -44,7 +35,7 @@ public:
     constraints_pen = this->edgesPen();
     constraints_pen.setColor(::Qt::red);
   }
-  
+
   void operator()(typename T::Face_handle fh);
 
   const QPen& constraintsPen() const
@@ -84,7 +75,7 @@ private:
 };
 
 template <typename T>
-void 
+void
 ConstrainedTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
 {
   this->painterostream = PainterOstream<Geom_traits>(painter);
@@ -99,22 +90,22 @@ ConstrainedTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
       this->painterostream << this->t->segment(*eit);
     }
   }
-  
+
   this->paintVertices(painter);
 }
 
 template <typename T>
-void 
+void
 ConstrainedTriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
 {
   for (int i=0; i<3; i++) {
     if ( fh < fh->neighbor(i) || this->t->is_infinite(fh->neighbor(i)) )  {
       if(this->visibleConstraints() && this->t->is_constrained(typename T::Edge(fh,i))){
         this->m_painter->setPen(constraintsPen());
-	this->painterostream << this->t->segment(fh,i);
+        this->painterostream << this->t->segment(fh,i);
       } else if( this->visibleEdges() ){
-	this->m_painter->setPen(this->edgesPen());
-	this->painterostream << this->t->segment(fh,i);
+        this->m_painter->setPen(this->edgesPen());
+        this->painterostream << this->t->segment(fh,i);
       }
     }
     if(this->visibleVertices()) {

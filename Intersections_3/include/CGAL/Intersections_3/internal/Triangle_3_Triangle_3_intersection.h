@@ -1,20 +1,11 @@
 // Copyright (c) 2010 GeometryFactory (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -35,7 +26,7 @@ namespace CGAL {
 
   template <class K>
   class Triangle_3;
-  
+
 namespace Intersections {
 
 namespace internal{
@@ -59,7 +50,7 @@ void intersection_coplanar_triangles_cutoff(
     orientations[ &(*it) ]=orient(p,q,r,*it);
 
   int pt_added=0;
-  
+
   const typename Kernel::Point_3* prev = &(*boost::prior(inter_pts.end()));
   Iterator stop = inter_pts.size() > 2 ? inter_pts.end() : boost::prior(inter_pts.end());
   for (Iterator it=inter_pts.begin();it!=stop;++it)
@@ -70,7 +61,7 @@ void intersection_coplanar_triangles_cutoff(
     {
       typename Intersection_traits<Kernel, typename Kernel::Line_3,
                                      typename Kernel::Line_3>
-        ::result_type 
+        ::result_type
         obj = intersection(Line_3(p,q),Line_3(*prev,curr),k);
       // assert "not empty"
       CGAL_kernel_assertion(bool(obj));
@@ -80,9 +71,9 @@ void intersection_coplanar_triangles_cutoff(
       orientations[prev]=COLLINEAR;
       ++pt_added;
     }
-    prev=&(*it);    
+    prev=&(*it);
   }
-  
+
   CGAL_kernel_assertion(pt_added<3);
   Iterator it=inter_pts.begin();
   while(it!=inter_pts.end())
@@ -93,7 +84,7 @@ void intersection_coplanar_triangles_cutoff(
       ++it;
   }
 }
-  
+
 template <class K>
 typename Intersection_traits<K, typename K::Triangle_3, typename K::Triangle_3>::result_type
 intersection_coplanar_triangles(
@@ -102,7 +93,7 @@ intersection_coplanar_triangles(
   const K& k)
 {
   const typename K::Point_3& p=t1.vertex(0),q=t1.vertex(1),r=t1.vertex(2);
-  
+
   std::list<typename K::Point_3> inter_pts;
   inter_pts.push_back(t2.vertex(0));
   inter_pts.push_back(t2.vertex(1));
@@ -112,7 +103,7 @@ intersection_coplanar_triangles(
   intersection_coplanar_triangles_cutoff(p,q,r,k,inter_pts); //line pq
   intersection_coplanar_triangles_cutoff(q,r,p,k,inter_pts); //line qr
   intersection_coplanar_triangles_cutoff(r,p,q,k,inter_pts); //line rp
-  
+
   switch ( inter_pts.size() ) {
     case 0:
       return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>();
@@ -137,7 +128,7 @@ struct Triangle_Line_visitor {
 
   result_type
   operator()(const typename K::Point_3& p, const typename K::Segment_3& s) const {
-    if ( s.has_on(p) )
+    if ( typename K::Has_on_3()(s,p) )
       return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>(p);
     else
       return result_type();
@@ -158,7 +149,7 @@ struct Triangle_Line_visitor {
 
   result_type
   operator()(const typename K::Segment_3& s1, const typename K::Segment_3& s2) const {
-    typename Intersection_traits<K, typename K::Segment_3, typename K::Segment_3>::result_type 
+    typename Intersection_traits<K, typename K::Segment_3, typename K::Segment_3>::result_type
       v = intersection_collinear_segments(s1,s2,K());
 
     if(v) {
@@ -171,7 +162,7 @@ struct Triangle_Line_visitor {
     return result_type();
   }
 };
-  
+
 template <class K>
 typename Intersection_traits<K, typename K::Triangle_3, typename K::Triangle_3>::result_type
 intersection(
@@ -181,7 +172,7 @@ intersection(
 {
   CGAL_precondition(!t1.is_degenerate() && !t2.is_degenerate());
 
-  typename Intersection_traits<K, typename K::Plane_3, typename K::Plane_3>::result_type 
+  typename Intersection_traits<K, typename K::Plane_3, typename K::Plane_3>::result_type
     v = internal::intersection(t1.supporting_plane(), t2.supporting_plane(), k);
 
   if(!v) {
@@ -199,7 +190,7 @@ intersection(
     typedef
     typename Intersection_traits<K, typename K::Triangle_3, typename K::Line_3>::result_type
       Triangle_Line_Inter;
-    
+
     Triangle_Line_Inter inter1 = intersection_coplanar(t1,*line,k);
     Triangle_Line_Inter inter2 = intersection_coplanar(t2,*line,k);
     if(!inter1 || !inter2) {

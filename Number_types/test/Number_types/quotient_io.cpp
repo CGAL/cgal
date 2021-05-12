@@ -23,8 +23,8 @@ main()
 
   T.open("quotient_out");
   assert( T );
-  std::copy( V1.begin(), 
-             V1.end(), 
+  std::copy( V1.begin(),
+             V1.end(),
              std::ostream_iterator<CGAL::Quotient<double> >(T,"\n") );
   T.close();
 
@@ -45,6 +45,6 @@ main()
   }
 
   assert( V1 == V2 );
- 
+
   return 0;
 }

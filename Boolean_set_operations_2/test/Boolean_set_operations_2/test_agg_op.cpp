@@ -204,10 +204,10 @@ int main(int argc, char **argv)
       --tmp;
       if(*itr == 't')
         break;
-      
+
       str.erase(itr);
       itr = tmp;
-      
+
     }
     if(str.size() <= 1)
       continue;
@@ -229,6 +229,6 @@ int main(int argc, char **argv)
     }
     inp.close();
   }
-  
+
   return success;
 }

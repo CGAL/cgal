@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     {
       std::cout << " Usage : " << argv[0]
                 << " <inputPoints.txt> <d_fitting> <d_monge>" << std::endl
-		<< "test with default arguments" << std::endl;
+                << "test with default arguments" << std::endl;
     }
   else {
     name_file_in = argv[1];
@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
       std::cerr << "cannot open file for input\n";
       exit(-1);
     }
-  
+
   //initalize the in_points container
   double x, y, z;
   std::vector<DPoint> in_points;
@@ -54,12 +54,12 @@ int main(int argc, char *argv[])
   //OUTPUT on std::cout
   CGAL::set_pretty_mode(std::cout);
   std::cout << "vertex : " << in_points[0] << std::endl
-	    << "number of points used : " << in_points.size() << std::endl
-	    << monge_form;
+            << "number of points used : " << in_points.size() << std::endl
+            << monge_form;
   std::cout  << "condition_number : " << monge_fit.condition_number() << std::endl
-	     << "pca_eigen_vals and associated pca_eigen_vecs :"  << std::endl;
+             << "pca_eigen_vals and associated pca_eigen_vecs :"  << std::endl;
   for (int i=0; i<3; i++)
     std::cout << monge_fit.pca_basis(i).first << std::endl
-	      << monge_fit.pca_basis(i).second  << std::endl;
+              << monge_fit.pca_basis(i).second  << std::endl;
   return 0;
 }

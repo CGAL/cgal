@@ -16,9 +16,9 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 void print_usage(const std::string & bench_name) {
   std::cout<<bench_name
-	   <<" [insert | remove] [-i FILE | -c N M] "
-	   <<"[-f FILE] [-w FILE] [-r N] [-p N] [-s N] [--nospatial] "
-	   <<"[--noread] [--nowrite]" <<std::endl<<std::endl;
+           <<" [insert | remove] [-i FILE | -c N M] "
+           <<"[-f FILE] [-w FILE] [-r N] [-p N] [-s N] [--nospatial] "
+           <<"[--noread] [--nowrite]" <<std::endl<<std::endl;
   std::cout<<"\t insert: \n\t\tbenchmark only the insert functionality"
       <<std::endl;
   std::cout<<"\t remove: \n\t\tbenchmark only the remove functionality"
@@ -26,8 +26,8 @@ void print_usage(const std::string & bench_name) {
   std::cout<<"\t -i FILE: \n\t\tinserts test data points from FILE"
       <<std::endl;
   std::cout<<"\t -c N M: \n\t\tinserts N+M random points, N of which "
-	   <<"are created by in_cube an M of which created by on_sphere. "
-	   <<"Default: 5 10"<<std::endl;
+           <<"are created by in_cube an M of which created by on_sphere. "
+           <<"Default: 5 10"<<std::endl;
   std::cout<<"\t -r N: \n\t\tremoves N vertices."<<std::endl;
   std::cout<<"\t -f FILE: \n\t\treads an initial triangulation from FILE, "
       <<"default: data/Triangulation.in"<<std::endl;
@@ -69,7 +69,7 @@ void create_random_points(InsertIterator it, int c, int s, int seed = 7)
 {
   CGAL::Random random(seed);
   typedef CGAL::Creator_uniform_3<double,Point>  Creator;
-  
+
   CGAL::Random_points_in_cube_3<Point, Creator> in_cube(.5, random);
   for (int count=0; count < c; count++) {
     Point p = *in_cube; in_cube ++;
@@ -101,10 +101,10 @@ int bench_triang(int argc, char* argv[], Triang T, bool periodic) {
     ofile = "data/Periodic_3_triangulation.out";
   } else {
     bench_name = "Delaunay_3_bench";
-    ifile = "data/Triangulation.in"; 
+    ifile = "data/Triangulation.in";
     ofile = "data/Triangulation.out";
   }
-  
+
   typedef typename Triang::Point Point;
   typedef CGAL::Timer Timer;
 
@@ -114,14 +114,14 @@ int bench_triang(int argc, char* argv[], Triang T, bool periodic) {
   bool do_remove = true;
   bool do_spatial_sort = true;
   bool random_data = true;
-  
+
   std::vector<Point> pts;
   unsigned int no_cube = 5;
   unsigned int no_sphe = 10;
   unsigned int no_rem = 20;
   unsigned int prec = 18;
   int seed = 7;
-  
+
   if (argc < 2) print_usage(bench_name);
 
   for (int i=1 ; i < argc ;  i++) {
@@ -158,14 +158,14 @@ int bench_triang(int argc, char* argv[], Triang T, bool periodic) {
     else
       print_usage(bench_name);
   }
-  
+
   if (do_insert) {
     Timer t_data;
     if (random_data) {
       std::cout << "creating random points: " ;
       t_data.start();
       create_random_points<Point>( std::back_inserter(pts),
-	  no_cube, no_sphe, seed );
+          no_cube, no_sphe, seed );
       t_data.stop();
     } else {
       std::cout << "reading test data: " ;
@@ -177,7 +177,7 @@ int bench_triang(int argc, char* argv[], Triang T, bool periodic) {
     }
     std::cout << t_data.time() << " sec" <<std::endl;
   }
-  
+
   if (do_read) {
     Timer t_read;
     std::cout<<"reading Triangulation: " ;
@@ -189,7 +189,7 @@ int bench_triang(int argc, char* argv[], Triang T, bool periodic) {
     t_read.stop();
     std::cout << t_read.time() << " sec" <<std::endl;
   }
-  
+
   if (do_insert) {
     Timer t_insert;
     std::cout<<"benchmarking insert: " ;
@@ -200,13 +200,13 @@ int bench_triang(int argc, char* argv[], Triang T, bool periodic) {
     } else {
       t_insert.start();
       for (typename std::vector<Point>::iterator pit=pts.begin();
-	   pit!=pts.end(); ++pit)
-	T.insert(*pit);
+           pit!=pts.end(); ++pit)
+        T.insert(*pit);
       t_insert.stop();
     }
     std::cout << t_insert.time() << " sec" <<std::endl;
   }
-  
+
   if (do_remove) {
     Timer t_remove;
     std::cout<<"benchmarking remove: ";
@@ -215,7 +215,7 @@ int bench_triang(int argc, char* argv[], Triang T, bool periodic) {
     t_remove.stop();
     std::cout << t_remove.time() << " sec" <<std::endl;
   }
-  
+
   if (do_write) {
     Timer t_write;
     std::cout<<"writing Triangulation: ";
@@ -226,7 +226,7 @@ int bench_triang(int argc, char* argv[], Triang T, bool periodic) {
     t_write.stop();
     std::cout << t_write.time() << " sec" <<std::endl;
   }
-  
+
   std::cout<<"finished"<<std::endl;
 
   return 0;

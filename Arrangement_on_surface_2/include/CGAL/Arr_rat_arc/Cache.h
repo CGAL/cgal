@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Oren Salzman <orenzalz@post.tau.ac.il >
 //                 Michael Hemmer <Michael.Hemmer@sophia.inria.fr>
@@ -34,7 +25,7 @@ namespace CGAL {
 namespace Arr_rational_arc {
 
 //-------------------
-//Cache 
+//Cache
 //-------------------
 template <typename AlgebraicKernel_d_1>
 class Cache : public Base_rational_arc_ds_1<AlgebraicKernel_d_1>
@@ -43,7 +34,7 @@ public:
   typedef AlgebraicKernel_d_1                           Algebraic_kernel_d_1;
   typedef Base_rational_arc_ds_1<Algebraic_kernel_d_1>  Base;
   typedef Cache<Algebraic_kernel_d_1>                   Self;
- 
+
   typedef typename Base::Polynomial_1                   Polynomial_1;
   typedef typename Base::Rational                       Rational;
   typedef typename Base::Algebraic_real_1               Algebraic_real_1;
@@ -126,15 +117,15 @@ public:
           ++iter1)
     {
       if (iter1->second.is_shared())
-      { 
+      {
         Rational_function_key key   = iter1->first;
         //construct new instance
         Rational_function f(iter1->second.numer(), iter1->second.denom(),
                             _ak_ptr);
-        _rat_func_map.insert(std::make_pair(key,f)); 
+        _rat_func_map.insert(std::make_pair(key,f));
       }
     }
-    
+
     //copy rational function pair map
     typename Rational_function_canonicalized_pair_map::const_iterator iter2;
     for ( iter2  = other.rat_pair_map().begin();
@@ -147,7 +138,7 @@ public:
         //construct new instance
         Rational_function_canonicalized_pair p(iter2->second.f(),
                                                iter2->second.g(), _ak_ptr);
-        _rat_pair_map.insert(std::make_pair(key,p)); 
+        _rat_pair_map.insert(std::make_pair(key,p));
       }
     }
 
@@ -161,7 +152,7 @@ public:
   {
     return _rat_pair_map;
   }
-  
+
   const Rational_function& get_rational_function(const Polynomial_1& numer,
                                                  const Polynomial_1& denom) const
   {
@@ -184,9 +175,9 @@ public:
         //then insert the new element
         Rational_function f(numer,denom,_ak_ptr);
         typename Rational_function_map::iterator it2 =
-          _rat_func_map.insert(it,std::make_pair(key,f)); 
-        return it2->second; 
-      } 
+          _rat_func_map.insert(it,std::make_pair(key,f));
+        return it2->second;
+      }
   }
   const Rational_function&  get_rational_function( const Rational& rat) const
   {
@@ -201,23 +192,23 @@ public:
     return get_rational_function (numer_poly,denom_poly);
   }
 
-  const Rational_function_pair get_rational_pair(const Rational_function& f, 
+  const Rational_function_pair get_rational_pair(const Rational_function& f,
                                                  const Rational_function& g) const
   {
     CGAL_precondition (_ak_ptr != nullptr);
     CGAL_precondition(!(f==g));
     Rational_function_canonicalized_pair_key key  = get_key(f,g);
-    bool is_opposite = (f.id() < g.id()) ? false : true ; 
+    bool is_opposite = (f.id() < g.id()) ? false : true ;
 
     //look if element exists in cache already
     typename Rational_function_canonicalized_pair_map::iterator it =
       _rat_pair_map.lower_bound(key);
-  
+
     if(it != _rat_pair_map.end() && !(_rat_pair_map.key_comp()(key, it->first)))
     {
       return (Rational_function_pair(it->second,is_opposite));
     }
-    else    //element does not exist, 
+    else    //element does not exist,
     {
       //first check if to clean up cache
       if (_rat_pair_map.size() > _rat_pair_map_watermark)
@@ -225,7 +216,7 @@ public:
 
       //create it & insert to cache
       Rational_function_canonicalized_pair p(f, g, _ak_ptr);
-      std::pair<typename Rational_function_canonicalized_pair_map::const_iterator, bool> res = 
+      std::pair<typename Rational_function_canonicalized_pair_map::const_iterator, bool> res =
         _rat_pair_map.insert(std::make_pair(key,p));
       return (Rational_function_pair(res.first->second,is_opposite));
     }
@@ -238,7 +229,7 @@ public:
   }
 private:
   Rational_function_key get_key(const Polynomial_1& numer,
-                                const Polynomial_1& denom) const 
+                                const Polynomial_1& denom) const
   {
     return Rational_function_key(numer, denom);
   }
@@ -257,9 +248,9 @@ private:
 
   }
 
-  void rat_func_map_clean_up() const 
-  {                                             
-   
+  void rat_func_map_clean_up() const
+  {
+
     //find eraseable rational functions
     std::vector<Rational_function_key> eraseable;
     typename Rational_function_map::iterator iter1;
@@ -286,7 +277,7 @@ private:
                                              typename Rational_function_map::size_type(128)));
     return;
   }
-  void rat_pair_map_clean_up() const 
+  void rat_pair_map_clean_up() const
   {
     //find eraseable rational functions
     std::vector<Rational_function_canonicalized_pair_key> eraseable;
@@ -309,7 +300,7 @@ private:
     }
 
     //re-set watermark
-    _rat_pair_map_watermark = 
+    _rat_pair_map_watermark =
       static_cast<unsigned int>((std::max)(2* _rat_pair_map.size(),
                                            typename Rational_function_canonicalized_pair_map::size_type(128)));
   }
@@ -321,7 +312,7 @@ private:
   mutable unsigned int                    _rat_pair_map_watermark;
   mutable Algebraic_kernel_d_1*   _ak_ptr;
 }; //Cache
- 
+
 }   //namespace Arr_rational_arc
 }   //namespace CGAL {
 #endif //CGAL_RATIONAL_ARC_CACHE

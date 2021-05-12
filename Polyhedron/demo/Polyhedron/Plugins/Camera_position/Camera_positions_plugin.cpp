@@ -9,7 +9,7 @@
 
 #include <QMainWindow>
 using namespace CGAL::Three;
-class Polyhedron_demo_camera_positions_plugin : 
+class Polyhedron_demo_camera_positions_plugin :
   public QObject,
   public CGAL::Three::Polyhedron_demo_io_plugin_interface
 {
@@ -31,8 +31,11 @@ public:
     return QList<Scene_item*>();
   }
 
-  bool canSave(const Scene_item*) override { return false; }
-  bool save(QFileInfo,QList<CGAL::Three::Scene_item*>& ) override {return false; }
+  bool canSave(const Scene_item*) override { return true; }
+  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& ) override
+  {
+    return cpl->save(fileinfo.filePath());
+  }
 private:
   Camera_positions_list* cpl;
 };

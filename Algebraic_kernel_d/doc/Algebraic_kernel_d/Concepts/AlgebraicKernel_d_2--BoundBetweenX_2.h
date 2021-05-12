@@ -3,11 +3,11 @@
 \ingroup PkgAlgebraicKernelDConceptsBi
 \cgalConcept
 
-Computes a number of type 
-`AlgebraicKernel_d_1::Bound` in-between the first coordinates of two 
-`AlgebraicKernel_d_2::AlgebraicReal_2`. 
+Computes a number of type
+`AlgebraicKernel_d_1::Bound` in-between the first coordinates of two
+`AlgebraicKernel_d_2::AlgebraicReal_2`.
 
-\cgalRefines `AdaptableBinaryFunction` 
+\cgalRefines `AdaptableBinaryFunction`
 
 \sa `AlgebraicKernel_d_2::BoundBetweenY_2`
 
@@ -16,39 +16,39 @@ Computes a number of type
 class AlgebraicKernel_d_2::BoundBetweenX_2 {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
 
-*/ 
-typedef AlgebraicKernel_d_1::Bound result_type; 
+*/
+typedef AlgebraicKernel_d_1::Bound result_type;
 
 /*!
 
-*/ 
-typedef AlgebraicKernel_d_2::Algebraic_real_2 first_argument_type; 
+*/
+typedef AlgebraicKernel_d_2::Algebraic_real_2 first_argument_type;
 
 /*!
 
-*/ 
-typedef AlgebraicKernel_d_2::Algebraic_real_2 second_argument_type; 
+*/
+typedef AlgebraicKernel_d_2::Algebraic_real_2 second_argument_type;
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
 
-Computes a number of type `AlgebraicKernel_d_1::Bound` 
-in-between the first coordinates of \f$ a\f$ and \f$ b\f$. 
-\pre \f$ a_x \neq b_x\f$. 
+Computes a number of type `AlgebraicKernel_d_1::Bound`
+in-between the first coordinates of \f$ a\f$ and \f$ b\f$.
+\pre \f$ a_x \neq b_x\f$.
 
-*/ 
-result_type 
-operator()(const first_argument_type & a, 
-const second_argument_type & b); 
+*/
+result_type
+operator()(const first_argument_type & a,
+const second_argument_type & b);
 
 /// @}
 

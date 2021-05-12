@@ -1,5 +1,6 @@
 #include <CGAL/ImageIO.h>
 #include <iostream>
+#include <string>
 
 int main(int argc, char **argv) {
   if (argc != 9) {
@@ -16,9 +17,6 @@ int main(int argc, char **argv) {
   const auto ymax = std::stoul(argv[6]);
   const auto zmin = std::stoul(argv[7]);
   const auto zmax = std::stoul(argv[8]);
-  assert(xmin >= 0);
-  assert(ymin >= 0);
-  assert(zmin >= 0);
   assert(xmax < image->xdim);
   assert(ymax < image->ydim);
   assert(zmax < image->zdim);
@@ -35,7 +33,7 @@ int main(int argc, char **argv) {
   for (auto k = zmin; k < zmax; ++k)
     for (auto j = ymin; j <= ymax; ++j)
       for (auto i = xmin; i <= xmax; ++i) {
-        auto pos = data + image->wdim * (i + image->xdim * (j + image->zdim * k));
+        auto pos = data + image->wdim * (i + image->xdim * (j + image->ydim * k));
         std::copy(pos, pos + image->wdim, new_data);
         new_data += image->wdim;
       }

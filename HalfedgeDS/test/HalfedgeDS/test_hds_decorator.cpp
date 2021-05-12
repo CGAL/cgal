@@ -91,7 +91,7 @@ void test_HalfedgeDS_decorator() {
     decorator.split_vertex( g2, g->opposite());
     assert( decorator.is_valid( false, 4));
     assert( g->next()->next()->next()->next() == g);
-    Halfedge_handle g3 = 
+    Halfedge_handle g3 =
         decorator.split_face( g2->next()->opposite(), h);
     assert( decorator.is_valid( false, 4));
     assert( g->next()->next()->next()->next() == g);
@@ -211,7 +211,7 @@ void test_HalfedgeDS_decorator2() {
     hds.normalize_border();
     assert( decorator.is_valid( false, 4));
     assert( g->next()->next()->next()->next() == g);
-    Halfedge_handle g3 = 
+    Halfedge_handle g3 =
         decorator.split_face( g2->next()->opposite(), h);
     hds.normalize_border();
     assert( decorator.is_valid( false, 4));

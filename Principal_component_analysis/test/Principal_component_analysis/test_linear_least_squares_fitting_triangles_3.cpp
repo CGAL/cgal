@@ -21,10 +21,10 @@ int main()
   std::cout << "Test 3D linear least squares fitting of triangles"  << std::endl;
 
   std::list<Triangle> triangles;
-	Point a(0.0,0.0,0.0);
-	Point b(1.0,0.0,0.0);
-	Point c(0.0,1.0,0.0);
-	Point d(0.0,0.0,1.0);
+        Point a(0.0,0.0,0.0);
+        Point b(1.0,0.0,0.0);
+        Point c(0.0,1.0,0.0);
+        Point d(0.0,0.0,1.0);
   triangles.push_back(Triangle(a,b,c));
   triangles.push_back(Triangle(a,b,d));
 
@@ -32,7 +32,7 @@ int main()
   Plane plane;
   Point centroid;
 
-	// no centroid, fit line and plane
+        // no centroid, fit line and plane
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line, CGAL::Dimension_tag<2>());
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line, CGAL::Dimension_tag<1>());
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line, CGAL::Dimension_tag<0>());
@@ -40,14 +40,14 @@ int main()
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,CGAL::Dimension_tag<1>());
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,CGAL::Dimension_tag<0>());
 
-	// centroid, fit line and plane
+        // centroid, fit line and plane
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,centroid, CGAL::Dimension_tag<2>());
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,centroid, CGAL::Dimension_tag<1>());
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,centroid, CGAL::Dimension_tag<0>());
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,centroid,CGAL::Dimension_tag<2>());
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,centroid,CGAL::Dimension_tag<1>());
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,centroid,CGAL::Dimension_tag<0>());
-  
+
   // If Eigen is available, it's used by default everywhere.
   // These additional lines test the fallback version
 #ifdef CGAL_EIGEN3_ENABLED
@@ -64,6 +64,6 @@ int main()
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,centroid,CGAL::Dimension_tag<0>(),
                                  Kernel(), CGAL::Diagonalize_traits<FT, 3>());
 #endif
-  
+
   return 0;
 }

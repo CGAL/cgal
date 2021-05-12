@@ -1,17 +1,11 @@
 // Copyright (c) 2006-2008  Max-Planck-Institute Saarbruecken (Germany)
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Michael Hemmer <hemmer@mpi-sb.mpg.de>
@@ -94,40 +88,40 @@ protected:
   __m128d C =_mm_load_sd(&c);
   __m128d D =_mm_load_sd(&d);
 
-  __m128d AB = _mm_max_sd(A,B);  
-  __m128d CD = _mm_max_sd(C,D);  
+  __m128d AB = _mm_max_sd(A,B);
+  __m128d CD = _mm_max_sd(C,D);
   A = _mm_max_sd(AB,CD);
   _mm_store_sd(&a, A);
   return a;
 }
-     
+
 inline double sse2max(double a, double b, double c)
 {
   __m128d A =_mm_load_sd(&a);
   __m128d B =_mm_load_sd(&b);
   __m128d C =_mm_load_sd(&c);
 
-  __m128d AB = _mm_max_sd(A,B);  
+  __m128d AB = _mm_max_sd(A,B);
   A = _mm_max_sd(AB,C);
   _mm_store_sd(&a, A);
   return a;
 }
-      
+
 inline double sse2max(double a, double b)
 {
   __m128d A =_mm_load_sd(&a);
   __m128d B =_mm_load_sd(&b);
 
-  __m128d C = _mm_max_sd(A,B);  
+  __m128d C = _mm_max_sd(A,B);
   _mm_store_sd(&a, C);
   return a;
 }
 
- 
-#if 0  
+
+#if 0
 // Doing things in parallel seems the way to go
-// but copying to/from arrays has too much overhead  
-//  a = max(a,a2) b = max(b,b2)    
+// but copying to/from arrays has too much overhead
+//  a = max(a,a2) b = max(b,b2)
 inline void sse2mmax2(double& a, double a2, double& b, double b2)
 {
    CGAL_ALIGN_16 double res[2];
@@ -138,7 +132,7 @@ inline void sse2mmax2(double& a, double a2, double& b, double b2)
   res[1] = b2;
   __m128d S =_mm_load_pd(res);
 
-  __m128d C = _mm_max_pd(F,S); 
+  __m128d C = _mm_max_pd(F,S);
 
   _mm_store_pd(res, C);
   a = res[0];
@@ -154,31 +148,31 @@ inline void sse2mmax2(double& a, double a2, double& b, double b2)
   __m128d C =_mm_load_sd(&c);
   __m128d D =_mm_load_sd(&d);
 
-  __m128d AB = _mm_min_sd(A,B);  
-  __m128d CD = _mm_min_sd(C,D);  
+  __m128d AB = _mm_min_sd(A,B);
+  __m128d CD = _mm_min_sd(C,D);
   A = _mm_min_sd(AB,CD);
   _mm_store_sd(&a, A);
   return a;
 }
-     
+
 inline double sse2min(double a, double b, double c)
 {
   __m128d A =_mm_load_sd(&a);
   __m128d B =_mm_load_sd(&b);
   __m128d C =_mm_load_sd(&c);
 
-  __m128d AB = _mm_min_sd(A,B);  
+  __m128d AB = _mm_min_sd(A,B);
   A = _mm_min_sd(AB,C);
   _mm_store_sd(&a, A);
   return a;
 }
-      
+
 inline double sse2min(double a, double b)
 {
   __m128d A =_mm_load_sd(&a);
   __m128d B =_mm_load_sd(&b);
 
-  __m128d C = _mm_min_sd(A,B);  
+  __m128d C = _mm_min_sd(A,B);
   _mm_store_sd(&a, C);
   return a;
 }
@@ -189,7 +183,7 @@ inline void sse2minmax(double& a, double b, double& c)
   __m128d B =_mm_load_sd(&b);
   __m128d C =_mm_load_sd(&c);
 
-  __m128d AB = _mm_min_sd(A,B);  
+  __m128d AB = _mm_min_sd(A,B);
   A = _mm_min_sd(AB,C);
   _mm_store_sd(&a, A);
 
@@ -205,7 +199,7 @@ struct Max<double> :public CGAL::cpp98::binary_function< double, double, double 
  Max() {}
 
  double operator()( const double& x, const double& y) const
-    { 
+    {
 #ifdef CGAL_USE_SSE2_MAX
       return sse2max(x,y);
 #else
@@ -214,20 +208,20 @@ struct Max<double> :public CGAL::cpp98::binary_function< double, double, double 
  }
 
   double operator()( double x, double y, double z) const
-  { 
+  {
 #ifdef CGAL_USE_SSE2_MAX
     return sse2max(x,y,z);
-#else 
-    return (std::max)((std::max)( x, y), z); 
+#else
+    return (std::max)((std::max)( x, y), z);
 #endif
   }
 
   double operator()( double w,double x, double y, double z) const
-  { 
+  {
 #ifdef CGAL_USE_SSE2_MAX
     return sse2max(w,x,y,z);
-#else 
-    return (std::max)((std::max)( x, y), (std::max)(w,z)); 
+#else
+    return (std::max)((std::max)( x, y), (std::max)(w,z));
 #endif
   }
 };
@@ -237,7 +231,7 @@ struct Min<double> :public CGAL::cpp98::binary_function< double, double, double 
  Min() {}
 
  double operator()( const double& x, const double& y) const
-    { 
+    {
 #ifdef CGAL_USE_SSE2_MAX
       return sse2min(x,y);
 #else
@@ -246,20 +240,20 @@ struct Min<double> :public CGAL::cpp98::binary_function< double, double, double 
  }
 
   double operator()( double x, double y, double z) const
-  { 
+  {
 #ifdef CGAL_USE_SSE2_MAX
     return sse2min(x,y,z);
-#else 
-    return (std::min)((std::min)( x, y), z); 
+#else
+    return (std::min)((std::min)( x, y), z);
 #endif
   }
 
   double operator()( double w,double x, double y, double z) const
-  { 
+  {
 #ifdef CGAL_USE_SSE2_MAX
     return sse2min(w,x,y,z);
-#else 
-    return (std::min)((std::min)( x, y), (std::min)(w,z)); 
+#else
+    return (std::min)((std::min)( x, y), (std::min)(w,z));
 #endif
   }
 };

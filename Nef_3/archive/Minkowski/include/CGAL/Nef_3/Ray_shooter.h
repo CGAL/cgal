@@ -8,13 +8,13 @@
 namespace CGAL {
 
 template<typename SNC_>
-class Ray_shooter : 
+class Ray_shooter :
 public Modifier_base<CGAL::SNC_point_locator<CGAL::SNC_decorator<SNC_> > {
 
   typedef SNC_                                   SNC_structure;
   typedef CGAL::SNC_decorator<SNC_structure>     SNC_decorator;
   typedef CGAL::SNC_point_locator<SNC_decorator> SNC_point_locator;
-  
+
   Object_handle& ores;
   Vector_3 dir;
 

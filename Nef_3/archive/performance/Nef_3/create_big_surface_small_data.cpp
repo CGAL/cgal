@@ -29,17 +29,17 @@ void transform_big(Nef_polyhedron& N,int n, int s) {
   z_min = vi->point().hz()/vi->point().hw();
   z_max = vi->point().hz()/vi->point().hw();
   for(;vi != N.vertices_end();++vi) {
-    if(vi->point().hx()/vi->point().hw() < x_min) 
+    if(vi->point().hx()/vi->point().hw() < x_min)
       x_min = vi->point().hx()/vi->point().hw();
-    if(vi->point().hx()/vi->point().hw() > x_max) 
+    if(vi->point().hx()/vi->point().hw() > x_max)
       x_max = vi->point().hx()/vi->point().hw();
-    if(vi->point().hy()/vi->point().hw() < y_min) 
+    if(vi->point().hy()/vi->point().hw() < y_min)
       y_min = vi->point().hy()/vi->point().hw();
-    if(vi->point().hy()/vi->point().hw() > y_max) 
+    if(vi->point().hy()/vi->point().hw() > y_max)
       y_max = vi->point().hy()/vi->point().hw();
-    if(vi->point().hz()/vi->point().hw() < z_min) 
+    if(vi->point().hz()/vi->point().hw() < z_min)
       z_min = vi->point().hz()/vi->point().hw();
-    if(vi->point().hz()/vi->point().hw() > z_max) 
+    if(vi->point().hz()/vi->point().hw() > z_max)
       z_max = vi->point().hz()/vi->point().hw();
   }
 
@@ -49,7 +49,7 @@ void transform_big(Nef_polyhedron& N,int n, int s) {
 }
 
 void transform_small(Nef_polyhedron& N, int s, int l, int x, int y) {
-  N.transform(Aff_transformation_3(CGAL::TRANSLATION, Vector_3(-x_min,-y_min,-z_min))); 
+  N.transform(Aff_transformation_3(CGAL::TRANSLATION, Vector_3(-x_min,-y_min,-z_min)));
   N.transform(Aff_transformation_3(CGAL::SCALING, s*l, x_max-x_min));
   N.transform(Aff_transformation_3(CGAL::TRANSLATION, Vector_3((2*x+1)*s/2,(2*y+1)*s/2,s/4)));
 }
@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
   in2 >> N2;
   Nef_polyhedron N3=N2;
   transform_big(N2,n,s);
-  
+
   CGAL::Random r;
   int x=r.get_int(0,n-l-1);
   int y=r.get_int(0,n-1-1);

@@ -2,24 +2,15 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sven Schoenherr
 //                 Bernd Gaertner <gaertner@inf.ethz.ch>
-//                 Franz Wessendorp 
+//                 Franz Wessendorp
 //                 Kaspar Fischer
 
 #ifndef CGAL_QP_PARTIAL_EXACT_PRICING_H
@@ -59,11 +50,11 @@ class QP_partial_exact_pricing : public QP__partial_base<Q,ET,Tags> {
 
     // creation
     QP_partial_exact_pricing( bool     randomize = false,
-			       Random&  random    = get_default_random());
+                               Random&  random    = get_default_random());
 
     // operations
     int  pricing(int& direction );
-    
+
     // creation
     ~QP_partial_exact_pricing(){ };
 
@@ -85,7 +76,7 @@ QP_partial_exact_pricing( bool  randomize, Random&  random)
     : Base( "partial exact"),
       Partial_base( randomize, random)
 { }
-    
+
 // operations
 template < typename Q, typename ET, typename Tags >
 int  QP_partial_exact_pricing<Q,ET,Tags>::
@@ -103,68 +94,68 @@ pricing_helper(int& /*direction*/, Tag_true /*is_in_standard_form*/)
 
     // loop over all active non-basic variables
     CGAL_qpe_debug {
-	this->vout() << "active variables:" << std::endl;
+        this->vout() << "active variables:" << std::endl;
     }
     for ( it = this->active_set_begin(); it != this->active_set_end(); ++it) {
 
         // don't price artificial variables
-	if (this->solver().is_artificial( *it) ||
-	    this->solver().is_basic( *it))  // added by kf
-	  continue;
+        if (this->solver().is_artificial( *it) ||
+            this->solver().is_basic( *it))  // added by kf
+          continue;
 
-	// compute mu_j
-	mu = this->mu_j( *it);
+        // compute mu_j
+        mu = this->mu_j( *it);
 
-	CGAL_qpe_debug {
-	    this->vout() << "  mu_" << *it << ": " << mu << std::endl;
-	}
+        CGAL_qpe_debug {
+            this->vout() << "  mu_" << *it << ": " << mu << std::endl;
+        }
 
-	// new minimum?
-	if ( mu < min_mu) { min_it = it; min_mu = mu; }
+        // new minimum?
+        if ( mu < min_mu) { min_it = it; min_mu = mu; }
     }
 
     // no entering variable found so far?
     if ( ( min_mu == this->et0) && ( this->inactive_set_begin() <
                                      this->inactive_set_end())) {
 
-	// loop over all inactive non-basic variables
-	CGAL_qpe_debug {
-	    this->vout() << "inactive variables:" << std::endl;
-	}
-	Index_const_iterator  active_it;
-	for ( it = this->inactive_set_begin(); it != this->inactive_set_end(); ++it) {
+        // loop over all inactive non-basic variables
+        CGAL_qpe_debug {
+            this->vout() << "inactive variables:" << std::endl;
+        }
+        Index_const_iterator  active_it;
+        for ( it = this->inactive_set_begin(); it != this->inactive_set_end(); ++it) {
 
-	    // don't price artificial variables
-	    if (this->solver().is_artificial( *it)) continue;
-	    
-	    // compute mu_j
-	    mu = this->mu_j( *it);
+            // don't price artificial variables
+            if (this->solver().is_artificial( *it)) continue;
 
-	    CGAL_qpe_debug {
-		this->vout() << "  mu_" << *it << ": " << mu << std::endl;
-	    }
+            // compute mu_j
+            mu = this->mu_j( *it);
 
-	    // candidate for entering?
-	    if ( mu < this->et0) {
+            CGAL_qpe_debug {
+                this->vout() << "  mu_" << *it << ": " << mu << std::endl;
+            }
 
-		// make variable active
-		active_it = it;
-		this->activating( active_it);
+            // candidate for entering?
+            if ( mu < this->et0) {
 
-		// new minimum?
-		if ( mu < min_mu) { min_it = active_it; min_mu = mu; }
-	    }
-	}
+                // make variable active
+                active_it = it;
+                this->activating( active_it);
+
+                // new minimum?
+                if ( mu < min_mu) { min_it = active_it; min_mu = mu; }
+            }
+        }
     }
-    CGAL_qpe_debug { 
+    CGAL_qpe_debug {
       this->vout() << std::endl;
     }
 
     // return index of entering variable, if any
     if ( min_mu < this->et0) {
-	int  j = *min_it;
-	this->entering_basis( min_it);
-	return j;
+        int  j = *min_it;
+        this->entering_basis( min_it);
+        return j;
     }
 
     // no entering variable found
@@ -180,61 +171,61 @@ pricing_helper(int& direction, Tag_false /*is_in_standard_form*/)
 
     // loop over all active non-basic variables
     CGAL_qpe_debug {
-	this->vout() << "active variables:" << std::endl;
+        this->vout() << "active variables:" << std::endl;
     }
     for ( it = this->active_set_begin(); it != this->active_set_end(); ++it) {
 
         // don't price artificial variables
-	if (this->solver().is_artificial( *it) ||
-	    this->solver().is_basic( *it))  // added by kf
-	  continue;
+        if (this->solver().is_artificial( *it) ||
+            this->solver().is_basic( *it))  // added by kf
+          continue;
 
-	// compute mu_j
-	mu = this->mu_j( *it);
+        // compute mu_j
+        mu = this->mu_j( *it);
 
-	if (this->price_dantzig (*it, mu, this->et0, min_j, min_mu, direction))
-	  min_it = it;
+        if (this->price_dantzig (*it, mu, this->et0, min_j, min_mu, direction))
+          min_it = it;
     }
 
     // no entering variable found so far?
     if ( ( min_j == -1) && ( this->inactive_set_begin() <
-                             this->inactive_set_end())) 
+                             this->inactive_set_end()))
       {
 
-	// loop over all inactive non-basic variables
-	CGAL_qpe_debug {
-	    this->vout() << "inactive variables:" << std::endl;
-	}
-	Index_const_iterator  active_it;
-	for ( it = this->inactive_set_begin(); 
-	      it != this->inactive_set_end(); ++it) {
+        // loop over all inactive non-basic variables
+        CGAL_qpe_debug {
+            this->vout() << "inactive variables:" << std::endl;
+        }
+        Index_const_iterator  active_it;
+        for ( it = this->inactive_set_begin();
+              it != this->inactive_set_end(); ++it) {
 
-	  // don't price basics/artificials
-	  CGAL_qpe_assertion (!this->solver().is_basic(*it));
-	  if (this->solver().is_artificial( *it)) continue;
-	    
-	  // compute mu_j
-	  mu = this->mu_j( *it);
+          // don't price basics/artificials
+          CGAL_qpe_assertion (!this->solver().is_basic(*it));
+          if (this->solver().is_artificial( *it)) continue;
 
-	  CGAL_qpe_debug {
-	    this->vout() << "  mu_" << *it << ": " << mu << std::endl;
-	  }
+          // compute mu_j
+          mu = this->mu_j( *it);
 
-	  // candidate for entering?
-	  if ( this->is_improving(*it, mu, this->et0)) {
+          CGAL_qpe_debug {
+            this->vout() << "  mu_" << *it << ": " << mu << std::endl;
+          }
 
-	    // make variable active
-	    active_it = it;
-	    this->activating( active_it);
+          // candidate for entering?
+          if ( this->is_improving(*it, mu, this->et0)) {
 
-	    // new minimum?
-	    if (this->price_dantzig (*active_it, mu, this->et0, 
-			       min_j, min_mu, direction))
-	      min_it = active_it;
-	  }
-	}
+            // make variable active
+            active_it = it;
+            this->activating( active_it);
+
+            // new minimum?
+            if (this->price_dantzig (*active_it, mu, this->et0,
+                               min_j, min_mu, direction))
+              min_it = active_it;
+          }
+        }
       }
-    CGAL_qpe_debug { 
+    CGAL_qpe_debug {
       this->vout() << std::endl;
     }
 

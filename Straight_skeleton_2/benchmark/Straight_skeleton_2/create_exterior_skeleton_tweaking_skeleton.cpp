@@ -34,26 +34,26 @@ int main()
   poly.push_back( Point(256, 768 ) ) ;
   poly.push_back( Point(240, 736 ) ) ;
   poly.push_back( Point(224, 768 ) ) ;
-     
+
   double offset = 144 ;
   SsPtr ss =
     CGAL::CGAL_SS_i::create_partial_exterior_straight_skeleton_2(
       offset,
-      poly.vertices_begin(), 
-      poly.vertices_end(), 
+      poly.vertices_begin(),
+      poly.vertices_end(),
       K() );
-  
+
   typedef CGAL::Polygon_offset_builder_traits_2<K>   OffsetBuilderTraits;
   typedef CGAL::Polygon_offset_builder_2<Ss,OffsetBuilderTraits,Polygon_2> OffsetBuilder;
-  
+
   OffsetBuilder builder(*ss);
-  
+
   for ( Halfedge_const_iterator i =  ss->halfedges_begin();
                                 i != ss->halfedges_end();
                                 ++i )
     if (  (i->is_bisector() && (i->id()%2)==0) ){
       Point p,q;
-      
+
       if ( i->opposite()->vertex()->has_infinite_time() )
       {
         boost::optional<Point> op=
@@ -63,14 +63,14 @@ int main()
       }
       else
         p=i->opposite()->vertex()->point();
-      
+
       if( i->vertex()->has_infinite_time() )
       {
         boost::optional<Point> op=
           builder.Construct_offset_point(offset , i);
         if(!op) continue;
         q=*op;
-      }        
+      }
       else
         q=i->vertex()->point();
 

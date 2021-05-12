@@ -1,7 +1,7 @@
 /*! \file test_connect_holes.cpp
  * Connecting a polygon with holes.
  */
- 
+
 #ifndef CGAL_BSO_RATIONAL_NT_H
 #define CGAL_BSO_RATIONAL_NT_H
 
@@ -21,15 +21,15 @@ typedef CGAL::Cartesian<Number_type>               Kernel;
 typedef Kernel::Point_2                            Point_2;
 typedef CGAL::Polygon_2<Kernel>                    Polygon_2;
 typedef CGAL::Polygon_with_holes_2<Kernel>         Polygon_with_holes_2;
-typedef Polygon_2::FT										FT;
+typedef Polygon_2::FT                                                                                FT;
 typedef Polygon_with_holes_2::Hole_const_iterator  Hole_const_iterator;
-typedef Polygon_with_holes_2::Hole_iterator  		Hole_iterator;
+typedef Polygon_with_holes_2::Hole_iterator                  Hole_iterator;
 
-//compute the area of a polygon with holes 
+//compute the area of a polygon with holes
 FT pwh_area(Polygon_with_holes_2 pwh)
 {
   Polygon_2 outerP = pwh.outer_boundary();
-  FT result = outerP.area();	
+  FT result = outerP.area();
   if (! pwh.has_holes())
     return result;
   Hole_const_iterator hit = pwh.holes_begin();
@@ -43,14 +43,14 @@ FT pwh_area(Polygon_with_holes_2 pwh)
 }
 
 bool testExampleFile(const char* filename)
-{  
+{
   // Read a polygon with holes from a file.
   std::ifstream input_file (filename);
   if (! input_file.is_open())
   {
     std::cerr << "Failed to open the " << filename << std::endl;
     return false;
-  }  
+  }
   Polygon_2               outerP;
   unsigned int            num_holes;
 
@@ -65,7 +65,7 @@ bool testExampleFile(const char* filename)
 
   Polygon_with_holes_2    P (outerP, holes.begin(), holes.end());
   FT inputArea = pwh_area(P);
-  
+
   // Connect the outer boundary of the polygon with its holes.
   std::list<Point_2>            pts;
   std::list<Point_2>::iterator  pit;
@@ -81,33 +81,33 @@ bool testExampleFile(const char* filename)
 }
 /*
 Test all 5 test files. The results are compared according to the area
-signature. The input polygon with holes area is calculated, and then 
+signature. The input polygon with holes area is calculated, and then
 after the holes are connected, an output polygon is created, and its
-area is calculated 
+area is calculated
 */
 int main()
-{ 
+{
   std::string testfilePrefix = "data/pgn_holes";
-  std::string testfileSuffix = ".dat";   
-  int result = 0;  
+  std::string testfileSuffix = ".dat";
+  int result = 0;
   for (int i = 1; i < 6; ++i) {
     std::stringstream strs;
     std::string si;
     strs << i;
-    strs >> si;     
+    strs >> si;
     std::string filename = testfilePrefix + si + testfileSuffix;
-    const char * cfilename = filename.c_str();    
+    const char * cfilename = filename.c_str();
     bool res = testExampleFile(cfilename);
     if (!res) {
         std::cout << "test " << i << " was a bitter failure" << std::endl;
         result = 1;
-    }  
+    }
     else {
-      std::cout <<"test " << i << " was a great success" << std::endl;      
+      std::cout <<"test " << i << " was a great success" << std::endl;
     }
   }
   if (result == 0)
-    std::cout << "ALL TESTS SUCCEEDED!" << std::endl;  
+    std::cout << "ALL TESTS SUCCEEDED!" << std::endl;
   return result;
 }
 

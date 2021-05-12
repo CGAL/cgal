@@ -67,6 +67,7 @@
 
 \package_listing{Triangulation_2}
 \package_listing{TDS_2}
+\package_listing{Triangulation_on_sphere_2}
 \package_listing{Periodic_2_triangulation_2}
 \package_listing{Hyperbolic_triangulation_2}
 \package_listing{Periodic_4_hyperbolic_triangulation_2}
@@ -90,6 +91,7 @@
 \package_listing{Surface_mesher}
 \package_listing{Skin_surface_3}
 \package_listing{Mesh_3}
+\package_listing{Tetrahedral_remeshing}
 \package_listing{Periodic_3_mesh_3}
 
 \cgalPackageSection{PartReconstruction,Shape Reconstruction}
@@ -119,6 +121,7 @@
 \package_listing{Stream_lines_2}
 \package_listing{Classification}
 \package_listing{Heat_method_3}
+\package_listing{Surface_mesh_topology}
 
 \cgalPackageSection{PartSearchStructures,Spatial Searching and Sorting}
 
@@ -128,7 +131,9 @@
 \package_listing{SearchStructures}
 \package_listing{Box_intersection_d}
 \package_listing{AABB_tree}
+\package_listing{Orthtree}
 \package_listing{Spatial_sorting}
+\package_listing{Optimal_bounding_box}
 
 \cgalPackageSection{PartGeometricOptimization,Geometric Optimization}
 

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Rineau
@@ -56,8 +47,8 @@ public:
   }
 
   Orientation operator()(const Point& p,
-			 const Point& q,
-			 const Point& r) const
+                         const Point& q,
+                         const Point& r) const
   {
     CGAL_PROFILER("Projected_orientation_with_normal_3::operator()");
     CGAL_TIME_PROFILER("Projected_orientation_with_normal_3::operator()");
@@ -91,9 +82,9 @@ public:
   }
 
   Oriented_side operator()(const Point& p,
-			   const Point& q,
-			   const Point& r,
-			   const Point& t) const
+                           const Point& q,
+                           const Point& r,
+                           const Point& t) const
   {
     CGAL_PROFILER("Projected_side_of_oriented_circle_with_normal_3::operator()")
     CGAL_TIME_PROFILER("Projected_side_of_oriented_circle_with_normal_3::operator()")
@@ -113,10 +104,10 @@ public:
     const FT k_r = tr * u;
 
     return sign_of_determinant<FT>(
-	tp.x(), tp.y(), tp.z(), (tp2 + k_p) * u2 - k_p * k_p,
-	tr.x(), tr.y(), tr.z(), (tr2 + k_r) * u2 - k_r * k_r,
-	tq.x(), tq.y(), tq.z(), (tq2 + k_q) * u2 - k_q * k_q,
-	 u.x(),  u.y(),  u.z(), u2 * u2);
+        tp.x(), tp.y(), tp.z(), (tp2 + k_p) * u2 - k_p * k_p,
+        tr.x(), tr.y(), tr.z(), (tr2 + k_r) * u2 - k_r * k_r,
+        tq.x(), tq.y(), tq.z(), (tq2 + k_q) * u2 - k_q * k_q,
+         u.x(),  u.y(),  u.z(), u2 * u2);
     // Note that q and r have been swapped in the determinant above, to
     // inverse its sign.
   }
@@ -194,7 +185,8 @@ public:
     CGAL_TIME_PROFILER("Construct Projected_intersect_3")
   }
 
-  Object operator()(const Segment& s1, const Segment& s2)
+  boost::optional<boost::variant<Point,Segment> >
+  operator()(const Segment& s1, const Segment& s2)
   {
     CGAL_PROFILER("Projected_intersect_3::operator()")
     CGAL_TIME_PROFILER("Projected_intersect_3::operator()")
@@ -209,12 +201,12 @@ public:
     const Plane_3 plane_1(s1.source(), u1);
     const Plane_3 plane_2(s2.source(), u2);
 
-    Object planes_intersection = intersection(plane_1, plane_2);
-    if(planes_intersection.empty()) {
+    auto planes_intersection = intersection(plane_1, plane_2);
+    if(! planes_intersection) {
       std::cerr << "planes_intersection is empty\n";
-      return planes_intersection;
+      return boost::none;
     }
-    if(const Line* line = object_cast<Line>(&planes_intersection))
+    if(const Line* line = boost::get<Line>(&*planes_intersection))
     {
       const Point& pi = line->point(0);
       if(cross_product(normal, pi - s1.source())
@@ -225,25 +217,32 @@ public:
       {
         // the intersection of the lines is not inside the segments
         std::cerr << "intersection not inside\n";
-        return Object();
+        return boost::none;
       }
       else
       {
         // Let the plane passing through s1.source() and with normal
         // the cross product of s1.to_vector() and s2.to_vector(). That
         // plane should intersect *l, now.
-        return intersection(*line, Plane_3(s1.source(),
-                                           cross_product(s1.to_vector(),
-                                                         s2.to_vector())));
+        auto inter = intersection(*line, Plane_3(s1.source(),
+                                                 cross_product(s1.to_vector(),
+                                                               s2.to_vector())));
+        if(! inter){
+          return boost::none;
+        }
+        if(const Point* point = boost::get<Point>(&*inter)){
+          typedef  boost::variant<Point, Segment> variant_type;
+          return boost::make_optional(variant_type(*point));
+        }
       }
     }
-    if(object_cast<Plane_3>(&planes_intersection))
+    if(boost::get<Plane_3>(&*planes_intersection))
     {
       std::cerr << "coplanar lines\n";
       CGAL_error();
-      return Object();
+      return boost::none;
     }
-    return Object();
+    return boost::none;
   }
 }; // end class Projected_intersect_3
 
@@ -289,6 +288,33 @@ public:
     return compare(base * (p - q), 0);
   }
 }; // end class Compare_along_axis
+
+template <class Traits>
+class Less_xy_along_axis
+{
+  // private members
+  typedef typename Traits::Vector_3 Vector_3;
+  typedef typename Traits::Point_2 Point;
+  Vector_3 base1, base2;
+public:
+  Less_xy_along_axis(const Vector_3& base1, const Vector_3& base2) : base1(base1), base2(base2)
+  {
+    CGAL_PROFILER("Construct Less_xy_along_axis")
+    CGAL_TIME_PROFILER("Construct Less_xy_along_axis")
+  }
+
+  typedef bool result_type;
+
+  bool operator() (const Point &p, const Point &q) const {
+
+    Compare_along_axis<Traits> cx(base1);
+    Comparison_result crx = cx(p, q);
+    if (crx == SMALLER) { return true; }
+    if (crx == LARGER) { return false; }
+    Less_along_axis<Traits> ly(base2);
+    return ly(p, q);
+  }
+}; // end class Less_xy_along_axis
 
 } // end namespace TriangulationProjectionTraitsCartesianFunctors
 
@@ -354,6 +380,8 @@ public:
     Less_along_axis<Self>                                    Less_x_2;
   typedef TriangulationProjectionTraitsCartesianFunctors::
     Less_along_axis<Self>                                    Less_y_2;
+  typedef TriangulationProjectionTraitsCartesianFunctors::
+    Less_xy_along_axis<Self>                                 Less_xy_2;
 
   typedef TriangulationProjectionTraitsCartesianFunctors::
     Projected_orientation_with_normal_3<Self>                Orientation_2;
@@ -392,6 +420,12 @@ public:
   less_y_2_object() const
   {
     return Less_y_2(this->base2());
+  }
+
+  Less_xy_2
+  less_xy_2_object() const
+  {
+    return Less_xy_2(this->base1(), this->base2());
   }
 
   Compare_x_2

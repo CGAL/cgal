@@ -6,6 +6,7 @@
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 
 #include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/boost/graph/IO/OFF.h>
 
 #include <iostream>
 #include <fstream>
@@ -38,7 +39,7 @@ int main(int argc, char* argv[])
   Target1 T1;
   {
     CGAL::copy_face_graph(S, T1);
-    CGAL::write_off("lcc.off", T1);
+    CGAL::write_OFF("lcc.off", T1);
   }
 
   S.clear();
@@ -51,10 +52,11 @@ int main(int argc, char* argv[])
 
     boost::unordered_map<source_vertex_descriptor, tm_vertex_descriptor> v2v;
     boost::unordered_map<source_halfedge_descriptor, tm_halfedge_descriptor> h2h;
-    
+
     CGAL::copy_face_graph(T1, S, CGAL::parameters::vertex_to_vertex_output_iterator(std::inserter(v2v, v2v.end()))
                                                   .halfedge_to_halfedge_output_iterator(std::inserter(h2h, h2h.end())));
     std::ofstream out("reverse.off");
+    out.precision(17);
     out << S;
   }
   return 0;

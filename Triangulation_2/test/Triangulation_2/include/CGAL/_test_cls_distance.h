@@ -9,14 +9,14 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------------
-// 
+//
 // release       :
 // release_date  :
-// 
-// source        : 
-// file          : 
-// revision      : 
-// revision_date : 
+//
+// source        :
+// file          :
+// revision      :
+// revision_date :
 // author(s)     : Francois Rebufat
 // (Francois.Rebufat@sophia.inria.fr)
 //
@@ -34,8 +34,8 @@ _test_cls_distance(Point p[34],const Traits &)
   //typedef typename Traits::Point  Point;
   //test for constructors
   Distance d0;
-  Distance d1(p[0]); 
-  Distance d2(p[0],p[1]); 
+  Distance d1(p[0]);
+  Distance d2(p[0],p[1]);
   Distance d3(p[0],p[1],p[2]);
   // try to apply compare to a valid objects
    assert(d3.compare()==CGAL::SMALLER);

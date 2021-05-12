@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -58,13 +49,13 @@ sign_a_plus_b_x_sqrt_c(const RT &a, const RT &b, const RT &c)
   if ( sa == ZERO )  return sb;
 
   return sa * CGAL::compare( CGAL::square(a),
-			     c * CGAL::square(b) );
+                             c * CGAL::square(b) );
 }
 
 template < class RT >
 Sign
 sign_a_x_sqrt_c_plus_b_x_sqrt_d(const RT &a, const RT &b,
-				const RT &c, const RT &d)
+                                const RT &c, const RT &d)
 {
   // computes the sign of quantity: a * sqrt(c) + b * sqrt(d)
 
@@ -80,17 +71,17 @@ sign_a_x_sqrt_c_plus_b_x_sqrt_d(const RT &a, const RT &b,
   if ( sa == ZERO )  return sb;
 
   return sa * CGAL::compare( CGAL::square(a) * c,
-			     CGAL::square(b) * d );
+                             CGAL::square(b) * d );
 }
 
 template < class RT >
 Sign
 sign_a_plus_b_x_sqrt_e_plus_c_x_sqrt_f(const RT &a, const RT &b,
-				       const RT &c, const RT &e,
-				       const RT &f)
+                                       const RT &c, const RT &e,
+                                       const RT &f)
 {
   // computes the sign of quantity: a + b * sqrt(e) + c * sqrt(f)
-  
+
   CGAL_assertion( !(CGAL::is_negative(e)) );
   CGAL_assertion( !(CGAL::is_negative(f)) );
 
@@ -101,24 +92,24 @@ sign_a_plus_b_x_sqrt_e_plus_c_x_sqrt_f(const RT &a, const RT &b,
   if ( s_a_plus_b_x_sqrt_e == sc )  return sc;
   if ( s_a_plus_b_x_sqrt_e == ZERO )  return sc;
 
-  return s_a_plus_b_x_sqrt_e * 
+  return s_a_plus_b_x_sqrt_e *
     sign_a_plus_b_x_sqrt_c(CGAL::square(a) + CGAL::square(b) * e
-			   - CGAL::square(c) * f,
-			   RT(2) * a * b, e);
+                           - CGAL::square(c) * f,
+                           RT(2) * a * b, e);
 }
 
 template < class RT >
 Sign
 sign_a_plus_b_x_sqrt_e_plus_c_x_sqrt_f_plus_d_sqrt_e_x_f(const RT &a,
-							 const RT &b,
-							 const RT &c,
-							 const RT &d,
-							 const RT &e,
-							 const RT &f)
+                                                         const RT &b,
+                                                         const RT &c,
+                                                         const RT &d,
+                                                         const RT &e,
+                                                         const RT &f)
 {
   // computes the sign of quantity:
   //           a + b * sqrt(e) + c * sqrt(f) + d * sqrt(e * f)
-  
+
   CGAL_assertion( !(CGAL::is_negative(e)) );
   CGAL_assertion( !(CGAL::is_negative(f)) );
 
@@ -133,10 +124,10 @@ sign_a_plus_b_x_sqrt_e_plus_c_x_sqrt_f_plus_d_sqrt_e_x_f(const RT &a,
 
   return s_a_plus_b_sqrt_e *
     sign_a_plus_b_x_sqrt_c(CGAL::square(a) + CGAL::square(b) * e
-			   - CGAL::square(c) * f
-			   - CGAL::square(d) * e * f,
-			   RT(2) * (a * b - c * d * f),
-			   e);
+                           - CGAL::square(c) * f
+                           - CGAL::square(d) * e * f,
+                           RT(2) * (a * b - c * d * f),
+                           e);
 }
 
 } //namespace CGAL

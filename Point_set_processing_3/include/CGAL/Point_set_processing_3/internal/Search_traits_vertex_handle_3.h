@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Pierre Alliez and Laurent Saboret
 
@@ -102,7 +93,7 @@ struct Kernel_traits< internal::Point_vertex_handle_3<Vertex_handle> > {
   };
 };
 
-  namespace internal {  
+  namespace internal {
 
 /// Functor with two function operators, which return the begin and
 /// past the end iterator for the Cartesian coordinates.
@@ -126,8 +117,10 @@ struct Construct_cartesian_const_iterator_vertex_handle_3
 template <class Vertex_handle>
 struct Euclidean_distance_vertex_handle_3
 {
+  typedef double FT;
   typedef CGAL::internal::Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
   typedef Point_vertex_handle_3 Query_item;
+  typedef Point_vertex_handle_3 Point_d;
 
   double transformed_distance(const Point_vertex_handle_3& p1, const Point_vertex_handle_3& p2) const {
     double distx = p1.x()-p2.x();
@@ -221,7 +214,7 @@ struct Euclidean_distance_vertex_handle_3
 
     h=p.z();
     dists[2] = (h >= (b.min_coord(2)+b.max_coord(2))/2.0)? h-b.min_coord(2) : b.max_coord(2)-h;
-    
+
     double d2 = dists[2]*dists[2];
 
     return d0 + d1 + d2;
@@ -255,7 +248,7 @@ class Search_traits_vertex_handle_3
                           >
 {};
 
-  } // namespace internal 
+  } // namespace internal
 /// \endcond
 
 } //namespace CGAL

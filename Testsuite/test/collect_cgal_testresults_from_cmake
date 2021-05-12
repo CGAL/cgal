@@ -9,8 +9,8 @@
 
 
 if [ -z "${CGAL_TEST_PLATFORM}" ]; then
-   
-  CGAL_TEST_PLATFORM=`dirname $PWD` 
+
+  CGAL_TEST_PLATFORM=`dirname $PWD`
   echo "CGAL_TEST_PLATFORM not in the environment, setting it to ${CGAL_TEST_PLATFORM}"
 fi
 
@@ -24,7 +24,6 @@ GENERAL_BUILD_LOGFILE=''
 PLATFORM_BUILD_LOGFILE=''
 TEST_REPORT=''
 RESULT_FILE=''
-shared_or_static=''
 
 #print_testresult <platform> <directory>
 # print result on stdout
@@ -51,14 +50,19 @@ print_testresult()
       # 'QMessageBox::warning'.
       if grep -v -F 'CMake Warning at /usr/share/cmake/Modules/FindBoost' CompilerOutput_$1 ProgramOutput.*.$1 | grep -i -E -q '(^|[^a-zA-Z_,:-])warning'
       then
-        RESULT="w"
+        if grep -v -F 'CMake Warning at /usr/share/cmake/Modules/FindBoost' CompilerOutput_$1 ProgramOutput.*.$1 | grep -i -E '(^|[^a-zA-Z_,:-])warning' | grep -i -q "include[/\]CGAL\|cmake"
+        then
+          RESULT="w"
+        else
+          RESULT="t"
+        fi
       else
-	if grep -E -q 'NOTICE: .*(need|require|incompatible).*and.*will not be' CompilerOutput_$1
-	then
-	  RESULT="r"
+  if grep -E -q 'NOTICE: .*(need|require|incompatible).*and.*will not be' CompilerOutput_$1
+  then
+    RESULT="r"
         else
           RESULT="y"
-	fi
+  fi
       fi
     fi
     TIMING=`awk '/^      # Running time: / {print $4}' < ErrorOutput_$1`
@@ -67,81 +71,19 @@ print_testresult()
   echo "$2 $RESULT"
 }
 
-
-parse_shared_or_static()
-{
-  if [ -f "${PLATFORM_BUILD_LOGFILE}" ] ; then
-  
-    if grep "Building shared libraries"  ${PLATFORM_BUILD_LOGFILE} >/dev/null 2>&1; then
-      shared_or_static='shared'  
-    else
-      shared_or_static='static'  
-    fi
-  
-  else
-    shared_or_static='shared'  
-  fi
-}
-
 parse_flags_and_third_party_choices()
 {
-  grep -e "^-- USING " ${PLATFORM_BUILD_LOGFILE} >> $RESULT_FILE 
+  grep -e "^-- USING " ${PLATFORM_BUILD_LOGFILE} >> $RESULT_FILE
   echo "------------" >> $RESULT_FILE
 }
 
-parse_lib_building_results()
-{
-  libname=$1
-  target=$2
-
-  if [ ! -e "${libname}_${shared_or_static}" ]; then
-    mkdir "${libname}_${shared_or_static}"
-  fi
-  
-  y_or_no='n'
-
-  configured=''
-  
-  if [ -f "${PLATFORM_BUILD_LOGFILE}" ]; then
-  
-    if grep -q "Built target ${target}" ${PLATFORM_BUILD_LOGFILE} ; then
-      y_or_no='y'
-    fi
-     
-    marker_beg=`grep -e "${target}.dir/depend$" ${PLATFORM_BUILD_LOGFILE} | head -1`
-    
-    if [ -n "${marker_beg}" ]; then
-  
-      configured='y'
-      
-      if [ ! "$target" = "CGAL" ]; then  
-        cat ${PLATFORM_BUILD_LOGFILE} | sed -n "\|${marker_beg}|,\|depend$| p" >> ${libname}_${shared_or_static}/$TEST_REPORT
-      fi
-      
-      # Test if there is a warning in the build log.
-      if [ "$y_or_no" = "y" ]; then
-        # See the comment line 38.
-        if grep -i -E -q '(^|[^a-zA-Z_,:-])warning' ${libname}_${shared_or_static}/$TEST_REPORT ; then
-          y_or_no='w'
-        fi
-      fi
-    fi
-  fi  
-  
-  if [ -z "${configured}" ] ; then
-    y_or_no='r'
-    echo "Not configured!" >> ${libname}_${shared_or_static}/$TEST_REPORT
-  fi
-  
-  echo ${libname}_${shared_or_static} $y_or_no >> $RESULT_FILE
-}
 
 output_main_logs()
 {
   [ -e Installation ] || mkdir "Installation"
-  
+
   INSTALLATION_TEST_REPORT="Installation/$TEST_REPORT"
- 
+
   echo "---------------------------------------------------------------" >> "$INSTALLATION_TEST_REPORT"
   echo "                    General Build Log                          " >> "$INSTALLATION_TEST_REPORT"
   echo "---------------------------------------------------------------" >> "$INSTALLATION_TEST_REPORT"
@@ -149,9 +91,9 @@ output_main_logs()
   if [ -f "${GENERAL_BUILD_LOGFILE}" ] ; then
     cat "${GENERAL_BUILD_LOGFILE}" >> "$INSTALLATION_TEST_REPORT"
   else
-    echo "Not found!" >> "$INSTALLATION_TEST_REPORT" 
+    echo "Not found!" >> "$INSTALLATION_TEST_REPORT"
   fi
-  
+
   echo "---------------------------------------------------------------" >> "$INSTALLATION_TEST_REPORT"
   echo "                Platform-specific Build Log                    " >> "$INSTALLATION_TEST_REPORT"
   echo "---------------------------------------------------------------" >> "$INSTALLATION_TEST_REPORT"
@@ -159,9 +101,9 @@ output_main_logs()
   if [ -f "${PLATFORM_BUILD_LOGFILE}" ] ; then
     cat "${PLATFORM_BUILD_LOGFILE}" >> "$INSTALLATION_TEST_REPORT"
   else
-    echo "Not found!" >> "$INSTALLATION_TEST_REPORT" 
+    echo "Not found!" >> "$INSTALLATION_TEST_REPORT"
   fi
-  
+
   if [ -f "$HOME/.autocgal_with_cmake_rc" ] ; then
     echo ""                                                                >> "$INSTALLATION_TEST_REPORT"
     echo "---------------------------------------------------------------" >> "$INSTALLATION_TEST_REPORT"
@@ -179,7 +121,7 @@ output_main_logs()
       cat "$HOME/.autocgalrc" >> "$INSTALLATION_TEST_REPORT"
     fi
   fi
-  
+
   if [ -f "../setup" ] ; then
     echo ""                                                                >> "$INSTALLATION_TEST_REPORT"
     echo "---------------------------------------------------------------" >> "$INSTALLATION_TEST_REPORT"
@@ -188,8 +130,8 @@ output_main_logs()
     echo ""                                                                >> "$INSTALLATION_TEST_REPORT"
     cat "../setup" >> "$INSTALLATION_TEST_REPORT"
   fi
-  
-  
+
+
   echo ""                                                                >> "$INSTALLATION_TEST_REPORT"
   echo "---------------------------------------------------------------" >> "$INSTALLATION_TEST_REPORT"
   echo "                       CMakeCache.txt"                           >> "$INSTALLATION_TEST_REPORT"
@@ -198,9 +140,9 @@ output_main_logs()
   if [ -f "../CMakeCache.txt" ] ; then
     cat "../CMakeCache.txt" >> "$INSTALLATION_TEST_REPORT"
   else
-    echo "Not found!" >> "$INSTALLATION_TEST_REPORT" 
+    echo "Not found!" >> "$INSTALLATION_TEST_REPORT"
   fi
-  
+
   echo ""                                                                >> "$INSTALLATION_TEST_REPORT"
   echo "---------------------------------------------------------------" >> "$INSTALLATION_TEST_REPORT"
   echo "               include/CGAL/compiler_config.h"                   >> "$INSTALLATION_TEST_REPORT"
@@ -209,9 +151,9 @@ output_main_logs()
   if [ -f "../include/CGAL/compiler_config.h" ] ; then
     cat "../include/CGAL/compiler_config.h" >> "$INSTALLATION_TEST_REPORT"
   else
-    echo "Not found!" >> "$INSTALLATION_TEST_REPORT" 
+    echo "Not found!" >> "$INSTALLATION_TEST_REPORT"
   fi
-  
+
   echo ""                                                                >> "$INSTALLATION_TEST_REPORT"
   echo "---------------------------------------------------------------" >> "$INSTALLATION_TEST_REPORT"
   echo "                       CGALConfig.cmake"                         >> "$INSTALLATION_TEST_REPORT"
@@ -220,9 +162,9 @@ output_main_logs()
   if [ -f "../CGALConfig.cmake" ] ; then
     cat "../CGALConfig.cmake" >> "$INSTALLATION_TEST_REPORT"
   else
-    echo "Not found!" >> "$INSTALLATION_TEST_REPORT" 
+    echo "Not found!" >> "$INSTALLATION_TEST_REPORT"
   fi
-  
+
   echo ""                                                                >> "$INSTALLATION_TEST_REPORT"
   echo "---------------------------------------------------------------" >> "$INSTALLATION_TEST_REPORT"
   echo "                       CMakeError.log"                           >> "$INSTALLATION_TEST_REPORT"
@@ -231,9 +173,9 @@ output_main_logs()
   if [ -f "../CMakeFiles/CMakeError.log" ] ; then
     cat "../CMakeFiles/CMakeError.log" >> "$INSTALLATION_TEST_REPORT"
   else
-    echo "Not found!" >> "$INSTALLATION_TEST_REPORT" 
+    echo "Not found!" >> "$INSTALLATION_TEST_REPORT"
   fi
-  
+
   echo ""                                                                >> "$INSTALLATION_TEST_REPORT"
   echo "---------------------------------------------------------------" >> "$INSTALLATION_TEST_REPORT"
   echo "                       CMakeOutput.log"                          >> "$INSTALLATION_TEST_REPORT"
@@ -242,9 +184,9 @@ output_main_logs()
   if [ -f "../CMakeFiles/CMakeOutput.log" ] ; then
     cat "../CMakeFiles/CMakeOutput.log" >> "$INSTALLATION_TEST_REPORT"
   else
-    echo "Not found!" >> "$INSTALLATION_TEST_REPORT" 
+    echo "Not found!" >> "$INSTALLATION_TEST_REPORT"
   fi
-  
+
 }
 
 echo "---------------------------------------------------------------"
@@ -271,16 +213,9 @@ echo "CGAL_TEST_PLATFORM ${CGAL_TEST_PLATFORM}" >> "$RESULT_FILE"
 echo "General installation log file: ${GENERAL_BUILD_LOGFILE}"  >> "$RESULT_FILE"
 echo "Host-specific installation log file: ${PLATFORM_BUILD_LOGFILE}"  >> "$RESULT_FILE"
 
-parse_shared_or_static
-
-output_main_logs  
+output_main_logs
 
 parse_flags_and_third_party_choices
-
-parse_lib_building_results "libCGAL"        "CGAL"    
-parse_lib_building_results "libCGALCore"    "CGAL_Core"    
-parse_lib_building_results "libCGALimageIO" "CGAL_ImageIO"
-parse_lib_building_results "libCGALQt5"     "CGAL_Qt5"
 
 for DIR in $TEST_DIRECTORIES ; do
   if [ -d "$DIR" ] ; then

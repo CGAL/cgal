@@ -38,19 +38,19 @@ struct Scene_movable_sm_item_priv
     Vertices = 0,
     NbOfVbos
   };
-  
+
   CGAL::qglviewer::ManipulatedFrame* frame;
   SMesh* facegraph;
   CGAL::qglviewer::Vec center_;
   Scene_movable_sm_item *item;
   QMatrix4x4 f_matrix;
   const QString item_name;
-  
+
   mutable QOpenGLShaderProgram *program;
   mutable std::vector<float> flat_normals;
   mutable std::vector<float> flat_vertices;
   mutable std::vector<float> edges_vertices;
-  
+
 };
 
 Scene_movable_sm_item::Scene_movable_sm_item(const CGAL::qglviewer::Vec& pos, SMesh* sm,
@@ -62,7 +62,7 @@ Scene_movable_sm_item::Scene_movable_sm_item(const CGAL::qglviewer::Vec& pos, SM
 
 void Scene_movable_sm_item_priv::initialize_buffers(CGAL::Three::Viewer_interface *viewer = nullptr) const
 {
-  item->getTriangleContainer(0)->initializeBuffers(viewer); 
+  item->getTriangleContainer(0)->initializeBuffers(viewer);
   item->getTriangleContainer(0)->setFlatDataSize(flat_vertices.size());
   item->getEdgeContainer(0)->initializeBuffers(viewer);
   item->getEdgeContainer(0)->setFlatDataSize(edges_vertices.size());
@@ -72,7 +72,7 @@ void Scene_movable_sm_item_priv::initialize_buffers(CGAL::Three::Viewer_interfac
   flat_vertices.shrink_to_fit();
   flat_normals.shrink_to_fit();
   edges_vertices.shrink_to_fit();
-  
+
   item->are_buffers_filled = true;
 }
 
@@ -81,7 +81,7 @@ void Scene_movable_sm_item_priv::compute_elements() const
 {
   typedef EPICK::Point_3 Point;
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  
+
   SMesh::Property_map<face_descriptor, EPICK::Vector_3 > fnormals =
       facegraph->add_property_map<face_descriptor, EPICK::Vector_3 >("f:normal").first;
   CGAL::Polygon_mesh_processing::compute_face_normals(*facegraph,fnormals);
@@ -123,10 +123,10 @@ void Scene_movable_sm_item_priv::compute_elements() const
                       p.y() - center_.y,
                       p.z() - center_.z);
     CPF::add_point_in_buffer(pc, edges_vertices);
-  }  
-  
-  
-  
+  }
+
+
+
   item->getTriangleContainer(0)->allocate(Tri::Flat_vertices, flat_vertices.data(),
                                           static_cast<int>(flat_vertices.size()*sizeof(float)));
   item->getTriangleContainer(0)->allocate(Tri::Flat_normals, flat_normals.data(),
@@ -150,7 +150,7 @@ void Scene_movable_sm_item::draw(CGAL::Three::Viewer_interface* viewer) const
   getTriangleContainer(0)->setColor(color());
   getTriangleContainer(0)->setAlpha(alpha());
   getTriangleContainer(0)->setFrameMatrix(d->f_matrix);
-  
+
   getTriangleContainer(0)->draw(viewer, true);
 }
 
@@ -162,7 +162,7 @@ void Scene_movable_sm_item::drawEdges(CGAL::Three::Viewer_interface* viewer) con
     d->initialize_buffers(viewer);
   getEdgeContainer(0)->setColor(color());
   getEdgeContainer(0)->setFrameMatrix(d->f_matrix);
-  
+
   getEdgeContainer(0)->draw(viewer, true);
 }
 
@@ -176,7 +176,7 @@ void
 Scene_movable_sm_item::compute_bbox() const {
   SMesh::Property_map<vertex_descriptor, Point_3> pprop = d->facegraph->points();
   CGAL::Bbox_3 bbox ;
-  
+
   for(vertex_descriptor vd :vertices(*d->facegraph))
   {
     bbox = bbox + pprop[vd].bbox();

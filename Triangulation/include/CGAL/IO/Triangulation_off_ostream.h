@@ -1,20 +1,11 @@
 // Copyright (c) 2014  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Clement Jamin
 
@@ -51,11 +42,11 @@ output_point(std::ostream & os, const Traits &traits, const P & p)
 // TODO: test if the stream is binary or text?
 template<typename Traits, typename P>
 int
-output_weighted_point(std::ostream & os, const Traits &traits, const P & p, 
+output_weighted_point(std::ostream & os, const Traits &traits, const P & p,
                       bool output_weight = true)
 {
   typedef typename Traits::Compute_coordinate_d Ccd;
-  typename Traits::Construct_point_d cp = 
+  typename Traits::Construct_point_d cp =
     traits.construct_point_d_object();
   typename Traits::Compute_weight_d pt_weight = traits.compute_weight_d_object();
   const Ccd ccd = traits.compute_coordinate_d_object();
@@ -72,11 +63,11 @@ output_weighted_point(std::ostream & os, const Traits &traits, const P & p,
 // TODO: test if the stream is binary or text?
 template<typename Traits, typename FCH>
 void
-output_full_cell(std::ostream & os, const Traits &traits, const FCH & fch, 
+output_full_cell(std::ostream & os, const Traits &traits, const FCH & fch,
                       bool output_weights = false)
 {
   typename FCH::value_type::Vertex_handle_iterator vit = fch->vertices_begin();
-  for( ; vit != fch->vertices_end(); ++vit ) 
+  for( ; vit != fch->vertices_end(); ++vit )
   {
     int dim;
     if (output_weights)

@@ -1,20 +1,11 @@
 // Copyright (c) 2008 GeometryFactory (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Fernando Cacciola
 //
@@ -41,10 +32,10 @@ namespace
       std::exit(255);
     }
     return 1 ;
-  }  
+  }
 
-  void CGAL_handle_signal( int n ) 
-  { 
+  void CGAL_handle_signal( int n )
+  {
     switch(n)
     {
       case SIGSEGV: std::fprintf(stderr,"In CGAL_handle_signal, Program received signal SIGSEGV: Segmentation Fault."); break ;
@@ -53,16 +44,16 @@ namespace
       default:
         std::fprintf(stderr,"In CGAL_handle_signal, Program received signal %d", n); break ;
     }
-    
-    std::exit(128+n); 
+
+    std::exit(128+n);
   }
-  
+
   struct CGAL_DebugHook
   {
     CGAL_DebugHook()
     {
       _CrtSetReportHook(CGAL_report_hook);
-      
+
       // This is OK for unattended runs but will prevent the IDE for trapping the signal
       std::signal(SIGSEGV,CGAL_handle_signal);
       std::signal(SIGFPE ,CGAL_handle_signal);

@@ -22,13 +22,13 @@ int main(int argc, char **argv)
   std::vector<Point> points;
   points.reserve(n);
   std::copy(std::istream_iterator<Point>(std::cin), std::istream_iterator<Point>(), std::back_inserter(points));
-  
+
   CGAL::Timer t;
   t.start();
   Delaunay delaunay;
   delaunay.insert(points.begin(), points.end());
   t.stop();
   std::cout << t.time() << " seconds\n";
-            
+
  return 0;
 }

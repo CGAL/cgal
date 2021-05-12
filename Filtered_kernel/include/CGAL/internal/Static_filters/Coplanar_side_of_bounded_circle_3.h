@@ -1,21 +1,12 @@
 // Copyright (c) 2001,2004  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -56,20 +47,20 @@ public:
   typedef Bounded_side result_type;
 
   Bounded_side operator()(const Point &p, const Point &q,
-	                  const Point &r, const Point &t) const
+                          const Point &r, const Point &t) const
   {
     return opti_coplanar_in_circleC3(
-	    to_double(p.x()), to_double(p.y()), to_double(p.z()),
+            to_double(p.x()), to_double(p.y()), to_double(p.z()),
             to_double(q.x()), to_double(q.y()), to_double(q.z()),
-	    to_double(r.x()), to_double(r.y()), to_double(r.z()),
-	    to_double(t.x()), to_double(t.y()), to_double(t.z()));
+            to_double(r.x()), to_double(r.y()), to_double(r.z()),
+            to_double(t.x()), to_double(t.y()), to_double(t.z()));
   }
 
   Bounded_side
   opti_coplanar_in_circleC3(double px, double py, double pz,
                             double qx, double qy, double qz,
-		            double rx, double ry, double rz,
-		            double tx, double ty, double tz) const
+                            double rx, double ry, double rz,
+                            double tx, double ty, double tz) const
   {
     CGAL_PROFILER("In_circle_3 calls");
 
@@ -77,17 +68,17 @@ public:
     double pty = py - ty;
     double ptz = pz - tz;
     double pt2 = CGAL_NTS square(ptx) + CGAL_NTS square(pty) +
-	         CGAL_NTS square(ptz);
+                 CGAL_NTS square(ptz);
     double qtx = qx - tx;
     double qty = qy - ty;
     double qtz = qz - tz;
     double qt2 = CGAL_NTS square(qtx) + CGAL_NTS square(qty) +
-	         CGAL_NTS square(qtz);
+                 CGAL_NTS square(qtz);
     double rtx = rx - tx;
     double rty = ry - ty;
     double rtz = rz - tz;
     double rt2 = CGAL_NTS square(rtx) + CGAL_NTS square(rty) +
-	         CGAL_NTS square(rtz);
+                 CGAL_NTS square(rtz);
     double pqx = qx - px;
     double pqy = qy - py;
     double pqz = qz - pz;
@@ -98,7 +89,7 @@ public:
     double vy = pqz*prx - pqx*prz;
     double vz = pqx*pry - pqy*prx;
     double v2 = CGAL_NTS square(vx) + CGAL_NTS square(vy) +
-	        CGAL_NTS square(vz);
+                CGAL_NTS square(vz);
 
     double det = determinant(ptx,pty,ptz,pt2,
                                    rtx,rty,rtz,rt2,
@@ -135,7 +126,7 @@ public:
     if (maxz < arz) maxz = arz;
     if (maxz < atz) maxz = atz;
 
-    double d = std::max(maxx, std::max(maxy, maxz));
+    double d = (std::max)(maxx, (std::max)(maxy, maxz));
     double eps = 3.27418e-11 * d * d * d * d * d * d;
 
     if (det >  eps) return ON_BOUNDED_SIDE;
@@ -147,7 +138,7 @@ public:
     typedef K::Point_3 P;
 
     return coplanar_side_of_bounded_circle(P(px,py,pz), P(qx,qy,qz),
-	                                   P(rx,ry,rz), P(tx,ty,tz));
+                                           P(rx,ry,rz), P(tx,ty,tz));
   }
 };
 

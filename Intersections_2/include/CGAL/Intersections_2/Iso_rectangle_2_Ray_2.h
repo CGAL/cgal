@@ -1,25 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Geert-Jan Giezeman
 
@@ -36,7 +27,7 @@
 #include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
-  
+
 namespace Intersections {
 
 namespace internal {
@@ -66,8 +57,8 @@ protected:
 
 template <class K>
 inline bool do_intersect(const typename K::Ray_2 &p1,
-			 const typename K::Iso_rectangle_2 &p2,
-			 const K&)
+                         const typename K::Iso_rectangle_2 &p2,
+                         const K&)
 {
     typedef Ray_2_Iso_rectangle_2_pair<K> pair_t;
     pair_t pair(&p1, &p2);
@@ -76,8 +67,8 @@ inline bool do_intersect(const typename K::Ray_2 &p1,
 
 template <class K>
 inline bool do_intersect(const typename K::Iso_rectangle_2 &p2,
-			 const typename K::Ray_2 &p1,
-			 const K& k)
+                         const typename K::Ray_2 &p1,
+                         const K& k)
 {
   return do_intersect(p1, p2, k);
 }
@@ -86,8 +77,8 @@ template <class K>
 typename CGAL::Intersection_traits
 <K, typename K::Ray_2, typename K::Iso_rectangle_2>::result_type
 intersection(const typename K::Ray_2 &ray,
-	     const typename K::Iso_rectangle_2 &iso,
-	     const K& )
+             const typename K::Iso_rectangle_2 &iso,
+             const K& )
 {
     typedef Ray_2_Iso_rectangle_2_pair<K> is_t;
     is_t ispair(&ray, &iso);
@@ -106,8 +97,8 @@ template <class K>
 typename CGAL::Intersection_traits
 <K, typename K::Ray_2, typename K::Iso_rectangle_2>::result_type
 intersection(const typename K::Iso_rectangle_2 &iso,
-	     const typename K::Ray_2 &ray,
-	     const K& k)
+             const typename K::Ray_2 &ray,
+             const K& k)
 {
   return intersection(ray, iso, k);
 }
@@ -181,7 +172,7 @@ template <class K>
 typename K::Segment_2
 Ray_2_Iso_rectangle_2_pair<K>::intersection_segment() const
 {
-    typedef typename K::Segment_2 Segment_2; 
+    typedef typename K::Segment_2 Segment_2;
     typename K::Construct_translated_point_2 translated_point;
     typename K::Construct_scaled_vector_2 construct_scaled_vector;
     if (!_known)

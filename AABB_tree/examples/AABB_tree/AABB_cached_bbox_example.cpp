@@ -1,7 +1,5 @@
-#include <iostream>
-#include <fstream>
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/Polyhedron_3.h>
@@ -9,11 +7,14 @@
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Timer.h>
 
+#include <iostream>
+#include <fstream>
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::FT FT;
 typedef K::Point_3 Point_3;
 typedef CGAL::Bbox_3 Bbox_3;
-typedef CGAL::Surface_mesh<Point_3> Surface_mesh; 
+typedef CGAL::Surface_mesh<Point_3> Surface_mesh;
 typedef CGAL::Polyhedron_3<K> Polyhedron_3;
 typedef CGAL::Timer Timer;
 
@@ -26,8 +27,12 @@ void triangle_mesh(const char* fname)
   typedef CGAL::AABB_tree<Traits> Tree;
 
   TriangleMesh tmesh;
-  std::ifstream in(fname);
-  in >> tmesh; 
+  if(!CGAL::read_polygon_mesh(fname, tmesh) || CGAL::is_triangle_mesh(tmesh))
+  {
+    std::cerr << "Invalid input." << std::endl;
+    return;
+  }
+
   Timer t;
   t.start();
   Tree tree(faces(tmesh).first, faces(tmesh).second, tmesh);
@@ -36,8 +41,7 @@ void triangle_mesh(const char* fname)
   std::cout << "Closest point to ORIGIN:" << tree.closest_point(CGAL::ORIGIN) << std::endl;
 }
 
-
-Bbox_3 bbox(boost::graph_traits<Surface_mesh>::face_descriptor fd, 
+Bbox_3 bbox(boost::graph_traits<Surface_mesh>::face_descriptor fd,
             const Surface_mesh& p)
 {
   boost::graph_traits<Surface_mesh>::halfedge_descriptor hd = halfedge(fd,p);
@@ -46,7 +50,6 @@ Bbox_3 bbox(boost::graph_traits<Surface_mesh>::face_descriptor fd,
   res += p.point(target(next(hd,p),p)).bbox();
   return res;
 }
-
 
 void surface_mesh_cache_bbox(const char* fname)
 {
@@ -59,14 +62,14 @@ void surface_mesh_cache_bbox(const char* fname)
   Surface_mesh tmesh;
   std::ifstream in(fname);
   in >> tmesh;
-  
+
   Timer t;
   t.start();
   Bbox_pmap bb = tmesh.add_property_map<face_descriptor,Bbox_3>("f:bbox",Bbox_3()).first;
- 
-  for(face_descriptor fd : faces(tmesh)){
+
+  for(face_descriptor fd : faces(tmesh))
     put(bb, fd, bbox(fd,tmesh));
-  }
+
   Traits traits(bb);
   Tree tree(traits);
   tree.insert(faces(tmesh).first, faces(tmesh).second, tmesh);
@@ -76,7 +79,6 @@ void surface_mesh_cache_bbox(const char* fname)
   std::cout << t.time() << " sec."<< std::endl;
    std::cout << "Closest point to ORIGIN:" << tree.closest_point(CGAL::ORIGIN) << std::endl;
 }
-
 
 int main(int argc, char* argv[])
 {

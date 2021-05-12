@@ -52,7 +52,7 @@ int main(int argc, char** argv)
     else
       iters = atoi(argv[2]);
   }
-    
+
 
   Side_of_original_octagon pred;
 

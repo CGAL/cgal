@@ -2,20 +2,8 @@
 /*
  * author:  Bruno Levy, INRIA, project ALICE
  * website: http://www.loria.fr/~levy/software
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation, either version 3
- * of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * This file is part of CGAL (www.cgal.org)
  *
  * Scientific work that use this software can reference the website and
  * the following publication:
@@ -37,7 +25,7 @@
  *
  * $URL$
  * $Id$
- * SPDX-License-Identifier: LGPL-3.0+
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
 #ifndef __OPENNL_CONJUGATE_GRADIENT__
@@ -65,7 +53,7 @@ namespace OpenNL {
  *
  * @param A generic square matrix; a function
  *   mult(const MATRIX& M, const double* x, double* y)
- * and a member function 
+ * and a member function
  *   int dimension() const
  * must to be defined.
  * @param b right hand side of the system.
@@ -93,7 +81,7 @@ public:
 
     // Solve the sparse linear system "A*x = b" for A symmetric positive definite
     // Return true on success
-    bool solve(const MATRIX &A, const VECTOR& b, VECTOR& x) 
+    bool solve(const MATRIX &A, const VECTOR& b, VECTOR& x)
     {
 #ifdef DEBUG_TRACE
         std::cerr << "  Call Conjugate Gradient" << std::endl;
@@ -160,7 +148,7 @@ private:
  *
  * @param A generic square matrix; a function
  *   mult(const MATRIX& M, const double* x, double* y)
- * and a member function 
+ * and a member function
  *   int dimension() const
  * must to be defined.
  * @param C preconditioner; a function
@@ -172,8 +160,8 @@ private:
  * @param max_iter maximum number of iterations.
  */
 
-template< class MATRIX, class PC_MATRIX, class VECTOR > 
-class Solver_preconditioned_CG 
+template< class MATRIX, class PC_MATRIX, class VECTOR >
+class Solver_preconditioned_CG
 {
 public:
     typedef MATRIX Matrix ;
@@ -194,7 +182,7 @@ public:
 
     // Solve the sparse linear system "A*x = b" for A symmetric positive definite
     // Return true on success
-    bool solve(const MATRIX &A, const PC_MATRIX &C, const VECTOR& b, VECTOR& x) 
+    bool solve(const MATRIX &A, const PC_MATRIX &C, const VECTOR& b, VECTOR& x)
     {
 #ifdef DEBUG_TRACE
         std::cerr << "  Call Conjugate Gradient with preconditioner" << std::endl;

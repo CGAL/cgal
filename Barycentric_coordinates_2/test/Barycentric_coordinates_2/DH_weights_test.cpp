@@ -63,7 +63,7 @@ int main()
 
             const Output_type c_result = discrete_harmonic_coordinates(point, expected_coordinates);
 
-            assert(coordinates[count + 0] - expected_coordinates[count + 0] == Scalar(0) && 
+            assert(coordinates[count + 0] - expected_coordinates[count + 0] == Scalar(0) &&
                    coordinates[count + 1] - expected_coordinates[count + 1] == Scalar(0) &&
                    coordinates[count + 2] - expected_coordinates[count + 2] == Scalar(0) &&
                    coordinates[count + 3] - expected_coordinates[count + 3] == Scalar(0) &&
@@ -101,7 +101,7 @@ int main()
 
         const Output_type c_result = discrete_harmonic_coordinates(query_points[i], expected_coordinates);
 
-        assert(coordinates[count + 0] - expected_coordinates[count + 0] == Scalar(0) && 
+        assert(coordinates[count + 0] - expected_coordinates[count + 0] == Scalar(0) &&
                coordinates[count + 1] - expected_coordinates[count + 1] == Scalar(0) &&
                coordinates[count + 2] - expected_coordinates[count + 2] == Scalar(0) &&
                coordinates[count + 3] - expected_coordinates[count + 3] == Scalar(0) &&
@@ -120,6 +120,6 @@ int main()
     }
 
     cout << endl << "DH_weights_test: PASSED." << endl << endl;
-    
+
     return EXIT_SUCCESS;
 }

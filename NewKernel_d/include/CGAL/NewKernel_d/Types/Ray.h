@@ -1,20 +1,11 @@
 // Copyright (c) 2014
 // INRIA Saclay-Ile de France (France)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Marc Glisse
 
@@ -25,28 +16,28 @@
 #include <CGAL/Kernel/mpl.h>
 namespace CGAL {
 template <class R_> class Ray {
-	typedef typename Get_type<R_, FT_tag>::type FT_;
-	typedef typename Get_type<R_, Point_tag>::type	Point_;
-	typedef typename Get_type<R_, Vector_tag>::type	Vector_;
-	typedef std::pair<Point_,Vector_> Data_;
-	Data_ data;
-	public:
-	Ray(){}
-	Ray(Point_ const&a, Vector_ const&b): data(a,b) {}
-	Point_ source()const{
-	  return data.first;
-	}
-	// FIXME: return a R_::Direction?
-	Vector_ direction()const{
-	  return data.second;
-	}
+        typedef typename Get_type<R_, FT_tag>::type FT_;
+        typedef typename Get_type<R_, Point_tag>::type        Point_;
+        typedef typename Get_type<R_, Vector_tag>::type        Vector_;
+        typedef std::pair<Point_,Vector_> Data_;
+        Data_ data;
+        public:
+        Ray(){}
+        Ray(Point_ const&a, Vector_ const&b): data(a,b) {}
+        Point_ source()const{
+          return data.first;
+        }
+        // FIXME: return a R_::Direction?
+        Vector_ direction()const{
+          return data.second;
+        }
 };
 namespace CartesianDKernelFunctors {
   template <class R_> struct Construct_ray : Store_kernel<R_> {
     CGAL_FUNCTOR_INIT_STORE(Construct_ray)
-    typedef typename Get_type<R_, Ray_tag>::type	result_type;
-    typedef typename Get_type<R_, Point_tag>::type	Point;
-    typedef typename Get_type<R_, Vector_tag>::type	Vector;
+    typedef typename Get_type<R_, Ray_tag>::type        result_type;
+    typedef typename Get_type<R_, Point_tag>::type        Point;
+    typedef typename Get_type<R_, Vector_tag>::type        Vector;
     typedef typename Get_functor<R_, Difference_of_points_tag>::type Dp_;
     //typedef typename Get_functor<R_, Translated_point_tag>::type Tp_;
     //typedef typename Get_functor<R_, Scaled_vector_tag>::type Sv_;

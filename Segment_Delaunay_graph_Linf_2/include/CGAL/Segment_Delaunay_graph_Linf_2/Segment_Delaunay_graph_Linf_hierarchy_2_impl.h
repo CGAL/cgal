@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
 //philaris@gmail.com, sandeep.kr.dey@gmail.com, evanthia.papadopoulou@usi.ch
@@ -39,7 +30,7 @@ void
 Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>::
 init_hierarchy(const Geom_traits& gt)
 {
-  hierarchy[0] = this; 
+  hierarchy[0] = this;
   for(unsigned int i = 1; i < sdg_hierarchy_2__maxlevel; ++i) {
     hierarchy[i] = new Base(gt);
   }
@@ -49,7 +40,7 @@ template<class Gt, class ST, class STag, class D_S, class LTag>
 Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>::
 Segment_Delaunay_graph_Linf_hierarchy_2(const Gt& gt)
   : Base(gt)
-{ 
+{
   init_hierarchy(gt);
 }
 
@@ -60,11 +51,11 @@ Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>::
 Segment_Delaunay_graph_Linf_hierarchy_2
 (const Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag> &sdg)
     : Base(sdg.geom_traits())
-{ 
+{
   // create an empty triangulation to be able to delete it !
   init_hierarchy(sdg.geom_traits());
   copy(sdg);
-} 
+}
 
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
@@ -72,11 +63,11 @@ Segment_Delaunay_graph_Linf_hierarchy_2
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 template<class Gt, class ST, class STag, class D_S, class LTag>
-Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>:: 
+Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>::
 ~Segment_Delaunay_graph_Linf_hierarchy_2()
 {
   clear();
-  for(unsigned int i = 1; i < sdg_hierarchy_2__maxlevel; ++i){ 
+  for(unsigned int i = 1; i < sdg_hierarchy_2__maxlevel; ++i){
     delete hierarchy[i];
   }
 }
@@ -111,7 +102,7 @@ template<class Gt, class ST, class STag, class D_S, class LTag>
 std::pair<bool,int>
 Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>::
 insert_point(const Point_2& p, const Storage_site_2& ss, int level,
-	     Vertex_handle* vertices)
+             Vertex_handle* vertices)
 {
   CGAL_SDG_DEBUG(std::cout << "debug hier insert_point " << p << " at level "
                  << level << std::endl;);
@@ -135,42 +126,42 @@ insert_point(const Point_2& p, const Storage_site_2& ss, int level,
     Arrangement_type at_res = this->arrangement_type(t, vnear[0]);
 
     CGAL_assertion( at_res == AT2::DISJOINT ||
-		    at_res == AT2::INTERIOR ||
-		    at_res == AT2::IDENTICAL );
+                    at_res == AT2::INTERIOR ||
+                    at_res == AT2::IDENTICAL );
 
     if ( vnear[0]->is_point() ) {
       CGAL_SDG_DEBUG(std::cout << "debug hier insert_point nearest is point"
                      << std::endl;);
       if ( at_res == AT2::IDENTICAL ) {
-	vertex = vnear[0];
-	merge_info(vertex, ss);
+        vertex = vnear[0];
+        merge_info(vertex, ss);
       } else {
-	vertex = hierarchy[0]->insert_point2(ss, t, vnear[0]);
+        vertex = hierarchy[0]->insert_point2(ss, t, vnear[0]);
       }
     } else { // nearest neighbor is a segment
       CGAL_assertion( vnear[0]->is_segment() );
       CGAL_assertion( at_res == AT2::DISJOINT ||
-		      at_res == AT2::INTERIOR );
+                      at_res == AT2::INTERIOR );
 
       if ( at_res == AT2::INTERIOR ) {
-	CGAL_assertion( t.is_input() );
-	lies_on_seg = true;
+        CGAL_assertion( t.is_input() );
+        lies_on_seg = true;
 
-	int vnear_level = find_level(vnear[0]);
+        int vnear_level = find_level(vnear[0]);
 
-	// I need to find the level of the nearest neighbor that t
-	// lies on and update the level of t
-	if ( new_level < vnear_level ) {
-	  new_level = vnear_level;
-	}
+        // I need to find the level of the nearest neighbor that t
+        // lies on and update the level of t
+        if ( new_level < vnear_level ) {
+          new_level = vnear_level;
+        }
 
-	Vertex_triple vt =
-	  hierarchy[0]->insert_exact_point_on_segment(ss, t, vnear[0]);
-	vertex = vt.first;
-	vs1 = vt.second;
-	vs2 = vt.third;
+        Vertex_triple vt =
+          hierarchy[0]->insert_exact_point_on_segment(ss, t, vnear[0]);
+        vertex = vt.first;
+        vs1 = vt.second;
+        vs2 = vt.third;
       } else {
-	vertex = hierarchy[0]->insert_point2(ss, t, vnear[0]);
+        vertex = hierarchy[0]->insert_point2(ss, t, vnear[0]);
       }
     }
   } else if ( n == 0 ) {
@@ -197,40 +188,40 @@ insert_point(const Point_2& p, const Storage_site_2& ss, int level,
     size_type nv = hierarchy[k]->number_of_vertices();
     if ( nv > 2 ) {
       if ( nv < sdg_hierarchy_2__minsize ) {
-	CGAL_assertion( vnear[k] == Vertex_handle() );
-	vnear[k] = hierarchy[k]->nearest_neighbor(p);
+        CGAL_assertion( vnear[k] == Vertex_handle() );
+        vnear[k] = hierarchy[k]->nearest_neighbor(p);
       }
       Arrangement_type at_res = this->arrangement_type(t, vnear[k]->site());
       if ( at_res == AT2::INTERIOR ) {
-	Vertex_triple vt =
-	  hierarchy[k]->insert_exact_point_on_segment(ss, t, vnear[k]);
-	vertex = vt.first;
-	vs1 = vt.second;
-	vs2 = vt.third;
+        Vertex_triple vt =
+          hierarchy[k]->insert_exact_point_on_segment(ss, t, vnear[k]);
+        vertex = vt.first;
+        vs1 = vt.second;
+        vs2 = vt.third;
 
-	CGAL_assertion( (same_segments(vs1_prev->site(), vs1->site()) &&
-			 same_segments(vs2_prev->site(), vs2->site())) ||
-			(same_segments(vs1_prev->site(), vs2->site()) &&
-			 same_segments(vs2_prev->site(), vs1->site())) );
-	if ( same_segments(vs1_prev->site(), vs1->site()) ) {
-	  vs1->set_down(vs1_prev);
-	  vs1_prev->set_up(vs1);
-	  vs1_prev = vs1;
+        CGAL_assertion( (same_segments(vs1_prev->site(), vs1->site()) &&
+                         same_segments(vs2_prev->site(), vs2->site())) ||
+                        (same_segments(vs1_prev->site(), vs2->site()) &&
+                         same_segments(vs2_prev->site(), vs1->site())) );
+        if ( same_segments(vs1_prev->site(), vs1->site()) ) {
+          vs1->set_down(vs1_prev);
+          vs1_prev->set_up(vs1);
+          vs1_prev = vs1;
 
-	  vs2->set_down(vs2_prev);
-	  vs2_prev->set_up(vs2);
-	  vs2_prev = vs2;
-	} else {
-	  vs1->set_down(vs2_prev);
-	  vs2_prev->set_up(vs1);
-	  vs2_prev = vs1;
+          vs2->set_down(vs2_prev);
+          vs2_prev->set_up(vs2);
+          vs2_prev = vs2;
+        } else {
+          vs1->set_down(vs2_prev);
+          vs2_prev->set_up(vs1);
+          vs2_prev = vs1;
 
-	  vs2->set_down(vs1_prev);
-	  vs1_prev->set_up(vs2);
-	  vs1_prev = vs2;
-	}
+          vs2->set_down(vs1_prev);
+          vs1_prev->set_up(vs2);
+          vs1_prev = vs2;
+        }
       } else {
-	vertex = hierarchy[k]->insert_point(ss, t, vnear[k]);	
+        vertex = hierarchy[k]->insert_point(ss, t, vnear[k]);
       }
     } else if ( nv == 2 ) {
       vertex = hierarchy[k]->insert_third(t, ss);
@@ -255,8 +246,8 @@ template<class Gt, class ST, class STag, class D_S, class LTag>
 void
 Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>::
 insert_point(const Site_2& t, const Storage_site_2& ss,
-	     int low, int high, Vertex_handle vbelow,
-	     Vertex_handle* vertices)
+             int low, int high, Vertex_handle vbelow,
+             Vertex_handle* vertices)
 {
   CGAL_precondition( low >= 1 && low <= high );
   CGAL_precondition( vbelow != Vertex_handle() );
@@ -284,9 +275,9 @@ insert_point(const Site_2& t, const Storage_site_2& ss,
       vertex = hierarchy[k]->insert_third(t, ss);
     } else {
       if ( ss.is_input() ) {
-	vertex = hierarchy[k]->insert_no_register(ss, t.point(), vnear[k]);
+        vertex = hierarchy[k]->insert_no_register(ss, t.point(), vnear[k]);
       } else {
-	break;
+        break;
       }
       // ideally what should be instead of the break-statement above is the
       // following statement(s) in the #if-#endif block
@@ -319,10 +310,10 @@ typename
 Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>::Vertex_handle
 Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>::
 insert_segment(const Point_2& p0, const Point_2& p1,
-	       const Storage_site_2& ss, int level)
+               const Storage_site_2& ss, int level)
 {
 
-  CGAL_SDG_DEBUG(std::cout << "debug hier insert_segment " 
+  CGAL_SDG_DEBUG(std::cout << "debug hier insert_segment "
                  << p0 << ' ' << p1 << std::endl;);
 
   // the tag is true so we DO insert segments in hierarchy
@@ -364,7 +355,7 @@ insert_segment(const Point_2& p0, const Point_2& p1,
 
     vertex = hierarchy[0]->insert_third(ss, vertices0[0], vertices1[0]);
     insert_segment_in_upper_levels(t, vertex->storage_site(),
-				   vertex, vertices0, level, stag);
+                                   vertex, vertices0, level, stag);
   } else {
     vertex = insert_segment_interior(t, ss, vertices0, level);
   }
@@ -377,7 +368,7 @@ typename
 Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>::Vertex_handle
 Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>::
 insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
-			const Vertex_handle* vertices, int level)
+                        const Vertex_handle* vertices, int level)
 {
   // insert the interior of a segment, and DO insert segments in
   // upper levels of the hierarchy
@@ -393,7 +384,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   Intersections_tag          itag;
   Segments_in_hierarchy_tag  stag;
 
-  CGAL_SDG_DEBUG(std::cout << "debug insert_segment_interior t=" << t 
+  CGAL_SDG_DEBUG(std::cout << "debug insert_segment_interior t=" << t
                  << " at level " << level << std::endl;);
 
   // find the first conflict
@@ -411,46 +402,46 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
     Arrangement_type at_res = this->arrangement_type(t, vv);
     if ( vv->is_segment() ) {
       if ( at_res == AT2::DISJOINT || at_res == AT2::TOUCH_1 ||
-	   at_res == AT2::TOUCH_2 || at_res == AT2::TOUCH_11 ||
-	   at_res == AT2::TOUCH_12 || at_res == AT2::TOUCH_21 ||
-	   at_res == AT2::TOUCH_22 ) {
-	// do nothing
+           at_res == AT2::TOUCH_2 || at_res == AT2::TOUCH_11 ||
+           at_res == AT2::TOUCH_12 || at_res == AT2::TOUCH_21 ||
+           at_res == AT2::TOUCH_22 ) {
+        // do nothing
       } else if ( at_res == AT2::IDENTICAL ) {
-	// merge info of identical items
-	merge_info(vv, ss);
-	return vv;
+        // merge info of identical items
+        merge_info(vv, ss);
+        return vv;
       } else if ( at_res == AT2::CROSSING ) {
         CGAL_SDG_DEBUG(std::cout << "debug insert_segment_interior crossing "
                        << t << " and " << *vv << std::endl;);
-	return insert_intersecting_segment_with_tag(ss, t, vv, level,
-						    itag, stag);
+        return insert_intersecting_segment_with_tag(ss, t, vv, level,
+                                                    itag, stag);
       } else if ( at_res == AT2::TOUCH_11_INTERIOR_1 ) {
-	Vertex_handle vp = second_endpoint_of_segment(vv);
+        Vertex_handle vp = second_endpoint_of_segment(vv);
 
-	Storage_site_2 sss = split_storage_site(ss, vp->storage_site(), true);
-	// merge the info of the first (common) subsegment
-	merge_info(vv, sss);
+        Storage_site_2 sss = split_storage_site(ss, vp->storage_site(), true);
+        // merge the info of the first (common) subsegment
+        merge_info(vv, sss);
 
-	return insert_segment_on_point(ss, vp, level, 1);
+        return insert_segment_on_point(ss, vp, level, 1);
       } else if ( at_res == AT2::TOUCH_12_INTERIOR_1 ) {
-	Vertex_handle vp = first_endpoint_of_segment(vv);
-	return insert_segment_on_point(ss, vp, level, 0);
+        Vertex_handle vp = first_endpoint_of_segment(vv);
+        return insert_segment_on_point(ss, vp, level, 0);
       } else {
-	// this should never be reached; the only possible values for
-	// at_res are DISJOINT, CROSSING, TOUCH_11_INTERIOR_1
-	// and TOUCH_12_INTERIOR_1
-	CGAL_error();
+        // this should never be reached; the only possible values for
+        // at_res are DISJOINT, CROSSING, TOUCH_11_INTERIOR_1
+        // and TOUCH_12_INTERIOR_1
+        CGAL_error();
       }
     } else {
       CGAL_assertion( vv->is_point() );
       if ( at_res == AT2::INTERIOR ) {
-	Storage_site_2 svv = vv->storage_site();
-	if ( svv.is_input() ) {
-	  return insert_segment_on_point(ss, vv, level, 2);
-	} else {
-	  // MK::ERROR:: not ready yet
-	  CGAL_error();
-	}
+        Storage_site_2 svv = vv->storage_site();
+        if ( svv.is_input() ) {
+          return insert_segment_on_point(ss, vv, level, 2);
+        } else {
+          // MK::ERROR:: not ready yet
+          CGAL_error();
+        }
       }
     }
     ++vc;
@@ -458,7 +449,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 
 
 
-  CGAL_SDG_DEBUG(std::cout << "debug insert_segment_interior t=" << t 
+  CGAL_SDG_DEBUG(std::cout << "debug insert_segment_interior t=" << t
                  << " start looking for vert cf " << std::endl;);
 
   // first look for conflict with vertex
@@ -488,9 +479,9 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 
 #ifdef CGAL_SDG_VERBOSE
   // debug
-  std::cout << "debug hier insert_segment_interior t=" 
-    << t << " with " 
-    << (is_infinite(start_f)? "infinite" : "finite") 
+  std::cout << "debug hier insert_segment_interior t="
+    << t << " with "
+    << (is_infinite(start_f)? "infinite" : "finite")
     << " face [" ;
   if (is_infinite(start_f->vertex(0))) {
     std::cout << " infv";
@@ -507,11 +498,11 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   } else {
     std::cout << ' ' << start_f->vertex(2)->site();
   }
-  std::cout << "] has sign s=" << s << std::endl; 
+  std::cout << "] has sign s=" << s << std::endl;
 
 #endif
 
-  // we are in conflict with a Voronoi vertex; start from that and 
+  // we are in conflict with a Voronoi vertex; start from that and
   // find the entire conflict region and then repair the diagram
   List l;
   Face_map fm;
@@ -523,23 +514,23 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   hierarchy[0]->expand_conflict_region(start_f, t, l, fm, sign_map, vcross);
 
   CGAL_assertion( vcross.third == AT2::DISJOINT ||
-		  vcross.third == AT2::CROSSING ||
-		  vcross.third == AT2::INTERIOR );
+                  vcross.third == AT2::CROSSING ||
+                  vcross.third == AT2::INTERIOR );
 
   // the following condition becomes true only if intersecting
   // segments are found
   if ( vcross.first ) {
     if ( t.is_segment() ) {
       if ( vcross.third == AT2::CROSSING ) {
-	Intersections_tag itag;
-	return insert_intersecting_segment_with_tag(ss, t, vcross.second,
-						    level, itag, stag);
+        Intersections_tag itag;
+        return insert_intersecting_segment_with_tag(ss, t, vcross.second,
+                                                    level, itag, stag);
       } else if ( vcross.third == AT2::INTERIOR ) {
-	return insert_segment_on_point(ss, vcross.second, level, 2);
+        return insert_segment_on_point(ss, vcross.second, level, 2);
       } else {
-	// this should never be reached; the only possible values for
-	// vcross.third are CROSSING, INTERIOR and DISJOINT
-	CGAL_error();
+        // this should never be reached; the only possible values for
+        // vcross.third are CROSSING, INTERIOR and DISJOINT
+        CGAL_error();
       }
     }
   }
@@ -560,9 +551,9 @@ template<class Gt, class ST, class STag, class D_S, class LTag>
 void
 Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>::
 insert_segment_in_upper_levels(const Site_2& t, const Storage_site_2& ss,
-			       Vertex_handle vbelow,
-			       const Vertex_handle* vertices,
-			       int level, Tag_true /* stag */)
+                               Vertex_handle vbelow,
+                               const Vertex_handle* vertices,
+                               int level, Tag_true /* stag */)
 {
   CGAL_precondition( vertices != nullptr );
   CGAL_precondition( vbelow != Vertex_handle() );
@@ -577,7 +568,7 @@ insert_segment_in_upper_levels(const Site_2& t, const Storage_site_2& ss,
       Vertex_handle v0(hierarchy[k]->finite_vertices_begin());
       Vertex_handle v1(++(hierarchy[k]->finite_vertices_begin()));
       CGAL_precondition( v0 != Vertex_handle() &&
-			 v1 != Vertex_handle() );
+                         v1 != Vertex_handle() );
       vertex = hierarchy[k]->insert_third(ss, v0, v1);
     } else {
       vertex = hierarchy[k]->insert_segment_interior(t, ss, vertices[k]);
@@ -601,9 +592,9 @@ typename
 Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>::Vertex_handle
 Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>::
 insert_segment_on_point(const Storage_site_2& ss,
-			const Vertex_handle& v,
-			int level, int which)
-{  
+                        const Vertex_handle& v,
+                        int level, int which)
+{
   // inserts the segment represented by ss in the case where this
   // segment goes through a point which has already been inserted and
   // corresponds to the vertex handle v
@@ -648,9 +639,9 @@ typename
 Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>::Vertex_handle
 Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>::
 insert_intersecting_segment_with_tag(const Storage_site_2& ss,
-				     const Site_2& t, Vertex_handle v,
-				     int level,
-				     Tag_true itag, Tag_false /* stag */)
+                                     const Site_2& t, Vertex_handle v,
+                                     int level,
+                                     Tag_true itag, Tag_false /* stag */)
 {
   CGAL_precondition( t.is_segment() && v->is_segment() );
 
@@ -695,9 +686,9 @@ typename
 Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>::Vertex_handle
 Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>::
 insert_intersecting_segment_with_tag(const Storage_site_2& ss,
-				     const Site_2& t, Vertex_handle v,
-				     int level,
-				     Tag_true itag, Tag_true /* stag */)
+                                     const Site_2& t, Vertex_handle v,
+                                     int level,
+                                     Tag_true itag, Tag_true /* stag */)
 {
   CGAL_precondition( t.is_segment() && v->is_segment() );
 
@@ -736,20 +727,20 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
 
     if ( k > 0 ) {
       CGAL_assertion( (same_segments(v1->site(), v1_old->site()) &&
-		       same_segments(v2->site(), v2_old->site())) ||
-		      (same_segments(v1->site(), v2_old->site()) &&
-		       same_segments(v2->site(), v1_old->site()))
-		      );
+                       same_segments(v2->site(), v2_old->site())) ||
+                      (same_segments(v1->site(), v2_old->site()) &&
+                       same_segments(v2->site(), v1_old->site()))
+                      );
       if ( same_segments(v1->site(), v1_old->site()) ) {
-	v1->set_down(v1_old);
-	v2->set_down(v2_old);
-	v1_old->set_up(v1);
-	v2_old->set_up(v2);
+        v1->set_down(v1_old);
+        v2->set_down(v2_old);
+        v1_old->set_up(v1);
+        v2_old->set_up(v2);
       } else {
-	v1->set_down(v2_old);
-	v2->set_down(v1_old);
-	v1_old->set_up(v2);
-	v2_old->set_up(v1);
+        v1->set_down(v2_old);
+        v2->set_down(v1_old);
+        v1_old->set_up(v2);
+        v2_old->set_up(v1);
       }
       vsx_old->set_up(vsx);
       vsx->set_down(vsx_old);
@@ -808,7 +799,7 @@ remove(const Vertex_handle& v)
   if ( is_point ) {
     h1 = ss.point();
   } else {
-    CGAL_assertion( ss.is_segment() );   
+    CGAL_assertion( ss.is_segment() );
     h1 = ss.source_of_supporting_site();
     h2 = ss.target_of_supporting_site();
   }
@@ -849,7 +840,7 @@ remove(const Vertex_handle& v)
 //---------------------------------------------------------------------------
 template<class Gt, class ST, class STag, class D_S, class LTag>
 typename
-Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>::Vertex_handle 
+Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>::Vertex_handle
 Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>::
 nearest_neighbor(const Point_2& p, bool force_point) const
 {
@@ -866,8 +857,8 @@ template<class Gt, class ST, class STag, class D_S, class LTag>
 void
 Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>::
 nearest_neighbor(const Site_2& t,
-		 Vertex_handle vnear[sdg_hierarchy_2__maxlevel],
-		 bool /* force_point */) const
+                 Vertex_handle vnear[sdg_hierarchy_2__maxlevel],
+                 bool /* force_point */) const
 {
   CGAL_precondition( t.is_point() );
 
@@ -875,8 +866,8 @@ nearest_neighbor(const Site_2& t,
   int level  = sdg_hierarchy_2__maxlevel;
 
   // find the highest level with enough vertices
-  while ( hierarchy[--level]->number_of_vertices() 
-	  < sdg_hierarchy_2__minsize ) {
+  while ( hierarchy[--level]->number_of_vertices()
+          < sdg_hierarchy_2__minsize ) {
     if ( !level ) break;  // do not go below 0
   }
   for (unsigned int i = level + 1; i < sdg_hierarchy_2__maxlevel; i++) {
@@ -885,7 +876,7 @@ nearest_neighbor(const Site_2& t,
 
   while ( level > 0 ) {
     vnear[level] = nearest =
-      hierarchy[level]->nearest_neighbor(t, nearest);  
+      hierarchy[level]->nearest_neighbor(t, nearest);
 
     CGAL_assertion( !hierarchy[level]->is_infinite(vnear[level]) );
     CGAL_assertion( vnear[level] != Vertex_handle() );
@@ -906,7 +897,7 @@ nearest_neighbor(const Site_2& t,
 //---------------------------------------------------------------------------
 template<class Gt, class ST, class STag, class D_S, class LTag>
 void
-Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>::   
+Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>::
 copy(const Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag> &sdg)
 {
 #ifndef CGAL_NO_ASSERTIONS
@@ -941,25 +932,25 @@ copy(const Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag> &sdg)
   // compute a map at lower level
   std::map< Vertex_handle, Vertex_handle > V;
   {
-    for(Finite_vertices_iterator it = hierarchy[0]->finite_vertices_begin(); 
-	it != hierarchy[0]->finite_vertices_end(); ++it) {
+    for(Finite_vertices_iterator it = hierarchy[0]->finite_vertices_begin();
+        it != hierarchy[0]->finite_vertices_end(); ++it) {
       if ( it->up() != Vertex_handle() ) {
-	V[ it->up()->down() ] = it;
+        V[ it->up()->down() ] = it;
       }
     }
   }
   {
     for(unsigned int i = 1; i < sdg_hierarchy_2__maxlevel; ++i) {
-      for(Finite_vertices_iterator it = hierarchy[i]->finite_vertices_begin(); 
-	  it != hierarchy[i]->finite_vertices_end(); ++it) {
-	// down pointer goes in original instead in copied triangulation
-	it->set_down(V[it->down()]);
-	// make reverse link
-	it->down()->set_up( it );
-	// make map for next level
-	if ( it->up() != Vertex_handle() ) {
-	  V[ it->up()->down() ] = it;
-	}
+      for(Finite_vertices_iterator it = hierarchy[i]->finite_vertices_begin();
+          it != hierarchy[i]->finite_vertices_end(); ++it) {
+        // down pointer goes in original instead in copied triangulation
+        it->set_down(V[it->down()]);
+        // make reverse link
+        it->down()->set_up( it );
+        // make map for next level
+        if ( it->up() != Vertex_handle() ) {
+          V[ it->up()->down() ] = it;
+        }
       }
     }
   }
@@ -972,7 +963,7 @@ copy(const Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag> &sdg)
 
 template<class Gt, class ST, class STag, class D_S, class LTag>
 void
-Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>:: 
+Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>::
 clear()
 {
   for(unsigned int i = 0; i < sdg_hierarchy_2__maxlevel; ++i) {
@@ -982,7 +973,7 @@ clear()
 
 template<class Gt, class ST, class STag, class D_S, class LTag>
 void
-Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>:: 
+Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>::
 swap(Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>& other)
 {
   Base* temp;
@@ -1001,7 +992,7 @@ swap(Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>& other)
 //---------------------------------------------------------------------------
 template<class Gt, class ST, class STag, class D_S, class LTag>
 bool
-Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>:: 
+Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>::
 is_valid(bool verbose, int level) const
 {
   // philaris: the level argument has to do with debugging level
@@ -1015,14 +1006,14 @@ is_valid(bool verbose, int level) const
 
 //#undef DEBUGVALIDHIER
 
-#ifdef DEBUGVALIDHIER  
-  std::cout << "debug hierarchy is_valid entering" 
+#ifdef DEBUGVALIDHIER
+  std::cout << "debug hierarchy is_valid entering"
     << " level=" << level << std::endl;
 #endif
 
   //verify correctness of triangulation at all levels
   for(unsigned int i = 0; i < sdg_hierarchy_2__maxlevel; ++i) {
-#ifdef DEBUGVALIDHIER  
+#ifdef DEBUGVALIDHIER
     std::cout << "debug hierarchy is_valid level " << i << std::endl;
 #endif
     if ( verbose ) {
@@ -1030,8 +1021,8 @@ is_valid(bool verbose, int level) const
     }
     bool is_valid_level = hierarchy[i]->is_valid(verbose, level);
 
-#ifdef DEBUGVALIDHIER  
-    std::cout << "debug level=" << i 
+#ifdef DEBUGVALIDHIER
+    std::cout << "debug level=" << i
       << " validity=" << is_valid_level << std::endl;
 #endif
 
@@ -1041,20 +1032,20 @@ is_valid(bool verbose, int level) const
     }
   }
   //verify that lower level has no down pointers
-  for( Finite_vertices_iterator it = hierarchy[0]->finite_vertices_begin(); 
+  for( Finite_vertices_iterator it = hierarchy[0]->finite_vertices_begin();
        it != hierarchy[0]->finite_vertices_end(); ++it) {
     result = result && ( it->down() == Vertex_handle() );
   }
 
   //verify that other levels has down pointer and reciprocal link is fine
   for(unsigned int i = 1; i < sdg_hierarchy_2__maxlevel; ++i) {
-    for( Finite_vertices_iterator it = hierarchy[i]->finite_vertices_begin(); 
-	 it != hierarchy[i]->finite_vertices_end(); ++it) {
+    for( Finite_vertices_iterator it = hierarchy[i]->finite_vertices_begin();
+         it != hierarchy[i]->finite_vertices_end(); ++it) {
       Vertex_handle vit(it);
       result = result && ( it->down()->up() == vit );
     }
   }
-#ifdef DEBUGVALIDHIER  
+#ifdef DEBUGVALIDHIER
   std::cout << "debug hierarchy is_valid returns " << result << std::endl;
 #endif
   return result;
@@ -1075,11 +1066,11 @@ print_error_message() const
   std::cerr << std::endl;
   std::cerr << "WARNING:" << std::endl;
   std::cerr << "A segment-segment intersection was found."
-	    << std::endl;
+            << std::endl;
   std::cerr << "The Segment_Delaunay_graph_Linf_hierarchy_2 class is not"
-	    << " configured to handle this situation." << std::endl;
+            << " configured to handle this situation." << std::endl;
   std::cerr << "Please look at the documentation on how to handle"
-	    << " this behavior." << std::endl;
+            << " this behavior." << std::endl;
   std::cerr << std::endl;
 }
 
@@ -1118,7 +1109,7 @@ file_output(std::ostream& os) const
   for (unsigned int i = 0; i < sdg_hierarchy_2__maxlevel; ++i) {
     int inum = 0;
     for (Finite_vertices_iterator vit = hierarchy[i]->finite_vertices_begin();
-	 vit != hierarchy[i]->finite_vertices_end(); ++vit) {
+         vit != hierarchy[i]->finite_vertices_end(); ++vit) {
       V[i][vit] = inum++;
     }
   }
@@ -1129,17 +1120,17 @@ file_output(std::ostream& os) const
   // create the map of up and down pointers
   for (unsigned int i = 0; i < sdg_hierarchy_2__maxlevel; ++i) {
     for (Finite_vertices_iterator vit = hierarchy[i]->finite_vertices_begin();
-	 vit != hierarchy[i]->finite_vertices_end(); ++vit) {
+         vit != hierarchy[i]->finite_vertices_end(); ++vit) {
       if ( vit->up() != Vertex_handle() ) {
-	V_up[i][vit] = V[i+1][vit->up()];
+        V_up[i][vit] = V[i+1][vit->up()];
       } else {
-	V_up[i][vit] = -1;
+        V_up[i][vit] = -1;
       }
 
       if ( vit->down() != Vertex_handle() ) {
-	V_down[i][vit] = V[i-1][vit->down()];
+        V_down[i][vit] = V[i-1][vit->down()];
       } else {
-	V_down[i][vit] = -1;
+        V_down[i][vit] = -1;
       }
     }
   }
@@ -1152,7 +1143,7 @@ file_output(std::ostream& os) const
     os << hierarchy[i]->number_of_vertices();
     if ( is_ascii(os) ) { os << std::endl; }
     for (Finite_vertices_iterator vit = hierarchy[i]->finite_vertices_begin();
-	 vit != hierarchy[i]->finite_vertices_end(); ++vit) {
+         vit != hierarchy[i]->finite_vertices_end(); ++vit) {
       os << V[i][vit];
       if ( is_ascii(os) ) { os << " "; }
       os << V_down[i][vit];
@@ -1190,7 +1181,7 @@ file_input(std::istream& is)
     V[i].resize(hierarchy[i]->number_of_vertices());
     int j = 0;
     for (Finite_vertices_iterator vit = hierarchy[i]->finite_vertices_begin();
-	 vit != hierarchy[i]->finite_vertices_end(); ++vit, ++j) {
+         vit != hierarchy[i]->finite_vertices_end(); ++vit, ++j) {
       V[i][j] = vit;
     }
   }

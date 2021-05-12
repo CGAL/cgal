@@ -62,7 +62,7 @@ int main()
                 wachspress_coordinates(Point(x, y), it, CGAL::Barycentric_coordinates::ON_BOUNDED_SIDE);
         }
         time_to_compute.stop();
-        
+
         time += time_to_compute.time();
 
         time_to_compute.reset();
@@ -71,6 +71,6 @@ int main()
 
     cout.precision(10);
     cout << endl << "CPU time to compute Wachspress coordinates (16 vertices) = " << mean_time << " seconds." << endl << endl;
-    
+
     return EXIT_SUCCESS;
 }

@@ -9,7 +9,7 @@ namespace CGAL {
 
 template<typename SNC_>
 class SNC_walls : public SNC_decorator<SNC_> {
-  
+
   typedef SNC_                                   SNC_structure;
   typedef CGAL::SNC_decorator<SNC_structure>     Base;
   typedef CGAL::SNC_point_locator<Base>          SNC_point_locator;
@@ -17,8 +17,8 @@ class SNC_walls : public SNC_decorator<SNC_> {
   typedef CGAL::SNC_constructor<SNC_structure>   SNC_constructor;
 
   typedef typename SNC_structure::Sphere_map     Sphere_map;
-  typedef CGAL::SM_decorator<Sphere_map>         SM_decorator;  
-  typedef CGAL::SM_point_locator<SM_decorator>   SM_point_locator; 
+  typedef CGAL::SM_decorator<Sphere_map>         SM_decorator;
+  typedef CGAL::SM_point_locator<SM_decorator>   SM_point_locator;
   typedef CGAL::SM_walls<Sphere_map>             SM_walls;
 
   typedef typename Base::Segment_3               Segment_3;
@@ -36,9 +36,9 @@ class SNC_walls : public SNC_decorator<SNC_> {
   typedef typename Base::Object_handle           Object_handle;
 
   SNC_point_locator* pl;
-  
+
  public:
-  SNC_walls(SNC_structure& S, SNC_point_locator* spl) 
+  SNC_walls(SNC_structure& S, SNC_point_locator* spl)
     : Base(S), pl(spl) {}
 
   /*
@@ -50,7 +50,7 @@ class SNC_walls : public SNC_decorator<SNC_> {
   Unique_hash_map<Vertex_handle, Object_handle> object_down;
 
   Vertex_handle create_opposite_vertex(Vertex_const_handle v, bool opp) {
-    
+
     Vector_3 vec = opp ? dir.opposite : dir;
     Object_handle o;
     if(!opp)
@@ -93,13 +93,13 @@ class SNC_walls : public SNC_decorator<SNC_> {
     case 2  :
       Point_3 ip;
       SNC_intersection I;
-      I.does_intersect_internally(Ray_3(v->point(),vec), Segment(eh),  ip);     
+      I.does_intersect_internally(Ray_3(v->point(),vec), Segment(eh),  ip);
       SM_walls SW(new_vertex(ip),fh->mark());
       SW.create_opposite_vertex_on_edge(eh, vi, Sphere_point(CGAL::ORIGIN-vec));
       break;
     case 3  :
       SM_walls SW(new_vertex(ip),fh->mark());
-      SW.extend_vertex_by_inner_walls(vh, vi, Sphere_point(CGAL::ORIGIN-vec)); 
+      SW.extend_vertex_by_inner_walls(vh, vi, Sphere_point(CGAL::ORIGIN-vec));
       break;
     default : CGAL_error_msg( "not implemented yet");
     }
@@ -108,7 +108,7 @@ class SNC_walls : public SNC_decorator<SNC_> {
   */
 
   void create_single_wall(Halfedge_handle ein, Vector_3 dir) {
-    
+
     Vertex_handle origin[2];
     Vertex_handle opposite[2];
     origin[0] = ein->source();
@@ -122,43 +122,43 @@ class SNC_walls : public SNC_decorator<SNC_> {
       SHalfloop_handle sl;
       SFace_handle sf;
       if(assign(sv,o)) {
-	opposite[i]=sv->twin()->source();
-	std::cerr << " Found svertex directly !!!! " << std::endl;
+        opposite[i]=sv->twin()->source();
+        std::cerr << " Found svertex directly !!!! " << std::endl;
       }
       else {
-	Vertex_handle v;
-	Halfedge_handle e;
-	Halffacet_handle f;
-	Ray_3 r(origin[i]->point(),dir);
-	Object_handle o2 = pl->shoot(r);
-	if(assign(f,o2))
-	  std::cerr << "Found facet " << std::endl;
-	else if(assign(e,o2)) {
-	  std::cerr << "Found edge " << std::endl;
-	  Point_3 ip;
-	  SNC_intersection I;
-	  I.does_intersect_internally(r, Segment_3(e->source()->point(),
-						   e->twin()->source()->point()),  
-				      ip);
-	  SNC_constructor C(*sncp());
-	  opposite[i] = C.create_from_edge(e,ip);
-	  SM_walls SMW(&*opposite[i]);
-	  SMW.add_two(i==0?ein->point():ein->twin()->point(),
-		      Sphere_point(CGAL::ORIGIN - dir));
-	}
-	else if(assign(v,o2)) {
-	  std::cerr << "Found vertex " << std::endl;
-	  opposite[i] = v;
-	  SM_walls SMW(&*opposite[i]);
-	  SMW.add_two(i==0?ein->point():ein->twin()->point(),
-		      Sphere_point(CGAL::ORIGIN - dir));	  
-	} else {
-	  std::cerr << "Found nothing " << std::endl;
-	  opposite[i] = origin[i];
-	}
+        Vertex_handle v;
+        Halfedge_handle e;
+        Halffacet_handle f;
+        Ray_3 r(origin[i]->point(),dir);
+        Object_handle o2 = pl->shoot(r);
+        if(assign(f,o2))
+          std::cerr << "Found facet " << std::endl;
+        else if(assign(e,o2)) {
+          std::cerr << "Found edge " << std::endl;
+          Point_3 ip;
+          SNC_intersection I;
+          I.does_intersect_internally(r, Segment_3(e->source()->point(),
+                                                   e->twin()->source()->point()),
+                                      ip);
+          SNC_constructor C(*sncp());
+          opposite[i] = C.create_from_edge(e,ip);
+          SM_walls SMW(&*opposite[i]);
+          SMW.add_two(i==0?ein->point():ein->twin()->point(),
+                      Sphere_point(CGAL::ORIGIN - dir));
+        }
+        else if(assign(v,o2)) {
+          std::cerr << "Found vertex " << std::endl;
+          opposite[i] = v;
+          SM_walls SMW(&*opposite[i]);
+          SMW.add_two(i==0?ein->point():ein->twin()->point(),
+                      Sphere_point(CGAL::ORIGIN - dir));
+        } else {
+          std::cerr << "Found nothing " << std::endl;
+          opposite[i] = origin[i];
+        }
       }
     }
-    
+
     SNC_constructor C(*sncp(),pl);
     C.build_external_structure();
   }
@@ -181,10 +181,10 @@ class SNC_walls : public SNC_decorator<SNC_> {
 
     Halfedge_iterator ei;
     CGAL_forall_vertices(ei, *this) {
-      create_opposite_halfedge_up(opposite_up[ei->source()], 
-				  opposite_up[ei->twin()->source()]);
-      create_opposite_halfedge3_down(opposite_down[ei->source()], 
-				     opposite_down[ei->twin()->source()]);
+      create_opposite_halfedge_up(opposite_up[ei->source()],
+                                  opposite_up[ei->twin()->source()]);
+      create_opposite_halfedge3_down(opposite_down[ei->source()],
+                                     opposite_down[ei->twin()->source()]);
     }
   }
   */

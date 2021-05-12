@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     :   Iordan Iordanov
 //                   Monique Teillaud
@@ -59,23 +50,7 @@ class Hyperbolic_traits_with_translations_2_adaptor
 public:
   typedef typename Predicate::result_type                 result_type;
 
-#ifndef CGAL_CFG_MATCHING_BUG_6
   using Predicate::operator();
-#else
-  result_type operator()(const Point& p0, const Point& p1) const
-  {
-	  return Predicate()(p0, p1);
-  }
-  result_type operator()(const Point& p0, const Point& p1, const Point& p2) const
-  {
-    return Predicate()(p0,p1,p2);
-  }
-
-  result_type operator()(const Point& p0, const Point& p1, const Point& p2, const Point& p3) const
-  {
-    return Predicate()(p0,p1,p2,p3);
-  }
-#endif
 
   Hyperbolic_traits_with_translations_2_adaptor(const Predicate_ pred = Predicate_()) : Predicate_(pred) {}
 
@@ -135,16 +110,9 @@ private:
 
 public:
   typedef Point                                           result_type;
- 
-#ifndef CGAL_CFG_MATCHING_BUG_6
+
   using Construct_point_base::operator();
-#else
-  Point operator()(const NT& x, const NT& y) const
-  {
-    return Construct_point_base()(x,y);
-  }
-#endif
-  
+
   Periodic_4_construct_hyperbolic_point_2() { }
 
   Point operator()(const Point& pt, const Hyperbolic_translation& tr) const
@@ -627,7 +595,7 @@ class Side_of_original_octagon
   };
 
 
-} // end namespace internal 
+} // end namespace internal
 
 
 template <typename Kernel = Exact_predicates_exact_constructions_kernel_with_sqrt,

@@ -1,11 +1,11 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Inscribed_Areas
 \anchor chapInscribedAreas
 
-\authors Michael Hoffmann and Eli Packer 
+\authors Michael Hoffmann and Eli Packer
 
 This chapter describes algorithms which for a given point set compute
 the "best" inscribed object from a specific class.
@@ -48,6 +48,6 @@ that do not contain any point of the point set.
 
 \image html largestEmptyRect.png
 \image latex largestEmptyRect.png
-*/ 
+*/
 } /* namespace CGAL */
 

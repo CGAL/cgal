@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Convex_Decomposition_of_Polyhedra
 \anchor chapterConvexDecomposition3
 \cgalAutoToc
@@ -79,6 +79,6 @@ support the use of extended kernels in the convex decomposition.
 
 \cgalExample{Convex_decomposition_3/list_of_convex_parts.cpp}
 
-*/ 
+*/
 } /* namespace CGAL */
 

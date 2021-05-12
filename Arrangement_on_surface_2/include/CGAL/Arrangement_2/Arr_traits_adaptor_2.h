@@ -2,21 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // $Date$
-//
 //
 // Author(s): Ron Wein             <wein@post.tau.ac.il>s
 //            Efi Fogel            <efif@post.tau.ac.il>
@@ -32,7 +22,6 @@
 #define CGAL_ARR_TRAITS_ADAPTOR_2_H
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
-
 
 /*! \file
  * Definitions of the adaptor classes for the arrangement traits class.
@@ -59,6 +48,7 @@ public:
   typedef Arr_traits_basic_adaptor_2<Base>          Self;
   typedef typename Base::X_monotone_curve_2         X_monotone_curve_2;
   typedef typename Base::Point_2                    Point_2;
+  typedef typename Base::Multiplicity               Multiplicity;
 
   // Categories
   typedef typename Base::Has_left_category          Has_left_category;
@@ -329,9 +319,12 @@ public:
                            const X_monotone_curve_2& xcv2,
                            Tag_false) const
     {
-      std::list<CGAL::Object> intersections;
+      typedef std::pair<Point_2, Multiplicity>          Intersection_point;
+      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+                                                        Intersection_result;
+      std::list<Intersection_result> intersections;
       m_self->intersect_2_object()(xcv1, xcv2, back_inserter(intersections));
-      return !intersections.empty();
+      return ! intersections.empty();
     }
   };
 
@@ -674,7 +667,7 @@ public:
       return parameter_space_in_y(xcv, ind, Psy_2_curve_end_tag());
     }
 
-      /*!
+    /*!
      * Obtain the location of the given curve end in y.
      * \param xcv The curve.
      * \return The location of the curve end in y direction.
@@ -1398,34 +1391,34 @@ public:
 
       // now we are in the open case: ARR_MIN_END > vertical > ARR_MAX_END
       if (vert1) {
-	if (!vert2) {
-	  res = ((ce2 == CGAL::ARR_MIN_END) ? CGAL::SMALLER : CGAL::LARGER);
-	  return res;
-	}
-	// both are vertical
-	if (loc1 == loc2) { // both ends converge to the same infinity
-	  res = CGAL::EQUAL;
-	  return res;
-	}
-	res = (loc1 == CGAL::ARR_BOTTOM_BOUNDARY ?
+        if (!vert2) {
+          res = ((ce2 == CGAL::ARR_MIN_END) ? CGAL::SMALLER : CGAL::LARGER);
+          return res;
+        }
+        // both are vertical
+        if (loc1 == loc2) { // both ends converge to the same infinity
+          res = CGAL::EQUAL;
+          return res;
+        }
+        res = (loc1 == CGAL::ARR_BOTTOM_BOUNDARY ?
                CGAL::SMALLER : CGAL::LARGER);
-	return res;
+        return res;
       }
 
       if (vert2) {
-	res = ((ce1 == CGAL::ARR_MIN_END) ? CGAL::LARGER : CGAL::SMALLER);
-	return res;
+        res = ((ce1 == CGAL::ARR_MIN_END) ? CGAL::LARGER : CGAL::SMALLER);
+        return res;
       }
 
       // otherwise: both ends have asymptotic behaviour
       if (ce1 == ce2) { // both ends approach asymptote from one side
-	if (loc1 == loc2) { // need special y-comparison
-	  res = m_self->compare_x_near_limit_2_object()(xcv1, xcv2, ce2);
-	  return res;
-	}
-	// else: order can be determined without y-comparison
-	res = CGAL::EQUAL;
-	return res;
+        if (loc1 == loc2) { // need special y-comparison
+          res = m_self->compare_x_near_limit_2_object()(xcv1, xcv2, ce2);
+          return res;
+        }
+        // else: order can be determined without y-comparison
+        res = CGAL::EQUAL;
+        return res;
       }
       // curve ends approach vertical asymptote (or singularity) from
       // different sides => no comparisons required
@@ -2167,9 +2160,9 @@ public:
 
       // Case 4: xcv1 is defined to the right of p, and xcv2 to its left.
       if (xcv_to_right) {
-	res1 = compare_y_at_x_right(xcv1, xcv, p);
-	if (res1 == EQUAL) xcv_equal_xcv1 = true;
-	return (res1  == LARGER);
+        res1 = compare_y_at_x_right(xcv1, xcv, p);
+        if (res1 == EQUAL) xcv_equal_xcv1 = true;
+        return (res1  == LARGER);
       }
 
       res2 = compare_y_at_x_left(xcv2, xcv, p);
@@ -2285,6 +2278,7 @@ public:
   typedef typename Base_traits_2::Curve_2              Curve_2;
   typedef typename Base::X_monotone_curve_2            X_monotone_curve_2;
   typedef typename Base::Point_2                       Point_2;
+  typedef typename Base::Multiplicity                  Multiplicity;
 
   // Categories.
   typedef typename Base::Has_left_category             Has_left_category;
@@ -2333,6 +2327,10 @@ public:
    * endpoint, then by the graphs, and finally by their right-most endpoint.
    */
   class Compare_xy_2 {
+      typedef std::pair<Point_2, Multiplicity>          Intersection_point;
+      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+                                                        Intersection_result;
+
   public:
     /*! Compare two points lexigoraphically: by x, then by y.
      * \param p1 the first point.
@@ -2369,7 +2367,7 @@ public:
     Comparison_result operator()(const X_monotone_curve_2& c1,
                                  const X_monotone_curve_2& c2) const
     {
-      std::list<CGAL::Object> intersections;
+      std::list<Intersection_result> intersections;
       return operator()(c1, c2, intersections,
                         Are_all_sides_oblivious_category());
     }
@@ -2595,7 +2593,7 @@ public:
     Comparison_result
     compare_remainder(const X_monotone_curve_2& c1,
                       const X_monotone_curve_2& c2,
-                      std::list<CGAL::Object>& intersections) const
+                      std::list<Intersection_result>& intersections) const
     {
       // Right-most sections are equal.
       // Advance to the next respective sections:
@@ -2606,9 +2604,9 @@ public:
       }
       // Verify the first intersection is an overlap, remove it, and
       // recursively call.
-      CGAL::Object first = intersections.front();
-      X_monotone_curve_2 xcv;
-      if (!assign(xcv, first)) {
+      const X_monotone_curve_2* xcv =
+        boost::get<X_monotone_curve_2>(&(intersections.front()));
+      if (! xcv) {
         CGAL_error_msg("The first intersection is not an overlap!");
         return SMALLER;
       }
@@ -2620,10 +2618,9 @@ public:
       typedef typename Self::Split_2        Split_2;
       Split_2 split = m_self.split_2_object();
       X_monotone_curve_2 c11, c12, c21, c22;
-      Construct_max_vertex_2 ctr_max =
-        m_self.construct_max_vertex_2_object();
-      const Point_2& p1 = ctr_max(xcv);
-      const Point_2& p2 = ctr_max(xcv);
+      Construct_max_vertex_2 ctr_max = m_self.construct_max_vertex_2_object();
+      const Point_2& p1 = ctr_max(*xcv);
+      const Point_2& p2 = ctr_max(*xcv);
       split(c1, p1, c11, c12);
       split(c2, p2, c21, c22);
       return operator()(c12, c22, intersections,
@@ -2634,7 +2631,7 @@ public:
      */
     Comparison_result operator()(const X_monotone_curve_2& c1,
                                  const X_monotone_curve_2& c2,
-                                 std::list<CGAL::Object>& intersections,
+                                 std::list<Intersection_result>& intersections,
                                  Arr_all_sides_oblivious_tag) const
     {
       const Point_2& c1_min = m_self.construct_min_vertex_2_object()(c1);
@@ -2655,7 +2652,7 @@ public:
      */
     Comparison_result operator()(const X_monotone_curve_2& c1,
                                  const X_monotone_curve_2& c2,
-                                 std::list<CGAL::Object>& intersections,
+                                 std::list<Intersection_result>& intersections,
                                  Arr_not_all_sides_oblivious_tag) const
     {
       typedef typename Base::Parameter_space_in_x_2     Parameter_space_in_x_2;

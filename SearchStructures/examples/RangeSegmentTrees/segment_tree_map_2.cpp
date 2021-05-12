@@ -49,7 +49,7 @@ int main()
   while(j!=OutputList.end())
   {
     std::cerr << (*j).first.first.x() << "-" << (*j).first.second.x() << " "
-	 << (*j).first.first.y() << "-" << (*j).first.second.y() << std::endl;
+         << (*j).first.first.y() << "-" << (*j).first.second.y() << std::endl;
     j++;
   }
 
@@ -62,7 +62,7 @@ int main()
   while(j!=N.end())
   {
     std::cerr << (*j).first.first.x() << "-" << (*j).first.second.x() << " "
-	 << (*j).first.first.y() << "-" << (*j).first.second.y() << std::endl;
+         << (*j).first.first.y() << "-" << (*j).first.second.y() << std::endl;
     j++;
   }
   if(Segment_tree_2.segment_tree_2->is_valid())

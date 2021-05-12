@@ -30,7 +30,7 @@ int main()
     double cx = *coord++;
     double cy = *coord++;
     double r = ms.radius();
-    std::cout << cx << " " << cy << " " << r << std::endl; 
+    std::cout << cx << " " << cy << " " << r << std::endl;
   }
   {
     Point_3 points[3]  = { Point_3(0,0,0), Point_3(1,0, 0), Point_3(1,1,1) } ;
@@ -41,7 +41,7 @@ int main()
     double cy = *coord++;
     double cz = *coord++;
     double r = ms.radius();
-    std::cout << cx << " " << cy << " "  << cz << " " << r << std::endl; 
+    std::cout << cx << " " << cy << " "  << cz << " " << r << std::endl;
   }
   {
     Point_d points[3]  = { Point_d(0,0,0,1), Point_d(1,0, 0,1), Point_d(1,1,1,1) } ;
@@ -56,10 +56,10 @@ int main()
       C[i++] = *coord;
     }
     double r = ms.radius();
-    std::cout << C[0] << "  " << C[1] << " "  << C[2] << " " << r << std::endl; 
+    std::cout << C[0] << "  " << C[1] << " "  << C[2] << " " << r << std::endl;
   }
 
   return 0;
 }
 
-   
+

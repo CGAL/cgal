@@ -2,24 +2,15 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Ron Wein        <wein@post.tau.ac.il>
 //                 Baruch Zukerman <baruchzu@post.tau.ac.il>
-               
+
 #ifndef CGAL_ONE_ROOT_NUMBER_H
 #define CGAL_ONE_ROOT_NUMBER_H
 
@@ -29,7 +20,7 @@
 /*! \file
  * Header file for the One_root_number<NT> class.
  */
-#include <CGAL/Interval_arithmetic.h> 
+#include <CGAL/Interval_arithmetic.h>
 
 namespace CGAL {
 
@@ -223,7 +214,7 @@ std::pair<double, double> to_interval (const _One_root_number<NT, FL>& x)
   const CGAL::Interval_nt<true>   alpha_in = to_interval(x.alpha());
   const CGAL::Interval_nt<true>   beta_in = to_interval(x.beta());
   const CGAL::Interval_nt<true>   gamma_in = to_interval(x.gamma());
-  const CGAL::Interval_nt<true>&  x_in = alpha_in + 
+  const CGAL::Interval_nt<true>&  x_in = alpha_in +
                                          (beta_in * CGAL::sqrt(gamma_in));
 
   return (std::make_pair (x_in.inf(), x_in.sup()));
@@ -259,7 +250,7 @@ _One_root_number<NT, FL> operator- (const NT& val,
  * Multiply a rational number and a one-root number.
  */
 template <class NT, bool FL>
-_One_root_number<NT, FL> operator* (const NT& val, 
+_One_root_number<NT, FL> operator* (const NT& val,
                                     const _One_root_number<NT, FL>& x)
 {
   if (x.is_rational())
@@ -288,7 +279,7 @@ _One_root_number<NT, FL> operator/ (const NT& val,
   //   -------------- = ---------------------
   //    a + b*sqrt(c)       a^2 - b^2 * c
   //
-  NT   denom = x.alpha()*x.alpha() - x.beta()*x.beta() * x.gamma(); 
+  NT   denom = x.alpha()*x.alpha() - x.beta()*x.beta() * x.gamma();
 
   CGAL_precondition (CGAL::sign(denom) != ZERO);
 
@@ -306,7 +297,7 @@ double to_double (const _One_root_number<NT, FL>& x)
     return (CGAL::to_double(x.alpha()));
 
   return (CGAL::to_double(x.alpha()) +
-          CGAL::to_double(x.beta()) * std::sqrt(CGAL::to_double(x.gamma()))); 
+          CGAL::to_double(x.beta()) * std::sqrt(CGAL::to_double(x.gamma())));
 }
 
 /*!
@@ -336,7 +327,7 @@ CGAL::Sign sign (const _One_root_number<NT, FL>& x)
   if (FL)
   {
     // Try to filter the sign computation using interval arithmetic.
-    const std::pair<double, double>&  x_in = CGAL::to_interval (x); 
+    const std::pair<double, double>&  x_in = CGAL::to_interval (x);
 
     if (x_in.first > 0)
       return (CGAL::POSITIVE);
@@ -361,9 +352,9 @@ CGAL::Comparison_result compare (const NT& val,
   if (FL)
   {
     // Try to filter the comparison using interval arithmetic.
-    const std::pair<double, double>&  x_in = CGAL::to_interval (val); 
-    const std::pair<double, double>&  y_in = CGAL::to_interval (x); 
-    
+    const std::pair<double, double>&  x_in = CGAL::to_interval (val);
+    const std::pair<double, double>&  y_in = CGAL::to_interval (x);
+
     if (x_in.second < y_in.first)
       return (SMALLER);
     else if (x_in.first > y_in.second)
@@ -394,8 +385,8 @@ CGAL::Comparison_result compare (const _One_root_number<NT, FL>& x,
   if (FL)
   {
     // Try to filter the comparison using interval arithmetic.
-    const std::pair<double, double>&  x_in = CGAL::to_interval (x); 
-    const std::pair<double, double>&  y_in = CGAL::to_interval (val); 
+    const std::pair<double, double>&  x_in = CGAL::to_interval (x);
+    const std::pair<double, double>&  y_in = CGAL::to_interval (val);
 
     if (x_in.second < y_in.first)
       return (SMALLER);
@@ -429,9 +420,9 @@ CGAL::Comparison_result compare (const _One_root_number<NT, FL>& x,
   if (FL)
   {
     // Try to filter the comparison using interval arithmetic.
-    const std::pair<double, double>&  x_in = CGAL::to_interval (x); 
-    const std::pair<double, double>&  y_in = CGAL::to_interval (y); 
-    
+    const std::pair<double, double>&  x_in = CGAL::to_interval (x);
+    const std::pair<double, double>&  y_in = CGAL::to_interval (y);
+
     if (x_in.second < y_in.first)
       return (SMALLER);
     else if (x_in.first > y_in.second)
@@ -448,7 +439,7 @@ CGAL::Comparison_result compare (const _One_root_number<NT, FL>& x,
   const NT          y_sqr = y.beta()*y.beta() * y.gamma();
   Comparison_result right_res = CGAL::compare (y_sqr, x_sqr);
   CGAL::Sign        sign_right = ZERO;
-  
+
   if (right_res == LARGER)
   {
     // Take the sign of b2:

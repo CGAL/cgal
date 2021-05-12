@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -38,7 +29,7 @@ template < class FT >
 inline
 void
 invert_C2(const FT &x, const FT &y, const FT &wt,
-	  FT &new_x, FT &new_y, FT &new_wt)
+          FT &new_x, FT &new_y, FT &new_wt)
 {
   FT p = CGAL::square(x) + CGAL::square(y) - CGAL::square(wt);
 
@@ -53,9 +44,9 @@ invert_C2(const FT &x, const FT &y, const FT &wt,
 template < class FT >
 void
 w_plane_tangent_line_2(const FT &x1, const FT &y1, const FT &w1,
-		       const FT &x2, const FT &y2, const FT &w2,
-		       const FT &x3, const FT &y3, const FT &w3,
-		       FT       & a, FT       & b, FT       & c)
+                       const FT &x2, const FT &y2, const FT &w2,
+                       const FT &x3, const FT &y3, const FT &w3,
+                       FT       & a, FT       & b, FT       & c)
 {
   // we assume that the weight w1 is the smallest among w1, w2, w3.
 
@@ -88,15 +79,15 @@ template < class FT >
 inline
 void
 z_plane_circumcircle_2(const FT &x1, const FT &y1, const FT &w1,
-		       const FT &x2, const FT &y2, const FT &w2,
-		       const FT &x3, const FT &y3, const FT &w3,
-		       FT       &cx, FT       &cy, FT      &cwt)
+                       const FT &x2, const FT &y2, const FT &w2,
+                       const FT &x3, const FT &y3, const FT &w3,
+                       FT       &cx, FT       &cy, FT      &cwt)
 {
   // we assume that the weight w1 is the smallest among w1, w2, w3.
 
   FT a, b, c;
   w_plane_tangent_line_2(x1, y1, w1, x2, y2, w2,
-			 x3, y3, w3, a, b, c);
+                         x3, y3, w3, a, b, c);
 
   cx = -a / (FT(2) * c) + x1;
   cy =  b / (FT(2) * c) + y1;
@@ -104,7 +95,7 @@ z_plane_circumcircle_2(const FT &x1, const FT &y1, const FT &w1,
   // this the only part that is computed at vain when only the center
   // is needed.
 #if 0
-  FT cwt2 = (CGAL::square(a) + CGAL::square(b)) / 
+  FT cwt2 = (CGAL::square(a) + CGAL::square(b)) /
     (FT(4) * CGAL::square(c));
 #endif
   //  cwt = CGAL::sqrt(cwt2) - FT(w1);
@@ -116,52 +107,52 @@ z_plane_circumcircle_2(const FT &x1, const FT &y1, const FT &w1,
 template < class FT >
 void
 ad_circumcircleC2(const FT &x1, const FT &y1, const FT &w1,
-		  const FT &x2, const FT &y2, const FT &w2,
-		  const FT &x3, const FT &y3, const FT &w3,
-		  FT       &cx, FT       &cy, FT      &cwt)
+                  const FT &x2, const FT &y2, const FT &w2,
+                  const FT &x3, const FT &y3, const FT &w3,
+                  FT       &cx, FT       &cy, FT      &cwt)
 {
   if (CGAL::compare(w2, w1) != LARGER &&
       CGAL::compare(w2, w3) != LARGER) {
     z_plane_circumcircle_2(x2, y2, w2,
-			   x3, y3, w3,
-			   x1, y1, w1,
-			   cx, cy, cwt);
+                           x3, y3, w3,
+                           x1, y1, w1,
+                           cx, cy, cwt);
     return;
   } else if (CGAL::compare(w3, w1) != LARGER &&
-	     CGAL::compare(w3, w2) != LARGER) {
+             CGAL::compare(w3, w2) != LARGER) {
     z_plane_circumcircle_2(x3, y3, w3,
-			   x1, y1, w1,
-			   x2, y2, w2,
-			   cx, cy, cwt);
+                           x1, y1, w1,
+                           x2, y2, w2,
+                           cx, cy, cwt);
     return;
   }
   z_plane_circumcircle_2(x1, y1, w1,
-			 x2, y2, w2,
-			 x3, y3, w3,
-			 cx, cy, cwt);
+                         x2, y2, w2,
+                         x3, y3, w3,
+                         cx, cy, cwt);
 }
 
 template < class FT >
 inline
 void
 ad_circumcenterC2(const FT &x1, const FT &y1, const FT &w1,
-		  const FT &x2, const FT &y2, const FT &w2,
-		  const FT &x3, const FT &y3, const FT &w3,
-		  FT       &cx, FT       &cy)
+                  const FT &x2, const FT &y2, const FT &w2,
+                  const FT &x3, const FT &y3, const FT &w3,
+                  FT       &cx, FT       &cy)
 {
   FT cwt;
   ad_circumcircleC2(x1, y1, w1,
-		    x2, y2, w2,
-		    x3, y3, w3,
-		    cx, cy, cwt);
+                    x2, y2, w2,
+                    x3, y3, w3,
+                    cx, cy, cwt);
 }
 
 
 template < class FT >
 void
 ad_left_bitangent_lineC2(const FT &x1, const FT &y1, const FT &w1,
-			 const FT &x2, const FT &y2, const FT &w2,
-			 FT       & a, FT       & b, FT       & c)
+                         const FT &x2, const FT &y2, const FT &w2,
+                         FT       & a, FT       & b, FT       & c)
 {
   FT dx = x1 - x2;
   FT dy = y1 - y2;

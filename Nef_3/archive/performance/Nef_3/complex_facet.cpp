@@ -85,31 +85,31 @@ void transform_big(Nef_polyhedron& N,int n, int s) {
   z_min = vi->point().hz()/vi->point().hw();
   z_max = vi->point().hz()/vi->point().hw();
   for(;vi != N.vertices_end();++vi) {
-    if(vi->point().hx()/vi->point().hw() < x_min) 
+    if(vi->point().hx()/vi->point().hw() < x_min)
       x_min = vi->point().hx()/vi->point().hw();
-    if(vi->point().hx()/vi->point().hw() > x_max) 
+    if(vi->point().hx()/vi->point().hw() > x_max)
       x_max = vi->point().hx()/vi->point().hw();
-    if(vi->point().hy()/vi->point().hw() < y_min) 
+    if(vi->point().hy()/vi->point().hw() < y_min)
       y_min = vi->point().hy()/vi->point().hw();
-    if(vi->point().hy()/vi->point().hw() > y_max) 
+    if(vi->point().hy()/vi->point().hw() > y_max)
       y_max = vi->point().hy()/vi->point().hw();
-    if(vi->point().hz()/vi->point().hw() < z_min) 
+    if(vi->point().hz()/vi->point().hw() < z_min)
       z_min = vi->point().hz()/vi->point().hw();
-    if(vi->point().hz()/vi->point().hw() > z_max) 
+    if(vi->point().hz()/vi->point().hw() > z_max)
       z_max = vi->point().hz()/vi->point().hw();
   }
 
   //  x_min-=(x_min<=0?0:1);
   //  y_min-=(y_min<=0?0:1);
   //  z_max+=(z_max<=0?1:0);
-  
+
   N.transform(Aff_transformation_3(CGAL::TRANSLATION, Vector_3(-x_min,-y_min,-z_max)));
   N.transform(Aff_transformation_3(CGAL::SCALING, n*s+2,x_max-x_min));
   N.transform(Aff_transformation_3(CGAL::TRANSLATION, Vector_3(0,0,s/2)));
 }
 
 void transform_small(Nef_polyhedron& N, int s, int l, int x, int y) {
-  N.transform(Aff_transformation_3(CGAL::TRANSLATION, Vector_3(-x_min,-y_min,-z_min))); 
+  N.transform(Aff_transformation_3(CGAL::TRANSLATION, Vector_3(-x_min,-y_min,-z_min)));
   N.transform(Aff_transformation_3(CGAL::SCALING, s*l, x_max-x_min));
   N.transform(Aff_transformation_3(CGAL::TRANSLATION, Vector_3((2*x+1)*s/2,(2*y+1)*s/2,s/4)));
 }
@@ -127,7 +127,7 @@ int main(int argc, char* argv[]) {
     t2.create_tetrahedra(n,n,1);
   } else {
     tgen t2(out1,s);
-    t2.create_tetrahedra(n,n,1);    
+    t2.create_tetrahedra(n,n,1);
   }
   std::istringstream in1(out1.str());
   Nef_polyhedron N1;

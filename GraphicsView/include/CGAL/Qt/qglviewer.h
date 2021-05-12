@@ -4,19 +4,11 @@
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
  This file is part of a fork of the QGLViewer library version 2.7.0.
- http://www.libqglviewer.com - contact@libqglviewer.com
-
- This file may be used under the terms of the GNU General Public License 
- version 3.0 as published by the Free Software Foundation and
- appearing in the LICENSE file included in the packaging of this file.
-
- This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 *****************************************************************************/
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: GPL-3.0-only
 
 #ifndef QGLVIEWER_QGLVIEWER_H
 #define QGLVIEWER_QGLVIEWER_H
@@ -36,7 +28,7 @@
 #include <QOpenGLBuffer>
 #include <QMap>
 #include <QVector>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QTimer>
 #include <QGLContext>
 #include <QOpenGLWidget>
@@ -78,14 +70,14 @@ implementation.
 class CGAL_QT_EXPORT QGLViewer : public QOpenGLWidget, public QOpenGLFunctions {
   Q_OBJECT
 
-public:  
+public:
   //todo check if this is used. If not remove it
-  explicit QGLViewer(QGLContext* context, QWidget *parent = 0,
-                     ::Qt::WindowFlags flags = 0);
-  explicit QGLViewer(QOpenGLContext* context, QWidget *parent = 0,
-                     ::Qt::WindowFlags flags = 0);
-  explicit QGLViewer(QWidget *parent = 0,
-                     ::Qt::WindowFlags flags = 0);
+  explicit QGLViewer(QGLContext* context, QWidget *parent = nullptr,
+                     ::Qt::WindowFlags flags = ::Qt::WindowType(0));
+  explicit QGLViewer(QOpenGLContext* context, QWidget *parent = nullptr,
+                     ::Qt::WindowFlags flags = ::Qt::WindowType(0));
+  explicit QGLViewer(QWidget *parent = nullptr,
+                     ::Qt::WindowFlags flags = ::Qt::WindowType(0));
 
   virtual ~QGLViewer();
 
@@ -125,9 +117,9 @@ public:
   qglviewer::Camera::drawAllPaths(). Actual camera and path edition will be
   implemented in the future. */
   bool cameraIsEdited() const { return cameraIsEdited_; }
-  
+
   /*!
-   * \brief isSharing returns true if the viewer was created from an existing one, 
+   * \brief isSharing returns true if the viewer was created from an existing one,
    * and therefore is sharing its context with it.
    */
   bool isSharing() const;
@@ -187,9 +179,7 @@ public:
   /*! Returns the background color of the viewer.
 
   This method is provided for convenience since the background color is an
-  OpenGL state variable set with \c glClearColor(). However, this internal
-  representation has the advantage that it is saved (resp. restored) with
-  saveStateToFile() (resp. restoreStateFromFile()).
+  OpenGL state variable set with \c glClearColor().
 
   Use setBackgroundColor() to define and activate a background color.
 
@@ -386,21 +376,21 @@ public:
   Note that if the QGLViewer is embedded in an other QWidget, it returns \c true
   when the top level widget is in full screen mode. */
   bool isFullScreen() const { return fullScreen_; }
-  
+
   /*! Returns the recommended size for the QGLViewer. Default value is 600x400
    * pixels. */
   virtual QSize sizeHint() const { return QSize(600, 400); }
   /*!
-   * Sets the offset of the scene. The offset is the difference between the origin 
+   * Sets the offset of the scene. The offset is the difference between the origin
    * of the world and the origin of the scene. It is relevant when the whole scene is translated
    * of a big number, because there is a useless loss of precision when drawing.
-   * 
-   * The offset must be added to the drawn coordinates, and substracted from the computation 
+   *
+   * The offset must be added to the drawn coordinates, and substracted from the computation
    * \attention  the result of pointUnderPixel is the real item translated by the offset.
-   * 
+   *
    */
   void setOffset(qglviewer::Vec offset);
-  
+
   /*!
    * returns the offset of the scene.
    * \see `setOffset()`
@@ -436,7 +426,7 @@ protected:
 
 protected:
   void displayFPS();
-  
+
 
 //@}
 
@@ -675,9 +665,8 @@ protected:
   initialize some of the OpenGL flags. The default implementation is empty. See
   initializeGL().
 
-  Typical usage include camera() initialization (showEntireScene()), previous
-  viewer state restoration (restoreStateFromFile()), OpenGL state modification
-  and display list creation.
+  Typical usage include camera() initialization (showEntireScene()),
+ OpenGL state modification and display list creation.
 
   Note that initializeGL() modifies the standard OpenGL context. These values
   can be restored back in this method.
@@ -727,7 +716,6 @@ protected:
   virtual void keyPressEvent(QKeyEvent *);
   virtual void keyReleaseEvent(QKeyEvent *);
   virtual void timerEvent(QTimerEvent *);
-  virtual void closeEvent(QCloseEvent *);
   //@}
 
   /*! @name Object selection */
@@ -929,35 +917,11 @@ protected:
   //@{
 public:
   QString stateFileName() const;
-  virtual QDomElement domElement(const QString &name,
-                                 QDomDocument &document) const;
 Q_SIGNALS:
   void needNewContext();
 
-public Q_SLOTS:
-  virtual void initFromDOMElement(const QDomElement &element);
-  virtual void saveStateToFile(); // cannot be const because of QMessageBox
-  virtual bool restoreStateFromFile();
-
-  /*! Defines the stateFileName() used by saveStateToFile() and
-    restoreStateFromFile().
-
-    The file name can have an optional prefix directory (no prefix meaning
-    current directory). If the directory does not exist, it will be created by
-    saveStateToFile().
-
-    \code
-    // Name depends on the displayed 3D model. Saved in current directory.
-    setStateFileName(3DModelName() + ".xml");
-
-    // Files are stored in a dedicated directory under user's home directory.
-    setStateFileName(QDir::homeDirPath + "/.config/myApp.xml");
-    \endcode */
-  void setStateFileName(const QString &name) { stateFileName_ = name; }
-
 
 protected:
-  static void saveStateToFileForAllViewers();
   //@}
 
   /*! @name QGLViewer pool */
@@ -1046,7 +1010,7 @@ protected:
   int animationTimerId_;
 
   // F P S    d i s p l a y
-  QTime fpsTime_;
+  QElapsedTimer fpsTime_;
   unsigned int fpsCounter_;
   QString fpsString_;
   qreal f_p_s_;
@@ -1175,13 +1139,10 @@ protected:
   QMap<WheelBindingPrivate, MouseActionPrivate> wheelBinding_;
   QMap<ClickBindingPrivate, qglviewer::ClickAction> clickBinding_;
   ::Qt::Key currentlyPressedKey_;
-  
-  // S t a t e   F i l e
-  QString stateFileName_;
 
   // H e l p   w i n d o w
   QTabWidget *helpWidget_;
-  
+
   //internal drawing buffers
   enum VBO
   {
@@ -1208,11 +1169,11 @@ protected:
   std::size_t axis_size;
   QOpenGLFramebufferObject* stored_fbo;
   //S n a p s h o t
-  QImage* takeSnapshot(qglviewer::SnapShotBackground  background_color, 
+  QImage* takeSnapshot(qglviewer::SnapShotBackground  background_color,
                        QSize finalSize, double oversampling, bool expand);
-  
+
   //Internal Projection Matrix
-  
+
   // O f f s e t
   qglviewer::Vec _offset;
   //C o n t e x t
@@ -1220,12 +1181,15 @@ protected:
   bool is_sharing;
   bool is_linked;
   QOpenGLContext* shared_context;
+  // Zoom
+  bool _first_tick;
+
 public:
   //! Is used to know if the openGL context is 4.3 or ES 2.0.
   //! @returns `true` if the context is 4.3.
-  //! @returns `false` if the context is ES 2.0.  
+  //! @returns `false` if the context is ES 2.0.
   bool isOpenGL_4_3()const {return is_ogl_4_3; }
-  
+
 };
 
 } //end CGAL

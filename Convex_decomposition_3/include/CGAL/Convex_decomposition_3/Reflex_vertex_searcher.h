@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     :  Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_CD3_REFLEX_VERTEX_SEARCHER_H
@@ -37,7 +28,7 @@ class Reflex_vertex_searcher : public Modifier_base<typename Nef_::SNC_structure
 
   typedef Nef_                                            Nef_polyhedron;
   typedef typename Nef_polyhedron::SNC_structure          SNC_structure;
-  typedef CGAL::SNC_decorator<SNC_structure>              SNC_decorator;  
+  typedef CGAL::SNC_decorator<SNC_structure>              SNC_decorator;
 
   typedef typename SNC_structure::Sphere_map Sphere_map;
   typedef CGAL::SM_decorator<Sphere_map>  SM_decorator;
@@ -68,14 +59,14 @@ class Reflex_vertex_searcher : public Modifier_base<typename Nef_::SNC_structure
 
  private:
   struct Reflex_vertex_visitor {
-    
+
     Sphere_point dir;
     Reflex_vertex_map& vertex_map;
 
     Reflex_vertex_visitor(Sphere_point dir_in,
-			  Reflex_vertex_map& vm) 
+                          Reflex_vertex_map& vm)
       : dir(dir_in), vertex_map(vm) {}
-    
+
     void visit(Vertex_handle /*v*/) const {}
     void visit(Halfedge_handle /*e*/) const {}
     void visit(Halffacet_handle /*f*/) const {}
@@ -89,15 +80,15 @@ class Reflex_vertex_searcher : public Modifier_base<typename Nef_::SNC_structure
       vertex_map[se->prev()->source()->source()] |= isrse;
     }
   };
-  
+
  public:
   Sphere_point dir;
   Reflex_vertex_map vertex_map;
   Vertex_iterator pos, neg, begin, end;
 
-  Reflex_vertex_searcher(Sphere_point dir_in) 
+  Reflex_vertex_searcher(Sphere_point dir_in)
       : dir(dir_in), vertex_map(0) {}
-  
+
   /*
   void operator()(SNC_structure& snc) {
     pos = neg = begin = snc.vertices_begin();
@@ -108,55 +99,55 @@ class Reflex_vertex_searcher : public Modifier_base<typename Nef_::SNC_structure
     Volume_iterator c;
     CGAL_forall_volumes(c, snc) {
       if(c->mark())
-	for(Shell_entry_iterator shi=c->shells_begin(); shi!=c->shells_end(); ++shi) {
-	  D.visit_shell_objects(SFace_handle(shi),rev);
-	}
+        for(Shell_entry_iterator shi=c->shells_begin(); shi!=c->shells_end(); ++shi) {
+          D.visit_shell_objects(SFace_handle(shi),rev);
+        }
     }
   }
   */
-  
+
   int is_reflex_vertex(Vertex_handle vi) {
     int result = 0;
     SM_point_locator PL(&*vi);
     Object_handle op(PL.locate(dir));
     Object_handle on(PL.locate(dir.antipode()));
-    
+
     bool markedsf[2];
     SFace_handle sfp, sfn;
     markedsf[0] = assign(sfp, op) && sfp->mark();
     markedsf[1] = assign(sfn, on) && sfn->mark();
-    
+
     CGAL_NEF_TRACEN("markedsf " << markedsf[0] << " " << markedsf[1]);
     CGAL_NEF_TRACEN("sf " << &*sfp << "==" << &*sfn);
-    
+
     if(markedsf[0]) {
       SFace_cycle_iterator sfci(sfp->sface_cycles_begin());
       for(; sfci != sfp->sface_cycles_end(); ++sfci) {
-	SHalfedge_around_sface_circulator 
-	  sfc(sfci), send(sfc);
-	CGAL_For_all(sfc, send) {
-	  int isrse = is_reflex_sedge<SNC_structure>(sfc, dir, false);
-	  if(isrse==0) continue;
-	  //	  if(!markedsf[1] || sfp!=sfn) 
-	  isrse&=1;
-	  result |= isrse;
-	}
+        SHalfedge_around_sface_circulator
+          sfc(sfci), send(sfc);
+        CGAL_For_all(sfc, send) {
+          int isrse = is_reflex_sedge<SNC_structure>(sfc, dir, false);
+          if(isrse==0) continue;
+          //          if(!markedsf[1] || sfp!=sfn)
+          isrse&=1;
+          result |= isrse;
+        }
       }
     }
-    
+
     if(/*sfp!=sfn &&*/ markedsf[1]) {
       SFace_cycle_iterator sfci(sfn->sface_cycles_begin());
       for(; sfci != sfn->sface_cycles_end(); ++sfci) {
-	SHalfedge_around_sface_circulator 
-	  sfc(sfci), send(sfc);
-	CGAL_For_all(sfc, send) {
-	  int isrse = is_reflex_sedge<SNC_structure>(sfc, dir, false);
-	  if(isrse==0) continue;
-	  isrse&=2;
-	  result |= isrse;
-	}
+        SHalfedge_around_sface_circulator
+          sfc(sfci), send(sfc);
+        CGAL_For_all(sfc, send) {
+          int isrse = is_reflex_sedge<SNC_structure>(sfc, dir, false);
+          if(isrse==0) continue;
+          isrse&=2;
+          result |= isrse;
+        }
       }
-    } 
+    }
 
     vertex_map[vi]=result;
     return result;
@@ -175,12 +166,12 @@ class Reflex_vertex_searcher : public Modifier_base<typename Nef_::SNC_structure
   void operator()(SNC_structure& snc) {
     pos = neg = begin = snc.vertices_begin();
     end = snc.vertices_end();
-    
+
     Vertex_iterator vi;
     CGAL_forall_vertices(vi, snc)
       vertex_map[vi] |= is_reflex_vertex(vi);
   }
-  
+
   void set_back_positive_reflex_vertices() {
     pos = begin;
   }
@@ -208,12 +199,12 @@ class Reflex_vertex_searcher : public Modifier_base<typename Nef_::SNC_structure
     ++neg;
     /*
     SHalfedge_iterator sei;
-    for(sei = v->shalfedges_begin(); 
-	sei != v->shalfedges_end(); ++sei) {
+    for(sei = v->shalfedges_begin();
+        sei != v->shalfedges_end(); ++sei) {
       int isrse = is_reflex_sedge<SNC_structure>(sei, dir);
       std::cerr << "check " << sei->source()->source()->point()
                 << "->" << sei->source()->twin()->source()->point()
-		<< ": " << isrse << std::endl;
+                << ": " << isrse << std::endl;
     }
     */
     return true;

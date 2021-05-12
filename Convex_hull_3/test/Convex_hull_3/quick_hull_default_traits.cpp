@@ -19,7 +19,7 @@ typedef CGAL::Simple_cartesian<double>                      SCD;
 typedef CGAL::Simple_homogeneous<double>                    SHD;
 typedef CGAL::Simple_cartesian<Exact_rational>            SCR;
 
-using namespace CGAL::internal::Convex_hull_3;
+using namespace CGAL::Convex_hull_3::internal;
 
 int main()
 {

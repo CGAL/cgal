@@ -33,7 +33,7 @@ private:
 public:
 
     /// Base class
-    typedef Base Point_with_normal; 
+    typedef Base Point_with_normal;
 
     // Repeat base class public types
     typedef Gt Geom_traits; ///< Geometric traits class.

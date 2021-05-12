@@ -5,8 +5,8 @@
 int main()
 {
   CORE::BigFloat n(1.2);
-  
+
   volatile double d = n.doubleValue();
-  
+
   return (d > 1) ? 0 : 1;
 }

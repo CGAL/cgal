@@ -106,11 +106,11 @@ void test(const int d, const string & type, int N)
     assert( tri.maximal_dimension() == tri2.maximal_dimension() );
     assert( tri.number_of_vertices() == tri2.number_of_vertices() );
     assert( tri.number_of_full_cells() == tri2.number_of_full_cells() );
-    
+
     std::ofstream ofs("tri", std::ios::binary);
     ofs << tri;
     ofs.close();
-    
+
     std::ifstream ifs("tri", std::ios::binary);
     ifs >> tri2;
     ifs.close();
@@ -153,7 +153,7 @@ void go(int N)
 
 int main(int argc, char **argv)
 {
-    srand(static_cast<unsigned int>(time(NULL)));
+    srand(static_cast<unsigned int>(time(nullptr)));
     int N = 1000;
     if( argc > 1 )
         N = atoi(argv[1]);

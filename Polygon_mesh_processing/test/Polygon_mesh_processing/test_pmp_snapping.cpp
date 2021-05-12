@@ -1,3 +1,5 @@
+// #define CGAL_PMP_SNAP_DEBUG_PP
+
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -6,6 +8,7 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/Polygon_mesh_processing/internal/Snapping/helper.h>
 #include <CGAL/Polygon_mesh_processing/internal/Snapping/snap.h>
 
 #include <CGAL/property_map.h>
@@ -37,7 +40,9 @@ void test_1()
   Mesh fg_source, fg_target;
 
   // empty meshes
-  std::size_t res = PMP::experimental::snap_border_vertices_onto_vertex_range(fg_source, fg_target);
+  std::cout << "Empty meshes tests..." << std::endl;
+
+  std::size_t res = PMP::experimental::snap_border_vertices(fg_source, fg_target);
   assert(res == 0);
 
   std::ifstream source_input("data_snapping/border_snapping_source.off");
@@ -47,17 +52,12 @@ void test_1()
     return;
   }
 
-  std::vector<halfedge_descriptor> border_vertices;
-  PMP::border_halfedges(fg_source, std::back_inserter(border_vertices));
-  std::cout << border_vertices.size() << " border vertices" << std::endl;
-
   // one empty mesh
-  std::cout << "Empty meshes tests..." << std::endl;
-  res = PMP::experimental::snap_border_vertices_onto_vertex_range(fg_source, fg_target);
+  res = PMP::experimental::snap_border_vertices(fg_source, fg_target);
   std::cout << "res: " << res << " (expected 0)" << std::endl;
   assert(res == 0);
 
-  res = PMP::experimental::snap_border_vertices_onto_vertex_range(fg_target, halfedges(fg_source), fg_source);
+  res = PMP::experimental::snap_border_vertices(fg_target, fg_source);
   std::cout << "res: " << res << " (expected 0)" << std::endl;
   assert(res == 0);
 
@@ -72,23 +72,35 @@ void test_1()
 
   // this epsilon value is too small, nothing happens
   std::cout << "*********************** EPS = 0.000000001 *************** " << std::endl;
+
   CGAL::Constant_property_map<vertex_descriptor, FT> tol_map_small(0.000000001);
-  res = PMP::experimental::snap_border_vertices_onto_vertex_range(fg_source_cpy, fg_target, tol_map_small);
-  res = PMP::experimental::snap_border_vertices_onto_vertex_range(fg_source_cpy, halfedges(fg_target), fg_target, tol_map_small);
+  res = PMP::experimental::snap_border_vertices(fg_source_cpy, tol_map_small, fg_target, tol_map_small);
+  std::cout << "res: " << res << " (expected 0)" << std::endl;
+  assert(res == 0);
+
+  std::vector<halfedge_descriptor> source_halfedge_range;
+  PMP::internal::vertices_as_halfedges(vertices(fg_source_cpy), fg_source_cpy, std::back_inserter(source_halfedge_range));
+  std::vector<halfedge_descriptor> target_halfedge_range;
+  PMP::internal::vertices_as_halfedges(vertices(fg_target), fg_target, std::back_inserter(target_halfedge_range));
+
+  res = PMP::experimental::snap_vertices(source_halfedge_range, fg_source_cpy, tol_map_small,
+                                         target_halfedge_range, fg_target, tol_map_small);
+
   std::cout << "res: " << res << " (expected 0)" << std::endl;
   assert(res == 0);
 
   // this epsilon value is too big; everything gets snapped!
   std::cout << "*********************** EPS = 0.1 *************** " << std::endl;
-  CGAL::Constant_property_map<vertex_descriptor, FT> tol_map_big(0.1);
-  fg_source_cpy = fg_source;
 
-  border_vertices.clear();
+  fg_source_cpy = fg_source;
+  std::vector<halfedge_descriptor> border_vertices;
   PMP::border_halfedges(fg_source_cpy, std::back_inserter(border_vertices));
 
-  res = PMP::experimental::snap_vertex_range_onto_vertex_range(border_vertices, fg_source_cpy,
-                                                               halfedges(fg_target), fg_target, tol_map_big,
-                                                               params::geom_traits(Kernel()), params::all_default());
+  CGAL::Constant_property_map<vertex_descriptor, FT> tol_map_big(0.1);
+  res = PMP::experimental::snap_vertices(border_vertices, fg_source_cpy, tol_map_big,
+                                         target_halfedge_range, fg_target, tol_map_big,
+                                         params::geom_traits(Kernel()),
+                                         params::do_lock_mesh(true));
 
   std::cout << "res: " << res << " (expected 154)" << std::endl;
   assert(res == 154);
@@ -96,24 +108,28 @@ void test_1()
   // this is a good value of 'epsilon', but not all expected vertices are projected
   // because the sampling of the border of the source mesh is not uniform
   std::cout << "*********************** EPS = 0.001 *************** " << std::endl;
-  CGAL::Constant_property_map<vertex_descriptor, FT> tol_map_good(0.001);
-  fg_source_cpy = fg_source;
 
+  fg_source_cpy = fg_source;
   border_vertices.clear();
   PMP::border_halfedges(fg_source_cpy, std::back_inserter(border_vertices));
 
-  res = PMP::experimental::snap_vertex_range_onto_vertex_range(border_vertices, fg_source_cpy,
-                                                               halfedges(fg_target), fg_target, tol_map_good);
+  CGAL::Constant_property_map<vertex_descriptor, FT> tol_map_good(0.001);
+  res = PMP::experimental::snap_vertices(border_vertices, fg_source_cpy, tol_map_good,
+                                         target_halfedge_range, fg_target, tol_map_good,
+                                         params::all_default(), params::do_lock_mesh(true));
   std::cout << "res: " << res << " vertices" << std::endl;
   assert(res == 76);
 
-  std::ofstream partial_snap_out("partially_snapped_mesh.off");
-  partial_snap_out << std::setprecision(17) << fg_source_cpy;
-
   // this one automatically computes an epsilon bound at each vertex
   std::cout << "*********************** EPS = LOCALLY COMPUTED *************** " << std::endl;
+
   fg_source_cpy = fg_source;
-  res = PMP::experimental::snap_border_vertices_onto_vertex_range(fg_source_cpy, fg_target);
+  border_vertices.clear();
+  PMP::border_halfedges(fg_source_cpy, std::back_inserter(border_vertices));
+
+  res = PMP::experimental::snap_vertices(border_vertices, fg_source_cpy,
+                                         target_halfedge_range, fg_target,
+                                         params::all_default(), params::do_lock_mesh(true));
   std::cout << "res: " << res << " vertices" << std::endl;
   assert(res == 77);
 
@@ -147,9 +163,11 @@ void test_2()
   // if a target vertex is already occupied, the source vertex will go to the next one that is
   // within tolerance and is available
   CGAL::Constant_property_map<vertex_descriptor, FT> tol_map(0.5);
-  std::size_t res = PMP::experimental::snap_border_vertices_onto_vertex_range(fg_source, fg_target, tol_map);
+  std::size_t res = PMP::experimental::snap_border_vertices(fg_source, tol_map, fg_target, tol_map);
   std::cout << "res: " << res << " vertices" << std::endl;
   assert(res == 3);
+
+  std::ofstream("out.off") << fg_source;
 }
 
 template <typename K, typename Mesh>

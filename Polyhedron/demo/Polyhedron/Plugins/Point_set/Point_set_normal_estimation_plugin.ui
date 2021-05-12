@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>301</width>
+    <width>330</width>
     <height>372</height>
    </rect>
   </property>
@@ -139,22 +139,6 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="QDoubleSpinBox" name="m_offset_radius">
-        <property name="minimum">
-         <double>0.010000000000000</double>
-        </property>
-        <property name="singleStep">
-         <double>0.010000000000000</double>
-        </property>
-        <property name="value">
-         <double>0.100000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QDoubleSpinBox" name="m_convolution_radius"/>
-      </item>
       <item row="1" column="0">
        <widget class="QRadioButton" name="buttonRadius">
         <property name="text">
@@ -182,6 +166,20 @@
         </property>
         <property name="value">
          <number>40</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="DoubleEdit" name="m_offset_radius">
+        <property name="text">
+         <string>0.10</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="DoubleEdit" name="m_convolution_radius">
+        <property name="text">
+         <string>0.00</string>
         </property>
        </widget>
       </item>
@@ -213,6 +211,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DoubleEdit</class>
+   <extends>QLineEdit</extends>
+   <header>CGAL_double_edit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
@@ -259,22 +264,6 @@
     </hint>
     <hint type="destinationlabel">
      <x>199</x>
-     <y>245</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonRadius</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>m_convolution_radius</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>90</x>
-     <y>242</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>285</x>
      <y>245</y>
     </hint>
    </hints>

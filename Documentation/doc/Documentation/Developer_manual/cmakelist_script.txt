@@ -1,0 +1,40 @@
+/*!
+
+\page devman_create_cgal_CMakeLists Creating a CMake Script for a Program Using %CGAL
+
+To compile a program that is not shipped with \cgal, it is recommended to also rely on a CMake-supported
+configuration using a `CMakeLists.txt`. The Bourne-shell script `cgal_create_CMakeLists.txt`
+can be used to create such `CMakeLists.txt` files.
+This script resides in the `scripts` directory of \cgal (e.g. `CGAL-\cgalReleaseNumber``/scripts`
+directory if you have downloaded a tarball).
+Executing `cgal_create_CMakeLists.txt` in an application directory creates a
+`CMakeLists.txt` containing rules to build the contained
+application(s). Three command line options determine details of the
+configuration.
+
+<DL>
+<DT><B>`-s source`</B><DD> If this parameter is given the script will
+create <B>a single executable</B> for 'source' linked with
+compilations of all other source files
+(`*.cc`, `*.cp`, `*.cxx`, `*.cpp`, `*.CPP`, `*.c++`, or `*.C`).
+This behaviour is usually needed for (graphical) demos.
+
+If the parameter is not given, the script creates <B>one executable for each given
+source file</B>.
+<DT><B>`-c com1:com2:...`</B><DD> Lists components ("com1",
+"com2") of \cgal to which the executable(s) should be linked. Valid components are \cgal's
+libraries (i.e.\ "Core", "ImageIO", and "Qt5"). An example is `-c Core`.
+
+<DT><B>`-b boost1:boost2:...`</B><DD> Lists components ("boost1",
+"boost2") of \boost to which the executable(s) should be
+linked. Valid options are, for instance, "filesystem" or "program_options".
+
+</DL>
+
+This options should suffice to create `CMakeLists.txt` script
+for most directories containing programs. However, in some special
+cases, it might still be required to create the script manually, for
+instance, if some source files/executables need a different linking than
+other source files. The Section \subpage devman_create_and_use_a_cmakelist provides more details.
+
+*/

@@ -1,28 +1,19 @@
-// Copyright (c) 2003-2004  
+// Copyright (c) 2003-2004
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sylvain Pion
- 
+
 #ifndef CGAL_KERNEL_GLOBAL_FUNCTIONS_2_H
 #define CGAL_KERNEL_GLOBAL_FUNCTIONS_2_H
 
@@ -312,9 +303,9 @@ template <class K>
 inline
 typename K::Comparison_result
 compare_signed_distance_to_line(const Point_2<K>& p,
-				const Point_2<K>& q,
-				const Point_2<K>& r,
-				const Point_2<K>& s)
+                                const Point_2<K>& q,
+                                const Point_2<K>& r,
+                                const Point_2<K>& s)
 {
   return internal::compare_signed_distance_to_line(p, q, r, s, K());
 }
@@ -323,8 +314,8 @@ template <class K>
 inline
 typename K::Comparison_result
 compare_signed_distance_to_line(const Line_2<K>& l,
-				const Point_2<K>& p,
-				const Point_2<K>& q)
+                                const Point_2<K>& p,
+                                const Point_2<K>& q)
 {
   return internal::compare_signed_distance_to_line(l, p, q, K());
 }
@@ -546,7 +537,7 @@ typename K::Comparison_result
 compare_y_at_x(const Point_2<K> &p, const Line_2<K> &h)
 {
   return internal::compare_y_at_x(p, h, K());
-}  
+}
 
 template < class K >
 inline
@@ -599,8 +590,8 @@ template <class K>
 inline
 typename K::Boolean
 has_larger_distance_to_point(const Point_2<K>& p,
-			     const Point_2<K>& q,
-			     const Point_2<K>& r)
+                             const Point_2<K>& q,
+                             const Point_2<K>& r)
 {
   return internal::has_larger_distance_to_point(p, q, r, K());
 }
@@ -629,8 +620,8 @@ template <class K>
 inline
 typename K::Boolean
 has_larger_signed_distance_to_line(const Line_2<K>& l,
-				   const Point_2<K>& p,
-				   const Point_2<K>& q)
+                                   const Point_2<K>& p,
+                                   const Point_2<K>& q)
 {
   return internal::has_larger_signed_distance_to_line(l, p, q, K());
 }
@@ -639,9 +630,9 @@ template <class K>
 inline
 typename K::Boolean
 has_larger_signed_distance_to_line(const Point_2<K>& p,
-				   const Point_2<K>& q,
-				   const Point_2<K>& r,
-				   const Point_2<K>& s)
+                                   const Point_2<K>& q,
+                                   const Point_2<K>& r,
+                                   const Point_2<K>& s)
 {
   return internal::has_larger_signed_distance_to_line(p, q, r, s, K());
 }

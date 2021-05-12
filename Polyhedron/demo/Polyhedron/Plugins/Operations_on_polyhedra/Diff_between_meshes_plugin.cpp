@@ -175,11 +175,11 @@ void Polyhedron_demo_diff_between_meshes_plugin::diff()
 
   Scene_surface_mesh_item* m1_over_m2_item = new Scene_surface_mesh_item(m1_over_m2);
   m1_over_m2_item->setColor(QColor(Qt::blue));
-  m1_over_m2_item->setName(QString("%1 - %2").arg(m1_item->name()).arg(m2_item->name()));
+  m1_over_m2_item->setName(QString("%2 - %1").arg(m1_item->name()).arg(m2_item->name()));
   CGAL::Three::Three::scene()->addItem(m1_over_m2_item);
   Scene_surface_mesh_item* m2_over_m1_item = new Scene_surface_mesh_item(m2_over_m1);
   m2_over_m1_item->setColor(QColor(Qt::red));
-  m2_over_m1_item->setName(QString("%2 - %1").arg(m1_item->name()).arg(m2_item->name()));
+  m2_over_m1_item->setName(QString("%1 - %2").arg(m1_item->name()).arg(m2_item->name()));
   CGAL::Three::Three::scene()->addItem(m2_over_m1_item);
   Scene_surface_mesh_item* common_item = new Scene_surface_mesh_item(common);
   common_item->setColor(QColor(Qt::green));

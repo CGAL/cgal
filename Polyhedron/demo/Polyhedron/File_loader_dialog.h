@@ -13,7 +13,7 @@ class File_loader_dialog : public QDialog, private Ui::FileLoaderDialog
     {
       setupUi(this);
     }
-  static 
+  static
     std::pair<QString,bool>
     getItem(QString filename, const QStringList& item_list, bool* ok)
     {
@@ -29,5 +29,5 @@ class File_loader_dialog : public QDialog, private Ui::FileLoaderDialog
         dialog.alwaysUse->isChecked()
       );
     }
-    
+
 };

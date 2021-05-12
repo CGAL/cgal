@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -93,7 +84,7 @@ struct Polyhedron_tester : public Tester<K>
                         CGAL::parameters::no_perturb());
 
     CGAL::remove_far_points_in_mesh_3(c3t3);
-    
+
     // Verify
     double vol = 0.479171765761454;
     this->verify_c3t3_volume(c3t3, vol*0.95, vol*1.05);
@@ -102,13 +93,13 @@ struct Polyhedron_tester : public Tester<K>
     if (boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
     {
       this->verify(c3t3, domain, criteria, Polyhedral_tag(),
-                   110, 140, 190, 235, 300, 450); 
+                   110, 140, 190, 235, 300, 450);
     }
     else
 #endif //CGAL_LINKED_WITH_TBB
     {
       this->verify(c3t3, domain, criteria, Polyhedral_tag(),
-                   119, 121, 200, 204, 350, 360);  
+                   119, 121, 200, 204, 350, 360);
     }
 
     // test the dump function

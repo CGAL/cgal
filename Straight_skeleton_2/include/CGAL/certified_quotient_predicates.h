@@ -1,32 +1,23 @@
 // Copyright (c) 2006-2008 Fernando Luis Cacciola Carballal. All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_CERTIFIED_QUOTIENT_PREDICATES_H 
+#ifndef CGAL_CERTIFIED_QUOTIENT_PREDICATES_H
 #define CGAL_CERTIFIED_QUOTIENT_PREDICATES_H
 
 #include <CGAL/certified_numeric_predicates.h>
 #include <CGAL/Quotient.h>
 
-namespace CGAL { 
+namespace CGAL {
 
 template <class NT>
-inline Uncertain<bool> certified_quotient_is_positive(const Quotient<NT>& x) 
+inline Uncertain<bool> certified_quotient_is_positive(const Quotient<NT>& x)
 {
   Uncertain<Sign> signum = CGAL_NTS certified_sign(x.num) ;
   Uncertain<Sign> sigden = CGAL_NTS certified_sign(x.den) ;
@@ -34,7 +25,7 @@ inline Uncertain<bool> certified_quotient_is_positive(const Quotient<NT>& x)
   return ( signum != zero ) & ( signum == sigden );
 }
 
-template <class NT> 
+template <class NT>
 inline Uncertain<bool> certified_quotient_is_negative(const Quotient<NT>& x)
 {
   Uncertain<Sign> signum = CGAL_NTS certified_sign(x.num) ;
@@ -47,10 +38,10 @@ inline Uncertain<bool> certified_quotient_is_negative(const Quotient<NT>& x)
 template <class NT>
 inline Uncertain<bool> certified_quotient_is_zero(const Quotient<NT>& x)
 {
-  return CGAL_NTS certified_is_zero(x.num) ; 
+  return CGAL_NTS certified_is_zero(x.num) ;
 }
- 
-template <class NT> 
+
+template <class NT>
 CGAL_MEDIUM_INLINE
 Uncertain<Sign> certified_quotient_sign(const Quotient<NT>& x)
 {

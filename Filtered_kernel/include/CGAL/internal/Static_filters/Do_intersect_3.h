@@ -3,20 +3,11 @@
 // Copyright (c) 2011 GeometryFactory Sarl (France)
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri, Laurent Rineau
@@ -59,18 +50,7 @@ public:
 
   typedef typename Base::result_type  result_type;
 
-
-#ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::operator();
-#else // CGAL_CFG_MATCHING_BUG_6
-  template <typename T1, typename T2>
-  result_type
-  operator()(const T1& t1, const T2& t2) const
-  {
-    return Base()(t1,t2);
-  }
-#endif // CGAL_CFG_MATCHING_BUG_6
-
 
   Sign sign_with_error(const double x, const double error) const {
     if(x > error) return POSITIVE;
@@ -79,32 +59,39 @@ public:
   }
 
 
-  // The internal::do_intersect(..) function 
+  // The internal::do_intersect(..) function
   // only performs orientation tests on the vertices
   // of the triangle and the segment
   // By calling the do_intersect function with
   // the  statically filtered kernel we avoid
   // that doubles are put into Interval_nt
   // to get taken out again with fit_in_double
-  result_type 
+  result_type
   operator()(const Segment_3 &s, const Triangle_3& t) const
   {
     return Intersections::internal::do_intersect(t,s, SFK());
   }
 
-  result_type 
+  result_type
   operator()(const Triangle_3& t, const Segment_3 &s) const
   {
     return Intersections::internal::do_intersect(t,s, SFK());
   }
 
-  result_type 
+  result_type
+  operator()(const Triangle_3 &t0, const Triangle_3& t1) const
+  {
+    return Intersections::internal::do_intersect(t0,t1, SFK());
+  }
+
+
+  result_type
   operator()(const Bbox_3& b, const Segment_3 &s) const
   {
     return this->operator()(s, b);
   }
 
-  result_type 
+  result_type
   operator()(const Segment_3 &s, const Bbox_3& b) const
   {
     CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
@@ -112,22 +99,22 @@ public:
 
     Get_approx<Point_3> get_approx; // Identity functor for all points
                                     // but lazy points
-    const Point_3& p = s.source(); 
-    const Point_3& q = s.target(); 
+    const Point_3& p = s.source();
+    const Point_3& q = s.target();
 
     double px, py, pz, qx, qy, qz;
     if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
         fit_in_double(get_approx(p).z(), pz) &&
         fit_in_double(get_approx(q).x(), qx) && fit_in_double(get_approx(q).y(), qy) &&
-        fit_in_double(get_approx(q).z(), qz) )   
+        fit_in_double(get_approx(q).z(), qz) )
     {
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
-      const Uncertain<result_type> ub = 
+      const Uncertain<result_type> ub =
         Intersections::internal::do_intersect_bbox_segment_aux
         <double,
-         true, // bounded at t=0 
-         true, // bounded at t=1 
+         true, // bounded at t=0
+         true, // bounded at t=1
          true> // do use static filters
         (px, py, pz,
          qx, qy, qz,
@@ -141,13 +128,13 @@ public:
 
 
 
-  result_type 
+  result_type
   operator()(const Bbox_3& b, const Ray_3 &r) const
   {
     return this->operator()(r, b);
   }
 
-  result_type 
+  result_type
   operator()(const Ray_3 &r, const Bbox_3& b) const
   {
     CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
@@ -155,22 +142,22 @@ public:
 
     Get_approx<Point_3> get_approx; // Identity functor for all points
     // but lazy points.
-    const Point_3& p = r.source(); 
-    const Point_3& q = r.second_point(); 
+    const Point_3& p = r.source();
+    const Point_3& q = r.second_point();
 
     double px, py, pz, qx, qy, qz;
     if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
         fit_in_double(get_approx(p).z(), pz) &&
         fit_in_double(get_approx(q).x(), qx) && fit_in_double(get_approx(q).y(), qy) &&
-        fit_in_double(get_approx(q).z(), qz) )   
+        fit_in_double(get_approx(q).z(), qz) )
     {
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
-      const Uncertain<result_type> ub = 
+      const Uncertain<result_type> ub =
         Intersections::internal::do_intersect_bbox_segment_aux
         <double,
-         true, // bounded at t=0 
-         false,// not bounded at t=1 
+         true, // bounded at t=0
+         false,// not bounded at t=1
          true> // do use static filters
         (px, py, pz,
          qx, qy, qz,
@@ -182,45 +169,63 @@ public:
     return Base::operator()(r,b);
   }
 
-  result_type 
+  result_type
   operator()(const Bbox_3& b, const Sphere_3 &s) const
   {
     return this->operator()(s, b);
   }
 
-  result_type 
-  operator()(const Sphere_3 &s, const Bbox_3& b) const
+  // The parameter overestimate is used to avoid a filter failure in AABB_tree::closest_point()
+  result_type
+  operator()(const Sphere_3 &s, const Bbox_3& b, bool overestimate = false) const
   {
     CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
                            std::string(CGAL_PRETTY_FUNCTION), tmp);
-    
+
     Get_approx<Point_3> get_approx; // Identity functor for all points
     const Point_3& c = s.center();
-    
-    double scx, scy, scz, ssr, bxmin, bymin, bzmin, bxmax, bymax, bzmax;
+
+    double scx, scy, scz, ssr;
+    double bxmin = b.xmin() , bymin = b.ymin() , bzmin = b.zmin() ,
+           bxmax = b.xmax() , bymax = b.ymax() , bzmax = b.zmax() ;
 
     if (fit_in_double(get_approx(c).x(), scx) &&
         fit_in_double(get_approx(c).y(), scy) &&
         fit_in_double(get_approx(c).z(), scz) &&
-        fit_in_double(s.squared_radius(), ssr) &&
-        fit_in_double(b.xmin(), bxmin) &&
-        fit_in_double(b.ymin(), bymin) &&
-        fit_in_double(b.zmin(), bzmin) &&
-        fit_in_double(b.xmax(), bxmax) &&
-        fit_in_double(b.ymax(), bymax) &&
-        fit_in_double(b.zmax(), bzmax))
+        fit_in_double(s.squared_radius(), ssr))
     {
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
-      
+
+      if ((ssr < 1.11261183279326254436e-293) || (ssr > 2.80889552322236673473e+306)){
+        CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+        return Base::operator()(s,b);
+      }
       double distance = 0;
       double max1 = 0;
-  
+      double double_tmp_result = 0;
+      double eps = 0;
       if(scx < bxmin)
       {
         double bxmin_scx = bxmin - scx;
         max1 = bxmin_scx;
-    
+
         distance = square(bxmin_scx);
+        double_tmp_result = (distance - ssr);
+
+        if( (max1 < 3.33558365626356687717e-147) || (max1 > 1.67597599124282407923e+153) ){
+          if(overestimate){
+            return true;
+          }else{
+            CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+            return Base::operator()(s,b);
+          }
+        }
+
+        eps = 1.99986535548615598560e-15 * (std::max) (ssr, square(max1));
+
+        if (double_tmp_result > eps){
+          return false;
+        }
       }
       else if(scx > bxmax)
       {
@@ -228,66 +233,136 @@ public:
         max1 = scx_bxmax;
 
         distance = square(scx_bxmax);
+        double_tmp_result = (distance - ssr);
+
+        if( (max1 < 3.33558365626356687717e-147) || (max1 > 1.67597599124282407923e+153)){
+          if(overestimate){
+            return true;
+          }else{
+            CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+            return Base::operator()(s,b);
+          }
+        }
+
+        eps = 1.99986535548615598560e-15 * (std::max) (ssr, square(max1));
+
+        if (double_tmp_result > eps){
+          return false;
+        }
       }
+
 
       if(scy < bymin)
       {
         double bymin_scy = bymin - scy;
-        if(max1 < bymin_scy)
+        if(max1 < bymin_scy){
           max1 = bymin_scy;
+        }
 
         distance += square(bymin_scy);
+        double_tmp_result = (distance - ssr);
+
+        if( (max1 < 3.33558365626356687717e-147) || ((max1 > 1.67597599124282407923e+153)) ){
+          if(overestimate){
+            return true;
+          }else{
+            CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+            return Base::operator()(s,b);
+          }
+        }
+
+        eps = 1.99986535548615598560e-15 * (std::max) (ssr, square(max1));
+
+        if (double_tmp_result > eps){
+          return false;
+        }
       }
       else if(scy > bymax)
       {
         double scy_bymax = scy - bymax;
-        if(max1 < scy_bymax)
+        if(max1 < scy_bymax){
           max1 = scy_bymax;
-
+        }
         distance += square(scy_bymax);
+        double_tmp_result = (distance - ssr);
+
+        if( ((max1 < 3.33558365626356687717e-147)) || ((max1 > 1.67597599124282407923e+153)) ){
+          if(overestimate){
+            return true;
+          }else{
+            CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+            return Base::operator()(s,b);
+          }
+        }
+
+        eps = 1.99986535548615598560e-15 * (std::max) (ssr, square(max1));
+
+        if (double_tmp_result > eps){
+          return false;
+        }
       }
+
 
       if(scz < bzmin)
       {
         double bzmin_scz = bzmin - scz;
-        if(max1 < bzmin_scz)
+        if(max1 < bzmin_scz){
           max1 = bzmin_scz;
-
+        }
         distance += square(bzmin_scz);
+        double_tmp_result = (distance - ssr);
+
+        if( ((max1 < 3.33558365626356687717e-147)) || ((max1 > 1.67597599124282407923e+153))){
+          if(overestimate){
+            return true;
+          }else{
+            CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+            return Base::operator()(s,b);
+          }
+        }
+
+        eps = 1.99986535548615598560e-15 * (std::max) (ssr, square(max1));
+
+        if (double_tmp_result > eps){
+          return false;
+        }
       }
       else if(scz > bzmax)
       {
         double scz_bzmax = scz - bzmax;
-        if(max1 < scz_bzmax)
+        if(max1 < scz_bzmax){
           max1 = scz_bzmax;
+        }
 
         distance += square(scz_bzmax);
-      }
+        double_tmp_result = (distance - ssr);
 
-      double double_tmp_result = (distance - ssr);
-      double max2 = CGAL::abs(ssr);
-  
-      if ((max1 < 3.33558365626356687717e-147) || (max2 < 1.11261183279326254436e-293)){
-        CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
-        return Base::operator()(s,b);
-      }
-      if ((max1 > 1.67597599124282407923e+153) || (max2 > 2.80889552322236673473e+306)){
-        CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
-        return Base::operator()(s,b);
-      }
-
-      double eps = 1.99986535548615598560e-15 * (std::max) (max2, (max1 * max1));
-  
-      if (double_tmp_result > eps)
-        return false;
-      else 
-      {
-        if (double_tmp_result < -eps)
-          return true;
-        else {
-          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
-          return Base::operator()(s,b);
+        if( ((max1 < 3.33558365626356687717e-147)) || ((max1 > 1.67597599124282407923e+153)) ){
+          if(overestimate){
+            return true;
+          }else{
+            CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+            return Base::operator()(s,b);
+          }
         }
+
+        eps = 1.99986535548615598560e-15 * (std::max) (ssr, square(max1));
+
+        if (double_tmp_result > eps){
+          return false;
+        }
+      }
+
+      // double_tmp_result and eps were growing all the time
+      // no need to test for > eps as done earlier in at least one case
+      if (double_tmp_result < -eps){
+        return true;
+      } else {
+        if(overestimate){
+          return true;
+        }
+        CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+        return Base::operator()(s,b);
       }
 
       CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
@@ -311,14 +386,14 @@ public:
               << "  degre " << f1bis.degree() << ": " <<  f1bis.error() << "\n"
               << "  degre " << f2.degree() << ": " <<  f2.error() << "\n"
               << "  degre " << f3.degree() << ": " <<  f3.error() << "\n";
-      
+
     double err = f.error();
     err += err * 2 *  F::ulp(); // Correction due to "eps * m * m".  Do we need 2 ?
     std::cerr << "*** epsilon for Do_intersect_3(Bbox_3, Segment_3) = "
               << err << std::endl;
     std::cerr << "\n"
               << "Now for underflow/overflows...\n"
-              << "        min_double/eps = " 
+              << "        min_double/eps = "
               << (std::numeric_limits<double>::min)() / err << std::endl
               << "  sqrt(min_double/eps) = "
               << CGAL::sqrt((std::numeric_limits<double>::min)() / err) << std::endl;

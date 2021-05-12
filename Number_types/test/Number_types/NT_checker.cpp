@@ -35,17 +35,17 @@ int main()
 #ifdef CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
   { // Integer
       typedef CGAL::Arithmetic_kernel::Integer Integer;
-      typedef CGAL::Number_type_checker<Integer,Integer> NT; 
+      typedef CGAL::Number_type_checker<Integer,Integer> NT;
       typedef CGAL::Euclidean_ring_tag Tag;
       typedef CGAL::Tag_true Is_exact;
-      CGAL::test_algebraic_structure<NT,Tag, Is_exact>();   
+      CGAL::test_algebraic_structure<NT,Tag, Is_exact>();
   }
-  {// Rational 
+  {// Rational
       typedef CGAL::Arithmetic_kernel::Rational Rational;
-      typedef CGAL::Number_type_checker<Rational,Rational> NT; 
+      typedef CGAL::Number_type_checker<Rational,Rational> NT;
       typedef CGAL::Field_tag Tag;
       typedef CGAL::Tag_true Is_exact;
-      CGAL::test_algebraic_structure<NT,Tag, Is_exact>();   
+      CGAL::test_algebraic_structure<NT,Tag, Is_exact>();
   }
 #endif // CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
   return 0;

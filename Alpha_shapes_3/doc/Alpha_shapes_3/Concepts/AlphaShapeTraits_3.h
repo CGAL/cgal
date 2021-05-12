@@ -3,9 +3,9 @@
 \ingroup PkgAlphaShapes3Concepts
 \cgalConcept
 
-The concept `AlphaShapeTraits_3` describes the requirements 
-for the geometric traits class 
-of the underlying Delaunay triangulation of a basic alpha shape. 
+The concept `AlphaShapeTraits_3` describes the requirements
+for the geometric traits class
+of the underlying Delaunay triangulation of a basic alpha shape.
 
 \cgalRefines `DelaunayTriangulationTraits_3`
 
@@ -22,48 +22,48 @@ following.
 class AlphaShapeTraits_3 {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
-A number type compatible with the type used for 
-the points coordinate. 
-*/ 
-typedef unspecified_type FT; 
+A number type compatible with the type used for
+the points coordinate.
+*/
+typedef unspecified_type FT;
 
 /*!
-An object constructor able to compute: 
+An object constructor able to compute:
 
-- the squared radius of the 
-smallest circumscribing sphere of 4 points `p0, p1, p2, p3`, 
-- the squared radius of the 
-smallest circumscribing sphere of 3 points `p0, p1, p2`, 
-- the squared radius of the smallest circumscribing sphere 
-of 2 points `p0, p1`, 
-- the squared radius of the smallest circumscribing sphere 
-to a single point `p0` (which is `FT(0)`). 
-*/ 
-typedef unspecified_type Compute_squared_radius_3; 
+- the squared radius of the
+smallest circumscribing sphere of 4 points `p0, p1, p2, p3`,
+- the squared radius of the
+smallest circumscribing sphere of 3 points `p0, p1, p2`,
+- the squared radius of the smallest circumscribing sphere
+of 2 points `p0, p1`,
+- the squared radius of the smallest circumscribing sphere
+to a single point `p0` (which is `FT(0)`).
+*/
+typedef unspecified_type Compute_squared_radius_3;
 
-/// @} 
+/// @}
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
-Default constructor. 
-*/ 
-AlphaShapeTraits_3(); 
+Default constructor.
+*/
+AlphaShapeTraits_3();
 
-/// @} 
+/// @}
 
-/// \name Access Functions 
+/// \name Access Functions
 /// @{
 
 /*!
 
-*/ 
-Compute_squared_radius_3 compute_squared_radius_3_object(); 
+*/
+Compute_squared_radius_3 compute_squared_radius_3_object();
 
 /// @}
 

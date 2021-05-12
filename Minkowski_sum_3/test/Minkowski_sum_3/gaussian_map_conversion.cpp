@@ -34,11 +34,11 @@ void test_convex_parts(Nef_polyhedron_3& N)
       Nef_polyhedron_3 tmp0(P), tmp1;
 
       CGAL::Gaussian_map<Kernel,Nef_polyhedron_3> G(N, ci);
-      CGAL::Gaussian_map_to_nef_3<Nef_polyhedron_3> 
-	Convertor(G);
+      CGAL::Gaussian_map_to_nef_3<Nef_polyhedron_3>
+        Convertor(G);
       tmp1.delegate(Convertor, true);
 
-      assert(tmp1.is_valid());      
+      assert(tmp1.is_valid());
       assert(tmp1.closure().symmetric_difference(tmp0).is_empty());
       delete G.sphere_map();
     }
@@ -52,8 +52,8 @@ void test_convex_parts(Nef_polyhedron_3& N)
        !vi->sfaces_begin()->mark()) {
       Nef_polyhedron_3 tmp;
       CGAL::Gaussian_map<Kernel,Nef_polyhedron_3> G(vi);
-      CGAL::Gaussian_map_to_nef_3<Nef_polyhedron_3> 
-	Convertor(G);
+      CGAL::Gaussian_map_to_nef_3<Nef_polyhedron_3>
+        Convertor(G);
       tmp.delegate(Convertor, true);
       assert(tmp.is_valid());
       assert(tmp.number_of_vertices() == 1);
@@ -75,7 +75,7 @@ void test_convex_parts(Nef_polyhedron_3& N)
     if(!SD.is_isolated(eci)) continue;
     Nef_polyhedron_3 tmp;
     CGAL::Gaussian_map<Kernel,Nef_polyhedron_3> G(eci);
-    CGAL::Gaussian_map_to_nef_3<Nef_polyhedron_3> 
+    CGAL::Gaussian_map_to_nef_3<Nef_polyhedron_3>
       Convertor(G);
     tmp.delegate(Convertor, true);
     assert(tmp.is_valid());
@@ -86,22 +86,22 @@ void test_convex_parts(Nef_polyhedron_3& N)
     assert((++tmp.vertices_begin())->mark());
     assert(!tmp.volumes_begin()->mark());
     assert(tmp.vertices_begin()->point() ==
-		   eci->source()->point() ||
-		   tmp.vertices_begin()->point() ==
-		   eci->twin()->source()->point());
+                   eci->source()->point() ||
+                   tmp.vertices_begin()->point() ==
+                   eci->twin()->source()->point());
     delete G.sphere_map();
 
     std::cerr << "single edge " << std::endl;
   }
-  
+
   Nef_polyhedron_3::Halffacet_const_iterator fci;
   for(fci = N.halffacets_begin(); fci != N.halffacets_end(); ++fci) {
-    if(fci->is_twin()) continue;  
+    if(fci->is_twin()) continue;
     if(fci->incident_volume() !=
        fci->twin()->incident_volume()) continue;
     Nef_polyhedron_3 tmp;
     CGAL::Gaussian_map<Kernel, Nef_polyhedron_3> G(fci);
-    CGAL::Gaussian_map_to_nef_3<Nef_polyhedron_3> 
+    CGAL::Gaussian_map_to_nef_3<Nef_polyhedron_3>
       Convertor(G);
     tmp.delegate(Convertor, true);
     assert(tmp.is_valid());
@@ -111,7 +111,7 @@ void test_convex_parts(Nef_polyhedron_3& N)
     assert(tmp.halffacets_begin()->mark());
     assert(!tmp.volumes_begin()->mark());
     assert(tmp.halffacets_begin()->plane() == fci->plane() ||
-		   tmp.halffacets_begin()->plane() == fci->twin()->plane());
+                   tmp.halffacets_begin()->plane() == fci->twin()->plane());
     delete G.sphere_map();
 
     std::cerr << "single facet " << std::endl;
@@ -125,7 +125,7 @@ int main()
   std::ifstream in0("star.nef3");
   in0 >> N;
   test_convex_parts(N);
-  
+
   std::ifstream in1("single_vertex.nef3");
   in1 >> N;
   test_convex_parts(N);

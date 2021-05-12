@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Stéphane Tayeb
 //
@@ -27,14 +18,18 @@
 #ifndef CGAL_INTERNAL_MESH_3_INDICES_MANAGEMENT_H
 #define CGAL_INTERNAL_MESH_3_INDICES_MANAGEMENT_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Triangulation_3.h>
 
 
 #include <boost/type_traits/is_same.hpp>
 #include <boost/utility/enable_if.hpp>
-#include <boost/variant.hpp>
+#include <boost/variant/variant.hpp>
+#include <boost/variant/get.hpp>
+#include <boost/variant/apply_visitor.hpp>
 #include <CGAL/Mesh_3/Has_features.h>
 #include <CGAL/IO/io.h>
+
+#include <tuple>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -57,6 +52,26 @@ struct Index_generator<T, T>
   typedef T       Index;
   typedef Index   type;
 };
+
+template <typename MD, bool has_feature = Has_features<MD>::value>
+struct Indices_tuple_generator
+{
+  using type = std::tuple<typename MD::Subdomain_index,
+                          typename MD::Surface_patch_index,
+                          typename MD::Curve_index,
+                          typename MD::Corner_index
+                          >;
+};
+
+template <typename MD>
+struct Indices_tuple_generator<MD, false>
+{
+  using type = std::tuple<typename MD::Subdomain_index,
+                          typename MD::Surface_patch_index>;
+};
+
+template <typename MD>
+using Indices_tuple_t = typename Indices_tuple_generator<MD>::type;
 
 // Nasty meta-programming to get a boost::variant of four types that
 // may not be all different.
@@ -253,6 +268,65 @@ struct Write_mesh_domain_index<Mesh_domain, false> {
   }
 }; // end template partial specialization
    // Write_mesh_domain_index<Mesh_domain, false>
+
+template <typename, typename Index>
+struct Read_write_index {
+  void operator()(std::ostream& os, int, Index index) const {
+    if(is_ascii(os)) os << oformat(index);
+    else CGAL::write(os, index);
+  }
+  Index operator()(std::istream& is, int) const {
+    Index index;
+    if(is_ascii(is)) is >> iformat(index);
+    else CGAL::read(is, index);
+    return index;
+  }
+};
+
+struct Variant_write_visitor {
+  std::ostream& os;
+  template <typename T>
+  void operator()(T v) const {
+    if(is_ascii(os)) os << CGAL::oformat(v);
+    else CGAL::write(os, v);
+  }
+};
+
+template <typename Index>
+struct Variant_read_visitor {
+  std::istream& is;
+  Index& variant;
+  template <typename T>
+  void operator()(T) const {
+    T v;
+    if(is_ascii(is)) is >> CGAL::iformat(v);
+    else CGAL::read(is, v);
+    variant = v;
+  }
+};
+
+template <typename Indices_types, typename... Args>
+struct Read_write_index<Indices_types, boost::variant<Args...>> {
+  using Index = boost::variant<Args...>;
+  using index_seq = std::make_index_sequence<std::tuple_size<Indices_types>::value>;
+
+  template <std::size_t... Is>
+  Index get_index(int dimension, std::index_sequence<Is...>) const{
+    static const Index variants[] = { std::tuple_element_t<Is, Indices_types>{}... };
+    return variants[dimension < 0 ? 0 : 3-dimension];
+  }
+
+  void operator()(std::ostream& os, int, Index index) const {
+    Variant_write_visitor visitor{os};
+    apply_visitor(visitor, index);
+  }
+  Index operator()(std::istream& is, int dimension) const {
+    Index index = get_index(dimension, index_seq{});
+    Variant_read_visitor<Index> visitor{is, index};
+    apply_visitor(visitor, index);
+    return index;
+  }
+};
 
 } // end namespace internal
 } // end namespace Mesh_3

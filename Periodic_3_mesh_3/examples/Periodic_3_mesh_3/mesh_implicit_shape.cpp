@@ -58,7 +58,7 @@ int main(int argc, char** argv)
     Periodic_mesh_domain::create_implicit_mesh_domain(schwarz_p, canonical_cube);
 
   Periodic_mesh_criteria criteria(facet_angle = 30,
-                                  facet_size = 0.05 * domain_size,
+                                  facet_size = 0.035 * domain_size,
                                   facet_distance = 0.025 * domain_size,
                                   cell_radius_edge_ratio = 2.,
                                   cell_size = 0.05);

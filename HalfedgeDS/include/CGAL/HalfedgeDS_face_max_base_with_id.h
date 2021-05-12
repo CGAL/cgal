@@ -1,20 +1,11 @@
 // Copyright (c) 2007  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola
 
@@ -29,21 +20,21 @@ template < class Refs, class Pln, class ID>
 class HalfedgeDS_face_max_base_with_id : public HalfedgeDS_face_base< Refs, Tag_true, Pln>
 {
 public:
-    
+
     typedef HalfedgeDS_face_base< Refs, Tag_true, Pln> Base ;
-    
+
     typedef ID size_type ;
-    
+
 private:
 
     size_type mID ;
-    
+
 public:
 
     HalfedgeDS_face_max_base_with_id() : mID ( size_type(-1) ) {}
     HalfedgeDS_face_max_base_with_id( Pln const& p) : Base(p), mID ( size_type(-1) ) {}
     HalfedgeDS_face_max_base_with_id( Pln const& p, size_type i ) : Base(p), mID (i) {}
-    
+
     size_type&       id()       { return mID; }
     size_type const& id() const { return mID; }
 };

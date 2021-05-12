@@ -26,8 +26,8 @@ struct Plane_equation {
     typename Facet::Halfedge_handle h = f.halfedge();
     typedef typename Facet::Plane_3  Plane;
     return Plane( h->vertex()->point(),
-		  h->next()->vertex()->point(),
-		  h->next()->next()->vertex()->point());
+                  h->next()->vertex()->point(),
+                  h->next()->next()->vertex()->point());
   }
 };
 
@@ -35,12 +35,12 @@ int main(int argc, char* argv[]) {
 
   CGAL_assertion(argc==2);
   std::ifstream in1(argv[1]);
-  
+
   Polyhedron P1;
   in1 >> P1;
 
   std::transform( P1.facets_begin(), P1.facets_end(), P1.planes_begin(),
-		  Plane_equation());
+                  Plane_equation());
 
   CGAL_assertion(is_strongly_convex_3(P1));
 

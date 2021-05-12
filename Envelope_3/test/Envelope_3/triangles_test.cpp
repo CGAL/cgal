@@ -26,7 +26,7 @@ typedef Traits_3::Xy_monotone_surface_3                          Xy_monotone_sur
 typedef Traits_3::Surface_3                                      Surface_3;
 
 typedef CGAL::Envelope_diagram_2<Traits_3>                       Envelope_diagram_2;
-typedef CGAL::Envelope_triangles_test_3<Traits_3, 
+typedef CGAL::Envelope_triangles_test_3<Traits_3,
                                         Envelope_diagram_2>      Envelope_test;
 
 std::ostream & operator << (std::ostream  & os, Triangle_3* p_data)
@@ -41,7 +41,7 @@ bool test_one_file(std::ifstream& inp)
 {
   Traits_3 traits;
   std::vector<Surface_3> triangles;
-  
+
   int triangles_num = 0;
   inp >> triangles_num;
   std::cout << "number of triangles to read: " << triangles_num << std::endl;
@@ -57,7 +57,7 @@ bool test_one_file(std::ifstream& inp)
   // make xy-monotone surfaces
   std::vector<Surface_3>::iterator begin;
   std::vector<Xy_monotone_surface_3> xy_monotones;
-  
+
   for(begin = triangles.begin(); begin != triangles.end(); ++begin)
     traits.make_xy_monotone_3_object()(*begin, true, std::back_inserter(xy_monotones));
 
@@ -128,6 +128,6 @@ int main(int argc, char **argv)
     }
     inp.close();
   }
-  
+
   return success;
 }

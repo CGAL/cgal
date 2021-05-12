@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Pierre Alliez and Lingjie Zhu
@@ -134,7 +125,7 @@ public:
     CGAL_assertion(!faces.empty());
 
     std::list<Triangle_3> tris;
-    for(const face_descriptor f : faces) {
+    for(const face_descriptor& f : faces) {
       const halfedge_descriptor he = halfedge(f, *m_tm);
       const Point_3 &p0 = m_vpmap[source(he, *m_tm)];
       const Point_3 &p1 = m_vpmap[target(he, *m_tm)];

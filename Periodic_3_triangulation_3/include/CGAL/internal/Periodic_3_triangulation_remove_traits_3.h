@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 
@@ -29,7 +20,7 @@
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Periodic_3_offset_3.h>
 
-namespace CGAL { 
+namespace CGAL {
 
 // Triangulation_3 has calls to Construct_point_3 to handle weighted and bare points.
 // The default inherited Construct_point_3 inherited by Periodic_3_triangulation_remove_traits_3
@@ -60,22 +51,22 @@ public:
 
   result_type operator()(const Point& p0, const Point& p1) const {
     return _functor(p0.first, p1.first,
-	p0.second, p1.second);
+        p0.second, p1.second);
   }
   result_type operator()(const Point& p0, const Point& p1,
       const Point& p2) const {
     return _functor(p0.first, p1.first, p2.first,
-	p0.second, p1.second, p2.second);
+        p0.second, p1.second, p2.second);
   }
   result_type operator()(const Point& p0, const Point& p1,
       const Point& p2, const Point& p3) const {
     return _functor(p0.first, p1.first, p2.first, p3.first,
-	p0.second, p1.second, p2.second, p3.second);
+        p0.second, p1.second, p2.second, p3.second);
   }
   result_type operator()(const Point& p0, const Point& p1,
       const Point& p2, const Point& p3, const Point& p4) const {
     return _functor(p0.first, p1.first, p2.first, p3.first, p4.first,
-	p0.second, p1.second, p2.second, p3.second, p4.second);
+        p0.second, p1.second, p2.second, p3.second, p4.second);
   }
 
 private:
@@ -114,10 +105,10 @@ public:
       Coplanar_orientation_3;
   typedef Point_offset_adaptor<Self, typename PT::Orientation_3>
       Orientation_3;
-  
+
   // Delaunay Triangulation traits
   typedef Point_offset_adaptor<Self,
-	  typename PT::Coplanar_side_of_bounded_circle_3>
+          typename PT::Coplanar_side_of_bounded_circle_3>
       Coplanar_side_of_bounded_circle_3;
   typedef Point_offset_adaptor<Self, typename PT::Side_of_oriented_sphere_3>
       Side_of_oriented_sphere_3;

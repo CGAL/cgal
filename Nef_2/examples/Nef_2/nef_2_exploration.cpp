@@ -54,7 +54,7 @@ void explore(std::string s, const Nef_polyhedron&  poly)
     }
 
     // explore the holes if the face has holes
-    Hole_const_iterator hit = explorer.holes_begin(fit), end = explorer.holes_end(fit); 
+    Hole_const_iterator hit = explorer.holes_begin(fit), end = explorer.holes_end(fit);
     if(hit == end){
       std::cout << "* has no hole" << std::endl;
     }else{
@@ -70,7 +70,7 @@ void explore(std::string s, const Nef_polyhedron&  poly)
         std::cout << " ( f = frame edge, e = ordinary edge)" << std::endl;
       }
     }
-  } 
+  }
   std::cout << "done\n" << std::endl;
 }
 
@@ -79,11 +79,11 @@ int main() {
   CGAL::set_pretty_mode(std::cout);
   Nef_polyhedron N0(Nef_polyhedron::COMPLETE);
   explore("complete", N0);
-  
+
   Line l(0,1,-2); // l : 0x + y - 2 = 0
   Nef_polyhedron N1(l,Nef_polyhedron::INCLUDED);
   explore("line", N1);
-  
+
   Point p1(1,1), p2(10,1), p3(10,10);
   Point triangle[3] = { p1, p2, p3 };
   Nef_polyhedron N2(triangle, triangle+3);
@@ -101,8 +101,8 @@ int main() {
     Nef_polyhedron N3(triangle, triangle+3);
     N2 -= N3;
   }
-  
+
   explore("triangle with two triangular holes", N2);
-  
+
   return 0;
 }

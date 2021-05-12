@@ -1,19 +1,11 @@
 // Copyright (c) 2011 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 
@@ -25,7 +17,7 @@
 
 #include <CGAL/Qt/qglviewer.h>
 #include <QKeyEvent>
-#include <QOpenGLFunctions_2_1>
+#include <QOpenGLFunctions>
 #include <QOpenGLVertexArrayObject>
 #include <QGLBuffer>
 #include <QOpenGLShaderProgram>
@@ -51,15 +43,15 @@ typedef Local_kernel::Vector_3 Local_vector;
 //Vertex source code
 const char vertex_source_mono[] =
   {
-    "#version 120 \n"
-    "attribute highp vec4 vertex;\n"
-    "attribute highp vec3 normal;\n"
-    
+    "#version 150 \n"
+    "in highp vec4 vertex;\n"
+    "in highp vec3 normal;\n"
+
     "uniform highp mat4 mvp_matrix;\n"
     "uniform highp mat4 mv_matrix; \n"
-    
-    "varying highp vec4 fP; \n"
-    "varying highp vec3 fN; \n"
+
+    "out highp vec4 fP; \n"
+    "out highp vec3 fN; \n"
     "void main(void)\n"
     "{\n"
     "   fP = mv_matrix * vertex; \n"
@@ -70,17 +62,17 @@ const char vertex_source_mono[] =
 
 const char vertex_source_color[] =
   {
-    "#version 120 \n"
-    "attribute highp vec4 vertex;\n"
-    "attribute highp vec3 normal;\n"
-    "attribute highp vec3 color;\n"
-    
+    "#version 150 \n"
+    "in highp vec4 vertex;\n"
+    "in highp vec3 normal;\n"
+    "in highp vec3 color;\n"
+
     "uniform highp mat4 mvp_matrix;\n"
     "uniform highp mat4 mv_matrix; \n"
-    
-    "varying highp vec4 fP; \n"
-    "varying highp vec3 fN; \n"
-    "varying highp vec4 fColor; \n"
+
+    "out highp vec4 fP; \n"
+    "out highp vec3 fN; \n"
+    "out highp vec4 fColor; \n"
     "void main(void)\n"
     "{\n"
     "   fP = mv_matrix * vertex; \n"
@@ -93,60 +85,62 @@ const char vertex_source_color[] =
 //Vertex source code
 const char fragment_source_mono[] =
   {
-    "#version 120 \n"
-    "varying highp vec4 fP; \n"
-    "varying highp vec3 fN; \n"
+    "#version 150 \n"
+    "in highp vec4 fP; \n"
+    "in highp vec3 fN; \n"
     "uniform highp vec4 color; \n"
     "uniform highp vec4 light_pos;  \n"
     "uniform highp vec4 light_diff; \n"
     "uniform highp vec4 light_spec; \n"
     "uniform highp vec4 light_amb;  \n"
     "uniform float spec_power ; \n"
-    
+    "out highp vec4 out_color; \n"
+
     "void main(void) { \n"
-    
+
     "   highp vec3 L = light_pos.xyz - fP.xyz; \n"
     "   highp vec3 V = -fP.xyz; \n"
-    
+
     "   highp vec3 N = normalize(fN); \n"
     "   L = normalize(L); \n"
     "   V = normalize(V); \n"
-    
+
     "   highp vec3 R = reflect(-L, N); \n"
     "   highp vec4 diffuse = max(dot(N,L), 0.0) * light_diff * color; \n"
     "   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
-    
-    "gl_FragColor = light_amb*color + diffuse  ; \n"
+
+    "out_color = light_amb*color + diffuse  ; \n"
     "} \n"
     "\n"
   };
 
 const char fragment_source_color[] =
   {
-    "#version 120 \n"
-    "varying highp vec4 fP; \n"
-    "varying highp vec3 fN; \n"
-    "varying highp vec4 fColor; \n"
+    "#version 150 \n"
+    "in highp vec4 fP; \n"
+    "in highp vec3 fN; \n"
+    "in highp vec4 fColor; \n"
     "uniform highp vec4 light_pos;  \n"
     "uniform highp vec4 light_diff; \n"
     "uniform highp vec4 light_spec; \n"
     "uniform highp vec4 light_amb;  \n"
     "uniform float spec_power ; \n"
-    
+    "out highp vec4 out_color; \n"
+
     "void main(void) { \n"
-    
+
     "   highp vec3 L = light_pos.xyz - fP.xyz; \n"
     "   highp vec3 V = -fP.xyz; \n"
-    
+
     "   highp vec3 N = normalize(fN); \n"
     "   L = normalize(L); \n"
     "   V = normalize(V); \n"
-    
+
     "   highp vec3 R = reflect(-L, N); \n"
     "   highp vec4 diffuse = max(dot(N,L), 0.0) * light_diff * fColor; \n"
     "   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
-    
-    "gl_FragColor = light_amb*fColor + diffuse  ; \n"
+
+    "out_color = light_amb*fColor + diffuse  ; \n"
     "} \n"
     "\n"
   };
@@ -154,8 +148,8 @@ const char fragment_source_color[] =
 //Vertex source code
 const char vertex_source_p_l[] =
   {
-    "#version 120 \n"
-    "attribute highp vec4 vertex;\n"
+    "#version 150 \n"
+    "in highp vec4 vertex;\n"
     "uniform highp mat4 mvp_matrix;\n"
     "void main(void)\n"
     "{\n"
@@ -165,10 +159,11 @@ const char vertex_source_p_l[] =
 //Vertex source code
 const char fragment_source_p_l[] =
   {
-    "#version 120 \n"
+    "#version 150 \n"
     "uniform highp vec4 color; \n"
+    "out highp vec4 out_color; \n"
     "void main(void) { \n"
-    "gl_FragColor = color; \n"
+    "out_color = color; \n"
     "} \n"
     "\n"
   };
@@ -202,7 +197,7 @@ typename K::Vector_3 compute_normal_of_face(const std::vector<typename K::Point_
   return (typename K::Construct_scaled_vector_3()(normal, 1.0/nb));
 }
 
-class Basic_viewer : public CGAL::QGLViewer, public QOpenGLFunctions_2_1
+class Basic_viewer : public CGAL::QGLViewer, public QOpenGLFunctions
 {
   struct Vertex_info
   {
@@ -223,7 +218,6 @@ class Basic_viewer : public CGAL::QGLViewer, public QOpenGLFunctions_2_1
 
   typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>    Fb;
   typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                   TDS;
-  // typedef CGAL::No_intersection_tag                                     Itag;
   typedef CGAL::Exact_predicates_tag                                    Itag;
   typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits, TDS,
                                                      Itag>              CDT;
@@ -240,7 +234,7 @@ public:
     m_inverse_normal(false),
     m_empty(true),
     m_size_points(7.),
-    m_size_edges(3.1),    
+    m_size_edges(3.1),
     m_vertices_mono_color(51, 51, 178),
     m_edges_mono_color(51, 51, 148),
     m_faces_mono_color(180, 125, 200),
@@ -274,12 +268,12 @@ public:
   void clear()
   {
     for (unsigned int i=0; i<LAST_INDEX; ++i)
-    { arrays[i].clear(); }    
+    { arrays[i].clear(); }
   }
 
   bool is_empty() const
   { return m_empty; }
-  
+
   void add_point(const Local_point& p, std::vector<float>& point_vector)
   {
     point_vector.push_back(p.x());
@@ -305,7 +299,7 @@ public:
     normal_vector.push_back(n.y());
     normal_vector.push_back(n.z());
   }
-  
+
   void add_mono_point(const Local_point& p)
   { add_point(p, arrays[POS_MONO_POINTS]); }
 
@@ -314,13 +308,13 @@ public:
     add_point(p, arrays[POS_COLORED_POINTS]);
     add_color(acolor, arrays[COLOR_POINTS]);
   }
-  
+
   void add_mono_segment(const Local_point& p1, const Local_point& p2)
   {
     add_point(p1, arrays[POS_MONO_SEGMENTS]);
     add_point(p2, arrays[POS_MONO_SEGMENTS]);
   }
-  
+
   void add_colored_segment(const Local_point& p1, const Local_point& p2,
                            const CGAL::Color& acolor)
   {
@@ -336,7 +330,7 @@ public:
       std::cerr<<"You cannot start a new face before to finish the previous one."<<std::endl;
       return;
     }
-    
+
     m_face_started=true;
   }
 
@@ -360,7 +354,7 @@ public:
   bool add_point_in_face(const Local_point& p)
   {
     if (!m_face_started) return false;
-    
+
     if (points_of_face.empty() || points_of_face.back()!=p)
     {
       points_of_face.push_back(p);
@@ -368,14 +362,14 @@ public:
     }
     return false;
   }
-  
+
   /// Add a point at the end of the current face
   /// @param p the point to add
   /// @p_normal the vertex normal in this point (for Gourod shading)
   void add_point_in_face(const Local_point& p, const Local_vector& p_normal)
   {
     if (!m_face_started) return;
-    
+
     if (add_point_in_face(p))
     {
       vertex_normals_for_face.push_back(p_normal);
@@ -389,14 +383,14 @@ public:
     {
       std::cout<<"PB: you try to triangulate a face with "<<points_of_face.size()<<" vertices."
                <<std::endl;
-      
+
       m_face_started=false;
       points_of_face.clear();
       vertex_normals_for_face.clear();
 
       return;
     }
-    
+
     Local_vector normal=compute_normal_of_face<Local_kernel>(points_of_face);
 
     if (points_of_face.size()==3) // Triangle: no need to triangulate
@@ -466,7 +460,7 @@ public:
           cdt.insert_constraint(previous, first);
 
         // (2) We mark all external triangles
-        // (2.1) We initialize is_external and is_process values 
+        // (2.1) We initialize is_external and is_process values
         for(typename CDT::All_faces_iterator fit = cdt.all_faces_begin(),
               fitend = cdt.all_faces_end(); fit!=fitend; ++fit)
         {
@@ -502,7 +496,7 @@ public:
 
         if ( face_internal!=NULL )
           face_queue.push(face_internal);
-        
+
         while(! face_queue.empty() )
         {
           typename CDT::Face_handle fh = face_queue.front();
@@ -539,7 +533,7 @@ public:
               // Its color
               if (m_started_face_is_colored)
               { add_color(color_of_face, arrays[COLOR_FACES]); }
-              
+
               // Its flat normal
               add_normal(normal, arrays[m_started_face_is_colored?
                                         FLAT_NORMAL_COLORED_FACES:
@@ -563,29 +557,29 @@ public:
     points_of_face.clear();
     vertex_normals_for_face.clear();
   }
-  
+
 protected:
-  
+
   void compile_shaders()
   {
     rendering_program_mono.removeAllShaders();
     rendering_program_color.removeAllShaders();
     /*rendering_program_p_l_mono.removeAllShaders();
       rendering_program_p_l_color.removeAllShaders(); */
-    
+
     // Create the buffers
     for (int i=0; i<NB_VBO_BUFFERS; ++i)
     {
       if(!buffers[i].isCreated() && !buffers[i].create())
       { std::cerr<<"VBO Creation number "<<i<<" FAILED"<<std::endl; }
     }
-    
+
     for (int i=0; i<NB_VAO_BUFFERS; ++i)
     {
       if(!vao[i].isCreated() && !vao[i].create())
       { std::cerr<<"VAO Creation number "<<i<<" FAILED"<<std::endl; }
     }
-    
+
     //The Facets
     QOpenGLShader *vertex_shader_mono = new QOpenGLShader(QOpenGLShader::Vertex);
     if(!vertex_shader_mono->compileSourceCode(vertex_source_mono))
@@ -597,7 +591,7 @@ protected:
     if(!rendering_program_mono.addShader(vertex_shader_mono))
     { std::cerr<<"adding vertex shader FAILED"<<std::endl; }
     if(!rendering_program_mono.addShader(fragment_shader_mono))
-    { std::cerr<<"adding fragment shader FAILED"<<std::endl; }    
+    { std::cerr<<"adding fragment shader FAILED"<<std::endl; }
     if(!rendering_program_mono.link())
     { std::cerr<<"linking Program FAILED"<<std::endl; }
     rendering_program_mono.bind();
@@ -623,7 +617,7 @@ protected:
     if(!rendering_program_color.addShader(vertex_shader_color))
     { std::cerr<<"adding vertex shader FAILED"<<std::endl; }
     if(!rendering_program_color.addShader(fragment_shader_color))
-    { std::cerr<<"adding fragment shader FAILED"<<std::endl; }    
+    { std::cerr<<"adding fragment shader FAILED"<<std::endl; }
     if(!rendering_program_color.link())
     { std::cerr<<"linking Program FAILED"<<std::endl; }
     rendering_program_color.bind();
@@ -662,11 +656,11 @@ protected:
     // 2.1) Mono segments
 
     // 2.2) Color segments
-    
+
     // 3) FACE SHADER
     assert(vaon<NB_VAO_BUFFERS);
     vao[vaon].bind();
-    
+
     // 3.1) Mono faces
 
     // 3.1.1) points of the mono faces
@@ -683,7 +677,7 @@ protected:
 
     buffers[bufn].release();
     ++bufn;
-    
+
     // 3.1.2) normals of the mono faces
     assert(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
@@ -704,7 +698,7 @@ protected:
     rendering_program_mono.enableAttributeArray(normalsLocation);
     rendering_program_mono.setAttributeBuffer(normalsLocation,GL_FLOAT,0,3);
     rendering_program_mono.release();
-    
+
     buffers[bufn].release();
     ++bufn;
 
@@ -714,8 +708,8 @@ protected:
     // 3.2) Color faces
     assert(vaon<NB_VAO_BUFFERS);
     vao[vaon].bind();
-  
-    // 3.2.1) points of the color faces    
+
+    // 3.2.1) points of the color faces
     assert(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(arrays[POS_COLORED_FACES].data(),
@@ -725,10 +719,10 @@ protected:
     rendering_program_color.enableAttributeArray(vertexLocation[vaon]);
     rendering_program_color.setAttributeBuffer(vertexLocation[vaon],GL_FLOAT,0,3);
     rendering_program_color.release();
-      
+
     buffers[bufn].release();
     ++bufn;
-    
+
     // 3.2.2) normals of the color faces
     assert(bufn<NB_VBO_BUFFERS);
     buffers[bufn].bind();
@@ -749,10 +743,10 @@ protected:
     rendering_program_color.enableAttributeArray(normalsLocation);
     rendering_program_color.setAttributeBuffer(normalsLocation,GL_FLOAT,0,3);
     rendering_program_color.release();
-    
+
     buffers[bufn].release();
     ++bufn;
-    
+
     // 3.2.3) colors of the faces
     if (!m_use_mono_color)
     {
@@ -765,13 +759,13 @@ protected:
       rendering_program_color.enableAttributeArray(colorsLocation);
       rendering_program_color.setAttributeBuffer(colorsLocation,GL_FLOAT,0,3);
       rendering_program_color.release();
-      
+
       buffers[bufn].release();
       ++bufn;
     }
 
     vao[vaon].release();
-    ++vaon;    
+    ++vaon;
 
     m_are_buffers_initialized = true;
   }
@@ -893,7 +887,6 @@ protected:
   virtual void init()
   {
     // Restore previous viewer state.
-    restoreStateFromFile();
     initializeOpenGLFunctions();
 
     // Define 'Control+Q' as the new exit shortcut (default was 'Escape')
@@ -944,7 +937,7 @@ protected:
       { arrays[k][i]=-arrays[k][i]; }
     }
   }
-  
+
   virtual void keyPressEvent(QKeyEvent *e)
   {
     const Qt::KeyboardModifiers modifiers = e->modifiers();
@@ -984,7 +977,7 @@ protected:
     {
       m_inverse_normal=!m_inverse_normal;
       negate_all_normals();
-      compile_shaders(); 
+      compile_shaders();
       initialize_buffers();
       displayMessage(QString("Inverse normal=%1.").arg(m_inverse_normal?"true":"false"));
       updateGL();
@@ -1135,7 +1128,7 @@ private:
   bool m_use_mono_color;
   bool m_inverse_normal;
   bool m_empty;
-  
+
   double m_size_points;
   double m_size_edges;
 
@@ -1146,7 +1139,7 @@ private:
 
   bool m_are_buffers_initialized;
   CGAL::Bbox_3 bb;
-  
+
   //Shaders elements
   int vertexLocation[NB_VAO_BUFFERS];
   int normalsLocation;
@@ -1156,7 +1149,7 @@ private:
   int colorLocation2;
   int lightLocation[5];
 
-  enum 
+  enum
     { POS_MONO_POINTS=0,
       POS_COLORED_POINTS,
       POS_MONO_SEGMENTS,

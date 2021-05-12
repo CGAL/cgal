@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>631</width>
-    <height>526</height>
+    <height>628</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -59,8 +59,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>278</width>
-             <height>499</height>
+             <width>275</width>
+             <height>534</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -282,6 +282,23 @@
              <widget class="QPushButton" name="default_save_asPushButton">
               <property name="text">
                <string>Change Default Saveas Dir...</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="sshButton">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="text">
+               <string>Network Settings</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="backFrontColor_pushButton">
+              <property name="text">
+               <string>Change Back/Front Colors...</string>
               </property>
              </widget>
             </item>

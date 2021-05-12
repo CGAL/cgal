@@ -1,25 +1,16 @@
-// Copyright (c) 1998-2004  
+// Copyright (c) 1998-2004
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Geert-Jan Giezeman, Andreas Fabri
 
@@ -157,7 +148,7 @@ squared_distance(
     const typename K::Point_3 &pt,
     const typename K::Segment_3 &seg,
     const K& k)
-{ 
+{
   typedef typename K::Kernel_tag Tag;
   Tag tag;
   return squared_distance(pt, seg, k, tag);
@@ -165,7 +156,7 @@ squared_distance(
 
 
 template <class K>
-inline 
+inline
 typename K::FT
 squared_distance(
     const typename K::Segment_3 & seg,
@@ -226,7 +217,7 @@ compare_distance_pssC3(
         }
       }
     }
-    return compare(d1*e2, d2*e1);
+    return CGAL::compare(d1*e2, d2*e1);
 }
 
 template <class K>
@@ -262,7 +253,7 @@ compare_distance_ppsC3(
         }
       }
     }
-    return compare(d1*e2, d2);
+    return CGAL::compare(d1*e2, d2);
 }
 
 
@@ -276,7 +267,7 @@ squared_distance_parallel(
   typedef typename K::Vector_3 Vector_3;
     const Vector_3 &dir1 = seg1.direction().vector();
     const Vector_3 &dir2 = seg2.direction().vector();
- 
+
     if (same_direction(dir1, dir2, k)) {
         if (!is_acute_angle(seg1.source(), seg1.target(), seg2.source(), k))
             return squared_distance(seg1.target(), seg2.source(), k);
@@ -295,11 +286,11 @@ squared_distance_parallel(
 
 template <class K>
 inline
-typename K::RT 
+typename K::RT
 _distance_measure_sub(typename K::RT startwdist, typename K::RT endwdist,
-			 const typename K::Vector_3 &start, 
-			 const typename K::Vector_3 &end,
-			 const K&)
+                         const typename K::Vector_3 &start,
+                         const typename K::Vector_3 &end,
+                         const K&)
 {
     return  CGAL_NTS abs(wmult((K*)0, startwdist, end.hw())) -
             CGAL_NTS abs(wmult((K*)0, endwdist, start.hw()));
@@ -327,14 +318,14 @@ squared_distance(
         return squared_distance(start1, seg2, k);
     if (start2 == end2)
         return squared_distance(start2, seg1, k);
-    
+
     Vector_3 dir1, dir2, normal;
     dir1 = seg1.direction().vector();
     dir2 = seg2.direction().vector();
     normal = wcross(dir1, dir2, k);
     if (is_null(normal, k))
         return squared_distance_parallel(seg1, seg2, k);
-    
+
     bool crossing1, crossing2;
     RT sdm_s1to2, sdm_e1to2, sdm_s2to1, sdm_e2to1;
     Vector_3 perpend1, perpend2, s2mins1, e2mins1, e1mins2;
@@ -347,7 +338,7 @@ squared_distance(
     sdm_e1to2 = wdot(perpend2, e1mins2, k);
     sdm_s2to1 = wdot(perpend1, s2mins1, k);
     sdm_e2to1 = wdot(perpend1, e2mins1, k);
-    
+
     if (sdm_s1to2 < RT(0)) {
         crossing1 = (sdm_e1to2 >= RT(0));
     } else {
@@ -366,12 +357,12 @@ squared_distance(
             crossing2 = (sdm_s2to1 == RT(0));
         }
     }
-    
+
     if (crossing1) {
         if (crossing2) {
             return squared_distance_to_plane(normal, s2mins1, k);
         }
-    
+
         RT dm;
         dm = _distance_measure_sub(
                   sdm_s2to1, sdm_e2to1, s2mins1, e2mins1, k);
@@ -420,7 +411,7 @@ squared_distance(
             return (min1 < min2) ? min1 : min2;
         }
     }
-    
+
 }
 
 
@@ -581,8 +572,8 @@ squared_distance(
     Vector_3 segdir = seg.direction().vector();
     Vector_3 normal = wcross(segdir, linedir, k);
     if (is_null(normal, k))
-        return squared_distance_to_line(linedir, 
-					construct_vector(linepoint,start), k);
+        return squared_distance_to_line(linedir,
+                                        construct_vector(linepoint,start), k);
 
     bool crossing;
     RT sdm_ss2l, sdm_se2l;
@@ -777,7 +768,7 @@ squared_distance(
     const typename K::Line_3 &line1,
     const typename K::Line_3 &line2,
     const K& k)
-{   
+{
   typename K::Construct_vector_3 construct_vector;
     typedef typename K::Vector_3 Vector_3;
 
@@ -801,7 +792,7 @@ template <class K>
 inline
 typename K::FT
 squared_distance(const Point_3<K> &pt,
-		 const Line_3<K> &line)
+                 const Line_3<K> &line)
 {
   return internal::squared_distance(pt, line, K());
 }
@@ -881,7 +872,7 @@ template <class K>
 inline
 typename K::FT
 squared_distance(const Segment_3<K> &seg1,
-		 const Segment_3<K> &seg2)
+                 const Segment_3<K> &seg2)
 {
   return internal::squared_distance(seg1, seg2, K());
 }
@@ -957,8 +948,8 @@ ray_ray_squared_distance_parallel(
     const Vector_3<K> &ray2dir,
     const Vector_3<K> &s1_min_s2)
 {
-  return internal::ray_ray_squared_distance_parallel(ray1dir, ray2dir, 
-						  s1_min_s2, K());
+  return internal::ray_ray_squared_distance_parallel(ray1dir, ray2dir,
+                                                  s1_min_s2, K());
 }
 
 template <class K>
@@ -1005,7 +996,7 @@ typename K::FT
 squared_distance(
     const Line_3<K> &line1,
     const Line_3<K> &line2)
-{  
+{
     return internal::squared_distance(line1, line2, K());
 }
 

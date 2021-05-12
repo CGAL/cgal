@@ -145,6 +145,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       message("Search dirs:")
       message("${search_dirs}")
     endif()
+    message( STATUS "USING COMPILER_VERSION = '${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}'" )
   endfunction()
 
   macro( get_dependency_version LIB )
@@ -289,10 +290,9 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
       # To deal with imported targets of Qt5 and Boost, when CGAL
       # targets are themselves imported by another project.
-      if(NOT CGAL_BUILDING_LIBS)
-        if (${component} STREQUAL "Qt5")
-          find_package(Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools QUIET)
-        endif()
+
+      if (${component} STREQUAL "Qt5")
+        find_package(Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools QUIET)
       endif()
 
     else(WITH_CGAL_${component})
@@ -307,9 +307,8 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
         set( vlib "${CGAL_EXT_LIB_${component}_PREFIX}" )
 
-        if ( NOT CGAL_IGNORE_PRECONFIGURED_${component} AND ${vlib}_FOUND)
+        if (${vlib}_FOUND)
 
-          ####message( STATUS "External library ${component} has been preconfigured")
           use_lib( ${component} ${${vlib}_USE_FILE})
 
         else()
@@ -323,7 +322,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
         endif()
       else()
 
-        if (NOT WITH_CGAL_${component}) 
+        if (NOT WITH_CGAL_${component})
           message(STATUS "NOTICE: The CGAL_${component} library seems to be required but is not build. Thus, it is expected that some executables will not be compiled.")
         endif()
 
@@ -332,45 +331,6 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     endif(WITH_CGAL_${component})
 
   endmacro()
-
-  macro( use_essential_libs )
-
-    # Comment: This is subject to be changed in the future
-    #          - either more specific (giving precise include_dir- and link-order)
-    #          - or even less specific if order becomes less relevant
-    # Eric Berberich 2012/06/29
-
-    if(NOT CGAL_DISABLE_GMP)
-      if(RS_FOUND)
-        use_component( RS )
-      endif()
-
-      if(MPFI_FOUND)
-        use_component( MPFI )
-      endif()
-
-      if(MPFR_FOUND)
-        use_component( MPFR )
-      endif()
-
-      if (GMPXX_FOUND)
-        use_component( GMPXX )
-      endif()
-
-      if(GMP_FOUND)
-        use_component( GMP )
-      endif()
-    endif(NOT CGAL_DISABLE_GMP)
-
-    if(LEDA_FOUND)
-      use_component( LEDA )
-    endif()
-
-    if(NTL_FOUND)
-      use_component( NTL )
-    endif()
-  endmacro()
-
 
   function( cgal_setup_module_path )
     # Avoid to modify the modules path twice
@@ -397,7 +357,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     # CGALConfig.cmake is platform specific so it is generated and stored in the binary folder.
     configure_file("${CGAL_MODULES_DIR}/CGALConfig_binary.cmake.in"  "${CMAKE_BINARY_DIR}/CGALConfig.cmake"        @ONLY)
     write_basic_package_version_file("${CMAKE_BINARY_DIR}/CGALConfigVersion.cmake"
-      VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUILD_VERSION}"
+      VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUGFIX_VERSION}"
       COMPATIBILITY SameMajorVersion)
 
     # There is also a version of CGALConfig.cmake that is prepared in case CGAL in installed in CMAKE_INSTALL_PREFIX.
@@ -406,35 +366,6 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     #write prefix exceptions
     file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "${SPECIAL_PREFIXES}\n")
     file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "${SPECIAL_PREFIXES}")
-
-     foreach( lib ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES} )
-
-       list( FIND CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES "${lib}" POSITION )
-       # if lib is essential or preconfiguration for an activated library ...
-       if ( ("${POSITION}" STRGREATER "-1") OR ( CGAL_ENABLE_PRECONFIG AND WITH_${lib} ))
-
-         set (vlib ${CGAL_EXT_LIB_${lib}_PREFIX} )
-         #the next 'if' is needed to avoid ${vlib} config variables to be overidden in case of a local configuration change
-         file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "if (NOT CGAL_IGNORE_PRECONFIGURED_${lib})\n")
-         file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "  set( ${vlib}_FOUND           \"${${vlib}_FOUND}\" )\n")
-         file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "  set( ${vlib}_USE_FILE        \"${${vlib}_USE_FILE}\" )\n")
-         file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "  set( ${vlib}_INCLUDE_DIR     \"${${vlib}_INCLUDE_DIR}\" )\n")
-         file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "  set( ${vlib}_LIBRARIES       \"${${vlib}_LIBRARIES}\" )\n")
-         file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "  set( ${vlib}_DEFINITIONS     \"${${vlib}_DEFINITIONS}\" )\n")
-         file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "endif()\n\n")
-
-
-         #the next 'if' is needed to avoid ${vlib} config variables to be overidden in case of a local configuration change
-         file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "if (NOT CGAL_IGNORE_PRECONFIGURED_${lib})\n")
-         file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "  set( ${vlib}_FOUND           \"${${vlib}_FOUND}\")\n")
-         file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "  set( ${vlib}_USE_FILE        \"${${vlib}_USE_FILE}\" )\n")
-         file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "  set( ${vlib}_INCLUDE_DIR     \"${${vlib}_INCLUDE_DIR}\" )\n")
-         file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "  set( ${vlib}_LIBRARIES       \"${${vlib}_LIBRARIES}\" )\n")
-         file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "  set( ${vlib}_DEFINITIONS     \"${${vlib}_DEFINITIONS}\" )\n")
-         file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "endif()\n\n")
-       endif()
-
-     endforeach()
 
   endmacro()
 
@@ -702,4 +633,3 @@ function(process_CGAL_subdirectory entry subdir type_name)
     message(STATUS "${subdir}/${ENTRY_DIR_NAME} is in dont_submit")
   endif()
 endfunction()
-

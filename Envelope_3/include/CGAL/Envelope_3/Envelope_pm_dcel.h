@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
 //                 Baruch Zukerman        <baruchzu@post.tau.ac.il>
@@ -68,11 +59,11 @@ public:
   {
     return (m_decision != DAC_DECISION_NOT_SET);
   }
-  
+
   Dac_decision get_decision() const
   {
     return m_decision;
-  }                                                   
+  }
 
   void set_decision(Comparison_result comp)
   {
@@ -125,7 +116,7 @@ public:
   {
     return (m_is_set && number_of_data_objects() == 0);
   }
-  
+
   /*!
    * Get the first data object associated with the face.
    * \pre number_of_data_objects() is not 0.
@@ -292,7 +283,7 @@ public:
   bool get_aux_is_set(unsigned int id) const
   {
     CGAL_precondition(id < 2);
-	return (!m_aux_source[id].is_empty());
+        return (!m_aux_source[id].is_empty());
   }
 };
 
@@ -399,7 +390,7 @@ public:
     this->Base_info::operator=(ex_v);
     flags = ex_v.flags;
   }
-  
+
 protected:
   void set_bit(unsigned int ind, bool b)
   {
@@ -455,10 +446,10 @@ protected:
     // and is not part of the arrangement
     IS_FAKE = 15
   };
-  
+
 public:
   Envelope_pm_halfedge() : Dcel_info<Data>(), flags(0)
-  {} 
+  {}
 
  /* void set_is_fake(bool b)
   {
@@ -617,7 +608,7 @@ public:
 
   /*! Constructor */
   Envelope_pm_face() : Dcel_info<Data>()
-  {}  
+  {}
 
   /*! Assign from another face.
    * \param f the other face.

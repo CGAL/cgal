@@ -1,21 +1,20 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/IO/read_xyz_points.h>
-#include <CGAL/IO/Writer_OFF.h>
+#include <CGAL/IO/read_points.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
 #include <CGAL/Polygonal_surface_reconstruction.h>
 
-#ifdef CGAL_USE_SCIP
+#ifdef CGAL_USE_SCIP  // defined (or not) by CMake scripts, do not define by hand
 
 #include <CGAL/SCIP_mixed_integer_program_traits.h>
 typedef CGAL::SCIP_mixed_integer_program_traits<double> MIP_Solver;
 
-#elif defined(CGAL_USE_GLPK)
+#elif defined(CGAL_USE_GLPK)  // defined (or not) by CMake scripts, do not define by hand
 
 #include <CGAL/GLPK_mixed_integer_program_traits.h>
-typedef CGAL::GLPK_mixed_integer_program_traits<double>	MIP_Solver;
+typedef CGAL::GLPK_mixed_integer_program_traits<double>        MIP_Solver;
 
 #endif
 
@@ -24,19 +23,19 @@ typedef CGAL::GLPK_mixed_integer_program_traits<double>	MIP_Solver;
 #include <fstream>
 #include <CGAL/Timer.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel	Kernel;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel        Kernel;
 
 typedef Kernel::FT       FT;
-typedef Kernel::Point_3	 Point;
+typedef Kernel::Point_3         Point;
 typedef Kernel::Vector_3 Vector;
 
 // Point with normal, and plane index.
 typedef boost::tuple<Point, Vector, int> PNI;
 typedef std::vector<PNI> Point_vector;
 
-typedef CGAL::Nth_of_tuple_property_map<0, PNI>	Point_map;
-typedef CGAL::Nth_of_tuple_property_map<1, PNI>	Normal_map;
-typedef CGAL::Nth_of_tuple_property_map<2, PNI>	Plane_index_map;
+typedef CGAL::Nth_of_tuple_property_map<0, PNI>        Point_map;
+typedef CGAL::Nth_of_tuple_property_map<1, PNI>        Normal_map;
+typedef CGAL::Nth_of_tuple_property_map<2, PNI>        Plane_index_map;
 
 typedef CGAL::Shape_detection::Point_set::
 Sphere_neighbor_query<Kernel, Point_vector, Point_map> Neighbor_query;
@@ -45,8 +44,8 @@ Least_squares_plane_fit_region<Kernel, Point_vector, Point_map, Normal_map> Regi
 typedef CGAL::Shape_detection::
 Region_growing<Point_vector, Neighbor_query, Region_type> Region_growing;
 
-typedef CGAL::Surface_mesh<Point>	Surface_mesh;
-typedef	CGAL::Polygonal_surface_reconstruction<Kernel> Polygonal_surface_reconstruction;
+typedef CGAL::Surface_mesh<Point>        Surface_mesh;
+typedef        CGAL::Polygonal_surface_reconstruction<Kernel> Polygonal_surface_reconstruction;
 
 class Index_map {
 
@@ -97,14 +96,13 @@ int main()
     std::cerr << "Failed open file \'" << input_file << "\'" << std::endl;
     return EXIT_FAILURE;
   }
+  input_stream.close();
   std::cout << "Loading point cloud: " << input_file << "...";
 
   CGAL::Timer t;
   t.start();
-    if (!input_stream ||
-    !CGAL::read_xyz_points(input_stream,
-      std::back_inserter(points),
-      CGAL::parameters::point_map(Point_map()).normal_map(Normal_map()))) {
+  if (!CGAL::read_points(input_file.c_str(), std::back_inserter(points),
+                         CGAL::parameters::point_map(Point_map()).normal_map(Normal_map()))) {
 
     std::cerr << "Error: cannot read file " << input_file << std::endl;
     return EXIT_FAILURE;
@@ -177,8 +175,7 @@ int main()
   std::cout << "Saving...";
   t.reset();
   const std::string& output_file("data/cube_result.off");
-  std::ofstream output_stream(output_file.c_str());
-  if (output_stream && CGAL::write_off(output_stream, model))
+  if (CGAL::write_OFF(output_file, model))
     std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
   else {
     std::cerr << " Failed saving file." << std::endl;

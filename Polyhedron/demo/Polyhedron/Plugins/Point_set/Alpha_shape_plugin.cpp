@@ -305,7 +305,7 @@ Scene_alpha_shape_item::Scene_alpha_shape_item(Scene_points_with_normal_item *po
     vertices.push_back(it->point().y()+offset.y);
     vertices.push_back(it->point().z()+offset.z);
   }
-  BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+  for(auto v : CGAL::QGLViewer::QGLViewerPool())
   {
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
     if(!isInit(viewer))
@@ -341,7 +341,7 @@ void Scene_alpha_shape_item::draw(CGAL::Three::Viewer_interface* viewer) const
 }
 
 void Scene_alpha_shape_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
-{ 
+{
   if ( getBuffersFilled() &&
        ! getBuffersInit(viewer))
   {
@@ -409,7 +409,7 @@ void Scene_alpha_shape_item::initializeBuffers(CGAL::Three::Viewer_interface *vi
   Pc* pc = getPointContainer(0);
   pc->initializeBuffers(viewer);
   pc->setFlatDataSize(vertices.size());
- 
+
   Tc* tc = getTriangleContainer(0);
   tc->initializeBuffers(viewer);
   tc->setIdxSize(indices.size());

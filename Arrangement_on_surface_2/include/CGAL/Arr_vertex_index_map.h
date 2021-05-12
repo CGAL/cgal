@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Efi Fogel         <efif@post.tau.ac.il>
@@ -210,11 +201,11 @@ public:
   {
     // Update the number of vertices.
     n_vertices--;
-    
+
     // Reduce memory consumption in case the number of vertices has
     // drastically decreased.
-    if (2*n_vertices+1 < rev_map.size() && 
-	rev_map.size() / 2 >= MIN_REV_MAP_SIZE)
+    if (2*n_vertices+1 < rev_map.size() &&
+        rev_map.size() / 2 >= MIN_REV_MAP_SIZE)
     {
       rev_map.resize (rev_map.size() / 2);
     }
@@ -225,7 +216,7 @@ public:
 
     if (index == n_vertices)
       return;
-    
+
     Vertex_handle  last_v = rev_map[n_vertices];
     index_map[last_v] = index;
     rev_map[index] = last_v;
@@ -236,13 +227,13 @@ public:
   //@}
 
 private:
-  
+
   /*! Initialize the map for the given arrangement. */
   void _init ()
   {
     // Get the number of vertices and allocate the reverse map accordingly.
     n_vertices = static_cast<unsigned int>(this->arrangement()->number_of_vertices());
-    
+
     if (n_vertices < MIN_REV_MAP_SIZE)
       rev_map.resize (MIN_REV_MAP_SIZE);
     else
@@ -251,20 +242,20 @@ private:
     // Clear the current mapping.
     index_map.clear();
 
-    // Create the initial mapping. 
+    // Create the initial mapping.
     typename Arrangement_2::Vertex_iterator   vit;
     Vertex_handle                             vh;
     unsigned int                              index = 0;
 
     for (vit = this->arrangement()->vertices_begin();
-	 vit != this->arrangement()->vertices_end(); ++vit, ++index)
+         vit != this->arrangement()->vertices_end(); ++vit, ++index)
     {
       // Map the current vertex to the current index.
       vh = vit;
       index_map[vh] = index;
       rev_map[index] = vh;
     }
-  }  
+  }
 
 };
 
@@ -277,8 +268,8 @@ private:
  */
 template<class Arrangement>
 unsigned int get (const CGAL::Arr_vertex_index_map<Arrangement>& index_map,
-		  typename Arrangement::Vertex_handle v) 
-{ 
+                  typename Arrangement::Vertex_handle v)
+{
   return index_map[v];
 }
 

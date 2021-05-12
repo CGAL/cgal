@@ -1,6 +1,6 @@
 #include <QApplication>
 #include <QMainWindow>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QAction>
 #include <QObject>
 #include <QDockWidget>
@@ -81,6 +81,8 @@ public:
     dock_widget = new QDockWidget("Mesh approximation parameters", mw);
     dock_widget->setVisible(false);
     ui_widget.setupUi(dock_widget);
+    ui_widget.chord_error->setRange(0.0, 10.0);
+    ui_widget.error_drop->setRange(0.01, 1.0);
     mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
 
     // connect ui actions
@@ -303,7 +305,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
   approx.set_metric(static_cast<VSA_wrapper::Metric>(
     ui_widget.comboMetric->currentIndex()));
 
-  QTime time;
+  QElapsedTimer time;
   time.start();
   approx.initialize_seeds(CGAL::parameters::seeding_method(
     static_cast<VSA::Seeding_method>(ui_widget.comboMethod->currentIndex()))

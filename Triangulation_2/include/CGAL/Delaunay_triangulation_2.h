@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Mariette Yvinec
 //               : Olivier Devillers  (remove)
@@ -98,6 +89,11 @@ public:
          const Delaunay_triangulation_2<Gt,Tds> &tr)
        : Triangulation_2<Gt,Tds>(tr)
   {   CGAL_triangulation_postcondition(is_valid());  }
+
+  Delaunay_triangulation_2(Delaunay_triangulation_2&&) = default;
+  Delaunay_triangulation_2& operator=(const Delaunay_triangulation_2&) = default;
+  Delaunay_triangulation_2& operator=(Delaunay_triangulation_2&&) = default;
+  ~Delaunay_triangulation_2() = default;
 
  template <class InputIterator>
  Delaunay_triangulation_2(InputIterator first, InputIterator last,
@@ -331,10 +327,10 @@ public:
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
 private:
- 
+
   using Triangulation::top_get_first;
   using Triangulation::top_get_second;
-  
+
   template <class Tuple_or_pair,class InputIterator>
   std::ptrdiff_t insert_with_info(InputIterator first,InputIterator last)
   {

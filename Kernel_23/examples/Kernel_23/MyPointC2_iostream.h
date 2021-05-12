@@ -31,7 +31,7 @@ operator>>(std::istream &is, MyPointC2 &p)
     case CGAL::IO::BINARY :
         CGAL::read(is, x);
         CGAL::read(is, y);
-	CGAL::read(is, c);
+        CGAL::read(is, c);
         break;
     default:
         std::cerr << "" << std::endl;

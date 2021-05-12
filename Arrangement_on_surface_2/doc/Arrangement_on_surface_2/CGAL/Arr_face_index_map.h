@@ -18,7 +18,7 @@ As new faces might be inserted into the attached arrangement, and
 existing faces might be removed, the notification mechanism is used
 to dynamically maintain the mapping of face handles to indices.
 
-  
+
 \cgalModels DefaultConstructible
 \cgalModels CopyConstructible
 \cgalModels Assignable
@@ -32,12 +32,12 @@ template< typename Arrangement >
 class Arr_face_index_map: public Arr_observer<Arrangement> {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
 the type of the attached arrangement.
-*/ 
+*/
 typedef Arrangement Arrangement_2;
 
 typedef boost::readable_property_map_tag category;
@@ -58,9 +58,9 @@ The type of mapping of faces to indices.
 */
 typedef Unique_hash_map<Face_handle, value_type> Index_map;
 
-/// @} 
+/// @}
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
@@ -70,10 +70,10 @@ Arr_face_index_map();
 
 /*!
 constructs a map and attaches it to the given arrangement `arr`.
-*/    
+*/
 Arr_face_index_map(Arrangement_2& arr);
 
-/// @} 
+/// @}
 
 }; /* end Arr_accessor */
 } /* end namespace CGAL */

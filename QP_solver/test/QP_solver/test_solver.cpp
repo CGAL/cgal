@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
 
@@ -32,7 +23,7 @@
 #ifndef CGAL_USE_GMP
 #include <CGAL/MP_Float.h>   // with normalization switched on
 #else
-#include <CGAL/Gmpz.h>  
+#include <CGAL/Gmpz.h>
 #include <CGAL/Gmpzf.h>
 #endif
 #include <CGAL/Exact_rational.h>
@@ -44,7 +35,7 @@
 #include <CGAL/QP_solver/QP_full_filtered_pricing.h>
 #include <CGAL/QP_solver/QP_partial_filtered_pricing.h>
 #include <CGAL/QP_functions.h>
-#include <CGAL/QP_models.h> 
+#include <CGAL/QP_models.h>
 
 // Note: The following #define's allow faster compilation for individual
 // test cases.  For instance, to only compile code for a solver
@@ -80,11 +71,11 @@ typedef std::map<std::string,int>::iterator Key_iterator;
 typedef std::pair<std::string,int> Arg;
 
 #ifdef CGAL_USE_GMP
-typedef CGAL::Gmpzf Float; 
+typedef CGAL::Gmpzf Float;
 typedef CGAL::Gmpz Integer;
 #else
-typedef CGAL::MP_Float Float;  
-typedef CGAL::MP_Float Integer; 
+typedef CGAL::MP_Float Float;
+typedef CGAL::MP_Float Integer;
 //typedef CGAL::Quotient<CGAL::MP_Float> Rational;  // too slow
 #endif
 typedef CGAL::Exact_rational Rational;
@@ -152,7 +143,7 @@ void usage()
        << "           use arbitrary-precision rationals internally\n"
        << "If any option is not specified, the program will test all\n"
        << "possible combinations (e.g., if '+l' is not specified, it will\n"
-       << "check whether the problem is linear and run both, the dedicated\n" 
+       << "check whether the problem is linear and run both, the dedicated\n"
        << "solver for the linear case and the non-dedicated solver on the\n"
        << " instance).\n"
        << "You can also negate the options 'l'or 'f' by\n"
@@ -188,7 +179,7 @@ namespace Token { // A simple token reader with put-back facility.
 // Returns true iff a new set of options could be parsed; if so, filename
 // receives the name of the MPS file to solve.
 bool parse_options(std::istream& in,std::map<std::string,int>& options,
-		   std::string &filename)
+                   std::string &filename)
 {
   options.clear();
   std::ws(in); // read white-space
@@ -242,13 +233,13 @@ bool parse_options(std::istream& in,std::map<std::string,int>& options,
     else {
       Input_type input = Int_type; // to kill warnings
       if (t == "int")
-	input = Int_type;
+        input = Int_type;
       else if (t == "double")
-	input = Double_type;
+        input = Double_type;
       else if (t == "rational")
-	input = Rational_type;
+        input = Rational_type;
       else
-	bailout1("unknown input number type '%'",t);
+        bailout1("unknown input number type '%'",t);
       good = options.insert(Arg("Input type",static_cast<int>(input))).second;
     }
 
@@ -283,11 +274,11 @@ bool parse_options(std::istream& in,std::map<std::string,int>& options,
 }
 
 template<typename Is_linear,
-	 typename Is_nonnegative,
-	 typename IT,
-	 typename ET>
+         typename Is_nonnegative,
+         typename IT,
+         typename ET>
 bool process(const std::string& filename,
-	     const std::map<std::string,int>& options)
+             const std::map<std::string,int>& options)
 {
   using std::cout;
   using std::endl;
@@ -323,13 +314,13 @@ bool process(const std::string& filename,
   //    file's input type  | input type IT to be used in parsing the file
   //    -----------------------------------------------------------------
   //    double             | int  (can't convert double to it)
-  //    int                | 
+  //    int                |
   //    rational           | int + double (can't convert rational to them)
   if ((type==Double_type && is_int(IT()) ) ||
       (type==Rational_type && (is_double(IT()) || is_int(IT()))))
     return true;
 
-  // also, Is_linear/Is_nonnegative tags are incompatible with 
+  // also, Is_linear/Is_nonnegative tags are incompatible with
   // nonlinear/nonnegative programs
   if ((check_tag(Is_linear()) && !qp.is_linear()) ||
       (check_tag(Is_nonnegative()) && !qp.is_nonnegative()))
@@ -338,47 +329,47 @@ bool process(const std::string& filename,
   // finally, filtered pricing strategies are only to be used if the input
   // type is double
   Key_const_iterator it = options.find("Strategy");
-  if (!is_double(IT()) && 
-      (it->second == CGAL::QP_FILTERED_DANTZIG || 
-       it->second == CGAL::QP_PARTIAL_FILTERED_DANTZIG)) 
+  if (!is_double(IT()) &&
+      (it->second == CGAL::QP_FILTERED_DANTZIG ||
+       it->second == CGAL::QP_PARTIAL_FILTERED_DANTZIG))
     return true;
 
   if (verbosity > 0)
     cout << "- Running a solver specialized for: "
-	 << (check_tag(Is_linear())? "linear " : "")
-	 << (check_tag(Is_nonnegative())? "standard-form " : "")
-	 << "file-IT=" << number_type << ' '
-	 << "IT=" << (is_double(IT())? "double" :
-		      (is_rational(IT())? "Gmpq" : "int")) << ' '
-	 << "ET=" << (is_Integer(ET())? "Gmpz" :
-		      (is_rational(ET())? "Gmpq" : "Double"))
-	 << endl;
+         << (check_tag(Is_linear())? "linear " : "")
+         << (check_tag(Is_nonnegative())? "standard-form " : "")
+         << "file-IT=" << number_type << ' '
+         << "IT=" << (is_double(IT())? "double" :
+                      (is_rational(IT())? "Gmpq" : "int")) << ' '
+         << "ET=" << (is_Integer(ET())? "Gmpz" :
+                      (is_rational(ET())? "Gmpq" : "Double"))
+         << endl;
 
   // check for format errors in MPS file:
   if (!qp.is_valid()) {
     cout << "Input is not a valid MPS file." << endl
-	 << "Error: " << qp.get_error() << endl;
+         << "Error: " << qp.get_error() << endl;
     return false;
   }
 
   // check name <-> index mapping
-  for (int j=0; j<qp.get_n(); ++j) 
+  for (int j=0; j<qp.get_n(); ++j)
     if (j != qp.variable_index_by_name (qp.variable_name_by_index (j))) {
       cout << "incorrect name <-> index mapping (variables)" << endl;
       return false;
     }
-  for (int i=0; i<qp.get_m(); ++i) 
+  for (int i=0; i<qp.get_m(); ++i)
     if (i != qp.constraint_index_by_name (qp.constraint_name_by_index (i))) {
       cout << "incorrect name <-> index mapping (constraints)" << endl;
       return false;
     }
-  
-  // print program (using QMATRIX format), read it back in and check 
+
+  // print program (using QMATRIX format), read it back in and check
   // whether it still agrees with the original program
   std::stringstream inout;
   // if we have doubles, adjust precision to accommodate high-precision doubles
   if (is_double(IT())) inout << std::setprecision (12);
-  CGAL::QP_functions_detail::print_program 
+  CGAL::QP_functions_detail::print_program
     (inout, qp, std::string("test_io_mps"),
      Is_linear(),Is_nonnegative());
 
@@ -388,32 +379,32 @@ bool process(const std::string& filename,
   if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp2)) {
     cout << "Warning: MPS reader (QP) and MPS writer disagree.\n" << endl;
   }
- 
+
   // now copy from the iterators, check for equality
-  CGAL::Quadratic_program<IT> 
-    qp4 (qp.get_n(), qp.get_m(), qp.get_a(), qp.get_b(), qp.get_r(), 
-	 qp.get_fl(), qp.get_l(), qp.get_fu(), qp.get_u(), 
-	 qp.get_d(), qp.get_c(), qp.get_c0());
+  CGAL::Quadratic_program<IT>
+    qp4 (qp.get_n(), qp.get_m(), qp.get_a(), qp.get_b(), qp.get_r(),
+         qp.get_fl(), qp.get_l(), qp.get_fu(), qp.get_u(),
+         qp.get_d(), qp.get_c(), qp.get_c0());
   if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp4)) {
     cout << "Program not correctly copied.\n" << endl;
     return false;
   }
   // test consistency of types
   if (qp.is_linear() != qp4.is_linear()) {
-    cout << "Program types inconsistent (linearity): " 
-	 << qp.is_linear() << " vs. " << qp4.is_linear() 
-	 << "\n"<< endl;
+    cout << "Program types inconsistent (linearity): "
+         << qp.is_linear() << " vs. " << qp4.is_linear()
+         << "\n"<< endl;
     return false;
   }
   if (qp.is_nonnegative() != qp4.is_nonnegative()) {
-    cout << "Program types inconsistent (nonnegativity): " 
-	 << qp.is_nonnegative() << " vs. " << qp4.is_nonnegative() 
-	 << "\n"<< endl;
+    cout << "Program types inconsistent (nonnegativity): "
+         << qp.is_nonnegative() << " vs. " << qp4.is_nonnegative()
+         << "\n"<< endl;
     return false;
   }
 
 
-  // now comes the actual, output-generating run 
+  // now comes the actual, output-generating run
   // make options
   CGAL::Quadratic_program_options solver_options;
   solver_options.set_verbosity(verbosity);
@@ -423,30 +414,30 @@ bool process(const std::string& filename,
   solver_options.set_auto_validation(true);
 
   CGAL::Quadratic_program_solution<ET> solution =
-    CGAL::QP_functions_detail::solve_program 
-    (qp, ET(0), Is_linear(), Is_nonnegative(), solver_options); 
+    CGAL::QP_functions_detail::solve_program
+    (qp, ET(0), Is_linear(), Is_nonnegative(), solver_options);
   // output solution + number of iterations
-  cout << CGAL::to_double(solution.objective_value()) << "(" 
+  cout << CGAL::to_double(solution.objective_value()) << "("
        << solution.number_of_iterations() << ") ";
-  bool is_valid = solution.is_valid(); 
+  bool is_valid = solution.is_valid();
 
   // the last step: solve poblem from copied QP, if full exact pricing
   // and general form
-  if (options.find("Strategy")->second == CGAL::QP_DANTZIG && 
+  if (options.find("Strategy")->second == CGAL::QP_DANTZIG &&
       !check_tag(Is_linear()) &&
       !check_tag(Is_nonnegative()))
-    { 
+    {
     // general form
-    typedef CGAL::Quadratic_program<IT> 
+    typedef CGAL::Quadratic_program<IT>
       LocalQP;
     CGAL::Quadratic_program_options local_options;
     local_options.set_verbosity(0);
     local_options.set_pricing_strategy(CGAL::QP_DANTZIG);
     local_options.set_auto_validation(true);
-    LocalQP qplocal (qp.get_n(), qp.get_m(), qp.get_a(), qp.get_b(), 
-		     qp.get_r(), 
-		     qp.get_fl(), qp.get_l(), qp.get_fu(), qp.get_u(), 
-		     qp.get_d(), qp.get_c(), qp.get_c0()); 
+    LocalQP qplocal (qp.get_n(), qp.get_m(), qp.get_a(), qp.get_b(),
+                     qp.get_r(),
+                     qp.get_fl(), qp.get_l(), qp.get_fu(), qp.get_u(),
+                     qp.get_d(), qp.get_c(), qp.get_c0());
     CGAL::solve_quadratic_program (qplocal, ET(), local_options);
     std::cout << "(c) ";
   }
@@ -457,9 +448,9 @@ bool process(const std::string& filename,
 }
 
 template<typename Is_linear,
-	 typename Is_nonnegative>
+         typename Is_nonnegative>
 bool processType(const std::string& filename,
-		 const std::map<std::string,int>& options)
+                 const std::map<std::string,int>& options)
 {
   // look up value:
   Key_const_iterator it = options.find("Input type");
@@ -474,19 +465,19 @@ bool processType(const std::string& filename,
 #ifdef QP_INT
   if (!processOnlyOneValue || value==Int_type)
     if (!process<Is_linear,Is_nonnegative,
-	int,Integer>(filename,options))
+        int,Integer>(filename,options))
       success = false;
 #endif
 #ifdef QP_DOUBLE
   if (!processOnlyOneValue || value==Double_type)
     if (!process<Is_linear,Is_nonnegative,
-	double,Float>(filename,options))
+        double,Float>(filename,options))
       success = false;
 #endif
 #ifdef QP_RATIONAL
   if (!processOnlyOneValue || value==Rational_type)
     if (!process<Is_linear,Is_nonnegative,
-	Rational,Rational>(filename,options))
+        Rational,Rational>(filename,options))
       success = false;
 #endif
 
@@ -495,7 +486,7 @@ bool processType(const std::string& filename,
 
 template<typename Is_linear>
 bool processFType(const std::string& filename,
-		  const std::map<std::string,int>& options)
+                  const std::map<std::string,int>& options)
 {
   Key_const_iterator it = options.find("Is in standard form");
   const bool processOnlyOneValue = it != options.end();
@@ -513,11 +504,11 @@ bool processFType(const std::string& filename,
     if (!processType<Is_linear,Tag_false>(filename,options))
       success = false;
 #endif
-  return success;  
+  return success;
 }
 
 bool processLFType(const std::string& filename,
-		   const std::map<std::string,int>& options)
+                   const std::map<std::string,int>& options)
 {
   std::cout << " Solution:   ";
   Key_const_iterator it = options.find("Is linear");
@@ -536,7 +527,7 @@ bool processLFType(const std::string& filename,
     if (!processFType<Tag_false>(filename,options))
       success = false;
 #endif
-  return success;  
+  return success;
 }
 
 int main(const int ac,const char **av) {
@@ -557,7 +548,7 @@ int main(const int ac,const char **av) {
     for (int i=1; i<ac; ++i) // convert av to a stream
       args << ' ' << av[i];
     cout << "Reading arguments from command line..." << endl;
-  } else 
+  } else
     cout << "Reading from standard in..." << endl;
   std::istream in(readFromStdIn? std::cin.rdbuf() : args.rdbuf());
 

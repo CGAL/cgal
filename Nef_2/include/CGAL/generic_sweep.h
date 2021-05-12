@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 #ifndef CGAL_GENERIC_SWEEP_H
@@ -57,7 +48,7 @@ specification and thereby varies within the application domain of the
 framework.
 
 The traits class |T| has to provide a set of types which define
-the input/output interface of the sweep: the input type |INPUT|, 
+the input/output interface of the sweep: the input type |INPUT|,
 the output type |OUTPUT|, and a geometry kernel type |GEOMETRY|.
 
 The natural phases which determine a sweep are
@@ -88,7 +79,7 @@ data structures and maybe triggering some animation tasks.
 completing the output.
 \end{description}
 
-The above subtasks are members of the class |T| which a 
+The above subtasks are members of the class |T| which a
 model of our traits concept has to provide:
 \begin{Mverb}
   void T::initialize_structures();
@@ -110,16 +101,16 @@ T traits;
 public :
 
 typedef T TRAITS;
-/*{\Mtypemember the traits class}*/ 
+/*{\Mtypemember the traits class}*/
 
 typedef typename TRAITS::INPUT  INPUT;
-/*{\Mtypemember the input interface.}*/ 
+/*{\Mtypemember the input interface.}*/
 
 typedef typename TRAITS::OUTPUT OUTPUT;
-/*{\Mtypemember the output container.}*/ 
+/*{\Mtypemember the output container.}*/
 
 typedef typename TRAITS::GEOMETRY GEOMETRY;
-/*{\Mtypemember the geometry kernel.}*/ 
+/*{\Mtypemember the geometry kernel.}*/
 
 /*{\Mevents 6.5}*/
 
@@ -147,8 +138,8 @@ object which maintains the sweep status.}*/
 
 /*{\Mcreation PS}*/
 
-generic_sweep(const INPUT& input, OUTPUT& output, 
-  const GEOMETRY& geometry = GEOMETRY()) : 
+generic_sweep(const INPUT& input, OUTPUT& output,
+  const GEOMETRY& geometry = GEOMETRY()) :
   traits(input,output,geometry) {}
 
 /*{\Mcreate creates a plane sweep object for a sweep on objects determined by
@@ -159,7 +150,7 @@ methods used by |\Mname|. At this point, it suffices to say that
 result data type. The |geometry| is an object providing object bound,
 geometry traits access.}*/
 
-generic_sweep(OUTPUT& output, const GEOMETRY& geometry = GEOMETRY()) : 
+generic_sweep(OUTPUT& output, const GEOMETRY& geometry = GEOMETRY()) :
   traits(output,geometry) {}
 /*{\Mcreate a simpler call of the above where |output| carries also
 the input.}*/
@@ -194,7 +185,7 @@ program:
   typedef std::pair<iterator,iterator> iterator_pair;
   std::list<POINT>  P; // fill input
   GRAPH<POINT,LINE> G; // the output
-  generic_sweep<triang_sweep_traits> 
+  generic_sweep<triang_sweep_traits>
     triangulation(iterator_pair(P.begin(),P.end()),G);
   triangulation.sweep();
 \end{Mverb}}*/

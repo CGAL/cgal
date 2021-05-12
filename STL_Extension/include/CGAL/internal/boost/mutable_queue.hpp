@@ -13,7 +13,7 @@
 // SPDX-License-Identifier: BSL-1.0
 //
 // NOTE: this file have been taken from boost 1.46.1 for using
-//       with Modificable_priority_queue (to enhance the 
+//       with Modificable_priority_queue (to enhance the
 //       non-documented mutable_queue).
 //       original file is <boost/pending/mutable_queue.hpp>
 //
@@ -76,7 +76,7 @@ namespace boost_ {
       : index_array(n,n), comp(x), id(_id) {
       c.reserve(n);
     }
-    
+
     template <class ForwardIterator>
     mutable_queue(ForwardIterator first, ForwardIterator last,
                   const Comp& x, const ID& _id)
@@ -102,7 +102,7 @@ namespace boost_ {
       size_type id_b = get(id, tmp);
       //SL was: size_type i = index_array[ id_b ];
       index_array[ id_b ] = index_array[ id_f ];
-      //SL was: index_array[ id_f ] = i; 
+      //SL was: index_array[ id_f ] = i;
       index_array[ id_f ] = index_array.size(); /*SL added*/
       c.pop_back();
       Node node(c.begin(), c.end(), c.begin(), id);

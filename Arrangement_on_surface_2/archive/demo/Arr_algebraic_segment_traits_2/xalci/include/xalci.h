@@ -4,15 +4,6 @@
 // All rights reserved.
 //
 // This file is part of EXACUS (http://www.mpi-inf.mpg.de/projects/EXACUS/).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // ----------------------------------------------------------------------------
 //
@@ -21,7 +12,7 @@
 // SoX_release   : $Name:  $
 // Revision      : $Revision: 1.37 $
 // Revision_date : $Date: 2009-06-30 13:14:59 $
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
 //
@@ -51,7 +42,7 @@
 #include <qlabel.h>
 #include <qtextedit.h>
 #include <qcheckbox.h>
-#include <qcombobox.h> 
+#include <qcombobox.h>
 #include <qpixmap.h>
 #include <qpainter.h>
 #include <qtabwidget.h>
@@ -212,7 +203,7 @@ protected slots:
     void print_endpoint(const Arc_2& arc,
         CGAL::Arr_curve_end end, std::ostream& os);
     void print_point(const Point_2& pt, std::ostream& os);
-        
+
     void arr_activate_layers();
     void cad_activate_layers();
     void oc_activate_layers();
@@ -221,7 +212,7 @@ protected slots:
     void cad_deactivate_layers();
     void oc_deactivate_layers();
 
-    
+
 protected:
 
     Poly_int2 make_square_free(const Poly_int2& poly);
@@ -230,12 +221,12 @@ protected:
 
     template<typename OutputIterator>
     bool read_polys_from_file(QString filename,OutputIterator out);
-        
+
     void cad_to_segments();
     void arr_compute_arrangement();
 
     CGAL::Bbox_2 bbox;
-    
+
     std::vector< Poly_int2 > cad_curves, arr_curves;
 
     Curve_selection_dialog* curve_selection_dialog;
@@ -244,26 +235,26 @@ protected:
 
     QPushButton *cad_analyse_btn, *cad_rasterize_btn, *cad_file_search,
           *cad_partial_selection,
-          *arr_analyse_btn, *arr_rasterize_btn, *arr_file_search, 
+          *arr_analyse_btn, *arr_rasterize_btn, *arr_file_search,
           *arr_partial_selection,
           *oc_analyse_btn, *oc_rasterize_btn;
-          
+
     QHButtonGroup *arr_method;
     QRadioButton *arr_cgal, *arr_leda;
     QCheckBox *cad_complete_check,*oc_complete_check, *arr_complete_check;
-    QListBox *cad_seg_list, *cad_curve_list,*oc_seg_list, *cad_ps_curve_list, 
+    QListBox *cad_seg_list, *cad_curve_list,*oc_seg_list, *cad_ps_curve_list,
           *arr_edge_list, *arr_node_list;
-          
+
     QTabWidget *tab_widget;
     QFrame* one_curve_tab, *cad_tab, *arr_tab;
     QLabel *arr_node_label,*arr_edge_label;
     std::vector<bool> cad_curve_list_selection;
-    
+
     QLineEdit *cad_input, *arr_input;
     QTextEdit *oc_input;
     QComboBox *oc_method_box;
     Graphic_layer *axis;
-        
+
     QWidget *central_widget;
     CGAL::Qt_widget *widget;
     CGAL::Qt_widget_standard_toolbar *stoolbar;

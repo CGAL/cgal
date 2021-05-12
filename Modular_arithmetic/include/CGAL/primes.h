@@ -1,20 +1,11 @@
 // Copyright (c) 2006-2008 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Michael Hemmer    <hemmer@mpi-inf.mpg.de>
@@ -26,7 +17,7 @@
 
 #include <CGAL/basic.h>
 
-namespace CGAL { 
+namespace CGAL {
 namespace internal {
 
 const int primes[2000] = {
@@ -296,10 +287,10 @@ const int primes[2000] = {
   67016611, 67016483, 67016437, 67016387, 67016269, 67016197, 67016189, 67016179,
 };
 
-static inline 
+static inline
 int get_next_lower_prime(int current_prime){
     bool is_prime = false;
-    
+
     int i;
     CGAL_precondition_msg(current_prime != 2 ," primes definitely exhausted ");
 
@@ -310,7 +301,7 @@ int get_next_lower_prime(int current_prime){
             return 3;
         }
         return 5;
-    }                
+    }
     for(i=current_prime-2;(i>1 && !is_prime);i=i-2){
         int r = 1;
         for(int j=3; (j <= i/2 && (r != 0)); j++){

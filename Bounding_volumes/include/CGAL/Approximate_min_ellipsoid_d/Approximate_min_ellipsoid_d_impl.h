@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
 
@@ -41,7 +32,7 @@ namespace CGAL {
     // According to (****), the computed ellipsoid E* has the representation
     //
     //   E* = { y in R^d | y^T M'/alpha y + 2/alpha y^Tm + (nu/alpha-1) <= 0 }
-    // 
+    //
     // for
     //
     //       [ M'  m  ]
@@ -60,7 +51,7 @@ namespace CGAL {
     // as the formula for the ellipsoid's center.  Comparing
     // coefficients we also get
     //
-    //    mu = nu/alpha-1 - c^T M'/alpha c 
+    //    mu = nu/alpha-1 - c^T M'/alpha c
     //       = nu/alpha-1 + c^T m / alpha
     //       = (nu + c^Tm)/alpha - 1                               (********)
     //
@@ -79,7 +70,7 @@ namespace CGAL {
     for (int i=0; i<d; ++i) {
       FT ci(0);
       for (int j=0; j<d; ++j)
-	ci += mi[i+d*j] * E->matrix(d,j);
+        ci += mi[i+d*j] * E->matrix(d,j);
       center_[i] = -ci;
     }
 
@@ -94,7 +85,7 @@ namespace CGAL {
     // According to (****), the computed ellipsoid E* has the representation
     //
     //   E* = { y in R^d | y^T M'/alpha y + 2/alpha y^Tm + (nu/alpha-1) <= 0 }
-    // 
+    //
     // for
     //
     //       [ M'  m  ]
@@ -103,7 +94,7 @@ namespace CGAL {
     // where M is the matrix defined via E->matrix(i,j).  After caling
     // compute_center() (see above), we have in center_ a point c such
     // that
-    // 
+    //
     //   E* = { y | (y - c)^T M'/alpha (y - c) + mu <= 0 }.
     //
     // where mu = nu/alpha-1 - c^T M'/alpha c.
@@ -114,13 +105,13 @@ namespace CGAL {
     // U) can be obtained by plugging (0,...,0,l_i,0,...,0)U^T=y-c into
     // the above equation for E*:
     //
-    //   l_i^2 d[i]/alpha = -mu, 
+    //   l_i^2 d[i]/alpha = -mu,
     //
     // which gives l_i = sqrt(-mu*alpha/d[i]).
 
     // precondition checking:
     CGAL_APPEL_ASSERT(!has_axes && lengths_.size() == 0 &&
-		      directions_.size() == 0);
+                      directions_.size() == 0);
 
     // compute M'^{-1}, if need be:
     if (!has_center)
@@ -134,7 +125,7 @@ namespace CGAL {
       mu += center_[i] * E->matrix(d,i);
     mu = mu/alpha - 1.0;
     const double factor = -mu*alpha;
-    
+
     // compute Eigendecomposition:
     if (d == 2)
       compute_axes_2(alpha, factor);
@@ -153,24 +144,24 @@ namespace CGAL {
 
     // write matrix M' as [ a, b; b, c ]:
     const std::array<double, 3> matrix = {{ E->matrix(0, 0),    // a
-						    E->matrix(0, 1),    // b
-						    E->matrix(1, 1) }}; // c
+                                                    E->matrix(0, 1),    // b
+                                                    E->matrix(1, 1) }}; // c
     std::array<double, 4> eigenvectors; // Note: not neces. normalized.
     std::array<double, 2> eigenvalues;  // Note: sorted ascendent.
 
     CGAL::Default_diagonalize_traits<double, 2>::diagonalize_selfadjoint_covariance_matrix
       (matrix, eigenvalues, eigenvectors);
-    
+
     // normalize eigenvectors:
     double l1=1.0/std::sqrt(eigenvectors[2]*eigenvectors[2]+
-			    eigenvectors[3]*eigenvectors[3]);
+                            eigenvectors[3]*eigenvectors[3]);
     double l2=1.0/std::sqrt(eigenvectors[0]*eigenvectors[0]+
-			    eigenvectors[1]*eigenvectors[1]);
-    
+                            eigenvectors[1]*eigenvectors[1]);
+
     // store axes lengths:
     lengths_.push_back(std::sqrt(factor/eigenvalues[1]));
     lengths_.push_back(std::sqrt(factor/eigenvalues[0]));
-    
+
     // store directions:
     directions_.resize(2);
     directions_[0].push_back(eigenvectors[2]*l1);
@@ -178,7 +169,7 @@ namespace CGAL {
     directions_[1].push_back(eigenvectors[0]*l2);
     directions_[1].push_back(eigenvectors[1]*l2);
   }
-  
+
   template<class Traits>
   void Approximate_min_ellipsoid_d<Traits>::
   compute_axes_3(const double /* alpha */, const double factor)
@@ -197,28 +188,28 @@ namespace CGAL {
                                                     E->matrix(1, 1),   // d
                                                     E->matrix(1, 2),   // e
                                                     E->matrix(2, 2) }}; // f
-    
+
     std::array<double, 9> eigenvectors; // Note: not necessarily normalized.
     std::array<double, 3> eigenvalues;  // Note: sorted ascendent.
 
     CGAL::Default_diagonalize_traits<double, 3>::diagonalize_selfadjoint_covariance_matrix
       (matrix, eigenvalues, eigenvectors);
-    
+
     // normalize eigenvectors:
     double l1 = 1.0/std::sqrt(eigenvectors[0] * eigenvectors[0]+  // x^2
-			      eigenvectors[1] * eigenvectors[1]+  // y^2
-			      eigenvectors[2] * eigenvectors[2]); // z^2
+                              eigenvectors[1] * eigenvectors[1]+  // y^2
+                              eigenvectors[2] * eigenvectors[2]); // z^2
     double l2 = 1.0/std::sqrt(eigenvectors[3] * eigenvectors[3]+  // x^2
-			      eigenvectors[4] * eigenvectors[4]+  // y^2
-			      eigenvectors[5] * eigenvectors[5]); // z^2
+                              eigenvectors[4] * eigenvectors[4]+  // y^2
+                              eigenvectors[5] * eigenvectors[5]); // z^2
     double l3 = 1.0/std::sqrt(eigenvectors[6] * eigenvectors[6]+  // x^2
-			      eigenvectors[7] * eigenvectors[7]+  // y^2
-			      eigenvectors[8] * eigenvectors[8]); // z^2
-    
+                              eigenvectors[7] * eigenvectors[7]+  // y^2
+                              eigenvectors[8] * eigenvectors[8]); // z^2
+
     // store axes lengths:
     for (int i=0; i<3; ++i)
       lengths_.push_back(std::sqrt(factor/eigenvalues[i]));
-    
+
     // store directions:
     directions_.resize(3);
     directions_[0].push_back(eigenvectors[6]*l3);
@@ -273,11 +264,11 @@ namespace CGAL {
     const double alpha_inv = 1.0/((1+achieved_epsilon())*(d+1));
     epsf.set_stroke_mode(Impl::Eps_export_2::Dashed);
     epsf.write_ellipse(to_double(defining_matrix(0,0)*alpha_inv),
-		       to_double(defining_matrix(1,1)*alpha_inv),
-		       to_double(defining_matrix(0,1)*alpha_inv),
-		       to_double(defining_vector(0)*alpha_inv),
-		       to_double(defining_vector(1)*alpha_inv),
-		       to_double(defining_scalar()*alpha_inv-1.0));
+                       to_double(defining_matrix(1,1)*alpha_inv),
+                       to_double(defining_matrix(0,1)*alpha_inv),
+                       to_double(defining_vector(0)*alpha_inv),
+                       to_double(defining_vector(1)*alpha_inv),
+                       to_double(defining_scalar()*alpha_inv-1.0));
   }
 
 }

@@ -108,7 +108,7 @@ struct Tester2 {
                                  CGAL::Delaunay_mesh_criteria_2<CDT>());
     const size_type number_of_vertices0bis = cdt.number_of_vertices();
     std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices() << "\n\n";
-  
+
     assert( number_of_vertices0 == number_of_vertices0bis );
 
     cdt = cdt2;
@@ -139,7 +139,7 @@ struct Tester2 {
       mesher.refine_mesh();
     }
     const size_type number_of_vertices2 = cdt.number_of_vertices();
-    std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices() 
+    std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices()
               << "\n\n";
 
     assert(cdt.is_valid());

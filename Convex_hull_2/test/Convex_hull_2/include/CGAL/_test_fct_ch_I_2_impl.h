@@ -2,9 +2,9 @@
 //
 // Copyright (c) 1999 The CGAL Consortium
 //
-// 
-// 
-// 
+//
+//
+//
 //
 // ----------------------------------------------------------------------------
 // release       :
@@ -32,7 +32,7 @@ bool
 ch__batch_test( const Traits& chI )
 {
   typedef typename Traits::Point_2   Point_2;
- 
+
   std::cout << "Testing ch";
   std::vector< Point_2 >  Cocircular_points;
   Cocircular_points.push_back( Point_2( 39, 80, 89 ));
@@ -60,7 +60,7 @@ ch__batch_test( const Traits& chI )
   assert( is_ccw_strongly_convex_2( extreme_points.begin(), \
                                          extreme_points.begin(), \
                                          chI ));
-  assert( is_cw_strongly_convex_2( extreme_points.rend(), 
+  assert( is_cw_strongly_convex_2( extreme_points.rend(),
                                         extreme_points.rend(), \
                                         chI ));
   assert( is_ccw_strongly_convex_2( extreme_points.begin(), \
@@ -70,7 +70,7 @@ ch__batch_test( const Traits& chI )
   assert( is_ccw_strongly_convex_2( extreme_points.begin(), \
                                          extreme_points.end(), \
                                          chI ));
-  assert( is_cw_strongly_convex_2( extreme_points.rbegin(), 
+  assert( is_cw_strongly_convex_2( extreme_points.rbegin(),
                                         extreme_points.rend(), \
                                         chI ));
 

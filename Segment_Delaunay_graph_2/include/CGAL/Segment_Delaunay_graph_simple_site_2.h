@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -43,7 +34,7 @@ namespace CGAL {
    */
 
 template <class R_>
-class Segment_Delaunay_graph_simple_site_2 
+class Segment_Delaunay_graph_simple_site_2
 {
 public:
   typedef R_ R;
@@ -84,21 +75,21 @@ public:
   // these "constructors" are defined in order to conform with the
   // specs; they will produce a run-time error if used
   static Self construct_site_2(const Point_2& /*p1*/, const Point_2& /*p2*/,
-			       const Point_2& /*q1*/, const Point_2& /*q2*/) {
+                               const Point_2& /*q1*/, const Point_2& /*q2*/) {
     no_constructor_support();
     return Self();
   }
 
   static Self construct_site_2(const Point_2& , const Point_2& ,
-			       const Point_2& , const Point_2& ,
-			       bool ) {
+                               const Point_2& , const Point_2& ,
+                               bool ) {
     no_constructor_support();
     return Self();
   }
 
   static Self construct_site_2(const Point_2& , const Point_2& ,
-			       const Point_2& , const Point_2& ,
-			       const Point_2& , const Point_2& ) {
+                               const Point_2& , const Point_2& ,
+                               const Point_2& , const Point_2& ) {
     no_constructor_support();
     return Self();
   }
@@ -113,7 +104,7 @@ public:
   bool is_input() const { return true; }
   bool is_input(unsigned int) const { return true; }
 
-  const Point_2& point() const { 
+  const Point_2& point() const {
     CGAL_precondition ( is_point() );
     return p_[0];
   }
@@ -155,17 +146,17 @@ public:
 
 
   Segment_2 segment() const {
-    CGAL_precondition ( is_segment() ); 
+    CGAL_precondition ( is_segment() );
     return Segment_2( p_[0], p_[1] );
   }
 
   const Point_2& source() const {
-    CGAL_precondition ( is_segment() ); 
+    CGAL_precondition ( is_segment() );
     return p_[0];
   }
 
   const Point_2& target() const {
-    CGAL_precondition ( is_segment() ); 
+    CGAL_precondition ( is_segment() );
     return p_[1];
   }
 
@@ -224,8 +215,8 @@ protected:
 
 template <class R>
 std::ostream&
-operator<<(std::ostream& os, 
-	   const Segment_Delaunay_graph_simple_site_2<R>& s)
+operator<<(std::ostream& os,
+           const Segment_Delaunay_graph_simple_site_2<R>& s)
 {
   if (!s.is_defined())
     return os << "u";
@@ -237,7 +228,7 @@ operator<<(std::ostream& os,
 template <class R>
 std::istream &
 operator>>(std::istream &is,
-	   Segment_Delaunay_graph_simple_site_2<R>& t)
+           Segment_Delaunay_graph_simple_site_2<R>& t)
 {
   typedef Segment_Delaunay_graph_simple_site_2<R>   Site_2;
   typedef typename Site_2::Point_2                  Point_2;
@@ -266,7 +257,7 @@ operator<<(Stream& str, Segment_Delaunay_graph_simple_site_2<R>& t)
       str << "p " << t.point();
     } else {
       str << "s " << t.segment().source() << "  "
-	  << t.segment().target();
+          << t.segment().target();
     }
   }
 

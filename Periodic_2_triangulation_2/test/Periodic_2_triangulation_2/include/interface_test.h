@@ -510,10 +510,10 @@ void test_io(T &pt1, bool ex)
     std::stringstream ss1b;
     CGAL::set_binary_mode(ss1b);
     ss1b << pt1;
-    
+
     ss1b >> pt1r;
     assert(CGAL::is_binary(ss1b));
-    
+
     assert(pt1 == pt1r);
   }
 

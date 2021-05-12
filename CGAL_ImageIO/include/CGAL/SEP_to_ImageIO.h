@@ -1,20 +1,11 @@
 // Copyright (c) 2016, 2017 GeometryFactory
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Laurent Rineau
 
@@ -72,10 +63,10 @@ public:
     boost::filesystem::path headerFile(fileName);
     boost::filesystem::path dataFile(string_field("in"));
 #if BOOST_FILESYSTEM_VERSION == 2
-    dataFile = boost::filesystem::complete(dataFile, 
+    dataFile = boost::filesystem::complete(dataFile,
                                            boost::filesystem::complete(headerFile.parent_path()));
 #else
-    dataFile = boost::filesystem::absolute(dataFile, 
+    dataFile = boost::filesystem::absolute(dataFile,
                                            boost::filesystem::absolute(headerFile.parent_path()));
 #endif
     if(!load_data(dataFile.string())) {
@@ -97,7 +88,7 @@ public:
 
 protected :
 
-  bool load_data(std::string dataFilename) 
+  bool load_data(std::string dataFilename)
   {
     if(_im) delete _im;
     _im = new _image;
@@ -150,11 +141,11 @@ protected :
 
     // Compute number of element
     const std::size_t size = n(1) * n(2) * n(3);
-    
+
     // Allocate array
     _data = new T[size];
     _im->data = (void*)_data;
-    
+
     // // Read file
     if(_readImageData(_im) < 0) return false;
    // char* buffer = reinterpret_cast<char*>(_data);

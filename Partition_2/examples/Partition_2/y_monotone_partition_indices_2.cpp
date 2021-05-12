@@ -16,10 +16,10 @@ typedef Partition_traits_2::Point_2                         Point_2;
 typedef Partition_traits_2::Polygon_2                       Polygon_2;  // a polygon of indices
 typedef std::list<Polygon_2>                                Polygon_list;
 
-/*  
+/*
 
       v4     v2
-      | \   /| 
+      | \   /|
       |  \ / |
       |  v3  |
       |      |
@@ -53,12 +53,12 @@ int main( )
       }
      std::cout << std::endl;
    }
-   
+
    assert(CGAL::partition_is_valid_2(polygon.vertices_begin(),
                                      polygon.vertices_end(),
                                      partition_polys.begin(),
                                      partition_polys.end(),
                                      traits));
-   
+
    return 0;
 }

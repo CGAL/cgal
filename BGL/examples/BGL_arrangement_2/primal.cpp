@@ -46,15 +46,15 @@ double get(Edge_length_func edge_length, Arrangement_2::Halfedge_handle e)
 {
   return edge_length(e);
 }
- 
+
 int main()
 {
   Arrangement_2   arr;
- 
+
   // Construct an arrangement of seven intersecting line segments.
   // We keep a handle for the vertex v_0 that corresponds to the point (1,1).
   Arrangement_2::Halfedge_handle  e =
-    insert_non_intersecting_curve (arr, Segment_2 (Point_2 (1, 1), 
+    insert_non_intersecting_curve (arr, Segment_2 (Point_2 (1, 1),
                                                    Point_2 (7, 1)));
   Arrangement_2::Vertex_handle    v0 = e->source();
   insert (arr, Segment_2 (Point_2 (1, 1), Point_2 (3, 7)));
@@ -66,16 +66,16 @@ int main()
 
   // Create a mapping of the arrangement vertices to indices.
   CGAL::Arr_vertex_index_map<Arrangement_2>        index_map(arr);
-  
+
   // Perform Dijkstra's algorithm from the vertex v0.
   Edge_length_func                                      edge_length;
-  
+
   boost::vector_property_map<double, CGAL::Arr_vertex_index_map<Arrangement_2> > dist_map(static_cast<unsigned int>(arr.number_of_vertices()), index_map);
   boost::dijkstra_shortest_paths(arr, v0,
                                  boost::vertex_index_map(index_map).
                                  weight_map(edge_length).
                                  distance_map(dist_map));
-  
+
   // Print the results:
   Arrangement_2::Vertex_iterator      vit;
 

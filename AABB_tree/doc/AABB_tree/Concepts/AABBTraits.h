@@ -17,34 +17,34 @@ The concept `AABBTraits` provides the geometric primitive types and methods for 
 class AABBTraits {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
-Value type of the `Squared_distance` functor. 
-*/ 
-typedef unspecified_type FT; 
+Value type of the `Squared_distance` functor.
+*/
+typedef unspecified_type FT;
 
 /*!
-Type of a 3D point. 
-*/ 
-typedef unspecified_type Point_3; 
+Type of a 3D point.
+*/
+typedef unspecified_type Point_3;
 
 /*!
-Type of primitive. 
+Type of primitive.
 Must be a model of the concepts `AABBPrimitive` or `AABBPrimitiveWithSharedData`.
-*/ 
-typedef unspecified_type Primitive; 
+*/
+typedef unspecified_type Primitive;
 
 /*!
-Bounding box type. 
-*/ 
-typedef unspecified_type Bounding_box; 
+Bounding box type.
+*/
+typedef unspecified_type Bounding_box;
 
   /*!
   enum required for axis selection
-  */ 
-  enum Axis { 
+  */
+  enum Axis {
     CGAL_X_AXIS,
     CGAL_Y_AXIS,
     CGAL_Z_AXIS
@@ -52,13 +52,13 @@ typedef unspecified_type Bounding_box;
 
 /*!
 3D Point and Primitive Id type
-*/ 
-typedef std::pair<Point_3, Primitive::Id> Point_and_primitive_id; 
+*/
+typedef std::pair<Point_3, Primitive::Id> Point_and_primitive_id;
 
 /*!
-\deprecated 
+\deprecated
 This requirement is deprecated and is no longer needed.
-*/ 
+*/
 typedef std::pair<Object, Primitive::Id> Object_and_primitive_id;
 
 
@@ -75,7 +75,7 @@ using Intersection_and_primitive_id = unspecified_type;
 
 /// \name Splitting
 /// During the construction of the AABB tree, the primitives are
-/// splitted according to some comparison functions related to the longest axis:
+/// split according to some comparison functions related to the longest axis:
 /// @{
 
 /*!
@@ -84,22 +84,22 @@ A functor object to split a range of primitives into two sub-ranges along the lo
  and have `Primitive` as value type. The operator is used for determining the primitives assigned to the two children nodes of a given node,
  assuming that the goal is to split the chosen axis dimension of the bounding box of the node. The primitives assigned to this node are passed as argument
  to the operator. It should modify the iterator range in such a way that its first half and its second half correspond to the two children nodes.
-*/ 
-typedef unspecified_type Split_primitives; 
+*/
+typedef unspecified_type Split_primitives;
 
 /*!
-A functor object to compute the bounding box of a set of primitives. Provides the operator: 
-`Bounding_box operator()(Input_iterator begin, Input_iterator beyond);` %Iterator type `InputIterator` must have `Primitive` as value type. 
-*/ 
-typedef unspecified_type Compute_bbox; 
+A functor object to compute the bounding box of a set of primitives. Provides the operator:
+`Bounding_box operator()(Input_iterator begin, Input_iterator beyond);` %Iterator type `InputIterator` must have `Primitive` as value type.
+*/
+typedef unspecified_type Compute_bbox;
 
 
 // remove as not used any where in the code:
-// A functor object to specify the direction along which the bounding box should be split: 
+// A functor object to specify the direction along which the bounding box should be split:
 // `Axis operator()(const Bounding_box& bbox);` which returns the
 // direction used for splitting `bbox`. It is usually the axis aligned
 // with the longest edge of `bbox`.
-// typedef unspecified_type Splitting_direction; 
+// typedef unspecified_type Splitting_direction;
 
 /// @}
 
@@ -111,20 +111,20 @@ typedef unspecified_type Compute_bbox;
 /// @{
 
 /*!
-A functor object to compute intersection predicates between the query and the nodes of the tree. Provides the operators: 
+A functor object to compute intersection predicates between the query and the nodes of the tree. Provides the operators:
 - `bool operator()(const Query & q, const Bounding_box & box);` which returns `true` iff the query intersects the bounding box
 - `bool operator()(const Query & q, const Primitive & primitive);` which returns `true` iff the query intersects the primitive
-*/ 
-typedef unspecified_type Do_intersect; 
+*/
+typedef unspecified_type Do_intersect;
 
 /*!
-A functor object to compute the intersection of a query and a primitive. Provides the operator: 
-`boost::optional<Intersection_and_primitive_id<Query>::%Type > operator()(const Query & q, const Primitive& primitive);` which returns the intersection as a pair composed of an object and a primitive id, iff the query intersects the primitive. 
+A functor object to compute the intersection of a query and a primitive. Provides the operator:
+`boost::optional<Intersection_and_primitive_id<Query>::%Type > operator()(const Query & q, const Primitive& primitive);` which returns the intersection as a pair composed of an object and a primitive id, iff the query intersects the primitive.
 
 \cgalHeading{Note on Backward Compatibility}
 Before the release 4.3 of \cgal, the return type of this function used to be `boost::optional<Object_and_primitive_id>`.
-*/ 
-typedef unspecified_type Intersection; 
+*/
+typedef unspecified_type Intersection;
 
 /// @}
 
@@ -135,71 +135,71 @@ typedef unspecified_type Intersection;
 /// @{
 
 /*!
-A functor object to compute distance comparisons between the query and the nodes of the tree. Provides the operators: 
+A functor object to compute distance comparisons between the query and the nodes of the tree. Provides the operators:
 - `bool operator()(const Query & query, const Bounding_box& box, const Point & closest);` which returns `true` iff the bounding box is closer to `query` than `closest` is
 - `bool operator()(const Query & query, const Primitive & primitive, const Point & closest);` which returns `true` iff `primitive` is closer to the `query` than `closest` is
-*/ 
-typedef unspecified_type Compare_distance; 
+*/
+typedef unspecified_type Compare_distance;
 
 /*!
-A functor object to compute closest point from the query on a primitive. Provides the operator: 
-`Point_3 operator()(const Query& query, const Primitive& primitive, const Point_3 & closest);` which returns the closest point to `query`, among `closest` and all points of the primitive. 
-*/ 
-typedef unspecified_type Closest_point; 
+A functor object to compute closest point from the query on a primitive. Provides the operator:
+`Point_3 operator()(const Query& query, const Primitive& primitive, const Point_3 & closest);` which returns the closest point to `query`, among `closest` and all points of the primitive.
+*/
+typedef unspecified_type Closest_point;
 
 /*!
-A functor object to compute the squared distance between two points. Provides the operator: 
-`FT operator()(const Point& query, const Point_3 & p);` which returns the squared distance between `p` and `q`. 
-*/ 
-typedef unspecified_type Squared_distance; 
+A functor object to compute the squared distance between two points. Provides the operator:
+`FT operator()(const Point& query, const Point_3 & p);` which returns the squared distance between `p` and `q`.
+*/
+typedef unspecified_type Squared_distance;
 
 /*!
 A functor object to compare two points. Provides the operator:
 `bool operator()(const Point_3& p, const Point_3& q);}` which returns `true` if `p` is equal to `q`.
 */
 typedef unspecified_type Equal_3;
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
-Returns the primitive splitting functor. 
-*/ 
-Split_primitives split_primitives_object(); 
+returns the primitive splitting functor.
+*/
+Split_primitives split_primitives_object();
 
 /*!
-Returns the bounding box constructor. 
-*/ 
-Compute_bbox compute_bbox_object(); 
+returns the bounding box constructor.
+*/
+Compute_bbox compute_bbox_object();
 
 /*!
-Returns the intersection detection functor. 
-*/ 
-Do_intersect do_intersect_object(); 
+returns the intersection detection functor.
+*/
+Do_intersect do_intersect_object();
 
 /*!
-Returns the intersection constructor. 
-*/ 
-Intersection intersection_object(); 
+returns the intersection constructor.
+*/
+Intersection intersection_object();
 
 /*!
-Returns the distance comparison functor. 
-*/ 
-Compare_distance compare_distance_object(); 
+returns the distance comparison functor.
+*/
+Compare_distance compare_distance_object();
 
 /*!
-Returns the closest point constructor. 
-*/ 
-Closest_point closest_point_object(); 
+returns the closest point constructor.
+*/
+Closest_point closest_point_object();
 
 /*!
-Returns the squared distance functor.
-*/ 
-Squared_distance squared_distance_object(); 
+returns the squared distance functor.
+*/
+Squared_distance squared_distance_object();
 
 /*!
-Returns the equal functor.
+returns the equal functor.
 */
 Equal_3 equal_3_object();
 
@@ -220,7 +220,7 @@ void set_shared_data(T ... t);
 {}
 
 /*!
-Returns the shared data of the primitive constructed after a call to `set_shared_data`.
+returns the shared data of the primitive constructed after a call to `set_shared_data`.
 If no call to `set_shared_data` has been done, `Primitive::Shared_data()` is returned.
 */
 const Primitive::Shared_data& shared_data() const;

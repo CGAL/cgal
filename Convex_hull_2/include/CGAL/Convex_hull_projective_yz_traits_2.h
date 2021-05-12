@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Susan Hert
 
@@ -34,57 +25,57 @@
 namespace CGAL {
 
 template <class Point_3>
-class Less_xy_plane_yz_2 
+class Less_xy_plane_yz_2
 {
 public:
    typedef bool         result_type;
 
-   bool 
+   bool
    operator()(const Point_3& p, const Point_3& q) const
-   { 
-      return 
+   {
+      return
         compare_lexicographically_xyC2(p.y(), p.z(), q.y(), q.z()) == SMALLER;
    }
 };
 
 template <class Point_3>
-class Equal_xy_plane_yz_2 
+class Equal_xy_plane_yz_2
 {
 public:
    typedef bool         result_type;
 
-   bool 
+   bool
    operator()(const Point_3& p, const Point_3& q) const
-   { 
-      return 
+   {
+      return
         compare_lexicographically_xyC2(p.y(), p.z(), q.y(), q.z()) == EQUAL;
    }
 };
 
 template <class Point_3>
-class Less_yx_plane_yz_2 
+class Less_yx_plane_yz_2
 {
 public:
    typedef bool         result_type;
 
-   bool 
+   bool
    operator()(const Point_3& p, const Point_3& q) const
-   { 
-      return 
+   {
+      return
         compare_lexicographically_xyC2(p.z(), p.y(), q.z(), q.y()) == SMALLER;
    }
 };
 
 template <class Point_3>
-class Left_turn_plane_yz_2 
+class Left_turn_plane_yz_2
 {
 public:
    typedef bool         result_type;
 
-   bool 
+   bool
    operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
-   { 
-    return orientationC2(p.y(), p.z(), q.y(), q.z(), r.y(), r.z()) 
+   {
+    return orientationC2(p.y(), p.z(), q.y(), q.z(), r.y(), r.z())
                                                            == LEFT_TURN;
    }
 };
@@ -94,14 +85,14 @@ class Left_of_line_plane_yz_2
 {
 public:
    Left_of_line_plane_yz_2(const Point_3& a, const Point_3& b):
-      p_a(a), p_b(b) 
+      p_a(a), p_b(b)
    { }
 
-   bool 
+   bool
    operator()(const Point_3& c) const
    {
       return orientationC2(p_a.y(), p_a.z(), p_b.y(), p_b.z(), c.y(), c.z()) ==
-             LEFT_TURN; 
+             LEFT_TURN;
    }
 private:
    Point_3 p_a;
@@ -161,12 +152,12 @@ public:
 
 
 template <class Point_3>
-class Convex_hull_projective_yz_traits_2 
+class Convex_hull_projective_yz_traits_2
 {
 public:
     typedef Point_3                            Point_2;
     typedef Less_xy_plane_yz_2<Point_3>        Less_xy_2;
-    typedef Equal_xy_plane_yz_2<Point_3>       Equal_2;    
+    typedef Equal_xy_plane_yz_2<Point_3>       Equal_2;
     typedef Less_yx_plane_yz_2<Point_3>        Less_yx_2;
     typedef Left_turn_plane_yz_2<Point_3>      Left_turn_2;
     typedef Less_dist_to_line_plane_yz_2<Point_3>
@@ -176,10 +167,10 @@ public:
     Less_xy_2
     less_xy_2_object() const
     {  return Less_xy_2(); }
-    
+
     Equal_2
     equal_2_object() const
-    {  return Equal_2(); }    
+    {  return Equal_2(); }
 
     Less_yx_2
     less_yx_2_object() const

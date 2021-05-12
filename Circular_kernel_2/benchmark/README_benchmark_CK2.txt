@@ -6,7 +6,7 @@ where alpha:
 2: means to bench the Lazy(CK) with Vartraits
 3: means to bench the CK with Vartraits
 4: means to bench the Bbox(Lazy(CK)) with Vartraits
-5: means to bench the BBox(CK) with Circulartraits 
+5: means to bench the BBox(CK) with Circulartraits
 6: means to bench the Lazy(CK) with Circulartraits
 7: means to bench the CK(CK) with Circulartraits
 8: means to bench the Bbox(Lazy(CK)) Circulartraits
@@ -29,7 +29,7 @@ c: Compute the arrangement of ${Scenario4}
 d: Compute the arrangement of ${Scenario5}
 
 ${Scenario1}:
-- Circles with center in [0,10]x[0,10], 
+- Circles with center in [0,10]x[0,10],
 - 0.5 of distance between each circle
 - unitary radius
 
@@ -49,11 +49,11 @@ ${Scenario4}
 ${Scenario5}
 Lattice, like:
 o o o o o o o o o o o o o o o o
- o o o o o o o o o o o o o o o 
+ o o o o o o o o o o o o o o o
 o o o o o o o o o o o o o o o o
- o o o o o o o o o o o o o o o 
+ o o o o o o o o o o o o o o o
 o o o o o o o o o o o o o o o o
- o o o o o o o o o o o o o o o 
+ o o o o o o o o o o o o o o o
 with no intersection.
 
 The output:

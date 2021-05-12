@@ -39,7 +39,7 @@ typedef CGAL::Regular_triangulation_3<My_traits, Tds> Tr;
 // c2t3
 typedef CGAL::Complex_2_in_triangulation_3<Tr> C2T3;
 
-const std::string format_cgal_description = 
+const std::string format_cgal_description =
         "a file of format produced by the output operator of\n"
 "  CGAL::Triangulation_3, with points\n"
 "  CGAL::Weighted_point_with_surface_index and cells\n"

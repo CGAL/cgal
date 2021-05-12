@@ -1,20 +1,19 @@
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
 #include <boost/config.hpp>
 #include <boost/version.hpp>
 
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <iostream>
 #include <fstream>
-
-#include <CGAL/IO/WKT.h>
-#include <boost/foreach.hpp> //must be included before WKT for some reason
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <vector>
 
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+
+#include <CGAL/IO/WKT.h>
+
 //typedef CGAL::Simple_cartesian<CGAL::Gmpq> Kernel;
-
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
-
 
 int main(int argc, char* argv[])
 {
@@ -27,7 +26,7 @@ int main(int argc, char* argv[])
     CGAL::read_linestring_WKT(is, ls);
     is.close();
   }
-  BOOST_FOREACH(Point p, ls)
+  for(Point p : ls)
       std::cout<<p<<std::endl;
   ls.clear();
   MultiLineString mls;
@@ -36,9 +35,9 @@ int main(int argc, char* argv[])
     CGAL::read_multi_linestring_WKT(is, mls);
     is.close();
   }
-  BOOST_FOREACH(LineString l, mls)
+  for(LineString l : mls)
   {
-    BOOST_FOREACH(const Point& p, l)
+    for(const Point& p : l)
         std::cout<<p<<std::endl;
   }
   return 0;

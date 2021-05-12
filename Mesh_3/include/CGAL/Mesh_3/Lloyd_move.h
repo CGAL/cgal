@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -32,7 +23,7 @@
 #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Mesh_3/Uniform_sizing_field.h>
 
-#include <CGAL/Hash_handles_with_or_without_timestamps.h>
+#include <CGAL/Time_stamper.h>
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/ch_graham_andrew.h>
 
@@ -560,7 +551,6 @@ private:
 
     Cell_circulator current_cell = tr.incident_cells(edge);
     Cell_circulator done = current_cell;
-    CGAL_assertion(c3t3.is_in_complex(current_cell));
 
     // a & b are fixed points
     const Weighted_point& wa = tr.point(v);
@@ -570,7 +560,6 @@ private:
     const Weighted_point& a_b = tr.point(current_cell, current_cell->index(v));
     Vector_3 ba = Vector_3(cp(a_b), b);
     ++current_cell;
-    CGAL_assertion(c3t3.is_in_complex(current_cell));
     CGAL_assertion(current_cell != done);
 
     // c & d are moving points
@@ -582,7 +571,6 @@ private:
 
     while ( current_cell != done )
     {
-      CGAL_assertion(c3t3.is_in_complex(current_cell));
       Bare_point d = tr.dual(current_cell);
       const Weighted_point& a_d = tr.point(current_cell, current_cell->index(v));
       Vector_3 da = Vector_3(cp(a_d), d);

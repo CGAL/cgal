@@ -6,7 +6,7 @@
 #include <iostream>
 int main ()
 {
-  std::cout << "Sorry, this example needs CORE ..." << std::endl; 
+  std::cout << "Sorry, this example needs CORE ..." << std::endl;
   return 0;
 }
 #else
@@ -47,7 +47,7 @@ int main ()
   // phi=36.87 degree (such that sin(phi) = 0.6, cos(phi) = 0.8),
   // yielding: 58x^2 + 72y^2 - 48xy - 360 = 0.
   Conic_arc_2   c2 (58, 72, -48, 0, 0, -360);
-  
+
   insert (arr, c2);
 
   // Insert the segment (1, 1) -- (0, -3).
@@ -97,13 +97,13 @@ int main ()
   Point_2       ps7 (4, 3);
   Point_2       pt7 (4, 2);
   Conic_arc_2   c7 (circ7, CGAL::CLOCKWISE, ps7, pt7);
-  
+
   insert (arr, c7);
 
   // Print out the size of the resulting arrangement.
   std::cout << "The arrangement size:" << std::endl
             << "   V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges() 
+            << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
 
   return 0;

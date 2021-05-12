@@ -1,19 +1,10 @@
 // Copyright (c) 2013  GeometryFactory (France). All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Xiang Gao <gaox@ethz.ch>
 //
@@ -403,14 +394,14 @@ public:
 
   /// During the local remeshing step, a triangle will be split
   /// if it has an angle larger than `max_triangle_angle()`.
-  double max_triangle_angle()
+  double max_triangle_angle() const
   {
     return m_alpha_TH;
   }
 
   /// During the local remeshing step, an edge will be collapse
   /// if it is length is less than `min_edge_length()`.
-  double min_edge_length()
+  double min_edge_length() const
   {
     return m_min_edge_length;
   }
@@ -432,7 +423,7 @@ public:
   /// @{
 
   /// Maximum number of iterations performed by `contract_until_convergence()`.
-  std::size_t max_iterations()
+  std::size_t max_iterations() const
   {
     return m_max_iterations;
   }
@@ -441,7 +432,7 @@ public:
   /// the meso-skeleton after one iteration is smaller than
   /// `area_variation_factor()*original_area` where `original_area` is the area of the input
   /// triangle mesh.
-  double area_variation_factor()
+  double area_variation_factor() const
   {
     return m_delta_area;
   }
@@ -469,7 +460,7 @@ public:
   /// faster, but results in a skeleton of lower quality.
   /// This parameter corresponds to \f$ w_H \f$ in the original publication.
   /// \cgalAdvancedEnd
-  double quality_speed_tradeoff()
+  double quality_speed_tradeoff() const
   {
     return m_omega_H;
   }
@@ -478,11 +469,11 @@ public:
   /// of the medial axis of the mesh during the contraction steps, so will be the result skeleton.
   // (an additional energy is used during the contraction using the Voronoi poles of the input triangulated mesh
   // as attractors).
-  bool is_medially_centered()
+  bool is_medially_centered() const
   {
     return m_is_medially_centered;
   }
-  
+
   /// \cgalAdvancedFunction
   /// \cgalAdvancedBegin
   /// Controls the smoothness of the medial approximation:
@@ -491,7 +482,7 @@ public:
   /// It is only used if `is_medially_centered()==true`.
   /// This parameter corresponds to \f$ w_M \f$ in the original publication.
   /// \cgalAdvancedEnd
-  double medially_centered_speed_tradeoff()
+  double medially_centered_speed_tradeoff() const
   {
     return m_omega_P;
   }
@@ -535,7 +526,7 @@ public:
    * @param fixed_points
    *        return the positions of fixed points
    */
-  void fixed_points(std::vector<Point>& fixed_points)
+  void fixed_points(std::vector<Point>& fixed_points) const
   {
     fixed_points.clear();
     for(vertex_descriptor vd : vertices(m_tmesh))
@@ -551,7 +542,7 @@ public:
    * @param non_fixed_points
    *        return the positions of non-fixed points
    */
-  void non_fixed_points(std::vector<Point>& non_fixed_points)
+  void non_fixed_points(std::vector<Point>& non_fixed_points) const
   {
     non_fixed_points.clear();
     for(vertex_descriptor vd : vertices(m_tmesh))
@@ -567,7 +558,7 @@ public:
    * @param max_poles
    *        for each surface mesh vertex, record its correspondent Voronoi pole position
    */
-  void poles(std::vector<Point>& max_poles)
+  void poles(std::vector<Point>& max_poles) const
   {
     max_poles.resize(num_vertices(m_tmesh));
     int cnt = 0;
@@ -848,7 +839,7 @@ private:
   {
     typedef std::pair<Input_vertex_descriptor, vertex_descriptor> Vertex_pair;
     std::vector<Vertex_pair> v2v;
-    copy_face_graph(tmesh, m_tmesh, 
+    copy_face_graph(tmesh, m_tmesh,
                     CGAL::parameters::vertex_to_vertex_output_iterator(std::back_inserter(v2v)));
 
     // copy input vertices to keep correspondence
@@ -875,9 +866,6 @@ private:
 
     m_vertex_id_count = static_cast<int>(num_vertices(m_tmesh));
     m_max_id = m_vertex_id_count;
-
-    if (m_is_medially_centered)
-      compute_voronoi_pole();
 
     init_args();
   }
@@ -1305,6 +1293,7 @@ private:
     }
 
     typedef std::pair<Exact_point, vertex_descriptor> Pair_type;
+    std::vector<Pair_type> duplicated_points;
     for(const Pair_type& p : points)
     {
       std::size_t vid = get(m_vertex_id_pmap, p.second);
@@ -1329,9 +1318,23 @@ private:
           max_neg_t = t;
         }
       }
-
-      p.second->pole = cell_dual[max_neg_i];
+      // max_neg_i is -1 only when duplicated the point is duplicated
+      // (null edge or non-manifold issue resolved with duplication)
+      if (max_neg_i!=-1)
+        p.second->pole = cell_dual[max_neg_i];
+      else
+        duplicated_points.push_back(p);
     }
+
+    for (const Pair_type& p : duplicated_points)
+    {
+      typename Delaunay::Locate_type lt;
+      int li, lj;
+      typename Delaunay::Cell_handle cell = T.locate (p.first, lt, li, lj);
+      CGAL_assertion(lt==Delaunay::VERTEX);
+      p.second->pole = cell->vertex(li)->info()->pole; // copy the pole of the point present in the DT3
+    }
+
     m_are_poles_computed = true;
   }
 

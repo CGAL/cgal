@@ -8,8 +8,8 @@
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 typedef CGAL::Polygon_2<Kernel>                           Polygon_2;
 typedef Kernel::Direction_2                               Direction_2;
-typedef Kernel::Vector_2                              	  Vector_2;
-typedef Kernel::Point_2                              	  Point_2;
+typedef Kernel::Vector_2                                        Vector_2;
+typedef Kernel::Point_2                                        Point_2;
 
 // A direction range is a closed range of directions on the unit circle.
 typedef std::pair<Direction_2, Direction_2>               Direction_range;

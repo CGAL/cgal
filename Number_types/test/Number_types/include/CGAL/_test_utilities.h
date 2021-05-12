@@ -1,22 +1,16 @@
-// Copyright (c) 2002, 2003  
+// Copyright (c) 2002, 2003
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later
+//
 //
 // Author(s)     : Michael Hoffmann, Sylvain Pion
 
@@ -26,7 +20,7 @@
 #include <CGAL/use.h>
 #include <cassert>
 #include <iostream>
-#include <sstream> 
+#include <sstream>
 #include <cassert>
 
 namespace CGAL {
@@ -43,7 +37,7 @@ test_sqrt(const NT&, Sqrt)
 
   CGAL::Sqrt<NT> local_sqrt; // introduced an object as inlining it crashes g++-3.3
 
-  if(Is_exact::value && 
+  if(Is_exact::value &&
      CGAL::is_same_or_derived<Algebraic_category,CGAL::Field_with_sqrt_tag>::value)
       {
           if (CGAL_NTS sqrt(sixteen)    != NT(4)) return false;
@@ -53,7 +47,7 @@ test_sqrt(const NT&, Sqrt)
       if (!( NT(CGAL_NTS sqrt(sixteen) - NT(5)) < NT(0) )) return false;
       if (!( NT(CGAL_NTS sqrt(sixteen) - NT(3)) > NT(0) )) return false;
       if (!( NT(local_sqrt(sixteen) - NT(5)) < NT(0) )) return false;
-      if (!( NT(local_sqrt(sixteen) - NT(3)) > NT(0) )) return false;  
+      if (!( NT(local_sqrt(sixteen) - NT(3)) > NT(0) )) return false;
   }
   return true;
 }
@@ -132,18 +126,18 @@ test_field_division(const NT&, CGAL::Field_tag )
 {
     if ( NT(0) / NT(1) != NT(0) ) return false;
     if ( NT(1) / NT(1) != NT(1) ) return false;
-    // mixed op with int 
+    // mixed op with int
     if ( NT(0) / 1  != NT(0) ) return false;
     if ( 1 / NT(1)  != NT(1) ) return false;
-    
+
     return true;
 }
 
 template < class NT >
 bool
 test_field_division(const NT&, CGAL::Integral_domain_without_division_tag)
-{ 
-    return true; 
+{
+    return true;
 }
 
 
@@ -152,7 +146,7 @@ bool
 test_integral_division(const NT&, CGAL::Integral_domain_tag)
 {
     return (CGAL_NTS integral_division(NT(6),NT(3)) == NT(2))
-    //mixed ops with int 
+    //mixed ops with int
       && (CGAL_NTS integral_division(6,NT(3)) == NT(2))
     &&  (CGAL_NTS integral_division(NT(6),3) == NT(2));
 }
@@ -160,8 +154,8 @@ test_integral_division(const NT&, CGAL::Integral_domain_tag)
 template < class NT >
 bool
 test_integral_division(const NT&, CGAL::Integral_domain_without_division_tag)
-{ 
-return true; 
+{
+return true;
 }
 
 template < class NT >
@@ -221,9 +215,9 @@ test_mixed_operators(const NT& x)
 
   // Test division (only if supported).
   typedef CGAL::Algebraic_structure_traits<NT> AST;
-  if (! test_field_division(x, typename AST::Algebraic_category())) 
+  if (! test_field_division(x, typename AST::Algebraic_category()))
       return false;
-  if (! test_integral_division(x, typename AST::Algebraic_category())) 
+  if (! test_integral_division(x, typename AST::Algebraic_category()))
       return false;
   return true;
 }
@@ -235,19 +229,19 @@ test_utilities(const NT& x)
   NT zero(0);
   NT one(1);
   NT mone(-one);
-  
-  // Min 
+
+  // Min
   std::cout << "  Min()" << std::endl;
-  const CGAL::Min<NT> minf = CGAL::Min<NT>(); 
+  const CGAL::Min<NT> minf = CGAL::Min<NT>();
   if(minf(mone,one) != mone) return false; // functor
   if(minf(one,mone) != mone) return false; // functor
   if(::CGAL::min BOOST_PREVENT_MACRO_SUBSTITUTION (one,mone) != mone) return false; // function
   if(::CGAL::min BOOST_PREVENT_MACRO_SUBSTITUTION (mone,one) != mone) return false; // function
 
 
-  // Max 
+  // Max
   std::cout << "  Max()" << std::endl;
-  const CGAL::Max<NT> maxf = CGAL::Max<NT>(); 
+  const CGAL::Max<NT> maxf = CGAL::Max<NT>();
   if(maxf(mone,one) != one) return false; // functor
   if(maxf(one,mone) != one) return false; // functor
   if(::CGAL::max BOOST_PREVENT_MACRO_SUBSTITUTION (one,mone) != one) return false; // function
@@ -256,7 +250,7 @@ test_utilities(const NT& x)
 
   // is_valid
   std::cout << "  is_valid()" << std::endl;
-  const CGAL::Is_valid<NT> is_valid = CGAL::Is_valid<NT>(); 
+  const CGAL::Is_valid<NT> is_valid = CGAL::Is_valid<NT>();
   if(!         is_valid(zero)) return false; // functor
   if(! ::CGAL::is_valid(zero)) return false; // function
 
@@ -369,10 +363,10 @@ test_utilities(const NT& x)
 
   // UFD
   typedef CGAL::Algebraic_structure_traits<NT> AST;
-  if (!test_gcd(x,typename AST::Algebraic_category())) return false; 
-  if (!test_sqrt(x,typename AST::Sqrt())) return false; 
+  if (!test_gcd(x,typename AST::Algebraic_category())) return false;
+  if (!test_sqrt(x,typename AST::Sqrt())) return false;
 
-  return true; 
+  return true;
 }
 
 } //namespace CGAL

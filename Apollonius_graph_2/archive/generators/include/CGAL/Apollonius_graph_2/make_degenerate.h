@@ -9,9 +9,9 @@ namespace CGAL {
 template<class InputIterator, class OutputIterator, class Traits>
 OutputIterator
 make_degenerate(InputIterator first,
-		InputIterator beyond,
-		OutputIterator oit,
-		const Traits& tr = Traits())
+                InputIterator beyond,
+                OutputIterator oit,
+                const Traits& tr = Traits())
 {
   typedef CGAL::Apollonius_graph_hierarchy_2<Traits> Apollonius_graph;
 
@@ -19,7 +19,7 @@ make_degenerate(InputIterator first,
 
   typedef typename Apollonius_graph::Finite_faces_iterator
     Finite_faces_iterator;
-  
+
   Apollonius_graph ag;
   Site_2 site;
 

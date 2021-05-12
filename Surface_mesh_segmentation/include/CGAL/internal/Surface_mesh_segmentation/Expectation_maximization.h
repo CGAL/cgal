@@ -1,25 +1,16 @@
-#ifndef CGAL_SURFACE_MESH_SEGMENTATION_EXPECTATION_MAXIMIZATION_H
 // Copyright (c) 2014  GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Ilker O. Yaz
 
 
+#ifndef CGAL_SURFACE_MESH_SEGMENTATION_EXPECTATION_MAXIMIZATION_H
 #define CGAL_SURFACE_MESH_SEGMENTATION_EXPECTATION_MAXIMIZATION_H
 
 #include <CGAL/license/Surface_mesh_segmentation.h>
@@ -84,7 +75,7 @@ private:
         return x == mean ? 1.0 : 0.0;
       }
 
-      double e_over = -0.5 * std::pow((x - mean) / deviation, 2);
+      double e_over = -0.5 * CGAL::square((x - mean) / deviation);
       return exp(e_over) / deviation;
     }
     /**
@@ -298,7 +289,7 @@ private:
       double new_deviation = 0.0;
       for(std::size_t point_i = 0; point_i < points.size(); ++point_i) {
         double membership = responsibility_matrix[center_i][point_i];
-        new_deviation += membership * std::pow(points[point_i] - new_mean, 2);
+        new_deviation += membership * CGAL::square(points[point_i] - new_mean);
       }
       new_deviation = std::sqrt(new_deviation/total_membership);
 

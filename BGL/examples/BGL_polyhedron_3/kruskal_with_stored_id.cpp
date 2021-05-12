@@ -23,14 +23,14 @@ kruskal( const Polyhedron& P)
 
   // We use the default edge weight which is the length of the edge
   // This property map is defined in graph_traits_Polyhedron_3.h
-  
+
   // This function call requires a vertex_index_map named parameter which
   // when  ommitted defaults to "get(vertex_index,graph)".
   // That default works here because the vertex type has an "id()" method
   // field which is used by the vertex_index internal property.
   std::list<edge_descriptor> mst;
   boost::kruskal_minimum_spanning_tree(P,std::back_inserter(mst));
-  
+
   std::cout << "#VRML V2.0 utf8\n"
     "Shape {\n"
     "appearance Appearance {\n"
@@ -39,21 +39,21 @@ kruskal( const Polyhedron& P)
     "IndexedLineSet {\n"
     "coord Coordinate {\n"
     "point [ \n";
-  
+
   vertex_iterator vb, ve;
   for(boost::tie(vb,ve) = vertices(P); vb!=ve; ++vb){
     std::cout << (*vb)->point() << "\n";
   }
-  
+
   std::cout << "]\n"
     "}\n"
     "coordIndex [\n";
-  
+
   for(std::list<edge_descriptor>::iterator it = mst.begin(); it != mst.end(); ++it){
     std::cout << source(*it,P)->id()
-	      << ", " << target(*it,P)->id() <<  ", -1\n";
+              << ", " << target(*it,P)->id() <<  ", -1\n";
   }
-  
+
   std::cout << "]\n"
     "}#IndexedLineSet\n"
     "}# Shape\n";
@@ -61,27 +61,27 @@ kruskal( const Polyhedron& P)
 
 
 int main() {
-  
+
   Polyhedron P;
-  
+
   Point a(1,0,0);
   Point b(0,1,0);
   Point c(0,0,1);
   Point d(0,0,0);
-  
+
   P.make_tetrahedron(a,b,c,d);
 
   // associate indices to the vertices using the "id()" field of the vertex.
   vertex_iterator vb, ve;
   int index = 0;
-  
+
   // boost::tie assigns the first and second element of the std::pair
   // returned by boost::vertices to the variables vit and ve
   for(boost::tie(vb,ve)=vertices(P); vb!=ve; ++vb ){
     vertex_descriptor  vd = *vb;
     vd->id() = index++;
   }
-  
+
   kruskal(P);
   return 0;
 }

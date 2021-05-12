@@ -1,20 +1,11 @@
 // Copyright (c) 2010-2011 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -71,8 +62,8 @@ namespace CGAL {
    * @return a new dart.
    */
   template < class Map >
-  typename Map::Dart_handle
-  CGAL_DEPRECATED make_combinatorial_tetrahedron(Map& amap,
+  CGAL_DEPRECATED typename Map::Dart_handle
+  make_combinatorial_tetrahedron(Map& amap,
                                  typename Map::Dart_handle d1,
                                  typename Map::Dart_handle d2,
                                  typename Map::Dart_handle d3,
@@ -108,8 +99,8 @@ namespace CGAL {
    * @return a dart of the new cuboidal_cell.
    */
   template < class Map >
-  typename Map::Dart_handle
-  CGAL_DEPRECATED make_combinatorial_hexahedron(Map& amap,
+  CGAL_DEPRECATED typename Map::Dart_handle
+  make_combinatorial_hexahedron(Map& amap,
                                 typename Map::Dart_handle d1,
                                 typename Map::Dart_handle d2,
                                 typename Map::Dart_handle d3,

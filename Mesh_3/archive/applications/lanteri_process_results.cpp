@@ -27,7 +27,7 @@ bool process_aux_1(const std::vector<Qualities>& qualities,
 
   std::vector<Gd_displayer*> displays(maximum_index);
   std::vector<Distribution> distributions(maximum_index);
-  
+
   for(int i = 0; i < maximum_index; ++i)
   {
     distributions[i].resize(number_of_classes);
@@ -42,14 +42,14 @@ bool process_aux_1(const std::vector<Qualities>& qualities,
 
     const int max = *(std::max_element(distributions[i].begin(),
                                        distributions[i].end()));
-    
+
     display_distribution(displays[i],
                          distributions[i],
                          1. / max);
   }
 
   *out_stream << "saving " << filename.c_str() << "...\n";
-  
+
   return main_display.save_png(filename.c_str());
 }
 
@@ -70,7 +70,7 @@ bool process_aux_2(const std::vector<Qualities>& qualities,
 
   std::vector<Gd_displayer*> displays(maximum_index);
   std::vector<Distribution> distributions(maximum_index);
-  
+
   for(int i = 0; i < maximum_index; ++i)
   {
     distributions[i].resize(number_of_classes);
@@ -90,13 +90,13 @@ bool process_aux_2(const std::vector<Qualities>& qualities,
 
     const int max = *(std::max_element(distributions[i].begin(),
                                                distributions[i].end()));
-    
+
     display_distribution(displays[i],
                          distributions[i],
                          1. / max);
 
     double x_position_of_length_bound = length_bounds[i] / max_quality;
-    
+
     displays[i]->segment(x_position_of_length_bound,  0.0,
                          x_position_of_length_bound, -0.05,
                          CGAL::blue());

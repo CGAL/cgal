@@ -1,25 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Herve Bronnimann
 
@@ -71,7 +62,7 @@ public:
     if (p.z() < q.z()) { minz = p.z(); maxz = q.z(); }
     else               { minz = q.z(); maxz = p.z(); }
     base = Rep(CGAL::make_array(construct_point_3(minx, miny, minz),
-	                         construct_point_3(maxx, maxy, maxz)));
+                                 construct_point_3(maxx, maxy, maxz)));
   }
 
   Iso_cuboidC3(const Point_3 &left,   const Point_3 &right,
@@ -88,7 +79,7 @@ public:
   Iso_cuboidC3(const FT& min_x, const FT& min_y, const FT& min_z,
                const FT& max_x, const FT& max_y, const FT& max_z)
     : base(CGAL::make_array(Construct_point_3()(min_x, min_y, min_z),
-	                     Construct_point_3()(max_x, max_y, max_z)))
+                             Construct_point_3()(max_x, max_y, max_z)))
   {
     CGAL_kernel_precondition(min_x <= max_x);
     CGAL_kernel_precondition(min_y <= max_y);
@@ -96,12 +87,12 @@ public:
   }
 
   Iso_cuboidC3(const FT& min_hx, const FT& min_hy, const FT& min_hz,
-               const FT& max_hx, const FT& max_hy, const FT& max_hz, 
+               const FT& max_hx, const FT& max_hy, const FT& max_hz,
                const FT& hw)
   {
     if (hw == FT(1))
        base = Rep(CGAL::make_array(Construct_point_3()(min_hx, min_hy, min_hz),
-		                    Construct_point_3()(max_hx, max_hy, max_hz)));
+                                    Construct_point_3()(max_hx, max_hy, max_hz)));
     else
        base = Rep(CGAL::make_array(Construct_point_3()(min_hx/hw, min_hy/hw, min_hz/hw),
                                     Construct_point_3()(max_hx/hw, max_hy/hw, max_hz/hw)));
@@ -220,7 +211,7 @@ Iso_cuboidC3<R>::min_coord(int i) const
      return xmin();
   else if (i == 1)
      return ymin();
-  else 
+  else
      return zmin();
 }
 
@@ -234,7 +225,7 @@ Iso_cuboidC3<R>::max_coord(int i) const
      return xmax();
   else if (i == 1)
      return ymax();
-  else 
+  else
      return zmax();
 }
 

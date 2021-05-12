@@ -10,7 +10,7 @@
 #include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/convex_hull_3.h> 
+#include <CGAL/convex_hull_3.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 
@@ -23,13 +23,13 @@ typedef CGAL::Nef_polyhedron_3<R>                             Nef_polyhedron;
 
 void read( const char* name, Polyhedron_3& poly) {
     ifstream in( name);
-    if ( ! in) { 
+    if ( ! in) {
         cerr << "minkowsky_sum: error: cannot open file '"<< name
              << "' for reading." << endl;
         exit( 1);
     }
     in >> poly;
-    if ( ! in) { 
+    if ( ! in) {
         cerr << "minkowsky_sum: error: reading from file '"<< name << "'."
              << endl;
         exit( 1);
@@ -61,7 +61,7 @@ struct Add_points {
 int main( int argc, char **argv) {
     if ( argc != 3) {
         cerr << "Usage: " << argv[0] << " <infile1> <infile2>" << endl;
-        cerr << "       Minkowsky sum of two 3d polyhedra in OFF format." 
+        cerr << "       Minkowsky sum of two 3d polyhedra in OFF format."
              << endl;
         cerr << "       Output in OFF to stdout." << endl;
         exit(1);
@@ -74,12 +74,12 @@ int main( int argc, char **argv) {
     list<Nef_polyhedron> nef;
     Polyhedron::Facet_iterator fit;
     for(fit = P1.facets_begin(); fit != P1.facets_end(); fit++) {
-      vector<Point> points; 
+      vector<Point> points;
       std::cerr << "size = " << nef.size() << std::endl;
       fold( fit->facet_begin(),
-	    P2.vertices_begin(), P2.vertices_end(),
-	    back_inserter( points),
-	    add);
+            P2.vertices_begin(), P2.vertices_end(),
+            back_inserter( points),
+            add);
       Polyhedron P3;
       convex_hull_3( points.begin(), points.end(), P3);
       nef.push_back(Nef_polyhedron(P3));

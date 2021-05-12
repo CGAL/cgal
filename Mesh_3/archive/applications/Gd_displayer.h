@@ -31,11 +31,11 @@ struct Gd_displayer : public Distribution_displayer
   /** \name FUNCTIONS SPECIFIC TO Gd_displayer */
   //@{
   /** Set world coordinates of the image.*/
-  inline 
+  inline
   void set_window(const double x_min,
-		  const double x_max, 
-		  const double y_min, 
-		  const double y_max)
+                  const double x_max,
+                  const double y_min,
+                  const double y_max)
   {
     set_window(x_min, x_max, y_min, y_max,
                0, 0, gdImageSX(im), gdImageSY(im));
@@ -50,9 +50,9 @@ struct Gd_displayer : public Distribution_displayer
       \param sy height of the clip zone
   */
   void set_window(const double x_min,
-		  const double x_max, 
-		  const double y_min, 
-		  const double y_max,
+                  const double x_max,
+                  const double y_min,
+                  const double y_max,
                   int x, int y,
                   int sx, int sy);
 
@@ -72,15 +72,15 @@ struct Gd_displayer : public Distribution_displayer
   }
 
   /** Returns the index of the color c in the image palette. */
-  inline 
+  inline
   int gd_color(CGAL::Color c)
   {
-    int i = gdImageColorExact(im, 
+    int i = gdImageColorExact(im,
                               c.red(),
                               c.green(),
                               c.blue());
     if( i < 0 )
-      return gdImageColorAllocate(im, 
+      return gdImageColorAllocate(im,
                                   c.red(),
                                   c.green(),
                                   c.blue());
@@ -90,7 +90,7 @@ struct Gd_displayer : public Distribution_displayer
   //@}
   // end specific functions
 private:
-  /** \name real dimensions 
+  /** \name real dimensions
       @{ */
   double xmin, xmax, ymin, ymax; //@}
   /** \name clip zone
@@ -99,6 +99,6 @@ private:
   /** \name scaling factors
       @{ */
   double xscal, yscal; //@}
-  
+
   gdImagePtr im; /**< the GD image */
 };

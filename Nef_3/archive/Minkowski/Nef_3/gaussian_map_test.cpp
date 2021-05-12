@@ -30,8 +30,8 @@ struct Plane_equation {
     typename Facet::Halfedge_handle h = f.halfedge();
     typedef typename Facet::Plane_3  Plane;
     return Plane( h->vertex()->point(),
-		  h->next()->vertex()->point(),
-		  h->next()->next()->vertex()->point());
+                  h->next()->vertex()->point(),
+                  h->next()->next()->vertex()->point());
   }
 };
 
@@ -40,16 +40,16 @@ int main(int argc, char* argv[]) {
   CGAL_assertion(argc==3);
   std::ifstream in1(argv[1]);
   std::ifstream in2(argv[2]);
-  
+
   Polyhedron P1,P2;
   in1 >> P1;
   in2 >> P2;
 
   std::transform( P1.facets_begin(), P1.facets_end(), P1.planes_begin(),
-		  Plane_equation());
+                  Plane_equation());
 
   std::transform( P2.facets_begin(), P2.facets_end(), P2.planes_begin(),
-		  Plane_equation());
+                  Plane_equation());
 
   CGAL_assertion(is_strongly_convex_3(P1));
   CGAL_assertion(is_strongly_convex_3(P2));
@@ -103,9 +103,9 @@ int main(int argc, char* argv[]) {
   std::cerr << "Runtime Minkowski Sum: " << t.time() << std::endl;
 
   // Visualization of result
-  //  Nef_polyhedron N(P);  
+  //  Nef_polyhedron N(P);
   QApplication a(argc, argv);
-  CGAL::Qt_widget_Nef_3<Nef_polyhedron>* w = 
+  CGAL::Qt_widget_Nef_3<Nef_polyhedron>* w =
     new CGAL::Qt_widget_Nef_3<Nef_polyhedron>(N);
   a.setMainWidget(w);
   w->show();

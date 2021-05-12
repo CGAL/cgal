@@ -4,8 +4,8 @@
 #if (!CGAL_USE_CORE) && (!CGAL_USE_LEDA) && (!(CGAL_USE_GMP && CGAL_USE_MPFI))
 int main ()
 {
-  std::cout << "Sorry, this example needs CORE, LEDA, or GMP+MPFI ..." 
-	    << std::endl; 
+  std::cout << "Sorry, this example needs CORE, LEDA, or GMP+MPFI ..."
+            << std::endl;
   return 0;
 }
 #else
@@ -35,14 +35,14 @@ int main() {
     CGAL::set_pretty_mode(std::cout);
 
     Arr_traits_2 arr_traits;
- 
+
     // Functor to create a curve from a Polynomial_2
     Arr_traits_2::Construct_curve_2 construct_curve
         = arr_traits.construct_curve_2_object();
 
     Polynomial_2 x = CGAL::shift(Polynomial_2(1),1,0);
     Polynomial_2 y = CGAL::shift(Polynomial_2(1),1,1);
-  
+
     Arrangement_2 arr(&arr_traits);
 
     // Construct an (unbounded line) with equation 3x-5y+2=0
@@ -74,9 +74,9 @@ int main() {
     // Print the arrangement size.
     std::cout << "The arrangement size:" << std::endl
               << "   V = " << arr.number_of_vertices()
-              << ",  E = " << arr.number_of_edges() 
+              << ",  E = " << arr.number_of_edges()
               << ",  F = " << arr.number_of_faces() << std::endl;
-    
+
     return 0;
 }
 

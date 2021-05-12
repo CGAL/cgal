@@ -13,14 +13,14 @@ public:
 /// @{
 
 /*!
-computes 
-the affine rank of the points in `A = tuple [first,last)`. 
-\pre The objects are of the same dimension. 
+computes
+the affine rank of the points in `A = tuple [first,last)`.
+\pre The objects are of the same dimension.
 
 \tparam ForwardIterator is a model of `ForwardIterator` with `Kernel_d::Point_d` as value type.
-*/ 
-template <class ForwardIterator> int 
-operator()(ForwardIterator first, ForwardIterator last); 
+*/
+template <class ForwardIterator> int
+operator()(ForwardIterator first, ForwardIterator last);
 
 /// @}
 

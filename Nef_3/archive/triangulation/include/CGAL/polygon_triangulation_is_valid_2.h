@@ -11,15 +11,15 @@
 namespace CGAL {
 
 template <class Traits>
-struct Less_xy_segment_2 
+struct Less_xy_segment_2
 {
   template <class Segment_2>
   bool operator()( const Segment_2& s, const Segment_2& r) {
     typedef typename Traits::Compare_xy_2 Compare_xy_2;
     Compare_xy_2 compare_xy_2;
     return ((compare_xy_2( s.source(), r.source()) == EQUAL) ?
-	    (compare_xy_2( s.target(), r.target()) == SMALLER) :
-	    (compare_xy_2( s.source(), r.source()) == SMALLER));
+            (compare_xy_2( s.target(), r.target()) == SMALLER) :
+            (compare_xy_2( s.source(), r.source()) == SMALLER));
   }
 };
 
@@ -30,14 +30,14 @@ class Segment_lexicographically_xy_ordered_2
   typedef typename Traits::Compare_xy_2 Compare_xy_2;
  public:
   //Segment_lexicographically_xy_ordered_2() : p(), q() {}
-  Segment_lexicographically_xy_ordered_2( const Point_2& pi, 
-					  const Point_2& qi) {
+  Segment_lexicographically_xy_ordered_2( const Point_2& pi,
+                                          const Point_2& qi) {
     Compare_xy_2 compare_xy_2;
     if( compare_xy_2( pi, qi) == SMALLER) {
       p = pi;
       q = qi;
     }
-    else { 
+    else {
       p = qi;
       q = pi;
     }
@@ -49,11 +49,11 @@ class Segment_lexicographically_xy_ordered_2
 };
 
 template <class BoundaryIterator, class TriangleIterator, class Traits>
-bool is_polygon_triangulation_valid_2( BoundaryIterator boundary_begin, 
-				       BoundaryIterator boundary_end,
-				       TriangleIterator triangle_begin,
-				       TriangleIterator triangle_end,
-				       const Traits& traits) {
+bool is_polygon_triangulation_valid_2( BoundaryIterator boundary_begin,
+                                       BoundaryIterator boundary_end,
+                                       TriangleIterator triangle_begin,
+                                       TriangleIterator triangle_end,
+                                       const Traits& traits) {
   typedef typename BoundaryIterator::value_type Circulator;
   typedef Segment_lexicographically_xy_ordered_2<Traits> Segment_2;
   typedef std::map< Segment_2, int, Less_xy_segment_2<Traits> > Counter;
@@ -84,7 +84,7 @@ bool is_polygon_triangulation_valid_2( BoundaryIterator boundary_begin,
     CGAL_For_all( c, cend) { // inner boundary
       Segment_2 s( *c, *cprev);
       if( counter[s] != 1)
-	return false;
+        return false;
       counter[s]++;
       cprev = c;
     }

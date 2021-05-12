@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 
@@ -52,7 +43,7 @@ public:
   typedef typename Arrangement_2::Vertex_handle            Vertex_handle;
   typedef typename Arrangement_2::Halfedge_handle          Halfedge_handle;
   typedef typename Arrangement_2::Face_handle              Face_handle;
-  typedef typename Arrangement_2::Ccb_halfedge_circulator  
+  typedef typename Arrangement_2::Ccb_halfedge_circulator
                                                       Ccb_halfedge_circulator;
 
 private:
@@ -108,7 +99,7 @@ public:
   }
 
   /*!
-   * Attach the observer to an arrangement. 
+   * Attach the observer to an arrangement.
    * \pre The observer is not already attached to an arrangement.
    */
   void attach (Arrangement_2& arr)
@@ -149,7 +140,7 @@ public:
     // that the oberver is not attached to an arrangement.
     p_arr->_unregister_observer (this);
     p_arr = nullptr;
-   
+
     // Notify the concrete oberver that the detachment took place.
     after_detach();
 
@@ -160,7 +151,7 @@ public:
   /// \name Notification functions on global arrangement operations.
   //@{
 
-  /*! 
+  /*!
    * Notification before the arrangement is assigned with another
    * arrangement.
    * \param arr The arrangement to be copied.
@@ -197,7 +188,7 @@ public:
   /// \name Notification functions on observer attachment or detachment.
   //@{
 
-  /*! 
+  /*!
    * Notification before the observer is attached to an arrangement.
    * \param arr The arrangement we are about to attach the observer to.
    */
@@ -210,7 +201,7 @@ public:
   virtual void after_attach ()
   {}
 
-  /*! 
+  /*!
    * Notification before the observer is detached from the arrangement.
    */
   virtual void before_detach ()

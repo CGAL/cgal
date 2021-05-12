@@ -43,7 +43,7 @@ int main()
 
     // Print some information about the polygon and coordinates.
     wachspress_coordinates.print_information();
-    
+
     // Compute Wachspress coordinates for all the randomly defined points.
     cout << endl << "Computed Wachspress coordinates: " << endl << endl;
     for(int i = 0; i < number_of_points; ++i) {

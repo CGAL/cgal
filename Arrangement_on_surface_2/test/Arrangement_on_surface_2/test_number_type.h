@@ -68,7 +68,7 @@
 #include <CGAL/Arithmetic_kernel.h>
 
 #else
-#error No Number Type (NT) specified! 
+#error No Number Type (NT) specified!
 #endif
 
 // ============================================================================
@@ -180,7 +180,7 @@ typedef Basic_number_type                               Ring_type;
 #define NUMBER_TYPE "CORE BigInt"
 
 #elif TEST_NT == CORE_RAT_NT
-typedef CGAL::CORE_arithmetic_kernel::Rational		    Basic_number_type;
+typedef CGAL::CORE_arithmetic_kernel::Rational                    Basic_number_type;
 typedef Basic_number_type                               Number_type;
 typedef Basic_number_type                               Ring_type;
 #define NUMBER_TYPE "CORE Rational"

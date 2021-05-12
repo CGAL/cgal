@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Ilker O. Yaz
 
@@ -87,20 +78,41 @@ namespace internal {
   @tparam TriangleMesh a model of `FaceGraph` and `MutableFaceGraph`
   @tparam VertexRange a range of vertex descriptors of `TriangleMesh`, model of `Range`.
           Its iterator type is `InputIterator`.
-  @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   @param tmesh the triangle mesh with patches to be faired
   @param vertices the vertices of the patches to be faired (the positions of only those vertices will be changed)
-  @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tmesh`.
-        If this parameter is omitted, an internal property map for
-      `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
-    \cgalParamBegin{fairing_continuity} tangential continuity of the output surface patch. The larger `fairing_continuity` gets, the more fixed vertices are required \cgalParamEnd
-    \cgalParamBegin{sparse_linear_solver} an instance of the sparse linear solver used for fairing \cgalParamEnd
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      should be available for the vertices of `tmesh`.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{fairing_continuity}
+      \cgalParamDescription{A value controling the tangential continuity of the output surface patch.
+                            The possible values are 0, 1 and 2, refering to the  C<sup>0</sup>, C<sup>1</sup>
+                            and C<sup>2</sup> continuity.}
+      \cgalParamType{unsigned int}
+      \cgalParamDefault{`1`}
+      \cgalParamExtra{The larger `fairing_continuity` gets, the more fixed vertices are required.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{sparse_linear_solver}
+      \cgalParamDescription{an instance of the sparse linear solver used for fairing}
+      \cgalParamType{a class model of `SparseLinearAlgebraWithFactorTraits_d`}
+      \cgalParamDefault{If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and
+                        `CGAL_EIGEN3_ENABLED` is defined, then the following overload of `Eigen_solver_traits`
+                        is provided as default value:\n
+                        `CGAL::Eigen_solver_traits<Eigen::SparseLU<CGAL::Eigen_sparse_matrix<double>::%EigenType, Eigen::COLAMDOrdering<int> > >`}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
-  
+
   @return `true` if fairing is successful, otherwise no vertices are relocated
 
   @pre `is_triangle_mesh(tmesh)`
@@ -146,18 +158,21 @@ namespace internal {
 #endif
 
     typedef typename GetVertexPointMap < TriangleMesh, NamedParameters>::type VPMap;
-    typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<TriangleMesh, VPMap>
+
+    // Cotangent_weight_with_voronoi_area_fairing has been changed to the version:
+    // Cotangent_weight_with_voronoi_area_fairing_secure to avoid imprecisions from
+    // the issue #4706 - https://github.com/CGAL/cgal/issues/4706.
+    typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing_secure<TriangleMesh, VPMap>
       Default_Weight_calculator;
 
     VPMap vpmap_ = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                get_property_map(vertex_point, tmesh));
+                                    get_property_map(vertex_point, tmesh));
 
     return internal::fair(tmesh, vertices,
-      choose_parameter(get_parameter(np, internal_np::sparse_linear_solver), Default_solver()),
+      choose_parameter<Default_solver>(get_parameter(np, internal_np::sparse_linear_solver)),
       choose_parameter(get_parameter(np, internal_np::weight_calculator), Default_Weight_calculator(tmesh, vpmap_)),
       choose_parameter(get_parameter(np, internal_np::fairing_continuity), 1),
-      vpmap_
-      );
+      vpmap_);
   }
 
   template<typename TriangleMesh, typename VertexRange>

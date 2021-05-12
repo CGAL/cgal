@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Rineau
@@ -24,12 +15,13 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-#include <CGAL/Hash_handles_with_or_without_timestamps.h>
+#include <CGAL/Time_stamper.h>
 #include <CGAL/IO/File_medit.h>
+#include <CGAL/utility.h>
 
+#include <fstream>
 #include <iostream>
 #include <string>
-#include <CGAL/utility.h>
 
 namespace CGAL {
 
@@ -137,7 +129,7 @@ output_to_tetgen(std::string filename,
   // Elements
   //-------------------------------------------------------
 
-  std::string elem_filename = filename + ".elem";
+  std::string elem_filename = filename + ".ele";
   std::ofstream elem_stream(elem_filename.c_str());
 
   elem_stream << std::setprecision(17);
@@ -198,15 +190,6 @@ output_to_tetgen(std::string filename,
 
 
 
-/**
- * @brief outputs mesh to tetgen format
- * @param os the stream
- * @param c3t3 the mesh
- * @param rebind if true, labels of cells are rebinded into [1..nb_of_labels]
- * @param show_patches if true, patches are labeled with different labels than
- * cells. If false, each surface facet is written twice, using label of
- * each adjacent cell.
- */
 template <class C3T3>
 void
 output_to_tetgen(std::string filename,

@@ -53,7 +53,7 @@ void run()
   Vector points2;
   Random_points g( 150.0);
 
-  // We enforce IEEE double precision as we compare a distance 
+  // We enforce IEEE double precision as we compare a distance
   // in a register with a distance in memory
   CGAL::Set_ieee_double_precision pfr;
 
@@ -98,7 +98,7 @@ void run()
     }
   }
   assert(points == points2);
-  
+
 
   std::cout << "done" << std::endl;
 }
@@ -132,20 +132,20 @@ bool search(bool nearest)
   std::sort(points.begin(), points.end());
   std::sort(result.begin(), result.end());
   std::set_difference(points.begin(), points.end(),
-		      result.begin(), result.end(),
-		      std::back_inserter(diff));
+                      result.begin(), result.end(),
+                      std::back_inserter(diff));
 
   std::cout << "|result| = " << result.size() << "  |diff| = " << diff.size() << std::endl;
   double sep_dist = (nearest)?0:(std::numeric_limits<double>::max)();
   {
     for(std::vector<Point>::iterator it = result.begin();
-	it != result.end();
-	it++){
+        it != result.end();
+        it++){
       double dist = CGAL::squared_distance(query, *it);
       if(nearest){
-	if(dist > sep_dist) sep_dist = dist;
+        if(dist > sep_dist) sep_dist = dist;
       } else {
-	if(dist < sep_dist) sep_dist = dist;
+        if(dist < sep_dist) sep_dist = dist;
       }
     }
   }
@@ -154,19 +154,19 @@ bool search(bool nearest)
   // the other points must be further/closer than min_dist
   {
     for(std::vector<Point>::iterator it = diff.begin();
-	it != diff.end();
-	it++){
+        it != diff.end();
+        it++){
       double dist = CGAL::squared_distance(query, *it);
       if(nearest){
-	if(dist < sep_dist){
-	  std::cout << "Error: Point " << *it << " at distance " << dist << "  <  " << sep_dist << std::endl;
+        if(dist < sep_dist){
+          std::cout << "Error: Point " << *it << " at distance " << dist << "  <  " << sep_dist << std::endl;
           res=false;
-	}
+        }
       } else {
-	if(dist > sep_dist){
-	  std::cout << "Error: Point " << *it << " at distance " << dist << "  >  " << sep_dist  << std::endl;
+        if(dist > sep_dist){
+          std::cout << "Error: Point " << *it << " at distance " << dist << "  >  " << sep_dist  << std::endl;
           res=false;
-	}
+        }
       }
     }
   }
@@ -174,7 +174,7 @@ bool search(bool nearest)
 }
 
 
-int 
+int
 main() {
   bool OK=true;
   std::cout << "Testing Incremental_neighbor_search\n";
@@ -195,6 +195,6 @@ main() {
 
   return OK ? 0 : 1;
 }
-  
+
 
 

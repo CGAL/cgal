@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -77,35 +68,35 @@ class Vertex
     Delaunay_face_handle fvalid = find_valid_vertex(f_);
     for (int i = 0; i < 3; i++) {
       int ccw_i = CW_CCW_2::ccw(i);
-      
+
       // if I want to return also infinite edges replace the test in
       // the if statement by the following test (i.e., should omit the
       // testing for infinity):
       //           !vda_->edge_rejector()(vda_->dual(), fvalid, i)
       if ( !vda_->edge_rejector()(vda_->dual(), fvalid, i) &&
-	   !vda_->dual().is_infinite(fvalid, i) ) {
-	if ( vda_->face_rejector()(vda_->dual(), fvalid->vertex(ccw_i)) ) {
-	  Delaunay_face_handle fopp;
-	  int iopp, i_mirror = vda_->dual().tds().mirror_index(fvalid, i);
+           !vda_->dual().is_infinite(fvalid, i) ) {
+        if ( vda_->face_rejector()(vda_->dual(), fvalid->vertex(ccw_i)) ) {
+          Delaunay_face_handle fopp;
+          int iopp, i_mirror = vda_->dual().tds().mirror_index(fvalid, i);
 
-	  Find_opposite_halfedge<VDA>()(vda_,
-					fvalid->neighbor(i),
-					i_mirror,
-					fopp, iopp);
+          Find_opposite_halfedge<VDA>()(vda_,
+                                        fvalid->neighbor(i),
+                                        i_mirror,
+                                        fopp, iopp);
 #if !defined(CGAL_NO_ASSERTIONS) && !defined(NDEBUG)
-	  Halfedge h(vda_, fopp, iopp);
-	  Vertex_handle v_this(*this);
-	  CGAL_assertion( h.has_target() && h.target() == v_this );
+          Halfedge h(vda_, fopp, iopp);
+          Vertex_handle v_this(*this);
+          CGAL_assertion( h.has_target() && h.target() == v_this );
 #endif
-	  return Halfedge_handle( Halfedge(vda_, fopp, iopp) );
-	} else {
+          return Halfedge_handle( Halfedge(vda_, fopp, iopp) );
+        } else {
 #if !defined(CGAL_NO_ASSERTIONS) && !defined(NDEBUG)
-	  Halfedge h(vda_, fvalid, i);
-	  Vertex_handle v_this(*this);
-	  CGAL_assertion( h.has_target() && h.target() == v_this );
+          Halfedge h(vda_, fvalid, i);
+          Vertex_handle v_this(*this);
+          CGAL_assertion( h.has_target() && h.target() == v_this );
 #endif
-	  return Halfedge_handle( Halfedge(vda_, fvalid, i) );
-	}
+          return Halfedge_handle( Halfedge(vda_, fvalid, i) );
+        }
       }
     }
 
@@ -118,7 +109,7 @@ class Vertex
 
   Halfedge_around_vertex_circulator incident_halfedges() const {
     CGAL_assertion( halfedge()->has_target() &&
-		    halfedge()->target() == Vertex_handle(*this) );
+                    halfedge()->target() == Vertex_handle(*this) );
     return Halfedge_around_vertex_circulator( *halfedge() );
   }
 

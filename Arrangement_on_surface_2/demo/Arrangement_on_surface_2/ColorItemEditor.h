@@ -37,7 +37,7 @@
  ** Nokia at qt-info@nokia.com.
  ** $QT_END_LICENSE$
  **
- ** SPDX-License-Identifier: LGPL-2.1
+ ** SPDX-License-Identifier: LGPL-2.1-only
  **
  ****************************************************************************/
 
@@ -56,7 +56,7 @@ class ColorItemEditor : public QPushButton
   Q_PROPERTY(QColor color READ color WRITE setColor USER true)
 
 public:
-  ColorItemEditor(QWidget *widget = 0);
+  ColorItemEditor(QWidget *widget = nullptr);
 
 public:
   QColor color( ) const;

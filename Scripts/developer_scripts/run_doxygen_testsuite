@@ -22,8 +22,8 @@ function error() {
     exit 1
 }
 
-CGAL_URL="https://cgal.geometryfactory.com/CGAL/Members/Releases"
-CURL_OPTS="--remote-name --silent -n"
+CGAL_URL="https://cgal.geometryfactory.com/CGAL/Releases"
+CURL_OPTS="--remote-name --silent --location --netrc"
 LATEST_LOCATION="${CGAL_URL}/LATEST"
 CGAL_DOC_BUILD="/home/cgal-testsuite/cgal_doc_build"
 

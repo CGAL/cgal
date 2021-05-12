@@ -47,7 +47,7 @@ void read_file(std::istream& inp,
   intersect = (x != 0);
   if (intersect)
     inp >> join_res;
-  
+
   unsigned int n_pgns;
   inp >> n_pgns;
   intersection_res.resize(n_pgns);
@@ -134,7 +134,7 @@ bool test(std::istream& inp, const Polygon1& p1, const Polygon2& p2)
   bool intersect;
 
   CGAL::Oriented_side or_side_from_file;
-  
+
   read_file(inp,
             intersect,
             join_res_from_file,
@@ -148,7 +148,7 @@ bool test(std::istream& inp, const Polygon1& p1, const Polygon2& p2)
 
   std::vector<Polygon_with_holes_2>  temp_result;
   std::back_insert_iterator<std::vector<Polygon_with_holes_2> > oi(temp_result);
-  
+
   CGAL::intersection(p1, p2, oi);
   if (! are_equal(intersection_res_from_file, temp_result))
   {
@@ -165,7 +165,7 @@ bool test(std::istream& inp, const Polygon1& p1, const Polygon2& p2)
 
   Polygon_with_holes_2 join_res;
   bool do_x;
-  
+
   do_x = CGAL::join(p1, p2, join_res);
   if (do_x != intersect)
   {
@@ -178,7 +178,7 @@ bool test(std::istream& inp, const Polygon1& p1, const Polygon2& p2)
     {
       std::cout << "join 12 failed..." << std::endl;
       return false;
-    }  
+    }
   }
 
   do_x = CGAL::join(p2, p1, join_res);
@@ -193,7 +193,7 @@ bool test(std::istream& inp, const Polygon1& p1, const Polygon2& p2)
     {
       std::cout << "join 22 failed..." << std::endl;
       return false;
-    }  
+    }
   }
 
   CGAL::difference(p1 ,p2, oi);
@@ -204,7 +204,7 @@ bool test(std::istream& inp, const Polygon1& p1, const Polygon2& p2)
   }
 
   CGAL::difference(p2 ,p1, oi);
-  
+
   if (! are_equal(diff2_res_from_file, temp_result))
   {
     std::cout << "diff 2 failed" << std::endl;
@@ -252,13 +252,13 @@ bool test(std::istream& inp, const Polygon1& p1, const Polygon2& p2)
     std::cout << "oriented_side 2 failed" << std::endl;
     return false;
   }
-    
+
   /////////////////////////////////////////
 
   Ps ps;
   Ps ps1(p1);
   Ps ps2(p2);
- 
+
   ps.intersection(ps1, ps2);
   ps.polygons_with_holes(oi);
   if (!ps.is_valid() || ! are_equal(intersection_res_from_file, temp_result))
@@ -307,7 +307,7 @@ bool test(std::istream& inp, const Polygon1& p1, const Polygon2& p2)
     else
       if (temp_result.size() == 2)
       {
-        if (! (temp_result[0]==p1 && temp_result[1]==p2) || 
+        if (! (temp_result[0]==p1 && temp_result[1]==p2) ||
              (temp_result[0]==p2 && temp_result[1]==p1))
         {
           std::cout << "join failed" << std::endl;
@@ -395,7 +395,7 @@ int main(int argc, char *argv[])
       std::string::iterator tmp = itr;
       --tmp;
       if (*itr == 't') break;
-      
+
       str.erase(itr);
       itr = tmp;
     }
@@ -415,6 +415,6 @@ int main(int argc, char *argv[])
     }
     inp.close();
   }
-  
+
   return success;
 }

@@ -83,11 +83,11 @@ int main(int argc, char **argv)
 
   // Print the dimensions of the minimization diagram.
   std::cout << "V = " << min_diag.number_of_vertices()
-	    << ",  E = " << min_diag.number_of_edges()
-	    << ",  F = " << min_diag.number_of_faces() << std::endl;
+            << ",  E = " << min_diag.number_of_edges()
+            << ",  F = " << min_diag.number_of_faces() << std::endl;
 
   std::cout << "Construction took " << timer.time()
-	    << " seconds." << std::endl;
+            << " seconds." << std::endl;
 
   return 0;
 }

@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
@@ -58,7 +49,7 @@ public:
 
 
    Rotation_tree_node_2(Base_point p) : point(p)
-   { 
+   {
       _parent.second = false;
       _left_sibling.second = false;
       _right_sibling.second = false;
@@ -67,7 +58,7 @@ public:
 
    operator Base_point() const
    { return point;}
-  
+
    bool has_left_sibling() const
    {  return _left_sibling.second; }
 
@@ -155,16 +146,16 @@ std::ostream& operator<<(std::ostream& os,
 {
    os << node.x() << " " << node.y() << " ";
    if (node.has_parent())
-      os << "  parent " << (*node.parent()).x() 
+      os << "  parent " << (*node.parent()).x()
          << " " << (*node.parent()).y() << " ";
    if (node.has_left_sibling())
-      os << "  left sibling " << (*node.left_sibling()).x() 
+      os << "  left sibling " << (*node.left_sibling()).x()
          << " " << (*node.left_sibling()).y() << " ";
    if (node.has_right_sibling())
-      os << "  right sibling " << (*node.right_sibling()).x() 
+      os << "  right sibling " << (*node.right_sibling()).x()
          << " " << (*node.right_sibling()).y() << " ";
    if (node.has_children())
-      os << "  rightmost child " << (*node.rightmost_child()).x() 
+      os << "  rightmost child " << (*node.rightmost_child()).x()
          << " " << (*node.rightmost_child()).y();
    return os;
 }

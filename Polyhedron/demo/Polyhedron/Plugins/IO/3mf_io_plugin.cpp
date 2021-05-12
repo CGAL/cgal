@@ -6,8 +6,7 @@
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
-#include <CGAL/IO/read_3mf.h>
-#include <CGAL/IO/write_3mf.h>
+#include <CGAL/IO/3MF.h>
 #include <QFileDialog>
 
 #include "Scene_surface_mesh_item.h"
@@ -78,64 +77,9 @@ class Io_3mf_plugin:
     std::vector<std::string> names;
     QList<Scene_item*> result;
     std::vector<std::vector<CGAL::Color> > all_colors;
-    int nb_polylines =
-        CGAL::read_polylines_from_3mf(fileinfo.filePath().toUtf8().toStdString(),
-                                      all_points, all_colors, names);
-    if(nb_polylines < 0 )
-    {
-      ok = false;
-      std::cerr << "Error in reading of meshes."<<std::endl;
-      return result;
-    }
-
-    for(int i=0; i< nb_polylines; ++i)
-    {
-      Scene_polylines_item* pol_item = new Scene_polylines_item();
-      PolylineRange& polylines = pol_item->polylines;
-      polylines.push_back(all_points[i]);
-      pol_item->setName(names[i].data());
-      pol_item->invalidateOpenGLBuffers();
-      CGAL::Color c = all_colors[i].front();
-      pol_item->setColor(QColor(c.red(), c.green(), c.blue()));
-      pol_item->setProperty("already_colord", true);
-      result << pol_item;
-      if(add_to_scene)
-        CGAL::Three::Three::scene()->addItem(pol_item);
-    }
-    all_points.clear();
-    all_colors.clear();
-    names.clear();
-    int nb_point_sets =
-        CGAL::read_point_clouds_from_3mf(fileinfo.filePath().toUtf8().toStdString(),
-                                         all_points, all_colors, names);
-    if(nb_point_sets < 0 )
-    {
-      ok = false;
-      std::cerr << "Error in reading of meshes."<<std::endl;
-      return result;
-    }
-    for(int i=0; i< nb_point_sets; ++i)
-    {
-      Scene_points_with_normal_item* pts_item = new Scene_points_with_normal_item();
-      for(std::size_t j = 0; j < all_points[i].size(); ++j)
-      {
-        pts_item->point_set()->insert(all_points[i][j]);
-      }
-      pts_item->setName(names[i].data());
-      pts_item->invalidateOpenGLBuffers();
-      CGAL::Color c = all_colors[i].front();
-      pts_item->setColor(QColor(c.red(), c.green(), c.blue()));
-      pts_item->setProperty("already_colord", true);
-      result << pts_item;
-      if(add_to_scene)
-        CGAL::Three::Three::scene()->addItem(pts_item);
-    }
-    all_points.clear();
-    names.clear();
-    all_colors.clear();
     int nb_meshes =
-        CGAL::read_triangle_soups_from_3mf(fileinfo.filePath().toUtf8().toStdString(),
-                                  all_points, all_polygons, all_colors, names);
+        CGAL::read_3MF(fileinfo.filePath().toUtf8().toStdString(),
+                       all_points, all_polygons, all_colors, names);
     if(nb_meshes <0 )
     {
       ok = false;
@@ -296,14 +240,14 @@ class Io_3mf_plugin:
           color.set_rgb(c.red(), c.green(), c.blue());
       }
 
-      CGAL::write_mesh_to_model(points, triangles, colors,
+      CGAL::IO::write_mesh_to_model(points, triangles, colors,
                                 sm_item->name().toStdString(), &pMeshObject, pModel);
     }
     for(Scene_points_with_normal_item* pts_item : pts_items)
     {
       QColor qc = pts_item->color();
       CGAL::Color color(qc.red(), qc.green(), qc.blue());
-      CGAL::write_point_cloud_to_model(pts_item->point_set()->points(), color,
+      CGAL::IO::write_point_cloud_to_model(pts_item->point_set()->points(), color,
                                        pts_item->name().toStdString(),
                                        &pMeshObject, pModel);
     }
@@ -314,12 +258,12 @@ class Io_3mf_plugin:
       {
         QColor qc = pol_item->color();
         CGAL::Color color(qc.red(), qc.green(), qc.blue());
-        CGAL::write_polyline_to_model(*pol_it,color,
+        CGAL::IO::write_polyline_to_model(*pol_it,color,
                                       pol_item->name().toStdString(),
                                       &pMeshObject, pModel);
       }
     }
-    CGAL::export_model_to_file(fi.filePath().toUtf8().toStdString(), pModel);
+    CGAL::IO::export_model_to_file(fi.filePath().toUtf8().toStdString(), pModel);
     items = to_return;
     return true;
   }

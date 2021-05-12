@@ -1,25 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Herve Bronnimann
 
@@ -44,7 +35,7 @@ public:
   typedef typename Transformation_base_3::Vector_3      Vector_3;
   typedef typename Transformation_base_3::Direction_3   Direction_3;
   typedef typename Transformation_base_3::Aff_transformation_3
-	                                                Aff_transformation_3;
+                                                        Aff_transformation_3;
 
   Translation_repC3() {}
   Translation_repC3(const Vector_3 &tv) : translationvector_(tv) {}
@@ -74,24 +65,24 @@ public:
   {
     return Aff_transformation_3(t.t11,
                                 t.t12,
-				t.t13,
-				t.t11 * translationvector_.x()
-				+ t.t12 * translationvector_.y()
-				+ t.t13 * translationvector_.z() + t.t14,
-				
-				t.t21,
+                                t.t13,
+                                t.t11 * translationvector_.x()
+                                + t.t12 * translationvector_.y()
+                                + t.t13 * translationvector_.z() + t.t14,
+
+                                t.t21,
                                 t.t22,
-				t.t23,
-				t.t21 * translationvector_.x()
-				+ t.t22 * translationvector_.y()
-				+ t.t23 * translationvector_.z() + t.t24,
-				
-				t.t31,
+                                t.t23,
+                                t.t21 * translationvector_.x()
+                                + t.t22 * translationvector_.y()
+                                + t.t23 * translationvector_.z() + t.t24,
+
+                                t.t31,
                                 t.t32,
-				t.t33,
-				t.t31 * translationvector_.x()
-				+ t.t32 * translationvector_.y()
-				+ t.t33 * translationvector_.z() + t.t34);
+                                t.t33,
+                                t.t31 * translationvector_.x()
+                                + t.t32 * translationvector_.y()
+                                + t.t33 * translationvector_.z() + t.t34);
   }
 
   virtual Aff_transformation_3 compose(const Translation_3 &t) const
@@ -105,18 +96,18 @@ public:
     FT ft0(0);
     return Aff_transformation_3(t.scalefactor_,
                                 ft0,
-				ft0,
-				t.scalefactor_ * translationvector_.x(),
-				
-				ft0,
-                                t.scalefactor_,
-				ft0,
-				t.scalefactor_ * translationvector_.y(),
-				
-				ft0,
                                 ft0,
-				t.scalefactor_,
-				t.scalefactor_ * translationvector_.z());
+                                t.scalefactor_ * translationvector_.x(),
+
+                                ft0,
+                                t.scalefactor_,
+                                ft0,
+                                t.scalefactor_ * translationvector_.y(),
+
+                                ft0,
+                                ft0,
+                                t.scalefactor_,
+                                t.scalefactor_ * translationvector_.z());
   }
 
   virtual Aff_transformation_3 inverse() const
@@ -128,7 +119,7 @@ public:
   {
     return Aff_transformation_3(TRANSLATION, translationvector_);
   }
-  
+
   virtual bool is_even() const
   {
     return true;

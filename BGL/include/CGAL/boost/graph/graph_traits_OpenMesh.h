@@ -1,19 +1,10 @@
 // Copyright (c) 2007  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri, Philipp Moeller
@@ -640,20 +631,19 @@ void clear(OPEN_MESH_CLASS& sm)
   CGAL_postcondition(num_faces(sm) == 0);
 }
 
+//doesn't seem to work. Use BGL default IO functions instead.
+//template<typename K>
+//bool read_OFF(std::istream& is, OPEN_MESH_CLASS& sm)
+//{
+//  OpenMesh::IO::Options ropt;
+//  return OpenMesh::IO::read_mesh(sm, is, ".OFF", ropt, false);
+//}
 
-template<typename K>
-bool read_off(std::istream& is, OPEN_MESH_CLASS& sm)
-{
-  OpenMesh::IO::Options ropt;
-  return OpenMesh::IO::read_mesh(sm, is, ".OFF", ropt, false);
-}
-
-
-template<typename K>
-bool write_off(std::ostream& os, OPEN_MESH_CLASS& sm)
-{
-  return OpenMesh::IO::write_mesh(sm, os, ".OFF");
-}
+//template<typename K>
+//bool write_OFF(std::ostream& os, OPEN_MESH_CLASS& sm)
+//{
+//  return OpenMesh::IO::write_mesh(sm, os, ".OFF");
+//}
 
 }
 #ifndef CGAL_NO_DEPRECATED_CODE

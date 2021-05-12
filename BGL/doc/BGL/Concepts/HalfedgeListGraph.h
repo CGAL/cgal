@@ -7,8 +7,8 @@ and adds the requirements for traversal of all halfedges in the graph.
 
 \cgalAssociatedTypesBegin
 
-\cgalAssociatedTypeBegin{boost::graph_traits<HalfedgeListGraph>::%halfedge_iterator} A halfedge iterator (obtained via `halfedges(g)`) provides access to all of the halfedges in a graph. 
-A halfedge iterator type must meet the requirements of `MultiPassInputIterator`. The value type of the 
+\cgalAssociatedTypeBegin{boost::graph_traits<HalfedgeListGraph>::%halfedge_iterator} A halfedge iterator (obtained via `halfedges(g)`) provides access to all of the halfedges in a graph.
+A halfedge iterator type must meet the requirements of `MultiPassInputIterator`. The value type of the
 halfedge iterator must be the same as the halfedge descriptor of the graph.
 \cgalAssociatedTypeEnd
 

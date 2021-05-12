@@ -4,15 +4,6 @@
 // All rights reserved.
 //
 // This file is part of EXACUS (http://www.mpi-inf.mpg.de/projects/EXACUS/).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // ----------------------------------------------------------------------------
 //
@@ -21,7 +12,7 @@
 // SoX_release   : $Name:  $
 // Revision      : $Revision: 1.43 $
 // Revision_date : $Date: 2009-06-30 13:14:58 $
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-inf.mpg.de>
 //                 Michael Kerber <mkerber@mpi-inf.mpg.de>
@@ -71,9 +62,9 @@ bool check_testsuite(int argc, char** argv) {
 
 int main (int argc, char** argv) {
 
-    if(check_testsuite(argc, argv)) 
+    if(check_testsuite(argc, argv))
         return 0;
-    
+
     std::cerr << "This demo requires Qt!" << std::endl;
     return 0;
 }
@@ -85,7 +76,7 @@ extern int n_rast_colors;
 extern Object_vector cad_objects, oc_objects, arr_objects;
 extern Object_vector* curr_objects;
 extern bool subdiv_layer_changed;
- 
+
 extern Graphic_layer *subdiv_layer;
 extern Layers cad_layers, oc_layers, arr_layers;
 
@@ -116,7 +107,7 @@ void xAlci_main_window::cad_curve_list_click() {
 
                 if(fidx == i || sidx == i)
                     if(cad_curve_list_selection[fidx] &&
-                            cad_curve_list_selection[sidx]) 
+                            cad_curve_list_selection[sidx])
                         cad_seg_list->setSelected(j, true);
             }
         }
@@ -124,8 +115,8 @@ void xAlci_main_window::cad_curve_list_click() {
                 cad_curve_list_selection[i]=false;
             for(int j = 0; j < static_cast<int>(cad_seg_list->count()); j++) {
                 if(cad_layers[j]->get_first_index() == i ||
-                        cad_layers[j]->get_second_index() == i) 
-                    cad_seg_list->setSelected(j,false);          
+                        cad_layers[j]->get_second_index() == i)
+                    cad_seg_list->setSelected(j,false);
             }
         }
     }
@@ -156,11 +147,11 @@ void xAlci_main_window::oc_switch_method(int index)
 void xAlci_main_window::arr_analyse_click() {
 
   arr_rasterize_btn->setEnabled(false);
-  
+
   //CGAL::set_error_behaviour(CGAL::THROW_EXCEPTION);
   //std::scientific(std::cout);
   //std::cout.precision(10);
-  
+
   std::vector<Poly_int2> temp_arr_curves;
   if(read_polys_from_file(arr_input->text(),
                           std::back_inserter(temp_arr_curves))) {
@@ -185,10 +176,10 @@ void xAlci_main_window::oc_analyse_click()
         widget->detach(*it);
         delete (*it);
     }
-    
+
     oc_layers.clear();
     oc_rasterize_btn->setEnabled(false);
-    
+
     Poly_int2 f;
     if(!input_poly(f, oc_input->text().ascii()))
         return;
@@ -198,11 +189,11 @@ void xAlci_main_window::oc_analyse_click()
 
     CGAL::Polynomial_traits_d< Poly_int2 >::Differentiate diff;
 
-    Poly_int2 fx = diff(f, 0), fxx = diff(f, 0), fxy = diff(fx, 1), 
+    Poly_int2 fx = diff(f, 0), fxx = diff(f, 0), fxy = diff(fx, 1),
         fy = diff(f, 1), fyy = diff(fy, 1);
     Poly_int2 ress = fxx*fy*fy - ((fx*fy*fxy)*Poly_int1(2,0)) + fyy*fx*fx,
         res1 = f*fx, res2 = f*fy;
-  
+
     CGAL::set_pretty_mode(std::cout);
     std::cout << "curv:\n " << ress << "\n\n";
     std::cout << "fx:\n " << fx << "\n\n";
@@ -214,16 +205,16 @@ void xAlci_main_window::oc_analyse_click()
     std::cout << "f:\n " << f << "\n\n";
     CGAL::set_pretty_mode(std::cout);
     std::cout << "f:\n " << f << "\n\n";
-    
+
     timer.reset();
     timer.start();
-    
+
 //     CGAL::res_tm.reset();
 
     {
 
     Kernel_2::Construct_curve_2 cc_2 = kernel_2.construct_curve_2_object();
-    
+
 Lbegin:
     try {
         Curve_analysis_2 curve = cc_2(f);
@@ -243,11 +234,11 @@ Lbegin:
 //         std::cout << "\nResultant time: " << CGAL::res_tm.time() << "\n";
         std::cout << oc_objects.size() << " arcs found (incl isolated points)"
              << std::endl;
-        
+
         Object_vector::const_iterator oit;
         Arc_2 arc;
         Point_2 pt;
-        
+
         for(oit = oc_objects.begin(), i = 0; oit != oc_objects.end();
                 oit++, i++) {
 
@@ -269,8 +260,8 @@ Lbegin:
             oc_layers[i]->deactivate();
         }
         //subdiv_renderer.set_polynomial(f);
-    
-    } 
+
+    }
 
     subdiv_layer_changed = true;
     //layers.push_back(new Graphic_layer(-1,widget));
@@ -283,29 +274,29 @@ void xAlci_main_window::cad_partial_selection_click()
     std::vector<Poly_int2> temp_cad_curves;
     if(read_polys_from_file(cad_input->text(),
         std::back_inserter(temp_cad_curves))) {
-        
+
         cad_curves = temp_cad_curves;
         std::stringstream strstr;
-        strstr << "Choose polynomials (" << cad_curves.size() 
+        strstr << "Choose polynomials (" << cad_curves.size()
                << " in total)";
         curve_selection_dialog = new
              Curve_selection_dialog(central_widget,tr(strstr.str().c_str()),
                 false, cad_curves.begin(), cad_curves.end());
-            
+
         curve_selection_dialog->setCaption(tr(strstr.str().c_str()));
         int sel_res = curve_selection_dialog->exec();
-    
+
         if(sel_res==QDialog::Accepted) {
-    
+
             QListBox* curve_selection = curve_selection_dialog->curve_list;
             std::vector<Poly_int2>::iterator curve_it = cad_curves.begin();
             int n = static_cast<int>(cad_curves.size());
             CGAL_assertion(n==curve_selection->numRows());
-        
+
             for(int i=0;i<n;i++) {
-                if(!curve_selection->isSelected(i)) 
+                if(!curve_selection->isSelected(i))
                     curve_it = cad_curves.erase(curve_it);
-                else 
+                else
                     curve_it++;
             }
             CGAL_assertion(curve_it == cad_curves.end());
@@ -318,10 +309,10 @@ void xAlci_main_window::cad_partial_selection_click()
 void xAlci_main_window::arr_partial_selection_click()
 {
     std::vector<Poly_int2> temp_arr_curves;
-  
+
     if(read_polys_from_file(arr_input->text(),
          std::back_inserter(temp_arr_curves))) {
-        
+
         if(arr_method->selectedId() == -1) {
             QMessageBox::warning(this, "Error",
                 "No Sweep-line method specified", 0);
@@ -331,7 +322,7 @@ void xAlci_main_window::arr_partial_selection_click()
         arr_curves = temp_arr_curves;
         std::stringstream strstr;
         strstr << "Choose polynomials (" << arr_curves.size() << " in total)";
-        
+
         curve_selection_dialog = new
             Curve_selection_dialog(central_widget, tr(strstr.str().c_str()),
                 false, arr_curves.begin(), arr_curves.end());
@@ -347,9 +338,9 @@ void xAlci_main_window::arr_partial_selection_click()
             CGAL_assertion(n==curve_selection->numRows());
 
             for(int i = 0; i < n; i++) {
-                if(!curve_selection->isSelected(i)) 
+                if(!curve_selection->isSelected(i))
                     curve_it = arr_curves.erase(curve_it);
-                else 
+                else
                     curve_it++;
             }
             CGAL_assertion(curve_it == arr_curves.end());
@@ -381,7 +372,7 @@ bool xAlci_main_window::read_polys_from_file(QString filename,
         int g = ifstr.get();
         if(g=='P') {
             ifstr.putback(g);
-            ifstr >> f; 
+            ifstr >> f;
             *out++ = f;
         }
     }
@@ -398,7 +389,7 @@ void xAlci_main_window::cad_to_segments() {
             it++) {
         widget->detach(*it);
         delete (*it);
-    } 
+    }
     cad_layers.clear();
 
     typedef std::vector<Curve_analysis_2> Curve_vector;
@@ -407,7 +398,7 @@ void xAlci_main_window::cad_to_segments() {
 
     std::vector<std::pair<int, int> > arc_info, inter_info, s_arcs_info;
     int curve_count = 0;
-        
+
     typedef Kernel_2::Curve_pair_analysis_2 Curve_pair_analysis_2;
     typedef Curve_pair_analysis_2::Status_line_1 Status_line_1;
 
@@ -415,17 +406,17 @@ void xAlci_main_window::cad_to_segments() {
     Kernel_2::Construct_curve_pair_2 ccp_2 =
             kernel_2.construct_curve_pair_2_object();
     CKvA_2::Make_x_monotone_2 make_x_monotone(&CKvA_2::instance());
-    
+
     int n = static_cast<int>(cad_curves.size());
     int number_of_steps = n + n*(n-1)/2;
 
     timer.reset();
     timer.start();
-    
+
     QProgressDialog* progress = new QProgressDialog(
         tr("Please wait"), tr("Abort"), number_of_steps, this,
              "Progress", true);
-    
+
     progress->setCaption("Analyse curves");
     connect(progress,SIGNAL(canceled),SLOT(cancel));
     progress->show();
@@ -437,7 +428,7 @@ void xAlci_main_window::cad_to_segments() {
 
         Curve_analysis_2 curve = cc_2(make_square_free(cad_curves[j]));
         progress->setProgress(progress_count++);
-            
+
         int arc_before = arcs.size(), arc_no;
         make_x_monotone(curve, std::back_inserter(arcs));
         arc_no = arcs.size() - arc_before;
@@ -449,15 +440,15 @@ void xAlci_main_window::cad_to_segments() {
 
         for(int i = 0; i < arc_no; i++)
             arc_info.push_back(std::make_pair(curve_count,curve_count));
-        
-//         int curve_int_count=0; 
+
+//         int curve_int_count=0;
         for(Curve_vector::const_iterator cit = curves.begin();
                 cit != curves.end(); cit++) {
 
  //#warning "cad2segments is temporary (or permanently ?) out of service"
 /*            if(progress->wasCanceled())
                 break;
-                
+
             Curve_pair_analysis_2 cpa;
             try {
                 cpa = ccp_2(curve, *cit);
@@ -467,15 +458,15 @@ void xAlci_main_window::cad_to_segments() {
                     progress_count++;
                     continue;
                 }
-                
+
                 Poly_int2 no_content, q, r, pair_gcd = NiX::gcd(
                     curve._internal_curve().f_primitive(),
                     cit->_internal_curve().f_primitive());
-                    
+
                 Poly_int1 d, pair_content = NiX::gcd(
                     curve._internal_curve().content(),
                     cit->_internal_curve().content());
-                    
+
                 Poly_int2::euclidean_division(cit->polynomial_2(),
                     pair_gcd, q, r);
 
@@ -487,7 +478,7 @@ void xAlci_main_window::cad_to_segments() {
 
                 Curve_pair_analysis_2::Status_line_1 cpa_line =
                     cpa.status_line_at_event(i);
-                
+
                 if(!cpa_line.is_intersection())
                     continue;
 
@@ -496,7 +487,7 @@ void xAlci_main_window::cad_to_segments() {
                     curve.status_line_for_x(x0);
 
                 for(int j = 0; j < sline.number_of_events(); j++) {
-                
+
                     int pair_idx = cpa_line.event_of_curve(j, 0);
                     Status_line_1::Arc_pair pair =
                         cpa_line.curves_at_event(pair_idx);
@@ -524,35 +515,35 @@ void xAlci_main_window::cad_to_segments() {
     } else {
         CGAL_assertion(progress_count == number_of_steps);
     }
-  
+
     delete progress;
     timer.stop();
 
     std::cout << "\n\nAnalyse elapsed time: " << timer.time() << std::endl;
     std::cout << arcs.size() << " arcs found" << std::endl;
-    
+
     CGAL_assertion(arcs.size() == arc_info.size());
-    
+
     std::cout << intersections.size() << " intersections found" << std::endl;
     CGAL_assertion(intersections.size() == inter_info.size());
-    
+
     std::copy(arcs.begin(), arcs.end(), std::back_inserter(cad_objects));
-    
+
     std::copy(arc_info.begin(), arc_info.end(),
         std::back_inserter(s_arcs_info));
 
     std::copy(intersections.begin(), intersections.end(),
         std::back_inserter(cad_objects));
-        
+
     std::copy(inter_info.begin(), inter_info.end(),
               std::back_inserter(s_arcs_info));
 
     Color_map color_map;
-        
+
     int i = 0;
     Point_2 pt;
     Arc_2 arc;
-    
+
     for(Object_vector::const_iterator oit = cad_objects.begin();
             oit != cad_objects.end(); oit++, i++) {
 
@@ -574,7 +565,7 @@ void xAlci_main_window::cad_to_segments() {
         cad_layers[i]->deactivate();
     }
 
-   
+
     cad_rasterize_btn->setEnabled(cad_complete_check->isChecked());
     widget->redraw();
 }
@@ -588,12 +579,12 @@ void xAlci_main_window::arr_compute_arrangement() {
             it++) {
         widget->detach(*it);
         delete (*it);
-    } 
+    }
     arr_layers.clear();
-    
+
     timer.reset();
     timer.start();
-    
+
     Kernel_2::Construct_curve_2 cc_2 = kernel_2.construct_curve_2_object();
     typedef std::vector<Curve_analysis_2> Curve_vector;
 
@@ -611,19 +602,19 @@ void xAlci_main_window::arr_compute_arrangement() {
     if(arr_method->selectedId()==0) {
 #if 0
 #ifdef CGAL_USE_LEDA
-    
+
       typedef Arrangement_2::SoX_Arrangement_2 Leda_graph_2;
-            
+
       Leda_graph_2 leda_graph_2;
-      
+
       arrangement(segments.begin(),
                   segments.end(),
                   leda_graph_2,
                   true,
                   GAPS_2_inst());
-      
+
       timer.stop();
-      
+
       std::cout << "\n\nAnalyse elapsed time: " << timer.time() << std::endl;
       int i=0;
       std::stringstream strstr1;
@@ -643,7 +634,7 @@ void xAlci_main_window::arr_compute_arrangement() {
         out_point(p,buf);
         arr_node_list->insertItem(buf.str());
         arr_layers.push_back(new Graphic_layer(i,widget,static_cast<QObject*>(0),static_cast<const char*>(0),random_color()));
-        arr_layers[i]->deactivate(); 
+        arr_layers[i]->deactivate();
         arr_objects.push_back(Arc_2(p));
         i++;
       }
@@ -660,9 +651,9 @@ void xAlci_main_window::arr_compute_arrangement() {
         if(std::find(arr_objects.begin(),
                      arr_objects.end(),
                      seg)==arr_objects.end()) {
-        
-          //if(true) { 
-          buf << "from: ";  
+
+          //if(true) {
+          buf << "from: ";
           out_point(seg.source(), buf);
           buf << " to: ";
           out_point(seg.target(), buf);
@@ -672,12 +663,12 @@ void xAlci_main_window::arr_compute_arrangement() {
             buf << " vertical";
           arr_edge_list->insertItem(buf.str());
           arr_layers.push_back(new Graphic_layer(i,widget,static_cast<QObject*>(0),static_cast<const char*>(0),random_color()));
-          arr_layers[i]->deactivate(); 
+          arr_layers[i]->deactivate();
           arr_objects.push_back(seg);
           i++;
         }
       }
-      
+
 #endif // CGAL_USE_LEDA
 #endif
     } else if(arr_method->selectedId()==1) {
@@ -686,7 +677,7 @@ void xAlci_main_window::arr_compute_arrangement() {
         Arrangement arr;
 
         CGAL::insert(arr, curves.begin(), curves.end(), boost::false_type());
-                  
+
         timer.stop();
         std::cout << "\n\nAnalyse elapsed time: " << timer.time() << std::endl;
 
@@ -700,9 +691,9 @@ void xAlci_main_window::arr_compute_arrangement() {
             arr.number_of_isolated_vertices()) << " in total):</b>";
         arr_edge_label->setText(outs2.str());
         arr_edge_label->update();
-        
+
         Color_map color_map;
-        
+
         int i = 0, cindex;
         for(Arrangement::Vertex_const_iterator vit = arr.vertices_begin();
                 vit != arr.vertices_end(); vit++) {
@@ -715,15 +706,15 @@ void xAlci_main_window::arr_compute_arrangement() {
                 arr_node_list->insertItem(os.str());
                 continue;
             }
-            
+
             os << "; isolated";
             arr_edge_list->insertItem(os.str());
 #if !XALCI_USE_FLAT_COLOR_SCHEME
-            cindex = i;            
+            cindex = i;
 #else
             cindex = pick_color(pt.curve().id(), color_map);
-#endif            
-            
+#endif
+
             arr_layers.push_back(new Graphic_layer(widget, i, cindex));
             arr_layers[i]->deactivate();
             arr_objects.push_back(CGAL::make_object(pt));
@@ -738,7 +729,7 @@ void xAlci_main_window::arr_compute_arrangement() {
             print_arc(arc, os);
             arr_edge_list->insertItem(os.str());
 
-#if !XALCI_USE_FLAT_COLOR_SCHEME            
+#if !XALCI_USE_FLAT_COLOR_SCHEME
             cindex = i;
 #else
             cindex = pick_color(arc.curve().id(), color_map);
@@ -774,7 +765,7 @@ void xAlci_main_window::visualize()
 void xAlci_main_window::cad_analyse_click()
 {
     cad_rasterize_btn->setEnabled(false);
-  
+
 //     CGAL::set_error_behaviour(CGAL::THROW_EXCEPTION);
     //std::scientific(std::cout);
     //std::cout.precision(10);
@@ -782,7 +773,7 @@ void xAlci_main_window::cad_analyse_click()
     if(read_polys_from_file(cad_input->text(),
             std::back_inserter(temp_cad_curves))) {
 
-            
+
         cad_curves = temp_cad_curves;
         cad_to_segments();
     }
@@ -791,19 +782,19 @@ void xAlci_main_window::cad_analyse_click()
 void xAlci_main_window::tab_changed(QWidget*) {
 
     Layers *detach[2], *attach;
-    
+
     if(tab_widget->currentPage() == cad_tab) {
         curr_objects = &cad_objects;
         attach = &cad_layers;
         detach[0] = &oc_layers;
         detach[1] = &arr_layers;
-        
+
     } else if(tab_widget->currentPage() == one_curve_tab) {
         curr_objects = &oc_objects;
         attach = &oc_layers;
         detach[0] = &cad_layers;
         detach[1] = &arr_layers;
-        
+
     } else {
         curr_objects = &arr_objects;
         attach = &arr_layers;

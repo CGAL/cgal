@@ -20,7 +20,7 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-This chapter describes concepts, classes, and functions for 
+This chapter describes concepts, classes, and functions for
 monotone and sorted matrix search.
 
 \cgalCRPSection{Assertions}

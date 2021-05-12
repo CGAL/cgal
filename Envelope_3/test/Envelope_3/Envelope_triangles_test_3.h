@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $Source: /CVSROOT/CGAL/Packages/Envelope_3/include/CGAL/Envelope_triangles_test_3.h,v $
 // $Revision$ $Date$
 // $Name:  $
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
 
@@ -66,7 +57,7 @@ protected:
                                                         Overlay_functor;
   typedef Envelope_overlay_2<Minimization_diagram_2, Overlay_functor>
                                                         Overlay_2;
-  
+
   typedef Arr_walk_along_line_point_location<Minimization_diagram_2>
                                                         Md_point_location;
 
@@ -108,7 +99,7 @@ public:
 
   // virtual destructor.
   virtual ~Envelope_triangles_test_3() { }
-  
+
   template <class SurfaceIterator>
   void construct_lu_envelope(SurfaceIterator begin, SurfaceIterator end,
                              Minimization_diagram_2 &result)
@@ -124,7 +115,7 @@ public:
     Md_point_location pl(result);
 
     std::size_t number_of_surfaces = surfaces.size();
-    
+
     std::list<X_monotone_curve_2> curves_col;
     std::list<Point_2> points_col;
     for(std::size_t i=0; i<number_of_surfaces; ++i)
@@ -197,14 +188,14 @@ public:
     for(; curves_it != curves_col.end(); ++curves_it)
       std::cout << *curves_it << std::endl;
 #endif
-    
+
     // insert the curves
     insert(result, curves_col.begin(), curves_col.end());
     // insert the points
     typename std::list<Point_2>::iterator pit = points_col.begin();
     for (; pit != points_col.end(); ++pit)
       insert_point(result, *pit, pl);
-      
+
     m_result = &result;
 
     // now, foreach vertex, edge and face, we should determine which surfaces
@@ -217,7 +208,7 @@ public:
       // first we find the surfaces that are defined over the vertex
       std::list<Xy_monotone_surface_3> defined_surfaces;
       typename Traits::Is_defined_over is_defined_over =
-        traits.is_defined_over_object();      
+        traits.is_defined_over_object();
       for(std::size_t i=0; i<number_of_surfaces; ++i)
         if (is_defined_over(vh->point(), surfaces[i]))
           defined_surfaces.push_back(surfaces[i]);
@@ -226,7 +217,7 @@ public:
       set_minimum_over_vertex(vh, defined_surfaces.begin(),
                               defined_surfaces.end());
     }
-    
+
     // update edges' data
     Halfedge_iterator hi = result.halfedges_begin();
     for (; hi != result.halfedges_end(); ++hi, ++hi) {
@@ -241,7 +232,7 @@ public:
       set_minimum_over_edge(hh, defined_surfaces.begin(),
                             defined_surfaces.end());
     }
-    
+
     // update faces' data
 
     // init current face for caching of computation
@@ -255,7 +246,7 @@ public:
       for(std::size_t i=0; i<number_of_surfaces; ++i)
         if (is_surface_defined_over_face(fh, surfaces[i]))
           defined_surfaces.push_back(surfaces[i]);
-      
+
       // now compare them over the face
       set_minimum_over_face(fh, defined_surfaces.begin(),
                             defined_surfaces.end());
@@ -273,7 +264,7 @@ public:
     Md_point_location pl(env);
     Object pl_obj;
     Face_const_handle pl_fh;
-    
+
     Face_iterator fi = test_env.faces_begin();
     bool eq, result = true;
     for (; fi != test_env.faces_end(); ++fi) {
@@ -344,7 +335,7 @@ protected:
     else {
       if (h != current_edge)
         compute_point_in_current_edge(h);
-      
+
       SurfaceIterator si = begin;
       // we set the first surface as the minimum, and then compare all the others
       h->set_data(*si);
@@ -362,7 +353,7 @@ protected:
       // set twin's data
       h->twin()->set_data(h->begin_data(), h->end_data());
     }
-  }  
+  }
   // fill the face with the surface on the envelope
   // the surfaces are known to not intersect inside the face
   // (but might intersect on its edges)
@@ -390,7 +381,7 @@ protected:
           face->set_data(*si); // this erases all surfaces from face's list
         // else - new surface has no affect on the envelope
       }
-    }  
+    }
   }
 
   // compare surfaces over face
@@ -405,7 +396,7 @@ protected:
     Comparison_result result2 =
       compare_surfaces_over_face_v2(face, surf1, surf2);
 
-#ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3 
+#ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3
       // use the 2 vertions and compare the results
       Comparison_result result1 =
         compare_surfaces_over_face_v1(face, surf1, surf2);
@@ -445,8 +436,8 @@ protected:
     do {
       Point_2 target_2 = hec->target()->point();
       cur_res = traits.compare_z_at_xy_3_object()(target_2,surf1,surf2);
-      
-#ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3 
+
+#ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3
         std::cout << "for comparison on vertices, current result = "
                   << cur_res << std::endl;
 #endif
@@ -478,7 +469,7 @@ protected:
     compute_point_in_current_face(face);
 
     cur_res = traits.compare_z_at_xy_3_object()(current_point,surf1,surf2);
-    
+
 #ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3
       std::cout << "for comparison inside face, current result = "
                 << cur_res << std::endl;
@@ -499,7 +490,7 @@ protected:
       traits.is_defined_over_object()(current_point_inside_edge, surf);
     return result;
   }
-  
+
   // check if the surface is defines over the face
   bool is_surface_defined_over_face(const Face_handle& face,
                                     Xy_monotone_surface_3 &surf)
@@ -509,7 +500,7 @@ protected:
       return false;
 
     bool result2 = is_surface_defined_over_face_v2(face, surf);
-    
+
 #ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3
       // use the 2 versions and compare the results
       bool result1 = is_surface_defined_over_face_v1(face, surf);
@@ -517,7 +508,7 @@ protected:
       std::cout << "result1 = " << result1 << " and result2 = " << result2
                 << std::endl;
 
-      assert(result1 == result2);      
+      assert(result1 == result2);
 #endif
 
     return result2;
@@ -548,12 +539,12 @@ protected:
 
         result &= tmp_result;
         hec++;
-      } while(hec != hec_begin && result);      
+      } while(hec != hec_begin && result);
     }
 
     if (result == false)
       return result;
-      
+
     // check vertices on holes boundary
     Hole_iterator hi;
     for (hi = face->holes_begin(); hi != face->holes_end(); ++hi) {
@@ -587,7 +578,7 @@ protected:
 
     bool result = traits.is_defined_over_object()(current_point,surf);
 
-    return result;    
+    return result;
   }
 
   // compute a point inside the face of the arranegement
@@ -595,7 +586,7 @@ protected:
                                     Face_handle face)
   {
     assert(!face->is_unbounded());
-    
+
     #ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3
       std::cout << "in compute point inside face" << std::endl;
     #endif
@@ -614,7 +605,7 @@ protected:
     assert(found);
 
     Halfedge_handle found_hh = hec;
-    
+
     // 2. find a point on this edge's curve that is not one of its vertices
     //    (we use the middle of the curve)
     Point_2 shoot_source = traits.construct_middle_point(found_hh->curve());
@@ -638,7 +629,7 @@ protected:
     Vertex_const_handle shoot_vh;
 
     Point_2 shoot_target;
-    
+
     if (shoot_up)
       shoot_obj = pl.ray_shoot_up(shoot_source);
     else
@@ -653,7 +644,7 @@ protected:
     }
     else
       CGAL_error(); // it cannot be the unbounded face
-    
+
     Point_2 res_point =
       traits.construct_middle_point(shoot_source, shoot_target);
 
@@ -670,7 +661,7 @@ protected:
     return res_point;
   }
 
-  
+
   // compute a point inside the face saved in current_face
   // and put the result into current_point
   void compute_point_in_current_face(Face_handle face)

@@ -1,20 +1,11 @@
 // Copyright (c) 2010-2011 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -23,6 +14,7 @@
 
 #include <CGAL/tuple.h>
 #include <CGAL/Compact_container.h>
+#include <CGAL/Concurrent_compact_container.h>
 #include <iostream>
 
 #include <boost/type_traits/is_same.hpp>
@@ -600,6 +592,18 @@ namespace CGAL
         static void run(Ts& ... t)
         { Foreach_static_restricted_except<Functor, j, Attributes>::run(t...); }
       };
+  };
+
+  // Helper class to define container type depending on the Concurrent_tag
+  template<typename Concurrent_tag, class T, class Alloc_>
+  struct Container_type
+  {
+    typedef CGAL::Compact_container<T, Alloc_> type;
+  };
+  template<class T, class Alloc_>
+  struct Container_type<CGAL::Tag_true, T, Alloc_>
+  {
+    typedef CGAL::Concurrent_compact_container<T, Alloc_> type;
   };
 
 } //namespace internal

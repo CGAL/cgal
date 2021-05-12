@@ -24,7 +24,7 @@ halfspaces.
 Due to the fact that all other binary set operations like union,
 difference and symmetric difference can be reduced to intersection and
 complement calculations, Nef polyhedra are also closed under those
-operations. Also, Nef polyhedra are closed under topological unary 
+operations. Also, Nef polyhedra are closed under topological unary
 set operations. Given a Nef polyhedron one can determine its interior, its
 boundary, and its closure.
 

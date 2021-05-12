@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Nico Kruithof <Nico@nghk.nl>
 
@@ -301,12 +292,12 @@ public:
   {
     return _gt;
   }
-  /// Returns the datastructure storing the triangulation.
+  /// Returns the data structure storing the triangulation.
   const Triangulation_data_structure & tds() const
   {
     return _tds;
   }
-  /// Returns the datastructure storing the triangulation.
+  /// Returns the data structure storing the triangulation.
   Triangulation_data_structure & tds()
   {
     return _tds;
@@ -366,17 +357,17 @@ public:
     else
       return _tds.number_of_faces() / 9;
   }
-  /// Returns the number of vertices stored in the datastructure.
+  /// Returns the number of vertices stored in the data structure.
   size_type number_of_stored_vertices() const
   {
     return _tds.number_of_vertices();
   }
-  /// Returns the number of edges stored in the datastructure.
+  /// Returns the number of edges stored in the data structure.
   size_type number_of_stored_edges() const
   {
     return _tds.number_of_edges();
   }
-  /// Returns the number of faces stored in the datastructure.
+  /// Returns the number of faces stored in the data structure.
   size_type number_of_stored_faces() const
   {
     return _tds.number_of_faces();
@@ -674,7 +665,7 @@ public:
   /// begin iterator over the non-virtual vertices
   Unique_vertex_iterator unique_vertices_begin() const
   {
-    return CGAL::filter_iterator(vertices_end(), 
+    return CGAL::filter_iterator(vertices_end(),
                                  Periodic_2_triangulation_2_internal::Domain_tester<Self>(this),
                                  vertices_begin());
   }
@@ -1821,7 +1812,7 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid_too_long_edges(bool verbose, 
             {
               if (too_long)
                 {
-                  if (verbose) std::cout << "1. Too long edge not in the datastructure" << std::endl;
+                  if (verbose) std::cout << "1. Too long edge not in the data structure" << std::endl;
                   result = false;
                 }
               result &= !too_long;
@@ -1835,7 +1826,7 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid_too_long_edges(bool verbose, 
                   too_long_edges++;
                   if (it2 == it->second.end())
                     {
-                      if (verbose) std::cout << "2. Too long edge not in the datastructure" << std::endl;
+                      if (verbose) std::cout << "2. Too long edge not in the data structure" << std::endl;
                       result = false;
                     }
                   CGAL_triangulation_assertion(result);
@@ -1844,7 +1835,7 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid_too_long_edges(bool verbose, 
                 {
                   if (it2 != it->second.end())
                     {
-                      if (verbose) std::cout << "Edge is not too long, but contained in the datastructure" << std::endl;
+                      if (verbose) std::cout << "Edge is not too long, but contained in the data structure" << std::endl;
                       result = false;
                     }
                   CGAL_triangulation_assertion(result);
@@ -1969,10 +1960,10 @@ void Periodic_2_triangulation_2<Gt, Tds>::flip(Face_handle f, int i)
             vh2_copy = v2s[i2 - 1];
 
           bool found = is_edge(vh1_copy, vh2_copy, fh, index);
-	  CGAL_USE(found);
+          CGAL_USE(found);
           CGAL_assertion(found);
-	  if (found)
-	    flip_single_edge(fh, index);
+          if (found)
+            flip_single_edge(fh, index);
         }
     }
 

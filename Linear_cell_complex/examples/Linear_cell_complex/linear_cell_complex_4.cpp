@@ -11,7 +11,7 @@ typedef LCC_4::FT                                          FT;
 int main()
 {
   LCC_4 lcc;
-  
+
   // Create two tetrahedra.
   FT p1[5]={ 0, 0, 0, 0, 0}; std::vector<FT> v1(p1,p1+5);
   FT p2[5]={ 0, 2, 0, 0, 0}; std::vector<FT> v2(p2,p2+5);
@@ -21,12 +21,12 @@ int main()
   FT p6[5]={-1, 2, 0, 0, 0}; std::vector<FT> v6(p6,p6+5);
   FT p7[5]={-1, 1, 2, 0, 0}; std::vector<FT> v7(p7,p7+5);
   FT p8[5]={-3, 1, 2, 0, 0}; std::vector<FT> v8(p8,p8+5);
-  
+
   Dart_handle d1 = lcc.make_tetrahedron(Point(5, v1.begin(), v1.end()),
                                         Point(5, v2.begin(), v2.end()),
                                         Point(5, v3.begin(), v3.end()),
-                                        Point(5, v4.begin(), v4.end()));  
-  
+                                        Point(5, v4.begin(), v4.end()));
+
   Dart_handle d2 = lcc.make_tetrahedron(Point(5, v5.begin(), v5.end()),
                                         Point(5, v6.begin(), v6.end()),
                                         Point(5, v7.begin(), v7.end()),
@@ -36,7 +36,7 @@ int main()
   std::cout<<", valid="<<lcc.is_valid()<<std::endl;
 
   lcc.sew<4>(d1,d2);
-  
+
   lcc.display_characteristics(std::cout);
   std::cout<<", valid="<<lcc.is_valid()<<std::endl;
 
@@ -50,7 +50,7 @@ int main()
   // Add one edge to cut the face containing dart d3 in two.
   Dart_handle d4 = lcc.insert_cell_1_in_cell_2(d3, lcc.alpha(d1, 1, 0, 1));
   CGAL_assertion( lcc.is_valid() );
-  
+
   lcc.display_characteristics(std::cout);
   std::cout<<", valid="<<lcc.is_valid()<<std::endl;
 

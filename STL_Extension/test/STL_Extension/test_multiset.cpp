@@ -45,38 +45,38 @@ void test_swap_and_replace();
 int main ()
 {
   std::cout << std::endl
-	    << "Testing insert and erase:" << std::endl
-	    << "=========================" << std::endl << std::endl;
+            << "Testing insert and erase:" << std::endl
+            << "=========================" << std::endl << std::endl;
   test_massive_insert_and_erase();
 
   std::cout << std::endl
-	    << "Testing the iterators:" << std::endl
-	    << "======================" << std::endl << std::endl;
+            << "Testing the iterators:" << std::endl
+            << "======================" << std::endl << std::endl;
   test_iterators();
 
   std::cout << std::endl
-	    << "Testing the lookup methods:" << std::endl
-	    << "===========================" << std::endl << std::endl;
+            << "Testing the lookup methods:" << std::endl
+            << "===========================" << std::endl << std::endl;
   test_lookup();
 
   std::cout << std::endl
-	    << "Testing the comparison functions:" << std::endl
-	    << "=================================" << std::endl << std::endl;
+            << "Testing the comparison functions:" << std::endl
+            << "=================================" << std::endl << std::endl;
   test_comparison();
 
   std::cout << std::endl
-	    << "Testing catenate:" << std::endl
-	    << "=================" << std::endl << std::endl;
+            << "Testing catenate:" << std::endl
+            << "=================" << std::endl << std::endl;
   test_catenate();
 
   std::cout << std::endl
-	    << "Testing split:" << std::endl
-	    << "==============" << std::endl << std::endl;
+            << "Testing split:" << std::endl
+            << "==============" << std::endl << std::endl;
   test_split();
 
   std::cout << std::endl
-	    << "Testing swap and replace:" << std::endl
-	    << "=========================" << std::endl << std::endl;
+            << "Testing swap and replace:" << std::endl
+            << "=========================" << std::endl << std::endl;
   test_swap_and_replace();
 
   return (0);
@@ -106,7 +106,7 @@ void test_massive_insert_and_erase ()
   // Print the set characteristics.
   std::cout << set.size() << " numbers in the set "
             << "(tree height is " << set.height()
-            << ", black-height is " << set.black_height() << ")." 
+            << ", black-height is " << set.black_height() << ")."
             << std::endl;
 
   // Delete some numbers.
@@ -141,7 +141,7 @@ void test_iterators ()
   typedef CGAL::Multiset<int>                Set;
   typedef Set::iterator                      Set_iter;
   typedef Set::reverse_iterator              Set_rev_iter;
-  
+
   Set         set;
   const int   range = 101;           // A prime number.
   int         k;
@@ -246,11 +246,11 @@ void test_lookup ()
   typedef CGAL::Multiset<Word_index, Word_index_compare>   Set;
   typedef Set::const_iterator                              Set_iter;
 
-  const char *words[] = 
+  const char *words[] =
     {"There's", "a", "lady", "who's", "sure",
      "all", "that", "glitters", "is", "gold",
      "And", "she's", "buying", "a", "stairway", "to", "heaven",
-     "And", "when", "she", "gets", "there", "she", "knows", 
+     "And", "when", "she", "gets", "there", "she", "knows",
      "if", "the", "stores", "are", "closed",
      "With", "a", "word", "she", "can", "get", "what", "she", "came", "for",
      "Woe", "oh", "oh", "oh", "oh", "oh",
@@ -278,7 +278,7 @@ void test_lookup ()
 
   for (k = 0; k < n_words; k++)
   {
-    if (cset.count (words[k], String_word_index_compare()) > 1 && 
+    if (cset.count (words[k], String_word_index_compare()) > 1 &&
         used_words.find (words[k]) == used_words.end())
     {
       used_words.insert (words[k]);
@@ -290,8 +290,8 @@ void test_lookup ()
 
       res = cset.find_lower (words[k], String_word_index_compare());
       assert ((res.second && lower != upper) ||
-		      (! res.second && lower == upper));
-	
+                      (! res.second && lower == upper));
+
       assert (lower == range.first && upper == range.second);
 
       while (lower != upper)
@@ -313,7 +313,7 @@ void test_comparison ()
   typedef CGAL::Multiset<int>                Set;
 
   // Construct a random set.
-  const int   n = 10; 
+  const int   n = 10;
   Set         set1;
   int         k;
 
@@ -350,7 +350,7 @@ void test_comparison ()
 
   assert (set1.is_valid());
   assert (set2.is_valid());
-  
+
   std::cout << "After swapping the sets: ";
   if (set1 == set2)
     std::cout << "S1 == S2" << std::endl;
@@ -384,16 +384,16 @@ void test_catenate ()
       s1_rev.clear();
       for (k = 1; k <= size1; k++)
       {
-	s1.insert (k);
-	s1_rev.insert (size1 - k + 1);
+        s1.insert (k);
+        s1_rev.insert (size1 - k + 1);
       }
 
       s2.clear();
       s2_rev.clear();
       for (k = 1; k <= size2; k++)
       {
-	s2.insert (size1 + k);
-	s2_rev.insert (size1 + size2 - k + 1);
+        s2.insert (size1 + k);
+        s2_rev.insert (size1 + size2 - k + 1);
       }
 
       s1.catenate (s2);
@@ -405,16 +405,16 @@ void test_catenate ()
       s1_rev.clear();
       for (k = 1; k <= size1; k++)
       {
-	s1.insert (k);
-	s1_rev.insert (size1 - k + 1);
+        s1.insert (k);
+        s1_rev.insert (size1 - k + 1);
       }
 
       s2.clear();
       s2_rev.clear();
       for (k = 1; k <= size2; k++)
       {
-	s2.insert (size1 + k);
-	s2_rev.insert (size1 + size2 - k + 1);
+        s2.insert (size1 + k);
+        s2_rev.insert (size1 + size2 - k + 1);
       }
 
       s1.catenate (s2_rev);
@@ -425,9 +425,9 @@ void test_catenate ()
   }
 
   // Construct two random sets.
-  const int   n1 = 1000; 
+  const int   n1 = 1000;
   Set         set1;
-  const int   n2 = 100; 
+  const int   n2 = 100;
   Set         set2;
   int         val;
 
@@ -531,7 +531,7 @@ void test_split ()
 struct Compare_floor
 {
   CGAL::Comparison_result operator() (const double& x1,
-				      const double& x2) const
+                                      const double& x2) const
   {
     const int  ix1 = static_cast<int> (x1);
     const int  ix2 = static_cast<int> (x2);
@@ -572,7 +572,7 @@ void test_swap_and_replace ()
   // Print the set.
   std::cout << set.size() << " numbers in the set "
             << "(tree height is " << set.height()
-            << ", black-height is " << set.black_height() << ")." 
+            << ", black-height is " << set.black_height() << ")."
             << std::endl;
 
   for (iter = set.begin(); iter != set.end(); ++iter)
@@ -630,7 +630,7 @@ void test_swap_and_replace ()
 
   // Perform the swap to make it valid again.
   iset.swap (pos1, pos2);
- 
+
   for (iitr = iset.begin(); iitr != iset.end(); ++iitr)
     std::cout << *iitr << ' ';
   std::cout << std::endl;

@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -52,11 +43,11 @@ namespace CGAL {
 //-----------------------------------------------------------------------
 
 template<class CK_t,
-	 class CK_MTag = Integral_domain_without_division_tag,
-	 class EK_t    = Simple_cartesian< MP_Float >,
-	 class EK_MTag = CK_MTag,
-	 class FK_t    = Simple_cartesian< Interval_nt<false> >,
-	 class FK_MTag = CK_MTag,
+         class CK_MTag = Integral_domain_without_division_tag,
+         class EK_t    = Simple_cartesian< MP_Float >,
+         class EK_MTag = CK_MTag,
+         class FK_t    = Simple_cartesian< Interval_nt<false> >,
+         class FK_MTag = CK_MTag,
          class C2E_t   = Cartesian_converter<CK_t, EK_t>,
          class C2F_t   =
          Cartesian_converter<CK_t, FK_t, To_interval<typename CK_t::RT> > >
@@ -202,15 +193,15 @@ public:
   // changes in the spec/concept); see also changes needed for the
   // filtered construction above.
   typedef Filtered_construction<CK_Construct_Apollonius_vertex_2,
-				EK_Construct_Apollonius_vertex_2,
-				FK_Construct_Apollonius_vertex_2,
-				C2E, C2F, E2C, F2C>
+                                EK_Construct_Apollonius_vertex_2,
+                                FK_Construct_Apollonius_vertex_2,
+                                C2E, C2F, E2C, F2C>
   Construct_Apollonius_vertex_2;
 
   typedef Filtered_construction<CK_Construct_Apollonius_site_2,
-				EK_Construct_Apollonius_site_2,
-				FK_Construct_Apollonius_site_2,
-				C2E, C2F, E2C, F2C>
+                                EK_Construct_Apollonius_site_2,
+                                FK_Construct_Apollonius_site_2,
+                                C2E, C2F, E2C, F2C>
   Construct_Apollonius_site_2;
 #else
   typedef typename CK_traits::Construct_Apollonius_vertex_2
@@ -297,27 +288,27 @@ public:
 
   typedef
   Filtered_predicate<EK_Oriented_side_of_bisector_2,
-		     FK_Oriented_side_of_bisector_2, C2E, C2F>
+                     FK_Oriented_side_of_bisector_2, C2E, C2F>
   Oriented_side_of_bisector_2;
 
   typedef
   Filtered_predicate<EK_Vertex_conflict_2,
-		     FK_Vertex_conflict_2, C2E, C2F>
+                     FK_Vertex_conflict_2, C2E, C2F>
   Vertex_conflict_2;
 
   typedef
   Filtered_predicate<EK_Finite_edge_interior_conflict_2,
-		     FK_Finite_edge_interior_conflict_2, C2E, C2F>
+                     FK_Finite_edge_interior_conflict_2, C2E, C2F>
   Finite_edge_interior_conflict_2;
 
   typedef
   Filtered_predicate<EK_Infinite_edge_interior_conflict_2,
-		     FK_Infinite_edge_interior_conflict_2, C2E, C2F>
+                     FK_Infinite_edge_interior_conflict_2, C2E, C2F>
   Infinite_edge_interior_conflict_2;
 
   typedef
   Filtered_predicate<EK_Is_degenerate_edge_2,
-		     FK_Is_degenerate_edge_2, C2E, C2F>
+                     FK_Is_degenerate_edge_2, C2E, C2F>
   Is_degenerate_edge_2;
 
 public:
@@ -332,7 +323,7 @@ public:
   }
 
   Construct_object_2
-  construct_object_2_object() const { 
+  construct_object_2_object() const {
     return Construct_object_2();
   }
 
@@ -340,7 +331,7 @@ public:
   // CONSTRUCTIONS
   //--------------
   Construct_Apollonius_vertex_2
-  construct_Apollonius_vertex_2_object() const { 
+  construct_Apollonius_vertex_2_object() const {
     return Construct_Apollonius_vertex_2();
   }
 

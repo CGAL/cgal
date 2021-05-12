@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is a part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez.
 
@@ -29,7 +20,7 @@
 
 #include <CGAL/disable_warnings.h>
 
-// STL headers.  
+// STL headers.
 #include <vector>
 
 // CGAL headers.
@@ -58,7 +49,7 @@ namespace Barycentric_coordinates {
 
 */
 
-template<class Traits> 
+template<class Traits>
     class Triangle_coordinates_2
 {
 
@@ -122,33 +113,33 @@ public:
     /// @{
 
     /// Returns all the vertices of the triangle.
-    inline const Vertex_range& vertices() const 
-    { 
-        return vertex; 
+    inline const Vertex_range& vertices() const
+    {
+        return vertex;
     }
 
     /// Returns the first vertex of the triangle.
-    inline const Point_2& first_vertex() const 
-    { 
-        return vertex[0]; 
+    inline const Point_2& first_vertex() const
+    {
+        return vertex[0];
     }
 
     /// Returns the second vertex of the triangle.
-    inline const Point_2& second_vertex() const 
-    { 
-        return vertex[1]; 
+    inline const Point_2& second_vertex() const
+    {
+        return vertex[1];
     }
 
     /// Returns the third vertex of the triangle.
-    inline const Point_2& third_vertex() const 
-    { 
-        return vertex[2]; 
+    inline const Point_2& third_vertex() const
+    {
+        return vertex[2];
     }
 
     /// @}
 
     // Computes triangle barycentric coordinates for a chosen query point with respect to all three vertices of the triangle.
-    // This function accepts a container of the type <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a> 
+    // This function accepts a container of the type <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>
     // and returns an iterator of the type <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>
     // that is placed past-the-end of the resulting sequence of coordinate values.
     inline boost::optional<std::back_insert_iterator<std::vector<FT> > > operator()(const Point_2 &query_point, std::vector<FT> &output_vector)
@@ -231,7 +222,7 @@ private:
 /*!
  * \relates Triangle_coordinates_2
  * This is a global function that takes three vertices of a triangle and computes triangle coordinates at a given query point with respect to these vertices.
- 
+
 \tparam Traits must be a model of the concept `BarycentricTraits_2`.
 
 */

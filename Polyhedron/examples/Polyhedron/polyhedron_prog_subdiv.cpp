@@ -102,6 +102,6 @@ int main(int argc, char* argv[]) {
         std::exit(1);
     }
     subdiv( P);
-    std::cout << P;
+    std::cout << std::setprecision(17) << P;
     return 0;
 }

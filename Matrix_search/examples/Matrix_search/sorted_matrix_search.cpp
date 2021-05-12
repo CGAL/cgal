@@ -38,7 +38,7 @@ int main()
   CGAL::sorted_matrix_search(
     &M, &M + 1,
     CGAL::sorted_matrix_search_traits_adaptor(
-      boost::bind2nd(std::greater_equal<Value>(), bound), M));
+      [&bound](const auto& m){ return std::greater_equal<Value>()(m, bound); }, M));
   std::cout << "Upper bound for " << bound << " is "
             << upper_bound << "." << std::endl;
 

@@ -175,7 +175,7 @@ int main(int, char **)
 //     // At least 1*max
 //     double boxSize = 1 + 2.05/(shrink * (1-shrink))*
 //       std::max((xExtr[1]-xExtr[0]),
-// 	std::max((yExtr[1]-yExtr[0]),(zExtr[1]-zExtr[0])));
+//         std::max((yExtr[1]-yExtr[0]),(zExtr[1]-zExtr[0])));
 
 //     regular.insert(Weighted_point(Point(xExtr[0]-boxSize,0,0),-1));
 //     regular.insert(Weighted_point(Point(xExtr[1]+boxSize,0,0),-1));
@@ -195,22 +195,22 @@ int main(int, char **)
 
 //   assert(simplicial.is_valid(true));
 
-  // 	// NGHK: function
-  // 	Mesh mesh;
-  // 	Marching_tetrahedra marching_tetrahedra(simplicial, mesh);
-  // 	marching_tetrahedra.build();
+  //         // NGHK: function
+  //         Mesh mesh;
+  //         Marching_tetrahedra marching_tetrahedra(simplicial, mesh);
+  //         marching_tetrahedra.build();
 
-  // 	{
-  // 		std::ofstream out("out/coarse.off");
-  // 		out << mesh;
-  // 	}
+  //         {
+  //                 std::ofstream out("out/coarse.off");
+  //                 out << mesh;
+  //         }
 
-  // 	// subdivision engine
-  // 	Sqrt3Method subdivider(simplicial, mesh);
-  // 	subdivider.subdivide(2);
+  //         // subdivision engine
+  //         Sqrt3Method subdivider(simplicial, mesh);
+  //         subdivider.subdivide(2);
 
-  // 	{
-  // 		std::ofstream out("out/sqrt.off");
-  // 		out << mesh;
-  // 	}
+  //         {
+  //                 std::ofstream out("out/sqrt.off");
+  //                 out << mesh;
+  //         }
 }

@@ -45,7 +45,7 @@ int main()
 
         time_to_compute.start();
         for(int j = 0; j < number_of_iterations; ++j) {
-            for(Scalar x = zero; x <= one; x += step) 
+            for(Scalar x = zero; x <= one; x += step)
                 segment_coordinates(Point(x, zero), it);
         }
         time_to_compute.stop();
@@ -58,6 +58,6 @@ int main()
 
     cout.precision(10);
     cout << endl << "CPU time to compute Segment coordinates = " << mean_time << " seconds." << endl << endl;
-    
+
     return EXIT_SUCCESS;
 }

@@ -1,5 +1,5 @@
-// example: read nonnegative linear program in MPS format from file 
-// the LP below is the first nonnegative linear program example 
+// example: read nonnegative linear program in MPS format from file
+// the LP below is the first nonnegative linear program example
 // in the user manual
 #include <iostream>
 #include <fstream>

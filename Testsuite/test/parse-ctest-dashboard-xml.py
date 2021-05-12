@@ -71,9 +71,10 @@ tests_per_label = defaultdict(list)
 for t_id in range(0, len(tests)):
     t = tests[t_id]
     for l in t['Labels']:
-        label = l.replace("_Tests","")
-        labels.add(label)
-        tests_per_label[label].append(t)
+        if "_Tests" in l or "_Examples" in l or "_Demo" in l:
+            label = l.replace("_Tests","")
+            labels.add(label)
+            tests_per_label[label].append(t)
 
 with open_file_create_dir(result_file_name.format(dir=os.getcwd(),
                                                   tester=tester_name,

@@ -72,7 +72,7 @@ int main()
   Is_border ib(g);
   FG fg(g,ib);
 
-  std::list<Polyline_3> polylines;  
+  std::list<Polyline_3> polylines;
   Polyline_visitor polyline_visitor(polylines);
 
    CGAL::split_graph_into_polylines( fg,
@@ -80,7 +80,7 @@ int main()
                                      Is_terminal() );
 
    std::cout.precision(17);
-   
+
    for(std::list<Polyline_3>::iterator it = polylines.begin(); it!= polylines.end(); ++it){
      Polyline_3& poly = *it;
      std::size_t n;
@@ -97,6 +97,6 @@ int main()
      std::cout << std::endl;
    }
 
-   
+
   return 0;
 }

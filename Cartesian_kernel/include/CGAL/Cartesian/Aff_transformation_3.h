@@ -1,25 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -59,7 +50,7 @@ class Aff_transformationC3
   typedef typename R_::Direction_3          Direction_3;
   typedef typename R_::Plane_3              Plane_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
-  
+
   using Handle_for_virtual<Aff_t_base>::initialize_with;
 public:
   typedef R_                               R;
@@ -166,10 +157,10 @@ public:
   { return transform(p); } // FIXME : not compiled by the test-suite !
 
   Aff_transformation_3 inverse() const { return this->Ptr()->inverse(); }
-  
+
   bool is_even() const { return this->Ptr()->is_even(); }
   bool is_odd() const { return  ! (this->Ptr()->is_even()); }
-  
+
   FT cartesian(int i, int j) const { return this->Ptr()->cartesian(i,j); }
   FT homogeneous(int i, int j) const { return cartesian(i,j); }
   FT m(int i, int j) const { return cartesian(i,j); }
@@ -177,7 +168,10 @@ public:
 
   Aff_transformation_3 operator*(const Aff_transformationC3 &t) const
   { return (*this->Ptr()) * (*t.Ptr()); }
-  
+
+  std::ostream &
+  print(std::ostream &os) const;
+
   bool operator==(const Aff_transformationC3 &t)const
   {
     for(int i=0; i<3; ++i)
@@ -186,24 +180,32 @@ public:
           return false;
     return true;
   }
-  
+
   bool operator!=(const Aff_transformationC3 &t)const
   {
     return !(*this == t);
   }
-  
+
 protected:
   Aff_transformation_3  transpose() const { return this->Ptr()->transpose(); }
 };
 
 
+template < class R >
+std::ostream&
+Aff_transformationC3<R>::print(std::ostream &os) const
+{
+  this->Ptr()->print(os);
+  return os;
+}
+
 #ifndef CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATIONC3
 template < class R >
-std::ostream &operator<<(std::ostream &os,
-                         const Aff_transformationC3<R> &t)
+std::ostream&
+operator<<(std::ostream &os, const Aff_transformationC3<R> &t)
 {
-    t.print(os);
-    return os;
+  t.print(os);
+  return os;
 }
 #endif // CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATIONC3
 

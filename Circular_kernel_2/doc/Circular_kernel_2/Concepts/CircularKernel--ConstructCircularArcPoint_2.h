@@ -14,15 +14,15 @@ public:
 
 /*!
 
-*/ 
-CircularKernel::Circular_arc_point_2 operator() 
-(const CircularKernel::Root_for_circles_2_2 & r); 
+*/
+CircularKernel::Circular_arc_point_2 operator()
+(const CircularKernel::Root_for_circles_2_2 & r);
 
 /*!
 
-*/ 
-CircularKernel::Circular_arc_point_2 operator() 
-(const CircularKernel::Point_2 & p); 
+*/
+CircularKernel::Circular_arc_point_2 operator()
+(const CircularKernel::Point_2 & p);
 
 /// @}
 

@@ -16,11 +16,8 @@
 #include <QMainWindow>
 
 using namespace CGAL::Three;
-#ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
+
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 class  Point_set_interference_plugin:
     public QObject,

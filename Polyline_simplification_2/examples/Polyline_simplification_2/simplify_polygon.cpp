@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
   CGAL::read_polygon_WKT(ifs, polygon);
   Cost cost;
   polygon = PS::simplify(polygon, cost, Stop(0.5));
-  
+
   std::cout.precision(12);
   CGAL::write_polygon_WKT(std::cout, polygon) << std::endl;
 

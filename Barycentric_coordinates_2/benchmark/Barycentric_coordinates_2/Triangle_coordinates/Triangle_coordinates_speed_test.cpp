@@ -52,7 +52,7 @@ int main()
                 triangle_coordinates(Point(x, y), it);
         }
         time_to_compute.stop();
-        
+
         time += time_to_compute.time();
 
         time_to_compute.reset();
@@ -61,6 +61,6 @@ int main()
 
     cout.precision(10);
     cout << endl << "CPU time to compute Triangle coordinates = " << mean_time << " seconds." << endl << endl;
-    
+
     return EXIT_SUCCESS;
 }

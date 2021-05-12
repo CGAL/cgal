@@ -13,7 +13,7 @@
 // SPDX-License-Identifier: BSL-1.0
 //
 // NOTE: this file have been taken from boost 1.46.1 for using
-//       with Modificable_priority_queue (to enhance the 
+//       with Modificable_priority_queue (to enhance the
 //       non-documented mutable_queue).
 //       original file is <boost/graph/detail/array_binary_tree.hpp>
 //
@@ -23,6 +23,7 @@
 #include <CGAL/iterator.h>
 
 #include <boost/config.hpp>
+#include <boost/iterator.hpp>
 
 #include <functional>
 

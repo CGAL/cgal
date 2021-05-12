@@ -51,7 +51,7 @@ int main(int argc, char** argv)
 
   QVTKWidget widget;
   widget.resize(256,256);
- 
+
   CGAL::Image_3 image;
   if(!image.read(argv[1]))
   {
@@ -125,7 +125,7 @@ int main(int argc, char** argv)
 
   // Note that when camera movement occurs (as it does in the Dolly()
   // method), the clipping planes often need adjusting. Clipping planes
-  // consist of two planes: near and far along the view direction. The 
+  // consist of two planes: near and far along the view direction. The
   // near plane clips out objects in front of the plane; the far plane
   // clips out objects behind the plane. This way only what is drawn
   // between the planes is actually rendered.
@@ -133,7 +133,7 @@ int main(int argc, char** argv)
 
   // Initialize the event loop and then start it.
 //   iren->Initialize();
-//   iren->Start(); 
+//   iren->Start();
 
   // It is important to delete all objects created previously to prevent
   // memory leaks. In this case, since the program is on its way to
@@ -155,7 +155,7 @@ int main(int argc, char** argv)
   widget.show();
 
   app.exec();
-  
+
   return 0;
 }
 

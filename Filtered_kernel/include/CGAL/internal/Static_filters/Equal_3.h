@@ -1,20 +1,11 @@
 // Copyright (c) 2011 GeometryFactory Sarl (France)
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri
@@ -48,18 +39,7 @@ public:
 
   typedef typename Base::result_type  result_type;
 
-
-#ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::operator();
-#else // CGAL_CFG_MATCHING_BUG_6
-  template <typename T>
-  result_type
-  operator()(const T& t1, const T& t2) const
-  {
-    return Base()(t1,t2);
-  }
-#endif // CGAL_CFG_MATCHING_BUG_6
-
 
   result_type operator()(const Point_3 &p, const Point_3& q) const
   {
@@ -102,6 +82,24 @@ public:
     return Base::operator()(p, q);
   }
 
+
+  result_type operator()(const Vector_3 &p, const Null_vector &q) const
+  {
+    CGAL_BRANCH_PROFILER(std::string("semi-static attempts/calls to   : ") +
+                         std::string(CGAL_PRETTY_FUNCTION), tmp);
+
+    Get_approx<Vector_3> get_approx; // Identity functor for all points
+                                     // but lazy points
+    double px, py, pz;
+
+    if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
+        fit_in_double(get_approx(p).z(), pz) )
+    {
+      CGAL_BRANCH_PROFILER_BRANCH(tmp);
+      return px == 0 && py == 0 && pz == 0;
+    }
+    return Base::operator()(p, q);
+  }
 }; // end class Equal_3
 
 } // end namespace Static_filters_predicates

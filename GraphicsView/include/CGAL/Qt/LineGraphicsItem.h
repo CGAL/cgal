@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -50,9 +41,9 @@ public:
 
 public:
   QRectF boundingRect() const;
-  
+
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-  
+
 
   const QPen& Pen() const
   {
@@ -65,7 +56,7 @@ public:
     this->pen = pen_;
   }
 
-  
+
   void setLine(const Line_2& a);
 
   Line_2 line() const
@@ -86,7 +77,7 @@ protected:
 
 
 template <typename CK>
-void 
+void
 LineGraphicsItem<CK>::setLine(const Line_2& a)
 {
   line_ = a;
@@ -102,7 +93,7 @@ LineGraphicsItem<CK>::LineGraphicsItem()
 }
 
 template <typename CK>
-QRectF 
+QRectF
 LineGraphicsItem<CK>::boundingRect() const
 {
   if(scene()){
@@ -115,8 +106,8 @@ LineGraphicsItem<CK>::boundingRect() const
 
 
 template <typename CK>
-void 
-LineGraphicsItem<CK>::paint(QPainter *painter, 
+void
+LineGraphicsItem<CK>::paint(QPainter *painter,
                                     const QStyleOptionGraphicsItem * /*option*/,
                                     QWidget * /*widget*/)
 {
@@ -129,7 +120,7 @@ LineGraphicsItem<CK>::paint(QPainter *painter,
 
 
 template <typename CK>
-void 
+void
 LineGraphicsItem<CK>::modelChanged()
 {
   update();

@@ -1,20 +1,11 @@
 // Copyright (c) 2008  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Sylvain Pion
 
@@ -22,11 +13,8 @@
 #define CGAL_ARRAY_H
 
 #include <CGAL/config.h>
-#ifndef CGAL_CFG_NO_CPP0X_ARRAY
-#  include <array>
-#else
-#  include <boost/array.hpp>
-#endif
+#include <array>
+#include <utility>
 
 namespace CGAL {
 
@@ -58,7 +46,7 @@ namespace CGAL {
 // It's also untrue that this is not documented...  It is !
 
 template< typename T, typename... Args >
-inline
+BOOST_CXX14_CONSTEXPR
 std::array< T, 1 + sizeof...(Args) >
 make_array(const T & t, const Args & ... args)
 {
@@ -71,11 +59,26 @@ make_array(const T & t, const Args & ... args)
 struct Construct_array
 {
   template <typename T, typename... Args>
-  std::array<T, 1 + sizeof...(Args)> operator()(const T& t, const Args& ... args)
+  constexpr
+  std::array<T, 1 + sizeof...(Args)>
+  operator()(const T& t, const Args& ... args) const
   {
     return make_array (t, args...);
   }
 };
+
+template <std::size_t...Is, typename T>
+constexpr std::array<T, sizeof...(Is)>
+make_filled_array_aux(const T& value, std::index_sequence<Is...>)
+{
+  return {(static_cast<void>(Is), value)...};
+}
+
+template <std::size_t N, typename T>
+constexpr std::array<T, N> make_filled_array(const T& value)
+{
+  return make_filled_array_aux(value, std::make_index_sequence<N>());
+}
 
 } //namespace CGAL
 

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Simon Giraudot
 
@@ -32,7 +23,7 @@
 
 namespace CGAL {
 
-  
+
   /*!
     \ingroup PkgPoissonSurfaceReconstruction3Ref
 
@@ -45,7 +36,7 @@ namespace CGAL {
       round of Delaunay refinement: it contours the isosurface
       corresponding to the isovalue of the median of the function
       values at the input points
-    - outputs the result in a polygon mesh 
+    - outputs the result in a polygon mesh
 
     This function relies mainly on the size parameter `spacing`. A
     reasonable solution is to use the average spacing of the input
@@ -68,7 +59,7 @@ namespace CGAL {
     \tparam PolygonMesh a model of `MutableFaceGraph` with an internal
     point property map.
 
-    \tparam Tag is a tag whose type affects the behavior of the 
+    \tparam Tag is a tag whose type affects the behavior of the
     meshing algorithm (see `make_surface_mesh()`).
 
     \param begin iterator on the first point of the sequence.
@@ -103,23 +94,24 @@ namespace CGAL {
     typedef typename boost::property_traits<PointMap>::value_type Point;
     typedef typename Kernel_traits<Point>::Kernel Kernel;
     typedef typename Kernel::Sphere_3 Sphere;
-    
+    typedef typename Kernel::FT FT;
+
     typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_function;
-    typedef CGAL::Surface_mesh_default_triangulation_3 STr;
+    typedef typename CGAL::Surface_mesher::Surface_mesh_default_triangulation_3_generator<Kernel>::Type STr;
     typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
     typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
-    
+
     Poisson_reconstruction_function function(begin, end, point_map, normal_map);
-    if ( ! function.compute_implicit_function() ) 
+    if ( ! function.compute_implicit_function() )
       return false;
 
     Point inner_point = function.get_inner_point();
     Sphere bsphere = function.bounding_sphere();
-    double radius = std::sqrt(bsphere.squared_radius());
+    FT radius = CGAL::approximate_sqrt(bsphere.squared_radius());
 
-    double sm_sphere_radius = 5.0 * radius;
-    double sm_dichotomy_error = sm_distance * spacing / 1000.0;
-    
+    FT sm_sphere_radius = 5.0 * radius;
+    FT sm_dichotomy_error = sm_distance * spacing / 1000.0;
+
     Surface_3 surface(function,
                       Sphere (inner_point, sm_sphere_radius * sm_sphere_radius),
                       sm_dichotomy_error / sm_sphere_radius);
@@ -130,7 +122,7 @@ namespace CGAL {
 
     STr tr;
     C2t3 c2t3(tr);
-    
+
     CGAL::make_surface_mesh(c2t3,
                             surface,
                             criteria,

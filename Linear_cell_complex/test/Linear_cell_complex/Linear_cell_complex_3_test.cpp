@@ -78,7 +78,7 @@ int main()
     std::cout<<" Error during Test_LCC_3<LCC3>."<<std::endl;
     return EXIT_FAILURE;
   }
-  
+
   trace_display_msg("test_LCC_3<LCC3b>");
   typedef CGAL::Linear_cell_complex_for_combinatorial_map<3,3,
                                     CGAL::Linear_cell_complex_traits<3>,
@@ -98,7 +98,7 @@ int main()
     std::cout<<" Error during Test_LCC_3<LCC3c>."<<std::endl;
     return EXIT_FAILURE;
   }
-  
+
   // ****************** TEST FOR GMAP ******************
   trace_display_msg("test_LCC_3<GLCC3>");
   typedef CGAL::Linear_cell_complex_for_generalized_map<3> GLCC3;

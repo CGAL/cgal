@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Mariette Yvinec, Sylvain Pion
@@ -33,7 +24,6 @@
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Dimension.h>
-#include <CGAL/result_of.h>
 #include <CGAL/Point_2.h>
 
 namespace CGAL {
@@ -92,50 +82,50 @@ public:
     : Rep(typename R::Construct_weighted_point_2()(Return_base_tag(), x, y))
   {}
 
-  typename cpp11::result_of<typename R::Construct_point_2( Weighted_point_2)>::type
+  decltype(auto)
   point() const
   {
     return typename R::Construct_point_2()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_weight_2( Weighted_point_2)>::type
+  decltype(auto)
   weight() const
   {
     return typename R::Compute_weight_2()(*this);
   }
 
 
-  typename cpp11::result_of<typename R::Compute_x_2( Point_2)>::type
+  decltype(auto)
   x() const
   {
     return typename R::Compute_x_2()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_y_2( Point_2)>::type
+  decltype(auto)
   y() const
   {
     return typename R::Compute_y_2()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_hx_2( Point_2)>::type
+  decltype(auto)
   hx() const
   {
     return R().compute_hx_2_object()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_hy_2( Point_2)>::type
+  decltype(auto)
   hy() const
   {
     return R().compute_hy_2_object()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_hw_2( Point_2)>::type
+  decltype(auto)
   hw() const
   {
     return R().compute_hw_2_object()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_x_2( Point_2)>::type
+  decltype(auto)
   cartesian(int i) const
   {
     CGAL_kernel_precondition( (i == 0) || (i == 1) );
@@ -152,7 +142,7 @@ public:
     return hw();
   }
 
-  typename cpp11::result_of<typename R::Compute_x_2(Point_2)>::type
+  decltype(auto)
   operator[](int i) const
   {
       return cartesian(i);
@@ -180,7 +170,7 @@ public:
 
   Weighted_point_2 transform(const Aff_transformation_2 &t) const
   {
-    return Weighted_point_2(t.transform(point(),weight()));
+    return Weighted_point_2(t.transform(point()),weight());
   }
 
 };

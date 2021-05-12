@@ -1,28 +1,19 @@
-// Copyright (c) 1999,2016  
+// Copyright (c) 1999,2016
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Stefan Schirra, Olivier Devillers, Mariette Yvinec
- 
+
 
 #ifndef CGAL_PREDICATES_ON_POINTSH3_H
 #define CGAL_PREDICATES_ON_POINTSH3_H
@@ -190,10 +181,10 @@ power_side_of_oriented_power_sphereH3(
     dthw *= dtwt;
 
     return - sign_of_determinant(dphx, dphy, dphz, dpz, dphw,
-	                         dqhx, dqhy, dqhz, dqz, dqhw,
-	                         drhx, drhy, drhz, drz, drhw,
-	                         dshx, dshy, dshz, dsz, dshw,
-	                         dthx, dthy, dthz, dtz, dthw);
+                                 dqhx, dqhy, dqhz, dqz, dqhw,
+                                 drhx, drhy, drhz, drz, drhw,
+                                 dshx, dshy, dshz, dsz, dshw,
+                                 dthx, dthy, dthz, dtz, dthw);
 }
 
 // The 2 degenerate are not speed critical, and they are quite boring and error

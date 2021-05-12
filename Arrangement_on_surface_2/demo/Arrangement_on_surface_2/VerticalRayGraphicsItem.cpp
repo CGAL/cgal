@@ -1,22 +1,14 @@
-// Copyright (c) 2012  Tel-Aviv University (Israel).
+// Copyright (c) 2012, 2020 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+// Author(s): Alex Tsui <alextsui05@gmail.com>
+//            Ahmed Essam <theartful.ae@gmail.com>
 
 #include "VerticalRayGraphicsItem.h"
 
@@ -38,6 +30,7 @@ void VerticalRayGraphicsItem::paint( QPainter* painter,
                                      QWidget* /* widget */ )
 {
   QPen rayPen( this->m_color, this->m_width );
+  rayPen.setCosmetic(true);
   painter->setPen( rayPen );
 
   if ( this->m_source.isNull( ) && this->m_targetY == 0.0 )
@@ -192,7 +185,7 @@ void VerticalRayGraphicsItem::modelChanged( )
 QRectF VerticalRayGraphicsItem::viewportRect( ) const
 {
   QRectF res;
-  if ( this->scene( ) == NULL )
+  if ( this->scene( ) == nullptr )
   {
     return res;
   }
@@ -214,7 +207,7 @@ QRectF VerticalRayGraphicsItem::viewportRect( ) const
 void VerticalRayGraphicsItem::drawArrowhead( QPainter* painter,
                                              double targetY, bool isShootingUp )
 {
-  if ( this->scene( ) == 0 || this->scene( )->views( ).size( ) == 0 )
+  if ( this->scene( ) == nullptr || this->scene( )->views( ).size( ) == 0 )
   {
     return;
   }

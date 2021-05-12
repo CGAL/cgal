@@ -2,7 +2,7 @@
 #define CGAL_QT_NEAREST_NEIGHBOR_H
 
 #include <vector>
-#include <QGraphicsSceneMouseEvent> 
+#include <QGraphicsSceneMouseEvent>
 #include <QGraphicsScene>
 #include <QGraphicsEllipseItem>
 #include <QEvent>
@@ -19,16 +19,16 @@ namespace Qt {
 template <typename T>
 class NearestNeighbor : public GraphicsViewInput
 {
-  typedef typename T::Point_d Point_2; 
+  typedef typename T::Point_d Point_2;
 public:
   NearestNeighbor(QGraphicsScene* s, typename T::Tree  * t_, QObject* parent, int N);
   ~NearestNeighbor();
- 
+
   void setPen(const QPen& pen);
 
   void show();
   void hide();
-  
+
   void setN(int n)
   {
     N = n;
@@ -99,7 +99,7 @@ NearestNeighbor<T>::hide()
 
 
 template <typename T>
-void 
+void
 NearestNeighbor<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
   if(t->empty()){
@@ -127,7 +127,7 @@ NearestNeighbor<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 
 template <typename T>
-bool 
+bool
 NearestNeighbor<T>::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMouseMove) {
@@ -138,7 +138,7 @@ NearestNeighbor<T>::eventFilter(QObject *obj, QEvent *event)
     // standard event processing
     return QObject::eventFilter(obj, event);
   }
-} 
+}
 
 } // namespace Qt
 } // namespace CGAL

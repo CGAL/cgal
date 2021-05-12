@@ -87,7 +87,7 @@ int main()
     Stl_euler Stream_lines(regular_grid_2, euler_integrator,dSep,dRat,1);
     std::cout << "placement generated\n";
   }
-  
+
   std::cout << "placement of streamlines on irregular field\n";
   TRRunge_kutta_integrator trrunge_kutta_integrator(1);
   std::ifstream inp("data/datap.tri.cin");
@@ -107,6 +107,6 @@ int main()
   TRStream_lines.set_saturation_ratio(1.7);
   TRStream_lines.update();
   std::cout << "placement generated\n";
-  
+
   std::cout << "success\n";
 }

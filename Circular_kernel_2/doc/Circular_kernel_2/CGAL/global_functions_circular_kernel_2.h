@@ -7,8 +7,8 @@ namespace CGAL {
 Checks whether the point lies in the vertical range defined by the
 arc.
 */
-bool 
-has_in_x_range(const Circular_arc_2<CircularKernel> &ca, 
+bool
+has_in_x_range(const Circular_arc_2<CircularKernel> &ca,
 const Circular_arc_point_2<CircularKernel> &p);
 
 /*!
@@ -18,8 +18,8 @@ const Circular_arc_point_2<CircularKernel> &p);
 Checks whether the point lies in the vertical range defined by the
 line segment.
 */
-bool 
-has_in_x_range(const Line_arc_2<CircularKernel> &ca, 
+bool
+has_in_x_range(const Line_arc_2<CircularKernel> &ca,
 const Circular_arc_point_2<CircularKernel> &p);
 
 
@@ -30,7 +30,7 @@ const Circular_arc_point_2<CircularKernel> &p);
 Checks whether the point lies on the circle.
 */
 bool
-has_on(const Circle_2<CircularKernel> &c, 
+has_on(const Circle_2<CircularKernel> &c,
 const Circular_arc_point_2<CircularKernel> &p);
 
 
@@ -42,7 +42,7 @@ Copies in the output iterator the `x`-monotone sub-arcs of `ca`.
 */
 template < class OutputIterator >
 OutputIterator
-make_x_monotone(const Circular_arc_2<CircularKernel> &ca, 
+make_x_monotone(const Circular_arc_2<CircularKernel> &ca,
 OutputIterator res);
 
 
@@ -54,7 +54,7 @@ Copies in the output iterator the `xy`-monotone sub-arcs of `ca`.
 */
 template < class OutputIterator >
 OutputIterator
-make_xy_monotone(const Circular_arc_2<CircularKernel> &ca, 
+make_xy_monotone(const Circular_arc_2<CircularKernel> &ca,
 OutputIterator res);
 
 
@@ -113,7 +113,7 @@ OutputIterator res);
 Compares vertically the two arcs, to the right of the point `p`,
 \pre `p` is an intersection point of the arcs, and the arcs are defined to the right of `p`.
 */
-CGAL::Comparison_result 
+CGAL::Comparison_result
 compare_y_to_right(const Circular_arc_2<CircularKernel> &ca1,
 const Circular_arc_2<CircularKernel> &ca2,
 Circular_arc_point_2<CircularKernel> &p);

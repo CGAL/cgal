@@ -1,21 +1,12 @@
 // Copyright (c) 2001-2005  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -46,6 +37,10 @@ namespace CGAL {
 //   not, or we let all this up to the compiler optimizer to figure out ?
 // - Some caching could be done at the Point_2 level.
 
+// Protection is undocumented and currently always true, meaning that it
+// assumes a default rounding mode of round-to-nearest. false would correspond
+// to a default of round-towards-infinity, so interval arithmetic does not
+// require protection but regular code may.
 
 template <class EP, class AP, class C2E, class C2A, bool Protection = true>
 class Filtered_predicate
@@ -103,11 +98,11 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
     {
       Protect_FPU_rounding<Protection> p;
       try
-	{
-	  Ares res = ap(c2a(args)...);
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
+        {
+          Ares res = ap(c2a(args)...);
+          if (is_certain(res))
+            return get_certain(res);
+        }
       catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);

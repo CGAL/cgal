@@ -32,9 +32,9 @@ int main()
 {
     Point_vector vertices(7);
 
-    vertices[0] = Point(0, 0);                                      vertices[1] = Point(1, 0); 
-    vertices[2] = Point(Scalar(1) /Scalar(2), 1);                   vertices[3] = Point(Scalar(3) /Scalar(2), Scalar(3)/Scalar(2)); 
-    vertices[4] = Point(Scalar(-1)/Scalar(2), Scalar(3)/Scalar(2)); vertices[5] = Point(0, 1);                                      
+    vertices[0] = Point(0, 0);                                      vertices[1] = Point(1, 0);
+    vertices[2] = Point(Scalar(1) /Scalar(2), 1);                   vertices[3] = Point(Scalar(3) /Scalar(2), Scalar(3)/Scalar(2));
+    vertices[4] = Point(Scalar(-1)/Scalar(2), Scalar(3)/Scalar(2)); vertices[5] = Point(0, 1);
     vertices[6] = Point(Scalar(-1)/Scalar(2), Scalar(1)/Scalar(2));
 
     Mean_value_coordinates mean_value_coordinates(vertices.begin(), vertices.end());

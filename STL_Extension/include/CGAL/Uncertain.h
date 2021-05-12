@@ -1,20 +1,11 @@
 // Copyright (c) 2005-2008  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Sylvain Pion
 
@@ -75,8 +66,6 @@ class Uncertain_conversion_exception
 public:
   Uncertain_conversion_exception(const std::string &s)
     : std::range_error(s) {}
-
-  ~Uncertain_conversion_exception() throw() {}
 };
 
 
@@ -121,7 +110,7 @@ public:
     if (is_certain())
       return _i;
     CGAL_PROFILER(std::string("Uncertain_conversion_exception thrown for CGAL::Uncertain< ")
-		  + typeid(T).name() + " >");
+                  + typeid(T).name() + " >");
     throw Uncertain_conversion_exception(
                   "Undecidable conversion of CGAL::Uncertain<T>");
   }
@@ -217,20 +206,20 @@ Uncertain<T>::indeterminate()
 
 namespace internal {
 
-	// helper class
-	template < typename T >
-	struct Indeterminate_helper {
-		typedef T result_type;
-		result_type operator()() const
-		{ return T(); }
-	};
+        // helper class
+        template < typename T >
+        struct Indeterminate_helper {
+                typedef T result_type;
+                result_type operator()() const
+                { return T(); }
+        };
 
-	template < typename T >
-	struct Indeterminate_helper< Uncertain<T> > {
-		typedef Uncertain<T> result_type;
-		result_type operator()() const
-		{ return Uncertain<T>::indeterminate(); }
-	};
+        template < typename T >
+        struct Indeterminate_helper< Uncertain<T> > {
+                typedef Uncertain<T> result_type;
+                result_type operator()() const
+                { return Uncertain<T>::indeterminate(); }
+        };
 
 } // namespace internal
 
@@ -359,6 +348,7 @@ Uncertain<bool> operator&(Uncertain<bool> a, bool b)
 #endif
 
 #define CGAL_AND_3(X, Y, Z)  CGAL_AND(X, CGAL_AND(Y, Z))
+#define CGAL_AND_6(A, B, C, D, E, F)  CGAL_AND(CGAL_AND_3(A, B, C), CGAL_AND_3(D, E,F))
 #define CGAL_OR_3(X, Y, Z)   CGAL_OR(X, CGAL_OR(Y, Z))
 
 
@@ -611,29 +601,17 @@ template < typename T >
 inline
 Uncertain<T> operator*(T a, Uncertain<T> b)
 {
-	return Uncertain<T>(a) * b;
+        return Uncertain<T>(a) * b;
 }
 
 template < typename T >
 inline
 Uncertain<T> operator*(Uncertain<T> a, T b)
 {
-	return a * Uncertain<T>(b);
+        return a * Uncertain<T>(b);
 }
 
 // enum_cast overload
-
-#ifdef CGAL_CFG_MATCHING_BUG_5
-
-template < typename T, typename U >
-inline
-Uncertain<T> enum_cast_bug(Uncertain<U> u, const T*)
-{
-  return Uncertain<T>(static_cast<const T>(u.inf()),
-                      static_cast<const T>(u.sup()));
-}
-
-#else
 
 template < typename T, typename U >
 inline
@@ -641,8 +619,6 @@ Uncertain<T> enum_cast(Uncertain<U> u)
 {
   return Uncertain<T>(static_cast<T>(u.inf()), static_cast<T>(u.sup()));
 }
-
-#endif
 
 } //namespace CGAL
 

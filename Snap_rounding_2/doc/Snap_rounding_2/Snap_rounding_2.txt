@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_2D_Snap_Rounding
 \anchor chapterSnapRounding
 \cgalAutoToc
@@ -39,7 +39,7 @@ with integer coordinates. A pixel is <I>hot</I> if it contains a
 vertex of the arrangement. Each vertex of the arrangement is replaced
 by the center of the hot pixel containing it and each edge \f$ e\f$ is
 replaced by the polygonal chain through the centers of the hot pixels
-met by \f$ e\f$, in the same order as they are met by \f$ e\f$. 
+met by \f$ e\f$, in the same order as they are met by \f$ e\f$.
 \cgalFigureRef{figsr1} demonstrates the results of SR.
 
 In a snap-rounded arrangement, the distance between a vertex and
@@ -132,6 +132,6 @@ allows the user to edit segments dynamically, applies a selected
 snap-rounding procedures, and displays the result onto the same window
 (see `<CGAL_ROOT>/demo/Snap_rounding_2/demo.cpp`).
 
-*/ 
+*/
 } /* namespace CGAL */
 

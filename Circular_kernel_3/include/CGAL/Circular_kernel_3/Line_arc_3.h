@@ -2,25 +2,16 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado, 
+// Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado,
 //             Sebastien Loriot, Julien Hazebrouck, Damien Leroy
 
-// Partially supported by the IST Programme of the EU as a 
-// STREP (FET Open) Project under Contract No  IST-006413 
+// Partially supported by the IST Programme of the EU as a
+// STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 #ifndef CGAL_SPHERICAL_KERNEL_LINE_ARC_3_H
@@ -46,7 +37,7 @@ namespace CGAL {
       typedef typename SK::FT                   FT;
 
     private:
-      typedef boost::tuple<Line_3, Circular_arc_point_3, 
+      typedef boost::tuple<Line_3, Circular_arc_point_3,
                              Circular_arc_point_3>  Rep;
       typedef typename SK::template Handle<Rep>::type  Base;
 
@@ -63,12 +54,12 @@ namespace CGAL {
 
     public:
       Line_arc_3()
-      : begin_less_xyz_than_end_flag(0) 
+      : begin_less_xyz_than_end_flag(0)
       {}
 
-      Line_arc_3(const Line_3 &l, 
+      Line_arc_3(const Line_3 &l,
                  const Circular_arc_point_3 &s,
-                 const Circular_arc_point_3 &t) 
+                 const Circular_arc_point_3 &t)
       : begin_less_xyz_than_end_flag(0)
       {
         // l must pass through s and t, and s != t
@@ -78,7 +69,7 @@ namespace CGAL {
         base = Rep(l,s,t);
       }
 
-      Line_arc_3(const Segment_3 &s) 
+      Line_arc_3(const Segment_3 &s)
       : begin_less_xyz_than_end_flag(0)
       {
         base = Rep(s.supporting_line(),
@@ -87,20 +78,20 @@ namespace CGAL {
       }
 
       Line_arc_3(const Point_3 &s,
-                 const Point_3 &t) 
+                 const Point_3 &t)
       : begin_less_xyz_than_end_flag(0)
       {
         CGAL_kernel_precondition(s != t);
         base = Rep(SK().construct_line_3_object()(s,t),s,t);
       }
 
-      Line_arc_3(const Line_3 &l, 
+      Line_arc_3(const Line_3 &l,
                  const Sphere_3 &s,
-                 bool less_xyz_first = true) 
+                 bool less_xyz_first = true)
       {
         std::vector<typename SK3_Intersection_traits<SK, Line_3, Sphere_3>::type> sols;
          SK().intersect_3_object()(l, s, std::back_inserter(sols));
-         // l must intersect s in 2 points 
+         // l must intersect s in 2 points
          CGAL_kernel_precondition(sols.size() == 2);
          const std::pair<typename SK::Circular_arc_point_3, unsigned>& pair1=
            *boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(&sols[0]);
@@ -110,12 +101,12 @@ namespace CGAL {
            *this = Line_arc_3(l, pair1.first, pair2.first);
          } else {
            *this = Line_arc_3(l, pair2.first, pair1.first);
-         } 
+         }
       }
 
-      Line_arc_3(const Line_3 &l, 
+      Line_arc_3(const Line_3 &l,
                  const Sphere_3 &s1, bool less_xyz_s1,
-                 const Sphere_3 &s2, bool less_xyz_s2) 
+                 const Sphere_3 &s2, bool less_xyz_s2)
       {
         std::vector<typename SK3_Intersection_traits<SK, Line_3, Sphere_3>::type> sols1, sols2;
          SK().intersect_3_object()(l, s1, std::back_inserter(sols1));
@@ -132,9 +123,9 @@ namespace CGAL {
          *this = Line_arc_3(l, pair1.first, pair2.first);
       }
 
-      Line_arc_3(const Line_3 &l, 
+      Line_arc_3(const Line_3 &l,
                  const Plane_3 &p1,
-                 const Plane_3 &p2) 
+                 const Plane_3 &p2)
       {
          // l must not be on p1 or p2
          CGAL_kernel_precondition(!SK().has_on_3_object()(p1,l));
@@ -152,17 +143,17 @@ namespace CGAL {
          *this = Line_arc_3(l, *point1, *point2);
       }
 
-      const Line_3& supporting_line() const 
+      const Line_3& supporting_line() const
       {
         return get_pointee_or_identity(base).template get<0>();
       }
 
-      const Circular_arc_point_3& source() const 
+      const Circular_arc_point_3& source() const
       {
         return get_pointee_or_identity(base).template get<1>();
       }
 
-      const Circular_arc_point_3& target() const 
+      const Circular_arc_point_3& target() const
       {
         return get_pointee_or_identity(base).template get<2>();
       }

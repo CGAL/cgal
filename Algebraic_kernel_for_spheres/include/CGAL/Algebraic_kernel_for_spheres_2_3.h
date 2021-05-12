@@ -2,25 +2,16 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //             Sylvain Pion
@@ -54,7 +45,7 @@ namespace CGAL {
 
     typedef RT_                                        RT;
     typedef typename Root_of_traits< RT >::RootOf_1    FT;
-            
+
     typedef CGAL::Polynomials_for_line_3<FT>           Polynomials_for_line_3;
     typedef CGAL::Polynomial_for_spheres_2_3<FT>       Polynomial_for_spheres_2_3;
     typedef CGAL::Polynomial_1_3<FT>                   Polynomial_1_3;
@@ -110,16 +101,16 @@ namespace CGAL {
 
     Compare_x compare_x_object() const
     { return Compare_x(); }
-    
+
     Compare_y compare_y_object() const
     { return Compare_y(); }
 
     Compare_z compare_z_object() const
     { return Compare_z(); }
-    
+
     Compare_xy compare_xy_object() const
     { return Compare_xy(); }
-    
+
     Compare_xyz compare_xyz_object() const
     { return Compare_xyz(); }
 

@@ -1,24 +1,15 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra
@@ -34,7 +25,6 @@
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/Dimension.h>
-#include <CGAL/result_of.h>
 #include <CGAL/IO/io.h>
 
 namespace CGAL {
@@ -63,12 +53,12 @@ public:
   typedef RVector_2 Rep;
   typedef typename R_::Cartesian_const_iterator_2 Cartesian_const_iterator;
 
-  const Rep& rep() const
+  const Rep& rep() const noexcept
   {
     return *this;
   }
 
-  Rep& rep()
+  Rep& rep() noexcept
   {
     return *this;
   }
@@ -102,27 +92,36 @@ public:
   Vector_2(const RT &x, const RT &y, const RT &w)
       : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), x,y,w)) {}
 
+  friend void swap(Self& a, Self& b)
+#ifdef __cpp_lib_is_swappable
+    noexcept(std::is_nothrow_swappable_v<Rep>)
+#endif
+  {
+    using std::swap;
+    swap(a.rep(), b.rep());
+  }
 
-  typename cpp11::result_of<typename R::Compute_x_2(Vector_2)>::type
+
+  decltype(auto)
   x() const
   {
     return R().compute_x_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_y_2(Vector_2)>::type
+  decltype(auto)
   y() const
   {
     return R().compute_y_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_y_2(Vector_2)>::type
+  decltype(auto)
   cartesian(int i) const
   {
     CGAL_kernel_precondition( (i == 0) || (i == 1) );
     return (i==0) ?  x() : y();
   }
 
-  typename cpp11::result_of<typename R::Compute_x_2(Vector_2)>::type
+  decltype(auto)
   operator[](int i) const
   {
       return cartesian(i);
@@ -138,26 +137,26 @@ public:
     return typename R::Construct_cartesian_const_iterator_2()(*this,2);
   }
 
-  typename cpp11::result_of<typename R::Compute_hx_2(Vector_2)>::type
+  decltype(auto)
   hx() const
   {
     return R().compute_hx_2_object()(*this);
   }
 
 
-  typename cpp11::result_of<typename R::Compute_hy_2(Vector_2)>::type
+  decltype(auto)
   hy() const
   {
     return R().compute_hy_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_hw_2(Vector_2)>::type
+  decltype(auto)
   hw() const
   {
     return R().compute_hw_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_hx_2(Vector_2)>::type
+  decltype(auto)
   homogeneous(int i) const
   {
     CGAL_kernel_precondition( (i >= 0) || (i <= 2) );

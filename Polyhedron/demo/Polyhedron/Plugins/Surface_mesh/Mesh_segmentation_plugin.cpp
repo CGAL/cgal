@@ -10,7 +10,7 @@
 #include <QApplication>
 #include <QMainWindow>
 #include <QInputDialog>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QAction>
 #include <QDebug>
 #include <QObject>
@@ -92,6 +92,7 @@ public:
         dock_widget = new QDockWidget("Mesh segmentation parameters", mw);
         dock_widget->setVisible(false); // do not show at the beginning
         ui_widget.setupUi(dock_widget);
+        ui_widget.Smoothness_spin_box->setMaximum(10.0);
         mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
 
         connect(ui_widget.Partition_button,  SIGNAL(clicked()), this, SLOT(on_Partition_button_clicked()));
@@ -210,7 +211,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::apply_SDF_button_clicked(Facegrap
   typename boost::property_map<Facegraph, CGAL::face_index_t>::type fidmap =
       get(CGAL::face_index, *pair->first->face_graph());
   FaceGraph_with_id_to_vector_property_map<Facegraph, double> sdf_pmap(&pair->second, fidmap);
-  QTime time;
+  QElapsedTimer time;
   time.start();
   std::pair<double, double> min_max_sdf = sdf_values(*(pair->first->face_graph()), sdf_pmap, cone_angle, number_of_rays);
   std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
@@ -245,7 +246,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
 template<class FacegraphItem>
 void Polyhedron_demo_mesh_segmentation_plugin::apply_Partition_button_clicked(FacegraphItem* item)
 {
-  
+
   typedef typename FacegraphItem::Face_graph Facegraph;
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -283,7 +284,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::apply_Partition_button_clicked(Fa
     QApplication::setOverrideCursor(Qt::WaitCursor);
   }
   check_and_set_ids(pair->first->face_graph());
-  QTime time;
+  QElapsedTimer time;
   time.start();
   typename boost::property_map<Facegraph, CGAL::face_index_t>::type fidmap =
       get(CGAL::face_index, *pair->first->face_graph());
@@ -292,9 +293,9 @@ void Polyhedron_demo_mesh_segmentation_plugin::apply_Partition_button_clicked(Fa
     FaceGraph_with_id_to_vector_property_map<Facegraph, double> sdf_pmap(&pair->second, fidmap);
     sdf_values(*(pair->first->face_graph()), sdf_pmap, cone_angle, number_of_rays);
   }
- 
-  
-  
+
+
+
   std::vector<std::size_t> internal_segment_map(num_faces(*pair->first->face_graph()));
   FaceGraph_with_id_to_vector_property_map<Facegraph, std::size_t> segment_pmap(&internal_segment_map, fidmap);
   FaceGraph_with_id_to_vector_property_map<Facegraph, double> sdf_pmap(&pair->second, fidmap);
@@ -302,11 +303,11 @@ void Polyhedron_demo_mesh_segmentation_plugin::apply_Partition_button_clicked(Fa
   if(!isClosed)
   {
     bool has_sdf_values = false;
-    for(typename boost::graph_traits<Facegraph>::face_descriptor f : 
+    for(typename boost::graph_traits<Facegraph>::face_descriptor f :
                   faces(*pair->first->face_graph()))
     {
       if(sdf_pmap[f] != -1
-         && sdf_pmap[f] != std::numeric_limits<double>::max())
+         && sdf_pmap[f] != (std::numeric_limits<double>::max)())
       {
         has_sdf_values = true;
         break;

@@ -1,4 +1,4 @@
-// Copyright (c) 2007 
+// Copyright (c) 2007
 // GeometryFactory (France),
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
@@ -6,26 +6,17 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel). All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //                 Lutz Kettner <kettner@mpi-sb.mpg.de>
 //                 Sylvain Pion
-//                 Fernando Cacciola <fernando.cacciola@geometryfactory.com> 
+//                 Fernando Cacciola <fernando.cacciola@geometryfactory.com>
 
 #ifndef CGAL_ITERATOR_TRANSFORM_H
 #define CGAL_ITERATOR_TRANSFORM_H 1
@@ -83,7 +74,7 @@ public:
   Iterator  current_iterator() const { return nt;}
   bool      operator==( const Self& i) const { return ( nt == i.nt); }
   bool      operator!=( const Self& i) const { return !(*this == i); }
-  
+
   struct Proxy
   {
       Proxy(const reference r) : ref(r) {}
@@ -95,13 +86,13 @@ public:
   {
       return Proxy(Fct()(*nt));
   }
-  
-  reference operator* () const 
+
+  reference operator* () const
   {
     Fct fct;
     return fct(*nt);
   }
-  
+
   Self&     operator++() {
     ++nt;
     return *this;

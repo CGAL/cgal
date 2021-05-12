@@ -16,12 +16,12 @@ Edge_map edge_map;
 char* argv0 = "";
 
 void  add_in_edge_map(int nface, int i, int j)
-{ 
- std::pair<int,int> edge = i < j ? 
+{
+ std::pair<int,int> edge = i < j ?
    std::make_pair( i,j) :
    std::make_pair( j,i);
  Edge_map::iterator edge_it = edge_map.find(edge);
- if (edge_it == edge_map.end()) 
+ if (edge_it == edge_map.end())
    edge_it = (edge_map.insert(std::make_pair(edge, std::list<int>()))).first;
  (edge_it->second).push_back(nface);
 }
@@ -30,7 +30,7 @@ void usage(std::string error = "")
 {
   if( error != "" )
     std:: cerr << "Error: " << error << std::endl;
-  std::cerr << "Usage:\n" 
+  std::cerr << "Usage:\n"
             << argv0 << " [OFF_FILE_NAME.off]\n"
             << "    will analyse OFF_FILE_NAME.off and display the list"
             << " of non manifold edges.\n";
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
     usage();
 
   std::ifstream ifs;
-  ifs.open(argv[1],std::ifstream::in); 
+  ifs.open(argv[1],std::ifstream::in);
 
   std::string heading;
   ifs >> heading;
@@ -59,10 +59,10 @@ int main(int argc, char *argv[])
   }
 
   // lecture des 3 nombres
-  int nb_points,nb_faces, ent2;  
+  int nb_points,nb_faces, ent2;
   ifs >> nb_points;
   ifs >> nb_faces;
-  ifs >> ent2;  
+  ifs >> ent2;
   std::cerr << "number of points: "<< nb_points << std::endl;
   std::cerr << "number of facets: "<< nb_faces << std::endl;
 
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
     }
 
     // add facet in edge map
-    for (int j = 0; j < npoints-1 ; j++) 
+    for (int j = 0; j < npoints-1 ; j++)
       add_in_edge_map(iface,vp[j],vp[j+1]);
 
     add_in_edge_map(iface, vp[npoints-1], vp[0]);
@@ -98,15 +98,15 @@ int main(int argc, char *argv[])
       edge_it != edge_map.end();
       edge_it++)
   {
-    if (edge_it->second.size() != 2) 
+    if (edge_it->second.size() != 2)
     {
       std::pair<int,int> edge = edge_it->first;
-      std::cout << "Edge " << edge.first << " "<< edge.second  
+      std::cout << "Edge " << edge.first << " "<< edge.second
                 << '\t'<< (edge_it->second).size() << '\t';
       std::cout << "Face list ";
       std::list<int>::iterator  face_it = (edge_it->second).begin();
       for( ; face_it != (edge_it->second).end() ; face_it++)
- 	std::cout << *face_it << '\t';
+         std::cout << *face_it << '\t';
       std::cout << std::endl;
       exit_code = EXIT_FAILURE;
     }

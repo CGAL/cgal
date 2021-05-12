@@ -4,19 +4,11 @@
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
  This file is part of a fork of the QGLViewer library version 2.7.0.
- http://www.libqglviewer.com - contact@libqglviewer.com
-
- This file may be used under the terms of the GNU General Public License 
- version 3.0 as published by the Free Software Foundation and
- appearing in the LICENSE file included in the packaging of this file.
-
- This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 *****************************************************************************/
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: GPL-3.0-only
 
 #ifdef CGAL_HEADER_ONLY
 #define CGAL_INLINE_FUNCTION inline
@@ -28,7 +20,6 @@
 #endif
 #include <CGAL/number_type_config.h>
 #include <CGAL/Qt/quaternion.h>
-#include <CGAL/Qt/domUtils.h>
 #include <stdlib.h> // RAND_MAX
 
 // All the methods are declared inline in Quaternion.h
@@ -217,71 +208,6 @@ CGAL_INLINE_FUNCTION
 qreal Quaternion::angle() const {
   const qreal angle = 2.0 * acos(q[3]);
   return (angle <= CGAL_PI) ? angle : 2.0 * CGAL_PI - angle;
-}
-
-/*! Returns an XML \c QDomElement that represents the Quaternion.
-
- \p name is the name of the QDomElement tag. \p doc is the \c QDomDocument
- factory used to create QDomElement.
-
- When output to a file, the resulting QDomElement will look like:
- \code
- <name q0=".." q1=".." q2=".." q3=".." />
- \endcode
-
- Use initFromDOMElement() to restore the Quaternion state from the resulting \c
- QDomElement. See also the Quaternion(const QDomElement&) constructor.
-
-CGAL_INLINE_FUNCTION
- See the Vec::domElement() documentation for a complete QDomDocument creation
- and saving example.
-
-CGAL_INLINE_FUNCTION
- See also Frame::domElement(), Camera::domElement(),
-CGAL_INLINE_FUNCTION
- KeyFrameInterpolator::domElement()... */
-CGAL_INLINE_FUNCTION
-QDomElement Quaternion::domElement(const QString &name,
-                                   QDomDocument &document) const {
-  QDomElement de = document.createElement(name);
-  de.setAttribute("q0", QString::number(q[0]));
-  de.setAttribute("q1", QString::number(q[1]));
-  de.setAttribute("q2", QString::number(q[2]));
-  de.setAttribute("q3", QString::number(q[3]));
-  return de;
-}
-
-/*! Restores the Quaternion state from a \c QDomElement created by domElement().
-
- The \c QDomElement should contain the \c q0, \c q1 , \c q2 and \c q3
- attributes. If one of these attributes is missing or is not a number, a warning
- is displayed and these fields are respectively set to 0.0, 0.0, 0.0 and 1.0
- (identity Quaternion).
-
- See also the Quaternion(const QDomElement&) constructor. */
-CGAL_INLINE_FUNCTION
-void Quaternion::initFromDOMElement(const QDomElement &element) {
-  Quaternion q(element);
-  *this = q;
-}
-
-/*! Constructs a Quaternion from a \c QDomElement representing an XML code of
-  the form \code< anyTagName q0=".." q1=".." q2=".." q3=".." />\endcode
-
-  If one of these attributes is missing or is not a number, a warning is
-  displayed and the associated value is respectively set to 0, 0, 0 and 1
-  (identity Quaternion).
-
-  See also domElement() and initFromDOMElement(). */
-CGAL_INLINE_FUNCTION
-Quaternion::Quaternion(const QDomElement &element) {
-  QStringList attribute;
-  attribute << "q0"
-            << "q1"
-            << "q2"
-            << "q3";
-  for (int i = 0; i < attribute.size(); ++i)
-    q[i] = DomUtils::qrealFromDom(element, attribute[i], ((i < 3) ? 0.0 : 1.0));
 }
 
 /*! Returns the Quaternion associated 4x4 OpenGL rotation matrix.

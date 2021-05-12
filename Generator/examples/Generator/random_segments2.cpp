@@ -43,14 +43,14 @@ int main() {
 
     CGAL_assertion( segs.size() == 100);
     for ( Vector::iterator i = segs.begin(); i != segs.end(); i++){
-	CGAL_assertion( i->source().x() <=  250);
-	CGAL_assertion( i->source().x() >= -250);
-	CGAL_assertion( i->source().y() <=  250);
-	CGAL_assertion( i->source().y() >= -250);
-	CGAL_assertion( i->target().x() <=  250);
-	CGAL_assertion( i->target().x() >= -250);
-	CGAL_assertion( i->target().y() <=  250);
-	CGAL_assertion( i->target().y() >= -250);
+        CGAL_assertion( i->source().x() <=  250);
+        CGAL_assertion( i->source().x() >= -250);
+        CGAL_assertion( i->source().y() <=  250);
+        CGAL_assertion( i->source().y() >= -250);
+        CGAL_assertion( i->target().x() <=  250);
+        CGAL_assertion( i->target().x() >= -250);
+        CGAL_assertion( i->target().y() <=  250);
+        CGAL_assertion( i->target().y() >= -250);
     }
     return 0;
 }

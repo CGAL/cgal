@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
 //                 Miguel Granados <granados@mpi-sb.mpg.de>
@@ -62,7 +53,7 @@ class Shell_to_nef_3
     SHalfedge_const_handle;
   typedef typename SNC_structure::SHalfloop_const_handle
     SHalfloop_const_handle;
-  typedef typename SNC_structure::SFace_const_handle 
+  typedef typename SNC_structure::SFace_const_handle
     SFace_const_handle;
   typedef typename SNC_structure::SFace_cycle_const_iterator
     SFace_cycle_const_iterator;
@@ -74,7 +65,7 @@ class Shell_to_nef_3
  public:
 
   Shell_to_nef_3(SNC_structure& S_) : S(S_) {}
-  
+
   void visit(Vertex_const_handle ) {}
   void visit(Halfedge_const_handle ) {}
   void visit(Halffacet_const_handle ) {}
@@ -93,27 +84,27 @@ class Shell_to_nef_3
     Vertex_handle nv = S.new_vertex();
     nv->point() = pv->point();
     nv->mark() = true;
-      
+
     SM_decorator SM(&*nv);
-    SHalfedge_around_sface_const_circulator 
+    SHalfedge_around_sface_const_circulator
       pe(sfci), pe_prev(pe), pend(pe);
-      
-    SVertex_handle sv_0 = 
+
+    SVertex_handle sv_0 =
       SM.new_svertex(pe->source()->point());
     sv_0->mark() = true;
 #ifndef CGAL_NEF_NO_INDEXED_ITEMS
     sv_0->set_index(pe->source()->get_index());
 #endif
-    ++pe;  
+    ++pe;
     SVertex_handle sv_prev = sv_0;
-      
+
     do {
       SVertex_handle sv = SM.new_svertex(pe->source()->point());
       sv->mark() = true;
 #ifndef CGAL_NEF_NO_INDEXED_ITEMS
       sv->set_index(pe->source()->get_index());
 #endif
-      
+
       SHalfedge_handle e = SM.new_shalfedge_pair(sv_prev, sv);
       e->circle() = pe_prev->circle();
       e->twin()->circle() = pe_prev->twin()->circle();
@@ -121,13 +112,13 @@ class Shell_to_nef_3
 #ifndef CGAL_NEF_NO_INDEXED_ITEMS
       e->set_index(pe_prev->get_index());
       e->twin()->set_index(pe_prev->twin()->get_index());
-#endif	
+#endif
       sv_prev = sv;
       pe_prev = pe;
       ++pe;
     }
     while( pe != pend );
-      
+
     SHalfedge_handle e;
     e = SM.new_shalfedge_pair(sv_prev, sv_0);
     e->circle() = pe_prev->circle();
@@ -135,25 +126,25 @@ class Shell_to_nef_3
     e->mark() = e->twin()->mark() = true;
 #ifndef CGAL_NEF_NO_INDEXED_ITEMS
     e->set_index(pe_prev->get_index());
-    e->twin()->set_index(pe_prev->twin()->get_index());    
+    e->twin()->set_index(pe_prev->twin()->get_index());
 #endif
     // create faces
     SFace_handle fext = SM.new_sface();
     SM.link_as_face_cycle(e->twin(), fext);
     fext->mark() = false;
-    
+
     SFace_handle fint = SM.new_sface();
     SM.link_as_face_cycle(e, fint);
     fint->mark() = false;
-    
-    SM.check_integrity_and_topological_planarity();   
+
+    SM.check_integrity_and_topological_planarity();
   }
 };
 
 template <class Nef_polyhedron>
 void shell_to_nef_3(const Nef_polyhedron& N,
-		    typename Nef_polyhedron::SFace_const_handle sf,
-		    typename Nef_polyhedron::SNC_structure& S) 
+                    typename Nef_polyhedron::SFace_const_handle sf,
+                    typename Nef_polyhedron::SNC_structure& S)
 {
   Shell_to_nef_3<typename Nef_polyhedron::SNC_structure> s2n(S);
   N.visit_shell_objects(sf, s2n);

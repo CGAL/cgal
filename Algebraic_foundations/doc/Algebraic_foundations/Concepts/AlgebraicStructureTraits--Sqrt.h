@@ -5,9 +5,9 @@ namespace AlgebraicStructureTraits_{
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
-`AdaptableUnaryFunction` providing the square root. 
+`AdaptableUnaryFunction` providing the square root.
 
-\cgalRefines `AdaptableUnaryFunction` 
+\cgalRefines `AdaptableUnaryFunction`
 
 \sa `AlgebraicStructureTraits`
 
@@ -16,28 +16,28 @@ namespace AlgebraicStructureTraits_{
 class Sqrt {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
-Is `AlgebraicStructureTraits::Type`. 
-*/ 
-typedef unspecified_type result_type; 
+Is `AlgebraicStructureTraits::Type`.
+*/
+typedef unspecified_type result_type;
 
 /*!
-Is `AlgebraicStructureTraits::Type`. 
-*/ 
-typedef unspecified_type argument_type; 
+Is `AlgebraicStructureTraits::Type`.
+*/
+typedef unspecified_type argument_type;
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
-returns \f$ \sqrt{x}\f$. 
-*/ 
-result_type operator()(argument_type x) const; 
+returns \f$ \sqrt{x}\f$.
+*/
+result_type operator()(argument_type x) const;
 
 /// @}
 

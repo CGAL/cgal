@@ -33,20 +33,20 @@ int main()
 {
   double coords[] ={ 1.0, 1.0, 1.0, 1.0,
                      2.0, 2.0, 2.0, 2.0 };
-  
+
   Data_vector points;
   points.push_back(std::make_pair(Point_d(4,coords  ,coords+4) , 1));
   points.push_back(std::make_pair(Point_d(4,coords+4,coords+8) , 2));
 
   std::vector<Vect_ppmap::key_type> indices;
-  indices.reserve(points.size());  
-  
+  indices.reserve(points.size());
+
   std::copy(
     boost::counting_iterator<Vect_ppmap::key_type>(0),
     boost::counting_iterator<Vect_ppmap::key_type>(points.size()),
     std::back_inserter(indices) );
-  
-  CGAL::spatial_sort( 
+
+  CGAL::spatial_sort(
     indices.begin(),
     indices.end(),
     Search_traits_d(Vect_ppmap(points)) );
@@ -57,6 +57,6 @@ int main()
   std::cout << std::endl;
 
   std::cout << "done" << std::endl;
-  
+
   return 0;
 }

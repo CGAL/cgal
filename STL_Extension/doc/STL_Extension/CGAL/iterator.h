@@ -193,7 +193,7 @@ dispatch_or_drop_output(O... o);
 The class `Dispatch_output_iterator` defines an
 `OutputIterator` that contains a tuple of output iterators, and
 dispatches among those based on the type of the value type which is
-put in it. Other types are also accepted, and the object is 
+put in it. Other types are also accepted, and the object is
 discarded in this case. Besides defining assignment for all
 parameters of `V` and for a tuple of type `V`, it is also defined for the types
 `boost::variant<T...>` and

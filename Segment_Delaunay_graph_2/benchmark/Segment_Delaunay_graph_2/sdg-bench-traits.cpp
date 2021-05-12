@@ -54,7 +54,7 @@ void run_seq(
     sdg.insert(
       SDG::Site_2::construct_site_2(
         points[ indices[i].first ],
-        points[ indices[i].second ] 
+        points[ indices[i].second ]
       ) );
   }
   time.stop();
@@ -78,17 +78,17 @@ int main(int argc, char** argv) {
 
   std::vector<CK::Point_2> points;
   std::vector<std::pair<std::size_t,std::size_t> > indices;
-  
+
   //read the number of sites
   std::size_t n;
   ifs >> n;
-  
+
   //read a close polygon given as its segments
   ifs >> site;
   points.push_back( site.source_of_supporting_site() );
-  
+
   std::size_t k=0;
-  while ( --n != 0) { 
+  while ( --n != 0) {
     ifs >> site;
     points.push_back( site.source_of_supporting_site() );
     indices.push_back( std::make_pair(k, k+1) );
@@ -96,13 +96,13 @@ int main(int argc, char** argv) {
   }
   indices.push_back( std::make_pair(k, 0) );
   ifs.close();
-  
+
   std::cout << "read a " << points.size() << " vertices polygon\n";
 
   run<SDG2_i>(points, indices, "SDG2_i");
   run<SDG2_wi>(points, indices, "SDG2_wi");
   run<SDG2_Hi>(points, indices, "SDG2_Hi");
   run<SDG2_Hwi>(points, indices, "SDG2_Hwi");
-  
+
   return 0;
 }

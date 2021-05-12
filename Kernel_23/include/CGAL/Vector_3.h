@@ -1,25 +1,16 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra
 
@@ -34,7 +25,6 @@
 #include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
-#include <CGAL/result_of.h>
 #include <CGAL/IO/io.h>
 
 namespace CGAL {
@@ -101,6 +91,15 @@ public:
 
   Vector_3(const RT& x, const RT& y, const RT& z, const RT& w)
     : Rep(typename R::Construct_vector_3()(Return_base_tag(), x, y, z, w)) {}
+
+  friend void swap(Self& a, Self& b)
+#ifdef __cpp_lib_is_swappable
+    noexcept(std::is_nothrow_swappable_v<Rep>)
+#endif
+  {
+    using std::swap;
+    swap(a.rep(), b.rep());
+  }
 
   Direction_3 direction() const
   {
@@ -173,49 +172,49 @@ public:
     return *this;
   }
 
-  typename cpp11::result_of<typename R::Compute_x_3(Vector_3)>::type
+  decltype(auto)
   x() const
   {
     return R().compute_x_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_y_3(Vector_3)>::type
+  decltype(auto)
   y() const
   {
     return R().compute_y_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_z_3(Vector_3)>::type
+  decltype(auto)
   z() const
   {
     return R().compute_z_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_hx_3(Vector_3)>::type
+  decltype(auto)
   hx() const
   {
     return R().compute_hx_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_hy_3(Vector_3)>::type
+  decltype(auto)
   hy() const
   {
     return R().compute_hy_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_hz_3(Vector_3)>::type
+  decltype(auto)
   hz() const
   {
     return R().compute_hz_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_hw_3(Vector_3)>::type
+  decltype(auto)
   hw() const
   {
     return R().compute_hw_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_x_3(Vector_3)>::type
+  decltype(auto)
   cartesian(int i) const
   {
     CGAL_kernel_precondition( (i == 0) || (i == 1) || (i == 2) );
@@ -224,7 +223,7 @@ public:
     return z();
   }
 
-  typename cpp11::result_of<typename R::Compute_hw_3(Vector_3)>::type
+  decltype(auto)
   homogeneous(int i) const
   {
     CGAL_kernel_precondition( (i >= 0) || (i <= 3) );
@@ -239,7 +238,7 @@ public:
       return 3;
   }
 
-  typename cpp11::result_of<typename R::Compute_x_3(Vector_3)>::type
+  decltype(auto)
   operator[](int i) const
   {
       return cartesian(i);
@@ -255,7 +254,7 @@ public:
     return typename R::Construct_cartesian_const_iterator_3()(*this,3);
   }
 
-  typename cpp11::result_of<typename R::Compute_squared_length_3(Vector_3)>::type
+  decltype(auto)
   squared_length() const
   {
     return R().compute_squared_length_3_object()(*this);
@@ -266,7 +265,7 @@ public:
 
 template <class R >
 std::ostream&
-insert(std::ostream& os, const Vector_3<R>& v, const Cartesian_tag&) 
+insert(std::ostream& os, const Vector_3<R>& v, const Cartesian_tag&)
 {
   switch(get_mode(os)) {
     case IO::ASCII :
@@ -314,7 +313,7 @@ operator<<(std::ostream& os, const Vector_3<R>& v)
 
 template <class R >
 std::istream&
-extract(std::istream& is, Vector_3<R>& v, const Cartesian_tag&) 
+extract(std::istream& is, Vector_3<R>& v, const Cartesian_tag&)
 {
   typename R::FT x(0), y(0), z(0);
   switch(get_mode(is)) {
@@ -339,7 +338,7 @@ extract(std::istream& is, Vector_3<R>& v, const Cartesian_tag&)
 
 template <class R >
 std::istream&
-extract(std::istream& is, Vector_3<R>& v, const Homogeneous_tag&) 
+extract(std::istream& is, Vector_3<R>& v, const Homogeneous_tag&)
 {
   typename R::RT hx, hy, hz, hw;
   switch(get_mode(is))

@@ -5,7 +5,7 @@
 #include <QColorDialog>
 
 #include <QGridLayout>
-#include <QGroupBox> 
+#include <QGroupBox>
 
 #include <QLabel>
 #include <QLineEdit>
@@ -28,7 +28,7 @@ class PreferenceDlg : public QDialog
   friend class Viewer;
 
 public:
-  PreferenceDlg(QWidget *parent=0);
+  PreferenceDlg(QWidget *parent=nullptr);
 
 private:
   void init(QColor, float, QColor, float, QColor, float, QColor, QColor, QColor, int);

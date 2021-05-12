@@ -1,22 +1,16 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later
+//
 //
 // Author(s)     : Stefan Schirra
 
@@ -67,6 +61,7 @@ _test_cls_aff_transformation_3(const R& )
  CGAL::Point_3<R>  p2( n5, n4,-n12, n4 );   // ( 5, 1,-4)
  CGAL::Point_3<R>  p3( n1, n0, n14, n4 );   // (-3, 0, 7)
  CGAL::Point_3<R>  p4( n7, n2, n8, -n6 );   // ( 4,11, 9)
+ CGAL::Weighted_point_3<R> wp4( p4, n7 );
 
  CGAL::Direction_3<R> d0(n13, n0, n0);
  CGAL::Direction_3<R> d1(n0, n13, n0);
@@ -81,6 +76,7 @@ _test_cls_aff_transformation_3(const R& )
  CGAL::Point_3<R>   tp2;
  CGAL::Point_3<R>   tp3;
  CGAL::Point_3<R>   tp4;
+ CGAL::Weighted_point_3<R>   twp4;
  CGAL::Segment_3<R> seg(p1,p2);
  CGAL::Segment_3<R> tseg;
  CGAL::Ray_3<R>     ray(p3,p2);
@@ -180,12 +176,15 @@ _test_cls_aff_transformation_3(const R& )
     tp2 = p2.transform( a[i] );
     tp3 = p3.transform( a[i] );
     tp4 = p4.transform( a[i] );
+    twp4 = wp4.transform( a[i] );
     tpla = pla.transform( a[i] );
     tseg = seg.transform( a[i] );
     tray = ray.transform( a[i] );
     tlin = lin.transform( a[i] );
     ttri = tri.transform( a[i] );
     ttet = tet.transform( a[i] );
+    assert( twp4.point() == tp4 );
+    assert( twp4.weight() == wp4.weight() );
     assert( tpla == CGAL::Plane_3<R>( tp1, tp2, tp3) || nonexact );
     assert( tseg == CGAL::Segment_3<R>(tp1, tp2) );
     assert( tray == CGAL::Ray_3<R>(tp3, tp2) );
@@ -194,6 +193,7 @@ _test_cls_aff_transformation_3(const R& )
     assert( ttet == CGAL::Tetrahedron_3<R>(tp1, tp2, tp3, tp4) );
     inv = a[i].inverse();
     tp4  = tp4.transform(  inv );
+    twp4 = twp4.transform( inv );
     tpla = tpla.transform( inv );
     tseg = tseg.transform( inv );
     tray = tray.transform( inv );
@@ -201,6 +201,7 @@ _test_cls_aff_transformation_3(const R& )
     ttri = ttri.transform( inv );
     ttet = ttet.transform( inv );
     assert( tp4  == p4 || nonexact );
+    assert( twp4 == wp4 || nonexact );
     assert( tpla == pla || nonexact );
     assert( tseg == seg || nonexact );
     assert( tray == ray || nonexact );
@@ -552,7 +553,7 @@ _test_cls_aff_transformation_3(const R& )
      a3(0,1,0,1,0,1,1,0,1,0,0,1), a4(0,0,1,1,0,0,1,1,0,0,1,1);
  assert(a2 == a3);
  assert(a3 != a4);
- 
+
  std::cout << "done" << std::endl;
  return true;
 }

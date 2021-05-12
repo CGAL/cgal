@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Pierre Alliez, Stephane Tayeb, Camille Wormser
 //
@@ -105,7 +96,7 @@ void test_all_intersection_query_types(Tree& tree)
 
     // any_intersection
     boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Ray>::Type > r = tree.any_intersection(ray);
-    boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Line>::Type > l = tree.any_intersection(line);    
+    boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Line>::Type > l = tree.any_intersection(line);
     boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Segment>::Type > s = tree.any_intersection(segment);
 
     // any_intersected_primitive
@@ -171,7 +162,7 @@ void test_distance_speed(Tree& tree,
             // picks a random point in the tree bbox
             Point query = random_point_in<K>(tree.bbox());
             Point closest = tree.closest_point(query);
-	    (void) closest;
+      (void) closest;
             nb++;
     }
     double speed = (double)nb / timer.time();
@@ -332,7 +323,7 @@ class Naive_implementations
   typedef typename Traits::Point_and_primitive_id Point_and_primitive_id;
 
   typedef boost::optional<Object_and_primitive_id> Intersection_result;
-  
+
   const Traits& m_traits;
 public:
   Naive_implementations(const Traits& traits):m_traits(traits){}
@@ -700,8 +691,8 @@ private:
         typename Tree::AABB_traits::template Intersection_and_primitive_id<Query>::Type
         Obj_type;
 
-      typedef 
-        std::vector<Obj_type> 
+      typedef
+        std::vector<Obj_type>
       Obj_Id_vector;
 
       Obj_Id_vector intersections_naive;

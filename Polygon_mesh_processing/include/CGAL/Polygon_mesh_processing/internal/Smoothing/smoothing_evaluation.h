@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Konstantinos Katrioplas (konst.katrioplas@gmail.com)
@@ -70,7 +61,7 @@ public:
       angles_.push_back(traits_.compute_approximate_angle_3_object()(a, b, c));
     }
 
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
     std::cout << "angles_ size = " << angles_.size() << std::endl;
 #endif
   }
@@ -88,7 +79,7 @@ public:
     for(face_descriptor f : faces(mesh_))
       areas_.push_back(face_area(f, mesh_));
 
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
     std::cout << "areas_ size = " << areas_.size() << std::endl;
 #endif
   }
@@ -106,7 +97,7 @@ public:
     for(face_descriptor f : faces(mesh_))
       aspect_ratios_.push_back(CGAL::Polygon_mesh_processing::face_aspect_ratio(f, mesh_));
 
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
     std::cout << "aspect_ratios_ size = " << aspect_ratios_.size() << std::endl;
 #endif
   }

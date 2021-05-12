@@ -29,10 +29,10 @@ bool test(std::string test_name)
   std::cerr << "Testing " << test_name << std::endl;
   const unsigned nb_input_points = sizeof(input)/sizeof(vec);
 
-  typedef CGAL::Constrained_triangulation_face_base_2<CDT_2_traits>  CDT_2_fb;
-  typedef CGAL::Triangulation_vertex_base_2<CDT_2_traits>            CDT_2_vb;
-  typedef CGAL::Triangulation_data_structure_2<CDT_2_vb, CDT_2_fb>  CDT_2_tds;
-  typedef CGAL::No_intersection_tag                                CDT_2_itag;
+  typedef CGAL::Constrained_triangulation_face_base_2<CDT_2_traits>     CDT_2_fb;
+  typedef CGAL::Triangulation_vertex_base_2<CDT_2_traits>               CDT_2_vb;
+  typedef CGAL::Triangulation_data_structure_2<CDT_2_vb, CDT_2_fb>      CDT_2_tds;
+  typedef CGAL::No_constraint_intersection_requiring_constructions_tag  CDT_2_itag;
   typedef CGAL::Constrained_Delaunay_triangulation_2<CDT_2_traits,
                                                      CDT_2_tds,
                                                      CDT_2_itag>        CDT_2;

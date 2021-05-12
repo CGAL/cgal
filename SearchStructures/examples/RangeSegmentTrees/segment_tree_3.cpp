@@ -41,8 +41,8 @@ int main()
   while(j!=OutputList.end())
   {
     std::cerr << (*j).first.key_1 << "," << (*j).first.key_2 << ", "
-	 << (*j).first.key_3 << "-" << (*j).second.key_1 << ","
-	 << (*j).second.key_2 << ", " << (*j).second.key_3 << std::endl;
+         << (*j).first.key_3 << "-" << (*j).second.key_1 << ","
+         << (*j).second.key_2 << ", " << (*j).second.key_3 << std::endl;
     j++;
   }
   Interval b(Key(2,6.8,9),Key(3,7,10));
@@ -52,8 +52,8 @@ int main()
   while(j!=N.end())
   {
     std::cerr << (*j).first.key_1 << "," << (*j).first.key_2 << ", "
-	 << (*j).first.key_3 << "-" << (*j).second.key_1 << ","
-	 << (*j).second.key_2 << ", " << (*j).second.key_3 << std::endl;
+         << (*j).first.key_3 << "-" << (*j).second.key_1 << ","
+         << (*j).second.key_2 << ", " << (*j).second.key_3 << std::endl;
     j++;
   }
   if(Segment_tree_3.segment_tree_3->is_valid())

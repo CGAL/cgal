@@ -47,7 +47,7 @@ int main()
          it=gm.darts().begin(), itend=gm.darts().end();
        it!=itend; ++it)
   {
-    if ( gm.attribute<2>(it)==NULL )
+    if ( gm.attribute<2>(it)==nullptr )
       gm.set_attribute<2>(it, gm.create_attribute<2>());
   }
 
@@ -59,8 +59,8 @@ int main()
 
   // 3) Set the color of all facets of the second hexahedron to 13.
   for (GMap_3::One_dart_per_incident_cell_range<2, 3>::iterator it=
-	 gm.one_dart_per_incident_cell<2,3>(dh2).begin(),
-	 itend=gm.one_dart_per_incident_cell<2,3>(dh2).end(); it!=itend; ++it)
+         gm.one_dart_per_incident_cell<2,3>(dh2).begin(),
+         itend=gm.one_dart_per_incident_cell<2,3>(dh2).end(); it!=itend; ++it)
   { gm.info<2>(it)=13; }
 
   // 4) 3-Sew the two hexahedra along one facet.

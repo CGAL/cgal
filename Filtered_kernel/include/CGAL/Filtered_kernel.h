@@ -1,21 +1,12 @@
 // Copyright (c) 2001,2004  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -121,14 +112,14 @@ template < typename CK, bool UseStaticFilters = true >
 struct Filtered_kernel_adaptor
   : public Filtered_kernel_base<CK>
 {
-	enum { Has_static_filters = false };
+        enum { Has_static_filters = false };
 };
 
 template < typename CK >
 struct Filtered_kernel_adaptor<CK, true>
   : public Static_filters_base<CK>
 {
-	enum { Has_static_filters = true };
+        enum { Has_static_filters = true };
 };
 
 // UseStaticFilters has a default value, depending on
@@ -139,7 +130,7 @@ struct Filtered_kernel
                Type_equality_wrapper<
                    typename CK:: template Base< Filtered_kernel<CK, UseStaticFilters> >::Type,
                    Filtered_kernel<CK, UseStaticFilters> >,
-	       UseStaticFilters >
+               UseStaticFilters >
 {};
 
 } //namespace CGAL

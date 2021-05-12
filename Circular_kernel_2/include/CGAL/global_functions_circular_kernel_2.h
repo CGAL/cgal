@@ -2,26 +2,17 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion, Julien Hazebrouck, Pedro Machado
 
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 
@@ -45,14 +36,14 @@ template <class CK>
 Circular_arc_point_2<CK>
 x_extremal_point(const Circle_2<CK> & c, bool i)
 {
-	return CircularFunctors::x_extremal_point<CK>(c,i);
+        return CircularFunctors::x_extremal_point<CK>(c,i);
 }
-  
+
 template <class CK, class OutputIterator>
 OutputIterator
 x_extremal_points(const Circle_2<CK> & c, OutputIterator res)
 {
- 	return CircularFunctors::x_extremal_points<CK>(c,res);
+         return CircularFunctors::x_extremal_points<CK>(c,res);
 }
 
 template <class CK>
@@ -66,22 +57,22 @@ template <class CK, class OutputIterator>
 OutputIterator
 y_extremal_points(const Circle_2<CK> & c, OutputIterator res)
 {
- 	return CircularFunctors::y_extremal_points<CK>(c,res);
+         return CircularFunctors::y_extremal_points<CK>(c,res);
 }
 
 // Not Documented
 template< class CK >
 inline
-CGAL::Comparison_result 
-compare_x(const Circular_arc_2<CK> &A1, const bool b1, 
-	  const Circular_arc_2<CK> &A2, const bool b2)
+CGAL::Comparison_result
+compare_x(const Circular_arc_2<CK> &A1, const bool b1,
+          const Circular_arc_2<CK> &A2, const bool b2)
 {
   return CK().compare_x_2_object()(A1, b1, A2, b2);
 }
 
 template< class CK >
 inline
-CGAL::Comparison_result 
+CGAL::Comparison_result
 compare_x(const Circular_arc_point_2<CK> &p, const Circular_arc_point_2<CK> &q)
 {
   return CK().compare_x_2_object()(p, q);
@@ -89,7 +80,7 @@ compare_x(const Circular_arc_point_2<CK> &p, const Circular_arc_point_2<CK> &q)
 
 template< class CK >
 inline
-CGAL::Comparison_result 
+CGAL::Comparison_result
 compare_y(const Circular_arc_point_2<CK> &p, const Circular_arc_point_2<CK> &q)
 {
   return CK().compare_y_2_object()(p, q);
@@ -97,7 +88,7 @@ compare_y(const Circular_arc_point_2<CK> &p, const Circular_arc_point_2<CK> &q)
 
 template< class CK >
 inline
-CGAL::Comparison_result 
+CGAL::Comparison_result
 compare_xy(const Circular_arc_point_2<CK> &p, const Circular_arc_point_2<CK> &q)
 {
   return CK().compare_xy_2_object()(p, q);
@@ -105,10 +96,10 @@ compare_xy(const Circular_arc_point_2<CK> &p, const Circular_arc_point_2<CK> &q)
 
 template< class CK >
 inline
-CGAL::Comparison_result 
+CGAL::Comparison_result
 compare_y_to_right(const Circular_arc_2<CK> &A1,
-		   const Circular_arc_2<CK> &A2,
-		   const Circular_arc_point_2<CK> &p)
+                   const Circular_arc_2<CK> &A2,
+                   const Circular_arc_point_2<CK> &p)
 {
   return CK().compare_y_to_right_2_object()(A1, A2, p);
 }
@@ -116,13 +107,13 @@ compare_y_to_right(const Circular_arc_2<CK> &A1,
 template < class CK >
 inline
 bool
-has_in_x_range(const Circular_arc_2<CK> &A, const Circular_arc_point_2<CK> &p) 
+has_in_x_range(const Circular_arc_2<CK> &A, const Circular_arc_point_2<CK> &p)
 {
   return CK().in_x_range_2_object()(A, p);
 }
 
 template < class CK >
-CGAL::Comparison_result       
+CGAL::Comparison_result
 compare_y_at_x(const Circular_arc_point_2<CK> &p, const Circular_arc_2<CK> &a)
 {
   return CK().compare_y_at_x_2_object()(p, a);
@@ -153,10 +144,10 @@ has_on(const Circle_2<CK> &c, const Circular_arc_point_2<CK> &p)
 // Not Documented
 template< class CK >
 inline
-CGAL::Comparison_result 
+CGAL::Comparison_result
 compare_y_to_right(const Line_arc_2<CK> &A1,
-		   const Line_arc_2<CK> &A2,
-		   const Circular_arc_point_2<CK> &p)
+                   const Line_arc_2<CK> &A2,
+                   const Circular_arc_point_2<CK> &p)
 {
   return CK().compare_y_to_right_2_object()(A1, A2, p);
 }
@@ -164,13 +155,13 @@ compare_y_to_right(const Line_arc_2<CK> &A1,
 template < class CK >
 inline
 bool
-has_in_x_range(const Line_arc_2<CK> &A, const Circular_arc_point_2<CK> &p) 
+has_in_x_range(const Line_arc_2<CK> &A, const Circular_arc_point_2<CK> &p)
 {
   return CK().in_x_range_2_object()(A, p);
 }
 
 template < class CK >
-CGAL::Comparison_result       
+CGAL::Comparison_result
 compare_y_at_x(const Circular_arc_point_2<CK> &p, const Line_arc_2<CK> &a)
 {
   return CK().compare_y_at_x_2_object()(p, a);

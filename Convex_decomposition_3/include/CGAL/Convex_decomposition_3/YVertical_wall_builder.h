@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     :  Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_CD3_YVERTICAL_WALL_BUILDER_H
@@ -69,41 +60,41 @@ class YVertical_wall_builder : public Modifier_base<typename Nef_::SNC_and_PL> {
 
  public:
   YVertical_wall_builder() {}
-    
+
   void operator()(SNC_and_PL& sncpl) {
     SNC_structure* sncp(sncpl.sncp);
 
     SFace_iterator sfi;
     CGAL_forall_sfaces(sfi, *sncp)
       if(sncp->is_boundary_object(sfi))
-	sncp->undef_boundary_item(sfi);
+        sncp->undef_boundary_item(sfi);
 
     Halfedge_iterator ei;
     CGAL_forall_halfedges(ei, *sncp) {
       if(ei->point() != Sphere_point(1,0,0)) continue;
-      SHalfedge_around_svertex_circulator 
-	svc(ei->out_sedge()), send(svc);
+      SHalfedge_around_svertex_circulator
+        svc(ei->out_sedge()), send(svc);
       CGAL_For_all(svc, send) {
-	if(!svc->incident_sface()->mark()) continue;
-	if(!CGAL::is_reflex_sedge_in_any_direction<SNC_structure>(svc))
-	  continue;
-	redges.push_back(ei);
-	break;
+        if(!svc->incident_sface()->mark()) continue;
+        if(!CGAL::is_reflex_sedge_in_any_direction<SNC_structure>(svc))
+          continue;
+        redges.push_back(ei);
+        break;
       }
     }
-    
+
     Vertical_redge_iterator vri;
     for(vri = redges_begin(); vri != redges_end(); ++vri) {
       Halfedge_handle ei(*vri);
-      SHalfedge_around_svertex_circulator 
-	svc(ei->out_sedge()), send(svc);
+      SHalfedge_around_svertex_circulator
+        svc(ei->out_sedge()), send(svc);
       CGAL_For_all(svc, send) {
-	if(!svc->incident_sface()->mark()) continue;
-	if(!CGAL::is_reflex_sedge_in_any_direction<SNC_structure>(svc))
-	  continue;
-	Single_wall3 W(svc);
-	W(sncpl);
-	break;
+        if(!svc->incident_sface()->mark()) continue;
+        if(!CGAL::is_reflex_sedge_in_any_direction<SNC_structure>(svc))
+          continue;
+        Single_wall3 W(svc);
+        W(sncpl);
+        break;
       }
     }
 

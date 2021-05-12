@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -32,10 +23,10 @@
 #include <CGAL/Triangulation_ds_face_base_2.h>
 
 
-namespace CGAL { 
+namespace CGAL {
 
 template < typename Gt, typename Fb = Triangulation_ds_face_base_2<> >
-class Segment_Delaunay_graph_face_base_2 
+class Segment_Delaunay_graph_face_base_2
   : public Fb
 {
 private:
@@ -76,9 +67,9 @@ private:
     void initialize_in_place_edge_list()
     {
       for (int i = 0; i < 3; ++i) {
-	selected[i] = false;
-	next_[i] = sentinel_edge();
-	prev_[i] = sentinel_edge();
+        selected[i] = false;
+        next_[i] = sentinel_edge();
+        prev_[i] = sentinel_edge();
       }
     }
 
@@ -109,7 +100,7 @@ private:
     {
       prev_[i] = prev;
     }
-  
+
     inline bool is_in_list(unsigned int i) const {
       return next_[i].second != -1 || prev_[i].second != -1;
     }
@@ -129,17 +120,17 @@ public:
   Segment_Delaunay_graph_face_base_2()
     : Fb() {}
 
-  Segment_Delaunay_graph_face_base_2(Vertex_handle v0, 
-				     Vertex_handle v1, 
-				     Vertex_handle v2)
+  Segment_Delaunay_graph_face_base_2(Vertex_handle v0,
+                                     Vertex_handle v1,
+                                     Vertex_handle v2)
     : Fb(v0,v1,v2) {}
 
-  Segment_Delaunay_graph_face_base_2(Vertex_handle v0, 
-				     Vertex_handle v1, 
-				     Vertex_handle v2,
-				     Face_handle n0, 
-				     Face_handle n1, 
-				     Face_handle n2)
+  Segment_Delaunay_graph_face_base_2(Vertex_handle v0,
+                                     Vertex_handle v1,
+                                     Vertex_handle v2,
+                                     Face_handle n0,
+                                     Face_handle n1,
+                                     Face_handle n2)
     : Fb(v0,v1,v2,n0,n1,n2) {}
 
 
@@ -151,7 +142,7 @@ public:
 };
 
 
-} //namespace CGAL 
+} //namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 

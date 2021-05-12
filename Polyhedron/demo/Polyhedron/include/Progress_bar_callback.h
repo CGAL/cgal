@@ -19,13 +19,13 @@ struct Progress_bar_callback
   {
     if (title != NULL)
       std::cerr << title << std::endl;
-    
+
     timer.start();
     t_start = timer.time();
     t_start_estimate = 0.;
     t_latest = t_start;
   }
-  
+
   bool operator()(double advancement) const
   {
     // Avoid calling time() at every single iteration, which could
@@ -40,7 +40,7 @@ struct Progress_bar_callback
     {
       if (advancement != 0. && t_start_estimate == 0.)
         t_start_estimate = t_latest;
-      
+
       std::ostringstream oss;
       oss << "[";
       int adv = int(advancement * bar_size);
@@ -50,7 +50,7 @@ struct Progress_bar_callback
         oss << ">";
       for (int i = adv; i < bar_size; ++ i)
         oss << " ";
-      
+
       oss << "] " << int(advancement * 100) << "% (";
 
       display_time (oss, t);
@@ -58,15 +58,15 @@ struct Progress_bar_callback
       oss << " elapsed, ";
 
       display_time (oss, estimate_remaining(t, advancement));
-      
+
       oss << " remaining)";
-      
+
       std::string bar_string = oss.str();
       std::cerr << "\r" << bar_string;
       for (std::size_t i = bar_string.size(); i < string_size; ++ i)
         std::cerr << " ";
       string_size = (std::max) (string_size, bar_string.size());
-      
+
       t_latest = t;
 
       if (advancement == 1)
@@ -85,15 +85,15 @@ struct Progress_bar_callback
     }
     if (seconds > 3600.)
       {
-	int hours = int(seconds / 3600.);
-	oss << hours << "h";
-	seconds -= hours * 3600.;
+        int hours = int(seconds / 3600.);
+        oss << hours << "h";
+        seconds -= hours * 3600.;
       }
     if (seconds > 60.)
       {
-	int minutes = (int)(seconds / 60.);
-	oss << minutes << "min";
-	seconds -= minutes * 60.;
+        int minutes = (int)(seconds / 60.);
+        oss << minutes << "min";
+        seconds -= minutes * 60.;
       }
     oss << int(seconds) << "sec";
   }
@@ -102,7 +102,7 @@ struct Progress_bar_callback
   {
     if (advancement == 0.)
       return std::numeric_limits<double>::infinity();
-    
+
     return ((1. - advancement) * (seconds - t_start_estimate) / advancement);
   }
 };

@@ -7,8 +7,8 @@ namespace CGAL {
 The class `Dart` represents a <I>d</I>D dart in a combinatorial map.
 
 \deprecated This class is deprecated since CGAL 4.9. Dart is now a type defined internally; users can now only define the information associated with darts. All functions defined in this class are now defined as methods of a combinatorial map taking a `Dart_handle` as first parameter. `CGAL_CMAP_DART_DEPRECATED` can be defined to keep the old behavior.
-  
-*/  
+
+*/
 template< typename d, typename CMap >
 struct Dart {
 /*!

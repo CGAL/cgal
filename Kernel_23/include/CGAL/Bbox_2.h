@@ -1,24 +1,15 @@
-// Copyright (c) 1999,2004  
+// Copyright (c) 1999,2004
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Andreas Fabri
 
@@ -168,7 +159,7 @@ Bbox_2::dilate(int dist)
   rep[2] = float_advance(rep[2],dist);
   rep[3] = float_advance(rep[3],dist);
 }
-  
+
 inline
 bool
 do_overlap(const Bbox_2 &bb1, const Bbox_2 &bb2)
@@ -213,7 +204,7 @@ operator>>(std::istream &is, Bbox_2 &b)
     double ymin = 0;
     double xmax = 0;
     double ymax = 0;
-    
+
     switch(get_mode(is)) {
     case IO::ASCII :
         is >> iformat(xmin) >> iformat(ymin) >> iformat(xmax) >> iformat(ymax);

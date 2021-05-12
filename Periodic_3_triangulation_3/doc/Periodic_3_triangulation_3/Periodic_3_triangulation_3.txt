@@ -219,17 +219,17 @@ The first template parameter of the triangulation class
 `Periodic_3_triangulation_3<Periodic_3TriangulationTraits_3, TriangulationDataStructure_3>`
 is the geometric traits class, described by the concept
 `Periodic_3TriangulationTraits_3`. It is different to the
-TriangulationTraits_3 (see
+`TriangulationTraits_3` (see
 chapter \ref Triangulation3secTraits "3D Triangulations") in that it
 implements all objects, predicates and constructions using offsets.
 
-The class `Periodic_3_triangulation_traits_3<TriangulationTraits_3,Periodic_3Offset_3>`
+The class `CGAL::Periodic_3_triangulation_traits_3<TriangulationTraits_3,Periodic_3Offset_3>`
 provides the required functionality. It expects two template
 parameters: a model of the concept `TriangulationTraits_3`
 and a model of the concept `Periodic_3Offset_3`.
 
 The second parameter `Periodic_3Offset_3` defaults to
-`Periodic_3_offset_3`.
+`CGAL::Periodic_3_offset_3`.
 
 \subsubsection P3Triangulation3secTraitsP3DT3 Traits for Periodic Delaunay Triangulations
 
@@ -237,7 +237,7 @@ The first template parameter of the Delaunay triangulation class
 `Periodic_3_Delaunay_triangulation_3<Periodic_3DelaunayTriangulationTraits_3, TriangulationDataStructure_3>`
 is the geometric traits class, described by the concept
 `Periodic_3DelaunayTriangulationTraits_3`. It is different to the
-DelaunayTriangulationTraits_3 (see
+`DelaunayTriangulationTraits_3` (see
 chapter \ref Triangulation3secTraits "3D Triangulations") in that it
 implements all objects, predicates and constructions using offsets.
 
@@ -246,9 +246,7 @@ provides the required functionality. It expects two template
 parameters: a model of the concept `DelaunayTriangulationTraits_3`
 and a model of the concept `Periodic_3Offset_3`.
 
-The second parameter `Periodic_3Offset_3` defaults to
-`Periodic_3_offset_3`.
-
+The second parameter `Periodic_3Offset_3` defaults to `CGAL::Periodic_3_offset_3`.
 
 \subsubsection P3Triangulation3secTraitsP3regularT3 Traits for Periodic Regular Triangulations
 
@@ -290,18 +288,14 @@ triangles, and tetrahedra are used.
 \subsection P3Triangulation3sectds The Triangulation Data Structure Parameter
 
 The second template parameter of the periodic triangulation classes is a
-triangulation data structure class. This class can be seen as a container for
-the cells and vertices maintaining incidence and adjacency relations (see
-Chapter \ref chapterTDS3 "3D Triangulation Data Structure"). A model of this triangulation data structure is
-`Triangulation_data_structure_3`, and it is described by the
-`TriangulationDataStructure_3` concept. This model is itself
-parameterized by a vertex base class and a cell base class, which gives the
-possibility to customize the vertices and cells used by the triangulation data
-structure, and hence by the geometric triangulation using it.
-To represent periodic triangulations the cell base and vertex base
-classes need to meet the concepts
-`Periodic_3TriangulationDSCellBase_3` and
-`Periodic_3TriangulationDSVertexBase_3`.
+triangulation data structure class.
+This parameter must meet the requirements described in the concept `TriangulationDataStructure_3`,
+for which \cgal offers the model `CGAL::Triangulation_data_structure_3`.
+To represent periodic triangulations,
+the face and vertex of the triangulation data structure must be also be models of extended concepts.
+The model `CGAL::Triangulation_data_structure_3` is parameterized by a vertex
+base class and a face base class, which gives the possibility to customize the vertices and
+faces used by the triangulation data structure.
 
 A default value for the triangulation data structure parameter is provided in
 all the triangulation classes, so it does not need to be specified by

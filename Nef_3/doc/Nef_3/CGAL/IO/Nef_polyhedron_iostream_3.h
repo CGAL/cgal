@@ -3,21 +3,21 @@ namespace CGAL {
 /*!
 \ingroup PkgNef3IOFunctions
 
-This operator reads a Nef polyhedron, which is given in the proprietary file 
-format written by the input operator <I>in</I> and assigns it to <I>N</I>. It includes the 
-complete incidence structure, the geometric data, and the marks of each item. 
+This operator reads a Nef polyhedron, which is given in the proprietary file
+format written by the input operator <I>in</I> and assigns it to <I>N</I>. It includes the
+complete incidence structure, the geometric data, and the marks of each item.
 
-It is recommended to use the \cgal kernels `Homogeneous`, 
-`Simple_homogeneous`, 
-or `Extended_homogeneous` parametrized with any exact number type that models 
-\f$ \mathbb{Z}\f$ (e.g.`Gmpz` or `leda_integer`). The input and 
-output iterators of Nef polyhedra parametrized with 
-either of these kernels are compatible as long as the Nef polyhedron is bounded. 
-An unbounded Nef polyhedron can only be read by a Nef polyhedron parametrized with 
-an extended kernel. It is also recommended to use the \cgal stream modifier 
-`set_ascii_mode()`. 
+It is recommended to use the \cgal kernels `Homogeneous`,
+`Simple_homogeneous`,
+or `Extended_homogeneous` parametrized with any exact number type that models
+\f$ \mathbb{Z}\f$ (e.g.`Gmpz` or `leda_integer`). The input and
+output iterators of Nef polyhedra parametrized with
+either of these kernels are compatible as long as the Nef polyhedron is bounded.
+An unbounded Nef polyhedron can only be read by a Nef polyhedron parametrized with
+an extended kernel. It is also recommended to use the \cgal stream modifier
+`set_ascii_mode()`.
 
-\sa `CGAL::Nef_polyhedron_3<Traits>` 
+\sa `CGAL::Nef_polyhedron_3<Traits>`
 
 */
 template <class Traits>

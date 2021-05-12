@@ -2,21 +2,12 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Efi Fogel    <efif@post.tau.ac.il>
+// Author(s): Efi Fogel    <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_TRACING_TRAITS_H
 #define CGAL_ARR_TRACING_TRAITS_H
@@ -35,13 +26,15 @@
 #include <iostream>
 #include <list>
 
+#include <boost/variant.hpp>
+
 #include <CGAL/basic.h>
 #include <CGAL/Arr_enums.h>
 #include <CGAL/Arr_tags.h>
 
 namespace CGAL {
 
-/*! \class 
+/*! \class
  * A model of the ArrangementTraits_2 concept that counts the methods invoked.
  */
 template <typename Base_traits>
@@ -70,17 +63,17 @@ public:
     COMPARE_ENDPOINTS_XY_OP,
 
     PARAMETER_SPACE_IN_X_OP,
-    IS_ON_X_IDENTIFICATION_OP,    
+    IS_ON_X_IDENTIFICATION_OP,
     COMPARE_Y_ON_BOUNDARY_OP,
     COMPARE_Y_NEAR_BOUNDARY_OP,
-    
+
     PARAMETER_SPACE_IN_Y_OP,
     IS_ON_Y_IDENTIFICATION_OP,
     COMPARE_X_AT_LIMIT_OP,
     COMPARE_X_NEAR_LIMIT_OP,
     COMPARE_X_ON_BOUNDARY_OP,
     COMPARE_X_NEAR_BOUNDARY_OP,
-    
+
     NUMBER_OF_OPERATIONS
   };
 
@@ -90,55 +83,55 @@ private:
 
   /*! A set of bits that indicate whether operations should be traced */
   unsigned int m_flags;
-  
+
   bool compare_x_op() const
   { return (0 != (m_flags & (0x1 << COMPARE_X_OP))); }
 
   bool compare_xy_op() const
   { return (0 != (m_flags & (0x1 << COMPARE_XY_OP))); }
-  
+
   bool construct_min_vertex_op() const
   { return (0 != (m_flags & (0x1 << CONSTRUCT_MIN_VERTEX_OP))); }
-  
+
   bool construct_max_vertex_op() const
   { return (0 != (m_flags & (0x1 << CONSTRUCT_MAX_VERTEX_OP))); }
-  
+
   bool is_vertical_op() const
   { return (0 != (m_flags & (0x1 << IS_VERTICAL_OP))); }
-  
+
   bool compare_y_at_x_op() const
   { return (0 != (m_flags & (0x1 << COMPARE_Y_AT_X_OP))); }
-  
+
   bool equal_points_op() const
   { return (0 != (m_flags & (0x1 << EQUAL_POINTS_OP))); }
-  
+
   bool equal_curves_op() const
   { return (0 != (m_flags & (0x1 << EQUAL_CURVES_OP))); }
-  
+
   bool compare_y_at_x_left_op() const
   { return (0 != (m_flags & (0x1 << COMPARE_Y_AT_X_LEFT_OP))); }
-  
+
   bool compare_y_at_x_right_op() const
   { return (0 != (m_flags & (0x1 << COMPARE_Y_AT_X_RIGHT_OP))); }
-  
+
   bool make_x_monotone_op() const
   { return (0 != (m_flags & (0x1 << MAKE_X_MONOTONE_OP))); }
-  
+
   bool split_op() const
   { return (0 != (m_flags & (0x1 << SPLIT_OP))); }
-  
+
   bool intersect_op() const
   { return (0 != (m_flags & (0x1 << INTERSECT_OP))); }
-  
+
   bool are_mergeable_op() const
   { return (0 != (m_flags & (0x1 << ARE_MERGEABLE_OP))); }
-  
+
   bool merge_op() const
   { return (0 != (m_flags & (0x1 << MERGE_OP))); }
-  
+
   bool construct_opposite_op() const
   { return (0 != (m_flags & (0x1 << CONSTRUCT_OPPOSITE_OP))); }
-  
+
   bool compare_endpoints_xy_op() const
   { return (0 != (m_flags & (0x1 << COMPARE_ENDPOINTS_XY_OP))); }
 
@@ -146,12 +139,12 @@ private:
 
   bool parameter_space_in_x_op() const
   { return (0 != (m_flags & (0x1 << PARAMETER_SPACE_IN_X_OP))); }
-  
-  bool is_on_x_identification_op() const 
-  { return m_flags & (0x1 << IS_ON_X_IDENTIFICATION_OP); }  
+
+  bool is_on_x_identification_op() const
+  { return m_flags & (0x1 << IS_ON_X_IDENTIFICATION_OP); }
 
   bool compare_y_on_boundary_op() const
-  { return (0 != (m_flags & (0x1 << COMPARE_Y_ON_BOUNDARY_OP))); }  
+  { return (0 != (m_flags & (0x1 << COMPARE_Y_ON_BOUNDARY_OP))); }
 
   bool compare_y_near_boundary_op() const
   { return m_flags & (0x1 << COMPARE_Y_NEAR_BOUNDARY_OP); }
@@ -161,8 +154,8 @@ private:
   bool parameter_space_in_y_op() const
   { return (0 != (m_flags & (0x1 << PARAMETER_SPACE_IN_Y_OP))); }
 
-  bool is_on_y_identification_op() const 
-  { return m_flags & (0x1 << IS_ON_Y_IDENTIFICATION_OP); }  
+  bool is_on_y_identification_op() const
+  { return m_flags & (0x1 << IS_ON_Y_IDENTIFICATION_OP); }
 
   bool compare_x_at_limit_op() const
   { return m_flags & (0x1 << COMPARE_X_AT_LIMIT_OP); }
@@ -171,11 +164,11 @@ private:
   { return m_flags & (0x1 << COMPARE_X_NEAR_LIMIT_OP); }
 
   bool compare_x_on_boundary_op() const
-  { return (0 != (m_flags & (0x1 << COMPARE_X_ON_BOUNDARY_OP))); }  
+  { return (0 != (m_flags & (0x1 << COMPARE_X_ON_BOUNDARY_OP))); }
 
   bool compare_x_near_boundary_op() const
   { return m_flags & (0x1 << COMPARE_X_NEAR_BOUNDARY_OP); }
-  
+
 public:
   /*! Default constructor */
   Arr_tracing_traits_2() :
@@ -193,7 +186,7 @@ public:
    * \param id the operation identifier
    */
   void enable_all_traces() { m_flags = 0xffffffff; }
-  
+
   /*! Disable the trace of a traits operation
    * \param id the operation identifier
    */
@@ -203,7 +196,7 @@ public:
    * \param id the operation identifier
    */
   void disable_all_traces() { m_flags = 0x0; }
-  
+
   /// \name Types and functors inherited from the base
   //@{
 
@@ -220,7 +213,7 @@ public:
                                                 Top_side_category;
   typedef typename internal::Arr_complete_right_side_category< Base >::Category
                                                 Right_side_category;
-  
+
   typedef typename Base::Point_2                Point_2;
   typedef typename Base::X_monotone_curve_2     X_monotone_curve_2;
   typedef typename Base::Curve_2                Curve_2;
@@ -231,7 +224,7 @@ public:
   private:
     typename Base::Compare_x_2 m_object;
     bool m_enabled;
-    
+
   public:
     /*! Construct */
     Compare_x_2(const Base * base, bool enabled = true) :
@@ -329,11 +322,11 @@ public:
       std::cout << "construct_max_vertex" << std::endl
                 << "  xcv: " << xcv << std::endl;
       Point_2 p = m_object(xcv);
-      std::cout << "  result: " << p << std::endl;      
+      std::cout << "  result: " << p << std::endl;
       return p;
     }
   };
-  
+
   /*! A functor that checks whether a given x-monotone curve is vertical. */
   class Is_vertical_2 {
   private:
@@ -344,7 +337,7 @@ public:
     /*! Construct */
     Is_vertical_2(const Base * base, bool enabled = true) :
       m_object(base->is_vertical_2_object()), m_enabled(enabled) {}
-    
+
     /*! Operate
      * \param xcv the curve
      * \return a Boolean that indicates whether the curve is vertical or not
@@ -359,7 +352,7 @@ public:
       return is_vertical;
     }
   };
-  
+
   /*! A functor that compares the y-coordinates of a point and an
    * x-monotone curve at the point x-coordinate.
    */
@@ -390,7 +383,7 @@ public:
       return cr;
     }
   };
-  
+
   /*! A functor that checks whether two points and two x-monotone curves are
    * identical.
    */
@@ -440,7 +433,7 @@ public:
       bool equal = m_object(p1, p2);
       std::cout << "  result: " << equal << std::endl;
       return equal;
-    }    
+    }
   };
 
   /*! A functor that compares compares the y-coordinates of two x-monotone
@@ -458,7 +451,7 @@ public:
 
     /*! Operate
      * \param xcv1 the first curve
-     * \param xcv2 the second curve 
+     * \param xcv2 the second curve
      * \param p the reference point
      * \return the comparison result
      */
@@ -510,8 +503,13 @@ public:
       return cr;
     }
   };
-  
-  /*! A functor that divides a curve into x-monotone curves. */
+
+  //! \name Intersections & subdivisions
+  //@{
+
+  /*! \class Make_x_monotone_2
+   * A functor for subdividing curves into x-monotone curves.
+   */
   class Make_x_monotone_2 {
   private:
     typename Base::Make_x_monotone_2 m_object;
@@ -522,39 +520,43 @@ public:
     Make_x_monotone_2(const Base * base, bool enabled = true) :
       m_object(base->make_x_monotone_2_object()), m_enabled(enabled) {}
 
-    /*! Operate
-     * \param cv the curve
-     * \param oi an output iterator that contains the result. It's value
-     * type is CGAL::Object, which wraps either an x-monotone curve or a point
-     * \return the output iterator
+    /*! Subdivide a given curve into x-monotone subcurves and insert them into
+     * a given output iterator.
+     * \param cv the curve.
+     * \param oi an output iterator for the result. Its value type is a variant
+     *           that wraps Point_2 or X_monotone_curve_2 objects.
+     * \return the output iterator.
      */
-    template<typename OutputIterator>
+    template <typename OutputIterator>
     OutputIterator operator()(const Curve_2 & cv, OutputIterator oi) const
     {
-      if (!m_enabled) return m_object(cv, oi);
+      if (! m_enabled) return m_object(cv, oi);
       std::cout << "make_x_monotone" << std::endl
-                << "  cv: " << cv << std::endl;        
-      std::list<CGAL::Object> container;
+                << "  cv: " << cv << std::endl;
+
+      typedef boost::variant<Point_2, X_monotone_curve_2>
+        Make_x_monotone_result;
+
+      std::list<Make_x_monotone_result> container;
       m_object(cv, std::back_inserter(container));
       if (container.empty()) return oi;
 
-      std::list<CGAL::Object>::iterator it;
-      unsigned int i = 0;
-      for (it = container.begin(); it != container.end(); ++it) {
-        X_monotone_curve_2 xcv;
-        if (assign (xcv, *it)) {
-          std::cout << "  result[" << i++ << "]: xcv: " << xcv << std::endl;
+      size_t i = 0;
+      for (auto it = container.begin(); it != container.end(); ++it) {
+        if (const auto* xcv = boost::get<X_monotone_curve_2>(*it)) {
+          std::cout << "  result[" << i++ << "]: xcv: " << *xcv << std::endl;
           continue;
         }
 
-        Point_2 p;
-        if (assign (p, *it)) {
-          std::cout << "  result[" << i++ << "]: p: " << p << std::endl;
+        if (const Point_2* p = boost::get<Point_2>(*it)) {
+          std::cout << "  result[" << i++ << "]: p: " << *p << std::endl;
           continue;
         }
+
+        CGAL_error();
       }
-      
-      for (it = container.begin(); it != container.end(); ++it) *oi++ = *it;
+
+      for (auto it = container.begin(); it != container.end(); ++it) *oi++ = *it;
       container.clear();
       return oi;
     }
@@ -601,49 +603,53 @@ public:
 
   public:
     /*! Construct */
-    Intersect_2(const Base * base, bool enabled = true) :
+    Intersect_2(const Base* base, bool enabled = true) :
       m_object(base->intersect_2_object()), m_enabled(enabled) {}
 
-    /*! Operate
+    /*! Compute the intersections of the two given curves and insert them into
+     * a given output iterator.
      * \param xcv1 the first curve
      * \param xcv2 the ssecond curve
-     * \param oi an output iterator that contains the result. It's value
-     * type is CGAL::Object, which wraps either an x-monotone overlapping
-     * curve or pair that consists of an intersection point and its
-     * multiplicity
-     * \return the output iterator
+     * \param oi the output iterator for the result. It value type is a variant
+     *           that wraps an x-monotone overlapping curve or a pair that
+     *           consists of the intersection point and its multiplicity
+     * \return the past-the-end output iterator.
      */
-    template<typename OutputIterator>
+    template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2 & xcv1,
                               const X_monotone_curve_2 & xcv2,
                               OutputIterator oi) const
     {
-      if (!m_enabled) return m_object(xcv1, xcv2, oi);
+      typedef std::pair<Point_2, Multiplicity>          Intersection_point;
+      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+                                                        Intersection_result;
+
+      if (! m_enabled) return m_object(xcv1, xcv2, oi);
+
       std::cout << "intersect" << std::endl
                 << "  xcv1: " << xcv1 << std::endl
                 << "  xcv2: " << xcv2 << std::endl;
-      std::list<CGAL::Object> container;
+      std::list<Intersection_result> container;
       m_object(xcv1, xcv2, std::back_inserter(container));
       if (container.empty()) return oi;
 
-      std::list<CGAL::Object>::iterator it;
       unsigned int i = 0;
-      for (it = container.begin(); it != container.end(); ++it) {
-        X_monotone_curve_2 xcv;
-        if (assign (xcv, *it)) {
-          std::cout << "  result[" << i++ << "]: xcv: " << xcv << std::endl;
+      for (const auto& item : container) {
+        const X_monotone_curve_2* xcv = boost::get<X_monotone_curve_2>(&item);
+        if (xcv != nullptr) {
+          std::cout << "  result[" << i++ << "]: xcv: " << *xcv << std::endl;
           continue;
         }
 
-        std::pair<Point_2,Multiplicity> point_pair;
-        if (assign (point_pair, *it)) {
-          std::cout << "  result[" << i++ << "]: p: " << point_pair.first
-                    << ", multiplicity: " << point_pair.second << std::endl;
+        const Intersection_point* ip = boost::get<Intersection_point>(&item);
+        if (ip != nullptr) {
+          std::cout << "  result[" << i++ << "]: p: " << ip->first
+                    << ", multiplicity: " << ip->second << std::endl;
           continue;
         }
       }
-      
-      for (it = container.begin(); it != container.end(); ++it) *oi++ = *it;
+
+      for (auto it = container.begin(); it != container.end(); ++it) *oi++ = *it;
       container.clear();
       return oi;
     }
@@ -663,7 +669,7 @@ public:
     /*! Operate
      * \param xcv1 the first curve
      * \param xcv2 the second curve
-     * \return true if the the two curve are mergeable and false otherwise.
+     * \return true if the two curve are mergeable and false otherwise.
      * Two curves are mergeable if they have the same underlying theoretical
      * curve
      */
@@ -777,7 +783,7 @@ public:
     Parameter_space_in_x_2(const Base * base, bool enabled = true) :
       m_object(base->parameter_space_in_x_2_object()), m_enabled(enabled)
     {}
-    
+
     /*! Operate
      * \param xcv the curve the end of which is tested
      * \param ce the curve-end identifier
@@ -795,14 +801,14 @@ public:
     }
   };
 
-  /*! A functor that determines whether a point or curve is on 
+  /*! A functor that determines whether a point or curve is on
    * x-identification.
    */
   class Is_on_x_identification_2 {
   private:
     typename Base::Is_on_x_identification_2 m_object;
     bool m_enabled;
-    
+
   public:
     /*! Construct */
     Is_on_x_identification_2(const Base * base, bool enabled = true) :
@@ -841,7 +847,7 @@ public:
   private:
     typename Base::Compare_y_on_boundary_2 m_object;
     bool m_enabled;
-    
+
   public:
     /*! Construct */
     Compare_y_on_boundary_2(const Base * base, bool enabled = true) :
@@ -872,7 +878,7 @@ public:
   private:
     typename Base::Compare_y_near_boundary_2 m_object;
     bool m_enabled;
-    
+
   public:
     /*! Construct */
     Compare_y_near_boundary_2(const Base * base, bool enabled = true) :
@@ -885,7 +891,7 @@ public:
      * \return the comparison result
      */
     Comparison_result operator()(const X_monotone_curve_2 & xcv1,
-                                 const X_monotone_curve_2 & xcv2, 
+                                 const X_monotone_curve_2 & xcv2,
                                  Arr_curve_end ce) const
     {
       if (!m_enabled) return m_object(xcv1, xcv2, ce);
@@ -913,7 +919,7 @@ public:
     /*! Construct */
     Parameter_space_in_y_2(const Base * base, bool enabled = true) :
       m_object(base->parameter_space_in_y_2_object()), m_enabled(enabled) {}
-    
+
     /*! Operate
      * \param xcv the curve the end of which is tested
      * \param ce the curve-end identifier
@@ -945,14 +951,14 @@ public:
     }
   };
 
-  /*! A functor that determines whether a point or curve is on 
+  /*! A functor that determines whether a point or curve is on
    * y-identification.
    */
   class Is_on_y_identification_2 {
   private:
     typename Base::Is_on_y_identification_2 m_object;
     bool m_enabled;
-    
+
   public:
     /*! Construct */
     Is_on_y_identification_2(const Base * base, bool enabled = true) :
@@ -991,14 +997,14 @@ public:
   private:
     typename Base::Compare_x_at_limit_2 m_object;
     bool m_enabled;
-    
+
   public:
     /*! Construct */
     Compare_x_at_limit_2(const Base * base, bool enabled = true) :
       m_object(base->compare_x_at_limit_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param p the first point 
+     * \param p the first point
      * \param xcv the curve the end of which is to be compared
      * \param ce the curve-end identifier
      * \return the comparison result
@@ -1046,7 +1052,7 @@ public:
   private:
     typename Base::Compare_x_near_limit_2 m_object;
     bool m_enabled;
-    
+
   public:
     /*! Construct */
     Compare_x_near_limit_2(const Base * base, bool enabled = true) :
@@ -1067,7 +1073,7 @@ public:
       std::cout << "compare_x_near_limit 2" << std::endl
                 << "  xcv1: " << xcv1 << std::endl
                 << "  xcv2: " << xcv2 << std::endl
-		<< "    ce: " << ce << std::endl; 
+                << "    ce: " << ce << std::endl;
       Comparison_result cr = m_object(xcv1, xcv2, ce);
       std::cout << "  result: " << cr << std::endl;
       return cr;
@@ -1081,7 +1087,7 @@ public:
   private:
     typename Base::Compare_x_on_boundary_2 m_object;
     bool m_enabled;
-    
+
   public:
     /*! Construct */
     Compare_x_on_boundary_2(const Base * base, bool enabled = true) :
@@ -1106,7 +1112,7 @@ public:
      * \param xcv the curve.
      * \param ce the curve-end
      */
-    Comparison_result operator()(const Point_2 & pt, 
+    Comparison_result operator()(const Point_2 & pt,
                                  const X_monotone_curve_2 & xcv, Arr_curve_end ce) const
     {
       if (!m_enabled) return m_object(pt, xcv, ce);
@@ -1140,7 +1146,7 @@ public:
     }
 
   };
-  
+
   /*! A functor that compares the x-coordinates of curve ends near the
    * boundary of the parameter space.
    */
@@ -1148,7 +1154,7 @@ public:
   private:
     typename Base::Compare_x_near_boundary_2 m_object;
     bool m_enabled;
-    
+
   public:
     /*! Construct */
     Compare_x_near_boundary_2(const Base * base, bool enabled = true) :
@@ -1169,7 +1175,7 @@ public:
       std::cout << "compare_x_near_boundary 2" << std::endl
                 << "  xcv1: " << xcv1 << std::endl
                 << "  xcv2: " << xcv2 << std::endl
-		<< "    ce: " << ce << std::endl; 
+                << "    ce: " << ce << std::endl;
       Comparison_result cr = m_object(xcv1, xcv2, ce);
       std::cout << "  result: " << cr << std::endl;
       return cr;
@@ -1183,7 +1189,7 @@ public:
 
   Compare_x_2 compare_x_2_object() const
   { return Compare_x_2(this, compare_x_op()); }
-  
+
   Compare_xy_2 compare_xy_2_object() const
   { return Compare_xy_2(this, compare_xy_op()); }
 
@@ -1195,10 +1201,10 @@ public:
 
   Is_vertical_2 is_vertical_2_object() const
   { return Is_vertical_2(this, is_vertical_op()); }
-  
+
   Compare_y_at_x_2 compare_y_at_x_2_object() const
   { return Compare_y_at_x_2(this, compare_y_at_x_op()); }
-  
+
   Equal_2 equal_2_object() const
   { return Equal_2(this, equal_points_op(), equal_curves_op()); }
 
@@ -1207,7 +1213,7 @@ public:
 
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
   { return Compare_y_at_x_right_2(this, compare_y_at_x_right_op()); }
-  
+
   Make_x_monotone_2 make_x_monotone_2_object() const
   { return Make_x_monotone_2(this, make_x_monotone_op()); }
 
@@ -1234,9 +1240,9 @@ public:
   Parameter_space_in_x_2 parameter_space_in_x_2_object() const
   { return Parameter_space_in_x_2(this, parameter_space_in_x_op()); }
 
-  Is_on_x_identification_2 is_on_x_identification_2_object() const 
+  Is_on_x_identification_2 is_on_x_identification_2_object() const
   { return Is_on_x_identification_2(this, is_on_x_identification_op()); }
-  
+
   Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const
   { return Compare_y_on_boundary_2(this, compare_y_on_boundary_op()); }
 
@@ -1244,11 +1250,11 @@ public:
   { return Compare_y_near_boundary_2(this, compare_y_near_boundary_op()); }
 
   // bottom-top
-  
+
   Parameter_space_in_y_2 parameter_space_in_y_2_object() const
   { return Parameter_space_in_y_2(this, parameter_space_in_y_op()); }
-  
-  Is_on_y_identification_2 is_on_y_identification_2_object() const 
+
+  Is_on_y_identification_2 is_on_y_identification_2_object() const
   { return Is_on_y_identification_2(this, is_on_y_identification_op()); }
 
   Compare_x_at_limit_2 compare_x_at_limit_2_object() const

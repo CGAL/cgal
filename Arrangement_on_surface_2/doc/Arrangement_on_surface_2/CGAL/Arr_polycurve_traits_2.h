@@ -239,19 +239,17 @@ namespace CGAL {
                                     const Point_2& tgt) const;
     };
 
-    /*! Subdivide the given subcurve into x-monotone subcurves and insert them
-     * into the given output iterator. Since the subcurves that
-     * constitute a general polycurve are not necessarily
-     * \f$x\f$-monotone, this functor may break them.
+    /*! Subdivide a given subcurve into x-monotone subcurves and insert them
+     * into a given output iterator.
      */
     class Make_x_monotone_2 {
     public:
       /*!
       * \pre if `cv` is not empty then it must be continuous and well-oriented.
-      * \param cv The subcurve.
-      * \param oi The output iterator, whose value-type is Object. The output
-      *           object is a wrapper of a X_monotone_curve_2 objects.
-      * \return The past-the-end iterator.
+      * \param cv the subcurve.
+      * \param oi an output iterator for the result. Its value type is a variant
+      *           that wraps Point_2 or an X_monotone_curve_2 objects.
+      * \return the past-the-end iterator.
       */
       template <typename OutputIterator>
       OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const;
@@ -410,7 +408,7 @@ namespace CGAL {
       size_type number_of_subcurves() const;
 
       /*! Obtain the \f$ k\f$th subcurve of the polycurve.
-       * \pre \f$k\f$ is not greater then or equal to \f$n-1\f$, where
+       * \pre \f$k\f$ is not greater than or equal to \f$n-1\f$, where
        *      \f$n\f$ is the number of subcurves.
        */
       typename SubcurveTraits_2::X_monotone_curve_2

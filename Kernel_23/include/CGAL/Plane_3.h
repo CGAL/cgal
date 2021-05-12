@@ -1,28 +1,19 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra
- 
+
 #ifndef CGAL_PLANE_3_H
 #define CGAL_PLANE_3_H
 
@@ -30,7 +21,6 @@
 #include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
-#include <CGAL/result_of.h>
 #include <CGAL/IO/io.h>
 
 namespace CGAL {
@@ -116,25 +106,25 @@ public:
     return Direction_3(a(), b(), c());
   }
 
-  typename cpp11::result_of<typename R::Compute_a_3( Plane_3)>::type
+  decltype(auto)
   a() const
   {
     return R().compute_a_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_b_3( Plane_3)>::type
+  decltype(auto)
   b() const
   {
     return R().compute_b_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_c_3( Plane_3)>::type
+  decltype(auto)
   c() const
   {
     return R().compute_c_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_d_3( Plane_3)>::type
+  decltype(auto)
   d() const
   {
     return R().compute_d_3_object()(*this);
@@ -148,8 +138,8 @@ public:
   bool has_on(const Circle_3 &c) const
   {
     return R().has_on_3_object()(*this, c);
-  }  
-  
+  }
+
   bool has_on(const Line_3 &l) const
   {
     return R().has_on_3_object()(*this, l);

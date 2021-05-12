@@ -1,25 +1,16 @@
-// Copyright (c) 1997-2000  
+// Copyright (c) 1997-2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>,
 //                 Lutz Kettner <kettner@mpi-sb.mpg.de>
@@ -41,7 +32,7 @@ class UF_forward_iterator {
     PTR_   m_p;
 public:
     // should be private and Union_find<...> a friend.
-    PTR_   ptr() const { return m_p; }  
+    PTR_   ptr() const { return m_p; }
 
     typedef UF_forward_iterator<PTR_, V_, R_, P_> Self;
     typedef V_                                    value_type;
@@ -88,11 +79,11 @@ public:
 // allocator concept as defined in the C++ standard.
 
 // Union_find is implemented with union by rank and path compression.
-// The running time for $m$ set operations on $n$ elements is 
+// The running time for $m$ set operations on $n$ elements is
 // $O(n \alpha(m,n))$ where $\alpha(m,n)$ is the extremely slow
 // growing inverse of Ackermann's function.
 
-template <typename T, typename A = CGAL_ALLOCATOR(T) > 
+template <typename T, typename A = CGAL_ALLOCATOR(T) >
 class Union_find {
     struct Union_find_struct {
         typedef Union_find_struct* pointer;
@@ -110,9 +101,9 @@ public:
     typedef Union_find_struct*                               pointer;
     typedef const Union_find_struct*                         const_pointer;
 
-    typedef T                                                value_type; 
-    typedef T&                                               reference; 
-    typedef const T&                                         const_reference; 
+    typedef T                                                value_type;
+    typedef T&                                               reference;
+    typedef const T&                                         const_reference;
 
     typedef internal::UF_forward_iterator< pointer, T, T&, T*>  iterator;
     typedef iterator                                         handle;
@@ -123,8 +114,7 @@ public:
 #ifdef _MSC_VER
     typedef CGAL_ALLOCATOR(Union_find_struct)                allocator;
 #else
-    typedef typename A::template rebind<Union_find_struct>   Rebind;
-    typedef typename Rebind::other                           allocator;
+    typedef typename std::allocator_traits<A>::template rebind_alloc<Union_find_struct> allocator;
 #endif
 
 private:
@@ -141,7 +131,7 @@ private:
     pointer find( pointer p) const {
         CGAL_assertion(p != 0);
         pointer r = p;
-        while (r->up) 
+        while (r->up)
             r = r->up; // now r is the root;
         while (p->up) {
             pointer u = p->up;
@@ -169,7 +159,7 @@ public:
 
     std::size_t bytes() const {
     // returns the memory consumed
-        return values * sizeof(Union_find_struct) + sizeof( Self); 
+        return values * sizeof(Union_find_struct) + sizeof( Self);
     }
 
     std::size_t size( const_handle p) const { return find(p).ptr()->size; }
@@ -208,7 +198,7 @@ public:
     bool same_set( const_handle p, const_handle q) const {
     // returns true iff $p$ and $q$ belong to the same set.
     // Precond: $p$ and $q$ are in the partition.
-        return find(p) == find(q); 
+        return find(p) == find(q);
     }
 
     iterator begin() { return iterator(m_first); }
@@ -230,7 +220,7 @@ typename Union_find<T,A>::handle Union_find<T,A>::make_set(const T& x) {
 
 template <typename T, typename A>
 void Union_find<T,A>::clear() {
-    while (m_first) { 
+    while (m_first) {
         pointer tmp = m_first->next;
         std::allocator_traits<allocator>::destroy(alloc, m_first);
         alloc.deallocate(m_first,1);
@@ -249,7 +239,7 @@ void Union_find<T,A>::unify_sets( handle p, handle q) {
         return;
     std::size_t sp = pit->size;
     std::size_t sq = qit->size;
-    if (sp > sq) 
+    if (sp > sq)
         std::swap(pit,qit); // now sp <= sq
     pit->up = qit;  // linking roots
     qit->size += pit->size; // updating size

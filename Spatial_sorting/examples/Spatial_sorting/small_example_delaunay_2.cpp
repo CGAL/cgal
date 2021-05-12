@@ -6,8 +6,8 @@
 #include <vector>
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Delaunay_triangulation_2<K> DT;
-void compute_delaunay(std::vector<K::Point_2>::iterator it, 
-			std::vector<K::Point_2>::iterator e){
+void compute_delaunay(std::vector<K::Point_2>::iterator it,
+                        std::vector<K::Point_2>::iterator e){
     DT dt;
     DT::Face_handle hint;
     for( ;it!=e; ++it)  hint = dt.insert(*it, hint)->face();

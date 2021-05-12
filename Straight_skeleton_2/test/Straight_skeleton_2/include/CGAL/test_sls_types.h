@@ -1,19 +1,10 @@
 // Copyright (c) 2005, 2006 Fernando Luis Cacciola Carballal. All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
@@ -89,11 +80,11 @@ class VisitorBase
 public:
 
   typedef void (*CheckTimeoutCallbackType) () ;
-  
+
   VisitorBase( CheckTimeoutCallbackType aCheckTimeoutCallback ) : check_timeout(aCheckTimeoutCallback) {}
-  
-protected:  
-  
+
+protected:
+
   CheckTimeoutCallbackType check_timeout ;
 } ;
 
@@ -102,7 +93,7 @@ class ISlsBuilderVisitor : public VisitorBase
 public:
 
   ISlsBuilderVisitor( CheckTimeoutCallbackType aCheckTimeoutCallback ) : VisitorBase(aCheckTimeoutCallback) {}
-  
+
   void on_contour_edge_entered ( Halfedge_const_handle const& ) const {}
 
   void on_initialization_started( int /*size_of_vertices*/ ) const {}
@@ -141,25 +132,25 @@ public:
 
 } ;
 
-  
+
 class IOffsetBuilderVisitor : public VisitorBase
 {
 public:
 
   IOffsetBuilderVisitor( CheckTimeoutCallbackType aCheckTimeoutCallback ) : VisitorBase(aCheckTimeoutCallback) {}
-  
+
   void on_construction_started ( IFT ) const {}
-  
+
   void on_offset_contour_started() const { check_timeout(); }
-  
+
   void on_offset_point ( IPoint const& ) const { check_timeout(); }
 
   IPoint on_offset_point_overflowed( Halfedge_const_handle ) const { return CGAL::ORIGIN ; }
-  
+
   void on_offset_contour_finished ( bool ) const { check_timeout(); }
-  
+
   void on_construction_finished () const {}
-  
+
   void on_error( char const* ) const { check_timeout(); }
 
 } ;

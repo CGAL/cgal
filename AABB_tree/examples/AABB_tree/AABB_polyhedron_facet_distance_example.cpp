@@ -28,10 +28,9 @@ int main()
     Polyhedron polyhedron;
     polyhedron.make_tetrahedron(p, q, r, s);
 
-    // constructs AABB tree and computes internal KD-tree 
+    // constructs AABB tree and computes internal KD-tree
     // data structure to accelerate distance queries
     Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
-    tree.accelerate_distance_queries();
 
     // query point
     Point query(0.0, 0.0, 3.0);
@@ -50,7 +49,7 @@ int main()
     Polyhedron::Face_handle f = pp.second; // closest primitive id
     std::cout << "closest point: " << closest_point << std::endl;
     std::cout << "closest triangle: ( "
-              << f->halfedge()->vertex()->point() << " , " 
+              << f->halfedge()->vertex()->point() << " , "
               << f->halfedge()->next()->vertex()->point() << " , "
               << f->halfedge()->next()->next()->vertex()->point()
               << " )" << std::endl;
