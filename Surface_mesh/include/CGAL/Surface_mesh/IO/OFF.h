@@ -354,7 +354,7 @@ bool read_OFF(std::istream& is,
 
 template <typename Point,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(std::string& fname,
+bool read_OFF(const std::string& fname,
               Surface_mesh<Point>& sm,
               const CGAL_BGL_NP_CLASS& np)
 {
@@ -364,7 +364,7 @@ bool read_OFF(std::string& fname,
 
 template <typename Point,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(std::string& fname,
+bool read_OFF(const std::string& fname,
               Surface_mesh<Point>& sm)
 {
   return read_OFF(fname, sm, parameters::all_default());
