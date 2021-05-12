@@ -79,28 +79,12 @@ template <class IteratorForward, class R>
 Bounded_side bounded_side_3(IteratorForward first,
                             IteratorForward last,
                             const Point_3<R>& point,
-                            typename R::Plane_3 plane = typename R::Plane_3(0,0,0,0)) {
+                            const Plane_3<R>& plane) {
   typedef typename R::Point_2 Point_2;
   typedef typename R::Point_3 Point_3;
-  typedef typename R::Plane_3 Plane_3;
-
-  if(plane == Plane_3(0,0,0,0)) {
-    // TO TEST: code never tested
-    IteratorForward p(first);
-    Point_3 p0(*(p++));
-    CGAL_assertion(p != last);
-    Point_3 p1(*(p++));
-    CGAL_assertion(p != last);
-    Point_3 p2(*(p++));
-    plane = Plane_3(p0, p1, p2);
-
-    /* since we just need to project the points to a non-perpendicular plane
-       we don't need to care about the plane orientation */
-  }
 
   typename R::Non_zero_dimension_3 non_zero_dimension_3;
   int dir = non_zero_dimension_3(plane.orthogonal_vector());
-
 
   CGAL_assertion(!plane.is_degenerate());
   Point_2 (*t)(const Point_3&);
