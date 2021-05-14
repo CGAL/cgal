@@ -139,6 +139,7 @@ struct Scene_surface_mesh_item_priv{
                                                  false));
     item->getEdgeContainer(0)->setFrameMatrix(QMatrix4x4());
     has_feature_edges = false;
+    has_feature_corners = false;
     invalidate_stats();
     vertices_displayed= false;
     edges_displayed = false;
@@ -173,6 +174,7 @@ struct Scene_surface_mesh_item_priv{
                                                  false));
 
     has_feature_edges = false;
+    has_feature_corners = false;
     invalidate_stats();
     vertices_displayed = false;
     edges_displayed = false;
@@ -251,6 +253,7 @@ struct Scene_surface_mesh_item_priv{
 
   mutable bool has_fpatch_id;
   mutable bool has_feature_edges;
+  mutable bool has_feature_corners;
   mutable bool floated;
   mutable bool has_vcolors;
   mutable bool has_fcolors;
@@ -280,6 +283,7 @@ struct Scene_surface_mesh_item_priv{
   mutable SMesh::Property_map<vertex_descriptor,int> v_selection_map;
   mutable SMesh::Property_map<face_descriptor,int> f_selection_map;
   mutable SMesh::Property_map<boost::graph_traits<SMesh>::edge_descriptor, bool> e_is_feature_map;
+  mutable SMesh::Property_map<boost::graph_traits<SMesh>::vertex_descriptor, bool> v_is_feature_map;
 
   mutable Color_vector colors_;
   double volume, area;
@@ -1497,6 +1501,17 @@ void Scene_surface_mesh_item::show_feature_edges(bool b)
     invalidate(COLORS);
     itemChanged();
   }
+}
+
+void Scene_surface_mesh_item::show_feature_corners(bool b)
+{
+    d->has_feature_corners = b;
+    if(b)
+    {
+        d->v_is_feature_map = d->smesh_->add_property_map<boost::graph_traits<SMesh>::vertex_descriptor,bool>("v:is_feature").first;
+        invalidate(COLORS);
+        itemChanged();
+    }
 }
 
 bool Scene_surface_mesh_item::isItemMulticolor()

@@ -71,7 +71,7 @@ is_sharp(PolygonMesh& polygonMesh,
 template <typename PolygonMesh, typename FT, typename NamedParameters>
 bool
 is_sharp_corner(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor& he,
-                const typename FT& cos_angle,
+                const FT& cos_angle,
                 const PolygonMesh& polygonMesh,
                 const NamedParameters& np)
 {

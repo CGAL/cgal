@@ -83,6 +83,7 @@ public:
 
   std::vector<QColor>& color_vector();
   void show_feature_edges(bool);
+  void show_feature_corners(bool);
   SMesh* polyhedron();
   const SMesh* polyhedron() const;
 

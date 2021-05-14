@@ -32,7 +32,7 @@ public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface*) {
     this->scene = scene_interface;
     this->mw = mainWindow;
-    actionSharEdges = new QAction("Detect Sharp Features", mw);
+    actionSharEdges = new QAction("Detect Sharp Edges", mw);
     actionSharEdges->setObjectName("detectSharpFeaturesAction");
     if(actionSharEdges) {
       connect(actionSharEdges, SIGNAL(triggered()),
@@ -63,6 +63,7 @@ public:
 
 public Q_SLOTS:
   void detectSharpEdges(bool input_dialog = false, double angle = 60);
+  void detectSharpCorners(bool input_dialog = false, double angle =60);
   void detectSharpEdgesWithInputDialog();
   void detectSharpCornersWithInputDialog();
 
@@ -155,7 +156,77 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dial
 
 void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpCornersWithInputDialog()
 {
-  //todo
+    detectSharpCorners(true);
+}
+
+void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpCorners(bool input_dialog,
+                                                                   double angle)
+{
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    typedef std::pair<int,FaceGraph*> Poly_tuple;
+
+    // Get selected items
+    QList<Poly_tuple> polyhedrons;
+    Q_FOREACH(int index, scene->selectionIndices())
+    {
+        Scene_facegraph_item* item =
+                qobject_cast<Scene_facegraph_item*>(scene->item(index));
+        if(!item)
+            return;
+
+        FaceGraph* pMesh = item->polyhedron();
+        if(!pMesh)
+            return;
+        item->show_feature_corners(true);
+        polyhedrons << std::make_pair(index, pMesh);
+    }
+
+    QApplication::restoreOverrideCursor();
+    if(input_dialog) {
+        bool ok = true;
+        angle = QInputDialog::getDouble(NULL,
+                                        tr("Sharp corners max angle"),
+                                        tr("Angle in degrees between 0 and 180:"),
+                                        angle, // value
+                                        0.,          // min
+                                        180., // max
+                                        2,          // decimals
+                                        &ok);
+        if(!ok) return;
+    }
+    // Detect edges
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    QApplication::processEvents();
+    std::size_t first_patch = 1;
+    Q_FOREACH(Poly_tuple tuple, polyhedrons)
+    {
+        Scene_facegraph_item* item =
+                qobject_cast<Scene_facegraph_item*>(scene->item(tuple.first));
+        FaceGraph* pMesh = tuple.second;
+        if (!pMesh)
+            continue;
+
+        boost::property_map<FaceGraph, CGAL::vertex_is_feature_t>::type vif
+                = get(CGAL::vertex_is_feature, *pMesh);
+        boost::graph_traits<FaceGraph>::vertex_descriptor v = *vertices(*pMesh).begin();
+
+        PMP::detect_sharp_corners(angle,vif,*pMesh);
+        std::size_t sharp_corners = 0;
+        if(get(vif,v) && v != *vertices(*pMesh).end())
+            ++sharp_corners;
+        v++;
+
+        //update item
+        item->setItemIsMulticolor(true);
+        item->computeItemColorVectorAutomatically(true);
+        item->invalidateOpenGLBuffers();
+
+        // update scene
+        scene->itemChanged(tuple.first);
+    }
+
+    // default cursor
+    QApplication::restoreOverrideCursor();
 }
 
 #include "Detect_sharp_edges_plugin.moc"

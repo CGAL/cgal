@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
 
   std::cout<<"This mesh contains "<<nb_sharp_edges<<" sharp edges"<<std::endl;
   std::cout<<sharp_corners_counter<<" sharp corners"<<std::endl;
-  std::cout<<" and "<<number_of_patches<<" surface patches."<<std::endl;
+  std::cout<<"and "<<number_of_patches<<" surface patches."<<std::endl;
 
   return 0;
 }
