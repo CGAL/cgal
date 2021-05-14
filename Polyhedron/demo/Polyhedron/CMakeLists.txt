@@ -47,7 +47,7 @@ include(${CGAL_USE_FILE})
 # Find Qt5 itself
 
 find_package(
-  Qt5 QUIET
+  Qt5 REQUIRED
   COMPONENTS OpenGL Script
   OPTIONAL_COMPONENTS ScriptTools WebSockets)
 

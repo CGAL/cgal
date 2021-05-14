@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
     = PMP::sharp_edges_segmentation(mesh, 90, eif, pid,
                                     PMP::parameters::vertex_incident_patches_map(vip));
   
-  PMP::detect_sharp_corners(60, vif, mesh);
+  PMP::detect_sharp_corners(90, vif, mesh);
   std::size_t sharp_corners_counter = 0;
   for(boost::graph_traits<Mesh>::vertex_descriptor v : vertices(mesh))
   {
