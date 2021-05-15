@@ -35,7 +35,7 @@ class ComparePoints {
   ComparePoints(Coordinate c) : coord(c) {
     CGAL_assertion( c >= 0 && c <=2);
   }
-  CGAL::Comparison_result operator()(const Point_3 p1, const Point_3& p2) {
+  CGAL::Comparison_result operator()(const Point_3& p1, const Point_3& p2) {
     switch(coord) {
     case 0:
       CGAL_NEF_TRACEN("compare_x " << p1 << ", " << p2 << "=" << (int) CGAL::compare_x(p1, p2));
@@ -161,7 +161,9 @@ public:
 #endif
   SNC_decorator D;
   Unique_hash_map<Vertex_handle, Oriented_side> OnSideMap;
+#ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
   Unique_hash_map<const RT*, Oriented_side> OnSideMapRC;
+#endif
 };
 
 template <class SNC_decorator>
