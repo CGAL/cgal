@@ -224,20 +224,20 @@ to represent arrangements in the plane.
 \subsection aos_ssec-basic-dcel Representation of Arrangements: The Dcel
 <!----------------------------------------------------------------------------->
 
-Given a set \f$\cal C\f$ of curves embedded in a two-dimensional
-surface, the <em>arrangement</em> \f$\cal A(\cal C)\f$ is the
-subdivision of the surface into zero-dimensional, one-dimensional and
-two-dimensional cells,\cgalFootnote{We use the term <em>cell</em> to
-describe the various dimensional entities in the induced
+Given a set \f$\mathcal{C}\f$ of curves embedded in a two-dimensional
+surface, the <em>arrangement</em> \f$\mathcal{A}(\mathcal{C})\f$ is
+the subdivision of the surface into zero-dimensional, one-dimensional
+and two-dimensional cells,\cgalFootnote{We use the term <em>cell</em>
+to describe the various dimensional entities in the induced
 subdivision. Sometimes, the term <em>face</em> is used for this
 purpose in the literature. However, we use the term <em>face</em> to
 describe a <em>two-dimensional</em> cell.}  called <em>vertices</em>,
 <em>edges</em> and <em>faces</em>, respectively, induced by the curves
-in \f$\cal C\f$.
+in \f$\mathcal{C}\f$.
 
 In our implementation we use a definition that slightly deviates from
 the standard definition above for practical reasons. The curves in
-\f$\cal C\f$ can intersect each other (a single curve may also be
+\f$\mathcal{C}\f$ can intersect each other (a single curve may also be
 self-intersecting or may comprise several disconnected branches) and
 are not necessarily \f$x\f$-monotone.\cgalFootnote{A continuous planar
 curve \f$c\f$ is <em>\f$x\f$-monotone</em> if every vertical line
@@ -248,35 +248,37 @@ segments as <em>weakly \f$x\f$-monotone</em>, as there exists a single
 vertical line that overlaps them. A circle of radius \f$r\f$ centered
 at \f$(x_0, y_0)\f$ is not \f$x\f$-monotone, as the vertical line \f$x
 = x_0\f$ intersects it at \f$(x_0, y_0 - r)\f$ and at \f$(x_0, y_0 +
-r)\f$.}  We construct a collection \f$\cal C''\f$ of \f$x\f$-monotone
-subcurves that are pairwise disjoint in their interiors in two steps
-as follows. First, we decompose each curve in \f$\cal C\f$ into
-maximal \f$x\f$-monotone subcurves and possibly isolated points,
-obtaining the collection \f$\cal C'\f$. Note that an \f$x\f$-monotone
-curve cannot be self-intersecting. Then, we decompose each curve in
-\f$\cal C'\f$ into maximal connected subcurves not intersecting any
-other curve (or point) in \f$\cal C'\f$ in its interior. The
-collection \f$\cal C''\f$ contains isolated points, if the collection
-\f$\cal C'\f$ contains such points. The arrangement
-induced by the collection \f$\cal C''\f$ can be conveniently embedded
-as a planar graph, the vertices of which are associated with curve
-endpoints or with isolated points, and the edges of which are
-associated with subcurves. It is easy to see that the faces of \f$\cal
-A(\cal C)\f$ are the same as the faces of \f$\cal A(\cal
-C'')\f$. There are possibly more vertices in \f$\cal A(\cal C'')\f$
-than in \f$\cal A(\cal C)\f$---the vertices where curves were cut into
-\f$x\f$-monotone (non-intersecting) pieces; accordingly there may also
-be more edges in \f$\cal A(\cal C'')\f$. This graph can be represented
-using a <em>doubly-connected edge list</em> data-structure (\dcel),
-which consists of containers of vertices, edges and faces and
-maintains the incidence relations among these cells. It is one of a
-family of combinatorial data structures called <em>halfedge data
-structures</em> (<span class="textsc">Hds</span>), which are
-edge-centered data structures capable of maintaining incidence
-relations among cells of, for example, planar subdivisions, polyhedra,
-or other orientable, two-dimensional surfaces embedded in a space of
-arbitrary dimension. Geometric interpretation is added by classes
-built on top of the halfedge data structure.
+r)\f$.}  We construct a collection \f$\mathcal{C}''\f$ of
+\f$x\f$-monotone subcurves that are pairwise disjoint in their
+interiors in two steps as follows. First, we decompose each curve in
+\f$\mathcal{C}\f$ into maximal \f$x\f$-monotone subcurves and possibly
+isolated points, obtaining the collection \f$\mathcal{C}'\f$. Note
+that an \f$x\f$-monotone curve cannot be self-intersecting. Then, we
+decompose each curve in \f$\mathcal{C}'\f$ into maximal connected
+subcurves not intersecting any other curve (or point) in
+\f$\mathcal{C}'\f$ in its interior. The collection \f$\mathcal{C}''\f$
+contains isolated points, if the collection \f$\mathcal{C}'\f$
+contains such points. The arrangement induced by the collection
+\f$\mathcal{C}''\f$ can be conveniently embedded as a planar graph,
+the vertices of which are associated with curve endpoints or with
+isolated points, and the edges of which are associated with
+subcurves. It is easy to see that the faces of
+\f$\mathcal{A}(\mathcal{C})\f$ are the same as the faces of
+\f$\mathcal{A}(\mathcal{C}'')\f$. There are possibly more vertices in
+\f$\mathcal{A}(\mathcal{C}'')\f$ than in
+\f$\mathcal{A}(\mathcal{C})\f$---the vertices where curves were cut
+into \f$x\f$-monotone (non-intersecting) pieces; accordingly there may
+also be more edges in \f$\mathcal{A}(\mathcal{C}'')\f$. This graph can
+be represented using a <em>doubly-connected edge list</em>
+data-structure (\dcel), which consists of containers of vertices,
+edges and faces and maintains the incidence relations among these
+cells. It is one of a family of combinatorial data structures called
+<em>halfedge data structures</em> (<span class="textsc">Hds</span>),
+which are edge-centered data structures capable of maintaining
+incidence relations among cells of, for example, planar subdivisions,
+polyhedra, or other orientable, two-dimensional surfaces embedded in a
+space of arbitrary dimension. Geometric interpretation is added by
+classes built on top of the halfedge data structure.
 
 \cgalAdvancedBegin
 
@@ -1088,13 +1090,13 @@ subcurves induce two new edges, respectively. In general, the
 perform such a split. As a matter of fact, it relies on the geometry
 traits to perform all geometric operations. To insert a point \f$p\f$
 that lies on an \f$x\f$-monotone curve associated with an existing
-edge \f$e\f$ into the arrangement \f$\cal A\f$, you must first
+edge \f$e\f$ into the arrangement \f$\mathcal{A}\f$, you must first
 construct the two curves \f$c_1\f$ and \f$c_2\f$, which are the two
 subcurves that result from splitting the \f$x\f$-monotone curve
 associated with the edge \f$e\f$ at \f$p\f$. Then, you have to issue
 the call \link Arrangement_on_surface_2::split_edge()
 `arr.split_edge(he, c1, c2)`\endlink, where `arr` identifies the
-arrangement \f$\cal A\f$ and `he` is a handle to one of the two
+arrangement \f$\mathcal{A}\f$ and `he` is a handle to one of the two
 halfedges that represent the edge \f$e\f$. The function splits the two
 halfedges that represent \f$e\f$ into two pairs of halfedges,
 respectively. Two new halfedges are incident to the new vertex \f$v\f$
@@ -1690,16 +1692,17 @@ zone-construction frameworks.
 \subsection arr_ssec_zone The Zone Construction Algorithm
 <!----------------------------------------------------------------------------->
 
-Given an arrangement of curves \f$\cal A = \cal A(\cal C)\f$ embedded
-in a two-dimensional surface, the <em>zone</em> of an additional curve
-\f$\gamma \notin \cal C\f$ in \f$\cal A\f$ is the union of the
-features of \f$\cal A\f$, whose closure is intersected by
-\f$\gamma\f$.  The complexity of the zone is defined as the sum of the
-complexities of its constituents. (Notice that some vertices are
-counted multiple times.)  The zone of a curve \f$\gamma\f$ is computed
-by locating the left endpoint of \f$\gamma\f$ in the arrangement and
-then "walking"' along the curve towards the right endpoint, keeping
-track of the vertices, edges, and faces crossed on the way. The \ref
+Given an arrangement of curves \f$\mathcal{A} =
+\mathcal{A}(\mathcal{C})\f$ embedded in a two-dimensional surface, the
+<em>zone</em> of an additional curve \f$\gamma \notin \mathcal{C}\f$
+in \f$\mathcal{A}\f$ is the union of the features of
+\f$\mathcal{A}\f$, whose closure is intersected by \f$\gamma\f$.  The
+complexity of the zone is defined as the sum of the complexities of
+its constituents. (Notice that some vertices are counted multiple
+times.)  The zone of a curve \f$\gamma\f$ is computed by locating the
+left endpoint of \f$\gamma\f$ in the arrangement and then "walking"'
+along the curve towards the right endpoint, keeping track of the
+vertices, edges, and faces crossed on the way. The \ref
 PkgArrangementOnSurface2 package offers a generic implementation of an
 algorithm that computes the zone. It is used to implement a set of
 operations that incrementally construct arrangements induced by sets
@@ -2071,25 +2074,24 @@ insert the curves one by one. For larger input sets, we use the
 aggregate insertion procedures.
 
 <!----------------------------------------------------------------------------->
-\cgalFigureBegin{aos_fig-global_insertion,global_insertion.png}
-An arrangement of intersecting line segments, as constructed in \ref
+\cgalFigureBegin{aos_fig-global_insertion,global_insertion.png} An
+arrangement of intersecting line segments, as constructed in \ref
 Arrangement_on_surface_2/global_insertion.cpp. The segments of
-\f${\mathcal S}_1\f$ are drawn in solid lines and the segments of
-\f${\mathcal S}_2\f$ are drawn in dark dashed lines. Note that the
+\f$\mathcal{S}_1\f$ are drawn in solid lines and the segments of
+\f$\mathcal{S}_2\f$ are drawn in dark dashed lines. Note that the
 segment \f$ s\f$ (light dashed line) overlaps one of the segments in
-\f${\mathcal S}_1\f$.
-\cgalFigureEnd
+\f$\mathcal{S}_1\f$.  \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
 The program below aggregately construct an arrangement of a set
-\f${\mathcal S}_1\f$ containing five line segments (drawn as solid
+\f$\mathcal{S}_1\f$ containing five line segments (drawn as solid
 lines). Then, it inserts a single segment \f$s\f$ (drawn as a dotted
 line) using the incremental insertion function. Finally, it adds a set
-\f${\mathcal S}_2\f$ with five more line segments (drawn as dashed
+\f$\mathcal{S}_2\f$ with five more line segments (drawn as dashed
 lines) in an aggregate fashion.  Notice that the line segments of
-\f${\mathcal S}_1\f$ are pairwise interior-disjoint, so
-`insert_non_intersecting_curves()` is safely used. \f${\mathcal
-S}_2\f$ also contains pairwise interior-disjoint segments, but as they
+\f$\mathcal{S}_1\f$ are pairwise interior-disjoint, so
+`insert_non_intersecting_curves()` is safely used. \f$\mathcal{S}_2\f$
+also contains pairwise interior-disjoint segments, but as they
 intersect the existing arrangement, \link
 insert(Arrangement_2<Traits,Dcel>&, InputIterator, InputIterator)
 `insert()`\endlink must be used to insert them. Also note that the
@@ -2209,14 +2211,13 @@ vertex and the remaining one is vertical.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-bounded_vd,bounded_vertical_decomposition.png}
-
 An arrangement of four line segments and its vertical decomposition
 into pseudo trapezoids, as constructed in \ref
 Arrangement_on_surface_2/bounded_vertical_decomposition.cpp.  The
-segments of \f${\mathcal S}_1\f$ are drawn in solid lines and the
-segments of \f${\mathcal S}_2\f$ are drawn in dark dashed lines. Note
+segments of \f$\mathcal{S}_1\f$ are drawn in solid lines and the
+segments of \f$\mathcal{S}_2\f$ are drawn in dark dashed lines. Note
 that the segment \f$ s\f$ (light dashed line) overlaps one of the
-segments in \f${\mathcal S}_1\f$.
+segments in \f$\mathcal{S}_1\f$.
 \cgalFigureEnd
 <!----------------------------------------------------------------------------->
 
@@ -2235,13 +2236,14 @@ listed below. The decomposition consists of 14 pseudo trapezoids, out
 of which two are bounded triangles, two are bounded trapezoids, and 10
 are unbounded trapezoids.
 
-The function template `decompose()` accepts an arrangement \f$\cal
-A\f$ and outputs for each vertex \f$v\f$ of \f$\cal A\f$ a pair of
-features---one that directly lies below \f$v\f$ and another that
-directly lies above \f$v\f$. It is implemented as a plane-sweep
-algorithm, which aggregately computes the set of pairs of
-features. Let \f$v\f$ be a vertex of \f$\cal A\f$. The feature above
-(respectively below) \f$v\f$ may be one of the following:
+The function template `decompose()` accepts an arrangement
+\f$\mathcal{A}\f$ and outputs for each vertex \f$v\f$ of
+\f$\mathcal{A}\f$ a pair of features---one that directly lies below
+\f$v\f$ and another that directly lies above \f$v\f$. It is
+implemented as a plane-sweep algorithm, which aggregately computes the
+set of pairs of features. Let \f$v\f$ be a vertex of
+\f$\mathcal{A}\f$. The feature above (respectively below) \f$v\f$ may
+be one of the following:
 
 <UL>
 
@@ -2307,18 +2309,18 @@ arbitrary curves in two-dimensional surfaces.
 \subsection aos_ssec-unbounded-rep Representing Arrangements of Unbounded Curves
 <!----------------------------------------------------------------------------->
 
-Given a set \f$\cal C\f$ of unbounded curves, a simple approach for
-representing the arrangement induced by \f$\cal C\f$ would be to clip
-the unbounded curves using an axis-parallel rectangle that contains
-all finite curve endpoints and intersection points between curves in
-\f$\cal C\f$. This process would result in a set of bounded curves
-(line segments if \f$\cal C\f$ consists of lines and rays), and it
-would be straightforward to compute the arrangement induced by this
-set.  However, we would like to operate directly on the unbounded
-curves without having to preprocess them. Moreover, if we are not
-given all the curves inducing the arrangement in advance, then the
-choice of a good bounding rectangle may change as more curves are
-introduced.
+Given a set \f$\mathcal{C}\f$ of unbounded curves, a simple approach
+for representing the arrangement induced by \f$\mathcal{C}\f$ would be
+to clip the unbounded curves using an axis-parallel rectangle that
+contains all finite curve endpoints and intersection points between
+curves in \f$\mathcal{C}\f$. This process would result in a set of
+bounded curves (line segments if \f$\mathcal{C}\f$ consists of lines
+and rays), and it would be straightforward to compute the arrangement
+induced by this set.  However, we would like to operate directly on
+the unbounded curves without having to preprocess them. Moreover, if
+we are not given all the curves inducing the arrangement in advance,
+then the choice of a good bounding rectangle may change as more curves
+are introduced.
 
 <!----------------------------------------------------------------------------->
 \cgalFigureBegin{aos_fig-unb_dcel,unb_dcel.png}
@@ -2755,18 +2757,19 @@ followed by a test that verifies that a vertex of degree greater than
 \section aos_sec-curved_surfaces Arrangements on Curved Surfaces
 <!--=========================================================================-->
 
-We are given a surface \f$S\f$ in \f$\mathbb{R}^3\f$ and a set \f$\cal
-C \f$ of curves embedded in this surface. The curves subdivide \f$S\f$
-into cells of dimension 0 (<em>vertices</em>), 1 (<em>edges</em>), and
-2 (<em>faces</em>). This subdivision is the <em>arrangement</em>
-\f$\cal A(\cal C) \f$ induced by \f$\cal C\f$ on \f$S\f$. Arrangements
-embedded in curved surfaces in \f$\mathbb{R}^3\f$ are generalizations
-of arrangements embedded in the plane. In this section we explain how
-to construct, maintain, and manipulate two-dimensional arrangements
-embedded in orientable parametric surfaces in three dimensions, such
-as planes, cylinders, spheres, and tori, and surfaces homeomorphic to
-them; see \cgalFigureRef{aos_fig-surfaces}. Such arrangements
-have many theoretical and practical applications; see, e.g.,
+We are given a surface \f$S\f$ in \f$\mathbb{R}^3\f$ and a set
+\f$\mathcal{C}\f$ of curves embedded in this surface. The curves
+subdivide \f$S\f$ into cells of dimension 0 (<em>vertices</em>), 1
+(<em>edges</em>), and 2 (<em>faces</em>). This subdivision is the
+<em>arrangement</em> \f$\mathcal{A}(\mathcal{C})\f$ induced by
+\f$\mathcal{C}\f$ on \f$S\f$. Arrangements embedded in curved surfaces
+in \f$\mathbb{R}^3\f$ are generalizations of arrangements embedded in
+the plane. In this section we explain how to construct, maintain, and
+manipulate two-dimensional arrangements embedded in orientable
+parametric surfaces in three dimensions, such as planes, cylinders,
+spheres, and tori, and surfaces homeomorphic to them; see
+\cgalFigureRef{aos_fig-surfaces}. Such arrangements have many
+theoretical and practical applications; see, e.g.,
 \cgalCite{as-aa-00}, \cgalCite{cgal:bfhks-apsca-10},
 \cgalCite{cgal:bfhmw-apsgf-10}, \cgalCite{cgal:fhktww-a-07}, and
 \cgalCite{cgal:h-a-04}.
@@ -6029,11 +6032,11 @@ arrangements is also useful for supporting Boolean set operations on
 polygons or general polygons; see e.g., \cgalCite{cgal:behhms-cbcab-02}).
 
 Formally, the <em>map overlay</em> of two two-dimensional subdivisions
-\f$\cal S_1\f$ and \f$\cal S_2\f$ is a two-dimensional subdivision
-\f$\cal S\f$, such that there is a face \f$f\f$ in \f$\cal S\f$ iff
-there are faces \f$f_1\f$ and \f$f_2\f$ in \f$\cal S_1\f$ and \f$\cal
-S_2\f$, respectively, such that \f$f\f$ is a maximal connected
-component of \f$f_1 \cap f_2\f$.
+\f$\mathcal{S}_1\f$ and \f$\mathcal{S}_2\f$ is a two-dimensional
+subdivision \f$\mathcal{S}\f$, such that there is a face \f$f\f$ in
+\f$\mathcal{S}\f$ iff there are faces \f$f_1\f$ and \f$f_2\f$ in
+\f$\mathcal{S}_1\f$ and \f$\mathcal{S}_2\f$, respectively, such that
+\f$f\f$ is a maximal connected component of \f$f_1 \cap f_2\f$.
 
 The overlay of two given arrangements, conveniently referred to as the
 "blue" and the "red" arrangements, is implemented as a plane-sweep
@@ -6337,15 +6340,15 @@ of the colors attached to the inducing features.
 \subsection arr_ssecarr_with_hist Storing the Curve History
 <!----------------------------------------------------------------------------->
 
-When you constructs an arrangement induced by a set \f$\cal C\f$ of
-arbitrary two-dimensional curves, you end up with a collection \f$\cal
-C''\f$ of \f$x\f$-monotone subcurves of \f$\cal C\f$ that are pairwise
-disjoint in their interior; see Section \ref aos_sec-intro. These
-subcurves are associated with the arrangement edges (more precisely,
-with pairs of \dcel halfedges). The connection between the
-originating input curves and the arrangement edges is lost during the
-construction process. This loss might be acceptable for some
-applications. However, in many practical cases it is important to
+When you constructs an arrangement induced by a set \f$\mathcal{C}\f$
+of arbitrary two-dimensional curves, you end up with a collection
+\f$\mathcal{C}''\f$ of \f$x\f$-monotone subcurves of \f$\mathcal{C}\f$
+that are pairwise disjoint in their interior; see Section \ref
+aos_sec-intro. These subcurves are associated with the arrangement
+edges (more precisely, with pairs of \dcel halfedges). The connection
+between the originating input curves and the arrangement edges is lost
+during the construction process. This loss might be acceptable for
+some applications. However, in many practical cases it is important to
 determine the input curves that give rise to the final subcurves.
 
 The
@@ -6353,7 +6356,7 @@ The
 class-template extends the
 `Arrangement_on_surface_2<GeometryTraits,TopologyTraots>` class
 template by keeping an additional container of input curves
-representing \f$\cal C\f$, and by maintaining a cross-mapping between
+representing \f$\mathcal{C}\f$, and by maintaining a cross-mapping between
 these curves and the arrangement edges they induce. Similarly, the
 `Arrangement_with_history_2<GeometryTraits,Dcel>` class-template
 extends the `Arrangement_2<GeometryTraits,Dcel>` class template. The
