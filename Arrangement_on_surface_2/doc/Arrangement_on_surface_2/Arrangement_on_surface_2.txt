@@ -6356,23 +6356,22 @@ The
 class-template extends the
 `Arrangement_on_surface_2<GeometryTraits,TopologyTraots>` class
 template by keeping an additional container of input curves
-representing \f$\mathcal{C}\f$, and by maintaining a cross-mapping between
-these curves and the arrangement edges they induce. Similarly, the
-`Arrangement_with_history_2<GeometryTraits,Dcel>` class-template
+representing \f$\mathcal{C}\f$, and by maintaining a cross-mapping
+between these curves and the arrangement edges they induce. Similarly,
+the `Arrangement_with_history_2<GeometryTraits,Dcel>` class-template
 extends the `Arrangement_2<GeometryTraits,Dcel>` class template. The
 `GeometryTraits` template parameter, of either class templates, must
 be substituted with a model of the `ArrangementTraits_2` concept; see
 Section \ref aos_ssec-insert_gen. It should define the \link
-ArrangementTraits_2::Curve_2 `Curve_2`\endlink type and support
-its subdivision into \link
-ArrangementBasicTraits_2::X_monotone_curve_2
+ArrangementTraits_2::Curve_2 `Curve_2`\endlink type and support its
+subdivision into \link ArrangementBasicTraits_2::X_monotone_curve_2
 `X_monotone_curve_2`\endlink objects, among the others.  The `Dcel`
 parameter must be substituted with a model of the `ArrangementDcel`
 concept. You can use either the default \dcel class or an extended
-\dcel class (see Section \ref arr_ssecex_dcel) based on your
-needs. An arrangement that support the cross-mapping mentioned above
-is referred to as an arrangement with history. In the following we use
-the `Arrangement_with_history_2<>` class template to demonstrate
+\dcel class (see Section \ref arr_ssecex_dcel) based on your needs. An
+arrangement that support the cross-mapping mentioned above is referred
+to as an arrangement with history. In the following we use the
+`Arrangement_with_history_2<>` class template to demonstrate
 arrangements with history. However, the explanation applies also to
 `Arrangement_on_surface_with_history_2<>`, as the type of the
 embedding surface is irrelevant to the discussion.
