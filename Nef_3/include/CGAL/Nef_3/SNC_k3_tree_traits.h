@@ -159,7 +159,6 @@ public:
 #ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
   bool reference_counted;
 #endif
-  SNC_decorator D;
   Unique_hash_map<Vertex_handle, Oriented_side> OnSideMap;
 #ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
   Unique_hash_map<const RT*, Oriented_side> OnSideMapRC;
