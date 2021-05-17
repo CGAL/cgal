@@ -1030,7 +1030,7 @@ function(test_caching_polyline_traits)
 
   execute_commands_old_structure(polylines caching_polyline_traits
     CONSTRUCTOR COMPARE_Y_AT_X_LEFT
-    COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE INTERSECT MERGE)
+    COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE INTERSECT MERGE ASSERTIONS)
 endfunction()
 
 #---------------------------------------------------------------------#
