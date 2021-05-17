@@ -79,7 +79,7 @@ public:
   using Is_on_x_identification_2 = typename Base::Is_on_x_identification_2;
   using Trim_2 = typename Base::Trim_2;
 
-  using Has_merge_category = typename Subcurve_traits_2::Has_merge_category;
+  using Has_merge_category = Tag_false;
   using Multiplicity = typename Subcurve_traits_2::Multiplicity;
   using Subcurve_2 = typename Subcurve_traits_2::Curve_2;
 
@@ -194,6 +194,14 @@ public:
         xcv2 = X_monotone_curve_2(kernel, xcv[i], xcv.points_end());
       }
       else {
+        // Make sure that p lies on the interior of the curve.
+        CGAL_precondition_code(auto compare_xy = kernel.compare_xy_2_object();
+                               auto cv = xcv[i]);
+
+        CGAL_precondition((geom_traits->compare_y_at_x_2_object()(p, cv) == EQUAL) &&
+                          compare_xy(cv.left(), p) == SMALLER &&
+                          compare_xy(cv.right(), p) == LARGER);
+
         // The i'th subcurve should be split: The left part(seg1)
         // goes to xcv1, and the right part(seg2) goes to xcv2.
         auto p_ptr = xcv.extreme_point(p, i);
@@ -450,32 +458,6 @@ public:
   };
   Intersect_2 intersect_2_object() const
   { return Intersect_2(*this); }
-
-  class Are_mergeable_2
-  {
-  public:
-    bool operator()(const X_monotone_curve_2&,
-                    const X_monotone_curve_2&) const
-    {
-      CGAL_error_msg("Are_mergeable_2 not implemented");
-      return false;
-    }
-  };
-  Are_mergeable_2 are_mergeable_2_object() const
-  { return Are_mergeable_2(); }
-
-  class Merge_2
-  {
-  public:
-    void operator()(const X_monotone_curve_2&,
-                    const X_monotone_curve_2&,
-                    X_monotone_curve_2&) const
-    {
-      CGAL_error_msg("Merge_2 not implemented");
-    }
-  };
-  Merge_2 merge_2_object() const
-  { return Merge_2(); }
 
   class Construct_curve_2
   {
