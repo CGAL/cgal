@@ -454,11 +454,11 @@ public:
   class Are_mergeable_2
   {
   public:
-    bool operator()(const X_monotone_curve_2& cv1,
-                    const X_monotone_curve_2& cv2) const
+    bool operator()(const X_monotone_curve_2&,
+                    const X_monotone_curve_2&) const
     {
-      CGAL_assertion_msg(false, "Are_mergeable_2 not implemented");
-      return true;
+      CGAL_error_msg("Are_mergeable_2 not implemented");
+      return false;
     }
   };
   Are_mergeable_2 are_mergeable_2_object() const
@@ -467,11 +467,11 @@ public:
   class Merge_2
   {
   public:
-    void operator()(const X_monotone_curve_2& cv1,
-                    const X_monotone_curve_2& cv2,
-                    X_monotone_curve_2& c) const
+    void operator()(const X_monotone_curve_2&,
+                    const X_monotone_curve_2&,
+                    X_monotone_curve_2&) const
     {
-      CGAL_assertion_msg(false, "Merge_2 not implemented");
+      CGAL_error_msg("Merge_2 not implemented");
     }
   };
   Merge_2 merge_2_object() const
