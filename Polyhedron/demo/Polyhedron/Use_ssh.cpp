@@ -302,9 +302,7 @@ bool push_file(ssh_session &session,
   //some versions of libssh don't copy everything without this.
   //This is the case for the official version on Ubuntu 18.04
   std::chrono::duration<int, std::micro> timespan(size);
-  typedef std::chrono::nanoseconds nanoseconds;
-  nanoseconds ns (nanoseconds::rep (1000000000 * timespan));
-  std::this_thread::sleep_for(ns);
+  std::this_thread::sleep_for(timespan);
   if (res != SSH_OK)
   {
     std::cerr<< "Can't write to remote file: %s\n"
