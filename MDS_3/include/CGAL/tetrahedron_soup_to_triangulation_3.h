@@ -119,8 +119,6 @@ namespace CGAL {
   *                    whose key type is model of `RandomAccessContainer`
   *                    and mapped type is `Tr::Cell::Surface_patch_index`}
   *     \cgalParamDefault{An empty `std::map<std::array<int, 3>, typename Tr::Cell::Surface_patch_index>`}
-  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
-  *                     must be available in `PolygonMesh`.}
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
