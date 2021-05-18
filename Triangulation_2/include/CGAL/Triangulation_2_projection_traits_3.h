@@ -16,14 +16,13 @@
 
 #include <CGAL/license/Triangulation_2.h>
 
-#include <CGAL/disable_warnings.h>
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/Triangulation_2_projection_traits_3.h>"
 #define CGAL_REPLACEMENT_HEADER "<CGAL/Projection_traits_3.h>"
 #include <CGAL/internal/deprecation_warning.h>
 
-#include <CGAL/internal/Triangulation_2_filtered_projection_traits_3.h>
-
+#include <CGAL/internal/Filtered_projection_traits_3.h>
+#ifndef CGAL_NO_DEPRECATED_CODE
 namespace CGAL{
 
 template < class Filtered_kernel >
@@ -52,5 +51,5 @@ public:
 };
 
 } // end namespace CGAL
-
+#endif //CGAL_NO_DEPRECATED_CODE
 #endif // CGAL_TRIANGULATION_2_PROJECTION_TRAITS_3_H

@@ -1,15 +1,15 @@
 namespace CGAL{
 
 /*!
- \ingroup PkgTriangulation2TriangulationClasses
+\ingroup kernel_classes
 
-  The class `Projection_traits_3` works similarly as the `Projection_traits_xy_3`,
-  `Projection_traits_xz_3` and `Projection_traits_yz_3` traits classes, by enabling
-  the use of 2D algorithms on the projections of 3D data on an arbitrary plane.
+The class `Projection_traits_3` works similarly to the `Projection_traits_xy_3`,
+`Projection_traits_xz_3`, and `Projection_traits_yz_3` traits classes, by enabling
+the use of 2D algorithms on the projections of 3D data onto an arbitrary plane.
 
- \tparam K must be a model of `Kernel`
+\tparam K must be a model of `Kernel`
 
- \note Internal constructions (projections) are used in the predicate and
+\note Internal constructions (projections) are used in the predicate and
 construction functors of this class. If `K` is a model of `Kernel` providing exact
 constructions or if `K` is a `CGAL::Filtered_kernel` (such as for
 `CGAL::Exact_predicates_inexact_constructions_kernel`), this class automatically
@@ -20,7 +20,7 @@ provides exact predicates.
 \cgalModels `ConstrainedTriangulationTraits_2`
 \cgalModels `PolygonTraits_2`
 
- */
+*/
 template <class K>
 class Projection_traits_3
 {
@@ -36,9 +36,9 @@ public:
 
   /// \name Functors
   /// The functors provided by this class are those listed in the
-  /// concepts. The functors operate on the 2D projection of their
+  /// concepts. The functors operate on the 2D projections of their
   /// arguments. They come with preconditions that projections of the
-  /// arguments are non-degenerate, eg. a line segment does not project
+  /// arguments are non-degenerate, e.g. a line segment does not project
   /// on a single point, two points do not project on the same point, etc.
   ///@}
 

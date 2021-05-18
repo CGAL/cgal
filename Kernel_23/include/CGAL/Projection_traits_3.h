@@ -15,7 +15,7 @@
 #define CGAL_PROJECTION_TRAITS_3_H
 
 
-#include <CGAL/internal/Triangulation_2_filtered_projection_traits_3.h>
+#include <CGAL/internal/Filtered_projection_traits_3.h>
 
 namespace CGAL{
 

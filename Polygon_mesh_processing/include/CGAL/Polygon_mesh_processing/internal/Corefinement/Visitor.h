@@ -387,9 +387,9 @@ private:
    typedef Non_manifold_feature_map<TriangleMesh>               NM_features_map;
 // typedef for the CDT
    typedef Intersection_nodes<TriangleMesh, VertexPointMap1, VertexPointMap2,
-            Predicates_on_constructions_needed>                          INodes;
+            Predicates_on_constructions_needed>                              INodes;
    typedef typename INodes::Exact_kernel                                     EK;
-    typedef Projection_traits_3<EK>                  CDT_traits;
+    typedef Projection_traits_3<EK>                                          CDT_traits;
     typedef Triangulation_vertex_base_with_info_2<Node_id,CDT_traits>        Vb;
     typedef Constrained_triangulation_face_base_2<CDT_traits>                Fb;
     typedef Triangulation_data_structure_2<Vb,Fb>                         TDS_2;

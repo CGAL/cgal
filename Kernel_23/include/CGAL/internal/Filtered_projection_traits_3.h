@@ -14,7 +14,7 @@
 #ifndef CGAL_INTERNAL_FILTERED_PROJECTION_TRAITS_3_H
 #define CGAL_INTERNAL_FILTERED_PROJECTION_TRAITS_3_H
 
-#include <CGAL/internal/Triangulation_2_projection_traits_base_3.h>
+#include <CGAL/internal/Projection_traits_base_3.h>
 #include <CGAL/Filtered_predicate_with_state.h>
 
 namespace CGAL {

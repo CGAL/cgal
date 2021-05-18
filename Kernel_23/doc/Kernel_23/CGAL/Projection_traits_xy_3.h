@@ -15,6 +15,12 @@ respectively.
 
 \tparam K must be a model of `Kernel`.
 
+\note Internal constructions (projections) are used in the predicate and
+construction functors of this class. If `K` is a model of `Kernel` providing exact
+constructions or if `K` is a `CGAL::Filtered_kernel` (such as for
+`CGAL::Exact_predicates_inexact_constructions_kernel`), this class automatically
+provides exact predicates.
+
 \cgalModels The class is a model of several 2D triangulation traits class concepts,
   except that it does not provide the type and constructors
   required to build the dual Voronoi diagram.
