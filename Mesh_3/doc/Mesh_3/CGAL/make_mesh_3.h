@@ -33,7 +33,10 @@ traverse the resulting mesh data structure or can be written to a file
 
 
 \tparam C3T3 is required to be a model of
-the concept `MeshComplex_3InTriangulation_3`. This is the return type.
+the concept `MeshComplex_3InTriangulation_3`,
+and a model of `MeshComplexWithFeatures_3InTriangulation_3`
+if the domain is a model of `MeshDomainWithFeatures_3`.
+This is the return type.
 The type `C3T3` is in particular required to provide a nested type
 `C3T3::Triangulation` for the 3D triangulation
 embedding the mesh. The vertex and cell base classes of the
