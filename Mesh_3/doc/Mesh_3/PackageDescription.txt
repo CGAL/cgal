@@ -29,7 +29,7 @@
 
 /// \defgroup PkgMesh3IOFunctions Input/Output Functions
 /// \ingroup PkgMesh3Ref
-/// The free functions that can be used to read and write meshes.
+/// See \ref PkgMDS3IOFunctions from 3D Mesh Data Structures.
 
 /*!
 \addtogroup PkgMesh3Ref
@@ -134,4 +134,3 @@ and their associated classes:
 - `CGAL::Mesh_facet_topology`
 
 */
-
