@@ -663,12 +663,6 @@ namespace cpp11{
 }//namespace cpp11
 } //namespace CGAL
 
-//Support for c++11 noexcept
-#if BOOST_VERSION > 104600 && !defined(BOOST_NO_CXX11_NOEXCEPT) && !defined(BOOST_NO_NOEXCEPT)
-#define CGAL_NOEXCEPT(x) noexcept(x)
-#else
-#define CGAL_NOEXCEPT(x)
-#endif
 
 // The fallthrough attribute
 // See for clang:
@@ -690,12 +684,6 @@ namespace cpp11{
 // https://svn.boost.org/trac/boost/ticket/2839
 #if defined(BOOST_MSVC) && BOOST_VERSION < 105600
 #define CGAL_CFG_BOOST_VARIANT_SWAP_BUG 1
-#endif
-
-#ifndef CGAL_NO_ASSERTIONS
-#  define CGAL_NO_ASSERTIONS_BOOL false
-#else
-#  define CGAL_NO_ASSERTIONS_BOOL true
 #endif
 
 #if defined( __INTEL_COMPILER)
