@@ -42,7 +42,7 @@
 #include <boost/range/join.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/container/flat_set.hpp>
 #include <boost/optional.hpp>
 
@@ -92,7 +92,7 @@ namespace internal {
     typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
     typedef FaceIndexMap FIMap;
 
-    boost::shared_ptr< std::set<edge_descriptor> > border_edges_ptr;
+    std::shared_ptr< std::set<edge_descriptor> > border_edges_ptr;
     const PM* pmesh_ptr_;
 
   public:

@@ -244,7 +244,7 @@ deactivate_vertex(Dag_node& vtx_node) const
 
 template <typename Td_traits>
 void Trapezoidal_decomposition_2<Td_traits>::
-deactivate_edge(boost::shared_ptr<X_monotone_curve_2>& cv,
+deactivate_edge(std::shared_ptr<X_monotone_curve_2>& cv,
                 Dag_node& edge_node) const
 {
   CGAL_precondition(traits->is_active(edge_node.get_data()));
@@ -1870,7 +1870,7 @@ void Trapezoidal_decomposition_2<Td_traits>::remove(Halfedge_const_handle he)
 
   //-----------------------------------
   //3. remove the trapezoids that represent the removed halfedge
-  boost::shared_ptr<X_monotone_curve_2>
+  std::shared_ptr<X_monotone_curve_2>
     removed_cv_ptr(new X_monotone_curve_2(he->curve()));
   Base_map_item_iterator last_edge_fragment_it = mid_it;
   //Base_trapezoid_iterator last_mid = mid_it;
