@@ -3164,7 +3164,7 @@ public:
      */
     void write(std::ostream& os) const {
 
-        switch (::CGAL::get_mode(os)) {
+        switch (::CGAL::IO::get_mode(os)) {
         case ::CGAL::IO::PRETTY:
             os << "arc@" << this->id() << "[(sup@" << this->curve().id();
             if (this->is_vertical()) {
@@ -3214,7 +3214,7 @@ public:
      */
     void read(std::istream& is) {
 
-      CGAL_precondition(CGAL::is_ascii(is));
+      CGAL_precondition(CGAL::IO::is_ascii(is));
 
       Rep rep;
 
@@ -3371,7 +3371,7 @@ std::istream& operator>> (
     std::istream& is,
     Arc_2< CurvedKernelViaAnalysis_2, Rep_ >& arc) {
 
-  CGAL_precondition(CGAL::is_ascii(is));
+  CGAL_precondition(CGAL::IO::is_ascii(is));
 
   //typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
   //typedef Rep_ Rep;

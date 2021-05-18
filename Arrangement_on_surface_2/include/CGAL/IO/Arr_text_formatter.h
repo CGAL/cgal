@@ -120,8 +120,8 @@ public:
   void write_arrangement_begin()
   {
     CGAL_assertion(m_out != nullptr);
-    m_old_out_mode = get_mode(*m_out);
-    set_ascii_mode(*m_out);
+    m_old_out_mode = IO::get_mode(*m_out);
+    IO::set_ascii_mode(*m_out);
     _write_comment("BEGIN ARRANGEMENT");
   }
 
@@ -277,8 +277,8 @@ public:
   void read_arrangement_begin()
   {
     CGAL_assertion(m_in != nullptr);
-    m_old_in_mode = get_mode(*m_in);
-    set_ascii_mode(*m_in);
+    m_old_in_mode = IO::get_mode(*m_in);
+    IO::set_ascii_mode(*m_in);
     _skip_comments();
   }
 

@@ -166,7 +166,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Ray_3<R>& r, const Cartesian_tag&)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << r.start() << ' ' << r.direction();
     case IO::BINARY :
@@ -180,7 +180,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Ray_3<R>& r, const Homogeneous_tag&)
 {
-  switch(get_mode(os))
+  switch(IO::get_mode(os))
   {
       case IO::ASCII :
           return os << r.start() << ' ' << r.direction();

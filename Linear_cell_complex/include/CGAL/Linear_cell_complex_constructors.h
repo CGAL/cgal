@@ -156,7 +156,7 @@ namespace CGAL {
       }
 
       FT x, y;
-      ais >> iformat(x) >> iformat(y);
+      ais >> IO::iformat(x) >> IO::iformat(y);
       vertices.push_back(Point{x, y});
       --numVertices;
     }
@@ -305,8 +305,8 @@ namespace CGAL {
     }
 
     File_header_OFF header(false);
-    header.set_binary(is_binary(out));
-    header.set_no_comments(!is_pretty(out));
+    header.set_binary(IO::is_binary(out));
+    header.set_no_comments(!IO::is_pretty(out));
     File_writer_OFF writer( header);
     writer.header().set_polyhedral_surface(true);
     writer.header().set_halfedges(alcc.number_of_darts());

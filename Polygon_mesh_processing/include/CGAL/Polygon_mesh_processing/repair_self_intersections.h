@@ -245,7 +245,7 @@ FaceOutputIterator replace_faces_with_patch(const std::vector<typename boost::gr
     remove_face(f, pmesh);
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
-  CGAL::write_polygon_mesh("results/last_patch_replacement.off", pmesh, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_mesh("results/last_patch_replacement.off", pmesh, CGAL::parameters::stream_precision(17));
 #endif
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
@@ -467,7 +467,7 @@ bool remove_self_intersections_with_smoothing(std::set<typename boost::graph_tra
   CGAL::copy_face_graph(ffg, local_mesh, CP::vertex_point_map(vpm));
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
-  CGAL::write_polygon_mesh("results/local_mesh.off", local_mesh, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_mesh("results/local_mesh.off", local_mesh, CGAL::parameters::stream_precision(17));
 #endif
 
   // Constrain sharp and border edges
@@ -486,7 +486,7 @@ bool remove_self_intersections_with_smoothing(std::set<typename boost::graph_tra
                                                                          .use_safety_constraints(false));
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
-  CGAL::write_polygon_mesh("results/post_smoothing_local_mesh.off", local_mesh, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_mesh("results/post_smoothing_local_mesh.off", local_mesh, CGAL::parameters::stream_precision(17));
 #endif
 
   if(does_self_intersect(local_mesh))

@@ -56,7 +56,7 @@ public:
         int i = 0;
         for(InputIterator it = begin;it != end; it++, i++) {
             std::stringstream curr_item;
-            ::CGAL::set_pretty_mode(curr_item);
+            ::CGAL::IO::set_pretty_mode(curr_item);
             curr_item << i << "th: ";
             curr_item << (*it);
             curve_list->insertItem(curr_item.str());

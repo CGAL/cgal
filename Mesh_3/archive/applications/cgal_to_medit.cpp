@@ -39,7 +39,7 @@ int main(int , char** argv)
 //                                   &std::cout) ) // debug to cout
   {
     std::cout << "  Writing " << argv[2] << std::endl;
-    CGAL::output_to_medit(ofs, c2t3);
+    CGAL::IO::output_to_medit(ofs, c2t3);
     return EXIT_SUCCESS;
   }
   else

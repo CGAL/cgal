@@ -67,7 +67,7 @@ int main(int argc, char** argv)
   C3t3 c3t3 = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria);
 
   std::ofstream medit_file("output_implicit_shape.mesh");
-  CGAL::output_periodic_mesh_to_medit(medit_file, c3t3, number_of_copies_in_output);
+  CGAL::IO::output_periodic_mesh_to_medit(medit_file, c3t3, number_of_copies_in_output);
 
   std::cout << "EXIT SUCCESS" << std::endl;
   return 0;

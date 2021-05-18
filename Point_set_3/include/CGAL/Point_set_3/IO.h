@@ -73,19 +73,20 @@ std::istream& operator>>(std::istream& is,
 
   is.seekg(0);
   if(line.find("OFF") == 0 || line.find("NOFF") == 0)
-    CGAL::read_OFF(is, ps);
+    CGAL::IO::read_OFF(is, ps);
   else if(line.find("ply") == 0)
-    CGAL::read_PLY(is, ps);
+    CGAL::IO::read_PLY(is, ps);
 #ifdef CGAL_LINKED_WITH_LASLIB
   else if(line.find("LASF") == 0)
-    CGAL::read_LAS(is, ps);
+    CGAL::IO::read_LAS(is, ps);
 #endif // LAS
   else
-    CGAL::read_XYZ(is, ps);
+    CGAL::IO::read_XYZ(is, ps);
 
   return is;
 }
 
+namespace IO {
 
 /*!
   \ingroup PkgPointSet3IO
@@ -127,7 +128,7 @@ bool read_point_set(const std::string& fname,
                     CGAL::Point_set_3<Point, Vector>& ps,
                     const CGAL_BGL_NP_CLASS& np)
 {
-  const std::string ext = IO::internal::get_file_extension(fname);
+  const std::string ext = internal::get_file_extension(fname);
 
   if(ext == "xyz" || ext == "pwn")
     return read_XYZ(fname, ps);
@@ -150,6 +151,8 @@ bool read_point_set(const std::string& fname, CGAL::Point_set_3<Point, Vector>& 
 {
   return read_point_set(fname, ps, parameters::all_default());
 }
+
+} // namespace IO
 
 /// \endcond
 
@@ -175,9 +178,11 @@ template <typename Point, typename Vector>
 std::ostream& operator<<(std::ostream& os,
                          const CGAL::Point_set_3<Point, Vector>& ps)
 {
-  write_PLY(os, ps);
+  IO::write_PLY(os, ps);
   return os;
 }
+
+namespace IO {
 
 /*!
   \ingroup PkgPointSet3IO
@@ -223,7 +228,7 @@ bool write_point_set(const std::string& fname,
                      CGAL::Point_set_3<Point, Vector>& ps,
                      const CGAL_BGL_NP_CLASS& np)
 {
-  const std::string ext = IO::internal::get_file_extension(fname);
+  const std::string ext = internal::get_file_extension(fname);
 
   if(ext == "xyz")
     return write_XYZ(fname, ps, np);
@@ -248,6 +253,8 @@ bool write_point_set(const std::string& fname, CGAL::Point_set_3<Point, Vector>&
 }
 
 /// \endcond
+
+} // namespace IO
 
 } // namespace CGAL
 

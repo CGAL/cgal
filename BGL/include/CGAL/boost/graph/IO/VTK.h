@@ -113,7 +113,6 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
 }
 
 } // namespace internal
-} // namespace IO
 
 /*!
  * \ingroup PkgBGLIoFuncsVTP
@@ -160,13 +159,13 @@ bool read_VTP(const std::string& fname,
   }
   test.close();
   vtkSmartPointer<vtkPointSet> data;
-  vtkSmartPointer<IO::internal::ErrorObserverVtk> obs =
-    vtkSmartPointer<IO::internal::ErrorObserverVtk>::New();
+  vtkSmartPointer<internal::ErrorObserverVtk> obs =
+    vtkSmartPointer<internal::ErrorObserverVtk>::New();
 
-  data = vtkPolyData::SafeDownCast(IO::internal::read_vtk_file<vtkXMLPolyDataReader>(fname, obs)->GetOutput());
+  data = vtkPolyData::SafeDownCast(internal::read_vtk_file<vtkXMLPolyDataReader>(fname, obs)->GetOutput());
   if (obs->GetError())
     return false;
-  return IO::internal::vtkPointSet_to_polygon_mesh(data, g, np);
+  return internal::vtkPointSet_to_polygon_mesh(data, g, np);
 }
 
 /// \cond SKIP_IN_MANUAL
@@ -180,7 +179,6 @@ bool read_VTP(const std::string& fname, Graph& g) { return read_VTP(fname, g, pa
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
 
-namespace IO {
 namespace internal {
 
 // writes the polys appended data at the end of the .vtp file
@@ -381,7 +379,6 @@ void write_polys_points(std::ostream& os,
 }
 
 } // namespace internal
-} // namespace IO
 
 /*! \ingroup PkgBGLIoFuncsVTP
  *
@@ -465,16 +462,16 @@ bool write_VTP(std::ostream& os,
   std::size_t offset = 0;
   const bool binary = choose_parameter(get_parameter(np, internal_np::use_binary_mode), true);
 
-  IO::internal::write_points_tag(os, g, binary, offset, np);
-  IO::internal::write_polys_tag(os, g, binary, offset, np);
+  internal::write_points_tag(os, g, binary, offset, np);
+  internal::write_polys_tag(os, g, binary, offset, np);
 
   os << "   </Piece>\n"
      << "  </PolyData>\n";
   if(binary)
   {
     os << "<AppendedData encoding=\"raw\">\n_";
-    IO::internal::write_polys_points(os, g, np);
-    IO::internal::write_polys(os, g, np);
+    internal::write_polys_points(os, g, np);
+    internal::write_polys(os, g, np);
   }
   os << "</VTKFile>" << std::endl;
 
@@ -534,7 +531,7 @@ bool write_VTP(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS
   std::ofstream os;
   if(binary){
     os.open(fname, std::ios::binary);
-    CGAL::set_mode(os, CGAL::IO::BINARY);
+    CGAL::IO::set_mode(os, CGAL::IO::BINARY);
   }
   else
     os.open(fname);
@@ -551,17 +548,19 @@ bool write_VTP(const std::string& fname, const Graph& g) { return write_VTP(fnam
 
 /// \endcond
 
+} // namespace IO
+
 #ifndef CGAL_NO_DEPRECATED_CODE
 
 /*!
  \ingroup PkgBGLIOFctDeprecated
 
- \deprecated This function is deprecated since \cgal 5.2, `CGAL::write_VTP()` should be used instead.
+ \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::write_VTP()` should be used instead.
 */
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 CGAL_DEPRECATED bool write_vtp(std::ostream& os, const Graph& g, const CGAL_BGL_NP_CLASS& np)
 {
-  return write_VTP(os, g, np);
+  return IO::write_VTP(os, g, np);
 }
 
 template <typename Graph>

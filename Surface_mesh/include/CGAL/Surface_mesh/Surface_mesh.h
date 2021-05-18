@@ -2171,7 +2171,7 @@ private: //------------------------------------------------------- private data
    template <typename P>
   std::ostream& operator<<(std::ostream& os, const Surface_mesh<P>& sm)
   {
-    write_OFF(os, sm);
+    IO::write_OFF(os, sm);
     return os;
   }
 
@@ -2183,7 +2183,7 @@ private: //------------------------------------------------------- private data
   template <typename P>
   std::istream& operator>>(std::istream& is, Surface_mesh<P>& sm)
   {
-    read_OFF(is, sm);
+    IO::read_OFF(is, sm);
     return is;
   }
 

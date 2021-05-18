@@ -141,7 +141,7 @@ void test_skeleton(const char* filename,
   std::ifstream in(filename);
   assert(in);
 
-  CGAL::set_ascii_mode(in);
+  CGAL::IO::set_ascii_mode(in);
 
   std::vector<Polygon_2> polys;
 

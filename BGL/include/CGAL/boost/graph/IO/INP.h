@@ -23,6 +23,8 @@
 
 namespace CGAL {
 
+namespace IO {
+
 /// \cond SKIP_IN_MANUAL
 
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
@@ -98,6 +100,6 @@ bool write_INP(const std::string& fname, const std::string& type, const Graph& g
 
 /// \endcond
 
-} // namespace CGAL
+}} // namespace CGAL::IO
 
 #endif // CGAL_BGL_IO_INP_H

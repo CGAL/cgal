@@ -114,9 +114,9 @@ int main (int argc, char* argv[])
   const char* fname = (argc>1) ? argv[1] : "data/cube.pwn";
   // Loading point set from a file.
 
-  if (!CGAL::read_points(fname, std::back_inserter(points),
-                         CGAL::parameters::point_map(Point_map()).
-                                           normal_map(Normal_map())))
+  if (!CGAL::IO::read_points(fname, std::back_inserter(points),
+                             CGAL::parameters::point_map(Point_map()).
+                                               normal_map(Normal_map())))
   {
       std::cerr << "Error: cannot read file" << std::endl;
       return EXIT_FAILURE;

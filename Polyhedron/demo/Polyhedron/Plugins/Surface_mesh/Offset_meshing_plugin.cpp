@@ -35,7 +35,7 @@
 #include <CGAL/Mesh_criteria_3.h>
 #include <CGAL/Three/Three.h>
 
-#include <CGAL/IO/facets_in_complex_3_to_triangle_mesh.h>
+#include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
 
 #include <memory> // std::shared_ptr
 

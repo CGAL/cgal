@@ -1,4 +1,5 @@
 namespace CGAL{
+namespace IO {
 //!\ingroup PkgMesh2IO
 //! \brief writes the faces of a domain and its constrained edges embedded in
 //! a 2D constrained Delaunay triangulation using the `PolyData` XML format.
@@ -9,11 +10,11 @@ namespace CGAL{
 //!
 //! \param os the stream used for writing.
 //! \param tr the triangulated domain to be written.
-//! \param mode decides if the data should be written in binary (`IO::BINARY`)
-//!   or in ASCII (`IO::ASCII`).
+//! \param mode decides if the data should be written in binary (`BINARY`)
+//!   or in ASCII (`ASCII`).
 //!
 template <class CDT>
-void write_vtu(std::ostream& os,
+void write_VTU(std::ostream& os,
                const CDT& tr,
                IO::Mode mode = IO::BINARY);
-}
+} }

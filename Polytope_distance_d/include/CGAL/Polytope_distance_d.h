@@ -849,7 +849,7 @@ operator << ( std::ostream& os,
   typedef  typename Traits_::ET          ET;
   typedef  ostream_iterator<ET>          Et_it;
 
-  switch ( CGAL::get_mode( os)) {
+  switch ( CGAL::IO::get_mode( os)) {
 
   case CGAL::IO::PRETTY:
     os << "CGAL::Polytope_distance_d( |P+Q| = "
@@ -918,7 +918,7 @@ operator << ( std::ostream& os,
 
   default:
     CGAL_optimisation_assertion_msg( false,
-                                     "CGAL::get_mode( os) invalid!");
+                                     "CGAL::IO::get_mode( os) invalid!");
     break; }
 
   return( os);

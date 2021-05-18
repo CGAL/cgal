@@ -28,7 +28,7 @@ typedef double FT;
 
 int main()
 {
-  CGAL::set_pretty_mode ( std::cerr );
+  CGAL::IO::set_pretty_mode ( std::cerr );
   CGAL_KD_SETDTHREAD(193);
   CGAL_TEST_START;
   {

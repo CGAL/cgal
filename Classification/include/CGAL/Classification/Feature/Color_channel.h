@@ -56,7 +56,7 @@ namespace Feature {
     `ColorMap`.
     \tparam ColorMap model of `ReadablePropertyMap` whose key
     type is the value type of the iterator of `PointRange` and value type
-    is `CGAL::Color`.
+    is `CGAL::IO::Color`.
   */
 template <typename GeomTraits, typename PointRange, typename ColorMap>
 class Color_channel : public Feature_base

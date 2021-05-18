@@ -545,7 +545,7 @@ struct Test {
       if(b != b_tree) {
         std::stringstream err_msg;
         err_msg.precision(17);
-        CGAL::set_pretty_mode(err_msg);
+        CGAL::IO::set_pretty_mode(err_msg);
         err_msg << "do_intersect(\n"
                 << "             " << unit_bbox << "\n,\n"
                 << "             " << tr

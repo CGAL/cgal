@@ -35,7 +35,7 @@ typedef CGAL::Random_points_in_square_2<Point_2>  Point_generator;
 
 int main()
 {
-  CGAL::set_pretty_mode(cout);
+  CGAL::IO::set_pretty_mode(cout);
 
   // build a random convex 20-gon p
   Polygon_2 p;

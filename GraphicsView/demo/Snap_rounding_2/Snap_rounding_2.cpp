@@ -272,7 +272,7 @@ MainWindow::open(QString fileName)
   {
 #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
     std::vector<std::vector<Point_2> > mls;
-    CGAL::read_multi_linestring_WKT(ifs, mls);
+    CGAL::IO::read_multi_linestring_WKT(ifs, mls);
     for(const std::vector<Point_2>& ls : mls)
     {
       if(ls.size() > 2)
@@ -322,7 +322,7 @@ MainWindow::on_actionSaveSegments_triggered()
         ls[1] = seg.target();
         mls.push_back(ls);
       }
-      CGAL::write_multi_linestring_WKT(ofs, mls);
+      CGAL::IO::write_multi_linestring_WKT(ofs, mls);
 #endif
     }
     else

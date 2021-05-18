@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
   const char* filename2 = (argc>2) ? argv[2] : "data/quad.off";
 
   Mesh sm1, sm2;
-  if(!CGAL::read_polygon_mesh(filename1, sm1) || !CGAL::read_polygon_mesh(filename2, sm2))
+  if(!CGAL::IO::read_polygon_mesh(filename1, sm1) || !CGAL::IO::read_polygon_mesh(filename2, sm2))
   {
     std::cerr << "Invalid input files." << std::endl;
     return EXIT_FAILURE;
@@ -33,5 +33,5 @@ int main(int argc, char* argv[])
   for(vertex_descriptor vd : vertices(sm1))
     std::cerr << vd << " " <<  name1[vd] <<std::endl;
 
-  CGAL::write_OFF(std::cout, sm1, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_OFF(std::cout, sm1, CGAL::parameters::stream_precision(17));
 }

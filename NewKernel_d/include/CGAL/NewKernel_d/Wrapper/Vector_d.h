@@ -134,7 +134,7 @@ public:
   {
     auto b = v.cartesian_begin();
     auto e = v.cartesian_end();
-    if(is_ascii(os))
+    if(IO::is_ascii(os))
     {
       os << v.dimension();
       for(; b != e; ++b){
@@ -155,7 +155,7 @@ public:
   friend std::istream & operator>>(std::istream &is, Vector_d & v)
   {
     int dim;
-    if( is_ascii(is) )
+    if( IO::is_ascii(is) )
       is >> dim;
     else
     {
@@ -164,10 +164,10 @@ public:
     if(!is) return is;
 
     std::vector<FT_> coords(dim);
-    if(is_ascii(is))
+    if(IO::is_ascii(is))
     {
       for(int i=0;i<dim;++i)
-        is >> iformat(coords[i]);
+        is >> IO::iformat(coords[i]);
     }
     else
     {

@@ -248,7 +248,7 @@ public:
   {
     is >> static_cast<Cmvb3_base&>(v);
     int dimension;
-    if(is_ascii(is)) {
+    if(IO::is_ascii(is)) {
       is >> dimension;
 
     } else {
@@ -267,7 +267,7 @@ public:
   friend std::ostream& operator<<(std::ostream &os, const Mesh_vertex_3& v)
   {
     os << static_cast<const Cmvb3_base&>(v);
-    if(is_ascii(os)) {
+    if(IO::is_ascii(os)) {
       os << " " << v.in_dimension()
          << " ";
     } else {
