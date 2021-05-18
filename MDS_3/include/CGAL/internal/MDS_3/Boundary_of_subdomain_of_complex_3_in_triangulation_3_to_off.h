@@ -81,8 +81,9 @@ output_facets_in_complex_to_off(const C3T3& c3t3,
 
   std::vector<Point> points;
   std::vector<Face> faces;
+  std::vector<Surface_patch_index> patches;
 
-  CGAL::MDS_3::internal::facets_in_complex_3_to_triangle_soup(c3t3, points, faces);
+  CGAL::MDS_3::internal::facets_in_complex_3_to_triangle_soup(c3t3, points, faces, patches);
 
   return output_polygon_soup_to_off(points, faces, out);
 }
