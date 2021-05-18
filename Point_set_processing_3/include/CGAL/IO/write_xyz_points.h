@@ -328,7 +328,7 @@ CGAL_DEPRECATED bool write_xyz_points(std::ostream& os, const PointRange& points
 template <typename PointRange>
 CGAL_DEPRECATED bool write_xyz_points(std::ostream& os, const PointRange& points)
 {
-  return IO::write_XYZ(os, points, parameters::all_default(points));
+  return IO::write_XYZ(os, points, parameters::all_default());
 }
 
 /// \endcond

@@ -652,7 +652,15 @@ namespace CGAL {
 
 // Typedef for the type of nullptr.
 typedef const void * Nullptr_t;   // Anticipate C++0x's std::nullptr_t
-
+namespace cpp11{
+#if CGAL_CXX20 || __cpp_lib_is_invocable>=201703L
+    template<typename Signature> class result_of;
+    template<typename F, typename... Args>
+    class result_of<F(Args...)> : public std::invoke_result<F, Args...> { };
+#else
+    using std::result_of;
+#endif
+}//namespace cpp11
 } //namespace CGAL
 
 //Support for c++11 noexcept
