@@ -20,7 +20,7 @@ typedef K::Point_3         Point_3;
 typedef K::Tetrahedron_3   Tetrahedron_3;
 typedef DT3::Vertex_handle Vertex_handle;
 
-int main(int argc, char* argv[])
+int main(int , char* [])
 {
   const int nbv = 100;
 
