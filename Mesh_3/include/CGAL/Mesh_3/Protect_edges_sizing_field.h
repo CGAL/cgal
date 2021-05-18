@@ -157,7 +157,7 @@ public:
   bool forced_stop() const {
 #ifndef CGAL_NO_ATOMIC
     if(stop_ptr_ != 0 &&
-       stop_ptr_->load(CGAL::cpp11::memory_order_acquire) == true)
+       stop_ptr_->load(std::memory_order_acquire) == true)
     {
       if(error_code_ != 0) *error_code_ = CGAL_MESH_3_STOPPED;
       return true;

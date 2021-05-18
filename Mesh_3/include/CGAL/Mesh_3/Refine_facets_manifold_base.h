@@ -446,7 +446,7 @@ public:
 
 #ifndef CGAL_NO_ATOMIC
       if(this->m_stop_ptr != 0 &&
-         this->m_stop_ptr->load(CGAL::cpp11::memory_order_acquire) == true)
+         this->m_stop_ptr->load(std::memory_order_acquire) == true)
       {
         return true;
       }
