@@ -21,6 +21,7 @@ int main(int argc, char* argv[])
   std::ifstream is(filename, std::ios_base::in);
   CGAL::read_MEDIT(is, tr);
 
+  // [call to a remeshing algorithm]
 
   std::ofstream os("after_remeshing.mesh");
   CGAL::write_MEDIT(os, tr);
