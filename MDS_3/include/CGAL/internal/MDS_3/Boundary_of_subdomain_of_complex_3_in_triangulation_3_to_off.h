@@ -58,11 +58,14 @@ output_boundary_of_c3t3_to_off(const C3T3& c3t3,
 {
   typedef typename C3T3::Triangulation::Geom_traits::Point_3             Point;
   typedef std::vector<std::size_t>                                       Face;
+  typedef typename C3T3::Surface_patch_index                             Surface_patch_index;
 
   std::vector<Point> points;
   std::vector<Face> faces;
+  std::vector<Surface_patch_index> patches;
 
-  CGAL::MDS_3::internal::facets_in_complex_3_to_triangle_soup(c3t3, sd_index, points, faces, normals_point_outside_of_the_subdomain);
+  CGAL::MDS_3::internal::facets_in_complex_3_to_triangle_soup(c3t3, sd_index, points, faces,
+        patches, normals_point_outside_of_the_subdomain);
 
   return output_polygon_soup_to_off(points, faces, out);
 }
@@ -73,12 +76,14 @@ output_facets_in_complex_to_off(const C3T3& c3t3,
                                 std::ostream& out)
 {
   typedef typename C3T3::Triangulation::Geom_traits::Point_3             Point;
+  typedef typename C3T3::Surface_patch_index                             Surface_patch_index;
   typedef std::vector<std::size_t>                                       Face;
 
   std::vector<Point> points;
   std::vector<Face> faces;
+  std::vector<Surface_patch_index> patches;
 
-  CGAL::MDS_3::internal::facets_in_complex_3_to_triangle_soup(c3t3, points, faces);
+  CGAL::MDS_3::internal::facets_in_complex_3_to_triangle_soup(c3t3, points, faces, patches);
 
   return output_polygon_soup_to_off(points, faces, out);
 }

@@ -13,7 +13,11 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/optional.hpp>
+#include <CGAL/iterator.h>
+#include <CGAL/property_map.h>
 #include <CGAL/boost/graph/iterator.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <boost/iterator/function_output_iterator.hpp>
 
 namespace CGAL {
 
@@ -200,6 +204,38 @@ adjust_incoming_halfedge(typename boost::graph_traits<Graph>::vertex_descriptor 
 
 
 } // internal
+
+namespace impl
+{
+  template<typename PMAP>
+  struct Output_iterator_functor
+  {
+    typedef typename boost::property_traits<PMAP>::key_type input_t;
+    typedef typename boost::property_traits<PMAP>::value_type output_t;
+    PMAP map;
+    Output_iterator_functor(PMAP map)
+      :map(map)
+    {
+    }
+    void operator()(const typename std::pair<input_t, output_t>& pair)
+    {
+      put(map, pair.first, pair.second);
+    }
+
+  };
+
+  template<typename PMAP>
+  boost::function_output_iterator<Output_iterator_functor<PMAP> > make_functor(PMAP map)
+  {
+    return boost::make_function_output_iterator(Output_iterator_functor<PMAP>(map));
+  }
+
+  inline Emptyset_iterator make_functor(const internal_np::Param_not_found&)
+  {
+    return Emptyset_iterator();
+  }
+}//end of impl
+
 } // CGAL
 
 
