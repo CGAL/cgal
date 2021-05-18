@@ -1,11 +1,11 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Real_timer.h>
 #include <CGAL/IO/OFF.h>
-
-
 #include <CGAL/boost/graph/property_maps.h>
-
+#include <CGAL/number_utils.h>
+#include <CGAL/Coercion_traits.h>
 
 #include <fstream>
 #include <ostream>
@@ -194,6 +194,14 @@ struct Custom_traits_Hausdorff
 };
 
 namespace CGAL{
+
+CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(Custom_traits_Hausdorff::FT)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short, Custom_traits_Hausdorff::FT)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int, Custom_traits_Hausdorff::FT)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long, Custom_traits_Hausdorff::FT)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float, Custom_traits_Hausdorff::FT)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double, Custom_traits_Hausdorff::FT)
+
 template<>struct Kernel_traits<Custom_traits_Hausdorff::Point_3>
 {
   typedef Custom_traits_Hausdorff Kernel;
