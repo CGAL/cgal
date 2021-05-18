@@ -38,9 +38,8 @@
 #else // no CGAL_MDS_3_COMMERCIAL_LICENSE
 
 #  if defined(CGAL_LICENSE_WARNING)
-     CGAL_pragma_warning("\nThe macro CGAL_MDS_3_COMMERCIAL_LICENSE "
-                          "is not defined."
-                          "\nYou use the CGAL 3D Mesh Generation package under "
+     CGAL_pragma_warning("\nThe macro CGAL_MDS_3_COMMERCIAL_LICENSE is not defined."
+                          "\nYou use the CGAL 3D Mesh Data Structure package under "
                           "the terms of the GPLv3+.")
 #  endif // CGAL_LICENSE_WARNING
 
