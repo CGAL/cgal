@@ -86,6 +86,8 @@ namespace internal {
 
     bool  operator==( const Self& x) const { return node == x.node; }
     bool  operator!=( const Self& x) const { return node != x.node; }
+    bool  operator==( std::nullptr_t) const { return node == nullptr; }
+    bool  operator!=( std::nullptr_t) const { return node != nullptr; }
     bool  operator< ( const Self& x) const { return node< x.node;   }
     bool  operator<=( const Self& x) const { return node<= x.node;  }
     bool  operator> ( const Self& x) const { return node> x.node;   }
@@ -139,6 +141,8 @@ namespace internal {
 
     bool     operator==( const Self& x) const { return node == x.node; }
     bool     operator!=( const Self& x) const { return node != x.node; }
+    bool     operator==( std::nullptr_t) const { return node == nullptr; }
+    bool     operator!=( std::nullptr_t) const { return node != nullptr; }
     bool     operator< ( const Self& x) const { return node< x.node;   }
     bool     operator<=( const Self& x) const { return node<= x.node;  }
     bool     operator> ( const Self& x) const { return node> x.node;   }
