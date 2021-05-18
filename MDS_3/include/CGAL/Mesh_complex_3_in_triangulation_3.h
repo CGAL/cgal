@@ -158,9 +158,11 @@ namespace CGAL {
 template <typename Tr,
           typename CornerIndex,
           typename CurveIndex>
-class Mesh_complex_3_in_triangulation_3 :
-    public CGAL::MDS_3::details::C3t3_helper_class<Tr>
+class Mesh_complex_3_in_triangulation_3
+#ifndef DOXYGEN_RUNNING
+  : public CGAL::MDS_3::details::C3t3_helper_class<Tr>
   , public CGAL::MDS_3::internal::Debug_messages_tools
+#endif
 {
 public:
   typedef typename Tr::Concurrency_tag                   Concurrency_tag;
