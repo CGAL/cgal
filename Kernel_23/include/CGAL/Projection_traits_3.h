@@ -21,27 +21,27 @@ namespace CGAL{
 
 // This declaration is needed to break the cyclic dependency.
 template < class Filtered_kernel >
-class Triangulation_2_filtered_projection_traits_3;
+class Filtered_projection_traits_3;
 
 template <class Kernel, bool Has_filtered_predicates=Kernel::Has_filtered_predicates>
 class Projection_traits_3
-  : public Triangulation_2_projection_traits_base_3<Kernel>
+  : public Projection_traits_base_3<Kernel>
 {
 public:
   explicit
   Projection_traits_3(const typename Kernel::Vector_3& n_)
-    : Triangulation_2_projection_traits_base_3<Kernel>(n_)
+    : Projection_traits_base_3<Kernel>(n_)
   {}
 };
 
 template <class Kernel>
 class Projection_traits_3<Kernel, true>
-  : public Triangulation_2_filtered_projection_traits_3<Kernel>
+  : public Filtered_projection_traits_3<Kernel>
 {
 public:
   explicit
   Projection_traits_3(const typename Kernel::Vector_3& n_)
-    : Triangulation_2_filtered_projection_traits_3<Kernel>(n_)
+    : Filtered_projection_traits_3<Kernel>(n_)
   {}
 };
 

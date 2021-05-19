@@ -317,9 +317,9 @@ public:
 
 
 template < class Kernel >
-class Triangulation_2_projection_traits_base_3
+class Projection_traits_base_3
 {
-  typedef Triangulation_2_projection_traits_base_3<Kernel> Self;
+  typedef Projection_traits_base_3<Kernel> Self;
 
   typename Kernel::Vector_3 n, b1, b2;
 
@@ -327,7 +327,7 @@ public:
   typedef typename Kernel::Vector_3 Vector_3;
 
 
-  explicit Triangulation_2_projection_traits_base_3(const Vector_3& n_)
+  explicit Projection_traits_base_3(const Vector_3& n_)
     : n(n_)
   {
     typedef typename Kernel::FT FT;
@@ -527,7 +527,7 @@ public:
     return Projection_to_plan(plane_point, *this);
   }
 
-}; // end class Triangulation_2_projection_traits_base_3<Kernel>
+}; // end class Projection_traits_base_3<Kernel>
 
 } // end namespace CGAL
 
