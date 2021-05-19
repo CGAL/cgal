@@ -24,6 +24,8 @@
 
 #include "CGAL/CORE/CoreDefs.h"
 
+#include <atomic>
+
 namespace CORE {
 
 //  Default Values
@@ -50,7 +52,7 @@ int IOErrorFlag = 0;
 #ifdef CGAL_NO_ATOMIC
 bool AbortFlag = true;
 #else
-CGAL::cpp11::atomic<bool> AbortFlag(true);
+std::atomic<bool> AbortFlag(true);
 #endif
 
 /**
@@ -61,7 +63,7 @@ CGAL::cpp11::atomic<bool> AbortFlag(true);
 #ifdef CGAL_NO_ATOMIC
 int InvalidFlag = 0;
 #else
-CGAL::cpp11::atomic<int> InvalidFlag(0);
+std::atomic<int> InvalidFlag(0);
 #endif
 
 /* ************************************************************
@@ -97,7 +99,7 @@ long EscapePrecFlag = 0;
 #ifdef CGAL_NO_ATOMIC
 bool EscapePrecWarning = true;
 #else
-CGAL::cpp11::atomic<bool> EscapePrecWarning(true);
+std::atomic<bool> EscapePrecWarning(true);
 #endif
 
 /** The Composite Precision [defAbsPrec, defRelPrec]
@@ -117,7 +119,7 @@ extLong defRelPrec = 60;
 #ifdef CGAL_NO_ATOMIC
 long defBigFloatOutputDigits = 10;
 #else
-CGAL::cpp11::atomic<long> defBigFloatOutputDigits(10);
+std::atomic<long> defBigFloatOutputDigits(10);
 #endif
 
 /**  NORMALLY, we like to make this equal to defBigFloatOutputDigits
@@ -125,7 +127,7 @@ CGAL::cpp11::atomic<long> defBigFloatOutputDigits(10);
 #ifdef CGAL_NO_ATOMIC
 long defOutputDigits = 10;
 #else
-CGAL::cpp11::atomic<long> defOutputDigits(10); // == defBigFloatOutputDigits;
+std::atomic<long> defOutputDigits(10); // == defBigFloatOutputDigits;
 #endif
 
 /** String Input Precision */
@@ -142,7 +144,7 @@ extLong defInputDigits = CORE_posInfty;
 #ifdef CGAL_NO_ATOMIC
 long defBigFloatInputDigits = 16;
 #else
-CGAL::cpp11::atomic<long> defBigFloatInputDigits(16);
+std::atomic<long> defBigFloatInputDigits(16);
 #endif
 
 /* ************************************************************
@@ -154,7 +156,7 @@ CGAL::cpp11::atomic<long> defBigFloatInputDigits(16);
 #ifdef CGAL_NO_ATOMIC
 bool fpFilterFlag = true;
 #else
-CGAL::cpp11::atomic<bool> fpFilterFlag(true);
+std::atomic<bool> fpFilterFlag(true);
 #endif
 
 /** IncrementaL evaluation flag
@@ -163,7 +165,7 @@ CGAL::cpp11::atomic<bool> fpFilterFlag(true);
 #ifdef CGAL_NO_ATOMIC
 bool incrementalEvalFlag = true;
 #else
-CGAL::cpp11::atomic<bool> incrementalEvalFlag(true);
+std::atomic<bool> incrementalEvalFlag(true);
 #endif
 
 /** Progressive evaluation flag
@@ -171,7 +173,7 @@ CGAL::cpp11::atomic<bool> incrementalEvalFlag(true);
 #ifdef CGAL_NO_ATOMIC
 bool progressiveEvalFlag = true;
 #else
-CGAL::cpp11::atomic<bool> progressiveEvalFlag(true);
+std::atomic<bool> progressiveEvalFlag(true);
 #endif
 
 /** Initial progressive evaluation precision
@@ -179,7 +181,7 @@ CGAL::cpp11::atomic<bool> progressiveEvalFlag(true);
 #ifdef CGAL_NO_ATOMIC
 long defInitialProgressivePrec = 64;
 #else
-CGAL::cpp11::atomic<long> defInitialProgressivePrec(64);
+std::atomic<long> defInitialProgressivePrec(64);
 #endif
 
 /** RATIONAL REDUCTION FLAG
@@ -187,7 +189,7 @@ CGAL::cpp11::atomic<long> defInitialProgressivePrec(64);
 #ifdef CGAL_NO_ATOMIC
 bool rationalReduceFlag = false;
 #else
-CGAL::cpp11::atomic<bool> rationalReduceFlag(false);
+std::atomic<bool> rationalReduceFlag(false);
 #endif
 #endif // CGAL_HEADER_ONLY
 
