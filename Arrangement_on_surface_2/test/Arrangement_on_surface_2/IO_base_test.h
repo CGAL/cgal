@@ -1,6 +1,8 @@
 #ifndef CGAL_IO_BASE_TEST_H
 #define CGAL_IO_BASE_TEST_H
 
+#include <list>
+
 template <typename GeomTraits_>
 class IO_base_test {
   IO_base_test<GeomTraits_>& operator=(const IO_base_test<GeomTraits_>&);
@@ -38,18 +40,38 @@ public:
   template <typename InputStream_>
   bool read_curve(InputStream_& is, Curve_2&);
 
+  void clear();
+
 protected:
   /*! An instance of the traits */
   const Geom_traits& m_geom_traits;
+
+#if TEST_GEOM_TRAITS == CACHING_POLYLINE_GEOM_TRAITS
+  // When using the Arr_caching_polyline_traits_2 traits class, the points that
+  // define a polyline must be retain in memory as long as the traits is used.
+  // We use a list to avoid resizing, which copies the points, and invalidates
+  // pointers to them (as they point to addresses of the old points).
+  std::list<std::vector<Point_2>> m_cached_points;
+#endif
 };
 
-/*!
- * Constructor.
+/*! Constructor.
  * Accepts test data file name.
  */
 template <typename GeomTraits_>
 IO_base_test<GeomTraits_>::IO_base_test(const GeomTraits_& geom_traits) :
-  m_geom_traits(geom_traits) {}
+  m_geom_traits(geom_traits)
+{}
+
+/*! Clear
+ */
+template <typename GeomTraits>
+void IO_base_test<GeomTraits>::clear() {
+#if (TEST_GEOM_TRAITS == CACHING_POLYLINE_GEOM_TRAITS)
+  for (auto& l : m_cached_points) l.clear();
+  m_cached_points.clear();
+#endif
+}
 
 // Generic implementation
 template <typename GeomTraits_>
@@ -128,12 +150,11 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
   unsigned int num_points;
   is >> num_points;
   std::vector<Point_2> points;
-  points.clear();
   for (unsigned int j = 0; j < num_points; ++j) {
     Basic_number_type x, y;
     is >> x >> y;
     Point_2 p(x, y);
-    points.push_back(p);
+    points.emplace_back(p);
   }
   xcv = m_geom_traits.construct_x_monotone_curve_2_object()(points.begin(),
                                                             points.end());
@@ -147,16 +168,18 @@ bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
   unsigned int num_points;
   is >> num_points;
   std::vector<Point_2> points;
-  points.clear();
   for (unsigned int j = 0; j < num_points; ++j) {
     Basic_number_type x, y;
     is >> x >> y;
     Point_2 p(x, y);
-    points.push_back(p);
+    points.emplace_back(p);
   }
   cv = m_geom_traits.construct_curve_2_object()(points.begin(), points.end());
   return true;
 }
+
+// The caching polyline traits does not support the construction of segments
+// that compose the (caching) polyline.
 template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_segment(InputStream_& is,
@@ -171,6 +194,8 @@ bool IO_base_test<Base_geom_traits>::read_segment(InputStream_& is,
   return true;
 }
 
+// The caching polyline traits does not support the construction of segments
+// that compose the (caching) polyline.
 template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_xsegment(InputStream_& is,
@@ -182,6 +207,41 @@ bool IO_base_test<Base_geom_traits>::read_xsegment(InputStream_& is,
   is >> x >> y;
   Point_2 p_tgt(x, y);
   xseg = X_monotone_subcurve_2(p_src, p_tgt);
+  return true;
+}
+
+#elif (TEST_GEOM_TRAITS == CACHING_POLYLINE_GEOM_TRAITS)
+
+template <>
+template <typename InputStream_>
+bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
+                                                 X_monotone_curve_2& xcv) {
+  m_cached_points.push_back(std::vector<Point_2>{});
+  auto& points = m_cached_points.back();
+  size_t num_points;
+  is >> num_points;
+  for (size_t j = 0; j < num_points; ++j) {
+    Basic_number_type x, y;
+    is >> x >> y;
+    points.emplace_back(x, y);
+  }
+  xcv = m_geom_traits.construct_x_monotone_curve_2_object()(points);
+  return true;
+}
+
+template <>
+template <typename InputStream_>
+bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv) {
+  m_cached_points.push_back(std::vector<Point_2>{});
+  auto& points = m_cached_points.back();
+  size_t num_points;
+  is >> num_points;
+  for (size_t j = 0; j < num_points; ++j) {
+    Basic_number_type x, y;
+    is >> x >> y;
+    points.emplace_back(x, y);
+  }
+  cv = m_geom_traits.construct_curve_2_object()(points);
   return true;
 }
 
@@ -427,7 +487,7 @@ bool IO_base_test<Base_geom_traits>::read_segment(InputStream_& is,
   is >> type;
   if (!read_general_curve(is, tmp_seg)) return false;
   seg = tmp_seg;
-   return true;
+  return true;
 }
 
 template <>

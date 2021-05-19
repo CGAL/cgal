@@ -12,7 +12,7 @@ namespace CGAL {
   is associated with a point of the plane and each edge is
   associated with an \f$ x\f$-monotone curve whose interior is disjoint from all
   other edges and vertices. Recall that an arrangement
-  edge is always comprised of a pair of twin <span class="textsc">Dcel</span> halfedges.
+  edge always comprises a pair of twin <span class="textsc">Dcel</span> halfedges.
 
   The `Arrangement_2` template has two parameters:
   <UL>
