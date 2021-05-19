@@ -146,7 +146,7 @@ public:
   }
 
   void transform(const Aff_transformation_3& t) {
-      transform(t, t.is_even(), t.transposed_inverse());
+      transform(t, t.is_even(), t.transpose().inverse());
   }
 
   void add_facet(Halffacet_handle f, int depth) {
