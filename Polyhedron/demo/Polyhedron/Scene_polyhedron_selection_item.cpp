@@ -95,7 +95,7 @@ struct Scene_polyhedron_selection_item_priv{
     item(parent)
   {
     filtered_graph = nullptr;
-    item->setProperty("classname", QString("surface_mesh"));
+    item->setProperty("classname", QString("surface_mesh_selection"));
   }
 
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
