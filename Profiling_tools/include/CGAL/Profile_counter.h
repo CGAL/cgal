@@ -48,6 +48,7 @@
 #include <iomanip>
 #include <string>
 #include <map>
+#include <atomic>
 
 #include <CGAL/disable_warnings.h>
 
@@ -92,7 +93,7 @@ struct Profile_counter
     Profile_counter(const std::string & ss)
       : s(ss)
     {
-      i = 0; // needed here because of tbb::atomic
+      i = 0; // needed here because of std::atomic
     }
 
     void operator++() { ++i; }
@@ -107,7 +108,7 @@ struct Profile_counter
 
 private:
 #ifdef CGAL_CONCURRENT_PROFILE
-    tbb::atomic<unsigned int> i;
+    std::atomic<unsigned int> i;
 #else
     unsigned int i;
 #endif
@@ -167,7 +168,7 @@ struct Profile_branch_counter
     Profile_branch_counter(const std::string & ss)
       : s(ss)
     {
-      i = j = 0; // needed here because of tbb::atomic
+      i = j = 0; // needed here because of std::atomic
     }
 
     void operator++() { ++i; }
@@ -183,7 +184,7 @@ struct Profile_branch_counter
 
 private:
 #ifdef CGAL_CONCURRENT_PROFILE
-    tbb::atomic<unsigned int> i, j;
+    std::atomic<unsigned int> i, j;
 #else
     unsigned int i, j;
 #endif
@@ -196,7 +197,7 @@ struct Profile_branch_counter_3
     Profile_branch_counter_3(const std::string & ss)
       : s(ss)
     {
-      i = j = k = 0; // needed here because of tbb::atomic
+      i = j = k = 0; // needed here because of std::atomic
     }
 
     void operator++() { ++i; }
@@ -214,7 +215,7 @@ struct Profile_branch_counter_3
 
 private:
 #ifdef CGAL_CONCURRENT_PROFILE
-    tbb::atomic<unsigned int> i, j, k;
+    std::atomic<unsigned int> i, j, k;
 #else
     unsigned int i, j, k;
 #endif

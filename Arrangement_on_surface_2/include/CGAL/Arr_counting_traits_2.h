@@ -26,9 +26,9 @@
 
 #include <iostream>
 #include <string.h>
+#include <atomic>
 
 #include <CGAL/basic.h>
-#include <CGAL/atomic.h>
 #include <CGAL/Arr_enums.h>
 #include <CGAL/Arr_tags.h>
 
@@ -950,7 +950,7 @@ public:
 #ifdef CGAL_NO_ATOMIC
     static unsigned int counter;
 #else
-    static CGAL::cpp11::atomic<unsigned int> counter;
+    static std::atomic<size_t> counter;
 #endif
     if (doit) ++counter;
     return counter;
