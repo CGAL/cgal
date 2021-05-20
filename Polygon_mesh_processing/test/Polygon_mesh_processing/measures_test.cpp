@@ -206,7 +206,6 @@ void test_centroid(const char* filename)
 template <typename PolygonMesh>
 void test_compare()
 {
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor      vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor        face_descriptor;
   namespace PMP = CGAL::Polygon_mesh_processing;
 

@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
 
   Surface_mesh mesh1;
   Polyhedron mesh2;
-  if(!PMP::read_polygon_mesh(filename1, mesh1))
+  if(!PMP::IO::read_polygon_mesh(filename1, mesh1))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;
