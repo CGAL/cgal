@@ -19,10 +19,11 @@ void generate_regular_polygon(
 
   vertices.clear();
   vertices.reserve(n);
-  for (std::size_t i = 0; i < n; ++i)
+  for (std::size_t i = 0; i < n; ++i) {
     vertices.push_back(Point_2(
       static_cast<FT>(+radius * sin((CGAL_PI / n) + ((i * 2.0 * CGAL_PI) / n))),
       static_cast<FT>(-radius * cos((CGAL_PI / n) + ((i * 2.0 * CGAL_PI) / n)))));
+  }
 }
 
 int main() {

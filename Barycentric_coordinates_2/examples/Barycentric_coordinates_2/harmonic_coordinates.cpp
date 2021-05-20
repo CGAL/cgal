@@ -57,8 +57,9 @@ int main() {
   for (std::size_t k = 0; k < 20; ++k) {
     coordinates.clear();
     harmonic_coordinates_2(k, std::back_inserter(coordinates));
-    for (std::size_t i = 0; i < coordinates.size() - 1; ++i)
+    for (std::size_t i = 0; i < coordinates.size() - 1; ++i) {
       std::cout << coordinates[i] << ", ";
+    }
     std::cout << coordinates[coordinates.size() - 1] << std::endl;
   }
 
@@ -72,8 +73,9 @@ int main() {
   for (std::size_t k = 0; k < 20; ++k) {
     coordinates.clear();
     harmonic_coordinates_2(barycenters[k], std::back_inserter(coordinates));
-    for (std::size_t i = 0; i < coordinates.size() - 1; ++i)
+    for (std::size_t i = 0; i < coordinates.size() - 1; ++i) {
       std::cout << coordinates[i] << ", ";
+    }
     std::cout << coordinates[coordinates.size() - 1] << std::endl;
   }
   std::cout << std::endl;

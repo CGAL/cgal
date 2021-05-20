@@ -13,7 +13,7 @@ models used to parameterize the class `Generalized_barycentric_coordinates_2`.
 - `Mean_value_2`
 - `Discrete_harmonic_2`
 
-\deprecated This part of the package is deprecated since the version 5.2 of \cgal.
+\deprecated This part of the package is deprecated since the version 5.4 of \cgal.
 */
 class BarycentricCoordinates_2 {
 
@@ -29,8 +29,7 @@ public:
     type <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>.
   */
   BarycentricCoordinates_2(
-    const std::vector<Traits::Point_2>& vertices,
-    const Traits& barycentric_traits) {
+    const std::vector<Traits::Point_2>& vertices, const Traits& barycentric_traits) {
 
   }
 
@@ -47,8 +46,7 @@ public:
   */
   boost::optional<OutputIterator>
   weights(
-    const Traits::Point_2& query_point,
-    OutputIterator& output) {
+    const Traits::Point_2& query_point, OutputIterator& output) {
 
   }
 

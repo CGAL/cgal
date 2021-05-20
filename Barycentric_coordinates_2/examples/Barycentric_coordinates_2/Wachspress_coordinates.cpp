@@ -42,8 +42,9 @@ int main() {
     CGAL::Barycentric_coordinates::wachspress_coordinates_2(
       convex, query, std::back_inserter(coordinates));
 
-    for (std::size_t i = 0; i < coordinates.size() - 1; ++i)
+    for (std::size_t i = 0; i < coordinates.size() - 1; ++i) {
       std::cout << coordinates[i] << ", ";
+    }
     std::cout << coordinates[coordinates.size() - 1] << std::endl;
   }
   std::cout << std::endl;

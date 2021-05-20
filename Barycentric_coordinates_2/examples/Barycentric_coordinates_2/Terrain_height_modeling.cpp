@@ -55,9 +55,10 @@ int main() {
 
   // Associate each polygon vertex with the corresponding function value.
   Vertex_function_value vertex_function_value;
-  for(const auto& vertex : polygon)
+  for (const auto& vertex : polygon) {
     vertex_function_value.insert(
       std::make_pair(vertex, vertex.z()));
+  }
 
   // Construct the class with the mean value weights.
   Mean_value_coordinates_2 mean_value_coordinates_2(polygon);
@@ -78,8 +79,9 @@ int main() {
 
     coordinates.clear();
     mean_value_coordinates_2(query, std::back_inserter(coordinates));
-    for (std::size_t i = 0; i < polygon.size(); ++i)
+    for (std::size_t i = 0; i < polygon.size(); ++i) {
       boundary[i] = std::make_pair(polygon[i], coordinates[i]);
+    }
 
     const FT f = CGAL::linear_interpolation(
       boundary.begin(), boundary.end(), FT(1),
@@ -89,8 +91,9 @@ int main() {
 
   // Output interpolated heights.
   std::cout << std::endl << "interpolated heights (all queries): " << std::endl << std::endl;
-  for (const auto& query : queries)
+  for (const auto& query : queries) {
     std::cout << query.z() << std::endl;
+  }
   std::cout << std::endl;
 
   return EXIT_SUCCESS;

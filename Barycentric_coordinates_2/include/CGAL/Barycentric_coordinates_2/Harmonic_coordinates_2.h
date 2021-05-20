@@ -189,8 +189,7 @@ namespace Barycentric_coordinates {
     */
     template<typename OutIterator>
     OutIterator operator()(
-      const Point_2& query,
-      OutIterator c_begin) {
+      const Point_2& query, OutIterator c_begin) {
 
       CGAL_precondition(
         m_setup_is_called &&
@@ -281,8 +280,7 @@ namespace Barycentric_coordinates {
     */
     template<typename OutIterator>
     OutIterator operator()(
-      const std::size_t query_index,
-      OutIterator c_begin) {
+      const std::size_t query_index, OutIterator c_begin) {
 
       CGAL_precondition(
         m_setup_is_called &&
@@ -301,11 +299,13 @@ namespace Barycentric_coordinates {
       // Save harmonic coordinates.
       const std::size_t n = m_polygon.size();
       if (m_domain.is_on_boundary(query_index)) {
-        for (std::size_t k = 0; k < n; ++k)
+        for (std::size_t k = 0; k < n; ++k) {
           *(c_begin++) = m_boundary(m_indices[query_index], k);
+        }
       } else {
-        for (std::size_t k = 0; k < n; ++k)
+        for (std::size_t k = 0; k < n; ++k) {
           *(c_begin++) = m_interior(m_indices[query_index], k);
+        }
       }
       return c_begin;
     }
@@ -510,8 +510,9 @@ namespace Barycentric_coordinates {
             std::back_inserter(lambda), m_traits, m_point_map);
 
           // Set boundary vector.
-          for (std::size_t k = 0; k < n; ++k)
+          for (std::size_t k = 0; k < n; ++k) {
             boundary(indices[i], k) = lambda[k];
+          }
         }
       }
     }
@@ -561,8 +562,9 @@ namespace Barycentric_coordinates {
             W -= w;
 
             if (m_domain.is_on_boundary(idx)) {
-              for (std::size_t k = 0; k < n; ++k)
+              for (std::size_t k = 0; k < n; ++k) {
                 b(indices[i], k) -= boundary(indices[idx], k) * w;
+              }
             } else {
               triplet_list.push_back(
                 TripletFT(indices[i], indices[idx], w));

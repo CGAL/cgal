@@ -31,22 +31,24 @@ int main() {
   std::vector<FT> coordinates;
   coordinates.reserve(queries.size() * 3);
 
-  for(const auto& query : queries)
+  for (const auto& query : queries) {
     CGAL::Barycentric_coordinates::triangle_coordinates_2(
       p0, p1, p2, query, std::back_inserter(coordinates));
+  }
 
   // Output all triangle coordinates.
   std::cout << std::endl << "triangle coordinates (all queries): " << std::endl << std::endl;
-  for (std::size_t i = 0; i < coordinates.size(); i += 3)
+  for (std::size_t i = 0; i < coordinates.size(); i += 3) {
     std::cout <<
     coordinates[i + 0] << ", " <<
     coordinates[i + 1] << ", " <<
     coordinates[i + 2] << std::endl;
+  }
   std::cout << std::endl;
 
   // Get a tuple of triangle coordinates for the first point.
-  const auto tuple = CGAL::Barycentric_coordinates::triangle_coordinates_in_tuple_2(
-    p0, p1, p2, queries[0]);
+  const auto tuple =
+    CGAL::Barycentric_coordinates::triangle_coordinates_in_tuple_2(p0, p1, p2, queries[0]);
   std::cout << "triangle coordinates (query 0): " <<
     std::get<0>(tuple) << " " << std::get<1>(tuple) << " " << std::get<2>(tuple) << std::endl << std::endl;
 

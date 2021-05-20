@@ -153,8 +153,7 @@ namespace Barycentric_coordinates {
     */
     template<typename PointRange>
     void create(
-      const FT max_edge_length,
-      const PointRange& seeds) {
+      const FT max_edge_length, const PointRange& seeds) {
 
       create_triangulation();
       refine_triangulation(
@@ -181,8 +180,7 @@ namespace Barycentric_coordinates {
       one past the last barycenter stored
     */
     template<typename OutIterator>
-    OutIterator barycenters(
-      OutIterator b_begin) const {
+    OutIterator barycenters(OutIterator b_begin) const {
 
       const std::size_t num_faces = get_number_of_faces();
       if (num_faces == 0) return b_begin;
@@ -296,8 +294,9 @@ namespace Barycentric_coordinates {
       triangle.clear();
       const auto fh = m_cdt.locate(query);
       if (fh->is_in_domain()) {
-        for (std::size_t i = 0; i < 3; ++i)
+        for (std::size_t i = 0; i < 3; ++i) {
           triangle.push_back(fh->vertex(i)->info().index);
+        }
       }
     }
 
@@ -334,8 +333,9 @@ namespace Barycentric_coordinates {
       const std::size_t num_vertices = points.size();
       add_ply_header_points(num_vertices, out);
 
-      for (const auto& point : points)
+      for (const auto& point : points) {
         out << point << " 0 0 0 0" << std::endl;
+      }
       save(out, file_path + ".ply");
     }
 
@@ -349,8 +349,9 @@ namespace Barycentric_coordinates {
       const std::size_t num_vertices = points.size();
       add_ply_header_points(num_vertices, out);
 
-      for (const auto& point : points)
+      for (const auto& point : points) {
         out << point << " 0 0 0" << std::endl;
+      }
       save(out, file_path + ".ply");
     }
 
@@ -417,15 +418,15 @@ namespace Barycentric_coordinates {
 
       for (std::size_t i = 0; i < n; ++i) {
         const std::size_t ip = (i + 1) % n;
-        if (m_vhs[i] != m_vhs[ip])
+        if (m_vhs[i] != m_vhs[ip]) {
           m_cdt.insert_constraint(m_vhs[i], m_vhs[ip]);
+        }
       }
     }
 
     template<typename PointRange>
     void refine_triangulation(
-      const FT max_edge_length,
-      const PointRange& seeds) {
+      const FT max_edge_length, const PointRange& seeds) {
 
       // 0.125 is the default shape bound that corresponds to a bound of 20.6 degrees.
       Mesher mesher(m_cdt);
@@ -494,9 +495,9 @@ namespace Barycentric_coordinates {
           const auto fh = edge->first;
           const auto nh = fh->vertex(edge->second);
 
-          if (fh->is_in_domain())
+          if (fh->is_in_domain()) {
             vh->info().neighbors.push_back(nh->info().index);
-          else {
+          } else {
             vh->info().neighbors.push_back(nh->info().index);
             break;
           } ++edge;

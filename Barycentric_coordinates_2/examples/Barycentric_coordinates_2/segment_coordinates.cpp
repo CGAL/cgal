@@ -28,21 +28,23 @@ int main() {
   std::vector<FT> coordinates;
   coordinates.reserve(queries.size() * 2);
 
-  for(const auto& query : queries)
+  for (const auto& query : queries) {
     CGAL::Barycentric_coordinates::segment_coordinates_2(
       source, target, query, std::back_inserter(coordinates));
+  }
 
   // Output all segment coordinates.
   std::cout << std::endl << "segment coordinates (all queries): " << std::endl << std::endl;
-  for (std::size_t i = 0; i < coordinates.size(); i += 2)
+  for (std::size_t i = 0; i < coordinates.size(); i += 2) {
     std::cout <<
     coordinates[i + 0] << ", " <<
     coordinates[i + 1] << std::endl;
+  }
   std::cout << std::endl;
 
   // Get a pair of segment coordinates for the first point.
-  const auto pair = CGAL::Barycentric_coordinates::segment_coordinates_in_pair_2(
-    source, target, queries[0]);
+  const auto pair =
+    CGAL::Barycentric_coordinates::segment_coordinates_in_pair_2(source, target, queries[0]);
   std::cout << "segment coordinates (query 0): " <<
     pair.first << " " << pair.second << std::endl << std::endl;
 

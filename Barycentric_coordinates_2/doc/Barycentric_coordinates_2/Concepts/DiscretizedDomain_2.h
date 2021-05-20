@@ -23,7 +23,7 @@ public:
   /*!
     returns the number of vertices after meshing the domain.
   */
-  const std::size_t number_of_vertices() const {
+  std::size_t number_of_vertices() const {
 
   }
 
@@ -40,19 +40,18 @@ public:
     verifies if the vertex with the index `query_index` is on the
     boundary of the domain.
   */
-  const bool is_on_boundary(
+  bool is_on_boundary(
     const std::size_t query_index) const {
 
   }
 
   /*!
-    fills `neighbors` with the indices of the vertices, which from the one-ring
+    fills `neighbors` with the indices of the vertices, which form the one-ring
     neighborhood of the vertex with the index `query_index`, the neighbors have to
     be in the counterclockwise order and form a simple polygon.
   */
   void operator()(
-    const std::size_t query_index,
-    std::vector<std::size_t>& neighbors) {
+    const std::size_t query_index, std::vector<std::size_t>& neighbors) {
 
   }
 
@@ -62,8 +61,7 @@ public:
     `query` point does not belong to the domain; the type `Query_2` is a model of `Kernel::Point_2`.
   */
   void locate(
-    const Query_2& query,
-    std::vector<std::size_t>& indices) {
+    const Query_2& query, std::vector<std::size_t>& indices) {
 
   }
 };

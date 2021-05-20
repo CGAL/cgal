@@ -159,10 +159,7 @@ namespace Barycentric_coordinates {
       one past the last weight stored
     */
     template<typename OutIterator>
-    OutIterator weights(
-      const Point_2& query,
-      OutIterator w_begin) {
-
+    OutIterator weights(const Point_2& query, OutIterator w_begin) {
       const bool normalize = false;
       return compute(query, w_begin, normalize);
     }
@@ -192,10 +189,7 @@ namespace Barycentric_coordinates {
       one past the last coordinate stored
     */
     template<typename OutIterator>
-    OutIterator operator()(
-      const Point_2& query,
-      OutIterator c_begin) {
-
+    OutIterator operator()(const Point_2& query, OutIterator c_begin) {
       const bool normalize = true;
       return compute(query, c_begin, normalize);
     }
@@ -225,9 +219,7 @@ namespace Barycentric_coordinates {
 
     template<typename OutputIterator>
     OutputIterator compute(
-      const Point_2& query,
-      OutputIterator output,
-      const bool normalize) {
+      const Point_2& query, OutputIterator output, const bool normalize) {
 
       switch (m_computation_policy) {
 
@@ -244,11 +236,13 @@ namespace Barycentric_coordinates {
 
         case Computation_policy_2::PRECISE_WITH_EDGE_CASES: {
           const auto edge_case = verify(query, output);
-          if (edge_case == internal::Edge_case::BOUNDARY)
+          if (edge_case == internal::Edge_case::BOUNDARY) {
             return output;
-          if (edge_case == internal::Edge_case::EXTERIOR)
+          }
+          if (edge_case == internal::Edge_case::EXTERIOR) {
             std::cerr << std::endl <<
             "WARNING: query does not belong to the polygon!" << std::endl;
+          }
           if (normalize) {
             return max_precision_coordinates(query, output);
           } else {
@@ -265,11 +259,13 @@ namespace Barycentric_coordinates {
 
         case Computation_policy_2::FAST_WITH_EDGE_CASES: {
           const auto edge_case = verify(query, output);
-          if (edge_case == internal::Edge_case::BOUNDARY)
+          if (edge_case == internal::Edge_case::BOUNDARY) {
             return output;
-          if (edge_case == internal::Edge_case::EXTERIOR)
+          }
+          if (edge_case == internal::Edge_case::EXTERIOR) {
             std::cerr << std::endl <<
             "WARNING: query does not belong to the polygon!" << std::endl;
+          }
           return m_wachspress_weights_2(query, output, normalize);
         }
 
@@ -283,18 +279,19 @@ namespace Barycentric_coordinates {
 
     template<typename OutputIterator>
     internal::Edge_case verify(
-      const Point_2& query,
-      OutputIterator output) const {
+      const Point_2& query, OutputIterator output) const {
 
       const auto result = internal::locate_wrt_polygon_2(
         m_polygon, query, m_traits, m_point_map);
-      if (!result)
+      if (!result) {
         return internal::Edge_case::EXTERIOR;
+      }
 
       const auto location = (*result).first;
       const std::size_t index = (*result).second;
-      if (location == internal::Query_point_location::ON_UNBOUNDED_SIDE)
+      if (location == internal::Query_point_location::ON_UNBOUNDED_SIDE) {
         return internal::Edge_case::EXTERIOR;
+      }
 
       if (
         location == internal::Query_point_location::ON_VERTEX ||
@@ -308,8 +305,7 @@ namespace Barycentric_coordinates {
 
     template<typename OutputIterator>
     OutputIterator max_precision_coordinates(
-      const Point_2& query,
-      OutputIterator coordinates) {
+      const Point_2& query, OutputIterator coordinates) {
 
       // Get the number of vertices in the polygon.
       const std::size_t n = m_polygon.size();
@@ -333,30 +329,35 @@ namespace Barycentric_coordinates {
       // Then we multiply them by areas A as in the formula (5) from [1].
       // We also split the loop.
       w[0] = m_area_2(pn, p1, p2);
-      for(std::size_t j = 1; j < n - 1; ++j)
+      for (std::size_t j = 1; j < n - 1; ++j) {
         w[0] *= A[j];
+      }
 
-      for(std::size_t i = 1; i < n - 1; ++i) {
+      for (std::size_t i = 1; i < n - 1; ++i) {
         const auto& pi0 = get(m_point_map, *(m_polygon.begin() + (i - 1)));
         const auto& pi1 = get(m_point_map, *(m_polygon.begin() + (i + 0)));
         const auto& pi2 = get(m_point_map, *(m_polygon.begin() + (i + 1)));
         w[i] = m_area_2(pi0, pi1, pi2);
 
-        for (std::size_t j = 0; j < i - 1; ++j)
+        for (std::size_t j = 0; j < i - 1; ++j) {
           w[i] *= A[j];
-        for (std::size_t j = i + 1; j < n; ++j)
+        }
+        for (std::size_t j = i + 1; j < n; ++j) {
           w[i] *= A[j];
+        }
       }
 
       const auto& pm = get(m_point_map, *(m_polygon.begin() + (n - 2)));
       w[n - 1] = m_area_2(pm, pn, p1);
-      for (std::size_t j = 0; j < n - 2; ++j)
+      for (std::size_t j = 0; j < n - 2; ++j) {
         w[n - 1] *= A[j];
+      }
 
       // Return coordinates.
       internal::normalize(w);
-      for (std::size_t i = 0; i < n; ++i)
+      for (std::size_t i = 0; i < n; ++i) {
         *(coordinates++) = w[i];
+      }
       return coordinates;
     }
   };

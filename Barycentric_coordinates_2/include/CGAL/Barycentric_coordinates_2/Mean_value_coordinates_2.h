@@ -170,10 +170,7 @@ namespace Barycentric_coordinates {
       one past the last weight stored
     */
     template<typename OutIterator>
-    OutIterator weights(
-      const Point_2& query,
-      OutIterator w_begin) {
-
+    OutIterator weights(const Point_2& query, OutIterator w_begin) {
       const bool normalize = false;
       return compute(query, w_begin, normalize);
     }
@@ -203,10 +200,7 @@ namespace Barycentric_coordinates {
       one past the last coordinate stored
     */
     template<typename OutIterator>
-    OutIterator operator()(
-      const Point_2& query,
-      OutIterator c_begin) {
-
+    OutIterator operator()(const Point_2& query, OutIterator c_begin) {
       const bool normalize = true;
       return compute(query, c_begin, normalize);
     }
@@ -248,9 +242,7 @@ namespace Barycentric_coordinates {
 
     template<typename OutputIterator>
     OutputIterator compute(
-      const Point_2& query,
-      OutputIterator output,
-      const bool normalize) {
+      const Point_2& query, OutputIterator output, const bool normalize) {
 
       switch (m_computation_policy) {
 
@@ -267,8 +259,9 @@ namespace Barycentric_coordinates {
 
         case Computation_policy_2::PRECISE_WITH_EDGE_CASES: {
           const auto edge_case = verify(query, output);
-          if (edge_case == internal::Edge_case::BOUNDARY)
+          if (edge_case == internal::Edge_case::BOUNDARY) {
             return output;
+          }
           if (normalize) {
             return max_precision_coordinates(query, output);
           } else {
@@ -285,8 +278,9 @@ namespace Barycentric_coordinates {
 
         case Computation_policy_2::FAST_WITH_EDGE_CASES: {
           const auto edge_case = verify(query, output);
-          if (edge_case == internal::Edge_case::BOUNDARY)
+          if (edge_case == internal::Edge_case::BOUNDARY) {
             return output;
+          }
           return m_mean_value_weights_2(query, output, normalize);
         }
 
@@ -300,18 +294,19 @@ namespace Barycentric_coordinates {
 
     template<typename OutputIterator>
     internal::Edge_case verify(
-      const Point_2& query,
-      OutputIterator output) const {
+      const Point_2& query, OutputIterator output) const {
 
       const auto result = internal::locate_wrt_polygon_2(
         m_polygon, query, m_traits, m_point_map);
-      if (!result)
+      if (!result) {
         return internal::Edge_case::EXTERIOR;
+      }
 
       const auto location = (*result).first;
       const std::size_t index = (*result).second;
-      if (location == internal::Query_point_location::ON_UNBOUNDED_SIDE)
+      if (location == internal::Query_point_location::ON_UNBOUNDED_SIDE) {
         return internal::Edge_case::EXTERIOR;
+      }
 
       if (
         location == internal::Query_point_location::ON_VERTEX ||
@@ -325,8 +320,7 @@ namespace Barycentric_coordinates {
 
     template<typename OutputIterator>
     OutputIterator max_precision_coordinates(
-      const Point_2& query,
-      OutputIterator coordinates) {
+      const Point_2& query, OutputIterator coordinates) {
 
       // Get the number of vertices in the polygon.
       const std::size_t n = m_polygon.size();
@@ -366,39 +360,44 @@ namespace Barycentric_coordinates {
 
       // Following section 4.2 from [2] we denote P_j = r_j*r_{j+1} + dot_product(d_j, d_{j+1}).
       // Vector s_i from [1] corresponds to that one with the name d_i in [2].
-      for (std::size_t j = 0; j < n - 1; ++j)
+      for (std::size_t j = 0; j < n - 1; ++j) {
         P[j] = (CGAL::max)(r[j] * r[j + 1] + m_scalar_product_2(s[j], s[j + 1]), FT(0));
+      }
       P[n - 1] = (CGAL::max)(r[n - 1] * r[0] + m_scalar_product_2(s[n - 1], s[0]), FT(0));
 
       // Compute mean value weights using the formula (16) from [2].
       // Since the formula (16) always gives positive values,
       // we have to add a proper sign to all the weight functions.
       w[0] = r[n - 1] * r[1] - m_scalar_product_2(s[n - 1], s[1]);
-      for (std::size_t j = 1; j < n - 1; ++j)
+      for (std::size_t j = 1; j < n - 1; ++j) {
         w[0] *= P[j];
+      }
       w[0] = sign_of_weight(A[n - 1], A[0], B[0]) * m_sqrt(w[0]);
 
       for (std::size_t i = 1; i < n - 1; ++i) {
         w[i] = r[i - 1] * r[i + 1] - m_scalar_product_2(s[i - 1], s[i + 1]);
 
-        for (std::size_t j = 0; j < i - 1; ++j)
+        for (std::size_t j = 0; j < i - 1; ++j) {
           w[i] *= P[j];
-
-        for(std::size_t j = i + 1; j < n; ++j)
+        }
+        for (std::size_t j = i + 1; j < n; ++j) {
           w[i] *= P[j];
+        }
 
         w[i] = sign_of_weight(A[i - 1], A[i], B[i]) * m_sqrt(w[i]);
       }
 
       w[n - 1] = r[n - 2] * r[0] - m_scalar_product_2(s[n - 2], s[0]);
-      for (std::size_t j = 0; j < n - 2; ++j)
+      for (std::size_t j = 0; j < n - 2; ++j) {
         w[n - 1] *= P[j];
+      }
       w[n - 1] = sign_of_weight(A[n - 2], A[n - 1], B[n - 1]) * m_sqrt(w[n - 1]);
 
       // Return coordinates.
       internal::normalize(w);
-      for (std::size_t i = 0; i < n; ++i)
+      for (std::size_t i = 0; i < n; ++i) {
         *(coordinates++) = w[i];
+      }
       return coordinates;
     }
 

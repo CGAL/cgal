@@ -101,11 +101,11 @@ namespace internal {
   // Get default values.
   template<typename OutputIterator>
   void get_default(
-    const std::size_t n,
-    OutputIterator output) {
+    const std::size_t n, OutputIterator output) {
 
-    for (std::size_t i = 0; i < n; ++i)
+    for (std::size_t i = 0; i < n; ++i) {
       *(output++) = 0;
+    }
   }
 
   // Normalize values.
@@ -113,16 +113,17 @@ namespace internal {
   void normalize(std::vector<FT>& values) {
 
     FT sum = FT(0);
-    for (const FT& value : values)
+    for (const FT& value : values) {
       sum += value;
+    }
 
     CGAL_assertion(sum != FT(0));
-    if (sum == FT(0))
-      return;
+    if (sum == FT(0)) return;
 
     const FT inv_sum = FT(1) / sum;
-    for (FT& value : values)
+    for (FT& value : values) {
       value *= inv_sum;
+    }
   }
 
   // Compute barycentric coordinates along the line.
@@ -241,8 +242,9 @@ namespace internal {
       const auto& p1 = get(point_map, *(polygon.begin() + i));
 
       const FT sq_r = squared_distance_2(query, p1);
-      if (sq_r < sq_tolerance)
+      if (sq_r < sq_tolerance) {
         return std::make_pair(Query_point_location::ON_VERTEX, i);
+      }
 
       const std::size_t ip = (i + 1) % n;
       const auto& p2 = get(point_map, *(polygon.begin() + ip));
@@ -253,8 +255,9 @@ namespace internal {
       const FT A = half * cross_product_2(s1, s2);
       const FT D = scalar_product_2(s1, s2);
 
-      if (CGAL::abs(A) < tolerance && D < FT(0))
+      if (CGAL::abs(A) < tolerance && D < FT(0)) {
         return std::make_pair(Query_point_location::ON_EDGE, i);
+      }
     }
     return boost::none;
   }
@@ -281,8 +284,9 @@ namespace internal {
     for (std::size_t i = 0; i < n; ++i) {
       const auto& p1 = get(point_map, *(polygon.begin() + i));
 
-      if (p1 == query)
+      if (p1 == query) {
         return std::make_pair(Query_point_location::ON_VERTEX, i);
+      }
 
       const std::size_t ip = (i + 1) % n;
       const auto& p2 = get(point_map, *(polygon.begin() + ip));
@@ -325,8 +329,9 @@ namespace internal {
     linear_coordinates_2(
       source, target, query, std::back_inserter(b), traits);
     *(coordinates++) = b[1];
-    for (std::size_t i = 1; i < n - 1; ++i)
+    for (std::size_t i = 1; i < n - 1; ++i) {
       *(coordinates++) = FT(0);
+    }
     *(coordinates++) = b[0];
 
     return std::make_pair(coordinates, true);
@@ -357,19 +362,21 @@ namespace internal {
         CGAL_assertion(index >= 0 && index < n);
 
         for (std::size_t i = 0; i < n; ++i)
-          if (i == index)
+          if (i == index) {
             *(coordinates++) = FT(1);
-          else
+          } else {
             *(coordinates++) = FT(0);
+          }
         return std::make_pair(coordinates, true);
       }
 
       case Query_point_location::ON_EDGE: {
         CGAL_assertion(index >= 0 && index < n);
 
-        if (index == n - 1)
+        if (index == n - 1) {
           return coordinates_on_last_edge_2(
             polygon, query, coordinates, traits, point_map);
+        }
 
         const std::size_t indexp = (index + 1) % n;
         const auto& source = get(point_map, *(polygon.begin() + index));

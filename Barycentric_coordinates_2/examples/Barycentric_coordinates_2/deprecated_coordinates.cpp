@@ -62,8 +62,9 @@ int main() {
     ++count;
 
     // Output the coordinates.
-    for (std::size_t i = 0; i < coordinates.size() - 1; ++i)
+    for (std::size_t i = 0; i < coordinates.size() - 1; ++i) {
       std::cout << coordinates[i] << ", ";
+    }
     std::cout << coordinates[coordinates.size() - 1] << std::endl;
   }
   std::cout << std::endl;

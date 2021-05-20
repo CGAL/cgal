@@ -49,8 +49,9 @@ int main() {
   discrete_harmonic_2.weights(center, std::back_inserter(weights));
 
   std::cout << std::endl << "discrete harmonic weights (center): ";
-  for (const FT& weight : weights)
+  for (const FT& weight : weights) {
     std::cout << weight << " ";
+  }
   std::cout << std::endl;
 
   // Compute discrete harmonic coordinates for the center point.
@@ -58,8 +59,9 @@ int main() {
   discrete_harmonic_2(center, std::back_inserter(coordinates));
 
   std::cout << std::endl << "discrete harmonic coordinates (center): ";
-  for (const FT& coordinate : coordinates)
+  for (const FT& coordinate : coordinates) {
     std::cout << coordinate << " ";
+  }
   std::cout << std::endl;
 
   // Construct several interior points.
@@ -76,8 +78,9 @@ int main() {
   for (const auto& query : interior_points) {
     ws.clear();
     discrete_harmonic_2.weights(query, std::back_inserter(ws));
-    for (std::size_t i = 0; i < ws.size() - 1; ++i)
+    for (std::size_t i = 0; i < ws.size() - 1; ++i) {
       std::cout << ws[i] << ", ";
+    }
     std::cout << ws[ws.size() - 1] << std::endl;
   }
 
@@ -88,8 +91,9 @@ int main() {
   for (const auto& query : interior_points) {
     bs.clear();
     discrete_harmonic_2(query, std::back_inserter(bs));
-    for (std::size_t i = 0; i < bs.size() - 1; ++i)
+    for (std::size_t i = 0; i < bs.size() - 1; ++i) {
       std::cout << bs[i] << ", ";
+    }
     std::cout << bs[bs.size() - 1] << std::endl;
   }
 
@@ -106,8 +110,9 @@ int main() {
     square, e4, std::back_inserter(coordinates), kernel, point_map);
 
   std::cout << std::endl << "boundary coordinates (edge 2 and edge 4): ";
-  for (const FT& coordinate : coordinates)
+  for (const FT& coordinate : coordinates) {
     std::cout << coordinate << " ";
+  }
   std::cout << std::endl;
 
   // Construct 6 other boundary points: 2 on the first and third edges respectively
@@ -128,8 +133,9 @@ int main() {
     bs.clear();
     CGAL::Barycentric_coordinates::boundary_coordinates_2(
       square, query, std::back_inserter(bs), point_map); // we can skip kernel here
-    for (std::size_t i = 0; i < bs.size() - 1; ++i)
+    for (std::size_t i = 0; i < bs.size() - 1; ++i) {
       std::cout << bs[i] << ", ";
+    }
     std::cout << bs[bs.size() - 1] << std::endl;
   }
 
@@ -145,8 +151,9 @@ int main() {
   discrete_harmonic_2(r, std::back_inserter(coordinates));
 
   std::cout << std::endl << "discrete harmonic coordinates (exterior): ";
-  for (const FT& coordinate : coordinates)
+  for (const FT& coordinate : coordinates) {
     std::cout << coordinate << " ";
+  }
   std::cout << std::endl << std::endl;
 
   return EXIT_SUCCESS;
