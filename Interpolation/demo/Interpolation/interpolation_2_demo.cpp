@@ -270,7 +270,7 @@ int main(int ,  char** )
 
   //viewer
   CGAL::Geomview_stream gv(CGAL::Bbox_3(0,0,0, 2, 2, 2));
-  gv.set_bg_color(CGAL::Color(0, 200, 200));
+  gv.set_bg_color(CGAL::IO::Color(0, 200, 200));
   gv.clear();
   gv.set_line_width(2);
 
@@ -278,14 +278,14 @@ int main(int ,  char** )
 
   std::cout << "The data points are displayed in blue in the geomview"
             << " application." << std::endl;
-  gv << CGAL::blue();
+  gv << CGAL::IO::blue();
   visu_points(gv,sample_3);
 
   //show the gradients
   if(method>0){
     std::cout << "The function gradients are displayed by red lines "
               <<" in the geomview application." << std::endl;
-    gv <<CGAL::red();
+    gv <<CGAL::IO::red();
     gv << Segment_3(Point_3(h/3,h/3,w),Point_3(h/3,h/3,w)+ Vector_3(-g,-g,0));
     gv << Segment_3(Point_3(-h/3,h/3,w),Point_3(-h/3,h/3,w)+Vector_3(g,-g,0));
     gv << Segment_3(Point_3(-h/3,-h/3,w),Point_3(-h/3,-h/3,w)+Vector_3(g,g,0));

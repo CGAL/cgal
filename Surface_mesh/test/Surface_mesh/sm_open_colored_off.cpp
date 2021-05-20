@@ -31,20 +31,20 @@ void OpenOFF(int i)
   CGAL_assertion(in && !surface_mesh.is_empty());
 
 
-  SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
-      surface_mesh.property_map<face_descriptor, CGAL::Color >("f:color").first;
+  SMesh::Property_map<face_descriptor, CGAL::IO::Color> fcolors =
+      surface_mesh.property_map<face_descriptor, CGAL::IO::Color >("f:color").first;
 
-  SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
-    surface_mesh.property_map<vertex_descriptor, CGAL::Color >("v:color").first;
-  CGAL::Color c = fcolors[*(surface_mesh.faces().begin())];
-  CGAL_assertion(c== CGAL::Color(229,0,0));
+  SMesh::Property_map<vertex_descriptor, CGAL::IO::Color> vcolors =
+    surface_mesh.property_map<vertex_descriptor, CGAL::IO::Color >("v:color").first;
+  CGAL::IO::Color c = fcolors[*(surface_mesh.faces().begin())];
+  CGAL_assertion(c== CGAL::IO::Color(229,0,0));
   c = fcolors[*(--surface_mesh.faces().end())];
-  CGAL_assertion(c== CGAL::Color(0,0,229));
+  CGAL_assertion(c== CGAL::IO::Color(0,0,229));
 
   c = vcolors[*(surface_mesh.vertices().begin())];
-  CGAL_assertion((c== CGAL::Color(229,0,0)));
+  CGAL_assertion((c== CGAL::IO::Color(229,0,0)));
   c = vcolors[*(--surface_mesh.vertices().end())];
-  CGAL_assertion((c== CGAL::Color(0,0,229)));
+  CGAL_assertion((c== CGAL::IO::Color(0,0,229)));
 }
 
 

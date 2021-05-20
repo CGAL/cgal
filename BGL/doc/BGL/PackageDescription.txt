@@ -756,8 +756,8 @@ user might encounter.
 - `CGAL::alpha_expansion_graphcut()`
 
 \cgalCRPSection{I/O Functions}
-- `CGAL::read_polygon_mesh()`
-- `CGAL::write_polygon_mesh()`
+- `CGAL::IO::read_polygon_mesh()`
+- `CGAL::IO::write_polygon_mesh()`
 - \link PkgBGLIoFuncsSTL I/O for STL files \endlink
 - \link PkgBGLIoFuncsPLY I/O for PLY files \endlink
 - \link PkgBGLIoFuncsOBJ I/O for OBJ files \endlink

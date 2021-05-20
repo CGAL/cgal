@@ -375,8 +375,15 @@ protected:
   }
 
   Nef_polyhedron_3& operator=(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) {
-    Base::operator=(N1);
+    Base::operator=(N1); // copy the handle
     set_snc(snc());
+    return (*this);
+  }
+
+  Nef_polyhedron_3& operator=(Nef_polyhedron_3<Kernel,Items, Mark>&& N1) noexcept {
+    N1.set_snc(snc()); // N1.set_snc sets N1.sncp_ not N1.snc_
+    Base::operator=(std::move(N1)); // swap the handles
+    set_snc(snc()); // snc() will return N1.snc_
     return (*this);
   }
 
@@ -496,8 +503,7 @@ protected:
        SFace_handle sf(v->new_sface());
        SM.link_as_isolated_vertex(sv,sf);
        if(first) {
-         sv->set_index();
-         index = sv->get_index();
+         index = sv->new_index();
          first = false;
        } else
          sv->set_index(index);
@@ -518,8 +524,7 @@ protected:
        SM.link_as_isolated_vertex(sv1,sf);
        SM.link_as_isolated_vertex(sv2,sf);
        sv1->set_index(index);
-       sv2->set_index();
-       index = sv2->get_index();
+       index = sv2->new_index();
      }
  };
 
@@ -1705,6 +1710,8 @@ protected:
     bool ninety = is_90degree_rotation(aff);
     bool scale = is_scaling(aff);
 
+    bool translate = aff.is_translation();
+
     Vertex_iterator vi;
     CGAL_forall_vertices( vi, snc()) {
 
@@ -1721,8 +1728,10 @@ protected:
         vertex_list.push_back(vi);
       } else {
         vi->point() = vi->point().transform( aff);
-        SM_decorator sdeco(&*vi);
-        sdeco.transform( linear);
+        if(! translate){
+          SM_decorator sdeco(&*vi);
+          sdeco.transform( linear);
+        }
       }
     }
 

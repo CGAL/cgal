@@ -240,7 +240,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Line_2<R>& l)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << l.a() << ' ' << l.b() << ' ' << l.c();
     case IO::BINARY :
@@ -267,9 +267,9 @@ std::istream&
 extract(std::istream& is, Line_2<R>& l)
 {
   typename R::RT a(0), b(0), c(0);
-    switch(get_mode(is)) {
+    switch(IO::get_mode(is)) {
     case IO::ASCII :
-        is >> iformat(a) >> iformat(b) >> iformat(c);
+        is >> IO::iformat(a) >> IO::iformat(b) >> IO::iformat(c);
         break;
     case IO::BINARY :
         read(is, a);

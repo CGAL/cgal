@@ -38,10 +38,10 @@ public:
     , m_isMoving(false)
     , m_hasNewPt(false)
     , m_selMode(NORMAL)
-    , m_nearestNb(NULL)
+    , m_nearestNb(nullptr)
     , m_hasEmptyS(false)
     , m_showTrackball(true)
-    , m_pDlgPrefer(NULL)
+    , m_pDlgPrefer(nullptr)
     {
       pos_emptyFacet = new std::vector<float>();
       pos_emptySphere= new std::vector<float>();
@@ -99,7 +99,7 @@ public:
     m_curMode = m;
     m_isMoving = false;
     m_hasEmptyS = false;
-    m_nearestNb = NULL;
+    m_nearestNb = nullptr;
     update();
   }
 
@@ -167,7 +167,7 @@ public Q_SLOTS:
     m_conflictCells.clear();
     m_vidSeled.clear();
     m_isMoving = false;
-    m_nearestNb = NULL;
+    m_nearestNb = nullptr;
     m_hasEmptyS = false;
     if( !m_incrementalPts.isEmpty() ) {
       Q_EMIT( stopIncAnimation() );
@@ -185,7 +185,7 @@ public Q_SLOTS:
     m_conflictCells.clear();
     m_vidSeled.clear();
     m_isMoving = false;
-    m_nearestNb = NULL;
+    m_nearestNb = nullptr;
     m_hasEmptyS = false;
   }
   // stop incremental construction

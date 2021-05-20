@@ -23,7 +23,6 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/kernel_config.h>
-#include <CGAL/result_of.h>
 
 namespace CGAL {
 
@@ -70,45 +69,53 @@ public:
   Segment_2(const Point_2 &sp, const Point_2 &ep)
     :  RSegment_2(typename R::Construct_segment_2()(Return_base_tag(), sp,ep)) {}
 
-  typename cpp11::result_of<typename R::Construct_source_2( Segment_2)>::type
+  decltype(auto)
   source() const
   {
     return R_().construct_source_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Construct_target_2( Segment_2)>::type
+  decltype(auto)
   target() const
   {
     return R_().construct_target_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Construct_source_2( Segment_2)>::type
+  decltype(auto)
   start() const
   {
     return source();
   }
 
-  typename cpp11::result_of<typename R::Construct_target_2( Segment_2)>::type
+  decltype(auto)
   end() const
   {
     return target();
   }
 
+  decltype(auto)
+  min BOOST_PREVENT_MACRO_SUBSTITUTION() const {
+    typename R_::Less_xy_2 less_xy;
+    return less_xy(source(), target()) ? source() : target();
+  }
 
-  typename cpp11::result_of<typename R_::Construct_min_vertex_2(Segment_2)>::type
-  min BOOST_PREVENT_MACRO_SUBSTITUTION() const;
+  decltype(auto)
+  max BOOST_PREVENT_MACRO_SUBSTITUTION() const {
+    typename R_::Less_xy_2 less_xy;
+    return less_xy(source(), target()) ? target() : source();
+  }
 
-  typename cpp11::result_of<typename R_::Construct_max_vertex_2( Segment_2)>::type
-  max BOOST_PREVENT_MACRO_SUBSTITUTION () const;
+  decltype(auto)
+  vertex(int i) const
+  { return (i%2 == 0) ? source() : target(); }
 
-  typename cpp11::result_of<typename R_::Construct_vertex_2( Segment_2, int)>::type
-  vertex(int i) const;
+  decltype(auto)
+  point(int i) const
+  { return vertex(i); }
 
-  typename cpp11::result_of<typename R_::Construct_vertex_2( Segment_2, int)>::type
-  point(int i) const;
-
-  typename cpp11::result_of<typename R_::Construct_vertex_2( Segment_2, int)>::type
-  operator[](int i) const;
+  decltype(auto)
+  operator[](int i) const
+  { return vertex(i); }
 
   bool        is_horizontal() const;
   bool        is_vertical() const;
@@ -170,47 +177,6 @@ public:
   }
 };
 
-template < class R_ >
-CGAL_KERNEL_INLINE
-typename cpp11::result_of<typename R_::Construct_min_vertex_2( Segment_2<R_> )>::type
-Segment_2<R_>::min BOOST_PREVENT_MACRO_SUBSTITUTION () const
-{
-  typename R_::Less_xy_2 less_xy;
-  return less_xy(source(),target()) ? source() : target();
-}
-
-template < class R_ >
-CGAL_KERNEL_INLINE
-typename cpp11::result_of<typename R_::Construct_max_vertex_2( Segment_2<R_> )>::type
-Segment_2<R_>::max BOOST_PREVENT_MACRO_SUBSTITUTION () const
-{
-  typename R_::Less_xy_2 less_xy;
-  return less_xy(source(),target()) ? target() : source();
-}
-
-template < class R_ >
-CGAL_KERNEL_INLINE
-typename cpp11::result_of<typename R_::Construct_vertex_2( Segment_2<R_>, int )>::type
-Segment_2<R_>::vertex(int i) const
-{
-  return (i%2 == 0) ? source() : target();
-}
-
-template < class R_ >
-inline
-typename cpp11::result_of<typename R_::Construct_vertex_2( Segment_2<R_>, int )>::type
-Segment_2<R_>::point(int i) const
-{
-  return vertex(i);
-}
-
-template < class R_ >
-inline
-typename cpp11::result_of<typename R_::Construct_vertex_2( Segment_2<R_>, int )>::type
-Segment_2<R_>::operator[](int i) const
-{
-  return vertex(i);
-}
 
 template < class R_ >
 CGAL_KERNEL_INLINE
@@ -276,7 +242,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Segment_2<R> &s)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << s.source() << ' ' << s.target();
     case IO::BINARY :

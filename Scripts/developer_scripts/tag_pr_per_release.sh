@@ -30,7 +30,7 @@ REMOTE=`git config branch.releases/CGAL-${PREVIOUS_MAJOR_RELEASE}-branch.remote 
 
 # Call git-fetch to refresh the branch, and fetch the references
 # refs/pull/*/head as well.
-git fetch --tags "${REMOTE}" `git config "remote.${REMOTE}.fetch"` 'refs/pull/*/head:refs/pull/*/head'
+git fetch --tags "${REMOTE}" `git config --get-all "remote.${REMOTE}.fetch"` '+refs/pull/*/head:refs/pull/*/head'
 
 PR_LIST=`git log --pretty='%D' v${PREVIOUS_MAJOR_RELEASE}..v${CURRENT_RELEASE} | awk 'match($0, /refs\/pull\/([0-9]+)\/head/, a) {print a[1]}' | sort -u`
 

@@ -177,7 +177,7 @@ void split_halfcircle(Sphere_segment<R>& s1,
   Plane_3 h(Point_3(0,0,0),(target()-CGAL::ORIGIN));
   Sphere_point<R> p =
     CGAL::intersection(sphere_circle(),Sphere_circle<R>(h));
-  if ( !has_on(p) ) p = p.antipode();
+  if ( !has_on_after_intersection(p) ) p = p.antipode();
   s1 = Sphere_segment<R>(this->ptr()->ps_,p,this->ptr()->c_);
   s2 = Sphere_segment<R>(p,this->ptr()->pt_,this->ptr()->c_);
 }
@@ -210,7 +210,7 @@ bool has_on(const Sphere_point<R>& p) const;
 /*{\Mop return true iff |\Mvar| contains |p|.}*/
 bool has_on_after_intersection(const Sphere_point<R>& p) const;
 
-bool has_in_relative_interior(const Sphere_point<R>& p) const;
+  bool has_in_relative_interior(const Sphere_point<R>& p, bool check_has_on = true) const;
 /*{\Mop return true iff |\Mvar| contains |p| in
 its relative interior.}*/
 
@@ -315,8 +315,8 @@ has_on_after_intersection(const CGAL::Sphere_point<R>& p) const {
 
 template <typename R>
 bool Sphere_segment<R>::
-has_in_relative_interior(const CGAL::Sphere_point<R>& p) const
-{ if ( !sphere_circle().has_on(p) ) return false;
+has_in_relative_interior(const CGAL::Sphere_point<R>& p, bool check_has_on) const
+{ if (check_has_on &&( !sphere_circle().has_on(p) ) ) return false;
   if ( !is_long() ) {
     return orientation(Point_3(0,0,0),
                        CGAL::ORIGIN + sphere_circle().orthogonal_vector(),
@@ -360,11 +360,11 @@ bool do_intersect_internally(const Sphere_segment<R>& s1,
   if ( equal_as_sets(s1.sphere_circle(),s2.sphere_circle()) )
     return false;
   p = CGAL::intersection(s1.sphere_circle(),s2.sphere_circle());
-  if ( s1.has_in_relative_interior(p) &&
-       s2.has_in_relative_interior(p) ) return true;
+  if ( s1.has_in_relative_interior(p, false) &&
+       s2.has_in_relative_interior(p, false) ) return true;
   p = p.antipode();
-  if ( s1.has_in_relative_interior(p) &&
-       s2.has_in_relative_interior(p) ) return true;
+  if ( s1.has_in_relative_interior(p, false) &&
+       s2.has_in_relative_interior(p, false) ) return true;
   return false;
 }
 
@@ -377,9 +377,9 @@ bool do_intersect_internally(const Sphere_circle<R>& c1,
   if ( equal_as_sets(c1,s2.sphere_circle()) )
     return false;
   p = CGAL::intersection(c1,s2.sphere_circle());
-  if ( s2.has_in_relative_interior(p) ) return true;
+  if ( s2.has_in_relative_interior(p, false) ) return true;
   p = p.antipode();
-  if ( s2.has_in_relative_interior(p) ) return true;
+  if ( s2.has_in_relative_interior(p, false) ) return true;
   return false;
 }
 

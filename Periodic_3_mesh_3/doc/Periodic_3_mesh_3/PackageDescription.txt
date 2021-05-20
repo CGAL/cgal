@@ -53,10 +53,10 @@ of the package \ref PkgPeriodic3Triangulation3).
 By identifying a single copy of the flat torus \f$ \mathbb T_c^3\f$ (where `c`
 denotes the period) with a cube of side `c` in \f$ \mathbb R^3\f$, the meshing process
 can be exclusively conducted within a cube of side `c`.
-The mesh within a single copy is created using %CGAL's \ref PkgMesh3 package, but
-because %CGAL's \ref PkgMesh3 package aims to mesh traditional (non-periodic)
-domains, an interface is necessary between %CGAL's \ref PkgMesh3 package
-and %CGAL's \ref PkgPeriodic3Triangulation3.
+The mesh within a single copy is created using \cgal's \ref PkgMesh3 package, but
+because \cgal's \ref PkgMesh3 package aims to mesh traditional (non-periodic)
+domains, an interface is necessary between \cgal's \ref PkgMesh3 package
+and \cgal's \ref PkgPeriodic3Triangulation3.
 This package offers these interfaces.
 
 \cgalClassifedRefPages
@@ -73,8 +73,8 @@ and `MeshDomainWithFeatures_3` in the package \ref PkgMesh3 :
 
 \cgalCRPSection{Classes}
 
-The following class provides the interface between %CGAL's periodic triangulation
-and %CGAL's three-dimensional mesh generator:
+The following class provides the interface between \cgal's periodic triangulation
+and \cgal's three-dimensional mesh generator:
 - `CGAL::Periodic_3_mesh_triangulation_3<MD, K, Vertex_base, Cell_base>`
 
 The following class allows to construct a periodic implicit function from an implicit function that is not periodic:
@@ -101,6 +101,6 @@ Many classes and functions used by this package are defined within the package
 and \ref PkgMesh3Parameters.
 
 \cgalCRPSection{Input/Output Functions}
-- \link PkgPeriodic3Mesh3IOFunctions `CGAL::output_periodic_mesh_to_medit()` \endlink
+- \link PkgPeriodic3Mesh3IOFunctions `CGAL::IO::output_periodic_mesh_to_medit()` \endlink
 
 */

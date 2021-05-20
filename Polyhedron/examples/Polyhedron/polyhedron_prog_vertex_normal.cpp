@@ -101,7 +101,7 @@ int main() {
     P.make_tetrahedron( p, q, r, s);
     std::for_each( P.facets_begin(),   P.facets_end(),   Facet_normal());
     std::for_each( P.vertices_begin(), P.vertices_end(), Vertex_normal());
-    CGAL::set_pretty_mode( std::cout);
+    CGAL::IO::set_pretty_mode( std::cout);
     for ( Vertex_iterator i = P.vertices_begin(); i != P.vertices_end(); ++i)
         std::cout << i->normal() << std::endl;
     return 0;

@@ -175,7 +175,7 @@ public:
         CGAL_assertion_code(check_protocoll = 0;)
     }
 
-    ~Enriched_polyhedron_incremental_builder_3() CGAL_NOEXCEPT(CGAL_NO_ASSERTIONS_BOOL)
+    ~Enriched_polyhedron_incremental_builder_3() noexcept(!CGAL_ASSERTIONS_ENABLED)
     {
         CGAL_destructor_assertion( check_protocoll == 0);
     }

@@ -20,7 +20,7 @@ email                : pierre.alliez@sophia.inria.fr
 //********************************************
 Texture::Texture()
 {
-  m_pData = NULL;
+  m_pData = nullptr;
   m_Width = 0;
   m_WidthByte32 = 0;
   m_Height = 0;
@@ -50,7 +50,7 @@ int Texture::Alloc(unsigned int width, unsigned int height, unsigned int depth)
   unsigned int Width32 = WidthByte32(width,depth);
 
   m_pData = new unsigned char [Width32 * height];
-  if(m_pData == NULL)
+  if(m_pData == nullptr)
   {
     return 0;
   }
@@ -70,10 +70,10 @@ int Texture::Alloc(unsigned int width, unsigned int height, unsigned int depth)
 //********************************************
 void Texture::Free()
 {
-  if(m_pData != NULL)
+  if(m_pData != nullptr)
   {
     delete [] m_pData;
-    m_pData = NULL;
+    m_pData = nullptr;
   }
   m_Width = 0;
   m_Height = 0;
@@ -128,7 +128,7 @@ int Texture::IsValid()
   success = (m_Depth == 24) || (m_Depth == 32);
   success &= (m_Width != 0);
   success &= (m_Height != 0);
-  success &= (m_pData != NULL);
+  success &= (m_pData != nullptr);
   return success;
 }
 
@@ -242,7 +242,7 @@ int Texture::Extract(int left, int top, int right, int bottom)
 
   // Alloc
   unsigned char *pData = new unsigned char[NewWidthByte32*NewHeight];
-  if(pData == NULL)
+  if(pData == nullptr)
   {
     //TRACE("Insufficiant memory");
     return 0;
@@ -293,7 +293,7 @@ int Texture::DuplicateMirror(int left, int top, int right, int bottom)
 
   // Alloc
   unsigned char *pData = new unsigned char[NewWidthByte32*NewHeight];
-  if(pData == NULL)
+  if(pData == nullptr)
   {
     //TRACE("Insufficiant memory");
     return 0;
@@ -365,7 +365,7 @@ int Texture::DuplicateRepeatWidth(int left, int top, int right, int bottom)
 
   // Alloc
   unsigned char *pData = new unsigned char[NewWidthByte32*NewHeight];
-  if(pData == NULL)
+  if(pData == nullptr)
   {
     ////TRACE("Insufficiant memory");
     return 0;
@@ -503,7 +503,7 @@ int Texture::AddAlphaLayer(unsigned char alpha) // 0 - 255
 
   // Alloc memory
   unsigned char *pData = new unsigned char[4*m_Width*m_Height];
-  if(pData == NULL)
+  if(pData == nullptr)
   {
     //TRACE("Texture::AddAlphaLayer : insufficiant memory");
     return 0;
@@ -576,7 +576,7 @@ int Texture::ReadBuffer(unsigned char *buffer,
                         int height,
                         int depth)
 {
-  if(buffer == NULL)
+  if(buffer == nullptr)
     return 0;
 
   if(!Alloc(width,height,depth))
@@ -605,7 +605,7 @@ int Texture::ReadBufferByte32(unsigned char *pData,
   if(!Alloc(width,height,32))
     return 0;
 
-  if(pData == NULL)
+  if(pData == nullptr)
     return 0;
 
   memcpy(m_pData,pData,height*m_WidthByte32);
@@ -619,7 +619,7 @@ int Texture::ReadBufferByte32(unsigned char *pData,
 void Texture::Copy(Texture *pTexture)
 {
   unsigned char *pBuffer = pTexture->GetData();
-  if(pBuffer == NULL)
+  if(pBuffer == nullptr)
     return;
 
   unsigned int width = pTexture->GetWidth();
@@ -646,7 +646,7 @@ int Texture::ReadBuffer(float *buffer,
                         int height,
                         int depth)
 {
-  if(buffer == NULL)
+  if(buffer == nullptr)
     return 0;
 
   if(!Alloc(width,height,depth))
@@ -671,7 +671,7 @@ int Texture::ReadBuffer(float **ppBuffer,
                         int height,
                         float ratio)
 {
-  if(ppBuffer == NULL)
+  if(ppBuffer == nullptr)
     return 0;
 
   if(!Alloc(width,height,24))
@@ -694,7 +694,7 @@ int Texture::WriteBuffer(float **ppBuffer,
                          int width,
                          int height)
 {
-  if(ppBuffer == NULL)
+  if(ppBuffer == nullptr)
     return 0;
 
   for(int j=0;j<height;j++)
@@ -710,7 +710,7 @@ int Texture::WriteBuffer32(float **ppBuffer,
                            int width,
                            int height)
 {
-  if(ppBuffer == NULL)
+  if(ppBuffer == nullptr)
     return 0;
   //ASSERT(m_Depth == 32);
   unsigned int r,g,b;
@@ -738,7 +738,7 @@ int Texture::ReadBuffer(double *buffer,
                         int height,
                         int depth)
 {
-  if(buffer == NULL)
+  if(buffer == nullptr)
     return 0;
 
   if(!Alloc(width,height,depth))

@@ -56,7 +56,7 @@ int main (int argc, char** argv)
   }
 
   std::ofstream ofile("out.ply", std::ios_base::binary);
-  CGAL::set_binary_mode(ofile);
+  CGAL::IO::set_binary_mode(ofile);
   ofile << points;
 
   return EXIT_SUCCESS;

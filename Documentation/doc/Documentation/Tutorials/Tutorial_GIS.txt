@@ -276,7 +276,7 @@ classifier currently available in \cgal is the %random forest from
 ETHZ. As it is a supervised classifier, a training set is needed.
 
 The following snippet shows how to use some manually selected training
-set to train a %fandom rorest classifier and compute a classification
+set to train a %random forest classifier and compute a classification
 regularized by a graph cut algorithm:
 
 \snippet Classification/gis_tutorial_example.cpp Classification

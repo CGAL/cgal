@@ -229,7 +229,12 @@ public:
   Sphere_map(bool = false) : boundary_item_(boost::none),
     svertices_(), sedges_(), sfaces_(), shalfloop_() {}
 
-  ~Sphere_map() { clear(); }
+  ~Sphere_map() noexcept(!CGAL_ASSERTIONS_ENABLED)
+  {
+    CGAL_destructor_assertion_catch(
+      clear();
+    );
+  }
 
   Sphere_map(const Self& D) : boundary_item_(boost::none),
     svertices_(D.svertices_),

@@ -82,7 +82,7 @@ SetGraphicsItem<Set>::paint(QPainter *painter,
                                     const QStyleOptionGraphicsItem *option,
                                     QWidget* )
 {
-  if (m_set == NULL)
+  if (m_set == nullptr)
     return;
 
   QRectF rect = option->exposedRect;

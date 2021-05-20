@@ -70,13 +70,13 @@ public:
                          t.transform(this->vertex(3)));
   }
 
-  typename cpp11::result_of<typename R::Construct_vertex_3( Tetrahedron_3, int)>::type
+  decltype(auto)
   vertex(int i) const
   {
     return R().construct_vertex_3_object()(*this,i);
   }
 
-  typename cpp11::result_of<typename R::Construct_vertex_3( Tetrahedron_3, int)>::type
+  decltype(auto)
   operator[](int i) const
   {
     return vertex(i);
@@ -128,7 +128,7 @@ public:
     return R().has_on_unbounded_side_3_object()(*this, p);
   }
 
-  typename cpp11::result_of<typename R::Compute_volume_3( Tetrahedron_3)>::type
+  decltype(auto)
   volume() const
   {
     return R().compute_volume_3_object()(*this);
@@ -147,7 +147,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Tetrahedron_3<R> &t)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << t[0] << ' ' << t[1] << ' ' << t[2] << ' ' << t[3];
     case IO::BINARY :

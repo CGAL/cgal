@@ -15,7 +15,7 @@
 #include <sstream>
 #include <stdlib.h>
 #include <algorithm>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "thread_queue.h"
 
@@ -51,7 +51,7 @@ template <class C3T3, class Domain> struct Optimizer;
 template <class C3T3, class MeshCriteria, class Domain>
 struct Mesher
 {
-  Mesher(const boost::shared_ptr<Domain_builder<Domain> >& pdomain_builder,
+  Mesher(const std::shared_ptr<Domain_builder<Domain> >& pdomain_builder,
          const int mesh_nb,
          const std::string& filename,
          const std::string& output,
@@ -95,7 +95,7 @@ struct Mesher
     timer.start();
 
     // we keep c3t3 between lines
-    boost::shared_ptr<C3T3> pc3t3_save (new C3T3());
+    std::shared_ptr<C3T3> pc3t3_save (new C3T3());
 
     // Generate Mesh
     file_out << "Generate mesh...";
@@ -183,7 +183,7 @@ private:
   }
 
 private:
-  boost::shared_ptr<Domain_builder<Domain> > pdomain_builder_;
+  std::shared_ptr<Domain_builder<Domain> > pdomain_builder_;
   int mesh_nb_;
   std::string filename_;
   std::string output_prefix_;
@@ -196,8 +196,8 @@ private:
 template <class C3T3, class Domain>
 struct Optimizer
 {
-  Optimizer(const boost::shared_ptr<C3T3>& pc3t3,
-            const boost::shared_ptr<Domain_builder<Domain> >& pdomain_builder,
+  Optimizer(const std::shared_ptr<C3T3>& pc3t3,
+            const std::shared_ptr<Domain_builder<Domain> >& pdomain_builder,
             const int mesh_nb,
             const std::string& output,
             const std::string& command_line)
@@ -339,8 +339,8 @@ private:
 
 
 private:
-  boost::shared_ptr<C3T3> pc3t3_;
-  boost::shared_ptr<Domain_builder<Domain> > pdomain_builder_;
+  std::shared_ptr<C3T3> pc3t3_;
+  std::shared_ptr<Domain_builder<Domain> > pdomain_builder_;
   std::string mesh_nb_;
   std::string output_prefix_;
   std::string command_line_;
@@ -571,7 +571,7 @@ void mesh(const std::string& data, const std::string& output_dir, const int nb_t
     //Load the domain
     std::stringstream cout_loc;
     cout_loc << "+ [" << filename << "] Create domain...";
-    boost::shared_ptr<Domain_builder<Domain> > pdomain_builder(new Domain_builder<Domain>(it->path().string()));
+    std::shared_ptr<Domain_builder<Domain> > pdomain_builder(new Domain_builder<Domain>(it->path().string()));
     cout_loc << "done (" << timer.time() << "s)\n";
     std::cout << cout_loc.str();
 

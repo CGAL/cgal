@@ -95,7 +95,7 @@ public:
     typedef typename GetVertexPointMap<Graph, NamedParameters>::const_type         VPM;
     typedef typename boost::property_traits<VPM>::reference                        Point_ref;
 
-    typedef CGAL::Color                                                            Color;
+    typedef CGAL::IO::Color                                                        Color;
 
     typedef typename internal_np::Lookup_named_param_def<
       internal_np::vertex_color_map_t, NamedParameters,
@@ -153,7 +153,7 @@ public:
 
       if(has_vertex_colors)
       {
-        const CGAL::Color& vc = get(vcm, v);
+        const CGAL::IO::Color& vc = get(vcm, v);
         m_writer.write_vertex_color(vc.red(), vc.green(), vc.blue()); // @fixme correct?
       }
 
@@ -182,7 +182,7 @@ public:
 
       if(has_face_colors)
       {
-        const CGAL::Color& fc = get(fcm, f);
+        const CGAL::IO::Color& fc = get(fcm, f);
         m_writer.write_face_color(fc.red(), fc.green(), fc.blue());
       }
 

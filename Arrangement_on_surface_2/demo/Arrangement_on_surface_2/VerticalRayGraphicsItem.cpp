@@ -185,7 +185,7 @@ void VerticalRayGraphicsItem::modelChanged( )
 QRectF VerticalRayGraphicsItem::viewportRect( ) const
 {
   QRectF res;
-  if ( this->scene( ) == NULL )
+  if ( this->scene( ) == nullptr )
   {
     return res;
   }
@@ -207,7 +207,7 @@ QRectF VerticalRayGraphicsItem::viewportRect( ) const
 void VerticalRayGraphicsItem::drawArrowhead( QPainter* painter,
                                              double targetY, bool isShootingUp )
 {
-  if ( this->scene( ) == 0 || this->scene( )->views( ).size( ) == 0 )
+  if ( this->scene( ) == nullptr || this->scene( )->views( ).size( ) == 0 )
   {
     return;
   }

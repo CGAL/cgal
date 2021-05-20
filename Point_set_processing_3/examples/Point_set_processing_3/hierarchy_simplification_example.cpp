@@ -19,7 +19,7 @@ int main(int argc, char*argv[])
 
   // Reads a point set file in points[].
   std::vector<Point> points;
-  if(!CGAL::read_points(fname, std::back_inserter(points)))
+  if(!CGAL::IO::read_points(fname, std::back_inserter(points)))
   {
     std::cerr << "Error: cannot read file " << fname << std::endl;
     return EXIT_FAILURE;
@@ -41,7 +41,7 @@ int main(int argc, char*argv[])
             << task_timer.time() << " seconds, "
             << (memory>>20) << " Mib allocated." << std::endl;
 
-  CGAL::write_points("out.xyz", points, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_points("out.xyz", points, CGAL::parameters::stream_precision(17));
 
   return EXIT_SUCCESS;
 }

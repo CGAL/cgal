@@ -1,16 +1,8 @@
-#include <algorithm>
-#include <vector>
-#include <fstream>
-
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/Timer.h>
-
-#include <boost/bind.hpp>
-#include <boost/functional/value_factory.hpp>
-#include <boost/range/algorithm/transform.hpp>
 
 #include <algorithm>
 #include <vector>
@@ -121,7 +113,7 @@ int main(int argc, char* argv[])
   std::cout.precision(17);
 
   Mesh P, Q;
-  if(!CGAL::read_polygon_mesh(argv[1], P) || !CGAL::read_polygon_mesh(argv[2], Q))
+  if(!CGAL::IO::read_polygon_mesh(argv[1], P) || !CGAL::IO::read_polygon_mesh(argv[2], Q))
   {
     std::cerr << "Invalid input files." << std::endl;
     return EXIT_FAILURE;

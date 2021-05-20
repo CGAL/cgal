@@ -19,6 +19,7 @@
 #include <CGAL/centroid.h>
 #include <CGAL/PCA_util.h>
 #include <CGAL/linear_least_squares_fitting_points_3.h>
+#include <CGAL/Subiterator.h>
 
 #include <list>
 #include <iterator>
@@ -74,24 +75,16 @@ linear_least_squares_fitting_3(InputIterator first,
 {
   typedef typename K::Segment_3  Segment;
   typedef typename K::Point_3  Point;
+  auto converter = [](const Segment& s, int idx) -> Point { return s[idx]; };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
 
-  std::list<Point> points;
-  for(InputIterator it = first;
-      it != beyond;
-      it++)
-  {
-    const Segment& t = *it;
-    points.push_back(t[0]);
-    points.push_back(t[1]);
-  }
-
-  // compute fitting plane
-  return linear_least_squares_fitting_3(points.begin(),points.end(),plane,c,(Point*)nullptr,k,tag,
-                                        diagonalize_traits);
-
+  return linear_least_squares_fitting_3
+    (make_subiterator<Point, 2> (first, converter),
+     make_subiterator<Point, 2> (beyond),
+     plane,c,(Point*)nullptr,k,tag,
+     diagonalize_traits);
 } // end linear_least_squares_fitting_segments_3
 
 // fits a line to a 3D segment set
@@ -141,24 +134,16 @@ linear_least_squares_fitting_3(InputIterator first,
 {
   typedef typename K::Segment_3  Segment;
   typedef typename K::Point_3  Point;
+  auto converter = [](const Segment& s, int idx) -> Point { return s[idx]; };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
 
-  std::list<Point> points;
-  for(InputIterator it = first;
-      it != beyond;
-      it++)
-  {
-    const Segment& t = *it;
-    points.push_back(t[0]);
-    points.push_back(t[1]);
-  }
-
-  // compute fitting plane
-  return linear_least_squares_fitting_3(points.begin(),points.end(),line,c,(Point*)nullptr,k,tag,
-                                        diagonalize_traits);
-
+  return linear_least_squares_fitting_3
+    (make_subiterator<Point, 2> (first, converter),
+     make_subiterator<Point, 2> (beyond),
+     line,c,(Point*)nullptr,k,tag,
+     diagonalize_traits);
 } // end linear_least_squares_fitting_segments_3
 
 } // end namespace internal
