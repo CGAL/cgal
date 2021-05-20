@@ -1,7 +1,7 @@
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/point_generators_2.h>
-#include <CGAL/Barycentric_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Wachspress_coordinates_2.h>
 
 // Typedefs.
 using Kernel = CGAL::Simple_cartesian<double>;

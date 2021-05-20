@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Barycentric_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Mean_value_coordinates_2.h>
 
 // Typedefs.
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;

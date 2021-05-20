@@ -214,7 +214,7 @@ namespace Barycentric_coordinates {
 
       This function implements `DiscretizedDomain_2::number_of_vertices()`.
     */
-    const std::size_t number_of_vertices() const {
+    std::size_t number_of_vertices() const {
 
       CGAL_assertion(
         m_vhs.size() == m_cdt.number_of_vertices());
@@ -251,7 +251,7 @@ namespace Barycentric_coordinates {
 
       \pre query_index >= 0 && query_index < number_of_vertices()
     */
-    const bool is_on_boundary(
+    bool is_on_boundary(
       const std::size_t query_index) const {
 
       CGAL_precondition(
@@ -515,7 +515,7 @@ namespace Barycentric_coordinates {
       }
     }
 
-    const std::size_t get_number_of_faces() const {
+    std::size_t get_number_of_faces() const {
 
       std::size_t num_faces = 0;
       for (auto fh = m_cdt.finite_faces_begin();

@@ -382,6 +382,180 @@ namespace Barycentric_coordinates {
     }
   };
 
+  /*!
+    \ingroup PkgBarycentricCoordinates2RefFunctions
+
+    \brief computes 2D discrete harmonic weights.
+
+    This function computes 2D discrete harmonic weights at a given `query` point
+    with respect to the vertices of a strictly convex `polygon`, that is one
+    weight per vertex. The weights are stored in a destination range
+    beginning at `w_begin`.
+
+    Internally, the class `Discrete_harmonic_coordinates_2` is used. If one wants to process
+    multiple query points, it is better to use that class. When using the free function,
+    internal memory is allocated for each query point, while when using the class,
+    it is allocated only once, which is much more efficient. However, for a few query
+    points, it is easier to use this function. It can also be used when the processing
+    time is not a concern.
+
+    \tparam PointRange
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
+    and value type is `GeomTraits::Point_2`
+
+    \tparam OutIterator
+    a model of `OutputIterator` that accepts values of type `GeomTraits::FT`
+
+    \tparam GeomTraits
+    a model of `BarycentricTraits_2`
+
+    \param polygon
+    an instance of `PointRange` with 2D points, which form a strictly convex polygon
+
+    \param query
+    a query point
+
+    \param w_begin
+    the beginning of the destination range with the computed weights
+
+    \param traits
+    a traits class with geometric objects, predicates, and constructions;
+    this parameter can be omitted if the traits class can be deduced from the point type
+
+    \param policy
+    one of the `Computation_policy_2`;
+    the default is `Computation_policy_2::FAST_WITH_EDGE_CASES`
+
+    \return an output iterator to the element in the destination range,
+    one past the last weight stored
+
+    \pre polygon.size() >= 3
+    \pre polygon is simple
+    \pre polygon is strictly convex
+  */
+  template<
+  typename PointRange,
+  typename OutIterator,
+  typename GeomTraits>
+  OutIterator discrete_harmonic_weights_2(
+    const PointRange& polygon,
+    const typename GeomTraits::Point_2& query,
+    OutIterator w_begin,
+    const GeomTraits& traits,
+    const Computation_policy_2 policy =
+    Computation_policy_2::FAST_WITH_EDGE_CASES) {
+
+    Discrete_harmonic_coordinates_2<PointRange, GeomTraits> discrete_harmonic(
+      polygon, policy, traits);
+    return discrete_harmonic.weights(query, w_begin);
+  }
+
+  /// \cond SKIP_IN_MANUAL
+  template<
+  typename PointRange,
+  typename Point_2,
+  typename OutIterator>
+  OutIterator discrete_harmonic_weights_2(
+    const PointRange& polygon,
+    const Point_2& query,
+    OutIterator w_begin,
+    const Computation_policy_2 policy =
+    Computation_policy_2::FAST_WITH_EDGE_CASES) {
+
+    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
+    const GeomTraits traits;
+    return discrete_harmonic_weights_2(
+      polygon, query, w_begin, traits, policy);
+  }
+  /// \endcond
+
+  /*!
+    \ingroup PkgBarycentricCoordinates2RefFunctions
+
+    \brief computes 2D discrete harmonic coordinates.
+
+    This function computes 2D discrete harmonic coordinates at a given `query` point
+    with respect to the vertices of a strictly convex `polygon`, that is one
+    coordinate per vertex. The coordinates are stored in a destination range
+    beginning at `c_begin`.
+
+    Internally, the class `Discrete_harmonic_coordinates_2` is used. If one wants to process
+    multiple query points, it is better to use that class. When using the free function,
+    internal memory is allocated for each query point, while when using the class,
+    it is allocated only once, which is much more efficient. However, for a few query
+    points, it is easier to use this function. It can also be used when the processing
+    time is not a concern.
+
+    \tparam PointRange
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
+    and value type is `GeomTraits::Point_2`
+
+    \tparam OutIterator
+    a model of `OutputIterator` that accepts values of type `GeomTraits::FT`
+
+    \tparam GeomTraits
+    a model of `BarycentricTraits_2`
+
+    \param polygon
+    an instance of `PointRange` with 2D points, which form a strictly convex polygon
+
+    \param query
+    a query point
+
+    \param c_begin
+    the beginning of the destination range with the computed coordinates
+
+    \param traits
+    a traits class with geometric objects, predicates, and constructions;
+    this parameter can be omitted if the traits class can be deduced from the point type
+
+    \param policy
+    one of the `Computation_policy_2`;
+    the default is `Computation_policy_2::PRECISE_WITH_EDGE_CASES`
+
+    \return an output iterator to the element in the destination range,
+    one past the last coordinate stored
+
+    \pre polygon.size() >= 3
+    \pre polygon is simple
+    \pre polygon is strictly convex
+  */
+  template<
+  typename PointRange,
+  typename OutIterator,
+  typename GeomTraits>
+  OutIterator discrete_harmonic_coordinates_2(
+    const PointRange& polygon,
+    const typename GeomTraits::Point_2& query,
+    OutIterator c_begin,
+    const GeomTraits& traits,
+    const Computation_policy_2 policy =
+    Computation_policy_2::PRECISE_WITH_EDGE_CASES) {
+
+    Discrete_harmonic_coordinates_2<PointRange, GeomTraits> discrete_harmonic(
+      polygon, policy, traits);
+    return discrete_harmonic(query, c_begin);
+  }
+
+  /// \cond SKIP_IN_MANUAL
+  template<
+  typename PointRange,
+  typename Point_2,
+  typename OutIterator>
+  OutIterator discrete_harmonic_coordinates_2(
+    const PointRange& polygon,
+    const Point_2& query,
+    OutIterator c_begin,
+    const Computation_policy_2 policy =
+    Computation_policy_2::PRECISE_WITH_EDGE_CASES) {
+
+    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
+    const GeomTraits traits;
+    return discrete_harmonic_coordinates_2(
+      polygon, query, c_begin, traits, policy);
+  }
+  /// \endcond
+
 } // namespace Barycentric_coordinates
 } // namespace CGAL
 

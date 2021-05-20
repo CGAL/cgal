@@ -350,7 +350,6 @@ namespace Barycentric_coordinates {
 
       if (m_setup_is_called) return;
       const std::size_t n = m_polygon.size();
-      const std::size_t N = m_domain.number_of_vertices();
 
       // Create an index map. It splits interior and boundary vertices.
       const auto pair = create_indices(m_indices);
@@ -488,7 +487,7 @@ namespace Barycentric_coordinates {
     }
 
     void set_boundary_vector(
-      const std::size_t numB,
+      const std::size_t /* numB */, // this is not used here but the number of elements is numB!
       const std::vector<std::size_t>& indices,
       VectorFT& boundary) const {
 

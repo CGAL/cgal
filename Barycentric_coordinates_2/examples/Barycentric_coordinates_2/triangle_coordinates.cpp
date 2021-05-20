@@ -1,5 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Barycentric_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/triangle_coordinates_2.h>
 
 // Typedefs.
 using Kernel = CGAL::Simple_cartesian<double>;

@@ -1,5 +1,6 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Barycentric_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/boundary_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_coordinates_2.h>
 
 // Typedefs.
 using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
@@ -48,7 +49,7 @@ int main() {
   discrete_harmonic_2.weights(center, std::back_inserter(weights));
 
   std::cout << std::endl << "discrete harmonic weights (center): ";
-  for (const FT weight : weights)
+  for (const FT& weight : weights)
     std::cout << weight << " ";
   std::cout << std::endl;
 
@@ -57,7 +58,7 @@ int main() {
   discrete_harmonic_2(center, std::back_inserter(coordinates));
 
   std::cout << std::endl << "discrete harmonic coordinates (center): ";
-  for (const FT coordinate : coordinates)
+  for (const FT& coordinate : coordinates)
     std::cout << coordinate << " ";
   std::cout << std::endl;
 
@@ -105,7 +106,7 @@ int main() {
     square, e4, std::back_inserter(coordinates), kernel, point_map);
 
   std::cout << std::endl << "boundary coordinates (edge 2 and edge 4): ";
-  for (const FT coordinate : coordinates)
+  for (const FT& coordinate : coordinates)
     std::cout << coordinate << " ";
   std::cout << std::endl;
 
@@ -144,7 +145,7 @@ int main() {
   discrete_harmonic_2(r, std::back_inserter(coordinates));
 
   std::cout << std::endl << "discrete harmonic coordinates (exterior): ";
-  for (const FT coordinate : coordinates)
+  for (const FT& coordinate : coordinates)
     std::cout << coordinate << " ";
   std::cout << std::endl << std::endl;
 
