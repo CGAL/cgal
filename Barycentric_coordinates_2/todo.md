@@ -14,3 +14,6 @@
 * Improve the solver interface and make it a parameter for the harmonic coordinates class.
 * What about adding a demo with visualization of the coordinate functions?
 * I should move internal weights to the weight interface.
+* Rename examples and tests to keep track of 2D and 3D versions.
+* Merge all necessary PRs.
+* Change CGAL::max() to (CGAL::max)().

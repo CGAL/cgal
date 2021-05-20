@@ -185,7 +185,7 @@ coordinates at all the generated points. The used `Kernel` is inexact.
 Example's point pattern.
 \cgalFigureEnd
 
-\cgalExample{Barycentric_coordinates_2/Wachspress_coordinates.cpp}
+\cgalExample{Barycentric_coordinates_2/wachspress_coordinates.cpp}
 
 
 \subsection dh_example Discrete Harmonic Coordinates

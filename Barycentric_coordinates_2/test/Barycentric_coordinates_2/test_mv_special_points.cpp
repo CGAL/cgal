@@ -1,7 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Barycentric_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Mean_value_coordinates_2.h>
 #include <boost/math/special_functions/fpclassify.hpp>
 
 template<typename Kernel>

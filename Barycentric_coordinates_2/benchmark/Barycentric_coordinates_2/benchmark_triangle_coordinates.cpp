@@ -1,6 +1,6 @@
 #include <CGAL/Real_timer.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Barycentric_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/triangle_coordinates_2.h>
 
 using Kernel  = CGAL::Exact_predicates_inexact_constructions_kernel;
 using FT      = typename Kernel::FT;
