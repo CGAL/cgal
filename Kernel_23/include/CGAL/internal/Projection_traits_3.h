@@ -283,6 +283,53 @@ public:
 };
 
 template <class R,int dim>
+class Construct_centroid_projected_3
+{
+public:
+  typedef typename R::Point_3 Point_3;
+  typedef typename R::Point_2 Point_2;
+  typedef typename R::FT      RT;
+  RT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
+  RT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
+
+  Point_2 project(const Point_3& p) const
+  {
+    return Point_2(x(p), y(p));
+  }
+
+  RT operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+  {
+    const Point_2 p2(project(p));
+    const Point_2 q2(project(q));
+    const Point_2 r2(project(r));
+    return centroid(p2, q2, r2);
+  }
+};
+
+template <class R,int dim>
+class Compute_determinant_projected_3
+{
+public:
+  typedef typename R::Vector_3 Vector_3;
+  typedef typename R::Vector_2 Vector_2;
+  typedef typename R::FT       RT;
+  RT x(const Vector_3 &v) const { return Projector<R,dim>::x(v); }
+  RT y(const Vector_3 &v) const { return Projector<R,dim>::y(v); }
+
+  Vector_2 project(const Vector_3& v) const
+  {
+    return Vector_2(x(v), y(v));
+  }
+
+  RT operator()(const Vector_3& v, const Vector_3& w) const
+  {
+    const Vector_2 v2(project(v));
+    const Vector_2 w2(project(w));
+    return determinant(v2, w2);
+  }
+};
+
+template <class R,int dim>
 class  Intersect_projected_3
 {
 public:
@@ -817,6 +864,9 @@ public:
   typedef Power_side_of_oriented_power_circle_projected_3<Rp, dim> Power_side_of_oriented_power_circle_2;
   typedef Construct_bbox_projected_2<Rp,dim>                  Construct_bbox_2;
 
+  typedef Construct_centroid_projected_3<RP,dim>              Construct_centroid_2;
+  typedef Compute_determinant_projected_3<RP,dim>             Compute_determinant_2;
+
   typedef typename Rp::Construct_point_3                      Construct_point_2;
   typedef typename Rp::Construct_weighted_point_3             Construct_weighted_point_2;
   typedef typename Rp::Construct_segment_3                    Construct_segment_2;
@@ -1013,6 +1063,12 @@ public:
 
   Construct_bbox_2  construct_bbox_2_object() const
     {return Construct_bbox_2();}
+
+  Construct_centroid_2  construct_centroid_2_object() const
+    {return Construct_centroid_2();}
+
+  Compute_determinant_2  compute_determinant_2_object() const
+    {return Compute_determinant_2();}
 
   Compute_scalar_product_2 compute_scalar_product_2_object() const
     {return Compute_scalar_product_2();}
