@@ -297,12 +297,22 @@ public:
     return Point_2(x(p), y(p));
   }
 
-  RT operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+  Point_3 embed(const Point_2& p) const
+  {
+    RT coords[3];
+    coords[Projector<R,dim>::x_index] = p.x();
+    coords[Projector<R,dim>::y_index] = p.y();
+    coords[dim] = FT(0);
+
+    return Point_3(coords[0], coords[1], coords[2]);
+  }
+
+  Point_3 operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
   {
     const Point_2 p2(project(p));
     const Point_2 q2(project(q));
     const Point_2 r2(project(r));
-    return centroid(p2, q2, r2);
+    return embed(CGAL::centroid(p2, q2, r2));
   }
 };
 
@@ -325,7 +335,7 @@ public:
   {
     const Vector_2 v2(project(v));
     const Vector_2 w2(project(w));
-    return determinant(v2, w2);
+    return CGAL::determinant(v2, w2);
   }
 };
 

@@ -23,6 +23,12 @@ int main()
 
   K k;
 
+  assert( k.construct_centroid_2_object()(p3, q3, r3) ==
+          CGAL::centroid(p2, q2, r2) );
+
+  assert( k.compute_determinant_2_object()(v3, w3) ==
+          CGAL::determinant(v2, w2) );
+
   assert( k.compute_scalar_product_2_object()(v3, w3) ==
           v2 * w2 );
 
