@@ -1,16 +1,95 @@
-# Created by the script cgal_create_cmake_script
+# Created by the script cgal_create_cmake_script.
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.20)
 project(Barycentric_coordinates_2_Tests)
 
-find_package(CGAL REQUIRED)
+cmake_minimum_required(VERSION 2.8.10)
+set(CMAKE_CXX_STANDARD 14)
 
-# create a target per cppfile
-file(
-  GLOB cppfiles
-  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-foreach(cppfile ${cppfiles})
-  create_single_source_cgal_program("${cppfile}")
-endforeach()
+find_package(CGAL QUIET COMPONENTS Core)
+if(CGAL_FOUND)
+
+  include(${CGAL_USE_FILE})
+  include(CGAL_CreateSingleSourceCGALProgram)
+
+  create_single_source_cgal_program(
+    "test_almost_degenerate_segment.cpp")
+  create_single_source_cgal_program(
+    "test_segment_coordinates.cpp")
+  create_single_source_cgal_program(
+    "test_segment_coordinates_with_offset.cpp")
+
+  create_single_source_cgal_program(
+    "test_almost_degenerate_triangle.cpp")
+  create_single_source_cgal_program(
+    "test_triangle_coordinates.cpp")
+
+  create_single_source_cgal_program(
+    "test_boundary_coordinates_at_vertices.cpp")
+  create_single_source_cgal_program(
+    "test_boundary_coordinates_on_edges.cpp")
+
+  create_single_source_cgal_program(
+    "test_wp_dh_unit_square.cpp")
+  create_single_source_cgal_program(
+    "test_wp_almost_degenerate_polygon.cpp")
+  create_single_source_cgal_program(
+    "test_wp_const_linear_precision.cpp")
+  create_single_source_cgal_program(
+    "test_wp_triangle.cpp")
+  create_single_source_cgal_program(
+    "test_wp_weights.cpp")
+
+  create_single_source_cgal_program(
+    "test_mv_special_points.cpp")
+  create_single_source_cgal_program(
+    "test_mv_weakly_convex_polygon.cpp")
+  create_single_source_cgal_program(
+    "test_mv_const_linear_precision.cpp")
+  create_single_source_cgal_program(
+    "test_mv_triangle.cpp")
+  create_single_source_cgal_program(
+    "test_mv_weights.cpp")
+
+  create_single_source_cgal_program(
+    "test_dh_almost_degenerate_polygon.cpp")
+  create_single_source_cgal_program(
+    "test_dh_const_linear_precision.cpp")
+  create_single_source_cgal_program(
+    "test_dh_triangle.cpp")
+  create_single_source_cgal_program(
+    "test_dh_weights.cpp")
+
+  # missing begin() and end() in CGAL 4.14
+  # create_single_source_cgal_program(
+  #   "test_cgal_polygons.cpp")
+
+  find_package(Eigen3 REQUIRED)
+  if(EIGEN3_FOUND)
+    include(${EIGEN3_USE_FILE})
+
+    create_single_source_cgal_program(
+      "test_hm_unit_square.cpp")
+    create_single_source_cgal_program(
+      "test_hm_const_linear_precision.cpp")
+    create_single_source_cgal_program(
+      "test_hm_triangle.cpp")
+
+    # missing:
+    # construct_centroid_2,
+    # compute_determinant_2
+    # in projection traits
+    # create_single_source_cgal_program(
+    #   "test_projection_traits.cpp")
+
+    create_single_source_cgal_program(
+      "test_all_coordinates.cpp")
+
+  else()
+    message(WARNING
+    "Harmonic coordinates require the Eigen library, and will not be compiled.")
+  endif()
+else()
+  message(WARNING
+  "This program requires the CGAL library, and will not be compiled.")
+endif()

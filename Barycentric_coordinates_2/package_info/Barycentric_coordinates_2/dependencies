@@ -1,9 +1,12 @@
-Algebraic_foundations
-Barycentric_coordinates_2
 Installation
 Kernel_23
-Number_types
-Polygon
-Profiling_tools
 STL_Extension
+Algebraic_foundations
+Number_types
+Circulator
 Stream_support
+Profiling_tools
+Property_map
+Mesh_2
+Polygon
+Triangulation_2
