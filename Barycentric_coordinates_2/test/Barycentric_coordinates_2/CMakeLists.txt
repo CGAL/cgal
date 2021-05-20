@@ -21,6 +21,7 @@ if(CGAL_FOUND)
 
   create_single_source_cgal_program("test_boundary_coordinates_at_vertices.cpp")
   create_single_source_cgal_program("test_boundary_coordinates_on_edges.cpp")
+  create_single_source_cgal_program("test_cgal_polygons.cpp")
 
   create_single_source_cgal_program("test_wp_dh_unit_square.cpp")
   create_single_source_cgal_program("test_wp_almost_degenerate_polygon.cpp")
@@ -38,9 +39,6 @@ if(CGAL_FOUND)
   create_single_source_cgal_program("test_dh_const_linear_precision.cpp")
   create_single_source_cgal_program("test_dh_triangle.cpp")
   create_single_source_cgal_program("test_dh_weights.cpp")
-
-  # missing begin() and end() in CGAL 4.14
-  # create_single_source_cgal_program("test_cgal_polygons.cpp")
 
   find_package(Eigen3 REQUIRED)
   include(CGAL_Eigen3_support)
