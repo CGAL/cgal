@@ -522,16 +522,16 @@ namespace Barycentric_coordinates {
       std::stringstream& out) const {
 
       out <<
-			"ply" << std::endl <<
-			"format ascii 1.0" << std::endl <<
-			"element vertex " << num_vertices << std::endl <<
-			"property double x" << std::endl <<
-			"property double y" << std::endl <<
-			"property double z" << std::endl <<
-			"property uchar red"   << std::endl <<
-			"property uchar green" << std::endl <<
-			"property uchar blue"  << std::endl <<
-			"end_header" << std::endl;
+      "ply" << std::endl <<
+      "format ascii 1.0" << std::endl <<
+      "element vertex " << num_vertices << std::endl <<
+      "property double x" << std::endl <<
+      "property double y" << std::endl <<
+      "property double z" << std::endl <<
+      "property uchar red"   << std::endl <<
+      "property uchar green" << std::endl <<
+      "property uchar blue"  << std::endl <<
+      "end_header" << std::endl;
     }
 
     void add_ply_header_mesh(
@@ -540,18 +540,18 @@ namespace Barycentric_coordinates {
       std::stringstream& out) const {
 
       out <<
-			"ply" << std::endl <<
-			"format ascii 1.0" << std::endl <<
-			"element vertex " << num_vertices << std::endl <<
-			"property double x" << std::endl <<
-			"property double y" << std::endl <<
-			"property double z" << std::endl <<
-			"element face " << num_faces << std::endl <<
-			"property list uchar int vertex_indices" << std::endl <<
-			"property uchar red"   << std::endl <<
-			"property uchar green" << std::endl <<
-			"property uchar blue"  << std::endl <<
-			"end_header" << std::endl;
+      "ply" << std::endl <<
+      "format ascii 1.0" << std::endl <<
+      "element vertex " << num_vertices << std::endl <<
+      "property double x" << std::endl <<
+      "property double y" << std::endl <<
+      "property double z" << std::endl <<
+      "element face " << num_faces << std::endl <<
+      "property list uchar int vertex_indices" << std::endl <<
+      "property uchar red"   << std::endl <<
+      "property uchar green" << std::endl <<
+      "property uchar blue"  << std::endl <<
+      "end_header" << std::endl;
     }
 
     void save(
