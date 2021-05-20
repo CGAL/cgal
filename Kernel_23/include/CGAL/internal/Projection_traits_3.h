@@ -302,7 +302,7 @@ public:
     RT coords[3];
     coords[Projector<R,dim>::x_index] = p.x();
     coords[Projector<R,dim>::y_index] = p.y();
-    coords[dim] = FT(0);
+    coords[dim] = RT(0);
 
     return Point_3(coords[0], coords[1], coords[2]);
   }
@@ -874,8 +874,8 @@ public:
   typedef Power_side_of_oriented_power_circle_projected_3<Rp, dim> Power_side_of_oriented_power_circle_2;
   typedef Construct_bbox_projected_2<Rp,dim>                  Construct_bbox_2;
 
-  typedef Construct_centroid_projected_3<RP,dim>              Construct_centroid_2;
-  typedef Compute_determinant_projected_3<RP,dim>             Compute_determinant_2;
+  typedef Construct_centroid_projected_3<Rp,dim>              Construct_centroid_2;
+  typedef Compute_determinant_projected_3<Rp,dim>             Compute_determinant_2;
 
   typedef typename Rp::Construct_point_3                      Construct_point_2;
   typedef typename Rp::Construct_weighted_point_3             Construct_weighted_point_2;
