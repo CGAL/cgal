@@ -84,7 +84,9 @@ function(cgal_add_compilation_test exe_name)
       APPEND PROPERTY LABELS "${PROJECT_NAME}")
     set_property(TEST "compilation_of__${exe_name}"
       APPEND PROPERTY FIXTURES_REQUIRED "check_build_system_SetupFixture")
-  elseif(NOT TEST compilation_of__${PROJECT_NAME})#CMAKE_VS_MSBUILD_COMMAND
+  elseif(NOT TARGET compilation_of__${PROJECT_NAME})#CMAKE_VS_MSBUILD_COMMAND
+    #this target is just a flag, to deal with the scope problem with the tests
+    add_custom_target(compilation_of__${PROJECT_NAME})
     add_test(NAME "compilation_of__${PROJECT_NAME}"
       COMMAND ${TIME_COMMAND} "${CMAKE_VS_MSBUILD_COMMAND}" "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.sln" "-m:$ENV{NUMBER_OF_PROCESSORS}" "/t:Build" "/p:Configuration=$<CONFIG>")
     set_property(TEST "compilation_of__${PROJECT_NAME}"
@@ -93,6 +95,13 @@ function(cgal_add_compilation_test exe_name)
       APPEND PROPERTY FIXTURES_REQUIRED "check_build_system_SetupFixture")
     set_tests_properties("compilation_of__${PROJECT_NAME}"
       PROPERTIES RUN_SERIAL TRUE)
+    #because of the scope of the tests, this part cannot go in the relevant CMakeLists
+    if("${PROJECT_NAME}" STREQUAL "Polyhedron_Demo")
+      set_tests_properties(compilation_of__Polyhedron_Demo PROPERTIES TIMEOUT 2400)
+    elseif("${PROJECT_NAME}" STREQUAL "Mesh_3_Tests" OR "${PROJECT_NAME}" STREQUAL "Mesh_3_Examples")
+      set_tests_properties(compilation_of__${PROJECT_NAME} PROPERTIES TIMEOUT 1600)
+    endif()
+
   endif()#CMAKE_VS_MSBUILD_COMMAND
   if(NOT TARGET ALL_CGAL_TARGETS)
     add_custom_target( ALL_CGAL_TARGETS )

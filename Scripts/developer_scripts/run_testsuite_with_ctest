@@ -259,8 +259,8 @@ run_test_on_platform()
   cd "${CGAL_BINARY_DIR}"
   log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "Testing on host ${HOST} and platform ${PLATFORM}"
 
-  if [ -f "${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/setup" ]; then
-    source "${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/setup"
+  if [ -f "${CGAL_HOME}/${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/setup" ]; then
+    source "${CGAL_HOME}/${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/setup"
   else
     INIT_FILE="${CGAL_HOME}/${REFERENCE_PLATFORMS_DIR}/${PLATFORM}.cmake"
   fi
@@ -295,27 +295,14 @@ run_test_on_platform()
   echo "SET(CTEST_CUSTOM_MAXIMUM_PASSED_TEST_OUTPUT_SIZE 1000000000)" > CTestCustom.cmake
   echo "SET(CTEST_CUSTOM_MAXIMUM_FAILED_TEST_OUTPUT_SIZE 1000000000)" >> CTestCustom.cmake
 
-  CTEST_OPTS="-T Start -T Test --timeout 1200  ${DO_NOT_TEST:+-E execution___of__}"
-  FULL_OPTS=${CTEST_OPTS}
-  echo "NUMBER_OF_PROCESSORS = ${NUMBER_OF_PROCESSORS}"
+  CTEST_OPTS="-T Start -T Test --timeout 1200 ${DO_NOT_TEST:+-E execution___of__}"
   if uname | grep -q "CYGWIN"; then
     CTEST_OPTS="-C ${CONFIG_TYPE} ${CTEST_OPTS}"
-    FULL_OPTS="${CTEST_OPTS} -LE Polyhedron_Demo -V"
   fi
   if [ -z "${SHOW_PROGRESS}" ]; then
-    ctest ${TO_TEST:+-L ${TO_TEST} } ${FULL_OPTS} -j${NUMBER_OF_PROCESSORS} ${KEEP_TESTS:+-FC .}> tmp.txt
-    if uname | grep -q "CYGWIN"; then
-          if [[ $TO_TEST == *"Polyhedron_Demo"* ]]; then
-        ctest ${CTEST_OPTS} -L Polyhedron_Demo ${KEEP_TESTS:+-FC .}>> tmp.txt
-      fi
-    fi
+    ctest ${TO_TEST:+-L ${TO_TEST} } ${CTEST_OPTS} -j${NUMBER_OF_PROCESSORS} ${KEEP_TESTS:+-FC .}>tmp.txt
   else
-    ctest ${TO_TEST:+-L ${TO_TEST} } -j${NUMBER_OF_PROCESSORS} ${FULL_OPTS} ${KEEP_TESTS:+-FC .} |tee tmp.txt
-    if uname | grep -q "CYGWIN"; then
-          if [[ $TO_TEST == *"Polyhedron_Demo"* ]]; then
-        ctest ${CTEST_OPTS} -L Polyhedron_Demo ${KEEP_TESTS:+-FC .} |tee -a tmp.txt
-          fi
-    fi
+    ctest ${TO_TEST:+-L ${TO_TEST} } ${CTEST_OPTS} -j${NUMBER_OF_PROCESSORS} ${KEEP_TESTS:+-FC .}|tee tmp.txt
   fi
   #####################
   ##   GET RESULTS   ##
