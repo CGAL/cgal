@@ -67,7 +67,7 @@ int main()
 
   // Output
   std::ofstream medit_file("out.mesh");
-  CGAL::output_to_medit(medit_file, c3t3);
+  CGAL::IO::output_to_medit(medit_file, c3t3);
 
   return 0;
 }

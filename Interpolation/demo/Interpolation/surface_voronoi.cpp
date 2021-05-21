@@ -146,7 +146,7 @@ void generate_cube_points(const int& n,
 int main()
 {
   CGAL::Geomview_stream gv(CGAL::Bbox_3(0,0,0, 2, 2, 2));
-  gv.set_bg_color(CGAL::Color(0, 200, 200));
+  gv.set_bg_color(CGAL::IO::Color(0, 200, 200));
   gv.clear();
 
   int n=150;
@@ -211,13 +211,13 @@ int main()
   gv << CGAL::violet();
   visu_points(gv,points);
 
-  gv << CGAL::red() << Segment(p, p+ 0.3*normal);
-  gv << CGAL::orange() <<p;
+  gv << CGAL::IO::red() << Segment(p, p+ 0.3*normal);
+  gv << CGAL::IO::orange() <<p;
 
   std::cout << "Visualizing the intersection of "
             << "3D Voronoi diagram with tangent plane at "
             << p << "." << std::endl;
-  gv << CGAL::blue();
+  gv << CGAL::IO::blue();
   T.draw_dual(gv);
   Face_iterator fit = T.finite_faces_begin(),
     fend = T.finite_faces_end();

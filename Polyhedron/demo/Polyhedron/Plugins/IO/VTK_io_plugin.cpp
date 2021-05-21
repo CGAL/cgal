@@ -241,7 +241,7 @@ public:
         std::ofstream os(output_filename.data());
         os << std::setprecision(16);
         //write header
-        CGAL::write_VTP(os, *mesh);
+        CGAL::IO::write_VTP(os, *mesh);
       }
     }
     else
@@ -255,7 +255,7 @@ public:
       os << std::setprecision(16);
       const C3t3& c3t3 = c3t3_item->c3t3();
 
-      CGAL::output_to_vtu(os, c3t3);
+      CGAL::IO::output_to_vtu(os, c3t3);
     }
     items.pop_front();
     return true;

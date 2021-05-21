@@ -86,7 +86,7 @@ int main(int argc, char** argv)
   if(input)
     {
       Tr t;
-      CGAL::read_triangle_poly_file(t, input);
+      CGAL::IO::read_triangle_poly_file(t, input);
       if(delaunay)
         {
           if(verbose)
@@ -103,12 +103,12 @@ int main(int argc, char** argv)
       if(argc==arg_count+1)
         {
           if(terminal_output)
-            CGAL::write_triangle_poly_file(t, std::cout);
+            CGAL::IO::write_triangle_poly_file(t, std::cout);
         }
       else
         {
           std::ofstream output(argv[arg_count+1]);
-          CGAL::write_triangle_poly_file(t, output);
+          CGAL::IO::write_triangle_poly_file(t, output);
         }
 
       if(terminal_output)

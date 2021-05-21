@@ -28,11 +28,11 @@ namespace CGAL
 struct DefaultColorFunctorT3
 {
   template<typename T3>
-  static CGAL::Color run(const T3&,
+  static CGAL::IO::Color run(const T3&,
                          const typename T3::Finite_facets_iterator* fh)
   {
     if (fh==nullptr) // use to get the mono color
-      return CGAL::Color(100, 125, 200); // R G B between 0-255
+      return CGAL::IO::Color(100, 125, 200); // R G B between 0-255
 
     CGAL::Random random((unsigned int)((std::size_t)(&*((*fh)->first))+
                                        (std::size_t)((*fh)->second)));
@@ -74,7 +74,7 @@ public:
 protected:
   void compute_face(Facet_const_handle fh)
   {
-    CGAL::Color c=m_fcolor.run(t3, &fh);
+    CGAL::IO::Color c=m_fcolor.run(t3, &fh);
     face_begin(c);
 
     add_point_in_face(fh->first->vertex((fh->second+1)%4)->point());

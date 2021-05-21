@@ -120,13 +120,13 @@ private:
 
   is >> n;
   CGAL_assertion(n == 10);
-  is >> iformat(cx);
+  is >> IO::iformat(cx);
   is >> n;
   CGAL_assertion(n == 20);
-  is >> iformat(cy);
+  is >> IO::iformat(cy);
   is >> n;
   CGAL_assertion(n == 40);
-  is >> iformat(r);
+  is >> IO::iformat(r);
   FT sqr_ft(r*r);
   circ = typename K::Construct_circle_2()(Point_2(cx,cy), sqr_ft);
 }
@@ -144,13 +144,13 @@ private:
 
   is >> n;
   CGAL_assertion(n == 10);
-  is >> iformat(cx);
+  is >> IO::iformat(cx);
   is >> n;
   CGAL_assertion(n == 20);
-  is >> iformat(cy);
+  is >> IO::iformat(cy);
   is >> n;
   CGAL_assertion(n == 40);
-  is >> iformat(r);
+  is >> IO::iformat(r);
 
   center = typename K::Construct_point_2()(cx,cy);
   rft = FT(r); // intentionally not squared
@@ -181,10 +181,10 @@ read_polygon(std::istream& is, Polygon& poly)
       CGAL_assertion(n == 0);
       is >> n;
       CGAL_assertion(n == 10);
-      is >> iformat(x);
+      is >> IO::iformat(x);
       is >> n;
       CGAL_assertion(n == 20);
-      is >> iformat(y);
+      is >> IO::iformat(y);
       is >> n;
       len = 0;
       if(n == 42){

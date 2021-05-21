@@ -122,7 +122,7 @@ int main(int argc, char * argv[])
     std::cerr << "Opening " << argv[i] << " for reading..." << std::endl;
 
     // If XYZ file format:
-    if(CGAL::read_points(argv[i], std::back_inserter(points)))
+    if(CGAL::IO::read_points(argv[i], std::back_inserter(points)))
     {
       std::cerr << "ok (" << points.size() << " points)" << std::endl;
     }

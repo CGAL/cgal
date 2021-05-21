@@ -138,7 +138,7 @@ int main(int argc, char * argv[])
       // Note: read_points() requires an iterator over points
       // + property maps to access each point's position and normal.
       // The position property map can be omitted here as we use iterators over Point_3 elements.
-      if (!CGAL::read_points(
+      if (!CGAL::IO::read_points(
             input_filename.c_str(),
             std::back_inserter(points),
             CGAL::parameters::normal_map

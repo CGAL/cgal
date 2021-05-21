@@ -64,7 +64,7 @@ The package can handle intersecting input constraints  and set no restriction on
 - `CGAL::lloyd_optimize_mesh_2`
 
 \cgalCRPSection{I/O Functions}
-- `CGAL::write_vtu()`
+- `CGAL::IO::write_VTU()`
 
 \cgalCRPSection{Enumerations}
 - `CGAL::Mesh_optimization_return_code`

@@ -18,7 +18,7 @@ int main(int argc, char** argv)
 
   // reads input surface triangle mesh
   Mesh mesh;
-  if(!CGAL::Polygon_mesh_processing::read_polygon_mesh(filename, mesh) ||
+  if(!CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(filename, mesh) ||
      !CGAL::is_triangle_mesh(mesh))
   {
     std::cerr << "Invalid input file." << std::endl;

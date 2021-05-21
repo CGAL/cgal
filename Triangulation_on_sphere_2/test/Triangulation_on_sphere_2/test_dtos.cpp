@@ -79,7 +79,7 @@ int main(int, char**)
   assert(tr.geom_traits().radius() == 1);
 
   tr.insert(points.begin(), points.end());
-  write_OFF("test_dtos.off", tr);
+  CGAL::IO::write_OFF("test_dtos.off", tr);
   assert(tr.is_valid());
 
   //////////////////////////////////////////////////////////////////////////////////////////////////

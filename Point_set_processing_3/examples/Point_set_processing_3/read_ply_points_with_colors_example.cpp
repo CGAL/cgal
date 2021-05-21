@@ -28,15 +28,15 @@ int main(int argc, char*argv[])
   // Reads a .ply point set file with normal vectors and colors
   std::vector<PNCI> points; // store points
   std::ifstream in(fname);
-  if(!CGAL::read_PLY_with_properties(in, std::back_inserter(points),
-                                     CGAL::make_ply_point_reader(Point_map()),
-                                     std::make_pair(Intensity_map(), CGAL::PLY_property<int>("intensity")),
-                                     std::make_tuple(Color_map(),
-                                                     CGAL::Construct_array(),
-                                                     CGAL::PLY_property<unsigned char>("red"),
-                                                     CGAL::PLY_property<unsigned char>("green"),
-                                                     CGAL::PLY_property<unsigned char>("blue")),
-                                     CGAL::make_ply_normal_reader(Normal_map())))
+  if(!CGAL::IO::read_PLY_with_properties(in, std::back_inserter(points),
+                                         CGAL::make_ply_point_reader(Point_map()),
+                                         std::make_pair(Intensity_map(), CGAL::PLY_property<int>("intensity")),
+                                         std::make_tuple(Color_map(),
+                                                         CGAL::Construct_array(),
+                                                         CGAL::IO::PLY_property<unsigned char>("red"),
+                                                         CGAL::IO::PLY_property<unsigned char>("green"),
+                                                         CGAL::IO::PLY_property<unsigned char>("blue")),
+                                         CGAL::IO::make_ply_normal_reader(Normal_map())))
   {
     std::cerr << "Error: cannot read file " << fname << std::endl;
     return EXIT_FAILURE;

@@ -90,10 +90,12 @@ void Scene_group_item::update_group_number(Scene_item * new_item, int n)
     Scene_group_item* group =
             qobject_cast<Scene_group_item*>(new_item);
     if(group)
+    {
       Q_FOREACH(Scene_interface::Item_id id, group->getChildren()){
 
         update_group_number(getChild(id),n+1);
       }
+    }
     new_item->has_group = n;
 }
 void Scene_group_item::setColor(QColor c)

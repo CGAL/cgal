@@ -14,7 +14,7 @@
 
 #include <CGAL/license/Triangulation_3.h>
 
-#include <CGAL/IO/facets_in_complex_3_to_triangle_mesh.h>
+#include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
 
 namespace CGAL {
 

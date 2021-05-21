@@ -919,8 +919,6 @@ struct Mpzf {
   Mpzf& operator*=(Mpzf const&x){ *this=*this*x; return *this; }
 #ifdef CGAL_MPZF_DIVISION_OPERATOR
   Mpzf& operator/=(Mpzf const&x){ *this=*this/x; return *this; }
-#else // not CGAL_MPZF_DIVISION_OPERATOR
-  Mpzf& operator/=(Mpzf const&x){ *this=division(*this,x); return *this; }
 #endif // not CGAL_MPZF_DIVISION_OPERATOR
 
   bool is_canonical () const {

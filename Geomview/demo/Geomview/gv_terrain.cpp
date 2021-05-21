@@ -39,7 +39,7 @@ int main()
   CGAL::Geomview_stream gv(CGAL::Bbox_3(-100, -100, -100, 600, 600, 600));
   gv.set_line_width(4);
   // gv.set_trace(true);
-  gv.set_bg_color(CGAL::Color(0, 200, 200));
+  gv.set_bg_color(CGAL::IO::Color(0, 200, 200));
   // gv.clear();
 
   Delaunay D;
@@ -57,13 +57,13 @@ int main()
 
   // use different colors, and put a few sleeps/clear.
 
-  gv << CGAL::blue();
+  gv << CGAL::IO::blue();
   std::cout << "Drawing 2D Delaunay triangulation in wired mode.\n";
   gv.set_wired(true);
   gv << D;
 
 #if 1 // It's too slow !  Needs to use OFF for that.
-  gv << CGAL::red();
+  gv << CGAL::IO::red();
   std::cout << "Drawing its Voronoi diagram.\n";
   gv.set_wired(true);
   D.draw_dual(gv);

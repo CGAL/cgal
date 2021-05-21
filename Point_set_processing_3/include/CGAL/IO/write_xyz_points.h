@@ -86,6 +86,8 @@ bool write_XYZ_PSP(std::ostream& os,
 } // namespace internal
 } // Point_set_processing_3
 
+namespace IO {
+
 /**
    \ingroup PkgPointSetProcessing3IOXyz
 
@@ -132,7 +134,7 @@ bool write_XYZ(std::ostream& os,
                const PointRange& points,
                const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr
+               , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
 #endif
                )
 {
@@ -143,7 +145,7 @@ bool write_XYZ(std::ostream& os,
 
 template <typename PointRange>
 bool write_XYZ(std::ostream& os, const PointRange& points,
-               typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
+               typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr)
 {
   return write_XYZ(os, points, parameters::all_default());
 }
@@ -196,7 +198,7 @@ bool write_XYZ(const std::string& filename,
                const PointRange& points,
                const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr
+               , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
 #endif
                )
 {
@@ -208,13 +210,15 @@ bool write_XYZ(const std::string& filename,
 
 template <typename PointRange>
 bool write_XYZ(const std::string& filename, const PointRange& points,
-               typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
+               typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr)
 {
   std::ofstream os(filename);
   return write_XYZ(os, points, parameters::all_default());
 }
 
 /// \endcond
+
+} // namespace IO
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
@@ -233,10 +237,10 @@ bool write_xyz_points_and_normals(std::ostream& os, ///< output stream.
                                   const Kernel& /*kernel*/) ///< geometric traits.
 {
   CGAL::Iterator_range<ForwardIterator> points(first, beyond);
-  return write_XYZ(os, points,
-                   parameters::point_map(point_map)
-                              .normal_map(normal_map)
-                              .geom_traits(Kernel()));
+  return IO::write_XYZ(os, points,
+                       parameters::point_map(point_map)
+                                  .normal_map(normal_map)
+                                  .geom_traits(Kernel()));
 }
 
 template <typename ForwardIterator,
@@ -250,9 +254,9 @@ bool write_xyz_points_and_normals(std::ostream& os, ///< output stream.
                                   NormalMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_XYZ(os, points,
-                   parameters::point_map(point_map)
-                              .normal_map(normal_map));
+  return IO::write_XYZ(os, points,
+                       parameters::point_map(point_map)
+                                  .normal_map(normal_map));
 }
 
 template <typename ForwardIterator,
@@ -265,7 +269,7 @@ bool write_xyz_points_and_normals(std::ostream& os, ///< output stream.
                                   NormalMap normal_map) ///< property map: value_type of ForwardIterator -> Vector_3.
 {
   CGAL::Iterator_range<ForwardIterator> points(first, beyond);
-  return write_XYZ(os, points, parameters::normal_map(normal_map));
+  return IO::write_XYZ(os, points, parameters::normal_map(normal_map));
 }
 
 template <typename ForwardIterator,
@@ -279,7 +283,7 @@ bool write_xyz_points(std::ostream& os, ///< output stream.
                       const Kernel& kernel)
 {
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_XYZ(os, points, parameters::point_map(point_map)
+  return IO::write_XYZ(os, points, parameters::point_map(point_map)
                                               .geom_traits (kernel));
 }
 
@@ -292,7 +296,7 @@ bool write_xyz_points(std::ostream& os, ///< output stream.
                       PointMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
 {
   CGAL::Iterator_range<ForwardIterator> points(first, beyond);
-  return write_XYZ(os, points, parameters::point_map(point_map));
+  return IO::write_XYZ(os, points, parameters::point_map(point_map));
 }
 
 template <typename ForwardIterator>
@@ -302,7 +306,7 @@ bool write_xyz_points(std::ostream& os, ///< output stream.
                       ForwardIterator beyond) ///< past-the-end input point.
 {
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_XYZ(os, points);
+  return IO::write_XYZ(os, points);
 }
 
 /// \endcond
@@ -310,13 +314,13 @@ bool write_xyz_points(std::ostream& os, ///< output stream.
 /**
   \ingroup PkgPointSetProcessing3IODeprecated
 
-  \deprecated This function is deprecated since \cgal 5.2,
+  \deprecated This function is deprecated since \cgal 5.3,
               \link PkgPointSetProcessing3IOXyz `CGAL::write_XYZ()` \endlink should be used instead.
 */
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 CGAL_DEPRECATED bool write_xyz_points(std::ostream& os, const PointRange& points, const CGAL_BGL_NP_CLASS& np)
 {
-  return write_XYZ(os, points, np);
+  return IO::write_XYZ(os, points, np);
 }
 
 /// \cond SKIP_IN_MANUAL
@@ -324,7 +328,7 @@ CGAL_DEPRECATED bool write_xyz_points(std::ostream& os, const PointRange& points
 template <typename PointRange>
 CGAL_DEPRECATED bool write_xyz_points(std::ostream& os, const PointRange& points)
 {
-  return write_XYZ(os, points, parameters::all_default(points));
+  return IO::write_XYZ(os, points, parameters::all_default());
 }
 
 /// \endcond

@@ -28,7 +28,7 @@ operator << ( std::ostream& os,
     typedef typename Min_ellipse_2<Traits_>::Point  Point;
     typedef  ostream_iterator<Point>        Os_it;
 
-    switch ( CGAL::get_mode( os)) {
+    switch ( CGAL::IO::get_mode( os)) {
 
       case CGAL::IO::PRETTY:
         os << endl;
@@ -61,7 +61,7 @@ operator << ( std::ostream& os,
 
       default:
         CGAL_optimisation_assertion_msg( false,
-                                         "CGAL::get_mode( os) invalid!");
+                                         "CGAL::IO::get_mode( os) invalid!");
         break; }
 
     return( os);
@@ -73,7 +73,7 @@ operator >> ( std::istream& is, CGAL::Min_ellipse_2<Traits_>& min_ellipse)
 {
     using namespace std;
 
-    switch ( CGAL::get_mode( is)) {
+    switch ( CGAL::IO::get_mode( is)) {
 
       case CGAL::IO::PRETTY:
         cerr << endl;

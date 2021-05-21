@@ -305,6 +305,17 @@ public:
     initialize_bounds();
   }
 
+  friend void swap(Self& l, Self& r)
+  {
+    using std::swap;
+    swap(static_cast<LK&>(l), static_cast<LK&>(r));
+    swap(static_cast<SK&>(l), static_cast<SK&>(r));
+    swap(l._center, r._center);
+    swap(l._radius, r._radius);
+    l.initialize_bounds();
+    r.initialize_bounds();
+  }
+
 public:
   const LK& lk() const { return static_cast<const LK&>(*this); }
   const SK& sk() const { return static_cast<const SK&>(*this); }

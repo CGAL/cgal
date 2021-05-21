@@ -35,7 +35,7 @@
 #include <CGAL/Mesh_criteria_3.h>
 #include <CGAL/Three/Three.h>
 
-#include <CGAL/IO/facets_in_complex_3_to_triangle_mesh.h>
+#include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
 
 #include <memory> // std::shared_ptr
 
@@ -76,8 +76,8 @@ public:
   }
 
 private:
-  boost::shared_ptr<Tree> m_tree_ptr;
-  boost::shared_ptr<Side_of> m_side_of_ptr;
+  std::shared_ptr<Tree> m_tree_ptr;
+  std::shared_ptr<Side_of> m_side_of_ptr;
   double m_offset_distance;
   bool m_is_closed;
 

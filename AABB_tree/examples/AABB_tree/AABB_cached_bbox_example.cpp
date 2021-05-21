@@ -27,7 +27,7 @@ void triangle_mesh(const char* fname)
   typedef CGAL::AABB_tree<Traits> Tree;
 
   TriangleMesh tmesh;
-  if(!CGAL::read_polygon_mesh(fname, tmesh) || CGAL::is_triangle_mesh(tmesh))
+  if(!CGAL::IO::read_polygon_mesh(fname, tmesh) || CGAL::is_triangle_mesh(tmesh))
   {
     std::cerr << "Invalid input." << std::endl;
     return;

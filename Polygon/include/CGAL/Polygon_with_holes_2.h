@@ -103,7 +103,7 @@ std::ostream& operator<<(std::ostream &os,
 {
   typename Polygon_with_holes_2<Kernel_,Container_>::Hole_const_iterator i;
 
-  switch(get_mode(os)) {
+  switch(IO::get_mode(os)) {
     case IO::ASCII :
       os << p.outer_boundary() << ' ' << p.number_of_holes()<<' ';
       for (i = p.holes_begin(); i != p.holes_end(); ++i) {

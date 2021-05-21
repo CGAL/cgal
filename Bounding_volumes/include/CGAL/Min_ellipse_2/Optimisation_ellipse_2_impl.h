@@ -31,7 +31,7 @@ operator << ( std::ostream& os, const CGAL::Optimisation_ellipse_2<K_>& e)
     const char*  sep  = empty;
     const char*  tail = empty;
 
-    switch ( CGAL::get_mode( os)) {
+    switch ( CGAL::IO::get_mode( os)) {
       case CGAL::IO::PRETTY:
         head = pretty_head;
         sep  = pretty_sep;
@@ -44,7 +44,7 @@ operator << ( std::ostream& os, const CGAL::Optimisation_ellipse_2<K_>& e)
         break;
       default:
         CGAL_optimisation_assertion_msg( false,
-                                         "CGAL::get_mode( os) invalid!");
+                                         "CGAL::IO::get_mode( os) invalid!");
         break; }
 
     os << head << e.n_boundary_points;
@@ -75,7 +75,7 @@ template < class K_ >
 std::istream&
 operator >> ( std::istream& is, CGAL::Optimisation_ellipse_2<K_>& e)
 {
-    switch ( CGAL::get_mode( is)) {
+    switch ( CGAL::IO::get_mode( is)) {
 
       case CGAL::IO::PRETTY:
         std::cerr << std::endl;
@@ -107,7 +107,7 @@ operator >> ( std::istream& is, CGAL::Optimisation_ellipse_2<K_>& e)
 
       default:
         CGAL_optimisation_assertion_msg( false,
-                                         "CGAL::get_mode( is) invalid!");
+                                         "CGAL::IO::get_mode( is) invalid!");
         break; }
 
     return( is);

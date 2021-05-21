@@ -254,10 +254,10 @@ public:
         cvx_hull_points.push_back(origin + p.x() * base1 + p.y() * base2);
       }
     }
-    std::vector<CGAL::Color> fcolors;
+    std::vector<CGAL::IO::Color> fcolors;
     for(const QColor& c : approx.proxy_colors())
-      fcolors.push_back(CGAL::Color(c.red(), c.green(), c.blue()));
-    approx.visual_items().planes->load(cvx_hull_points, cvx_hulls, fcolors, std::vector<CGAL::Color>());
+      fcolors.push_back(CGAL::IO::Color(c.red(), c.green(), c.blue()));
+    approx.visual_items().planes->load(cvx_hull_points, cvx_hulls, fcolors, std::vector<CGAL::IO::Color>());
   }
 
 public Q_SLOTS:

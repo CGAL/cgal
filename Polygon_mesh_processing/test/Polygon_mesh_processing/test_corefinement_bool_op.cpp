@@ -67,7 +67,7 @@ void run_boolean_operations(
 #ifdef CGAL_COREFINEMENT_DEBUG
    std::stringstream fname;
    fname << scenario << "_tm1_union_tm2.off";
-   CGAL::write_polygon_mesh(fname.str(), union_, CGAL::parameters::stream_precision(17));
+   CGAL::IO::write_polygon_mesh(fname.str(), union_, CGAL::parameters::stream_precision(17));
 #endif
   }
   else
@@ -79,7 +79,7 @@ void run_boolean_operations(
 #ifdef CGAL_COREFINEMENT_DEBUG
    std::stringstream fname;
    fname << scenario << "_tm1_inter_tm2.off";
-   CGAL::write_polygon_mesh(fname.str(), inter, CGAL::parameters::stream_precision(17));
+   CGAL::IO::write_polygon_mesh(fname.str(), inter, CGAL::parameters::stream_precision(17));
 #endif
   }
   else
@@ -91,7 +91,7 @@ void run_boolean_operations(
 #ifdef CGAL_COREFINEMENT_DEBUG
    std::stringstream fname;
    fname << scenario << "_tm1_minus_tm2.off";
-   CGAL::write_polygon_mesh(fname.str(), tm1_minus_tm2, CGAL::parameters::stream_precision(17));
+   CGAL::IO::write_polygon_mesh(fname.str(), tm1_minus_tm2, CGAL::parameters::stream_precision(17));
 #endif
   }
   else
@@ -103,7 +103,7 @@ void run_boolean_operations(
 #ifdef CGAL_COREFINEMENT_DEBUG
    std::stringstream fname;
    fname << scenario << "_tm2_minus_tm1.off";
-   CGAL::write_polygon_mesh(fname.str(), tm2_minus_tm1, CGAL::parameters::stream_precision(17));
+   CGAL::IO::write_polygon_mesh(fname.str(), tm2_minus_tm1, CGAL::parameters::stream_precision(17));
 #endif
   }
   else
