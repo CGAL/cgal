@@ -50,7 +50,7 @@ if(CGAL_FOUND)
     target_link_libraries(test_hm_const_linear_precision PUBLIC CGAL::Eigen3_support)
     create_single_source_cgal_program("test_hm_triangle.cpp")
     target_link_libraries(test_hm_triangle PUBLIC CGAL::Eigen3_support)
-    create_single_source_cgal_program("test_projection_traits.cpp") # TODO: fails, fix it!
+    create_single_source_cgal_program("test_projection_traits.cpp")
     target_link_libraries(test_projection_traits PUBLIC CGAL::Eigen3_support)
     create_single_source_cgal_program("test_all_coordinates.cpp")
     target_link_libraries(test_all_coordinates PUBLIC CGAL::Eigen3_support)

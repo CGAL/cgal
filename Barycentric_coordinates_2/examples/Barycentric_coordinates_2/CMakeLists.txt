@@ -17,11 +17,7 @@ if(CGAL_FOUND)
   create_single_source_cgal_program("wachspress_coordinates.cpp")
   create_single_source_cgal_program("mean_value_coordinates.cpp")
   create_single_source_cgal_program("discrete_harmonic_coordinates.cpp")
-
-  # missing:
-  # construct_centroid_2
-  # in projection traits
-  # create_single_source_cgal_program("terrain_height_modeling.cpp")
+  create_single_source_cgal_program("terrain_height_modeling.cpp")
 
   # this code is deprecated:
   # create_single_source_cgal_program("deprecated_coordinates.cpp")

@@ -17,11 +17,10 @@ using Point_map = CGAL::Identity_property_map<Point_3>;
 
 void check_result(
   const std::vector<FT>& weights,
-  const std::vector<FT>& coordinates) {
+  const std::vector<FT>& coordinates,
+  const FT epsilon = FT(1) / FT(100000000000000)) {
 
   const FT quater = FT(1) / FT(4);
-  const FT epsilon = FT(1) / FT(100000000000000);
-
   assert(coordinates.size() == 4);
   assert(
     CGAL::abs(coordinates[0] - quater) < epsilon &&
@@ -46,12 +45,6 @@ void test_projection_traits(
   const Point_3& query,
   const Projection_traits& projection_traits) {
 
-  using Domain = CGAL::Barycentric_coordinates::
-    Delaunay_domain_2<Vertices, Projection_traits, Point_map>;
-  using HMC2   = CGAL::Barycentric_coordinates::
-    Harmonic_coordinates_2<Vertices, Domain, Projection_traits, Point_map>;
-
-  Point_map point_map;
   std::vector<FT> weights;
   std::vector<FT> coordinates;
 
@@ -76,7 +69,14 @@ void test_projection_traits(
     vertices, query, std::back_inserter(coordinates), projection_traits);
   check_result(weights, coordinates);
 
+  using Domain = CGAL::Barycentric_coordinates::
+    Delaunay_domain_2<Vertices, Projection_traits, Point_map>;
+  using HMC2   = CGAL::Barycentric_coordinates::
+    Harmonic_coordinates_2<Vertices, Domain, Projection_traits, Point_map>;
+
   coordinates.clear();
+  Point_map point_map;
+
   CGAL::Barycentric_coordinates::boundary_coordinates_2(
     vertices, vertices[0], std::back_inserter(coordinates), projection_traits, point_map);
   assert(
@@ -85,8 +85,7 @@ void test_projection_traits(
 
   const FT max_edge_length = FT(1) / FT(10);
   const std::vector<Point_3> seeds = { query };
-  Domain domain(
-    vertices, projection_traits, point_map);
+  Domain domain(vertices, projection_traits, point_map);
   domain.create(max_edge_length, seeds);
 
   HMC2 harmonic_coordinates_2(
@@ -95,10 +94,12 @@ void test_projection_traits(
   coordinates.clear();
   for (std::size_t k = 0; k < domain.number_of_vertices(); ++k)
     harmonic_coordinates_2(k, std::back_inserter(coordinates));
+  assert(coordinates.size() ==
+    domain.number_of_vertices() * vertices.size());
 
   weights.clear(); coordinates.clear();
   harmonic_coordinates_2(query, std::back_inserter(coordinates));
-  check_result(weights, coordinates);
+  check_result(weights, coordinates, max_edge_length);
 }
 
 int main() {
