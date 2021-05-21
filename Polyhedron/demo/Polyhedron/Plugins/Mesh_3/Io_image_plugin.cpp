@@ -1239,7 +1239,7 @@ bool Io_image_plugin::loadDCM(QString dirname)
     {
 
       Image *image = createDCMImage(dirname);
-      if(image->image() == 0)
+      if(image->image() == nullptr)
       {
         QMessageBox::warning(mw, mw->windowTitle(),
                              tr("Error with file <tt>%1/</tt>:\nunknown file format!").arg(dirname));
@@ -1265,7 +1265,7 @@ bool Io_image_plugin::loadDCM(QString dirname)
     else
     {
       Image *image = createDCMImage(dirname);
-      if(image->image() == 0)
+      if(image->image() == nullptr)
       {
         QMessageBox::warning(mw, mw->windowTitle(),
                              tr("Error with file <tt>%1/</tt>:\nunknown file format!").arg(dirname));
