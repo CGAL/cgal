@@ -1,1 +1,1 @@
-Generalized Barycentric Coordinates for 2D polygons and 3D polyhedra.
+Generalized Barycentric Coordinates for planar simple polygons.

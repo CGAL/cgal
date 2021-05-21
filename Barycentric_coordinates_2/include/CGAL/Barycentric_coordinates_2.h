@@ -92,7 +92,7 @@ namespace Barycentric_coordinates {
     const PointRange& polygon,
     const PointRange& seeds,
     OutIterator c_begin,
-    const GeomTraits& /* traits */, // TODO: we should involve it in the code!
+    const GeomTraits& traits,
     const typename GeomTraits::FT max_edge_length =
     typename GeomTraits::FT(1) / typename GeomTraits::FT(100)) {
 
@@ -102,10 +102,11 @@ namespace Barycentric_coordinates {
       Harmonic_coordinates_2<PointRange, Domain, GeomTraits>;
     using FT = typename GeomTraits::FT;
 
-    Domain domain(polygon);
+    Domain domain(polygon, traits);
     domain.create(max_edge_length, seeds);
 
-    Harmonic_coordinates_2 harmonic_coordinates_2(polygon, domain);
+    Harmonic_coordinates_2 harmonic_coordinates_2(
+      polygon, domain, traits);
     harmonic_coordinates_2.compute();
 
     std::vector<FT> coordinates;

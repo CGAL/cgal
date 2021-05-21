@@ -6,8 +6,6 @@
 * Why the 2D mesher does not generate boundary points exactly on the polygon boundary but only with the precision 10^-5?
 * Should we remove tables? Are not they redundant?
 
-* Add 3D coordinates.
 * Merge this package with the natural neighbor coordinates package.
 * Improve the solver interface and make it a parameter for the harmonic coordinates class.
 * Add a demo with visualization of the coordinate functions.
-* Rename examples and tests to keep track of 2D and 3D versions.
