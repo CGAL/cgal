@@ -138,6 +138,6 @@ int main() {
   const Point_3 query_yz(1, h, h);
   test_projection_traits(vertices_yz, query_yz, projection_traits_yz);
 
-  std::cout << "test_projection_traits: PASSED" << std::endl;
+  std::cout << "test_bc_projection_traits: PASSED" << std::endl;
   return EXIT_SUCCESS;
 }

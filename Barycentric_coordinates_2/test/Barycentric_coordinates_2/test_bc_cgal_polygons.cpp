@@ -77,6 +77,6 @@ int main() {
     coordinates[0] == FT(0) && coordinates[1] == FT(0) &&
     coordinates[2] == FT(0) && coordinates[3] == FT(0) );
 
-  std::cout << "test_cgal_polygons: PASSED" << std::endl;
+  std::cout << "test_bc_cgal_polygons: PASSED" << std::endl;
   return EXIT_SUCCESS;
 }

@@ -61,6 +61,6 @@ int main() {
   test_equality(mv_coordinates, hm_coordinates);
   test_equality(dh_coordinates, hm_coordinates);
 
-  std::cout << "test_all_coordinates: PASSED" << std::endl;
+  std::cout << "test_bc_all_coordinates: PASSED" << std::endl;
   return EXIT_SUCCESS;
 }
