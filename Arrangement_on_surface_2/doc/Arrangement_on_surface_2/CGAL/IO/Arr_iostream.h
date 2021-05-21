@@ -80,7 +80,7 @@ Inserts the arrangement object `arr` into the output stream
 `os` using the output format defined by the
 `Arr_text_formatter` class. Only the basic geometric and
 topological features of the arrangement are inserted. Auxiliary data
-that may be attached to the <span class="textsc">Dcel</span> features is ignored.
+that may be attached to the \dcel features is ignored.
 */
 template<typename Traits, typename Dcel>
 std::ostream& operator<< (std::ostream& os,
