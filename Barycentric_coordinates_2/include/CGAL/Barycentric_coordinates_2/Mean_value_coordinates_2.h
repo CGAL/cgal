@@ -17,8 +17,8 @@
 #include <CGAL/license/Barycentric_coordinates_2.h>
 
 // Internal includes.
+#include <CGAL/Weights/mean_value_weights.h>
 #include <CGAL/Barycentric_coordinates_2/internal/utils_2.h>
-#include <CGAL/Barycentric_coordinates_2/internal/Mean_value_weights_2.h>
 
 // [1] Reference: "K. Hormann and M. Floater.
 // Mean value coordinates for arbitrary planar polygons.
@@ -80,7 +80,7 @@ namespace Barycentric_coordinates {
     using Sqrt = typename Get_sqrt::Sqrt;
 
     using Mean_value_weights_2 =
-      internal::Mean_value_weights_2<VertexRange, GeomTraits, PointMap>;
+      Weights::Mean_value_weights_2<VertexRange, GeomTraits, PointMap>;
     /// \endcond
 
     /// Number type.

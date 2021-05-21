@@ -22,8 +22,8 @@
 #include <Eigen/Sparse>
 
 // Internal includes.
+#include <CGAL/Weights/cotangent_weights.h>
 #include <CGAL/Barycentric_coordinates_2/internal/utils_2.h>
-#include <CGAL/Barycentric_coordinates_2/internal/Cotangent_weights_2.h>
 
 // [1] Reference: "P. Joshi, M. Meyer, T. DeRose, B. Green, and T. Sanocki.
 // Harmonic coordinates for character articulation.
@@ -557,7 +557,7 @@ namespace Barycentric_coordinates {
             const auto& p0 = m_domain.vertex(neighbors[jm]);
             const auto& p1 = m_domain.vertex(neighbors[j]);
             const auto& p2 = m_domain.vertex(neighbors[jp]);
-            const FT w = -internal::cotangent_weight(
+            const FT w = -Weights::cotangent_weight(
               p0, p1, p2, query, m_traits) / FT(2);
             W -= w;
 

@@ -46,6 +46,7 @@ int main() {
     }
     std::cout << "deformed domain vertex: (" << x << ", " << y << ")" << std::endl;
   }
+  std::cout << std::endl;
 
   return EXIT_SUCCESS;
 }

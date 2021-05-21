@@ -30,12 +30,13 @@
 #include <boost/optional/optional.hpp>
 
 // Internal includes.
+#include <CGAL/Weights/internal/polygon_utils_2.h>
 #include <CGAL/Barycentric_coordinates_2/barycentric_enum_2.h>
-#include <CGAL/Barycentric_coordinates_2/internal/polygon_utils_2.h>
 
 namespace CGAL {
 namespace Barycentric_coordinates {
 namespace internal {
+  using namespace Weights::internal;
 
   enum class Query_point_location {
 

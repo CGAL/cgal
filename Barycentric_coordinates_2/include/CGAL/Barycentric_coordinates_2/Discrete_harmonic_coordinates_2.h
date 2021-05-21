@@ -17,8 +17,8 @@
 #include <CGAL/license/Barycentric_coordinates_2.h>
 
 // Internal includes.
+#include <CGAL/Weights/discrete_harmonic_weights.h>
 #include <CGAL/Barycentric_coordinates_2/internal/utils_2.h>
-#include <CGAL/Barycentric_coordinates_2/internal/Discrete_harmonic_weights_2.h>
 
 // [1] Reference: "M. S. Floater, K. Hormann, and G. Kos.
 // A general construction of barycentric coordinates over convex polygons.
@@ -70,7 +70,7 @@ namespace Barycentric_coordinates {
     using Squared_distance_2 = typename GeomTraits::Compute_squared_distance_2;
 
     using Discrete_harmonic_weights_2 =
-      internal::Discrete_harmonic_weights_2<VertexRange, GeomTraits, PointMap>;
+      Weights::Discrete_harmonic_weights_2<VertexRange, GeomTraits, PointMap>;
     /// \endcond
 
     /// Number type.

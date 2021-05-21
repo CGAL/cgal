@@ -17,8 +17,8 @@
 #include <CGAL/license/Barycentric_coordinates_2.h>
 
 // Internal includes.
+#include <CGAL/Weights/wachspress_weights.h>
 #include <CGAL/Barycentric_coordinates_2/internal/utils_2.h>
-#include <CGAL/Barycentric_coordinates_2/internal/Wachspress_weights_2.h>
 
 // [1] Reference: "M. S. Floater, K. Hormann, and G. Kos.
 // A general construction of barycentric coordinates over convex polygons.
@@ -69,7 +69,7 @@ namespace Barycentric_coordinates {
     using Area_2 = typename GeomTraits::Compute_area_2;
 
     using Wachspress_weights_2 =
-      internal::Wachspress_weights_2<VertexRange, GeomTraits, PointMap>;
+      Weights::Wachspress_weights_2<VertexRange, GeomTraits, PointMap>;
     /// \endcond
 
     /// Number type.
