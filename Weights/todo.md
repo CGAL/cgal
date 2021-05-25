@@ -20,5 +20,5 @@ Later:
 
 To do now:
 * What happens with WP/MV/DH weights on the polygon boundary?
-* Check if this code works with the Projection_traits_xy class. E.g. the latter does not have the object Construct_centroid_2.
+* Check if this code works with the Projection_traits_xy/xz/yz classes.
 * Add missing functions in Triangulation_2_projection_3 traits.

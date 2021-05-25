@@ -1,6 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Weights/mean_value_weights.h>
-#include <CGAL/Weights/internal/Projection_traits_3.h>
+#include <CGAL/Triangulation_2_projection_traits_3.h>
 
 // Typedefs.
 using Kernel  = CGAL::Simple_cartesian<double>;
@@ -43,7 +43,7 @@ int main() {
   std::cout << std::endl;
 
   // 3D configuration.
-  CGAL::Weights::internal::Projection_traits_3<Kernel> ptraits(
+  CGAL::Triangulation_2_projection_traits_3<Kernel> ptraits(
     typename Kernel::Vector_3(0, 0, 1));
 
   const std::vector<Point_3> polygon3 = {t3, r3, p3, Point_3(0, 1, 1)};
