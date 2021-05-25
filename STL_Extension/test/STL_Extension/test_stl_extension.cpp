@@ -50,9 +50,8 @@
 #include <boost/type_traits/is_same.hpp>
 #include <boost/typeof/typeof.hpp>
 
-#include <CGAL/disable_warnings.h>
+#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
 #include <CGAL/result_of.h>
-#include<CGAL/enable_warnings.h>
 using namespace CGAL;
 
 struct item : public In_place_list_base<item> {
