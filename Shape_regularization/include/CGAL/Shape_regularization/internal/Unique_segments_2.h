@@ -46,8 +46,7 @@ namespace internal {
     using Segment_2 = typename Traits::Segment_2;
     using Indices = std::vector<std::size_t>;
 
-    using Collinear_groups_2 =
-      Collinear_groups_2<Traits, Input_range, Segment_map>;
+    using CGroups_2 = Collinear_groups_2<Traits, Input_range, Segment_map>;
 
     template<typename NamedParameters>
     Unique_segments_2(
@@ -75,7 +74,7 @@ namespace internal {
   private:
     const Input_range& m_input_range;
     const Segment_map m_segment_map;
-    const Collinear_groups_2 m_grouping;
+    const CGroups_2 m_grouping;
 
     std::vector<Segment_2> m_segments;
 

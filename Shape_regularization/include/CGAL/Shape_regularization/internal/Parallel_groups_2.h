@@ -77,8 +77,7 @@ namespace internal {
     FT m_max_angle;
     std::vector<Indices> m_parallel_groups;
 
-    void make_parallel_groups(
-      const bool preserve_order) {
+    void make_parallel_groups(const bool preserve_order) {
 
       m_parallel_groups.clear();
       std::vector<bool> states(m_input_range.size(), false);

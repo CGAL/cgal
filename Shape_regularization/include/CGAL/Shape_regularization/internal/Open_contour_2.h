@@ -48,8 +48,7 @@ namespace internal {
     typename Input_range,
     typename Point_map>
     void initialize(
-      const Input_range& input_range,
-      const Point_map point_map) {
+      const Input_range& input_range, const Point_map point_map) {
 
       m_base.initialize_open(
         input_range, point_map, m_wraps);
@@ -57,8 +56,7 @@ namespace internal {
     }
 
     template<typename OutputIterator>
-    OutputIterator regularize(
-      OutputIterator contour) {
+    OutputIterator regularize(OutputIterator contour) {
 
       CGAL_assertion(m_wraps.size() >= 2);
       if (m_wraps.size() < 2) return contour;

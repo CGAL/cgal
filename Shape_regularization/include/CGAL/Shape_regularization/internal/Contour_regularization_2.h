@@ -68,9 +68,7 @@ namespace internal {
     }
 
     template<typename OutputIterator>
-    OutputIterator regularize(
-      OutputIterator contour) {
-
+    OutputIterator regularize(OutputIterator contour) {
       return m_regularization->regularize(contour);
     }
 

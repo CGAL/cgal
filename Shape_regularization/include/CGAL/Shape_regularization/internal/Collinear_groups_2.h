@@ -43,8 +43,7 @@ namespace internal {
     using Line_2 = typename Traits::Line_2;
     using Indices = std::vector<std::size_t>;
 
-    using Parallel_groups_2 =
-      Parallel_groups_2<Traits, Input_range, Segment_map>;
+    using PGroups_2 = Parallel_groups_2<Traits, Input_range, Segment_map>;
 
     template<typename NamedParameters>
     Collinear_groups_2(
@@ -79,13 +78,12 @@ namespace internal {
   private:
     const Input_range& m_input_range;
     const Segment_map m_segment_map;
-    const Parallel_groups_2 m_grouping;
+    const PGroups_2 m_grouping;
 
     FT m_max_offset;
     std::vector<Indices> m_collinear_groups;
 
-    void make_collinear_groups(
-      const bool preserve_order) {
+    void make_collinear_groups(const bool preserve_order) {
 
       std::vector<Indices> parallel_groups;
       m_grouping.groups(
