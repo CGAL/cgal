@@ -50,6 +50,9 @@
 #include <boost/type_traits/is_same.hpp>
 #include <boost/typeof/typeof.hpp>
 
+#include <CGAL/disable_warnings.h>
+#include <CGAL/result_of.h>
+#include<CGAL/enable_warnings.h>
 using namespace CGAL;
 
 struct item : public In_place_list_base<item> {
@@ -8217,6 +8220,27 @@ void test_make_sorted_pair() {
                           std::pair<int,int> >::value) );
 }
 
+void test_result_of() {
+  struct Result_functor
+  {
+    int operator()()
+    {
+      return 0;
+    }
+
+    float operator()(const int&)
+    {
+      return 0.0f;
+    }
+  };
+
+  typedef CGAL::cpp11::result_of<Result_functor(void)>::type result_type;
+  typedef CGAL::cpp11::result_of<Result_functor(int)>::type result_type_float;
+  CGAL_static_assertion((boost::is_same<result_type, int>::value));
+  CGAL_static_assertion((boost::is_same<result_type_float, float>::value));
+
+}
+
 int main() {
   init_global_data();
   test_Circulator_identity();
@@ -8239,6 +8263,7 @@ int main() {
   test_prev_next();
   test_copy_n();
   test_make_sorted_pair();
+  test_result_of();
   return 0;
 }
 // EOF //
