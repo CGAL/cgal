@@ -33,14 +33,12 @@ if(CGAL_FOUND)
     endforeach()
 
     # Use Eigen.
-    find_package(Eigen3 3.1.0 QUIET)
-    if (EIGEN3_FOUND)
+    find_package(Eigen3 REQUIRED)
+    include(CGAL_Eigen3_support)
+    if(TARGET CGAL::Eigen3_support)
       message(STATUS "Found Eigen")
-      include(CGAL_target_use_Eigen)
-      create_single_source_cgal_program(
-        "regularize_real_data_2.cpp")
-      CGAL_target_use_Eigen(regularize_real_data_2)
-      target_link_libraries(regularize_real_data_2 PUBLIC ${OSQP_LIBRARIES})
+      create_single_source_cgal_program("regularize_real_data_2.cpp")
+      target_link_libraries(regularize_real_data_2 PUBLIC CGAL::Eigen3_support ${OSQP_LIBRARIES})
       target_compile_definitions(regularize_real_data_2 PUBLIC -DCGAL_USE_OSQP)
 
     else()
@@ -50,17 +48,12 @@ if(CGAL_FOUND)
     message(STATUS "NOTICE: OSQP was not found. OSQP examples won't be available.")
   endif()
 
-  create_single_source_cgal_program(
-    "regularize_framework.cpp")
-  create_single_source_cgal_program(
-    "regularize_planes.cpp")
-  create_single_source_cgal_program(
-    "regularize_contour.cpp")
-  create_single_source_cgal_program(
-    "regularize_closed_contour.cpp")
-  create_single_source_cgal_program(
-    "regularize_open_contour.cpp")
+  create_single_source_cgal_program("regularize_framework.cpp")
+  create_single_source_cgal_program("regularize_planes.cpp")
+  create_single_source_cgal_program("regularize_contour.cpp")
+  create_single_source_cgal_program("regularize_closed_contour.cpp")
+  create_single_source_cgal_program("regularize_open_contour.cpp")
+
 else()
-  message(WARNING
-  "This program requires the CGAL library, and will not be compiled.")
+  message(WARNING "This program requires the CGAL library, and will not be compiled.")
 endif()

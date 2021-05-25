@@ -164,7 +164,6 @@ namespace Segments {
     const GeomTraits& traits) {
 
     CGAL_precondition(input_range.size() >= 2);
-    using Indices = std::vector<std::size_t>;
     using Neighbor_query = Delaunay_neighbor_query_2<GeomTraits, InputRange>;
     using Angle_regularization = Angle_regularization_2<GeomTraits, InputRange>;
 
@@ -209,7 +208,6 @@ namespace Segments {
     const GeomTraits& traits) {
 
     CGAL_precondition(input_range.size() >= 2);
-    using Indices = std::vector<std::size_t>;
     using Neighbor_query = Delaunay_neighbor_query_2<GeomTraits, InputRange>;
     using Offset_regularization = Offset_regularization_2<GeomTraits, InputRange>;
 

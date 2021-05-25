@@ -91,8 +91,8 @@ namespace Shape_regularization {
       lambda(FT(4) / FT(5)),
       neg_inf(-internal::max_value<FT>()),
       pos_inf(+internal::max_value<FT>()),
-      val_pos(FT(+2) * lambda),
-      val_neg(FT(-2) * lambda)
+      val_neg(FT(-2) * lambda),
+      val_pos(FT(+2) * lambda)
       { }
     };
 

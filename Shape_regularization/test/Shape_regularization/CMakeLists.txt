@@ -70,6 +70,5 @@ if(CGAL_FOUND)
   endforeach()
 
 else()
-  message(WARNING
-  "This program requires the CGAL library, and will not be compiled.")
+  message(WARNING "This program requires the CGAL library, and will not be compiled.")
 endif()

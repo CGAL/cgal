@@ -196,11 +196,11 @@ namespace Segments {
 
     // EXTRA METHODS TO TEST THE CLASS!
     /// \cond SKIP_IN_MANUAL
-    const std::size_t number_of_groups() const {
+    std::size_t number_of_groups() const {
       return m_num_groups;
     }
 
-    const std::size_t number_of_neighbors() const {
+    std::size_t number_of_neighbors() const {
       std::size_t num_neighbors = 0;
       for (const auto& group : m_groups)
         num_neighbors += group.size();

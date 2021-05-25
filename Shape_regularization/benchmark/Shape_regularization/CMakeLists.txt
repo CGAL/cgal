@@ -34,6 +34,5 @@ if(CGAL_FOUND)
     message(STATUS "NOTICE: OSQP was not found. OSQP benchmarks won't be available.")
   endif()
 else()
-  message(WARNING
-  "This program requires the CGAL library, and will not be compiled.")
+  message(WARNING "This program requires the CGAL library, and will not be compiled.")
 endif()

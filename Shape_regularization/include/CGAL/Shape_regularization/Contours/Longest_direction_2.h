@@ -150,7 +150,7 @@ namespace Contours {
 
       The returned number is always one.
     */
-    const std::size_t number_of_directions() const {
+    std::size_t number_of_directions() const {
       return m_directions.size();
     }
 
@@ -172,7 +172,7 @@ namespace Contours {
     std::vector<Direction_2> m_directions;
     std::vector<std::size_t> m_assigned;
 
-    const bool verbose() const {
+    bool verbose() const {
       return m_base.verbose();
     }
 

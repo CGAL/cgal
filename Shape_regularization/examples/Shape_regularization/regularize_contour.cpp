@@ -4,7 +4,7 @@
 using Kernel  = CGAL::Simple_cartesian<double>;
 using Point_2 = typename Kernel::Point_2;
 
-int main(int argc, char *argv[]) {
+int main() {
 
   // Create input contour.
   const std::vector<Point_2> contour = {

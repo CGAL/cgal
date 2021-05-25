@@ -98,7 +98,7 @@ namespace internal {
 
     std::vector<Segment_wrapper_2> m_wraps;
 
-    const bool verbose() const {
+    bool verbose() const {
       return m_base.verbose();
     }
 

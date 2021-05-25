@@ -10,7 +10,6 @@ namespace SR = CGAL::Shape_regularization;
 template<class Traits>
 void test_contour_orientation() {
 
-  using FT      = typename Traits::FT;
   using Point_2 = typename Traits::Point_2;
   using Contour = std::vector<Point_2>;
   using Saver   = SR::Tests::Saver<Traits>;

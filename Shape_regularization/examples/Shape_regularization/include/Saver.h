@@ -132,7 +132,7 @@ public:
       CGAL::sqrt(CGAL::to_double(CGAL::squared_distance(minb, maxb))));
     if (length < FT(10) && scale == FT(1)) scale *= FT(1000);
 
-    const FT radius = FT(1);
+    // const FT radius = FT(1);
     const FT line_width = FT(1);
     const bool dashed = false;
 

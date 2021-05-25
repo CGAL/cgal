@@ -127,7 +127,7 @@ namespace internal {
     // General Utilities. //
     ////////////////////////
 
-    const bool verbose() const {
+    bool verbose() const {
       return m_verbose;
     }
 
@@ -483,7 +483,7 @@ namespace internal {
     }
 
     void rotate_segment(
-      const FT_pair& bounds,
+      const FT_pair& /* bounds */,
       const Direction_2& ref_direction,
       const Direction_2& seg_direction,
       Segment_2& segment) const {

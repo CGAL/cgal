@@ -13,8 +13,7 @@ struct Custom_object {
 
 struct Custom_neighbor_query_2 {
   void operator()(
-    const std::size_t query_index,
-    std::vector<std::size_t>& neighbors) {
+    const std::size_t query_index, std::vector<std::size_t>& neighbors) {
     neighbors.clear();
     if (query_index == 0) { neighbors.push_back(1); } // first  object
     if (query_index == 1) { neighbors.push_back(0); } // second object
@@ -22,17 +21,13 @@ struct Custom_neighbor_query_2 {
 };
 
 struct Custom_regularization_2 {
-  FT bound(
-    const std::size_t query_index) const {
+  FT bound(const std::size_t ) const {
     return FT(5); // maximum angle change
   }
-  FT target(
-    const std::size_t query_index_i,
-    const std::size_t query_index_j) {
+  FT target(const std::size_t , const std::size_t ) {
     return FT(0); // 0 angle change
   }
-  void update(
-    const std::vector<FT>& solution) {
+  void update(const std::vector<FT>& ) {
     // skip update
   }
 };
@@ -67,11 +62,10 @@ using Objects = std::vector<Custom_object>;
 using Neighbor_query = Custom_neighbor_query_2;
 using Regularization_type = Custom_regularization_2;
 using Quadratic_program = Custom_quadratic_program_traits<FT>;
-using Regularizer =
-  CGAL::Shape_regularization::QP_regularization<
-    Kernel, Objects, Neighbor_query, Regularization_type, Quadratic_program>;
+using Regularizer = CGAL::Shape_regularization::QP_regularization<
+  Kernel, Objects, Neighbor_query, Regularization_type, Quadratic_program>;
 
-int main(int argc, char *argv[]) {
+int main() {
 
   Neighbor_query neighbor_query;
   Regularization_type regularization_type;
