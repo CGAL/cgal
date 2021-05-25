@@ -116,7 +116,7 @@ public Q_SLOTS:
 
       for(auto pp : cur_frame)
       {
-        SMesh::Vertex_index vh(pp.first);
+        SMesh::Vertex_index vh(static_cast<SMesh::size_type>(pp.first));
         VPmap vpm = get(CGAL::vertex_point, *sm_item->face_graph());
         Point_3 np = pp.second;
         put(vpm, vh, Point_3(np.x()-offset.x,
