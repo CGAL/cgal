@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Florent Lafarge, Simon Giraudot
+// Author(s)     : Simon Giraudot, Florent Lafarge
 //
 
 #ifndef CGAL_SHAPE_REGULARIZATION_REGULARIZE_PLANES_H

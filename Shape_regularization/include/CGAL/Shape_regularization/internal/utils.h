@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Florent Lafarge, Simon Giraudot, Gennadii Sytov, Dmitry Anisimov
+// Author(s)     : Dmitry Anisimov, Gennadii Sytov
 //
 
 #ifndef CGAL_SHAPE_REGULARIZATION_INTERNAL_UTILS_H

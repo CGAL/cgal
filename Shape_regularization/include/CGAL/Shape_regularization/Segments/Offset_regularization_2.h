@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Jean-Philippe Bauchet, Florent Lafarge, Gennadii Sytov, Dmitry Anisimov
+// Author(s)     : Dmitry Anisimov, Gennadii Sytov, Jean-Philippe Bauchet, Florent Lafarge
 //
 
 #ifndef CGAL_SHAPE_REGULARIZATION_OFFSET_REGULARIZATION_2_H
