@@ -1,0 +1,1 @@
+2D Generalized Barycentric Coordinates for simple polygons

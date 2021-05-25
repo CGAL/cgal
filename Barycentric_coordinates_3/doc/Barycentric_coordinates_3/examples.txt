@@ -1,0 +1,6 @@
+/*!
+
+\example Barycentric_coordinates_3/tetrahedon_coordinates.cpp
+
+
+*/
