@@ -33,6 +33,5 @@ if(CGAL_FOUND)
   create_single_source_cgal_program("test_mixed_voronoi_region_weights.cpp")
 
 else()
-  message(WARNING
-  "This program requires the CGAL library, and will not be compiled.")
+  message(WARNING "This program requires the CGAL library, and will not be compiled.")
 endif()

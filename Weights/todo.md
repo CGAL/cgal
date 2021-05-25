@@ -1,7 +1,7 @@
 To discuss:
 * When computing weights one by one, we recompute certain areas/distances multiple times and so using them e.g. in barycentric coordinates is not efficient. What should we do about that?
 * Why do we have in the orbifold_Tutte_parameterizer "+tangent_weight" while in the MVC_post_processor it is "-tangent_weight"? I have fixed that.
-* Do I need to cut-zero the dh weights in the orbifold_Tutte_parameterizer? (line 837) I do cut it for the moment. Otherwise, the results are not equal to the original version.
+* Do I need to cut-zero the dh weights in the orbifold_Tutte_parameterizer? (line 837)? I do cut it for the moment. Otherwise, the results are not equal to the original version.
 * Skeletonization uses the weird secure version for the cotangent weights.
 * In skeletonization, the final example results are not determenistic.
 * Should I remove the positive area from the Tangent_weight and substitute it by computing tan(alpha/2)? In this case, I will keep the correct sign in any configuration.

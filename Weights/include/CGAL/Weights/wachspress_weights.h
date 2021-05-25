@@ -60,20 +60,6 @@ namespace Weights {
   /*!
     \ingroup PkgWeightsRefWachspressWeights
 
-    \brief computes the Wachspress weight in 3D at `q` using the points `p0`, `p1`,
-    and `p2`, given a traits class `traits` with geometric objects, predicates, and constructions.
-  */
-  template<typename GeomTraits>
-  typename GeomTraits::FT wachspress_weight(
-    const typename GeomTraits::Point_3& p0,
-    const typename GeomTraits::Point_3& p1,
-    const typename GeomTraits::Point_3& p2,
-    const typename GeomTraits::Point_3& q,
-    const GeomTraits& traits) { }
-
-  /*!
-    \ingroup PkgWeightsRefWachspressWeights
-
     \brief computes the Wachspress weight in 2D at `q` using the points `p0`, `p1`,
     and `p2`, which are parameterized by a `Kernel` K.
   */
@@ -83,19 +69,6 @@ namespace Weights {
     const CGAL::Point_2<K>& p1,
     const CGAL::Point_2<K>& p2,
     const CGAL::Point_2<K>& q) { }
-
-  /*!
-    \ingroup PkgWeightsRefWachspressWeights
-
-    \brief computes the Wachspress weight in 3D at `q` using the points `p0`, `p1`,
-    and `p2`, which are parameterized by a `Kernel` K.
-  */
-  template<typename K>
-  typename K::FT wachspress_weight(
-    const CGAL::Point_3<K>& p0,
-    const CGAL::Point_3<K>& p1,
-    const CGAL::Point_3<K>& p2,
-    const CGAL::Point_3<K>& q) { }
 
   #endif // DOXYGEN_RUNNING
 
@@ -126,6 +99,8 @@ namespace Weights {
     return wachspress_weight(t, r, p, q, traits);
   }
 
+  namespace wachspress_ns {
+
   template<typename GeomTraits>
   typename GeomTraits::FT wachspress_weight(
     const typename GeomTraits::Point_3& t,
@@ -153,6 +128,9 @@ namespace Weights {
     const GeomTraits traits;
     return wachspress_weight(t, r, p, q, traits);
   }
+
+  } // namespace wachspress_ns
+
   /// \endcond
 
   /*!
