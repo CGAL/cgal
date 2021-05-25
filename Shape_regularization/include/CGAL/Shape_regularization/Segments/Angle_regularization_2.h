@@ -165,7 +165,7 @@ namespace Segments {
       \pre index_range.size() >= 2
     */
     template<typename IndexRange>
-  	void add_group(
+    void add_group(
       const IndexRange& index_range) {
 
       if (m_is_first_call) {

@@ -315,13 +315,13 @@ namespace internal {
     Point_2& p) {
 
     FT x, y;
-		const FT dx = p.x() - barycenter.x();
-		const FT dy = p.y() - barycenter.y();
+    const FT dx = p.x() - barycenter.x();
+    const FT dy = p.y() - barycenter.y();
     rotate_2_ccw(angle_deg, dx, dy, x, y);
     x += barycenter.x();
     y += barycenter.y();
-		p = Point_2(x, y);
-	}
+    p = Point_2(x, y);
+  }
 
   // Rotates a segment.
   template<
