@@ -14,7 +14,7 @@ if(CGAL_FOUND)
   include(CGAL_CreateSingleSourceCGALProgram)
 
   # Find OSQP library and headers.
-  find_package(OSQP REQUIRED)
+  find_package(OSQP QUIET)
   if(OSQP_FOUND)
     message(STATUS "Found OSQP")
 
