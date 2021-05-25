@@ -104,23 +104,24 @@ squared_distance(
     const typename K::Ray_3 &ray,
     const K& k)
 {
-// #define CGAL_DISTANCE_3_USE_RT_FUNCTIONS_IN_FT_FUNCTIONS
-#ifdef CGAL_DISTANCE_3_USE_RT_FUNCTIONS_IN_FT_FUNCTIONS
-  typedef typename K::RT RT;
-  typedef typename K::FT FT;
-  RT num, den;
-  squared_distance_RT(pt, ray, num, den, k);
-  return Rational_traits<FT>().make_rational(num, den);
-#else
-  typename K::Construct_vector_3 construct_vector;
+  // This duplicates code from the _RT functions, but it is a slowdown to do something like:
+  //
+  //   RT num, den;
+  //   squared_distance_RT(pt, ray, num, den, k);
+  //   return Rational_traits<FT>().make_rational(num, den);
+  //
+  // See https://github.com/CGAL/cgal/pull/5680
+
   typedef typename K::Vector_3 Vector_3;
 
-    Vector_3 diff = construct_vector(ray.source(), pt);
-    const Vector_3 &dir = ray.direction().vector();
-    if (!is_acute_angle(dir,diff, k) )
-        return (typename K::FT)(diff*diff);
-    return squared_distance_to_line(dir, diff, k);
-#endif
+  typename K::Construct_vector_3 construct_vector = k.construct_vector_3_object();
+
+  Vector_3 diff = construct_vector(ray.source(), pt);
+  const Vector_3 &dir = ray.direction().vector();
+  if (!is_acute_angle(dir,diff, k) )
+    return (typename K::FT)(diff*diff);
+
+  return squared_distance_to_line(dir, diff, k);
 }
 
 template <class K>
@@ -184,17 +185,12 @@ squared_distance(
     const typename K::Segment_3 &seg,
     const K& k)
 {
-#ifdef CGAL_DISTANCE_3_USE_RT_FUNCTIONS_IN_FT_FUNCTIONS
-  typedef typename K::RT RT;
-  typedef typename K::FT FT;
-  RT num, den;
-  squared_distance_RT(pt, seg, num, den, k);
-  return Rational_traits<FT>().make_rational(num, den);
-#else
-  typename K::Construct_vector_3 construct_vector;
   typedef typename K::Vector_3 Vector_3;
   typedef typename K::RT RT;
   typedef typename K::FT FT;
+
+  typename K::Construct_vector_3 construct_vector = k.construct_vector_3_object();
+
   // assert that the segment is valid (non zero length).
   Vector_3 diff = construct_vector(seg.source(), pt);
   Vector_3 segvec = construct_vector(seg.source(), seg.target());
@@ -209,7 +205,6 @@ squared_distance(
   // This is an expanded call to squared_distance_to_line() to avoid recomputing 'e'
   Vector_3 wcr = wcross(segvec, diff, k);
   return FT(wcr*wcr) / wmult((K*)0, e, diff.hw(), diff.hw());
-#endif
 }
 
 template <class K>

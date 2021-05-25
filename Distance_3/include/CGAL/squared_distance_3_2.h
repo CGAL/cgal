@@ -359,16 +359,7 @@ squared_distance(
     const typename K::Triangle_3 & t,
     const K& k)
 {
-  // @todo if the factorized code is used in the end, then the function above, i.e.
-  // squared_distance_to_triangle(), should be removed
-#ifdef CGAL_DISTANCE_3_USE_RT_FUNCTIONS_IN_FT_FUNCTIONS
-  typedef typename K::RT RT;
-  typedef typename K::FT FT;
-  RT num, den;
-  squared_distance_RT(pt, t, num, den, k);
-  return Rational_traits<FT>().make_rational(num, den);
-#else
-  typename K::Construct_vertex_3 vertex;
+  typename K::Construct_vertex_3 vertex = k.construct_vertex_3_object();
   bool inside = false;
   return squared_distance_to_triangle(pt,
                                       vertex(t, 0),
@@ -376,7 +367,6 @@ squared_distance(
                                       vertex(t, 2),
                                       inside,
                                       k);
-#endif
 }
 
 } // namespace internal
