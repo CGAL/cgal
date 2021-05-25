@@ -44,9 +44,9 @@ std::array<Vh, 3> make_ordered_vertex_array(const Vh vh0, const Vh vh1, const Vh
   return ft;
 }
 
-template<class Tr>
+template<class Tr, typename PointRange>
 void build_vertices(Tr& tr,
-                    const std::vector<typename Tr::Point>& points,
+                    const PointRange& points,
                     std::vector<typename Tr::Vertex_handle>& vertex_handle_vector)
 {
   typedef typename Tr::Vertex_handle            Vertex_handle;
@@ -100,15 +100,15 @@ bool add_facet_to_incident_cells_map(const typename Tr::Cell_handle c, int i,
   return true;
 }
 
-template<class Tr>
+template<class Tr, typename CellRange, typename FacetPatchMap>
 bool build_finite_cells(Tr& tr,
-    const std::vector<std::array<int,5> >& finite_cells,
+    const CellRange& finite_cells,
     const std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
     boost::unordered_map<std::array<typename Tr::Vertex_handle, 3>,
                         std::vector<std::pair<typename Tr::Cell_handle, int> > >& incident_cells_map,
-    const std::map<std::array<int,3>, typename Tr::Cell::Surface_patch_index>& border_facets,
+    const FacetPatchMap& border_facets,
     const bool verbose,
-                        bool replace_domain_0 = false)
+    bool replace_domain_0 = false)
 {
   typedef std::array<int, 5>              Tet_with_ref; // 4 ids + 1 reference
 
@@ -338,11 +338,17 @@ bool assign_neighbors(Tr& tr,
   return true;
 }
 
-template<class Tr>
+template<class Tr,
+         typename PointRange,
+         typename CellRange,
+         typename FacetPatchMap>
 bool build_triangulation(Tr& tr,
-                         const std::vector<typename Tr::Point>& points,
-                         const std::vector<std::array<int,5> >& finite_cells,
-                         const std::map<std::array<int,3>, typename Tr::Cell::Surface_patch_index>& border_facets,
+                         const PointRange& points,
+                         const CellRange& finite_cells,
+                         const FacetPatchMap& border_facets,
+//                         const std::vector<typename Tr::Point>& points,
+//                         const std::vector<std::array<int,5> >& finite_cells,
+//                         const std::map<std::array<int,3>, typename Tr::Cell::Surface_patch_index>& border_facets,
                          std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
                          const bool verbose = false,
                          bool replace_domain_0 = false)
@@ -396,14 +402,22 @@ bool build_triangulation(Tr& tr,
   return tr.tds().is_valid();
 }
 
-template<class Tr>
+template<class Tr,
+         typename PointRange,
+         typename CellRange,
+         typename FacetPatchMap>
 bool build_triangulation(Tr& tr,
-                         const std::vector<typename Tr::Point>& points,
-                         const std::vector<std::array<int,5> >& finite_cells,
-                         const std::map<std::array<int,3>, typename Tr::Cell::Surface_patch_index>& border_facets,
+                         const PointRange& points,
+                         const CellRange& finite_cells,
+                         const FacetPatchMap& border_facets,
                          const bool verbose = false,
                          bool replace_domain_0 = false)
+//  const std::vector<typename Tr::Point>& points,        //PointRange
+//  const std::vector<std::array<int, 5> >& finite_cells, //CellRange
+//  const std::map<std::array<int, 3>, typename Tr::Cell::Surface_patch_index>& border_facets,//FacetsMap
 {
+  BOOST_STATIC_ASSERT(boost::is_same<typename Tr::Point,
+                                     typename PointRange::value_type>::value);
   std::vector<typename Tr::Vertex_handle> vertex_handle_vector;
 
   return build_triangulation(tr, points, finite_cells, border_facets,
@@ -510,7 +524,7 @@ template<class Tr>
 bool build_triangulation_from_file(std::istream& is,
                                    Tr& tr)
 {
-  return build_triangulation_from_file<Tr>(is, tr, false);
+  return build_triangulation_from_file(is, tr, false);
 }
 }  // namespace MDS_3
 }  // namespace CGAL

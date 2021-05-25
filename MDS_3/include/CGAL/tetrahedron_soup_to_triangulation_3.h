@@ -116,7 +116,7 @@ namespace CGAL {
   *     \cgalParamDescription{each element in the range describes a surface facet using the indices of points
   *       in `points` (indices 0 to 2), and the associated `Surface_patch_index` (index 3)}
   *     \cgalParamType{a class model of `AssociativeContainer`
-  *                    whose key type is model of `RandomAccessContainer`
+  *                    whose key type is model of `RandomAccessContainer` containing `int`
   *                    and mapped type is `Tr::Cell::Surface_patch_index`}
   *     \cgalParamDefault{An empty `std::map<std::array<int, 3>, typename Tr::Cell::Surface_patch_index>`}
   *   \cgalParamNEnd
