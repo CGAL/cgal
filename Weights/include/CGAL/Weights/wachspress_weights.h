@@ -99,7 +99,7 @@ namespace Weights {
     return wachspress_weight(t, r, p, q, traits);
   }
 
-  namespace wachspress_ns {
+  namespace internal {
 
   template<typename GeomTraits>
   typename GeomTraits::FT wachspress_weight(
@@ -115,7 +115,8 @@ namespace Weights {
       traits,
       t,  r,  p,  q,
       tf, rf, pf, qf);
-    return wachspress_weight(tf, rf, pf, qf, traits);
+    return CGAL::Weights::
+      wachspress_weight(tf, rf, pf, qf, traits);
   }
 
   template<typename GeomTraits>
@@ -129,7 +130,7 @@ namespace Weights {
     return wachspress_weight(t, r, p, q, traits);
   }
 
-  } // namespace wachspress_ns
+  } // namespace internal
 
   /// \endcond
 

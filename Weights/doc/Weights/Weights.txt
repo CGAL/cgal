@@ -93,6 +93,35 @@ The parameter `traits` with a traits class can be omitted for all functions and 
 if it can be deduced from the input point type.
 
 
+\subsection Weights_Flattening Flattening
+
+\cgalFigureBegin{flattening, flattening.svg}
+  The non-planar configuration (top) is flattened to the planar configuration (bottom).
+\cgalFigureEnd
+
+When computing weights for a query point `q` with respect to its neighbors
+`p0`, `p1`, and `p2`, the local configuration is a quadrilateral `[p0, p1, p2, q]`
+or two connected triangles `[q, p0, p1]` and `[q, p1, p2]`. When computing 3D weights,
+these triangles are not necessarily coplanar. When they are not coplanar, they can be
+made coplanar through the process called *flattening* (see the Figure above), however the latter
+introduces a distortion because the weights are computed with respect to the flattened configuration
+rather than to the original non-flat configuration. Certain weights in this package support only
+flat configurations, while other weights support both. The weights, which support non-flat configurations,
+provide the corresponding overloads with 3D points, while other weights support only
+2D point types. For example, \ref PkgWeightsRefCotangentWeights "cotangent weights" support both flat
+and non-flat configurations, while \ref PkgWeightsRefDiscreteHarmonicWeights "discrete harmonic weights"
+support only flat configurations.
+
+
+\subsection Weights_Alternatives Alternatives
+
+Several weights in this package have different implementations. One reason to have it is
+explained in section about \ref Weights_Flattening. Another reason is that in different communities
+the same weights are named and computed differently. If one searches for these weights,
+one needs to know all their alternative names, which is tiresome. We provide the most common
+names and implementations of these weights.
+
+
 \section Weights_Examples Examples
 
 In this section, you can find a few examples of how and when the provided
@@ -161,8 +190,8 @@ in the custom traits class.
 
 A typical example of using weights is discretizing *Poisson* and *Laplace
 equations* which play an important role in various geometry processing applications
-such as, for example, \ref PkgSurfaceMeshDeformation "surface mesh deformation" and
-\ref PkgSurfaceMeshParameterization "surface mesh parameterization" (see
+such as, for example, \ref PkgSurfaceMeshDeformation "Surface Mesh Deformation" and
+\ref PkgSurfaceMeshParameterization "Surface Mesh Parameterization" (see
 also \ref Weights_Intro "Introduction" for more details). This example shows
 how to write the *discretized Laplacian* for all vertices of the given triangle mesh in
 matrix notation. We use the standard cotangent discretization weighted by the areas of
@@ -171,22 +200,13 @@ the mixed Voronoi cells around each mesh vertex.
 \cgalExample{Weights/weighted_laplacian.cpp}
 
 
-\subsection Weights_Examples_Flattening Flattening and Convergence
+\subsection Weights_Examples_Convergence Convergence
 
-When computing weights for a query point `q` with respect to its neighbors
-`p0`, `p1`, and `p2`, the local configuration is a quadrilateral `[p0, p1, p2, q]`
-or two connected triangles `[q, p0, p1]` and `[q, p1, p2]`. When computing 3D weights,
-these triangles are not necessarily coplanar. When they are not coplanar, we make them coplanar,
-since several weights cannot be computed for non-coplanar triangles, however this
-so-called *flattening* introduces a distortion since the weights are computed
-not with respect to the original configuration but to its flattened version. This example
-shows how this distortion progresses when the point `q1`, which is not in the plane, moves back
-to the original flat configuration with `q0`. Moreover, this example shows how to use the
-family of weights which includes multiple types of weights in one function. In particular,
-we show how, by changing an input parameter, we converge from the Wachspress weights to
-the mean value weights.
+This little example shows how to use the family of weights which includes multiple types
+of weights in one function. In particular, we show how, by changing an input parameter,
+we converge from the Wachspress weights to the mean value weights.
 
-\cgalExample{Weights/flattening.cpp}
+\cgalExample{Weights/convergence.cpp}
 
 
 \section Weights_History History

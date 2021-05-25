@@ -22,10 +22,10 @@ int main() {
   const Point_3 q3 = Point_3( 0,  0, 1);
 
   // Compute weights.
-  std::cout << "2D discrete harmonic: " <<
-    CGAL::Weights::discrete_harmonic_weight(t2, r2, p2, q2) << std::endl;
-  std::cout << "3D discrete harmonic: " <<
-    CGAL::Weights::discrete_harmonic_weight(t3, r3, p3, q3) << std::endl;
+  std::cout << "2D discrete harmonic: " << CGAL::Weights::
+    discrete_harmonic_weight(t2, r2, p2, q2) << std::endl;
+  std::cout << "3D discrete harmonic: " << CGAL::Weights::internal::
+    discrete_harmonic_weight(t3, r3, p3, q3) << std::endl;
 
   // Compute weights on a polygon.
 

@@ -128,7 +128,7 @@ namespace Weights {
     return three_point_family_weight(t, r, p, q, a, traits);
   }
 
-  namespace three_point_family_ns {
+  namespace internal {
 
   // Example of flattening:
 
@@ -174,7 +174,8 @@ namespace Weights {
       traits,
       t,  r,  p,  q,
       tf, rf, pf, qf);
-    return three_point_family_weight(tf, rf, pf, qf, a, traits);
+    return CGAL::Weights::
+      three_point_family_weight(tf, rf, pf, qf, a, traits);
   }
 
   template<typename GeomTraits>
@@ -190,7 +191,7 @@ namespace Weights {
     return three_point_family_weight(t, r, p, q, a, traits);
   }
 
-  } // namespace three_point_family_ns
+  } // namespace internal
 
   /// \endcond
 

@@ -155,7 +155,7 @@ namespace Weights {
     return mean_value_weight(t, r, p, q, traits);
   }
 
-  namespace mean_value_ns {
+  namespace internal {
 
   template<typename GeomTraits>
   typename GeomTraits::FT mean_value_weight(
@@ -171,7 +171,8 @@ namespace Weights {
       traits,
       t,  r,  p,  q,
       tf, rf, pf, qf);
-    return mean_value_weight(tf, rf, pf, qf, traits);
+    return CGAL::Weights::
+      mean_value_weight(tf, rf, pf, qf, traits);
   }
 
   template<typename GeomTraits>
@@ -185,7 +186,7 @@ namespace Weights {
     return mean_value_weight(t, r, p, q, traits);
   }
 
-  } // namespace mean_value_ns
+  } // namespace internal
 
   /// \endcond
 

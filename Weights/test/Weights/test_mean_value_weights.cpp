@@ -22,10 +22,10 @@ int main() {
   const Point_3 q3 = Point_3( 0,  0, 1);
 
   // Compute weights.
-  std::cout << "2D mean value: " <<
-    CGAL::Weights::mean_value_weight(t2, r2, p2, q2) << std::endl;
-  std::cout << "3D mean value: " <<
-    CGAL::Weights::mean_value_weight(t3, r3, p3, q3) << std::endl;
+  std::cout << "2D mean value: " << CGAL::Weights::
+    mean_value_weight(t2, r2, p2, q2) << std::endl;
+  std::cout << "3D mean value: " << CGAL::Weights::internal::
+    mean_value_weight(t3, r3, p3, q3) << std::endl;
 
   // Compute weights on a polygon.
 

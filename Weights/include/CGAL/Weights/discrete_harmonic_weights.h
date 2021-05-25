@@ -110,7 +110,7 @@ namespace Weights {
     return discrete_harmonic_weight(t, r, p, q, traits);
   }
 
-  namespace discrete_harmonic_ns {
+  namespace internal {
 
   template<typename GeomTraits>
   typename GeomTraits::FT discrete_harmonic_weight(
@@ -126,7 +126,8 @@ namespace Weights {
       traits,
       t,  r,  p,  q,
       tf, rf, pf, qf);
-    return discrete_harmonic_weight(tf, rf, pf, qf, traits);
+    return CGAL::Weights::
+      discrete_harmonic_weight(tf, rf, pf, qf, traits);
   }
 
   template<typename GeomTraits>
@@ -140,7 +141,7 @@ namespace Weights {
     return discrete_harmonic_weight(t, r, p, q, traits);
   }
 
-  } // namespace discrete_harmonic_ns
+  } // namespace internal
 
   /// \endcond
 
