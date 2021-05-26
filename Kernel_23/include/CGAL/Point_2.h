@@ -70,6 +70,10 @@ public:
     : RPoint_2(p)
   {}
 
+  Point_2(RPoint_2&& p)
+    : RPoint_2(std::move(p))
+  {}
+
   explicit
   Point_2(const Weighted_point_2& wp)
     : Rep(wp.point())

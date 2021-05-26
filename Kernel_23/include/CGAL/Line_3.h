@@ -66,6 +66,9 @@ public:
   Line_3(const Rep& l)
       : Rep(l) {}
 
+  Line_3(Rep&& l)
+      : Rep(std::move(l)) {}
+
   Line_3(const Point_3 & p, const Point_3 & q)
       : Rep(typename R::Construct_line_3()(Return_base_tag(), p, q)) {}
 

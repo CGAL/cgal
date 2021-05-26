@@ -62,6 +62,9 @@ public:
   Sphere_3(const Rep& s)
    : Rep(s) {}
 
+  Sphere_3(Rep&& s)
+   : Rep(std::move(s)) {}
+
   Sphere_3(const Point_3_& p, const FT& sq_rad,
            const Orientation& o = COUNTERCLOCKWISE)
    : Rep(typename R::Construct_sphere_3()(Return_base_tag(), p, sq_rad, o)) {}

@@ -68,6 +68,9 @@ public:
   Ray_2(const RRay_2& r)
     : RRay_2(r) {}
 
+  Ray_2(RRay_2&& r)
+    : RRay_2(std::move(r)) {}
+
   Ray_2(const Point_2 &sp, const Point_2 &secondp)
     : RRay_2(typename R::Construct_ray_2()(Return_base_tag(), sp, secondp)) {}
 

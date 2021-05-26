@@ -66,6 +66,9 @@ public:
   Direction_2(const RDirection_2& d)
     : RDirection_2(d) {}
 
+  Direction_2(RDirection_2&& d)
+    : RDirection_2(std::move(d)) {}
+
   explicit Direction_2(const Vector_2& v)
     : RDirection_2(typename R::Construct_direction_2()(Return_base_tag(), v)) {}
 

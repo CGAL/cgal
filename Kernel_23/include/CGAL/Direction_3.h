@@ -65,6 +65,9 @@ public:
   Direction_3(const Rep& d)
     : Rep(d) {}
 
+  Direction_3(Rep&& d)
+    : Rep(std::move(d)) {}
+
   explicit Direction_3(const Vector_3& v)
     : Rep(typename R::Construct_direction_3()(Return_base_tag(), v)) {}
 

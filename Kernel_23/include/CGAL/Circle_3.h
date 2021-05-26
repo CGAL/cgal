@@ -93,6 +93,9 @@ public:
   Circle_3(const Rep& r)
     : Rep(r) {}
 
+  Circle_3(Rep&& r)
+    : Rep(std::move(r)) {}
+
   typename cpp11::result_of
   <typename R::Construct_sphere_3( Circle_3)>::type
   diametral_sphere() const
