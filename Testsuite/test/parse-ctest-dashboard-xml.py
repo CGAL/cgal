@@ -86,8 +86,14 @@ with open_file_create_dir(result_file_name.format(dir=os.getcwd(),
                 print("   {result} {name} in {time} s : {value} ".format(result = "successful " if (t['Status'] == 'passed') else "ERROR:     ", name = t['Name'], value = t['ExitValue'] if(t['ExitValue'] != "") else "SUCCESS" , time = t['ExecutionTime']), file=error)
                 if t['Status'] != 'passed':
                     result_for_label='n'
-                elif t['Output'] != None and re.search(r'(^|[^a-zA-Z_,:-])([^0]\s)warning', t['Output'], flags=re.IGNORECASE):
-                    result_for_label='w'
+                elif t['Output'] != None:
+                  for m in re.finditer(r'(.*([^a-zA-Z_,:-])([^\d]\s)warning).*?(\[|\n)', lines, flags=re.IGNORECASE):
+                        n = re.search(r'cmake|cgal', m.group(0), flags=re.IGNORECASE)
+                        if n:
+                            result_for_label='w'
+                            break;
+                        else:
+                            result_for_label='t'
 
                 with io.open("{}/ProgramOutput.{}".format(label, t['Name']), mode="w", encoding="utf-8") as f:
                     print("{}/ProgramOutput.{}".format(label, t['Name']))
