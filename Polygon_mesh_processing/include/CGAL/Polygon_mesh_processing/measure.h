@@ -53,14 +53,14 @@ public:
 
 namespace Polygon_mesh_processing {
 
-namespace pmp_internal {
+namespace internal {
 
 inline void rearrange_face_ids(boost::container::small_vector<std::size_t, 4>& ids)
 {
   auto min_elem = std::min_element(ids.begin(), ids.end());
   std::rotate(ids.begin(), min_elem, ids.end());
 }
-}//namespace pmp_internal
+}//namespace internal
 /**
   * \ingroup measure_grp
   * computes the length of an edge of a given polygon mesh.
@@ -906,6 +906,9 @@ void match_faces(const PolygonMesh1& m1, const PolygonMesh2& m2,
                                        get_const_property_map(vertex_point, m1));
   const VPMap2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
                                        get_const_property_map(vertex_point, m2));
+  CGAL_static_assertion_msg((boost::is_same<typename boost::property_traits<VPMap1>::value_type,
+                             typename boost::property_traits<VPMap2>::value_type>::value),
+                            "Both vertex point maps must have the same point type.");
 
   const VIMap1 vim1 = get_initialized_vertex_index_map(m1, np1);
   const VIMap2 vim2 = get_initialized_vertex_index_map(m2, np2);
@@ -920,7 +923,7 @@ void match_faces(const PolygonMesh1& m1, const PolygonMesh2& m2,
   std::size_t id = 0;
   for(auto v : vertices(m1))
   {
-    const Point_3& p = get(vpm1, v);
+    const typename boost::property_traits<VPMap1>::reference p = get(vpm1, v);
     auto res = point_id_map.emplace(p, id);
     if(res.second)
       ++id;
@@ -928,7 +931,7 @@ void match_faces(const PolygonMesh1& m1, const PolygonMesh2& m2,
   }
   for(auto v : vertices(m2))
   {
-    const Point_3& p = get(vpm2, v);
+    const typename boost::property_traits<VPMap2>::reference p = get(vpm2, v);
     auto res = point_id_map.emplace(p, id);
     if(res.second)
       ++id;
@@ -955,7 +958,7 @@ void match_faces(const PolygonMesh1& m1, const PolygonMesh2& m2,
     }
     if(all_shared)
     {
-      pmp_internal::rearrange_face_ids(ids);
+      internal::rearrange_face_ids(ids);
       m1_faces_map.emplace(ids, f);
     }
     else
@@ -977,7 +980,7 @@ void match_faces(const PolygonMesh1& m1, const PolygonMesh2& m2,
     }
     if(all_shared)
     {
-      pmp_internal::rearrange_face_ids(ids);
+      internal::rearrange_face_ids(ids);
       auto it = m1_faces_map.find(ids);
       if(it != m1_faces_map.end())
       {

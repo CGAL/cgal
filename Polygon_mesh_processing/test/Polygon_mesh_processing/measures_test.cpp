@@ -362,8 +362,8 @@ int main(int argc, char* argv[])
   // It won't work with Epec for large meshes as it builds up a deep DAG
   // leading to a stackoverflow when the destructor is called.
   test_centroid<CGAL::Surface_mesh<Epic::Point_3>,Epic>(filename_surface_mesh);
-  test_compare<CGAL::Polyhedron_3<Epic> >();
-  test_compare<CGAL::Polyhedron_3<Epec> >();
+  test_compare<CGAL::Polyhedron_3<Epic>, CGAL::Surface_mesh<Epic::Point_3> >();
+  test_compare<CGAL::Polyhedron_3<Epec>, CGAL::Surface_mesh<Epec::Point_3> >();
   test_compare<CGAL::Surface_mesh<Epic::Point_3>, CGAL::Polyhedron_3<Epic> >();
   test_compare<CGAL::Surface_mesh<Epec::Point_3>, CGAL::Polyhedron_3<Epec> >();
   std::cerr << "All done." << std::endl;
