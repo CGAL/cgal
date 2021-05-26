@@ -8235,6 +8235,8 @@ void test_result_of() {
 
   typedef CGAL::cpp11::result_of<Result_functor(void)>::type result_type;
   typedef CGAL::cpp11::result_of<Result_functor(int)>::type result_type_float;
+  CGAL_USE_TYPE(result_type);
+  CGAL_USE_TYPE(result_type_float);
   CGAL_static_assertion((boost::is_same<result_type, int>::value));
   CGAL_static_assertion((boost::is_same<result_type_float, float>::value));
 
