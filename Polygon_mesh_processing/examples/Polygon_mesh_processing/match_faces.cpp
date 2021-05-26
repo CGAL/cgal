@@ -41,15 +41,15 @@ int main(int argc, char* argv[])
 
   PMP::match_faces(mesh1, mesh2, std::back_inserter(common), std::back_inserter(m1_only), std::back_inserter(m2_only));
 
-  std::cout<<"Faces only in m1 :"<<std::endl;
-  for(const auto& f : m1_only)
+  std::cout <<"Faces only in m1 :"<< std::endl;
+  for(const face_descriptor_1& f : m1_only)
     std::cout << " " << f;
 
-  std::cout<<"\n\nFaces only in m2:"<<std::endl;
-  for(const auto& f : m2_only)
+  std::cout <<"\n\nFaces only in m2:" << std::endl;
+  for(const face_descriptor_2& f : m2_only)
     std::cout << " " << &(*f);
 
-  std::cout<<"\n\nFaces in both:"<<std::endl;
+  std::cout << "\n\nFaces in both:" << std::endl;
   for(const auto& f_pair : common)
     std::cout << " (" << f_pair.first << ", " << &(*f_pair.second);
   std::cout << std::endl;

@@ -203,16 +203,19 @@ void test_centroid(const char* filename)
 
 }
 
-template <typename PolygonMesh>
+template <typename PolygonMesh1, typename PolygonMesh2 >
 void test_compare()
 {
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor        face_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh1>::face_descriptor        face_descriptor1;
+  typedef typename boost::graph_traits<PolygonMesh2>::face_descriptor        face_descriptor2;
   namespace PMP = CGAL::Polygon_mesh_processing;
 
-  PolygonMesh mesh1, mesh2;
-  std::vector<std::pair<face_descriptor, face_descriptor> > common;
+  PolygonMesh1 mesh1;
+  PolygonMesh2 mesh2;
+  std::vector<std::pair<face_descriptor1, face_descriptor2> > common;
   common.clear();
-  std::vector<face_descriptor> m1_only, m2_only;
+  std::vector<face_descriptor1> m1_only;
+  std::vector<face_descriptor2> m2_only;
   /*************************
    * triangulated and open *
    * **********************/
@@ -261,8 +264,8 @@ void test_compare()
     return;
   }
   input.close();
-  std::unordered_map<face_descriptor, std::size_t> fim1;
-  std::unordered_map<face_descriptor, std::size_t> fim2;
+  std::unordered_map<face_descriptor1, std::size_t> fim1;
+  std::unordered_map<face_descriptor2, std::size_t> fim2;
   std::size_t id = 0;
   for(const auto& f : faces(mesh1))
   {
@@ -361,8 +364,8 @@ int main(int argc, char* argv[])
   test_centroid<CGAL::Surface_mesh<Epic::Point_3>,Epic>(filename_surface_mesh);
   test_compare<CGAL::Polyhedron_3<Epic> >();
   test_compare<CGAL::Polyhedron_3<Epec> >();
-  test_compare<CGAL::Surface_mesh<Epic::Point_3> >();
-  test_compare<CGAL::Surface_mesh<Epec::Point_3> >();
+  test_compare<CGAL::Surface_mesh<Epic::Point_3>, CGAL::Polyhedron_3<Epic> >();
+  test_compare<CGAL::Surface_mesh<Epec::Point_3>, CGAL::Polyhedron_3<Epec> >();
   std::cerr << "All done." << std::endl;
   return 0;
 }

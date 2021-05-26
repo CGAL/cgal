@@ -7,7 +7,7 @@ Release date: December 2021
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/5.4/Manual/packages.html#PkgPolygonMeshProcessing)
 
--   Added the function `CGAL::Polygon_mesh_processing::match_faces()` that given two polygon meshes identifies faces present in only one of the two meshes as well as faces present in both.
+-   Added the function `CGAL::Polygon_mesh_processing::match_faces()`, which, given two polygon meshes, identifies their common faces as well as as faces present in only either of them.
 
 
 [Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)

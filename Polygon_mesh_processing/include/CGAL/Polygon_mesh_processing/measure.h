@@ -57,10 +57,10 @@ namespace pmp_internal {
 
 inline void rearrange_face_ids(boost::container::small_vector<std::size_t, 4>& ids)
 {
-    auto min_elem = std::min_element(ids.begin(), ids.end());
-    std::rotate(ids.begin(), min_elem, ids.end());
+  auto min_elem = std::min_element(ids.begin(), ids.end());
+  std::rotate(ids.begin(), min_elem, ids.end());
 }
-}//end pmp_internal
+}//namespace pmp_internal
 /**
   * \ingroup measure_grp
   * computes the length of an edge of a given polygon mesh.
@@ -835,7 +835,7 @@ centroid(const TriangleMesh& tmesh)
 /**
   * \ingroup measure_grp
   * identifies faces only present in `m1` and `m2` as well as the faces present
-  * in both polygon meshes. Two faces are identical if they have the same
+  * in both polygon meshes. Two faces are matching if they have the same
   * orientation and the same points.
   *
   * @tparam PolygonMesh1 a model of `HalfedgeListGraph` and `FaceListGraph`
@@ -851,8 +851,8 @@ centroid(const TriangleMesh& tmesh)
   * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
   * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
   *
-  * @param m1 the first `PolygonMesh1`
-  * @param m2 the second `PolygonMesh2`
+  * @param m1 the first `PolygonMesh`
+  * @param m2 the second `PolygonMesh`
   * @param common output iterator collecting the faces that are common to both meshes.
   * @param m1_only output iterator collecting the faces that are only in `m1`
   * @param m2_only output iterator collecting the faces that are only in `m2`
@@ -863,7 +863,7 @@ centroid(const TriangleMesh& tmesh)
   *   \cgalParamNBegin{vertex_point_map}
   *     \cgalParamDescription{a property map associating points to the vertices of `m1`}
   *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh1>::%vertex_descriptor`
-  *                    as key type and `%Point_3` as value type. `%Point_3` must be LessThanComparable.}
+  *                    as key type and `%Point_3` as value type. `%Point_3` must be `LessThanComparable`.}
   *     \cgalParamDefault{`boost::get(CGAL::vertex_point, m1)`}
   *     \cgalParamExtra{The same holds for `m2` and `PolygonMesh2` and the point type must be the same for both meshes.}
   *   \cgalParamNEnd
@@ -883,29 +883,32 @@ centroid(const TriangleMesh& tmesh)
  */
 template< typename PolygonMesh1,
           typename PolygonMesh2,
+          typename FacePairOutputIterator,
           typename FaceOutputIterator1,
           typename FaceOutputIterator2,
-          typename FacePairOutputIterator,
           typename NamedParameters1,
           typename NamedParameters2 >
 void match_faces(const PolygonMesh1& m1, const PolygonMesh2& m2,
                  FacePairOutputIterator common, FaceOutputIterator1 m1_only, FaceOutputIterator2 m2_only,
                  const NamedParameters1& np1, const NamedParameters2& np2)
 {
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
-  typedef typename GetVertexPointMap < PolygonMesh1, NamedParameters1>::const_type VPMap1;
-  typedef typename GetVertexPointMap < PolygonMesh2, NamedParameters2>::const_type VPMap2;
+  typedef typename GetVertexPointMap<PolygonMesh1, NamedParameters1>::const_type            VPMap1;
+  typedef typename GetVertexPointMap<PolygonMesh2, NamedParameters2>::const_type            VPMap2;
   typedef typename GetInitializedVertexIndexMap<PolygonMesh1, NamedParameters1>::const_type VIMap1;
   typedef typename GetInitializedVertexIndexMap<PolygonMesh2, NamedParameters2>::const_type VIMap2;
-  VPMap1 vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
-                                      get_const_property_map(vertex_point, m1));
-  VPMap2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
-                                      get_const_property_map(vertex_point, m2));
-  VIMap1 vim1 = get_initialized_vertex_index_map(m1, np1);
-  VIMap2 vim2 = get_initialized_vertex_index_map(m2, np2);
-  typedef typename boost::property_traits<VPMap2>::value_type Point_3;
-  typedef typename boost::graph_traits<PolygonMesh1>::face_descriptor face_descriptor_1;
+  typedef typename boost::property_traits<VPMap2>::value_type                               Point_3;
+  typedef typename boost::graph_traits<PolygonMesh1>::face_descriptor                       face_descriptor_1;
+
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  const VPMap1 vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
+                                       get_const_property_map(vertex_point, m1));
+  const VPMap2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
+                                       get_const_property_map(vertex_point, m2));
+
+  const VIMap1 vim1 = get_initialized_vertex_index_map(m1, np1);
+  const VIMap2 vim2 = get_initialized_vertex_index_map(m2, np2);
 
   std::map<Point_3, std::size_t> point_id_map;
 
@@ -918,20 +921,20 @@ void match_faces(const PolygonMesh1& m1, const PolygonMesh2& m2,
   for(auto v : vertices(m1))
   {
     const Point_3& p = get(vpm1, v);
-    auto res = point_id_map.insert(std::make_pair(p, id));
+    auto res = point_id_map.emplace(p, id);
     if(res.second)
       ++id;
-    m1_vertex_id[get(vim1, v)]=res.first->second;
+    m1_vertex_id[get(vim1, v)] = res.first->second;
   }
   for(auto v : vertices(m2))
   {
     const Point_3& p = get(vpm2, v);
-    auto res = point_id_map.insert(std::make_pair(p, id));
+    auto res = point_id_map.emplace(p, id);
     if(res.second)
       ++id;
     else
       shared_vertices.set(res.first->second);
-    m2_vertex_id[get(vim2, v)]=res.first->second;
+    m2_vertex_id[get(vim2, v)] = res.first->second;
   }
 
   //fill a set with the "faces point-ids" of m1 and then iterate faces of m2 to compare.
@@ -942,7 +945,7 @@ void match_faces(const PolygonMesh1& m1, const PolygonMesh2& m2,
     boost::container::small_vector<std::size_t, 4> ids;
     for(auto v : CGAL::vertices_around_face(halfedge(f, m1), m1))
     {
-       std::size_t vid = m1_vertex_id[get(vim1, v)];
+      std::size_t vid = m1_vertex_id[get(vim1, v)];
       ids.push_back(vid);
       if(!shared_vertices.test(vid))
       {
@@ -953,7 +956,7 @@ void match_faces(const PolygonMesh1& m1, const PolygonMesh2& m2,
     if(all_shared)
     {
       pmp_internal::rearrange_face_ids(ids);
-      m1_faces_map.insert({ids, f});
+      m1_faces_map.emplace(ids, f);
     }
     else
       *m1_only++ = f;
@@ -996,7 +999,7 @@ void match_faces(const PolygonMesh1& m1, const PolygonMesh2& m2,
   }
 }
 
-template<typename PolygonMesh1, typename PolygonMesh2, typename FaceOutputIterator1, typename FaceOutputIterator2, typename FacePairOutputIterator, typename NamedParameters>
+template<typename PolygonMesh1, typename PolygonMesh2, typename FacePairOutputIterator, typename FaceOutputIterator1, typename FaceOutputIterator2, typename NamedParameters>
 void match_faces(const PolygonMesh1& m1, const PolygonMesh2& m2,
                  FacePairOutputIterator common, FaceOutputIterator1 m1_only, FaceOutputIterator2 m2_only,
                  const NamedParameters& np)
@@ -1004,7 +1007,7 @@ void match_faces(const PolygonMesh1& m1, const PolygonMesh2& m2,
   match_faces(m1, m2, common, m1_only, m2_only, np, parameters::all_default());
 }
 
-template<typename PolygonMesh1, typename PolygonMesh2, typename FaceOutputIterator1, typename FaceOutputIterator2, typename FacePairOutputIterator>
+template<typename PolygonMesh1, typename PolygonMesh2, typename FacePairOutputIterator, typename FaceOutputIterator1, typename FaceOutputIterator2>
 void match_faces(const PolygonMesh1& m1, const PolygonMesh2& m2,
                  FacePairOutputIterator common, FaceOutputIterator1 m1_only, FaceOutputIterator2 m2_only)
 {
