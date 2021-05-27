@@ -87,7 +87,7 @@ with open_file_create_dir(result_file_name.format(dir=os.getcwd(),
                 if t['Status'] != 'passed':
                     result_for_label='n'
                 elif t['Output'] != None:
-                  for m in re.finditer(r'(.*([^a-zA-Z_,:-])([^\d]\s)warning).*?(\[|\n)', lines, flags=re.IGNORECASE):
+                  for m in re.finditer(r'(.*([^a-zA-Z_,:-])([^\d]\s)warning).*?(\[|\n)', t['Output'], flags=re.IGNORECASE):
                         n = re.search(r'cmake|cgal', m.group(0), flags=re.IGNORECASE)
                         if n:
                             result_for_label='w'
