@@ -37,6 +37,16 @@ namespace internal{
           sizeof( typename std::iterator_traits<H>::value_type);
       }
     };
+
+    template <class H>
+    struct Hash_functor<H*>{
+      std::size_t
+      operator()(const H* h)
+      {
+        return std::size_t(h) /
+          sizeof(H);
+      }
+    };
   }
 }
 
