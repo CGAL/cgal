@@ -23,7 +23,7 @@ int main(int argc, char** argv)
   // Reads a .xyz point set file in points[]
   std::vector<Point> points;
 
-  if(!CGAL::read_points(input_filename, std::back_inserter(points)))
+  if(!CGAL::IO::read_points(input_filename, std::back_inserter(points)))
   {
     std::cerr << "Error: cannot read file " << input_filename  << std::endl;
     return EXIT_FAILURE;
@@ -40,7 +40,7 @@ int main(int argc, char** argv)
      CGAL::parameters::select_percentage(retain_percentage).
      neighbor_radius (neighbor_radius));
 
-  if(!CGAL::write_points(output_filename, output, CGAL::parameters::stream_precision(17)))
+  if(!CGAL::IO::write_points(output_filename, output, CGAL::parameters::stream_precision(17)))
     return EXIT_FAILURE;
 
   return EXIT_SUCCESS;

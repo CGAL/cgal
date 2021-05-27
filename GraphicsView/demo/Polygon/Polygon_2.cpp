@@ -125,7 +125,7 @@ MainWindow::MainWindow()
 
   this->graphicsView->setAcceptDrops(false);
 
-  minkgi = 0;
+  minkgi = nullptr;
   // Add a GraphicItem for the Polygon2
   pgi = new CGAL::Qt::PolygonGraphicsItem<Polygon2>(&poly);
 
@@ -253,7 +253,7 @@ MainWindow::open(QString fileName)
   {
 #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
     CGAL::Polygon_with_holes_2<K> P;
-    CGAL::read_polygon_WKT(ifs, P);
+    CGAL::IO::read_polygon_WKT(ifs, P);
     poly = Polygon2(P.outer_boundary().begin(),
                     P.outer_boundary().end());
 #endif
@@ -288,7 +288,7 @@ MainWindow::on_actionSavePolygon_triggered()
       CGAL::Polygon_2<K> P(poly.begin(),
                            poly.end());
       CGAL::Polygon_with_holes_2<K> Pwh(P);
-      CGAL::write_polygon_WKT(ofs, Pwh);
+      CGAL::IO::write_polygon_WKT(ofs, Pwh);
 #endif
     }
     else
@@ -557,10 +557,10 @@ MainWindow::clearPartition()
 void
 MainWindow::clearMinkowski()
 {
-  if(minkgi != 0){
+  if(minkgi != nullptr){
     scene.removeItem(minkgi);
     delete minkgi;
-    minkgi = 0;
+    minkgi = nullptr;
   }
 }
 

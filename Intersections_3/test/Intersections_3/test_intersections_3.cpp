@@ -1,5 +1,8 @@
 // 3D intersection tests.
 
+// We want to check that no division is performed for interface macro Do_intersect_3_RT
+#define CGAL_NO_MPZF_DIVISION_OPERATOR
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/MP_Float.h>
@@ -542,7 +545,7 @@ struct Test {
       if(b != b_tree) {
         std::stringstream err_msg;
         err_msg.precision(17);
-        CGAL::set_pretty_mode(err_msg);
+        CGAL::IO::set_pretty_mode(err_msg);
         err_msg << "do_intersect(\n"
                 << "             " << unit_bbox << "\n,\n"
                 << "             " << tr

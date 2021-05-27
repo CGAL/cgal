@@ -119,7 +119,7 @@ template < typename TDS, typename Data, typename SSP >
 std::ostream &
 operator<<(std::ostream & O, const Triangulation_full_cell<TDS, Data, SSP> & s)
 {
-    /*if( is_ascii(O) )
+    /*if( IO::is_ascii(O) )
     {
         // os << '\n';
     }
@@ -132,7 +132,7 @@ template < typename TDS, typename Data, typename SSP >
 std::istream &
 operator>>(std::istream & I, Triangulation_full_cell<TDS, Data, SSP> & s)
 {
-    /*if( is_ascii(I) )
+    /*if( IO::is_ascii(I) )
     {}
     else {}*/
     I >> s.data();

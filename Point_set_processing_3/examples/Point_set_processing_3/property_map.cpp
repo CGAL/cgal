@@ -82,7 +82,7 @@ void orient_normals(Iterator beg, Iterator end, OrientationPMap orient_pmap, Nor
 
 int main()
 {
-  CGAL::set_pretty_mode(std::cout);
+  CGAL::IO::set_pretty_mode(std::cout);
 
   // Here we run it on plain points. No need for a property map
   {

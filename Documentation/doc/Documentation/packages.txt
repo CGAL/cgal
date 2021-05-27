@@ -67,6 +67,7 @@
 
 \package_listing{Triangulation_2}
 \package_listing{TDS_2}
+\package_listing{Triangulation_on_sphere_2}
 \package_listing{Periodic_2_triangulation_2}
 \package_listing{Hyperbolic_triangulation_2}
 \package_listing{Periodic_4_hyperbolic_triangulation_2}
@@ -130,6 +131,7 @@
 \package_listing{SearchStructures}
 \package_listing{Box_intersection_d}
 \package_listing{AABB_tree}
+\package_listing{Orthtree}
 \package_listing{Spatial_sorting}
 \package_listing{Optimal_bounding_box}
 

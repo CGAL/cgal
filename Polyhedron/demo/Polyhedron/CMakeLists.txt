@@ -75,14 +75,11 @@ set_package_properties(
 include(CGAL_Eigen3_support)
 
 find_package(METIS)
+include(CGAL_METIS_support)
 set_package_properties(
   METIS PROPERTIES
   DESCRIPTION "A library for partitionning."
   PURPOSE "Requiered for the partition plugin.")
-
-if(METIS_FOUND)
-  include_directories(${METIS_INCLUDE_DIRS})
-endif()
 
 # Activate concurrency?
 option(POLYHEDRON_DEMO_ACTIVATE_CONCURRENCY "Enable concurrency" ON)
@@ -336,23 +333,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   if(TARGET CGAL::Eigen3_support)
     target_link_libraries(scene_points_with_normal_item
                           PUBLIC CGAL::Eigen3_support)
-  endif()
-
-  find_package(LASLIB)
-  set_package_properties(
-    LASLIB PROPERTIES
-    DESCRIPTION "A library for some I/O."
-    PURPOSE "Requiered for reading or writing LAS files.")
-
-  include(CGAL_LASLIB_support)
-  if(TARGET CGAL::LASLIB_support)
-    target_link_libraries(scene_points_with_normal_item
-                          PUBLIC CGAL::LASLIB_support)
-    if(MSVC)
-      target_compile_definitions(
-        scene_points_with_normal_item
-        PUBLIC "-D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS")
-    endif()
   endif()
 
   if(TBB_FOUND)

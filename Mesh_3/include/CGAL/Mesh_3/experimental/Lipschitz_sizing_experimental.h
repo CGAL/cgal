@@ -29,7 +29,7 @@
 #include <CGAL/array.h>
 #include <CGAL/Bbox_3.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <list>
 #include <sstream>
@@ -93,7 +93,7 @@ private:
 private:
   //only one of these aabb_trees is needed
   const Tree* m_ptree;
-  boost::shared_ptr<Tree> m_own_ptree;
+  std::shared_ptr<Tree> m_own_ptree;
 
   const MeshDomain& m_domain;
   Parameters m_params;
@@ -104,7 +104,7 @@ private:
 
 #ifdef CGAL_MESH_3_EXPERIMENTAL_USE_PATCHES_IDS
   //help to accelerate aabb_tree queries in m_ptree
-  boost::shared_ptr<Kd_tree> m_kd_tree;
+  std::shared_ptr<Kd_tree> m_kd_tree;
 
   Facet_patch_id_map m_facet_patch_id_map;
   const Patches_ids_map& patches_ids_map;

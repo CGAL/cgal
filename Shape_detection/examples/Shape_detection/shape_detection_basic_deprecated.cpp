@@ -41,10 +41,10 @@ int run(const char* filename) {
   // read_points takes an OutputIterator for storing the points
   // and a property map to store the normal vector with each point.
 
-  if (!CGAL::read_points(filename,
-                         std::back_inserter(points),
-                         CGAL::parameters::point_map(Point_map()).
-                         normal_map(Normal_map()))) {
+  if (!CGAL::IO::read_points(filename,
+                             std::back_inserter(points),
+                             CGAL::parameters::point_map(Point_map()).
+                             normal_map(Normal_map()))) {
 
     std::cout << "Error: cannot read the file cube.pwn" << std::endl;
     return EXIT_FAILURE;

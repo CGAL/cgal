@@ -14,7 +14,7 @@ std::cerr<<"ERROR: ("<<__LINE__ <<") test "<<#b<<" failed."<<std::endl; }
 
 #define CGAL_IO_TEST(datao,datai,iomode) {                                \
     std::stringstream S;                                                  \
-    CGAL::set_mode(S,iomode);                                             \
+    CGAL::IO::set_mode(S,iomode);                                             \
     S << datao;                                                           \
     if ( iomode != CGAL::IO::BINARY)                                      \
         S << '\n';                                                        \

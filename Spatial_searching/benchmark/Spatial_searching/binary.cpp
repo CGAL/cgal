@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
   std::ifstream ascii(argv[1]);
   ascii >> d >> N;
   std::ofstream binary(argv[2], std::ios::out | std::ios::binary);
-  CGAL::set_binary_mode(binary);
+  CGAL::IO::set_binary_mode(binary);
   CGAL::write(binary, d);
   CGAL::write(binary, N);
   for(int i=0; i < N; i++){
@@ -36,8 +36,8 @@ int main(int argc, char* argv[])
 
   std::ifstream binary(argv[1], std::ios::in | std::ios::binary);
   std::ofstream bbox(argv[2], std::ios::out | std::ios::binary);
-  CGAL::set_binary_mode(binary);
-  CGAL::set_binary_mode(bbox);
+  CGAL::IO::set_binary_mode(binary);
+  CGAL::IO::set_binary_mode(bbox);
   CGAL::read(binary,d);
   CGAL::read(binary,N);
   CGAL::write(bbox, d);
@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
 
   std::ifstream binary(argv[1], std::ios::in | std::ios::binary);
   std::ofstream ascii(argv[2]);
-  CGAL::set_binary_mode(binary);
+  CGAL::IO::set_binary_mode(binary);
   CGAL::read(binary,d);
   CGAL::read(binary,N);
   ascii << d << std::endl << N << std::endl;

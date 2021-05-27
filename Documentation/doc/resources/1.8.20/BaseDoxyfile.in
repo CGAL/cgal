@@ -251,7 +251,7 @@ TAB_SIZE               = 4
 # commands \{ and \} for these it is advised to use the version @{ and @} or use
 # a double escape (\\{ and \\})
 
-ALIASES                = "cgal=CGAL" \
+ALIASES                = "cgal=%CGAL" \
                          "protocgal=C++gal" \
                          "plageo=Plageo" \
                          "stl=STL" \

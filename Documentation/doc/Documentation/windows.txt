@@ -92,6 +92,11 @@ When you hit the *Configure* button, you must:
 <li>select *Specify toolchain file for cross compilation* (the file `vcpkg.cmake` within the directory
 where you have installed `vcpkg`, e.g. `C:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake`).</li>
 </ul>
+
+\cgalFigureBegin{toolchain,toolchain.png}
+The box to check to get to the toolchain option
+\cgalFigureEnd
+
 Once the configuration process is done, tick *Advanced* and *Grouped* in `cmake-gui`.
 You will see entries for where header files and libraries are taken from.
 
@@ -278,5 +283,12 @@ This file is automatically provided for all examples and demos of \cgal. For you
 you are advised to look at the `CMakeLists.txt` files in the example
 folder of the package(s) that you are using to learn how to specify \cgal and additional third party
 dependencies.
+
+\section sec-win-demo Trying CGAL algorithms using a Precompiled Demo
+\cgal provides a few demos offering a graphical user interface for some \cgal algorithms.
+All precompiled demos are available for download on the \ref packages page.
+Two links are provided in the column on the right: the demo itself (under **Windows Demo**) and a set of dlls (under **Common Demo Dlls**)
+that contains dlls files that must be placed in the same directory as the `.exe` of the demo.
+See for example the \ref PkgConvexHull3 package.
 
 */

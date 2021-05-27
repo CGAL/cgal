@@ -21,7 +21,6 @@
 #include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
-#include <CGAL/result_of.h>
 #include <CGAL/IO/io.h>
 
 namespace CGAL {
@@ -107,25 +106,25 @@ public:
     return Direction_3(a(), b(), c());
   }
 
-  typename cpp11::result_of<typename R::Compute_a_3( Plane_3)>::type
+  decltype(auto)
   a() const
   {
     return R().compute_a_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_b_3( Plane_3)>::type
+  decltype(auto)
   b() const
   {
     return R().compute_b_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_c_3( Plane_3)>::type
+  decltype(auto)
   c() const
   {
     return R().compute_c_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_d_3( Plane_3)>::type
+  decltype(auto)
   d() const
   {
     return R().compute_d_3_object()(*this);
@@ -229,7 +228,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Plane_3<R> &p)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << p.a() << ' ' << p.b() <<  ' ' << p.c() << ' ' << p.d();
     case IO::BINARY :
@@ -250,9 +249,9 @@ std::istream &
 operator>>(std::istream &is, Plane_3<R> &p)
 {
   typename R::RT a(0), b(0), c(0), d(0);
-    switch(get_mode(is)) {
+    switch(IO::get_mode(is)) {
     case IO::ASCII :
-        is >> iformat(a) >> iformat(b) >> iformat(c) >> iformat(d);
+        is >> IO::iformat(a) >> IO::iformat(b) >> IO::iformat(c) >> IO::iformat(d);
         break;
     case IO::BINARY :
         read(is, a);

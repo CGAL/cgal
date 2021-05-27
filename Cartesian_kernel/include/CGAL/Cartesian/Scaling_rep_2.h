@@ -120,6 +120,11 @@ public:
     return true;
   }
 
+  bool is_scaling() const
+  {
+    return true;
+  }
+
   FT cartesian(int i, int j) const
   {
     if (i!=j) return FT(0);

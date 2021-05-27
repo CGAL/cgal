@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
   const char* filename2 = (argc > 2) ? argv[2] : "data/eight.off";
 
   Mesh mesh1, mesh2;
-  if(!PMP::read_polygon_mesh(filename1, mesh1) || !PMP::read_polygon_mesh(filename2, mesh2))
+  if(!PMP::IO::read_polygon_mesh(filename1, mesh1) || !PMP::IO::read_polygon_mesh(filename2, mesh2))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;

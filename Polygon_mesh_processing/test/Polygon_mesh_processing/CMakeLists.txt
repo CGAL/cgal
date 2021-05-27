@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Polygon_mesh_processing_Tests)
 
 # CGAL and its components
@@ -70,6 +70,7 @@ create_single_source_cgal_program("pmp_do_intersect_test.cpp")
 create_single_source_cgal_program("test_is_polygon_soup_a_polygon_mesh.cpp")
 create_single_source_cgal_program("test_stitching.cpp")
 create_single_source_cgal_program("remeshing_test.cpp")
+create_single_source_cgal_program("remeshing_with_isolated_constraints_test.cpp" )
 create_single_source_cgal_program("measures_test.cpp")
 create_single_source_cgal_program("triangulate_faces_test.cpp")
 create_single_source_cgal_program("triangulate_faces_hole_filling_dt3_test.cpp")
@@ -77,6 +78,7 @@ create_single_source_cgal_program("triangulate_faces_hole_filling_all_search_tes
 create_single_source_cgal_program("test_pmp_remove_border_edge.cpp")
 create_single_source_cgal_program("test_pmp_distance.cpp")
 create_single_source_cgal_program("test_corefinement_and_constraints.cpp")
+create_single_source_cgal_program("test_corefinement_and_constraints_nearest.cpp")
 create_single_source_cgal_program("test_corefinement_bool_op.cpp")
 create_single_source_cgal_program("test_corefine.cpp")
 create_single_source_cgal_program("test_coref_epic_points_identity.cpp")
@@ -125,14 +127,14 @@ if(OpenMesh_FOUND)
 endif()
 
 find_package(Ceres QUIET)
+include(CGAL_Ceres_support)
 
-if(TARGET ceres AND TARGET CGAL::Eigen3_support)
-  target_compile_definitions( test_mesh_smoothing PRIVATE CGAL_PMP_USE_CERES_SOLVER )
-  target_link_libraries( test_mesh_smoothing PUBLIC CGAL::Eigen3_support PRIVATE ceres )
+if(TARGET CGAL::Ceres_support AND TARGET CGAL::Eigen3_support)
+  target_link_libraries( test_mesh_smoothing PUBLIC CGAL::Eigen3_support CGAL::Ceres_support)
 
 #  target_compile_definitions( test_pmp_repair_self_intersections PRIVATE CGAL_PMP_USE_CERES_SOLVER )
 #  target_link_libraries( test_pmp_repair_self_intersections PRIVATE ceres )
-endif(TARGET ceres AND TARGET CGAL::Eigen3_support)
+endif(TARGET CGAL::Ceres_support AND TARGET CGAL::Eigen3_support)
 
 if(BUILD_TESTING)
   set_tests_properties(

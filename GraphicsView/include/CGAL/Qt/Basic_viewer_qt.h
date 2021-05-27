@@ -56,12 +56,12 @@
 namespace CGAL
 {
 //------------------------------------------------------------------------------
-inline CGAL::Color get_random_color(CGAL::Random& random)
+inline CGAL::IO::Color get_random_color(CGAL::Random& random)
 {
-  CGAL::Color res;
+  CGAL::IO::Color res;
   do
   {
-    res=CGAL::Color(random.get_int(0,256),
+    res=CGAL::IO::Color(random.get_int(0,256),
                     random.get_int(0,256),
                     random.get_int(0,256));
   }
@@ -184,16 +184,16 @@ public:
     // Add custom mouse description
     setMouseBindingDescription(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::LeftButton, "Rotate the clipping plane when enabled");
     setMouseBindingDescription(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::RightButton, "Translate the clipping plane when enabled");
-    setMouseBindingDescription(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::MidButton, "Control the clipping plane transparency when enabled");
+    setMouseBindingDescription(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::MiddleButton, "Control the clipping plane transparency when enabled");
 
     setMouseBinding(::Qt::ControlModifier, ::Qt::LeftButton, qglviewer::FRAME, qglviewer::NO_MOUSE_ACTION);
     setMouseBinding(::Qt::ControlModifier, ::Qt::RightButton, qglviewer::FRAME, qglviewer::NO_MOUSE_ACTION);
-    setMouseBinding(::Qt::ControlModifier, ::Qt::MidButton, qglviewer::FRAME, qglviewer::NO_MOUSE_ACTION);
+    setMouseBinding(::Qt::ControlModifier, ::Qt::MiddleButton, qglviewer::FRAME, qglviewer::NO_MOUSE_ACTION);
     setWheelBinding(::Qt::ControlModifier, qglviewer::FRAME, qglviewer::NO_MOUSE_ACTION);
 
     setMouseBinding(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::LeftButton, qglviewer::FRAME, qglviewer::ROTATE);
     setMouseBinding(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::RightButton, qglviewer::FRAME, qglviewer::TRANSLATE);
-    setMouseBinding(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::MidButton, qglviewer::FRAME, qglviewer::ZOOM);
+    setMouseBinding(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::MiddleButton, qglviewer::FRAME, qglviewer::ZOOM);
     setWheelBinding(::Qt::Key_C, ::Qt::ControlModifier, qglviewer::FRAME, qglviewer::ZOOM);
 
     if (title[0]==0)
@@ -318,7 +318,7 @@ public:
   { m_buffer_for_mono_points.add_point(p); }
 
   template<typename KPoint>
-  void add_point(const KPoint& p, const CGAL::Color& acolor)
+  void add_point(const KPoint& p, const CGAL::IO::Color& acolor)
   { m_buffer_for_colored_points.add_point(p, acolor); }
 
   template<typename KPoint>
@@ -327,7 +327,7 @@ public:
 
   template<typename KPoint>
   void add_segment(const KPoint& p1, const KPoint& p2,
-                   const CGAL::Color& acolor)
+                   const CGAL::IO::Color& acolor)
   { m_buffer_for_colored_segments.add_segment(p1, p2, acolor); }
 
   template <typename KPoint, typename KVector>
@@ -359,7 +359,7 @@ public:
   }
 
   template <typename KPoint, typename KVector>
-  void add_ray(const KPoint &p, const KVector &v, const CGAL::Color &acolor)
+  void add_ray(const KPoint &p, const KVector &v, const CGAL::IO::Color &acolor)
   {
     double bigNumber = 1e30;
     m_buffer_for_colored_rays.add_ray_segment(p, (p + (bigNumber)*v), acolor);
@@ -374,7 +374,7 @@ public:
   }
 
   template <typename KPoint, typename KVector>
-  void add_line(const KPoint &p, const KVector &v, const CGAL::Color &acolor)
+  void add_line(const KPoint &p, const KVector &v, const CGAL::IO::Color &acolor)
   {
     double bigNumber = 1e30;
     m_buffer_for_colored_lines.add_line_segment((p - (bigNumber)*v),
@@ -412,7 +412,7 @@ public:
     { m_buffer_for_mono_faces.face_begin(); }
   }
 
-  void face_begin(const CGAL::Color& acolor)
+  void face_begin(const CGAL::IO::Color& acolor)
   {
     if (is_a_face_started())
     {
@@ -1702,11 +1702,11 @@ protected:
   double m_size_rays;
   double m_size_lines;
 
-  CGAL::Color m_vertices_mono_color;
-  CGAL::Color m_edges_mono_color;
-  CGAL::Color m_rays_mono_color;
-  CGAL::Color m_lines_mono_color;
-  CGAL::Color m_faces_mono_color;
+  CGAL::IO::Color m_vertices_mono_color;
+  CGAL::IO::Color m_edges_mono_color;
+  CGAL::IO::Color m_rays_mono_color;
+  CGAL::IO::Color m_lines_mono_color;
+  CGAL::IO::Color m_faces_mono_color;
   QVector4D   m_ambient_color;
 
   bool m_are_buffers_initialized;

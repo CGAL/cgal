@@ -291,7 +291,7 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
     assert(compare_1(bound,Algebraic_real_1(2)) == SMALLER );
   }
 
-  CGAL::set_pretty_mode(std::cerr);
+  CGAL::IO::set_pretty_mode(std::cerr);
 
   // Approximations
   bool all_right = true;
@@ -408,13 +408,13 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
 
 #define CGAL_TEST_ALGEBRAIC_REAL_IO(_f)         \
     alg1=_f;                                    \
-    ss<<CGAL::oformat(alg1);                        \
+    ss<<CGAL::IO::oformat(alg1);                \
     CGAL_assertion(ss.good());                  \
-    ss>>CGAL::iformat(alg2);                        \
-    CGAL_assertion(!ss.fail());                  \
+    ss>>CGAL::IO::iformat(alg2);                    \
+    CGAL_assertion(!ss.fail());                 \
     ss.clear();                                 \
     assert(alg1==alg2)
-    // Note: after the reading ss>>CGAL::iformat(alg2) the state of ss can
+    // Note: after the reading ss>>CGAL::IO::iformat(alg2) the state of ss can
     // have the eofbit. The C++ norm says if one tries to write to a stream
     // with eofbit, then the failbit will be set. That is why one must
     // clear the iostate with ss.clear().
@@ -422,7 +422,7 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
 
     Algebraic_real_1 alg1,alg2;
     std::stringstream ss;
-    CGAL::set_ascii_mode(ss);
+    CGAL::IO::set_ascii_mode(ss);
 
     // test construction from int, Coefficient and Bound
     CGAL_TEST_ALGEBRAIC_REAL_IO(construct_algebraic_real_1(int(2)));

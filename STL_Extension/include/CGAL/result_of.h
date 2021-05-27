@@ -18,45 +18,59 @@
 #ifndef CGAL_RESULT_OF_H
 #define CGAL_RESULT_OF_H
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/result_of.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/config.h>"
+
 #include <CGAL/config.h>
 #include <CGAL/disable_warnings.h>
 
-// Address the warning C4003: not enough actual parameters for macro 'BOOST_PP_SEQ_DETAIL_IS_NOT_EMPTY'
-// result_of.hpp includes files from boost/preprocessor
-// This concerns boost 1_65_1
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable: 4003)
-#endif
-#include <boost/utility/result_of.hpp>
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
+#if CGAL_CXX20 || __cpp_lib_is_invocable>=201703L
 
-#include <boost/version.hpp>
+  // C++>=17
 
-namespace CGAL{
+#elif CGAL_CXX11
 
-// Even if for now we use the tr1 result_of implementation, we use the cpp11
-// namespace since in the future, that's the decltype version that will be used
-namespace cpp11{
+  #include <type_traits>
 
-template<typename F>
-struct result_of
-{
-  // from boost 1.44 release note https://www.boost.org/users/history/version_1_44_0.html :
-  //    New template boost::tr1_result_of that implements the TR1 ResultOf protocol even if boost::result_of uses the C++0x decltype-based implementation.
-  #if BOOST_VERSION < 104400
-  typedef typename boost::result_of<F>::type type;
-  #else
-  typedef typename boost::tr1_result_of<F>::type type;
+#else // C++<11
+
+  // Address the warning C4003: not enough actual parameters for macro 'BOOST_PP_SEQ_DETAIL_IS_NOT_EMPTY'
+  // result_of.hpp includes files from boost/preprocessor
+  // This concerns boost 1_65_1
+  #if defined(BOOST_MSVC)
+    #pragma warning(push)
+    #pragma warning(disable: 4003)
   #endif
-};
+    #include <boost/utility/result_of.hpp>
+  #if defined(BOOST_MSVC)
+    #pragma warning(pop)
+  #endif
+  #include <boost/version.hpp>
 
-}
+#endif // end C++<11
 
-}
+namespace CGAL {
+namespace cpp11 {
+
+#if CGAL_CXX20 || __cpp_lib_is_invocable>=201703L
+
+  template<typename Signature> class result_of;
+  template<typename F, typename... Args>
+  class result_of<F(Args...)> : public std::invoke_result<F, Args...> { };
+
+#elif CGAL_CXX11
+
+  using std::result_of;
+
+#else // C++<11
+
+  using boost::result_of;
+
+#endif // end C++<11
+
+} // end cpp11
+} // end CGAL
 
 #include <CGAL/enable_warnings.h>
 
-#endif //CGAL_RESULT_OF_H
+#endif // CGAL_RESULT_OF_H

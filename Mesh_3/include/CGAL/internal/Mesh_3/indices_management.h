@@ -163,13 +163,13 @@ struct Read_mesh_domain_index {
     switch(dimension) {
     case 0:
       typename MT::Corner_index ci;
-      if(is_ascii(is)) is >> ci;
+      if(IO::is_ascii(is)) is >> ci;
       else CGAL::read(is, ci);
       return  ci;
       break;
     case 1:
       typename MT::Curve_index si;
-      if(is_ascii(is)) is >> si;
+      if(IO::is_ascii(is)) is >> si;
       else CGAL::read(is, si);
       return  si;
       break;
@@ -195,13 +195,13 @@ struct Write_mesh_domain_index {
     switch(dimension) {
     case 0: {
       const Ci& ci = get_index<Ci>(index);
-      if(is_ascii(os)) os << oformat(ci);
+      if(IO::is_ascii(os)) os << IO::oformat(ci);
       else CGAL::write(os, ci);
     }
       break;
     case 1: {
       const Si& si = get_index<Si>(index);
-      if(is_ascii(os)) os << oformat(si);
+      if(IO::is_ascii(os)) os << IO::oformat(si);
       else CGAL::write(os, si);
     }
       break;
@@ -223,14 +223,14 @@ struct Read_mesh_domain_index<Mesh_domain, false> {
     switch(dimension) {
     case 2: {
       typename MT::Surface_patch_index spi;
-      if(is_ascii(is)) is >> iformat(spi);
+      if(IO::is_ascii(is)) is >> IO::iformat(spi);
       else CGAL::read(is, spi);
       return  spi;
     }
       break;
     default: {// 3
       typename MT::Subdomain_index di;
-      if(is_ascii(is)) is >> iformat(di);
+      if(IO::is_ascii(is)) is >> IO::iformat(di);
       else CGAL::read(is, di);
       return  di;
     }
@@ -254,13 +254,13 @@ struct Write_mesh_domain_index<Mesh_domain, false> {
     switch(dimension) {
     case 2: {
       const Spi& spi = get_index<Spi>(index);
-      if(is_ascii(os)) os << oformat(spi);
+      if(IO::is_ascii(os)) os << IO::oformat(spi);
       else CGAL::write(os, spi);
     }
       break;
     default: {// 3
       const Di& di = get_index<Di>(index);
-      if(is_ascii(os)) os << oformat(di);
+      if(IO::is_ascii(os)) os << IO::oformat(di);
       else CGAL::write(os, di);
     }
       break;
@@ -272,12 +272,12 @@ struct Write_mesh_domain_index<Mesh_domain, false> {
 template <typename, typename Index>
 struct Read_write_index {
   void operator()(std::ostream& os, int, Index index) const {
-    if(is_ascii(os)) os << oformat(index);
+    if(IO::is_ascii(os)) os << IO::oformat(index);
     else CGAL::write(os, index);
   }
   Index operator()(std::istream& is, int) const {
     Index index;
-    if(is_ascii(is)) is >> iformat(index);
+    if(IO::is_ascii(is)) is >> IO::iformat(index);
     else CGAL::read(is, index);
     return index;
   }
@@ -287,7 +287,7 @@ struct Variant_write_visitor {
   std::ostream& os;
   template <typename T>
   void operator()(T v) const {
-    if(is_ascii(os)) os << CGAL::oformat(v);
+    if(IO::is_ascii(os)) os << CGAL::IO::oformat(v);
     else CGAL::write(os, v);
   }
 };
@@ -299,7 +299,7 @@ struct Variant_read_visitor {
   template <typename T>
   void operator()(T) const {
     T v;
-    if(is_ascii(is)) is >> CGAL::iformat(v);
+    if(IO::is_ascii(is)) is >> CGAL::IO::iformat(v);
     else CGAL::read(is, v);
     variant = v;
   }

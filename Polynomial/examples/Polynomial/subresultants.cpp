@@ -5,7 +5,7 @@
 #include <CGAL/Exact_integer.h>
 
 int main(){
-  CGAL::set_pretty_mode(std::cout);
+  CGAL::IO::set_pretty_mode(std::cout);
 
   typedef CGAL::Exact_integer Int;
 

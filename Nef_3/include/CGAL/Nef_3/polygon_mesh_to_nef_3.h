@@ -112,7 +112,7 @@ class Face_graph_index_adder {
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
  public:
   Face_graph_index_adder(Polyhedron&, HalfedgeIndexMap ) {}
-  void set_hash(halfedge_descriptor,
+  void set_edge(halfedge_descriptor,
                 SHalfedge_handle) {}
   void resolve_indexes() {}
 };
@@ -126,21 +126,21 @@ class Face_graph_index_adder<CGAL::SNC_indexed_items, PolygonMesh, SNC_structure
 
   typedef Halfedge_around_face_circulator<PolygonMesh>
     Halfedge_around_facet_const_circulator;
-    typedef std::vector<SHalfedge_handle> Hash;
+  typedef std::vector<SHalfedge_handle> SHalfedges;
 
   PolygonMesh& P;
   HalfedgeIndexMap him;
-  Hash hash;
+  SHalfedges shalfedges;
 
 public:
   Face_graph_index_adder(PolygonMesh& P_, HalfedgeIndexMap him) : P(P_), him(him)
   {
-    hash.resize(num_halfedges(P));
+    shalfedges.resize(num_halfedges(P));
   }
 
-  void set_hash(halfedge_descriptor evc,
+  void set_edge(halfedge_descriptor evc,
                 SHalfedge_handle se) {
-    hash[get(him,evc)] = se;
+    shalfedges[get(him,evc)] = se;
   }
 
   void resolve_indexes()
@@ -148,26 +148,22 @@ public:
     for(face_descriptor fi : faces(P)) {
       Halfedge_around_facet_const_circulator
         fc(halfedge(fi,P),P), end(fc);
-      typename boost::property_traits<HalfedgeIndexMap>::value_type
-        index = get(him,*fc);
-      hash[index]->set_index();
-      hash[index]->twin()->set_index();
-      hash[index]->twin()->source()->set_index();
-      int se  = hash[index]->get_index();
-      int set = hash[index]->twin()->get_index();
-      int sv  = hash[index]->twin()->source()->get_index();
+      SHalfedge_handle s = shalfedges[get(him,*fc)];
+      int se  = s->new_index();
+      int set = s->twin()->new_index();
+      int sv  = s->twin()->source()->new_index();
 
       ++fc;
       CGAL_For_all(fc, end) {
-        index = get(him,*fc);
-        hash[index]->set_index(se);
-        hash[index]->twin()->set_index(set);
-        hash[index]->source()->set_index(sv);
-        hash[index]->twin()->source()->set_index();
-        sv = hash[index]->twin()->source()->get_index();
+        SHalfedge_handle n = shalfedges[get(him,*fc)];
+        n->set_index(se);
+        n->twin()->set_index(set);
+        n->source()->set_index(sv);
+        sv = n->twin()->source()->new_index();
       }
-      hash[get(him,*fc)]->source()->set_index(sv);
+      s->source()->set_index(sv);
     }
+
   }
 };
 
@@ -266,7 +262,7 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
         e->twin()->circle() = ss_circle.opposite();
         e->mark() = e->twin()->mark() = true;
 
-        index_adder.set_hash(pe_prev, e);
+        index_adder.set_edge(pe_prev, e);
       }
 
       sv_prev = sv;
@@ -300,7 +296,7 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
       e->twin()->circle() = ss_circle.opposite();
       e->mark() = e->twin()->mark() = true;
 
-      index_adder.set_hash(pe_prev, e);
+      index_adder.set_edge(pe_prev, e);
     }
 
     // create faces

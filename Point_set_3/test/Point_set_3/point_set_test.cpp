@@ -36,7 +36,7 @@ int main (int, char**)
   test (point_set.has_normal_map(), "point set should have normals.");
 
   const char* fname ("data/oni.pwn");
-  if(!CGAL::read_point_set(fname, point_set))
+  if(!CGAL::IO::read_point_set(fname, point_set))
   {
     test (false, "failed to read input point set.");
     return EXIT_FAILURE;

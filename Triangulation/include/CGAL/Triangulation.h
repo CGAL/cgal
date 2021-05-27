@@ -1336,7 +1336,7 @@ operator>>(std::istream & is, Triangulation<TT, TDS> & tr)
     // read current dimension and number of vertices
     size_t n;
     int cd;
-    if( is_ascii(is) )
+    if( IO::is_ascii(is) )
         is >> cd >> n;
     else
     {
@@ -1388,7 +1388,7 @@ operator<<(std::ostream & os, const Triangulation<TT, TDS> & tr)
 
     // outputs dimensions and number of vertices
     size_t n = tr.number_of_vertices();
-    if( is_ascii(os) )
+    if( IO::is_ascii(os) )
         os << tr.current_dimension() << std::endl << n << std::endl;
     else
     {
@@ -1405,7 +1405,7 @@ operator<<(std::ostream & os, const Triangulation<TT, TDS> & tr)
 
     // infinite vertex has index 0 (among all the vertices)
     index_of_vertex[tr.infinite_vertex()] = i++;
-    if(is_ascii(os))
+    if(IO::is_ascii(os))
       os << *tr.infinite_vertex() <<"\n";
     else
       write(os, *tr.infinite_vertex());
@@ -1414,7 +1414,7 @@ operator<<(std::ostream & os, const Triangulation<TT, TDS> & tr)
     {
         if( tr.is_infinite(it) )
             continue;
-        if(is_ascii(os))
+        if(IO::is_ascii(os))
           os << *it <<"\n"; // write the vertex
         else
           write(os, *it);
