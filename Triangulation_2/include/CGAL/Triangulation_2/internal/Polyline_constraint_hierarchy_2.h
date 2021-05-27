@@ -46,14 +46,13 @@ private:
   class Node {
   public:
     explicit Node(Vertex_handle vh, bool input = false)
-      : vertex_(vh), id(-1), input(input)
+      : vertex_(vh), input(input)
     {}
     const Point& point() const { return vertex_->point(); }
     Vertex_handle vertex() const { return vertex_; }
   private:
     Vertex_handle vertex_;
   public:
-    int id;
     bool input;
   };
 
@@ -585,45 +584,58 @@ void Polyline_constraint_hierarchy_2<T,Compare,Point>::simplify(Vertex_it uc,
                                                        Vertex_it wc)
 
 {
+  // TODO: How do we (want to) deal with u == w ???
   Vertex_handle u = *uc, v = *vc, w = *wc;
   typename Sc_to_c_map::iterator uv_sc_iter = sc_to_c_map.find(make_edge(u, v));
-  CGAL_assertion_msg( uv_sc_iter != sc_to_c_map.end(), "not a subconstraint" );
+  typename Sc_to_c_map::iterator vw_sc_iter = sc_to_c_map.find(make_edge(v, w));
   Context_list*  uv_hcl = uv_sc_iter->second;
-  CGAL_assertion_msg((u == w) || (uv_hcl->size() == 1), "more than one constraint passing through the subconstraint" );
-
-  if(*(uv_hcl->front().current()) != u) {
-    std::swap(u,w);
-    uv_sc_iter = sc_to_c_map.find(make_edge(u, v));
-    CGAL_assertion_msg( uv_sc_iter != sc_to_c_map.end(), "not a subconstraint" );
-    uv_hcl = (*uv_sc_iter).second;
-    CGAL_assertion_msg((u == w) || (uv_hcl->size() == 1), "more than one constraint passing through the subconstraint" );
-  }
-  // now u,v, and w are ordered along the polyline constraint
+  Context_list*  vw_hcl = vw_sc_iter->second;
+  // AF:  what is input() about???
   if(vc.input()){
     uc.input() = true;
     wc.input() = true;
   }
-  typename Sc_to_c_map::iterator vw_sc_iter = sc_to_c_map.find(make_edge(v, w));
-  CGAL_assertion_msg( vw_sc_iter != sc_to_c_map.end(), "not a subconstraint" );
-  Context_list*  vw_hcl = vw_sc_iter->second;
-    CGAL_assertion_msg((u == w) || (vw_hcl->size() == 1), "more than one constraint passing through the subconstraint" );
 
-  Vertex_list* vertex_list = uv_hcl->front().id().vl_ptr();
-  CGAL_assertion_msg(vertex_list  == vw_hcl->front().id().vl_ptr(), "subconstraints from different polyline constraints" );
-  // Remove the list item which points to v
-  vertex_list->skip(vc.base());
-
-  if(u != w){
-    // Remove the entries for [u,v] and [v,w]
-    sc_to_c_map.erase(uv_sc_iter);
-    sc_to_c_map.erase(vw_sc_iter);
-    delete vw_hcl;
-    // reuse other context list
-    sc_to_c_map[make_edge(u,w)] = uv_hcl;
-  }else{
-    sc_to_c_map.erase(uv_sc_iter);
-    delete vw_hcl;
+  // Take contexts from the two context lists depending on the orientation of the constraints
+  // These are the contexts where current is either u or w
+  // remove from uv_hcl the contexts where current is not u
+  // remove from vw_hcl the contexts where current is not w
+  // splice into uv_hcl
+  typename Context_list::iterator it = uv_hcl->begin();
+  while(it != uv_hcl->end()){
+    if((*it->current()) != u){
+      it = uv_hcl->erase(it);
+    }else{
+      // Remove the list item which points to v
+      Vertex_list* vertex_list = it->id().vl_ptr();
+      Vertex_it vc_in_context = it->current();
+      vc_in_context = boost::next(vc_in_context);
+      vertex_list->skip(vc_in_context.base());
+      ++it;
+    }
   }
+  it = vw_hcl->begin();
+  while(it != vw_hcl->end()){
+    if((*it->current()) != w){
+      it = vw_hcl->erase(it);
+    }else{
+      // Remove the list item which points to v
+      Vertex_list* vertex_list = it->id().vl_ptr();
+      Vertex_it vc_in_context = it->current();
+      vc_in_context = boost::next(vc_in_context);
+      vertex_list->skip(vc_in_context.base());
+      ++it;
+    }
+  }
+
+  uv_hcl->splice(uv_hcl->end(),*vw_hcl);
+  delete vw_hcl;
+
+  sc_to_c_map.erase(uv_sc_iter);
+  sc_to_c_map.erase(vw_sc_iter);
+
+  // reuse other context list
+  sc_to_c_map[make_edge(u,w)] = uv_hcl;
 }
 
 

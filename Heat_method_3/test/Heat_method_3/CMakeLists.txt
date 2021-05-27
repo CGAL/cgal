@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Heat_method_3_Tests)
 
 # CGAL and its components
@@ -47,4 +47,7 @@ create_single_source_cgal_program("heat_method_surface_mesh_test.cpp")
 target_link_libraries(heat_method_surface_mesh_test PUBLIC CGAL::Eigen3_support)
 create_single_source_cgal_program("heat_method_surface_mesh_direct_test.cpp")
 target_link_libraries(heat_method_surface_mesh_direct_test
+                      PUBLIC CGAL::Eigen3_support)
+create_single_source_cgal_program("heat_method_surface_mesh_intrinsic_test.cpp")
+target_link_libraries(heat_method_surface_mesh_intrinsic_test
                       PUBLIC CGAL::Eigen3_support)

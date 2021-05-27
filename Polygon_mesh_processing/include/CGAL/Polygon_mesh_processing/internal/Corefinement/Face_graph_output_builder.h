@@ -1371,7 +1371,17 @@ public:
       CGAL::Bounded_side in_tm2 = is_tm2_inside_out
                                 ? ON_UNBOUNDED_SIDE : ON_BOUNDED_SIDE;
 
-      Side_of_triangle_mesh<TriangleMesh, Kernel, VertexPointMap2> inside_tm2(tm2, vpm2);
+      typedef typename Nodes_vector::Exact_kernel Exact_kernel;
+      typedef Side_of_helper<TriangleMesh,
+                             Node_id_map,
+                             VertexPointMap2,
+                             Nodes_vector, Kernel> VPM_helper;
+      typedef typename VPM_helper::VPM SOTM_vpm2;
+      typedef typename VPM_helper::Tree_type Tree_type;
+
+      Tree_type tree;
+      VPM_helper::build_tree(tm2, tree, vertex_to_node_id2, fids2, vpm2, nodes);
+      Side_of_triangle_mesh<TriangleMesh, Exact_kernel, SOTM_vpm2, Tree_type> inside_tm2(tree);
 
       for(face_descriptor f : faces(tm1))
       {
@@ -1382,16 +1392,20 @@ public:
           patch_status_not_set_tm1.reset( patch_id );
           halfedge_descriptor h = halfedge(f, tm1);
           Node_id index_p1 = get_node_id(target(h, tm1), vertex_to_node_id1);
+          std::array<Node_id, 3> fnids = { index_p1, index_p1, index_p1 };
           if (index_p1 != NID)
           {
             h=next(h, tm1);
             index_p1 = get_node_id(target(h, tm1), vertex_to_node_id1);
+            fnids[1]=index_p1;
             if (index_p1 != NID)
             {
               h=next(h, tm1);
               index_p1 = get_node_id(target(h, tm1), vertex_to_node_id1);
+              fnids[2]=index_p1;
             }
           }
+
           if (index_p1 != NID)
           {
             if (coplanar_patches_of_tm1.test(patch_id))
@@ -1401,12 +1415,13 @@ public:
             }
             else
             {
-              // triangle which is tangent at its 3 vertices
-              // \todo improve this part which is not robust with a kernel
-              // with inexact constructions.
-              Bounded_side position = inside_tm2(centroid(get(vpm1, source(h, tm1)),
-                                                          get(vpm1, target(h, tm1)),
-                                                          get(vpm1, target(next(h, tm1), tm1)) ));
+              typename Exact_kernel::Point_3 e_centroid =
+                centroid(nodes.exact_node(fnids[0]),
+                         nodes.exact_node(fnids[1]),
+                         nodes.exact_node(fnids[2]));
+
+              Bounded_side position = inside_tm2(e_centroid);
+
               CGAL_assertion( position != ON_BOUNDARY);
               if ( position == in_tm2 )
                 is_patch_inside_tm2.set(patch_id);
@@ -1414,9 +1429,7 @@ public:
           }
           else
           {
-            // TODO: tm2 might have been modified and an inexact vpm will
-            //       provide a non-robust result.
-            Bounded_side position = inside_tm2( get(vpm1, target(h, tm1)));
+            Bounded_side position = inside_tm2( nodes.to_exact(get(vpm1, target(h, tm1))));
             CGAL_assertion( position != ON_BOUNDARY);
             if ( position == in_tm2 )
               is_patch_inside_tm2.set(patch_id);
@@ -1433,7 +1446,18 @@ public:
       CGAL::Bounded_side in_tm1 = is_tm1_inside_out
                                 ? ON_UNBOUNDED_SIDE : ON_BOUNDED_SIDE;
 
-      Side_of_triangle_mesh<TriangleMesh, Kernel, VertexPointMap1> inside_tm1(tm1, vpm1);
+      typedef typename Nodes_vector::Exact_kernel Exact_kernel;
+      typedef Side_of_helper<TriangleMesh,
+                             Node_id_map,
+                             VertexPointMap1,
+                             Nodes_vector, Kernel> VPM_helper;
+      typedef typename VPM_helper::VPM SOTM_vpm1;
+      typedef typename VPM_helper::Tree_type Tree_type;
+
+      Tree_type tree;
+      VPM_helper::build_tree(tm1, tree, vertex_to_node_id1, fids1, vpm1, nodes);
+      Side_of_triangle_mesh<TriangleMesh, Exact_kernel, SOTM_vpm1, Tree_type> inside_tm1(tree);
+
       for(face_descriptor f : faces(tm2))
       {
         const std::size_t f_id = get(fids2, f);
@@ -1443,14 +1467,17 @@ public:
           patch_status_not_set_tm2.reset( patch_id );
           halfedge_descriptor h = halfedge(f, tm2);
           Node_id index_p2 = get_node_id(target(h, tm2), vertex_to_node_id2);
+          std::array<Node_id, 3> fnids = { index_p2, index_p2, index_p2 };
           if (index_p2 != NID)
           {
             h=next(h, tm2);
             index_p2 = get_node_id(target(h, tm2), vertex_to_node_id2);
+            fnids[1]=index_p2;
             if (index_p2 != NID)
             {
               h=next(h, tm2);
               index_p2 = get_node_id(target(h, tm2), vertex_to_node_id2);
+              fnids[2]=index_p2;
             }
           }
           if (index_p2 != NID)
@@ -1462,11 +1489,11 @@ public:
             }
             else
             {
-              // triangle which is tangent at its 3 vertices
-              // \todo improve this part which is not robust with a kernel
-              // with inexact constructions.
-              Bounded_side position = inside_tm1(midpoint(get(vpm2, source(h, tm2)),
-                                                          get(vpm2, target(h, tm2)) ));
+              typename Exact_kernel::Point_3 e_centroid =
+                centroid(nodes.exact_node(fnids[0]),
+                         nodes.exact_node(fnids[1]),
+                         nodes.exact_node(fnids[2]));
+              Bounded_side position = inside_tm1(e_centroid);
               CGAL_assertion( position != ON_BOUNDARY);
               if ( position == in_tm1 )
                 is_patch_inside_tm1.set(patch_id);
@@ -1474,9 +1501,7 @@ public:
           }
           else
           {
-            // TODO: tm1 might have been modified and an inexact vpm will
-            //       provide a non-robust result.
-            Bounded_side position = inside_tm1( get(vpm2, target(h, tm2)));
+            Bounded_side position = inside_tm1( nodes.to_exact(get(vpm2, target(h, tm2))));
             CGAL_assertion( position != ON_BOUNDARY);
             if ( position == in_tm1 )
               is_patch_inside_tm1.set(patch_id);

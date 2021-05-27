@@ -96,8 +96,7 @@ public:
   Circle_3(Rep&& r)
     : Rep(std::move(r)) {}
 
-  typename cpp11::result_of
-  <typename R::Construct_sphere_3( Circle_3)>::type
+  decltype(auto)
   diametral_sphere() const
   {
     return typename R::Construct_sphere_3()(*this);
@@ -113,8 +112,7 @@ public:
     return typename R::Construct_sphere_3()(*this).squared_radius();
   }
 
-  typename cpp11::result_of
-  <typename R::Construct_plane_3( Circle_3)>::type
+  decltype(auto)
   supporting_plane() const
   {
     return typename R::Construct_plane_3()(*this);

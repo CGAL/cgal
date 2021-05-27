@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
   const char* filename = (argc > 1) ? argv[1] : "data/pig.off";
 
   Mesh mesh;
-  if(!PMP::read_polygon_mesh(filename, mesh) || !CGAL::is_triangle_mesh(mesh))
+  if(!PMP::IO::read_polygon_mesh(filename, mesh) || !CGAL::is_triangle_mesh(mesh))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;
@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
                            .protect_constraints(true)//i.e. protect border, here
                            );
 
-  CGAL::write_polygon_mesh("out.off", mesh, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_mesh("out.off", mesh, CGAL::parameters::stream_precision(17));
   std::cout << "Remeshing done." << std::endl;
 
   return 0;

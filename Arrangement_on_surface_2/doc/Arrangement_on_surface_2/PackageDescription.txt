@@ -203,8 +203,8 @@ implemented as peripheral classes or as free (global) functions.
 - `CGAL::locate()`
 - `CGAL::decompose()`
 - `CGAL::overlay()`
-- `CGAL::read()`
-- `CGAL::write()`
+- `CGAL::IO::read()`
+- `CGAL::IO::write()`
 - `CGAL::remove_curve()`
 - \link PkgArrangementOnSurface2op_left_shift `CGAL::operator<<` \endlink
 - \link PkgArrangementOnSurface2op_right_shift `CGAL::operator<<` \endlink

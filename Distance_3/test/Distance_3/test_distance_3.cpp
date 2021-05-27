@@ -56,6 +56,7 @@ struct Test {
   typedef CGAL::Triangle_3< K >       T;
   typedef CGAL::Plane_3< K >          Pl;
   typedef CGAL::Iso_cuboid_3< K >     Cub;
+  typedef CGAL::Tetrahedron_3< K >    Tet;
 
 
   template < typename Type >
@@ -109,8 +110,17 @@ struct Test {
 
   void P_T()
   {
-    std::cout << "Point - Segment\n";
+    std::cout << "Point - Triangle\n";
     check_squared_distance (p(0, 1, 2), T(p(0, 0, 0), p( 2, 0, 0), p( 0, 2, 0)), 4);
+  }
+
+  void P_Tet()
+  {
+    std::cout << "Point - Tetrahedron\n";
+    check_squared_distance (p(0, 0, 0), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 0, 0, 1)), 0);
+    check_squared_distance (p(0, 0, 2), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 0, 0, 1)), 1);
+    check_squared_distance (p(0, 0, -1), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 0, 0, 1)), 1);
+    check_squared_distance (p(5, 0, 0), Tet(p(0, 0, 0), p( 1, 0, 0), p( 0, 1, 0), p( 4, 0, 1)), 2);
   }
 
   void S_S()
@@ -238,6 +248,7 @@ struct Test {
     P_P();
     P_S();
     P_T();
+    P_Tet();
     S_S();
     P_R();
     R_R();

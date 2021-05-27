@@ -485,9 +485,6 @@ public:
   template<class VertexDistanceMap>
   void estimate_geodesic_distances(VertexDistanceMap vdm)
   {
-    CGAL_precondition(
-      !CGAL::Heat_method_3::internal::has_degenerate_faces(triangle_mesh(), Traits()));
-
     if(is_empty(tm)){
       return;
     }
@@ -666,6 +663,9 @@ struct Base_helper
   template <class VertexDistanceMap>
   void estimate_geodesic_distances(VertexDistanceMap vdm)
   {
+    CGAL_assertion(
+      !CGAL::Heat_method_3::internal::has_degenerate_faces(
+        base().triangle_mesh(), Traits()));
     base().estimate_geodesic_distances(vdm);
   }
 };
@@ -751,9 +751,6 @@ struct Base_helper<TriangleMesh, Traits, Intrinsic_Delaunay, LA, VertexPointMap>
   template <class VertexDistanceMap>
   void estimate_geodesic_distances(VertexDistanceMap vdm)
   {
-    CGAL_precondition(
-      !CGAL::Heat_method_3::internal::has_degenerate_faces(
-        this->m_idt.triangle_mesh(), Traits()));
     base().estimate_geodesic_distances(this->m_idt.vertex_distance_map(vdm));
   }
 };
@@ -769,11 +766,11 @@ struct Base_helper<TriangleMesh, Traits, Intrinsic_Delaunay, LA, VertexPointMap>
  * time after changes to the set of sources.
  *
  * \tparam TriangleMesh a triangulated surface mesh, model of `FaceListGraph` and `HalfedgeListGraph`
- *                      with no degenerate faces
  * \tparam Mode must be `Intrinsic_Delaunay` to indicate that an intrinsic Delaunay triangulation is internally constructed
  *                              or `Direct` to indicate that the input mesh should be used as is.
  *                              If `Intrinsic_Delaunay`, then the type `TriangleMesh` must have an internal property for `vertex_point`
  *                              and its value type must be the same as the value type of `VertexPointMap`.
+ *                              If `Direct`, then the input mesh should not have any degenerate faces.
  * \tparam VertexPointMap a model of `ReadablePropertyMap` with
  *         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
  *         `Traits::Point_3` as value type.
@@ -940,7 +937,7 @@ public:
    * \tparam VertexDistanceMap a property map model of `WritablePropertyMap`
    * with `vertex_descriptor` as key type and `double` as value type.
    * \param vdm the vertex distance map to be filled
-   * \pre the support triangle mesh does not have any degenerate faces
+   * \pre If `Mode` is `Direct`, the support triangle mesh does not have any degenerate faces
    * \warning The key type is `double` even when used with an exact kernel.
    **/
   template <class VertexDistanceMap>
@@ -961,7 +958,7 @@ public:
 /// \tparam Mode either the tag `Direct` or `Intrinsic_Delaunay`, which determines if the geodesic distance
 ///              is computed directly on the mesh or if the intrinsic Delaunay triangulation is applied first.
 ///              The default is `Intrinsic_Delaunay`.
-/// \pre `tm` does not have any degenerate faces
+/// \pre If `Mode` is `Direct`, `tm` does not have any degenerate faces
 /// \warning The return type is `double` even when used with an exact kernel.
 ///
 /// \sa `CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3`
@@ -1003,7 +1000,7 @@ estimate_geodesic_distances(const TriangleMesh& tm,
 /// \tparam Mode either the tag `Direct` or `Intrinsic_Delaunay`, which determines if the geodesic distance
 ///              is computed directly on the mesh or if the intrinsic Delaunay triangulation is applied first.
 ///              The default is `Intrinsic_Delaunay`.
-/// \pre `tm` does not have any degenerate faces
+/// \pre If `Mode` is `Direct`, `tm` mesh does not have any degenerate faces
 /// \warning The return type is `double` even when used with an exact kernel.
 /// \sa `CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3`
 template <typename TriangleMesh, typename VertexDistanceMap, typename VertexConstRange, typename Mode>

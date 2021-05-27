@@ -97,14 +97,14 @@ int main( int argc, char **argv) {
     }
 
     if ( binary) {
-        vout << "CGAL::set_binary_mode( ofstream(" << name << "))" << endl;
-        CGAL::set_binary_mode( *p_out);
+        vout << "CGAL::IO::set_binary_mode( ofstream(" << name << "))" << endl;
+        CGAL::IO::set_binary_mode( *p_out);
     } else if ( noc) {
-        vout << "CGAL::set_ascii_mode( ofstream(" << name << "))" << endl;
-        CGAL::set_ascii_mode( *p_out);
+        vout << "CGAL::IO::set_ascii_mode( ofstream(" << name << "))" << endl;
+        CGAL::IO::set_ascii_mode( *p_out);
     } else {
-        vout << "CGAL::set_pretty_mode( ofstream(" << name << "))" << endl;
-        CGAL::set_pretty_mode( *p_out);
+        vout << "CGAL::IO::set_pretty_mode( ofstream(" << name << "))" << endl;
+        CGAL::IO::set_pretty_mode( *p_out);
     }
 
     vout << "ofstream(" << name << ") << CGAL::Polyhedron_3 ..." << endl;

@@ -27,9 +27,9 @@ int main(int argc, char*argv[])
 
   // Reads a point set file in points[].
   std::list<PointVectorPair> points;
-  if(!CGAL::read_points(fname,
-                        std::back_inserter(points),
-                        CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())))
+  if(!CGAL::IO::read_points(fname,
+                            std::back_inserter(points),
+                            CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())))
   {
     std::cerr << "Error: cannot read file " << fname<< std::endl;
     return EXIT_FAILURE;

@@ -95,7 +95,7 @@ public:
         ptr_ = new (p) RefCounted(std::forward<T1>(t1), std::forward<T2>(t2), std::forward<Args>(args)...);
     }
 
-    Handle_for(const Handle_for& h) noexcept
+    Handle_for(const Handle_for& h) noexcept(!CGAL_ASSERTIONS_ENABLED)
       : ptr_(h.ptr_)
     {
         // CGAL_assume (ptr_->count > 0);
@@ -106,7 +106,7 @@ public:
     }
 
     Handle_for&
-    operator=(const Handle_for& h) noexcept
+    operator=(const Handle_for& h) noexcept(!CGAL_ASSERTIONS_ENABLED)
     {
         Handle_for tmp = h;
         swap(tmp);

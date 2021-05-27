@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
   const char* filename = (argc > 1) ? argv[1] : "data/mech-holes-shark.off";
 
   Mesh mesh;
-  if(!PMP::read_polygon_mesh(filename, mesh))
+  if(!PMP::IO::read_polygon_mesh(filename, mesh))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;
@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
   std::cout << std::endl;
   std::cout << nb_holes << " holes have been filled" << std::endl;
 
-  CGAL::write_polygon_mesh("filled_SM.off", mesh, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_mesh("filled_SM.off", mesh, CGAL::parameters::stream_precision(17));
   std::cout << "Mesh written to: filled_SM.off" << std::endl;
 
   return 0;

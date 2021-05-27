@@ -89,7 +89,7 @@ public:
 
   Sphere_3 orthogonal_transform(const Aff_transformation_3 &t) const;
 
-  typename cpp11::result_of<typename R::Construct_center_3( Sphere_3)>::type
+  decltype(auto)
   center() const
   {
     return R().construct_center_3_object()(*this);
@@ -211,7 +211,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Sphere_3<R>& c,const Cartesian_tag&)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         os << c.center() << ' ' << c.squared_radius() << ' '
            << static_cast<int>(c.orientation());
@@ -243,7 +243,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Sphere_3<R>& c, const Homogeneous_tag&)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         os << c.center() << ' ' << c.squared_radius() << ' '
            << static_cast<int>(c.orientation());
@@ -286,7 +286,7 @@ extract(std::istream& is, Sphere_3<R>& c, const Cartesian_tag&)
     typename R::Point_3 center;
     typename R::FT squared_radius(0);
     int o=0;
-    switch(get_mode(is)) {
+    switch(IO::get_mode(is)) {
     case IO::ASCII :
         is >> center >> squared_radius >> o;
         break;
@@ -314,7 +314,7 @@ extract(std::istream& is, Sphere_3<R>& c, const Homogeneous_tag&)
     typename R::Point_3 center;
     typename R::FT squared_radius;
     int o=0;
-    switch(get_mode(is)) {
+    switch(IO::get_mode(is)) {
     case IO::ASCII :
         is >> center >> squared_radius >> o;
         break;

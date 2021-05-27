@@ -22,11 +22,13 @@
 
 namespace CGAL {
 
-template <class K,  class Hilbert_policy >
-class Hilbert_sort_on_sphere_3 {
-        typedef typename K::Point_3  Point_3;
-
-        static const double _sqrt_of_one_over_three;
+template <class K,
+          class Hilbert_policy,
+          class P = typename K::Point_3>
+class Hilbert_sort_on_sphere_3
+{
+        typedef P Point_3;
+        typedef typename K::FT FT;
 
         // Face 1, x > sqrt(1/3)
         // Face 2, y > sqrt(1/3)
@@ -42,28 +44,33 @@ class Hilbert_sort_on_sphere_3 {
         typedef internal::Transform_coordinates_traits_3<K,-1,0,1,1> Face_5_traits_3;  // -z +x
         typedef internal::Transform_coordinates_traits_3<K,1,1,0,0> Face_6_traits_3;  // +x +y
 
+
+
         Hilbert_sort_2<Face_1_traits_3, Hilbert_policy > _hs_1_object;
         Hilbert_sort_2<Face_2_traits_3, Hilbert_policy > _hs_2_object;
         Hilbert_sort_2<Face_3_traits_3, Hilbert_policy > _hs_3_object;
         Hilbert_sort_2<Face_4_traits_3, Hilbert_policy > _hs_4_object;
         Hilbert_sort_2<Face_5_traits_3, Hilbert_policy > _hs_5_object;
         Hilbert_sort_2<Face_6_traits_3, Hilbert_policy > _hs_6_object;
+
         K _k;
         Point_3 _p;
-        double _sq_r;
+        FT _sq_r;
+        const FT _sqrt_of_one_over_three;
 
 public:
-        Hilbert_sort_on_sphere_3 (const K &k=K(),
-                                  double sq_r = 1.0,
-                                                          const Point_3 &p = Point_3(0,0,0),
-                                                          std::ptrdiff_t limit=1)
+        Hilbert_sort_on_sphere_3 (const K &k = K(),
+                                  FT sq_r = 1.0,
+                                  const Point_3 &p = Point_3(0,0,0),
+                                  std::ptrdiff_t limit=1)
         : _hs_1_object(Face_1_traits_3(),limit),
           _hs_2_object(Face_2_traits_3(),limit),
           _hs_3_object(Face_3_traits_3(),limit),
           _hs_4_object(Face_4_traits_3(),limit),
           _hs_5_object(Face_5_traits_3(),limit),
           _hs_6_object(Face_6_traits_3(),limit),
-          _k(k), _p(p), _sq_r(sq_r)
+          _k(k), _p(p), _sq_r(sq_r),
+          _sqrt_of_one_over_three(CGAL_NTS sqrt(FT(1)/FT(3)))
         {
                 CGAL_precondition( sq_r > 0 );
         }
@@ -74,10 +81,10 @@ public:
                 typedef typename std::iterator_traits<RandomAccessIterator>::value_type Point;
                 std::vector< Point > vec[6];
 
-                const double mulcte = _sqrt_of_one_over_three * CGAL_NTS sqrt(_sq_r);
-                const double lxi = _p.x() - mulcte, lxs = _p.x() + mulcte;
-                const double lyi = _p.y() - mulcte, lys = _p.y() + mulcte;
-                const double lzs = _p.z() + mulcte;
+                const FT mulcte = _sqrt_of_one_over_three * CGAL_NTS sqrt(_sq_r);
+                const FT lxi = _p.x() - mulcte, lxs = _p.x() + mulcte;
+                const FT lyi = _p.y() - mulcte, lys = _p.y() + mulcte;
+                const FT lzs = _p.z() + mulcte;
 
                 for(RandomAccessIterator i = begin; i != end; ++i) {
                         const Point &p = *i;
@@ -105,8 +112,6 @@ public:
                                 *begin++ = vec[i][j];
         }
 };
-template <class K,  class Hilbert_policy >
-const double Hilbert_sort_on_sphere_3<K,Hilbert_policy>::_sqrt_of_one_over_three = 0.57735026919;
 
 } // namespace CGAL
 

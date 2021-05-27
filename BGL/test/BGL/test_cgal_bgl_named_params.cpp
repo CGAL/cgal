@@ -63,6 +63,7 @@ void test(const NamedParameters& np)
   assert(get_parameter(np, CGAL::internal_np::vertex_incident_patches).v == 11);
   assert(get_parameter(np, CGAL::internal_np::density_control_factor).v == 12);
   assert(get_parameter(np, CGAL::internal_np::use_delaunay_triangulation).v == 13);
+  assert(get_parameter(np, CGAL::internal_np::use_2d_constrained_delaunay_triangulation).v == 4573);
   assert(get_parameter(np, CGAL::internal_np::fairing_continuity).v == 14);
   assert(get_parameter(np, CGAL::internal_np::sparse_linear_solver).v == 15);
   assert(get_parameter(np, CGAL::internal_np::number_of_relaxation_steps).v == 16);
@@ -108,6 +109,7 @@ void test(const NamedParameters& np)
   assert(get_parameter(np, CGAL::internal_np::maximum_number_of_faces).v == 78910);
   assert(get_parameter(np, CGAL::internal_np::non_manifold_feature_map).v == 60);
   assert(get_parameter(np, CGAL::internal_np::filter).v == 61);
+  assert(get_parameter(np, CGAL::internal_np::face_epsilon_map).v == 62);
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   assert(get_parameter(np, CGAL::internal_np::get_cost_policy).v == 34);
@@ -165,6 +167,7 @@ void test(const NamedParameters& np)
   check_same_type<11>(get_parameter(np, CGAL::internal_np::vertex_incident_patches));
   check_same_type<12>(get_parameter(np, CGAL::internal_np::density_control_factor));
   check_same_type<13>(get_parameter(np, CGAL::internal_np::use_delaunay_triangulation));
+  check_same_type<4573>(get_parameter(np, CGAL::internal_np::use_2d_constrained_delaunay_triangulation));
   check_same_type<14>(get_parameter(np, CGAL::internal_np::fairing_continuity));
   check_same_type<15>(get_parameter(np, CGAL::internal_np::sparse_linear_solver));
   check_same_type<16>(get_parameter(np, CGAL::internal_np::number_of_relaxation_steps));
@@ -223,6 +226,7 @@ void test(const NamedParameters& np)
   check_same_type<78910>(get_parameter(np, CGAL::internal_np::maximum_number_of_faces));
   check_same_type<60>(get_parameter(np, CGAL::internal_np::non_manifold_feature_map));
   check_same_type<61>(get_parameter(np, CGAL::internal_np::filter));
+  check_same_type<62>(get_parameter(np, CGAL::internal_np::face_epsilon_map));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   check_same_type<34>(get_parameter(np, CGAL::internal_np::get_cost_policy));
@@ -314,6 +318,7 @@ int main()
                          .vertex_incident_patches_map(A<11>(11))
                          .density_control_factor(A<12>(12))
                          .use_delaunay_triangulation(A<13>(13))
+                         .use_2d_constrained_delaunay_triangulation(A<4573>(4573))
                          .fairing_continuity(A<14>(14))
                          .sparse_linear_solver(A<15>(15))
                          .number_of_relaxation_steps(A<16>(16))
@@ -350,6 +355,7 @@ int main()
                          .use_compact_clipper(A<45>(45))
                          .non_manifold_feature_map(A<60>(60))
                          .filter(A<61>(61))
+                         .face_epsilon_map(A<62>(62))
                          .apply_per_connected_component(A<46>(46))
                          .output_iterator(A<47>(47))
                          .erase_all_duplicates(A<48>(48))

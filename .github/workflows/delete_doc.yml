@@ -26,7 +26,7 @@ jobs:
            git rm -r ${PR_NUMBER} 
          fi
          #git diff exits with 1 if there is a diff
-         if !git diff --quiet; then
+         if ! git diff --quiet; then
            git commit -a --amend -m"base commit" && git push -f -u origin master
          fi
 

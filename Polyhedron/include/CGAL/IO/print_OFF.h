@@ -55,8 +55,8 @@ bool print_polyhedron_OFF(std::ostream& out,
                           bool verbose = false)
 {
   File_header_OFF header(verbose);
-  header.set_binary(is_binary(out));
-  header.set_no_comments(!is_pretty(out));
+  header.set_binary(IO::is_binary(out));
+  header.set_no_comments(!IO::is_pretty(out));
 
   return print_polyhedron_with_header_OFF(out, P, header);
 }

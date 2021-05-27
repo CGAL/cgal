@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
   bool draw=(argc<3?false:(std::string(argv[2])=="-draw"));
 
   Mesh sm;
-  if(!CGAL::read_polygon_mesh(filename, sm))
+  if(!CGAL::IO::read_polygon_mesh(filename, sm))
   {
     std::cout<<"Cannot read file '"<<filename<<"'. Exiting program"<<std::endl;
     return EXIT_FAILURE;

@@ -123,7 +123,7 @@ public:
       double cumulative_distance_square = 0.0;
       // distance_square holds closest distance that points have, so just test new coming center (i.e. centers.back())
       for(std::size_t j = 0; j < points.size(); ++j) {
-        double new_distance = std::pow(centers.back() - points[j], 2);
+        double new_distance = CGAL::square(centers.back() - points[j]);
         if(new_distance < distance_square[j]) {
           distance_square[j] = new_distance;
         }
@@ -422,7 +422,7 @@ private:
     double sum = 0.0;
     for(std::vector<K_means_point>::const_iterator point_it = points.begin();
         point_it != points.end(); ++point_it) {
-      sum += std::pow(centers[point_it->center_id].mean - point_it->data, 2);
+      sum += CGAL::square(centers[point_it->center_id].mean - point_it->data);
     }
     return sum;
   }

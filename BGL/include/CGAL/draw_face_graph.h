@@ -26,11 +26,11 @@ namespace CGAL
 struct DefaultColorFunctorFaceGraph
 {
   template<typename Graph>
-  CGAL::Color operator()(const Graph&,
+  CGAL::IO::Color operator()(const Graph&,
                          typename boost::graph_traits<Graph>::face_descriptor fh) const
   {
     if (fh==boost::graph_traits<Graph>::null_face()) // use to get the mono color
-      return CGAL::Color(100, 125, 200); // R G B between 0-255
+      return CGAL::IO::Color(100, 125, 200); // R G B between 0-255
 
     return get_random_color(CGAL::get_default_random());
   }
@@ -141,7 +141,7 @@ protected:
         {
           if (fh!=boost::graph_traits<SM>::null_face())
           {
-            CGAL::Color c=fcolor(sm, fh);
+            CGAL::IO::Color c=fcolor(sm, fh);
             face_begin(c);
             auto hd=halfedge(fh, sm);
             const auto first_hd = hd;

@@ -412,26 +412,26 @@ cover_Min_ellipse_2( bool verbose, const Traits&, const RT&)
     {
         verr << endl << "  writing `test_Min_ellipse_2.ascii'...";
         ofstream os( "test_Min_ellipse_2.ascii");
-        CGAL::set_ascii_mode( os);
+        CGAL::IO::set_ascii_mode( os);
         os << me;
     }
     {
         verr << endl << "  writing `test_Min_ellipse_2.pretty'...";
         ofstream os( "test_Min_ellipse_2.pretty");
-        CGAL::set_pretty_mode( os);
+        CGAL::IO::set_pretty_mode( os);
         os << me;
     }
     {
         verr << endl << "  writing `test_Min_ellipse_2.binary'...";
         ofstream os( "test_Min_ellipse_2.binary");
-        CGAL::set_binary_mode( os);
+        CGAL::IO::set_binary_mode( os);
         os << me;
     }
     {
         verr << endl << "  reading `test_Min_ellipse_2.ascii'...";
         Min_ellipse me_in;
         ifstream is( "test_Min_ellipse_2.ascii");
-        CGAL::set_ascii_mode( is);
+        CGAL::IO::set_ascii_mode( is);
         is >> me_in;
         bool    is_valid = me_in.is_valid( verbose);
         assert( is_valid);

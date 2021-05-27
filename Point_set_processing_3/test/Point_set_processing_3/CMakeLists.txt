@@ -1,6 +1,6 @@
 # This is the CMake script for compiling this folder.
 
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Point_set_processing_3_Tests)
 
 # Find CGAL
@@ -10,7 +10,7 @@ find_package(CGAL REQUIRED)
 if (MSVC)
   if ( CMAKE_SIZEOF_VOID_P EQUAL 4 )
     # Allow Windows 32bit applications to use up to 3GB of RAM
-    SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE")
   endif()
   # Prints new compilation options
   message( STATUS "USING DEBUG CXXFLAGS   = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}'" )

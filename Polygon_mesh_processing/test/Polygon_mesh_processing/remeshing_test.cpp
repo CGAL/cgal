@@ -1,3 +1,4 @@
+
 // data/joint_refined.off 0.1 5 data/joint-patch.selection.txt
 
 //#define CGAL_PMP_REMESHING_DEBUG
@@ -14,6 +15,7 @@
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
+#include <CGAL/Polygon_mesh_processing/detect_features.h>
 
 #include <CGAL/Timer.h>
 #include <fstream>
@@ -130,19 +132,19 @@ public:
     : set_ptr_(set_ptr)
   {}
   Constraints_pmap()
-    : set_ptr_(NULL)
+    : set_ptr_(nullptr)
   {}
 
   friend value_type get(const Constraints_pmap& map, const key_type& e)
   {
-    CGAL_assertion(map.set_ptr_ != NULL);
+    CGAL_assertion(map.set_ptr_ != nullptr);
     return !map.set_ptr_->empty()
          && map.set_ptr_->count(e);
   }
   friend void put(Constraints_pmap& map
                 , const key_type& e, const value_type is)
   {
-    CGAL_assertion(map.set_ptr_ != NULL);
+    CGAL_assertion(map.set_ptr_ != nullptr);
     if (is)                map.set_ptr_->insert(e);
     else if(get(map, e))   map.set_ptr_->erase(e);
   }
@@ -150,7 +152,7 @@ public:
 
 
 
-Main(int argc, char* argv[])
+Main(int argc, const char* argv[])
 {
 #ifdef CGAL_PMP_REMESHING_DEBUG
   std::cout.precision(17);
@@ -171,27 +173,31 @@ Main(int argc, char* argv[])
   unsigned int nb_iter = (argc > 3) ? atoi(argv[3]) : 2;
   const char* selection_file = (argc > 4) ? argv[4]
     : "data/joint-patch.selection.txt";
-  const char* save_file = (argc > 5) ? argv[5] : NULL;
+  double sharp_angle = (argc > 5) ? atof(argv[5]) : 0.;
+  const char* save_file = (argc > 6) ? argv[6] : nullptr;
 
-  std::set<face_descriptor> pre_patch;
-  collect_patch(selection_file, m, pre_patch);
-
-  std::cout << "Test self intersections...";
-  std::vector<std::pair<face_descriptor, face_descriptor> > facets;
-  PMP::self_intersections(pre_patch,
-                          m,
-                          std::back_inserter(facets));
-  if(!facets.empty())
+  CGAL::Timer t;
+  if (selection_file != nullptr && sharp_angle == 0.)
   {
-    std::cout << "Input is self intersecting. STOP" << std::endl;
-    if (strcmp(filename, "data/joint_refined.off") == 0)
-      assert(false);
-    return;
-  }
-  else
-    std::cout << "OK." << std::endl;
+    std::set<face_descriptor> pre_patch;
+    collect_patch(selection_file, m, pre_patch);
 
-  std::cout << "Split border...";
+    std::cout << "Test self intersections...";
+    std::vector<std::pair<face_descriptor, face_descriptor> > facets;
+    PMP::self_intersections(pre_patch,
+      m,
+      std::back_inserter(facets));
+    if (!facets.empty())
+    {
+      std::cout << "Input is self intersecting. STOP" << std::endl;
+      if (strcmp(filename, "data/joint_refined.off") == 0)
+        assert(false);
+      return;
+    }
+    else
+      std::cout << "OK." << std::endl;
+
+    std::cout << "Split border...";
     std::set<edge_descriptor> border;
     Constraints_pmap ecmap(&border);
     PMP::border_halfedges(pre_patch,
@@ -199,48 +205,99 @@ Main(int argc, char* argv[])
       boost::make_function_output_iterator(halfedge2edge(m, border)));
     PMP::split_long_edges(border, target_edge_length, m
       , PMP::parameters::edge_is_constrained_map(ecmap));
-  std::cout << "done." << std::endl;
+    std::cout << "done." << std::endl;
 
-  std::cout << "Collect patch...";
+    std::cout << "Collect patch...";
     std::vector<face_descriptor> patch;
     face_descriptor seed = face(halfedge(*border.begin(), m), m);
     if (is_border(halfedge(*border.begin(), m), m))
       seed = face(opposite(halfedge(*border.begin(), m), m), m);
     PMP::connected_component(seed, m, std::back_inserter(patch),
       PMP::parameters::edge_is_constrained_map(ecmap));
-  std::cout << " done." << std::endl;
+    std::cout << " done." << std::endl;
 
-  std::cout << "Start remeshing of " << selection_file
-    << " (" << patch.size() << " faces)..." << std::endl;
+    std::cout << "Start remeshing of " << selection_file
+      << " (" << patch.size() << " faces)..." << std::endl;
 
-  CGAL::Timer t;
-  t.start();
+    t.start();
 
-  PMP::isotropic_remeshing(
-    patch,
-    target_edge_length,
-    m,
-    PMP::parameters::number_of_iterations(nb_iter)
-    .protect_constraints(false)
-  );
-  t.stop();
-  std::cout << "Remeshing patch took " << t.time() << std::endl;
-
-  t.reset();
-  t.start();
-  PMP::isotropic_remeshing(faces(m),
-    2.*target_edge_length,
-    m,
-    PMP::parameters::number_of_iterations(nb_iter)
-    .protect_constraints(true) //only borders. they have been refined by previous remeshing
-    .edge_is_constrained_map(ecmap)
-    .relax_constraints(true)
-    .number_of_relaxation_steps(3)
+    PMP::isotropic_remeshing(
+      patch,
+      target_edge_length,
+      m,
+      PMP::parameters::number_of_iterations(nb_iter)
+      .protect_constraints(false)
     );
-  t.stop();
-  std::cout << "Remeshing all took " << t.time() << std::endl;
+    t.stop();
+    std::cout << "Remeshing patch took " << t.time() << std::endl;
 
-  if (save_file != NULL)
+    t.reset();
+    t.start();
+    PMP::isotropic_remeshing(faces(m),
+      2.*target_edge_length,
+      m,
+      PMP::parameters::number_of_iterations(nb_iter)
+      .protect_constraints(true) //only borders. they have been refined by previous remeshing
+      .edge_is_constrained_map(ecmap)
+      .relax_constraints(true)
+      .number_of_relaxation_steps(3)
+    );
+    t.stop();
+    std::cout << "Remeshing all took " << t.time() << std::endl;
+
+  }
+  else if (sharp_angle > 0)
+  {
+    typedef typename  boost::property_map<Mesh, CGAL::edge_is_feature_t>::type EIFMap;
+    typedef typename boost::property_map<Mesh, CGAL::face_patch_id_t<int> >::type PIMap;
+    typedef typename boost::property_map<Mesh, CGAL::vertex_incident_patches_t<int> >::type VIMap;
+
+    EIFMap eif = get(CGAL::edge_is_feature, m);
+    PIMap pid = get(CGAL::face_patch_id_t<int>(), m);
+    VIMap vip = get(CGAL::vertex_incident_patches_t<int>(), m);
+
+    if (sharp_angle > 0)
+      PMP::sharp_edges_segmentation(m, sharp_angle, eif, pid,
+        PMP::parameters::vertex_incident_patches_map(vip));
+
+    std::vector<edge_descriptor> sharp_edges;
+    for (edge_descriptor e : edges(m))
+    {
+      if (get(eif, e))
+        sharp_edges.push_back(e);
+    }
+
+    std::cout << "Start remeshing of " << filename
+      << " (" << num_faces(m) << " faces)..." << std::endl;
+    t.reset();
+    t.start();
+
+    PMP::split_long_edges(
+      sharp_edges,
+      target_edge_length,
+      m,
+      PMP::parameters::edge_is_constrained_map(eif));
+
+    PMP::isotropic_remeshing(
+      faces(m),
+      target_edge_length,
+      m,
+      PMP::parameters::edge_is_constrained_map(eif)
+      .number_of_iterations(nb_iter)
+      .number_of_relaxation_steps(3)
+      .protect_constraints(true)//i.e. protect border, here
+    );
+    t.stop();
+    std::cout << "Remeshing took with sharp edges took " << t.time() << std::endl;
+
+    std::cout << "Test self intersections...";
+    std::vector<std::pair<face_descriptor, face_descriptor> > facets;
+    PMP::self_intersections(m, std::back_inserter(facets));
+    assert(facets.empty());
+    std::cout << "done." << std::endl;
+  }
+
+  if (save_file != nullptr)
   {
     std::ofstream out("remeshed.off");
     out << m;
@@ -252,9 +309,22 @@ Main(int argc, char* argv[])
 }
 };
 
-int main(int argc, char* argv[])
+int main(int argc, const char* argv[])
 {
   Main<Epic> m(argc,argv);
+
+  const char* param[6] = { "remesh",//command
+                           "data_remeshing/cheese_transformed-facets.off",//input
+                           "0.0015", //target edge length
+                           "3",      //#iterations
+                           "0",      //selection file
+                           "60." };  //sharp angle bound
+  Main<Epic> sharp1(6, param);
+
+  const char* param_bis[6] = { param[0],
+                               "data_remeshing/cheese_transformed-facets-2.off",
+                               param[2], param[3], param[4], param[5] };
+  Main<Epic> sharp2(6, param_bis);
 
   return 0;
 }

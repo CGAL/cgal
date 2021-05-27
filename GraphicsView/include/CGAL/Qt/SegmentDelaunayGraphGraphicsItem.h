@@ -164,9 +164,9 @@ SegmentDelaunayGraphGraphicsItem<T>::drawAll(QPainter *painter, const QStyleOpti
            vit != t->finite_vertices_end(); ++vit) {
         typename T::Site_2 s = vit->site();
         if ( s.is_input() ) {
-          //*widget << CGAL::red();
+          //*widget << CGAL::IO::red();
         } else {
-          //*widget << CGAL::yellow();
+          //*widget << CGAL::IO::yellow();
         }
         if ( s.is_point() ) {
           QPointF point = matrix.map(convert(s.point()));
