@@ -70,7 +70,7 @@ Sometimes, such weights are referred as *local averaging regions*. These weights
 lengths, areas, and volumes of 2D and 3D objects.
 
 
-\section Weights_Interface Interface
+\section Weights_Implementation Implementation
 
 All weights have a simple and unified interface. In particular, all analytic weights take
 a query point and three other points in 2D or 3D and return a unique scalar. They all
@@ -99,18 +99,34 @@ if it can be deduced from the input point type.
   The non-planar configuration (top) is flattened to the planar configuration (bottom).
 \cgalFigureEnd
 
-When computing weights for a query point `q` with respect to its neighbors
-`p0`, `p1`, and `p2`, the local configuration is a quadrilateral `[p0, p1, p2, q]`
-or two connected triangles `[q, p0, p1]` and `[q, p1, p2]`. When computing 3D weights,
-these triangles are not necessarily coplanar. When they are not coplanar, they can be
-made coplanar through the process called *flattening* (see the Figure above), however the latter
-introduces a distortion because the weights are computed with respect to the flattened configuration
-rather than to the original non-flat configuration. Certain weights in this package support only
-flat configurations, while other weights support both. The weights, which support non-flat configurations,
+When computing weights for a query point \f$q\f$ with respect to its neighbors
+\f$p_0\f$, \f$p_1\f$, and \f$p_2\f$, the local configuration is a quadrilateral
+[\f$p_0\f$, \f$p_1\f$, \f$p_2\f$, \f$q\f$] or two connected triangles [\f$q\f$, \f$p_0\f$, \f$p_1\f$]
+and [\f$q\f$, \f$p_1\f$, \f$p_2\f$]. When computing 3D weights, these triangles are not
+necessarily coplanar. When they are not coplanar, they can be made coplanar through the process
+called *flattening* (see the Figure above), however the latter introduces a distortion because the
+weights are computed with respect to the flattened configuration rather than to the original
+non-flat configuration. Certain weights in this package support only flat configurations,
+while other weights support both. The weights, which support non-flat configurations,
 provide the corresponding overloads with 3D points, while other weights support only
 2D point types. For example, \ref PkgWeightsRefCotangentWeights "cotangent weights" support both flat
 and non-flat configurations, while \ref PkgWeightsRefDiscreteHarmonicWeights "discrete harmonic weights"
 support only flat configurations.
+
+If you still want to compute the 2D weights in 3D, you can either provide your own way to flatten
+the 3D configuration or you can use one of the projection traits available in CGAL as the
+last parameter to the weight function (see \ref Weights_Examples_ProjectionTraits for example).
+
+
+\subsection Weights_Edge_Cases Edge Cases
+
+None of the weights in this package is defined for query points on the boundaries. The boundary cases include:
+
+- *edges*, for example [\f$p_0\f$, \f$p_1\f$] or [\f$p_1\f$, \f$p_2\f$] or any polygon edge and
+- *corners*, for example \f$p_0\f$, \f$p_1\f$, or \f$p_2\f$ or any polygon corner.
+
+Several weights also require other conditions to be satisifed. You should address the
+reference manual for more details.
 
 
 \subsection Weights_Alternatives Alternatives

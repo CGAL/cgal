@@ -5,8 +5,6 @@ To discuss:
 * Skeletonization uses the weird secure version for the cotangent weights.
 * In skeletonization, the final example results are not determenistic.
 * Should I remove the positive area from the Tangent_weight and substitute it by computing tan(alpha/2)? In this case, I will keep the correct sign in any configuration.
-* What about using a solution that we currently use in the triangulate_hole_with_cdt() instead of flattening?
-* Explain that boundary points are not handled.
 
 Later:
 * Cleanup tests.
@@ -18,4 +16,3 @@ Later:
 * Try to combine mvc and dhc in the orbifold parameterization. Not sure if this is necessary.
 * Mention that tangent_weight_3 uses positive areas (no distortions) and can be used only for PMP, while mean_value_weight_2/3 e.g. can have different signs/distortions for 2D and 3D versions due to the flattening of the 3D region.
 * Fix all other packages with respect to the new interface.
-* What happens with WP/MV/DH weights on the polygon boundary?
