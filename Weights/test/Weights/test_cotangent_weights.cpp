@@ -1,48 +1,26 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Weights/utils.h>
-#include <CGAL/Weights/cotangent_weights.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
+#include "include/utils.h"
+#include "include/wrappers.h"
 
 // Typedefs.
-using Kernel  = CGAL::Simple_cartesian<double>;
-using Point_2 = typename Kernel::Point_2;
-using Point_3 = typename Kernel::Point_3;
+using SCKER = CGAL::Simple_cartesian<double>;
+using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
+using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
+
+template<typename Kernel>
+bool test_kernel() {
+  const wrappers::Cotangent_wrapper<Kernel> cot;
+  const wrappers::Discrete_harmonic_wrapper<Kernel> dhw;
+  return tests::test_analytic_weight<Kernel>(cot, dhw);
+}
 
 int main() {
-
-  // 2D configuration.
-  const Point_2 t2 = Point_2(-1,  0);
-  const Point_2 r2 = Point_2( 0, -1);
-  const Point_2 p2 = Point_2( 1,  0);
-  const Point_2 q2 = Point_2( 0,  0);
-
-  // 3D configuration.
-  const Point_3 t3 = Point_3(-1,  0, 1);
-  const Point_3 r3 = Point_3( 0, -1, 1);
-  const Point_3 p3 = Point_3( 1,  0, 1);
-  const Point_3 q3 = Point_3( 0,  0, 1);
-
-  // Compute weights.
-  std::cout << "2D cotangent: " <<
-    CGAL::Weights::cotangent_weight(t2, r2, p2, q2) << std::endl;
-  std::cout << "3D cotangent: " <<
-    CGAL::Weights::cotangent_weight(t3, r3, p3, q3) << std::endl;
-  std::cout << "---------------" << std::endl;
-
-  // Construct a 2D weight.
-  const auto w2 =
-    CGAL::Weights::half_cotangent_weight(
-      CGAL::Weights::cotangent(q2, t2, r2)) +
-    CGAL::Weights::half_cotangent_weight(
-      CGAL::Weights::cotangent(r2, p2, q2));
-  std::cout << "2D cotangent: " << w2 << std::endl;
-
-  // Construct a 3D weight.
-  const auto w3 =
-    CGAL::Weights::half_cotangent_weight(
-      CGAL::Weights::cotangent(q3, t3, r3)) +
-    CGAL::Weights::half_cotangent_weight(
-      CGAL::Weights::cotangent(r3, p3, q3));
-  std::cout << "3D cotangent: " << w3 << std::endl;
-
+  assert(test_kernel<SCKER>());
+  assert(test_kernel<EPICK>());
+  assert(test_kernel<EPECK>());
+  std::cout << "* test_cotangent_weights: SUCCESS" << std::endl;
   return EXIT_SUCCESS;
 }

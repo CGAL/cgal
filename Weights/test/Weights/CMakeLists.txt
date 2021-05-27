@@ -12,19 +12,19 @@ if(CGAL_FOUND)
   include(${CGAL_USE_FILE})
   include(CGAL_CreateSingleSourceCGALProgram)
 
-  # create_single_source_cgal_program("test_uniform_weights.cpp")
-  # create_single_source_cgal_program("test_shepard_weights.cpp")
-  # create_single_source_cgal_program("test_inverse_distance_weights.cpp")
-  # create_single_source_cgal_program("test_three_point_family_weights.cpp")
+  create_single_source_cgal_program("test_uniform_weights.cpp")
+  create_single_source_cgal_program("test_shepard_weights.cpp")
+  create_single_source_cgal_program("test_inverse_distance_weights.cpp")
+  create_single_source_cgal_program("test_three_point_family_weights.cpp")
 
   create_single_source_cgal_program("test_wachspress_weights.cpp")
   create_single_source_cgal_program("test_authalic_weights.cpp")
 
-  # create_single_source_cgal_program("test_mean_value_weights.cpp")
-  # create_single_source_cgal_program("test_tangent_weights.cpp")
+  create_single_source_cgal_program("test_mean_value_weights.cpp")
+  create_single_source_cgal_program("test_tangent_weights.cpp")
 
-  # create_single_source_cgal_program("test_discrete_harmonic_weights.cpp")
-  # create_single_source_cgal_program("test_cotangent_weights.cpp")
+  create_single_source_cgal_program("test_discrete_harmonic_weights.cpp")
+  create_single_source_cgal_program("test_cotangent_weights.cpp")
 
   create_single_source_cgal_program("test_uniform_region_weights.cpp")
   create_single_source_cgal_program("test_triangular_region_weights.cpp")

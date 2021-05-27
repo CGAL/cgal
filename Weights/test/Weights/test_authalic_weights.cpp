@@ -13,8 +13,8 @@ using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
 template<typename Kernel>
 bool test_kernel() {
   const wrappers::Authalic_wrapper<Kernel> aut;
-  const wrappers::Wachspress_wrapper<Kernel> wac;
-  return tests::test_analytic_weight<Kernel>(aut, wac);
+  const wrappers::Wachspress_wrapper<Kernel> whp;
+  return tests::test_analytic_weight<Kernel>(aut, whp);
 }
 
 int main() {

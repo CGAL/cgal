@@ -22,7 +22,7 @@ FT get_tolerance() {
 
 template<typename Kernel>
 std::vector< std::array<typename Kernel::Point_2, 3> >
-get_default_triangles() {
+get_all_triangles() {
 
   using Point_2 = typename Kernel::Point_2;
   const std::array<Point_2, 3> triangle0 = {
@@ -32,12 +32,29 @@ get_default_triangles() {
     Point_2(-2, 0), Point_2(0, -1), Point_2(2, 0)
   };
   const std::array<Point_2, 3> triangle2 = {
-    Point_2(-1, 0), Point_2(-1, -2), Point_2(1, 0)
+    Point_2(-2, 0), Point_2(-2, -2), Point_2(2, 0)
   };
   const std::array<Point_2, 3> triangle3 = {
-    Point_2(-1, 0), Point_2(1, -2), Point_2(1, 0)
+    Point_2(-2, 0), Point_2(2, -2), Point_2(2, 0)
   };
   return { triangle0, triangle1, triangle2, triangle3 };
+}
+
+template<typename Kernel>
+std::vector< std::array<typename Kernel::Point_2, 3> >
+get_symmetric_triangles() {
+
+  using Point_2 = typename Kernel::Point_2;
+  const std::array<Point_2, 3> triangle0 = {
+    Point_2(-1, 0), Point_2(0, -1), Point_2(1, 0)
+  };
+  const std::array<Point_2, 3> triangle1 = {
+    Point_2(-2, 0), Point_2(0, -1), Point_2(2, 0)
+  };
+  const std::array<Point_2, 3> triangle2 = {
+    Point_2(-3, 0), Point_2(0, -1), Point_2(3, 0)
+  };
+  return { triangle0, triangle1, triangle2 };
 }
 
 template<typename Kernel>
@@ -62,7 +79,7 @@ get_uniform_triangles() {
 
 template<typename Kernel>
 std::vector< std::vector<typename Kernel::Point_2> >
-get_default_polygons() {
+get_all_polygons() {
 
   using Point_2 = typename Kernel::Point_2;
   const std::vector<Point_2> polygon0 = {
@@ -396,21 +413,14 @@ bool test_analytic_weight(
     Point_2(-h, 0), Point_2(+h, 0), Point_2(0, -h), Point_2(0, +h),
     Point_2(-t, 0), Point_2(+t, 0), Point_2(0, -t), Point_2(0, +t)
   };
-  const auto configs = get_default_triangles<Kernel>();
 
   // Test query points.
+  auto configs = get_all_triangles<Kernel>();
   for (const auto& config : configs) {
     if (!test_query<Kernel>(weight, zero, config)) return false;
     for (const auto& query : queries) {
       if (!test_query<Kernel>(weight, query, config)) return false;
     }
-  }
-
-  // Test symmetry along x axis.
-  for (const auto& config : configs) {
-    if (!test_symmetry_x<Kernel>(weight, config, q)) return false;
-    if (!test_symmetry_x<Kernel>(weight, config, h)) return false;
-    if (!test_symmetry_x<Kernel>(weight, config, t)) return false;
   }
 
   // Test alternative formulations.
@@ -423,6 +433,14 @@ bool test_analytic_weight(
         return false;
       }
     }
+  }
+
+  // Test symmetry along x axis.
+  configs = get_symmetric_triangles<Kernel>();
+  for (const auto& config : configs) {
+    if (!test_symmetry_x<Kernel>(weight, config, q)) return false;
+    if (!test_symmetry_x<Kernel>(weight, config, h)) return false;
+    if (!test_symmetry_x<Kernel>(weight, config, t)) return false;
   }
   return true;
 }
@@ -455,7 +473,7 @@ bool test_barycentric_weight(
   }
 
   // Test on polygons.
-  const auto polygons = get_default_polygons<Kernel>();
+  const auto polygons = get_all_polygons<Kernel>();
   for (const auto& polygon : polygons) {
     if (!test_on_polygon<Kernel>(weight, zero, polygon)) return false;
     for (const auto& query : queries) {
@@ -473,7 +491,7 @@ typename Weight_wrapper>
 bool test_region_weight(const Weight_wrapper& weight) {
 
   // Test neighborhoods.
-  auto configs = get_default_triangles<Kernel>();
+  auto configs = get_all_triangles<Kernel>();
   for (const auto& config : configs) {
     if (!test_neighbors<Kernel>(weight, config)) return false;
   }
