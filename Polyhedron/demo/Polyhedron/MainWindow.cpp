@@ -2662,7 +2662,7 @@ QString MainWindow::get_item_stats()
       QString classname = item->property("classname").toString();
       if(classname.isEmpty())
          classname = item->metaObject()->className();
-      if(classnames.at(i).contains(classname))
+      if(classnames.at(i) == classname)
       {
         items[i] << s_item;
         break;
