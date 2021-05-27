@@ -33,7 +33,7 @@ namespace internal{
       std::size_t
       operator()(const H& h)
       {
-        return std::size_t(&*h) /
+        return std::size_t(h.operator->()) /
           sizeof( typename std::iterator_traits<H>::value_type);
       }
     };
