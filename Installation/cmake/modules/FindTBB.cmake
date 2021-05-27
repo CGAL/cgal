@@ -190,7 +190,7 @@ endmacro()
 #
 
 #start with CONFIG Mode
-find_package(TBB QUIET NO_MODULE)
+find_package(TBB 2019.5 QUIET NO_MODULE)
 if(TBB_FOUND)
   return()
 endif()#TBB_FOUND
