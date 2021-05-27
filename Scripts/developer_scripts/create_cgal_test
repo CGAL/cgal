@@ -129,7 +129,7 @@ compile_and_run()
       rm -f \$OUTPUTFILE
       COMMAND="./\$1"
       if [ -f \$1.cmd ] ; then
-        COMMAND="\$COMMAND `eval echo \$(cat \$1.cmd)`"
+        COMMAND="\$COMMAND \`eval echo \$(cat \$1.cmd)\`"
       fi
       if [ -f \$1.cin ] ; then
         COMMAND="cat \$1.cin | \$COMMAND"
