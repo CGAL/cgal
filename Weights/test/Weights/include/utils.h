@@ -5,10 +5,13 @@
 #include <array>
 #include <vector>
 #include <cassert>
+#include <algorithm>
 #include <string>
 
 // CGAL includes.
 #include <CGAL/assertions.h>
+#include <CGAL/Projection_traits_xy_3.h>
+#include <CGAL/Weights/utils.h>
 
 namespace tests {
 
@@ -38,21 +41,41 @@ get_default_triangles() {
 }
 
 template<typename Kernel>
+std::vector< std::array<typename Kernel::Point_2, 3> >
+get_uniform_triangles() {
+
+  using Point_2 = typename Kernel::Point_2;
+  const std::array<Point_2, 3> triangle0 = {
+    Point_2(-1, 0), Point_2(0, -1), Point_2(1, 0)
+  };
+  const std::array<Point_2, 3> triangle1 = {
+    Point_2(-2, 0), Point_2(0, -2), Point_2(2, 0)
+  };
+  const std::array<Point_2, 3> triangle2 = {
+    Point_2(1, 0), Point_2(-1, 0), Point_2(-1, -2)
+  };
+  const std::array<Point_2, 3> triangle3 = {
+    Point_2(1, -2), Point_2(1, 0), Point_2(-1, 0)
+  };
+  return { triangle0, triangle1, triangle2, triangle3 };
+}
+
+template<typename Kernel>
 std::vector< std::vector<typename Kernel::Point_2> >
 get_default_polygons() {
 
   using Point_2 = typename Kernel::Point_2;
   const std::vector<Point_2> polygon0 = {
-    Point_2(-1, 0), Point_2(1, 0), Point_2(0, 1)
+    Point_2(-2, -2), Point_2(2, -2), Point_2(0, 2)
   };
   const std::vector<Point_2> polygon1 = {
-    Point_2(0, 0), Point_2(1, 0), Point_2(1, 1), Point_2(0, 1)
+    Point_2(-1, -1), Point_2(1, -1), Point_2(1, 1), Point_2(-1, 1)
   };
   const std::vector<Point_2> polygon2 = {
-    Point_2(-1, 0), Point_2(0, -1), Point_2(1, 0), Point_2(0, 1)
+    Point_2(-2, 0), Point_2(0, -2), Point_2(2, 0), Point_2(0, 2)
   };
   const std::vector<Point_2> polygon3 = {
-    Point_2(-1, 0), Point_2(0, -1), Point_2(1, 0), Point_2(1, 1), Point_2(-1, 1)
+    Point_2(-2, -2), Point_2(2, -2), Point_2(2, 0), Point_2(0, 2), Point_2(-2, 0)
   };
   return { polygon0, polygon1, polygon2, polygon3 };
 }
@@ -216,10 +239,8 @@ bool test_neighbors(
   const Point_3 q3(q2.x(), q2.y(), 1);
   const Point_3 r3(r2.x(), r2.y(), 1);
 
-  const auto a2 = wrapper.weight_a(p2, q2, r2);
-  const auto a3 = wrapper.weight_a(p3, q3, r3);
-  CGAL_assertion(a2 <= CGAL::area(p2, q2, r2));
-  if (a2 > CGAL::area(p2, q2, r2)) return false;
+  const auto a2 = wrapper.weight(p2, q2, r2);
+  const auto a3 = wrapper.weight(p3, q3, r3);
   CGAL_assertion(a2 >= FT(0) && a3 >= FT(0));
   if (a2 < FT(0) || a3 < FT(0)) return false;
   CGAL_assertion(CGAL::abs(a2 - a3) < tol);
@@ -230,27 +251,50 @@ bool test_neighbors(
 template<
 typename Kernel,
 typename Weight_wrapper>
-bool test_on_polygon(
+bool test_area(
   const Weight_wrapper& wrapper,
-  const typename Kernel::Point_2& query,
-  const std::vector<typename Kernel::Point_2>& polygon) {
+  const std::array<typename Kernel::Point_2, 3>& neighbors) {
 
-  // Get weights.
-  using FT = typename Kernel::FT;
-  CGAL_assertion(polygon.size() >= 3);
-  if (polygon.size() < 3) return false;
-  const FT tol = get_tolerance<FT>();
+  using FT      = typename Kernel::FT;
+  using Point_2 = typename Kernel::Point_2;
+  using Point_3 = typename Kernel::Point_3;
 
-  std::vector<FT> weights;
-  weights.reserve(polygon.size());
-  wrapper.compute_on_polygon(
-    polygon, query, std::back_inserter(weights));
-  CGAL_assertion(weights.size() == polygon.size());
-  if (weights.size() != polygon.size()) return false;
+  // 2D configuration.
+  const Point_2& p2 = neighbors[0];
+  const Point_2& q2 = neighbors[1];
+  const Point_2& r2 = neighbors[2];
+
+  // 3D configuration.
+  const Point_3 p3(p2.x(), p2.y(), 1);
+  const Point_3 q3(q2.x(), q2.y(), 1);
+  const Point_3 r3(r2.x(), r2.y(), 1);
+
+  const auto a2 = wrapper.weight(p2, q2, r2);
+  const auto a3 = wrapper.weight(p3, q3, r3);
+  CGAL_assertion(a2 <= CGAL::Weights::area(p2, q2, r2));
+  CGAL_assertion(a3 <= CGAL::Weights::area(p3, q3, r3));
+  if (a2 > CGAL::Weights::area(p2, q2, r2)) return false;
+  if (a3 > CGAL::Weights::area(p3, q3, r3)) return false;
+  CGAL_assertion(a2 >= FT(0));
+  CGAL_assertion(a3 >= FT(0));
+  if (a2 < FT(0)) return false;
+  if (a3 < FT(0)) return false;
+  return true;
+}
+
+template<typename FT, typename Point>
+bool test_coordinates(
+  const Point& query,
+  const std::vector<Point>& polygon,
+  const std::vector<FT>& weights) {
+
+  CGAL_assertion(weights.size() > 0);
+  if (weights.size() == 0) return false;
 
   // Compute the sum of weights.
+  const FT tol = get_tolerance<FT>();
   FT sum = FT(0);
-  for (const auto& weight : weights) {
+  for (const FT& weight : weights) {
     sum += weight;
   }
   CGAL_assertion(sum >= tol);
@@ -259,7 +303,7 @@ bool test_on_polygon(
   // Compute coordinates.
   std::vector<FT> coordinates;
   coordinates.reserve(weights.size());
-  for (const auto& weight : weights) {
+  for (const FT& weight : weights) {
     coordinates.push_back(weight / sum);
   }
   CGAL_assertion(coordinates.size() == weights.size());
@@ -267,7 +311,7 @@ bool test_on_polygon(
 
   // Test partition of unity.
   sum = FT(0);
-  for (const auto& coordinate : coordinates) {
+  for (const FT& coordinate : coordinates) {
     sum += coordinate;
   }
   CGAL_assertion(CGAL::abs(FT(1) - sum) < tol);
@@ -283,6 +327,50 @@ bool test_on_polygon(
   CGAL_assertion(CGAL::abs(query.y() - y) < tol);
   if (CGAL::abs(query.x() - x) >= tol) return false;
   if (CGAL::abs(query.y() - y) >= tol) return false;
+  return true;
+}
+
+template<
+typename Kernel,
+typename Weight_wrapper>
+bool test_on_polygon(
+  const Weight_wrapper& wrapper,
+  const typename Kernel::Point_2& query_2,
+  const std::vector<typename Kernel::Point_2>& polygon_2) {
+
+  // Get weights.
+  using FT = typename Kernel::FT;
+  CGAL_assertion(polygon_2.size() >= 3);
+  if (polygon_2.size() < 3) return false;
+
+  // 2D version.
+  std::vector<FT> weights_2;
+  weights_2.reserve(polygon_2.size());
+  wrapper.compute_on_polygon(
+    polygon_2, query_2, Kernel(), std::back_inserter(weights_2));
+  CGAL_assertion(weights_2.size() == polygon_2.size());
+  if (weights_2.size() != polygon_2.size()) return false;
+  if (!test_coordinates(query_2, polygon_2, weights_2)) return false;
+
+  // 3D version.
+  using Point_3 = typename Kernel::Point_3;
+  const Point_3 query_3(query_2.x(), query_2.y(), 1);
+  std::vector<Point_3> polygon_3;
+  polygon_3.reserve(polygon_2.size());
+  for (const auto& vertex_2 : polygon_2) {
+    polygon_3.push_back(Point_3(vertex_2.x(), vertex_2.y(), 1));
+  }
+  CGAL_assertion(polygon_3.size() == polygon_2.size());
+  if (polygon_3.size() != polygon_2.size()) return false;
+  const CGAL::Projection_traits_xy_3<Kernel> ptraits;
+
+  std::vector<FT> weights_3;
+  weights_3.reserve(polygon_3.size());
+  wrapper.compute_on_polygon(
+    polygon_3, query_3, ptraits, std::back_inserter(weights_3));
+  CGAL_assertion(weights_3.size() == polygon_3.size());
+  if (weights_3.size() != polygon_3.size()) return false;
+  if (!test_coordinates(query_3, polygon_3, weights_3)) return false;
   return true;
 }
 
@@ -358,9 +446,7 @@ bool test_barycentric_weight(
     Point_2(-h,  0), Point_2(+h,  0), Point_2(-q,  0), Point_2(+q,  0),
     Point_2( 0, -h), Point_2( 0, +h), Point_2( 0, -q), Point_2( 0, +q),
     Point_2(-h, -h), Point_2(+h, +h), Point_2(-q, -q), Point_2(+q, +q),
-    Point_2(-h, +q), Point_2(+h, -q), Point_2(-q, +h), Point_2(+q, -h),
-    Point_2(-1,  0), Point_2( 0, -1), Point_2( 1,  0), Point_2( 0,  1),
-    Point_2(-1, -1), Point_2( 1, -1), Point_2( 1,  1), Point_2(-1,  1)
+    Point_2(-h, +q), Point_2(+h, -q), Point_2(-q, +h), Point_2(+q, -h)
   };
 
   // Test analytic formulations.
@@ -387,9 +473,15 @@ typename Weight_wrapper>
 bool test_region_weight(const Weight_wrapper& weight) {
 
   // Test neighborhoods.
-  const auto configs = get_default_triangles<Kernel>();
+  auto configs = get_default_triangles<Kernel>();
   for (const auto& config : configs) {
     if (!test_neighbors<Kernel>(weight, config)) return false;
+  }
+
+  // Test areas.
+  configs = get_uniform_triangles<Kernel>();
+  for (const auto& config : configs) {
+    if (!test_area<Kernel>(weight, config)) return false;
   }
   return true;
 }

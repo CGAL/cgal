@@ -90,7 +90,7 @@ namespace internal {
   void normalize(std::vector<FT>& values) {
 
     FT sum = FT(0);
-    for (const FT value : values) {
+    for (const FT& value : values) {
       sum += value;
     }
 
