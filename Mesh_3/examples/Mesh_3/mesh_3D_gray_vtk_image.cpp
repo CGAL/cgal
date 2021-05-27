@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
   vtk_image->Print(std::cerr);
 
   CGAL::Image_3 image = CGAL::IO::read_vtk_image_data(vtk_image);
-  if(image.image() == 0){
+  if(image.image() == nullptr){
     std::cerr << "could not create a CGAL::Image_3 from the vtk image\n";
     return 0;
   }

@@ -86,7 +86,7 @@ public:
   bool supportsRenderingMode(RenderingMode m) const {
     return (m == Flat || m == FlatPlusEdges);
   }
-  Scene_item* clone() const {return 0;}
+  Scene_item* clone() const {return nullptr;}
   QString toolTip() const {return QString("Item %1 with color indicating distance with %2").arg(this->name()).arg(other_poly);}
   void draw(Viewer_interface *viewer) const
   {

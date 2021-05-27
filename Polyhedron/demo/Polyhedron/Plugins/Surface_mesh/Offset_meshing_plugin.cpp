@@ -522,7 +522,7 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
     polylines_item = qobject_cast<Scene_polylines_item*>(scene->item(index));
   }
 
-  SMesh* sMesh = NULL;
+  SMesh* sMesh = nullptr;
   double diag = 0;
   Scene_item::Bbox box;
   if(sm_item)
@@ -532,11 +532,11 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
       return;
     box = bbox(sMesh);
   }
-  else if(soup_item != 0)
+  else if(soup_item != nullptr)
   {
     box = bbox(soup_item);
   }
-  else if(soup_item == 0)
+  else if(soup_item == nullptr)
     return;
   double X=(box.max)(0)-(box.min)(0),
       Y = (box.max)(1)-(box.min)(1),
