@@ -187,6 +187,29 @@ typedef unspecified_type Construct_circumcenter_2;
 
 /// @}
 
+/// \name Creation
+/// Only a default constructor, copy constructor and an assignment
+/// operator are required. Note that further constructors can be
+/// provided.
+/// @{
+
+/*!
+default constructor.
+*/
+TriangulationTraits_2();
+
+/*!
+Copy constructor
+*/
+TriangulationTraits_2(TriangulationTraits_2 gtr);
+
+/*!
+Assignment operator.
+*/
+TriangulationTraits_2 operator=(TriangulationTraits_2 gtr);
+
+/// @}
+
 /// \name Predicate Functions
 /// The following functions give access to the predicate and
 /// constructor objects.

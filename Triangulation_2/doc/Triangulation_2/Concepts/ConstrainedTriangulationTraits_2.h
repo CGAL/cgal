@@ -51,6 +51,11 @@ typedef unspecified_type Intersect_2;
 /// @{
 
 /*!
+A number type supporting the comparison operator `<`.
+*/
+typedef unspecified_type RT;
+
+/*!
 The line type.
 */
 typedef unspecified_type Line_2;
