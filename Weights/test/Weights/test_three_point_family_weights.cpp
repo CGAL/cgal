@@ -31,6 +31,10 @@ bool test_overloads() {
   struct Traits : public Kernel { };
   if (CGAL::Weights::three_point_family_weight(t1, r1, p1, q1, 1, Traits()) != a2) return false;
   if (CGAL::Weights::internal::three_point_family_weight(t2, r2, p2, q2, 1, Traits()) != a3) return false;
+  CGAL::Projection_traits_xy_3<Kernel> ptraits;
+  const FT a23 = CGAL::Weights::three_point_family_weight(t2, r2, p2, q2, 0, ptraits);
+  if (a23 < FT(0)) return false;
+  if (a23 != a2 || a23 != a3) return false;
   return true;
 }
 
