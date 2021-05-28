@@ -1,30 +1,64 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Weights/three_point_family_weights.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
+#include "include/utils.h"
+#include "include/wrappers.h"
 
 // Typedefs.
-using Kernel  = CGAL::Simple_cartesian<double>;
-using Point_2 = typename Kernel::Point_2;
-using Point_3 = typename Kernel::Point_3;
+using SCKER = CGAL::Simple_cartesian<double>;
+using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
+using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
+
+template<typename Kernel>
+void test_overloads() {
+  using FT      = typename Kernel::FT;
+  using Point_2 = typename Kernel::Point_2;
+  using Point_3 = typename Kernel::Point_3;
+  const Point_2 t1(-1,  0);
+  const Point_2 r1( 0, -1);
+  const Point_2 p1( 1,  0);
+  const Point_2 q1( 0,  0);
+  const Point_3 t2(-1,  0, 1);
+  const Point_3 r2( 0, -1, 1);
+  const Point_3 p2( 1,  0, 1);
+  const Point_3 q2( 0,  0, 1);
+  const FT a2 = CGAL::Weights::three_point_family_weight(t1, r1, p1, q1);
+  const FT a3 = CGAL::Weights::internal::three_point_family_weight(t2, r2, p2, q2);
+  assert(a2 >= FT(0));
+  assert(a3 >= FT(0));
+  assert(a2 == a3);
+  struct Traits : public Kernel { };
+  assert(CGAL::Weights::three_point_family_weight(t1, r1, p1, q1, 1, Traits()) == a2);
+  assert(CGAL::Weights::internal::three_point_family_weight(t2, r2, p2, q2, 1, Traits()) == a3);
+  CGAL::Projection_traits_xy_3<Kernel> ptraits;
+  const FT a23 = CGAL::Weights::three_point_family_weight(t2, r2, p2, q2, 0, ptraits);
+  assert(a23 >= FT(0));
+  assert(a23 == a2 && a23 == a3);
+}
+
+template<typename Kernel>
+bool test_kernel() {
+  test_overloads<Kernel>();
+  using FT = typename Kernel::FT;
+  const FT h = FT(1) / FT(2);
+  const wrappers::Three_point_family_wrapper<Kernel> tpfa(0);
+  const wrappers::Three_point_family_wrapper<Kernel> tpfb(1);
+  const wrappers::Three_point_family_wrapper<Kernel> tpfc(2);
+  const wrappers::Three_point_family_wrapper<Kernel> tpfd(h);
+  const wrappers::Wachspress_wrapper<Kernel> whp;
+  const wrappers::Mean_value_wrapper<Kernel> mvw;
+  const wrappers::Discrete_harmonic_wrapper<Kernel> dhw;
+  assert(tests::test_analytic_weight<Kernel>(tpfa, whp));
+  assert(tests::test_analytic_weight<Kernel>(tpfb, mvw));
+  assert(tests::test_analytic_weight<Kernel>(tpfc, dhw));
+  return tests::test_analytic_weight<Kernel>(tpfd, tpfd);
+}
 
 int main() {
-
-  // 2D configuration.
-  const Point_2 t2 = Point_2(-1,  0);
-  const Point_2 r2 = Point_2( 0, -1);
-  const Point_2 p2 = Point_2( 1,  0);
-  const Point_2 q2 = Point_2( 0,  0);
-
-  // 3D configuration.
-  const Point_3 t3 = Point_3(-1,  0, 1);
-  const Point_3 r3 = Point_3( 0, -1, 1);
-  const Point_3 p3 = Point_3( 1,  0, 1);
-  const Point_3 q3 = Point_3( 0,  0, 1);
-
-  // Compute weights.
-  std::cout << "2D family: " <<
-    CGAL::Weights::three_point_family_weight(t2, r2, p2, q2) << std::endl;
-  std::cout << "3D family: " <<
-    CGAL::Weights::three_point_family_weight(t3, r3, p3, q3, 1.0) << std::endl;
-
+  assert(test_kernel<SCKER>());
+  assert(test_kernel<EPICK>());
+  assert(test_kernel<EPECK>());
+  std::cout << "* test_three_point_family_weights: SUCCESS" << std::endl;
   return EXIT_SUCCESS;
 }

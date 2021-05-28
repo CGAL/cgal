@@ -62,20 +62,6 @@ namespace Weights {
   /*!
     \ingroup PkgWeightsRefDiscreteHarmonicWeights
 
-    \brief computes the discrete harmonic weight in 3D at `q` using the points `p0`, `p1`,
-    and `p2`, given a traits class `traits` with geometric objects, predicates, and constructions.
-  */
-  template<typename GeomTraits>
-  typename GeomTraits::FT discrete_harmonic_weight(
-    const typename GeomTraits::Point_3& p0,
-    const typename GeomTraits::Point_3& p1,
-    const typename GeomTraits::Point_3& p2,
-    const typename GeomTraits::Point_3& q,
-    const GeomTraits& traits) { }
-
-  /*!
-    \ingroup PkgWeightsRefDiscreteHarmonicWeights
-
     \brief computes the discrete harmonic weight in 2D at `q` using the points `p0`, `p1`,
     and `p2`, which are parameterized by a `Kernel` K.
   */
@@ -85,19 +71,6 @@ namespace Weights {
     const CGAL::Point_2<K>& p1,
     const CGAL::Point_2<K>& p2,
     const CGAL::Point_2<K>& q) { }
-
-  /*!
-    \ingroup PkgWeightsRefDiscreteHarmonicWeights
-
-    \brief computes the discrete harmonic weight in 3D at `q` using the points `p0`, `p1`,
-    and `p2`, which are parameterized by a `Kernel` K.
-  */
-  template<typename K>
-  typename K::FT discrete_harmonic_weight(
-    const CGAL::Point_3<K>& p0,
-    const CGAL::Point_3<K>& p1,
-    const CGAL::Point_3<K>& p2,
-    const CGAL::Point_3<K>& q) { }
 
   #endif // DOXYGEN_RUNNING
 
@@ -137,6 +110,8 @@ namespace Weights {
     return discrete_harmonic_weight(t, r, p, q, traits);
   }
 
+  namespace internal {
+
   template<typename GeomTraits>
   typename GeomTraits::FT discrete_harmonic_weight(
     const typename GeomTraits::Point_3& t,
@@ -151,7 +126,8 @@ namespace Weights {
       traits,
       t,  r,  p,  q,
       tf, rf, pf, qf);
-    return discrete_harmonic_weight(tf, rf, pf, qf, traits);
+    return CGAL::Weights::
+      discrete_harmonic_weight(tf, rf, pf, qf, traits);
   }
 
   template<typename GeomTraits>
@@ -164,6 +140,9 @@ namespace Weights {
     const GeomTraits traits;
     return discrete_harmonic_weight(t, r, p, q, traits);
   }
+
+  } // namespace internal
+
   /// \endcond
 
   /*!

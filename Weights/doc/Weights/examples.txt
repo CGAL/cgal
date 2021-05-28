@@ -5,5 +5,5 @@
 \example Weights/weighted_laplacian.cpp
 \example Weights/projection_traits.cpp
 \example Weights/custom_traits.cpp
-\example Weights/flattening.cpp
+\example Weights/convergence.cpp
 */
