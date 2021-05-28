@@ -49,17 +49,17 @@ void test_kernel() {
   const Point_3 q3(1, q.x(), q.y());
 
   const FT ref_value = FT(4);
-  // assert(CGAL::Weights::authalic_weight(t1, r1, p1, q1, xy_traits) == ref_value); // determinant_2
-  // assert(CGAL::Weights::authalic_weight(t2, r2, p2, q2, xz_traits) == ref_value);
-  // assert(CGAL::Weights::authalic_weight(t3, r3, p3, q3, yz_traits) == ref_value);
+  assert(CGAL::Weights::authalic_weight(t1, r1, p1, q1, xy_traits) == ref_value);
+  assert(CGAL::Weights::authalic_weight(t2, r2, p2, q2, xz_traits) == ref_value);
+  assert(CGAL::Weights::authalic_weight(t3, r3, p3, q3, yz_traits) == ref_value);
 
   assert(CGAL::Weights::wachspress_weight(t1, r1, p1, q1, xy_traits) == ref_value);
   assert(CGAL::Weights::wachspress_weight(t2, r2, p2, q2, xz_traits) == ref_value);
   assert(CGAL::Weights::wachspress_weight(t3, r3, p3, q3, yz_traits) == ref_value);
 
-  // assert(CGAL::Weights::cotangent_weight(t1, r1, p1, q1, xy_traits) == ref_value); // determinant_2
-  // assert(CGAL::Weights::cotangent_weight(t2, r2, p2, q2, xz_traits) == ref_value);
-  // assert(CGAL::Weights::cotangent_weight(t3, r3, p3, q3, yz_traits) == ref_value);
+  assert(CGAL::Weights::cotangent_weight(t1, r1, p1, q1, xy_traits) == ref_value);
+  assert(CGAL::Weights::cotangent_weight(t2, r2, p2, q2, xz_traits) == ref_value);
+  assert(CGAL::Weights::cotangent_weight(t3, r3, p3, q3, yz_traits) == ref_value);
 
   assert(CGAL::Weights::discrete_harmonic_weight(t1, r1, p1, q1, xy_traits) == ref_value);
   assert(CGAL::Weights::discrete_harmonic_weight(t2, r2, p2, q2, xz_traits) == ref_value);
@@ -81,9 +81,9 @@ void test_kernel() {
   assert(CGAL::Weights::triangular_area(t2, r2, p2, xz_traits) >= FT(0));
   assert(CGAL::Weights::triangular_area(t3, r3, p3, yz_traits) >= FT(0));
 
-  // assert(CGAL::Weights::barycentric_area(t1, r1, p1, xy_traits) >= FT(0)); // centroid_2
-  // assert(CGAL::Weights::barycentric_area(t2, r2, p2, xz_traits) >= FT(0));
-  // assert(CGAL::Weights::barycentric_area(t3, r3, p3, yz_traits) >= FT(0));
+  assert(CGAL::Weights::barycentric_area(t1, r1, p1, xy_traits) >= FT(0));
+  assert(CGAL::Weights::barycentric_area(t2, r2, p2, xz_traits) >= FT(0));
+  assert(CGAL::Weights::barycentric_area(t3, r3, p3, yz_traits) >= FT(0));
 
   assert(CGAL::Weights::voronoi_area(t1, r1, p1, xy_traits) >= FT(0));
   assert(CGAL::Weights::voronoi_area(t2, r2, p2, xz_traits) >= FT(0));
