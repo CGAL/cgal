@@ -617,7 +617,7 @@ coordinates are generated using the <TT>drand48</TT> C function). In the
 weighted case, the weights are all zero, which means that there are actually no
 hidden points during execution.
 
-The measurements have been performed using \cgal 3.6, using the <span class="textsc">Gnu</span> \cpp compiler
+The measurements have been performed using \cgal 3.6, using the \gnu \cpp compiler
 version 4.3.2, under Linux (Fedora 10 distribution), with the compilation options
 <TT>-O3 -DCGAL_NDEBUG</TT>. The computer used was equipped with a 64bit Intel
 Xeon 3GHz processor and 32GB of RAM (a recent desktop machine as of 2009).
