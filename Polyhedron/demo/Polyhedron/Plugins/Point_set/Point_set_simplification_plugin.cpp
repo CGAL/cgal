@@ -127,7 +127,7 @@ class Point_set_demo_point_set_simplification_dialog : public QDialog, private U
 {
   Q_OBJECT
   public:
-    Point_set_demo_point_set_simplification_dialog(QWidget * /*parent*/ = 0)
+    Point_set_demo_point_set_simplification_dialog(QWidget * /*parent*/ = nullptr)
     {
       setupUi(this);
       m_maximumSurfaceVariation->setRange(0.000010, 0.33330);
@@ -184,7 +184,7 @@ void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggere
   {
     // Gets point set
     Point_set* points = item->point_set();
-    if(points == NULL)
+    if(points == nullptr)
         return;
 
     // Gets options
@@ -259,7 +259,7 @@ void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggere
     // Warns user
     if (nb_points_to_remove > 0)
     {
-      QMessageBox::information(NULL,
+      QMessageBox::information(nullptr,
                                tr("Points selected for removal"),
                                tr("%1 point(s) are selected for removal.\nYou may delete or reset the selection using the item context menu.")
                                .arg(nb_points_to_remove));
