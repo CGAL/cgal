@@ -144,27 +144,9 @@ output_to_avizo(std::ostream& os,
 
 } // end namespace IO
 
-
 #ifndef CGAL_NO_DEPRECATED_CODE
 using IO::output_to_avizo;
 #endif
-
-
-
-/**
- * \ingroup PkgMDS3IOFunctions
- * @brief outputs mesh to avizo format
- * @param os the stream
- * @param c3t3 the mesh complex
- * \see \ref IOStreamAvizo
- */
-template <class C3T3>
-void
-output_to_avizo(std::ostream& os,
-                 const C3T3& c3t3)
-{
-  MDS_3::output_to_avizo(os,c3t3);
-}
 
 } // end namespace CGAL
 
