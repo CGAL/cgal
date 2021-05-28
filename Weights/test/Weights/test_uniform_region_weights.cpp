@@ -11,25 +11,24 @@ using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
 
 template<typename Kernel>
-bool test_overloads() {
+void test_overloads() {
   using FT      = typename Kernel::FT;
   using Point_2 = typename Kernel::Point_2;
   using Point_3 = typename Kernel::Point_3;
   const FT a = CGAL::Weights::uniform_area();
-  if (a != FT(1)) return false;
+  assert(a == FT(1));
   const Point_2 p(0, 0);
   const Point_3 q(0, 0, 0);
-  if (CGAL::Weights::uniform_area(p, p, p) != a) return false;
-  if (CGAL::Weights::uniform_area(q, q, q) != a) return false;
+  assert(CGAL::Weights::uniform_area(p, p, p) == a);
+  assert(CGAL::Weights::uniform_area(q, q, q) == a);
   struct Traits : public Kernel { };
-  if (CGAL::Weights::uniform_area(p, p, p, Traits()) != a) return false;
-  if (CGAL::Weights::uniform_area(q, q, q, Traits()) != a) return false;
-  return true;
+  assert(CGAL::Weights::uniform_area(p, p, p, Traits()) == a);
+  assert(CGAL::Weights::uniform_area(q, q, q, Traits()) == a);
 }
 
 template<typename Kernel>
 bool test_kernel() {
-  if (!test_overloads<Kernel>()) return false;
+  test_overloads<Kernel>();
   const wrappers::Uniform_region_wrapper<Kernel> uni;
   return tests::test_region_weight<Kernel>(uni);
 }

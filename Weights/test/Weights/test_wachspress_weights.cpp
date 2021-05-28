@@ -11,7 +11,7 @@ using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
 
 template<typename Kernel>
-bool test_overloads() {
+void test_overloads() {
   using FT      = typename Kernel::FT;
   using Point_2 = typename Kernel::Point_2;
   using Point_3 = typename Kernel::Point_3;
@@ -25,22 +25,21 @@ bool test_overloads() {
   const Point_3 q2( 0,  0, 1);
   const FT a2 = CGAL::Weights::wachspress_weight(t1, r1, p1, q1);
   const FT a3 = CGAL::Weights::internal::wachspress_weight(t2, r2, p2, q2);
-  if (a2 < FT(0)) return false;
-  if (a3 < FT(0)) return false;
-  if (a2 != a3)   return false;
+  assert(a2 >= FT(0));
+  assert(a3 >= FT(0));
+  assert(a2 == a3);
   struct Traits : public Kernel { };
-  if (CGAL::Weights::wachspress_weight(t1, r1, p1, q1, Traits()) != a2) return false;
-  if (CGAL::Weights::internal::wachspress_weight(t2, r2, p2, q2, Traits()) != a3) return false;
+  assert(CGAL::Weights::wachspress_weight(t1, r1, p1, q1, Traits()) == a2);
+  assert(CGAL::Weights::internal::wachspress_weight(t2, r2, p2, q2, Traits()) == a3);
   CGAL::Projection_traits_xy_3<Kernel> ptraits;
   const FT a23 = CGAL::Weights::wachspress_weight(t2, r2, p2, q2, ptraits);
-  if (a23 < FT(0)) return false;
-  if (a23 != a2 || a23 != a3) return false;
-  return true;
+  assert(a23 >= FT(0));
+  assert(a23 == a2 && a23 == a3);
 }
 
 template<typename Kernel>
 bool test_kernel() {
-  if (!test_overloads<Kernel>()) return false;
+  test_overloads<Kernel>();
   const wrappers::Wachspress_wrapper<Kernel> whp;
   const wrappers::Authalic_wrapper<Kernel> aut;
   return tests::test_barycentric_weight<Kernel>(whp, aut);

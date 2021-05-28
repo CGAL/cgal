@@ -11,7 +11,7 @@ using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
 
 template<typename Kernel>
-bool test_overloads() {
+void test_overloads() {
   using FT      = typename Kernel::FT;
   using Point_2 = typename Kernel::Point_2;
   using Point_3 = typename Kernel::Point_3;
@@ -25,22 +25,21 @@ bool test_overloads() {
   const Point_3 q2( 0,  0, 1);
   const FT a2 = CGAL::Weights::three_point_family_weight(t1, r1, p1, q1);
   const FT a3 = CGAL::Weights::internal::three_point_family_weight(t2, r2, p2, q2);
-  if (a2 < FT(0)) return false;
-  if (a3 < FT(0)) return false;
-  if (a2 != a3)   return false;
+  assert(a2 >= FT(0));
+  assert(a3 >= FT(0));
+  assert(a2 == a3);
   struct Traits : public Kernel { };
-  if (CGAL::Weights::three_point_family_weight(t1, r1, p1, q1, 1, Traits()) != a2) return false;
-  if (CGAL::Weights::internal::three_point_family_weight(t2, r2, p2, q2, 1, Traits()) != a3) return false;
+  assert(CGAL::Weights::three_point_family_weight(t1, r1, p1, q1, 1, Traits()) == a2);
+  assert(CGAL::Weights::internal::three_point_family_weight(t2, r2, p2, q2, 1, Traits()) == a3);
   CGAL::Projection_traits_xy_3<Kernel> ptraits;
   const FT a23 = CGAL::Weights::three_point_family_weight(t2, r2, p2, q2, 0, ptraits);
-  if (a23 < FT(0)) return false;
-  if (a23 != a2 || a23 != a3) return false;
-  return true;
+  assert(a23 >= FT(0));
+  assert(a23 == a2 && a23 == a3);
 }
 
 template<typename Kernel>
 bool test_kernel() {
-  if (!test_overloads<Kernel>()) return false;
+  test_overloads<Kernel>();
   using FT = typename Kernel::FT;
   const FT h = FT(1) / FT(2);
   const wrappers::Three_point_family_wrapper<Kernel> tpfa(0);
@@ -50,9 +49,9 @@ bool test_kernel() {
   const wrappers::Wachspress_wrapper<Kernel> whp;
   const wrappers::Mean_value_wrapper<Kernel> mvw;
   const wrappers::Discrete_harmonic_wrapper<Kernel> dhw;
-  if (!tests::test_analytic_weight<Kernel>(tpfa, whp)) return false;
-  if (!tests::test_analytic_weight<Kernel>(tpfb, mvw)) return false;
-  if (!tests::test_analytic_weight<Kernel>(tpfc, dhw)) return false;
+  assert(tests::test_analytic_weight<Kernel>(tpfa, whp));
+  assert(tests::test_analytic_weight<Kernel>(tpfb, mvw));
+  assert(tests::test_analytic_weight<Kernel>(tpfc, dhw));
   return tests::test_analytic_weight<Kernel>(tpfd, tpfd);
 }
 

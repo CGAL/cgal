@@ -11,7 +11,7 @@ using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
 
 template<typename Kernel>
-bool test_overloads() {
+void test_overloads() {
   using FT      = typename Kernel::FT;
   using Point_2 = typename Kernel::Point_2;
   using Point_3 = typename Kernel::Point_3;
@@ -21,19 +21,18 @@ bool test_overloads() {
   const Point_3 q2(1, 0, 1);
   const FT a2 = CGAL::Weights::inverse_distance_weight(p1, q1);
   const FT a3 = CGAL::Weights::inverse_distance_weight(p2, q2);
-  if (a2 != FT(1)) return false;
-  if (a3 != FT(1)) return false;
-  if (CGAL::Weights::inverse_distance_weight(p1, p1, q1, q1) != a2) return false;
-  if (CGAL::Weights::inverse_distance_weight(p2, p2, q2, q2) != a3) return false;
+  assert(a2 == FT(1));
+  assert(a3 == FT(1));
+  assert(CGAL::Weights::inverse_distance_weight(p1, p1, q1, q1) == a2);
+  assert(CGAL::Weights::inverse_distance_weight(p2, p2, q2, q2) == a3);
   struct Traits : public Kernel { };
-  if (CGAL::Weights::inverse_distance_weight(p1, p1, q1, q1, Traits()) != a2) return false;
-  if (CGAL::Weights::inverse_distance_weight(p2, p2, q2, q2, Traits()) != a3) return false;
-  return true;
+  assert(CGAL::Weights::inverse_distance_weight(p1, p1, q1, q1, Traits()) == a2);
+  assert(CGAL::Weights::inverse_distance_weight(p2, p2, q2, q2, Traits()) == a3);
 }
 
 template<typename Kernel>
 bool test_kernel() {
-  if (!test_overloads<Kernel>()) return false;
+  test_overloads<Kernel>();
   const wrappers::Inverse_distance_wrapper<Kernel> idw;
   const wrappers::Shepard_wrapper<Kernel> spw(1);
   return tests::test_analytic_weight<Kernel>(idw, spw);

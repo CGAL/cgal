@@ -16,6 +16,7 @@ if(CGAL_FOUND)
   create_single_source_cgal_program("test_shepard_weights.cpp")
   create_single_source_cgal_program("test_inverse_distance_weights.cpp")
   create_single_source_cgal_program("test_three_point_family_weights.cpp")
+  create_single_source_cgal_program("test_projected_weights.cpp")
 
   create_single_source_cgal_program("test_wachspress_weights.cpp")
   create_single_source_cgal_program("test_authalic_weights.cpp")

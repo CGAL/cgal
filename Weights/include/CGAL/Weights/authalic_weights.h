@@ -153,9 +153,7 @@ namespace Weights {
     const auto squared_distance_2 =
       traits.compute_squared_distance_2_object();
     const FT d2 = squared_distance_2(q, r);
-
-    return authalic_ns::weight(
-      cot_gamma, cot_beta, d2);
+    return authalic_ns::weight(cot_gamma, cot_beta, d2);
   }
 
   template<typename GeomTraits>
@@ -184,9 +182,7 @@ namespace Weights {
     const auto squared_distance_3 =
       traits.compute_squared_distance_3_object();
     const FT d2 = squared_distance_3(q, r);
-
-    return authalic_ns::weight(
-      cot_gamma, cot_beta, d2);
+    return authalic_ns::weight(cot_gamma, cot_beta, d2);
   }
 
   template<typename GeomTraits>

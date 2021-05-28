@@ -51,6 +51,18 @@ namespace Weights {
     }
 
     template<typename FT>
+    FT weight(const FT t1, const FT t2, const FT r) {
+
+      FT w = FT(0);
+      CGAL_precondition(r != FT(0));
+      if (r != FT(0)) {
+        const FT inv = FT(2) / r;
+        w = (t1 + t2) * inv;
+      }
+      return w;
+    }
+
+    template<typename FT>
     FT weight(
       const FT d1, const FT r, const FT d2,
       const FT A1, const FT A2,
@@ -66,13 +78,75 @@ namespace Weights {
         const FT inv2 = FT(2) / P2;
         const FT t1 = A1 * inv1;
         const FT t2 = A2 * inv2;
-        CGAL_precondition(r != FT(0));
-        if (r != FT(0)) {
-          const FT inv = FT(2) / r;
-          w = (t1 + t2) * inv;
-        }
+        w = weight(t1, t2, r);
       }
       return w;
+    }
+
+    // This is positive case only.
+    // This version is based on the positive area.
+    // This version is more precise for all positive cases.
+    template<typename GeomTraits>
+    typename GeomTraits::FT tangent_weight_v1(
+      const typename GeomTraits::Point_3& t,
+      const typename GeomTraits::Point_3& r,
+      const typename GeomTraits::Point_3& p,
+      const typename GeomTraits::Point_3& q,
+      const GeomTraits& traits) {
+
+      using FT = typename GeomTraits::FT;
+      const auto dot_product_3 =
+        traits.compute_scalar_product_3_object();
+      const auto construct_vector_3 =
+        traits.construct_vector_3_object();
+
+      const auto v1 = construct_vector_3(q, t);
+      const auto v2 = construct_vector_3(q, r);
+      const auto v3 = construct_vector_3(q, p);
+
+      const FT l1 = internal::length_3(traits, v1);
+      const FT l2 = internal::length_3(traits, v2);
+      const FT l3 = internal::length_3(traits, v3);
+
+      const FT A1 = internal::positive_area_3(traits, r, q, t);
+      const FT A2 = internal::positive_area_3(traits, p, q, r);
+
+      const FT D1 = dot_product_3(v1, v2);
+      const FT D2 = dot_product_3(v2, v3);
+
+      return weight(l1, l2, l3, A1, A2, D1, D2);
+    }
+
+    // This version handles both positive and negative cases.
+    // However, it is less precise.
+    template<typename GeomTraits>
+    typename GeomTraits::FT tangent_weight_v2(
+      const typename GeomTraits::Point_3& t,
+      const typename GeomTraits::Point_3& r,
+      const typename GeomTraits::Point_3& p,
+      const typename GeomTraits::Point_3& q,
+      const GeomTraits& traits) {
+
+      using FT = typename GeomTraits::FT;
+      const auto construct_vector_3 =
+        traits.construct_vector_3_object();
+
+      auto v1 = construct_vector_3(q, t);
+      auto v2 = construct_vector_3(q, r);
+      auto v3 = construct_vector_3(q, p);
+
+      const FT l2 = internal::length_3(traits, v2);
+
+      internal::normalize_3(traits, v1);
+      internal::normalize_3(traits, v2);
+      internal::normalize_3(traits, v3);
+
+      const double ha_rad_1 = internal::angle_3(traits, v1, v2) / 2.0;
+      const double ha_rad_2 = internal::angle_3(traits, v2, v3) / 2.0;
+      const FT t1 = static_cast<FT>(std::tan(ha_rad_1));
+      const FT t2 = static_cast<FT>(std::tan(ha_rad_2));
+
+      return weight(t1, t2, l2);
     }
   }
   /// \endcond
@@ -283,28 +357,8 @@ namespace Weights {
     const typename GeomTraits::Point_3& q,
     const GeomTraits& traits) {
 
-    using FT = typename GeomTraits::FT;
-    const auto dot_product_3 =
-      traits.compute_scalar_product_3_object();
-    const auto construct_vector_3 =
-      traits.construct_vector_3_object();
-
-    const auto v1 = construct_vector_3(q, t);
-    const auto v2 = construct_vector_3(q, r);
-    const auto v3 = construct_vector_3(q, p);
-
-    const FT l1 = internal::length_3(traits, v1);
-    const FT l2 = internal::length_3(traits, v2);
-    const FT l3 = internal::length_3(traits, v3);
-
-    const FT A1 = internal::positive_area_3(traits, r, q, t);
-    const FT A2 = internal::positive_area_3(traits, p, q, r);
-
-    const FT D1 = dot_product_3(v1, v2);
-    const FT D2 = dot_product_3(v2, v3);
-
-    return tangent_ns::weight(
-      l1, l2, l3, A1, A2, D1, D2);
+    // return tangent_ns::tangent_weight_v1(t, r, p, q, traits);
+       return tangent_ns::tangent_weight_v2(t, r, p, q, traits);
   }
 
   template<typename GeomTraits>
