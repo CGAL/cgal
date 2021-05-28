@@ -285,6 +285,18 @@ in the left shoulder of the target shape where the red triangle goes over the po
 \anchor deformation_example
 \cgalExample{Barycentric_coordinates_2/shape_deformation.cpp}
 
+But despite the possible foldovers, a similar technique can be used for image warping
+in 2D and character articulation in 3D. For example in 2D, we first enclose an image,
+which we want to deform, into a simple polygon so-called *cage*, we then
+bound each image pixel to this cage using barycentric coordinates, and finally deform
+this cage into a new one, which also deforms the underlying image, as shown
+in the figure below for harmonic coordinates.
+
+\cgalFigureBegin{image_warping_example, image_warping.png}
+An image on the left is deformed into a new image on the right using a 2D concave polygon (grey)
+and harmonic coordinates computed at each image pixel with respect to the vertices of this polygon.
+\cgalFigureEnd
+
 
 \subsection aff_example Affine Coordinates
 This is an example, where we show how a
