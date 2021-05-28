@@ -67,7 +67,7 @@ with notations shown in the figure below.
 
 Here, the distance is computed between the points `p` and `q`.
 
-Alternative formulations are explained in \ref Weights_Alternatives.
+Alternative formulations are explained in \ref Weights_Implementation.
 
 \cgalFigureBegin{inverse_distance_weight, inverse_distance.svg}
   Notation used for the inverse distance weight.
@@ -97,7 +97,7 @@ being the power parameter.
 Here, `q` is a query point and the points `p0`, `p1`, and `p2` are ordered.
 
 This weight supports only planar configurations (see more in section about \ref Weights_Flattening)
-while alternative formulations are explained in \ref Weights_Alternatives.
+while alternative formulations are explained in \ref Weights_Implementation.
 
 \cgalFigureBegin{three_point_family_weight, three_point_family.svg}
   Notation used for the three point family weight.
@@ -134,7 +134,7 @@ with notations shown in the figure below.
 Here, `q` is a query point and the points `p0`, `p1`, and `p2` are ordered.
 
 This weight supports only planar configurations (see more in section about \ref Weights_Flattening)
-while alternative formulations are explained in \ref Weights_Alternatives.
+while alternative formulations are explained in \ref Weights_Implementation.
 
 \cgalFigureBegin{wachspress_weight, wachspress.svg}
   Notation used for the Wachspress weight.
@@ -163,7 +163,7 @@ with notations shown in the figure below.
 
 Here, `q` is a query point and the points `p0`, `p1`, and `p2` are ordered.
 
-Alternative formulations are explained in \ref Weights_Alternatives.
+Alternative formulations are explained in \ref Weights_Implementation.
 
 \cgalFigureBegin{authalic_weight, authalic.svg}
   Notation used for the authalic weight.
@@ -199,7 +199,7 @@ The \f$\pm\f$ sign is a sign of the weight that depends on the configuration.
 Here, `q` is a query point and the points `p0`, `p1`, and `p2` are ordered.
 
 This weight supports only planar configurations (see more in section about \ref Weights_Flattening)
-while alternative formulations are explained in \ref Weights_Alternatives.
+while alternative formulations are explained in \ref Weights_Implementation.
 
 \cgalFigureBegin{mean_value_weight, mean_value.svg}
   Notation used for the mean value weight.
@@ -233,7 +233,7 @@ with notations shown in the figure below and dot products
 
 Here, `q` is a query point and the points `p0`, `p1`, and `p2` are ordered.
 
-Alternative formulations are explained in \ref Weights_Alternatives.
+Alternative formulations are explained in \ref Weights_Implementation.
 
 \cgalFigureBegin{tangent_weight, tangent.svg}
   Notation used for the tangent weight.
@@ -263,7 +263,7 @@ with notations shown in the figure below.
 Here, `q` is a query point and the points `p0`, `p1`, and `p2` are ordered.
 
 This weight supports only planar configurations (see more in section about \ref Weights_Flattening)
-while alternative formulations are explained in \ref Weights_Alternatives.
+while alternative formulations are explained in \ref Weights_Implementation.
 
 \cgalFigureBegin{discrete_harmonic_weight, discrete_harmonic.svg}
   Notation used for the discrete harmonic weight.
@@ -292,7 +292,7 @@ with notations shown in the figure below.
 
 Here, `q` is a query point and the points `p0`, `p1`, and `p2` are ordered.
 
-Alternative formulations are explained in \ref Weights_Alternatives.
+Alternative formulations are explained in \ref Weights_Implementation.
 
 \cgalFigureBegin{cotangent_weight, cotangent.svg}
   Notation used for the cotangent weight.

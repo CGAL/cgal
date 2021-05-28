@@ -28,6 +28,7 @@ struct Authalic_wrapper {
       CGAL::Weights::squared_distance(q, r));
   }
   bool supports_3d() const { return true; }
+  bool is_barycentric() const { return true; }
 };
 
 template<typename Kernel>
@@ -46,6 +47,7 @@ struct Cotangent_wrapper {
       CGAL::Weights::cotangent(r, p, q));
   }
   bool supports_3d() const { return true; }
+  bool is_barycentric() const { return true; }
 };
 
 template<typename Kernel>
@@ -70,6 +72,7 @@ struct Tangent_wrapper {
       CGAL::Weights::scalar_product(p, q, r));
   }
   bool supports_3d() const { return true; }
+  bool is_barycentric() const { return true; }
 };
 
 template<typename Kernel>
@@ -93,6 +96,7 @@ struct Wachspress_wrapper {
     CGAL::Weights::wachspress_weights_2(polygon, query, out, traits);
   }
   bool supports_3d() const { return false; }
+  bool is_barycentric() const { return true; }
 };
 
 template<typename Kernel>
@@ -116,6 +120,7 @@ struct Discrete_harmonic_wrapper {
     CGAL::Weights::discrete_harmonic_weights_2(polygon, query, out, traits);
   }
   bool supports_3d() const { return false; }
+  bool is_barycentric() const { return true; }
 };
 
 template<typename Kernel>
@@ -139,6 +144,7 @@ struct Mean_value_wrapper {
     CGAL::Weights::mean_value_weights_2(polygon, query, out, traits);
   }
   bool supports_3d() const { return false; }
+  bool is_barycentric() const { return true; }
 };
 
 template<typename Kernel>
@@ -158,9 +164,8 @@ struct Three_point_family_wrapper {
   FT weight_b(const Point& t, const Point& r, const Point& p, const Point& q) const {
     return weight_a(t, r, p, q);
   }
-  template<typename Polygon, typename Point, typename Traits, typename OutputIterator>
-  void compute_on_polygon(const Polygon&, const Point&, const Traits&, OutputIterator) const { }
   bool supports_3d() const { return false; }
+  bool is_barycentric() const { return true; }
 };
 
 template<typename Kernel>
@@ -220,6 +225,7 @@ struct Uniform_wrapper {
     return weight_a(t, r, p, q);
   }
   bool supports_3d() const { return true; }
+  bool is_barycentric() const { return false; }
 };
 
 template<typename Kernel>
@@ -234,6 +240,7 @@ struct Inverse_distance_wrapper {
     return weight_a(t, r, p, q);
   }
   bool supports_3d() const { return true; }
+  bool is_barycentric() const { return false; }
 };
 
 template<typename Kernel>
@@ -250,6 +257,7 @@ struct Shepard_wrapper {
     return weight_a(t, r, p, q);
   }
   bool supports_3d() const { return true; }
+  bool is_barycentric() const { return false; }
 };
 
 } // namespace wrappers

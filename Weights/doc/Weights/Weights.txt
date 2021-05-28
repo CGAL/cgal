@@ -92,6 +92,12 @@ is a unique scalar.
 The parameter `traits` with a traits class can be omitted for all functions and classes
 if it can be deduced from the input point type.
 
+Several weights in this package have different implementations. One reason to have it is
+explained in section about \ref Weights_Flattening. Another reason is that in different communities
+the same weights are named and computed differently. If one searches for these weights,
+one needs to know all their alternative names, which is tiresome. We provide the most common
+names and implementations of these weights.
+
 
 \subsection Weights_Flattening Flattening
 
@@ -127,15 +133,6 @@ None of the weights in this package is defined for query points on the boundarie
 
 Several weights also require other conditions to be satisifed. You should address the
 reference manual for more details.
-
-
-\subsection Weights_Alternatives Alternatives
-
-Several weights in this package have different implementations. One reason to have it is
-explained in section about \ref Weights_Flattening. Another reason is that in different communities
-the same weights are named and computed differently. If one searches for these weights,
-one needs to know all their alternative names, which is tiresome. We provide the most common
-names and implementations of these weights.
 
 
 \section Weights_Examples Examples

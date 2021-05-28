@@ -393,6 +393,39 @@ bool test_on_polygon(
 
 template<
 typename Kernel,
+typename Weight_wrapper>
+bool test_barycentric_properties(
+  const Weight_wrapper& wrapper,
+  const typename Kernel::Point_2& query,
+  const std::vector<typename Kernel::Point_2>& polygon) {
+
+  // Get weights.
+  using FT = typename Kernel::FT;
+  const std::size_t n = polygon.size();
+  CGAL_assertion(n >= 3);
+  if (n < 3) return false;
+
+  // Check properties.
+  std::vector<FT> weights;
+  weights.reserve(n);
+  for (std::size_t i = 0; i < n; ++i) {
+    const std::size_t im = (i + n - 1) % n;
+    const std::size_t ip = (i + 1) % n;
+    const auto& t = polygon[im];
+    const auto& r = polygon[i];
+    const auto& p = polygon[ip];
+    const auto& q = query;
+    const FT weight = wrapper.weight_a(t, r, p, q);
+    weights.push_back(weight);
+  }
+  CGAL_assertion(weights.size() == n);
+  if (weights.size() != n) return false;
+  if (!test_coordinates(query, polygon, weights)) return false;
+  return true;
+}
+
+template<
+typename Kernel,
 typename Weight_wrapper_1,
 typename Weight_wrapper_2>
 bool test_analytic_weight(
@@ -441,6 +474,21 @@ bool test_analytic_weight(
     if (!test_symmetry_x<Kernel>(weight, config, q)) return false;
     if (!test_symmetry_x<Kernel>(weight, config, h)) return false;
     if (!test_symmetry_x<Kernel>(weight, config, t)) return false;
+  }
+
+  // Test barycentric properties.
+  if (weight.is_barycentric()) {
+    const auto polygons = get_all_polygons<Kernel>();
+    for (const auto& polygon : polygons) {
+      if (!test_barycentric_properties<Kernel>(weight, zero, polygon)) {
+        return false;
+      }
+      for (const auto& query : queries) {
+        if (!test_barycentric_properties<Kernel>(weight, query, polygon)) {
+          return false;
+        }
+      }
+    }
   }
   return true;
 }
