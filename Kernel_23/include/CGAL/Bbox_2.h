@@ -176,7 +176,7 @@ inline
 std::ostream&
 operator<<(std::ostream &os, const Bbox_2 &b)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         os << b.xmin() << ' ' << b.ymin() << ' '
            << b.xmax() << ' ' << b.ymax();
@@ -205,9 +205,9 @@ operator>>(std::istream &is, Bbox_2 &b)
     double xmax = 0;
     double ymax = 0;
 
-    switch(get_mode(is)) {
+    switch(IO::get_mode(is)) {
     case IO::ASCII :
-        is >> iformat(xmin) >> iformat(ymin) >> iformat(xmax) >> iformat(ymax);
+        is >> IO::iformat(xmin) >> IO::iformat(ymin) >> IO::iformat(xmax) >> IO::iformat(ymax);
         break;
     case IO::BINARY :
         read(is, xmin);

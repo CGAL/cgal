@@ -1487,6 +1487,8 @@ triangulate_hole_polyline(const PointRange1& points,
                           bool use_delaunay_triangulation,
                           const Kernel&)
 {
+  CGAL_assertion(!points.empty());
+
   typedef Kernel        K;
   typedef typename K::Point_3    Point_3;
   #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3

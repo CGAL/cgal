@@ -400,7 +400,7 @@ MainWindow::loadWKT(QString
   do
     {
     std::vector<K::Point_2> mpts;
-    CGAL::read_multi_point_WKT(ifs, mpts);
+    CGAL::IO::read_multi_point_WKT(ifs, mpts);
     for(const K::Point_2& p : mpts)
       svd.insert(p);
     }while(ifs.good() && !ifs.eof());
@@ -411,7 +411,7 @@ MainWindow::loadWKT(QString
     {
     typedef std::vector<K::Point_2> LineString;
     std::vector<LineString> mls;
-    CGAL::read_multi_linestring_WKT(ifs, mls);
+    CGAL::IO::read_multi_linestring_WKT(ifs, mls);
     for(const LineString& ls : mls)
     {
       if(ls.empty())
@@ -449,7 +449,7 @@ MainWindow::loadWKT(QString
   {
     typedef CGAL::Polygon_with_holes_2<K> Polygon;
     std::vector<Polygon> mps;
-    CGAL::read_multi_polygon_WKT(ifs, mps);
+    CGAL::IO::read_multi_polygon_WKT(ifs, mps);
     for(const Polygon& poly : mps)
     {
       if(poly.outer_boundary().is_empty())

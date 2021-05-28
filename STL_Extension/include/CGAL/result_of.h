@@ -18,6 +18,9 @@
 #ifndef CGAL_RESULT_OF_H
 #define CGAL_RESULT_OF_H
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/result_of.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/config.h>"
+
 #include <CGAL/config.h>
 #include <CGAL/disable_warnings.h>
 

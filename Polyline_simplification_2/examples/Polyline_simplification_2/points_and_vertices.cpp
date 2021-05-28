@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
   Polygon_with_holes_2 P;
   Constraint_id cid;
   std::size_t largest = 0;
-  while(CGAL::read_polygon_WKT(ifs, P)){
+  while(CGAL::IO::read_polygon_WKT(ifs, P)){
     const Polygon_2& poly = P.outer_boundary();
     Constraint_id cid2 = ct.insert_constraint(poly);
     if(poly.size() > largest){

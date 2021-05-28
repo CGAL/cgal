@@ -31,7 +31,7 @@ void trace( std::string s )
   out << s ;
 }
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <QtGui>
 #include <QString>
@@ -306,7 +306,7 @@ public:
 
 class Curve_set
 {
-  typedef boost::shared_ptr<Rep_base> Rep_ptr ;
+  typedef std::shared_ptr<Rep_base> Rep_ptr ;
 
 public:
 
@@ -417,7 +417,7 @@ private:
 
   QPen                        mPen ;
   QBrush                      mBrush ;
-  boost::shared_ptr<Rep_base> mRep ;
+  std::shared_ptr<Rep_base> mRep ;
 
 } ;
 

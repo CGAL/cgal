@@ -831,7 +831,7 @@ public:
                            ec->circle());
         Sphere_point sp(intersection(c, seg.sphere_circle()));
         CGAL_NEF_TRACEN(seg <<" has_on " << sp);
-        if(!seg.has_on(sp))
+        if(!seg.has_on_after_intersection(sp))
           sp = sp.antipode();
         sv = D.new_svertex(sp);
         CGAL_NEF_TRACEN("new svertex 3 " << normalized(sp));
@@ -2063,7 +2063,7 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
                            ec->circle());
         Sphere_point sp(intersection(c, seg.sphere_circle()));
         CGAL_NEF_TRACEN(seg <<" has_on " << sp);
-        if(!seg.has_on(sp))
+        if(!seg.has_on_after_intersection(sp))
           sp = sp.antipode();
         sv = D.new_svertex(sp);
         CGAL_NEF_TRACEN("new svertex 3 " << normalized(sp));

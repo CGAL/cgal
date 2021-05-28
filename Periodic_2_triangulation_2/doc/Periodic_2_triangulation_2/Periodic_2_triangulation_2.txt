@@ -309,7 +309,7 @@ the `TriangulationDataStructure_2` (e.g. a `Vertex_handle` or
 `Face_handle`), he can use the
 `Triangulation_vertex_base_with_info_2` class to add his own
 information easily in the vertices. The example below shows how to
-add a `CGAL::Color` this way.
+add a `CGAL::IO::Color` this way.
 
 \cgalExample{Periodic_2_triangulation_2/p2t2_colored_vertices.cpp}
 

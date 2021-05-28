@@ -275,7 +275,7 @@ MainWindow::open(QString fileName)
   if(fileName.endsWith(".wkt",Qt::CaseInsensitive))
   {
 #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
-    CGAL::read_multi_point_WKT(ifs, points);
+    CGAL::IO::read_multi_point_WKT(ifs, points);
 #endif
   }
   else

@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
   std::ifstream ifs( (argc==1)?"data/polygon.wkt":argv[1]);
   CT ct;
   Polygon_with_holes_2 P;
-  while(CGAL::read_polygon_WKT(ifs, P)){
+  while(CGAL::IO::read_polygon_WKT(ifs, P)){
     const Polygon_2& poly = P.outer_boundary();
     ct.insert_constraint(poly);
     for(Polygon_with_holes_2::Hole_const_iterator it = P.holes_begin(); it != P.holes_end(); ++it){

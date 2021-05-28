@@ -216,7 +216,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Point_3<R>& p,const Cartesian_tag&)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << p.x() << ' ' << p.y() << ' ' << p.z();
     case IO::BINARY :
@@ -234,7 +234,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Point_3<R>& p,const Homogeneous_tag&)
 {
-  switch(get_mode(os))
+  switch(IO::get_mode(os))
   {
     case IO::ASCII :
         return os << p.hx() << ' ' << p.hy() << ' ' << p.hz() << ' ' << p.hw();
@@ -265,9 +265,9 @@ std::istream&
 extract(std::istream& is, Point_3<R>& p, const Cartesian_tag&)
 {
   typename R::FT x(0), y(0), z(0);
-    switch(get_mode(is)) {
+    switch(IO::get_mode(is)) {
     case IO::ASCII :
-        is >> iformat(x) >> iformat(y) >> iformat(z);
+        is >> IO::iformat(x) >> IO::iformat(y) >> IO::iformat(z);
         break;
     case IO::BINARY :
         read(is, x);
@@ -291,7 +291,7 @@ std::istream&
 extract(std::istream& is, Point_3<R>& p, const Homogeneous_tag&)
 {
   typename R::RT hx, hy, hz, hw;
-  switch(get_mode(is))
+  switch(IO::get_mode(is))
   {
     case IO::ASCII :
         is >> hx >> hy >> hz >> hw;

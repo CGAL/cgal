@@ -21,11 +21,11 @@ struct Gd_displayer : public Distribution_displayer
   //@{
   void fill_rectangle(double x1, double y1,
                       double x2, double y2,
-                      CGAL::Color c);
+                      CGAL::IO::Color c);
 
   void segment(double x1, double y1,
                double x2, double y2,
-               CGAL::Color c);
+               CGAL::IO::Color c);
   //@}
 
   /** \name FUNCTIONS SPECIFIC TO Gd_displayer */
@@ -73,7 +73,7 @@ struct Gd_displayer : public Distribution_displayer
 
   /** Returns the index of the color c in the image palette. */
   inline
-  int gd_color(CGAL::Color c)
+  int gd_color(CGAL::IO::Color c)
   {
     int i = gdImageColorExact(im,
                               c.red(),

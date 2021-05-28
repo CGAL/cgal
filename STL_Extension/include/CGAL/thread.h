@@ -12,6 +12,9 @@
 #ifndef CGAL_THREAD_H
 #define CGAL_THREAD_H
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/thread.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/config.h>"
+
 #include <CGAL/config.h>
 
 /*

@@ -241,7 +241,7 @@ MainWindow::open(QString fileName)
       do
       {
         std::vector<Point_2> multi_points;
-        CGAL::read_multi_point_WKT(ifs, multi_points);
+        CGAL::IO::read_multi_point_WKT(ifs, multi_points);
         if(multi_points.size() == 2)
         {
           Line_arc_2 la(Segment_2(multi_points[0],

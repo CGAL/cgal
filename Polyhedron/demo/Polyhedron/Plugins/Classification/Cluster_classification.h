@@ -379,7 +379,7 @@ class Cluster_classification : public Item_classification_base
   Point_set::Property_map<unsigned char> m_red;
   Point_set::Property_map<unsigned char> m_green;
   Point_set::Property_map<unsigned char> m_blue;
-  Point_set::Property_map<CGAL::Color> m_color;
+  Point_set::Property_map<CGAL::IO::Color> m_color;
   Point_set::Property_map<int> m_cluster_id;
   Point_set::Property_map<int> m_training;
   Point_set::Property_map<int> m_classif;

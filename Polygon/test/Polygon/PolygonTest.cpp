@@ -91,7 +91,7 @@ void test_iterators(ListPolygon& p, const ListPolygon& q)
   typedef ListPolygon::Edge_const_circulator EC;
   typedef ListPolygon::Edge_const_iterator EI;
 
-  CGAL::set_ascii_mode(cout);
+  CGAL::IO::set_ascii_mode(cout);
 
   {
     VC v = p.vertices_circulator();
@@ -165,28 +165,28 @@ void test_stream_operators(ListPolygon& p)
 {
   {
     std::ofstream to("polytest.ascii");
-    CGAL::set_ascii_mode(to);
+    CGAL::IO::set_ascii_mode(to);
     to << p;
     to.close();
 
     ListPolygon p_copy;
     std::ifstream from("polytest.ascii");
-    CGAL::set_ascii_mode(from);
+    CGAL::IO::set_ascii_mode(from);
     from >> p_copy;
 
     assert(p == p_copy);
   }
   {
     std::ofstream to("polytest.pretty");
-    CGAL::set_pretty_mode(to);
+    CGAL::IO::set_pretty_mode(to);
     to << p;
   }
   {
     std::ofstream to("polytest.binary");
-    CGAL::set_binary_mode(to);
+    CGAL::IO::set_binary_mode(to);
     to << p;
   }
-  CGAL::set_pretty_mode(cout);
+  CGAL::IO::set_pretty_mode(cout);
 }
 
 //-----------------------------------------------------------------------//

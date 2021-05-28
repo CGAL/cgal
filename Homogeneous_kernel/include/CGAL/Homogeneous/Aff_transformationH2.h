@@ -58,6 +58,11 @@ class Aff_transformation_rep_baseH2 : public Ref_counted_virtual
                         general_form() const = 0;
     virtual  bool       is_even() const = 0;
 
+    virtual  bool       is_translation() const { return false; }
+    virtual  bool       is_scaling() const { return false; }
+    virtual  bool       is_reflection() const { return false; }
+    virtual  bool       is_rotation() const { return false; }
+
     virtual  RT         homogeneous(int i, int j) const = 0;
     virtual  FT         cartesian(int i, int j) const = 0;
 };
@@ -247,6 +252,10 @@ class Translation_repH2 : public Aff_transformation_rep_baseH2<R>
              is_even() const
              { return true; }
 
+    virtual  bool
+             is_translation() const
+             { return true; }
+
     virtual  Aff_transformation_repH2<R>
              general_form() const
              {
@@ -321,6 +330,11 @@ class Rotation_repH2 : public Aff_transformation_rep_baseH2<R>
              {
                return true;
              }
+
+    virtual  bool
+             is_rotation() const
+             { return true; }
+
     virtual  Aff_transformation_repH2<R>
              general_form() const
              {
@@ -392,6 +406,10 @@ class Scaling_repH2 : public Aff_transformation_rep_baseH2<R>
              is_even() const
              { return true; }
 
+    virtual  bool
+             is_scaling() const
+             { return true; }
+
     virtual  Aff_transformation_repH2<R>
              general_form() const
              {
@@ -455,6 +473,10 @@ class Reflection_repH2 : public Aff_transformation_rep_baseH2<R>
     virtual  bool
              is_even() const
              { return false; }
+
+    virtual  bool
+             is_reflection() const
+             { return true; }
 
     virtual  Aff_transformation_repH2<R>
              general_form() const
@@ -575,6 +597,11 @@ public:
     Aff_transformationH2<R> inverse() const;
     bool                    is_even() const;
     bool                    is_odd()  const;
+
+    bool                    is_translation() const;
+    bool                    is_scaling() const;
+    bool                    is_rotation() const;
+    bool                    is_reflection() const;
 
                             // Access functions for matrix form
     FT                      cartesian(int i, int j) const;
@@ -738,6 +765,30 @@ bool
 Aff_transformationH2<R>::
 is_odd() const
 { return ! is_even(); }
+
+template < class R >
+bool
+Aff_transformationH2<R>::
+is_translation() const
+{ return this->Ptr()->is_translation(); }
+
+template < class R >
+bool
+Aff_transformationH2<R>::
+is_scaling() const
+{ return this->Ptr()->is_scaling(); }
+
+template < class R >
+bool
+Aff_transformationH2<R>::
+is_rotation() const
+{ return this->Ptr()->is_rotation(); }
+
+template < class R >
+bool
+Aff_transformationH2<R>::
+is_reflection() const
+{ return this->Ptr()->is_reflection(); }
 
 template < class R >
 inline

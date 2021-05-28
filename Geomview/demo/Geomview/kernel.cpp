@@ -41,7 +41,7 @@ int main()
   gv.clear(); // remove the pickplane.
 
   gv << K::Point_2 (200, 100);
-  gv << CGAL::blue();
+  gv << CGAL::IO::blue();
   gv << K::Point_3 (200, 100, 100);
   gv << CGAL::red();
   gv << K::Segment_2 (K::Point_2(200, 100),

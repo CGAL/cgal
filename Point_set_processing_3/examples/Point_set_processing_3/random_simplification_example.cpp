@@ -18,7 +18,7 @@ int main(int argc, char*argv[])
 
   // Reads a point set file in points[].
   std::vector<Point> points;
-  if(!CGAL::read_points(fname, std::back_inserter(points)))
+  if(!CGAL::IO::read_points(fname, std::back_inserter(points)))
   {
     std::cerr << "Error: cannot read file " << fname << std::endl;
     return EXIT_FAILURE;
@@ -33,7 +33,7 @@ int main(int argc, char*argv[])
 
   // Saves point set.
   const std::string output_filename = (argc>2) ? argv[2] : "Three_lady_copy.xyz";
-  if(!CGAL::write_points(output_filename, points, CGAL::parameters::stream_precision(17)))
+  if(!CGAL::IO::write_points(output_filename, points, CGAL::parameters::stream_precision(17)))
     return EXIT_FAILURE;
 
   return EXIT_SUCCESS;

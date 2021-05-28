@@ -176,7 +176,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   }
 
   std::string debug(SHalfedge_handle e) const
-  { std::stringstream os; set_pretty_mode(os);
+  { std::stringstream os; CGAL::IO::set_pretty_mode(os);
     os << "sedge-use " << e->source()->source()->point()
        << e->twin()->source()->twin()->source()->point() <<'\0';
     return os.str();
