@@ -90,13 +90,13 @@ public:
   // visual items
   struct Visual_items {
     Visual_items() :
-      group(NULL),
-      seeds(NULL),
+      group(nullptr),
+      seeds(nullptr),
       has_meshing_items(false),
-      triangles(NULL),
-      polygons(NULL),
-      anchors(NULL),
-      planes(NULL) {}
+      triangles(nullptr),
+      polygons(nullptr),
+      anchors(nullptr),
+      planes(nullptr) {}
 
     CGAL::Three::Scene_group_item *group;
     Scene_polylines_item *seeds;

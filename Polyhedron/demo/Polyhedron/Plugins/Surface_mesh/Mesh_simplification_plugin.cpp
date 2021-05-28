@@ -111,7 +111,7 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
   }
   if (poly_item || selection_item)
   {
-    FaceGraph& pmesh = (poly_item != NULL)
+    FaceGraph& pmesh = (poly_item != nullptr)
       ? *poly_item->polyhedron()
       : *selection_item->polyhedron();
 
@@ -124,8 +124,8 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
     connect(ui.buttonBox, SIGNAL(rejected()),
             &dialog, SLOT(reject()));
 
-    Scene_interface::Bbox bbox = poly_item != NULL ? poly_item->bbox()
-      : (selection_item != NULL ? selection_item->bbox()
+    Scene_interface::Bbox bbox = poly_item != nullptr ? poly_item->bbox()
+      : (selection_item != nullptr ? selection_item->bbox()
         : scene->bbox());
 
     double diago_length = CGAL::sqrt((bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin())
@@ -186,7 +186,7 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
       << num_halfedges(pmesh) / 2 << " edges)" << std::endl;
 
     // update scene
-    if (poly_item != NULL)
+    if (poly_item != nullptr)
     {
       poly_item->invalidateOpenGLBuffers();
       poly_item->polyhedron()->collect_garbage();

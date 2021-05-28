@@ -53,7 +53,7 @@ namespace CommonKernelFunctors {
         return 0;
       } else if(certainly_not(is_zero(vec.y()))){
         return 1;
-      }else if(certainly_not(is_zero(vec.y()))){
+      }else if(certainly_not(is_zero(vec.z()))){
         return 2;
       }
 
