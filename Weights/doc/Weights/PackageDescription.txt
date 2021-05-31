@@ -96,7 +96,7 @@ being the power parameter.
 
 Here, `q` is a query point and the points `p0`, `p1`, and `p2` are ordered.
 
-This weight supports only planar configurations (see more in section about \ref Weights_Implementation_Flattening)
+This weight supports only planar configurations (see more in section about \ref Weights_Implementation_Coplanarity)
 while alternative formulations are explained in \ref Weights_Implementation.
 
 \cgalFigureBegin{three_point_family_weight, three_point_family.svg}
@@ -133,7 +133,7 @@ with notations shown in the figure below.
 
 Here, `q` is a query point and the points `p0`, `p1`, and `p2` are ordered.
 
-This weight supports only planar configurations (see more in section about \ref Weights_Implementation_Flattening)
+This weight supports only planar configurations (see more in section about \ref Weights_Implementation_Coplanarity)
 while alternative formulations are explained in \ref Weights_Implementation.
 
 \cgalFigureBegin{wachspress_weight, wachspress.svg}
@@ -198,7 +198,7 @@ The \f$\pm\f$ sign is a sign of the weight that depends on the configuration.
 
 Here, `q` is a query point and the points `p0`, `p1`, and `p2` are ordered.
 
-This weight supports only planar configurations (see more in section about \ref Weights_Implementation_Flattening)
+This weight supports only planar configurations (see more in section about \ref Weights_Implementation_Coplanarity)
 while alternative formulations are explained in \ref Weights_Implementation.
 
 \cgalFigureBegin{mean_value_weight, mean_value.svg}
@@ -262,7 +262,7 @@ with notations shown in the figure below.
 
 Here, `q` is a query point and the points `p0`, `p1`, and `p2` are ordered.
 
-This weight supports only planar configurations (see more in section about \ref Weights_Implementation_Flattening)
+This weight supports only planar configurations (see more in section about \ref Weights_Implementation_Coplanarity)
 while alternative formulations are explained in \ref Weights_Implementation.
 
 \cgalFigureBegin{discrete_harmonic_weight, discrete_harmonic.svg}

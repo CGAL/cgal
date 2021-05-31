@@ -130,35 +130,6 @@ namespace Weights {
 
   namespace internal {
 
-  // Example of flattening:
-
-  // 3D configuration.
-  // const Point_3 p0(0, 1, 1);
-  // const Point_3 p1(2, 0, 1);
-  // const Point_3 p2(7, 1, 1);
-  // const Point_3 q0(3, 1, 1);
-
-  // Choose a type of the weight:
-  // e.g. 0 - Wachspress (WP) weight.
-  // const FT wp = FT(0);
-
-  // Compute WP weights for q1, which is not on the plane [p0, p1, p2].
-
-  // Point_3 q1(3, 1, 2);
-  // std::cout << "3D wachspress (WP, q1): ";
-  // std::cout << CGAL::Weights::three_point_family_weight(p0, p1, p2, q1, wp) << std::endl;
-
-  // Converge q1 towards q0 that is we flatten the configuration.
-  // We also compare the result with the authalic weight.
-
-  // std::cout << "Converge q1 to q0: " << std::endl;
-  // for (FT x = FT(0); x <= FT(1); x += step) {
-  //   std::cout << "3D wachspress/authalic: ";
-  //   q1 = Point_3(3, 1, FT(2) - x);
-  //   std::cout << CGAL::Weights::three_point_family_weight(p0, p1, p2, q1, wp) << "/";
-  //   std::cout << CGAL::Weights::authalic_weight(p0, p1, p2, q1) << std::endl;
-  // }
-
   template<typename GeomTraits>
   typename GeomTraits::FT three_point_family_weight(
     const typename GeomTraits::Point_3& t,
