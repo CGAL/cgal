@@ -20,6 +20,21 @@ if(TARGET CGAL::Eigen3_support)
 endif()
 
 create_single_source_cgal_program("mixed_integer_program.cpp")
+create_single_source_cgal_program("osqp_quadratic_program.cpp")
+
+find_package(OSQP QUIET)
+include(CGAL_OSQP_support)
+
+if(TARGET CGAL::OSQP_support)
+
+  target_link_libraries(osqp_quadratic_program PUBLIC CGAL::OSQP_support)
+  message("OSQP found and used")
+
+else()
+
+  message(STATUS "NOTICE: OSQP was not found. Complete OSQP examples won't be available.")
+
+endif()
 
 find_package(SCIP QUIET)
 include(CGAL_SCIP_support)
