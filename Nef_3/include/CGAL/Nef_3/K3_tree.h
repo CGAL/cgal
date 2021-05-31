@@ -44,6 +44,7 @@
 
 namespace CGAL {
 
+#ifdef CGAL_NEF3_TRIANGULATE_FACETS
 template <typename Triangle_3>
 void sort_triangle_by_lexicographically_smaller_vertex
 (const Triangle_3& t, int& a, int& b, int& c) {
@@ -79,6 +80,7 @@ struct Compare_triangle_3 {
     return false; // the two triangles are equivalent
   }
 };
+#endif
 
 template <class Traits>
 class K3_tree
@@ -885,7 +887,9 @@ typename Object_list::difference_type n_vertices = std::distance(objects.begin()
     Unique_hash_map< Vertex_handle, bool> v_mark(false);
     Unique_hash_map< Halfedge_handle, bool> e_mark(false);
     Unique_hash_map< Halffacet_handle, bool> f_mark(false);
+#ifdef CGAL_NEF3_TRIANGULATE_FACETS
     std::map< Triangle_3, bool, Compare_triangle_3<Triangle_3> > t_mark;
+#endif
     for( typename Objects_around_segment::Iterator oar = objects.begin();
          oar != objects.end(); ++oar) {
       for( typename Object_list::const_iterator o = (*oar).begin();
