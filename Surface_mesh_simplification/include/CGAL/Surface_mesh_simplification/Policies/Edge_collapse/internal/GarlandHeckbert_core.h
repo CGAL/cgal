@@ -17,6 +17,8 @@
 
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_quadrics.h>
+
 
 #include <Eigen/Dense>
 
@@ -49,16 +51,16 @@ struct GarlandHeckbert_core
   typedef typename Geom_traits::Line_3                                          Line_3;
   typedef typename Geom_traits::Plane_3                                         Plane_3;
   typedef typename Geom_traits::Vector_3                                        Vector_3;
+  typedef typename Geom_traits::Point_3                                         Point_3;
 
   typedef typename GarlandHeckbert_matrix_type<GT_>::type                       Matrix4x4;
   typedef Eigen::Matrix<FT, 1, 4>                                               Row4;
   typedef Eigen::Matrix<FT, 4, 1>                                               Col4;
-
+  
   static Col4 point_to_homogenous_column(const Point& pt)
   {
     return Col4(pt.x(), pt.y(), pt.z(), FT(1));
   }
-
   /**
   * Combines two Q matrices.
   * It is simply the addition of two matrices
@@ -75,10 +77,7 @@ struct GarlandHeckbert_core
   */
   static bool is_discontinuity_vertex(const halfedge_descriptor h, const Triangle_mesh& tmesh)
   {
-    if(is_border(target(h, tmesh), tmesh))
-      return true;
-
-    return false;
+    return is_border(target(h, tmesh), tmesh);
   }
 
   static bool is_discontinuity_edge(const halfedge_descriptor h, const Triangle_mesh& tmesh)
@@ -87,85 +86,8 @@ struct GarlandHeckbert_core
   }
 
   /*
-  * fundamental error quadric for the target vertex of h in tmesh
-  * Unused, but leaving it as it might still be useful somehow
-  */
-  static Matrix4x4 fundamental_error_quadric(const halfedge_descriptor h,
-                                             const Triangle_mesh& tmesh,
-                                             const Vertex_point_pmap& vpm,
-                                             const Geom_traits& gt,
-                                             const FT discontinuity_multiplier = FT(100))
-  {
-    Matrix4x4 quadric = Matrix4x4::Zero();
-
-    const vertex_descriptor target_vd = target(h, tmesh);
-    const Vector_3 target_vertex_vector = gt.construct_vector_3_object()(CGAL::ORIGIN, get(vpm, target_vd));
-
-    // const bool discontinuity_vertex = is_discontinuity_vertex(h, tmesh);
-
-    for(const halfedge_descriptor hd : halfedges_around_target(target_vd, tmesh))
-    {
-      const face_descriptor fd = face(hd, tmesh);
-      if(fd == GraphTraits::null_face())
-        continue;
-
-      Plane_3 plane(get(vpm, source(hd, tmesh)),
-                    get(vpm, target(hd, tmesh)),
-                    get(vpm, target(next(hd, tmesh), tmesh)));
-
-      Row4 plane_mtr;
-      const FT norm = CGAL::sqrt(CGAL::square(plane.a()) +
-                                 CGAL::square(plane.b()) +
-                                 CGAL::square(plane.c()));
-      const FT den = FT(1) / norm;
-
-      plane_mtr << den * plane.a(),
-                   den * plane.b(),
-                   den * plane.c(),
-                   den * plane.d();
-      quadric += plane_mtr.transpose() * plane_mtr;
-
-      if(is_discontinuity_edge(hd, tmesh))
-      {
-        const vertex_descriptor source_vd = source(hd, tmesh);
-
-        const Vector_3 p1p2 = gt.construct_vector_3_object()(get(vpm, source_vd), get(vpm, target_vd));
-        const Vector_3 normal = gt.construct_cross_product_vector_3_object()(
-                                  p1p2, gt.construct_orthogonal_vector_3_object()(plane));
-
-        const FT d = - normal * target_vertex_vector;
-        const FT norm = CGAL::sqrt(gt.compute_squared_length_3_object()(normal));
-        const FT den = FT(1) / norm;
-
-        plane_mtr << den * normal.x(),
-                     den * normal.y(),
-                     den * normal.z(),
-                     den * d;
-        quadric += discontinuity_multiplier * plane_mtr.transpose() * plane_mtr;
-      }
-
-      const halfedge_descriptor shd = next(hd, tmesh);
-      if(is_discontinuity_edge(shd, tmesh))
-      {
-        const Vector_3 p1p2 = gt.construct_vector_3_object()(get(vpm, target_vd), get(vpm, target(shd, tmesh)));
-        const Vector_3 normal = gt.construct_cross_product_vector_3_object()(
-                                  p1p2, gt.construct_orthogonal_vector_3_object()(plane));
-
-        const FT d = - normal * target_vertex_vector;
-        const FT norm = CGAL::sqrt(gt.compute_squared_length_3_object()(normal));
-        const FT den = FT(1) / norm;
-
-        plane_mtr << den * normal.x(),
-                     den * normal.y(),
-                     den * normal.z(),
-                     den * d;
-        quadric += discontinuity_multiplier * plane_mtr.transpose() * plane_mtr;
-      }
-    }
-
-    return quadric;
-  }
-
+   * TODO build selection of quadric type into the policy system
+   */
   template <typename VCM>
   static void fundamental_error_quadrics(VCM& vcm, // quadrics container
                                          const Triangle_mesh& tmesh,
@@ -179,63 +101,53 @@ struct GarlandHeckbert_core
 
     for(face_descriptor f : faces(tmesh))
     {
+      if (f == GraphTraits::null_face())
+      {
+        continue;
+      }
+      
       const halfedge_descriptor h = halfedge(f, tmesh);
-
-      const Point_reference p = get(vpm, source(h, tmesh));
-      const Point_reference q = get(vpm, target(h, tmesh));
-      const Point_reference r = get(vpm, target(next(h, tmesh), tmesh));
-
-      const FT rpx = p.x() - r.x();
-      const FT rpy = p.y() - r.y();
-      const FT rpz = p.z() - r.z();
-      const FT rqx = q.x() - r.x();
-      const FT rqy = q.y() - r.y();
-      const FT rqz = q.z() - r.z();
-
-      // Cross product rp * rq
-      const FT a = rpy*rqz - rqy*rpz;
-      const FT b = rpz*rqx - rqz*rpx;
-      const FT c = rpx*rqy - rqx*rpy;
-      const FT d = - a*r.x() - b*r.y() - c*r.z();
-
-      const Vector_3 plane_n = gt.construct_vector_3_object()(a, b, c);
-      const FT norm = CGAL::sqrt(CGAL::square(a) + CGAL::square(b) + CGAL::square(c));
-      const FT den = FT(1) / norm;
-
-      Row4 plane_mtr_r;
-      plane_mtr_r << den * a, den * b, den * c, den * d;
-      const Matrix4x4 plane_mtr = plane_mtr_r.transpose() * plane_mtr_r;
+      
+      // get the three vertices of the triangular face
+      const Point_3 p = get(vpm, source(h, tmesh));
+      const Point_3 q = get(vpm, target(h, tmesh));
+      const Point_3 r = get(vpm, target(next(h, tmesh), tmesh));
+      
+      // construtct the (4 x 4) matrix representing the plane quadric
+      // TODO find good default values for std deviations
+      const auto plane_matrix 
+        = quadrics::construct_classical_plane_quadric<Geom_traits>(p, q, r, gt);
 
       for(halfedge_descriptor shd : halfedges_around_face(h, tmesh))
       {
         const vertex_descriptor vs = source(shd, tmesh);
         const vertex_descriptor vt = target(shd, tmesh);
 
-        put(vcm, vt, combine_matrices(get(vcm, vt), plane_mtr));
+        put(vcm, vt, combine_matrices(get(vcm, vt), plane_matrix));
 
         if(!is_discontinuity_edge(shd, tmesh))
           continue;
 
-        const Vector_3 pspt = gt.construct_vector_3_object()(get(vpm, vs), get(vpm, vt));
-        const Vector_3 disc_plane_n = gt.construct_cross_product_vector_3_object()(pspt, plane_n);
+        //TODO optimize and clean up the computation of this quadric
+        // some functions may be called unnecessarily often here (i.e. too 
+        // much normalization and two cross products)
+        //
+        // also, behavious at discontinuous edges are largely untested at this stage
+        const auto edge_source = get(vpm, vs);
+        const auto plane_n = gt.construct_unit_normal_3_object()(r, p, q);
+        // vector along the current discontinuous edge 
+        const auto v_edge = gt.construct_vector_3_object()(get(vpm, vs), get(vpm, vt));
+        // pstp x plane_n
+        const auto disc_normal = gt.construct_cross_product_vector_3_object()(v_edge, plane_n);
 
-        // the plane contains the edge, so taking 'vs' or 'vt' will yield the same 'd'
-        const Vector_3 vvt = gt.construct_vector_3_object()(CGAL::ORIGIN, get(vpm, vt));
-        const FT disc_d = - gt.compute_scalar_product_3_object()(disc_plane_n, vvt);
+        const FT disc_length = CGAL::sqrt(gt.compute_squared_length_3_object()(disc_normal));
 
-        const FT disc_norm = CGAL::sqrt(gt.compute_squared_length_3_object()(disc_plane_n));
-        const FT disc_den = FT(1) / disc_norm;
+        const auto discontinuous_matrix = discontinuity_multiplier 
+          * quadrics::construct_classical_plane_quadric<Geom_traits>(
+              disc_normal / disc_length, edge_source, gt);
 
-        Row4 disc_mtr_r;
-        disc_mtr_r << disc_den * disc_plane_n.x(),
-                      disc_den * disc_plane_n.y(),
-                      disc_den * disc_plane_n.z(),
-                      disc_den * disc_d;
-
-        const Matrix4x4 disc_mtr = discontinuity_multiplier * disc_mtr_r.transpose() * disc_mtr_r;
-
-        put(vcm, vs, combine_matrices(get(vcm, vs), disc_mtr));
-        put(vcm, vt, combine_matrices(get(vcm, vt), disc_mtr));
+        put(vcm, vs, combine_matrices(get(vcm, vs), discontinuous_matrix));
+        put(vcm, vt, combine_matrices(get(vcm, vt), discontinuous_matrix));
       }
     }
   }
