@@ -92,15 +92,17 @@ namespace Contours {
 
       CGAL_precondition(m_input_range.size() >= 2);
 
-      if (is_closed)
+      if (is_closed) {
         estimate_closed(m_bounds, m_directions, m_assigned);
-      else
+      } else {
         estimate_open(m_bounds, m_directions, m_assigned);
+      }
 
       if (verbose()) {
         std::cout << "* assigned directions: ";
-        for (std::size_t direction_index : m_assigned)
+        for (std::size_t direction_index : m_assigned) {
           std::cout << direction_index << " ";
+        }
         std::cout << std::endl;
       }
     }

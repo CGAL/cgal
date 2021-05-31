@@ -181,8 +181,9 @@ namespace internal {
     using FT = typename Traits::FT;
     using Direction_2 = typename Traits::Direction_2;
 
-    if (v.y() < FT(0) || (v.y() == FT(0) && v.x() < FT(0)))
+    if (v.y() < FT(0) || (v.y() == FT(0) && v.x() < FT(0))) {
       v = -v;
+    }
     normalize_vector(v);
     return Direction_2(v);
   }
@@ -280,8 +281,11 @@ namespace internal {
   FT convert_angle_2(const FT angle_2) {
 
     FT angle = angle_2;
-    if (angle > FT(90)) angle = FT(180) - angle;
-    else if (angle < -FT(90)) angle = FT(180) + angle;
+    if (angle > FT(90)) {
+      angle = FT(180) - angle;
+    } else if (angle < -FT(90)) {
+      angle = FT(180) + angle;
+    }
     return angle;
   }
 
@@ -341,8 +345,11 @@ namespace internal {
     Segment_2& segment) {
 
     FT angle_deg = angle_2_deg;
-    if (angle_deg < FT(0)) angle_deg += ref_angle_2_deg;
-    else if (angle_deg > FT(0)) angle_deg -= ref_angle_2_deg;
+    if (angle_deg < FT(0)) {
+      angle_deg += ref_angle_2_deg;
+    } else if (angle_deg > FT(0)) {
+      angle_deg -= ref_angle_2_deg;
+    }
 
     auto source = segment.source();
     auto target = segment.target();
@@ -431,10 +438,11 @@ namespace internal {
       const Point pt1 = projected_origin + delta * line_vector;
       const Point pt2 = projected_origin - delta * line_vector;
 
-      if (CGAL::squared_distance(pt_normal, pt1) <= CGAL::squared_distance(pt_normal, pt2))
+      if (CGAL::squared_distance(pt_normal, pt1) <= CGAL::squared_distance(pt_normal, pt2)) {
         return Vector(CGAL::ORIGIN, pt1);
-      else
+      } else {
         return Vector(CGAL::ORIGIN, pt2);
+      }
     } else return n;
   }
 
@@ -457,8 +465,9 @@ namespace internal {
 
     Line line;
     const CGAL::Object ob_1 = CGAL::intersection(plane_orthogonality, plane_symmetry);
-    if (!assign(line, ob_1))
+    if (!assign(line, ob_1)) {
       return regularize_normal<Traits>(n, symmetry_direction, cos_symmetry);
+    }
 
     const Point projected_origin = line.projection(CGAL::ORIGIN);
     const FT R = CGAL::squared_distance(Point(CGAL::ORIGIN), projected_origin);
@@ -471,12 +480,14 @@ namespace internal {
       const Point pt2 = projected_origin - delta * line_vector;
 
       const Point pt_n = CGAL::ORIGIN + n;
-      if (CGAL::squared_distance(pt_n, pt1) <= CGAL::squared_distance(pt_n, pt2))
+      if (CGAL::squared_distance(pt_n, pt1) <= CGAL::squared_distance(pt_n, pt2)) {
         return Vector(CGAL::ORIGIN, pt1);
-      else
+      } else {
         return Vector(CGAL::ORIGIN, pt2);
-    } else // no point intersecting the unit sphere and line
+      }
+    } else { // no point intersecting the unit sphere and line
       return regularize_normal<Traits>(n, symmetry_direction, cos_symmetry);
+    }
   }
 
   template<
@@ -498,9 +509,10 @@ namespace internal {
     std::vector< std::vector<Point> > listp(nb_planes);
     for (std::size_t i = 0; i < points.size(); ++i) {
       const int idx = get(index_map, i);
-      if (idx != -1)
+      if (idx != -1) {
         listp[std::size_t(idx)].push_back(
           get(point_map, *(points.begin() + i)));
+      }
     }
 
     centroids.reserve(nb_planes);
@@ -539,8 +551,9 @@ namespace internal {
         const auto it2 = planes.begin() + j;
         const Vector v2 = get(plane_map, *it2).orthogonal_vector();
 
-        if (CGAL::abs(v1 * v2) > FT(1) - tolerance_cosangle)
+        if (CGAL::abs(v1 * v2) > FT(1) - tolerance_cosangle) {
           parallel_planes[i].push_back(j);
+        }
       }
     }
 
@@ -581,8 +594,9 @@ namespace internal {
                 index_container_current_ring_parallel.push_back(it);
                 is_available[it] = false;
 
-                if (clu.normal * normal_it < FT(0))
+                if (clu.normal * normal_it < FT(0)) {
                   normal_it = -normal_it;
+                }
 
                 clu.normal = FT(clu.area) * clu.normal + FT(areas[it]) * normal_it;
                 const FT norm = FT(1) / CGAL::sqrt(clu.normal.squared_length());
@@ -625,8 +639,9 @@ namespace internal {
 
     std::vector<FT> cosangle_centroids;
     std::vector<std::size_t> list_cluster_index;
-    for (std::size_t i = 0; i < clusters.size(); ++i)
+    for (std::size_t i = 0; i < clusters.size(); ++i) {
       list_cluster_index.push_back(static_cast<std::size_t>(-1));
+    }
 
     std::size_t mean_index = 0;
     for (std::size_t i = 0; i < clusters.size(); ++i) {
@@ -651,14 +666,16 @@ namespace internal {
     }
 
     for (std::size_t i = 0; i < cosangle_centroids.size(); ++i) {
-      if (cosangle_centroids[i] < tolerance_cosangle_ortho)
+      if (cosangle_centroids[i] < tolerance_cosangle_ortho) {
         cosangle_centroids[i] = FT(0);
-      else if (cosangle_centroids[i] > FT(1) - tolerance_cosangle)
+      } else if (cosangle_centroids[i] > FT(1) - tolerance_cosangle) {
         cosangle_centroids[i] = FT(1);
+      }
     }
 
-    for (std::size_t i = 0; i < clusters.size(); ++i)
+    for (std::size_t i = 0; i < clusters.size(); ++i) {
       clusters[i].cosangle_symmetry = cosangle_centroids[list_cluster_index[i]];
+    }
   }
 
   template<typename Traits>
@@ -672,8 +689,9 @@ namespace internal {
     std::vector< std::vector<std::size_t> > subgraph_clusters;
     std::vector<std::size_t> subgraph_clusters_max_area_index;
 
-    for (std::size_t i = 0; i < clusters.size(); ++i)
+    for (std::size_t i = 0; i < clusters.size(); ++i) {
       clusters[i].is_free = true;
+    }
 
     for (std::size_t i = 0; i < clusters.size(); ++i) {
       if (clusters[i].is_free) {
@@ -736,9 +754,11 @@ namespace internal {
 
       const std::size_t index = subgraph_clusters_max_area_index[i];
       std::vector<std::size_t> subgraph_clusters_prop_temp;
-      for (std::size_t j = 0; j < subgraph_clusters[i].size(); ++j)
-        if (subgraph_clusters[i][j] != index)
+      for (std::size_t j = 0; j < subgraph_clusters[i].size(); ++j) {
+        if (subgraph_clusters[i][j] != index) {
           subgraph_clusters_prop_temp.push_back(subgraph_clusters[i][j]);
+        }
+      }
       subgraph_clusters_prop.push_back(subgraph_clusters_prop_temp);
     }
 
@@ -746,8 +766,9 @@ namespace internal {
     // from the largest area cluster and we propagate over the subgraph
     // by regularizing the normals of the clusters according to the
     // orthogonality and cos angle to symmetry direction.
-    for (std::size_t i = 0; i < clusters.size(); ++i)
+    for (std::size_t i = 0; i < clusters.size(); ++i) {
       clusters[i].is_free = true;
+    }
 
     for (std::size_t i = 0; i < subgraph_clusters_prop.size(); ++i) {
       const std::size_t index_current = subgraph_clusters_max_area_index[i];

@@ -180,8 +180,9 @@ namespace Segments {
     void clear() {
       m_num_groups = 0;
       m_is_first_call = true;
-      for (auto& group : m_groups)
+      for (auto& group : m_groups) {
         group.clear();
+      }
     }
 
     /// @}
@@ -194,8 +195,9 @@ namespace Segments {
 
     std::size_t number_of_neighbors() const {
       std::size_t num_neighbors = 0;
-      for (const auto& group : m_groups)
+      for (const auto& group : m_groups) {
         num_neighbors += group.size();
+      }
       return num_neighbors;
     }
 

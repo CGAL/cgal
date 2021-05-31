@@ -138,8 +138,9 @@ void benchmark_qp_segments(
     group.reserve(m);
     for (std::size_t i = 0; i < n;) {
       group.clear();
-      for (std::size_t j = 0; j < m; ++j)
+      for (std::size_t j = 0; j < m; ++j) {
         group.push_back(i + j);
+      }
       neighbor_query.add_group(group);
       i += m;
     }
@@ -157,8 +158,9 @@ void benchmark_qp_segments(
     group.reserve(m);
     for (std::size_t i = 0; i < n;) {
       group.clear();
-      for (std::size_t j = 0; j < m; ++j)
+      for (std::size_t j = 0; j < m; ++j) {
         group.push_back(i + j);
+      }
       angle_regularization.add_group(group);
       i += m;
     }
@@ -218,8 +220,9 @@ void benchmark_qp_segments(
   offset_time /= static_cast<double>(num_iters);
 
   std::cout.precision(10);
-  if (regroup && !simple_output)
+  if (regroup && !simple_output) {
     std::cout << "grouped: " ;
+  }
 
   // std::cout << "benchmark_qp_segments " << segments.size() << " (CPU time " <<
   // "delaunay/setup_angles/angles/setup_offsets/offsets): " <<
@@ -228,14 +231,15 @@ void benchmark_qp_segments(
   //   setup_offset_time << "/" << offset_time <<
   // " seconds" << std::endl;
 
-  if (!simple_output)
+  if (!simple_output) {
     std::cout << "benchmark_qp_segments " << segments.size() << " (CPU time " <<
     "angles/offsets): " << angle_time << "/" << offset_time << " seconds" << std::endl;
-  else {
-    if (!regroup)
+  } else {
+    if (!regroup) {
       std::cout << segments.size() << " " << angle_time << " " << offset_time << " ";
-    else
+    } else {
       std::cout << angle_time << " " << offset_time << std::endl;
+    }
   }
 }
 

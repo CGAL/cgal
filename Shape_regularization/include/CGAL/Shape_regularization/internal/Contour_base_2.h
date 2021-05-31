@@ -92,8 +92,9 @@ namespace internal {
         const auto& polyline = polylines[i];
 
         out << polyline.size() << " ";
-        for (std::size_t j = 0; j < polyline.size(); ++j)
+        for (std::size_t j = 0; j < polyline.size(); ++j) {
           out << polyline[j] << " ";
+        }
         out << std::endl;
       }
       save(out, path + ".polylines");
@@ -133,8 +134,9 @@ namespace internal {
 
       sorted.clear();
       sorted.reserve(wraps.size());
-      for (std::size_t i = 0; i < wraps.size(); ++i)
+      for (std::size_t i = 0; i < wraps.size(); ++i) {
         sorted.push_back(i);
+      }
 
       std::sort(sorted.begin(), sorted.end(),
       [&wraps](const std::size_t i, const std::size_t j) -> bool {
@@ -243,8 +245,9 @@ namespace internal {
           im = (im + n - 1) % n;
           ip = (ip + 1) % n;
 
-          if (im == i || ip == i)
+          if (im == i || ip == i) {
             stop = true;
+          }
           ++max_count;
 
         } while (!stop && max_count < n);
@@ -273,10 +276,11 @@ namespace internal {
         const std::size_t di = assigned[i];
         const std::size_t dp = assigned[ip];
 
-        if (dm != std::size_t(-1) && dm == dp && di != dm)
+        if (dm != std::size_t(-1) && dm == dp && di != dm) {
           clean.push_back(dm);
-        else
+        } else {
           clean.push_back(di);
+        }
       }
       assigned = clean;
     }
@@ -317,13 +321,16 @@ namespace internal {
           }
 
           if (stop) break;
-          if (im != std::size_t(-1) && im > 0)
+          if (im != std::size_t(-1) && im > 0) {
             im = im - 1;
-          if (ip != std::size_t(-1) && ip < n - 1)
+          }
+          if (ip != std::size_t(-1) && ip < n - 1) {
             ip = ip + 1;
+          }
 
-          if (im == 0 || ip == n - 1)
+          if (im == 0 || ip == n - 1) {
             stop = true;
+          }
           ++max_count;
 
         } while (max_count < n);
@@ -351,10 +358,11 @@ namespace internal {
           CGAL_assertion(ip >= 0 && ip < n);
           const std::size_t di = assigned[i];
           const std::size_t dp = assigned[ip];
-          if (di != dp)
+          if (di != dp) {
             clean.push_back(dp);
-          else
+          } else {
             clean.push_back(di);
+          }
           continue;
         }
 
@@ -363,10 +371,11 @@ namespace internal {
           CGAL_assertion(im >= 0 && im < n);
           const std::size_t dm = assigned[im];
           const std::size_t di = assigned[i];
-          if (di != dm)
+          if (di != dm) {
             clean.push_back(dm);
-          else
+          } else {
             clean.push_back(di);
+          }
           continue;
         }
 
@@ -379,10 +388,11 @@ namespace internal {
         CGAL_assertion(ip >= 0 && ip < n);
         const std::size_t dp = assigned[ip];
 
-        if (dm != std::size_t(-1) && dm == dp && di != dm)
+        if (dm != std::size_t(-1) && dm == dp && di != dm) {
           clean.push_back(dm);
-        else
+        } else {
           clean.push_back(di);
+        }
       }
       assigned = clean;
     }
@@ -457,8 +467,9 @@ namespace internal {
         query_index < assigned.size());
 
       const std::size_t direction_index = assigned[query_index];
-      if (direction_index == std::size_t(-1))
+      if (direction_index == std::size_t(-1)) {
         return;
+      }
 
       CGAL_assertion(
         direction_index >= 0 &&
@@ -505,9 +516,11 @@ namespace internal {
       std::vector<Segment_wrapper_2>& wraps) const {
 
       std::vector<Segment_wrapper_2> clean;
-      for (const auto& wrap : wraps)
-        if (wrap.segment.squared_length() > internal::tolerance<FT>())
+      for (const auto& wrap : wraps) {
+        if (wrap.segment.squared_length() > internal::tolerance<FT>()) {
           clean.push_back(wrap);
+        }
+      }
       wraps = clean;
     }
 
@@ -586,8 +599,9 @@ namespace internal {
         find_longest_segment(wraps);
       const Segment_2 weighted =
         compute_weighted_segment(wraps, weights, ref_segment);
-      if (weighted.source() == weighted.target())
+      if (weighted.source() == weighted.target()) {
         return ref_segment;
+      }
       return weighted;
     }
 
@@ -607,8 +621,9 @@ namespace internal {
       }
 
       CGAL_assertion(sum_distance > FT(0));
-      for (auto& weight : weights)
+      for (auto& weight : weights) {
         weight /= sum_distance;
+      }
       CGAL_assertion(weights.size() == wraps.size());
     }
 
@@ -744,9 +759,9 @@ namespace internal {
       typename std::result_of<Intersect_2(Line_2, Line_2)>::type result
       = CGAL::intersection(line_1, line_2);
       if (result) {
-        if (const Line_2* line = boost::get<Line_2>(&*result))
+        if (const Line_2* line = boost::get<Line_2>(&*result)) {
           return false;
-        else {
+        } else {
           const Point_2* point = boost::get<Point_2>(&*result);
           in_point = *point; return true;
         }

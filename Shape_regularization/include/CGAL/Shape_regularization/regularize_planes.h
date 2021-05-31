@@ -109,9 +109,10 @@ namespace Planes {
 
     // Find subgraphs of mutually orthogonal clusters (store indices of
     // clusters in subgraph_clusters), and select the cluster of the largest area.
-    if (regularize_orthogonality || regularize_axis_symmetry)
+    if (regularize_orthogonality || regularize_axis_symmetry) {
       internal::subgraph_mutually_orthogonal_clusters<Kernel>(
         clusters, (regularize_axis_symmetry ? symmetry_direction : CGAL::NULL_VECTOR));
+    }
 
     // Recompute optimal plane for each primitive after the normal regularization.
     for (std::size_t i = 0; i < clusters.size(); ++i) {
@@ -121,12 +122,14 @@ namespace Planes {
         const Plane& plane = get(plane_map, *(planes.begin() + index_prim));
 
         const Point pt_reg = plane.projection(centroids[index_prim]);
-        if (plane.orthogonal_vector() * vec_reg < FT(0))
+        if (plane.orthogonal_vector() * vec_reg < FT(0)) {
           vec_reg = -vec_reg;
+        }
         const Plane plane_reg(pt_reg, vec_reg);
 
-        if (CGAL::abs(plane.orthogonal_vector() * vec_reg) > FT(1) - tolerance_cosangle)
+        if (CGAL::abs(plane.orthogonal_vector() * vec_reg) > FT(1) - tolerance_cosangle) {
           put(plane_map, *(planes.begin() + index_prim), plane_reg);
+        }
       }
     }
 
@@ -134,8 +137,9 @@ namespace Planes {
       // Detect. co-planarity and use list_coplanar_prim to store the results.
       for (std::size_t i = 0; i < clusters.size(); ++i) {
         Vector vec_reg = clusters[i].normal;
-        for (std::size_t ip = 0; ip < clusters[i].planes.size(); ++ip)
+        for (std::size_t ip = 0; ip < clusters[i].planes.size(); ++ip) {
           clusters[i].coplanar_group.push_back(static_cast<std::size_t>(-1));
+        }
 
         std::size_t cop_index = 0;
         for (std::size_t j = 0; j < clusters[i].planes.size(); ++j) {
@@ -156,8 +160,9 @@ namespace Planes {
                 const Point pt_proj = plan_reg.projection(pt_reg_next);
                 const FT distance = CGAL::sqrt(CGAL::squared_distance(pt_reg_next, pt_proj));
 
-                if (distance < tolerance_coplanarity)
+                if (distance < tolerance_coplanarity) {
                   clusters[i].coplanar_group[k] = cop_index;
+                }
               }
             }
             ++cop_index;
@@ -186,10 +191,11 @@ namespace Planes {
 
           if (get(plane_map,
           *(planes.begin() + index_prim)).orthogonal_vector()
-          * plane_reg.orthogonal_vector() < 0)
+          * plane_reg.orthogonal_vector() < 0) {
             put(plane_map, *(planes.begin() + index_prim), plane_reg.opposite());
-          else
+          } else {
             put(plane_map, *(planes.begin() + index_prim), plane_reg);
+          }
         }
       }
     }

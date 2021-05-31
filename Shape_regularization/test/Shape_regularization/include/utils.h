@@ -66,8 +66,9 @@ double get_coefficient_value(
     (theta > 3.0 * CGAL_PI / 2.0 && theta < 7.0 * CGAL_PI / 4.0)) {
 
     iterator += 0.02;
-  } else
+  } else {
     iterator -= 0.02;
+  }
 
   if (theta < CGAL_PI) return -1.0 * iterator;
   return iterator;

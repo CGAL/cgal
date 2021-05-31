@@ -101,8 +101,9 @@ namespace internal {
 
         states[i] = true;
         orthogonal_group.clear();
-        for (const std::size_t seg_index : parallel_groups[i])
+        for (const std::size_t seg_index : parallel_groups[i]) {
           orthogonal_group.push_back(seg_index);
+        }
 
         traverse_group(
           preserve_order, i, si, parallel_groups,
@@ -134,8 +135,9 @@ namespace internal {
             angle_2 >= FT(90) - m_max_angle) {
 
           states[j] = true;
-          for (const std::size_t seg_index : parallel_groups[j])
+          for (const std::size_t seg_index : parallel_groups[j]) {
             orthogonal_group.push_back(seg_index);
+          }
         } else if (preserve_order) return;
       }
     }

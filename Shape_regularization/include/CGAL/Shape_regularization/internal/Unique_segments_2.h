@@ -85,8 +85,9 @@ namespace internal {
         std::back_inserter(collinear_groups));
       m_segments.reserve(collinear_groups.size());
 
-      for (const auto& collinear_group : collinear_groups)
+      for (const auto& collinear_group : collinear_groups) {
         handle_collinear_group(collinear_group);
+      }
       CGAL_assertion(m_segments.size() == collinear_groups.size());
     }
 
@@ -122,8 +123,9 @@ namespace internal {
 
       Segment_2 weighted = compute_weighted_segment(
         collinear_group, weights, ref_segment);
-      if (weighted.source() == weighted.target())
+      if (weighted.source() == weighted.target()) {
         weighted = ref_segment;
+      }
 
       const Vector_2 ref_vector = weighted.to_vector();
       const Line_2 ref_line = Line_2(weighted.source(), weighted.target());
@@ -162,8 +164,9 @@ namespace internal {
       }
 
       CGAL_assertion(sum_distance > FT(0));
-      for (auto& weight : weights)
+      for (auto& weight : weights) {
         weight /= sum_distance;
+      }
       CGAL_assertion(
         weights.size() == collinear_group.size());
     }

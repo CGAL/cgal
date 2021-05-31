@@ -59,8 +59,9 @@ namespace Tests {
 
       const FT stub = FT(0);
       std::vector<Segment_2> edges;
-      for (const std::size_t seg_index : group)
+      for (const std::size_t seg_index : group) {
         edges.push_back(segments[seg_index]);
+      }
       export_segments(edges, path, stub);
     }
 
@@ -69,8 +70,9 @@ namespace Tests {
       const std::string path,
       const FT) {
 
-      if (contour.size() == 0)
+      if (contour.size() == 0) {
         return;
+      }
 
       const FT stub = FT(0);
       std::vector<Segment_2> segments;
@@ -92,8 +94,9 @@ namespace Tests {
       const std::string path,
       const FT) {
 
-      if (contour.size() == 0)
+      if (contour.size() == 0) {
         return;
+      }
 
       const FT stub = FT(0);
       std::vector<Segment_2> segments;
@@ -115,8 +118,7 @@ namespace Tests {
       const std::string path,
       FT scale) {
 
-      if (input.size() == 0)
-        return;
+      if (input.size() == 0) return;
       clear();
 
       // Compute barycenter.
@@ -169,8 +171,9 @@ namespace Tests {
       const FT scale) {
 
       std::vector<Segment_2> edges;
-      for (const std::size_t seg_index : group)
+      for (const std::size_t seg_index : group) {
         edges.push_back(segments[seg_index]);
+      }
       export_eps_segments(edges, path, scale);
     }
 
@@ -179,8 +182,9 @@ namespace Tests {
       const std::string path,
       FT scale) {
 
-      if (contour.size() == 0)
+      if (contour.size() == 0) {
         return;
+      }
 
       std::vector<Segment_2> segments;
       const std::size_t n = contour.size();
@@ -201,8 +205,9 @@ namespace Tests {
       const std::string path,
       FT scale) {
 
-      if (contour.size() == 0)
+      if (contour.size() == 0) {
         return;
+      }
 
       std::vector<Segment_2> segments;
       const std::size_t n = contour.size();
@@ -244,16 +249,18 @@ namespace Tests {
       const std::vector<Polyline>& polylines,
       const std::string path) {
 
-      if (polylines.size() == 0)
+      if (polylines.size() == 0) {
         return;
+      }
 
       clear();
       for (std::size_t i = 0; i < polylines.size(); ++i) {
         const auto& polyline = polylines[i];
 
         out << polyline.size() << " ";
-        for (std::size_t j = 0; j < polyline.size(); ++j)
+        for (std::size_t j = 0; j < polyline.size(); ++j) {
           out << polyline[j] << " ";
+        }
         out << std::endl;
       }
       save(path + ".polylines");

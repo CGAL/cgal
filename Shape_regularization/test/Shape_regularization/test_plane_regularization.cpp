@@ -122,9 +122,11 @@ void check_planes_changed(
   const std::vector<Plane>& before,
   const std::vector<Plane>& after) {
 
-  for (std::size_t i = 0; i < before.size(); ++i)
-    if (planes_difference(before[i], after[i]))
+  for (std::size_t i = 0; i < before.size(); ++i) {
+    if (planes_difference(before[i], after[i])) {
       return;
+    }
+  }
   std::cerr << "Error: no plane has been altered by regularization" <<
   " while at least one should have." << std::endl;
 }

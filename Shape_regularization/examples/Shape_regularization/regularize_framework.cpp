@@ -52,8 +52,9 @@ public:
   bool solve(OutputIterator solution) {
 
     // 3 = 2 objects + 1 edge between them
-    for (std::size_t i = 0; i < 3; ++i)
+    for (std::size_t i = 0; i < 3; ++i) {
       *(++solution) = NT(0);
+    }
     return true;
   }
 };

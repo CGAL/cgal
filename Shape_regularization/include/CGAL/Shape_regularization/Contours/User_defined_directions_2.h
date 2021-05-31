@@ -107,17 +107,19 @@ namespace Contours {
       CGAL_precondition(input_range.size() >= 2);
       CGAL_precondition(direction_range.size() >= 1);
 
-      if (is_closed)
+      if (is_closed) {
         estimate_closed(
           direction_range, m_bounds, m_directions, m_assigned);
-      else
+      } else {
         estimate_open(
           direction_range, m_bounds, m_directions, m_assigned);
+      }
 
       if (verbose()) {
         std::cout << "* assigned directions: ";
-        for (std::size_t direction_index : m_assigned)
+        for (std::size_t direction_index : m_assigned) {
           std::cout << direction_index << " ";
+        }
         std::cout << std::endl;
       }
     }
@@ -203,8 +205,9 @@ namespace Contours {
       initialize_directions(direction_range, directions);
 
       bounds.clear(); bounds.reserve(directions.size());
-      for (std::size_t i = 0; i < directions.size(); ++i)
+      for (std::size_t i = 0; i < directions.size(); ++i) {
         bounds.push_back(std::make_pair(FT(45), FT(45)));
+      }
 
       assigned.clear(); assigned.resize(wraps.size());
       set_directions(directions, wraps, assigned);
@@ -229,8 +232,9 @@ namespace Contours {
       initialize_directions(direction_range, directions);
 
       bounds.clear(); bounds.reserve(directions.size());
-      for (std::size_t i = 0; i < directions.size(); ++i)
+      for (std::size_t i = 0; i < directions.size(); ++i) {
         bounds.push_back(std::make_pair(FT(45), FT(45)));
+      }
 
       assigned.clear(); assigned.resize(wraps.size());
       set_directions(directions, wraps, assigned);

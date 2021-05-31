@@ -161,11 +161,12 @@ void benchmark_contours(
   open_time /= static_cast<double>(num_iters);
 
   std::cout.precision(10);
-  if (simple_output)
+  if (simple_output) {
     std::cout << contour.size() << " " << closed_time << " " << open_time << std::endl;
-  else
+  } else {
     std::cout << "benchmark_contours " << contour.size() << " (CPU time " <<
     "closed/open): " << closed_time << "/" << open_time << " seconds" << std::endl;
+  }
 }
 
 int main() {
@@ -174,8 +175,9 @@ int main() {
   const std::vector<std::size_t> ns = {
     10, 100, 1000, 10000, 100000, 1000000, 10000000
   };
-  for (const std::size_t n : ns)
+  for (const std::size_t n : ns) {
     benchmark_contours(n, false, num_iters);
+  }
 
   // Dense results for plotting.
   // std::vector<std::size_t> ns;

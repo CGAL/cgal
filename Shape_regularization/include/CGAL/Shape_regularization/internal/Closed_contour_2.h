@@ -62,21 +62,24 @@ namespace internal {
       if (m_wraps.size() < 3) return contour;
 
       rotate_contour(m_wraps);
-      if (verbose())
+      if (verbose()) {
         m_base.export_polylines(
           m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/rotated");
+      }
 
       bool success = optimize_contour(m_wraps);
       if (!success) return contour;
-      if (verbose())
+      if (verbose()) {
         m_base.export_polylines(
           m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/optimized");
+      }
 
       success = connect_contour(m_wraps);
       if (!success) return contour;
-      if (verbose())
+      if (verbose()) {
         m_base.export_polylines(
           m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/connected");
+      }
 
       return update_input(m_wraps, contour);
     }
@@ -112,16 +115,18 @@ namespace internal {
       // Merge parallel/collinear segments.
       std::vector<Segment_2> segments;
       m_base.create_unique_segments(m_max_offset_2, wraps, segments);
-      if (verbose())
+      if (verbose()) {
         std::cout <<
           "* number of segments (merging) = " << segments.size() << std::endl;
+      }
       if (wraps.size() < 4) return false;
 
       // Add orthogonal segments.
       create_orthogonal_segments(segments, wraps);
-      if (verbose())
+      if (verbose()) {
         std::cout <<
           "* number of segments (orthogonal) = " << wraps.size() << std::endl;
+      }
       if (wraps.size() < 4) return false;
 
       return true;
@@ -219,9 +224,10 @@ namespace internal {
       const std::size_t after = wraps.size();
       CGAL_assertion(after <= before);
 
-      if (verbose())
+      if (verbose()) {
         std::cout <<
           "* segments before/after = " << before << "/" << after << std::endl;
+      }
     }
 
     template<typename OutputIterator>

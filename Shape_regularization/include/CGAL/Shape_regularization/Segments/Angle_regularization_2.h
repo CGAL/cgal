@@ -348,8 +348,9 @@ namespace Segments {
       m_num_groups = 0;
       m_is_first_call = true;
       m_num_modified_segments = 0;
-      for (auto& wrap : m_wraps)
+      for (auto& wrap : m_wraps) {
         wrap.is_used = false;
+      }
     }
 
     /// @}
@@ -428,7 +429,7 @@ namespace Segments {
         x2 = wrap.barycenter.x() + wrap.length * direction.dx() / FT(2);
         y1 = (-c - a * x1) / b;
         y2 = (-c - a * x2) / b;
-      }  else {
+      } else {
         y1 = wrap.barycenter.y() - wrap.length * direction.dy() / FT(2);
         y2 = wrap.barycenter.y() + wrap.length * direction.dy() / FT(2);
         x1 = (-c - b * y1) / a;

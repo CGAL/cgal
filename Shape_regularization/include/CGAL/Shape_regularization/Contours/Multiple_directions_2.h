@@ -143,15 +143,17 @@ namespace Contours {
       CGAL_precondition(
         m_min_length_2 >= FT(0));
 
-      if (is_closed)
+      if (is_closed) {
         estimate_closed(m_bounds, m_directions, m_assigned);
-      else
+      } else {
         estimate_open(m_bounds, m_directions, m_assigned);
+      }
 
       if (verbose()) {
         std::cout << "* assigned directions: ";
-        for (std::size_t direction_index : m_assigned)
+        for (std::size_t direction_index : m_assigned) {
           std::cout << direction_index << " ";
+        }
         std::cout << std::endl;
       }
     }
@@ -257,8 +259,9 @@ namespace Contours {
       } else {
         m_base.unify_along_contours_closed(wraps, assigned);
         m_base.correct_directions_closed(wraps, assigned);
-        if (m_adjust_directions)
+        if (m_adjust_directions) {
           m_base.readjust_directions(wraps, assigned, directions);
+        }
       }
     }
 
@@ -287,17 +290,19 @@ namespace Contours {
       } else {
         m_base.unify_along_contours_open(wraps, assigned);
         m_base.correct_directions_open(wraps, assigned);
-        if (m_adjust_directions)
+        if (m_adjust_directions) {
           m_base.readjust_directions(wraps, assigned, directions);
+        }
       }
     }
 
     void set_valid_directions(
       std::vector<Segment_wrapper_2>& wraps) const {
 
-      for (auto& wrap : wraps)
+      for (auto& wrap : wraps) {
         wrap.is_valid_direction =
           is_valid_principal_direction(wrap.segment);
+      }
     }
 
     bool is_valid_principal_direction(
@@ -327,10 +332,11 @@ namespace Contours {
       do {
         query_index = find_next_longest_segment(
           wraps, longest_to_short);
-        if (query_index != std::size_t(-1))
+        if (query_index != std::size_t(-1)) {
           set_next_longest_direction(
             wraps, query_index, group_index,
             bounds, directions, assigned);
+        }
         ++group_index;
       } while (query_index != std::size_t(-1));
     }
@@ -372,8 +378,9 @@ namespace Contours {
       longest.is_used = true;
 
       for (auto& wrap : wraps) {
-        if (wrap.index == query_index) // skip longest
+        if (wrap.index == query_index) { // skip longest
           continue;
+        }
 
         // Check if another wrap satisifes the conditions.
         if (is_valid_wrap(wrap)) {

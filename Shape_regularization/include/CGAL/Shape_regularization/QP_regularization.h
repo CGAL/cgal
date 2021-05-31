@@ -382,8 +382,9 @@ namespace Shape_regularization {
 
       // Used to set bounds for each variable li <= xi <= ui.
       const std::size_t s = m_targets.size() * 2;
-      for (std::size_t i = 0; i < n; ++i)
+      for (std::size_t i = 0; i < n; ++i) {
         qp.set_A(s + i, i, FT(1));
+      }
 
       // CGAL_assertion(qp.A_size() == A_nnz);
     }
@@ -433,8 +434,9 @@ namespace Shape_regularization {
 
       const auto success = qp.solve(
         std::back_inserter(solution));
-      if (!success)
+      if (!success) {
         std::cerr << "WARNING: The solver has not converged!" << std::endl;
+      }
       CGAL_assertion(solution.size() == n);
     }
   };
