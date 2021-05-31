@@ -25,6 +25,10 @@ Release date: June 2021
 
 A comprehensive list of the supported file formats is available in the Stream_support package [here](https://doc.cgal.org/5.3/Stream_support/index.html#IOstreamSupportedFormats); inversely, the following [page](https://doc.cgal.org/5.3/Stream_support/IOStreamSupportedFileFormats.html) can be used to find out which CGAL data structures can be used given a specific file format.
 
+### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.3/Manual/packages.html#PkgKernel23)
+
+- Added functions to the classes `Aff_transformation_2` and `Aff_transformation_3`, which enable to determine if they internally have a specialized representation.
+
 ### [Quadtrees, Octrees, and Orthtrees](https://doc.cgal.org/5.3/Manual/packages.html#PkgOrthree) (new package)
 
 -   This package implements a tree data structure in which each node
@@ -601,7 +605,7 @@ Release date: November 2019
  -   Added a function to convert a Nef_polyhedron_3 to a polygon soup: [`CGAL::convert_nef_polyhedron_to_polygon_soup()`](https://doc.cgal.org/5.0/Nef_3/group__PkgNef3IOFunctions.html#ga28a9eb4da0cd6153f0c16f7f9eaf6665)
 
 ### [IO Streams](https://doc.cgal.org/5.0/Manual/packages.html#PkgStreamSupport)
-- **Breaking change:** The API of [`CGAL::Color`](https://doc.cgal.org/5.0/Stream_support/classCGAL_1_1Color.html) has been cleaned up.
+- **Breaking change:** The API of [`CGAL::IO::Color`](https://doc.cgal.org/5.0/Stream_support/classCGAL_1_1Color.html) has been cleaned up.
 - Added new functions to support some parts of the WKT file format:
     * [`CGAL::read_WKT()`](https://doc.cgal.org/5.0/Stream_support/group__PkgStreamSupportRef.html#gad2872abfe6fcf17d705d38567fdd6248)
     * [`CGAL::read_point_WKT()`](https://doc.cgal.org/5.0/Stream_support/group__PkgStreamSupportRef.html#gadbd2705b183e467507abd2f167446eba)

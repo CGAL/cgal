@@ -399,7 +399,7 @@ class Point_set_item_classification : public Item_classification_base
   Point_set::Property_map<unsigned char> m_red;
   Point_set::Property_map<unsigned char> m_green;
   Point_set::Property_map<unsigned char> m_blue;
-  Point_set::Property_map<CGAL::Color> m_color;
+  Point_set::Property_map<CGAL::IO::Color> m_color;
   std::vector<std::vector<float> > m_label_probabilities;
 
   Point_set::Property_map<int> m_training;

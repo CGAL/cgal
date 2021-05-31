@@ -58,7 +58,7 @@ int main(int argc, char** argv)
 
   {
     Polyhedron p;
-    if (!CGAL::read_polygon_mesh(file, p))
+    if (!CGAL::IO::read_polygon_mesh(file, p))
     {
       std::cout<<"ERROR reading file "<<file<<" for polyhedron."<<std::endl;
       exit(EXIT_FAILURE);
@@ -68,7 +68,7 @@ int main(int argc, char** argv)
 
   {
     SM sm;
-    if (!CGAL::read_polygon_mesh(file, sm))
+    if (!CGAL::IO::read_polygon_mesh(file, sm))
     {
       std::cout<<"ERROR reading file "<<file<<" for surface mesh."<<std::endl;
       exit(EXIT_FAILURE);

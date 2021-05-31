@@ -65,7 +65,7 @@ int main(int argc, char*argv[])
 
   // Output
   std::ofstream file("out-sm.vtu");
-  CGAL::output_to_vtu(file, c3t3, CGAL::IO::ASCII);
+  CGAL::IO::output_to_vtu(file, c3t3, CGAL::IO::ASCII);
   // Could be replaced by:
   // c3t3.output_to_medit(file);
 

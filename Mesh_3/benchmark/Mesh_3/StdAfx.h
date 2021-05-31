@@ -131,7 +131,7 @@
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/thread/tss.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/type_traits.hpp>

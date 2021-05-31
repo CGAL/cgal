@@ -1,6 +1,9 @@
 namespace CGAL {
+
+namespace IO {
+
 /*!
-  \defgroup PkgArrangementOnSurface2Read CGAL::read()
+  \defgroup PkgArrangementOnSurface2Read CGAL::IO::read()
   \ingroup PkgArrangementOnSurface2IO
 
 Reads a given arrangement from a given input stream
@@ -37,7 +40,7 @@ std::istream& read (Arrangement_2<Traits,Dcel>& arr,
 /// @}
 
 /*!
-  \defgroup PkgArrangementOnSurface2Write CGAL::write()
+  \defgroup PkgArrangementOnSurface2Write CGAL::IO::write()
   \ingroup PkgArrangementOnSurface2IO
 
 Writes a given arrangement into a given output stream
@@ -69,13 +72,15 @@ std::ostream& write (const Arrangement_2<Traits,Dcel>& arr,
 
 /// @}
 
+} // namespace IO
+
 /*!
 \ingroup PkgArrangementOnSurface2op_left_shift
 Inserts the arrangement object `arr` into the output stream
 `os` using the output format defined by the
 `Arr_text_formatter` class. Only the basic geometric and
 topological features of the arrangement are inserted. Auxiliary data
-that may be attached to the <span class="textsc">Dcel</span> features is ignored.
+that may be attached to the \dcel features is ignored.
 */
 template<typename Traits, typename Dcel>
 std::ostream& operator<< (std::ostream& os,
@@ -93,4 +98,4 @@ template<class Traits, class Dcel>
 std::istream& operator>>(std::istream& is, Arrangement_2<Traits,Dcel>& arr);
 
 
-} /* end namespace CGAL*/
+} /* end namespace CGAL::IO*/

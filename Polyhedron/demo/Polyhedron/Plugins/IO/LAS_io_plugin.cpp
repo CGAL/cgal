@@ -40,7 +40,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
 
   item->point_set()->clear();
 
-  ok = CGAL::read_LAS (in, *(item->point_set())) && !item->isEmpty();
+  ok = CGAL::IO::read_LAS (in, *(item->point_set())) && !item->isEmpty();
   if(ok)
   {
     std::cerr << item->point_set()->info();
@@ -95,7 +95,7 @@ bool Polyhedron_demo_las_plugin::save(QFileInfo fileinfo,QList<CGAL::Three::Scen
 
   point_set_item->point_set()->reset_indices();
 
-  return CGAL::write_LAS(out, *(point_set_item->point_set()));
+  return CGAL::IO::write_LAS(out, *(point_set_item->point_set()));
 }
 
 

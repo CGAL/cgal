@@ -25,7 +25,7 @@ operator << ( std::ostream& os, const Min_sphere_d<Traits>& min_sphere)
 {
     typedef typename Min_sphere_d<Traits>::Point  Point;
 
-    switch ( get_mode( os)) {
+    switch ( IO::get_mode( os)) {
 
       case IO::PRETTY:
         os << std::endl;
@@ -63,7 +63,7 @@ operator << ( std::ostream& os, const Min_sphere_d<Traits>& min_sphere)
 
       default:
         CGAL_optimisation_assertion_msg
-            ( false, "get_mode( os) invalid!");
+            ( false, "IO::get_mode( os) invalid!");
         break; }
 
     return( os);
@@ -73,7 +73,7 @@ template < class Traits >
 std::istream&
 operator >> ( std::istream& is, Min_sphere_d<Traits>& min_sphere)
 {
-    switch ( get_mode( is)) {
+    switch ( IO::get_mode( is)) {
 
       case IO::PRETTY:
         std::cerr << std::endl;

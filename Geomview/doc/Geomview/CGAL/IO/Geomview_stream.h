@@ -16,7 +16,7 @@ namespace CGAL {
   on the two pipes.
 
   All insert operators construct expressions in `gcl`, the Geomview
-  command language, which is a subset of <span class="textsc">Lisp</span>. These expressions
+  command language, which is a subset of \lisp. These expressions
   are sent to Geomview via the pipe. The extract operators notify `interest`
   for a certain kind of events. When such an event happens Geomview
   sends a description of the event in `gcl` and the extract operator has

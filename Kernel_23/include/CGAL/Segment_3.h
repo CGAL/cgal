@@ -173,7 +173,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Segment_3<R> &s)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << s.source() << ' ' << s.target();
     case IO::BINARY :

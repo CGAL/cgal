@@ -43,7 +43,7 @@
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/Timer.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/array.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/utility/enable_if.hpp>
@@ -274,7 +274,7 @@ private:
 
   // operator() is pre-computed on vertices of *m_tr by solving
   // the Poisson equation Laplacian(f) = divergent(normals field).
-  boost::shared_ptr<Triangulation> m_tr;
+  std::shared_ptr<Triangulation> m_tr;
   mutable std::shared_ptr<std::vector<Cached_bary_coord> > m_bary;
   mutable std::vector<Point> Dual;
   mutable std::vector<Vector> Normal;

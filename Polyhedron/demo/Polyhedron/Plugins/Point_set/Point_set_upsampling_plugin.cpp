@@ -60,7 +60,7 @@ class Point_set_demo_point_set_upsampling_dialog : public QDialog, private Ui::P
 
   Q_OBJECT
 public:
-  Point_set_demo_point_set_upsampling_dialog(QWidget * /*parent*/ = 0)
+  Point_set_demo_point_set_upsampling_dialog(QWidget * /*parent*/ = nullptr)
   {
     setupUi(this);
     m_edgeSensitivity->setMaximum(1.0);
@@ -93,7 +93,7 @@ void Polyhedron_demo_point_set_upsampling_plugin::on_actionEdgeAwareUpsampling_t
 
       // Gets point set
       Point_set* points = item->point_set();
-      if(points == NULL)
+      if(points == nullptr)
         return;
 
       // Gets options

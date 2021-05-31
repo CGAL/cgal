@@ -222,7 +222,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Iso_rectangle_2<R> &r)
 {
-  switch(get_mode(os)) {
+  switch(IO::get_mode(os)) {
   case IO::ASCII :
     return os << (r.min)() << ' ' << (r.max)();
   case IO::BINARY :

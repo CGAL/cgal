@@ -253,7 +253,7 @@ Scene_polylines_item_private::computeSpheres()
               colors[2] = 200;
           }
 
-          CGAL::Color c(colors[0], colors[1], colors[2]);
+          CGAL::IO::Color c(colors[0], colors[1], colors[2]);
           spheres->add_sphere(K::Sphere_3(center+offset, spheres_drawn_square_radius),s_id++, c);
       }
       spheres->setToolTip(

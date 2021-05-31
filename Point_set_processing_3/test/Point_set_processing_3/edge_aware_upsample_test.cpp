@@ -118,10 +118,10 @@ int main(int argc, char * argv[])
     std::cerr << "Opening " << argv[i] << " for reading..." << std::endl;
 
     // If XYZ file format:
-   if(CGAL::read_points(argv[i],
-                        std::back_inserter(points),
-                        CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
-                                         .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
+   if(CGAL::IO::read_points(argv[i],
+                            std::back_inserter(points),
+                            CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
+                                             .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
     {
       std::cerr << "ok (" << points.size() << " points)" << std::endl;
     }

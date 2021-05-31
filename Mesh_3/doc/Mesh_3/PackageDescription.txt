@@ -138,7 +138,7 @@ and their associated classes:
 - `CGAL::Mesh_facet_topology`
 
 \cgalCRPSection{Input/Output Functions}
-- `CGAL::output_to_medit()`
-- `CGAL::output_to_vtu()`
+- `CGAL::IO::output_to_medit()`
+- `CGAL::IO::output_to_vtu()`
 */
 

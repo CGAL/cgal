@@ -28,6 +28,8 @@
 
 namespace CGAL {
 
+namespace IO {
+
 /**
   \ingroup PkgPointSetProcessing3IO
 
@@ -88,7 +90,7 @@ bool read_points(const std::string& fname,
                  PointOutputIterator output,
                  const NamedParameters& np)
 {
-  const std::string ext = IO::internal::get_file_extension(fname);
+  const std::string ext = internal::get_file_extension(fname);
 
   if(ext == "xyz" || ext == "pwn")
     return read_XYZ<OutputIteratorValueType>(fname, output, np);
@@ -128,6 +130,6 @@ bool read_points(const std::string& fname, OutputIterator output)
 
 /// \endcond
 
-} // namespace CGAL
+} } // namespace CGAL::IO
 
 #endif // CGAL_POINT_SET_PROCESSING_READ_POINTS_H

@@ -23,13 +23,12 @@ and <TT>long double</TT>.
 
 \cgalHeading{Implementation}
 
-All interval operations are performed by the <span
-class="textsc">Mpfi</span> library. The class `Gmpfi` is not reference
+All interval operations are performed by the \mpfi library. The class `Gmpfi` is not reference
 counted, but its members are.
 
 The default precision of `Gmpfi` is local to each thread and independent of
-the default precision of `Gmpfr` (in contrast to the behaviour of the <span
-class="textsc">Mpfi</span> and <span class="textsc">Mpfr</span> libraries,
+the default precision of `Gmpfr` (in contrast to the behaviour of the \mpfi
+and \mpfr libraries,
 which share a default precision).
 
 \sa `CGAL::Gmpfr`

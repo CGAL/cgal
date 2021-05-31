@@ -27,7 +27,7 @@ routines though which are automatically included by \cgal.
 
 All built-in number types of \cpp can represent a discrete (bounded)
 subset of the rational numbers only. We assume that the
-floating-point arithmetic of your machine follows <span class="textsc">Ieee</span>
+floating-point arithmetic of your machine follows \ieee
 floating-point standard. Since the floating-point culture has much
 more infrastructural support (hardware, language definition and
 compiler) than exact computation, it is very efficient.
@@ -57,7 +57,7 @@ point values, a generalization of integers scaled by a (potentially negative)
 power of 2. It allows to deal with ring operations over floating-point values
 with requiring rational numbers. By plugging it in `Quotient`, one obtains
 rational numbers. Note that `MP_Float` may not be as efficient as the
-integer types provided by <span class="textsc">Gmp</span> or \leda, but it has the advantage
+integer types provided by \gmp or \leda, but it has the advantage
 to make more parts of \cgal independent on these external libraries for
 handling robustness issues.
 
@@ -81,7 +81,7 @@ types.
 
 \anchor gmpnt
 
-\cgal provides wrapper classes for number types defined in the <span class="textsc">Gnu</span> Multiple Precision arithmetic library \cgalCite{g-ggmpa}. The file
+\cgal provides wrapper classes for number types defined in the \gnu Multiple Precision arithmetic library \cgalCite{g-ggmpa}. The file
 <TT>CGAL/Gmpz.h</TT> provides the class `Gmpz`, a wrapper class for
 the arbitrary-precision integer type `mpz_t`, which is compliant
 with the \cgal number type requirements. The file <TT>CGAL/Gmpq.h</TT>
@@ -108,12 +108,12 @@ library after each operation. For more details, the reader should refer
 to \cgalCite{cgal:mt-mpfr} and the `Gmpfr` reference manual.
 
 In addition, it is possible to directly use the C++ number types provided by
-<span class="textsc">Gmp</span> : `mpz_class`, `mpq_class` (note that support for
+\gmp : `mpz_class`, `mpq_class` (note that support for
 `mpf_class` is incomplete). The file <TT>CGAL/gmpxx.h</TT> provides the
 necessary functions to make these classes compliant to the \cgal number type
 requirements.
 
-To use these classes, <span class="textsc">Gmp</span> and <span class="textsc">Mpfr</span> must be installed.
+To use these classes, \gmp and \mpfr must be installed.
 
 \section Number_typesLEDA Number Types Provided by LEDA
 
@@ -157,12 +157,12 @@ requirements.
 
 \anchor corent
 
-In principle <span class="textsc">Core</span> \cgalCite{klpy-clp-99} provides the same set of number types as \leda.
+In principle \core \cgalCite{klpy-clp-99} provides the same set of number types as \leda.
 The type `CORE::BigInt` represent integers and `CORE::BigRat`
 represent rationals of arbitrary length. The number type `CORE::BigFloat` is
 a variable precision floating-point type. It is also possible to interpret it as an
 interval type, since it also carries the error of a computed value.
-As for \leda, the most sophisticated number type in <span class="textsc">Core</span> is `CORE::Expr`,
+As for \leda, the most sophisticated number type in \core is `CORE::Expr`,
 which is in its functionality equivalent to `leda_real`.
 
 
@@ -192,7 +192,7 @@ is implemented on top of `Gmpfr`, the global flags
 are inherited from the `Gmpfr` interface. See
 \cgalCite{cgal:r-mpfi} and the `Gmpfi` reference manual for details.
 
-To use the `Gmpfi` class, <span class="textsc">Mpfi</span> must be installed.
+To use the `Gmpfi` class, \mpfi must be installed.
 
 \section Number_typesUser User-supplied Number Types
 
@@ -213,12 +213,12 @@ implemented by Stefan Schirra and Andreas Fabri.
 
 Later, around 1998-2002, Sylvain Pion implemented `Interval_nt`,
 `MP_Float` and `Lazy_exact_nt`, together with the interfaces to
-the `mpz_class` and `mpq_class` types from <span class="textsc">Gmp</span>.
+the `mpz_class` and `mpq_class` types from \gmp.
 
 Number type concepts were then refined, notably by Lutz Kettner and
 Susan Hert, who also contributed utility algorithms.
 
-The work on concepts was further extended within the <span class="textsc">Exacus</span> project, and was finally
+The work on concepts was further extended within the \exacus project, and was finally
 contributed to \cgal by Michael Hemmer in 2006, as what is now the separate
 package \ref Chapter_Algebraic_Foundations "Algebraic Foundations", together with
 a rewritten interface to operations on number types.

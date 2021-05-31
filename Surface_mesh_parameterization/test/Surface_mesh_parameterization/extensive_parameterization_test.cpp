@@ -79,7 +79,7 @@ typedef boost::graph_traits<SM_Seam_mesh>::halfedge_descriptor    SM_SE_halfedge
 int main(int, char**)
 {
   std::cout.precision(17);
-  CGAL::set_pretty_mode(std::cout);
+  CGAL::IO::set_pretty_mode(std::cout);
 
   // ***************************************************************************
   // Default case

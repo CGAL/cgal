@@ -462,7 +462,7 @@ public:
                        bool show_patches = false) const
   {
     // Call global function
-    CGAL::output_to_medit(os,*this,rebind,show_patches);
+    CGAL::IO::output_to_medit(os,*this,rebind,show_patches);
   }
 
   /// Outputs the mesh to maya
@@ -470,7 +470,7 @@ public:
                       bool surfaceOnly = true) const
   {
     // Call global function
-    CGAL::output_to_maya(os,*this,surfaceOnly);
+    CGAL::IO::output_to_maya(os,*this,surfaceOnly);
   }
 
   //-------------------------------------------------------

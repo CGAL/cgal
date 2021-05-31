@@ -26,7 +26,7 @@ main( int, char**)
   Min_circle  mc1( P, P+n, false);    // very slow
   Min_circle  mc2( P, P+n, true);     // fast
 
-  CGAL::set_pretty_mode( std::cout);
+  CGAL::IO::set_pretty_mode( std::cout);
   std::cout << mc2;
 
   return 0;

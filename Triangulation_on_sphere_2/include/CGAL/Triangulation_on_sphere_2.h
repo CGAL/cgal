@@ -200,11 +200,22 @@ public:
     return is_contour(e.first, e.second);
   }
 
+  template<class T>
+  bool is_infinite(const T&, int = 0) const
+  {
+    return false;
+  }
+
   //-----------------------TRAVERSING : ITERATORS AND CIRCULATORS-----------------------------------
 
   typedef typename Tds::Vertex_iterator           Vertices_iterator;
+  typedef typename Tds::Vertex_iterator           All_vertices_iterator;
   typedef typename Tds::Edge_iterator             All_edges_iterator;
   typedef typename Tds::Face_iterator             All_faces_iterator;
+
+  typedef typename Tds::Vertex_iterator           Finite_vertices_iterator;
+  typedef typename Tds::Edge_iterator             Finite_edges_iterator;
+  typedef typename Tds::Face_iterator             Finite_faces_iterator;
 
   typedef typename Tds::Vertex_circulator         Vertex_circulator;
   typedef typename Tds::Edge_circulator           Edge_circulator;
@@ -267,14 +278,18 @@ public:
   typedef boost::transform_iterator<Pt_proj, Vertices_iterator>      Point_iterator;
   typedef Iterator_range<Point_iterator>                             Points;
 
+  // -- faces
   All_faces_iterator all_faces_begin() const { return _tds.faces_begin(); }
   All_faces_iterator all_faces_end() const { return _tds.faces_end(); }
+  Finite_faces_iterator finite_faces_begin() const { return _tds.faces_begin(); }
+  Finite_faces_iterator finite_faces_end() const { return _tds.faces_end(); }
 
   All_face_handles all_face_handles() const
   {
     return make_prevent_deref_range(all_faces_begin(), all_faces_end());
   }
 
+  // -- edges
   Contour_edges_iterator contour_edges_begin() const
   {
     if(dimension() < 1)
@@ -326,10 +341,19 @@ public:
 
   All_edges_iterator all_edges_begin() const { return _tds.edges_begin(); }
   All_edges_iterator all_edges_end() const { return _tds.edges_end(); }
+  Finite_edges_iterator finite_edges_begin() const { return _tds.edges_begin(); }
+  Finite_edges_iterator finite_edges_end() const { return _tds.edges_end(); }
+
   All_edges all_edges() const { return _tds.edges(); }
 
+  // -- vertices
   Vertices_iterator vertices_begin() const { return _tds.vertices_begin(); }
   Vertices_iterator vertices_end() const { return _tds.vertices_end(); }
+  All_vertices_iterator all_vertices_begin() const { return _tds.vertices_begin(); }
+  All_vertices_iterator all_vertices_end() const { return _tds.vertices_end(); }
+  Finite_vertices_iterator finite_vertices_begin() const { return _tds.vertices_begin(); }
+  Finite_vertices_iterator finite_vertices_end() const { return _tds.vertices_end(); }
+
   Vertex_handles vertex_handles() const
   {
     return make_prevent_deref_range(vertices_begin(), vertices_end());
@@ -491,8 +515,9 @@ void
 Triangulation_on_sphere_2<Gt, Tds>::
 swap(Triangulation_on_sphere_2& tr)
 {
+  using std::swap;
   _tds.swap(tr._tds);
-  std::swap(tr.geom_traits(), geom_traits());
+  swap(_gt, tr._gt);
 }
 
 template <typename Gt, typename Tds>
