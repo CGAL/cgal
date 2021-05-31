@@ -91,10 +91,6 @@ namespace Contours {
       among the ones listed below; this parameter can be omitted,
       the default values are then used
 
-      \param point_map
-      an instance of `PointMap` that maps an item from input range to `GeomTraits::Point_2`;
-      this parameter can be omitted, the identity map `CGAL::Identity_property_map` is then used
-
       \cgalNamedParamsBegin
         \cgalParamNBegin{max_angle}
           \cgalParamDescription{maximum allowed angle deviation in degrees between a contour edge
@@ -114,6 +110,11 @@ namespace Contours {
           \cgalParamType{boolean}
           \cgalParamDefault{true}
         \cgalParamNEnd
+        \cgalParamNBegin{point_map}
+          \cgalParamDescription{an instance of `PointMap` that maps an item from `input_range`
+          to `GeomTraits::Point_2`}
+          \cgalParamDefault{`PointMap()`}
+        \cgalParamNEnd
       \cgalNamedParamsEnd
 
       \pre input_range.size() >= 3 for closed contours
@@ -123,10 +124,10 @@ namespace Contours {
     Multiple_directions_2(
       const InputRange& input_range,
       const bool is_closed,
-      const NamedParameters& np,
-      const PointMap point_map = PointMap()) :
+      const NamedParameters& np) :
     m_input_range(input_range),
-    m_point_map(point_map) {
+    m_point_map(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::point_map), PointMap())) {
 
       CGAL_precondition(input_range.size() >= 2);
       m_max_angle_2 = parameters::choose_parameter(

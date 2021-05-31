@@ -40,6 +40,10 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/assertions.h>
 
+// Named parameters.
+#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+
 namespace CGAL {
 namespace Shape_regularization {
 namespace internal {
@@ -47,6 +51,10 @@ namespace internal {
   ////////////////////////
   // General Utilities. //
   ////////////////////////
+
+  // Type alias for named parameters with segment maps.
+  template<typename InputRange, typename NamedParameters>
+  using GetSegmentMap = CGAL::GetPointMap<InputRange, NamedParameters>;
 
   // Universal tolerance.
   template<typename FT>

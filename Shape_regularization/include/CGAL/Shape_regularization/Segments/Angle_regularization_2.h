@@ -98,16 +98,17 @@ namespace Segments {
       among the ones listed below; this parameter can be omitted,
       the default values are then used
 
-      \param segment_map
-      an instance of `SegmentMap` that maps an item from input range to `GeomTraits::Segment_2`;
-      this parameter can be omitted, the identity map `CGAL::Identity_property_map` is then used
-
       \cgalNamedParamsBegin
         \cgalParamNBegin{max_angle}
           \cgalParamDescription{maximum allowed angle deviation in degrees of a segment
             from its initial orientation}
           \cgalParamType{`GeomTraits::FT`}
           \cgalParamDefault{25 degrees}
+        \cgalParamNEnd
+        \cgalParamNBegin{segment_map}
+          \cgalParamDescription{an instance of `SegmentMap` that maps an item from `input_range`
+          to `GeomTraits::Segment_2`}
+          \cgalParamDefault{`SegmentMap()`}
         \cgalParamNEnd
       \cgalNamedParamsEnd
 
@@ -117,10 +118,11 @@ namespace Segments {
     template<typename NamedParameters>
     Angle_regularization_2(
       InputRange& input_range,
-      const NamedParameters& np,
-      const SegmentMap segment_map = SegmentMap()) :
+      const NamedParameters& np) :
     m_input_range(input_range),
-    m_segment_map(segment_map) {
+    m_segment_map(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::segment_map), SegmentMap())),
+    m_num_modified_segments(0) {
 
       CGAL_precondition(
         input_range.size() >= 2);

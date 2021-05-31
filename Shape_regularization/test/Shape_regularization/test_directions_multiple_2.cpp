@@ -41,13 +41,15 @@ void test_directions_multiple_2() {
     CGAL::parameters::
     min_length(min_length_2).
     max_angle(max_angle_2).
-    adjust_directions(false), pmap);
+    adjust_directions(false).
+    point_map(pmap));
   MD open_directions(
     contour, !is_closed,
     CGAL::parameters::
     min_length(min_length_2).
     max_angle(max_angle_2).
-    adjust_directions(false), pmap);
+    adjust_directions(false).
+    point_map(pmap));
 
   const std::size_t num_closed_directions =
     closed_directions.number_of_directions();

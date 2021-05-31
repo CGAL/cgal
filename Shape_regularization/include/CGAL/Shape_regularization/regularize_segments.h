@@ -353,13 +353,6 @@ namespace Segments {
     \tparam NamedParameters
     a sequence of \ref bgl_namedparameters "Named Parameters"
 
-    \tparam SegmentMap
-    a model of `ReadablePropertyMap` whose key type is the value type of the input
-    range and value type is `GeomTraits::Segment_2`
-
-    \tparam GeomTraits
-    a model of `Kernel`
-
     \param input_range
     a const range of input segments
 
@@ -370,14 +363,6 @@ namespace Segments {
     an optional sequence of \ref bgl_namedparameters "Named Parameters"
     among the ones listed below; this parameter can be omitted,
     the default values are then used
-
-    \param segment_map
-    an instance of `SegmentMap`; this parameter can be omitted,
-    the identity map `CGAL::Identity_property_map` is then used
-
-    \param traits
-    an instance of `GeomTraits`; this parameter can be omitted if the traits class
-    can be deduced from the input value type
 
     \cgalNamedParamsBegin
       \cgalParamNBegin{max_angle}
@@ -392,6 +377,19 @@ namespace Segments {
         \cgalParamType{boolean}
         \cgalParamDefault{false}
       \cgalParamNEnd
+      \cgalParamNBegin{segment_map}
+        \cgalParamDescription{a property map that maps an item from `input_range`
+        to `GeomTraits::Segment_2`}
+        \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the input
+        range and value type is `GeomTraits::Segment_2`}
+        \cgalParamDefault{`CGAL::Identity_property_map`}
+      \cgalParamNEnd
+      \cgalParamNBegin{geom_traits}
+        \cgalParamDescription{an instance of geometric traits class}
+        \cgalParamType{a model of `Kernel`}
+        \cgalParamDefault{a CGAL `Kernel` deduced from the point type,
+        using `CGAL::Kernel_traits`}
+      \cgalParamNEnd
     \cgalNamedParamsEnd
 
     \return an output iterator to the element in the destination range,
@@ -403,15 +401,18 @@ namespace Segments {
   template<
   typename InputRange,
   typename OutIterator,
-  typename NamedParameters,
-  typename SegmentMap,
-  typename GeomTraits>
+  typename NamedParameters>
   OutIterator parallel_groups(
     const InputRange& input_range,
     OutIterator groups,
-    const NamedParameters& np,
-    const SegmentMap segment_map,
-    const GeomTraits& traits) {
+    const NamedParameters& np) {
+
+    using SegmentMap = typename internal::GetSegmentMap<InputRange, NamedParameters>::type;
+    using Segment_2 = typename SegmentMap::value_type;
+    using GeomTraits = typename CGAL::Kernel_traits<Segment_2>::Kernel;
+
+    GeomTraits traits;
+    SegmentMap segment_map;
 
     CGAL_precondition(input_range.size() >= 1);
     using Parallel_groups_2 = internal::Parallel_groups_2<
@@ -423,28 +424,6 @@ namespace Segments {
   }
 
   /// \cond SKIP_IN_MANUAL
-  template<
-  typename InputRange,
-  typename OutIterator,
-  typename NamedParameters,
-  typename SegmentMap = CGAL::Identity_property_map<
-  typename std::iterator_traits< typename InputRange::const_iterator >::value_type > >
-  OutIterator parallel_groups(
-    const InputRange& input_range,
-    OutIterator groups,
-    const NamedParameters& np,
-    const SegmentMap segment_map = SegmentMap()) {
-
-    CGAL_precondition(input_range.size() >= 1);
-    using Iterator_type = typename InputRange::const_iterator;
-    using Segment_2 = typename std::iterator_traits<Iterator_type>::value_type;
-    using GeomTraits = typename Kernel_traits<Segment_2>::Kernel;
-    GeomTraits traits;
-
-    return parallel_groups(
-      input_range, groups, np, segment_map, traits);
-  }
-
   template<
   typename InputRange,
   typename OutIterator>
@@ -479,13 +458,6 @@ namespace Segments {
     \tparam NamedParameters
     a sequence of \ref bgl_namedparameters "Named Parameters"
 
-    \tparam SegmentMap
-    a model of `ReadablePropertyMap` whose key type is the value type of the input
-    range and value type is `GeomTraits::Segment_2`
-
-    \tparam GeomTraits
-    a model of `Kernel`
-
     \param input_range
     a const range of input segments
 
@@ -496,14 +468,6 @@ namespace Segments {
     an optional sequence of \ref bgl_namedparameters "Named Parameters"
     among the ones listed below; this parameter can be omitted,
     the default values are then used
-
-    \param segment_map
-    an instance of `SegmentMap`; this parameter can be omitted,
-    the identity map `CGAL::Identity_property_map` is then used
-
-    \param traits
-    an instance of `GeomTraits`; this parameter can be omitted if the traits class
-    can be deduced from the input value type
 
     \cgalNamedParamsBegin
       \cgalParamNBegin{max_offset}
@@ -518,6 +482,19 @@ namespace Segments {
         \cgalParamType{boolean}
         \cgalParamDefault{false}
       \cgalParamNEnd
+      \cgalParamNBegin{segment_map}
+        \cgalParamDescription{a property map that maps an item from `input_range`
+        to `GeomTraits::Segment_2`}
+        \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the input
+        range and value type is `GeomTraits::Segment_2`}
+        \cgalParamDefault{`CGAL::Identity_property_map`}
+      \cgalParamNEnd
+      \cgalParamNBegin{geom_traits}
+        \cgalParamDescription{an instance of geometric traits class}
+        \cgalParamType{a model of `Kernel`}
+        \cgalParamDefault{a CGAL `Kernel` deduced from the point type,
+        using `CGAL::Kernel_traits`}
+      \cgalParamNEnd
     \cgalNamedParamsEnd
 
     \return an output iterator to the element in the destination range,
@@ -529,15 +506,18 @@ namespace Segments {
   template<
   typename InputRange,
   typename OutIterator,
-  typename NamedParameters,
-  typename SegmentMap,
-  typename GeomTraits>
+  typename NamedParameters>
   OutIterator collinear_groups(
     const InputRange& input_range,
     OutIterator groups,
-    const NamedParameters& np,
-    const SegmentMap segment_map,
-    const GeomTraits& traits) {
+    const NamedParameters& np) {
+
+    using SegmentMap = typename internal::GetSegmentMap<InputRange, NamedParameters>::type;
+    using Segment_2 = typename SegmentMap::value_type;
+    using GeomTraits = typename CGAL::Kernel_traits<Segment_2>::Kernel;
+
+    GeomTraits traits;
+    SegmentMap segment_map;
 
     CGAL_precondition(input_range.size() >= 1);
     using Collinear_groups_2 = internal::Collinear_groups_2<
@@ -549,28 +529,6 @@ namespace Segments {
   }
 
   /// \cond SKIP_IN_MANUAL
-  template<
-  typename InputRange,
-  typename OutIterator,
-  typename NamedParameters,
-  typename SegmentMap = CGAL::Identity_property_map<
-  typename std::iterator_traits< typename InputRange::const_iterator >::value_type > >
-  OutIterator collinear_groups(
-    const InputRange& input_range,
-    OutIterator groups,
-    const NamedParameters& np,
-    const SegmentMap segment_map = SegmentMap()) {
-
-    CGAL_precondition(input_range.size() >= 1);
-    using Iterator_type = typename InputRange::const_iterator;
-    using Segment_2 = typename std::iterator_traits<Iterator_type>::value_type;
-    using GeomTraits = typename Kernel_traits<Segment_2>::Kernel;
-    GeomTraits traits;
-
-    return collinear_groups(
-      input_range, groups, np, segment_map, traits);
-  }
-
   template<
   typename InputRange,
   typename OutIterator>
@@ -605,13 +563,6 @@ namespace Segments {
     \tparam NamedParameters
     a sequence of \ref bgl_namedparameters "Named Parameters"
 
-    \tparam SegmentMap
-    a model of `ReadablePropertyMap` whose key type is the value type of the input
-    range and value type is `GeomTraits::Segment_2`
-
-    \tparam GeomTraits
-    a model of `Kernel`
-
     \param input_range
     a const range of input segments
 
@@ -622,14 +573,6 @@ namespace Segments {
     an optional sequence of \ref bgl_namedparameters "Named Parameters"
     among the ones listed below; this parameter can be omitted,
     the default values are then used
-
-    \param segment_map
-    an instance of `SegmentMap`; this parameter can be omitted,
-    the identity map `CGAL::Identity_property_map` is then used
-
-    \param traits
-    an instance of `GeomTraits`; this parameter can be omitted if the traits class
-    can be deduced from the input value type
 
     \cgalNamedParamsBegin
       \cgalParamNBegin{max_angle}
@@ -644,6 +587,19 @@ namespace Segments {
         \cgalParamType{boolean}
         \cgalParamDefault{false}
       \cgalParamNEnd
+      \cgalParamNBegin{segment_map}
+        \cgalParamDescription{a property map that maps an item from `input_range`
+        to `GeomTraits::Segment_2`}
+        \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the input
+        range and value type is `GeomTraits::Segment_2`}
+        \cgalParamDefault{`CGAL::Identity_property_map`}
+      \cgalParamNEnd
+      \cgalParamNBegin{geom_traits}
+        \cgalParamDescription{an instance of geometric traits class}
+        \cgalParamType{a model of `Kernel`}
+        \cgalParamDefault{a CGAL `Kernel` deduced from the point type,
+        using `CGAL::Kernel_traits`}
+      \cgalParamNEnd
     \cgalNamedParamsEnd
 
     \return an output iterator to the element in the destination range,
@@ -655,15 +611,18 @@ namespace Segments {
   template<
   typename InputRange,
   typename OutIterator,
-  typename NamedParameters,
-  typename SegmentMap,
-  typename GeomTraits>
+  typename NamedParameters>
   OutIterator orthogonal_groups(
     const InputRange& input_range,
     OutIterator groups,
-    const NamedParameters& np,
-    const SegmentMap segment_map,
-    const GeomTraits& traits) {
+    const NamedParameters& np) {
+
+    using SegmentMap = typename internal::GetSegmentMap<InputRange, NamedParameters>::type;
+    using Segment_2 = typename SegmentMap::value_type;
+    using GeomTraits = typename CGAL::Kernel_traits<Segment_2>::Kernel;
+
+    GeomTraits traits;
+    SegmentMap segment_map;
 
     CGAL_precondition(input_range.size() >= 1);
     using Orthogonal_groups_2 = internal::Orthogonal_groups_2<
@@ -675,28 +634,6 @@ namespace Segments {
   }
 
   /// \cond SKIP_IN_MANUAL
-  template<
-  typename InputRange,
-  typename OutIterator,
-  typename NamedParameters,
-  typename SegmentMap = CGAL::Identity_property_map<
-  typename std::iterator_traits< typename InputRange::const_iterator >::value_type > >
-  OutIterator orthogonal_groups(
-    const InputRange& input_range,
-    OutIterator groups,
-    const NamedParameters& np,
-    const SegmentMap segment_map = SegmentMap()) {
-
-    CGAL_precondition(input_range.size() >= 1);
-    using Iterator_type = typename InputRange::const_iterator;
-    using Segment_2 = typename std::iterator_traits<Iterator_type>::value_type;
-    using GeomTraits = typename Kernel_traits<Segment_2>::Kernel;
-    GeomTraits traits;
-
-    return orthogonal_groups(
-      input_range, groups, np, segment_map, traits);
-  }
-
   template<
   typename InputRange,
   typename OutIterator>
@@ -730,13 +667,6 @@ namespace Segments {
     \tparam NamedParameters
     a sequence of \ref bgl_namedparameters "Named Parameters"
 
-    \tparam SegmentMap
-    a model of `ReadablePropertyMap` whose key type is the value type of the input
-    range and value type is `GeomTraits::Segment_2`
-
-    \tparam GeomTraits
-    a model of `Kernel`
-
     \param input_range
     a const range of input segments
 
@@ -747,14 +677,6 @@ namespace Segments {
     an optional sequence of \ref bgl_namedparameters "Named Parameters"
     among the ones listed below; this parameter can be omitted,
     the default values are then used
-
-    \param segment_map
-    an instance of `SegmentMap`; this parameter can be omitted,
-    the identity map `CGAL::Identity_property_map` is then used
-
-    \param traits
-    an instance of `GeomTraits`; this parameter can be omitted if the traits class
-    can be deduced from the input value type
 
     \cgalNamedParamsBegin
       \cgalParamNBegin{max_offset}
@@ -769,6 +691,19 @@ namespace Segments {
         \cgalParamType{boolean}
         \cgalParamDefault{false}
       \cgalParamNEnd
+      \cgalParamNBegin{segment_map}
+        \cgalParamDescription{a property map that maps an item from `input_range`
+        to `GeomTraits::Segment_2`}
+        \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the input
+        range and value type is `GeomTraits::Segment_2`}
+        \cgalParamDefault{`CGAL::Identity_property_map`}
+      \cgalParamNEnd
+      \cgalParamNBegin{geom_traits}
+        \cgalParamDescription{an instance of geometric traits class}
+        \cgalParamType{a model of `Kernel`}
+        \cgalParamDefault{a CGAL `Kernel` deduced from the point type,
+        using `CGAL::Kernel_traits`}
+      \cgalParamNEnd
     \cgalNamedParamsEnd
 
     \return an output iterator to the element in the destination range,
@@ -780,15 +715,18 @@ namespace Segments {
   template<
   typename InputRange,
   typename OutIterator,
-  typename NamedParameters,
-  typename SegmentMap,
-  typename GeomTraits>
+  typename NamedParameters>
   OutIterator unique_segments(
     const InputRange& input_range,
     OutIterator segments,
-    const NamedParameters& np,
-    const SegmentMap segment_map,
-    const GeomTraits& traits) {
+    const NamedParameters& np) {
+
+    using SegmentMap = typename internal::GetSegmentMap<InputRange, NamedParameters>::type;
+    using Segment_2 = typename SegmentMap::value_type;
+    using GeomTraits = typename CGAL::Kernel_traits<Segment_2>::Kernel;
+
+    GeomTraits traits;
+    SegmentMap segment_map;
 
     CGAL_precondition(input_range.size() >= 1);
     using Unique_segments_2 = internal::Unique_segments_2<
@@ -800,28 +738,6 @@ namespace Segments {
   }
 
   /// \cond SKIP_IN_MANUAL
-  template<
-  typename InputRange,
-  typename OutIterator,
-  typename NamedParameters,
-  typename SegmentMap = CGAL::Identity_property_map<
-  typename std::iterator_traits< typename InputRange::const_iterator >::value_type > >
-  OutIterator unique_segments(
-    const InputRange& input_range,
-    OutIterator segments,
-    const NamedParameters& np,
-    const SegmentMap segment_map = SegmentMap()) {
-
-    CGAL_precondition(input_range.size() >= 1);
-    using Iterator_type = typename InputRange::const_iterator;
-    using Segment_2 = typename std::iterator_traits<Iterator_type>::value_type;
-    using GeomTraits = typename Kernel_traits<Segment_2>::Kernel;
-    GeomTraits traits;
-
-    return unique_segments(
-      input_range, segments, np, segment_map, traits);
-  }
-
   template<
   typename InputRange,
   typename OutIterator>

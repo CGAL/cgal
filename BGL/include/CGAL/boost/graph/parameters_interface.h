@@ -221,3 +221,4 @@ CGAL_add_named_parameter(regularize_axis_symmetry_t, regularize_axis_symmetry, r
 CGAL_add_named_parameter(symmetry_direction_t, symmetry_direction, symmetry_direction)
 CGAL_add_named_parameter(preserve_order_t, preserve_order, preserve_order)
 CGAL_add_named_parameter(adjust_directions_t, adjust_directions, adjust_directions)
+CGAL_add_named_parameter(segment_t, segment_map, segment_map)

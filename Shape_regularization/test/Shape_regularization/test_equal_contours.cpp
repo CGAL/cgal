@@ -42,12 +42,12 @@ void test_equal_contours() {
   std::vector<Point_2> closed_contour;
   SR::Contours::regularize_closed_contour(
     contour, closed_directions, std::back_inserter(closed_contour),
-    CGAL::parameters::all_default(), pmap);
+    CGAL::parameters::point_map(pmap));
 
   std::vector<Point_2> open_contour;
   SR::Contours::regularize_open_contour(
     contour, open_directions, std::back_inserter(open_contour),
-    CGAL::parameters::all_default(), pmap);
+    CGAL::parameters::point_map(pmap));
 
   assert(closed_contour.size() == 4);
   assert(closed_contour.size() == open_contour.size());

@@ -58,13 +58,6 @@ namespace Contours {
     \tparam NamedParameters
     a sequence of \ref bgl_namedparameters "Named Parameters"
 
-    \tparam PointMap
-    a model of `ReadablePropertyMap` whose key type is the value type of the input
-    range and value type is `GeomTraits::Point_2`
-
-    \tparam GeomTraits
-    a model of `Kernel`
-
     \param input_range
     a const range of ordered points, which form a contour
 
@@ -79,20 +72,25 @@ namespace Contours {
     among the ones listed below; this parameter can be omitted,
     the default values are then used
 
-    \param point_map
-    an instance of `PointMap` that maps an item from input range to `GeomTraits::Point_2`;
-    this parameter can be omitted, the identity map `CGAL::Identity_property_map` is then used
-
-    \param traits
-    an instance of `GeomTraits`; this parameter can be omitted if the traits class
-    can be deduced from the input value type
-
     \cgalNamedParamsBegin
       \cgalParamNBegin{max_offset}
         \cgalParamDescription{maximum allowed orthogonal distance between two parallel
           and consecutive contour edges such that they are considered to be collinear}
         \cgalParamType{`GeomTraits::FT`}
         \cgalParamDefault{0.5 unit length}
+      \cgalParamNEnd
+      \cgalParamNBegin{point_map}
+        \cgalParamDescription{a property map that maps an item from `input_range`
+        to `GeomTraits::Point_2`}
+        \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the input
+        range and value type is `GeomTraits::Point_2`}
+        \cgalParamDefault{`CGAL::Identity_property_map`}
+      \cgalParamNEnd
+      \cgalParamNBegin{geom_traits}
+        \cgalParamDescription{an instance of geometric traits class}
+        \cgalParamType{a model of `Kernel`}
+        \cgalParamDefault{a CGAL `Kernel` deduced from the point type,
+        using `CGAL::Kernel_traits`}
       \cgalParamNEnd
     \cgalNamedParamsEnd
 
@@ -105,16 +103,19 @@ namespace Contours {
   typename InputRange,
   typename ContDirections,
   typename OutIterator,
-  typename NamedParameters,
-  typename PointMap,
-  typename GeomTraits>
+  typename NamedParameters>
   OutIterator regularize_closed_contour(
     const InputRange& input_range,
     const ContDirections& directions,
     OutIterator contour,
-    const NamedParameters& np,
-    const PointMap point_map,
-    const GeomTraits& traits) {
+    const NamedParameters& np) {
+
+    using PointMap = typename CGAL::GetPointMap<InputRange, NamedParameters>::type;
+    using Point_2 = typename PointMap::value_type;
+    using GeomTraits = typename CGAL::Kernel_traits<Point_2>::Kernel;
+
+    GeomTraits traits;
+    PointMap point_map;
 
     CGAL_precondition(input_range.size() >= 3);
     using Contour_regularizer =
@@ -127,30 +128,6 @@ namespace Contours {
   }
 
   /// \cond SKIP_IN_MANUAL
-  template<
-  typename InputRange,
-  typename ContDirections,
-  typename OutIterator,
-  typename NamedParameters,
-  typename PointMap = CGAL::Identity_property_map<
-  typename std::iterator_traits< typename InputRange::const_iterator >::value_type > >
-  OutIterator regularize_closed_contour(
-    const InputRange& input_range,
-    const ContDirections& directions,
-    OutIterator contour,
-    const NamedParameters& np,
-    const PointMap point_map = PointMap()) {
-
-    CGAL_precondition(input_range.size() >= 3);
-    using Iterator_type = typename InputRange::const_iterator;
-    using Point_2 = typename std::iterator_traits<Iterator_type>::value_type;
-    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
-    GeomTraits traits;
-
-    return regularize_closed_contour(
-      input_range, directions, contour, np, point_map, traits);
-  }
-
   template<
   typename InputRange,
   typename ContDirections,
@@ -220,13 +197,6 @@ namespace Contours {
     \tparam NamedParameters
     a sequence of \ref bgl_namedparameters "Named Parameters"
 
-    \tparam PointMap
-    a model of `ReadablePropertyMap` whose key type is the value type of the input
-    range and value type is `GeomTraits::Point_2`
-
-    \tparam GeomTraits
-    a model of `Kernel`
-
     \param input_range
     a const range of ordered points, which form a contour
 
@@ -241,20 +211,25 @@ namespace Contours {
     among the ones listed below; this parameter can be omitted,
     the default values are then used
 
-    \param point_map
-    an instance of `PointMap` that maps an item from input range to `GeomTraits::Point_2`;
-    this parameter can be omitted, the identity map `CGAL::Identity_property_map` is then used
-
-    \param traits
-    an instance of `GeomTraits`; this parameter can be omitted if the traits class
-    can be deduced from the input value type
-
     \cgalNamedParamsBegin
       \cgalParamNBegin{max_offset}
         \cgalParamDescription{maximum allowed orthogonal distance between two parallel
           and consecutive contour edges such that they are considered to be collinear}
         \cgalParamType{`GeomTraits::FT`}
         \cgalParamDefault{0.5 unit length}
+      \cgalParamNEnd
+      \cgalParamNBegin{point_map}
+        \cgalParamDescription{a property map that maps an item from `input_range`
+        to `GeomTraits::Point_2`}
+        \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the input
+        range and value type is `GeomTraits::Point_2`}
+        \cgalParamDefault{`CGAL::Identity_property_map`}
+      \cgalParamNEnd
+      \cgalParamNBegin{geom_traits}
+        \cgalParamDescription{an instance of geometric traits class}
+        \cgalParamType{a model of `Kernel`}
+        \cgalParamDefault{a CGAL `Kernel` deduced from the point type,
+        using `CGAL::Kernel_traits`}
       \cgalParamNEnd
     \cgalNamedParamsEnd
 
@@ -267,16 +242,19 @@ namespace Contours {
   typename InputRange,
   typename ContDirections,
   typename OutIterator,
-  typename NamedParameters,
-  typename PointMap,
-  typename GeomTraits>
+  typename NamedParameters>
   OutIterator regularize_open_contour(
     const InputRange& input_range,
     const ContDirections& directions,
     OutIterator contour,
-    const NamedParameters& np,
-    const PointMap point_map,
-    const GeomTraits& traits) {
+    const NamedParameters& np) {
+
+    using PointMap = typename CGAL::GetPointMap<InputRange, NamedParameters>::type;
+    using Point_2 = typename PointMap::value_type;
+    using GeomTraits = typename CGAL::Kernel_traits<Point_2>::Kernel;
+
+    GeomTraits traits;
+    PointMap point_map;
 
     CGAL_precondition(input_range.size() >= 2);
     using Contour_regularizer =
@@ -289,30 +267,6 @@ namespace Contours {
   }
 
   /// \cond SKIP_IN_MANUAL
-  template<
-  typename InputRange,
-  typename ContDirections,
-  typename OutIterator,
-  typename NamedParameters,
-  typename PointMap = CGAL::Identity_property_map<
-  typename std::iterator_traits< typename InputRange::const_iterator >::value_type > >
-  OutIterator regularize_open_contour(
-    const InputRange& input_range,
-    const ContDirections& directions,
-    OutIterator contour,
-    const NamedParameters& np,
-    const PointMap point_map = PointMap()) {
-
-    CGAL_precondition(input_range.size() >= 2);
-    using Iterator_type = typename InputRange::const_iterator;
-    using Point_2 = typename std::iterator_traits<Iterator_type>::value_type;
-    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
-    GeomTraits traits;
-
-    return regularize_open_contour(
-      input_range, directions, contour, np, point_map, traits);
-  }
-
   template<
   typename InputRange,
   typename ContDirections,

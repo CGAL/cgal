@@ -39,8 +39,7 @@ public:
     once for each neighbor pair being regularized.
   */
   FieldNumberType target(
-    const std::size_t i,
-    const std::size_t j) {
+    const std::size_t i, const std::size_t j) {
 
   }
 
