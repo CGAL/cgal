@@ -138,7 +138,11 @@ public:
   void operator()(PolygonMesh& pmesh,
                   const bool insert_isolated_vertices = true)
   {
-    return operator()(pmesh, get(CGAL::vertex_point, pmesh), insert_isolated_vertices);
+    return operator()(pmesh,
+             get(CGAL::vertex_point, pmesh),
+             CGAL::Emptyset_iterator(),
+             CGAL::Emptyset_iterator(),
+             insert_isolated_vertices);
   }
 
 private:
