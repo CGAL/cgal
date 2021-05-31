@@ -734,7 +734,7 @@ public:
 #endif
   {
     // Call global function
-    CGAL::output_to_medit(os, *this, rebind, show_patches);
+    CGAL::IO::output_to_medit(os, *this, rebind, show_patches);
   }
 
   /*!
@@ -743,7 +743,7 @@ public:
   void output_to_maya(std::ostream& os, bool surfaceOnly = true) const
   {
     // Call global function
-    CGAL::output_to_maya(os, *this, surfaceOnly);
+    CGAL::IO::output_to_maya(os, *this, surfaceOnly);
   }
 
   /// @}
