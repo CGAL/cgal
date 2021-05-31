@@ -16,6 +16,7 @@
 
 #include <CGAL/license/MDS_3.h>
 
+#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/MDS_3/tet_soup_to_c3t3.h>
 
 #include <CGAL/utility.h>
