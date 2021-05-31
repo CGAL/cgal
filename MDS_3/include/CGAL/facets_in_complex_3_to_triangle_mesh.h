@@ -230,7 +230,7 @@ void set_face_patches(const Index2FaceMap& i2f,
       PMP::orient_polygon_soup(points, faces);
     CGAL_postcondition(PMP::is_polygon_soup_a_polygon_mesh(faces));
 
-    boost::unordered_map<int, face_descriptor> i2f;
+    boost::unordered_map<std::size_t, face_descriptor> i2f;
     PMP::polygon_soup_to_polygon_mesh(points, faces, graph,
       CGAL::parameters::polygon_to_face_output_iterator(std::inserter(i2f, i2f.end())));
 
