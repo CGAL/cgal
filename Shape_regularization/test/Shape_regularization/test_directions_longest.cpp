@@ -10,7 +10,6 @@ namespace SR = CGAL::Shape_regularization;
 template<class Traits>
 void test_directions_longest() {
 
-  using FT          = typename Traits::FT;
   using Point_2     = typename Traits::Point_2;
   using Direction_2 = typename Traits::Direction_2;
   using Contour     = std::vector<Point_2>;

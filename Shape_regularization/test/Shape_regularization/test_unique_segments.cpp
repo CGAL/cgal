@@ -14,7 +14,6 @@ void test_unique_segments() {
   using Point_2   = typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
   using Segments  = std::vector<Segment_2>;
-  using Indices   = std::vector<std::size_t>;
   using Saver     = SR::Tests::Saver<Traits>;
 
   Saver saver;

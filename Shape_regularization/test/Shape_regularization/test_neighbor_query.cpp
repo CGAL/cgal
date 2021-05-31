@@ -10,7 +10,6 @@ namespace SR = CGAL::Shape_regularization;
 template<class Traits>
 void test_neighbor_query() {
 
-  using FT        = typename Traits::FT;
   using Point_2   = typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
   using Segments  = std::vector<Segment_2>;

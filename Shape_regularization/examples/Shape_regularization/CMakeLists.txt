@@ -15,7 +15,8 @@ if(CGAL_FOUND)
 
   # Find OSQP library and headers.
   find_package(OSQP QUIET)
-  if(OSQP_FOUND)
+  include(CGAL_OSQP_support)
+  if(TARGET CGAL::OSQP_support)
     message(STATUS "Found OSQP")
 
     set(osqp_targets
@@ -27,8 +28,7 @@ if(CGAL_FOUND)
     foreach(osqp_target ${osqp_targets})
       create_single_source_cgal_program("${osqp_target}.cpp")
       if(TARGET ${osqp_target})
-        target_link_libraries(${osqp_target} PUBLIC ${OSQP_LIBRARIES})
-        target_compile_definitions(${osqp_target} PUBLIC -DCGAL_USE_OSQP)
+        target_link_libraries(${osqp_target} PUBLIC CGAL::OSQP_support)
       endif()
     endforeach()
 
@@ -38,9 +38,7 @@ if(CGAL_FOUND)
     if(TARGET CGAL::Eigen3_support)
       message(STATUS "Found Eigen")
       create_single_source_cgal_program("regularize_real_data_2.cpp")
-      target_link_libraries(regularize_real_data_2 PUBLIC CGAL::Eigen3_support ${OSQP_LIBRARIES})
-      target_compile_definitions(regularize_real_data_2 PUBLIC -DCGAL_USE_OSQP)
-
+      target_link_libraries(regularize_real_data_2 PUBLIC CGAL::Eigen3_support CGAL::OSQP_support)
     else()
       message(STATUS "NOTICE: Eigen was not found. Eigen examples won't be available.")
     endif()

@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
   file.precision(20);
 
   if (!file ||
-    !CGAL::read_xyz_points(
+    !CGAL::IO::read_XYZ(
       file,
       std::back_inserter(points),
       CGAL::parameters::point_map(Point_map()).

@@ -34,7 +34,6 @@ bool has_no_difference(
 template<class Traits>
 void test_segments() {
 
-  using FT        = typename Traits::FT;
   using Point_2   = typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
   using Segments  = std::vector<Segment_2>;

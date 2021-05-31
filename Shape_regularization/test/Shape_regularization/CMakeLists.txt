@@ -15,7 +15,8 @@ if(CGAL_FOUND)
 
   # Find OSQP library and headers.
   find_package(OSQP QUIET)
-  if(OSQP_FOUND)
+  include(CGAL_OSQP_support)
+  if(TARGET CGAL::OSQP_support)
     message(STATUS "Found OSQP")
 
     set(osqp_targets
@@ -32,11 +33,9 @@ if(CGAL_FOUND)
     foreach(osqp_target ${osqp_targets})
       create_single_source_cgal_program("${osqp_target}.cpp")
       if(TARGET ${osqp_target})
-        target_link_libraries(${osqp_target} PUBLIC ${OSQP_LIBRARIES})
-        target_compile_definitions(${osqp_target} PUBLIC -DCGAL_USE_OSQP)
+        target_link_libraries(${osqp_target} PUBLIC CGAL::OSQP_support)
       endif()
     endforeach()
-
   else()
     message(STATUS "NOTICE: OSQP was not found. OSQP tests won't be available.")
   endif()

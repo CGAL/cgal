@@ -145,7 +145,7 @@ void benchmark_qp_segments(
     }
   }
   timer.stop();
-  const double delaunay_time = timer.time();
+  // const double delaunay_time = timer.time();
   timer.reset();
 
   const FT max_angle_2 = FT(10);
@@ -164,7 +164,7 @@ void benchmark_qp_segments(
     }
   }
   timer.stop();
-  const double setup_angle_time = timer.time();
+  // const double setup_angle_time = timer.time();
   timer.reset();
 
   double angle_time = 0.0;
@@ -184,7 +184,7 @@ void benchmark_qp_segments(
   OR offset_regularization(
     segments, CGAL::parameters::max_offset(max_offset_2));
   timer.stop();
-  const double setup_offset_time = timer.time();
+  // const double setup_offset_time = timer.time();
   timer.reset();
 
   timer.start();
@@ -192,7 +192,7 @@ void benchmark_qp_segments(
   angle_regularization.parallel_groups(
     std::back_inserter(pgroups));
   timer.stop();
-  const double init_group_time = timer.time();
+  // const double init_group_time = timer.time();
   timer.reset();
 
   timer.start();
@@ -202,7 +202,7 @@ void benchmark_qp_segments(
     offset_regularization.add_group(pgroup);
   }
   timer.stop();
-  const double add_group_time = timer.time();
+  // const double add_group_time = timer.time();
   timer.reset();
 
   double offset_time = 0.0;
@@ -239,7 +239,7 @@ void benchmark_qp_segments(
   }
 }
 
-int main(int argc, char *argv[]) {
+int main() {
 
   const std::size_t num_iters = 1;
   const std::vector<std::size_t> ns = {

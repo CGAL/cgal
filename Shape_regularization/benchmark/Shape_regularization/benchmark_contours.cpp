@@ -124,7 +124,7 @@ void benchmark_contours(
   timer.start();
   CD closed_directions(contour, true);
   timer.stop();
-  const double longest_closed = timer.time();
+  // const double longest_closed = timer.time();
   timer.reset();
 
   double closed_time = 0.0;
@@ -144,7 +144,7 @@ void benchmark_contours(
   timer.start();
   CD open_directions(contour, false);
   timer.stop();
-  const double longest_open = timer.time();
+  // const double longest_open = timer.time();
   timer.reset();
 
   double open_time = 0.0;
@@ -168,7 +168,7 @@ void benchmark_contours(
     "closed/open): " << closed_time << "/" << open_time << " seconds" << std::endl;
 }
 
-int main(int argc, char *argv[]) {
+int main() {
 
   const std::size_t num_iters = 1;
   const std::vector<std::size_t> ns = {

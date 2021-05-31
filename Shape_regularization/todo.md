@@ -1,7 +1,6 @@
 * Comment the code.
 * Spell check all files.
 * Check memory leaking.
-* Check authors.
 
 * Install OSQP on all testing platforms.
 * Add a 3D version of the QP regularization algorithm.
