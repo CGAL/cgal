@@ -151,15 +151,7 @@ void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
 template <typename Index2FaceMap, typename SurfacePatchRange>
 void set_face_patches(const Index2FaceMap&,
                       const SurfacePatchRange&,
-                      internal_np::Param_not_found&)
-{
-  return;
-}
-
-template <typename Index2FaceMap, typename SurfacePatchRange>
-void set_face_patches(const Index2FaceMap&,
-                      const SurfacePatchRange&,
-                      internal_np::No_property&)
+                      const internal_np::Param_not_found&)
 {
   return;
 }
@@ -169,7 +161,7 @@ template <typename Index2FaceMap,
           typename FacePatchMap>
 void set_face_patches(const Index2FaceMap& i2f,
                       const SurfacePatchRange& patches,
-                      FacePatchMap& fpmap)
+                      const FacePatchMap& fpmap)
 {
   for (auto index_and_face : i2f)
   {
