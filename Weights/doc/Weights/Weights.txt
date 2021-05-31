@@ -182,11 +182,11 @@ The used type of barycentric weights is `Wachspress_weights_2`.
 \subsection Weights_Examples_ProjectionTraits Computing 2D Weights in 3D
 
 If you have a 2D polygon in 3D plane that is not an XY plane, you can still compute
-the 2D weights, however you need to provide a special projection traits class. This example
-shows how to achieve that when using the `Mean_value_weights_2` type of barycentric weights.
-We also show how to use these traits for computing the \ref PkgWeightsRefWachspressWeights "Wachspress weight"
-for 3D points, which are not strictly coplanar. The common plane that is used in this example is
-projectable to the XY plane.
+the 2D weights, however you need to provide a special projection traits class.
+The common plane that is used in this example is projectable to the XY plane. We first
+compute `Mean_value_weights_2` for a 3D polygon in this plane. We then also show how to use
+the projection traits to compute the \ref PkgWeightsRefWachspressWeights "2D Wachspress weight"
+for 3D points, which are not strictly coplanar.
 
 \cgalExample{Weights/projection_traits.cpp}
 
@@ -221,7 +221,7 @@ the mixed Voronoi cells around each mesh vertex.
 
 This little example shows how to use the family of weights which includes multiple types
 of weights in one function. In particular, we show how, by changing an input parameter,
-we converge from the Wachspress weights to the mean value weights.
+we converge from the `Wachspress_weights_2` to the `Mean_value_weights_2`.
 
 \cgalExample{Weights/convergence.cpp}
 

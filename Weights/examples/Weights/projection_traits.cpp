@@ -43,7 +43,7 @@ int main() {
   const Point_3 r3( 0, -1, 1);
   const Point_3 p3( 1,  0, 1.0 + eps);
   const Point_3 q3( 0,  0, 1);
-  std::cout << "3D Wachspress weight: " <<
+  std::cout << "2D Wachspress weight: " <<
     CGAL::Weights::wachspress_weight(t3, r3, p3, q3, ptraits) << std::endl;
   return EXIT_SUCCESS;
 }
