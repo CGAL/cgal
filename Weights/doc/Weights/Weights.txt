@@ -93,13 +93,13 @@ The parameter `traits` with a traits class can be omitted for all functions and 
 if it can be deduced from the input point type.
 
 Several weights in this package have different implementations. One reason to have it is
-explained in section about \ref Weights_Flattening. Another reason is that in different communities
-the same weights are named and computed differently. If one searches for these weights,
-one needs to know all their alternative names, which is tiresome. We provide the most common
-names and implementations of these weights.
+explained in section about \ref Weights_Implementation_Flattening. Another reason is that
+in different communities the same weights are named and computed differently. If one searches
+for these weights, one needs to know all their alternative names, which is tiresome. We provide
+the most common names and implementations of these weights.
 
 
-\subsection Weights_Flattening Flattening
+\subsection Weights_Implementation_Flattening Coplanarity
 
 \cgalFigureBegin{flattening, flattening.svg}
   The non-planar configuration (top) is flattened to the planar configuration (bottom).
@@ -108,23 +108,28 @@ names and implementations of these weights.
 When computing weights for a query point \f$q\f$ with respect to its neighbors
 \f$p_0\f$, \f$p_1\f$, and \f$p_2\f$, the local configuration is a quadrilateral
 [\f$p_0\f$, \f$p_1\f$, \f$p_2\f$, \f$q\f$] or two connected triangles [\f$q\f$, \f$p_0\f$, \f$p_1\f$]
-and [\f$q\f$, \f$p_1\f$, \f$p_2\f$]. When computing 3D weights, these triangles are not
+and [\f$q\f$, \f$p_1\f$, \f$p_2\f$]. When working in 3D, these triangles are not
 necessarily coplanar. When they are not coplanar, they can be made coplanar through the process
 called *flattening* (see the Figure above), however the latter introduces a distortion because the
 weights are computed with respect to the flattened configuration rather than to the original
-non-flat configuration. Certain weights in this package support only flat configurations,
-while other weights support both. The weights, which support non-flat configurations,
-provide the corresponding overloads with 3D points, while other weights support only
-2D point types. For example, \ref PkgWeightsRefCotangentWeights "cotangent weights" support both flat
-and non-flat configurations, while \ref PkgWeightsRefDiscreteHarmonicWeights "discrete harmonic weights"
+non-flat configuration.
+
+Certain weights in this package support only coplanar configurations, while other weights support both.
+The weights, which support non-coplanar configurations, provide the corresponding overloads with 3D points,
+while other weights support only 2D point types. For example, \ref PkgWeightsRefCotangentWeights "cotangent weights"
+support both flat and non-flat configurations, while \ref PkgWeightsRefDiscreteHarmonicWeights "discrete harmonic weights"
 support only flat configurations.
 
-If you still want to compute the 2D weights in 3D, you can either provide your own way to flatten
-the 3D configuration or you can use one of the projection traits available in CGAL as the
-last parameter to the weight function (see \ref Weights_Examples_ProjectionTraits for example).
+If you still want to compute the coplanar weights, such as discrete harmonic weight, in 3D,
+you can either provide your own way to flatten the 3D configuration or you can use one of the projection
+traits available in CGAL as the last parameter to the weight function (see \ref Weights_Examples_ProjectionTraits for example).
+If the two triangles are not exactly coplanar, this projection traits will introduce an error,
+but this error is proportional to how much these triangles differ from the common plane. If the
+non-coplanarity difference between them is due to noise or inexact computations, it won't affect much
+the final computation result.
 
 
-\subsection Weights_Edge_Cases Edge Cases
+\subsection Weights_Implementation_Boundaries Boundaries
 
 None of the weights in this package is defined for query points on the boundaries. The boundary cases include:
 
@@ -179,10 +184,8 @@ The used type of barycentric weights is `Wachspress_weights_2`.
 If you have a 2D polygon in 3D plane that is not an XY plane, you can still compute
 the 2D weights, however you need to provide a special projection traits class. This example
 shows how to achieve that when using the `Mean_value_weights_2` type of barycentric weights.
-
-You can also use such traits when computing
-\ref PkgWeightsRefAnalytic "analytic weights" or
-\ref PkgWeightsRefRegions "weighting regions".
+We also show how to use these traits for computing the Wachspress weight for 3D points, which
+are not strictly coplanar.
 
 \cgalExample{Weights/projection_traits.cpp}
 

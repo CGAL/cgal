@@ -34,6 +34,5 @@ int main() {
     std::cout << "3D x: ";
     std::cout << CGAL::Weights::three_point_family_weight(p0, p1, p2, q0, x) << std::endl;
   }
-
   return EXIT_SUCCESS;
 }
