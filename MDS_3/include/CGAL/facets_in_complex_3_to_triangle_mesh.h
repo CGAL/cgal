@@ -115,24 +115,24 @@ void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
                                    CGAL::to_double(p.z()));
         points.push_back(bp);
         ++inum;
-
-        f[i - 1] = map_entry->second;
       }
 
-      if (export_all_facets)
-      {
-        if ((cell_sdi > opp_sdi) == (s % 2 == 1))
-          std::swap(f[0], f[1]);
-      }
-      else
-      {
-        if (((cell_sdi == sd_index) == (s % 2 == 1)) == normals_point_outside_of_the_subdomain)
-          std::swap(f[0], f[1]);
-      }
-
-      faces.push_back(f);
-      patches.push_back(spi);
+      f[i-1] = map_entry->second;
     }
+
+    if(export_all_facets)
+    {
+      if((cell_sdi > opp_sdi) == (s%2 == 1))
+        std::swap(f[0], f[1]);
+    }
+    else
+    {
+      if(((cell_sdi == sd_index) == (s%2 == 1)) == normals_point_outside_of_the_subdomain)
+        std::swap(f[0], f[1]);
+    }
+
+    faces.push_back(f);
+    patches.push_back(spi);
   }
 }
 
