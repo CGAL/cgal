@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
   const std::string filename = is_default_input ? "data/am.off" : argv[1];
 
   Surface_mesh surface_mesh;
-  if (!CGAL::read_polygon_mesh(filename, surface_mesh, CGAL::parameters::all_default())) {
+  if (!CGAL::IO::read_polygon_mesh(filename, surface_mesh, CGAL::parameters::all_default())) {
     std::cerr << "ERROR: cannot read the input file!" << std::endl;
     return EXIT_FAILURE;
   }

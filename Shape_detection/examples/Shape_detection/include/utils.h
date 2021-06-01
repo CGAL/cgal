@@ -73,8 +73,8 @@ void save_point_regions_2(
   }
 
   std::ofstream out(fullpath);
-  CGAL::set_ascii_mode(out);
-  CGAL::write_PLY_with_properties(
+  CGAL::IO::set_ascii_mode(out);
+  CGAL::IO::write_PLY_with_properties(
     out, pwc,
     CGAL::make_ply_point_writer(PLY_Point_map()),
       std::make_tuple(
@@ -120,8 +120,8 @@ void save_point_regions_3(
   }
 
   std::ofstream out(fullpath);
-  CGAL::set_ascii_mode(out);
-  CGAL::write_PLY_with_properties(
+  CGAL::IO::set_ascii_mode(out);
+  CGAL::IO::write_PLY_with_properties(
     out, pwc,
     CGAL::make_ply_point_writer(PLY_Point_map()),
       std::make_tuple(
@@ -170,8 +170,8 @@ void save_segment_regions_2(
   }
 
   std::ofstream out(fullpath);
-  CGAL::set_ascii_mode(out);
-  CGAL::write_PLY_with_properties(
+  CGAL::IO::set_ascii_mode(out);
+  CGAL::IO::write_PLY_with_properties(
     out, pwc,
     CGAL::make_ply_point_writer(PLY_Point_map()),
       std::make_tuple(
@@ -218,8 +218,8 @@ void save_segment_regions_3(
   }
 
   std::ofstream out(fullpath);
-  CGAL::set_ascii_mode(out);
-  CGAL::write_PLY_with_properties(
+  CGAL::IO::set_ascii_mode(out);
+  CGAL::IO::write_PLY_with_properties(
     out, pwc,
     CGAL::make_ply_point_writer(PLY_Point_map()),
       std::make_tuple(
@@ -314,7 +314,7 @@ void save_polygon_mesh_regions(
       face_color[Face_index(static_cast<size_type>(index))] = color;
     }
   }
-  CGAL::write_PLY(out, polygon_mesh);
+  CGAL::IO::write_PLY(out, polygon_mesh);
 }
 
 } // namespace utils
