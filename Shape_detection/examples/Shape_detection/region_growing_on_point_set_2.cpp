@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
   // Load xyz data either from a local folder or a user-provided file.
   const bool is_default_input = argc > 1 ? false : true;
   std::ifstream in(is_default_input ? "data/point_set_2.xyz" : argv[1]);
-  CGAL::set_ascii_mode(in);
+  CGAL::IO::set_ascii_mode(in);
   if (!in) {
     std::cerr << "ERROR: cannot read the input file!" << std::endl;
     return EXIT_FAILURE;

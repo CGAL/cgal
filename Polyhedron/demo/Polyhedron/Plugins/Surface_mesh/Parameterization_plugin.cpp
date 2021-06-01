@@ -73,7 +73,7 @@ struct Is_selected_property_map{
   Base_face_graph* graph;
   HIndexMap idmap;
   Is_selected_property_map()
-    : is_selected_ptr(NULL), graph(NULL) {}
+    : is_selected_ptr(nullptr), graph(nullptr) {}
   Is_selected_property_map(std::vector<bool>& is_selected,
                            Base_face_graph* graph)
     : is_selected_ptr( &is_selected), graph(graph)
@@ -108,13 +108,13 @@ protected:
   bool eventFilter(QObject *obj, QEvent *ev)
   {
     QGraphicsView* v = qobject_cast<QGraphicsView*>(obj);
-    if(v == NULL) {
+    if(v == nullptr) {
       QWidget* viewport = qobject_cast<QWidget*>(obj);
-      if(viewport == NULL) {
+      if(viewport == nullptr) {
         return false;
       }
       v = qobject_cast<QGraphicsView*>(viewport->parent());
-      if(v == NULL) {
+      if(v == nullptr) {
         return false;
       }
     }
@@ -387,7 +387,7 @@ public:
     connect(ui_widget.nextButton, &QPushButton::clicked, this, &Polyhedron_demo_parameterization_plugin::on_nextButton_pressed);
     addDockWidget(dock_widget);
     dock_widget->setVisible(false);
-    current_uv_item = NULL;
+    current_uv_item = nullptr;
   }
 
   bool applicable(QAction*) const
@@ -436,7 +436,7 @@ public Q_SLOTS:
 
     Q_FOREACH(UVItem* pl, projections)
     {
-      if(pl==NULL || pl != projections[scene->item(id)])
+      if(pl==nullptr || pl != projections[scene->item(id)])
         continue;
       current_uv_item = pl;
       break;
@@ -481,7 +481,7 @@ public Q_SLOTS:
 
     if(projections.empty() || projections.first() == NULL)
     {
-      current_uv_item = NULL;
+      current_uv_item = nullptr;
       dock_widget->setWindowTitle(tr("UVMapping"));
       ui_widget.component_numberLabel->setText(QString("Component :"));
     }
@@ -510,14 +510,14 @@ void Polyhedron_demo_parameterization_plugin::on_prevButton_pressed()
   int id = scene->mainSelectionIndex();
   Q_FOREACH(UVItem* pl, projections)
   {
-    if(pl==NULL
+    if(pl==nullptr
        || pl != projections[scene->item(id)])
       continue;
 
     current_uv_item = pl;
     break;
   }
-  if(current_uv_item == NULL)
+  if(current_uv_item == nullptr)
     return;
   current_uv_item->set_current_component((std::max)(0,current_uv_item->current_component()-1));
   replacePolyline();
@@ -528,14 +528,14 @@ void Polyhedron_demo_parameterization_plugin::on_nextButton_pressed()
   int id = scene->mainSelectionIndex();
   Q_FOREACH(UVItem* pl, projections)
   {
-    if(pl==NULL
+    if(pl==nullptr
        || pl != projections[scene->item(id)])
       continue;
 
     current_uv_item = pl;
     break;
   }
-  if(current_uv_item == NULL)
+  if(current_uv_item == nullptr)
     return;
   current_uv_item->set_current_component((std::min)(current_uv_item->number_of_components()-1,current_uv_item->current_component()+1));
   ui_widget.component_numberLabel->setText(QString("Component : %1/%2").arg(current_uv_item->current_component()+1).arg(current_uv_item->number_of_components()));
@@ -545,7 +545,7 @@ void Polyhedron_demo_parameterization_plugin::on_nextButton_pressed()
 void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterization_method method)
 {
   // get active polyhedron
-  Scene_facegraph_item* poly_item = NULL;
+  Scene_facegraph_item* poly_item = nullptr;
   CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   Q_FOREACH(CGAL::Three::Scene_interface::Item_id id, scene->selectionIndices())
   {
@@ -573,7 +573,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     CGAL::Three::Three::error("Selected item has no valid polyhedron.");
     return;
   }
-  Scene_polyhedron_selection_item* sel_item = NULL;
+  Scene_polyhedron_selection_item* sel_item = nullptr;
   bool is_seamed = false;
   Q_FOREACH(CGAL::Three::Scene_interface::Item_id id, scene->selectionIndices())
   {
@@ -588,7 +588,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   }
 
   if(method == PARAM_OTE &&
-     (sel_item == NULL || sel_item->selected_vertices.empty())) {
+     (sel_item == nullptr || sel_item->selected_vertices.empty())) {
     std::cerr << "\nError: no cones/seam selected; Aborting parameterization." << std::endl;
     return;
   }

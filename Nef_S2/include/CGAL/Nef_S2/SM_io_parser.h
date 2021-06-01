@@ -152,8 +152,8 @@ SM_io_parser(std::ostream& iout, const Base& D)
   en(this->number_of_shalfedges()),
   ln(this->number_of_shalfloops()),
   fn(this->number_of_sfaces())
-{ verbose = (get_mode(out) != CGAL::IO::ASCII &&
-             get_mode(out) != CGAL::IO::BINARY);
+{ verbose = (IO::get_mode(out) != CGAL::IO::ASCII &&
+             IO::get_mode(out) != CGAL::IO::BINARY);
 }
 
 

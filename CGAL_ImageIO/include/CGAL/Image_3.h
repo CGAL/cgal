@@ -19,7 +19,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/array.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/format.hpp>
 #include <boost/unordered_set.hpp>
 #include <CGAL/ImageIO.h>
@@ -81,7 +81,7 @@ class CGAL_IMAGEIO_EXPORT Image_3
 public:
   enum Own { OWN_THE_DATA, DO_NOT_OWN_THE_DATA };
 
-  typedef boost::shared_ptr<_image> Image_shared_ptr;
+  typedef std::shared_ptr<_image> Image_shared_ptr;
   typedef Image_shared_ptr Pointer;
 
 protected:

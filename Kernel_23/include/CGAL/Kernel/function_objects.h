@@ -53,7 +53,7 @@ namespace CommonKernelFunctors {
         return 0;
       } else if(certainly_not(is_zero(vec.y()))){
         return 1;
-      }else if(certainly_not(is_zero(vec.y()))){
+      }else if(certainly_not(is_zero(vec.z()))){
         return 2;
       }
 
@@ -3111,7 +3111,7 @@ namespace CommonKernelFunctors {
     result_type
     operator()(const Iso_rectangle_2& i1, const Iso_rectangle_2& i2) const
     {
-      return ((i1.min)() == (i2.min)()) && ((i1.max)() == (i2.max)());
+      return CGAL_AND((i1.min)() == (i2.min)(), (i1.max)() == (i2.max)());
     }
   };
 
@@ -3138,7 +3138,7 @@ namespace CommonKernelFunctors {
     result_type
     operator()(const Point_3 &p, const Point_3 &q) const
     {
-      return p.x() == q.x() && p.y() == q.y() && p.z() == q.z();
+      return CGAL_AND_3(p.x() == q.x(), p.y() == q.y(), p.z() == q.z());
     }
 
     result_type

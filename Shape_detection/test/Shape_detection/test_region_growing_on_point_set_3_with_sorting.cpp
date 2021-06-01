@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
 
   // Load data.
   std::ifstream in(argc > 1 ? argv[1] : "data/point_set_3.xyz");
-  CGAL::set_ascii_mode(in);
+  CGAL::IO::set_ascii_mode(in);
   assert(in);
 
   const bool with_normal_map = true;

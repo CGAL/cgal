@@ -117,7 +117,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Triangle_3<R> &t)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << t[0] << ' ' << t[1] << ' ' << t[2];
     case IO::BINARY :

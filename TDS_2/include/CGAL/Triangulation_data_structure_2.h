@@ -67,6 +67,22 @@ public:
     typedef Triangulation_data_structure_2<Vb, Fb2>  Other;
   };
 
+  class Face_data {
+    unsigned char conflict_state;
+  public:
+    Face_data() : conflict_state(0) {}
+
+    void clear()            { conflict_state = 0; }
+    void mark_in_conflict() { conflict_state = 1; }
+    void mark_on_boundary() { conflict_state = 2; }
+    void mark_processed()   { conflict_state = 1; }
+
+    bool is_clear()       const { return conflict_state == 0; }
+    bool is_in_conflict() const { return conflict_state == 1; }
+    bool is_on_boundary() const { return conflict_state == 2; }
+    bool processed() const { return conflict_state == 1; }
+  };
+
   typedef Vertex_base                                Vertex;
   typedef Face_base                                  Face;
 
@@ -2097,7 +2113,7 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
 
   size_type n = number_of_vertices();
   size_type m = number_of_full_dim_faces();
-  if(is_ascii(os))  os << n << ' ' << m << ' ' << dimension() << std::endl;
+  if(IO::is_ascii(os))  os << n << ' ' << m << ' ' << dimension() << std::endl;
   else     os << n << m << dimension();
   if (n==0) return;
 
@@ -2112,7 +2128,7 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
     if( ! skip_first){
       // os << v->point();
       os << *v ;
-    if(is_ascii(os))  os << std::endl;
+    if(IO::is_ascii(os))  os << std::endl;
     }
   }
 
@@ -2122,10 +2138,10 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
         V[vit] = inum++;
         // os << vit->point();
         os << *vit;
-        if(is_ascii(os)) os << "\n";
+        if(IO::is_ascii(os)) os << "\n";
     }
   }
-  if(is_ascii(os)) os << "\n";
+  if(IO::is_ascii(os)) os << "\n";
 
   // vertices of the faces
   inum = 0;
@@ -2135,21 +2151,21 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
     F[ib] = inum++;
     for(int j = 0; j < dim ; ++j) {
       os << V[ib->vertex(j)];
-      if(is_ascii(os)) os << " ";
+      if(IO::is_ascii(os)) os << " ";
     }
     os << *ib ;
-    if(is_ascii(os)) os << "\n";
+    if(IO::is_ascii(os)) os << "\n";
   }
-  if(is_ascii(os)) os << "\n";
+  if(IO::is_ascii(os)) os << "\n";
 
   // neighbor pointers of the  faces
   for( Face_iterator it = face_iterator_base_begin();
        it != face_iterator_base_end(); ++it) {
     for(int j = 0; j < dimension()+1; ++j){
       os << F[it->neighbor(j)];
-      if(is_ascii(os))  os << " ";
+      if(IO::is_ascii(os))  os << " ";
     }
-    if(is_ascii(os)) os << "\n";
+    if(IO::is_ascii(os)) os << "\n";
   }
 
   return ;

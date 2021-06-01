@@ -24,7 +24,7 @@ typedef CGAL::Surface_mesh<Point_3> Mesh;
 typedef std::vector<Point_3> PointRange;
 typedef std::vector<std::size_t> Polygon;
 typedef std::vector<Polygon> PolygonRange;
-typedef std::vector<CGAL::Color> ColorRange;
+typedef std::vector<CGAL::IO::Color> ColorRange;
 
 int main(int argc, char** argv)
 {
@@ -38,7 +38,7 @@ int main(int argc, char** argv)
   std::vector<Mesh> meshes;
 
   //testing reading functions.
-  if(!CGAL::read_3MF(filename, meshes))
+  if(!CGAL::IO::read_3MF(filename, meshes))
     return 1;
   for(std::size_t i = 0; i< meshes.size(); ++i)
   {
@@ -86,7 +86,7 @@ int main(int argc, char** argv)
       triangle.push_back(vertex_id_map[vert]);
     }
     triangles.push_back(triangle);
-    colors.push_back(CGAL::Color(255,0,0,255));
+    colors.push_back(CGAL::IO::Color(255,0,0,255));
   }
 
   all_polygons.push_back(triangles);
@@ -113,7 +113,7 @@ int main(int argc, char** argv)
       triangle.push_back(vertex_id_map[vert]);
     }
     triangles.push_back(triangle);
-    colors.push_back(CGAL::Color(0,0,255,255));
+    colors.push_back(CGAL::IO::Color(0,0,255,255));
 
   }
   all_polygons.push_back(triangles);
@@ -125,7 +125,7 @@ int main(int argc, char** argv)
   meshes[0] = sphere;
   meshes[1] = tube;
 
-  CGAL::write_3MF("meshes.3mf", meshes, names);
+  CGAL::IO::write_3MF("meshes.3mf", meshes, names);
 
   std::cout << "OK." << std::endl;
 #endif //CGAL_LINKED_WITH_3MF

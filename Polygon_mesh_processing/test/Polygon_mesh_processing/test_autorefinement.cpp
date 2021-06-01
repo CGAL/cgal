@@ -22,7 +22,7 @@ struct My_visitor :
     : i (new int(0) )
   {}
 
-  boost::shared_ptr<int> i;
+  std::shared_ptr<int> i;
 };
 
 void test(const char* fname, std::size_t nb_polylines, std::size_t total_nb_points,

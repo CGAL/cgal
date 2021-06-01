@@ -366,6 +366,10 @@ test_utilities(const NT& x)
   if (!test_gcd(x,typename AST::Algebraic_category())) return false;
   if (!test_sqrt(x,typename AST::Sqrt())) return false;
 
+  // approximate_sqrt
+  std::cout << "  approximate_sqrt()" << std::endl;
+  if(NT(CGAL::approximate_sqrt(one)) != one) return false;
+
   return true;
 }
 

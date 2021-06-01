@@ -9,7 +9,7 @@ lie on the boundary or on the positive side of the curves. This class
 template provides methods to apply regularized Boolean set-operations and
 few other utility methods. An `Arrangement_2` data structure is
 internally used to represent the point set. The arrangement is
-represented as a doubly-connected edge-list (<span class="textsc">Dcel</span>).
+represented as a doubly-connected edge-list (\dcel).
 
 The `Traits` template-parameter should be instantiated with a
 model of the concept `GeneralPolygonSetTraits_2`. The traits class
@@ -29,7 +29,7 @@ the term <I>polygon</I> instead of general polygon for simplicity hereafter.
 The template parameter `Dcel` should be instantiated with a
 model of the concept `GeneralPolygonSetDcel`. It is instantiated
 by default with the type `Gps_default_dcel<Traits>`. You can override
-this default, with a different <span class="textsc">Dcel</span> class, typically an extension
+this default, with a different \dcel class, typically an extension
 of the `Gps_default_dcel` class template. Overriding the default is
 necessary only if you intend to obtain the underlying internal arrangement
 and process it further.

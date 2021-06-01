@@ -98,7 +98,7 @@ bool find_cycle_in_unweighted_cmap_and_polyhedron() {
   CGAL::Surface_mesh_topology::Path_on_surface<LCC_for_CMap_2> cycle1 = cst1.compute_shortest_non_contractible_cycle_with_base_point(root1);
   for (std::size_t i = 0; i < cycle1.length(); ++i) {
     auto e = cycle1[i];
-    if (e == NULL) {
+    if (e == nullptr) {
       std::cerr << "Fail find_cycle_in_unweighted_cmap_and_polyhedron: NULL dart handle found in cycle1\n";
       return false;
     }
@@ -120,7 +120,7 @@ bool find_cycle_in_unweighted_cmap_and_polyhedron() {
   CGAL::Surface_mesh_topology::Path_on_surface<Polyhedron> cycle2 = cst2.compute_shortest_non_contractible_cycle_with_base_point(*root2);
   for (std::size_t i = 0; i < cycle2.length(); ++i) {
     auto e = cycle2[i];
-    if (e == NULL) {
+    if (e == nullptr) {
       std::cerr << "Fail find_cycle_in_unweighted_cmap_and_polyhedron: NULL dart handle found in cycle\n";
       return false;
     }
@@ -142,7 +142,7 @@ bool edge_width_in_unweighted_polyhedron() {
   CGAL::Surface_mesh_topology::Path_on_surface<Polyhedron> cycle = cst.compute_edge_width();
   for (std::size_t i = 0; i < cycle.length(); ++i) {
     auto e = cycle[i];
-    if (e == NULL) {
+    if (e == nullptr) {
       std::cerr << "Fail edge_width_in_unweighted_polyhedron: NULL dart handle found in cycle\n";
       return false;
     }
@@ -364,7 +364,7 @@ bool unsew_edge_width_repeatedly_in_unweighted_gmap() {
     LCC_for_GMap_2::size_type belong_to_cycle = lcc_gm.get_new_mark();
     for (std::size_t i = 0; i < cycle.length(); ++i) {
       auto e = cycle[i];
-      if (e == NULL) {
+      if (e == nullptr) {
         std::cerr << "Fail unsew_edge_width_repeatedly_in_unweighted_gmap: NULL dart handle found in cycle\n";
         return false;
       }

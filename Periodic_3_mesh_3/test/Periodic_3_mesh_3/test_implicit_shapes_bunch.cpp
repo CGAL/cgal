@@ -244,7 +244,7 @@ int main()
 
     // Output
     std::ofstream medit_file(file_name.c_str());
-    CGAL::output_periodic_mesh_to_medit(medit_file, c3t3);
+    CGAL::IO::output_periodic_mesh_to_medit(medit_file, c3t3);
   }
 
   std::cout << "EXIT SUCCESS" << std::endl;

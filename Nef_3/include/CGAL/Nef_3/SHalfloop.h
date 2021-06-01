@@ -102,7 +102,7 @@ class SHalfloop_base {
  public:
     std::string debug() const
       { std::stringstream os;
-        set_pretty_mode(os);
+        CGAL::IO::set_pretty_mode(os);
         os<<"sl [ "<<circle_<<" ] ";
         return os.str();
       }

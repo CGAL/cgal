@@ -23,7 +23,7 @@ int main(int argc, char** argv)
   const char* filename = (argc > 1) ? argv[1] : "data/pig.off";
 
   Surface_mesh sm;
-  if(!PMP::read_polygon_mesh(filename, sm) || sm.is_empty())
+  if(!PMP::IO::read_polygon_mesh(filename, sm) || sm.is_empty())
   {
     std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;

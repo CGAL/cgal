@@ -5,9 +5,9 @@
 // A face type with a color member variable.
 template <class Refs>
 struct My_face : public CGAL::HalfedgeDS_face_base<Refs> {
-    CGAL::Color color;
+    CGAL::IO::Color color;
     My_face() {}
-    My_face( CGAL::Color c) : color(c) {}
+    My_face( CGAL::IO::Color c) : color(c) {}
 };
 
 // An items type using my face.
@@ -28,8 +28,8 @@ typedef HDS::Face_handle                              Face_handle;
 
 int main() {
     HDS hds;
-    Face_handle f = hds.faces_push_back( Face( CGAL::red()));
-    f->color = CGAL::blue();
-    CGAL_assertion( f->color == CGAL::blue());
+    Face_handle f = hds.faces_push_back( Face( CGAL::IO::red()));
+    f->color = CGAL::IO::blue();
+    CGAL_assertion( f->color == CGAL::IO::blue());
     return 0;
 }

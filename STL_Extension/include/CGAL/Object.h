@@ -24,18 +24,19 @@
 #include <CGAL/config.h>
 #include <CGAL/assertions.h>
 
+#include <iterator>
 #include <typeinfo>
 
 #include <boost/variant.hpp>
 #include <boost/optional.hpp>
 #include <boost/any.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace CGAL {
 
 class Object
 {
-    boost::shared_ptr<boost::any> obj;
+    std::shared_ptr<boost::any> obj;
 
     // returns an any pointer from a variant
     struct Any_from_variant : public boost::static_visitor<boost::any*> {

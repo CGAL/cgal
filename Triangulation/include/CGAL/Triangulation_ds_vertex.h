@@ -112,7 +112,7 @@ template < class TDS >
 std::istream &
 operator>>(std::istream & is, Triangulation_ds_vertex<TDS> &) /* Concept */
 {
-    /*if( is_ascii(is) )
+    /*if( IO::is_ascii(is) )
     {}
     else {}*/
     return is;
@@ -122,7 +122,7 @@ template< class TDS >
 std::ostream &
 operator<<(std::ostream & os, const Triangulation_ds_vertex<TDS> &) /* Concept */
 {
-    /*if( is_ascii(os) )
+    /*if( IO::is_ascii(os) )
     {
         os << '\n';
     }

@@ -283,7 +283,7 @@ void Viewer::doBindings()
                                    back_color.split(",").at(2).toFloat(),
                          1.0f);
   d->spec_power = viewer_settings.value("spec_power", 51.8).toFloat();
-  d->scene = 0;
+  d->scene = nullptr;
   d->projection_is_ortho = false;
   d->cam_sharing = false;
   d->twosides = false;
@@ -776,7 +776,7 @@ void Viewer::turnCameraBy180Degres() {
 
 void Viewer_impl::draw_aux(bool with_names, Viewer* viewer)
 {
-  if(scene == 0)
+  if(scene == nullptr)
     return;
   current_total_pass = viewer->inFastDrawing() ? total_pass/2 : total_pass;
   viewer->setGlPointSize(2.f);
@@ -1398,7 +1398,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
     if(!isOpenGL_4_3())
     {
       std::cerr<<"An OpenGL context of version 4.3 is required for the program ("<<name<<")."<<std::endl;
-      return 0;
+      return nullptr;
     }
     QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_flat.vert", ":/cgal/Polyhedron_3/resources/shader_flat.frag");
     program->setProperty("hasLight", true);
@@ -1421,7 +1421,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
     if(!isOpenGL_4_3())
     {
       std::cerr<<"An OpenGL context of version 4.3 is required for the program ("<<name<<")."<<std::endl;
-      return 0;
+      return nullptr;
     }
     QOpenGLShaderProgram* program = declare_program(name,
                                                     ":/cgal/Polyhedron_3/resources/solid_wireframe_shader.vert",
@@ -1436,7 +1436,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
     if(!isOpenGL_4_3())
     {
       std::cerr<<"An OpenGL context of version 4.3 is required for the program ("<<name<<")."<<std::endl;
-      return 0;
+      return nullptr;
     }
     QOpenGLShaderProgram* program = declare_program(name,
                                                     ":/cgal/Polyhedron_3/resources/no_interpolation_shader.vert",
@@ -1448,7 +1448,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
   }
   default:
     std::cerr<<"ERROR : Program not found."<<std::endl;
-    return 0;
+    return nullptr;
   }
 }
 

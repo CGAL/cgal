@@ -14,7 +14,7 @@
 /// \defgroup PkgMesh2IO I/O Functions
 /// \ingroup PkgMesh2Ref
 /// In addition to the stream extraction and insertion operators for
-/// %CGAL 2D triangulations, the following functions can be used.
+/// \cgal 2D triangulations, the following functions can be used.
 
 /*!
 \addtogroup PkgMesh2Ref
@@ -64,7 +64,7 @@ The package can handle intersecting input constraints  and set no restriction on
 - `CGAL::lloyd_optimize_mesh_2`
 
 \cgalCRPSection{I/O Functions}
-- `CGAL::write_vtu()`
+- `CGAL::IO::write_VTU()`
 
 \cgalCRPSection{Enumerations}
 - `CGAL::Mesh_optimization_return_code`

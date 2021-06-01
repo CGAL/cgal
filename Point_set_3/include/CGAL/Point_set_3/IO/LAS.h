@@ -32,6 +32,8 @@ class Point_set_3;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Read
 
+namespace IO {
+
 namespace internal {
 
 template <typename PointSet, typename PropertyMap>
@@ -158,23 +160,25 @@ template <typename Point, typename Vector>
 bool read_LAS(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set)
 {
   std::ifstream is(fname, std::ios::binary);
-  CGAL::set_mode(is, CGAL::IO::BINARY);
+  CGAL::IO::set_mode(is, CGAL::IO::BINARY);
   return read_LAS(is, point_set);
 }
+
+} // namespace IO
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
 /*!
   \ingroup PkgPointSet3IODeprecated
 
-  \deprecated This function is deprecated since \cgal 5.2,
-              \link PkgPointSet3IO `CGAL::read_LAS()` \endlink should be used instead.
+  \deprecated This function is deprecated since \cgal 5.3,
+              \link PkgPointSet3IO `CGAL::IO::read_LAS()` \endlink should be used instead.
  */
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool read_las_point_set(std::istream& is, ///< input stream.
                                         CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
 {
-  return read_LAS(is, point_set);
+  return IO::read_LAS(is, point_set);
 }
 
 #endif // CGAL_NO_DEPRECATED_CODE
@@ -182,6 +186,8 @@ CGAL_DEPRECATED bool read_las_point_set(std::istream& is, ///< input stream.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
+
+namespace IO {
 
 /*!
   \ingroup PkgPointSet3IOLAS
@@ -390,23 +396,25 @@ bool write_LAS(const std::string& fname,
                CGAL::Point_set_3<Point, Vector>& point_set)
 {
   std::ofstream os(fname, std::ios::binary);
-  CGAL::set_mode(os, CGAL::IO::BINARY);
+  CGAL::IO::set_mode(os, CGAL::IO::BINARY);
   return write_LAS(os, point_set);
 }
+
+} // namespace IO
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
 /*!
   \ingroup PkgPointSet3IODeprecated
 
-  \deprecated This function is deprecated since \cgal 5.2,
-              \link PkgPointSet3IO `CGAL::write_LAS()` \endlink should be used instead.
+  \deprecated This function is deprecated since \cgal 5.3,
+              \link PkgPointSet3IO `CGAL::IO::write_LAS()` \endlink should be used instead.
  */
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool write_las_point_set(std::ostream& os, ///< output stream.
                                          CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set
 {
-  return write_LAS(os, point_set);
+  return IO::write_LAS(os, point_set);
 }
 
 #endif // CGAL_NO_DEPRECATED_CODE

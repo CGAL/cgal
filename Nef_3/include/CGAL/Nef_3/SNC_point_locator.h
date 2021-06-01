@@ -126,7 +126,7 @@ public:
 
   virtual void add_vertex(Vertex_handle) {}
 
-  virtual ~SNC_point_locator() CGAL_NOEXCEPT(CGAL_NO_ASSERTIONS_BOOL)
+  virtual ~SNC_point_locator() noexcept(!CGAL_ASSERTIONS_ENABLED)
   {
     CGAL_NEF_CLOG("");
     CGAL_NEF_CLOG("construction_time:  "<<ct_t.time());
@@ -423,7 +423,7 @@ public:
     return updated;
   }
 
-  virtual ~SNC_point_locator_by_spatial_subdivision() CGAL_NOEXCEPT(CGAL_NO_ASSERTIONS_BOOL)
+  virtual ~SNC_point_locator_by_spatial_subdivision() noexcept(!CGAL_ASSERTIONS_ENABLED)
   {
     CGAL_destructor_warning(initialized ||
                  candidate_provider == 0); // required?
@@ -834,11 +834,11 @@ public:
         //           (e->source() == v  || e->twin()->source() == v)) continue;
         Segment_3 ss(e->source()->point(),e->twin()->source()->point());
         CGAL_NEF_TRACEN("test edge " << e->source()->point() << "->" << e->twin()->source()->point());
-          if(is.does_contain_internally(ss, p) ) {
+        if (is.does_contain_internally(ss, p)) {
         _CGAL_NEF_TRACEN("found on edge "<< ss);
           return make_object(e);
         }
-        if(is.does_intersect_internally(s, ss, ip)) {
+        if((e->source() != v)  && (e->twin()->source() != v) && is.does_intersect_internally(s, ss, ip)) {
           // first = false;
           s = Segment_3(p, normalized(ip));
           result = make_object(e);

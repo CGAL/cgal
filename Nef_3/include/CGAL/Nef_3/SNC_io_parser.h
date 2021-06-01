@@ -1112,8 +1112,8 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
   sln(W.number_of_shalfloops()),
   sfn(W.number_of_sfaces())
 {
-  verbose = (get_mode(out) != CGAL::IO::ASCII &&
-             get_mode(out) != CGAL::IO::BINARY);
+  verbose = (IO::get_mode(out) != CGAL::IO::ASCII &&
+             IO::get_mode(out) != CGAL::IO::BINARY);
   sorted = sort;
   reduce = reduce_;
   reduce = reduce && this->is_extended_kernel() && this->is_bounded();

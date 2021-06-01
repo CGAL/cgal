@@ -112,7 +112,7 @@ public:
     const FT dy = 2*diag;
     const FT z (0);
     const FT fd =  FT(1);
-    SM_Tree *min_sm_tree = NULL;
+    SM_Tree *min_sm_tree = nullptr;
     for( std::size_t t = r.begin(); t != r.end(); ++t)
     {
       int i = static_cast<int>(t%grid_size), j = static_cast<int>(t/grid_size);
@@ -205,7 +205,7 @@ struct PPMAP
 
   Mesh* _mesh;
   PPMAP<Mesh>()
-    :_mesh(NULL){}
+    :_mesh(nullptr){}
   PPMAP<Mesh>(Mesh* mesh)
     :_mesh(mesh)
   {
@@ -613,7 +613,7 @@ public:
       menu->addAction(filterAction);
 
       QMenu *container = new QMenu(tr("Tree level"));
-      QWidgetAction *sliderAction = new QWidgetAction(0);
+      QWidgetAction *sliderAction = new QWidgetAction(nullptr);
       connect(lvlSlider, &QSlider::valueChanged, this,
               [this](){
         invalidateOpenGLBuffers();
@@ -637,7 +637,7 @@ public:
   void compute_bbox() const {}
 
   Scene_aabb_item* clone() const {
-    return 0;
+    return nullptr;
   }
 
   QString toolTip() const {
@@ -665,7 +665,7 @@ public:
       for(CGAL::QGLViewer* v: CGAL::QGLViewer::QGLViewerPool())
       {
         CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
-        if(viewer == NULL)
+        if(viewer == nullptr)
           continue;
         setBuffersInit(viewer, false);
       }
@@ -938,7 +938,7 @@ class Polyhedron_demo_cut_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.90")
 
 public:
-  Polyhedron_demo_cut_plugin() : QObject(), edges_item(0) {
+  Polyhedron_demo_cut_plugin() : QObject(), edges_item(nullptr) {
   }
 
    ~Polyhedron_demo_cut_plugin();
@@ -1054,7 +1054,7 @@ public Q_SLOTS:
   void cut();
   void computeIntersection();
   void reset_edges() {
-    edges_item = 0;
+    edges_item = nullptr;
   }
   void Intersection();
   void SignedFacets();
@@ -1062,7 +1062,7 @@ public Q_SLOTS:
   void UnsignedEdges();
   void resetPlane()
   {
-    plane_item = NULL;
+    plane_item = nullptr;
   }
   void uncheckActions()
   {
@@ -1168,7 +1168,7 @@ void Polyhedron_demo_cut_plugin::init(QMainWindow* mainWindow,
           this, SLOT(UnsignedFacets()));
   connect(actionUnsignedEdges, SIGNAL(triggered()),
           this, SLOT(UnsignedEdges()));
-  plane_item = NULL;
+  plane_item = nullptr;
   Scene* real_scene = static_cast<Scene*>(scene);
     connect(real_scene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)),
             this, SLOT(deleteTrees(CGAL::Three::Scene_item*)));
@@ -1296,7 +1296,7 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
     CGAL::Three::Scene_item* item = scene->item(i);
 
     Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(item);
-    if ( NULL != sm_item )
+    if ( nullptr != sm_item )
       sm_item->setVisible(false);
   }
   //fills the tree maps
@@ -1338,7 +1338,7 @@ void Polyhedron_demo_cut_plugin::SignedFacets() {
   if(edges_item)
   {
     scene->erase(scene->item_id(edges_item));
-    edges_item = NULL;
+    edges_item = nullptr;
   }
   QApplication::restoreOverrideCursor();
 
@@ -1353,7 +1353,7 @@ void Polyhedron_demo_cut_plugin::UnsignedFacets() {
   if(edges_item)
   {
     scene->erase(scene->item_id(edges_item));
-    edges_item = NULL;
+    edges_item = nullptr;
   }
   QApplication::restoreOverrideCursor();
 }
@@ -1367,7 +1367,7 @@ void Polyhedron_demo_cut_plugin::UnsignedEdges() {
   if(edges_item)
   {
     scene->erase(scene->item_id(edges_item));
-    edges_item = NULL;
+    edges_item = nullptr;
   }
   QApplication::restoreOverrideCursor();
 }
@@ -1408,7 +1408,7 @@ void Polyhedron_demo_cut_plugin::computeIntersection()
       const Simple_kernel::Segment_3* inter_seg =
           CGAL::object_cast<Simple_kernel::Segment_3>(&(it->first));
 
-      if ( NULL != inter_seg )
+      if ( nullptr != inter_seg )
         edges_item->edges.push_back(*inter_seg);
     }
   }
