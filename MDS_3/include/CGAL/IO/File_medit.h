@@ -16,7 +16,7 @@
 
 #include <CGAL/license/MDS_3.h>
 
-#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
+#include <CGAL/MDS_3/Mesh_complex_3_in_triangulation_3_fwd.h>
 #include <CGAL/MDS_3/tet_soup_to_c3t3.h>
 
 #include <CGAL/utility.h>
@@ -891,16 +891,16 @@ output_to_medit(std::ostream& os,
   if ( rebind )
   {
     if ( show_patches )
-      MDS_3::output_to_medit<C3T3,true,false>(os,c3t3);
+      CGAL::MDS_3::output_to_medit<C3T3,true,false>(os,c3t3);
     else
-      MDS_3::output_to_medit<C3T3,true,true>(os,c3t3);
+      CGAL::MDS_3::output_to_medit<C3T3,true,true>(os,c3t3);
   }
   else
   {
     if ( show_patches )
-      MDS_3::output_to_medit<C3T3,false,false>(os,c3t3);
+      CGAL::MDS_3::output_to_medit<C3T3,false,false>(os,c3t3);
     else
-      MDS_3::output_to_medit<C3T3,false,true>(os,c3t3);
+      CGAL::MDS_3::output_to_medit<C3T3,false,true>(os,c3t3);
   }
 }
 
