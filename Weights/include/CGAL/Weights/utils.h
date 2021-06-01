@@ -57,7 +57,7 @@ namespace Weights {
     \ingroup PkgWeightsRefTangents
 
     \brief computes the tangent of the angle between the vectors `[q, r]` and `[q, p]`
-    using the 2D points `p`, `q` and `r`, which are parameterized by a `Kernel` K.
+    using the 2D points `p`, `q` and `r` which are parameterized by a `Kernel` K.
   */
   template<typename K>
   typename K::FT tangent(
@@ -69,7 +69,7 @@ namespace Weights {
     \ingroup PkgWeightsRefTangents
 
     \brief computes the tangent of the angle between the vectors `[q, r]` and `[q, p]`
-    using the 3D points `p`, `q` and `r`, which are parameterized by a `Kernel` K.
+    using the 3D points `p`, `q` and `r` which are parameterized by a `Kernel` K.
   */
   template<typename K>
   typename K::FT tangent(
@@ -109,7 +109,7 @@ namespace Weights {
     \ingroup PkgWeightsRefCotangents
 
     \brief computes the cotangent of the angle between the vectors `[q, r]` and `[q, p]`
-    using the 2D points `p`, `q` and `r`, which are parameterized by a `Kernel` K.
+    using the 2D points `p`, `q` and `r` which are parameterized by a `Kernel` K.
   */
   template<typename K>
   typename K::FT cotangent(
@@ -121,7 +121,7 @@ namespace Weights {
     \ingroup PkgWeightsRefCotangents
 
     \brief computes the cotangent of the angle between the vectors `[q, r]` and `[q, p]`
-    using the 3D points `p`, `q` and `r`, which are parameterized by a `Kernel` K.
+    using the 3D points `p`, `q` and `r` which are parameterized by a `Kernel` K.
   */
   template<typename K>
   typename K::FT cotangent(

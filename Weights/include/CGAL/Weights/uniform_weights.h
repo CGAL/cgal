@@ -55,7 +55,7 @@ namespace Weights {
   /*!
     \ingroup PkgWeightsRefUniformWeights
 
-    \brief this function always returns 1, given four points in 2D, which are
+    \brief this function always returns 1, given four points in 2D which are
     parameterized by a `Kernel` K.
   */
   template<typename K>
@@ -68,7 +68,7 @@ namespace Weights {
   /*!
     \ingroup PkgWeightsRefUniformWeights
 
-    \brief this function always returns 1, given four points in 3D, which are
+    \brief this function always returns 1, given four points in 3D which are
     parameterized by a `Kernel` K.
   */
   template<typename K>

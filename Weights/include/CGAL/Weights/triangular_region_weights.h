@@ -54,7 +54,7 @@ namespace Weights {
     \ingroup PkgWeightsRefTriangularRegionWeights
 
     \brief computes the area of the triangular cell in 2D using the points `p`, `q`
-    and `r`, which are parameterized by a `Kernel` K.
+    and `r` which are parameterized by a `Kernel` K.
   */
   template<typename K>
   typename K::FT triangular_area(
@@ -66,7 +66,7 @@ namespace Weights {
     \ingroup PkgWeightsRefTriangularRegionWeights
 
     \brief computes the area of the triangular cell in 3D using the points `p`, `q`
-    and `r`, which are parameterized by a `Kernel` K.
+    and `r` which are parameterized by a `Kernel` K.
   */
   template<typename K>
   typename K::FT triangular_area(

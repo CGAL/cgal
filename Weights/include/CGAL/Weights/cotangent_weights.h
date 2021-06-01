@@ -93,7 +93,7 @@ namespace Weights {
     \ingroup PkgWeightsRefCotangentWeights
 
     \brief computes the cotangent weight in 2D at `q` using the points `p0`, `p1`,
-    and `p2`, which are parameterized by a `Kernel` K.
+    and `p2` which are parameterized by a `Kernel` K.
   */
   template<typename K>
   typename K::FT cotangent_weight(
@@ -106,7 +106,7 @@ namespace Weights {
     \ingroup PkgWeightsRefCotangentWeights
 
     \brief computes the cotangent weight in 3D at `q` using the points `p0`, `p1`,
-    and `p2`, which are parameterized by a `Kernel` K.
+    and `p2` which are parameterized by a `Kernel` K.
   */
   template<typename K>
   typename K::FT cotangent_weight(

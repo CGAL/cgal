@@ -12,17 +12,17 @@ namespace Weights {
 
 Many geometric algorithms rely on the intermediate computation of scalars, so-called *weights*,
 which are then used for solving different linear systems or to favor one result over another,
-so-called *weighting*. This package provides a simple and unified interface
+also known as *weighting*. This package provides a simple and unified interface
 to different types of weights.
 
-A typical example of a geometric algorithm that requires weights is a *Laplace smoothing*
+A typical example of a geometric algorithm that requires weights is the *Laplace smoothing*
 of a triangle mesh:
 
 \f$v_i \leftarrow v_i + h \lambda\Delta v_i\f$,
 
-where \f$v_i\f$ is a position of the mesh vertex \f$i\f$, \f$h\f$ is a sufficiently
-small time step, \f$\lambda\f$ is a scalar diffusion coefficient, and \f$\Delta v_i\f$
-is a discrete average of the *Laplace-Beltrami operator* at vertex \f$v_i\f$ computed
+where \f$v_i\f$ is the position of the mesh vertex \f$i\f$, \f$h\f$ is a sufficiently
+small time step, \f$\lambda\f$ is the scalar diffusion coefficient, and \f$\Delta v_i\f$
+is the discrete average of the *Laplace-Beltrami operator* at vertex \f$v_i\f$ computed
 using the *cotangent weights*:
 
 \f$\Delta v_i = w_i\sum_{v_j \in N_1(v_i)} w_{ij} (v_j - v_i)\f$,
@@ -34,12 +34,12 @@ Here, the weights \f$w_{ij}\f$ can be computed using the
 \ref PkgWeightsRefCotangentWeights "cotangent weight" and the
 local averaging domain can be computed using the
 \ref PkgWeightsRefMixedVoronoiRegionWeights "mixed Voronoi region weight". The
-algorithm above smooths the mesh geometry that leads to a smoother version of the
+algorithm above smooths the mesh geometry, resulting in a higher quality version of the
 original mesh. The full example of the discretized *Laplacian* for all vertices
 of a triangle mesh can be found \ref Weights_Examples_WeightedLaplacian "here".
 
 There are many other scenarios where the weights from this package are used. In particular,
-the following \cgal packages depend on this package:
+the following \cgal packages make use of weights described in this package:
 \ref PkgBarycentricCoordinates2 "2D Generalized Barycentric Coordinates",
 \ref PkgPolygonMeshProcessing "Polygon Mesh Processing",
 \ref PkgSurfaceMeshDeformation "Triangulated Surface Mesh Deformation",
@@ -57,31 +57,31 @@ three typical groups of weights:
 
 - \ref PkgWeightsRefAnalytic "Analytic Weights"
 include all basic weights which can be computed for a query point with respect to its local
-neighbors in 2D or 3D, whatever way these neighbors are defined. Usually, the configuration is
+neighbors in 2D or 3D, however these neighbors are defined. Usually, the configuration is
 a query point and three other points. These weights return one unique value per query point.
 - \ref PkgWeightsRefBarycentric "Barycentric Weights"
 include all weights which can be computed for a query point with respect to the vertices
-of a polygon in XY or any other plane. These weights return \f$n\f$ values per query
+of a planar polygon. These weights return \f$n\f$ values per query
 point, where \f$n\f$ is the number of polygon vertices. Barycentric weights are also used
 for computing \ref PkgBarycentricCoordinates2 "2D barycentric coordinates".
 - \ref PkgWeightsRefRegions "Weighting Regions"
 include all weights which are used to balance other weights but are rarely used on their own.
-Sometimes, such weights are referred as *local averaging regions*. These weights are usually
-lengths, areas, and volumes of 2D and 3D objects.
+Sometimes, such weights are also referred to as *local averaging regions*. These weights
+are usually lengths, areas, and volumes of 2D and 3D objects.
 
 
 \section Weights_Implementation Implementation
 
-All weights have a simple and unified interface. In particular, all analytic weights take
-a query point and three other points in 2D or 3D and return a unique scalar. They all
+All weight functions have a simple and unified interface. In particular, all analytic weight functions
+usually take a query point and three other points in 2D or 3D and return a unique scalar. They all
 have the same signature and are parameterized by a traits class that must be a model of
 `AnalyticWeightTraits_2` for 2D computations or `AnalyticWeightTraits_3` for 3D computations.
 
-The barycentric weights are parameterized by a traits class of the concept
-`AnalyticWeightTraits_2` and are all models of the concept `BarycentricWeights_2`.
+The barycentric weight functions are parameterized by a traits class of the concept
+`AnalyticWeightTraits_2` and they are all models of the concept `BarycentricWeights_2`.
 They take an input polygon and a query point and compute the weights at this point
-with respect to all vertices of the polygon. The weights are then returned in a
-container providing the corresponding output iterator. These weights also provide a
+with respect to all vertices of the polygon. The computed weights are then returned in a
+container providing the corresponding output iterator. These weight functions also provide a
 \ref PkgPropertyMap "property map" mechanism for mapping a user type of the polygon
 vertex to `CGAL::Point_2`.
 
@@ -89,13 +89,13 @@ All weighting regions have the same signature and are parameterized by a traits 
 of the concept `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`. The returned weight
 is a unique scalar.
 
-The parameter `traits` with a traits class can be omitted for all functions and classes
-if it can be deduced from the input point type.
+The `traits` parameter can be omitted for all functions and classes if it can be deduced
+from the input point type using `CGAL::Kernel_traits`.
 
 Several weights in this package have different implementations. One reason to have it is
 explained in section about \ref Weights_Implementation_Coplanarity. Another reason is that
-in different communities the same weights are named and computed differently. If one searches
-for these weights, one needs to know all their alternative names, which is tiresome. We provide
+the same weights are named and computed differently in different communities. If one searches
+for these weights, one needs to know all their alternative names which is problematic. We provide
 the most common names and implementations of these weights.
 
 
@@ -108,7 +108,7 @@ and [\f$q\f$, \f$p_1\f$, \f$p_2\f$]. When working in 3D, these triangles are not
 necessarily coplanar, in other words, they do not belong to the same common plane.
 
 Certain weights in this package support only coplanar configurations, while other weights support both.
-The weights, which support non-coplanar configurations, provide the corresponding overloads with 3D points,
+The weights which support non-coplanar configurations, provide the corresponding overloads with 3D points,
 while other weights accept only 2D point types. For example, \ref PkgWeightsRefCotangentWeights "cotangent weights"
 support both coplanar and non-coplanar configurations, while \ref PkgWeightsRefDiscreteHarmonicWeights "discrete harmonic weights"
 support only coplanar configurations.
@@ -116,13 +116,13 @@ support only coplanar configurations.
 
 \subsection Weights_Implementation_Boundaries Boundaries
 
-None of the weights in this package is defined for query points on the boundaries. The boundary cases include:
+None of the weights in this package are defined for query points on boundaries. The boundary cases include:
 
 - *edges*, for example [\f$p_0\f$, \f$p_1\f$] or [\f$p_1\f$, \f$p_2\f$] or any polygon edge and
 - *corners*, for example \f$p_0\f$, \f$p_1\f$, or \f$p_2\f$ or any polygon corner.
 
-Several weights also require other conditions to be satisifed. You should address the
-reference manual for more details.
+Several weights also require additional conditions to be satisifed. Consult the reference
+manual for more details.
 
 
 \section Weights_Examples Examples

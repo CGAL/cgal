@@ -7,14 +7,13 @@ namespace Weights {
 \defgroup PkgWeightsRefConcepts Concepts
 \ingroup PkgWeightsRef
 
-Concepts, which are used to parameterize/define the functions and classes
-from `CGAL::Weights`.
+Concepts which are used to parameterize and define the functions and classes of this package.
 
 
 \defgroup PkgWeightsRefAnalytic Analytic Weights
 \ingroup PkgWeightsRef
 
-Models and functions that can be used to compute weights, which have a simple analytic expression.
+Models and functions that can be used to compute weights which have a simple analytic expression.
 
 
 \defgroup PkgWeightsRefUniformWeights Uniform Weight
@@ -25,8 +24,6 @@ This weight is always equal to 1.
 \tparam GeomTraits
 a model of `AnalyticWeightTraits_2` for 2D points;
 a model of `AnalyticWeightTraits_3` for 3D points
-
-\note The type `FT` is a model of `FieldNumberType`.
 
 \addtogroup PkgWeightsRefAnalytic
 
@@ -53,7 +50,6 @@ a model of `AnalyticWeightTraits_2` for 2D points;
 a model of `AnalyticWeightTraits_3` for 3D points
 
 \pre d != 0
-\note The type `FT` is a model of `FieldNumberType`.
 
 \addtogroup PkgWeightsRefAnalytic
 
@@ -74,14 +70,13 @@ Alternative formulations are explained in \ref Weights_Implementation.
 \cgalFigureEnd
 
 \cgalHeading{Alternative Formulations}
-- This weight is a special case of the \ref PkgWeightsRefShepardWeights "Shepard Weight".
+This weight is a special case of the \ref PkgWeightsRefShepardWeights "Shepard Weight".
 
 \tparam GeomTraits
 a model of `AnalyticWeightTraits_2` for 2D points;
 a model of `AnalyticWeightTraits_3` for 3D points
 
 \pre d != 0
-\note The type `FT` is a model of `FieldNumberType`.
 
 \addtogroup PkgWeightsRefAnalytic
 
@@ -94,7 +89,7 @@ This weight is computed as
 with notations shown in the figure below and \f$a\f$ any real number
 being the power parameter.
 
-Here, `q` is a query point and the points `p0`, `p1`, and `p2` are ordered.
+Here, `q` is a query point and the points `p0`, `p1`, and `p2` are its neighbors.
 
 This weight supports only planar configurations (see more in section about \ref Weights_Implementation_Coplanarity)
 while alternative formulations are explained in \ref Weights_Implementation.
@@ -119,7 +114,6 @@ a model of `AnalyticWeightTraits_2` for 2D points;
 a model of `AnalyticWeightTraits_3` for 3D points
 
 \pre A1 != 0 && A2 != 0
-\note The type `FT` is a model of `FieldNumberType`.
 
 \addtogroup PkgWeightsRefAnalytic
 
@@ -131,7 +125,7 @@ This weight is computed as
 \f$w = \frac{C}{A_1 A_2}\f$
 with notations shown in the figure below.
 
-Here, `q` is a query point and the points `p0`, `p1`, and `p2` are ordered.
+Here, `q` is a query point and the points `p0`, `p1`, and `p2` are its neighbors.
 
 This weight supports only planar configurations (see more in section about \ref Weights_Implementation_Coplanarity)
 while alternative formulations are explained in \ref Weights_Implementation.
@@ -149,7 +143,6 @@ a model of `AnalyticWeightTraits_2` for 2D points;
 a model of `AnalyticWeightTraits_3` for 3D points
 
 \pre A1 != 0 && A2 != 0
-\note The type `FT` is a model of `FieldNumberType`.
 
 \addtogroup PkgWeightsRefAnalytic
 
@@ -161,7 +154,7 @@ This weight is computed as
 \f$w = 2 \frac{\cot\beta + \cot\gamma}{d^2}\f$
 with notations shown in the figure below.
 
-Here, `q` is a query point and the points `p0`, `p1`, and `p2` are ordered.
+Here, `q` is a query point and the points `p0`, `p1`, and `p2` are its neighbors.
 
 Alternative formulations are explained in \ref Weights_Implementation.
 
@@ -178,7 +171,6 @@ a model of `AnalyticWeightTraits_2` for 2D points;
 a model of `AnalyticWeightTraits_3` for 3D points
 
 \pre d != 0
-\note The type `FT` is a model of `FieldNumberType`.
 
 \addtogroup PkgWeightsRefAnalytic
 
@@ -196,7 +188,7 @@ with notations shown in the figure below and dot products
 
 The \f$\pm\f$ sign is a sign of the weight that depends on the configuration.
 
-Here, `q` is a query point and the points `p0`, `p1`, and `p2` are ordered.
+Here, `q` is a query point and the points `p0`, `p1`, and `p2` are its neighbors.
 
 This weight supports only planar configurations (see more in section about \ref Weights_Implementation_Coplanarity)
 while alternative formulations are explained in \ref Weights_Implementation.
@@ -214,7 +206,6 @@ a model of `AnalyticWeightTraits_2` for 2D points;
 a model of `AnalyticWeightTraits_3` for 3D points
 
 \pre (d * d1 + D1) != 0 && (d * d2 + D2) != 0
-\note The type `FT` is a model of `FieldNumberType`.
 
 \addtogroup PkgWeightsRefAnalytic
 
@@ -231,7 +222,7 @@ with notations shown in the figure below and dot products
 \f$D_1 = (p_0 - q) \cdot (p_1 - q)\f$ and
 \f$D_2 = (p_1 - q) \cdot (p_2 - q)\f$.
 
-Here, `q` is a query point and the points `p0`, `p1`, and `p2` are ordered.
+Here, `q` is a query point and the points `p0`, `p1`, and `p2` are its neighbors.
 
 Alternative formulations are explained in \ref Weights_Implementation.
 
@@ -248,7 +239,6 @@ a model of `AnalyticWeightTraits_2` for 2D points;
 a model of `AnalyticWeightTraits_3` for 3D points
 
 \pre (d * d1 + D1) != 0 && (d * d2 + D2) != 0 && d != 0
-\note The type `FT` is a model of `FieldNumberType`.
 
 \addtogroup PkgWeightsRefAnalytic
 
@@ -260,7 +250,7 @@ This weight is computed as
 \f$w = \frac{d_2^2 A_1 - d^2 B + d_1^2 A_2}{A_1 A_2}\f$
 with notations shown in the figure below.
 
-Here, `q` is a query point and the points `p0`, `p1`, and `p2` are ordered.
+Here, `q` is a query point and the points `p0`, `p1`, and `p2` are its neighbors.
 
 This weight supports only planar configurations (see more in section about \ref Weights_Implementation_Coplanarity)
 while alternative formulations are explained in \ref Weights_Implementation.
@@ -278,7 +268,6 @@ a model of `AnalyticWeightTraits_2` for 2D points;
 a model of `AnalyticWeightTraits_3` for 3D points
 
 \pre A1 != 0 && A2 != 0
-\note The type `FT` is a model of `FieldNumberType`.
 
 \addtogroup PkgWeightsRefAnalytic
 
@@ -290,7 +279,7 @@ This weight is computed as
 \f$w = 2 (\cot\beta + \cot\gamma)\f$
 with notations shown in the figure below.
 
-Here, `q` is a query point and the points `p0`, `p1`, and `p2` are ordered.
+Here, `q` is a query point and the points `p0`, `p1`, and `p2` are its neighbors.
 
 Alternative formulations are explained in \ref Weights_Implementation.
 
@@ -306,8 +295,6 @@ Alternative formulations are explained in \ref Weights_Implementation.
 a model of `AnalyticWeightTraits_2` for 2D points;
 a model of `AnalyticWeightTraits_3` for 3D points
 
-\note The type `FT` is a model of `FieldNumberType`.
-
 \addtogroup PkgWeightsRefAnalytic
 
 
@@ -321,7 +308,7 @@ to polygons. These weights are then normalized in order to obtain barycentric co
 \defgroup PkgWeightsRefBarycentricWachspressWeights Wachspress Weights
 \ingroup PkgWeightsRefBarycentric
 
-Wachspress weights, which can be computed for a query point with respect to the
+Wachspress weights which can be computed for a query point with respect to the
 vertices of a strictly convex polygon.
 
 \addtogroup PkgWeightsRefBarycentric
@@ -330,7 +317,7 @@ vertices of a strictly convex polygon.
 \defgroup PkgWeightsRefBarycentricMeanValueWeights Mean Value Weights
 \ingroup PkgWeightsRefBarycentric
 
-Mean value weights, which can be computed for a query point with respect to the
+Mean value weights which can be computed for a query point with respect to the
 vertices of a simple polygon.
 
 \addtogroup PkgWeightsRefBarycentric
@@ -339,7 +326,7 @@ vertices of a simple polygon.
 \defgroup PkgWeightsRefBarycentricDiscreteHarmonicWeights Discrete Harmonic Weights
 \ingroup PkgWeightsRefBarycentric
 
-Discrete Harmonic weights, which can be computed for a query point with respect to the
+Discrete Harmonic weights which can be computed for a query point with respect to the
 vertices of a strictly convex polygon.
 
 \addtogroup PkgWeightsRefBarycentric
@@ -361,8 +348,6 @@ This weight is always equal to 1.
 a model of `AnalyticWeightTraits_2` for 2D points;
 a model of `AnalyticWeightTraits_3` for 3D points
 
-\note The type `FT` is a model of `FieldNumberType`.
-
 \addtogroup PkgWeightsRefRegions
 
 
@@ -379,8 +364,6 @@ the triangle `[p, q, r]`.
 \tparam GeomTraits
 a model of `AnalyticWeightTraits_2` for 2D points;
 a model of `AnalyticWeightTraits_3` for 3D points
-
-\note The type `FT` is a model of `FieldNumberType`.
 
 \addtogroup PkgWeightsRefRegions
 
@@ -400,8 +383,6 @@ the triangle `[p, q, r]`.
 a model of `AnalyticWeightTraits_2` for 2D points;
 a model of `AnalyticWeightTraits_3` for 3D points
 
-\note The type `FT` is a model of `FieldNumberType`.
-
 \addtogroup PkgWeightsRefRegions
 
 
@@ -419,8 +400,6 @@ the triangle `[p, q, r]`.
 \tparam GeomTraits
 a model of `AnalyticWeightTraits_2` for 2D points;
 a model of `AnalyticWeightTraits_3` for 3D points
-
-\note The type `FT` is a model of `FieldNumberType`.
 
 \sa \ref PkgWeightsRefMixedVoronoiRegionWeights "Mixed Voronoi Region Weight"
 
@@ -451,8 +430,6 @@ the figure below.
 a model of `AnalyticWeightTraits_2` for 2D points;
 a model of `AnalyticWeightTraits_3` for 3D points
 
-\note The type `FT` is a model of `FieldNumberType`.
-
 \sa \ref PkgWeightsRefVoronoiRegionWeights "Voronoi Region Weight"
 
 \addtogroup PkgWeightsRefRegions
@@ -461,7 +438,7 @@ a model of `AnalyticWeightTraits_3` for 3D points
 \defgroup PkgWeightsRefUtils Utility Functions
 \ingroup PkgWeightsRef
 
-Different related utility functions.
+Various related utility functions.
 
 
 \defgroup PkgWeightsRefTangents Tangent
@@ -473,8 +450,6 @@ the angle `[p, q, r]` in 2D or 3D.
 \tparam GeomTraits
 a model of `AnalyticWeightTraits_2` for 2D points;
 a model of `AnalyticWeightTraits_3` for 3D points
-
-\note The type `FT` is a model of `FieldNumberType`.
 
 \addtogroup PkgWeightsRefUtils
 
@@ -488,8 +463,6 @@ the angle `[p, q, r]` in 2D or 3D.
 \tparam GeomTraits
 a model of `AnalyticWeightTraits_2` for 2D points;
 a model of `AnalyticWeightTraits_3` for 3D points
-
-\note The type `FT` is a model of `FieldNumberType`.
 
 \addtogroup PkgWeightsRefUtils
 
@@ -510,7 +483,7 @@ weights, and weighting regions. All weights are available both in 2D and 3D.}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
-\cgalPkgSince{5.3}
+\cgalPkgSince{5.4}
 \cgalPkgBib{cgal:a-wi}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo, polyhedron_3.zip}

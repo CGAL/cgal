@@ -79,7 +79,7 @@ namespace Weights {
     \ingroup PkgWeightsRefThreePointFamilyWeights
 
     \brief computes the three-point family weight in 2D at `q` using the points `p0`, `p1`,
-    and `p2`, which are parameterized by a `Kernel` K, and the power parameter `a`, which
+    and `p2` which are parameterized by a `Kernel` K, and the power parameter `a` which
     can be omitted.
   */
   template<typename K>

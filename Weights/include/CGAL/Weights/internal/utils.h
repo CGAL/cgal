@@ -454,7 +454,7 @@ namespace internal {
   // The common plane that is used in this example is projectable to the XY plane. We first
   // compute `Mean_value_weights_2` for a 3D polygon in this plane. We then also show how to use
   // the projection traits to compute the \ref PkgWeightsRefWachspressWeights "2D Wachspress weight"
-  // for 3D points, which are not strictly coplanar.
+  // for 3D points which are not strictly coplanar.
 
   // \cgalExample{Weights/projection_traits.cpp}
 
@@ -470,7 +470,7 @@ namespace internal {
   // e.g. 0 - Wachspress (WP) weight.
   // const FT wp = FT(0);
 
-  // Compute WP weights for q1, which is not on the plane [p0, p1, p2].
+  // Compute WP weights for q1 which is not on the plane [p0, p1, p2].
 
   // Point_3 q1(3, 1, 2);
   // std::cout << "3D wachspress (WP, q1): ";

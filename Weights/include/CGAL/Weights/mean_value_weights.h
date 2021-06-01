@@ -97,7 +97,7 @@ namespace Weights {
     \ingroup PkgWeightsRefMeanValueWeights
 
     \brief computes the mean value weight in 2D at `q` using the points `p0`, `p1`,
-    and `p2`, which are parameterized by a `Kernel` K.
+    and `p2` which are parameterized by a `Kernel` K.
   */
   template<typename K>
   typename K::FT mean_value_weight(
@@ -196,7 +196,7 @@ namespace Weights {
     \brief 2D mean value weights for polygons.
 
     This class implements 2D mean value weights ( \cite cgal:bc:hf-mvcapp-06,
-    \cite cgal:bc:fhk-gcbcocp-06, \cite cgal:f-mvc-03 ), which can be computed
+    \cite cgal:bc:fhk-gcbcocp-06, \cite cgal:f-mvc-03 ) which can be computed
     at any point inside and outside a simple polygon.
 
     Mean value weights are well-defined inside and outside a simple polygon and are
@@ -302,7 +302,7 @@ namespace Weights {
       This function fills a destination range with 2D mean value weights computed at
       the `query` point with respect to the vertices of the input polygon.
 
-      The number of computed weights equals to the number of polygon vertices.
+      The number of computed weights is equal to the number of polygon vertices.
 
       \tparam OutIterator
       a model of `OutputIterator` whose value type is `FT`
@@ -445,7 +445,7 @@ namespace Weights {
     Internally, the class `Mean_value_weights_2` is used. If one wants to process
     multiple query points, it is better to use that class. When using the free function,
     internal memory is allocated for each query point, while when using the class,
-    it is allocated only once, which is much more efficient. However, for a few query
+    it is allocated only once which is much more efficient. However, for a few query
     points, it is easier to use this function. It can also be used when the processing
     time is not a concern.
 
@@ -460,7 +460,7 @@ namespace Weights {
     a model of `AnalyticWeightTraits_2`
 
     \param polygon
-    an instance of `PointRange` with 2D points, which form a simple polygon
+    an instance of `PointRange` with 2D points which form a simple polygon
 
     \param query
     a query point

@@ -82,7 +82,7 @@ namespace Weights {
     \ingroup PkgWeightsRefShepardWeights
 
     \brief computes the Shepard weight in 2D using the points `p` and `q`,
-    which are parameterized by a `Kernel` K, and the power parameter `a`, which
+    which are parameterized by a `Kernel` K, and the power parameter `a` which
     can be omitted.
   */
   template<typename K>
@@ -97,7 +97,7 @@ namespace Weights {
     \ingroup PkgWeightsRefShepardWeights
 
     \brief computes the Shepard weight in 3D using the points `p` and `q`,
-    which are parameterized by a `Kernel` K, and the power parameter `a`, which
+    which are parameterized by a `Kernel` K, and the power parameter `a` which
     can be omitted.
   */
   template<typename K>
@@ -138,7 +138,7 @@ namespace Weights {
     \ingroup PkgWeightsRefShepardWeights
 
     \brief computes the Shepard weight in 2D using the points `p` and `q`,
-    which are parameterized by a `Kernel` K, and the power parameter `a`, which
+    which are parameterized by a `Kernel` K, and the power parameter `a` which
     can be omitted.
   */
   template<typename K>
@@ -151,7 +151,7 @@ namespace Weights {
     \ingroup PkgWeightsRefShepardWeights
 
     \brief computes the Shepard weight in 3D using the points `p` and `q`,
-    which are parameterized by a `Kernel` K, and the power parameter `a`, which
+    which are parameterized by a `Kernel` K, and the power parameter `a` which
     can be omitted.
   */
   template<typename K>
