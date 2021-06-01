@@ -38,7 +38,7 @@ namespace Polygon_mesh {
     a model of `FaceListGraph`
 
     \tparam FaceToRegionMap
-    a model of `ReadablePropertyMap` whose key type is `boost::graph_traits<PolygonMesh>::face_descriptor`
+    a model of `ReadablePropertyMap` whose key type is `face_descriptor` of the `PolygonMesh`
     and value type is `std::size_t`
 
     \tparam FaceRange
@@ -110,7 +110,7 @@ namespace Polygon_mesh {
 
     /*!
       a model of `ConstRange` whose iterator type is `RandomAccessIterator` and
-      value type is `boost::graph_traits<PolygonMesh>::edge_descriptor`.
+      value type is `edge_descriptor` of the `PolygonMesh`.
     */
     using Segment_range = Iterator_range<Transform_iterator>;
 

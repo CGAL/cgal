@@ -560,7 +560,7 @@ the region growing on a polygon mesh and extract a set of such regions and then 
 to the class `CGAL::Shape_detection::Polygon_mesh::Polyline_graph` that returns a range of the corresponding edges,
 which can later be split into a set of linear regions, as shown in the example below.
 
-\cgalExample{Shape_detection/region_growing_on_polyline_graph.cpp}
+\cgalExample{Shape_detection/region_growing_on_segment_set.cpp}
 
 
 \subsubsection Shape_detection_RegionGrowingSegments_parameters Parameters

@@ -9,6 +9,7 @@
 \example Shape_detection/region_growing_on_point_set_2.cpp
 \example Shape_detection/region_growing_on_point_set_3.cpp
 \example Shape_detection/region_growing_on_polygon_mesh.cpp
-\example Shape_detection/region_growing_on_polyline_graph.cpp
+\example Shape_detection/region_growing_on_segment_set.cpp
+\example Shape_detection/region_growing_on_polyline.cpp
 \example Shape_detection/region_growing_with_custom_classes.cpp
 */
