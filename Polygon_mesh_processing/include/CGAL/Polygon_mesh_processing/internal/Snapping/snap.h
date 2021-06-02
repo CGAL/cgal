@@ -1017,7 +1017,7 @@ std::size_t snap_non_conformal(HalfedgeRange& halfedge_range_A,
   Vertex_patch vertex_patch_map_A = get(Vertex_size_t_tag(), tm_A);
   Vertex_patch vertex_patch_map_B = get(Vertex_size_t_tag(), tm_B);
 
-  for(const halfedge_descriptor h : halfedge_range_A)
+  for(const halfedge_descriptor& h : halfedge_range_A)
   {
     CGAL_precondition(is_border(h, tm_A));
     halfedge_descriptor h_opp = opposite(h, tm_A);
@@ -1026,7 +1026,7 @@ std::size_t snap_non_conformal(HalfedgeRange& halfedge_range_A,
   }
 
   // @todo avoid that when 'self_snapping' is true
-  for(const halfedge_descriptor h : halfedge_range_B)
+  for(const halfedge_descriptor& h : halfedge_range_B)
   {
     CGAL_precondition(is_border(h, tm_B));
     halfedge_descriptor h_opp = opposite(h, tm_B);
@@ -1111,16 +1111,16 @@ std::size_t snap_non_conformal(HalfedgeRange& halfedge_range_A,
     }
   }
 
-  for(const halfedge_descriptor h : locked_halfedges_A_vector)
+  for(const halfedge_descriptor& h : locked_halfedges_A_vector)
     put(locked_halfedges_A, h, true);
-  for(const halfedge_descriptor h : locked_halfedges_B_vector)
+  for(const halfedge_descriptor& h : locked_halfedges_B_vector)
     put(locked_halfedges_B, h, true);
 
   if(is_same_mesh)
   {
-    for(const halfedge_descriptor h : locked_halfedges_A_vector)
+    for(const halfedge_descriptor& h : locked_halfedges_A_vector)
       put(locked_halfedges_B, h, true);
-    for(const halfedge_descriptor h : locked_halfedges_B_vector)
+    for(const halfedge_descriptor& h : locked_halfedges_B_vector)
       put(locked_halfedges_A, h, true);
   }
 

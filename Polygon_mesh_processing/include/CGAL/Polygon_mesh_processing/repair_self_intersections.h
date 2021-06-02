@@ -1570,7 +1570,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
         std::cout << "  DEBUG: No self-intersection in CC\n";
 #endif
 
-        for(const face_descriptor f : cc_faces)
+        for(const face_descriptor& f : cc_faces)
           faces_to_remove.erase(f);
 
         continue;
