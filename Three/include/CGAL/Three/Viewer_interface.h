@@ -287,6 +287,8 @@ public:
   //!  A vector indicating the scaling factors to apply to the scene when displaying it.
   //!  It can be useful when a scene is very large along one of it's coordinates, making it hard to visualize it.
   virtual const QVector3D& scaler() const = 0;
+
+  virtual void showEntireScene() = 0;
 }; // end class Viewer_interface
 }
 }
