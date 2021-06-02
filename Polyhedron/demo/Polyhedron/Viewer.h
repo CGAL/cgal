@@ -139,6 +139,7 @@ public Q_SLOTS:
   void onTextMessageSocketReceived(QString message);
 #endif
   void scaleScene();
+  void showEntireScene()Q_DECL_OVERRIDE;
 protected:
   void paintEvent(QPaintEvent *)Q_DECL_OVERRIDE;
   void paintGL()Q_DECL_OVERRIDE;

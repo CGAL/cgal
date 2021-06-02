@@ -2119,4 +2119,15 @@ void Viewer::onTextMessageSocketReceived(QString message)
 #endif
 
 const QVector3D& Viewer::scaler()const { return d->scaler; }
+void Viewer::showEntireScene()
+{
+  CGAL::QGLViewer::showEntireScene();
+  CGAL::Bbox_3 bbox = CGAL::Three::Three::scene()->bbox();
+
+  CGAL::qglviewer::Vec vmin(((float)bbox.xmin()+offset().x)*d->scaler.x(), ((float)bbox.ymin()+offset().y)*d->scaler.y(), ((float)bbox.zmin()+offset().z)*d->scaler.z()),
+      vmax(((float)bbox.xmax()+offset().x)*d->scaler.x(), ((float)bbox.ymax()+offset().y)*d->scaler.y(), ((float)bbox.zmax()+offset().z)*d->scaler.z());
+  camera()->setPivotPoint((vmin+vmax)*0.5);
+  camera()->setSceneBoundingBox(vmin, vmax);
+  camera()->fitBoundingBox(vmin, vmax);
+}
 #include "Viewer.moc"
