@@ -322,13 +322,13 @@ bool write_GOCAD(std::ostream& os,
   boost::container::flat_map<vertex_descriptor, vertices_size_type> reindex;
 
   vertices_size_type i = 0;
-  for(const vertex_descriptor v : vertices(g))
+  for(const vertex_descriptor& v : vertices(g))
   {
     os << "VRTX " << i << " " << get(vpm, v) << "\n";
     reindex[v] = i++;
   }
 
-  for(const face_descriptor f : faces(g))
+  for(const face_descriptor& f : faces(g))
   {
     halfedge_descriptor h = halfedge(f, g);
     os << "TRGL " << reindex[target(prev(h, g), g)] << " "

@@ -143,7 +143,7 @@ public:
                           has_vertex_textures                 );
 
     vertices_size_type id = 0;
-    for(const vertex_descriptor v : vertices(g))
+    for(const vertex_descriptor& v : vertices(g))
     {
       const Point_ref p = get(vpm, v);
       m_writer.write_vertex(to_double(p.x()), to_double(p.y()), to_double(p.z()));
@@ -164,7 +164,7 @@ public:
     }
 
     m_writer.write_facet_header();
-    for(const face_descriptor f : faces(g))
+    for(const face_descriptor& f : faces(g))
     {
       CGAL::Halfedge_around_face_circulator<Graph> hc(halfedge(f, g), g);
       CGAL::Halfedge_around_face_circulator<Graph> hc_end = hc;

@@ -269,7 +269,7 @@ bool write_STL(std::ostream& os,
     const boost::uint32_t N32 = static_cast<boost::uint32_t>(faces(g).size());
     os.write(reinterpret_cast<const char *>(&N32), sizeof(N32));
 
-    for(const face_descriptor f : faces(g))
+    for(const face_descriptor& f : faces(g))
     {
       const halfedge_descriptor h = halfedge(f, g);
       Point_ref p = get(vpm, target(h, g));
@@ -294,7 +294,7 @@ bool write_STL(std::ostream& os,
   else
   {
     os << "solid" << std::endl;
-    for(const face_descriptor f : faces(g))
+    for(const face_descriptor& f : faces(g))
     {
       halfedge_descriptor h = halfedge(f, g);
       Point_ref p = get(vpm, target(h, g));
