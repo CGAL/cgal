@@ -31,9 +31,10 @@ A comprehensive list of the supported file formats is available in the Stream_su
 inversely, the following [page](https://doc.cgal.org/5.3/Stream_support/IOStreamSupportedFileFormats.html)
 can be used to find out which CGAL data structures can be used given a specific file format.
 
-### General
+### [Requirements](https://doc.cgal.org/5.3/Manual/thirdparty.html)
 
 -   The CMake minimal version is now `3.14`.
+-   The GNU compiler g++ versions 6 and 7 are no longer tested. Only version 8.3 or later are supported
 
 ### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.3/Manual/packages.html#PkgKernel23)
 
