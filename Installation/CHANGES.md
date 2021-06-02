@@ -22,9 +22,9 @@ Release date: July 2021
 ### File Input / Output
 
 -   Point set, polygon soup, and polygon mesh file I/O functions have been harmonized and documented:
--   Point set I/O functions can be found in the packages [Point_set_processing_3](https://doc.cgal.org/5.3/Manual/packages.html#PkgPolygonMeshProcessing), and [Point_set_3](https://doc.cgal.org/5.3/Manual/packages.html#PkgPointSet3).
--   Polygon mesh I/O functions can be found in the package [BGL](https://doc.cgal.org/5.3/Manual/packages.html#PkgBGL).
--   Polygon soup I/O can be found in the package [Stream_support](https://doc.cgal.org/5.3/Manual/packages.html#PkgStreamSupport).
+    -   Point set I/O functions can be found in the packages [Point_set_processing_3](https://doc.cgal.org/5.3/Manual/packages.html#PkgPolygonMeshProcessing), and [Point_set_3](https://doc.cgal.org/5.3/Manual/packages.html#PkgPointSet3).
+    -   Polygon mesh I/O functions can be found in the package [BGL](https://doc.cgal.org/5.3/Manual/packages.html#PkgBGL).
+    -   Polygon soup I/O can be found in the package [Stream_support](https://doc.cgal.org/5.3/Manual/packages.html#PkgStreamSupport).
 
 A comprehensive list of the supported file formats is available in the Stream_support package
 [here](https://doc.cgal.org/5.3/Stream_support/index.html#IOstreamSupportedFormats);
