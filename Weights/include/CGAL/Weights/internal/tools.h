@@ -76,7 +76,7 @@ public:
     CGAL_assertion(m_d_r != FT(0)); // two points are identical!
     m_d_p = distance(q, p);
     CGAL_assertion(m_d_p != FT(0)); // two points are identical!
-    const auto A = area(p, q, r);
+    const auto A = CGAL::Weights::area(p, q, r);
     CGAL_assertion(A != FT(0));     // three points are identical!
     const auto scalar = scalar_product(p, q, r);
 
@@ -107,7 +107,9 @@ public:
 
   template<class VertexPointMap>
   decltype(auto) operator()(
-    const halfedge_descriptor he, const PolygonMesh& pmesh, const VertexPointMap& pmap) const {
+    const halfedge_descriptor he,
+    const PolygonMesh& pmesh,
+    const VertexPointMap& pmap) const {
 
     const auto v0 = target(he, pmesh);
     const auto v1 = source(he, pmesh);
@@ -197,10 +199,6 @@ public:
     const PolygonMesh& pmesh, const VertexPointMap pmap) :
   m_pmesh(pmesh), m_pmap(pmap) { }
 
-  PolygonMesh& pmesh() {
-    return m_pmesh;
-  }
-
   FT w_i(const vertex_descriptor v_i) const {
     return FT(1) / (FT(2) * voronoi(v_i));
   }
@@ -210,7 +208,7 @@ public:
   }
 
 private:
-  FT cotangent_secure(halfedge_descriptor he) const {
+  FT cotangent_secure(const halfedge_descriptor he) const {
 
     const auto v0 = target(he, m_pmesh);
     const auto v1 = source(he, m_pmesh);
@@ -290,12 +288,8 @@ public:
   using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
   using vertex_descriptor   = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
 
-  Edge_cotangent_weight_wrapper(PolygonMesh& pmesh, VertexPointMap pmap) :
+  Edge_cotangent_weight_wrapper(const PolygonMesh& pmesh, const VertexPointMap pmap) :
   m_pmesh(pmesh), m_pmap(pmap) { }
-
-  PolygonMesh& pmesh() {
-    return m_pmesh;
-  }
 
   FT operator()(const halfedge_descriptor he) const {
 
@@ -333,6 +327,84 @@ public:
   }
 };
 
+template<
+typename PolygonMesh,
+typename VertexPointMap = typename boost::property_map<PolygonMesh, vertex_point_t>::type>
+class Mean_value_weight_wrapper {
+
+  using GeomTraits = typename CGAL::Kernel_traits<
+      typename boost::property_traits<VertexPointMap>::value_type>::type;
+  using FT = typename GeomTraits::FT;
+  using Vector = typename GeomTraits::Vector_3;
+
+  const PolygonMesh& m_pmesh;
+  const VertexPointMap m_pmap;
+
+public:
+  using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
+  using vertex_descriptor   = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
+
+  Mean_value_weight_wrapper(const PolygonMesh& pmesh, const VertexPointMap pmap) :
+  m_pmesh(pmesh), m_pmap(pmap) { }
+
+  // Returns the mean-value coordinate of the specified halfedge_descriptor.
+  // Returns different values for different edge orientations (which is normal
+  // behaviour according to the formula).
+  FT operator()(const halfedge_descriptor he) const {
+
+    const vertex_descriptor v0 = target(he, m_pmesh);
+    const vertex_descriptor v1 = source(he, m_pmesh);
+    const Vector vec = get(m_pmap, v0) - get(m_pmap, v1);
+    const FT norm = static_cast<FT>(
+      CGAL::sqrt(CGAL::to_double(vec.squared_length())));
+
+    // Only one triangle for border edges.
+    if (is_border_edge(he, m_pmesh)) {
+      const halfedge_descriptor he_cw = opposite(next(he, m_pmesh), m_pmesh);
+      vertex_descriptor v2 = source(he_cw, m_pmesh);
+      if (is_border_edge(he_cw, m_pmesh)) {
+        const halfedge_descriptor he_ccw = prev(opposite(he, m_pmesh), m_pmesh);
+        v2 = source(he_ccw, m_pmesh);
+      }
+      return half_tan_value_2(v1, v0, v2) / norm;
+    } else {
+      const halfedge_descriptor he_cw = opposite(next(he, m_pmesh), m_pmesh);
+      const vertex_descriptor v2 = source(he_cw, m_pmesh);
+      const halfedge_descriptor he_ccw = prev(opposite(he, m_pmesh), m_pmesh);
+      const vertex_descriptor v3 = source(he_ccw, m_pmesh);
+      return (
+        half_tan_value_2(v1, v0, v2) / norm +
+        half_tan_value_2(v1, v0, v3) / norm );
+    }
+  }
+
+private:
+  // The authors deviation built on Meyer_02.
+  // See Iterative_authalic_parameterizer_3.h.
+  FT half_tan_value_2(
+    const vertex_descriptor v0,
+    const vertex_descriptor v1,
+    const vertex_descriptor v2) const {
+
+    const Vector a = get(m_pmap, v0) - get(m_pmap, v1);
+    const Vector b = get(m_pmap, v2) - get(m_pmap, v1);
+    const FT dot_ab = a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+    const FT dot_aa = a.squared_length();
+    const FT dot_bb = b.squared_length();
+    const FT dot_aa_bb = dot_aa * dot_bb;
+
+    const FT cos_rep = dot_ab;
+    const FT sin_rep = static_cast<FT>(
+      CGAL::sqrt(CGAL::to_double(dot_aa_bb  - dot_ab * dot_ab)));
+    const FT normalizer = static_cast<FT>(
+      CGAL::sqrt(CGAL::to_double(dot_aa_bb))); // |a| * |b|
+
+    // The formula from [Floater04] page 4:
+    // tan(Q / 2) = (1 - cos(Q)) / sin(Q).
+    return (normalizer - cos_rep) / sin_rep;
+  }
+};
+
 template<typename PolygonMesh>
 class Single_cotangent_weight_wrapper {
 
@@ -342,7 +414,9 @@ public:
 
   template<class VertexPointMap>
   decltype(auto) operator()(
-    const halfedge_descriptor he, const PolygonMesh& pmesh, const VertexPointMap& pmap) const {
+    const halfedge_descriptor he,
+    const PolygonMesh& pmesh,
+    const VertexPointMap& pmap) const {
 
     using Kernel = typename CGAL::Kernel_traits<
       typename boost::property_traits<VertexPointMap>::value_type>::type;
