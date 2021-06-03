@@ -39,8 +39,6 @@ decltype(auto) cotangent_3_secure(
 
   const auto dot_product_3 =
     traits.compute_scalar_product_3_object();
-  const auto cross_product_3 =
-    traits.construct_cross_product_vector_3_object();
   const auto construct_vector_3 =
     traits.construct_vector_3_object();
 
@@ -78,11 +76,11 @@ public:
     CGAL_assertion(m_d_r != FT(0)); // two points are identical!
     m_d_p = distance(q, p);
     CGAL_assertion(m_d_p != FT(0)); // two points are identical!
-    const auto area = area(p, q, r);
-    CGAL_assertion(area != FT(0));  // three points are identical!
+    const auto A = area(p, q, r);
+    CGAL_assertion(A != FT(0));     // three points are identical!
     const auto scalar = scalar_product(p, q, r);
 
-    m_w_base = -tangent_half_angle(m_d_r, m_d_p, area, scalar);
+    m_w_base = -tangent_half_angle(m_d_r, m_d_p, A, scalar);
   }
 
   FT get_w_r() const {
@@ -256,7 +254,7 @@ private:
 
     FT voronoi_area = FT(0);
     CGAL_assertion(CGAL::is_triangle_mesh(m_pmesh));
-    for (const auto he : halfedges_around_target(halfedge(v0, m_pmesh), m_pmesh)) {
+    for (const auto& he : halfedges_around_target(halfedge(v0, m_pmesh), m_pmesh)) {
       CGAL_assertion(v0 == target(he, m_pmesh));
       if (is_border(he, m_pmesh)) {
         continue;
