@@ -164,14 +164,14 @@ namespace internal {
     // Cotangent_weight_with_voronoi_area_fairing_secure to avoid imprecisions from
     // the issue #4706 - https://github.com/CGAL/cgal/issues/4706.
     typedef CGAL::Weights::internal::Cotangent_weight_wrapper_with_voronoi_secure<
-      TriangleMesh, VPMap> Default_Weight_calculator;
+      TriangleMesh, VPMap> Default_weight_calculator;
 
     VPMap vpmap_ = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                     get_property_map(vertex_point, tmesh));
 
     return internal::fair(tmesh, vertices,
       choose_parameter<Default_solver>(get_parameter(np, internal_np::sparse_linear_solver)),
-      choose_parameter(get_parameter(np, internal_np::weight_calculator), Default_Weight_calculator(tmesh, vpmap_)),
+      choose_parameter(get_parameter(np, internal_np::weight_calculator), Default_weight_calculator(tmesh, vpmap_)),
       choose_parameter(get_parameter(np, internal_np::fairing_continuity), 1),
       vpmap_);
   }

@@ -369,7 +369,7 @@ private:
   std::vector<bool> constrained_flags_;
 
   const GeomTraits& traits_;
-  CGAL::Weights::internal::Edge_cotangent_weight_wrapper<
+  const CGAL::Weights::internal::Edge_cotangent_weight_wrapper<
     TriangleMesh, VertexPointMap> weight_calculator_;
 };
 
