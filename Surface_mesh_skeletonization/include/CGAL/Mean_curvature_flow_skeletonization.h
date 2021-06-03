@@ -35,7 +35,7 @@
 #include <CGAL/boost/graph/iterator.h>
 
 // Compute cotangent Laplacian
-#include <CGAL/Polygon_mesh_processing/Weights.h>
+#include <CGAL/Weights/internal/tools.h>
 
 // Compute the vertex normal
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
@@ -222,12 +222,9 @@ public:
   typedef typename boost::graph_traits<mTriangleMesh>::edge_descriptor         edge_descriptor;
   typedef typename boost::graph_traits<mTriangleMesh>::edge_iterator           edge_iterator;
 
-  // Cotangent weight calculator
-  typedef internal::Cotangent_weight<mTriangleMesh,
-    typename boost::property_map<mTriangleMesh, vertex_point_t>::type,
-    internal::Cotangent_value_minimum_zero<mTriangleMesh,
-      typename boost::property_map<mTriangleMesh, vertex_point_t>::type,
-      internal::Cotangent_value_Meyer_secure<mTriangleMesh> > >                Weight_calculator;
+  // Get weight from the weight interface.
+  typedef CGAL::Weights::internal::
+    Cotangent_weight_wrapper<mTriangleMesh>                                    Weight_calculator;
 
   typedef internal::Curve_skeleton<mTriangleMesh,
                                    VertexIndexMap,
@@ -375,14 +372,14 @@ public:
   Mean_curvature_flow_skeletonization(const TriangleMesh& tmesh,
                                       VertexPointMap vertex_point_map,
                                       const Traits& traits = Traits())
-    : m_traits(traits), m_weight_calculator(m_tmesh)
+    : m_traits(traits), m_weight_calculator(true)
   {
     init(tmesh, vertex_point_map);
   }
 
   Mean_curvature_flow_skeletonization(const TriangleMesh& tmesh,
                                       const Traits& traits = Traits())
-    : m_traits(traits), m_weight_calculator(m_tmesh)
+    : m_traits(traits), m_weight_calculator(true)
   {
     init(tmesh);
   }
@@ -890,7 +887,8 @@ private:
     m_edge_weight.reserve(2 * num_edges(m_tmesh));
     for(halfedge_descriptor hd : halfedges(m_tmesh))
     {
-      m_edge_weight.push_back(m_weight_calculator(hd));
+      m_edge_weight.push_back(
+        m_weight_calculator(hd, m_tmesh, m_tmesh_point_pmap));
     }
   }
 
