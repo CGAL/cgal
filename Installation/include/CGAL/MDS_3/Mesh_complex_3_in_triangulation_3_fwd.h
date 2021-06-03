@@ -27,11 +27,8 @@ namespace MDS_3 {
   template<class Tr>
   bool build_triangulation_from_file(std::istream& is,
                                      Tr& tr,
-                                     bool replace_domain_0);
-
-  template<class Tr>
-  bool build_triangulation_from_file(std::istream& is,
-                                     Tr& tr);
+                                     bool verbose = false,
+                                     bool replace_domain_0 = false);
 
 } // MDS_3
 } // CGAL

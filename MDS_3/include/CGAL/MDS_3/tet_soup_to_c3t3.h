@@ -346,9 +346,6 @@ bool build_triangulation(Tr& tr,
                          const PointRange& points,
                          const CellRange& finite_cells,
                          const FacetPatchMap& border_facets,
-//                         const std::vector<typename Tr::Point>& points,
-//                         const std::vector<std::array<int,5> >& finite_cells,
-//                         const std::map<std::array<int,3>, typename Tr::Cell::Surface_patch_index>& border_facets,
                          std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
                          const bool verbose = false,
                          bool replace_domain_0 = false)
@@ -399,7 +396,8 @@ bool build_triangulation(Tr& tr,
   if(verbose)
     std::cout << tr.number_of_vertices() << " vertices" << std::endl;
 
-  return tr.tds().is_valid();
+  return true;// tr.tds().is_valid();
+              //TDS not valid when cells do not cover the convex hull of vertices
 }
 
 template<class Tr,
@@ -412,9 +410,6 @@ bool build_triangulation(Tr& tr,
                          const FacetPatchMap& border_facets,
                          const bool verbose = false,
                          bool replace_domain_0 = false)
-//  const std::vector<typename Tr::Point>& points,        //PointRange
-//  const std::vector<std::array<int, 5> >& finite_cells, //CellRange
-//  const std::map<std::array<int, 3>, typename Tr::Cell::Surface_patch_index>& border_facets,//FacetsMap
 {
   BOOST_STATIC_ASSERT(boost::is_same<typename Tr::Point,
                                      typename PointRange::value_type>::value);
@@ -428,6 +423,7 @@ bool build_triangulation(Tr& tr,
 template<class Tr>
 bool build_triangulation_from_file(std::istream& is,
                                    Tr& tr,
+                                   const bool verbose,
                                    bool replace_domain_0)
 {
   typedef typename Tr::Point                                  Point_3;
@@ -449,7 +445,9 @@ bool build_triangulation_from_file(std::istream& is,
 
   CGAL_assertion(dim == 3);
 
-  std::cout << "Reading .mesh file..." << std::endl;
+  if(verbose)
+    std::cout << "Reading .mesh file..." << std::endl;
+
   while(is >> word && word != "End")
   {
     if(word == "Vertices")
@@ -508,24 +506,21 @@ bool build_triangulation_from_file(std::istream& is,
     }
   }
 
-  std::cout << points.size() << " points" << std::endl;
-  std::cout << border_facets.size() << " border facets" << std::endl;
-  std::cout << finite_cells.size() << " cells" << std::endl;
+  if (verbose)
+  {
+    std::cout << points.size() << " points" << std::endl;
+    std::cout << border_facets.size() << " border facets" << std::endl;
+    std::cout << finite_cells.size() << " cells" << std::endl;
+  }
 
   if(finite_cells.empty())
     return false;
 
-  bool is_well_built = build_triangulation(tr,
-    points, finite_cells, border_facets, false, replace_domain_0);
-  return is_well_built;
+  return build_triangulation(tr,
+                      points, finite_cells, border_facets,
+                      verbose, replace_domain_0);
 }
 
-template<class Tr>
-bool build_triangulation_from_file(std::istream& is,
-                                   Tr& tr)
-{
-  return build_triangulation_from_file(is, tr, false);
-}
 }  // namespace MDS_3
 }  // namespace CGAL
 
