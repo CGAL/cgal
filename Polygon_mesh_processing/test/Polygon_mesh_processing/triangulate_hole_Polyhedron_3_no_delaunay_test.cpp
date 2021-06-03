@@ -25,6 +25,19 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
 typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
 
+template<
+class GeomTraits,
+class PolygonMesh>
+class Uniform_weight_fairing {
+
+public:
+  using FT = typename GeomTraits::FT;
+  using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
+  using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
+
+  FT w_ij(halfedge_descriptor) { return FT(1); }
+  FT w_i(vertex_descriptor) { return FT(1); }
+};
 
 template <class Polyhedron>
 void read_poly(const char* file_name, Polyhedron& poly) {
@@ -315,7 +328,7 @@ void test_ouput_iterators_triangulate_and_refine_hole(const char* file_name) {
   std::cout << "  Done!" << std::endl;
 }
 
-template <class Polyhedron>
+template <class Kernel, class Polyhedron>
 void test_triangulate_refine_and_fair_hole_compile() {
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_handle;
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor Facet_handle;
@@ -336,16 +349,16 @@ void test_triangulate_refine_and_fair_hole_compile() {
   read_poly_with_borders("elephant_quad_hole.off", poly, border_reps);
   CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole
   (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices),
-  CGAL::Polygon_mesh_processing::parameters::weight_calculator(
-    CGAL::internal::Uniform_weight_fairing<Polyhedron>(poly)).
+  CGAL::Polygon_mesh_processing::parameters::
+    weight_calculator(Uniform_weight_fairing<Kernel, Polyhedron>()).
     sparse_linear_solver(Default_solver()));
 
   // default solver
   read_poly_with_borders("elephant_quad_hole.off", poly, border_reps);
   CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole
     (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices),
-    CGAL::Polygon_mesh_processing::parameters::weight_calculator(
-      CGAL::internal::Uniform_weight_fairing<Polyhedron>(poly)));
+    CGAL::Polygon_mesh_processing::parameters::
+      weight_calculator(Uniform_weight_fairing<Kernel, Polyhedron>()));
 
   // default solver and weight
   read_poly_with_borders("elephant_quad_hole.off", poly, border_reps);
@@ -404,7 +417,7 @@ typedef CGAL::Surface_mesh<typename Kernel::Point_3> Polyhedron;
   test_triangulate_hole_should_be_no_output<Polyhedron>("data/non_manifold_vertex.off");
   test_triangulate_hole_should_be_no_output<Polyhedron>("data/two_tris_collinear.off");
 
-  test_triangulate_refine_and_fair_hole_compile<Polyhedron>();
+  test_triangulate_refine_and_fair_hole_compile<Kernel, Polyhedron>();
 
 
 }

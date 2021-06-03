@@ -19,7 +19,6 @@
 #include <map>
 #include <set>
 #include <CGAL/assertions.h>
-#include <CGAL/Polygon_mesh_processing/Weights.h>
 #ifdef CGAL_PMP_FAIR_DEBUG
 #include <CGAL/Timer.h>
 #endif
@@ -65,7 +64,7 @@ private:
   double weight = 0;
   Halfedge_around_vertex_circulator circ(halfedge(v,pmesh),pmesh), done(circ);
   do {
-    weight += weight_calculator.w_ij(*circ);
+    weight += CGAL::to_double(weight_calculator.w_ij(*circ));
     } while(++circ != done);
     return weight;
   }
@@ -95,11 +94,11 @@ private:
       }
     }
     else {
-      double w_i = weight_calculator.w_i(v);
+      double w_i = CGAL::to_double(weight_calculator.w_i(v));
 
       Halfedge_around_vertex_circulator circ(halfedge(v,pmesh),pmesh), done(circ);
       do {
-        double w_i_w_ij = w_i * weight_calculator.w_ij(*circ) ;
+        double w_i_w_ij = w_i * CGAL::to_double(weight_calculator.w_ij(*circ)) ;
 
         vertex_descriptor nv = target(opposite(*circ,pmesh),pmesh);
         compute_row(nv, row_id, matrix, x, y, z, -w_i_w_ij*multiplier, vertex_id_map, depth-1);
