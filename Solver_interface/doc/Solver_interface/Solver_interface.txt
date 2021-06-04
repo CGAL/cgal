@@ -24,7 +24,7 @@ we provide models using \ref thirdpartySCIP and \ref thirdpartyGLPK
 libraries. It is also possible to derive new models from other
 high performance libraries, e.g.,
 <a href = "https://projects.coin-or.org/Cbc"> CBC </a>,
-<a href = "http://www.gurobi.com/"> Gurobi </a>.
+<a href = "https://www.gurobi.com/"> Gurobi </a>.
 
 
 
