@@ -202,6 +202,7 @@ CGAL_add_named_parameter(smooth_constrained_edges_t, smooth_constrained_edges, s
 
 // MDS_3 parameters
 CGAL_add_named_parameter(surface_facets_t, surface_facets, surface_facets)
+CGAL_add_named_parameter(all_vertices_t, all_vertices, all_vertices)
 
 // output parameters
 CGAL_add_named_parameter(face_proxy_map_t, face_proxy_map, face_proxy_map)

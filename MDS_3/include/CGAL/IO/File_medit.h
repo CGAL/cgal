@@ -26,6 +26,9 @@
 #include <boost/unordered_map.hpp>
 #include <boost/utility/enable_if.hpp>
 
+#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+
 #include <iomanip>
 #include <iostream>
 #include <map>
@@ -703,7 +706,8 @@ struct Medit_pmap_generator<C3T3, false, false>
 template <class C3T3, bool rebind, bool no_patch>
 void
 output_to_medit(std::ostream& os,
-                const C3T3& c3t3)
+                const C3T3& c3t3,
+                const bool all_vertices)
 {
 #ifdef CGAL_MESH_3_IO_VERBOSE
   std::cerr << "Output to medit:\n";
@@ -726,7 +730,8 @@ output_to_medit(std::ostream& os,
                   facet_pmap,
                   cell_pmap,
                   facet_pmap_twice,
-                  Generator().print_twice());
+                  Generator().print_twice(),
+                  all_vertices);
 
 #ifdef CGAL_MESH_3_IO_VERBOSE
   std::cerr << "done.\n";
@@ -747,14 +752,15 @@ output_to_medit(std::ostream& os,
                 const Facet_index_property_map& facet_pmap,
                 const Cell_index_property_map& cell_pmap,
                 const Facet_index_property_map_twice& facet_twice_pmap = Facet_index_property_map_twice(),
-                const bool print_each_facet_twice = false)
+                const bool print_each_facet_twice = false,
+                const bool all_vertices = true)
 {
   typedef typename C3T3::Triangulation Tr;
   typedef typename C3T3::Facets_in_complex_iterator Facet_iterator;
   typedef typename C3T3::Cells_in_complex_iterator Cell_iterator;
 
-  typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Tr::Vertex_handle Vertex_handle;
+  typedef typename Tr::Cell_handle   Cell_handle;
   typedef typename Tr::Point Point; //can be weighted or not
 
   const Tr& tr = c3t3.triangulation();
@@ -779,17 +785,38 @@ output_to_medit(std::ostream& os,
 
   boost::unordered_map<Vertex_handle, int> V;
   int inum = 1;
-  for( Finite_vertices_iterator vit = tr.finite_vertices_begin();
-       vit != tr.finite_vertices_end();
-       ++vit)
+  if (all_vertices)
   {
-    V[vit] = inum++;
-    Point p = tr.point(vit);
-    os << CGAL::to_double(p.x()) << ' '
-       << CGAL::to_double(p.y()) << ' '
-       << CGAL::to_double(p.z()) << ' '
-       << get(vertex_pmap, vit)
-       << '\n';
+    for (Vertex_handle vit : tr.finite_vertex_handles())
+    {
+      V[vit] = inum++;
+      Point p = tr.point(vit);
+      os << CGAL::to_double(p.x()) << ' '
+        << CGAL::to_double(p.y()) << ' '
+        << CGAL::to_double(p.z()) << ' '
+        << get(vertex_pmap, vit)
+        << '\n';
+    }
+  }
+  else
+  {
+    for (Cell_handle c : c3t3.cells_in_complex())
+    {
+      for (int i = 0; i < 4; ++i)
+      {
+        Vertex_handle vit = c->vertex(i);
+        if (V.find(vit) == V.end())
+        {
+          V[vit] = inum++;
+          Point p = tr.point(vit);
+          os << CGAL::to_double(p.x()) << ' '
+            << CGAL::to_double(p.y()) << ' '
+            << CGAL::to_double(p.z()) << ' '
+            << get(vertex_pmap, vit)
+            << '\n';
+        }
+      }
+    }
   }
 
   //-------------------------------------------------------
@@ -886,38 +913,93 @@ void
 output_to_medit(std::ostream& os,
                 const C3T3& c3t3,
                 bool rebind = false,
-                bool show_patches = false)
+                bool show_patches = false
+#ifndef DOXYGEN_RUNNING
+              , bool all_vertices = true
+#endif
+)
 {
   if ( rebind )
   {
     if ( show_patches )
-      CGAL::MDS_3::output_to_medit<C3T3,true,false>(os,c3t3);
+      CGAL::MDS_3::output_to_medit<C3T3,true,false>(os, c3t3, all_vertices);
     else
-      CGAL::MDS_3::output_to_medit<C3T3,true,true>(os,c3t3);
+      CGAL::MDS_3::output_to_medit<C3T3,true,true>(os, c3t3, all_vertices);
   }
   else
   {
     if ( show_patches )
-      CGAL::MDS_3::output_to_medit<C3T3,false,false>(os,c3t3);
+      CGAL::MDS_3::output_to_medit<C3T3,false,false>(os, c3t3, all_vertices);
     else
-      CGAL::MDS_3::output_to_medit<C3T3,false,true>(os,c3t3);
+      CGAL::MDS_3::output_to_medit<C3T3,false,true>(os, c3t3, all_vertices);
   }
 }
 
 /**
  * @ingroup PkgMDS3IOFunctions
  * @brief outputs a mesh complex to the medit (`.mesh`) file format.
-        See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
+ *      See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
+ * @tparam T3 can be instantiated with any 3D triangulation of \cgal provided that its
+ *  vertex and cell base class are models of the concepts `MeshVertexBase_3` and `MeshCellBase_3`, respectively.
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * @param os the output stream
+ * @param t3 the triangulation
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ * \cgalParamNBegin{all_vertices}
+ *   \cgalParamDescription{If `true`, all the vertices in `t3` are written in `os`.
+ *                         Otherwise, only the vertices that belong to a cell `c` for which
+ *                         `c->subdomain_index() != Subdomain_index()` are written}
+ *   \cgalParamType{Boolean}
+ *   \cgalParamDefault{`true`}
+ *   \cgalParamExtra{This parameter should be set to `false` for the file to be readable by `read_MEDIT()`.}
+ * \cgalParamNEnd
+ *
+ * \see \ref IOStreamMedit
+ */
+template<typename T3, typename NamedParameters>
+void write_MEDIT(std::ostream& os,
+                 const T3& t3,
+                 const NamedParameters& np)
+{
+  CGAL::Mesh_complex_3_in_triangulation_3<T3, int, int> c3t3;
+  c3t3.triangulation() = t3;
+  c3t3.rescan_after_load_of_triangulation();
+
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+
+  bool all_v = choose_parameter(get_parameter(np, internal_np::all_vertices), true);
+  bool rebind = false;
+  bool show_patches = false;
+
+  output_to_medit(os, c3t3, rebind, show_patches, all_v);
+}
+
+template<typename T3>
+void write_MEDIT(std::ostream& os,
+                 const T3& t3)
+{
+  write_MEDIT(os, t3, parameters::all_default());
+}
+
+/**
+ * @ingroup PkgMDS3IOFunctions
+ * @brief outputs a mesh complex to the medit (`.mesh`) file format.
+ *      See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
+ * @tparam T3 can be instantiated with any 3D triangulation of \cgal provided that its
+ *  vertex and cell base class are models of the concepts `MeshVertexBase_3` and `MeshCellBase_3`, respectively.
  * @param os the output stream
  * @param c3t3 the mesh complex
  *
  * \see \ref IOStreamMedit
  */
-template<typename T3>
-void write_MEDIT(std::ostream& os, const T3& t3)
+template<typename T3, typename CornerIndex, typename CurveIndex>
+void write_MEDIT(std::ostream& os,
+  const CGAL::Mesh_complex_3_in_triangulation_3<T3, CornerIndex, CurveIndex>& c3t3)
 {
-  CGAL::Mesh_complex_3_in_triangulation_3<T3, int, int> c3t3;
-  c3t3.triangulation() = t3;
   c3t3.rescan_after_load_of_triangulation();
   output_to_medit(os, c3t3);
 }
