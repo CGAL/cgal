@@ -12,6 +12,10 @@
 /// \ingroup PkgMDS3Ref
 /// The functions to work with the 3D mesh data structures.
 
+/// \defgroup PkgMDS3ExportFunctions Export Functions
+/// \ingroup PkgMDS3Ref
+/// The free functions that can be used to export meshes to given output file formats.
+
 /// \defgroup PkgMDS3IOFunctions Input/Output Functions
 /// \ingroup PkgMDS3Ref
 /// The free functions that can be used to read and write meshes.
@@ -54,10 +58,16 @@ Here are the main concepts of this package:
 - `CGAL::facets_in_complex_3_to_triangle_mesh()`
 - `CGAL::tetrahedron_soup_to_triangulation_3()`
 
-\cgalCRPSection{Input/Output Functions}
+\cgalCRPSection{Export Functions}
+
 - `CGAL::output_to_medit()`
 - `CGAL::output_to_vtu()`
 - `CGAL::output_to_tetgen()`
 - `CGAL::output_to_avizo()`
+
+\cgalCRPSection{Input/Output Functions}
+
+- `CGAL::write_MEDIT()`
+- `CGAL::read_MEDIT()`
 */
 

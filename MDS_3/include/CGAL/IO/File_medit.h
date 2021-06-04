@@ -870,7 +870,7 @@ output_to_medit(std::ostream& os,
 namespace IO {
 
 /**
- * @ingroup PkgMDS3IOFunctions
+ * @ingroup PkgMDS3ExportFunctions
  * @brief outputs a mesh complex to the medit (`.mesh`) file format.
         See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
  * @param os the output stream
@@ -904,7 +904,15 @@ output_to_medit(std::ostream& os,
   }
 }
 
-
+/**
+ * @ingroup PkgMDS3IOFunctions
+ * @brief outputs a mesh complex to the medit (`.mesh`) file format.
+        See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
+ * @param os the output stream
+ * @param c3t3 the mesh complex
+ *
+ * \see \ref IOStreamMedit
+ */
 template<typename T3>
 void write_MEDIT(std::ostream& os, const T3& t3)
 {
