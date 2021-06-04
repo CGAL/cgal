@@ -19,6 +19,7 @@
 #include <map>
 #include <set>
 #include <CGAL/assertions.h>
+#include <CGAL/boost/graph/helpers.h>
 #ifdef CGAL_PMP_FAIR_DEBUG
 #include <CGAL/Timer.h>
 #endif
