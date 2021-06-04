@@ -23,7 +23,7 @@
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/squared_distance_3.h>
-#include <CGAL/Polygon_mesh_processing/measure.h>
+// #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/number_utils.h>
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_solver_traits.h>
