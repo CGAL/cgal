@@ -27,7 +27,7 @@ int main (int argc, char** argv)
 
   std::ofstream os("elephant_out.mesh");
   CGAL::IO::write_MEDIT(os, tr,
-    CGAL::parameters::all_vertices(true));
+    CGAL::parameters::all_vertices(false));
   os.close();
 
   return EXIT_SUCCESS;

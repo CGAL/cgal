@@ -734,7 +734,10 @@ public:
 #endif
   {
     // Call global function
-    CGAL::IO::output_to_medit(os, *this, rebind, show_patches);
+    bool all_vertices = true;
+    bool all_cells = false;
+    CGAL::MDS_3::output_to_medit(os, *this, rebind, show_patches,
+      all_vertices, all_cells);
   }
 
   /*!
