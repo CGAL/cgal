@@ -39,11 +39,11 @@ namespace CGAL {
 namespace Barycentric_coordinates_depr {
 
 // Examples: see the User Manual here - https://doc.cgal.org/latest/Manual/index.html.
-// [1] Reference: Weisstein, Eric W. "Barycentric Coordinates." From MathWorld--A Wolfram Web Resource. http://mathworld.wolfram.com/BarycentricCoordinates.html.
+// [1] Reference: Weisstein, Eric W. "Barycentric Coordinates." From MathWorld--A Wolfram Web Resource. https://mathworld.wolfram.com/BarycentricCoordinates.html.
 
 /*!
  * \ingroup PkgBarycentricCoordinates2RefDeprecated
- * The class `Triangle_coordinates_2` implements barycentric coordinates ( <a href="http://mathworld.wolfram.com/BarycentricCoordinates.html" target=blanc>[1]</a>,
+ * The class `Triangle_coordinates_2` implements barycentric coordinates ( <a href="https://mathworld.wolfram.com/BarycentricCoordinates.html" target=blanc>[1]</a>,
  * <a href="https://en.wikipedia.org/wiki/Barycentric_coordinate_system" target=blanc>[2]</a> ) with respect to an arbitrary non-degenerate triangle in the plane.
  * This class is parameterized by a traits class `Traits`.
 
@@ -142,8 +142,8 @@ public:
     /// @}
 
     // Computes triangle barycentric coordinates for a chosen query point with respect to all three vertices of the triangle.
-    // This function accepts a container of the type <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>
-    // and returns an iterator of the type <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>
+    // This function accepts a container of the type <a href="https://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>
+    // and returns an iterator of the type <a href="https://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>
     // that is placed past-the-end of the resulting sequence of coordinate values.
     inline boost::optional<std::back_insert_iterator<std::vector<FT> > > operator()(const Point_2 &query_point, std::vector<FT> &output_vector)
     {

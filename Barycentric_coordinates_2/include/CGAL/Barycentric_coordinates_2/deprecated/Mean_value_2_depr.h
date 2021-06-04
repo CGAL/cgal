@@ -127,7 +127,7 @@ public:
     // \name Creation
 
     // Creates the class `Mean_value_2` that implements the behaviour of mean value coordinates for any query point that does not belong to the polygon's boundary.
-    // The polygon is given by a range of vertices of the type `Traits::Point_2` stored in a container of the type <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>.
+    // The polygon is given by a range of vertices of the type `Traits::Point_2` stored in a container of the type <a href="https://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>.
     Mean_value_2(const std::vector<typename Traits::Point_2> &vertices, const Traits &b_traits) :
         vertex(vertices),
         barycentric_traits(b_traits),
@@ -268,7 +268,7 @@ private:
         D[n-1] = scalar_product_2(s[n-1], s[0]);
 
         // Compute intermediate values t using the formulas from slide 19 here
-        // - http://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf
+        // - https://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf
         for(int i = 0; i < n-1; ++i) {
             CGAL_precondition( (r[i]*r[i+1] + D[i]) != FT(0) );
             t[i] = A[i] / (r[i]*r[i+1] + D[i]);
@@ -397,7 +397,7 @@ private:
         D[n-1] = scalar_product_2(s[n-1], s[0]);
 
         // Compute intermediate values t using the formulas from slide 19 here
-        // - http://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf
+        // - https://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf
         for(int i = 0; i < n-1; ++i) {
             CGAL_precondition( (r[i]*r[i+1] + D[i]) != FT(0) );
             t[i] = A[i] / (r[i]*r[i+1] + D[i]);

@@ -560,7 +560,7 @@ After the normalization of these weights as before
 </center>
 
 we obtain the max precision \f$O(n^2)\f$ algorithm. The max speed O(n) algorithm computes the
-weights \f$w_i\f$ using the pseudocode from <a href="http://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf">here</a>.
+weights \f$w_i\f$ using the pseudocode from <a href="https://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf">here</a>.
 These weights
 
 <center>
