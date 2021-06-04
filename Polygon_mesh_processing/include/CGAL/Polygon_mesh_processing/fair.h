@@ -163,7 +163,7 @@ namespace internal {
     // Cotangent_weight_with_voronoi_area_fairing has been changed to the version:
     // Cotangent_weight_with_voronoi_area_fairing_secure to avoid imprecisions from
     // the issue #4706 - https://github.com/CGAL/cgal/issues/4706.
-    typedef CGAL::Weights::internal::Cotangent_weight_wrapper_with_voronoi_secure<
+    typedef CGAL::Weights::internal::Cotangent_weight_secure_with_voronoi_wrapper<
       TriangleMesh, VPMap> Default_weight_calculator;
 
     VPMap vpmap_ = choose_parameter(get_parameter(np, internal_np::vertex_point),

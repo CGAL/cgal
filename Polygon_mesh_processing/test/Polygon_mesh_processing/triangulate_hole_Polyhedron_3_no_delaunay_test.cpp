@@ -337,7 +337,7 @@ void test_triangulate_refine_and_fair_hole_compile() {
   CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole
   (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices),
   CGAL::Polygon_mesh_processing::parameters::
-    weight_calculator(CGAL::Weights::internal::Uniform_weight_fairing<Polyhedron>()).
+    weight_calculator(CGAL::Weights::internal::Uniform_weight_wrapper<Polyhedron>()).
     sparse_linear_solver(Default_solver()));
 
   // default solver
@@ -345,7 +345,7 @@ void test_triangulate_refine_and_fair_hole_compile() {
   CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole
     (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices),
     CGAL::Polygon_mesh_processing::parameters::
-      weight_calculator(CGAL::Weights::internal::Uniform_weight_fairing<Polyhedron>()));
+      weight_calculator(CGAL::Weights::internal::Uniform_weight_wrapper<Polyhedron>()));
 
   // default solver and weight
   read_poly_with_borders("elephant_quad_hole.off", poly, border_reps);
