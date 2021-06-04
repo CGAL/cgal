@@ -899,8 +899,21 @@ public:
   typedef unspecified_type Facets_in_complex_iterator;
   /// Iterator type to visit the edges of the 1D complex
   typedef unspecified_type Edges_in_complex_iterator;
-  /// Iterator type to visit the edges of the 0D complex
+  /// Iterator type to visit the vertices of the 0D complex
   typedef unspecified_type Vertices_in_complex_iterator;
+
+  /// Range type for iterating over all cells of the 3D complex,
+  /// with a nested type iterator that has as value type `Cell_handle`.
+  typedef Iterator_range<unspecified_type> Cells_in_complex;
+  /// Range type for iterating over all facets of the 2D complex,
+  /// with a nested type iterator that has as value type `Facet`.
+  typedef Iterator_range<unspecified_type> Facets_in_complex;
+  /// Range type for iterating over all cells of the 1D complex,
+  /// with a nested type iterator that has as value type `Edge`.
+  typedef Iterator_range<unspecified_type> Edges_in_complex;
+  /// Range type for iterating over all vertices of the 0D complex,
+  /// with a nested type iterator that has as value type `Vertex_handle`.
+  typedef Iterator_range<unspecified_type> Vertices_in_complex;
 
 #else
   typedef Filter_iterator<
@@ -940,6 +953,11 @@ public:
 
     operator Cell_handle() const { return Cell_handle(this->base()); }
   }; // end class Cells_in_complex_iterator
+
+  typedef Iterator_range<Prevent_deref<Vertices_in_complex_iterator> > Vertices_in_complex;
+  typedef Iterator_range<Edges_in_complex_iterator>                    Edges_in_complex;
+  typedef Iterator_range<Facets_in_complex_iterator>                   Facets_in_complex;
+  typedef Iterator_range<Prevent_deref<Cells_in_complex_iterator> >    Cells_in_complex;
 
 #endif
 
@@ -1041,6 +1059,46 @@ public:
                                  Vertex_iterator_not_in_complex(*this));
   }
 
+  /*!
+    returns a range of iterators over vertices of the 0D complex
+    \note The value type of `Vertices_in_complex::iterator` is `Vertex_handle`.
+  */
+  Vertices_in_complex vertices_in_complex() const
+  {
+    return make_prevent_deref_range(vertices_in_complex_begin(),
+                                    vertices_in_complex_end());
+  }
+  /*!
+    returns a range of iterators over the edges of the 1D complex,
+    starting at an arbitrary edge.
+    Returns an empty range when `t.dimension() < 2`.
+  */
+  Edges_in_complex edges_in_complex() const
+  {
+    return make_prevent_deref_range(edges_in_complex_begin(),
+                                    edges_in_complex_end());
+  }
+  /*!
+    returns a range of iterators over the facets of the 2D complex,
+    starting at an arbitrary facet.
+    Returns an empty range when `t.dimension() < 2`.
+  */
+  Facets_in_complex facets_in_complex() const
+  {
+    return make_prevent_deref_range(facets_in_complex_begin(),
+                                    facets_in_complex_end());
+  }
+  /*!
+    returns a range of iterators over cells of the 3D complex.
+    Returns an empty range when `triangulation().number_of_cells() == 0`
+    or complex is empty.
+    \note The value type of `Cells_in_complex::iterator` is `Cell_handle`.
+  */
+  Cells_in_complex cells_in_complex() const
+  {
+    return make_prevent_deref_range(cells_in_complex_begin(),
+                                    cells_in_complex_end());
+  }
 ///  @}
 
 public:
