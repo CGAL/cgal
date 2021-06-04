@@ -72,23 +72,23 @@ public:
   Tangent_weight_wrapper(
     const Point& p, const Point& q, const Point& r) {
 
-    m_d_r = distance(q, r);
+    m_d_r = CGAL::Weights::distance(q, r);
     CGAL_assertion(m_d_r != FT(0)); // two points are identical!
-    m_d_p = distance(q, p);
+    m_d_p = CGAL::Weights::distance(q, p);
     CGAL_assertion(m_d_p != FT(0)); // two points are identical!
-    const auto A = CGAL::Weights::area(p, q, r);
-    CGAL_assertion(A != FT(0));     // three points are identical!
-    const auto scalar = scalar_product(p, q, r);
 
-    m_w_base = -tangent_half_angle(m_d_r, m_d_p, A, scalar);
+    const auto A = CGAL::Weights::area(p, q, r);
+    CGAL_assertion(A != FT(0)); // three points are identical!
+    const auto S = CGAL::Weights::scalar_product(p, q, r);
+    m_w_base = -CGAL::Weights::tangent_half_angle(m_d_r, m_d_p, A, S);
   }
 
   FT get_w_r() const {
-    return half_tangent_weight(m_w_base, m_d_r) / FT(2);
+    return CGAL::Weights::half_tangent_weight(m_w_base, m_d_r) / FT(2);
   }
 
   FT get_w_p() const {
-    return half_tangent_weight(m_w_base, m_d_p) / FT(2);
+    return CGAL::Weights::half_tangent_weight(m_w_base, m_d_p) / FT(2);
   }
 };
 
@@ -134,7 +134,7 @@ public:
         if (m_use_secure_version) {
           weight = cotangent_3_secure(p1, p2, p0);
         } else {
-          weight = cotangent(p1, p2, p0);
+          weight = CGAL::Weights::cotangent(p1, p2, p0);
         }
         weight = (CGAL::max)(FT(0), weight);
         weight /= FT(2);
@@ -143,7 +143,7 @@ public:
         if (m_use_secure_version) {
           weight = cotangent_3_secure(p0, p2, p1);
         } else {
-          weight = cotangent(p0, p2, p1);
+          weight = CGAL::Weights::cotangent(p0, p2, p1);
         }
         weight = (CGAL::max)(FT(0), weight);
         weight /= FT(2);
@@ -162,13 +162,13 @@ public:
       if (m_use_secure_version) {
         cot_beta = cotangent_3_secure(p0, p2, p1);
       } else {
-        cot_beta = cotangent(p0, p2, p1);
+        cot_beta = CGAL::Weights::cotangent(p0, p2, p1);
       }
 
       if (m_use_secure_version) {
         cot_gamma = cotangent_3_secure(p1, p3, p0);
       } else {
-        cot_gamma = cotangent(p1, p3, p0);
+        cot_gamma = CGAL::Weights::cotangent(p1, p3, p0);
       }
 
       cot_beta  = (CGAL::max)(FT(0), cot_beta);  cot_beta  /= FT(2);
@@ -182,7 +182,7 @@ public:
 template<
 typename PolygonMesh,
 typename VertexPointMap = typename boost::property_map<PolygonMesh, vertex_point_t>::type>
-class Cotangent_weight_wrapper_with_voronoi_secure {
+class Cotangent_weight_secure_with_voronoi_wrapper {
 
   using GeomTraits = typename CGAL::Kernel_traits<
       typename boost::property_traits<VertexPointMap>::value_type>::type;
@@ -195,7 +195,7 @@ public:
   using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
   using vertex_descriptor   = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
 
-  Cotangent_weight_wrapper_with_voronoi_secure(
+  Cotangent_weight_secure_with_voronoi_wrapper(
     const PolygonMesh& pmesh, const VertexPointMap pmap) :
   m_pmesh(pmesh), m_pmap(pmap) { }
 
@@ -265,7 +265,7 @@ private:
       const auto& p1 = get(m_pmap, v1);
       const auto& p2 = get(m_pmap, v2);
 
-      voronoi_area += mixed_voronoi_area(p1, p0, p2);
+      voronoi_area += CGAL::Weights::mixed_voronoi_area(p1, p0, p2);
     }
     CGAL_assertion(voronoi_area != FT(0));
     return voronoi_area;
@@ -305,7 +305,7 @@ public:
       const auto& p1 = get(m_pmap, v1);
       const auto& p2 = get(m_pmap, v2);
 
-      weight = cotangent(p0, p2, p1);
+      weight = CGAL::Weights::cotangent(p0, p2, p1);
 
     } else {
       const auto h1 = next(he, m_pmesh);
@@ -321,7 +321,7 @@ public:
       const auto& p2 = get(m_pmap, v2);
       const auto& p3 = get(m_pmap, v3);
 
-      weight = cotangent_weight(p2, p1, p3, p0) / FT(2);
+      weight = CGAL::Weights::cotangent_weight(p2, p1, p3, p0) / FT(2);
     }
     return weight;
   }
@@ -434,12 +434,12 @@ public:
     const auto& p1 = get(pmap, v1);
     const auto& p2 = get(pmap, v2);
 
-    return cotangent(p0, p2, p1);
+    return CGAL::Weights::cotangent(p0, p2, p1);
   }
 };
 
 template<class PolygonMesh>
-class Uniform_weight_fairing {
+class Uniform_weight_wrapper {
 
 public:
   using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;

@@ -11,8 +11,8 @@
 // Author(s)     : Yin Xu, Andreas Fabri, Ilker O. Yaz
 //
 
-#ifndef CGAL_WEIGHTS_INTERNAL_PMP_DEPRECATED_H
-#define CGAL_WEIGHTS_INTERNAL_PMP_DEPRECATED_H
+#ifndef CGAL_WEIGHTS_PMP_DEPRECATED_H
+#define CGAL_WEIGHTS_PMP_DEPRECATED_H
 
 // #include <CGAL/license/Weights.h>
 
@@ -23,7 +23,7 @@
 
 namespace CGAL {
 namespace Weights {
-namespace internal {
+namespace deprecated {
 
 // Returns the cotangent value of the half angle [v0, v1, v2]
 // using the formula in -[Meyer02] Discrete Differential-Geometry Operators for- page 19.
@@ -949,8 +949,8 @@ public:
   double w_i(vertex_descriptor /* v_i */) { return 1.0; }
 };
 
-} // namespace internal
+} // namespace deprecated
 } // namespace Weights
 } // namespace CGAL
 
-#endif // CGAL_WEIGHTS_INTERNAL_PMP_DEPRECATED_H
+#endif // CGAL_WEIGHTS_PMP_DEPRECATED_H
