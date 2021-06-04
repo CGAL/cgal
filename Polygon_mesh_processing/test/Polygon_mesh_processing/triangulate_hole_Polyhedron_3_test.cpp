@@ -30,20 +30,6 @@ typedef boost::graph_traits<Polyhedron>::halfedge_iterator    Halfedge_iterator;
 typedef CGAL::Halfedge_around_face_circulator<Polyhedron> Halfedge_around_facet_circulator;
 typedef boost::property_map<Polyhedron,CGAL::vertex_point_t>::type Point_property_map;
 
-template<
-class GeomTraits,
-class PolygonMesh>
-class Uniform_weight_fairing {
-
-public:
-  using FT = typename GeomTraits::FT;
-  using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
-  using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
-
-  FT w_ij(halfedge_descriptor) { return FT(1); }
-  FT w_i(vertex_descriptor) { return FT(1); }
-};
-
 void read_poly(const char* file_name, Polyhedron& poly) {
   poly.clear();
 
@@ -341,7 +327,7 @@ void test_triangulate_refine_and_fair_hole_compile() {
   CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole
   (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices),
   CGAL::Polygon_mesh_processing::parameters::
-    weight_calculator(Uniform_weight_fairing<Kernel, Polyhedron>()).
+    weight_calculator(CGAL::Weights::internal::Uniform_weight_fairing<Polyhedron>()).
     sparse_linear_solver(Default_solver()).
     use_2d_constrained_delaunay_triangulation(false));
 
@@ -350,7 +336,7 @@ void test_triangulate_refine_and_fair_hole_compile() {
   CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole
     (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices),
     CGAL::Polygon_mesh_processing::parameters::
-      weight_calculator(Uniform_weight_fairing<Kernel, Polyhedron>()));
+      weight_calculator(CGAL::Weights::internal::Uniform_weight_fairing<Polyhedron>()));
 
   // default solver and weight
   read_poly_with_borders("elephant_quad_hole.off", poly, border_reps);
