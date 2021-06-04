@@ -1,1 +1,1 @@
-2D Generalized Barycentric Coordinates for simple polygons
+3D Generalized Barycentric Coordinates for convex simplicial polytopes.
