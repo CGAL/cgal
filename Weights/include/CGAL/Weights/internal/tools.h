@@ -438,6 +438,16 @@ public:
   }
 };
 
+template<class PolygonMesh>
+class Uniform_weight_fairing {
+
+public:
+  using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
+  using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
+  double w_ij(halfedge_descriptor) { return 1.0; }
+  double w_i(vertex_descriptor) { return 1.0; }
+};
+
 } // namespace internal
 } // namespace Weights
 } // namespace CGAL

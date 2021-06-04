@@ -128,15 +128,6 @@ namespace Weights {
   }
   /// \endcond
 
-  /*!
-    \ingroup PkgWeightsRefUniformWeights
-
-    \brief this function always returns 1.
-  */
-  double uniform_weight() {
-    return 1.0;
-  }
-
 } // namespace Weights
 } // namespace CGAL
 

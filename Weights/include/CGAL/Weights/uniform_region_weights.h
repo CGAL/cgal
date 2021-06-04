@@ -120,15 +120,6 @@ namespace Weights {
   }
   /// \endcond
 
-  /*!
-    \ingroup PkgWeightsRefUniformRegionWeights
-
-    \brief this function always returns 1.
-  */
-  double uniform_area() {
-    return 1.0;
-  }
-
 } // namespace Weights
 } // namespace CGAL
 
