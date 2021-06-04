@@ -19,6 +19,7 @@
 #include <CGAL/Surface_mesh_parameterization/internal/validity.h>
 #include <CGAL/Surface_mesh_parameterization/Circular_border_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Fixed_border_parameterizer_3.h>
+#include <CGAL/Weights/uniform_weights.h>
 
 #include <CGAL/Default.h>
 #include <CGAL/iterator.h>
@@ -136,6 +137,7 @@ private:
 // Private types
 private:
   typedef typename Base::NT                       NT;
+  typedef typename Base::Point_3                  Point_3;
 
   // Solver traits subtypes:
   typedef typename Solver_traits::Vector          Vector;
@@ -180,7 +182,8 @@ protected:
       Vertex_around_target_circulator<Triangle_mesh> /* neighbor_vertex_v_j */ ) const
   {
     /// In the Tutte Barycentric Mapping algorithm, we have `w_ij = 1`, for `j` neighbor vertex of `i`.
-    return 1.;
+    const Point_3 stub;
+    return CGAL::Weights::uniform_weight(stub, stub, stub, stub);
   }
 };
 

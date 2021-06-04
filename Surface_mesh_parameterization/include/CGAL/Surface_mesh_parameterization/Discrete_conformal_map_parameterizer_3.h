@@ -16,11 +16,10 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/Surface_mesh_parameterization/internal/angles.h>
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
-
 #include <CGAL/Surface_mesh_parameterization/Fixed_border_parameterizer_3.h>
+#include <CGAL/Weights/cotangent_weights.h>
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>
@@ -173,26 +172,19 @@ protected:
                           Vertex_around_target_circulator<Triangle_mesh> neighbor_vertex_v_j) const // its target is main_vertex_v_i
   {
     const PPM ppmap = get(vertex_point, mesh);
-
     const Point_3& position_v_i = get(ppmap, main_vertex_v_i);
     const Point_3& position_v_j = get(ppmap, *neighbor_vertex_v_j);
 
-    // Compute cotangent of (v_i,v_k,v_j) corner (i.e. cotan of v_k corner)
-    // if v_k is the vertex before v_j when circulating around v_i
     vertex_around_target_circulator previous_vertex_v_k = neighbor_vertex_v_j;
     previous_vertex_v_k--;
     const Point_3& position_v_k = get(ppmap, *previous_vertex_v_k);
-    NT cotg_beta_ij = internal::cotangent<Kernel>(position_v_i, position_v_k, position_v_j);
 
-    // Compute cotangent of (v_j,v_l,v_i) corner (i.e. cotan of v_l corner)
-    // if v_l is the vertex after v_j when circulating around v_i
     vertex_around_target_circulator next_vertex_v_l = neighbor_vertex_v_j;
     next_vertex_v_l++;
     const Point_3& position_v_l = get(ppmap, *next_vertex_v_l);
-    NT cotg_alpha_ij = internal::cotangent<Kernel>(position_v_j, position_v_l, position_v_i);
 
-    NT weight = cotg_beta_ij + cotg_alpha_ij;
-    return weight;
+    return CGAL::Weights::cotangent_weight(
+      position_v_k, position_v_j, position_v_l, position_v_i) / NT(2);
   }
 };
 

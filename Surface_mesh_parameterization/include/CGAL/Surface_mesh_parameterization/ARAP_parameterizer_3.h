@@ -26,8 +26,8 @@
 #include <CGAL/Surface_mesh_parameterization/LSCM_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/MVC_post_processor_3.h>
 #include <CGAL/Surface_mesh_parameterization/Two_vertices_parameterizer_3.h>
-
 #include <CGAL/Surface_mesh_parameterization/parameterize.h>
+#include <CGAL/Weights/utils.h>
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
@@ -449,7 +449,8 @@ private:
     const Point_3& position_vj = get(ppmap, vj);
     const Point_3& position_vk = get(ppmap, vk);
 
-    NT cot = internal::cotangent<Kernel>(position_vi, position_vj, position_vk);
+    const NT cot = CGAL::Weights::
+      cotangent(position_vi, position_vj, position_vk);
     put(ctmap, hd, cot);
   }
 
@@ -489,13 +490,13 @@ private:
 
     // coefficient corresponding to the angle at vk if vk is the vertex before vj
     // while circulating around vi
-    NT c_k = get(ctmap, opposite(hd, mesh));
+    const NT c_k = get(ctmap, opposite(hd, mesh));
 
     // coefficient corresponding to the angle at vl if vl is the vertex after vj
     // while circulating around vi
-    NT c_l = get(ctmap, hd);
+    const NT c_l = get(ctmap, hd);
 
-    NT weight = c_k + c_l;
+    const NT weight = c_k + c_l;
     return weight;
   }
 

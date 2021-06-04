@@ -16,11 +16,10 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/Surface_mesh_parameterization/internal/angles.h>
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
-
 #include <CGAL/Surface_mesh_parameterization/Fixed_border_parameterizer_3.h>
+#include <CGAL/Weights/authalic_weights.h>
 
 #include <CGAL/Default.h>
 
@@ -177,34 +176,19 @@ protected:
                           Vertex_around_target_circulator<Triangle_mesh> neighbor_vertex_v_j) const
   {
     const PPM ppmap = get(vertex_point, mesh);
-
     const Point_3& position_v_i = get(ppmap, main_vertex_v_i);
     const Point_3& position_v_j = get(ppmap, *neighbor_vertex_v_j);
 
-    // Compute the square norm of v_j -> v_i vector
-    Vector_3 edge = position_v_i - position_v_j;
-    double square_len = edge*edge;
-
-    // Compute cotangent of (v_k,v_j,v_i) corner (i.e. cotan of v_j corner)
-    // if v_k is the vertex before v_j when circulating around v_i
     vertex_around_target_circulator previous_vertex_v_k = neighbor_vertex_v_j;
     previous_vertex_v_k--;
     const Point_3& position_v_k = get(ppmap, *previous_vertex_v_k);
-    NT cotg_psi_ij = internal::cotangent<Kernel>(position_v_k, position_v_j, position_v_i);
 
-    // Compute cotangent of (v_i,v_j,v_l) corner (i.e. cotan of v_j corner)
-    // if v_l is the vertex after v_j when circulating around v_i
     vertex_around_target_circulator next_vertex_v_l = neighbor_vertex_v_j;
     next_vertex_v_l++;
-    const Point_3& position_v_l = get(ppmap,*next_vertex_v_l);
-    NT cotg_theta_ij = internal::cotangent<Kernel>(position_v_i, position_v_j, position_v_l);
+    const Point_3& position_v_l = get(ppmap, *next_vertex_v_l);
 
-    NT weight = 0.0;
-    CGAL_assertion(square_len != 0.0); // two points are identical!
-    if(square_len != 0.0)
-      weight = (cotg_psi_ij + cotg_theta_ij) / square_len;
-
-    return weight;
+    return CGAL::Weights::authalic_weight(
+      position_v_k, position_v_j, position_v_l, position_v_i) / NT(2);
   }
 };
 
