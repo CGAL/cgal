@@ -39,8 +39,6 @@ decltype(auto) cotangent_3_secure(
 
   const auto dot_product_3 =
     traits.compute_scalar_product_3_object();
-  const auto cross_product_3 =
-    traits.construct_cross_product_vector_3_object();
   const auto construct_vector_3 =
     traits.construct_vector_3_object();
 
@@ -74,23 +72,23 @@ public:
   Tangent_weight_wrapper(
     const Point& p, const Point& q, const Point& r) {
 
-    m_d_r = distance(q, r);
+    m_d_r = CGAL::Weights::distance(q, r);
     CGAL_assertion(m_d_r != FT(0)); // two points are identical!
-    m_d_p = distance(q, p);
+    m_d_p = CGAL::Weights::distance(q, p);
     CGAL_assertion(m_d_p != FT(0)); // two points are identical!
-    const auto area = area(p, q, r);
-    CGAL_assertion(area != FT(0));  // three points are identical!
-    const auto scalar = scalar_product(p, q, r);
 
-    m_w_base = -tangent_half_angle(m_d_r, m_d_p, area, scalar);
+    const auto A = CGAL::Weights::area(p, q, r);
+    CGAL_assertion(A != FT(0)); // three points are identical!
+    const auto S = CGAL::Weights::scalar_product(p, q, r);
+    m_w_base = -CGAL::Weights::tangent_half_angle(m_d_r, m_d_p, A, S);
   }
 
   FT get_w_r() const {
-    return half_tangent_weight(m_w_base, m_d_r) / FT(2);
+    return CGAL::Weights::half_tangent_weight(m_w_base, m_d_r) / FT(2);
   }
 
   FT get_w_p() const {
-    return half_tangent_weight(m_w_base, m_d_p) / FT(2);
+    return CGAL::Weights::half_tangent_weight(m_w_base, m_d_p) / FT(2);
   }
 };
 
@@ -109,7 +107,9 @@ public:
 
   template<class VertexPointMap>
   decltype(auto) operator()(
-    const halfedge_descriptor he, const PolygonMesh& pmesh, const VertexPointMap& pmap) const {
+    const halfedge_descriptor he,
+    const PolygonMesh& pmesh,
+    const VertexPointMap& pmap) const {
 
     const auto v0 = target(he, pmesh);
     const auto v1 = source(he, pmesh);
@@ -134,7 +134,7 @@ public:
         if (m_use_secure_version) {
           weight = cotangent_3_secure(p1, p2, p0);
         } else {
-          weight = cotangent(p1, p2, p0);
+          weight = CGAL::Weights::cotangent(p1, p2, p0);
         }
         weight = (CGAL::max)(FT(0), weight);
         weight /= FT(2);
@@ -143,7 +143,7 @@ public:
         if (m_use_secure_version) {
           weight = cotangent_3_secure(p0, p2, p1);
         } else {
-          weight = cotangent(p0, p2, p1);
+          weight = CGAL::Weights::cotangent(p0, p2, p1);
         }
         weight = (CGAL::max)(FT(0), weight);
         weight /= FT(2);
@@ -162,13 +162,13 @@ public:
       if (m_use_secure_version) {
         cot_beta = cotangent_3_secure(p0, p2, p1);
       } else {
-        cot_beta = cotangent(p0, p2, p1);
+        cot_beta = CGAL::Weights::cotangent(p0, p2, p1);
       }
 
       if (m_use_secure_version) {
         cot_gamma = cotangent_3_secure(p1, p3, p0);
       } else {
-        cot_gamma = cotangent(p1, p3, p0);
+        cot_gamma = CGAL::Weights::cotangent(p1, p3, p0);
       }
 
       cot_beta  = (CGAL::max)(FT(0), cot_beta);  cot_beta  /= FT(2);
@@ -182,7 +182,7 @@ public:
 template<
 typename PolygonMesh,
 typename VertexPointMap = typename boost::property_map<PolygonMesh, vertex_point_t>::type>
-class Cotangent_weight_wrapper_with_voronoi_secure {
+class Cotangent_weight_secure_with_voronoi_wrapper {
 
   using GeomTraits = typename CGAL::Kernel_traits<
       typename boost::property_traits<VertexPointMap>::value_type>::type;
@@ -195,13 +195,9 @@ public:
   using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
   using vertex_descriptor   = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
 
-  Cotangent_weight_wrapper_with_voronoi_secure(
+  Cotangent_weight_secure_with_voronoi_wrapper(
     const PolygonMesh& pmesh, const VertexPointMap pmap) :
   m_pmesh(pmesh), m_pmap(pmap) { }
-
-  PolygonMesh& pmesh() {
-    return m_pmesh;
-  }
 
   FT w_i(const vertex_descriptor v_i) const {
     return FT(1) / (FT(2) * voronoi(v_i));
@@ -212,7 +208,7 @@ public:
   }
 
 private:
-  FT cotangent_secure(halfedge_descriptor he) const {
+  FT cotangent_secure(const halfedge_descriptor he) const {
 
     const auto v0 = target(he, m_pmesh);
     const auto v1 = source(he, m_pmesh);
@@ -256,7 +252,7 @@ private:
 
     FT voronoi_area = FT(0);
     CGAL_assertion(CGAL::is_triangle_mesh(m_pmesh));
-    for (const auto he : halfedges_around_target(halfedge(v0, m_pmesh), m_pmesh)) {
+    for (const auto& he : halfedges_around_target(halfedge(v0, m_pmesh), m_pmesh)) {
       CGAL_assertion(v0 == target(he, m_pmesh));
       if (is_border(he, m_pmesh)) {
         continue;
@@ -269,7 +265,7 @@ private:
       const auto& p1 = get(m_pmap, v1);
       const auto& p2 = get(m_pmap, v2);
 
-      voronoi_area += mixed_voronoi_area(p1, p0, p2);
+      voronoi_area += CGAL::Weights::mixed_voronoi_area(p1, p0, p2);
     }
     CGAL_assertion(voronoi_area != FT(0));
     return voronoi_area;
@@ -292,12 +288,8 @@ public:
   using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
   using vertex_descriptor   = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
 
-  Edge_cotangent_weight_wrapper(PolygonMesh& pmesh, VertexPointMap pmap) :
+  Edge_cotangent_weight_wrapper(const PolygonMesh& pmesh, const VertexPointMap pmap) :
   m_pmesh(pmesh), m_pmap(pmap) { }
-
-  PolygonMesh& pmesh() {
-    return m_pmesh;
-  }
 
   FT operator()(const halfedge_descriptor he) const {
 
@@ -313,7 +305,7 @@ public:
       const auto& p1 = get(m_pmap, v1);
       const auto& p2 = get(m_pmap, v2);
 
-      weight = cotangent(p0, p2, p1);
+      weight = CGAL::Weights::cotangent(p0, p2, p1);
 
     } else {
       const auto h1 = next(he, m_pmesh);
@@ -329,9 +321,87 @@ public:
       const auto& p2 = get(m_pmap, v2);
       const auto& p3 = get(m_pmap, v3);
 
-      weight = cotangent_weight(p2, p1, p3, p0) / FT(2);
+      weight = CGAL::Weights::cotangent_weight(p2, p1, p3, p0) / FT(2);
     }
     return weight;
+  }
+};
+
+template<
+typename PolygonMesh,
+typename VertexPointMap = typename boost::property_map<PolygonMesh, vertex_point_t>::type>
+class Mean_value_weight_wrapper {
+
+  using GeomTraits = typename CGAL::Kernel_traits<
+      typename boost::property_traits<VertexPointMap>::value_type>::type;
+  using FT = typename GeomTraits::FT;
+  using Vector = typename GeomTraits::Vector_3;
+
+  const PolygonMesh& m_pmesh;
+  const VertexPointMap m_pmap;
+
+public:
+  using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
+  using vertex_descriptor   = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
+
+  Mean_value_weight_wrapper(const PolygonMesh& pmesh, const VertexPointMap pmap) :
+  m_pmesh(pmesh), m_pmap(pmap) { }
+
+  // Returns the mean-value coordinate of the specified halfedge_descriptor.
+  // Returns different values for different edge orientations (which is normal
+  // behaviour according to the formula).
+  FT operator()(const halfedge_descriptor he) const {
+
+    const vertex_descriptor v0 = target(he, m_pmesh);
+    const vertex_descriptor v1 = source(he, m_pmesh);
+    const Vector vec = get(m_pmap, v0) - get(m_pmap, v1);
+    const FT norm = static_cast<FT>(
+      CGAL::sqrt(CGAL::to_double(vec.squared_length())));
+
+    // Only one triangle for border edges.
+    if (is_border_edge(he, m_pmesh)) {
+      const halfedge_descriptor he_cw = opposite(next(he, m_pmesh), m_pmesh);
+      vertex_descriptor v2 = source(he_cw, m_pmesh);
+      if (is_border_edge(he_cw, m_pmesh)) {
+        const halfedge_descriptor he_ccw = prev(opposite(he, m_pmesh), m_pmesh);
+        v2 = source(he_ccw, m_pmesh);
+      }
+      return half_tan_value_2(v1, v0, v2) / norm;
+    } else {
+      const halfedge_descriptor he_cw = opposite(next(he, m_pmesh), m_pmesh);
+      const vertex_descriptor v2 = source(he_cw, m_pmesh);
+      const halfedge_descriptor he_ccw = prev(opposite(he, m_pmesh), m_pmesh);
+      const vertex_descriptor v3 = source(he_ccw, m_pmesh);
+      return (
+        half_tan_value_2(v1, v0, v2) / norm +
+        half_tan_value_2(v1, v0, v3) / norm );
+    }
+  }
+
+private:
+  // The authors deviation built on Meyer_02.
+  // See Iterative_authalic_parameterizer_3.h.
+  FT half_tan_value_2(
+    const vertex_descriptor v0,
+    const vertex_descriptor v1,
+    const vertex_descriptor v2) const {
+
+    const Vector a = get(m_pmap, v0) - get(m_pmap, v1);
+    const Vector b = get(m_pmap, v2) - get(m_pmap, v1);
+    const FT dot_ab = a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+    const FT dot_aa = a.squared_length();
+    const FT dot_bb = b.squared_length();
+    const FT dot_aa_bb = dot_aa * dot_bb;
+
+    const FT cos_rep = dot_ab;
+    const FT sin_rep = static_cast<FT>(
+      CGAL::sqrt(CGAL::to_double(dot_aa_bb  - dot_ab * dot_ab)));
+    const FT normalizer = static_cast<FT>(
+      CGAL::sqrt(CGAL::to_double(dot_aa_bb))); // |a| * |b|
+
+    // The formula from [Floater04] page 4:
+    // tan(Q / 2) = (1 - cos(Q)) / sin(Q).
+    return (normalizer - cos_rep) / sin_rep;
   }
 };
 
@@ -344,7 +414,9 @@ public:
 
   template<class VertexPointMap>
   decltype(auto) operator()(
-    const halfedge_descriptor he, const PolygonMesh& pmesh, const VertexPointMap& pmap) const {
+    const halfedge_descriptor he,
+    const PolygonMesh& pmesh,
+    const VertexPointMap& pmap) const {
 
     using Kernel = typename CGAL::Kernel_traits<
       typename boost::property_traits<VertexPointMap>::value_type>::type;
@@ -362,8 +434,18 @@ public:
     const auto& p1 = get(pmap, v1);
     const auto& p2 = get(pmap, v2);
 
-    return cotangent(p0, p2, p1);
+    return CGAL::Weights::cotangent(p0, p2, p1);
   }
+};
+
+template<class PolygonMesh>
+class Uniform_weight_wrapper {
+
+public:
+  using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
+  using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
+  double w_ij(halfedge_descriptor) { return 1.0; }
+  double w_i(vertex_descriptor) { return 1.0; }
 };
 
 } // namespace internal

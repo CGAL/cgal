@@ -6,7 +6,7 @@ namespace Weights {
 \cgalConcept
 
 A concept that describes the set of requirements of the template parameter
-`GeomTraits` used to parameterize several classes and functions with 2D weights
+`GeomTraits` used to parameterize several classes and functions
 from the namespace `CGAL::Weights`.
 
 \cgalHasModel
@@ -34,23 +34,18 @@ typedef unspecified_type Comparison_result;
 */
 typedef unspecified_type Orientation;
 
-/*!
-  A model of `Kernel::Angle_2`.
-*/
-typedef unspecified_type Angle_2;
-
 /// @}
 
 /// \name Geometric Objects
 /// @{
 
 /*!
-  A model of `Kernel::Point_2`.
+  2D point type.
 */
 typedef unspecified_type Point_2;
 
 /*!
-  A model of `Kernel::Vector_2`.
+  2D vector type.
 */
 typedef unspecified_type Vector_2;
 
@@ -110,6 +105,8 @@ typedef unspecified_type Compute_determinant_2;
   `%Point_2 operator()(const Point_2& p, const Point_2& q, const Point_2& r)`
 
   that returns the center of the circle passing through the points `p`, `q`, and `r`.
+
+  \pre The points `p`, `q`, and `r` are not collinear.
 */
 typedef unspecified_type Construct_circumcenter_2;
 

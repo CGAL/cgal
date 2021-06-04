@@ -432,6 +432,61 @@ namespace internal {
     return Point_2(x, y);
   }
 
+  // Flattening.
+
+  // \cgalFigureBegin{flattening, flattening.svg}
+  //   The non-planar configuration (top) is flattened to the planar configuration (bottom).
+  // \cgalFigureEnd
+
+  // When computing weights for a query point \f$q\f$ with respect to its neighbors
+  // \f$p_0\f$, \f$p_1\f$, and \f$p_2\f$, the local configuration is a quadrilateral
+  // [\f$p_0\f$, \f$p_1\f$, \f$p_2\f$, \f$q\f$] or two connected triangles [\f$q\f$, \f$p_0\f$, \f$p_1\f$]
+  // and [\f$q\f$, \f$p_1\f$, \f$p_2\f$]. When working in 3D, these triangles are not
+  // necessarily coplanar, in other words, they do not belong to the same common plane.
+  // When they are not coplanar, they can be made coplanar through the process called *flattening* (see the Figure above),
+  // however the latter introduces a distortion because the weights are computed with respect to the
+  // flattened configuration rather than to the original non-flat configuration.
+
+  // \subsection Weights_Examples_ProjectionTraits Computing 2D Weights in 3D
+
+  // If you have a 2D polygon in 3D plane that is not an XY plane, you can still compute
+  // the 2D weights, however you need to provide a special projection traits class.
+  // The common plane that is used in this example is projectable to the XY plane. We first
+  // compute `Mean_value_weights_2` for a 3D polygon in this plane. We then also show how to use
+  // the projection traits to compute the \ref PkgWeightsRefWachspressWeights "2D Wachspress weight"
+  // for 3D points which are not strictly coplanar.
+
+  // \cgalExample{Weights/projection_traits.cpp}
+
+  // Example of flattening:
+
+  // 3D configuration.
+  // const Point_3 p0(0, 1, 1);
+  // const Point_3 p1(2, 0, 1);
+  // const Point_3 p2(7, 1, 1);
+  // const Point_3 q0(3, 1, 1);
+
+  // Choose a type of the weight:
+  // e.g. 0 - Wachspress (WP) weight.
+  // const FT wp = FT(0);
+
+  // Compute WP weights for q1 which is not on the plane [p0, p1, p2].
+
+  // Point_3 q1(3, 1, 2);
+  // std::cout << "3D wachspress (WP, q1): ";
+  // std::cout << CGAL::Weights::three_point_family_weight(p0, p1, p2, q1, wp) << std::endl;
+
+  // Converge q1 towards q0 that is we flatten the configuration.
+  // We also compare the result with the authalic weight.
+
+  // std::cout << "Converge q1 to q0: " << std::endl;
+  // for (FT x = FT(0); x <= FT(1); x += step) {
+  //   std::cout << "3D wachspress/authalic: ";
+  //   q1 = Point_3(3, 1, FT(2) - x);
+  //   std::cout << CGAL::Weights::three_point_family_weight(p0, p1, p2, q1, wp) << "/";
+  //   std::cout << CGAL::Weights::authalic_weight(p0, p1, p2, q1) << std::endl;
+  // }
+
   // Flattens an arbitrary quad into a planar quad.
   template<typename GeomTraits>
   void flatten(

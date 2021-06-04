@@ -15,8 +15,7 @@ void test_overloads() {
   using FT      = typename Kernel::FT;
   using Point_2 = typename Kernel::Point_2;
   using Point_3 = typename Kernel::Point_3;
-  const FT a = CGAL::Weights::uniform_area();
-  assert(a == FT(1));
+  const FT a = FT(1);
   const Point_2 p(0, 0);
   const Point_3 q(0, 0, 0);
   assert(CGAL::Weights::uniform_area(p, p, p) == a);

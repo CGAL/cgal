@@ -53,7 +53,7 @@ namespace Weights {
   /*!
     \ingroup PkgWeightsRefUniformRegionWeights
 
-    \brief this function always returns 1, given three points in 2D, which are
+    \brief this function always returns 1, given three points in 2D which are
     parameterized by a `Kernel` K.
   */
   template<typename K>
@@ -65,7 +65,7 @@ namespace Weights {
   /*!
     \ingroup PkgWeightsRefUniformRegionWeights
 
-    \brief this function always returns 1, given three points in 3D, which are
+    \brief this function always returns 1, given three points in 3D which are
     parameterized by a `Kernel` K.
   */
   template<typename K>
@@ -119,15 +119,6 @@ namespace Weights {
     return uniform_area(p, q, r, traits);
   }
   /// \endcond
-
-  /*!
-    \ingroup PkgWeightsRefUniformRegionWeights
-
-    \brief this function always returns 1.
-  */
-  double uniform_area() {
-    return 1.0;
-  }
 
 } // namespace Weights
 } // namespace CGAL

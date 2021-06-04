@@ -3,7 +3,6 @@
 \example Weights/coordinates_one_query.cpp
 \example Weights/coordinates_multiple_queries.cpp
 \example Weights/weighted_laplacian.cpp
-\example Weights/projection_traits.cpp
 \example Weights/custom_traits.cpp
 \example Weights/convergence.cpp
 */

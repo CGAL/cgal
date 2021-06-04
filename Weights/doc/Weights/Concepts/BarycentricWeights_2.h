@@ -5,8 +5,8 @@ namespace Weights {
 \ingroup PkgWeightsRefConcepts
 \cgalConcept
 
-A concept that describes the set of methods required in all classes for computing
-2D generalized barycentric weights with respect to polygons.
+A concept that describes the set of methods required in all classes used in
+the computation of 2D generalized barycentric weights.
 
 \cgalHasModel
 - `CGAL::Weights::Wachspress_weights_2`
@@ -21,11 +21,14 @@ public:
     fills a destination range with 2D generalized barycentric weights
     computed at the `query` point with respect to the vertices of the input polygon.
 
-    The number of computed weights equals to the number of polygon vertices.
+    \tparam OutIterator
+    a model of `OutputIterator` whose value type is `FieldNumberType`
+
+    The number of computed weights is equal to the number of polygon vertices.
   */
-  template<typename OutputIterator>
-  OutputIterator operator()(
-    const Point_2& query, OutputIterator w_begin)
+  template<typename OutIterator>
+  OutIterator operator()(
+    const Point_2& query, OutIterator w_begin)
   { }
 };
 

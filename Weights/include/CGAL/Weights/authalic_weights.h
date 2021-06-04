@@ -112,7 +112,7 @@ namespace Weights {
     \ingroup PkgWeightsRefAuthalicWeights
 
     \brief computes the authalic weight in 2D at `q` using the points `p0`, `p1`,
-    and `p2`, which are parameterized by a `Kernel` K.
+    and `p2` which are parameterized by a `Kernel` K.
   */
   template<typename K>
   typename K::FT authalic_weight(
@@ -125,7 +125,7 @@ namespace Weights {
     \ingroup PkgWeightsRefAuthalicWeights
 
     \brief computes the authalic weight in 3D at `q` using the points `p0`, `p1`,
-    and `p2`, which are parameterized by a `Kernel` K.
+    and `p2` which are parameterized by a `Kernel` K.
   */
   template<typename K>
   typename K::FT authalic_weight(
