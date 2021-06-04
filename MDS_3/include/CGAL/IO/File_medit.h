@@ -707,7 +707,8 @@ template <class C3T3, bool rebind, bool no_patch>
 void
 output_to_medit(std::ostream& os,
                 const C3T3& c3t3,
-                const bool all_vertices)
+                const bool all_vertices,
+                const bool all_cells)
 {
 #ifdef CGAL_MESH_3_IO_VERBOSE
   std::cerr << "Output to medit:\n";
@@ -731,7 +732,8 @@ output_to_medit(std::ostream& os,
                   cell_pmap,
                   facet_pmap_twice,
                   Generator().print_twice(),
-                  all_vertices);
+                  all_vertices,
+                  all_cells);
 
 #ifdef CGAL_MESH_3_IO_VERBOSE
   std::cerr << "done.\n";
@@ -753,11 +755,11 @@ output_to_medit(std::ostream& os,
                 const Cell_index_property_map& cell_pmap,
                 const Facet_index_property_map_twice& facet_twice_pmap = Facet_index_property_map_twice(),
                 const bool print_each_facet_twice = false,
-                const bool all_vertices = true)
+                const bool all_vertices = true,
+                const bool all_cells = true)
 {
   typedef typename C3T3::Triangulation Tr;
   typedef typename C3T3::Facets_in_complex_iterator Facet_iterator;
-  typedef typename C3T3::Cells_in_complex_iterator Cell_iterator;
 
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Cell_handle   Cell_handle;
@@ -875,14 +877,25 @@ output_to_medit(std::ostream& os,
   os << "Tetrahedra\n"
      << number_of_cells << '\n';
 
-  for( Cell_iterator cit = c3t3.cells_in_complex_begin() ;
-       cit != c3t3.cells_in_complex_end() ;
-       ++cit )
+  if (all_cells)
   {
-    for (int i=0; i<4; i++)
-      os << V[cit->vertex(i)] << ' ';
+    for (Cell_handle cit : c3t3.triangulation().finite_cell_handles())
+    {
+      for (int i = 0; i < 4; i++)
+        os << V[cit->vertex(i)] << ' ';
 
-    os << get(cell_pmap, cit) << '\n';
+      os << get(cell_pmap, cit) << '\n';
+    }
+  }
+  else
+  {
+    for (Cell_handle cit : c3t3.cells_in_complex())
+    {
+      for (int i = 0; i < 4; i++)
+        os << V[cit->vertex(i)] << ' ';
+
+      os << get(cell_pmap, cit) << '\n';
+    }
   }
 
   //-------------------------------------------------------
@@ -916,22 +929,27 @@ output_to_medit(std::ostream& os,
                 bool show_patches = false
 #ifndef DOXYGEN_RUNNING
               , bool all_vertices = true
+              , bool all_cells = false
 #endif
 )
 {
   if ( rebind )
   {
     if ( show_patches )
-      CGAL::MDS_3::output_to_medit<C3T3,true,false>(os, c3t3, all_vertices);
+      CGAL::MDS_3::output_to_medit<C3T3,true,false>(os, c3t3,
+        all_vertices, all_cells);
     else
-      CGAL::MDS_3::output_to_medit<C3T3,true,true>(os, c3t3, all_vertices);
+      CGAL::MDS_3::output_to_medit<C3T3,true,true>(os, c3t3,
+        all_vertices, all_cells);
   }
   else
   {
     if ( show_patches )
-      CGAL::MDS_3::output_to_medit<C3T3,false,false>(os, c3t3, all_vertices);
+      CGAL::MDS_3::output_to_medit<C3T3,false,false>(os, c3t3,
+        all_vertices, all_cells);
     else
-      CGAL::MDS_3::output_to_medit<C3T3,false,true>(os, c3t3, all_vertices);
+      CGAL::MDS_3::output_to_medit<C3T3,false,true>(os, c3t3,
+        all_vertices, all_cells);
   }
 }
 
@@ -956,7 +974,15 @@ output_to_medit(std::ostream& os,
  *   \cgalParamDefault{`true`}
  *   \cgalParamExtra{This parameter should be set to `false` for the file to be readable by `read_MEDIT()`.}
  * \cgalParamNEnd
- *
+ * \cgalParamNBegin{all_cells}
+ *   \cgalParamDescription{If `true`, all the cells in `t3` are written in `os`,
+ *        however they belong to the complex or not.
+ *        Otherwise, only the cells `c` for which
+ *        `c->subdomain_index() != Subdomain_index()` are written}
+ *   \cgalParamType{Boolean}
+ *   \cgalParamDefault{`true`}
+ *   \cgalParamExtra{If `all_vertices` is `true`, this parameter is ignored.}
+ * \cgalParamNEnd
  * \see \ref IOStreamMedit
  */
 template<typename T3, typename NamedParameters>
@@ -974,8 +1000,10 @@ void write_MEDIT(std::ostream& os,
   bool all_v = choose_parameter(get_parameter(np, internal_np::all_vertices), true);
   bool rebind = false;
   bool show_patches = false;
+  bool all_c = all_v ||
+    choose_parameter(get_parameter(np, internal_np::all_cells), true);
 
-  output_to_medit(os, c3t3, rebind, show_patches, all_v);
+  output_to_medit(os, c3t3, rebind, show_patches, all_v, all_c);
 }
 
 template<typename T3>
