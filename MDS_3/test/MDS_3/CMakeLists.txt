@@ -15,6 +15,7 @@ create_single_source_cgal_program( "test_c3t3_io.cpp" )
 create_single_source_cgal_program( "test_c3t3_with_features.cpp" )
 create_single_source_cgal_program( "test_c3t3_into_facegraph.cpp" )
 create_single_source_cgal_program( "test_c3t3_extract_subdomains_boundaries.cpp" )
+create_single_source_cgal_program( "test_c3t3_io_MEDIT.cpp" )
 
 foreach(target
     test_c3t3
