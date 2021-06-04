@@ -88,6 +88,7 @@ int main (int argc, char** argv){
 
   std::ofstream out("graph.off");
   out << poly;
+  out.close();
 
   CGAL_assertion(is_valid(poly));
   return EXIT_SUCCESS;
