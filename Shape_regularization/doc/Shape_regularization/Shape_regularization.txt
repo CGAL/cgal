@@ -17,7 +17,7 @@ A closed contour before (red) and after (green) regularization.
 
 This \cgal package enables to regularize a set of segments and open or closed contours in 2D
 and a set of planes in 3D such that all input objects are rotated and aligned with respect
-to the user-specified conditions. We also provide an advance regularization algorithm that can
+to the user-specified conditions. In addition, we provide a global regularization framework that can
 be adjusted for the user needs and any type of geometric objects. This package can also be used
 in conjunction with the \ref PkgShapeDetection "Shape Detection" package.
 
@@ -436,7 +436,7 @@ still use the old API of that function, however to avoid parameters ambiguity, w
 suggest to use the new API with the \ref BGLNamedParameters "Named Parameters" mechanism.
 
 
-\section QP_Regularization Advance QP Regularization
+\section QP_Regularization QP Regularization
 
 The shape regularization component is a generic framework that is based on the
 Quadratic Programming (QP) global regularization algorithm \cgalCite{cgal:bl-kippi-18}
