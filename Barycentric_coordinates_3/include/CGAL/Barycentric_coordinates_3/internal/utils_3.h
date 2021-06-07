@@ -4,6 +4,9 @@
 // STL includes 
 #include <tuple>
 
+// CGAL includes
+#include <CGAL/Surface_mesh.h>
+
 namespace CGAL{
 namespace Barycentric_coordinates{
 namespace internal{
