@@ -22,6 +22,19 @@ template <typename Tr,
           typename CurveIndex = int>
 class Mesh_complex_3_in_triangulation_3;
 
+namespace IO {
+  template <class C3T3>
+  void output_to_medit(std::ostream& os,
+                       const C3T3& c3t3,
+                       bool rebind = false,
+                       bool show_patches = false
+#ifndef DOXYGEN_RUNNING
+                     , bool all_vertices = true
+                     , bool all_cells = false
+#endif
+  );
+}
+
 namespace MDS_3 {
 
   template<class Tr>

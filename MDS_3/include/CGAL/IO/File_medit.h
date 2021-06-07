@@ -926,11 +926,11 @@ template <class C3T3>
 void
 output_to_medit(std::ostream& os,
                 const C3T3& c3t3,
-                bool rebind = false,
-                bool show_patches = false
+                bool rebind,      // = false,
+                bool show_patches // = false
 #ifndef DOXYGEN_RUNNING
-              , bool all_vertices = true
-              , bool all_cells = false
+              , bool all_vertices // = true
+              , bool all_cells    // = false
 #endif
 )
 {
