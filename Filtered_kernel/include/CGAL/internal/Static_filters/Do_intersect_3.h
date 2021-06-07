@@ -135,6 +135,9 @@ public:
     Get_approx<Point_3> get_approx;
     double px, py, pz;
 
+    if(! do_overlap(t.bbox(),b)){
+      return false;
+    }
     {
       const Point_3& p = t[0];
       if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
