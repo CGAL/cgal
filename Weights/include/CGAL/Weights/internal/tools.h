@@ -250,6 +250,7 @@ private:
 
   FT voronoi(const vertex_descriptor v0) const {
 
+    const GeomTraits traits;
     FT voronoi_area = FT(0);
     CGAL_assertion(CGAL::is_triangle_mesh(m_pmesh));
     for (const auto& he : halfedges_around_target(halfedge(v0, m_pmesh), m_pmesh)) {
@@ -284,8 +285,7 @@ private:
 
       } else {
 
-        const FT A = static_cast<FT>(CGAL::sqrt(CGAL::to_double(
-          CGAL::squared_area(p0, p1, p2))));
+        const FT A = positive_area_3(traits, p0, p1, p2);
         if (angle0 == CGAL::OBTUSE) {
           voronoi_area += A / FT(2);
         } else {
