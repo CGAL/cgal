@@ -43,6 +43,7 @@ class Do_intersect_3
   typedef typename K_base::Ray_3     Ray_3;
   typedef typename K_base::Segment_3 Segment_3;
   typedef typename K_base::Triangle_3 Triangle_3;
+  typedef typename K_base::Tetrahedron_3 Tetrahedron_3;
   typedef typename K_base::Sphere_3 Sphere_3;
   typedef typename K_base::Do_intersect_3 Base;
 
@@ -126,6 +127,101 @@ public:
     return Base::operator()(s,b);
   }
 
+
+
+  result_type
+  operator()(const Tetrahedron_3 &t, const Bbox_3& b) const
+  {
+    Get_approx<Point_3> get_approx;
+    bool in = false, out = false;
+    double px, py, pz;
+
+    {
+      const Point_3& p = t[0];
+      if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
+          fit_in_double(get_approx(p).z(), pz) )
+        {
+          if( (px >= b.xmin() && px <= b.xmax()) && (py >= b.ymin() && py <= b.ymax())  && (pz >= b.zmin() && pz <= b.zmax()) ){
+            in = true;
+          }else{
+            out = true;
+          }
+        }else{
+        return Base::operator()(t,b);
+      }
+    }
+
+    {
+      const Point_3& p = t[1];
+      if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
+          fit_in_double(get_approx(p).z(), pz) )
+        {
+          if( (px >= b.xmin() && px <= b.xmax()) && (py >= b.ymin() && py <= b.ymax())  && (pz >= b.zmin() && pz <= b.zmax()) ){
+            if(out){
+              return true;
+            }
+            in = true;
+          }else{
+            if(in){
+              return true;
+            }
+            out = true;
+          }
+        }else{
+        return Base::operator()(t,b);
+      }
+    }
+
+    {
+      const Point_3& p = t[2];
+      if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
+          fit_in_double(get_approx(p).z(), pz) )
+        {
+          if( (px >= b.xmin() && px <= b.xmax()) && (py >= b.ymin() && py <= b.ymax())  && (pz >= b.zmin() && pz <= b.zmax()) ){
+            if(out){
+              return true;
+            }
+            in = true;
+          }else{
+            if(in){
+              return true;
+            }
+            out = true;
+          }
+        }else{
+        return Base::operator()(t,b);
+      }
+    }
+
+
+
+    {
+      const Point_3& p = t[3];
+      if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
+          fit_in_double(get_approx(p).z(), pz) )
+        {
+          if( (px >= b.xmin() && px <= b.xmax()) && (py >= b.ymin() && py <= b.ymax())  && (pz >= b.zmin() && pz <= b.zmax()) ){
+            if(out){
+              return true;
+            }
+            in = true;
+          }else{
+            if(in){
+              return true;
+            }
+            out = true;
+          }
+        }else{
+        return Base::operator()(t,b);
+      }
+    }
+
+
+    if(in){
+      return true;
+    }
+    return Base::operator()(t,b);
+  }
 
 
   result_type
