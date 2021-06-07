@@ -265,7 +265,33 @@ private:
       const auto& p1 = get(m_pmap, v1);
       const auto& p2 = get(m_pmap, v2);
 
-      voronoi_area += CGAL::Weights::mixed_voronoi_area(p1, p0, p2);
+      const auto angle0 = CGAL::angle(p1, p0, p2);
+      const auto angle1 = CGAL::angle(p2, p1, p0);
+      const auto angle2 = CGAL::angle(p0, p2, p1);
+
+      const bool obtuse =
+        (angle0 == CGAL::OBTUSE) ||
+        (angle1 == CGAL::OBTUSE) ||
+        (angle2 == CGAL::OBTUSE);
+
+      if (!obtuse) {
+        const FT cot_p1 = CGAL::Weights::cotangent(p2, p1, p0);
+        const FT cot_p2 = CGAL::Weights::cotangent(p0, p2, p1);
+
+        const FT t1 = cot_p1 * (p2 - p0).squared_length();
+        const FT t2 = cot_p2 * (p1 - p0).squared_length();
+        voronoi_area += (t1 + t2) / FT(8);
+
+      } else {
+
+        const FT A = static_cast<FT>(CGAL::sqrt(CGAL::to_double(
+          CGAL::squared_area(p0, p1, p2))));
+        if (angle0 == CGAL::OBTUSE) {
+          voronoi_area += A / FT(2);
+        } else {
+          voronoi_area += A / FT(4);
+        }
+      }
     }
     CGAL_assertion(voronoi_area != FT(0));
     return voronoi_area;
