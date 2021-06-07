@@ -736,7 +736,7 @@ public:
     // Call global function
     bool all_vertices = true;
     bool all_cells = false;
-    CGAL::MDS_3::output_to_medit(os, *this, rebind, show_patches,
+    CGAL::IO::output_to_medit(os, *this, rebind, show_patches,
       all_vertices, all_cells);
   }
 
