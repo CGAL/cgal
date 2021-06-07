@@ -133,7 +133,6 @@ public:
   operator()(const Tetrahedron_3 &t, const Bbox_3& b) const
   {
     Get_approx<Point_3> get_approx;
-    bool in = false, out = false;
     double px, py, pz;
 
     {
@@ -142,9 +141,7 @@ public:
           fit_in_double(get_approx(p).z(), pz) )
         {
           if( (px >= b.xmin() && px <= b.xmax()) && (py >= b.ymin() && py <= b.ymax())  && (pz >= b.zmin() && pz <= b.zmax()) ){
-            in = true;
-          }else{
-            out = true;
+            return true;
           }
         }else{
         return Base::operator()(t,b);
@@ -157,15 +154,7 @@ public:
           fit_in_double(get_approx(p).z(), pz) )
         {
           if( (px >= b.xmin() && px <= b.xmax()) && (py >= b.ymin() && py <= b.ymax())  && (pz >= b.zmin() && pz <= b.zmax()) ){
-            if(out){
               return true;
-            }
-            in = true;
-          }else{
-            if(in){
-              return true;
-            }
-            out = true;
           }
         }else{
         return Base::operator()(t,b);
@@ -178,15 +167,7 @@ public:
           fit_in_double(get_approx(p).z(), pz) )
         {
           if( (px >= b.xmin() && px <= b.xmax()) && (py >= b.ymin() && py <= b.ymax())  && (pz >= b.zmin() && pz <= b.zmax()) ){
-            if(out){
               return true;
-            }
-            in = true;
-          }else{
-            if(in){
-              return true;
-            }
-            out = true;
           }
         }else{
         return Base::operator()(t,b);
@@ -201,25 +182,11 @@ public:
           fit_in_double(get_approx(p).z(), pz) )
         {
           if( (px >= b.xmin() && px <= b.xmax()) && (py >= b.ymin() && py <= b.ymax())  && (pz >= b.zmin() && pz <= b.zmax()) ){
-            if(out){
               return true;
-            }
-            in = true;
-          }else{
-            if(in){
-              return true;
-            }
-            out = true;
           }
-        }else{
-        return Base::operator()(t,b);
-      }
+        }
     }
 
-
-    if(in){
-      return true;
-    }
     return Base::operator()(t,b);
   }
 
