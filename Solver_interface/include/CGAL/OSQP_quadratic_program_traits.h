@@ -49,6 +49,9 @@ namespace CGAL {
 
   public:
     /// \cond SKIP_IN_MANUAL
+    OSQP_quadratic_program_traits() :
+    m_largest_col(0) { }
+
     void reserve_P(const std::size_t k) {
       P_vec.reserve(k);
     }
@@ -70,6 +73,7 @@ namespace CGAL {
     }
 
     void set_P(const std::size_t i, const std::size_t j, const FT value) {
+      m_largest_col = (CGAL::max)(j, m_largest_col);
       P_vec.push_back(std::make_tuple(i, j, value));
     }
 
@@ -116,8 +120,7 @@ namespace CGAL {
     template<typename OutIterator>
     bool solve(OutIterator solution) {
 
-      const std::size_t num_cols = std::get<1>(P_vec.back()) + 1;
-      CGAL_precondition(q_vec.size() == num_cols);
+      CGAL_precondition(q_vec.size() == m_largest_col + 1);
       CGAL_precondition(l_vec.size() == u_vec.size());
 
       const c_int P_nnz = static_cast<c_int>(P_vec.size());
@@ -193,9 +196,16 @@ namespace CGAL {
 
       return success;
     }
+
+    void clear() {
+      m_largest_col = 0;
+      P_vec.clear(); A_vec.clear();
+      q_vec.clear(); l_vec.clear(); u_vec.clear();
+    }
     /// \endcond
 
   private:
+    std::size_t m_largest_col;
     std::vector<Triplet> P_vec, A_vec;
     std::vector<FT> q_vec, l_vec, u_vec;
 
@@ -206,9 +216,8 @@ namespace CGAL {
 
       M_p[0] = 0;
       std::size_t count = 0;
-      const std::size_t num_cols = std::get<1>(triplets.back());
       std::size_t ref_col = 0;
-      for (ref_col = 0; ref_col <= num_cols; ++ref_col) {
+      for (ref_col = 0; ref_col <= m_largest_col; ++ref_col) {
         std::size_t num_rows = 0;
         for (std::size_t i = 0; i < triplets.size(); ++i) {
           const std::size_t row = std::get<0>(triplets[i]);
@@ -248,8 +257,9 @@ namespace CGAL {
       const std::size_t m = l_vec.size(); // number of constraints
 
       CGAL_assertion(n > 1);
-      for (std::size_t i = 0; i < n; ++i)
+      for (std::size_t i = 0; i < n; ++i) {
         q_x[i] = CGAL::to_double(q_vec[i]);
+      }
 
       CGAL_assertion(m >= 0);
       for (std::size_t i = 0; i < m; ++i) {
