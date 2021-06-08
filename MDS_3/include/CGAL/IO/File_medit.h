@@ -972,7 +972,7 @@ output_to_medit(std::ostream& os,
  *                         Otherwise, only the vertices that belong to a cell `c` for which
  *                         `c->subdomain_index() != Subdomain_index()` are written}
  *   \cgalParamType{Boolean}
- *   \cgalParamDefault{`true`}
+ *   \cgalParamDefault{`false`}
  *   \cgalParamExtra{This parameter should be set to `false` for the file to be readable by `read_MEDIT()`.}
  * \cgalParamNEnd
  * \cgalParamNBegin{all_cells}
@@ -998,7 +998,7 @@ void write_MEDIT(std::ostream& os,
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
-  bool all_v = choose_parameter(get_parameter(np, internal_np::all_vertices), true);
+  bool all_v = choose_parameter(get_parameter(np, internal_np::all_vertices), false);
   bool rebind = false;
   bool show_patches = false;
   bool all_c = all_v ||
@@ -1020,19 +1020,74 @@ void write_MEDIT(std::ostream& os,
  *      See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
  * @tparam T3 can be instantiated with any 3D triangulation of \cgal provided that its
  *  vertex and cell base class are models of the concepts `MeshVertexBase_3` and `MeshCellBase_3`, respectively.
+ * @tparam CornerIndex is the type of the indices for corners
+ * @tparam CurveIndex is the type of the indices for curves
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
  * @param os the output stream
  * @param c3t3 the mesh complex
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
+ * \cgalNamedParamsBegin
+ * \cgalParamNBegin{all_vertices}
+ *   \cgalParamDescription{If `true`, all the vertices in `t3` are written in `os`.
+ *                         Otherwise, only the vertices that belong to a cell `c` for which
+ *                         `c->subdomain_index() != Subdomain_index()` are written}
+ *   \cgalParamType{Boolean}
+ *   \cgalParamDefault{`false`}
+ *   \cgalParamExtra{This parameter should be set to `false` for the file to be readable by `read_MEDIT()`.}
+ * \cgalParamNEnd
+ * \cgalParamNBegin{all_cells}
+ *   \cgalParamDescription{If `true`, all the cells in `t3` are written in `os`,
+ *        however they belong to the complex or not.
+ *        Otherwise, only the cells `c` for which
+ *        `c->subdomain_index() != Subdomain_index()` are written}
+ *   \cgalParamType{Boolean}
+ *   \cgalParamDefault{`true`}
+ *   \cgalParamExtra{If `all_vertices` is `true`, this parameter is ignored.}
+ * \cgalParamNEnd
  * \see \ref IOStreamMedit
  */
-template<typename T3, typename CornerIndex, typename CurveIndex>
+template<typename T3,
+         typename CornerIndex,
+         typename CurveIndex,
+         typename NamedParameters>
 void write_MEDIT(std::ostream& os,
-  const CGAL::Mesh_complex_3_in_triangulation_3<T3, CornerIndex, CurveIndex>& c3t3)
+  const CGAL::Mesh_complex_3_in_triangulation_3<T3, CornerIndex, CurveIndex>& c3t3,
+  const NamedParameters& np)
 {
-  c3t3.rescan_after_load_of_triangulation();
-  output_to_medit(os, c3t3);
+  return write_MEDIT(os, c3t3.triangulation(), np);
 }
 
+template<typename T3,
+         typename CornerIndex,
+         typename CurveIndex,
+         typename NamedParameters>
+void write_MEDIT(std::ostream& os,
+    const CGAL::Mesh_complex_3_in_triangulation_3<T3, CornerIndex, CurveIndex>& c3t3)
+{
+  return write_MEDIT(os, c3t3, parameters::all_default());
+}
+
+/**
+ * @ingroup PkgMDS3IOFunctions
+ * @brief reads a mesh complex written in the medit (`.mesh`) file format.
+ *   See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
+ * @tparam T3 can be instantiated with any 3D triangulation of \cgal provided that its
+ *  vertex and cell base class are models of the concepts `MeshVertexBase_3` and `MeshCellBase_3`,
+ *  respectively.
+ *
+ * @param in the input stream
+ * @param t3 the triangulation
+ *
+ * This function reads the data about vertices, surface facets and
+ * triangulation cells from `in`, and builds a valid `T3` from it.
+ *
+ * Note that a valid 3D triangulation of \cgal should have a valid
+ * data structure (see `TriangulationDataStructure_3 `),
+ * positively oriented cells,
+ * and cover the geometric convex hull of all points in `t3`.
+ */
 template<typename T3>
 bool read_MEDIT(std::istream& in, T3& t3)
 {
