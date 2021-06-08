@@ -392,15 +392,12 @@ private:
       const FT cotan_k = CGAL::Weights::cotangent(p_j, p_k, p_i, traits);
 
       const Vector_3& a = m_X[face_i];
-      const double i_entry =
-        (CGAL::to_double(scalar_product(a, v_ij) * cotan_k)) +
-        (CGAL::to_double(scalar_product(a, v_ik) * cotan_j));
-      const double j_entry =
-        (CGAL::to_double(scalar_product(a, v_jk) * cotan_i)) +
-        (CGAL::to_double(scalar_product(a, v_ji) * cotan_k));
-      const double k_entry =
-        (CGAL::to_double(scalar_product(a, v_ki) * cotan_j)) +
-        (CGAL::to_double(scalar_product(a, v_kj) * cotan_i));
+      const double i_entry = (CGAL::to_double(scalar_product(a, v_ij) * cotan_k)) +
+                             (CGAL::to_double(scalar_product(a, v_ik) * cotan_j));
+      const double j_entry = (CGAL::to_double(scalar_product(a, v_jk) * cotan_i)) +
+                             (CGAL::to_double(scalar_product(a, v_ji) * cotan_k));
+      const double k_entry = (CGAL::to_double(scalar_product(a, v_ki) * cotan_j)) +
+                             (CGAL::to_double(scalar_product(a, v_kj) * cotan_i));
 
       indexD.add_coef(i, 0, (1./2)*i_entry);
       indexD.add_coef(j, 0, (1./2)*j_entry);

@@ -393,8 +393,7 @@ private:
     const Point_2& p = pk;
     const Point_2& q = pi;
     const Point_2& r = pj;
-    const CGAL::Weights::internal::
-      Tangent_weight_wrapper<NT> tangent_weight(p, q, r);
+    const CGAL::Weights::internal::Tangent_weight_wrapper<NT> tangent_weight(p, q, r);
 
     // Set w_ij in matrix
     const NT w_ij = tangent_weight.get_w_r();

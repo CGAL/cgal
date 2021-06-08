@@ -722,24 +722,23 @@ private:
     const Point_3& p = pk;
     const Point_3& q = pi;
     const Point_3& r = pj;
-    const CGAL::Weights::internal::
-      Tangent_weight_wrapper<NT> tangent_weight(p, q, r);
+    const CGAL::Weights::internal::Tangent_weight_wrapper<NT> tangent_weight(p, q, r);
 
     // Set w_ij in matrix
     const NT w_ij = tangent_weight.get_w_r();
-    M.add_coef(2 * i, 2 * j, w_ij);
-    M.add_coef(2 * i + 1, 2 * j + 1, w_ij);
+    M.add_coef(2*i, 2*j, w_ij);
+    M.add_coef(2*i + 1, 2*j + 1, w_ij);
 
     // Set w_ik in matrix
     const NT w_ik = tangent_weight.get_w_p();
-    M.add_coef(2 * i, 2 * k, w_ik);
-    M.add_coef(2 * i + 1, 2 * k + 1, w_ik);
+    M.add_coef(2*i, 2*k, w_ik);
+    M.add_coef(2*i + 1, 2*k + 1, w_ik);
 
     // Add to w_ii (w_ii = - sum w_ij)
     const NT w_ii = - w_ij - w_ik;
 
-    M.add_coef(2 * i, 2 * i, w_ii);
-    M.add_coef(2 * i + 1, 2 * i + 1, w_ii);
+    M.add_coef(2*i, 2*i, w_ii);
+    M.add_coef(2*i + 1, 2*i + 1, w_ii);
   }
 
   // Compute the mean value Laplacian matrix.
@@ -789,20 +788,20 @@ private:
       const NT w_ij = NT(2) * cotangent_weight(hd, mesh, pmap);
 
       // ij
-      M.set_coef(2 * i, 2 * j, w_ij, true /* new coef */);
-      M.set_coef(2 * i + 1, 2 * j + 1, w_ij, true /* new coef */);
+      M.set_coef(2*i, 2*j, w_ij, true /* new coef */);
+      M.set_coef(2*i + 1, 2*j + 1, w_ij, true /* new coef */);
 
       // ji
-      M.set_coef(2 * j, 2 * i, w_ij, true /* new coef */);
-      M.set_coef(2 * j + 1, 2 * i + 1, w_ij, true /* new coef */);
+      M.set_coef(2*j, 2*i, w_ij, true /* new coef */);
+      M.set_coef(2*j + 1, 2*i + 1, w_ij, true /* new coef */);
 
       // ii
-      M.add_coef(2 * i, 2 * i, - w_ij);
-      M.add_coef(2 * i + 1, 2 * i + 1, - w_ij);
+      M.add_coef(2*i, 2*i, - w_ij);
+      M.add_coef(2*i + 1, 2*i + 1, - w_ij);
 
       // jj
-      M.add_coef(2 * j, 2 * j, - w_ij);
-      M.add_coef(2 * j + 1, 2 * j + 1, - w_ij);
+      M.add_coef(2*j, 2*j, - w_ij);
+      M.add_coef(2*j + 1, 2*j + 1, - w_ij);
     }
   }
 

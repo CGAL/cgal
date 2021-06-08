@@ -449,8 +449,7 @@ private:
     const Point_3& position_vj = get(ppmap, vj);
     const Point_3& position_vk = get(ppmap, vk);
 
-    const NT cot = CGAL::Weights::
-      cotangent(position_vi, position_vj, position_vk);
+    const NT cot = CGAL::Weights::cotangent(position_vi, position_vj, position_vk);
     put(ctmap, hd, cot);
   }
 
