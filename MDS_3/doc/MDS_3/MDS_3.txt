@@ -7,8 +7,10 @@ namespace CGAL {
 \authors Pierre Alliez, Clément Jamin, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec
 \cgalAutoToc
 
-\cgalFigureBegin{figuremultilabel_mesher,multilabel_mesher.jpg}
-Cut-view of a multi-domain 3D mesh generated from a segmented image.
+\cgalFigureBegin{figure_tetmesh_knot,knot_full.png}
+A multi-domain 3D tetrahedral mesh generated from a polyhedral surface with multiple surface patches.
+The complete triangulation is displayed, including cells that belong or do not
+belong to the mesh complex, surface patches and feature edges.
 \cgalFigureEnd
 
 \section MDS_3_section_intro Introduction
@@ -35,16 +37,21 @@ We introduce the concept of \em mesh \em complex, that encodes extra information
 on top of a 3D triangulation to represent a complete simplicial
 complex. A mesh complex describes four sub-complexes
 of simplices
-of the support 3D triangulation per dimension from 0 to 3 :
+of the support 3D triangulation, per dimension from 0 to 3 :
 - corner vertices in 0D,
 - feature edges in 1D,
 - surface facets in 2D,
-- domain cells in 3D.
+- domain cells in 3D (see Figure \ref{figure_c3t3_cells}).
 
 The concept `MeshComplex_3InTriangulation_3` is a data structure devised to
-represent the three dimensional complexes embedded in a `Triangulation_3`.
+represent these three dimensional complexes embedded in a `Triangulation_3`.
 
-\todo add figure
+\cgalFigureBegin{figure_c3t3_cells,c3t3_cells.png}
+(Left and Middle) A multi-domain 3D mesh is represented by its tetrahedral cells,
+with subdomain indices, and surface indices (depicted with different colors here).
+(Right) The underlying `Triangulation_3` triangulates the whole convex hull of its vertices.
+The cells that lie outside the meshing domain are drawn in wire frame.
+\cgalFigureEnd
 
 
 \section MDS_3_section_examples Examples
