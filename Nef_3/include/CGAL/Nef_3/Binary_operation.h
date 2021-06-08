@@ -313,12 +313,6 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
     //    CGAL_NEF_SETDTHREAD(19*43*131);
     CGAL_NEF_TRACEN("=> binary operation");
 
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-    SNC_constructor C1(snc1);
-    C1.create_box();
-    SNC_constructor C2(snc2);
-    C2.create_box();
-#endif
 
     CGAL_NEF_TRACEN("\nnumber of vertices (so far...) = "
                     << this->sncp()->number_of_vertices());
