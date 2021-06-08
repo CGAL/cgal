@@ -389,6 +389,7 @@ private:
     // @fixme unefficient: lengths are computed (and inversed!) twice per edge
 
     // Set w_i_base: - tan(alpha / 2)
+    // Match order of the input points to the new weight implementation.
     const Point_2& p = pk;
     const Point_2& q = pi;
     const Point_2& r = pj;

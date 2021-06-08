@@ -137,7 +137,6 @@ private:
 // Private types
 private:
   typedef typename Base::NT                       NT;
-  typedef typename Base::Point_3                  Point_3;
 
   // Solver traits subtypes:
   typedef typename Solver_traits::Vector          Vector;
@@ -182,8 +181,7 @@ protected:
       Vertex_around_target_circulator<Triangle_mesh> /* neighbor_vertex_v_j */ ) const
   {
     /// In the Tutte Barycentric Mapping algorithm, we have `w_ij = 1`, for `j` neighbor vertex of `i`.
-    const Point_3 stub;
-    return CGAL::Weights::uniform_weight(stub, stub, stub, stub);
+    return NT(1);
   }
 };
 

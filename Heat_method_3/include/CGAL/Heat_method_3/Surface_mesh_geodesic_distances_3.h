@@ -387,12 +387,9 @@ private:
       const Vector_3 v_kj = construct_vector(p_k, p_j);
 
       const Traits traits;
-      const FT cotan_i = CGAL::Weights::
-        cotangent(p_k, p_i, p_j, traits);
-      const FT cotan_j = CGAL::Weights::
-        cotangent(p_k, p_j, p_i, traits);
-      const FT cotan_k = CGAL::Weights::
-        cotangent(p_j, p_k, p_i, traits);
+      const FT cotan_i = CGAL::Weights::cotangent(p_k, p_i, p_j, traits);
+      const FT cotan_j = CGAL::Weights::cotangent(p_k, p_j, p_i, traits);
+      const FT cotan_k = CGAL::Weights::cotangent(p_j, p_k, p_i, traits);
 
       const Vector_3& a = m_X[face_i];
       const double i_entry =
