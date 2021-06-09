@@ -58,7 +58,7 @@ public:
     const FT time;
     const PVertex& m_pother;
     const IVertex& m_ivertex;
-    const bool operator<(const ETime& e) const {
+    bool operator<(const ETime& e) const {
 
       const FT tol = KSR::tolerance<FT>();
       const FT time_diff = CGAL::abs(time - e.time);
@@ -70,7 +70,7 @@ public:
       return time < e.time;
     }
 
-    const bool is_pvertex_to_ivertex() const {
+    bool is_pvertex_to_ivertex() const {
       return (
         m_pother  == Data_structure::null_pvertex() &&
         m_ivertex != Data_structure::null_ivertex());
@@ -165,20 +165,20 @@ public:
   const PVertex& pother() const { return m_pother; }
   const IVertex& ivertex() const { return m_ivertex; }
   const IEdge& iedge() const { return m_iedge; }
-  const NT time() const { return static_cast<NT>(m_time.time); }
-  const std::size_t support_plane() const { return m_support_plane_idx; }
+  NT time() const { return static_cast<NT>(m_time.time); }
+  std::size_t support_plane() const { return m_support_plane_idx; }
 
   // Predicates.
-  const bool is_constrained() const { return m_is_constrained; }
+  bool is_constrained() const { return m_is_constrained; }
 
   // Event types. See constructors above.
-  const bool is_pvertex_to_pvertex() const {
+  bool is_pvertex_to_pvertex() const {
     return (m_pother != Data_structure::null_pvertex()); }
-  const bool is_pvertex_to_iedge()   const {
+  bool is_pvertex_to_iedge()   const {
     return (m_iedge != Data_structure::null_iedge()); }
-  const bool is_pvertex_to_ivertex() const {
+  bool is_pvertex_to_ivertex() const {
     return (m_pother == Data_structure::null_pvertex() && m_ivertex != Data_structure::null_ivertex()); }
-  const bool is_pvertices_to_ivertex() const {
+  bool is_pvertices_to_ivertex() const {
     return (m_pother != Data_structure::null_pvertex() && m_ivertex != Data_structure::null_ivertex()); }
 
   // Output.

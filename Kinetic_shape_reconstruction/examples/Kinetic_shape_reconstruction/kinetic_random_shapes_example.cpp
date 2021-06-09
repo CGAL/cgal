@@ -82,7 +82,7 @@ const std::vector<int> box_faces_to_vertices(const int i) {
   return vertices;
 }
 
-const std::vector<int> box_faces_to_edges(const int i) {
+std::vector<int> box_faces_to_edges(const int i) {
   const int _edges[6][4] = {
     { 0, 8, 2, 9},  { 1, 10, 3, 11},
     {10, 6, 8, 4},  {11,  7, 9,  5},
@@ -95,8 +95,8 @@ const std::vector<int> box_faces_to_edges(const int i) {
   return edges;
 }
 
-const bool find_next_object_colliding_plane(
-  const Point_3& pt_min, const Point_3& pt_max,
+bool find_next_object_colliding_plane(
+  const Point_3& /*pt_min*/, const Point_3& /*pt_max*/,
   const std::vector<Point_3>& box_corners,
   const std::vector< std::pair<std::size_t, std::size_t> >& box_edges,
   const Plane_3& plane,
@@ -158,8 +158,8 @@ void find_next_object_colliding_plane(
   Point_3& m) {
 
   std::vector<int> vertices(8, -1), edges(12, -1);
-  for (int i = 0; i < vertices.size(); ++i) vertices[i] = i;
-  for (int i = 0; i < edges.size(); ++i) edges[i] = i;
+  for (std::size_t i = 0; i < vertices.size(); ++i) vertices[i] = int(i);
+  for (std::size_t i = 0; i < edges.size(); ++i) edges[i] = int(i);
   std::pair<bool, int> prev_object(false, -1);
   find_next_object_colliding_plane(
     pt_min, pt_max,
@@ -198,7 +198,7 @@ void construct_bounding_polygon_of_support_plane(
 
     bool iteration_done = false;
     int curr_face;
-    for (int f = 0; f < adjacent_faces.size(); ++f) {
+    for (std::size_t f = 0; f < adjacent_faces.size(); ++f) {
       curr_face = adjacent_faces[f];
       if (curr_face == prev_face) continue;
 
@@ -218,7 +218,7 @@ void construct_bounding_polygon_of_support_plane(
 
         if (curr_object.first) {
           std::list<int> faces;
-          for (int g = 0; g < adjacent_faces.size(); ++g) {
+          for (std::size_t g = 0; g < adjacent_faces.size(); ++g) {
             if (adjacent_faces[g] != prev_face) {
               faces.push_back(adjacent_faces[g]);
             }

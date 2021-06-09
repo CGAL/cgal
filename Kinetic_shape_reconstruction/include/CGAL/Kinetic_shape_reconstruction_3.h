@@ -84,7 +84,7 @@ public:
   typename InputRange,
   typename PolygonMap,
   typename NamedParameters>
-  const bool partition(
+  bool partition(
     const InputRange& input_range,
     const PolygonMap polygon_map,
     const NamedParameters& np) {
@@ -235,7 +235,7 @@ public:
   typename VectorMap,
   typename SemanticMap,
   typename NamedParameters>
-  const bool reconstruct(
+  bool reconstruct(
     const InputRange& input_range,
     const PointMap point_map,
     const VectorMap normal_map,
@@ -281,15 +281,15 @@ public:
   **         STATISTICS         **
   ********************************/
 
-  const std::size_t number_of_events() const {
+  std::size_t number_of_events() const {
     return m_num_events;
   }
 
-  const int number_of_support_planes() const {
+  int number_of_support_planes() const {
     return static_cast<int>(m_data.number_of_support_planes());
   }
 
-  const std::size_t number_of_vertices(const int support_plane_idx = -1) const {
+  std::size_t number_of_vertices(const int support_plane_idx = -1) const {
 
     CGAL_assertion(support_plane_idx < number_of_support_planes());
     if (support_plane_idx >= number_of_support_planes()) return std::size_t(-1);
@@ -302,7 +302,7 @@ public:
     return static_cast<std::size_t>(m_data.mesh(sp_idx).number_of_vertices());
   }
 
-  const std::size_t number_of_edges(const int support_plane_idx = -1) const {
+  std::size_t number_of_edges(const int support_plane_idx = -1) const {
 
     CGAL_assertion(support_plane_idx < number_of_support_planes());
     if (support_plane_idx >= number_of_support_planes()) return std::size_t(-1);
@@ -315,7 +315,7 @@ public:
     return static_cast<std::size_t>(m_data.mesh(sp_idx).number_of_edges());
   }
 
-  const std::size_t number_of_faces(const int support_plane_idx = -1) const {
+  std::size_t number_of_faces(const int support_plane_idx = -1) const {
 
     CGAL_assertion(support_plane_idx < number_of_support_planes());
     if (support_plane_idx >= number_of_support_planes()) return std::size_t(-1);
@@ -336,15 +336,15 @@ public:
     return num_faces;
   }
 
-  const int number_of_volume_levels() const {
+  int number_of_volume_levels() const {
     return m_data.number_of_volume_levels();
   }
 
-  const std::size_t number_of_volumes(const int volume_level = -1) const {
+  std::size_t number_of_volumes(const int volume_level = -1) const {
     return m_data.number_of_volumes(volume_level);
   }
 
-  const int support_plane_index(const std::size_t polygon_index) const {
+  int support_plane_index(const std::size_t polygon_index) const {
     const int support_plane_idx = m_data.support_plane_index(polygon_index);
     CGAL_assertion(support_plane_idx >= 6);
     return support_plane_idx;
@@ -552,7 +552,7 @@ public:
   }
 
   template<typename LCC>
-  void output_partition(LCC& lcc) const {
+  void output_partition(LCC& /*lcc*/) const {
     CGAL_assertion_msg(false, "TODO: OUTPUT PARTITION LCC!");
   }
 

@@ -152,7 +152,7 @@ int main(const int argc, const char** argv) {
     assert(sp_mesh.number_of_faces()    == ksr.number_of_faces(i));
     support_planes.push_back(sp_mesh);
   }
-  assert(support_planes.size() == num_support_planes);
+  assert(support_planes.size() == static_cast<std::size_t>(num_support_planes));
 
   std::cout << std::endl;
   std::cout << "--- OUTPUT STATS: " << std::endl;

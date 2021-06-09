@@ -39,7 +39,7 @@ struct Polygon_map {
 };
 
 template<typename Traits>
-const bool run_test(
+bool run_test(
   const std::string input_filename,
   const std::vector<unsigned int>& ks,
   const std::size_t num_iters,
@@ -131,26 +131,26 @@ const bool run_test(
       std::vector<Point_3> output_vertices;
       ksr.output_partition_vertices(
         std::back_inserter(output_vertices));
-      assert(num_vertices == output_vertices.size());
-      if (num_vertices != output_vertices.size()) return false;
+      assert(static_cast<std::size_t>(num_vertices) == output_vertices.size());
+      if (static_cast<std::size_t>(num_vertices) != output_vertices.size()) return false;
 
       std::vector<Segment_3> output_edges;
       ksr.output_partition_edges(
         std::back_inserter(output_edges));
-      assert(num_edges == output_edges.size());
-      if (num_edges != output_edges.size()) return false;
+      assert(static_cast<std::size_t>(num_edges) == output_edges.size());
+      if (static_cast<std::size_t>(num_edges) != output_edges.size()) return false;
 
       std::vector< std::vector<std::size_t> > output_faces;
       ksr.output_partition_faces(
         std::back_inserter(output_faces));
-      assert(num_faces == output_faces.size());
-      if (num_faces != output_faces.size()) return false;
+      assert(static_cast<std::size_t>(num_faces) == output_faces.size());
+      if (static_cast<std::size_t>(num_faces) != output_faces.size()) return false;
 
       std::vector<Surface_mesh> output_volumes;
       ksr.output_partition_volumes(
         std::back_inserter(output_volumes));
-      assert(num_volumes == output_volumes.size());
-      if (num_volumes != output_volumes.size()) return false;
+      assert(static_cast<std::size_t>(num_volumes) == output_volumes.size());
+      if (static_cast<std::size_t>(num_volumes) != output_volumes.size()) return false;
 
       ksr.clear();
       assert(ksr.number_of_support_planes() == 0);
@@ -393,7 +393,7 @@ void run_all_tests() {
   }
 }
 
-int main(const int argc, const char** argv) {
+int main(const int /*argc*/, const char** /*argv*/) {
 
   // Does not always work with exact, errors are mostly related to events,
   // which happen at the same time. Initializer and Finalizer work, the problems

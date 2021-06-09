@@ -62,7 +62,7 @@ public:
   template<
   typename InputRange,
   typename PolygonMap>
-  const double initialize(
+  double initialize(
     const InputRange& input_range,
     const PolygonMap polygon_map,
     const unsigned int k,

@@ -215,7 +215,7 @@ namespace KSR_3 {
       }
     }
 
-    const double compute_edge_cost(const FT edge_weight) const {
+    double compute_edge_cost(const FT edge_weight) const {
 
       CGAL_assertion(m_beta      >= FT(0) && m_beta      <= FT(1));
       CGAL_assertion(edge_weight >= FT(0) && edge_weight <= FT(1));
@@ -250,7 +250,7 @@ namespace KSR_3 {
       }
     }
 
-    const double get_face_cost(
+    double get_face_cost(
       const FT face_prob, const FT face_weight) const {
 
       CGAL_assertion(face_prob   >= FT(0) && face_prob   <= FT(1));

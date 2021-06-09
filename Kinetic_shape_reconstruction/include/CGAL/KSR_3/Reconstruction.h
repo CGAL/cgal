@@ -147,7 +147,7 @@ public:
     const Semantic_map& semantic_map,
     Data_structure& data,
     const bool verbose,
-    const bool debug) :
+    const bool debug = true) :
   m_input_range(input_range),
   m_point_map(point_map),
   m_normal_map(normal_map),
@@ -155,7 +155,7 @@ public:
   m_point_map_3(m_input_range, m_point_map),
   m_normal_map_3(m_input_range, m_normal_map),
   m_data(data),
-  m_debug(true),
+  m_debug(debug),
   m_verbose(verbose),
   m_planar_shape_type(Planar_shape_type::CONVEX_HULL) {
 
@@ -201,7 +201,7 @@ public:
   }
 
   template<typename NamedParameters>
-  const bool detect_planar_shapes(
+  bool detect_planar_shapes(
     const NamedParameters& np) {
 
     if (m_verbose) {
@@ -231,7 +231,7 @@ public:
   }
 
   template<typename NamedParameters>
-  const bool regularize_planar_shapes(
+  bool regularize_planar_shapes(
     const NamedParameters& np) {
 
     if (m_verbose) {
@@ -303,7 +303,7 @@ public:
   }
 
   template<typename NamedParameters>
-  const bool compute_model(
+  bool compute_model(
     const NamedParameters& np) {
 
     if (m_verbose) {
@@ -541,7 +541,7 @@ private:
     return plane;
   }
 
-  const std::size_t add_planar_shape(
+  std::size_t add_planar_shape(
     const std::vector<std::size_t>& region, const Plane_3& plane) {
 
     switch (m_planar_shape_type) {
@@ -559,7 +559,7 @@ private:
     return std::size_t(-1);
   }
 
-  const std::size_t add_convex_hull_shape(
+  std::size_t add_convex_hull_shape(
     const std::vector<std::size_t>& region, const Plane_3& plane) {
 
     std::vector<Point_2> points;
@@ -588,8 +588,8 @@ private:
     return shape_idx;
   }
 
-  const std::size_t add_rectangle_shape(
-    const std::vector<std::size_t>& region, const Plane_3& plane) {
+  std::size_t add_rectangle_shape(
+    const std::vector<std::size_t>& /*region*/, const Plane_3& /*plane*/) {
 
     CGAL_assertion_msg(false, "TODO: ADD RECTANGLE SHAPE!");
     return std::size_t(-1);
@@ -632,7 +632,7 @@ private:
   }
 
   template<typename NamedParameters>
-  const std::size_t compute_planar_shapes_with_rg(
+  std::size_t compute_planar_shapes_with_rg(
     const NamedParameters& np,
     const std::vector<std::size_t>& input_range) {
 
@@ -751,7 +751,7 @@ private:
   }
 
   template<typename NamedParameters>
-  const std::size_t add_polygons_using_alpha_shapes(
+  std::size_t add_polygons_using_alpha_shapes(
     const NamedParameters& np,
     const std::vector<std::size_t>& input_range) {
 
@@ -957,7 +957,7 @@ private:
     CGAL_assertion(segments.size() == lines.size());
   }
 
-  const std::size_t add_walls_from_segments(
+  std::size_t add_walls_from_segments(
     const std::vector<Segment_2>& segments) {
 
     FT min_z = +FT(1000000000000);

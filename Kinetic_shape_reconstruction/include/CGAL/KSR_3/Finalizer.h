@@ -156,7 +156,7 @@ private:
   **          CLEANING          **
   ********************************/
 
-  const std::size_t detect_hanging_pfaces(const bool should_be_removed) {
+  std::size_t detect_hanging_pfaces(const bool should_be_removed) {
 
     bool quit = true;
     std::size_t num_removed_pfaces = 0;
@@ -177,7 +177,7 @@ private:
     return num_removed_pfaces;
   }
 
-  const std::size_t initialize_pface_removal(
+  std::size_t initialize_pface_removal(
     const IEdge& iedge, const bool should_be_removed) {
 
     std::vector<PFace> pfaces;
@@ -196,7 +196,7 @@ private:
     return num_removed_pfaces;
   }
 
-  const std::size_t remove_pfaces(
+  std::size_t remove_pfaces(
     const IEdge& init_iedge, const PFace& init_pface,
     const bool should_be_removed, const bool debug = false) {
 
@@ -309,7 +309,7 @@ private:
     }
   }
 
-  const bool remove_pface(const Halfedge_index he, const PFace& pface) {
+  bool remove_pface(const Halfedge_index he, const PFace& pface) {
 
     const std::string plane_idx = std::to_string(pface.first);
     const std::string face_idx  = std::to_string(pface.second);
@@ -322,7 +322,7 @@ private:
     return true;
   }
 
-  const std::size_t fill_holes(const bool already_removed) {
+  std::size_t fill_holes(const bool already_removed) {
 
     // TODO: REIMPLEMENT IN A BETTER WAY:
     // First, sort all hanging pfaces by the number of potentially added pfaces;
@@ -355,7 +355,7 @@ private:
     return num_added_pfaces;
   }
 
-  const std::size_t initialize_pface_insertion(const IEdge& iedge) {
+  std::size_t initialize_pface_insertion(const IEdge& iedge) {
 
     std::vector<PFace> pfaces;
     m_data.incident_faces(iedge, pfaces);
@@ -386,7 +386,7 @@ private:
     return num_added_pfaces;
   }
 
-  const std::size_t create_pfaces(
+  std::size_t create_pfaces(
     const IEdge& init_iedge, const PFace& init_pface, const bool debug = false) {
 
     CDT cdt;
@@ -521,7 +521,7 @@ private:
     CGAL_assertion(todo.size() == 0);
   }
 
-  const bool is_border(
+  bool is_border(
     const std::size_t sp_idx, const CDT& cdt, const Edge& edge,
     const std::map<CID, IEdge>& map_intersections) const {
 
@@ -549,7 +549,7 @@ private:
     return false;
   }
 
-  const std::size_t tag_cdt_interior_faces(const CDT& cdt) const {
+  std::size_t tag_cdt_interior_faces(const CDT& cdt) const {
 
     std::size_t face_index = 0;
     std::queue<Face_handle> todo;
@@ -585,7 +585,7 @@ private:
     return face_index;
   }
 
-  const Face_handle find_initial_face(
+  Face_handle find_initial_face(
     const CDT& cdt, const IEdge& init_iedge) const {
 
     CGAL_assertion(init_iedge != m_data.null_iedge());
@@ -608,7 +608,7 @@ private:
     return Face_handle();
   }
 
-  const IEdge find_iedge(const Edge& edge) const {
+  IEdge find_iedge(const Edge& edge) const {
 
     const auto& fh = edge.first;
     const auto& id = edge.second;
@@ -636,7 +636,7 @@ private:
     return iedge;
   }
 
-  const std::size_t tag_cdt_potential_faces(
+  std::size_t tag_cdt_potential_faces(
     const std::size_t sp_idx,
     const CDT& cdt,
     const Face_handle& init_fh,
@@ -690,7 +690,7 @@ private:
     return num_detected_pfaces;
   }
 
-  const std::pair<bool, bool> is_crossing(
+  std::pair<bool, bool> is_crossing(
     const std::size_t sp_idx, const CDT& cdt, const Edge& edge) const {
 
     const auto& init_fh = edge.first;
@@ -714,7 +714,7 @@ private:
     return std::make_pair(true, false);
   }
 
-  const std::size_t insert_pfaces(
+  std::size_t insert_pfaces(
     const std::size_t sp_idx, const CDT& cdt) {
 
     std::set<std::size_t> done;
@@ -947,13 +947,13 @@ private:
       }
 
       CGAL_assertion(pair.first != -1);
-      if (volumes.size() <= pair.first)
+      if (volumes.size() <= static_cast<std::size_t>(pair.first))
         volumes.resize(pair.first + 1);
       volumes[pair.first].add_pface(pface, pair.second);
 
       if (pface.first < 6 && pair.second == -1) continue;
       CGAL_assertion(pair.second != -1);
-      if (volumes.size() <= pair.second)
+      if (volumes.size() <= static_cast<std::size_t>(pair.second))
         volumes.resize(pair.second + 1);
       volumes[pair.second].add_pface(pface, pair.first);
     }
@@ -1104,7 +1104,7 @@ private:
     }
   }
 
-  const bool is_boundary_pface(
+  bool is_boundary_pface(
     const PFace& pface,
     const int volume_index,
     const int num_volumes,
@@ -1249,7 +1249,7 @@ private:
     const PFace& pface,
     const int volume_index,
     const int num_volumes,
-    const std::map<int, Point_3>& centroids,
+    const std::map<int, Point_3>& /*centroids*/,
     std::size_t& volume_size,
     Point_3& volume_centroid,
     std::map<PFace, std::pair<int, int> >& map_volumes,
@@ -1357,7 +1357,7 @@ private:
   }
 
   const PFace find_using_2d_directions(
-    const int volume_index,
+    const int /*volume_index*/,
     const Point_3& volume_centroid,
     const PFace& pface,
     const PEdge& pedge,

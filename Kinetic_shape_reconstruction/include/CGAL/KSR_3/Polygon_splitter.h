@@ -232,7 +232,7 @@ private:
   }
 
   // Check if the newly created pface goes beyond the bbox.
-  const bool is_pface_inside_bbox(
+  bool is_pface_inside_bbox(
     const std::size_t support_plane_idx,
     const std::vector<Point_2>& merged) const {
 
@@ -567,7 +567,7 @@ private:
     }
   }
 
-  const bool is_pvertex(
+  bool is_pvertex(
     const std::map<PVertex, Vertex_handle>& vhs_pv,
     const std::vector<PVertex>& polygon,
     const Point_2& query) const {
@@ -583,7 +583,7 @@ private:
     return false;
   }
 
-  const bool is_ivertex(
+  bool is_ivertex(
     const std::size_t sp_idx,
     const std::set<IEdge>& iedges,
     const Point_2& query) {
@@ -604,7 +604,7 @@ private:
     return false;
   }
 
-  const std::size_t find_pedge(
+  std::size_t find_pedge(
     const std::map<PVertex, Vertex_handle>& vhs_pv,
     const std::vector<PVertex>& polygon,
     const Point_2& query) const {
@@ -703,7 +703,7 @@ private:
     // std::cout << "- number of interior pfaces: " << face_index << std::endl;
   }
 
-  const bool is_boundary(const Edge& edge) const {
+  bool is_boundary(const Edge& edge) const {
 
     const auto& fh = edge.first;
     const std::size_t idx = edge.second;
@@ -1167,7 +1167,7 @@ private:
   }
 
   // Set neighbor to the closest polygon vertex with the well-defined direction.
-  const bool update_neighbor(
+  bool update_neighbor(
     const PVertex& pvertex, PVertex& neighbor) const {
 
     bool is_found = (m_input.find(neighbor) != m_input.end());

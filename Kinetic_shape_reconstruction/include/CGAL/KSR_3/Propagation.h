@@ -109,7 +109,7 @@ private:
   **       IDENTIFY EVENTS      **
   ********************************/
 
-  const bool initialize_queue() {
+  bool initialize_queue() {
 
     if (m_debug) {
       std::cout << "* initializing queue for events in [" <<
@@ -132,7 +132,7 @@ private:
     return still_running;
   }
 
-  const bool compute_events_of_pvertex(
+  bool compute_events_of_pvertex(
     const PVertex& pvertex,
     const std::vector<IEdge>& iedges,
     const std::vector<Segment_2>& segments,
@@ -175,7 +175,7 @@ private:
     try_pvertex_to_ivertex_constrained_event(pvertex, pv_segment);
   }
 
-  const bool try_pvertices_to_ivertex_event(
+  bool try_pvertices_to_ivertex_event(
     const PVertex& pvertex, const Segment_2& pv_segment, const Bbox_2& pv_bbox) {
     bool is_event_found = false;
 
@@ -466,7 +466,7 @@ private:
     }
   }
 
-  const bool try_pvertex_to_ivertex_unconstrained_event(
+  bool try_pvertex_to_ivertex_unconstrained_event(
     const PVertex& pvertex, const IEdge& iedge,
     const Point_2& inter, const Point_2& pinit) {
 
@@ -512,7 +512,7 @@ private:
   **          RUNNING           **
   ********************************/
 
-  const std::size_t run(
+  std::size_t run(
     const std::size_t initial_iteration) {
 
     if (m_debug) {
@@ -729,7 +729,7 @@ private:
     // CGAL_assertion_msg(false, "TODO: UNCONSTRAINED PVERTEX MEETS IEDGE!");
   }
 
-  const bool apply_event_unconstrained_pedge_meets_iedge(
+  bool apply_event_unconstrained_pedge_meets_iedge(
     const PVertex& pvertex, const IEdge& iedge, const Event& event) {
 
     bool is_event_happend = false;
@@ -836,13 +836,13 @@ private:
   }
 
   // STOP CONDITIONS!
-  const bool check_stop_condition(
+  bool check_stop_condition(
     const PVertex& pvertex, const IEdge& iedge) {
     return check_pvertex_meets_iedge_global_k(pvertex, iedge);
   }
 
   // GLOBAL STOP CONDITIONS!
-  const bool check_pvertex_meets_iedge_global_k(
+  bool check_pvertex_meets_iedge_global_k(
     const PVertex& pvertex, const IEdge& iedge) {
 
     if (m_debug) {
@@ -878,12 +878,12 @@ private:
     return stop;
   }
 
-  const bool check_stop_condition(
+  bool check_stop_condition(
     const PVertex& pvertex, const PVertex& pother, const IEdge& iedge) {
     return check_pedge_meets_iedge_global_k(pvertex, pother, iedge);
   }
 
-  const bool check_pedge_meets_iedge_global_k(
+  bool check_pedge_meets_iedge_global_k(
     const PVertex& pvertex, const PVertex& pother, const IEdge& iedge) {
 
     if (m_debug) {
@@ -981,7 +981,7 @@ private:
   **    OPERATIONS ON POLYGONS  **
   ********************************/
 
-  const PVertex crop_pvertex_along_iedge(
+  PVertex crop_pvertex_along_iedge(
     const PVertex& pvertex, const IEdge& iedge) {
 
     if (m_verbose) {
@@ -1039,7 +1039,7 @@ private:
     return pother;
   }
 
-  const std::array<PVertex, 3> propagate_pvertex_beyond_iedge(
+  std::array<PVertex, 3> propagate_pvertex_beyond_iedge(
     const PVertex& pvertex, const IEdge& iedge) {
 
     if (m_verbose) {
@@ -1174,7 +1174,7 @@ private:
     // CGAL_assertion_msg(false, "TODO: CROP PEDGE ALONG IEDGE!");
   }
 
-  const std::pair<PVertex, PVertex> propagate_pedge_beyond_iedge(
+  std::pair<PVertex, PVertex> propagate_pedge_beyond_iedge(
     const PVertex& pvertex, const PVertex& pother, const IEdge& iedge) {
 
     if (m_verbose) {
@@ -1224,7 +1224,7 @@ private:
     return std::make_pair(propagated_2, propagated_1);
   }
 
-  const bool transfer_pvertex_via_iedge(
+  bool transfer_pvertex_via_iedge(
     const PVertex& pvertex, const PVertex& pother) {
 
     if (m_verbose) {
@@ -1350,7 +1350,7 @@ private:
     return (target_pface != m_data.null_pface());
   }
 
-  const std::vector<PVertex> merge_pvertices_on_ivertex(
+  std::vector<PVertex> merge_pvertices_on_ivertex(
     const FT min_time, const FT max_time, const IVertex& ivertex,
     const PVertex& event_pvertex, const std::vector<PVertex>& pvertices,
     std::vector< std::pair<IEdge, bool> >& crossed_iedges) {
@@ -1523,7 +1523,7 @@ private:
 
   void apply_back_border_case(
     const FT min_time, const FT max_time,
-    const PVertex& event_pvertex,
+    const PVertex& /*event_pvertex*/,
     const PVertex& pvertex, const IVertex& ivertex,
     const PVertex& back, const PVertex& prev,
     const std::vector<IEdge>& fiedges,
@@ -1926,7 +1926,7 @@ private:
   void apply_open_case(
     const FT min_time, const FT max_time,
     const PVertex& pvertex, const IVertex& ivertex,
-    const PVertex& front, const PVertex& back,
+    const PVertex& /*front*/, const PVertex& /*back*/,
     const PVertex& prev , const PVertex& next,
     const std::vector<IEdge>& fiedges,
     const std::vector<IEdge>& biedges,

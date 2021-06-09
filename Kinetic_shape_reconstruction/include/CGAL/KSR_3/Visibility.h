@@ -189,7 +189,7 @@ namespace KSR_3 {
       }
     }
 
-    const bool handle_sample_point(
+    bool handle_sample_point(
       const Volume_cell& volume,
       const Point_3& query,
       std::size_t& in, std::size_t& out) const {

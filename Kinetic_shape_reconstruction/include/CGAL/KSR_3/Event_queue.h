@@ -70,8 +70,8 @@ public:
   { }
 
   // Size.
-  const bool empty() const { return m_queue.empty(); }
-  const std::size_t size() const { return m_queue.size(); }
+  bool empty() const { return m_queue.empty(); }
+  std::size_t size() const { return m_queue.size(); }
   void clear() { m_queue.clear(); }
 
   // Access.
@@ -81,7 +81,7 @@ public:
   }
 
   // Pop the event by the shortest time: short -> long
-  const Event pop() {
+  Event pop() {
 
     // std::cout << "POPPING EVENTS: " << std::endl;
     // print();
@@ -101,7 +101,7 @@ public:
   }
 
   // Get next event with the closest time.
-  const Event next() {
+  Event next() {
     return *queue_by_time().begin();
   }
 
