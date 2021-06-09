@@ -7,11 +7,7 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_core.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_policy_base.h>
 
-#include <CGAL/tags.h>
-
 #include <Eigen/Dense>
-
-#include <boost/optional/optional.hpp>
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
@@ -65,9 +61,6 @@ class GarlandHeckbert_policies :
 
     GarlandHeckbert_policies(TriangleMesh& tmesh, FT dm = FT(100)) 
       : Get_cost(dm) {
-      /**
-       * TODO call base class constructors?
-       */
       Vertex_cost_map<TriangleMesh, GeomTraits> vcm_ = get(Cost_property<TriangleMesh, GeomTraits>(),
           tmesh);
 
@@ -78,9 +71,6 @@ class GarlandHeckbert_policies :
       Get_placement::m_cost_matrices = vcm_;
     }
 
-    /**
-     * TODO implementations of all functions needed by the base implementation
-     */
     Col_4 construct_optimal_point(const Mat_4& aQuadric, const Col_4& p0, const Col_4& p1) const 
     {
       Mat_4 X;
@@ -131,9 +121,14 @@ class GarlandHeckbert_policies :
       return opt_pt;
     }
 
-    Mat_4 construct_quadric_from_normal(const Vector_3& normal, const Point_3& point) const {
+    Mat_4 construct_quadric_from_normal(const Vector_3& normal, const Point_3& point, const
+        GeomTraits& gt) const {
+
+      const auto dot_product = gt.compute_scalar_product_3_object();
+      const auto construct_vector = gt.construct_vector_3_object();
+      
       // negative dot product between the normal and the position vector
-      const auto d = - normal * Vector_3(ORIGIN, point);
+      const auto d = - dot_product(normal, construct_vector(ORIGIN, point));
 
       // row vector given by d appended to the normal
       const auto row = Eigen::Matrix<FT, 1, 4>(normal.x(), normal.y(), normal.z(), d);

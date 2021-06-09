@@ -103,7 +103,7 @@ class GarlandHeckbert_cost_base
       const Vector_3 face_normal = unit_normal(p, q, r);
       
       // construtct the (4 x 4) matrix representing the plane quadric
-      const Mat_4 quadric = construct_quadric(face_normal, r);
+      const Mat_4 quadric = construct_quadric(face_normal, r, gt);
 
       for(halfedge_descriptor shd : halfedges_around_face(h, tmesh))
       {
@@ -126,7 +126,7 @@ class GarlandHeckbert_cost_base
         const Vector_3 normalized = discontinuity_normal 
           / sqrt(discontinuity_normal.squared_length());
         const Mat_4 discontinuous_quadric 
-          = discontinuity_multiplier * construct_quadric(normalized, get(vpm, vs));
+          = discontinuity_multiplier * construct_quadric(normalized, get(vpm, vs), gt);
         
         put(m_cost_matrices, vs, get(m_cost_matrices, vs) + discontinuous_quadric);
         put(m_cost_matrices, vt, get(m_cost_matrices, vt) + discontinuous_quadric);
@@ -177,8 +177,8 @@ class GarlandHeckbert_cost_base
   } 
   
   // use CRTP to call the quadric implementation 
-  Mat_4 construct_quadric(const Vector_3& normal , const Point_3& point) const {
-    return static_cast<const QuadricImpl*>(this)->construct_quadric_from_normal(normal, point);
+  Mat_4 construct_quadric(const Vector_3& normal , const Point_3& point, const GeomTraits& gt) const {
+    return static_cast<const QuadricImpl*>(this)->construct_quadric_from_normal(normal, point, gt);
   }
 };
 
