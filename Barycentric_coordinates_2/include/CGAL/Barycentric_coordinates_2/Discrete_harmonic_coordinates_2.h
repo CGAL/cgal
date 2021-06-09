@@ -437,23 +437,23 @@ namespace Barycentric_coordinates {
     const Computation_policy_2 policy =
     Computation_policy_2::FAST_WITH_EDGE_CASES) {
 
-    Discrete_harmonic_coordinates_2<PointRange, GeomTraits> discrete_harmonic(
-      polygon, policy, traits);
+    Discrete_harmonic_coordinates_2<PointRange, GeomTraits>
+      discrete_harmonic(polygon, policy, traits);
     return discrete_harmonic.weights(query, w_begin);
   }
 
   /// \cond SKIP_IN_MANUAL
   template<
   typename PointRange,
-  typename Point_2,
   typename OutIterator>
   OutIterator discrete_harmonic_weights_2(
     const PointRange& polygon,
-    const Point_2& query,
+    const typename PointRange::value_type& query,
     OutIterator w_begin,
     const Computation_policy_2 policy =
     Computation_policy_2::FAST_WITH_EDGE_CASES) {
 
+    using Point_2 = typename PointRange::value_type;
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     const GeomTraits traits;
     return discrete_harmonic_weights_2(
@@ -524,23 +524,23 @@ namespace Barycentric_coordinates {
     const Computation_policy_2 policy =
     Computation_policy_2::PRECISE_WITH_EDGE_CASES) {
 
-    Discrete_harmonic_coordinates_2<PointRange, GeomTraits> discrete_harmonic(
-      polygon, policy, traits);
+    Discrete_harmonic_coordinates_2<PointRange, GeomTraits>
+      discrete_harmonic(polygon, policy, traits);
     return discrete_harmonic(query, c_begin);
   }
 
   /// \cond SKIP_IN_MANUAL
   template<
   typename PointRange,
-  typename Point_2,
   typename OutIterator>
   OutIterator discrete_harmonic_coordinates_2(
     const PointRange& polygon,
-    const Point_2& query,
+    const typename PointRange::value_type& query,
     OutIterator c_begin,
     const Computation_policy_2 policy =
     Computation_policy_2::PRECISE_WITH_EDGE_CASES) {
 
+    using Point_2 = typename PointRange::value_type;
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     const GeomTraits traits;
     return discrete_harmonic_coordinates_2(

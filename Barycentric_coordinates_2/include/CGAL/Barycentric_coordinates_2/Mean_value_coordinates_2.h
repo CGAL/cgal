@@ -477,23 +477,23 @@ namespace Barycentric_coordinates {
     const Computation_policy_2 policy =
     Computation_policy_2::FAST_WITH_EDGE_CASES) {
 
-    Mean_value_coordinates_2<PointRange, GeomTraits> mean_value(
-      polygon, policy, traits);
+    Mean_value_coordinates_2<PointRange, GeomTraits>
+      mean_value(polygon, policy, traits);
     return mean_value.weights(query, w_begin);
   }
 
   /// \cond SKIP_IN_MANUAL
   template<
   typename PointRange,
-  typename Point_2,
   typename OutIterator>
   OutIterator mean_value_weights_2(
     const PointRange& polygon,
-    const Point_2& query,
+    const typename PointRange::value_type& query,
     OutIterator w_begin,
     const Computation_policy_2 policy =
     Computation_policy_2::FAST_WITH_EDGE_CASES) {
 
+    using Point_2 = typename PointRange::value_type;
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     const GeomTraits traits;
     return mean_value_weights_2(
@@ -563,23 +563,23 @@ namespace Barycentric_coordinates {
     const Computation_policy_2 policy =
     Computation_policy_2::PRECISE_WITH_EDGE_CASES) {
 
-    Mean_value_coordinates_2<PointRange, GeomTraits> mean_value(
-      polygon, policy, traits);
+    Mean_value_coordinates_2<PointRange, GeomTraits>
+      mean_value(polygon, policy, traits);
     return mean_value(query, c_begin);
   }
 
   /// \cond SKIP_IN_MANUAL
   template<
   typename PointRange,
-  typename Point_2,
   typename OutIterator>
   OutIterator mean_value_coordinates_2(
     const PointRange& polygon,
-    const Point_2& query,
+    const typename PointRange::value_type& query,
     OutIterator c_begin,
     const Computation_policy_2 policy =
     Computation_policy_2::PRECISE_WITH_EDGE_CASES) {
 
+    using Point_2 = typename PointRange::value_type;
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     const GeomTraits traits;
     return mean_value_coordinates_2(
