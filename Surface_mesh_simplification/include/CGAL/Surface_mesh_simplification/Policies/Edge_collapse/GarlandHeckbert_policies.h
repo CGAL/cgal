@@ -21,6 +21,10 @@ template<typename TriangleMesh, typename GeomTraits>
 class GarlandHeckbert_policies;
 
 template<typename TriangleMesh, typename GeomTraits>
+using Cost_property = CGAL::dynamic_vertex_property_t<Eigen::Matrix<typename GeomTraits::FT, 4, 4,
+  Eigen::DontAlign>>;
+
+template<typename TriangleMesh, typename GeomTraits>
 using Vertex_cost_map = typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<
   Eigen::Matrix<typename GeomTraits::FT, 4, 4, Eigen::DontAlign>>>::type;
 
@@ -59,8 +63,20 @@ class GarlandHeckbert_policies :
 
     typedef typename GeomTraits::FT FT;
 
-    GarlandHeckbert_policies() { }
-    GarlandHeckbert_policies(TriangleMesh tm) : tm_(tm) { }  
+    GarlandHeckbert_policies(TriangleMesh& tmesh, FT dm = FT(100)) 
+      : Get_cost(dm) {
+      /**
+       * TODO call base class constructors?
+       */
+      Vertex_cost_map<TriangleMesh, GeomTraits> vcm_ = get(Cost_property<TriangleMesh, GeomTraits>(),
+          tmesh);
+
+      /**
+       * initialize the two base class cost matrices (protected members)
+       */
+      Get_cost::m_cost_matrices = vcm_;
+      Get_placement::m_cost_matrices = vcm_;
+    }
 
     /**
      * TODO implementations of all functions needed by the base implementation
