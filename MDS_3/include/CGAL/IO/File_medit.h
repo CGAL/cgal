@@ -984,6 +984,7 @@ output_to_medit(std::ostream& os,
  *   \cgalParamDefault{`true`}
  *   \cgalParamExtra{If `all_vertices` is `true`, this parameter is ignored.}
  * \cgalParamNEnd
+ * \cgalNamedParamsEnd
  * \see \ref IOStreamMedit
  */
 template<typename T3, typename NamedParameters>
@@ -1046,6 +1047,7 @@ void write_MEDIT(std::ostream& os,
  *   \cgalParamDefault{`true`}
  *   \cgalParamExtra{If `all_vertices` is `true`, this parameter is ignored.}
  * \cgalParamNEnd
+ * \cgalNamedParamsEnd
  * \see \ref IOStreamMedit
  */
 template<typename T3,
