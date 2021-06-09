@@ -405,11 +405,13 @@ namespace Weights {
   /// \cond SKIP_IN_MANUAL
   template<
   typename PointRange,
-  typename Point_2,
   typename OutIterator>
   OutIterator wachspress_weights_2(
-    const PointRange& polygon, const Point_2& query, OutIterator w_begin) {
+    const PointRange& polygon,
+    const typename PointRange::value_type& query,
+    OutIterator w_begin) {
 
+    using Point_2 = typename PointRange::value_type;
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     const GeomTraits traits;
     return wachspress_weights_2(
