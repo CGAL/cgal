@@ -1,5 +1,20 @@
+// Copyright (c) 2021 GeometryFactory SARL (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : Antonio Gomes, Dmitry Anisimov
+//
+
 #ifndef CGAL_BARYCENTRIC_WACHSPRESS_COORDINATES_3_H
 #define CGAL_BARYCENTRIC_WACHSPRESS_COORDINATES_3_H
+
+// #include <CGAL/license/Barycentric_coordinates_3.h>
 
 // Internal includes.
 #include <CGAL/Barycentric_coordinates_3/internal/utils_3.h>
@@ -7,74 +22,112 @@
 namespace CGAL {
 namespace Barycentric_coordinates {
 
-template<typename GeomTraits>
-class Wachspress_coordinates_3{
+  template<
+  typename PolygonMesh,
+  typename GeomTraits,
+  typename VertexToPointMap = typename property_map_selector<PolygonMesh, CGAL::vertex_point_t>::const_type>
+  class Wachspress_coordinates_3 {
 
-    public:
+  public:
+    using Polygon_mesh = PolygonMesh;
+    using Geom_traits = GeomTraits;
+    using Vertex_to_point_map = VertexToPointMap;
 
-        // Dihedral angle calculation
-        using Dihedral_angle_3 = typename GeomTraits::Compute_approximate_dihedral_angle_3;
+		typedef typename GeomTraits::FT FT;
+    typedef typename GeomTraits::Point_3 Point_3;
 
-        // Number type
-        typedef typename GeomTraits::FT FT;
+  public:
+    Wachspress_coordinates_3(
+    	const PolygonMesh& polygon_mesh,
+    	const Computation_policy_3 policy =
+    	Computation_policy_3::DEFAULT,
+    	//const VertexToPointMap vertex_to_point_map = VertexToPointMap(),
+    	const GeomTraits traits = GeomTraits()) :
+    m_polygon_mesh(polygon_mesh),
+    m_computation_policy(policy),
+    m_vertex_to_point_map(get_const_property_map(CGAL::vertex_point, polygon_mesh)),
+    m_traits(traits) { 
 
-        // Point type.
-        typedef typename GeomTraits::Point_3 Point_3;
+    	// preconditions, resize containers, etc.
 
-        // Mesh type
-        typedef CGAL::Surface_mesh<Point_3> Mesh;
+    	m_weights.resize(vertices(m_polygon_mesh).size());
+    }
 
-        // Custom types
-        typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
-        typedef typename boost::graph_traits<Mesh>::face_descriptor face_descriptor;
-        typedef typename boost::property_map<Mesh,CGAL::vertex_point_t>::type Point_property_map; 
-        typedef typename CGAL::Face_around_target_circulator<Mesh> Face_circulator;
-        
-        // Constructor just initializing data
-        Wachspress_coordinates_3(
-            const Mesh& mesh,
-            const GeomTraits traits = GeomTraits()) :
-        m_mesh(mesh), 
-        m_traits(traits),
-        m_dihedral_angle_3(m_traits.compute_approximate_dihedral_angle_3_object()){}
+    template<typename OutIterator>
+    OutIterator operator()(const Point_3& query, OutIterator c_begin) {
+      return compute(query, c_begin);
+    }  
 
-        //Test function to return dihedral angles of edges opposite to first vertex
-        std::vector<FT> dihedral_first(){
+  private:
+  	const PolygonMesh& m_polygon_mesh;
+  	const Computation_policy_3 m_computation_policy; // skip it for the moment
+  	const VertexToPointMap m_vertex_to_point_map; // use it to map vertex to Point_3
+  	const GeomTraits m_traits;
 
-            ppm = get(CGAL::vertex_point, m_mesh);
-            vertex_descriptor vd = (vertices(m_mesh).begin())[0];
+  	std::vector<FT> m_weights;
 
-            Point_3 v0 = get(ppm, vd);
+  	// put here any other necessary global containers
 
-            m_face_circulator = Face_circulator(m_mesh.halfedge(vd), m_mesh);
-            Face_circulator done(m_face_circulator);
+  	template<typename OutputIterator>
+    OutputIterator compute(
+      const Point_3& query, OutputIterator coordinates) {
 
-            do{
+    	// Compute weights.
+    	const FT sum = compute_weights(query);
+    	CGAL_assertion(sum > FT(0));
 
-                std::cout << *m_face_circulator++ << "\n"; 
-            }while(m_face_circulator!=done);
+      // The coordinates must be saved in the same order as vertices in the vertex range.
+      std::size_t vi = 0;
+      const auto vd = vertices(m_polygon_mesh);
+      for (const auto vertex : vd) {
+      	CGAL_assertion(vi < m_weights.size());
+      	const FT coordinate = m_weights[vi] / sum;
+        *(coordinates++) = coordinate;
+        ++vi;
+      }
+    }
 
-            return std::vector<FT>();
-        }
+    FT compute_weights(const Point_3& query) {
 
-    
-    
-    private:
+    	// Sum of weights to normalize them later.
+    	FT sum = FT(0);
+			// Vertex index.
+    	std::size_t vi = 0; 
+    	// Vertex range, you can make it global.
+    	const auto vd = vertices(m_polygon_mesh);
+    	for (const auto vertex : vd) {
+    		
+            std::cout << get(m_vertex_to_point_map, vertex) << "\n"; 
+    		const FT weight = FT(vi); // compute it here for query
+    		CGAL_assertion(vi < m_weights.size());
+    		m_weights[vi] = weight; 
+    		sum += weight;
+    		++vi; // update vi
+      }
+      CGAL_assertion(sum > FT(0));
+      return sum;
+    }
+  };
 
-        // Fields
-        const GeomTraits m_traits;
-        const Mesh& m_mesh;
-        const Dihedral_angle_3 m_dihedral_angle_3;
+  template<
+  typename Point_3,
+  typename OutIterator,
+  typename GeomTraits>
+  OutIterator wachspress_coordinates_3(
+    const CGAL::Surface_mesh<Point_3>& surface_mesh,
+    const Point_3& query,
+    OutIterator c_begin,
+    const Computation_policy_3 policy =
+    Computation_policy_3::DEFAULT) {
 
-        // Custom variables
-        Point_property_map ppm;
-        Face_circulator m_face_circulator;
+    using Geom_Traits = typename Kernel_traits<Point_3>::Kernel;
+    using SM = CGAL::Surface_mesh<Point_3>;
 
+    Wachspress_coordinates_3<SM, Geom_Traits> wachspress(surface_mesh, policy);
+    return wachspress(query, c_begin);
+  }
 
-};
+} // namespace Barycentric_coordinates
+} // namespace CGAL
 
-
-}
-}
-
-#endif
+#endif // CGAL_BARYCENTRIC_WACHSPRESS_COORDINATES_3_H

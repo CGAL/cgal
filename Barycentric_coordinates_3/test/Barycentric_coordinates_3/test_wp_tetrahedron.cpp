@@ -20,10 +20,16 @@ int main(){
     const Point_3 p2(0.0, 1.0, 0.0);
     const Point_3 p3(0.0, 0.0, 1.0);
 
+    // Query Point
+    const Point_3 q(0.25, 0.25, 0.25, 0.25);
+
+    // Store results
+    std::vector<FT> coordinates;
+
     CGAL::make_tetrahedron(p0, p1, p2, p3, ms);
 
-    CGAL::Barycentric_coordinates::Wachspress_coordinates_3<Kernel> ws(ms, Kernel());
-    ws.dihedral_first();
+    CGAL::Barycentric_coordinates::Wachspress_coordinates_3<Mesh, Kernel> ws(ms);
+    ws(q, std::back_inserter(coordinates));
 
     return EXIT_SUCCESS;
 }
