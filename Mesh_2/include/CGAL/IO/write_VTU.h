@@ -12,8 +12,8 @@
 //
 // Author(s)     : Laurent RINEAU, Stephane Tayeb, Maxime Gimeno
 
-#ifndef CGAL_WRITE_VTU_H
-#define CGAL_WRITE_VTU_H
+#ifndef CGAL_IO_WRITE_VTU_H
+#define CGAL_IO_WRITE_VTU_H
 
 #include <CGAL/license/Mesh_2.h>
 
@@ -68,7 +68,7 @@ write_cells_tag_2(std::ostream& os,
                                  tr.constrained_edges_end())) * sizeof(std::size_t);
   }
   else {
-    os << "\">\n";
+    os << ">\n";
     for(typename CDT::Finite_faces_iterator
             fit = tr.finite_faces_begin(),
             end = tr.finite_faces_end();
@@ -79,6 +79,17 @@ write_cells_tag_2(std::ostream& os,
         os << V[fit->vertex(0)] << " ";
         os << V[fit->vertex(2)] << " ";
         os << V[fit->vertex(1)] << " ";
+      }
+    }
+    for(typename CDT::Constrained_edges_iterator
+          cei = tr.constrained_edges_begin(),
+          end = tr.constrained_edges_end();
+        cei != end; ++cei)
+    {
+      for(int i=0; i<3; ++i)
+      {
+        if(i != cei->second)
+          os << V[cei->first->vertex(i)] << " ";
       }
     }
     os << "      </DataArray>\n";
@@ -96,7 +107,7 @@ write_cells_tag_2(std::ostream& os,
     // 1 offset (size_t) per cell + length of the encoded data (size_t)
   }
   else {
-    os << "\">\n";
+    os << ">\n";
     std::size_t cells_offset = 0;
     for(typename CDT::Finite_faces_iterator fit =
         tr.finite_faces_begin() ;
@@ -108,6 +119,13 @@ write_cells_tag_2(std::ostream& os,
         cells_offset += 3;
         os << cells_offset << " ";
       }
+    }
+    for(std::size_t i = 0, end = std::distance(tr.constrained_edges_begin(),
+                                               tr.constrained_edges_end());
+        i < end; ++i)
+    {
+      cells_offset += 2;
+      os << cells_offset << " ";
     }
     os << "      </DataArray>\n";
   }
@@ -125,7 +143,7 @@ write_cells_tag_2(std::ostream& os,
     // 1 unsigned char per cell + length of the encoded data (size_t)
   }
   else {
-    os << "\">\n";
+    os << ">\n";
     for(typename CDT::Finite_faces_iterator fit =
         tr.finite_faces_begin() ;
         fit != tr.finite_faces_end() ;
@@ -135,6 +153,12 @@ write_cells_tag_2(std::ostream& os,
       {
         os << "5 ";
       }
+    }
+    for(std::size_t i = 0, end = std::distance(tr.constrained_edges_begin(),
+                                               tr.constrained_edges_end());
+        i < end; ++i)
+    {
+      os << "3 ";
     }
     os << "      </DataArray>\n";
   }
@@ -301,10 +325,10 @@ write_attributes_2(std::ostream& os,
 }
 
 template <class CDT>
-void write_vtu_with_attributes(std::ostream& os,
+void write_VTU_with_attributes(std::ostream& os,
                const CDT& tr,
                std::vector<std::pair<const char*, const std::vector<double>*> >& attributes,
-               IO::Mode mode = IO::BINARY)
+               Mode mode = BINARY)
 {
   typedef typename CDT::Vertex_handle Vertex_handle;
   std::map<Vertex_handle, std::size_t> V;
@@ -336,7 +360,7 @@ void write_vtu_with_attributes(std::ostream& os,
   os << "  <Piece NumberOfPoints=\"" << tr.number_of_vertices()
      << "\" NumberOfCells=\"" << number_of_triangles + std::distance(tr.constrained_edges_begin(), tr.constrained_edges_end()) << "\">\n";
   std::size_t offset = 0;
-  const bool binary = (mode == IO::BINARY);
+  const bool binary = (mode == BINARY);
   write_cdt_points_tag(os,tr,V,binary,offset);
   write_cells_tag_2(os,tr,number_of_triangles, V,binary,offset);
   if(attributes.empty())
@@ -361,16 +385,27 @@ void write_vtu_with_attributes(std::ostream& os,
 }
 
 } // namespace internal
-} // namespace CGAL
 
+template <class CDT>
+void write_VTU(std::ostream& os,
+               const CDT& tr,
+               Mode mode = BINARY)
+{
+  std::vector<std::pair<const char*, const std::vector<double>*> > dummy_atts;
+  internal::write_VTU_with_attributes(os, tr, dummy_atts, mode);
+}
+
+} // namespace IO
+
+#ifndef CGAL_NO_DEPRECATED_CODE
 template <class CDT>
 void write_vtu(std::ostream& os,
                const CDT& tr,
                IO::Mode mode = IO::BINARY)
 {
-  std::vector<std::pair<const char*, const std::vector<double>*> > dummy_atts;
-  IO::internal::write_vtu_with_attributes(os, tr, dummy_atts, mode);
+  IO::write_VTU(os, tr, mode);
 }
+#endif
 
 } //end CGAL
-#endif // CGAL_WRITE_VTU_H
+#endif // CGAL_IO_WRITE_VTU_H

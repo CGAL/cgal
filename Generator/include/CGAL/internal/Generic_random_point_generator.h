@@ -18,7 +18,6 @@
 #include <CGAL/generators.h>
 #include <CGAL/Random.h>
 #include <CGAL/property_map.h>
-#include <CGAL/result_of.h>
 
 
 #include <vector>

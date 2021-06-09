@@ -177,7 +177,7 @@ void split_halfcircle(Sphere_segment<R>& s1,
   Plane_3 h(Point_3(0,0,0),(target()-CGAL::ORIGIN));
   Sphere_point<R> p =
     CGAL::intersection(sphere_circle(),Sphere_circle<R>(h));
-  if ( !has_on(p) ) p = p.antipode();
+  if ( !has_on_after_intersection(p) ) p = p.antipode();
   s1 = Sphere_segment<R>(this->ptr()->ps_,p,this->ptr()->c_);
   s2 = Sphere_segment<R>(p,this->ptr()->pt_,this->ptr()->c_);
 }

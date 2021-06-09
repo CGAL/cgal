@@ -29,7 +29,7 @@ typedef CGAL::Arrangement_2<Traits_2>              Arrangement_2;
 
 int main ()
 {
-  CGAL::set_pretty_mode(std::cout);             // for nice printouts.
+  CGAL::IO::set_pretty_mode(std::cout);             // for nice printouts.
 
   // create a polynomial representing x .-)
   Polynomial_1 x = CGAL::shift(Polynomial_1(1),1);

@@ -21,14 +21,14 @@ int main(int argc, char*argv[])
   // Reads a .las point set file with normal vectors and colors
   std::ifstream in(fname, std::ios_base::binary);
   std::vector<PointWithColor> points; // store points
-  if(!CGAL::read_LAS_with_properties(in, std::back_inserter (points),
-                                     CGAL::make_las_point_reader(CGAL::First_of_pair_property_map<PointWithColor>()),
-                                     std::make_tuple(CGAL::Second_of_pair_property_map<PointWithColor>(),
-                                                     CGAL::Construct_array(),
-                                                     CGAL::LAS_property::R(),
-                                                     CGAL::LAS_property::G(),
-                                                     CGAL::LAS_property::B(),
-                                                     CGAL::LAS_property::I())))
+  if(!CGAL::IO::read_LAS_with_properties(in, std::back_inserter (points),
+                                         CGAL::IO::make_las_point_reader(CGAL::First_of_pair_property_map<PointWithColor>()),
+                                         std::make_tuple(CGAL::Second_of_pair_property_map<PointWithColor>(),
+                                                         CGAL::Construct_array(),
+                                                         CGAL::IO::LAS_property::R(),
+                                                         CGAL::IO::LAS_property::G(),
+                                                         CGAL::IO::LAS_property::B(),
+                                                         CGAL::IO::LAS_property::I())))
   {
     std::cerr << "Error: cannot read file " << fname << std::endl;
     return EXIT_FAILURE;

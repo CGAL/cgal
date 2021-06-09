@@ -590,7 +590,7 @@ public:
   /*!
    * Destructor. [takes O(n) operations]
    */
-  virtual ~Multiset ();
+  virtual ~Multiset () noexcept(!CGAL_ASSERTIONS_ENABLED);
 
   /*!
    * Assignment operator. [takes O(n) operations]
@@ -1565,14 +1565,16 @@ Multiset<Type, Compare, Allocator, UseCompactContainer>::Multiset (const Self& t
 // Destructor.
 //
 template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
-Multiset<Type, Compare, Allocator, UseCompactContainer>::~Multiset ()
+Multiset<Type, Compare, Allocator, UseCompactContainer>::~Multiset () noexcept(!CGAL_ASSERTIONS_ENABLED)
 {
   if (UseCompactContainer::value)
     return;
 
   // Delete the entire tree recursively.
-  if (rootP != nullptr)
-    _destroy (rootP);
+  CGAL_destructor_assertion_catch(
+    if (rootP != nullptr)
+      _destroy (rootP);
+  );
 
   rootP = nullptr;
   beginNode.parentP = nullptr;

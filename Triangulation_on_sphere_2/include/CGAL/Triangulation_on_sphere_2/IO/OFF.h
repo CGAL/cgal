@@ -43,6 +43,8 @@ class Triangulation_on_sphere_2;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
 
+namespace IO {
+
 /*!
   \ingroup PkgPointSet3IOOFF
 
@@ -187,6 +189,6 @@ bool write_OFF(const std::string& fname, const CGAL::Triangulation_on_sphere_2<G
 
 /// \endcond
 
-} // namespace CGAL
+} } // namespace CGAL::IO
 
 #endif // CGAL_TOS2_IO_OFF_H

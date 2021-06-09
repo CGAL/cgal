@@ -296,7 +296,7 @@ MainWindow::open(QString fileName)
   if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
   {
 #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
-    CGAL::read_multi_point_WKT(ifs, m_sites);
+    CGAL::IO::read_multi_point_WKT(ifs, m_sites);
 #endif
   }
   else
@@ -330,7 +330,7 @@ MainWindow::on_actionSavePoints_triggered()
     std::ofstream ofs(qPrintable(fileName));
     if(fileName.endsWith(".wkt", Qt::CaseInsensitive)){
 #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
-      CGAL::write_multi_point_WKT(ofs, m_sites);
+      CGAL::IO::write_multi_point_WKT(ofs, m_sites);
 #endif
     }else
       for(Points::iterator it = m_sites.begin();

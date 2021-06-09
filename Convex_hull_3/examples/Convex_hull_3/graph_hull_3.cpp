@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
 {
   const char* filename = (argc>1) ? argv[1] : "data/star.off";
   Surface_mesh poly;
-  if(!CGAL::read_polygon_mesh(filename, poly))
+  if(!CGAL::IO::read_polygon_mesh(filename, poly))
   {
     std::cerr<< "Cannot open input file." <<std::endl;
     return 1;

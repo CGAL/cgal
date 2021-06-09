@@ -1710,6 +1710,8 @@ protected:
     bool ninety = is_90degree_rotation(aff);
     bool scale = is_scaling(aff);
 
+    bool translate = aff.is_translation();
+
     Vertex_iterator vi;
     CGAL_forall_vertices( vi, snc()) {
 
@@ -1726,8 +1728,10 @@ protected:
         vertex_list.push_back(vi);
       } else {
         vi->point() = vi->point().transform( aff);
-        SM_decorator sdeco(&*vi);
-        sdeco.transform( linear);
+        if(! translate){
+          SM_decorator sdeco(&*vi);
+          sdeco.transform( linear);
+        }
       }
     }
 

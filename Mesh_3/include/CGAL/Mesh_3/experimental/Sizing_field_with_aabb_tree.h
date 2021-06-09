@@ -174,7 +174,7 @@ struct Sizing_field_with_aabb_tree
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
     if(dim <= 1) {
       std::cerr << "Sizing("  << p << ", dim=" << dim
-                << ", index=#" << CGAL::oformat(id) << "): ";
+                << ", index=#" << CGAL::IO::oformat(id) << "): ";
     }
 #endif // CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
     double result = d_;
@@ -258,12 +258,12 @@ struct Sizing_field_with_aabb_tree
                                "Ids are { ")
               % group(setprecision(17),result)
               % group(setprecision(17),p)
-              % CGAL::oformat(get(facet_patch_id_map,
+              % CGAL::IO::oformat(get(facet_patch_id_map,
                                   projection_traits.closest_point_and_primitive().second))
               % group(setprecision(17),
                       projection_traits.closest_point_and_primitive().first);
             for(Patch_index i : ids) {
-              s << CGAL::oformat(i) << " ";
+              s << CGAL::IO::oformat(i) << " ";
             }
             s << "}\n";
             std::cerr << s.str();
@@ -327,10 +327,10 @@ struct Sizing_field_with_aabb_tree
                              "Closest face id: %4%\n"
                              "Ids are { ")
             % result % p % curve_id
-            % CGAL::oformat(get(facet_patch_id_map,
+            % CGAL::IO::oformat(get(facet_patch_id_map,
                                 projection_traits.closest_point_and_primitive().second));
           for(Patch_index i : ids) {
-            s << CGAL::oformat(i) << " ";
+            s << CGAL::IO::oformat(i) << " ";
           }
           s << "}\n";
           std::cerr << s.str();
@@ -346,10 +346,10 @@ struct Sizing_field_with_aabb_tree
                              "Closest face id: %4%\n"
                              "Ids are { ")
             % result % p % curve_id
-            % CGAL::oformat(get(facet_patch_id_map,
+            % CGAL::IO::oformat(get(facet_patch_id_map,
                                 projection_traits.closest_point_and_primitive().second));
           for(Patch_index i : ids) {
-            s << CGAL::oformat(i) << " ";
+            s << CGAL::IO::oformat(i) << " ";
           }
           s << "}\n";
           CGAL_assertion_msg(result <=0, s.str().c_str());
@@ -364,7 +364,7 @@ struct Sizing_field_with_aabb_tree
             % result % p % curve_id
             % projection_traits.closest_point_and_primitive().second->patch_id();
           for(Patch_index i : ids) {
-            s << CGAL::oformat(i) << " ";
+            s << CGAL::IO::oformat(i) << " ";
           }
           s << "}\n";
           std::cerr << "ERROR at " << __FILE__ << " line " << __LINE__ << " :\n"

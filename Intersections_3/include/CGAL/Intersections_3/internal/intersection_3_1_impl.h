@@ -26,7 +26,7 @@
 #include <CGAL/Intersections_3/Iso_cuboid_3_Line_3.h>
 #include <CGAL/utils_classes.h>
 #include <CGAL/squared_distance_3.h>
-
+#include <CGAL/rank.h>
 #include <CGAL/Intersections_3/internal/bbox_intersection_3.h>
 namespace CGAL {
 
@@ -239,7 +239,7 @@ intersection_point(const typename K::Plane_3 &plane1,
 
   const FT den = minor_0*m22 - minor_1*m12 + minor_2*m02; // determinant of M
 
-  if(den == FT(0)){
+  if(is_zero(den)){
     return boost::none;
   }
 
@@ -379,7 +379,7 @@ intersection(const typename K::Line_3 &l1,
   const Vector_3 v3v2 = cross_product(v3,v2);
   const Vector_3 v1v2 = cross_product(v1,v2);
   const FT sl = v1v2.squared_length();
-  if(certainly(sl == FT(0)))
+  if(certainly(is_zero(sl)))
     return intersection_return<typename K::Intersect_3, typename K::Line_3, typename K::Line_3>();
   const FT t = ((v3v2.x()*v1v2.x()) + (v3v2.y()*v1v2.y()) + (v3v2.z()*v1v2.z())) / sl;
 
@@ -522,6 +522,7 @@ do_intersect(const typename K::Segment_3  &s1,
   }
   return false;
 }
+
 
 template <class K>
 typename Intersection_traits<K, typename K::Line_3, typename K::Segment_3>::result_type
@@ -853,9 +854,9 @@ do_intersect(const typename K::Plane_3 &p,
   typedef typename K::FT FT;
   const FT d2 = CGAL::square(p.a()*s.center().x() +
                              p.b()*s.center().y() +
-                             p.c()*s.center().z() + p.d()) /
-      (square(p.a()) + square(p.b()) + square(p.c()));
-  return d2 <= s.squared_radius();
+                             p.c()*s.center().z() + p.d());
+
+  return d2 <= s.squared_radius() * (square(p.a()) + square(p.b()) + square(p.c()));
 }
 
 template <class K>
@@ -967,20 +968,15 @@ template <class K>
 bool
 do_intersect(const typename K::Plane_3 &plane,
              const typename K::Ray_3 &ray,
-             const K& k)
+             const K& )
 {
-    typedef typename K::Point_3 Point_3;
+    typename K::Oriented_side_3 oriented_side_3;
 
-    typename Intersection_traits<K, typename K::Plane_3, typename K::Line_3>
-      ::result_type
-      line_intersection = internal::intersection(plane, ray.supporting_line(), k);
-
-    if(!line_intersection)
-        return false;
-    if(const Point_3 *isp = intersect_get<Point_3>(line_intersection))
-        return ray.collinear_has_on(*isp);
-
-    return true;
+    Oriented_side os = oriented_side_3(plane,ray.source());
+    if(os == ON_ORIENTED_BOUNDARY){
+      return true;
+    }
+    return sign(ray.to_vector()* plane.orthogonal_vector()) * os == -1;
 }
 
 
@@ -1642,38 +1638,171 @@ template <class R>
 inline bool
 do_intersect(const Plane_3<R>& plane1, const Plane_3<R>& plane2, const R&)
 {
-  return bool(intersection(plane1, plane2));
+    typedef typename R::RT RT;
+    const RT &a = plane1.a();
+    const RT &b = plane1.b();
+    const RT &c = plane1.c();
+    const RT &d = plane1.d();
+    const RT &p = plane2.a();
+    const RT &q = plane2.b();
+    const RT &r = plane2.c();
+    const RT &s = plane2.d();
+
+    RT det = a*q-p*b;
+    if (det != 0) {
+      return true;
+    }
+    det = a*r-p*c;
+    if (det != 0) {
+      return true;
+    }
+    det = b*r-c*q;
+    if (det != 0) {
+      return true;
+    }
+// degenerate case
+    if (a!=0 || p!=0) {
+      return (a*s == p*d);
+    }
+    if (b!=0 || q!=0) {
+      return (b*s == q*d);
+    }
+    if (c!=0 || r!=0) {
+      return (c*s == r*d);
+    }
+    return true;
 }
 
 
 template <class R>
 inline bool
 do_intersect(const Plane_3<R> &plane1, const Plane_3<R> &plane2,
-             const Plane_3<R> &plane3, const R& r)
+             const Plane_3<R> &plane3, const R&)
 {
-  return bool(intersection(plane1, plane2, plane3, r));
+  typedef typename R::RT RT;
+
+  if(! is_zero(determinant(plane1.a(), plane1.b(), plane1.c(),
+                           plane2.a(), plane2.b(), plane2.c(),
+                           plane3.a(), plane3.b(), plane3.c()))){
+    return true;
+  }
+
+  int pcount = 0;
+  bool b12, b13,b23;
+  if((b12 = parallel(plane1,plane2))) pcount++;
+  if((b13 = parallel(plane1,plane3))) pcount++;
+  if((b23 = parallel(plane2,plane3))) pcount++;
+
+  if(pcount == 3){
+    return (( (plane1 == plane2) || (plane1 == plane2.opposite())) && ( (plane1 == plane3) || (plane1 == plane3.opposite())));
+  }
+
+  if(pcount == 1){
+    if(b12 && ((plane1 == plane2)||(plane1 == plane2.opposite()  ))) return true;
+    if(b13 && ((plane1 == plane3)||(plane1 == plane3.opposite()  ))) return true;
+    if(b23 && ((plane2 == plane3)||(plane2 == plane3.opposite()  ))) return true;
+  }
+
+  int rd = rank_34<RT>(plane1.a(), plane1.b(), plane1.c(), plane1.d(),
+                       plane2.a(), plane2.b(), plane2.c(), plane2.d(),
+                       plane3.a(), plane3.b(), plane3.c(), plane3.d());
+
+  return rd == 2;
 }
 
 
 template <class R>
 inline bool
-do_intersect(const Iso_cuboid_3<R> &i, const Iso_cuboid_3<R> &j, const R&)
+do_intersect(const Iso_cuboid_3<R> &icub1, const Iso_cuboid_3<R> &icub2, const R&)
 {
-  return bool(CGAL::intersection(i, j));
+    typedef typename R::Point_3 Point_3;
+
+    Point_3 min_points[2];
+    Point_3 max_points[2];
+    min_points[0] = (icub1.min)();
+    min_points[1] = (icub2.min)();
+    max_points[0] = (icub1.max)();
+    max_points[1] = (icub2.max)();
+    const int DIM = 3;
+    int min_idx[DIM];
+    int max_idx[DIM];
+    Point_3 newmin;
+    Point_3 newmax;
+    for (int dim = 0; dim < DIM; ++dim) {
+        min_idx[dim] =
+          min_points[0].cartesian(dim) >= min_points[1].cartesian(dim) ? 0 : 1;
+        max_idx[dim] =
+          max_points[0].cartesian(dim) <= max_points[1].cartesian(dim) ? 0 : 1;
+        if (min_idx[dim] != max_idx[dim]
+                && max_points[max_idx[dim]].cartesian(dim)
+                   < min_points[min_idx[dim]].cartesian(dim))
+          return false;
+    }
+    return true;
+
 }
 
 template <class R>
 inline bool
-do_intersect(const Line_3<R> &l, const Iso_cuboid_3<R> &j, const R&)
+do_intersect(const Line_3<R> &line, const Iso_cuboid_3<R> &box, const R&)
 {
-  return bool(CGAL::intersection(l, j));
+    typedef typename R::Point_3 Point_3;
+    typedef typename R::Vector_3 Vector_3;
+    typedef typename R::FT FT;
+    bool all_values = true;
+    FT _min = 0, _max = 0; // initialization to stop compiler warning
+    FT _denum;
+    Point_3 const & _ref_point=line.point();
+    Vector_3 const & _dir=line.direction().vector();
+    Point_3 const & _iso_min=(box.min)();
+    Point_3 const & _iso_max=(box.max)();
+    for (int i=0; i< _ref_point.dimension(); i++) {
+        if (_dir.homogeneous(i) == 0) {
+            if (_ref_point.cartesian(i) < _iso_min.cartesian(i)) {
+              return false;
+            }
+            if (_ref_point.cartesian(i) > _iso_max.cartesian(i)) {
+              return false;
+            }
+        } else {
+            FT newmin, newmax;
+            FT newdenum = _dir.cartesian(i);
+            if (_dir.homogeneous(i) > 0) {
+              newmin = (_iso_min.cartesian(i) - _ref_point.cartesian(i));
+              newmax = (_iso_max.cartesian(i) - _ref_point.cartesian(i));
+            } else {
+              newmin = (_iso_max.cartesian(i) - _ref_point.cartesian(i));
+              newmax = (_iso_min.cartesian(i) - _ref_point.cartesian(i));
+            }
+            if (all_values) {
+                _min = newmin;
+                _max = newmax;
+                _denum = newdenum;
+            } else {
+
+              if (compare_quotients(newmin, newdenum, _min, _denum) == LARGER)
+                    _min = newmin;
+              if (compare_quotients(newmax, newdenum, _max, _denum) == LARGER)
+                    _max = newmax;
+              if (compare_quotients(_max, _denum, _min, _denum) == SMALLER) {
+                  return false;
+                }
+                _denum = newdenum;
+
+            }
+            all_values = false;
+        }
+    }
+    CGAL_kernel_assertion(!all_values);
+    return true;
 }
+
 
 template <class R>
 inline bool
-do_intersect(const Iso_cuboid_3<R> &j, const Line_3<R> &l, const R&)
+do_intersect(const Iso_cuboid_3<R> &j, const Line_3<R> &l, const R& r)
 {
-  return bool(CGAL::intersection(l, j));
+  return do_intersect(l, j, r);
 }
 } // namespace internal
 } // namespace Intersections

@@ -25,6 +25,7 @@
 #include <sstream>
 
 namespace CGAL {
+namespace IO {
 template <class C3T3>
 void
 output_to_maya(std::ostream& os,
@@ -309,6 +310,12 @@ output_to_maya(std::ostream& os,
   std::cerr << "done.\n";
 #endif
 } // end output_to_maya(...)
+
+} // namespace IO
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+using IO::output_to_maya;
+#endif
 
 } // end namespace CGAL
 

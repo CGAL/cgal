@@ -357,7 +357,7 @@ MainWindow::loadWKTConstraints(QString
   std::ifstream ifs(qPrintable(fileName));
   do{
     std::vector<Polygon> polygons;
-    CGAL::read_multi_polygon_WKT(ifs, polygons);
+    CGAL::IO::read_multi_polygon_WKT(ifs, polygons);
     for(const Polygon& poly : polygons)
     {
       if(poly.outer_boundary().is_empty())
@@ -387,7 +387,7 @@ MainWindow::loadWKTConstraints(QString
   SVD::Vertex_handle vqold;
   do{
     std::vector<LineString > linestrings;
-    CGAL::read_multi_linestring_WKT(ifs, linestrings);
+    CGAL::IO::read_multi_linestring_WKT(ifs, linestrings);
     for(const LineString& ls : linestrings)
     {
       bool first_pass=true;

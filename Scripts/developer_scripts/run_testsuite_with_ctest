@@ -258,9 +258,9 @@ run_test_on_platform()
   CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${PLATFORM}
   cd "${CGAL_BINARY_DIR}"
   log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "Testing on host ${HOST} and platform ${PLATFORM}"
-  
-  if [ -f "${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/setup" ]; then
-    source "${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/setup"
+
+  if [ -f "${CGAL_HOME}/${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/setup" ]; then
+    source "${CGAL_HOME}/${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/setup"
   else
     INIT_FILE="${CGAL_HOME}/${REFERENCE_PLATFORMS_DIR}/${PLATFORM}.cmake"
   fi
@@ -274,7 +274,7 @@ run_test_on_platform()
     CMAKE_OPTS="${CMAKE_OPTS} -DWITH_examples=ON -DWITH_demos=ON"
   fi
   if [ -z "${SHOW_PROGRESS}" ]; then
-    cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR  >package_installation.log 2>&1 
+    cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR  >package_installation.log 2>&1
   else
     cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR 2>&1 |tee package_installation.log
   fi
@@ -294,14 +294,15 @@ run_test_on_platform()
   #unsets the limit of 1024 bits for the logs through ssh
   echo "SET(CTEST_CUSTOM_MAXIMUM_PASSED_TEST_OUTPUT_SIZE 1000000000)" > CTestCustom.cmake
   echo "SET(CTEST_CUSTOM_MAXIMUM_FAILED_TEST_OUTPUT_SIZE 1000000000)" >> CTestCustom.cmake
-  CTEST_OPTS="-T Start -T Test --timeout 1200 -j${NUMBER_OF_PROCESSORS} ${DO_NOT_TEST:+-E execution___of__} "
+
+  CTEST_OPTS="-T Start -T Test --timeout 1200 ${DO_NOT_TEST:+-E execution___of__}"
   if uname | grep -q "CYGWIN"; then
-    CTEST_OPTS="-C ${CONFIG_TYPE} ${CTEST_OPTS} -V"
+    CTEST_OPTS="-C ${CONFIG_TYPE} ${CTEST_OPTS}"
   fi
   if [ -z "${SHOW_PROGRESS}" ]; then
-    ctest ${TO_TEST:+-L ${TO_TEST} } ${CTEST_OPTS} ${KEEP_TESTS:+-FC .}> tmp.txt
+    ctest ${TO_TEST:+-L ${TO_TEST} } ${CTEST_OPTS} -j${NUMBER_OF_PROCESSORS} ${KEEP_TESTS:+-FC .}>tmp.txt
   else
-    ctest ${TO_TEST:+-L ${TO_TEST} } ${CTEST_OPTS} ${KEEP_TESTS:+-FC .} |tee tmp.txt
+    ctest ${TO_TEST:+-L ${TO_TEST} } ${CTEST_OPTS} -j${NUMBER_OF_PROCESSORS} ${KEEP_TESTS:+-FC .}|tee tmp.txt
   fi
   #####################
   ##   GET RESULTS   ##
@@ -321,7 +322,9 @@ run_test_on_platform()
   echo "TESTER_NAME ${CGAL_TESTER}" >> "$RESULT_FILE"
   echo "TESTER_ADDRESS ${TESTER_ADDRESS}" >> "$RESULT_FILE"
   echo "CGAL_TEST_PLATFORM ${PLATFORM}" >> "$RESULT_FILE"
-  grep -e "^-- USING " "${CGAL_BINARY_DIR}/installation.log" >> $RESULT_FILE
+  grep -e "^-- USING " "${CGAL_BINARY_DIR}/installation.log"|sort -u >> $RESULT_FILE
+  #Use sed to get the content of DEBUG or RELEASE CXX FLAGS so that Multiconfiguration platforms do provide their CXXXFLAGS to the testsuite page (that greps USING CXXFLAGS to get info)
+  sed -i -E 's/(^-- USING )(DEBUG|RELEASE) (CXXFLAGS)/\1\3/' $RESULT_FILE
   echo "------------" >> "$RESULT_FILE"
   #if git branch, create empty scm file for python script
   if [ -n "${SCRIPTS_DIR}" ]; then
@@ -373,7 +376,7 @@ run_test_on_host()
 setup_dirs
 
 
-# Setup cmake 
+# Setup cmake
 log "${ACTUAL_LOGFILE}" "running the testsuites"
 if [ -n "${CONSOLE_OUTPUT}" ]; then
     printf "\n-------------------------------------------------------\n"

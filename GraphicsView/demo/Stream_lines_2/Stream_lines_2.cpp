@@ -200,7 +200,7 @@ MainWindow::open(QString fileName)
     do
     {
       std::vector<Point_2> ps;
-      CGAL::read_multi_point_WKT(ifs, ps);
+      CGAL::IO::read_multi_point_WKT(ifs, ps);
       if(size == -1)
         size = static_cast<int>(ps.size());
       else if(ps.size() > 0 && size != static_cast<int>(ps.size()))
@@ -266,7 +266,7 @@ MainWindow::on_actionSavePoints_triggered()
         mp[i].push_back(Point_2(regular_grid->get_field(j,i).x(),
                                 regular_grid->get_field(j,i).y()));
       }
-      CGAL::write_multi_point_WKT(ofs, mp[i]);
+      CGAL::IO::write_multi_point_WKT(ofs, mp[i]);
     }
     ofs.close();
   }

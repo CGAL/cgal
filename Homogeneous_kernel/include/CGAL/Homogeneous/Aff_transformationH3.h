@@ -82,11 +82,21 @@ public:
   virtual  bool
            is_even() const = 0;
 
+  virtual  bool
+           is_translation() const { return false; }
+
+  virtual  bool
+           is_scaling() const { return false; }
+
   virtual  RT
            homogeneous(int i, int j) const = 0;
 
   virtual  FT
            cartesian(int i, int j) const = 0;
+
+  // this function has a default here as it is only used for "pure" scaling and translation
+  // and not for the other types (Identity and general case)
+  virtual  Aff_transformation_3 compose(const Aff_transformation_rep_baseH3*) const { return Aff_transformation_3(); }
 };
 
 template < class R_ >
@@ -221,6 +231,128 @@ public:
            { return (i==j) ? FT(1) : FT(0); }
 };
 
+template < class R >
+class Scaling_repH3 : public Aff_transformation_rep_baseH3<R>
+{
+  public:
+    typedef typename R::RT RT;
+    typedef typename R::FT FT;
+    typedef typename R::Point_3      Point_3;
+    typedef typename R::Vector_3     Vector_3;
+    typedef typename R::Direction_3  Direction_3;
+    typedef typename R::Plane_3      Plane_3;
+    typedef typename R::Aff_transformation_3 Aff_transformation_3;
+    typedef Aff_transformation_rep_baseH3<R> Base;
+    typedef Scaling_repH3<R> Self;
+
+             Scaling_repH3()
+             {}
+
+             Scaling_repH3(const RT& scaling_numerator,
+                                 const RT& scaling_denominator) :
+               _sf_num(scaling_numerator), _sf_den(scaling_denominator)
+             {
+               if ( scaling_denominator < RT(0)   )
+               {
+                 _sf_num = - _sf_num;
+                 _sf_den = - _sf_den;
+               };
+             }
+
+    virtual  ~Scaling_repH3()
+             {}
+
+    virtual  Point_3
+             transform(const Point_3 & p) const
+             {
+               return Point_3( p.hx() * _sf_num,
+                               p.hy() * _sf_num,
+                               p.hz() * _sf_num,
+                               p.hw() * _sf_den );
+             }
+    virtual  Vector_3
+             transform(const Vector_3 & v) const
+             {
+               return Vector_3( v.hx() * _sf_num,
+                                v.hy() * _sf_num,
+                                v.hz() * _sf_num,
+                                v.hw() * _sf_den );
+             }
+
+    virtual  Direction_3
+             transform(const Direction_3 & d) const
+             { return d; }
+
+    virtual  Plane_3
+             transform(const Plane_3 & p) const
+             {
+               return Plane_3(p.a()*_sf_den, p.b()*_sf_den, p.c()*_sf_den, p.d()*_sf_num);
+             }
+
+    virtual  Aff_transformation_3
+             inverse() const
+             { return Aff_transformation_3(SCALING, _sf_den, _sf_num); }
+
+    virtual  Aff_transformation_3
+             transpose() const
+             { return Aff_transformation_3(SCALING, _sf_num, _sf_den); }
+
+    virtual  bool
+             is_even() const
+             { return true; }
+
+    virtual  bool
+             is_scaling() const
+             { return true; }
+
+    virtual  Aff_transformation_repH3<R>
+             general_form() const
+             {
+               return
+               Aff_transformation_repH3<R>(_sf_num, RT(0)  , RT(0)  ,RT(0)  ,
+                                           RT(0)  , _sf_num, RT(0)  ,RT(0)  ,
+                                           RT(0)  , RT(0)  , _sf_num,RT(0)  ,
+                                                                 _sf_den );
+             }
+
+  Aff_transformation_3 compose(const Base* aff) const
+  {
+    const Self* sr = dynamic_cast<const Self*>(aff);
+    return Aff_transformation_3(SCALING, _sf_num * sr->_sf_num, _sf_den * sr->_sf_den);
+  }
+
+    virtual  RT   homogeneous(int i, int j) const;
+    virtual  FT   cartesian(int i, int j) const;
+
+
+  private:
+    RT  _sf_num;
+    RT  _sf_den;
+};
+
+
+template < class R >
+typename Scaling_repH3<R>::RT
+Scaling_repH3<R>::
+homogeneous(int i, int j) const
+{
+  if(i!=j) return RT(0);
+  if (i==3) return _sf_den;
+  return _sf_num;
+}
+
+template <class R>
+typename Scaling_repH3<R>::FT
+Scaling_repH3<R>::
+cartesian(int i, int j) const
+{
+  if(i!=j) return FT(0);
+  if (i==3) return FT(1);
+  return FT(_sf_num) / FT(_sf_den);
+}
+
+
+
 template < class R_ >
 class Translation_repH3 : public Aff_transformation_rep_baseH3<R_>
 {
@@ -231,6 +363,8 @@ class Translation_repH3 : public Aff_transformation_rep_baseH3<R_>
   typedef typename R_::Direction_3          Direction_3;
   typedef typename R_::Plane_3              Plane_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
+  typedef Aff_transformation_rep_baseH3<R_> Base;
+  typedef Translation_repH3<R_>             Self;
 
 public:
   typedef R_                    R;
@@ -264,11 +398,20 @@ public:
   virtual  bool
            is_even() const;
 
+  virtual  bool
+           is_translation() const;
+
   virtual  RT
            homogeneous(int i, int j) const ;
 
   virtual  FT
            cartesian(int i, int j) const ;
+
+  Aff_transformation_3 compose(const Base* aff) const
+  {
+    const Self* sr = dynamic_cast<const Self*>(aff);
+    return Aff_transformation_3(TRANSLATION, tv +  sr->tv);
+  }
 
 friend class Aff_transformationH3<R>;
 
@@ -339,6 +482,12 @@ public:
 
   bool
   is_odd()    const;
+
+  bool
+  is_scaling()    const;
+
+  bool
+  is_translation()    const;
 
   FT
   cartesian(int i, int j) const
@@ -539,6 +688,7 @@ Aff_transformation_repH3<R>::is_even() const
                                               t20, t21, t22 ) ) == POSITIVE );
 }
 
+
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
 typename Aff_transformation_repH3<R>::RT
@@ -694,6 +844,12 @@ Translation_repH3<R>::is_even() const
 { return true; }
 
 template < class R >
+inline
+bool
+Translation_repH3<R>::is_translation() const
+{ return true; }
+
+template < class R >
 CGAL_KERNEL_LARGE_INLINE
 typename Translation_repH3<R>::RT
 Translation_repH3<R>::homogeneous(int i, int j) const
@@ -800,11 +956,7 @@ CGAL_KERNEL_INLINE
 Aff_transformationH3<R>::
 Aff_transformationH3(const Scaling&, const RT& num, const RT& den)
 {
-  const RT RT0(0);
-  initialize_with(Aff_transformation_repH3<R>(num, RT0, RT0, RT0,
-                                            RT0, num, RT0, RT0,
-                                            RT0, RT0, num, RT0,
-                                                           den ));
+  initialize_with(Scaling_repH3<R>(num, den ));
 }
 
 template < class R >
@@ -890,15 +1042,35 @@ bool
 Aff_transformationH3<R>::is_odd() const
 { return ( ! (this->Ptr()->is_even() )); }
 
+
+template < class R >
+inline
+bool
+Aff_transformationH3<R>::is_scaling() const
+{ return this->Ptr()->is_scaling(); }
+
+template < class R >
+inline
+bool
+Aff_transformationH3<R>::is_translation() const
+{ return this->Ptr()->is_translation(); }
+
 template < class R >
 CGAL_KERNEL_INLINE
 Aff_transformationH3<R>
 operator*(const Aff_transformationH3<R>& left_argument,
           const Aff_transformationH3<R>& right_argument )
 {
- return _general_transformation_composition(
-              left_argument.Ptr() ->general_form(),
-              right_argument.Ptr()->general_form() );
+  if(left_argument.is_scaling() && right_argument.is_scaling()){
+    return left_argument.Ptr()->compose(right_argument.Ptr());
+  }
+
+  if(left_argument.is_translation() && right_argument.is_translation()){
+    return left_argument.Ptr()->compose(right_argument.Ptr());
+  }
+
+  return _general_transformation_composition(left_argument.Ptr() ->general_form(),
+                                             right_argument.Ptr()->general_form() );
 }
 
 template < class R >

@@ -33,7 +33,7 @@ void test(const PointRange& points)
   dt.insert(points.begin(), points.end());
 
   // The triangulation, using straight edges
-  write_OFF("result.off", dt, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_OFF("result.off", dt, CGAL::parameters::stream_precision(17));
 
   std::ofstream out_primal("edges_primal.polylines.cgal");
   out_primal.precision(17);

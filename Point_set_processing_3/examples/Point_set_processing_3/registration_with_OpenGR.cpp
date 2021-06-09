@@ -26,17 +26,17 @@ int main(int argc, const char** argv)
   const char* fname2 = (argc>2) ? argv[2] : "data/hippo2.ply";
 
   std::vector<Pwn> pwns1, pwns2;
-  if(!CGAL::read_points(fname1, std::back_inserter(pwns1),
-                        CGAL::parameters::point_map(CGAL::First_of_pair_property_map<Pwn>())
-                                         .normal_map(Normal_map())))
+  if(!CGAL::IO::read_points(fname1, std::back_inserter(pwns1),
+                            CGAL::parameters::point_map(CGAL::First_of_pair_property_map<Pwn>())
+                                             .normal_map(Normal_map())))
   {
     std::cerr << "Error: cannot read file " << fname1 << std::endl;
     return EXIT_FAILURE;
   }
 
-  if(!CGAL::read_points(fname2, std::back_inserter(pwns2),
-                        CGAL::parameters::point_map(Point_map())
-                                         .normal_map(Normal_map())))
+  if(!CGAL::IO::read_points(fname2, std::back_inserter(pwns2),
+                            CGAL::parameters::point_map(Point_map())
+                                             .normal_map(Normal_map())))
   {
     std::cerr << "Error: cannot read file " << fname2 << std::endl;
     return EXIT_FAILURE;
@@ -64,10 +64,10 @@ int main(int argc, const char** argv)
                                       params::point_map(Point_map())
                                              .normal_map(Normal_map()));
 
-  if(!CGAL::write_points("pwns2_aligned.ply", pwns2,
-                         CGAL::parameters::point_map(Point_map())
-                                          .normal_map(Normal_map())
-                                          .stream_precision(17)))
+  if(!CGAL::IO::write_points("pwns2_aligned.ply", pwns2,
+                             CGAL::parameters::point_map(Point_map())
+                                              .normal_map(Normal_map())
+                                              .stream_precision(17)))
     return EXIT_FAILURE;
 
   std::cout << "Registration score: " << score << ".\n"

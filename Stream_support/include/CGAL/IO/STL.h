@@ -36,6 +36,8 @@
 
 namespace CGAL {
 
+namespace IO {
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Read
@@ -77,7 +79,7 @@ bool read_STL(std::istream& is,
               TriangleRange& facets,
               const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-              , typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr
+              , typename boost::enable_if<internal::is_Range<TriangleRange> >::type* = nullptr
 #endif
               )
 {
@@ -114,7 +116,7 @@ bool read_STL(std::istream& is,
   {
     if(binary)
       return false;
-    return IO::internal::parse_ASCII_STL(is, points, facets, verbose);
+    return internal::parse_ASCII_STL(is, points, facets, verbose);
   }
 
   // We are within the first 80 characters, both ASCII and binary are possible
@@ -141,7 +143,7 @@ bool read_STL(std::istream& is,
   // If the first word is not 'solid', the file must be binary
   if(s != "solid" || (word[5] !='\n' && word[5] !='\r' && word[5] != ' '))
   {
-    if(IO::internal::parse_binary_STL(is, points, facets, verbose))
+    if(internal::parse_binary_STL(is, points, facets, verbose))
     {
       return true;
     }
@@ -151,14 +153,14 @@ bool read_STL(std::istream& is,
       // The file does not start with 'solid' anyway, so it's fine to reset it.
       is.clear();
       is.seekg(0, std::ios::beg);
-      return IO::internal::parse_ASCII_STL(is, points, facets, verbose);
+      return internal::parse_ASCII_STL(is, points, facets, verbose);
     }
 
   }
   // Now, we have found the keyword "solid" which is supposed to indicate that the file is ASCII
   is.clear();
   is.seekg(0, std::ios::beg); // the parser needs to read all "solid" to work correctly.
-  if(IO::internal::parse_ASCII_STL(is, points, facets, verbose))
+  if(internal::parse_ASCII_STL(is, points, facets, verbose))
   {
     // correctly read the input as an ASCII file
     return true;
@@ -166,7 +168,7 @@ bool read_STL(std::istream& is,
   else// Failed to read the ASCII file
   {
     // It might have actually have been a binary file... ?
-    return IO::internal::parse_binary_STL(is, points, facets, verbose);
+    return internal::parse_binary_STL(is, points, facets, verbose);
   }
 }
 
@@ -174,7 +176,7 @@ bool read_STL(std::istream& is,
 
 template <typename PointRange, typename TriangleRange>
 bool read_STL(std::istream& is, PointRange& points, TriangleRange& facets,
-              typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr)
+              typename boost::enable_if<internal::is_Range<TriangleRange> >::type* = nullptr)
 {
   return read_STL(is, points, facets, parameters::all_default());
 }
@@ -222,7 +224,7 @@ bool read_STL(const std::string& fname,
               TriangleRange& facets,
               const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-              , typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr
+              , typename boost::enable_if<internal::is_Range<TriangleRange> >::type* = nullptr
 #endif
               )
 {
@@ -232,7 +234,7 @@ bool read_STL(const std::string& fname,
   if(binary)
   {
     std::ifstream is(fname, std::ios::binary);
-    CGAL::set_mode(is, CGAL::IO::BINARY);
+    CGAL::IO::set_mode(is, BINARY);
     if(read_STL(is, points, facets, np))
     {
       return true;
@@ -241,7 +243,7 @@ bool read_STL(const std::string& fname,
     facets.clear();
   }
   std::ifstream is(fname);
-  CGAL::set_mode(is, CGAL::IO::ASCII);
+  CGAL::IO::set_mode(is, CGAL::IO::ASCII);
   bool v = choose_parameter(get_parameter(np, internal_np::verbose),
                             false);
   return read_STL(is, points, facets, CGAL::parameters::verbose(v).use_binary_mode(false));
@@ -251,7 +253,7 @@ bool read_STL(const std::string& fname,
 
 template <typename PointRange, typename TriangleRange>
 bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facets,
-              typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr)
+              typename boost::enable_if<internal::is_Range<TriangleRange> >::type* = nullptr)
 {
   return read_STL(fname, points, facets, parameters::all_default());
 }
@@ -297,7 +299,7 @@ bool write_STL(std::ostream& os,
                const TriangleRange& facets,
                const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr
+               , typename boost::enable_if<internal::is_Range<TriangleRange> >::type* = nullptr
 #endif
                )
 {
@@ -319,7 +321,7 @@ bool write_STL(std::ostream& os,
 
   set_stream_precision_from_NP(os, np);
 
-  if(get_mode(os) == IO::BINARY)
+  if(get_mode(os) == BINARY)
   {
     os << "FileType: Binary                                                                ";
     const boost::uint32_t N32 = static_cast<boost::uint32_t>(facets.size());
@@ -369,7 +371,7 @@ bool write_STL(std::ostream& os,
 
 template <typename PointRange, typename TriangleRange>
 bool write_STL(std::ostream& os, const PointRange& points, const TriangleRange& facets,
-               typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr)
+               typename boost::enable_if<internal::is_Range<TriangleRange> >::type* = nullptr)
 {
   return write_STL(os, points, facets, parameters::all_default());
 }
@@ -417,7 +419,7 @@ bool write_STL(const std::string& fname,
                const TriangleRange& facets,
                const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr
+               , typename boost::enable_if<internal::is_Range<TriangleRange> >::type* = nullptr
 #endif
                )
 {
@@ -425,13 +427,13 @@ bool write_STL(const std::string& fname,
   if(binary)
   {
     std::ofstream os(fname, std::ios::binary);
-    CGAL::set_mode(os, CGAL::IO::BINARY);
+    CGAL::IO::set_mode(os, CGAL::IO::BINARY);
     return write_STL(os, points, facets, np);
   }
   else
   {
     std::ofstream os(fname);
-    CGAL::set_mode(os, CGAL::IO::ASCII);
+    CGAL::IO::set_mode(os, CGAL::IO::ASCII);
     return write_STL(os, points, facets, np);
   }
 }
@@ -440,12 +442,14 @@ bool write_STL(const std::string& fname,
 
 template <typename PointRange, typename TriangleRange>
 bool write_STL(const std::string& fname, const PointRange& points, const TriangleRange& facets,
-               typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr)
+               typename boost::enable_if<internal::is_Range<TriangleRange> >::type* = nullptr)
 {
   return write_STL(fname, points, facets, parameters::all_default());
 }
 
 /// \endcond
+
+} // namespace IO
 
 } // namespace CGAL
 

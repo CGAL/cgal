@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
   const char* filename = (argc > 1) ? argv[1] : "./data/sphere.off";
 
   Triangle_mesh tm;
-  if(!CGAL::read_polygon_mesh(filename, tm) ||
+  if(!CGAL::IO::read_polygon_mesh(filename, tm) ||
      CGAL::is_empty(tm) || !CGAL::is_triangle_mesh(tm))
   {
     std::cerr << "Invalid input file." << std::endl;
