@@ -19,6 +19,8 @@
 #include <CGAL/Polygon_mesh_processing/refine.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Weights/uniform_weights.h>
+#include <CGAL/Weights/cotangent_weights.h>
 #include <CGAL/Timer.h>
 #include <CGAL/iterator.h>
 
@@ -717,7 +719,7 @@ bool Polyhedron_demo_hole_filling_plugin::fill
       success = std::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
               it, std::back_inserter(patch), CGAL::Emptyset_iterator(),
               CGAL::Polygon_mesh_processing::parameters::
-              weight_calculator(CGAL::Weights::internal::Uniform_weight_wrapper<Face_graph>()).
+              weight_calculator(CGAL::Weights::Uniform_weight<Face_graph>()).
               density_control_factor(alpha).
               fairing_continuity(continuity).
               use_delaunay_triangulation(use_DT)));
@@ -727,7 +729,7 @@ bool Polyhedron_demo_hole_filling_plugin::fill
       success = std::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
               it, std::back_inserter(patch), CGAL::Emptyset_iterator(),
               CGAL::Polygon_mesh_processing::parameters::
-              weight_calculator(CGAL::Weights::internal::Cotangent_weight_secure_with_voronoi_wrapper<Face_graph, decltype(pmap)>(poly, pmap)).
+              weight_calculator(CGAL::Weights::Secure_cotangent_weight_with_voronoi_area<Face_graph, decltype(pmap)>(poly, pmap)).
               density_control_factor(alpha).
               fairing_continuity(continuity).
               use_delaunay_triangulation(use_DT)));

@@ -13,6 +13,7 @@ typedef Scene_surface_mesh_item Scene_facegraph_item;
 #include <CGAL/iterator.h>
 #include <CGAL/Polygon_mesh_processing/fair.h>
 #include <CGAL/Polygon_mesh_processing/refine.h>
+#include <CGAL/Weights/uniform_weights.h>
 
 #include <QElapsedTimer>
 #include <QAction>
@@ -99,7 +100,7 @@ public Q_SLOTS:
       CGAL::Polygon_mesh_processing::fair(*selection_item->polyhedron(),
         selection_item->selected_vertices,
         CGAL::Polygon_mesh_processing::parameters::
-        weight_calculator(CGAL::Weights::internal::Uniform_weight_wrapper<FaceGraph>()).
+        weight_calculator(CGAL::Weights::Uniform_weight<FaceGraph>()).
         fairing_continuity(continuity));
     if(weight_index == 0)
       CGAL::Polygon_mesh_processing::fair(*selection_item->polyhedron(),
