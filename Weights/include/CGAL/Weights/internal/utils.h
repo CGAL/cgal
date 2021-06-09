@@ -28,11 +28,13 @@
 
 // Boost headers.
 #include <boost/mpl/has_xxx.hpp>
+#include <CGAL/boost/graph/helpers.h>
 
 // CGAL includes.
 #include <CGAL/utils.h>
 #include <CGAL/assertions.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/Kernel/global_functions.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Point_3.h>
@@ -661,8 +663,8 @@ namespace internal {
     const auto qf = to_2d(traits, b1, b2, origin, b);
     const auto rf = to_2d(traits, b1, b2, origin, c);
 
-    const FT area_3 = area_2(traits, pf, qf, rf);
-    return area_3;
+    const FT A = area_2(traits, pf, qf, rf);
+    return A;
   }
 
   // Computes positive area of a 3D triangle.
@@ -684,8 +686,45 @@ namespace internal {
       traits.construct_cross_product_vector_3_object();
     const auto cross = cross_product_3(v1, v2);
     const FT half = FT(1) / FT(2);
-    const FT area_3 = half * length_3(traits, cross);
-    return area_3;
+    const FT A = half * length_3(traits, cross);
+    return A;
+  }
+
+  // Computes a secure cotangent between two 3D vectors.
+  template<typename GeomTraits>
+  typename GeomTraits::FT cotangent_3_secure(
+    const GeomTraits& traits,
+    const typename GeomTraits::Point_3& p,
+    const typename GeomTraits::Point_3& q,
+    const typename GeomTraits::Point_3& r) {
+
+    using FT = typename GeomTraits::FT;
+    using Get_sqrt = Get_sqrt<GeomTraits>;
+    const auto sqrt = Get_sqrt::sqrt_object(traits);
+
+    const auto dot_product_3 =
+      traits.compute_scalar_product_3_object();
+    const auto construct_vector_3 =
+      traits.construct_vector_3_object();
+
+    const auto v1 = construct_vector_3(q, r);
+    const auto v2 = construct_vector_3(q, p);
+
+    const FT dot = dot_product_3(v1, v2);
+    const FT length_v1 = length_3(traits, v1);
+    const FT length_v2 = length_3(traits, v2);
+
+    const FT lb = -FT(999) / FT(1000), ub = FT(999) / FT(1000);
+    FT cosine = dot / length_v1 / length_v2;
+    cosine = (cosine < lb) ? lb : cosine;
+    cosine = (cosine > ub) ? ub : cosine;
+    const FT sine = sqrt(FT(1) - cosine * cosine);
+
+    CGAL_assertion(sine != FT(0));
+    if (sine != FT(0)) {
+      return cosine / sine;
+    }
+    return FT(0); // undefined
   }
 
 } // namespace internal
