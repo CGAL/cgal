@@ -371,6 +371,78 @@ namespace Weights {
     const GeomTraits traits;
     return tangent_weight(t, r, p, q, traits);
   }
+
+  // Undocumented tangent weight class.
+  // Its constructor takes three points either in 2D or 3D.
+  // This version is currently used in:
+  // Surface_mesh_parameterizer -> MVC_post_processor_3.h
+  // Surface_mesh_parameterizer -> Orbifold_Tutte_parameterizer_3.h
+  template<typename FT>
+  class Tangent_weight {
+    FT m_d_r, m_d_p, m_w_base;
+
+  public:
+    template<typename GeomTraits>
+    Tangent_weight(
+      const CGAL::Point_2<GeomTraits>& p,
+      const CGAL::Point_2<GeomTraits>& q,
+      const CGAL::Point_2<GeomTraits>& r) {
+
+      const GeomTraits traits;
+      const auto scalar_product_2 =
+        traits.compute_scalar_product_2_object();
+      const auto construct_vector_2 =
+        traits.construct_vector_2_object();
+
+      m_d_r = internal::distance_2(traits, q, r);
+      CGAL_assertion(m_d_r != FT(0)); // two points are identical!
+      m_d_p = internal::distance_2(traits, q, p);
+      CGAL_assertion(m_d_p != FT(0)); // two points are identical!
+
+      const auto v1 = construct_vector_2(q, r);
+      const auto v2 = construct_vector_2(q, p);
+
+      const auto A = internal::area_2(traits, p, q, r);
+      CGAL_assertion(A != FT(0)); // three points are identical!
+      const auto S = scalar_product_2(v1, v2);
+      m_w_base = -tangent_half_angle(m_d_r, m_d_p, A, S);
+    }
+
+    template<typename GeomTraits>
+    Tangent_weight(
+      const CGAL::Point_3<GeomTraits>& p,
+      const CGAL::Point_3<GeomTraits>& q,
+      const CGAL::Point_3<GeomTraits>& r) {
+
+      const GeomTraits traits;
+      const auto scalar_product_3 =
+        traits.compute_scalar_product_3_object();
+      const auto construct_vector_3 =
+        traits.construct_vector_3_object();
+
+      m_d_r = internal::distance_3(traits, q, r);
+      CGAL_assertion(m_d_r != FT(0)); // two points are identical!
+      m_d_p = internal::distance_3(traits, q, p);
+      CGAL_assertion(m_d_p != FT(0)); // two points are identical!
+
+      const auto v1 = construct_vector_3(q, r);
+      const auto v2 = construct_vector_3(q, p);
+
+      const auto A = internal::positive_area_3(traits, p, q, r);
+      CGAL_assertion(A != FT(0)); // three points are identical!
+      const auto S = scalar_product_3(v1, v2);
+      m_w_base = -tangent_half_angle(m_d_r, m_d_p, A, S);
+    }
+
+    FT get_w_r() const {
+      return half_tangent_weight(m_w_base, m_d_r) / FT(2);
+    }
+
+    FT get_w_p() const {
+      return half_tangent_weight(m_w_base, m_d_p) / FT(2);
+    }
+  };
+
   /// \endcond
 
 } // namespace Weights
