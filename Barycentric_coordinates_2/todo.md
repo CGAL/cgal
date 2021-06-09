@@ -9,3 +9,7 @@
 * Merge this package with the natural neighbor coordinates package.
 * Improve the solver interface and make it a parameter for the harmonic coordinates class.
 * Add a demo with visualization of the coordinate functions.
+
+* Remove Point_2 from the template of free functions and get this type directly from the PointRange typename.
+* Put in the classes PointMap first and GeomTraits second.
+* Remove the free overload with the traits parameter.
