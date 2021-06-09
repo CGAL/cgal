@@ -413,12 +413,13 @@ public:
                          int
                          > LRint;
 
-      LR * lr = dynamic_cast<LR*>(p.ptr());
-      if(lr && (! lr->et)){
+      auto&& t = typeid(*p.ptr());
+      if(t.name() == typeid(LR).name()){
+        LR * lr = static_cast<LR*>(p.ptr());
         return std::get<1>(lr->l);
-      } else {
-        LRint* lrint = dynamic_cast<LRint*>(p.ptr());
-        if(lrint && (! lrint->et)){
+      }else{
+        if(t.name() == typeid(LRint).name()){
+          LRint* lrint = static_cast<LRint*>(p.ptr());
           return std::get<1>(lrint->l);
         }
       }
@@ -465,16 +466,17 @@ public:
                          int
                          > LRint;
 
-
-      LR * lr = dynamic_cast<LR*>(p.ptr());
-      if(lr && (! lr->et)){
+      auto&& t = typeid(*p.ptr());
+      if(t.name() == typeid(LR).name()){
+        LR * lr = static_cast<LR*>(p.ptr());
         return std::get<1>(lr->l);
       }else{
-        LRint* lrint = dynamic_cast<LRint*>(p.ptr());
-        if(lrint && (! lrint->et)){
+        if(t.name() == typeid(LRint).name()){
+          LRint* lrint = static_cast<LRint*>(p.ptr());
           return std::get<1>(lrint->l);
         }
       }
+
       return BaseClass().construct_point_3_object()(p);
     }
 
