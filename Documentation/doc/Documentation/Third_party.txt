@@ -10,20 +10,20 @@ supporting <a href="https://isocpp.org/wiki/faq/cpp14">C++14</a> or later.
 \cgal \cgalReleaseNumber is supported (continuously tested) for the following compilers/operating systems:
 
 | Operating System | Compiler |
-| :------- | :--------------- |
-| Linux | \gnu `g++` 6.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} |
-|       | `Clang` \cgalFootnote{<A HREF="http://clang.llvm.org/">`http://clang.llvm.org/`</A>} compiler version 8.0.0 |
-| \ms Windows | \gnu `g++` 6.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} |
-|                 | \ms Visual `C++` 14.0, 15.9, 16.0 (\visualstudio 2015, 2017, and 2019)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">`https://visualstudio.microsoft.com/`</A>} |
-| MacOS X | \gnu `g++` 6.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} |
-|         | Apple `Clang` compiler versions 7.0.2 and 10.0.1 |
+| :----------      | :--------------- |
+| Linux            | \gnu `g++` 8.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} |
+|                  | `Clang` \cgalFootnote{<A HREF="http://clang.llvm.org/">`http://clang.llvm.org/`</A>} compiler version 11.1.0 |
+| \ms Windows      | \gnu `g++` 8.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} |
+|                  | \ms Visual `C++` 14.0, 15.9, 16.10 (\visualstudio 2015, 2017, and 2019)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">`https://visualstudio.microsoft.com/`</A>} |
+| MacOS X          | \gnu `g++` 8.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} |
+|                  | Apple `Clang` compiler versions 10.0.1 and 12.0.0 |
 
 <!-- Windows supported version are also listed on windows.html (must change both) -->
 
 Older versions of the above listed compilers might work, but no guarantee is provided.
 
 \section seccmake CMake
-<b>Version 3.12 or later</b>
+<b>Version 3.14 or later</b>
 
 In order to configure and build the \cgal examples, demos, or libraries,
 you need <a href="https://cmake.org/">CMake</a>, a cross-platform "makefile generator".

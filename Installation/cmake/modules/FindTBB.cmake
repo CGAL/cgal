@@ -188,12 +188,20 @@ endmacro()
 #=============================================================================
 #  Now to actually find TBB
 #
-
-#start with CONFIG Mode
-find_package(TBB QUIET NO_MODULE)
+#start with looking for TBB_DIR and TBB_ROOT
+if((TBB_ROOT OR ENV{TBB_ROOT} OR ENV{TBB_DIR} ) AND NOT TBB_FOUND)
+  find_package(TBB QUIET NO_MODULE NO_CMAKE_SYSTEM_PATH NO_SYSTEM_ENVIRONMENT_PATH)
+endif()
 if(TBB_FOUND)
   return()
 endif()#TBB_FOUND
+
+#try CONFIG Mode
+find_package(TBB 2019.0.11005 QUIET NO_MODULE)
+if(TBB_FOUND)
+  return()
+endif()#TBB_FOUND
+
 # Get path, convert backslashes as ${ENV_${var}}
 getenv_path(TBB_ROOT)
 
