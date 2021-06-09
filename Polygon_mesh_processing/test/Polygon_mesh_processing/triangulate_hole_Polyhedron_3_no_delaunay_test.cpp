@@ -16,6 +16,8 @@
 
 #include <CGAL/boost/graph/Euler_operations.h>
 
+#include <CGAL/Weights/uniform_weights.h>
+
 #include <cassert>
 #include <vector>
 #include <set>
@@ -337,7 +339,7 @@ void test_triangulate_refine_and_fair_hole_compile() {
   CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole
   (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices),
   CGAL::Polygon_mesh_processing::parameters::
-    weight_calculator(CGAL::Weights::internal::Uniform_weight_wrapper<Polyhedron>()).
+    weight_calculator(CGAL::Weights::Uniform_weight<Polyhedron>()).
     sparse_linear_solver(Default_solver()));
 
   // default solver
@@ -345,7 +347,7 @@ void test_triangulate_refine_and_fair_hole_compile() {
   CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole
     (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices),
     CGAL::Polygon_mesh_processing::parameters::
-      weight_calculator(CGAL::Weights::internal::Uniform_weight_wrapper<Polyhedron>()));
+      weight_calculator(CGAL::Weights::Uniform_weight<Polyhedron>()));
 
   // default solver and weight
   read_poly_with_borders("elephant_quad_hole.off", poly, border_reps);
