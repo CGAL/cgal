@@ -339,7 +339,7 @@ public:
   }
 
   template<typename Pair>
-  const std::size_t add_input_polygon(
+  std::size_t add_input_polygon(
     const std::vector<Pair>& points,
     const Point_2& centroid,
     const std::vector<std::size_t>& input_indices) {
@@ -386,7 +386,7 @@ public:
   }
 
   template<typename Pair>
-  const bool is_valid_polygon(const std::vector<Pair>& polygon) const {
+  bool is_valid_polygon(const std::vector<Pair>& polygon) const {
 
     const FT ptol = KSR::point_tolerance<FT>();
     for (std::size_t i = 0; i < polygon.size(); ++i) {
@@ -403,7 +403,7 @@ public:
   }
 
   template<typename Pair>
-  const bool is_simple_polygon(const std::vector<Pair>& points) const {
+  bool is_simple_polygon(const std::vector<Pair>& points) const {
     std::vector<Point_2> polygon;
     polygon.reserve(points.size());
     for (const auto& pair : points)
@@ -413,7 +413,7 @@ public:
   }
 
   template<typename Pair>
-  const bool is_convex_polygon(const std::vector<Pair>& points) const {
+  bool is_convex_polygon(const std::vector<Pair>& points) const {
     std::vector<Point_2> polygon;
     polygon.reserve(points.size());
     for (const auto& pair : points)
@@ -553,13 +553,13 @@ public:
     return m_data->v_ivertex_map[vi];
   }
 
-  const bool has_iedge(const Edge_index& ei) const {
+  bool has_iedge(const Edge_index& ei) const {
     return (m_data->e_iedge_map[ei] != Intersection_graph::null_iedge());
   }
-  const bool has_iedge(const Vertex_index& vi) const {
+  bool has_iedge(const Vertex_index& vi) const {
     return (m_data->v_iedge_map[vi] != Intersection_graph::null_iedge());
   }
-  const bool has_ivertex(const Vertex_index& vi) const {
+  bool has_ivertex(const Vertex_index& vi) const {
     return (m_data->v_ivertex_map[vi] != Intersection_graph::null_ivertex());
   }
 
@@ -574,24 +574,24 @@ public:
   const std::vector<std::size_t>& input(const Face_index& fi) const { return m_data->input_map[fi]; }
   std::vector<std::size_t>& input(const Face_index& fi) { return m_data->input_map[fi]; }
 
-  const bool is_original(const Vertex_index& vi) const { return m_data->v_original_map[vi]; }
+  bool is_original(const Vertex_index& vi) const { return m_data->v_original_map[vi]; }
 
   const unsigned int& k() const { return m_data->k; }
   unsigned int& k() { return m_data->k; }
 
-  const unsigned int& k(const Face_index& fi) const {
+  const unsigned int& k(const Face_index& /*fi*/) const {
     return m_data->k;
     // return m_data->k_map[fi];
   }
-  unsigned int& k(const Face_index& fi) {
+  unsigned int& k(const Face_index& /*fi*/) {
     return m_data->k;
     // return m_data->k_map[fi];
   }
 
-  const bool is_active(const Vertex_index& vi) const { return m_data->v_active_map[vi]; }
+  bool is_active(const Vertex_index& vi) const { return m_data->v_active_map[vi]; }
   void set_active(const Vertex_index& vi, const bool value) { m_data->v_active_map[vi] = value; }
 
-  const bool is_frozen(const Vertex_index& vi) const {
+  bool is_frozen(const Vertex_index& vi) const {
     return (m_data->direction[vi] == CGAL::NULL_VECTOR);
   }
 

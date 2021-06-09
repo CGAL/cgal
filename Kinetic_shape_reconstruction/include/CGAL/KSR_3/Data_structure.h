@@ -393,18 +393,18 @@ public:
     m_input_polygon_map = input_polygon_map;
   }
 
-  const int support_plane_index(const std::size_t polygon_index) const {
+  int support_plane_index(const std::size_t polygon_index) const {
 
     CGAL_assertion(m_input_polygon_map.find(polygon_index) != m_input_polygon_map.end());
     const std::size_t sp_idx = m_input_polygon_map.at(polygon_index);
     return static_cast<int>(sp_idx);
   }
 
-  const int number_of_volume_levels() const {
+  int number_of_volume_levels() const {
     return static_cast<int>(m_volume_level_map.size());
   }
 
-  const std::size_t number_of_volumes(const int volume_level) const {
+  std::size_t number_of_volumes(const int volume_level) const {
 
     CGAL_assertion(volume_level < number_of_volume_levels());
     if (volume_level >= number_of_volume_levels()) return std::size_t(-1);
@@ -499,16 +499,16 @@ public:
   Mesh& mesh(const PSimplex& psimplex) { return mesh(psimplex.first); }
   Mesh& mesh(const std::size_t support_plane_idx) { return support_plane(support_plane_idx).mesh(); }
 
-  const std::size_t number_of_support_planes() const {
+  std::size_t number_of_support_planes() const {
     return m_support_planes.size();
   }
 
-  const bool is_bbox_support_plane(const std::size_t support_plane_idx) const {
+  bool is_bbox_support_plane(const std::size_t support_plane_idx) const {
     return (support_plane_idx < 6);
   }
 
   template<typename PointRange>
-  const std::size_t add_support_plane(const PointRange& polygon) {
+  std::size_t add_support_plane(const PointRange& polygon) {
 
     const Support_plane new_support_plane(polygon);
     std::size_t support_plane_idx = KSR::no_element();
@@ -1038,7 +1038,7 @@ public:
     return out;
   }
 
-  const std::size_t get_iedges_front_back(
+  std::size_t get_iedges_front_back(
     const PVertex& event_pvertex, const std::vector<PVertex>& pvertices,
     std::vector<IEdge>& fiedges, std::vector<IEdge>& biedges) const {
 
@@ -1464,13 +1464,13 @@ public:
     }
   }
 
-  const PVertex source(const PEdge& pedge) const {
+  PVertex source(const PEdge& pedge) const {
     return PVertex(pedge.first, mesh(pedge).source(mesh(pedge).halfedge(pedge.second)));
   }
-  const PVertex target(const PEdge& pedge) const {
+  PVertex target(const PEdge& pedge) const {
     return PVertex(pedge.first, mesh(pedge).target(mesh(pedge).halfedge(pedge.second)));
   }
-  const PVertex opposite(const PEdge& pedge, const PVertex& pvertex) const {
+  PVertex opposite(const PEdge& pedge, const PVertex& pvertex) const {
 
     if (mesh(pedge).target(mesh(pedge).halfedge(pedge.second)) == pvertex.second) {
       return PVertex(pedge.first, mesh(pedge).source(mesh(pedge).halfedge(pedge.second)));
@@ -1479,7 +1479,7 @@ public:
     return PVertex(pedge.first, mesh(pedge).target(mesh(pedge).halfedge(pedge.second)));
   }
 
-  const Point_3 centroid_of_pface(const PFace& pface) const {
+  Point_3 centroid_of_pface(const PFace& pface) const {
 
     const std::function<Point_3(PVertex)> unary_f =
     [&](const PVertex& pvertex) -> Point_3 {
@@ -1492,7 +1492,7 @@ public:
     return CGAL::centroid(polygon.begin(), polygon.end());
   }
 
-  const Plane_3 plane_of_pface(const PFace& pface) const {
+  Plane_3 plane_of_pface(const PFace& pface) const {
 
     const std::function<Point_3(PVertex)> unary_f =
     [&](const PVertex& pvertex) -> Point_3 {
@@ -1505,11 +1505,11 @@ public:
     return Plane_3(polygon[0], polygon[1], polygon[2]);
   }
 
-  const PFace pface_of_pvertex(const PVertex& pvertex) const {
+  PFace pface_of_pvertex(const PVertex& pvertex) const {
     return PFace(pvertex.first, support_plane(pvertex).face(pvertex.second));
   }
 
-  const std::pair<PFace, PFace> pfaces_of_pvertex(const PVertex& pvertex) const {
+  std::pair<PFace, PFace> pfaces_of_pvertex(const PVertex& pvertex) const {
 
     std::pair<PFace, PFace> out(null_pface(), null_pface());
     std::tie(out.first.second, out.second.second) =
@@ -1523,7 +1523,7 @@ public:
     return out;
   }
 
-  const PFaces_around_pvertex pfaces_around_pvertex(const PVertex& pvertex) const {
+  PFaces_around_pvertex pfaces_around_pvertex(const PVertex& pvertex) const {
 
     return PFaces_around_pvertex(
       boost::make_transform_iterator(
@@ -1545,7 +1545,7 @@ public:
     }
   }
 
-  const PVertices_of_pface pvertices_of_pface(const PFace& pface) const {
+  PVertices_of_pface pvertices_of_pface(const PFace& pface) const {
 
     return PVertices_of_pface(
       boost::make_transform_iterator(
@@ -1556,7 +1556,7 @@ public:
         Halfedge_to_pvertex(pface.first, mesh(pface))));
   }
 
-  const PEdges_of_pface pedges_of_pface(const PFace& pface) const {
+  PEdges_of_pface pedges_of_pface(const PFace& pface) const {
 
     return PEdges_of_pface(
       boost::make_transform_iterator(
@@ -1567,7 +1567,7 @@ public:
         Halfedge_to_pedge(pface.first, mesh(pface))));
   }
 
-  const PEdges_around_pvertex pedges_around_pvertex(const PVertex& pvertex) const {
+  PEdges_around_pvertex pedges_around_pvertex(const PVertex& pvertex) const {
     return PEdges_around_pvertex(
       boost::make_transform_iterator(
         halfedges_around_target(halfedge(pvertex.second, mesh(pvertex)), mesh(pvertex)).begin(),
@@ -1577,7 +1577,7 @@ public:
         Halfedge_to_pedge(pvertex.first, mesh(pvertex))));
   }
 
-  const std::vector<Volume_cell> incident_volumes(const PFace& query_pface) const {
+  std::vector<Volume_cell> incident_volumes(const PFace& query_pface) const {
     std::vector<Volume_cell> nvolumes;
     for (const auto& volume : m_volumes) {
       for (const auto& pface : volume.pfaces) {
@@ -1618,16 +1618,16 @@ public:
   const unsigned int& k(const PFace& pface) const { return support_plane(pface).k(pface.second); }
   unsigned int& k(const PFace& pface) { return support_plane(pface).k(pface.second); }
 
-  const bool is_frozen(const PVertex& pvertex) const { return support_plane(pvertex).is_frozen(pvertex.second); }
+  bool is_frozen(const PVertex& pvertex) const { return support_plane(pvertex).is_frozen(pvertex.second); }
 
   const Vector_2& direction(const PVertex& pvertex) const { return support_plane(pvertex).direction(pvertex.second); }
   Vector_2& direction(const PVertex& pvertex) { return support_plane(pvertex).direction(pvertex.second); }
 
   const FT speed(const PVertex& pvertex) { return support_plane(pvertex).speed(pvertex.second); }
 
-  const bool is_active(const PVertex& pvertex) const { return support_plane(pvertex).is_active(pvertex.second); }
+  bool is_active(const PVertex& pvertex) const { return support_plane(pvertex).is_active(pvertex.second); }
 
-  const bool is_verbose() const { return m_verbose; }
+  bool is_verbose() const { return m_verbose; }
   void set_verbose(const bool verbose) { m_verbose = verbose; }
 
   void deactivate(const PVertex& pvertex) {
@@ -1665,9 +1665,9 @@ public:
   decltype(auto) ivertices() const { return m_intersection_graph.vertices(); }
   decltype(auto) iedges() const { return m_intersection_graph.edges(); }
 
-  const std::size_t nb_intersection_lines() const { return m_intersection_graph.nb_lines(); }
-  const std::size_t line_idx(const IEdge& iedge) const { return m_intersection_graph.line(iedge); }
-  const std::size_t line_idx(const PVertex& pvertex) const { return line_idx(iedge(pvertex)); }
+  std::size_t nb_intersection_lines() const { return m_intersection_graph.nb_lines(); }
+  std::size_t line_idx(const IEdge& iedge) const { return m_intersection_graph.line(iedge); }
+  std::size_t line_idx(const PVertex& pvertex) const { return line_idx(iedge(pvertex)); }
 
   const IVertex add_ivertex(const Point_3& point, const std::set<std::size_t>& support_planes_idx) {
 
@@ -1766,18 +1766,18 @@ public:
     return out;
   }
 
-  const bool is_iedge(const IVertex& source, const IVertex& target) const {
+  bool is_iedge(const IVertex& source, const IVertex& target) const {
     return m_intersection_graph.is_edge(source, target);
   }
 
-  const bool is_active(const IEdge& iedge) const {
+  bool is_active(const IEdge& iedge) const {
     return m_intersection_graph.is_active(iedge);
   }
-  const bool is_active(const IVertex& ivertex) const {
+  bool is_active(const IVertex& ivertex) const {
     return m_intersection_graph.is_active(ivertex);
   }
 
-  const bool is_bbox_iedge(const IEdge& edge) const {
+  bool is_bbox_iedge(const IEdge& edge) const {
 
     for (const auto support_plane_idx : m_intersection_graph.intersected_planes(edge)) {
       if (support_plane_idx < 6) {
@@ -1829,7 +1829,7 @@ public:
   **        CONNECTIVITY        **
   ********************************/
 
-  const bool has_complete_graph(const PVertex& pvertex) const {
+  bool has_complete_graph(const PVertex& pvertex) const {
     if (!has_ivertex(pvertex)) {
       std::cout << "- disconnected pvertex: " << point_3(pvertex) << std::endl;
       CGAL_assertion(has_ivertex(pvertex));
@@ -1847,7 +1847,7 @@ public:
     return true;
   }
 
-  const bool has_one_pface(const PVertex& pvertex) const {
+  bool has_one_pface(const PVertex& pvertex) const {
     std::vector<PFace> nfaces;
     const auto pface = pface_of_pvertex(pvertex);
     non_null_pfaces_around_pvertex(pvertex, nfaces);
@@ -1856,7 +1856,7 @@ public:
     return (nfaces.size() == 1 && nfaces[0] == pface);
   }
 
-  const bool is_sneaking_pedge(
+  bool is_sneaking_pedge(
     const PVertex& pvertex, const PVertex& pother, const IEdge& iedge) const {
 
     // Here, pvertex and pother must cross the same iedge.
@@ -1871,7 +1871,7 @@ public:
     return false;
   }
 
-  const bool must_be_swapped(
+  bool must_be_swapped(
     const Point_2& source_p, const Point_2& target_p,
     const PVertex& pextra, const PVertex& pvertex, const PVertex& pother) const {
 
@@ -1883,16 +1883,16 @@ public:
     return (dot_product < FT(0));
   }
 
-  const bool has_ivertex(const PVertex& pvertex) const { return support_plane(pvertex).has_ivertex(pvertex.second); }
-  const IVertex ivertex(const PVertex& pvertex) const { return support_plane(pvertex).ivertex(pvertex.second); }
+  bool has_ivertex(const PVertex& pvertex) const { return support_plane(pvertex).has_ivertex(pvertex.second); }
+  IVertex ivertex(const PVertex& pvertex) const { return support_plane(pvertex).ivertex(pvertex.second); }
 
-  const bool has_iedge(const PVertex& pvertex) const { return support_plane(pvertex).has_iedge(pvertex.second); }
-  const IEdge iedge(const PVertex& pvertex) const { return support_plane(pvertex).iedge(pvertex.second); }
+  bool has_iedge(const PVertex& pvertex) const { return support_plane(pvertex).has_iedge(pvertex.second); }
+  IEdge iedge(const PVertex& pvertex) const { return support_plane(pvertex).iedge(pvertex.second); }
 
-  const bool has_iedge(const PEdge& pedge) const { return support_plane(pedge).has_iedge(pedge.second); }
-  const IEdge iedge(const PEdge& pedge) const { return support_plane(pedge).iedge(pedge.second); }
+  bool has_iedge(const PEdge& pedge) const { return support_plane(pedge).has_iedge(pedge.second); }
+  IEdge iedge(const PEdge& pedge) const { return support_plane(pedge).iedge(pedge.second); }
 
-  const bool has_pedge(
+  bool has_pedge(
     const std::size_t sp_idx, const IEdge& iedge) const {
 
     for (const auto pedge : this->pedges(sp_idx)) {
@@ -1917,13 +1917,13 @@ public:
     connect(pother, iedge);
   }
 
-  const IVertex disconnect_ivertex(const PVertex& pvertex) {
+  IVertex disconnect_ivertex(const PVertex& pvertex) {
     const auto ivertex = this->ivertex(pvertex);
     support_plane(pvertex).set_ivertex(pvertex.second, null_ivertex());
     return ivertex;
   }
 
-  const IEdge disconnect_iedge(const PVertex& pvertex) {
+  IEdge disconnect_iedge(const PVertex& pvertex) {
     const auto iedge = this->iedge(pvertex);
     support_plane(pvertex).set_iedge(pvertex.second, null_iedge());
     return iedge;
@@ -1943,7 +1943,7 @@ public:
     { }
   };
 
-  const std::vector<PVertex> pvertices_around_ivertex(
+  std::vector<PVertex> pvertices_around_ivertex(
     const PVertex& pvertex, const IVertex& ivertex) const {
 
     if (m_verbose) {
@@ -2088,51 +2088,51 @@ public:
   **        CONVERSIONS         **
   ********************************/
 
-  const Point_2 to_2d(const std::size_t support_plane_idx, const IVertex& ivertex) const {
+  Point_2 to_2d(const std::size_t support_plane_idx, const IVertex& ivertex) const {
     return support_plane(support_plane_idx).to_2d(point_3(ivertex));
   }
-  const Segment_2 to_2d(const std::size_t support_plane_idx, const Segment_3& segment_3) const {
+  Segment_2 to_2d(const std::size_t support_plane_idx, const Segment_3& segment_3) const {
     return support_plane(support_plane_idx).to_2d(segment_3);
   }
-  const Point_2 to_2d(const std::size_t support_plane_idx, const Point_3& point_3) const {
+  Point_2 to_2d(const std::size_t support_plane_idx, const Point_3& point_3) const {
     return support_plane(support_plane_idx).to_2d(point_3);
   }
 
-  const Point_2 point_2(const PVertex& pvertex, const FT time) const {
+  Point_2 point_2(const PVertex& pvertex, const FT time) const {
     return support_plane(pvertex).point_2(pvertex.second, time);
   }
-  const Point_2 point_2(const PVertex& pvertex) const {
+  Point_2 point_2(const PVertex& pvertex) const {
     return point_2(pvertex, m_current_time);
   }
-  const Point_2 point_2(const std::size_t support_plane_idx, const IVertex& ivertex) const {
+  Point_2 point_2(const std::size_t support_plane_idx, const IVertex& ivertex) const {
     return support_plane(support_plane_idx).to_2d(point_3(ivertex));
   }
 
-  const Segment_2 segment_2(const std::size_t support_plane_idx, const IEdge& iedge) const {
+  Segment_2 segment_2(const std::size_t support_plane_idx, const IEdge& iedge) const {
     return support_plane(support_plane_idx).to_2d(segment_3(iedge));
   }
 
-  const Point_3 to_3d(const std::size_t support_plane_idx, const Point_2& point_2) const {
+  Point_3 to_3d(const std::size_t support_plane_idx, const Point_2& point_2) const {
     return support_plane(support_plane_idx).to_3d(point_2);
   }
 
-  const Point_3 point_3(const PVertex& pvertex, const FT time) const {
+  Point_3 point_3(const PVertex& pvertex, const FT time) const {
     return support_plane(pvertex).point_3(pvertex.second, time);
   }
-  const Point_3 point_3(const PVertex& pvertex) const {
+  Point_3 point_3(const PVertex& pvertex) const {
     return point_3(pvertex, m_current_time);
   }
-  const Point_3 point_3(const IVertex& vertex) const {
+  Point_3 point_3(const IVertex& vertex) const {
     return m_intersection_graph.point_3(vertex);
   }
 
-  const Segment_3 segment_3(const PEdge& pedge, const FT time) const {
+  Segment_3 segment_3(const PEdge& pedge, const FT time) const {
     return support_plane(pedge).segment_3(pedge.second, time);
   }
-  const Segment_3 segment_3(const PEdge& pedge) const {
+  Segment_3 segment_3(const PEdge& pedge) const {
     return segment_3 (pedge, m_current_time);
   }
-  const Segment_3 segment_3(const IEdge& edge) const {
+  Segment_3 segment_3(const IEdge& edge) const {
     return m_intersection_graph.segment_3(edge);
   }
 
@@ -2144,7 +2144,7 @@ public:
   // CONNECTED TO THE IEDGE. THAT WILL BE FASTER THAN CURRENT COMPUTATIONS!
 
   // Check if there is a collision with another polygon.
-  const std::pair<bool, bool> collision_occured (
+  std::pair<bool, bool> collision_occured (
     const PVertex& pvertex, const IEdge& iedge) const {
 
     bool collision = false;
@@ -2172,7 +2172,7 @@ public:
     return std::make_pair(collision, false);
   }
 
-  const std::pair<bool, bool> is_occupied(
+  std::pair<bool, bool> is_occupied(
     const PVertex& pvertex, const IVertex& ivertex, const IEdge& query_iedge) const {
 
     const auto pair = is_occupied(pvertex, query_iedge);
@@ -2218,7 +2218,7 @@ public:
     }
   }
 
-  const std::pair<bool, bool> is_occupied(
+  std::pair<bool, bool> is_occupied(
     const PVertex& pvertex, const IEdge& query_iedge) const {
 
     CGAL_assertion(query_iedge != null_iedge());
@@ -2250,7 +2250,7 @@ public:
     return std::make_pair(true, false);
   }
 
-  const bool update_limit_lines_and_k(
+  bool update_limit_lines_and_k(
     const PVertex& pvertex, const IEdge& iedge, const bool is_occupied_iedge) {
 
     const std::size_t sp_idx_1 = pvertex.first;
@@ -2322,7 +2322,7 @@ public:
   ********************************/
 
   template<typename Pair>
-  const bool is_valid_polygon(
+  bool is_valid_polygon(
     const std::size_t sp_idx,
     const std::vector<Pair>& points) const {
 
@@ -2351,7 +2351,7 @@ public:
     return is_valid;
   }
 
-  const bool check_bbox() const {
+  bool check_bbox() const {
 
     for (std::size_t i = 0; i < 6; ++i) {
       const auto pfaces = this->pfaces(i);
@@ -2375,7 +2375,7 @@ public:
     return true;
   }
 
-  const bool check_interior() const {
+  bool check_interior() const {
 
     for (std::size_t i = 6; i < number_of_support_planes(); ++i) {
       const auto pfaces = this->pfaces(i);
@@ -2399,7 +2399,7 @@ public:
     return true;
   }
 
-  const bool check_vertices() const {
+  bool check_vertices() const {
 
     for (const auto vertex : m_intersection_graph.vertices()) {
       const auto nedges = m_intersection_graph.incident_edges(vertex);
@@ -2413,7 +2413,7 @@ public:
     return true;
   }
 
-  const bool check_edges() const {
+  bool check_edges() const {
 
     std::vector<PFace> nfaces;
     for (const auto edge : m_intersection_graph.edges()) {
@@ -2428,7 +2428,7 @@ public:
     return true;
   }
 
-  const bool check_faces() const {
+  bool check_faces() const {
 
     for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
       const auto pfaces = this->pfaces(i);
@@ -2445,7 +2445,7 @@ public:
     return true;
   }
 
-  const bool check_intersection_graph() const {
+  bool check_intersection_graph() const {
 
     std::cout.precision(20);
     const FT ptol = KSR::point_tolerance<FT>();
@@ -2467,7 +2467,7 @@ public:
     return true;
   }
 
-  const bool is_mesh_valid(
+  bool is_mesh_valid(
     const bool check_simplicity,
     const bool check_convexity,
     const std::size_t support_plane_idx) const {
@@ -2532,7 +2532,7 @@ public:
     return true;
   }
 
-  const bool check_integrity(
+  bool check_integrity(
     const bool is_initialized   = true,
     const bool check_simplicity = false,
     const bool check_convexity  = false) const {
@@ -2607,7 +2607,7 @@ public:
     return true;
   }
 
-  const bool check_volume(
+  bool check_volume(
     const int volume_index,
     const std::size_t volume_size,
     const std::map<PFace, std::pair<int, int> >& map_volumes) const {
@@ -2632,7 +2632,7 @@ public:
     return true;
   }
 
-  const bool is_volume_degenerate(
+  bool is_volume_degenerate(
     const std::vector<PFace>& pfaces) const {
 
     for (const auto& pface : pfaces) {
@@ -2655,7 +2655,7 @@ public:
     return false;
   }
 
-  const std::size_t find_adjacent_pfaces(
+  std::size_t find_adjacent_pfaces(
     const PFace& current,
     const IEdge& query,
     const std::vector<PFace>& pfaces) const {
@@ -2677,7 +2677,7 @@ public:
   **   FUTURE POINTS AND DIRECTIONS   **
   *************************************/
 
-  const std::pair<bool, bool> compute_future_points_and_directions(
+  std::pair<bool, bool> compute_future_points_and_directions(
     const PVertex& pvertex, const IEdge& iedge,
     Point_2& future_point_a, Point_2& future_point_b,
     Vector_2& future_direction_a, Vector_2& future_direction_b) const {
@@ -2826,8 +2826,8 @@ public:
     return std::make_pair(is_parallel_prev, is_parallel_next);
   }
 
-  const bool compute_future_point_and_direction(
-    const std::size_t idx, const PVertex& pvertex, const PVertex& pother, // back prev // front next
+  bool compute_future_point_and_direction(
+    const std::size_t /*idx*/, const PVertex& pvertex, const PVertex& pother, // back prev // front next
     const IEdge& iedge, Point_2& future_point, Vector_2& future_direction) const {
 
     bool is_parallel = false;
@@ -2914,7 +2914,7 @@ public:
     return is_parallel;
   }
 
-  const bool compute_future_point_and_direction(
+  bool compute_future_point_and_direction(
     const PVertex& pvertex, const PVertex& prev, const PVertex& next, // prev next
     const IEdge& iedge, Point_2& future_point, Vector_2& future_direction) const {
 
@@ -2996,7 +2996,7 @@ public:
     return is_parallel;
   }
 
-  const bool is_intersecting_iedge(
+  bool is_intersecting_iedge(
     const FT min_time, const FT max_time,
     const PVertex& pvertex, const IEdge& iedge) const {
 

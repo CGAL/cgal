@@ -49,10 +49,10 @@ namespace CGAL {
 namespace KSR {
 
 // Use -1 as no element identifier.
-inline const std::size_t no_element() { return std::size_t(-1); }
+inline std::size_t no_element() { return std::size_t(-1); }
 
 // Use -2 as special uninitialized identifier.
-inline const std::size_t uninitialized() { return std::size_t(-2); }
+inline std::size_t uninitialized() { return std::size_t(-2); }
 
 // Convert point to string.
 template<typename Point_d>
@@ -133,7 +133,7 @@ angle_3d(const Vector_3& v1, const Vector_3& v2) {
 
 // Intersections.
 template<typename Type1, typename Type2, typename ResultType>
-inline const bool intersection(
+inline bool intersection(
   const Type1& t1, const Type2& t2, ResultType& result) {
 
   const auto inter = intersection(t1, t2);
@@ -156,7 +156,7 @@ inline const ResultType intersection(const Type1& t1, const Type2& t2) {
 
 // Predicates.
 template<typename Segment_2>
-const bool are_parallel(
+bool are_parallel(
   const Segment_2& seg1, const Segment_2& seg2) {
 
   using Traits = typename Kernel_traits<Segment_2>::Kernel;
@@ -267,7 +267,7 @@ angle_2(const Direction_2& dir1, const Direction_2& dir2) {
 template<typename IVertex>
 class Indexer {
 public:
-  const std::size_t operator()(const IVertex& ivertex) {
+  std::size_t operator()(const IVertex& ivertex) {
     const auto pair = m_indices.insert(
       std::make_pair(ivertex, m_indices.size()));
     const auto& item = pair.first;

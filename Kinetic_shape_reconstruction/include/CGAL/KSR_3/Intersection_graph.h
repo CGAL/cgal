@@ -87,11 +87,11 @@ public:
     m_map_vertices.clear();
   }
 
-  const std::size_t number_of_vertices() const {
+  std::size_t number_of_vertices() const {
     return static_cast<std::size_t>(boost::num_vertices(m_graph));
   }
 
-  const std::size_t number_of_edges() const {
+  std::size_t number_of_edges() const {
     return static_cast<std::size_t>(boost::num_edges(m_graph));
   }
 
@@ -163,8 +163,8 @@ public:
     return Edge_descriptor(null_ivertex(), null_ivertex(), nullptr);
   }
 
-  const std::size_t add_line() { return ( m_nb_lines++ ); }
-  const std::size_t nb_lines() const { return m_nb_lines; }
+  std::size_t add_line() { return ( m_nb_lines++ ); }
+  std::size_t nb_lines() const { return m_nb_lines; }
   void set_nb_lines(const std::size_t value) { m_nb_lines = value; }
   Graph& graph() { return m_graph; }
 
@@ -221,7 +221,7 @@ public:
     m_graph[edge].line = line_idx;
   }
 
-  const std::size_t line(const Edge_descriptor& edge) const { return m_graph[edge].line; }
+  std::size_t line(const Edge_descriptor& edge) const { return m_graph[edge].line; }
 
   const std::pair<Edge_descriptor, Edge_descriptor>
   split_edge(const Edge_descriptor& edge, const Vertex_descriptor& vertex) {
@@ -257,7 +257,7 @@ public:
   const Vertex_descriptor source(const Edge_descriptor& edge) const { return boost::source(edge, m_graph); }
   const Vertex_descriptor target(const Edge_descriptor& edge) const { return boost::target(edge, m_graph); }
 
-  const bool is_edge(const Vertex_descriptor& source, const Vertex_descriptor& target) const {
+  bool is_edge(const Vertex_descriptor& source, const Vertex_descriptor& target) const {
     return boost::edge(source, target, m_graph).second;
   }
 

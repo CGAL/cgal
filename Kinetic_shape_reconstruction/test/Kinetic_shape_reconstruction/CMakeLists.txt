@@ -6,7 +6,7 @@ project(Kinetic_shape_reconstruction_Tests)
 cmake_minimum_required(VERSION 3.1...3.15)
 set(CMAKE_CXX_STANDARD 14)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror")
 
 find_package(CGAL QUIET COMPONENTS Core)
 if(CGAL_FOUND)
@@ -26,9 +26,8 @@ if(CGAL_FOUND)
       include(CGAL_Eigen_support)
 
       set(targets
-      # kinetic_2d_stress_test
-      kinetic_3d_test_all
-      )
+      kinetic_2d_stress_test
+      kinetic_3d_test_all)
 
       set(project_linked_libraries)
       set(project_compilation_definitions)
