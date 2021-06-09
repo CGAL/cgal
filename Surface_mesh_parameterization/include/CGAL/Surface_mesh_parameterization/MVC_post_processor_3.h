@@ -21,7 +21,7 @@
 #include <CGAL/Surface_mesh_parameterization/Two_vertices_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/parameterize.h>
 
-#include <CGAL/Weights/internal/tools.h>
+#include <CGAL/Weights/tangent_weights.h>
 #include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
@@ -393,7 +393,7 @@ private:
     const Point_2& p = pk;
     const Point_2& q = pi;
     const Point_2& r = pj;
-    const CGAL::Weights::internal::Tangent_weight_wrapper<NT> tangent_weight(p, q, r);
+    const CGAL::Weights::Tangent_weight<NT> tangent_weight(p, q, r);
 
     // Set w_ij in matrix
     const NT w_ij = tangent_weight.get_w_r();

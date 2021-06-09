@@ -22,7 +22,8 @@
 #include <CGAL/Surface_mesh_parameterization/orbifold_enums.h>
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/Surface_mesh_parameterization/orbifold_shortest_path.h>
-#include <CGAL/Weights/internal/tools.h>
+#include <CGAL/Weights/tangent_weights.h>
+#include <CGAL/Weights/cotangent_weights.h>
 #include <CGAL/assertions.h>
 
 #include <CGAL/assertions.h>
@@ -722,7 +723,7 @@ private:
     const Point_3& p = pk;
     const Point_3& q = pi;
     const Point_3& r = pj;
-    const CGAL::Weights::internal::Tangent_weight_wrapper<NT> tangent_weight(p, q, r);
+    const CGAL::Weights::Tangent_weight<NT> tangent_weight(p, q, r);
 
     // Set w_ij in matrix
     const NT w_ij = tangent_weight.get_w_r();
@@ -783,8 +784,7 @@ private:
       const int j = get(vimap, vj);
 
       if (i > j) continue;
-      const CGAL::Weights::internal::
-        Cotangent_weight_wrapper<SeamMesh> cotangent_weight;
+      const CGAL::Weights::Cotangent_weight<SeamMesh> cotangent_weight;
       const NT w_ij = NT(2) * cotangent_weight(hd, mesh, pmap);
 
       // ij
