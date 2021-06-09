@@ -180,7 +180,7 @@ int main(const int argc, const char** argv) {
   output_filename = "partition-faces.ply";
   std::ofstream output_file_faces(output_filename);
   output_file_faces.precision(20);
-  if (!CGAL::write_PLY(output_file_faces, all_vertices, all_faces)) {
+  if (!CGAL::IO::write_PLY(output_file_faces, all_vertices, all_faces)) {
     std::cerr << "ERROR: can't write to the file " << output_filename << "!" << std::endl;
     return EXIT_FAILURE;
   }
@@ -191,7 +191,7 @@ int main(const int argc, const char** argv) {
   output_filename = "reconstructed-model.ply";
   std::ofstream output_file_model(output_filename);
   output_file_model.precision(20);
-  if (!CGAL::write_PLY(output_file_model, output_vertices, output_faces)) {
+  if (!CGAL::IO::write_PLY(output_file_model, output_vertices, output_faces)) {
     std::cerr << "ERROR: can't write to the file " << output_filename << "!" << std::endl;
     return EXIT_FAILURE;
   }

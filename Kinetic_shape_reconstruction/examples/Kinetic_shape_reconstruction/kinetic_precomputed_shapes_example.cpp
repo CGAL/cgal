@@ -61,10 +61,10 @@ int main(const int argc, const char** argv) {
   std::vector<Point_3> input_vertices;
   std::vector< std::vector<std::size_t> > input_faces;
 
-  if (CGAL::read_OFF(input_file_off, input_vertices, input_faces)) {
+  if (CGAL::IO::read_OFF(input_file_off, input_vertices, input_faces)) {
     std::cout << "* reading the OFF file: " << input_filename << "!" << std::endl;
     input_file_off.close();
-  } else if (CGAL::read_PLY(input_file_ply, input_vertices, input_faces)) {
+  } else if (CGAL::IO::read_PLY(input_file_ply, input_vertices, input_faces)) {
     std::cout << "* reading the PLY file: " << input_filename << "!" << std::endl;
     input_file_ply.close();
   } else {

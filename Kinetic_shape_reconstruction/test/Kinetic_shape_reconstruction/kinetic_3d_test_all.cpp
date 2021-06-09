@@ -57,7 +57,7 @@ bool run_test(
   std::ifstream input_file(input_filename);
   std::vector<Point_3> input_vertices;
   std::vector< std::vector<std::size_t> > input_faces;
-  const bool is_input_success = CGAL::read_OFF(input_file, input_vertices, input_faces);
+  const bool is_input_success = CGAL::IO::read_OFF(input_file, input_vertices, input_faces);
   assert(is_input_success);
   if (!is_input_success) return false;
   std::vector<double> times;
