@@ -245,7 +245,7 @@ public:
 
     // Create solution.
     const c_float *x = work->solution->x;
-    for(c_int i=0; i<n; ++i)
+    for(c_int i=0; i<static_cast<c_int>(n); ++i)
     {
       const FT value{x[i]};
       *(++solution) = value;
@@ -264,7 +264,7 @@ public:
 
 public:
   // Based on the code in scipy, function coo_tocsr()
-  void set_matrix_from_triplets(const std::string name,
+  void set_matrix_from_triplets(const std::string /* name */,
                                 const std::vector<Triplet>& triplets,
                                 c_float *M_x,
                                 c_int *M_i,
