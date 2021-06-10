@@ -84,8 +84,29 @@ public:
   }
 
 public:
-  /// \cond SKIP_IN_MANUAL
+  /// Reset the problem, removing all existing entries and setting sizes to `0`.
+  void clear()
+  {
+    n = m = 0;
+    P_vec.clear();
+    A_vec.clear();
+    q_vec.clear();
+    l_vec.clear();
+    u_vec.clear();
+  }
 
+  /// Change the number of variables and the number of constraints of the problem.
+  ///
+  /// \warning Calling this function also clears all previous entries.
+  void resize(const int new_n,
+              const int new_m = 0)
+  {
+    clear();
+    n = new_n;
+    m = new_m;
+  }
+
+  /// \cond SKIP_IN_MANUAL
   void set_P(const std::size_t i, const std::size_t j, const FT value)
   {
     if(j < i)
