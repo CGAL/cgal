@@ -457,7 +457,6 @@ private:
     if (m_verbose) {
       std::cout << "* inserted input polygons: " << polygons.size() << std::endl;
     }
-    CGAL_assertion_msg(false, "TODO: FINISH POLYGONS INSERTION!");
   }
 
   template<typename PointRange>
@@ -487,7 +486,7 @@ private:
     const PolygonMap polygon_map,
     std::map< std::size_t, std::pair<
       std::vector<Point_2>,
-      std::vector<std::size_t> > >& /*polygons*/) {
+      std::vector<std::size_t> > >& polygons) {
 
     std::size_t input_index = 0;
     std::vector<Point_2> polygon_2;
@@ -501,12 +500,15 @@ private:
       CGAL_assertion(support_plane_idx != KSR::no_element());
       convert_polygon(support_plane_idx, polygon_3, polygon_2);
 
-      if (!is_added) {
-
+      if (is_added) {
+        input_indices.clear();
+        input_indices.push_back(input_index);
+        polygons[support_plane_idx] = std::make_pair(polygon_2, input_indices);
+      } else {
+        CGAL_assertion_msg(false, "TODO: FINISH POLYGONS PREPROCESSING!");
       }
       ++input_index;
     }
-    CGAL_assertion_msg(false, "TODO: FINISH POLYGONS PREPROCESSING!");
   }
 
   void make_polygons_intersection_free() {
