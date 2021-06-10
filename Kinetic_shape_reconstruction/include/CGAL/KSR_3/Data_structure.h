@@ -508,28 +508,30 @@ public:
   }
 
   template<typename PointRange>
-  std::size_t add_support_plane(const PointRange& polygon) {
+  std::pair<std::size_t, bool> add_support_plane(const PointRange& polygon) {
 
     const Support_plane new_support_plane(polygon);
     std::size_t support_plane_idx = KSR::no_element();
     bool found_coplanar_polygons = false;
+    bool is_added = false;
     for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
       if (new_support_plane == support_plane(i)) {
         found_coplanar_polygons = true;
         support_plane_idx = i;
-        return support_plane_idx;
+        return std::make_pair(support_plane_idx, is_added);
       }
     }
     CGAL_assertion_msg(!found_coplanar_polygons,
     "ERROR: NO COPLANAR POLYGONS HERE!");
 
+    is_added = !is_added;
     if (support_plane_idx == KSR::no_element()) {
       support_plane_idx = number_of_support_planes();
       m_support_planes.push_back(new_support_plane);
     }
 
     intersect_with_bbox(support_plane_idx);
-    return support_plane_idx;
+    return std::make_pair(support_plane_idx, is_added);
   }
 
   void intersect_with_bbox(const std::size_t sp_idx) {
@@ -752,7 +754,11 @@ public:
   template<typename PointRange>
   void add_bbox_polygon(const PointRange& polygon) {
 
-    const std::size_t support_plane_idx = add_support_plane(polygon);
+    bool is_added = true;
+    std::size_t support_plane_idx = KSR::no_element();
+    std::tie(support_plane_idx, is_added) = add_support_plane(polygon);
+    CGAL_assertion(is_added);
+    CGAL_assertion(support_plane_idx != KSR::no_element());
 
     std::array<IVertex, 4> ivertices;
     std::array<Point_2, 4> points;
@@ -781,7 +787,15 @@ public:
   void add_input_polygon(
     const PointRange& polygon, const std::size_t input_index) {
 
-    const std::size_t support_plane_idx = add_support_plane(polygon);
+    CGAL_assertion_msg(false,
+      "TODO: THIS FUNCTION SHOULD NOT BE CALLED! DELETE IT LATER!");
+
+    bool is_added = true;
+    std::size_t support_plane_idx = KSR::no_element();
+    std::tie(support_plane_idx, is_added) = add_support_plane(polygon);
+    CGAL_assertion(is_added);
+    CGAL_assertion(support_plane_idx != KSR::no_element());
+
     std::vector< std::pair<Point_2, bool> > points;
     points.reserve(polygon.size());
     for (const auto& point : polygon) {
@@ -805,7 +819,7 @@ public:
   void add_input_polygon(
     const std::size_t support_plane_idx,
     const std::vector<std::size_t>& input_indices,
-    std::vector<Point_2>& polygon) {
+    const std::vector<Point_2>& polygon) {
 
     std::vector< std::pair<Point_2, bool> > points;
     points.reserve(polygon.size());
@@ -1697,6 +1711,7 @@ public:
     std::size_t line_idx = m_intersection_graph.add_line();
     for (std::size_t i = 0; i < vertices.size() - 1; ++i) {
 
+      CGAL_assertion(!is_zero_length_iedge(vertices[i], vertices[i + 1]));
       const auto pair = m_intersection_graph.add_edge(
         vertices[i], vertices[i + 1], support_planes_idx);
       const auto iedge = pair.first;
@@ -1764,6 +1779,14 @@ public:
       }
     }
     return out;
+  }
+
+  bool is_zero_length_iedge(const IVertex& a, const IVertex& b) const {
+    const auto& p = m_intersection_graph.point_3(a);
+    const auto& q = m_intersection_graph.point_3(b);
+    const FT distance = KSR::distance(p, q);
+    const FT ptol = KSR::point_tolerance<FT>();
+    return distance < ptol;
   }
 
   bool is_iedge(const IVertex& source, const IVertex& target) const {

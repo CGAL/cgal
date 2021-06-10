@@ -113,7 +113,10 @@ public:
 
     // Preprocessing.
     std::cout.precision(20);
-    if (m_data.pfaces(sp_idx).size() > 1) merge_coplanar_pfaces(sp_idx);
+    if (m_data.pfaces(sp_idx).size() > 1) {
+      CGAL_assertion_msg(false, "ERROR: THIS CALL SHOULD NEVER HAPPEN!");
+      merge_coplanar_pfaces(sp_idx);
+    }
     CGAL_assertion_msg(m_data.pfaces(sp_idx).size() == 1,
     "ERROR: WE CANNOT HAVE MULTIPLE COPLANAR PFACES!");
     const auto pface = *m_data.pfaces(sp_idx).begin();
@@ -162,6 +165,7 @@ private:
   void merge_coplanar_pfaces(
     const std::size_t support_plane_idx) {
 
+    CGAL_assertion_msg(false, "TODO: DELETE THIS ONE!");
     const bool is_debug = false;
     CGAL_assertion(support_plane_idx >= 6);
     if (is_debug) {
@@ -191,6 +195,7 @@ private:
     const std::size_t support_plane_idx,
     std::vector<Point_2>& points) const {
 
+    CGAL_assertion_msg(false, "TODO: DELETE THIS ONE!");
     points.clear();
     const auto all_pfaces = m_data.pfaces(support_plane_idx);
     CGAL_assertion(all_pfaces.size() > 1);
@@ -212,6 +217,7 @@ private:
     const std::vector<Point_2>& points,
     std::vector<Point_2>& merged) const {
 
+    CGAL_assertion_msg(false, "TODO: DELETE THIS ONE!");
     merged.clear();
     switch (m_merge_type) {
       case Planar_shape_type::CONVEX_HULL: {
@@ -236,6 +242,7 @@ private:
     const std::size_t support_plane_idx,
     const std::vector<Point_2>& merged) const {
 
+    CGAL_assertion_msg(false, "TODO: DELETE THIS ONE!");
     std::vector<Point_2> bbox;
     create_bbox(support_plane_idx, bbox);
     CGAL_assertion(bbox.size() == 4);
@@ -263,6 +270,7 @@ private:
     const std::size_t support_plane_idx,
     std::vector<Point_2>& merged) {
 
+    CGAL_assertion_msg(false, "TODO: DELETE THIS ONE!");
     const auto all_pfaces = m_data.pfaces(support_plane_idx);
     std::vector<std::size_t> input_indices;
     input_indices.reserve(all_pfaces.size());

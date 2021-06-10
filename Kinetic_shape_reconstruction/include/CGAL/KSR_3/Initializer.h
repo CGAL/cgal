@@ -438,16 +438,75 @@ private:
     const InputRange& input_range,
     const PolygonMap polygon_map) {
 
-    std::size_t input_index = 0;
-    for (const auto& item : input_range) {
-      const auto& polygon = get(polygon_map, item);
-      m_data.add_input_polygon(polygon, input_index);
-      ++input_index;
+    using Polygon_2 = std::vector<Point_2>;
+    using Indices = std::vector<std::size_t>;
+
+    std::map< std::size_t, std::pair<Polygon_2, Indices> > polygons;
+    preprocess_polygons(input_range, polygon_map, polygons);
+    CGAL_assertion(polygons.size() > 0);
+
+    for (const auto& item : polygons) {
+      const std::size_t support_plane_idx = item.first;
+      const auto& pair = item.second;
+      const Polygon_2& polygon = pair.first;
+      const Indices& input_indices = pair.second;
+      m_data.add_input_polygon(support_plane_idx, input_indices, polygon);
     }
+
     CGAL_assertion(m_data.number_of_support_planes() > 6);
     if (m_verbose) {
-      std::cout << "* inserted input polygons: " <<  input_range.size() << std::endl;
+      std::cout << "* inserted input polygons: " << polygons.size() << std::endl;
     }
+    CGAL_assertion_msg(false, "TODO: FINISH POLYGONS INSERTION!");
+  }
+
+  template<typename PointRange>
+  void convert_polygon(
+    const std::size_t support_plane_idx,
+    const PointRange& polygon_3,
+    std::vector<Point_2>& polygon_2) {
+
+    polygon_2.clear();
+    polygon_2.reserve(polygon_3.size());
+    for (const auto& point : polygon_3) {
+      const Point_3 converted(
+        static_cast<FT>(point.x()),
+        static_cast<FT>(point.y()),
+        static_cast<FT>(point.z()));
+      polygon_2.push_back(
+        m_data.support_plane(support_plane_idx).to_2d(converted));
+    }
+    CGAL_assertion(polygon_2.size() == polygon_3.size());
+  }
+
+  template<
+  typename InputRange,
+  typename PolygonMap>
+  void preprocess_polygons(
+    const InputRange& input_range,
+    const PolygonMap polygon_map,
+    std::map< std::size_t, std::pair<
+      std::vector<Point_2>,
+      std::vector<std::size_t> > >& /*polygons*/) {
+
+    std::size_t input_index = 0;
+    std::vector<Point_2> polygon_2;
+    std::vector<std::size_t> input_indices;
+    for (const auto& item : input_range) {
+      const auto& polygon_3 = get(polygon_map, item);
+
+      bool is_added = true;
+      std::size_t support_plane_idx = KSR::no_element();
+      std::tie(support_plane_idx, is_added) = m_data.add_support_plane(polygon_3);
+      CGAL_assertion(support_plane_idx != KSR::no_element());
+      convert_polygon(support_plane_idx, polygon_3, polygon_2);
+
+      if (!is_added) {
+
+      }
+      ++input_index;
+    }
+    CGAL_assertion_msg(false, "TODO: FINISH POLYGONS PREPROCESSING!");
   }
 
   void make_polygons_intersection_free() {
