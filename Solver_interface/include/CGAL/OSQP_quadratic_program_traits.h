@@ -20,6 +20,7 @@
 #include <tuple>
 #include <vector>
 #include <utility>
+#include <exception>
 
 // CGAL includes.
 #include <CGAL/assertions.h>
@@ -230,7 +231,16 @@ public:
     osqp_setup(&work, data, settings);
 
     // Solve problem.
-    const int exitflag = osqp_solve(work);
+    int exitflag = -1;
+    try
+    {
+      exitflag = osqp_solve(work);
+    }
+    catch (std::exception& e)
+    {
+      std::cerr << "ERROR: OSQP solver has thrown an exception!" << std::endl;
+      std::cerr << e.what() << std::endl;
+    }
     const bool success = (exitflag == 0);
 
     // Create solution.
@@ -265,7 +275,9 @@ public:
     // Compute the number of non-zero entries in each column of the sparse matrix A
     std::fill(M_p, M_p + n, 0);
     for(std::size_t k=0; k<nnz; ++k)
+    {
       M_p[std::get<1>(triplets[k])]++;
+    }
 
     // Fill M_p
     c_int cumsum = 0;
@@ -297,20 +309,20 @@ public:
       last = tmp;
     }
 
-//    std::cout << name + "_x: ";
-//    for(std::size_t i=0; i<nnz; ++i)
-//      std::cout << M_x[i] << " ";
-//    std::cout << std::endl;
+    // std::cout << name + "_x: ";
+    // for(std::size_t i=0; i<nnz; ++i)
+    //   std::cout << M_x[i] << " ";
+    // std::cout << std::endl;
 
-//    std::cout << name + "_i: ";
-//    for(std::size_t i=0; i<nnz; ++i)
-//      std::cout << M_i[i] << " ";
-//    std::cout << std::endl;
+    // std::cout << name + "_i: ";
+    // for(std::size_t i=0; i<nnz; ++i)
+    //   std::cout << M_i[i] << " ";
+    // std::cout << std::endl;
 
-//    std::cout << name + "_p: ";
-//    for(std::size_t i=0; i<(n+1); ++i)
-//      std::cout << M_p[i] << " ";
-//    std::cout << std::endl;
+    // std::cout << name + "_p: ";
+    // for(std::size_t i=0; i<(n+1); ++i)
+    //   std::cout << M_p[i] << " ";
+    // std::cout << std::endl;
   }
 
   void set_qlu_data(c_float *q_x,
@@ -318,7 +330,9 @@ public:
                     c_float *u_x) const
   {
     for(std::size_t i=0; i<n; ++i)
+    {
       q_x[i] = c_float(CGAL::to_double(q_vec[i]));
+    }
 
     for(std::size_t i=0; i<m; ++i)
     {
@@ -326,20 +340,20 @@ public:
       u_x[i] = c_float(CGAL::to_double(u_vec[i]));
     }
 
-//    std::cout << "q_x: ";
-//    for(std::size_t i=0; i<n; ++i)
-//      std::cout << q_x[i] << " ";
-//    std::cout << std::endl;
+    // std::cout << "q_x: ";
+    // for(std::size_t i=0; i<n; ++i)
+    //   std::cout << q_x[i] << " ";
+    // std::cout << std::endl;
 
-//    std::cout << "l_x: ";
-//    for(std::size_t i=0; i<m; ++i)
-//      std::cout << l_x[i] << " ";
-//    std::cout << std::endl;
+    // std::cout << "l_x: ";
+    // for(std::size_t i=0; i<m; ++i)
+    //   std::cout << l_x[i] << " ";
+    // std::cout << std::endl;
 
-//    std::cout << "u_x: ";
-//    for(std::size_t i=0; i<m; ++i)
-//      std::cout << u_x[i] << " ";
-//    std::cout << std::endl;
+    // std::cout << "u_x: ";
+    // for(std::size_t i=0; i<m; ++i)
+    //   std::cout << u_x[i] << " ";
+    // std::cout << std::endl;
   }
 };
 
