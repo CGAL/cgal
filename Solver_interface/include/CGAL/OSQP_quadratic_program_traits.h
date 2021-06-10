@@ -1,4 +1,4 @@
-// Copyright (c) 2020 GeometryFactory SARL (France).
+// Copyright (c) 2020-2021 GeometryFactory SARL (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
@@ -8,6 +8,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Dmitry Anisimov
+//                 Mael Rouxel-Labbé
 //
 
 #ifndef CGAL_OSQP_QUADRATIC_PROGRAM_TRAITS_H
@@ -28,251 +29,298 @@
 
 namespace CGAL {
 
-  /*!
-    \ingroup PkgSolverInterfaceNLP
+/*!
+  \ingroup PkgSolverInterfaceNLP
 
-    \brief wraps the external OSQP solver.
+  \brief wraps the external OSQP solver.
 
-    This class provides an interface for formulating and solving
-    constrained or unconstrained quadratic programs using the \ref thirdpartyOSQP "OSQP"
-    library, which must be available on the system.
+  This class provides an interface for formulating and solving
+  constrained or unconstrained quadratic programs using the \ref thirdpartyOSQP "OSQP"
+  library, which must be available on the system.
 
-    \tparam FT
-    number type
+  \tparam FT
+  number type
 
-    \cgalModels `QuadraticProgramTraits`
-  */
-  template<typename FT>
-  class OSQP_quadratic_program_traits {
-    // row, col, value
-    using Triplet = std::tuple<std::size_t, std::size_t, FT>;
+  \cgalModels `QuadraticProgramTraits`
+*/
+template<typename FT>
+class OSQP_quadratic_program_traits
+{
+  using Triplet = std::tuple<std::size_t, std::size_t, FT>; // row, col, value
 
-  public:
-    /// \cond SKIP_IN_MANUAL
-    void reserve_P(const std::size_t k) {
-      P_vec.reserve(k);
+private:
+  std::size_t n; // number of variables
+  std::size_t m; // number of constraints
+
+  std::vector<Triplet> P_vec, A_vec;
+  std::vector<FT> q_vec, l_vec, u_vec;
+
+public:
+  /// Default constructor
+  OSQP_quadratic_program_traits() : n(0), m(0) { }
+
+  /// Constructor
+  /// \param n the number of variables
+  OSQP_quadratic_program_traits(const std::size_t n)
+    : n(n), m(0)
+  {
+    // 6*n, just guessing that this is some kind of sparse problem on a nice 2D mesh
+    P_vec.reserve(6 * n);
+    q_vec.reserve(n);
+  }
+
+  /// Constructor
+  /// \param n the number of variables
+  /// \param m the number of constraints
+  OSQP_quadratic_program_traits(const std::size_t n, const std::size_t m)
+    : n(n), m(m)
+  {
+    P_vec.reserve(6 * n);
+    q_vec.reserve(n);
+
+    A_vec.reserve(m);
+    l_vec.reserve(m);
+    u_vec.reserve(m);
+  }
+
+public:
+  /// \cond SKIP_IN_MANUAL
+
+  void set_P(const std::size_t i, const std::size_t j, const FT value)
+  {
+    if(j < i)
+      return;
+    if(j >= n) // no need to test i since j >= i
+      n = j+1;
+
+    P_vec.emplace_back(i, j, value);
+  }
+
+  void set_q(const std::size_t i, const FT value)
+  {
+    if(i >= n)
+      n = i+1;
+    if(i >= q_vec.size())
+      q_vec.resize(n);
+
+    q_vec[i] = value;
+  }
+
+  void set_r(const FT) {
+    // is not used here
+  }
+
+  void set_A(const std::size_t i, const std::size_t j, const FT value)
+  {
+    if(i >= m)
+      m = i+1;
+    if(j >= n)
+      n = j+1;
+
+    A_vec.emplace_back(i, j, value);
+  }
+
+  void set_l(const std::size_t i, const FT value)
+  {
+    if(i >= m)
+      m = i+1;
+    if(i >= l_vec.size())
+      l_vec.resize(m);
+
+    l_vec[i] = value;
+  }
+
+  void set_u(const std::size_t i, const FT value)
+  {
+    if(i >= m)
+      m = i+1;
+    if(i >= u_vec.size())
+      u_vec.resize(m);
+
+    u_vec[i] = value;
+  }
+
+  template<typename OutIterator>
+  bool solve(OutIterator solution,
+             const FT eps_abs = 1e-10,
+             const FT eps_rel = 1e-15,
+             const bool verbose = false)
+  {
+    std::cout << "num variables = " << n << std::endl;
+    std::cout << "num constraints = " << m << std::endl;
+
+    CGAL_precondition(n >= 1 && m >= 0);
+
+    CGAL_precondition(q_vec.size() == n);
+    CGAL_precondition(l_vec.size() == m && l_vec.size() == m);
+
+    const c_int P_nnz = static_cast<c_int>(P_vec.size());
+    c_float P_x[P_nnz];
+    c_int   P_i[P_nnz];
+    c_int   P_p[n + 1];
+    set_matrix_from_triplets("P", P_vec, P_x, P_i, P_p);
+    std::cout << "P_nnz: " << P_nnz << std::endl;
+
+    const c_int A_nnz = static_cast<c_int>(A_vec.size());
+    c_float A_x[A_nnz];
+    c_int   A_i[A_nnz];
+    c_int   A_p[n + 1];
+    set_matrix_from_triplets("A", A_vec, A_x, A_i, A_p);
+    std::cout << "A_nnz: " << A_nnz << std::endl;
+
+    const c_int q_size = static_cast<c_int>(q_vec.size());
+    const c_int l_size = static_cast<c_int>(l_vec.size());
+    const c_int u_size = static_cast<c_int>(u_vec.size());
+
+    c_float q_x[q_size];
+    c_float l_x[l_size];
+    c_float u_x[u_size];
+    set_qlu_data(q_x, l_x, u_x);
+
+    // Problem settings.
+    OSQPSettings *settings = (OSQPSettings *) malloc(sizeof(OSQPSettings));
+    CGAL_assertion(settings);
+
+    // Structures.
+    OSQPWorkspace *work;
+    OSQPData *data = (OSQPData *) malloc(sizeof(OSQPData));
+    CGAL_assertion(data);
+
+    // Populate data.
+    data->n = static_cast<c_int>(n);
+    data->m = static_cast<c_int>(m);
+    data->P = csc_matrix(data->n, data->n, P_nnz, P_x, P_i, P_p);
+    CGAL_assertion(data->P);
+
+    data->q = q_x;
+    data->A = csc_matrix(data->m, data->n, A_nnz, A_x, A_i, A_p);
+    CGAL_assertion(data->A);
+
+    data->l = l_x;
+    data->u = u_x;
+
+    // Set solver settings.
+    osqp_set_default_settings(settings);
+    settings->eps_abs = eps_abs;
+    settings->eps_rel = eps_rel;
+    settings->verbose = verbose;
+
+    // Set workspace.
+    osqp_setup(&work, data, settings);
+
+    // Solve problem.
+    const int exitflag = osqp_solve(work);
+    const bool success = (exitflag == 0);
+
+    // Create solution.
+    const c_float *x = work->solution->x;
+    for(c_int i=0; i<n; ++i)
+    {
+      const FT value{x[i]};
+      *(++solution) = value;
     }
 
-    void reserve_q(const std::size_t n) {
-      q_vec.reserve(n);
+    // Clean workspace.
+    osqp_cleanup(work);
+    c_free(data->A);
+    c_free(data->P);
+    c_free(data);
+    c_free(settings);
+
+    return success;
+  }
+  /// \endcond
+
+public:
+  // Based on the code in scipy, function coo_tocsr()
+  void set_matrix_from_triplets(const std::string name,
+                                const std::vector<Triplet>& triplets,
+                                c_float *M_x,
+                                c_int *M_i,
+                                c_int *M_p) const
+  {
+    const std::size_t nnz = triplets.size();
+
+    // Compute the number of non-zero entries in each column of the sparse matrix A
+    std::fill(M_p, M_p + n, 0);
+    for(std::size_t k=0; k<nnz; ++k)
+      M_p[std::get<1>(triplets[k])]++;
+
+    // Fill M_p
+    c_int cumsum = 0;
+    for(std::size_t j=0; j<n; ++j)
+    {
+      const c_int tmp = M_p[j];
+      M_p[j] = cumsum;
+      cumsum += tmp;
+    }
+    M_p[n] = nnz;
+
+    // Write Ai, Ax into M_i, M_x
+    for(std::size_t k=0; k<nnz; ++k)
+    {
+      const c_int col = static_cast<c_int>(std::get<1>(triplets[k]));
+      const c_int dest = M_p[col];
+
+      M_i[dest] = static_cast<c_int>(std::get<0>(triplets[k]));
+      M_x[dest] = c_float(CGAL::to_double(std::get<2>(triplets[k])));
+
+      M_p[col]++;
     }
 
-    void reserve_A(const std::size_t k) {
-      A_vec.reserve(k);
+    c_int last = 0;
+    for(std::size_t j=0; j<=n; ++j)
+    {
+      const c_int tmp = M_p[j];
+      M_p[j] = last;
+      last = tmp;
     }
 
-    void reserve_l(const std::size_t m) {
-      l_vec.reserve(m);
+//    std::cout << name + "_x: ";
+//    for(std::size_t i=0; i<nnz; ++i)
+//      std::cout << M_x[i] << " ";
+//    std::cout << std::endl;
+
+//    std::cout << name + "_i: ";
+//    for(std::size_t i=0; i<nnz; ++i)
+//      std::cout << M_i[i] << " ";
+//    std::cout << std::endl;
+
+//    std::cout << name + "_p: ";
+//    for(std::size_t i=0; i<(n+1); ++i)
+//      std::cout << M_p[i] << " ";
+//    std::cout << std::endl;
+  }
+
+  void set_qlu_data(c_float *q_x,
+                    c_float *l_x,
+                    c_float *u_x) const
+  {
+    for(std::size_t i=0; i<n; ++i)
+      q_x[i] = c_float(CGAL::to_double(q_vec[i]));
+
+    for(std::size_t i=0; i<m; ++i)
+    {
+      l_x[i] = c_float(CGAL::to_double(l_vec[i]));
+      u_x[i] = c_float(CGAL::to_double(u_vec[i]));
     }
 
-    void reserve_u(const std::size_t m) {
-      u_vec.reserve(m);
-    }
+//    std::cout << "q_x: ";
+//    for(std::size_t i=0; i<n; ++i)
+//      std::cout << q_x[i] << " ";
+//    std::cout << std::endl;
 
-    void set_P(const std::size_t i, const std::size_t j, const FT value) {
-      P_vec.push_back(std::make_tuple(i, j, value));
-    }
+//    std::cout << "l_x: ";
+//    for(std::size_t i=0; i<m; ++i)
+//      std::cout << l_x[i] << " ";
+//    std::cout << std::endl;
 
-    void set_q(const std::size_t, const FT value) {
-      q_vec.push_back(value);
-    }
-
-    void set_r(const FT) {
-      // is not used here
-    }
-
-    void set_A(const std::size_t i, const std::size_t j, const FT value) {
-      A_vec.push_back(std::make_tuple(i, j, value));
-    }
-
-    void set_l(const std::size_t, const FT value) {
-      l_vec.push_back(value);
-    }
-
-    void set_u(const std::size_t, const FT value) {
-      u_vec.push_back(value);
-    }
-
-    std::size_t P_size() const {
-      return P_vec.size();
-    }
-
-    std::size_t q_size() const {
-      return q_vec.size();
-    }
-
-    std::size_t A_size() const {
-      return A_vec.size();
-    }
-
-    std::size_t l_size() const {
-      return l_vec.size();
-    }
-
-    std::size_t u_size() const {
-      return u_vec.size();
-    }
-
-    template<typename OutIterator>
-    bool solve(OutIterator solution) {
-
-      const std::size_t num_cols = std::get<1>(P_vec.back()) + 1;
-      CGAL_precondition(q_vec.size() == num_cols);
-      CGAL_precondition(l_vec.size() == u_vec.size());
-
-      const c_int P_nnz = static_cast<c_int>(P_vec.size());
-      c_float P_x[P_nnz];
-      c_int   P_i[P_nnz];
-      c_int   P_p[P_nnz + 1];
-      set_matrix_from_triplets("P", P_vec, P_x, P_i, P_p);
-      // std::cout << "P_nnz: " << P_nnz << std::endl;
-
-      const c_int A_nnz = static_cast<c_int>(A_vec.size());
-      c_float A_x[A_nnz];
-      c_int   A_i[A_nnz];
-      c_int   A_p[P_nnz + 1];
-      set_matrix_from_triplets("A", A_vec, A_x, A_i, A_p);
-      // std::cout << "A_nnz: " << A_nnz << std::endl;
-
-      const c_int q_size = static_cast<c_int>(q_vec.size());
-      const c_int l_size = static_cast<c_int>(l_vec.size());
-      const c_int u_size = static_cast<c_int>(u_vec.size());
-
-      c_float q_x[q_size];
-      c_float l_x[l_size];
-      c_float u_x[u_size];
-      set_qlu_data(q_x, l_x, u_x);
-
-      // Problem settings.
-      OSQPSettings *settings = (OSQPSettings *)c_malloc(sizeof(OSQPSettings));
-
-      // Structures.
-      OSQPWorkspace *work;
-      OSQPData *data;
-
-      // Populate data.
-      const c_int n = q_size; // number of variables
-      const c_int m = l_size; // number of constraints
-      // std::cout << "n: " << n << std::endl;
-      // std::cout << "m: " << m << std::endl;
-
-      data = (OSQPData *)c_malloc(sizeof(OSQPData));
-      data->n = n;
-      data->m = m;
-      data->P = csc_matrix(n, n, P_nnz, P_x, P_i, P_p);
-      data->q = q_x;
-      data->A = csc_matrix(m, n, A_nnz, A_x, A_i, A_p);
-      data->l = l_x;
-      data->u = u_x;
-
-      // Set solver settings.
-      osqp_set_default_settings(settings);
-      settings->eps_rel = 1.0e-15;
-      settings->verbose = false;
-
-      // Set workspace.
-      osqp_setup(&work, data, settings);
-
-      // Solve problem.
-      const int exitflag = osqp_solve(work);
-      const bool success = exitflag == 0 ? true : false;
-
-      // Create solution.
-      const c_float *x = work->solution->x;
-      for (c_int i = 0; i < n; ++i) {
-        const FT value = static_cast<FT>(x[i]);
-        *(++solution) = value;
-      }
-
-      // Clean workspace.
-      osqp_cleanup(work);
-      c_free(data->A);
-      c_free(data->P);
-      c_free(data);
-      c_free(settings);
-
-      return success;
-    }
-    /// \endcond
-
-  private:
-    std::vector<Triplet> P_vec, A_vec;
-    std::vector<FT> q_vec, l_vec, u_vec;
-
-    void set_matrix_from_triplets(
-      const std::string /* name */,
-      const std::vector<Triplet>& triplets,
-      c_float *M_x, c_int *M_i, c_int *M_p) const {
-
-      M_p[0] = 0;
-      std::size_t count = 0;
-      const std::size_t num_cols = std::get<1>(triplets.back());
-      std::size_t ref_col = 0;
-      for (ref_col = 0; ref_col <= num_cols; ++ref_col) {
-        std::size_t num_rows = 0;
-        for (std::size_t i = 0; i < triplets.size(); ++i) {
-          const std::size_t row = std::get<0>(triplets[i]);
-          const std::size_t col = std::get<1>(triplets[i]);
-          const double value = CGAL::to_double(std::get<2>(triplets[i]));
-
-          if (col == ref_col) {
-            M_i[count] = row; M_x[count] = value;
-            ++count; ++num_rows;
-          }
-        }
-        M_p[ref_col + 1] = M_p[ref_col] + num_rows;
-      }
-
-      // std::cout << name + "_x: ";
-      // for (std::size_t i = 0; i < count; ++i)
-      //   std::cout << M_x[i] << " ";
-      // std::cout << std::endl;
-
-      // std::cout << name + "_i: ";
-      // for (std::size_t i = 0; i < count; ++i)
-      //   std::cout << M_i[i] << " ";
-      // std::cout << std::endl;
-
-      // std::cout << name + "_p: ";
-      // for (std::size_t i = 0; i <= ref_col; ++i)
-      //   std::cout << M_p[i] << " ";
-      // std::cout << std::endl;
-    }
-
-    void set_qlu_data(
-      c_float *q_x, c_float *l_x, c_float *u_x) const {
-
-      CGAL_assertion(q_vec.size() > 1);
-      CGAL_assertion(l_vec.size() == u_vec.size());
-      const std::size_t n = q_vec.size(); // number of variables
-      const std::size_t m = l_vec.size(); // number of constraints
-
-      CGAL_assertion(n > 1);
-      for (std::size_t i = 0; i < n; ++i)
-        q_x[i] = CGAL::to_double(q_vec[i]);
-
-      CGAL_assertion(m >= 0);
-      for (std::size_t i = 0; i < m; ++i) {
-        l_x[i] = CGAL::to_double(l_vec[i]);
-        u_x[i] = CGAL::to_double(u_vec[i]);
-      }
-
-      // std::cout << "q_x: ";
-      // for (std::size_t i = 0; i < n; ++i)
-      //   std::cout << q_x[i] << " ";
-      // std::cout << std::endl;
-
-      // std::cout << "l_x: ";
-      // for (std::size_t i = 0; i < m; ++i)
-      //   std::cout << l_x[i] << " ";
-      // std::cout << std::endl;
-
-      // std::cout << "u_x: ";
-      // for (std::size_t i = 0; i < m; ++i)
-      //   std::cout << u_x[i] << " ";
-      // std::cout << std::endl;
-    }
-  };
+//    std::cout << "u_x: ";
+//    for(std::size_t i=0; i<m; ++i)
+//      std::cout << u_x[i] << " ";
+//    std::cout << std::endl;
+  }
+};
 
 } // namespace CGAL
 
