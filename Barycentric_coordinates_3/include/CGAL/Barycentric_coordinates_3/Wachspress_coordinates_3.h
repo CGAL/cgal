@@ -39,24 +39,34 @@ namespace Barycentric_coordinates {
   public:
     Wachspress_coordinates_3(
     	const PolygonMesh& polygon_mesh,
-    	const Computation_policy_3 policy =
-    	Computation_policy_3::DEFAULT,
-    	//const VertexToPointMap vertex_to_point_map = VertexToPointMap(),
+    	const Computation_policy_3 policy,
+    	const VertexToPointMap vertex_to_point_map,
     	const GeomTraits traits = GeomTraits()) :
     m_polygon_mesh(polygon_mesh),
     m_computation_policy(policy),
-    m_vertex_to_point_map(get_const_property_map(CGAL::vertex_point, polygon_mesh)),
-    m_traits(traits) { 
+    m_vertex_to_point_map(vertex_to_point_map),
+    m_traits(traits) {
 
     	// preconditions, resize containers, etc.
 
     	m_weights.resize(vertices(m_polygon_mesh).size());
     }
 
+    Wachspress_coordinates_3(
+    	const PolygonMesh& polygon_mesh,
+    	const Computation_policy_3 policy =
+    	Computation_policy_3::DEFAULT,
+    	const GeomTraits traits = GeomTraits()) :
+    Wachspress_coordinates_3(
+      polygon_mesh,
+      policy,
+      get_const_property_map(CGAL::vertex_point, polygon_mesh),
+      traits) { }
+
     template<typename OutIterator>
     OutIterator operator()(const Point_3& query, OutIterator c_begin) {
       return compute(query, c_begin);
-    }  
+    }
 
   private:
   	const PolygonMesh& m_polygon_mesh;
@@ -92,15 +102,15 @@ namespace Barycentric_coordinates {
     	// Sum of weights to normalize them later.
     	FT sum = FT(0);
 			// Vertex index.
-    	std::size_t vi = 0; 
+    	std::size_t vi = 0;
     	// Vertex range, you can make it global.
     	const auto vd = vertices(m_polygon_mesh);
     	for (const auto vertex : vd) {
-    		
-            std::cout << get(m_vertex_to_point_map, vertex) << "\n"; 
+
+            std::cout << get(m_vertex_to_point_map, vertex) << "\n";
     		const FT weight = FT(vi); // compute it here for query
     		CGAL_assertion(vi < m_weights.size());
-    		m_weights[vi] = weight; 
+    		m_weights[vi] = weight;
     		sum += weight;
     		++vi; // update vi
       }
