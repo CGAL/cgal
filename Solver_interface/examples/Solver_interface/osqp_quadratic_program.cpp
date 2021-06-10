@@ -33,31 +33,28 @@ using FT = typename Kernel::FT;
 
 int main(void) {
 
-  CGAL::OSQP_quadratic_program_traits<FT> osqp;
+  const std::size_t n = 2; // number of variables
+  const std::size_t m = 3; // number of constraints
+  CGAL::OSQP_quadratic_program_traits<FT> osqp(n, m);
 
-  osqp.reserve_P(3);
   osqp.set_P(0, 0, 4);
   osqp.set_P(0, 1, 1);
   osqp.set_P(1, 1, 2);
 
-  osqp.reserve_q(2);
   osqp.set_q(0, 1);
   osqp.set_q(1, 1);
 
   osqp.set_r(0);
 
-  osqp.reserve_A(4);
   osqp.set_A(0, 0, 1);
   osqp.set_A(0, 1, 1);
   osqp.set_A(1, 0, 1);
   osqp.set_A(2, 1, 1);
 
-  osqp.reserve_l(3);
   osqp.set_l(0, 1);
   osqp.set_l(1, 0);
   osqp.set_l(2, 0);
 
-  osqp.reserve_u(3);
   osqp.set_u(0, 1);
   osqp.set_u(1, 0.7);
   osqp.set_u(2, 0.7);
