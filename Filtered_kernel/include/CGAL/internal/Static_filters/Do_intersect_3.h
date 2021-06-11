@@ -235,6 +235,64 @@ public:
     return Base::operator()(r,b);
   }
 
+
+  result_type
+  operator()(const Bbox_3& b, const Triangle_3 &t) const
+  {
+    return this->operator()(t, b);
+  }
+
+
+  result_type
+  operator()(const Triangle_3 &t, const Bbox_3& b) const
+  {
+    Get_approx<Point_3> get_approx;
+    double px, py, pz;
+
+    if(! do_overlap(t.bbox(),b)){
+      return false;
+    }
+    {
+      const Point_3& p = t[0];
+      if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
+          fit_in_double(get_approx(p).z(), pz) )
+        {
+          if( (px >= b.xmin() && px <= b.xmax()) && (py >= b.ymin() && py <= b.ymax())  && (pz >= b.zmin() && pz <= b.zmax()) ){
+            return true;
+          }
+        }else{
+        return Base::operator()(t,b);
+      }
+    }
+
+    {
+      const Point_3& p = t[1];
+      if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
+          fit_in_double(get_approx(p).z(), pz) )
+        {
+          if( (px >= b.xmin() && px <= b.xmax()) && (py >= b.ymin() && py <= b.ymax())  && (pz >= b.zmin() && pz <= b.zmax()) ){
+              return true;
+          }
+        }else{
+        return Base::operator()(t,b);
+      }
+    }
+
+    {
+      const Point_3& p = t[2];
+      if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
+          fit_in_double(get_approx(p).z(), pz) )
+        {
+          if( (px >= b.xmin() && px <= b.xmax()) && (py >= b.ymin() && py <= b.ymax())  && (pz >= b.zmin() && pz <= b.zmax()) ){
+              return true;
+          }
+        }else{
+        return Base::operator()(t,b);
+      }
+    }
+    return Base::operator()(t,b);
+  }
+
   result_type
   operator()(const Bbox_3& b, const Sphere_3 &s) const
   {

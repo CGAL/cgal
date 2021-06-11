@@ -33,6 +33,23 @@
 
 namespace CGAL {
 
+template <typename T>
+struct Tet {
+  typedef typename Kernel_traits<T>::Kernel::Point_3 Point_3;
+  typedef typename Kernel_traits<T>::Kernel::Triangle_3 Triangle_3;
+
+  Tet()
+  {}
+
+  Tet(const T& tet, bool b0, bool b1, bool b2, bool b3)
+    : tet(tet), bbox(tet.bbox()), b0(b0), b1(b1), b2(b2), b3(b3)
+  {}
+
+  T tet;
+  Bbox_3 bbox;
+  bool b0=false, b1=false, b2=false, b3=false;
+};
+
 namespace internal{  namespace AABB_tree {
 
 template <class T>
@@ -324,19 +341,91 @@ public:
   /// In the case the query is a `CGAL::AABB_tree`, the `do_intersect()`
   /// function of this tree is used.
   class Do_intersect {
+    typedef typename GeomTraits::Ray_3 Ray_3;
     const AABB_traits<GeomTraits,AABBPrimitive, BboxMap>& m_traits;
   public:
     Do_intersect(const AABB_traits<GeomTraits,AABBPrimitive, BboxMap>& traits)
       :m_traits(traits) {}
 
     template<typename Query>
-    bool operator()(const Query& q, const Bounding_box& bbox) const
+    bool operator()(const Tet<Query>& q, const Bounding_box& bbox) const
+    {
+      // bool expected = CGAL::do_intersect(q.tet, bbox);
+      // return expected;
+      bool retur = false;
+      if(! do_overlap(q.bbox, bbox)){
+        retur = false;
+        // if(retur != expected){ std::cout << "oops 1"  << std::endl; }
+        return retur;
+      }
+      typedef typename Tet<Query>::Triangle_3 Triangle_3;
+      if(! q.b0){
+        Triangle_3 t(q.tet[1], q.tet[2],q.tet[3]);
+        if(do_intersect(t,bbox)){
+          retur =  true;
+          // if(retur != expected){ std::cout << "oops 2"  << std::endl; }
+          return retur;
+        }
+      }
+      if(! q.b1){
+        Triangle_3 t(q.tet[2], q.tet[3],q.tet[0]);
+        if(do_intersect(t,bbox)){
+          retur = true;
+          // if(retur != expected){ std::cout << "oops 3"  << std::endl; }
+          return retur;
+        }
+      }
+      if(! q.b2){
+        Triangle_3 t(q.tet[3], q.tet[0],q.tet[1]);
+        if(do_intersect(t,bbox)){
+          retur = true;
+          // if(retur != expected){ std::cout << "oops 4"  << std::endl; }
+          return retur;
+        }
+      }
+      if(! q.b3){
+        Triangle_3 t(q.tet[0], q.tet[1],q.tet[2]);
+        if(do_intersect(t,bbox)){
+          retur = true;
+          // if(retur != expected){ std::cout << "oops 5"  << std::endl; }
+          return retur;
+        }
+      }
+      Point_3 bbp(bbox.xmin(),bbox.ymin(),bbox.zmin());
+      if(q.tet.has_on_bounded_side(bbp)){
+        retur = true;
+        // if(retur != expected){ std::cout << "oops 6"  << std::endl; }
+        return retur;
+      }
+
+      return false;
+    }
+
+    template<typename Query>
+    bool operator()(const Tet<Query>& q, const Primitive& pr) const
+    {
+      return GeomTraits().do_intersect_3_object()(q.tet, internal::Primitive_helper<AT>::get_datum(pr,m_traits));
+    }
+
+
+    bool operator()(const Ray_3& q, const Bounding_box& bbox) const
     {
       return CGAL::do_intersect(q, bbox);
     }
 
-    template<typename Query>
-    bool operator()(const Query& q, const Primitive& pr) const
+
+    bool operator()(const Ray_3& q, const Primitive& pr) const
+    {
+      return GeomTraits().do_intersect_3_object()(q, internal::Primitive_helper<AT>::get_datum(pr,m_traits));
+    }
+
+    bool operator()(const Sphere_3& q, const Bounding_box& bbox) const
+    {
+      return CGAL::do_intersect(q, bbox);
+    }
+
+
+    bool operator()(const Sphere_3& q, const Primitive& pr) const
     {
       return GeomTraits().do_intersect_3_object()(q, internal::Primitive_helper<AT>::get_datum(pr,m_traits));
     }
