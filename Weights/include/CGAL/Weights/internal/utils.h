@@ -14,7 +14,7 @@
 #ifndef CGAL_WEIGHTS_INTERNAL_UTILS_H
 #define CGAL_WEIGHTS_INTERNAL_UTILS_H
 
-// #include <CGAL/license/Weights.h>
+#include <CGAL/license/Weights.h>
 
 // STL includes.
 #include <cmath>

@@ -14,7 +14,7 @@
 #ifndef CGAL_WEIGHTS_UTILS_H
 #define CGAL_WEIGHTS_UTILS_H
 
-// #include <CGAL/license/Weights.h>
+#include <CGAL/license/Weights.h>
 
 // Internal includes.
 #include <CGAL/Weights/internal/utils.h>

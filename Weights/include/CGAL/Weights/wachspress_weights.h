@@ -14,7 +14,7 @@
 #ifndef CGAL_WACHSPRESS_WEIGHTS_H
 #define CGAL_WACHSPRESS_WEIGHTS_H
 
-// #include <CGAL/license/Weights.h>
+#include <CGAL/license/Weights.h>
 
 // Internal includes.
 #include <CGAL/Weights/internal/utils.h>
