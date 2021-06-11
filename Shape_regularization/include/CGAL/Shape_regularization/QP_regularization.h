@@ -183,13 +183,11 @@ namespace Shape_regularization {
       }
 
       // QP data.
-      set_qp_data(
-        m_quadratic_program);
+      set_qp_data(m_quadratic_program);
 
       // Solve.
       std::vector<FT> solution;
-      solve_quadratic_program(
-        m_quadratic_program, solution);
+      solve_quadratic_program(m_quadratic_program, solution);
       if (solution.size() != m_input_range.size() + m_targets.size()) {
         std::cerr << "Error: the number of solution values is not equal to the " <<
         "number of input segments + the number of edges in the graph!" << std::endl;
@@ -298,14 +296,14 @@ namespace Shape_regularization {
       CGAL_assertion(m_targets.size() >= 0);
     }
 
-    void set_qp_data(
-      Quadratic_program& qp) const {
+    void set_qp_data(Quadratic_program& qp) const {
 
       const std::size_t k = m_input_range.size(); // k segments
       const std::size_t e = m_targets.size(); // e graph edges
       const std::size_t n = k + e; // number of variables
       const std::size_t m = 2 * e + n; // number of constraints
 
+      qp.resize(n, m);
       set_quadratic_term(n, k, qp);
       set_linear_term(n, k, qp);
       set_constant_term(qp);
@@ -318,7 +316,6 @@ namespace Shape_regularization {
       const std::size_t k,
       Quadratic_program& qp) const {
 
-      qp.reserve_P(n);
       for (std::size_t i = 0; i < n; ++i) {
         FT value = FT(0);
         if (i < k) {
@@ -335,7 +332,6 @@ namespace Shape_regularization {
       const std::size_t k,
       Quadratic_program& qp) const {
 
-      qp.reserve_q(n);
       for (std::size_t i = 0; i < n; ++i) {
         FT value = FT(0);
         if (i >= k) {
@@ -363,8 +359,6 @@ namespace Shape_regularization {
       std::size_t it = 0;
       std::size_t ij = k;
 
-      const std::size_t A_nnz = m_targets.size() * 6 + n;
-      qp.reserve_A(A_nnz);
       for (const auto& target : m_targets) {
         const std::size_t i = target.first.first;
         const std::size_t j = target.first.second;
@@ -386,6 +380,7 @@ namespace Shape_regularization {
         qp.set_A(s + i, i, FT(1));
       }
 
+      // const std::size_t A_nnz = m_targets.size() * 6 + n;
       // CGAL_assertion(qp.A_size() == A_nnz);
     }
 
@@ -394,9 +389,6 @@ namespace Shape_regularization {
       const std::size_t k,
       const std::size_t e,
       Quadratic_program& qp) const {
-
-      qp.reserve_l(m);
-      qp.reserve_u(m);
 
       auto tit = m_targets.begin();
       for (std::size_t i = 0; i < m; ++i) {
