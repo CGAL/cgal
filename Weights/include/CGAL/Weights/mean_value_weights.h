@@ -215,7 +215,7 @@ namespace Weights {
 
     // Returns the mean-value coordinate of the specified halfedge_descriptor.
     // Returns different values for different edge orientations (which is normal
-    // behaviour according to the formula).
+    // behavior according to the formula).
     FT operator()(const halfedge_descriptor he) const {
 
       const vertex_descriptor v0 = target(he, m_pmesh);
