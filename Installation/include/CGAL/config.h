@@ -591,13 +591,13 @@ using std::max;
 #endif
 
 #ifndef CGAL_HAS_THREADS
-inline bool is_currently_single_threaded(){ return true; }
+  namespace CGAL { inline bool is_currently_single_threaded(){ return true; } }
 #elif __has_include(<sys/single_threaded.h>)
-#include <sys/single_threaded.h>
-inline bool is_currently_single_threaded(){ return ::__libc_single_threaded; }
+#  include <sys/single_threaded.h>
+  namespace CGAL { inline bool is_currently_single_threaded(){ return ::__libc_single_threaded; } }
 #else
-/* This is the conservative default */
-inline bool is_currently_single_threaded(){ return false; }
+  /* This is the conservative default */
+  namespace CGAL { inline bool is_currently_single_threaded(){ return false; } }
 #endif
 
 // Support for LEDA with threads
