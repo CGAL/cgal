@@ -137,7 +137,7 @@ extended the existing concepts. Liangliang Nan introduced the concept
 `MixedIntegerProgramTraits` and two models for solving mixed integer
 programs when implementing the \ref PkgPolygonalSurfaceReconstruction
 package. The concepts and models for solving linear and quadratic programs
-were later introduced by Dmitry Anisimov.
+were later introduced by Dmitry Anisimov and Mael Rouxel-Labbé.
 
 Simon Giraudot was responsible for gathering all concepts and classes,
 and also wrote this user manual with the help of Andreas Fabri.

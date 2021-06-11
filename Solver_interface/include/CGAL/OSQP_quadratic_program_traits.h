@@ -57,7 +57,7 @@ private:
   std::vector<FT> q_vec, l_vec, u_vec;
 
 public:
-  /// Default constructor
+  /// %Default constructor
   OSQP_quadratic_program_traits() : n(0), m(0) { }
 
   /// Constructor
@@ -85,7 +85,7 @@ public:
   }
 
 public:
-  /// Reset the problem, removing all existing entries and setting sizes to `0`.
+  /// Resets the problem, removing all existing entries and setting sizes to `0`.
   void clear()
   {
     n = m = 0;
@@ -96,7 +96,7 @@ public:
     u_vec.clear();
   }
 
-  /// Change the number of variables and the number of constraints of the problem.
+  /// Changes the number of variables and the number of constraints of the problem.
   ///
   /// \warning Calling this function also clears all previous entries.
   void resize(const int new_n,
