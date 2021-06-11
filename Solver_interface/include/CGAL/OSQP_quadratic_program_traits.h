@@ -176,9 +176,11 @@ public:
              const FT eps_rel = 1e-15,
              const bool verbose = false)
   {
-    std::cout << "num variables = " << n << std::endl;
-    std::cout << "num constraints = " << m << std::endl;
-
+    if(verbose)
+    {
+      std::cout << "num variables = " << n << std::endl;
+      std::cout << "num constraints = " << m << std::endl;
+    }
     CGAL_precondition(n >= 1 && m >= 0);
 
     CGAL_precondition(q_vec.size() == n);
@@ -189,14 +191,14 @@ public:
     c_int   P_i[P_nnz];
     c_int   P_p[n + 1];
     set_matrix_from_triplets("P", P_vec, P_x, P_i, P_p);
-    std::cout << "P_nnz: " << P_nnz << std::endl;
+    if(verbose) std::cout << "P_nnz: " << P_nnz << std::endl;
 
     const c_int A_nnz = static_cast<c_int>(A_vec.size());
     c_float A_x[A_nnz];
     c_int   A_i[A_nnz];
     c_int   A_p[n + 1];
     set_matrix_from_triplets("A", A_vec, A_x, A_i, A_p);
-    std::cout << "A_nnz: " << A_nnz << std::endl;
+    if(verbose) std::cout << "A_nnz: " << A_nnz << std::endl;
 
     const c_int q_size = static_cast<c_int>(q_vec.size());
     const c_int l_size = static_cast<c_int>(l_vec.size());
@@ -244,7 +246,7 @@ public:
     {
       exitflag = osqp_solve(work);
     }
-    catch (std::exception& e)
+    catch(std::exception& e)
     {
       std::cerr << "ERROR: OSQP solver has thrown an exception!" << std::endl;
       std::cerr << e.what() << std::endl;
