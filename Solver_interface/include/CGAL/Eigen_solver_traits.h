@@ -70,7 +70,7 @@ The class `Eigen_solver_traits` provides an interface to the sparse solvers of \
 
 \cgalModels `SparseLinearAlgebraWithFactorTraits_d` and `NormalEquationSparseLinearAlgebraTraits_d`
 
-\tparam EigenSolverT A sparse solver of \ref thirdpartyEigen "Eigen". The default solver is the iterative bi-congugate gradient stabilized solver  `Eigen::BiCGSTAB` for `double`.
+\tparam EigenSolverT A sparse solver of \ref thirdpartyEigen "Eigen". The default solver is the iterative bi-conjugate gradient stabilized solver  `Eigen::BiCGSTAB` for `double`.
 
 \sa `CGAL::Eigen_sparse_matrix<T>`
 \sa `CGAL::Eigen_sparse_symmetric_matrix<T>`
@@ -230,7 +230,7 @@ protected:
 };
 
 // Specialization of the solver for BiCGSTAB as for surface parameterization,
-// the intializer should be a vector of one's (this was the case in 3.1-alpha
+// the initializer should be a vector of one's (this was the case in 3.1-alpha
 // but not in the official 3.1).
 template<>
 class Eigen_solver_traits<Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType> >
