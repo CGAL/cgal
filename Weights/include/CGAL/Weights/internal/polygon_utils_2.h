@@ -14,7 +14,7 @@
 #ifndef CGAL_WEIGHTS_INTERNAL_POLYGON_UTILS_2_H
 #define CGAL_WEIGHTS_INTERNAL_POLYGON_UTILS_2_H
 
-// #include <CGAL/license/Weights.h>
+#include <CGAL/license/Weights.h>
 
 // STL includes.
 #include <cmath>
