@@ -31,5 +31,11 @@ int main(){
     CGAL::Barycentric_coordinates::Wachspress_coordinates_3<Mesh, Kernel> ws(ms);
     ws(q, std::back_inserter(coordinates));
 
+    std::cout << "Coordinates: " << std::endl;
+    std::cout << coordinates[0] << std::endl;
+    std::cout << coordinates[1] << std::endl;
+    std::cout << coordinates[2] << std::endl;
+    std::cout << coordinates[3] << std::endl;
+
     return EXIT_SUCCESS;
 }

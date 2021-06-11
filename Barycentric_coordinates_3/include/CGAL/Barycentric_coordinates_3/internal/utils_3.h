@@ -6,6 +6,7 @@
 
 // Internal includes
 #include <CGAL/Barycentric_coordinates_3/barycentric_enum_3.h>
+#include <CGAL/Surface_mesh/Surface_mesh.h>
 
 namespace CGAL{
 namespace Barycentric_coordinates{
@@ -69,6 +70,51 @@ namespace internal{
     *(coordinates++) = b3;
 
     return coordinates;
+  }
+
+  // Compute wp coordinates for a given vertex v and a query q
+  template<
+  typename GeomTraits, 
+  typename PolygonMesh,
+  typename VertexToPointMap, 
+  typename FaceCirculator>
+  typename GeomTraits::FT calculate_wp_vertex_query(
+  const typename GeomTraits::Point_3& vertex,
+  const typename GeomTraits::Point_3& query,
+  const PolygonMesh& mesh,
+  const VertexToPointMap& vertex_to_point_map,
+  FaceCirculator& face_circulator,
+  const GeomTraits& traits){
+
+    using FT = typename GeomTraits::FT;
+    using Point_3 = typename GeomTraits::Point_3;
+    using Polygon_mesh = PolygonMesh;
+
+    const auto det3 = traits.compute_determinant_3_object();
+    const auto dot3 = traits.compute_scalar_product_3_object();
+
+    // Vertices of triangle
+    Point_3 p0;
+    Point_3 p1;
+    Point_3 p2;
+
+    // Use face circulator 
+    CGAL::Face_around_target_circulator<Polygon_mesh> done(face_circulator);
+    do{
+
+      //Figure out how to pick every vertex ofr one face;
+      auto vertices_of_face = mesh.vertex(mesh.edge(mesh.halfedge(*face_circulator)), 0);
+
+      std::cout << p0 << std::endl;
+    
+      face_circulator++;
+    }while(face_circulator!=done);
+    
+
+    // Vector between query and vertex
+    typename GeomTraits::Vector_3 query_vertex(query, vertex);
+
+    return FT(0);
   }
 
 }

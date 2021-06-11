@@ -33,7 +33,7 @@ namespace Barycentric_coordinates {
     using Geom_traits = GeomTraits;
     using Vertex_to_point_map = VertexToPointMap;
 
-		typedef typename GeomTraits::FT FT;
+	typedef typename GeomTraits::FT FT;
     typedef typename GeomTraits::Point_3 Point_3;
 
   public:
@@ -107,7 +107,19 @@ namespace Barycentric_coordinates {
     	const auto vd = vertices(m_polygon_mesh);
     	for (const auto vertex : vd) {
 
-            std::cout << get(m_vertex_to_point_map, vertex) << "\n";
+            // Map vertex descriptor to point_3
+            const Point_3 vertex_val = get(m_vertex_to_point_map, vertex);
+
+            // Circulator of faces around some vertex(I think that edges will be better)
+            CGAL::Face_around_target_circulator<Polygon_mesh>
+            face_circulator(m_polygon_mesh.halfedge(vertex), m_polygon_mesh);
+
+            // Internal function to calculate wp coordinates
+            // To much arguments, i will change that once I got the function working
+            internal::calculate_wp_vertex_query(vertex_val, query, m_polygon_mesh,
+            m_vertex_to_point_map, face_circulator, m_traits);
+
+
     		const FT weight = FT(vi); // compute it here for query
     		CGAL_assertion(vi < m_weights.size());
     		m_weights[vi] = weight;
