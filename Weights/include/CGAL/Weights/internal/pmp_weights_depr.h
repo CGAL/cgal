@@ -30,6 +30,8 @@ namespace CGAL {
 namespace Weights {
 namespace deprecated {
 
+/// \cond SKIP_IN_MANUAL
+
 // Returns the cotangent value of the half angle [v0, v1, v2]
 // using the formula in -[Meyer02] Discrete Differential-Geometry Operators for- page 19.
 // The potential problem with the previous one (Cotangent_value) is that it does not produce symmetric results
@@ -953,6 +955,8 @@ public:
   double w_ij(halfedge_descriptor /* e */) { return 1.0; }
   double w_i(vertex_descriptor /* v_i */) { return 1.0; }
 };
+
+/// \endcond
 
 } // namespace deprecated
 } // namespace Weights
