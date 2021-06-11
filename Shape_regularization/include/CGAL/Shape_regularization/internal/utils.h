@@ -14,7 +14,7 @@
 #ifndef CGAL_SHAPE_REGULARIZATION_INTERNAL_UTILS_H
 #define CGAL_SHAPE_REGULARIZATION_INTERNAL_UTILS_H
 
-// #include <CGAL/license/Shape_regularization.h>
+#include <CGAL/license/Shape_regularization.h>
 
 // STL includes.
 #include <set>

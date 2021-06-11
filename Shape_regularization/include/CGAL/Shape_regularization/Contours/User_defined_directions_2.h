@@ -14,7 +14,7 @@
 #ifndef CGAL_SHAPE_REGULARIZATION_USER_DEFINED_PRINCIPAL_DIRECTIONS_2_H
 #define CGAL_SHAPE_REGULARIZATION_USER_DEFINED_PRINCIPAL_DIRECTIONS_2_H
 
-// #include <CGAL/license/Shape_regularization.h>
+#include <CGAL/license/Shape_regularization.h>
 
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/Contour_base_2.h>

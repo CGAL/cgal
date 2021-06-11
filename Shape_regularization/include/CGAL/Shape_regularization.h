@@ -14,7 +14,7 @@
 #ifndef CGAL_SHAPE_REGULARIZATION_HEADERS_H
 #define CGAL_SHAPE_REGULARIZATION_HEADERS_H
 
-// #include <CGAL/license/Shape_regularization.h>
+#include <CGAL/license/Shape_regularization.h>
 
 #include <CGAL/Shape_regularization/regularize_planes.h>
 #include <CGAL/Shape_regularization/regularize_segments.h>

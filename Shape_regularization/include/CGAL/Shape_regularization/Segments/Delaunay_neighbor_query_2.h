@@ -14,7 +14,7 @@
 #ifndef CGAL_SHAPE_REGULARIZATION_DELAUNAY_NEIGHBOR_QUERY_2_H
 #define CGAL_SHAPE_REGULARIZATION_DELAUNAY_NEIGHBOR_QUERY_2_H
 
-// #include <CGAL/license/Shape_regularization.h>
+#include <CGAL/license/Shape_regularization.h>
 
 // CGAL includes.
 #include <CGAL/Delaunay_triangulation_2.h>

@@ -14,7 +14,7 @@
 #ifndef CGAL_SHAPE_REGULARIZATION_CLOSED_CONTOUR_2_H
 #define CGAL_SHAPE_REGULARIZATION_CLOSED_CONTOUR_2_H
 
-// #include <CGAL/license/Shape_regularization.h>
+#include <CGAL/license/Shape_regularization.h>
 
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/Contour_base_2.h>
