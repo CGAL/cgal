@@ -14,7 +14,7 @@
 #ifndef CGAL_WEIGHTS_PMP_DEPRECATED_H
 #define CGAL_WEIGHTS_PMP_DEPRECATED_H
 
-// #include <CGAL/license/Weights.h>
+#include <CGAL/license/Weights.h>
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/Weights/internal/pmp_weights_depr.h>"
 #define CGAL_DEPRECATED_MESSAGE_DETAILS \

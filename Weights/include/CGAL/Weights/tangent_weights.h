@@ -14,7 +14,7 @@
 #ifndef CGAL_TANGENT_WEIGHTS_H
 #define CGAL_TANGENT_WEIGHTS_H
 
-// #include <CGAL/license/Weights.h>
+#include <CGAL/license/Weights.h>
 
 // Internal includes.
 #include <CGAL/Weights/internal/utils.h>

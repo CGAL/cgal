@@ -14,7 +14,7 @@
 #ifndef CGAL_VORONOI_REGION_WEIGHTS_H
 #define CGAL_VORONOI_REGION_WEIGHTS_H
 
-// #include <CGAL/license/Weights.h>
+#include <CGAL/license/Weights.h>
 
 // Internal includes.
 #include <CGAL/Weights/internal/utils.h>

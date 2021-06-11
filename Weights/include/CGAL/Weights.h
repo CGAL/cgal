@@ -14,7 +14,7 @@
 #ifndef CGAL_WEIGHTS_H
 #define CGAL_WEIGHTS_H
 
-// #include <CGAL/license/Weights.h>
+#include <CGAL/license/Weights.h>
 
 #include <CGAL/Weights/utils.h>
 #include <CGAL/Weights/uniform_weights.h>
