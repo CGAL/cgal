@@ -143,6 +143,10 @@ Classification
     removed.
 
 
+See https://www.cgal.org/2021/06/04/cgal53-beta1/ for a
+complete list of changes.
+
+
 The CGAL project is a collaborative effort to develop a robust,
 easy-to-use, and efficient C++ software library of geometric data
 structures and algorithms, like
