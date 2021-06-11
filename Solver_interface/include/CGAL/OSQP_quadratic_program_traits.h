@@ -105,6 +105,14 @@ public:
     clear();
     n = new_n;
     m = new_m;
+    P_vec.reserve(6 * n);
+    q_vec.reserve(n);
+    if(m > 0)
+    {
+      A_vec.reserve(m);
+      l_vec.reserve(m);
+      u_vec.reserve(m);
+    }
   }
 
   /// \cond SKIP_IN_MANUAL
