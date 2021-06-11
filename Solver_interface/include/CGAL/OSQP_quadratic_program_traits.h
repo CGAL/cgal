@@ -172,8 +172,8 @@ public:
 
   template<typename OutIterator>
   bool solve(OutIterator solution,
-             const FT eps_abs = 1e-10,
-             const FT eps_rel = 1e-15,
+             const double eps_abs = 1e-10,
+             const double eps_rel = 1e-15,
              const bool verbose = false)
   {
     if(verbose)
