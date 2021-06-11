@@ -52,9 +52,6 @@ public:
   typedef typename Edge_rejector::Delaunay_graph         Delaunay_graph;
   typedef typename Edge_rejector::Edge                   Edge;
   typedef typename Edge_rejector::Face_handle            Face_handle;
-  typedef typename Edge_rejector::Edge_circulator        Edge_circulator;
-  typedef typename Edge_rejector::All_edges_iterator     All_edges_iterator;
-  typedef typename Edge_rejector::Finite_edges_iterator  Finite_edges_iterator;
   typedef typename Edge_rejector::result_type            result_type;
 
 private:
@@ -99,18 +96,9 @@ public:
     return operator()(dual, Edge(f,i));
   }
 
+  template <typename EdgeIterator>
   bool operator()(const Delaunay_graph& dual,
-                  const Edge_circulator& ec) const {
-    return operator()(dual, *ec);
-  }
-
-  bool operator()(const Delaunay_graph& dual,
-                  const All_edges_iterator& eit) const {
-    return operator()(dual, *eit);
-  }
-
-  bool operator()(const Delaunay_graph& dual,
-                  const Finite_edges_iterator& eit) const {
+                  const EdgeIterator eit) const {
     return operator()(dual, *eit);
   }
 
@@ -167,9 +155,6 @@ public:
   typedef typename Edge_rejector::Delaunay_graph         Delaunay_graph;
   typedef typename Edge_rejector::Edge                   Edge;
   typedef typename Edge_rejector::Face_handle            Face_handle;
-  typedef typename Edge_rejector::Edge_circulator        Edge_circulator;
-  typedef typename Edge_rejector::All_edges_iterator     All_edges_iterator;
-  typedef typename Edge_rejector::Finite_edges_iterator  Finite_edges_iterator;
   typedef typename Edge_rejector::result_type            result_type;
 
 private:
@@ -214,18 +199,9 @@ public:
     return operator()(dual, Edge(f,i));
   }
 
+  template <typename EdgeIterator>
   bool operator()(const Delaunay_graph& dual,
-                  const Edge_circulator& ec) const {
-    return operator()(dual, *ec);
-  }
-
-  bool operator()(const Delaunay_graph& dual,
-                  const All_edges_iterator& eit) const {
-    return operator()(dual, *eit);
-  }
-
-  bool operator()(const Delaunay_graph& dual,
-                  const Finite_edges_iterator& eit) const {
+                  const EdgeIterator eit) const {
     return operator()(dual, *eit);
   }
 
@@ -250,11 +226,11 @@ public:
 
   bool is_valid() const { return true; }
 
-  bool is_valid(const Delaunay_graph& dual) const {
+  bool is_valid(const Delaunay_graph& dual) const
+  {
     bool valid = true;
-    All_edges_iterator eit;
-    for (eit = dual.all_edges_begin(); eit != dual.all_edges_end(); ++eit) {
-      Edge e = *eit;
+    for (auto eit = dual.all_edges_begin(); eit != dual.all_edges_end(); ++eit) {
+      const Edge& e = *eit;
       bool b = !emap.is_defined(e) || (emap[e] != UNDEFINED);
       valid = valid && b;
     }
