@@ -33,8 +33,13 @@ namespace Barycentric_coordinates {
     using Geom_traits = GeomTraits;
     using Vertex_to_point_map = VertexToPointMap;
 
+    using Dot_3 = typename GeomTraits::Compute_scalar_product_3;
+    using Det_3 = typename GeomTraits::Compute_determinant_3;
+    using Cross_3 = typename GeomTraits::Construct_cross_product_vector_3;
+
 	typedef typename GeomTraits::FT FT;
     typedef typename GeomTraits::Point_3 Point_3;
+    typedef typename GeomTraits::Vector_3 Vector_3;
 
   public:
     Wachspress_coordinates_3(
@@ -45,10 +50,12 @@ namespace Barycentric_coordinates {
     m_polygon_mesh(polygon_mesh),
     m_computation_policy(policy),
     m_vertex_to_point_map(vertex_to_point_map),
-    m_traits(traits) {
+    m_traits(traits), 
+    m_dot3(m_traits.compute_scalar_product_3_object()), 
+    m_det3(m_traits.compute_determinant_3_object()),
+    m_cross3(m_traits.construct_cross_product_vector_3_object()){
 
     	// preconditions, resize containers, etc.
-
     	m_weights.resize(vertices(m_polygon_mesh).size());
     }
 
@@ -74,53 +81,44 @@ namespace Barycentric_coordinates {
   	const VertexToPointMap m_vertex_to_point_map; // use it to map vertex to Point_3
   	const GeomTraits m_traits;
 
-  	std::vector<FT> m_weights;
+    const Dot_3 m_dot3;
+    const Det_3 m_det3;
+    const Cross_3 m_cross3;
 
-  	// put here any other necessary global containers
+  	std::vector<FT> m_weights;
 
   	template<typename OutputIterator>
     OutputIterator compute(
       const Point_3& query, OutputIterator coordinates) {
 
-    	// Compute weights.
-    	const FT sum = compute_weights(query);
-    	CGAL_assertion(sum > FT(0));
+        // Compute weights.
+        const FT sum = compute_weights(query);
+        CGAL_assertion(sum > FT(0));
 
-      // The coordinates must be saved in the same order as vertices in the vertex range.
-      std::size_t vi = 0;
-      const auto vd = vertices(m_polygon_mesh);
-      for (const auto vertex : vd) {
-      	CGAL_assertion(vi < m_weights.size());
-      	const FT coordinate = m_weights[vi] / sum;
-        *(coordinates++) = coordinate;
-        ++vi;
-      }
+        // The coordinates must be saved in the same order as vertices in the vertex range.
+        std::size_t vi = 0;
+        const auto vd = vertices(m_polygon_mesh);
+        for (const auto vertex : vd) {
+            CGAL_assertion(vi < m_weights.size());
+            const FT coordinate = m_weights[vi]/sum;
+            *(coordinates++) = coordinate;
+            ++vi;
+        }
     }
-
+    
     FT compute_weights(const Point_3& query) {
 
     	// Sum of weights to normalize them later.
     	FT sum = FT(0);
-			// Vertex index.
+		// Vertex index.
     	std::size_t vi = 0;
     	// Vertex range, you can make it global.
     	const auto vd = vertices(m_polygon_mesh);
     	for (const auto vertex : vd) {
 
-            // Map vertex descriptor to point_3
-            const Point_3 vertex_val = get(m_vertex_to_point_map, vertex);
+            // Call function to calculate wp coordinates
+            const FT weight = compute_wp_vertex_query(vertex, query);
 
-            // Circulator of faces around some vertex(I think that edges will be better)
-            CGAL::Face_around_target_circulator<Polygon_mesh>
-            face_circulator(m_polygon_mesh.halfedge(vertex), m_polygon_mesh);
-
-            // Internal function to calculate wp coordinates
-            // To much arguments, i will change that once I got the function working
-            internal::calculate_wp_vertex_query(vertex_val, query, m_polygon_mesh,
-            m_vertex_to_point_map, face_circulator, m_traits);
-
-
-    		const FT weight = FT(vi); // compute it here for query
     		CGAL_assertion(vi < m_weights.size());
     		m_weights[vi] = weight;
     		sum += weight;
@@ -129,6 +127,77 @@ namespace Barycentric_coordinates {
       CGAL_assertion(sum > FT(0));
       return sum;
     }
+
+    // Compute wp coordinates for a given vertex v and a query q
+    template<typename Vertex>
+    FT compute_wp_vertex_query(const Vertex& vertex, const Point_3& query){
+
+        // Map vertex descriptor to point_3
+        const Point_3 vertex_val = get(m_vertex_to_point_map, vertex);
+
+        // Circulator of faces around some vertex
+        CGAL::Face_around_target_circulator<Polygon_mesh>
+        face_circulator(m_polygon_mesh.halfedge(vertex), m_polygon_mesh);
+
+        CGAL::Face_around_target_circulator<Polygon_mesh>
+        done(face_circulator);
+
+        // Vector connecting query point to vertex;
+        Vector_3 query_vertex(query, vertex_val);
+
+        // First face. p_1 is negated because the order of the circulator is reversed
+        Vector_3 face_normal1 = get_face_normal(*face_circulator);
+        FT dist_perp1 = m_dot3(query_vertex, face_normal1);
+        Vector_3 p_1 = -face_normal1/dist_perp1;
+        face_circulator++;
+
+        // Compute weight w_v
+        FT weight = 0;
+
+        // Iterate using the circulator
+        do{
+
+            // Calculate normals of faces
+            Vector_3 face_normal_i = get_face_normal(*face_circulator); face_circulator++;
+            Vector_3 face_normal_i_1 = get_face_normal(*face_circulator); face_circulator++; 
+
+            // Distance of query to face
+            FT perp_dist_i = m_dot3(query_vertex, face_normal_i);
+            FT perp_dist_i_1 = m_dot3(query_vertex, face_normal_i_1);
+
+            // pf vector
+            Vector_3 p_i = face_normal_i/perp_dist_i;
+            Vector_3 p_i_1 = face_normal_i_1/perp_dist_i_1;
+
+            // Sum partial result to weight
+            weight += m_det3(p_1, p_i, p_i_1);
+            
+        }while(face_circulator!=done);
+
+        return weight;
+    }
+  
+
+    // Compute normal vector of the face (not normalized).
+    template<typename Face>
+    Vector_3 get_face_normal(const Face& face) {
+
+      const auto hedge = halfedge(face, m_polygon_mesh);
+      const auto vertices = vertices_around_face(hedge, m_polygon_mesh);
+      CGAL_precondition(vertices.size() >= 3);
+
+      auto vertex = vertices.begin();
+      const Point_3& point1 = get(m_vertex_to_point_map, *vertex); ++vertex;
+      const Point_3& point2 = get(m_vertex_to_point_map, *vertex); ++vertex;
+      const Point_3& point3 = get(m_vertex_to_point_map, *vertex);
+
+      const Vector_3 u = point2 - point1;
+      const Vector_3 v = point3 - point1;
+      const Vector_3 face_normal = m_cross3(u, v);
+
+      return face_normal;
+    }
+
   };
 
   template<
