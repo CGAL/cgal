@@ -35,18 +35,13 @@ struct Custom_regularization_2 {
 template<typename NT>
 class Custom_quadratic_program_traits  {
 public:
-  void reserve_P(const std::size_t) { }
-  void reserve_q(const std::size_t) { }
-  void reserve_A(const std::size_t) { }
-  void reserve_l(const std::size_t) { }
-  void reserve_u(const std::size_t) { }
-
   void  set_P(const std::size_t, const std::size_t, const FT) { }
   void  set_q(const std::size_t, const FT) { }
   void  set_r(const FT) { }
   void  set_A(const std::size_t, const std::size_t, const FT) { }
   void  set_l(const std::size_t, const FT) { }
   void  set_u(const std::size_t, const FT) { }
+  void resize(const std::size_t, const std::size_t) { }
 
   template<typename OutputIterator>
   bool solve(OutputIterator solution) {
