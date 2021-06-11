@@ -134,7 +134,7 @@ namespace Planes {
     }
 
     if (regularize_coplanarity) {
-      // Detect. co-planarity and use list_coplanar_prim to store the results.
+      // Detect coplanarity and use list_coplanar_prim to store the results.
       for (std::size_t i = 0; i < clusters.size(); ++i) {
         Vector vec_reg = clusters[i].normal;
         for (std::size_t ip = 0; ip < clusters[i].planes.size(); ++ip) {

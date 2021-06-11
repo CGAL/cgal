@@ -105,7 +105,7 @@ namespace Contours {
           \cgalParamDefault{3 unit lengths}
         \cgalParamNEnd
         \cgalParamNBegin{adjust_directions}
-          \cgalParamDescription{indicates wether the found directions should be better
+          \cgalParamDescription{indicates whether the found directions should be better
             adjusted to the original shape or not}
           \cgalParamType{boolean}
           \cgalParamDefault{true}
@@ -382,7 +382,7 @@ namespace Contours {
           continue;
         }
 
-        // Check if another wrap satisifes the conditions.
+        // Check if another wrap satisfies the conditions.
         if (is_valid_wrap(wrap)) {
           if (does_satisify_angle_conditions(
             longest.segment, wrap.segment)) {
