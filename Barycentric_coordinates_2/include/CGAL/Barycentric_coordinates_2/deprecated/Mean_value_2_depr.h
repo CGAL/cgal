@@ -98,7 +98,7 @@ public:
  * The class `Mean_value_2` implements 2D mean value coordinates ( \cite cgal:bc:hf-mvcapp-06, \cite cgal:bc:fhk-gcbcocp-06, \cite cgal:f-mvc-03 ).
  * This class is parameterized by a traits class `Traits`, and it is used as a coordinate class to complete the class `Generalized_barycentric_coordinates_2`.
  * For a polygon with three vertices (triangle) it is better to use the class `Triangle_coordinates_2`.
- * Mean value coordinates can be computed only approximately due to an inevitable square root operation, and they are necesserily positive only inside the kernel of a star-shaped polygon and inside any quadrilateral.
+ * Mean value coordinates can be computed only approximately due to an inevitable square root operation, and they are necessarily positive only inside the kernel of a star-shaped polygon and inside any quadrilateral.
 
  * \deprecated This part of the package is deprecated since the version 5.2 of \cgal.
 
@@ -126,7 +126,7 @@ public:
 
     // \name Creation
 
-    // Creates the class `Mean_value_2` that implements the behaviour of mean value coordinates for any query point that does not belong to the polygon's boundary.
+    // Creates the class `Mean_value_2` that implements the behavior of mean value coordinates for any query point that does not belong to the polygon's boundary.
     // The polygon is given by a range of vertices of the type `Traits::Point_2` stored in a container of the type <a href="https://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>.
     Mean_value_2(const std::vector<typename Traits::Point_2> &vertices, const Traits &b_traits) :
         vertex(vertices),

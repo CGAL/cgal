@@ -76,7 +76,7 @@ public:
 
     // \name Creation
 
-    // Creates the class `Wachspress_2` that implements the behaviour of Wachspress coordinates for any query point that does not belong to the polygon's boundary.
+    // Creates the class `Wachspress_2` that implements the behavior of Wachspress coordinates for any query point that does not belong to the polygon's boundary.
     // The polygon is given by a range of vertices of the type `Traits::Point_2` stored in a container of the type <a href="https://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>.
     Wachspress_2(const std::vector<typename Traits::Point_2> &vertices, const Traits &b_traits) :
         vertex(vertices),

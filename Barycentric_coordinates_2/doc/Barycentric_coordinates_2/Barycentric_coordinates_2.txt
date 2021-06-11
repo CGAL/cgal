@@ -274,18 +274,18 @@ Harmonic coordinates satisfy all the properties of barycentric coordinates for c
 concave polygons and hence this is our choice to perform a shape deformation. Note that
 even though harmonic coordinates are guaranteed to be positive inside a polygon, they
 do not guarantee a bijective mapping between the source and target shapes that is
-the target mesh can fold over the target polygon after the mapping (see the little fold over
+the target mesh can fold-over the target polygon after the mapping (see the little fold-over
 in the left shoulder of the target shape).
 
 \cgalFigureBegin{shape_deformation_example, shape_deformation.svg}
-The shape on the left is deformed into the shape on the right. The zoom shows a fold over
+The shape on the left is deformed into the shape on the right. The zoom shows a fold-over
 in the left shoulder of the target shape where the red triangle goes over the polygon boundary.
 \cgalFigureEnd
 
 \anchor deformation_example
 \cgalExample{Barycentric_coordinates_2/shape_deformation.cpp}
 
-But despite the possible foldovers, a similar technique can be used for image warping
+But despite the possible fold-overs, a similar technique can be used for image warping
 in 2D and character articulation in 3D. For example in 2D, we first enclose an image,
 which we want to deform, into a simple polygon so-called *cage*, we then
 bound each image pixel to this cage using barycentric coordinates, and finally deform

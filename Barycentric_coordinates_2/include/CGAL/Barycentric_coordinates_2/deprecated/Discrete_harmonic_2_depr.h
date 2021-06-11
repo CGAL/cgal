@@ -46,7 +46,7 @@ namespace Barycentric_coordinates_depr {
  * The class `Discrete_harmonic_2` implements 2D discrete harmonic coordinates ( \cite cgal:bc:fhk-gcbcocp-06, \cite cgal:pp-cdmsc-93, \cite cgal:bc:eddhls-maam-95 ).
  * This class is parameterized by a traits class `Traits`, and it is used as a coordinate class to complete the class `Generalized_barycentric_coordinates_2`.
  * For a polygon with three vertices (triangle) it is better to use the class `Triangle_coordinates_2`.
- * Discrete harmonic coordinates can be computed exactly. By definition, they do not necesserily give positive values.
+ * Discrete harmonic coordinates can be computed exactly. By definition, they do not necessarily give positive values.
 
  * \deprecated This part of the package is deprecated since the version 5.2 of \cgal.
 
@@ -76,7 +76,7 @@ public:
 
     // \name Creation
 
-    // Creates the class `Discrete_harmonic_2` that implements the behaviour of discrete harmonic coordinates for any query point that does not belong to the polygon's boundary.
+    // Creates the class `Discrete_harmonic_2` that implements the behavior of discrete harmonic coordinates for any query point that does not belong to the polygon's boundary.
     // The polygon is given by a range of vertices of the type `Traits::Point_2` stored in a container of the type <a href="https://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>.
     Discrete_harmonic_2(const std::vector<typename Traits::Point_2> &vertices, const Traits &b_traits) :
         vertex(vertices),
