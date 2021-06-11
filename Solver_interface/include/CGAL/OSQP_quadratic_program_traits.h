@@ -255,7 +255,7 @@ public:
 
     // Create solution.
     const c_float *x = work->solution->x;
-    for(c_int i=0; i<static_cast<c_int>(n); ++i)
+    for(std::size_t i=0; i<n; ++i)
     {
       const FT value{x[i]};
       *(++solution) = value;
