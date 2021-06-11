@@ -3,7 +3,7 @@
 \cgalConcept
 
 A concept that describes the set of methods used to define and solve a
-linear programming (LP) problem of the general form:
+linear programming (`lp`) problem of the general form:
 <center>
 \f{eqnarray*}{
 & \mbox{minimize} & \mathbf{q}^{T}\mathbf{x} + r \\
@@ -31,24 +31,9 @@ public:
   /// @{
 
   /*!
-    Allocates memory for `n` values in the vector `q`.
+    Allocates memory for `n` variables and `m` constraints in `lp`.
   */
-  void reserve_q(const std::size_t n) { }
-
-  /*!
-    Allocates memory for `k` non-zero values in the matrix `A`.
-  */
-  void reserve_A(const std::size_t k) { }
-
-  /*!
-    Allocates memory for `m` values in the vector `l`.
-  */
-  void reserve_l(const std::size_t m) { }
-
-  /*!
-    Allocates memory for `m` values in the vector `u`.
-  */
-  void reserve_u(const std::size_t m) { }
+  void resize(const std::size_t n, const std::size_t m) { }
 
   /// @}
 
@@ -56,35 +41,30 @@ public:
   /// @{
 
   /*!
-    Sets the entry `qj` of `lp` to `value`.
+    Sets the entry `qi` of `lp` to `value`.
   */
-  void set_q(const std::size_t j, const FT value)
-  { }
+  void set_q(const std::size_t i, const FT value) { }
 
   /*!
     Sets the entry `r` of `lp` to `value`.
   */
-  void set_r(const FT value)
-  { }
+  void set_r(const FT value) { }
 
   /*!
     Sets the entry `Aij` in the row `i` and column `j` of
     the constraint matrix `A` of `lp` to `value`.
   */
-  void set_A(const std::size_t i, const std::size_t j, const FT value)
-  { }
+  void set_A(const std::size_t i, const std::size_t j, const FT value) { }
 
   /*!
     Sets the entry `li` of `lp` to `value`.
   */
-  void set_l(const std::size_t i, const FT value)
-  { }
+  void set_l(const std::size_t i, const FT value) { }
 
   /*!
     Sets the entry `ui` of `lp` to `value`.
   */
-  void set_u(const std::size_t i, const FT value)
-  { }
+  void set_u(const std::size_t i, const FT value) { }
 
   /// @}
 
@@ -97,7 +77,7 @@ public:
     Number of values in `solution` equals to the number `n` of values in the vector `x`.
 
     \tparam OutIterator
-    a model of `OutputIterator` that accepts values of type `FT`
+    a model of `OutputIterator` that accepts values of type `FieldNumberType`
 
     \param solution
     an output iterator with the solution
@@ -105,8 +85,7 @@ public:
     \returns a status of the computation `success == true`
   */
   template<typename OutIterator>
-  bool solve(OutIterator solution)
-  { }
+  bool solve(OutIterator solution) { }
 
   /// @}
 };
