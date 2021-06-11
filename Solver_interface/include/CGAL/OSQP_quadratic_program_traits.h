@@ -272,7 +272,7 @@ public:
   }
   /// \endcond
 
-public:
+private:
   // Based on the code in scipy, function coo_tocsr()
   void set_matrix_from_triplets(const std::string /* name */,
                                 const std::vector<Triplet>& triplets,
