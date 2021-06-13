@@ -190,7 +190,7 @@ bool is_short() const
   return R().orientation_3_object()(Point_3(CGAL::ORIGIN),
                                     Point_3(source()),
                                     Point_3(target()),
-                                    pole())
+                                    orthogonal_pole())
     == CGAL::POSITIVE; }
 
 bool is_long() const
@@ -198,7 +198,7 @@ bool is_long() const
 { return R().orientation_3_object()(Point_3(CGAL::ORIGIN),
                                     Point_3(source()),
                                     Point_3(target()),
-                                    pole())
+                                    orthogonal_pole())
     == CGAL::NEGATIVE; }
 
 bool is_degenerate() const { return source() == target(); }
@@ -225,12 +225,12 @@ bool operator!=(const Sphere_segment<R>& so) const
 
 private:
 
-Point_3 pole() const
+Point_3 orthogonal_pole() const
 { return CGAL::ORIGIN + sphere_circle().orthogonal_vector(); }
 
 CGAL::Orientation source_orientation(const CGAL::Sphere_point<R>& p) const
 { return orientation(Point_3(CGAL::ORIGIN),
-                     pole(),
+                     orthogonal_pole(),
                      source(),
                      p);
 }
@@ -238,7 +238,7 @@ CGAL::Orientation source_orientation(const CGAL::Sphere_point<R>& p) const
 CGAL::Orientation target_orientation(const CGAL::Sphere_point<R>& p) const
 { return orientation(Point_3(CGAL::ORIGIN),
                      target(),
-                     pole(),
+                     orthogonal_pole(),
                      p);
 }
 
