@@ -166,10 +166,10 @@ if no debugging is intended. Users should thus run:
     cd CGAL-\cgalReleaseNumber/examples/Triangulation_2
     cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber -DCMAKE_BUILD_TYPE=Release . # we are here using a release tarball
 
-Note that the package Qt on brew is "keg-only", which means it cannot be "linked" with brew.
+After the Qt6 is released, the package Qt5 on brew is "keg-only", which means it is not "linked" with brew.
 You will have to specify the Qt5_DIR by hand to cmake, using something like
 
-    -DQt5_DIR=/usr/local/opt/qt/lib/cmake/Qt5
+    -DQt5_DIR=/usr/local/opt/qt@5/lib/cmake/Qt5
 
 where '/usr/local/` is actually your current brew installation directory.
 
