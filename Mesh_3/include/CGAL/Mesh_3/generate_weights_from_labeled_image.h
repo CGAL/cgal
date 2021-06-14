@@ -18,6 +18,9 @@
 #include <CGAL/Image_3.h>
 
 #include <itkImage.h>
+#include <itkThresholdImageFilter.h>
+#include <itkRescaleIntensityImageFilter.h>
+
 //#include <itkMaximumImageFilter.h>
 //#include <itkSmoothingRecursiveGaussianImageFilter.h>
 //#include <itkConnectedComponentImageFilter.h>
@@ -25,6 +28,7 @@
 #include <boost/container/flat_set.hpp>
 
 #include <iostream>
+#include <vector>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -77,11 +81,36 @@ void generate_weights(const CGAL::Image_3& image,
   using PixelType = Image_word_type;
   using ImageType = itk::Image<PixelType, 3/*Dimension*/>;
 
-  ImageType::Pointer itk_img = ImageType::New();
+  typename ImageType::Pointer itk_img = ImageType::New();
   boost::container::flat_set<Image_word_type> labels;
   internal::convert_image_3_to_itk(image, *itk_img, labels);
 
-  //  //create indicator functions //TODO
+  //create indicator images
+  using IndicatorFilter = itk::ThresholdImageFilter<ImageType>;
+  using RescaleFilterType = itk::RescaleIntensityImageFilter<ImageType, ImageType>;
+
+  std::vector<typename ImageType::Pointer> indicators(labels.size());
+
+  for (Image_word_type label : labels)
+  {
+    //compute "indicator image" for "label"
+    IndicatorFilter::Pointer indicator = IndicatorFilter::New();
+    indicator->SetInput(itk_img);
+    indicator->SetOutsideValue(0);
+    indicator->ThresholdOutside(label, label);
+    indicator->Update();
+
+    //rescale it "* 255"
+    RescaleFilterType::Pointer rescaler = RescaleFilterType::New();
+    rescaler->SetOutputMinimum(0);
+    rescaler->SetOutputMaximum(255);
+    rescaler->SetInput(indicator->GetOutput());
+    rescaler->Update();
+
+    //save for later use
+    indicators.push_back(rescaler->GetOutput());
+  }
+
   //  using ConnectedComponentImageFilterType = itk::ConnectedComponentImageFilter<ImageType, ImageType>;
   //
   //  ConnectedComponentImageFilterType::Pointer connected = ConnectedComponentImageFilterType::New();
