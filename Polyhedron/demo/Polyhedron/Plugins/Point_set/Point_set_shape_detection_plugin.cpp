@@ -210,8 +210,8 @@ private:
     Neighbor_query neighbor_query(mesh);
     Region_type region_type(
       mesh, CGAL::parameters::
-      distance_threshold(max_distance_to_plane).
-      angle_threshold(max_accepted_angle).
+      max_distance(max_distance_to_plane).
+      max_angle(max_accepted_angle).
       min_region_size(min_region_size).
       vertex_point_map(vertex_to_point_map));
     Sorting sorting(
@@ -342,12 +342,12 @@ private:
     // Region growing set up.
     Neighbor_query neighbor_query(
       *points, CGAL::parameters::
-      neighbor_radius(search_sphere_radius).
+      sphere_radius(search_sphere_radius).
       point_map(points->point_map()));
     Region_type region_type(
       *points, CGAL::parameters::
-      distance_threshold(max_distance_to_plane).
-      angle_threshold(max_accepted_angle).
+      max_distance(max_distance_to_plane).
+      max_angle(max_accepted_angle).
       min_region_size(min_region_size).
       point_map(points->point_map()).
       normal_map(points->normal_map()));
