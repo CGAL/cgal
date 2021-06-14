@@ -41,8 +41,8 @@ bool test_region_growing_on_polyline(int argc, char *argv[]) {
   using Region_growing_3 = SD::Region_growing<Polyline_3, Neighbor_query_3, Region_type_3>;
 
   // Default parameter values.
-  const FT max_distance_to_line = FT(45) / FT(10);
-  const FT max_accepted_angle   = FT(45);
+  const FT distance_threshold = FT(45) / FT(10);
+  const FT angle_threshold    = FT(45);
 
   // Load data.
   std::ifstream in(argc > 1 ? argv[1] : "data/polyline_3.polylines.txt");
@@ -67,8 +67,8 @@ bool test_region_growing_on_polyline(int argc, char *argv[]) {
   Region_type_3 region_type_3(
     polyline_3,
     CGAL::parameters::
-    max_distance(max_distance_to_line).
-    max_angle(max_accepted_angle));
+    max_distance(distance_threshold).
+    max_angle(angle_threshold));
 
   // Run 3D region growing.
   Region_growing_3 region_growing_3(
@@ -104,8 +104,8 @@ bool test_region_growing_on_polyline(int argc, char *argv[]) {
   Region_type_2 region_type_2(
     polyline_2,
     CGAL::parameters::
-    max_distance(max_distance_to_line).
-    max_angle(max_accepted_angle));
+    max_distance(distance_threshold).
+    max_angle(angle_threshold));
 
   // Run 2D region growing.
   Region_growing_2 region_growing_2(

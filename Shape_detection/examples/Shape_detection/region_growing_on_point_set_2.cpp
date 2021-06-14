@@ -40,20 +40,20 @@ int main(int argc, char *argv[]) {
   assert(is_default_input && point_set_2.size() == 3634);
 
   // Default parameter values for the data file point_set_2.xyz.
-  const FT          search_sphere_radius = FT(5);
-  const FT          max_distance_to_line = FT(45) / FT(10);
-  const FT          max_accepted_angle   = FT(45);
-  const std::size_t min_region_size      = 5;
+  const FT          sphere_radius   = FT(5);
+  const FT          max_distance    = FT(45) / FT(10);
+  const FT          max_angle       = FT(45);
+  const std::size_t min_region_size = 5;
 
   // Create instances of the classes Neighbor_query and Region_type.
   Neighbor_query neighbor_query(
-    point_set_2, CGAL::parameters::sphere_radius(search_sphere_radius));
+    point_set_2, CGAL::parameters::sphere_radius(sphere_radius));
 
   Region_type region_type(
     point_set_2,
     CGAL::parameters::
-    max_distance(max_distance_to_line).
-    max_angle(max_accepted_angle).
+    max_distance(max_distance).
+    max_angle(max_angle).
     min_region_size(min_region_size));
 
   // Create an instance of the region growing class.

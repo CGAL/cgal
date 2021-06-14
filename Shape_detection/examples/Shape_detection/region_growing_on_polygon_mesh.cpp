@@ -47,9 +47,9 @@ int main(int argc, char *argv[]) {
   assert(is_default_input && face_range.size() == 32245);
 
   // Default parameter values for the data file polygon_mesh.off.
-  const FT          max_distance_to_plane = FT(1);
-  const FT          max_accepted_angle    = FT(45);
-  const std::size_t min_region_size       = 5;
+  const FT          max_distance    = FT(1);
+  const FT          max_angle       = FT(45);
+  const std::size_t min_region_size = 5;
 
   // Create instances of the classes Neighbor_query and Region_type.
   Neighbor_query neighbor_query(polygon_mesh);
@@ -57,8 +57,8 @@ int main(int argc, char *argv[]) {
   Region_type region_type(
     polygon_mesh,
     CGAL::parameters::
-    max_distance(max_distance_to_plane).
-    max_angle(max_accepted_angle).
+    max_distance(max_distance).
+    max_angle(max_angle).
     min_region_size(min_region_size));
 
   // Sort face indices.

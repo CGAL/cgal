@@ -40,10 +40,10 @@ int main(int argc, char *argv[]) {
   assert(is_default_input && input_range.size() == 8075);
 
   // Default parameter values for the data file point_set_3.xyz.
-  const std::size_t k                     = 12;
-  const FT          max_distance_to_plane = FT(2);
-  const FT          max_accepted_angle    = FT(20);
-  const std::size_t min_region_size       = 50;
+  const std::size_t k               = 12;
+  const FT          max_distance    = FT(2);
+  const FT          max_angle       = FT(20);
+  const std::size_t min_region_size = 50;
 
   // Create instances of the classes Neighbor_query and Region_type.
   Neighbor_query neighbor_query(
@@ -54,8 +54,8 @@ int main(int argc, char *argv[]) {
   Region_type region_type(
     input_range,
     CGAL::parameters::
-    max_distance(max_distance_to_plane).
-    max_angle(max_accepted_angle).
+    max_distance(max_distance).
+    max_angle(max_angle).
     min_region_size(min_region_size).
     point_map(input_range.point_map()).
     normal_map(input_range.normal_map()));

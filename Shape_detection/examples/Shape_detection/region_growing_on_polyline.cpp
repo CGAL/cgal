@@ -51,16 +51,16 @@ int main(int argc, char *argv[]) {
   assert(is_default_input && polyline_3.size() == 249);
 
   // Default parameter values for the data file polyline_3.polylines.txt.
-  const FT max_distance_to_line = FT(45) / FT(10);
-  const FT max_accepted_angle   = FT(45);
+  const FT max_distance = FT(45) / FT(10);
+  const FT max_angle    = FT(45);
 
   // Setting up the 3D polyline algorithm.
   Neighbor_query_3 neighbor_query_3(polyline_3);
   Region_type_3 region_type_3(
     polyline_3,
     CGAL::parameters::
-    max_distance(max_distance_to_line).
-    max_angle(max_accepted_angle));
+    max_distance(max_distance).
+    max_angle(max_angle));
   Region_growing_3 region_growing_3(
     polyline_3, neighbor_query_3, region_type_3);
 
@@ -96,8 +96,8 @@ int main(int argc, char *argv[]) {
   Region_type_2 region_type_2(
     polyline_2,
     CGAL::parameters::
-    max_distance(max_distance_to_line).
-    max_angle(max_accepted_angle));
+    max_distance(max_distance).
+    max_angle(max_angle));
   Region_growing_2 region_growing_2(
     polyline_2, neighbor_query_2, region_type_2);
 
