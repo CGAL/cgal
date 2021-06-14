@@ -20,10 +20,9 @@
 #include <itkImage.h>
 #include <itkThresholdImageFilter.h>
 #include <itkRescaleIntensityImageFilter.h>
+#include <itkSmoothingRecursiveGaussianImageFilter.h>
 
 //#include <itkMaximumImageFilter.h>
-//#include <itkSmoothingRecursiveGaussianImageFilter.h>
-//#include <itkConnectedComponentImageFilter.h>
 
 #include <boost/container/flat_set.hpp>
 
@@ -88,6 +87,7 @@ void generate_weights(const CGAL::Image_3& image,
   //create indicator images
   using IndicatorFilter = itk::ThresholdImageFilter<ImageType>;
   using RescaleFilterType = itk::RescaleIntensityImageFilter<ImageType, ImageType>;
+  using FilterType = itk::SmoothingRecursiveGaussianImageFilter<ImageType, ImageType>;
 
   std::vector<typename ImageType::Pointer> indicators(labels.size());
 
@@ -107,31 +107,16 @@ void generate_weights(const CGAL::Image_3& image,
     rescaler->SetInput(indicator->GetOutput());
     rescaler->Update();
 
+    //perform gaussian smoothing
+    FilterType::Pointer smoother = FilterType::New();
+    smoother->SetSigma(sigma);
+    smoother->SetInput(rescaler->GetOutput());
+    smoother->Update();
+
     //save for later use
-    indicators.push_back(rescaler->GetOutput());
+    indicators.push_back(smoother->GetOutput());
   }
 
-  //  using ConnectedComponentImageFilterType = itk::ConnectedComponentImageFilter<ImageType, ImageType>;
-  //
-  //  ConnectedComponentImageFilterType::Pointer connected = ConnectedComponentImageFilterType::New();
-  //  //connected->SetInput(reader->GetOutput());
-  //  connected->Update();
-  //
-  //  std::size_t nb_labels = connected->GetObjectCount();
-  //  std::cout << "Number of objects: " << nb_labels << std::endl;
-  //
-  //  std::vector<ImageType> indicators(nb_labels);
-  //
-  //  //smooth indicator functions
-  //  using FilterType = itk::SmoothingRecursiveGaussianImageFilter<ImageType, ImageType>;
-  //  FilterType::Pointer smoothFilter = FilterType::New();
-  //
-  //  smoothFilter->SetSigma(sigma);
-  ////  smoothFilter->SetInput(reader->GetOutput());
-  ////
-  //////  writer->SetInput(smoothFilter->GetOutput());
-  ////
-  //
 //    //take the max of indicator functions
 //  using MaximumImageFilterType = itk::MaximumImageFilter<ImageType>;
 //  MaximumImageFilterType::Pointer maximumImageFilter = MaximumImageFilterType::New();
