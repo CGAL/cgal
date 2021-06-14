@@ -350,7 +350,7 @@ The component also provides
 The program associates all points from a region to the best-fit hyperplane (2D line or 3D plane)
 and controls the quality of this fit.
 
-The quality of region growing in a point set (2D or 3D) can be improved by slightly sacrificing the running time.
+The quality of region growing in a point set (2D or 3D) can be improved by slightly increasing the running time.
 To achieve this, one can sort indices of input points with respect to some quality criteria. These quality criteria
 can be included through the property map (see \ref Shape_detection_RegionGrowingFramework_seeding "SeedMap" for more details).
 We provide a quality sorting both for 2D and 3D points:
@@ -479,7 +479,7 @@ A typical runtime measure for a 3D point set with the K nearest neighborhood and
 
 If one wants to detect planes on a polygon mesh, this \cgal component provides the corresponding models of the concepts
 \ref Shape_detection_RegionGrowingFramework_connectivity "NeighborQuery" and \ref Shape_detection_RegionGrowingFramework_conditions "RegionType".
-In particular, it has
+In particular, it provides
 
 - `CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query` class that retrieves all edge-adjacent faces of a face, and
 - `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region` class that fits a 3D plane to the vertices of
@@ -493,7 +493,7 @@ for detecting 3D planes on `CGAL::Surface_mesh`.
 A surface mesh depicted with one color per detected plane.
 \cgalFigureEnd
 
-The quality of region growing on a polygon mesh can be improved by slightly sacrificing the running time. To achieve
+The quality of region growing on a polygon mesh can be improved by slightly increasing the running time. To achieve
 this, one can sort indices of input faces with respect to some quality criteria. These quality criteria
 can be included in region growing through the property map (see \ref Shape_detection_RegionGrowingFramework_seeding "SeedMap" for more details).
 We provide such a quality sorting:
@@ -541,12 +541,12 @@ mostly depends on the `RegionType` model's implementation, which is usually fast
 \subsection Shape_detection_RegionGrowingSegments Segment Set
 
 If one wants to detect lines in a segment set, this \cgal component provides the corresponding models of the concept
-\ref Shape_detection_RegionGrowingFramework_conditions "RegionType". In particular, it has the
+\ref Shape_detection_RegionGrowingFramework_conditions "RegionType". In particular, it provides
 
 - `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region` class that fits a 2D or 3D line
 to the chunks of 2D or 3D segments, respectively, and controls the quality of this fit.
 
-The quality of region growing in a segment set (2D or 3D) can be improved by slightly sacrificing the running time.
+The quality of region growing in a segment set (2D or 3D) can be improved by slightly increasing the running time.
 To achieve this, one can sort indices of input segments with respect to some quality criteria. These quality criteria
 can be included through the property map (see \ref Shape_detection_RegionGrowingFramework_seeding "SeedMap" for more details).
 We provide such a quality sorting:
@@ -578,13 +578,11 @@ The right choice of these parameters is important for producing the good results
 
 \subsection Shape_detection_RegionGrowingPolyline Polyline
 
-If one wants to detect lines along a 2D or 3D polyline,
-
 \cgalFigureBegin{Region_growing_on_polyline, Region_growing/region_growing_on_polyline.png}
 A 3D polyline depicted with one color per detected line.
 \cgalFigureEnd
 
-one can use the
+If one wants to detect lines along a 2D or 3D polyline, one can use the
 - `CGAL::Shape_detection::Polyline::Least_squares_line_fit_region` class that fits a 2D or 3D line
 to the chunks of polyline vertices, respectively, and controls the quality of this fit.
 
@@ -644,9 +642,31 @@ which are subgroups of axis-symmetric and orthogonal clusters) as described by V
 
 This version of Region Growing deprecates the old way to specify parameters. Now, all parameters
 are provided as \ref bgl_namedparameters "Named Parameters". That means the old constructors are deprecated.
+
+\code{.cpp}
+  // Old API.
+  Least_squares_line_fit_region region_type(
+    input_range, distance_threshold, angle_threshold, min_region_size);
+
+  // New API.
+  Least_squares_line_fit_region region_type(
+    input_range, CGAL::parameters::
+    max_distance(distance_threshold).
+    max_angle(angle_threshold).
+    min_region_size(min_region_size));
+\endcode
+
 Second, the method `update` of the \ref Shape_detection_RegionGrowingFramework_conditions "RegionType" concept
 now returns a Boolean flag. When it is `true`, the new region is further propagated, otherwise, it is rejected.
 The reason behind this change is to provide users with control for early rejection of non-valid regions.
+
+\code{.cpp}
+  // Old API.
+  void update(const std::vector<std::size_t>& indices) { };
+
+  // New API.
+  bool update(const std::vector<std::size_t>& indices) { };
+\endcode
 
 
 \section Shape_detection_History History
