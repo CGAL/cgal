@@ -72,7 +72,7 @@ public:
   /// @{
 
   /*!
-    \brief Solves the linear program.
+    \brief solves the linear program.
 
     Number of values in `solution` equals to the number `n` of values in the vector `x`.
 

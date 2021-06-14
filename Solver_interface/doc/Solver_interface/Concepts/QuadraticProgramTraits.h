@@ -46,8 +46,6 @@ public:
 
   /*!
     Sets the entries `Pij` and `Pji` of `qp` to `value`.
-
-    Note that you should define only the upper triangular part of the matrix!
   */
   void set_P(const std::size_t i, const std::size_t j, const FT value) { }
 
@@ -83,7 +81,7 @@ public:
   /// @{
 
   /*!
-    \brief Solves the quadratic program.
+    \brief solves the quadratic program.
 
     Number of values in `solution` equals to the number `n` of values in the vector `x`.
 

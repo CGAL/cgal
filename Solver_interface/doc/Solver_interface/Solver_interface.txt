@@ -21,15 +21,11 @@ Library (MKL)</a>.
 
 For mixed integer programs (either constrained or unconstrained),
 we provide models using the \ref thirdpartySCIP and \ref thirdpartyGLPK
-libraries. It is also possible to derive new models from other
-high performance libraries such as <a href = "https://projects.coin-or.org/Cbc">CBC</a> or
-<a href = "http://www.gurobi.com/">Gurobi</a>.
+libraries.
 
 For linear and quadratic programs, we provide a model using the built-in
 \ref PkgQPSolver "CGAL Linear and Quadratic Programming Solver" and a model using
-the external \ref thirdpartyOSQP library. It is also possible to derive new models
-from other quadratic programming libraries such as
-<a href = "http://pages.cs.wisc.edu/~swright/ooqp/">OOQP</a> for example.
+the external \ref thirdpartyOSQP library.
 
 
 \section SectionSolverDiagonalize Matrix Diagonalization
