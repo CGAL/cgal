@@ -14,8 +14,6 @@
 #ifndef CGAL_BARYCENTRIC_WACHSPRESS_COORDINATES_3_H
 #define CGAL_BARYCENTRIC_WACHSPRESS_COORDINATES_3_H
 
-// #include <CGAL/license/Barycentric_coordinates_3.h>
-
 // Internal includes.
 #include <CGAL/Barycentric_coordinates_3/internal/utils_3.h>
 
@@ -55,7 +53,8 @@ namespace Barycentric_coordinates {
     m_det3(m_traits.compute_determinant_3_object()),
     m_cross3(m_traits.construct_cross_product_vector_3_object()){
 
-    	// preconditions, resize containers, etc.
+        //put here conditions to ensure that the polyhedron is convex and combinatorial consistent
+    	CGAL_precondition(vertices(m_polygon_mesh).size()>=4);
     	m_weights.resize(vertices(m_polygon_mesh).size());
     }
 
@@ -77,7 +76,7 @@ namespace Barycentric_coordinates {
 
   private:
   	const PolygonMesh& m_polygon_mesh;
-  	const Computation_policy_3 m_computation_policy; // skip it for the moment
+  	const Computation_policy_3 m_computation_policy; 
   	const VertexToPointMap m_vertex_to_point_map; // use it to map vertex to Point_3
   	const GeomTraits m_traits;
 
@@ -93,12 +92,13 @@ namespace Barycentric_coordinates {
 
         // Compute weights.
         const FT sum = compute_weights(query);
-        CGAL_assertion(sum > FT(0));
+        CGAL_assertion(sum != FT(0));
 
         // The coordinates must be saved in the same order as vertices in the vertex range.
         std::size_t vi = 0;
         const auto vd = vertices(m_polygon_mesh);
         for (const auto vertex : vd) {
+
             CGAL_assertion(vi < m_weights.size());
             const FT coordinate = m_weights[vi]/sum;
             *(coordinates++) = coordinate;
@@ -110,9 +110,9 @@ namespace Barycentric_coordinates {
 
     	// Sum of weights to normalize them later.
     	FT sum = FT(0);
+        
 		// Vertex index.
     	std::size_t vi = 0;
-    	// Vertex range, you can make it global.
     	const auto vd = vertices(m_polygon_mesh);
     	for (const auto vertex : vd) {
 
@@ -124,7 +124,8 @@ namespace Barycentric_coordinates {
     		sum += weight;
     		++vi; // update vi
       }
-      CGAL_assertion(sum > FT(0));
+
+      CGAL_assertion(sum != FT(0));
       return sum;
     }
 
@@ -135,7 +136,7 @@ namespace Barycentric_coordinates {
         // Map vertex descriptor to point_3
         const Point_3 vertex_val = get(m_vertex_to_point_map, vertex);
 
-        // Circulator of faces around some vertex
+        // Circulator of faces around the vertex
         CGAL::Face_around_target_circulator<Polygon_mesh>
         face_circulator(m_polygon_mesh.halfedge(vertex), m_polygon_mesh);
 
@@ -146,9 +147,10 @@ namespace Barycentric_coordinates {
         Vector_3 query_vertex(query, vertex_val);
 
         // First face. p_1 is negated because the order of the circulator is reversed
-        Vector_3 face_normal1 = get_face_normal(*face_circulator);
-        FT dist_perp1 = m_dot3(query_vertex, face_normal1);
-        Vector_3 p_1 = -face_normal1/dist_perp1;
+        Vector_3 face_normal_1 = get_face_normal(*face_circulator);
+        FT dist_perp_1 = m_dot3(query_vertex, face_normal_1);
+        CGAL_assertion(dist_perp_1 != 0);
+        Vector_3 p_1 = -face_normal_1/dist_perp_1;
         face_circulator++;
 
         // Compute weight w_v
@@ -156,14 +158,15 @@ namespace Barycentric_coordinates {
 
         // Iterate using the circulator
         do{
-
             // Calculate normals of faces
             Vector_3 face_normal_i = get_face_normal(*face_circulator); face_circulator++;
             Vector_3 face_normal_i_1 = get_face_normal(*face_circulator); face_circulator++; 
 
             // Distance of query to face
             FT perp_dist_i = m_dot3(query_vertex, face_normal_i);
+            CGAL_assertion(perp_dist_i != 0);
             FT perp_dist_i_1 = m_dot3(query_vertex, face_normal_i_1);
+            CGAL_assertion(perp_dist_i_1 != 0);
 
             // pf vector
             Vector_3 p_i = face_normal_i/perp_dist_i;
@@ -177,7 +180,6 @@ namespace Barycentric_coordinates {
         return weight;
     }
   
-
     // Compute normal vector of the face (not normalized).
     template<typename Face>
     Vector_3 get_face_normal(const Face& face) {
