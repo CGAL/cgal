@@ -346,15 +346,16 @@ public:
                          int
                          > LRint;
 
+      auto& obj = *p.ptr();
+      const char* tn = typeid(obj).name();
 
-      auto&& t = typeid(*p.ptr());
-      if(t.name() == typeid(LR).name()){
+      if(tn == typeid(LR).name()){
         LR * lr = static_cast<LR*>(p.ptr());
         if(lr->is_lazy()){
           return std::get<2>(lr->l);
         }
       }else{
-        if(t.name() == typeid(LRint).name()){
+        if(tn == typeid(LRint).name()){
           LRint* lrint = static_cast<LRint*>(p.ptr());
           if(lrint->is_lazy()){
             return std::get<2>(lrint->l);
@@ -397,15 +398,16 @@ public:
                          int
                          > LRint;
 
+      auto& obj = *p.ptr();
+      const char* tn = typeid(obj).name();
 
-      auto&& t = typeid(*p.ptr());
-      if(t.name() == typeid(LR).name()){
+      if(tn == typeid(LR).name()){
         LR * lr = static_cast<LR*>(p.ptr());
         if(lr->is_lazy()){
           return std::get<2>(lr->l);
         }
       }else{
-        if(t.name() == typeid(LRint).name()){
+        if(tn == typeid(LRint).name()){
           LRint* lrint = static_cast<LRint*>(p.ptr());
           if(lrint->is_lazy()){
             return std::get<2>(lrint->l);
@@ -455,14 +457,16 @@ public:
                          int
                          > LRint;
 
-      auto&& t = typeid(*p.ptr());
-      if(t.name() == typeid(LR).name()){
+      auto& obj = *p.ptr();
+      const char* tn = typeid(obj).name();
+
+      if(tn == typeid(LR).name()){
         LR * lr = static_cast<LR*>(p.ptr());
         if(lr->is_lazy()){
           return std::get<1>(lr->l);
         }
       }else{
-        if(t.name() == typeid(LRint).name()){
+        if(tn == typeid(LRint).name()){
           LRint* lrint = static_cast<LRint*>(p.ptr());
           if(lrint->is_lazy()){
             return std::get<1>(lrint->l);
@@ -512,14 +516,16 @@ public:
                          int
                          > LRint;
 
-      auto&& t = typeid(*p.ptr());
-      if(t.name() == typeid(LR).name()){
+      auto& obj = *p.ptr();
+      const char* tn = typeid(obj).name();
+
+      if(tn == typeid(LR).name()){
         LR * lr = static_cast<LR*>(p.ptr());
         if(lr->is_lazy()){
           return std::get<1>(lr->l);
         }
       }else{
-        if(t.name() == typeid(LRint).name()){
+        if(tn == typeid(LRint).name()){
           LRint* lrint = static_cast<LRint*>(p.ptr());
           if(lrint->is_lazy()){
             return std::get<1>(lrint->l);
