@@ -1,1 +1,2 @@
 - update the docs
+- integrate changes from the Simon's branch with cylinders and spheres
