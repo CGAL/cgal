@@ -44,6 +44,9 @@ else()
   message(STATUS "VTK was not found")
 endif()
 
+find_package(ITK QUIET NO_MODULE)
+include(${ITK_USE_FILE})
+
 create_single_source_cgal_program("mesh_hybrid_mesh_domain.cpp")
 target_link_libraries(mesh_hybrid_mesh_domain PUBLIC CGAL::Eigen3_support)
 
@@ -149,7 +152,7 @@ if(TARGET CGAL::CGAL_ImageIO)
     target_link_libraries(mesh_3D_image PUBLIC CGAL::Eigen3_support)
 
     create_single_source_cgal_program("mesh_3D_weighted_image.cpp")
-    target_link_libraries(mesh_3D_weighted_image PUBLIC CGAL::Eigen3_support)
+    target_link_libraries(mesh_3D_weighted_image PUBLIC CGAL::Eigen3_support ${ITK_LIBRARIES})
 
     create_single_source_cgal_program(
       "mesh_3D_image_with_custom_initialization.cpp")

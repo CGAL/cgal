@@ -6,6 +6,7 @@
 
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_3/Image_plus_weights_to_labeled_function_wrapper.h>
+#include <CGAL/Mesh_3/generate_weights_from_labeled_image.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/Image_3.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
@@ -48,13 +49,12 @@ int main(int argc, char* argv[])
     std::cerr << "Error: Cannot read file " <<  fname << std::endl;
     return EXIT_FAILURE;
   }
-  CGAL::Image_3 weights;
-  fname = (argc>2)?argv[2]:"data/liver-weights.inr.gz";
-  if((argc == 1 || argc > 2) && !weights.read(fname)) {
-    std::cerr << "Error: Cannot read file " <<  argv[2] << std::endl;
-    return EXIT_FAILURE;
-  }
   /// [Loads images]
+
+  /// [Generate weights]
+  CGAL::Image_3 weights;
+  CGAL::Mesh_3::generate_weights(image, weights, 1., (unsigned char)(1));
+  /// [Generate weights]
 
   /// [Domain creation]
   Mesh_domain domain = argc > 2
