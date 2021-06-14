@@ -56,14 +56,14 @@ int main(int argc, char *argv[]) {
   // Create parameter classes.
   Neighbor_query neighbor_query(
     input_range, CGAL::parameters::
-    neighbor_radius(k).
+    k_neighbors(k).
     point_map(input_range.point_map()));
 
   Region_type region_type(
     input_range,
     CGAL::parameters::
-    distance_threshold(distance_threshold).
-    angle_threshold(angle_threshold).
+    max_distance(distance_threshold).
+    max_angle(angle_threshold).
     min_region_size(min_region_size).
     point_map(input_range.point_map()).
     normal_map(input_range.normal_map()));
@@ -89,8 +89,8 @@ int main(int argc, char *argv[]) {
     SD::internal::region_growing_planes(
       input_range, std::back_inserter(regions),
       CGAL::parameters::
-      distance_threshold(distance_threshold).
-      angle_threshold(angle_threshold).
+      max_distance(distance_threshold).
+      max_angle(angle_threshold).
       min_region_size(min_region_size).
       point_map(input_range.point_map()).
       normal_map(input_range.normal_map()));

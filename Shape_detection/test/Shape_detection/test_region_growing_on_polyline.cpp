@@ -67,8 +67,8 @@ bool test_region_growing_on_polyline(int argc, char *argv[]) {
   Region_type_3 region_type_3(
     polyline_3,
     CGAL::parameters::
-    distance_threshold(max_distance_to_line).
-    angle_threshold(max_accepted_angle));
+    max_distance(max_distance_to_line).
+    max_angle(max_accepted_angle));
 
   // Run 3D region growing.
   Region_growing_3 region_growing_3(
@@ -104,8 +104,8 @@ bool test_region_growing_on_polyline(int argc, char *argv[]) {
   Region_type_2 region_type_2(
     polyline_2,
     CGAL::parameters::
-    distance_threshold(max_distance_to_line).
-    angle_threshold(max_accepted_angle));
+    max_distance(max_distance_to_line).
+    max_angle(max_accepted_angle));
 
   // Run 2D region growing.
   Region_growing_2 region_growing_2(

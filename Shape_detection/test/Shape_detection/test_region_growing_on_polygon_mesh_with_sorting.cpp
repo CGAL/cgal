@@ -58,8 +58,8 @@ int main(int argc, char *argv[]) {
   Region_type region_type(
     polygon_mesh,
     CGAL::parameters::
-    distance_threshold(distance_threshold).
-    angle_threshold(angle_threshold).
+    max_distance(distance_threshold).
+    max_angle(angle_threshold).
     min_region_size(min_region_size).
     vertex_point_map(vertex_to_point_map));
 
@@ -84,8 +84,8 @@ int main(int argc, char *argv[]) {
     SD::internal::region_growing_planes(
       polygon_mesh, std::back_inserter(regions),
       CGAL::parameters::
-      distance_threshold(distance_threshold).
-      angle_threshold(angle_threshold).
+      max_distance(distance_threshold).
+      max_angle(angle_threshold).
       min_region_size(min_region_size).
       vertex_point_map(vertex_to_point_map));
     assert(regions.size() == 326);

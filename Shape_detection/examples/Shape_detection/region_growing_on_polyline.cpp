@@ -59,8 +59,8 @@ int main(int argc, char *argv[]) {
   Region_type_3 region_type_3(
     polyline_3,
     CGAL::parameters::
-    distance_threshold(max_distance_to_line).
-    angle_threshold(max_accepted_angle));
+    max_distance(max_distance_to_line).
+    max_angle(max_accepted_angle));
   Region_growing_3 region_growing_3(
     polyline_3, neighbor_query_3, region_type_3);
 
@@ -96,8 +96,8 @@ int main(int argc, char *argv[]) {
   Region_type_2 region_type_2(
     polyline_2,
     CGAL::parameters::
-    distance_threshold(max_distance_to_line).
-    angle_threshold(max_accepted_angle));
+    max_distance(max_distance_to_line).
+    max_angle(max_accepted_angle));
   Region_growing_2 region_growing_2(
     polyline_2, neighbor_query_2, region_type_2);
 

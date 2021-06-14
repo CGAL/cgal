@@ -58,12 +58,12 @@ int main(int argc, char *argv[]) {
 
   // Create parameter classes.
   Neighbor_query neighbor_query(
-    input_range, CGAL::parameters::neighbor_radius(k));
+    input_range, CGAL::parameters::k_neighbors(k));
   Region_type region_type(
     input_range,
     CGAL::parameters::
-    distance_threshold(distance_threshold).
-    angle_threshold(angle_threshold).
+    max_distance(distance_threshold).
+    max_angle(angle_threshold).
     min_region_size(min_region_size));
 
   // Sort indices.
@@ -86,8 +86,8 @@ int main(int argc, char *argv[]) {
     SD::internal::region_growing_lines(
       input_range, std::back_inserter(regions),
       CGAL::parameters::
-      distance_threshold(distance_threshold).
-      angle_threshold(angle_threshold).
+      max_distance(distance_threshold).
+      max_angle(angle_threshold).
       min_region_size(min_region_size));
     assert(regions.size() == 62);
   }

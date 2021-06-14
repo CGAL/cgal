@@ -101,20 +101,20 @@ namespace Point_set {
       among the ones listed below
 
       \cgalNamedParamsBegin
-        \cgalParamNBegin{distance_threshold}
+        \cgalParamNBegin{max_distance}
           \cgalParamDescription{the maximum distance from a point to a plane}
           \cgalParamType{`GeomTraits::FT`}
           \cgalParamDefault{1}
         \cgalParamNEnd
-        \cgalParamNBegin{angle_threshold}
-          \cgalParamDescription{the maximum accepted angle in degrees between
+        \cgalParamNBegin{max_angle}
+          \cgalParamDescription{the maximum angle in degrees between
           the normal of a point and the normal of a plane}
           \cgalParamType{`GeomTraits::FT`}
           \cgalParamDefault{25 degrees}
         \cgalParamNEnd
-        \cgalParamNBegin{cos_value_threshold}
-          \cgalParamDescription{the cos value computed as `cos(angle_threshold * PI / 180)`,
-          this parameter can be used instead of the `angle_threshold`}
+        \cgalParamNBegin{cos_value}
+          \cgalParamDescription{the cos value computed as `cos(max_angle * PI / 180)`,
+          this parameter can be used instead of the `max_angle`}
           \cgalParamType{`GeomTraits::FT`}
           \cgalParamDefault{`cos(25 * PI / 180)`}
         \cgalParamNEnd
@@ -140,9 +140,9 @@ namespace Point_set {
       \cgalNamedParamsEnd
 
       \pre `input_range.size() > 0`
-      \pre `distance_threshold >= 0`
-      \pre `angle_threshold >= 0 && angle_threshold <= 90`
-      \pre `cos_value_threshold >= 0 && cos_value_threshold <= 1`
+      \pre `max_distance >= 0`
+      \pre `max_angle >= 0 && max_angle <= 90`
+      \pre `cos_value >= 0 && cos_value <= 1`
       \pre `min_region_size > 0`
     */
     template<typename NamedParameters>
@@ -161,23 +161,25 @@ namespace Point_set {
     m_scalar_product_3(m_traits.compute_scalar_product_3_object()) {
 
       CGAL_precondition(input_range.size() > 0);
-      m_distance_threshold = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::distance_threshold), FT(1));
-      CGAL_precondition(m_distance_threshold >= FT(0));
+      const FT max_distance = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::max_distance), FT(1));
+      CGAL_precondition(max_distance >= FT(0));
+      m_distance_threshold = max_distance;
 
-      const FT angle_threshold = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::angle_threshold), FT(25));
-      CGAL_precondition(angle_threshold >= FT(0) && angle_threshold <= FT(90));
+      const FT max_angle = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::max_angle), FT(25));
+      CGAL_precondition(max_angle >= FT(0) && max_angle <= FT(90));
 
       m_min_region_size = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::min_region_size), 3);
       CGAL_precondition(m_min_region_size > 0);
 
-      const FT cos_value_threshold = static_cast<FT>(std::cos(CGAL::to_double(
-        (angle_threshold * static_cast<FT>(CGAL_PI)) / FT(180))));
-      m_cos_value_threshold = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::cos_value_threshold), cos_value_threshold);
-      CGAL_precondition(m_cos_value_threshold >= FT(0) && m_cos_value_threshold <= FT(1));
+      const FT default_cos_value = static_cast<FT>(std::cos(CGAL::to_double(
+        (max_angle * static_cast<FT>(CGAL_PI)) / FT(180))));
+      const FT cos_value = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::cos_value), default_cos_value);
+      CGAL_precondition(cos_value >= FT(0) && cos_value <= FT(1));
+      m_cos_value_threshold = cos_value;
     }
 
     /// @}
@@ -189,9 +191,9 @@ namespace Point_set {
       \brief implements `RegionType::is_part_of_region()`.
 
       This function controls if a point with the index `query_index` is within
-      the `distance_threshold` from the corresponding plane and if the angle
-      between its normal and the plane's normal is within the `angle_threshold`.
-      If both conditions are satisfied, it returns `true`, otherwise `false`.
+      the `max_distance` from the corresponding plane and if the angle between
+      its normal and the plane's normal is within the `max_angle`. If both conditions
+      are satisfied, it returns `true`, otherwise `false`.
 
       \param query_index
       index of the query point

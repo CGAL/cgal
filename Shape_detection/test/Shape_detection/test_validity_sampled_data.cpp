@@ -112,12 +112,12 @@ void test_copied_point_cloud (const Point_set& original_points, std::size_t nb)
   CGAL::Real_timer t;
   t.start();
   RG_query rg_query (
-    points, CGAL::parameters::neighbor_radius(parameters.cluster_epsilon));
+    points, CGAL::parameters::sphere_radius(parameters.cluster_epsilon));
   RG_region rg_region (
     points,
     CGAL::parameters::
-    distance_threshold(parameters.epsilon).
-    cos_value_threshold(parameters.normal_threshold).
+    max_distance(parameters.epsilon).
+    cos_value(parameters.normal_threshold).
     min_region_size(parameters.min_points));
   Region_growing region_growing (points, rg_query, rg_region);
   std::size_t nb_detected = 0;

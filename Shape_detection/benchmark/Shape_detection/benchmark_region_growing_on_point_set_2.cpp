@@ -42,13 +42,13 @@ void benchmark_region_growing_on_point_set_2(
 
   // Create instances of the parameter classes.
   Neighbor_query neighbor_query(
-    input_range, CGAL::parameters::neighbor_radius(sphere_radius));
+    input_range, CGAL::parameters::sphere_radius(sphere_radius));
 
   Region_type region_type(
     input_range,
     CGAL::parameters::
-    distance_threshold(distance_threshold).
-    angle_threshold(angle_threshold).
+    max_distance(distance_threshold).
+    max_angle(angle_threshold).
     min_region_size(min_region_size));
 
   // Create an instance of the region growing class.
@@ -75,8 +75,8 @@ void benchmark_region_growing_on_point_set_2(
   std::cout << "Test #"                          << test_count                << std::endl;
   std::cout << "  sphere_radius = "              << sphere_radius             << std::endl;
   std::cout << "  min_region_size = "            << min_region_size           << std::endl;
-  std::cout << "  distance_threshold = "         << distance_threshold        << std::endl;
-  std::cout << "  angle_threshold = "            << angle_threshold           << std::endl;
+  std::cout << "  max_distance = "               << distance_threshold        << std::endl;
+  std::cout << "  max_angle = "                  << angle_threshold           << std::endl;
   std::cout << "  -----"                                                      << std::endl;
   std::cout << "  Time elapsed: "                << timer.time()              << std::endl;
   std::cout << "  Number of detected regions: "  << regions.size()            << std::endl;

@@ -116,7 +116,7 @@ namespace Point_set {
       among the ones listed below
 
       \cgalNamedParamsBegin
-        \cgalParamNBegin{neighbor_radius}
+        \cgalParamNBegin{k_neighbors}
           \cgalParamDescription{the number of returned neighbors per each query point}
           \cgalParamType{`std::size_t`}
           \cgalParamDefault{12}
@@ -147,10 +147,10 @@ namespace Point_set {
       Search_traits(m_index_to_point_map)) {
 
       CGAL_precondition(input_range.size() > 0);
-      const std::size_t k = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::neighbor_radius), 12);
-      CGAL_precondition(k > 0);
-      m_number_of_neighbors = k;
+      const std::size_t K = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::k_neighbors), 12);
+      CGAL_precondition(K > 0);
+      m_number_of_neighbors = K;
       m_tree.build();
     }
 

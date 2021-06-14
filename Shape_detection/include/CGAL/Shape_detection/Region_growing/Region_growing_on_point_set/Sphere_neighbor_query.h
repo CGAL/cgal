@@ -112,7 +112,7 @@ namespace Point_set {
       among the ones listed below
 
       \cgalNamedParamsBegin
-        \cgalParamNBegin{neighbor_radius}
+        \cgalParamNBegin{sphere_radius}
           \cgalParamDescription{the fixed radius of the fuzzy sphere used for
           searching neighbors of a query point}
           \cgalParamType{`GeomTraits::FT`}
@@ -126,7 +126,7 @@ namespace Point_set {
       \cgalNamedParamsEnd
 
       \pre `input_range.size() > 0`
-      \pre `neighbor_radius > 0`
+      \pre `sphere_radius > 0`
     */
     template<typename NamedParameters>
     Sphere_neighbor_query(
@@ -144,7 +144,7 @@ namespace Point_set {
 
       CGAL_precondition(input_range.size() > 0);
       m_sphere_radius = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::neighbor_radius), FT(1));
+        parameters::get_parameter(np, internal_np::sphere_radius), FT(1));
       CGAL_precondition(m_sphere_radius > FT(0));
       m_tree.build();
     }
@@ -158,7 +158,7 @@ namespace Point_set {
       \brief implements `NeighborQuery::operator()()`.
 
       This operator finds indices of all points, which fall into a sphere
-      of the fixed radius `neighbor_radius` centered at the query point with
+      of the fixed radius `sphere_radius` centered at the query point with
       the index `query_index`. These neighbors are returned in `neighbors`.
 
       \param query_index

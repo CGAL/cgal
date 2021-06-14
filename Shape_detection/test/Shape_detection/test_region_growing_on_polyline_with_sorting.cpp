@@ -68,8 +68,8 @@ int main(int argc, char *argv[]) {
   Region_type_3 region_type_3(
     polyline_3,
     CGAL::parameters::
-    distance_threshold(max_distance_to_line).
-    angle_threshold(max_accepted_angle));
+    max_distance(max_distance_to_line).
+    max_angle(max_accepted_angle));
 
   // Sort indices.
   Sorting_3 sorting_3(
@@ -96,8 +96,8 @@ int main(int argc, char *argv[]) {
     SD::internal::region_growing_polylines(
       polyline_3, std::back_inserter(regions),
       CGAL::parameters::
-      distance_threshold(max_distance_to_line).
-      angle_threshold(max_accepted_angle));
+      max_distance(max_distance_to_line).
+      max_angle(max_accepted_angle));
     assert(regions.size() == 15);
   }
 
@@ -121,8 +121,8 @@ int main(int argc, char *argv[]) {
   Region_type_2 region_type_2(
     polyline_2,
     CGAL::parameters::
-    distance_threshold(max_distance_to_line).
-    angle_threshold(max_accepted_angle));
+    max_distance(max_distance_to_line).
+    max_angle(max_accepted_angle));
 
   // Sort indices.
   Sorting_2 sorting_2(
@@ -149,8 +149,8 @@ int main(int argc, char *argv[]) {
     SD::internal::region_growing_polylines(
       polyline_2, std::back_inserter(regions),
       CGAL::parameters::
-      distance_threshold(max_distance_to_line).
-      angle_threshold(max_accepted_angle));
+      max_distance(max_distance_to_line).
+      max_angle(max_accepted_angle));
     assert(regions.size() == 5);
   }
 

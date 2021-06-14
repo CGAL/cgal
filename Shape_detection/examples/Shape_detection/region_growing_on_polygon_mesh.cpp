@@ -57,8 +57,8 @@ int main(int argc, char *argv[]) {
   Region_type region_type(
     polygon_mesh,
     CGAL::parameters::
-    distance_threshold(max_distance_to_plane).
-    angle_threshold(max_accepted_angle).
+    max_distance(max_distance_to_plane).
+    max_angle(max_accepted_angle).
     min_region_size(min_region_size));
 
   // Sort face indices.

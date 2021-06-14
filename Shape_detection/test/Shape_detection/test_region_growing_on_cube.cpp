@@ -66,8 +66,8 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
   Region_type region_type(
     polyhedron,
     CGAL::parameters::
-    distance_threshold(distance_threshold).
-    angle_threshold(angle_threshold).
+    max_distance(distance_threshold).
+    max_angle(angle_threshold).
     min_region_size(min_region_size).
     vertex_point_map(vertex_to_point_map));
 
@@ -97,8 +97,8 @@ bool test_region_growing_on_cube(int argc, char *argv[]) {
     SD::internal::region_growing_planes(
       polyhedron, std::back_inserter(regions),
       CGAL::parameters::
-      distance_threshold(distance_threshold).
-      angle_threshold(angle_threshold).
+      max_distance(distance_threshold).
+      max_angle(angle_threshold).
       min_region_size(min_region_size).
       vertex_point_map(vertex_to_point_map));
     assert(regions.size() == face_range.size());

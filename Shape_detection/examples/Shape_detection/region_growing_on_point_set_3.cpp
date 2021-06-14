@@ -48,14 +48,14 @@ int main(int argc, char *argv[]) {
   // Create instances of the classes Neighbor_query and Region_type.
   Neighbor_query neighbor_query(
     input_range, CGAL::parameters::
-    neighbor_radius(k).
+    k_neighbors(k).
     point_map(input_range.point_map()));
 
   Region_type region_type(
     input_range,
     CGAL::parameters::
-    distance_threshold(max_distance_to_plane).
-    angle_threshold(max_accepted_angle).
+    max_distance(max_distance_to_plane).
+    max_angle(max_accepted_angle).
     min_region_size(min_region_size).
     point_map(input_range.point_map()).
     normal_map(input_range.normal_map()));
