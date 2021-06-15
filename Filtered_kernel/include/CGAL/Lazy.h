@@ -324,12 +324,6 @@ public:
 
   const ET & exact() const
   {
-#if defined(CGAL_HAS_THREADS) && defined(__gnu_linux__) && !defined(_REENTRANT)
-    // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=55394
-    // -pthread or -lpthread is just needed for linking, but I can't test that here...
-    // We could take the lack of _REENTRANT on that platform as forcing CGAL_HAS_NO_THREADS
-    static_assert(false, "Please pass -pthread to the compiler");
-#endif
     // The test is unnecessary, only use it if benchmark says so, or in order to avoid calling Lazy_exact_Ex_Cst::update_exact() (which used to contain an assertion)
     //if (is_lazy())
     std::call_once(once, [this](){this->update_exact();});
