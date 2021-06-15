@@ -124,11 +124,15 @@ angle_3d(const Vector_3& v1, const Vector_3& v2) {
 
   const double a = CGAL::to_double(v1 * v2) / (
     CGAL::sqrt(CGAL::to_double(v1.squared_length())) *
-    CGAL::sqrt(CGAL::to_double(v2.squared_length())));
+    CGAL::sqrt(CGAL::to_double(v2.squared_length())) );
 
-  if (a < -1.0) return static_cast<FT>(std::acos(-1.0) / CGAL_PI * 180.0);
-  else if (a > 1.0) return static_cast<FT>(std::acos(1.0) / CGAL_PI * 180.0);
-  return static_cast<FT>(std::acos(a) / CGAL_PI * 180.0);
+  if (a < -1.0) {
+    return static_cast<FT>(std::acos(-1.0) / CGAL_PI * 180.0);
+  } else if (a > 1.0) {
+    return static_cast<FT>(std::acos(+1.0) / CGAL_PI * 180.0);
+  } else {
+    return static_cast<FT>(std::acos(   a) / CGAL_PI * 180.0);
+  }
 }
 
 // Intersections.

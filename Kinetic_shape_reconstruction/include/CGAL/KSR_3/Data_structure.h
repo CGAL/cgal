@@ -508,9 +508,10 @@ public:
   }
 
   template<typename PointRange>
-  std::pair<std::size_t, bool> add_support_plane(const PointRange& polygon) {
+  std::pair<std::size_t, bool> add_support_plane(
+    const PointRange& polygon, const bool is_bbox) {
 
-    const Support_plane new_support_plane(polygon);
+    const Support_plane new_support_plane(polygon, is_bbox);
     std::size_t support_plane_idx = KSR::no_element();
     bool found_coplanar_polygons = false;
     bool is_added = false;
@@ -756,7 +757,7 @@ public:
 
     bool is_added = true;
     std::size_t support_plane_idx = KSR::no_element();
-    std::tie(support_plane_idx, is_added) = add_support_plane(polygon);
+    std::tie(support_plane_idx, is_added) = add_support_plane(polygon, true);
     CGAL_assertion(is_added);
     CGAL_assertion(support_plane_idx != KSR::no_element());
 
@@ -792,7 +793,7 @@ public:
 
     bool is_added = true;
     std::size_t support_plane_idx = KSR::no_element();
-    std::tie(support_plane_idx, is_added) = add_support_plane(polygon);
+    std::tie(support_plane_idx, is_added) = add_support_plane(polygon, false);
     CGAL_assertion(is_added);
     CGAL_assertion(support_plane_idx != KSR::no_element());
 

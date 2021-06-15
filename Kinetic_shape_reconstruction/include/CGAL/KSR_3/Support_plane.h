@@ -66,6 +66,8 @@ public:
 
 private:
   struct Data {
+    bool is_bbox;
+    Point_3 centroid;
     Plane_3 plane;
     Mesh mesh;
     V_vector_map direction;
@@ -93,7 +95,7 @@ public:
   }
 
   template<typename PointRange>
-  Support_plane(const PointRange& polygon) :
+  Support_plane(const PointRange& polygon, const bool is_bbox) :
   m_data(std::make_shared<Data>()) {
 
     std::vector<Point_3> points;
@@ -108,6 +110,7 @@ public:
     CGAL_assertion(n == polygon.size());
 
     // Newell's method.
+    FT cx = FT(0), cy = FT(0), cz = FT(0);
     Vector_3 normal = CGAL::NULL_VECTOR;
     for (std::size_t i = 0; i < n; ++i) {
       const std::size_t ip = (i + 1) % n;
@@ -117,11 +120,20 @@ public:
       const FT y = normal.y() + (pa.z() - pb.z()) * (pa.x() + pb.x());
       const FT z = normal.z() + (pa.x() - pb.x()) * (pa.y() + pb.y());
       normal = Vector_3(x, y, z);
+      cx += pa.x();
+      cy += pa.y();
+      cz += pa.z();
     }
     CGAL_assertion_msg(normal != CGAL::NULL_VECTOR, "ERROR: BBOX IS FLAT!");
+    CGAL_assertion(n != 0);
+    cx /= static_cast<FT>(n);
+    cy /= static_cast<FT>(n);
+    cz /= static_cast<FT>(n);
 
     m_data->k = 0;
     m_data->plane = Plane_3(points[0], KSR::normalize(normal));
+    m_data->centroid = Point_3(cx, cy, cz);
+    m_data->is_bbox = is_bbox;
     add_property_maps();
   }
 
@@ -163,6 +175,7 @@ public:
 
     using CFT       = typename SP::Kernel::FT;
     using CPoint_2  = typename SP::Kernel::Point_2;
+    using CPoint_3  = typename SP::Kernel::Point_3;
     using CPlane_3  = typename SP::Kernel::Plane_3;
     using CVector_2 = typename SP::Kernel::Vector_2;
 
@@ -175,6 +188,11 @@ public:
     std::set<CPoint_2> pts;
     std::map<Vertex_index, Vertex_index> map_vi;
     sp.data().k = m_data->k;
+    sp.data().is_bbox = m_data->is_bbox;
+    sp.data().centroid = CPoint_3(
+      static_cast<CFT>(CGAL::to_double(m_data->centroid.x())),
+      static_cast<CFT>(CGAL::to_double(m_data->centroid.y())),
+      static_cast<CFT>(CGAL::to_double(m_data->centroid.z())));
     // sp.data().plane = converter(m_data->plane);
     sp.data().plane = CPlane_3(
       static_cast<CFT>(CGAL::to_double(m_data->plane.a())),
@@ -423,6 +441,8 @@ public:
   }
 
   const Plane_3& plane() const { return m_data->plane; }
+  const Point_3& centroid() const { return m_data->centroid; }
+  bool is_bbox() const { return m_data->is_bbox; }
 
   const Mesh& mesh() const { return m_data->mesh; }
   Mesh& mesh() { return m_data->mesh; }
@@ -682,24 +702,60 @@ public:
 };
 
 template<typename Kernel>
-bool operator==(
-  const Support_plane<Kernel>& a, const Support_plane<Kernel>& b) {
+bool operator==(const Support_plane<Kernel>& a, const Support_plane<Kernel>& b) {
+
+  if (a.is_bbox() || b.is_bbox()) {
+    return false;
+  }
 
   using FT = typename Kernel::FT;
   const auto& planea = a.plane();
   const auto& planeb = b.plane();
 
-  // Are the planes parallel?
-  const FT vtol = KSR::vector_tolerance<FT>();
   const auto va = planea.orthogonal_vector();
   const auto vb = planeb.orthogonal_vector();
-  if (CGAL::abs(va * vb) < vtol) return false;
+
+  // Are the planes parallel?
+  // const FT vtol = KSR::vector_tolerance<FT>();
+  // const FT aval = CGAL::abs(va * vb);
+  // if (aval < vtol) {
+  //   return false;
+  // }
+
+  const FT vtol = FT(5); // degrees
+  const FT aval = KSR::angle_3d(va, vb);
+  if (aval >= vtol) {
+    return false;
+  }
+
+  // std::cout << "aval: " << aval << " : " << vtol << std::endl;
 
   // Are the planes coplanar?
-  const FT ptol = KSR::point_tolerance<FT>();
-  const auto pa = planea.point();
-  const auto pb = planeb.projection(pa);
-  return (KSR::distance(pa, pb) < ptol);
+  // const FT ptol = KSR::point_tolerance<FT>();
+  // const auto pa = planea.point();
+  // const auto pb = planeb.projection(pa);
+  // const FT bval = KSR::distance(pa, pb);
+  // TODO: Should we rotate the planes here before computing the distance?
+
+  const FT ptol = FT(5) / FT(10);
+  const auto pa1 = a.centroid();
+  const auto pb1 = planeb.projection(pa1);
+  const auto pb2 = b.centroid();
+  const auto pa2 = planea.projection(pb2);
+
+  const FT bval1 = KSR::distance(pa1, pb1);
+  const FT bval2 = KSR::distance(pa2, pb2);
+  const FT bval = (CGAL::min)(bval1, bval2);
+
+  // if (bval < ptol) {
+  //   std::cout << "2 " << pa << " " << pb << std::endl;
+  //   std::cout << "bval: " << bval << " : " << ptol << std::endl;
+  // }
+
+  // std::cout << "bval: " << bval << " : " << ptol << std::endl;
+  if (bval >= ptol) return false;
+  // std::cout << "- found coplanar planes" << std::endl;
+  return true;
 }
 
 } // namespace KSR_3

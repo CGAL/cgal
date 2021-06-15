@@ -39,6 +39,7 @@ private:
   using FT          = typename Kernel::FT;
   using Point_2     = typename Kernel::Point_2;
   using Point_3     = typename Kernel::Point_3;
+  using Segment_2   = typename Kernel::Segment_2;
   using Segment_3   = typename Kernel::Segment_3;
   using Transform_3 = typename Kernel::Aff_transformation_3;
 
@@ -53,10 +54,13 @@ private:
   using Bbox_3     = CGAL::Bbox_3;
   using OBB_traits = CGAL::Oriented_bounding_box_traits_3<IK>;
 
+  using Planar_shape_type = KSR::Planar_shape_type;
+
 public:
   Initializer(
     const bool verbose, const bool dprint, const bool debug, Data_structure& data) :
-  m_verbose(verbose), m_export(dprint), m_debug(debug), m_data(data)
+  m_verbose(verbose), m_export(dprint), m_debug(debug), m_data(data),
+  m_merge_type(Planar_shape_type::CONVEX_HULL)
   { }
 
   template<
@@ -141,6 +145,7 @@ private:
   const bool m_export;
   const bool m_debug;
   Data_structure& m_data;
+  const Planar_shape_type m_merge_type;
 
   template<
   typename InputRange,
@@ -496,7 +501,7 @@ private:
 
       bool is_added = true;
       std::size_t support_plane_idx = KSR::no_element();
-      std::tie(support_plane_idx, is_added) = m_data.add_support_plane(polygon_3);
+      std::tie(support_plane_idx, is_added) = m_data.add_support_plane(polygon_3, false);
       CGAL_assertion(support_plane_idx != KSR::no_element());
       convert_polygon(support_plane_idx, polygon_3, polygon_2);
 
@@ -504,11 +509,144 @@ private:
         input_indices.clear();
         input_indices.push_back(input_index);
         polygons[support_plane_idx] = std::make_pair(polygon_2, input_indices);
+
       } else {
-        CGAL_assertion_msg(false, "TODO: FINISH POLYGONS PREPROCESSING!");
+
+        CGAL_assertion(polygons.find(support_plane_idx) != polygons.end());
+        auto& pair = polygons.at(support_plane_idx);
+        auto& other_polygon = pair.first;
+        auto& other_indices = pair.second;
+        other_indices.push_back(input_index);
+        merge_polygons(support_plane_idx, polygon_2, other_polygon);
+        // CGAL_assertion_msg(false, "TODO: FINISH POLYGONS PREPROCESSING!");
       }
       ++input_index;
     }
+  }
+
+  void merge_polygons(
+    const std::size_t support_plane_idx,
+    const std::vector<Point_2>& polygon_a,
+    std::vector<Point_2>& polygon_b) {
+
+    const bool is_debug = false;
+    CGAL_assertion(support_plane_idx >= 6);
+    if (is_debug) {
+      std::cout << std::endl << "support plane idx: " << support_plane_idx << std::endl;
+    }
+
+    // Add points from a to b.
+    auto& points = polygon_b;
+    for (const auto& point : polygon_a) {
+      points.push_back(point);
+    }
+
+    // Create the merged polygon.
+    std::vector<Point_2> merged;
+    create_merged_polygon(support_plane_idx, points, merged);
+
+    if (is_debug) {
+      std::cout << "merged polygon: " << std::endl;
+      for (std::size_t i = 0; i < merged.size(); ++i) {
+        const std::size_t ip = (i + 1) % merged.size();
+        const auto& p = merged[i];
+        const auto& q = merged[ip];
+        std::cout << "2 " <<
+        m_data.to_3d(support_plane_idx, p) << " " <<
+        m_data.to_3d(support_plane_idx, q) << std::endl;
+      }
+    }
+
+    // Update b with the new merged polygon.
+    polygon_b = merged;
+  }
+
+  void create_merged_polygon(
+    const std::size_t support_plane_idx,
+    const std::vector<Point_2>& points,
+    std::vector<Point_2>& merged) const {
+
+    merged.clear();
+    switch (m_merge_type) {
+      case Planar_shape_type::CONVEX_HULL: {
+        CGAL::convex_hull_2(points.begin(), points.end(), std::back_inserter(merged) );
+        break;
+      }
+      case Planar_shape_type::RECTANGLE: {
+        CGAL_assertion_msg(false, "TODO: MERGE POLYGONS INTO A RECTANGLE!");
+        break;
+      }
+      default: {
+        CGAL_assertion_msg(false, "ERROR: MERGE POLYGONS, WRONG TYPE!");
+        break;
+      }
+    }
+    CGAL_assertion(merged.size() >= 3);
+    CGAL_assertion(is_polygon_inside_bbox(support_plane_idx, merged));
+  }
+
+  // Check if the newly created polygon goes beyond the bbox.
+  bool is_polygon_inside_bbox(
+    const std::size_t support_plane_idx,
+    const std::vector<Point_2>& merged) const {
+
+    std::vector<Point_2> bbox;
+    create_bbox(support_plane_idx, bbox);
+    CGAL_assertion(bbox.size() == 4);
+
+    for (std::size_t i = 0; i < 4; ++i) {
+      const std::size_t ip = (i + 1) % 4;
+      const auto& pi = bbox[i];
+      const auto& qi = bbox[ip];
+      const Segment_2 edge(pi, qi);
+
+      for (std::size_t j = 0; j < merged.size(); ++j) {
+        const std::size_t jp = (j + 1) % merged.size();
+        const auto& pj = merged[j];
+        const auto& qj = merged[jp];
+        const Segment_2 segment(pj, qj);
+        Point_2 inter;
+        const bool is_intersected = KSR::intersection(segment, edge, inter);
+        if (is_intersected) return false;
+      }
+    }
+    return true;
+  }
+
+  void create_bbox(
+    const std::size_t support_plane_idx,
+    std::vector<Point_2>& bbox) const {
+
+    CGAL_assertion(support_plane_idx >= 6);
+    const auto& iedges = m_data.support_plane(support_plane_idx).unique_iedges();
+    CGAL_assertion(iedges.size() > 0);
+
+    std::vector<Point_2> points;
+    points.reserve(iedges.size() * 2);
+
+    for (const auto& iedge : iedges) {
+      const auto source = m_data.source(iedge);
+      const auto target = m_data.target(iedge);
+      // std::cout << "2 " <<
+      // m_data.point_3(source) << " " <<
+      // m_data.point_3(target) << std::endl;
+      points.push_back(m_data.to_2d(support_plane_idx, source));
+      points.push_back(m_data.to_2d(support_plane_idx, target));
+    }
+    CGAL_assertion(points.size() == iedges.size() * 2);
+
+    const auto box = CGAL::bbox_2(points.begin(), points.end());
+    const Point_2 p1(box.xmin(), box.ymin());
+    const Point_2 p2(box.xmax(), box.ymin());
+    const Point_2 p3(box.xmax(), box.ymax());
+    const Point_2 p4(box.xmin(), box.ymax());
+
+    bbox.clear();
+    bbox.reserve(4);
+    bbox.push_back(p1);
+    bbox.push_back(p2);
+    bbox.push_back(p3);
+    bbox.push_back(p4);
   }
 
   void make_polygons_intersection_free() {
