@@ -249,47 +249,26 @@ public:
     Get_approx<Point_3> get_approx;
     double px, py, pz;
 
+    // check overlaps between bboxes
     if(! do_overlap(t.bbox(),b)){
       return false;
     }
+    for (int i=0; i<3; ++i)
     {
-      const Point_3& p = t[0];
+      const Point_3& p = t[i];
       if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
           fit_in_double(get_approx(p).z(), pz) )
-        {
-          if( (px >= b.xmin() && px <= b.xmax()) && (py >= b.ymin() && py <= b.ymax())  && (pz >= b.zmin() && pz <= b.zmax()) ){
-            return true;
-          }
-        }else{
+      {
+        if( (px >= b.xmin() && px <= b.xmax()) && (py >= b.ymin() && py <= b.ymax())  && (pz >= b.zmin() && pz <= b.zmax()) ){
+          return true;
+        }
+      }
+      else
+      {
         return Base::operator()(t,b);
       }
     }
 
-    {
-      const Point_3& p = t[1];
-      if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
-          fit_in_double(get_approx(p).z(), pz) )
-        {
-          if( (px >= b.xmin() && px <= b.xmax()) && (py >= b.ymin() && py <= b.ymax())  && (pz >= b.zmin() && pz <= b.zmax()) ){
-              return true;
-          }
-        }else{
-        return Base::operator()(t,b);
-      }
-    }
-
-    {
-      const Point_3& p = t[2];
-      if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
-          fit_in_double(get_approx(p).z(), pz) )
-        {
-          if( (px >= b.xmin() && px <= b.xmax()) && (py >= b.ymin() && py <= b.ymax())  && (pz >= b.zmin() && pz <= b.zmax()) ){
-              return true;
-          }
-        }else{
-        return Base::operator()(t,b);
-      }
-    }
     return Base::operator()(t,b);
   }
 
