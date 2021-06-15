@@ -21,8 +21,7 @@
 #include <itkThresholdImageFilter.h>
 #include <itkRescaleIntensityImageFilter.h>
 #include <itkSmoothingRecursiveGaussianImageFilter.h>
-
-//#include <itkMaximumImageFilter.h>
+#include <itkMaximumImageFilter.h>
 
 #include <boost/container/flat_set.hpp>
 
@@ -41,6 +40,8 @@ void convert_image_3_to_itk(const CGAL::Image_3& image,
   using PixelType = Image_word_type;
   using ImageType = itk::Image<PixelType, 3/*Dimension*/>;
 
+  itk_img.Allocate(image.xdim() * image.ydim() * image.zdim());
+
   typename ImageType::SpacingType spacing;
   spacing[0] = image.vx();
   spacing[1] = image.vy();
@@ -58,10 +59,10 @@ void convert_image_3_to_itk(const CGAL::Image_3& image,
   {
     for (std::size_t j = 0; j < image.ydim(); ++j)
     {
-      for (std::size_t k = 0; j < image.zdim(); ++k)
+      for (std::size_t k = 0; k < image.zdim(); ++k)
       {
         typename ImageType::IndexType index = {(Index)i, (Index)j, (Index)k};
-        const Image_word_type& label = image.value(i, j, k);
+        const Image_word_type label = image.value(i, j, k);
         itk_img.SetPixel(index, label);
         labels.insert(label);
       }
@@ -84,10 +85,9 @@ void generate_weights(const CGAL::Image_3& image,
   boost::container::flat_set<Image_word_type> labels;
   internal::convert_image_3_to_itk(image, *itk_img, labels);
 
-  //create indicator images
   using IndicatorFilter = itk::ThresholdImageFilter<ImageType>;
   using RescaleFilterType = itk::RescaleIntensityImageFilter<ImageType, ImageType>;
-  using FilterType = itk::SmoothingRecursiveGaussianImageFilter<ImageType, ImageType>;
+  using GaussianFilterType = itk::SmoothingRecursiveGaussianImageFilter<ImageType, ImageType>;
 
   std::vector<typename ImageType::Pointer> indicators(labels.size());
 
@@ -108,25 +108,24 @@ void generate_weights(const CGAL::Image_3& image,
     rescaler->Update();
 
     //perform gaussian smoothing
-    FilterType::Pointer smoother = FilterType::New();
-    smoother->SetSigma(sigma);
+    GaussianFilterType::Pointer smoother = GaussianFilterType::New();
     smoother->SetInput(rescaler->GetOutput());
-    smoother->Update();
+    smoother->SetSigma(sigma);
 
     //save for later use
     indicators.push_back(smoother->GetOutput());
   }
 
-//    //take the max of indicator functions
-//  using MaximumImageFilterType = itk::MaximumImageFilter<ImageType>;
-//  MaximumImageFilterType::Pointer maximumImageFilter = MaximumImageFilterType::New();
-//  //  for(itk::ProcessObject::DataObjectIdentifierType i = 0; i < connected->GetObjectCount(); ++i)
-//  //    maximumImageFilter->SetInput(i, indicators[i]);
-//  //  maximumImageFilter->Execute();
-//  //  maximumImageFilter->Update();
-//
-//    //output
-//  weights.set_data(maximumImageFilter->GetOutput());
+  //take the max of indicator functions
+  using MaximumImageFilterType = itk::MaximumImageFilter<ImageType>;
+  MaximumImageFilterType::Pointer maximumImageFilter = MaximumImageFilterType::New();
+  for(std::size_t i = 0; i < indicators.size(); ++i)
+    maximumImageFilter->SetInput(i, indicators[i]);
+
+  maximumImageFilter->Update();
+
+  //output
+  weights.set_data(maximumImageFilter->GetOutput());
 }
 
 }//namespace Mesh_3
