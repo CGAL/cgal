@@ -1,23 +1,27 @@
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Barycentric_coordinates_3/Wachspress_coordinates_3.h>
 
 //Typedefs
-using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
+using SCKER = CGAL::Simple_cartesian<double>;
+using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
+using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
 
-using FT = Kernel::FT;
-using Point_3 = Kernel::Point_3;
-using Mesh =  CGAL::Surface_mesh<Point_3>;
+template<typename Kernel>
+void test_overolads(){
 
-// REVIEW: Look here: https://github.com/danston/cgal/blob/Weights-new_package-danston/Weights/test/Weights/test_wachspress_weights.cpp
-// and test all three kernels: SCKER, EPICK, and EPECK. Do not copy the test, just how the kernels are tested.
+  using FT = typename Kernel::FT;
+  using Point_3 = typename Kernel::Point_3;
+  using Mesh =  typename CGAL::Surface_mesh<Point_3>;
 
-int main(){
   // Tetrahedron Mesh
   Mesh ms;
 
   // Set cout precision
-  std::cout.precision(20);
+  std::cout.precision(8);
 
   // Construct tetrahedron
   const Point_3 p0(0.0, 0.0, 0.0);
@@ -45,12 +49,26 @@ int main(){
     std::cout << "Coordinates: " << "(" << q << ") ---->>> " << coordinates[0] << " " <<
     coordinates[1] << " " << coordinates[2] << " " << coordinates[3] << std::endl;
   }
+}
 
 
-  // REVIEW: Actually, I do not see any tests here! The test must be something like here:
-  // https://github.com/danston/cgal/blob/Barycentric_coordinates_2-danston/Barycentric_coordinates_2/test/Barycentric_coordinates_2/test_wp_triangle.cpp
-  // that is it must compute both Wachspress and tetrahedron coordinates and then use assert(wp_coord == tetra_coord)!
-  // This looks more like an example rather than a test.
+int main(){
+
+  std::cout << "SCKER" << std::endl;
+  test_overolads<SCKER>();
+  std::cout << "EPICK" << std::endl;
+  test_overolads<EPICK>();
+  std::cout << "EPECK" << std::endl;
+  test_overolads<EPECK>();
+
+  std::cout << "* test_wachspress_weights: SUCCESS" << std::endl;
 
   return EXIT_SUCCESS;
 }
+
+
+// REVIEW: Actually, I do not see any tests here! The test must be something like here:
+// https://github.com/danston/cgal/blob/Barycentric_coordinates_2-danston/Barycentric_coordinates_2/test/Barycentric_coordinates_2/test_wp_triangle.cpp
+// that is it must compute both Wachspress and tetrahedron coordinates and then use assert(wp_coord == tetra_coord)!
+// This looks more like an example rather than a test.
+
