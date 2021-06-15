@@ -140,6 +140,16 @@ namespace internal {
     }
   }
 
+  template <class K, int SIDE>
+  inline
+  Sign
+  do_axis_intersect_aux_impl(const typename K::FT& alpha,
+                             const typename K::FT& beta,
+                             const typename K::FT& c_alpha,
+                             const typename K::FT& c_beta)
+  {
+    return - c_alpha * alpha + c_beta * beta;
+  }
 
   template <class K, int SIDE>
   inline
@@ -148,7 +158,7 @@ namespace internal {
                            const typename K::FT& beta,
                            const typename K::Vector_3* sides)
   {
-    return -sides[SIDE].z()*alpha + sides[SIDE].y()*beta;
+    return do_axis_intersect_aux_impl<K, SIDE>(alpha, beta, sides[SIDE].z(), sides[SIDE].y());
   }
 
   template <class K, int SIDE>
@@ -158,7 +168,7 @@ namespace internal {
                            const typename K::FT& beta,
                            const typename K::Vector_3* sides)
   {
-    return sides[SIDE].z()*alpha - sides[SIDE].x()*beta;
+    return do_axis_intersect_aux_impl<K, SIDE>(beta, alpha, sides[SIDE].x(), sides[SIDE].z());
   }
 
   template <class K, int SIDE>
@@ -168,7 +178,7 @@ namespace internal {
                           const typename K::FT& beta,
                           const typename K::Vector_3* sides)
   {
-    return -sides[SIDE].y()*alpha + sides[SIDE].x()*beta;
+    return do_axis_intersect_aux_impl<K, SIDE>(alpha, beta, sides[SIDE].y(), sides[SIDE].x());
   }
 
   //given a vector checks whether it is collinear to a base vector
