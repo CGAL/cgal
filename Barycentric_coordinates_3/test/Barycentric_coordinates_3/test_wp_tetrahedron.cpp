@@ -9,6 +9,9 @@ using FT = Kernel::FT;
 using Point_3 = Kernel::Point_3;
 using Mesh =  CGAL::Surface_mesh<Point_3>;
 
+// REVIEW: Look here: https://github.com/danston/cgal/blob/Weights-new_package-danston/Weights/test/Weights/test_wachspress_weights.cpp
+// and test all three kernels: SCKER, EPICK, and EPECK. Do not copy the test, just how the kernels are tested.
+
 int main(){
     // Tetrahedron Mesh
     Mesh ms;
@@ -22,20 +25,32 @@ int main(){
     CGAL::make_tetrahedron(p0, p1, p2, p3, ms);
 
     // Instantiate some interior, boundary, and exterior query points for which we compute coordinates.
+    // REVIEW: keep all the lines within 80-100 characters (in Visual Studio Code e.g. you can set a ruler at 80 characters).
+    // Also configure your edtior to remove trailing white spaces and indent using 2 spaces.
+    // Do it in all files.
     const std::vector<Point_3> queries = {  Point_3(0.25f , 0.25f, 0.25f), Point_3(0.3f, 0.2f, 0.3f), Point_3(0.1f, 0.1f, 0.1f), Point_3(0.2f, 0.5f, 0.3f),                     // interior query points
                                             Point_3(0.5f, 0.5f, 0.5f), Point_3(-1.0f, -1.0f, 1.0f), Point_3(0.5f, 0.5f, -2.0f)                      // exterior query points
                                         };
 
     CGAL::Barycentric_coordinates::Wachspress_coordinates_3<Mesh, Kernel> ws(ms);
 
+    // REVIEW: use "const query : queries". In general, try to use const as often as possible.
     for(auto q:queries){
         // Store results
+        // REVIEW: put coordinates outside the loop and clear() at each run, it is much more efficient
+        // because the memory is allocated only once and reserve() in case you know the size and you know it, it is 4 here.
         std::vector<FT> coordinates;
         ws(q, std::back_inserter(coordinates));
 
-        std::cout << "Coordinates: " << "(" << q << ") ---->>> " << coordinates[0] << " " << 
+        std::cout << "Coordinates: " << "(" << q << ") ---->>> " << coordinates[0] << " " <<
         coordinates[1] << " " << coordinates[2] << " " << coordinates[3] << std::endl;
     }
 
+    // REVIEW: Actually, I do not see any tests here! The test must be something like here:
+    // https://github.com/danston/cgal/blob/Barycentric_coordinates_2-danston/Barycentric_coordinates_2/test/Barycentric_coordinates_2/test_wp_triangle.cpp
+    // that is it must compute both Wachspress and tetrahedron coordinates and then use assert(wp_coord == tetra_coord)!
+    // This looks more like an example rather than a test.
+
     return EXIT_SUCCESS;
 }
+// REVIEW: always leave an empty line at the end of the file. Some machines do not like when it is not there!

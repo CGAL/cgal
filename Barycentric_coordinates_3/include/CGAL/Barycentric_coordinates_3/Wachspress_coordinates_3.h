@@ -48,12 +48,14 @@ namespace Barycentric_coordinates {
     m_polygon_mesh(polygon_mesh),
     m_computation_policy(policy),
     m_vertex_to_point_map(vertex_to_point_map),
-    m_traits(traits), 
-    m_dot3(m_traits.compute_scalar_product_3_object()), 
+    m_traits(traits),
+    m_dot3(m_traits.compute_scalar_product_3_object()),
     m_det3(m_traits.compute_determinant_3_object()),
     m_cross3(m_traits.construct_cross_product_vector_3_object()){
 
         //put here conditions to ensure that the polyhedron is convex and combinatorial consistent
+      // REVIEW: what about this: https://doc.cgal.org/latest/Convex_hull_3/group__PkgConvexityChecking.html#ga1e42ab960e30ee450cdebf0b5e58f9e3 ?
+      // Also: faces(m_polygon_mesh).size() >= 4 ?
     	CGAL_precondition(vertices(m_polygon_mesh).size()>=4);
     	m_weights.resize(vertices(m_polygon_mesh).size());
     }
@@ -76,10 +78,11 @@ namespace Barycentric_coordinates {
 
   private:
   	const PolygonMesh& m_polygon_mesh;
-  	const Computation_policy_3 m_computation_policy; 
+  	const Computation_policy_3 m_computation_policy;
   	const VertexToPointMap m_vertex_to_point_map; // use it to map vertex to Point_3
   	const GeomTraits m_traits;
 
+    // REVIEW: change to m_dot_3 or m_dot_product_3, always use underscores, this is CGAL style.
     const Dot_3 m_dot3;
     const Det_3 m_det3;
     const Cross_3 m_cross3;
@@ -97,24 +100,27 @@ namespace Barycentric_coordinates {
         // The coordinates must be saved in the same order as vertices in the vertex range.
         std::size_t vi = 0;
         const auto vd = vertices(m_polygon_mesh);
-        for (const auto vertex : vd) {
+        // REVIEW: CGAL_assertion(m_weights.size() == vd.size()) ?
+        // Try to add as many as possible assertions.
+        for (const auto vertex : vd) { // REVIEW: I get warning: vertex is unused variable
 
             CGAL_assertion(vi < m_weights.size());
             const FT coordinate = m_weights[vi]/sum;
             *(coordinates++) = coordinate;
             ++vi;
         }
+        // REVIEW: you forgot return! Do you compile with -Wall and -Wextra ?
     }
-    
+
     FT compute_weights(const Point_3& query) {
 
     	// Sum of weights to normalize them later.
     	FT sum = FT(0);
-        
+
 		// Vertex index.
     	std::size_t vi = 0;
     	const auto vd = vertices(m_polygon_mesh);
-    	for (const auto vertex : vd) {
+    	for (const auto vertex : vd) { // REVIEW: warning, here vertex should be passed by ref
 
             // Call function to calculate wp coordinates
             const FT weight = compute_wp_vertex_query(vertex, query);
@@ -134,6 +140,9 @@ namespace Barycentric_coordinates {
     FT compute_wp_vertex_query(const Vertex& vertex, const Point_3& query){
 
         // Map vertex descriptor to point_3
+        // REVIEW: use Point_3& that is with the reference.
+        // Even if the property_map returns by value, the life time of this ref
+        // will be extended so it is ok.
         const Point_3 vertex_val = get(m_vertex_to_point_map, vertex);
 
         // Circulator of faces around the vertex
@@ -144,23 +153,26 @@ namespace Barycentric_coordinates {
         done(face_circulator);
 
         // Vector connecting query point to vertex;
+        // REVIEW: Use const Vector_3 query_vertex....
+        // Or even better: https://doc.cgal.org/latest/Kernel_23/classKernel.html#abf20ed4375d501fdf4d0e139838ca0dc
         Vector_3 query_vertex(query, vertex_val);
 
         // First face. p_1 is negated because the order of the circulator is reversed
+        // REVIEW: const const const
         Vector_3 face_normal_1 = get_face_normal(*face_circulator);
         FT dist_perp_1 = m_dot3(query_vertex, face_normal_1);
-        CGAL_assertion(dist_perp_1 != 0);
+        CGAL_assertion(dist_perp_1 != 0); // REVIEW: != FT(0) because now you compare against integer but FT is double or whatsoever
         Vector_3 p_1 = -face_normal_1/dist_perp_1;
         face_circulator++;
 
         // Compute weight w_v
-        FT weight = 0;
+        FT weight = 0; // REVIEW: FT(0), better keep using FT(value), explicit conversion instead of implicit
 
         // Iterate using the circulator
         do{
             // Calculate normals of faces
             Vector_3 face_normal_i = get_face_normal(*face_circulator); face_circulator++;
-            Vector_3 face_normal_i_1 = get_face_normal(*face_circulator); face_circulator++; 
+            Vector_3 face_normal_i_1 = get_face_normal(*face_circulator); face_circulator++;
 
             // Distance of query to face
             FT perp_dist_i = m_dot3(query_vertex, face_normal_i);
@@ -174,12 +186,12 @@ namespace Barycentric_coordinates {
 
             // Sum partial result to weight
             weight += m_det3(p_1, p_i, p_i_1);
-            
+
         }while(face_circulator!=done);
 
         return weight;
     }
-  
+
     // Compute normal vector of the face (not normalized).
     template<typename Face>
     Vector_3 get_face_normal(const Face& face) {

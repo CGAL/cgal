@@ -1,11 +1,14 @@
 #ifndef CGAL_BARYCENTRIC_INTERNAL_UTILS_3_H
 #define CGAL_BARYCENTRIC_INTERNAL_UTILS_3_H
 
-// STL includes 
+// STL includes
 #include <tuple>
 
 // Internal includes
-#include <CGAL/Barycentric_coordinates_3/barycentric_enum_3.h>
+#include <CGAL/Barycentric_coordinates_3/barycentric_enum_3.h> // REVIEW: I do not think you will need it here.
+// REVIEW: Do not put Surface_mesh dependency here. Since you work with the face graph already, just put:
+// #include <CGAL/boost/graph/helpers.h> - It should cover all basic functions like faces(), vertices(), is_border() etc.
+// The Surface_mesh header should be included only in the files where the actual Surface_mesh<> is used.
 #include <CGAL/Surface_mesh/Surface_mesh.h>
 
 namespace CGAL{
