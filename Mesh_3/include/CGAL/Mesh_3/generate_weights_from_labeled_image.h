@@ -18,6 +18,7 @@
 #include <CGAL/Image_3.h>
 
 #include <itkImage.h>
+#include <itkImageDuplicator.h>
 #include <itkThresholdImageFilter.h>
 #include <itkRescaleIntensityImageFilter.h>
 #include <itkSmoothingRecursiveGaussianImageFilter.h>
@@ -85,6 +86,7 @@ void generate_weights(const CGAL::Image_3& image,
   boost::container::flat_set<Image_word_type> labels;
   internal::convert_image_3_to_itk(image, *itk_img, labels);
 
+  using DuplicatorType = itk::ImageDuplicator<ImageType>;
   using IndicatorFilter = itk::ThresholdImageFilter<ImageType>;
   using RescaleFilterType = itk::RescaleIntensityImageFilter<ImageType, ImageType>;
   using GaussianFilterType = itk::SmoothingRecursiveGaussianImageFilter<ImageType, ImageType>;
@@ -93,9 +95,13 @@ void generate_weights(const CGAL::Image_3& image,
 
   for (Image_word_type label : labels)
   {
+    DuplicatorType::Pointer duplicator = DuplicatorType::New();
+    duplicator->SetInputImage(itk_img);
+    duplicator->Update();
+
     //compute "indicator image" for "label"
     IndicatorFilter::Pointer indicator = IndicatorFilter::New();
-    indicator->SetInput(itk_img);
+    indicator->SetInput(duplicator->GetOutput());
     indicator->SetOutsideValue(0);
     indicator->ThresholdOutside(label, label);
     indicator->Update();
