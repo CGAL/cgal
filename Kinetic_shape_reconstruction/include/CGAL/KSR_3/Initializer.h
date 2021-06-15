@@ -460,8 +460,10 @@ private:
 
     CGAL_assertion(m_data.number_of_support_planes() > 6);
     if (m_verbose) {
+      std::cout << "* provided input polygons: " << input_range.size() << std::endl;
       std::cout << "* inserted input polygons: " << polygons.size() << std::endl;
     }
+    CGAL_assertion(polygons.size() <= input_range.size());
   }
 
   template<typename PointRange>

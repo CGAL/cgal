@@ -1574,6 +1574,8 @@ private:
         const auto& iedge = pair.first;
         CGAL_assertion(iedge != m_data.null_iedge());
         // std::cout << "iedge: " << m_data.str(iedge) << ", " << m_data.segment_3(iedge) << std::endl;
+        // std::cout << "fiedge: " << (fiedges.size() > 0) << std::endl;
+        // std::cout << "fiedge: " << m_data.segment_3(fiedges.back()) << std::endl;
         if (fiedges.size() > 0 && iedge == fiedges.back()) {
           if (m_verbose) std::cout << "- found same time iedge, prev" << std::endl;
           found_iedge = true; break;
@@ -1776,6 +1778,8 @@ private:
         const auto& iedge = pair.first;
         CGAL_assertion(iedge != m_data.null_iedge());
         // std::cout << "iedge: " << m_data.str(iedge) << ", " << m_data.segment_3(iedge) << std::endl;
+        // std::cout << "biedge: " << (biedges.size() > 0) << std::endl;
+        // std::cout << "biedge: " << m_data.segment_3(biedges.front()) << std::endl;
         if (biedges.size() > 0 && iedge == biedges.front()) {
           if (m_verbose) std::cout << "- found same time iedge, next" << std::endl;
           found_iedge = true; break;
@@ -1789,7 +1793,7 @@ private:
       } else {
         shifted_next = pn_curr - dirn / FT(10);
         if (m_verbose) std::cout << "- including iedge, next" << std::endl;
-        CGAL_assertion_msg(false, "TODO: CHECK FRONT NEXT CASE 2!");
+        // CGAL_assertion_msg(false, "TODO: CHECK FRONT NEXT CASE 2!");
       }
     } else {
       const auto pn_last = m_data.point_2(next, next_time);
@@ -1980,6 +1984,8 @@ private:
         const auto& iedge = pair.first;
         CGAL_assertion(iedge != m_data.null_iedge());
         // std::cout << "iedge: " << m_data.str(iedge) << ", " << m_data.segment_3(iedge) << std::endl;
+        // std::cout << "fiedge: " << (fiedges.size() > 0) << std::endl;
+        // std::cout << "fiedge: " << m_data.segment_3(fiedges.back()) << std::endl;
         if (fiedges.size() > 0 && iedge == fiedges.back()) {
           if (m_verbose) std::cout << "- found same time iedge, prev" << std::endl;
           found_iedge = true; break;
@@ -2018,6 +2024,8 @@ private:
         const auto& iedge = pair.first;
         CGAL_assertion(iedge != m_data.null_iedge());
         // std::cout << "iedge: " << m_data.str(iedge) << ", " << m_data.segment_3(iedge) << std::endl;
+        // std::cout << "biedge: " << (biedges.size() > 0) << std::endl;
+        // std::cout << "biedge: " << m_data.segment_3(biedges.front()) << std::endl;
         if (biedges.size() > 0 && iedge == biedges.front()) {
           if (m_verbose) std::cout << "- found same time iedge, next" << std::endl;
           found_iedge = true; break;

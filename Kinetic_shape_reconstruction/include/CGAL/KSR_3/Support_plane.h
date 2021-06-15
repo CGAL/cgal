@@ -722,7 +722,7 @@ bool operator==(const Support_plane<Kernel>& a, const Support_plane<Kernel>& b) 
   //   return false;
   // }
 
-  const FT vtol = FT(5); // degrees
+  const FT vtol = FT(5); // degrees // TODO: We should put it as a parameter.
   const FT aval = KSR::angle_3d(va, vb);
   if (aval >= vtol) {
     return false;
@@ -737,7 +737,7 @@ bool operator==(const Support_plane<Kernel>& a, const Support_plane<Kernel>& b) 
   // const FT bval = KSR::distance(pa, pb);
   // TODO: Should we rotate the planes here before computing the distance?
 
-  const FT ptol = FT(5) / FT(10);
+  const FT ptol = FT(5) / FT(10); // TODO: We should put it as a parameter.
   const auto pa1 = a.centroid();
   const auto pb1 = planeb.projection(pa1);
   const auto pb2 = b.centroid();
