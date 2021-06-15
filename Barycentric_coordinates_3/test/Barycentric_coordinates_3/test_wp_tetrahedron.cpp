@@ -66,7 +66,7 @@ int main(){
   return EXIT_SUCCESS;
 }
 
-
+//IMPORTANT!!!!!
 // REVIEW: Actually, I do not see any tests here! The test must be something like here:
 // https://github.com/danston/cgal/blob/Barycentric_coordinates_2-danston/Barycentric_coordinates_2/test/Barycentric_coordinates_2/test_wp_triangle.cpp
 // that is it must compute both Wachspress and tetrahedron coordinates and then use assert(wp_coord == tetra_coord)!

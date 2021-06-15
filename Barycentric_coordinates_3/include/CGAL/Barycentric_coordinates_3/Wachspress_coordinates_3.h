@@ -40,7 +40,7 @@ namespace Barycentric_coordinates {
     using Cross_3 = typename GeomTraits::Construct_cross_product_vector_3;
     using Construct_vec_3 = typename GeomTraits::Construct_vector_3;
 
-	typedef typename GeomTraits::FT FT;
+	  typedef typename GeomTraits::FT FT;
     typedef typename GeomTraits::Point_3 Point_3;
     typedef typename GeomTraits::Vector_3 Vector_3;
 
