@@ -142,18 +142,18 @@ namespace internal {
 
   template <class K, int SIDE>
   inline
-  Sign
+  Uncertain<Sign>
   do_axis_intersect_aux_impl(const typename K::FT& alpha,
                              const typename K::FT& beta,
                              const typename K::FT& c_alpha,
                              const typename K::FT& c_beta)
   {
-    return - c_alpha * alpha + c_beta * beta;
+    return sign(- c_alpha * alpha + c_beta * beta);
   }
 
   template <class K, int SIDE>
   inline
-  typename K::FT
+  Sign
   do_axis_intersect_aux_A0(const typename K::FT& alpha,
                            const typename K::FT& beta,
                            const typename K::Vector_3* sides)
@@ -163,7 +163,7 @@ namespace internal {
 
   template <class K, int SIDE>
   inline
-  typename K::FT
+  Sign
   do_axis_intersect_aux_A1(const typename K::FT& alpha,
                            const typename K::FT& beta,
                            const typename K::Vector_3* sides)
@@ -173,7 +173,7 @@ namespace internal {
 
   template <class K, int SIDE>
   inline
-  typename K::FT
+  Sign
   do_axis_intersect_aux_A2(const typename K::FT& alpha,
                           const typename K::FT& beta,
                           const typename K::Vector_3* sides)
@@ -217,31 +217,31 @@ namespace internal {
     {
     case 0: {
       // t_max >= t_min
-      Uncertain<bool> b =  do_axis_intersect_aux_A0<K,SIDE>(k->y()-j->y(), k->z()-j->z(), sides) >= 0;
+      Uncertain<bool> b =  do_axis_intersect_aux_A0<K,SIDE>(k->y()-j->y(), k->z()-j->z(), sides) != NEGATIVE;
       if (is_indeterminate(b))
         return b;
       if(b) std::swap(j,k);
-      return CGAL_AND((do_axis_intersect_aux_A0<K,SIDE>(p_min.y()-j->y(), p_min.z()-j->z(), sides) <= 0),
-                      (do_axis_intersect_aux_A0<K,SIDE>(p_max.y()-k->y(), p_max.z()-k->z(), sides) >= 0) );
+      return CGAL_AND((do_axis_intersect_aux_A0<K,SIDE>(p_min.y()-j->y(), p_min.z()-j->z(), sides) != POSITIVE),
+                      (do_axis_intersect_aux_A0<K,SIDE>(p_max.y()-k->y(), p_max.z()-k->z(), sides) != NEGATIVE) );
     }
     case 1: {
       // t_max >= t_min
-      Uncertain<bool> b =  do_axis_intersect_aux_A1<K,SIDE>(k->x()-j->x(), k->z()-j->z(), sides) >= 0;
+      Uncertain<bool> b =  do_axis_intersect_aux_A1<K,SIDE>(k->x()-j->x(), k->z()-j->z(), sides) != NEGATIVE;
       if (is_indeterminate(b))
         return b;
       if(b) std::swap(j,k);
-      return  CGAL_AND((do_axis_intersect_aux_A1<K,SIDE>(p_min.x()-j->x(), p_min.z()-j->z(), sides) <= 0),
-                       (do_axis_intersect_aux_A1<K,SIDE>(p_max.x()-k->x(), p_max.z()-k->z(), sides) >= 0) );
+      return  CGAL_AND((do_axis_intersect_aux_A1<K,SIDE>(p_min.x()-j->x(), p_min.z()-j->z(), sides) != POSITIVE),
+                       (do_axis_intersect_aux_A1<K,SIDE>(p_max.x()-k->x(), p_max.z()-k->z(), sides) != NEGATIVE) );
 
     }
     case 2: {
       // t_max >= t_min
-      Uncertain<bool> b = do_axis_intersect_aux_A2<K,SIDE>(k->x()-j->x(), k->y()-j->y(), sides) >= 0;
+      Uncertain<bool> b = do_axis_intersect_aux_A2<K,SIDE>(k->x()-j->x(), k->y()-j->y(), sides) != NEGATIVE;
       if ( is_indeterminate(b))
         return b;
       if(b) std::swap(j,k);
-      return  CGAL_AND((do_axis_intersect_aux_A2<K,SIDE>(p_min.x()-j->x(), p_min.y()-j->y(), sides) <= 0),
-                       (do_axis_intersect_aux_A2<K,SIDE>(p_max.x()-k->x(), p_max.y()-k->y(), sides) >= 0) );
+      return  CGAL_AND((do_axis_intersect_aux_A2<K,SIDE>(p_min.x()-j->x(), p_min.y()-j->y(), sides) != POSITIVE),
+                       (do_axis_intersect_aux_A2<K,SIDE>(p_max.x()-k->x(), p_max.y()-k->y(), sides) != NEGATIVE) );
     }
     default:
       // Should not happen
