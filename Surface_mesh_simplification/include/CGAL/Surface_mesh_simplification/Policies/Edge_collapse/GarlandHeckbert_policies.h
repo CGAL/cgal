@@ -1,3 +1,15 @@
+// Copyright (c) 2019  GeometryFactory (France). All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Baskin Burak Senbaslar,
+//                 Mael Rouxel-Labbé,
+//                 Julian Komaromy
+
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_GARLANDHECKBERT_POLICIES_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_GARLANDHECKBERT_POLICIES_H
 
@@ -12,63 +24,71 @@
 namespace CGAL {
 namespace Surface_mesh_simplification {
 
-// forward-declare template class
-template<typename TriangleMesh, typename GeomTraits>
-class GarlandHeckbert_policies;
-
-template<typename TriangleMesh, typename GeomTraits>
-using Cost_property = CGAL::dynamic_vertex_property_t<Eigen::Matrix<typename GeomTraits::FT, 4, 4,
-  Eigen::DontAlign>>;
-
-template<typename TriangleMesh, typename GeomTraits>
-using Vertex_cost_map = typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<
-  Eigen::Matrix<typename GeomTraits::FT, 4, 4, Eigen::DontAlign>>>::type;
-
-template<typename TriangleMesh, typename GeomTraits>
-using Cost_base = internal::GarlandHeckbert_cost_base<
-    Vertex_cost_map<TriangleMesh, GeomTraits>, 
-    GeomTraits, 
-    GarlandHeckbert_policies<TriangleMesh, GeomTraits>>;
-
-template<typename TriangleMesh, typename GeomTraits>
-using Placement_base = internal::GarlandHeckbert_placement_base<
-    Vertex_cost_map<TriangleMesh, GeomTraits>, 
-    GeomTraits, 
-    GarlandHeckbert_policies<TriangleMesh, GeomTraits>>;
-
-  // derived class implements functions used in the base class that
-  // takes the derived class as template argument - see "CRTP"
+// derived class implements functions used in the base class that
+// takes the derived class as template argument - see "CRTP"
 template<typename TriangleMesh, typename GeomTraits>
 class GarlandHeckbert_policies : 
-  public Placement_base<TriangleMesh, GeomTraits>,
-  public Cost_base<TriangleMesh, GeomTraits>
+  public internal::GarlandHeckbert_placement_base<
+    typename boost::property_map<
+      TriangleMesh, 
+      CGAL::dynamic_vertex_property_t<Eigen::Matrix<typename GeomTraits::FT, 4, 4, Eigen::DontAlign>>
+    >::type,
+    GeomTraits,
+    GarlandHeckbert_policies<TriangleMesh, GeomTraits>
+  >,
+  public internal::GarlandHeckbert_cost_base<
+    typename boost::property_map<
+      TriangleMesh, 
+      CGAL::dynamic_vertex_property_t<Eigen::Matrix<typename GeomTraits::FT, 4, 4, Eigen::DontAlign>>
+    >::type,
+    GeomTraits,
+    GarlandHeckbert_policies<TriangleMesh, GeomTraits>
+  >
 {
 
   public:
+    typedef typename GeomTraits::FT FT;
+    
+    typedef typename Eigen::Matrix<FT, 4, 4, Eigen::DontAlign> GH_matrix;
+    typedef CGAL::dynamic_vertex_property_t<GH_matrix> Cost_property;
+    
+    typedef typename boost::property_map<TriangleMesh, Cost_property>::type Vertex_cost_map;
 
-    typedef Cost_base<TriangleMesh, GeomTraits> Get_cost;
-    typedef Placement_base<TriangleMesh, GeomTraits> Get_placement;
+    typedef internal::GarlandHeckbert_placement_base<
+      Vertex_cost_map, GeomTraits, GarlandHeckbert_policies<TriangleMesh, GeomTraits>
+      > Placement_base;
 
+    typedef internal::GarlandHeckbert_cost_base<
+      Vertex_cost_map, GeomTraits, GarlandHeckbert_policies<TriangleMesh, GeomTraits>
+      > Cost_base;
+    
+    // both types are the same, this is so we avoid casting back to the base class in
+    // get_cost() or get_placement()
+    typedef GarlandHeckbert_policies Get_cost;
+    typedef GarlandHeckbert_policies Get_placement;
+    
+    // introduce both operators into scope so we get an overload operator()
+    // this is needed since Get_cost and Get_placement are the same type
+    using Cost_base::operator();
+    using Placement_base::operator();
+      
     // these using directives are needed to choose between the definitions of these types
     // in Cost_base and Placement_base (even though they are the same)
     // TODO alternatives - e.g. rename base class types so they don't clash
-    using typename Cost_base<TriangleMesh, GeomTraits>::Mat_4;
-    using typename Cost_base<TriangleMesh, GeomTraits>::Col_4;
-    using typename Cost_base<TriangleMesh, GeomTraits>::Point_3;
-    using typename Cost_base<TriangleMesh, GeomTraits>::Vector_3;
-
-    typedef typename GeomTraits::FT FT;
+    using typename Cost_base::Mat_4;
+    using typename Cost_base::Col_4;
+    using typename Cost_base::Point_3;
+    using typename Cost_base::Vector_3;
 
     GarlandHeckbert_policies(TriangleMesh& tmesh, FT dm = FT(100)) 
-      : Get_cost(dm) {
-      Vertex_cost_map<TriangleMesh, GeomTraits> vcm_ = get(Cost_property<TriangleMesh, GeomTraits>(),
-          tmesh);
+    {
+      vcm_ = get(Cost_property(), tmesh);
 
       /**
        * initialize the two base class cost matrices (protected members)
        */
-      Get_cost::m_cost_matrices = vcm_;
-      Get_placement::m_cost_matrices = vcm_;
+      Cost_base::init_vcm(vcm_);
+      Placement_base::init_vcm(vcm_);
     }
 
     Col_4 construct_optimal_point(const Mat_4& aQuadric, const Col_4& p0, const Col_4& p1) const 
@@ -124,24 +144,32 @@ class GarlandHeckbert_policies :
     Mat_4 construct_quadric_from_normal(const Vector_3& normal, const Point_3& point, const
         GeomTraits& gt) const {
 
-      const auto dot_product = gt.compute_scalar_product_3_object();
-      const auto construct_vector = gt.construct_vector_3_object();
+      auto dot_product = gt.compute_scalar_product_3_object();
+      auto construct_vector = gt.construct_vector_3_object();
       
       // negative dot product between the normal and the position vector
-      const auto d = - dot_product(normal, construct_vector(ORIGIN, point));
+      const FT d = - dot_product(normal, construct_vector(ORIGIN, point));
 
       // row vector given by d appended to the normal
-      const auto row = Eigen::Matrix<FT, 1, 4>(normal.x(), normal.y(), normal.z(), d);
+      const Eigen::Matrix<FT, 1, 4> row(normal.x(), normal.y(), normal.z(), d);
 
       // outer product
       return row.transpose() * row;
     }
 
+    const Get_cost& get_cost() const {
+      return *this;
+    }
+    
+    const Get_placement& get_placement() const {
+      return *this;
+    }
+
   private:
-    TriangleMesh tm_;
+    Vertex_cost_map vcm_;
 };
 
 } //namespace Surface_mesh_simplification
 } //namespace CGAL
 
-#endif
+#endif //CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_GARLANDHECKBERT_POLICIES_H

@@ -1,7 +1,20 @@
+// Copyright (c) 2019  GeometryFactory (France). All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Baskin Burak Senbaslar,
+//                 Mael Rouxel-Labbé,
+//                 Julian Komaromy
+
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_GARLANDHECKBERT_PROBABILISTIC_POLICIES_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_GARLANDHECKBERT_PROBABILISTIC_POLICIES_H
 
 #include <CGAL/license/Surface_mesh_simplification.h>
+#include <iostream>
 
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_core.h>
@@ -12,71 +25,81 @@
 namespace CGAL {
 namespace Surface_mesh_simplification {
 
-// forward-declare template class
-template<typename TriangleMesh, typename GeomTraits>
-class GarlandHeckbert_policies;
-
-template<typename TriangleMesh, typename GeomTraits>
-using Cost_property = CGAL::dynamic_vertex_property_t<Eigen::Matrix<typename GeomTraits::FT, 4, 4,
-  Eigen::DontAlign>>;
-
-template<typename TriangleMesh, typename GeomTraits>
-using Vertex_cost_map = typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<
-  Eigen::Matrix<typename GeomTraits::FT, 4, 4, Eigen::DontAlign>>>::type;
-
-template<typename TriangleMesh, typename GeomTraits>
-using Cost_base = internal::GarlandHeckbert_cost_base<
-    Vertex_cost_map<TriangleMesh, GeomTraits>, 
-    GeomTraits, 
-    GarlandHeckbert_policies<TriangleMesh, GeomTraits>>;
-
-template<typename TriangleMesh, typename GeomTraits>
-using Placement_base = internal::GarlandHeckbert_placement_base<
-    Vertex_cost_map<TriangleMesh, GeomTraits>, 
-    GeomTraits, 
-    GarlandHeckbert_policies<TriangleMesh, GeomTraits>>;
-
-  // derived class implements functions used in the base class that
-  // takes the derived class as template argument - see "CRTP"
+// derived class implements functions used in the base class that
+// takes the derived class as template argument - see "CRTP"
+//
+// derives from cost_base and placement_base
 template<typename TriangleMesh, typename GeomTraits>
 class GarlandHeckbert_probabilistic_policies : 
-  public Placement_base<TriangleMesh, GeomTraits>,
-  public Cost_base<TriangleMesh, GeomTraits>
+  public internal::GarlandHeckbert_placement_base<
+    typename boost::property_map<
+      TriangleMesh, 
+      CGAL::dynamic_vertex_property_t<Eigen::Matrix<typename GeomTraits::FT, 4, 4, Eigen::DontAlign>>
+    >::type,
+    GeomTraits,
+    GarlandHeckbert_probabilistic_policies<TriangleMesh, GeomTraits>
+  >,
+  public internal::GarlandHeckbert_cost_base<
+    typename boost::property_map<
+      TriangleMesh, 
+      CGAL::dynamic_vertex_property_t<Eigen::Matrix<typename GeomTraits::FT, 4, 4, Eigen::DontAlign>>
+    >::type,
+    GeomTraits,
+    GarlandHeckbert_probabilistic_policies<TriangleMesh, GeomTraits>
+  >
 {
 
   public:
+    typedef typename GeomTraits::FT FT;
+    
+    typedef typename Eigen::Matrix<FT, 4, 4, Eigen::DontAlign> GH_matrix;
+    typedef CGAL::dynamic_vertex_property_t<GH_matrix> Cost_property;
+    
+    typedef typename boost::property_map<TriangleMesh, Cost_property>::type Vertex_cost_map;
 
-    typedef Cost_base<TriangleMesh, GeomTraits> Get_cost;
-    typedef Placement_base<TriangleMesh, GeomTraits> Get_placement;
+    typedef internal::GarlandHeckbert_placement_base<
+      Vertex_cost_map, GeomTraits, GarlandHeckbert_probabilistic_policies<TriangleMesh, GeomTraits>
+      > Placement_base;
 
+    typedef internal::GarlandHeckbert_cost_base<
+      Vertex_cost_map, GeomTraits, GarlandHeckbert_probabilistic_policies<TriangleMesh, GeomTraits>
+      > Cost_base;
+    
+    // both types are the same, this is so we avoid casting back to the base class in
+    // get_cost() or get_placement()
+    typedef GarlandHeckbert_probabilistic_policies Get_cost;
+    typedef GarlandHeckbert_probabilistic_policies Get_placement;
+
+    // so that operator() gets overloaded, this is needed because now Get_cost and Get_placement
+    // are the same
+    using Cost_base::operator();
+    using Placement_base::operator();
+    
     // these using directives are needed to choose between the definitions of these types
     // in Cost_base and Placement_base (even though they are the same)
     // TODO alternatives - e.g. rename base class types so they don't clash
-    using typename Cost_base<TriangleMesh, GeomTraits>::Mat_4;
-    using typename Cost_base<TriangleMesh, GeomTraits>::Col_4;
-    using typename Cost_base<TriangleMesh, GeomTraits>::Point_3;
-    using typename Cost_base<TriangleMesh, GeomTraits>::Vector_3;
+    using typename Cost_base::Mat_4;
+    using typename Cost_base::Col_4;
+    using typename Cost_base::Point_3;
+    using typename Cost_base::Vector_3;
 
-    typedef typename GeomTraits::FT FT;
 
     // TODO good default values
     GarlandHeckbert_probabilistic_policies(
         TriangleMesh& tmesh, 
-        FT dm = FT(100),
-        Vector_3 mv = Vector_3(0.01, 0.01, 0.01), 
-        Vector_3 mn = Vector_3(0.01, 0.01, 0.01), 
-        FT sdn = 0.01,
-        FT sdp = 0.01) 
-      : Get_cost(dm), mean_vec(mv), mean_normal(mn), std_dev_normal(sdn), std_dev_pos(sdp) 
+        FT dm,
+        FT sdn,
+        FT sdp) 
+      : sdev_n_2(square(sdn)), sdev_p_2(square(sdp))
     {
-      Vertex_cost_map<TriangleMesh, GeomTraits> vcm_ = get(Cost_property<TriangleMesh, GeomTraits>(),
-          tmesh);
+      // initialize the private variable vcm so it's lifetime is bound to that of the policy's
+      vcm_ = get(Cost_property(), tmesh);
 
-      /**
-       * initialize the two base class cost matrices (protected members)
-       */
-      Get_cost::m_cost_matrices = vcm_;
-      Get_placement::m_cost_matrices = vcm_;
+      // initialize both vcms
+      Cost_base::init_vcm(vcm_);
+      Placement_base::init_vcm(vcm_);
+
+      std::cout << "Using probabilisitic quadrics with sigma_n^2 = " << sdev_n_2 << std::endl; 
     }
 
     Col_4 construct_optimal_point(const Mat_4& aQuadric, const Col_4& p0, const Col_4& p1) const 
@@ -92,21 +115,18 @@ class GarlandHeckbert_probabilistic_policies :
 
     }
 
-    Mat_4 construct_quadric_from_normal(const Vector_3& normal, const Point_3& point,
+    Mat_4 construct_quadric_from_normal(const Vector_3& mean_normal, const Point_3& point,
         const GeomTraits& gt) const {
-      const auto squared_length = gt.compute_squared_length_3_object();
-      const auto dot_product = gt.compute_scalar_product_3_object();
-      const auto construct_vec_3 = gt.construct_vector_3_object();
+      auto squared_length = gt.compute_squared_length_3_object();
+      auto dot_product = gt.compute_scalar_product_3_object();
+      auto construct_vec_3 = gt.construct_vector_3_object();
 
+      const Vector_3 mean_vec = construct_vec_3(ORIGIN, point);
       const FT dot_mnmv = dot_product(mean_normal, mean_vec);
 
       // Eigen column vector of length 3
-      const Col_4 mean_n_col = vector_3_to_col_vec(mean_normal);
+      const Eigen::Matrix<FT, 3, 1> mean_n_col{mean_normal.x(), mean_normal.y(), mean_normal.z()};
 
-      // intermediate values for simplicity
-      const FT sdev_n_2 = square(std_dev_normal);
-      const FT sdev_p_2 = square(std_dev_pos);
-      
       // start by setting values along the diagonal
       Mat_4 mat = sdev_n_2 * Mat_4::Identity();
 
@@ -117,8 +137,11 @@ class GarlandHeckbert_probabilistic_policies :
       // set the first 3 values of the last row and the first 
       // 3 values of the last column
       //TODO why do we have to flip this sign as well? Probably linked to
-      // our weird cross product order in the three point overloads, 
-      const auto b = - vector_3_to_col_vec(dot_mnmv * mean_normal + sdev_n_2 * mean_vec);
+      // our normal orientation
+      const auto b1 = -(dot_mnmv * mean_normal + sdev_n_2 * mean_vec);
+      
+      const Eigen::Matrix<FT, 3, 1> b {b1.x(), b1.y(), b1.z()};
+      
       mat.col(3).head(3) = b;
       mat.row(3).head(3) = b.transpose();
 
@@ -131,19 +154,24 @@ class GarlandHeckbert_probabilistic_policies :
       return mat;
     }
 
-  private:
-    Vector_3 mean_vec;
-    Vector_3 mean_normal;
-    FT std_dev_normal;
-    FT std_dev_pos;
-
-    Eigen::Matrix<FT, 3, 1> vector_3_to_col_vec(const Vector_3& v)
-    {
-      return Eigen::Matrix<FT, 3, 1>(v.x(), v.y(), v.z());
+    const Get_cost& get_cost() {
+      return *this;
     }
+
+    const Get_placement& get_placement() {
+      return *this;
+    }
+    
+  private:
+    // the only parameters we need are the normal and position variances 
+    // - ie the squared standard deviations
+    FT sdev_n_2;
+    FT sdev_p_2;
+
+    Vertex_cost_map vcm_;
 };
 
 } //namespace Surface_mesh_simplification
 } //namespace CGAL
 
-#endif
+#endif //CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_GARLANDHECKBERT_PROBABILISTIC_POLICIES_H
