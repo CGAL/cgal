@@ -1,15 +1,27 @@
+// Copyright (c) 2021 GeometryFactory SARL (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : Antonio Gomes, Dmitry Anisimov
+//
+
 #ifndef CGAL_BARYCENTRIC_INTERNAL_UTILS_3_H
 #define CGAL_BARYCENTRIC_INTERNAL_UTILS_3_H
+
+// #include <CGAL/license/Barycentric_coordinates_3.h>
 
 // STL includes
 #include <tuple>
 
 // Internal includes
-#include <CGAL/Barycentric_coordinates_3/barycentric_enum_3.h> // REVIEW: I do not think you will need it here.
-// REVIEW: Do not put Surface_mesh dependency here. Since you work with the face graph already, just put:
-// #include <CGAL/boost/graph/helpers.h> - It should cover all basic functions like faces(), vertices(), is_border() etc.
-// The Surface_mesh header should be included only in the files where the actual Surface_mesh<> is used.
-#include <CGAL/Surface_mesh/Surface_mesh.h>
+#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/convexity_check_3.h>
 
 namespace CGAL{
 namespace Barycentric_coordinates{

@@ -1,5 +1,20 @@
+// Copyright (c) 2021 GeometryFactory SARL (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : Antonio Gomes, Dmitry Anisimov
+//
+
 #ifndef CGAL_BARYCENTRIC_TRIANGLE_COORDINATES_3_H
 #define CGAL_BARYCENTRIC_TRIANGLE_COORDINATES_3_H
+
+// #include <CGAL/license/Barycentric_coordinates_3.h>
 
 #include <CGAL/Barycentric_coordinates_3/internal/utils_3.h>
 
@@ -85,10 +100,7 @@ namespace Barycentric_coordinates{
       p0, p1, p2, p3, query, traits);
   }
 
-
-
 }
 }
-
 
 #endif
