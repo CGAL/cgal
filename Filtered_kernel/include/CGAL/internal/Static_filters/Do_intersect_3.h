@@ -242,6 +242,252 @@ public:
     return this->operator()(t, b);
   }
 
+  /// TODO: move in utils
+  Uncertain<Sign> sign_of_minor(double px, double py, double qx, double qy, double rx, double ry) const
+  {
+    double qx_px = (qx - px);
+    double ry_py = (ry - py);
+    double rx_px = (rx - px);
+    double qy_py = (qy - py);
+    Sign int_tmp_result;
+    double double_tmp_result;
+    double eps;
+    double_tmp_result = ((qx_px * ry_py) - (rx_px * qy_py));
+    double max1 = fabs(qx_px);
+    if( (max1 < fabs(rx_px)) )
+    {
+        max1 = fabs(rx_px);
+    }
+    double max2 = fabs(ry_py);
+    if( (max2 < fabs(qy_py)) )
+    {
+        max2 = fabs(qy_py);
+    }
+    double lower_bound_1;
+    double upper_bound_1;
+    lower_bound_1 = max1;
+    upper_bound_1 = max1;
+    if( (max2 < lower_bound_1) )
+    {
+        lower_bound_1 = max2;
+    }
+    else
+    {
+        if( (max2 > upper_bound_1) )
+        {
+            upper_bound_1 = max2;
+        }
+    }
+    if( (lower_bound_1 < 5.00368081960964746551e-147) )
+    {
+        return Uncertain<Sign>();
+    }
+    else
+    {
+        if( (upper_bound_1 > 1.67597599124282389316e+153) )
+        {
+            return Uncertain<Sign>();
+        }
+        eps = (8.88720573725927976811e-16 * (max1 * max2));
+        if( (double_tmp_result > eps) )
+        {
+            int_tmp_result = POSITIVE;
+        }
+        else
+        {
+            if( (double_tmp_result < -eps) )
+            {
+                int_tmp_result = NEGATIVE;
+            }
+            else
+            {
+                return Uncertain<Sign>();
+            }
+        }
+    }
+    return int_tmp_result;
+  };
+
+  bool get_cross_product_sign(const std::array< std::array<double, 3>, 3 >& pts, std::array<Sign, 3>& signs) const
+  {
+    Uncertain<Sign> s = sign_of_minor(pts[0][1], pts[0][2], pts[1][1], pts[1][2], pts[2][1], pts[2][2]);
+    if (is_indeterminate(s)) return false;
+    signs[0]=s;
+    s = sign_of_minor(pts[0][2], pts[0][0], pts[1][2], pts[1][0], pts[2][2], pts[2][0]);
+    if (is_indeterminate(s)) return false;
+    signs[1]=s;
+    s = sign_of_minor(pts[0][0], pts[0][1], pts[1][0], pts[1][1], pts[2][0], pts[2][1]);
+    if (is_indeterminate(s)) return false;
+    signs[2]=s;
+    return true;
+  }
+
+  bool do_intersect_supporting_plane_bbox(const Triangle_3& t, const std::array< std::array<double, 3>, 3>& pts, const Bbox_3& bbox) const
+  {
+    auto my_orient = [](const std::array< std::array<double, 3>, 3>& pts, double x, double y, double z) -> Uncertain<Orientation>
+    {
+      double pqx = pts[1][0] - pts[0][0];
+      double pqy = pts[1][1] - pts[0][1];
+      double pqz = pts[1][2] - pts[0][2];
+      double prx = pts[2][0] - pts[0][0];
+      double pry = pts[2][1] - pts[0][1];
+      double prz = pts[2][2] - pts[0][2];
+      double psx = x - pts[0][0];
+      double psy = y - pts[0][1];
+      double psz = z - pts[0][2];
+
+      // CGAL::abs uses fabs on platforms where it is faster than (a<0)?-a:a
+      // Then semi-static filter.
+
+      double maxx = CGAL::abs(pqx);
+      double maxy = CGAL::abs(pqy);
+      double maxz = CGAL::abs(pqz);
+
+      double aprx = CGAL::abs(prx);
+      double apsx = CGAL::abs(psx);
+
+      double apry = CGAL::abs(pry);
+      double apsy = CGAL::abs(psy);
+
+      double aprz = CGAL::abs(prz);
+      double apsz = CGAL::abs(psz);
+#ifdef CGAL_USE_SSE2_MAX
+      CGAL::Max<double> mmax;
+
+      maxx = mmax(maxx, aprx, apsx);
+      maxy = mmax(maxy, apry, apsy);
+      maxz = mmax(maxz, aprz, apsz);
+#else
+      if (maxx < aprx) maxx = aprx;
+      if (maxx < apsx) maxx = apsx;
+      if (maxy < apry) maxy = apry;
+      if (maxy < apsy) maxy = apsy;
+      if (maxz < aprz) maxz = aprz;
+      if (maxz < apsz) maxz = apsz;
+#endif
+      double det = CGAL::determinant(pqx, pqy, pqz,
+                                     prx, pry, prz,
+                                     psx, psy, psz);
+
+      double eps = 5.1107127829973299e-15 * maxx * maxy * maxz;
+
+#ifdef CGAL_USE_SSE2_MAX
+#if 0
+      CGAL::Min<double> mmin;
+      double tmp = mmin(maxx, maxy, maxz);
+      maxz = mmax(maxx, maxy, maxz);
+      maxx = tmp;
+#else
+      sse2minmax(maxx,maxy,maxz);
+      // maxy can contain ANY element
+#endif
+#else
+      // Sort maxx < maxy < maxz.
+      if (maxx > maxz)
+          std::swap(maxx, maxz);
+      if (maxy > maxz)
+          std::swap(maxy, maxz);
+      else if (maxy < maxx)
+          std::swap(maxx, maxy);
+#endif
+      // Protect against underflow in the computation of eps.
+      if (maxx < 1e-97) /* cbrt(min_double/eps) */ {
+        if (maxx == 0)
+          return ZERO;
+      }
+      // Protect against overflow in the computation of det.
+      else if (maxz < 1e102) /* cbrt(max_double [hadamard]/4) */ {
+
+        if (det > eps)  return POSITIVE;
+        if (det < -eps) return NEGATIVE;
+      }
+      return Uncertain<Orientation>();
+    };
+
+    auto orient = [my_orient](const Triangle_3& t, const std::array< std::array<double, 3>, 3>& pts,
+                              double x, double y, double z) -> Orientation
+    {
+      Uncertain<Orientation> res = my_orient(pts, x, y, z);
+      if (!is_indeterminate(res)) return make_certain(res);
+      typename SFK::Orientation_3 orient = SFK().orientation_3_object();
+      //TODO: avoid calling the static filter again...
+      return orient(t[0], t[1], t[2], Point_3(x,y,z));
+    };
+////
+    std::array<Sign, 3> signs;
+    bool OK = get_cross_product_sign(pts, signs);
+
+    if (OK)
+    {
+      // extract extreme directions
+      std::array<double, 3> p_min, p_max;
+
+      if(signs[0] == POSITIVE) {
+        if(signs[1] == POSITIVE) {
+          if(signs[2] == POSITIVE) {
+              p_min = {bbox.xmin(), bbox.ymin(),bbox.zmin()};
+              p_max = {bbox.xmax(), bbox.ymax(),bbox.zmax()};
+          } else {
+            p_min = {bbox.xmin(), bbox.ymin(),bbox.zmax()};
+            p_max = {bbox.xmax(), bbox.ymax(),bbox.zmin()};
+          }
+        } else {
+          if(signs[2]==POSITIVE) {
+            p_min = {bbox.xmin(), bbox.ymax(),bbox.zmin()};
+            p_max = {bbox.xmax(), bbox.ymin(),bbox.zmax()};
+          } else {
+            p_min = {bbox.xmin(), bbox.ymax(),bbox.zmax()};
+            p_max = {bbox.xmax(), bbox.ymin(),bbox.zmin()};
+          }
+        }
+      }
+      else{
+        if(signs[1]==POSITIVE) {
+          if(signs[2]==POSITIVE) {
+            p_min = {bbox.xmax(), bbox.ymin(),bbox.zmin()};
+            p_max = {bbox.xmin(), bbox.ymax(),bbox.zmax()};
+          }
+          else{
+            p_min = {bbox.xmax(), bbox.ymin(),bbox.zmax()};
+            p_max = {bbox.xmin(), bbox.ymax(),bbox.zmin()};
+          }
+        }
+        else {
+          if(signs[2]==POSITIVE) {
+            p_min = {bbox.xmax(), bbox.ymax(),bbox.zmin()};
+            p_max = {bbox.xmin(), bbox.ymin(),bbox.zmax()};
+          }
+          else {
+            p_min = {bbox.xmax(), bbox.ymax(),bbox.zmax()};
+            p_max = {bbox.xmin(), bbox.ymin(),bbox.zmin()};
+          }
+        }
+      }
+
+      return ! (orient(t, pts, p_max[0], p_max[1], p_max[2]) == ON_NEGATIVE_SIDE ||
+                orient(t, pts, p_min[0], p_min[1], p_min[2]) == ON_POSITIVE_SIDE);
+    }
+
+    CGAL::Orientation side = orient(t, pts, bbox.xmin(), bbox.ymin(),bbox.zmin());
+    if(side == COPLANAR) return true;
+    CGAL::Oriented_side s = orient(t, pts, bbox.xmax(), bbox.ymax(),bbox.zmax());
+    if(s != side) return true;
+    s = orient(t, pts, bbox.xmin(), bbox.ymin(),bbox.zmax());
+    if(s != side) return true;
+    s = orient(t, pts, bbox.xmax(), bbox.ymax(),bbox.zmin());
+    if(s != side) return true;
+    s = orient(t, pts, bbox.xmin(), bbox.ymax(),bbox.zmin());
+    if(s != side) return true;
+     s = orient(t, pts, bbox.xmax(), bbox.ymin(),bbox.zmax());
+    if(s != side) return true;
+     s = orient(t, pts, bbox.xmin(), bbox.ymax(),bbox.zmax());
+    if(s != side) return true;
+    s = orient(t, pts, bbox.xmax(), bbox.ymin(),bbox.zmin());
+    if(s != side) return true;
+    return false;
+  };
+
+  ////
 
   result_type
   operator()(const Triangle_3 &t, const Bbox_3& b) const
@@ -274,6 +520,7 @@ public:
     // copy of the regular code with do_axis_intersect_aux_impl statically filtered
     auto do_axis_intersect_aux_impl = [](double alpha, double beta, double c_alpha, double c_beta) -> Uncertain<Sign>
     {
+      // TODO: shall we add the case 0 if one of the alpha's and beta's are 0?
       Sign int_tmp_result;
       double double_tmp_result;
       double eps;
@@ -333,29 +580,7 @@ public:
       return int_tmp_result;
     };
 
-    auto do_intersect_plane_bbox = [](const Triangle_3& t, const Bbox_3& bbox)
-    {
-      typename SFK::Orientation_3 orient = SFK().orientation_3_object();
-      CGAL::Orientation side = orient(t[0], t[1],t[2], Point_3(bbox.xmin(), bbox.ymin(),bbox.zmin()));
-      if(side == COPLANAR) return true;
-      CGAL::Oriented_side s = orient(t[0], t[1],t[2], Point_3(bbox.xmax(), bbox.ymax(),bbox.zmax()));
-      if(s != side) return true;
-      s = orient(t[0], t[1],t[2], Point_3(bbox.xmin(), bbox.ymin(),bbox.zmax()));
-      if(s != side) return true;
-      s = orient(t[0], t[1],t[2], Point_3(bbox.xmax(), bbox.ymax(),bbox.zmin()));
-      if(s != side) return true;
-      s = orient(t[0], t[1],t[2], Point_3(bbox.xmin(), bbox.ymax(),bbox.zmin()));
-      if(s != side) return true;
-       s = orient(t[0], t[1],t[2], Point_3(bbox.xmax(), bbox.ymin(),bbox.zmax()));
-      if(s != side) return true;
-       s = orient(t[0], t[1],t[2], Point_3(bbox.xmin(), bbox.ymax(),bbox.zmax()));
-      if(s != side) return true;
-       s = orient(t[0], t[1],t[2], Point_3(bbox.xmax(), bbox.ymin(),bbox.zmin()));
-      if(s != side) return true;
-      return false;
-    };
-
-    if ( !do_intersect_plane_bbox(t,b) )
+    if ( !do_intersect_supporting_plane_bbox(t, pts, b) )
       return false;
 
     Uncertain<bool> res = Intersections::internal::do_intersect_bbox_or_iso_cuboid_impl<double>(pts, b, do_axis_intersect_aux_impl);
