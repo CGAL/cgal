@@ -30,7 +30,7 @@ namespace Barycentric_coordinates{
     const typename GeomTraits::Point_3& p1,
     const typename GeomTraits::Point_3& p2,
     const typename GeomTraits::Point_3& p3,
-    const typename GeomTraits::Point_2& query,
+    const typename GeomTraits::Point_3& query,
     OutIterator c_begin,
     const GeomTraits& traits) {
 

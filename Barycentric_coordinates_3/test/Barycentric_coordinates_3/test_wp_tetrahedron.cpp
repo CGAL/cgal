@@ -1,74 +1,89 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Barycentric_coordinates_3/Wachspress_coordinates_3.h>
+#include <CGAL/Barycentric_coordinates_3/tetrahedron_coordinates_3.h>
 
 //Typedefs
-using SCKER = CGAL::Simple_cartesian<double>;
-using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
-using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
+using Kernel = CGAL::Simple_cartesian<double>;
 
-template<typename Kernel>
-void test_overolads(){
+int main(){
 
   using FT = typename Kernel::FT;
   using Point_3 = typename Kernel::Point_3;
   using Mesh =  typename CGAL::Surface_mesh<Point_3>;
 
-  // Tetrahedron Mesh
-  Mesh ms;
-
   // Set cout precision
-  std::cout.precision(8);
+  std::cout.precision(20);
 
-  // Construct tetrahedron
+  // Regular tetrahedron
+  Mesh tetrahedron;
+
+  // Vertices
   const Point_3 p0(0.0, 0.0, 0.0);
   const Point_3 p1(1.0, 0.0, 0.0);
   const Point_3 p2(0.0, 1.0, 0.0);
   const Point_3 p3(0.0, 0.0, 1.0);
 
-  CGAL::make_tetrahedron(p0, p1, p2, p3, ms);
+  // Construct tetrahedron
+  CGAL::make_tetrahedron(p0, p1, p2, p3, tetrahedron);
 
-  // Instantiate some interior, boundary, and exterior query points for which we compute coordinates
-  const std::vector<Point_3> queries = {Point_3(0.25f, 0.25f, 0.25f), Point_3(0.3f, 0.2f, 0.3f),
-                                        Point_3(0.1f, 0.1f, 0.1f), Point_3(0.2f, 0.5f, 0.3f),
-                                        Point_3(0.5f, 0.5f, 0.5f), Point_3(-1.0f, -1.0f, 1.0f),
-                                        Point_3(0.5f, 0.5f, -2.0f)
-                                      };
+  CGAL::Barycentric_coordinates::Wachspress_coordinates_3<Mesh, Kernel> ws(tetrahedron);
 
-  CGAL::Barycentric_coordinates::Wachspress_coordinates_3<Mesh, Kernel> ws(ms);
-  std::vector<FT> coordinates;
+  std::vector<FT> tri_coordinates;
+  std::vector<FT> wp_coordinates;
 
-  for(const auto q:queries){
-    // Store results
-    coordinates.clear();
-    ws(q, std::back_inserter(coordinates));
+  // Tolerance
+  const FT tol = FT(1.0e-13);
 
-    std::cout << "Coordinates: " << "(" << q << ") ---->>> " << coordinates[0] << " " <<
-    coordinates[1] << " " << coordinates[2] << " " << coordinates[3] << std::endl;
+  // Sample points
+  const FT step  = FT(1) / FT(500);
+  const FT scale = FT(100);
+
+  std::size_t count = 0;
+  const FT limit = scale * step;
+
+  for(FT x = step; x < limit; x += step){
+    for(FT y = step; y < limit; y += step){
+      for(FT z = step; z < FT(1) - x - y; z+= step){ // Excludes points inside faces
+
+        const Point_3 query = Point_3(x, y, z);
+
+        ws(query, std::back_inserter(wp_coordinates));
+
+        CGAL::Barycentric_coordinates::triangle_coordinates_3(p0, p1,
+         p2, p3, query, std::back_inserter(tri_coordinates));
+
+        assert(tri_coordinates[count + 0] > -tol && tri_coordinates[count + 0] <= FT(1));
+        assert(tri_coordinates[count + 1] > -tol && tri_coordinates[count + 1] <= FT(1));
+        assert(tri_coordinates[count + 2] > -tol && tri_coordinates[count + 2] <= FT(1));
+        assert(tri_coordinates[count + 3] > -tol && tri_coordinates[count + 3] <= FT(1));
+
+        assert(wp_coordinates[count + 0] > -tol && wp_coordinates[count + 0] <= FT(1));
+        assert(wp_coordinates[count + 1] > -tol && wp_coordinates[count + 1] <= FT(1));
+        assert(wp_coordinates[count + 2] > -tol && wp_coordinates[count + 2] <= FT(1));
+        assert(wp_coordinates[count + 3] > -tol && wp_coordinates[count + 3] <= FT(1));
+
+        // Problem with points near the faces. Example: (0.02, 0.49, 0.48)
+        /*
+        std::cout << query << std::endl;
+        std::cout << tri_coordinates[count + 0]<< " " << tri_coordinates[count + 1]<< " " <<
+        tri_coordinates[count + 2]<< " " << tri_coordinates[count + 3]<< std::endl <<
+        wp_coordinates[count + 0] << " " << wp_coordinates[count + 1] << " " <<
+        wp_coordinates[count + 2] << " " << wp_coordinates[count + 3] << std::endl << std::endl;
+        */
+
+        assert(
+          CGAL::abs(tri_coordinates[count + 0] - wp_coordinates[count + 0]) < tol &&
+          CGAL::abs(tri_coordinates[count + 1] - wp_coordinates[count + 1]) < tol &&
+          CGAL::abs(tri_coordinates[count + 2] - wp_coordinates[count + 2]) < tol &&
+          CGAL::abs(tri_coordinates[count + 3] - wp_coordinates[count + 3]) < tol);
+
+        count += 4;
+      }
+    }
   }
-}
 
-
-int main(){
-
-  std::cout << "SCKER" << std::endl;
-  test_overolads<SCKER>();
-  std::cout << "EPICK" << std::endl;
-  test_overolads<EPICK>();
-  std::cout << "EPECK" << std::endl;
-  test_overolads<EPECK>();
-
-  std::cout << "* test_wachspress_weights: SUCCESS" << std::endl;
-
+  std::cout << "test_wp_tetrahedron: PASSED" << std::endl;
   return EXIT_SUCCESS;
 }
-
-//IMPORTANT!!!!!
-// REVIEW: Actually, I do not see any tests here! The test must be something like here:
-// https://github.com/danston/cgal/blob/Barycentric_coordinates_2-danston/Barycentric_coordinates_2/test/Barycentric_coordinates_2/test_wp_triangle.cpp
-// that is it must compute both Wachspress and tetrahedron coordinates and then use assert(wp_coord == tetra_coord)!
-// This looks more like an example rather than a test.
-
