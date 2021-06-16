@@ -89,8 +89,8 @@ solution, and we recommend to use them.
 These libraries can be obtained from <A HREF="https://gmplib.org/">`https://gmplib.org/`</A>
 and <A HREF="https://www.mpfr.org/">`https://www.mpfr.org/`</A>.
 Since Visual \cpp is not properly supported by the \sc{Gmp} and \sc{Mpfr} projects,
-we provide precompiled versions of \sc{Gmp} and \sc{Mpfr}, which can be downloaded with the installer
-<a href="https://github.com/CGAL/cgal/releases">`CGAL-\cgalReleaseNumber``-Setup.exe`</a>.
+we provide precompiled versions of \sc{Gmp} and \sc{Mpfr}, which can be downloaded
+from the <a href="https://github.com/CGAL/cgal/releases">assets of a release</a>.
 
 \section secoptional3rdpartysoftware Optional Third Party Libraries
 
