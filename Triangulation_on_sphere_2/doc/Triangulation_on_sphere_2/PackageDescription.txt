@@ -1,4 +1,4 @@
-/// \defgroup PkgTriangulationOnSphere2Ref 2D Triangulation on Sphere Reference
+/// \defgroup PkgTriangulationOnSphere2Ref 2D Triangulation on the Sphere Reference
 
 /// \defgroup PkgTriangulationOnSphere2Concepts Concepts
 /// \ingroup PkgTriangulationOnSphere2Ref
@@ -12,7 +12,7 @@
 /*!
 \addtogroup PkgTriangulationOnSphere2Ref
 
-\cgalPkgDescriptionBegin{2D Triangulations on Sphere,PkgTriangulationOnSphere2}
+\cgalPkgDescriptionBegin{2D Triangulations on the Sphere,PkgTriangulationOnSphere2}
 \cgalPkgPicture{triangulation_on_sphere.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Mael Rouxel-Labbé, Monique Teillaud, and Claudia Werner}
@@ -26,7 +26,7 @@
 \cgalPkgDependsOn{\ref PkgTDS2}
 \cgalPkgBib{cgal:rtw-tos2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Delaunay Triangulation, delaunay_Triangulation_on_sphere_2.zip}
+\cgalPkgDemo{2D Triangulations on the sphere,triangulation_on_sphere_2.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
