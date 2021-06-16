@@ -48,13 +48,17 @@ public:
     Protect_FPU_rounding<Protection> P1;
     try
     {
-      return From_Filtered( Filter_construction(To_Filtered(a1)) );
+      result_type res = From_Filtered(Filter_construction(To_Filtered(a1)));
+
+      // Catch potential NaNs which may appear e.g. if the filtered kernel's number type is interval-based
+      // with one bound of the interval is infinity and the base kernel's number type is double.
+      if(res == res)
+        return res;
     }
-    catch (Uncertain_conversion_exception&)
-    {
-      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
-      return From_Exact( Exact_construction(To_Exact(a1)) );
-    }
+    catch (Uncertain_conversion_exception&) { }
+
+    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+    return From_Exact(Exact_construction(To_Exact(a1)));
   }
   template <class A1, class A2>
   result_type
@@ -63,15 +67,19 @@ public:
     Protect_FPU_rounding<Protection> P1;
     try
     {
-      return From_Filtered( Filter_construction(To_Filtered(a1),
-                                                To_Filtered(a2)) );
+      result_type res = From_Filtered(Filter_construction(To_Filtered(a1),
+                                                          To_Filtered(a2)));
+
+      // Catch potential NaNs which may appear e.g. if the filtered kernel's number type is interval-based
+      // with one bound of the interval is infinity and the base kernel's number type is double.
+      if(res == res)
+        return res;
     }
-    catch (Uncertain_conversion_exception&)
-    {
-      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
-      return From_Exact( Exact_construction(To_Exact(a1),
-                                            To_Exact(a2)) );
-    }
+    catch (Uncertain_conversion_exception&) { }
+
+    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+    return From_Exact(Exact_construction(To_Exact(a1),
+                                         To_Exact(a2)));
   }
 
   template <class A1, class A2, class A3>
@@ -81,24 +89,24 @@ public:
     Protect_FPU_rounding<Protection> P1;
     try
     {
-      return From_Filtered( Filter_construction(To_Filtered(a1),
-                                                To_Filtered(a2),
-                                                To_Filtered(a3)) );
-    }
-    catch (Uncertain_conversion_exception&)
-    {
-      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
-      return From_Exact( Exact_construction(To_Exact(a1),
-                                            To_Exact(a2),
-                                            To_Exact(a3)) );
-    }
-  }
+      result_type res = From_Filtered(Filter_construction(To_Filtered(a1),
+                                                          To_Filtered(a2),
+                                                          To_Filtered(a3)));
 
+      // Catch potential NaNs which may appear e.g. if the filtered kernel's number type is interval-based
+      // with one bound of the interval is infinity and the base kernel's number type is double.
+      if(res == res)
+        return res;
+    }
+    catch (Uncertain_conversion_exception&) { }
+
+    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+    return From_Exact(Exact_construction(To_Exact(a1),
+                                         To_Exact(a2),
+                                         To_Exact(a3)));
+  }
 };
 
-
-
 } //namespace CGAL
-
 
 #endif // CGAL_FILTERED_CONSTRUCTION_H
