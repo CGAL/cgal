@@ -204,7 +204,7 @@ length integers, and for vectors, matrices, and polynomials over the
 integers and over finite fields. The optional library \ntl is used by \cgal
 to speed up operations of the Polynomial package, such as GCDs. It is recommended to install \ntl with support from \gmp.
 
-\ntl can be downloaded from <A HREF="https://www.shoup.net/ntl/">`https://www.shoup.net/ntl/`</A>.
+\ntl can be downloaded from <A HREF="https://libntl.org">`https://libntl.org`</A>.
 
 \subsection thirdpartyESBTL ESBTL
 
@@ -225,7 +225,7 @@ code. In order to use \tbb in \cgal programs, the executables
 should be linked with the CMake imported target `CGAL::TBB_support`
 provided in `CGAL_TBB_support.cmake`.
 
-The \tbb web site is <A HREF="https://www.threadingbuildingblocks.org">`https://www.threadingbuildingblocks.org`</A>.
+The \tbb web site is <A HREF="https://github.com/oneapi-src/oneTBB">`https://github.com/oneapi-src/oneTBB`</A>.
 
 \subsection thirdpartyLASlib LASlib
 

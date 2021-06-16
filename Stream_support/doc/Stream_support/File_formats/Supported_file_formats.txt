@@ -370,7 +370,7 @@ The `3MF`, using the file extension `.3mf`, is an open source file format create
 It is an XML-based format that aims to enhance the \ref IOStreamSTL by adding means to include
 extra information such as colors.
 
-A precise specification of the format is available at <a href="http://www.3mf.io/specification/">3mf.io</a>;
+A precise specification of the format is available at <a href="https://3mf.io/specification/">3mf.io</a>;
 note that only versions `1.x` are currently supported in \cgal.
 
 <table class="iotable">
