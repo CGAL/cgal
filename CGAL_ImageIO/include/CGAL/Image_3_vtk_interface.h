@@ -84,6 +84,7 @@ struct VTK_type_generator<boost::uint32_t> {
   typedef vtkUnsignedIntArray ArrayType;
 };
 
+inline
 ::vtkImageData* vtk_image_sharing_same_data_pointer(Image_3& image)
 {
   vtkImageData* vtk_image = vtkImageData::New();
