@@ -190,17 +190,6 @@ as this will help `cmake` to find Boost.</li>
 <li>Add the path to the Boost `dlls` (`C:\dev\libboost_1_71_0\lib64-msvc-XX.Y`) files to the `PATH` environment variable.</li>
 </ul>
 
-\subsection ssect-installer-install-cgal Installing CGAL Itself
-
-Download and run `CGAL-\cgalReleaseNumber``-Setup.exe` from
-<a href="https://www.cgal.org/download/windows.html">https://www.cgal.org/download/windows.html</a>.
-It is a self extracting executable that downloads the \cgal header files, and optionally the source code of the
-examples and demos. Additionally, it can download the precompiled versions of \gmp and \mpfr. You must
-specify if you want the 32 or the 64 bit versions of these two libraries.
-
-Setting the environment variable `CGAL_DIR` to `C:\dev\CGAL-\cgalReleaseNumber` is a good idea
-to help `cmake` to find \cgal during the configuration process, detailed in the next section.
-
 \subsection ssect-installer-compile-example Compiling an Example
 
 We assume that you have downloaded the examples with the \cgal Installer.
