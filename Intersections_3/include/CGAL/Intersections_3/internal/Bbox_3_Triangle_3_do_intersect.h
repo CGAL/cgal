@@ -242,11 +242,11 @@ namespace internal {
     }
   }
 
-  template <class FT, class K, class Box3, class Fct>
-  bool do_intersect_bbox_or_iso_cuboid_impl(const std::array< std::array<FT, 3>, 3>& triangle,
-                                            const Box3& bbox,
-                                            const K& k,
-                                            Fct do_axis_intersect_aux_impl)
+  template <class FT, class Box3, class Fct>
+  Uncertain<bool>
+  do_intersect_bbox_or_iso_cuboid_impl(const std::array< std::array<FT, 3>, 3>& triangle,
+                                       const Box3& bbox,
+                                       Fct do_axis_intersect_aux_impl)
   {
     std::array< std::array<FT, 3>, 3> sides =
     {{
@@ -361,7 +361,7 @@ namespace internal {
         }
       }
     }
-    return ind_or_true; // throws exception in case it is indeterminate
+    return ind_or_true;
   }
 
   template <class K, class Box3>
@@ -390,8 +390,8 @@ namespace internal {
       { a_triangle[1][0], a_triangle[1][1], a_triangle[1][2] },
       { a_triangle[2][0], a_triangle[2][1], a_triangle[2][2] }
     }};
-
-    return do_intersect_bbox_or_iso_cuboid_impl<FT>(triangle, a_bbox, k, do_axis_intersect_aux_impl);
+    // exception will be thrown in case the output is indeterminate
+    return do_intersect_bbox_or_iso_cuboid_impl<FT>(triangle, a_bbox, do_axis_intersect_aux_impl);
   }
 
   template <class K>

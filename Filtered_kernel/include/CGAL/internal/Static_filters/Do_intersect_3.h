@@ -246,20 +246,22 @@ public:
   result_type
   operator()(const Triangle_3 &t, const Bbox_3& b) const
   {
-    Get_approx<Point_3> get_approx;
-    double px, py, pz;
-
     // check overlaps between bboxes
     if(! do_overlap(t.bbox(),b)){
       return false;
     }
+
+    // check if at least one triangle point is inside the bbox
+    Get_approx<Point_3> get_approx;
+    std::array< std::array<double, 3>, 3> pts;
+
     for (int i=0; i<3; ++i)
     {
       const Point_3& p = t[i];
-      if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
-          fit_in_double(get_approx(p).z(), pz) )
+      if (fit_in_double(get_approx(p).x(), pts[i][0]) && fit_in_double(get_approx(p).y(), pts[i][1]) &&
+          fit_in_double(get_approx(p).z(), pts[i][2]) )
       {
-        if( (px >= b.xmin() && px <= b.xmax()) && (py >= b.ymin() && py <= b.ymax())  && (pz >= b.zmin() && pz <= b.zmax()) ){
+        if( (pts[i][0] >= b.xmin() && pts[i][0] <= b.xmax()) && (pts[i][1] >= b.ymin() && pts[i][1] <= b.ymax())  && (pts[i][2] >= b.zmin() && pts[i][2] <= b.zmax()) ){
           return true;
         }
       }
@@ -268,6 +270,97 @@ public:
         return Base::operator()(t,b);
       }
     }
+
+    // copy of the regular code with do_axis_intersect_aux_impl statically filtered
+    auto do_axis_intersect_aux_impl = [](double alpha, double beta, double c_alpha, double c_beta) -> Uncertain<Sign>
+    {
+      Sign int_tmp_result;
+      double double_tmp_result;
+      double eps;
+      double_tmp_result = ((-c_alpha * alpha) + (c_beta * beta));
+      double max1 = fabs(c_alpha);
+      if( (max1 < fabs(c_beta)) )
+      {
+          max1 = fabs(c_beta);
+      }
+      double max2 = fabs(alpha);
+      if( (max2 < fabs(beta)) )
+      {
+          max2 = fabs(beta);
+      }
+      double lower_bound_1;
+      double upper_bound_1;
+      lower_bound_1 = max1;
+      upper_bound_1 = max1;
+      if( (max2 < lower_bound_1) )
+      {
+          lower_bound_1 = max2;
+      }
+      else
+      {
+          if( (max2 > upper_bound_1) )
+          {
+              upper_bound_1 = max2;
+          }
+      }
+      if( (lower_bound_1 < 5.00368081960964746551e-147) )
+      {
+          return Uncertain<Sign>();
+      }
+      else
+      {
+          if( (upper_bound_1 > 1.67597599124282389316e+153) )
+          {
+              return Uncertain<Sign>();
+          }
+          eps = (8.88720573725927976811e-16 * (max1 * max2));
+          if( (double_tmp_result > eps) )
+          {
+              int_tmp_result = POSITIVE;
+          }
+          else
+          {
+              if( (double_tmp_result < -eps) )
+              {
+                  int_tmp_result = NEGATIVE;
+              }
+              else
+              {
+                  return Uncertain<Sign>();
+              }
+          }
+      }
+      return int_tmp_result;
+    };
+
+    auto do_intersect_plane_bbox = [](const Triangle_3& t, const Bbox_3& bbox)
+    {
+      typename SFK::Orientation_3 orient = SFK().orientation_3_object();
+      CGAL::Orientation side = orient(t[0], t[1],t[2], Point_3(bbox.xmin(), bbox.ymin(),bbox.zmin()));
+      if(side == COPLANAR) return true;
+      CGAL::Oriented_side s = orient(t[0], t[1],t[2], Point_3(bbox.xmax(), bbox.ymax(),bbox.zmax()));
+      if(s != side) return true;
+      s = orient(t[0], t[1],t[2], Point_3(bbox.xmin(), bbox.ymin(),bbox.zmax()));
+      if(s != side) return true;
+      s = orient(t[0], t[1],t[2], Point_3(bbox.xmax(), bbox.ymax(),bbox.zmin()));
+      if(s != side) return true;
+      s = orient(t[0], t[1],t[2], Point_3(bbox.xmin(), bbox.ymax(),bbox.zmin()));
+      if(s != side) return true;
+       s = orient(t[0], t[1],t[2], Point_3(bbox.xmax(), bbox.ymin(),bbox.zmax()));
+      if(s != side) return true;
+       s = orient(t[0], t[1],t[2], Point_3(bbox.xmin(), bbox.ymax(),bbox.zmax()));
+      if(s != side) return true;
+       s = orient(t[0], t[1],t[2], Point_3(bbox.xmax(), bbox.ymin(),bbox.zmin()));
+      if(s != side) return true;
+      return false;
+    };
+
+    if ( !do_intersect_plane_bbox(t,b) )
+      return false;
+
+    Uncertain<bool> res = Intersections::internal::do_intersect_bbox_or_iso_cuboid_impl<double>(pts, b, do_axis_intersect_aux_impl);
+    if ( !is_indeterminate(res) )
+      return make_certain(res);
 
     return Base::operator()(t,b);
   }
