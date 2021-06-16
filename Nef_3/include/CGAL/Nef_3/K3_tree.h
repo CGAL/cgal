@@ -258,9 +258,6 @@ typedef typename Traits::Halffacet_handle Halffacet_handle;
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
 typedef typename Traits::Halffacet_triangle_handle Halffacet_triangle_handle;
 #endif
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-typedef typename Traits::Partial_facet Partial_facet;
-#endif
 typedef typename Traits::Object_handle Object_handle;
 typedef std::vector<Object_handle> Object_list;
 typedef typename Object_list::const_iterator Object_const_iterator;
@@ -899,9 +896,6 @@ typename Object_list::difference_type n_vertices = std::distance(objects.begin()
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
         Halffacet_triangle_handle t;
 #endif
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-        Partial_facet pf;
-#endif
         if( CGAL::assign( v, *o)) {
           if( !v_mark[v]) {
             O.push_back(*o);
@@ -927,11 +921,6 @@ typename Object_list::difference_type n_vertices = std::distance(objects.begin()
             O.push_back(*o);
             t_mark[tr] = true;
           }
-        }
-#endif
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-        else if(CGAL::assign(pf, *o)) {
-          CGAL_error_msg( "wrong type");
         }
 #endif
         else
@@ -1024,10 +1013,6 @@ std::string dump_object_list( const Object_list& O, int level = 0) {
   typename Object_list::size_type t_count = 0;
   Halffacet_triangle_handle t;
 #endif
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-  typename Object_list::size_type p_count = 0;
-  Partial_facet pf;
-#endif
   for( o = O.begin(); o != O.end(); ++o) {
     if( CGAL::assign( v, *o)) {
       if( level) os << v->point() << std::endl;
@@ -1048,21 +1033,12 @@ std::string dump_object_list( const Object_list& O, int level = 0) {
       ++t_count;
     }
 #endif
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-    else if( CGAL::assign(pf, *o)) {
-      if( level) pf.debug();
-      ++p_count;
-    }
-#endif
     else
       CGAL_error_msg( "wrong handle");
   }
   os << v_count << "v " << e_count << "e " << f_count << "f ";
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
   os  << t_count << "t ";
-#endif
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-  os  << p_count << "p ";
 #endif
   return os.str();
  }
@@ -1224,19 +1200,6 @@ bool classify_objects(Object_iterator start, Object_iterator end,
   Point_3 point_on_plane(partition_plane.point());
 
   for( o = start; o != end; ++o) {
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-    Partial_facet pf;
-    if(CGAL::assign(pf, *o)) {
-      Partial_facet pfn,pfp;
-      if(pf.divide(partition_plane, pfn, pfp)) {
-        *o1 = make_object(pfn);
-        ++o1;
-        *o2 = make_object(pfp);
-        ++o2;
-        continue;
-      }
-    }
-#endif
     Oriented_side side = sop( point_on_plane, *o, depth);
     if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY) {
       *o1 = *o;
