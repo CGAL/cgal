@@ -343,15 +343,15 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   }
 
   Halffacet_handle get_visible_facet( const Vertex_handle v,
-                                                       const Ray_3& ray) const
+                                      const Ray_3& ray) const
   { return Base::template get_visible_facet<Decorator_traits>(v, ray); }
 
   Halffacet_handle get_visible_facet( const Halfedge_handle e,
-                                                       const Ray_3& ray) const
+                                      const Ray_3& ray) const
   { return Base::template get_visible_facet<Decorator_traits>(e, ray); }
 
   Halffacet_handle get_visible_facet( const Halffacet_handle f,
-                                                       const Ray_3& ray) const
+                                      const Ray_3& ray) const
   { return Base::template get_visible_facet<Decorator_traits>(f, ray); }
 
   Halffacet_handle get_visible_facet( const Vertex_handle v,
