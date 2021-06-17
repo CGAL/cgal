@@ -546,9 +546,9 @@ private:
       }
       ++iteration;
 
-      // if (iteration == 5) {
-      //   exit(EXIT_FAILURE);
-      // }
+      if (iteration == 1010) {
+        exit(EXIT_FAILURE);
+      }
 
       apply(event);
       CGAL_assertion(m_data.check_integrity());
@@ -1403,7 +1403,9 @@ private:
     // If we use pvertex, we miss important iedges!
     std::vector<IEdge> fiedges, biedges;
     m_data.get_iedges_front_back(event_pvertex, pvertices, fiedges, biedges);
-    const auto query_pvertex = m_data.null_pvertex();
+    std::pair<Point_2, Vector_2> query_pvertex = std::make_pair(
+      m_data.point_2(event_pvertex, FT(0)), m_data.direction(event_pvertex));
+
     // const auto query_pvertex = PVertex(sp_idx, // does not work!
     // m_data.support_plane(sp_idx).duplicate_vertex(event_pvertex.second));
     // m_data.support_plane(sp_idx).set_point(
@@ -1523,7 +1525,7 @@ private:
 
   void apply_back_border_case(
     const FT min_time, const FT max_time,
-    const PVertex& /*event_pvertex*/,
+    const std::pair<Point_2, Vector_2>& event_pvertex,
     const PVertex& pvertex, const IVertex& ivertex,
     const PVertex& back, const PVertex& prev,
     const std::vector<IEdge>& fiedges,
@@ -1669,8 +1671,10 @@ private:
       bool is_parallel = false;
       if (KSR::distance(m_data.point_2(back), m_data.point_2(prev)) < KSR::point_tolerance<FT>()) {
         // is_parallel = m_data.compute_future_point_and_direction(
-        //   0, event_pvertex, prev, iedge_0, future_point, future_direction);
-        CGAL_assertion_msg(false, "TODO: BACK, FIX CASE WITH EQUAL BACK AND PREV!");
+        //   0, back, prev, iedge_0, future_point, future_direction);
+        is_parallel = m_data.compute_future_point_and_direction(
+          0, event_pvertex, prev, iedge_0, future_point, future_direction);
+        // CGAL_assertion_msg(false, "TODO: BACK, FIX CASE WITH EQUAL BACK AND PREV!");
       } else {
         is_parallel = m_data.compute_future_point_and_direction(
           0, back, prev, iedge_0, future_point, future_direction);

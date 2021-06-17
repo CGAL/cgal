@@ -2851,6 +2851,91 @@ public:
   }
 
   bool compute_future_point_and_direction(
+    const std::size_t /*idx*/, const std::pair<Point_2, Vector_2>& pvertex, const PVertex& pother, // back prev // front next
+    const IEdge& iedge, Point_2& future_point, Vector_2& future_direction) const {
+
+    bool is_parallel = false;
+    const auto source_p = point_2(pother.first, source(iedge));
+    const auto target_p = point_2(pother.first, target(iedge));
+    CGAL_assertion_msg(KSR::distance(source_p, target_p) >= KSR::point_tolerance<FT>(),
+    "TODO: COMPUTE FUTURE POINT AND DIRECTION 1, HANDLE ZERO-LENGTH IEDGE!");
+
+    const Vector_2 iedge_vec(source_p, target_p);
+    const Line_2  iedge_line(source_p, target_p);
+
+    const auto& next = pother;
+    const auto next_p = point_2(next);
+    const auto curr_p = pvertex.first + m_current_time * pvertex.second;
+
+    const Point_2 pinit = iedge_line.projection(curr_p);
+    CGAL_assertion(pvertex.second != CGAL::NULL_VECTOR);
+    CGAL_assertion(direction(next) != CGAL::NULL_VECTOR);
+
+    // std::cout << "pinit projected: " << to_3d(pother.first, pinit) << std::endl;
+    // std::cout << "dir prev: " << direction(pother) << std::endl;
+
+    // std::cout << "next future: " << point_3(next, m_current_time + FT(1)) << std::endl;
+    // std::cout << "curr future: " << to_3d(pother.first, pvertex.first + (m_current_time + FT(1)) * pvertex.second) << std::endl;
+
+    const Line_2 future_line_next(
+      point_2(next, m_current_time + FT(1)),
+      pvertex.first + (m_current_time + FT(1)) * pvertex.second);
+    const Vector_2 current_vec_next(next_p, curr_p);
+
+    const FT tol = KSR::tolerance<FT>();
+    FT m2 = FT(100000), m3 = FT(100000);
+    // std::cout << "tol: " << tol << std::endl;
+
+    const FT next_d = (curr_p.x() - next_p.x());
+    const FT edge_d = (target_p.x() - source_p.x());
+
+    if (CGAL::abs(next_d) > tol)
+      m2 = (curr_p.y() - next_p.y()) / next_d;
+    if (CGAL::abs(edge_d) > tol)
+      m3 = (target_p.y() - source_p.y()) / edge_d;
+
+    // std::cout << "m2: " << m2 << std::endl;
+    // std::cout << "m3: " << m3 << std::endl;
+
+    // std::cout << "m2 - m3: " << CGAL::abs(m2 - m3) << std::endl;
+
+    if (CGAL::abs(m2 - m3) < tol) {
+      if (m_verbose) std::cout << "- back/front parallel lines" << std::endl;
+
+      is_parallel = true;
+      // Here, in the dot product, we can have maximum 1 zero-length vector.
+      const FT next_dot = current_vec_next * iedge_vec;
+      if (next_dot < FT(0)) {
+        if (m_verbose) std::cout << "- back/front moves backwards" << std::endl;
+        future_point = target_p;
+        // std::cout << point_3(target(iedge)) << std::endl;
+      } else {
+        if (m_verbose) std::cout << "- back/front moves forwards" << std::endl;
+        future_point = source_p;
+        // std::cout << point_3(source(iedge)) << std::endl;
+      }
+
+    } else {
+      if (m_verbose) std::cout << "- back/front intersected lines" << std::endl;
+      future_point = KSR::intersection<Point_2>(future_line_next, iedge_line);
+    }
+
+    CGAL_assertion(pinit != future_point);
+    future_direction = Vector_2(pinit, future_point);
+    CGAL_assertion(future_direction != Vector_2());
+    future_point = pinit - m_current_time * future_direction;
+
+    if (m_verbose) {
+      auto tmp = future_direction;
+      tmp = KSR::normalize(tmp);
+      std::cout << "- back/front future point: " <<
+      to_3d(pother.first, pinit + m_current_time * tmp) << std::endl;
+      std::cout << "- back/front future direction: " << future_direction << std::endl;
+    }
+    return is_parallel;
+  }
+
+  bool compute_future_point_and_direction(
     const std::size_t /*idx*/, const PVertex& pvertex, const PVertex& pother, // back prev // front next
     const IEdge& iedge, Point_2& future_point, Vector_2& future_direction) const {
 
@@ -2876,6 +2961,9 @@ public:
     const Point_2 pinit = iedge_line.projection(curr_p);
     CGAL_assertion(direction(curr) != CGAL::NULL_VECTOR);
     CGAL_assertion(direction(next) != CGAL::NULL_VECTOR);
+
+    // std::cout << "pinit projected: " << to_3d(pvertex.first, pinit) << std::endl;
+    // std::cout << "dir prev: " << direction(pother) << std::endl;
 
     // std::cout << "next future: " << point_3(next, m_current_time + FT(1)) << std::endl;
     // std::cout << "curr future: " << point_3(curr, m_current_time + FT(1)) << std::endl;

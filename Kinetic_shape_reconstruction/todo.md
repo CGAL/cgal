@@ -64,3 +64,4 @@ TODO:
 34. Compare the timing of our code with the original code.
 35. Merge all collinear vertices along input polygons to avoid handling special cases.
 36. Implement the function remove_equal_points() before removing collinear points.
+37. When merging coplanar polygons, should we give a priority not to the first one but to the biggest one?
