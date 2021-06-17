@@ -342,20 +342,17 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     return( e1!=e2 && SD.cyclic_adj_succ(e2)==e1);
   }
 
-  template <typename Traits = Self::Decorator_traits>
-  typename Traits::Halffacet_handle get_visible_facet( const typename Traits::Vertex_handle v,
+  Halffacet_handle get_visible_facet( const Vertex_handle v,
                                                        const Ray_3& ray) const
-  { return Base::template get_visible_facet<Traits>(v, ray); }
+  { return Base::template get_visible_facet<Decorator_traits>(v, ray); }
 
-  template <typename Traits = Self::Decorator_traits>
-  typename Traits::Halffacet_handle get_visible_facet( const typename Traits::Halfedge_handle e,
+  Halffacet_handle get_visible_facet( const Halfedge_handle e,
                                                        const Ray_3& ray) const
-  { return Base::template get_visible_facet<Traits>(e, ray); }
+  { return Base::template get_visible_facet<Decorator_traits>(e, ray); }
 
-  template <typename Traits = Self::Decorator_traits>
-  typename Traits::Halffacet_handle get_visible_facet( const typename Traits::Halffacet_handle f,
+  Halffacet_handle get_visible_facet( const Halffacet_handle f,
                                                        const Ray_3& ray) const
-  { return Base::template get_visible_facet<Traits>(f, ray); }
+  { return Base::template get_visible_facet<Decorator_traits>(f, ray); }
 
   Halffacet_handle get_visible_facet( const Vertex_handle v,
                                       const Segment_3& ray) const
@@ -672,9 +669,9 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     return valid;
   }
 
-  template <typename Visitor, typename Traits = Self::Decorator_traits>
-  void visit_shell_objects(typename Traits::SFace_handle f, Visitor& V) const
-  { Base::template visit_shell_objects<Visitor, Traits>(f, V); }
+  template <typename Visitor>
+  void visit_shell_objects(SFace_handle f, Visitor& V) const
+  { Base::template visit_shell_objects<Visitor,Decorator_traits>(f, V); }
 
   Vertex_iterator   vertices_begin()   { return sncp()->vertices_begin(); }
   Vertex_iterator   vertices_end()     { return sncp()->vertices_end(); }
