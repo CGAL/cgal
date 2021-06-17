@@ -239,7 +239,7 @@ public:
         if(! inter){
           return boost::none;
         }
-        if(const Point* point = boost::get<Point>(&*inter)){        
+        if(const Point* point = boost::get<Point>(&*inter)){
           return boost::make_optional(variant_type(*point));
         }
       }
