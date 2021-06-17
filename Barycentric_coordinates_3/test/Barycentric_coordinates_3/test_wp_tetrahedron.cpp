@@ -34,7 +34,7 @@ int main(){
   std::vector<FT> wp_coordinates;
 
   // Tolerance
-  const FT tol = FT(1.0e-13);
+  const FT tol = FT(1.0e-10);
 
   // Sample points
   const FT step  = FT(1) / FT(500);
