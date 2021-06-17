@@ -245,6 +245,8 @@ public:
   /// TODO: move in utils
   Uncertain<Sign> sign_of_minor(double px, double py, double qx, double qy, double rx, double ry) const
   {
+    CGAL_BRANCH_PROFILER_3("certain / uncertain / calls to   : sign_of_minor", tmp);
+
     double qx_px = (qx - px);
     double ry_py = (ry - py);
     double rx_px = (rx - px);
@@ -280,12 +282,14 @@ public:
     }
     if( (lower_bound_1 < 5.00368081960964746551e-147) )
     {
+        CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
         return Uncertain<Sign>();
     }
     else
     {
         if( (upper_bound_1 > 1.67597599124282389316e+153) )
         {
+            CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
             return Uncertain<Sign>();
         }
         eps = (8.88720573725927976811e-16 * (max1 * max2));
@@ -301,24 +305,37 @@ public:
             }
             else
             {
+                CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
                 return Uncertain<Sign>();
             }
         }
     }
+    CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
     return int_tmp_result;
   };
 
   bool get_cross_product_sign(const std::array< std::array<double, 3>, 3 >& pts, std::array<Sign, 3>& signs) const
   {
+    CGAL_BRANCH_PROFILER_3("determinate / indeterminate / calls to   : get_cross_product_sign", tmp);
     Uncertain<Sign> s = sign_of_minor(pts[0][1], pts[0][2], pts[1][1], pts[1][2], pts[2][1], pts[2][2]);
-    if (is_indeterminate(s)) return false;
+    if (is_indeterminate(s)){
+      CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
+      return false;
+    }
     signs[0]=s;
     s = sign_of_minor(pts[0][2], pts[0][0], pts[1][2], pts[1][0], pts[2][2], pts[2][0]);
-    if (is_indeterminate(s)) return false;
+    if (is_indeterminate(s)){
+      CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
+      return false;
+    }
     signs[1]=s;
     s = sign_of_minor(pts[0][0], pts[0][1], pts[1][0], pts[1][1], pts[2][0], pts[2][1]);
-    if (is_indeterminate(s)) return false;
+    if (is_indeterminate(s)){
+      CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
+      return false;
+    }
     signs[2]=s;
+    CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
     return true;
   }
 
