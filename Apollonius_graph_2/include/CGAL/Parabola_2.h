@@ -267,14 +267,19 @@ public:
   }
 
 
-  inline Line_2 line() const
+  inline const Line_2& line() const
   {
     return l;
   }
 
-  inline Point_2 center() const
+  inline const Point_2& center() const
   {
     return c;
+  }
+
+  inline const Point_2& origin() const
+  {
+    return o;
   }
 
   template< class Stream >
