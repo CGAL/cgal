@@ -253,15 +253,15 @@ public:
     double double_tmp_result;
     double eps;
     double_tmp_result = ((qx_px * ry_py) - (rx_px * qy_py));
-    double max1 = fabs(qx_px);
-    if( (max1 < fabs(rx_px)) )
+    double max1 = CGAL::abs(qx_px);
+    if( (max1 < CGAL::abs(rx_px)) )
     {
-        max1 = fabs(rx_px);
+      max1 = CGAL::abs(rx_px);
     }
-    double max2 = fabs(ry_py);
-    if( (max2 < fabs(qy_py)) )
+    double max2 = CGAL::abs(ry_py);
+    if( (max2 < CGAL::abs(qy_py)) )
     {
-        max2 = fabs(qy_py);
+      max2 = CGAL::abs(qy_py);
     }
     double lower_bound_1;
     double upper_bound_1;
@@ -525,15 +525,15 @@ public:
       double double_tmp_result;
       double eps;
       double_tmp_result = ((-c_alpha * alpha) + (c_beta * beta));
-      double max1 = fabs(c_alpha);
-      if( (max1 < fabs(c_beta)) )
+      double max1 = CGAL::abs(c_alpha);
+      if( (max1 < CGAL::abs(c_beta)) )
       {
-          max1 = fabs(c_beta);
+          max1 = CGAL::abs(c_beta);
       }
-      double max2 = fabs(alpha);
-      if( (max2 < fabs(beta)) )
+      double max2 = CGAL::abs(alpha);
+      if( (max2 < CGAL::abs(beta)) )
       {
-          max2 = fabs(beta);
+          max2 = CGAL::abs(beta);
       }
       double lower_bound_1;
       double upper_bound_1;
