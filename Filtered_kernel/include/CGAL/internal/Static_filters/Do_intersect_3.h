@@ -322,19 +322,19 @@ public:
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
       return false;
     }
-    signs[0]=s;
+    signs[0]=make_certain(s);
     s = sign_of_minor(pts[0][2], pts[0][0], pts[1][2], pts[1][0], pts[2][2], pts[2][0]);
     if (is_indeterminate(s)){
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
       return false;
     }
-    signs[1]=s;
+    signs[1]=make_certain(s);
     s = sign_of_minor(pts[0][0], pts[0][1], pts[1][0], pts[1][1], pts[2][0], pts[2][1]);
     if (is_indeterminate(s)){
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
       return false;
     }
-    signs[2]=s;
+    signs[2]=make_certain(s);
     CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
     return true;
   }
