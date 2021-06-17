@@ -339,9 +339,13 @@ public:
     return true;
   }
 
+  // adaptation of the do-intersect code of Plane_3/Bbox_3 when we don't know the plane equation exactly
   bool do_intersect_supporting_plane_bbox(const Triangle_3& t, const std::array< std::array<double, 3>, 3>& pts, const Bbox_3& bbox) const
   {
-    auto my_orient = [](const std::array< std::array<double, 3>, 3>& pts, double x, double y, double z) -> Uncertain<Orientation>
+    // copy of the static filter of Orientation_3 skipping the fit_in_double + using Uncertain as result type
+    auto statically_filtered_orientation_3 =
+      [](const std::array< std::array<double, 3>, 3>& pts, double x, double y, double z)
+        -> Uncertain<Orientation>
     {
       double pqx = pts[1][0] - pts[0][0];
       double pqy = pts[1][1] - pts[0][1];
@@ -421,21 +425,23 @@ public:
       return Uncertain<Orientation>::indeterminate();
     };
 
-    auto orient = [my_orient](const Triangle_3& t, const std::array< std::array<double, 3>, 3>& pts,
-                              double x, double y, double z) -> Orientation
+    auto orientation =
+      [statically_filtered_orientation_3]
+        (const Triangle_3& t, const std::array< std::array<double, 3>, 3>& pts, double x, double y, double z)
+          -> Orientation
     {
-      Uncertain<Orientation> res = my_orient(pts, x, y, z);
+      Uncertain<Orientation> res = statically_filtered_orientation_3(pts, x, y, z);
       if (!is_indeterminate(res)) return make_certain(res);
-      typename K_base::Orientation_3 orient = K_base().orientation_3_object();
+      typename K_base::Orientation_3 orient = K_base().orientation_3_object(); // skip the static filter and directly call the base
       return orient(t[0], t[1], t[2], Point_3(x,y,z));
     };
-////
+
     std::array<Sign, 3> signs;
     bool OK = get_cross_product_sign(pts, signs);
 
     if (OK)
     {
-      // extract extreme directions
+      // extract extreme directions (copy of the code of get_min_max from Bbox_3_Plane_3_do_intersect.h)
       std::array<double, 3> p_min, p_max;
 
       if(signs[0] == POSITIVE) {
@@ -480,30 +486,28 @@ public:
         }
       }
 
-      return ! (orient(t, pts, p_max[0], p_max[1], p_max[2]) == ON_NEGATIVE_SIDE ||
-                orient(t, pts, p_min[0], p_min[1], p_min[2]) == ON_POSITIVE_SIDE);
+      return ! (orientation(t, pts, p_max[0], p_max[1], p_max[2]) == ON_NEGATIVE_SIDE ||
+                orientation(t, pts, p_min[0], p_min[1], p_min[2]) == ON_POSITIVE_SIDE);
     }
 
-    CGAL::Orientation side = orient(t, pts, bbox.xmin(), bbox.ymin(),bbox.zmin());
+    CGAL::Orientation side = orientation(t, pts, bbox.xmin(), bbox.ymin(),bbox.zmin());
     if(side == COPLANAR) return true;
-    CGAL::Oriented_side s = orient(t, pts, bbox.xmax(), bbox.ymax(),bbox.zmax());
+    CGAL::Oriented_side s = orientation(t, pts, bbox.xmax(), bbox.ymax(),bbox.zmax());
     if(s != side) return true;
-    s = orient(t, pts, bbox.xmin(), bbox.ymin(),bbox.zmax());
+    s = orientation(t, pts, bbox.xmin(), bbox.ymin(),bbox.zmax());
     if(s != side) return true;
-    s = orient(t, pts, bbox.xmax(), bbox.ymax(),bbox.zmin());
+    s = orientation(t, pts, bbox.xmax(), bbox.ymax(),bbox.zmin());
     if(s != side) return true;
-    s = orient(t, pts, bbox.xmin(), bbox.ymax(),bbox.zmin());
+    s = orientation(t, pts, bbox.xmin(), bbox.ymax(),bbox.zmin());
     if(s != side) return true;
-     s = orient(t, pts, bbox.xmax(), bbox.ymin(),bbox.zmax());
+     s = orientation(t, pts, bbox.xmax(), bbox.ymin(),bbox.zmax());
     if(s != side) return true;
-     s = orient(t, pts, bbox.xmin(), bbox.ymax(),bbox.zmax());
+     s = orientation(t, pts, bbox.xmin(), bbox.ymax(),bbox.zmax());
     if(s != side) return true;
-    s = orient(t, pts, bbox.xmax(), bbox.ymin(),bbox.zmin());
+    s = orientation(t, pts, bbox.xmax(), bbox.ymin(),bbox.zmin());
     if(s != side) return true;
     return false;
   };
-
-  ////
 
   result_type
   operator()(const Triangle_3 &t, const Bbox_3& b) const
@@ -536,7 +540,6 @@ public:
     // copy of the regular code with do_axis_intersect_aux_impl statically filtered
     auto do_axis_intersect_aux_impl = [](double alpha, double beta, double c_alpha, double c_beta) -> Uncertain<Sign>
     {
-      // TODO: shall we add the case 0 if one of the alpha's and beta's are 0?
       Sign int_tmp_result;
       double double_tmp_result;
       double eps;
