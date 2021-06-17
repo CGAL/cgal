@@ -283,14 +283,14 @@ public:
     if( (lower_bound_1 < 5.00368081960964746551e-147) )
     {
         CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
-        return Uncertain<Sign>();
+        return Uncertain<Sign>::indeterminate();
     }
     else
     {
         if( (upper_bound_1 > 1.67597599124282389316e+153) )
         {
             CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
-            return Uncertain<Sign>();
+            return Uncertain<Sign>::indeterminate();
         }
         eps = (8.88720573725927976811e-16 * (max1 * max2));
         if( (double_tmp_result > eps) )
@@ -306,7 +306,7 @@ public:
             else
             {
                 CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
-                return Uncertain<Sign>();
+                return Uncertain<Sign>::indeterminate();
             }
         }
     }
@@ -418,7 +418,7 @@ public:
         if (det > eps)  return POSITIVE;
         if (det < -eps) return NEGATIVE;
       }
-      return Uncertain<Orientation>();
+      return Uncertain<Orientation>::indeterminate();
     };
 
     auto orient = [my_orient](const Triangle_3& t, const std::array< std::array<double, 3>, 3>& pts,
@@ -569,13 +569,13 @@ public:
       }
       if( (lower_bound_1 < 5.00368081960964746551e-147) )
       {
-          return Uncertain<Sign>();
+          return Uncertain<Sign>::indeterminate();
       }
       else
       {
           if( (upper_bound_1 > 1.67597599124282389316e+153) )
           {
-              return Uncertain<Sign>();
+              return Uncertain<Sign>::indeterminate();
           }
           eps = (8.88720573725927976811e-16 * (max1 * max2));
           if( (double_tmp_result > eps) )
@@ -590,7 +590,7 @@ public:
               }
               else
               {
-                  return Uncertain<Sign>();
+                return Uncertain<Sign>::indeterminate();
               }
           }
       }
