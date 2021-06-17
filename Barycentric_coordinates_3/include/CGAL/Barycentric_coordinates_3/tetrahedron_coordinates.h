@@ -25,7 +25,7 @@ namespace Barycentric_coordinates{
   template<
   typename OutIterator,
   typename GeomTraits>
-  OutIterator triangle_coordinates_3(
+  OutIterator tetrahedron_coordinates(
     const typename GeomTraits::Point_3& p0,
     const typename GeomTraits::Point_3& p1,
     const typename GeomTraits::Point_3& p2,
@@ -42,7 +42,7 @@ namespace Barycentric_coordinates{
   template<
   typename Point_3,
   typename OutIterator>
-  OutIterator triangle_coordinates_3(
+  OutIterator tetrahedron_coordinates(
     const Point_3& p0,
     const Point_3& p1,
     const Point_3& p2,
@@ -52,7 +52,7 @@ namespace Barycentric_coordinates{
 
     using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
     const GeomTraits traits;
-    return triangle_coordinates_3(
+    return tetrahedron_coordinates(
       p0, p1, p2, p3, query, c_begin, traits);
   }
 
@@ -63,7 +63,7 @@ namespace Barycentric_coordinates{
   typename GeomTraits::FT,
   typename GeomTraits::FT,
   typename GeomTraits::FT>
-  triangle_coordinates_in_tuple_3(
+  tetrahedron_coordinates_in_tuple(
     const typename GeomTraits::Point_3& p0,
     const typename GeomTraits::Point_3& p1,
     const typename GeomTraits::Point_3& p2,
@@ -87,7 +87,7 @@ namespace Barycentric_coordinates{
   typename Kernel_traits<Point_3>::Kernel::FT,
   typename Kernel_traits<Point_3>::Kernel::FT,
   typename Kernel_traits<Point_3>::Kernel::FT>
-  triangle_coordinates_in_tuple_3(
+  tetrahedron_coordinates_in_tuple(
     const Point_3& p0,
     const Point_3& p1,
     const Point_3& p2,
@@ -96,7 +96,7 @@ namespace Barycentric_coordinates{
 
     using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
     const GeomTraits traits;
-    return triangle_coordinates_in_tuple_3(
+    return tetrahedron_coordinates_in_tuple(
       p0, p1, p2, p3, query, traits);
   }
 

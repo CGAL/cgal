@@ -2,7 +2,7 @@
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Barycentric_coordinates_3/Wachspress_coordinates_3.h>
-#include <CGAL/Barycentric_coordinates_3/tetrahedron_coordinates_3.h>
+#include <CGAL/Barycentric_coordinates_3/tetrahedron_coordinates.h>
 
 //Typedefs
 using Kernel = CGAL::Simple_cartesian<double>;
@@ -51,27 +51,18 @@ int main(){
 
         ws(query, std::back_inserter(wp_coordinates));
 
-        CGAL::Barycentric_coordinates::triangle_coordinates_3(p0, p1,
+        CGAL::Barycentric_coordinates::tetrahedron_coordinates(p0, p1,
          p2, p3, query, std::back_inserter(tri_coordinates));
 
-        assert(tri_coordinates[count + 0] > -tol && tri_coordinates[count + 0] <= FT(1));
-        assert(tri_coordinates[count + 1] > -tol && tri_coordinates[count + 1] <= FT(1));
-        assert(tri_coordinates[count + 2] > -tol && tri_coordinates[count + 2] <= FT(1));
-        assert(tri_coordinates[count + 3] > -tol && tri_coordinates[count + 3] <= FT(1));
+        assert(tri_coordinates[count + 0] >= FT(0) && tri_coordinates[count + 0] <= FT(1));
+        assert(tri_coordinates[count + 1] >= FT(0) && tri_coordinates[count + 1] <= FT(1));
+        assert(tri_coordinates[count + 2] >= FT(0) && tri_coordinates[count + 2] <= FT(1));
+        assert(tri_coordinates[count + 3] >= FT(0) && tri_coordinates[count + 3] <= FT(1));
 
-        assert(wp_coordinates[count + 0] > -tol && wp_coordinates[count + 0] <= FT(1));
-        assert(wp_coordinates[count + 1] > -tol && wp_coordinates[count + 1] <= FT(1));
-        assert(wp_coordinates[count + 2] > -tol && wp_coordinates[count + 2] <= FT(1));
-        assert(wp_coordinates[count + 3] > -tol && wp_coordinates[count + 3] <= FT(1));
-
-        // Problem with points near the faces. Example: (0.02, 0.49, 0.48)
-        /*
-        std::cout << query << std::endl;
-        std::cout << tri_coordinates[count + 0]<< " " << tri_coordinates[count + 1]<< " " <<
-        tri_coordinates[count + 2]<< " " << tri_coordinates[count + 3]<< std::endl <<
-        wp_coordinates[count + 0] << " " << wp_coordinates[count + 1] << " " <<
-        wp_coordinates[count + 2] << " " << wp_coordinates[count + 3] << std::endl << std::endl;
-        */
+        assert(wp_coordinates[count + 0] >= FT(0) && wp_coordinates[count + 0] <= FT(1));
+        assert(wp_coordinates[count + 1] >= FT(0) && wp_coordinates[count + 1] <= FT(1));
+        assert(wp_coordinates[count + 2] >= FT(0) && wp_coordinates[count + 2] <= FT(1));
+        assert(wp_coordinates[count + 3] >= FT(0) && wp_coordinates[count + 3] <= FT(1));
 
         assert(
           CGAL::abs(tri_coordinates[count + 0] - wp_coordinates[count + 0]) < tol &&
