@@ -426,8 +426,7 @@ public:
     {
       Uncertain<Orientation> res = my_orient(pts, x, y, z);
       if (!is_indeterminate(res)) return make_certain(res);
-      typename SFK::Orientation_3 orient = SFK().orientation_3_object();
-      //TODO: avoid calling the static filter again...
+      typename K_base::Orientation_3 orient = K_base().orientation_3_object();
       return orient(t[0], t[1], t[2], Point_3(x,y,z));
     };
 ////
