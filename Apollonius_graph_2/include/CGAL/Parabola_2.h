@@ -288,8 +288,8 @@ public:
     std::vector< Point_2 > p;
     std::vector< Point_2 > pleft, pright;
 
-    pleft.push_back(o);
-    pright.push_back(o);
+    pleft.push_back(origin());
+    pright.push_back(origin());
     const FT STEP(2);
     for (int i = 1; i <= 100; i++) {
       p = compute_points(i * i * STEP);
@@ -316,7 +316,7 @@ public:
       W << Segment_2(pright[i], pright[i+1]);
     }
 
-    W << o;
+    W << origin();
   }
 };
 
