@@ -190,6 +190,7 @@ public:
   {
     CGAL_PROFILER("Projected_intersect_3::operator()")
     CGAL_TIME_PROFILER("Projected_intersect_3::operator()")
+    typedef boost::variant<Point, Segment> variant_type;
     const Vector_3 u1 = cross_product(s1.to_vector(), normal);
     if(u1 == NULL_VECTOR)
       return K().intersect_3_object()(s1.supporting_line(), s2);
@@ -203,20 +204,28 @@ public:
 
     auto planes_intersection = intersection(plane_1, plane_2);
     if(! planes_intersection) {
+#ifdef CGAL_T2_PTB_3_DEBUG
       std::cerr << "planes_intersection is empty\n";
+#endif
       return boost::none;
     }
     if(const Line* line = boost::get<Line>(&*planes_intersection))
     {
+      // check if the intersection line intersects both segments by
+      // checking if a point on the intersection line is between
+      // the segments endpoints
       const Point& pi = line->point(0);
-      if(cross_product(normal, pi - s1.source())
+      if(  cross_product(normal, pi - s1.source())
          * cross_product(normal, pi - s1.target()) > FT(0)
          ||
-         cross_product(normal, pi - s2.source())
+           cross_product(normal, pi - s2.source())
          * cross_product(normal, pi - s2.target()) > FT(0) )
       {
-        // the intersection of the lines is not inside the segments
+        // the intersection of the supporting lines is not inside both segments
+#ifdef CGAL_T2_PTB_3_DEBUG
         std::cerr << "intersection not inside\n";
+        return boost::none;
+#endif
         return boost::none;
       }
       else
@@ -230,16 +239,67 @@ public:
         if(! inter){
           return boost::none;
         }
-        if(const Point* point = boost::get<Point>(&*inter)){
-          typedef  boost::variant<Point, Segment> variant_type;
+        if(const Point* point = boost::get<Point>(&*inter)){        
           return boost::make_optional(variant_type(*point));
         }
       }
     }
     if(boost::get<Plane_3>(&*planes_intersection))
     {
-      std::cerr << "coplanar lines\n";
-      CGAL_error();
+#ifdef CGAL_T2_PTB_3_DEBUG
+      std::cerr << "coplanar supporting lines\n";
+#endif
+      auto is_inside_segment = [](const Segment& s, const Point& q)
+      {
+        return Vector_3(q,s.source()) * Vector_3(q,s.target()) <=0;
+      };
+
+      bool src2_in_s1 = is_inside_segment(s1, s2.source());
+      bool tgt2_in_s1 = is_inside_segment(s1, s2.target());
+      bool src1_in_s2 = is_inside_segment(s2, s1.source());
+      bool tgt1_in_s2 = is_inside_segment(s2, s1.target());
+
+      if (src1_in_s2 && tgt1_in_s2) return boost::make_optional(variant_type(s1));
+      if (src2_in_s1 && tgt2_in_s1) return boost::make_optional(variant_type(s2));
+
+      if (src1_in_s2)
+      {
+        if (src2_in_s1)
+        {
+          if (cross_product(normal, Vector_3(s1.source(), s2.source())) != NULL_VECTOR)
+            return boost::make_optional(variant_type(Segment(s1.source(), s2.source())));
+          else
+            return boost::make_optional(variant_type((s1.source())));
+        }
+        if (tgt2_in_s1)
+        {
+          if (cross_product(normal, Vector_3(s1.source(), s2.target())) != NULL_VECTOR)
+            return boost::make_optional(variant_type(Segment(s1.source(), s2.target())));
+          else
+            return boost::make_optional(variant_type(s1.source()));
+        }
+        // should never get here with a Kernel with exact constructions
+        return boost::make_optional(variant_type(s1.source()));
+      }
+      if (tgt1_in_s2)
+      {
+        if (src2_in_s1)
+        {
+          if (cross_product(normal, Vector_3(s1.target(), s2.source())) != NULL_VECTOR)
+            return boost::make_optional(variant_type(Segment(s1.target(), s2.source())));
+          else
+            return boost::make_optional(variant_type(s1.target()));
+        }
+        if (tgt2_in_s1)
+        {
+          if (cross_product(normal, Vector_3(s1.target(), s2.target())) != NULL_VECTOR)
+            return boost::make_optional(variant_type(Segment(s1.target(), s2.target())));
+          else
+            return boost::make_optional(variant_type(s1.target()));
+        }
+        // should never get here with a Kernel with exact constructions
+        return boost::make_optional(variant_type(s1.target()));
+      }
       return boost::none;
     }
     return boost::none;
