@@ -140,7 +140,7 @@ namespace internal {
 
   template <class FT, int SIDE, class Fct>
   inline
-  Sign
+  Uncertain<Sign>
   do_axis_intersect_aux_A0(const FT& alpha,
                            const FT& beta,
                            const std::array<std::array<FT,3>, 3>& sides,
@@ -151,7 +151,7 @@ namespace internal {
 
   template <class FT, int SIDE, class Fct>
   inline
-  Sign
+  Uncertain<Sign>
   do_axis_intersect_aux_A1(const FT& alpha,
                            const FT& beta,
                            const std::array<std::array<FT,3>, 3>& sides,
@@ -162,7 +162,7 @@ namespace internal {
 
   template <class FT, int SIDE, class Fct>
   inline
-  Sign
+  Uncertain<Sign>
   do_axis_intersect_aux_A2(const FT& alpha,
                            const FT& beta,
                            const std::array<std::array<FT,3>, 3>& sides,
