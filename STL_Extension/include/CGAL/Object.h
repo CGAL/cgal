@@ -76,25 +76,10 @@ class Object
     template <class T>
     bool assign(T &t) const
     {
-      if(obj) {
-        #ifdef CGAL_USE_ANY_BAD_CAST
-        try {
-          t = boost::any_cast<T>(*obj);
-          return true;
-        } catch(...) {
-          return false;
-        }
-        #else
-        const T* res =  boost::any_cast<T>(&(*obj));
-        if (res){
-          t=*res;
-          return true;
-        }
-        return false;
-        #endif
-      } else {
-        return false;
-      }
+      const T* res = boost::any_cast<T>(obj.get());
+      if (!res) return false;
+      t = *res;
+      return true;
     }
 
     bool
@@ -174,19 +159,13 @@ template <class T>
 inline
 const T * object_cast(const Object * o)
 {
-  if(o->obj)
-    return boost::any_cast<T>((o->obj).get());
-  else
-    return nullptr;
+  return boost::any_cast<T>((o->obj).get());
 }
 
 template <class T>
 inline
 T object_cast(const Object & o)
 {
-  if(!o.obj)
-    throw Bad_object_cast();
-
   const T * result = boost::any_cast<T>((o.obj).get());
   if (!result)
     throw Bad_object_cast();
