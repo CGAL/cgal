@@ -1256,7 +1256,7 @@ bool fill_hole_with_constraints(std::vector<typename boost::graph_traits<Triangl
   CGAL_assertion(!does_self_intersect(new_faces, tmesh, parameters::vertex_point_map(vpm)));
 
   // Update working range with the new faces
-  for(const face_descriptor& f : cc_faces)
+  for(const face_descriptor f : cc_faces)
     working_face_range.erase(f);
 
   working_face_range.insert(new_faces.begin(), new_faces.end());
