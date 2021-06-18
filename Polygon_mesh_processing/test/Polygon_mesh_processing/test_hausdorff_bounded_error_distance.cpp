@@ -102,7 +102,7 @@ void get_meshes(
 template<typename PolygonMesh>
 void save_mesh(const PolygonMesh& mesh, const std::string filepath) {
 
-  if (!CGAL::write_PLY(filepath + ".ply", mesh)) {
+  if (!CGAL::IO::write_PLY(filepath + ".ply", mesh)) {
     std::cerr << "ERROR: cannot save this file: " << filepath << std::endl;
     exit(EXIT_FAILURE);
   }
