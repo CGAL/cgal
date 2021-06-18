@@ -389,21 +389,21 @@ void Scene_surface_mesh_item_priv::addFlatData(Point p, EPICK::Vector_3 n, CGAL:
   const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   if(name.testFlag(Scene_item_rendering_helper::GEOMETRY))
   {
-    flat_vertices.push_back((cgal_gl_data)(p.x()+offset[0]));
-    flat_vertices.push_back((cgal_gl_data)(p.y()+offset[1]));
-    flat_vertices.push_back((cgal_gl_data)(p.z()+offset[2]));
+    flat_vertices.push_back(static_cast<cgal_gl_data>(p.x()+offset[0]));
+    flat_vertices.push_back(static_cast<cgal_gl_data>(p.y()+offset[1]));
+    flat_vertices.push_back(static_cast<cgal_gl_data>(p.z()+offset[2]));
   }
   if(name.testFlag(Scene_item_rendering_helper::NORMALS))
   {
-    flat_normals.push_back((cgal_gl_data)n.x());
-    flat_normals.push_back((cgal_gl_data)n.y());
-    flat_normals.push_back((cgal_gl_data)n.z());
+    flat_normals.push_back(static_cast<cgal_gl_data>(n.x()));
+    flat_normals.push_back(static_cast<cgal_gl_data>(n.y()));
+    flat_normals.push_back(static_cast<cgal_gl_data>(n.z()));
   }
   if(c != nullptr && name.testFlag(Scene_item_rendering_helper::COLORS))
   {
-    f_colors.push_back((float)c->red()/255);
-    f_colors.push_back((float)c->green()/255);
-    f_colors.push_back((float)c->blue()/255);
+    f_colors.push_back(static_cast<float>(c->red())/255);
+    f_colors.push_back(static_cast<float>(c->green())/255);
+    f_colors.push_back(static_cast<float>(c->blue())/255);
   }
 }
 
@@ -649,9 +649,9 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
     for(vertex_descriptor vd : vertices(*smesh_))
     {
       CGAL::IO::Color c = vcolors[vd];
-      v_colors.push_back((float)c.red()/255);
-      v_colors.push_back((float)c.green()/255);
-      v_colors.push_back((float)c.blue()/255);
+      v_colors.push_back(static_cast<float>(c.red())/255);
+      v_colors.push_back(static_cast<float>(c.green())/255);
+      v_colors.push_back(static_cast<float>(c.blue())/255);
     }
   }
 
@@ -1566,8 +1566,8 @@ void
 Scene_surface_mesh_item_priv::
 invalidate_stats()
 {
-  number_of_degenerated_faces = (unsigned int)(-1);
-  number_of_null_length_edges = (unsigned int)(-1);
+  number_of_degenerated_faces = static_cast<unsigned int>(-1);
+  number_of_null_length_edges = static_cast<unsigned int>(-1);
   has_nm_vertices = false;
   volume = -std::numeric_limits<double>::infinity();
   area = -std::numeric_limits<double>::infinity();
@@ -1675,7 +1675,7 @@ QString Scene_surface_mesh_item::computeStats(int type)
   {
     if(is_triangle_mesh(*d->smesh_))
     {
-      if (d->number_of_degenerated_faces == (unsigned int)(-1))
+      if (d->number_of_degenerated_faces == static_cast<unsigned int>(-1))
         d->number_of_degenerated_faces = nb_degenerate_faces(d->smesh_);
       return QString::number(d->number_of_degenerated_faces);
     }
@@ -2333,7 +2333,7 @@ float Scene_surface_mesh_item::alpha() const
 {
   if(!d->alphaSlider)
     return 1.0f;
-  return (float)d->alphaSlider->value() / 255.0f;
+  return static_cast<float>(d->alphaSlider->value()) / 255.0f;
 }
 
 void Scene_surface_mesh_item::setAlpha(int alpha)

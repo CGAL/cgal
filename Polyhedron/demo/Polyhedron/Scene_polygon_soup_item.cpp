@@ -196,16 +196,16 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
           normals.push_back(normal.z());
           if(!soup->fcolors.empty())
           {
-            f_colors.push_back((float)color.red()/255);
-            f_colors.push_back((float)color.green()/255);
-            f_colors.push_back((float)color.blue()/255);
+            f_colors.push_back(static_cast<float>(color.red())/255);
+            f_colors.push_back(static_cast<float>(color.green())/255);
+            f_colors.push_back(static_cast<float>(color.blue())/255);
           }
           if(!soup->vcolors.empty())
           {
             CGAL::IO::Color vcolor = soup->vcolors[triangulation.v2v[ffit->vertex(i)]];
-            v_colors.push_back((float)vcolor.red()/255);
-            v_colors.push_back((float)vcolor.green()/255);
-            v_colors.push_back((float)vcolor.blue()/255);
+            v_colors.push_back(static_cast<float>(vcolor.red())/255);
+            v_colors.push_back(static_cast<float>(vcolor.green())/255);
+            v_colors.push_back(static_cast<float>(vcolor.blue())/255);
           }
         }
     }
@@ -263,17 +263,17 @@ Scene_polygon_soup_item_priv::compute_normals_and_vertices() const{
                 if(!soup->fcolors.empty())
                 {
                   const CGAL::IO::Color color = soup->fcolors[nb];
-                    f_colors.push_back((float)color.red()/255);
-                    f_colors.push_back((float)color.green()/255);
-                    f_colors.push_back((float)color.blue()/255);
+                    f_colors.push_back(static_cast<float>(color.red())/255);
+                    f_colors.push_back(static_cast<float>(color.green())/255);
+                    f_colors.push_back(static_cast<float>(color.blue())/255);
                 }
 
                 if(!soup->vcolors.empty())
                 {
                   const CGAL::IO::Color color = soup->vcolors[it->at(i)];
-                  v_colors.push_back((float)color.red()/255);
-                  v_colors.push_back((float)color.green()/255);
-                  v_colors.push_back((float)color.blue()/255);
+                  v_colors.push_back(static_cast<float>(color.red())/255);
+                  v_colors.push_back(static_cast<float>(color.green())/255);
+                  v_colors.push_back(static_cast<float>(color.blue())/255);
                 }
             }
         }
