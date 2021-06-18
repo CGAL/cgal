@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Aff_transformation_3.h>
-#include <CGAL/IO/PLY.h>
+#include <CGAL/IO/OFF.h>
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
@@ -52,12 +52,10 @@ int main(int argc, char** argv) {
   std::cout << std::endl << "* moving mesh example:" << std::endl;
 
   Surface_mesh surface_mesh;
-  std::ifstream sm_input(filepath);
-  sm_input >> surface_mesh;
+  CGAL::IO::read_OFF(filepath, surface_mesh);
 
   Polyhedron polyhedron;
-  std::ifstream poly_input(filepath);
-  poly_input >> polyhedron;
+  CGAL::IO::read_OFF(filepath, polyhedron);
 
   PMP::transform(Affine_transformation_3(CGAL::Translation(),
     Vector_3(FT(0), FT(0), FT(1))), polyhedron);
