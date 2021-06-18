@@ -30,6 +30,8 @@
 
 namespace CGAL_MINIBALL_NAMESPACE {
 
+namespace  Bounding_volumes {
+
   template<typename FT>
   inline bool compare(const FT& a,const FT& b,
                       const FT& ap,const FT& bp) {
@@ -55,6 +57,8 @@ namespace CGAL_MINIBALL_NAMESPACE {
       return 4 * uu *bp > sqr(v);
     }
   }
+
+} // namespace Bounding_volumes
 
   template<class Traits>
   void Min_sphere_of_spheres_d<Traits>::update(LP_algorithm) {
@@ -168,7 +172,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
                                          t.center_cartesian_begin(*l[k]),FT(0),std::plus<FT>(),
         Subtract_and_square<FT>());
 
-      if (compare(max,maxp,t.radius(*l[k]),dist)) {
+      if (Bounding_volumes::compare(max,maxp,t.radius(*l[k]),dist)) {
         max   = t.radius(*l[k]);
         maxp  = dist;
         i     = k;
@@ -203,7 +207,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
          Subtract_and_square_to_double<FT>());
 
       const double r = CGAL_MINIBALL_NTS to_double(t.radius(*l[k]));
-      if (compare(max,maxp,r,dist)) {
+      if (Bounding_volumes::compare(max,maxp,r,dist)) {
         max   = r;
         maxp  = dist;
         i     = k;

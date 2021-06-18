@@ -189,6 +189,11 @@ endmacro()
 #  Now to actually find TBB
 #
 
+#start with CONFIG Mode
+find_package(TBB QUIET NO_MODULE)
+if(TBB_FOUND)
+  return()
+endif()#TBB_FOUND
 # Get path, convert backslashes as ${ENV_${var}}
 getenv_path(TBB_ROOT)
 

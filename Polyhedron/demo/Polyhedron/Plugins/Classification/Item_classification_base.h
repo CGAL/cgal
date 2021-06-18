@@ -228,7 +228,7 @@ public:
   void change_label_color (std::size_t position, const QColor& color)
   {
     m_labels[position]->set_color
-      (CGAL::Color (color.red(), color.green(), color.blue()));
+      (CGAL::IO::Color (color.red(), color.green(), color.blue()));
   }
   void change_label_name (std::size_t position, const std::string& name)
   {

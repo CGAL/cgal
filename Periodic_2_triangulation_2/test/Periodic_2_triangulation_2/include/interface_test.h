@@ -496,7 +496,7 @@ void test_io(T &pt1, bool ex)
   T pt1r;
   ss1 >> pt1r;
 
-  assert(CGAL::is_ascii(ss1));
+  assert(CGAL::IO::is_ascii(ss1));
   if (!ex)
   {
     assert(pt1 == pt1r);
@@ -508,11 +508,11 @@ void test_io(T &pt1, bool ex)
   if (!ex)
   {
     std::stringstream ss1b;
-    CGAL::set_binary_mode(ss1b);
+    CGAL::IO::set_binary_mode(ss1b);
     ss1b << pt1;
 
     ss1b >> pt1r;
-    assert(CGAL::is_binary(ss1b));
+    assert(CGAL::IO::is_binary(ss1b));
 
     assert(pt1 == pt1r);
   }
@@ -521,10 +521,10 @@ void test_io(T &pt1, bool ex)
 
   pt1r.clear();
   std::stringstream ss1p;
-  CGAL::set_pretty_mode(ss1p);
+  CGAL::IO::set_pretty_mode(ss1p);
   ss1p << pt1;
 
-  assert(CGAL::is_pretty(ss1p));
+  assert(CGAL::IO::is_pretty(ss1p));
 }
 
 template <class T>

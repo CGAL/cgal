@@ -55,7 +55,7 @@ namespace CGAL {
 
     std::ostream& operator()(std::ostream& out) const {
 
-      if (is_ascii(out))
+      if (IO::is_ascii(out))
         out << int(c[0]) << " " << int(c[1]) << " " << int(c[2]);
       else
         out.write(reinterpret_cast<const char*>(&c), sizeof(c));
@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
 
   // Load xyz data either from a local folder or a user-provided file.
   std::ifstream in(argc > 1 ? argv[1] : "data/point_set_2.xyz");
-  CGAL::set_ascii_mode(in);
+  CGAL::IO::set_ascii_mode(in);
 
   if (!in) {
     std::cout <<
@@ -161,8 +161,8 @@ int main(int argc, char *argv[]) {
 
     std::ofstream out(fullpath);
 
-    CGAL::set_ascii_mode(out);
-    CGAL::write_PLY_with_properties(
+    CGAL::IO::set_ascii_mode(out);
+    CGAL::IO::write_PLY_with_properties(
       out, pwc,
       CGAL::make_ply_point_writer(PLY_Point_map()),
         std::make_tuple(

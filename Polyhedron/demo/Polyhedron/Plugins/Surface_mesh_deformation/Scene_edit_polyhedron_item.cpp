@@ -357,7 +357,7 @@ void Scene_edit_polyhedron_item_priv::compute_normals_and_vertices(Mesh* mesh)
 
             if(spheres)
             {
-              CGAL::Color c(0,255,0);
+              CGAL::IO::Color c(0,255,0);
               EPICK::Point_3 point(p.x()+offset.x, p.y()+offset.y, p.z()+offset.z);
               spheres->add_sphere(EPICK::Sphere_3(point, length_of_axis/15.0*length_of_axis/15.0), 0, c);
             }
@@ -391,7 +391,7 @@ void Scene_edit_polyhedron_item_priv::compute_normals_and_vertices(Mesh* mesh)
 
             if(spheres_ctrl)
             {
-              CGAL::Color c(255*r,0,255*b);
+              CGAL::IO::Color c(255*r,0,255*b);
 
               EPICK::Point_3 center(p.x()+offset.x,
                                      p.y()+offset.y,

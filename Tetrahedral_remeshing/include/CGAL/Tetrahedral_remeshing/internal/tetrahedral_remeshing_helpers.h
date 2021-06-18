@@ -1671,7 +1671,7 @@ template<typename C3t3>
 void dump_binary(const C3t3& c3t3, const char* filename)
 {
   std::ofstream os(filename, std::ios::binary | std::ios::out);
-  CGAL::Mesh_3::save_binary_file(os, c3t3);
+  CGAL::IO::save_binary_file(os, c3t3);
   os.close();
 }
 

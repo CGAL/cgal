@@ -49,7 +49,7 @@ int main(int argc, char** argv)
   const char* filename = (argc>1) ? argv[1] : "data/plane.off";
 
   Mesh mesh;
-  if(!CGAL::read_polygon_mesh(filename, mesh))
+  if(!CGAL::IO::read_polygon_mesh(filename, mesh))
   {
     std::cerr<< "Cannot open data/plane.off";
     return 1;

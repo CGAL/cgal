@@ -1167,7 +1167,7 @@ std::ostream& operator<<(std::ostream& os,const Gmpfr &a){
         if(a.is_inf())
                 return os<<(a<0?"-inf":"+inf");
         // The rest of the function was written by George Tzoumas.
-        if (!is_pretty(os)) {
+        if (!IO::is_pretty(os)) {
                 std::pair<Gmpz,long> ie=a.to_integer_exp();
                 os << ie.first << 'e' << ie.second;
                 return os;

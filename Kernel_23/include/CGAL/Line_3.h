@@ -138,7 +138,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Line_3<R> &l)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << l.point(0) << ' ' << l.point(1);
     case IO::BINARY :

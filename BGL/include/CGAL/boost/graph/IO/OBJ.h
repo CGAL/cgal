@@ -68,7 +68,6 @@ public:
 };
 
 } // namespace internal
-} // namespace IO
 
 /*!
   \ingroup PkgBGLIoFuncsOBJ
@@ -115,14 +114,14 @@ bool read_OBJ(std::istream& is,
               Graph& g,
               const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-              , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+              , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
               )
 {
   typedef typename CGAL::GetVertexPointMap<Graph, CGAL_BGL_NP_CLASS>::type  VPM;
   typedef typename boost::property_traits<VPM>::value_type                  Point;
 
-  IO::internal::OBJ_builder<Graph, Point> builder(is);
+  internal::OBJ_builder<Graph, Point> builder(is);
   return builder(g, np);
 }
 
@@ -130,7 +129,7 @@ bool read_OBJ(std::istream& is,
 
 template <typename Graph>
 bool read_OBJ(std::istream& is, Graph& g,
-              typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+              typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
   return read_OBJ(is, g, parameters::all_default());
 }
@@ -182,12 +181,12 @@ bool read_OBJ(const std::string& fname,
               Graph& g,
               const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-              , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+              , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
               )
 {
   std::ifstream is(fname);
-  CGAL::set_mode(is, CGAL::IO::ASCII);
+  CGAL::IO::set_mode(is, CGAL::IO::ASCII);
   return read_OBJ(is, g, np);
 }
 
@@ -195,7 +194,7 @@ bool read_OBJ(const std::string& fname,
 
 template <typename Graph>
 bool read_OBJ(const std::string& fname, Graph& g,
-              typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+              typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
   return read_OBJ(fname, g, parameters::all_default());
 }
@@ -245,11 +244,11 @@ bool write_OBJ(std::ostream& os,
                const Graph& g,
                const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-               , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+               , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
                )
 {
-  IO::internal::Generic_facegraph_printer<std::ostream, Graph, CGAL::File_writer_wavefront> printer(os);
+  internal::Generic_facegraph_printer<std::ostream, Graph, CGAL::File_writer_wavefront> printer(os);
   return printer(g, np);
 }
 
@@ -257,7 +256,7 @@ bool write_OBJ(std::ostream& os,
 
 template <typename Graph>
 bool write_OBJ(std::ostream& os, const Graph& g,
-               typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+               typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
   return write_OBJ(os, g, parameters::all_default());
 }
@@ -302,12 +301,12 @@ bool write_OBJ(const std::string& fname,
                const Graph& g,
                const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-               , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+               , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
                )
 {
   std::ofstream os(fname);
-  CGAL::set_mode(os, CGAL::IO::ASCII);
+  CGAL::IO::set_mode(os, CGAL::IO::ASCII);
   return write_OBJ(os, g, np);
 }
 
@@ -315,13 +314,13 @@ bool write_OBJ(const std::string& fname,
 
 template <typename Graph>
 bool write_OBJ(const std::string& fname, const Graph& g,
-               typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+               typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
 {
   return write_OBJ(fname, g, parameters::all_default());
 }
 
 /// \endcond
 
-} // namespace CGAL
+}} // namespace CGAL::IO
 
 #endif // CGAL_BGL_IO_OBJ_H

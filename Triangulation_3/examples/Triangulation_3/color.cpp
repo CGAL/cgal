@@ -8,7 +8,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 
-typedef CGAL::Triangulation_vertex_base_with_info_3<CGAL::Color, K> Vb;
+typedef CGAL::Triangulation_vertex_base_with_info_3<CGAL::IO::Color, K> Vb;
 typedef CGAL::Delaunay_triangulation_cell_base_3<K>                 Cb;
 typedef CGAL::Triangulation_data_structure_3<Vb, Cb>                Tds;
 typedef CGAL::Delaunay_triangulation_3<K, Tds>                      Delaunay;
@@ -30,7 +30,7 @@ int main()
   Delaunay::Finite_vertices_iterator vit;
   for (Delaunay::Vertex_handle v : T.finite_vertex_handles())
       if (T.degree(v) == 6)
-        v->info() = CGAL::red();
+        v->info() = CGAL::IO::red();
 
   return 0;
 }

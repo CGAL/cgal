@@ -93,7 +93,7 @@ int main(int argc, char** argv)
   std::ofstream medit_file("out-mesh-polylines.mesh");
   c3t3.output_to_medit(medit_file);
   std::ofstream binary_file("out-mesh-polylines.binary.cgal", std::ios::binary|std::ios::out);
-  save_binary_file(binary_file, c3t3);
+  CGAL::IO::save_binary_file(binary_file, c3t3);
   std::cout << "Number of vertices in c3t3: "
             << c3t3.triangulation().number_of_vertices() << std::endl;
   assert(c3t3.triangulation().number_of_vertices() > 900);

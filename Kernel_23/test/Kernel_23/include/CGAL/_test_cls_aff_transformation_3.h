@@ -151,6 +151,16 @@ _test_cls_aff_transformation_3(const R& )
  assert( ident.is_even() );
  assert( xrefl.is_odd() );
 
+ // translation
+ assert( translate.is_translation() );
+ assert( ! scale11.is_translation() );
+ assert( ! gtrans.is_translation() );
+
+ // scaling
+ assert( scale11.is_scaling() );
+ assert( ! translate.is_scaling() );
+ assert( ! gscale.is_scaling() );
+
  CGAL::Aff_transformation_3<R> a[11];
 
  std::cout << '.';
@@ -261,7 +271,7 @@ _test_cls_aff_transformation_3(const R& )
  assert( vec.transform(translate) == vec.transform(gtrans) );
  assert( dir.transform(translate) == dir.transform(gtrans) );
  assert( pnt.transform(translate) == pnt.transform(gtrans) );
- assert( pla.transform(translate) == pla.transform(gtrans) );
+ assert( pla.transform(translate) == pla.transform(gtrans) || nonexact );
 
  // xrefl
  tdir = d0.transform(xrefl);

@@ -95,13 +95,13 @@ void test(const int d, const string & type)
     // TEST File I/O
     std::ofstream fo((string("output-tds-")+type).c_str());
     if( d % 2 )
-        CGAL::set_binary_mode(fo);
+        CGAL::IO::set_binary_mode(fo);
     fo << tds;
     fo.close();
 
     std::ifstream fi((string("output-tds-")+type).c_str());
     if( d % 2 )
-        CGAL::set_binary_mode(fi);
+        CGAL::IO::set_binary_mode(fi);
     TDS input_tds(d);
     fi >> input_tds;
     fi.close();

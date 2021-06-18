@@ -17,33 +17,33 @@ typedef std::pair<Point_3, Vector_3> PointVectorPair;
 bool read(std::string s)
 {
   std::vector<PointVectorPair> pv_pairs;
-  return CGAL::read_points(s, back_inserter(pv_pairs),
-                           CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
-                                            .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
+  return CGAL::IO::read_points(s, back_inserter(pv_pairs),
+                               CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
+                                                .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
 }
 
 bool read(std::string s,
           std::vector<PointVectorPair>& pv_pairs)
 {
-  return CGAL::read_points(s, back_inserter(pv_pairs),
-                           CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
-                                            .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
+  return CGAL::IO::read_points(s, back_inserter(pv_pairs),
+                               CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
+                                                .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
 }
 
 bool read_off(std::string s,
               std::vector<PointVectorPair>& pv_pairs)
 {
-  return CGAL::read_OFF(s, back_inserter(pv_pairs),
-                        CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
-                                         .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
+  return CGAL::IO::read_OFF(s, back_inserter(pv_pairs),
+                            CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
+                                             .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
 }
 
 bool read_ply(std::string s,
               std::vector<PointVectorPair>& pv_pairs)
 {
-  return CGAL::read_PLY(s, back_inserter(pv_pairs),
-                        CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
-                                         .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
+  return CGAL::IO::read_PLY(s, back_inserter(pv_pairs),
+                            CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
+                                             .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
 }
 
 int main()

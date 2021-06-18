@@ -58,27 +58,27 @@ Surface_mesh_item_classification::~Surface_mesh_item_classification()
 void Surface_mesh_item_classification::backup_existing_colors_and_add_new()
 {
   bool has_colors = false;
-  boost::tie (m_color, has_colors) = m_mesh->polyhedron()->property_map<face_descriptor, CGAL::Color>("f:color");
+  boost::tie (m_color, has_colors) = m_mesh->polyhedron()->property_map<face_descriptor, CGAL::IO::Color>("f:color");
   if (has_colors)
   {
     m_real_color
-      = m_mesh->polyhedron()->add_property_map<face_descriptor, CGAL::Color>("f:real_color").first;
+      = m_mesh->polyhedron()->add_property_map<face_descriptor, CGAL::IO::Color>("f:real_color").first;
     for(face_descriptor fd : faces(*(m_mesh->polyhedron())))
     {
       m_real_color[fd] = m_color[fd];
-      m_color[fd] = CGAL::Color(128, 128, 128);
+      m_color[fd] = CGAL::IO::Color(128, 128, 128);
     }
   }
   else
     m_color =
-      m_mesh->polyhedron()->add_property_map<face_descriptor, CGAL::Color>("f:color", CGAL::Color(128,128,128)).first;
+      m_mesh->polyhedron()->add_property_map<face_descriptor, CGAL::IO::Color>("f:color", CGAL::IO::Color(128,128,128)).first;
 }
 
 void Surface_mesh_item_classification::change_color (int index, float* vmin, float* vmax)
 {
   m_index_color = index;
   int index_color = index;
-  if (index == 0 && m_real_color == Mesh::Property_map<face_descriptor, CGAL::Color>())
+  if (index == 0 && m_real_color == Mesh::Property_map<face_descriptor, CGAL::IO::Color>())
     index_color = -1;
 
   static Color_ramp ramp;
@@ -87,7 +87,7 @@ void Surface_mesh_item_classification::change_color (int index, float* vmin, flo
   if (index_color == -1) // item color
   {
     for(face_descriptor fd : faces(*(m_mesh->polyhedron())))
-      m_color[fd] = CGAL::Color(128,128,128);
+      m_color[fd] = CGAL::IO::Color(128,128,128);
   }
   else if (index_color == 0) // real colors
   {
@@ -104,7 +104,7 @@ void Surface_mesh_item_classification::change_color (int index, float* vmin, flo
       if (c != std::size_t(-1))
         color = label_qcolor (m_labels[c]);
 
-      m_color[fd] = CGAL::Color(color.red(), color.green(), color.blue());
+      m_color[fd] = CGAL::IO::Color(color.red(), color.green(), color.blue());
     }
   }
   else if (index_color == 2) // training
@@ -121,7 +121,7 @@ void Surface_mesh_item_classification::change_color (int index, float* vmin, flo
       float div = 1;
       if (c != c2)
         div = 2;
-      m_color[fd] = CGAL::Color(color.red() / div,
+      m_color[fd] = CGAL::IO::Color(color.red() / div,
                                 color.green() / div,
                                 color.blue() / div);
     }
@@ -136,7 +136,7 @@ void Surface_mesh_item_classification::change_color (int index, float* vmin, flo
       {
         for(face_descriptor fd : faces(*(m_mesh->polyhedron())))
         {
-          m_color[fd] = CGAL::Color((unsigned char)(128),
+          m_color[fd] = CGAL::IO::Color((unsigned char)(128),
                                     (unsigned char)(128),
                                     (unsigned char)(128));
         }
@@ -146,7 +146,7 @@ void Surface_mesh_item_classification::change_color (int index, float* vmin, flo
         for(face_descriptor fd : faces(*(m_mesh->polyhedron())))
         {
           float v = (std::max) (0.f, (std::min)(1.f, m_label_probabilities[corrected_index][fd]));
-          m_color[fd] = CGAL::Color((unsigned char)(ramp.r(v) * 255),
+          m_color[fd] = CGAL::IO::Color((unsigned char)(ramp.r(v) * 255),
                                     (unsigned char)(ramp.g(v) * 255),
                                     (unsigned char)(ramp.b(v) * 255));
         }
@@ -190,7 +190,7 @@ void Surface_mesh_item_classification::change_color (int index, float* vmin, flo
         if (v < 0.f) v = 0.f;
         if (v > 1.f) v = 1.f;
 
-        m_color[fd] = CGAL::Color((unsigned char)(ramp.r(v) * 255),
+        m_color[fd] = CGAL::IO::Color((unsigned char)(ramp.r(v) * 255),
                                   (unsigned char)(ramp.g(v) * 255),
                                   (unsigned char)(ramp.b(v) * 255));
       }

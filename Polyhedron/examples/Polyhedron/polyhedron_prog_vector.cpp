@@ -17,7 +17,7 @@ int main() {
 
     Polyhedron P;    // alternative constructor: Polyhedron P(4,12,4);
     P.make_tetrahedron( p, q, r, s);
-    CGAL::set_ascii_mode( std::cout);
+    CGAL::IO::set_ascii_mode( std::cout);
     std::copy( P.points_begin(), P.points_end(),
                std::ostream_iterator<Point_3>( std::cout, "\n"));
     return 0;

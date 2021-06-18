@@ -253,7 +253,7 @@ MainWindow::open(QString fileName)
   {
 #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
     CGAL::Polygon_with_holes_2<K> P;
-    CGAL::read_polygon_WKT(ifs, P);
+    CGAL::IO::read_polygon_WKT(ifs, P);
     poly = Polygon2(P.outer_boundary().begin(),
                     P.outer_boundary().end());
 #endif
@@ -288,7 +288,7 @@ MainWindow::on_actionSavePolygon_triggered()
       CGAL::Polygon_2<K> P(poly.begin(),
                            poly.end());
       CGAL::Polygon_with_holes_2<K> Pwh(P);
-      CGAL::write_polygon_WKT(ofs, Pwh);
+      CGAL::IO::write_polygon_WKT(ofs, Pwh);
 #endif
     }
     else

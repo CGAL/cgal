@@ -7,8 +7,7 @@ Release date: December 2021
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/5.4/Manual/packages.html#PkgPolygonMeshProcessing)
 
--   Added the function `CGAL::Polygon_mesh_processing::match_faces()` that given two polygon meshes identifies faces present in only one of the two meshes as well as faces present in both.
-
+-   Added the function `CGAL::Polygon_mesh_processing::match_faces()`, which, given two polygon meshes, identifies their common faces as well as as faces present in only either of them.
 
 [Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)
 -----------
@@ -33,6 +32,10 @@ Release date: June 2021
   - Polygon soup I/O can be found in the package [Stream_support](https://doc.cgal.org/5.3/Manual/packages.html#PkgStreamSupport).
 
 A comprehensive list of the supported file formats is available in the Stream_support package [here](https://doc.cgal.org/5.3/Stream_support/index.html#IOstreamSupportedFormats); inversely, the following [page](https://doc.cgal.org/5.3/Stream_support/IOStreamSupportedFileFormats.html) can be used to find out which CGAL data structures can be used given a specific file format.
+
+### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.3/Manual/packages.html#PkgKernel23)
+
+- Added functions to the classes `Aff_transformation_2` and `Aff_transformation_3`, which enable to determine if they internally have a specialized representation.
 
 ### [Quadtrees, Octrees, and Orthtrees](https://doc.cgal.org/5.3/Manual/packages.html#PkgOrthree) (new package)
 
@@ -464,7 +467,7 @@ Release date: November 2019
   - LLVM Clang version 8.0 or later (on Linux or MacOS), and
   - Apple Clang compiler versions 7.0.2 and 10.0.1 (on MacOS).
 - Since CGAL 4.9, CGAL can be used as a header-only library, with
-  dependencies. Since CGAL 5.0, that is now the default, unless
+  dependencies. Since CGAL 5.0, that is now the default, unless
   specified differently in the (optional) CMake configuration.
 - The section "Getting Started with CGAL" of the documentation has
   been updated and reorganized.
@@ -610,7 +613,7 @@ Release date: November 2019
  -   Added a function to convert a Nef_polyhedron_3 to a polygon soup: [`CGAL::convert_nef_polyhedron_to_polygon_soup()`](https://doc.cgal.org/5.0/Nef_3/group__PkgNef3IOFunctions.html#ga28a9eb4da0cd6153f0c16f7f9eaf6665)
 
 ### [IO Streams](https://doc.cgal.org/5.0/Manual/packages.html#PkgStreamSupport)
-- **Breaking change:** The API of [`CGAL::Color`](https://doc.cgal.org/5.0/Stream_support/classCGAL_1_1Color.html) has been cleaned up.
+- **Breaking change:** The API of [`CGAL::IO::Color`](https://doc.cgal.org/5.0/Stream_support/classCGAL_1_1Color.html) has been cleaned up.
 - Added new functions to support some parts of the WKT file format:
     * [`CGAL::read_WKT()`](https://doc.cgal.org/5.0/Stream_support/group__PkgStreamSupportRef.html#gad2872abfe6fcf17d705d38567fdd6248)
     * [`CGAL::read_point_WKT()`](https://doc.cgal.org/5.0/Stream_support/group__PkgStreamSupportRef.html#gadbd2705b183e467507abd2f167446eba)
@@ -2304,14 +2307,14 @@ Release date: October 2014
 -   Changes in the set of supported platforms:
     -   The Microsoft Windows Visual C++ compiler 2008 (VC9) is no
         longer supported since CGAL-4.5.
--   Since CGAL version 4.0, Eigen was the recommended third-party
+-   Since CGAL version 4.0, Eigen was the recommended third-party
     library to use with *Planar Parameterization of Triangulated Surface
     Meshes*, *Surface Reconstruction from Point Sets*, *Approximation of
     Ridges and Umbilics on Triangulated Surface Meshes*, and *Estimation
     of Local Differential Properties of Point-Sampled Surfaces*
-    packages. From CGAL version 4.5, Taucs, Blas and Lapack are no
+    packages. From CGAL version 4.5, Taucs, Blas and Lapack are no
     longer supported.
--   CGAL is now compatible with the new CMake version 3.0.
+-   CGAL is now compatible with the new CMake version 3.0.
 
 ### Triangulated Surface Mesh Deformation (new package)
 
@@ -2450,7 +2453,7 @@ Release date: April 2014
 
 -   Additional supported platforms:
     -   The Apple Clang compiler version 5.0 is now supported on
-        OS X Mavericks.
+        OS X Mavericks.
     -   The Microsoft Windows Visual C++ compiler 2013 (VC12) is now
         supported.
 
@@ -2588,7 +2591,7 @@ Release date: October 2013
     transparent to the user thanks to the implicit constructor added to
     `CGAL::Object`. However, it is recommended to upgrade your code. The
     previous behavior can be restored by defining the macro
-    `CGAL_INTERSECTION_VERSION` to 1.
+    `CGAL_INTERSECTION_VERSION` to 1.
 
 #### 2D Arrangements
 
@@ -2849,7 +2852,7 @@ Release date: October 2012
 
 -   Additional supported platforms:
     -   The Apple Clang compiler versions 3.1 and 3.2 are now supported
-        on Mac OS X.
+        on Mac OS X.
 -   Improved configuration for essential and optional external third
     party software
 -   Added more general script to create CMakeLists.txt files:

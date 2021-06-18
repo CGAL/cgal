@@ -661,7 +661,20 @@ echo 'COLLECTING RESULTS';
 ./collect_cgal_testresults_from_cmake;
 if [ -n "\$COLLECT_DEMOS_BINARIES" ]; then
   echo 'COLLECTING DEMOS BINARIES';
-  tar czvf '${CGAL_TEST_DIR}/demos_${CGAL_TESTER}_${PLATFORM}.tar.gz' *_Demo/*.exe *_Demo/*.dll *_Demo/*/*.dll *_Demo/*/*/*.dll
+  echo "cp ${CGAL_TEST_DIR}/../developer_scripts/cgal_demo_copy_all_dlls_cygwin.sh ${CGAL_BINARY_DIR}/test"
+  cp "${CGAL_TEST_DIR}/../developer_scripts/cgal_demo_copy_all_dlls_cygwin.sh" "${CGAL_BINARY_DIR}/test"
+EOF
+  cat >> "$file" <<'EOF'
+  for demo_dir in *_Demo; do
+    echo "pushd ${demo_dir}"
+    pushd "${demo_dir}"
+    bash ../cgal_demo_copy_all_dlls_cygwin.sh "${demo_dir}_with_dlls" ""
+    mv "${demo_dir}_with_dlls" ..
+    popd
+  done
+EOF
+cat >> "$file" <<EOF
+  tar czvf "${CGAL_TEST_DIR}/demos_${CGAL_TESTER}_${PLATFORM}.tar.gz" *_Demo_with_dlls/*
 fi
 echo 'COPYING RESULTS';
 cp 'results_${CGAL_TESTER}_${PLATFORM}.tar.gz' 'results_${CGAL_TESTER}_${PLATFORM}.txt' '${CGAL_TEST_DIR}';

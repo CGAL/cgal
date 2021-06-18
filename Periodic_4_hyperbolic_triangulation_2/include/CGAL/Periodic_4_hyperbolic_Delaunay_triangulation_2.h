@@ -24,7 +24,6 @@
 
 #include <CGAL/intersections.h>
 #include <CGAL/iterator.h>
-#include <CGAL/result_of.h>
 #include <CGAL/Timer.h>
 
 #include <iterator>

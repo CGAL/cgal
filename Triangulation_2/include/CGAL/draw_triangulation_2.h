@@ -28,7 +28,7 @@ namespace CGAL
 struct DefaultColorFunctorT2
 {
   template<typename T2>
-  static CGAL::Color run(const T2&,
+  static CGAL::IO::Color run(const T2&,
                          const typename T2::Finite_faces_iterator fh)
   {
     CGAL::Random random((unsigned int)(std::size_t)(&*fh));
@@ -68,7 +68,7 @@ public:
 protected:
   void compute_face(Facet_const_handle fh)
   {
-    CGAL::Color c=m_fcolor.run(t2, fh);
+    CGAL::IO::Color c=m_fcolor.run(t2, fh);
     face_begin(c);
 
     add_point_in_face(fh->vertex(0)->point());

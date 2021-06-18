@@ -230,6 +230,6 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::transform()`
 
 \cgalCRPSection{I/O Functions}
-- \link PMP_IO_grp `CGAL::Polygon_mesh_processing::read_polygon_mesh()`\endlink
+- \link PMP_IO_grp `CGAL::Polygon_mesh_processing::IO::read_polygon_mesh()`\endlink
 
 */

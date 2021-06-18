@@ -540,7 +540,7 @@ add_faces()
     std::ifstream in("data/head.off");
     std::vector<Kernel::Point_3> points;
     std::vector<std::array<std::size_t, 3> > faces_ids;
-    CGAL::read_OFF(in, points, faces_ids);
+    CGAL::IO::read_OFF(in, points, faces_ids);
 
     std::vector<vertex_descriptor> verts;
     verts.reserve(points.size());
@@ -561,7 +561,7 @@ add_faces()
   {
     std::ifstream in("data/open_cube.off");
     T m;
-    CGAL::read_OFF(in, m);
+    CGAL::IO::read_OFF(in, m);
     std::vector<vertex_descriptor> verts(vertices(m).begin(), vertices(m).end());
     std::list< std::vector<vertex_descriptor> > new_faces;
     new_faces.push_back({verts[1], verts[7], verts[4]});
@@ -574,7 +574,7 @@ add_faces()
   {
     std::ifstream in("data/open_cube.off");
     T m;
-    CGAL::read_OFF(in, m);
+    CGAL::IO::read_OFF(in, m);
     std::vector<vertex_descriptor> verts(vertices(m).begin(), vertices(m).end());
     verts.push_back(add_vertex(m));
     put(CGAL::vertex_point, m, verts.back(), Kernel::Point_3(50,0,50));
