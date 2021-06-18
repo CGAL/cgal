@@ -199,7 +199,7 @@ void write_polys(std::ostream& os,
 
   std::size_t off = 0;
 
-  for(const face_descriptor& f : faces(g))
+  for(const face_descriptor f : faces(g))
   {
     off += 3;
     offsets.push_back(off);
@@ -340,7 +340,7 @@ void write_points_tag(std::ostream& os,
   else
   {
     os << "\">\n";
-    for(const vertex_descriptor& v : vertices(g))
+    for(const vertex_descriptor v : vertices(g))
       os << get(vpm, v).x() << " " << get(vpm, v).y() << " " << get(vpm, v).z() << " ";
     os << "      </DataArray>\n";
   }

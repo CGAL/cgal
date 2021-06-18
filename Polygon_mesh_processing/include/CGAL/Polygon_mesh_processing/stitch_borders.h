@@ -184,7 +184,7 @@ public:
   std::vector<halfedge_descriptor> halfedges_to_consider() const
   {
     std::vector<halfedge_descriptor> boundaries;
-    for(const halfedge_descriptor& bh : m_cycle_reps)
+    for(const halfedge_descriptor bh : m_cycle_reps)
       for(halfedge_descriptor h : CGAL::halfedges_around_face(bh, m_pmesh))
         boundaries.push_back(h);
 
@@ -222,7 +222,7 @@ public:
 
     CGAL_assertion(!cycle_halfedges.empty());
 
-    for(const halfedge_descriptor& h : cycle_halfedges)
+    for(const halfedge_descriptor h : cycle_halfedges)
       put(m_candidate_halfedges, h, true);
 
     for(const halfedges_pair& hp : filtered_stitchable_halfedges)
@@ -231,7 +231,7 @@ public:
       put(m_candidate_halfedges, hp.second, false);
     }
 
-    for(const halfedge_descriptor& h : cycle_halfedges)
+    for(const halfedge_descriptor h : cycle_halfedges)
     {
       if(!is_border(h, m_pmesh) || !get(m_candidate_halfedges, h))
         continue;
@@ -1147,7 +1147,7 @@ std::size_t stitch_boundary_cycles(const BorderHalfedgeRange& boundary_cycle_rep
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor           halfedge_descriptor;
 
   std::size_t stitched_boundary_cycles_n = 0;
-  for(const halfedge_descriptor& h : boundary_cycle_representatives)
+  for(const halfedge_descriptor h : boundary_cycle_representatives)
     stitched_boundary_cycles_n += stitch_boundary_cycle(h, pmesh, cycle_reps_maintainer, np);
 
   return stitched_boundary_cycles_n;

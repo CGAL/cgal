@@ -589,7 +589,7 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
     {
       if(is_second_mesh_fixed)
       {
-        for(const halfedge_descriptor& ha : vs_a)
+        for(const halfedge_descriptor ha : vs_a)
           put(vpm_A, target(ha, tm_A), get(vpm_B, vb));
       }
       else
@@ -605,10 +605,10 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
         std::cout << "new position of " << va << " " << vb << " --> " << new_p << std::endl;
 #endif
 
-        for(const halfedge_descriptor& ha : vs_a)
+        for(const halfedge_descriptor ha : vs_a)
           put(vpm_A, target(ha, tm_A), new_p);
 
-        for(const halfedge_descriptor& hb : vs_b)
+        for(const halfedge_descriptor hb : vs_b)
           put(vpm_B, target(hb, tm_B), new_p);
       }
 
@@ -650,9 +650,9 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
 
     // Quadratic, but all halfedges in vs_a and vs_b point to the same point. There shouldn't be many.
     // @fixme this assumes compatible orientation...
-    for(const halfedge_descriptor& ha : vs_a)
+    for(const halfedge_descriptor ha : vs_a)
     {
-      for(const halfedge_descriptor& hb : vs_b)
+      for(const halfedge_descriptor hb : vs_b)
       {
         if(!is_border(ha, tm_A) || !is_border(hb, tm_B))
           continue;

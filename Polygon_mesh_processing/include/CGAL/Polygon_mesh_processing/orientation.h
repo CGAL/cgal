@@ -499,7 +499,7 @@ void copy_container_content(
   RefToContainer ref_wrapper)
 {
   ref_wrapper.get().reserve(vec.size());
-  for(const T t : vec)
+  for(const T& t : vec)
   {
    ref_wrapper.get().push_back(t);
   }

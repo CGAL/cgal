@@ -95,13 +95,13 @@ void polygon_mesh_to_polygon_soup(const PolygonMesh& mesh,
   CGAL::internal::reserve(points, points.size() + vertices(mesh).size());
   CGAL::internal::reserve(polygons, polygons.size() + faces(mesh).size());
 
-  for(const vertex_descriptor& v : vertices(mesh))
+  for(const vertex_descriptor v : vertices(mesh))
   {
     points.emplace_back(get(vpm, v));
     put(vim, v, index++);
   }
 
-  for(const face_descriptor& f : faces(mesh))
+  for(const face_descriptor f : faces(mesh))
   {
     CGAL::Iterator_range<CGAL::Halfedge_around_face_iterator<PolygonMesh> > incident_halfedges =
       CGAL::halfedges_around_face(halfedge(f, mesh), mesh);

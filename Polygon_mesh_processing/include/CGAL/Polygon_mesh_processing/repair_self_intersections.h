@@ -111,7 +111,7 @@ FaceOutputIterator replace_faces_with_patch(const std::vector<typename boost::gr
   std::map<Point, vertex_descriptor> point_to_vs;
 
   // first, add those for which the vertex will not change
-  for(const vertex_descriptor& v : border_vertices)
+  for(const vertex_descriptor v : border_vertices)
     point_to_vs[get(vpm, v)] = v;
 
   // now build a correspondence map and the faces with vertices
@@ -505,7 +505,7 @@ bool remove_self_intersections_with_smoothing(std::set<typename boost::graph_tra
   }
 
   std::vector<std::vector<Point> > patch;
-  for(const face_descriptor& f : faces(local_mesh))
+  for(const face_descriptor f : faces(local_mesh))
   {
     halfedge_descriptor h = halfedge(f, local_mesh);
     patch.emplace_back(std::initializer_list<Point>{get(local_vpm, target(h, local_mesh)),
@@ -702,7 +702,7 @@ bool construct_tentative_hole_patch(std::vector<typename boost::graph_traits<Tri
 
   // Collect vertices and edges inside the current selection cc: first collect all vertices and
   // edges incident to the faces to remove...
-  for(const face_descriptor& f : cc_faces)
+  for(const face_descriptor f : cc_faces)
   {
     for(halfedge_descriptor h : halfedges_around_face(halfedge(f, tmesh), tmesh))
     {
@@ -843,7 +843,7 @@ bool construct_tentative_hole_patch(std::vector<typename boost::graph_traits<Tri
   hole_points.reserve(cc_border_hedges.size());
   third_points.reserve(cc_border_hedges.size());
 
-  for(const halfedge_descriptor& h : cc_border_hedges)
+  for(const halfedge_descriptor h : cc_border_hedges)
   {
     const vertex_descriptor v = source(h, tmesh);
     hole_points.push_back(get(vpm, v));
@@ -887,7 +887,7 @@ bool construct_tentative_sub_hole_patch(std::vector<std::vector<typename boost::
   // (pointing inside the domain to be remeshed)
   std::set<halfedge_descriptor> internal_hedges;
   std::vector<halfedge_descriptor> cc_border_hedges;
-  for(const face_descriptor& fd : sub_cc_faces)
+  for(const face_descriptor fd : sub_cc_faces)
   {
     halfedge_descriptor h = halfedge(fd, tmesh);
     for(int i=0; i<3;++i)
@@ -933,7 +933,7 @@ bool construct_tentative_sub_hole_patch(std::vector<std::vector<typename boost::
   hole_points.reserve(cc_border_hedges.size());
   third_points.reserve(cc_border_hedges.size());
 
-  for(const halfedge_descriptor& h : cc_border_hedges)
+  for(const halfedge_descriptor h : cc_border_hedges)
   {
     const vertex_descriptor v = source(h, tmesh);
     hole_points.push_back(get(vpm, v));
@@ -1091,7 +1091,7 @@ bool fill_hole(std::vector<typename boost::graph_traits<TriangleMesh>::halfedge_
 
   // Could renew the range directly within the patch replacement function
   // to avoid erasing and re-adding the same face
-  for(const face_descriptor& f : cc_faces)
+  for(const face_descriptor f : cc_faces)
     working_face_range.erase(f);
 
   // Plug the new triangles in the mesh, reusing previous edges and faces
@@ -1570,7 +1570,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
         std::cout << "  DEBUG: No self-intersection in CC\n";
 #endif
 
-        for(const face_descriptor& f : cc_faces)
+        for(const face_descriptor f : cc_faces)
           faces_to_remove.erase(f);
 
         continue;
@@ -1582,7 +1582,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
 #endif
 
     // remove faces from the set to process
-    for(const face_descriptor& f : cc_faces)
+    for(const face_descriptor f : cc_faces)
       faces_to_remove.erase(f);
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT

@@ -555,7 +555,7 @@ public:
     // Filter coplanar edges: we consider only coplanar edges incident to one non-coplanar facet
     //   for each such edge, add the corresponding nodes in the adjacency-list graph as well as
     //   the edge
-    for(const edge_descriptor& ed : all_coplanar_edges)
+    for(const edge_descriptor ed : all_coplanar_edges)
     {
       if (  face(halfedge(ed, m_tmesh), m_tmesh)==graph_traits::null_face() ||
             opposite_face(ed)==graph_traits::null_face()  ||
