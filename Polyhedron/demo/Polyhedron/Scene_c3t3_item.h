@@ -129,6 +129,7 @@ public:
     bool keyPressEvent(QKeyEvent *) Q_DECL_OVERRIDE;
     bool eventFilter(QObject *, QEvent *) Q_DECL_OVERRIDE;
     std::size_t number_of_patches() const;
+    std::set<int> subdomain_indices() const;
   public Q_SLOTS:
 
   void on_spheres_color_changed();

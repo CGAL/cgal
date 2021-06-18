@@ -2129,5 +2129,11 @@ std::size_t Scene_c3t3_item::number_of_patches() const
 {
   return d->surface_patch_indices_.size();
 }
+
+std::set<int> Scene_c3t3_item::subdomain_indices() const
+{
+  return d->subdomain_indices_;
+}
+
 #include "Scene_c3t3_item.moc"
 

@@ -110,6 +110,10 @@ endif() #eigen
 polyhedron_demo_plugin(c3t3_io_plugin C3t3_io_plugin KEYWORDS Viewer Mesh_3)
 target_link_libraries(c3t3_io_plugin PUBLIC scene_c3t3_item)
 
+qt5_wrap_ui(FilterUI_FILES Filter_widget.ui)
+polyhedron_demo_plugin(mesh_3_filter_domain_plugin Mesh_3_filter_domain_plugin ${FilterUI_FILES} KEYWORDS Viewer Mesh_3)
+target_link_libraries(mesh_3_filter_domain_plugin PUBLIC scene_c3t3_item)
+
 qt5_wrap_ui(ribUI_FILES Rib_dialog.ui)
 polyhedron_demo_plugin(c3t3_rib_exporter_plugin C3t3_rib_exporter_plugin
                        ${ribUI_FILES} KEYWORDS Mesh_3)
