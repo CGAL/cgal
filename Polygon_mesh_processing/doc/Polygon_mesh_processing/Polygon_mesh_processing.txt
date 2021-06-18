@@ -959,7 +959,7 @@ with the following code:
 The function `CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance()`
 computes an estimate of the Hausdorff distance of two triangle meshes which is
 bounded by a user-given error bound. Given two meshes `tm1` and `tm2`, it follows
-the procedure given by \cgalCite{tang2009interactive}. Namely, bounded volume hierarchy (BVH) is
+the procedure given by \cgalCite{tang2009interactive}. Namely, a bounded volume hierarchy (BVH) is
 built on `tm1` and `tm2` respectively. The tree on `tm1` is used to iterate over all
 triangles in `tm1`. Throughout the traversal, the procedure keeps track of a global
 lower and upper bound on the Hausdorff distance respectively. For each triangle
