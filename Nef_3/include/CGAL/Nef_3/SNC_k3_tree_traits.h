@@ -112,9 +112,6 @@ public:
   typedef typename SNC_structure::Halffacet_triangle_handle
                                   Halffacet_triangle_handle;
 #endif
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-  typedef typename SNC_structure::Partial_facet Partial_facet;
-#endif
   typedef typename SNC_structure::Object_handle Object_handle;
 
   typedef typename Decorator_traits::Halffacet_cycle_iterator
@@ -151,10 +148,6 @@ public:
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
   template<typename Depth> Oriented_side operator()
     ( const Point_3& pop, Halffacet_triangle_handle f, Depth depth);
-#endif
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-  template<typename Depth> Oriented_side operator()
-    ( const Point_3& pop, Partial_facet& f, Depth depth);
 #endif
 #ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
   bool reference_counted;
@@ -298,9 +291,6 @@ public:
   typedef typename SNC_structure::Halffacet_triangle_handle
                                   Halffacet_triangle_handle;
 #endif
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-  typedef typename SNC_structure::Partial_facet Partial_facet;
-#endif
 
   typedef typename SNC_structure::Object_handle Object_handle;
   typedef std::vector<Object_handle> Object_list;
@@ -345,19 +335,12 @@ Side_of_plane<SNC_decorator>::operator()
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
   Halffacet_triangle_handle t;
 #endif
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-  Partial_facet pf;
-#endif
   if( CGAL::assign( v, o))
     return (*this)(pop, v, depth);
   else if( CGAL::assign( e, o))
     return (*this)(pop, e, depth);
   else if( CGAL::assign( f, o))
     return (*this)(pop, f, depth);
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-  else if( CGAL::assign(pf, o))
-    return (*this)(pop, pf, depth);
-#endif
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
   else if( CGAL::assign( t, o))
     return (*this)(pop, t, depth);
@@ -547,17 +530,6 @@ Side_of_plane<SNC_decorator>::operator()
    as far as two vertices located on different sides of the plane.
 */
 
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-template <class SNC_decorator>
-template <typename Depth>
-Oriented_side
-Side_of_plane<SNC_decorator>::operator()
-  (const Point_3& pop, Partial_facet& pf, Depth depth) {
-  CGAL_error_msg( "not implemented yet");
-
-  return ON_ORIENTED_BOUNDARY;
-}
-#endif
 
 template <class SNC_decorator>
 template <typename Depth>

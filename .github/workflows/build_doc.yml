@@ -81,7 +81,7 @@ jobs:
             cd build_doc && make -j2 doc
             make -j2 doc_with_postprocessing 2>tmp.log
             if [ -s tmp.log ]; then
-              content=`cat ./build_doc/tmp.log`
+              content=`cat ./tmp.log`
               echo ::set-output name=DoxygenError::$(cat tmp.log)
               exit 1
             fi

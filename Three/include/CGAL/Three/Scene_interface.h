@@ -26,15 +26,15 @@
 */
 enum RenderingMode
 {
-  Points = 0, //! Renders only points without lighting.
-  PointsPlusNormals, //!Renders points and normals.
-  Wireframe, //!Renders only edges.
-  Flat, //!Renders only faces, with a lighting per face.
-  FlatPlusEdges, //!Renders flat faces and edges.
-  Gouraud, //!Renders only faces, with a lighting per vertex.
-  GouraudPlusEdges, //!Renders faces with a lighting per vertex, and edges.
-  ShadedPoints, //!Renders only points with lighting.
-  NumberOfRenderingMode //!Number of values in this enum.
+  Points = 0,           //!< Renders only points without lighting.
+  PointsPlusNormals,    //!< Renders points and normals.
+  Wireframe,            //!< Renders only edges.
+  Flat,                 //!< Renders only faces, with a lighting per face.
+  FlatPlusEdges,        //!< Renders flat faces and edges.
+  Gouraud,              //!< Renders only faces, with a lighting per vertex.
+  GouraudPlusEdges,     //!< Renders faces with a lighting per vertex, and edges.
+  ShadedPoints,         //!< Renders only points with lighting.
+  NumberOfRenderingMode //!< Number of values in this enum.
 };
 
 
