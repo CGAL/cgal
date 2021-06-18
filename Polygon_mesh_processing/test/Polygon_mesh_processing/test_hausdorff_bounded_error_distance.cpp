@@ -1,6 +1,9 @@
 // Use it to include parallel computations in the bounded error Hausdorff distance.
 // #define USE_PARALLEL_BEHD
 
+// Use this def in order to get all DEBUG info related to the bounded-error Hausdorff code!
+// #define CGAL_HAUSDORFF_DEBUG
+
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/Simple_cartesian.h>
@@ -10,6 +13,7 @@
 #include <CGAL/IO/PLY.h>
 
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/Polygon_mesh_processing/distance.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
@@ -28,6 +32,7 @@ using Triangle_3 = typename Kernel::Triangle_3;
 
 using TAG                     = CGAL::Sequential_tag;
 using Surface_mesh            = CGAL::Surface_mesh<Point_3>;
+using Polyhedron              = CGAL::Polyhedron_3<Kernel>;
 using Affine_transformation_3 = CGAL::Aff_transformation_3<Kernel>;
 using Timer                   = CGAL::Real_timer;
 
@@ -76,27 +81,200 @@ struct Bounded_error_hd_wrapper {
   }
 };
 
-void get_mesh(const std::string filepath, Surface_mesh& mesh) {
+template<typename PolygonMesh>
+void get_mesh(const std::string filepath, PolygonMesh& mesh) {
 
   mesh.clear();
   std::ifstream input(filepath);
   input >> mesh;
-  std::cout << "* getting mesh with " << mesh.number_of_faces() << " faces" << std::endl;
+  std::cout << "* getting mesh with " << faces(mesh).size() << " faces" << std::endl;
 }
 
+template<typename PolygonMesh1, typename PolygonMesh2>
 void get_meshes(
   const std::string filepath1, const std::string filepath2,
-  Surface_mesh& mesh1, Surface_mesh& mesh2) {
+  PolygonMesh1& mesh1, PolygonMesh2& mesh2) {
 
   get_mesh(filepath1, mesh1);
   get_mesh(filepath2, mesh2);
 }
 
-void save_mesh(const Surface_mesh& mesh, const std::string filepath) {
+template<typename PolygonMesh>
+void save_mesh(const PolygonMesh& mesh, const std::string filepath) {
 
   if (!CGAL::write_PLY(filepath + ".ply", mesh)) {
     std::cerr << "ERROR: cannot save this file: " << filepath << std::endl;
     exit(EXIT_FAILURE);
+  }
+}
+
+// An easy example of a tetrahedron and its remeshed version.
+void remeshing_tetrahedon_example(
+  const double error_bound, const bool save = false) {
+
+  Timer timer;
+  Surface_mesh mesh1, mesh2;
+  std::cout << std::endl << "* (E1) remeshing Tetrahedron example:" << std::endl;
+
+  CGAL::make_tetrahedron(
+    Point_3(0, 0, 0), Point_3(2, 0, 0),
+    Point_3(1, 1, 1), Point_3(1, 0, 2), mesh1);
+  mesh2 = mesh1;
+
+  using edge_descriptor = typename boost::graph_traits<Surface_mesh>::edge_descriptor;
+  Surface_mesh::Property_map<edge_descriptor, bool> is_constrained_map =
+    mesh2.add_property_map<edge_descriptor, bool>("e:is_constrained", true).first;
+
+  const double target_edge_length = 0.05;
+  PMP::isotropic_remeshing(
+    mesh2.faces(), target_edge_length, mesh2,
+    PMP::parameters::edge_is_constrained_map(is_constrained_map));
+
+  if (save) save_mesh(mesh1, "mesh1");
+  if (save) save_mesh(mesh2, "mesh2");
+
+  timer.reset();
+  timer.start();
+  const double hdist = PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound);
+  std::cout << "* bounded-error Hausdorff distance: " << hdist << std::endl;
+  timer.stop();
+  std::cout << "* processing time: " << timer.time() << " s." << std::endl;
+  assert(hdist == error_bound);
+}
+
+// Example with a point realizing the Hausdorff distance strictly
+// lying in the interior of a triangle.
+void interior_triangle_example(
+  const double error_bound, const bool save = false) {
+
+  Timer timer;
+  Surface_mesh mesh1, mesh2;
+  std::cout << std::endl << "* (E2) interior Triangle example:" << std::endl;
+
+  mesh1.add_vertex(Point_3(-1,  1, 1));
+  mesh1.add_vertex(Point_3( 0, -1, 1));
+  mesh1.add_vertex(Point_3( 1,  1, 1));
+  mesh1.add_face(mesh1.vertices());
+
+  auto v0 = mesh2.add_vertex(Point_3(-1.0,  1,  0));
+  auto v1 = mesh2.add_vertex(Point_3( 0.0, -1,  0));
+  auto v2 = mesh2.add_vertex(Point_3( 1.0,  1,  0));
+  auto v3 = mesh2.add_vertex(Point_3( 0.0,  1, -1));
+  auto v4 = mesh2.add_vertex(Point_3(-0.5,  0, -1));
+  auto v5 = mesh2.add_vertex(Point_3( 0.5,  0, -1));
+  mesh2.add_face(v0, v3, v4);
+  mesh2.add_face(v1, v4, v5);
+  mesh2.add_face(v2, v5, v3);
+
+  if (save) save_mesh(mesh1, "mesh1");
+  if (save) save_mesh(mesh2, "mesh2");
+
+  timer.reset();
+  timer.start();
+  const double hdist = PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound);
+  std::cout << "* bounded-error Hausdorff distance: " << hdist << std::endl;
+  timer.stop();
+  std::cout << "* processing time: " << timer.time() << " s." << std::endl;
+  assert(hdist >= 1.0);
+}
+
+// Read a real mesh given by the user, perturb it slightly, and compute the
+// Hausdorff distance between the original mesh and its pertubation.
+void perturbing_surface_mesh_example(
+  const std::string filepath, const double error_bound, const bool save = false) {
+
+  Timer timer;
+  std::cout << std::endl << "* (E3) perturbing Surface Mesh example:" << std::endl;
+
+  Surface_mesh mesh1, mesh2;
+  get_meshes(filepath, filepath, mesh1, mesh2);
+
+  const double max_size = 0.1;
+  PMP::random_perturbation(
+    mesh2.vertices(), mesh2, max_size, CGAL::parameters::do_project(false));
+  std::cout << "* perturbing the second mesh" << std::endl;
+
+  if (save) save_mesh(mesh2, "mesh2");
+
+  timer.reset();
+  timer.start();
+  const double hdist = PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound);
+  std::cout << "* bounded-error Hausdorff distance: " << hdist << std::endl;
+  timer.stop();
+  std::cout << "* processing time: " << timer.time() << " s." << std::endl;
+  assert(hdist > 0.0);
+}
+
+// Read two meshes and store them in two different face graph containers,
+// perturb the second mesh, and compute the Hausdorff distance.
+void perturbing_polyhedron_mesh_example(
+  const std::string filepath, const double error_bound) {
+
+  Timer timer;
+  std::cout << std::endl << "* (E3) perturbing Polyhedron mesh example:" << std::endl;
+
+  Surface_mesh mesh1;
+  Polyhedron mesh2;
+  get_mesh(filepath, mesh1);
+  get_mesh(filepath, mesh2);
+
+  const double max_size = 0.1;
+  PMP::random_perturbation(
+    vertices(mesh2), mesh2, max_size, CGAL::parameters::do_project(false));
+  std::cout << "* perturbing the second mesh" << std::endl;
+
+  timer.reset();
+  timer.start();
+  const double hdist1 = PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound);
+  const double hdist2 = PMP::bounded_error_Hausdorff_distance<TAG>(mesh2, mesh1, error_bound);
+  std::cout << "* bounded-error Hausdorff distance 1->2: " << hdist1 << std::endl;
+  std::cout << "* bounded-error Hausdorff distance 2->1: " << hdist2 << std::endl;
+  timer.stop();
+  std::cout << "* processing time: " << timer.time() << " s." << std::endl;
+  assert(hdist1 > 0.0);
+  assert(hdist2 > 0.0);
+  assert(hdist2 > hdist1);
+
+  const double hdist3 = PMP::bounded_error_symmetric_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound);
+  assert(hdist3 == (CGAL::max)(hdist1, hdist2));
+}
+
+// Read two meshes given by the user, initially place them at their originally
+// given position. Move the second mesh in 300 steps away from the first one.
+// Print how the Hausdorff distance changes.
+void moving_surface_mesh_example(
+  const std::string filepath1, const std::string filepath2,
+  const std::size_t n, const double error_bound, const bool save = false) {
+
+  Timer timer;
+  std::cout << std::endl << "* (E4) moving Surface Mesh example:" << std::endl;
+
+  Surface_mesh mesh1, mesh2;
+  get_meshes(filepath1, filepath2, mesh1, mesh2);
+
+  const auto bbox = PMP::bbox(mesh2);
+  const FT distance = CGAL::approximate_sqrt(CGAL::squared_distance(
+      Point_3(bbox.xmin(), bbox.ymin(), bbox.zmin()),
+      Point_3(bbox.xmax(), bbox.ymax(), bbox.zmax())));
+
+  const FT t = FT(1) / FT(100);
+  if (save) save_mesh(mesh2, "mesh-0");
+
+  double curr_dist = 0.0;
+  for (std::size_t i = 0; i < n; ++i) {
+    PMP::transform(Affine_transformation_3(CGAL::Translation(),
+      Vector_3(t * distance, t * distance, t * distance)), mesh2);
+
+    timer.reset();
+    timer.start();
+    const double hdist = PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound);
+    std::cout << "* position: " << i << std::endl;
+    std::cout << "* bounded-error Hausdorff distance: " << hdist << std::endl;
+    timer.stop();
+    std::cout << "* processing time: " << timer.time() << " s." << std::endl;
+    if (save) save_mesh(mesh2, "mesh-" + std::to_string(i + 1));
+    assert(hdist > curr_dist);
+    curr_dist = hdist;
   }
 }
 
@@ -121,14 +299,16 @@ void test_0(const FunctionWrapper& functor, const bool save = false) {
 
   const double dista = functor(mesh1, mesh2);
   const double distb = functor(mesh2, mesh1);
-
   const double naive = (CGAL::max)(dista, distb);
   const double distc = functor.symmetric(mesh1, mesh2);
-  assert(distc == naive);
 
   std::cout << "* Hausdorff distance (expected 0): " << dista << std::endl;
   std::cout << "* HInverted distance (expected 0): " << distb << std::endl;
   std::cout << "* Symmetric distance (expected 0): " << distc << std::endl;
+
+  assert(dista == 0.0);
+  assert(distb == 0.0);
+  assert(distc == naive);
 }
 
 template<class FunctionWrapper>
@@ -155,14 +335,16 @@ void test_1(const FunctionWrapper& functor, const bool save = false) {
 
   const double dista = functor(mesh1, mesh2);
   const double distb = functor(mesh2, mesh1);
-
   const double naive = (CGAL::max)(dista, distb);
   const double distc = functor.symmetric(mesh1, mesh2);
-  assert(distc == naive);
 
   std::cout << "* Hausdorff distance (expected 1): " << dista << std::endl;
   std::cout << "* HInverted distance (expected 1): " << distb << std::endl;
   std::cout << "* Symmetric distance (expected 1): " << distc << std::endl;
+
+  assert(dista == 1.0);
+  assert(distb == 1.0);
+  assert(distc == naive);
 }
 
 template<class FunctionWrapper>
@@ -189,14 +371,16 @@ void test_2(const FunctionWrapper& functor, const bool save = false) {
 
   const double dista = functor(mesh1, mesh2);
   const double distb = functor(mesh2, mesh1);
-
   const double naive = (CGAL::max)(dista, distb);
   const double distc = functor.symmetric(mesh1, mesh2);
-  assert(distc == naive);
 
   std::cout << "* Hausdorff distance (expected 1): " << dista << std::endl;
   std::cout << "* HInverted distance (expected 1): " << distb << std::endl;
   std::cout << "* Symmetric distance (expected 1): " << distc << std::endl;
+
+  assert(dista == 1.0);
+  assert(distb == 1.0);
+  assert(distc == naive);
 }
 
 template<class FunctionWrapper>
@@ -224,14 +408,16 @@ void test_3(const FunctionWrapper& functor, const bool save = false) {
 
   const double dista = functor(mesh1, mesh2);
   const double distb = functor(mesh2, mesh1);
-
   const double naive = (CGAL::max)(dista, distb);
   const double distc = functor.symmetric(mesh1, mesh2);
-  assert(distc == naive);
 
   std::cout << "* Hausdorff distance (expected sqrt(2)): " << dista << std::endl;
   std::cout << "* HInverted distance (expected      2 ): " << distb << std::endl;
   std::cout << "* Symmetric distance (expected      2 ): " << distc << std::endl;
+
+  assert(CGAL::abs(dista - CGAL::sqrt(2.0)) < 1e-5); // error bound is 1e-4
+  assert(distb == 2.0);
+  assert(distc == naive);
 }
 
 template<class FunctionWrapper>
@@ -258,14 +444,17 @@ void test_4(const FunctionWrapper& functor, const bool save = false) {
 
   const double dista = functor(mesh1, mesh2);
   const double distb = functor(mesh2, mesh1);
-
   const double naive = (CGAL::max)(dista, distb);
   const double distc = functor.symmetric(mesh1, mesh2);
-  assert(distc == naive);
 
   std::cout << "* Hausdorff distance (expected 1.22): " << dista << std::endl;
   std::cout << "* HInverted distance (expected 1.22): " << distb << std::endl;
   std::cout << "* Symmetric distance (expected 1.22): " << distc << std::endl;
+
+  assert(CGAL::abs(dista - 1.224744) < 1e-5); // error bound is 1e-4
+  assert(CGAL::abs(distb - 1.224744) < 1e-5); // error bound is 1e-4
+  assert(dista == distb);
+  assert(distc == naive);
 }
 
 template<class FunctionWrapper>
@@ -293,14 +482,16 @@ void test_5(const FunctionWrapper& functor, const bool save = false) {
 
   const double dista = functor(mesh1, mesh2);
   const double distb = functor(mesh2, mesh1);
-
   const double naive = (CGAL::max)(dista, distb);
   const double distc = functor.symmetric(mesh1, mesh2);
-  assert(distc == naive);
 
   std::cout << "* Hausdorff distance (expected 1.73): " << dista << std::endl;
   std::cout << "* HInverted distance (expected 2.12): " << distb << std::endl;
   std::cout << "* Symmetric distance (expected 2.12): " << distc << std::endl;
+
+  assert(CGAL::abs(dista - 1.732050) < 1e-5); // error bound is 1e-4
+  assert(CGAL::abs(distb - 2.121320) < 1e-5); // error bound is 1e-4
+  assert(distc == naive);
 }
 
 template<class FunctionWrapper>
@@ -333,14 +524,16 @@ void test_6(const FunctionWrapper& functor, const bool save = false) {
 
   const double dista = functor(mesh1, mesh2);
   const double distb = functor(mesh2, mesh1);
-
   const double naive = (CGAL::max)(dista, distb);
   const double distc = functor.symmetric(mesh1, mesh2);
-  assert(distc == naive);
 
   std::cout << "* Hausdorff distance (expected 0.0): " << dista << std::endl;
   std::cout << "* HInverted distance (expected 0.7): " << distb << std::endl;
   std::cout << "* Symmetric distance (expected 0.7): " << distc << std::endl;
+
+  assert(dista == 0.0);
+  assert(CGAL::abs(distb - 0.707106) < 1e-5); // error bound is 1e-4
+  assert(distc == naive);
 }
 
 template<class FunctionWrapper>
@@ -373,14 +566,16 @@ void test_7(const FunctionWrapper& functor, const bool save = false) {
 
   const double dista = functor(mesh1, mesh2);
   const double distb = functor(mesh2, mesh1);
-
   const double naive = (CGAL::max)(dista, distb);
   const double distc = functor.symmetric(mesh1, mesh2);
-  assert(distc == naive);
 
   std::cout << "* Hausdorff distance (expected 0.50): " << dista << std::endl;
   std::cout << "* HInverted distance (expected 0.86): " << distb << std::endl;
   std::cout << "* Symmetric distance (expected 0.86): " << distc << std::endl;
+
+  assert(dista == 0.5);
+  assert(CGAL::abs(distb - 0.866025) < 1e-5); // error bound is 1e-4
+  assert(distc == naive);
 }
 
 template<class FunctionWrapper>
@@ -413,14 +608,16 @@ void test_8(const FunctionWrapper& functor, const bool save = false) {
 
   const double dista = functor(mesh1, mesh2);
   const double distb = functor(mesh2, mesh1);
-
   const double naive = (CGAL::max)(dista, distb);
   const double distc = functor.symmetric(mesh1, mesh2);
-  assert(distc == naive);
 
   std::cout << "* Hausdorff distance (expected 1): " << dista << std::endl;
   std::cout << "* HInverted distance (expected 2): " << distb << std::endl;
   std::cout << "* Symmetric distance (expected 2): " << distc << std::endl;
+
+  assert(dista == 1.0);
+  assert(distb == 2.0);
+  assert(distc == naive);
 }
 
 template<class FunctionWrapper>
@@ -460,14 +657,16 @@ void test_9(const FunctionWrapper& functor, const bool save = false) {
 
   const double dista = functor(mesh1, mesh2);
   const double distb = functor(mesh2, mesh1);
-
   const double naive = (CGAL::max)(dista, distb);
   const double distc = functor.symmetric(mesh1, mesh2);
-  assert(distc == naive);
 
   std::cout << "* Hausdorff distance (expected 1): " << dista << std::endl;
   std::cout << "* HInverted distance (expected 1): " << distb << std::endl;
   std::cout << "* Symmetric distance (expected 1): " << distc << std::endl;
+
+  assert(dista == 1.0);
+  assert(distb == 1.0);
+  assert(distc == naive);
 }
 
 template<class FunctionWrapper>
@@ -527,6 +726,9 @@ void test_one_versus_another(
   const double distb1 = functor2(mesh1, mesh2);
   std::cout << "* Hausdorff distance1: " << dista1 << std::endl;
   std::cout << "* Hausdorff distance2: " << distb1 << std::endl;
+
+  assert(CGAL::abs(dista0 - distb0) < 1e-3); // error bound is 1e-4
+  assert(CGAL::abs(dista1 - distb1) < 1e-3); // error bound is 1e-4
 }
 
 template<
@@ -563,6 +765,9 @@ void test_real_meshes(
   std::cout << std::endl;
   std::cout << "* Hausdorff distance2 f: " << distb0 << std::endl;
   std::cout << "* Hausdorff distance2 b: " << distb1 << std::endl;
+
+  assert(CGAL::abs(dista0 - distb0) < 1e-3); // error bound is 1e-4
+  assert(CGAL::abs(dista1 - distb1) < 1e-3); // error bound is 1e-4
 }
 
 template<class FunctionWrapper>
@@ -598,6 +803,10 @@ void test_timings(const std::string filepath, const FunctionWrapper& functor) {
   std::cout << "* time ab1 naive (sec.): " << timea + timeb << std::endl;
   std::cout << "* time ab1 optimized (sec.): " << timeab << std::endl;
 
+  assert(timea > 0.0);
+  assert(timeb > 0.0);
+  assert(timeab < timea + timeb);
+
   PMP::transform(Affine_transformation_3(CGAL::Translation(),
     Vector_3(FT(0), FT(0), FT(1))), mesh2);
 
@@ -624,9 +833,16 @@ void test_timings(const std::string filepath, const FunctionWrapper& functor) {
   std::cout << "* time ab2 naive (sec.): " << timea + timeb << std::endl;
   std::cout << "* time ab2 optimized (sec.): " << timeab << std::endl;
 
+  assert(timea > 0.0);
+  assert(timeb > 0.0);
+  assert(timeab < timea + timeb);
+
   std::cout << "* dista  = " << dista1 << " , " << dista2 << std::endl;
   std::cout << "* distb  = " << distb1 << " , " << distb2 << std::endl;
   std::cout << "* distab = " << distc1 << " , " << distc2 << std::endl;
+
+  assert(dista1 == distb1 && distb1 == distc1);
+  assert(dista2 == distb2 && distb2 == distc2);
 }
 
 template<class FunctionWrapper>
@@ -672,10 +888,12 @@ void test_bunny(
     times.push_back(timer.time());
     std::cout << "* distance / Hausdorff / time (sec.) : " <<
       distance << " / " << distc << " / " << times.back() << std::endl;
+    assert(distc > 0.0);
 
   } else {
 
     // t is the step where n is the number of steps.
+    double curr_dist = 1.0;
     const FT t = FT(1) / static_cast<FT>(n);
     for (int k = n; k >= 0; --k) {
       auto mesh = mesh2;
@@ -693,6 +911,8 @@ void test_bunny(
       times.push_back(timer.time());
       std::cout << "* distance / Hausdorff / time (sec.) " << k << " : " <<
         distance << " / " << distc << " / " << times.back() << std::endl;
+      assert(distc < curr_dist);
+      curr_dist = distc;
     }
   }
 
@@ -710,6 +930,10 @@ void test_bunny(
   std::cout << "* avg time: " << avg_time * 1000.0 << std::endl;
   std::cout << "* min time: " << min_time * 1000.0 << std::endl;
   std::cout << "* max time: " << max_time * 1000.0 << std::endl;
+
+  assert(min_time <= max_time);
+  assert(min_time <= avg_time);
+  assert(avg_time <= max_time);
 }
 
 Triangle_3 get_triangle(const int index, const Surface_mesh& mesh) {
@@ -721,6 +945,7 @@ Triangle_3 get_triangle(const int index, const Surface_mesh& mesh) {
 
   const auto he = halfedge(face, mesh);
   const auto vertices = vertices_around_face(he, mesh);
+  assert(vertices.size() >= 3);
   auto vit = vertices.begin();
   const auto& p0 = mesh.point(*vit); ++vit;
   const auto& p1 = mesh.point(*vit); ++vit;
@@ -743,6 +968,9 @@ void compute_realizing_triangles(
 
   std::cout << "* Hausdorff: " << hdist << std::endl;
   std::cout << "* f1 / f2: " << f1 << " / " << f2 << std::endl;
+
+  assert(f1 == 0);
+  assert(f2 == 0 || f2 == 161);
 
   if (f1 != -1 && save) {
     const auto triangle = get_triangle(f1, mesh1);
@@ -864,6 +1092,10 @@ void test_parallel_version(
 
   std::cout << "* dista seq = " << dista << std::endl;
   std::cout << "* distb par = " << distb << std::endl;
+
+  assert(timea > 0.0);
+  assert(timeb > 0.0);
+  assert(dista == distb);
 }
 #endif // defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
 
@@ -880,7 +1112,7 @@ void test_early_quit(const std::string filepath) {
   std::cout << " ---- distance 0.0 = 0.0 ---- " << std::endl;
   timer.reset();
   timer.start();
-  assert(!PMP::is_further_than<TAG>(mesh1, mesh2, 0.0));
+  assert(!PMP::is_Hausdorff_distance_larger<TAG>(mesh1, mesh2, 0.0));
   timer.stop();
   const double timea = timer.time();
 
@@ -890,25 +1122,25 @@ void test_early_quit(const std::string filepath) {
   std::cout << " ---- distance 0.5 < 1.0 ---- " << std::endl;
   timer.reset();
   timer.start();
-  assert(!PMP::is_further_than<TAG>(mesh1, mesh2, 1.0));
+  assert(!PMP::is_Hausdorff_distance_larger<TAG>(mesh1, mesh2, 1.0));
   timer.stop();
   const double timeb = timer.time();
   std::cout << " ---- distance 0.5 < 0.6 ---- " << std::endl;
   timer.reset();
   timer.start();
-  assert(!PMP::is_further_than<TAG>(mesh1, mesh2, 0.6));
+  assert(!PMP::is_Hausdorff_distance_larger<TAG>(mesh1, mesh2, 0.6));
   timer.stop();
   const double timec = timer.time();
   std::cout << " ---- distance 0.5 > 0.4 ---- " << std::endl;
   timer.reset();
   timer.start();
-  assert(PMP::is_further_than<TAG>(mesh1, mesh2, 0.4));
+  assert(PMP::is_Hausdorff_distance_larger<TAG>(mesh1, mesh2, 0.4));
   timer.stop();
   const double timed = timer.time();
   std::cout << " ---- distance 0.5 > 0.0 ---- " << std::endl;
   timer.reset();
   timer.start();
-  assert(PMP::is_further_than<TAG>(mesh1, mesh2, 0.0));
+  assert(PMP::is_Hausdorff_distance_larger<TAG>(mesh1, mesh2, 0.0));
   timer.stop();
   const double timee = timer.time();
 
@@ -917,6 +1149,21 @@ void test_early_quit(const std::string filepath) {
   std::cout << "* timec 0.5 < 0.6 = " << timec << std::endl;
   std::cout << "* timed 0.5 > 0.4 = " << timed << std::endl;
   std::cout << "* timee 0.5 > 0.0 = " << timee << std::endl;
+
+  assert(timea > 0.0);
+  assert(timeb > 0.0);
+  assert(timec > 0.0);
+  assert(timed > 0.0);
+  assert(timee > 0.0);
+}
+
+void run_examples(const double error_bound, const std::string filepath) {
+
+  remeshing_tetrahedon_example(error_bound);
+  interior_triangle_example(error_bound);
+  perturbing_surface_mesh_example(filepath, error_bound);
+  perturbing_polyhedron_mesh_example(filepath, error_bound);
+  moving_surface_mesh_example(filepath, filepath, 5, error_bound);
 }
 
 int main(int argc, char** argv) {
@@ -929,6 +1176,7 @@ int main(int argc, char** argv) {
   std::cout << std::endl << "* error bound: " << error_bound << std::endl;
   // std::cout << std::endl << "* number of samples: " << num_samples << std::endl;
   std::string filepath = (argc > 1 ? argv[1] : "data/blobby.off");
+  run_examples(error_bound, filepath);
 
   // ------------------------------------------------------------------------ //
   // Tests.

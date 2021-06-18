@@ -202,6 +202,7 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 
 \cgalCRPSection{Distance Functions}
 - `CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance()`
+- `CGAL::Polygon_mesh_processing::bounded_error_symmetric_Hausdorff_distance()`
 - `CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance()`
 - `CGAL::Polygon_mesh_processing::approximate_symmetric_Hausdorff_distance()`
 - `CGAL::Polygon_mesh_processing::approximate_max_distance_to_point_set()`

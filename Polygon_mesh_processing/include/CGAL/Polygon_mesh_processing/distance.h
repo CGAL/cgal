@@ -1031,12 +1031,12 @@ double approximate_Hausdorff_distance(
   CGAL_assertion_code(  bool is_triangle = is_triangle_mesh(tm) );
   CGAL_assertion_msg (is_triangle,
         "Mesh is not triangulated. Distance computing impossible.");
-  #ifdef CGAL_HAUSDORFF_DEBUG
-  std::cout << "Nb sample points " << sample_points.size() << "\n";
-  #endif
   typedef typename Kernel::Point_3 Point_3;
   std::vector<Point_3> sample_points
     (boost::begin(original_sample_points), boost::end(original_sample_points) );
+  #ifdef CGAL_HAUSDORFF_DEBUG
+  std::cout << "Nb sample points " << sample_points.size() << "\n";
+  #endif
 
   spatial_sort(sample_points.begin(), sample_points.end());
 
@@ -1327,6 +1327,9 @@ double approximate_symmetric_Hausdorff_distance(const TriangleMesh& tm1,
 // Use this def in order to get back the parallel version of the one-sided Hausdorff code!
 // #define USE_PARALLEL_BEHD
 
+// Use this def in order to get all DEBUG info related to the bounded-error Hausdorff code!
+// #define CGAL_HAUSDORFF_DEBUG
+
 namespace internal {
 
 template< class Kernel,
@@ -1356,13 +1359,14 @@ std::pair<typename Kernel::FT, bool> preprocess_bounded_error_Hausdorff_impl(
 {
   using FT      = typename Kernel::FT;
   using Point_3 = typename Kernel::Point_3;
-  using Timer   = CGAL::Real_timer;
 
+  #ifdef CGAL_HAUSDORFF_DEBUG
+  using Timer = CGAL::Real_timer;
   Timer timer;
   timer.start();
-
-  // std::cout << "* preprocessing begin ...." << std::endl;
-  std::cout.precision(20);
+  std::cout << "* preprocessing begin ...." << std::endl;
+  std::cout.precision(17);
+  #endif
 
   // Compute the max value that is used as infinity value for the given meshes.
   // In our case, it is twice the length of the diagonal of the bbox of two input meshes.
@@ -1392,9 +1396,11 @@ std::pair<typename Kernel::FT, bool> preprocess_bounded_error_Hausdorff_impl(
     match_faces(tm1, tm2, std::back_inserter(common),
       std::back_inserter(tm1_only), std::back_inserter(tm2_only), np1, np2);
 
-    // std::cout << "-   common: " <<   common.size() << std::endl;
-    // std::cout << "- tm1 only: " << tm1_only.size() << std::endl;
-    // std::cout << "- tm2 only: " << tm2_only.size() << std::endl;
+    #ifdef CGAL_HAUSDORFF_DEBUG
+    std::cout << "-   common: " <<   common.size() << std::endl;
+    std::cout << "- tm1 only: " << tm1_only.size() << std::endl;
+    std::cout << "- tm2 only: " << tm2_only.size() << std::endl;
+    #endif
 
     if (is_one_sided_distance) { // one-sided distance
 
@@ -1436,9 +1442,11 @@ std::pair<typename Kernel::FT, bool> preprocess_bounded_error_Hausdorff_impl(
     tm2_tree.insert(faces2.begin(), faces2.end(), tm2, vpm2);
   }
 
+  #ifdef CGAL_HAUSDORFF_DEBUG
   timer.stop();
-  // std::cout << "* .... end preprocessing" << std::endl;
-  // std::cout << "* preprocessing time (sec.): " << timer.time() << std::endl;
+  std::cout << "* .... end preprocessing" << std::endl;
+  std::cout << "* preprocessing time (sec.): " << timer.time() << std::endl;
+  #endif
   return std::make_pair(infinity_value, rebuild);
 }
 
@@ -1480,18 +1488,19 @@ double bounded_error_Hausdorff_impl(
   using Face_handle_2 = typename boost::graph_traits<TriangleMesh2>::face_descriptor;
 
   using Candidate = Candidate_triangle<Kernel, Face_handle_1, Face_handle_2>;
-  using Timer     = CGAL::Real_timer;
 
-  std::cout.precision(20);
   CGAL_precondition(error_bound >= FT(0));
   CGAL_precondition(tm1_tree.size() > 0);
   CGAL_precondition(tm2_tree.size() > 0);
 
   // First, we apply culling.
-  // std::cout << "- applying culling" << std::endl;
-
+  #ifdef CGAL_HAUSDORFF_DEBUG
+  using Timer = CGAL::Real_timer;
   Timer timer;
   timer.start();
+  std::cout << "- applying culling" << std::endl;
+  std::cout.precision(17);
+  #endif
 
   // Build traversal traits for tm1_tree.
   TM1_hd_traits traversal_traits_tm1(
@@ -1506,12 +1515,16 @@ double bounded_error_Hausdorff_impl(
   auto& candidate_triangles = traversal_traits_tm1.get_candidate_triangles();
   auto global_bounds = traversal_traits_tm1.get_global_bounds();
 
-  // std::cout << "- number of candidate triangles: " << candidate_triangles.size() << std::endl;
-  // const FT culling_rate = FT(100) - (FT(candidate_triangles.size()) / FT(tm1_tree.size()) * FT(100));
-  // std::cout << "- culling rate: " << culling_rate << "%" << std::endl;
+  #ifdef CGAL_HAUSDORFF_DEBUG
+  std::cout << "- number of candidate triangles: " << candidate_triangles.size() << std::endl;
+  const FT culling_rate = FT(100) - (FT(candidate_triangles.size()) / FT(tm1_tree.size()) * FT(100));
+  std::cout << "- culling rate: " << culling_rate << "%" << std::endl;
+  #endif
 
+  #ifdef CGAL_HAUSDORFF_DEBUG
   timer.stop();
-  // std::cout << "* culling (sec.): " << timer.time() << std::endl;
+  std::cout << "* culling (sec.): " << timer.time() << std::endl;
+  #endif
 
   CGAL_assertion(global_bounds.lower >= FT(0));
   CGAL_assertion(global_bounds.upper >= FT(0));
@@ -1526,10 +1539,11 @@ double bounded_error_Hausdorff_impl(
   CGAL_assertion(!traversal_traits_tm1.early_quit());
 
   // Second, we apply subdivision.
-  // std::cout << "- applying subdivision" << std::endl;
-
+  #ifdef CGAL_HAUSDORFF_DEBUG
   timer.reset();
   timer.start();
+  std::cout << "- applying subdivision" << std::endl;
+  #endif
 
   // See Section 5.1 in the paper.
   const FT squared_error_bound = error_bound * error_bound;
@@ -1657,8 +1671,10 @@ double bounded_error_Hausdorff_impl(
     }
   }
 
+  #ifdef CGAL_HAUSDORFF_DEBUG
   timer.stop();
-  // std::cout << "* subdivision (sec.): " << timer.time() << std::endl;
+  std::cout << "* subdivision (sec.): " << timer.time() << std::endl;
+  #endif
 
   // Compute linear interpolation between the found lower and upper bounds.
   CGAL_assertion(global_bounds.lower >= FT(0));
@@ -1667,12 +1683,6 @@ double bounded_error_Hausdorff_impl(
   const double hdist = CGAL::to_double((global_bounds.lower + global_bounds.upper) / FT(2));
 
   // Get realizing triangles.
-  // std::cout << "- found lface 1:" << static_cast<int>(global_bounds.lpair.first)  << std::endl;
-  // std::cout << "- found lface 2:" << static_cast<int>(global_bounds.lpair.second) << std::endl;
-
-  // std::cout << "- found uface 1:" << static_cast<int>(global_bounds.upair.first)  << std::endl;
-  // std::cout << "- found uface 2:" << static_cast<int>(global_bounds.upair.second) << std::endl;
-
   CGAL_assertion(global_bounds.lpair.first != boost::graph_traits<TriangleMesh1>::null_face());
   CGAL_assertion(global_bounds.lpair.second != boost::graph_traits<TriangleMesh2>::null_face());
   CGAL_assertion(global_bounds.upair.first != boost::graph_traits<TriangleMesh1>::null_face());
@@ -1708,7 +1718,9 @@ struct Triangle_mesh_wrapper {
 template<class TM1Wrapper, class TM2Wrapper>
 struct Bounded_error_preprocessing {
 
+  #ifdef CGAL_HAUSDORFF_DEBUG
   using Timer = CGAL::Real_timer;
+  #endif
   std::vector<boost::any>& tm_wrappers;
 
   // Constructor.
@@ -1731,9 +1743,14 @@ struct Bounded_error_preprocessing {
 
   // TODO: make AABB tree build parallel!
   void operator()(const tbb::blocked_range<std::size_t>& range) {
+
+    #ifdef CGAL_HAUSDORFF_DEBUG
     Timer timer;
     timer.reset();
     timer.start();
+    std::cout.precision(17);
+    #endif
+
     for (std::size_t i = range.begin(); i != range.end(); ++i) {
       CGAL_assertion(i < tm_wrappers.size());
       auto& tm_wrapper = tm_wrappers[i];
@@ -1747,8 +1764,11 @@ struct Bounded_error_preprocessing {
         CGAL_assertion_msg(false, "Error: wrong boost any type!");
       }
     }
+
+    #ifdef CGAL_HAUSDORFF_DEBUG
     timer.stop();
-    // std::cout << "* time operator() preprocessing (sec.): " << timer.time() << std::endl;
+    std::cout << "* time operator() preprocessing (sec.): " << timer.time() << std::endl;
+    #endif
   }
 
   void join(Bounded_error_preprocessing&) { }
@@ -1764,7 +1784,9 @@ template< class TriangleMesh1,
 struct Bounded_error_distance_computation {
 
   using FT = typename Kernel::FT;
+  #ifdef CGAL_HAUSDORFF_DEBUG
   using Timer = CGAL::Real_timer;
+  #endif
 
   const std::vector<TriangleMesh1>& tm1_parts; const TriangleMesh2& tm2;
   const FT error_bound; const VPM1& vpm1; const VPM2& vpm2;
@@ -1796,9 +1818,14 @@ struct Bounded_error_distance_computation {
   }
 
   void operator()(const tbb::blocked_range<std::size_t>& range) {
+
+    #ifdef CGAL_HAUSDORFF_DEBUG
     Timer timer;
     timer.reset();
     timer.start();
+    std::cout.precision(17);
+    #endif
+
     double hdist = -1.0;
     auto stub = CGAL::Emptyset_iterator();
 
@@ -1816,8 +1843,11 @@ struct Bounded_error_distance_computation {
       if (dist > hdist) hdist = dist;
     }
     if (hdist > distance) distance = hdist;
+
+    #ifdef CGAL_HAUSDORFF_DEBUG
     timer.stop();
-    // std::cout << "* time operator() computation (sec.): " << timer.time() << std::endl;
+    std::cout << "* time operator() computation (sec.): " << timer.time() << std::endl;
+    #endif
   }
 
   void join(Bounded_error_distance_computation& rhs) {
@@ -1871,8 +1901,11 @@ double bounded_error_one_sided_Hausdorff_impl(
   using Face_handle_1 = typename boost::graph_traits<TM1>::face_descriptor;
   using Face_handle_2 = typename boost::graph_traits<TM2>::face_descriptor;
 
-  using Timer = CGAL::Real_timer;
-
+  // This is parallel version: we split the tm1 into parts, build trees for all parts, and
+  // run in parallel all BHD computations. The final distance is obtained by taking the max
+  // between BHDs computed for these parts with respect to tm2.
+  // This is off by default because the parallel version does not show much of runtime improvement.
+  // The slowest part is building AABB trees and this is what should be accelerated in the future.
   #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED) && defined(USE_PARALLEL_BEHD)
   using Point_3       = typename Kernel::Point_3;
   using TMF           = CGAL::Face_filtered_graph<TM1>;
@@ -1887,8 +1920,11 @@ double bounded_error_one_sided_Hausdorff_impl(
   std::vector<boost::any> tm_wrappers;
   #endif // defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
 
+  #ifdef CGAL_HAUSDORFF_DEBUG
+  using Timer = CGAL::Real_timer;
   Timer timer;
-  std::cout.precision(20);
+  std::cout.precision(17);
+  #endif
 
   TM1_tree tm1_tree;
   TM2_tree tm2_tree;
@@ -1898,15 +1934,19 @@ double bounded_error_one_sided_Hausdorff_impl(
   // TODO: add to NP!
   const int nb_cores = 4;
   const std::size_t min_nb_faces_to_split = 100; // TODO: increase this number?
-  // std::cout << "* num cores: " << nb_cores << std::endl;
+  #ifdef CGAL_HAUSDORFF_DEBUG
+  std::cout << "* num cores: " << nb_cores << std::endl;
+  #endif
 
   if (
     boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value &&
     nb_cores > 1 && faces(tm1).size() >= min_nb_faces_to_split) {
 
     // (0) -- Compute infinity value.
+    #ifdef CGAL_HAUSDORFF_DEBUG
     timer.reset();
     timer.start();
+    #endif
     const auto bbox1 = bbox(tm1);
     const auto bbox2 = bbox(tm2);
     const auto bb = bbox1 + bbox2;
@@ -1915,39 +1955,54 @@ double bounded_error_one_sided_Hausdorff_impl(
       Point_3(bb.xmax(), bb.ymax(), bb.zmax()));
     infinity_value = CGAL::approximate_sqrt(sq_dist) * FT(2);
     CGAL_assertion(infinity_value >= FT(0));
+    #ifdef CGAL_HAUSDORFF_DEBUG
     timer.stop();
-    // const double time0 = timer.time();
-    // std::cout << "- computing infinity (sec.): " << time0 << std::endl;
+    const double time0 = timer.time();
+    std::cout << "- computing infinity (sec.): " << time0 << std::endl;
+    #endif
 
     // (1) -- Create partition of tm1.
+    #ifdef CGAL_HAUSDORFF_DEBUG
     timer.reset();
     timer.start();
+    #endif
     using Face_property_tag = CGAL::dynamic_face_property_t<int>;
     auto face_pid_map = get(Face_property_tag(), tm1);
     CGAL::METIS::partition_graph(
       tm1, nb_cores, CGAL::parameters::
       face_partition_id_map(face_pid_map));
+    #ifdef CGAL_HAUSDORFF_DEBUG
     timer.stop();
-    // const double time1 = timer.time();
-    // std::cout << "- computing partition time (sec.): " << time1 << std::endl;
+    const double time1 = timer.time();
+    std::cout << "- computing partition time (sec.): " << time1 << std::endl;
+    #endif
 
     // (2) -- Create a filtered face graph for each part.
+    #ifdef CGAL_HAUSDORFF_DEBUG
     timer.reset();
     timer.start();
+    #endif
     tm1_parts.reserve(nb_cores);
     for (int i = 0; i < nb_cores; ++i) {
       tm1_parts.emplace_back(tm1, i, face_pid_map);
-      // CGAL_assertion(tm1_parts.back().is_selection_valid()); // TODO: why is it triggered sometimes?
-      // std::cout << "- part " << i << " size: " << tm1_parts.back().number_of_faces() << std::endl;
+      // TODO: why is it triggered sometimes?
+      // CGAL_assertion(tm1_parts.back().is_selection_valid());
+      #ifdef CGAL_HAUSDORFF_DEBUG
+      std::cout << "- part " << i << " size: " << tm1_parts.back().number_of_faces() << std::endl;
+      #endif
     }
     CGAL_assertion(tm1_parts.size() == nb_cores);
+    #ifdef CGAL_HAUSDORFF_DEBUG
     timer.stop();
-    // const double time2 = timer.time();
-    // std::cout << "- creating graphs time (sec.): " << time2 << std::endl;
+    const double time2 = timer.time();
+    std::cout << "- creating graphs time (sec.): " << time2 << std::endl;
+    #endif
 
     // (3) -- Preprocess all input data.
+    #ifdef CGAL_HAUSDORFF_DEBUG
     timer.reset();
     timer.start();
+    #endif
     tm1_trees.resize(tm1_parts.size());
     tm_wrappers.reserve(tm1_parts.size() + 1);
     for (std::size_t i = 0; i < tm1_parts.size(); ++i) {
@@ -1957,20 +2012,26 @@ double bounded_error_one_sided_Hausdorff_impl(
     CGAL_assertion(tm_wrappers.size() == tm1_parts.size() + 1);
     Bounded_error_preprocessing<TM1_wrapper, TM2_wrapper> bep(tm_wrappers);
     tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, tm_wrappers.size()), bep);
+    #ifdef CGAL_HAUSDORFF_DEBUG
     timer.stop();
-    // const double time3 = timer.time();
-    // std::cout << "- creating trees time (sec.) " << time3 << std::endl;
+    const double time3 = timer.time();
+    std::cout << "- creating trees time (sec.) " << time3 << std::endl;
+    #endif
 
     // Final timing.
-    // std::cout << "* preprocessing parallel time (sec.) " <<
-    //   time0 + time1 + time2 + time3 << std::endl;
+    #ifdef CGAL_HAUSDORFF_DEBUG
+    std::cout << "* preprocessing parallel time (sec.) " <<
+      time0 + time1 + time2 + time3 << std::endl;
+    #endif
 
   } else // sequential version
   #endif // defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
   {
-    // std::cout << "* preprocessing sequential version " << std::endl;
+    #ifdef CGAL_HAUSDORFF_DEBUG
     timer.reset();
     timer.start();
+    std::cout << "* preprocessing sequential version " << std::endl;
+    #endif
     bool rebuild = false;
     std::vector<Face_handle_1> tm1_only;
     std::vector<Face_handle_2> tm2_only;
@@ -1984,13 +2045,19 @@ double bounded_error_one_sided_Hausdorff_impl(
       tm1_tree.do_not_accelerate_distance_queries();
       tm2_tree.accelerate_distance_queries();
     }
+    #ifdef CGAL_HAUSDORFF_DEBUG
     timer.stop();
-    // std::cout << "* preprocessing sequential time (sec.) " << timer.time() << std::endl;
+    std::cout << "* preprocessing sequential time (sec.) " << timer.time() << std::endl;
+    #endif
   }
 
-  // std::cout << "* infinity_value: " << infinity_value << std::endl;
+  #ifdef CGAL_HAUSDORFF_DEBUG
+  std::cout << "* infinity_value: " << infinity_value << std::endl;
+  #endif
   if (infinity_value < FT(0)) {
-    // std::cout << "* culling rate: 100%" << std::endl;
+    #ifdef CGAL_HAUSDORFF_DEBUG
+    std::cout << "* culling rate: 100%" << std::endl;
+    #endif
     const auto face1 = *(faces(tm1).begin());
     const auto face2 = *(faces(tm2).begin());
     *out++ = std::make_pair(face1, face2);
@@ -2002,15 +2069,19 @@ double bounded_error_one_sided_Hausdorff_impl(
   const FT initial_bound = error_bound;
   std::atomic<double> hdist;
 
+  #ifdef CGAL_HAUSDORFF_DEBUG
   timer.reset();
   timer.start();
+  #endif
 
   #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED) && defined(USE_PARALLEL_BEHD)
   if (
     boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value &&
     nb_cores > 1 && faces(tm1).size() >= min_nb_faces_to_split) {
 
-    // std::cout << "* executing parallel version " << std::endl;
+    #ifdef CGAL_HAUSDORFF_DEBUG
+    std::cout << "* executing parallel version " << std::endl;
+    #endif
     Bounded_error_distance_computation<TMF, TM2, VPM1, VPM2, TMF_tree, TM2_tree, Kernel> bedc(
       tm1_parts, tm2, error_bound, vpm1, vpm2,
       infinity_value, initial_bound, tm1_trees, tm2_tree);
@@ -2020,21 +2091,24 @@ double bounded_error_one_sided_Hausdorff_impl(
   } else // sequential version
   #endif // defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
   {
-    // std::cout << "* executing sequential version " << std::endl;
+    #ifdef CGAL_HAUSDORFF_DEBUG
+    std::cout << "* executing sequential version " << std::endl;
+    #endif
     hdist = bounded_error_Hausdorff_impl<Kernel>(
       tm1, tm2, error_bound, vpm1, vpm2,
       infinity_value, initial_bound, distance_bound,
       tm1_tree, tm2_tree, out);
   }
 
+  #ifdef CGAL_HAUSDORFF_DEBUG
   timer.stop();
-  // std::cout << "* computation time (sec.) " << timer.time() << std::endl;
+  std::cout << "* computation time (sec.) " << timer.time() << std::endl;
+  #endif
 
   CGAL_assertion(hdist >= 0.0);
   return hdist;
 }
 
-// TODO: should we add a parallel version here?
 template< class Concurrency_tag,
           class Kernel,
           class TriangleMesh1,
@@ -2064,14 +2138,6 @@ double bounded_error_symmetric_Hausdorff_impl(
     "Parallel_tag is enabled but at least TBB or METIS is unavailable.");
   #endif
 
-  // Naive version.
-  // TODO: we can use it for parallel version to simplify our life.
-  // const double hdist1 = bounded_error_one_sided_Hausdorff_impl<Concurrency_tag, Kernel>(
-  //   tm1, tm2, error_bound, distance_bound, compare_meshes, vpm1, vpm2, np1, np2, out1);
-  // const double hdist2 = bounded_error_one_sided_Hausdorff_impl<Concurrency_tag, Kernel>(
-  //   tm2, tm1, error_bound, distance_bound, compare_meshes, vpm2, vpm1, np1, np2, out2);
-  // return (CGAL::max)(hdist1, hdist2);
-
   // Optimized version.
   // -- We compare meshes only if it is required.
   // -- We first build trees and rebuild them only if it is required.
@@ -2090,7 +2156,6 @@ double bounded_error_symmetric_Hausdorff_impl(
   using Face_handle_1 = typename boost::graph_traits<TriangleMesh1>::face_descriptor;
   using Face_handle_2 = typename boost::graph_traits<TriangleMesh2>::face_descriptor;
 
-  std::cout.precision(20);
   std::vector<Face_handle_1> tm1_only;
   std::vector<Face_handle_2> tm2_only;
 
@@ -2104,7 +2169,10 @@ double bounded_error_symmetric_Hausdorff_impl(
     tm1_tree, tm2_tree, tm1_only, tm2_only);
 
   if (infinity_value < FT(0)) {
-    // std::cout << "* culling rate: 100%" << std::endl;
+    #ifdef CGAL_HAUSDORFF_DEBUG
+    std::cout.precision(17);
+    std::cout << "* culling rate: 100%" << std::endl;
+    #endif
     const auto face1 = *(faces(tm1).begin());
     const auto face2 = *(faces(tm2).begin());
     *out1++ = std::make_pair(face1, face2);
@@ -2470,7 +2538,7 @@ template< class Concurrency_tag,
           class TriangleMesh2,
           class NamedParameters1,
           class NamedParameters2 >
-bool is_further_than(
+bool is_Hausdorff_distance_larger(
   const TriangleMesh1& tm1,
   const TriangleMesh2& tm2,
   const double distance_bound,
@@ -2516,8 +2584,11 @@ bool is_further_than(
   }
   CGAL_assertion(hdist >= 0.0);
 
-  // std::cout << "- fin distance: " << hdist << std::endl;
-  // std::cout << "- max distance: " << distance_bound << std::endl;
+  #ifdef CGAL_HAUSDORFF_DEBUG
+  std::cout.precision(17);
+  std::cout << "- fin distance: " << hdist << std::endl;
+  std::cout << "- max distance: " << distance_bound << std::endl;
+  #endif
   return hdist > distance_bound;
 }
 
@@ -2525,27 +2596,27 @@ template< class Concurrency_tag,
           class TriangleMesh1,
           class TriangleMesh2,
           class NamedParameters1 >
-double is_further_than(
+double is_Hausdorff_distance_larger(
   const TriangleMesh1& tm1,
   const TriangleMesh2& tm2,
   const double max_distance,
   const double error_bound,
   const NamedParameters1& np1)
 {
-  return is_further_than<Concurrency_tag>(
+  return is_Hausdorff_distance_larger<Concurrency_tag>(
     tm1, tm2, max_distance, error_bound, np1, parameters::all_default());
 }
 
 template< class Concurrency_tag,
           class TriangleMesh1,
           class TriangleMesh2 >
-double is_further_than(
+double is_Hausdorff_distance_larger(
   const TriangleMesh1& tm1,
   const TriangleMesh2& tm2,
   const double max_distance = 1.0,
   const double error_bound = 0.0001)
 {
-  return is_further_than<Concurrency_tag>(
+  return is_Hausdorff_distance_larger<Concurrency_tag>(
     tm1, tm2, max_distance, error_bound, parameters::all_default());
 }
 
