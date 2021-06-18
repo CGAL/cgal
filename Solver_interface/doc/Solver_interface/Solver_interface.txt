@@ -23,7 +23,7 @@ For mixed integer programs (either constrained or unconstrained),
 we provide models using the \ref thirdpartySCIP and \ref thirdpartyGLPK
 libraries.
 
-For linear and quadratic programs, CGAL provides the built-in
+For linear and quadratic programs, \cgal provides the built-in
 \ref PkgQPSolver "CGAL Linear and Quadratic Programming Solver"
 and we also provide a model using the \ref thirdpartyOSQP library.
 
