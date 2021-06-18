@@ -77,6 +77,8 @@ for t_id in range(0, len(tests)):
             tests_per_label[label].append(t)
 
 warning_pattern=re.compile(r'(.*([^a-zA-Z_,:-])([^\d]\s)warning).*?(\[|\n)', flags=re.IGNORECASE)
+w_det=re.compile("warning");
+filter_pattern=re.compile(r'cmake|cgal', flags=re.IGNORECASE);
 with open_file_create_dir(result_file_name.format(dir=os.getcwd(),
                                                   tester=tester_name,
                                                   platform=platform_name), 'a+') as results:
@@ -87,12 +89,12 @@ with open_file_create_dir(result_file_name.format(dir=os.getcwd(),
                 print("   {result} {name} in {time} s : {value} ".format(result = "successful " if (t['Status'] == 'passed') else "ERROR:     ", name = t['Name'], value = t['ExitValue'] if(t['ExitValue'] != "") else "SUCCESS" , time = t['ExecutionTime']), file=error)
                 if t['Status'] != 'passed':
                     result_for_label='n'
-                elif t['Output'] != None and re.search("warning", t['Output'], flags=re.IGNORECASE):
+                elif t['Output'] != None and w_det.search(t['Output']):
                     entries = re.split("\n+", t['Output'])
                     for entry in entries:
                         m=warning_pattern.search(entry)
                         if m:
-                            n = re.search(r'cmake|cgal', m.group(0), flags=re.IGNORECASE)
+                            n = filter_pattern.search(m.group(0))
                             if n:
                                 result_for_label='w'
                                 break;
