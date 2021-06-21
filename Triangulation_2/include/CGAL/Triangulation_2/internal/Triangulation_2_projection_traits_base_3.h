@@ -224,7 +224,6 @@ public:
         // the intersection of the supporting lines is not inside both segments
 #ifdef CGAL_T2_PTB_3_DEBUG
         std::cerr << "intersection not inside\n";
-        return boost::none;
 #endif
         return boost::none;
       }
