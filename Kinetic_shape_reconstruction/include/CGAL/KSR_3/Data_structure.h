@@ -25,6 +25,7 @@
 
 #include <CGAL/KSR_3/Support_plane.h>
 #include <CGAL/KSR_3/Intersection_graph.h>
+#include <CGAL/Barycentric_coordinates_2/Segment_coordinates_2.h>
 
 namespace CGAL {
 namespace KSR_3 {
@@ -1864,6 +1865,8 @@ public:
     for (const auto pedge : pedges) {
       if (!has_iedge(pedge)) {
         std::cout << "- disconnected pedge: " << segment_3(pedge) << std::endl;
+        dump_2d_surface_mesh(*this, pvertex.first,
+          "iter-10000-surface-mesh-" + std::to_string(pvertex.first));
         CGAL_assertion(has_iedge(pedge));
         return false;
       }
@@ -2344,6 +2347,26 @@ public:
   /*******************************
   **    CHECKING PROPERTIES     **
   ********************************/
+
+  bool belongs_to_iedge(const PVertex& pvertex, const IEdge& iedge) const {
+    // TODO: change using dot products and iedge direction.
+    const auto query = point_2(pvertex);
+    const auto s = source(iedge);
+    const auto t = target(iedge);
+    const auto ps = point_2(pvertex.first, s);
+    const auto pt = point_2(pvertex.first, t);
+    const auto scoords = CGAL::Barycentric_coordinates::compute_segment_coordinates_2(ps, pt, query, Kernel());
+    const FT tol = KSR::tolerance<FT>();
+    const bool is_pos_0 = (scoords[0] >= FT(0) - tol && scoords[0] <= FT(1) + tol);
+    const bool is_pos_1 = (scoords[1] >= FT(0) - tol && scoords[1] <= FT(1) + tol);
+    // std::cout << "ps: " << ps << std::endl;
+    // std::cout << "pt: " << pt << std::endl;
+    // std::cout << "query: " << query << std::endl;
+    // std::cout << "scoords: " << scoords[0] << " : " << scoords[1] << std::endl;
+    CGAL_assertion(is_pos_0);
+    CGAL_assertion(is_pos_1);
+    return is_pos_0 && is_pos_1;
+  }
 
   template<typename Pair>
   bool is_valid_polygon(
@@ -2947,13 +2970,13 @@ public:
 
     const Vector_2 iedge_vec(source_p, target_p);
     const Line_2  iedge_line(source_p, target_p);
-    // std::cout << "iedge segment: " << segment_3(iedge) << std::endl;
+    std::cout << "iedge segment: " << segment_3(iedge) << std::endl;
 
     const auto& next = pother;
     const auto& curr = pvertex;
 
-    // std::cout << "next p: " << point_3(next) << std::endl;
-    // std::cout << "curr p: " << point_3(curr) << std::endl;
+    std::cout << "next p: " << point_3(next) << std::endl;
+    std::cout << "curr p: " << point_3(curr) << std::endl;
 
     const auto next_p = point_2(next);
     const auto curr_p = point_2(curr);
@@ -2962,11 +2985,11 @@ public:
     CGAL_assertion(direction(curr) != CGAL::NULL_VECTOR);
     CGAL_assertion(direction(next) != CGAL::NULL_VECTOR);
 
-    // std::cout << "pinit projected: " << to_3d(pvertex.first, pinit) << std::endl;
-    // std::cout << "dir prev: " << direction(pother) << std::endl;
+    std::cout << "pinit projected: " << to_3d(pvertex.first, pinit) << std::endl;
+    std::cout << "dir prev: " << direction(pother) << std::endl;
 
-    // std::cout << "next future: " << point_3(next, m_current_time + FT(1)) << std::endl;
-    // std::cout << "curr future: " << point_3(curr, m_current_time + FT(1)) << std::endl;
+    std::cout << "next future: " << point_3(next, m_current_time + FT(1)) << std::endl;
+    std::cout << "curr future: " << point_3(curr, m_current_time + FT(1)) << std::endl;
 
     const Line_2 future_line_next(
       point_2(next, m_current_time + FT(1)),
@@ -2975,7 +2998,7 @@ public:
 
     const FT tol = KSR::tolerance<FT>();
     FT m2 = FT(100000), m3 = FT(100000);
-    // std::cout << "tol: " << tol << std::endl;
+    std::cout << "tol: " << tol << std::endl;
 
     const FT next_d = (curr_p.x() - next_p.x());
     const FT edge_d = (target_p.x() - source_p.x());
@@ -2985,12 +3008,12 @@ public:
     if (CGAL::abs(edge_d) > tol)
       m3 = (target_p.y() - source_p.y()) / edge_d;
 
-    // std::cout << "m2: " << m2 << std::endl;
-    // std::cout << "m3: " << m3 << std::endl;
+    std::cout << "m2: " << m2 << std::endl;
+    std::cout << "m3: " << m3 << std::endl;
 
-    // std::cout << "m2 - m3: " << CGAL::abs(m2 - m3) << std::endl;
+    std::cout << "m2 - m3: " << CGAL::abs(m2 - m3) << std::endl;
 
-    if (CGAL::abs(m2 - m3) < tol) {
+    if (CGAL::abs(m2 - m3) < tol || CGAL::abs(m3) < tol) { // TODO: should we add also m2?
       if (m_verbose) std::cout << "- back/front parallel lines" << std::endl;
 
       is_parallel = true;

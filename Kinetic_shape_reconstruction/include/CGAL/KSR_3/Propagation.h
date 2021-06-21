@@ -546,9 +546,9 @@ private:
       }
       ++iteration;
 
-      if (iteration == 1010) {
-        exit(EXIT_FAILURE);
-      }
+      // if (iteration == 1010) {
+      //   exit(EXIT_FAILURE);
+      // }
 
       apply(event);
       CGAL_assertion(m_data.check_integrity());
@@ -1672,10 +1672,12 @@ private:
       if (KSR::distance(m_data.point_2(back), m_data.point_2(prev)) < KSR::point_tolerance<FT>()) {
         // is_parallel = m_data.compute_future_point_and_direction(
         //   0, back, prev, iedge_0, future_point, future_direction);
+        std::cout << "- back = prev, equal points case" << std::endl;
         is_parallel = m_data.compute_future_point_and_direction(
           0, event_pvertex, prev, iedge_0, future_point, future_direction);
         // CGAL_assertion_msg(false, "TODO: BACK, FIX CASE WITH EQUAL BACK AND PREV!");
       } else {
+        std::cout << "- back, prev, not equal points case" << std::endl;
         is_parallel = m_data.compute_future_point_and_direction(
           0, back, prev, iedge_0, future_point, future_direction);
       }
@@ -1721,6 +1723,7 @@ private:
       m_data.direction(cropped) = future_direction;
       if (m_verbose) std::cout << "- cropped: " <<
         m_data.str(cropped) << ", " << m_data.point_3(cropped) << std::endl;
+      // CGAL_assertion(m_data.belongs_to_iedge(cropped, iedge_0)); // Can we do it more precise?
     }
 
     // Create new pfaces if any.
@@ -1997,7 +2000,9 @@ private:
       }
 
       if (found_iedge) {
-        shifted_prev = pp_curr + dirp / FT(10);
+        // 10 is probably too much in some cases! See iteration 1789 in 40 polygons!
+        // Or dirp is too long!
+        shifted_prev = pp_curr + dirp / FT(100); // it was 10, temporary fix
         if (m_verbose) std::cout << "- excluding iedge, prev" << std::endl;
         // CGAL_assertion_msg(false, "TODO: CHECK OPEN PREV CASE 1!");
       } else {
