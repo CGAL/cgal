@@ -19,41 +19,45 @@
 
 #include <itkImage.h>
 #include <itkImageDuplicator.h>
-#include <itkThresholdImageFilter.h>
-#include <itkRescaleIntensityImageFilter.h>
-#include <itkSmoothingRecursiveGaussianImageFilter.h>
+#include <itkBinaryThresholdImageFilter.h>
+#include <itkRecursiveGaussianImageFilter.h>
 #include <itkMaximumImageFilter.h>
-
-#include <boost/container/flat_set.hpp>
 
 #include <iostream>
 #include <vector>
+#include <set>
+#include <type_traits>
 
 namespace CGAL {
 namespace Mesh_3 {
 namespace internal {
 
-template<typename Image_word_type>
+template<typename Image_word_type, typename LabelsSet>
 void convert_image_3_to_itk(const CGAL::Image_3& image,
-                            itk::Image<Image_word_type, 3>& itk_img,
-                            boost::container::flat_set<Image_word_type>& labels)
+                            itk::Image<Image_word_type, 3>* const itk_img,
+                            LabelsSet& labels)
 {
-  using PixelType = Image_word_type;
-  using ImageType = itk::Image<PixelType, 3/*Dimension*/>;
-
-  itk_img.Allocate(image.xdim() * image.ydim() * image.zdim());
+  using ImageType = itk::Image<Image_word_type, 3/*Dimension*/>;
 
   typename ImageType::SpacingType spacing;
   spacing[0] = image.vx();
   spacing[1] = image.vy();
   spacing[2] = image.vz();
-  itk_img.SetSpacing(spacing);
+  itk_img->SetSpacing(spacing);
 
   typename ImageType::PointType origin;
   origin[0] = image.tx();
   origin[1] = image.ty();
   origin[2] = image.tz();
-  itk_img.SetOrigin(origin);
+  itk_img->SetOrigin(origin);
+
+  typename ImageType::IndexType  corner = {{0, 0, 0 }};
+  typename ImageType::SizeType   size = {{image.xdim(), image.ydim(), image.zdim()}};
+  typename ImageType::RegionType region(corner, size);
+  itk_img->SetRegions(region);
+
+//  itk_img->Allocate(image.xdim() * image.ydim() * image.zdim());
+  itk_img->Allocate();
 
   using Index = itk::Index<3>::IndexValueType;
   for (std::size_t i = 0; i < image.xdim(); ++i)
@@ -64,74 +68,197 @@ void convert_image_3_to_itk(const CGAL::Image_3& image,
       {
         typename ImageType::IndexType index = {(Index)i, (Index)j, (Index)k};
         const Image_word_type label = image.value(i, j, k);
-        itk_img.SetPixel(index, label);
         labels.insert(label);
+        itk_img->SetPixel(index, label);
       }
     }
   }
 }
 
+int count_non_zero_pixels(const CGAL::Image_3& image)
+{
+  int nb_nonzero = 0;
+  for (std::size_t i = 0; i < image.xdim(); ++i)
+  {
+    for (std::size_t j = 0; j < image.ydim(); ++j)
+    {
+      for (std::size_t k = 0; k < image.zdim(); ++k)
+      {
+        if (image.value(i, j, k) != 0)
+          nb_nonzero++;
+      }
+    }
+  }
+  return nb_nonzero;
+}
+
+template<typename Image_word_type>
+int count_non_zero_pixels(const itk::Image<Image_word_type, 3>* image)
+{
+  int nb_nonzero = 0;
+  const auto sizeOfImage = image->GetLargestPossibleRegion().GetSize();
+  using Index = itk::Index<3>::IndexValueType;
+
+  for (std::size_t i = 0; i < sizeOfImage[0]; ++i)
+  {
+    for (std::size_t j = 0; j < sizeOfImage[1]; ++j)
+    {
+      for (std::size_t k = 0; k < sizeOfImage[2]; ++k)
+      {
+        const itk::Index<3>  index = { (Index)i, (Index)j, (Index)k };
+        if (image->GetPixel(index) != 0)
+          nb_nonzero++;
+      }
+    }
+  }
+  return nb_nonzero;
+}
+
+template<typename Image_word_type>
+WORD_KIND get_wordkind()
+{
+  if (std::is_floating_point<Image_word_type>::value)
+    return WK_FLOAT;
+  else
+    return WK_FIXED;
+/** unknown (uninitialized) */
+//    WK_UNKNOWN
+}
+
+template<typename Image_word_type>
+SIGN get_sign()
+{
+  if (std::is_signed<Image_word_type>::value)
+    return SGN_SIGNED;
+  else
+    return SGN_UNSIGNED;
+/** unknown (uninitialized or floating point words) */
+//    SGN_UNKNOWN
+}
+
+
+
 }//namespace internal
 
 template<typename Image_word_type>
-void generate_weights(const CGAL::Image_3& image,
-                      CGAL::Image_3& weights,
-                      const float& sigma,
-                      Image_word_type)
+CGAL::Image_3 generate_weights(const CGAL::Image_3& image,
+                               const float& sigma,
+                               Image_word_type)
 {
-  using PixelType = Image_word_type;
-  using ImageType = itk::Image<PixelType, 3/*Dimension*/>;
+  //create weights image
+  _image* weights
+    = _createImage(image.xdim(), image.ydim(), image.zdim(),
+                   1,                                      //vectorial dimension
+                   image.vx(), image.vy(), image.vz(),
+                   sizeof(Image_word_type),           //image word size in bytes
+                   internal::get_wordkind<Image_word_type>(),   //image word kind WK_FIXED, WK_FLOAT, WK_UNKNOWN
+                   internal::get_sign<Image_word_type>());      //image word sign
+  Image_word_type* weights_ptr = (Image_word_type*)(weights->data);
+  std::fill(weights_ptr,
+            weights_ptr + image.xdim() * image.ydim() * image.zdim(),
+            Image_word_type(0));
+  weights->tx = image.tx();
+  weights->ty = image.ty();
+  weights->tz = image.tz();
 
+  //convert image to itkImage
+  using ImageType = itk::Image<Image_word_type, 3/*Dimension*/>;
   typename ImageType::Pointer itk_img = ImageType::New();
-  boost::container::flat_set<Image_word_type> labels;
-  internal::convert_image_3_to_itk(image, *itk_img, labels);
+  std::set<Image_word_type> labels;
+  internal::convert_image_3_to_itk(image, itk_img.GetPointer(), labels);
 
   using DuplicatorType = itk::ImageDuplicator<ImageType>;
-  using IndicatorFilter = itk::ThresholdImageFilter<ImageType>;
-  using RescaleFilterType = itk::RescaleIntensityImageFilter<ImageType, ImageType>;
-  using GaussianFilterType = itk::SmoothingRecursiveGaussianImageFilter<ImageType, ImageType>;
+  using IndicatorFilter = itk::BinaryThresholdImageFilter<ImageType, ImageType>;
+  using GaussianFilterType = itk::RecursiveGaussianImageFilter<ImageType, ImageType>;
+  using MaximumImageFilterType = itk::MaximumImageFilter<ImageType>;
 
   std::vector<typename ImageType::Pointer> indicators(labels.size());
+  DuplicatorType::Pointer duplicator = DuplicatorType::New();
+  duplicator->SetInputImage(itk_img);
+  duplicator->Update();
 
+  int id = 0;
   for (Image_word_type label : labels)
   {
-    DuplicatorType::Pointer duplicator = DuplicatorType::New();
-    duplicator->SetInputImage(itk_img);
-    duplicator->Update();
+    if (label == 0)
+    {
+      indicators.resize(labels.size() - 1);
+      continue;
+    }
+    if (id > 0)
+    {
+      duplicator->SetInputImage(indicators[id - 1]);
+      duplicator->Update();
+    }
+    indicators[id++] = duplicator->GetOutput();
+  }
+
+  id = 0;
+  typename ImageType::Pointer blured_max = ImageType::New();
+  for (Image_word_type label : labels)
+  {
+    if (label == 0)
+      continue;
+
+    std::cout << "\nLABEL = " << label << std::endl;
 
     //compute "indicator image" for "label"
     IndicatorFilter::Pointer indicator = IndicatorFilter::New();
-    indicator->SetInput(duplicator->GetOutput());
+    indicator->SetInput(indicators[id]);
     indicator->SetOutsideValue(0);
-    indicator->ThresholdOutside(label, label);
+    indicator->SetInsideValue(255);
+    indicator->SetLowerThreshold(label);
+    indicator->SetUpperThreshold(label);
     indicator->Update();
-
-    //rescale it "* 255"
-    RescaleFilterType::Pointer rescaler = RescaleFilterType::New();
-    rescaler->SetOutputMinimum(0);
-    rescaler->SetOutputMaximum(255);
-    rescaler->SetInput(indicator->GetOutput());
-    rescaler->Update();
 
     //perform gaussian smoothing
     GaussianFilterType::Pointer smoother = GaussianFilterType::New();
-    smoother->SetInput(rescaler->GetOutput());
+    smoother->SetInput(indicator->GetOutput());
     smoother->SetSigma(sigma);
+    smoother->Update();
 
-    //save for later use
-    indicators.push_back(smoother->GetOutput());
+    std::cout << "AFTER SMOOTHING = " << label << std::endl;
+    std::cout << "\tnon zero in smoothed ("
+      << label << ")\t= " << internal::count_non_zero_pixels(smoother->GetOutput()) << std::endl;
+
+    //take the max of indicator functions
+    if (id == 0)
+      blured_max = smoother->GetOutput();
+    else
+    {
+      MaximumImageFilterType::Pointer maximumImageFilter = MaximumImageFilterType::New();
+      maximumImageFilter->SetInput(0, blured_max);
+      maximumImageFilter->SetInput(1, smoother->GetOutput());
+      maximumImageFilter->Update();
+      blured_max = maximumImageFilter->GetOutput();
+    }
+
+    std::cout << "AFTER MAX = " << label << std::endl;
+    std::cout << "\tnon zero in max ("
+      << label << ")\t= " << internal::count_non_zero_pixels(blured_max.GetPointer()) << std::endl;
   }
 
-  //take the max of indicator functions
-  using MaximumImageFilterType = itk::MaximumImageFilter<ImageType>;
-  MaximumImageFilterType::Pointer maximumImageFilter = MaximumImageFilterType::New();
-  for(std::size_t i = 0; i < indicators.size(); ++i)
-    maximumImageFilter->SetInput(i, indicators[i]);
+  //copy pixels to weights
+  typename ImageType::Pointer itk_weights = blured_max;
+  using Index = itk::Index<3>::IndexValueType;
+  for (std::size_t i = 0; i < image.xdim(); ++i)
+  {
+    for (std::size_t j = 0; j < image.ydim(); ++j)
+    {
+      for (std::size_t k = 0; k < image.zdim(); ++k)
+      {
+        typename ImageType::IndexType index = { (Index)i, (Index)j, (Index)k };
+        using CGAL::IMAGEIO::static_evaluate;
+        static_evaluate<Image_word_type>(weights, i, j, k) = itk_weights->GetPixel(index);;
+      }
+    }
+  }
 
-  maximumImageFilter->Update();
+  std::cout << "non zero in image \t= " << internal::count_non_zero_pixels(image) << std::endl;
+  std::cout << "non zero in weights \t= " << internal::count_non_zero_pixels(itk_weights.GetPointer()) << std::endl;
 
-  //output
-  weights.set_data(maximumImageFilter->GetOutput());
+  //_writeImage(weights, "weights-image.inr.gz");
+  return CGAL::Image_3(weights);
 }
 
 }//namespace Mesh_3

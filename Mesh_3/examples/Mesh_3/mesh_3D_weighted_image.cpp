@@ -43,7 +43,8 @@ using Wrapper = CGAL::Mesh_3::Image_plus_weights_to_labeled_function_wrapper<
 int main(int argc, char* argv[])
 {
   /// [Loads images]
-  const char* fname = (argc>1)?argv[1]:"data/liver.inr.gz";
+  const char* fname = (argc > 1) ? argv[1] : "data/liver.inr.gz";
+  const float sigma = (argc > 2) ? atof(argv[2]) : 1.f;
   CGAL::Image_3 image;
   if(!image.read(fname)){
     std::cerr << "Error: Cannot read file " <<  fname << std::endl;
@@ -52,8 +53,13 @@ int main(int argc, char* argv[])
   /// [Loads images]
 
   /// [Generate weights]
-  CGAL::Image_3 weights;
-  CGAL::Mesh_3::generate_weights(image, weights, 1., (unsigned char)(1));
+  CGAL::Image_3 weights =
+    CGAL::Mesh_3::generate_weights(image, sigma, (unsigned char)(1));
+
+  auto image_ptr = weights.image();
+  std::ostringstream oss;
+  oss << "weights_" << sigma << ".inr.gz";
+  ::_writeImage(image_ptr, oss.str().c_str());
   /// [Generate weights]
 
   /// [Domain creation]
