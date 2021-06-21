@@ -80,6 +80,10 @@ namespace Barycentric_coordinates {
       return compute(query, c_begin);
     }
 
+    VertexToPointMap get_vertex_to_point_map(){
+      return m_vertex_to_point_map;
+    }
+
   private:
     const PolygonMesh& m_polygon_mesh;
   	const Computation_policy_3 m_computation_policy;
