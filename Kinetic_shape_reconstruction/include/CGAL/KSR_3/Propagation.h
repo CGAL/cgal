@@ -546,7 +546,7 @@ private:
       }
       ++iteration;
 
-      // if (iteration == 1010) {
+      // if (iteration == 3366) {
       //   exit(EXIT_FAILURE);
       // }
 
@@ -1119,7 +1119,7 @@ private:
       }
 
       const bool is_parallel = m_data.compute_future_point_and_direction(
-        0, pvertex, pthird, iedge, future_point, future_direction);
+        0, IVertex(), pvertex, pthird, iedge, future_point, future_direction);
       CGAL_assertion(future_direction != Vector_2());
       if (is_parallel) {
         if (m_verbose) std::cout << "- pedge to iedge 1, parallel case" << std::endl;
@@ -1155,7 +1155,7 @@ private:
       }
 
       const bool is_parallel = m_data.compute_future_point_and_direction(
-        0, pother, pthird, iedge, future_point, future_direction);
+        0, IVertex(), pother, pthird, iedge, future_point, future_direction);
       CGAL_assertion(future_direction != Vector_2());
       if (is_parallel) {
         if (m_verbose) std::cout << "- pedge to iedge 2, parallel case" << std::endl;
@@ -1276,7 +1276,7 @@ private:
     Point_2 future_point;
     Vector_2 future_direction;
     const bool is_parallel =
-    m_data.compute_future_point_and_direction(0, pother, pthird, iedge, future_point, future_direction);
+    m_data.compute_future_point_and_direction(0, IVertex(), pother, pthird, iedge, future_point, future_direction);
     CGAL_assertion(future_direction != Vector_2());
     if (is_parallel) {
       if (m_verbose) std::cout << "- transfer pvertex, parallel case" << std::endl;
@@ -1679,7 +1679,7 @@ private:
       } else {
         std::cout << "- back, prev, not equal points case" << std::endl;
         is_parallel = m_data.compute_future_point_and_direction(
-          0, back, prev, iedge_0, future_point, future_direction);
+          0, ivertex, back, prev, iedge_0, future_point, future_direction);
       }
       if (is_parallel) {
         if (m_data.is_intersecting_iedge(min_time, max_time, prev, iedge_0)) {
@@ -1701,7 +1701,7 @@ private:
         cropped = prev;
         const auto pprev = ( m_data.border_prev_and_next(prev) ).first;
         m_data.compute_future_point_and_direction(
-          0, prev, pprev, prev_iedge, future_point, future_direction);
+          0, ivertex, prev, pprev, prev_iedge, future_point, future_direction);
 
       } else {
         if (m_verbose) std::cout << "- back, prev, standard case" << std::endl;
@@ -1881,7 +1881,7 @@ private:
         CGAL_assertion_msg(false, "TODO: FRONT, FIX CASE WITH EQUAL FRONT AND NEXT!");
       }
       const bool is_parallel = m_data.compute_future_point_and_direction(
-        0, front, next, iedge_0, future_point, future_direction);
+        0, ivertex, front, next, iedge_0, future_point, future_direction);
       if (is_parallel) {
         if (m_data.is_intersecting_iedge(min_time, max_time, next, iedge_0)) {
           next_iedge = iedge_0;
@@ -1902,7 +1902,7 @@ private:
         cropped = next;
         const auto nnext = ( m_data.border_prev_and_next(next) ).second;
         m_data.compute_future_point_and_direction(
-          0, next, nnext, next_iedge, future_point, future_direction);
+          0, ivertex, next, nnext, next_iedge, future_point, future_direction);
 
       } else {
         if (m_verbose) std::cout << "- front, next, standard case" << std::endl;
@@ -2239,7 +2239,7 @@ private:
         cropped = next;
         const auto nnext = ( m_data.border_prev_and_next(next) ).second;
         m_data.compute_future_point_and_direction(
-          0, next, nnext, next_iedge, future_points.front(), future_directions.front());
+          0, ivertex, next, nnext, next_iedge, future_points.front(), future_directions.front());
 
       } else {
         if (m_verbose) std::cout << "- open, next, standard case" << std::endl;
@@ -2272,7 +2272,7 @@ private:
         cropped = prev;
         const auto pprev = ( m_data.border_prev_and_next(prev) ).first;
         m_data.compute_future_point_and_direction(
-          0, prev, pprev, prev_iedge, future_points.back(), future_directions.back());
+          0, ivertex, prev, pprev, prev_iedge, future_points.back(), future_directions.back());
 
       } else {
         if (m_verbose) std::cout << "- open, prev, standard case" << std::endl;

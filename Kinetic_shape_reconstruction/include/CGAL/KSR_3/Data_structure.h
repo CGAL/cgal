@@ -1359,7 +1359,7 @@ public:
           point_2(pvertex.first, opposite(iedge_ip, ivertex))) >= KSR::point_tolerance<FT>(),
         "TODO: TRAVERSE IEDGES GLOBAL, HANDLE ZERO-LENGTH IEDGE IP!");
 
-        add_new_pface(pvertex, pv_prev, pv_next, is_open, reverse, i, iedge_ip, pvertices);
+        add_new_pface(ivertex, pvertex, pv_prev, pv_next, is_open, reverse, i, iedge_ip, pvertices);
         ++num_added_pfaces;
         continue;
       }
@@ -1380,7 +1380,7 @@ public:
   }
 
   void add_new_pface(
-    const PVertex& pvertex, const PVertex& pv_prev, const PVertex& pv_next,
+    const IVertex& ivertex, const PVertex& pvertex, const PVertex& pv_prev, const PVertex& pv_next,
     const bool is_open, const bool reverse, const std::size_t idx, const IEdge& iedge,
     std::vector<PVertex>& pvertices) {
 
@@ -1403,7 +1403,7 @@ public:
       pv2 = pvertices[idx + 1];
     } else {
       create_new_pvertex(
-        pvertex, pv_prev, pv_next, is_open, idx + 1, iedge, pvertices);
+        ivertex, pvertex, pv_prev, pv_next, is_open, idx + 1, iedge, pvertices);
       pv2 = pvertices[idx + 1];
     }
     CGAL_assertion(pv2 != null_pvertex());
@@ -1420,7 +1420,7 @@ public:
   }
 
   void create_new_pvertex(
-    const PVertex& pvertex, const PVertex& pv_prev, const PVertex& pv_next,
+    const IVertex& ivertex, const PVertex& pvertex, const PVertex& pv_prev, const PVertex& pv_next,
     const bool is_open, const std::size_t idx, const IEdge& iedge,
     std::vector<PVertex>& pvertices) {
 
@@ -1431,7 +1431,7 @@ public:
 
     if (!is_open) {
       is_parallel = compute_future_point_and_direction(
-        0, pv_prev, pv_next, iedge, future_point, future_direction);
+        0, ivertex, pv_prev, pv_next, iedge, future_point, future_direction);
       if (is_parallel) {
         if (m_verbose) std::cout << "- new pvertex, back/front, parallel case" << std::endl;
         CGAL_assertion_msg(!is_parallel,
@@ -2959,7 +2959,7 @@ public:
   }
 
   bool compute_future_point_and_direction(
-    const std::size_t /*idx*/, const PVertex& pvertex, const PVertex& pother, // back prev // front next
+    const std::size_t /*idx*/, const IVertex& ivertex, const PVertex& pvertex, const PVertex& pother, // back prev // front next
     const IEdge& iedge, Point_2& future_point, Vector_2& future_direction) const {
 
     bool is_parallel = false;
@@ -3003,6 +3003,11 @@ public:
     const FT next_d = (curr_p.x() - next_p.x());
     const FT edge_d = (target_p.x() - source_p.x());
 
+    // std::cout << "next_d: " << next_d << std::endl;
+    // std::cout << "edge_d: " << edge_d << std::endl;
+    // std::cout << "diff_d: " << CGAL::abs(
+    //   CGAL::abs(next_d) - CGAL::abs(edge_d)) << std::endl;
+
     if (CGAL::abs(next_d) > tol)
       m2 = (curr_p.y() - next_p.y()) / next_d;
     if (CGAL::abs(edge_d) > tol)
@@ -3013,7 +3018,23 @@ public:
 
     std::cout << "m2 - m3: " << CGAL::abs(m2 - m3) << std::endl;
 
-    if (CGAL::abs(m2 - m3) < tol || CGAL::abs(m3) < tol) { // TODO: should we add also m2?
+    bool is_reversed = false;
+    if (CGAL::abs(m2 - m3) >= tol) {
+      if (m_verbose) std::cout << "- back/front intersected lines" << std::endl;
+      future_point = KSR::intersection<Point_2>(future_line_next, iedge_line);
+      if (ivertex != IVertex()) {
+        const auto overtex = opposite(iedge, ivertex);
+        const Vector_2 vec1(pinit, future_point);
+        const Vector_2 vec2(point_2(curr.first, ivertex), point_2(curr.first, overtex));
+        const FT vec_dot = vec1 * vec2;
+        if (vec_dot < FT(0)) {
+          std::cout << "FOUND REVERSED" << std::endl;
+          is_reversed = true;
+        }
+      }
+    }
+
+    if (CGAL::abs(m2 - m3) < tol || is_reversed) {
       if (m_verbose) std::cout << "- back/front parallel lines" << std::endl;
 
       is_parallel = true;
@@ -3028,10 +3049,6 @@ public:
         future_point = source_p;
         // std::cout << point_3(source(iedge)) << std::endl;
       }
-
-    } else {
-      if (m_verbose) std::cout << "- back/front intersected lines" << std::endl;
-      future_point = KSR::intersection<Point_2>(future_line_next, iedge_line);
     }
 
     CGAL_assertion(pinit != future_point);
