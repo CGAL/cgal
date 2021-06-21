@@ -129,7 +129,8 @@ public:
     bool keyPressEvent(QKeyEvent *) Q_DECL_OVERRIDE;
     bool eventFilter(QObject *, QEvent *) Q_DECL_OVERRIDE;
     std::size_t number_of_patches() const;
-    std::set<int> subdomain_indices() const;
+    const std::set<int> &subdomain_indices() const;
+    QColor getSubdomainIndexColor(int i) const;
   public Q_SLOTS:
 
   void on_spheres_color_changed();
@@ -144,6 +145,7 @@ public:
   void show_intersection(bool b);
   void show_grid(bool b);
   void show_cnc(bool b);
+
 
   virtual QPixmap graphicalToolTip() const Q_DECL_OVERRIDE;
 
@@ -162,6 +164,8 @@ public:
 
   void set_detect_borders(bool b);
   bool get_detect_borders();
+
+  void switchVisibleSubdomain(int);
 
   void itemAboutToBeDestroyed(Scene_item *) Q_DECL_OVERRIDE;
 

@@ -75,16 +75,60 @@ public Q_SLOTS:
     if(!c3t3_item)
       return;
 
+
+    for (std::set<int>::iterator it = c3t3_item->subdomain_indices().begin(),
+         end = c3t3_item->subdomain_indices().end(); it != end; ++it)
+    {
+      int index = *it;
+      QPushButton* button = new QPushButton(tr("%1").arg(index));
+      buttons.push_back(button);
+      button->setCheckable(true);
+      button->setChecked(true);
+      QColor color = c3t3_item->getSubdomainIndexColor(index);
+      QString s("QPushButton { font-weight: bold; background: #"
+                + QString::number(color.red(),16)
+                + QString::number(color.green(),16)
+                + QString::number(color.blue(),16)
+                + "; }");
+
+      button->setStyleSheet(s);
+      connect(button, &QPushButton::toggled, [index, c3t3_item](bool){
+        c3t3_item->switchVisibleSubdomain(index);
+      });
+
+      dock_widget->horizontalLayout->addWidget(button);
+    }
+
+
+    auto cleanup = [this, c3t3_item](){
+      while(!buttons.empty())
+      {
+        auto button = buttons.back();
+        buttons.pop_back();
+        dock_widget->horizontalLayout->removeWidget(button);
+        buttons.removeAll(button);
+        delete button;
+      }
+      dock_widget->hide();
+      //todo : trouver comment disconnect clean-up, pour pas que ça se connect 36 fois qunad tu appuies sur reset.
+      std::cout<<"cleaned."<<std::endl;
+    };
+    connect(c3t3_item, &Scene_c3t3_item::aboutToBeDestroyed, cleanup);
+    //Is it safe ? Will they be called in that order ?
+    connect(dock_widget->resetButton, &QPushButton::clicked, [this, cleanup](){
+      cleanup();
+      filter();
+    });
+
     dock_widget->show();
     dock_widget->raise();
-
-    dock_widget->test_label->setText(QString("This item has %1 subdomains.").arg(c3t3_item->subdomain_indices().size()));
-
   }
 
 private:
   QAction* actionFilter;
   DockWidget* dock_widget;
+  QVector<QPushButton*> buttons;
+
 };
 
 #include "Mesh_3_filter_domain_plugin.moc"

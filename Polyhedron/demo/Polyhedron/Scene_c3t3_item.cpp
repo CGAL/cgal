@@ -30,6 +30,7 @@
 #include <CGAL/Qt/qglviewer.h>
 
 #include <boost/iterator/function_output_iterator.hpp>
+#include <boost/dynamic_bitset.hpp>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -501,6 +502,8 @@ struct Scene_c3t3_item_priv {
   Tree tree;
   QVector<QColor> colors;
   QVector<QColor> colors_subdomains;
+  boost::dynamic_bitset<> visible_subdomain;
+
   bool show_tetrahedra;
   bool is_aabb_tree_built;
   bool cnc_are_shown;
@@ -659,6 +662,7 @@ Scene_c3t3_item::c3t3_changed()
   // Fill indices map and get max subdomain value
   d->surface_patch_indices_.clear();
   d->subdomain_indices_.clear();
+  d->visible_subdomain.clear();
 
   int max = 0;
   for (C3t3::Cells_in_complex_iterator cit = this->c3t3().cells_in_complex_begin(),
@@ -668,6 +672,7 @@ Scene_c3t3_item::c3t3_changed()
     d->subdomain_indices_.insert(cit->subdomain_index());
   }
   const int max_subdomain_index = max;
+  d->visible_subdomain.resize(max_subdomain_index+1, true);
   for (C3t3::Facets_in_complex_iterator fit = this->c3t3().facets_in_complex_begin(),
     end = this->c3t3().facets_in_complex_end(); fit != end; ++fit)
   {
@@ -2130,9 +2135,29 @@ std::size_t Scene_c3t3_item::number_of_patches() const
   return d->surface_patch_indices_.size();
 }
 
-std::set<int> Scene_c3t3_item::subdomain_indices() const
+const std::set<int>& Scene_c3t3_item::subdomain_indices() const
 {
   return d->subdomain_indices_;
+}
+
+QColor Scene_c3t3_item::getSubdomainIndexColor(int i) const
+{
+  return d->colors_subdomains[i];
+}
+
+void Scene_c3t3_item::switchVisibleSubdomain(int i)
+{
+  d->visible_subdomain[i] = !d->visible_subdomain[i];
+  \
+  //to remove
+  if(d->visible_subdomain[i])
+  {
+    std::cout<<"Subdomain "<<i<<"is visible"<<std::endl;
+  }
+  else
+  {
+    std::cout<<"Subdomain "<<i<<"is hidden"<<std::endl;
+  }
 }
 
 #include "Scene_c3t3_item.moc"
