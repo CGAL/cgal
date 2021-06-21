@@ -904,6 +904,9 @@ struct Lazy_construction_optional_for_polygonal_envelope
       CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(LazyPointRep, rep);
 
       const typename AK::Point_3 ap = *oap;
+      if(rep.et != nullptr){
+        delete rep.et;
+      }
       rep = LazyPointRep(2,ap, ec, l1, l2, l3);
       typename LK::Point_3 lp(&rep);
       return boost::make_optional(lp);
@@ -942,6 +945,9 @@ struct Lazy_construction_optional_for_polygonal_envelope
 
       CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(LazyPointRep, rep);
       const typename AK::Point_3 ap = *oap;
+      if(rep.et != nullptr){
+        delete rep.et;
+      }
       rep = LazyPointRep(2, ap, ec, l1, l2);
       typename LK::Point_3 lp(&rep);
       return boost::make_optional(lp);
