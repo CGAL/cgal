@@ -146,9 +146,9 @@ public:
   double vy() const { return image_ptr->vy; }
   double vz() const { return image_ptr->vz; }
 
-  double tx() const { return image_ptr->tx; }
-  double ty() const { return image_ptr->ty; }
-  double tz() const { return image_ptr->tz; }
+  float tx() const { return image_ptr->tx; }
+  float ty() const { return image_ptr->ty; }
+  float tz() const { return image_ptr->tz; }
 
   float value(const std::size_t i,
               const std::size_t j,
