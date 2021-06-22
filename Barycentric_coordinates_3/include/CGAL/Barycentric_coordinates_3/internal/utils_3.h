@@ -41,7 +41,7 @@ namespace internal{
   template<
   typename OutputIterator,
   typename GeomTraits>
-  OutputIterator planar_coordinates_3(
+  OutputIterator tetrahedron_coordinates_impl(
     const typename GeomTraits::Point_3& p0,
     const typename GeomTraits::Point_3& p1,
     const typename GeomTraits::Point_3& p2,

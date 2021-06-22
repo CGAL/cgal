@@ -7,9 +7,6 @@
 
 // CGAL includes
 #include <CGAL/boost/graph/helpers.h>
-#include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/point_generators_3.h>
-#include <CGAL/Random.h>
 
 namespace tests{
 
@@ -24,8 +21,8 @@ namespace tests{
     using Point_3 = typename Kernel::Point_3;
 
     Mesh tetrahedron0;
-    std::vector<Point_3> coords = {Point_3(1.0, 0.0, 0.0), Point_3(0.0, 1.0, 0.0),
-                                   Point_3(0.0, 0.0, 0.0), Point_3(0.0, 0.0, 1.0)};
+    std::vector<Point_3> coords = {Point_3(0.0, 0.0, 0.0), Point_3(1.0, 0.0, 0.0),
+                                   Point_3(0.0, 1.0, 0.0), Point_3(0.0, 0.0, 1.0)};
 
     CGAL::make_tetrahedron(coords[0], coords[1],
                            coords[2], coords[3], tetrahedron0);
@@ -50,63 +47,67 @@ namespace tests{
     return {hexahedron0, coords};
   }
 
-  template<typename Kernel, typename Mesh>
-  Mesh get_regular_prism(){
+  template<typename Kernel>
+  void test_partition_of_unity(std::vector<typename Kernel::FT>& coords){
 
-    using Point_3 = typename Kernel::Point_3;
     using FT = typename Kernel::FT;
 
-    Mesh prism0;
-    CGAL::make_regular_prism(3, prism0, Point_3(0.0, 0.0, 0.0), FT(1.0), FT(1.0), true);
+    FT tol = get_tolerance<FT>();
 
-    return prism0;
+    FT sum = FT(0);
+    for(auto& coord : coords)
+      sum += coord;
+
+    assert(CGAL::abs(FT(1) - sum) < tol);
   }
 
-  template<
-    typename Point_3,
-    typename OutputIterator>
-  OutputIterator sample_random_inside_tetrahedron(
-    Point_3 p0,
-    Point_3 p1,
-    Point_3 p2,
-    Point_3 p3,
-    OutputIterator points,
-    int num_points){
+  template<typename Kernel>
+  void test_barycenter(std::vector<typename Kernel::FT>& coords){
 
-    using Kernel  = typename CGAL::Kernel_traits<Point_3>::Kernel;
-    using Tetrahedron_3 = typename Kernel::Tetrahedron_3;
-    using Point_generator = CGAL::Random_points_in_tetrahedron_3<Point_3> ;
+    using FT = typename Kernel::FT;
 
-    Tetrahedron_3 tr(p0, p1, p2, p3);
-    Point_generator point_gen(tr);
+    std::size_t num_coords = coords.size();
+    assert(num_coords != 0);
 
-    std::copy_n(point_gen, num_points, points);
-    return points;
+    for(auto& coord : coords)
+      assert(coord == FT(1)/FT(num_coords));
   }
 
-  /*
-  template<typename Kernel, typename Mesh, typename VertexToPointMap, typename OutputIterator>
-  void sample_mesh_interior_points(Mesh& mesh, VertexToPointMap& vertex_to_point_map){
+  template<typename Kernel>
+  void test_linear_precision(
+    std::vector<typename Kernel::FT>& coords,
+    const std::vector<typename Kernel::Point_3>& vertices,
+    const typename Kernel::Point_3& query){
 
-    using Point_3 = typename Kernel::Point_3;
-    typedef CGAL::Delaunay_triangulation_3< Kernel > DT;
-    typedef typename DT::Segment_simplex_iterator Segment_simplex_iterator;
-    typedef CGAL::Triangulation_simplex_3<typename DT::Triangulation_data_structure> Simplex;
+    using FT = typename Kernel::FT;
 
-    std::vector<Point_3> points;
+    FT tol = get_tolerance<FT>();
 
-    const auto vd = vertices(mesh);
-    for(auto& vertex : vd){
+    std::size_t num_coords = coords.size();
+    FT x_linear_comb = FT(0);
+    FT y_linear_comb = FT(0);
+    FT z_linear_comb = FT(0);
 
-      Point_3 vertex_value = get(vertex_to_point_map, vertex);
-      points.push_back(vertex_value);
+    for(std::size_t i = 0; i < num_coords; i++){
+
+      x_linear_comb += vertices[i].x() * coords[i];
+      y_linear_comb += vertices[i].y() * coords[i];
+      z_linear_comb += vertices[i].z() * coords[i];
     }
 
-    DT dt(points.begin(), points.end());
-    assert(dt.is_valid());
+    assert(CGAL::abs(x_linear_comb - query.x()) < tol &&
+           CGAL::abs(y_linear_comb - query.y()) < tol &&
+           CGAL::abs(z_linear_comb - query.z()) < tol);
   }
-  */
 
+  template<typename Kernel>
+  void test_positivity(std::vector<typename Kernel::FT>& coords){
+
+    using FT = typename Kernel::FT;
+
+    for(auto& coord : coords)
+      assert(coord >= FT(0) && coord <= FT(1));
+  }
 }
 
 #endif

@@ -34,7 +34,7 @@ namespace Barycentric_coordinates{
     OutIterator c_begin,
     const GeomTraits& traits) {
 
-    return internal::planar_coordinates_3(
+    return internal::tetrahedron_coordinates_impl(
       p0, p1, p2, p3, query, c_begin, traits);
   }
 
@@ -74,7 +74,7 @@ namespace Barycentric_coordinates{
     using FT = typename GeomTraits::FT;
     std::vector<FT> coordinates;
     coordinates.reserve(4);
-    internal::planar_coordinates_3(
+    internal::tetrahedron_coordinates_impl(
       p0, p1, p2, p3, query, std::back_inserter(coordinates), traits);
     CGAL_assertion(coordinates.size() == 4);
     return std::make_tuple(coordinates[0], coordinates[1], coordinates[2], coordinates[3]);
