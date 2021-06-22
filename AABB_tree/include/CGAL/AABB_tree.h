@@ -21,6 +21,7 @@
 
 #include <vector>
 #include <iterator>
+#include <CGAL/grid_simplify_point_set.h>
 #include <CGAL/internal/AABB_tree/AABB_traversal_traits.h>
 #include <CGAL/internal/AABB_tree/AABB_node.h>
 #include <CGAL/internal/AABB_tree/AABB_search_tree.h>
@@ -829,14 +830,26 @@ public:
   template<typename Tr>
   bool AABB_tree<Tr>::build_kd_tree()
   {
+		Bbox_3 bb;
+    for(const Primitive& p : m_primitives){
+			bb = bb + Helper::get_reference_point(p, m_traits).bbox();
+		}
+		double dmin = (std::min)((std::min)(bb.xmax()-bb.xmin(), bb.ymax()-bb.ymin()),bb.zmax()-bb.zmin());
+		dmin /= 30.0;
+
     // iterate over primitives to get reference points on them
     std::vector<Point_and_primitive_id> points;
     points.reserve(m_primitives.size());
     for(const Primitive& p : m_primitives)
       points.push_back( Point_and_primitive_id( Helper::get_reference_point(p, m_traits), p.id() ) );
 
+		First_of_pair_property_map<Point_and_primitive_id> foppm;
+		typename std::vector<Point_and_primitive_id>::iterator
+			it = grid_simplify_point_set(points, dmin, CGAL::parameters::point_map(foppm));
+
+		std::cout << "Insert " << std::distance(points.begin(), it)  << " out of " << points.size() << " in the kd tree" << std::endl;
     // clears current KD tree
-    return build_kd_tree(points.begin(), points.end());
+    return build_kd_tree(points.begin(), it);
   }
 
   // constructs the search KD tree from given points
