@@ -1406,11 +1406,6 @@ private:
     std::pair<Point_2, Vector_2> query_pvertex = std::make_pair(
       m_data.point_2(event_pvertex, FT(0)), m_data.direction(event_pvertex));
 
-    // const auto query_pvertex = PVertex(sp_idx, // does not work!
-    // m_data.support_plane(sp_idx).duplicate_vertex(event_pvertex.second));
-    // m_data.support_plane(sp_idx).set_point(
-    //   query_pvertex.second, m_data.support_plane(sp_idx).get_point(event_pvertex.second));
-
     // Freeze pvertices.
     const Point_2 ipoint = m_data.point_2(sp_idx, ivertex);
     for (std::size_t i = 1; i < pvertices.size() - 1; ++i) {
@@ -1496,8 +1491,6 @@ private:
     if (m_data.iedge(pvertex) != m_data.null_iedge()) {
       crossed_iedges.push_back(std::make_pair(m_data.iedge(pvertex), true));
     }
-    // TODO: I THINK, I SHOULD RETURN ONLY THOSE IEDGES, WHICH HAVE BEEN HANDLED
-    // AND THEY SHOULD BE EQUAL TO THE NUMBER OF NEW PVERTICES!
 
     if (m_verbose) {
       std::size_t num_new_pvertices = 0;
@@ -1877,11 +1870,15 @@ private:
     "TODO: FRONT, HANDLE ZERO-LENGTH IEDGE!");
 
     { // future point and direction
+    bool is_parallel = false;
       if (KSR::distance(m_data.point_2(front), m_data.point_2(next)) < KSR::point_tolerance<FT>()) {
+        std::cout << "- front = next, equal points case" << std::endl;
         CGAL_assertion_msg(false, "TODO: FRONT, FIX CASE WITH EQUAL FRONT AND NEXT!");
+      } else {
+        std::cout << "- front, next, not equal points case" << std::endl;
+        is_parallel = m_data.compute_future_point_and_direction(
+          0, ivertex, front, next, iedge_0, future_point, future_direction);
       }
-      const bool is_parallel = m_data.compute_future_point_and_direction(
-        0, ivertex, front, next, iedge_0, future_point, future_direction);
       if (is_parallel) {
         if (m_data.is_intersecting_iedge(min_time, max_time, next, iedge_0)) {
           next_iedge = iedge_0;
@@ -2188,11 +2185,15 @@ private:
       "TODO: OPEN, FRONT, HANDLE ZERO-LENGTH IEDGE!");
 
       if (m_verbose) std::cout << "- getting future point and direction, front" << std::endl;
+      bool is_parallel = false;
       if (KSR::distance(m_data.point_2(prev), m_data.point_2(next)) < KSR::point_tolerance<FT>()) {
+        std::cout << "- prev = next, equal points case" << std::endl;
         CGAL_assertion_msg(false, "TODO: OPEN, FRONT, FIX CASE WITH EQUAL PREV AND NEXT!");
+      } else {
+        std::cout << "- prev, next, not equal points case" << std::endl;
+        is_parallel = m_data.compute_future_point_and_direction(
+          pvertex, prev, next, crossed_iedges.front().first, future_points.front(), future_directions.front());
       }
-      const bool is_parallel = m_data.compute_future_point_and_direction(
-        pvertex, prev, next, crossed_iedges.front().first, future_points.front(), future_directions.front());
       if (is_parallel) {
         if (m_data.is_intersecting_iedge(min_time, max_time, prev, crossed_iedges.front().first)) {
           prev_iedge = crossed_iedges.front().first;
@@ -2211,11 +2212,15 @@ private:
       "TODO: OPEN, BACK, HANDLE ZERO-LENGTH IEDGE!");
 
       if (m_verbose) std::cout << "- getting future point and direction, back" << std::endl;
+      bool is_parallel = false;
       if (KSR::distance(m_data.point_2(prev), m_data.point_2(next)) < KSR::point_tolerance<FT>()) {
+        std::cout << "- prev = next, equal points case" << std::endl;
         CGAL_assertion_msg(false, "TODO: OPEN, BACK, FIX CASE WITH EQUAL PREV AND NEXT!");
+      } else {
+        std::cout << "- prev, next, not equal points case" << std::endl;
+        is_parallel = m_data.compute_future_point_and_direction(
+          pvertex, prev, next, crossed_iedges.back().first, future_points.back(), future_directions.back());
       }
-      const bool is_parallel = m_data.compute_future_point_and_direction(
-        pvertex, prev, next, crossed_iedges.back().first, future_points.back(), future_directions.back());
       if (is_parallel) {
         if (m_data.is_intersecting_iedge(min_time, max_time, prev, crossed_iedges.back().first)) {
           prev_iedge = crossed_iedges.back().first;

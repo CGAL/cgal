@@ -25,7 +25,6 @@
 
 #include <CGAL/KSR_3/Support_plane.h>
 #include <CGAL/KSR_3/Intersection_graph.h>
-#include <CGAL/Barycentric_coordinates_2/Segment_coordinates_2.h>
 
 namespace CGAL {
 namespace KSR_3 {
@@ -1857,6 +1856,8 @@ public:
   bool has_complete_graph(const PVertex& pvertex) const {
     if (!has_ivertex(pvertex)) {
       std::cout << "- disconnected pvertex: " << point_3(pvertex) << std::endl;
+      dump_2d_surface_mesh(*this, pvertex.first,
+        "iter-10000-surface-mesh-" + std::to_string(pvertex.first));
       CGAL_assertion(has_ivertex(pvertex));
       return false;
     }
@@ -2348,24 +2349,8 @@ public:
   **    CHECKING PROPERTIES     **
   ********************************/
 
-  bool belongs_to_iedge(const PVertex& pvertex, const IEdge& iedge) const {
-    // TODO: change using dot products and iedge direction.
-    const auto query = point_2(pvertex);
-    const auto s = source(iedge);
-    const auto t = target(iedge);
-    const auto ps = point_2(pvertex.first, s);
-    const auto pt = point_2(pvertex.first, t);
-    const auto scoords = CGAL::Barycentric_coordinates::compute_segment_coordinates_2(ps, pt, query, Kernel());
-    const FT tol = KSR::tolerance<FT>();
-    const bool is_pos_0 = (scoords[0] >= FT(0) - tol && scoords[0] <= FT(1) + tol);
-    const bool is_pos_1 = (scoords[1] >= FT(0) - tol && scoords[1] <= FT(1) + tol);
-    // std::cout << "ps: " << ps << std::endl;
-    // std::cout << "pt: " << pt << std::endl;
-    // std::cout << "query: " << query << std::endl;
-    // std::cout << "scoords: " << scoords[0] << " : " << scoords[1] << std::endl;
-    CGAL_assertion(is_pos_0);
-    CGAL_assertion(is_pos_1);
-    return is_pos_0 && is_pos_1;
+  bool belongs_to_iedge(const PVertex& /*pvertex*/, const IEdge& /*iedge*/) const {
+    return true; // TODO: finish this using dot products and orientations!
   }
 
   template<typename Pair>
@@ -2781,6 +2766,14 @@ public:
     const FT next_d = (curr_p.x() - next_p.x());
     const FT edge_d = (target_p.x() - source_p.x());
 
+    // std::cout << "prev_d: " << prev_d << std::endl;
+    // std::cout << "next_d: " << next_d << std::endl;
+    // std::cout << "edge_d: " << edge_d << std::endl;
+    // std::cout << "pdif_d: " << CGAL::abs(
+    //   CGAL::abs(prev_d) - CGAL::abs(edge_d)) << std::endl;
+    // std::cout << "ndif_d: " << CGAL::abs(
+    //   CGAL::abs(next_d) - CGAL::abs(edge_d)) << std::endl;
+
     if (CGAL::abs(prev_d) > tol)
       m1 = (curr_p.y() - prev_p.y()) / prev_d;
     if (CGAL::abs(next_d) > tol)
@@ -2874,7 +2867,8 @@ public:
   }
 
   bool compute_future_point_and_direction(
-    const std::size_t /*idx*/, const std::pair<Point_2, Vector_2>& pvertex, const PVertex& pother, // back prev // front next
+    const std::size_t /*idx*/,
+    const std::pair<Point_2, Vector_2>& pvertex, const PVertex& pother, // back prev // front next
     const IEdge& iedge, Point_2& future_point, Vector_2& future_direction) const {
 
     bool is_parallel = false;
@@ -2885,10 +2879,14 @@ public:
 
     const Vector_2 iedge_vec(source_p, target_p);
     const Line_2  iedge_line(source_p, target_p);
+    // std::cout << "iedge segment: " << segment_3(iedge) << std::endl;
 
     const auto& next = pother;
     const auto next_p = point_2(next);
     const auto curr_p = pvertex.first + m_current_time * pvertex.second;
+
+    // std::cout << "next p: " << point_3(next) << std::endl;
+    // std::cout << "curr p: " << to_3d(pother.first, curr_p) << std::endl;
 
     const Point_2 pinit = iedge_line.projection(curr_p);
     CGAL_assertion(pvertex.second != CGAL::NULL_VECTOR);
@@ -2898,7 +2896,9 @@ public:
     // std::cout << "dir prev: " << direction(pother) << std::endl;
 
     // std::cout << "next future: " << point_3(next, m_current_time + FT(1)) << std::endl;
-    // std::cout << "curr future: " << to_3d(pother.first, pvertex.first + (m_current_time + FT(1)) * pvertex.second) << std::endl;
+    // std::cout << "curr future: " <<
+    //   to_3d(pother.first, pvertex.first + (m_current_time + FT(1)) * pvertex.second)
+    // << std::endl;
 
     const Line_2 future_line_next(
       point_2(next, m_current_time + FT(1)),
@@ -2911,6 +2911,11 @@ public:
 
     const FT next_d = (curr_p.x() - next_p.x());
     const FT edge_d = (target_p.x() - source_p.x());
+
+    // std::cout << "next_d: " << next_d << std::endl;
+    // std::cout << "edge_d: " << edge_d << std::endl;
+    // std::cout << "diff_d: " << CGAL::abs(
+    //   CGAL::abs(next_d) - CGAL::abs(edge_d)) << std::endl;
 
     if (CGAL::abs(next_d) > tol)
       m2 = (curr_p.y() - next_p.y()) / next_d;
@@ -2959,7 +2964,8 @@ public:
   }
 
   bool compute_future_point_and_direction(
-    const std::size_t /*idx*/, const IVertex& ivertex, const PVertex& pvertex, const PVertex& pother, // back prev // front next
+    const std::size_t /*idx*/, const IVertex& ivertex,
+    const PVertex& pvertex, const PVertex& pother, // back prev // front next
     const IEdge& iedge, Point_2& future_point, Vector_2& future_direction) const {
 
     bool is_parallel = false;
@@ -2970,13 +2976,13 @@ public:
 
     const Vector_2 iedge_vec(source_p, target_p);
     const Line_2  iedge_line(source_p, target_p);
-    std::cout << "iedge segment: " << segment_3(iedge) << std::endl;
+    // std::cout << "iedge segment: " << segment_3(iedge) << std::endl;
 
     const auto& next = pother;
     const auto& curr = pvertex;
 
-    std::cout << "next p: " << point_3(next) << std::endl;
-    std::cout << "curr p: " << point_3(curr) << std::endl;
+    // std::cout << "next p: " << point_3(next) << std::endl;
+    // std::cout << "curr p: " << point_3(curr) << std::endl;
 
     const auto next_p = point_2(next);
     const auto curr_p = point_2(curr);
@@ -2985,11 +2991,11 @@ public:
     CGAL_assertion(direction(curr) != CGAL::NULL_VECTOR);
     CGAL_assertion(direction(next) != CGAL::NULL_VECTOR);
 
-    std::cout << "pinit projected: " << to_3d(pvertex.first, pinit) << std::endl;
-    std::cout << "dir prev: " << direction(pother) << std::endl;
+    // std::cout << "pinit projected: " << to_3d(pvertex.first, pinit) << std::endl;
+    // std::cout << "dir prev: " << direction(pother) << std::endl;
 
-    std::cout << "next future: " << point_3(next, m_current_time + FT(1)) << std::endl;
-    std::cout << "curr future: " << point_3(curr, m_current_time + FT(1)) << std::endl;
+    // std::cout << "next future: " << point_3(next, m_current_time + FT(1)) << std::endl;
+    // std::cout << "curr future: " << point_3(curr, m_current_time + FT(1)) << std::endl;
 
     const Line_2 future_line_next(
       point_2(next, m_current_time + FT(1)),
@@ -2998,7 +3004,7 @@ public:
 
     const FT tol = KSR::tolerance<FT>();
     FT m2 = FT(100000), m3 = FT(100000);
-    std::cout << "tol: " << tol << std::endl;
+    // std::cout << "tol: " << tol << std::endl;
 
     const FT next_d = (curr_p.x() - next_p.x());
     const FT edge_d = (target_p.x() - source_p.x());
@@ -3013,22 +3019,22 @@ public:
     if (CGAL::abs(edge_d) > tol)
       m3 = (target_p.y() - source_p.y()) / edge_d;
 
-    std::cout << "m2: " << m2 << std::endl;
-    std::cout << "m3: " << m3 << std::endl;
+    // std::cout << "m2: " << m2 << std::endl;
+    // std::cout << "m3: " << m3 << std::endl;
 
-    std::cout << "m2 - m3: " << CGAL::abs(m2 - m3) << std::endl;
+    // std::cout << "m2 - m3: " << CGAL::abs(m2 - m3) << std::endl;
 
     bool is_reversed = false;
     if (CGAL::abs(m2 - m3) >= tol) {
       if (m_verbose) std::cout << "- back/front intersected lines" << std::endl;
       future_point = KSR::intersection<Point_2>(future_line_next, iedge_line);
-      if (ivertex != IVertex()) {
+      if (ivertex != IVertex()) { // TODO: Factor out this solution!
         const auto overtex = opposite(iedge, ivertex);
         const Vector_2 vec1(pinit, future_point);
         const Vector_2 vec2(point_2(curr.first, ivertex), point_2(curr.first, overtex));
         const FT vec_dot = vec1 * vec2;
         if (vec_dot < FT(0)) {
-          std::cout << "FOUND REVERSED" << std::endl;
+          std::cout << "- found reversed, parallel edge-case detected" << std::endl;
           is_reversed = true;
         }
       }
@@ -3105,6 +3111,11 @@ public:
 
     const FT next_d = (curr_p.x() - next_p.x());
     const FT edge_d = (target_p.x() - source_p.x());
+
+    // std::cout << "next_d: " << next_d << std::endl;
+    // std::cout << "edge_d: " << edge_d << std::endl;
+    // std::cout << "diff_d: " << CGAL::abs(
+    //   CGAL::abs(next_d) - CGAL::abs(edge_d)) << std::endl;
 
     if (CGAL::abs(next_d) > tol)
       m2 = (curr_p.y() - next_p.y()) / next_d;

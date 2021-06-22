@@ -74,7 +74,7 @@ public:
     const bool verbose = true,
     const bool debug   = false) :
   m_verbose(verbose),
-  m_export(true),
+  m_export(false),
   m_debug(debug),
   m_data(m_debug),
   m_num_events(0)
