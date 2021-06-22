@@ -1667,7 +1667,7 @@ private:
         //   0, back, prev, iedge_0, future_point, future_direction);
         std::cout << "- back = prev, equal points case" << std::endl;
         is_parallel = m_data.compute_future_point_and_direction(
-          0, event_pvertex, prev, iedge_0, future_point, future_direction);
+          0, ivertex, event_pvertex, prev, iedge_0, future_point, future_direction);
         // CGAL_assertion_msg(false, "TODO: BACK, FIX CASE WITH EQUAL BACK AND PREV!");
       } else {
         std::cout << "- back, prev, not equal points case" << std::endl;
@@ -1874,7 +1874,8 @@ private:
     bool is_parallel = false;
       if (KSR::distance(m_data.point_2(front), m_data.point_2(next)) < KSR::point_tolerance<FT>()) {
         std::cout << "- front = next, equal points case" << std::endl;
-        CGAL_assertion_msg(false, "TODO: FRONT, FIX CASE WITH EQUAL FRONT AND NEXT!");
+        CGAL_assertion_msg(false,
+        "TODO: FRONT, FIX CASE WITH EQUAL FRONT AND NEXT! SEE BACK CASE FOR REFERENCE!");
       } else {
         std::cout << "- front, next, not equal points case" << std::endl;
         is_parallel = m_data.compute_future_point_and_direction(
@@ -2134,7 +2135,8 @@ private:
       Point_2 future_point;
       Vector_2 future_direction;
       if (KSR::distance(m_data.point_2(prev), m_data.point_2(next)) < KSR::point_tolerance<FT>()) {
-        CGAL_assertion_msg(false, "TODO: OPEN, 1 EDGE CASE, FIX CASE WITH EQUAL PREV AND NEXT!");
+        CGAL_assertion_msg(false,
+        "TODO: OPEN, 1 EDGE CASE, FIX CASE WITH EQUAL PREV AND NEXT! SEE BACK CASE FOR REFERENCE!");
       }
       const bool is_parallel = m_data.compute_future_point_and_direction(
         pvertex, prev, next, crossed_iedges[0].first, future_point, future_direction);
@@ -2169,6 +2171,8 @@ private:
       m_data.direction(cropped) = future_direction;
       if (m_verbose) std::cout << "- cropped: " <<
         m_data.str(cropped) << ", " << m_data.point_3(cropped) << std::endl;
+      CGAL_assertion(m_data.is_correctly_oriented(
+        cropped.first, future_direction, ivertex, crossed_iedges[0].first));
 
       // CGAL_assertion_msg(false, "TODO: OPEN, HANDLE 1 EDGE CASE!");
       return;
@@ -2191,7 +2195,8 @@ private:
       bool is_parallel = false;
       if (KSR::distance(m_data.point_2(prev), m_data.point_2(next)) < KSR::point_tolerance<FT>()) {
         std::cout << "- prev = next, equal points case" << std::endl;
-        CGAL_assertion_msg(false, "TODO: OPEN, FRONT, FIX CASE WITH EQUAL PREV AND NEXT!");
+        CGAL_assertion_msg(false,
+        "TODO: OPEN, FRONT, FIX CASE WITH EQUAL PREV AND NEXT! SEE BACK CASE FOR REFERENCE!");
       } else {
         std::cout << "- prev, next, not equal points case" << std::endl;
         is_parallel = m_data.compute_future_point_and_direction(
@@ -2218,7 +2223,8 @@ private:
       bool is_parallel = false;
       if (KSR::distance(m_data.point_2(prev), m_data.point_2(next)) < KSR::point_tolerance<FT>()) {
         std::cout << "- prev = next, equal points case" << std::endl;
-        CGAL_assertion_msg(false, "TODO: OPEN, BACK, FIX CASE WITH EQUAL PREV AND NEXT!");
+        CGAL_assertion_msg(false,
+        "TODO: OPEN, BACK, FIX CASE WITH EQUAL PREV AND NEXT! SEE BACK CASE FOR REFERENCE!");
       } else {
         std::cout << "- prev, next, not equal points case" << std::endl;
         is_parallel = m_data.compute_future_point_and_direction(
