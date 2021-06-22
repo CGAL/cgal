@@ -253,6 +253,7 @@ public:
     : at(std::move(other.at)), et(other.et)
   {
     other.et = nullptr;
+    this->count = std::move(other.count);
   }
 
   //move-assignment
@@ -265,6 +266,7 @@ public:
     this->et = other.et;
     other.et = nullptr;
     this->at = std::move(other.at);
+    this->count = std::move(other.count);
   }
 
   template<class A>
