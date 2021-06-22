@@ -1716,7 +1716,8 @@ private:
       m_data.direction(cropped) = future_direction;
       if (m_verbose) std::cout << "- cropped: " <<
         m_data.str(cropped) << ", " << m_data.point_3(cropped) << std::endl;
-      // CGAL_assertion(m_data.belongs_to_iedge(cropped, iedge_0)); // Can we do it more precise?
+      CGAL_assertion(m_data.is_correctly_oriented(
+        cropped.first, future_direction, ivertex, iedge_0));
     }
 
     // Create new pfaces if any.
@@ -1921,6 +1922,8 @@ private:
       m_data.direction(cropped) = future_direction;
       if (m_verbose) std::cout << "- cropped: " <<
         m_data.str(cropped) << ", " << m_data.point_3(cropped) << std::endl;
+      CGAL_assertion(m_data.is_correctly_oriented(
+        cropped.first, future_direction, ivertex, iedge_0));
     }
 
     // Create new pfaces if any.
@@ -2266,6 +2269,8 @@ private:
       m_data.direction(cropped) = future_directions.front();
       if (m_verbose) std::cout << "- cropped 1: " <<
         m_data.str(cropped) << ", " << m_data.point_3(cropped) << std::endl;
+      CGAL_assertion(m_data.is_correctly_oriented(
+        cropped.first, future_directions.front(), ivertex, crossed_iedges.front().first));
     }
 
     { // second crop
@@ -2299,6 +2304,8 @@ private:
       m_data.direction(cropped) = future_directions.back();
       if (m_verbose) std::cout << "- cropped 2: " <<
         m_data.str(cropped) << ", " << m_data.point_3(cropped) << std::endl;
+      CGAL_assertion(m_data.is_correctly_oriented(
+        cropped.first, future_directions.back(), ivertex, crossed_iedges.back().first));
     }
 
     // Create new pfaces if any.

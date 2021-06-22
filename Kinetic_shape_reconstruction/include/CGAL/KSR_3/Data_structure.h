@@ -1459,6 +1459,8 @@ public:
     CGAL_assertion(pvertices[idx] == null_pvertex());
     pvertices[idx] = propagated;
 
+    CGAL_assertion(is_correctly_oriented(
+      propagated.first, future_direction, ivertex, iedge));
     // CGAL_assertion_msg(false, "TODO: CREATE NEW PVERTEX!");
   }
 
@@ -2349,8 +2351,16 @@ public:
   **    CHECKING PROPERTIES     **
   ********************************/
 
-  bool belongs_to_iedge(const PVertex& /*pvertex*/, const IEdge& /*iedge*/) const {
-    return true; // TODO: finish this using dot products and orientations!
+  bool is_correctly_oriented(
+    const std::size_t sp_idx, const Vector_2& direction,
+    const IVertex& ivertex, const IEdge& iedge) const {
+
+    CGAL_assertion(direction.squared_length() != FT(0));
+    const auto overtex = opposite(iedge, ivertex);
+    const Vector_2 ref_direction(
+      point_2(sp_idx, ivertex), point_2(sp_idx, overtex));
+    const FT vec_dot = direction * ref_direction;
+    return (vec_dot >= FT(0));
   }
 
   template<typename Pair>
