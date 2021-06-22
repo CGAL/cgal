@@ -599,11 +599,11 @@ public:
   const unsigned int& k() const { return m_data->k; }
   unsigned int& k() { return m_data->k; }
 
-  const unsigned int& k(const Face_index& /*fi*/) const {
+  const unsigned int& k(const Face_index& /* fi */) const {
     return m_data->k;
     // return m_data->k_map[fi];
   }
-  unsigned int& k(const Face_index& /*fi*/) {
+  unsigned int& k(const Face_index& /* fi */) {
     return m_data->k;
     // return m_data->k_map[fi];
   }

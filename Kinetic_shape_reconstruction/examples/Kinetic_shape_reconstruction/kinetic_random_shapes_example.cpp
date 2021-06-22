@@ -96,7 +96,7 @@ std::vector<int> box_faces_to_edges(const int i) {
 }
 
 bool find_next_object_colliding_plane(
-  const Point_3& /*pt_min*/, const Point_3& /*pt_max*/,
+  const Point_3& /* pt_min */, const Point_3& /* pt_max */,
   const std::vector<Point_3>& box_corners,
   const std::vector< std::pair<std::size_t, std::size_t> >& box_edges,
   const Plane_3& plane,

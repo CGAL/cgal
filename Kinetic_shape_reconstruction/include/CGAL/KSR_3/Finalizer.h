@@ -1249,7 +1249,7 @@ private:
     const PFace& pface,
     const int volume_index,
     const int num_volumes,
-    const std::map<int, Point_3>& /*centroids*/,
+    const std::map<int, Point_3>& /* centroids */,
     std::size_t& volume_size,
     Point_3& volume_centroid,
     std::map<PFace, std::pair<int, int> >& map_volumes,
@@ -1357,7 +1357,7 @@ private:
   }
 
   const PFace find_using_2d_directions(
-    const int /*volume_index*/,
+    const int /* volume_index */,
     const Point_3& volume_centroid,
     const PFace& pface,
     const PEdge& pedge,

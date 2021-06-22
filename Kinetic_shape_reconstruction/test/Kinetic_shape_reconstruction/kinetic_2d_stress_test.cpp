@@ -261,7 +261,7 @@ void stress_test(
 #endif
 }
 
-int main(const int /*argc*/, const char** /*argv*/) {
+int main(const int /* argc */, const char** /* argv */) {
 
   CGAL::Real_timer t;
   t.start();

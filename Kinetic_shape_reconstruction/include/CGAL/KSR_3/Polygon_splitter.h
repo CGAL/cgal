@@ -967,13 +967,15 @@ private:
       const auto neighbors = get_polygon_neighbors(pvertex);
       Point_2 future_point; Vector_2 future_direction;
       compute_future_point_and_direction(
-        pvertex, iedge, neighbors.first, neighbors.second, future_point, future_direction);
+        pvertex, IVertex(), iedge,
+        neighbors.first, neighbors.second, future_point, future_direction);
       CGAL_assertion(future_direction != Vector_2());
       m_data.direction(pvertex) = future_direction;
     }
   }
 
-  void set_boundary_ivertex(const PVertex& pvertex, const IVertex& ivertex) {
+  void set_boundary_ivertex(
+    const PVertex& pvertex, const IVertex& ivertex) {
 
     if (m_verbose) {
       std::cout.precision(20);
@@ -1066,10 +1068,10 @@ private:
     std::vector<Vector_2> future_directions(2);
     const auto neighbors = get_polygon_neighbors(pvertex);
     compute_future_point_and_direction(
-      pvertex, crossed_iedges.front().first, neighbors.first, neighbors.second,
+      pvertex, ivertex, crossed_iedges.front().first, neighbors.first, neighbors.second,
       future_points.front(), future_directions.front());
     compute_future_point_and_direction(
-      pvertex, crossed_iedges.back().first, neighbors.first, neighbors.second,
+      pvertex, ivertex, crossed_iedges.back().first, neighbors.first, neighbors.second,
       future_points.back(), future_directions.back());
 
     // Crop the pvertex.
@@ -1199,7 +1201,8 @@ private:
   }
 
   void compute_future_point_and_direction(
-    const PVertex& pvertex, const IEdge& iedge,
+    const PVertex& pvertex,
+    const IVertex& ivertex, const IEdge& iedge,
     const PVertex& n1, const PVertex& n2,
     Point_2& future_point, Vector_2& future_direction) const {
 
@@ -1216,7 +1219,7 @@ private:
     const bool is_debug = false;
     m_data.set_verbose(is_debug);
     const auto is_parallel = m_data.compute_future_point_and_direction(
-      pvertex, n1, n2, iedge, future_point, future_direction);
+      pvertex, ivertex, n1, n2, iedge, future_point, future_direction);
     m_data.set_verbose(m_verbose);
 
     CGAL_assertion_msg(!is_parallel,

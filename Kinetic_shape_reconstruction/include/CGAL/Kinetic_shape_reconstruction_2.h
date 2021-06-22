@@ -126,7 +126,7 @@ public:
 
 
   template <typename PointRange, typename PointMap, typename VectorMap>
-  void reconstruct (const PointRange& /*points*/, PointMap /*point_map*/, VectorMap /*normal_map*/)
+  void reconstruct (const PointRange& /* points */, PointMap /* point_map */, VectorMap /* normal_map */)
   {
     // TODO
   }
@@ -349,7 +349,7 @@ public:
 
   template <typename VertexOutputIterator, typename FacetOutputIterator>
   void output_partition_cells_to_polygon_soup (VertexOutputIterator vertices,
-                                               FacetOutputIterator /*facets*/) const
+                                               FacetOutputIterator /* facets */) const
   {
     for (std::size_t i = 0; i < m_data.number_of_meta_vertices(); ++ i)
       *(vertices ++) = m_data.meta_vertex(i).point();

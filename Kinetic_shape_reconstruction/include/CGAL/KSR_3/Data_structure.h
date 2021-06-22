@@ -1440,7 +1440,7 @@ public:
       }
     } else {
       is_parallel = compute_future_point_and_direction(
-        pvertex, pv_prev, pv_next, iedge, future_point, future_direction);
+        pvertex, ivertex, pv_prev, pv_next, iedge, future_point, future_direction);
       if (is_parallel) {
         if (m_verbose) std::cout << "- new pvertex, open, parallel case" << std::endl;
         CGAL_assertion_msg(!is_parallel,
@@ -2351,6 +2351,31 @@ public:
   **    CHECKING PROPERTIES     **
   ********************************/
 
+  bool is_reversed_direction(
+    const std::size_t sp_idx,
+    const Point_2& p1, const Point_2& q1,
+    const IVertex& ivertex, const IEdge& iedge) const {
+
+    if (ivertex == IVertex()) return false;
+
+    CGAL_assertion(p1 != q1);
+    const Vector_2 vec1(p1, q1);
+
+    const auto overtex = opposite(iedge, ivertex);
+    const auto p2 = point_2(sp_idx, ivertex);
+    const auto q2 = point_2(sp_idx, overtex);
+
+    CGAL_assertion(p2 != q2);
+    const Vector_2 vec2(p2, q2);
+
+    const FT vec_dot = vec1 * vec2;
+    const bool is_reversed = (vec_dot < FT(0));
+    if (is_reversed && m_verbose) {
+      std::cout << "- found reversed future direction" << std::endl;
+    }
+    return is_reversed;
+  }
+
   bool is_correctly_oriented(
     const std::size_t sp_idx, const Vector_2& direction,
     const IVertex& ivertex, const IEdge& iedge) const {
@@ -2720,7 +2745,7 @@ public:
   *************************************/
 
   std::pair<bool, bool> compute_future_points_and_directions(
-    const PVertex& pvertex, const IEdge& iedge,
+    const PVertex& pvertex, const IVertex& ivertex, const IEdge& iedge,
     Point_2& future_point_a, Point_2& future_point_b,
     Vector_2& future_direction_a, Vector_2& future_direction_b) const {
 
@@ -2807,9 +2832,28 @@ public:
     // std::cout << "m1 - m3 a: " << CGAL::abs(m1 - m3) << std::endl;
     // std::cout << "m2 - m3 b: " << CGAL::abs(m2 - m3) << std::endl;
 
-    if (CGAL::abs(m1 - m3) < tol) {
-      if (m_verbose) std::cout << "- prev parallel lines" << std::endl;
+    bool is_reversed = false;
+    if (CGAL::abs(m1 - m3) >= tol) {
+      if (m_verbose) std::cout << "- prev intersected lines" << std::endl;
+      const bool is_a_found = KSR::intersection(
+        future_line_prev, iedge_line, future_point_a);
+      if (!is_a_found) {
+        std::cout << "WARNING: A IS NOT FOUND!" << std::endl;
+        future_point_b = pinit + (pinit - future_point_a);
+        CGAL_assertion_msg(false, "TODO: CAN WE EVER BE HERE? WHY?");
+      }
 
+      // If reversed, we most-likely in the parallel case and an intersection point
+      // is wrongly computed. This can happen even when we are bigger than tolerance.
+      // This should not happen here, I guess. If happens, we should find different
+      // solution or modify this solution.
+      is_reversed = is_reversed_direction(
+        sp_idx, pinit, future_point_a, ivertex, iedge);
+      CGAL_assertion(!is_reversed);
+    }
+
+    if (CGAL::abs(m1 - m3) < tol || is_reversed) {
+      if (m_verbose) std::cout << "- prev parallel lines" << std::endl;
       is_parallel_prev = true;
       // Here, in the dot product, we can have maximum 1 zero-length vector.
       const FT prev_dot = current_vec_prev * iedge_vec;
@@ -2821,14 +2865,6 @@ public:
         if (m_verbose) std::cout << "- prev moves forwards" << std::endl;
         future_point_a = source_p;
         // std::cout << point_3(source(iedge)) << std::endl;
-      }
-    } else {
-      if (m_verbose) std::cout << "- prev intersected lines" << std::endl;
-
-      const bool is_a_found = KSR::intersection(future_line_prev, iedge_line, future_point_a);
-      if (!is_a_found) {
-        std::cout << "WARNING: A IS NOT FOUND!" << std::endl;
-        future_point_b = pinit + (pinit - future_point_a);
       }
     }
 
@@ -2845,9 +2881,28 @@ public:
       std::cout << "- prev future direction a: " << future_direction_a << std::endl;
     }
 
-    if (CGAL::abs(m2 - m3) < tol) {
-      if (m_verbose) std::cout << "- next parallel lines" << std::endl;
+    is_reversed = false;
+    if (CGAL::abs(m2 - m3) >= tol) {
+      if (m_verbose) std::cout << "- next intersected lines" << std::endl;
+      const bool is_b_found = KSR::intersection(
+        future_line_next, iedge_line, future_point_b);
+      if (!is_b_found) {
+        std::cout << "WARNING: B IS NOT FOUND!" << std::endl;
+        future_point_a = pinit + (pinit - future_point_b);
+        CGAL_assertion_msg(false, "TODO: CAN WE EVER BE HERE? WHY?");
+      }
 
+      // If reversed, we most-likely in the parallel case and an intersection point
+      // is wrongly computed. This can happen even when we are bigger than tolerance.
+      // This should not happen here, I guess. If happens, we should find different
+      // solution or modify this solution.
+      is_reversed = is_reversed_direction(
+        sp_idx, pinit, future_point_b, ivertex, iedge);
+      CGAL_assertion(!is_reversed);
+    }
+
+    if (CGAL::abs(m2 - m3) < tol || is_reversed) {
+      if (m_verbose) std::cout << "- next parallel lines" << std::endl;
       is_parallel_next = true;
       // Here, in the dot product, we can have maximum 1 zero-length vector.
       const FT next_dot = current_vec_next * iedge_vec;
@@ -2859,14 +2914,6 @@ public:
         if (m_verbose) std::cout << "- next moves forwards" << std::endl;
         future_point_b = source_p;
         // std::cout << point_3(source(iedge)) << std::endl;
-      }
-    } else {
-      if (m_verbose) std::cout << "- next intersected lines" << std::endl;
-
-      const bool is_b_found = KSR::intersection(future_line_next, iedge_line, future_point_b);
-      if (!is_b_found) {
-        std::cout << "WARNING: B IS NOT FOUND!" << std::endl;
-        future_point_a = pinit + (pinit - future_point_b);
       }
     }
 
@@ -3002,21 +3049,15 @@ public:
     if (CGAL::abs(m2 - m3) >= tol) {
       if (m_verbose) std::cout << "- back/front intersected lines" << std::endl;
       future_point = KSR::intersection<Point_2>(future_line_next, iedge_line);
-      if (ivertex != IVertex()) { // TODO: Factor out this solution!
-        const auto overtex = opposite(iedge, ivertex);
-        const Vector_2 vec1(pinit, future_point);
-        const Vector_2 vec2(point_2(sp_idx, ivertex), point_2(sp_idx, overtex));
-        const FT vec_dot = vec1 * vec2;
-        if (vec_dot < FT(0)) {
-          std::cout << "- found reversed, parallel edge-case detected" << std::endl;
-          is_reversed = true;
-        }
-      }
+
+      // If reversed, we most-likely in the parallel case and an intersection point
+      // is wrongly computed. This can happen even when we are bigger than tolerance.
+      is_reversed = is_reversed_direction(
+        sp_idx, pinit, future_point, ivertex, iedge);
     }
 
     if (CGAL::abs(m2 - m3) < tol || is_reversed) {
       if (m_verbose) std::cout << "- back/front parallel lines" << std::endl;
-
       is_parallel = true;
       // Here, in the dot product, we can have maximum 1 zero-length vector.
       const FT next_dot = current_vec_next * iedge_vec;
@@ -3047,7 +3088,8 @@ public:
   }
 
   bool compute_future_point_and_direction(
-    const PVertex& pvertex, const PVertex& prev, const PVertex& next, // prev next
+    const PVertex& pvertex, const IVertex& ivertex,
+    const PVertex& prev, const PVertex& next, // prev next
     const IEdge& iedge, Point_2& future_point, Vector_2& future_direction) const {
 
     bool is_parallel = false;
@@ -3111,9 +3153,19 @@ public:
 
     // std::cout << "m2 - m3: " << CGAL::abs(m2 - m3) << std::endl;
 
-    if (CGAL::abs(m2 - m3) < tol) {
-      if (m_verbose) std::cout << "- open parallel lines" << std::endl;
+    bool is_reversed = false;
+    if (CGAL::abs(m2 - m3) >= tol) {
+      if (m_verbose) std::cout << "- open intersected lines" << std::endl;
+      future_point = KSR::intersection<Point_2>(future_line_next, iedge_line);
 
+      // If reversed, we most-likely in the parallel case and an intersection point
+      // is wrongly computed. This can happen even when we are bigger than tolerance.
+      is_reversed = is_reversed_direction(
+        sp_idx, pinit, future_point, ivertex, iedge);
+    }
+
+    if (CGAL::abs(m2 - m3) < tol || is_reversed) {
+      if (m_verbose) std::cout << "- open parallel lines" << std::endl;
       is_parallel = true;
       if (source_p == pv_point) {
         future_point = target_p;
@@ -3122,10 +3174,6 @@ public:
         future_point = source_p;
         // std::cout << point_3(source(iedge)) << std::endl;
       }
-
-    } else {
-      if (m_verbose) std::cout << "- open intersected lines" << std::endl;
-      future_point = KSR::intersection<Point_2>(future_line_next, iedge_line);
     }
 
     CGAL_assertion(pinit != future_point);

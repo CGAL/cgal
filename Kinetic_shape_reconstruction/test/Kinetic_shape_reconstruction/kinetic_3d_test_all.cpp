@@ -393,7 +393,7 @@ void run_all_tests() {
   }
 }
 
-int main(const int /*argc*/, const char** /*argv*/) {
+int main(const int /* argc */, const char** /* argv */) {
 
   // Does not always work with exact, errors are mostly related to events,
   // which happen at the same time. Initializer and Finalizer work, the problems

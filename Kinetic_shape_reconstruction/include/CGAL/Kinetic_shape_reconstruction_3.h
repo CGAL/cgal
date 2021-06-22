@@ -552,7 +552,7 @@ public:
   }
 
   template<typename LCC>
-  void output_partition(LCC& /*lcc*/) const {
+  void output_partition(LCC& /* lcc */) const {
     CGAL_assertion_msg(false, "TODO: OUTPUT PARTITION LCC!");
   }
 

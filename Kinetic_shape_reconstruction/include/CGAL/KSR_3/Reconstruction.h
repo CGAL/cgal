@@ -589,7 +589,7 @@ private:
   }
 
   std::size_t add_rectangle_shape(
-    const std::vector<std::size_t>& /*region*/, const Plane_3& /*plane*/) {
+    const std::vector<std::size_t>& /* region */, const Plane_3& /* plane */) {
 
     CGAL_assertion_msg(false, "TODO: ADD RECTANGLE SHAPE!");
     return std::size_t(-1);
