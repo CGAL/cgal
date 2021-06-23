@@ -167,8 +167,8 @@ is_obtuse_angle(const typename K::Point_3 &p,
 }
 template <class K>
 void
-squared_distance_to_plane_RT(const typename K::Vector_3 & normal,
-                             const typename K::Vector_3 & diff,
+squared_distance_to_plane_RT(const typename K::Vector_3& normal,
+                             const typename K::Vector_3& diff,
                              typename K::RT& num,
                              typename K::RT& den,
                              const K& k)
@@ -183,8 +183,8 @@ squared_distance_to_plane_RT(const typename K::Vector_3 & normal,
 
 template <class K>
 typename K::FT
-squared_distance_to_plane(const typename K::Vector_3 & normal,
-                          const typename K::Vector_3 & diff,
+squared_distance_to_plane(const typename K::Vector_3& normal,
+                          const typename K::Vector_3& diff,
                           const K& k)
 {
   typedef typename K::RT RT;
@@ -196,8 +196,8 @@ squared_distance_to_plane(const typename K::Vector_3 & normal,
 
 template <class K>
 void
-squared_distance_to_line_RT(const typename K::Vector_3 & dir,
-                            const typename K::Vector_3 & diff,
+squared_distance_to_line_RT(const typename K::Vector_3& dir,
+                            const typename K::Vector_3& diff,
                             typename K::RT& num,
                             typename K::RT& den,
                             const K& k)
@@ -207,10 +207,11 @@ squared_distance_to_line_RT(const typename K::Vector_3 & dir,
   num = wdot(wcr, wcr, k);
   den = wmult((K*)0, wdot(dir, dir, k), diff.hw(), diff.hw());
 }
+
 template <class K>
 typename K::FT
-squared_distance_to_line(const typename K::Vector_3 & dir,
-                         const typename K::Vector_3 & diff,
+squared_distance_to_line(const typename K::Vector_3& dir,
+                         const typename K::Vector_3& diff,
                          const K& k)
 {
   typedef typename K::RT RT;
