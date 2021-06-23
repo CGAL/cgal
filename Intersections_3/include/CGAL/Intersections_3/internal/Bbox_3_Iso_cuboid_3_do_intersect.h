@@ -14,13 +14,10 @@
 #ifndef CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_ISO_CUBOID_3_DO_INTERSECT_H
 #define CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_ISO_CUBOID_3_DO_INTERSECT_H
 
-#include <CGAL/Iso_cuboid_3.h>
 #include <CGAL/Bbox_3.h>
 
 namespace CGAL {
-
 namespace Intersections {
-
 namespace internal {
 
 template <class K>
@@ -37,8 +34,16 @@ bool do_intersect(const CGAL::Bbox_3& bb,
   return true;
 }
 
+template <class K>
+bool do_intersect(const typename K::Iso_cuboid_3& ic,
+                  const CGAL::Bbox_3& bb,
+                  const K& k)
+{
+  return do_intersect(bb, ic, k);
+}
+
 } // namespace internal
 } // namespace Intersections
-} //namespace CGAL
+} // namespace CGAL
 
-#endif  // CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_ISO_CUBOID_3_DO_INTERSECT_H
+#endif // CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_ISO_CUBOID_3_DO_INTERSECT_H
