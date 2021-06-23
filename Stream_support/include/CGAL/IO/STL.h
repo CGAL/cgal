@@ -286,7 +286,7 @@ bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facet
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
- *     \cgalParamDefault{`the precision of the stream `os``}
+ *     \cgalParamDefault{the precision of the stream `os`}
  *     \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd

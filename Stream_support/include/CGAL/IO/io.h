@@ -161,7 +161,7 @@ template< class F >
 struct Output_rep< Some_type, F > {
   static const bool is_specialized = true;
   Output_rep( const Some_type& t );
-  std::ostream& operator()( std::ostream& out ) const;
+  std::ostream& operator()( std::ostream& os ) const;
 };
 
 \endcode
@@ -184,7 +184,7 @@ public:
   //! initialize with a const reference to \a t.
   Output_rep( const T& tt) : t(tt) {}
   //! perform the output, calls \c operator\<\< by default.
-  std::ostream& operator()( std::ostream& out) const { return (out << t); }
+  std::ostream& operator()( std::ostream& os) const { return (os << t); }
 };
 
 /*!
@@ -197,7 +197,7 @@ public:
   The output operator is defined for all classes in the \cgal `Kernel` and for the class `Color` as well.
 */
 template <class T, class F>
-std::ostream& operator<<( std::ostream& out, Output_rep<T,F> rep) { return rep( out); }
+std::ostream& operator<<( std::ostream& os, Output_rep<T,F> rep) { return rep(os); }
 
 namespace IO {
 
@@ -239,7 +239,7 @@ public:
   Input_rep( T& tt) : t(tt) {}
 
   //! perform the input, calls \c operator\>\> by default.
-  std::istream& operator()( std::istream& in) const { return (in >> t); }
+  std::istream& operator()( std::istream& is) const { return (is >> t); }
 };
 
 #if CGAL_FORCE_IFORMAT_DOUBLE || \
@@ -396,7 +396,7 @@ as `std::cin`, as well as from `std::istringstream` and `std::ifstream`.
 The input operator is defined for all classes in the \cgal `Kernel`.
 */
 template <class T>
-std::istream& operator>>( std::istream& in, Input_rep<T> rep) { return rep(in); }
+std::istream& operator>>( std::istream& is, Input_rep<T> rep) { return rep(is); }
 
 namespace IO {
 
@@ -419,14 +419,14 @@ public:
   //! initialize with a const reference to \a t.
   Benchmark_rep( const T& tt) : t(tt) {}
   //! perform the output, calls \c operator\<\< by default.
-  std::ostream& operator()( std::ostream& out) const { return out << t; }
+  std::ostream& operator()( std::ostream& os) const { return os << t; }
 
   // static function to get the benchmark name
   static std::string get_benchmark_name() { return ""; }
 };
 
 template <class T, class F>
-std::ostream& operator<<( std::ostream& out, Benchmark_rep<T,F> rep) { return rep( out); }
+std::ostream& operator<<( std::ostream& os, Benchmark_rep<T,F> rep) { return rep(os); }
 
 namespace IO {
 
@@ -450,9 +450,9 @@ returns the printing mode of the %IO stream `s`.
 \sa `CGAL::IO::is_binary()`
 \sa `CGAL::IO::is_pretty()`
 */
-inline Mode get_mode(std::ios& i)
+inline Mode get_mode(std::ios& s)
 {
-  return static_cast<Mode>(i.iword(Static::get_mode()));
+  return static_cast<Mode>(s.iword(Static::get_mode()));
 }
 
 /*!
@@ -470,10 +470,10 @@ Returns the previous mode of `s`.
 \sa `CGAL::IO::is_binary()`
 \sa `CGAL::IO::is_pretty()`
 */
-inline Mode set_ascii_mode(std::ios& i)
+inline Mode set_ascii_mode(std::ios& s)
 {
-  Mode m = get_mode(i);
-  i.iword(Static::get_mode()) = ASCII;
+  Mode m = get_mode(s);
+  s.iword(Static::get_mode()) = ASCII;
   return m;
 }
 
@@ -492,10 +492,10 @@ Returns the previous mode of `s`.
 \sa `CGAL::IO::is_binary()`
 \sa `CGAL::IO::is_pretty()`
 */
-inline Mode set_binary_mode(std::ios& i)
+inline Mode set_binary_mode(std::ios& s)
 {
-  Mode m = get_mode(i);
-  i.iword(Static::get_mode()) = BINARY;
+  Mode m = get_mode(s);
+  s.iword(Static::get_mode()) = BINARY;
   return m;
 }
 
@@ -514,10 +514,10 @@ Returns the previous mode of `s`.
 \sa `CGAL::IO::is_binary()`
 \sa `CGAL::IO::is_pretty()`
 */
-inline Mode set_pretty_mode(std::ios& i)
+inline Mode set_pretty_mode(std::ios& s)
 {
-  Mode m = get_mode(i);
-  i.iword(Static::get_mode()) = PRETTY;
+  Mode m = get_mode(s);
+  s.iword(Static::get_mode()) = PRETTY;
   return m;
 }
 
@@ -535,10 +535,10 @@ sets the printing mode of the %IO stream `s`.
 \sa `CGAL::IO::is_binary()`
 \sa `CGAL::IO::is_pretty()`
 */
-inline Mode set_mode(std::ios& i, Mode m)
+inline Mode set_mode(std::ios& s, Mode m)
 {
-  Mode old = get_mode(i);
-  i.iword(Static::get_mode()) = m;
+  Mode old = get_mode(s);
+  s.iword(Static::get_mode()) = m;
   return old;
 }
 
@@ -556,7 +556,7 @@ checks if the %IO stream `s` is in `PRETTY` mode.
 \sa `CGAL::IO::is_ascii()`
 \sa `CGAL::IO::is_binary()`
 */
-inline bool is_pretty(std::ios& i) { return i.iword(Static::get_mode()) == PRETTY; }
+inline bool is_pretty(std::ios& s) { return s.iword(Static::get_mode()) == PRETTY; }
 
 /*!
 \ingroup PkgStreamSupportRef
@@ -572,7 +572,7 @@ checks if the %IO stream `s` is in `ASCII` mode.
 \sa `CGAL::IO::is_binary()`
 \sa `CGAL::IO::is_pretty()`
 */
-inline bool is_ascii(std::ios& i) { return i.iword(Static::get_mode()) == ASCII; }
+inline bool is_ascii(std::ios& s) { return s.iword(Static::get_mode()) == ASCII; }
 
 /*!
 \ingroup PkgStreamSupportRef
@@ -588,7 +588,7 @@ checks if the %IO stream `s` is in `BINARY` mode.
 \sa `CGAL::IO::is_ascii()`
 \sa `CGAL::IO::is_pretty()`
 */
-inline bool is_binary(std::ios& i) { return i.iword(Static::get_mode()) == BINARY; }
+inline bool is_binary(std::ios& s) { return s.iword(Static::get_mode()) == BINARY; }
 
 } // namespace IO
 
@@ -642,23 +642,23 @@ inline void read(std::istream& is, T& t)
 
 namespace IO {
 
-inline std::ostream& operator<<( std::ostream& out, const Color& col)
+inline std::ostream& operator<<( std::ostream& os, const Color& col)
 {
-  switch(get_mode(out))
+  switch(get_mode(os))
   {
     case ASCII :
-      return out << static_cast<int>(col.red())   << ' '
-                 << static_cast<int>(col.green()) << ' '
-                 << static_cast<int>(col.blue()) << ' '
-                 << static_cast<int>(col.alpha());
+      return os << static_cast<int>(col.red())   << ' '
+                << static_cast<int>(col.green()) << ' '
+                << static_cast<int>(col.blue()) << ' '
+                << static_cast<int>(col.alpha());
     case BINARY :
-      out.write(reinterpret_cast<const char*>(col.to_rgba().data()), 4);
-      return out;
+      os.write(reinterpret_cast<const char*>(col.to_rgba().data()), 4);
+      return os;
     default:
-      return out << "Color(" << static_cast<int>(col.red()) << ", "
-                 << static_cast<int>(col.green()) << ", "
-                 << static_cast<int>(col.blue()) << ", "
-                 << static_cast<int>(col.alpha()) << ")";
+      return os << "Color(" << static_cast<int>(col.red()) << ", "
+                << static_cast<int>(col.green()) << ", "
+                << static_cast<int>(col.blue()) << ", "
+                << static_cast<int>(col.alpha()) << ")";
   }
 }
 
