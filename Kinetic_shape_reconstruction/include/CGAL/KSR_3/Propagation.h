@@ -1541,10 +1541,10 @@ private:
     CGAL_assertion(prev_time >= FT(0));
     CGAL_assertion(curr_time >= FT(0));
 
-    // std::cout << "min time: "  <<  min_time << std::endl;
-    // std::cout << "max time: "  <<  max_time << std::endl;
-    // std::cout << "prev time: " << prev_time << std::endl;
+    // std::cout << "minn time: " <<  min_time << std::endl;
     // std::cout << "curr time: " << curr_time << std::endl;
+    // std::cout << "maxx time: " <<  max_time << std::endl;
+    // std::cout << "lrev time: " << prev_time << std::endl;
 
     const FT prev_diff = CGAL::abs(curr_time - prev_time);
     // CGAL_assertion(prev_diff >= tol);
@@ -1553,12 +1553,18 @@ private:
     //   exit(EXIT_FAILURE);
     // }
 
+    FT ntime = max_time;
+    if (prev_diff < tol) {
+      ntime = m_queue.get_next_time(min_time, max_time, curr_time);
+      // std::cout << "next time: " << ntime << std::endl;
+    }
+
     Point_2 shifted_prev;
     const auto pp_curr = m_data.point_2(prev, curr_time);
     if (prev_diff < tol) {
       if (m_verbose) std::cout << "- back, same time events, prev" << std::endl;
-      CGAL_assertion(CGAL::abs(max_time - curr_time) >= tol);
-      const auto pp_futr = m_data.point_2(prev, max_time);
+      CGAL_assertion(CGAL::abs(ntime - curr_time) >= tol);
+      const auto pp_futr = m_data.point_2(prev, ntime);
       const auto dirp = Vector_2(pp_curr, pp_futr);
 
       // Should we reverse fiedges to satisfy the order?
@@ -1579,11 +1585,11 @@ private:
       }
 
       if (found_iedge) {
-        shifted_prev = pp_curr + dirp / FT(10);
+        shifted_prev = pp_curr + dirp / FT(2);
         if (m_verbose) std::cout << "- excluding iedge, prev" << std::endl;
         // CGAL_assertion_msg(false, "TODO: CHECK BACK PREV CASE 1!");
       } else {
-        shifted_prev = pp_curr - dirp / FT(10);
+        shifted_prev = pp_curr - dirp / FT(2);
         if (m_verbose) std::cout << "- including iedge, prev" << std::endl;
         // CGAL_assertion_msg(false, "TODO: CHECK BACK PREV CASE 2!");
       }
@@ -1752,10 +1758,10 @@ private:
     CGAL_assertion(next_time >= FT(0));
     CGAL_assertion(curr_time >= FT(0));
 
-    // std::cout << "min time: "  <<  min_time << std::endl;
-    // std::cout << "max time: "  <<  max_time << std::endl;
-    // std::cout << "next time: " << next_time << std::endl;
+    // std::cout << "minn time: " <<  min_time << std::endl;
     // std::cout << "curr time: " << curr_time << std::endl;
+    // std::cout << "maxx time: " <<  max_time << std::endl;
+    // std::cout << "lext time: " << next_time << std::endl;
 
     const FT next_diff = CGAL::abs(curr_time - next_time);
     // CGAL_assertion(next_diff >= tol);
@@ -1764,12 +1770,18 @@ private:
     //   exit(EXIT_FAILURE);
     // }
 
+    FT ntime = max_time;
+    if (next_diff < tol) {
+      ntime = m_queue.get_next_time(min_time, max_time, curr_time);
+      // std::cout << "next time: " << ntime << std::endl;
+    }
+
     Point_2 shifted_next;
     const auto pn_curr = m_data.point_2(next, curr_time);
     if (next_diff < tol) {
       if (m_verbose) std::cout << "- front, same time events, next" << std::endl;
-      CGAL_assertion(CGAL::abs(max_time - curr_time) >= tol);
-      const auto pn_futr = m_data.point_2(next, max_time);
+      CGAL_assertion(CGAL::abs(ntime - curr_time) >= tol);
+      const auto pn_futr = m_data.point_2(next, ntime);
       const auto dirn = Vector_2(pn_curr, pn_futr);
 
       CGAL_assertion_msg(biedges.size() <= 2,
@@ -1789,11 +1801,11 @@ private:
       }
 
       if (found_iedge) {
-        shifted_next = pn_curr + dirn / FT(10);
+        shifted_next = pn_curr + dirn / FT(2);
         if (m_verbose) std::cout << "- excluding iedge, next" << std::endl;
         // CGAL_assertion_msg(false, "TODO: CHECK FRONT NEXT CASE 1!");
       } else {
-        shifted_next = pn_curr - dirn / FT(10);
+        shifted_next = pn_curr - dirn / FT(2);
         if (m_verbose) std::cout << "- including iedge, next" << std::endl;
         // CGAL_assertion_msg(false, "TODO: CHECK FRONT NEXT CASE 2!");
       }
@@ -1957,11 +1969,12 @@ private:
     const FT curr_time = m_data.current_time();
     const FT next_time = m_data.last_event_time(next);
 
-    // std::cout << "min time: "  <<  min_time << std::endl;
-    // std::cout << "max time: "  <<  max_time << std::endl;
-    // std::cout << "prev time: " << prev_time << std::endl;
+    // std::cout << "minn time: " <<  min_time << std::endl;
     // std::cout << "curr time: " << curr_time << std::endl;
-    // std::cout << "next time: " << next_time << std::endl;
+    // std::cout << "maxx time: " <<  max_time << std::endl;
+
+    // std::cout << "lrev time: " << prev_time << std::endl;
+    // std::cout << "lext time: " << next_time << std::endl;
 
     const FT tol = KSR::tolerance<FT>();
     CGAL_assertion(prev_time >= FT(0));
@@ -1977,12 +1990,18 @@ private:
     //   exit(EXIT_FAILURE);
     // }
 
+    FT ntime = max_time;
+    if (prev_diff < tol || next_diff < tol) {
+      ntime = m_queue.get_next_time(min_time, max_time, curr_time);
+      // std::cout << "next time: " << ntime << std::endl;
+    }
+
     Point_2 shifted_prev;
     const auto pp_curr = m_data.point_2(prev, curr_time);
     if (prev_diff < tol) {
       if (m_verbose) std::cout << "- open, same time events, prev" << std::endl;
-      CGAL_assertion(CGAL::abs(max_time - curr_time) >= tol);
-      const auto pp_futr = m_data.point_2(prev, max_time);
+      CGAL_assertion(CGAL::abs(ntime - curr_time) >= tol);
+      const auto pp_futr = m_data.point_2(prev, ntime);
       const auto dirp = Vector_2(pp_curr, pp_futr);
 
       CGAL_assertion_msg(fiedges.size() <= 2,
@@ -2002,13 +2021,11 @@ private:
       }
 
       if (found_iedge) {
-        // 10 is probably too much in some cases! See iteration 1789 in 40 polygons!
-        // Or dirp is too long!
-        shifted_prev = pp_curr + dirp / FT(100); // it was 10, temporary fix
+        shifted_prev = pp_curr + dirp / FT(2);
         if (m_verbose) std::cout << "- excluding iedge, prev" << std::endl;
         // CGAL_assertion_msg(false, "TODO: CHECK OPEN PREV CASE 1!");
       } else {
-        shifted_prev = pp_curr - dirp / FT(10);
+        shifted_prev = pp_curr - dirp / FT(2);
         if (m_verbose) std::cout << "- including iedge, prev" << std::endl;
         CGAL_assertion_msg(false, "TODO: CHECK OPEN PREV CASE 2!");
       }
@@ -2023,8 +2040,8 @@ private:
     const auto pn_curr = m_data.point_2(next, curr_time);
     if (next_diff < tol) {
       if (m_verbose) std::cout << "- open, same time events, next" << std::endl;
-      CGAL_assertion(CGAL::abs(max_time - curr_time) >= tol);
-      const auto pn_futr = m_data.point_2(next, max_time);
+      CGAL_assertion(CGAL::abs(ntime - curr_time) >= tol);
+      const auto pn_futr = m_data.point_2(next, ntime);
       const auto dirn = Vector_2(pn_curr, pn_futr);
 
       CGAL_assertion_msg(biedges.size() <= 2,
@@ -2044,11 +2061,11 @@ private:
       }
 
       if (found_iedge) {
-        shifted_next = pn_curr + dirn / FT(10);
+        shifted_next = pn_curr + dirn / FT(2);
         if (m_verbose) std::cout << "- excluding iedge, next" << std::endl;
         // CGAL_assertion_msg(false, "TODO: CHECK OPEN NEXT CASE 1!");
       } else {
-        shifted_next = pn_curr - dirn / FT(10);
+        shifted_next = pn_curr - dirn / FT(2);
         if (m_verbose) std::cout << "- including iedge, next" << std::endl;
         CGAL_assertion_msg(false, "TODO: CHECK OPEN NEXT CASE 2!");
       }

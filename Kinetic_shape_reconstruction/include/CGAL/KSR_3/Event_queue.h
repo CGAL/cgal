@@ -105,6 +105,29 @@ public:
     return *queue_by_time().begin();
   }
 
+  // Get next time within the range [min_time, max_time] that is greater
+  // than curr_time by at least a tolerance.
+  FT get_next_time(
+    const FT min_time, const FT max_time, const FT curr_time) {
+
+    const auto pother = Data_structure::null_pvertex();
+    const auto ivertex = Data_structure::null_ivertex();
+    const ETime e_min_time(min_time, pother, ivertex, true);
+    const ETime e_max_time(max_time, pother, ivertex, true);
+
+    const auto it_min = queue_by_time().lower_bound(e_min_time);
+    const auto it_max = queue_by_time().upper_bound(e_max_time);
+    const auto time_range = CGAL::make_range(it_min, it_max);
+
+    for (const auto& event : time_range) {
+      if (event.time() > (curr_time + KSR::tolerance<FT>())) {
+        return event.time();
+      }
+    }
+    CGAL_assertion(max_time > curr_time);
+    return max_time;
+  }
+
   // Erase all events of the iedge.
   void erase_vertex_events(
     const IEdge iedge,

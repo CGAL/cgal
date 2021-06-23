@@ -50,19 +50,25 @@ public:
   friend Queue;
 
   struct ETime {
-    ETime(const NT event_time, const PVertex& pother, const IVertex& ivertex) :
+    ETime(
+      const NT event_time,
+      const PVertex& pother,
+      const IVertex& ivertex,
+      const bool is_virtual = false) :
     time(static_cast<FT>(CGAL::to_double(event_time))),
-    m_pother(pother), m_ivertex(ivertex)
+    m_pother(pother), m_ivertex(ivertex), m_is_virtual(is_virtual)
     { }
 
     const FT time;
     const PVertex& m_pother;
     const IVertex& m_ivertex;
+    const bool m_is_virtual;
+
     bool operator<(const ETime& e) const {
 
       const FT tol = KSR::tolerance<FT>();
       const FT time_diff = CGAL::abs(time - e.time);
-      if (time_diff < tol) {
+      if (time_diff < tol && !is_virtual() && !e.is_virtual()) {
         const std::size_t la =   is_pvertex_to_ivertex() ? 1 : 0;
         const std::size_t lb = e.is_pvertex_to_ivertex() ? 1 : 0;
         if (la != lb) return la < lb;
@@ -75,6 +81,8 @@ public:
         m_pother  == Data_structure::null_pvertex() &&
         m_ivertex != Data_structure::null_ivertex());
     }
+
+    bool is_virtual() const { return m_is_virtual; }
   };
 
   // Event types.
