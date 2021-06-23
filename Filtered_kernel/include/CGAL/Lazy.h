@@ -267,6 +267,7 @@ public:
     other.et = nullptr;
     this->at = std::move(other.at);
     this->count = std::move(other.count);
+    return *this;
   }
 
   template<class A>
