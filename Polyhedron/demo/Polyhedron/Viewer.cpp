@@ -1240,6 +1240,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
     program->setProperty("hasTransparency", true);
     program->setProperty("hasCenter", true);
     program->setProperty("hasSurfaceMode", true);
+    program->setProperty("hasSubdomainIndicesValues", true);
     return program;
   }
   case PROGRAM_C3T3_EDGES:

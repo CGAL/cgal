@@ -75,9 +75,9 @@ public Q_SLOTS:
     if(!c3t3_item)
       return;
 
-
+    int compact_id = 0;
     for (std::set<int>::iterator it = c3t3_item->subdomain_indices().begin(),
-         end = c3t3_item->subdomain_indices().end(); it != end; ++it)
+         end = c3t3_item->subdomain_indices().end(); it != end; ++it, ++compact_id)
     {
       int index = *it;
       QPushButton* button = new QPushButton(tr("%1").arg(index));
@@ -92,8 +92,8 @@ public Q_SLOTS:
                 + "; }");
 
       button->setStyleSheet(s);
-      connect(button, &QPushButton::toggled, [index, c3t3_item](bool){
-        c3t3_item->switchVisibleSubdomain(index);
+      connect(button, &QPushButton::toggled, [compact_id, c3t3_item](bool){
+        c3t3_item->switchVisibleSubdomain(compact_id);
       });
 
       dock_widget->horizontalLayout->addWidget(button);

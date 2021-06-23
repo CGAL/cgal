@@ -2,6 +2,7 @@
 in vec4 color;
 in vec4 fP; 
 in vec3 fN; 
+flat in uint subdomain_out;
 uniform vec4 light_pos;  
 uniform vec4 light_diff; 
 uniform vec4 light_spec; 
@@ -18,6 +19,7 @@ uniform bool writing;
 uniform sampler2D sampler;
 uniform float alpha;
 uniform bool is_surface;
+uniform uvec4 is_visible_bitset;
 out  vec4 out_color;
 
 float depth(float z)
@@ -26,10 +28,16 @@ float depth(float z)
 }
 
 void main(void) {
+  uint i = subdomain_out/32u;
+  if(4u>>(subdomain_out%32u) != 1u)
+  {
+    out_color = vec4(1.0,0,0,1.0);
+    return;
+  }
   float d = depth(gl_FragCoord.z);
   float test = texture(sampler, vec2(gl_FragCoord.x/width, gl_FragCoord.y/height)).r;
   if(comparing && d <= test)
-  discard;
+    discard;
   if(writing)
     out_color = vec4(d,d,d,1.0);
   else

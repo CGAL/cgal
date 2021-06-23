@@ -16,7 +16,9 @@
 #include <QMouseEvent>
 
 #include <map>
+#include <unordered_map>
 #include <vector>
+#include <bitset>
 
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Three/Triangle_container.h>
@@ -39,6 +41,8 @@
 
 #include "Scene_polygon_soup_item.h"
 
+
+//TODO: Secure the case where there are more that 124 different subdomains and the case OpenGL is too old. (no shifting before 1.30)
 
 typedef CGAL::AABB_triangulation_3_cell_primitive<EPICK,
                                                   C3t3::Triangulation> Primitive;
@@ -93,13 +97,15 @@ public :
       std::vector<float> *p_normals,
       std::vector<float> *p_edges,
       std::vector<float> *p_colors,
-      std::vector<float> *p_bary)
+      std::vector<float> *p_bary,
+      std::vector<GLuint> *p_subdomain_ids)
   {
     vertices = p_vertices;
     normals = p_normals;
     edges = p_edges;
     colors = p_colors;
     barycenters = p_bary;
+    subdomain_ids = p_subdomain_ids;
   }
   void setColor(QColor c) Q_DECL_OVERRIDE
   {
@@ -127,6 +133,8 @@ public :
                              static_cast<int>(colors->size()*sizeof(float)));
     getTriangleContainer(0)->allocate(Tc::Facet_centers, barycenters->data(),
                                   static_cast<int>(barycenters->size()*sizeof(float)));
+    getTriangleContainer(0)->allocate(Tc::Subdomain_indices, subdomain_ids->data(),
+                                  static_cast<int>(subdomain_ids->size()*sizeof(GLuint)));
     getEdgeContainer(0)->allocate(Ec::Vertices, edges->data(),
                             static_cast<int>(edges->size()*sizeof(float)));
     setBuffersFilled(true);
@@ -284,6 +292,7 @@ private:
   mutable std::vector<float> *edges;
   mutable std::vector<float> *colors;
   mutable std::vector<float> *barycenters;
+  mutable std::vector<GLuint> *subdomain_ids;
   mutable bool is_fast;
   mutable QSlider* alphaSlider;
   mutable float m_alpha ;
@@ -454,6 +463,8 @@ struct Scene_c3t3_item_priv {
   typedef std::set<int> Indices;
   Indices surface_patch_indices_;
   Indices subdomain_indices_;
+  std::vector<int> compact_to_id;
+  std::unordered_map<int, int> id_to_compact;
   QSlider* tet_Slider;
 
   //!Allows OpenGL 2.0 context to get access to glDrawArraysInstanced.
@@ -473,6 +484,7 @@ struct Scene_c3t3_item_priv {
   mutable std::vector<float> positions_grid;
   mutable std::vector<float> positions_poly;
   mutable std::vector<float> positions_barycenter;
+  mutable std::vector<GLuint> inter_subdomain_ids;
 
   mutable std::vector<float> normals;
   mutable std::vector<float> f_colors;
@@ -482,6 +494,7 @@ struct Scene_c3t3_item_priv {
   mutable std::vector<float> ws_vertex;
   mutable std::vector<float> s_radius;
   mutable std::vector<float> s_center;
+  mutable std::vector<int> subdomain_ids;
   mutable bool computed_stats;
   mutable float max_edges_length;
   mutable float min_edges_length;
@@ -503,6 +516,7 @@ struct Scene_c3t3_item_priv {
   QVector<QColor> colors;
   QVector<QColor> colors_subdomains;
   boost::dynamic_bitset<> visible_subdomain;
+  std::bitset<31> bs[4] = {7,0,0,0};
 
   bool show_tetrahedra;
   bool is_aabb_tree_built;
@@ -556,7 +570,7 @@ void Scene_c3t3_item::common_constructor(bool is_surface)
 
   d->is_surface = is_surface;
   d->is_grid_shown = !is_surface;
-  d->show_tetrahedra = !is_surface;
+  d->show_tetrahedra = false; //!is_surface;
   d->last_intersection = !d->show_tetrahedra;
 
   setTriangleContainer(C3t3_faces, new Tc(Vi::PROGRAM_C3T3, false));
@@ -663,13 +677,19 @@ Scene_c3t3_item::c3t3_changed()
   d->surface_patch_indices_.clear();
   d->subdomain_indices_.clear();
   d->visible_subdomain.clear();
+  d->compact_to_id.clear();
+  d->id_to_compact.clear();
 
   int max = 0;
   for (C3t3::Cells_in_complex_iterator cit = this->c3t3().cells_in_complex_begin(),
     end = this->c3t3().cells_in_complex_end(); cit != end; ++cit)
   {
     max = (std::max)(max, cit->subdomain_index());
-    d->subdomain_indices_.insert(cit->subdomain_index());
+    if(d->subdomain_indices_.insert(cit->subdomain_index()).second)
+    {
+      d->compact_to_id.push_back(cit->subdomain_index());
+      d->id_to_compact[cit->subdomain_index()] = d->compact_to_id.size() -1;
+    }
   }
   const int max_subdomain_index = max;
   d->visible_subdomain.resize(max_subdomain_index+1, true);
@@ -977,6 +997,16 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     // it is only computed once and positions_poly is emptied at the end
     getTriangleContainer(C3t3_faces)->setAlpha(alpha());
     getTriangleContainer(C3t3_faces)->setIsSurface(d->is_surface);
+
+    GLuint visible_bitset[4] =
+    {
+      static_cast<GLuint>(d->bs[0].to_ulong()),
+      static_cast<GLuint>(d->bs[1].to_ulong()),
+      static_cast<GLuint>(d->bs[2].to_ulong()),
+      static_cast<GLuint>(d->bs[3].to_ulong())
+    };
+    std::cout<<visible_bitset[0]<<", "<<visible_bitset[1]<<", "<<visible_bitset[2]<<", "<<visible_bitset[3]<<std::endl;
+    viewer->getShaderProgram(getTriangleContainer(C3t3_faces)->getProgram())->setUniformValueArray("is_visible_bitset", visible_bitset, 4);
     getTriangleContainer(C3t3_faces)->draw(viewer, false);
     if(d->show_tetrahedra){
       ncthis->show_intersection(true);
@@ -1329,7 +1359,8 @@ void Scene_c3t3_item_priv::computeIntersection(const Primitive& cell)
   const Tr::Bare_point& pd = wp2p(ch->vertex(3)->point());
 
   CGAL::IO::Color color(UC(c.red()), UC(c.green()), UC(c.blue()));
-
+  for(int i=0; i< 4; ++i)
+    inter_subdomain_ids.push_back(id_to_compact[ch->subdomain_index()]);
   intersection->addTriangle(pb, pa, pc, color);
   intersection->addTriangle(pa, pb, pd, color);
   intersection->addTriangle(pa, pd, pc, color);
@@ -1359,6 +1390,7 @@ void Scene_c3t3_item_priv::computeIntersections(CGAL::Three::Viewer_interface* v
   f_colors.clear();
   positions_lines.clear();
   positions_barycenter.clear();
+  inter_subdomain_ids.clear();
   const Geom_traits::Plane_3& plane = item->plane(offset);
   tree.all_intersected_primitives(plane,
         boost::make_function_output_iterator(ComputeIntersection(*this)));
@@ -1445,7 +1477,7 @@ void Scene_c3t3_item_priv::computeElements()
   s_colors.resize(0);
   s_center.resize(0);
   s_radius.resize(0);
-
+  subdomain_ids.resize(0);
   //The grid
   {
     positions_grid.resize(0);
@@ -1496,6 +1528,7 @@ void Scene_c3t3_item_priv::computeElements()
       f_colors.push_back((float)color.redF());f_colors.push_back((float)color.greenF());f_colors.push_back((float)color.blueF());
       f_colors.push_back((float)color.redF());f_colors.push_back((float)color.greenF());f_colors.push_back((float)color.blueF());
       f_colors.push_back((float)color.redF());f_colors.push_back((float)color.greenF());f_colors.push_back((float)color.blueF());
+      subdomain_ids.push_back(id_to_compact[cell->subdomain_index()]);
       if ((index % 2 == 1) == c3t3.is_in_complex(cell))
         draw_triangle(pb, pa, pc);
       else draw_triangle(pa, pb, pc);
@@ -1626,7 +1659,8 @@ void Scene_c3t3_item::show_intersection(bool b)
                                   &d->normals,
                                   &d->positions_lines,
                                   &d->f_colors,
-                                  &d->positions_barycenter);
+                                  &d->positions_barycenter,
+                                  &d->inter_subdomain_ids);
     d->intersection->setName("Intersection tetrahedra");
     d->intersection->setRenderingMode(renderingMode());
     connect(d->intersection, SIGNAL(destroyed()), this, SLOT(reset_intersection_item()));
@@ -2079,6 +2113,11 @@ void Scene_c3t3_item::computeElements()const
         d->positions_barycenter.data(),
         static_cast<int>(d->positions_barycenter.size()*sizeof(float)));
 
+  getTriangleContainer(C3t3_faces)->allocate(
+        Tc::Subdomain_indices, d->subdomain_ids.data(),
+        static_cast<int>(d->subdomain_ids.size()*sizeof(GLuint)));
+
+
   d->positions_poly_size = d->positions_poly.size();
 
   getEdgeContainer(C3t3_edges)->allocate(
@@ -2145,20 +2184,17 @@ QColor Scene_c3t3_item::getSubdomainIndexColor(int i) const
   return d->colors_subdomains[i];
 }
 
-void Scene_c3t3_item::switchVisibleSubdomain(int i)
+void Scene_c3t3_item::switchVisibleSubdomain(int id)
 {
-  d->visible_subdomain[i] = !d->visible_subdomain[i];
-  \
-  //to remove
-  if(d->visible_subdomain[i])
-  {
-    std::cout<<"Subdomain "<<i<<"is visible"<<std::endl;
-  }
-  else
-  {
-    std::cout<<"Subdomain "<<i<<"is hidden"<<std::endl;
-  }
+  int real_id = d->compact_to_id[id] ;
+  d->visible_subdomain[real_id] = !d->visible_subdomain[real_id];
+
+  int i = id/32;
+  int j = id%32;
+
+  d->bs[i][j] = d->visible_subdomain[real_id];
 }
 
 #include "Scene_c3t3_item.moc"
+
 

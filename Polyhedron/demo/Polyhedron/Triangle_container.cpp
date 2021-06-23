@@ -79,6 +79,7 @@ void Triangle_container::initGL( Viewer_interface* viewer)
                          QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1));
         getVao(viewer)->addVbo(getVbo(Distances));
       }
+
     }
     else
     {
@@ -136,6 +137,15 @@ void Triangle_container::initGL( Viewer_interface* viewer)
         getVao(viewer)->addVbo(getVbo(Texture_map));
         if(!getTexture())
           setTexture(new Texture());
+      }
+      if(viewer->getShaderProgram(getProgram())->property("hasSubdomainIndicesValues").toBool())
+      {
+        if(!getVbo(Subdomain_indices))
+          setVbo(Subdomain_indices,
+                 new Vbo("subdomain_in",
+                         Vbo::GEOMETRY,
+                         QOpenGLBuffer::VertexBuffer, GL_UNSIGNED_INT, 0, 1));
+        getVao(viewer)->addVbo(getVbo(Subdomain_indices));
       }
     }
   }
