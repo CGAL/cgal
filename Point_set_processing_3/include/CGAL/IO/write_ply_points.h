@@ -178,7 +178,7 @@ template <typename PointRange,
        \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
        \cgalParamType{int}
        \cgalParamDefault{the precision of the stream `os`}
-       \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
+       \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
      \cgalParamNEnd
    \cgalNamedParamsEnd
 
@@ -250,7 +250,7 @@ bool write_PLY(std::ostream& os, const PointRange& points,
 
    \cgalNamedParamsBegin
      \cgalParamNBegin{use_binary_mode}
-       \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+       \cgalParamDescription{indicates whether data should be written in binary (`true`) or in \ascii (`false`)}
        \cgalParamType{Boolean}
        \cgalParamDefault{`true`}
      \cgalParamNEnd
@@ -277,7 +277,7 @@ bool write_PLY(std::ostream& os, const PointRange& points,
        \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
        \cgalParamType{int}
        \cgalParamDefault{`6`}
-       \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
+       \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
      \cgalParamNEnd
    \cgalNamedParamsEnd
 

@@ -55,7 +55,7 @@ IOStreams.  The basic task of such an operator is to produce a
 representation of an object that can be written as a sequence of
 characters on devices as a console, a file, or a pipe. The enum `Mode` distinguish between three different printing formats.
 
-In `ASCII` mode, numbers
+In \ascii mode, numbers
 e.g. the coordinates of a point or
 the coefficients of a line, are written
 in a machine independent format.
@@ -68,7 +68,7 @@ object is written, as well as the data defining the object. For example
 for a point at the origin with %Cartesian double coordinates, the output
 would be `PointC2(0.0, 0.0)`.  At the moment \cgal does not
 provide input operations for pretty printed data. By default a stream
-is in <span class="textsc">Ascii</span> mode.
+is in \ascii mode.
 
 \sa `CGAL::IO::set_mode()`
 \sa `CGAL::IO::set_ascii_mode()`
@@ -458,7 +458,7 @@ inline Mode get_mode(std::ios& s)
 /*!
 \ingroup PkgStreamSupportRef
 
-sets the mode of the %IO stream `s` to be the `ASCII` mode.
+sets the mode of the %IO stream `s` to be the \ascii mode.
 Returns the previous mode of `s`.
 
 \link PkgStreamSupportEnumRef `CGAL::IO::Mode`\endlink
@@ -561,7 +561,7 @@ inline bool is_pretty(std::ios& s) { return s.iword(Static::get_mode()) == PRETT
 /*!
 \ingroup PkgStreamSupportRef
 
-checks if the %IO stream `s` is in `ASCII` mode.
+checks if the %IO stream `s` is in \ascii mode.
 
 \link PkgStreamSupportEnumRef `CGAL::IO::Mode`\endlink
 \sa `CGAL::IO::set_mode()`
@@ -684,7 +684,7 @@ inline std::istream &operator>>(std::istream &is, Color& col)
       break;
     default:
       std::cerr << "" << std::endl;
-      std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+      std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
       break;
   }
 

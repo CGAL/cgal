@@ -188,7 +188,7 @@ bool read_STL(std::istream& is, PointRange& points, TriangleRange& facets,
  *
  * \brief reads the content of a file named `fname` into `points` and `facets`, using the \ref IOStreamSTL.
  *
- *  If `use_binary_mode` is `true`, but the reading fails, ASCII reading will be automatically tested.
+ *  If `use_binary_mode` is `true`, but the reading fails, \ascii reading will be automatically tested.
  * \attention The polygon soup is not cleared, and the data from the file are appended.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
@@ -204,7 +204,7 @@ bool read_STL(std::istream& is, PointRange& points, TriangleRange& facets,
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{use_binary_mode}
- *     \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
+ *     \cgalParamDescription{indicates whether data should be read in binary (`true`) or in \ascii (`false`)}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
@@ -287,7 +287,7 @@ bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facet
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
  *     \cgalParamDefault{the precision of the stream `os`}
- *     \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
+ *     \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -398,7 +398,7 @@ bool write_STL(std::ostream& os, const PointRange& points, const TriangleRange& 
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{use_binary_mode}
- *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+ *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in \ascii (`false`)}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
@@ -407,7 +407,7 @@ bool write_STL(std::ostream& os, const PointRange& points, const TriangleRange& 
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
  *     \cgalParamDefault{`6`}
- *     \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
+ *     \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
