@@ -7,7 +7,7 @@ namespace CGAL {
 `Arr_extended_dcel_text_formatter` defines the format of an arrangement in an input or output stream
 (typically a file stream), thus enabling reading and writing an `Arrangement`
 instance using a simple text format. The `Arrangement` class should be
-instantiated with a <span class="textsc">Dcel</span> class which in turn instantiates the
+instantiated with a \dcel class which in turn instantiates the
 `Arr_extended_dcel` template with the `VertexData`, `HalfedgeData` and
 `FaceData` types.
 The formatter supports reading and writing the data objects attached to the
@@ -41,7 +41,7 @@ namespace CGAL {
 `Arr_face_extended_text_formatter` defines the format of an arrangement in an input or output stream
 (typically a file stream), thus enabling reading and writing an `Arrangement`
 instance using a simple text format. The `Arrangement` class should be
-instantiated with a <span class="textsc">Dcel</span> class which in turn instantiates the
+instantiated with a \dcel class which in turn instantiates the
 `Arr_face_extended_dcel` template with a `FaceData` type.
 The formatter supports reading and writing the data objects attached to the
 arrangement faces as well.
@@ -73,7 +73,7 @@ namespace CGAL {
 `Arr_text_formatter` defines the format of an arrangement in an input or output stream
 (typically a file stream), thus enabling reading and writing an `Arrangement`
 instance using a simple text format. The arrangement is assumed to store no auxiliary
-data with its <span class="textsc">Dcel</span> records (and if there are such records they will not be written
+data with its \dcel records (and if there are such records they will not be written
 or read by the formatter).
 
 The `Arr_text_formatter` class assumes that the nested `Point_2` and the `Curve_2` types

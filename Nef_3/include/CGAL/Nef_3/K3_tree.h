@@ -22,6 +22,7 @@
 #include <CGAL/Nef_3/quotient_coordinates_to_homogeneous_point.h>
 #include <CGAL/Lazy_kernel.h>
 #include <CGAL/Cartesian.h>
+#include <boost/container/deque.hpp>
 
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
 #include <CGAL/Constrained_triangulation_2.h>
@@ -257,9 +258,6 @@ typedef typename Traits::Halffacet_handle Halffacet_handle;
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
 typedef typename Traits::Halffacet_triangle_handle Halffacet_triangle_handle;
 #endif
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-typedef typename Traits::Partial_facet Partial_facet;
-#endif
 typedef typename Traits::Object_handle Object_handle;
 typedef std::vector<Object_handle> Object_list;
 typedef typename Object_list::const_iterator Object_const_iterator;
@@ -288,31 +286,33 @@ typedef Smaller_than<
   Vertex_handle,
   int> Smaller_;
 
-class Node {
+  class Node  {
   friend class K3_tree<Traits>;
 public:
-  Node( Node* p, Node* l, Node* r, Plane_3 pl, const Object_list& O) :
+    typedef Node* Node_handle;
+
+  Node( Node_handle p, Node_handle l, Node_handle r, Plane_3 pl, const Object_list& O) :
     parent_node(p), left_node(l), right_node(r), splitting_plane(pl),
         object_list(O) {
-    if(l == 0)
+    if(l == nullptr)
       point_on_plane = Point_3();
     else
       point_on_plane = pl.point();
   }
   bool is_leaf() const {
-    CGAL_assertion( (left_node != 0 && right_node != 0) ||
-                    (left_node == 0 && right_node == 0));
-    return (left_node == 0 && right_node == 0);
+    CGAL_assertion( (left_node != nullptr && right_node != nullptr) ||
+                    (left_node == nullptr && right_node == nullptr));
+    return (left_node == nullptr && right_node == nullptr);
   }
-  const Node* parent() const { return parent_node; }
-  const Node* left() const { return left_node; }
-  const Node* right() const { return right_node; }
+  Node_handle parent() const { return parent_node; }
+  Node_handle left() const { return left_node; }
+  Node_handle right() const { return right_node; }
   const Plane_3& plane() const { return splitting_plane; }
   const Object_list& objects() const { return object_list; }
 
   void transform(const Aff_transformation_3& t) {
-    if(left_node != 0) {
-        CGAL_assertion(right_node != 0);
+    if(left_node != nullptr) {
+        CGAL_assertion(right_node != nullptr);
         left_node->transform(t);
          right_node->transform(t);
           splitting_plane = splitting_plane.transform(t);
@@ -332,9 +332,9 @@ public:
   std::size_t bytes() {
     // bytes used for the Kd-tree
     std::size_t s = sizeof(Node);
-    if(left_node != 0)
+    if(left_node != nullptr)
       s += left_node->bytes();
-    if(right_node != 0)
+    if(right_node != nullptr)
       s += right_node->bytes();
     typename Object_list::iterator o;
     for(o = object_list.begin(); o != object_list.end(); ++o)
@@ -371,16 +371,16 @@ public:
       }
     }
 
-    if(left_node != 0)
+    if(left_node != nullptr)
       s += left_node->leafs(mask, lower_limit);
-    if(right_node != 0)
+    if(right_node != nullptr)
       s += right_node->leafs(mask, lower_limit);
     return s;
   }
 
   template<typename Depth>
   void add_facet(Halffacet_handle f, Depth depth) {
-    if(left_node == 0) {
+    if(left_node == nullptr) {
       object_list.push_back(make_object(f));
       return;
     }
@@ -395,7 +395,7 @@ public:
 
   template<typename Depth>
   void add_edge(Halfedge_handle e, Depth depth) {
-    if(left_node == 0) {
+    if(left_node == nullptr) {
       object_list.push_back(make_object(e));
       return;
     }
@@ -410,7 +410,7 @@ public:
 
   template<typename Depth>
   void add_vertex(Vertex_handle v, Depth depth) {
-    if(left_node == 0) {
+    if(left_node == nullptr) {
       object_list.push_back(make_object(v));
       return;
     }
@@ -425,8 +425,8 @@ public:
 
 
 friend std::ostream& operator<<
-  (std::ostream& os, const Node* node) {
-  CGAL_assertion( node != 0);
+  (std::ostream& os, const Node_handle node) {
+  CGAL_assertion( node != nullptr);
   if( node->is_leaf())
     os <<  node->objects().size();
   else {
@@ -441,8 +441,8 @@ friend std::ostream& operator<<
   return os;
 }
 
-
-~Node() CGAL_NOEXCEPT(CGAL_NO_ASSERTIONS_BOOL)
+    /*
+~Node() noexcept(!CGAL_ASSERTIONS_ENABLED)
 {
   CGAL_NEF_TRACEN("~Node: deleting node...");
   CGAL_destructor_assertion_catch(
@@ -452,16 +452,21 @@ friend std::ostream& operator<<
     }
   );
 }
-
+    */
 private:
-  Node* parent_node;
-  Node* left_node;
-  Node* right_node;
+
+
+
+  Node_handle parent_node;
+  Node_handle left_node;
+  Node_handle right_node;
   Plane_3 splitting_plane;
   Point_3 point_on_plane;
   Object_list object_list;
 };
 
+  typedef boost::container::deque<Node> Node_range;
+  typedef Node* Node_handle;
 
 
 public:
@@ -471,7 +476,7 @@ public:
     class Iterator;
   protected:
     Traits traits;
-    Node *root_node;
+    Node_handle root_node;
     Segment_3 segment;
     bool initialized;
   public:
@@ -498,32 +503,32 @@ public:
     {
       friend class K3_tree;
       typedef Iterator Self;
-      typedef std::pair< const Node*, Segment_3> Candidate;
+      typedef std::pair< const Node_handle, Segment_3> Candidate;
     protected:
       std::list<Candidate> S;
-      const Node* node;
+      Node_handle node;
       Traits traits;
       CGAL_assertion_code( Segment_3 prev_segment;)
       CGAL_assertion_code( bool first_segment;)
     public:
-      Iterator() : node(0) {}
-      Iterator( const Node* root, const Segment_3& s) {
+      Iterator() : node() {}
+      Iterator( const Node_handle root, const Segment_3& s) {
         CGAL_assertion_code( first_segment = true);
         S.push_front( Candidate( root, s));
         ++(*this); // place the interator in the first intersected cell
       }
       Iterator( const Self& i) : S(i.S), node(i.node) {}
       const Object_list& operator*() const {
-        CGAL_assertion( node != 0);
+        CGAL_assertion( node != nullptr);
         return node->objects();
       }
       Self& operator++() {
 
 if( S.empty())
-  node = 0; // end of the iterator
+  node = nullptr; // end of the iterator
 else {
   while( !S.empty()) {
-    const Node* n = S.front().first;
+    Node_handle n = S.front().first;
     Segment_3 s = S.front().second;
     S.pop_front();
     if( n->is_leaf()) {
@@ -575,13 +580,13 @@ else {
         return !(*this == i);
       }
     private:
-      const Node* get_node() const {
-        CGAL_assertion( node != 0);
+      Node_handle get_node() const {
+        CGAL_assertion( node != nullptr);
         return node;
       }
 
 inline
-const Node* get_child_by_side( const Node* node, Oriented_side side) {
+Node_handle get_child_by_side( const Node_handle node, Oriented_side side) {
   CGAL_assertion( node != nullptr);
   CGAL_assertion( side != ON_ORIENTED_BOUNDARY);
   if( side == ON_NEGATIVE_SIDE) {
@@ -651,7 +656,7 @@ class Objects_around_box {
  public:
   class Iterator;
  protected:
-  Node *root_node;
+  Node_handle root_node;
   Bounding_box_3 box;
   bool initialized;
 
@@ -680,16 +685,16 @@ class Objects_around_box {
 
     friend class K3_tree;
     typedef Iterator Self;
-    typedef std::pair< const Node*, Bounding_box_3> Candidate;
+    typedef std::pair< const Node_handle, Bounding_box_3> Candidate;
 
   protected:
     std::list<Candidate> S;
-    const Node* node;
+    const Node_handle node;
 
   public:
-    Iterator() : node(0) {}
+    Iterator() : node(nullptr) {}
 
-    Iterator( const Node* root, const Bounding_box_3& s) {
+    Iterator( const Node_handle root, const Bounding_box_3& s) {
       S.push_front( Candidate( root, s));
       ++(*this); // place the interator in the first intersected cell
     }
@@ -697,17 +702,17 @@ class Objects_around_box {
     Iterator( const Self& i) : S(i.S), node(i.node) {}
 
     const Object_list& operator*() const {
-      CGAL_assertion( node != 0);
+      CGAL_assertion( node != nullptr);
       return node->objects();
     }
 
     Self& operator++() {
 
       if(S.empty())
-        node = 0; // end of the iterator
+        node = nullptr; // end of the iterator
       else {
         while( !S.empty()) {
-          const Node* n = S.front().first;
+          const Node_handle n = S.front().first;
           Bounding_box_3 b = S.front().second;
           S.pop_front();
           if( n->is_leaf()) {
@@ -742,13 +747,13 @@ class Objects_around_box {
     }
 
   private:
-    const Node* get_node() const {
-      CGAL_assertion( node != 0);
+    Node_handle get_node() const {
+      CGAL_assertion( node != nullptr);
       return node;
     }
 
     inline
-    const Node* get_child_by_side( const Node* node, Oriented_side side) {
+    Node_handle get_child_by_side( const Node_handle node, Oriented_side side) {
       CGAL_assertion( node != nullptr);
       CGAL_assertion( side != ON_ORIENTED_BOUNDARY);
       if( side == ON_NEGATIVE_SIDE) {
@@ -765,7 +770,11 @@ private:
   bool reference_counted;
 #endif
   Traits traits;
-  Node* root;
+
+
+  Node_handle root;
+  boost::container::deque<Node> nodes;
+
   int max_depth;
   Bounding_box_3 bounding_box;
 public:
@@ -887,9 +896,6 @@ typename Object_list::difference_type n_vertices = std::distance(objects.begin()
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
         Halffacet_triangle_handle t;
 #endif
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-        Partial_facet pf;
-#endif
         if( CGAL::assign( v, *o)) {
           if( !v_mark[v]) {
             O.push_back(*o);
@@ -915,11 +921,6 @@ typename Object_list::difference_type n_vertices = std::distance(objects.begin()
             O.push_back(*o);
             t_mark[tr] = true;
           }
-        }
-#endif
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-        else if(CGAL::assign(pf, *o)) {
-          CGAL_error_msg( "wrong type");
         }
 #endif
         else
@@ -951,8 +952,8 @@ typename Object_list::difference_type n_vertices = std::distance(objects.begin()
   public:
     BBox_updater() {}
 
-    void pre_visit(const Node*) {}
-    void post_visit(const Node* n) {
+    void pre_visit(const Node_handle) {}
+    void post_visit(const Node_handle n) {
       typename Object_list::const_iterator o;
       for( o = n->objects().begin();
            o != n->objects().end(); ++o) {
@@ -969,9 +970,9 @@ typename Object_list::difference_type n_vertices = std::distance(objects.begin()
   };
 
   template <typename Visitor>
-  void visit_k3tree(const Node* current, Visitor& V) const {
+  void visit_k3tree(const Node_handle current, Visitor& V) const {
     V.pre_visit(current);
-    if(current->left() != 0) {
+    if(current->left() != nullptr) {
       visit_k3tree(current->left(), V);
       visit_k3tree(current->right(), V);
     }
@@ -982,9 +983,10 @@ typename Object_list::difference_type n_vertices = std::distance(objects.begin()
   size_t leafs(int mask = 255, int lower_limit=0) { return root->leafs(mask, lower_limit);}
 
   void transform(const Aff_transformation_3& t) {
-    // TODO: Bounding box must be updated/transformed, too
-    if(root != 0)
-      root->transform(t);
+    if(root == nullptr){
+      return;
+    }
+    root->transform(t);
 
     BBox_updater bbup;
     visit_k3tree(root, bbup);
@@ -996,7 +998,7 @@ typename Object_list::difference_type n_vertices = std::distance(objects.begin()
 template <typename T>
 friend std::ostream& operator<<
 (std::ostream& os, const K3_tree<T>& k3_tree) {
-  os << (const Node*)k3_tree.root; // no default conversion to const Node*?
+  os << (const Node_handle)k3_tree.root; // no default conversion to const Node_handle?
   return os;
 }
 #endif
@@ -1010,10 +1012,6 @@ std::string dump_object_list( const Object_list& O, int level = 0) {
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
   typename Object_list::size_type t_count = 0;
   Halffacet_triangle_handle t;
-#endif
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-  typename Object_list::size_type p_count = 0;
-  Partial_facet pf;
 #endif
   for( o = O.begin(); o != O.end(); ++o) {
     if( CGAL::assign( v, *o)) {
@@ -1035,21 +1033,12 @@ std::string dump_object_list( const Object_list& O, int level = 0) {
       ++t_count;
     }
 #endif
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-    else if( CGAL::assign(pf, *o)) {
-      if( level) pf.debug();
-      ++p_count;
-    }
-#endif
     else
       CGAL_error_msg( "wrong handle");
   }
   os << v_count << "v " << e_count << "e " << f_count << "f ";
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
   os  << t_count << "t ";
-#endif
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-  os  << p_count << "p ";
 #endif
   return os.str();
  }
@@ -1060,11 +1049,11 @@ bool update( Unique_hash_map<Vertex_handle, bool>& V,
   return update( root, V, E, F);
 }
 
-bool update( Node* node,
+bool update( Node_handle node,
              Unique_hash_map<Vertex_handle, bool>& V,
              Unique_hash_map<Halfedge_handle, bool>& E,
              Unique_hash_map<Halffacet_handle, bool>& F) {
-  CGAL_assertion( node != 0);
+  CGAL_assertion( node != nullptr);
   if( node->is_leaf()) {
     bool updated = false;
     Object_list* O = &node->object_list;
@@ -1105,26 +1094,28 @@ bool update( Node* node,
   CGAL_NEF_TRACEN("k3_tree::update(): right node updated? "<<right_updated);
   return (left_updated || right_updated);
 }
-
-~K3_tree() CGAL_NOEXCEPT(CGAL_NO_ASSERTIONS_BOOL)
+  /*
+~K3_tree() noexcept(!CGAL_ASSERTIONS_ENABLED)
 {
   CGAL_NEF_TRACEN("~K3_tree: deleting root...");
   CGAL_destructor_assertion_catch(
     delete root;
   );
 }
+  */
 
 private:
 
 template <typename Depth>
-Node* build_kdtree(Object_list& O, Object_iterator v_end,
-                   Depth depth, Node* parent=0, int non_efective_splits=0) {
+Node_handle build_kdtree(Object_list& O, Object_iterator v_end,
+                   Depth depth, Node_handle parent=nullptr, int non_efective_splits=0) {
   CGAL_precondition( depth >= 0);
   CGAL_NEF_TRACEN( "build_kdtree: "<<O.size()<<" objects, "<<"depth "<<depth);
   CGAL_NEF_TRACEN( "build_kdtree: "<<dump_object_list(O,1));
   if( !can_set_be_divided(O.begin(), v_end, depth)) {
     CGAL_NEF_TRACEN("build_kdtree: set cannot be divided");
-    return new Node( parent, 0, 0, Plane_3(), O);
+    nodes.push_back(Node( parent, nullptr, nullptr, Plane_3(), O));
+    return &(nodes.back());
   }
   Object_iterator median;
   Plane_3 partition_plane = construct_splitting_plane(O.begin(), v_end, median, depth);
@@ -1166,7 +1157,8 @@ Node* build_kdtree(Object_list& O, Object_iterator v_end,
   if( !splitted) {
     CGAL_NEF_TRACEN("build_kdtree: splitting plane not found");
     //    if(depth > max_depth)
-    return new Node( parent, 0, 0, Plane_3(), O);
+    nodes.push_back(Node( parent, nullptr, nullptr, Plane_3(), O));
+    return &(nodes.back());
   } else {
     CGAL_NEF_TRACEN("Sizes " << O1.size() << ", " << O2.size() << ", " << O.size());
     CGAL_assertion( O1.size() <= O.size() && O2.size() <= O.size());
@@ -1179,9 +1171,11 @@ Node* build_kdtree(Object_list& O, Object_iterator v_end,
     non_efective_splits = 0;
   if( non_efective_splits > 2) {
     CGAL_NEF_TRACEN("build_kdtree: non efective splits reached maximum");
-    return new Node( parent, 0, 0, Plane_3(), O);
+    nodes.push_back(Node( parent, nullptr, nullptr, Plane_3(), O));
+    return &(nodes.back());
   }
-  Node *node = new Node( parent, 0, 0, partition_plane, Object_list());
+  nodes.push_back(Node( parent, nullptr, nullptr, partition_plane, Object_list()));
+  Node_handle node = &(nodes.back());
   node->left_node = build_kdtree( O1, O1.begin()+v_end1, depth + 1, node, non_efective_splits);
   node->right_node = build_kdtree( O2, O2.begin()+v_end2, depth + 1, node, non_efective_splits);
   return node;
@@ -1206,19 +1200,6 @@ bool classify_objects(Object_iterator start, Object_iterator end,
   Point_3 point_on_plane(partition_plane.point());
 
   for( o = start; o != end; ++o) {
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-    Partial_facet pf;
-    if(CGAL::assign(pf, *o)) {
-      Partial_facet pfn,pfp;
-      if(pf.divide(partition_plane, pfn, pfp)) {
-        *o1 = make_object(pfn);
-        ++o1;
-        *o2 = make_object(pfp);
-        ++o2;
-        continue;
-      }
-    }
-#endif
     Oriented_side side = sop( point_on_plane, *o, depth);
     if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY) {
       *o1 = *o;
@@ -1258,8 +1239,8 @@ Plane_3 construct_splitting_plane(Object_iterator start, Object_iterator end,
   return Plane_3();
 }
 
-const Node *locate_cell_containing( const Point_3& p, const Node* node) const {
-  CGAL_precondition( node != 0);
+Node_handle locate_cell_containing( const Point_3& p, const Node_handle node) const {
+  CGAL_precondition( node != nullptr);
   if( node->is_leaf())
     return node;
   else {
@@ -1273,13 +1254,13 @@ const Node *locate_cell_containing( const Point_3& p, const Node* node) const {
   }
 }
 
-const Object_list& locate( const Point_3& p, const Node* node) const {
-  CGAL_precondition( node != 0);
+const Object_list& locate( const Point_3& p, const Node_handle node) const {
+  CGAL_precondition( node != nullptr);
   return locate_cell_containing( p, node)->objects();
 }
 
-bool is_point_on_cell( const Point_3& p, const Node* target, const Node* current) const {
-  CGAL_precondition( target != 0 && current != 0);
+bool is_point_on_cell( const Point_3& p, const Node_handle target, const Node_handle current) const {
+  CGAL_precondition( target != nullptr && current != nullptr);
   if( current->is_leaf())
     return (current == target);
   Oriented_side side = current->plane().oriented_side(p);

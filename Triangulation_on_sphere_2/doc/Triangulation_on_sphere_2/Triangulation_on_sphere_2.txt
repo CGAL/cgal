@@ -1,0 +1,241 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_2D_Triangulations_on_sphere
+
+\cgalAutoToc
+\author Mael Rouxel-Labbé, Monique Teillaud, and Claudia Werner
+
+\cgalFigureAnchor{fig_TOS2_header}
+<center>
+<img src="header.png" style="max-width:70%;"/>
+</center>
+
+This chapter describes two-dimensional triangulations on the sphere of \cgal. It is organized as follows:
+<ul>
+  <li>Section \ref Section_2D_ToS_Definitions introduces the main definitions about triangulations on the sphere.</li>
+  <li>Section \ref Section_2D_ToS_Implementation details the way two-dimensional triangulations on the sphere
+      are implemented and represented in \cgal.</li>
+  <li>Section \ref Section_2D_ToS_Examples lists a few basic examples to illustrate the capabilities
+      of the package.</li>
+</ul>
+
+\section Section_2D_ToS_Definitions Definitions
+
+Denote by \f$ \mathbb{S(c, r)}\f$ the two-dimensional sphere embedded in the Euclidean space \f$ \mathbb{R}^3\f$,
+with center `c` and radius `r`, that is
+\f$ \mathbb{S(c, r)} = \left\{ x \in \mathbf{R}^3 : \left\| x - c \right\| = r \right\} \f$.
+When the parameters `c` and `r` are not important, they will be omitted and \f$ \mathbb{S}\f$
+will be used directly.
+Given a set \f$ \mathcal{P}\f$ of points on \f$ \mathbb{S(c, r)}\f$, a <em>two-dimension triangulation</em>
+of \f$ \mathcal{P}\f$ can be described as a two-dimensional simplicial complex that is pure,
+connected, and without singularity whose vertices are exactly the points in \f$ \mathcal{P}\f$
+(see the complete definition in the package
+\ref Section_2D_Triangulations_Definitions "2D Triangulations").
+
+In \f$ \mathbb{R}^2\f$, a <em>Delaunay</em> triangulation is a two-dimension triangulation
+that satisfies the <em>empty circle property</em> (also called <em>Delaunay property</em>):
+the circumscribing circle of any facet of the triangulation contains no point in its interior.
+This definition naturally extends to the two-dimensional sphere, as illustrated in the figure below.
+
+\cgalFigureBegin{fig_del_def, delaunay_on_sphere_def.svg}
+Delaunay property: the circumscribing circle (in green) on the sphere
+of the Delaunay face \f$ p_1 p_2 p_3\f$ is empty.
+\cgalFigureEnd
+
+A particularity of Delaunay triangulations on \f$ \mathbb{S}\f$ is that the Delaunay property
+test can be reduced to a simple orientation test in the three-dimensional space: indeed, the circumscribing
+circle of a Delaunay face is the intersection of the plane passing through the three vertices
+of the face with \f$ \mathbb{S}\f$, and determining whether a fourth point `q` is within the
+circumscribing circle or not is equivalent to checking whether `q` is above or below the said supporting plane.
+
+\subsection Section_2D_ToS_Imprecision Representation of a Point on the Sphere
+
+The theoretical definition of Delaunay triangulations in the previous section assumes that points
+in \f$ \mathcal{P}\f$ lie exactly on the sphere. In a real world however, one usually does not
+manipulate points that lie exactly on \f$ \mathbb{S}\f$ because the chosen number type
+is not able to represent square roots exactly, such as \f$ \mathtt{float}\f$, or \f$ \mathtt{double}\f$.
+Some specific number types are able to represent exactly all points on the sphere, for example
+the class `CORE::Expr`, but this comes with the drawback of a substantially higher computational cost.
+
+This lack of exact representation is an obvious problem as the interpretation of the Delaunay property
+as an orientation test does not stand if points do not lie in a convex position.
+
+This gap between the theoretical and the practical settings was addressed by Caroli et al. \cgalCite{cgal:ccplr-redtp-10} :
+the solution is to use a <em>regular</em> triangulation, which is a generalization of the Delaunay triangulation
+to sets of <em>weighted points</em>
+(see \ref Section_2D_Triangulations_Regular "2D Regular Triangulations" for more information).
+A weighted point \f$(p,w)\f$ of \f$ \mathbb{R}^2\f$ can naturally be seen as as a circle with center \f$ p\f$
+and radius \f$ r\f$ such that \f$ r^2 = w\f$ and similarly to Delaunay triangulations and the definition
+of regular triangulations in \f$ \mathbb{R}^2\f$ can be naturally extended to circles on \f$ \mathbb{S}\f$.
+Given a set of points \f$ \mathcal{P}_3\f$ living in \f$ \mathbb{R}^3\f$, Caroli et al. compute
+a regular triangulation of the set of weighted points \f$ \mathcal{P}_w\f$ where the weighted
+points of \f$ \mathcal{P}_w\f$ are the projection of the points of \f$ \mathcal{P}_3\f$ onto \f$ \mathbb{S}\f$,
+and whose weights are based on the projection distance. Furthermore, they show that if the Euclidean distance
+between the points of \f$ \mathcal{P}_w\f$ is sufficiently large, and if the points are sufficiently
+close to the sphere, then the Delaunay triangulation of the Delaunay triangulation of \f$ \mathcal{P}_3\f$
+is exactly the regular triangulation of \f$ \mathcal{P}_w\f$.
+As a consequence is that one can manipulate 3D points that are not exactly on the sphere,
+and it possible to build the Delaunay triangulation without taking the weights into account, as long as the
+points are sufficiently far from each other.
+
+Caroli et al. et provide bounds on this separation criterion for the case of the \f$ \mathtt{double}\f$
+number type: two points must be at least \f$ 2^{-25}r\f$ apart. This is a condition that
+is generally satisfied for most inputs: if \f$ r\f$ were for example the radius of the Earth,
+roughly 6300 kms, then the point separation requirement would be of the order of 1 meter.
+
+\section Section_2D_ToS_Implementation Implementation
+
+The main class of this package is the class `CGAL::Delaunay_triangulation_on_sphere_2`;
+it represents a Delaunay triangulation on the sphere, and provides insertion and removal of vertices,
+as well as tools to draw the triangulation and its dual, the Voronoi diagram.
+The base of `CGAL::Delaunay_triangulation_on_sphere_2` is the class `CGAL::Triangulation_on_sphere_2`.
+It represents a triangulation on the sphere, but does <em>not</em> support insertion or removal
+of vertices. Both classes are built on top of a data structure called the triangulation data structure.
+The triangulation data structure can be thought of as a container for the faces and vertices
+of the triangulation. This data structure also takes care of all the combinatorial aspects of the triangulation.
+
+These triangulation classes are intentionally very similar to `CGAL::Delaunay_triangulation_2` and
+`CGAL::Triangulation_2` as both classes represent triangulations of a 2-manifold domain without boundary.
+As such, many details about the implementation are not repeated here, and complementary information
+can be found in the Sections \ref Section_2D_Triangulations_Representation,
+\ref Section_2D_Triangulations_Software_Design, and \ref Section_2D_Triangulations_Basic
+of the package \ref PkgTriangulation2.
+
+However, a significant departure from Euclidean 2D triangulations is the following: since
+the triangulation data structure represents a 2-manifold without boundary, it is necessary
+for 2D triangulations to introduce so-called <i>infinite faces</i> to complete the "real"
+triangulation (see \ref Triangulation_2TheSetofFaces).
+On the sphere, this trick is not necessary as the triangulation itself is already a 2-manifold
+without boundary.
+
+\subsection Section_2D_ToS_Ghost Ghost Faces
+
+There is an exception to the previous statement: in degenerate configurations where all points
+lie on the same hemisphere, the Delaunay triangulation on the sphere theoretically has a border.
+Internally however, the triangulation data structure must remain a 2-manifold at all time.
+To ensure this property, fictitious faces referred to as <i>ghost faces</i> are added.
+These faces are characterized by the fact that the center of the sphere does not (strictly) lie
+on the positive side of the supporting plane of the face. Conversely, faces that
+are not ghost faces are called <em>solid faces</em>, and edges of such faces are <em>solid edges</em>.
+
+\cgalFigureAnchor{fig_TOS2_ghost}
+<center>
+<img src="ghost_faces.png" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{fig_TOS2_ghost}
+Solid (blue) and ghost (orange) faces of a Delaunay triangulation on the sphere. View from above (leftmost),
+and below (middle and rightmost).
+\cgalFigureCaptionEnd
+
+\subsection Section_2D_ToS_Traits Traits Classes and Choice of Kernel
+
+Two traits classes are offered with this package as models of the concept `DelaunayTriangulationOnSphereTraits_2`:
+<ul>
+  <li>`CGAL::Delaunay_triangulation_on_sphere_traits_2`: This is the simplest possible traits,
+      which represents points on sphere directly as 3D points. If its kernel template parameter
+      cannot represent all points on the sphere exactly, it employs the solution
+      described in Section \ref Section_2D_ToS_Imprecision to determine whether a point
+      should be considered on the sphere, or too close to an existing vertex.
+  </li>
+  <li>`CGAL::Projection_on_sphere_traits_3`: This traits class utilizes a custom internal point type
+      for points on the sphere: given a point `p` in 3D space, this traits class manipulates directly
+      its projection on the sphere (that is, the intersection of the sphere and the segment with endpoints
+      `p` and the center of the sphere). Consequently, all points to be inserted are on the sphere.
+      This traits enable manipulating points that are not on the sphere, but whose triangulation
+      on the sphere is still interesting, such as geographical coordinates with altitude.
+  </li>
+</ul>
+
+Both these classes are templated by a kernel. The choice of this kernel is important to ensure
+a correct result: for the construction of triangulations to be safe, the kernel should provide
+exact predicates (for example, `CGAL::Exact_predicates_inexact_constructions_kernel`). In addition,
+some auxiliary functions such as those used in the construction of the Voronoi diagram require creating
+new geometric points; as such, a kernel offering an exact representation of points on the sphere
+and exact constructions (for example, `CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt`)
+should be used if one wants to avoid otherwise inevitable numerical approximations.
+
+\subsection Section_2D_ToS_Lowdim Dimension of a Triangulation on the Sphere
+
+Mostly by convention with other triangulations, the dimension of a triangulation on the sphere
+is defined as follows:
+<ul>
+  <li>`-2`, if the triangulation is empty;</li>
+  <li>`-1`, if the triangulation contains a single vertex;</li>
+  <li>`0`, if the triangulation contains exactly two vertices;</li>
+  <li>`1`, if the triangulation contains at least three coplanar vertices (which do not necessarily
+           lie on a great circle);</li>
+  <li>`2`, if the triangulation contains at least four non-coplanar vertices.</li>
+</ul>
+
+Note that a triangulation of dimension `1` is just a polygon drawn on a circle. The polygon is
+not triangulated itself. Thus the triangulation of dimension `1` consists of a planar polygon and
+has no faces.
+
+\subsection Section_2D_ToS_Embedding Geometric Embeddings
+
+The descriptions of Delaunay (and regular) triangulations over \f$ \mathbb{S}\f$ have so far been mostly
+combinatorial. The question of the geometrical embedding of the simplices of the triangulation
+is also interesting. The two natural embedding of edges and faces of a triangulation of a set
+of points on \f$ \mathbb{S}\f$ are to use either <em>straight</em> simplex, that is using
+three-dimensional segments and triangles for the edges and faces of the triangulation, or
+to use a <em>curved</em> embedding, where the edges are arc segments of great circles over \f$ \mathbb{S}\f$.
+In the latter choice, the geometrical embedding of the face is defined implicitely by its three edges.
+
+Both choices are available to users, for example using either `Triangulation_on_sphere_2::segment()`
+or `Triangulation_on_sphere_2::segment_on_sphere()`. Similar choices are available in the construction
+of the dual, the Voronoi diagram.
+
+\cgalFigureAnchor{fig_TOS2_embedding}
+<center>
+<img src="geometric_embedding.png" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{fig_TOS2_embedding}
+Curved (left) and straight (right) geometric embeddings of the edges of the Delaunay triangulation
+of the French (including overseas territories) post offices.
+\cgalFigureCaptionEnd
+
+\section Section_2D_ToS_Examples Examples
+
+\subsection Section_2D_ToS_Ex_Basic Basic Example
+
+The following example uses the simplest traits class provided in this package. It demonstrates
+how to iteratively insert a few points, and how the dimension and the data structure
+of the triangulation evolve with these insertions.
+
+\cgalExample{Triangulation_on_sphere_2/triang_on_sphere.cpp}
+
+\subsection Section_2D_ToS_Ex_Exact Using an Exact Kernel
+
+The following example illustrates the limitation of using a kernel with inexact representation
+of points on the sphere and the rejection of a point for being too close to an already existing
+vertex. A kernel providing exact representation is also shown to be able to insert
+these two extremely close points.
+
+\cgalExample{Triangulation_on_sphere_2/triang_on_sphere_exact.cpp}
+
+\subsection Section_2D_ToS_Ex_Project Using the Projection Traits Class
+
+In this example, the use of the projection traits class is illustrated.
+
+\cgalExample{Triangulation_on_sphere_2/triang_on_sphere_proj.cpp}
+
+\subsection Section_2D_ToS_Ex_Range Insertion of a Range and Spatial Sorting
+
+The following example demonstrates how to insert a range of points at once. This enables
+an internal algorithm to sort the set of points to ensure locality when inserting points,
+which greatly speeds up the insertion.
+
+\cgalExample{Triangulation_on_sphere_2/triang_on_sphere_range.cpp}
+
+\section Section_2D_ToS_Design Design and Implementation History
+
+Prototype code implementing the publication of Caroli et al. \cgalCite{cgal:ccplr-redtp-10}
+was developed over the two internships of Oliver Rouiller and Claudia Werner at Inria,
+under the supervision of Monique Teillaud and with the help of Sébastien Loriot.
+Based on this prototype, Mael Rouxel-Labbé developed the initial version of this package.
+
+*/
+} /* namespace CGAL */
+

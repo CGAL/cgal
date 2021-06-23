@@ -18,7 +18,7 @@ struct PRIV{
       is_bbox_computed(false),
       is_diag_bbox_computed(false),
       _diag_bbox(0),
-      alphaSlider(0),
+      alphaSlider(nullptr),
       are_buffers_filled(false)
   {}
 
@@ -139,7 +139,7 @@ QMenu* Scene_item_rendering_helper::contextMenu()
   if(!prop)
   {
     QMenu *container = new QMenu(tr("Alpha value"));
-    QWidgetAction *sliderAction = new QWidgetAction(0);
+    QWidgetAction *sliderAction = new QWidgetAction(nullptr);
 
     sliderAction->setDefaultWidget(priv->alphaSlider);
     container->addAction(sliderAction);

@@ -57,17 +57,17 @@ public:
   typedef GeomTraits Geom_traits;
 
   /*!
-  A <span class="textsc">Bgl</span> vertex descriptor representing a vertex of the surface mesh.
+  A \bgl vertex descriptor representing a vertex of the surface mesh.
   */
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
 
   /*!
-  A <span class="textsc">Bgl</span> halfedge descriptor representing a halfedge of the surface mesh.
+  A \bgl halfedge descriptor representing a halfedge of the surface mesh.
   */
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
   /*!
-  A <span class="textsc">Bgl</span> edge descriptor representing an edge of the surface mesh.
+  A \bgl edge descriptor representing an edge of the surface mesh.
   */
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor edge_descriptor;
 

@@ -144,7 +144,7 @@ class Halfedge_base
  public:
       std::string debug() const
         { std::stringstream os;
-          set_pretty_mode(os);
+          CGAL::IO::set_pretty_mode(os);
           os<<"sv [ "<<point_
     #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
       <<info_

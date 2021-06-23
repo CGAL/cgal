@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Polygon_mesh_processing_Tests)
 
 # CGAL and its components
@@ -70,6 +70,7 @@ create_single_source_cgal_program("pmp_do_intersect_test.cpp")
 create_single_source_cgal_program("test_is_polygon_soup_a_polygon_mesh.cpp")
 create_single_source_cgal_program("test_stitching.cpp")
 create_single_source_cgal_program("remeshing_test.cpp")
+create_single_source_cgal_program("remeshing_with_isolated_constraints_test.cpp" )
 create_single_source_cgal_program("measures_test.cpp")
 create_single_source_cgal_program("triangulate_faces_test.cpp")
 create_single_source_cgal_program("triangulate_faces_hole_filling_dt3_test.cpp")

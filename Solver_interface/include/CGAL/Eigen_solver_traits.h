@@ -29,7 +29,7 @@
 
 #include <CGAL/Eigen_matrix.h>
 #include <CGAL/Eigen_vector.h>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace CGAL {
 namespace internal {
@@ -226,7 +226,7 @@ public:
 
 protected:
   const typename Matrix::EigenType* m_mat;
-  boost::shared_ptr<EigenSolverT> m_solver_sptr;
+  std::shared_ptr<EigenSolverT> m_solver_sptr;
 };
 
 // Specialization of the solver for BiCGSTAB as for surface parameterization,
@@ -275,7 +275,7 @@ public:
   }
 
 protected:
-  boost::shared_ptr<EigenSolverT> m_solver_sptr;
+  std::shared_ptr<EigenSolverT> m_solver_sptr;
 };
 
 } // namespace CGAL

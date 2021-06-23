@@ -17,7 +17,7 @@
 #include <CGAL/Distance_3/Point_3_Ray_3.h>
 #include <CGAL/Distance_3/Point_3_Line_3.h>
 #include <CGAL/Intersection_traits_3.h>
-
+#include <CGAL/Rational_traits.h>
 namespace CGAL {
 
 template <class K>
@@ -38,9 +38,15 @@ inline
 typename K::Boolean
 do_intersect(const typename K::Sphere_3 &sp,
              const typename K::Triangle_3 &tr,
-             const K & /* k */)
+             const K & k)
 {
-  return squared_distance(sp.center(), tr) <= sp.squared_radius();
+  typedef typename K::RT RT;
+  RT num, den;
+
+  CGAL::internal::squared_distance_RT(sp.center(), tr, num, den, k);
+  return ! (compare_quotients<RT>(num, den,
+                                  Rational_traits<typename K::FT>().numerator(sp.squared_radius()),
+                                  Rational_traits<typename K::FT>().denominator(sp.squared_radius())) == LARGER);
 }
 
 template <class K>
@@ -48,18 +54,9 @@ inline
 typename K::Boolean
 do_intersect(const typename K::Triangle_3 &tr,
              const typename K::Sphere_3 &sp,
-             const K & /* k */)
+             const K & k)
 {
-  return squared_distance(sp.center(), tr) <= sp.squared_radius();
-}
-template <class K>
-inline
-typename K::Boolean
-do_intersect(const typename K::Sphere_3 &sp,
-             const typename K::Line_3 &lin,
-             const K & /* k */)
-{
-  return squared_distance(sp.center(), lin) <= sp.squared_radius();
+  return do_intersect(sp, tr, k);
 }
 
 
@@ -68,9 +65,26 @@ inline
 typename K::Boolean
 do_intersect(const typename K::Line_3 &lin,
              const typename K::Sphere_3 &sp,
-             const K & /* k */)
+             const K & k)
 {
-  return squared_distance(sp.center(), lin) <= sp.squared_radius();
+  typedef typename K::RT RT;
+  RT num, den;
+
+  CGAL::internal::squared_distance_RT(sp.center(), lin, num, den, k);
+  return ! (compare_quotients<RT>(num, den,
+                                  Rational_traits<typename K::FT>().numerator(sp.squared_radius()),
+                                  Rational_traits<typename K::FT>().denominator(sp.squared_radius())) == LARGER);
+
+}
+
+template <class K>
+inline
+typename K::Boolean
+do_intersect(const typename K::Sphere_3 &sp,
+             const typename K::Line_3 &lin,
+             const K & k)
+{
+  return do_intersect(lin,sp,k);
 }
 
 
@@ -80,9 +94,15 @@ inline
 typename K::Boolean
 do_intersect(const typename K::Sphere_3 &sp,
              const typename K::Ray_3 &ray,
-             const K & /* k */)
+             const K & k)
 {
-  return squared_distance(sp.center(), ray) <= sp.squared_radius();
+  typedef typename K::RT RT;
+  RT num, den;
+
+  CGAL::internal::squared_distance_RT(sp.center(), ray, num, den, k);
+  return ! (compare_quotients<RT>(num, den,
+                                  Rational_traits<typename K::FT>().numerator(sp.squared_radius()),
+                                  Rational_traits<typename K::FT>().denominator(sp.squared_radius())) == LARGER);
 }
 
 
@@ -91,9 +111,9 @@ inline
 typename K::Boolean
 do_intersect(const typename K::Ray_3 &ray,
              const typename K::Sphere_3 &sp,
-             const K & /* k */)
+             const K & k)
 {
-  return squared_distance(sp.center(), ray) <= sp.squared_radius();
+  return do_intersect(sp,ray,k);
 }
 
 template <class K>
@@ -101,9 +121,15 @@ inline
 typename K::Boolean
 do_intersect(const typename K::Sphere_3 &sp,
              const typename K::Segment_3 &seg,
-             const K & /* k */)
+             const K & k)
 {
-  return squared_distance(sp.center(), seg) <= sp.squared_radius();
+  typedef typename K::RT RT;
+  RT num, den;
+
+  CGAL::internal::squared_distance_RT(sp.center(), seg, num, den, k);
+  return ! (compare_quotients<RT>(num, den,
+                                  Rational_traits<typename K::FT>().numerator(sp.squared_radius()),
+                                  Rational_traits<typename K::FT>().denominator(sp.squared_radius())) == LARGER);
 }
 
 
@@ -112,9 +138,9 @@ inline
 typename K::Boolean
 do_intersect(const typename K::Segment_3 &seg,
              const typename K::Sphere_3 &sp,
-             const K & /* k */)
+             const K & k)
 {
-  return squared_distance(sp.center(), seg) <= sp.squared_radius();
+  return do_intersect(sp,seg,k);
 }
 
 } // namespace internal

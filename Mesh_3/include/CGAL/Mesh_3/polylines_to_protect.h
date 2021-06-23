@@ -249,6 +249,7 @@ struct Enriched_pixel {
   Domain_type domain;
   Image_word_type word;
   bool on_edge_of_the_cube;
+  bool on_corner_of_the_cube;
 }; // end struct template Enriched_pixel<Pix,P,D,C>
 
 } // end namespace internal
@@ -524,10 +525,10 @@ polylines_to_protect
                                  Image_word_type> Enriched_pixel;
 
           array<array<Enriched_pixel, 2>, 2> square =
-            {{ {{ { pix00, Point_3(), Domain_type(), 0, false },
-                  { pix01, Point_3(), Domain_type(), 0, false } }},
-               {{ { pix10, Point_3(), Domain_type(), 0, false },
-                  { pix11, Point_3(), Domain_type(), 0, false } }} }};
+            {{ {{ { pix00, Point_3(), Domain_type(), 0, false, false },
+                  { pix01, Point_3(), Domain_type(), 0, false, false } }},
+               {{ { pix10, Point_3(), Domain_type(), 0, false, false },
+                  { pix11, Point_3(), Domain_type(), 0, false, false } }} }};
 
           std::map<Domain_type, int> pixel_values_set;
           for(int ii = 0; ii < 2; ++ii) {
@@ -536,16 +537,20 @@ polylines_to_protect
               double x = pixel[0] * vx + tx;
               double y = pixel[1] * vy + ty;
               double z = pixel[2] * vz + tz;
-              square[ii][jj].on_edge_of_the_cube =
-                ( ( ( 0 == pixel[0] || (xdim - 1) == pixel[0] ) ? 1 : 0 )
-                  +
-                  ( ( 0 == pixel[1] || (ydim - 1) == pixel[1] ) ? 1 : 0 )
-                  +
-                  ( ( 0 == pixel[2] || (zdim - 1) == pixel[2] ) ? 1 : 0 ) > 1 );
+              short sum_faces = ((0 == pixel[0] || (xdim - 1) == pixel[0]) ? 1 : 0)
+                              + ((0 == pixel[1] || (ydim - 1) == pixel[1]) ? 1 : 0)
+                              + ((0 == pixel[2] || (zdim - 1) == pixel[2]) ? 1 : 0);
+              square[ii][jj].on_edge_of_the_cube = (sum_faces > 1);
+              square[ii][jj].on_corner_of_the_cube = (sum_faces > 2);
+
 #ifdef CGAL_MESH_3_DEBUG_POLYLINES_TO_PROTECT
               if(square[ii][jj].on_edge_of_the_cube) {
                 std::cerr << "  Pixel(" << pixel[0] << ", " << pixel[1] << ", "
                           << pixel[2] << ") is on edge\n";
+              }
+              if (square[ii][jj].on_corner_of_the_cube) {
+                std::cerr << "  Pixel(" << pixel[0] << ", " << pixel[1] << ", "
+                  << pixel[2] << ") is on corner\n";
               }
 #endif // CGAL_MESH_3_DEBUG_POLYLINES_TO_PROTECT
 
@@ -582,10 +587,10 @@ polylines_to_protect
             bool out01 = null(square[0][1].domain);
             bool out11 = null(square[1][1].domain);
 
-            bool on_edge00 = square[0][0].on_edge_of_the_cube;
-            bool on_edge10 = square[1][0].on_edge_of_the_cube;
-            bool on_edge01 = square[0][1].on_edge_of_the_cube;
-            bool on_edge11 = square[1][1].on_edge_of_the_cube;
+            bool is_corner00 = square[0][0].on_corner_of_the_cube;
+            bool is_corner10 = square[1][0].on_corner_of_the_cube;
+            bool is_corner01 = square[0][1].on_corner_of_the_cube;
+            bool is_corner11 = square[1][1].on_corner_of_the_cube;
 
             //
             // Protect the edges of the cube
@@ -593,26 +598,26 @@ polylines_to_protect
             if(pix00[axis_xx] == 0 &&
                ! ( out00 && out01 ) )
             {
-              g_manip.try_add_edge(g_manip.get_vertex(p00, on_edge00),
-                                   g_manip.get_vertex(p01, on_edge01));
+              g_manip.try_add_edge(g_manip.get_vertex(p00, is_corner00),
+                                   g_manip.get_vertex(p01, is_corner01));
             }
             if(pix11[axis_xx] == image_dims[axis_xx]-1 &&
                ! ( out10 && out11 ) )
             {
-              g_manip.try_add_edge(g_manip.get_vertex(p10, on_edge10),
-                                   g_manip.get_vertex(p11, on_edge11));
+              g_manip.try_add_edge(g_manip.get_vertex(p10, is_corner10),
+                                   g_manip.get_vertex(p11, is_corner11));
             }
             if(pix00[axis_yy] == 0 &&
                ! ( out00 && out10 ) )
             {
-              g_manip.try_add_edge(g_manip.get_vertex(p00, on_edge00),
-                                   g_manip.get_vertex(p10, on_edge10));
+              g_manip.try_add_edge(g_manip.get_vertex(p00, is_corner00),
+                                   g_manip.get_vertex(p10, is_corner10));
             }
             if(pix11[axis_yy] == image_dims[axis_yy]-1 &&
                ! ( out01 && out11 ) )
             {
-              g_manip.try_add_edge(g_manip.get_vertex(p01, on_edge01),
-                                   g_manip.get_vertex(p11, on_edge11));
+              g_manip.try_add_edge(g_manip.get_vertex(p01, is_corner01),
+                                   g_manip.get_vertex(p11, is_corner11));
             }
           } // end of scope for outIJ and on_edgeIJ
 

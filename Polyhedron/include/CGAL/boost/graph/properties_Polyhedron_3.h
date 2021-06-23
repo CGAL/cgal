@@ -16,7 +16,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/number_utils.h>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <CGAL/boost/graph/internal/Has_member_id.h>
 #include <CGAL/Distance_3/Point_3_Point_3.h>
 
@@ -46,7 +46,7 @@ public:
 
   reference operator[](const key_type& k) const { return (*map_)[k]; }
 private:
-   boost::shared_ptr<Map> map_;
+   std::shared_ptr<Map> map_;
 };
 
 // Special case for edges.
@@ -75,7 +75,7 @@ public:
 
   reference operator[](const key_type& k) const { return (*map_)[k]; }
 private:
-  boost::shared_ptr<Map> map_;
+  std::shared_ptr<Map> map_;
 };
 
   template<typename Handle, typename FT>

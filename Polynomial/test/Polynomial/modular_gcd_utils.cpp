@@ -43,7 +43,7 @@ void test_modular_gcd_utils() {
   CGAL_USE_TYPE(Field_with_sqrt);
 
   CGAL::Random my_random(4711);
-  ::CGAL::set_pretty_mode(std::cout);
+  ::CGAL::IO::set_pretty_mode(std::cout);
 
   typedef typename AT::Integer Integer;
   typedef Integer NT;

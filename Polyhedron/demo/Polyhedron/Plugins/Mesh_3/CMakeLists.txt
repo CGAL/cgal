@@ -35,7 +35,7 @@ if(VTK_FOUND)
   endif()
   if("${VTK_VERSION_MAJOR}" GREATER "5" OR VTK_VERSION VERSION_GREATER 5)
     if(TARGET VTK::IOImage)
-      set(VTK_LIBRARIES VTK::IOImage)
+      set(VTK_LIBRARIES VTK::IOImage VTK::ImagingGeneral)
     endif()
     if(NOT VTK_LIBRARIES)
       message(

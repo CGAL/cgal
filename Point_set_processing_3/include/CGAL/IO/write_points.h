@@ -33,6 +33,8 @@
 
 namespace CGAL {
 
+namespace IO {
+
 /**
   \ingroup PkgPointSetProcessing3IO
 
@@ -96,11 +98,11 @@ bool write_points(const std::string& fname,
                   const PointRange& points,
                   const CGAL_BGL_NP_CLASS& np,
 #ifndef DOXYGEN_RUNNING
-                  typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr
+                  typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
 #endif
                   )
 {
-  const std::string ext = IO::internal::get_file_extension(fname);
+  const std::string ext = internal::get_file_extension(fname);
 
   if(ext == "xyz" || ext == "pwn")
     return write_XYZ(fname, points, np);
@@ -120,13 +122,13 @@ bool write_points(const std::string& fname,
 
 template <typename PointRange>
 bool write_points(const std::string& fname,const PointRange& points,
-                  typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
+                  typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr)
 {
   return write_points(fname, points, parameters::all_default());
 }
 
 /// \endcond
 
-} // namespace CGAL
+} } // namespace CGAL::IO
 
 #endif // CGAL_POINT_SET_PROCESSING_WRITE_POINTS_H

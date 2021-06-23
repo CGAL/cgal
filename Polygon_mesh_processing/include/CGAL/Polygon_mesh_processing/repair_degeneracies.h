@@ -436,7 +436,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
     std::cout << "Iter: " << iter << std::endl;
     std::ostringstream oss;
     oss << "degen_cleaning_iter_" << iter++ << ".off";
-    CGAL::write_polygon_mesh(oss.str(), tmesh, CGAL::parameters::stream_precision(17));
+    CGAL::IO::write_polygon_mesh(oss.str(), tmesh, CGAL::parameters::stream_precision(17));
 #endif
 
     if(edges_to_collapse.empty() && edges_to_flip.empty())
@@ -1680,7 +1680,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
 #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
   {
     std::cout <<"Done with null edges.\n";
-    CGAL::write_polygon_mesh("/tmp/no_null_edges.off", tmesh, CGAL::parameters::stream_precision(17));
+    CGAL::IO::write_polygon_mesh("/tmp/no_null_edges.off", tmesh, CGAL::parameters::stream_precision(17));
   }
 #endif
 
@@ -1804,7 +1804,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
       std::vector<typename Traits::Point_3> points;
       std::vector<std::vector<std::size_t> > triangles;
       std::ifstream in("/tmp/out.off");
-      CGAL::read_OFF(in, points, triangles);
+      CGAL::IO::read_OFF(in, points, triangles);
       if(!CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(triangles))
       {
         std::cerr << "Warning: got a polygon soup (may simply be a non-manifold vertex)!\n";

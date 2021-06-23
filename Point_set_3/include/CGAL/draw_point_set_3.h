@@ -66,7 +66,7 @@ protected:
   void compute_vertex(const Point& p)
   {
     add_point(p);
-    // We can use add_point(p, c) with c a CGAL::Color to add a colored point
+    // We can use add_point(p, c) with c a CGAL::IO::Color to add a colored point
   }
 
   void compute_elements()

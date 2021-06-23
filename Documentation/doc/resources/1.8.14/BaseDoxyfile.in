@@ -229,12 +229,16 @@ TAB_SIZE               = 4
 # newlines (in the resulting output). You can put ^^ in the value part of an
 # alias to insert a newline as if a physical newline was in the original file.
 
-ALIASES                = "cgal=CGAL" \
+ALIASES                = "cgal=%CGAL" \
                          "protocgal=C++gal" \
                          "plageo=Plageo" \
                          "stl=STL" \
                          "gmp=GMP" \
                          "gmpxx=GMPXX" \
+                         "exacus=Exacus" \
+                         "iso=ISO" \
+                         "lisp=Lisp" \
+                         "ieee=IEEE" \
                          "mpir=MPIR" \
                          "mpfr=MPFR" \
                          "leda=LEDA" \

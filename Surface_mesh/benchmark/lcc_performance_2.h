@@ -95,7 +95,7 @@ private:
   virtual bool write_mesh(const char* _filename)
   {
     std::ofstream ofs(_filename);
-    CGAL::write_off(lcc, ofs);
+    CGAL::IO::write_OFF(lcc, ofs);
     return true;
   }
 
