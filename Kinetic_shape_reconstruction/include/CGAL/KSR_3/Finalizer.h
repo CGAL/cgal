@@ -962,14 +962,16 @@ private:
 
     if (m_verbose) {
       std::cout << "* created volumes: " << volumes.size() << std::endl;
-      if (m_export) dump_volumes(m_data, "volumes/final");
+      if (m_export) dump_volumes(m_data, "final");
       for (std::size_t i = 0; i < volumes.size(); ++i) {
         const auto& volume = volumes[i];
         CGAL_assertion(volume.pfaces.size() > 3);
-        std::cout <<
-        " VOLUME "     << std::to_string(i) << ": "
-        " pvertices: " << volume.pvertices.size() <<
-        " pfaces: "    << volume.pfaces.size()    << std::endl;
+        if (m_debug) {
+          std::cout <<
+          " VOLUME "     << std::to_string(i) << ": "
+          " pvertices: " << volume.pvertices.size() <<
+          " pfaces: "    << volume.pfaces.size()    << std::endl;
+        }
       }
     }
 
@@ -1012,7 +1014,7 @@ private:
         volume_size, volume_centroid, map_volumes, queue);
     }
 
-    if (m_verbose) {
+    if (m_debug) {
       std::cout << "- FOUND VOLUME " << volume_index << ", (SIZE/BARYCENTER): "
       << volume_size << " / " << volume_centroid << std::endl;
     }
@@ -1060,7 +1062,7 @@ private:
         false, query, volume_index, num_volumes, centroids,
         volume_size, volume_centroid, map_volumes, queue);
     }
-    if (m_verbose) {
+    if (m_debug) {
       std::cout << "- FOUND VOLUME " << volume_index << ", (SIZE/BARYCENTER): "
       << volume_size << " / " << volume_centroid << std::endl;
     }

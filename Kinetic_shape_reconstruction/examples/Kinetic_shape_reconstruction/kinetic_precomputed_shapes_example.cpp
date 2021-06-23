@@ -165,8 +165,8 @@ int main(const int argc, const char** argv) {
   std::cout << "* number of events: "         << num_events         << std::endl;
 
   // Export.
-  std::cout << std::endl;
-  std::cout << "--- EXPORT: " << std::endl;
+  // std::cout << std::endl;
+  // std::cout << "--- EXPORT: " << std::endl;
 
   // Vertices.
   // std::string output_filename = "partition-vertices.xyz";

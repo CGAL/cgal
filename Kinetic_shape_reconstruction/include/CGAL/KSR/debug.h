@@ -312,7 +312,7 @@ public:
   using Random       = CGAL::Random;
 
   Saver() :
-  m_path_prefix("/Users/monet/Documents/fork/pull-requests/kinetic/logs/"),
+  m_path_prefix(""),
   grey(Color(125, 125, 125)),
   red(Color(125, 0, 0))
   { }

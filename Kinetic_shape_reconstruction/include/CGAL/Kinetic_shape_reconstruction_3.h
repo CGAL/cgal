@@ -209,7 +209,7 @@ public:
     timer.stop();
     const double time_to_finalize = timer.time();
     if (m_verbose) {
-      std::cout << "* found " << m_data.number_of_volumes(-1) << " volumes" << std::endl;
+      std::cout << "* found all together " << m_data.number_of_volumes(-1) << " volumes" << std::endl;
     }
     // std::cout << std::endl << "CREATING VOLUMES SUCCESS!" << std::endl << std::endl;
     // exit(EXIT_SUCCESS);
