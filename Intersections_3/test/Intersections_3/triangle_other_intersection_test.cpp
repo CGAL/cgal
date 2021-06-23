@@ -633,13 +633,13 @@ int main()
   random_test<Sc_f>();
 
   std::cout << "\tTesting with Simple_cartesian<double>..." << std::endl ;
-        random_test<Sc_d>();
+  random_test<Sc_d>();
 
   std::cout << "\tTesting with Cartesian<float>..." << std::endl ;
-        random_test<C_f>();
+  random_test<C_f>();
 
   std::cout << "\tTesting with Cartesian<double>..." << std::endl ;
-        random_test<C_d>();
+  random_test<C_d>();
 
   std::cout << "\tTesting with Exact_predicates_inexact_constructions_kernel..." << std::endl ;
   random_test<Epic>();
