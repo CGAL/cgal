@@ -55,11 +55,6 @@ int main(int argc, char* argv[])
   /// [Generate weights]
   CGAL::Image_3 weights =
     CGAL::Mesh_3::generate_weights(image, sigma, (unsigned char)(1));
-
-  auto image_ptr = weights.image();
-  std::ostringstream oss;
-  oss << "weights_" << sigma << ".inr.gz";
-  ::_writeImage(image_ptr, oss.str().c_str());
   /// [Generate weights]
 
   /// [Domain creation]
