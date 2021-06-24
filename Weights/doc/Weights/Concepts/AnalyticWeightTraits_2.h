@@ -1,6 +1,3 @@
-namespace CGAL {
-namespace Weights {
-
 /*!
 \ingroup PkgWeightsRefConcepts
 \cgalConcept
@@ -201,6 +198,3 @@ typedef unspecified_type Orientation_2;
 /// @}
 
 };
-
-} // namespace Weights
-} // namespace CGAL

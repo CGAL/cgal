@@ -1,6 +1,3 @@
-namespace CGAL {
-namespace Weights {
-
 /*!
 \ingroup PkgWeightsRefConcepts
 \cgalConcept
@@ -31,6 +28,3 @@ public:
     const Point_2& query, OutIterator w_begin)
   { }
 };
-
-} // namespace Weights
-} // namespace CGAL
