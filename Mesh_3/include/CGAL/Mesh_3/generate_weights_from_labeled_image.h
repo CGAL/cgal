@@ -145,24 +145,27 @@ CGAL::Image_3 generate_weights(const CGAL::Image_3& image,
                                const float& sigma,
                                Image_word_type)
 {
+  typedef unsigned char Weights_type; //from 0 t 255
+
   //create weights image
   _image* weights
     = _createImage(image.xdim(), image.ydim(), image.zdim(),
-                   1,                                      //vectorial dimension
+                   1,                                        //vectorial dimension
                    image.vx(), image.vy(), image.vz(),
-                   sizeof(Image_word_type),           //image word size in bytes
-                   internal::get_wordkind<Image_word_type>(),   //image word kind WK_FIXED, WK_FLOAT, WK_UNKNOWN
-                   internal::get_sign<Image_word_type>());      //image word sign
-  Image_word_type* weights_ptr = (Image_word_type*)(weights->data);
+                   sizeof(Weights_type),                     //image word size in bytes
+                   internal::get_wordkind<Weights_type>(),   //image word kind WK_FIXED, WK_FLOAT, WK_UNKNOWN
+                   internal::get_sign<Weights_type>());      //image word sign
+  Weights_type* weights_ptr = (Weights_type*)(weights->data);
   std::fill(weights_ptr,
             weights_ptr + image.xdim() * image.ydim() * image.zdim(),
-            Image_word_type(0));
+            Weights_type(0));
   weights->tx = image.tx();
   weights->ty = image.ty();
   weights->tz = image.tz();
 
   //convert image to itkImage
   using ImageType = itk::Image<Image_word_type, 3/*Dimension*/>;
+  using WeightsType = itk::Image<Weights_type, 3>;
   typename ImageType::Pointer itk_img = ImageType::New();
   std::set<Image_word_type> labels;
   internal::convert_image_3_to_itk(image, itk_img.GetPointer(), labels);
@@ -203,7 +206,7 @@ CGAL::Image_3 generate_weights(const CGAL::Image_3& image,
     std::cout << "\nLABEL = " << label << std::endl;
 
     //compute "indicator image" for "label"
-    IndicatorFilter::Pointer indicator = IndicatorFilter::New();
+    typename IndicatorFilter::Pointer indicator = IndicatorFilter::New();
     indicator->SetInput(indicators[id]);
     indicator->SetOutsideValue(0);
     indicator->SetInsideValue(255);
@@ -212,7 +215,7 @@ CGAL::Image_3 generate_weights(const CGAL::Image_3& image,
     indicator->Update();
 
     //perform gaussian smoothing
-    GaussianFilterType::Pointer smoother = GaussianFilterType::New();
+    typename GaussianFilterType::Pointer smoother = GaussianFilterType::New();
     smoother->SetInput(indicator->GetOutput());
     smoother->SetSigma(sigma);
     smoother->Update();
@@ -226,7 +229,7 @@ CGAL::Image_3 generate_weights(const CGAL::Image_3& image,
       blured_max = smoother->GetOutput();
     else
     {
-      MaximumImageFilterType::Pointer maximumImageFilter = MaximumImageFilterType::New();
+      typename MaximumImageFilterType::Pointer maximumImageFilter = MaximumImageFilterType::New();
       maximumImageFilter->SetInput(0, blured_max);
       maximumImageFilter->SetInput(1, smoother->GetOutput());
       maximumImageFilter->Update();
@@ -249,7 +252,7 @@ CGAL::Image_3 generate_weights(const CGAL::Image_3& image,
       {
         typename ImageType::IndexType index = { (Index)i, (Index)j, (Index)k };
         using CGAL::IMAGEIO::static_evaluate;
-        static_evaluate<Image_word_type>(weights, i, j, k) = itk_weights->GetPixel(index);;
+        static_evaluate<Weights_type>(weights, i, j, k) = itk_weights->GetPixel(index);
       }
     }
   }
