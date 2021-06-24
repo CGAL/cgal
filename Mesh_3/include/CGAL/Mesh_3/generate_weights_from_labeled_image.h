@@ -75,6 +75,7 @@ void convert_image_3_to_itk(const CGAL::Image_3& image,
   }
 }
 
+#ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
 int count_non_zero_pixels(const CGAL::Image_3& image)
 {
   int nb_nonzero = 0;
@@ -113,6 +114,7 @@ int count_non_zero_pixels(const itk::Image<Image_word_type, 3>* image)
   }
   return nb_nonzero;
 }
+#endif //CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
 
 template<typename Image_word_type>
 WORD_KIND get_wordkind()
@@ -135,8 +137,6 @@ SIGN get_sign()
 /** unknown (uninitialized or floating point words) */
 //    SGN_UNKNOWN
 }
-
-
 
 }//namespace internal
 
@@ -203,7 +203,9 @@ CGAL::Image_3 generate_weights(const CGAL::Image_3& image,
     if (label == 0)
       continue;
 
+#ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
     std::cout << "\nLABEL = " << label << std::endl;
+#endif
 
     //compute "indicator image" for "label"
     typename IndicatorFilter::Pointer indicator = IndicatorFilter::New();
@@ -220,10 +222,6 @@ CGAL::Image_3 generate_weights(const CGAL::Image_3& image,
     smoother->SetSigma(sigma);
     smoother->Update();
 
-    std::cout << "AFTER SMOOTHING = " << label << std::endl;
-    std::cout << "\tnon zero in smoothed ("
-      << label << ")\t= " << internal::count_non_zero_pixels(smoother->GetOutput()) << std::endl;
-
     //take the max of indicator functions
     if (id == 0)
       blured_max = smoother->GetOutput();
@@ -236,13 +234,14 @@ CGAL::Image_3 generate_weights(const CGAL::Image_3& image,
       blured_max = maximumImageFilter->GetOutput();
     }
 
-    std::cout << "AFTER MAX = " << label << std::endl;
+#ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
+    std::cout << "AFTER MAX (label = " << label << ") : " <<  std::endl;
     std::cout << "\tnon zero in max ("
       << label << ")\t= " << internal::count_non_zero_pixels(blured_max.GetPointer()) << std::endl;
+#endif
   }
 
   //copy pixels to weights
-  typename ImageType::Pointer itk_weights = blured_max;
   using Index = itk::Index<3>::IndexValueType;
   for (std::size_t i = 0; i < image.xdim(); ++i)
   {
@@ -252,15 +251,17 @@ CGAL::Image_3 generate_weights(const CGAL::Image_3& image,
       {
         typename ImageType::IndexType index = { (Index)i, (Index)j, (Index)k };
         using CGAL::IMAGEIO::static_evaluate;
-        static_evaluate<Weights_type>(weights, i, j, k) = itk_weights->GetPixel(index);
+        static_evaluate<Weights_type>(weights, i, j, k) = blured_max->GetPixel(index);
       }
     }
   }
 
+#ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
   std::cout << "non zero in image \t= " << internal::count_non_zero_pixels(image) << std::endl;
-  std::cout << "non zero in weights \t= " << internal::count_non_zero_pixels(itk_weights.GetPointer()) << std::endl;
-
+  std::cout << "non zero in weights \t= " << internal::count_non_zero_pixels(blured_max.GetPointer()) << std::endl;
   //_writeImage(weights, "weights-image.inr.gz");
+#endif
+
   return CGAL::Image_3(weights);
 }
 
