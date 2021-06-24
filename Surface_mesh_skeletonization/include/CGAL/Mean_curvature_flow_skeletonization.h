@@ -371,14 +371,14 @@ public:
   Mean_curvature_flow_skeletonization(const TriangleMesh& tmesh,
                                       VertexPointMap vertex_point_map,
                                       const Traits& traits = Traits())
-    : m_traits(traits), m_weight_calculator(true /* use_secure_version */)
+    : m_traits(traits), m_weight_calculator(true /* use_clamped_version */)
   {
     init(tmesh, vertex_point_map);
   }
 
   Mean_curvature_flow_skeletonization(const TriangleMesh& tmesh,
                                       const Traits& traits = Traits())
-    : m_traits(traits), m_weight_calculator(true /* use_secure_version */)
+    : m_traits(traits), m_weight_calculator(true /* use_clamped_version */)
   {
     init(tmesh);
   }
