@@ -16,10 +16,15 @@
 
 #include <CGAL/license/Weights.h>
 
-#define CGAL_DEPRECATED_HEADER "<CGAL/Weights/internal/pmp_weights_depr.h>"
+#define CGAL_DEPRECATED_HEADER "<CGAL/Weights/internal/pmp_weights_deprecated.h>"
 #define CGAL_DEPRECATED_MESSAGE_DETAILS \
   "This part of the package is deprecated since the version 5.4 of CGAL!"
 #include <CGAL/internal/deprecation_warning.h>
+
+// README:
+// This header collects all weights, which have been in CGAL before unifying them
+// into the new package Weights. This header is for information purpose only. It
+// will be removed in the next release.
 
 // Includes.
 #include <CGAL/property_map.h>
