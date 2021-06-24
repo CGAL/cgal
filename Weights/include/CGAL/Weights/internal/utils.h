@@ -690,9 +690,11 @@ namespace internal {
     return A;
   }
 
-  // Computes a secure cotangent between two 3D vectors.
+  // Computes a clamped cotangent between two 3D vectors.
+  // In the old version of weights in PMP, it has been called secure.
+  // See Weights/internal/pmp_weights_deprecated.h for more information.
   template<typename GeomTraits>
-  typename GeomTraits::FT cotangent_3_secure(
+  typename GeomTraits::FT cotangent_3_clamped(
     const GeomTraits& traits,
     const typename GeomTraits::Point_3& p,
     const typename GeomTraits::Point_3& q,

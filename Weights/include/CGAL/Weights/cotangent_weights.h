@@ -268,23 +268,23 @@ namespace Weights {
   };
 
   // Undocumented cotangent weight class.
-  // Its constructor takes a boolean flag to choose between default and secure
+  // Its constructor takes a boolean flag to choose between default and clamped
   // versions of the cotangent weights and its operator() is defined based on the
   // halfedge_descriptor, polygon mesh, and vertex to point map.
   // This version is currently used in:
   // Surface_mesh_deformation -> Surface_mesh_deformation.h (default version)
   // Surface_mesh_parameterizer -> Orbifold_Tutte_parameterizer_3.h (default version)
-  // Surface_mesh_skeletonization -> Mean_curvature_flow_skeletonization.h (secure version)
+  // Surface_mesh_skeletonization -> Mean_curvature_flow_skeletonization.h (clamped version)
   template<typename PolygonMesh>
   class Cotangent_weight {
-    bool m_use_secure_version;
+    bool m_use_clamped_version;
 
   public:
     using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
     using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
 
-    Cotangent_weight(const bool use_secure_version = false) :
-    m_use_secure_version(use_secure_version) { }
+    Cotangent_weight(const bool use_clamped_version = false) :
+    m_use_clamped_version(use_clamped_version) { }
 
     template<class VertexPointMap>
     decltype(auto) operator()(const halfedge_descriptor he,
@@ -311,8 +311,8 @@ namespace Weights {
           v2 = source(he_ccw, pmesh);
 
           const auto& p2 = get(pmap, v2);
-          if (m_use_secure_version) {
-            weight = internal::cotangent_3_secure(traits, p1, p2, p0);
+          if (m_use_clamped_version) {
+            weight = internal::cotangent_3_clamped(traits, p1, p2, p0);
           } else {
             weight = internal::cotangent_3(traits, p1, p2, p0);
           }
@@ -320,8 +320,8 @@ namespace Weights {
           weight /= FT(2);
         } else {
           const auto& p2 = get(pmap, v2);
-          if (m_use_secure_version) {
-            weight = internal::cotangent_3_secure(traits, p0, p2, p1);
+          if (m_use_clamped_version) {
+            weight = internal::cotangent_3_clamped(traits, p0, p2, p1);
           } else {
             weight = internal::cotangent_3(traits, p0, p2, p1);
           }
@@ -339,14 +339,14 @@ namespace Weights {
         const auto& p3 = get(pmap, v3);
         FT cot_beta = FT(0), cot_gamma = FT(0);
 
-        if (m_use_secure_version) {
-          cot_beta = internal::cotangent_3_secure(traits, p0, p2, p1);
+        if (m_use_clamped_version) {
+          cot_beta = internal::cotangent_3_clamped(traits, p0, p2, p1);
         } else {
           cot_beta = internal::cotangent_3(traits, p0, p2, p1);
         }
 
-        if (m_use_secure_version) {
-          cot_gamma = internal::cotangent_3_secure(traits, p1, p3, p0);
+        if (m_use_clamped_version) {
+          cot_gamma = internal::cotangent_3_clamped(traits, p1, p3, p0);
         } else {
           cot_gamma = internal::cotangent_3(traits, p1, p3, p0);
         }
@@ -362,7 +362,7 @@ namespace Weights {
   // Undocumented cotangent weight class.
   // Its constructor takes a polygon mesh and a vertex to point map
   // and its operator() is defined based on the halfedge_descriptor only.
-  // This class is using a special truncated version of the cotangent weights called secure.
+  // This class is using a special clamped version of the cotangent weights.
   // This version is currently used in:
   // Polygon_mesh_processing -> fair.h
   // Polyhedron demo -> Hole_filling_plugin.cpp
@@ -391,11 +391,11 @@ namespace Weights {
     }
 
     FT w_ij(const halfedge_descriptor he) const {
-      return cotangent_secure(he);
+      return cotangent_clamped(he);
     }
 
   private:
-    FT cotangent_secure(const halfedge_descriptor he) const {
+    FT cotangent_clamped(const halfedge_descriptor he) const {
 
       const auto v0 = target(he, m_pmesh);
       const auto v1 = source(he, m_pmesh);
@@ -413,10 +413,10 @@ namespace Weights {
           v2 = source(he_ccw, m_pmesh);
 
           const auto& p2 = get(m_pmap, v2);
-          weight = internal::cotangent_3_secure(m_traits, p1, p2, p0);
+          weight = internal::cotangent_3_clamped(m_traits, p1, p2, p0);
         } else {
           const auto& p2 = get(m_pmap, v2);
-          weight = internal::cotangent_3_secure(m_traits, p0, p2, p1);
+          weight = internal::cotangent_3_clamped(m_traits, p0, p2, p1);
         }
 
       } else {
@@ -428,8 +428,8 @@ namespace Weights {
         const auto& p2 = get(m_pmap, v2);
         const auto& p3 = get(m_pmap, v3);
 
-        const FT cot_beta  = internal::cotangent_3_secure(m_traits, p0, p2, p1);
-        const FT cot_gamma = internal::cotangent_3_secure(m_traits, p1, p3, p0);
+        const FT cot_beta  = internal::cotangent_3_clamped(m_traits, p0, p2, p1);
+        const FT cot_gamma = internal::cotangent_3_clamped(m_traits, p1, p3, p0);
         weight = cot_beta + cot_gamma;
       }
       return weight;
