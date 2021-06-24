@@ -108,10 +108,6 @@ public:
 
   virtual void transform(const Aff_transformation_3& t) = 0;
 
-  //virtual bool update( Unique_hash_map<Vertex_handle, bool>& V,
-  //                   Unique_hash_map<Halfedge_handle, bool>& E,
-  //                   Unique_hash_map<Halffacet_handle, bool>& F) = 0;
-
   virtual void add_facet(Halffacet_handle) {}
 
   virtual void add_edge(Halfedge_handle) {}
@@ -187,8 +183,6 @@ public:
   typedef typename SNC_candidate_provider::Objects_along_ray Objects_along_ray;
   typedef typename Objects_along_ray::Iterator Objects_along_ray_iterator;
 
-  //  typedef typename SNC_candidate_provider::Objects_around_box Objects_around_box;
-
   using Base::get_visible_facet;
 public:
   SNC_point_locator_by_spatial_subdivision() :
@@ -238,16 +232,6 @@ public:
     candidate_provider->transform(t);
   }
 
-  virtual bool update( Unique_hash_map<Vertex_handle, bool>& V,
-                       Unique_hash_map<Halfedge_handle, bool>& E,
-                       Unique_hash_map<Halffacet_handle, bool>& F) {
-    CGAL_NEF_TIMER(ct_t.start());
-    CGAL_assertion( initialized);
-    bool updated = candidate_provider->update( V, E, F);
-    CGAL_NEF_TIMER(ct_t.stop());
-    return updated;
-  }
-
   virtual ~SNC_point_locator_by_spatial_subdivision() noexcept(!CGAL_ASSERTIONS_ENABLED)
   {
     CGAL_destructor_warning(initialized ||
@@ -255,125 +239,6 @@ public:
     if(initialized)
       delete candidate_provider;
   }
-
-  /*
-  template <typename Box>
-  bool point_in_box(const Box& box, const Point_3& p) {
-    if(p.x() < box.min_coord(0)) return true;
-    if(p.x() > box.max_coord(0)) return true;
-    if(p.y() < box.min_coord(1)) return true;
-    if(p.y() > box.max_coord(1)) return true;
-    if(p.z() < box.min_coord(2)) return true;
-    if(p.z() > box.max_coord(2)) return true;
-    return false;
-  }
-
-  template <typename Box>
-  bool in_range(const Box& box) const {
-    Vertex_handle v;
-    Halfedge_handle e;
-    Halffacet_handle f;
-
-    Objects_around_box oab;
-    typename Objects_around_box::Iterator
-      objects_iterator(oab.begin());
-    for( ; objects_iterator != oab.end(); ++objects_iterator) {
-      Object_list candidates = *objects_iterator;
-      Object_list_iterator o;
-      CGAL_for_each( o, candidates) {
-        if(CGAL::assign(v, *o)) {
-          if(point_in_box(box, v->point()))
-            return true;
-        } else if(CGAL::assign(e, *o)) {
-          Point_3 ip;
-          Point_3 pmin(box.min_coord(0), box.min_coord(1), box.min_coord(2));
-          Point_3 pmax(box.max_coord(0), box.max_coord(1), box.max_coord(2));
-          Segment_3 seg(e->source()->point(),
-                        e->twin()->source()->point());
-
-          Plane_3 pl(pmin, Vector_3(1,0,0));
-          Object o = intersection(pl, seg);
-          if(CGAL::assign(ip,o) && point_in_box(box, ip))
-            return true;
-          pl = Plane_3(pmin, Vector_3(0,1,0));
-          o = intersection(pl, seg);
-          if(CGAL::assign(ip,o) && point_in_box(box, ip))
-            return true;
-          pl = Plane_3(pmin, Vector_3(0,0,1));
-          o = intersection(pl, seg);
-          if(CGAL::assign(ip,o) && point_in_box(box, ip))
-            return true;
-          pl = Plane_3(pmax, Vector_3(1,0,0));
-          o = intersection(pl, seg);
-          if(CGAL::assign(ip,o) && point_in_box(box, ip))
-            return true;
-          pl = Plane_3(pmax, Vector_3(0,1,0));
-          o = intersection(pl, seg);
-          if(CGAL::assign(ip,o) && point_in_box(box, ip))
-            return true;
-          pl = Plane_3(pmax, Vector_3(0,0,1));
-          o = intersection(pl, seg);
-          if(CGAL::assign(ip,o) && point_in_box(box, ip))
-            return true;
-        } else if(CGAL::assign(f, *o)) {
-          Segment_3 seg(Point_3(box.min_coord(0), box.min_coord(1), box.min_coord(2)),
-                        Point_3(box.min_coord(0), box.min_coord(1), box.max_coord(2)));
-          if(is.does_intersect_internally(seg, f))
-            return true;
-          seg = Segment_3(Point_3(box.max_coord(0), box.min_coord(1), box.min_coord(2)),
-                          Point_3(box.max_coord(0), box.min_coord(1), box.max_coord(2)));
-          if(is.does_intersect_internally(seg, f))
-            return true;
-          seg = Segment_3(Point_3(box.min_coord(0), box.max_coord(1), box.min_coord(2)),
-                          Point_3(box.min_coord(0), box.max_coord(1), box.max_coord(2)));
-          if(is.does_intersect_internally(seg, f))
-            return true;
-          seg = Segment_3(Point_3(box.max_coord(0), box.max_coord(1), box.min_coord(2)),
-                          Point_3(box.max_coord(0), box.max_coord(1), box.max_coord(2)));
-          if(is.does_intersect_internally(seg, f))
-            return true;
-
-          seg = Segment_3(Point_3(box.min_coord(0), box.min_coord(1), box.min_coord(2)),
-                          Point_3(box.min_coord(0), box.max_coord(1), box.min_coord(2)));
-          if(is.does_intersect_internally(seg, f))
-            return true;
-          seg = Segment_3(Point_3(box.max_coord(0), box.min_coord(1), box.min_coord(2)),
-                          Point_3(box.max_coord(0), box.max_coord(1), box.min_coord(2)));
-          if(is.does_intersect_internally(seg, f))
-            return true;
-          seg = Segment_3(Point_3(box.min_coord(0), box.min_coord(1), box.max_coord(2)),
-                          Point_3(box.min_coord(0), box.max_coord(1), box.max_coord(2)));
-          if(is.does_intersect_internally(seg, f))
-            return true;
-          seg = Segment_3(Point_3(box.max_coord(0), box.min_coord(1), box.max_coord(2)),
-                          Point_3(box.max_coord(0), box.max_coord(1), box.max_coord(2)));
-          if(is.does_intersect_internally(seg, f))
-            return true;
-
-          seg = Segment_3(Point_3(box.min_coord(0), box.min_coord(1), box.min_coord(2)),
-                          Point_3(box.max_coord(0), box.min_coord(1), box.min_coord(2)));
-          if(is.does_intersect_internally(seg, f))
-            return true;
-          seg = Segment_3(Point_3(box.min_coord(0), box.max_coord(1), box.min_coord(2)),
-                          Point_3(box.max_coord(0), box.max_coord(1), box.min_coord(2)));
-          if(is.does_intersect_internally(seg, f))
-            return true;
-          seg = Segment_3(Point_3(box.min_coord(0), box.min_coord(1), box.max_coord(2)),
-                          Point_3(box.max_coord(0), box.min_coord(1), box.max_coord(2)));
-          if(is.does_intersect_internally(seg, f))
-            return true;
-          seg = Segment_3(Point_3(box.min_coord(0), box.max_coord(1), box.max_coord(2)),
-                          Point_3(box.max_coord(0), box.max_coord(1), box.max_coord(2)));
-          if(is.does_intersect_internally(seg, f))
-            return true;
-
-        } else
-          CGAL_assertion_msg(false, "wrong handle");
-      }
-    }
-    return false;
-  }
-  */
 
   virtual Object_handle shoot(const Ray_3& ray, int mask=255) const {
     CGAL_NEF_TIMER(rs_t.start());
@@ -916,14 +781,6 @@ public:
     return new Self;
   }
 
-  virtual bool update( Unique_hash_map<Vertex_handle, bool>& V,
-                       Unique_hash_map<Halfedge_handle, bool>& E,
-                       Unique_hash_map<Halffacet_handle, bool>& F) {
-    CGAL_NEF_TIMER(ct_t.start());
-    CGAL_assertion( initialized);
-    CGAL_NEF_TIMER(ct_t.stop());
-    return false;
-  }
 
   virtual ~SNC_point_locator_naive() {}
 
