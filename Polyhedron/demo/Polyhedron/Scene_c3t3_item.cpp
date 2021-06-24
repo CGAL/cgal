@@ -43,6 +43,7 @@
 
 
 //TODO: Secure the case where there are more that 124 different subdomains and the case OpenGL is too old. (no shifting before 1.30)
+//TODO: Replace the facet patch_id by a pair of patch_ids (one per adjacent cell), and test the pair instead of only one id in the shader.
 
 typedef CGAL::AABB_triangulation_3_cell_primitive<EPICK,
                                                   C3t3::Triangulation> Primitive;
@@ -98,7 +99,7 @@ public :
       std::vector<float> *p_edges,
       std::vector<float> *p_colors,
       std::vector<float> *p_bary,
-      std::vector<GLuint> *p_subdomain_ids)
+      std::vector<float> *p_subdomain_ids)
   {
     vertices = p_vertices;
     normals = p_normals;
@@ -134,7 +135,7 @@ public :
     getTriangleContainer(0)->allocate(Tc::Facet_centers, barycenters->data(),
                                   static_cast<int>(barycenters->size()*sizeof(float)));
     getTriangleContainer(0)->allocate(Tc::Subdomain_indices, subdomain_ids->data(),
-                                  static_cast<int>(subdomain_ids->size()*sizeof(GLuint)));
+                                  static_cast<int>(subdomain_ids->size()*sizeof(float)));
     getEdgeContainer(0)->allocate(Ec::Vertices, edges->data(),
                             static_cast<int>(edges->size()*sizeof(float)));
     setBuffersFilled(true);
@@ -292,7 +293,7 @@ private:
   mutable std::vector<float> *edges;
   mutable std::vector<float> *colors;
   mutable std::vector<float> *barycenters;
-  mutable std::vector<GLuint> *subdomain_ids;
+  mutable std::vector<float> *subdomain_ids;
   mutable bool is_fast;
   mutable QSlider* alphaSlider;
   mutable float m_alpha ;
@@ -484,7 +485,7 @@ struct Scene_c3t3_item_priv {
   mutable std::vector<float> positions_grid;
   mutable std::vector<float> positions_poly;
   mutable std::vector<float> positions_barycenter;
-  mutable std::vector<GLuint> inter_subdomain_ids;
+  mutable std::vector<float> inter_subdomain_ids;
 
   mutable std::vector<float> normals;
   mutable std::vector<float> f_colors;
@@ -494,7 +495,7 @@ struct Scene_c3t3_item_priv {
   mutable std::vector<float> ws_vertex;
   mutable std::vector<float> s_radius;
   mutable std::vector<float> s_center;
-  mutable std::vector<int> subdomain_ids;
+  mutable std::vector<float> subdomain_ids;
   mutable bool computed_stats;
   mutable float max_edges_length;
   mutable float min_edges_length;
@@ -998,15 +999,11 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     getTriangleContainer(C3t3_faces)->setAlpha(alpha());
     getTriangleContainer(C3t3_faces)->setIsSurface(d->is_surface);
 
-    GLuint visible_bitset[4] =
-    {
-      static_cast<GLuint>(d->bs[0].to_ulong()),
-      static_cast<GLuint>(d->bs[1].to_ulong()),
-      static_cast<GLuint>(d->bs[2].to_ulong()),
-      static_cast<GLuint>(d->bs[3].to_ulong())
-    };
-    std::cout<<visible_bitset[0]<<", "<<visible_bitset[1]<<", "<<visible_bitset[2]<<", "<<visible_bitset[3]<<std::endl;
-    viewer->getShaderProgram(getTriangleContainer(C3t3_faces)->getProgram())->setUniformValueArray("is_visible_bitset", visible_bitset, 4);
+    QVector4D visible_bitset(d->bs[0].to_ulong(),d->bs[1].to_ulong(),d->bs[2].to_ulong(),d->bs[3].to_ulong());
+    QOpenGLShaderProgram* program = viewer->getShaderProgram(getTriangleContainer(C3t3_faces)->getProgram());
+    program->bind();
+    program->setUniformValue("is_visible_bitset", visible_bitset);
+    program->release();
     getTriangleContainer(C3t3_faces)->draw(viewer, false);
     if(d->show_tetrahedra){
       ncthis->show_intersection(true);
@@ -1359,8 +1356,10 @@ void Scene_c3t3_item_priv::computeIntersection(const Primitive& cell)
   const Tr::Bare_point& pd = wp2p(ch->vertex(3)->point());
 
   CGAL::IO::Color color(UC(c.red()), UC(c.green()), UC(c.blue()));
-  for(int i=0; i< 4; ++i)
-    inter_subdomain_ids.push_back(id_to_compact[ch->subdomain_index()]);
+  for(int i=0; i< 12; ++i)
+  {
+    inter_subdomain_ids.push_back(static_cast<float>(id_to_compact[ch->subdomain_index()]));
+  }
   intersection->addTriangle(pb, pa, pc, color);
   intersection->addTriangle(pa, pb, pd, color);
   intersection->addTriangle(pa, pd, pc, color);
@@ -1528,7 +1527,10 @@ void Scene_c3t3_item_priv::computeElements()
       f_colors.push_back((float)color.redF());f_colors.push_back((float)color.greenF());f_colors.push_back((float)color.blueF());
       f_colors.push_back((float)color.redF());f_colors.push_back((float)color.greenF());f_colors.push_back((float)color.blueF());
       f_colors.push_back((float)color.redF());f_colors.push_back((float)color.greenF());f_colors.push_back((float)color.blueF());
-      subdomain_ids.push_back(id_to_compact[cell->subdomain_index()]);
+      for(int i=0; i<3; ++i)
+      {
+        subdomain_ids.push_back(static_cast<float>(id_to_compact[cell->subdomain_index()]));
+      }
       if ((index % 2 == 1) == c3t3.is_in_complex(cell))
         draw_triangle(pb, pa, pc);
       else draw_triangle(pa, pb, pc);
@@ -2115,7 +2117,7 @@ void Scene_c3t3_item::computeElements()const
 
   getTriangleContainer(C3t3_faces)->allocate(
         Tc::Subdomain_indices, d->subdomain_ids.data(),
-        static_cast<int>(d->subdomain_ids.size()*sizeof(GLuint)));
+        static_cast<int>(d->subdomain_ids.size()*sizeof(float)));
 
 
   d->positions_poly_size = d->positions_poly.size();
