@@ -1,6 +1,3 @@
-namespace CGAL {
-namespace Weights {
-
 /*!
 \ingroup PkgWeightsRefConcepts
 \cgalConcept
@@ -125,6 +122,3 @@ typedef unspecified_type Construct_centroid_3;
 /// @}
 
 };
-
-} // namespace Weights
-} // namespace CGAL
