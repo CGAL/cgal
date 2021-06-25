@@ -108,10 +108,6 @@ public:
   typedef typename Decorator_traits::Halfedge_handle Halfedge_handle;
   typedef typename Decorator_traits::Halffacet_handle Halffacet_handle;
 
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS
-  typedef typename SNC_structure::Halffacet_triangle_handle
-                                  Halffacet_triangle_handle;
-#endif
   typedef typename SNC_structure::Object_handle Object_handle;
 
   typedef typename Decorator_traits::Halffacet_cycle_iterator
@@ -145,10 +141,6 @@ public:
     ( const Point_3& pop, Halfedge_handle e, Depth depth);
   template<typename Depth> Oriented_side operator()
     ( const Point_3& pop, Halffacet_handle f, Depth depth);
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS
-  template<typename Depth> Oriented_side operator()
-    ( const Point_3& pop, Halffacet_triangle_handle f, Depth depth);
-#endif
 #ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
   bool reference_counted;
 #endif
@@ -288,10 +280,6 @@ public:
   typedef typename Decorator_traits::Vertex_handle Vertex_handle;
   typedef typename Decorator_traits::Halfedge_handle Halfedge_handle;
   typedef typename Decorator_traits::Halffacet_handle Halffacet_handle;
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS
-  typedef typename SNC_structure::Halffacet_triangle_handle
-                                  Halffacet_triangle_handle;
-#endif
 
   typedef typename SNC_structure::Object_handle Object_handle;
   typedef std::vector<Object_handle> Object_list;
@@ -333,19 +321,12 @@ Side_of_plane<SNC_decorator>::operator()
   Vertex_handle v;
   Halfedge_handle e;
   Halffacet_handle f;
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS
-  Halffacet_triangle_handle t;
-#endif
   if( CGAL::assign( v, o))
     return (*this)(pop, v, depth);
   else if( CGAL::assign( e, o))
     return (*this)(pop, e, depth);
   else if( CGAL::assign( f, o))
     return (*this)(pop, f, depth);
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS
-  else if( CGAL::assign( t, o))
-    return (*this)(pop, t, depth);
-#endif
   else
     CGAL_error_msg( "wrong handle");
 
@@ -462,63 +443,6 @@ Side_of_plane<SNC_decorator>::operator()
   return ON_ORIENTED_BOUNDARY;
 }
 
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS
-template <typename SNC_decorator>
-template <typename Depth>
-Oriented_side
-Side_of_plane<SNC_decorator>::operator()
-( const Point_3& pop, Halffacet_triangle_handle t, Depth depth) {
-  bool on_positive_side = false, on_negative_side = false;
-  Triangle_3 tr(t.get_triangle());
-  for( int i = 0; i < 3; ++i) {
-    Oriented_side side = ON_ORIENTED_BOUNDARY;
-    Comparison_result cr;
-    if(
-#ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
-       !reference_counted ||
-#endif
-       !OnSideMapRC.is_defined(&(tr[i].hw()))) {
-      switch(depth%3) {
-      case 0:
-        cr = CGAL::compare_x(tr[i], pop);
-        side = cr == LARGER ? ON_POSITIVE_SIDE :
-                 cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
-        break;
-      case 1:
-        cr = CGAL::compare_y(tr[i], pop);
-        side = cr == LARGER ? ON_POSITIVE_SIDE :
-                 cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
-        break;
-      case 2:
-        cr = CGAL::compare_z(tr[i], pop);
-        side = cr == LARGER ? ON_POSITIVE_SIDE :
-                 cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
-        break;
-      default: CGAL_error_msg( "wrong value");
-      }
-#ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
-      if(reference_counted)
-        OnSideMapRC[&(tr[i].hw())] = side;
-    } else if(reference_counted)
-      side = OnSideMapRC[&(tr[i].hw())];
-#endif
-    if( side == ON_POSITIVE_SIDE)
-      on_positive_side = true;
-    else if( side == ON_NEGATIVE_SIDE)
-      on_negative_side = true;
-  }
-  if( on_positive_side && on_negative_side)
-    return ON_ORIENTED_BOUNDARY;
-  if( !on_positive_side && !on_negative_side)
-    return ON_ORIENTED_BOUNDARY;
-  if( on_positive_side) {
-    CGAL_assertion( !on_negative_side);
-    return ON_POSITIVE_SIDE;
-  }
-  CGAL_assertion( on_negative_side);
-  return ON_NEGATIVE_SIDE;
-}
-#endif
 
 /*
    As for the edges, if a facet is tanget to the plane it is not considered as
