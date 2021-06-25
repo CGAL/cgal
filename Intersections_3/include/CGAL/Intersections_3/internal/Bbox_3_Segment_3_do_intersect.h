@@ -140,11 +140,11 @@ do_intersect_bbox_segment_aux(const FT& px, const FT& py, const FT& pz,
                               const BFT& bxmax, const BFT& bymax, const BFT& bzmax)
 {
   if(((px >= bxmin) && (px <= bxmax) &&
-       (py >= bymin) && (py <= bymax) &&
-       (pz >= bzmin) && (pz <= bzmax)) ||
-      ((qx >= bxmin) && (qx <= bxmax) &&
-       (qy >= bymin) && (qy <= bymax) &&
-       (qz >= bzmin) && (qz <= bzmax)))
+      (py >= bymin) && (py <= bymax) &&
+      (pz >= bzmin) && (pz <= bzmax)) ||
+     ((qx >= bxmin) && (qx <= bxmax) &&
+      (qy >= bymin) && (qy <= bymax) &&
+      (qz >= bzmin) && (qz <= bzmax)))
   {
     return true;
   }
@@ -208,7 +208,7 @@ do_intersect_bbox_segment_aux(const FT& px, const FT& py, const FT& pz,
   // If the query is vertical for x, then check its x-coordinate is in
   // the x-slab.
   if((px == qx) &&  // <=> (dmin == 0)
-     (! (bounded_0 && bounded_1))) // do not check for a segment
+     (!(bounded_0 && bounded_1))) // do not check for a segment
   {
     if(px > bxmax || px < bxmin)
       return false;
@@ -396,25 +396,23 @@ do_intersect_bbox_segment_aux(const FT& px, const FT& py, const FT& pz,
   }
 
   Is_greater_value b = Is_greater_value();
+
   // If tymin/dymin > t1, set t1 = tymin/dymin.
   if((px == qx) || // <=> (dmin == 0)
      ((py != qy) && // <=> (dymin > 0)
-      certainly(b = is_greater( dmin*tymin, dymin* tmin))))
+      certainly(b = is_greater(dmin*tymin, dymin*tmin))))
   {
     tmin = tymin;
     dmin = dymin;
   }
 
   if(is_indeterminate(b))
-    return b; // Note that the default-constructed
-
-  // Is_greater_value cannot be
-  // indeterminate.
+    return b; // Note that the default-constructed Is_greater_value cannot be indeterminate.
 
   // If tymax/dymax < t2, set t2 = tymax/dymax.
   if((px == qx) || // <=> (dmax > 0)
      ((py != qy) && // <=> dymax > 0
-      certainly(b = is_greater(dymax* tmax,  dmax*tymax))))
+      certainly(b = is_greater(dymax*tmax, dmax*tymax))))
   {
     tmax = tymax;
     dmax = dymax;
@@ -437,7 +435,7 @@ do_intersect_bbox_segment_aux(const FT& px, const FT& py, const FT& pz,
     if(is_greater.bound_overflow() || is_greater.value_might_underflow())
       return Is_greater::uncertain();
 
-    const Is_greater_value b1 = is_greater(dzmax* tmin,  dmin*tzmax);
+    const Is_greater_value b1 = is_greater(dzmax*tmin, dmin*tzmax);
     if(possibly(b1))
       return !b1; // if(is_greater) return false; // or uncertain
 
@@ -445,6 +443,7 @@ do_intersect_bbox_segment_aux(const FT& px, const FT& py, const FT& pz,
     if(possibly(b2))
       return !b2; // if(is_greater) return false; // or uncertain
   }
+
   return true;
 }
 

@@ -22,14 +22,21 @@ namespace CGAL {
 namespace Intersections {
 namespace internal {
 
-template <typename FT>
+template <typename FT, typename BFT>
 inline
 bool
 bbox_line_do_intersect_aux(const FT& px, const FT& py, const FT& pz,
                            const FT& vx, const FT& vy, const FT& vz,
-                           const FT& bxmin, const FT& bymin, const FT& bzmin,
-                           const FT& bxmax, const FT& bymax, const FT& bzmax)
+                           const BFT& bxmin, const BFT& bymin, const BFT& bzmin,
+                           const BFT& bxmax, const BFT& bymax, const BFT& bzmax)
 {
+  if((px >= bxmin) && (px <= bxmax) &&
+     (py >= bymin) && (py <= bymax) &&
+     (pz >= bzmin) && (pz <= bzmax))
+  {
+    return true;
+  }
+
   // -----------------------------------
   // treat x coord
   // -----------------------------------
