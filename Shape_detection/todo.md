@@ -1,2 +1,4 @@
 - update the docs
 - integrate changes from the Simon's branch with cylinders and spheres
+- better handle deprecated version
+- fix the typedefs of the Polyline_graph

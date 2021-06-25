@@ -538,6 +538,7 @@ Since accessing neighbors of a face in a polygon mesh is fast, performance of th
 mostly depends on the `RegionType` model's implementation, which is usually fast, too.
 
 
+\cgalModifBegin
 \subsection Shape_detection_RegionGrowingSegments Segment Set
 
 If one wants to detect lines in a segment set, this \cgal component provides the corresponding models of the concept
@@ -600,6 +601,7 @@ The line fitting class above depends on three parameters:
 - `min_region_size` - the minimum number of vertices a region must have.
 
 As already mentioned, the right choice of these parameters is important for producing the good results.
+\cgalModifEnd
 
 
 \section Shape_detection_Comparison Comparison
@@ -638,6 +640,7 @@ which are subgroups of axis-symmetric and orthogonal clusters) as described by V
 \cgalExample{Shape_detection/efficient_RANSAC_and_plane_regularization.cpp}
 
 
+\cgalModifBegin
 \section Shape_detection_DeprecatedComponents Deprecated Components
 
 This version of Region Growing deprecates the old way to specify parameters. Now, all parameters
@@ -667,6 +670,7 @@ The reason behind this change is to provide users with control for early rejecti
   // New API.
   bool update(const std::vector<std::size_t>& indices) { };
 \endcode
+\cgalModifEnd
 
 
 \section Shape_detection_History History
