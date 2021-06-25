@@ -157,6 +157,11 @@ public:
     return ::evaluate(image(),i,j,k);
   }
 
+  bool is_valid() const
+  {
+    return image_ptr.get() != nullptr;
+  }
+
 public:
 
   bool read(const char* file)

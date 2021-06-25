@@ -5,7 +5,6 @@
 #include <CGAL/Mesh_criteria_3.h>
 
 #include <CGAL/Labeled_mesh_domain_3.h>
-#include <CGAL/Mesh_3/Image_plus_weights_to_labeled_function_wrapper.h>
 #include <CGAL/Mesh_3/generate_weights_from_labeled_image.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/Image_3.h>
@@ -35,38 +34,28 @@ using namespace CGAL::parameters;
 using Word_type = unsigned char;
 using Subdomain_index = int;
 
-using Wrapper = CGAL::Mesh_3::Image_plus_weights_to_labeled_function_wrapper<
-    CGAL::Image_3, K, Word_type,
-    unsigned char, // Weights_type,
-    Subdomain_index>;
-
 int main(int argc, char* argv[])
 {
-  /// [Loads images]
+  /// [Loads image]
   const char* fname = (argc > 1) ? argv[1] : "data/liver.inr.gz";
-  const float sigma = (argc > 2) ? atof(argv[2]) : 1.f;
   CGAL::Image_3 image;
   if(!image.read(fname)){
     std::cerr << "Error: Cannot read file " <<  fname << std::endl;
     return EXIT_FAILURE;
   }
-  /// [Loads images]
+  /// [Loads image]
 
   /// [Generate weights]
-  CGAL::Image_3 weights =
+  const float sigma = (argc > 2) ? atof(argv[2]) : 1.f;
+  CGAL::Image_3 img_weights =
     CGAL::Mesh_3::generate_weights(image, sigma, (unsigned char)(1));
   /// [Generate weights]
 
   /// [Domain creation]
-  Mesh_domain domain = argc > 2
-      ? Mesh_domain(Wrapper(image, weights),
-                    CGAL::Mesh_3::internal::compute_bounding_box(image),
-                    relative_error_bound = 1e-6)
-      : Mesh_domain::create_labeled_image_mesh_domain(
-            image, // null_subdomain_index
-                   // = [](auto) { return true;
-                   // },
-            relative_error_bound = 1e-6);
+  Mesh_domain domain
+    = Mesh_domain::create_labeled_image_mesh_domain(image,
+                                                    weights = img_weights,
+                                                    relative_error_bound = 1e-6);
   /// [Domain creation]
 
   // Mesh criteria

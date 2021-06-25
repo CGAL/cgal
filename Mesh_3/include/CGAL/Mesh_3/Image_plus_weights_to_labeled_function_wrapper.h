@@ -72,26 +72,25 @@ namespace Mesh_3 {
  * Wraps a pair of images into a labeled function which takes his values into
  * N. Uses weighted trilinear interpolation.
  */
-template<class Image_,
-         class BGT,
-         typename Image_word_type = unsigned char,
+template<typename Image_word_type = unsigned char,
          typename Weights_type = unsigned char,
          typename Return_type = int,
-         typename Transform = Identity<Return_type>
+         typename Image_values_to_labels = std::function<Return_type(Image_word_type)>
          >
 class Image_plus_weights_to_labeled_function_wrapper
 {
 public:
+
   // Types
   typedef Return_type return_type;
   typedef Image_word_type word_type;
-  typedef typename BGT::Point_3   Point_3;
+  typedef CGAL::Image_3 Image_;
 
   /// Constructor
   Image_plus_weights_to_labeled_function_wrapper
   (const Image_& image,
    const Image_& weights_image,
-   const Transform& transform = Transform(),
+   Image_values_to_labels transform = Identity<Return_type>(),
    const Return_type value_outside = 0)
     : r_im_(image)
     , r_weights_im_(weights_image)
@@ -111,9 +110,9 @@ public:
    * @param p the input point
    * @return the label at point \c p
    */
-  return_type operator()(const Point_3& p, const bool = true) const
+  template <typename Point_3>
+  return_type operator()(const Point_3& p) const
   {
-
     return transform(
       r_im_.template labellized_trilinear_interpolation<Image_word_type>(
           CGAL::to_double(p.x()),
@@ -127,7 +126,7 @@ private:
   /// Labeled image to wrap
   const Image_& r_im_;
   const Image_& r_weights_im_;
-  const Transform transform;
+  const Image_values_to_labels transform;
   const Return_type value_outside;
   CGAL::ImageIO::Weighted_indicator_factory<Image_word_type,
                                             Weights_type> indicator_factory;
