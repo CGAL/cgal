@@ -147,7 +147,7 @@ void Triangle_container::initGL( Viewer_interface* viewer)
           setVbo(Subdomain_indices,
                  new Vbo("subdomain_in",
                          Vbo::GEOMETRY,
-                         QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1));
+                         QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 2));
         getVao(viewer)->addVbo(getVbo(Subdomain_indices));
       }
     }

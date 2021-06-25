@@ -3,7 +3,7 @@ in vec4 vertex;
 in vec3 normals;
 in vec3 colors;
 in vec3 center;
-in float subdomain_in;
+in vec2 subdomain_in;
 uniform  mat4 mvp_matrix;
 uniform  mat4 mv_matrix;
 uniform mat4 norm_matrix;
@@ -12,7 +12,7 @@ uniform  float shrink_factor;
 out vec4 fP;
 out vec3 fN;
 out vec4 color;
-flat out float subdomain_out;
+flat out vec2 subdomain_out;
 uniform  float point_size;
 void main(void)
 {

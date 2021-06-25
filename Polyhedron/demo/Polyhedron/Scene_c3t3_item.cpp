@@ -43,7 +43,6 @@
 
 
 //TODO: Secure the case where there are more that 124 different subdomains and the case OpenGL is too old. (no shifting before 1.30)
-//TODO: Replace the facet patch_id by a pair of patch_ids (one per adjacent cell), and test the pair instead of only one id in the shader.
 
 typedef CGAL::AABB_triangulation_3_cell_primitive<EPICK,
                                                   C3t3::Triangulation> Primitive;
@@ -1356,9 +1355,11 @@ void Scene_c3t3_item_priv::computeIntersection(const Primitive& cell)
   const Tr::Bare_point& pd = wp2p(ch->vertex(3)->point());
 
   CGAL::IO::Color color(UC(c.red()), UC(c.green()), UC(c.blue()));
+  float id = static_cast<float>(id_to_compact[ch->subdomain_index()]);
   for(int i=0; i< 12; ++i)
   {
-    inter_subdomain_ids.push_back(static_cast<float>(id_to_compact[ch->subdomain_index()]));
+    inter_subdomain_ids.push_back(id);
+    inter_subdomain_ids.push_back(id);
   }
   intersection->addTriangle(pb, pa, pc, color);
   intersection->addTriangle(pa, pb, pd, color);
@@ -1518,6 +1519,7 @@ void Scene_c3t3_item_priv::computeElements()
     fit != end; ++fit)
     {
       const Tr::Cell_handle& cell = fit->first;
+      const Tr::Cell_handle& cell2 = cell->neighbor(fit->second);
       const int& index = fit->second;
       const Tr::Bare_point& pa = wp2p(cell->vertex((index + 1) & 3)->point());
       const Tr::Bare_point& pb = wp2p(cell->vertex((index + 2) & 3)->point());
@@ -1527,9 +1529,17 @@ void Scene_c3t3_item_priv::computeElements()
       f_colors.push_back((float)color.redF());f_colors.push_back((float)color.greenF());f_colors.push_back((float)color.blueF());
       f_colors.push_back((float)color.redF());f_colors.push_back((float)color.greenF());f_colors.push_back((float)color.blueF());
       f_colors.push_back((float)color.redF());f_colors.push_back((float)color.greenF());f_colors.push_back((float)color.blueF());
+      //As a facet belongs to 2 cells, we need both to decide if it should be hidden or not.
+      //Also 0 is a forbidden value, that is reserved for the "outside of the domain", so it won't be in the bs table.
+      float dom1 = (cell->subdomain_index() != 0) ? static_cast<float>(id_to_compact[cell->subdomain_index()])
+                                                  : static_cast<float>(id_to_compact[cell2->subdomain_index()]);
+
+      float dom2 = (cell2->subdomain_index() != 0) ? static_cast<float>(id_to_compact[cell2->subdomain_index()])
+                                                  : static_cast<float>(id_to_compact[cell->subdomain_index()]);
       for(int i=0; i<3; ++i)
       {
-        subdomain_ids.push_back(static_cast<float>(id_to_compact[cell->subdomain_index()]));
+        subdomain_ids.push_back(dom1);
+        subdomain_ids.push_back(dom2);
       }
       if ((index % 2 == 1) == c3t3.is_in_complex(cell))
         draw_triangle(pb, pa, pc);
