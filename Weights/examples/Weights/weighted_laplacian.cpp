@@ -1,10 +1,8 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Weights/utils.h>
-#include <CGAL/Weights/cotangent_weights.h>
-#include <CGAL/Weights/mixed_voronoi_region_weights.h>
 #include <CGAL/Eigen_solver_traits.h>
 #include <CGAL/Eigen_matrix.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Weights.h>
 
 // Typedefs.
 using Kernel  = CGAL::Simple_cartesian<double>;
