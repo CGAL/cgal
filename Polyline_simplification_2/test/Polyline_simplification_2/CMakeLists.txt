@@ -36,8 +36,7 @@ endif()
 # Creating entries for all .cpp/.C files with "main" routine
 # ##########################################################
 
+create_single_source_cgal_program( "issue-5774.cpp" )
 create_single_source_cgal_program( "simplify_polygon_test.cpp" )
 
 create_single_source_cgal_program( "simplify_polyline_with_duplicate_points.cpp" )
-
-
