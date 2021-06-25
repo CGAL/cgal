@@ -81,9 +81,9 @@ namespace Polygon_mesh {
     /// Number type.
     typedef typename GeomTraits::FT FT;
 
-    #ifdef DOXYGEN_RUNNING
+    #ifdef DOXYGEN_NS
       /*!
-        a model of `ReadablePropertyMap` whose key type is `boost::graph_traits<PolygonMesh>::face_descriptor`
+        a model of `ReadablePropertyMap` whose key type is `face_descriptor`
         and value type is `std::size_t`. This map associates each face of the input mesh
         to the index of the planar region it belongs to.
       */

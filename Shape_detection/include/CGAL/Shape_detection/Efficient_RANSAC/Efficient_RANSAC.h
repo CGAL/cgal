@@ -102,7 +102,7 @@ public:
   typedef Shape_base<Traits> Shape; ///< Shape type.
   typedef Plane<Traits> Plane_shape; ///< %Plane shape type.
 
-#ifdef DOXYGEN_RUNNING
+#ifdef DOXYGEN_NS
   typedef unspecified_type Shape_range;
   ///< `Iterator_range` with a bidirectional constant iterator type with value type `boost::shared_ptr<Shape>`.
   typedef unspecified_type Plane_range;
@@ -139,7 +139,7 @@ public:
 
 #endif
 
-#ifdef DOXYGEN_RUNNING
+#ifdef DOXYGEN_NS
   typedef unspecified_type Point_index_range;
   ///< `Iterator_range` with a bidirectional iterator with value type `std::size_t`
   ///  as indices into the input data that has not been assigned to a shape.

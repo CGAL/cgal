@@ -108,19 +108,26 @@ namespace Polygon_mesh {
     /// \name Types
     /// @{
 
-    /*!
-      a model of `ConstRange` whose iterator type is `RandomAccessIterator` and
-      value type is `edge_descriptor` of the `PolygonMesh`.
-    */
-    using Segment_range = Iterator_range<Transform_iterator>;
+    #ifdef DOXYGEN_NS
+      /*!
+        a model of `ConstRange` whose iterator type is `RandomAccessIterator` and
+        value type is `edge_descriptor` of the `PolygonMesh`.
+      */
+      typedef unspecified_type Segment_range;
 
-    /*!
-      a model of `ReadablePropertyMap` whose key type is the value type of `Segment_range`
-      and value type is `Kernel::Segment_3`.
-    */
-    using Segment_map = Segment_from_edge_descriptor_map<Face_graph, Vertex_to_point_map>;
+      /*!
+        a model of `ReadablePropertyMap` whose key type is the value type of `Segment_range`
+        and value type is `Kernel::Segment_3`.
+      */
+      typedef unspecified_type Segment_map;
+    #endif
 
     /// @}
+
+    /// \cond SKIP_IN_MANUAL
+    using Segment_range = Iterator_range<Transform_iterator>;
+    using Segment_map = Segment_from_edge_descriptor_map<Face_graph, Vertex_to_point_map>;
+    /// \endcond
 
   public:
     /// \name Initialization

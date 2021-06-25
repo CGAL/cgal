@@ -69,7 +69,7 @@ namespace Polygon_mesh {
     using Seed_map = internal::Seed_property_map;
     /// \endcond
 
-    #ifdef DOXYGEN_RUNNING
+    #ifdef DOXYGEN_NS
       /*!
         a model of `ReadablePropertyMap` whose key and value type is `std::size_t`.
         This map provides an access to the ordered indices of input faces.
