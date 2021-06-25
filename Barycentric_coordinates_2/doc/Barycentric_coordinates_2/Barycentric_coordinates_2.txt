@@ -316,8 +316,8 @@ Example's point pattern.
 
 \subsection depr_example Deprecated Coordinates
 This example illustrates how to quickly update the code in order to use the deprecated
-version of mean value coordinates that is the version below 5.2. Basically, one
-needs to add the suffix `_depr` to the namespace and include the corresponding
+version of mean value coordinates that is the version below 5.4. Basically, one
+needs to add the suffix `_deprecated` to the namespace and include the corresponding
 deprecated headers. The used `Kernel` is inexact and the used coordinates are
 mean value coordinates. The result is identical to the one from
 \ref mv_coord_example "this example".

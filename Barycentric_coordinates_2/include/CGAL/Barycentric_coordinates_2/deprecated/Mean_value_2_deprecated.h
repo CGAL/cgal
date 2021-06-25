@@ -10,14 +10,14 @@
 //
 // Author(s) : Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez.
 
-#ifndef CGAL_BARYCENTRIC_MEAN_VALUE_2_DEPR_H
-#define CGAL_BARYCENTRIC_MEAN_VALUE_2_DEPR_H
+#ifndef CGAL_BARYCENTRIC_MEAN_VALUE_2_DEPRECATED_H
+#define CGAL_BARYCENTRIC_MEAN_VALUE_2_DEPRECATED_H
 
 #include <CGAL/license/Barycentric_coordinates_2.h>
 
-#define CGAL_DEPRECATED_HEADER "<CGAL/Barycentric_coordinates_2/deprecated/Mean_value_2_depr.h>"
+#define CGAL_DEPRECATED_HEADER "<CGAL/Barycentric_coordinates_2/deprecated/Mean_value_2_deprecated.h>"
 #define CGAL_DEPRECATED_MESSAGE_DETAILS \
-  "This part of the package is deprecated since the version 5.2 of CGAL!"
+  "This part of the package is deprecated since the version 5.4 of CGAL!"
 #include <CGAL/internal/deprecation_warning.h>
 
 #include <CGAL/disable_warnings.h>
@@ -35,13 +35,13 @@
 #include <boost/optional/optional.hpp>
 
 // Barycentric coordinates headers.
-#include <CGAL/Barycentric_coordinates_2/deprecated/barycentric_enum_2_depr.h>
+#include <CGAL/Barycentric_coordinates_2/deprecated/barycentric_enum_2_deprecated.h>
 
 // CGAL namespace.
 namespace CGAL {
 
 // Barycentric coordinates namespace.
-namespace Barycentric_coordinates_depr {
+namespace Barycentric_coordinates_deprecated {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Try to find a square root object in the provided `Traits` class. If not, then use the default square root from CGAL.
@@ -100,7 +100,7 @@ public:
  * For a polygon with three vertices (triangle) it is better to use the class `Triangle_coordinates_2`.
  * Mean value coordinates can be computed only approximately due to an inevitable square root operation, and they are necessarily positive only inside the kernel of a star-shaped polygon and inside any quadrilateral.
 
- * \deprecated This part of the package is deprecated since the version 5.2 of \cgal.
+ * \deprecated This part of the package is deprecated since the version 5.4 of \cgal.
 
 \tparam Traits must be a model of the concept `BarycentricTraits_2`.
 
@@ -500,10 +500,10 @@ private:
     }
 };
 
-} // namespace Barycentric_coordinates_depr
+} // namespace Barycentric_coordinates_deprecated
 
 } // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 
-#endif // CGAL_BARYCENTRIC_MEAN_VALUE_2_DEPR_H
+#endif // CGAL_BARYCENTRIC_MEAN_VALUE_2_DEPRECATED_H

@@ -10,14 +10,14 @@
 //
 // Author(s) : Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez.
 
-#ifndef CGAL_BARYCENTRIC_ENUM_2_DEPR_H
-#define CGAL_BARYCENTRIC_ENUM_2_DEPR_H
+#ifndef CGAL_BARYCENTRIC_ENUM_2_DEPRECATED_H
+#define CGAL_BARYCENTRIC_ENUM_2_DEPRECATED_H
 
 #include <CGAL/license/Barycentric_coordinates_2.h>
 
-#define CGAL_DEPRECATED_HEADER "<CGAL/Barycentric_coordinates_2/deprecated/barycentric_enum_2_depr.h>"
+#define CGAL_DEPRECATED_HEADER "<CGAL/Barycentric_coordinates_2/deprecated/barycentric_enum_2_deprecated.h>"
 #define CGAL_DEPRECATED_MESSAGE_DETAILS \
-  "This part of the package is deprecated since the version 5.2 of CGAL!"
+  "This part of the package is deprecated since the version 5.4 of CGAL!"
 #include <CGAL/internal/deprecation_warning.h>
 
 // CGAL namespace.
@@ -27,11 +27,11 @@ namespace CGAL {
  * \ingroup PkgBarycentricCoordinates2RefDeprecated
  * The namespace Barycentric_coordinates contains implementations of all generalized barycentric coordinates: 2D, 3D, related enumerations, and so on.
 
- * \deprecated This part of the package is deprecated since the version 5.2 of \cgal.
+ * \deprecated This part of the package is deprecated since the version 5.4 of \cgal.
  */
 
 // Barycentric_coordinates namespace.
-namespace Barycentric_coordinates_depr {
+namespace Barycentric_coordinates_deprecated {
 
 /// \name Locations of a Query Point
 /// @{
@@ -88,8 +88,8 @@ enum Type_of_polygon
     STRICTLY_CONVEX
 };
 
-} // namespace Barycentric_coordinates_depr
+} // namespace Barycentric_coordinates_deprecated
 
 } // namespace CGAL
 
-#endif // CGAL_BARYCENTRIC_ENUM_2_DEPR_H
+#endif // CGAL_BARYCENTRIC_ENUM_2_DEPRECATED_H

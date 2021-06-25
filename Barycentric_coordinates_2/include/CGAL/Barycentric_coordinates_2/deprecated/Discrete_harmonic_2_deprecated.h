@@ -10,14 +10,14 @@
 //
 // Author(s) : Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez.
 
-#ifndef CGAL_BARYCENTRIC_DISCRETE_HARMONIC_2_DEPR_H
-#define CGAL_BARYCENTRIC_DISCRETE_HARMONIC_2_DEPR_H
+#ifndef CGAL_BARYCENTRIC_DISCRETE_HARMONIC_2_DEPRECATED_H
+#define CGAL_BARYCENTRIC_DISCRETE_HARMONIC_2_DEPRECATED_H
 
 #include <CGAL/license/Barycentric_coordinates_2.h>
 
-#define CGAL_DEPRECATED_HEADER "<CGAL/Barycentric_coordinates_2/deprecated/Discrete_harmonic_2_depr.h>"
+#define CGAL_DEPRECATED_HEADER "<CGAL/Barycentric_coordinates_2/deprecated/Discrete_harmonic_2_deprecated.h>"
 #define CGAL_DEPRECATED_MESSAGE_DETAILS \
-  "This part of the package is deprecated since the version 5.2 of CGAL!"
+  "This part of the package is deprecated since the version 5.4 of CGAL!"
 #include <CGAL/internal/deprecation_warning.h>
 
 #include <CGAL/disable_warnings.h>
@@ -27,7 +27,7 @@
 #include <CGAL/Polygon_2_algorithms.h>
 
 // Barycentric coordinates headers.
-#include <CGAL/Barycentric_coordinates_2/deprecated/barycentric_enum_2_depr.h>
+#include <CGAL/Barycentric_coordinates_2/deprecated/barycentric_enum_2_deprecated.h>
 
 // Boost headers.
 #include <boost/optional/optional.hpp>
@@ -36,7 +36,7 @@
 namespace CGAL {
 
 // Barycentric coordinates namespace.
-namespace Barycentric_coordinates_depr {
+namespace Barycentric_coordinates_deprecated {
 
 // Examples: see the User Manual here - https://doc.cgal.org/latest/Manual/index.html.
 // [1] Reference: "M. S. Floater, K. Hormann, and G. Kos. A general construction of barycentric coordinates over convex polygons. Advances in Computational Mathematics, 24(1-4):311-331, 2006.".
@@ -48,7 +48,7 @@ namespace Barycentric_coordinates_depr {
  * For a polygon with three vertices (triangle) it is better to use the class `Triangle_coordinates_2`.
  * Discrete harmonic coordinates can be computed exactly. By definition, they do not necessarily give positive values.
 
- * \deprecated This part of the package is deprecated since the version 5.2 of \cgal.
+ * \deprecated This part of the package is deprecated since the version 5.4 of \cgal.
 
 \tparam Traits must be a model of the concepts `BarycentricTraits_2` and `PolygonTraits_2`.
 
@@ -432,10 +432,10 @@ private:
     }
 };
 
-} // namespace Barycentric_coordinates_depr
+} // namespace Barycentric_coordinates_deprecated
 
 } // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 
-#endif // CGAL_BARYCENTRIC_DISCRETE_HARMONIC_2_DEPR_H
+#endif // CGAL_BARYCENTRIC_DISCRETE_HARMONIC_2_DEPRECATED_H

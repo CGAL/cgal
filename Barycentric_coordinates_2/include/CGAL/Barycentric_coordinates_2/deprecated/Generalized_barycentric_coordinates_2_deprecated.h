@@ -10,14 +10,14 @@
 //
 // Author(s) : Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez.
 
-#ifndef CGAL_BARYCENTRIC_GENERALIZED_COORDINATES_2_DEPR_H
-#define CGAL_BARYCENTRIC_GENERALIZED_COORDINATES_2_DEPR_H
+#ifndef CGAL_BARYCENTRIC_GENERALIZED_COORDINATES_2_DEPRECATED_H
+#define CGAL_BARYCENTRIC_GENERALIZED_COORDINATES_2_DEPRECATED_H
 
 #include <CGAL/license/Barycentric_coordinates_2.h>
 
-#define CGAL_DEPRECATED_HEADER "<CGAL/Barycentric_coordinates_2/deprecated/Generalized_barycentric_coordinates_2_depr.h>"
+#define CGAL_DEPRECATED_HEADER "<CGAL/Barycentric_coordinates_2/deprecated/Generalized_barycentric_coordinates_2_deprecated.h>"
 #define CGAL_DEPRECATED_MESSAGE_DETAILS \
-  "This part of the package is deprecated since the version 5.2 of CGAL!"
+  "This part of the package is deprecated since the version 5.4 of CGAL!"
 #include <CGAL/internal/deprecation_warning.h>
 
 #include <CGAL/disable_warnings.h>
@@ -26,8 +26,8 @@
 #include <CGAL/Polygon_2_algorithms.h>
 
 // Barycentric coordinates headers.
-#include <CGAL/Barycentric_coordinates_2/deprecated/Segment_coordinates_2_depr.h>
-#include <CGAL/Barycentric_coordinates_2/deprecated/barycentric_enum_2_depr.h>
+#include <CGAL/Barycentric_coordinates_2/deprecated/Segment_coordinates_2_deprecated.h>
+#include <CGAL/Barycentric_coordinates_2/deprecated/barycentric_enum_2_deprecated.h>
 
 // Boost headers.
 #include <boost/optional.hpp>
@@ -36,7 +36,7 @@
 namespace CGAL {
 
 // Barycentric coordinates namespace.
-namespace Barycentric_coordinates_depr {
+namespace Barycentric_coordinates_deprecated {
 
 // Examples: see the User Manual here - https://doc.cgal.org/latest/Manual/index.html.
 
@@ -45,7 +45,7 @@ namespace Barycentric_coordinates_depr {
  * The class `Generalized_barycentric_coordinates_2` implements generalized barycentric coordinates along the polygon's boundary and provides a common interface for all coordinate classes.
  * This class is parameterized by a coordinate class `Coordinate_2`, and a traits class `Traits`.
 
- * \deprecated This part of the package is deprecated since the version 5.2 of \cgal.
+ * \deprecated This part of the package is deprecated since the version 5.4 of \cgal.
 
 \tparam Coordinate_2 must be a model of the concept `BarycentricCoordinates_2`.
 
@@ -108,15 +108,15 @@ public:
     /// Computed coordinates are stored in the output iterator `output`.
     ///
     /// Different choices of the parameter `query_point_location` are possible:
-    /// `CGAL::Barycentric_coordinates_depr::UNSPECIFIED_LOCATION` - default constant with automatic check for a location,
-    /// `CGAL::Barycentric_coordinates_depr::ON_BOUNDED_SIDE` - for a strictly interior query point,
-    /// `CGAL::Barycentric_coordinates_depr::ON_BOUNDARY` - for a query point on the boundary of the polygon,
-    /// `CGAL::Barycentric_coordinates_depr::ON_VERTEX` - for a query point at one of the polygon's vertices, and
-    /// `CGAL::Barycentric_coordinates_depr::ON_UNBOUNDED_SIDE` - for a strictly exterior query point.
+    /// `CGAL::Barycentric_coordinates_deprecated::UNSPECIFIED_LOCATION` - default constant with automatic check for a location,
+    /// `CGAL::Barycentric_coordinates_deprecated::ON_BOUNDED_SIDE` - for a strictly interior query point,
+    /// `CGAL::Barycentric_coordinates_deprecated::ON_BOUNDARY` - for a query point on the boundary of the polygon,
+    /// `CGAL::Barycentric_coordinates_deprecated::ON_VERTEX` - for a query point at one of the polygon's vertices, and
+    /// `CGAL::Barycentric_coordinates_deprecated::ON_UNBOUNDED_SIDE` - for a strictly exterior query point.
     ///
     /// Another parameter is `type_of_algorithm` with the following possible constants:
-    /// `CGAL::Barycentric_coordinates_depr::PRECISE` - default slow algorithm, which is as precise as possible and
-    /// `CGAL::Barycentric_coordinates_depr::FAST` - fast algorithm, which is less precise but much faster.
+    /// `CGAL::Barycentric_coordinates_deprecated::PRECISE` - default slow algorithm, which is as precise as possible and
+    /// `CGAL::Barycentric_coordinates_deprecated::FAST` - fast algorithm, which is less precise but much faster.
     template<class OutputIterator>
         inline boost::optional<OutputIterator> operator()(const Point_2 &query_point, OutputIterator output, Query_point_location query_point_location = UNSPECIFIED_LOCATION, Type_of_algorithm type_of_algorithm = PRECISE)
     {
@@ -248,11 +248,11 @@ public:
         if(int(number_of_vertices) < 3) {
             output_stream << "This polygon has " << number_of_vertices << " vertices." << std::endl;
             output_stream << "Since number of vertices is less than 3, generalized barycentric coordinates cannot be computed!" << std::endl;
-            output_stream << "Please use the class CGAL::Barycentric_coordinates_depr::Segment_coordinates_2!" << std::endl;
+            output_stream << "Please use the class CGAL::Barycentric_coordinates_deprecated::Segment_coordinates_2!" << std::endl;
         } else {
             if(int(number_of_vertices) == 3) {
                  output_stream << "This polygon has " << number_of_vertices << " vertices." << std::endl;
-                 output_stream << "For triangles it is better to use the class CGAL::Barycentric_coordinates_depr::Triangle_coordinates_2!" << std::endl;
+                 output_stream << "For triangles it is better to use the class CGAL::Barycentric_coordinates_deprecated::Triangle_coordinates_2!" << std::endl;
             }
             else output_stream << "This polygon has " << number_of_vertices << " vertices." << std::endl;
         }
@@ -587,10 +587,10 @@ private:
     }
 };
 
-} // namespace Barycentric_coordinates_depr
+} // namespace Barycentric_coordinates_deprecated
 
 } // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 
-#endif // CGAL_BARYCENTRIC_GENERALIZED_COORDINATES_2_DEPR_H
+#endif // CGAL_BARYCENTRIC_GENERALIZED_COORDINATES_2_DEPRECATED_H

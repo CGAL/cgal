@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Barycentric_coordinates_2/deprecated/Mean_value_2_depr.h>
-#include <CGAL/Barycentric_coordinates_2/deprecated/Generalized_barycentric_coordinates_2_depr.h>
+#include <CGAL/Barycentric_coordinates_2/deprecated/Mean_value_2_deprecated.h>
+#include <CGAL/Barycentric_coordinates_2/deprecated/Generalized_barycentric_coordinates_2_deprecated.h>
 
 // Typedefs.
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
@@ -9,9 +9,9 @@ using FT      = Kernel::FT;
 using Point_2 = Kernel::Point_2;
 
 using Mean_value =
-  CGAL::Barycentric_coordinates_depr::Mean_value_2<Kernel>;
+  CGAL::Barycentric_coordinates_deprecated::Mean_value_2<Kernel>;
 using Mean_value_coordinates =
-  CGAL::Barycentric_coordinates_depr::Generalized_barycentric_coordinates_2<Mean_value, Kernel>;
+  CGAL::Barycentric_coordinates_deprecated::Generalized_barycentric_coordinates_2<Mean_value, Kernel>;
 
 int main() {
 
@@ -37,13 +37,13 @@ int main() {
     Point_2(0.55,  0.11) };
 
   // We speed up the computation using the O(n) algorithm called with the
-  // parameter CGAL::Barycentric_coordinates_depr::FAST.
-  // The default one is CGAL::Barycentric_coordinates_depr::PRECISE.
-  const auto type_of_algorithm = CGAL::Barycentric_coordinates_depr::FAST;
+  // parameter CGAL::Barycentric_coordinates_deprecated::FAST.
+  // The default one is CGAL::Barycentric_coordinates_deprecated::PRECISE.
+  const auto type_of_algorithm = CGAL::Barycentric_coordinates_deprecated::FAST;
 
   // We also speed up the computation by using the parameter
-  // query_point_location = CGAL::Barycentric_coordinates_depr::ON_BOUNDED_SIDE.
-  const auto query_point_location = CGAL::Barycentric_coordinates_depr::ON_BOUNDED_SIDE;
+  // query_point_location = CGAL::Barycentric_coordinates_deprecated::ON_BOUNDED_SIDE.
+  const auto query_point_location = CGAL::Barycentric_coordinates_deprecated::ON_BOUNDED_SIDE;
 
   // Create a vector `std::vector` to store coordinates.
   std::vector<FT> coordinates;

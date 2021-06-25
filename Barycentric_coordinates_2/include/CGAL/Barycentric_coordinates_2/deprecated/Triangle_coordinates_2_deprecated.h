@@ -10,14 +10,14 @@
 //
 // Author(s) : Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez.
 
-#ifndef CGAL_BARYCENTRIC_TRIANGLE_COORDINATES_2_DEPR_H
-#define CGAL_BARYCENTRIC_TRIANGLE_COORDINATES_2_DEPR_H
+#ifndef CGAL_BARYCENTRIC_TRIANGLE_COORDINATES_2_DEPRECATED_H
+#define CGAL_BARYCENTRIC_TRIANGLE_COORDINATES_2_DEPRECATED_H
 
 #include <CGAL/license/Barycentric_coordinates_2.h>
 
-#define CGAL_DEPRECATED_HEADER "<CGAL/Barycentric_coordinates_2/deprecated/Triangle_coordinates_2_depr.h>"
+#define CGAL_DEPRECATED_HEADER "<CGAL/Barycentric_coordinates_2/deprecated/Triangle_coordinates_2_deprecated.h>"
 #define CGAL_DEPRECATED_MESSAGE_DETAILS \
-  "This part of the package is deprecated since the version 5.2 of CGAL!"
+  "This part of the package is deprecated since the version 5.4 of CGAL!"
 #include <CGAL/internal/deprecation_warning.h>
 
 #include <CGAL/disable_warnings.h>
@@ -36,7 +36,7 @@
 namespace CGAL {
 
 // Barycentric coordinates namespace.
-namespace Barycentric_coordinates_depr {
+namespace Barycentric_coordinates_deprecated {
 
 // Examples: see the User Manual here - https://doc.cgal.org/latest/Manual/index.html.
 // [1] Reference: Weisstein, Eric W. "Barycentric Coordinates." From MathWorld--A Wolfram Web Resource. https://mathworld.wolfram.com/BarycentricCoordinates.html.
@@ -47,7 +47,7 @@ namespace Barycentric_coordinates_depr {
  * <a href="https://en.wikipedia.org/wiki/Barycentric_coordinate_system" target=blanc>[2]</a> ) with respect to an arbitrary non-degenerate triangle in the plane.
  * This class is parameterized by a traits class `Traits`.
 
- * \deprecated This part of the package is deprecated since the version 5.2 of \cgal.
+ * \deprecated This part of the package is deprecated since the version 5.4 of \cgal.
 
 \tparam Traits must be a model of the concept `BarycentricTraits_2`.
 
@@ -253,10 +253,10 @@ template<class Traits>
     return CGAL::make_array(b_first, b_second, FT(1) - b_first - b_second);
 }
 
-} // namespace Barycentric_coordinates_depr
+} // namespace Barycentric_coordinates_deprecated
 
 } // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 
-#endif // CGAL_BARYCENTRIC_TRIANGLE_COORDINATES_2_DEPR_H
+#endif // CGAL_BARYCENTRIC_TRIANGLE_COORDINATES_2_DEPRECATED_H

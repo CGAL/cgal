@@ -1,5 +1,5 @@
 namespace CGAL {
-namespace Barycentric_coordinates_depr {
+namespace Barycentric_coordinates_deprecated {
 
 /*!
 \ingroup PkgBarycentricCoordinates2RefConcepts
@@ -84,5 +84,5 @@ public:
 
 };
 
-} // namespace Barycentric_coordinates_depr
+} // namespace Barycentric_coordinates_deprecated
 } // namespace CGAL

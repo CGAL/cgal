@@ -16,13 +16,13 @@
 
 #include <CGAL/license/Barycentric_coordinates_2.h>
 
-#include <CGAL/Barycentric_coordinates_2/deprecated/barycentric_enum_2_depr.h>
-#include <CGAL/Barycentric_coordinates_2/deprecated/Segment_coordinates_2_depr.h>
-#include <CGAL/Barycentric_coordinates_2/deprecated/Triangle_coordinates_2_depr.h>
+#include <CGAL/Barycentric_coordinates_2/deprecated/barycentric_enum_2_deprecated.h>
+#include <CGAL/Barycentric_coordinates_2/deprecated/Segment_coordinates_2_deprecated.h>
+#include <CGAL/Barycentric_coordinates_2/deprecated/Triangle_coordinates_2_deprecated.h>
 
-#include <CGAL/Barycentric_coordinates_2/deprecated/Wachspress_2_depr.h>
-#include <CGAL/Barycentric_coordinates_2/deprecated/Mean_value_2_depr.h>
-#include <CGAL/Barycentric_coordinates_2/deprecated/Discrete_harmonic_2_depr.h>
-#include <CGAL/Barycentric_coordinates_2/deprecated/Generalized_barycentric_coordinates_2_depr.h>
+#include <CGAL/Barycentric_coordinates_2/deprecated/Wachspress_2_deprecated.h>
+#include <CGAL/Barycentric_coordinates_2/deprecated/Mean_value_2_deprecated.h>
+#include <CGAL/Barycentric_coordinates_2/deprecated/Discrete_harmonic_2_deprecated.h>
+#include <CGAL/Barycentric_coordinates_2/deprecated/Generalized_barycentric_coordinates_2_deprecated.h>
 
 #endif // CGAL_BARYCENTRIC_DEPRECATED_HEADERS_2_H
