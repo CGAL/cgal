@@ -2441,7 +2441,7 @@ double bounded_error_Hausdorff_distance(
  * and `bounded_error_Hausdorff_distance(tm2, tm1, error_bound, np2, np1)`.
  *
  * This function optimizes all internal calls to shared data structures in order to
- * speed the computation.
+ * speed up the computation.
  *
  * @return the symmetric Hausdorff distance
  */
