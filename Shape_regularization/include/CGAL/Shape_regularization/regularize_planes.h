@@ -440,27 +440,6 @@ namespace Planes {
     regularize_planes(
       planes, plane_map, points, point_map, CGAL::parameters::all_default());
   }
-
-  template<
-  typename PlaneRange,
-  typename PlaneMap,
-  typename PointRange,
-  typename PointMap>
-  void regularize_planes(
-    PlaneRange& planes,
-    const PointRange& points) {
-
-    using Plane_iterator_type = typename PlaneRange::const_iterator;
-    using Plane_3 = typename std::iterator_traits<Plane_iterator_type>::value_type;
-    using Plane_map = CGAL::Identity_property_map<Plane_3>;
-
-    using Point_iterator_type = typename PointRange::const_iterator;
-    using Point_3 = typename std::iterator_traits<Point_iterator_type>::value_type;
-    using Point_map = CGAL::Identity_property_map<Point_3>;
-
-    regularize_planes(
-      planes, Plane_map(), points, Point_map());
-  }
   /// \endcond
 
 } // namespace Planes
