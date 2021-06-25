@@ -135,26 +135,6 @@ public:
  public:
   const SNC_structure* sncp() const { return sncp_; }
 
-  SFace_const_handle adjacent_sface(Halffacet_const_handle f) const {
-    Halffacet_cycle_const_iterator fc(f->facet_cycles_begin());
-    CGAL_assertion( fc != f->facet_cycles_end());
-
-    if ( fc.is_shalfedge() ) {
-      SHalfedge_const_handle se(fc);
-      CGAL_assertion( facet(se) == f);
-      CGAL_assertion( sface(se) != SFace_const_handle());
-      CGAL_assertion( volume(sface(se->twin())) == f->incident_volume());
-      return sface(se->twin());
-    }
-    else
-      CGAL_error_msg( "Facet outer cycle entry point"
-                             "is not an SHalfedge? ");
-    return SFace_const_handle(); // never reached
-  }
-
-  //  static const Point_3& point(Vertex_const_handle v)
-  //  { return v->point(); }
-
   static Vector_3 vector(Halfedge_const_handle e)
   { return Vector_3(e->point()-CGAL::ORIGIN); }
 
@@ -430,112 +410,6 @@ public:
     CGAL_assertion( f_visible->plane().has_on_positive_side(ray.source()));
     return f_visible;
   }
-
-  Halffacet_const_handle get_visible_facet( const Vertex_const_handle v,
-                                      const Segment_3& ray) const
-    /*{\Mop when one shoots a ray |ray| in order to find the facet below to
-      an object, and vertex |v| is hit, we need to choose one of the facets
-      in the adjacency list of |v| such that it could be 'seen' from the
-      piercing point of the |ray| on the sphere map on |v|.  We make it just
-      locating the sphere facet |sf| pierced by |ray| and taking the adjacent
-      facet to one of the sphere segments on the boundary of |sf|.
-      \precondition |ray| target is on |v| and the intersection between
-      |ray| and the 2-skeleton incident to v is empty. }*/ {
-
-    Halffacet_const_handle f_visible;
-    CGAL_assertion( ray.source() != v->point());
-    CGAL_assertion( ray.has_on(v->point()));
-    Sphere_point sp(ray.source() - v->point());
-    CGAL_NEF_TRACEN( "Locating "<<sp <<" in "<<v->point());
-    CGAL_assertion(Infi_box::degree(sp.hx()) < 2 &&
-                   Infi_box::degree(sp.hy()) < 2 &&
-                   Infi_box::degree(sp.hz()) < 2 &&
-                   Infi_box::degree(sp.hw()) == 0);
-    sp = Infi_box::simplify(sp);
-    CGAL_NEF_TRACEN( "Locating "<<sp <<" in "<<v->point());
-    SM_point_locator L(v);
-    Object_handle o = L.locate(sp);
-
-    SFace_const_handle sf;
-    CGAL_assertion(CGAL::assign(sf,o));
-    CGAL::assign( sf, o);
-
-    SFace_cycle_const_iterator fc = sf->sface_cycles_begin(),
-      fce = sf->sface_cycles_end();
-    if( is_empty_range( fc, fce)) {
-        CGAL_NEF_TRACEN( "no adjacent facets were found.");
-        f_visible =  Halffacet_const_handle();
-    }
-    else {
-      if (fc.is_shalfedge()) {
-      SHalfedge_const_handle se(fc);
-      CGAL_NEF_TRACEN( "adjacent facet found (SEdges cycle).");
-        CGAL_NEF_TRACEN("se"<<PH(se));
-        f_visible = se->twin()->facet();
-        CGAL_NEF_TRACEN("f_visible"<<&f_visible);
-      }
-      else if (fc.is_shalfloop()) {
-      SHalfloop_const_handle sl(fc);
-      CGAL_NEF_TRACEN( "adjacent facet found (SHalfloop cycle).");
-      f_visible = sl->twin()->facet();
-      }
-      else if(fc.is_svertex()) {
-        CGAL_NEF_TRACEN( "no adjacent facets were found (but incident edge(s)).");
-        f_visible = Halffacet_const_handle();
-      }
-      else
-        CGAL_error_msg("Damn wrong handle");
-    }
-    return f_visible;
-  }
-
-  /*
-  Halffacet_const_handle get_visible_facet( const Halfedge_const_handle e,
-                                      const Segment_3& ray) const {
-    //{\Mop when one shoot a ray |ray| in order to find the facet below to
-    //  an object, and an edge |e| is hit, we need to choose one of the two
-   //   facets in the adjacency list of |e| that could be 'seen'  from the
-   //   piercing point of the |ray| on the local (virtual) view  of |e|
-   //   \precondition |ray| target belongs to |e|. }
-
-    CGAL_error();
-
-    SM_const_decorator SD;
-    if( SD.is_isolated(e))
-      return Halffacet_const_handle();
-
-    Halffacet_const_handle res = facet(sh);
-
-    Vector_3 ed(segment(e).to_vector());
-    Vector_3 ev(segment(e).to_vector()), rv(ray.to_vector());
-    SHalfedge_around_svertex_const_circulator sh(SD.first_out_edge(e)), send(sh);
-    Vector_3 vec0(cross_product(ev,res->plane().orthogonal_vector()));
-    CGAL_NEF_TRACEN("initial face candidate "<< res->plane());
-
-    sh++;
-    CGAL_For_all(sh,send) {
-    Vector_3 vec1(cross_product(ev,sh->plane().orthogonal_vector()));
-      RT sk0(rv*vec0),  sk1(rv*vec1);
-      if(sk0<0 && sk1>0)
-        continue;
-      if(sk0>0 && sk1<0) {
-        res = facet(sh);
-        continue;
-      }
-
-      RT len0 = vec0.x()*vec0.x()+vec0.y()*vec0.y()+vec0.z()*vec0.z();
-      RT len1 = vec1.x()*vec1.x()+vec1.y()*vec1.y()+vec1.z()*vec1.z();
-      RT sq0 = sk0 * sk0;
-      RT sq1 = sk1 * sk1;
-      RT diff = len0*sq1 - len1*sq0;
-
-      if((sk0 > 0 && diff<0) || (sk0 < 0 && diff>0))
-        res = facet(sh);
-    }
-
-    return Halffacet_const_handle(); // never reached
-  }
-  */
 
   Halffacet_const_handle get_visible_facet( const Halffacet_const_handle f,
                                       const Segment_3& ray) const
