@@ -16,6 +16,11 @@
 
 #include <CGAL/license/Weights.h>
 
+/**
+@file Weights.h
+@brief a convenience header that includes all weights.
+*/
+
 #include <CGAL/Weights/utils.h>
 #include <CGAL/Weights/uniform_weights.h>
 
