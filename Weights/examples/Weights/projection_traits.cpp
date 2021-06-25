@@ -16,9 +16,7 @@ int main() {
   // Create a polygon and a query point.
   const std::vector<Point_3> polygon =
     { Point_3(0, 0, 1), Point_3(1, 0, 1), Point_3(1, 1, 1), Point_3(0, 1, 1) };
-
-  const FT half = FT(1) / FT(2);
-  const Point_3 query(half, half, 1);
+  const Point_3 query(0.5, 0.5, 1);
 
   // Allocate memory for weights.
   std::vector<FT> weights;
@@ -38,7 +36,7 @@ int main() {
   std::cout << std::endl;
 
   // Almost coplanar case.
-  const FT eps = FT(1) / FT(1000);
+  const FT eps = 0.001;
   const Point_3 t3(-1,  0, 1.0 + eps);
   const Point_3 r3( 0, -1, 1);
   const Point_3 p3( 1,  0, 1.0 + eps);
