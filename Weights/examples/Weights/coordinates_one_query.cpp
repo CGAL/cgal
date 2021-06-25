@@ -11,9 +11,7 @@ int main() {
   // Create a polygon and a query point.
   const std::vector<Point_2> polygon =
     { Point_2(0, 0), Point_2(1, 0), Point_2(1, 1), Point_2(0, 1) };
-
-  const FT half = FT(1) / FT(2);
-  const Point_2 query(half, half);
+  const Point_2 query(0.5, 0.5);
 
   // Allocate memory for weights and coordinates.
   std::vector<FT> weights;
