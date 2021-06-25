@@ -434,39 +434,6 @@ a model of `AnalyticWeightTraits_3` for 3D points
 
 \addtogroup PkgWeightsRefRegions
 
-
-\defgroup PkgWeightsRefUtils Utility Functions
-\ingroup PkgWeightsRef
-
-Various related utility functions.
-
-
-\defgroup PkgWeightsRefTangents Tangent
-\ingroup PkgWeightsRefUtils
-
-Given three points `p`, `q`, and `r`, these functions compute the tangent of
-the angle `[p, q, r]` in 2D or 3D.
-
-\tparam GeomTraits
-a model of `AnalyticWeightTraits_2` for 2D points;
-a model of `AnalyticWeightTraits_3` for 3D points
-
-\addtogroup PkgWeightsRefUtils
-
-
-\defgroup PkgWeightsRefCotangents Cotangent
-\ingroup PkgWeightsRefUtils
-
-Given three points `p`, `q`, and `r`, these functions compute the cotangent of
-the angle `[p, q, r]` in 2D or 3D.
-
-\tparam GeomTraits
-a model of `AnalyticWeightTraits_2` for 2D points;
-a model of `AnalyticWeightTraits_3` for 3D points
-
-\addtogroup PkgWeightsRefUtils
-
-
 \addtogroup PkgWeightsRef
 
 
