@@ -17,19 +17,19 @@ int main(){
   std::cout.precision(20);
 
   // Cube
-  Mesh cube;
-  std::vector<Point_3> cube_coords;
+  Mesh tetrahedron;
+  std::vector<Point_3> tetrahedron_coords;
 
-  std::tie(cube, cube_coords) = tests::get_hexahedron<Kernel, Mesh>();
+  std::tie(tetrahedron, tetrahedron_coords) = tests::get_irregular_tetrahedron<Kernel, Mesh>();
 
-  std::vector<FT> dh_coordinates_cube;
-  dh_coordinates_cube.resize(8);
+  std::vector<FT> dh_coordinates_tetrahedron;
+  dh_coordinates_tetrahedron.resize(4);
 
-  CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_3<Mesh, Kernel> dh_cube(cube);
-  dh_cube(Point_3(FT(1)/FT(2), FT(1)/FT(2), FT(1)/FT(2)), dh_coordinates_cube.begin());
+  CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_3<Mesh, Kernel> dh_tetrahedron(tetrahedron);
+  dh_tetrahedron(Point_3(FT(1)/FT(4), FT(1)/FT(4), FT(1)/FT(4)), dh_coordinates_tetrahedron.begin());
 
-  for(auto c : dh_coordinates_cube)
+  for(auto c : dh_coordinates_tetrahedron)
     std::cout << c << "\n";
-  tests::test_barycenter<Kernel>(dh_coordinates_cube);
+  tests::test_barycenter<Kernel>(dh_coordinates_tetrahedron);
 }
 

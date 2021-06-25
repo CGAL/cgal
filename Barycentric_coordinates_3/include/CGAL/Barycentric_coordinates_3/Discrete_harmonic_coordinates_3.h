@@ -200,14 +200,12 @@ namespace Barycentric_coordinates {
       // Compute weight w_v
       FT weight = FT(0);
 
-      std::cout << query << " \n";
-
       // Iterate using the circulator
       do{
 
         const auto hedge = halfedge(*face_circulator, m_polygon_mesh);
         const auto vertices = vertices_around_face(hedge, m_polygon_mesh);
-        CGAL_precondition(vertices.size() >= 3);
+        CGAL_precondition(vertices.size() == 3);
 
         auto vertex_itr = vertices.begin();
         std::vector<Point_3> points;
@@ -222,17 +220,17 @@ namespace Barycentric_coordinates {
 
         const Point_3& point1 = points[0];
         const Point_3& point2 = points[1];
-        Vector_3 opposite_edge = m_construct_vector_3(point2, point1);
-        FT edge_length = sqrt(opposite_edge.squared_length ());
 
-        Vector_3 normal_query = m_cross_3(m_construct_vector_3(point2, query),
+        Vector_3 opposite_edge = m_construct_vector_3(point2, point1);
+        FT edge_length = sqrt(opposite_edge.squared_length());
+
+        Vector_3 normal_query = m_cross_3(m_construct_vector_3(query, point2),
          m_construct_vector_3(query, point1));
 
         FT cot_dihedral = cot_dihedral_angle(get_face_normal(*face_circulator), normal_query);
 
         weight += (cot_dihedral * edge_length) / 2;
         face_circulator++;
-        std::cout << (cot_dihedral) << " a\n";
 
       }while(face_circulator!=done);
 
@@ -261,6 +259,9 @@ namespace Barycentric_coordinates {
 
     //Compute cotangent of dihedral angle between two faces
     FT cot_dihedral_angle(const Vector_3& normal_1, const Vector_3& normal_2){
+
+      assert(normal_1.squared_length() != FT(0));
+      assert(normal_2.squared_length() != FT(0));
 
       FT approximate_cos = m_dot_3(normal_1, normal_2) /
         sqrt(normal_1.squared_length()*normal_2.squared_length());
