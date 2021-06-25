@@ -276,8 +276,8 @@ int main( int argc, char **argv) {
         exit( 1);
     }
 
-    CGAL::set_ascii_mode(* p_in);
-    CGAL::set_ascii_mode(* p_out);
+    CGAL::IO::set_ascii_mode(* p_in);
+    CGAL::IO::set_ascii_mode(* p_out);
 
     vout << "Scanning Inventor file `" << iname << "' ....\n--------" << endl;
     iv_file_scanner( *p_in);

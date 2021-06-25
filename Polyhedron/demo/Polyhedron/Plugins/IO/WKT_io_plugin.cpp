@@ -60,7 +60,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
   }
 
   std::list<std::vector<Scene_polylines_item::Point_3> > polylines;
-  CGAL::read_multi_linestring_WKT (in, polylines);
+  CGAL::IO::read_multi_linestring_WKT (in, polylines);
 
   Scene_polylines_item* item = new Scene_polylines_item;
   item->polylines = polylines;
@@ -101,7 +101,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
     qobject_cast<Scene_polylines_item*>(item);
   if (polylines_item)
   {
-    CGAL::write_multi_linestring_WKT (out, polylines_item->polylines);
+    CGAL::IO::write_multi_linestring_WKT (out, polylines_item->polylines);
     items.pop_front();
     return true;
   }

@@ -34,6 +34,8 @@
 
 namespace CGAL {
 
+namespace IO {
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Read
@@ -396,7 +398,7 @@ bool read_3MF(const std::string& fname,
  * \tparam ColorRanges a model of the concepts `RandomAccessContainer` and
  *                     `BackInsertionSequence` whose `value_type` is
  *                     a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
- *                     whose `value_type` is `CGAL::Color`
+ *                     whose `value_type` is `CGAL::IO::Color`
  *
  * \param fname the name of the 3mf file to read
  * \param all_points a `PointRanges` that will contain the points of the meshes in `fname`.
@@ -477,7 +479,7 @@ bool write_3MF(const std::string& fname,
       name = std::string("");
     }
 
-    std::vector<CGAL::Color> colors(all_triangles[id].size());
+    std::vector<CGAL::IO::Color> colors(all_triangles[id].size());
     IO::write_mesh_to_model(all_points[id], all_triangles[id], colors, name, &pMeshObject, pModel);
   }
 
@@ -502,12 +504,14 @@ bool write_3MF(const std::string& fname,
 
 template<typename PointRange, typename TriangleRange>
 bool write_3MF(const std::string& fname, const PointRange& points, const TriangleRange& triangles,
-               typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
+               typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr)
 {
   return write_triangle_soup_to_3mf(fname, points, triangles, "anonymous");
 }
 
 /// \endcond
+
+} // namespace IO
 
 } // namespace CGAL
 

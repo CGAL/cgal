@@ -525,10 +525,10 @@ polylines_to_protect
                                  Image_word_type> Enriched_pixel;
 
           array<array<Enriched_pixel, 2>, 2> square =
-            {{ {{ { pix00, Point_3(), Domain_type(), 0, false },
-                  { pix01, Point_3(), Domain_type(), 0, false } }},
-               {{ { pix10, Point_3(), Domain_type(), 0, false },
-                  { pix11, Point_3(), Domain_type(), 0, false } }} }};
+            {{ {{ { pix00, Point_3(), Domain_type(), 0, false, false },
+                  { pix01, Point_3(), Domain_type(), 0, false, false } }},
+               {{ { pix10, Point_3(), Domain_type(), 0, false, false },
+                  { pix11, Point_3(), Domain_type(), 0, false, false } }} }};
 
           std::map<Domain_type, int> pixel_values_set;
           for(int ii = 0; ii < 2; ++ii) {

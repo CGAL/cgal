@@ -3,7 +3,7 @@
 \ingroup PkgArrangementOnSurface2ConceptsDCEL
 \cgalConcept
 
-A face record in a <span class="textsc">Dcel</span> data structure. A face may either be unbounded,
+A face record in a \dcel data structure. A face may either be unbounded,
 otherwise it has an incident halfedge along the chain defining its outer
 boundary. A face may also contain holes and isolated vertices in its
 interior.
@@ -22,12 +22,12 @@ public:
 /// @{
 
 /*!
-the corresponding <span class="textsc">Dcel</span> vertex type.
+the corresponding \dcel vertex type.
 */
 typedef unspecified_type Vertex;
 
 /*!
-the corresponding <span class="textsc">Dcel</span> halfedge type.
+the corresponding \dcel halfedge type.
 */
 typedef unspecified_type Halfedge;
 

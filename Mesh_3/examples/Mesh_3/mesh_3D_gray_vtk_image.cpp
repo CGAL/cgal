@@ -14,7 +14,7 @@
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/Image_3.h>
-#include <CGAL/read_vtk_image_data.h>
+#include <CGAL/IO/read_vtk_image_data.h>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/functional.hpp>
@@ -73,8 +73,8 @@ int main(int argc, char* argv[])
   vtkImageData* vtk_image = smoother->GetOutput();
   vtk_image->Print(std::cerr);
 
-  CGAL::Image_3 image = CGAL::read_vtk_image_data(vtk_image);
-  if(image.image() == 0){
+  CGAL::Image_3 image = CGAL::IO::read_vtk_image_data(vtk_image);
+  if(image.image() == nullptr){
     std::cerr << "could not create a CGAL::Image_3 from the vtk image\n";
     return 0;
   }

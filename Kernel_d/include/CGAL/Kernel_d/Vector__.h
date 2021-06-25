@@ -405,7 +405,7 @@ std::ostream& operator<<(std::ostream& os, const Vector_<NT_,AL_>& v)
 /*{\Xbinopfunc  writes |\Mvar| componentwise to the output stream $O$.}*/
 { /* syntax: d x_0 x_1 ... x_d-1 */
     int d = v.dimension();
-    switch (get_mode(os)) {
+    switch (IO::get_mode(os)) {
     case CGAL::IO::BINARY:
         CGAL::write( os, d);
         for ( int i = 0; i < d; ++i)
@@ -434,7 +434,7 @@ std::istream& operator>>(std::istream& is, Vector_<NT_,AL_>& v)
 /*{\Xbinopfunc  reads |\Mvar| componentwise from the input stream $I$.}*/
 { /* syntax: d x_0 x_1 ... x_d-1 */
   int d;
-  switch (get_mode(is)) {
+  switch (IO::get_mode(is)) {
     case CGAL::IO::ASCII :
     case CGAL::IO::BINARY :
       is >> d;

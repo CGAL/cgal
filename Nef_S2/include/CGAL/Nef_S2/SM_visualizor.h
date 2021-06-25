@@ -21,8 +21,8 @@
 #include <CGAL/Nef_S2/SM_triangulator.h>
 #include <CGAL/Nef_S2/Sphere_geometry_OGL.h>
 
-#define CGAL_NEF_LGREY CGAL::Color(170,170,200)
-#define CGAL_NEF_DGREY CGAL::Color(30,30,50)
+#define CGAL_NEF_LGREY CGAL::IO::Color(170,170,200)
+#define CGAL_NEF_DGREY CGAL::IO::Color(30,30,50)
 namespace CGAL {
 
 template <typename Map_>

@@ -216,7 +216,7 @@ class SHalfedge_base  {
 
     std::string debug() const
       { std::stringstream os;
-        set_pretty_mode(os);
+        CGAL::IO::set_pretty_mode(os);
         os <<"e[ "<<source_->debug()<<", "
            <<twin_->source_->debug()
     #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO

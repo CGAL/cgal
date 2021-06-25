@@ -32,7 +32,7 @@ Given a set \f$ \mathcal{P}\f$ of points on \f$ \mathbb{S(c, r)}\f$, a <em>two-d
 of \f$ \mathcal{P}\f$ can be described as a two-dimensional simplicial complex that is pure,
 connected, and without singularity whose vertices are exactly the points in \f$ \mathcal{P}\f$
 (see the complete definition in the package
-\link Section_2D_Triangulations_Definitions 2D Triangulations\endlink).
+\ref Section_2D_Triangulations_Definitions "2D Triangulations").
 
 In \f$ \mathbb{R}^2\f$, a <em>Delaunay</em> triangulation is a two-dimension triangulation
 that satisfies the <em>empty circle property</em> (also called <em>Delaunay property</em>):
@@ -65,7 +65,7 @@ as an orientation test does not stand if points do not lie in a convex position.
 This gap between the theoretical and the practical settings was addressed by Caroli et al. \cgalCite{cgal:ccplr-redtp-10} :
 the solution is to use a <em>regular</em> triangulation, which is a generalization of the Delaunay triangulation
 to sets of <em>weighted points</em>
-(see \link Section_2D_Triangulations_Regular 2D Regular Triangulations\endlink for more information).
+(see \ref Section_2D_Triangulations_Regular "2D Regular Triangulations" for more information).
 A weighted point \f$(p,w)\f$ of \f$ \mathbb{R}^2\f$ can naturally be seen as as a circle with center \f$ p\f$
 and radius \f$ r\f$ such that \f$ r^2 = w\f$ and similarly to Delaunay triangulations and the definition
 of regular triangulations in \f$ \mathbb{R}^2\f$ can be naturally extended to circles on \f$ \mathbb{S}\f$.

@@ -28,7 +28,7 @@ int main() {
     P.make_tetrahedron( p, q, r, s);
     std::transform( P.facets_begin(), P.facets_end(), P.planes_begin(),
                     Plane_equation());
-    CGAL::set_pretty_mode( std::cout);
+    CGAL::IO::set_pretty_mode( std::cout);
     std::copy( P.planes_begin(), P.planes_end(),
                std::ostream_iterator<Plane_3>( std::cout, "\n"));
     return 0;

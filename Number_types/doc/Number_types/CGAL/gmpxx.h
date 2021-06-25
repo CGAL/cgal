@@ -5,7 +5,7 @@
 \ingroup nt_gmp
 
 The class `mpq_class` is an exact multiprecision rational number type,
-provided by <span class="textsc">Gmp</span>.
+provided by \gmp.
 CGAL provides the necessary functions to make it compliant to the number type
 concept.
 
@@ -13,7 +13,7 @@ concept.
 \cgalModels `RealEmbeddable`
 \cgalModels `Fraction`
 
-See the <span class="textsc">Gmp</span> documentation for additional details.
+See the \gmp documentation for additional details.
 
 */
 
@@ -27,14 +27,14 @@ class mpq_class {
 \ingroup nt_gmp
 
 The class `mpz_class` is an exact multiprecision integer number type,
-provided by <span class="textsc">Gmp</span>.
+provided by \gmp.
 CGAL provides the necessary functions to make it compliant to the number type
 concept.
 
 \cgalModels `EuclideanRing`
 \cgalModels `RealEmbeddable`
 
-See the <span class="textsc">Gmp</span> documentation for additional details.
+See the \gmp documentation for additional details.
 
 */
 

@@ -94,7 +94,7 @@ void Polyhedron_demo_point_set_clustering_plugin::on_actionCluster_triggered()
   {
     // Gets point set
     Point_set* points = item->point_set();
-    if(points == NULL)
+    if(points == nullptr)
         return;
 
     QMultipleInputDialog dialog ("Clustering", mw);

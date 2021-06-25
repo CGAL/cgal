@@ -73,7 +73,7 @@ public:
     }
     else
     {
-      out() << '\n' << oformat(x) << ' ' << oformat(y) << ' ' << oformat(z);
+      out() << '\n' << IO::oformat(x) << ' ' << IO::oformat(y) << ' ' << IO::oformat(z);
     }
   }
 
@@ -87,7 +87,7 @@ public:
     }
     else
     {
-      out() << ' ' << ' ' << oformat(x) << ' ' << oformat(y) << ' ' << oformat(z);
+      out() << ' ' << ' ' << IO::oformat(x) << ' ' << IO::oformat(y) << ' ' << IO::oformat(z);
     }
   }
 
@@ -101,7 +101,7 @@ public:
     }
     else
     {
-      out() << ' ' << ' ' << oformat(r) << ' ' << oformat(g) << ' ' << oformat(b);
+      out() << ' ' << ' ' << IO::oformat(r) << ' ' << IO::oformat(g) << ' ' << IO::oformat(b);
     }
   }
 
@@ -114,7 +114,7 @@ public:
     }
     else
     {
-      out() << ' ' << ' ' << oformat(tx) << ' ' << oformat(ty);
+      out() << ' ' << ' ' << IO::oformat(tx) << ' ' << IO::oformat(ty);
     }
   }
 

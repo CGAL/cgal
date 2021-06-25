@@ -277,11 +277,11 @@ inline std::ostream & operator<<(std::ostream & os, const Arr::Vertex & vertex)
 inline Window_stream & operator<<(Window_stream & ws, Arr & arr)
 {
   Arr::Edge_iterator ei;
-  ws << CGAL::blue();
+  ws << CGAL::IO::blue();
   for (ei = arr.edges_begin(); ei != arr.edges_end(); ++ei)
     ws << (*ei).curve();
   Arr::Vertex_iterator vi;
-  ws << CGAL::red();
+  ws << CGAL::IO::red();
   for (vi = arr.vertices_begin(); vi != arr.vertices_end(); ++vi)
     ws << (*vi).point();
   return ws;

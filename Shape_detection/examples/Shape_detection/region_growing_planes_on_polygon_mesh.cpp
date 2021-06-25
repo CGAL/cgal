@@ -25,7 +25,7 @@ using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
 using FT      = typename Kernel::FT;
 using Point_3 = typename Kernel::Point_3;
 
-using Color = CGAL::Color;
+using Color = CGAL::IO::Color;
 
 // Choose the type of a container for a polygon mesh.
 #define USE_SURFACE_MESH
@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
 
   // Load off data either from a local folder or a user-provided file.
   std::ifstream in(argc > 1 ? argv[1] : "data/building.off");
-  CGAL::set_ascii_mode(in);
+  CGAL::IO::set_ascii_mode(in);
 
   if (!in) {
     std::cout <<

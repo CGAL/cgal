@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
   const char* filename2 = (argc > 2) ? argv[2] : "data/eight.off";
 
   Mesh mesh1, mesh2;
-  if(!PMP::read_polygon_mesh(filename1, mesh1) || !PMP::read_polygon_mesh(filename2, mesh2))
+  if(!PMP::IO::read_polygon_mesh(filename1, mesh1) || !PMP::IO::read_polygon_mesh(filename2, mesh2))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;
@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
   if (valid_difference)
   {
     std::cout << "Difference was successfully computed\n";
-    CGAL::write_polygon_mesh("difference.off", mesh1, CGAL::parameters::stream_precision(17));
+    CGAL::IO::write_polygon_mesh("difference.off", mesh1, CGAL::parameters::stream_precision(17));
   }
   else
   {
@@ -103,7 +103,7 @@ int main(int argc, char* argv[])
   PMP::isotropic_remeshing(selected_faces, 0.02, mesh1,
                            params::edge_is_constrained_map(is_constrained_map));
 
-  CGAL::write_polygon_mesh("difference_remeshed.off", mesh1, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_mesh("difference_remeshed.off", mesh1, CGAL::parameters::stream_precision(17));
 
   return 0;
 }

@@ -10,11 +10,11 @@ struct Qt_widget_displayer : public Distribution_displayer
 
   void fill_rectangle(double x1, double y1,
                       double x2, double y2,
-                      CGAL::Color c);
+                      CGAL::IO::Color c);
 
   void segment(double x1, double y1,
                double x2, double y2,
-               CGAL::Color c);
+               CGAL::IO::Color c);
 private:
   CGAL::Qt_widget* widget;
 };

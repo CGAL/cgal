@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
   const char* filename = (argc > 1) ? argv[1] : "data/prim.off";
 
   Mesh primal;
-  if(!CGAL::read_polygon_mesh(filename, primal))
+  if(!CGAL::IO::read_polygon_mesh(filename, primal))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;

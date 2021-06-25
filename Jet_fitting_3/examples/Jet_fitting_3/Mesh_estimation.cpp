@@ -198,7 +198,7 @@ std::cerr << "res4openGL_fname" << res4openGL_fname  << std::endl;
     verbose_fname  = w_if_name + ".verb.txt";
     out_verbose.open(verbose_fname.c_str(), std::ios::out);
     assert(out_verbose.good());
-    CGAL::set_pretty_mode(out_verbose);
+    CGAL::IO::set_pretty_mode(out_verbose);
   }
   unsigned int nb_vertices_considered = 0;//count vertices for verbose
 

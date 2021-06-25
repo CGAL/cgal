@@ -212,7 +212,7 @@ Comparison_result operator()(
 template <typename NT, typename LA>
 void Tuple_d<NT,LA>::print(std::ostream& os, const char* l) const
 { int i;
-  switch( get_mode(os) ) {
+  switch( IO::get_mode(os) ) {
     case CGAL::IO::ASCII :
       os << size() << " ";
       for (i = 0; i < size(); ++i)
@@ -235,7 +235,7 @@ void Tuple_d<NT,LA>::print(std::ostream& os, const char* l) const
 template <typename NT, typename LA>
 void Tuple_d<NT,LA>::read(std::istream& is)
 { int i = 0, d;
-  switch( get_mode(is) ) {
+  switch( IO::get_mode(is) ) {
     case CGAL::IO::ASCII :
       is >> d; v = Vector(d);
       while (i < d && is >> v[i] ) ++i;

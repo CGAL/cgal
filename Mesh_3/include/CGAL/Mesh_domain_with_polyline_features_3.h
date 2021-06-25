@@ -40,8 +40,7 @@
 #include <boost/variant.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/utility/enable_if.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
+#include <memory>
 
 namespace CGAL {
 
@@ -859,7 +858,7 @@ public:
   typedef CGAL::AABB_tree<AABB_curves_traits> Curves_AABB_tree;
 
 private:
-  mutable boost::shared_ptr<Curves_AABB_tree> curves_aabb_tree_ptr_;
+  mutable std::shared_ptr<Curves_AABB_tree> curves_aabb_tree_ptr_;
   mutable bool curves_aabb_tree_is_built;
 
 public:
@@ -884,7 +883,7 @@ public:
     if(curves_aabb_tree_ptr_) {
       curves_aabb_tree_ptr_->clear();
     } else {
-      curves_aabb_tree_ptr_ = boost::make_shared<Curves_AABB_tree>();
+      curves_aabb_tree_ptr_ = std::make_shared<Curves_AABB_tree>();
     }
     for(typename Edges::const_iterator
           edges_it = edges_.begin(),

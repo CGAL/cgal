@@ -36,7 +36,7 @@ bool test_scene(int argc, char** argv) {
   // and a property map to store the normal vector with each point.
   const char* filename = (argc > 1) ? argv[1] : "data/cube.pwn";
 
-  if (!CGAL::read_points(filename, std::back_inserter(points),
+  if (!CGAL::IO::read_points(filename, std::back_inserter(points),
                          CGAL::parameters::point_map(Point_map())
                                           .normal_map(Normal_map())))
   {

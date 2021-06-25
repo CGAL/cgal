@@ -234,6 +234,10 @@ ALIASES                = "cgal=%CGAL" \
                          "stl=STL" \
                          "gmp=GMP" \
                          "gmpxx=GMPXX" \
+                         "iso=ISO" \
+                         "lisp=Lisp" \
+                         "ieee=IEEE" \
+                         "exacus=Exacus" \
                          "mpir=MPIR" \
                          "mpfr=MPFR" \
                          "leda=LEDA" \

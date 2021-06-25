@@ -17,7 +17,7 @@
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/squared_distance_2_1.h>
 #include <CGAL/number_utils.h>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <CGAL/boost/graph/internal/Has_member_id.h>
 
 #define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS
@@ -46,7 +46,7 @@ public:
 
   reference operator[](const key_type& k) const { return (*map_)[k]; }
 private:
-   boost::shared_ptr<Map> map_;
+   std::shared_ptr<Map> map_;
 };
 
 // Special case for edges.
@@ -75,7 +75,7 @@ public:
 
   reference operator[](const key_type& k) const { return (*map_)[k]; }
 private:
-  boost::shared_ptr<Map> map_;
+  std::shared_ptr<Map> map_;
 };
 
   template<typename Handle, typename FT>

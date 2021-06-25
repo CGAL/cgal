@@ -33,7 +33,7 @@
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
-
+namespace IO {
 /*!
   \ingroup PMP_IO_grp
 
@@ -82,7 +82,7 @@ namespace Polygon_mesh_processing {
  *
  * \return `true` if the reading, repairing, and orientation operations were successful, `false` otherwise.
  *
- * \sa \link PkgBGLIOFct `CGAL::write_polygon_mesh()` \endlink
+ * \sa \link PkgBGLIOFct `CGAL::IO::write_polygon_mesh()` \endlink
  */
 template <typename PolygonMesh, typename NamedParameters>
 bool read_polygon_mesh(const std::string& fname,
@@ -101,7 +101,7 @@ bool read_polygon_mesh(const std::string& fname,
 
   std::vector<Point> points;
   std::vector<std::vector<std::size_t> > faces;
-  if(!CGAL::read_polygon_soup(fname, points, faces))
+  if(!CGAL::IO::read_polygon_soup(fname, points, faces))
   {
     if(verbose)
       std::cerr << "Warning: cannot read polygon soup" << std::endl;
@@ -135,11 +135,12 @@ bool read_polygon_mesh(const std::string& fname,
 template <typename PolygonMesh>
 bool read_polygon_mesh(const std::string& fname, PolygonMesh& g)
 {
-  return CGAL::Polygon_mesh_processing::read_polygon_mesh(fname, g, parameters::all_default());
+  return CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(fname, g, parameters::all_default());
 }
 
 /// \endcond
 
+} // namespace IO
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
 

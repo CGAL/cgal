@@ -144,7 +144,7 @@ inline double to_double(const SPolynomial<RT>& p)
 template <class RT>
 std::ostream& operator<<(std::ostream& os, const SPolynomial<RT>& p)
 {
-  switch( get_mode(os) ) {
+  switch( IO::get_mode(os) ) {
     case CGAL::IO::ASCII :
       os << p.m() << " " << p.n(); break;
     case CGAL::IO::BINARY :
@@ -158,7 +158,7 @@ std::ostream& operator<<(std::ostream& os, const SPolynomial<RT>& p)
 template <class RT>
 std::istream& operator>>(std::istream& is, SPolynomial<RT>& p)
 { RT m,n;
-  switch( get_mode(is) ){
+  switch( IO::get_mode(is) ){
     case CGAL::IO::ASCII :
       is >> m >> n; p = SPolynomial<RT>(m,n); break;
     case CGAL::IO::BINARY :
@@ -309,7 +309,7 @@ CheckPoint checkrep() const
 
 template <class RT>
 std::ostream& operator<<(std::ostream& os, const Extended_point<RT>& p)
-{ switch( get_mode(os) ) {
+{ switch( IO::get_mode(os) ) {
     case CGAL::IO::ASCII :
       os << p.hx() << " " << p.hy() << " " << p.hw(); break;
     case CGAL::IO::BINARY :
@@ -327,7 +327,7 @@ std::ostream& operator<<(std::ostream& os, const Extended_point<RT>& p)
 template <class RT>
 std::istream& operator>>(std::istream& is, Extended_point<RT>& p)
 { SPolynomial<RT> x,y; RT w;
-  switch( get_mode(is) ){
+  switch( IO::get_mode(is) ){
     case CGAL::IO::ASCII :
       is >> x >> y >> w; break;
     case CGAL::IO::BINARY :

@@ -227,7 +227,7 @@ cases where many labels are used (more than five).
 
 An [example](\ref Classification_example_ethz_random_forest) shows how to
 use this classifier. For more details about the algorithm, please refer
-to README provided in the [ETH Zurich's code archive](https://www.ethz.ch/content/dam/ethz/special-interest/baug/igp/photogrammetry-remote-sensing-dam/documents/sourcecode-and-datasets/Random%20Forest/rforest.zip).
+to README provided in the [ETH Zurich's code archive](https://ethz.ch/content/dam/ethz/special-interest/baug/igp/photogrammetry-remote-sensing-dam/documents/sourcecode-and-datasets/Random%20Forest/rforest.zip).
 
 \subsubsection Classification_ETHZ_random_forest_deprecated Deprecated IO
 

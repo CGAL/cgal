@@ -162,7 +162,7 @@ template<typename Arithmetic_kernel> void test_routine() {
         CGAL_ACK_DEBUG_PRINT << "P[3(0,P[2(0,-2)(2,2)])(1,P[1(1,-1)])(3,P[1(1,-6)])]" << std::endl;
 #endif
         f=from_string<Poly_int2>("P[3(0,P[2(0,-2)(2,2)])(1,P[1(1,-1)])(3,P[1(1,-6)])]");
-        ::CGAL::set_pretty_mode(std::cout);
+        ::CGAL::IO::set_pretty_mode(std::cout);
         curve=construct_curve_2(f);
         assert(curve.number_of_status_lines_with_event()==1);
         assert(number_of_objects<Algebraic_kernel_d_2>(curve)==2);

@@ -18,6 +18,9 @@
 #include <CGAL/IO/Fig_stream.h>
 #include <list>
 
+namespace CGAL {
+namespace IO {
+
 /*!
  * Write an x-monotone conic arc to a FIG stream.
  */
@@ -96,5 +99,7 @@ void write_conic_arc
 
   return;
 }
+
+}} // namespace CGAL:IO
 
 #endif
