@@ -1,5 +1,4 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Weights/utils.h>
 #include <CGAL/Weights/wachspress_weights.h>
 #include <CGAL/Weights/mean_value_weights.h>
 #include <CGAL/Projection_traits_xy_3.h>
