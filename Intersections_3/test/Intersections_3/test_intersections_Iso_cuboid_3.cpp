@@ -156,9 +156,9 @@ public:
       int My = this->r.get_int(this->m, this->M);
       int Mz = this->r.get_int(this->m, this->M);
 
-      if(mx == Mx) ++Mx;
-      if(my == My) ++My;
-      if(mz == Mz) ++Mz;
+      if(abs(mx - Mx) < 2) Mx = mx + 2;
+      if(abs(my - My) < 2) My = my + 2;
+      if(abs(mz - Mz) < 2) Mz = mz + 2;
       if(mx > Mx) std::swap(mx, Mx);
       if(my > My) std::swap(my, My);
       if(mz > Mz) std::swap(mz, Mz);
@@ -166,8 +166,8 @@ public:
       P mp = p(mx, my, mz), Mp = p(Mx, My, Mz);
       Cub cub(mp, Mp);
 
-      P q1 = p(this->r.get_int(mx - this->M, mx), this->r.get_int(my, My), this->r.get_int(mz, Mz)),
-        q2 = p(this->r.get_int(Mx, Mx + this->M), this->r.get_int(my, My), this->r.get_int(mz, Mz));
+      P q1 = p(this->r.get_int(mx - this->M, mx - 1), this->r.get_int(my, My), this->r.get_int(mz, Mz)),
+        q2 = p(this->r.get_int(Mx + 1, Mx + this->M), this->r.get_int(my, My), this->r.get_int(mz, Mz));
       assert(!cub.has_on_bounded_side(q1) && !cub.has_on_bounded_side(q2));
 
       L l(q1, q2);
@@ -175,8 +175,8 @@ public:
       Base::template check_intersection<S>(cub, l, S(q1, q2), cub);
 
       q1 = p(this->r.get_int(mx, Mx), this->r.get_int(my - this->M, my), this->r.get_int(mz, Mz)),
-      q2 = p(this->r.get_int(mx, Mx), this->r.get_int(my + (My - my) / 2, My), this->r.get_int(mz, Mz));
-      assert(!cub.has_on_bounded_side(q1) && !cub.has_on_unbounded_side(q2));
+      q2 = p(this->r.get_int(mx+1, Mx), this->r.get_int(my+1, My), this->r.get_int(mz+1, Mz));
+      assert(cub.has_on_unbounded_side(q1) && cub.has_on_bounded_side(q2));
 
       l = L(q1, q2);
       Base::template check_intersection<S>(cub, l);
@@ -373,8 +373,6 @@ public:
 
       if(CGAL::do_intersect(cub, S(s0, s1)))
       {
-        std::cout << "yo" << std::endl;
-        std::cin.get();
         check_intersection(cub, S(s0, s1), L(s0, s1), cub);
         check_intersection(cub, S(s0, s1), R(s0, s1), cub);
       }
@@ -676,11 +674,11 @@ public:
     std::cout << "3D Line Intersection tests\n";
 
     Cub_Cub();
-//    Cub_L(); // @fixme bugged in random cases
+    Cub_L();
     Cub_Pl();
     Cub_P();
     Cub_R();
-//    Cub_S(); // @fixme bugged in random cases
+    Cub_S();
     Cub_Sph();
     Cub_Tet();
     Cub_Tr();
