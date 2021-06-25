@@ -31,22 +31,7 @@ void main(void) {
   uint domain = uint(subdomain_out);
   uint i = domain/32u;
   uint visible = uint(is_visible_bitset[i]);
-  if(domain==0u)
-  {
-    out_color = vec4(1.0,0.0,0.0,1.0);
-    return;
-  }
-  else if(domain==1u)
-  {
-    out_color = vec4(0.0,1.0,0.0,1.0);
-    return;
-  }
-  else if(domain==2u)
-  {
-    out_color = vec4(0.0,0.0,1.0,1.0);
-    return;
-  }
-  if(visible>>(domain%32u) == 0u)
+  if((visible>>(domain%32u))%2u == 0u)
   {
     discard;
   }
@@ -60,7 +45,24 @@ void main(void) {
   {
     if(color.w<0 || is_surface)
     {
+      //=======
+      if(domain==0u)
+      {
+        out_color = vec4(1.0,0.0,0.0,1.0);
+        return;
+      }
+      else if(domain==1u)
+      {
+        out_color = vec4(0.0,1.0,0.0,1.0);
+        return;
+      }
+      else if(domain==2u)
+      {
+        out_color = vec4(0.0,0.0,1.0,1.0);
+        return;
+      }
 
+      //=======
       vec4 my_color = vec4(color.xyz, 1.);
       vec3 L = light_pos.xyz - fP.xyz; 
       vec3 V = -fP.xyz; 
