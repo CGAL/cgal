@@ -23,45 +23,6 @@
 namespace CGAL {
 namespace Barycentric_coordinates {
 
-  //Default sqrt
-  template<class Traits>
-  class Default_sqrt{
-      typedef typename Traits::FT FT;
-
-  public:
-      FT operator()(const FT &value) const{
-          return FT(CGAL::sqrt(CGAL::to_double(value)));
-      }
-  };
-
-  BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_Sqrt, Sqrt, false)
-
-  // Case: do_not_use_default = false.
-  template<class Traits, bool do_not_use_default = Has_nested_type_Sqrt<Traits>::value>
-      class Get_sqrt
-  {
-  public:
-      typedef Default_sqrt<Traits> Sqrt;
-
-      static Sqrt sqrt_object(const Traits&)
-      {
-          return Sqrt();
-      }
-  };
-
-  // Case: do_not_use_default = true.
-  template<class Traits>
-      class Get_sqrt<Traits, true>
-  {
-  public:
-      typedef typename Traits::Sqrt Sqrt;
-
-      static Sqrt sqrt_object(const Traits &traits)
-      {
-          return traits.sqrt_object();
-      }
-  };
-
   template<
   typename PolygonMesh,
   typename GeomTraits,
@@ -78,7 +39,7 @@ namespace Barycentric_coordinates {
     using Construct_vec_3 = typename GeomTraits::Construct_vector_3;
     using Cross_3 = typename GeomTraits::Construct_cross_product_vector_3;
     using Dot_3 = typename GeomTraits::Compute_scalar_product_3;
-    using Sqrt = typename Get_sqrt<GeomTraits>::Sqrt;
+    using Sqrt = typename internal::Get_sqrt<GeomTraits>::Sqrt;
 
 	  typedef typename GeomTraits::FT FT;
     typedef typename GeomTraits::Point_3 Point_3;
@@ -97,7 +58,7 @@ namespace Barycentric_coordinates {
     m_construct_vector_3(m_traits.construct_vector_3_object()),
     m_cross_3(m_traits.construct_cross_product_vector_3_object()),
     m_dot_3(m_traits.compute_scalar_product_3_object()),
-    sqrt(Get_sqrt<GeomTraits>::sqrt_object(m_traits)){
+    sqrt(internal::Get_sqrt<GeomTraits>::sqrt_object(m_traits)){
 
       // Check if polyhedron is strongly convex
       CGAL_assertion(is_strongly_convex_3(m_polygon_mesh, m_traits));
@@ -209,11 +170,14 @@ namespace Barycentric_coordinates {
 
         auto vertex_itr = vertices.begin();
         std::vector<Point_3> points;
+        int vertex_parity = 1;
 
         for(std::size_t i = 0; i < 3; i++){
 
           if(*vertex_itr != vertex)
             points.push_back(get(m_vertex_to_point_map, *vertex_itr));
+          else
+            vertex_parity *= (i & 1)? 1 : -1;
 
           ++vertex_itr;
         }
@@ -224,7 +188,7 @@ namespace Barycentric_coordinates {
         Vector_3 opposite_edge = m_construct_vector_3(point2, point1);
         FT edge_length = sqrt(opposite_edge.squared_length());
 
-        Vector_3 normal_query = m_cross_3(m_construct_vector_3(query, point2),
+        Vector_3 normal_query = vertex_parity * m_cross_3(m_construct_vector_3(query, point2),
          m_construct_vector_3(query, point1));
 
         FT cot_dihedral = cot_dihedral_angle(get_face_normal(*face_circulator), normal_query);
@@ -263,15 +227,13 @@ namespace Barycentric_coordinates {
       assert(normal_1.squared_length() != FT(0));
       assert(normal_2.squared_length() != FT(0));
 
-      FT approximate_cos = m_dot_3(normal_1, normal_2) /
-        sqrt(normal_1.squared_length()*normal_2.squared_length());
+      FT approximate_dot_3 = m_dot_3(normal_1, normal_2);
 
-      FT approximate_sin = sqrt(m_cross_3(normal_1, normal_2).squared_length()) /
-        sqrt(normal_1.squared_length()*normal_2.squared_length());
+      FT approximate_cross_3_length = sqrt(m_cross_3(normal_1, normal_2).squared_length());
 
-      assert(approximate_sin != FT(0));
+      assert(approximate_cross_3_length != FT(0));
 
-      return approximate_cos/approximate_sin;
+      return approximate_dot_3/approximate_cross_3_length;
     }
 
   };
