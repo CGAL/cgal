@@ -44,9 +44,9 @@ namespace CGAL {
 
   \cgalModifBegin
   \note The `FT` type is provided for convenience. Internally, this FT type is converted
-  to `c_float` type that can be set either to `float` or `double`. By default, usually
-  the `double` type is used. After the optimization is complete, the `c_float` type is
-  converted back to `FT`. See more about `c_float` <a href="https://osqp.org/docs/interfaces/cc++#data-types">here</a>.
+  to `c_float` type that can be set either to `float` or `double`. By default, the `double`
+  type is used. After the optimization is complete, the `c_float` type is converted back to `FT`.
+  See more about `c_float` <a href="https://osqp.org/docs/interfaces/cc++#data-types">here</a>.
   \cgalModifEnd
 
   \cgalModels `QuadraticProgramTraits`
