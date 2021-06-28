@@ -517,7 +517,7 @@ struct Scene_c3t3_item_priv {
   QVector<QColor> colors;
   QVector<QColor> colors_subdomains;
   boost::dynamic_bitset<> visible_subdomain;
-  std::bitset<31> bs[4] = {7,0,0,0};
+  std::bitset<31> bs[4];
 
   bool show_tetrahedra;
   bool is_aabb_tree_built;
@@ -563,6 +563,13 @@ struct Set_show_tetrahedra {
 
 void Scene_c3t3_item::common_constructor(bool is_surface)
 {
+  for(int i=0; i<24; ++i)
+  {
+    d->bs[0][i] = 1;
+    d->bs[1][i] = 1;
+    d->bs[2][i] = 1;
+    d->bs[3][i] = 1;
+  }
   compute_bbox();
   connect(d->frame, SIGNAL(modified()), this, SLOT(changed()));
   c3t3_changed();

@@ -77,7 +77,7 @@ public Q_SLOTS:
     Scene_c3t3_item* c3t3_item = qobject_cast<Scene_c3t3_item*>(item);
     if(!c3t3_item)
       return;
-
+    int counter = 0;
     for (std::set<int>::iterator it = c3t3_item->subdomain_indices().begin(),
          end = c3t3_item->subdomain_indices().end(); it != end; ++it)
     {
