@@ -52,10 +52,13 @@ public:
 
   bool applicable(QAction*) const override
   {
+    if(!CGAL::Three::Three::mainViewer()->isOpenGL_4_3())
+      return false;
     Scene_item* item = scene->item(scene->mainSelectionIndex());
     if(!item)
       return false;
-    return qobject_cast<Scene_c3t3_item*>(item);
+    Scene_c3t3_item* c3t3_item = qobject_cast<Scene_c3t3_item*>(item);
+    return (c3t3_item && c3t3_item->subdomain_indices().size() < 124);
   }
 
   QList<QAction*> actions() const override{
@@ -75,9 +78,8 @@ public Q_SLOTS:
     if(!c3t3_item)
       return;
 
-    int compact_id = 0;
     for (std::set<int>::iterator it = c3t3_item->subdomain_indices().begin(),
-         end = c3t3_item->subdomain_indices().end(); it != end; ++it, ++compact_id)
+         end = c3t3_item->subdomain_indices().end(); it != end; ++it)
     {
       int index = *it;
       QPushButton* button = new QPushButton(tr("%1").arg(index));
@@ -92,8 +94,9 @@ public Q_SLOTS:
                 + "; }");
 
       button->setStyleSheet(s);
-      connect(button, &QPushButton::toggled, [compact_id, c3t3_item](bool){
-        c3t3_item->switchVisibleSubdomain(compact_id);
+      connect(button, &QPushButton::toggled, [index, c3t3_item](bool){
+        c3t3_item->switchVisibleSubdomain(index);
+        c3t3_item->redraw();
       });
 
       dock_widget->horizontalLayout->addWidget(button);
@@ -110,11 +113,8 @@ public Q_SLOTS:
         delete button;
       }
       dock_widget->hide();
-      //todo : trouver comment disconnect clean-up, pour pas que ça se connect 36 fois qunad tu appuies sur reset.
-      std::cout<<"cleaned."<<std::endl;
     };
     connect(c3t3_item, &Scene_c3t3_item::aboutToBeDestroyed, cleanup);
-    //Is it safe ? Will they be called in that order ?
     connect(dock_widget->resetButton, &QPushButton::clicked, [this, cleanup](){
       cleanup();
       filter();
