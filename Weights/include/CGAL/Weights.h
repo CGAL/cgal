@@ -17,8 +17,9 @@
 #include <CGAL/license/Weights.h>
 
 /**
-@file Weights.h
-@brief a convenience header that includes all weights.
+* \ingroup PkgWeightsRef
+* \file CGAL/Weights.h
+* A convenience header that includes all weights.
 */
 
 #include <CGAL/Weights/utils.h>
