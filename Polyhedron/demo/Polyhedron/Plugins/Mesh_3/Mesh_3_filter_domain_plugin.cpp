@@ -96,7 +96,9 @@ public Q_SLOTS:
       button->setStyleSheet(s);
       connect(button, &QPushButton::toggled, [index, c3t3_item](bool){
         c3t3_item->switchVisibleSubdomain(index);
+        c3t3_item->computeIntersection();
         c3t3_item->redraw();
+
       });
 
       dock_widget->horizontalLayout->addWidget(button);

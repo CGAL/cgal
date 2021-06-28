@@ -41,12 +41,6 @@
 
 #include "Scene_polygon_soup_item.h"
 
-
-/*TODO:
- * Manage the edges too.
- * Enhance the color choice : the intersection should always be the same color as the surface.
-*/
-
 typedef CGAL::AABB_triangulation_3_cell_primitive<EPICK,
                                                   C3t3::Triangulation> Primitive;
 typedef CGAL::AABB_traits<EPICK, Primitive> Traits;
@@ -140,6 +134,9 @@ public :
                                   static_cast<int>(subdomain_ids->size()*sizeof(float)));
     getEdgeContainer(0)->allocate(Ec::Vertices, edges->data(),
                             static_cast<int>(edges->size()*sizeof(float)));
+    //getEdgeContainer(0)->allocate(
+    //      Ec::Subdomain_indices, subdomain_ids->data(),
+    //      static_cast<int>(subdomain_ids->size()*sizeof(float)));
     setBuffersFilled(true);
   }
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const Q_DECL_OVERRIDE
@@ -1085,6 +1082,15 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     }
 
     QVector4D cp = cgal_plane_to_vector4d(this->plane());
+    QOpenGLShaderProgram* program = viewer->getShaderProgram(getEdgeContainer(C3t3_edges)->getProgram());
+    program->bind();
+    if(d->is_filterable)
+    {
+      QVector4D visible_bitset(d->bs[0].to_ulong(),d->bs[1].to_ulong(),d->bs[2].to_ulong(),d->bs[3].to_ulong());
+      program->setUniformValue("is_visible_bitset", visible_bitset);
+    }
+    program->setUniformValue("is_filterable", d->is_filterable);
+    program->release();
     getEdgeContainer(C3t3_edges)->setPlane(cp);
     getEdgeContainer(C3t3_edges)->setIsSurface(d->is_surface);
     getEdgeContainer(C3t3_edges)->setColor(QColor(Qt::black));
@@ -1356,6 +1362,10 @@ void Scene_c3t3_item_priv::computeIntersection(const Primitive& cell)
   typedef unsigned char UC;
   Tr::Cell_handle ch = cell.id();
   QColor c;
+  if(!visible_subdomain[ch->subdomain_index()])
+  {
+    return;
+  }
   if(surface_patch_indices_.size()>1)
     c = this->colors_subdomains[ch->subdomain_index()].lighter(50);
   else
@@ -1369,9 +1379,8 @@ void Scene_c3t3_item_priv::computeIntersection(const Primitive& cell)
   CGAL::IO::Color color(UC(c.red()), UC(c.green()), UC(c.blue()));
 
   float id = static_cast<float>(id_to_compact[ch->subdomain_index()]);
-  for(int i=0; i< 12; ++i)
+  for(int i=0; i< 48; ++i)
   {
-    inter_subdomain_ids.push_back(id);
     inter_subdomain_ids.push_back(id);
   }
   intersection->addTriangle(pb, pa, pc, color);
@@ -1551,7 +1560,7 @@ void Scene_c3t3_item_priv::computeElements()
 
         float dom2 = (cell2->subdomain_index() != 0) ? static_cast<float>(id_to_compact[cell2->subdomain_index()])
             : static_cast<float>(id_to_compact[cell->subdomain_index()]);
-        for(int i=0; i<3; ++i)
+        for(int i=0; i<6; ++i)
         {
           subdomain_ids.push_back(dom1);
           subdomain_ids.push_back(dom2);
@@ -2154,6 +2163,10 @@ void Scene_c3t3_item::computeElements()const
         static_cast<int>(d->positions_lines.size()*sizeof(float)));
   d->positions_lines_size = d->positions_lines.size();
 
+  getEdgeContainer(C3t3_edges)->allocate(
+        Ec::Subdomain_indices, d->subdomain_ids.data(),
+        static_cast<int>(d->subdomain_ids.size()*sizeof(float)));
+
   getEdgeContainer(CNC)->allocate(
         Ec::Vertices,
         d->positions_lines_not_in_complex.data(),
@@ -2220,6 +2233,14 @@ void Scene_c3t3_item::switchVisibleSubdomain(int id)
   int j = compact_id%32;
 
   d->bs[i][j] = d->visible_subdomain[id];
+}
+
+void Scene_c3t3_item::computeIntersection()
+{
+  for(auto v : CGAL::QGLViewer::QGLViewerPool())
+  {
+    d->computeIntersections(static_cast<CGAL::Three::Viewer_interface*>(v));
+  }
 }
 
 #include "Scene_c3t3_item.moc"

@@ -1251,6 +1251,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
                           ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_c3t3_edges.frag");
     program->setProperty("hasCutPlane", true);
     program->setProperty("hasSurfaceMode", true);
+    program->setProperty("hasSubdomainIndicesValues", true);
     return program;
   }
   case PROGRAM_WITH_LIGHT:

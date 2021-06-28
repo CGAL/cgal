@@ -145,6 +145,7 @@ public:
   void show_intersection(bool b);
   void show_grid(bool b);
   void show_cnc(bool b);
+  void computeIntersection();
 
 
   virtual QPixmap graphicalToolTip() const Q_DECL_OVERRIDE;
