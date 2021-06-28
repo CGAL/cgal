@@ -26,7 +26,7 @@
 #include <CGAL/Polygon_2_algorithms.h>
 
 // Barycentric coordinates headers.
-#include <CGAL/Barycentric_coordinates_2/Segment_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/segment_coordinates_2.h>
 #include <CGAL/Barycentric_coordinates_2/barycentric_enum_2.h>
 
 // Boost headers.
