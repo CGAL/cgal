@@ -156,7 +156,7 @@ namespace Barycentric_coordinates {
       face_circulator(m_polygon_mesh.halfedge(vertex), m_polygon_mesh);
 
       CGAL::Face_around_target_circulator<Polygon_mesh>
-      done(face_circulator);
+      face_done(face_circulator);
 
       // Compute weight w_v
       FT weight = FT(0);
@@ -165,38 +165,28 @@ namespace Barycentric_coordinates {
       do{
 
         const auto hedge = halfedge(*face_circulator, m_polygon_mesh);
-        const auto vertices = vertices_around_face(hedge, m_polygon_mesh);
-        CGAL_precondition(vertices.size() == 3);
+        CGAL::Vertex_around_face_circulator<Polygon_mesh>
+        vertex_circulator(hedge, m_polygon_mesh);
 
-        auto vertex_itr = vertices.begin();
-        std::vector<Point_3> points;
-        int vertex_parity = 1;
+        while(*vertex_circulator!=vertex)
+          vertex_circulator++;
 
-        for(std::size_t i = 0; i < 3; i++){
-
-          if(*vertex_itr != vertex)
-            points.push_back(get(m_vertex_to_point_map, *vertex_itr));
-          else
-            vertex_parity *= (i & 1)? 1 : -1;
-
-          ++vertex_itr;
-        }
-
-        const Point_3& point1 = points[0];
-        const Point_3& point2 = points[1];
+        vertex_circulator++;
+        const Point_3& point2 = get(m_vertex_to_point_map, *vertex_circulator);
+        vertex_circulator--; vertex_circulator--;
+        const Point_3& point1 = get(m_vertex_to_point_map, *vertex_circulator);
 
         Vector_3 opposite_edge = m_construct_vector_3(point2, point1);
         FT edge_length = sqrt(opposite_edge.squared_length());
 
-        Vector_3 normal_query = vertex_parity * m_cross_3(m_construct_vector_3(query, point2),
+        Vector_3 normal_query =  m_cross_3(m_construct_vector_3(query, point2),
          m_construct_vector_3(query, point1));
 
         FT cot_dihedral = cot_dihedral_angle(get_face_normal(*face_circulator), normal_query);
-
         weight += (cot_dihedral * edge_length) / 2;
         face_circulator++;
 
-      }while(face_circulator!=done);
+      }while(face_circulator!=face_done);
 
       return weight;
     }

@@ -127,6 +127,7 @@ namespace Barycentric_coordinates {
 	    // Vertex index.
       std::size_t vi = 0;
       const auto vd = vertices(m_polygon_mesh);
+
       for (const auto& vertex : vd) {
 
         // Call function to calculate wp coordinates
@@ -155,6 +156,7 @@ namespace Barycentric_coordinates {
 
       CGAL::Face_around_target_circulator<Polygon_mesh>
       done(face_circulator);
+      done--; done --;
 
       // Vector connecting query point to vertex;
       const Vector_3 query_vertex = m_construct_vector_3(query, vertex_val);
@@ -173,7 +175,7 @@ namespace Barycentric_coordinates {
       do{
         // Calculate normals of faces
         const Vector_3 face_normal_i = get_face_normal(*face_circulator); face_circulator++;
-        const Vector_3 face_normal_i_1 = get_face_normal(*face_circulator); face_circulator++;
+        const Vector_3 face_normal_i_1 = get_face_normal(*face_circulator);
 
         // Distance of query to face
         const FT perp_dist_i = m_dot_3(query_vertex, face_normal_i);

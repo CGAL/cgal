@@ -31,6 +31,21 @@ namespace tests{
   }
 
   template<typename Kernel, typename Mesh>
+  std::pair<Mesh, std::vector<typename Kernel::Point_3>> get_regular_tetrahedron(){
+
+    using Point_3 = typename Kernel::Point_3;
+
+    Mesh tetrahedron0;
+    std::vector<Point_3> coords = {Point_3(1.0, 1.0, 1.0), Point_3(-1.0, 1.0, -1.0),
+                                   Point_3(1.0, -1.0, -1.0), Point_3(-1.0, -1.0, 1.0)};
+
+    CGAL::make_tetrahedron(coords[0], coords[1],
+                           coords[2], coords[3], tetrahedron0);
+
+    return {tetrahedron0, coords};
+  }
+
+  template<typename Kernel, typename Mesh>
   std::pair<Mesh, std::vector<typename Kernel::Point_3>> get_hexahedron(){
 
     using Point_3 = typename Kernel::Point_3;

@@ -46,8 +46,6 @@ void test_overloads() {
         dh_coordinates_tetrahedron.clear();
         dh_coordinates_tetrahedron.resize(4);
 
-        //std::cout << x << " " << y << " " << z << "\n";
-
         const Point_3 query(x, y, z);
         dh_tetrahedron(query, dh_coordinates_tetrahedron.begin());
 
