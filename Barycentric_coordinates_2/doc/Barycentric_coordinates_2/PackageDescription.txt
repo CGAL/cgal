@@ -55,6 +55,7 @@ coordinates from the Package \ref PkgInterpolation2.}
 ## Concepts ##
 - `BarycentricTraits_2`
 - `DiscretizedDomain_2`
+- `BarycentricCoordinates_2`
 
 ## Analytic Coordinates ##
 - `Wachspress_coordinates_2<VertexRange, GeomTraits, PointMap>`

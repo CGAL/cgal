@@ -34,4 +34,9 @@
 #include <CGAL/Barycentric_coordinates_2/Mean_value_coordinates_2.h>
 #include <CGAL/Barycentric_coordinates_2/Harmonic_coordinates_2.h>
 
+#include <CGAL/Barycentric_coordinates_2/Wachspress_2.h>
+#include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_2.h>
+#include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Mean_value_2.h>
+
 #endif // CGAL_BARYCENTRIC_COORDINATES_2_H

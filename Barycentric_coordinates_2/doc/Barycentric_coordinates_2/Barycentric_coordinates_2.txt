@@ -268,6 +268,7 @@ The interpolated data. The color bar represents the corresponding height.
 
 
 \subsection shape_deform_example Shape Deformation
+
 This is another advanced example that shows how to use generalized barycentric coordinates
 in order to deform a given 2D shape into another shape as shown in the figure below.
 Harmonic coordinates satisfy all the properties of barycentric coordinates for complicated
@@ -299,6 +300,7 @@ and harmonic coordinates computed at each image pixel with respect to the vertic
 
 
 \subsection aff_example Affine Coordinates
+
 This is an example, where we show how a
 <a href="https://en.cppreference.com/w/cpp/language/lambda">lambda expression</a>
 can be used to define a model of generalized barycentric coordinates. To make this example
@@ -315,15 +317,17 @@ Example's point pattern.
 
 
 \subsection depr_example Deprecated Coordinates
-This example illustrates how to quickly update the code in order to use the deprecated
-version of mean value coordinates that is the version below 5.4. Basically, one
-needs to add the suffix `_deprecated` to the namespace and include the corresponding
-deprecated headers. The used `Kernel` is inexact and the used coordinates are
-mean value coordinates. The result is identical to the one from
-\ref mv_coord_example "this example".
+
+This example illustrates how to use the deprecated API of this package.
+The used `Kernel` is inexact and the used coordinates are mean value coordinates.
+The result is identical to the one from \ref mv_coord_example "this example".
 
 \anchor depr_coord_example
 \cgalExample{Barycentric_coordinates_2/deprecated_coordinates.cpp}
+
+\note The headers `Segment_coordinates_2.h` and `Triangle_coordinates_2.h` are
+not capitalized in the new version that is they are named `segment_coordinates_2.h`
+and `triangle_coordinates_2.h`!
 
 
 \section gbc_degeneracies Edge Cases
@@ -820,6 +824,7 @@ second table, the slowest step is to solve for coordinates, as expected.
 
 
 \section gbc_history History
+
 The package was first released in 2015 and included segment, triangle, Wachspress,
 discrete harmonic, and mean value coordinates. The API of that version is now deprecated
 but can still be used. An example of the old API can be found \ref depr_example "here".
@@ -844,6 +849,7 @@ and modified so that they can be used now on their own without the class `Genera
 
 
 \section gbc_acknowledgments Acknowledgments
+
 The authors wish to thank <a href="https://cs.nyu.edu/~teseo/">Teseo Schneider</a>
 and Randolf Schaerfig for helpful comments and discussions. We also appreciate the
 great effort invested in this package by our reviewers Andreas Fabri, Sébastien Loriot,

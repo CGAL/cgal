@@ -2,8 +2,12 @@
 #include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/Projection_traits_xz_3.h>
 #include <CGAL/Projection_traits_yz_3.h>
-#include <CGAL/Barycentric_coordinates_2.h>
 #include <CGAL/Barycentric_coordinates_2/Delaunay_domain_2.h>
+#include <CGAL/Barycentric_coordinates_2/Wachspress_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Mean_value_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Harmonic_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/boundary_coordinates_2.h>
 
 using Kernel  = CGAL::Exact_predicates_inexact_constructions_kernel;
 using FT      = typename Kernel::FT;

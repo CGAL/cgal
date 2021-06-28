@@ -25,6 +25,10 @@
 #include <fstream>
 #include <cassert>
 
+// CGAL headers.
+#include <CGAL/array.h>
+#include <CGAL/assertions.h>
+
 // Boost headers.
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/optional/optional.hpp>

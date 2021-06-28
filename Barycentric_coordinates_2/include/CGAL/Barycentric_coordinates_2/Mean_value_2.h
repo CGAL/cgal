@@ -10,12 +10,12 @@
 //
 // Author(s) : Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez.
 
-#ifndef CGAL_BARYCENTRIC_MEAN_VALUE_2_DEPRECATED_H
-#define CGAL_BARYCENTRIC_MEAN_VALUE_2_DEPRECATED_H
+#ifndef CGAL_BARYCENTRIC_MEAN_VALUE_2_H
+#define CGAL_BARYCENTRIC_MEAN_VALUE_2_H
 
 #include <CGAL/license/Barycentric_coordinates_2.h>
 
-#define CGAL_DEPRECATED_HEADER "<CGAL/Barycentric_coordinates_2/deprecated/Mean_value_2_deprecated.h>"
+#define CGAL_DEPRECATED_HEADER "<CGAL/Barycentric_coordinates_2/Mean_value_2.h>"
 #define CGAL_DEPRECATED_MESSAGE_DETAILS \
   "This part of the package is deprecated since the version 5.4 of CGAL!"
 #include <CGAL/internal/deprecation_warning.h>
@@ -35,13 +35,13 @@
 #include <boost/optional/optional.hpp>
 
 // Barycentric coordinates headers.
-#include <CGAL/Barycentric_coordinates_2/deprecated/barycentric_enum_2_deprecated.h>
+#include <CGAL/Barycentric_coordinates_2/barycentric_enum_2.h>
 
 // CGAL namespace.
 namespace CGAL {
 
 // Barycentric coordinates namespace.
-namespace Barycentric_coordinates_deprecated {
+namespace Barycentric_coordinates {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Try to find a square root object in the provided `Traits` class. If not, then use the default square root from CGAL.
@@ -500,10 +500,10 @@ private:
     }
 };
 
-} // namespace Barycentric_coordinates_deprecated
+} // namespace Barycentric_coordinates
 
 } // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 
-#endif // CGAL_BARYCENTRIC_MEAN_VALUE_2_DEPRECATED_H
+#endif // CGAL_BARYCENTRIC_MEAN_VALUE_2_H

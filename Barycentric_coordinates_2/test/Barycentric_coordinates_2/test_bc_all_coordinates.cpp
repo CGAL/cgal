@@ -1,6 +1,9 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Delaunay_domain_2.h>
-#include <CGAL/Barycentric_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Wachspress_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Mean_value_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Harmonic_coordinates_2.h>
 
 using Kernel  = CGAL::Exact_predicates_inexact_constructions_kernel;
 using FT      = typename Kernel::FT;
