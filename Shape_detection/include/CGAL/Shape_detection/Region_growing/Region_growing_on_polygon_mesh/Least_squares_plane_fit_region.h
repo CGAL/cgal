@@ -196,6 +196,53 @@ namespace Polygon_mesh {
       m_cos_value_threshold = cos_value;
     }
 
+    /*!
+      \brief initializes all internal data structures.
+
+      \deprecated This constructor is deprecated since the version 5.4 of \cgal.
+
+      \param pmesh
+      an instance of `PolygonMesh` that represents a polygon mesh
+
+      \param distance_threshold
+      the maximum distance from the furthest vertex of a face to a plane. %Default is 1.
+
+      \param angle_threshold
+      the maximum accepted angle in degrees between the normal of a face and
+      the normal of a plane. %Default is 25 degrees.
+
+      \param min_region_size
+      the minimum number of faces a region must have. %Default is 1.
+
+      \param vertex_to_point_map
+      an instance of `VertexToPointMap` that maps a polygon mesh
+      vertex to `Kernel::Point_3`
+
+      \param traits
+      an instance of `GeomTraits`
+
+      \pre `faces(pmesh).size() > 0`
+      \pre `distance_threshold >= 0`
+      \pre `angle_threshold >= 0 && angle_threshold <= 90`
+      \pre `min_region_size > 0`
+    */
+    CGAL_DEPRECATED_MSG("This constructor is deprecated since the version 5.4 of CGAL!")
+    Least_squares_plane_fit_region(
+      const PolygonMesh& pmesh,
+      const FT distance_threshold = FT(1),
+      const FT angle_threshold = FT(25),
+      const std::size_t min_region_size = 1,
+      const VertexToPointMap vertex_to_point_map = VertexToPointMap(),
+      const GeomTraits traits = GeomTraits()) :
+    Least_squares_plane_fit_region(
+      pmesh, CGAL::parameters::
+    max_distance(distance_threshold).
+    max_angle(angle_threshold).
+    min_region_size(min_region_size).
+    vertex_point_map(vertex_to_point_map).
+    geom_traits(traits))
+    { }
+
     /// @}
 
     /// \name Access
