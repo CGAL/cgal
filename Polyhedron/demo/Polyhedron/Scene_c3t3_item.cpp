@@ -1378,10 +1378,13 @@ void Scene_c3t3_item_priv::computeIntersection(const Primitive& cell)
 
   CGAL::IO::Color color(UC(c.red()), UC(c.green()), UC(c.blue()));
 
-  float id = static_cast<float>(id_to_compact[ch->subdomain_index()]);
-  for(int i=0; i< 48; ++i)
+  if(is_filterable)
   {
-    inter_subdomain_ids.push_back(id);
+    float id = static_cast<float>(id_to_compact[ch->subdomain_index()]);
+    for(int i=0; i< 48; ++i)
+    {
+      inter_subdomain_ids.push_back(id);
+    }
   }
   intersection->addTriangle(pb, pa, pc, color);
   intersection->addTriangle(pa, pb, pd, color);
