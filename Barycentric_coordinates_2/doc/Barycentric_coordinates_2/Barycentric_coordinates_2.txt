@@ -327,7 +327,7 @@ The result is identical to the one from \ref mv_coord_example "this example".
 
 \note The headers `Segment_coordinates_2.h` and `Triangle_coordinates_2.h` are
 not capitalized in the new version that is they are named `segment_coordinates_2.h`
-and `triangle_coordinates_2.h`!
+and `triangle_coordinates_2.h`.
 
 
 \section gbc_degeneracies Edge Cases
