@@ -74,7 +74,6 @@ class GarlandHeckbert_policies :
       
     // these using directives are needed to choose between the definitions of these types
     // in Cost_base and Placement_base (even though they are the same)
-    // TODO alternatives - e.g. rename base class types so they don't clash
     using typename Cost_base::Mat_4;
     using typename Cost_base::Col_4;
     using typename Cost_base::Point_3;

@@ -75,14 +75,20 @@ class GarlandHeckbert_probabilistic_policies :
     
     // these using directives are needed to choose between the definitions of these types
     // in Cost_base and Placement_base (even though they are the same)
-    // TODO alternatives - e.g. rename base class types so they don't clash
     using typename Cost_base::Mat_4;
     using typename Cost_base::Col_4;
     using typename Cost_base::Point_3;
     using typename Cost_base::Vector_3;
 
 
-    // TODO good default values
+    GarlandHeckbert_probabilistic_policies(
+        TriangleMesh& tmesh, 
+        FT dm): GarlandHeckbert_probabilistic_policies(tmesh, dm, 1.0, 1.0) // the one is dummy value
+    { 
+      // set the actual estimate variances
+      estimate_variance(tmesh);
+    }
+    
     GarlandHeckbert_probabilistic_policies(
         TriangleMesh& tmesh, 
         FT dm,
@@ -132,8 +138,8 @@ class GarlandHeckbert_probabilistic_policies :
 
       // set the first 3 values of the last row and the first 
       // 3 values of the last column
-      //TODO why do we have to flip this sign as well? Probably linked to
-      // our normal orientation
+      // the negative sign comes from the fact that in the paper,
+      // the b column and row appear with a negative sign
       const auto b1 = -(dot_mnmv * mean_normal + sdev_n_2 * mean_vec);
       
       const Eigen::Matrix<FT, 3, 1> b {b1.x(), b1.y(), b1.z()};
@@ -141,7 +147,8 @@ class GarlandHeckbert_probabilistic_policies :
       mat.col(3).head(3) = b;
       mat.row(3).head(3) = b.transpose();
 
-      // set the value in the bottom right corner
+      // set the value in the bottom right corner, we get this by considering 
+      // that we only have single variances given instead of covariance matrices
       mat(3, 3) = CGAL::square(dot_mnmv) 
         + sdev_n_2 * squared_length(mean_vec) 
         + sdev_p_2 * squared_length(mean_normal)
@@ -165,6 +172,37 @@ class GarlandHeckbert_probabilistic_policies :
     FT sdev_p_2;
 
     Vertex_cost_map vcm_;
+
+    // give a very rough estimate of a decent variance for both parameters 
+    void estimate_variance(TriangleMesh mesh)
+    {
+      typedef typename TriangleMesh::Vertex_index vertex_descriptor;
+      // get the bounding box of the mesh
+      CGAL::Bbox_3 bbox { };
+
+      for (vertex_descriptor v : mesh.vertices())
+      {
+        bbox += mesh.point(v).bbox();
+      }
+      
+      // length of the longest edge
+      FT max_edge_length = 0;
+      
+      for (int i = 0; i < 3; ++i)
+      {
+        max_edge_length = max(max_edge_length, abs(bbox.max(i) - bbox.min(i))); 
+      }
+
+      // set the variances based on the default value for [-1, 1]^3 cubes 
+      // here we have the maximum edge length, so if we scale
+      // our mesh down by max_edge_length it fits inside a [0, 1]^3 cube, hence the "/ 2"
+      sdev_n_2 = good_default_variance_unit * max_edge_length / 2.0;
+      sdev_p_2 = good_default_variance_unit * max_edge_length / 2.0;
+    }
+    
+    // magic number determined by some testing, this is a good variance for models that
+    // fit inside a [-1, 1]^3 unit cube
+    static constexpr FT good_default_variance_unit = 1e-6;
 };
 
 } //namespace Surface_mesh_simplification
