@@ -1,10 +1,17 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Barycentric_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Delaunay_domain_2.h>
+#include <CGAL/Barycentric_coordinates_2/Harmonic_coordinates_2.h>
 
 // Typedefs.
-using Kernel  = CGAL::Exact_predicates_inexact_constructions_kernel;
-using FT      = Kernel::FT;
-using Point_2 = Kernel::Point_2;
+using Kernel      = CGAL::Exact_predicates_inexact_constructions_kernel;
+using FT          = Kernel::FT;
+using Point_2     = Kernel::Point_2;
+using Point_range = std::vector<Point_2>;
+
+using Domain =
+  CGAL::Barycentric_coordinates::Delaunay_domain_2<Point_range, Kernel>;
+using Harmonic_coordinates_2 =
+  CGAL::Barycentric_coordinates::Harmonic_coordinates_2<Point_range, Domain, Kernel>;
 
 int main() {
 
@@ -25,14 +32,20 @@ int main() {
   // Use seeds to mark the interior part of the source shape.
   const std::vector<Point_2> seeds = { Point_2(3, 5) };
 
+  // Construct a Delaunay domain.
+  const FT max_edge_length = FT(1) / FT(3);
+  Domain domain(source_shape);
+  domain.create(max_edge_length, seeds);
+
   // Use it to store coordinates.
   std::vector< std::vector<FT> > coordinates;
+  coordinates.reserve(domain.number_of_vertices());
 
   // Compute harmonic coordinates at the vertices of the
   // discretized interior domain of the source shape.
-  const FT max_edge_length = FT(1) / FT(3);
-  CGAL::Barycentric_coordinates::harmonic_coordinates_2(
-    source_shape, seeds, std::back_inserter(coordinates), max_edge_length);
+  Harmonic_coordinates_2 harmonic_coordinates_2(source_shape, domain);
+  harmonic_coordinates_2.compute();
+  harmonic_coordinates_2(std::back_inserter(coordinates));
 
   // Deform the source domain into the target domain.
   // We output only the first 20 results.

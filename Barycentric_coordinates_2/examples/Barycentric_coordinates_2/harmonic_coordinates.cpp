@@ -1,5 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Barycentric_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Delaunay_domain_2.h>
+#include <CGAL/Barycentric_coordinates_2/Harmonic_coordinates_2.h>
 
 // Typedefs.
 using Kernel      = CGAL::Simple_cartesian<double>;
@@ -34,12 +35,14 @@ int main() {
     Point_2(0.01, 0.10), Point_2(0.02, 0.07)
   };
 
-  // Construct a Delaunay domain.
+  // Use seeds to mark the interior part of the polygon.
   std::list<Point_2> seeds;
   seeds.push_back(Point_2(0.1, 0.1));
 
+  // Construct a Delaunay domain.
+  const double max_edge_length = 0.01;
   Domain domain(polygon);
-  domain.create(0.01, seeds);
+  domain.create(max_edge_length, seeds);
 
   // Compute harmonic coordinates at the vertices of the domain.
   Harmonic_coordinates_2 harmonic_coordinates_2(polygon, domain);

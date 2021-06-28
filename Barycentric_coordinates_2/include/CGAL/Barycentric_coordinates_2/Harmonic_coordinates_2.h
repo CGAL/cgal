@@ -161,7 +161,7 @@ namespace Barycentric_coordinates {
     /*!
       \brief evaluates 2D harmonic coordinates.
 
-      This function fills `coordinates` with harmonic coordinates evaluated at the `query`
+      This function fills `c_begin` with harmonic coordinates evaluated at the `query`
       point with respect to the vertices of the input polygon. Evaluation is performed
       by locating the finite element in the input domain that contains `query` and then
       linearly interpolating harmonic coordinates within this element.
@@ -252,9 +252,9 @@ namespace Barycentric_coordinates {
     }
 
     /*!
-      \brief returns 2D harmonic coordinates.
+      \brief returns 2D harmonic coordinates at one domain vertex.
 
-      This function fills `coordinates` with harmonic coordinates computed at the
+      This function fills `c_begin` with harmonic coordinates computed at the
       vertex of the input domain with the index `query_index`.
 
       The number of returned coordinates equals to the number of polygon vertices.
@@ -306,6 +306,36 @@ namespace Barycentric_coordinates {
         for (std::size_t k = 0; k < n; ++k) {
           *(c_begin++) = m_interior(m_indices[query_index], k);
         }
+      }
+      return c_begin;
+    }
+
+    /*!
+      \brief returns 2D harmonic coordinates at all domain vertices.
+
+      This function fills `c_begin` with harmonic coordinates computed at
+      the vertices of the input domain.
+
+      The number of returned coordinates equals to the number of input domain vertices.
+
+      \tparam OutIterator
+      a model of `OutputIterator` that accepts values of type `std::vector<FT>`
+
+      \param c_begin
+      the beginning of the destination range with the computed coordinates
+
+      \return an output iterator to the element in the destination range,
+      one past the last coordinate set stored
+    */
+    template<typename OutIterator>
+    OutIterator operator()(OutIterator c_begin) {
+
+      std::vector<FT> coordinates;
+      coordinates.reserve(m_polygon.size());
+      for (std::size_t k = 0; k < m_domain.number_of_vertices(); ++k) {
+        coordinates.clear();
+        operator()(k, std::back_inserter(coordinates));
+        *(c_begin++) = coordinates;
       }
       return c_begin;
     }

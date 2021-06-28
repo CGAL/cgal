@@ -74,7 +74,6 @@ coordinates from the Package \ref PkgInterpolation2.}
 - `mean_value_coordinates_2()`
 - `discrete_harmonic_weights_2()`
 - `discrete_harmonic_coordinates_2()`
-- `harmonic_coordinates_2()`
 - `boundary_coordinates_2()`
 */
 

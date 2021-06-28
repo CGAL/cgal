@@ -1,4 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Barycentric_coordinates_2/Delaunay_domain_2.h>
 #include <CGAL/Barycentric_coordinates_2.h>
 
 using Kernel  = CGAL::Exact_predicates_inexact_constructions_kernel;

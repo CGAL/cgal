@@ -178,8 +178,8 @@ namespace Barycentric_coordinates {
     /*!
       \brief computes 2D mean value coordinates.
 
-      This function fills `coordinates` with 2D mean value coordinates computed at the `query`
-      point with respect to the vertices of the input polygon.
+      This function fills `c_begin` with 2D mean value coordinates computed
+      at the `query` point with respect to the vertices of the input polygon.
 
       The number of returned coordinates equals to the number of polygon vertices.
 
