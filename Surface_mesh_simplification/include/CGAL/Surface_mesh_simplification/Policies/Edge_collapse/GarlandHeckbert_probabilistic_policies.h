@@ -14,8 +14,6 @@
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_GARLANDHECKBERT_PROBABILISTIC_POLICIES_H
 
 #include <CGAL/license/Surface_mesh_simplification.h>
-#include <iostream>
-
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_core.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_policy_base.h>
@@ -98,8 +96,6 @@ class GarlandHeckbert_probabilistic_policies :
       // initialize both vcms
       Cost_base::init_vcm(vcm_);
       Placement_base::init_vcm(vcm_);
-
-      std::cout << "Using probabilisitic quadrics with sigma_n^2 = " << sdev_n_2 << std::endl; 
     }
 
     Col_4 construct_optimal_point(const Mat_4& aQuadric, const Col_4& p0, const Col_4& p1) const 
