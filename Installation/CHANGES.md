@@ -1,6 +1,18 @@
 Release History
 ===============
 
+### Barycentric Coordinates 2 (breaking change)
+
+- The classes `Segment_coordinates_2` and `Triangle_coordinates_2` are removed, because the related functions `compute_segment_coordinates_2()` and `compute_triangle_coordinates_2()` are much more general and simpler to use.
+- The prefix compute_ is removed from the functions `compute_segment_coordinates_2()` and `compute_triangle_coordinates_2()`.
+- The classes `Wachspress_2`, `Discrete_harmonic_2`, and `Mean_value_2` are modified and the suffix `_coordinates` is added. The reason is that harmonic (and many other) coordinates cannot be computed analytically.
+- The class `Generalized_barycentric_coordinates_2` is removed and the three coordinate classes above can now be used on their own. In the previous version of the package, we had to instantiate the class `Generalized_barycentric_coordinates_2` with one of the above types, however since harmonic coordinates (and in fact many other coordinates) cannot be used with the class `Generalized_barycentric_coordinates_2`, it was removed. Another reason is that any model of the concept `BarycentricCoordinates_2` from the previous version is instantiated directly in the class `Generalized_barycentric_coordinates_2` and hence it does not allow users to add any parameters to the constructor, which is very important for many coordinate functions.
+- The class `Harmonic_coordinates_2` is added. These coordinates have to be first computed at the vertices of a triangulated domain restricted to the polygon, and only then they can be evaluated per point using the `operator()`. The harmonic coordinates class is parameterized by the discretized domain, which should conform to the concept `DiscretizedDomain_2`.
+- The class `Delaunay_domain_2` is added. It depends on the package `Mesh_2` and is not explicetly included in any other header.
+- All functions and classes are now using ranges and property maps.
+- The concept `BarycentricCoordinates_2` is removed.
+- The old API is preserved but deprecated.
+
 [Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)
 -----------
 
