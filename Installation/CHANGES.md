@@ -1,6 +1,16 @@
 Release History
 ===============
 
+### Shape Detection (breaking change)
+
+- Added named parameters (that changed the APIs of many class constructors)
+- The update function from the `RegionType` concept returns a boolean flag that enables to detect if the input conditions for the new region are satisfied (breaking change)
+- Old fitting classes are now using better versions of the region conditions, more precise and faster, including the correct normal orientations
+- Added new classes for getting linear regions in a set of 2D and 3D segments
+- Added the Polyline_graph class for extracting a set of polylines from a face graph, which splits this graph into a set of user-defined regions
+- Added new classes for getting linear regions on 2D and 3D polylines
+- Old API is preserved but deprecated
+
 [Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)
 -----------
 
