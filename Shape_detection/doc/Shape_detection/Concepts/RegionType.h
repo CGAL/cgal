@@ -65,4 +65,17 @@ public:
     const std::vector<std::size_t>& indices) {
 
   }
+
+  /*!
+    enables to update any information that is maintained with the region
+    represented by `indices`.
+
+    \deprecated This is deprecated function that was used in all versions before \cgal 5.4.
+    The change from `void` in the old version to `bool` in the new version affects
+    only user-defined region types.
+  */
+  void update(
+    const std::vector<std::size_t>& indices) {
+
+  }
 };

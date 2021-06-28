@@ -59,11 +59,6 @@ Property maps that can be used with the `CGAL::Shape_detection::Efficient_RANSAC
 
 \addtogroup PkgShapeDetectionRANSAC
 
-\defgroup PkgShapeDetectionDEPR Deprecated
-\ingroup PkgShapeDetectionRef
-
-Deprecated components.
-
 \addtogroup PkgShapeDetectionRef
 
 \cgalPkgDescriptionBegin{Shape Detection, PkgShapeDetection}
