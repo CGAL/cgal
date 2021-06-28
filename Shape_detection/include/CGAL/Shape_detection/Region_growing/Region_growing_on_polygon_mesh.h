@@ -16,6 +16,12 @@
 
 #include <CGAL/license/Shape_detection.h>
 
+/**
+* \ingroup PkgShapeDetectionRef
+* \file CGAL/Shape_detection/Region_growing/Region_growing_on_polygon_mesh.h
+* A convenience header that includes all classes related to the region growing algorithm on a polygon mesh.
+*/
+
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_polygon_mesh/Polyline_graph.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_polygon_mesh/One_ring_neighbor_query.h>
 

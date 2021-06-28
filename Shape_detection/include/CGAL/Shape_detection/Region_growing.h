@@ -16,6 +16,12 @@
 
 #include <CGAL/license/Shape_detection.h>
 
+/**
+* \ingroup PkgShapeDetectionRef
+* \file CGAL/Shape_detection/Region_growing.h
+* A convenience header that includes all classes related to the region growing algorithm.
+*/
+
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_segment_set.h>

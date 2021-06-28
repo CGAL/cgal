@@ -16,6 +16,12 @@
 
 #include <CGAL/license/Shape_detection.h>
 
+/**
+* \ingroup PkgShapeDetectionRef
+* \file CGAL/Shape_detection/Efficient_RANSAC.h
+* A convenience header that includes all classes related to the efficient RANSAC algorithm.
+*/
+
 #include <CGAL/Shape_detection/Efficient_RANSAC/Efficient_RANSAC.h>
 #include <CGAL/Shape_detection/Efficient_RANSAC/Efficient_RANSAC_traits.h>
 

@@ -16,6 +16,12 @@
 
 #include <CGAL/license/Shape_detection.h>
 
+/**
+* \ingroup PkgShapeDetectionRef
+* \file CGAL/Shape_detection/Region_growing/Region_growing_on_segment_set.h
+* A convenience header that includes all classes related to the region growing algorithm on a segment set.
+*/
+
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_segment_set/Least_squares_line_fit_region.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_segment_set/Least_squares_line_fit_sorting.h>
 

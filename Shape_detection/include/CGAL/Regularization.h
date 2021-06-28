@@ -15,6 +15,13 @@
 #define CGAL_REGULARIZATION_H
 
 #include <CGAL/license/Shape_detection.h>
+
+/**
+* \ingroup PkgShapeDetectionRef
+* \file CGAL/Regularization.h
+* A convenience header that includes all free functions for shape regularization.
+*/
+
 #include <CGAL/Regularization/regularize_planes.h>
 
 #endif // CGAL_REGULARIZATION_H
