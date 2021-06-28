@@ -76,8 +76,47 @@ public:
 
   // Access.
   void push(const Event& event) {
-    if (m_verbose) std::cout << "** pushing " << event << std::endl;
-    m_queue.insert(event);
+    // old version of push() - non unique
+    // if (m_verbose) std::cout << "** pushing " << event << std::endl;
+    // m_queue.insert(event);
+
+    // version with unique events
+    m_temporary_queue.push_back(event);
+  }
+
+  void finalize_pushing() {
+
+    // old version of push() - non unique events
+    // return;
+
+    // version with unique events
+    if (m_temporary_queue.size() == 0) return;
+    if (m_temporary_queue.size() == 1) {
+
+      const auto& event = m_temporary_queue[0];
+      if (m_verbose) std::cout << "** pushing " << event << std::endl;
+      m_queue.insert(event);
+
+    } else {
+
+      CGAL_assertion(are_all_keys_the_same(m_temporary_queue));
+      std::set<Event> sorted_events;
+      std::copy(m_temporary_queue.begin(), m_temporary_queue.end(),
+        std::inserter(sorted_events, sorted_events.begin()));
+
+      // if (m_verbose) {
+      //   std::cout << "- sorted queue: " << sorted_events.size() << std::endl;
+      //   for (const auto& event : sorted_events) {
+      //     std::cout << event << std::endl;
+      //   }
+      // }
+
+      const auto& event = *(sorted_events.begin());
+      if (m_verbose) std::cout << "** pushing " << event << std::endl;
+      m_queue.insert(event);
+    }
+    m_temporary_queue.clear();
+    CGAL_assertion(has_unique_keys());
   }
 
   // Pop the event by the shortest time: short -> long
@@ -97,6 +136,7 @@ public:
         std::cout << "WARNING: NEXT EVENT IS HAPPENNING AT THE SAME TIME!" << std::endl;
       }
     }
+    CGAL_assertion(has_unique_keys());
     return event;
   }
 
@@ -143,6 +183,7 @@ public:
         std::cout << "** erasing (by iedge) " << event << std::endl;
     }
     queue_by_iedge_idx().erase(pe.first, pe.second);
+    CGAL_assertion(has_unique_keys());
   }
 
   // Erase all events of the pvertex.
@@ -167,6 +208,7 @@ public:
         std::cout << "** erasing (by pother) " << event << std::endl;
     }
     queue_by_pother_idx().erase(po.first, po.second);
+    CGAL_assertion(has_unique_keys());
   }
 
   // Sorting.
@@ -182,13 +224,50 @@ public:
 
   // Helpers.
   void print() const {
-    for (const auto& event : m_queue)
+    // std::size_t count = 0;
+    for (const auto& event : m_queue) {
       std::cout << event << std::endl;
+      // if (count > 15) return;
+      // ++count;
+    }
+  }
+
+  bool are_all_keys_the_same(
+    const std::vector<Event>& events) const {
+
+    CGAL_assertion(events.size() > 1);
+    for (std::size_t i = 1; i < events.size(); ++i) {
+      if (events[i].pvertex() != events[0].pvertex()) return false;
+    }
+    return true;
+  }
+
+  bool has_unique_keys() const {
+
+    // old version of push() - non unique
+    // return true;
+
+    std::set<PVertex> unique_keys;
+    for (const auto& event : m_queue) {
+      const auto pair = unique_keys.insert(event.pvertex());
+      const bool is_inserted = pair.second;
+      if (!is_inserted) {
+        std::cout << "ERROR: QUEUE HAS NON-UNIQUE KEYS!" << std::endl;
+        std::cout << event << std::endl;
+        std::cout << "PRINTING CURRENT QUEUE: " << std::endl;
+        for (const auto& e : m_queue) {
+          std::cout << e << std::endl;
+        }
+        return false;
+      }
+    }
+    return true;
   }
 
 private:
   Queue m_queue;
   const bool m_verbose;
+  std::vector<Event> m_temporary_queue;
 };
 
 } // namespace KSR_3

@@ -55,25 +55,29 @@ public:
       const PVertex& pother,
       const IVertex& ivertex,
       const bool is_virtual = false) :
-    time(static_cast<FT>(CGAL::to_double(event_time))),
+    m_time(static_cast<FT>(CGAL::to_double(event_time))),
     m_pother(pother), m_ivertex(ivertex), m_is_virtual(is_virtual)
     { }
 
-    const FT time;
+  private:
+    const FT m_time;
     const PVertex& m_pother;
     const IVertex& m_ivertex;
     const bool m_is_virtual;
 
+  public:
+    FT time() const { return m_time; }
+
     bool operator<(const ETime& e) const {
 
       const FT tol = KSR::tolerance<FT>();
-      const FT time_diff = CGAL::abs(time - e.time);
+      const FT time_diff = CGAL::abs(time() - e.time());
       if (time_diff < tol && !is_virtual() && !e.is_virtual()) {
         const std::size_t la =   is_pvertex_to_ivertex() ? 1 : 0;
         const std::size_t lb = e.is_pvertex_to_ivertex() ? 1 : 0;
         if (la != lb) return la < lb;
       }
-      return time < e.time;
+      return time() < e.time();
     }
 
     bool is_pvertex_to_ivertex() const {
@@ -94,7 +98,7 @@ public:
     m_pother(Data_structure::null_pvertex()),
     m_ivertex(Data_structure::null_ivertex()),
     m_iedge(Data_structure::null_iedge()),
-    m_time(ETime(0, m_pother, m_ivertex)),
+    m_time(ETime(NT(0), m_pother, m_ivertex)),
     m_support_plane_idx(m_pvertex.first)
   { }
 
@@ -168,12 +172,16 @@ public:
     "ERROR: THIS EVENT CANNOT EVER HAPPEN IN THE UNCONSTRAINED SETTING!");
   }
 
+  bool operator<(const Event& e) const {
+    return time() < e.time();
+  }
+
   // Data access.
   const PVertex& pvertex() const { return m_pvertex; }
   const PVertex& pother() const { return m_pother; }
   const IVertex& ivertex() const { return m_ivertex; }
   const IEdge& iedge() const { return m_iedge; }
-  NT time() const { return static_cast<NT>(m_time.time); }
+  NT time() const { return static_cast<NT>(m_time.time()); }
   std::size_t support_plane() const { return m_support_plane_idx; }
 
   // Predicates.
@@ -181,35 +189,35 @@ public:
 
   // Event types. See constructors above.
   bool is_pvertex_to_pvertex() const {
-    return (m_pother != Data_structure::null_pvertex()); }
+    return (pother() != Data_structure::null_pvertex()); }
   bool is_pvertex_to_iedge()   const {
-    return (m_iedge != Data_structure::null_iedge()); }
+    return (iedge() != Data_structure::null_iedge()); }
   bool is_pvertex_to_ivertex() const {
-    return (m_pother == Data_structure::null_pvertex() && m_ivertex != Data_structure::null_ivertex()); }
+    return (pother() == Data_structure::null_pvertex() && ivertex() != Data_structure::null_ivertex()); }
   bool is_pvertices_to_ivertex() const {
-    return (m_pother != Data_structure::null_pvertex() && m_ivertex != Data_structure::null_ivertex()); }
+    return (pother() != Data_structure::null_pvertex() && ivertex() != Data_structure::null_ivertex()); }
 
   // Output.
   friend std::ostream& operator<<(std::ostream& os, const Event& event) {
 
-    const std::string constr_type = ( event.m_is_constrained ? "constrained " : "unconstrained " );
+    const std::string constr_type = ( event.is_constrained() ? "constrained " : "unconstrained " );
     if (event.is_pvertices_to_ivertex()) {
       os << constr_type << "event at t = " << event.time() << " between PVertex("
-         << event.m_pvertex.first << ":" << event.m_pvertex.second
-         << "), PVertex(" << event.m_pother.first << ":" << event.m_pother.second
-         << "), and IVertex(" << event.m_ivertex << ")";
+         << event.pvertex().first << ":" << event.pvertex().second
+         << "), PVertex(" << event.pother().first << ":" << event.pother().second
+         << "), and IVertex(" << event.ivertex() << ")";
     } else if (event.is_pvertex_to_pvertex()) {
       os << constr_type << "event at t = " << event.time() << " between PVertex("
-         << event.m_pvertex.first << ":" << event.m_pvertex.second
-         << ") and PVertex(" << event.m_pother.first << ":" << event.m_pother.second << ")";
+         << event.pvertex().first << ":" << event.pvertex().second
+         << ") and PVertex(" << event.pother().first << ":" << event.pother().second << ")";
     } else if (event.is_pvertex_to_iedge()) {
       os << constr_type << "event at t = " << event.time() << " between PVertex("
-         << event.m_pvertex.first << ":" << event.m_pvertex.second
-         << ") and IEdge" << event.m_iedge;
+         << event.pvertex().first << ":" << event.pvertex().second
+         << ") and IEdge" << event.iedge();
     } else if (event.is_pvertex_to_ivertex()) {
       os << constr_type << "event at t = " << event.time() << " between PVertex("
-         << event.m_pvertex.first << ":" << event.m_pvertex.second
-         << ") and IVertex(" << event.m_ivertex << ")";
+         << event.pvertex().first << ":" << event.pvertex().second
+         << ") and IVertex(" << event.ivertex() << ")";
     } else {
       os << "ERROR: INVALID EVENT at t = " << event.time();
     }

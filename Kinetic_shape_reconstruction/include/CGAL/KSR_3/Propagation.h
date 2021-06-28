@@ -161,6 +161,7 @@ private:
       compute_events_of_unconstrained_pvertex(
         pvertex, pv_segment, pv_bbox, iedges, segments, bboxes);
     }
+    m_queue.finalize_pushing();
     return true;
   }
 
@@ -521,6 +522,7 @@ private:
 
     std::size_t iteration = initial_iteration;
     while (!m_queue.empty()) {
+      // m_queue.print();
 
       const Event event = m_queue.pop();
       const FT current_time = event.time();
@@ -546,9 +548,9 @@ private:
       }
       ++iteration;
 
-      // if (iteration == 3366) {
-      //   exit(EXIT_FAILURE);
-      // }
+      if (iteration == 1) {
+        exit(EXIT_FAILURE);
+      }
 
       apply(event);
       CGAL_assertion(m_data.check_integrity());
