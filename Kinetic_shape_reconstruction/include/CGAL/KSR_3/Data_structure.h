@@ -2843,6 +2843,10 @@ public:
         CGAL_assertion_msg(false, "TODO: CAN WE EVER BE HERE? WHY?");
       }
 
+      if (m_verbose) {
+        std::cout << "- intersected point: " << to_3d(sp_idx, future_point_a) << std::endl;
+      }
+
       // If reversed, we most-likely in the parallel case and an intersection point
       // is wrongly computed. This can happen even when we are bigger than tolerance.
       // This should not happen here, I guess. If happens, we should find different
@@ -2890,6 +2894,10 @@ public:
         std::cout << "WARNING: B IS NOT FOUND!" << std::endl;
         future_point_a = pinit + (pinit - future_point_b);
         CGAL_assertion_msg(false, "TODO: CAN WE EVER BE HERE? WHY?");
+      }
+
+      if (m_verbose) {
+        std::cout << "- intersected point: " << to_3d(sp_idx, future_point_b) << std::endl;
       }
 
       // If reversed, we most-likely in the parallel case and an intersection point
@@ -3049,6 +3057,9 @@ public:
     if (CGAL::abs(m2 - m3) >= tol) {
       if (m_verbose) std::cout << "- back/front intersected lines" << std::endl;
       future_point = KSR::intersection<Point_2>(future_line_next, iedge_line);
+      if (m_verbose) {
+        std::cout << "- intersected point: " << to_3d(sp_idx, future_point) << std::endl;
+      }
 
       // If reversed, we most-likely in the parallel case and an intersection point
       // is wrongly computed. This can happen even when we are bigger than tolerance.
@@ -3157,6 +3168,9 @@ public:
     if (CGAL::abs(m2 - m3) >= tol) {
       if (m_verbose) std::cout << "- open intersected lines" << std::endl;
       future_point = KSR::intersection<Point_2>(future_line_next, iedge_line);
+      if (m_verbose) {
+        std::cout << "- intersected point: " << to_3d(sp_idx, future_point) << std::endl;
+      }
 
       // If reversed, we most-likely in the parallel case and an intersection point
       // is wrongly computed. This can happen even when we are bigger than tolerance.

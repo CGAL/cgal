@@ -77,17 +77,17 @@ public:
   // Access.
   void push(const Event& event) {
     // old version of push() - non unique
-    // if (m_verbose) std::cout << "** pushing " << event << std::endl;
-    // m_queue.insert(event);
+    if (m_verbose) std::cout << "** pushing " << event << std::endl;
+    m_queue.insert(event);
 
     // version with unique events
-    m_temporary_queue.push_back(event);
+    // m_temporary_queue.push_back(event);
   }
 
   void finalize_pushing() {
 
     // old version of push() - non unique events
-    // return;
+    return;
 
     // version with unique events
     if (m_temporary_queue.size() == 0) return;
@@ -245,7 +245,10 @@ public:
   bool has_unique_keys() const {
 
     // old version of push() - non unique
-    // return true;
+    // we may still have non unique events like:
+    // pvertex to ivertex (inserted earlier) + pvertex to pother (inserted later),
+    // where the pvertex is the same in both events, so we skip this check!
+    return true;
 
     std::set<PVertex> unique_keys;
     for (const auto& event : m_queue) {

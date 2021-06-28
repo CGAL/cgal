@@ -548,9 +548,9 @@ private:
       }
       ++iteration;
 
-      if (iteration == 1) {
-        exit(EXIT_FAILURE);
-      }
+      // if (iteration == 630) {
+      //   exit(EXIT_FAILURE);
+      // }
 
       apply(event);
       CGAL_assertion(m_data.check_integrity());
