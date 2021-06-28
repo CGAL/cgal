@@ -93,7 +93,7 @@ int main(int argc, char** argv)
   const double ratio = (argc > 2) ? std::stod(argv[2]) : 0.2;
   const std::string outname = (argc > 3) ? argv[3] : "test";
   
-  FT variance = (argc > 4) ? std::stod(argv[4]) : 1;
+  FT variance = (argc > 4) ? std::stod(argv[4]) : 0.05;
   
   std::ifstream is(filename);
   if(!is || !(is >> surface_mesh))
@@ -121,7 +121,6 @@ int main(int argc, char** argv)
   
   collapse(surface_mesh, outname + "_classic.off", ratio, classic_cost, classic_placement);
 
-  // variances 2 - 1 - 0.5 - 0.25 - 0.125 - (0.0625)
   for (int i = 0; i < 5; ++i)
   {
     Prob_policies prob_policies(surface_mesh, 100, variance, variance);
@@ -130,12 +129,12 @@ int main(int argc, char** argv)
     const Prob_placement& prob_placement = prob_policies.get_placement();
     
     std::string filename = outname + "_prob_" + std::to_string(i) + ".off";
+
+    std::cout << "Using variance of " << variance << " for both parameters\n";
     collapse(surface_mesh, filename, ratio, prob_cost, prob_placement);
 
     variance = variance / 2;
   }
-  
-  //CGAL::draw(surface_mesh);
   
   return EXIT_SUCCESS;
 }
