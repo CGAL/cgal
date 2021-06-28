@@ -68,16 +68,17 @@ public:
     // see segment_segment.cpp
   }
 
-  // @fixme EPICK
   void S_Sph()
   {
     std::cout << "Segment - Sphere\n";
 
     // No intersection
     check_do_not_intersect(S(p(4,1,9), p(4,6,-1)), Sph(p(9,2,4), 1));
-     check_do_not_intersect(S(p(-2,3,4), p(1,2,-1)), Sph(p(9,2,4), 10000));
+    check_do_not_intersect(S(p(-2,3,4), p(1,2,-1)), Sph(p(9,2,4), 10000));
 
+    check_do_intersect(S(p(0,1,0), p(2,1,0)), Sph(p(1,0,0), 1));
     check_do_intersect(S(p(-2,3,4), p(1,2,-1)), Sph(p(9,2,4), 100));
+    check_do_intersect(S(p(-2,3,4), p(3,2,-5)), Sph(p(9,2,4), 100));
 
     for(int i=0; i<N; ++i)
     {
@@ -92,8 +93,6 @@ public:
       Sph sph(c, sqr);
       if(sph.oriented_side(s0) != sph.oriented_side(s1))
         check_do_intersect(sph, S(s0, s1));
-      else
-        check_do_not_intersect(sph, S(s0, s1));
     }
   }
 
@@ -182,7 +181,7 @@ public:
     std::cout << "3D Segment Intersection tests\n";
 
     S_S();
-//    S_Sph(); // @fixme
+    S_Sph();
     S_Tet();
     S_Tr();
   }

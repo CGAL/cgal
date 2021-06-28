@@ -28,12 +28,33 @@ do_intersect(const typename K::Sphere_3& sp,
              const K& k)
 {
   typedef typename K::RT RT;
-  RT num, den;
+  typedef typename K::Bounded_side Bounded_side;
 
-  CGAL::internal::squared_distance_RT(sp.center(), seg, num, den, k);
+  typename K::Bounded_side_3 bounded_side = k.bounded_side_3_object();
+  typename K::Compute_squared_radius_3 sq_radius = k.compute_squared_radius_3_object();
+  typename K::Construct_center_3 center = k.construct_center_3_object();
+  typename K::Construct_source_3 source = k.construct_source_3_object();
+  typename K::Construct_target_3 target = k.construct_target_3_object();
+
+  const Bounded_side source_side = bounded_side(sp, source(seg));
+  const Bounded_side target_side = bounded_side(sp, target(seg));
+
+  if(source_side != target_side)
+    return true;
+  else if(source_side == ON_BOUNDED_SIDE) // else if ==> both extremities are on the same side
+    return false;
+  else if(source_side == ON_BOUNDARY)
+    return true;
+
+  CGAL_kernel_assertion(source_side == ON_UNBOUNDED_SIDE && target_side == ON_UNBOUNDED_SIDE);
+
+  // Both out can still be intersecting the sphere
+  RT num, den;
+  CGAL::internal::squared_distance_RT(center(sp), seg, num, den, k);
+
   return !(compare_quotients<RT>(num, den,
-                                 Rational_traits<typename K::FT>().numerator(sp.squared_radius()),
-                                 Rational_traits<typename K::FT>().denominator(sp.squared_radius())) == LARGER);
+                                 Rational_traits<typename K::FT>().numerator(sq_radius(sp)),
+                                 Rational_traits<typename K::FT>().denominator(sq_radius(sp))) == LARGER);
 }
 
 template <class K>
