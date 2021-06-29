@@ -6,6 +6,9 @@ Release History
 
 Release date: July 2021
 
+### General changes
+-   The support for the compiled version of CGAL is dropped. Only the header-only version is supported.
+
 ### [Quadtrees, Octrees, and Orthtrees](https://doc.cgal.org/5.3/Manual/packages.html#PkgOrthtree) (new package)
 
 -   This package implements a tree data structure in which each node encloses a hypercubic section
