@@ -350,6 +350,9 @@ removes some unneeded files, and performs minor repair on some glitches.''')
 
     # remove %CGAL in navtree: this should be a fix in doxygen but for now it does not worth it
     re_replace_first_in_file('%CGAL','CGAL',glob.glob('./Manual/navtree.js')[0])
+    manual_pages=glob.glob('./Manual/*.html')
+    for fn in manual_pages:
+      re_replace_in_file('%CGAL','CGAL',fn)
     clean_doc()
 
     #remove links to CGAL in the bibliography
