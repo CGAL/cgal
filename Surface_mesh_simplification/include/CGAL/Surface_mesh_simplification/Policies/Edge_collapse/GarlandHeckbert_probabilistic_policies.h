@@ -15,7 +15,6 @@
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_core.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_policy_base.h>
 
 #include <Eigen/Dense>
