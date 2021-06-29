@@ -32,6 +32,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="resetButton">
+        <property name="toolTip">
+         <string>Click this button after selecting another item to change the target of the plugin.</string>
+        </property>
         <property name="text">
          <string>Reset Item</string>
         </property>
