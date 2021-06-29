@@ -152,7 +152,7 @@ class GarlandHeckbert_probabilistic_policies :
       mat(3, 3) = CGAL::square(dot_mnmv) 
         + sdev_n_2 * squared_length(mean_vec) 
         + sdev_p_2 * squared_length(mean_normal)
-        + 3 * sdev_n_2 + sdev_p_2;
+        + 3 * sdev_n_2 * sdev_p_2;
 
       return mat;
     }
