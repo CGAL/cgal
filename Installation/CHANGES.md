@@ -7,7 +7,7 @@ Release History
 - The update function from the `RegionType` concept returns a boolean flag that enables to detect if the input conditions for the new region are satisfied (breaking change)
 - Old fitting classes are now using better versions of the region conditions, more precise and faster, including the correct normal orientations
 - Added new classes for getting linear regions in a set of 2D and 3D segments
-- Added the Polyline_graph class for extracting a set of polylines from a face graph, which splits this graph into a set of user-defined regions
+- Added the `Polyline_graph` class for extracting a set of polylines from a face graph, which splits this graph into a set of user-defined regions
 - Added new classes for getting linear regions on 2D and 3D polylines
 - Old API is preserved but deprecated
 
