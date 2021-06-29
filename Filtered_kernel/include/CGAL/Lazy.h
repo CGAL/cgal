@@ -236,6 +236,7 @@ template <typename AT_, typename ET, typename E2A>
 class Lazy_rep : public Rep, public Depth_base
 {
   Lazy_rep (const Lazy_rep&) = delete; // cannot be copied.
+  Lazy_rep& operator= (const Lazy_rep&) = delete; // cannot be copied.
 
 public:
 
@@ -246,6 +247,28 @@ public:
 
   Lazy_rep ()
     : at(), et(nullptr){}
+
+  //move-constructor
+  Lazy_rep (Lazy_rep&& other)
+    : at(std::move(other.at)), et(other.et)
+  {
+    other.et = nullptr;
+    this->count = std::move(other.count);
+  }
+
+  //move-assignment
+  Lazy_rep& operator= (Lazy_rep&& other)
+  {
+    if(this->et)
+    {
+      delete this->et;
+    }
+    this->et = other.et;
+    other.et = nullptr;
+    this->at = std::move(other.at);
+    this->count = std::move(other.count);
+    return *this;
+  }
 
   template<class A>
   Lazy_rep (A&& a)
