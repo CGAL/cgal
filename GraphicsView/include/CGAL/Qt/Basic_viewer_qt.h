@@ -962,7 +962,7 @@ protected:
       if(m_frame_plane)
       {
         for(int i=0; i< 16 ; i++)
-          clipping_mMatrix.data()[i] =  m_frame_plane->matrix()[i];
+        { clipping_mMatrix.data()[i] =  m_frame_plane->matrix()[i]; }        
       }
 
       rendering_program_clipping_plane.bind();
@@ -986,11 +986,11 @@ protected:
 
     QMatrix4x4 clipping_mMatrix;
     clipping_mMatrix.setToIdentity();
-    if(m_frame_plane)
-    {
-      for(int i=0; i< 16 ; i++)
-        clipping_mMatrix.data()[i] =  m_frame_plane->matrix()[i];
-    }
+    if(m_frame_plane==nullptr)
+    { m_frame_plane=new CGAL::qglviewer::ManipulatedFrame; }
+    
+    for(int i=0; i< 16 ; i++)
+    { clipping_mMatrix.data()[i] =  m_frame_plane->matrix()[i]; }
     QVector4D clipPlane = clipping_mMatrix * QVector4D(0.0, 0.0, 1.0, 0.0);
     QVector4D plane_point = clipping_mMatrix * QVector4D(0,0,0,1);
     if(!m_are_buffers_initialized)
@@ -1426,17 +1426,10 @@ protected:
       {
         // toggle clipping plane
         m_use_clipping_plane = (m_use_clipping_plane + 1) % CLIPPING_PLANE_END_INDEX;
-        if (m_use_clipping_plane==CLIPPING_PLANE_OFF && m_frame_plane)
-        {
-          setManipulatedFrame(nullptr);
-          delete m_frame_plane;
-          m_frame_plane=nullptr;
-        }
-        else if (m_frame_plane==nullptr)
-        {
-          m_frame_plane=new CGAL::qglviewer::ManipulatedFrame;
-          setManipulatedFrame(m_frame_plane);
-        }
+        if (m_use_clipping_plane==CLIPPING_PLANE_OFF)
+        { setManipulatedFrame(nullptr); }
+        else
+        { setManipulatedFrame(m_frame_plane); }
 
         switch(m_use_clipping_plane)
         {
