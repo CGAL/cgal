@@ -9,3 +9,5 @@
 * Merge this package with the natural neighbor coordinates package.
 * Improve the solver interface and make it a parameter for the harmonic coordinates class.
 * Add a demo with visualization of the coordinate functions.
+
+* Do not forget to mention that segment and triangle headers are not capitalized now.

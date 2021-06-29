@@ -40,6 +40,12 @@ if(CGAL_FOUND)
   create_single_source_cgal_program("test_dh_triangle.cpp")
   create_single_source_cgal_program("test_dh_weights.cpp")
 
+  create_single_source_cgal_program("test_sc_deprecated_api.cpp")
+  create_single_source_cgal_program("test_tc_deprecated_api.cpp")
+  create_single_source_cgal_program("test_wp_deprecated_api.cpp")
+  create_single_source_cgal_program("test_mv_deprecated_api.cpp")
+  create_single_source_cgal_program("test_dh_deprecated_api.cpp")
+
   find_package(Eigen3 REQUIRED)
   include(CGAL_Eigen3_support)
   if(TARGET CGAL::Eigen3_support)
