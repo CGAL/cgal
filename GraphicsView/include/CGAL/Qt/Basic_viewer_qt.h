@@ -245,7 +245,10 @@ public:
   void clear()
   {
     for (unsigned int i=0; i<LAST_INDEX; ++i)
-    { arrays[i].clear(); }
+    {
+      if (i!=POS_CLIPPING_PLANE)
+      { arrays[i].clear(); }
+    }
 
     m_bounding_box=CGAL::Bbox_3();
     m_texts.clear();
