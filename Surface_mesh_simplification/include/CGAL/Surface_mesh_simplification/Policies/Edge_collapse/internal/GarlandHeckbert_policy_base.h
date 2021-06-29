@@ -17,7 +17,6 @@
 
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_core.h>
 
 #include <iostream>
 #include <CGAL/tags.h>
