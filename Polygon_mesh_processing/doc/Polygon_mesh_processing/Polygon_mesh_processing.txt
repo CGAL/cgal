@@ -981,6 +981,12 @@ In the current implementation, the BVH used is an AABB-tree and not the swept sp
 volumes as used in the original implementation. This should explain the runtime difference
 observed with the original implementation.
 
+The function `CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance()` computes
+the one-sided Hausdorff distance from `tm1` to `tm2`. This component also provides
+the symmetric distance `CGAL::Polygon_mesh_processing::bounded_error_symmetric_Hausdorff_distance()`
+and an utility function called `CGAL::Polygon_mesh_processing::is_Hausdorff_distance_larger()`
+that returns `true` if the Hausdorff distance between two meshes is larger than the user-defined max distance.
+
 \subsubsection BHDExample Bounded Hausdorff Distance Example
 
 In the following examples: (a) the distance of a tetrahedron to a remeshed

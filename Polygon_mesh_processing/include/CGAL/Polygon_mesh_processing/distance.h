@@ -2440,12 +2440,12 @@ double bounded_error_Hausdorff_distance(
  * \ingroup PMP_distance_grp
  * returns the maximum of `bounded_error_Hausdorff_distance(tm1, tm2, error_bound, np1, np2)`
  * and `bounded_error_Hausdorff_distance(tm2, tm1, error_bound, np2, np1)`.
- * See more in `CGAL::PMP::bounded_error_Hausdorff_distance()`.
  *
  * This function optimizes all internal calls to shared data structures in order to
  * speed up the computation.
  *
  * @return the symmetric Hausdorff distance
+ * @see `CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance()`
  */
 template< class Concurrency_tag,
           class TriangleMesh1,
@@ -2527,7 +2527,7 @@ double bounded_error_symmetric_Hausdorff_distance(
  * \ingroup PMP_distance_grp
  * returns `true` if the Hausdorff distance between two meshes is larger than
  * the user-defined max distance, otherwise it returns `false`. The distance used
- * to compute the proximity of the meshes is the `CGAL::PMP::bounded_error_Hausdorff_distance()`.
+ * to compute the proximity of the meshes is the bounded-error Hausdorff distance.
  *
  * Instead of computing the full distance and checking it against the user-provided
  * value, this function early quits in case certain criteria show that the meshes
@@ -2543,6 +2543,7 @@ double bounded_error_symmetric_Hausdorff_distance(
  * \cgalNamedParamsEnd
  *
  * @return Boolean `true` or `false`
+* @see `CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance()`
  */
 template< class Concurrency_tag,
           class TriangleMesh1,
