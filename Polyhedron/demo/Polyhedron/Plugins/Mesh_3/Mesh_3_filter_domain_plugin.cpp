@@ -92,10 +92,15 @@ public Q_SLOTS:
       button->setChecked(true);
       QColor color = c3t3_item->getSubdomainIndexColor(index);
       QString s("QPushButton { font-weight: bold; background: #"
-                + QString::number(color.red(),16)
+                + QString::number(90,16)
+                + QString::number(90,16)
+                + QString::number(90,16)
+                + "; color: red;} QPushButton:checked{ font-weight: bold; background: #"
+        + QString::number(color.red(),16)
                 + QString::number(color.green(),16)
                 + QString::number(color.blue(),16)
-                + "; }");
+        + "; color: black;}"
+      );
 
       button->setStyleSheet(s);
       connect(button, &QPushButton::toggled, [index, c3t3_item](bool){
