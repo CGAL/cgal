@@ -2530,7 +2530,16 @@ double bounded_error_symmetric_Hausdorff_distance(
  *
  * Instead of computing the full distance and checking it against the user-provided
  * value, this function early quits in case certain criteria show that the meshes
- * do not satisfy the provided distance bound.
+ * do not satisfy the provided `distance_bound`.
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{use_one_sided_hausdorff}
+ *     \cgalParamDescription{a boolean tag indicating if the one-sided Hausdorff distance should be used.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *     \cgalParamExtra{If this tag is set to `false`, the symmetric Hausdorff distance is used.}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
  *
  * @return Boolean `true` or `false`
  */
@@ -2568,7 +2577,8 @@ bool is_Hausdorff_distance_larger(
     parameters::get_parameter(np2, internal_np::match_faces), true);
   const bool match_faces = match_faces1 && match_faces2;
 
-  const bool use_one_sided = true; // TODO: Put in the NP!
+  const bool use_one_sided = parameters::choose_parameter(
+    parameters::get_parameter(np1, internal_np::use_one_sided_hausdorff), true);
   CGAL_precondition(error_bound >= 0.0);
   const FT error_threshold = static_cast<FT>(error_bound);
   CGAL_precondition(distance_bound >= 0.0);
