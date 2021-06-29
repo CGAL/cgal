@@ -3260,15 +3260,15 @@ namespace CartesianKernelFunctors {
 
     result_type
     operator() (const Circle_2 & c1, const Circle_2 & c2) const
-          {
+    {
       // Concentric Circles don't have radical line
       CGAL_kernel_precondition (c1.center() != c2.center());
       const FT a = 2*(c2.center().x() - c1.center().x());
       const FT b = 2*(c2.center().y() - c1.center().y());
       const FT c = CGAL::square(c1.center().x()) +
-        CGAL::square(c1.center().y()) - c1.squared_radius() -
-        CGAL::square(c2.center().x()) -
-        CGAL::square(c2.center().y()) + c2.squared_radius();
+                   CGAL::square(c1.center().y()) - c1.squared_radius() -
+                   CGAL::square(c2.center().x()) -
+                   CGAL::square(c2.center().y()) + c2.squared_radius();
       return Line_2(a, b, c);
     }
   };
@@ -3293,11 +3293,11 @@ namespace CartesianKernelFunctors {
       const FT b = 2*(s2.center().y() - s1.center().y());
       const FT c = 2*(s2.center().z() - s1.center().z());
       const FT d = CGAL::square(s1.center().x()) +
-        CGAL::square(s1.center().y()) +
-        CGAL::square(s1.center().z()) - s1.squared_radius() -
-        CGAL::square(s2.center().x()) -
-        CGAL::square(s2.center().y()) -
-        CGAL::square(s2.center().z()) + s2.squared_radius();
+                   CGAL::square(s1.center().y()) +
+                   CGAL::square(s1.center().z()) - s1.squared_radius() -
+                   CGAL::square(s2.center().x()) -
+                   CGAL::square(s2.center().y()) -
+                   CGAL::square(s2.center().z()) + s2.squared_radius();
       return Plane_3(a, b, c, d);
     }
   };

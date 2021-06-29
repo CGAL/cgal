@@ -45,7 +45,6 @@ namespace HomogeneousKernelFunctors {
   using CartesianKernelFunctors::Compute_approximate_squared_length_3;
   using CartesianKernelFunctors::Compute_area_divided_by_pi_3;
   using CartesianKernelFunctors::Compute_squared_length_divided_by_pi_square_3;
-  using CartesianKernelFunctors::Construct_radical_plane_3;
 
   template <typename K>
   class Angle_2
@@ -3418,22 +3417,59 @@ namespace HomogeneousKernelFunctors {
 
     result_type
     operator() (const Circle_2 & c1, const Circle_2 & c2) const
-          {
+    {
       // Concentric Circles don't have radical line
       CGAL_kernel_precondition (c1.center() != c2.center());
       const FT a = 2*(c2.center().x() - c1.center().x());
       const FT b = 2*(c2.center().y() - c1.center().y());
       const FT c = CGAL::square(c1.center().x()) +
-        CGAL::square(c1.center().y()) - c1.squared_radius() -
-        CGAL::square(c2.center().x()) -
-        CGAL::square(c2.center().y()) + c2.squared_radius();
-                        const RT aa = a.numerator() * b.denominator() * c.denominator();
-                        const RT bb = a.denominator() * b.numerator() * c.denominator();
-                        const RT cc = a.denominator() * b.denominator() * c.numerator();
+                   CGAL::square(c1.center().y()) - c1.squared_radius() -
+                   CGAL::square(c2.center().x()) -
+                   CGAL::square(c2.center().y()) + c2.squared_radius();
+
+      const RT aa = a.numerator() * b.denominator() * c.denominator();
+      const RT bb = a.denominator() * b.numerator() * c.denominator();
+      const RT cc = a.denominator() * b.denominator() * c.numerator();
+
       return Line_2(aa, bb, cc);
     }
   };
 
+  template <class K>
+  class Construct_radical_plane_3
+  {
+    typedef typename K::Plane_3            Plane_3;
+    typedef typename K::Sphere_3           Sphere_3;
+    typedef typename K::RT                 RT;
+    typedef typename K::FT                 FT;
+
+  public:
+
+    typedef Plane_3 result_type;
+
+    result_type
+    operator() (const Sphere_3 & s1, const Sphere_3 & s2) const
+    {
+      // Concentric Spheres don't have radical plane
+      CGAL_kernel_precondition (s1.center() != s2.center());
+      const FT a = 2*(s2.center().x() - s1.center().x());
+      const FT b = 2*(s2.center().y() - s1.center().y());
+      const FT c = 2*(s2.center().z() - s1.center().z());
+      const FT d = CGAL::square(s1.center().x()) +
+                   CGAL::square(s1.center().y()) +
+                   CGAL::square(s1.center().z()) - s1.squared_radius() -
+                   CGAL::square(s2.center().x()) -
+                   CGAL::square(s2.center().y()) -
+                   CGAL::square(s2.center().z()) + s2.squared_radius();
+
+      const RT aa = a.numerator() * b.denominator() * c.denominator() * d.denominator();
+      const RT bb = a.denominator() * b.numerator() * c.denominator() * d.denominator();
+      const RT cc = a.denominator() * b.denominator() * c.numerator() * d.denominator();
+      const RT dd = a.denominator() * b.denominator() * c.denominator() * d.numerator();
+
+      return Plane_3(aa, bb, cc, dd);
+    }
+  };
 
   template <typename K>
   class Construct_scaled_vector_2
