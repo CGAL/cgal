@@ -49,13 +49,13 @@ FT get_w_ij(const Mesh& mesh, const HD he, const PointMap pmap) {
 
   const auto& p0 = get(pmap, v2); // neighbor jm
   const auto& p2 = get(pmap, v3); // neighbor jp
-  return CGAL::Weights::cotangent_weight(p0, p1, p2, q) / FT(2);
+  return CGAL::Weights::cotangent_weight(p0, p1, p2, q) / 2.0;
 }
 
 template<typename PointMap>
 FT get_w_i(const Mesh& mesh, const VD v_i, const PointMap pmap) {
 
-  FT A_i = FT(0);
+  FT A_i = 0.0;
   const auto v0 = v_i;
   const auto init = halfedge(v_i, mesh);
   for (const auto& he : halfedges_around_target(init, mesh)) {
@@ -70,8 +70,8 @@ FT get_w_i(const Mesh& mesh, const VD v_i, const PointMap pmap) {
     const auto& r = get(pmap, v2);
     A_i += CGAL::Weights::mixed_voronoi_area(p, q, r);
   }
-  assert(A_i != FT(0));
-  return FT(1) / (FT(2) * A_i);
+  assert(A_i != 0.0);
+  return 1.0 / (2.0 * A_i);
 }
 
 void set_laplacian_matrix(const Mesh& mesh, Matrix& L) {

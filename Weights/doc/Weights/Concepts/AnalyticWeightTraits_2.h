@@ -2,9 +2,8 @@
 \ingroup PkgWeightsRefConcepts
 \cgalConcept
 
-A concept that describes the set of requirements of the template parameter
-`GeomTraits` used to parameterize several classes and functions
-from the namespace `CGAL::Weights`.
+A concept that describes the set of requirements of classes used in the computation
+of analytic weights in 2D.
 
 \cgalHasModel
 - All models of `Kernel`
