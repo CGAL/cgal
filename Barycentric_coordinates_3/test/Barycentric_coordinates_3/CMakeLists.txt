@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script.
 # This is the CMake script for compiling a CGAL application.
 
-project(Barycentric_coordinates_3_Examples)
+project(Barycentric_coordinates_3_Tests)
 
 cmake_minimum_required(VERSION 3.1...3.15)
 set(CMAKE_CXX_STANDARD 14)
@@ -16,7 +16,6 @@ if(CGAL_FOUND)
   create_single_source_cgal_program("test_wp_tetrahedron.cpp")
   create_single_source_cgal_program("test_wp_weights.cpp")
   create_single_source_cgal_program("test_dh_weights.cpp")
-  create_single_source_cgal_program("test_dh_wp.cpp")
 
 else()
   message(WARNING "This program requires the CGAL library, and will not be compiled.")

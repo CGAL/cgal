@@ -51,7 +51,6 @@ void test_overloads() {
 
         tests::test_linear_precision<Kernel>(dh_coordinates_tetrahedron, tetrahedron_coords, query);
         tests::test_partition_of_unity<Kernel>(dh_coordinates_tetrahedron);
-        tests::test_positivity<Kernel>(dh_coordinates_tetrahedron);
       }
     }
   }
