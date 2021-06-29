@@ -2330,7 +2330,8 @@ double bounded_error_Hausdorff_naive_impl(
  *
  * @tparam Concurrency_tag enables sequential versus parallel algorithm.
  *                         Possible values are `Sequential_tag` and `Parallel_tag`.
- *                         Currently, parallel computation is not implemented, though.
+ *                         Currently, the parallel version is not implemented and the
+ *                         sequential version is always used whatever tag is chosen!
  *
  * @tparam TriangleMesh1 a model of the concept `FaceListGraph`
  * @tparam TriangleMesh2 a model of the concept `FaceListGraph`
