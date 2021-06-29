@@ -25,6 +25,7 @@ if(EIGEN3_FOUND)
   create_single_source_cgal_program("test_region_growing_on_polygon_mesh_with_sorting.cpp")
   create_single_source_cgal_program("test_region_growing_on_polyline_with_sorting.cpp")
   create_single_source_cgal_program("test_region_growing_on_degenerated_mesh.cpp")
+  create_single_source_cgal_program("test_region_growing_deprecated_constructors.cpp")
   foreach(
     target
     test_region_growing_basic
@@ -38,7 +39,8 @@ if(EIGEN3_FOUND)
     test_region_growing_on_point_set_3_with_sorting
     test_region_growing_on_polygon_mesh_with_sorting
     test_region_growing_on_polyline_with_sorting
-    test_region_growing_on_degenerated_mesh)
+    test_region_growing_on_degenerated_mesh
+    test_region_growing_deprecated_constructors)
     target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
   endforeach()
 
