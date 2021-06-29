@@ -27,10 +27,10 @@ namespace Surface_mesh_simplification {
 //
 // derives from cost_base and placement_base
 template<typename TriangleMesh, typename GeomTraits>
-class GarlandHeckbert_probabilistic_policies : 
+class GarlandHeckbert_probabilistic_policies :
   public internal::GarlandHeckbert_placement_base<
     typename boost::property_map<
-      TriangleMesh, 
+      TriangleMesh,
       CGAL::dynamic_vertex_property_t<Eigen::Matrix<typename GeomTraits::FT, 4, 4, Eigen::DontAlign>>
     >::type,
     GeomTraits,
@@ -38,7 +38,7 @@ class GarlandHeckbert_probabilistic_policies :
   >,
   public internal::GarlandHeckbert_cost_base<
     typename boost::property_map<
-      TriangleMesh, 
+      TriangleMesh,
       CGAL::dynamic_vertex_property_t<Eigen::Matrix<typename GeomTraits::FT, 4, 4, Eigen::DontAlign>>
     >::type,
     GeomTraits,
@@ -48,10 +48,10 @@ class GarlandHeckbert_probabilistic_policies :
 
   public:
     typedef typename GeomTraits::FT FT;
-    
+
     typedef typename Eigen::Matrix<FT, 4, 4, Eigen::DontAlign> GH_matrix;
     typedef CGAL::dynamic_vertex_property_t<GH_matrix> Cost_property;
-    
+
     typedef typename boost::property_map<TriangleMesh, Cost_property>::type Vertex_cost_map;
 
     typedef internal::GarlandHeckbert_placement_base<
@@ -61,7 +61,7 @@ class GarlandHeckbert_probabilistic_policies :
     typedef internal::GarlandHeckbert_cost_base<
       Vertex_cost_map, GeomTraits, GarlandHeckbert_probabilistic_policies<TriangleMesh, GeomTraits>
       > Cost_base;
-    
+
     // both types are the same, this is so we avoid casting back to the base class in
     // get_cost() or get_placement()
     typedef GarlandHeckbert_probabilistic_policies Get_cost;
@@ -71,7 +71,7 @@ class GarlandHeckbert_probabilistic_policies :
     // are the same
     using Cost_base::operator();
     using Placement_base::operator();
-    
+
     // these using directives are needed to choose between the definitions of these types
     // in Cost_base and Placement_base (even though they are the same)
     using typename Cost_base::Mat_4;
@@ -79,20 +79,18 @@ class GarlandHeckbert_probabilistic_policies :
     using typename Cost_base::Point_3;
     using typename Cost_base::Vector_3;
 
-
-    GarlandHeckbert_probabilistic_policies(
-        TriangleMesh& tmesh, 
-        FT dm): GarlandHeckbert_probabilistic_policies(tmesh, dm, 1.0, 1.0) // the one is dummy value
-    { 
+public:
+    GarlandHeckbert_probabilistic_policies(TriangleMesh& tmesh, FT dm)
+      : GarlandHeckbert_probabilistic_policies(tmesh, dm, 1.0, 1.0) // the one is dummy value
+    {
       // set the actual estimate variances
       estimate_variance(tmesh);
     }
-    
-    GarlandHeckbert_probabilistic_policies(
-        TriangleMesh& tmesh, 
-        FT dm,
-        FT sdn,
-        FT sdp) 
+
+    GarlandHeckbert_probabilistic_policies(TriangleMesh& tmesh,
+                                           FT dm,
+                                           FT sdn,
+                                           FT sdp)
       : sdev_n_2(square(sdn)), sdev_p_2(square(sdp))
     {
       // initialize the private variable vcm so it's lifetime is bound to that of the policy's
@@ -103,7 +101,7 @@ class GarlandHeckbert_probabilistic_policies :
       Placement_base::init_vcm(vcm_);
     }
 
-    Col_4 construct_optimal_point(const Mat_4& aQuadric, const Col_4& p0, const Col_4& p1) const 
+    Col_4 construct_optimal_point(const Mat_4& aQuadric, const Col_4& p0, const Col_4& p1) const
     {
       Mat_4 X;
       X << aQuadric.block(0, 0, 3, 4), 0, 0, 0, 1;
@@ -111,7 +109,7 @@ class GarlandHeckbert_probabilistic_policies :
       Col_4 opt_pt;
 
       opt_pt = X.inverse().col(3); // == X.inverse() * (0 0 0 1)
-      
+
       return opt_pt;
 
     }
@@ -135,21 +133,21 @@ class GarlandHeckbert_probabilistic_policies :
       // to the upper left 3x3 block
       mat.block(0, 0, 3, 3) += mean_n_col * mean_n_col.transpose();
 
-      // set the first 3 values of the last row and the first 
+      // set the first 3 values of the last row and the first
       // 3 values of the last column
       // the negative sign comes from the fact that in the paper,
       // the b column and row appear with a negative sign
       const auto b1 = -(dot_mnmv * mean_normal + sdev_n_2 * mean_vec);
-      
+
       const Eigen::Matrix<FT, 3, 1> b {b1.x(), b1.y(), b1.z()};
-      
+
       mat.col(3).head(3) = b;
       mat.row(3).head(3) = b.transpose();
 
-      // set the value in the bottom right corner, we get this by considering 
+      // set the value in the bottom right corner, we get this by considering
       // that we only have single variances given instead of covariance matrices
-      mat(3, 3) = CGAL::square(dot_mnmv) 
-        + sdev_n_2 * squared_length(mean_vec) 
+      mat(3, 3) = CGAL::square(dot_mnmv)
+        + sdev_n_2 * squared_length(mean_vec)
         + sdev_p_2 * squared_length(mean_normal)
         + 3 * sdev_n_2 * sdev_p_2;
 
@@ -163,48 +161,48 @@ class GarlandHeckbert_probabilistic_policies :
     const Get_placement& get_placement() {
       return *this;
     }
-    
+
   private:
-    // the only parameters we need are the normal and position variances 
+    // the only parameters we need are the normal and position variances
     // - ie the squared standard deviations
     FT sdev_n_2;
     FT sdev_p_2;
 
     Vertex_cost_map vcm_;
 
-    // give a very rough estimate of a decent variance for both parameters 
-    void estimate_variance(TriangleMesh mesh)
+    // give a very rough estimate of a decent variance for both parameters
+    void estimate_variance(const TriangleMesh& mesh)
     {
       typedef typename TriangleMesh::Vertex_index vertex_descriptor;
       // get the bounding box of the mesh
       CGAL::Bbox_3 bbox { };
 
-      for (vertex_descriptor v : mesh.vertices())
+      for (vertex_descriptor v : vertices(mesh))
       {
         bbox += mesh.point(v).bbox();
       }
-      
+
       // length of the longest edge
       FT max_edge_length = 0;
-      
+
       for (int i = 0; i < 3; ++i)
       {
-        max_edge_length = max(max_edge_length, abs(bbox.max(i) - bbox.min(i))); 
+        max_edge_length = max(max_edge_length, abs(bbox.max(i) - bbox.min(i)));
       }
 
-      // set the variances based on the default value for [-1, 1]^3 cubes 
+      // set the variances based on the default value for [-1, 1]^3 cubes
       // here we have the maximum edge length, so if we scale
       // our mesh down by max_edge_length it fits inside a [0, 1]^3 cube, hence the "/ 2"
       sdev_n_2 = good_default_variance_unit * max_edge_length / 2.0;
       sdev_p_2 = good_default_variance_unit * max_edge_length / 2.0;
     }
-    
+
     // magic number determined by some testing, this is a good variance for models that
     // fit inside a [-1, 1]^3 unit cube
     static constexpr FT good_default_variance_unit = 1e-6;
 };
 
-} //namespace Surface_mesh_simplification
-} //namespace CGAL
+} // namespace Surface_mesh_simplification
+} // namespace CGAL
 
 #endif //CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_GARLANDHECKBERT_PROBABILISTIC_POLICIES_H
