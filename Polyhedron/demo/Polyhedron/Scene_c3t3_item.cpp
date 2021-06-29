@@ -517,7 +517,7 @@ struct Scene_c3t3_item_priv {
   QVector<QColor> colors;
   QVector<QColor> colors_subdomains;
   boost::dynamic_bitset<> visible_subdomain;
-  std::bitset<31> bs[4];
+  std::bitset<24> bs[4] = {16777215, 16777215, 16777215, 16777215};
 
   bool show_tetrahedra;
   bool is_aabb_tree_built;
@@ -563,13 +563,6 @@ struct Set_show_tetrahedra {
 
 void Scene_c3t3_item::common_constructor(bool is_surface)
 {
-  for(int i=0; i<24; ++i)
-  {
-    d->bs[0][i] = 1;
-    d->bs[1][i] = 1;
-    d->bs[2][i] = 1;
-    d->bs[3][i] = 1;
-  }
   compute_bbox();
   connect(d->frame, SIGNAL(modified()), this, SLOT(changed()));
   c3t3_changed();
@@ -700,7 +693,7 @@ Scene_c3t3_item::c3t3_changed()
   }
   const int max_subdomain_index = max;
   d->visible_subdomain.resize(max_subdomain_index+1, true);
-  d->is_filterable &=( d->subdomain_ids.size() < 124);
+  d->is_filterable &=( d->subdomain_ids.size() < 96);
 
   for (C3t3::Facets_in_complex_iterator fit = this->c3t3().facets_in_complex_begin(),
     end = this->c3t3().facets_in_complex_end(); fit != end; ++fit)

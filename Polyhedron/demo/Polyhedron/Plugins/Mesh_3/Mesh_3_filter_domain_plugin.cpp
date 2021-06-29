@@ -58,7 +58,7 @@ public:
     if(!item)
       return false;
     Scene_c3t3_item* c3t3_item = qobject_cast<Scene_c3t3_item*>(item);
-    return (c3t3_item && c3t3_item->subdomain_indices().size() < 124);
+    return (c3t3_item && c3t3_item->subdomain_indices().size() < 96);
   }
 
   QList<QAction*> actions() const override{
