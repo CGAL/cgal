@@ -962,7 +962,7 @@ protected:
       if(m_frame_plane)
       {
         for(int i=0; i< 16 ; i++)
-        { clipping_mMatrix.data()[i] =  m_frame_plane->matrix()[i]; }        
+        { clipping_mMatrix.data()[i] =  m_frame_plane->matrix()[i]; }
       }
 
       rendering_program_clipping_plane.bind();
@@ -988,7 +988,7 @@ protected:
     clipping_mMatrix.setToIdentity();
     if(m_frame_plane==nullptr)
     { m_frame_plane=new CGAL::qglviewer::ManipulatedFrame; }
-    
+
     for(int i=0; i< 16 ; i++)
     { clipping_mMatrix.data()[i] =  m_frame_plane->matrix()[i]; }
     QVector4D clipPlane = clipping_mMatrix * QVector4D(0.0, 0.0, 1.0, 0.0);
