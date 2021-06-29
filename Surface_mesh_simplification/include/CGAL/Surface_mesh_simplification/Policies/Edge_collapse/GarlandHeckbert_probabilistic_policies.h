@@ -80,6 +80,11 @@ class GarlandHeckbert_probabilistic_policies :
     using typename Cost_base::Vector_3;
 
 public:
+
+    GarlandHeckbert_probabilistic_policies(TriangleMesh& tmesh)
+      : GarlandHeckbert_probabilistic_policies(tmesh, 100) // default discontinuity multiplier is 100
+    { }
+    
     GarlandHeckbert_probabilistic_policies(TriangleMesh& tmesh, FT dm)
       : GarlandHeckbert_probabilistic_policies(tmesh, dm, 1.0, 1.0) // the one is dummy value
     {
@@ -181,19 +186,22 @@ public:
         bbox += mesh.point(v).bbox();
       }
 
-      // length of the longest edge
-      FT max_edge_length = 0;
+      // calculate geometric mean of edge lengths
+      FT geometric_mean = 1;
 
       for (int i = 0; i < 3; ++i)
       {
-        max_edge_length = max(max_edge_length, abs(bbox.max(i) - bbox.min(i)));
+        geometric_mean *= abs(bbox.max(i) - bbox.min(i));
       }
+
+      geometric_mean = pow(geometric_mean, 1/3);
 
       // set the variances based on the default value for [-1, 1]^3 cubes
       // here we have the maximum edge length, so if we scale
       // our mesh down by max_edge_length it fits inside a [0, 1]^3 cube, hence the "/ 2"
-      const FT n2 = good_default_variance_unit * max_edge_length / 2.0;
-      const FT p2 = good_default_variance_unit * max_edge_length / 2.0;
+      const FT n2 = good_default_variance_unit * geometric_mean / 2.0;
+      const FT p2 = good_default_variance_unit * geometric_mean / 2.0;
+      
       return std::make_pair(n2, p2);
     }
 
