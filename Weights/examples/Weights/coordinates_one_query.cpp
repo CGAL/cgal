@@ -30,11 +30,11 @@ int main() {
   std::cout << std::endl;
 
   // Normalize weights in order to get barycentric coordinates.
-  FT sum = FT(0);
+  FT sum = 0.0;
   for (const FT weight : weights) {
     sum += weight;
   }
-  assert(sum != FT(0));
+  assert(sum != 0.0);
   for (const FT weight : weights) {
     coordinates.push_back(weight / sum);
   }

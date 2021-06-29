@@ -18,8 +18,8 @@ int main() {
 
   // Choose a type of the weight:
   // e.g. 0 - Wachspress (WP) weight; 1 - mean value (MV);
-  const FT wp = FT(0);
-  const FT mv = FT(1);
+  const FT wp = 0.0;
+  const FT mv = 1.0;
 
   // Compute WP and MV weights.
   std::cout << "3D Wachspress (WP, q0): ";
@@ -29,8 +29,8 @@ int main() {
 
   // Converge WP towards MV.
   std::cout << "Converge WP to MV on q0: " << std::endl;
-  const FT step = FT(1) / FT(10);
-  for (FT x = FT(0); x <= FT(1); x += step) {
+  const FT step = 0.1;
+  for (FT x = 0.0; x <= 1.0; x += step) {
     std::cout << "3D x: ";
     std::cout << CGAL::Weights::three_point_family_weight(p0, p1, p2, q0, x) << std::endl;
   }
