@@ -103,7 +103,13 @@ namespace Weights {
     const GeomTraits traits;
     return cotangent(p, q, r, traits);
   }
+  /// \endcond
 
+  /// \cond SKIP_IN_MANUAL
+  // These are free functions to be used when building weights from parts rather
+  // than using the predefined weight functions. In principle, they can be removed.
+  // They are here to have unified interface within the Weights package and its
+  // construction weight system.
   template<typename GeomTraits>
   typename GeomTraits::FT squared_distance(
     const CGAL::Point_2<GeomTraits>& p,
