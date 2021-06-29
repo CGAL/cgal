@@ -26,8 +26,8 @@ int main() {
   std::cout << CGAL::Weights::tangent_weight(t3, r3, p3, q3) << std::endl;
 
   std::cout << "2D/3D Shepard weight: ";
-  std::cout << CGAL::Weights::shepard_weight(r2, q2, FT(2)) << "/";
-  std::cout << CGAL::Weights::shepard_weight(r3, q3, FT(2)) << std::endl;
+  std::cout << CGAL::Weights::shepard_weight(r2, q2, 2.0) << "/";
+  std::cout << CGAL::Weights::shepard_weight(r3, q3, 2.0) << std::endl;
 
   std::cout << "2D/3D barycentric area: ";
   std::cout << CGAL::Weights::barycentric_area(p2, q2, r2) << "/";

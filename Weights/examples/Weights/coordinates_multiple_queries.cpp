@@ -24,7 +24,7 @@ int main() {
   // Generate a set of query points.
   std::vector<Point_2> queries;
   queries.reserve(num_queries);
-  Generator generator(FT(1));
+  Generator generator(1.0);
   std::copy_n(generator, num_queries, std::back_inserter(queries));
   assert(queries.size() == num_queries);
 
@@ -51,11 +51,11 @@ int main() {
 
   // Normalize weights in order to get barycentric coordinates.
   for (std::size_t i = 0; i < weights.size(); i += polygon.size()) {
-    FT sum = FT(0);
+    FT sum = 0.0;
     for (std::size_t j = 0; j < polygon.size(); ++j) {
       sum += weights[i + j];
     }
-    assert(sum != FT(0));
+    assert(sum != 0.0);
     for (std::size_t j = 0; j < polygon.size(); ++j) {
       coordinates.push_back(weights[i + j] / sum);
     }
