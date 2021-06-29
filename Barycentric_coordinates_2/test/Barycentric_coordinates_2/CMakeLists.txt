@@ -40,6 +40,7 @@ if(CGAL_FOUND)
   create_single_source_cgal_program("test_dh_triangle.cpp")
   create_single_source_cgal_program("test_dh_weights.cpp")
 
+  # this code is deprecated:
   create_single_source_cgal_program("test_sc_deprecated_api.cpp")
   create_single_source_cgal_program("test_tc_deprecated_api.cpp")
   create_single_source_cgal_program("test_wp_deprecated_api.cpp")

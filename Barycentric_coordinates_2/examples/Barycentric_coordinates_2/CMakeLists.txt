@@ -20,7 +20,7 @@ if(CGAL_FOUND)
   create_single_source_cgal_program("terrain_height_modeling.cpp")
 
   # this code is deprecated:
-  # create_single_source_cgal_program("deprecated_coordinates.cpp")
+  create_single_source_cgal_program("deprecated_coordinates.cpp")
 
   find_package(Eigen3 REQUIRED)
   include(CGAL_Eigen3_support)
