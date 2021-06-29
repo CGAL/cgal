@@ -84,7 +84,7 @@ public:
       : GarlandHeckbert_probabilistic_policies(tmesh, dm, 1.0, 1.0) // the one is dummy value
     {
       // set the actual estimate variances
-      estimate_variance(tmesh);
+      std::tie(sdev_n_2, sdev_p_2) = estimate_variances(tmesh);
     }
 
     GarlandHeckbert_probabilistic_policies(TriangleMesh& tmesh,
@@ -111,7 +111,6 @@ public:
       opt_pt = X.inverse().col(3); // == X.inverse() * (0 0 0 1)
 
       return opt_pt;
-
     }
 
     Mat_4 construct_quadric_from_normal(const Vector_3& mean_normal, const Point_3& point,
@@ -171,7 +170,7 @@ public:
     Vertex_cost_map vcm_;
 
     // give a very rough estimate of a decent variance for both parameters
-    void estimate_variance(const TriangleMesh& mesh)
+    static std::pair<FT, FT> estimate_variances(const TriangleMesh& mesh)
     {
       typedef typename TriangleMesh::Vertex_index vertex_descriptor;
       // get the bounding box of the mesh
@@ -193,8 +192,9 @@ public:
       // set the variances based on the default value for [-1, 1]^3 cubes
       // here we have the maximum edge length, so if we scale
       // our mesh down by max_edge_length it fits inside a [0, 1]^3 cube, hence the "/ 2"
-      sdev_n_2 = good_default_variance_unit * max_edge_length / 2.0;
-      sdev_p_2 = good_default_variance_unit * max_edge_length / 2.0;
+      const FT n2 = good_default_variance_unit * max_edge_length / 2.0;
+      const FT p2 = good_default_variance_unit * max_edge_length / 2.0;
+      return std::make_pair(n2, p2);
     }
 
     // magic number determined by some testing, this is a good variance for models that
