@@ -1,3 +1,6 @@
+// Turn off warnings.
+#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+
 // STL includes.
 #include <string>
 #include <vector>
