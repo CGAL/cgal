@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QMessageBox>
 #include <QMainWindow>
 #include <QPushButton>
 #include <QAction>
@@ -50,6 +51,9 @@ public:
     dock_widget = new DockWidget("Filter Domain", mw);
     dock_widget->setVisible(false); // do not show at the beginning
     addDockWidget(dock_widget);
+    connect(dock_widget->resetButton, &QPushButton::clicked, [this](){
+      filter();
+    });
   }
 
   bool applicable(QAction*) const override
@@ -59,8 +63,7 @@ public:
     Scene_item* item = scene->item(scene->mainSelectionIndex());
     if(!item)
       return false;
-    Scene_c3t3_item* c3t3_item = qobject_cast<Scene_c3t3_item*>(item);
-    return (c3t3_item && c3t3_item->subdomain_indices().size() < 96);
+    return qobject_cast<Scene_c3t3_item*>(item);
   }
 
   QList<QAction*> actions() const override{
@@ -73,12 +76,31 @@ public:
   }
 
 public Q_SLOTS:
+
+  void cleanup()
+  {
+    while(!buttons.empty())
+    {
+      auto button = buttons.back();
+      buttons.pop_back();
+      dock_widget->gridLayout->removeWidget(button);
+      buttons.removeAll(button);
+      delete button;
+    }
+    dock_widget->hide();
+  }
+
   void filter()
   {
     Scene_item* item = scene->item(scene->mainSelectionIndex());
     Scene_c3t3_item* c3t3_item = qobject_cast<Scene_c3t3_item*>(item);
     if(!c3t3_item)
       return;
+    if(c3t3_item->subdomain_indices().size() > 96)
+    {
+      QMessageBox::warning(nullptr, "Warning", tr("The filtering is only available for items with less than 96 subdomains, and this one has %1").arg(c3t3_item->subdomain_indices().size()));
+      return;
+    }
     int counter = 0;
     int limit = static_cast<int>(std::ceil(CGAL::approximate_sqrt(EPICK::FT(c3t3_item->subdomain_indices().size()))));
     QGridLayout *layout = dock_widget->gridLayout;
@@ -115,22 +137,7 @@ public Q_SLOTS:
     }
 
 
-    auto cleanup = [this, c3t3_item](){
-      while(!buttons.empty())
-      {
-        auto button = buttons.back();
-        buttons.pop_back();
-        dock_widget->gridLayout->removeWidget(button);
-        buttons.removeAll(button);
-        delete button;
-      }
-      dock_widget->hide();
-    };
-    connect(c3t3_item, &Scene_c3t3_item::aboutToBeDestroyed, cleanup);
-    connect(dock_widget->resetButton, &QPushButton::clicked, [this, cleanup](){
-      cleanup();
-      filter();
-    });
+    connect(c3t3_item, &Scene_c3t3_item::aboutToBeDestroyed, this, &Polyhedron_demo_mesh_3_filter_domain_plugin::cleanup);
 
     dock_widget->show();
     dock_widget->raise();
@@ -144,3 +151,4 @@ private:
 };
 
 #include "Mesh_3_filter_domain_plugin.moc"
+
