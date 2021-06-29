@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <QMainWindow>
+#include <QPushButton>
 #include <QAction>
 
 #include <Scene_c3t3_item.h>
@@ -7,6 +8,7 @@
 #include <CGAL/Three/Three.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/double.h>
 #include "Messages_interface.h"
 
 #include "ui_Filter_widget.h"
@@ -78,6 +80,8 @@ public Q_SLOTS:
     if(!c3t3_item)
       return;
     int counter = 0;
+    int limit = static_cast<int>(std::ceil(CGAL::approximate_sqrt(EPICK::FT(c3t3_item->subdomain_indices().size()))));
+    QGridLayout *layout = dock_widget->gridLayout;
     for (std::set<int>::iterator it = c3t3_item->subdomain_indices().begin(),
          end = c3t3_item->subdomain_indices().end(); it != end; ++it)
     {
@@ -100,8 +104,9 @@ public Q_SLOTS:
         c3t3_item->redraw();
 
       });
+      layout->addWidget(button,counter/limit, counter%limit);
+      ++counter;
 
-      dock_widget->horizontalLayout->addWidget(button);
     }
 
 
@@ -110,7 +115,7 @@ public Q_SLOTS:
       {
         auto button = buttons.back();
         buttons.pop_back();
-        dock_widget->horizontalLayout->removeWidget(button);
+        dock_widget->gridLayout->removeWidget(button);
         buttons.removeAll(button);
         delete button;
       }
