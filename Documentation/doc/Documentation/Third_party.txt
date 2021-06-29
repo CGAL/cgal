@@ -28,7 +28,7 @@ Older versions of the above listed compilers might work, but no guarantee is pro
 In order to configure and build the \cgal examples, demos, or libraries,
 you need <a href="https://cmake.org/">CMake</a>, a cross-platform "makefile generator".
 
-This manual explains only the features of CMake which are needed in order to build \cgal.
+This manual explains only the features of CMake which are needed in order to use \cgal.
 Please refer to the <a href="https://cmake.org/documentation/">CMake documentation</a>
 for further details.
 
