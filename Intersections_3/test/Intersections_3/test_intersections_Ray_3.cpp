@@ -72,6 +72,7 @@ public:
     check_no_intersection  (R(p(0,0,0), p(1,0,0)), R(p(1,-1,0), p(1,-2,0)));
     check_no_intersection  (R(p(0,0,0), p(1,0,0)), R(p(0,-1,0), p(0,-2,0)));
     check_no_intersection  (R(p(0,0,0), p(1,0,0)), R(p(0,1,0), p(0,2,0)));
+    check_no_intersection  (R(p(0,0,0), p(1,0,0)), R(p(-1,0,0), p(-1,-1,0)));
 
     // Point
     check_intersection     (R(p(0,0,0), p(1,0,0)), R(p(0,0,0), p(-1,0,0)),
@@ -88,11 +89,10 @@ public:
                             p(1,0,0));
 
     // Segment
-    // @fixme
-//    check_intersection     (R(p(0,0,0), p(1,0,0)), R(p(2,0,0), p(-3,0,0)),
-//                            S(p(0,0,0), p(2,0,0)));
-//    check_intersection     (R(p(2,0,0), p(-3,0,0)), R(p(0,0,0), p(1,0,0)),
-//                            S(p(2,0,0), p(0,0,0)));
+    check_intersection     (R(p(0,0,0), p(1,0,0)), R(p(2,0,0), p(-3,0,0)),
+                            S(p(0,0,0), p(2,0,0)), false);
+    check_intersection     (R(p(2,0,0), p(-3,0,0)), R(p(0,0,0), p(1,0,0)),
+                            S(p(2,0,0), p(0,0,0)), false);
 
     // Ray
     check_intersection     (R(p(0,0,0), p(1,0,0)), R(p(-1,0,0), p(3,0,0)),

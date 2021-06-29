@@ -171,9 +171,8 @@ int main(int, char**)
   std::cout << " |||||||| Test Simple_cartesian<double> ||||||||" << std::endl;
   Sphere_3_intersection_tester< CGAL::Simple_cartesian<double> >(r).run();
 
-  // @fixme illegal Plane_3 constructor in Cartesian_kernel::Construct_radical_plane_3
-//  std::cout << " |||||||| Test CGAL::Homogeneous<CGAL::MP_Float> ||||||||" << std::endl;
-//  Sphere_3_intersection_tester< CGAL::Homogeneous<CGAL::MP_Float> >(r).run();
+  std::cout << " |||||||| Test CGAL::Homogeneous<CGAL::MP_Float> ||||||||" << std::endl;
+  Sphere_3_intersection_tester< CGAL::Homogeneous<CGAL::MP_Float> >(r).run();
 
   std::cout << " |||||||| Test EPICK ||||||||" << std::endl;
   Sphere_3_intersection_tester< CGAL::Epick >(r, true /*exact predicates*/).run();
@@ -181,8 +180,8 @@ int main(int, char**)
   std::cout << " |||||||| Test EPECK ||||||||" << std::endl;
   Sphere_3_intersection_tester< CGAL::Epeck >(r, true /*exact predicates*/, true /*exact constructions*/).run();
 
-//  std::cout << " |||||||| Test CGAL::Homogeneous<CGAL::Epeck_ft> ||||||||" << std::endl;
-//  Sphere_3_intersection_tester< CGAL::Homogeneous<CGAL::Epeck_ft> >(r, true /*exact predicates*/, true /*exact constructions*/).run();
+  std::cout << " |||||||| Test CGAL::Homogeneous<CGAL::Epeck_ft> ||||||||" << std::endl;
+  Sphere_3_intersection_tester< CGAL::Homogeneous<CGAL::Epeck_ft> >(r, true /*exact predicates*/, true /*exact constructions*/).run();
 
   std::cout << "OK!" << std::endl;
 }

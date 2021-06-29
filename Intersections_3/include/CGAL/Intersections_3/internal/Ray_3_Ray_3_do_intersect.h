@@ -36,8 +36,8 @@ do_intersect(const typename K::Ray_3& r1,
 
   typename K::Coplanar_orientation_3 pred = k.coplanar_orientation_3_object();
 
-  CGAL::Orientation p0p1s = pred(r1.point(0), r1.point(1), r2.source());
-  CGAL::Orientation stp0 = pred(r2.source(), r2.second_point(), r1.point(0));
+  CGAL::Orientation p0p1s = pred(r1.source(), r1.second_point(), r2.source());
+  CGAL::Orientation stp0 = pred(r2.source(), r2.second_point(), r1.source());
 
   if(p0p1s == COLLINEAR)
   {
@@ -49,7 +49,7 @@ do_intersect(const typename K::Ray_3& r1,
   }
 
   if(stp0 == COLLINEAR)
-    return Ray_3_has_on_collinear_Point_3(r2, r1.point(0), k);
+    return Ray_3_has_on_collinear_Point_3(r2, r1.source(), k);
 
   return (p0p1s != stp0);
 }
