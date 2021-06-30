@@ -28,7 +28,7 @@ Older versions of the above listed compilers might work, but no guarantee is pro
 In order to configure and build the \cgal examples, demos, or libraries,
 you need <a href="https://cmake.org/">CMake</a>, a cross-platform "makefile generator".
 
-This manual explains only the features of CMake which are needed in order to build \cgal.
+This manual explains only the features of CMake which are needed in order to use \cgal.
 Please refer to the <a href="https://cmake.org/documentation/">CMake documentation</a>
 for further details.
 
@@ -84,7 +84,7 @@ and for multi precision floating point numbers.
 \cgal combines floating point arithmetic with exact arithmetic
 in order to be efficient and reliable. \cgal has a built-in
 number type for that, but \gmp and \mpfr provide a faster
-solution, and we recommend to use them.
+solution, and we recommend using them.
 
 These libraries can be obtained from <A HREF="https://gmplib.org/">`https://gmplib.org/`</A>
 and <A HREF="https://www.mpfr.org/">`https://www.mpfr.org/`</A>.
