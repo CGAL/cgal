@@ -9,6 +9,11 @@ Release date: July 2021
 ### General changes
 -   The support for the compiled version of CGAL is dropped. Only the header-only version is supported.
 
+-   On Windows, the type used for `Exact_rational`, in `Epick` and indirectly (through `Lazy_exact_nt`)
+   `Epeck` may now be `boost::multiprecision::mpq_rational`, as has been the case on other platforms
+   for several releases. This depends on various options and is added to a list that includes
+   `mpq_class`, `CGAL::Gmpq`, `leda_rational` and `CGAL::Quotient<CGAL::MP_Float>`.
+
 ### [Quadtrees, Octrees, and Orthtrees](https://doc.cgal.org/5.3/Manual/packages.html#PkgOrthtree) (new package)
 
 -   This package implements a tree data structure in which each node encloses a hypercubic section
