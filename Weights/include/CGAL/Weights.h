@@ -14,7 +14,9 @@
 #ifndef CGAL_WEIGHTS_H
 #define CGAL_WEIGHTS_H
 
+/// \cond SKIP_IN_MANUAL
 #include <CGAL/license/Weights.h>
+/// \endcond
 
 /**
 * \ingroup PkgWeightsRef
@@ -22,7 +24,10 @@
 * A convenience header that includes all weights.
 */
 
+/// \cond SKIP_IN_MANUAL
 #include <CGAL/Weights/utils.h>
+/// \endcond
+
 #include <CGAL/Weights/uniform_weights.h>
 
 #include <CGAL/Weights/shepard_weights.h>
