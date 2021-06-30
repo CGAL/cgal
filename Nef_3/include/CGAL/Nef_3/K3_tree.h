@@ -37,6 +37,7 @@
 
 namespace CGAL {
 
+namespace internal {
 
 template <typename Kernel>
 class Ortho_plane_3
@@ -97,6 +98,9 @@ private:
     int direction;
     FT distance;
 };
+
+}
+
 template <class Traits>
 class K3_tree
 {
@@ -157,7 +161,7 @@ typedef typename Traits::Side_of_plane Side_of_plane;
 typedef typename Traits::Kernel Kernel;
 typedef typename Kernel::RT RT;
 typedef typename Kernel::FT FT;
-typedef Ortho_plane_3<Kernel> Ortho_plane_3;
+typedef internal::Ortho_plane_3<Kernel> Ortho_plane_3;
 
 typedef Smaller_than<
   Kernel,
