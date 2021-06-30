@@ -96,7 +96,7 @@ public:
                                            FT dm,
                                            FT sdn,
                                            FT sdp)
-      : sdev_n_2(square(sdn)), sdev_p_2(square(sdp))
+      : Cost_base(dm), sdev_n_2(square(sdn)), sdev_p_2(square(sdp))
     {
       // initialize the private variable vcm so it's lifetime is bound to that of the policy's
       vcm_ = get(Cost_property(), tmesh);
