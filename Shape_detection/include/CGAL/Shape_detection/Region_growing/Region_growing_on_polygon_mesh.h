@@ -14,7 +14,9 @@
 #ifndef CGAL_SHAPE_DETECTION_REGION_GROWING_POLYGON_MESH_H
 #define CGAL_SHAPE_DETECTION_REGION_GROWING_POLYGON_MESH_H
 
+/// \cond SKIP_IN_MANUAL
 #include <CGAL/license/Shape_detection.h>
+/// \endcond
 
 /**
 * \ingroup PkgShapeDetectionRef

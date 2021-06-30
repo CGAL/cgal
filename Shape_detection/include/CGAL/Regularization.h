@@ -14,7 +14,9 @@
 #ifndef CGAL_REGULARIZATION_H
 #define CGAL_REGULARIZATION_H
 
+/// \cond SKIP_IN_MANUAL
 #include <CGAL/license/Shape_detection.h>
+/// \endcond
 
 /**
 * \ingroup PkgShapeDetectionRef
