@@ -20,7 +20,7 @@
 * \ingroup PkgBarycentricCoordinates2Ref
 * \file CGAL/Barycentric_coordinates_2.h
 * A convenience header that includes all free functions and classes for
-* 2D barycentric coordinates.
+* 2D barycentric coordinates in closed form. Harmonic coordinates are not included.
 */
 
 // Internal includes.
@@ -32,7 +32,6 @@
 #include <CGAL/Barycentric_coordinates_2/Wachspress_coordinates_2.h>
 #include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_coordinates_2.h>
 #include <CGAL/Barycentric_coordinates_2/Mean_value_coordinates_2.h>
-#include <CGAL/Barycentric_coordinates_2/Harmonic_coordinates_2.h>
 
 #include <CGAL/Barycentric_coordinates_2/Wachspress_2.h>
 #include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_2.h>

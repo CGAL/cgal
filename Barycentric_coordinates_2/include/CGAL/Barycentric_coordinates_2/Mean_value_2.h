@@ -14,12 +14,6 @@
 #define CGAL_BARYCENTRIC_MEAN_VALUE_2_H
 
 #include <CGAL/license/Barycentric_coordinates_2.h>
-
-#define CGAL_DEPRECATED_HEADER "<CGAL/Barycentric_coordinates_2/Mean_value_2.h>"
-#define CGAL_DEPRECATED_MESSAGE_DETAILS \
-  "This part of the package is deprecated since the version 5.4 of CGAL!"
-#include <CGAL/internal/deprecation_warning.h>
-
 #include <CGAL/disable_warnings.h>
 
 // STL headers.
@@ -108,7 +102,11 @@ public:
 
 */
 template<class Traits>
-    class Mean_value_2
+class
+#ifndef DOXYGEN_RUNNING
+CGAL_DEPRECATED_MSG("This part of the package is deprecated since the version 5.4 of CGAL!")
+#endif
+Mean_value_2
 {
 
 public:

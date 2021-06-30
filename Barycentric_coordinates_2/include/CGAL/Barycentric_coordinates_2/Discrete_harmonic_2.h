@@ -14,12 +14,6 @@
 #define CGAL_BARYCENTRIC_DISCRETE_HARMONIC_2_H
 
 #include <CGAL/license/Barycentric_coordinates_2.h>
-
-#define CGAL_DEPRECATED_HEADER "<CGAL/Barycentric_coordinates_2/Discrete_harmonic_2.h>"
-#define CGAL_DEPRECATED_MESSAGE_DETAILS \
-  "This part of the package is deprecated since the version 5.4 of CGAL!"
-#include <CGAL/internal/deprecation_warning.h>
-
 #include <CGAL/disable_warnings.h>
 
 // CGAL headers.
@@ -58,7 +52,11 @@ namespace Barycentric_coordinates {
 
 */
 template<class Traits>
-    class Discrete_harmonic_2
+class
+#ifndef DOXYGEN_RUNNING
+CGAL_DEPRECATED_MSG("This part of the package is deprecated since the version 5.4 of CGAL!")
+#endif
+Discrete_harmonic_2
 {
 
 public:

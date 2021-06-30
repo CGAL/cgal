@@ -14,12 +14,6 @@
 #define CGAL_BARYCENTRIC_GENERALIZED_COORDINATES_2_H
 
 #include <CGAL/license/Barycentric_coordinates_2.h>
-
-#define CGAL_DEPRECATED_HEADER "<CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>"
-#define CGAL_DEPRECATED_MESSAGE_DETAILS \
-  "This part of the package is deprecated since the version 5.4 of CGAL!"
-#include <CGAL/internal/deprecation_warning.h>
-
 #include <CGAL/disable_warnings.h>
 
 // CGAL headers.
@@ -53,7 +47,11 @@ namespace Barycentric_coordinates {
 
 */
 template<class Coordinate_2, class Traits>
-    class Generalized_barycentric_coordinates_2
+class
+#ifndef DOXYGEN_RUNNING
+CGAL_DEPRECATED_MSG("This part of the package is deprecated since the version 5.4 of CGAL!")
+#endif
+Generalized_barycentric_coordinates_2
 {
 
 public:
