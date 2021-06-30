@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
   Quadratic_program qp_angles;
   Neighbor_query neighbor_query(segments);
   Angle_regularization angle_regularization(
-    segments, CGAL::parameters::max_angle(max_angle_2));
+    segments, CGAL::parameters::maximum_angle(max_angle_2));
 
   // Add each group of input segments.
   for (const auto& group : groups) {
@@ -85,7 +85,7 @@ int main(int argc, char *argv[]) {
   // Create qp solver and offset-based regularization model.
   Quadratic_program qp_offsets;
   Offset_regularization offset_regularization(
-    segments, CGAL::parameters::max_offset(max_offset_2));
+    segments, CGAL::parameters::maximum_offset(max_offset_2));
 
   // Add each group of parallel segments with at least 2 segments.
   neighbor_query.clear();

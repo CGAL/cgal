@@ -31,7 +31,7 @@ void test_100_segments_offsets() {
   SR::Segments::parallel_groups(
     segments,
     std::back_inserter(parallel_groups),
-    CGAL::parameters::max_angle(max_angle_2));
+    CGAL::parameters::maximum_angle(max_angle_2));
 
   // Segments output;
   // for (std::size_t i = 0; i < parallel_groups.size(); ++i) {
@@ -48,7 +48,7 @@ void test_100_segments_offsets() {
 
   const FT max_offset_2 = FT(1) / FT(4);
   OR offset_regularization(
-    segments, CGAL::parameters::max_offset(max_offset_2));
+    segments, CGAL::parameters::maximum_offset(max_offset_2));
 
   NQ neighbor_query(segments);
   for (const auto& parallel_group : parallel_groups) {

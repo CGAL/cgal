@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
   std::vector<Point_2> regularized;
   CGAL::Shape_regularization::Contours::regularize_open_contour(
     contour, directions, std::back_inserter(regularized),
-    CGAL::parameters::max_offset(max_offset_2));
+    CGAL::parameters::maximum_offset(max_offset_2));
 
   std::cout << "* number of directions = " <<
     directions.number_of_directions() << std::endl;

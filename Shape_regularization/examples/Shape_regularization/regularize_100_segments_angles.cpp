@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
   // Create neigbor query and angle-based regularization model.
   Neighbor_query neighbor_query(segments);
   Angle_regularization angle_regularization(
-    segments, CGAL::parameters::max_angle(max_angle_2));
+    segments, CGAL::parameters::maximum_angle(max_angle_2));
 
   // Regularize.
   CGAL::Shape_regularization::Segments::regularize_segments(

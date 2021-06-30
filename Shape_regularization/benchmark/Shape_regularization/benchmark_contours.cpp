@@ -133,7 +133,7 @@ void benchmark_contours(
     timer.start();
     CGAL::Shape_regularization::Contours::regularize_closed_contour(
       contour, closed_directions, std::back_inserter(regularized),
-      CGAL::parameters::max_offset(max_offset_2));
+      CGAL::parameters::maximum_offset(max_offset_2));
     timer.stop();
     closed_time += timer.time();
     timer.reset();
@@ -153,7 +153,7 @@ void benchmark_contours(
     timer.start();
     CGAL::Shape_regularization::Contours::regularize_open_contour(
       contour, open_directions, std::back_inserter(regularized),
-      CGAL::parameters::max_offset(max_offset_2));
+      CGAL::parameters::maximum_offset(max_offset_2));
     timer.stop();
     open_time += timer.time();
     timer.reset();

@@ -41,7 +41,7 @@ void test_cgal_solver() {
   const FT max_angle_2 = FT(5);
   NQ neighbor_query(segments);
   AR angle_regularization(
-    segments, CGAL::parameters::max_angle(max_angle_2));
+    segments, CGAL::parameters::maximum_angle(max_angle_2));
 
   QP qp_angles;
   QP_AR qp_ar(

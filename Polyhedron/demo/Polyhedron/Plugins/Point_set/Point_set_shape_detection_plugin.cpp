@@ -384,8 +384,8 @@ private:
         regularize_orthogonality(true).
         regularize_coplanarity(true).
         regularize_axis_symmetry(true).
-        max_angle(max_accepted_angle).
-        max_offset(max_distance_to_plane));
+        maximum_angle(max_accepted_angle).
+        maximum_offset(max_distance_to_plane));
 
       std::cerr << "done" << std::endl;
     }
@@ -669,8 +669,8 @@ private:
           regularize_orthogonality(true).
           regularize_coplanarity(true).
           regularize_axis_symmetry(true).
-          max_angle(dialog.normal_tolerance()).
-          max_offset(op.epsilon));
+          maximum_angle(dialog.normal_tolerance()).
+          maximum_offset(op.epsilon));
 
         std::cerr << "done" << std::endl;
       }

@@ -103,7 +103,7 @@ namespace Segments {
       the default values are then used
 
       \cgalNamedParamsBegin
-        \cgalParamNBegin{max_offset}
+        \cgalParamNBegin{maximum_offset}
           \cgalParamDescription{maximum allowed orthogonal distance between two parallel segments
             such that they are considered to be collinear}
           \cgalParamType{`GeomTraits::FT`}
@@ -131,7 +131,7 @@ namespace Segments {
       CGAL_precondition(
         input_range.size() >= 2);
       const FT max_offset = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::max_offset), FT(1) / FT(2));
+        parameters::get_parameter(np, internal_np::maximum_offset), FT(1) / FT(2));
       CGAL_precondition(max_offset >= FT(0));
 
       m_max_offset = max_offset;
@@ -300,7 +300,7 @@ namespace Segments {
 
       const Collinear_groups_2 grouping(
         m_input_range,
-        CGAL::parameters::max_offset(m_max_offset),
+        CGAL::parameters::maximum_offset(m_max_offset),
         m_segment_map, Traits());
       return grouping.groups(groups);
     }
@@ -335,7 +335,7 @@ namespace Segments {
 
       const Unique_segments_2 unique(
         m_input_range,
-        CGAL::parameters::max_offset(m_max_offset),
+        CGAL::parameters::maximum_offset(m_max_offset),
         m_segment_map, Traits());
       return unique.segments(segments);
     }

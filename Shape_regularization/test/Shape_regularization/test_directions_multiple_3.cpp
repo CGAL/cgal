@@ -44,14 +44,14 @@ void test_directions_multiple_3() {
   // std::vector<Point_2> regularized;
   // SR::Contours::regularize_closed_contour(
   //   contour, closed_directions, std::back_inserter(regularized),
-  //   CGAL::parameters::max_offset(2));
+  //   CGAL::parameters::maximum_offset(2));
   // saver.export_closed_contour(regularized,
   //   "/Users/monet/Documents/gsoc/ggr/logs/dm3_output_cl", 100);
 
   // regularized.clear();
   // SR::Contours::regularize_open_contour(
   //   contour, open_directions, std::back_inserter(regularized),
-  //   CGAL::parameters::max_offset(2));
+  //   CGAL::parameters::maximum_offset(2));
   // saver.export_open_contour(regularized,
   //   "/Users/monet/Documents/gsoc/ggr/logs/dm3_output_op", 100);
 

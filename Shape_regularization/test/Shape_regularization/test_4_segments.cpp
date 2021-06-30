@@ -36,7 +36,7 @@ void test_4_segments() {
   const FT max_angle_2 = FT(5);
   NQ neighbor_query(segments);
   AR angle_regularization(
-    segments, CGAL::parameters::max_angle(max_angle_2));
+    segments, CGAL::parameters::maximum_angle(max_angle_2));
 
   QP qp_angles;
   SR::Segments::regularize_segments(
@@ -71,7 +71,7 @@ void test_4_segments() {
 
   const FT max_offset_2 = FT(1) / FT(10);
   OR offset_regularization(
-    segments, CGAL::parameters::max_offset(max_offset_2));
+    segments, CGAL::parameters::maximum_offset(max_offset_2));
 
   neighbor_query.clear();
   for (const auto& parallel_group : parallel_groups) {

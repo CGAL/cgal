@@ -61,7 +61,7 @@ namespace internal {
 
       CGAL_precondition(input_range.size() >= 2);
       const FT max_offset_2 = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::max_offset), FT(1) / FT(2));
+        parameters::get_parameter(np, internal_np::maximum_offset), FT(1) / FT(2));
       m_regularization = std::make_unique<Regularization>(
         directions, max_offset_2);
       m_regularization->initialize(input_range, point_map);

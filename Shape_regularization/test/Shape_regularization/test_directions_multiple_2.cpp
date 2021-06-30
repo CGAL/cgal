@@ -39,15 +39,15 @@ void test_directions_multiple_2() {
   MD closed_directions(
     contour,  is_closed,
     CGAL::parameters::
-    min_length(min_length_2).
-    max_angle(max_angle_2).
+    minimum_length(min_length_2).
+    maximum_angle(max_angle_2).
     adjust_directions(false).
     point_map(pmap));
   MD open_directions(
     contour, !is_closed,
     CGAL::parameters::
-    min_length(min_length_2).
-    max_angle(max_angle_2).
+    minimum_length(min_length_2).
+    maximum_angle(max_angle_2).
     adjust_directions(false).
     point_map(pmap));
 
@@ -73,14 +73,14 @@ void test_directions_multiple_2() {
   // std::vector<Point_2> regularized;
   // SR::Contours::regularize_closed_contour(
   //   contour, closed_directions, std::back_inserter(regularized),
-  //   CGAL::parameters::max_offset(2));
+  //   CGAL::parameters::maximum_offset(2));
   // saver.export_closed_contour(regularized,
   //   "/Users/monet/Documents/gsoc/ggr/logs/dm2_output_cl", 100);
 
   // regularized.clear();
   // SR::Contours::regularize_open_contour(
   //   contour, open_directions, std::back_inserter(regularized),
-  //   CGAL::parameters::max_offset(2));
+  //   CGAL::parameters::maximum_offset(2));
   // saver.export_open_contour(regularized,
   //   "/Users/monet/Documents/gsoc/ggr/logs/dm2_output_op", 100);
 

@@ -195,7 +195,7 @@ int main() {
       regularize_orthogonality(false).
       regularize_coplanarity(false).
       regularize_axis_symmetry(false).
-      max_angle(15.0));
+      maximum_angle(15.0));
 
     after = get_ransac_planes(ransac);
 
@@ -248,7 +248,7 @@ int main() {
       regularize_orthogonality(true).
       regularize_coplanarity(false).
       regularize_axis_symmetry(true).
-      max_angle(15.0));
+      maximum_angle(15.0));
 
     after = get_ransac_planes(ransac);
 
@@ -301,8 +301,8 @@ int main() {
       regularize_orthogonality(false).
       regularize_coplanarity(true).
       regularize_axis_symmetry(false).
-      max_angle(5.0).
-      max_offset(0.3));
+      maximum_angle(5.0).
+      maximum_offset(0.3));
 
     after = get_ransac_planes(ransac);
 
@@ -360,7 +360,7 @@ int main() {
       regularize_orthogonality(false).
       regularize_coplanarity(false).
       regularize_axis_symmetry(true).
-      max_angle(15.0).
+      maximum_angle(15.0).
       symmetry_direction(Vector(1.0, 0.0, 0.0)));
 
     after = get_ransac_planes(ransac);

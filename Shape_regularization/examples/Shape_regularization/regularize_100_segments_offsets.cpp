@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
   std::vector<Indices> pgroups;
   CGAL::Shape_regularization::Segments::parallel_groups(
     segments, std::back_inserter(pgroups),
-    CGAL::parameters::max_angle(max_angle_2));
+    CGAL::parameters::maximum_angle(max_angle_2));
 
   // Offset regularization.
   const FT max_offset_2 = FT(1) / FT(4);
@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
   // Create neigbor query and offset-based regularization model.
   Neighbor_query neighbor_query(segments);
   Offset_regularization offset_regularization(
-    segments, CGAL::parameters::max_offset(max_offset_2));
+    segments, CGAL::parameters::maximum_offset(max_offset_2));
 
   // Add each group of parallel segments with at least 2 segments.
   for (const auto& pgroup : pgroups) {

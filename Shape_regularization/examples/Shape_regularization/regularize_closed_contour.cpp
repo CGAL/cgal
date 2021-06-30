@@ -38,12 +38,12 @@ int main(int argc, char *argv[]) {
   const bool is_closed = true;
   Contour_directions directions(
     contour, is_closed, CGAL::parameters::
-    min_length(min_length_2).max_angle(max_angle_2));
+    minimum_length(min_length_2).maximum_angle(max_angle_2));
 
   std::vector<Point_2> regularized;
   CGAL::Shape_regularization::Contours::regularize_closed_contour(
     contour, directions, std::back_inserter(regularized),
-    CGAL::parameters::max_offset(max_offset_2));
+    CGAL::parameters::maximum_offset(max_offset_2));
 
   std::cout << "* number of directions = " <<
     directions.number_of_directions() << std::endl;

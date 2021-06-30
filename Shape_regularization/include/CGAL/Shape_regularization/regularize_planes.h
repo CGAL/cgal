@@ -340,13 +340,13 @@ namespace Planes {
           and `int` as value type}
         \cgalParamDefault{no default value}
       \cgalParamNEnd
-      \cgalParamNBegin{max_angle}
+      \cgalParamNBegin{maximum_angle}
         \cgalParamDescription{maximum allowed angle in degrees between plane normals used
           for parallelism, orthogonality, and axis symmetry}
         \cgalParamType{`GeomTraits::FT`}
         \cgalParamDefault{25 degrees}
       \cgalParamNEnd
-      \cgalParamNBegin{max_offset}
+      \cgalParamNBegin{maximum_offset}
         \cgalParamDescription{maximum allowed orthogonal distance between two parallel planes
           such that they are considered to be coplanar}
         \cgalParamType{`GeomTraits::FT`}
@@ -424,10 +424,10 @@ namespace Planes {
       true);
 
     const FT tol_angle = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::max_angle),
+      parameters::get_parameter(np, internal_np::maximum_angle),
       FT(25));
     const FT tol_copln = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::max_offset),
+      parameters::get_parameter(np, internal_np::maximum_offset),
       FT(1) / FT(100));
     const Vector_3 sym_dir = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::symmetry_direction),

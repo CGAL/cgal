@@ -92,13 +92,13 @@ namespace Contours {
       the default values are then used
 
       \cgalNamedParamsBegin
-        \cgalParamNBegin{max_angle}
+        \cgalParamNBegin{maximum_angle}
           \cgalParamDescription{maximum allowed angle deviation in degrees between a contour edge
             and a principal direction such that they are considered to be parallel or orthogonal}
           \cgalParamType{`GeomTraits::FT`}
           \cgalParamDefault{10 degrees}
         \cgalParamNEnd
-        \cgalParamNBegin{min_length}
+        \cgalParamNBegin{minimum_length}
           \cgalParamDescription{minimum acceptable length of a contour edge whose direction can be taken
             as a principal direction}
           \cgalParamType{`GeomTraits::FT`}
@@ -131,9 +131,9 @@ namespace Contours {
 
       CGAL_precondition(input_range.size() >= 2);
       m_max_angle_2 = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::max_angle), FT(10));
+        parameters::get_parameter(np, internal_np::maximum_angle), FT(10));
       m_min_length_2 = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::min_length), FT(3));
+        parameters::get_parameter(np, internal_np::minimum_length), FT(3));
       m_adjust_directions = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::adjust_directions), true);
 

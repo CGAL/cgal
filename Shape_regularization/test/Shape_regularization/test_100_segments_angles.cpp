@@ -29,7 +29,7 @@ void test_100_segments_angles() {
   const FT max_angle_2 = FT(40);
   NQ neighbor_query(segments);
   AR angle_regularization(
-    segments, CGAL::parameters::max_angle(max_angle_2));
+    segments, CGAL::parameters::maximum_angle(max_angle_2));
 
   SR::Segments::regularize_segments(
     segments, neighbor_query, angle_regularization);

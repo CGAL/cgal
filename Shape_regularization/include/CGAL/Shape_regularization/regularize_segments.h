@@ -380,7 +380,7 @@ namespace Segments {
     the default values are then used
 
     \cgalNamedParamsBegin
-      \cgalParamNBegin{max_angle}
+      \cgalParamNBegin{maximum_angle}
         \cgalParamDescription{maximum allowed angle deviation in degrees between two segments
           such that they are considered to be parallel}
         \cgalParamType{`GeomTraits::FT`}
@@ -485,7 +485,7 @@ namespace Segments {
     the default values are then used
 
     \cgalNamedParamsBegin
-      \cgalParamNBegin{max_offset}
+      \cgalParamNBegin{maximum_offset}
         \cgalParamDescription{maximum allowed orthogonal distance between two parallel segments
           such that they are considered to be collinear}
         \cgalParamType{`GeomTraits::FT`}
@@ -590,7 +590,7 @@ namespace Segments {
     the default values are then used
 
     \cgalNamedParamsBegin
-      \cgalParamNBegin{max_angle}
+      \cgalParamNBegin{maximum_angle}
         \cgalParamDescription{maximum allowed angle deviation in degrees between two segments
           such that they are considered to be parallel or orthogonal}
         \cgalParamType{`GeomTraits::FT`}
@@ -694,7 +694,7 @@ namespace Segments {
     the default values are then used
 
     \cgalNamedParamsBegin
-      \cgalParamNBegin{max_offset}
+      \cgalParamNBegin{maximum_offset}
         \cgalParamDescription{maximum allowed orthogonal distance between two parallel segments
           such that they are considered to be collinear}
         \cgalParamType{`GeomTraits::FT`}

@@ -99,7 +99,7 @@ namespace Segments {
       the default values are then used
 
       \cgalNamedParamsBegin
-        \cgalParamNBegin{max_angle}
+        \cgalParamNBegin{maximum_angle}
           \cgalParamDescription{maximum allowed angle deviation in degrees of a segment
             from its initial orientation}
           \cgalParamType{`GeomTraits::FT`}
@@ -127,7 +127,7 @@ namespace Segments {
       CGAL_precondition(
         input_range.size() >= 2);
       const FT max_angle = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::max_angle), FT(25));
+        parameters::get_parameter(np, internal_np::maximum_angle), FT(25));
       CGAL_precondition(max_angle >= FT(0) && max_angle <= FT(90));
 
       m_max_angle = max_angle;
@@ -298,7 +298,7 @@ namespace Segments {
 
       const Parallel_groups_2 grouping(
         m_input_range,
-        CGAL::parameters::max_angle(m_max_angle),
+        CGAL::parameters::maximum_angle(m_max_angle),
         m_segment_map, Traits());
       return grouping.groups(groups);
     }
@@ -319,7 +319,7 @@ namespace Segments {
 
       const Orthogonal_groups_2 grouping(
         m_input_range,
-        CGAL::parameters::max_angle(m_max_angle),
+        CGAL::parameters::maximum_angle(m_max_angle),
         m_segment_map, Traits());
       return grouping.groups(groups);
     }

@@ -537,8 +537,8 @@ namespace internal {
       const SegmentMap segment_map;
       const Unique_segments_2 unique(
         wraps, CGAL::parameters::
-        max_angle(get_angle_threshold_2()).
-        max_offset(max_offset_2).
+        maximum_angle(get_angle_threshold_2()).
+        maximum_offset(max_offset_2).
         preserve_order(true),
         segment_map, Traits());
 

@@ -152,7 +152,7 @@ void benchmark_qp_segments(
   const FT max_angle_2 = FT(10);
   timer.start();
   AR angle_regularization(
-    segments, CGAL::parameters::max_angle(max_angle_2));
+    segments, CGAL::parameters::maximum_angle(max_angle_2));
   if (regroup) {
     Indices group;
     group.reserve(m);
@@ -184,7 +184,7 @@ void benchmark_qp_segments(
   const FT max_offset_2 = FT(1) / FT(5);
   timer.start();
   OR offset_regularization(
-    segments, CGAL::parameters::max_offset(max_offset_2));
+    segments, CGAL::parameters::maximum_offset(max_offset_2));
   timer.stop();
   // const double setup_offset_time = timer.time();
   timer.reset();

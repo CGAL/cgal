@@ -41,7 +41,7 @@ void test_2_segments() {
   NQ neighbor_query(segments, smap);
   AR angle_regularization(
     segments, CGAL::parameters::
-    max_angle(max_angle_2).
+    maximum_angle(max_angle_2).
     segment_map(smap));
 
   QP qp_angles;
@@ -77,7 +77,7 @@ void test_2_segments() {
   const FT max_offset_2 = FT(1) / FT(2);
   OR offset_regularization(
     segments, CGAL::parameters::
-    max_offset(max_offset_2).
+    maximum_offset(max_offset_2).
     segment_map(smap));
 
   neighbor_query.clear();

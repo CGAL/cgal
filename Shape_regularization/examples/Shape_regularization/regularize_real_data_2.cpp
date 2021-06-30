@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
   // Create neigbor query and angle-based regularization model.
   Neighbor_query neighbor_query(segments);
   Angle_regularization angle_regularization(
-    segments, CGAL::parameters::max_angle(max_angle_2));
+    segments, CGAL::parameters::maximum_angle(max_angle_2));
 
   // Regularize.
   CGAL::Shape_regularization::Segments::regularize_segments(
@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
 
   // Create offset-based regularization model.
   Offset_regularization offset_regularization(
-    segments, CGAL::parameters::max_offset(max_offset_2));
+    segments, CGAL::parameters::maximum_offset(max_offset_2));
 
   // Add each group of parallel segments with at least 2 segments.
   neighbor_query.clear();

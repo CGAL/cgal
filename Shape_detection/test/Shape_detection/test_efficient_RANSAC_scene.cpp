@@ -134,8 +134,8 @@ bool test_scene(int argc, char** argv) {
       regularize_orthogonality(true).
       regularize_coplanarity(true).
       regularize_axis_symmetry(true).
-      max_angle(FT(50)).
-      max_offset(FT(1) / FT(100)));
+      maximum_angle(FT(50)).
+      maximum_offset(FT(1) / FT(100)));
 
   Point_index_range pts = ransac.indices_of_unassigned_points();
 

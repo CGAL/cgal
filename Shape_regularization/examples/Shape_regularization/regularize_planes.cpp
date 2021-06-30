@@ -59,7 +59,7 @@ int main(int argc, char** argv) {
     CGAL::parameters::plane_index_map(
       CGAL::Shape_detection::Point_to_shape_index_map<Traits>(points, planes)).
     regularize_coplanarity(false). // do not regularize coplanarity
-    max_angle(FT(10))); // 10 degrees of tolerance for parallelism / orthogonality
+    maximum_angle(FT(10))); // 10 degrees of tolerance for parallelism / orthogonality
 
   std::cout << "* all detected planes are regularized" << std::endl;
   return EXIT_SUCCESS;

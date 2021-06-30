@@ -211,9 +211,9 @@ CGAL_add_named_parameter(overlap_t, overlap, overlap)
 CGAL_add_named_parameter(maximum_normal_deviation_t, maximum_normal_deviation, maximum_normal_deviation)
 
 // List of named parameters used in Shape_regularization package
-CGAL_add_named_parameter(min_length_t, min_length, min_length)
-CGAL_add_named_parameter(max_angle_t, max_angle, max_angle)
-CGAL_add_named_parameter(max_offset_t, max_offset, max_offset)
+CGAL_add_named_parameter(minimum_length_t, minimum_length, minimum_length)
+CGAL_add_named_parameter(maximum_angle_t, maximum_angle, maximum_angle)
+CGAL_add_named_parameter(maximum_offset_t, maximum_offset, maximum_offset)
 CGAL_add_named_parameter(regularize_parallelism_t, regularize_parallelism, regularize_parallelism)
 CGAL_add_named_parameter(regularize_orthogonality_t, regularize_orthogonality, regularize_orthogonality)
 CGAL_add_named_parameter(regularize_coplanarity_t, regularize_coplanarity, regularize_coplanarity)
