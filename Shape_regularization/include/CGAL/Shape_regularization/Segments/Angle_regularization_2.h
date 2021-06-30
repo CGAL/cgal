@@ -113,7 +113,7 @@ namespace Segments {
       \cgalNamedParamsEnd
 
       \pre input_range.size() >= 2
-      \pre max_angle >= 0 && max_angle <= 90
+      \pre maximum_angle >= 0 && maximum_angle <= 90
     */
     template<typename NamedParameters>
     Angle_regularization_2(
@@ -221,7 +221,7 @@ namespace Segments {
     }
 
     /*!
-      \brief returns `max_angle`.
+      \brief returns `maximum_angle`.
     */
     const FT bound(const std::size_t) const {
       return m_max_angle;

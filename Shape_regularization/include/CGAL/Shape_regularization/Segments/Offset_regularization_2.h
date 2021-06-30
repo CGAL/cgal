@@ -117,7 +117,7 @@ namespace Segments {
       \cgalNamedParamsEnd
 
       \pre input_range.size() >= 2
-      \pre max_offset >= 0
+      \pre maximum_offset >= 0
     */
     template<typename NamedParameters>
     Offset_regularization_2(
@@ -227,7 +227,7 @@ namespace Segments {
     }
 
     /*!
-      \brief returns `max_offset`.
+      \brief returns `maximum_offset`.
     */
     FT bound(const std::size_t) const {
       return m_max_offset;

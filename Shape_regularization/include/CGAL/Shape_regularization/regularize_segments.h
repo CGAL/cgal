@@ -411,7 +411,7 @@ namespace Segments {
     one past the last group stored
 
     \pre input_range.size() >= 1
-    \pre max_angle >= 0 && max_angle <= 90
+    \pre maximum_angle >= 0 && maximum_angle <= 90
   */
   template<
   typename InputRange,
@@ -516,7 +516,7 @@ namespace Segments {
     one past the last group stored
 
     \pre input_range.size() >= 1
-    \pre max_offset >= 0
+    \pre maximum_offset >= 0
   */
   template<
   typename InputRange,
@@ -621,7 +621,7 @@ namespace Segments {
     one past the last group stored
 
     \pre input_range.size() >= 1
-    \pre max_angle >= 0 && max_angle <= 90
+    \pre maximum_angle >= 0 && maximum_angle <= 90
   */
   template<
   typename InputRange,
@@ -725,7 +725,7 @@ namespace Segments {
     one past the last segment stored
 
     \pre input_range.size() >= 1
-    \pre max_offset >= 0
+    \pre maximum_offset >= 0
   */
   template<
   typename InputRange,
