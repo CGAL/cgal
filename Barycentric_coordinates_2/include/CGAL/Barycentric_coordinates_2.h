@@ -14,7 +14,9 @@
 #ifndef CGAL_BARYCENTRIC_COORDINATES_2_H
 #define CGAL_BARYCENTRIC_COORDINATES_2_H
 
+/// \cond SKIP_IN_MANUAL
 #include <CGAL/license/Barycentric_coordinates_2.h>
+/// \endcond
 
 /**
 * \ingroup PkgBarycentricCoordinates2Ref
