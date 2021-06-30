@@ -114,12 +114,15 @@ support both coplanar and non-coplanar configurations, while \ref PkgWeightsRefD
 support only coplanar configurations.
 
 
-\subsection Weights_Implementation_Boundaries Boundaries
+\subsection Weights_Implementation_Edge_Cases Edge Cases
 
-None of the weights in this package are defined for query points on boundaries. The boundary cases include:
+None of the weights in this package are defined for query points which belong to
 
-- *edges*, for example [\f$p_0\f$, \f$p_1\f$] or [\f$p_1\f$, \f$p_2\f$] or any polygon edge and
-- *corners*, for example \f$p_0\f$, \f$p_1\f$, or \f$p_2\f$ or any polygon corner.
+- *end segments* so-called *edges*, for example [\f$p_0\f$, \f$p_1\f$] or [\f$p_1\f$, \f$p_2\f$] or any polygon edge and to
+- *end points* so-called *corners*, for example \f$p_0\f$, \f$p_1\f$, or \f$p_2\f$ or any polygon corner.
+
+For example, if \f$q\f$ = \f$p_0\f$ or \f$q \in [p_0, p_1]\f$, a weight may be undefined
+due to invalid operations such as division by zero.
 
 Several weights also require additional conditions to be satisfied. Consult the reference
 manual for more details.
