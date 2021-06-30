@@ -26,6 +26,7 @@
 
 
 #include <deque>
+#include <stack>
 #include <sstream>
 #include <string>
 #include <map>
@@ -37,6 +38,65 @@
 namespace CGAL {
 
 
+template <typename Kernel>
+class Ortho_plane_3
+{
+    typedef typename Kernel::FT FT;
+    typedef typename Kernel::Plane_3 Plane_3;
+    typedef typename Kernel::Point_3 Point_3;
+public:
+    Ortho_plane_3() :
+        direction(-1)
+    {}
+
+    Ortho_plane_3(const Point_3& p,int dir) :
+        direction(dir), distance(p[dir])
+    {}
+
+    Plane_3 plane() const
+    {
+        switch(direction) {
+        case 0: return Plane_3(1,0,0,-distance);
+        case 1: return Plane_3(0,1,0,-distance);
+        case 2: return Plane_3(0,0,1,-distance);
+        default: CGAL_error();
+        }
+    }
+
+    Point_3 point() const
+    {
+        switch(direction) {
+        case 0: return Point_3(distance,0,0);
+        case 1: return Point_3(0,distance,0);
+        case 2: return Point_3(0,0,distance);
+        default: CGAL_error();
+        }
+    }
+
+    Comparison_result oriented_side(const Point_3& pt) const
+    {
+        switch(direction) {
+        case 0: return compare(pt.x(),distance);
+        case 1: return compare(pt.y(),distance);
+        case 2: return compare(pt.z(),distance);
+        default: CGAL_error();
+        }
+    }
+
+    void transform(const Aff_transformation_3<Kernel>& t)
+    {
+        switch (direction) {
+        case 0: distance = point().transform(t).x(); break;
+        case 1: distance = point().transform(t).y(); break;
+        case 2: distance = point().transform(t).z(); break;
+        default: CGAL_error();
+        }
+    }
+
+private:
+    int direction;
+    FT distance;
+};
 template <class Traits>
 class K3_tree
 {
@@ -97,6 +157,7 @@ typedef typename Traits::Side_of_plane Side_of_plane;
 typedef typename Traits::Kernel Kernel;
 typedef typename Kernel::RT RT;
 typedef typename Kernel::FT FT;
+typedef Ortho_plane_3<Kernel> Ortho_plane_3;
 
 typedef Smaller_than<
   Kernel,
@@ -108,19 +169,12 @@ typedef Smaller_than<
 public:
     typedef Node* Node_handle;
   Node(const Vertex_list& V, const Halfedge_list& E, const Halffacet_list& F) :
-    left_node(nullptr), right_node(nullptr)
+    left_node(nullptr), right_node(nullptr), vertex_list(V), edge_list(E), facet_list(F)
   {
-      object_list.reserve(V.size()+E.size()+F.size());
-      for(Vertex_const_iterator vi=V.begin(); vi!=V.end(); ++vi)
-          object_list.push_back(make_object(*vi));
-      for(Halfedge_const_iterator ei=E.begin(); ei!=E.end(); ++ei)
-          object_list.push_back(make_object(*ei));
-      for(Halffacet_const_iterator fi=F.begin(); fi!=F.end(); ++fi)
-          object_list.push_back(make_object(*fi));
   }
 
-  Node(Node_handle l, Node_handle r, const Plane_3& pl) :
-    left_node(l), right_node(r), splitting_plane(pl)
+  Node(Node_handle l, Node_handle r, const Point_3& pt, int coord) :
+    left_node(l), right_node(r), splitting_plane(pt, coord)
   {
   }
 
@@ -132,21 +186,29 @@ public:
 
   Node_handle left() const { return left_node; }
   Node_handle right() const { return right_node; }
-  const Plane_3& plane() const { return splitting_plane; }
-  const Object_list& objects() const { return object_list; }
+  bool empty() { return vertex_list.empty() && edge_list.empty() && facet_list.empty(); }
+  Vertex_const_iterator vertices_begin() { return vertex_list.begin(); }
+  Vertex_const_iterator vertices_end() { return vertex_list.end(); }
+  Halfedge_const_iterator edges_begin() { return edge_list.begin(); }
+  Halfedge_const_iterator edges_end() { return edge_list.end(); }
+  Halffacet_const_iterator facets_begin() { return facet_list.begin(); }
+  Halffacet_const_iterator facets_end() { return facet_list.end(); }
+
+  const Ortho_plane_3& ortho_plane() const { return splitting_plane; }
+  const Plane_3 plane() const { return splitting_plane.plane(); }
 
   void transform(const Aff_transformation_3& t) {
     if(left_node != nullptr) {
         CGAL_assertion(right_node != nullptr);
         left_node->transform(t);
-         right_node->transform(t);
-          splitting_plane = splitting_plane.transform(t);
+        right_node->transform(t);
+        splitting_plane.transform(t);
     }
   }
 
   void add_facet(Halffacet_handle f, int depth) {
     if(left_node == nullptr) {
-      object_list.push_back(make_object(f));
+      facet_list.push_back(f);
       return;
     }
 
@@ -160,7 +222,7 @@ public:
 
   void add_edge(Halfedge_handle e, int depth) {
     if(left_node == nullptr) {
-      object_list.push_back(make_object(e));
+      edge_list.push_back(e);
       return;
     }
 
@@ -174,7 +236,7 @@ public:
 
   void add_vertex(Vertex_handle v, int depth) {
     if(left_node == nullptr) {
-      object_list.push_back(make_object(v));
+      vertex_list.push_back(v);
       return;
     }
 
@@ -187,33 +249,19 @@ public:
   }
 
 
-friend std::ostream& operator<<
-  (std::ostream& os, const Node_handle node) {
-  CGAL_assertion( node != nullptr);
-  if( node->is_leaf())
-    os <<  node->objects().size();
-  else {
-    os << " ( ";
-    if( !node->left()) os << '-';
-    else os << node->left();
-    os << " , ";
-    if( !node->right()) os << '-';
-    else os << node->right();
-    os << " ) ";
-  }
-  return os;
-}
-
 private:
 
   Node_handle left_node;
   Node_handle right_node;
-  Plane_3 splitting_plane;
-  Object_list object_list;
+  Ortho_plane_3 splitting_plane;
+  Vertex_list vertex_list;
+  Halffacet_list facet_list;
+  Halfedge_list edge_list;
 };
 
   typedef boost::container::deque<Node> Node_range;
   typedef Node* Node_handle;
+  typedef std::vector<Node_handle> Node_list;
 
 
 public:
@@ -266,10 +314,6 @@ public:
         ++(*this); // place the interator in the first intersected cell
       }
       Iterator( const Self& i) : S(i.S), node(i.node) {}
-      const Object_list& operator*() const {
-        CGAL_assertion( node != nullptr);
-        return node->objects();
-      }
       Self& operator++() {
 
 if( S.empty())
@@ -299,8 +343,8 @@ else {
       CGAL_NEF_TRACEN("find next intersected cell: segment: "<<s);
       CGAL_NEF_TRACEN("find next intersected cell: node plane: "<<n->plane() <<
              ", point: "<<n->plane().point());
-      Oriented_side src_side = n->plane().oriented_side(s.source());
-      Oriented_side tgt_side = n->plane().oriented_side(s.target());
+      Oriented_side src_side = n->ortho_plane().oriented_side(s.source());
+      Oriented_side tgt_side = n->ortho_plane().oriented_side(s.target());
       if( src_side == ON_ORIENTED_BOUNDARY && tgt_side == ON_ORIENTED_BOUNDARY)
         src_side = tgt_side = ON_NEGATIVE_SIDE;
       else if( src_side == ON_ORIENTED_BOUNDARY)
@@ -348,35 +392,6 @@ void divide_segment_by_plane( Segment_3 s, Plane_3 pl,
     };
   };
 
-  class Objects_along_ray : public Objects_around_segment
-  {
-    typedef Objects_around_segment Base;
-  protected:
-    Traits traits;
-  public:
-    Objects_along_ray( const K3_tree& k, const Ray_3& r) {
-      CGAL_NEF_TRACEN("Objects_along_ray: input ray: "<<r);
-      Vector_3 vec(r.to_vector());
-      // First of all, we need to find out wheather we are working over an extended kernel or on a standard kernel. As precondition we have that ray is oriented in the minus x axis direction.  When having an extended kernel, the ray can be subtituted by a segment with the endpoint on the 'intersection' between the ray and the bounding infimaximal box.  In the presence of a standard kernel, the intersection is computed with the bounding box with the vertices of the Nef polyhedron.
-      Point_3 p(r.source()), q;
-      Bounding_box_3 b = k.bounding_box;
-      typename Kernel::Non_zero_coordinate_index_3 non_zero_coordinate_index_3;
-      int c = non_zero_coordinate_index_3(vec);
-
-      Point_3 pt_on_minus_x_plane = vec[c] < 0 ?
-        Point_3(FT(b.min_coord(0)), FT(b.min_coord(1)),FT(b.min_coord(2))) :
-        Point_3(FT(b.max_coord(0)), FT(b.max_coord(1)),FT(b.max_coord(2)));
-      // We compute the intersection between a plane with normal vector in
-      // the minus x direction and located at the minimum point of the bounding box, and the input ray.  When the ray does not intersect the bounding volume, there won't be any object hit, so it is safe to construct a segment that simply lay in the unbounded side of the bounding box.  This approach is taken instead of somehow (efficiently) report that there was no hit object, in order to mantain a clear interface with the Iterator class.
-      Plane_3 pl_on_minus_x = K3_tree::construct_splitting_plane(pt_on_minus_x_plane, c, typename Traits::Kernel::Kernel_tag());
-      Object o = traits.intersect_object()( pl_on_minus_x, r);
-      if( !CGAL::assign( q, o) || pl_on_minus_x.has_on(p))
-        q = r.source() + vec;
-      else
-        q = normalized(q);
-      Base::initialize( k, Segment_3( p, q));
-    }
-  };
 
 private:
 #ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
@@ -439,52 +454,23 @@ public:
     non_efective_splits=0;
     root = build_kdtree(vertices, edges, facets, 0);
   }
-  const Object_list& objects_around_point( const Point_3& p) const {
-    return locate( p, root);
+  Node_handle locate_node_containing( const Point_3 p) const {
+    return locate_node_containing( p, root);
   }
-  Objects_along_ray objects_along_ray( const Ray_3& r) const {
-    return Objects_along_ray( *this, r);
+  Node_list nodes_along_ray( const Ray_3& r) const {
+    Segment_3 s = ray_to_segment(r);
+    return nodes_around_segment(s);
   }
-  Object_list objects_around_segment( const Segment_3& s) const {
-    Object_list O;
-
+  Node_list nodes_around_segment( const Segment_3& s) const {
+    Node_list nodes;
     Objects_around_segment objects( *this, s);
-    Generic_handle_map<bool> visited(false);
-
-    for( typename Objects_around_segment::Iterator oar = objects.begin();
-         oar != objects.end(); ++oar) {
-      for( typename Object_list::const_iterator o = (*oar).begin();
-           o != (*oar).end(); ++o) { // TODO: implement operator->(...)
-        Vertex_handle v;
-        Halfedge_handle e;
-        Halffacet_handle f;
-        if( CGAL::assign( v, *o)) {
-          if( !visited[v]) {
-            O.push_back(*o);
-            visited[v] = true;
-          }
-        }
-        else if( CGAL::assign( e, *o)) {
-          if( !visited [e]) {
-            O.push_back(*o);
-            visited[e] = true;
-          }
-        }
-        else if( CGAL::assign( f, *o)) {
-          if( !visited[f]) {
-            O.push_back(*o);
-            visited[f] = true;
-          }
-        }
-        else
-          CGAL_error_msg( "wrong handle");
-      }
+    for(typename Objects_around_segment::Iterator oas = objects.begin(); oas != objects.end(); ++oas) {
+      nodes.push_back(oas.get_node());
     }
-    return O;
+    return nodes;
   }
-
-  bool is_point_on_cell( const Point_3& p, const typename Objects_around_segment::Iterator& target) const {
-    return is_point_on_cell( p, target.get_node(), root);
+  bool is_point_in_node( const Point_3& p, const Node_handle target) const {
+    return is_point_in_node( p, target, root);
   }
 
   void add_facet(Halffacet_handle f) {
@@ -507,12 +493,8 @@ public:
 
     void pre_visit(const Node_handle) {}
     void post_visit(const Node_handle n) {
-      typename Object_list::const_iterator o;
-      for( o = n->objects().begin();
-           o != n->objects().end(); ++o) {
-        Vertex_handle v;
-        if( CGAL::assign( v, *o))
-          b.extend(v->point());
+      for(Vertex_const_iterator vi = n->vertex_list.begin(); vi!=n->vertex_list.end(); ++vi) {
+          b.extend((*vi)->point());
       }
     }
 
@@ -579,7 +561,6 @@ std::string dump_object_list( const Object_list& O, int level = 0) {
   os << v_count << "v " << e_count << "e " << f_count << "f ";
   return os.str();
  }
-
 private:
 
 int non_efective_splits;
@@ -637,7 +618,7 @@ Node_handle build_kdtree(Vertex_list& V, Halfedge_list& E, Halffacet_list& F,
 
   Node_handle left_node = build_kdtree(V1, E1, F1, depth + 1);
   Node_handle right_node = build_kdtree(V2, E2, F2, depth + 1);
-  nodes.push_back(Node(left_node, right_node, construct_splitting_plane(point_on_plane, coord, typename Traits::Kernel::Kernel_tag())));
+  nodes.push_back(Node(left_node, right_node, point_on_plane, coord));
   return &(nodes.back());
 }
 
@@ -718,34 +699,65 @@ static Node_handle get_child_by_side( const Node_handle node, Oriented_side side
   return node->right();
 }
 
-Node_handle locate_cell_containing( const Point_3& p, const Node_handle node) const {
+Node_handle locate_node_containing( const Point_3& p, const Node_handle node) const {
   CGAL_precondition( node != nullptr);
   if( node->is_leaf())
     return node;
 
-  Oriented_side side = node->plane().oriented_side(p);
+  Oriented_side side = node->ortho_plane().oriented_side(p);
   if(side == ON_ORIENTED_BOUNDARY)
     side = ON_NEGATIVE_SIDE;
-  return locate_cell_containing(p, get_child_by_side(node, side));
+  return locate_node_containing(p, get_child_by_side(node, side));
 }
 
-const Object_list& locate( const Point_3& p, const Node_handle node) const {
-  CGAL_precondition( node != nullptr);
-  return locate_cell_containing( p, node)->objects();
-}
 
-bool is_point_on_cell( const Point_3& p, const Node_handle target, const Node_handle current) const {
+bool is_point_in_node( const Point_3& p, const Node_handle target, const Node_handle current) const {
   CGAL_precondition( target != nullptr && current != nullptr);
   if( current->is_leaf())
     return (current == target);
-  Oriented_side side = current->plane().oriented_side(p);
+  Oriented_side side = current->ortho_plane().oriented_side(p);
   if( side == ON_NEGATIVE_SIDE)
-    return is_point_on_cell( p, target, current->left());
+    return is_point_in_node( p, target, current->left());
   else if( side == ON_POSITIVE_SIDE)
-    return is_point_on_cell( p, target, current->right());
+    return is_point_in_node( p, target, current->right());
   CGAL_assertion( side == ON_ORIENTED_BOUNDARY);
-  return (is_point_on_cell( p, target, current->left()) ||
-          is_point_on_cell( p, target, current->right()));
+  return (is_point_in_node( p, target, current->left()) ||
+          is_point_in_node( p, target, current->right()));
+}
+
+Segment_3 ray_to_segment(const Ray_3& r) const
+{
+  CGAL_NEF_TRACEN("Objects_along_ray: input ray: "<<r);
+  Vector_3 vec(r.to_vector());
+  /* First of all, we need to find out wheather we are working over an extended
+   * kernel or on a standard kernel. As precondition we have that ray is oriented
+   * in the minus x axis direction.  When having an extended kernel, the ray can
+   * be subtituted by a segment with the endpoint on the 'intersection' between
+   * the ray and the bounding infimaximal box.  In the presence of a standard
+   * kernel, the intersection is computed with the bounding box with the vertices
+   * of the Nef polyhedron.*/
+  Point_3 p(r.source()), q;
+  Bounding_box_3 b = bounding_box;
+  typename Kernel::Non_zero_coordinate_index_3 non_zero_coordinate_index_3;
+  int c = non_zero_coordinate_index_3(vec);
+
+  Point_3 pt_on_minus_x_plane = vec[c] < 0 ?
+    Point_3(FT(b.min_coord(0)), FT(b.min_coord(1)),FT(b.min_coord(2))) :
+    Point_3(FT(b.max_coord(0)), FT(b.max_coord(1)),FT(b.max_coord(2)));
+  /* We compute the intersection between a plane with normal vector in the minus x
+   * direction and located at the minimum point of the bounding box, and the input
+   * ray.  When the ray does not intersect the bounding volume, there won't be any
+   * object hit, so it is safe to construct a segment that simply lay in the
+   * unbounded side of the bounding box.  This approach is taken instead of somehow
+   * (efficiently) report that there was no hit object, in order to mantain a clear
+   * interface with the Iterator class.*/
+  Plane_3 pl_on_minus_x = K3_tree::construct_splitting_plane(pt_on_minus_x_plane, c, typename Traits::Kernel::Kernel_tag());
+  Object o = traits.intersect_object()( pl_on_minus_x, r);
+  if( !CGAL::assign( q, o) || pl_on_minus_x.has_on(p))
+    q = r.source() + vec;
+  else
+    q = normalized(q);
+  return Segment_3( p, q);
 }
 
 };

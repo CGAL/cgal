@@ -180,6 +180,49 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
       snc0(s0), snc1(s1), bop(_bop), result(r),
       inverse_order(invert_order), A(Ain) {}
 
+      void operator()(Halfedge_handle e0, Halffacet_handle f, const Point_3& ip)
+      const {
+        Point_3 p(normalized(ip));
+#ifdef CGAL_NEF3_OVERLAY_BY_HAND_OFF
+        Binary_operation D(result);
+        Vertex_handle v0, v1;
+        v0 = D.create_local_view_on( p, e0);
+        v1 = D.create_local_view_on( p, f);
+        if( inverse_order)
+          std::swap( v0, v1);
+        D.binop_local_views( v0, v1, bop, result,A);
+        result.delete_vertex(v0);
+        result.delete_vertex(v1);
+#else // CGAL_NEF3_OVERLAY_BY_HAND_OFF
+        SNC_constructor C(result);
+        Sphere_map* M0 = C.create_edge_facet_overlay(e0, f, p, bop, inverse_order, A);
+        SM_overlayer O(M0);
+        O.simplify(A);
+#endif // CGAL_NEF3_OVERLAY_BY_HAND_OFF
+      }
+
+      void operator()(Halfedge_handle e0, Halfedge_handle e, const Point_3& ip)
+      const {
+          //        std::cerr << "inverse order " << inverse_order << std::endl;
+          Point_3 p(normalized(ip));
+  #ifdef CGAL_NEF_EXPERIMENTAL_CODE
+          typename CGAL::Edge_edge_overlay<SNC_structure> eeo(result, e0, e);
+          Sphere_map* M0 = eeo.create_edge_edge_overlay(p, bop, inverse_order, A);
+          SM_overlayer O(M0);
+          O.simplify(A);
+  #else
+          Binary_operation D(result);
+          Vertex_handle v0, v1;
+          v0 = D.create_local_view_on( p, e0);
+          v1 = D.create_local_view_on( p, e);
+          if( inverse_order)
+            std::swap( v0, v1);
+          D.binop_local_views( v0, v1, bop, result,A);
+          result.delete_vertex(v0);
+          result.delete_vertex(v1);
+#endif
+      }
+
       void operator()(Halfedge_handle e0, Object_handle o1, const Point_3& ip)
       const {
 
@@ -190,7 +233,6 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
       Halfedge_handle e;
       Halffacet_handle f;
 
-      Point_3 p(normalized(ip));
 #ifdef CGAL_USE_TRACE
       CGAL_NEF_TRACEN("Intersection_call_back: intersection reported on " << p << " (normalized: " << normalized(p) << " )");
       CGAL_NEF_TRACEN("edge 0 has source " << e0->source()->point() << " and direction " << e0->vector());
@@ -209,42 +251,10 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
 #endif
 
       if( CGAL::assign( e, o1)) {
-        //        std::cerr << "inverse order " << inverse_order << std::endl;
-
-#ifdef CGAL_NEF_EXPERIMENTAL_CODE
-        typename CGAL::Edge_edge_overlay<SNC_structure> eeo(result, e0, e);
-        Sphere_map* M0 = eeo.create_edge_edge_overlay(p, bop, inverse_order, A);
-        SM_overlayer O(M0);
-        O.simplify(A);
-#else
-        Binary_operation D(result);
-        Vertex_handle v0, v1;
-        v0 = D.create_local_view_on( p, e0);
-        v1 = D.create_local_view_on( p, e);
-        if( inverse_order)
-          std::swap( v0, v1);
-        D.binop_local_views( v0, v1, bop, result,A);
-        result.delete_vertex(v0);
-        result.delete_vertex(v1);
-#endif
+        (*this)(e0,e,ip);
       }
       else if( CGAL::assign( f, o1)) {
-#ifdef CGAL_NEF3_OVERLAY_BY_HAND_OFF
-        Binary_operation D(result);
-        Vertex_handle v0, v1;
-        v0 = D.create_local_view_on( p, e0);
-        v1 = D.create_local_view_on( p, f);
-        if( inverse_order)
-          std::swap( v0, v1);
-        D.binop_local_views( v0, v1, bop, result,A);
-        result.delete_vertex(v0);
-        result.delete_vertex(v1);
-#else // CGAL_NEF3_OVERLAY_BY_HAND_OFF
-        SNC_constructor C(result);
-        Sphere_map* M0 = C.create_edge_facet_overlay(e0, f, p, bop, inverse_order, A);
-        SM_overlayer O(M0);
-        O.simplify(A);
-#endif // CGAL_NEF3_OVERLAY_BY_HAND_OFF
+        (*this)(e0,f,ip);
       }
       else
         CGAL_error_msg( "wrong handle");
