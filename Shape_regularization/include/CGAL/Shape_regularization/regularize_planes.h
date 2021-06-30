@@ -14,17 +14,32 @@
 #ifndef CGAL_SHAPE_REGULARIZATION_REGULARIZE_PLANES_H
 #define CGAL_SHAPE_REGULARIZATION_REGULARIZE_PLANES_H
 
+/// \cond SKIP_IN_MANUAL
 #include <CGAL/license/Shape_regularization.h>
+/// \endcond
+
+/**
+* \ingroup PkgShapeRegularizationRef
+* \file CGAL/Shape_regularization/regularize_planes.h
+* This header includes all classes for regularizing planes.
+* It also includes the corresponding free functions.
+*/
 
 // Boost includes.
+/// \cond SKIP_IN_MANUAL
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
+/// \endcond
 
 // Shape detection includes.
+/// \cond SKIP_IN_MANUAL
 #include <CGAL/Shape_detection/Efficient_RANSAC.h>
+/// \endcond
 
 // Internal includes.
+/// \cond SKIP_IN_MANUAL
 #include <CGAL/Shape_regularization/internal/utils.h>
+/// \endcond
 
 namespace CGAL {
 namespace Shape_regularization {

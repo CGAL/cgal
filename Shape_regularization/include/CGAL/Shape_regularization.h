@@ -14,7 +14,15 @@
 #ifndef CGAL_SHAPE_REGULARIZATION_HEADERS_H
 #define CGAL_SHAPE_REGULARIZATION_HEADERS_H
 
+/// \cond SKIP_IN_MANUAL
 #include <CGAL/license/Shape_regularization.h>
+/// \endcond
+
+/**
+* \ingroup PkgShapeRegularizationRef
+* \file CGAL/Shape_regularization.h
+* A convenience header that includes all free functions and classes for shape regularization.
+*/
 
 #include <CGAL/Shape_regularization/regularize_planes.h>
 #include <CGAL/Shape_regularization/regularize_segments.h>

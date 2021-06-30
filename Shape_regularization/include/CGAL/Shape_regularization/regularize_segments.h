@@ -14,21 +14,36 @@
 #ifndef CGAL_SHAPE_REGULARIZATION_REGULARIZE_SEGMENTS_H
 #define CGAL_SHAPE_REGULARIZATION_REGULARIZE_SEGMENTS_H
 
+/// \cond SKIP_IN_MANUAL
 #include <CGAL/license/Shape_regularization.h>
+/// \endcond
+
+/**
+* \ingroup PkgShapeRegularizationRef
+* \file CGAL/Shape_regularization/regularize_segments.h
+* This header includes all classes for regularizing segments.
+* It also includes the corresponding free functions.
+*/
 
 // Boost includes.
+/// \cond SKIP_IN_MANUAL
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
+/// \endcond
 
 // Internal includes.
+/// \cond SKIP_IN_MANUAL
 #include <CGAL/Shape_regularization/internal/utils.h>
 #include <CGAL/Shape_regularization/internal/Parallel_groups_2.h>
 #include <CGAL/Shape_regularization/internal/Orthogonal_groups_2.h>
 #include <CGAL/Shape_regularization/internal/Collinear_groups_2.h>
+/// \endcond
 
+/// \cond SKIP_IN_MANUAL
 #if defined(CGAL_USE_OSQP)
 #include <CGAL/OSQP_quadratic_program_traits.h>
 #endif // CGAL_USE_OSQP
+/// \endcond
 
 #include <CGAL/Shape_regularization/QP_regularization.h>
 #include <CGAL/Shape_regularization/Segments/Angle_regularization_2.h>

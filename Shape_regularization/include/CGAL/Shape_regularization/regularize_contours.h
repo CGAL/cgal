@@ -14,15 +14,28 @@
 #ifndef CGAL_SHAPE_REGULARIZATION_REGULARIZE_CONTOURS_H
 #define CGAL_SHAPE_REGULARIZATION_REGULARIZE_CONTOURS_H
 
+/// \cond SKIP_IN_MANUAL
 #include <CGAL/license/Shape_regularization.h>
+/// \endcond
+
+/**
+* \ingroup PkgShapeRegularizationRef
+* \file CGAL/Shape_regularization/regularize_contours.h
+* This header includes all classes for regularizing contours.
+* It also includes the corresponding free functions.
+*/
 
 // Boost includes.
+/// \cond SKIP_IN_MANUAL
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
+/// \endcond
 
 // Internal includes.
+/// \cond SKIP_IN_MANUAL
 #include <CGAL/Shape_regularization/internal/utils.h>
 #include <CGAL/Shape_regularization/internal/Contour_regularization_2.h>
+/// \endcond
 
 #include <CGAL/Shape_regularization/Contours/Longest_direction_2.h>
 #include <CGAL/Shape_regularization/Contours/Multiple_directions_2.h>
