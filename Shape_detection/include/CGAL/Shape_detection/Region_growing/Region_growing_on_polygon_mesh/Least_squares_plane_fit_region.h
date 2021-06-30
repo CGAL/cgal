@@ -120,24 +120,24 @@ namespace Polygon_mesh {
       among the ones listed below
 
       \cgalNamedParamsBegin
-        \cgalParamNBegin{max_distance}
+        \cgalParamNBegin{maximum_distance}
           \cgalParamDescription{the maximum distance from the furthest vertex of a face to a plane}
           \cgalParamType{`GeomTraits::FT`}
           \cgalParamDefault{1}
         \cgalParamNEnd
-        \cgalParamNBegin{max_angle}
+        \cgalParamNBegin{maximum_angle}
           \cgalParamDescription{the maximum angle in degrees between
           the normal of a face and the normal of a plane}
           \cgalParamType{`GeomTraits::FT`}
           \cgalParamDefault{25 degrees}
         \cgalParamNEnd
-        \cgalParamNBegin{cos_value}
-          \cgalParamDescription{the cos value computed as `cos(max_angle * PI / 180)`,
-          this parameter can be used instead of the `max_angle`}
+        \cgalParamNBegin{cosine_value}
+          \cgalParamDescription{the cos value computed as `cos(maximum_angle * PI / 180)`,
+          this parameter can be used instead of the `maximum_angle`}
           \cgalParamType{`GeomTraits::FT`}
           \cgalParamDefault{`cos(25 * PI / 180)`}
         \cgalParamNEnd
-        \cgalParamNBegin{min_region_size}
+        \cgalParamNBegin{minimum_region_size}
           \cgalParamDescription{the minimum number of faces a region must have}
           \cgalParamType{`std::size_t`}
           \cgalParamDefault{1}
@@ -154,10 +154,10 @@ namespace Polygon_mesh {
       \cgalNamedParamsEnd
 
       \pre `faces(pmesh).size() > 0`
-      \pre `max_distance >= 0`
-      \pre `max_angle >= 0 && max_angle <= 90`
-      \pre `cos_value >= 0 && cos_value <= 1`
-      \pre `min_region_size > 0`
+      \pre `maximum_distance >= 0`
+      \pre `maximum_angle >= 0 && maximum_angle <= 90`
+      \pre `cosine_value >= 0 && cosine_value <= 1`
+      \pre `minimum_region_size > 0`
     */
     template<typename NamedParameters>
     Least_squares_plane_fit_region(
@@ -176,22 +176,22 @@ namespace Polygon_mesh {
 
       CGAL_precondition(m_face_range.size() > 0);
       const FT max_distance = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::max_distance), FT(1));
+        parameters::get_parameter(np, internal_np::maximum_distance), FT(1));
       CGAL_precondition(max_distance >= FT(0));
       m_distance_threshold = max_distance;
 
       const FT max_angle = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::max_angle), FT(25));
+        parameters::get_parameter(np, internal_np::maximum_angle), FT(25));
       CGAL_precondition(max_angle >= FT(0) && max_angle <= FT(90));
 
       m_min_region_size = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::min_region_size), 1);
+        parameters::get_parameter(np, internal_np::minimum_region_size), 1);
       CGAL_precondition(m_min_region_size > 0);
 
       const FT default_cos_value = static_cast<FT>(std::cos(CGAL::to_double(
         (max_angle * static_cast<FT>(CGAL_PI)) / FT(180))));
       const FT cos_value = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::cos_value), default_cos_value);
+        parameters::get_parameter(np, internal_np::cosine_value), default_cos_value);
       CGAL_precondition(cos_value >= FT(0) && cos_value <= FT(1));
       m_cos_value_threshold = cos_value;
     }
@@ -236,9 +236,9 @@ namespace Polygon_mesh {
       const GeomTraits traits = GeomTraits()) :
     Least_squares_plane_fit_region(
       pmesh, CGAL::parameters::
-    max_distance(distance_threshold).
-    max_angle(angle_threshold).
-    min_region_size(min_region_size).
+    maximum_distance(distance_threshold).
+    maximum_angle(angle_threshold).
+    minimum_region_size(min_region_size).
     vertex_point_map(vertex_to_point_map).
     geom_traits(traits))
     { }
@@ -252,8 +252,8 @@ namespace Polygon_mesh {
       \brief implements `RegionType::is_part_of_region()`.
 
       This function controls if a face with the index `query_index` is within
-      the `max_distance` from the corresponding plane and if the angle between
-      its normal and the plane's normal is within the `max_angle`. If both conditions
+      the `maximum_distance` from the corresponding plane and if the angle between
+      its normal and the plane's normal is within the `maximum_angle`. If both conditions
       are satisfied, it returns `true`, otherwise `false`.
 
       \param query_index
@@ -295,7 +295,7 @@ namespace Polygon_mesh {
     /*!
       \brief implements `RegionType::is_valid_region()`.
 
-      This function controls if the `region` contains at least `min_region_size` faces.
+      This function controls if the `region` contains at least `minimum_region_size` faces.
 
       \param region
       indices of faces included in the region

@@ -57,9 +57,9 @@ bool test_region_growing_on_degenerated_mesh(int argc, char *argv[]) {
   Region_type region_type(
     surface_mesh,
     CGAL::parameters::
-    max_distance(distance_threshold).
-    max_angle(angle_threshold).
-    min_region_size(min_region_size).
+    maximum_distance(distance_threshold).
+    maximum_angle(angle_threshold).
+    minimum_region_size(min_region_size).
     vertex_point_map(vertex_to_point_map));
 
   // Run region growing.

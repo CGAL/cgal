@@ -91,9 +91,9 @@ void benchmark_region_growing_on_point_set_3(
   Region_type region_type(
     input_range,
     CGAL::parameters::
-    max_distance(distance_threshold).
-    max_angle(angle_threshold).
-    min_region_size(min_region_size));
+    maximum_distance(distance_threshold).
+    maximum_angle(angle_threshold).
+    minimum_region_size(min_region_size));
 
   // Create an instance of the region growing class.
   Region_growing region_growing(

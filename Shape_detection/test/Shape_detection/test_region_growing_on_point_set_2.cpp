@@ -62,9 +62,9 @@ bool test_region_growing_on_point_set_2(int argc, char *argv[]) {
   Region_type region_type(
     input_range,
     CGAL::parameters::
-    max_distance(distance_threshold).
-    max_angle(angle_threshold).
-    min_region_size(min_region_size));
+    maximum_distance(distance_threshold).
+    maximum_angle(angle_threshold).
+    minimum_region_size(min_region_size));
 
   // Run region growing.
   Region_growing region_growing(

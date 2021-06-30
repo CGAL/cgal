@@ -62,9 +62,9 @@ int main(int argc, char *argv[]) {
   Region_type region_type(
     input_range,
     CGAL::parameters::
-    max_distance(distance_threshold).
-    max_angle(angle_threshold).
-    min_region_size(min_region_size));
+    maximum_distance(distance_threshold).
+    maximum_angle(angle_threshold).
+    minimum_region_size(min_region_size));
 
   // Sort indices.
   Sorting sorting(
@@ -86,9 +86,9 @@ int main(int argc, char *argv[]) {
     SD::internal::region_growing_lines(
       input_range, std::back_inserter(regions),
       CGAL::parameters::
-      max_distance(distance_threshold).
-      max_angle(angle_threshold).
-      min_region_size(min_region_size));
+      maximum_distance(distance_threshold).
+      maximum_angle(angle_threshold).
+      minimum_region_size(min_region_size));
     assert(regions.size() == 62);
   }
 

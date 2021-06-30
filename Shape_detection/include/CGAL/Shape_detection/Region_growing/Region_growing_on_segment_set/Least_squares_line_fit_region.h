@@ -101,24 +101,24 @@ namespace Segment_set {
       among the ones listed below
 
       \cgalNamedParamsBegin
-        \cgalParamNBegin{max_distance}
+        \cgalParamNBegin{maximum_distance}
           \cgalParamDescription{the maximum distance from the furthest vertex of a segment to a line}
           \cgalParamType{`GeomTraits::FT`}
           \cgalParamDefault{1}
         \cgalParamNEnd
-        \cgalParamNBegin{max_angle}
+        \cgalParamNBegin{maximum_angle}
           \cgalParamDescription{the maximum angle in degrees between
           the direction of a segment and the direction of a line}
           \cgalParamType{`GeomTraits::FT`}
           \cgalParamDefault{25 degrees}
         \cgalParamNEnd
-        \cgalParamNBegin{cos_value}
-          \cgalParamDescription{the cos value computed as `cos(max_angle * PI / 180)`,
-          this parameter can be used instead of the `max_angle`}
+        \cgalParamNBegin{cosine_value}
+          \cgalParamDescription{the cos value computed as `cos(maximum_angle * PI / 180)`,
+          this parameter can be used instead of the `maximum_angle`}
           \cgalParamType{`GeomTraits::FT`}
           \cgalParamDefault{`cos(25 * PI / 180)`}
         \cgalParamNEnd
-        \cgalParamNBegin{min_region_size}
+        \cgalParamNBegin{minimum_region_size}
           \cgalParamDescription{the minimum number of segments a region must have}
           \cgalParamType{`std::size_t`}
           \cgalParamDefault{1}
@@ -135,10 +135,10 @@ namespace Segment_set {
       \cgalNamedParamsEnd
 
       \pre `input_range.size() > 0`
-      \pre `max_distance >= 0`
-      \pre `max_angle >= 0 && max_angle <= 90`
-      \pre `cos_value >= 0 && cos_value <= 1`
-      \pre `min_region_size > 0`
+      \pre `maximum_distance >= 0`
+      \pre `maximum_angle >= 0 && maximum_angle <= 90`
+      \pre `cosine_value >= 0 && cosine_value <= 1`
+      \pre `minimum_region_size > 0`
     */
     template<typename NamedParameters>
     Least_squares_line_fit_region(
@@ -156,22 +156,22 @@ namespace Segment_set {
 
       CGAL_precondition(input_range.size() > 0);
       const FT max_distance = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::max_distance), FT(1));
+        parameters::get_parameter(np, internal_np::maximum_distance), FT(1));
       CGAL_precondition(max_distance >= FT(0));
       m_distance_threshold = max_distance;
 
       const FT max_angle = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::max_angle), FT(25));
+        parameters::get_parameter(np, internal_np::maximum_angle), FT(25));
       CGAL_precondition(max_angle >= FT(0) && max_angle <= FT(90));
 
       m_min_region_size = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::min_region_size), 1);
+        parameters::get_parameter(np, internal_np::minimum_region_size), 1);
       CGAL_precondition(m_min_region_size > 0);
 
       const FT default_cos_value = static_cast<FT>(std::cos(CGAL::to_double(
         (max_angle * static_cast<FT>(CGAL_PI)) / FT(180))));
       const FT cos_value = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::cos_value), default_cos_value);
+        parameters::get_parameter(np, internal_np::cosine_value), default_cos_value);
       CGAL_precondition(cos_value >= FT(0) && cos_value <= FT(1));
       m_cos_value_threshold = cos_value;
     }
@@ -185,8 +185,8 @@ namespace Segment_set {
       \brief implements `RegionType::is_part_of_region()`.
 
       This function controls if a segment with the index `query_index` is within
-      the `max_distance` from the corresponding line and if the angle between the
-      direction of this segment and the line's direction is within the `max_angle`.
+      the `maximum_distance` from the corresponding line and if the angle between the
+      direction of this segment and the line's direction is within the `maximum_angle`.
       If both conditions are satisfied, it returns `true`, otherwise `false`.
 
       \param query_index
@@ -232,7 +232,7 @@ namespace Segment_set {
     /*!
       \brief implements `RegionType::is_valid_region()`.
 
-      This function controls if the `region` contains at least `min_region_size` segments.
+      This function controls if the `region` contains at least `minimum_region_size` segments.
 
       \param region
       indices of segments included in the region

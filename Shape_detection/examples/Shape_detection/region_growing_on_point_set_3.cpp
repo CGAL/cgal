@@ -54,9 +54,9 @@ int main(int argc, char *argv[]) {
   Region_type region_type(
     input_range,
     CGAL::parameters::
-    max_distance(max_distance).
-    max_angle(max_angle).
-    min_region_size(min_region_size).
+    maximum_distance(max_distance).
+    maximum_angle(max_angle).
+    minimum_region_size(min_region_size).
     point_map(input_range.point_map()).
     normal_map(input_range.normal_map()));
 
