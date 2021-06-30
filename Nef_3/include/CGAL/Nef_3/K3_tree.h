@@ -18,7 +18,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Unique_hash_map.h>
+#include <CGAL/Nef_S2/Generic_handle_map.h>
 #include <CGAL/Nef_3/quotient_coordinates_to_homogeneous_point.h>
 #include <CGAL/Lazy_kernel.h>
 #include <CGAL/Cartesian.h>
@@ -335,10 +335,8 @@ else {
 
 void divide_segment_by_plane( Segment_3 s, Plane_3 pl,
                               Segment_3& s1, Segment_3& s2) {
-  Object o = traits.intersect_object()( pl, s);
-  Point_3 ip;
-  CGAL_assertion( CGAL::assign( ip, o));
-  CGAL::assign( ip, o);
+  auto o = traits.intersect_object()( pl, s);
+  Point_3& ip = boost::get<Point_3>(*o);
   ip = normalized(ip);
   s1 = Segment_3( s.source(), ip);
   s2 = Segment_3( ip, s.target());
@@ -451,9 +449,8 @@ public:
     Object_list O;
 
     Objects_around_segment objects( *this, s);
-    Unique_hash_map< Vertex_handle, bool> v_mark(false);
-    Unique_hash_map< Halfedge_handle, bool> e_mark(false);
-    Unique_hash_map< Halffacet_handle, bool> f_mark(false);
+    Generic_handle_map<bool> visited(false);
+
     for( typename Objects_around_segment::Iterator oar = objects.begin();
          oar != objects.end(); ++oar) {
       for( typename Object_list::const_iterator o = (*oar).begin();
@@ -462,21 +459,21 @@ public:
         Halfedge_handle e;
         Halffacet_handle f;
         if( CGAL::assign( v, *o)) {
-          if( !v_mark[v]) {
+          if( !visited[v]) {
             O.push_back(*o);
-            v_mark[v] = true;
+            visited[v] = true;
           }
         }
         else if( CGAL::assign( e, *o)) {
-          if( !e_mark [e]) {
+          if( !visited [e]) {
             O.push_back(*o);
-            e_mark[e] = true;
+            visited[e] = true;
           }
         }
         else if( CGAL::assign( f, *o)) {
-          if( !f_mark[f]) {
+          if( !visited[f]) {
             O.push_back(*o);
-            f_mark[f] = true;
+            visited[f] = true;
           }
         }
         else

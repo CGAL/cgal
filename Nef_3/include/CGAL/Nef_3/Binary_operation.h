@@ -499,7 +499,6 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
 #endif
 
     // choose between intersection algorithms
-#ifdef CGAL_NEF3_INTERSECTION_BY_KDTREE
     Halfedge_iterator e0, e1;
     /*
     CGAL_NEF_TRACEN("=> finding edge-edge intersections...");
@@ -530,13 +529,6 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
     }
     CGAL_NEF_TRACEN("\nnumber of vertices (so far...) = "
                     << this->sncp()->number_of_vertices());
-#else
-    CGAL_NEF_TRACEN("intersection by fast box intersection");
-        binop_intersection_test_segment_tree<SNC_decorator> binop_box_intersection;
-        binop_box_intersection(call_back0, call_back1,
-                               const_cast<SNC_structure&>(snc1),
-                               const_cast<SNC_structure&>(snc2));
-#endif
 
 #ifdef CGAL_NEF3_TIMER_INTERSECTION
     timer_intersection.stop();

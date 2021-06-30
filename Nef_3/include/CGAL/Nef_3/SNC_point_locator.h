@@ -18,6 +18,8 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
+#include <CGAL/Nef_3/Nef_box.h>
+#include <CGAL/Nef_3/SNC_iteration.h>
 #include <CGAL/Nef_3/SNC_k3_tree_traits.h>
 #include <CGAL/Nef_3/K3_tree.h>
 #include <CGAL/Unique_hash_map.h>
@@ -150,6 +152,7 @@ public:
 
   typedef typename CGAL::K3_tree<K3_tree_traits> K3_tree;
   typedef K3_tree SNC_candidate_provider;
+  typedef CGAL::Nef_box<SNC_decorator>                    Nef_box;
 
   typedef typename SNC_structure::Object_handle Object_handle;
   typedef typename SNC_structure::Point_3 Point_3;
@@ -537,7 +540,8 @@ public:
                                                          e0->twin()->source()->point()));
 
 
-    Segment_3 s(Segment_3(e0->source()->point(),e0->twin()->source()->point()));
+    Segment_3 s(e0->source()->point(),e0->twin()->source()->point());
+    Nef_box sb(e0);
     Vertex_handle v;
     Halfedge_handle e;
     Halffacet_handle f;
@@ -552,9 +556,9 @@ public:
 #ifdef CGAL_NEF3_DUMP_STATISTICS
       ++number_of_intersection_candidates;
 #endif
-
+        Nef_box eb(e);
         Point_3 q;
-        if( is.does_intersect_internally( s, Segment_3(e->source()->point(),
+        if(does_intersect(sb, eb) && is.does_intersect_internally( s, Segment_3(e->source()->point(),
                                                        e->twin()->source()->point()), q)) {
           q = normalized(q);
           call_back( e0, make_object(Halfedge_handle(e)), q);
@@ -566,9 +570,9 @@ public:
 #ifdef CGAL_NEF3_DUMP_STATISTICS
       ++number_of_intersection_candidates;
 #endif
-
+        Nef_box fb(f);
         Point_3 q;
-        if( is.does_intersect_internally( s, f, q) ) {
+        if(does_intersect(sb, fb) && is.does_intersect_internally( s, f, q) ) {
           q = normalized(q);
           call_back( e0, make_object(Halffacet_handle(f)), q);
           _CGAL_NEF_TRACEN("edge intersects facet on plane "<<f->plane()<<" on "<<q);
@@ -586,7 +590,8 @@ public:
     CGAL_assertion( initialized);
     _CGAL_NEF_TRACEN( "intersecting edge: "<<&*e0<<' '<<Segment_3(e0->source()->point(),
                                                          e0->twin()->source()->point()));
-    Segment_3 s(Segment_3(e0->source()->point(),e0->twin()->source()->point()));
+    Segment_3 s(e0->source()->point(),e0->twin()->source()->point());
+    Nef_box sb(e0);
     Vertex_handle v;
     Halfedge_handle e;
     Halffacet_handle f;
@@ -601,9 +606,9 @@ public:
 #ifdef CGAL_NEF3_DUMP_STATISTICS
       ++number_of_intersection_candidates;
 #endif
-
+        Nef_box eb(e);
         Point_3 q;
-        if( is.does_intersect_internally( s, Segment_3(e->source()->point(),
+        if(does_intersect(sb, eb) && is.does_intersect_internally( s, Segment_3(e->source()->point(),
                                                        e->twin()->source()->point()), q)) {
           q = normalized(q);
           call_back( e0, make_object(Halfedge_handle(e)), q);
@@ -626,7 +631,8 @@ public:
     CGAL_assertion( initialized);
     _CGAL_NEF_TRACEN( "intersecting edge: "<< Segment_3(e0->source()->point(),
                                                e0->twin()->source()->point()));
-    Segment_3 s(Segment_3(e0->source()->point(),e0->twin()->source()->point()));
+    Segment_3 s(e0->source()->point(),e0->twin()->source()->point());
+    Nef_box sb(e0);
     Vertex_handle v;
     Halfedge_handle e;
     Halffacet_handle f;
@@ -644,9 +650,9 @@ public:
 #ifdef CGAL_NEF3_DUMP_STATISTICS
       ++number_of_intersection_candidates;
 #endif
-
+        Nef_box fb(f);
         Point_3 q;
-        if( is.does_intersect_internally( s, f, q) ) {
+        if(does_intersect(sb, fb) && is.does_intersect_internally( s, f, q) ) {
           q = normalized(q);
           call_back( e0, make_object(Halffacet_handle(f)), q);
           _CGAL_NEF_TRACEN("edge intersects facet on plane "<<f->plane()<<" on "<<q);
@@ -656,6 +662,17 @@ public:
         CGAL_error_msg( "wrong handle");
     }
     CGAL_NEF_TIMER(it_t.stop());
+  }
+
+  static bool does_intersect(const Nef_box& bb1, const Nef_box& bb2)
+  {
+      if(bb1.max_coord(0) < bb2.min_coord(0) || bb2.max_coord(0) < bb1.min_coord(0))
+          return false;
+      if(bb1.max_coord(1) < bb2.min_coord(1) || bb2.max_coord(1) < bb1.min_coord(1))
+          return false;
+      if(bb1.max_coord(2) < bb2.min_coord(2) || bb2.max_coord(2) < bb1.min_coord(2))
+          return false;
+      return true;
   }
 
 private:
