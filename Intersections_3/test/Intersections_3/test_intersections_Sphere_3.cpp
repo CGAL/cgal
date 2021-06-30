@@ -129,24 +129,32 @@ public:
     check_do_not_intersect(Sph(p(0,0,0), 3), Tr(p(6,3,8), p(7,2,8), p(1,9,7)));
     check_do_not_intersect(Sph(p(0,0,0), 10000), Tr(p(6,3,8), p(7,2,8), p(1,9,7)));
 
+    check_do_intersect(Sph(p(1, 2, 3), 100), Tr(p(-15, -18, 3), p(-15, 13, 1), p(15, 0, 2)));
+    check_do_intersect(Sph(p(1, 2, 3), 100), Tr(p(-150, -180, 3), p(-150, 130, 1), p(150, 0, 2)));
+
     // Generic
     for(int i=0; i<N; ++i)
     {
-      P tr0 = random_point(), tr1 = random_point(), tr2 = random_point();
-      Tr tr(tr0, tr1, tr2);
+      const P tr0 = random_point(), tr1 = random_point(), tr2 = random_point();
+      const Tr tr(tr0, tr1, tr2);
       if(tr.is_degenerate())
         continue;
 
-      P c = random_point();
-      FT r = this->r.get_int(this->m + 1, this->M);
+      const P c = random_point();
+
+      if(this->has_exact_c)
+        check_do_intersect(Sph(c, CGAL::squared_distance(c, tr)), tr);
+
+      const FT r = this->r.get_int(this->m + 1, this->M);
       Sph sph(c, r);
+
+      if(c != tr1 && c != tr2)
+        check_do_intersect(sph, Tr(c, tr1, tr2));
 
       if(sph.oriented_side(tr0) != sph.oriented_side(tr1) ||
          sph.oriented_side(tr0) != sph.oriented_side(tr2) ||
          sph.oriented_side(tr2) != sph.oriented_side(tr1))
         check_do_intersect(sph, tr);
-      else
-        check_do_not_intersect(sph, tr);
     }
   }
 

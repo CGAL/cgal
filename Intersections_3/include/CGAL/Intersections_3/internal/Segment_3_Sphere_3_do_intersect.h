@@ -48,7 +48,7 @@ do_intersect(const typename K::Sphere_3& sp,
 
   CGAL_kernel_assertion(source_side == ON_UNBOUNDED_SIDE && target_side == ON_UNBOUNDED_SIDE);
 
-  // Both out can still be intersecting the sphere
+  // Both extremities are out, but the segment can still be intersecting the sphere
   RT num, den;
   CGAL::internal::squared_distance_RT(center(sp), seg, num, den, k);
 
