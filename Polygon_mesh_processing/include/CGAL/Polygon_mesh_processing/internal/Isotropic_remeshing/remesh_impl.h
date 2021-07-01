@@ -447,6 +447,10 @@ namespace internal {
           halfedge_descriptor hnew2 =
             CGAL::Euler::split_face(hnew, next(next(hnew, mesh_), mesh_), mesh_);
           put(ecmap_, edge(hnew2, mesh_), false);
+
+          double sqlen_new2 = sqlength(hnew2);
+          if (sqlen_new2 > sq_high)
+            long_edges.insert(long_edge(hnew2, sqlen_new2));
         }
 
         //do it again on the other side if we're not on boundary
@@ -456,6 +460,10 @@ namespace internal {
           halfedge_descriptor hnew2 =
             CGAL::Euler::split_face(prev(hnew_opp, mesh_), next(hnew_opp, mesh_), mesh_);
           put(ecmap_, edge(hnew2, mesh_), false);
+
+          double sqlen_new2 = sqlength(hnew2);
+          if (sqlen_new2 > sq_high)
+            long_edges.insert(long_edge(hnew2, sqlen_new2));
         }
       }
 #ifdef CGAL_PMP_REMESHING_VERBOSE
