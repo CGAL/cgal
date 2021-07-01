@@ -8,6 +8,10 @@ Release History
     user-specified conditions. In addition, it provides a global regularization framework that can be
     adjusted for the user needs and any type of geometric objects.
 
+###  [CGAL and Solvers](https://doc.cgal.org/5.4/Manual/packages.html#PkgSolverInterface)
+
+-   Added the [OSQP solver](https://osqp.org/) support. This solver enables to efficiently compute the convex Quadratic Programming (QP) problems arising in the context of several packages.
+
 
 [Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)
 -----------
