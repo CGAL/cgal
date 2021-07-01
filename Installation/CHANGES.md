@@ -1,17 +1,26 @@
 Release History
 ===============
 
-### Barycentric Coordinates 2 (breaking change)
+### [2D Generalized Barycentric Coordinates](https://doc.cgal.org/5.4/Manual/packages.html#PkgBarycentricCoordinates2) (breaking change, major changes)
 
-- The classes `Segment_coordinates_2` and `Triangle_coordinates_2` are removed, because the related functions `compute_segment_coordinates_2()` and `compute_triangle_coordinates_2()` are much more general and simpler to use.
-- The prefix compute_ is removed from the functions `compute_segment_coordinates_2()` and `compute_triangle_coordinates_2()`.
-- The classes `Wachspress_2`, `Discrete_harmonic_2`, and `Mean_value_2` are modified and the suffix `_coordinates` is added. The reason is that harmonic (and many other) coordinates cannot be computed analytically.
-- The class `Generalized_barycentric_coordinates_2` is removed and the three coordinate classes above can now be used on their own. In the previous version of the package, we had to instantiate the class `Generalized_barycentric_coordinates_2` with one of the above types, however since harmonic coordinates (and in fact many other coordinates) cannot be used with the class `Generalized_barycentric_coordinates_2`, it was removed. Another reason is that any model of the concept `BarycentricCoordinates_2` from the previous version is instantiated directly in the class `Generalized_barycentric_coordinates_2` and hence it does not allow users to add any parameters to the constructor, which is very important for many coordinate functions.
-- The class `Harmonic_coordinates_2` is added. These coordinates have to be first computed at the vertices of a triangulated domain restricted to the polygon, and only then they can be evaluated per point using the `operator()`. The harmonic coordinates class is parameterized by the discretized domain, which should conform to the concept `DiscretizedDomain_2`.
-- The class `Delaunay_domain_2` is added. It depends on the package `Mesh_2` and is not explicetly included in any other header.
-- All functions and classes are now using ranges and property maps.
-- The concept `BarycentricCoordinates_2` is removed.
-- The old API is preserved but deprecated.
+-   The headers `Segment_coordinates_2.h` and `Triangle_coordinates_2.h` are renamed to
+    `segment_coordinates_2.h` and `triangle_coordinates_2.h` (breaking change).
+-   The classes `Segment_coordinates_2` and `Triangle_coordinates_2` are deprecated. The free functions
+    `compute_segment_coordinates_2()` and `compute_triangle_coordinates_2()` are deprecated as well.
+    Instead, the free functions `segment_coordinates_2()` and `triangle_coordinates_2()` must be used.
+-   The enums `Query_point_location` and `Type_of_algorithm` are deprecated. Instead, the enum
+    `Computation_policy_2` must be used.
+-   The clases `Wachspress_2`, `Discrete_harmonic_2`, `Mean_value_2`, and
+    `Generalized_barycentric_coordinates_2` are deprecated. As consequence, the concept `BarycentricCoordinates_2` is deprecated as well. Instead, the classes `Wachspress_coordinates_2`,
+    `Discrete_harmonic_coordinates_2`, and `Mean_value_coordinates_2` must be used.
+-   Added the class `Harmonic_coordinates_2` for computing approximate harmonic coordinates in 2D.
+    These coordinates satisfy all properties of barycentric coordinates inside any simple polygon.
+-   Added a new concept `DiscretizedDomain_2` and a model of this concept called `Delaunay_domain_2`
+    which is based on the [Mesh 2](https://doc.cgal.org/5.4/Manual/packages.html#PkgMesh2) package.
+    A model of this concept is required for computing `Harmonic_coordinates_2`.
+-   Added free functions for computing Wachspress, discrete harmonic, and mean value coordinates.
+-   All free functions and classes are now using ranges and property maps.
+
 
 [Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)
 -----------
