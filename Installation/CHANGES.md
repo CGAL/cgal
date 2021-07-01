@@ -1,7 +1,7 @@
 Release History
 ===============
 
-### [Shape Detection](https://doc.cgal.org/5.4/Manual/packages.html#PkgShapeDetection) (small feature)
+### [Shape Detection](https://doc.cgal.org/5.4/Manual/packages.html#PkgShapeDetection)
 
 -   Added new shapes to the Region Growing algorithm on a point set: circles in 2D, spheres in 3D,
     and cylinders in 3D.
