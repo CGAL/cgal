@@ -36,6 +36,10 @@ void test_overloads() {
   // Test cube
   //Check for barycenter
   mv_tetrahedron(Point_3(FT(1)/FT(4), FT(1)/FT(4), FT(1)/FT(4)), mv_coordinates_tetrahedron.begin());
+
+  for(auto u: mv_coordinates_tetrahedron)
+    std::cout << u << "\n";
+
   tests::test_barycenter<Kernel>(mv_coordinates_tetrahedron);
 
   // Sample interior points

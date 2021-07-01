@@ -40,6 +40,7 @@ namespace Barycentric_coordinates {
     using Cross_3 = typename GeomTraits::Construct_cross_product_vector_3;
     using Dot_3 = typename GeomTraits::Compute_scalar_product_3;
     using Sqrt = typename internal::Get_sqrt<GeomTraits>::Sqrt;
+    using Approximate_angle_3 = typename GeomTraits::Compute_approximate_angle_3;
 
 	  typedef typename GeomTraits::FT FT;
     typedef typename GeomTraits::Point_3 Point_3;
@@ -58,6 +59,7 @@ namespace Barycentric_coordinates {
     m_construct_vector_3(m_traits.construct_vector_3_object()),
     m_cross_3(m_traits.construct_cross_product_vector_3_object()),
     m_dot_3(m_traits.compute_scalar_product_3_object()),
+    m_approximate_angle_3(m_traits.compute_approximate_angle_3_object()),
     sqrt(internal::Get_sqrt<GeomTraits>::sqrt_object(m_traits)){
 
       // Check if polyhedron is strongly convex
@@ -96,6 +98,7 @@ namespace Barycentric_coordinates {
     const Cross_3 m_cross_3;
     const Dot_3 m_dot_3;
     const Sqrt sqrt;
+    const Approximate_angle_3 m_approximate_angle_3;
 
   	std::vector<FT> m_weights;
 
@@ -188,21 +191,28 @@ namespace Barycentric_coordinates {
         }
 
         std::vector<Vector_3> m_vectors;
+        std::vector<FT> angles;
         for(std::size_t i = 0; i<3; i++){
 
           Vector_3 normal = m_cross_3(unit_vectors[i], unit_vectors[(i+1)%3]);
+          angles.push_back(m_approximate_angle_3(unit_vectors[i], unit_vectors[(i+1)%3]));
           normal = normal / sqrt(normal.squared_length());
           m_vectors.push_back(normal);
         }
 
-        //Missing area of circle
+        FT dot_e_m = m_dot_3(unit_vectors[vertex_idx], m_vectors[(vertex_idx+1)%3]);
 
+        for(std::size_t i = 0; i<3; i++){
+
+          weight += m_dot_3(m_vectors[i], m_vectors[(vertex_idx+1)%3]) * angles[i];
+        }
+        weight /= 2*dot_e_m;
 
         face_circulator++;
 
       }while(face_circulator!=face_done);
 
-      return weight;
+      return weight/sqrt(m_construct_vector_3(vertex_val, query).squared_length());
     }
 
     // Compute normal vector of the face (not normalized).
