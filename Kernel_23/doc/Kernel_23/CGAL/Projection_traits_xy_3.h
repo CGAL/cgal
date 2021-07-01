@@ -31,6 +31,7 @@ and predicates defined in `K`.
 \cgalModels `ConvexHullTraits_2`
 \cgalModels `DelaunayMeshTraits_2`
 \cgalModels `AnalyticWeightTraits_2`
+\cgalModels `BarycentricTraits_2`
 
 */
 template< typename K >
