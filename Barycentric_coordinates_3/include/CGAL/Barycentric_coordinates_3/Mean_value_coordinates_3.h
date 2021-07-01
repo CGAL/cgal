@@ -11,8 +11,8 @@
 // Author(s)     : Antonio Gomes, Dmitry Anisimov
 //
 
-#ifndef CGAL_BARYCENTRIC_DISCRETE_HARMONIC_COORDINATES_3_H
-#define CGAL_BARYCENTRIC_DISCRETE_HARMONIC_COORDINATES_3_H
+#ifndef CGAL_BARYCENTRIC_MEAN_VALUE_COORDINATES_3_H
+#define CGAL_BARYCENTRIC_MEAN_VALUE_COORDINATES_3_H
 
 // #include <CGAL/license/Barycentric_coordinates_3.h>
 
@@ -28,7 +28,7 @@ namespace Barycentric_coordinates {
   typename GeomTraits,
   typename VertexToPointMap = typename property_map_selector<PolygonMesh,
     CGAL::vertex_point_t>::const_type>
-  class Discrete_harmonic_coordinates_3 {
+  class Mean_value_coordinates_3 {
 
   public:
     using Polygon_mesh = PolygonMesh;
@@ -45,7 +45,7 @@ namespace Barycentric_coordinates {
     typedef typename GeomTraits::Point_3 Point_3;
     typedef typename GeomTraits::Vector_3 Vector_3;
 
-    Discrete_harmonic_coordinates_3(
+    Mean_value_coordinates_3(
       const PolygonMesh& polygon_mesh,
       const Computation_policy_3 policy,
       const VertexToPointMap vertex_to_point_map,
@@ -65,12 +65,12 @@ namespace Barycentric_coordinates {
       m_weights.resize(vertices(m_polygon_mesh).size());
     }
 
-    Discrete_harmonic_coordinates_3(
+    Mean_value_coordinates_3(
       const PolygonMesh& polygon_mesh,
       const Computation_policy_3 policy =
       Computation_policy_3::DEFAULT,
       const GeomTraits traits = GeomTraits()) :
-    Discrete_harmonic_coordinates_3(
+    Mean_value_coordinates_3(
       polygon_mesh,
       policy,
       get_const_property_map(CGAL::vertex_point, polygon_mesh),
@@ -132,7 +132,7 @@ namespace Barycentric_coordinates {
       for (const auto& vertex : vd) {
 
         // Call function to calculate wp coordinates
-        const FT weight = compute_dh_vertex_query(vertex, query);
+        const FT weight = compute_mv_vertex_query(vertex, query);
 
     	  CGAL_assertion(vi < m_weights.size());
     	  m_weights[vi] = weight;
@@ -146,7 +146,7 @@ namespace Barycentric_coordinates {
 
     // Compute wp coordinates for a given vertex v and a query q
     template<typename Vertex>
-    FT compute_dh_vertex_query(const Vertex& vertex, const Point_3& query){
+    FT compute_mv_vertex_query(const Vertex& vertex, const Point_3& query){
 
       // Map vertex descriptor to point_3
       const Point_3& vertex_val = get(m_vertex_to_point_map, vertex);
@@ -169,30 +169,35 @@ namespace Barycentric_coordinates {
         auto vertex_itr = vertices.begin();
         CGAL_precondition(vertices.size() == 3);
 
-        int vertex_parity = 1;
-        std::vector<Point_3> points;
+        std::vector<Vector_3> unit_vectors;
+        int vertex_idx = -1;
         for(std::size_t i = 0; i < 3; i++){
 
-          if(*vertex_itr!=vertex)
-            points.push_back(get(m_vertex_to_point_map, *vertex_itr));
-          else
-            vertex_parity *= (i & 1)? -1 : 1;
+          if(*vertex_itr == vertex)
+            vertex_idx = i;
+
+          Point_3 i_face_vertex = get(m_vertex_to_point_map, *vertex_itr);
+          Vector_3 i_query_vertex = m_construct_vector_3(query, i_face_vertex);
+
+          assert(i_query_vertex.squared_length() != 0);
+          i_query_vertex = i_query_vertex/sqrt(i_query_vertex.squared_length());
+
+          unit_vectors.push_back(i_query_vertex);
 
           vertex_itr++;
         }
 
-        const Point_3& point2 = points[0];
-        const Point_3& point1 = points[1];
+        std::vector<Vector_3> m_vectors;
+        for(std::size_t i = 0; i<3; i++){
 
-        Vector_3 opposite_edge = m_construct_vector_3(point2, point1);
-        FT edge_length = sqrt(opposite_edge.squared_length());
+          Vector_3 normal = m_cross_3(unit_vectors[i], unit_vectors[(i+1)%3]);
+          normal = normal / sqrt(normal.squared_length());
+          m_vectors.push_back(normal);
+        }
 
-        Vector_3 normal_query = vertex_parity * m_cross_3(m_construct_vector_3(query, point2),
-         m_construct_vector_3(query, point1));
+        //Missing area of circle
 
-        FT cot_dihedral = cot_dihedral_angle(get_face_normal(*face_circulator), normal_query);
 
-        weight += (cot_dihedral * edge_length) / 2;
         face_circulator++;
 
       }while(face_circulator!=face_done);
@@ -241,7 +246,7 @@ namespace Barycentric_coordinates {
   typename Point_3,
   typename OutIterator,
   typename GeomTraits>
-  OutIterator discrete_harmonic_coordinates_3(
+  OutIterator mean_value_coordinates_3(
     const CGAL::Surface_mesh<Point_3>& surface_mesh,
     const Point_3& query,
     OutIterator c_begin,
@@ -251,11 +256,11 @@ namespace Barycentric_coordinates {
     using Geom_Traits = typename Kernel_traits<Point_3>::Kernel;
     using SM = CGAL::Surface_mesh<Point_3>;
 
-    Discrete_harmonic_coordinates_3<SM, Geom_Traits> discrete_harmonic(surface_mesh, policy);
-    return discrete_harmonic(query, c_begin);
+    Mean_value_coordinates_3<SM, Geom_Traits> mean_value(surface_mesh, policy);
+    return mean_value(query, c_begin);
   }
 
 } // namespace Barycentric_coordinates
 } // namespace CGAL
 
-#endif // CGAL_BARYCENTRIC_DISCRETE_HARMONIC_COORDINATES_3_H
+#endif // CGAL_BARYCENTRIC_MEAN_VALUE_COORDINATES_3_H

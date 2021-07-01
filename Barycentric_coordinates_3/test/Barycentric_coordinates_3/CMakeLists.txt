@@ -16,6 +16,7 @@ if(CGAL_FOUND)
   create_single_source_cgal_program("test_wp_tetrahedron.cpp")
   create_single_source_cgal_program("test_wp_weights.cpp")
   create_single_source_cgal_program("test_dh_weights.cpp")
+  create_single_source_cgal_program("test_mv_weights.cpp")
 
 else()
   message(WARNING "This program requires the CGAL library, and will not be compiled.")
