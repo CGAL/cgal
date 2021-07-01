@@ -548,7 +548,7 @@ private:
       }
       ++iteration;
 
-      // if (iteration == 630) {
+      // if (iteration == 638) {
       //   exit(EXIT_FAILURE);
       // }
 
@@ -624,6 +624,15 @@ private:
     const PVertex& /* pother  */,
     const Event&   /* event   */) {
 
+    if (m_debug) {
+      std::cout << "WARNING: SKIPPING TWO UNCONSTRAINED PVERTICES MEET EVENT!" << std::endl;
+      std::cout << "WARNING: THIS EVENT IS DUST!" << std::endl;
+      m_queue.print();
+      CGAL_assertion_msg(
+        false, "TODO: CHECK, SEE CONSTR. PV. MEETS IEDGE FOR MORE DETAILS!");
+    }
+    return; // skip
+
     CGAL_assertion_msg(false,
     "ERROR: TWO UNCONSTRAINED PVERTICES MEET! DO WE HAVE A CONCAVE POLYGON?");
   }
@@ -633,6 +642,15 @@ private:
     const PVertex& /* pother  */,
     const Event&   /* event   */) {
 
+    if (m_debug) {
+      std::cout << "WARNING: SKIPPING TWO CONSTRAINED PVERTICES MEET EVENT!" << std::endl;
+      std::cout << "WARNING: THIS EVENT IS DUST!" << std::endl;
+      m_queue.print();
+      CGAL_assertion_msg(
+        false, "TODO: CHECK, SEE CONSTR. PV. MEETS IEDGE FOR MORE DETAILS!");
+    }
+    return; // skip
+
     CGAL_assertion_msg(false,
     "ERROR: TWO CONSTRAINED PVERTICES MEET! CAN IT HAPPEN?");
   }
@@ -641,6 +659,20 @@ private:
     const PVertex& /* pvertex */,
     const IEdge&   /* iedge   */,
     const Event&   /* event   */) {
+
+    if (m_debug) {
+      std::cout << "WARNING: SKIPPING CONSTRAINED PVERTEX MEETS IEDGE EVENT!" << std::endl;
+      std::cout << "WARNING: THIS EVENT IS DUST!" << std::endl;
+      // m_queue.print();
+    }
+
+    // In this case what happens is:
+    // We push multiple events between pvertex and iedges.
+    // Several of these events with the closest time are handled,
+    // however several can stay because they happen along iedges, which
+    // are not direct neighbors of the handled events and so they stay.
+    // Here, however, these events are useless and can be safely ignored.
+    return;
 
     CGAL_assertion_msg(false,
     "ERROR: CONSTRAINED PVERTEX MEETS IEDGE! WHAT IS WRONG?");
@@ -652,6 +684,16 @@ private:
 
     CGAL_assertion( m_data.has_iedge(pvertex));
     CGAL_assertion(!m_data.has_iedge(pother));
+
+    if (m_debug) {
+      std::cout << "WARNING: SKIPPING PVERTICES MEET IVERTEX EVENT!" << std::endl;
+      std::cout << "WARNING: THIS EVENT IS DUST!" << std::endl;
+      m_queue.print();
+      CGAL_assertion_msg(
+        false, "TODO: CHECK, SEE CONSTR. PV. MEETS IEDGE FOR MORE DETAILS!");
+    }
+    return; // skip
+
     CGAL_assertion_msg(false,
     "ERROR: PVERTICES MEET IVERTEX! IT SHOULD NOT EVER HAPPEN!");
   }
