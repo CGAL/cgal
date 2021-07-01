@@ -1,15 +1,22 @@
 Release History
 ===============
 
-### Shape Detection (breaking change)
+### [Shape Detection](https://doc.cgal.org/5.4/Manual/packages.html#PkgShapeDetection) (breaking change, major changes)
 
-- Added named parameters (that changed the APIs of many class constructors)
-- The update function from the `RegionType` concept returns a boolean flag that enables to detect if the input conditions for the new region are satisfied (breaking change)
-- Old fitting classes are now using better versions of the region conditions, more precise and faster, including the correct normal orientations
-- Added new classes for getting linear regions in a set of 2D and 3D segments
-- Added the `Polyline_graph` class for extracting a set of polylines from a face graph, which splits this graph into a set of user-defined regions
-- Added new classes for getting linear regions on 2D and 3D polylines
-- Old API is preserved but deprecated
+-   **Breaking change**: The method `update()` in the concept `RegionType` returns now
+    a `boolean` instead of  `void` that is used inside the class `Region_growing` for detecting if
+    the input conditions for the new region are satisfied. This change affects only user-defined
+    types of regions.
+-   The constructors of all models used together with the region growing algorithm now enable users
+    to provide parameters through the named parameters mechanism. The old constructors without named
+    parameters are deprecated.
+-   All fitting classes in the region growing framework are now using better versions of the region
+    conditions, more precise and faster, including the correct normal orientations.
+-   Added new models of the concept `RegionType` for getting linear regions in a set of 2D and 3D
+    segments and on 2D and 3D polylines.
+-   Added the `Polyline_graph` class for extracting a set of polylines from a face graph, which splits
+    this graph into a set of user-defined regions.
+
 
 [Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)
 -----------
