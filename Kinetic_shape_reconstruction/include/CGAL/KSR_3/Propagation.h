@@ -624,14 +624,14 @@ private:
     const PVertex& /* pother  */,
     const Event&   /* event   */) {
 
-    if (m_debug) {
-      std::cout << "WARNING: SKIPPING TWO UNCONSTRAINED PVERTICES MEET EVENT!" << std::endl;
-      std::cout << "WARNING: THIS EVENT IS DUST!" << std::endl;
-      m_queue.print();
-      CGAL_assertion_msg(
-        false, "TODO: CHECK, SEE CONSTR. PV. MEETS IEDGE FOR MORE DETAILS!");
-    }
-    return; // skip
+    // if (m_debug) {
+    //   std::cout << "WARNING: SKIPPING TWO UNCONSTRAINED PVERTICES MEET EVENT!" << std::endl;
+    //   std::cout << "WARNING: THIS EVENT IS DUST!" << std::endl;
+    //   m_queue.print();
+    //   CGAL_assertion_msg(
+    //     false, "TODO: CHECK, SEE CONSTR. PV. MEETS IEDGE FOR MORE DETAILS!");
+    // }
+    // return; // skip
 
     CGAL_assertion_msg(false,
     "ERROR: TWO UNCONSTRAINED PVERTICES MEET! DO WE HAVE A CONCAVE POLYGON?");
@@ -642,14 +642,14 @@ private:
     const PVertex& /* pother  */,
     const Event&   /* event   */) {
 
-    if (m_debug) {
-      std::cout << "WARNING: SKIPPING TWO CONSTRAINED PVERTICES MEET EVENT!" << std::endl;
-      std::cout << "WARNING: THIS EVENT IS DUST!" << std::endl;
-      m_queue.print();
-      CGAL_assertion_msg(
-        false, "TODO: CHECK, SEE CONSTR. PV. MEETS IEDGE FOR MORE DETAILS!");
-    }
-    return; // skip
+    // if (m_debug) {
+    //   std::cout << "WARNING: SKIPPING TWO CONSTRAINED PVERTICES MEET EVENT!" << std::endl;
+    //   std::cout << "WARNING: THIS EVENT IS DUST!" << std::endl;
+    //   m_queue.print();
+    //   CGAL_assertion_msg(
+    //     false, "TODO: CHECK, SEE CONSTR. PV. MEETS IEDGE FOR MORE DETAILS!");
+    // }
+    // return; // skip
 
     CGAL_assertion_msg(false,
     "ERROR: TWO CONSTRAINED PVERTICES MEET! CAN IT HAPPEN?");
@@ -660,11 +660,11 @@ private:
     const IEdge&   /* iedge   */,
     const Event&   /* event   */) {
 
-    if (m_debug) {
-      std::cout << "WARNING: SKIPPING CONSTRAINED PVERTEX MEETS IEDGE EVENT!" << std::endl;
-      std::cout << "WARNING: THIS EVENT IS DUST!" << std::endl;
-      // m_queue.print();
-    }
+    // if (m_debug) {
+    //   std::cout << "WARNING: SKIPPING CONSTRAINED PVERTEX MEETS IEDGE EVENT!" << std::endl;
+    //   std::cout << "WARNING: THIS EVENT IS DUST!" << std::endl;
+    //   // m_queue.print();
+    // }
 
     // In this case what happens is:
     // We push multiple events between pvertex and iedges.
@@ -672,7 +672,8 @@ private:
     // however several can stay because they happen along iedges, which
     // are not direct neighbors of the handled events and so they stay.
     // Here, however, these events are useless and can be safely ignored.
-    return;
+    // This is a solution that is off for now. I found a better one.
+    // return;
 
     CGAL_assertion_msg(false,
     "ERROR: CONSTRAINED PVERTEX MEETS IEDGE! WHAT IS WRONG?");
@@ -685,28 +686,38 @@ private:
     CGAL_assertion( m_data.has_iedge(pvertex));
     CGAL_assertion(!m_data.has_iedge(pother));
 
-    if (m_debug) {
-      std::cout << "WARNING: SKIPPING PVERTICES MEET IVERTEX EVENT!" << std::endl;
-      std::cout << "WARNING: THIS EVENT IS DUST!" << std::endl;
-      m_queue.print();
-      CGAL_assertion_msg(
-        false, "TODO: CHECK, SEE CONSTR. PV. MEETS IEDGE FOR MORE DETAILS!");
-    }
-    return; // skip
+    // if (m_debug) {
+    //   std::cout << "WARNING: SKIPPING PVERTICES MEET IVERTEX EVENT!" << std::endl;
+    //   std::cout << "WARNING: THIS EVENT IS DUST!" << std::endl;
+    //   m_queue.print();
+    //   CGAL_assertion_msg(
+    //     false, "TODO: CHECK, SEE CONSTR. PV. MEETS IEDGE FOR MORE DETAILS!");
+    // }
+    // return; // skip
 
     CGAL_assertion_msg(false,
     "ERROR: PVERTICES MEET IVERTEX! IT SHOULD NOT EVER HAPPEN!");
   }
 
   void apply_event_unconstrained_pvertex_meets_ivertex(
-    const PVertex& pvertex, const IVertex& ivertex, const Event& event) {
+    const PVertex& pvertex, const IVertex& /* ivertex */, const Event& /* event */) {
 
     CGAL_assertion(!m_data.has_iedge(pvertex));
     CGAL_assertion( m_data.has_one_pface(pvertex));
 
+    // if (m_debug) {
+    //   std::cout << "WARNING: SKIPPING UNCONSTRAINED PVERTEX MEETS IVERTEX EVENT!" << std::endl;
+    //   std::cout << "WARNING: THIS EVENT IS DUST!" << std::endl;
+    //   m_queue.print();
+    //   CGAL_assertion_msg(
+    //     false, "TODO: CHECK, SEE CONSTR. PV. MEETS IEDGE FOR MORE DETAILS!");
+    // }
+    // return; // skip
+
     CGAL_assertion_msg(false,
     "ERROR: UNCONSTRAINED PVERTEX MEETS IVERTEX! IT SHOULD NOT EVER HAPPEN!");
-    apply_event_pvertex_meets_ivertex(pvertex, ivertex, event);
+
+    // apply_event_pvertex_meets_ivertex(pvertex, ivertex, event);
   }
 
   // VALID EVENTS!
@@ -740,6 +751,17 @@ private:
       // }
       const auto& iedge = crossed_iedge.first;
       remove_events(iedge, pvertex.first);
+    }
+
+    // In general, pvertices in this container are newly created that is
+    // they are either cropped or propagated. However, in parallel cases,
+    // they may be the ones, which are prev or next or, in other words, either
+    // first or last in the crossed_pvertices above. The first and last there
+    // are skipped and their events are not removed, so we remove them here,
+    // to be certain.
+    for (const auto& pvertex : pvertices) {
+      if (pvertex == m_data.null_pvertex()) continue;
+      remove_events(pvertex);
     }
 
     // And compute new events.

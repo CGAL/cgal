@@ -81,12 +81,14 @@ public:
     m_queue.insert(event);
 
     // version with unique events
+    // it breaks the case real_data_test/test-40-polygons with k = 1!
     // m_temporary_queue.push_back(event);
   }
 
   void finalize_pushing() {
 
     // old version of push() - non unique events
+    // it breaks the case real_data_test/test-40-polygons with k = 1!
     return;
 
     // version with unique events
