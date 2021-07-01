@@ -35,7 +35,6 @@ namespace Barycentric_coordinates {
     using Geom_traits = GeomTraits;
     using Vertex_to_point_map = VertexToPointMap;
 
-    using Dihedral_angle_3 = typename GeomTraits::Compute_approximate_dihedral_angle_3;
     using Construct_vec_3 = typename GeomTraits::Construct_vector_3;
     using Cross_3 = typename GeomTraits::Construct_cross_product_vector_3;
     using Dot_3 = typename GeomTraits::Compute_scalar_product_3;
@@ -54,7 +53,6 @@ namespace Barycentric_coordinates {
     m_computation_policy(policy),
     m_vertex_to_point_map(vertex_to_point_map),
     m_traits(traits),
-    m_dihedral_angle_3(m_traits.compute_approximate_dihedral_angle_3_object()),
     m_construct_vector_3(m_traits.construct_vector_3_object()),
     m_cross_3(m_traits.construct_cross_product_vector_3_object()),
     m_dot_3(m_traits.compute_scalar_product_3_object()),
@@ -91,7 +89,6 @@ namespace Barycentric_coordinates {
   	const VertexToPointMap m_vertex_to_point_map; // use it to map vertex to Point_3
   	const GeomTraits m_traits;
 
-    const Dihedral_angle_3 m_dihedral_angle_3;
     const Construct_vec_3 m_construct_vector_3;
     const Cross_3 m_cross_3;
     const Dot_3 m_dot_3;
@@ -131,7 +128,7 @@ namespace Barycentric_coordinates {
       const auto vd = vertices(m_polygon_mesh);
       for (const auto& vertex : vd) {
 
-        // Call function to calculate wp coordinates
+        // Call function to calculate coordinates
         const FT weight = compute_dh_vertex_query(vertex, query);
 
     	  CGAL_assertion(vi < m_weights.size());
@@ -148,9 +145,6 @@ namespace Barycentric_coordinates {
     template<typename Vertex>
     FT compute_dh_vertex_query(const Vertex& vertex, const Point_3& query){
 
-      // Map vertex descriptor to point_3
-      const Point_3& vertex_val = get(m_vertex_to_point_map, vertex);
-
       // Circulator of faces around the vertex
       CGAL::Face_around_target_circulator<Polygon_mesh>
       face_circulator(m_polygon_mesh.halfedge(vertex), m_polygon_mesh);
@@ -164,6 +158,7 @@ namespace Barycentric_coordinates {
       // Iterate using the circulator
       do{
 
+        //Vertices around face iterator
         const auto hedge = halfedge(*face_circulator, m_polygon_mesh);
         const auto vertices = vertices_around_face(hedge, m_polygon_mesh);
         auto vertex_itr = vertices.begin();

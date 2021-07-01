@@ -35,7 +35,6 @@ namespace Barycentric_coordinates {
     using Geom_traits = GeomTraits;
     using Vertex_to_point_map = VertexToPointMap;
 
-    using Dihedral_angle_3 = typename GeomTraits::Compute_approximate_dihedral_angle_3;
     using Construct_vec_3 = typename GeomTraits::Construct_vector_3;
     using Cross_3 = typename GeomTraits::Construct_cross_product_vector_3;
     using Dot_3 = typename GeomTraits::Compute_scalar_product_3;
@@ -55,7 +54,6 @@ namespace Barycentric_coordinates {
     m_computation_policy(policy),
     m_vertex_to_point_map(vertex_to_point_map),
     m_traits(traits),
-    m_dihedral_angle_3(m_traits.compute_approximate_dihedral_angle_3_object()),
     m_construct_vector_3(m_traits.construct_vector_3_object()),
     m_cross_3(m_traits.construct_cross_product_vector_3_object()),
     m_dot_3(m_traits.compute_scalar_product_3_object()),
@@ -93,7 +91,6 @@ namespace Barycentric_coordinates {
   	const VertexToPointMap m_vertex_to_point_map; // use it to map vertex to Point_3
   	const GeomTraits m_traits;
 
-    const Dihedral_angle_3 m_dihedral_angle_3;
     const Construct_vec_3 m_construct_vector_3;
     const Cross_3 m_cross_3;
     const Dot_3 m_dot_3;
@@ -134,7 +131,7 @@ namespace Barycentric_coordinates {
       const auto vd = vertices(m_polygon_mesh);
       for (const auto& vertex : vd) {
 
-        // Call function to calculate wp coordinates
+        // Call function to calculate coordinates
         const FT weight = compute_mv_vertex_query(vertex, query);
 
     	  CGAL_assertion(vi < m_weights.size());
@@ -167,89 +164,70 @@ namespace Barycentric_coordinates {
       // Iterate using the circulator
       do{
 
+        // Vertices around face iterator
         const auto hedge = halfedge(*face_circulator, m_polygon_mesh);
         const auto vertices = vertices_around_face(hedge, m_polygon_mesh);
         auto vertex_itr = vertices.begin();
         CGAL_precondition(vertices.size() == 3);
 
-        std::vector<Vector_3> unit_vectors;
+        // Weight of vertex for this particular face
+        FT partial_weight = FT(0);
         int vertex_idx = -1;
+
+        // Store useful information
+        std::vector<Vector_3> query_vertex_vectors;
+        std::vector<Vector_3> unit_vectors;
+        std::vector<Vector_3> m_vectors;
+        std::vector<FT> angles;
+        query_vertex_vectors.resize(3);
+        unit_vectors.resize(3);
+        m_vectors.resize(3);
+        angles.resize(3);
+
         for(std::size_t i = 0; i < 3; i++){
 
           if(*vertex_itr == vertex)
             vertex_idx = i;
 
-          Point_3 i_face_vertex = get(m_vertex_to_point_map, *vertex_itr);
-          Vector_3 i_query_vertex = m_construct_vector_3(query, i_face_vertex);
-
-          assert(i_query_vertex.squared_length() != 0);
-          i_query_vertex = i_query_vertex/sqrt(i_query_vertex.squared_length());
-
-          unit_vectors.push_back(i_query_vertex);
-
+          const Vector_3 p = m_construct_vector_3(query, get(m_vertex_to_point_map, *vertex_itr));
+          query_vertex_vectors[i] = p;
           vertex_itr++;
         }
 
-        std::vector<Vector_3> m_vectors;
-        std::vector<FT> angles;
-        for(std::size_t i = 0; i<3; i++){
+        // Current vertex should be present in face
+        assert(vertex_idx != -1);
 
-          Vector_3 normal = m_cross_3(unit_vectors[i], unit_vectors[(i+1)%3]);
-          angles.push_back(m_approximate_angle_3(unit_vectors[i], unit_vectors[(i+1)%3]));
-          normal = normal / sqrt(normal.squared_length());
-          m_vectors.push_back(normal);
+        for(std::size_t i = 0; i < 3; i++){
+
+          assert(query_vertex_vectors[i].squared_length() > 0);
+          unit_vectors[i] = query_vertex_vectors[i]/sqrt(query_vertex_vectors[i].squared_length());
+
+          m_vectors[i] = m_cross_3(query_vertex_vectors[i], query_vertex_vectors[(i+1)%3]);
+          assert(m_vectors[i].squared_length() > 0);
+          m_vectors[i] /= sqrt(m_vectors[i].squared_length());
+
+          angles[i] = m_approximate_angle_3(query_vertex_vectors[i], query_vertex_vectors[(i+1)%3]);
         }
 
-        FT dot_e_m = m_dot_3(unit_vectors[vertex_idx], m_vectors[(vertex_idx+1)%3]);
+        partial_weight += angles[0] * m_dot_3(m_vectors[0], m_vectors[(vertex_idx+1)%3]);
+        partial_weight += angles[1] * m_dot_3(m_vectors[1], m_vectors[(vertex_idx+1)%3]);
+        partial_weight += angles[2] * m_dot_3(m_vectors[2], m_vectors[(vertex_idx+1)%3]);
 
-        for(std::size_t i = 0; i<3; i++){
+        const FT dot_unit_m = m_dot_3(unit_vectors[vertex_idx], m_vectors[(vertex_idx+1)%3]);
+        assert(dot_unit_m != 0);
+        partial_weight /= dot_unit_m;
 
-          weight += m_dot_3(m_vectors[i], m_vectors[(vertex_idx+1)%3]) * angles[i];
-        }
-        weight /= 2*dot_e_m;
+        weight += partial_weight;
 
         face_circulator++;
 
       }while(face_circulator!=face_done);
 
-      return weight/sqrt(m_construct_vector_3(vertex_val, query).squared_length());
+      const FT vertex_query_squared_len = m_construct_vector_3(vertex_val, query).squared_length();
+      assert(vertex_query_squared_len != 0);
+
+      return weight/sqrt(vertex_query_squared_len);
     }
-
-    // Compute normal vector of the face (not normalized).
-    template<typename Face>
-    Vector_3 get_face_normal(const Face& face) {
-
-      const auto hedge = halfedge(face, m_polygon_mesh);
-      const auto vertices = vertices_around_face(hedge, m_polygon_mesh);
-      CGAL_precondition(vertices.size() >= 3);
-
-      auto vertex = vertices.begin();
-      const Point_3& point1 = get(m_vertex_to_point_map, *vertex); ++vertex;
-      const Point_3& point2 = get(m_vertex_to_point_map, *vertex); ++vertex;
-      const Point_3& point3 = get(m_vertex_to_point_map, *vertex);
-
-      const Vector_3 u = point2 - point1;
-      const Vector_3 v = point3 - point1;
-      const Vector_3 face_normal = m_cross_3(u, v);
-
-      return face_normal;
-    }
-
-    //Compute cotangent of dihedral angle between two faces
-    FT cot_dihedral_angle(const Vector_3& normal_1, const Vector_3& normal_2){
-
-      assert(normal_1.squared_length() != FT(0));
-      assert(normal_2.squared_length() != FT(0));
-
-      FT approximate_dot_3 = m_dot_3(normal_1, normal_2);
-
-      FT approximate_cross_3_length = sqrt(m_cross_3(normal_1, normal_2).squared_length());
-
-      assert(approximate_cross_3_length != FT(0));
-
-      return approximate_dot_3/approximate_cross_3_length;
-    }
-
   };
 
   template<
