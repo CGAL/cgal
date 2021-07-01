@@ -3,8 +3,8 @@ Release History
 
 ### [2D Generalized Barycentric Coordinates](https://doc.cgal.org/5.4/Manual/packages.html#PkgBarycentricCoordinates2) (breaking change, major changes)
 
--   The headers `Segment_coordinates_2.h` and `Triangle_coordinates_2.h` are renamed to
-    `segment_coordinates_2.h` and `triangle_coordinates_2.h` (breaking change).
+-   **Breaking change**: The headers `Segment_coordinates_2.h` and `Triangle_coordinates_2.h` are
+    renamed to `segment_coordinates_2.h` and `triangle_coordinates_2.h`.
 -   The classes `Segment_coordinates_2` and `Triangle_coordinates_2` are deprecated. The free functions
     `compute_segment_coordinates_2()` and `compute_triangle_coordinates_2()` are deprecated as well.
     Instead, the free functions `segment_coordinates_2()` and `triangle_coordinates_2()` must be used.
