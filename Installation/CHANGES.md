@@ -6,7 +6,8 @@ Release History
 
 Release date: July 2021
 
-### General changes
+### [General changes](https://doc.cgal.org/5.3/Manual/general_intro.html)
+
 -   The support for the compiled version of CGAL is dropped. Only the header-only version is supported.
 
 -   On Windows, the type used for `Exact_rational`, in `Epick` and indirectly (through `Lazy_exact_nt`)
