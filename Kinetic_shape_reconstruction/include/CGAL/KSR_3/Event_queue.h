@@ -152,10 +152,8 @@ public:
   FT get_next_time(
     const FT min_time, const FT max_time, const FT curr_time) {
 
-    const auto pother = Data_structure::null_pvertex();
-    const auto ivertex = Data_structure::null_ivertex();
-    const ETime e_min_time(min_time, pother, ivertex, true);
-    const ETime e_max_time(max_time, pother, ivertex, true);
+    const ETime e_min_time(min_time, false, true);
+    const ETime e_max_time(max_time, false, true);
 
     const auto it_min = queue_by_time().lower_bound(e_min_time);
     const auto it_max = queue_by_time().upper_bound(e_max_time);
@@ -181,8 +179,9 @@ public:
     const auto pe_range = CGAL::make_range(pe);
 
     if (m_verbose) {
-      for (const auto& event : pe_range)
+      for (const auto& event : pe_range) {
         std::cout << "** erasing (by iedge) " << event << std::endl;
+      }
     }
     queue_by_iedge_idx().erase(pe.first, pe.second);
     CGAL_assertion(has_unique_keys());
@@ -196,8 +195,9 @@ public:
     const auto pv_range = CGAL::make_range(pv);
 
     if (m_verbose) {
-      for (const auto& event : pv_range)
+      for (const auto& event : pv_range) {
         std::cout << "** erasing (by pvertex) " << event << std::endl;
+      }
     }
     queue_by_pvertex_idx().erase(pv.first, pv.second);
 

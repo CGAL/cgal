@@ -52,40 +52,36 @@ public:
   struct ETime {
     ETime(
       const NT event_time,
-      const PVertex& pother,
-      const IVertex& ivertex,
-      const bool is_virtual = false) :
+      const bool is_pv_to_iv,
+      const bool is_vt = false) :
     m_time(static_cast<FT>(CGAL::to_double(event_time))),
-    m_pother(pother), m_ivertex(ivertex), m_is_virtual(is_virtual)
+    m_is_pvertex_to_ivertex(is_pv_to_iv), m_is_virtual(is_vt)
     { }
 
   private:
     const FT m_time;
-    const PVertex& m_pother;
-    const IVertex& m_ivertex;
+    const bool m_is_pvertex_to_ivertex;
     const bool m_is_virtual;
 
   public:
-    FT time() const { return m_time; }
-
     bool operator<(const ETime& e) const {
 
       const FT tol = KSR::tolerance<FT>();
-      const FT time_diff = CGAL::abs(time() - e.time());
-      if (time_diff < tol && !is_virtual() && !e.is_virtual()) {
-        const std::size_t la =   is_pvertex_to_ivertex() ? 1 : 0;
+      const FT time_diff = CGAL::abs(this->time() - e.time());
+      if (time_diff < tol && !this->is_virtual() && !e.is_virtual()) {
+        const std::size_t la = this->is_pvertex_to_ivertex() ? 1 : 0;
         const std::size_t lb = e.is_pvertex_to_ivertex() ? 1 : 0;
+
+        // std::cout << "la: " << la << ", time: " << this->time() << std::endl;
+        // std::cout << "lb: " << lb << ", time: " << e.time() << std::endl;
+
         if (la != lb) return la < lb;
       }
-      return time() < e.time();
+      return this->time() < e.time();
     }
 
-    bool is_pvertex_to_ivertex() const {
-      return (
-        m_pother  == Data_structure::null_pvertex() &&
-        m_ivertex != Data_structure::null_ivertex());
-    }
-
+    FT time() const { return m_time; }
+    bool is_pvertex_to_ivertex() const { return m_is_pvertex_to_ivertex; }
     bool is_virtual() const { return m_is_virtual; }
   };
 
@@ -93,13 +89,15 @@ public:
 
   // Empty event.
   Event() :
-    m_is_constrained(false),
-    m_pvertex(Data_structure::null_pvertex()),
-    m_pother(Data_structure::null_pvertex()),
-    m_ivertex(Data_structure::null_ivertex()),
-    m_iedge(Data_structure::null_iedge()),
-    m_time(ETime(NT(0), m_pother, m_ivertex)),
-    m_support_plane_idx(m_pvertex.first)
+  m_is_constrained(false),
+  m_pvertex(Data_structure::null_pvertex()),
+  m_pother(Data_structure::null_pvertex()),
+  m_ivertex(Data_structure::null_ivertex()),
+  m_iedge(Data_structure::null_iedge()),
+  m_time(ETime(NT(0), (
+    m_pother  == Data_structure::null_pvertex() &&
+    m_ivertex != Data_structure::null_ivertex()))),
+  m_support_plane_idx(m_pvertex.first)
   { }
 
   // An event that occurs between two polygon vertices.
@@ -113,7 +111,9 @@ public:
   m_pother(pother),
   m_ivertex(Data_structure::null_ivertex()),
   m_iedge(Data_structure::null_iedge()),
-  m_time(ETime(time, m_pother, m_ivertex)),
+  m_time(ETime(time, (
+    m_pother  == Data_structure::null_pvertex() &&
+    m_ivertex != Data_structure::null_ivertex()))),
   m_support_plane_idx(m_pvertex.first) {
 
     CGAL_assertion_msg(is_constrained,
@@ -131,7 +131,9 @@ public:
   m_pother(Data_structure::null_pvertex()),
   m_ivertex(Data_structure::null_ivertex()),
   m_iedge(iedge),
-  m_time(ETime(time, m_pother, m_ivertex)),
+  m_time(ETime(time, (
+    m_pother  == Data_structure::null_pvertex() &&
+    m_ivertex != Data_structure::null_ivertex()))),
   m_support_plane_idx(m_pvertex.first) {
 
     CGAL_assertion_msg(!is_constrained,
@@ -149,7 +151,9 @@ public:
   m_pother(Data_structure::null_pvertex()),
   m_ivertex(ivertex),
   m_iedge(Data_structure::null_iedge()),
-  m_time(ETime(time, m_pother, m_ivertex)),
+  m_time(ETime(time, (
+    m_pother  == Data_structure::null_pvertex() &&
+    m_ivertex != Data_structure::null_ivertex()))),
   m_support_plane_idx(m_pvertex.first)
   { }
 
@@ -165,7 +169,9 @@ public:
   m_pother(pother),
   m_ivertex(ivertex),
   m_iedge(Data_structure::null_iedge()),
-  m_time(ETime(time, m_pother, m_ivertex)),
+  m_time(ETime(time, (
+    m_pother  == Data_structure::null_pvertex() &&
+    m_ivertex != Data_structure::null_ivertex()))),
   m_support_plane_idx(m_pvertex.first) {
 
     CGAL_assertion_msg(is_constrained,
