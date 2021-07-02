@@ -718,26 +718,33 @@ bool operator==(const Support_plane<Kernel>& a, const Support_plane<Kernel>& b) 
   // Are the planes parallel?
   // const FT vtol = KSR::vector_tolerance<FT>();
   // const FT aval = CGAL::abs(va * vb);
+
+  // std::cout << "aval: " << aval << " : " << vtol << std::endl;
   // if (aval < vtol) {
   //   return false;
   // }
 
   const FT vtol = FT(5); // degrees // TODO: We should put it as a parameter.
-  const FT aval = KSR::angle_3d(va, vb);
+  FT aval = KSR::angle_3d(va, vb);
+  CGAL_assertion(aval >= FT(0) && aval <= FT(180));
+  if (aval >= FT(90)) aval = FT(180) - aval;
+
+  // std::cout << "aval: " << aval << " : " << vtol << std::endl;
   if (aval >= vtol) {
     return false;
   }
-
-  // std::cout << "aval: " << aval << " : " << vtol << std::endl;
 
   // Are the planes coplanar?
   // const FT ptol = KSR::point_tolerance<FT>();
   // const auto pa = planea.point();
   // const auto pb = planeb.projection(pa);
   // const FT bval = KSR::distance(pa, pb);
+
   // TODO: Should we rotate the planes here before computing the distance?
 
-  const FT ptol = FT(5) / FT(10); // TODO: We should put it as a parameter.
+  // TODO: We should put it as a parameter.
+  // TODO: Can we make it work for a smaller parameter: e.g. 0.1?
+  const FT ptol = FT(5) / FT(10);
   const auto pa1 = a.centroid();
   const auto pb1 = planeb.projection(pa1);
   const auto pb2 = b.centroid();
@@ -745,7 +752,8 @@ bool operator==(const Support_plane<Kernel>& a, const Support_plane<Kernel>& b) 
 
   const FT bval1 = KSR::distance(pa1, pb1);
   const FT bval2 = KSR::distance(pa2, pb2);
-  const FT bval = (CGAL::min)(bval1, bval2);
+  const FT bval = (CGAL::max)(bval1, bval2);
+  CGAL_assertion(bval >= FT(0));
 
   // if (bval < ptol) {
   //   std::cout << "2 " << pa << " " << pb << std::endl;

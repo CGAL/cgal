@@ -527,7 +527,7 @@ private:
       const Event event = m_queue.pop();
       const FT current_time = event.time();
 
-      // const std::size_t sp_debug_idx = 17;
+      // const std::size_t sp_debug_idx = 27;
       if (m_export /* && event.pvertex().first == sp_debug_idx */) {
         if (iteration < 10) {
           dump(m_data, "iter-0" + std::to_string(iteration));
@@ -535,10 +535,12 @@ private:
           //   "-surface-mesh-" + std::to_string(sp_debug_idx));
           dump_event(m_data, event, "iter-0" + std::to_string(iteration));
         } else {
-          dump(m_data, "iter-" + std::to_string(iteration));
-          // dump_2d_surface_mesh(m_data, sp_debug_idx, "iter-" + std::to_string(iteration) +
-          //   "-surface-mesh-" + std::to_string(sp_debug_idx));
-          dump_event(m_data, event, "iter-" + std::to_string(iteration));
+          // if (iteration > 3600) {
+            dump(m_data, "iter-" + std::to_string(iteration));
+            // dump_2d_surface_mesh(m_data, sp_debug_idx, "iter-" + std::to_string(iteration) +
+            //   "-surface-mesh-" + std::to_string(sp_debug_idx));
+            dump_event(m_data, event, "iter-" + std::to_string(iteration));
+          // }
         }
       }
 
@@ -548,7 +550,7 @@ private:
       }
       ++iteration;
 
-      // if (iteration == 54) {
+      // if (iteration == 3725) {
       //   exit(EXIT_FAILURE);
       // }
 
