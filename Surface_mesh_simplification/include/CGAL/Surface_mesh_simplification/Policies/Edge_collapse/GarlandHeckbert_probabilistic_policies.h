@@ -121,8 +121,52 @@ public:
 
       return opt_pt;
     }
+    
+    template<typename VPM, typename TM> 
+    Mat_4 construct_quadric_from_face(
+        const VPM& point_map,
+        const TM& tmesh, 
+        typename boost::graph_traits<TM>::face_descriptor f, 
+        const GeomTraits& gt) const
+    {
+      const Vector_3 normal = this->construct_unit_normal_from_face(point_map, tmesh, f, gt);
+      const Point_3 p = get(point_map, source(halfedge(f, tmesh), tmesh));
+      
+      return construct_quadric_from_normal(normal, p, gt);
+    }
+    
+    template<typename VPM, typename TM> 
+    Mat_4 construct_quadric_from_edge(
+        const VPM& point_map,
+        const TM& tmesh, 
+        typename boost::graph_traits<TM>::halfedge_descriptor he, 
+        const GeomTraits& gt) const
+    {
+      const Vector_3 normal = this->construct_edge_normal(point_map, tmesh, he, gt);
+      const Point_3 p = get(point_map, source(he, tmesh));
+      
+      return construct_quadric_from_normal(normal, p, gt);
+    }
 
-    Mat_4 construct_quadric_from_normal(const Vector_3& mean_normal, const Point_3& point,
+    const Get_cost& get_cost() {
+      return *this;
+    }
+
+    const Get_placement& get_placement() {
+      return *this;
+    }
+
+  private:
+    // the only parameters we need are the normal and position variances
+    // - ie the squared standard deviations
+    FT sdev_n_2;
+    FT sdev_p_2;
+
+    Vertex_cost_map vcm_;
+    
+    Mat_4 construct_quadric_from_normal(
+        const Vector_3& mean_normal, 
+        const Point_3& point,
         const GeomTraits& gt) const {
       auto squared_length = gt.compute_squared_length_3_object();
       auto dot_product = gt.compute_scalar_product_3_object();
@@ -161,23 +205,7 @@ public:
 
       return mat;
     }
-
-    const Get_cost& get_cost() {
-      return *this;
-    }
-
-    const Get_placement& get_placement() {
-      return *this;
-    }
-
-  private:
-    // the only parameters we need are the normal and position variances
-    // - ie the squared standard deviations
-    FT sdev_n_2;
-    FT sdev_p_2;
-
-    Vertex_cost_map vcm_;
-
+    
     // give a very rough estimate of a decent variance for both parameters
     static std::pair<FT, FT> estimate_variances(const TriangleMesh& mesh)
     {
@@ -211,7 +239,7 @@ public:
 
     // magic number determined by some testing, this is a good variance for models that
     // fit inside a [-1, 1]^3 unit cube
-    static constexpr FT good_default_variance_unit = 1e-6;
+    static constexpr FT good_default_variance_unit = 1e-4;
 };
 
 } // namespace Surface_mesh_simplification

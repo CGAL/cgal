@@ -139,22 +139,34 @@ class GarlandHeckbert_policies :
       return opt_pt;
     }
 
-    Mat_4 construct_quadric_from_normal(const Vector_3& normal, const Point_3& point, const
-        GeomTraits& gt) const {
+    template<typename VPM, typename TM> 
+    Mat_4 construct_quadric_from_face(
+        const VPM& point_map,
+        const TM& tmesh, 
+        typename boost::graph_traits<TM>::face_descriptor f, 
+        const GeomTraits& gt) const
+    {
+      // this-> is used because we are calling a base class function
+      const Vector_3 normal = this->construct_unit_normal_from_face(point_map, tmesh, f, gt);
 
-      auto dot_product = gt.compute_scalar_product_3_object();
-      auto construct_vector = gt.construct_vector_3_object();
+      // get any point of the face 
+      const auto p = get(point_map, source(halfedge(f, tmesh), tmesh));
       
-      // negative dot product between the normal and the position vector
-      const FT d = - dot_product(normal, construct_vector(ORIGIN, point));
-
-      // row vector given by d appended to the normal
-      const Eigen::Matrix<FT, 1, 4> row(normal.x(), normal.y(), normal.z(), d);
-
-      // outer product
-      return row.transpose() * row;
+      return construct_quadric_from_normal(normal, p, gt);
     }
-
+    
+    template<typename VPM, typename TM> 
+    Mat_4 construct_quadric_from_edge(
+        const VPM& point_map,
+        const TM& tmesh, 
+        typename boost::graph_traits<TM>::halfedge_descriptor he, 
+        const GeomTraits& gt) const
+    {
+      const Vector_3 normal = this->construct_edge_normal(point_map, tmesh, he, gt);
+      
+      return construct_quadric_from_normal(normal, get(point_map, source(he, tmesh)), gt);
+    }
+    
     const Get_cost& get_cost() const {
       return *this;
     }
@@ -164,7 +176,26 @@ class GarlandHeckbert_policies :
     }
 
   private:
-    Vertex_cost_map vcm_;
+  Vertex_cost_map vcm_;
+  
+  // helper function to construct quadrics
+
+  Mat_4 construct_quadric_from_normal(const Vector_3& normal, const Point_3& point, 
+      const GeomTraits& gt) const 
+  {
+
+    auto dot_product = gt.compute_scalar_product_3_object();
+    auto construct_vector = gt.construct_vector_3_object();
+
+    // negative dot product between the normal and the position vector
+    const FT d = - dot_product(normal, construct_vector(ORIGIN, point));
+
+    // row vector given by d appended to the normal
+    const Eigen::Matrix<FT, 1, 4> row(normal.x(), normal.y(), normal.z(), d);
+
+    // outer product
+    return row.transpose() * row;
+  }
 };
 
 } //namespace Surface_mesh_simplification

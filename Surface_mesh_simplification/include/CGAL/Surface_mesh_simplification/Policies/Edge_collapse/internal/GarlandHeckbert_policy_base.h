@@ -17,7 +17,6 @@
 
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
-
 #include <iostream>
 #include <CGAL/tags.h>
 
@@ -97,6 +96,7 @@ class GarlandHeckbert_cost_base
 
       const halfedge_descriptor h = halfedge(f, tmesh);
 
+      /*
       // get the three vertices of the triangular face
       const Point_reference p = get(vpm, source(h, tmesh));
       const Point_reference q = get(vpm, target(h, tmesh));
@@ -104,15 +104,16 @@ class GarlandHeckbert_cost_base
 
       const Vector_3 face_normal = unit_normal(p, q, r);
 
+      */
       // construtct the (4 x 4) matrix representing the plane quadric
-      const Mat_4 quadric = construct_quadric(face_normal, r, gt);
+      const Mat_4 quadric = construct_quadric<VPM, TM>(vpm, tmesh, f, gt);
 
       for(halfedge_descriptor shd : halfedges_around_face(h, tmesh))
       {
         const vertex_descriptor vs = source(shd, tmesh);
         const vertex_descriptor vt = target(shd, tmesh);
 
-        put(m_cost_matrices, vt, combine_matrices(get(m_cost_matrices, vt), quadric));
+        put(m_cost_matrices, vs, combine_matrices(get(m_cost_matrices, vs), quadric));
 
         if(!is_discontinuity_edge(shd, tmesh))
         {
@@ -121,14 +122,16 @@ class GarlandHeckbert_cost_base
 
         //TODO behaviour at discontinuous edges is largely untested at this stage
         //TODO helper function to add to target
+        /*
         const Vector_3 edge_vector = Vector_3(get(vpm, vs), get(vpm, vt));
         const Vector_3 discontinuity_normal = cross_product(edge_vector, face_normal);
 
         // normalize
         const Vector_3 normalized = discontinuity_normal
           / sqrt(discontinuity_normal.squared_length());
+        */
         const Mat_4 discontinuous_quadric
-          = discontinuity_multiplier * construct_quadric(normalized, get(vpm, vs), gt);
+          = discontinuity_multiplier * construct_quadric<VPM, TM>(vpm, tmesh, shd, gt);
 
         put(m_cost_matrices, vs, combine_matrices(get(m_cost_matrices, vs), discontinuous_quadric));
         put(m_cost_matrices, vt, combine_matrices(get(m_cost_matrices, vt), discontinuous_quadric));
@@ -171,6 +174,56 @@ class GarlandHeckbert_cost_base
   void init_vcm(const Vertex_cost_map& vcm) {
     m_cost_matrices = vcm;
   }
+  
+  template<typename VPM, typename TM>
+  Vector_3 construct_edge_normal(
+    const VPM& point_map,
+    const TM& tmesh, 
+    typename boost::graph_traits<TM>::halfedge_descriptor he, 
+    const GeomTraits& gt) const
+  {
+    typedef typename boost::graph_traits<TM>::vertex_descriptor vertex_descriptor;
+    // TODO we do a potentially redundant calculation here, as we have 
+    // almost certainly already calculated this when constructing a quadric for the face
+    const Vector_3 face_normal = this->construct_unit_normal_from_face(
+        point_map, tmesh, face(he, tmesh), gt);
+
+    const vertex_descriptor vs = source(he, tmesh);
+    const vertex_descriptor vt = target(he, tmesh);
+
+    const Vector_3 edge_vector = Vector_3(get(point_map, vs), get(point_map, vt));
+    const Vector_3 discontinuity_normal = cross_product(edge_vector, face_normal);
+
+    // normalize
+    const Vector_3 normal = discontinuity_normal 
+      / sqrt(discontinuity_normal.squared_length());
+
+    return normal;
+  }
+  
+  template<typename VPM, typename TM>
+    Vector_3 construct_unit_normal_from_face(
+        const VPM& point_map,
+        const TM& tmesh, 
+        typename boost::graph_traits<TM>::face_descriptor f, 
+        const GeomTraits& gt) const
+    {      
+      // initialize all necessary kernel functions
+      auto unit_normal = gt.construct_unit_normal_3_object();
+
+      // reference and descriptor types
+      typedef typename boost::property_traits<VPM>::reference Point_reference;
+      typedef typename boost::graph_traits<TM>::halfedge_descriptor halfedge_descriptor;
+
+      const halfedge_descriptor h = halfedge(f, tmesh);
+
+      // get the three points of the face and calculate their unit normal
+      const Point_reference p = get(point_map, source(h, tmesh));
+      const Point_reference q = get(point_map, target(h, tmesh));
+      const Point_reference r = get(point_map, target(next(h, tmesh), tmesh));
+
+      return unit_normal(p, q, r);
+    }
 
   private:
   Vertex_cost_map m_cost_matrices;
@@ -182,70 +235,99 @@ class GarlandHeckbert_cost_base
   }
 
   // use CRTP to call the quadric implementation
-  Mat_4 construct_quadric(const Vector_3& normal, const Point_3& point, const GeomTraits& gt) const {
-    return static_cast<const QuadricImpl*>(this)->construct_quadric_from_normal(normal, point, gt);
-  }
+  /*
+   * TODO to reuse as much code as possible, the interface could be changed to depend
+   * on three points, from which we can always generate a normal and a point, but can 
+   * also generate triangle quadrics
+   *
+   * this would make it unituitive to treat discontinuity edges
+   * - generally, how should this work? Fallback onto plane quadrics?
+   *
+   * that could mean deriving class must provide both two functions, which are now separate
+   * so then we can also contain discontinuity multiplier logic in the deriving classes
+   */
+
+  template<typename VPM, typename TM>
+    Mat_4 construct_quadric(
+        const VPM& point_map, 
+        const TM& tmesh,
+        typename boost::graph_traits<TM>::face_descriptor f, const GeomTraits& gt) const 
+    {
+      return static_cast<const QuadricImpl*>(this)
+        ->construct_quadric_from_face(point_map, tmesh, f, gt);
+    }
+
+  template<typename VPM, typename TM>
+    Mat_4 construct_quadric(
+        const VPM& point_map, 
+        const TM& tmesh,
+        typename boost::graph_traits<TM>::halfedge_descriptor he,
+        const GeomTraits& gt) const 
+    {
+      return static_cast<const QuadricImpl*>(this)
+        ->construct_quadric_from_edge(point_map, tmesh, he, gt);
+    }
 };
 
-//TODO should probably take a TirangleMesh as Parameter and define the VCM type in base classes
 template<typename VCM,
-         typename GeomTraits,
-         typename QuadricImpl>
-class GarlandHeckbert_placement_base
+  typename GeomTraits,
+  typename QuadricImpl>
+  class GarlandHeckbert_placement_base
 {
   public:
-  // define type required by the Get_cost concept
-  typedef VCM Vertex_cost_map;
+    // define type required by the Get_cost concept
+    typedef VCM Vertex_cost_map;
 
-  // matrix and column vector types
-  typedef typename GeomTraits::FT FT;
-  typedef typename GeomTraits::Point_3 Point_3;
-  typedef Eigen::Matrix<FT, 4, 4, Eigen::DontAlign> Mat_4;
-  typedef Eigen::Matrix<FT, 4, 1> Col_4;
+    // matrix and column vector types
+    typedef typename GeomTraits::FT FT;
+    typedef typename GeomTraits::Point_3 Point_3;
+    typedef Eigen::Matrix<FT, 4, 4, Eigen::DontAlign> Mat_4;
+    typedef Eigen::Matrix<FT, 4, 1> Col_4;
 
-  GarlandHeckbert_placement_base() { }
-  GarlandHeckbert_placement_base(Vertex_cost_map cost_matrices) : m_cost_matrices(cost_matrices) { }
+    GarlandHeckbert_placement_base() { }
+    GarlandHeckbert_placement_base(Vertex_cost_map cost_matrices) : m_cost_matrices(cost_matrices) { }
 
-  template<typename Profile>
-  boost::optional<typename Profile::Point> operator()(const Profile& profile) const
-  {
-    CGAL_precondition(!get(m_cost_matrices, profile.v0()).isZero(0));
-    CGAL_precondition(!get(m_cost_matrices, profile.v1()).isZero(0));
+    template<typename Profile>
+      boost::optional<typename Profile::Point> operator()(const Profile& profile) const
+      {
+        CGAL_precondition(!get(m_cost_matrices, profile.v0()).isZero(0));
+        CGAL_precondition(!get(m_cost_matrices, profile.v1()).isZero(0));
 
-    // the combined matrix has already been computed in the evaluation of the cost...
-    const Mat_4 combinedMatrix = combine_matrices(
-        get(m_cost_matrices, profile.v0()),
-        get(m_cost_matrices, profile.v1()));
+        // the combined matrix has already been computed in the evaluation of the cost...
+        const Mat_4 combinedMatrix = combine_matrices(
+            get(m_cost_matrices, profile.v0()),
+            get(m_cost_matrices, profile.v1()));
 
-    const Col_4 p0 = point_to_homogenous_column(profile.p0());
-    const Col_4 p1 = point_to_homogenous_column(profile.p1());
+        const Col_4 p0 = point_to_homogenous_column(profile.p0());
+        const Col_4 p1 = point_to_homogenous_column(profile.p1());
 
-    const Col_4 opt = construct_optimum(combinedMatrix, p0, p1);
+        const Col_4 opt = construct_optimum(combinedMatrix, p0, p1);
 
-    boost::optional<typename Profile::Point> pt = typename Profile::Point(
-        opt(0) / opt(3),
-        opt(1) / opt(3),
-        opt(2) / opt(3));
+        boost::optional<typename Profile::Point> pt = typename Profile::Point(
+            opt(0) / opt(3),
+            opt(1) / opt(3),
+            opt(2) / opt(3));
 
-    return pt;
-  }
+        return pt;
+      }
 
   protected:
-  void init_vcm(const Vertex_cost_map& vcm) {
-    m_cost_matrices = vcm;
-  }
+    void init_vcm(const Vertex_cost_map& vcm) {
+      m_cost_matrices = vcm;
+    }
+
 
   private:
-  Vertex_cost_map m_cost_matrices;
+    Vertex_cost_map m_cost_matrices;
 
-  // use CRTP to call the quadric implementation
-  Col_4 construct_optimum(const Mat_4& mat, const Col_4& p0, const Col_4& p1) const {
-    return static_cast<const QuadricImpl*>(this)->construct_optimal_point(mat, p0, p1);
-  }
+    // use CRTP to call the quadric implementation
+    Col_4 construct_optimum(const Mat_4& mat, const Col_4& p0, const Col_4& p1) const {
+      return static_cast<const QuadricImpl*>(this)->construct_optimal_point(mat, p0, p1);
+    }
 
-  Col_4 point_to_homogenous_column(const Point_3& point) const {
-    return Col_4(point.x(), point.y(), point.z(), FT(1));
-  }
+    Col_4 point_to_homogenous_column(const Point_3& point) const {
+      return Col_4(point.x(), point.y(), point.z(), FT(1));
+    }
 };
 
 } // namespace internal
