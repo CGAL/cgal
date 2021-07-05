@@ -11,28 +11,25 @@
 #include <CGAL/IO/File_binary_mesh_3.h>
 
 // Domain
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Labeled_mesh_domain_3<K> Mesh_domain;
+using K = CGAL::Exact_predicates_inexact_constructions_kernel;
+using Mesh_domain = CGAL::Labeled_mesh_domain_3<K>;
 
+using Concurrency_tag =
 #ifdef CGAL_CONCURRENT_MESH_3
-typedef CGAL::Parallel_tag Concurrency_tag;
+  CGAL::Parallel_tag;
 #else
-typedef CGAL::Sequential_tag Concurrency_tag;
+  CGAL::Sequential_tag;
 #endif
 
 // Triangulation
-typedef CGAL::Mesh_triangulation_3<Mesh_domain,CGAL::Default,Concurrency_tag>::type Tr;
-
-typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
+using Tr   = CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Default, Concurrency_tag>::type;
+using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr>;
 
 // Criteria
-typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+using Mesh_criteria = CGAL::Mesh_criteria_3<Tr>;
 
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
-
-using Word_type = unsigned char;
-using Subdomain_index = int;
 
 int main(int argc, char* argv[])
 {
