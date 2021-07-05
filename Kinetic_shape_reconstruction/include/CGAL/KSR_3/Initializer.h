@@ -285,63 +285,65 @@ private:
     CGAL_assertion(bbox_length_3 >= FT(0));
     const FT tol = KSR::tolerance<FT>();
     if (bbox_length_1 < tol || bbox_length_2 < tol || bbox_length_3 < tol) {
-      if (bbox_length_1 < tol) {
+      const FT d = FT(40) * tol; // 40 is a magic number but it is not a big deal in this case
 
+      if (bbox_length_1 < tol) { // yz case
         CGAL_assertion_msg(bbox_length_2 >= tol, "ERROR: DEGENERATED INPUT POLYGONS!");
         CGAL_assertion_msg(bbox_length_3 >= tol, "ERROR: DEGENERATED INPUT POLYGONS!");
-        const FT x = FT(40) * tol; // 40 is a magic number but it is not a big deal in this case
 
-        bbox[0] = Point_3(bbox[0].x() - x, bbox[0].y(), bbox[0].z());
-        bbox[3] = Point_3(bbox[3].x() - x, bbox[3].y(), bbox[3].z());
-        bbox[4] = Point_3(bbox[4].x() - x, bbox[4].y(), bbox[4].z());
-        bbox[5] = Point_3(bbox[5].x() - x, bbox[5].y(), bbox[5].z());
+        bbox[0] = Point_3(bbox[0].x() - d, bbox[0].y() - d, bbox[0].z() - d);
+        bbox[3] = Point_3(bbox[3].x() - d, bbox[3].y() + d, bbox[3].z() - d);
+        bbox[4] = Point_3(bbox[4].x() - d, bbox[4].y() + d, bbox[4].z() + d);
+        bbox[5] = Point_3(bbox[5].x() - d, bbox[5].y() - d, bbox[5].z() + d);
 
-        bbox[1] = Point_3(bbox[1].x() + x, bbox[1].y(), bbox[1].z());
-        bbox[2] = Point_3(bbox[2].x() + x, bbox[2].y(), bbox[2].z());
-        bbox[7] = Point_3(bbox[7].x() + x, bbox[7].y(), bbox[7].z());
-        bbox[6] = Point_3(bbox[6].x() + x, bbox[6].y(), bbox[6].z());
-        if (m_verbose) std::cout << "* setting x-based flat axis-aligned bbox" << std::endl;
+        bbox[1] = Point_3(bbox[1].x() + d, bbox[1].y() - d, bbox[1].z() - d);
+        bbox[2] = Point_3(bbox[2].x() + d, bbox[2].y() + d, bbox[2].z() - d);
+        bbox[7] = Point_3(bbox[7].x() + d, bbox[7].y() + d, bbox[7].z() + d);
+        bbox[6] = Point_3(bbox[6].x() + d, bbox[6].y() - d, bbox[6].z() + d);
+        if (m_verbose) {
+          std::cout << "* setting x-based flat axis-aligned bounding box" << std::endl;
+        }
 
-      } else if (bbox_length_2 < tol) {
-
-        CGAL_assertion_msg(bbox_length_3 >= tol, "ERROR: DEGENERATED INPUT POLYGONS!");
+      } else if (bbox_length_2 < tol) { // xz case
         CGAL_assertion_msg(bbox_length_1 >= tol, "ERROR: DEGENERATED INPUT POLYGONS!");
-        const FT y = FT(40) * tol; // 40 is a magic number but it is not a big deal in this case
+        CGAL_assertion_msg(bbox_length_3 >= tol, "ERROR: DEGENERATED INPUT POLYGONS!");
 
-        bbox[0] = Point_3(bbox[0].x(), bbox[0].y() - y, bbox[0].z());
-        bbox[1] = Point_3(bbox[1].x(), bbox[1].y() - y, bbox[1].z());
-        bbox[6] = Point_3(bbox[6].x(), bbox[6].y() - y, bbox[6].z());
-        bbox[5] = Point_3(bbox[5].x(), bbox[5].y() - y, bbox[5].z());
+        bbox[0] = Point_3(bbox[0].x() - d, bbox[0].y() - d, bbox[0].z() - d);
+        bbox[1] = Point_3(bbox[1].x() + d, bbox[1].y() - d, bbox[1].z() - d);
+        bbox[6] = Point_3(bbox[6].x() + d, bbox[6].y() - d, bbox[6].z() + d);
+        bbox[5] = Point_3(bbox[5].x() - d, bbox[5].y() - d, bbox[5].z() + d);
 
-        bbox[3] = Point_3(bbox[3].x(), bbox[3].y() + y, bbox[3].z());
-        bbox[2] = Point_3(bbox[2].x(), bbox[2].y() + y, bbox[2].z());
-        bbox[7] = Point_3(bbox[7].x(), bbox[7].y() + y, bbox[7].z());
-        bbox[4] = Point_3(bbox[4].x(), bbox[4].y() + y, bbox[4].z());
-        if (m_verbose) std::cout << "* setting y-based flat axis-aligned bbox" << std::endl;
+        bbox[3] = Point_3(bbox[3].x() - d, bbox[3].y() + d, bbox[3].z() - d);
+        bbox[2] = Point_3(bbox[2].x() + d, bbox[2].y() + d, bbox[2].z() - d);
+        bbox[7] = Point_3(bbox[7].x() + d, bbox[7].y() + d, bbox[7].z() + d);
+        bbox[4] = Point_3(bbox[4].x() - d, bbox[4].y() + d, bbox[4].z() + d);
+        if (m_verbose) {
+          std::cout << "* setting y-based flat axis-aligned bounding box" << std::endl;
+        }
 
-      } else if (bbox_length_3 < tol) {
-
+      } else if (bbox_length_3 < tol) { // xy case
         CGAL_assertion_msg(bbox_length_1 >= tol, "ERROR: DEGENERATED INPUT POLYGONS!");
         CGAL_assertion_msg(bbox_length_2 >= tol, "ERROR: DEGENERATED INPUT POLYGONS!");
-        const FT z = FT(40) * tol; // 40 is a magic number but it is not a big deal in this case
 
-        bbox[0] = Point_3(bbox[0].x(), bbox[0].y(), bbox[0].z() - z);
-        bbox[1] = Point_3(bbox[1].x(), bbox[1].y(), bbox[1].z() - z);
-        bbox[2] = Point_3(bbox[2].x(), bbox[2].y(), bbox[2].z() - z);
-        bbox[3] = Point_3(bbox[3].x(), bbox[3].y(), bbox[3].z() - z);
+        bbox[0] = Point_3(bbox[0].x() - d, bbox[0].y() - d, bbox[0].z() - d);
+        bbox[1] = Point_3(bbox[1].x() + d, bbox[1].y() - d, bbox[1].z() - d);
+        bbox[2] = Point_3(bbox[2].x() + d, bbox[2].y() + d, bbox[2].z() - d);
+        bbox[3] = Point_3(bbox[3].x() - d, bbox[3].y() + d, bbox[3].z() - d);
 
-        bbox[5] = Point_3(bbox[5].x(), bbox[5].y(), bbox[5].z() + z);
-        bbox[6] = Point_3(bbox[6].x(), bbox[6].y(), bbox[6].z() + z);
-        bbox[7] = Point_3(bbox[7].x(), bbox[7].y(), bbox[7].z() + z);
-        bbox[4] = Point_3(bbox[4].x(), bbox[4].y(), bbox[4].z() + z);
-        if (m_verbose) std::cout << "* setting z-based flat axis-aligned bbox" << std::endl;
+        bbox[5] = Point_3(bbox[5].x() - d, bbox[5].y() - d, bbox[5].z() + d);
+        bbox[6] = Point_3(bbox[6].x() + d, bbox[6].y() - d, bbox[6].z() + d);
+        bbox[7] = Point_3(bbox[7].x() + d, bbox[7].y() + d, bbox[7].z() + d);
+        bbox[4] = Point_3(bbox[4].x() - d, bbox[4].y() + d, bbox[4].z() + d);
+        if (m_verbose) {
+          std::cout << "* setting z-based flat axis-aligned bounding box" << std::endl;
+        }
 
       } else {
         CGAL_assertion_msg(false, "ERROR: WRONG CASE!");
       }
     } else {
       if (m_verbose) {
-        std::cout << "* using axis aligned bounding box" << std::endl;
+        std::cout << "* using axis-aligned bounding box" << std::endl;
       }
     }
   }
