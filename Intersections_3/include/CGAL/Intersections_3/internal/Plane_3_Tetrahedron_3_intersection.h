@@ -18,7 +18,6 @@
 #include <CGAL/kernel_basic.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Intersections_3/internal/Plane_3_Triangle_3_do_intersect.h>
-#include <CGAL/Intersections_3/internal/tetrahedron_intersection_helpers.h>
 
 #include <set>
 
@@ -119,8 +118,7 @@ intersection(const typename K::Tetrahedron_3& tet,
           // check for intersection of the edge
           if (orientations[next_id] == ON_POSITIVE_SIDE)
           {
-            ids.push_back(
-                          inter_pt_index(current_id, next_id, edge_id));
+            ids.push_back(inter_pt_index(current_id, next_id, edge_id));
           }
           break;
         }
