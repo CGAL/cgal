@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
   /// [Generate weights]
   const float sigma = (argc > 2) ? atof(argv[2]) : 1.f;
   CGAL::Image_3 img_weights =
-    CGAL::Mesh_3::generate_weights(image, sigma, (unsigned char)(1));
+    CGAL::Mesh_3::generate_weights(image, sigma);
   /// [Generate weights]
 
   /// [Domain creation]

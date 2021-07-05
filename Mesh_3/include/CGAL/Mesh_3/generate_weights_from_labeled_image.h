@@ -16,6 +16,7 @@
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/Image_3.h>
+#include <CGAL/ImageIO.h>
 
 #include <itkImage.h>
 #include <itkImageDuplicator.h>
@@ -141,9 +142,8 @@ SIGN get_sign()
 }//namespace internal
 
 template<typename Image_word_type>
-CGAL::Image_3 generate_weights(const CGAL::Image_3& image,
-                               const float& sigma,
-                               Image_word_type)
+CGAL::Image_3 generate_weights_with_known_word_type(const CGAL::Image_3& image,
+                                                    const float& sigma)
 {
   typedef unsigned char Weights_type; //from 0 t 255
 
@@ -263,6 +263,19 @@ CGAL::Image_3 generate_weights(const CGAL::Image_3& image,
 #endif
 
   return CGAL::Image_3(weights);
+}
+
+
+CGAL::Image_3 generate_weights(const CGAL::Image_3& image,
+                               const float& sigma)
+{
+  CGAL_IMAGE_IO_CASE(image.image(),
+    return generate_weights_with_known_word_type<Word>(image, sigma);
+  );
+  CGAL_error_msg("This place should never be reached, because it would mean "
+    "the image word type is a type that is not handled by "
+    "CGAL_ImageIO.");
+  return CGAL::Image_3();
 }
 
 }//namespace Mesh_3
