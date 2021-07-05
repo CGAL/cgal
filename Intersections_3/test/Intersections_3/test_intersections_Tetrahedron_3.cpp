@@ -41,6 +41,8 @@ struct Tetrahedron_3_intersection_tester
 
   typedef CGAL::Vector_3<K>         V;
 
+  typedef std::vector<P>            Poly;
+
   using Base::p;
   using Base::pl;
   using Base::random_point;
@@ -100,15 +102,13 @@ public:
       if(tet4.is_degenerate())
         continue;
 
-      std::set<CGAL::Oriented_side> os;
-      os.insert(tet0.oriented_side(tet10));
-      os.insert(tet0.oriented_side(tet11));
-      os.insert(tet0.oriented_side(tet12));
-      os.insert(tet0.oriented_side(tet13));
+      std::set<CGAL::Bounded_side> os;
+      os.insert(tet0.bounded_side(tet10));
+      os.insert(tet0.bounded_side(tet11));
+      os.insert(tet0.bounded_side(tet12));
+      os.insert(tet0.bounded_side(tet13));
 
-      if(os.size() == 1 && (*os.begin() == CGAL::ON_POSITIVE_SIDE))
-        check_do_not_intersect(tet0, tet4);
-      else
+      if(os.size() != 1 || (*os.begin() != CGAL::ON_UNBOUNDED_SIDE))
         check_do_intersect(tet0, tet4);
     }
   }
@@ -117,138 +117,120 @@ public:
   {
     Tet tet(p(0,0,0), p(0,1,0), p(1,0,0), p(0,0,1));
 
-//    check_no_intersection(tet, Tr(p(2,0,0), p(2,1,0), p(2,0,1)));
+    // no intersection
+    check_no_intersection(tet, Tr(p(2,0,0), p(2,1,0), p(2,0,1)));
 
-   // tr inside a face
-   check_intersection(tet, Tr(P(0,0.9,0), P(0,0.1,0), P(0,0,0.9)),
-                      Tr(P(0,0.9,0), P(0,0.1,0), P(0,0,0.9)));
-   // face inside tr
-   check_intersection(tet, Tr(p(0,2,0), p(0,-2,0), p(0,0,2)),
-                      Tr(p(0,0,1), p(0,0,0), p(0,1,0)));
+    // tr share a vertex, triangle on face
+    check_intersection(tet, Tr(p(0,1,0), P(0.1,0.1,0), P(0.5,0.1,0)),
+                       Tr(p(0,1,0), P(0.1,0.1,0), P(0.5,0.1,0)));
 
-   // only one edge intersecting
-   check_do_intersect(tet, Tr(P(-2, 0.5, 0.5), P(-2,0.75,1), P(1.5, 0.5, 0.5)));
+    // tr vertex adjacent to a vertex
+    check_intersection(tet, Tr(p(0,1,0), p(3,1,0), p(0,3,0)),
+                       p(0,1,0));
 
-   // edge shared, 3rd point outside
-   check_do_intersect(tet, Tr(p(0,1,0), p(1,0,0), P(0.5,0,-100)));
+    // tr edge adjacent to a vertex
+    check_intersection(tet, Tr(p(-1,1,0), p(3,1,0), p(0,3,0)),
+                       p(0,1,0));
 
-   // shared edge, 3rd point inside
-   check_do_intersect(tet, Tr(p(0,1,0), p(1,0,0), P(0.25,0.25,0.25)));
+    // tr adjacent to a vertex, outside
+    check_intersection(tet, Tr(p(-1,1,12), p(0,1,-50), P(0.5,1,-0.5)),
+                       p(0,1,0));
 
-   // tr adjacent to a vertex, outside
-   check_do_intersect(tet, Tr(p(-1,1,12), p(0,1,-50), P(0.5,1,-0.5)));
+    // only one edge intersecting
+    check_intersection(tet, Tr(P(-2, 0.5, 0.5), P(-2,0.75,1), P(1.5, 0.5, 0.5)),
+                       P(0,0.5,0.5));
 
-   // tr share a vertex, inside
-   check_do_intersect(tet, Tr(p(0,1,0), P(0.1,0.1,0), P(0.5,0.1,0)));
+    // edge shared, 3rd point outside
+    check_intersection(tet, Tr(p(0,1,0), p(1,0,0), P(0.5,0,-100)),
+                       S(p(0,1,0), p(1,0,0)));
 
-   // tr edge adjacent to a vertex
-   check_do_intersect(tet, Tr(p(-1,1,0), p(3,1,0), p(0,3,0)));
+    // shared edge, 3rd point inside
+    check_intersection(tet, Tr(p(0,1,0), p(1,0,0), P(0.25,0.25,0.25)),
+                       Tr(p(0,1,0), p(1,0,0), P(0.25,0.25,0.25)));
 
-   // tr vertex adjacent to a vertex
-   check_do_intersect(tet, Tr(p(0,1,0), p(3,1,0), p(0,3,0)));
+    // tr edge containing a tetrahedron edge
+    check_intersection(tet, Tr(p(0,-1,0), p(0,3,0), p(1,1,-1)), S(p(0,0,0), p(0,1,0)));
 
-   // traversing triangles
-   Tr tr(P(-2, 0.5, 0.25), P(-2, 0.75, 0.6), P(1.5, 0.5, 0.25));
-   check_do_intersect(tet, tr);
+    // tr edge intersecting a tet face
+    check_intersection(tet, Tr(P(-0.5,0,0.5), P(2,0,0.5), P(0.5,-2,0)),
+                       S(P(0,0,0.5), P(0.5,0,0.5)));
 
-   // tr share a vertex, through
-   tr = Tr(p(0,1,0), P(0.1,0.1,0), P(0.9,0.1,0));
-   check_do_intersect(tet, tr);
+    // tr face containing a tetrahedron edge
+    check_intersection(Tet(p(0,1,0), p(0,0,1), p(0,1,1), p(1, 0, 1)),
+                       Tr(p(-2,0,-2), P(0,0,5), p(10,0,0)),
+                       S(p(0,0,1), p(1,0,1)));
+
+    // sharing a point on edge
+    check_intersection(tet, Tr(P(-2, 1, 0.5), P(-2, 0.75, 1.6), P(2, 0, 0.5)),
+                       P(0, 0.5, 0.5));
+
+    // tr inside a face
+    check_intersection(tet, Tr(P(0,0.9,0), P(0,0.1,0), P(0,0,0.9)),
+                       Tr(P(0,0.9,0), P(0,0.1,0), P(0,0,0.9)));
+
+    // face inside tr
+    check_intersection(tet, Tr(p(0,2,0), p(0,-2,0), p(0,0,2)),
+                       Tr(p(0,0,1), p(0,0,0), p(0,1,0)));
+
+    // on the same plane, polygonal intersection
+    Base::template check_intersection<Poly>(tet, Tr(p(0,-2,0), p(1,1,0), p(1,2,0)));
+
+    // traversing triangles
+    Base::template check_intersection<Tr>(tet, Tr(P(-2, 0.5, 0.25), P(-2, 0.75, 0.6), P(1.5, 0.5, 0.25)));
+
+    // tr share an edge, third point on face
+    Base::template check_intersection<Tr>(tet, Tr(p(0,1,0), P(0.1,0.1,0), P(0.9,0.1,0)));
+
+    // sharing a vertex + edge/face intersection
+    Base::template check_intersection<Poly>(tet, Tr(p(0,0,0), P(0.5,-1,0), P(0.5,1,0)));
+
+    // vertex on edge & triangle inside, triangle intersection
+    Base::template check_intersection<Tr>(tet, Tr(P(0.5,0,0), P(0.5,0.25,0.25), P(0.5,-0.5,0)));
+
+    // vertex on edge & triangle inside, double segment
+    Base::template check_intersection<Tr>(tet, Tr(P(0,0,0.5), P(-1,1.5,0.25), P(1.5,-1,0.25)));
+
+    // vertex on edge & triangle inside, double segment non-incident
+    Base::template check_intersection<Poly>(tet, Tr(P(0.25,0,0.25), P(-1,0.5,0.25), P(1.5,0.5,0.25)));
+
+    // vertex on face, triangle outside & segment intersection
+    Base::check_intersection(tet, Tr(P(0.5,0,-0.25), P(0.5,0,0.25), P(0.5,-0.5,0)),
+                             S(P(0.5, 0, 0.25), P(0.5, 0, 0)));
+
+    // vertex on face & inside, triangle intersection
+    Base::template check_intersection<Tr>(tet, Tr(P(0.5,0,0), P(0.5,0.25,0.25), P(0.5,-0.5,0)));
+
+    // vertex on face, triangle intersection
+    Base::template check_intersection<Tr>(tet, Tr(P(0, 0.25, 0.25), P(0.5, -0.25, 0.25), P(0.5, -0.25, 0.5)));
+
+    // vertex inside, segment-triangle intersection
+    Base::template check_intersection<Tr>(tet, Tr(P(0.2, 0.15, 0.3), P(-2, 0.6, 0.15), P(-2, 0.12, 0.15)));
+
+    // vertex inside, double segment intersection
+    Base::template check_intersection<Poly>(tet, Tr(P(0.2, 0.15, 0.3), P(-1, 0.15, -2), P(-1, 0.15, 2)));
+
+    // two vertices inside
+    Base::template check_intersection<Poly>(tet, Tr(P(0.1, 0.5, 0.1), P(0.3,0.1,0.1), P(4,0.3,0.9)));
 
     if(this->has_exact_c)
     {
       Tr tr(p(-2,2,0), p(2,2,0), P(0.25,0.25,0));
       auto res = CGAL::intersection(tet, tr);
-      const std::vector<P>* poly = boost::get<std::vector<P> >(&*res);
+      const Poly* poly = boost::get<Poly>(&*res);
       assert(poly != nullptr);
       assert(poly->size() == 4);
-      for(const P& pt : *poly)
-      {
+      for(const P& pt : *poly) {
         assert(tet.has_on_boundary(pt) && tr.has_on(pt));
       }
-
-      // only one edge intersecting
-      check_intersection (tet, Tr(P(-2, 0.5, 0.5), P(-2,0.75,1), P(1.5, 0.5, 0.5)),
-                          P(0,0.5,0.5));
-
-      // edge shared, 3rd point outside
-      check_intersection (tet, Tr(p(0,1,0), p(1,0,0), P(0.5,0,-100)),
-                          S(p(0,1,0), p(1,0,0)));
-
-      // shared edge, 3rd point inside
-      check_intersection (tet, Tr(p(0,1,0), p(1,0,0), P(0.25,0.25,0.25)),
-                          Tr(p(0,1,0), p(1,0,0), P(0.25,0.25,0.25)));
-
-      // tr adjacent to a vertex, outside
-      check_intersection (tet, Tr(p(-1,1,12), p(0,1,-50), P(0.5,1,-0.5)),
-                          p(0,1,0));
-
-      // tr adjacent to an edge, outside
-      check_intersection (tet, Tr(P(-0.6, 1, 0.6), P(0.5, 1.20, -0.5), P(0, -0.5, 0)),
-                          S(p(0,0,0), p(0,1,0)));
-
-      // tr share a vertex, inside
-      check_intersection (tet, Tr(p(0,1,0), P(0.1,0.1,0), P(0.5,0.1,0)),
-                          Tr(p(0,1,0), P(0.1,0.1,0), P(0.5,0.1,0)));
-
-      // tr edge adjacent to a vertex
-      check_intersection (tet, Tr(p(-1,1,0), p(3,1,0), p(0,3,0)),
-                          p(0,1,0));
-
-      // tr vertex adjacent to a vertex
-      check_intersection (tet, Tr(p(0,1,0), p(3,1,0), p(0,3,0)),
-                          p(0,1,0));
-
-      // traversing triangles
-      tr = Tr(P(-2, 0.5, 0.25), P(-2, 0.75, 0.6), P(1.5, 0.5, 0.25));
-      res = CGAL::intersection(tet, tr);
-      std::vector<P>* inter = boost::get<std::vector<P> >(&*res);
-      assert(inter != nullptr);
-      assert(inter->size() == 4);
-      for(const P& pt : *inter) {
-        assert(tet.has_on_boundary(pt) && tr.has_on(pt));
-      }
-
-      tr = Tr(P(-2, 0.25, 0), P(-2, 0.75, 0), P(1.5, 0.5, 0));
-      res = CGAL::intersection(tet, tr);
-      inter = boost::get<std::vector<P> >(&*res);
-      assert(inter != nullptr);
-      assert(inter->size() == 4);
-      for(const P& pt : *inter) {
-        assert(tet.has_on_boundary(pt) && tr.has_on(pt));
-      }
-
-      tr = Tr(P(0.2, 0.15, 0.3), P(-2, 0.6, 0.15), P(-2, 0.12, 0.15));
-      res = CGAL::intersection(tet, tr);
-      Tr* res_tr = boost::get<Tr>(&*res);
-      assert(res_tr != nullptr);
-
-      tr = Tr(P(0.2, 0.15, 0.3), P(-1, 0.15, -2), P(-1, 0.15, 2));
-      res = CGAL::intersection(tet, tr);
-      inter = boost::get<std::vector<P> >(&*res);
-      assert(inter != nullptr);
-      assert(inter->size() == 4);
 
       tr = Tr(P(0.45, 0.20, 0.1), P(0.1, 0.20, 0.5), P(-0.5, 0.25, -0.5));
       res = CGAL::intersection(tet, tr);
-      inter = boost::get<std::vector<P> >(&*res);
+      const Poly* inter = boost::get<Poly>(&*res);
       assert(inter != nullptr);
-      assert(inter->size() == 4);
+      assert(inter->size() == 5);
       for(const P& pt : *inter) {
         assert((tet.has_on_bounded_side(pt) || tet.has_on_boundary(pt)) && tr.has_on(pt));
       }
-
-      // tr share a vertex, through
-      tr = Tr(p(0,1,0), P(0.1,0.1,0), P(0.9,0.1,0));
-      res = CGAL::intersection(tet, tr);
-      res_tr = boost::get<Tr>(&*res);
-      assert(res_tr != nullptr);
-
-      tr = Tr(P(0.1, 0.5, 0.1), P(0.3,0.1,0.1), P(4,0.3,0.9));
-      res = CGAL::intersection(tet, tr);
-      inter = boost::get<std::vector<P> >(&*res);
-      assert(inter != nullptr);
-      assert(inter->size() == 4);
     }
 
     for(int i=0; i<N; ++i)
@@ -279,18 +261,26 @@ public:
       if(tr.is_degenerate())
         continue;
 
-      std::set<CGAL::Oriented_side> os;
-      os.insert(tet.oriented_side(tr0));
-      os.insert(tet.oriented_side(tr1));
-      os.insert(tet.oriented_side(tr2));
+      std::set<CGAL::Bounded_side> os;
+      os.insert(tet.bounded_side(tr0));
+      os.insert(tet.bounded_side(tr1));
+      os.insert(tet.bounded_side(tr2));
 
-      std::cout << "Tet: " << tet << std::endl;
-      std::cout << "Tr: " << tr << std::endl;
-
-      if(os.size() == 1 && (*os.begin() == CGAL::ON_POSITIVE_SIDE))
-        check_do_not_intersect(tet, tr);
-      else
+      if(os.size() != 1 || (*os.begin() != CGAL::ON_UNBOUNDED_SIDE))
+      {
         check_do_intersect(tet, tr);
+
+        auto res = CGAL::intersection(tet, tr);
+        if(const Poly* poly = boost::get<Poly>(&*res))
+        {
+          for(const P& pt : *poly) {
+            assert((tet.has_on_bounded_side(pt) || tet.has_on_boundary(pt)) && tr.has_on(pt));
+          }
+
+//          assert(CGAL::is_simple_2(poly->begin(), poly->end(),
+//                                   CGAL::Projection_traits_3(tr.supporting_plane().orthogonal_vector())));
+        }
+      }
     }
   }
 
