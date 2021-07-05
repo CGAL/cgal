@@ -16,7 +16,10 @@
 #include <CGAL/license/Surface_mesh_simplification.h>
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_policy_base.h>
-
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_optimizers.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_probabilistic_faces.h>
+#include <Eigen/Dense>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_plane_quadrics.h>
 #include <Eigen/Dense>
 
 namespace CGAL {
@@ -28,6 +31,9 @@ namespace Surface_mesh_simplification {
 // derives from cost_base and placement_base
 template<typename TriangleMesh, typename GeomTraits>
 class GarlandHeckbert_probabilistic_policies :
+  public internal::GarlandHeckbert_probabilistic_faces<TriangleMesh, GeomTraits>,
+  public internal::GarlandHeckbert_plane_edges<TriangleMesh, GeomTraits>,
+  public internal::GarlandHeckbert_invertible_optimizer<GeomTraits>,
   public internal::GarlandHeckbert_placement_base<
     typename boost::property_map<
       TriangleMesh,
@@ -110,6 +116,7 @@ public:
       Placement_base::init_vcm(vcm_);
     }
 
+    /*
     Col_4 construct_optimal_point(const Mat_4& aQuadric, const Col_4& p0, const Col_4& p1) const
     {
       Mat_4 X;
@@ -155,6 +162,7 @@ public:
     const Get_placement& get_placement() {
       return *this;
     }
+    */
 
   private:
     // the only parameters we need are the normal and position variances
