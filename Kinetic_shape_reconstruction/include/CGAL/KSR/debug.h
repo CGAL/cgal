@@ -130,7 +130,10 @@ void dump_2d_surface_mesh(
     for (const auto pvertex : data.pvertices_of_pface(pface)) {
       vertices.push_back(map_vertices[pvertex.second]);
     }
+
+    CGAL_assertion(vertices.size() >= 3);
     const auto face = mesh.add_face(vertices);
+    CGAL_assertion(face != Mesh::null_face());
     std::tie(red[face], green[face], blue[face]) =
       get_idx_color(support_plane_idx * (pface.second + 1));
   }
@@ -181,7 +184,9 @@ void dump_polygons(const DS& data, const std::string tag = std::string()) {
           vertices.push_back(map_vertices[pvertex.second]);
         }
 
+        CGAL_assertion(vertices.size() >= 3);
         const auto face = bbox_mesh.add_face(vertices);
+        CGAL_assertion(face != Mesh::null_face());
         std::tie(bbox_red[face], bbox_green[face], bbox_blue[face]) =
           get_idx_color((i + 1) * (pface.second + 1));
       }
@@ -201,7 +206,10 @@ void dump_polygons(const DS& data, const std::string tag = std::string()) {
         for (const auto pvertex : data.pvertices_of_pface(pface)) {
           vertices.push_back(map_vertices[pvertex.second]);
         }
+
+        CGAL_assertion(vertices.size() >= 3);
         const auto face = mesh.add_face(vertices);
+        CGAL_assertion(face != Mesh::null_face());
         std::tie(red[face], green[face], blue[face]) =
           get_idx_color(i * (pface.second + 1));
       }
@@ -620,6 +628,7 @@ void dump_volume(
     } else {
       colors.push_back(saver.get_idx_color(0));
     }
+    CGAL_assertion(polygon.size() >= 3);
     polygons.push_back(polygon);
   }
   CGAL_assertion(colors.size() == pfaces.size());
@@ -645,8 +654,10 @@ void dump_volumes(const DS& data, const std::string tag = std::string()) {
     polygons.clear();
     for (const auto& pface : volume.pfaces) {
       polygon.clear();
-      for (const auto pvertex : data.pvertices_of_pface(pface))
+      for (const auto pvertex : data.pvertices_of_pface(pface)) {
         polygon.push_back(data.point_3(pvertex));
+      }
+      CGAL_assertion(polygon.size() >= 3);
       polygons.push_back(polygon);
       colors.push_back(color);
     }
@@ -689,6 +700,7 @@ void dump_pface(
   for (const auto pvertex : data.pvertices_of_pface(pface)) {
     polygon.push_back(data.point_3(pvertex));
   }
+  CGAL_assertion(polygon.size() >= 3);
   polygons.push_back(polygon);
   Saver<Kernel> saver;
   saver.export_polygon_soup_3(polygons, "volumes/" + name);

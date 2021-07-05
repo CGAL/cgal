@@ -527,7 +527,7 @@ private:
       const Event event = m_queue.pop();
       const FT current_time = event.time();
 
-      // const std::size_t sp_debug_idx = 27;
+      // const std::size_t sp_debug_idx = 10;
       if (m_export /* && event.pvertex().first == sp_debug_idx */) {
         if (iteration < 10) {
           dump(m_data, "iter-0" + std::to_string(iteration));
@@ -535,7 +535,7 @@ private:
           //   "-surface-mesh-" + std::to_string(sp_debug_idx));
           dump_event(m_data, event, "iter-0" + std::to_string(iteration));
         } else {
-          // if (iteration > 3600) {
+          // if (iteration > 1400) {
             dump(m_data, "iter-" + std::to_string(iteration));
             // dump_2d_surface_mesh(m_data, sp_debug_idx, "iter-" + std::to_string(iteration) +
             //   "-surface-mesh-" + std::to_string(sp_debug_idx));
@@ -550,7 +550,7 @@ private:
       }
       ++iteration;
 
-      // if (iteration == 3725) {
+      // if (iteration == 1500) {
       //   exit(EXIT_FAILURE);
       // }
 
@@ -1852,8 +1852,8 @@ private:
       const auto pn_futr = m_data.point_2(next, ntime);
       const auto dirn = Vector_2(pn_curr, pn_futr);
 
-      CGAL_assertion_msg(biedges.size() <= 2,
-      "TODO: FRONT, CAN WE HAVE MORE THAN 2 BIEDGES?");
+      // CGAL_assertion_msg(biedges.size() <= 2,
+      // "TODO: FRONT, CAN WE HAVE MORE THAN 2 BIEDGES?");
 
       bool found_iedge = false;
       for (const auto& pair : iedges) {
@@ -2112,8 +2112,8 @@ private:
       const auto pn_futr = m_data.point_2(next, ntime);
       const auto dirn = Vector_2(pn_curr, pn_futr);
 
-      CGAL_assertion_msg(biedges.size() <= 2,
-      "TODO: OPEN NEXT, CAN WE HAVE MORE THAN 2 BIEDGES?");
+      // CGAL_assertion_msg(biedges.size() <= 2,
+      // "TODO: OPEN NEXT, CAN WE HAVE MORE THAN 2 BIEDGES?");
 
       bool found_iedge = false;
       for (const auto& pair : iedges) {

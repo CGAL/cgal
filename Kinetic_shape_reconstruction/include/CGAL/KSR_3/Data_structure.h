@@ -1073,8 +1073,8 @@ public:
       const auto iedge = this->iedge(pvertices[i]);
       if (iedge == null_iedge()) continue;
       CGAL_assertion(iedge != null_iedge());
-      if (iedge == ref_iedge) continue;
-      CGAL_assertion(i != event_idx);
+      // if (iedge == ref_iedge) continue;
+      // CGAL_assertion(i != event_idx);
 
       if (i < event_idx) {
         if (fiedges.size() > 0 && fiedges.back() == iedge) continue;
@@ -1542,13 +1542,15 @@ public:
 
   PFaces_around_pvertex pfaces_around_pvertex(const PVertex& pvertex) const {
 
-    return PFaces_around_pvertex(
+    const auto pfaces = PFaces_around_pvertex(
       boost::make_transform_iterator(
         halfedges_around_target(halfedge(pvertex.second, mesh(pvertex)), mesh(pvertex)).begin(),
         Halfedge_to_pface(pvertex.first, mesh(pvertex))),
       boost::make_transform_iterator(
         halfedges_around_target(halfedge(pvertex.second, mesh(pvertex)), mesh(pvertex)).end(),
         Halfedge_to_pface(pvertex.first, mesh(pvertex))));
+    CGAL_assertion(pfaces.size() >= 1);
+    return pfaces;
   }
 
   void non_null_pfaces_around_pvertex(
@@ -1564,37 +1566,45 @@ public:
 
   PVertices_of_pface pvertices_of_pface(const PFace& pface) const {
 
-    return PVertices_of_pface(
+    const auto pvertices = PVertices_of_pface(
       boost::make_transform_iterator(
         halfedges_around_face(halfedge(pface.second, mesh(pface)), mesh(pface)).begin(),
         Halfedge_to_pvertex(pface.first, mesh(pface))),
       boost::make_transform_iterator(
         halfedges_around_face(halfedge(pface.second, mesh(pface)), mesh(pface)).end(),
         Halfedge_to_pvertex(pface.first, mesh(pface))));
+    CGAL_assertion(pvertices.size() >= 3);
+    return pvertices;
   }
 
   PEdges_of_pface pedges_of_pface(const PFace& pface) const {
 
-    return PEdges_of_pface(
+    const auto pedges = PEdges_of_pface(
       boost::make_transform_iterator(
         halfedges_around_face(halfedge(pface.second, mesh(pface)), mesh(pface)).begin(),
         Halfedge_to_pedge(pface.first, mesh(pface))),
       boost::make_transform_iterator(
         halfedges_around_face(halfedge(pface.second, mesh(pface)), mesh(pface)).end(),
         Halfedge_to_pedge(pface.first, mesh(pface))));
+    CGAL_assertion(pedges.size() >= 3);
+    return pedges;
   }
 
   PEdges_around_pvertex pedges_around_pvertex(const PVertex& pvertex) const {
-    return PEdges_around_pvertex(
+
+    const auto pedges = PEdges_around_pvertex(
       boost::make_transform_iterator(
         halfedges_around_target(halfedge(pvertex.second, mesh(pvertex)), mesh(pvertex)).begin(),
         Halfedge_to_pedge(pvertex.first, mesh(pvertex))),
       boost::make_transform_iterator(
         halfedges_around_target(halfedge(pvertex.second, mesh(pvertex)), mesh(pvertex)).end(),
         Halfedge_to_pedge(pvertex.first, mesh(pvertex))));
+    CGAL_assertion(pedges.size() >= 2);
+    return pedges;
   }
 
   std::vector<Volume_cell> incident_volumes(const PFace& query_pface) const {
+
     std::vector<Volume_cell> nvolumes;
     for (const auto& volume : m_volumes) {
       for (const auto& pface : volume.pfaces) {
