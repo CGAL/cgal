@@ -17,10 +17,9 @@
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_policy_base.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_optimizers.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_probabilistic_faces.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_common.h>
 #include <Eigen/Dense>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_plane_quadrics.h>
-#include <Eigen/Dense>
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
@@ -31,7 +30,6 @@ namespace Surface_mesh_simplification {
 // derives from cost_base and placement_base
 template<typename TriangleMesh, typename GeomTraits>
 class GarlandHeckbert_probabilistic_policies :
-  public internal::GarlandHeckbert_probabilistic_faces<TriangleMesh, GeomTraits>,
   public internal::GarlandHeckbert_plane_edges<TriangleMesh, GeomTraits>,
   public internal::GarlandHeckbert_invertible_optimizer<GeomTraits>,
   public internal::GarlandHeckbert_placement_base<
@@ -85,24 +83,28 @@ class GarlandHeckbert_probabilistic_policies :
     using typename Cost_base::Point_3;
     using typename Cost_base::Vector_3;
 
-public:
-
+    // default discontinuity multiplier is 100
     GarlandHeckbert_probabilistic_policies(TriangleMesh& tmesh)
-      : GarlandHeckbert_probabilistic_policies(tmesh, 100) // default discontinuity multiplier is 100
+      : GarlandHeckbert_probabilistic_policies(tmesh, 100) 
     { }
     
     GarlandHeckbert_probabilistic_policies(TriangleMesh& tmesh, FT dm)
-      : GarlandHeckbert_probabilistic_policies(tmesh, dm, 1.0, 1.0) // the one is dummy value
-    {
-      // set the actual estimate variances
-      std::tie(sdev_n_2, sdev_p_2) = estimate_variances(tmesh);
+      : Cost_base(dm)
+    { 
+      // initialize the private variable vcm so it's lifetime is bound to that of the policy's
+      vcm_ = get(Cost_property(), tmesh);
+
+      std::tie(normal_variance, mean_variance) = estimate_variances(tmesh);
+      
+      // initialize both vcms
+      Cost_base::init_vcm(vcm_);
+      Placement_base::init_vcm(vcm_);
     }
 
     GarlandHeckbert_probabilistic_policies(TriangleMesh& tmesh,
                                            FT dm,
                                            FT sdn,
-                                           FT sdp)
-      : Cost_base(dm), sdev_n_2(square(sdn)), sdev_p_2(square(sdp))
+                                           FT sdp) : Cost_base(dm)
     {
 
       // we need positive variances so that we always get an invertible matrix
@@ -116,66 +118,31 @@ public:
       Placement_base::init_vcm(vcm_);
     }
 
-    /*
-    Col_4 construct_optimal_point(const Mat_4& aQuadric, const Col_4& p0, const Col_4& p1) const
-    {
-      Mat_4 X;
-      X << aQuadric.block(0, 0, 3, 4), 0, 0, 0, 1;
-
-      Col_4 opt_pt;
-
-      opt_pt = X.inverse().col(3); // == X.inverse() * (0 0 0 1)
-
-      return opt_pt;
-    }
-    
-    template<typename VPM, typename TM> 
+    template<typename VPM, typename TM>
     Mat_4 construct_quadric_from_face(
         const VPM& point_map,
         const TM& tmesh, 
         typename boost::graph_traits<TM>::face_descriptor f, 
         const GeomTraits& gt) const
     {
-      const Vector_3 normal = this->construct_unit_normal_from_face(point_map, tmesh, f, gt);
+      const Vector_3 normal = internal::common::construct_unit_normal_from_face<
+        GeomTraits, VPM, TM>(point_map, tmesh, f, gt);
       const Point_3 p = get(point_map, source(halfedge(f, tmesh), tmesh));
-      
+
       return construct_quadric_from_normal(normal, p, gt);
     }
     
-    template<typename VPM, typename TM> 
-    Mat_4 construct_quadric_from_edge(
-        const VPM& point_map,
-        const TM& tmesh, 
-        typename boost::graph_traits<TM>::halfedge_descriptor he, 
+    const Get_cost& get_cost() const { return *this; }
+    const Get_placement& get_placement() const { return *this; }
+    
+  private:
+    Vertex_cost_map vcm_;
+   
+    Mat_4 construct_quadric_from_normal(
+        const Vector_3& mean_normal,
+        const Point_3& point, 
         const GeomTraits& gt) const
     {
-      const Vector_3 normal = this->construct_edge_normal(point_map, tmesh, he, gt);
-      const Point_3 p = get(point_map, source(he, tmesh));
-      
-      return construct_quadric_from_normal(normal, p, gt);
-    }
-
-    const Get_cost& get_cost() {
-      return *this;
-    }
-
-    const Get_placement& get_placement() {
-      return *this;
-    }
-    */
-
-  private:
-    // the only parameters we need are the normal and position variances
-    // - ie the squared standard deviations
-    FT sdev_n_2;
-    FT sdev_p_2;
-
-    Vertex_cost_map vcm_;
-    
-    Mat_4 construct_quadric_from_normal(
-        const Vector_3& mean_normal, 
-        const Point_3& point,
-        const GeomTraits& gt) const {
       auto squared_length = gt.compute_squared_length_3_object();
       auto dot_product = gt.compute_scalar_product_3_object();
       auto construct_vec_3 = gt.construct_vector_3_object();
@@ -187,7 +154,7 @@ public:
       const Eigen::Matrix<FT, 3, 1> mean_n_col{mean_normal.x(), mean_normal.y(), mean_normal.z()};
 
       // start by setting values along the diagonal
-      Mat_4 mat = sdev_n_2 * Mat_4::Identity();
+      Mat_4 mat = normal_variance * Mat_4::Identity();
 
       // add outer product of the mean normal with itself
       // to the upper left 3x3 block
@@ -197,7 +164,7 @@ public:
       // 3 values of the last column
       // the negative sign comes from the fact that in the paper,
       // the b column and row appear with a negative sign
-      const auto b1 = -(dot_mnmv * mean_normal + sdev_n_2 * mean_vec);
+      const auto b1 = -(dot_mnmv * mean_normal + normal_variance * mean_vec);
 
       const Eigen::Matrix<FT, 3, 1> b {b1.x(), b1.y(), b1.z()};
 
@@ -207,13 +174,12 @@ public:
       // set the value in the bottom right corner, we get this by considering
       // that we only have single variances given instead of covariance matrices
       mat(3, 3) = CGAL::square(dot_mnmv)
-        + sdev_n_2 * squared_length(mean_vec)
-        + sdev_p_2 * squared_length(mean_normal)
-        + 3 * sdev_n_2 * sdev_p_2;
+        + normal_variance * squared_length(mean_vec)
+        + mean_variance * squared_length(mean_normal)
+        + 3 * normal_variance * mean_variance;
 
       return mat;
     }
-    
     // give a very rough estimate of a decent variance for both parameters
     static std::pair<FT, FT> estimate_variances(const TriangleMesh& mesh)
     {
@@ -248,6 +214,10 @@ public:
     // magic number determined by some testing, this is a good variance for models that
     // fit inside a [-1, 1]^3 unit cube
     static constexpr FT good_default_variance_unit = 1e-4;
+    
+  private:
+    FT mean_variance;
+    FT normal_variance;
 };
 
 } // namespace Surface_mesh_simplification
