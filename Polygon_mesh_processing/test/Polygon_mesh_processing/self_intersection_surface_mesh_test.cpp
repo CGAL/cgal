@@ -81,6 +81,51 @@ int test_self_intersections(const char* filename,
   return 0;
 }
 
+template <typename K>
+int test_limited_self_intersections(const char* filename)
+{
+  typedef CGAL::Surface_mesh<typename K::Point_3>                Mesh;
+  typedef typename boost::graph_traits<Mesh>::face_descriptor    face_descriptor;
+
+  std::ifstream input(filename);
+  Mesh m;
+
+  if ( !input || !(input >> m) ) {
+    std::cerr << "Error: cannot read file: " << filename << std::endl;
+    return 1;
+  }
+
+  CGAL::Timer timer;
+  timer.start();
+
+  std::vector<std::pair<face_descriptor, face_descriptor> > intersected_tris;
+
+  if(!std::is_same<K, EPECK>::value) // EPECK isn't threadsafe
+  {
+    PMP::self_intersections<CGAL::Parallel_tag>(
+          m, std::back_inserter(intersected_tris), CGAL::parameters::max_number(40));
+    std::cout << "self_intersections test for 40 SI took " << timer.time() << " sec." << std::endl;
+    std::cout << "Found " << intersected_tris.size() << " SIs." << std::endl;
+    if(intersected_tris.size() < 40)
+    {
+      std::cerr<<"Not enough intersections found in parallel."<<std::endl;
+      return 1;
+    }
+    intersected_tris.clear();
+    timer.reset();
+  }
+  PMP::self_intersections<CGAL::Sequential_tag>(
+    m, std::back_inserter(intersected_tris), CGAL::parameters::max_number(40));
+  std::cout << "self_intersections test for 40 SI took " << timer.time() << " sec." << std::endl;
+  timer.reset();
+  if(intersected_tris.size() != 40)
+  {
+    std::cerr<<"Too many intersections found in sequential"<<std::endl;
+    return 1;
+  }
+  return 0;
+}
+
 int main(int argc, char** argv)
 {
   // If file(s) are provided, the associated expected result must also be provided.
@@ -151,6 +196,14 @@ int main(int argc, char** argv)
 
   std::cout << "Fourth test (EPECK):" << std::endl;
   r += test_self_intersections<EPECK>(filename, expected);
+
+  filename = (argc > 9) ? argv[9] : "data/mannequin-devil.off";
+
+  std::cout << "Test with max_number (EPICK):" << std::endl;
+  r += test_limited_self_intersections<EPICK>(filename);
+
+  std::cout << "Test with max_number (EPECK):" << std::endl;
+  r += test_limited_self_intersections<EPECK>(filename);
 
   return r;
 }
