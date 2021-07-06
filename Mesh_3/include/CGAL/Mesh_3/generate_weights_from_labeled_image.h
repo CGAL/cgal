@@ -141,6 +141,7 @@ SIGN get_sign()
 
 }//namespace internal
 
+/// @cond INTERNAL
 template<typename Image_word_type>
 CGAL::Image_3 generate_weights_with_known_word_type(const CGAL::Image_3& image,
                                                     const float& sigma)
@@ -264,7 +265,20 @@ CGAL::Image_3 generate_weights_with_known_word_type(const CGAL::Image_3& image,
 
   return CGAL::Image_3(weights);
 }
+/// @endcond
 
+/*!
+* Free function that generates a `CGAL::Image_3` of weights associated to each
+* voxel of `image`, to make the output mesh surfaces smoother.
+* The weights image is generated using the algorithm described by Stalling et al
+* in \cgalCite{stalling1998weighted}.
+*
+* @param image the input labeled image from which a `Labeled_mesh_domain_3`
+* is created
+* @param sigma the standard deviation parameter of the internal Gaussian filter
+*
+* @returns a `CGAL::Image_3` or weights used to build a quality `Labeled_mesh_domain_3`
+*/
 
 CGAL::Image_3 generate_weights(const CGAL::Image_3& image,
                                const float& sigma)

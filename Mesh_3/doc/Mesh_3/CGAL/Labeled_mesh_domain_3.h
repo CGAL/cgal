@@ -233,6 +233,11 @@ The parameters are optional unless otherwise specified.
 <li> <b>`parameters::image` (mandatory)</b> the input 3D image. Must
 be a `CGAL::Image_3` object.
 
+<li> <b>`parameters::weights`</b> an input 3D image that provides
+weights associated to each voxel (the word type is `unsigned char`,
+and the voxels values are integers between 0 and 255).
+The weights image can be generated with `CGAL::Mesh_3::generate_weights()`.
+
 <li><b>`parameter::value_outside`</b> the value attached to voxels
  outside of the domain to be meshed. Its default value is `0`.
 
@@ -245,6 +250,11 @@ be a `CGAL::Image_3` object.
 From the example (\ref Mesh_3/mesh_3D_image.cpp):
 
 \snippet Mesh_3/mesh_3D_image.cpp Domain creation
+
+From the example (\ref Mesh_3/mesh_3D_weighted_image.cpp),
+where the labeled image is used with precomputed weights image :
+
+\snippet Mesh_3/mesh_3D_weighted_image.cpp Domain creation
 
  */
 template <typename ... A_i>

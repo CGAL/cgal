@@ -706,6 +706,24 @@ The resulting mesh is shown in \cgalFigureRef{figureliver_3d_image_mesh}.
 Cut view of a 3D mesh produced from a segmented liver image. Code from subsection \ref Mesh_3_subsection_examples_3d_image generates this file.
 \cgalFigureEnd
 
+\subsubsection Mesh_3DomainsFrom3DImagesWithWeights Domains From Segment 3D Images, with Weights
+
+When a segmented image is given as input, the generated mesh surface sometimes sticks too closely
+to the voxels surface, causing an aliasing effect.
+A solution to generate a smooth and accurate output surface was described by Stalling et al in
+\cgalCite{stalling1998weighted}. It consists in generating a second input image, made
+of integer coefficients called "weights". This image that can be generated using
+CGAL with `CGAL::Mesh_3::generate_weights()` as shown in
+the following example.
+
+\cgalExample{Mesh_3/mesh_3D_weighted_image.cpp}
+
+\cgalFigureBegin{figure_weightedImage, weighted_images.jpg}
+Surface the output mesh generated with a very small `facet_distance`,
+without the weights (left) and with the weights (right).
+\cgalFigureEnd
+
+
 \subsubsection Mesh_3DomainsFrom3DImagesWithCustomInitialization Domains From 3D Images, with a Custom Initialization
 
 The example \ref Mesh_3/mesh_3D_image_with_custom_initialization.cpp is a modification
