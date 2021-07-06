@@ -55,20 +55,19 @@ IOStreams.  The basic task of such an operator is to produce a
 representation of an object that can be written as a sequence of
 characters on devices as a console, a file, or a pipe. The enum `Mode` distinguish between three different printing formats.
 
-In \ascii mode, numbers
+In `ASCII` mode, numbers
 e.g. the coordinates of a point or
 the coefficients of a line, are written
 in a machine independent format.
-In <span class="textsc">BINARY</span> mode, data are written
+In `BINARY` mode, data are written
 in a binary format, e.g. a double is represented
 as a sequence of four byte. The format depends on the machine.
- The mode  <span class="textsc">PRETTY</span>
-serves mainly for debugging as the type of the geometric
+ The mode `PRETTY` serves mainly for debugging as the type of the geometric
 object is written, as well as the data defining the object. For example
 for a point at the origin with %Cartesian double coordinates, the output
 would be `PointC2(0.0, 0.0)`.  At the moment \cgal does not
 provide input operations for pretty printed data. By default a stream
-is in \ascii mode.
+is in `ASCII` mode.
 
 \sa `CGAL::IO::set_mode()`
 \sa `CGAL::IO::set_ascii_mode()`
@@ -458,7 +457,7 @@ inline Mode get_mode(std::ios& s)
 /*!
 \ingroup PkgStreamSupportRef
 
-sets the mode of the %IO stream `s` to be the \ascii mode.
+sets the mode of the %IO stream `s` to be the `ASCII` mode.
 Returns the previous mode of `s`.
 
 \link PkgStreamSupportEnumRef `CGAL::IO::Mode`\endlink
@@ -561,7 +560,7 @@ inline bool is_pretty(std::ios& s) { return s.iword(Static::get_mode()) == PRETT
 /*!
 \ingroup PkgStreamSupportRef
 
-checks if the %IO stream `s` is in \ascii mode.
+checks if the %IO stream `s` is in `ASCII` mode.
 
 \link PkgStreamSupportEnumRef `CGAL::IO::Mode`\endlink
 \sa `CGAL::IO::set_mode()`
