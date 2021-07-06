@@ -3,7 +3,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Barycentric_coordinates_3/Mean_value_coordinates_3.h>
+#include <CGAL/Barycentric_coordinates_3/Voronoi_coordinates_3.h>
 
 #include "include/utils.h"
 
@@ -24,32 +24,40 @@ void test_overloads() {
   std::vector<Point_3> tetrahedron_coords;
 
   std::tie(tetrahedron, tetrahedron_coords) = tests::get_irregular_tetrahedron<Kernel, Mesh>();
-  CGAL::Barycentric_coordinates::Mean_value_coordinates_3<Mesh, Kernel> mv_tetrahedron(tetrahedron);
+  CGAL::Barycentric_coordinates::Voronoi_coordinates_3<Mesh, Kernel> voronoi_tetrahedron(tetrahedron);
 
   const FT step  = FT(1) / FT(10);
   const FT scale = FT(10);
   const FT limit = step*scale;
 
-  std::vector<FT> mv_coordinates_tetrahedron;
-  mv_coordinates_tetrahedron.resize(4);
+  std::vector<FT> voronoi_coordinates_tetrahedron;
+  voronoi_coordinates_tetrahedron.resize(4);
 
   //Check for barycenter
-  mv_tetrahedron(Point_3(FT(1)/FT(4), FT(1)/FT(4), FT(1)/FT(4)), mv_coordinates_tetrahedron.begin());
-  tests::test_barycenter<Kernel>(mv_coordinates_tetrahedron);
+  voronoi_tetrahedron(Point_3(FT(1)/FT(4), FT(1)/FT(4), FT(1)/FT(4)),
+   voronoi_coordinates_tetrahedron.begin());
+
+  for(std::size_t i = 0; i < 4; i++)
+    std::cout << voronoi_coordinates_tetrahedron[i] << std::endl;
+
+  tests::test_barycenter<Kernel>(voronoi_coordinates_tetrahedron);
 
   // Sample interior points
   for(FT x = step; x < limit; x += step){
     for(FT y = step; y < limit; y += step){
       for(FT z = step; z < FT(1) - x - y - step; z+= step){ // Excludes points inside faces
 
-        mv_coordinates_tetrahedron.clear();
-        mv_coordinates_tetrahedron.resize(4);
+        voronoi_coordinates_tetrahedron.clear();
+        voronoi_coordinates_tetrahedron.resize(4);
 
         const Point_3 query(x, y, z);
-        mv_tetrahedron(query, mv_coordinates_tetrahedron.begin());
+        voronoi_tetrahedron(query, voronoi_coordinates_tetrahedron.begin());
 
-        tests::test_linear_precision<Kernel>(mv_coordinates_tetrahedron, tetrahedron_coords, query);
-        tests::test_partition_of_unity<Kernel>(mv_coordinates_tetrahedron);
+        for(std::size_t i = 0; i < 4; i++)
+          std::cout << voronoi_coordinates_tetrahedron[i] << std::endl;
+
+        tests::test_linear_precision<Kernel>(voronoi_coordinates_tetrahedron, tetrahedron_coords, query);
+        tests::test_partition_of_unity<Kernel>(voronoi_coordinates_tetrahedron);
       }
     }
   }

@@ -11,8 +11,8 @@
 // Author(s)     : Antonio Gomes, Dmitry Anisimov
 //
 
-#ifndef CGAL_BARYCENTRIC_DISCRETE_HARMONIC_COORDINATES_3_H
-#define CGAL_BARYCENTRIC_DISCRETE_HARMONIC_COORDINATES_3_H
+#ifndef CGAL_BARYCENTRIC_VORONOI_COORDINATES_3_H
+#define CGAL_BARYCENTRIC_VORONOI_COORDINATES_3_H
 
 // #include <CGAL/license/Barycentric_coordinates_3.h>
 
@@ -28,7 +28,7 @@ namespace Barycentric_coordinates {
   typename GeomTraits,
   typename VertexToPointMap = typename property_map_selector<PolygonMesh,
     CGAL::vertex_point_t>::const_type>
-  class Discrete_harmonic_coordinates_3 {
+  class Voronoi_coordinates_3 {
 
   public:
     using Polygon_mesh = PolygonMesh;
@@ -39,12 +39,13 @@ namespace Barycentric_coordinates {
     using Cross_3 = typename GeomTraits::Construct_cross_product_vector_3;
     using Dot_3 = typename GeomTraits::Compute_scalar_product_3;
     using Sqrt = typename internal::Get_sqrt<GeomTraits>::Sqrt;
+    using Approximate_angle_3 = typename GeomTraits::Compute_approximate_angle_3;
 
 	  typedef typename GeomTraits::FT FT;
     typedef typename GeomTraits::Point_3 Point_3;
     typedef typename GeomTraits::Vector_3 Vector_3;
 
-    Discrete_harmonic_coordinates_3(
+    Voronoi_coordinates_3(
       const PolygonMesh& polygon_mesh,
       const Computation_policy_3 policy,
       const VertexToPointMap vertex_to_point_map,
@@ -56,6 +57,7 @@ namespace Barycentric_coordinates {
     m_construct_vector_3(m_traits.construct_vector_3_object()),
     m_cross_3(m_traits.construct_cross_product_vector_3_object()),
     m_dot_3(m_traits.compute_scalar_product_3_object()),
+    m_approximate_angle_3(m_traits.compute_approximate_angle_3_object()),
     sqrt(internal::Get_sqrt<GeomTraits>::sqrt_object(m_traits)){
 
       // Check if polyhedron is strongly convex
@@ -63,12 +65,12 @@ namespace Barycentric_coordinates {
       m_weights.resize(vertices(m_polygon_mesh).size());
     }
 
-    Discrete_harmonic_coordinates_3(
+    Voronoi_coordinates_3(
       const PolygonMesh& polygon_mesh,
       const Computation_policy_3 policy =
       Computation_policy_3::DEFAULT,
       const GeomTraits traits = GeomTraits()) :
-    Discrete_harmonic_coordinates_3(
+    Voronoi_coordinates_3(
       polygon_mesh,
       policy,
       get_const_property_map(CGAL::vertex_point, polygon_mesh),
@@ -93,6 +95,7 @@ namespace Barycentric_coordinates {
     const Cross_3 m_cross_3;
     const Dot_3 m_dot_3;
     const Sqrt sqrt;
+    const Approximate_angle_3 m_approximate_angle_3;
 
   	std::vector<FT> m_weights;
 
@@ -129,7 +132,7 @@ namespace Barycentric_coordinates {
       for (const auto& vertex : vd) {
 
         // Call function to calculate coordinates
-        const FT weight = compute_dh_vertex_query(vertex, query);
+        const FT weight = compute_mv_vertex_query(vertex, query);
 
     	  CGAL_assertion(vi < m_weights.size());
     	  m_weights[vi] = weight;
@@ -143,7 +146,10 @@ namespace Barycentric_coordinates {
 
     // Compute wp coordinates for a given vertex v and a query q
     template<typename Vertex>
-    FT compute_dh_vertex_query(const Vertex& vertex, const Point_3& query){
+    FT compute_mv_vertex_query(const Vertex& vertex, const Point_3& query){
+
+      // Map vertex descriptor to point_3
+      const Point_3& vertex_val = get(m_vertex_to_point_map, vertex);
 
       // Circulator of faces around the vertex
       CGAL::Face_around_target_circulator<Polygon_mesh>
@@ -158,61 +164,69 @@ namespace Barycentric_coordinates {
       // Iterate using the circulator
       do{
 
-        //Vertices around face iterator
+        // Vertices around face iterator
         const auto hedge = halfedge(*face_circulator, m_polygon_mesh);
         const auto vertices = vertices_around_face(hedge, m_polygon_mesh);
         auto vertex_itr = vertices.begin();
         CGAL_precondition(vertices.size() == 3);
 
-        int vertex_parity = 1;
-        std::vector<Point_3> points;
+        // Weight of vertex for this particular face
+        FT partial_weight = FT(0);
+        int vertex_idx = -1;
+
+        // Store useful information
+        std::vector<Vector_3> query_vertex_vectors;
+        std::vector<Vector_3> m_vectors;
+        Vector_3 r_vector;
+        Vector_3 m_vector_vertex;
+        query_vertex_vectors.resize(3);
+        m_vectors.resize(3);
+
         for(std::size_t i = 0; i < 3; i++){
 
-          if(*vertex_itr!=vertex)
-            points.push_back(get(m_vertex_to_point_map, *vertex_itr));
-          else
-            vertex_parity *= (i & 1)? -1 : 1;
+          if(*vertex_itr == vertex)
+            vertex_idx = i;
 
+          const Vector_3 p = m_construct_vector_3(query, get(m_vertex_to_point_map, *vertex_itr));
+          query_vertex_vectors[i] = p;
           vertex_itr++;
         }
 
-        const Point_3& point2 = points[0];
-        const Point_3& point1 = points[1];
+        // Current vertex should be present in face
+        assert(vertex_idx != -1);
 
-        Vector_3 opposite_edge = m_construct_vector_3(point2, point1);
-        FT edge_length = sqrt(opposite_edge.squared_length());
+        for(std::size_t i = 0; i < 3; i++){
 
-        Vector_3 normal_query = vertex_parity * m_cross_3(m_construct_vector_3(query, point2),
-         m_construct_vector_3(query, point1));
+          m_vectors[i] = m_cross_3(query_vertex_vectors[i], query_vertex_vectors[(i+1)%3]);
+          assert(m_vectors[i].squared_length() > 0);
+          m_vectors[i] /= sqrt(m_vectors[i].squared_length());
 
-        FT cot_dihedral = cot_dihedral_angle(get_face_normal(*face_circulator), normal_query);
+          Vector_3 edge_vector = query_vertex_vectors[i+1] - query_vertex_vectors[i];
+          FT cot_1 = cot_dihedral_angle(-edge_vector, query_vertex_vectors[i]);
+          FT cot_2 = cot_dihedral_angle(edge_vector, query_vertex_vectors[i+1]);
 
-        weight += (cot_dihedral * edge_length) / 2;
+          std::cout <<"Cotangents: "<< cot_1 << " " << cot_2 << "\n";
+
+          FT d_val = query_vertex_vectors[i].squared_length() * cot_2 +
+           query_vertex_vectors[i+1].squared_length() * cot_1;
+
+          r_vector = r_vector + d_val * m_vectors[i];
+
+          if(i != vertex_idx && i+1 != vertex_idx)
+            m_vector_vertex = m_vectors[i];
+        }
+
+        weight += m_dot_3(r_vector, m_vector_vertex);
+
+        std::cout << r_vector << "\n";
+
         face_circulator++;
 
       }while(face_circulator!=face_done);
 
+      std::cout << "Weight: "<<weight << "\n";
+
       return weight;
-    }
-
-    // Compute normal vector of the face (not normalized).
-    template<typename Face>
-    Vector_3 get_face_normal(const Face& face) {
-
-      const auto hedge = halfedge(face, m_polygon_mesh);
-      const auto vertices = vertices_around_face(hedge, m_polygon_mesh);
-      CGAL_precondition(vertices.size() >= 3);
-
-      auto vertex = vertices.begin();
-      const Point_3& point1 = get(m_vertex_to_point_map, *vertex); ++vertex;
-      const Point_3& point2 = get(m_vertex_to_point_map, *vertex); ++vertex;
-      const Point_3& point3 = get(m_vertex_to_point_map, *vertex);
-
-      const Vector_3 u = point2 - point1;
-      const Vector_3 v = point3 - point1;
-      const Vector_3 face_normal = m_cross_3(u, v);
-
-      return face_normal;
     }
 
     //Compute cotangent of dihedral angle between two faces
@@ -229,14 +243,13 @@ namespace Barycentric_coordinates {
 
       return approximate_dot_3/approximate_cross_3_length;
     }
-
   };
 
   template<
   typename Point_3,
   typename OutIterator,
   typename GeomTraits>
-  OutIterator discrete_harmonic_coordinates_3(
+  OutIterator voronoi_coordinates_3(
     const CGAL::Surface_mesh<Point_3>& surface_mesh,
     const Point_3& query,
     OutIterator c_begin,
@@ -246,11 +259,11 @@ namespace Barycentric_coordinates {
     using Geom_Traits = typename Kernel_traits<Point_3>::Kernel;
     using SM = CGAL::Surface_mesh<Point_3>;
 
-    Discrete_harmonic_coordinates_3<SM, Geom_Traits> discrete_harmonic(surface_mesh, policy);
-    return discrete_harmonic(query, c_begin);
+    Voronoi_coordinates_3<SM, Geom_Traits> voronoi(surface_mesh, policy);
+    return voronoi(query, c_begin);
   }
 
 } // namespace Barycentric_coordinates
 } // namespace CGAL
 
-#endif // CGAL_BARYCENTRIC_DISCRETE_HARMONIC_COORDINATES_3_H
+#endif // CGAL_BARYCENTRIC_VORONOI_COORDINATES_3_H
