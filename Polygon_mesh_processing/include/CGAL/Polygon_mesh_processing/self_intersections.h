@@ -429,7 +429,12 @@ self_intersections(const FaceRange& face_range,
  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
  *   \cgalParamNEnd
- * \cgalNamedParamsEnd
+ *
+ *   \cgalParamNBegin{max_number}
+ *     \cgalParamDescription{the maximum number of self intersections that will be computed and returned by the function.}
+ *     \cgalParamType{int}
+ *     \cgalParamDefault{`the number of self intersections in `tmesh`.}
+ *   \cgalParamNEnd
  *
  * @return `out`
  */
