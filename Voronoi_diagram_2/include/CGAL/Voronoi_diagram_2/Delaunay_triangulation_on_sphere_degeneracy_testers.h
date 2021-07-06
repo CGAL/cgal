@@ -37,7 +37,9 @@ public:
 
   typedef typename Delaunay_graph::Edge                  Edge;
   typedef typename Delaunay_graph::Face_handle           Face_handle;
-
+  typedef typename Delaunay_graph::Edge_circulator       Edge_circulator;
+  typedef typename Delaunay_graph::All_edges_iterator    All_edges_iterator;
+  typedef typename Delaunay_graph::Finite_edges_iterator Finite_edges_iterator;
   typedef bool                                           result_type;
 
  private:

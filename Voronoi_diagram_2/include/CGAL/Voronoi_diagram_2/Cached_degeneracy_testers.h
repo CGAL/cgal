@@ -52,6 +52,9 @@ public:
   typedef typename Edge_rejector::Delaunay_graph         Delaunay_graph;
   typedef typename Edge_rejector::Edge                   Edge;
   typedef typename Edge_rejector::Face_handle            Face_handle;
+  typedef typename Edge_rejector::Edge_circulator        Edge_circulator;
+  typedef typename Edge_rejector::All_edges_iterator     All_edges_iterator;
+  typedef typename Edge_rejector::Finite_edges_iterator  Finite_edges_iterator;
   typedef typename Edge_rejector::result_type            result_type;
 
 private:
@@ -155,6 +158,9 @@ public:
   typedef typename Edge_rejector::Delaunay_graph         Delaunay_graph;
   typedef typename Edge_rejector::Edge                   Edge;
   typedef typename Edge_rejector::Face_handle            Face_handle;
+  typedef typename Edge_rejector::Edge_circulator        Edge_circulator;
+  typedef typename Edge_rejector::All_edges_iterator     All_edges_iterator;
+  typedef typename Edge_rejector::Finite_edges_iterator  Finite_edges_iterator;
   typedef typename Edge_rejector::result_type            result_type;
 
 private:
