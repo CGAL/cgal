@@ -32,7 +32,7 @@ namespace Barycentric_coordinates {
 
   public:
     using Polygon_mesh = PolygonMesh;
-    using Geom_traits = GeomTraits;
+    using Geom_Traits = GeomTraits;
     using Vertex_to_point_map = VertexToPointMap;
 
     using Dot_3 = typename GeomTraits::Compute_scalar_product_3;
@@ -162,7 +162,8 @@ namespace Barycentric_coordinates {
       const Vector_3 query_vertex = m_construct_vector_3(query, vertex_val);
 
       // First face. p_1 is negated because the order of the circulator is reversed
-      const Vector_3 face_normal_1 = get_face_normal(*face_circulator);
+      const Vector_3 face_normal_1 = internal::get_face_normal(
+        *face_circulator, m_vertex_to_point_map, m_polygon_mesh, m_traits);
       const FT dist_perp_1 = m_dot_3(query_vertex, face_normal_1);
       CGAL_assertion(dist_perp_1 != FT(0));
       const Vector_3 p_1 = -face_normal_1/dist_perp_1;
@@ -174,8 +175,11 @@ namespace Barycentric_coordinates {
       // Iterate using the circulator
       do{
         // Calculate normals of faces
-        const Vector_3 face_normal_i = get_face_normal(*face_circulator); face_circulator++;
-        const Vector_3 face_normal_i_1 = get_face_normal(*face_circulator);
+        const Vector_3 face_normal_i = internal::get_face_normal(
+          *face_circulator, m_vertex_to_point_map, m_polygon_mesh, m_traits);
+        face_circulator++;
+        const Vector_3 face_normal_i_1 = internal::get_face_normal(
+          *face_circulator, m_vertex_to_point_map, m_polygon_mesh, m_traits);
 
         // Distance of query to face
         const FT perp_dist_i = m_dot_3(query_vertex, face_normal_i);
@@ -195,43 +199,22 @@ namespace Barycentric_coordinates {
       return weight;
     }
 
-    // Compute normal vector of the face (not normalized).
-    template<typename Face>
-    Vector_3 get_face_normal(const Face& face) {
-
-      const auto hedge = halfedge(face, m_polygon_mesh);
-      const auto vertices = vertices_around_face(hedge, m_polygon_mesh);
-      CGAL_precondition(vertices.size() >= 3);
-
-      auto vertex = vertices.begin();
-      const Point_3& point1 = get(m_vertex_to_point_map, *vertex); ++vertex;
-      const Point_3& point2 = get(m_vertex_to_point_map, *vertex); ++vertex;
-      const Point_3& point3 = get(m_vertex_to_point_map, *vertex);
-
-      const Vector_3 u = point2 - point1;
-      const Vector_3 v = point3 - point1;
-      const Vector_3 face_normal = m_cross_3(u, v);
-
-      return face_normal;
-    }
-
   };
 
   template<
   typename Point_3,
-  typename OutIterator,
-  typename GeomTraits>
+  typename Mesh,
+  typename OutIterator>
   OutIterator wachspress_coordinates_3(
-    const CGAL::Surface_mesh<Point_3>& surface_mesh,
+    const Mesh& surface_mesh,
     const Point_3& query,
     OutIterator c_begin,
     const Computation_policy_3 policy =
     Computation_policy_3::DEFAULT) {
 
     using Geom_Traits = typename Kernel_traits<Point_3>::Kernel;
-    using SM = CGAL::Surface_mesh<Point_3>;
 
-    Wachspress_coordinates_3<SM, Geom_Traits> wachspress(surface_mesh, policy);
+    Wachspress_coordinates_3<Mesh, Geom_Traits> wachspress(surface_mesh, policy);
     return wachspress(query, c_begin);
   }
 

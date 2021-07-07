@@ -32,7 +32,7 @@ namespace Barycentric_coordinates {
 
   public:
     using Polygon_mesh = PolygonMesh;
-    using Geom_traits = GeomTraits;
+    using Geom_Traits = GeomTraits;
     using Vertex_to_point_map = VertexToPointMap;
 
     using Construct_vec_3 = typename GeomTraits::Construct_vector_3;
@@ -63,6 +63,10 @@ namespace Barycentric_coordinates {
       // Check if polyhedron is strongly convex
       CGAL_assertion(is_strongly_convex_3(m_polygon_mesh, m_traits));
       m_weights.resize(vertices(m_polygon_mesh).size());
+      query_vertex_vectors.resize(3);
+      unit_vectors.resize(3);
+      m_vectors.resize(3);
+      angles.resize(3);
     }
 
     Mean_value_coordinates_3(
@@ -97,7 +101,12 @@ namespace Barycentric_coordinates {
     const Sqrt sqrt;
     const Approximate_angle_3 m_approximate_angle_3;
 
-  	std::vector<FT> m_weights;
+    // Store useful information
+    std::vector<FT> m_weights;
+    std::vector<Vector_3> query_vertex_vectors;
+    std::vector<Vector_3> unit_vectors;
+    std::vector<Vector_3> m_vectors;
+    std::vector<FT> angles;
 
   	template<typename OutputIterator>
     OutputIterator compute(
@@ -174,16 +183,6 @@ namespace Barycentric_coordinates {
         FT partial_weight = FT(0);
         int vertex_idx = -1;
 
-        // Store useful information
-        std::vector<Vector_3> query_vertex_vectors;
-        std::vector<Vector_3> unit_vectors;
-        std::vector<Vector_3> m_vectors;
-        std::vector<FT> angles;
-        query_vertex_vectors.resize(3);
-        unit_vectors.resize(3);
-        m_vectors.resize(3);
-        angles.resize(3);
-
         for(std::size_t i = 0; i < 3; i++){
 
           if(*vertex_itr == vertex)
@@ -232,19 +231,18 @@ namespace Barycentric_coordinates {
 
   template<
   typename Point_3,
-  typename OutIterator,
-  typename GeomTraits>
+  typename Mesh,
+  typename OutIterator>
   OutIterator mean_value_coordinates_3(
-    const CGAL::Surface_mesh<Point_3>& surface_mesh,
+    const Mesh& surface_mesh,
     const Point_3& query,
     OutIterator c_begin,
     const Computation_policy_3 policy =
     Computation_policy_3::DEFAULT) {
 
     using Geom_Traits = typename Kernel_traits<Point_3>::Kernel;
-    using SM = CGAL::Surface_mesh<Point_3>;
 
-    Mean_value_coordinates_3<SM, Geom_Traits> mean_value(surface_mesh, policy);
+    Mean_value_coordinates_3<Mesh, Geom_Traits> mean_value(surface_mesh, policy);
     return mean_value(query, c_begin);
   }
 

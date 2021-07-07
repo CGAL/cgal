@@ -32,7 +32,7 @@ namespace Barycentric_coordinates {
 
   public:
     using Polygon_mesh = PolygonMesh;
-    using Geom_traits = GeomTraits;
+    using Geom_Traits = GeomTraits;
     using Vertex_to_point_map = VertexToPointMap;
 
     using Construct_vec_3 = typename GeomTraits::Construct_vector_3;
@@ -166,10 +166,16 @@ namespace Barycentric_coordinates {
 
         int vertex_parity = 1;
         std::vector<Point_3> points;
+        points.resize(2);
+        int point_count = 0;
+
         for(std::size_t i = 0; i < 3; i++){
 
-          if(*vertex_itr!=vertex)
-            points.push_back(get(m_vertex_to_point_map, *vertex_itr));
+          if(*vertex_itr!=vertex){
+
+            points[point_count] = get(m_vertex_to_point_map, *vertex_itr);
+            point_count++;
+          }
           else
             vertex_parity *= (i & 1)? -1 : 1;
 
@@ -179,13 +185,16 @@ namespace Barycentric_coordinates {
         const Point_3& point2 = points[0];
         const Point_3& point1 = points[1];
 
-        Vector_3 opposite_edge = m_construct_vector_3(point2, point1);
-        FT edge_length = sqrt(opposite_edge.squared_length());
+        const Vector_3 opposite_edge = m_construct_vector_3(point2, point1);
+        const FT edge_length = sqrt(opposite_edge.squared_length());
 
-        Vector_3 normal_query = vertex_parity * m_cross_3(m_construct_vector_3(query, point2),
+        const Vector_3 normal_query = vertex_parity * m_cross_3(m_construct_vector_3(query, point2),
          m_construct_vector_3(query, point1));
 
-        FT cot_dihedral = cot_dihedral_angle(get_face_normal(*face_circulator), normal_query);
+        const FT cot_dihedral = internal::cot_dihedral_angle(
+          internal::get_face_normal(
+            *face_circulator, m_vertex_to_point_map, m_polygon_mesh, m_traits),
+            normal_query, m_traits);
 
         weight += (cot_dihedral * edge_length) / 2;
         face_circulator++;
@@ -195,58 +204,22 @@ namespace Barycentric_coordinates {
       return weight;
     }
 
-    // Compute normal vector of the face (not normalized).
-    template<typename Face>
-    Vector_3 get_face_normal(const Face& face) {
-
-      const auto hedge = halfedge(face, m_polygon_mesh);
-      const auto vertices = vertices_around_face(hedge, m_polygon_mesh);
-      CGAL_precondition(vertices.size() >= 3);
-
-      auto vertex = vertices.begin();
-      const Point_3& point1 = get(m_vertex_to_point_map, *vertex); ++vertex;
-      const Point_3& point2 = get(m_vertex_to_point_map, *vertex); ++vertex;
-      const Point_3& point3 = get(m_vertex_to_point_map, *vertex);
-
-      const Vector_3 u = point2 - point1;
-      const Vector_3 v = point3 - point1;
-      const Vector_3 face_normal = m_cross_3(u, v);
-
-      return face_normal;
-    }
-
-    //Compute cotangent of dihedral angle between two faces
-    FT cot_dihedral_angle(const Vector_3& vec_1, const Vector_3& vec_2){
-
-      assert(vec_1.squared_length() != FT(0));
-      assert(vec_2.squared_length() != FT(0));
-
-      FT approximate_dot_3 = m_dot_3(vec_1, vec_2);
-
-      FT approximate_cross_3_length = sqrt(m_cross_3(vec_1, vec_2).squared_length());
-
-      assert(approximate_cross_3_length != FT(0));
-
-      return approximate_dot_3/approximate_cross_3_length;
-    }
-
   };
 
   template<
   typename Point_3,
-  typename OutIterator,
-  typename GeomTraits>
+  typename Mesh,
+  typename OutIterator>
   OutIterator discrete_harmonic_coordinates_3(
-    const CGAL::Surface_mesh<Point_3>& surface_mesh,
+    const Mesh& surface_mesh,
     const Point_3& query,
     OutIterator c_begin,
     const Computation_policy_3 policy =
     Computation_policy_3::DEFAULT) {
 
     using Geom_Traits = typename Kernel_traits<Point_3>::Kernel;
-    using SM = CGAL::Surface_mesh<Point_3>;
 
-    Discrete_harmonic_coordinates_3<SM, Geom_Traits> discrete_harmonic(surface_mesh, policy);
+    Discrete_harmonic_coordinates_3<Mesh, Geom_Traits> discrete_harmonic(surface_mesh, policy);
     return discrete_harmonic(query, c_begin);
   }
 

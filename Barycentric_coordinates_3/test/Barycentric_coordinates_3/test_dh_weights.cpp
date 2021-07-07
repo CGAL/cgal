@@ -43,14 +43,14 @@ void test_overloads() {
     for(FT y = step; y < limit; y += step){
       for(FT z = step; z < FT(1) - x - y - step; z+= step){ // Excludes points inside faces
 
-        dh_coordinates_tetrahedron.clear();
-        dh_coordinates_tetrahedron.resize(4);
-
         const Point_3 query(x, y, z);
         dh_tetrahedron(query, dh_coordinates_tetrahedron.begin());
 
         tests::test_linear_precision<Kernel>(dh_coordinates_tetrahedron, tetrahedron_coords, query);
         tests::test_partition_of_unity<Kernel>(dh_coordinates_tetrahedron);
+
+        CGAL::Barycentric_coordinates::discrete_harmonic_coordinates_3(
+          tetrahedron, query, dh_coordinates_tetrahedron.begin());
       }
     }
   }

@@ -126,6 +126,63 @@ public:
     return coordinates;
   }
 
+  // Compute normal vector of the face (not normalized).
+  template<
+    typename Face,
+    typename VertexToPointMap,
+    typename PolygonMesh,
+    typename GeomTraits>
+  typename GeomTraits::Vector_3 get_face_normal(
+    const Face& face,
+    const VertexToPointMap& vertex_to_point_map,
+    const PolygonMesh& polygon_mesh,
+    const GeomTraits& traits){
+
+    using Point_3 = typename GeomTraits::Point_3;
+    using Vector_3 = typename GeomTraits::Vector_3;
+    const auto& cross_3 = traits.construct_cross_product_vector_3_object();
+
+    const auto hedge = halfedge(face, polygon_mesh);
+    const auto vertices = vertices_around_face(hedge, polygon_mesh);
+    CGAL_precondition(vertices.size() >= 3);
+
+    auto vertex = vertices.begin();
+    const Point_3& point1 = get(vertex_to_point_map, *vertex); ++vertex;
+    const Point_3& point2 = get(vertex_to_point_map, *vertex); ++vertex;
+    const Point_3& point3 = get(vertex_to_point_map, *vertex);
+
+    const Vector_3 u = point2 - point1;
+    const Vector_3 v = point3 - point1;
+    const Vector_3 face_normal = cross_3(u, v);
+
+    return face_normal;
+  }
+
+  //Compute cotangent of dihedral angle between two faces
+  template<typename GeomTraits>
+  typename GeomTraits::FT cot_dihedral_angle(
+    const typename GeomTraits::Vector_3& vec_1,
+    const typename GeomTraits::Vector_3& vec_2,
+    const GeomTraits& traits){
+
+    using FT = typename GeomTraits::FT;
+    const auto& dot_3 = traits.compute_scalar_product_3_object();
+    const auto& cross_3 = traits.construct_cross_product_vector_3_object();
+    const auto& sqrt(Get_sqrt<GeomTraits>::sqrt_object(traits));
+
+    assert(vec_1.squared_length() != FT(0));
+    assert(vec_2.squared_length() != FT(0));
+
+    const FT approximate_dot_3 = dot_3(vec_1, vec_2);
+
+    const FT approximate_cross_3_length = sqrt(cross_3(vec_1, vec_2).squared_length());
+
+    assert(approximate_cross_3_length != FT(0));
+
+    return approximate_dot_3/approximate_cross_3_length;
+  }
+
+
 }
 }
 }

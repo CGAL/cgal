@@ -2,6 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 project(Barycentric_coordinates_3_Tests)
+set(CMAKE_CXX_FLAGS "${CMAXE_CXX_FLAGS} -Wall -Wextra -Werror")
 
 cmake_minimum_required(VERSION 3.1...3.15)
 set(CMAKE_CXX_STANDARD 14)
@@ -18,7 +19,6 @@ if(CGAL_FOUND)
   create_single_source_cgal_program("test_dh_weights.cpp")
   create_single_source_cgal_program("test_mv_weights.cpp")
   create_single_source_cgal_program("test_voronoi_weights.cpp")
-
 else()
   message(WARNING "This program requires the CGAL library, and will not be compiled.")
 endif()

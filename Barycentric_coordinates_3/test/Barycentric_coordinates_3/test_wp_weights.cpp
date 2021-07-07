@@ -17,7 +17,7 @@ void test_overloads() {
 
   using FT = typename Kernel::FT;
   using Point_3 = typename Kernel::Point_3;
-  using Mesh = typename CGAL::Surface_mesh<Point_3>;
+  using Mesh = CGAL::Surface_mesh<Point_3>;
 
   // Cube
   Mesh cube;
@@ -43,15 +43,15 @@ void test_overloads() {
     for(FT y = step; y < limit; y += step){
       for(FT z = step; z < limit; z += step){
 
-        wp_coordinates_cube.clear();
-        wp_coordinates_cube.resize(8);
-
         const Point_3 query(x, y, z);
         wp_cube(query, wp_coordinates_cube.begin());
 
         tests::test_linear_precision<Kernel>(wp_coordinates_cube, cube_coords, query);
         tests::test_partition_of_unity<Kernel>(wp_coordinates_cube);
         tests::test_positivity<Kernel>(wp_coordinates_cube);
+
+        CGAL::Barycentric_coordinates::wachspress_coordinates_3(
+          cube, query, wp_coordinates_cube.begin());
       }
     }
   }

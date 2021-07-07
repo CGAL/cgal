@@ -42,14 +42,14 @@ void test_overloads() {
     for(FT y = step; y < limit; y += step){
       for(FT z = step; z < FT(1) - x - y - step; z+= step){ // Excludes points inside faces
 
-        mv_coordinates_tetrahedron.clear();
-        mv_coordinates_tetrahedron.resize(4);
-
         const Point_3 query(x, y, z);
         mv_tetrahedron(query, mv_coordinates_tetrahedron.begin());
 
         tests::test_linear_precision<Kernel>(mv_coordinates_tetrahedron, tetrahedron_coords, query);
         tests::test_partition_of_unity<Kernel>(mv_coordinates_tetrahedron);
+
+        CGAL::Barycentric_coordinates::mean_value_coordinates_3(
+          tetrahedron, query, mv_coordinates_tetrahedron.begin());
       }
     }
   }
