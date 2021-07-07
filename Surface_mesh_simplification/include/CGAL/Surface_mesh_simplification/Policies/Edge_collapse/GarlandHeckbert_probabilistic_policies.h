@@ -20,6 +20,7 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_common.h>
 #include <Eigen/Dense>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_plane_quadrics.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
@@ -94,7 +95,7 @@ class GarlandHeckbert_probabilistic_policies :
       // initialize the private variable vcm so it's lifetime is bound to that of the policy's
       vcm_ = get(Cost_property(), tmesh);
 
-      std::tie(normal_variance, mean_variance) = estimate_variances(tmesh);
+      std::tie(normal_variance, mean_variance) = estimate_variances(tmesh, GeomTraits());
       
       // initialize both vcms
       Cost_base::init_vcm(vcm_);
@@ -181,39 +182,38 @@ class GarlandHeckbert_probabilistic_policies :
       return mat;
     }
     // give a very rough estimate of a decent variance for both parameters
-    static std::pair<FT, FT> estimate_variances(const TriangleMesh& mesh)
+    static std::pair<FT, FT> estimate_variances(const TriangleMesh& mesh, 
+        const GeomTraits& gt)
     {
       typedef typename TriangleMesh::Vertex_index vertex_descriptor;
-      // get the bounding box of the mesh
-      CGAL::Bbox_3 bbox { };
-
-      for (vertex_descriptor v : vertices(mesh))
+      typedef typename TriangleMesh::Edge_index edge_descriptor;
+      
+      FT average_edge_length = 0;
+      
+      auto construct_vector = gt.construct_vector_3_object();
+      
+      for (edge_descriptor e : edges(mesh))
       {
-        bbox += mesh.point(v).bbox();
+        vertex_descriptor v1 = mesh.vertex(e, 0);
+        vertex_descriptor v2 = mesh.vertex(e, 1);
+
+        const Point_3& p1 = mesh.point(v1); 
+        const Point_3& p2 = mesh.point(v2); 
+
+        const Vector_3 vec = construct_vector(p1, p2);
+        average_edge_length += sqrt(vec.squared_length());
       }
-
-      // calculate geometric mean of edge lengths
-      FT geometric_mean = 1;
-
-      for (int i = 0; i < 3; ++i)
-      {
-        geometric_mean *= abs(bbox.max(i) - bbox.min(i));
-      }
-
-      geometric_mean = pow(geometric_mean, 1/3);
-
-      // set the variances based on the default value for [-1, 1]^3 cubes
-      // here we have the maximum edge length, so if we scale
-      // our mesh down by max_edge_length it fits inside a [0, 1]^3 cube, hence the "/ 2"
-      const FT n2 = good_default_variance_unit * geometric_mean / 2.0;
-      const FT p2 = good_default_variance_unit * geometric_mean / 2.0;
+      
+      average_edge_length = average_edge_length / mesh.number_of_edges();
+      const FT n2 = 0.05 * average_edge_length;
+      const FT p2 = 0.05 * average_edge_length;
       
       return std::make_pair(n2, p2);
     }
 
     // magic number determined by some testing, this is a good variance for models that
     // fit inside a [-1, 1]^3 unit cube
-    static constexpr FT good_default_variance_unit = 1e-4;
+    static constexpr FT good_default_variance_unit = 0.05;
     
   private:
     FT mean_variance;
