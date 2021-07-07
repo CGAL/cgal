@@ -58,8 +58,8 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
 
-//todo: document the behavior of max_number in parallel and Make a different functor without an atomic.
-template<typename Output_iterator>
+//todo: document the behavior of max_number in parallel
+template<class ConcurrencyTag, typename Output_iterator>
 struct Throw_at_count_reached_functor {
 
   std::atomic<unsigned int>& counter;
@@ -68,6 +68,33 @@ struct Throw_at_count_reached_functor {
   Output_iterator out;
 
   Throw_at_count_reached_functor(std::atomic<unsigned int>& counter,
+                         const unsigned int& max,
+                         Output_iterator out)
+    : counter(counter), max(max), out(out)
+  {}
+
+  template<class T>
+  void operator()(const T& t )
+  {
+    *out++ = t;
+    ++counter;
+    if(counter >= max)
+    {
+      throw CGAL::internal::Throw_at_output_exception();
+    }
+  }
+};
+
+//specialization for sequential code : The exact same functor except for the atomic counter that is not atomic here.
+template<typename Output_iterator>
+struct Throw_at_count_reached_functor<CGAL::Sequential_tag, Output_iterator> {
+
+  unsigned int& counter;
+  const unsigned int& max;
+
+  Output_iterator out;
+
+  Throw_at_count_reached_functor(unsigned int& counter,
                          const unsigned int& max,
                          Output_iterator out)
     : counter(counter), max(max), out(out)
@@ -328,7 +355,7 @@ self_intersections_impl(const FaceRange& face_range,
     typedef std::back_insert_iterator<Face_pairs>                                        Face_pairs_back_inserter;
     typedef internal::Strict_intersect_faces<Box, TM, VPM, GT, Face_pairs_back_inserter> Intersecting_faces_filter;
     //for max_number
-    typedef internal::Throw_at_count_reached_functor<Face_pairs_back_inserter>           Throw_functor;
+    typedef internal::Throw_at_count_reached_functor<Parallel_tag, Face_pairs_back_inserter>           Throw_functor;
     typedef boost::function_output_iterator<Throw_functor>                               Throwing_after_count_output_iterator;
     typedef internal::Strict_intersect_faces<Box, TM, VPM,
         GT,Throwing_after_count_output_iterator>                                         Filtered_intersecting_faces_filter;
@@ -380,12 +407,11 @@ self_intersections_impl(const FaceRange& face_range,
   {
     try
     {
-      typedef internal::Throw_at_count_reached_functor<FacePairOutputIterator>    Throw_functor;
+      typedef internal::Throw_at_count_reached_functor<Sequential_tag, FacePairOutputIterator>    Throw_functor;
       typedef boost::function_output_iterator<Throw_functor>                      Throwing_after_count_output_iterator;
       typedef internal::Strict_intersect_faces<Box, TM, VPM,
           GT,Throwing_after_count_output_iterator>                                Filtered_intersecting_faces_filter;
-      std::atomic<unsigned int> atomic_counter(counter);
-      Throw_functor throwing_count_functor(atomic_counter, max_number, out);
+      Throw_functor throwing_count_functor(counter, max_number, out);
       Throwing_after_count_output_iterator count_filter(throwing_count_functor);
       Filtered_intersecting_faces_filter limited_callback(tmesh, vpmap, gt, count_filter);
       CGAL::box_self_intersection_d<CGAL::Sequential_tag>(box_ptr.begin(), box_ptr.end(), limited_callback, cutoff);
