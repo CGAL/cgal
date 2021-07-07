@@ -470,7 +470,7 @@ self_intersections_impl(const FaceRange& face_range,
  *   \cgalParamNBegin{max_number}
  *     \cgalParamDescription{the maximum number of self intersections that will be computed and returned by the function.}
  *     \cgalParamType{unsigned int}
- *     \cgalParamDefault{`the number of self intersections in `face_range`.}
+ *     \cgalParamDefault{the number of self intersections in `face_range`.}
  *     \cgalParamExtra{In parallel mode, the number of returned self-intersections is at least `max_number`, but
  *                     may be a little more, because some threads might keep running for a short time between the moment
  *                     it is decided to stop and the moment they are actually stopped.}
@@ -548,8 +548,12 @@ self_intersections(const FaceRange& face_range,
  *   \cgalParamNBegin{max_number}
  *     \cgalParamDescription{the maximum number of self intersections that will be computed and returned by the function.}
  *     \cgalParamType{unsigned int}
- *     \cgalParamDefault{`the number of self intersections in `tmesh`.}
+ *     \cgalParamDefault{the number of self intersections in `tmesh`.}
+ *     \cgalParamExtra{In parallel mode, the number of returned self-intersections is at least `max_number`, but
+ *                     may be a little more, because some threads might keep running for a short time between the moment
+ *                     it is decided to stop and the moment they are actually stopped.}
  *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
  *
  * @return `out`
  */
