@@ -22,13 +22,11 @@ void test_overloads() {
   // tetrahedron
   Mesh tetrahedron;
   std::vector<Point_3> tetrahedron_coords;
+  std::vector<Point_3> sample_points;
 
   std::tie(tetrahedron, tetrahedron_coords) = tests::get_irregular_tetrahedron<Kernel, Mesh>();
   CGAL::Barycentric_coordinates::Mean_value_coordinates_3<Mesh, Kernel> mv_tetrahedron(tetrahedron);
-
-  const FT step  = FT(1) / FT(10);
-  const FT scale = FT(10);
-  const FT limit = step*scale;
+  tests::random_points_triangle_mesh(tetrahedron, std::back_inserter(sample_points), 100000);
 
   std::vector<FT> mv_coordinates_tetrahedron;
   mv_coordinates_tetrahedron.resize(4);
@@ -37,21 +35,24 @@ void test_overloads() {
   mv_tetrahedron(Point_3(FT(1)/FT(4), FT(1)/FT(4), FT(1)/FT(4)), mv_coordinates_tetrahedron.begin());
   tests::test_barycenter<Kernel>(mv_coordinates_tetrahedron);
 
-  // Sample interior points
-  for(FT x = step; x < limit; x += step){
-    for(FT y = step; y < limit; y += step){
-      for(FT z = step; z < FT(1) - x - y - step; z+= step){ // Excludes points inside faces
+  for(auto& point : sample_points){
 
-        const Point_3 query(x, y, z);
-        mv_tetrahedron(query, mv_coordinates_tetrahedron.begin());
+    FT x = point.x();
+    FT y = point.y();
+    FT z = point.z();
 
-        tests::test_linear_precision<Kernel>(mv_coordinates_tetrahedron, tetrahedron_coords, query);
-        tests::test_partition_of_unity<Kernel>(mv_coordinates_tetrahedron);
+    if(x + y + z == FT(1) || x == FT(0) || y == FT(0) || z == FT(0)) //avoid points inside faces
+      continue;
 
-        CGAL::Barycentric_coordinates::mean_value_coordinates_3(
-          tetrahedron, query, mv_coordinates_tetrahedron.begin());
-      }
-    }
+    const Point_3 query(x, y, z);
+    mv_tetrahedron(query, mv_coordinates_tetrahedron.begin());
+
+    tests::test_linear_precision<Kernel>(mv_coordinates_tetrahedron, tetrahedron_coords, query);
+    tests::test_partition_of_unity<Kernel>(mv_coordinates_tetrahedron);
+    tests::test_positivity<Kernel>(mv_coordinates_tetrahedron);
+
+    CGAL::Barycentric_coordinates::mean_value_coordinates_3(
+      tetrahedron, query, mv_coordinates_tetrahedron.begin());
   }
 
 }

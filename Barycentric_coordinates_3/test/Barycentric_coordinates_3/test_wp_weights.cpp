@@ -24,6 +24,7 @@ void test_overloads() {
   std::vector<Point_3> cube_coords;
 
   std::tie(cube, cube_coords) = tests::get_hexahedron<Kernel, Mesh>();
+
   CGAL::Barycentric_coordinates::Wachspress_coordinates_3<Mesh, Kernel> wp_cube(cube);
 
   const FT step  = FT(1) / FT(10);

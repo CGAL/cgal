@@ -14,7 +14,7 @@ if(CGAL_FOUND)
   include(CGAL_CreateSingleSourceCGALProgram)
 
   create_single_source_cgal_program("test_tetrahedron_coordinates.cpp")
-  create_single_source_cgal_program("test_wp_tetrahedron.cpp")
+  create_single_source_cgal_program("test_wp_dh_mv_tetrahedron.cpp")
   create_single_source_cgal_program("test_wp_weights.cpp")
   create_single_source_cgal_program("test_dh_weights.cpp")
   create_single_source_cgal_program("test_mv_weights.cpp")

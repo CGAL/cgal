@@ -7,6 +7,7 @@
 
 // CGAL includes
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/point_generators_3.h>
 
 namespace tests{
 
@@ -123,6 +124,16 @@ namespace tests{
     for(auto& coord : coords)
       assert(coord >= FT(0) && coord <= FT(1));
   }
+
+  template<typename Mesh, typename OutIterator>
+  OutIterator random_points_triangle_mesh(Mesh& mesh, OutIterator out, int n){
+
+    CGAL::Random_points_in_triangle_mesh_3<Mesh> gen(mesh);
+    std::copy_n(gen, n, out);
+
+    return out;
+  }
+
 }
 
 #endif
