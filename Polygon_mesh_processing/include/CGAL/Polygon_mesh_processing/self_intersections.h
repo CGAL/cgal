@@ -58,7 +58,7 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
 
-template<class ConcurrencyTag, typename Output_iterator>
+template<typename Output_iterator>
 struct Throw_at_count_reached_functor {
 
   std::atomic<unsigned int>& counter;
@@ -67,33 +67,6 @@ struct Throw_at_count_reached_functor {
   Output_iterator out;
 
   Throw_at_count_reached_functor(std::atomic<unsigned int>& counter,
-                         const unsigned int& max,
-                         Output_iterator out)
-    : counter(counter), max(max), out(out)
-  {}
-
-  template<class T>
-  void operator()(const T& t )
-  {
-    *out++ = t;
-    ++counter;
-    if(counter >= max)
-    {
-      throw CGAL::internal::Throw_at_output_exception();
-    }
-  }
-};
-
-//specialization for sequential code : The exact same functor except for the atomic counter that is not atomic here.
-template<typename Output_iterator>
-struct Throw_at_count_reached_functor<CGAL::Sequential_tag, Output_iterator> {
-
-  unsigned int& counter;
-  const unsigned int& max;
-
-  Output_iterator out;
-
-  Throw_at_count_reached_functor(unsigned int& counter,
                          const unsigned int& max,
                          Output_iterator out)
     : counter(counter), max(max), out(out)
@@ -281,7 +254,7 @@ self_intersections_impl(const FaceRange& face_range,
                                get_const_property_map(boost::vertex_point, tmesh));
 
   const bool do_limit = !(is_default_parameter(get_parameter(np, internal_np::max_number)));
-  unsigned int max_number = choose_parameter(get_parameter(np, internal_np::max_number), 0);
+  const unsigned int max_number = choose_parameter(get_parameter(np, internal_np::max_number), 0);
   unsigned int counter = 0;
   const unsigned int seed = choose_parameter(get_parameter(np, internal_np::random_seed), 0);
   CGAL_USE(seed); // used in the random shuffle of the range, which is only done to balance tasks in parallel
@@ -354,7 +327,7 @@ self_intersections_impl(const FaceRange& face_range,
     typedef std::back_insert_iterator<Face_pairs>                                        Face_pairs_back_inserter;
     typedef internal::Strict_intersect_faces<Box, TM, VPM, GT, Face_pairs_back_inserter> Intersecting_faces_filter;
     //for max_number
-    typedef internal::Throw_at_count_reached_functor<Parallel_tag, Face_pairs_back_inserter>           Throw_functor;
+    typedef internal::Throw_at_count_reached_functor<Face_pairs_back_inserter>           Throw_functor;
     typedef boost::function_output_iterator<Throw_functor>                               Throwing_after_count_output_iterator;
     typedef internal::Strict_intersect_faces<Box, TM, VPM,
         GT,Throwing_after_count_output_iterator>                                         Filtered_intersecting_faces_filter;
@@ -375,8 +348,9 @@ self_intersections_impl(const FaceRange& face_range,
       catch(const CGAL::internal::Throw_at_output_exception&)
       {
         // Sequentially write into the output iterator
-        for(std::size_t i=0; i<face_pairs.size(); ++i)
-          *out ++= face_pairs[i];
+        std::copy(face_pairs.begin(), face_pairs.end(), out);
+        //for(std::size_t i=0; i<face_pairs.size(); ++i)
+        //  *out ++= face_pairs[i];
 
         return out;
       }
@@ -404,18 +378,21 @@ self_intersections_impl(const FaceRange& face_range,
     CGAL::box_self_intersection_d<CGAL::Sequential_tag>(box_ptr.begin(), box_ptr.end(), throwing_filter, cutoff);
   else if(do_limit)
   {
-    try
+    typedef std::function<void(const std::pair<face_descriptor, face_descriptor>&) > Count_and_throw_filter;
+    std::size_t nbi=0;
+    Count_and_throw_filter max_inter_counter = [&nbi, max_number, &out](const std::pair<face_descriptor, face_descriptor>& f_pair)
     {
-      typedef internal::Throw_at_count_reached_functor<Sequential_tag, FacePairOutputIterator>    Throw_functor;
-      typedef boost::function_output_iterator<Throw_functor>                      Throwing_after_count_output_iterator;
-      typedef internal::Strict_intersect_faces<Box, TM, VPM,
-          GT,Throwing_after_count_output_iterator>                                Filtered_intersecting_faces_filter;
-      Throw_functor throwing_count_functor(counter, max_number, out);
-      Throwing_after_count_output_iterator count_filter(throwing_count_functor);
-      Filtered_intersecting_faces_filter limited_callback(tmesh, vpmap, gt, count_filter);
-      CGAL::box_self_intersection_d<CGAL::Sequential_tag>(box_ptr.begin(), box_ptr.end(), limited_callback, cutoff);
+      *out++=f_pair;
+      if (++nbi == max_number)
+        throw CGAL::internal::Throw_at_output_exception();
+    };
+    typedef internal::Strict_intersect_faces<Box, TM, VPM, GT, boost::function_output_iterator<Count_and_throw_filter > > Intersecting_faces_limited_filter;
+    Intersecting_faces_limited_filter limited_intersect_faces(tmesh, vpmap, gt,
+                                                      boost::make_function_output_iterator(max_inter_counter));
+    try{
+      CGAL::box_self_intersection_d<CGAL::Sequential_tag>(box_ptr.begin(), box_ptr.end(), limited_intersect_faces, cutoff);
     }
-    catch(const CGAL::internal::Throw_at_output_exception&)
+    catch (const CGAL::internal::Throw_at_output_exception&)
     {
       return out;
     }
@@ -471,9 +448,8 @@ self_intersections_impl(const FaceRange& face_range,
  *     \cgalParamDescription{the maximum number of self intersections that will be computed and returned by the function.}
  *     \cgalParamType{unsigned int}
  *     \cgalParamDefault{the number of self intersections in `face_range`.}
- *     \cgalParamExtra{In parallel mode, the number of returned self-intersections is at least `max_number`, but
- *                     may be a little more, because some threads might keep running for a short time between the moment
- *                     it is decided to stop and the moment they are actually stopped.}
+ *     \cgalParamExtra{In parallel mode, the number of returned self-intersections is at least `max_number`
+ *     (and not exactly that number) as for performance reason no strong synchronization is put on threads.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  */
@@ -549,9 +525,8 @@ self_intersections(const FaceRange& face_range,
  *     \cgalParamDescription{the maximum number of self intersections that will be computed and returned by the function.}
  *     \cgalParamType{unsigned int}
  *     \cgalParamDefault{the number of self intersections in `tmesh`.}
- *     \cgalParamExtra{In parallel mode, the number of returned self-intersections is at least `max_number`, but
- *                     may be a little more, because some threads might keep running for a short time between the moment
- *                     it is decided to stop and the moment they are actually stopped.}
+ *     \cgalParamExtra{In parallel mode, the number of returned self-intersections is at least `max_number`
+ *     (and not exactly that number) as for performance reason no strong synchronization is put on threads.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
