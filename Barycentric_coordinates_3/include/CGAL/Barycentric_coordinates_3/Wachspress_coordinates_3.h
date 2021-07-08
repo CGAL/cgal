@@ -101,6 +101,36 @@ namespace Barycentric_coordinates {
     OutputIterator compute(
       const Point_3& query, OutputIterator coordinates) {
 
+      switch(m_computation_policy){
+
+        case Computation_policy_3::DEFAULT:{
+          return compute_coords(query, coordinates);
+        }
+
+        case Computation_policy_3::WITH_EDGE_CASES:{
+          const auto edge_case = verify(query, coordinates);
+          if (edge_case == internal::Edge_case::BOUNDARY) {
+            return coordinates;
+          }
+          if (edge_case == internal::Edge_case::EXTERIOR) {
+            std::cerr << std::endl <<
+            "WARNING: query does not belong to the polygon!" << std::endl;
+          }
+          return compute_coords(query, coordinates);
+        }
+
+        default:{
+          internal::get_default(vertices(m_polygon_mesh).size(), coordinates);
+          return coordinates;
+        }
+      }
+      return coordinates;
+    }
+
+    template<typename OutputIterator>
+    OutputIterator compute_coords(
+      const Point_3& query, OutputIterator coordinates){
+
       // Compute weights.
       const FT sum = compute_weights(query);
       CGAL_assertion(sum != FT(0));
@@ -117,6 +147,13 @@ namespace Barycentric_coordinates {
       }
 
       return coordinates;
+    }
+
+    template<typename OutIterator>
+    internal::Edge_case verify(
+      const Point_3& query, OutIterator output){
+
+      return internal::Edge_case::INTERIOR;
     }
 
     FT compute_weights(const Point_3& query) {

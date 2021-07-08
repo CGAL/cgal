@@ -21,7 +21,9 @@ namespace Barycentric_coordinates {
 
 enum class Computation_policy_3 {
 
-  DEFAULT = 0
+  DEFAULT = 0,
+  WITH_EDGE_CASES = 1
+
 };
 
 

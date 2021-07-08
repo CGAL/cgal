@@ -27,6 +27,13 @@ namespace CGAL{
 namespace Barycentric_coordinates{
 namespace internal{
 
+enum class Edge_case {
+
+  EXTERIOR = 0, // exterior part of the polygon
+  BOUNDARY = 1, // boundary part of the polygon
+  INTERIOR = 2  // interior part of the polygon
+};
+
 //Default sqrt
 template<class Traits>
 class Default_sqrt{
