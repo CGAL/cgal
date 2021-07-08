@@ -452,6 +452,8 @@ self_intersections_impl(const FaceRange& face_range,
  *     (and not exactly that number) as for performance reason no strong synchronization is put on threads.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
+ *
+ * @return `out`
  */
 template < class ConcurrencyTag = Sequential_tag,
            class TriangleMesh,
