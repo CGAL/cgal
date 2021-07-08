@@ -76,7 +76,7 @@ class Point_set_demo_point_set_shape_detection_dialog : public QDialog, public U
 {
   Q_OBJECT
 public:
-  Point_set_demo_point_set_shape_detection_dialog(QWidget * /*parent*/ = 0)
+  Point_set_demo_point_set_shape_detection_dialog(QWidget * /*parent*/ = nullptr)
   {
     setupUi(this);
     m_normal_tolerance_field->setMaximum(1.0);
@@ -192,7 +192,7 @@ private:
     using Vertex_to_point_map = typename Region_type::Vertex_to_point_map;
     using Region_growing = CGAL::Shape_detection::Region_growing<Face_range, Neighbor_query, Region_type>;
 
-    CGAL::Random rand(static_cast<unsigned int>(time(0)));
+    CGAL::Random rand(static_cast<unsigned int>(time(nullptr)));
     const SMesh& mesh = *(sm_item->polyhedron());
     scene->setSelectedItem(-1);
     const Face_range face_range = faces(mesh);
@@ -290,7 +290,7 @@ private:
     dialog.min_points();
 
     // Get a point set.
-    CGAL::Random rand(static_cast<unsigned int>(time(0)));
+    CGAL::Random rand(static_cast<unsigned int>(time(nullptr)));
     Point_set* points = item->point_set();
 
     scene->setSelectedItem(-1);
@@ -456,7 +456,7 @@ private:
 
       if (dialog.generate_alpha()) {
         // If plane, build alpha shape
-        Scene_surface_mesh_item* sm_item = NULL;
+        Scene_surface_mesh_item* sm_item = nullptr;
         sm_item = new Scene_surface_mesh_item;
 
         using Plane = CGAL::Shape_detection::RG::Plane<Kernel>;
@@ -555,7 +555,7 @@ private:
     op.cluster_epsilon = dialog.cluster_epsilon();    // maximum euclidean distance between points to be clustered.
     op.normal_threshold = std::cos(CGAL_PI * dialog.normal_tolerance() / 180.);   // normal_threshold < dot(surface_normal, point_normal);
 
-    CGAL::Random rand(static_cast<unsigned int>(time(0)));
+    CGAL::Random rand(static_cast<unsigned int>(time(nullptr)));
     // Gets point set
     Point_set* points = item->point_set();
 
@@ -672,7 +672,7 @@ private:
     {
       CGAL::Shape_detection::Cylinder<Traits> *cyl;
       cyl = dynamic_cast<CGAL::Shape_detection::Cylinder<Traits> *>(shape.get());
-      if (cyl != NULL){
+      if (cyl != nullptr){
         if(cyl->radius() > diam){
           continue;
         }
@@ -774,7 +774,7 @@ private:
           if (dialog.generate_alpha ())
             {
               // If plane, build alpha shape
-              Scene_surface_mesh_item* sm_item = NULL;
+              Scene_surface_mesh_item* sm_item = nullptr;
                 sm_item = new Scene_surface_mesh_item;
 
 
@@ -929,7 +929,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetectShapesSM_t
 
     // Get a surface mesh.
     SMesh* mesh = sm_item->polyhedron();
-    if(mesh == NULL) return;
+    if(mesh == nullptr) return;
 
     Point_set_demo_point_set_shape_detection_dialog dialog;
 
@@ -978,7 +978,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
       // Gets point set
       Point_set* points = item->point_set();
 
-      if(points == NULL)
+      if(points == nullptr)
         return;
 
       //Epic_kernel::FT diag = sqrt(((points->bounding_box().max)() - (points->bounding_box().min)()).squared_length());
@@ -1074,7 +1074,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::build_alpha_shape
 
 void Polyhedron_demo_point_set_shape_detection_plugin::on_actionEstimateParameters_triggered() {
 
-  CGAL::Random rand(static_cast<unsigned int>(time(0)));
+  CGAL::Random rand(static_cast<unsigned int>(time(nullptr)));
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_points_with_normal_item* item =
@@ -1085,12 +1085,12 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionEstimateParamete
       // Gets point set
       Point_set* points = item->point_set();
 
-      if(points == NULL)
+      if(points == nullptr)
         return;
 
       if (points->nb_selected_points() == 0)
         {
-          QMessageBox::information(NULL,
+          QMessageBox::information(nullptr,
                                    tr("Warning"),
                                    tr("Selection is empty.\nTo estimate parameters, please select a planar section."));
           return;
@@ -1151,7 +1151,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionEstimateParamete
       QApplication::restoreOverrideCursor();
 
 
-      QMessageBox::information(NULL,
+      QMessageBox::information(nullptr,
                                tr("Estimated Parameters"),
                                tr("Epsilon = [%1 ; %2 ; %3 ; %4 ; %5]\nNormal Tolerance = [%6 ; %7 ; %8 ; %9 ; %10]\nMinimum Number of Points = %11\nConnectivity Epsilon = [%12 ; %13 ; %14 ; %15 ; %16]")
                                .arg(std::sqrt(epsilon.front()))

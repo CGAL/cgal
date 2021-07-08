@@ -9,7 +9,7 @@
 This chapter gives an overview of issues related to the
 configuration of \cgal that allow you to answer such questions as:
 <UL>
-<LI>Is \em LEDA / <span class="textsc">Gmp</span> there? (Section  \ref secleda_gmp_support)
+<LI>Is \em LEDA / \gmp there? (Section  \ref secleda_gmp_support)
 <LI>Which compiler is this? (Section  \ref secwhich_compiler )
 <LI>Does the compiler support feature X? (Section  \ref secworkaround_flags )
 </UL>
@@ -290,8 +290,8 @@ up-to-date version of this list.
 <DT><B><TT>CGAL_CFG_NO_LONG_LONG</TT></B><DD>
 
    The `long long` built-in integral type is not part of the
-  <span class="textsc">Iso</span> C++ standard, but many compilers support it
-  nevertheless, since it is part of the <span class="textsc">Iso</span> C standard. This
+  \iso C++ standard, but many compilers support it
+  nevertheless, since it is part of the \iso C standard. This
   flag is set if it is supported.
 
 <DT><B><TT>CGAL_CFG_NO_TMPL_IN_TMPL_PARAM</TT></B><DD>

@@ -25,16 +25,16 @@ TD.os64bits {font-style:italic}
 .cmaketag {font-weight: bold; color: rgb(100%,20%,20%);}
 
 
-TD.ok {background-color: rgb(50%,100%,50%)}
+TD.ok {background-color: rgb(44%,88%,44%)}
 TD.warning {background-color: rgb(100%,100%,50%)}
-TD.third_party_warning {background-color: rgb(93%,65%,0%)}
+TD.third_party_warning {background-color: rgb(75%,100%,50%)}
 TD.error {background-color: rgb(100%,50%,50%)}
 TD.na {background-color: white;}
 TD.requirements { background-color: rgb(65%,65%,100%) }
 
-TH.ok {background-color: rgb(50%,100%,50%)}
+TD.ok {background-color: rgb(44%,88%,44%)}
 TH.warning {background-color: rgb(100%,100%,50%)}
-TH.third_party_warning {background-color: rgb(93%,65%,0%)}
+TH.third_party_warning {background-color: rgb(75%,100%,50%)}
 TH.error {background-color: rgb(100%,50%,50%)}
 TH.requirements { background-color: rgb(65%,65%,100%) }
 

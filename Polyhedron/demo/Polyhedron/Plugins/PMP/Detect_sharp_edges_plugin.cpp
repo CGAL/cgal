@@ -99,7 +99,7 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dial
   QApplication::restoreOverrideCursor();
   if(input_dialog) {
     bool ok = true;
-    angle = QInputDialog::getDouble(NULL,
+    angle = QInputDialog::getDouble(nullptr,
                                     tr("Sharp edges max angle"),
                                     tr("Angle in degrees between 0 and 180:"),
                                     angle, // value

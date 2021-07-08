@@ -27,6 +27,8 @@ _test_fct_vector_3(const R& )
  typedef typename  R::RT    RT;
  typedef typename  R::FT    FT;
 
+ typedef typename R::Non_zero_dimension_3 Non_zero_dimension_3;
+
  RT  n0(  0 );
  RT  n1( 12 );
  RT  n2( -4 );
@@ -43,6 +45,8 @@ _test_fct_vector_3(const R& )
 
 
  CGAL::Vector_3<R>  v0(CGAL::NULL_VECTOR);  // ( 0, 0, 0)
+ CGAL::Vector_3<R>  v001(n0,n0,n1);  // ( 0, 0, 12)
+ CGAL::Vector_3<R>  v011(n0,n1,n1);  // ( 0, 12, 12)
  CGAL::Vector_3<R>  v1(n1, n2, n3, n4);    // ( 6,-2, 3)
  CGAL::Vector_3<R>  v2(n5, n6, n7, n8);    // ( 3,-6,12)
  CGAL::Vector_3<R>  v3(n5, n10, n9);       // ( 9,-8,15)
@@ -52,6 +56,12 @@ _test_fct_vector_3(const R& )
  CGAL::Vector_3<R>  v10( n8,-n2,-n5, n4);  // (1.5,2,-4.5)
  CGAL::Vector_3<R>  v11(-n6, n11,-n12, n8);// ( 6, 8, -18)
  CGAL::Vector_3<R>  v12(n1, n2, -n3, n4);  // ( 6,-2, -3)
+
+ Non_zero_dimension_3 nzd;
+ assert( nzd(v0) == -1 );
+ assert( nzd(v001) == 2 );
+ assert( nzd(v011) == 1 );
+ assert( nzd(v1) == 0 );
 
  assert( orientation(v0, v0, v0) == CGAL::COPLANAR );
  assert( orientation(v1, v1, v1) == CGAL::COPLANAR );
