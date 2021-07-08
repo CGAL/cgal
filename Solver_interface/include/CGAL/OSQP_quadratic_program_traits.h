@@ -186,7 +186,7 @@ public:
       std::cout << "num variables = " << n << std::endl;
       std::cout << "num constraints = " << m << std::endl;
     }
-    CGAL_precondition(n >= 1 && m >= 0);
+    CGAL_precondition(n >= 1); // m >= 0
 
     CGAL_precondition(q_vec.size() == n);
     CGAL_precondition(l_vec.size() == m && l_vec.size() == m);
