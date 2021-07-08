@@ -35,13 +35,6 @@ namespace CGAL {
 
 namespace Box_intersection_d {
 
-namespace internal {
-struct Lazy_visitor
-{
-  void operator()(){}
-};
-}
-
 #define CGAL_BOX_INTERSECTION_DEBUG 0
 
 
