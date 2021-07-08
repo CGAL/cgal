@@ -229,6 +229,9 @@ public:
     const Point_3& query_point = get(m_point_map, key);
     Vector_3 normal = get(m_normal_map, key);
 
+    // TODO: Why do we have m_axis = 0 here sometimes?
+    // Should it ever happen?
+    if (m_axis.to_vector() == Vector_3(0, 0, 0)) return false;
     FT distance_to_center = m_sqrt(m_squared_distance_3 (query_point, m_axis));
     FT distance_to_cylinder = CGAL::abs (distance_to_center - m_radius);
 

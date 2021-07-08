@@ -36,10 +36,8 @@ using Line_sorting   = SD::Point_set::Least_squares_line_fit_sorting<Kernel, Inp
 using Circle_region  = SD::Point_set::Least_squares_circle_fit_region<Kernel, Input_range, Point_map, Normal_map>;
 using Circle_sorting = SD::Point_set::Least_squares_circle_fit_sorting<Kernel, Input_range, Neighbor_query, Point_map>;
 
-using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
-
-template <typename Region_type, typename Sorting, typename RegionCode, typename AssertionCode>
-bool test (int argc, char** argv, const SortingCode& sc, const RegionCode& reg, const AssertionCode& assertion)
+template <typename Region_type, typename Sorting>
+bool test (int argc, char** argv, const std::size_t minr, const std::size_t maxr)
 {
   using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
@@ -95,15 +93,19 @@ bool test (int argc, char** argv, const SortingCode& sc, const RegionCode& reg, 
   region_growing.detect(std::back_inserter(regions));
 
   region_growing.release_memory();
-  assert(regions.size() >= 62 && regions.size() <= 66);
+  assert(regions.size() >= minr && regions.size() <= maxr);
 
-  const bool cartesian_double_test_success = (regions.size() >= 62 && regions.size() <= 66);
+  const bool cartesian_double_test_success = (regions.size() >= minr && regions.size() <= maxr);
   std::cout << "cartesian_double_test_success: " << cartesian_double_test_success << std::endl;
 
   const bool success = cartesian_double_test_success;
+  return success;
 }
 
 int main(int argc, char *argv[]) {
 
-  return (success) ? EXIT_SUCCESS : EXIT_FAILURE;
+  return ((
+    test<Line_region, Line_sorting>(argc, argv, 62, 66) &&
+    test<Circle_region, Circle_sorting>(argc, argv, 196, 200)
+  ) ? EXIT_SUCCESS : EXIT_FAILURE );
 }

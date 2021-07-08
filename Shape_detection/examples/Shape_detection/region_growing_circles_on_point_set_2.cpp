@@ -43,7 +43,7 @@ int main (int argc, char** argv)
   std::cerr << points3.size() << " points read" << std::endl;
 
   // Input should have normals
-  assert (points.has_normal_map());
+  assert (points3.has_normal_map());
 
   Point_set_2 points;
   points.add_normal_map();
