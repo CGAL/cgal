@@ -57,8 +57,8 @@ namespace Barycentric_coordinates {
     m_construct_vector_3(m_traits.construct_vector_3_object()),
     m_cross_3(m_traits.construct_cross_product_vector_3_object()),
     m_dot_3(m_traits.compute_scalar_product_3_object()),
-    m_approximate_angle_3(m_traits.compute_approximate_angle_3_object()),
-    sqrt(internal::Get_sqrt<GeomTraits>::sqrt_object(m_traits)){
+    sqrt(internal::Get_sqrt<GeomTraits>::sqrt_object(m_traits)),
+    m_approximate_angle_3(m_traits.compute_approximate_angle_3_object()) {
 
       // Check if polyhedron is strongly convex
       CGAL_assertion(is_strongly_convex_3(m_polygon_mesh, m_traits));
@@ -162,7 +162,7 @@ namespace Barycentric_coordinates {
 
       // Circulator of faces around the vertex
       CGAL::Face_around_target_circulator<Polygon_mesh>
-      face_circulator(m_polygon_mesh.halfedge(vertex), m_polygon_mesh);
+      face_circulator(halfedge(vertex, m_polygon_mesh), m_polygon_mesh);
 
       CGAL::Face_around_target_circulator<Polygon_mesh>
       face_done(face_circulator);

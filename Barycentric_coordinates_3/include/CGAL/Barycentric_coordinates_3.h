@@ -16,7 +16,7 @@
 
 // #include <CGAL/license/Barycentric_coordinates_3.h>
 
-#include <CGAL/Barycentric_coordinates_3/tetrahedron_coordinates_3.h>
+#include <CGAL/Barycentric_coordinates_3/tetrahedron_coordinates.h>
 #include <CGAL/Barycentric_coordinates_3/Wachspress_coordinates_3.h>
 #include <CGAL/Barycentric_coordinates_3/Discrete_harmonic_coordinates_3.h>
 #include <CGAL/Barycentric_coordinates_3/Mean_value_coordinates_3.h>

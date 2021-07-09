@@ -57,8 +57,8 @@ namespace Barycentric_coordinates {
     m_construct_vector_3(m_traits.construct_vector_3_object()),
     m_cross_3(m_traits.construct_cross_product_vector_3_object()),
     m_dot_3(m_traits.compute_scalar_product_3_object()),
-    m_approximate_angle_3(m_traits.compute_approximate_angle_3_object()),
-    sqrt(internal::Get_sqrt<GeomTraits>::sqrt_object(m_traits)){
+    sqrt(internal::Get_sqrt<GeomTraits>::sqrt_object(m_traits)),
+    m_approximate_angle_3(m_traits.compute_approximate_angle_3_object()) {
 
       // Check if polyhedron is strongly convex
       CGAL_assertion(is_strongly_convex_3(m_polygon_mesh, m_traits));
@@ -149,7 +149,7 @@ namespace Barycentric_coordinates {
     FT compute_mv_vertex_query(const Vertex& vertex, const Point_3& query){
 
       // Map vertex descriptor to point_3
-      const Point_3& vertex_val = get(m_vertex_to_point_map, vertex);
+      // const Point_3& vertex_val = get(m_vertex_to_point_map, vertex);
 
       // Circulator of faces around the vertex
       CGAL::Face_around_target_circulator<Polygon_mesh>
@@ -171,7 +171,7 @@ namespace Barycentric_coordinates {
         CGAL_precondition(vertices.size() == 3);
 
         // Weight of vertex for this particular face
-        FT partial_weight = FT(0);
+        // FT partial_weight = FT(0);
         int vertex_idx = -1;
 
         // Store useful information
@@ -195,7 +195,7 @@ namespace Barycentric_coordinates {
         // Current vertex should be present in face
         assert(vertex_idx != -1);
 
-        for(std::size_t i = 0; i < 3; i++){
+        for(int i = 0; i < 3; i++){
 
           m_vectors[i] = m_cross_3(query_vertex_vectors[i], query_vertex_vectors[(i+1)%3]);
           assert(m_vectors[i].squared_length() > 0);

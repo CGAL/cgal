@@ -147,7 +147,7 @@ namespace Barycentric_coordinates {
 
       // Circulator of faces around the vertex
       CGAL::Face_around_target_circulator<Polygon_mesh>
-      face_circulator(m_polygon_mesh.halfedge(vertex), m_polygon_mesh);
+      face_circulator(halfedge(vertex, m_polygon_mesh), m_polygon_mesh);
 
       CGAL::Face_around_target_circulator<Polygon_mesh>
       face_done(face_circulator);

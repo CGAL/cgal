@@ -151,7 +151,7 @@ namespace Barycentric_coordinates {
 
     template<typename OutIterator>
     internal::Edge_case verify(
-      const Point_3& query, OutIterator output){
+      const Point_3& /*query*/, OutIterator /*output*/){
 
       return internal::Edge_case::INTERIOR;
     }
@@ -189,7 +189,7 @@ namespace Barycentric_coordinates {
 
       // Circulator of faces around the vertex
       CGAL::Face_around_target_circulator<Polygon_mesh>
-      face_circulator(m_polygon_mesh.halfedge(vertex), m_polygon_mesh);
+      face_circulator(halfedge(vertex, m_polygon_mesh), m_polygon_mesh);
 
       CGAL::Face_around_target_circulator<Polygon_mesh>
       done(face_circulator);
