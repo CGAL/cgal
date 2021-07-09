@@ -253,8 +253,8 @@ self_intersections_impl(const FaceRange& face_range,
   VPM vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                get_const_property_map(boost::vertex_point, tmesh));
 
-  const bool do_limit = !(is_default_parameter(get_parameter(np, internal_np::max_number)));
-  const unsigned int max_number = choose_parameter(get_parameter(np, internal_np::max_number), 0);
+  const bool do_limit = !(is_default_parameter(get_parameter(np, internal_np::maximum_number)));
+  const unsigned int maximum_number = choose_parameter(get_parameter(np, internal_np::maximum_number), 0);
   unsigned int counter = 0;
   const unsigned int seed = choose_parameter(get_parameter(np, internal_np::random_seed), 0);
   CGAL_USE(seed); // used in the random shuffle of the range, which is only done to balance tasks in parallel
@@ -284,7 +284,7 @@ self_intersections_impl(const FaceRange& face_range,
       {
         *out++= std::make_pair(f, f);
         ++counter;
-        if(do_limit && counter == max_number)
+        if(do_limit && counter == maximum_number)
         {
           return out;
         }
@@ -326,7 +326,7 @@ self_intersections_impl(const FaceRange& face_range,
     typedef tbb::concurrent_vector<std::pair<face_descriptor, face_descriptor> >         Face_pairs;
     typedef std::back_insert_iterator<Face_pairs>                                        Face_pairs_back_inserter;
     typedef internal::Strict_intersect_faces<Box, TM, VPM, GT, Face_pairs_back_inserter> Intersecting_faces_filter;
-    //for max_number
+    //for maximum_number
     typedef internal::Throw_at_count_reached_functor<Face_pairs_back_inserter>           Throw_functor;
     typedef boost::function_output_iterator<Throw_functor>                               Throwing_after_count_output_iterator;
     typedef internal::Strict_intersect_faces<Box, TM, VPM,
@@ -340,7 +340,7 @@ self_intersections_impl(const FaceRange& face_range,
       try
       {
         std::atomic<unsigned int> atomic_counter(counter);
-        Throw_functor throwing_count_functor(atomic_counter, max_number, std::back_inserter(face_pairs));
+        Throw_functor throwing_count_functor(atomic_counter, maximum_number, std::back_inserter(face_pairs));
         Throwing_after_count_output_iterator count_filter(throwing_count_functor);
         Filtered_intersecting_faces_filter limited_callback(tmesh, vpmap, gt, count_filter);
         CGAL::box_self_intersection_d<ConcurrencyTag>(box_ptr.begin(), box_ptr.end(), limited_callback, cutoff);
@@ -377,10 +377,10 @@ self_intersections_impl(const FaceRange& face_range,
   {
     typedef std::function<void(const std::pair<face_descriptor, face_descriptor>&) > Count_and_throw_filter;
     std::size_t nbi=0;
-    Count_and_throw_filter max_inter_counter = [&nbi, max_number, &out](const std::pair<face_descriptor, face_descriptor>& f_pair)
+    Count_and_throw_filter max_inter_counter = [&nbi, maximum_number, &out](const std::pair<face_descriptor, face_descriptor>& f_pair)
     {
       *out++=f_pair;
-      if (++nbi == max_number)
+      if (++nbi == maximum_number)
         throw CGAL::internal::Throw_at_output_exception();
     };
     typedef internal::Strict_intersect_faces<Box, TM, VPM, GT, boost::function_output_iterator<Count_and_throw_filter > > Intersecting_faces_limited_filter;
@@ -441,11 +441,11 @@ self_intersections_impl(const FaceRange& face_range,
  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{max_number}
+ *   \cgalParamNBegin{maximum_number}
  *     \cgalParamDescription{the maximum number of self intersections that will be computed and returned by the function.}
  *     \cgalParamType{unsigned int}
  *     \cgalParamDefault{the number of self intersections in `face_range`.}
- *     \cgalParamExtra{In parallel mode, the number of returned self-intersections is at least `max_number`
+ *     \cgalParamExtra{In parallel mode, the number of returned self-intersections is at least `maximum_number`
  *     (and not exactly that number) as for performance reason no strong synchronization is put on threads.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
@@ -520,11 +520,11 @@ self_intersections(const FaceRange& face_range,
  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{max_number}
+ *   \cgalParamNBegin{maximum_number}
  *     \cgalParamDescription{the maximum number of self intersections that will be computed and returned by the function.}
  *     \cgalParamType{unsigned int}
  *     \cgalParamDefault{the number of self intersections in `tmesh`.}
- *     \cgalParamExtra{In parallel mode, the number of returned self-intersections is at least `max_number`
+ *     \cgalParamExtra{In parallel mode, the number of returned self-intersections is at least `maximum_number`
  *     (and not exactly that number) as for performance reason no strong synchronization is put on threads.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd

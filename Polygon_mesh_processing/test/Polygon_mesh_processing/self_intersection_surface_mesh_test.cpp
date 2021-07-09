@@ -103,7 +103,7 @@ int test_limited_self_intersections(const char* filename)
   if(!std::is_same<K, EPECK>::value) // EPECK isn't threadsafe
   {
     PMP::self_intersections<CGAL::Parallel_tag>(
-          m, std::back_inserter(intersected_tris), CGAL::parameters::max_number(40));
+          m, std::back_inserter(intersected_tris), CGAL::parameters::maximum_number(40));
     std::cout << "self_intersections test for 40 SI took " << timer.time() << " sec." << std::endl;
     std::cout << "Found " << intersected_tris.size() << " SIs." << std::endl;
     if(intersected_tris.size() < 40)
@@ -115,7 +115,7 @@ int test_limited_self_intersections(const char* filename)
     timer.reset();
   }
   PMP::self_intersections<CGAL::Sequential_tag>(
-    m, std::back_inserter(intersected_tris), CGAL::parameters::max_number(40));
+    m, std::back_inserter(intersected_tris), CGAL::parameters::maximum_number(40));
   std::cout << "self_intersections test for 40 SI took " << timer.time() << " sec." << std::endl;
   timer.reset();
   if(intersected_tris.size() != 40)
@@ -199,10 +199,10 @@ int main(int argc, char** argv)
 
   filename = (argc > 9) ? argv[9] : "data/mannequin-devil.off";
 
-  std::cout << "Test with max_number (EPICK):" << std::endl;
+  std::cout << "Test with maximum_number (EPICK):" << std::endl;
   r += test_limited_self_intersections<EPICK>(filename);
 
-  std::cout << "Test with max_number (EPECK):" << std::endl;
+  std::cout << "Test with maximum_number (EPECK):" << std::endl;
   r += test_limited_self_intersections<EPECK>(filename);
 
   return r;
