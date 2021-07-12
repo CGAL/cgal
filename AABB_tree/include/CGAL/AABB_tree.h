@@ -232,7 +232,7 @@ namespace CGAL {
 
     bool build_kd_tree();
     template<typename ConstPointIterator>
-    bool build_kd_tree(ConstPointIterator first, ConstPointIterator beyond);
+    bool build_kd_tree(ConstPointIterator first, ConstPointIterator beyond, const bool preprocess = false);
 public:
 
     /// \name Intersection Tests
@@ -454,10 +454,10 @@ public:
     /// \tparam ConstPointIterator is an iterator with
     /// value type `Point_and_primitive_id`.
     template<typename ConstPointIterator>
-    bool accelerate_distance_queries(ConstPointIterator first, ConstPointIterator beyond)
+    bool accelerate_distance_queries(ConstPointIterator first, ConstPointIterator beyond, const bool preprocess = false)
     {
       m_use_default_search_tree = false;
-      return build_kd_tree(first,beyond);
+      return build_kd_tree(first,beyond,preprocess);
     }
 
     /// returns the minimum squared distance between the query point
@@ -844,10 +844,11 @@ public:
   template<typename Tr>
   template<typename ConstPointIterator>
   bool AABB_tree<Tr>::build_kd_tree(ConstPointIterator first,
-                                    ConstPointIterator beyond)
+                                    ConstPointIterator beyond,
+                                    const bool preprocess)
   {
     clear_search_tree();
-    m_p_search_tree = std::make_unique<const Search_tree>(first, beyond);
+    m_p_search_tree = std::make_unique<const Search_tree>(first, beyond, preprocess);
 #ifdef CGAL_HAS_THREADS
       m_atomic_search_tree_constructed.store(true, std::memory_order_release); // in case build_kd_tree() is triggered by a call to best_hint()
 #else
