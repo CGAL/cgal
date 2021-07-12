@@ -22,6 +22,10 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_plane_quadrics.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
+#include <CGAL/boost/graph/Named_function_parameters.h>
+
+//CGAL_add_named_parameter(face_variance_map_t, face_variance_map, face_variance_map);
+  
 namespace CGAL {
 namespace Surface_mesh_simplification {
 
@@ -29,7 +33,10 @@ namespace Surface_mesh_simplification {
 // takes the derived class as template argument - see "CRTP"
 //
 // derives from cost_base and placement_base
-template<typename TriangleMesh, typename GeomTraits>
+template<typename TriangleMesh, typename GeomTraits, typename 
+  FaceVarianceMap = Constant_property_map<
+    typename boost::graph_traits<TriangleMesh>::face_descriptor, typename GeomTraits::FT
+  >> 
 class GarlandHeckbert_probabilistic_policies :
   public internal::GarlandHeckbert_plane_edges<TriangleMesh, GeomTraits>,
   public internal::GarlandHeckbert_invertible_optimizer<GeomTraits>,
@@ -50,9 +57,14 @@ class GarlandHeckbert_probabilistic_policies :
     GarlandHeckbert_probabilistic_policies<TriangleMesh, GeomTraits>
   >
 {
+  
+  typedef typename GeomTraits::FT FT;
+  
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor; 
+  
+  typedef typename boost::property_traits<FaceVarianceMap>::value_type Face_variance;
 
   public:
-    typedef typename GeomTraits::FT FT;
 
     typedef typename Eigen::Matrix<FT, 4, 4, Eigen::DontAlign> GH_matrix;
     typedef CGAL::dynamic_vertex_property_t<GH_matrix> Cost_property;
@@ -95,45 +107,47 @@ class GarlandHeckbert_probabilistic_policies :
       // initialize the private variable vcm so it's lifetime is bound to that of the policy's
       vcm_ = get(Cost_property(), tmesh);
 
-      std::tie(normal_variance, mean_variance) = estimate_variances(tmesh, GeomTraits());
+      FT variance;
+      std::tie(variance, variance) = estimate_variances(tmesh, GeomTraits());
       
       // initialize both vcms
       Cost_base::init_vcm(vcm_);
       Placement_base::init_vcm(vcm_);
-    }
-
-    GarlandHeckbert_probabilistic_policies(TriangleMesh& tmesh,
-                                           FT dm,
-                                           FT sdn,
-                                           FT sdp) : Cost_base(dm)
-    {
-
-      // we need positive variances so that we always get an invertible matrix
-      CGAL_precondition(sdn > 0.0 && sdp > 0.0);
       
-      // initialize the private variable vcm so it's lifetime is bound to that of the policy's
+      // try to initialize the face variance map using the estimated variance
+      // TODO use the mean variance as well, should be easy to have pairs as value types
+      face_variance_map = FaceVarianceMap { variance };  
+    }
+    
+    GarlandHeckbert_probabilistic_policies(TriangleMesh& tmesh, FT dm, const FaceVarianceMap& fvm)
+      : Cost_base(dm), face_variance_map(fvm)
+    { 
+       // initialize the private variable vcm so it's lifetime is bound to that of the policy's
       vcm_ = get(Cost_property(), tmesh);
 
       // initialize both vcms
       Cost_base::init_vcm(vcm_);
       Placement_base::init_vcm(vcm_);
     }
-
-    template<typename VPM, typename TM>
+    
+    template<typename VPM>
     Mat_4 construct_quadric_from_face(
         const VPM& point_map,
-        const TM& tmesh, 
-        typename boost::graph_traits<TM>::face_descriptor f, 
+        const TriangleMesh& tmesh, 
+        face_descriptor f, 
         const GeomTraits& gt) const
     {
       const Vector_3 normal = internal::common::construct_unit_normal_from_face<
-        GeomTraits, VPM, TM>(point_map, tmesh, f, gt);
+        GeomTraits, VPM, TriangleMesh>(point_map, tmesh, f, gt);
+      
       const Point_3 p = get(point_map, source(halfedge(f, tmesh), tmesh));
 
-      return construct_quadric_from_normal(normal, p, gt);
+      FT variance = get(face_variance_map, f);
+      return construct_quadric_from_normal(normal, p, gt, variance, variance);
     }
     
     const Get_cost& get_cost() const { return *this; }
+    
     const Get_placement& get_placement() const { return *this; }
     
   private:
@@ -142,7 +156,9 @@ class GarlandHeckbert_probabilistic_policies :
     Mat_4 construct_quadric_from_normal(
         const Vector_3& mean_normal,
         const Point_3& point, 
-        const GeomTraits& gt) const
+        const GeomTraits& gt,
+        FT face_nv,
+        FT face_mv) const
     {
       auto squared_length = gt.compute_squared_length_3_object();
       auto dot_product = gt.compute_scalar_product_3_object();
@@ -155,7 +171,7 @@ class GarlandHeckbert_probabilistic_policies :
       const Eigen::Matrix<FT, 3, 1> mean_n_col{mean_normal.x(), mean_normal.y(), mean_normal.z()};
 
       // start by setting values along the diagonal
-      Mat_4 mat = normal_variance * Mat_4::Identity();
+      Mat_4 mat = face_nv * Mat_4::Identity();
 
       // add outer product of the mean normal with itself
       // to the upper left 3x3 block
@@ -165,7 +181,7 @@ class GarlandHeckbert_probabilistic_policies :
       // 3 values of the last column
       // the negative sign comes from the fact that in the paper,
       // the b column and row appear with a negative sign
-      const auto b1 = -(dot_mnmv * mean_normal + normal_variance * mean_vec);
+      const auto b1 = -(dot_mnmv * mean_normal + face_nv * mean_vec);
 
       const Eigen::Matrix<FT, 3, 1> b {b1.x(), b1.y(), b1.z()};
 
@@ -175,9 +191,9 @@ class GarlandHeckbert_probabilistic_policies :
       // set the value in the bottom right corner, we get this by considering
       // that we only have single variances given instead of covariance matrices
       mat(3, 3) = CGAL::square(dot_mnmv)
-        + normal_variance * squared_length(mean_vec)
-        + mean_variance * squared_length(mean_normal)
-        + 3 * normal_variance * mean_variance;
+        + face_nv * squared_length(mean_vec)
+        + face_mv * squared_length(mean_normal)
+        + 3 * face_nv * face_mv;
 
       return mat;
     }
@@ -216,8 +232,7 @@ class GarlandHeckbert_probabilistic_policies :
     static constexpr FT good_default_variance_unit = 0.05;
     
   private:
-    FT mean_variance;
-    FT normal_variance;
+    FaceVarianceMap face_variance_map;
 };
 
 } // namespace Surface_mesh_simplification
