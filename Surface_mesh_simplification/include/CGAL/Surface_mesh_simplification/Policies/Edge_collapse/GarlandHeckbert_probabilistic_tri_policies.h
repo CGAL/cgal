@@ -87,6 +87,7 @@ class GarlandHeckbert_probabilistic_tri_policies :
     using typename Cost_base::Point_3;
     using typename Cost_base::Vector_3;
 
+    // TODO use property maps here as well
     // default discontinuity multiplier is 100
     GarlandHeckbert_probabilistic_tri_policies(TriangleMesh& tmesh)
       : GarlandHeckbert_probabilistic_tri_policies(tmesh, 100) 
@@ -122,25 +123,12 @@ class GarlandHeckbert_probabilistic_tri_policies :
       Placement_base::init_vcm(vcm_);
     }
     
-    // overload for default parameters
-    template<typename VPM, typename TM>
     Mat_4 construct_quadric_from_face(
-        const VPM& point_map,
-        const TM& tmesh, 
-        typename boost::graph_traits<TM>::face_descriptor f, 
+        const Vector_3& a, 
+        const Vector_3& b, 
+        const Vector_3& c, 
+        const FT var,
         const GeomTraits& gt) const
-    {
-      return construct_quadric_from_face(point_map, tmesh, f, gt, 
-          CGAL::parameters::all_default());
-    }
-    
-    template<typename VPM, typename TM, typename NamedParameters>
-    Mat_4 construct_quadric_from_face(
-        const VPM& point_map,
-        const TM& tmesh, 
-        typename boost::graph_traits<TM>::face_descriptor f, 
-        const GeomTraits& gt,
-        const NamedParameters& np) const
     {
       // TODO much of this is the same as for classical triangle quadrics
       auto construct_vector = gt.construct_vector_3_object();
@@ -148,35 +136,20 @@ class GarlandHeckbert_probabilistic_tri_policies :
       auto sum_vectors = gt.construct_sum_of_vectors_3_object();
       auto dot_product = gt.compute_scalar_product_3_object();
 
-      typedef typename boost::property_traits<VPM>::reference Point_reference;
-      typedef typename boost::graph_traits<TM>::halfedge_descriptor halfedge_descriptor;
-
-      const FT var = mean_variance;
-      const halfedge_descriptor h = halfedge(f, tmesh);
-
-      // get all points and turn them into location vectors so we can use cross product on them
-      const Point_reference p = get(point_map, source(h, tmesh));
-      const Point_reference q = get(point_map, target(h, tmesh));
-      const Point_reference r = get(point_map, target(next(h, tmesh), tmesh));
-
-      Vector_3 a = construct_vector(ORIGIN, p);
-      Vector_3 b = construct_vector(ORIGIN, q);
-      Vector_3 c = construct_vector(ORIGIN, r);
-       
       // calculate certain vectors used later
       const Vector_3 ab = cross_product(a, b);
       const Vector_3 bc = cross_product(b, c);
       const Vector_3 ca = cross_product(c, a);
 
-      const Vector_3 a_minus_b = sum_vectors(a, -b);
-      const Vector_3 b_minus_c = sum_vectors(b, -c);
-      const Vector_3 c_minus_a = sum_vectors(c, -a);
+      const Vector_3 a_minus_b = a - b;//sum_vectors(a, -b);
+      const Vector_3 b_minus_c = b - c;//sum_vectors(b, -c);
+      const Vector_3 c_minus_a = c - a;//sum_vectors(c, -a);
       
       const Mat_3 cp_ab = skew_sym_mat_cross_product(a_minus_b);
       const Mat_3 cp_bc = skew_sym_mat_cross_product(b_minus_c);
       const Mat_3 cp_ca = skew_sym_mat_cross_product(c_minus_a);
       
-      const Vector_3 sum_of_cross_product = sum_vectors(sum_vectors(ab, bc), ca);
+      const Vector_3 sum_of_cross_product = ab + bc + ca;//sum_vectors(sum_vectors(ab, bc), ca);
 
       const Eigen::Matrix<FT, 3, 1, Eigen::DontAlign> 
         sum_cp_col{ sum_of_cross_product.x(), sum_of_cross_product.y(), sum_of_cross_product.z() };
@@ -216,9 +189,40 @@ class GarlandHeckbert_probabilistic_tri_policies :
       ret.block(0, 0, 3, 3) = A;
       ret.block(3, 0, 1, 3) = -res_b.transpose();
       ret.block(0, 3, 3, 1) = -res_b;
-      ret(4, 4) = res_c;
+      ret(3, 3) = res_c;
 
       return ret;
+    }
+    
+    template<typename VPM, typename TM>
+    Mat_4 construct_quadric_from_face(
+        const VPM& point_map,
+        const TM& tmesh, 
+        typename boost::graph_traits<TM>::face_descriptor f, 
+        const GeomTraits& gt) const
+    {
+      // TODO much of this is the same as for classical triangle quadrics
+      auto construct_vector = gt.construct_vector_3_object();
+      auto cross_product = gt.construct_cross_product_vector_3_object();
+      auto sum_vectors = gt.construct_sum_of_vectors_3_object();
+      auto dot_product = gt.compute_scalar_product_3_object();
+
+      typedef typename boost::property_traits<VPM>::reference Point_reference;
+      typedef typename boost::graph_traits<TM>::halfedge_descriptor halfedge_descriptor;
+
+      const FT var = mean_variance;
+      const halfedge_descriptor h = halfedge(f, tmesh);
+
+      // get all points and turn them into location vectors so we can use cross product on them
+      const Point_reference p = get(point_map, source(h, tmesh));
+      const Point_reference q = get(point_map, target(h, tmesh));
+      const Point_reference r = get(point_map, target(next(h, tmesh), tmesh));
+
+      Vector_3 a = construct_vector(ORIGIN, p);
+      Vector_3 b = construct_vector(ORIGIN, q);
+      Vector_3 c = construct_vector(ORIGIN, r);
+
+      return construct_quadric_from_face(a, b, c, var, gt);
     }
     
     const Get_cost& get_cost() const { return *this; }
@@ -281,7 +285,6 @@ class GarlandHeckbert_probabilistic_tri_policies :
     // fit inside a [-1, 1]^3 unit cube
     static constexpr FT good_default_variance_unit = 0.05;
     
-  private:
     FT mean_variance;
     FT normal_variance;
 };
