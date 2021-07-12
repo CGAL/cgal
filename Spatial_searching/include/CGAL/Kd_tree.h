@@ -288,6 +288,20 @@ public:
     return pts.empty();
   }
 
+  void preprocess(const FT distance_threshold = FT(1) / FT(1000)) {
+
+    // TODO: put squared_distance_d_object in SearchTraits.
+    if (pts.size() < 2) return;
+    std::sort(pts.begin(), pts.end());
+    const FT eps = distance_threshold * distance_threshold;
+    const auto last = std::unique(pts.begin(), pts.end(),
+      [&](const Point_d& p, const Point_d& q) {
+        return CGAL::squared_distance(p, q) < eps;
+      }
+    );
+    pts.erase(last, pts.end());
+  }
+
   void build()
   {
     build<Sequential_tag>();
