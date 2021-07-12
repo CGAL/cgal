@@ -74,7 +74,7 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 </head><body>
 <h1 id="maintitle">Doxygen Manual Results</h1>'''
     page_footer='''<table border="1" cellspacing="2" cellpadding="5" class="test-results">
-    <tr><td/><th colspan="3">Doxygen 1.8.4</th><th colspan="3">Doxygen 1.8.13(official)</th><th colspan="3">Doxygen master</th></tr>
+    <tr><td/><th colspan="3">Doxygen 1.8.13</th><th colspan="3">Doxygen 1.9.1(official)</th><th colspan="3">Doxygen master</th></tr>
 <tr>
 <th>Package Name</th>
 <th>Logs </th>
@@ -267,10 +267,10 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 <html><head><title>Manual Testsuite Overview</title></head>
 <body><h1>Overviewpage of the Doxygen Manual Testsuite</h1>
 <table border="1" cellspacing="2" cellpadding="5" id="revisions" class="rev-table">
-  <tr><td/><td/><th colspan="2">Doxygen 1.8.4</th><th colspan="2">Doxygen 1.8.13</th><th colspan="2">Doxygen master</th><td/><td/></tr>
+  <tr><td/><td/><th colspan="2">Doxygen 1.8.13</th><th colspan="2">Doxygen 1.9.1</th><th colspan="2">Doxygen master</th><td/><td/></tr>
 <tr><th>Revision</th><th>Date</th><th>Warnings</th>
 <th>Errors</th><th>Warnings </th><th>Errors</th><th>Warnings </th><th>Errors </th>
-<th>Diff with doxygen master</th><th>Diff with doxygen 1.8.13</th></tr></table></body>''')
+<th>Diff with doxygen master</th><th>Diff with doxygen 1.9.1</th></tr></table></body>''')
                 args_list=''
                 for arg in sys.argv[0:]:
                   args_list+=arg+' '

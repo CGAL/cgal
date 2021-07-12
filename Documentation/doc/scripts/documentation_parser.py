@@ -17,7 +17,7 @@ types=[p.attr('kind') for p in d('compound').items()]
 type_map = defaultdict(list) #map <type, name>
 dict_map = defaultdict(dict)#map <name, map<member type, member name>>
 #FOREACH compounds : fill maps
-for i in xrange(0,len(compounds)):
+for i in range(0,len(compounds)):
   if check_type(types[i], "typedef"):
     types[i]="type"
   name=d('compound').children("name").eq(i).text()
@@ -41,7 +41,7 @@ for i in xrange(0,len(compounds)):
     mtype_map = defaultdict(list)# map<member type, member name>
 
     #FOREACH member :
-    for j in xrange(0,len(members)):
+    for j in range(0,len(members)):
       if(check_type(types[i], ['class', 'Concept class'])
          and m_types[j] == "function"):
         m_types[j]="method"
@@ -62,7 +62,7 @@ for btype in type_map:
   out=btype
   if btype.endswith('s'):
     out+='e'
-  print out.title()+'s'
+  print (out.title()+'s')
   indent+="  "
   #FOREACH name
   for name in type_map[btype]:
@@ -101,7 +101,7 @@ for btype in type_map:
       suffix=""
     if suffix.endswith(', '):
       suffix = suffix[:-2]+'>'
-    print indent+name+suffix
+    print (indent+name+suffix)
 
     indent+="  "
     #FOREACH mtype
@@ -109,7 +109,7 @@ for btype in type_map:
       out=mtype
       if mtype.endswith('s'):
         out+='e'
-      print indent+out.title()+'s'
+      print (indent+out.title()+'s')
       indent+="  "
       #FOREACH member
       overload_map = defaultdict(int) #contains the number of times a member has appeared (to manage the overloads)
@@ -124,7 +124,7 @@ for btype in type_map:
           f=pq(filename=op.join(op.sep, root_path,filepath), parser="xml")
           index=0
           memberdefs=[m.text() for m in f("memberdef").items()]
-          for i in xrange(0,len(memberdefs)):
+          for i in range(0,len(memberdefs)):
             member_names=[member_name.text() for member_name in f('memberdef').eq(i).children("name").items()]
             if f('memberdef').eq(i).children("name").text() == member:
               if (index < overload_map[member]):
@@ -171,7 +171,7 @@ for btype in type_map:
           prefix+=definition
         if(prefix != ""):
           prefix+=" "
-        print indent+prefix+member+arguments
+        print (indent+prefix+member+arguments)
         overload_map[member]+=1
       #END foreach member
       indent=indent[:-2]
