@@ -350,7 +350,13 @@ public:
                                "Parallel_tag is enabled but TBB is unavailable.");
 #endif
 
-    Point_container c(dim_, data.begin(), data.end(),traits_);
+    bool create_balanced_tree = false;
+    if (std::is_same<Splitter, CGAL::Balanced_splitter<SearchTraits>>::value) {
+      create_balanced_tree = true;
+      CGAL_assertion_msg(false, "TODO: CHECK THIS TYPE!");
+    }
+
+    Point_container c(dim_, data.begin(), data.end(), traits_, create_balanced_tree);
     bbox = new Kd_tree_rectangle<FT,D>(c.bounding_box());
     if (c.size() <= split.bucket_size()){
       tree_root = create_leaf_node(c);

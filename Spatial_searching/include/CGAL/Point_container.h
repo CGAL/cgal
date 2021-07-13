@@ -54,6 +54,54 @@ private:
   // i.e. minimal enclosing bounding
   // box of points
 
+  std::vector< std::vector<FT> > m_references;
+  std::vector<FT> m_temporary;
+
+  void initialize_reference(
+    iterator begin, iterator end, std::vector<FT>& reference) {
+
+    // for (std::size_t i = 0; i < coordinates.size(); ++i) {
+    //   reference[i] = coordinates[i];
+    // }
+    CGAL_assertion_msg(false, "TODO: FINISH INITIALIZE REFERENCE!");
+  }
+
+  void merge_sort(
+    const std::vector<FT>& reference,
+    std::vector<FT>& temporary, const std::size_t low, const std::size_t high,
+		const std::size_t p, const int dim) {
+
+    CGAL_assertion_msg(false, "TODO: FINISH MERGE SORT!");
+  }
+
+  std::size_t remove_duplicates(
+    std::vector<FT>& reference, const std::size_t i, const int dim) {
+
+    CGAL_assertion_msg(false, "TODO: FINISH REMOVE DUPLICATES!");
+    return -1;
+  }
+
+  FT super_key_compare(
+    const FT a, const FT b, const std::size_t p, const int dim) {
+
+    FT diff = FT(0);
+    // for (long i = 0; i < dim; i++) {
+    //   long r = i + p;
+    //   // A fast alternative to the modulus operator for (i + p) < 2 * dim.
+    //   r = (r < dim) ? r : r - dim;
+    //   diff = a[r] - b[r];
+    //   if (diff != 0) break;
+    // }
+    CGAL_assertion_msg(false, "TODO: FINISH SUPER KEY COMPARE!");
+    return diff;
+  }
+
+  template<class Separator>
+  void balanced_split(Point_container<Traits>& c, Separator& sep) {
+
+    CGAL_assertion_msg(false, "TODO: FINISH BALANCED SPLIT!");
+  }
+
 public:
 
   inline const Kd_tree_rectangle<FT,D>&
@@ -231,10 +279,27 @@ public:
   }
 
   // building the container from a sequence of Point_d*
-  Point_container(const int d, iterator begin, iterator end,const Traits& traits_) :
-    traits(traits_),m_b(begin), m_e(end), bbox(d, begin, end,traits.construct_cartesian_const_iterator_d_object()), tbox(bbox)
+  Point_container(const int d, iterator begin, iterator end, const Traits& traits_, const bool create_balanced_tree = false) :
+    traits(traits_), m_b(begin), m_e(end), bbox(d, begin, end, traits.construct_cartesian_const_iterator_d_object()), tbox(bbox)
   {
     built_coord = max_span_coord();
+
+    if (create_balanced_tree) {
+      const std::size_t num_points = std::distance(begin, end);
+      m_temporary.resize(num_points);
+      m_references.resize(d, std::vector<FT>(num_points));
+      for (std::size_t i = 0; i < m_references.size(); ++i) {
+	      initialize_reference(begin, end, m_references[i]);
+	      merge_sort(m_references[i], m_temporary, 0, m_references[i].size() - 1, i, d);
+	    }
+
+      std::vector<std::size_t> ref_end(m_references.size());
+      for (std::size_t i = 0; i < ref_end.size(); ++i) {
+        ref_end[i] = remove_duplicates(m_references[i], i, d);
+      }
+
+      CGAL_assertion_msg(false, "TODO: FINISH INITIALIZATION!");
+    }
   }
 
   void

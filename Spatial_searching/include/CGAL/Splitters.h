@@ -303,5 +303,26 @@ namespace CGAL {
 
   };
 
+  template<
+  class SearchTraits,
+  class Separator_ = Plane_separator<typename SearchTraits::FT> >
+  class Balanced_splitter : public Splitter_base<typename SearchTraits::FT> {
+    using Base = Splitter_base<typename SearchTraits::FT>;
+
+  public:
+    using FT = typename SearchTraits::FT;
+    using Container = Point_container<SearchTraits>;
+    using Separator = Separator_;
+
+    Balanced_splitter() : Base() { }
+    Balanced_splitter(const unsigned int bucket_size) : Base(bucket_size) { }
+
+    void operator()(Separator& sep, Container& c0, Container& c1) const {
+      CGAL_assertion(c0.is_valid());
+      CGAL_assertion(c1.is_valid());
+      CGAL_assertion_msg(false, "TODO: FINISH BALANCED SPLITTER!");
+    }
+  };
+
 } // namespace CGAL
 #endif // CGAL_SPLITTERS
