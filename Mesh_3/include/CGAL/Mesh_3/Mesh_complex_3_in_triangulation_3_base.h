@@ -59,7 +59,7 @@ namespace CGAL {
   //              tbb::interface5::concurrent_hash_map
   template < class DSC, bool Const >
   std::size_t tbb_hasher(const std::pair<CGAL::internal::CC_iterator<DSC, Const>,
-                         CGAL::internal::CC_iterator<DSC, Const> >& p)
+                                         CGAL::internal::CC_iterator<DSC, Const> >& p)
   {
     return boost::hash<std::pair<CGAL::internal::CC_iterator<DSC, Const>,
                                  CGAL::internal::CC_iterator<DSC, Const> > >()(p);
