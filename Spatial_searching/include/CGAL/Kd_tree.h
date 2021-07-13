@@ -353,7 +353,7 @@ public:
     bool create_balanced_tree = false;
     if (std::is_same<Splitter, CGAL::Balanced_splitter<SearchTraits>>::value) {
       create_balanced_tree = true;
-      CGAL_assertion_msg(false, "TODO: CHECK THIS TYPE!");
+      // CGAL_assertion_msg(false, "TODO: CHECK THIS TYPE!");
     }
 
     Point_container c(dim_, data.begin(), data.end(), traits_, create_balanced_tree);
