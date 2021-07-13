@@ -37,7 +37,15 @@ namespace Polygon_mesh_processing {
 
 namespace internal {
 
-template<class PointRange, class PolygonRange>
+struct Polygon_soup_orientation_visitor{
+  inline virtual void non_manifold_edge(const std::size_t&, const std::size_t&){}
+  inline virtual void duplicate_vertex(const std::size_t&, const std::size_t&){}
+  inline virtual void non_manifold_vertex(const std::size_t&){}
+  inline virtual void update_polygon_id(const std::size_t&, const std::size_t&, const std::size_t&){}
+  inline virtual void reverse_polygon(const std::size_t&) {}
+};
+
+template<class PointRange, class PolygonRange, class Visitor>
 struct Polygon_soup_orienter
 {
   typedef typename PointRange::value_type                               Point_3;
@@ -63,6 +71,7 @@ struct Polygon_soup_orienter
   Edge_map edges;             //< the set of edges of the input polygons
   Marked_edges marked_edges;  //< the set of singular edges or edges incident
                               //<   to non-compatible orientation polygons
+  Visitor& visitor;
 
   /// for each polygon referenced by its position in `polygons`, indicates
   /// the connected component it belongs too after orientation.
@@ -82,6 +91,7 @@ struct Polygon_soup_orienter
   static void set_edge_marked(V_ID i, V_ID j, Marked_edges& marked_edges)
   {
     marked_edges.insert(canonical_edge(i,j));
+
   }
 
   static std::array<V_ID,3>
@@ -121,6 +131,7 @@ struct Polygon_soup_orienter
   }
 
   void inverse_orientation(const std::size_t index) {
+    visitor.reverse_polygon(index);
     std::reverse(polygons[index].begin(), polygons[index].end());
   }
 
@@ -129,6 +140,7 @@ struct Polygon_soup_orienter
     V_ID old_index,
     V_ID new_index)
   {
+    visitor.update_polygon_id(polygon_id, old_index, new_index);
     for(V_ID& i : polygons[polygon_id])
       if( i==old_index )
         i=new_index;
@@ -147,12 +159,12 @@ struct Polygon_soup_orienter
     }
   }
 
-  Polygon_soup_orienter(Points& points, Polygons& polygons)
-    : points(points), polygons(polygons), edges(points.size())
+  Polygon_soup_orienter(Points& points, Polygons& polygons, Visitor& visitor)
+    : points(points), polygons(polygons), edges(points.size()), visitor(visitor)
   {}
 
 //filling containers
-  static void fill_edge_map(Edge_map& edges, Marked_edges& marked_edges, const Polygons& polygons) {
+  static void fill_edge_map(Edge_map& edges, Marked_edges& marked_edges, const Polygons& polygons, Visitor& visitor) {
     // Fill edges
     for (P_ID i = 0; i < polygons.size(); ++i)
     {
@@ -179,14 +191,18 @@ struct Polygon_soup_orienter
         em_it = edges[i1].find(i0);
         if (em_it != edges[i1].end()) nb_edges += em_it->second.size();
 
-        if (nb_edges > 2) set_edge_marked(i0, i1, marked_edges);
+        if (nb_edges > 2)
+        {
+          visitor.non_manifold_edge(i0, i1);
+          set_edge_marked(i0, i1, marked_edges);
+        }
       }
     }
   }
 
   void fill_edge_map()
   {
-    fill_edge_map(edges, marked_edges, polygons);
+    fill_edge_map(edges, marked_edges, polygons, visitor);
   }
 
   /// We try to orient polygon consistently by walking in the dual graph, from
@@ -302,7 +318,7 @@ struct Polygon_soup_orienter
     } // end while loop on all non-oriented polygons remaining
   }
 
-  /// A vertex is said to be singular if its link is neither a cycle nor a chain,
+  /// A vertex is said to be .3 if its link is neither a cycle nor a chain,
   /// but several cycles and chains.
   /// For each such vertex v, we consider each set of polygons incident to v
   /// and sharing a non-marked edge incident to v. A copy of v is assigned to
@@ -373,6 +389,7 @@ struct Polygon_soup_orienter
     for(const V_ID_and_Polygon_ids& vid_and_pids : vertices_to_duplicate)
     {
       V_ID new_index = static_cast<V_ID>(points.size());
+      visitor.duplicate_vertex(vid_and_pids.first, new_index);
       points.push_back( points[vid_and_pids.first] );
       for(P_ID polygon_id : vid_and_pids.second)
         replace_vertex_index_in_polygon(polygon_id, vid_and_pids.first, new_index);
@@ -436,6 +453,22 @@ struct Polygon_soup_orienter
 };
 } // namespace internal
 
+//todo: Documentation
+template <class PointRange, class PolygonRange, class Visitor>
+bool orient_polygon_soup(PointRange& points,
+                         PolygonRange& polygons,
+                         Visitor& visitor)
+{
+  std::size_t inital_nb_pts = points.size();
+  internal::Polygon_soup_orienter<PointRange, PolygonRange, Visitor>
+      orienter(points, polygons, visitor);
+  orienter.fill_edge_map();
+  orienter.orient();
+  orienter.duplicate_singular_vertices();
+
+  return inital_nb_pts==points.size();
+}
+
 /**
  * \ingroup PMP_orientation_grp
  * tries to consistently orient a soup of polygons in 3D space.
@@ -474,7 +507,9 @@ bool orient_polygon_soup(PointRange& points,
                          PolygonRange& polygons)
 {
   std::size_t inital_nb_pts = points.size();
-  internal::Polygon_soup_orienter<PointRange, PolygonRange> orienter(points, polygons);
+  internal::Polygon_soup_orientation_visitor dummy_visitor;
+  internal::Polygon_soup_orienter<PointRange, PolygonRange,
+      internal::Polygon_soup_orientation_visitor> orienter(points, polygons, dummy_visitor);
   orienter.fill_edge_map();
   orienter.orient();
   orienter.duplicate_singular_vertices();

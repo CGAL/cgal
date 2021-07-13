@@ -206,11 +206,14 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 
   //check manifoldness
   typedef std::vector<V_ID>                                           PointRange;
-  typedef internal::Polygon_soup_orienter<PointRange, PolygonRange>   Orienter;
+  typedef internal::Polygon_soup_orienter<PointRange, PolygonRange,
+      internal::Polygon_soup_orientation_visitor>   Orienter;
 
   typename Orienter::Edge_map edges(max_id+1);
   typename Orienter::Marked_edges marked_edges;
-  Orienter::fill_edge_map(edges, marked_edges, polygons);
+  internal::Polygon_soup_orientation_visitor dummy_visitor;
+
+  Orienter::fill_edge_map(edges, marked_edges, polygons, dummy_visitor);
 
   //returns false if duplication is necessary
   if(!marked_edges.empty())

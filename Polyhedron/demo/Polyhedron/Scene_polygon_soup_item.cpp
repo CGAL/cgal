@@ -420,9 +420,20 @@ void Scene_polygon_soup_item::inside_out()
 }
 
 bool
-Scene_polygon_soup_item::orient()
+Scene_polygon_soup_item::orient(std::vector<std::size_t>& non_manifold_vertices)
 {
+  struct Visitor : public CGAL::Polygon_mesh_processing::internal::Polygon_soup_orientation_visitor
+  {
+    std::vector<std::size_t>& nm_vertices;
 
+    Visitor(std::vector<std::size_t>& nm_vertices)
+      :nm_vertices(nm_vertices){}
+
+    void duplicate_vertex(const std::size_t&, const std::size_t& id) final
+    {
+      nm_vertices.push_back(id);
+    }
+  };
   if(isEmpty() || d->oriented)
     return true; // nothing to do
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -449,9 +460,10 @@ Scene_polygon_soup_item::orient()
     d->soup->polygons.swap(valid_polygons);
 
   bool res;
+  Visitor visitor(non_manifold_vertices);
   QApplication::setOverrideCursor(Qt::WaitCursor);
   res =  CGAL::Polygon_mesh_processing::
-    orient_polygon_soup(d->soup->points, d->soup->polygons);
+    orient_polygon_soup(d->soup->points, d->soup->polygons, visitor);
   QApplication::restoreOverrideCursor();
   return res;
 }
@@ -493,7 +505,8 @@ Scene_polygon_soup_item::save(std::ostream& out) const
 bool
 Scene_polygon_soup_item::exportAsSurfaceMesh(SMesh *out_surface_mesh)
 {
-  orient();
+  std::vector<std::size_t> dum;
+  orient(dum);
   CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh< CGAL::Surface_mesh<Point_3> >(
     d->soup->points, d->soup->polygons, *out_surface_mesh);
   std::size_t rv = CGAL::Polygon_mesh_processing::remove_isolated_vertices(*out_surface_mesh);
