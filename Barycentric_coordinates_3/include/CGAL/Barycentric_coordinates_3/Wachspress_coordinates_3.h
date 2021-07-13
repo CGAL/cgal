@@ -110,17 +110,23 @@ namespace Barycentric_coordinates {
         case Computation_policy_3::WITH_EDGE_CASES:{
           const auto edge_case = verify(query, coordinates);
           if (edge_case == internal::Edge_case::BOUNDARY) {
+            std::cout << "Boundary \n";
             return coordinates;
           }
           if (edge_case == internal::Edge_case::EXTERIOR) {
             std::cerr << std::endl <<
             "WARNING: query does not belong to the polygon!" << std::endl;
+            std::cout << "EXTERIOR \n";
           }
+          else
+            std::cout << "Interior \n";
+
           return compute_coords(query, coordinates);
         }
 
         default:{
           internal::get_default(vertices(m_polygon_mesh).size(), coordinates);
+          std::cout << "Default \n";
           return coordinates;
         }
       }
@@ -151,9 +157,9 @@ namespace Barycentric_coordinates {
 
     template<typename OutIterator>
     internal::Edge_case verify(
-      const Point_3& /*query*/, OutIterator /*output*/){
+      const Point_3& query, OutIterator output){
 
-      return internal::Edge_case::INTERIOR;
+      return internal::locate_query_edge(m_vertex_to_point_map, m_polygon_mesh, query, m_traits);
     }
 
     FT compute_weights(const Point_3& query) {

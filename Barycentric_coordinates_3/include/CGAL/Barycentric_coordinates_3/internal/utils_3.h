@@ -83,6 +83,11 @@ public:
     }
   }
 
+  template<typename FT>
+  FT get_tolerance() {
+    return FT(1) / FT(10000000000);
+  }
+
 // Compute barycentric coordinates in the space.
   template<
   typename OutputIterator,
@@ -189,6 +194,55 @@ public:
     return approximate_dot_3/approximate_cross_3_length;
   }
 
+  // Determine if the query point is on the interior, exterior or boundary
+  template<
+    typename VertexToPointMap,
+    typename PolygonMesh,
+    typename GeomTraits>
+  Edge_case locate_query_edge(
+    const VertexToPointMap& vertex_to_point_map,
+    const PolygonMesh& polygon_mesh,
+    const typename GeomTraits::Point_3& query,
+    const GeomTraits& traits){
+
+    using Point_3 = typename GeomTraits::Point_3;
+    using Vector_3 = typename GeomTraits::Vector_3;
+    using FT = typename GeomTraits::FT;
+    const auto& dot_3 = traits.compute_scalar_product_3_object();
+    const auto& construct_vector_3 = traits.construct_vector_3_object();
+
+    const FT tol = get_tolerance<FT>();
+    auto face_range = faces(polygon_mesh);
+
+    for(auto& face : face_range){
+
+      const auto hedge = halfedge(face, polygon_mesh);
+      const auto vertices = vertices_around_face(hedge, polygon_mesh);
+      CGAL_precondition(vertices.size() >= 3);
+
+      auto vertex = vertices.begin();
+      const auto vertex_val = get(vertex_to_point_map, *vertex);
+
+      // Vector connecting query point to vertex;
+      const Vector_3 query_vertex = construct_vector_3(query, vertex_val);
+
+      // Calculate normals of faces
+      const Vector_3 face_normal_i = get_face_normal(
+        face, vertex_to_point_map, polygon_mesh, traits);
+
+      // Distance of query to face
+      const FT perp_dist_i = dot_3(query_vertex, face_normal_i);
+
+      // Verify location of query point;
+      if(CGAL::abs(perp_dist_i) < tol)
+        return Edge_case::BOUNDARY;
+      else if(perp_dist_i < 0)
+        return Edge_case::EXTERIOR;
+    }
+
+    //Default case
+    return Edge_case::INTERIOR;
+  }
 
 }
 }

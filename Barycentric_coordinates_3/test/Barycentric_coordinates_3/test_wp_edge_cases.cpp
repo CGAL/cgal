@@ -29,35 +29,16 @@ void test_overloads() {
 
   CGAL::Barycentric_coordinates::Wachspress_coordinates_3<Mesh, Kernel> wp_cube(cube, CP3::WITH_EDGE_CASES);
 
-  const FT step  = FT(1) / FT(10);
-  const FT scale = FT(10);
-  const FT limit = step*scale;
-
   std::vector<FT> wp_coordinates_cube;
   wp_coordinates_cube.resize(8);
 
-  // Test cube
-  //Check for barycenter
-  wp_cube(Point_3(FT(1)/FT(2), FT(1)/FT(2), FT(1)/FT(2)), wp_coordinates_cube.begin());
-  tests::test_barycenter<Kernel>(wp_coordinates_cube);
+  wp_cube(Point_3(10.0, 10.0, 10.0), wp_coordinates_cube.begin());
 
-  // Sample interior points
-  for(FT x = step; x < limit; x += step){
-    for(FT y = step; y < limit; y += step){
-      for(FT z = step; z < limit; z += step){
-
-        const Point_3 query(x, y, z);
-        wp_cube(query, wp_coordinates_cube.begin());
-
-        tests::test_linear_precision<Kernel>(wp_coordinates_cube, cube_coords, query);
-        tests::test_partition_of_unity<Kernel>(wp_coordinates_cube);
-        tests::test_positivity<Kernel>(wp_coordinates_cube);
-
-        CGAL::Barycentric_coordinates::wachspress_coordinates_3(
-          cube, query, wp_coordinates_cube.begin());
-      }
-    }
+  for(auto u : wp_coordinates_cube){
+    std::cout << u << " \n";
   }
+
+
 
 }
 
