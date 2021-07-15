@@ -195,13 +195,13 @@ private:
     if (try_parallel_internal_node_creation (nh, c, c_low, tag))
       return;
 
-    std::cout << "c low size: " << c_low.size() << std::endl;
-    std::cout << "c size: "     << c.size()     << std::endl;
+    // std::cout << "c0 size: " << c_low.size() << std::endl;
+    // std::cout << "c1 size: " << c.size()     << std::endl;
 
     if (c_low.size() > split.bucket_size())
     {
       nh->lower_ch = new_internal_node();
-      std::cout << "- building left node" << std::endl;
+      // std::cout << "- building left node" << std::endl;
       create_internal_node (nh->lower_ch, c_low, tag);
     }
     else
@@ -210,7 +210,7 @@ private:
     if (c.size() > split.bucket_size())
     {
       nh->upper_ch = new_internal_node();
-      std::cout << "- building right node" << std::endl;
+      // std::cout << "- building right node" << std::endl;
       create_internal_node (nh->upper_ch, c, tag);
     }
     else
@@ -363,16 +363,57 @@ public:
       // CGAL_assertion_msg(false, "TODO: CHECK THIS TYPE!");
     }
 
-    Point_container c(dim_, data.begin(), data.end(), traits_, create_balanced_tree);
-    c.set_initial_depth(0);
+    using Construct_cartesian_const_iterator_d = typename Traits::Construct_cartesian_const_iterator_d;
+    using FTP = typename Construct_cartesian_const_iterator_d::result_type;
+
+    std::vector< std::vector< std::pair<FTP, const Point_d*> > > references;
+    std::vector<FTP> temporary;
+
+    long m_start = -1, m_end = -1;
+    if (create_balanced_tree) {
+
+      Point_container tmp(dim_, traits_); // TODO: do not use this tmp container to access methods!
+      const std::size_t num_points = std::distance(data.begin(), data.end());
+      temporary.resize(num_points);
+      references.resize(dim_, std::vector< std::pair<FTP, const Point_d*> >(num_points));
+      for (std::size_t i = 0; i < references.size(); ++i) {
+        tmp.initialize_references(data.begin(), data.end(), traits_.construct_cartesian_const_iterator_d_object(), references[i]);
+        tmp.apply_merge_sort(references[i], temporary, 0, references[i].size() - 1, i, dim_);
+      }
+
+      // print_references();
+
+      std::vector<std::size_t> ref_end(references.size());
+      for (std::size_t i = 0; i < ref_end.size(); ++i) {
+        ref_end[i] = tmp.remove_duplicates(references[i], i, dim_);
+      }
+
+      // print_references();
+      // CGAL_assertion_msg(false, "TODO: FINISH INITIALIZATION!");
+
+      m_start = 0;
+      m_end   = ref_end[0];
+
+      data.clear(); std::vector<Point_d> tmp_pts;
+      for (long i = m_start; i <= m_end; ++i) {
+        data.push_back(references[0][i].second);
+        tmp_pts.push_back(*data.back());
+      }
+      pts = tmp_pts;
+      std::cout << "* num clean points: " << pts.size() << std::endl;
+    }
+
+    Point_container c(dim_, data.begin(), data.end(), traits_);
+    c.set_data(references, temporary);
+    c.set_data(dim_, 0, m_start, m_end);
 
     bbox = new Kd_tree_rectangle<FT,D>(c.bounding_box());
     if (c.size() <= split.bucket_size()){
       tree_root = create_leaf_node(c);
-    }else {
-       tree_root = new_internal_node();
-       std::cout << "- building root node" << std::endl;
-       create_internal_node (tree_root, c, ConcurrencyTag());
+    } else {
+      tree_root = new_internal_node();
+      // std::cout << "- building root node" << std::endl;
+      create_internal_node (tree_root, c, ConcurrencyTag());
     }
 
     //Reorder vector for spatial locality

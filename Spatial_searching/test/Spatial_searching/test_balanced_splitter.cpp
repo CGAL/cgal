@@ -34,7 +34,7 @@ using Primitive = CGAL::AABB_triangle_primitive<Kernel, Iterator>;
 using ABtraits  = CGAL::AABB_traits<Kernel, Primitive>;
 using AB_tree   = CGAL::AABB_tree<ABtraits>;
 
-void test_balanced_tree() {
+void test_balanced_tree(const std::vector<Point_3>& /* points */) {
 
   std::vector<Point_3> points = {
     Point_3(2,3,3), Point_3(5,4,2), Point_3(9,6,7), Point_3(4,7,9), Point_3(8,1,5),
@@ -43,8 +43,10 @@ void test_balanced_tree() {
     Point_3(5,4,2), Point_3(6,3,1), Point_3(8,7,6), Point_3(9,6,7), Point_3(2,1,3),
     Point_3(7,2,6), Point_3(4,7,9), Point_3(1,6,8), Point_3(3,4,5), Point_3(9,4,10)
   };
-  assert(points.size() == 25);
+	assert(points.size() == 25);
   std::cout << "* num points: " << points.size() << std::endl;
+
+  // using Balanced_splitter = CGAL::Sliding_midpoint<STraits>;
 
   using Balanced_splitter = CGAL::Balanced_splitter<STraits>;
   using Balanced_kd_tree  = CGAL::Kd_tree<STraits, Balanced_splitter>;
@@ -205,9 +207,6 @@ void test_runtime_aabb_tree_query(
 
 int main(int argc, char* argv[]) {
 
-  test_balanced_tree();
-  return EXIT_SUCCESS;
-
   std::cout.precision(20);
   std::vector<Point_3> points;
   const std::string filename = (argc > 1 ? argv[1] : "data/failure-tiny.xyz"); // "data/clean-result.xyz"
@@ -222,6 +221,10 @@ int main(int argc, char* argv[]) {
     points.push_back(p);
     ++count;
   }
+
+  test_balanced_tree(points);
+  return EXIT_SUCCESS;
+
   std::cout << "* num points: " << points.size() << std::endl;
 
   // Default call.

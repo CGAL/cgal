@@ -66,6 +66,8 @@ private:
   std::size_t m_dim = -1;
   std::size_t m_depth = -1;
 
+public:
+
   void initialize_references(
     const iterator begin, const iterator end,
     const Construct_cartesian_const_iterator_d& construct_it,
@@ -157,6 +159,54 @@ private:
     }
   }
 
+  struct Balanced_cmp {
+
+    const int m_dim;
+    const long m_median;
+    const std::size_t m_axis;
+    std::vector< std::pair<FTP, const Point_d*> >& m_reference;
+
+    FT compare_keys( // TODO: Remove this duplicated method!
+      const FTP a, const FTP b, const std::size_t p, const int dim) const {
+
+      FT diff = FT(0);
+      for (std::size_t i = 0; i < dim; ++i) {
+        std::size_t r = i + p;
+        r = (r < dim) ? r : r - dim;
+        diff = a[r] - b[r];
+        if (diff != FT(0)) break;
+      }
+      // CGAL_assertion_msg(false, "TODO: FINISH SUPER KEY COMPARE!");
+      return diff;
+    }
+
+    Balanced_cmp(
+      std::vector< std::pair<FTP, const Point_d*> >& reference,
+      const std::size_t axis, const long median, const int dim) :
+    m_dim(dim), m_median(median), m_axis(axis), m_reference(reference)
+    { }
+
+    bool operator()(const Point_d* pt) const {
+
+      FTP a; bool duplicates_found = true;
+      for (const auto& item : m_reference) {
+        if (item.second == pt) {
+          a = item.first;
+          duplicates_found = false;
+          break;
+        }
+      }
+      if (duplicates_found) {
+        CGAL_assertion_msg(false, "ERROR: DUPLICATES ARE FOUND!");
+        return false;
+      }
+
+      const FT compare = compare_keys(
+        a, m_reference[m_median].first, m_axis, m_dim);
+      return compare < FT(0);
+    }
+  };
+
 public:
 
   void set_data(
@@ -196,10 +246,10 @@ public:
     const long median = m_start + ((m_end - m_start) / 2);
     const std::size_t axis = m_depth % m_dim;
 
-    std::cout << "data: "   << size()  << std::endl;
-    std::cout << "start: "  << m_start << std::endl;
-    std::cout << "end: "    << m_end   << std::endl;
-    std::cout << "median: " << median  << std::endl;
+    // std::cout << "data: "   << size()  << std::endl;
+    // std::cout << "start: "  << m_start << std::endl;
+    // std::cout << "end: "    << m_end   << std::endl;
+    // std::cout << "median: " << median  << std::endl;
 
     CGAL_assertion(m_end > m_start + 2);
     for (std::size_t i = m_start; i <= m_end; ++i) {
@@ -228,6 +278,8 @@ public:
     // std::cout << "DEPTH: " << m_depth << std::endl;
     // print_references();
 
+    ///////////////////////
+
     // OLD CODE!
 
     // c.bbox = bbox;
@@ -241,20 +293,30 @@ public:
     // Cmp<Traits> cmp(split_coord, cutting_value, construct_it);
     // iterator it = std::partition(begin(), end(), cmp);
 
-    // c.set_range(begin(), it);
-    // set_range(it, end());
+    ///////////////////////
 
-    std::vector<const Point_d*> data1, data2;
-    for (std::size_t i = m_start; i <= m_end; ++i) {
-      if (i < median) {
-        data1.push_back(m_references[m_dim-1][i].second);
-      } else if (i > median) {
-        data2.push_back(m_references[m_dim-1][i].second);
-      }
-    }
+    // NEW VERSION!
+    Balanced_cmp cmp(m_references[m_dim-1], axis, median, m_dim);
+    iterator it = std::partition(begin(), end(), cmp);
 
-    c.set_range(data1.begin(), data1.end());
-    set_range(data2.begin(), data2.end());
+    c.set_range(begin(), it);
+    set_range(it, end());
+
+    ///////////////////////
+
+    // OLD VERSION!
+
+    // std::vector<const Point_d*> data1, data2;
+    // for (std::size_t i = m_start; i <= m_end; ++i) {
+    //   if (i < median) {
+    //     data1.push_back(m_references[m_dim-1][i].second);
+    //   } else if (i > median) {
+    //     data2.push_back(m_references[m_dim-1][i].second);
+    //   }
+    // }
+
+    // c.set_range(data1.begin(), data1.end());
+    // set_range(data2.begin(), data2.end());
 
     // std::cout << "data 1: " << std::endl;
     // for (const auto& d1 : data1) {
@@ -265,6 +327,8 @@ public:
     // for (const auto& d2 : data2) {
     //   std::cout << *d2 << std::endl;
     // }
+
+    ///////////////////////
 
     // std::cout << "pre size c0: " << c.size() << std::endl;
     // std::cout << "pre size c1: " << size()   << std::endl;
@@ -459,34 +523,10 @@ public:
   }
 
   // building the container from a sequence of Point_d*
-  Point_container(const int d, iterator begin, iterator end, const Traits& traits_, const bool create_balanced_tree = false) :
+  Point_container(const int d, iterator begin, iterator end, const Traits& traits_) :
     traits(traits_), m_b(begin), m_e(end), bbox(d, begin, end, traits.construct_cartesian_const_iterator_d_object()), tbox(bbox)
   {
     built_coord = max_span_coord();
-
-    if (create_balanced_tree) {
-      const std::size_t num_points = std::distance(begin, end);
-      m_temporary.resize(num_points);
-      m_references.resize(d, std::vector< std::pair<FTP, const Point_d*> >(num_points));
-      for (std::size_t i = 0; i < m_references.size(); ++i) {
-        initialize_references(begin, end, traits.construct_cartesian_const_iterator_d_object(), m_references[i]);
-        apply_merge_sort(m_references[i], m_temporary, 0, m_references[i].size() - 1, i, d);
-      }
-
-      // print_references();
-
-      std::vector<std::size_t> ref_end(m_references.size());
-      for (std::size_t i = 0; i < ref_end.size(); ++i) {
-        ref_end[i] = remove_duplicates(m_references[i], i, d);
-      }
-
-      // print_references();
-      // CGAL_assertion_msg(false, "TODO: FINISH INITIALIZATION!");
-
-      m_start = 0;
-      m_end   = ref_end[0];
-      m_dim   = d;
-    }
   }
 
   void
