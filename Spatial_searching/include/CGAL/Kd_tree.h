@@ -26,6 +26,7 @@
 #include <CGAL/Kd_tree_node.h>
 #include <CGAL/Splitters.h>
 #include <CGAL/internal/Get_dimension_tag.h>
+#include <CGAL/constructions_d.h>
 
 #include <boost/container/deque.hpp>
 #include <boost/optional.hpp>
