@@ -228,7 +228,7 @@ void test(const NamedParameters& np)
   check_same_type<60>(get_parameter(np, CGAL::internal_np::non_manifold_feature_map));
   check_same_type<61>(get_parameter(np, CGAL::internal_np::filter));
   check_same_type<62>(get_parameter(np, CGAL::internal_np::face_epsilon_map));
-  check_same_type<62>(get_parameter(np, CGAL::internal_np::maximum_number));
+  check_same_type<68>(get_parameter(np, CGAL::internal_np::maximum_number));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   check_same_type<34>(get_parameter(np, CGAL::internal_np::get_cost_policy));
