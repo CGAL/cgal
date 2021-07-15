@@ -43,7 +43,7 @@ void test_balanced_tree(const std::vector<Point_3>& /* points */) {
     Point_3(5,4,2), Point_3(6,3,1), Point_3(8,7,6), Point_3(9,6,7), Point_3(2,1,3),
     Point_3(7,2,6), Point_3(4,7,9), Point_3(1,6,8), Point_3(3,4,5), Point_3(9,4,10)
   };
-	assert(points.size() == 25);
+  assert(points.size() == 25);
   std::cout << "* num points: " << points.size() << std::endl;
 
   // using Balanced_splitter = CGAL::Sliding_midpoint<STraits>;
