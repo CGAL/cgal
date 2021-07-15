@@ -100,6 +100,7 @@ int test_limited_self_intersections(const char* filename)
 
   std::vector<std::pair<face_descriptor, face_descriptor> > intersected_tris;
 
+#ifdef CGAL_LINKED_WITH_TBB
   if(!std::is_same<K, EPECK>::value) // EPECK isn't threadsafe
   {
     PMP::self_intersections<CGAL::Parallel_tag>(
@@ -114,6 +115,7 @@ int test_limited_self_intersections(const char* filename)
     intersected_tris.clear();
     timer.reset();
   }
+#endif
   PMP::self_intersections<CGAL::Sequential_tag>(
     m, std::back_inserter(intersected_tris), CGAL::parameters::maximum_number(40));
   std::cout << "self_intersections test for 40 SI took " << timer.time() << " sec." << std::endl;
