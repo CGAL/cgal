@@ -22,23 +22,21 @@ void test_overloads() {
   using Mesh = CGAL::Surface_mesh<Point_3>;
 
   // Cube
-  Mesh cube;
-  std::vector<Point_3> cube_coords;
+  Mesh tetrahedron;
+  std::vector<Point_3> tetrahedron_coords;
 
-  std::tie(cube, cube_coords) = tests::get_hexahedron<Kernel, Mesh>();
+  std::tie(tetrahedron, tetrahedron_coords) = tests::get_irregular_tetrahedron<Kernel, Mesh>();
 
-  CGAL::Barycentric_coordinates::Wachspress_coordinates_3<Mesh, Kernel> wp_cube(cube, CP3::WITH_EDGE_CASES);
+  CGAL::Barycentric_coordinates::Wachspress_coordinates_3<Mesh, Kernel> wp_tetrahedron(tetrahedron, CP3::WITH_EDGE_CASES);
 
-  std::vector<FT> wp_coordinates_cube;
-  wp_coordinates_cube.resize(8);
+  std::vector<FT> wp_coordinates_tetrahedron;
+  wp_coordinates_tetrahedron.resize(4);
 
-  wp_cube(Point_3(10.0, 10.0, 10.0), wp_coordinates_cube.begin());
+  wp_tetrahedron(Point_3(0.05, 0.1, 0.85), wp_coordinates_tetrahedron.begin());
 
-  for(auto u : wp_coordinates_cube){
+  for(auto u : wp_coordinates_tetrahedron){
     std::cout << u << " \n";
   }
-
-
 
 }
 

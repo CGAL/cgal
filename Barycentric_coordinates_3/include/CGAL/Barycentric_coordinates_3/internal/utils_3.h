@@ -22,6 +22,7 @@
 // Internal includes
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/convexity_check_3.h>
+#include <CGAL/Barycentric_coordinates_2/Triangle_coordinates_2.h>
 
 namespace CGAL{
 namespace Barycentric_coordinates{
@@ -85,7 +86,7 @@ public:
 
   template<typename FT>
   FT get_tolerance() {
-    return FT(1) / FT(10000000000);
+    return FT(1) / FT(100000);
   }
 
 // Compute barycentric coordinates in the space.
@@ -194,15 +195,72 @@ public:
     return approximate_dot_3/approximate_cross_3_length;
   }
 
+  template<
+    typename Face,
+    typename VertexToPointMap,
+    typename PolygonMesh,
+    typename OutIterator,
+    typename GeomTraits>
+  OutIterator boundary_coordinates_3(
+    const Face& face,
+    const VertexToPointMap& vertex_to_point_map,
+    const PolygonMesh& polygon_mesh,
+    const typename GeomTraits::Point_3& query,
+    OutIterator coordinates,
+    const GeomTraits& traits){
+
+    using Point_3 = typename GeomTraits::Point_3;
+    using Vector_3 = typename GeomTraits::Vector_3;
+    using FT = typename GeomTraits::FT;
+    using Plane_3 = typename GeomTraits::Plane_3;
+    using Point_2 = typename GeomTraits::Point_2;
+
+    const auto hedge = halfedge(face, polygon_mesh);
+    const auto vertices_face = vertices_around_face(hedge, polygon_mesh);
+    CGAL_precondition(vertices_face.size() >= 3);
+    auto vertex = vertices_face.begin();
+
+    const auto v0 = *vertex; vertex++;
+    const auto v1 = *vertex; vertex++;
+    const auto v2 = *vertex;
+
+    const Plane_3 plane_face(get(vertex_to_point_map, v0), get(vertex_to_point_map, v1), get(vertex_to_point_map, v2));
+    const Point_2 query_2d = plane_face.to_2d(query);
+    const Point_2 v0_2d = plane_face.to_2d(get(vertex_to_point_map, v0));
+    const Point_2 v1_2d = plane_face.to_2d(get(vertex_to_point_map, v1));
+    const Point_2 v2_2d = plane_face.to_2d(get(vertex_to_point_map, v2));
+
+    std::array<FT, 3> coordinates_2d = compute_triangle_coordinates_2(
+      v0_2d, v1_2d, v2_2d, query_2d, traits);
+
+    const auto vd = vertices(polygon_mesh);
+    for(const auto& v : vd){
+
+      if(v == v0)
+        *coordinates = coordinates_2d[0];
+      else if(v == v1)
+        *coordinates = coordinates_2d[1];
+      else if(v == v2)
+        *coordinates = coordinates_2d[2];
+      else
+        *coordinates = 0;
+
+      coordinates++;
+    }
+    return coordinates;
+  }
+
   // Determine if the query point is on the interior, exterior or boundary
   template<
     typename VertexToPointMap,
     typename PolygonMesh,
+    typename OutIterator,
     typename GeomTraits>
   Edge_case locate_query_edge(
     const VertexToPointMap& vertex_to_point_map,
     const PolygonMesh& polygon_mesh,
     const typename GeomTraits::Point_3& query,
+    OutIterator coordinates,
     const GeomTraits& traits){
 
     using Point_3 = typename GeomTraits::Point_3;
@@ -234,8 +292,11 @@ public:
       const FT perp_dist_i = dot_3(query_vertex, face_normal_i);
 
       // Verify location of query point;
-      if(CGAL::abs(perp_dist_i) < tol)
+      if(CGAL::abs(perp_dist_i) < tol){
+
+        boundary_coordinates_3(face, vertex_to_point_map, polygon_mesh, query, coordinates, traits);
         return Edge_case::BOUNDARY;
+      }
       else if(perp_dist_i < 0)
         return Edge_case::EXTERIOR;
     }

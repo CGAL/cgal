@@ -43,6 +43,8 @@ namespace Barycentric_coordinates {
 	  typedef typename GeomTraits::FT FT;
     typedef typename GeomTraits::Point_3 Point_3;
     typedef typename GeomTraits::Vector_3 Vector_3;
+    typedef typename GeomTraits::Plane_3 Plane_3;
+    typedef typename GeomTraits::Point_2 Point_2;
 
   public:
     Wachspress_coordinates_3(
@@ -108,7 +110,10 @@ namespace Barycentric_coordinates {
         }
 
         case Computation_policy_3::WITH_EDGE_CASES:{
-          const auto edge_case = verify(query, coordinates);
+          // Calculate query position relative to the polyhedron
+          const auto edge_case = internal::locate_query_edge(
+            m_vertex_to_point_map, m_polygon_mesh, query, coordinates, m_traits);
+
           if (edge_case == internal::Edge_case::BOUNDARY) {
             std::cout << "Boundary \n";
             return coordinates;
