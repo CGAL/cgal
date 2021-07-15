@@ -57,32 +57,37 @@ private:
   using Construct_cartesian_const_iterator_d = typename Traits::Construct_cartesian_const_iterator_d;
   using FTP = typename Construct_cartesian_const_iterator_d::result_type;
 
-  std::vector< std::vector<FTP> > m_references;
+  std::vector< std::vector< std::pair<FTP, const Point_d*> > > m_references;
   std::vector<FTP> m_temporary;
 
-  void initialize_reference(
+  long m_start = -1;
+  long m_end = -1;
+
+  std::size_t m_dim = -1;
+  std::size_t m_depth = -1;
+
+  void initialize_references(
     const iterator begin, const iterator end,
     const Construct_cartesian_const_iterator_d& construct_it,
-    std::vector<FTP>& reference) const {
+    std::vector< std::pair<FTP, const Point_d*> >& reference) const {
 
     // std::cout << std::endl;
     std::size_t count = 0;
     for (auto it = begin; it != end; ++it) {
       const auto bit = construct_it(**it);
-      reference[count] = bit;
+      reference[count] = std::make_pair(bit, *it);
       // std::cout << *reference[count] << std::endl;
       ++count;
     }
     // CGAL_assertion_msg(false, "TODO: FINISH INITIALIZE REFERENCE!");
   }
 
-  FT super_key_compare(
+  FT compare_keys(
     const FTP a, const FTP b, const std::size_t p, const int dim) const {
 
     FT diff = FT(0);
     for (std::size_t i = 0; i < dim; ++i) {
       std::size_t r = i + p;
-      // A fast alternative to the modulus operator for (i + p) < 2 * dim.
       r = (r < dim) ? r : r - dim;
       diff = a[r] - b[r];
       if (diff != FT(0)) break;
@@ -91,33 +96,30 @@ private:
     return diff;
   }
 
-  void merge_sort(
-    std::vector<FTP>& reference, std::vector<FTP>& temporary,
+  void apply_merge_sort(
+    std::vector< std::pair<FTP, const Point_d*> >& reference,
+    std::vector<FTP>& temporary,
     const std::size_t low, const std::size_t high,
 		const std::size_t p, const int dim) const {
 
 	  std::size_t i, j, k;
 	  if (high > low) {
 
-	    // Avoid overflow when calculating the median.
 	    const std::size_t median = low + ( (high - low) >> 1 );
+	    apply_merge_sort(reference, temporary, low, median, p, dim);
+	    apply_merge_sort(reference, temporary, median + 1, high, p, dim);
 
-	    // Recursively subdivide the lower and upper halves of the array.
-	    merge_sort(reference, temporary, low, median, p, dim);
-	    merge_sort(reference, temporary, median + 1, high, p, dim);
-
-      // Merge the results for this level of subdivision.
       for (i = median + 1; i > low; --i) {
-        temporary[i - 1] = reference[i - 1];
+        temporary[i - 1] = reference[i - 1].first;
       }
 
       for (j = median; j < high; ++j) {
-        temporary[median + (high - j)] = reference[j + 1]; // avoid address overflow.
+        temporary[median + (high - j)] = reference[j + 1].first;
       }
 
       for (k = low; k <= high; ++k) {
-        reference[k] = (
-          super_key_compare(temporary[i], temporary[j], p, dim) < FT(0) ) ?
+        reference[k].first = (
+          compare_keys(temporary[i], temporary[j], p, dim) < FT(0) ) ?
           temporary[i++] :
           temporary[j--] ;
       }
@@ -127,16 +129,17 @@ private:
   }
 
   std::size_t remove_duplicates(
-    std::vector<FTP>& reference, const std::size_t i, const int dim) const {
+    std::vector< std::pair<FTP, const Point_d*> >& reference,
+    const std::size_t i, const int dim) const {
 
     std::size_t end = 0;
     for (std::size_t j = 1; j < reference.size(); ++j) {
-      const FT compare = super_key_compare(reference[j], reference[j - 1], i, dim);
+      const FT compare = compare_keys(reference[j].first, reference[j - 1].first, i, dim);
 
       if (compare < FT(0)) {
         CGAL_assertion_msg(false, "ERROR: NEGATIVE SUPER KEY COMPARE RESULT!");
       } else if (compare > FT(0)) {
-        reference[++end] = reference[j];
+        reference[++end].first = reference[j].first;
       }
     }
 
@@ -145,68 +148,85 @@ private:
   }
 
   void print_references() const {
+
     for (const auto& reference : m_references) {
       std::cout << std::endl;
       for (const auto& item : reference) {
-        std::cout << *item << std::endl;
+        std::cout << *(item.first) << std::endl;
       }
     }
   }
 
 public:
 
+  void set_data(
+    const std::vector< std::vector< std::pair<FTP, const Point_d*> > >& references,
+    const std::vector<FTP>& temporary) {
+
+    m_references = references;
+    m_temporary = temporary;
+  }
+
+  void set_data(
+    const std::size_t dim, const std::size_t depth,
+    const long start, const long end) {
+
+    m_dim = dim;
+    m_depth = depth;
+    m_start = start;
+    m_end = end;
+  }
+
+  void set_initial_depth(const std::size_t depth) {
+    m_depth = depth;
+  }
+
   void balanced_split(Point_container<Traits>& c) {
 
-    CGAL_assertion(dimension() == c.dimension());
-    CGAL_assertion(is_valid());
+    // CGAL_assertion(dimension() == c.dimension());
+    // CGAL_assertion(is_valid());
 
     // NEW CODE!
+    CGAL_assertion(m_dim   != static_cast<std::size_t>(-1));
+    CGAL_assertion(m_depth != static_cast<std::size_t>(-1));
 
-    // More than three references were passed to this function, so
-	  // the median element of references[0] is chosen as the tuple about
-	  // which the other reference arrays will be partitioned.  Avoid
-	  // overflow when computing the median.
-	  // const long median = start + ((end - start) / 2);
+    CGAL_assertion(m_start != -1);
+    CGAL_assertion(m_end   != -1);
 
-	  // Store the median element of references[0] in a new kdNode.
-	  // node = new KdNode(references.at(0).at(median));
+	  const long median = m_start + ((m_end - m_start) / 2);
+    const std::size_t axis = m_depth % m_dim;
 
-	  // Copy references[0] to the temporary array before partitioning.
-	  // for (long i = start; i <= end; i++) {
-		//   temporary.at(i) = references.at(0).at(i);
-	  // }
+    std::cout << "data: "   << size()  << std::endl;
+    std::cout << "start: "  << m_start << std::endl;
+    std::cout << "end: "    << m_end   << std::endl;
+    std::cout << "median: " << median  << std::endl;
 
-    // Process each of the other reference arrays in a priori sorted order
-    // and partition it by comparing super keys.  Store the result from
-    // references[i] in references[i-1], thus permuting the reference
-    // arrays.  Skip the element of references[i] that that references
-    // a point that equals the point that is stored in the new k-d node.
-	  // long lower, upper;
-	  // for (long i = 1; i < dim; i++) {
+    CGAL_assertion(m_end > m_start + 2);
+	  for (std::size_t i = m_start; i <= m_end; ++i) {
+		  m_temporary[i] = m_references[0][i].first;
+	  }
 
-    //   // Process one reference array. Compare once only.
-    //   lower = start - 1;
-    //   upper = median;
-    //   for (long j = start; j <= end; j++) {
-    //     long compare = superKeyCompare(references.at(i).at(j), node->tuple, axis, dim);
-    //     if (compare < 0) {
-    //       references.at(i-1).at(++lower) = references.at(i).at(j);
-    //     } else if (compare > 0) {
-    //       references.at(i-1).at(++upper) = references.at(i).at(j);
-    //     }
-    //   }
-	  // }
+	  std::size_t lower, upper;
+	  for (std::size_t i = 1; i < m_dim; ++i) {
+      lower = m_start-1;
+      upper = median;
+      for (std::size_t j = m_start; j <= m_end; ++j) {
+        const FT compare = compare_keys(
+          m_references[i][j].first, m_references[0][median].first, axis, m_dim);
+        if (compare < FT(0)) {
+          m_references[i-1][++lower].first = m_references[i][j].first;
+        } else if (compare > FT(0)) {
+          m_references[i-1][++upper].first = m_references[i][j].first;
+        }
+      }
+	  }
 
-	  // Copy the temporary array to references[dim-1] to finish permutation.
-	  // for (long i = start; i <= end; i++) {
-		//   references.at(dim - 1).at(i) = temporary.at(i);
-	  // }
+	  for (std::size_t i = m_start; i <= m_end; ++i) {
+		  m_references[m_dim-1][i].first = m_temporary[i];
+	  }
 
-	  // Recursively build the < branch of the tree.
-	  // std::tie(node->ltChild, final_depth) = buildKdTree(references, temporary, start, lower, dim, depth + 1);
-
-	  // Recursively build the > branch of the tree.
-	  // std::tie(node->gtChild, final_depth) = buildKdTree(references, temporary, median + 1, upper, dim, depth + 1);
+    // std::cout << "DEPTH: " << m_depth << std::endl;
+    // print_references();
 
     // OLD CODE!
 
@@ -224,6 +244,35 @@ public:
     // c.set_range(begin(), it);
     // set_range(it, end());
 
+    std::vector<const Point_d*> data1, data2;
+    for (std::size_t i = m_start; i <= m_end; ++i) {
+      if (i < median) {
+        data1.push_back(m_references[m_dim-1][i].second);
+      } else if (i > median) {
+        data2.push_back(m_references[m_dim-1][i].second);
+      }
+    }
+
+    c.set_range(data1.begin(), data1.end());
+    set_range(data2.begin(), data2.end());
+
+    // std::cout << "data 1: " << std::endl;
+    // for (const auto& d1 : data1) {
+    //   std::cout << *d1 << std::endl;
+    // }
+
+    // std::cout << "data 2: " << std::endl;
+    // for (const auto& d2 : data2) {
+    //   std::cout << *d2 << std::endl;
+    // }
+
+    // std::cout << "pre size c0: " << c.size() << std::endl;
+    // std::cout << "pre size c1: " << size()   << std::endl;
+
+    c.set_data(m_references, m_temporary);
+    c.set_data(m_dim, m_depth + 1, m_start, lower);
+    set_data(m_dim, m_depth + 1, median + 1, upper);
+
     // Adjust boxes.
     // bbox.set_lower_bound(split_coord, cutting_value);
     // tbox. template update_from_point_pointers<typename Traits::Construct_cartesian_const_iterator_d>(begin(), end(), construct_it);
@@ -232,7 +281,7 @@ public:
     // CGAL_assertion(is_valid());
     // CGAL_assertion(c.is_valid());
 
-    CGAL_assertion_msg(false, "TODO: FINISH BALANCED SPLIT!");
+    // CGAL_assertion_msg(false, "TODO: FINISH BALANCED SPLIT!");
   }
 
   inline const Kd_tree_rectangle<FT,D>&
@@ -418,19 +467,25 @@ public:
     if (create_balanced_tree) {
       const std::size_t num_points = std::distance(begin, end);
       m_temporary.resize(num_points);
-      m_references.resize(d, std::vector<FTP>(num_points));
+      m_references.resize(d, std::vector< std::pair<FTP, const Point_d*> >(num_points));
       for (std::size_t i = 0; i < m_references.size(); ++i) {
-	      initialize_reference(begin, end, traits.construct_cartesian_const_iterator_d_object(), m_references[i]);
-	      merge_sort(m_references[i], m_temporary, 0, m_references[i].size() - 1, i, d);
+	      initialize_references(begin, end, traits.construct_cartesian_const_iterator_d_object(), m_references[i]);
+	      apply_merge_sort(m_references[i], m_temporary, 0, m_references[i].size() - 1, i, d);
 	    }
+
       // print_references();
 
       std::vector<std::size_t> ref_end(m_references.size());
       for (std::size_t i = 0; i < ref_end.size(); ++i) {
         ref_end[i] = remove_duplicates(m_references[i], i, d);
       }
+
       // print_references();
       // CGAL_assertion_msg(false, "TODO: FINISH INITIALIZATION!");
+
+      m_start = 0;
+      m_end   = ref_end[0];
+      m_dim   = d;
     }
   }
 

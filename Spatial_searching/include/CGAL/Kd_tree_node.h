@@ -173,12 +173,12 @@ namespace CGAL {
           static_cast<Internal_node_const_handle>(this);
         indent(d);
         std::cout << "lower tree" << std::endl;
-        node->lower()->print(d+1);
+        node->lower()->print(d+5);
         indent(d);
         std::cout << "separator: dim = " << node->cutting_dimension() << "  val = " << node->cutting_value() << std::endl;
         indent(d);
         std::cout << "upper tree" << std::endl;
-        node->upper()->print(d+1);
+        node->upper()->print(d+5);
       }
     }
 

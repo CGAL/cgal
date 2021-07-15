@@ -188,14 +188,20 @@ private:
     split(sep, c, c_low);
     nh->set_separator(sep);
 
-    handle_extended_node (nh, c, c_low, UseExtendedNode());
+    if (!std::is_same<Splitter, CGAL::Balanced_splitter<SearchTraits>>::value) {
+      handle_extended_node (nh, c, c_low, UseExtendedNode());
+    }
 
     if (try_parallel_internal_node_creation (nh, c, c_low, tag))
       return;
 
+    std::cout << "c low size: " << c_low.size() << std::endl;
+    std::cout << "c size: "     << c.size()     << std::endl;
+
     if (c_low.size() > split.bucket_size())
     {
       nh->lower_ch = new_internal_node();
+      std::cout << "- building left node" << std::endl;
       create_internal_node (nh->lower_ch, c_low, tag);
     }
     else
@@ -204,6 +210,7 @@ private:
     if (c.size() > split.bucket_size())
     {
       nh->upper_ch = new_internal_node();
+      std::cout << "- building right node" << std::endl;
       create_internal_node (nh->upper_ch, c, tag);
     }
     else
@@ -357,11 +364,14 @@ public:
     }
 
     Point_container c(dim_, data.begin(), data.end(), traits_, create_balanced_tree);
+    c.set_initial_depth(0);
+
     bbox = new Kd_tree_rectangle<FT,D>(c.bounding_box());
     if (c.size() <= split.bucket_size()){
       tree_root = create_leaf_node(c);
     }else {
        tree_root = new_internal_node();
+       std::cout << "- building root node" << std::endl;
        create_internal_node (tree_root, c, ConcurrencyTag());
     }
 
@@ -395,6 +405,10 @@ public:
   int dim() const
   {
     return dim_;
+  }
+
+  void print() {
+    tree_root->print(2);
   }
 
 private:
@@ -565,6 +579,9 @@ public:
   OutputIterator
   search(OutputIterator it, const FuzzyQueryItem& q) const
   {
+    if (std::is_same<Splitter, CGAL::Balanced_splitter<SearchTraits>>::value) {
+      CGAL_assertion_msg(false, "TODO: THE BALANCED ALGORITHM IS NOT FINISHED!");
+    }
     if(! pts.empty()){
 
       if(! is_built()){
@@ -581,6 +598,9 @@ public:
   boost::optional<Point_d>
   search_any_point(const FuzzyQueryItem& q) const
   {
+    if (std::is_same<Splitter, CGAL::Balanced_splitter<SearchTraits>>::value) {
+      CGAL_assertion_msg(false, "TODO: THE BALANCED ALGORITHM IS NOT FINISHED!");
+    }
     if(! pts.empty()){
 
       if(! is_built()){
