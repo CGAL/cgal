@@ -100,14 +100,14 @@ private:
     std::vector< std::pair<FTP, const Point_d*> >& reference,
     std::vector<FTP>& temporary,
     const std::size_t low, const std::size_t high,
-		const std::size_t p, const int dim) const {
+    const std::size_t p, const int dim) const {
 
-	  std::size_t i, j, k;
-	  if (high > low) {
+    std::size_t i, j, k;
+    if (high > low) {
 
-	    const std::size_t median = low + ( (high - low) >> 1 );
-	    apply_merge_sort(reference, temporary, low, median, p, dim);
-	    apply_merge_sort(reference, temporary, median + 1, high, p, dim);
+      const std::size_t median = low + ( (high - low) >> 1 );
+      apply_merge_sort(reference, temporary, low, median, p, dim);
+      apply_merge_sort(reference, temporary, median + 1, high, p, dim);
 
       for (i = median + 1; i > low; --i) {
         temporary[i - 1] = reference[i - 1].first;
@@ -193,7 +193,7 @@ public:
     CGAL_assertion(m_start != -1);
     CGAL_assertion(m_end   != -1);
 
-	  const long median = m_start + ((m_end - m_start) / 2);
+    const long median = m_start + ((m_end - m_start) / 2);
     const std::size_t axis = m_depth % m_dim;
 
     std::cout << "data: "   << size()  << std::endl;
@@ -202,12 +202,12 @@ public:
     std::cout << "median: " << median  << std::endl;
 
     CGAL_assertion(m_end > m_start + 2);
-	  for (std::size_t i = m_start; i <= m_end; ++i) {
-		  m_temporary[i] = m_references[0][i].first;
-	  }
+    for (std::size_t i = m_start; i <= m_end; ++i) {
+      m_temporary[i] = m_references[0][i].first;
+    }
 
-	  std::size_t lower, upper;
-	  for (std::size_t i = 1; i < m_dim; ++i) {
+    std::size_t lower, upper;
+    for (std::size_t i = 1; i < m_dim; ++i) {
       lower = m_start-1;
       upper = median;
       for (std::size_t j = m_start; j <= m_end; ++j) {
@@ -219,11 +219,11 @@ public:
           m_references[i-1][++upper].first = m_references[i][j].first;
         }
       }
-	  }
+    }
 
-	  for (std::size_t i = m_start; i <= m_end; ++i) {
-		  m_references[m_dim-1][i].first = m_temporary[i];
-	  }
+    for (std::size_t i = m_start; i <= m_end; ++i) {
+      m_references[m_dim-1][i].first = m_temporary[i];
+    }
 
     // std::cout << "DEPTH: " << m_depth << std::endl;
     // print_references();
@@ -469,9 +469,9 @@ public:
       m_temporary.resize(num_points);
       m_references.resize(d, std::vector< std::pair<FTP, const Point_d*> >(num_points));
       for (std::size_t i = 0; i < m_references.size(); ++i) {
-	      initialize_references(begin, end, traits.construct_cartesian_const_iterator_d_object(), m_references[i]);
-	      apply_merge_sort(m_references[i], m_temporary, 0, m_references[i].size() - 1, i, d);
-	    }
+        initialize_references(begin, end, traits.construct_cartesian_const_iterator_d_object(), m_references[i]);
+        apply_merge_sort(m_references[i], m_temporary, 0, m_references[i].size() - 1, i, d);
+      }
 
       // print_references();
 
