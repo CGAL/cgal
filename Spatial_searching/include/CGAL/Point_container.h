@@ -54,144 +54,59 @@ private:
   // i.e. minimal enclosing bounding
   // box of points
 
+public:
   using Construct_cartesian_const_iterator_d = typename Traits::Construct_cartesian_const_iterator_d;
   using FTP = typename Construct_cartesian_const_iterator_d::result_type;
+  using Ref_pair = std::pair<FTP, const Point_d*>;
 
-  std::vector< std::vector< std::pair<FTP, const Point_d*> > > m_references;
-  std::vector<FTP> m_temporary;
+private:
+  std::vector< std::vector<Ref_pair> > m_references;
 
   long m_start = -1;
   long m_end = -1;
 
-  std::size_t m_dim = -1;
-  std::size_t m_depth = -1;
+  std::size_t m_dim = static_cast<std::size_t>(-1);
+  std::size_t m_depth = static_cast<std::size_t>(-1);
 
 public:
+  struct Key_compare {
 
-  void initialize_references(
-    const iterator begin, const iterator end,
-    const Construct_cartesian_const_iterator_d& construct_it,
-    std::vector< std::pair<FTP, const Point_d*> >& reference) const {
+    FT operator()(
+      const FTP p, const FTP q, // refs to points p and q
+      const std::size_t axis, // axis offset in (x, y, z, w, ...)
+      const std::size_t dim) const { // dimension
 
-    // std::cout << std::endl;
-    std::size_t count = 0;
-    for (auto it = begin; it != end; ++it) {
-      const auto bit = construct_it(**it);
-      reference[count] = std::make_pair(bit, *it);
-      // std::cout << *reference[count] << std::endl;
-      ++count;
-    }
-    // CGAL_assertion_msg(false, "TODO: FINISH INITIALIZE REFERENCE!");
-  }
-
-  FT compare_keys(
-    const FTP a, const FTP b, const std::size_t p, const int dim) const {
-
-    FT diff = FT(0);
-    for (std::size_t i = 0; i < dim; ++i) {
-      std::size_t r = i + p;
-      r = (r < dim) ? r : r - dim;
-      diff = a[r] - b[r];
-      if (diff != FT(0)) break;
-    }
-    // CGAL_assertion_msg(false, "TODO: FINISH SUPER KEY COMPARE!");
-    return diff;
-  }
-
-  void apply_merge_sort(
-    std::vector< std::pair<FTP, const Point_d*> >& reference,
-    std::vector<FTP>& temporary,
-    const std::size_t low, const std::size_t high,
-    const std::size_t p, const int dim) const {
-
-    std::size_t i, j, k;
-    if (high > low) {
-
-      const std::size_t median = low + ( (high - low) >> 1 );
-      apply_merge_sort(reference, temporary, low, median, p, dim);
-      apply_merge_sort(reference, temporary, median + 1, high, p, dim);
-
-      for (i = median + 1; i > low; --i) {
-        temporary[i - 1] = reference[i - 1].first;
+      FT coords_diff = FT(0);
+      for (std::size_t i = 0; i < dim; ++i) {
+        const std::size_t idx = (i + axis) % dim; // stay inside dim
+        coords_diff = p[idx] - q[idx];
+        if (coords_diff != FT(0)) break;
       }
-
-      for (j = median; j < high; ++j) {
-        temporary[median + (high - j)] = reference[j + 1].first;
-      }
-
-      for (k = low; k <= high; ++k) {
-        reference[k].first = (
-          compare_keys(temporary[i], temporary[j], p, dim) < FT(0) ) ?
-          temporary[i++] :
-          temporary[j--] ;
-      }
+      // CGAL_assertion_msg(false, "TODO: FINISH COMPARE KEYS!");
+      return coords_diff;
     }
-
-    // CGAL_assertion_msg(false, "TODO: FINISH MERGE SORT!");
-  }
-
-  std::size_t remove_duplicates(
-    std::vector< std::pair<FTP, const Point_d*> >& reference,
-    const std::size_t i, const int dim) const {
-
-    std::size_t end = 0;
-    for (std::size_t j = 1; j < reference.size(); ++j) {
-      const FT compare = compare_keys(reference[j].first, reference[j - 1].first, i, dim);
-
-      if (compare < FT(0)) {
-        CGAL_assertion_msg(false, "ERROR: NEGATIVE SUPER KEY COMPARE RESULT!");
-      } else if (compare > FT(0)) {
-        reference[++end].first = reference[j].first;
-      }
-    }
-
-    // CGAL_assertion_msg(false, "TODO: FINISH REMOVE DUPLICATES!");
-    return end;
-  }
-
-  void print_references() const {
-
-    for (const auto& reference : m_references) {
-      std::cout << std::endl;
-      for (const auto& item : reference) {
-        std::cout << *(item.first) << std::endl;
-      }
-    }
-  }
+  };
 
   struct Balanced_cmp {
 
-    const int m_dim;
     const long m_median;
+    const std::size_t m_dim;
     const std::size_t m_axis;
-    std::vector< std::pair<FTP, const Point_d*> >& m_reference;
-
-    FT compare_keys( // TODO: Remove this duplicated method!
-      const FTP a, const FTP b, const std::size_t p, const int dim) const {
-
-      FT diff = FT(0);
-      for (std::size_t i = 0; i < dim; ++i) {
-        std::size_t r = i + p;
-        r = (r < dim) ? r : r - dim;
-        diff = a[r] - b[r];
-        if (diff != FT(0)) break;
-      }
-      // CGAL_assertion_msg(false, "TODO: FINISH SUPER KEY COMPARE!");
-      return diff;
-    }
+    std::vector<Ref_pair>& m_reference;
+    const Key_compare compare_keys;
 
     Balanced_cmp(
-      std::vector< std::pair<FTP, const Point_d*> >& reference,
-      const std::size_t axis, const long median, const int dim) :
-    m_dim(dim), m_median(median), m_axis(axis), m_reference(reference)
+      std::vector<Ref_pair>& reference,
+      const std::size_t axis, const long median, const std::size_t dim) :
+    m_median(median), m_dim(dim), m_axis(axis), m_reference(reference)
     { }
 
     bool operator()(const Point_d* pt) const {
 
-      FTP a; bool duplicates_found = true;
-      for (const auto& item : m_reference) {
-        if (item.second == pt) {
-          a = item.first;
+      FTP p; bool duplicates_found = true;
+      for (const auto& ref_pair : m_reference) {
+        if (ref_pair.second == pt) {
+          p = ref_pair.first;
           duplicates_found = false;
           break;
         }
@@ -202,19 +117,26 @@ public:
       }
 
       const FT compare = compare_keys(
-        a, m_reference[m_median].first, m_axis, m_dim);
+        p, m_reference[m_median].first, m_axis, m_dim);
       return compare < FT(0);
     }
   };
 
+  void print_references() const {
+
+    for (const auto& reference : m_references) {
+      std::cout << std::endl;
+      for (const auto& ref_pair : reference) {
+        std::cout << *(ref_pair.first) << std::endl;
+      }
+    }
+  }
+
 public:
 
-  void set_data(
-    const std::vector< std::vector< std::pair<FTP, const Point_d*> > >& references,
-    const std::vector<FTP>& temporary) {
-
+  // TODO: Avoid this function.
+  void set_data(const std::vector< std::vector<Ref_pair> >& references) {
     m_references = references;
-    m_temporary = temporary;
   }
 
   void set_data(
@@ -245,22 +167,26 @@ public:
 
     const long median = m_start + ((m_end - m_start) / 2);
     const std::size_t axis = m_depth % m_dim;
+    CGAL_assertion(median >= 0);
 
     // std::cout << "data: "   << size()  << std::endl;
     // std::cout << "start: "  << m_start << std::endl;
     // std::cout << "end: "    << m_end   << std::endl;
     // std::cout << "median: " << median  << std::endl;
 
+    const Key_compare compare_keys;
+    std::vector<FTP> tmp(m_references[0].size());
     CGAL_assertion(m_end > m_start + 2);
-    for (std::size_t i = m_start; i <= m_end; ++i) {
-      m_temporary[i] = m_references[0][i].first;
+    for (long i = m_start; i <= m_end; ++i) { // copy the first ref to save it
+      tmp[i] = m_references[0][i].first;
     }
 
-    std::size_t lower, upper;
-    for (std::size_t i = 1; i < m_dim; ++i) {
-      lower = m_start-1;
+    long lower, upper;
+    for (std::size_t i = 1; i < m_dim; ++i) { // apply permutations for dim - 1 axis
+      lower = m_start - 1;
       upper = median;
-      for (std::size_t j = m_start; j <= m_end; ++j) {
+
+      for (long j = m_start; j <= m_end; ++j) { // always skip median key
         const FT compare = compare_keys(
           m_references[i][j].first, m_references[0][median].first, axis, m_dim);
         if (compare < FT(0)) {
@@ -270,9 +196,10 @@ public:
         }
       }
     }
+    CGAL_assertion(lower >= 0 && upper >= 0);
 
-    for (std::size_t i = m_start; i <= m_end; ++i) {
-      m_references[m_dim-1][i].first = m_temporary[i];
+    for (long i = m_start; i <= m_end; ++i) { // copy back
+      m_references[m_dim-1][i].first = tmp[i];
     }
 
     // std::cout << "DEPTH: " << m_depth << std::endl;
@@ -297,7 +224,7 @@ public:
 
     // NEW VERSION!
     Balanced_cmp cmp(m_references[m_dim-1], axis, median, m_dim);
-    iterator it = std::partition(begin(), end(), cmp);
+    const auto it = std::partition(begin(), end(), cmp);
 
     c.set_range(begin(), it);
     set_range(it, end());
@@ -333,7 +260,7 @@ public:
     // std::cout << "pre size c0: " << c.size() << std::endl;
     // std::cout << "pre size c1: " << size()   << std::endl;
 
-    c.set_data(m_references, m_temporary);
+    c.set_data(m_references);
     c.set_data(m_dim, m_depth + 1, m_start, lower);
     set_data(m_dim, m_depth + 1, median + 1, upper);
 

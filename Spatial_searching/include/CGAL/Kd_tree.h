@@ -137,6 +137,88 @@ private:
   bool built_;
   bool removed_;
 
+  using FTP = typename Point_container::FTP;
+  using Ref_pair = typename Point_container::Ref_pair;
+  using Key_compare = typename Point_container::Key_compare;
+  using Construct_cartesian_const_iterator_d = typename Traits::Construct_cartesian_const_iterator_d;
+
+  template<typename DataIterator>
+  void initialize_reference(
+    const DataIterator begin, const DataIterator end,
+    const Construct_cartesian_const_iterator_d& construct_it,
+    std::vector<Ref_pair>& reference) const {
+
+    // std::cout << std::endl;
+    std::size_t i = 0;
+    for (auto it = begin; it != end; ++it, ++i) {
+      const auto bit = construct_it(**it);
+      reference[i] = std::make_pair(bit, *it); // copy refs to all points
+      // std::cout << *reference[i] << std::endl;
+    }
+    // CGAL_assertion_msg(false, "TODO: FINISH INITIALIZE REFERENCE!");
+  }
+
+  void apply_merge_sort(
+    std::vector<Ref_pair>& reference, std::vector<FTP>& tmp,
+    const long low, const long high,
+    const std::size_t axis, const std::size_t dim) const {
+
+    long i, j, k;
+    const Key_compare compare_keys;
+    if (high > low) {
+
+      const long median = low + ( (high - low) >> 1 );
+      apply_merge_sort(reference, tmp, low, median, axis, dim);
+      apply_merge_sort(reference, tmp, median + 1, high, axis, dim);
+
+      for (i = median + 1; i > low; --i) {
+        tmp[i-1] = reference[i-1].first;
+      }
+
+      for (j = median; j < high; ++j) {
+        tmp[median+(high-j)] = reference[j+1].first;
+      }
+
+      for (k = low; k <= high; ++k) {
+        reference[k].first =
+        ( compare_keys(tmp[i], tmp[j], axis, dim) < FT(0) ) ?
+          tmp[i++] :
+          tmp[j--] ;
+      }
+    }
+    // CGAL_assertion_msg(false, "TODO: FINISH APPLY MERGE SORT!");
+  }
+
+  std::size_t remove_duplicates(
+    std::vector<Ref_pair>& reference,
+    const std::size_t i, const std::size_t dim) const {
+
+    std::size_t end = 0;
+    const Key_compare compare_keys;
+    for (std::size_t j = 1; j < reference.size(); ++j) {
+      const FT compare = compare_keys(reference[j].first, reference[j-1].first, i, dim);
+
+      if (compare < FT(0)) {
+        CGAL_assertion_msg(false, "ERROR: NEGATIVE COMPARE KEYS RESULT!");
+      } else if (compare > FT(0)) {
+        reference[++end].first = reference[j].first;
+      }
+    }
+    // CGAL_assertion_msg(false, "TODO: FINISH REMOVE DUPLICATES!");
+    return end;
+  }
+
+  void print_references(
+    const std::vector< std::vector<Ref_pair> >& references) const {
+
+    for (const auto& reference : references) {
+      std::cout << std::endl;
+      for (const auto& ref_pair : reference) {
+        std::cout << *(ref_pair.first) << std::endl;
+      }
+    }
+  }
+
   // protected copy constructor
   Kd_tree(const Tree& tree)
     : traits_(tree.traits_),built_(tree.built_),dim_(-1)
@@ -189,7 +271,7 @@ private:
     split(sep, c, c_low);
     nh->set_separator(sep);
 
-    if (!std::is_same<Splitter, CGAL::Balanced_splitter<SearchTraits>>::value) {
+    if (!std::is_same<Splitter, CGAL::Balanced_splitter<SearchTraits> >::value) {
       handle_extended_node (nh, c, c_low, UseExtendedNode());
     }
 
@@ -359,43 +441,41 @@ public:
 #endif
 
     bool create_balanced_tree = false;
-    if (std::is_same<Splitter, CGAL::Balanced_splitter<SearchTraits>>::value) {
+    if (std::is_same<Splitter, CGAL::Balanced_splitter<SearchTraits> >::value) {
       create_balanced_tree = true;
-      // CGAL_assertion_msg(false, "TODO: CHECK THIS TYPE!");
+      // CGAL_assertion_msg(false, "TODO: CHECK THIS IF!");
     }
 
-    using Construct_cartesian_const_iterator_d = typename Traits::Construct_cartesian_const_iterator_d;
-    using FTP = typename Construct_cartesian_const_iterator_d::result_type;
-
-    std::vector< std::vector< std::pair<FTP, const Point_d*> > > references;
-    std::vector<FTP> temporary;
-
+    std::vector<FTP> tmp;
+    std::vector< std::vector<Ref_pair> > references;
     long m_start = -1, m_end = -1;
     if (create_balanced_tree) {
 
-      Point_container tmp(dim_, traits_); // TODO: do not use this tmp container to access methods!
-      const std::size_t num_points = std::distance(data.begin(), data.end());
-      temporary.resize(num_points);
-      references.resize(dim_, std::vector< std::pair<FTP, const Point_d*> >(num_points));
+      tmp.resize(data.size());
+      references.resize(dim_, std::vector<Ref_pair>(data.size()));
       for (std::size_t i = 0; i < references.size(); ++i) {
-        tmp.initialize_references(data.begin(), data.end(), traits_.construct_cartesian_const_iterator_d_object(), references[i]);
-        tmp.apply_merge_sort(references[i], temporary, 0, references[i].size() - 1, i, dim_);
+        initialize_reference(data.begin(), data.end(),
+        traits_.construct_cartesian_const_iterator_d_object(), references[i]);
+        apply_merge_sort(references[i], tmp, 0, references[i].size() - 1, i, dim_);
       }
 
-      // print_references();
+      // print_references(references);
 
       std::vector<std::size_t> ref_end(references.size());
       for (std::size_t i = 0; i < ref_end.size(); ++i) {
-        ref_end[i] = tmp.remove_duplicates(references[i], i, dim_);
+        ref_end[i] = static_cast<long>(remove_duplicates(references[i], i, dim_));
       }
 
-      // print_references();
+      // print_references(references);
       // CGAL_assertion_msg(false, "TODO: FINISH INITIALIZATION!");
 
       m_start = 0;
       m_end   = ref_end[0];
 
-      data.clear(); std::vector<Point_d> tmp_pts;
+      data.clear();
+      data.reserve(references[0].size());
+      std::vector<Point_d> tmp_pts;
+      tmp_pts.reserve(data.size());
       for (long i = m_start; i <= m_end; ++i) {
         data.push_back(references[0][i].second);
         tmp_pts.push_back(*data.back());
@@ -405,7 +485,7 @@ public:
     }
 
     Point_container c(dim_, data.begin(), data.end(), traits_);
-    c.set_data(references, temporary);
+    c.set_data(references);
     c.set_data(dim_, 0, m_start, m_end);
 
     bbox = new Kd_tree_rectangle<FT,D>(c.bounding_box());
@@ -621,7 +701,7 @@ public:
   OutputIterator
   search(OutputIterator it, const FuzzyQueryItem& q) const
   {
-    if (std::is_same<Splitter, CGAL::Balanced_splitter<SearchTraits>>::value) {
+    if (std::is_same<Splitter, CGAL::Balanced_splitter<SearchTraits> >::value) {
       CGAL_assertion_msg(false, "TODO: THE BALANCED ALGORITHM IS NOT FINISHED!");
     }
     if(! pts.empty()){
@@ -640,7 +720,7 @@ public:
   boost::optional<Point_d>
   search_any_point(const FuzzyQueryItem& q) const
   {
-    if (std::is_same<Splitter, CGAL::Balanced_splitter<SearchTraits>>::value) {
+    if (std::is_same<Splitter, CGAL::Balanced_splitter<SearchTraits> >::value) {
       CGAL_assertion_msg(false, "TODO: THE BALANCED ALGORITHM IS NOT FINISHED!");
     }
     if(! pts.empty()){
