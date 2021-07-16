@@ -451,12 +451,11 @@ public:
                                "Parallel_tag is enabled but TBB is unavailable.");
 #endif
 
-    std::vector<FTP> tmp;
     std::vector< std::vector<Ref_pair> > references;
     long start = -1, end = -1;
     if (m_create_balanced_tree) {
 
-      tmp.resize(data.size());
+      std::vector<FTP> tmp(data.size());
       references.resize(dim_, std::vector<Ref_pair>(data.size()));
       for (std::size_t i = 0; i < references.size(); ++i) {
         initialize_reference(data.begin(), data.end(),
@@ -492,9 +491,12 @@ public:
     }
 
     Point_container c(dim_, data.begin(), data.end(), traits_);
-    const auto ref_ptr = std::make_shared<References>(references);
-    c.set_references(ref_ptr);
-    c.set_data(dim_, 0, start, end);
+
+    if (m_create_balanced_tree) {
+      const auto ref_ptr = std::make_shared<References>(references);
+      c.set_references(ref_ptr);
+      c.set_data(dim_, 0, start, end);
+    }
 
     bbox = new Kd_tree_rectangle<FT,D>(c.bounding_box());
     if (c.size() <= split.bucket_size()){
