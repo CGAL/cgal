@@ -279,7 +279,9 @@ bool is_target_vertex_a_corner(halfedge_descriptor h,
     }
   }
 
-  CGAL_assertion(h2 != graph_traits::null_halfedge());
+  // handle case when the graph of constraints does not contains only cycle
+  // (for example when there is a tangency between surfaces and is shared)
+  if (h2 == graph_traits::null_halfedge()) return true;
 
   const Point_3& p = get(vpm, target(h, tm));
   const Point_3& q = get(vpm, source(h, tm));
