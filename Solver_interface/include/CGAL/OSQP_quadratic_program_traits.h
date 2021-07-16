@@ -21,6 +21,7 @@
 #include <vector>
 #include <utility>
 #include <exception>
+#include <memory>
 
 // CGAL includes.
 #include <CGAL/assertions.h>
@@ -192,27 +193,27 @@ public:
     CGAL_precondition(l_vec.size() == m && l_vec.size() == m);
 
     const c_int P_nnz = static_cast<c_int>(P_vec.size());
-    c_float P_x[P_nnz];
-    c_int   P_i[P_nnz];
-    c_int   P_p[n + 1];
-    set_matrix_from_triplets("P", P_vec, P_x, P_i, P_p);
+    auto P_x = std::make_unique<c_float[]>(P_nnz);
+    auto P_i = std::make_unique<c_int[]>(P_nnz);
+    auto P_p = std::make_unique<c_int[]>(n + 1);
+    set_matrix_from_triplets("P", P_vec, P_x.get(), P_i.get(), P_p.get());
     if(verbose) std::cout << "P_nnz: " << P_nnz << std::endl;
 
     const c_int A_nnz = static_cast<c_int>(A_vec.size());
-    c_float A_x[A_nnz];
-    c_int   A_i[A_nnz];
-    c_int   A_p[n + 1];
-    set_matrix_from_triplets("A", A_vec, A_x, A_i, A_p);
+    auto A_x = std::make_unique<c_float[]>(A_nnz);
+    auto A_i = std::make_unique<c_int[]>(A_nnz);
+    auto A_p = std::make_unique<c_int[]>(n + 1);
+    set_matrix_from_triplets("A", A_vec, A_x.get(), A_i.get(), A_p.get());
     if(verbose) std::cout << "A_nnz: " << A_nnz << std::endl;
 
     const c_int q_size = static_cast<c_int>(q_vec.size());
     const c_int l_size = static_cast<c_int>(l_vec.size());
     const c_int u_size = static_cast<c_int>(u_vec.size());
 
-    c_float q_x[q_size];
-    c_float l_x[l_size];
-    c_float u_x[u_size];
-    set_qlu_data(q_x, l_x, u_x);
+    auto q_x = std::make_unique<c_float[]>(q_size);
+    auto l_x = std::make_unique<c_float[]>(l_size);
+    auto u_x = std::make_unique<c_float[]>(u_size);
+    set_qlu_data(q_x.get(), l_x.get(), u_x.get());
 
     // Problem settings.
     OSQPSettings *settings = (OSQPSettings *) malloc(sizeof(OSQPSettings));
@@ -226,15 +227,15 @@ public:
     // Populate data.
     data->n = static_cast<c_int>(n);
     data->m = static_cast<c_int>(m);
-    data->P = csc_matrix(data->n, data->n, P_nnz, P_x, P_i, P_p);
+    data->P = csc_matrix(data->n, data->n, P_nnz, P_x.get(), P_i.get(), P_p.get());
     CGAL_assertion(data->P);
 
-    data->q = q_x;
-    data->A = csc_matrix(data->m, data->n, A_nnz, A_x, A_i, A_p);
+    data->q = q_x.get();
+    data->A = csc_matrix(data->m, data->n, A_nnz, A_x.get(), A_i.get(), A_p.get());
     CGAL_assertion(data->A);
 
-    data->l = l_x;
-    data->u = u_x;
+    data->l = l_x.get();
+    data->u = u_x.get();
 
     // Set solver settings.
     osqp_set_default_settings(settings);
@@ -246,7 +247,7 @@ public:
     osqp_setup(&work, data, settings);
 
     // Solve problem.
-    int exitflag = -1;
+    c_int exitflag = -1;
     try
     {
       exitflag = osqp_solve(work);
