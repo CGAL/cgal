@@ -109,7 +109,7 @@ Orthogonal distance computation technique
 \cgalFigureEnd
 
 Assume we are searching the nearest neighbor, descending the kd-tree, with \f$ R_{p} \f$
-as the parent rectangle and \f$ R_{lo} \f$ and \f$ R_{hi}\f$ as its childs in the current step.
+as the parent rectangle and \f$ R_{lo} \f$ and \f$ R_{hi}\f$ as its children in the current step.
 Further assume \f$ R_{lo} \f$ is closer to query point \f$q\f$. Let \f$cd\f$ denote the cutting dimension and let
 \f$cv\f$ denote the cutting value. At this point we already know the distance \f$rd_{p}\f$
 to the parent rectangle and need to check if \f$R_{hi}\f$ could contain
@@ -127,7 +127,7 @@ which is the case for point queries.
 The following two classes implement the standard
 search strategy for orthogonal distances like the weighted Minkowski
 distance. The second one is a specialization for incremental neighbor
-searching and distance browsing. Both require extendes nodes.
+searching and distance browsing. Both require extended nodes.
 
 `Orthogonal_k_neighbor_search<Traits,
 OrthogonalDistance, Splitter, SpatialTree>`
@@ -159,7 +159,7 @@ When using fuzzy items, queries are reported as follows:
 - Points that are within the inner approximation are always reported.
 - Points that are within the outer approximation but not within the inner approximation
 might or might not be reported.
-- Points thare not within the outer approximation are never reported.
+- Points that are not within the outer approximation are never reported.
 
 For exact range searching the fuzziness parameter \f$ \epsilon\f$ is set to zero.
 
@@ -203,7 +203,7 @@ the midpoint of rectangle rule, to the nearest data point.
 </DL>
 
 As all the midpoint rules cut the bounding box in the middle of the longest side, the tree will
-become linear for a dataset with exponential increasing distances in one dimension.
+become linear for a data set with exponential increasing distances in one dimension.
 
 \cgalFigureBegin{Spatial_searchingslidingworstcase, Sliding_worst_case.jpg}
 Midpoint worst case point set in 2d.
@@ -400,7 +400,7 @@ splitting rule, needed to set the maximal allowed bucket size.
 
 This example program has two 2-dimensional data sets: The first one containing
 collinear points with exponential increasing distances and the second
-one with collinear points in the firstdimension and one point with a distance
+one with collinear points in the first dimension and one point with a distance
 exceeding the spread of the other points in the second dimension. These are
 the worst cases for the midpoint/median rules and can also occur in
 higher dimensions.
@@ -462,7 +462,7 @@ k | bucket size | Surface Build | Random Build | Surface/Surface  | Surface/Rand
 </center>
 
 \cgalFigureBegin{Spatial_searchingfigbenchmark,gargoyle.png}
-Benchmark dataset (downsampled for visualization).\n
+Benchmark data set (down-sampled for visualization).\n
 Blue: Gargoyle surface. Green: Gargoyle bbox random.
 \cgalFigureEnd
 
@@ -477,7 +477,7 @@ rectangles such that no rectangle contains too many input objects.
 For our purposes, a <I>rectangle</I> in real  `d` dimensional space,
 \f$ \mathbb{R}^d\f$, is the product of `d` closed intervals on the coordinate axes.
 `kd` trees are obtained by partitioning point sets in \f$ \mathbb{R}^d\f$ using
-`(d-1)`-dimensional hyperplanes. Each node in the tree is split into
+`(d-1)`-dimensional hyper planes. Each node in the tree is split into
 two children by one such separating hyperplane. Several splitting
 rules (see Section \ref Spatial_SearchingSplitting_rule_section can
 be used to compute a separating `(d-1)`-dimensional hyperplane.
