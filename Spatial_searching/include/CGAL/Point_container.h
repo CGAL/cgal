@@ -212,12 +212,15 @@ public:
 
     // OLD CODE!
 
-    // c.bbox = bbox;
+    c.bbox = bbox;
+    const int split_coord = m_dim - 1; // TODO: Is it correct?
+    // const FT cutting_value = (*m_references)[m_dim-1][median] // TODO: finish this!
+
     // const int split_coord = sep.cutting_dimension();
     // FT cutting_value = sep.cutting_value();
 
-    // built_coord = split_coord;
-    // c.built_coord = split_coord;
+    built_coord = split_coord;
+    c.built_coord = split_coord;
 
     // auto construct_it = traits.construct_cartesian_const_iterator_d_object();
     // Cmp<Traits> cmp(split_coord, cutting_value, construct_it);
@@ -268,10 +271,11 @@ public:
     set_data(m_dim, m_depth + 1, median + 1, upper);
 
     // Adjust boxes.
+    auto construct_it = traits.construct_cartesian_const_iterator_d_object();
     // bbox.set_lower_bound(split_coord, cutting_value);
-    // tbox. template update_from_point_pointers<typename Traits::Construct_cartesian_const_iterator_d>(begin(), end(), construct_it);
+    tbox. template update_from_point_pointers<typename Traits::Construct_cartesian_const_iterator_d>(begin(), end(), construct_it);
     // c.bbox.set_upper_bound(split_coord, cutting_value);
-    // c.tbox. template update_from_point_pointers<typename Traits::Construct_cartesian_const_iterator_d>(c.begin(), c.end(), construct_it);
+    c.tbox. template update_from_point_pointers<typename Traits::Construct_cartesian_const_iterator_d>(c.begin(), c.end(), construct_it);
     // CGAL_assertion(is_valid());
     // CGAL_assertion(c.is_valid());
 
