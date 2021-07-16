@@ -317,10 +317,10 @@ namespace CGAL {
     Balanced_splitter() : Base() { }
     Balanced_splitter(const unsigned int bucket_size) : Base(bucket_size) { }
 
-    void operator()(Separator& /* sep */, Container& c0, Container& c1) const {
-      // CGAL_assertion(c0.is_valid());
-      // CGAL_assertion(c1.is_valid());
-      c0.balanced_split(c1);
+    void operator()(Separator& sep, Container& c0, Container& c1) const {
+      CGAL_assertion(c0.is_valid());
+      CGAL_assertion(c1.is_valid());
+      c0.balanced_split(c1, sep);
       // CGAL_assertion_msg(false, "TODO: FINISH BALANCED SPLITTER!");
     }
   };

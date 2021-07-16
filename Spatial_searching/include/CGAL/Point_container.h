@@ -104,6 +104,7 @@ public:
     m_median(median), m_dim(dim), m_axis(axis), m_reference(reference)
     { }
 
+    // TODO: Can we avoid this linear search?
     bool operator()(const Point_d* pt) const {
 
       FTP p; bool duplicates_found = true;
@@ -156,10 +157,11 @@ public:
     m_depth = depth;
   }
 
-  void balanced_split(Point_container<Traits>& c) {
+  template<class Separator>
+  void balanced_split(Point_container<Traits>& c, Separator& sep) {
 
-    // CGAL_assertion(dimension() == c.dimension());
-    // CGAL_assertion(is_valid());
+    CGAL_assertion(dimension() == c.dimension());
+    CGAL_assertion(is_valid());
 
     // NEW CODE!
     CGAL_assertion(m_dim   != static_cast<std::size_t>(-1));
@@ -212,15 +214,18 @@ public:
 
     // OLD CODE!
 
-    c.bbox = bbox;
-    const int split_coord = m_dim - 1; // TODO: Is it correct?
-    // const FT cutting_value = (*m_references)[m_dim-1][median] // TODO: finish this!
+    // c.bbox = bbox;
+    // const int split_coord = static_cast<int>(axis); // TODO: Is it correct?
+    // const FT cutting_value = ((*m_references)[m_dim-1][median].first)[axis]; // TODO: Is it correct?
+
+    // std::cout << "split coord: "   << split_coord   << std::endl;
+    // std::cout << "cutting value: " << cutting_value << std::endl;
 
     // const int split_coord = sep.cutting_dimension();
     // FT cutting_value = sep.cutting_value();
 
-    built_coord = split_coord;
-    c.built_coord = split_coord;
+    // built_coord = split_coord;
+    // c.built_coord = split_coord;
 
     // auto construct_it = traits.construct_cartesian_const_iterator_d_object();
     // Cmp<Traits> cmp(split_coord, cutting_value, construct_it);
@@ -270,14 +275,43 @@ public:
     c.set_data(m_dim, m_depth + 1, m_start, lower);
     set_data(m_dim, m_depth + 1, median + 1, upper);
 
-    // Adjust boxes.
+    // Adjust boxes and other data.
+    // TODO: The cutting value and split_coord obtained from the new algorithm
+    // do not satisfy the is_valid() criteria. Maybe it is correct and due to
+    // a different type of partition but maybe we do something wrong. For the moment,
+    // we recompute these values for tight bboxes and use midpoint as ref. The question is:
+    // does it affect the search anyhow?
+
     auto construct_it = traits.construct_cartesian_const_iterator_d_object();
-    // bbox.set_lower_bound(split_coord, cutting_value);
+    // bbox.set_lower_bound(split_coord, cutting_value); // old version
+    bbox. template update_from_point_pointers<typename Traits::Construct_cartesian_const_iterator_d>(begin(), end(), construct_it);
     tbox. template update_from_point_pointers<typename Traits::Construct_cartesian_const_iterator_d>(begin(), end(), construct_it);
-    // c.bbox.set_upper_bound(split_coord, cutting_value);
+    // c.bbox.set_upper_bound(split_coord, cutting_value); // old version
+    c.bbox. template update_from_point_pointers<typename Traits::Construct_cartesian_const_iterator_d>(c.begin(), c.end(), construct_it);
     c.tbox. template update_from_point_pointers<typename Traits::Construct_cartesian_const_iterator_d>(c.begin(), c.end(), construct_it);
-    // CGAL_assertion(is_valid());
-    // CGAL_assertion(c.is_valid());
+
+    built_coord = max_span_coord();
+    c.built_coord = max_span_coord();
+
+    sep.set_cutting_dimension(max_span_coord());
+    const FT cutting_value = (max_span_upper() + max_span_lower()) / FT(2); // midpoint
+    // const FT cutting_value = this->median(sep.cutting_dimension()); // median
+    sep.set_cutting_value(cutting_value);
+
+    // std::cout << "bbox: " << std::endl;
+    // bbox.print(std::cout);
+    // std::cout << "tbox: " << std::endl;
+    // tbox.print(std::cout);
+    // std::cout << std::endl;
+
+    // std::cout << "c.bbox: " << std::endl;
+    // c.bbox.print(std::cout);
+    // std::cout << "c.tbox: " << std::endl;
+    // c.tbox.print(std::cout);
+    // std::cout << std::endl;
+
+    CGAL_assertion(is_valid());
+    CGAL_assertion(c.is_valid());
 
     // CGAL_assertion_msg(false, "TODO: FINISH BALANCED SPLIT!");
   }

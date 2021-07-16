@@ -5,7 +5,10 @@
 #include <CGAL/Real_timer.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/Euclidean_distance.h>
 #include <CGAL/Search_traits_3.h>
+#include <CGAL/Fuzzy_sphere.h>
 #include <CGAL/Kd_tree.h>
 
 #include <CGAL/AABB_tree.h>
@@ -46,21 +49,45 @@ void test_balanced_tree(const std::vector<Point_3>& /* points */) {
   assert(points.size() == 25);
   std::cout << "* num points: " << points.size() << std::endl;
 
-  // using Balanced_splitter = CGAL::Sliding_midpoint<STraits>;
+  // using Splitter = CGAL::Sliding_midpoint<STraits>;
 
-  using Balanced_splitter = CGAL::Balanced_splitter<STraits>;
-  using Balanced_kd_tree  = CGAL::Kd_tree<STraits, Balanced_splitter>;
+  using Splitter = CGAL::Balanced_splitter<STraits>;
+  using Kd_tree  = CGAL::Kd_tree<STraits, Splitter>;
 
   const unsigned int bucket_size = 5;
   std::cout << "* bucket size: " << bucket_size << std::endl;
-  Balanced_splitter splitter(bucket_size);
+  Splitter splitter(bucket_size);
 
   std::cout << "* building the balanced tree ... " << std::endl;
-  Balanced_kd_tree tree(points.begin(), points.end(), splitter);
+  Kd_tree tree(points.begin(), points.end(), splitter);
+  // tree.preprocess(0.00001); // smaller -> more duplicates
   tree.build();
   std::cout << "* building done" << std::endl;
   tree.statistics(std::cout);
   tree.print();
+
+  // Search.
+  // Test for default fuzzy search.
+  using Fuzzy_sphere = CGAL::Fuzzy_sphere<STraits>;
+  Fuzzy_sphere fuzzy_sphere(Point_3(2,3,3), 2);
+
+  std::vector<Point_3> result;
+  tree.search(std::back_inserter(result), fuzzy_sphere);
+  std::cout << "* found points (fuzzy): " << result.size() << std::endl;
+  for (const auto& point : result) {
+    std::cout << point << std::endl;
+  }
+
+  // Orthogonal search.
+  // Test if it works for orthogonal search when extended node is required.
+  using Distance = CGAL::Euclidean_distance<STraits>;
+  using Neighbor_search = CGAL::Orthogonal_k_neighbor_search<STraits, Distance, Splitter, Kd_tree>;
+  const Point_3 query(2,3,3);
+  Neighbor_search nsearch(tree, query, 2);
+  std::cout << "* found points (orth k): " << std::distance(nsearch.begin(), nsearch.end()) << std::endl;
+  for (auto it = nsearch.begin(); it != nsearch.end(); ++it) {
+    std::cout << it->first << " with dist: " << CGAL::sqrt(it->second) << std::endl;
+  }
 }
 
 void call_kd_tree(
