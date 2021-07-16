@@ -21,6 +21,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/assertions.h>
 #include <vector>
+#include <memory>
 
 #include <CGAL/algorithm.h>
 #include <CGAL/Kd_tree_node.h>
@@ -141,6 +142,7 @@ private:
   using Ref_pair = typename Point_container::Ref_pair;
   using Key_compare = typename Point_container::Key_compare;
   using Construct_cartesian_const_iterator_d = typename Traits::Construct_cartesian_const_iterator_d;
+  using References = typename Point_container::References;
 
   template<typename DataIterator>
   void initialize_reference(
@@ -485,7 +487,8 @@ public:
     }
 
     Point_container c(dim_, data.begin(), data.end(), traits_);
-    c.set_data(references);
+    const auto ref_ptr = std::make_shared<References>(references);
+    c.set_data(ref_ptr);
     c.set_data(dim_, 0, m_start, m_end);
 
     bbox = new Kd_tree_rectangle<FT,D>(c.bounding_box());

@@ -22,6 +22,7 @@
 #include <vector>
 #include <functional>
 #include <algorithm>
+#include <memory>
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/internal/Get_dimension_tag.h>
 
@@ -58,9 +59,11 @@ public:
   using Construct_cartesian_const_iterator_d = typename Traits::Construct_cartesian_const_iterator_d;
   using FTP = typename Construct_cartesian_const_iterator_d::result_type;
   using Ref_pair = std::pair<FTP, const Point_d*>;
+  using References = std::vector< std::vector<Ref_pair> >;
+  using Ref_ptr = std::shared_ptr<References>;
 
 private:
-  std::vector< std::vector<Ref_pair> > m_references;
+  Ref_ptr m_references;
 
   long m_start = -1;
   long m_end = -1;
@@ -92,11 +95,11 @@ public:
     const long m_median;
     const std::size_t m_dim;
     const std::size_t m_axis;
-    std::vector<Ref_pair>& m_reference;
+    const std::vector<Ref_pair>& m_reference;
     const Key_compare compare_keys;
 
     Balanced_cmp(
-      std::vector<Ref_pair>& reference,
+      const std::vector<Ref_pair>& reference,
       const std::size_t axis, const long median, const std::size_t dim) :
     m_median(median), m_dim(dim), m_axis(axis), m_reference(reference)
     { }
@@ -124,7 +127,7 @@ public:
 
   void print_references() const {
 
-    for (const auto& reference : m_references) {
+    for (const auto& reference : (*m_references)) {
       std::cout << std::endl;
       for (const auto& ref_pair : reference) {
         std::cout << *(ref_pair.first) << std::endl;
@@ -135,7 +138,7 @@ public:
 public:
 
   // TODO: Avoid this function.
-  void set_data(const std::vector< std::vector<Ref_pair> >& references) {
+  void set_data(const Ref_ptr& references) {
     m_references = references;
   }
 
@@ -175,10 +178,10 @@ public:
     // std::cout << "median: " << median  << std::endl;
 
     const Key_compare compare_keys;
-    std::vector<FTP> tmp(m_references[0].size());
+    std::vector<FTP> tmp((*m_references)[0].size());
     CGAL_assertion(m_end > m_start + 2);
     for (long i = m_start; i <= m_end; ++i) { // copy the first ref to save it
-      tmp[i] = m_references[0][i].first;
+      tmp[i] = (*m_references)[0][i].first;
     }
 
     long lower, upper;
@@ -188,18 +191,18 @@ public:
 
       for (long j = m_start; j <= m_end; ++j) { // always skip median key
         const FT compare = compare_keys(
-          m_references[i][j].first, m_references[0][median].first, axis, m_dim);
+          (*m_references)[i][j].first, (*m_references)[0][median].first, axis, m_dim);
         if (compare < FT(0)) {
-          m_references[i-1][++lower].first = m_references[i][j].first;
+          (*m_references)[i-1][++lower].first = (*m_references)[i][j].first;
         } else if (compare > FT(0)) {
-          m_references[i-1][++upper].first = m_references[i][j].first;
+          (*m_references)[i-1][++upper].first = (*m_references)[i][j].first;
         }
       }
     }
     CGAL_assertion(lower >= 0 && upper >= 0);
 
     for (long i = m_start; i <= m_end; ++i) { // copy back
-      m_references[m_dim-1][i].first = tmp[i];
+      (*m_references)[m_dim-1][i].first = tmp[i];
     }
 
     // std::cout << "DEPTH: " << m_depth << std::endl;
@@ -223,7 +226,7 @@ public:
     ///////////////////////
 
     // NEW VERSION!
-    Balanced_cmp cmp(m_references[m_dim-1], axis, median, m_dim);
+    Balanced_cmp cmp((*m_references)[m_dim-1], axis, median, m_dim);
     const auto it = std::partition(begin(), end(), cmp);
 
     c.set_range(begin(), it);
@@ -236,9 +239,9 @@ public:
     // std::vector<const Point_d*> data1, data2;
     // for (std::size_t i = m_start; i <= m_end; ++i) {
     //   if (i < median) {
-    //     data1.push_back(m_references[m_dim-1][i].second);
+    //     data1.push_back((*m_references)[m_dim-1][i].second);
     //   } else if (i > median) {
-    //     data2.push_back(m_references[m_dim-1][i].second);
+    //     data2.push_back((*m_references)[m_dim-1][i].second);
     //   }
     // }
 
