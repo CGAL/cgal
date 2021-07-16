@@ -90,230 +90,57 @@ public:
     }
   };
 
-  struct Balanced_cmp {
-
-    const long m_median;
-    const std::size_t m_dim;
-    const std::size_t m_axis;
-    const std::vector<Ref_pair>& m_reference;
-    const Key_compare compare_keys;
-
-    Balanced_cmp(
-      const std::vector<Ref_pair>& reference,
-      const std::size_t axis, const long median, const std::size_t dim) :
-    m_median(median), m_dim(dim), m_axis(axis), m_reference(reference)
-    { }
-
-    // TODO: Can we avoid this linear search?
-    bool operator()(const Point_d* pt) const {
-
-      FTP p; bool duplicates_found = true;
-      for (const auto& ref_pair : m_reference) {
-        if (ref_pair.second == pt) {
-          p = ref_pair.first;
-          duplicates_found = false;
-          break;
-        }
-      }
-      if (duplicates_found) {
-        CGAL_assertion_msg(false, "ERROR: DUPLICATES ARE FOUND!");
-        return false;
-      }
-
-      const FT compare = compare_keys(
-        p, m_reference[m_median].first, m_axis, m_dim);
-      return compare < FT(0);
-    }
-  };
-
-  void print_references() const {
-
-    for (const auto& reference : (*m_references)) {
-      std::cout << std::endl;
-      for (const auto& ref_pair : reference) {
-        std::cout << *(ref_pair.first) << std::endl;
-      }
-    }
+public:
+  inline std::size_t
+  get_dim() const
+  {
+    return m_dim;
   }
 
-public:
+  inline std::size_t
+  get_depth() const
+  {
+    return m_depth;
+  }
 
-  // TODO: Avoid this function.
-  void set_data(const Ref_ptr& references) {
+  inline std::size_t
+  get_start() const
+  {
+    return m_start;
+  }
+
+  inline std::size_t
+  get_end() const
+  {
+    return m_end;
+  }
+
+  inline const Ref_ptr&
+  get_references() const
+  {
+    return m_references;
+  }
+
+  inline void
+  set_references(const Ref_ptr& references)
+  {
     m_references = references;
   }
 
-  void set_data(
+  void
+  set_data(
     const std::size_t dim, const std::size_t depth,
-    const long start, const long end) {
-
+    const long start, const long end)
+  {
     m_dim = dim;
     m_depth = depth;
     m_start = start;
     m_end = end;
   }
 
-  void set_initial_depth(const std::size_t depth) {
+  inline void
+  set_initial_depth(const std::size_t depth) {
     m_depth = depth;
-  }
-
-  template<class Separator>
-  void balanced_split(Point_container<Traits>& c, Separator& sep) {
-
-    CGAL_assertion(dimension() == c.dimension());
-    CGAL_assertion(is_valid());
-
-    // NEW CODE!
-    CGAL_assertion(m_dim   != static_cast<std::size_t>(-1));
-    CGAL_assertion(m_depth != static_cast<std::size_t>(-1));
-
-    CGAL_assertion(m_start != -1);
-    CGAL_assertion(m_end   != -1);
-
-    const long median = m_start + ((m_end - m_start) / 2);
-    const std::size_t axis = m_depth % m_dim;
-    CGAL_assertion(median >= 0);
-
-    // std::cout << "data: "   << size()  << std::endl;
-    // std::cout << "start: "  << m_start << std::endl;
-    // std::cout << "end: "    << m_end   << std::endl;
-    // std::cout << "median: " << median  << std::endl;
-
-    const Key_compare compare_keys;
-    std::vector<FTP> tmp((*m_references)[0].size());
-    CGAL_assertion(m_end > m_start + 2);
-    for (long i = m_start; i <= m_end; ++i) { // copy the first ref to save it
-      tmp[i] = (*m_references)[0][i].first;
-    }
-
-    long lower, upper;
-    for (std::size_t i = 1; i < m_dim; ++i) { // apply permutations for dim - 1 axis
-      lower = m_start - 1;
-      upper = median;
-
-      for (long j = m_start; j <= m_end; ++j) { // always skip median key
-        const FT compare = compare_keys(
-          (*m_references)[i][j].first, (*m_references)[0][median].first, axis, m_dim);
-        if (compare < FT(0)) {
-          (*m_references)[i-1][++lower].first = (*m_references)[i][j].first;
-        } else if (compare > FT(0)) {
-          (*m_references)[i-1][++upper].first = (*m_references)[i][j].first;
-        }
-      }
-    }
-    CGAL_assertion(lower >= 0 && upper >= 0);
-
-    for (long i = m_start; i <= m_end; ++i) { // copy back
-      (*m_references)[m_dim-1][i].first = tmp[i];
-    }
-
-    // std::cout << "DEPTH: " << m_depth << std::endl;
-    // print_references();
-
-    ///////////////////////
-
-    // OLD CODE!
-
-    // c.bbox = bbox;
-    // const int split_coord = static_cast<int>(axis); // TODO: Is it correct?
-    // const FT cutting_value = ((*m_references)[m_dim-1][median].first)[axis]; // TODO: Is it correct?
-
-    // std::cout << "split coord: "   << split_coord   << std::endl;
-    // std::cout << "cutting value: " << cutting_value << std::endl;
-
-    // const int split_coord = sep.cutting_dimension();
-    // FT cutting_value = sep.cutting_value();
-
-    // built_coord = split_coord;
-    // c.built_coord = split_coord;
-
-    // auto construct_it = traits.construct_cartesian_const_iterator_d_object();
-    // Cmp<Traits> cmp(split_coord, cutting_value, construct_it);
-    // iterator it = std::partition(begin(), end(), cmp);
-
-    ///////////////////////
-
-    // NEW VERSION!
-    Balanced_cmp cmp((*m_references)[m_dim-1], axis, median, m_dim);
-    const auto it = std::partition(begin(), end(), cmp);
-
-    c.set_range(begin(), it);
-    set_range(it, end());
-
-    ///////////////////////
-
-    // OLD VERSION!
-
-    // std::vector<const Point_d*> data1, data2;
-    // for (std::size_t i = m_start; i <= m_end; ++i) {
-    //   if (i < median) {
-    //     data1.push_back((*m_references)[m_dim-1][i].second);
-    //   } else if (i > median) {
-    //     data2.push_back((*m_references)[m_dim-1][i].second);
-    //   }
-    // }
-
-    // c.set_range(data1.begin(), data1.end());
-    // set_range(data2.begin(), data2.end());
-
-    // std::cout << "data 1: " << std::endl;
-    // for (const auto& d1 : data1) {
-    //   std::cout << *d1 << std::endl;
-    // }
-
-    // std::cout << "data 2: " << std::endl;
-    // for (const auto& d2 : data2) {
-    //   std::cout << *d2 << std::endl;
-    // }
-
-    ///////////////////////
-
-    // std::cout << "pre size c0: " << c.size() << std::endl;
-    // std::cout << "pre size c1: " << size()   << std::endl;
-
-    c.set_data(m_references);
-    c.set_data(m_dim, m_depth + 1, m_start, lower);
-    set_data(m_dim, m_depth + 1, median + 1, upper);
-
-    // Adjust boxes and other data.
-    // TODO: The cutting value and split_coord obtained from the new algorithm
-    // do not satisfy the is_valid() criteria. Maybe it is correct and due to
-    // a different type of partition but maybe we do something wrong. For the moment,
-    // we recompute these values for tight bboxes and use midpoint as ref. The question is:
-    // does it affect the search anyhow?
-
-    auto construct_it = traits.construct_cartesian_const_iterator_d_object();
-    // bbox.set_lower_bound(split_coord, cutting_value); // old version
-    bbox. template update_from_point_pointers<typename Traits::Construct_cartesian_const_iterator_d>(begin(), end(), construct_it);
-    tbox. template update_from_point_pointers<typename Traits::Construct_cartesian_const_iterator_d>(begin(), end(), construct_it);
-    // c.bbox.set_upper_bound(split_coord, cutting_value); // old version
-    c.bbox. template update_from_point_pointers<typename Traits::Construct_cartesian_const_iterator_d>(c.begin(), c.end(), construct_it);
-    c.tbox. template update_from_point_pointers<typename Traits::Construct_cartesian_const_iterator_d>(c.begin(), c.end(), construct_it);
-
-    built_coord = max_span_coord();
-    c.built_coord = max_span_coord();
-
-    sep.set_cutting_dimension(max_span_coord());
-    const FT cutting_value = (max_span_upper() + max_span_lower()) / FT(2); // midpoint
-    // const FT cutting_value = this->median(sep.cutting_dimension()); // median
-    sep.set_cutting_value(cutting_value);
-
-    // std::cout << "bbox: " << std::endl;
-    // bbox.print(std::cout);
-    // std::cout << "tbox: " << std::endl;
-    // tbox.print(std::cout);
-    // std::cout << std::endl;
-
-    // std::cout << "c.bbox: " << std::endl;
-    // c.bbox.print(std::cout);
-    // std::cout << "c.tbox: " << std::endl;
-    // c.tbox.print(std::cout);
-    // std::cout << std::endl;
-
-    CGAL_assertion(is_valid());
-    CGAL_assertion(c.is_valid());
-
-    // CGAL_assertion_msg(false, "TODO: FINISH BALANCED SPLIT!");
   }
 
   inline const Kd_tree_rectangle<FT,D>&
@@ -322,8 +149,20 @@ public:
     return bbox;
   }
 
+  inline Kd_tree_rectangle<FT,D>&
+  bounding_box()
+  {
+    return bbox;
+  }
+
   inline const Kd_tree_rectangle<FT,D>&
   tight_bounding_box() const
+  {
+    return tbox;
+  }
+
+  inline Kd_tree_rectangle<FT,D>&
+  tight_bounding_box()
   {
     return tbox;
   }
@@ -338,6 +177,12 @@ public:
   built_coordinate() const
   {
     return built_coord;
+  }
+
+  inline void
+  set_built_coordinate(const int new_built_coord)
+  {
+    built_coord = new_built_coord;
   }
 
   // coordinate of the maximal span

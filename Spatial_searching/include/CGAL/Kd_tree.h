@@ -194,6 +194,7 @@ private:
     // CGAL_assertion_msg(false, "TODO: FINISH APPLY MERGE SORT!");
   }
 
+  // TODO: Be sure that we have the same reference vectors after remove duplicates.
   std::size_t remove_duplicates(
     std::vector<Ref_pair>& reference,
     const std::size_t i, const std::size_t dim) const {
@@ -386,6 +387,8 @@ public:
     return pts.empty();
   }
 
+  // TODO: It is not really a job of the tree to remove duplicates.
+  // We should remove this function and related stuff in AABB tree.
   void preprocess(const FT distance_threshold = FT(0)) {
 
     // TODO: put squared_distance_d_object in SearchTraits.
@@ -450,7 +453,7 @@ public:
 
     std::vector<FTP> tmp;
     std::vector< std::vector<Ref_pair> > references;
-    long m_start = -1, m_end = -1;
+    long start = -1, end = -1;
     if (m_create_balanced_tree) {
 
       tmp.resize(data.size());
@@ -471,8 +474,8 @@ public:
       // print_references(references);
       // CGAL_assertion_msg(false, "TODO: FINISH INITIALIZATION!");
 
-      m_start = 0;
-      m_end   = ref_end[0];
+      start = 0;
+      end   = ref_end[0];
 
       // TODO: Can we do it using std::remove_if()?
       // Or we can put it in preprocess().
@@ -480,7 +483,7 @@ public:
       data.reserve(references[0].size());
       std::vector<Point_d> tmp_pts;
       tmp_pts.reserve(data.size());
-      for (long i = m_start; i <= m_end; ++i) {
+      for (long i = start; i <= end; ++i) {
         data.push_back(references[0][i].second);
         tmp_pts.push_back(*data.back());
       }
@@ -490,8 +493,8 @@ public:
 
     Point_container c(dim_, data.begin(), data.end(), traits_);
     const auto ref_ptr = std::make_shared<References>(references);
-    c.set_data(ref_ptr);
-    c.set_data(dim_, 0, m_start, m_end);
+    c.set_references(ref_ptr);
+    c.set_data(dim_, 0, start, end);
 
     bbox = new Kd_tree_rectangle<FT,D>(c.bounding_box());
     if (c.size() <= split.bucket_size()){
@@ -534,6 +537,7 @@ public:
     return dim_;
   }
 
+  // TODO: make this function output the format supported by the graphviz lib.
   void print() {
     tree_root->print(2);
   }
