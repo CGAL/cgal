@@ -488,7 +488,7 @@ public:
         tmp_pts.push_back(*data.back());
       }
       pts = tmp_pts;
-      std::cout << "* num clean points: " << pts.size() << std::endl;
+      // std::cout << "* num clean points: " << pts.size() << std::endl;
     }
 
     Point_container c(dim_, data.begin(), data.end(), traits_);
