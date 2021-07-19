@@ -215,6 +215,10 @@ struct Polygon_soup_orienter
     }
   }
 
+  static void fill_edge_map(Edge_map& edges, Marked_edges& marked_edges, const Polygons& polygons) {
+    Visitor dum;
+    fill_edge_map(edges, marked_edges, polygons, &dum);
+  }
   void fill_edge_map()
   {
     fill_edge_map(edges, marked_edges, polygons, visitor);
