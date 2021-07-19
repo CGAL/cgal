@@ -233,8 +233,8 @@ template<class T>void lazy_reset_member(T&t) {
   Lazy_reset_member_1<T>()(t);
 }
 template<class...T, std::size_t...i>void lazy_reset_member_tuple(std::tuple<T...>&t, std::index_sequence<i...>) {
-  using ignore = int[];
-  ignore { (lazy_reset_member(std::get<i>(t)), 0) ... };
+  auto ignore = [](auto&&...){};
+  ignore ( (lazy_reset_member(std::get<i>(t)), 0) ... );
 }
 template<class...T>void lazy_reset_member(std::tuple<T...>&t) {
   lazy_reset_member_tuple(t, std::make_index_sequence<sizeof...(T)>());
