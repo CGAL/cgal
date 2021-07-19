@@ -632,8 +632,7 @@ Node_handle build_kdtree(Vertex_list& V, Halfedge_list& E, Halffacet_list& F,
   }
 
   int coord = depth%3;
-  Vertex_iterator median;
-  Point_3 point_on_plane = find_median_point(V, median, coord);
+  Point_3 point_on_plane = find_median_point(V, coord);
   CGAL_NEF_TRACEN("build_kdtree: plane: "<<partition_plane<< " " << point_on_plane);
 
 #ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
@@ -643,8 +642,6 @@ Node_handle build_kdtree(Vertex_list& V, Halfedge_list& E, Halffacet_list& F,
 #endif
 
   Vertex_list V1,V2;
-  V1.reserve(std::distance(V.begin(), median));
-  V2.reserve(std::distance(median, V.end()));
   classify_objects(V, sop, V1, V2);
 
   Halfedge_list E1,E2;
@@ -711,14 +708,17 @@ static bool classify_objects(const List& l,Side_of_plane& sop,
   return (on_oriented_boundary != l.size());
 }
 
-static Point_3 find_median_point(Vertex_list& V,
-                          Vertex_iterator& median, int coord) {
+static Point_3 find_median_point(Vertex_list& V, int coord) {
   CGAL_assertion(V.size() > 1);
 
-  median = V.begin() + V.size()/2;
-  std::nth_element(V.begin(), median, V.end(), Smaller(coord));
+  Smaller smaller(coord);
+  Vertex_iterator begin = V.begin();
+  Vertex_iterator median = begin + V.size()/2;
+  std::nth_element(begin, median, V.end(), smaller);
+  Vertex_iterator prev = std::prev(median);
+  std::nth_element(begin, prev, median, smaller);
 
-  return (*median)->point();
+  return CGAL::midpoint((*median)->point(), (*prev)->point());
 }
 
 static Plane_3 construct_splitting_plane(const Point_3& pt, int coord)
