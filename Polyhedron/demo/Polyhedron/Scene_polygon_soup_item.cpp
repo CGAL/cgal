@@ -429,6 +429,9 @@ Scene_polygon_soup_item::orient(std::vector<std::pair<std::size_t, std::size_t> 
     Visitor(std::vector<std::pair<std::size_t, std::size_t> >& nm_vertices)
       :nm_vertices(nm_vertices){}
 
+    Visitor(const Visitor& other)
+      :nm_vertices(other.nm_vertices){}
+
     void duplicate_vertex(const std::size_t& v1, const std::size_t& v2) final
     {
       nm_vertices.push_back(std::make_pair(v1, v2));
@@ -463,7 +466,7 @@ Scene_polygon_soup_item::orient(std::vector<std::pair<std::size_t, std::size_t> 
   Visitor visitor(non_manifold_vertices);
   QApplication::setOverrideCursor(Qt::WaitCursor);
   res =  CGAL::Polygon_mesh_processing::
-    orient_polygon_soup(d->soup->points, d->soup->polygons, &visitor);
+    orient_polygon_soup(d->soup->points, d->soup->polygons, visitor);
   QApplication::restoreOverrideCursor();
   return res;
 }

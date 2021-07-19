@@ -210,7 +210,6 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 
   typename Orienter::Edge_map edges(max_id+1);
   typename Orienter::Marked_edges marked_edges;
-
   Orienter::fill_edge_map(edges, marked_edges, polygons);
 
   //returns false if duplication is necessary
