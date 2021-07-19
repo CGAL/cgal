@@ -493,7 +493,7 @@ using std::max;
 // Macros to detect features of clang. We define them for the other
 // compilers.
 // See http://clang.llvm.org/docs/LanguageExtensions.html
-// See also http://en.cppreference.com/w/cpp/experimental/feature_test
+// See also https://en.cppreference.com/w/cpp/experimental/feature_test
 #ifndef __has_feature
   #define __has_feature(x) 0  // Compatibility with non-clang compilers.
 #endif

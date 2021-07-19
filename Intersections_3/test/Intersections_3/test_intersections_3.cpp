@@ -161,13 +161,35 @@ struct Test {
 
   void P_do_intersect()
   {
-    P p(0,0,0), q(1,0,0), r(2,0,0), s(10,10,10);
+    P p(0,0,0), q(1,0,0), r(2,0,0), s(10,10,10), s2(10,10,0), s3(10,-10,-1), t(3,0,0);
     Sph sph(p,1);
     Cub cub(p,r);
     assert(do_intersect(q,sph));
     assert(do_intersect(sph,q));
     assert(! do_intersect(s,cub));
     assert(! do_intersect(cub,s));
+
+    assert(do_intersect(sph, Tr(p,q,s)));
+    assert(do_intersect(sph, Tr(r,q,s)));
+    assert(! do_intersect(sph, Tr(r,s,t)));
+
+    assert(! do_intersect(sph, Tr(s,s2,s3)));
+
+    assert(do_intersect(sph, S(p,r)));
+    assert(do_intersect(sph, S(q,r)));
+    assert(do_intersect(sph, S(s,q)));
+    assert(! do_intersect(sph, S(s,r)));
+
+    assert(do_intersect(sph, L(p,r)));
+    assert(do_intersect(sph, L(q,r)));
+    assert(do_intersect(sph, L(s,q)));
+    assert(! do_intersect(sph, L(s,r)));
+
+    assert(do_intersect(sph, R(p,r)));
+    assert(do_intersect(sph, R(q,r)));
+    assert(do_intersect(sph, R(s,q)));
+    assert(! do_intersect(sph, R(s,r)));
+
   }
 
 
@@ -1265,6 +1287,7 @@ struct Test {
     Bbox_L();
     Bbox_R();
     Bbox_Tr();
+
   }
 };
 

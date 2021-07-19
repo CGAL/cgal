@@ -331,7 +331,7 @@ extract(std::istream& is, Vector_3<R>& v, const Cartesian_tag&)
     default:
       is.setstate(std::ios::failbit);
       std::cerr << "" << std::endl;
-      std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+      std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
       break;
   }
   if (is)
@@ -358,7 +358,7 @@ extract(std::istream& is, Vector_3<R>& v, const Homogeneous_tag&)
     default:
         is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
   }
   if (is)

@@ -366,7 +366,7 @@ int readPgmAsciiImage(const char *name,_image *im)
       switch ( im->wordKind ) {
       case WK_FIXED :
         if ( sscanf( tmp, "%d", &iv ) != 1 ) {
-          fprintf( stderr, "readAsciiPgmImage: error in reading ascii data\n" );
+          fprintf( stderr, "readAsciiPgmImage: error in reading ASCII data\n" );
           ImageIO_free( im->data ); im->data = nullptr;
           return 0;
         }

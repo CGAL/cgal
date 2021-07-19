@@ -287,6 +287,7 @@ template <typename AT_, typename ET, typename E2A, int=Lazy_rep_selector<AT_>::v
 class Lazy_rep : public Rep, public Depth_base
 {
   Lazy_rep (const Lazy_rep&) = delete; // cannot be copied.
+  Lazy_rep& operator= (const Lazy_rep&) = delete; // cannot be copied.
 
 public:
 
@@ -399,6 +400,7 @@ template <typename AT_, typename ET, typename E2A>
 class Lazy_rep<AT_, ET, E2A, 1> : public Rep, public Depth_base
 {
   Lazy_rep (const Lazy_rep&) = delete; // cannot be copied.
+  Lazy_rep& operator= (const Lazy_rep&) = delete; // cannot be copied.
 
 public:
 
@@ -511,6 +513,7 @@ template <bool b, typename ET, typename E2A>
 class Lazy_rep<Interval_nt<b>, ET, E2A, 2> : public Rep, public Depth_base
 {
   Lazy_rep (const Lazy_rep&) = delete; // cannot be copied.
+  Lazy_rep& operator= (const Lazy_rep&) = delete; // cannot be copied.
 
 public:
 
