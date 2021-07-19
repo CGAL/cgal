@@ -236,6 +236,8 @@ was developed over the two internships of Oliver Rouiller and Claudia Werner at 
 under the supervision of Monique Teillaud and with the help of Sébastien Loriot.
 Based on this prototype, Mael Rouxel-Labbé developed the initial version of this package.
 
+The work was partially supported by the grant ANR-17-CE40-0033 of the French National Research Agency ANR <a href="https://members.loria.fr/Monique.Teillaud/collab/SoS/">(project SoS)</a> and INTER/ANR/16/11554412/SoS of the Luxembourg National Research fund FNR.
+
 */
 } /* namespace CGAL */
 
