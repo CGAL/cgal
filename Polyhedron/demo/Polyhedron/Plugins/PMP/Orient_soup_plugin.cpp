@@ -1,3 +1,5 @@
+#include <unordered_set>
+
 #include <QApplication>
 #include <QAction>
 #include <QList>
@@ -50,7 +52,7 @@ public Q_SLOTS:
   void orientSM();
   void shuffle();
   void displayNonManifoldEdges();
-  void createPointsAndPolyline(const std::vector<std::size_t> &nm_points, bool warn);
+  void createPointsAndPolyline(std::vector<std::pair<std::size_t, std::size_t> > &nm_points, bool warn);
   void cleanSoup();
 
 private:
@@ -97,7 +99,7 @@ void Polyhedron_demo_orient_soup_plugin::init(QMainWindow* mainWindow,
   actionNMToPolyline->setProperty("subMenuName", "Polygon Mesh Processing");
   connect(actionNMToPolyline, &QAction::triggered,
           this, [this](){
-    std::vector<size_t> dum;
+    std::vector<std::pair<std::size_t, std::size_t> > dum;
     this->createPointsAndPolyline(dum, false);
   });
   actionClean = new QAction(tr("Clean Polygon Soup"), mainWindow);
@@ -153,7 +155,7 @@ void Polyhedron_demo_orient_soup_plugin::orientSM()
     if(item)
     {
       int create_items = QMessageBox::question(mw, "Orient Mesh", "Do you wish to extract the potential non manifold simplicies ?");
-      std::vector<std::size_t> nm_points;
+      std::vector<std::pair<std::size_t, std::size_t> > nm_points;
       if(!item->orient(nm_points)) {
          QMessageBox::information(mw, tr("Not orientable without self-intersections"),
                                       tr("The polygon soup \"%1\" is not directly orientable."
@@ -247,7 +249,7 @@ void Polyhedron_demo_orient_soup_plugin::displayNonManifoldEdges()
   }
 }
 //todo: nm-points should probably be a pair, and the removal check be on both members
-void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline(const std::vector<std::size_t>& nm_points, bool warn)
+void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline(std::vector<std::pair<std::size_t, std::size_t> >& nm_points, bool warn)
 {
 
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
@@ -260,19 +262,34 @@ void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline(const std::vect
     QApplication::setOverrideCursor(Qt::WaitCursor);
     Scene_points_with_normal_item* points = nullptr;
 
-    std::set<std::size_t> nm_vertices;
-    for(const std::size_t& i : nm_points)
-    {
-      nm_vertices.insert(i);
-    }
     //remove vertices already in NM edges
-    //check edges of p_id.
+
+    std::vector<std::pair<std::size_t, std::size_t> > to_remove;
+    std::unordered_set<std::size_t> check_set;
     for(Scene_polygon_soup_item::Edge edge : item->non_manifold_edges())
     {
-      nm_vertices.erase(edge[0]);
-      nm_vertices.erase(edge[1]);
+      check_set.insert(edge[0]);
+      check_set.insert(edge[1]);
     }
 
+    for(const auto& p : nm_points)
+    {
+      if(!check_set.insert(p.first).second
+         || !check_set.insert(p.second).second)
+      {
+        to_remove.push_back(p);
+      }
+    }
+
+    for(const auto& tr : to_remove)
+    {
+      nm_points.erase(std::remove(nm_points.begin(), nm_points.end(), tr), nm_points.end());
+    }
+    std::set<std::size_t> nm_vertices;
+    for(const auto& p : nm_points)
+    {
+      nm_vertices.insert(p.first);
+    }
     bool items_created = false;
     if(nm_vertices.empty() && warn)
     {
