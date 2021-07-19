@@ -493,7 +493,7 @@ MainWindow::open(QString fileName)
   std::ifstream ifs(qPrintable(fileName));
   if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
   {
-    CGAL::read_multi_point_WKT(ifs, points);
+    CGAL::IO::read_multi_point_WKT(ifs, points);
     for(K::Point_2 p : points)
     {
       mc.insert(p);
@@ -538,7 +538,7 @@ MainWindow::on_actionSavePoints_triggered()
       for(Min_circle::Point_iterator pit = mc.points_begin();
           pit != mc.points_end(); ++pit)
         out_pts.push_back(*pit);
-      CGAL::write_multi_point_WKT(ofs, out_pts);
+      CGAL::IO::write_multi_point_WKT(ofs, out_pts);
     }
     else
     {

@@ -42,7 +42,7 @@ template<class POLY>
 void gcd_test(const POLY& f, const POLY& g, const POLY& d) {
     POLY tmp = CGAL::gcd(f, g);
 #ifdef WITH_OUTPUT
-    ::CGAL::set_pretty_mode(std::cout);
+    ::CGAL::IO::set_pretty_mode(std::cout);
     std::cout << "\ngcd: ";
     std::cout << "\nf(x) = " << f;
     std::cout << "\ng(x) = " << g;
@@ -734,7 +734,7 @@ void trivariate_polynomial_test() {
 
 template <class AT>
 void polynomial_gcd_test() {
-    ::CGAL::set_pretty_mode(std::cout);
+    ::CGAL::IO::set_pretty_mode(std::cout);
     std::cout<<" univariate "<<std::endl;
     univariate_polynomial_test<AT>();
     std::cout<<" bivariate "<<std::endl;

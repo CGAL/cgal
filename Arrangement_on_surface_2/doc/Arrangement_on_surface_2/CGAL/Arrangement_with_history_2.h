@@ -8,8 +8,8 @@ namespace CGAL {
 
 An object `arr` of the class `Arrangement_with_history_2` represents the
 planar subdivision induced by a set of input curves \f$ \cal C\f$.
-The arrangement is represented as a doubly-connected edge-list (<span class="textsc">Dcel</span>).
-As is the case for the `Arrangement_2<Traits,Dcel>`, each <span class="textsc">Dcel</span>
+The arrangement is represented as a doubly-connected edge-list (\dcel).
+As is the case for the `Arrangement_2<Traits,Dcel>`, each \dcel
 vertex is associated with a point and each edge is associated with an
 \f$ x\f$-monotone curve whose interior is disjoint from all other edges and
 vertices. Each such \f$ x\f$-monotone curve is a subcurve of some
@@ -66,7 +66,7 @@ the traits class in use.
 typedef unspecified_type Traits_2;
 
 /*!
-the <span class="textsc">Dcel</span> representation of the arrangement.
+the \dcel representation of the arrangement.
 */
 typedef unspecified_type Dcel;
 

@@ -90,7 +90,7 @@ void kdtree_demo(int argc, char** argv)
 
         // Generate points:
         std::ifstream input(argv[1], std::ios::in | std::ios::binary);
-        CGAL::set_binary_mode(input);
+        CGAL::IO::set_binary_mode(input);
         //        input >> n >> n; // dimension and # of points
         CGAL::read(input,n);
         CGAL::read(input,n);
@@ -98,7 +98,7 @@ void kdtree_demo(int argc, char** argv)
 
         std::vector<Point<double> > queries;
         std::ifstream queries_stream(argv[2], std::ios::in | std::ios::binary);
-        CGAL::set_binary_mode(queries_stream);
+        CGAL::IO::set_binary_mode(queries_stream);
         CGAL::read(queries_stream,n);
         CGAL::read(queries_stream,n);
         // queries_stream >> n >> n;

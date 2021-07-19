@@ -85,6 +85,9 @@
 #include <string>
 #include <fstream>
 #include <type_traits>
+#include <unordered_set>
+#include <unordered_map>
+
 #ifdef DOXYGEN_RUNNING
 #define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
 #define CGAL_PMP_NP_CLASS NamedParameters

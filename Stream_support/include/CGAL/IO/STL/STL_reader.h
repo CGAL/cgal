@@ -84,7 +84,7 @@ bool read_ASCII_facet(std::istream& is,
       }
       else
       {
-        IO::internal::fill_point(x, y, z, 1 /*w*/, p);
+        fill_point(x, y, z, 1 /*w*/, p);
         typename std::map<Point, int>::iterator iti = index_map.insert(std::make_pair(p, -1)).first;
 
         if(iti->second == -1)
@@ -252,7 +252,7 @@ bool parse_binary_STL(std::istream& is,
       }
 
       Point p;
-      IO::internal::fill_point(x, y, z, 1 /*w*/, p);
+      fill_point(x, y, z, 1 /*w*/, p);
 
       typename std::map<Point, int>::iterator iti = index_map.insert(std::make_pair(p, -1)).first;
 

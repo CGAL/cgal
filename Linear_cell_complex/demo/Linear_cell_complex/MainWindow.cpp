@@ -1823,7 +1823,7 @@ void MainWindow::onMengerInc()
       LCC::Attribute_handle<3>::type ah = (scene.lcc)->create_attribute<3>();
       scene.lcc->set_attribute<3>(mengerVolumes[i], ah);
       scene.lcc->info<3>(mengerVolumes[i]).color()=
-          (CGAL::Color(myrandom.get_int(0,256),
+          (CGAL::IO::Color(myrandom.get_int(0,256),
                        myrandom.get_int(0,256),
                        myrandom.get_int(0,256)));
 
@@ -1925,11 +1925,11 @@ void MainWindow::split_vol_in_three(Dart_handle dh, bool removecenter)
   if (scene.lcc->are_attributes_automatically_managed())
   {
     scene.lcc->info<3>(f1).color()=
-      (CGAL::Color(myrandom.get_int(0,256),
+      (CGAL::IO::Color(myrandom.get_int(0,256),
                    myrandom.get_int(0,256),
                    myrandom.get_int(0,256)));
     scene.lcc->info<3>(f2).color()=
-      (CGAL::Color(myrandom.get_int(0,256),
+      (CGAL::IO::Color(myrandom.get_int(0,256),
                    myrandom.get_int(0,256),
                    myrandom.get_int(0,256)));
 
@@ -1979,11 +1979,11 @@ void MainWindow::split_vol_in_nine(Dart_handle dh, bool removecenter)
   if (scene.lcc->are_attributes_automatically_managed())
   {
     scene.lcc->info<3>(f1).color()=
-      (CGAL::Color(myrandom.get_int(0,256),
+      (CGAL::IO::Color(myrandom.get_int(0,256),
                    myrandom.get_int(0,256),
                    myrandom.get_int(0,256)));
     scene.lcc->info<3>(f2).color()=
-      (CGAL::Color(myrandom.get_int(0,256),
+      (CGAL::IO::Color(myrandom.get_int(0,256),
                    myrandom.get_int(0,256),
                    myrandom.get_int(0,256)));
 
@@ -2039,11 +2039,11 @@ void MainWindow::split_vol_in_twentyseven(Dart_handle dh)
   if (scene.lcc->are_attributes_automatically_managed())
   {
     scene.lcc->info<3>(f1).color()=
-      (CGAL::Color(myrandom.get_int(0,256),
+      (CGAL::IO::Color(myrandom.get_int(0,256),
                    myrandom.get_int(0,256),
                    myrandom.get_int(0,256)));
     scene.lcc->info<3>(f2).color()=
-      (CGAL::Color(myrandom.get_int(0,256),
+      (CGAL::IO::Color(myrandom.get_int(0,256),
                    myrandom.get_int(0,256),
                    myrandom.get_int(0,256)));
     update_volume_list_add(scene.lcc->attribute<3>(dh));
@@ -3177,7 +3177,7 @@ void MainWindow::onSierpinskiTriangleInc()
       LCC::Attribute_handle<3>::type ah = (scene.lcc)->create_attribute<3>();
       scene.lcc->set_attribute<3>(sierpinskiTriangleSurfaces[i], ah);
       scene.lcc->info<3>(sierpinskiTriangleSurfaces[i]).color()=
-        (CGAL::Color(myrandom.get_int(0,256),
+        (CGAL::IO::Color(myrandom.get_int(0,256),
                      myrandom.get_int(0,256),
                      myrandom.get_int(0,256)));
 

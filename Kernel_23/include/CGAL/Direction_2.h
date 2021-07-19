@@ -180,7 +180,7 @@ std::ostream&
 insert(std::ostream& os, const Direction_2<R>& d, const Cartesian_tag&)
 {
     typename R::Vector_2 v = d.to_vector();
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << v.x() << ' ' << v.y();
     case IO::BINARY :
@@ -196,7 +196,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Direction_2<R>& d, const Homogeneous_tag&)
 {
-  switch(get_mode(os))
+  switch(IO::get_mode(os))
   {
     case IO::ASCII :
         return os << d.dx() << ' ' << d.dy();
@@ -223,9 +223,9 @@ std::istream&
 extract(std::istream& is, Direction_2<R>& d, const Cartesian_tag&)
 {
   typename R::FT x(0), y(0);
-    switch(get_mode(is)) {
+    switch(IO::get_mode(is)) {
     case IO::ASCII :
-        is >> iformat(x) >> iformat(y);
+        is >> IO::iformat(x) >> IO::iformat(y);
         break;
     case IO::BINARY :
         read(is, x);
@@ -233,7 +233,7 @@ extract(std::istream& is, Direction_2<R>& d, const Cartesian_tag&)
         break;
     default:
         is.setstate(std::ios::failbit);
-        std::cerr << std::endl << "Stream must be in ascii or binary mode"
+        std::cerr << std::endl << "Stream must be in ASCII or binary mode"
                   << std::endl;
         break;
     }
@@ -247,10 +247,10 @@ std::istream&
 extract(std::istream& is, Direction_2<R>& d, const Homogeneous_tag&)
 {
   typename R::RT x, y;
-  switch(get_mode(is))
+  switch(IO::get_mode(is))
   {
     case IO::ASCII :
-        is >> iformat(x) >> iformat(y);
+        is >> IO::iformat(x) >> IO::iformat(y);
         break;
     case IO::BINARY :
         read(is, x);
@@ -259,7 +259,7 @@ extract(std::istream& is, Direction_2<R>& d, const Homogeneous_tag&)
     default:
         is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
   }
   d = Direction_2<R>(x, y);

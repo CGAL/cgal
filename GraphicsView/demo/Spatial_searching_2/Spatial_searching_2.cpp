@@ -267,7 +267,7 @@ MainWindow::open(QString fileName)
   std::vector<K::Point_2> points;
   if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
   {
-    CGAL::read_multi_point_WKT(ifs, points);
+    CGAL::IO::read_multi_point_WKT(ifs, points);
   }
   else{
     while(ifs >> p) {

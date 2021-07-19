@@ -301,10 +301,10 @@ int main(int argc, char * argv[])
     {
       std::ifstream stream(input_filename.c_str());
       success = stream &&
-                CGAL::read_OFF(stream,
-                                      std::back_inserter(points),
-                                      CGAL::parameters::normal_map
-                                      (CGAL::make_normal_of_point_with_normal_map(PointList::value_type()))
+                CGAL::IO::read_OFF(stream,
+                                   std::back_inserter(points),
+                                   CGAL::parameters::normal_map
+                                     (CGAL::make_normal_of_point_with_normal_map(PointList::value_type()))
                   );
     }
     // If XYZ file format
@@ -312,9 +312,9 @@ int main(int argc, char * argv[])
              extension == ".pwn" || extension == ".PWN")
     {
       std::ifstream stream(input_filename.c_str());
-      success = stream && CGAL::read_XYZ(stream,
-                                         std::back_inserter(points),
-                                         CGAL::parameters::normal_map(CGAL::make_normal_of_point_with_normal_map(PointList::value_type())));
+      success = stream && CGAL::IO::read_XYZ(stream,
+                                             std::back_inserter(points),
+                                             CGAL::parameters::normal_map(CGAL::make_normal_of_point_with_normal_map(PointList::value_type())));
     }
     if (success)
     {

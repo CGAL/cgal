@@ -270,7 +270,7 @@ MainWindow::open(QString fileName)
   std::ifstream ifs(qPrintable(fileName));
   if(fileName.endsWith(".wkt",Qt::CaseInsensitive))
   {
-    CGAL::read_multi_point_WKT(ifs, points);
+    CGAL::IO::read_multi_point_WKT(ifs, points);
   }
   else
   {

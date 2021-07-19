@@ -255,7 +255,7 @@ MainWindow::on_actionLoadPoints_triggered()
     if(fileName.endsWith(".wkt",Qt::CaseInsensitive))
     {
       std::vector<K::Point_3> points_3;
-      CGAL::read_multi_point_WKT(ifs, points_3);
+      CGAL::IO::read_multi_point_WKT(ifs, points_3);
       for(const K::Point_3& p : points_3)
       {
         points.push_back(Weighted_point_2(K::Point_2(p.x(), p.y()), p.z()));
@@ -299,7 +299,7 @@ MainWindow::on_actionSavePoints_triggered()
                                       vit->point().y(),
                                       vit->point().weight()));
       }
-      CGAL::write_multi_point_WKT(ofs, points_3);
+      CGAL::IO::write_multi_point_WKT(ofs, points_3);
     }
     else
     {

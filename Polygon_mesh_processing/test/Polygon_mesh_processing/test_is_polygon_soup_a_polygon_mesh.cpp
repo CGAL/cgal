@@ -40,7 +40,7 @@ void test_polygon_soup(std::string fname, bool expected)
     exit(EXIT_FAILURE);
   }
 
-  if(!CGAL::read_OFF(input, points, polygons))
+  if(!CGAL::IO::read_OFF(input, points, polygons))
   {
     std::cerr << "Error parsing the OFF file " << fname << "\n";
     exit(EXIT_FAILURE);

@@ -1624,7 +1624,7 @@ public:
 
     std::size_t n;
     int d;
-    if(is_ascii(is))
+    if(IO::is_ascii(is))
       is >> d >> n;
     else {
       read(is, d);
@@ -1922,7 +1922,7 @@ create_star_2(Vertex_handle v, Cell_handle c, int li )
     // pnew is null at the first iteration
     v1->set_cell(cnew);
     //pnew->set_neighbor( cw(pnew->index(v1)), cnew );
-    if (pnew != Cell_handle()) { pnew->set_neighbor( 1, cnew );}
+    if (pnew != nullptr) { pnew->set_neighbor( 1, cnew );}
 
     bound = cur;
     i1 = ccw(i1);
@@ -1955,7 +1955,7 @@ operator>>(std::istream& is, Triangulation_data_structure_3<Vb,Cb,Ct>& tds)
 
   std::size_t n;
   int d;
-  if(is_ascii(is))
+  if(IO::is_ascii(is))
      is >> d >> n;
   else {
     read(is, n);
@@ -2006,7 +2006,7 @@ operator<<(std::ostream& os, const Triangulation_data_structure_3<Vb,Cb,Ct> &tds
   // outputs dimension and number of vertices
   size_type n = tds.number_of_vertices();
 
-  if (is_ascii(os))
+  if (IO::is_ascii(os))
       os << tds.dimension() << std::endl << n << std::endl;
   else
   {
@@ -2522,7 +2522,7 @@ read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
   case 2:
   case 1:
     {
-      if(is_ascii(is))
+      if(IO::is_ascii(is))
         is >> m;
       else
         read(is, m);
@@ -2533,7 +2533,7 @@ read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
         Cell_handle c = create_cell();
         for (int k=0; k<=dimension(); ++k) {
           std::size_t ik;
-            if(is_ascii(is))
+            if(IO::is_ascii(is))
                is >> ik;
             else
               read(is, ik);
@@ -2546,7 +2546,7 @@ read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
         Cell_handle c = C[j];
         for (int k=0; k<=dimension(); ++k) {
           std::size_t ik;
-            if(is_ascii(is))
+            if(IO::is_ascii(is))
               is >> ik;
             else
               read(is, ik);
@@ -2596,7 +2596,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
   case 3:
     {
       std::size_t m = number_of_cells();
-      if(is_ascii(os))
+      if(IO::is_ascii(os))
         os << m << std::endl;
       else
         write(os, m);
@@ -2606,7 +2606,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
       for(it = cells_begin(); it != cells_end(); ++it) {
         C[it] = i++;
         for(int j = 0; j < 4; j++){
-          if(is_ascii(os)) {
+          if(IO::is_ascii(os)) {
             os << V[it->vertex(j)];
             if ( j==3 )
               os << '\n';
@@ -2622,7 +2622,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
       // write the neighbors
       for(it = cells_begin(); it != cells_end(); ++it) {
         for (int j = 0; j < 4; j++) {
-          if(is_ascii(os)){
+          if(IO::is_ascii(os)){
             os << C[it->neighbor(j)];
             if(j==3)
               os << '\n';
@@ -2638,7 +2638,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
   case 2:
     {
       size_type m = number_of_facets();
-      if(is_ascii(os))
+      if(IO::is_ascii(os))
         os << m << '\n';
       else
         write(os, m);
@@ -2648,7 +2648,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
       for(it = facets_begin(); it != facets_end(); ++it) {
         C[(*it).first] = i++;
         for(int j = 0; j < 3; j++){
-          if(is_ascii(os)) {
+          if(IO::is_ascii(os)) {
             os << V[(*it).first->vertex(j)];
             if ( j==2 )
               os << '\n';
@@ -2665,7 +2665,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
       // write the neighbors
       for(it = facets_begin(); it != facets_end(); ++it) {
         for (int j = 0; j < 3; j++) {
-          if(is_ascii(os)){
+          if(IO::is_ascii(os)){
             os << C[(*it).first->neighbor(j)];
             if(j==2)
               os << '\n';
@@ -2682,7 +2682,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
   case 1:
     {
       size_type m = number_of_edges();
-      if(is_ascii(os))
+      if(IO::is_ascii(os))
         os << m << '\n';
       else
         write(os, m);
@@ -2691,7 +2691,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
       for(it = edges_begin(); it != edges_end(); ++it) {
         C[(*it).first] = i++;
         for(int j = 0; j < 2; j++){
-          if(is_ascii(os)) {
+          if(IO::is_ascii(os)) {
             os << V[(*it).first->vertex(j)];
             if ( j==1 )
               os << '\n';
@@ -2708,7 +2708,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
       // write the neighbors
       for(it = edges_begin(); it != edges_end(); ++it) {
         for (int j = 0; j < 2; j++) {
-          if(is_ascii(os)){
+          if(IO::is_ascii(os)){
             os << C[(*it).first->neighbor(j)];
             if(j==1)
               os << '\n';

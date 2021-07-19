@@ -372,7 +372,7 @@ MainWindow::open(QString fileName)
   std::vector<Point_2> points;
   if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
   {
-    CGAL::read_multi_point_WKT(ifs, points);
+    CGAL::IO::read_multi_point_WKT(ifs, points);
   }
   else
   {
@@ -414,7 +414,7 @@ MainWindow::on_actionSavePoints_triggered()
       {
         points.push_back(vit->point());
       }
-      CGAL::write_multi_point_WKT(ofs, points);
+      CGAL::IO::write_multi_point_WKT(ofs, points);
     }
     else
     {

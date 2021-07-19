@@ -238,7 +238,7 @@ MainWindow::open(QString fileName)
     if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
     {
       std::vector<K::Point_3> point_3_s;
-      CGAL::read_multi_point_WKT(ifs, point_3_s);
+      CGAL::IO::read_multi_point_WKT(ifs, point_3_s);
       for(const K::Point_3& point_3 : point_3_s)
       {
         points.push_back(Apollonius_site_2(K::Point_2(point_3.x(), point_3.y()), point_3.z()));
@@ -280,7 +280,7 @@ MainWindow::on_actionSavePoints_triggered()
                                     vit->point().y(),
                                     vit->weight()));
       }
-      CGAL::write_multi_point_WKT(ofs, points);
+      CGAL::IO::write_multi_point_WKT(ofs, points);
     }
     else
       for(Apollonius::Sites_iterator

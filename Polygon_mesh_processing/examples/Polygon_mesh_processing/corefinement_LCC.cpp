@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
   const char* filename2 = (argc > 2) ? argv[2] : "data/eight.off";
 
   LCC mesh1, mesh2;
-  if(!PMP::read_polygon_mesh(filename1, mesh1) || !PMP::read_polygon_mesh(filename2, mesh2))
+  if(!PMP::IO::read_polygon_mesh(filename1, mesh1) || !PMP::IO::read_polygon_mesh(filename2, mesh2))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;
@@ -38,10 +38,10 @@ int main(int argc, char* argv[])
 
   std::ofstream output("mesh1_refined.off");
   output.precision(17);
-  CGAL::write_OFF(output, mesh1);
+  CGAL::IO::write_OFF(output, mesh1);
   output.close();
   output.open("mesh2_refined.off");
-  CGAL::write_OFF(output, mesh2);
+  CGAL::IO::write_OFF(output, mesh2);
   output.close();
 
   return 0;

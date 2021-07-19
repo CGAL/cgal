@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
     MultiPoint points;
     MultiLineString polylines;
     MultiPolygon polygons;
-    CGAL::read_WKT(is, points,polylines,polygons);
+    CGAL::IO::read_WKT(is, points,polylines,polygons);
 
     for(Point p : points)
       std::cout<<p<<std::endl;

@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
   LineString ls;
   {
     std::ifstream is((argc>1)?argv[1]:"data/linestring.wkt");
-    CGAL::read_linestring_WKT(is, ls);
+    CGAL::IO::read_linestring_WKT(is, ls);
     is.close();
   }
   for(Point p : ls)
@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
   MultiLineString mls;
   {
     std::ifstream is((argc>2)?argv[2]:"data/multilinestring.wkt");
-    CGAL::read_multi_linestring_WKT(is, mls);
+    CGAL::IO::read_multi_linestring_WKT(is, mls);
     is.close();
   }
   for(LineString l : mls)

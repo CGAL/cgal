@@ -24,7 +24,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Timer.h>
-#include <CGAL/IO/write_vtu.h>
+#include <CGAL/IO/write_VTU.h>
 #include <CGAL/IO/WKT.h>
 
 // Qt headers
@@ -560,7 +560,7 @@ MainWindow::loadWKT(QString filename)
     typedef CGAL::Polygon_with_holes_2<K> Polygon;
     typedef CGAL::Point_2<K> Point;
     std::vector<Polygon> mps;
-    CGAL::read_multi_polygon_WKT(ifs, mps);
+    CGAL::IO::read_multi_polygon_WKT(ifs, mps);
     for(const Polygon& p : mps)
     {
       if(p.outer_boundary().is_empty())
@@ -592,7 +592,7 @@ MainWindow::loadWKT(QString filename)
   {
     typedef std::vector<K::Point_2> LineString;
     std::vector<LineString> mls;
-    CGAL::read_multi_linestring_WKT(ifs, mls);
+    CGAL::IO::read_multi_linestring_WKT(ifs, mls);
     for(const LineString& ls : mls)
     {
       if(ls.empty())
@@ -630,7 +630,7 @@ MainWindow::loadWKT(QString filename)
   do
   {
     std::vector<K::Point_2> mpts;
-    CGAL::read_multi_point_WKT(ifs, mpts);
+    CGAL::IO::read_multi_point_WKT(ifs, mpts);
     for(const K::Point_2& p : mpts)
     {
       cdt.insert(p);
@@ -657,7 +657,7 @@ void
 MainWindow::loadPolyConstraints(QString fileName)
 {
   std::ifstream ifs(qPrintable(fileName));
-  read_triangle_poly_file(cdt,ifs);
+  CGAL::IO::read_triangle_poly_file(cdt,ifs);
   discoverComponents(cdt, m_seeds);
   Q_EMIT( changed());
   actionRecenter->trigger();
@@ -776,7 +776,7 @@ MainWindow::saveConstraints(QString fileName)
     output << cdt;
   else if (output)
   {
-    CGAL::write_vtu(output, cdt);
+    CGAL::IO::write_VTU(output, cdt);
   }
 }
 

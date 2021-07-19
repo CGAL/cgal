@@ -248,7 +248,7 @@ MainWindow::open(QString fileName)
   if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
   {
     CGAL::Polygon_with_holes_2<K> P;
-    CGAL::read_polygon_WKT(ifs, P);
+    CGAL::IO::read_polygon_WKT(ifs, P);
     poly = Polygon2(P.outer_boundary().begin(),
                     P.outer_boundary().end());
   }
@@ -279,7 +279,7 @@ MainWindow::on_actionSavePolygon_triggered()
       CGAL::Polygon_2<K> P(poly.begin(),
                            poly.end());
       CGAL::Polygon_with_holes_2<K> Pwh(P);
-      CGAL::write_polygon_WKT(ofs, Pwh);
+      CGAL::IO::write_polygon_WKT(ofs, Pwh);
     }
     else
       ofs << poly;

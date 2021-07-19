@@ -71,7 +71,7 @@ int main(int argc, char** argv)
                                       .get_placement(Placement()));
 
   std::cout << t.time() << " sec" << std::endl;
-  CGAL::write_polygon_mesh((argc > 3) ? argv[3] : "out.off", surface_mesh, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_mesh((argc > 3) ? argv[3] : "out.off", surface_mesh, CGAL::parameters::stream_precision(17));
 
   return EXIT_SUCCESS;
 }

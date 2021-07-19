@@ -40,7 +40,7 @@ int main(int, char**)
     std::cout << dtos.number_of_ghost_faces() << " ghost faces\n" << std::endl;
   }
 
-  CGAL::write_OFF("result.off", dtos, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_OFF("result.off", dtos, CGAL::parameters::stream_precision(17));
 
   return EXIT_SUCCESS;
 }

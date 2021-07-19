@@ -384,7 +384,7 @@ void MainWindow::loadWKT(QString fileName)
   MultiPoint points;
   MultiLineString polylines;
   MultiPolygon polygons;
-  CGAL::read_WKT(ifs, points,polylines,polygons);
+  CGAL::IO::read_WKT(ifs, points,polylines,polygons);
 
   m_pct.clear();
   mGI->modelChanged();

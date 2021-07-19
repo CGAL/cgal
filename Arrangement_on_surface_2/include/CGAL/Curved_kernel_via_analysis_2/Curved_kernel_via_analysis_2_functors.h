@@ -231,7 +231,7 @@ public:
         // avoid compiler warning
         (void)arc;
 
-        //CGAL::set_pretty_mode(std::cerr);
+        //CGAL::IO::set_pretty_mode(std::cerr);
         CERR("Construct_pt_on_arc: " << CGAL::to_double(x) << ", " << arcno <<
              ", " << c.id() <<  "\narc = " << arc << "\n");
 

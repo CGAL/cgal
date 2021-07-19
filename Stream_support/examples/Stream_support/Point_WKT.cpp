@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
 
   std::ifstream is((argc>1)?argv[1]:"data/multipoint.wkt");
   MultiPoint mp;
-  CGAL::read_multi_point_WKT(is, mp);
+  CGAL::IO::read_multi_point_WKT(is, mp);
   for(const Point& p : mp)
   {
     std::cout<<p<<std::endl;

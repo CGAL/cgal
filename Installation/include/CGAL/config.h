@@ -432,7 +432,7 @@ using std::max;
 // Macros to detect features of clang. We define them for the other
 // compilers.
 // See http://clang.llvm.org/docs/LanguageExtensions.html
-// See also http://en.cppreference.com/w/cpp/experimental/feature_test
+// See also https://en.cppreference.com/w/cpp/experimental/feature_test
 #ifndef __has_feature
   #define __has_feature(x) 0  // Compatibility with non-clang compilers.
 #endif
@@ -560,6 +560,9 @@ using std::max;
 #  include <unordered_set>
 #  include <unordered_map>
 #  include <functional>
+#  include <thread>
+#  include <chrono>
+#  include <atomic>
 //
 namespace CGAL {
 //
@@ -578,6 +581,16 @@ namespace CGAL {
     using std::is_enum;
     using std::unordered_set;
     using std::unordered_map;
+    using std::atomic;
+    using std::memory_order_relaxed;
+    using std::memory_order_consume;
+    using std::memory_order_acquire;
+    using std::memory_order_release;
+    using std::memory_order_acq_rel;
+    using std::memory_order_seq_cst;
+    using std::atomic_thread_fence;
+    using std::thread;
+
   }
 //
   namespace cpp0x = cpp11;
@@ -590,14 +603,20 @@ namespace CGAL {
 // Typedef for the type of nullptr.
 typedef const void * Nullptr_t;   // Anticipate C++0x's std::nullptr_t
 
+namespace cpp11{
+#if CGAL_CXX20 || __cpp_lib_is_invocable>=201703L
+    template<typename Signature> class result_of;
+    template<typename F, typename... Args>
+    class result_of<F(Args...)> : public std::invoke_result<F, Args...> { };
+#else
+    using std::result_of;
+#endif
+}//namespace cpp11
 } //namespace CGAL
 
 //Support for c++11 noexcept
 #if !defined(BOOST_NO_NOEXCEPT)
 #define CGAL_NOEXCEPT(x) noexcept(x)
-#else
-#define CGAL_NOEXCEPT(x)
-#endif
 
 // The fallthrough attribute
 // See for clang:
@@ -620,7 +639,6 @@ typedef const void * Nullptr_t;   // Anticipate C++0x's std::nullptr_t
 #  define CGAL_NO_ASSERTIONS_BOOL false
 #else
 #  define CGAL_NO_ASSERTIONS_BOOL true
-#endif
 
 #if defined( __INTEL_COMPILER)
 #define CGAL_ADDITIONAL_VARIANT_FOR_ICL ,int

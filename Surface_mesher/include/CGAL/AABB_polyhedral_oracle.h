@@ -25,7 +25,7 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace CGAL {
 
@@ -50,7 +50,7 @@ namespace CGAL {
     typedef AABB_tree<AABB_traits> Tree;
     typedef typename AABB_traits::Bounding_box Bounding_box;
 
-    typedef boost::shared_ptr<Tree> Tree_shared_ptr;
+    typedef std::shared_ptr<Tree> Tree_shared_ptr;
     Tree_shared_ptr m_pTree;
 
   public:

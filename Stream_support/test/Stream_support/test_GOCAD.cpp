@@ -18,7 +18,7 @@ int main(int argc, char** argv)
   std::vector<Point> points;
   std::vector<Face> polygons;
 
-  bool ok = CGAL::read_GOCAD(gocad_file, points, polygons);
+  bool ok = CGAL::IO::read_GOCAD(gocad_file, points, polygons);
   assert(ok);
   std::cout << points.size() << " points and " << polygons.size() << " polygons" << std::endl;
 
@@ -28,37 +28,37 @@ int main(int argc, char** argv)
   points.clear();
   polygons.clear();
   std::string gocad_string(gocad_file);
-  ok = CGAL::read_GOCAD(gocad_string, points, polygons);
+  ok = CGAL::IO::read_GOCAD(gocad_string, points, polygons);
   assert(ok);
 
   points.clear();
   polygons.clear();
   std::ifstream is(gocad_file);
-  ok = CGAL::read_GOCAD(is, points, polygons);
+  ok = CGAL::IO::read_GOCAD(is, points, polygons);
   assert(ok);
   is.close();
 
-  ok = CGAL::write_GOCAD(gocad_file, points, polygons);
+  ok = CGAL::IO::write_GOCAD(gocad_file, points, polygons);
   assert(ok);
 
   std::ofstream os("tmp.ts");
-  ok = CGAL::write_GOCAD(os, points, polygons);
+  ok = CGAL::IO::write_GOCAD(os, points, polygons);
   assert(ok);
   os.close();
 
-  ok = CGAL::write_GOCAD("tmp.ts", points, polygons);
+  ok = CGAL::IO::write_GOCAD("tmp.ts", points, polygons);
   assert(ok);
 
   const std::size_t ptn = points.size();
   const std::size_t pln = polygons.size();
 
-  ok = CGAL::write_polygon_soup("tmp.ts", points, polygons);
+  ok = CGAL::IO::write_polygon_soup("tmp.ts", points, polygons);
   assert(ok);
 
   points.clear();
   polygons.clear();
 
-  ok = CGAL::read_polygon_soup("tmp.ts", points, polygons);
+  ok = CGAL::IO::read_polygon_soup("tmp.ts", points, polygons);
   assert(ok);
 
   assert(points.size() == ptn);

@@ -291,7 +291,7 @@ MainWindow::open(QString fileName)
   std::ifstream ifs(qPrintable(fileName));
   if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
   {
-    CGAL::read_multi_point_WKT(ifs, m_sites);
+    CGAL::IO::read_multi_point_WKT(ifs, m_sites);
   }
   else
   {
@@ -321,7 +321,7 @@ MainWindow::on_actionSavePoints_triggered()
   if(! fileName.isEmpty()) {
     std::ofstream ofs(qPrintable(fileName));
     if(fileName.endsWith(".wkt", Qt::CaseInsensitive)){
-      CGAL::write_multi_point_WKT(ofs, m_sites);
+      CGAL::IO::write_multi_point_WKT(ofs, m_sites);
     }else
       for(Points::iterator it = m_sites.begin();
           it != m_sites.end(); ++it)

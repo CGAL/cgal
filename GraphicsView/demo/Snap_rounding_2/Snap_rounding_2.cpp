@@ -267,7 +267,7 @@ MainWindow::open(QString fileName)
   if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
   {
     std::vector<std::vector<Point_2> > mls;
-    CGAL::read_multi_linestring_WKT(ifs, mls);
+    CGAL::IO::read_multi_linestring_WKT(ifs, mls);
     for(const std::vector<Point_2>& ls : mls)
     {
       if(ls.size() > 2)
@@ -313,7 +313,7 @@ MainWindow::on_actionSaveSegments_triggered()
         ls[1] = seg.target();
         mls.push_back(ls);
       }
-      CGAL::write_multi_linestring_WKT(ofs, mls);
+      CGAL::IO::write_multi_linestring_WKT(ofs, mls);
     }
     else
       std::copy(input.begin(), input.end(),  std::ostream_iterator<Segment_2>(ofs, "\n"));
