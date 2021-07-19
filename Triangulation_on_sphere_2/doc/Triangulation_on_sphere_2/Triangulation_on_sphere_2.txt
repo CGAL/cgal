@@ -12,7 +12,7 @@ namespace CGAL {
 <img src="header.png" style="max-width:70%;"/>
 </center>
 
-This chapter describes two-dimensional triangulations on the sphere of \cgal. It is organized as follows:
+This chapter describes two-dimensional triangulations on the sphere. It is organized as follows:
 <ul>
   <li>Section \ref Section_2D_ToS_Definitions introduces the main definitions about triangulations on the sphere.</li>
   <li>Section \ref Section_2D_ToS_Implementation details the way two-dimensional triangulations on the sphere
