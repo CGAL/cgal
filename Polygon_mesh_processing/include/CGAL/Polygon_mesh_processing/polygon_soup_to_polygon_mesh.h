@@ -213,7 +213,7 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
   typename Orienter::Marked_edges marked_edges;
   internal::Polygon_soup_orientation_visitor dummy_visitor;
 
-  Orienter::fill_edge_map(edges, marked_edges, polygons, dummy_visitor);
+  Orienter::fill_edge_map(edges, marked_edges, polygons, &dummy_visitor);
 
   //returns false if duplication is necessary
   if(!marked_edges.empty())

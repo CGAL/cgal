@@ -45,7 +45,7 @@ struct Polygon_soup_orientation_visitor{
   inline virtual void reverse_polygon(const std::size_t&) {}
 };
 
-template<class PointRange, class PolygonRange, class Visitor>
+template<class PointRange, class PolygonRange, class Visitor = Polygon_soup_orientation_visitor>
 struct Polygon_soup_orienter
 {
   typedef typename PointRange::value_type                               Point_3;
@@ -71,7 +71,7 @@ struct Polygon_soup_orienter
   Edge_map edges;             //< the set of edges of the input polygons
   Marked_edges marked_edges;  //< the set of singular edges or edges incident
                               //<   to non-compatible orientation polygons
-  Visitor& visitor;
+  Visitor* visitor;
 
   /// for each polygon referenced by its position in `polygons`, indicates
   /// the connected component it belongs too after orientation.
@@ -131,7 +131,10 @@ struct Polygon_soup_orienter
   }
 
   void inverse_orientation(const std::size_t index) {
-    visitor.reverse_polygon(index);
+    if(visitor)
+    {
+      visitor->reverse_polygon(index);
+    }
     std::reverse(polygons[index].begin(), polygons[index].end());
   }
 
@@ -140,7 +143,10 @@ struct Polygon_soup_orienter
     V_ID old_index,
     V_ID new_index)
   {
-    visitor.update_polygon_id(polygon_id, old_index, new_index);
+    if(visitor)
+    {
+      visitor->update_polygon_id(polygon_id, old_index, new_index);
+    }
     for(V_ID& i : polygons[polygon_id])
       if( i==old_index )
         i=new_index;
@@ -159,12 +165,18 @@ struct Polygon_soup_orienter
     }
   }
 
-  Polygon_soup_orienter(Points& points, Polygons& polygons, Visitor& visitor)
+  Polygon_soup_orienter(Points& points, Polygons& polygons, Visitor* visitor)
     : points(points), polygons(polygons), edges(points.size()), visitor(visitor)
   {}
 
+  Polygon_soup_orienter(Points& points, Polygons& polygons)
+    : points(points), polygons(polygons), edges(points.size()), visitor(nullptr)
+  {
+  }
+
+
 //filling containers
-  static void fill_edge_map(Edge_map& edges, Marked_edges& marked_edges, const Polygons& polygons, Visitor& visitor) {
+  static void fill_edge_map(Edge_map& edges, Marked_edges& marked_edges, const Polygons& polygons, Visitor* visitor) {
     // Fill edges
     for (P_ID i = 0; i < polygons.size(); ++i)
     {
@@ -193,7 +205,10 @@ struct Polygon_soup_orienter
 
         if (nb_edges > 2)
         {
-          visitor.non_manifold_edge(i0, i1);
+          if(visitor)
+          {
+            visitor->non_manifold_edge(i0, i1);
+          }
           set_edge_marked(i0, i1, marked_edges);
         }
       }
@@ -389,7 +404,10 @@ struct Polygon_soup_orienter
     for(const V_ID_and_Polygon_ids& vid_and_pids : vertices_to_duplicate)
     {
       V_ID new_index = static_cast<V_ID>(points.size());
-      visitor.duplicate_vertex(vid_and_pids.first, new_index);
+      if(visitor)
+      {
+        visitor->duplicate_vertex(vid_and_pids.first, new_index);
+      }
       points.push_back( points[vid_and_pids.first] );
       for(P_ID polygon_id : vid_and_pids.second)
         replace_vertex_index_in_polygon(polygon_id, vid_and_pids.first, new_index);
@@ -457,7 +475,7 @@ struct Polygon_soup_orienter
 template <class PointRange, class PolygonRange, class Visitor>
 bool orient_polygon_soup(PointRange& points,
                          PolygonRange& polygons,
-                         Visitor& visitor)
+                         Visitor* visitor)
 {
   std::size_t inital_nb_pts = points.size();
   internal::Polygon_soup_orienter<PointRange, PolygonRange, Visitor>
@@ -507,9 +525,7 @@ bool orient_polygon_soup(PointRange& points,
                          PolygonRange& polygons)
 {
   std::size_t inital_nb_pts = points.size();
-  internal::Polygon_soup_orientation_visitor dummy_visitor;
-  internal::Polygon_soup_orienter<PointRange, PolygonRange,
-      internal::Polygon_soup_orientation_visitor> orienter(points, polygons, dummy_visitor);
+  internal::Polygon_soup_orienter<PointRange, PolygonRange> orienter(points, polygons);
   orienter.fill_edge_map();
   orienter.orient();
   orienter.duplicate_singular_vertices();
