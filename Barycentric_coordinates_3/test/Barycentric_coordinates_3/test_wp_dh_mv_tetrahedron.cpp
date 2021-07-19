@@ -31,8 +31,6 @@ void test_overload(){
 
   std::vector<FT> tetra_coordinates;
   std::vector<FT> bar_coordinates;
-  tetra_coordinates.resize(4);
-  bar_coordinates.resize(4);
 
   // Sample points
   const FT step  = FT(1) / FT(20);
@@ -48,9 +46,11 @@ void test_overload(){
 
         const Point_3 query = Point_3(x, y, z);
 
-        bar(query, bar_coordinates.begin());
+        bar_coordinates.clear();
+        tetra_coordinates.clear();
+        bar(query, std::back_inserter(bar_coordinates));
         CGAL::Barycentric_coordinates::tetrahedron_coordinates(vertices[0], vertices[1],
-         vertices[2], vertices[3], query, tetra_coordinates.begin());
+         vertices[2], vertices[3], query, std::back_inserter(tetra_coordinates));
 
         tests::test_positivity<Kernel>(bar_coordinates);
         tests::test_positivity<Kernel>(tetra_coordinates);

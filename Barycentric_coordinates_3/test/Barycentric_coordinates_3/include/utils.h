@@ -9,6 +9,14 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/point_generators_3.h>
 
+#include <CGAL/Mesh_triangulation_3.h>
+#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
+#include <CGAL/Mesh_criteria_3.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Polyhedral_mesh_domain_3.h>
+#include <CGAL/make_mesh_3.h>
+#include <CGAL/refine_mesh_3.h>
+
 namespace tests{
 
   template<typename FT>
@@ -32,13 +40,14 @@ namespace tests{
   }
 
   template<typename Kernel, typename Mesh>
-  std::pair<Mesh, std::vector<typename Kernel::Point_3>> get_regular_tetrahedron(){
+  std::pair<Mesh, std::vector<typename Kernel::Point_3>> get_regular_tetrahedron(
+    typename Kernel::FT scale){
 
     using Point_3 = typename Kernel::Point_3;
 
     Mesh tetrahedron0;
-    std::vector<Point_3> coords = {Point_3(1.0, 1.0, 1.0), Point_3(-1.0, 1.0, -1.0),
-                                   Point_3(1.0, -1.0, -1.0), Point_3(-1.0, -1.0, 1.0)};
+    std::vector<Point_3> coords = {Point_3(scale, scale, scale), Point_3(-scale, scale, -scale),
+                                   Point_3(scale, -scale, -scale), Point_3(-scale, -scale, scale)};
 
     CGAL::make_tetrahedron(coords[0], coords[1],
                            coords[2], coords[3], tetrahedron0);
@@ -125,11 +134,24 @@ namespace tests{
       assert(coord >= FT(0) && coord <= FT(1));
   }
 
-  template<typename Mesh, typename OutIterator>
-  OutIterator random_points_triangle_mesh(Mesh& mesh, OutIterator out, int n){
+  template<typename Kernel, typename OutIterator>
+  OutIterator random_points_tetrahedron(
+    std::vector<typename Kernel::Point_3>& coords,
+    OutIterator out, int n){
 
-    CGAL::Random_points_in_triangle_mesh_3<Mesh> gen(mesh);
-    std::copy_n(gen, n, out);
+    using Tetrahedron_3 = typename Kernel::Tetrahedron_3;
+    using Mesh = typename CGAL::Surface_mesh<typename Kernel::Point_3>;
+
+    CGAL_assertion(coords.size() == 4);
+    Tetrahedron_3 tetra_inside(coords[0], coords[1], coords[2], coords[3]);
+    Mesh tetra_surf;
+    CGAL::make_tetrahedron(coords[0], coords[1],
+                           coords[2], coords[3], tetra_surf);
+
+    CGAL::Random_points_in_tetrahedron_3<typename Kernel::Point_3> gen_in(tetra_inside);
+    CGAL::Random_points_in_triangle_mesh_3<Mesh> gen_surf(tetra_surf);
+    std::copy_n(gen_in, n/2, out);
+    std::copy_n(gen_surf, n/2, out);
 
     return out;
   }

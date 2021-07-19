@@ -26,13 +26,13 @@ void test_overloads() {
 
   std::tie(tetrahedron, tetrahedron_coords) = tests::get_irregular_tetrahedron<Kernel, Mesh>();
   CGAL::Barycentric_coordinates::Mean_value_coordinates_3<Mesh, Kernel> mv_tetrahedron(tetrahedron);
-  tests::random_points_triangle_mesh(tetrahedron, std::back_inserter(sample_points), 100000);
+  tests::random_points_tetrahedron<Kernel>(tetrahedron_coords, std::back_inserter(sample_points), 1000);
 
   std::vector<FT> mv_coordinates_tetrahedron;
-  mv_coordinates_tetrahedron.resize(4);
 
   //Check for barycenter
-  mv_tetrahedron(Point_3(FT(1)/FT(4), FT(1)/FT(4), FT(1)/FT(4)), mv_coordinates_tetrahedron.begin());
+  mv_tetrahedron(Point_3(FT(1)/FT(4), FT(1)/FT(4), FT(1)/FT(4)),
+   std::back_inserter(mv_coordinates_tetrahedron));
   tests::test_barycenter<Kernel>(mv_coordinates_tetrahedron);
 
   for(auto& point : sample_points){
@@ -45,14 +45,16 @@ void test_overloads() {
       continue;
 
     const Point_3 query(x, y, z);
-    mv_tetrahedron(query, mv_coordinates_tetrahedron.begin());
+    mv_coordinates_tetrahedron.clear();
+    mv_tetrahedron(query, std::back_inserter(mv_coordinates_tetrahedron));
 
     tests::test_linear_precision<Kernel>(mv_coordinates_tetrahedron, tetrahedron_coords, query);
     tests::test_partition_of_unity<Kernel>(mv_coordinates_tetrahedron);
     tests::test_positivity<Kernel>(mv_coordinates_tetrahedron);
 
+    mv_coordinates_tetrahedron.clear();
     CGAL::Barycentric_coordinates::mean_value_coordinates_3(
-      tetrahedron, query, mv_coordinates_tetrahedron.begin());
+      tetrahedron, query, std::back_inserter(mv_coordinates_tetrahedron));
   }
 
 }

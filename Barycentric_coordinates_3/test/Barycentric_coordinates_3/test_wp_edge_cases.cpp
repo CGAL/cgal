@@ -19,25 +19,32 @@ void test_overloads() {
 
   using FT = typename Kernel::FT;
   using Point_3 = typename Kernel::Point_3;
-  using Mesh = CGAL::Surface_mesh<Point_3>;
+  using Mesh = typename CGAL::Surface_mesh<Point_3>;
 
-  // Cube
+  // tetrahedron
   Mesh tetrahedron;
   std::vector<Point_3> tetrahedron_coords;
+  std::vector<Point_3> sample_points;
 
-  std::tie(tetrahedron, tetrahedron_coords) = tests::get_irregular_tetrahedron<Kernel, Mesh>();
+  std::tie(tetrahedron, tetrahedron_coords) = tests::get_regular_tetrahedron<Kernel, Mesh>(FT(1.0));
 
-  CGAL::Barycentric_coordinates::Wachspress_coordinates_3<Mesh, Kernel> wp_tetrahedron(tetrahedron, CP3::WITH_EDGE_CASES);
+  CGAL::Barycentric_coordinates::Wachspress_coordinates_3<Mesh, Kernel> wp_tetrahedron(
+    tetrahedron, CP3::WITH_EDGE_CASES);
+  tests::random_points_tetrahedron<Kernel>(tetrahedron_coords,
+   std::back_inserter(sample_points), 10000);
 
   std::vector<FT> wp_coordinates_tetrahedron;
-  wp_coordinates_tetrahedron.resize(4);
 
-  wp_tetrahedron(Point_3(0.05, 0.1, 0.85), wp_coordinates_tetrahedron.begin());
+  for(auto& point : sample_points){
 
-  for(auto u : wp_coordinates_tetrahedron){
-    std::cout << u << " \n";
+    const Point_3 query(point.x(), point.y(), point.z());
+    wp_coordinates_tetrahedron.clear();
+    wp_tetrahedron(query, std::back_inserter(wp_coordinates_tetrahedron));
+
+    tests::test_linear_precision<Kernel>(wp_coordinates_tetrahedron, tetrahedron_coords, query);
+    tests::test_partition_of_unity<Kernel>(wp_coordinates_tetrahedron);
+    tests::test_positivity<Kernel>(wp_coordinates_tetrahedron);
   }
-
 }
 
 int main(){
@@ -49,7 +56,6 @@ int main(){
   test_overloads<SCKER>();
   std::cout << "SCKER PASSED" << std::endl;
 
-  /*
   std::cout << "EPICK test :" << std::endl;
   test_overloads<EPICK>();
   std::cout << "EPICK PASSED" << std::endl;
@@ -57,7 +63,6 @@ int main(){
   std::cout << "EPECK test :" << std::endl;
   test_overloads<EPECK>();
   std::cout << "EPECK PASSED" << std::endl;
-  */
 
   return EXIT_SUCCESS;
 }

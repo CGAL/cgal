@@ -111,27 +111,22 @@ namespace Barycentric_coordinates {
 
         case Computation_policy_3::WITH_EDGE_CASES:{
           // Calculate query position relative to the polyhedron
-          const auto edge_case = internal::locate_query_edge(
+          const auto edge_case = internal::locate_wrt_polyhedron(
             m_vertex_to_point_map, m_polygon_mesh, query, coordinates, m_traits);
 
           if (edge_case == internal::Edge_case::BOUNDARY) {
-            std::cout << "Boundary \n";
             return coordinates;
           }
           if (edge_case == internal::Edge_case::EXTERIOR) {
             std::cerr << std::endl <<
             "WARNING: query does not belong to the polygon!" << std::endl;
-            std::cout << "EXTERIOR \n";
           }
-          else
-            std::cout << "Interior \n";
 
           return compute_coords(query, coordinates);
         }
 
         default:{
           internal::get_default(vertices(m_polygon_mesh).size(), coordinates);
-          std::cout << "Default \n";
           return coordinates;
         }
       }
@@ -158,13 +153,6 @@ namespace Barycentric_coordinates {
       }
 
       return coordinates;
-    }
-
-    template<typename OutIterator>
-    internal::Edge_case verify(
-      const Point_3& query, OutIterator output){
-
-      return internal::locate_query_edge(m_vertex_to_point_map, m_polygon_mesh, query, m_traits);
     }
 
     FT compute_weights(const Point_3& query) {
@@ -222,6 +210,12 @@ namespace Barycentric_coordinates {
 
       // Iterate using the circulator
       do{
+
+        // Check if it is a triangular mesh
+        const auto hedge = halfedge(*face_circulator, m_polygon_mesh);
+        const auto vertices = vertices_around_face(hedge, m_polygon_mesh);
+        CGAL_precondition(vertices.size() == 3);
+
         // Calculate normals of faces
         const Vector_3 face_normal_i = internal::get_face_normal(
           *face_circulator, m_vertex_to_point_map, m_polygon_mesh, m_traits);

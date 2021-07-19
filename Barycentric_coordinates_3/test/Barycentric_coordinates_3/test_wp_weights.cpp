@@ -4,6 +4,7 @@
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Barycentric_coordinates_3/Wachspress_coordinates_3.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 
 #include "include/utils.h"
 
@@ -18,12 +19,14 @@ void test_overloads() {
   using FT = typename Kernel::FT;
   using Point_3 = typename Kernel::Point_3;
   using Mesh = CGAL::Surface_mesh<Point_3>;
+  namespace PMP = CGAL::Polygon_mesh_processing;
 
   // Cube
   Mesh cube;
   std::vector<Point_3> cube_coords;
 
   std::tie(cube, cube_coords) = tests::get_hexahedron<Kernel, Mesh>();
+  PMP::triangulate_faces(faces(cube), cube);
 
   CGAL::Barycentric_coordinates::Wachspress_coordinates_3<Mesh, Kernel> wp_cube(cube);
 
@@ -32,11 +35,10 @@ void test_overloads() {
   const FT limit = step*scale;
 
   std::vector<FT> wp_coordinates_cube;
-  wp_coordinates_cube.resize(8);
 
   // Test cube
   //Check for barycenter
-  wp_cube(Point_3(FT(1)/FT(2), FT(1)/FT(2), FT(1)/FT(2)), wp_coordinates_cube.begin());
+  wp_cube(Point_3(FT(1)/FT(2), FT(1)/FT(2), FT(1)/FT(2)), std::back_inserter(wp_coordinates_cube));
   tests::test_barycenter<Kernel>(wp_coordinates_cube);
 
   // Sample interior points
@@ -45,14 +47,16 @@ void test_overloads() {
       for(FT z = step; z < limit; z += step){
 
         const Point_3 query(x, y, z);
-        wp_cube(query, wp_coordinates_cube.begin());
+        wp_coordinates_cube.clear();
+        wp_cube(query, std::back_inserter(wp_coordinates_cube));
 
         tests::test_linear_precision<Kernel>(wp_coordinates_cube, cube_coords, query);
         tests::test_partition_of_unity<Kernel>(wp_coordinates_cube);
         tests::test_positivity<Kernel>(wp_coordinates_cube);
 
+        wp_coordinates_cube.clear();
         CGAL::Barycentric_coordinates::wachspress_coordinates_3(
-          cube, query, wp_coordinates_cube.begin());
+          cube, query, std::back_inserter(wp_coordinates_cube));
       }
     }
   }

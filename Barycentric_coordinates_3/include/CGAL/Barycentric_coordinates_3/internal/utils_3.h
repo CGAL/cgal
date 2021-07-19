@@ -86,7 +86,7 @@ public:
 
   template<typename FT>
   FT get_tolerance() {
-    return FT(1) / FT(100000);
+    return FT(1) / FT(10000000000);
   }
 
 // Compute barycentric coordinates in the space.
@@ -196,13 +196,13 @@ public:
   }
 
   template<
-    typename Face,
+    typename VertexRange,
     typename VertexToPointMap,
     typename PolygonMesh,
     typename OutIterator,
     typename GeomTraits>
   OutIterator boundary_coordinates_3(
-    const Face& face,
+    VertexRange vertex,
     const VertexToPointMap& vertex_to_point_map,
     const PolygonMesh& polygon_mesh,
     const typename GeomTraits::Point_3& query,
@@ -215,16 +215,14 @@ public:
     using Plane_3 = typename GeomTraits::Plane_3;
     using Point_2 = typename GeomTraits::Point_2;
 
-    const auto hedge = halfedge(face, polygon_mesh);
-    const auto vertices_face = vertices_around_face(hedge, polygon_mesh);
-    CGAL_precondition(vertices_face.size() >= 3);
-    auto vertex = vertices_face.begin();
-
     const auto v0 = *vertex; vertex++;
     const auto v1 = *vertex; vertex++;
     const auto v2 = *vertex;
 
-    const Plane_3 plane_face(get(vertex_to_point_map, v0), get(vertex_to_point_map, v1), get(vertex_to_point_map, v2));
+    const FT tol = get_tolerance<FT>();
+
+    const Plane_3 plane_face(get(vertex_to_point_map, v0),
+     get(vertex_to_point_map, v1), get(vertex_to_point_map, v2));
     const Point_2 query_2d = plane_face.to_2d(query);
     const Point_2 v0_2d = plane_face.to_2d(get(vertex_to_point_map, v0));
     const Point_2 v1_2d = plane_face.to_2d(get(vertex_to_point_map, v1));
@@ -237,13 +235,13 @@ public:
     for(const auto& v : vd){
 
       if(v == v0)
-        *coordinates = coordinates_2d[0];
+        *coordinates = CGAL::abs(coordinates_2d[0]) < tol? 0: coordinates_2d[0];
       else if(v == v1)
-        *coordinates = coordinates_2d[1];
+        *coordinates = CGAL::abs(coordinates_2d[1]) < tol? 0: coordinates_2d[1];
       else if(v == v2)
-        *coordinates = coordinates_2d[2];
+        *coordinates = CGAL::abs(coordinates_2d[2]) < tol? 0: coordinates_2d[2];
       else
-        *coordinates = 0;
+        *coordinates = FT(0);
 
       coordinates++;
     }
@@ -256,7 +254,7 @@ public:
     typename PolygonMesh,
     typename OutIterator,
     typename GeomTraits>
-  Edge_case locate_query_edge(
+  Edge_case locate_wrt_polyhedron(
     const VertexToPointMap& vertex_to_point_map,
     const PolygonMesh& polygon_mesh,
     const typename GeomTraits::Point_3& query,
@@ -268,6 +266,7 @@ public:
     using FT = typename GeomTraits::FT;
     const auto& dot_3 = traits.compute_scalar_product_3_object();
     const auto& construct_vector_3 = traits.construct_vector_3_object();
+    const auto& sqrt(Get_sqrt<GeomTraits>::sqrt_object(traits));
 
     const FT tol = get_tolerance<FT>();
     auto face_range = faces(polygon_mesh);
@@ -275,18 +274,19 @@ public:
     for(auto& face : face_range){
 
       const auto hedge = halfedge(face, polygon_mesh);
-      const auto vertices = vertices_around_face(hedge, polygon_mesh);
-      CGAL_precondition(vertices.size() >= 3);
+      const auto vertices_face = vertices_around_face(hedge, polygon_mesh);
+      CGAL_precondition(vertices_face.size() >= 3);
 
-      auto vertex = vertices.begin();
+      auto vertex = vertices_face.begin();
       const auto vertex_val = get(vertex_to_point_map, *vertex);
 
       // Vector connecting query point to vertex;
       const Vector_3 query_vertex = construct_vector_3(query, vertex_val);
 
       // Calculate normals of faces
-      const Vector_3 face_normal_i = get_face_normal(
+      Vector_3 face_normal_i = get_face_normal(
         face, vertex_to_point_map, polygon_mesh, traits);
+      face_normal_i = face_normal_i / sqrt(face_normal_i.squared_length());
 
       // Distance of query to face
       const FT perp_dist_i = dot_3(query_vertex, face_normal_i);
@@ -294,7 +294,7 @@ public:
       // Verify location of query point;
       if(CGAL::abs(perp_dist_i) < tol){
 
-        boundary_coordinates_3(face, vertex_to_point_map, polygon_mesh, query, coordinates, traits);
+        boundary_coordinates_3(vertex, vertex_to_point_map, polygon_mesh, query, coordinates, traits);
         return Edge_case::BOUNDARY;
       }
       else if(perp_dist_i < 0)

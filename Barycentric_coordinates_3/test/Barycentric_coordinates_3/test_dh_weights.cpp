@@ -31,11 +31,11 @@ void test_overloads() {
   const FT limit = step*scale;
 
   std::vector<FT> dh_coordinates_tetrahedron;
-  dh_coordinates_tetrahedron.resize(4);
 
   // Test cube
   //Check for barycenter
-  dh_tetrahedron(Point_3(FT(1)/FT(4), FT(1)/FT(4), FT(1)/FT(4)), dh_coordinates_tetrahedron.begin());
+  dh_tetrahedron(Point_3(FT(1)/FT(4), FT(1)/FT(4), FT(1)/FT(4)),
+   std::back_inserter(dh_coordinates_tetrahedron));
   tests::test_barycenter<Kernel>(dh_coordinates_tetrahedron);
 
   // Sample interior points
@@ -44,13 +44,15 @@ void test_overloads() {
       for(FT z = step; z < FT(1) - x - y - step; z+= step){ // Excludes points inside faces
 
         const Point_3 query(x, y, z);
-        dh_tetrahedron(query, dh_coordinates_tetrahedron.begin());
+        dh_coordinates_tetrahedron.clear();
+        dh_tetrahedron(query, std::back_inserter(dh_coordinates_tetrahedron));
 
         tests::test_linear_precision<Kernel>(dh_coordinates_tetrahedron, tetrahedron_coords, query);
         tests::test_partition_of_unity<Kernel>(dh_coordinates_tetrahedron);
 
+        dh_coordinates_tetrahedron.clear();
         CGAL::Barycentric_coordinates::discrete_harmonic_coordinates_3(
-          tetrahedron, query, dh_coordinates_tetrahedron.begin());
+          tetrahedron, query, std::back_inserter(dh_coordinates_tetrahedron));
       }
     }
   }
