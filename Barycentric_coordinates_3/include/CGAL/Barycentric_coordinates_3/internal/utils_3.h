@@ -228,7 +228,7 @@ public:
     const Point_2 v1_2d = plane_face.to_2d(get(vertex_to_point_map, v1));
     const Point_2 v2_2d = plane_face.to_2d(get(vertex_to_point_map, v2));
 
-    std::array<FT, 3> coordinates_2d = compute_triangle_coordinates_2(
+    const std::array<FT, 3> coordinates_2d = compute_triangle_coordinates_2(
       v0_2d, v1_2d, v2_2d, query_2d, traits);
 
     const auto vd = vertices(polygon_mesh);
