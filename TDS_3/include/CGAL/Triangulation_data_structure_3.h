@@ -4047,6 +4047,9 @@ copy_tds(const TDS_src& tds,
   // Number of pointers to cell/vertex to copy per cell.
   const int dim = (std::max)(1, dimension() + 1);
 
+  // Number of neighbors to set
+  const int nn = (std::max)(0, dimension() + 1);
+
   // Initializes maps
   Unique_hash_map< typename TDS_src::Vertex_handle,Vertex_handle > V;
   Unique_hash_map< typename TDS_src::Cell_handle,Cell_handle > F;
@@ -4077,7 +4080,7 @@ copy_tds(const TDS_src& tds,
   // Hook neighbor pointers of the cells.
   for (typename TDS_src::Cell_iterator cit2 = tds.cells().begin();
           cit2 != tds.cells_end(); ++cit2) {
-    for (int j = 0; j < dim; j++)
+    for (int j = 0; j < nn; j++)
       F[cit2]->set_neighbor(j, F[cit2->neighbor(j)] );
   }
 
