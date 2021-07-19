@@ -466,7 +466,7 @@ Scene_polygon_soup_item::orient(std::vector<std::pair<std::size_t, std::size_t> 
   Visitor visitor(non_manifold_vertices);
   QApplication::setOverrideCursor(Qt::WaitCursor);
   res =  CGAL::Polygon_mesh_processing::
-    orient_polygon_soup(d->soup->points, d->soup->polygons, visitor);
+    orient_polygon_soup(d->soup->points, d->soup->polygons, CGAL::parameters::visitor(visitor));
   QApplication::restoreOverrideCursor();
   return res;
 }

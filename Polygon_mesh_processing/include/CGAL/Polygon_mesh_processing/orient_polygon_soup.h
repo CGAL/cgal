@@ -21,6 +21,9 @@
 #include <CGAL/tuple.h>
 #include <CGAL/array.h>
 #include <CGAL/assertions.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+
 #include <boost/container/flat_set.hpp>
 #include <boost/container/flat_map.hpp>
 
@@ -464,11 +467,20 @@ struct Polygon_soup_orienter
 } // namespace internal
 
 //todo: Documentation
-template <class PointRange, class PolygonRange, class Visitor>
+template <class PointRange, class PolygonRange, class NamedParameters>
 bool orient_polygon_soup(PointRange& points,
                          PolygonRange& polygons,
-                         Visitor visitor)
+                         const NamedParameters& np)
 {
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::visitor_t,
+    NamedParameters,
+    internal::Polygon_soup_orientation_visitor//default
+  > ::type Visitor;
+  Visitor visitor(choose_parameter<Visitor>(get_parameter(np, internal_np::visitor)));
   std::size_t inital_nb_pts = points.size();
   internal::Polygon_soup_orienter<PointRange, PolygonRange, Visitor>
       orienter(points, polygons, visitor);
@@ -516,13 +528,7 @@ template <class PointRange, class PolygonRange>
 bool orient_polygon_soup(PointRange& points,
                          PolygonRange& polygons)
 {
-  std::size_t inital_nb_pts = points.size();
-  internal::Polygon_soup_orienter<PointRange, PolygonRange> orienter(points, polygons);
-  orienter.fill_edge_map();
-  orienter.orient();
-  orienter.duplicate_singular_vertices();
-
-  return inital_nb_pts==points.size();
+  return orient_polygon_soup(points, polygons, parameters::all_default());
 }
 
 } }//end namespace CGAL::Polygon_mesh_processing
