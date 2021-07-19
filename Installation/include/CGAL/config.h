@@ -614,10 +614,6 @@ namespace cpp11{
 }//namespace cpp11
 } //namespace CGAL
 
-//Support for c++11 noexcept
-#if !defined(BOOST_NO_NOEXCEPT)
-#define CGAL_NOEXCEPT(x) noexcept(x)
-
 // The fallthrough attribute
 // See for clang:
 //   http://clang.llvm.org/docs/AttributeReference.html#statement-attributes
