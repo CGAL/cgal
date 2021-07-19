@@ -190,7 +190,21 @@ _test_cls_triangulation_3(const Triangulation &)
   //########################################################################
 
 
-  /**************CONSTRUCTORS (1)*********************/
+  /************** CONSTRUCTORS (1)********************/
+
+  Cls Tm1;
+  assert( Tm1.dimension() == -1 );
+  assert( Tm1.number_of_vertices() == 0 );
+
+  Cls Tm3(Tm1);
+  assert(Tm3 == Tm1);
+
+  Cls Tm4 = Tm1;
+  assert(Tm4 == Tm1);
+
+  Tm3.swap(Tm1);
+
+  /************** INSERTIONS *************************/
   /************** and I/O ****************************/
 
   std::cout << "    Constructor " << std::endl;
