@@ -464,6 +464,7 @@ public:
     reference_counted = (&(p1.hx()) == &(p2.hx()));
     CGAL_NEF_TRACEN("reference counted " << reference_counted);
 #endif
+    non_efective_splits=0;
     root = build_kdtree(vertices, edges, facets, 0);
   }
   const Object_list& objects_around_point( const Point_3& p) const {
@@ -610,8 +611,10 @@ std::string dump_object_list( const Object_list& O, int level = 0) {
 
 private:
 
+int non_efective_splits;
+
 Node_handle build_kdtree(Vertex_list& V, Halfedge_list& E, Halffacet_list& F,
-                         int depth, int non_efective_splits=0) {
+                         int depth) {
   CGAL_precondition( depth >= 0);
 
   if( !can_set_be_divided(depth, V.size())) {
@@ -661,8 +664,8 @@ Node_handle build_kdtree(Vertex_list& V, Halfedge_list& E, Halffacet_list& F,
     return &(nodes.back());
   }
 
-  Node_handle left_node = build_kdtree(V1, E1, F1, depth + 1, non_efective_splits);
-  Node_handle right_node = build_kdtree(V2, E2, F2, depth + 1, non_efective_splits);
+  Node_handle left_node = build_kdtree(V1, E1, F1, depth + 1);
+  Node_handle right_node = build_kdtree(V2, E2, F2, depth + 1);
   nodes.push_back(Node(left_node, right_node, construct_splitting_plane(point_on_plane, coord)));
   return &(nodes.back());
 }
