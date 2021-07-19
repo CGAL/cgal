@@ -76,18 +76,18 @@ namespace IO {
     \cgalParamNEnd
 
      \cgalParamNBegin{use_binary_mode}
-       \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+       \cgalParamDescription{indicates whether data should be written in binary (`true`) or in \ascii (`false`)}
        \cgalParamType{Boolean}
        \cgalParamDefault{`true`}
        \cgalParamExtra{This parameter is only relevant for `PLY` writing: the `OFF` and `XYZ` formats
-                       are always ASCII, and the `LAS` format is always binary.}
+                       are always \ascii, and the `LAS` format is always binary.}
      \cgalParamNEnd
 
     \cgalParamNBegin{stream_precision}
       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
       \cgalParamType{int}
       \cgalParamDefault{`6`}
-      \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
+      \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 

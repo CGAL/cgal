@@ -315,7 +315,7 @@ extract(std::istream& is, Weighted_point_3<R>& p, const Cartesian_tag&)
         break;
     default:
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
     }
     if (is)
@@ -344,7 +344,7 @@ extract(std::istream& is, Weighted_point_3<R>& p, const Homogeneous_tag&)
         break;
     default:
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
   }
   if (is)
