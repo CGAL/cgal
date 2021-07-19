@@ -66,7 +66,6 @@ private:
   QMainWindow* mw;
   QAction* actionOrientSM;
   QAction* actionShuffle;
-  QAction* actionNMToPolyline;
   QAction* actionDisplayNonManifoldEdges;
   QAction* actionClean;
 
@@ -95,13 +94,7 @@ void Polyhedron_demo_orient_soup_plugin::init(QMainWindow* mainWindow,
   actionDisplayNonManifoldEdges->setProperty("subMenuName", "View");
   connect(actionDisplayNonManifoldEdges, SIGNAL(triggered()),
           this, SLOT(displayNonManifoldEdges()));
-  actionNMToPolyline = new QAction(tr("Extract Non Manifold Simplices"), mainWindow);
-  actionNMToPolyline->setProperty("subMenuName", "Polygon Mesh Processing");
-  connect(actionNMToPolyline, &QAction::triggered,
-          this, [this](){
-    std::vector<std::pair<std::size_t, std::size_t> > dum;
-    this->createPointsAndPolyline(dum, false);
-  });
+
   actionClean = new QAction(tr("Clean Polygon Soup"), mainWindow);
   actionClean->setProperty("subMenuName", "Polygon Mesh Processing");
   connect(actionClean, &QAction::triggered,
@@ -112,7 +105,6 @@ QList<QAction*> Polyhedron_demo_orient_soup_plugin::actions() const {
   return QList<QAction*>()
       << actionOrientSM
       << actionShuffle
-      << actionNMToPolyline
       << actionDisplayNonManifoldEdges
       << actionClean;
 }
