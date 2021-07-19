@@ -62,32 +62,6 @@ private:
   Coordinate coord;
 };
 
-
-template <typename Vertex, typename Coordinate, typename EK>
-  class Smaller_than<CGAL::Lazy_kernel<EK>, Vertex, Coordinate>
-{
-public:
-  Smaller_than(Coordinate c) : coord(c) {
-    CGAL_assertion( c >= 0 && c <=2);
-  }
-  bool operator()( const Vertex& v1, const Vertex& v2) {
-    switch(coord) {
-    case 0: return CGAL::to_interval(v1->point().x()).second <
-                           CGAL::to_interval(v2->point().x()).first;
-    case 1: return CGAL::to_interval(v1->point().y()).second <
-                           CGAL::to_interval(v2->point().y()).first;
-    case 2: return CGAL::to_interval(v1->point().z()).second <
-                           CGAL::to_interval(v2->point().z()).first;
-    default: CGAL_error();
-    }
-    return false;
-  }
-
-private:
-  Coordinate coord;
-};
-
-
 public:
   friend class Objects_along_ray;
   friend class Objects_around_segment;

@@ -56,49 +56,6 @@ private:
 };
 
 
-template <typename Coordinate, typename EK>
-class Compare_points<CGAL::Lazy_kernel<EK>, Coordinate> {
-
-  typedef CGAL::Lazy_kernel<EK>     Kernel;
-  typedef typename Kernel::Point_3  Point_3;
- public:
-  Compare_points(Coordinate c) : coord(c) {
-    CGAL_assertion( c >= 0 && c <=2);
-  }
-  CGAL::Comparison_result operator()( const Point_3& p1, const Point_3& p2) {
-    switch(coord) {
-    case 0:
-      if(CGAL::to_interval(p1.x()).second <
-         CGAL::to_interval(p2.x()).first)
-        return CGAL::SMALLER;
-      else if(CGAL::to_interval(p2.x()).second <
-              CGAL::to_interval(p1.x()).first)
-        return CGAL::LARGER;
-      return CGAL::EQUAL;
-    case 1:
-      if(CGAL::to_interval(p1.y()).second <
-         CGAL::to_interval(p2.y()).first)
-        return CGAL::SMALLER;
-      else if(CGAL::to_interval(p2.y()).second <
-              CGAL::to_interval(p1.y()).first)
-        return CGAL::LARGER;
-      return CGAL::EQUAL;
-    case 2:
-      if(CGAL::to_interval(p1.z()).second <
-         CGAL::to_interval(p2.z()).first)
-        return CGAL::SMALLER;
-      else if(CGAL::to_interval(p2.z()).second <
-              CGAL::to_interval(p1.z()).first)
-        return CGAL::LARGER;
-      return CGAL::EQUAL;
-    default: CGAL_error();
-    }
-    return CGAL::EQUAL;
-  }
-private:
-  Coordinate coord;
-};
-
 template <class SNC_decorator>
 class Side_of_plane {
 
