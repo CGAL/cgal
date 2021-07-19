@@ -359,17 +359,6 @@ else {
         return node;
       }
 
-inline
-Node_handle get_child_by_side( const Node_handle node, Oriented_side side) {
-  CGAL_assertion( node != nullptr);
-  CGAL_assertion( side != ON_ORIENTED_BOUNDARY);
-  if( side == ON_NEGATIVE_SIDE) {
-    return node->left();
-  }
-  CGAL_assertion( side == ON_POSITIVE_SIDE);
-  return node->right();
-}
-
 void divide_segment_by_plane( Segment_3 s, Plane_3 pl,
                               Segment_3& s1, Segment_3& s2) {
   Object o = traits.intersect_object()( pl, s);
@@ -733,19 +722,25 @@ static Plane_3 construct_splitting_plane(const Point_3& pt, int coord)
   return Plane_3();
 }
 
+static Node_handle get_child_by_side( const Node_handle node, Oriented_side side) {
+  CGAL_assertion( node != nullptr);
+  CGAL_assertion( side != ON_ORIENTED_BOUNDARY);
+  if( side == ON_NEGATIVE_SIDE) {
+    return node->left();
+  }
+  CGAL_assertion( side == ON_POSITIVE_SIDE);
+  return node->right();
+}
+
 Node_handle locate_cell_containing( const Point_3& p, const Node_handle node) const {
   CGAL_precondition( node != nullptr);
   if( node->is_leaf())
     return node;
-  else {
-    Oriented_side side = node->plane().oriented_side(p);
-    if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
-      return locate_cell_containing( p, node->left());
-    else { // side == ON_POSITIVE_SIDE
-      CGAL_assertion( side == ON_POSITIVE_SIDE);
-      return locate_cell_containing( p, node->right());
-    }
-  }
+
+  Oriented_side side = node->plane().oriented_side(p);
+  if(side == ON_ORIENTED_BOUNDARY)
+    side = ON_NEGATIVE_SIDE;
+  return locate_cell_containing(p, get_child_by_side(node, side));
 }
 
 const Object_list& locate( const Point_3& p, const Node_handle node) const {
