@@ -24,6 +24,7 @@ typedef Kernel::Point_3                                         Point_3;
 typedef CGAL::Surface_mesh<Point_3>                             Surface_mesh;
 
 typedef typename boost::graph_traits<Surface_mesh>::edge_descriptor edge_descriptor;
+typedef typename boost::graph_traits<Surface_mesh>::face_descriptor face_descriptor;
 
 namespace SMS = CGAL::Surface_mesh_simplification;
 namespace PMP = CGAL::Polygon_mesh_processing;
@@ -50,7 +51,7 @@ void print_hist(histo h)
   std::cout << os.str() << std::endl;
 }
 
-hist generate_statistics(Surface_mesh mesh, hist histo, std::function<FT(edge_descriptor, 
+hist generate_edge_statistics(Surface_mesh mesh, hist histo, std::function<FT(edge_descriptor, 
       const Surface_mesh&)> f)
 {
   for (auto e : mesh.edges())
@@ -62,14 +63,27 @@ hist generate_statistics(Surface_mesh mesh, hist histo, std::function<FT(edge_de
   return histo;
 }
 
+hist generate_face_statistics(Surface_mesh mesh, hist histo, std::function<FT(face_descriptor, 
+      const Surface_mesh&)> f)
+{
+  for (auto face : mesh.faces())
+  {
+    FT value = f(face, mesh); 
+    histo(value);
+  }
+
+  return histo;
+}
+
 template<typename Policy>
-hist generate_statistics(Surface_mesh mesh, Policy p, 
-    hist histo, std::function<FT(edge_descriptor, const Surface_mesh&)> f)
+Surface_mesh edge_collapse(Surface_mesh mesh)
 {
   typedef typename Policy::Get_cost Cost; 
   typedef typename Policy::Get_placement Placement;
   
   typedef SMS::Bounded_normal_change_placement<Placement> Bounded_placement;
+  
+  Policy p {mesh, 100};
   
   const Cost& cost = p.get_cost();
   const Placement& unbounded_placement = p.get_placement();
@@ -84,7 +98,7 @@ hist generate_statistics(Surface_mesh mesh, Policy p,
   SMS::edge_collapse(mesh, stop,
       CGAL::parameters::get_cost(cost).get_placement(placement));
   
-  return generate_statistics(mesh, histo, f);
+  return mesh;
 }
 
 int main(int argc, char** argv)
@@ -107,24 +121,58 @@ int main(int argc, char** argv)
   using namespace boost::histogram;
   hist edge_histo = make_histogram(axis::regular<>(14, 0.1, 4.0, "length"));
   
-  auto edge_length = [] (edge_descriptor e, const Surface_mesh& mesh) { 
+  auto f = [] (edge_descriptor e, const Surface_mesh& mesh) { 
     return PMP::edge_length(mesh.halfedge(e), mesh);
   };
   
+  auto g = [] (face_descriptor face, const Surface_mesh& mesh) { 
+    return PMP::face_aspect_ratio(face, mesh);
+  };
+  
+  Surface_mesh probabilistic = edge_collapse
+    <SMS::GarlandHeckbert_probabilistic_policies<Surface_mesh, Kernel>>(surface_mesh);
+  
+  Surface_mesh classic = edge_collapse
+    <SMS::GarlandHeckbert_policies<Surface_mesh, Kernel>>(surface_mesh);
+  
+  Surface_mesh classic_tri = edge_collapse
+    <SMS::GarlandHeckbert_triangle_policies<Surface_mesh, Kernel>>(surface_mesh);
+ 
+  Surface_mesh probabilistic_tri = edge_collapse
+    <SMS::GarlandHeckbert_probabilistic_tri_policies<Surface_mesh, Kernel>>(surface_mesh);
+  
   std::cout << "Original mesh histogram:\n";
-  print_hist(generate_statistics(surface_mesh, edge_histo, edge_length));
-
-  std::cout << "Decimated probabilistic mesh histogram:\n";
-  print_hist(generate_statistics<SMS::GarlandHeckbert_probabilistic_policies<Surface_mesh, Kernel>>
-      (surface_mesh, {surface_mesh, 100}, edge_histo, edge_length));
+  print_hist(generate_edge_statistics(surface_mesh, edge_histo, f));
 
   std::cout << "Decimated classic mesh histogram:\n";
-  print_hist(generate_statistics<SMS::GarlandHeckbert_policies<Surface_mesh, Kernel>>
-      (surface_mesh, {surface_mesh, 100}, edge_histo, edge_length));
+  print_hist(generate_edge_statistics(classic, edge_histo, f));
+ 
+  std::cout << "Decimated probabilistic mesh histogram:\n";
+  print_hist(generate_edge_statistics(probabilistic, edge_histo, f));
 
   std::cout << "Decimated classic tri mesh histogram:\n";
-  print_hist(generate_statistics<SMS::GarlandHeckbert_triangle_policies<Surface_mesh, Kernel>>
-      (surface_mesh, {surface_mesh, 100}, edge_histo, edge_length));
+  print_hist(generate_edge_statistics(classic_tri, edge_histo, f));
 
+  std::cout << "Decimated probabilistic tri mesh histogram:\n";
+  print_hist(generate_edge_statistics(probabilistic_tri, edge_histo, f));
+  
+
+  hist face_histo = make_histogram(axis::regular<>(10, 1.0, 5.5));
+  
+  std::cout << "Original aspect ratio:\n";
+  print_hist(generate_face_statistics(surface_mesh, face_histo, g));
+
+  std::cout << "Classic aspect ratio:\n";
+  print_hist(generate_face_statistics(classic, face_histo, g));
+  
+  std::cout << "Probabilistic aspect ratio:\n";
+  print_hist(generate_face_statistics(probabilistic, face_histo, g));
+  
+  std::cout << "Classic tri aspect ratio:\n";
+  print_hist(generate_face_statistics(classic_tri, face_histo, g));
+  
+  std::cout << "Probabilistic tri aspect ratio:\n";
+  print_hist(generate_face_statistics(probabilistic_tri, face_histo, g));
+  
   return EXIT_SUCCESS;
 }
