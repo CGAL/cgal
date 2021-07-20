@@ -778,7 +778,11 @@ void test_timings(const std::string filepath, const FunctionWrapper& functor) {
 
   Timer timer;
   Surface_mesh mesh1, mesh2;
-  get_meshes(filepath, filepath, mesh1, mesh2);
+  get_mesh(filepath, mesh1);
+  PMP::isotropic_remeshing(faces(mesh1), 0.005, mesh1);
+  mesh1.collect_garbage();
+  mesh2=mesh1;
+
 
   timer.reset();
   timer.start();
@@ -1224,8 +1228,7 @@ int main(int argc, char** argv) {
 
   // --- Compare timings.
 
-  filepath = (argc > 1 ? argv[1] : "data/blobby-remeshed.off");
-  // filepath = "/Users/monet/Documents/fork/pull-requests/hausdorff/data/bunny-dense.off";
+  filepath = (argc > 1 ? argv[1] : "data/blobby.off");
   // test_timings(filepath, apprx_hd);
   // test_timings(filepath, naive_hd);
   test_timings(filepath, bound_hd);
