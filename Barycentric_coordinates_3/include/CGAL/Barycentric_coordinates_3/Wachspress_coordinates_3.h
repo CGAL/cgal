@@ -114,10 +114,15 @@ namespace Barycentric_coordinates {
           const auto edge_case = internal::locate_wrt_polyhedron(
             m_vertex_to_point_map, m_polygon_mesh, query, coordinates, m_traits);
 
-          if (edge_case == internal::Edge_case::BOUNDARY) {
+          if(edge_case == internal::Edge_case::BOUNDARY) {
             return coordinates;
           }
-          if (edge_case == internal::Edge_case::EXTERIOR) {
+          if(edge_case == internal::Edge_case::EXTERIOR_BOUNDARY){
+            std::cerr << std::endl <<
+            "WARNING: query does not belong to the polygon!" << std::endl;
+            return coordinates;
+          }
+          if(edge_case == internal::Edge_case::EXTERIOR) {
             std::cerr << std::endl <<
             "WARNING: query does not belong to the polygon!" << std::endl;
           }

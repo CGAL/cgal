@@ -26,12 +26,29 @@ void test_overloads() {
   std::vector<Point_3> tetrahedron_coords;
   std::vector<Point_3> sample_points;
 
-  std::tie(tetrahedron, tetrahedron_coords) = tests::get_regular_tetrahedron<Kernel, Mesh>(FT(1.0));
+  // Offsets
+  const FT tol = tests::get_tolerance<FT>()/FT(10);
 
+  // Sample interior and boundary
+  std::tie(tetrahedron, tetrahedron_coords) = tests::get_regular_tetrahedron<Kernel, Mesh>(FT(1.0));
+  tests::random_points_tetrahedron<Kernel>(tetrahedron_coords,
+   std::back_inserter(sample_points), 100);
+
+  // Face offsets
+  std::vector<Point_3> tetrahedron_tol_diff;
+  std::tie(std::ignore, tetrahedron_tol_diff) = tests::get_regular_tetrahedron<Kernel, Mesh>(FT(1.0) - tol);
+  tests::random_points_tetrahedron<Kernel>(tetrahedron_tol_diff,
+   std::back_inserter(sample_points), 100);
+
+  // Vertice offsets
+  for(auto& v : tetrahedron_coords){
+
+    sample_points.push_back(Point_3(v.x(), v.y(), v.z()));
+  }
+
+  // WP coordinates
   CGAL::Barycentric_coordinates::Wachspress_coordinates_3<Mesh, Kernel> wp_tetrahedron(
     tetrahedron, CP3::WITH_EDGE_CASES);
-  tests::random_points_tetrahedron<Kernel>(tetrahedron_coords,
-   std::back_inserter(sample_points), 10000);
 
   std::vector<FT> wp_coordinates_tetrahedron;
 

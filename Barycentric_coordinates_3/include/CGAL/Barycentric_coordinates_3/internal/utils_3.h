@@ -30,9 +30,10 @@ namespace internal{
 
 enum class Edge_case {
 
-  EXTERIOR = 0, // exterior part of the polygon
-  BOUNDARY = 1, // boundary part of the polygon
-  INTERIOR = 2  // interior part of the polygon
+  EXTERIOR = 0, // exterior part of the polyhedron
+  INTERIOR = 1,  // interior part of the polyhedron
+  BOUNDARY = 2, // boundary part of the polyhedron
+  EXTERIOR_BOUNDARY = 3, // extension of the boundary
 };
 
 //Default sqrt
@@ -219,6 +220,11 @@ public:
     const auto v1 = *vertex; vertex++;
     const auto v2 = *vertex;
 
+    // Check if the three vertices are not identical
+    CGAL_assertion(v0 != v1);
+    CGAL_assertion(v0 != v2);
+    CGAL_assertion(v1 != v2);
+
     const FT tol = get_tolerance<FT>();
 
     const Plane_3 plane_face(get(vertex_to_point_map, v0),
@@ -235,11 +241,11 @@ public:
     for(const auto& v : vd){
 
       if(v == v0)
-        *coordinates = CGAL::abs(coordinates_2d[0]) < tol? 0: coordinates_2d[0];
+        *coordinates = CGAL::abs(coordinates_2d[0]) < tol? FT(0): coordinates_2d[0];
       else if(v == v1)
-        *coordinates = CGAL::abs(coordinates_2d[1]) < tol? 0: coordinates_2d[1];
+        *coordinates = CGAL::abs(coordinates_2d[1]) < tol? FT(0): coordinates_2d[1];
       else if(v == v2)
-        *coordinates = CGAL::abs(coordinates_2d[2]) < tol? 0: coordinates_2d[2];
+        *coordinates = CGAL::abs(coordinates_2d[2]) < tol? FT(0): coordinates_2d[2];
       else
         *coordinates = FT(0);
 
@@ -268,6 +274,10 @@ public:
     const auto& construct_vector_3 = traits.construct_vector_3_object();
     const auto& sqrt(Get_sqrt<GeomTraits>::sqrt_object(traits));
 
+    // Flags that indicates position of the query point
+    bool exterior_flag = false;
+    bool boundary_flag = false;
+
     const FT tol = get_tolerance<FT>();
     auto face_range = faces(polygon_mesh);
 
@@ -294,15 +304,23 @@ public:
       // Verify location of query point;
       if(CGAL::abs(perp_dist_i) < tol){
 
-        boundary_coordinates_3(vertex, vertex_to_point_map, polygon_mesh, query, coordinates, traits);
-        return Edge_case::BOUNDARY;
+        if(!boundary_flag)
+          boundary_coordinates_3(vertex, vertex_to_point_map, polygon_mesh, query, coordinates, traits);
+        boundary_flag = true;
       }
       else if(perp_dist_i < 0)
-        return Edge_case::EXTERIOR;
+        exterior_flag = true;
     }
 
-    //Default case
-    return Edge_case::INTERIOR;
+    // Choose location
+    if(boundary_flag && exterior_flag)
+      return Edge_case::EXTERIOR_BOUNDARY;
+    else if(boundary_flag)
+      return Edge_case::BOUNDARY;
+    else if(exterior_flag)
+      return Edge_case::EXTERIOR;
+    else
+      return Edge_case::INTERIOR;
   }
 
 }
