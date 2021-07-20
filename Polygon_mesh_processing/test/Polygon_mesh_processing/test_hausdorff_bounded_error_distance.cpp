@@ -850,8 +850,8 @@ void test_bunny(
   const FunctionWrapper& functor, const int n = 5, const bool save = false) {
 
   std::cout.precision(20);
-  const std::string filepath1 = "data/bunny1.off"; // approx 16.3K
-  const std::string filepath2 = "data/bunny2.off"; // approx 69.4K
+  const std::string filepath1 = "data/bunny_16300.off"; // approx 16.3K
+  const std::string filepath2 = "data/bunny_69400.off"; // approx 69.4K
 
   std::cout << std::endl << "-- test bunny:" << std::endl << std::endl;
   std::cout << "* name -> " << functor.name() << std::endl;
@@ -1234,7 +1234,7 @@ int main(int argc, char** argv) {
 
   // test_bunny(apprx_hd);
   // test_bunny(naive_hd);
-  test_bunny(bound_hd, 3);
+  // test_bunny(bound_hd, 3);
 
   // --- Test realizing triangles.
   test_realizing_triangles(error_bound);
