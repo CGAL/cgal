@@ -1029,24 +1029,39 @@ void test_realizing_triangles(
 
   // Complex test.
   std::cout << std::endl << " ---- complex test ---- " << std::endl;
+  mesh1.clear();
+  mesh2.clear();
   const std::string filepath1 = "data/tetrahedron.off";
   const std::string filepath2 = "data/tetrahedron-remeshed.off";
-  get_meshes(filepath1, filepath2, mesh1, mesh2);
+
+  std::array<Surface_mesh::Vertex_index,3> vhs1 = {
+    mesh1.add_vertex(Point_3(0, 1, 3)),
+    mesh1.add_vertex(Point_3(1, 1, 3)),
+    mesh1.add_vertex(Point_3(1, 0, 3))
+  };
+  mesh1.add_face(vhs1);
+
+  std::array<Surface_mesh::Vertex_index,3> vhs2 = {
+    mesh2.add_vertex(Point_3(0, 1, 3.5)),
+    mesh2.add_vertex(Point_3(1, 1, 3.5)),
+    mesh2.add_vertex(Point_3(1, 0, 3.5))
+  };
+  mesh2.add_face(vhs2);
+
+  Surface_mesh tmp1,tmp2;
+  get_meshes(filepath1, filepath2, tmp1, tmp2);
 
   PMP::transform(Affine_transformation_3(
-    CGAL::Translation(), Vector_3(0, 0, error_bound / 2.0)), mesh2);
+    CGAL::Translation(), Vector_3(0, 0, 10 * error_bound)), tmp2);
+
+
+
+  mesh1.join(tmp1);
+  mesh2.join(tmp2);
 
   if (save) save_mesh(mesh1, "2mesh1");
   if (save) save_mesh(mesh2, "2mesh2");
 
-  compute_realizing_triangles(mesh1, mesh2, error_bound, "2", save);
-
-  mesh2.clear();
-  get_mesh(filepath2, mesh2);
-  PMP::transform(Affine_transformation_3(CGAL::Translation(),
-    Vector_3(FT(0), FT(0), FT(1))), mesh2);
-
-  if (save) save_mesh(mesh2, "2mesh2");
   compute_realizing_triangles(mesh1, mesh2, error_bound, "2", save);
 }
 
