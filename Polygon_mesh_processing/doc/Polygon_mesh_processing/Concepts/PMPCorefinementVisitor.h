@@ -110,10 +110,10 @@ typedef unspecified_type halfedge_descriptor;
   void intersection_edge_copy(halfedge_descriptor h_src1, const TriangleMesh& tm_src1,
                               halfedge_descriptor h_src2, const TriangleMesh& tm_src2,
                               halfedge_descriptor h_tgt,  TriangleMesh& tm_tgt);
-  //called before vertex `v_src` from `tm_src` is copied in `tm_tgt`
+  ///called before vertex `v_src` from `tm_src` is copied in `tm_tgt`
   void before_vertex_copy(vertex_descriptor v_src, const TriangleMesh& tm_src, TriangleMesh& tm_tgt);
-  //called after vertex `v_src` from `tm_src` is copied in `tm_tgt`. The new vertex is `v_tgt`. Put
-  // on the vertex point map has already been called.
+  ///called after vertex `v_src` from `tm_src` is copied in `tm_tgt`. The new vertex is `v_tgt`. Put
+  /// on the vertex point map has already been called.
   void after_vertex_copy(vertex_descriptor v_src, const TriangleMesh& tm_src,
                          vertex_descriptor v_tgt, TriangleMesh& tm_tgt);
 /// @}
