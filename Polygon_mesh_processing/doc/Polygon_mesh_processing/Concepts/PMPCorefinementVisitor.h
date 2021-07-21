@@ -40,14 +40,14 @@ typedef unspecified_type halfedge_descriptor;
   /// the split of that edge. If `edge_split(h_i, tm)` is called for `i=1` to `n`,
   /// `h_1`, `h_2`, ... ,`h_n`, `h` is the sequence of halfedges representing the
   /// edge split (with the same initial orientation). There is only one call per edge.
-  void before_edge_split(halfedge_descriptor h, TriangleMesh& tm);
+  void before_edge_split(halfedge_descriptor h, Triangle_mesh& tm);
   /// called when a new split is done. The target of `hnew` is a new split vertex. There is only one call per edge.
-  void edge_split(halfedge_descriptor hnew, TriangleMesh& tm);
+  void edge_split(halfedge_descriptor hnew, Triangle_mesh& tm);
   /// called when the split of the halfedge `h` passed at the later call to `before_edge_split()` is finished.
   void after_edge_split();
   ///  called when a new edge has been added to triangulate a face. The face triangulated is `f_split`
   ///  in the last call to `before_subface_creations(f_split, tm)`. There is only one call per edge.
-  void add_retriangulation_edge(halfedge_descriptor h, TriangleMesh& tm);
+  void add_retriangulation_edge(halfedge_descriptor h, Triangle_mesh& tm);
 /// @}
 
 /// @name Function used by corefine() when a new vertex is created
@@ -71,15 +71,15 @@ typedef unspecified_type halfedge_descriptor;
                                    int sdim,
                                    halfedge_descriptor h_f,
                                    halfedge_descriptor h_e,
-                                   const TriangleMesh& tm_f,
-                                   const TriangleMesh& tm_e,
+                                   const Triangle_mesh& tm_f,
+                                   const Triangle_mesh& tm_e,
                                    bool is_target_coplanar,
                                    bool is_source_coplanar);
 
   /// called when a new vertex is added in `tm` (either an edge split or a vertex inserted in the interior of a face).
   /// `i_id` is the intersection point id reported in `new_node_added`.
   /// For each mesh, a vertex with a given id will be reported exactly once, except if it is already an existing vertex.
-  void new_vertex_added(std::size_t i_id, vertex_descriptor v, TriangleMesh& tm);
+  void new_vertex_added(std::size_t i_id, vertex_descriptor v, Triangle_mesh& tm);
 /// @}
 
 /// @name Functions used by Boolean operations functions using corefinement.
@@ -92,29 +92,29 @@ typedef unspecified_type halfedge_descriptor;
   void after_face_copy(face_descriptor  f_src, const Triangle_mesh& tm_src,
                        face_descriptor  f_tgt, Triangle_mesh& tm_tgt);
   /// called before importing the edge of `h_src` of `tm_src` in `tm_tgt`. There is one call per edge.
-  void before_edge_copy(halfedge_descriptor h_src/, const TriangleMesh& tm_src, TriangleMesh& tm_tgt){}
+  void before_edge_copy(halfedge_descriptor h_src/, const Triangle_mesh& tm_src, Triangle_mesh& tm_tgt){}
   /// called after importing the edge of `h_src` of `tm_src` in `tm_tgt`. The corresponding new halfedge is `h_tgt`.
   /// There is only one call per edge.
-  void after_edge_copy(halfedge_descriptor h_src, const TriangleMesh& tm_src,
-                       halfedge_descriptor h_tgt, TriangleMesh& tm_tgt);
+  void after_edge_copy(halfedge_descriptor h_src, const Triangle_mesh& tm_src,
+                       halfedge_descriptor h_tgt, Triangle_mesh& tm_tgt);
   /// called before a patch boundary edge is duplicated to disconnect patches of `tm`
   /// (When an in-place operation and an out-of-place are both requested).
-  void before_edge_duplicated(halfedge_descriptor h, TriangleMesh& tm);
+  void before_edge_duplicated(halfedge_descriptor h, Triangle_mesh& tm);
   /// called when the edge of `h_src` has been duplicated into `h_new` in `tm`
   /// (When an in-place operation and an out-of-place are both requested).
   void after_edge_duplicated(halfedge_descriptor h_src,
-                             halfedge_descriptor h_new, TriangleMesh& tm);
+                             halfedge_descriptor h_new, Triangle_mesh& tm);
   /// called when an intersection edge (represented in input meshes `tm_src1` and `tm_src2` by `h_src1` and `h_src2`,
   /// respectively) is imported in `tm_tgt` as `h_tgt`. There is only one call per edge.
   /// (Called only when an out-of-place operation is requested)
-  void intersection_edge_copy(halfedge_descriptor h_src1, const TriangleMesh& tm_src1,
-                              halfedge_descriptor h_src2, const TriangleMesh& tm_src2,
-                              halfedge_descriptor h_tgt,  TriangleMesh& tm_tgt);
+  void intersection_edge_copy(halfedge_descriptor h_src1, const Triangle_mesh& tm_src1,
+                              halfedge_descriptor h_src2, const Triangle_mesh& tm_src2,
+                              halfedge_descriptor h_tgt,  Triangle_mesh& tm_tgt);
   ///called before vertex `v_src` from `tm_src` is copied in `tm_tgt`
-  void before_vertex_copy(vertex_descriptor v_src, const TriangleMesh& tm_src, TriangleMesh& tm_tgt);
+  void before_vertex_copy(vertex_descriptor v_src, const Triangle_mesh& tm_src, Triangle_mesh& tm_tgt);
   ///called after vertex `v_src` from `tm_src` is copied in `tm_tgt`. The new vertex is `v_tgt`. Put
   /// on the vertex point map has already been called.
-  void after_vertex_copy(vertex_descriptor v_src, const TriangleMesh& tm_src,
-                         vertex_descriptor v_tgt, TriangleMesh& tm_tgt);
+  void after_vertex_copy(vertex_descriptor v_src, const Triangle_mesh& tm_src,
+                         vertex_descriptor v_tgt, Triangle_mesh& tm_tgt);
 /// @}
 };
