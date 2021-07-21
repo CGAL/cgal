@@ -42,10 +42,10 @@ namespace internal {
 
 struct Polygon_soup_orientation_visitor{
   inline virtual void non_manifold_edge(const std::size_t&, const std::size_t&){}
-  inline virtual void duplicate_vertex(const std::size_t&, const std::size_t&){}
+  inline virtual void duplicated_vertex(const std::size_t&, const std::size_t&){}
   inline virtual void non_manifold_vertex(const std::size_t&){}
-  inline virtual void update_polygon_id(const std::size_t&, const std::size_t&, const std::size_t&){}
-  inline virtual void reverse_polygon(const std::size_t&) {}
+  inline virtual void point_id_in_polygon_updated(const std::size_t&, const std::size_t&, const std::size_t&){}
+  inline virtual void polygon_orientation_reversed(const std::size_t&) {}
 };
 
 template<class PointRange, class PolygonRange, class Visitor = Polygon_soup_orientation_visitor>
@@ -134,7 +134,7 @@ struct Polygon_soup_orienter
   }
 
   void inverse_orientation(const std::size_t index) {
-    visitor.reverse_polygon(index);
+    visitor.polygon_orientation_reversed(index);
     std::reverse(polygons[index].begin(), polygons[index].end());
   }
 
@@ -143,7 +143,7 @@ struct Polygon_soup_orienter
     V_ID old_index,
     V_ID new_index)
   {
-    visitor.update_polygon_id(polygon_id, old_index, new_index);
+    visitor.point_id_in_polygon_updated(polygon_id, old_index, new_index);
     for(V_ID& i : polygons[polygon_id])
       if( i==old_index )
         i=new_index;
@@ -331,7 +331,7 @@ struct Polygon_soup_orienter
     } // end while loop on all non-oriented polygons remaining
   }
 
-  /// A vertex is said to be .3 if its link is neither a cycle nor a chain,
+  /// A vertex is said to be singular if its link is neither a cycle nor a chain,
   /// but several cycles and chains.
   /// For each such vertex v, we consider each set of polygons incident to v
   /// and sharing a non-marked edge incident to v. A copy of v is assigned to
@@ -402,7 +402,7 @@ struct Polygon_soup_orienter
     for(const V_ID_and_Polygon_ids& vid_and_pids : vertices_to_duplicate)
     {
       V_ID new_index = static_cast<V_ID>(points.size());
-      visitor.duplicate_vertex(vid_and_pids.first, new_index);
+      visitor.duplicated_vertex(vid_and_pids.first, new_index);
       points.push_back( points[vid_and_pids.first] );
       for(P_ID polygon_id : vid_and_pids.second)
         replace_vertex_index_in_polygon(polygon_id, vid_and_pids.first, new_index);

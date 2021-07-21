@@ -429,10 +429,7 @@ Scene_polygon_soup_item::orient(std::vector<std::pair<std::size_t, std::size_t> 
     Visitor(std::vector<std::pair<std::size_t, std::size_t> >& nm_vertices)
       :nm_vertices(nm_vertices){}
 
-    Visitor(const Visitor& other)
-      :nm_vertices(other.nm_vertices){}
-
-    void duplicate_vertex(const std::size_t& v1, const std::size_t& v2) final
+    void duplicated_vertex(const std::size_t& v1, const std::size_t& v2) final
     {
       nm_vertices.push_back(std::make_pair(v1, v2));
     }
