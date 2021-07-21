@@ -50,6 +50,39 @@ typedef unspecified_type halfedge_descriptor;
   void add_retriangulation_edge(halfedge_descriptor h, TriangleMesh& tm);
 /// @}
 
+/// @name Function used by corefine() when a new vertex is created
+/// @{
+
+  /// called when a new intersection point is detected. The intersection is detected using
+  /// a face of `tm_f` and an edge of `tm_e`.
+  /// \param i_id the id of the intersection point, starting at 0. Ids are consecutive.
+  /// \param sdim indicates the dimension of the simplex part of the face that is intersected by the edge
+  ///             (0 for a vertex, 1 for an edge, 2 for the interior of the face)
+  /// \param h_f a halfedge from `tm_f` indicating the simplex intersected:
+  ///            if `sdim==0` the target of `h_f` is the intersection point,
+  ///            if `sdim==1` the edge of `h_f` contains the intersection point in its interior,
+  ///            if `sdim==2` the face of `h_f` contains the intersection point in its interior.
+  /// \param h_e a halfedge from `tm_e`
+  /// \param is_target_coplanar `true` iif the target of `h_e` is the intersection point
+  /// \param is_source_coplanar `true` iif the source of `h_e` is the intersection point
+  /// \param tm_f mesh containing `h_f`
+  /// \param tm_e mesh containing `h_e`
+  void intersection_point_detected(std::size_t i_id,
+                                   int sdim,
+                                   halfedge_descriptor h_f,
+                                   halfedge_descriptor h_e,
+                                   const TriangleMesh& tm_f,
+                                   const TriangleMesh& tm_e,
+                                   bool is_target_coplanar,
+                                   bool is_source_coplanar)
+  {}
+
+  /// called when a new vertex is added in `tm` (either an edge split or a vertex inserted in the interior of a face).
+  /// `i_id` is the intersection point id reported in `new_node_added`.
+  /// For each mesh, a vertex with a given id will be reported exactly once, except if it is already an existing vertex.
+  void new_vertex_added(std::size_t i_id, vertex_descriptor v, TriangleMesh& tm);
+/// @}
+
 /// @name Functions used by Boolean operations functions using corefinement.
 /// These functions are not needed if you only call `corefine()`.
 /// @{

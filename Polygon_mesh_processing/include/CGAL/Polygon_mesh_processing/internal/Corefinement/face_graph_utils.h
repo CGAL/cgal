@@ -417,6 +417,7 @@ struct Default_visitor{
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::face_descriptor face_descriptor;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
+  typedef typename GT::vertex_descriptor vertex_descriptor;
 // face visitor functions
   void before_subface_creations(face_descriptor /*f_old*/,TriangleMesh&){}
   void after_subface_creations(TriangleMesh&){}
@@ -443,19 +444,23 @@ struct Default_visitor{
   void intersection_edge_copy(halfedge_descriptor /* h_old1 */, const TriangleMesh& /* tm1 */,
                               halfedge_descriptor /* h_old2 */, const TriangleMesh& /* tm2 */,
                               halfedge_descriptor /* h_new */,  TriangleMesh& /* tm_new */){}
+// vertex visitor functions
+  void new_vertex_added(std::size_t /* node_id */,
+                        vertex_descriptor /* vh */,
+                        const TriangleMesh& /* tm */){}
 
+  void intersection_point_detected(std::size_t /* node_id */,
+                                   int /* sdim */,
+                                   halfedge_descriptor /* principal_edge */,
+                                   halfedge_descriptor /* additional_edge */,
+                                   const TriangleMesh& /* tm1 */,
+                                   const TriangleMesh& /* tm2 */,
+                                   bool /* is_target_coplanar */,
+                                   bool /* is_source_coplanar */) {}
 
 // calls commented in the code and probably incomplete due to the migration
 // see NODE_VISITOR_TAG
 /*
-  void new_node_added(  std::size_t node_id,
-                        Intersection_type type,
-                        halfedge_descriptor principal_edge,
-                        halfedge_descriptor additional_edge,
-                        bool is_target_coplanar,
-                        bool is_source_coplanar)
-  {}
-
   // autorefinement only
   void new_node_added_triple_face(std::size_t node_id,
                                   face_descriptor f1,
@@ -463,10 +468,6 @@ struct Default_visitor{
                                   face_descriptor f3,
                                   const TriangleMesh& tm)
   {}
-
-  void new_vertex_added(std::size_tnode_id,
-                        vertex_descriptor vh,
-                        TriangleMesh& tm){}
 */
 };
 
@@ -504,10 +505,10 @@ triangulate_a_face(
   for(Node_id node_id : node_ids)
   {
     vertex_descriptor v=add_vertex(tm);
-//    user_visitor.new_vertex_added(node_id, v, tm); // NODE_VISITOR_TAG
     nodes.call_put(vpm, v, node_id, tm);
     // register the new vertex in the output builder
     output_builder.set_vertex_id(v, node_id, tm);
+    user_visitor.new_vertex_added(node_id, v, tm);
 
     CGAL_assertion(node_id_to_vertex.size()>node_id);
     node_id_to_vertex[node_id]=v;
