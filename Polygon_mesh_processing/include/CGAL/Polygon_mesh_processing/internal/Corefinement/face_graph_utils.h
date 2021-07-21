@@ -457,7 +457,9 @@ struct Default_visitor{
                                    const TriangleMesh& /* tm2 */,
                                    bool /* is_target_coplanar */,
                                    bool /* is_source_coplanar */) {}
-
+  void before_vertex_copy(vertex_descriptor /*v_src*/, const TriangleMesh& /*tm_src*/, TriangleMesh& /*tm_tgt*/){}
+  void after_vertex_copy(vertex_descriptor /*v_src*/, const TriangleMesh& /*tm_src*/,
+                         vertex_descriptor /* v_tgt */, TriangleMesh& /*tm_tgt*/){}
 // calls commented in the code and probably incomplete due to the migration
 // see NODE_VISITOR_TAG
 /*
@@ -862,9 +864,11 @@ void import_polyline(
 
   if( insert_res.second )
   {
+    user_visitor.before_vertex_copy(source(h1,pm1), pm1, output);
     src = add_vertex(output);
     set_halfedge(src, opposite(h_out,output),output);
     put(vpm_out, src, get(vpm1, source(h1,pm1)));
+    user_visitor.after_vertex_copy(source(h1,pm1), pm1, src, output);
     insert_res.first->second = src;
   }
   else
@@ -878,18 +882,22 @@ void import_polyline(
       pm1_to_output_vertices.insert( std::make_pair( target(h1,pm1), tgt ) );
     if( insert_res.second )
     {
+      user_visitor.before_vertex_copy(target(h1,pm1), pm1, output);
       tgt = add_vertex(output);
       set_halfedge(tgt, h_out, output);
       put(vpm_out, tgt, get(vpm1, target(h1,pm1)));
+      user_visitor.after_vertex_copy(target(h1,pm1), pm1, tgt, output);
       insert_res.first->second = tgt;
     }
     else
       tgt = insert_res.first->second;
   }
   else{
+    user_visitor.before_vertex_copy(target(h1,pm1), pm1, output);
     tgt = add_vertex(output);
     set_halfedge(tgt, h_out, output);
     put(vpm_out, tgt, get(vpm1, target(h1,pm1)));
+    user_visitor.after_vertex_copy(target(h1,pm1), pm1, tgt, output);
   }
 
   //update source and target vertex of the edge created
@@ -923,19 +931,23 @@ void import_polyline(
     //if this is the final segment, only create a target vertex if it does not exist
     if (i+1!=nb_segments)
     {
+      user_visitor.before_vertex_copy(target(h1,pm1), pm1, output);
       tgt=add_vertex(output);
       set_halfedge(tgt, h_out, output);
       put(vpm_out, tgt, get(vpm1, target(h1,pm1)));
+      user_visitor.after_vertex_copy(target(h1,pm1), pm1, tgt, output);
     }
     else{
       std::pair< typename VertexMap::iterator, bool > insert_res =
         pm1_to_output_vertices.insert(std::make_pair(target(h1,pm1), tgt));
       if (insert_res.second)
       {
+        user_visitor.before_vertex_copy(target(h1,pm1), pm1, output);
         tgt=add_vertex(output);
         set_halfedge(tgt, h_out, output);
         put(vpm_out, tgt, get(vpm1, target(h1,pm1)));
         insert_res.first->second = tgt;
+        user_visitor.after_vertex_copy(target(h1,pm1), pm1, tgt, output);
       }
       else
         tgt = insert_res.first->second;
@@ -1113,20 +1125,24 @@ void append_patches_to_triangle_mesh(
       if (  halfedge(target(h,tm),tm)==h &&
             patch.interior_vertices.count(target(h, tm)) )
       {
+        user_visitor.before_vertex_copy(target(h,tm), tm, output);
         vertex_descriptor v = add_vertex(output);
         set_halfedge(v, new_h, output);
         set_target(new_h, v, output);
         put(vpm_out, v, get(vpm_tm, target(h, tm) ) );
+        user_visitor.after_vertex_copy(target(h,tm), tm, v, output);
         interior_vertex_halfedges.push_back( new_h );
       }
       if (  halfedge(source(h,tm),tm)==opposite(h,tm) &&
             patch.interior_vertices.count(source(h,tm)) )
       {
+        user_visitor.before_vertex_copy(source(h,tm), tm, output);
         vertex_descriptor v = add_vertex(output);
         halfedge_descriptor new_h_opp = opposite(new_h, output);
         set_halfedge(v, new_h_opp, output);
         set_target(new_h_opp, v, output);
         put(vpm_out, v, get(vpm_tm, source(h, tm) ) );
+        user_visitor.after_vertex_copy(source(h,tm), tm, v, output);
         interior_vertex_halfedges.push_back( new_h_opp );
       }
     }

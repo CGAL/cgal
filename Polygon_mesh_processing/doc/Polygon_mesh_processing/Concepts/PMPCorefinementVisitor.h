@@ -74,8 +74,7 @@ typedef unspecified_type halfedge_descriptor;
                                    const TriangleMesh& tm_f,
                                    const TriangleMesh& tm_e,
                                    bool is_target_coplanar,
-                                   bool is_source_coplanar)
-  {}
+                                   bool is_source_coplanar);
 
   /// called when a new vertex is added in `tm` (either an edge split or a vertex inserted in the interior of a face).
   /// `i_id` is the intersection point id reported in `new_node_added`.
@@ -111,5 +110,11 @@ typedef unspecified_type halfedge_descriptor;
   void intersection_edge_copy(halfedge_descriptor h_src1, const TriangleMesh& tm_src1,
                               halfedge_descriptor h_src2, const TriangleMesh& tm_src2,
                               halfedge_descriptor h_tgt,  TriangleMesh& tm_tgt);
+  //called before vertex `v_src` from `tm_src` is copied in `tm_tgt`
+  void before_vertex_copy(vertex_descriptor v_src, const TriangleMesh& tm_src, TriangleMesh& tm_tgt);
+  //called after vertex `v_src` from `tm_src` is copied in `tm_tgt`. The new vertex is `v_tgt`. Put
+  // on the vertex point map has already been called.
+  void after_vertex_copy(vertex_descriptor v_src, const TriangleMesh& tm_src,
+                         vertex_descriptor v_tgt, TriangleMesh& tm_tgt);
 /// @}
 };
