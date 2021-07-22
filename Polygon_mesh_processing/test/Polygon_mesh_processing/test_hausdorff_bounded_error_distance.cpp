@@ -40,9 +40,9 @@ using Face_handle = typename boost::graph_traits<Surface_mesh>::face_descriptor;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 struct Approximate_hd_wrapper {
-  const std::size_t m_num_samples;
+  const double m_num_samples;
   std::string name() const { return "approximate"; }
-  Approximate_hd_wrapper(const std::size_t num_samples) : m_num_samples(num_samples) { }
+  Approximate_hd_wrapper(const double num_samples) : m_num_samples(num_samples) { }
   double operator()(const Surface_mesh& tm1, const Surface_mesh& tm2) const {
     return PMP::approximate_Hausdorff_distance<TAG>(tm1, tm2,
       PMP::parameters::number_of_points_per_area_unit(m_num_samples),
@@ -1191,7 +1191,7 @@ int main(int argc, char** argv) {
   // std::cin >> name;
 
   const double error_bound = 1e-4;
-  const std::size_t num_samples = 1000;
+  const double num_samples = 10.;
   std::cout << std::endl << "* error bound: " << error_bound << std::endl;
   // std::cout << std::endl << "* number of samples: " << num_samples << std::endl;
   std::string filepath = (argc > 1 ? argv[1] : "data/blobby.off");
