@@ -20,7 +20,6 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/AABB_primitive.h>
-#include <CGAL/result_of.h>
 #include <iterator>
 
 namespace CGAL {
@@ -31,14 +30,18 @@ namespace internal {
     //classical typedefs
     typedef Iterator key_type;
     typedef typename GeomTraits::Point_3 value_type;
-    typedef typename cpp11::result_of<
-      typename GeomTraits::Construct_vertex_3(typename GeomTraits::Triangle_3,int)
-    >::type reference;
+    // typedef decltype(
+    //   std::declval<typename GeomTraits::Construct_vertex_3>()(
+    //     std::declval<typename GeomTraits::Triangle_3>(),
+    //     std::declval<int>())) reference;
+    typedef decltype(
+      typename GeomTraits::Construct_vertex_3()(
+        *std::declval<key_type&>(), 0)) reference;
     typedef boost::readable_property_map_tag category;
+    typedef Point_from_triangle_3_iterator_property_map<GeomTraits, Iterator> Self;
 
-    inline friend
-    typename Point_from_triangle_3_iterator_property_map<GeomTraits,Iterator>::reference
-    get(Point_from_triangle_3_iterator_property_map<GeomTraits,Iterator>, Iterator it)
+    inline friend reference
+    get(Self, key_type it)
     {
       return typename GeomTraits::Construct_vertex_3()( *it, 0 );
     }
@@ -57,7 +60,6 @@ namespace internal {
  * \tparam GeomTraits is a traits class providing the nested type `Point_3` and `Triangle_3`.
  *         It also provides the functor `Construct_vertex_3` that has an operator taking a `Triangle_3`
  *         and an integer as parameters and returning a triangle point as a type convertible to `Point_3`.
- *         In addition `Construct_vertex_3` must support the result_of protocol.
  * \tparam Iterator is a model of `ForwardIterator` with its value type convertible to `GeomTraits::Triangle_3`
  * \tparam CacheDatum is either `CGAL::Tag_true` or `CGAL::Tag_false`. In the former case,
  *           the datum is stored in the primitive, while in the latter it is

@@ -543,6 +543,8 @@ namespace Polygon_mesh_processing {
                             OutputIterator out,
                             const NamedParameters& np)
   {
+    if (points.empty()) return out;
+
     using parameters::choose_parameter;
     using parameters::get_parameter;
 

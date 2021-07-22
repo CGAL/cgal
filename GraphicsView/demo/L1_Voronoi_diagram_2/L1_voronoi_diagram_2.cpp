@@ -296,7 +296,7 @@ MainWindow::open(QString fileName)
   if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
   {
 #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
-    CGAL::read_multi_point_WKT(ifs, m_sites);
+    CGAL::IO::read_multi_point_WKT(ifs, m_sites);
 #endif
   }
   else
@@ -330,7 +330,7 @@ MainWindow::on_actionSavePoints_triggered()
     std::ofstream ofs(qPrintable(fileName));
     if(fileName.endsWith(".wkt", Qt::CaseInsensitive)){
 #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
-      CGAL::write_multi_point_WKT(ofs, m_sites);
+      CGAL::IO::write_multi_point_WKT(ofs, m_sites);
 #endif
     }else
       for(Points::iterator it = m_sites.begin();
@@ -358,10 +358,10 @@ MainWindow::on_actionShowVoronoi_toggled(bool checked)
 
 void
 MainWindow::calculate_envelope() {
-  if (m_envelope_diagram != NULL) {
-    m_graphics_item->setArrangement(NULL);
+  if (m_envelope_diagram != nullptr) {
+    m_graphics_item->setArrangement(nullptr);
     delete m_envelope_diagram;
-    m_envelope_diagram = NULL;
+    m_envelope_diagram = nullptr;
   }
 
   m_envelope_diagram = new Envelope_diagram_2();
@@ -374,7 +374,7 @@ QRectF
 MainWindow::bounding_rect() {
   CGAL::Bbox_2 bbox(0, 0, 0, 0);
 
-  if (m_envelope_diagram != NULL) {
+  if (m_envelope_diagram != nullptr) {
     for (Envelope_diagram_2::Vertex_iterator it =
            m_envelope_diagram->vertices_begin();
          it != m_envelope_diagram->vertices_end(); ++it) {

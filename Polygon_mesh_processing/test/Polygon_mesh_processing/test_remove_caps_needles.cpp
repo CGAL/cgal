@@ -38,7 +38,7 @@ int main(int argc, char** argv)
                                                     0.14);
 
 
-  CGAL::write_polygon_mesh("cleaned_mesh.off", mesh, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_mesh("cleaned_mesh.off", mesh, CGAL::parameters::stream_precision(17));
 
   std::cout << "Output mesh has " << edges(mesh).size() << " edges\n";
   if (PMP::does_self_intersect(mesh))

@@ -240,7 +240,7 @@ int main(int argc, char* argv[])
 
   // Output
   std::ofstream medit_file("out.mesh");
-  CGAL::output_to_medit(medit_file, c3t3, !vm.count("no_label_rebind"), vm.count("show_patches"));
+  CGAL::IO::output_to_medit(medit_file, c3t3, !vm.count("no_label_rebind"), vm.count("show_patches"));
 
   return 0;
 }

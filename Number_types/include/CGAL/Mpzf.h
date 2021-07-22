@@ -10,6 +10,10 @@
 //
 // Author(s)        :  Marc Glisse
 
+#ifndef CGAL_NO_MPZF_DIVISION_OPERATOR
+#define CGAL_MPZF_DIVISION_OPERATOR 1
+#endif
+
 #ifndef CGAL_MPZF_H
 #define CGAL_MPZF_H
 #include <cstdlib>
@@ -774,7 +778,11 @@ struct Mpzf {
     return res;
   }
 
+#ifndef CGAL_MPZF_DIVISION_OPERATOR
+  friend Mpzf division(Mpzf const&a, Mpzf const&b){
+#else // CGAL_MPZF_DIVISION_OPERATOR
   friend Mpzf operator/(Mpzf const&a, Mpzf const&b){
+#endif // CGAL_MPZF_DIVISION_OPERATOR
     // FIXME: Untested
     int asize=std::abs(a.size);
     int bsize=std::abs(b.size);
@@ -909,7 +917,9 @@ struct Mpzf {
   Mpzf& operator+=(Mpzf const&x){ *this=*this+x; return *this; }
   Mpzf& operator-=(Mpzf const&x){ *this=*this-x; return *this; }
   Mpzf& operator*=(Mpzf const&x){ *this=*this*x; return *this; }
+#ifdef CGAL_MPZF_DIVISION_OPERATOR
   Mpzf& operator/=(Mpzf const&x){ *this=*this/x; return *this; }
+#endif // not CGAL_MPZF_DIVISION_OPERATOR
 
   bool is_canonical () const {
     if (size == 0) return true;
@@ -1096,7 +1106,11 @@ std::istream& operator>> (std::istream& is, Mpzf& a)
           Type operator()(
               const Type& x,
               const Type& y ) const {
+#ifdef CGAL_MPZF_DIVISION_OPERATOR
             return x / y;
+#else // not CGAL_MPZF_DIVISION_OPERATOR
+            return division(x, y);
+#endif // not CGAL_MPZF_DIVISION_OPERATOR
           }
         };
 

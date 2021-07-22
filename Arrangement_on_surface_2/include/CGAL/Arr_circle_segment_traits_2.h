@@ -23,12 +23,12 @@
  * The header file for the Arr_circle_segment_traits_2<Kenrel> class.
  */
 
-#include <CGAL/atomic.h>
 #include <CGAL/tags.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_geometry_traits/Circle_segment_2.h>
 
 #include <fstream>
+#include <atomic>
 
 namespace CGAL {
 
@@ -80,7 +80,7 @@ public:
 #ifdef CGAL_NO_ATOMIC
     static unsigned int index;
 #else
-    static CGAL::cpp11::atomic<unsigned int> index;
+    static std::atomic<unsigned int> index;
 #endif
     return (++index);
   }

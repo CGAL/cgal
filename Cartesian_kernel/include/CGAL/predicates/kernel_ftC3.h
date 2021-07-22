@@ -61,8 +61,10 @@ compare_lexicographically_xyzC3(const FT &px, const FT &py, const FT &pz,
 {
   typedef typename Compare<FT>::result_type Cmp;
   Cmp c = CGAL_NTS compare(px, qx);
+  if (is_indeterminate(c)) return indeterminate<Cmp>();
   if (c != EQUAL) return c;
   c = CGAL_NTS compare(py, qy);
+  if (is_indeterminate(c)) return indeterminate<Cmp>();
   if (c != EQUAL) return c;
   return CGAL_NTS compare(pz, qz);
 }
@@ -288,12 +290,12 @@ typename Equal_to<FT>::result_type
 equal_directionC3(const FT &dx1, const FT &dy1, const FT &dz1,
                   const FT &dx2, const FT &dy2, const FT &dz2)
 {
-  return sign_of_determinant(dx1, dy1, dx2, dy2) == ZERO
-      && sign_of_determinant(dx1, dz1, dx2, dz2) == ZERO
-      && sign_of_determinant(dy1, dz1, dy2, dz2) == ZERO
-      && CGAL_NTS sign(dx1) == CGAL_NTS sign(dx2)
-      && CGAL_NTS sign(dy1) == CGAL_NTS sign(dy2)
-      && CGAL_NTS sign(dz1) == CGAL_NTS sign(dz2);
+  return CGAL_AND_6(sign_of_determinant(dx1, dy1, dx2, dy2) == ZERO,
+                    sign_of_determinant(dx1, dz1, dx2, dz2) == ZERO,
+                    sign_of_determinant(dy1, dz1, dy2, dz2) == ZERO,
+                    CGAL_NTS sign(dx1) == CGAL_NTS sign(dx2),
+                    CGAL_NTS sign(dy1) == CGAL_NTS sign(dy2),
+                    CGAL_NTS sign(dz1) == CGAL_NTS sign(dz2) );
 }
 
 template < class FT >
@@ -313,10 +315,10 @@ equal_planeC3(const FT &ha, const FT &hb, const FT &hc, const FT &hd,
                          sign_of_determinant(pa, pd, ha, hd) == ZERO );
     Sg s1b = CGAL_NTS sign(hb);
     if (s1b != ZERO)
-        return s1b == CGAL_NTS sign(pb)
-            && sign_of_determinant(pb, pd, hb, hd) == ZERO;
-    return CGAL_NTS sign(pc) == CGAL_NTS sign(hc)
-        && sign_of_determinant(pc, pd, hc, hd) == ZERO;
+        return CGAL_AND(s1b == CGAL_NTS sign(pb),
+                        sign_of_determinant(pb, pd, hb, hd) == ZERO );
+    return CGAL_AND( CGAL_NTS sign(pc) == CGAL_NTS sign(hc),
+                     sign_of_determinant(pc, pd, hc, hd) == ZERO );
 }
 
 template <class FT >

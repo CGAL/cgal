@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(CGALimageIO_Demo)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
@@ -30,8 +30,8 @@ if(VTK_FOUND)
   if(TARGET vtkRenderingQt AND TARGET vtkFiltersModeling)
     find_package(VTK COMPONENTS vtkRenderingQt vtkFiltersModeling NO_MODULE)
     include(${VTK_USE_FILE})
-    find_package(Qt${VTK_QT_VERSION} COMPONENTS QtGui)
-    if(NOT TARGET Qt${VTK_QT_VERSION}::QtGui)
+    find_package(Qt${VTK_QT_VERSION} COMPONENTS Gui)
+    if(NOT TARGET Qt${VTK_QT_VERSION}::Gui)
       message(
         STATUS
           "NOTICE: vtkRenderingQt needs Qt${VTK_QT_VERSION}, and will not be compiled."
@@ -44,7 +44,7 @@ if(VTK_FOUND)
 
     target_link_libraries(
       image_to_vtk_viewer ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES}
-      ${VTK_LIBRARIES} Qt${VTK_QT_VERSION}::QtGui)
+      ${VTK_LIBRARIES} Qt${VTK_QT_VERSION}::Gui)
   else()
     message(
       STATUS

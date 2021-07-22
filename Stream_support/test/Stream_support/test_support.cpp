@@ -38,24 +38,24 @@ int main()
     typedef CGAL::Istream_iterator<Point,std::istringstream>  IteratorI;
     {
         std::ostringstream  out;
-        CGAL::set_ascii_mode( out);
-        assert( CGAL::is_ascii( out));
+        CGAL::IO::set_ascii_mode( out);
+        assert( CGAL::IO::is_ascii( out));
         out << Point( 1, 2) << '\0';
         std::istringstream in( out.str() );
-        CGAL::set_ascii_mode(in);
-        assert( CGAL::is_ascii(in));
+        CGAL::IO::set_ascii_mode(in);
+        assert( CGAL::IO::is_ascii(in));
         Point p;
         in >> p;
         assert( p == Point( 1, 2));
     }
     {
         std::ostringstream  out;
-        CGAL::set_ascii_mode( out);
+        CGAL::IO::set_ascii_mode( out);
         IteratorO   o(out);
         *o = Point( 1, 2);
         out << '\0';
         std::istringstream  in( out.str() );
-        CGAL::set_ascii_mode( in);
+        CGAL::IO::set_ascii_mode( in);
         IteratorI   i(in);
         Point p = *i;
         assert( p == Point( 1, 2));

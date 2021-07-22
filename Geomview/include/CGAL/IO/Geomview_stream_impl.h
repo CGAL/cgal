@@ -197,7 +197,7 @@ Geomview_stream::pickplane(const Bbox_3 &bbox)
 
     // close the text bracket
             << "}) (pickable pickplane no)";
-    set_ascii_mode(bin_bak);
+    IO::set_ascii_mode(bin_bak);
 }
 
 CGAL_INLINE_FUNCTION

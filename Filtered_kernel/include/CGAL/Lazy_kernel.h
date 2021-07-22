@@ -336,11 +336,33 @@ public:
                          FT
                          > LR;
 
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_2,
+                         typename Exact_kernel::Weighted_point_2,
+                         typename Approximate_kernel::Construct_weighted_point_2,
+                         typename Exact_kernel::Construct_weighted_point_2,
+                         E2A_,
+                         Return_base_tag,
+                         Point_2,
+                         int
+                         > LRint;
 
-      LR * lr = dynamic_cast<LR*>(p.ptr());
-      if(lr && (! lr->et)){
-        return std::get<2>(lr->l);
+      auto& obj = *p.ptr();
+      const char* tn = typeid(obj).name();
+
+      if(tn == typeid(LR).name()){
+        LR * lr = static_cast<LR*>(p.ptr());
+        if(lr->is_lazy()){
+          return std::get<2>(lr->l);
+        }
+      }else{
+        if(tn == typeid(LRint).name()){
+          LRint* lrint = static_cast<LRint*>(p.ptr());
+          if(lrint->is_lazy()){
+            return std::get<2>(lrint->l);
+          }
+        }
       }
+
       return BaseClass().compute_weight_2_object()(p);
     }
 
@@ -366,11 +388,33 @@ public:
                          FT
                          > LR;
 
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_3,
+                         typename Exact_kernel::Weighted_point_3,
+                         typename Approximate_kernel::Construct_weighted_point_3,
+                         typename Exact_kernel::Construct_weighted_point_3,
+                         E2A_,
+                         Return_base_tag,
+                         Point_3,
+                         int
+                         > LRint;
 
-      LR * lr = dynamic_cast<LR*>(p.ptr());
-      if(lr && (! lr->et)){
-        return std::get<2>(lr->l);
+      auto& obj = *p.ptr();
+      const char* tn = typeid(obj).name();
+
+      if(tn == typeid(LR).name()){
+        LR * lr = static_cast<LR*>(p.ptr());
+        if(lr->is_lazy()){
+          return std::get<2>(lr->l);
+        }
+      }else{
+        if(tn == typeid(LRint).name()){
+          LRint* lrint = static_cast<LRint*>(p.ptr());
+          if(lrint->is_lazy()){
+            return std::get<2>(lrint->l);
+          }
+        }
       }
+
       return BaseClass().compute_weight_3_object()(p);
     }
 
@@ -413,13 +457,20 @@ public:
                          int
                          > LRint;
 
-      LR * lr = dynamic_cast<LR*>(p.ptr());
-      if(lr && (! lr->et)){
-        return std::get<1>(lr->l);
-      } else {
-        LRint* lrint = dynamic_cast<LRint*>(p.ptr());
-        if(lrint && (! lrint->et)){
-          return std::get<1>(lrint->l);
+      auto& obj = *p.ptr();
+      const char* tn = typeid(obj).name();
+
+      if(tn == typeid(LR).name()){
+        LR * lr = static_cast<LR*>(p.ptr());
+        if(lr->is_lazy()){
+          return std::get<1>(lr->l);
+        }
+      }else{
+        if(tn == typeid(LRint).name()){
+          LRint* lrint = static_cast<LRint*>(p.ptr());
+          if(lrint->is_lazy()){
+            return std::get<1>(lrint->l);
+          }
         }
       }
 
@@ -465,21 +516,39 @@ public:
                          int
                          > LRint;
 
+      auto& obj = *p.ptr();
+      const char* tn = typeid(obj).name();
 
-      LR * lr = dynamic_cast<LR*>(p.ptr());
-      if(lr && (! lr->et)){
-        return std::get<1>(lr->l);
+      if(tn == typeid(LR).name()){
+        LR * lr = static_cast<LR*>(p.ptr());
+        if(lr->is_lazy()){
+          return std::get<1>(lr->l);
+        }
       }else{
-        LRint* lrint = dynamic_cast<LRint*>(p.ptr());
-        if(lrint && (! lrint->et)){
-          return std::get<1>(lrint->l);
+        if(tn == typeid(LRint).name()){
+          LRint* lrint = static_cast<LRint*>(p.ptr());
+          if(lrint->is_lazy()){
+            return std::get<1>(lrint->l);
+          }
         }
       }
+
       return BaseClass().construct_point_3_object()(p);
     }
 
   };
 
+
+  struct Less_xyz_3 : public BaseClass::Less_xyz_3
+  {
+    typedef typename Kernel_::Point_3 Point_3;
+
+    bool operator()(const Point_3& p, const Point_3& q) const
+    {
+      if (p.rep().identical(q.rep())) { return false; }
+      return BaseClass::Less_xyz_3::operator()(p,q);
+    }
+  };
 
   Construct_point_2 construct_point_2_object() const
   {
@@ -501,7 +570,6 @@ public:
   {
     return Compute_weight_3();
   }
-
 
   Assign_2
   assign_2_object() const
@@ -534,6 +602,10 @@ public:
   Compute_approximate_area_3
   compute_approximate_area_3_object() const
   { return Compute_approximate_area_3(); }
+
+  Less_xyz_3
+  less_xyz_3_object() const
+  { return Less_xyz_3(); }
 }; // end class Lazy_kernel_base<EK_, AK_, E2A_, Kernel_2>
 
 

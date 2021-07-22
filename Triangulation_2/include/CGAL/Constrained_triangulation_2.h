@@ -1544,7 +1544,7 @@ file_output(std::ostream& os) const
     for(int j = 0; j < 3; ++j){
       if (ib->is_constrained(j)) { os << "C";}
       else { os << "N";}
-      if(is_ascii(os)){
+      if(IO::is_ascii(os)){
         if(j==2) {
           os << "\n";
         } else {

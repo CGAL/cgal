@@ -39,7 +39,6 @@ CGAL_add_named_parameter(face_to_face_map_t, face_to_face_map, face_to_face_map)
 CGAL_add_named_parameter(implementation_tag_t, implementation_tag, implementation_tag)
 CGAL_add_named_parameter(prevent_unselection_t, prevent_unselection, prevent_unselection)
 
-CGAL_add_named_parameter(stream_precision_t, stream_precision, stream_precision)
 CGAL_add_named_parameter(verbose_t, verbose, verbose)
 
 // List of named parameters used for IO
@@ -52,6 +51,8 @@ CGAL_add_named_parameter(vertex_color_map_t, vertex_color_map, vertex_color_map)
 CGAL_add_named_parameter(vertex_texture_map_t, vertex_texture_map, vertex_texture_map)
 CGAL_add_named_parameter(face_color_map_t, face_color_map, face_color_map)
 CGAL_add_named_parameter(repair_polygon_soup_t, repair_polygon_soup, repair_polygon_soup)
+CGAL_add_named_parameter(output_color_t, output_color, output_color)
+CGAL_add_named_parameter(stream_precision_t, stream_precision, stream_precision)
 
 // List of named parameters that we use in the package 'Mesh_3'
 CGAL_add_named_parameter(vertex_feature_degree_t, vertex_feature_degree, vertex_feature_degree_map)
@@ -101,6 +102,9 @@ CGAL_add_named_parameter(use_angle_smoothing_t, use_angle_smoothing, use_angle_s
 CGAL_add_named_parameter(use_area_smoothing_t, use_area_smoothing, use_area_smoothing)
 CGAL_add_named_parameter(use_Delaunay_flips_t, use_Delaunay_flips, use_Delaunay_flips)
 CGAL_add_named_parameter(do_project_t, do_project, do_project)
+CGAL_add_named_parameter(do_split_t, do_split, do_split)
+CGAL_add_named_parameter(do_collapse_t, do_collapse, do_collapse)
+CGAL_add_named_parameter(do_flip_t, do_flip, do_flip)
 CGAL_add_named_parameter(do_orientation_tests_t, do_orientation_tests, do_orientation_tests)
 CGAL_add_named_parameter(do_self_intersection_tests_t, do_self_intersection_tests, do_self_intersection_tests)
 CGAL_add_named_parameter(error_codes_t, error_codes, error_codes)
@@ -120,6 +124,7 @@ CGAL_add_named_parameter(do_not_modify_t, do_not_modify, do_not_modify)
 CGAL_add_named_parameter(allow_self_intersections_t, allow_self_intersections, allow_self_intersections)
 CGAL_add_named_parameter(non_manifold_feature_map_t, non_manifold_feature_map, non_manifold_feature_map)
 CGAL_add_named_parameter(polyhedral_envelope_epsilon_t, polyhedral_envelope_epsilon, polyhedral_envelope_epsilon)
+CGAL_add_named_parameter(face_epsilon_map_t, face_epsilon_map, face_epsilon_map)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)

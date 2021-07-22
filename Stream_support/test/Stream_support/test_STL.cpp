@@ -27,7 +27,7 @@ void read(const char* fname, std::size_t v, std::size_t f,
 
   std::vector<Point_type> points;
   std::vector<Polygon_type> faces;
-  bool ok = CGAL::read_STL(input, points, faces, CGAL::parameters::use_binary_mode(is_binary));
+  bool ok = CGAL::IO::read_STL(input, points, faces, CGAL::parameters::use_binary_mode(is_binary));
   assert(ok != should_fail);
   if(!should_fail)
   {
@@ -75,7 +75,7 @@ int main(int argc, char** argv)
   std::vector<Point> points;
   std::vector<Face> polygons;
 
-  bool ok = CGAL::read_STL(stl_file, points, polygons, CGAL::parameters::verbose(true));
+  bool ok = CGAL::IO::read_STL(stl_file, points, polygons, CGAL::parameters::verbose(true));
   assert(ok);
   std::cout << points.size() << " points and " << polygons.size() << " polygons" << std::endl;
 
@@ -85,31 +85,31 @@ int main(int argc, char** argv)
   points.clear();
   polygons.clear();
   std::string stl_string(stl_file);
-  ok = CGAL::read_STL(stl_string, points, polygons);
+  ok = CGAL::IO::read_STL(stl_string, points, polygons);
   assert(ok);
 
   points.clear();
   polygons.clear();
   std::ifstream is(stl_file);
-  ok = CGAL::read_STL(is, points, polygons);
+  ok = CGAL::IO::read_STL(is, points, polygons);
   assert(ok);
   points.clear();
   polygons.clear();
   is.clear();
   is.seekg(0, is.beg);
-  ok = CGAL::read_STL(is, points, polygons, CGAL::parameters::use_binary_mode(false));
+  ok = CGAL::IO::read_STL(is, points, polygons, CGAL::parameters::use_binary_mode(false));
   assert(ok);
   is.close();
 
-  ok = CGAL::write_STL("tmp.stl", points, polygons);
+  ok = CGAL::IO::write_STL("tmp.stl", points, polygons);
   assert(ok);
 
-  ok = CGAL::write_polygon_soup("tmp.stl", points, polygons);
+  ok = CGAL::IO::write_polygon_soup("tmp.stl", points, polygons);
   assert(ok);
 
   std::ofstream os("tmp.stl");
-  CGAL::set_binary_mode(os);
-  ok = CGAL::write_STL(os, points, polygons);
+  CGAL::IO::set_binary_mode(os);
+  ok = CGAL::IO::write_STL(os, points, polygons);
   assert(ok);
   os.close();
 
@@ -119,7 +119,7 @@ int main(int argc, char** argv)
   points.clear();
   polygons.clear();
 
-  ok = CGAL::read_polygon_soup("tmp.stl", points, polygons);
+  ok = CGAL::IO::read_polygon_soup("tmp.stl", points, polygons);
   assert(ok);
 
   assert(points.size() == pts_backup.size());

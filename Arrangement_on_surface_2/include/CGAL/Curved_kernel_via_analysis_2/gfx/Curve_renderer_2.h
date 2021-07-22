@@ -2586,8 +2586,8 @@ inline bool is_isolated_pixel(const Pixel_2& /* pix */) {
 // DEBUG ONLY
 #ifdef Gfx_USE_OUT
 void dump_neighbourhood(const Pixel_2& pix) {
-    CGAL::set_mode(std::cerr, CGAL::IO::PRETTY);
-    CGAL::set_mode(std::cout, CGAL::IO::PRETTY);
+    CGAL::IO::set_mode(std::cerr, CGAL::IO::PRETTY);
+    CGAL::IO::set_mode(std::cout, CGAL::IO::PRETTY);
 
     Stripe box[2]; // 0 - left-right stripe, 1 - bottom-top stripe
     //NT inv = NT(1) / NT(one << pix.level);

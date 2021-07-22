@@ -174,7 +174,7 @@ struct Sizing_field_with_aabb_tree
 #ifdef CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
     if(dim <= 1) {
       std::cerr << "Sizing("  << p << ", dim=" << dim
-                << ", index=#" << CGAL::oformat(id) << "): ";
+                << ", index=#" << CGAL::IO::oformat(id) << "): ";
     }
 #endif // CGAL_MESH_3_PROTECTION_HIGH_VERBOSITY
     double result = d_;
@@ -258,12 +258,12 @@ struct Sizing_field_with_aabb_tree
                                "Ids are { ")
               % group(setprecision(17),result)
               % group(setprecision(17),p)
-              % CGAL::oformat(get(facet_patch_id_map,
+              % CGAL::IO::oformat(get(facet_patch_id_map,
                                   projection_traits.closest_point_and_primitive().second))
               % group(setprecision(17),
                       projection_traits.closest_point_and_primitive().first);
             for(Patch_index i : ids) {
-              s << CGAL::oformat(i) << " ";
+              s << CGAL::IO::oformat(i) << " ";
             }
             s << "}\n";
             std::cerr << s.str();
@@ -286,8 +286,8 @@ struct Sizing_field_with_aabb_tree
     else { // dim == 1
       const typename MeshDomain::Curve_index& curve_id =
         domain.curve_index(id);
-      const Patches_ids& ids = curves_incident_patches[curve_id];
       if(!aabb_tree.empty()) {
+        const Patches_ids& ids = curves_incident_patches[curve_id];
         CGAL_assertion(! ids.empty());
 
         //Compute distance to surface patches
@@ -327,10 +327,10 @@ struct Sizing_field_with_aabb_tree
                              "Closest face id: %4%\n"
                              "Ids are { ")
             % result % p % curve_id
-            % CGAL::oformat(get(facet_patch_id_map,
+            % CGAL::IO::oformat(get(facet_patch_id_map,
                                 projection_traits.closest_point_and_primitive().second));
           for(Patch_index i : ids) {
-            s << CGAL::oformat(i) << " ";
+            s << CGAL::IO::oformat(i) << " ";
           }
           s << "}\n";
           std::cerr << s.str();
@@ -346,10 +346,10 @@ struct Sizing_field_with_aabb_tree
                              "Closest face id: %4%\n"
                              "Ids are { ")
             % result % p % curve_id
-            % CGAL::oformat(get(facet_patch_id_map,
+            % CGAL::IO::oformat(get(facet_patch_id_map,
                                 projection_traits.closest_point_and_primitive().second));
           for(Patch_index i : ids) {
-            s << CGAL::oformat(i) << " ";
+            s << CGAL::IO::oformat(i) << " ";
           }
           s << "}\n";
           CGAL_assertion_msg(result <=0, s.str().c_str());
@@ -364,7 +364,7 @@ struct Sizing_field_with_aabb_tree
             % result % p % curve_id
             % projection_traits.closest_point_and_primitive().second->patch_id();
           for(Patch_index i : ids) {
-            s << CGAL::oformat(i) << " ";
+            s << CGAL::IO::oformat(i) << " ";
           }
           s << "}\n";
           std::cerr << "ERROR at " << __FILE__ << " line " << __LINE__ << " :\n"
@@ -385,8 +385,6 @@ struct Sizing_field_with_aabb_tree
       //Compute distance to the curve on which p lies
       typedef typename GeomTraits::Segment_3                        Segment_3;
       typedef typename GeomTraits::Plane_3                          Plane_3;
-      typedef typename CGAL::cpp11::result_of<
-        typename GeomTraits::Intersect_3(Segment_3, Plane_3)>::type Intersection_result;
 
       const typename Input_curves_AABB_tree_::Point_and_primitive_id& ppid
         = domain.curves_aabb_tree().closest_point_and_primitive(p);
@@ -417,8 +415,7 @@ struct Sizing_field_with_aabb_tree
         if (curve_id != prim.id().first->first)
           continue;//don't deal with the same curves as what is done above
 
-        Intersection_result int_res
-          = CGAL::intersection(prim.datum(), curr_ortho_plane);
+        const auto int_res = CGAL::intersection(prim.datum(), curr_ortho_plane);
         if (int_res)
         {
           if (const Point_3* pp = boost::get<Point_3>(&*int_res))

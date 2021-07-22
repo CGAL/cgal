@@ -91,10 +91,10 @@ void Clipping_box_plugin::init(QMainWindow* mainWindow, CGAL::Three::Scene_inter
   connect(dock_widget->pushButton, SIGNAL(toggled(bool)),
           this, SLOT(clip(bool)));
 
-  item = NULL;
+  item = nullptr;
   connect(mw, SIGNAL(newViewerCreated(QObject*)),
           this, SLOT(connectNewViewer(QObject*)));
-  visualizer = NULL;
+  visualizer = nullptr;
   shift_pressing = false;
 }
 
@@ -143,7 +143,7 @@ void Clipping_box_plugin::clipbox()
 }
 
 void Clipping_box_plugin::enableAction() {
-  item = NULL;
+  item = nullptr;
   actionClipbox->setEnabled(true);
 }
 
@@ -213,7 +213,7 @@ void Clipping_box_plugin::tab_change()
     if(item)
     {
       scene->erase(scene->item_id(item));
-      item = NULL;
+      item = nullptr;
     }
     action->setChecked(true);
     CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
@@ -272,7 +272,7 @@ bool Clipping_box_plugin::eventFilter(QObject *, QEvent *event) {
     // Cancel selection
     else if (mouseEvent->button() == Qt::RightButton && visualizer)
     {
-      visualizer = NULL;
+      visualizer = nullptr;
       QApplication::restoreOverrideCursor();
       return true;
     }
@@ -345,7 +345,7 @@ bool Clipping_box_plugin::eventFilter(QObject *, QEvent *event) {
     viewer->enableClippingBox(planes);
     dock_widget->unclipButton->setEnabled(true);
     dock_widget->clipButton->setChecked(false);
-    visualizer = NULL;
+    visualizer = nullptr;
     QApplication::restoreOverrideCursor();
     static_cast<CGAL::Three::Viewer_interface*>(viewer)->set2DSelectionMode(false);
     viewer->update();

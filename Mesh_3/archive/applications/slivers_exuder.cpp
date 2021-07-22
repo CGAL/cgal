@@ -69,7 +69,7 @@ int main(int argc, char** argv)
   timer.stop();
   std::cout << "  Pumping done. CPU time: " << timer.time() << std::endl;
 
-  CGAL::set_binary_mode(ofs);
+  CGAL::IO::set_binary_mode(ofs);
   std::cout << "  Writing " << argv[2] << std::endl;
   CGAL::Mesh_3::output_mesh(ofs, c2t3);
   ofs.close();

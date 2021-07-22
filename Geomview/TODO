@@ -32,7 +32,7 @@ Color:
 - See how we can mix the Color output with the raw mode.
   Currently it's not clear to me.
   Check how to do transparency with Geomview ?
-  (passing the one from CGAL::Color)
+  (passing the one from CGAL::IO::Color)
 
 Demo :
 ------

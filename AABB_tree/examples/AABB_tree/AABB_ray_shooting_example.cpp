@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/tetrahedron.off");
 
   Mesh mesh;
-  if(!CGAL::read_polygon_mesh(filename, mesh))
+  if(!CGAL::IO::read_polygon_mesh(filename, mesh))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;

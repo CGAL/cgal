@@ -171,8 +171,8 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
 //  widget->show();
 //
 // // widget->lock();
-////  *widget << CGAL::FillColor(CGAL::Color(200, 200, 200))
-////          << CGAL::Color(200, 200, 200)
+////  *widget << CGAL::FillColor(CGAL::IO::Color(200, 200, 200))
+////          << CGAL::IO::Color(200, 200, 200)
 ////          << Rectangle_2(Point_2(0, 0), Point_2(1,1));
 ////
 //  if( number_of_classes == 0 ) return;
@@ -195,7 +195,7 @@ void parse_argv(int argc, char** argv, int extra_args = 0)
 ////                               Point_2((k+1)*width, height));
 //      }
 //    else
-////      *widget << CGAL::red() << Segment_2(Point_2(k*width, 0),
+////      *widget << CGAL::IO::red() << Segment_2(Point_2(k*width, 0),
 ////                                        Point_2((k+1)*width, 0));
 //
 // // widget->unlock();

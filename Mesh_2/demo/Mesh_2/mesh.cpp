@@ -93,18 +93,18 @@ int main(int argc, char** argv)
   std::ifstream input(argv[arg_count]);
   if(input)
     {
-      CGAL::read_triangle_poly_file(t, input);
+      CGAL::IO::read_triangle_poly_file(t, input);
       CGAL::refine_Delaunay_mesh_2(t, criteria);
 
       if(argc==arg_count+1)
         {
           if(terminal_output)
-            CGAL::write_triangle_poly_file(t, std::cout);
+            CGAL::IO::write_triangle_poly_file(t, std::cout);
         }
       else
         {
           std::ofstream output(argv[arg_count+1]);
-          CGAL::write_triangle_poly_file(t, output);
+          CGAL::IO::write_triangle_poly_file(t, output);
         }
       if(terminal_output)
         std::cerr

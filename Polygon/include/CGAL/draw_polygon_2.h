@@ -74,7 +74,7 @@ protected:
 
     Point prev=p2.vertex(p2.size()-1);
 
-    CGAL::Color c(75,160,255);
+    CGAL::IO::Color c(75,160,255);
     face_begin(c);
 
     for (typename P2::Vertex_const_iterator i=p2.vertices_begin();

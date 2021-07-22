@@ -86,6 +86,8 @@ namespace internal {
 
     bool  operator==( const Self& x) const { return node == x.node; }
     bool  operator!=( const Self& x) const { return node != x.node; }
+    bool  operator==( std::nullptr_t) const { return node == nullptr; }
+    bool  operator!=( std::nullptr_t) const { return node != nullptr; }
     bool  operator< ( const Self& x) const { return node< x.node;   }
     bool  operator<=( const Self& x) const { return node<= x.node;  }
     bool  operator> ( const Self& x) const { return node> x.node;   }
@@ -139,6 +141,8 @@ namespace internal {
 
     bool     operator==( const Self& x) const { return node == x.node; }
     bool     operator!=( const Self& x) const { return node != x.node; }
+    bool     operator==( std::nullptr_t) const { return node == nullptr; }
+    bool     operator!=( std::nullptr_t) const { return node != nullptr; }
     bool     operator< ( const Self& x) const { return node< x.node;   }
     bool     operator<=( const Self& x) const { return node<= x.node;  }
     bool     operator> ( const Self& x) const { return node> x.node;   }
@@ -175,7 +179,7 @@ namespace internal {
 template <class T, class Alloc>
   std::size_t hash_value(const In_place_list_iterator<T,Alloc>&  i)
   {
-    T* ptr = &*i;
+    T* ptr = i.operator->();
     return reinterpret_cast<std::size_t>(ptr)/ sizeof(T);
   }
 
@@ -183,7 +187,7 @@ template <class T, class Alloc>
 template <class T, class Alloc>
   std::size_t hash_value(const In_place_list_const_iterator<T,Alloc>&  i)
   {
-    const T* ptr = &*i;
+    const T* ptr = i.operator->();
     return reinterpret_cast<std::size_t>(ptr)/ sizeof(T);
    }
 
@@ -445,9 +449,11 @@ public:
     (*node).prev_link = node;
     insert(begin(), x.begin(), x.end());
   }
-  ~In_place_list() {
-    erase(begin(), end());
-    put_node(node);
+  ~In_place_list() noexcept {
+    try {
+      erase(begin(), end());
+      put_node(node);
+    } catch(...) {}
   }
 
   Self& operator=(const Self& x);
@@ -786,7 +792,7 @@ namespace std {
 
     std::size_t operator()(const CGAL::internal::In_place_list_iterator<T, Alloc>& i) const
     {
-      const T* ptr = &*i;
+      const T* ptr = i.operator->();
       return reinterpret_cast<std::size_t>(ptr)/ sizeof(T);
     }
   };
@@ -797,7 +803,7 @@ namespace std {
 
     std::size_t operator()(const CGAL::internal::In_place_list_const_iterator<T, Alloc>& i) const
     {
-      const T* ptr = &*i;
+      const T* ptr =i.operator->();
       return reinterpret_cast<std::size_t>(ptr)/ sizeof(T);
     }
   };

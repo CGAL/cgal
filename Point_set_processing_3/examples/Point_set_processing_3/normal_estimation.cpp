@@ -244,8 +244,8 @@ int main(int argc, char * argv[])
     PointList points;
     std::cerr << "Open " << input_filename << " for reading..." << std::endl;
 
-    if(!CGAL::read_points(input_filename.c_str(), std::back_inserter(points),
-                          CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())))
+    if(!CGAL::IO::read_points(input_filename.c_str(), std::back_inserter(points),
+                              CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())))
     {
       std::cerr << "Error: cannot read file " << input_filename << std::endl;
       return EXIT_FAILURE;
@@ -290,10 +290,10 @@ int main(int argc, char * argv[])
 
     std::cerr << "Write file " << output_filename << std::endl << std::endl;
 
-    if(!CGAL::write_points(output_filename, points,
-                           CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
-                                            .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())
-                                            .stream_precision(17)))
+    if(!CGAL::IO::write_points(output_filename, points,
+                               CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
+                                                .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())
+                                                .stream_precision(17)))
     {
       std::cerr << "Error: cannot write file " << output_filename << std::endl;
       return EXIT_FAILURE;

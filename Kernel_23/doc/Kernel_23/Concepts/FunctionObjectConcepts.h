@@ -4996,6 +4996,10 @@ public:
   */
   Kernel::Point_2 operator()(const Kernel::Point_2& p,
                              const Kernel::Point_2& q );
+  /*!
+    computes the midpoint of the segment `s`.
+  */
+  Kernel::Point_2 operator()(const Kernel::Segment_2& s);
 
   /// @}
 
@@ -5022,6 +5026,11 @@ public:
   */
   Kernel::Point_3 operator()(const Kernel::Point_3& p,
                              const Kernel::Point_3& q );
+
+  /*!
+    computes the midpoint of the segment `s`.
+  */
+  Kernel::Point_3 operator()(const Kernel::Segment_3& s);
 
 
   /// @}
@@ -6905,7 +6914,7 @@ public:
   /// @{
 
   /*!
-    computes the unit normal of the vectors`q-p` and `r-p`.
+    computes the unit normal of the vectors `q-p` and `r-p`.
     This requires that `Kernel::FT` supports the `sqrt` operation.
   */
   Kernel::Vector_3 operator()(const Kernel::Point_3& p,
@@ -8409,8 +8418,6 @@ public:
   \cgalRefines `AdaptableFunctor` (with two arguments)
 
   \sa \link intersection_grp `CGAL::intersection()` \endlink
-  \sa `CGAL::cpp11::result_of`
-
 */
 class Intersect_2 {
 public:
@@ -8424,7 +8431,7 @@ public:
     `Type1` and `Type2`, for all pairs `Type1` and `Type2`.
     For details see the reference manual page for \link intersection_grp `CGAL::intersection()` \endlink.
   */
-  CGAL::cpp11::result_of<Kernel::Intersect_2(Type1, Type2)>::type
+  decltype(auto)
   operator()(Type1 obj1, Type2 obj2);
 
   /// @}
@@ -8438,8 +8445,6 @@ public:
   \cgalRefines `AdaptableFunctor` (with two or three arguments)
 
   \sa intersection_linear_grp
-  \sa `CGAL::cpp11::result_of`
-
 */
 class Intersect_3 {
 public:
@@ -8453,8 +8458,8 @@ public:
     objects of type `Type1` and `Type2`.
     For details see the reference manual page for \ref intersection_linear_grp.
   */
-  CGAL::cpp11::result_of<Kernel::Intersect_3(Type1, Type2)>::type
- operator()(Type1 obj1, Type2 obj2);
+  decltype(auto)
+  operator()(Type1 obj1, Type2 obj2);
 
 
 

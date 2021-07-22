@@ -39,7 +39,7 @@ of the class, that is, `Residue` is not thread-safe in this case.
 In case `CGAL_HAS_THREADS`
 the implementation of the class is thread safe using
 `boost::thread_specific_ptr`. However, this may cause some performance
-penalty. Hence, it may be advisable to configure %CGAL with
+penalty. Hence, it may be advisable to configure \cgal with
 `CGAL_HAS_NO_THREADS`.   See Section  \ref Preliminaries_thread_safety "Thread Safety"
 in the preliminaries.
 

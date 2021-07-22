@@ -1129,7 +1129,7 @@ public:
     CGAL_assertion(pp1.length() % primitiveSize == 0);
     pp1.cut(primitiveSize);
     CGAL_assertion(pp1.is_closed());
-    return std::make_pair(pp1, originalLength / primitiveSize);
+    return std::make_pair(pp1, int(originalLength / primitiveSize));
   }
 
   /// @return the turn between dart number i and dart number i+1.

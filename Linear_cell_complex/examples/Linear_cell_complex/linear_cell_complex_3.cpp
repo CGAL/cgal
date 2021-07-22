@@ -48,7 +48,7 @@ int main()
 
   // Display all the vertices of the lcc by iterating on the
   // Vertex_attribute container.
-  CGAL::set_ascii_mode(std::cout);
+  CGAL::IO::set_ascii_mode(std::cout);
   std::cout<<"Vertices: ";
   for (LCC_3::Vertex_attribute_const_range::iterator
          v=lcc.vertex_attributes().begin(),

@@ -330,8 +330,7 @@ Oriented_side side_of_oriented_circle(Face_handle f, const Point& p) const;
 /*!
 tests the validity of the triangulation as a
 `Triangulation_2` and additionally tests the Delaunay property. This
-method is mainly useful for debugging Delaunay triangulation
-algorithms designed by the user.
+method is mainly useful for debugging Delaunay triangulation algorithms.
 */
 bool is_valid(bool verbose = false, int level = 0) const;
 
