@@ -52,7 +52,7 @@ public Q_SLOTS:
   void orientSM();
   void shuffle();
   void displayNonManifoldEdges();
-  void createPointsAndPolyline(std::vector<std::pair<std::size_t, std::size_t> > &nm_points, bool warn);
+  void createPointsAndPolyline(std::vector<std::size_t> &nm_points, bool warn);
   void cleanSoup();
 
 private:
@@ -147,7 +147,7 @@ void Polyhedron_demo_orient_soup_plugin::orientSM()
     if(item)
     {
       int create_items = QMessageBox::question(mw, "Orient Mesh", "Do you wish to extract the potential non manifold simplicies ?");
-      std::vector<std::pair<std::size_t, std::size_t> > nm_points;
+      std::vector<std::size_t> nm_points;
       if(!item->orient(nm_points)) {
          QMessageBox::information(mw, tr("Not orientable without self-intersections"),
                                       tr("The polygon soup \"%1\" is not directly orientable."
@@ -241,7 +241,7 @@ void Polyhedron_demo_orient_soup_plugin::displayNonManifoldEdges()
   }
 }
 //todo: nm-points should probably be a pair, and the removal check be on both members
-void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline(std::vector<std::pair<std::size_t, std::size_t> >& nm_points, bool warn)
+void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline(std::vector<std::size_t>& nm_points, bool warn)
 {
 
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
@@ -264,10 +264,12 @@ void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline(std::vector<std
     }
 
     std::set<std::size_t> nm_vertices;
-    for(const auto& p : nm_points)
+    for(const auto& v : nm_points)
     {
-      if(check_set.insert(p.first).second && check_set.insert(p.second).second)
-        nm_vertices.insert(p.first);
+      if(check_set.insert(v).second)
+      {
+        nm_vertices.insert(v);
+      }
     }
     bool items_created = false;
     if(nm_vertices.empty() && warn)

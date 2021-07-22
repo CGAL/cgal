@@ -420,18 +420,18 @@ void Scene_polygon_soup_item::inside_out()
 }
 
 bool
-Scene_polygon_soup_item::orient(std::vector<std::pair<std::size_t, std::size_t> >& non_manifold_vertices)
+Scene_polygon_soup_item::orient(std::vector<std::size_t>& non_manifold_vertices)
 {
   struct Visitor : public CGAL::Polygon_mesh_processing::internal::Polygon_soup_orientation_visitor
   {
-    std::vector<std::pair<std::size_t, std::size_t> >& nm_vertices;
+    std::vector<std::size_t>& nm_vertices;
 
-    Visitor(std::vector<std::pair<std::size_t, std::size_t> >& nm_vertices)
+    Visitor(std::vector<std::size_t>& nm_vertices)
       :nm_vertices(nm_vertices){}
 
     void duplicated_vertex(const std::size_t& v1, const std::size_t& v2) final
     {
-      nm_vertices.push_back(std::make_pair(v1, v2));
+      nm_vertices.push_back(v1);
     }
   };
   if(isEmpty() || d->oriented)
@@ -505,7 +505,7 @@ Scene_polygon_soup_item::save(std::ostream& out) const
 bool
 Scene_polygon_soup_item::exportAsSurfaceMesh(SMesh *out_surface_mesh)
 {
-  std::vector<std::pair<std::size_t, std::size_t> > dum;
+  std::vector<std::size_t> dum;
   orient(dum);
   CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh< CGAL::Surface_mesh<Point_3> >(
     d->soup->points, d->soup->polygons, *out_surface_mesh);
