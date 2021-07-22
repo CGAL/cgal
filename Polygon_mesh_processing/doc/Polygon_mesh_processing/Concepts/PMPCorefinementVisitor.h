@@ -112,8 +112,8 @@ typedef unspecified_type halfedge_descriptor;
                               halfedge_descriptor h_tgt,  Triangle_mesh& tm_tgt);
   ///called before vertex `v_src` from `tm_src` is copied in `tm_tgt`
   void before_vertex_copy(vertex_descriptor v_src, const Triangle_mesh& tm_src, Triangle_mesh& tm_tgt);
-  ///called after vertex `v_src` from `tm_src` is copied in `tm_tgt`. The new vertex is `v_tgt`. Put
-  /// on the vertex point map has already been called.
+  ///called after vertex `v_src` from `tm_src` is copied in `tm_tgt`. The new vertex is `v_tgt`.
+  /// The point has already been put in the vertex point map.
   void after_vertex_copy(vertex_descriptor v_src, const Triangle_mesh& tm_src,
                          vertex_descriptor v_tgt, Triangle_mesh& tm_tgt);
 /// @}
