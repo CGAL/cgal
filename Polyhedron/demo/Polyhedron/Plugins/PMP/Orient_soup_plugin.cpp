@@ -256,7 +256,6 @@ void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline(std::vector<std
 
     //remove vertices already in NM edges
 
-    std::vector<std::pair<std::size_t, std::size_t> > to_remove;
     std::unordered_set<std::size_t> check_set;
     for(Scene_polygon_soup_item::Edge edge : item->non_manifold_edges())
     {
@@ -264,23 +263,11 @@ void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline(std::vector<std
       check_set.insert(edge[1]);
     }
 
-    for(const auto& p : nm_points)
-    {
-      if(!check_set.insert(p.first).second
-         || !check_set.insert(p.second).second)
-      {
-        to_remove.push_back(p);
-      }
-    }
-
-    for(const auto& tr : to_remove)
-    {
-      nm_points.erase(std::remove(nm_points.begin(), nm_points.end(), tr), nm_points.end());
-    }
     std::set<std::size_t> nm_vertices;
     for(const auto& p : nm_points)
     {
-      nm_vertices.insert(p.first);
+      if(check_set.insert(p.first).second && check_set.insert(p.second).second)
+        nm_vertices.insert(p.first);
     }
     bool items_created = false;
     if(nm_vertices.empty() && warn)
