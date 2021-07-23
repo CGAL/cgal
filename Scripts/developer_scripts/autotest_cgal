@@ -628,8 +628,8 @@ if [ -f '${LIST_TEST_PACKAGES}' ]; then
   cp '${CGAL_TEST_DIR}/makefile2'                           '${CGAL_BINARY_DIR}/test'
   cp '${CGAL_TEST_DIR}/run_testsuite_with_cmake'            '${CGAL_BINARY_DIR}/test'
 
-# list all packages in CGAL_TEST_DIR. If PACKAGE is found in LIST_TEST_PACKAGES,
-# copy it, else prepare for the special "skipped" case in the table.
+  # list all packages in CGAL_TEST_DIR. If PACKAGE is found in LIST_TEST_PACKAGES,
+  # copy it, else prepare for the special "skipped" case in the table.
   for PACKAGE in \$(ls "${CGAL_TEST_DIR}"); do
     if [ -d "${CGAL_TEST_DIR}/\$PACKAGE" ]; then
       if source '${LIST_TEST_PACKAGES}' '${CGAL_ROOT}' | egrep -q \$PACKAGE; then
@@ -643,6 +643,7 @@ if [ -f '${LIST_TEST_PACKAGES}' ]; then
         touch "${CGAL_BINARY_DIR}/test/\${PACKAGE}/skipped"
       fi
     fi
+
   done
 
 else
@@ -770,7 +771,6 @@ run_test_on_host()
   fi
 
   for PLATFORM in ${PLATFORMS}; do
-
     run_test_on_host_and_platform "${HOST}" "${PLATFORM}"
     publish_results "${HOST}" "${PLATFORM}"
   done
@@ -988,4 +988,3 @@ rm -f "$LOCK_FILE";
 ## Local Variables:
 ## sh-basic-offset: 2
 ## End:
-
