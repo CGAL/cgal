@@ -78,11 +78,11 @@ jobs:
           for i in ${!HOSTS[@]}; do
             HOST=$(echo ${HOSTS[$i]}|cut -d' ' -f 1 )
             PATH_TO_SCRIPT=$(echo ${HOSTS[$i]}|cut -d' ' -f 2 )
-            if [ "$i" -ne  "0" ] ; then
+            if [ "$i" =  "0" ] ; then
               echo "ssh ${HOST} ${PATH_TO_SCRIPT}/run_testsuite_from_branch_name.sh $USER_NAME $BRANCH_NAME $BASE y"
               ssh ${HOST} "${PATH_TO_SCRIPT}/run_testsuite_from_branch_name.sh $USER_NAME $BRANCH_NAME $BASE y"
             else
-              echo "ssh ${HOST} ${PATH_TO_SCRIPT}/run_testsuite_from_branch_name.sh $USER_NAME $BRANCH_NAME $BASE y"
+              echo "ssh ${HOST} ${PATH_TO_SCRIPT}/run_testsuite_from_branch_name.sh $USER_NAME $BRANCH_NAME $BASE"
               ssh ${HOST} "${PATH_TO_SCRIPT}/run_testsuite_from_branch_name.sh $USER_NAME $BRANCH_NAME $BASE"
             fi
           done

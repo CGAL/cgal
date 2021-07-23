@@ -58,7 +58,7 @@ echo "starting testsuite..."
 
 ./autotest_cgal -c 
 
-if [ -n "$4" ]; then
+if [ "$4" = "y" ]; then
   cd ${CGAL_ROOT}
   V=$(cat VERSION_NUMBER)
   V=$(($V+1))
