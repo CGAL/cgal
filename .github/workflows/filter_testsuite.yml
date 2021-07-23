@@ -75,14 +75,15 @@ jobs:
           BRANCH_NAME=$(echo $LABEL | cut -d':' -f 2)
           BASE="${{ steps.get_base.outputs.result }}"
           mapfile -t HOSTS < ~/ssh_host_list;
-          LAST_INDEX=$((${#HOSTS[@]}-1))
           for i in ${!HOSTS[@]}; do
             HOST=$(echo ${HOSTS[$i]}|cut -d' ' -f 1 )
             PATH_TO_SCRIPT=$(echo ${HOSTS[$i]}|cut -d' ' -f 2 )
-            if [ "$i" -ne  "$LAST_INDEX" ] ; then
-              ssh ${HOST} "${PATH_TO_SCRIPT}/run_testsuite_from_branch_name.sh $USER_NAME $BRANCH_NAME $BASE"
-            else
+            if [ "$i" -ne  "0" ] ; then
+              echo "ssh ${HOST} ${PATH_TO_SCRIPT}/run_testsuite_from_branch_name.sh $USER_NAME $BRANCH_NAME $BASE y"
               ssh ${HOST} "${PATH_TO_SCRIPT}/run_testsuite_from_branch_name.sh $USER_NAME $BRANCH_NAME $BASE y"
+            else
+              echo "ssh ${HOST} ${PATH_TO_SCRIPT}/run_testsuite_from_branch_name.sh $USER_NAME $BRANCH_NAME $BASE y"
+              ssh ${HOST} "${PATH_TO_SCRIPT}/run_testsuite_from_branch_name.sh $USER_NAME $BRANCH_NAME $BASE"
             fi
           done
       - name: Post address

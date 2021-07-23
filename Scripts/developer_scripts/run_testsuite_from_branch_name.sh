@@ -11,12 +11,13 @@ if uname | grep -q -i cygwin; then
   export SHELLOPTS
   set -o igncr
 fi
-source "$(dirname $0)/.autofilterrc"
+source ~/.autofilterrc
+echo "CGAL_ROOT = $CGAL_ROOT" > log
 USER_REPO=$1
 BRANCH_NAME=$2
 BASE_NAME=$3
 cd ${CGAL_ROOT}
-scp mgimeno@cgal.geometryfactory.com:public_html/test_suite/VERSION_NUMBER .
+scp ${VERSION_NUMBER_SSH_URL} .
 cd ${CGAL_GIT_DIR}
 if [ ! -d cgal ]; then
   git clone --depth 1 --no-single-branch https://github.com/CGAL/cgal.git 
@@ -44,6 +45,7 @@ fi
 (
 #create the release from the branch
 echo " Create release..."
+echo "CGAL_VERSION=0.0-Ic-$(cat ${CGAL_ROOT}/VERSION_NUMBER)"> log
 cmake -DGIT_REPO=${CGAL_GIT_DIR}/cgal -DDESTINATION=${CGAL_ROOT}/CGAL-TEST -DPUBLIC=OFF -DTESTSUITE=ON -DCGAL_VERSION=0.0-Ic-$(cat ${CGAL_ROOT}/VERSION_NUMBER) -P ${CGAL_GIT_DIR}/cgal/Scripts/developer_scripts/cgal_create_release_with_cmake.cmake | tee log
 echo "done."
 DEST=$(sed -E 's/.*CGAL-TEST\/(.*)/\1/' log);
@@ -55,15 +57,16 @@ ln -s $PWD/CGAL-TEST/$DEST CGAL-I
 echo "starting testsuite..."
 
 ./autotest_cgal -c 
-)>${CGAL_ROOT}/autotest.log2 2>&1 & 
-echo "finished."
+
 if [ -n "$4" ]; then
   cd ${CGAL_ROOT}
   V=$(cat VERSION_NUMBER)
   V=$(($V+1))
   echo $V > VERSION_NUMBER
-  scp VERSION_NUMBER mgimeno@cgal.geometryfactory.com:public_html/test_suite/VERSION_NUMBER
+  scp VERSION_NUMBER ${VERSION_NUMBER_SSH_URL}
 fi
+)>${CGAL_ROOT}/autotest.log2 2>&1 & 
+echo "finished."
 
 echo "exit."
 exit 0
