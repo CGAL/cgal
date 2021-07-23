@@ -3,6 +3,7 @@
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/tags.h>
 #include <CGAL/Timer.h>
 
@@ -87,10 +88,9 @@ int test_limited_self_intersections(const char* filename)
   typedef CGAL::Surface_mesh<typename K::Point_3>                Mesh;
   typedef typename boost::graph_traits<Mesh>::face_descriptor    face_descriptor;
 
-  std::ifstream input(filename);
   Mesh m;
 
-  if ( !input || !(input >> m) ) {
+  if ( !CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(filename, m) ) {
     std::cerr << "Error: cannot read file: " << filename << std::endl;
     return 1;
   }

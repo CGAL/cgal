@@ -16,6 +16,7 @@
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_SELF_INTERSECTIONS
 #define CGAL_POLYGON_MESH_PROCESSING_SELF_INTERSECTIONS
+
 #include <CGAL/license/Polygon_mesh_processing/predicate.h>
 
 #include <CGAL/disable_warnings.h>
@@ -67,8 +68,8 @@ struct Throw_at_count_reached_functor {
   Output_iterator out;
 
   Throw_at_count_reached_functor(std::atomic<unsigned int>& counter,
-                         const unsigned int& max,
-                         Output_iterator out)
+                                 const unsigned int& max,
+                                 Output_iterator out)
     : counter(counter), max(max), out(out)
   {}
 
@@ -255,6 +256,10 @@ self_intersections_impl(const FaceRange& face_range,
 
   const bool do_limit = !(is_default_parameter(get_parameter(np, internal_np::maximum_number)));
   const unsigned int maximum_number = choose_parameter(get_parameter(np, internal_np::maximum_number), 0);
+  if(do_limit && maximum_number == 0)
+  {
+    return out;
+  }
   unsigned int counter = 0;
   const unsigned int seed = choose_parameter(get_parameter(np, internal_np::random_seed), 0);
   CGAL_USE(seed); // used in the random shuffle of the range, which is only done to balance tasks in parallel
@@ -442,11 +447,11 @@ self_intersections_impl(const FaceRange& face_range,
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{maximum_number}
- *     \cgalParamDescription{the maximum number of self intersections that will be computed and returned by the function.}
+ *     \cgalParamDescription{the maximum number of self intersections that will be detected and returned by the function.}
  *     \cgalParamType{unsigned int}
- *     \cgalParamDefault{the number of self intersections in `face_range`.}
+ *     \cgalParamDefault{No limit.}
  *     \cgalParamExtra{In parallel mode, the number of returned self-intersections is at least `maximum_number`
- *     (and not exactly that number) as for performance reason no strong synchronization is put on threads.}
+ *     (and not exactly that number) as no strong synchronization is put on threads for performance reasons.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -521,11 +526,11 @@ self_intersections(const FaceRange& face_range,
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{maximum_number}
- *     \cgalParamDescription{the maximum number of self intersections that will be computed and returned by the function.}
+ *     \cgalParamDescription{the maximum number of self intersections that will be detected and returned by the function.}
  *     \cgalParamType{unsigned int}
- *     \cgalParamDefault{the number of self intersections in `tmesh`.}
+ *     \cgalParamDefault{No limit.}
  *     \cgalParamExtra{In parallel mode, the number of returned self-intersections is at least `maximum_number`
- *     (and not exactly that number) as for performance reason no strong synchronization is put on threads.}
+ *     (and not exactly that number) as no strong synchronization is put on threads for performance reasons.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
