@@ -1273,14 +1273,14 @@ CGAL_FILTERED_FACE_GRAPH_DYNAMIC_PMAP_SPECIALIZATION(dynamic_face_property_t)
 
 //specializations for indices
 template<typename Graph, typename FIMap, typename VIMap, typename HIMap>
-struct property_map<CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, CGAL::face_index_t>
+struct property_map<CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, boost::face_index_t>
 {
   typedef CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>                       FFG;
   typedef typename FFG::FIM                                                           FIM;
 
-  typedef typename boost::property_traits<FIM>::value_type                            Face_index;
-  typedef typename CGAL::dynamic_face_property_t<Face_index>                          Face_index_dtag;
-  typedef typename boost::property_map<FFG, Face_index_dtag>::type                    type;
+  typedef typename boost::property_traits<FIM>::value_type                            Index;
+  typedef typename CGAL::dynamic_face_property_t<Index>                               Index_dtag;
+  typedef typename boost::property_map<FFG, Index_dtag>::type                         type;
 
   typedef typename CGAL::Property_map_binder<FIM,
                      typename CGAL::Pointer_property_map<
@@ -1293,9 +1293,9 @@ struct property_map<CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, boost
   typedef CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>                       FFG;
   typedef typename FFG::VIM                                                           VIM;
 
-  typedef typename boost::property_traits<VIM>::value_type                            Vertex_index;
-  typedef typename CGAL::dynamic_vertex_property_t<Vertex_index>                      Vertex_index_dtag;
-  typedef typename boost::property_map<FFG, Vertex_index_dtag>::type                  type;
+  typedef typename boost::property_traits<VIM>::value_type                            Index;
+  typedef typename CGAL::dynamic_vertex_property_t<Index>                             Index_dtag;
+  typedef typename boost::property_map<FFG, Index_dtag>::type                         type;
 
   typedef typename CGAL::Property_map_binder<VIM,
                      typename CGAL::Pointer_property_map<
@@ -1303,14 +1303,14 @@ struct property_map<CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, boost
 };
 
 template<typename Graph, typename FIMap, typename VIMap, typename HIMap>
-struct property_map<CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, CGAL::halfedge_index_t>
+struct property_map<CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, boost::halfedge_index_t>
 {
   typedef CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>                       FFG;
   typedef typename FFG::HIM                                                           HIM;
 
-  typedef typename boost::property_traits<HIM>::value_type                            Halfedge_index;
-  typedef typename CGAL::dynamic_halfedge_property_t<Halfedge_index>                  Halfedge_index_dtag;
-  typedef typename boost::property_map<FFG, Halfedge_index_dtag>::type                type;
+  typedef typename boost::property_traits<HIM>::value_type                            Index;
+  typedef typename CGAL::dynamic_halfedge_property_t<Index>                           Index_dtag;
+  typedef typename boost::property_map<FFG, Index_dtag>::type                         type;
 
   typedef typename CGAL::Property_map_binder<HIM,
                      typename CGAL::Pointer_property_map<
@@ -1323,8 +1323,8 @@ namespace CGAL {
 
 //specializations for indices
 template <class Graph, typename FIMap, typename VIMap, typename HIMap>
-typename boost::property_map<Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, CGAL::face_index_t >::const_type
-get(CGAL::face_index_t, const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
+typename boost::property_map<Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, boost::face_index_t >::const_type
+get(boost::face_index_t, const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
 {
   return w.get_face_index_map();
 }
@@ -1337,19 +1337,19 @@ get(boost::vertex_index_t, const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>
 }
 
 template <class Graph, typename FIMap, typename VIMap, typename HIMap>
-typename boost::property_map<Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, CGAL::halfedge_index_t >::const_type
-get(CGAL::halfedge_index_t, const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
+typename boost::property_map<Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, boost::halfedge_index_t >::const_type
+get(boost::halfedge_index_t, const Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
 {
   return w.get_halfedge_index_map();
 }
 
 // non-const (dynamic pmap)
 template <class Graph, typename FIMap, typename VIMap, typename HIMap>
-typename boost::property_map<Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, CGAL::face_index_t >::type
-get(CGAL::face_index_t, Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
+typename boost::property_map<Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, boost::face_index_t >::type
+get(boost::face_index_t, Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
 {
   typedef CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>                       FFG;
-  typedef typename boost::property_map<FFG, CGAL::face_index_t>::type                 result_type;
+  typedef typename boost::property_map<FFG, boost::face_index_t>::type                result_type;
   typedef typename boost::property_traits<result_type>::value_type                    Index;
   typedef typename CGAL::dynamic_face_property_t<Index>                               Index_dtag;
 
@@ -1369,11 +1369,11 @@ get(boost::vertex_index_t, Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
 }
 
 template <class Graph, typename FIMap, typename VIMap, typename HIMap>
-typename boost::property_map<Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, CGAL::halfedge_index_t >::type
-get(CGAL::halfedge_index_t, Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
+typename boost::property_map<Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, boost::halfedge_index_t >::type
+get(boost::halfedge_index_t, Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
 {
   typedef CGAL::Face_filtered_graph<Graph, FIMap, VIMap, HIMap>                       FFG;
-  typedef  typename boost::property_map<FFG, CGAL::halfedge_index_t >::type           result_type;
+  typedef  typename boost::property_map<FFG, boost::halfedge_index_t >::type          result_type;
   typedef typename boost::property_traits<result_type>::value_type                    Index;
   typedef typename CGAL::dynamic_halfedge_property_t<Index>                           Index_dtag;
 
