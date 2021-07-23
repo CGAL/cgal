@@ -10,7 +10,7 @@
 // Author(s)     :  Aymeric PELLE <aymeric.pelle@sophia.inria.fr>
 //                  Mael Rouxel-Labbé
 
-#if defined(__GNUC__)
+#if (__GNUC__ > 0)
 #  pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 #endif
 

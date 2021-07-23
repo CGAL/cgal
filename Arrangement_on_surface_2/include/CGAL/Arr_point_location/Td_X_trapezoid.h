@@ -122,7 +122,7 @@ public:
 #if defined(__SUNPRO_CC) || defined(__PGI) || defined(__INTEL_COMPILER)
   friend class Trapezoidal_decomposition_2<Traits>::Around_point_circulator;
   friend class Trapezoidal_decomposition_2<Traits>::In_face_iterator;
-#elif defined(__GNUC__)
+#elif (__GNUC__ > 0)
 
   friend class Trapezoidal_decomposition_2<Traits>::Around_point_circulator;
   friend class Trapezoidal_decomposition_2<Traits>::In_face_iterator;

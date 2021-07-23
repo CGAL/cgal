@@ -172,7 +172,7 @@ inline double IA_opacify(double x)
   // Intel has a bug where -mno-sse still defines __SSE__ and __SSE2__
   // (-mno-sse2 works though), no work-around for now.
 # if defined __SSE2_MATH__ || (defined __INTEL_COMPILER && defined __SSE2__)
-#  if defined(__GNUC__)
+#  if (__GNUC__ > 0)
   // ICEs in reload/LRA with older versions.
   asm volatile ("" : "+gx"(x) );
 #  else

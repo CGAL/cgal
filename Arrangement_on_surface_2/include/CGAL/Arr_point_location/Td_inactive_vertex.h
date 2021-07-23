@@ -92,7 +92,7 @@ public:
 #ifdef CGAL_PM_FRIEND_CLASS
 #if defined(__SUNPRO_CC) || defined(__PGI) || defined(__INTEL_COMPILER)
   friend class Trapezoidal_decomposition_2<Traits>::In_face_iterator;
-#elif defined(__GNUC__)
+#elif (__GNUC__ > 0)
   friend class Trapezoidal_decomposition_2<Traits>::In_face_iterator;
 #else
   friend class In_face_iterator;

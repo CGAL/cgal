@@ -75,7 +75,7 @@ CGAL_static_assertion_msg(false, CGAL_INTERNAL_DEPRECATED_MESSAGE);
 #elif !defined(CGAL_NO_DEPRECATION_WARNINGS) // don't trigger on NO_DEPRECATION_WARNINGS
 #  if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__DMC__)
 #    pragma message (CGAL_INTERNAL_DEPRECATED_MESSAGE)
-#  elif defined(__GNUC__) || defined(__HP_aCC) || defined(__SUNPRO_CC) || defined(__IBMCPP__)
+#  elif (__GNUC__ > 0) || defined(__HP_aCC) || defined(__SUNPRO_CC) || defined(__IBMCPP__)
      // warning does not expand its arguments, issue a warning and add the message.
 #    warning "A deprecated header has been included."
 #    pragma message (CGAL_INTERNAL_DEPRECATED_MESSAGE)

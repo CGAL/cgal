@@ -223,7 +223,7 @@
 #define CGAL_CFG_NO_TR1_ARRAY 1
 // never use TR1
 #define CGAL_CFG_NO_TR1_TUPLE 1
-#if !defined(__GNUC__) || defined(__INTEL_COMPILER)
+#if (__GNUC__ <= 0) || defined(__INTEL_COMPILER)
 #define CGAL_CFG_NO_STATEMENT_EXPRESSIONS 1
 #endif
 #if _MSC_VER==1800
@@ -509,20 +509,20 @@ using std::max;
 #endif
 
 #if __has_feature(cxx_thread_local) || \
-    ( defined(__GNUC__) && __cplusplus >= 201103L ) || \
+    ( (__GNUC__ > 0) && __cplusplus >= 201103L ) || \
     ( _MSC_VER >= 1900 )
 // see also Installation/cmake/modules/config/support/CGAL_test_cpp_version.cpp
 #define CGAL_CAN_USE_CXX11_THREAD_LOCAL
 #endif
 
 #if (__has_include(<mutex>) && __cplusplus >= 201103L ) | \
-    ( defined(__GNUC__) && __cplusplus >= 201103L ) || \
+    ( (__GNUC__ > 0) && __cplusplus >= 201103L ) || \
     ( _MSC_VER >= 1700 )
 #define CGAL_CAN_USE_CXX11_MUTEX
 #endif
 
 #if (__has_include(<atomic>) && __cplusplus >= 201103L ) || \
-    ( defined(__GNUC__) && __cplusplus >= 201103L ) || \
+    ( (__GNUC__ > 0) && __cplusplus >= 201103L ) || \
     ( _MSC_VER >= 1700 )
 #define CGAL_CAN_USE_CXX11_ATOMIC
 #endif

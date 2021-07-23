@@ -11,7 +11,7 @@
 // Author(s)     :  Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 //                  Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 
-#if defined(__GNUC__)
+#if (__GNUC__ > 0)
 #  pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 #endif
 
