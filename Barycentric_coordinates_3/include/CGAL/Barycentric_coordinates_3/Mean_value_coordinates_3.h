@@ -112,6 +112,45 @@ namespace Barycentric_coordinates {
     OutputIterator compute(
       const Point_3& query, OutputIterator coordinates) {
 
+      switch(m_computation_policy){
+
+        case Computation_policy_3::DEFAULT:{
+          return compute_coords(query, coordinates);
+        }
+
+        case Computation_policy_3::WITH_EDGE_CASES:{
+          // Calculate query position relative to the polyhedron
+          const auto edge_case = internal::locate_wrt_polyhedron(
+            m_vertex_to_point_map, m_polygon_mesh, query, coordinates, m_traits);
+
+          if(edge_case == internal::Edge_case::BOUNDARY) {
+            return coordinates;
+          }
+          if(edge_case == internal::Edge_case::EXTERIOR_BOUNDARY){
+            std::cerr << std::endl <<
+            "WARNING: query does not belong to the polygon!" << std::endl;
+            return coordinates;
+          }
+          if(edge_case == internal::Edge_case::EXTERIOR) {
+            std::cerr << std::endl <<
+            "WARNING: query does not belong to the polygon!" << std::endl;
+          }
+
+          return compute_coords(query, coordinates);
+        }
+
+        default:{
+          internal::get_default(vertices(m_polygon_mesh).size(), coordinates);
+          return coordinates;
+        }
+      }
+      return coordinates;
+    }
+
+    template<typename OutputIterator>
+    OutputIterator compute_coords(
+      const Point_3& query, OutputIterator coordinates){
+
       // Compute weights.
       const FT sum = compute_weights(query);
       CGAL_assertion(sum != FT(0));
@@ -138,9 +177,10 @@ namespace Barycentric_coordinates {
 	    // Vertex index.
       std::size_t vi = 0;
       const auto vd = vertices(m_polygon_mesh);
+
       for (const auto& vertex : vd) {
 
-        // Call function to calculate coordinates
+        // Call function to calculate wp coordinates
         const FT weight = compute_mv_vertex_query(vertex, query);
 
     	  CGAL_assertion(vi < m_weights.size());

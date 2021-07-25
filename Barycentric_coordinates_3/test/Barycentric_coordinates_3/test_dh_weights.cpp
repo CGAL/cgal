@@ -32,7 +32,6 @@ void test_overloads() {
 
   std::vector<FT> dh_coordinates_tetrahedron;
 
-  // Test cube
   //Check for barycenter
   dh_tetrahedron(Point_3(FT(1)/FT(4), FT(1)/FT(4), FT(1)/FT(4)),
    std::back_inserter(dh_coordinates_tetrahedron));
@@ -56,7 +55,6 @@ void test_overloads() {
       }
     }
   }
-
 }
 
 int main(){

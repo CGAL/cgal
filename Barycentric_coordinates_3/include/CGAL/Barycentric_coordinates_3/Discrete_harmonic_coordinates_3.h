@@ -100,6 +100,45 @@ namespace Barycentric_coordinates {
     OutputIterator compute(
       const Point_3& query, OutputIterator coordinates) {
 
+      switch(m_computation_policy){
+
+        case Computation_policy_3::DEFAULT:{
+          return compute_coords(query, coordinates);
+        }
+
+        case Computation_policy_3::WITH_EDGE_CASES:{
+          // Calculate query position relative to the polyhedron
+          const auto edge_case = internal::locate_wrt_polyhedron(
+            m_vertex_to_point_map, m_polygon_mesh, query, coordinates, m_traits);
+
+          if(edge_case == internal::Edge_case::BOUNDARY) {
+            return coordinates;
+          }
+          if(edge_case == internal::Edge_case::EXTERIOR_BOUNDARY){
+            std::cerr << std::endl <<
+            "WARNING: query does not belong to the polygon!" << std::endl;
+            return coordinates;
+          }
+          if(edge_case == internal::Edge_case::EXTERIOR) {
+            std::cerr << std::endl <<
+            "WARNING: query does not belong to the polygon!" << std::endl;
+          }
+
+          return compute_coords(query, coordinates);
+        }
+
+        default:{
+          internal::get_default(vertices(m_polygon_mesh).size(), coordinates);
+          return coordinates;
+        }
+      }
+      return coordinates;
+    }
+
+    template<typename OutputIterator>
+    OutputIterator compute_coords(
+      const Point_3& query, OutputIterator coordinates){
+
       // Compute weights.
       const FT sum = compute_weights(query);
       CGAL_assertion(sum != FT(0));
@@ -126,9 +165,10 @@ namespace Barycentric_coordinates {
 	    // Vertex index.
       std::size_t vi = 0;
       const auto vd = vertices(m_polygon_mesh);
+
       for (const auto& vertex : vd) {
 
-        // Call function to calculate coordinates
+        // Call function to calculate wp coordinates
         const FT weight = compute_dh_vertex_query(vertex, query);
 
     	  CGAL_assertion(vi < m_weights.size());
@@ -144,6 +184,8 @@ namespace Barycentric_coordinates {
     // Compute wp coordinates for a given vertex v and a query q
     template<typename Vertex>
     FT compute_dh_vertex_query(const Vertex& vertex, const Point_3& query){
+
+      const Point_3 vertex_val = get(m_vertex_to_point_map, vertex);
 
       // Circulator of faces around the vertex
       CGAL::Face_around_target_circulator<Polygon_mesh>
@@ -191,10 +233,17 @@ namespace Barycentric_coordinates {
         const Vector_3 normal_query = vertex_parity * m_cross_3(m_construct_vector_3(query, point2),
          m_construct_vector_3(query, point1));
 
-        const FT cot_dihedral = internal::cot_dihedral_angle(
-          internal::get_face_normal(
-            *face_circulator, m_vertex_to_point_map, m_polygon_mesh, m_traits),
-            normal_query, m_traits);
+        const Vector_3 face_normal = internal::get_face_normal(
+          *face_circulator, m_vertex_to_point_map, m_polygon_mesh, m_traits);
+
+        FT cot_dihedral = internal::cot_dihedral_angle(
+          face_normal, normal_query, m_traits);
+
+        const Vector_3 vertex_query = m_construct_vector_3(vertex_val, query);
+
+        // Treat case when the point is outside
+        if(m_dot_3(face_normal, vertex_query) > 0)
+          cot_dihedral *= -1;
 
         weight += (cot_dihedral * edge_length) / 2;
         face_circulator++;
