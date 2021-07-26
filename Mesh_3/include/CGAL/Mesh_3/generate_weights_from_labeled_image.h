@@ -273,11 +273,11 @@ CGAL::Image_3 generate_weights_with_known_word_type(const CGAL::Image_3& image,
 * The weights image is generated using the algorithm described by Stalling et al
 * in \cgalCite{stalling1998weighted}.
 *
-* @param image the input labeled image from which a `Labeled_mesh_domain_3`
-* is created
+* @param image the input labeled image from which the weights image is computed.
+*   Both will then be used to construct a `Labeled_mesh_domain_3`.
 * @param sigma the standard deviation parameter of the internal Gaussian filter
 *
-* @returns a `CGAL::Image_3` or weights used to build a quality `Labeled_mesh_domain_3`
+* @returns a `CGAL::Image_3` of weights used to build a quality `Labeled_mesh_domain_3`
 */
 
 CGAL::Image_3 generate_weights(const CGAL::Image_3& image,
