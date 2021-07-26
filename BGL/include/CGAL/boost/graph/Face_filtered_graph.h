@@ -28,6 +28,10 @@
 #include <boost/range/has_range_iterator.hpp>
 #include <boost/unordered_set.hpp>
 
+#include <bitset>
+#include <utility>
+#include <vector>
+
 #ifdef DOXYGEN_RUNNING
 #define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
 #define CGAL_BGL_NP_CLASS NamedParameters
