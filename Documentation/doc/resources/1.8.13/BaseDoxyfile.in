@@ -237,6 +237,7 @@ ALIASES                = "cgal=%CGAL" \
                          "iso=ISO" \
                          "lisp=Lisp" \
                          "ieee=IEEE" \
+                         "ascii=ASCII" \
                          "exacus=Exacus" \
                          "mpir=MPIR" \
                          "mpfr=MPFR" \
