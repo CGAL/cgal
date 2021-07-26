@@ -35,6 +35,8 @@ namespace fs = boost::filesystem;
 using hist = boost::histogram::histogram<std::tuple<boost::histogram::axis::regular<double, 
       boost::use_default, boost::use_default, boost::use_default>>>; 
 
+// settings for benchmarking - throw away the first n_burns results and keep the n_samples
+// samples
 constexpr int n_burns = 1;
 constexpr int n_samples = 10;
 
@@ -223,6 +225,7 @@ int main(int argc, char** argv)
   }
   
   time_policy<Classic_tri_policies>("../data/", output);
+  
   /*
   Surface_mesh probabilistic = edge_collapse
     <SMS::GarlandHeckbert_probabilistic_policies<Surface_mesh, Kernel>>(surface_mesh);
@@ -250,7 +253,6 @@ int main(int argc, char** argv)
 
   std::cout << "Decimated probabilistic tri mesh histogram:\n";
   print_hist(generate_edge_statistics(probabilistic_tri, edge_histo, f));
-  
 
   hist face_histo = make_histogram(axis::regular<>(10, 1.0, 5.5));
   
@@ -269,6 +271,7 @@ int main(int argc, char** argv)
   std::cout << "Probabilistic tri aspect ratio:\n";
   print_hist(generate_face_statistics(probabilistic_tri, face_histo, g));
   */
+
   
   return EXIT_SUCCESS;
 }

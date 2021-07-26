@@ -28,7 +28,7 @@ endif()
 # Creating entries for all .cpp/.C files with "main" routine
 # ##########################################################
 
-create_single_source_cgal_program( "edge_collapse_envelope.cpp" )
+create_single_source_cgal_program("edge_collapse_envelope.cpp")
 create_single_source_cgal_program("edge_collapse_constrain_sharp_edges.cpp")
 create_single_source_cgal_program("edge_collapse_constrained_border_polyhedron.cpp")
 create_single_source_cgal_program("edge_collapse_enriched_polyhedron.cpp")
@@ -45,10 +45,11 @@ find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("edge_collapse_garland_heckbert.cpp")
+  create_single_source_cgal_program("gh_statistics.cpp")
   target_link_libraries(edge_collapse_garland_heckbert PUBLIC CGAL::Eigen3_support)
 
-  create_single_source_cgal_program("garland_heckbert_policy_comparisons.cpp")
-  target_link_libraries(garland_heckbert_policy_comparisons PUBLIC CGAL::Eigen3_support)
+  #  create_single_source_cgal_program("garland_heckbert_policy_comparisons.cpp")
+  # target_link_libraries(garland_heckbert_policy_comparisons PUBLIC CGAL::Eigen3_support)
 else()
   message(
     STATUS
