@@ -177,7 +177,7 @@ CGAL::Image_3 generate_weights_with_known_word_type(const CGAL::Image_3& image,
   using MaximumImageFilterType = itk::MaximumImageFilter<ImageType>;
 
   std::vector<typename ImageType::Pointer> indicators(labels.size());
-  DuplicatorType::Pointer duplicator = DuplicatorType::New();
+  typename DuplicatorType::Pointer duplicator = DuplicatorType::New();
   duplicator->SetInputImage(itk_img);
   duplicator->Update();
 
