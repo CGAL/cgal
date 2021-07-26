@@ -138,33 +138,32 @@ private:
   bool built_;
   bool removed_;
 
-  using FTP = typename Point_container::FTP;
   using Ref_pair = typename Point_container::Ref_pair;
   using Key_compare = typename Point_container::Key_compare;
-  using Construct_cartesian_const_iterator_d = typename Traits::Construct_cartesian_const_iterator_d;
   using References = typename Point_container::References;
 
   static const bool m_create_balanced_tree =
     std::is_same<Splitter, CGAL::Balanced_splitter<SearchTraits> >::value;
 
-  template<typename DataIterator>
   void initialize_reference(
-    const DataIterator begin, const DataIterator end,
-    const Construct_cartesian_const_iterator_d& construct_it,
+    const Point_d_const_iterator begin, const Point_d_const_iterator end,
+    const typename SearchTraits::Construct_cartesian_const_iterator_d& construct_it,
     std::vector<Ref_pair>& reference) const {
 
-    // std::cout << std::endl;
     std::size_t i = 0;
     for (auto it = begin; it != end; ++it, ++i) {
       const auto bit = construct_it(**it);
       reference[i] = std::make_pair(bit, *it); // copy refs to all points
-      // std::cout << *reference[i] << std::endl;
     }
+
+    // print_reference(reference);
     // CGAL_assertion_msg(false, "TODO: FINISH INITIALIZE REFERENCE!");
   }
 
+  // TODO: Can we have a better stable and parallel sort here from boost?
   void apply_merge_sort(
-    std::vector<Ref_pair>& reference, std::vector<FTP>& tmp,
+    std::vector<Ref_pair>& reference,
+    std::vector<Ref_pair>& tmp,
     const long low, const long high,
     const std::size_t axis, const std::size_t dim) const {
 
@@ -177,24 +176,31 @@ private:
       apply_merge_sort(reference, tmp, median + 1, high, axis, dim);
 
       for (i = median + 1; i > low; --i) {
-        tmp[i-1] = reference[i-1].first;
+        tmp[i-1] = reference[i-1];
       }
 
       for (j = median; j < high; ++j) {
-        tmp[median+(high-j)] = reference[j+1].first;
+        tmp[median+(high-j)] = reference[j+1];
       }
 
       for (k = low; k <= high; ++k) {
-        reference[k].first =
-        ( compare_keys(tmp[i], tmp[j], axis, dim) < FT(0) ) ?
+        reference[k] =
+        ( compare_keys(tmp[i].first, tmp[j].first, axis, dim) < FT(0) ) ?
           tmp[i++] :
           tmp[j--] ;
       }
     }
+
+    // print_reference(reference);
     // CGAL_assertion_msg(false, "TODO: FINISH APPLY MERGE SORT!");
   }
 
-  // TODO: Be sure that we have the same reference vectors after remove duplicates.
+  // TODO: Be sure that we have the same reference vectors after we remove duplicates.
+  // See check_consistency() below.
+  // We do not really remove duplicates here but rather move the pointer to the right end.
+  // At the end, all unique points are moved to the beginning of the array and all
+  // duplicates are moved to the end of this array.
+  // Should we actually remove them?
   std::size_t remove_duplicates(
     std::vector<Ref_pair>& reference,
     const std::size_t i, const std::size_t dim) const {
@@ -202,27 +208,57 @@ private:
     std::size_t end = 0;
     const Key_compare compare_keys;
     for (std::size_t j = 1; j < reference.size(); ++j) {
-      const FT compare = compare_keys(reference[j].first, reference[j-1].first, i, dim);
+      const FT compare = compare_keys( // p[i] > q[i]
+        reference[j].first /* p */, reference[j-1].first /* q */, i, dim);
 
       if (compare < FT(0)) {
         CGAL_assertion_msg(false, "ERROR: NEGATIVE COMPARE KEYS RESULT!");
       } else if (compare > FT(0)) {
-        reference[++end].first = reference[j].first;
+        reference[++end] = reference[j];
       }
     }
     // CGAL_assertion_msg(false, "TODO: FINISH REMOVE DUPLICATES!");
     return end;
   }
 
-  void print_references(
-    const std::vector< std::vector<Ref_pair> >& references) const {
+  bool check_consistency(
+    const std::vector<std::size_t>& ref_end) const {
 
-    for (const auto& reference : references) {
-      std::cout << std::endl;
-      for (const auto& ref_pair : reference) {
-        std::cout << *(ref_pair.first) << std::endl;
+    for (std::size_t i = 0; i < ref_end.size() - 1; ++i) {
+      for (std::size_t j = i + 1; j < ref_end.size(); ++j) {
+        if (ref_end[i] != ref_end[j]) {
+          return false;
+        }
       }
     }
+    return true;
+  }
+
+  void print_reference(
+    const std::size_t dim,
+    const std::vector<Ref_pair>& reference) const {
+
+    std::cout << std::endl;
+    for (const auto& ref_pair : reference) {
+      std::cout << *(ref_pair.first) << std::endl;
+      for (std::size_t i = 0; i < dim; ++i) {
+        std::cout << ref_pair.first[i] << " ";
+      }
+      std::cout << std::endl;
+      // std::cout << *(ref_pair.second) << std::endl;
+    }
+  }
+
+  void print_references(
+    const std::size_t dim,
+    const std::vector< std::vector<Ref_pair> >& references,
+    const std::string name) const {
+
+    std::cout << std::endl << "--- " << name << " : " << std::endl;
+    for (const auto& reference : references) {
+      print_reference(dim, reference);
+    }
+    CGAL_assertion_msg(false, "TODO: CHECK PRINT REFERENCES!");
   }
 
   // protected copy constructor
@@ -285,7 +321,7 @@ private:
     // std::cout << "c0 size: " << c_low.size() << std::endl;
     // std::cout << "c1 size: " << c.size()     << std::endl;
 
-    if (c_low.size() > split.bucket_size())
+    if (c_low.size() > split.bucket_size() && !c_low.is_last_call())
     {
       nh->lower_ch = new_internal_node();
       // std::cout << "- building left node" << std::endl;
@@ -294,7 +330,7 @@ private:
     else
       nh->lower_ch = create_leaf_node(c_low);
 
-    if (c.size() > split.bucket_size())
+    if (c.size() > split.bucket_size() && !c.is_last_call())
     {
       nh->upper_ch = new_internal_node();
       // std::cout << "- building right node" << std::endl;
@@ -455,7 +491,7 @@ public:
     long start = -1, end = -1;
     if (m_create_balanced_tree) {
 
-      std::vector<FTP> tmp(data.size());
+      std::vector<Ref_pair> tmp(data.size());
       references.resize(dim_, std::vector<Ref_pair>(data.size()));
       for (std::size_t i = 0; i < references.size(); ++i) {
         initialize_reference(data.begin(), data.end(),
@@ -463,31 +499,40 @@ public:
         apply_merge_sort(references[i], tmp, 0, references[i].size() - 1, i, dim_);
       }
 
-      // print_references(references);
+      // print_references(dim_, references, "REF AFTER SORT");
 
+      CGAL_assertion(references.size() == dim_);
       std::vector<std::size_t> ref_end(references.size());
       for (std::size_t i = 0; i < ref_end.size(); ++i) {
         ref_end[i] = static_cast<long>(remove_duplicates(references[i], i, dim_));
+        // std::cout << "REF END " << i << ": " << ref_end[i] << std::endl;
       }
-
-      // print_references(references);
-      // CGAL_assertion_msg(false, "TODO: FINISH INITIALIZATION!");
+      CGAL_assertion(check_consistency(ref_end));
 
       start = 0;
       end   = ref_end[0];
 
+      // print_references(dim_, references, "REF WITHOUT DUPLICATES");
+
       // TODO: Can we do it using std::remove_if()?
       // Or we can put it in preprocess().
-      data.clear();
-      data.reserve(references[0].size());
-      std::vector<Point_d> tmp_pts;
-      tmp_pts.reserve(data.size());
-      for (long i = start; i <= end; ++i) {
-        data.push_back(references[0][i].second);
-        tmp_pts.push_back(*data.back());
-      }
-      pts = tmp_pts;
+      // data.clear();
+      // data.reserve(end + 1);
+      // std::vector<Point_d> tmp_pts;
+      // tmp_pts.reserve(data.size());
+      // for (long i = start; i <= end; ++i) {
+      //   data.push_back(references[0][i].second);
+      //   tmp_pts.push_back(*data.back());
+      // }
+      // CGAL_assertion(data.size() == end + 1);
+      // CGAL_assertion(tmp_pts.size() == data.size());
+      // pts = tmp_pts;
+
       // std::cout << "* num clean points: " << pts.size() << std::endl;
+      // for (const auto& pt : pts) {
+      //   std::cout << pt << std::endl;
+      // }
+      // CGAL_assertion_msg(false, "TODO: FINISH INITIALIZATION!");
     }
 
     Point_container c(dim_, data.begin(), data.end(), traits_);
@@ -504,6 +549,8 @@ public:
     } else {
       tree_root = new_internal_node();
       // std::cout << "- building root node" << std::endl;
+
+      // print_references(dim_, references, "REF BEFORE 1");
       create_internal_node (tree_root, c, ConcurrencyTag());
     }
 

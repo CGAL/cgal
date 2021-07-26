@@ -71,6 +71,8 @@ private:
   std::size_t m_dim = static_cast<std::size_t>(-1);
   std::size_t m_depth = static_cast<std::size_t>(-1);
 
+  bool m_is_last_call = false;
+
 public:
   struct Key_compare {
 
@@ -91,6 +93,18 @@ public:
   };
 
 public:
+  inline bool
+  is_last_call() const
+  {
+    return m_is_last_call;
+  }
+
+  inline void
+  set_last_call(const bool new_last_call)
+  {
+    m_is_last_call = new_last_call;
+  }
+
   inline std::size_t
   get_dim() const
   {

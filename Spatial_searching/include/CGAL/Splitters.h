@@ -323,6 +323,8 @@ namespace CGAL {
 
     struct Balanced_cmp {
 
+      const long m_end;
+      const long m_start;
       const long m_median;
       const std::size_t m_dim;
       const std::size_t m_axis;
@@ -331,44 +333,81 @@ namespace CGAL {
 
       Balanced_cmp(
         const std::vector<Ref_pair>& reference,
-        const std::size_t axis, const long median, const std::size_t dim) :
-      m_median(median), m_dim(dim), m_axis(axis), m_reference(reference)
+        const std::size_t axis, const long median, const std::size_t dim,
+        const long start, const long end) :
+      m_end(end), m_start(start), m_median(median),
+      m_dim(dim), m_axis(axis), m_reference(reference)
       { }
 
       // TODO: Can we avoid this linear search?
       bool operator()(const Point_d* pt) const {
 
-        FTP p; bool duplicates_found = true;
-        for (const auto& ref_pair : m_reference) {
-          if (ref_pair.second == pt) {
+        // std::cout << "---- new line ----" << std::endl;
+        CGAL_assertion(m_median >= m_start && m_median <= m_end);
+        FTP p; bool is_median_found = true;
+        for (long i = m_start; i <= m_end; ++i) {
+          const auto& ref_pair = m_reference[i];
+          // std::cout << *ref_pair.second << " - " << *pt << std::endl;
+          if (*ref_pair.second == *pt) {
             p = ref_pair.first;
-            duplicates_found = false;
+            is_median_found = false;
             break;
           }
         }
-        if (duplicates_found) {
-          CGAL_assertion_msg(false, "ERROR: DUPLICATES ARE FOUND!");
-          return false;
+
+        // If we enter this if, it means that we have found one of the medians
+        // from the previous steps.
+        if (is_median_found) {
+          // std::cout << "median found: " << *pt << " : ";
+          for (const auto& ref_pair : m_reference) {
+            if (*ref_pair.second ==*pt) {
+              p = ref_pair.first;
+              break;
+            }
+          }
+          // CGAL_assertion(p != FTP());
+          // std::cout << compare_keys(
+          //   p, m_reference[m_median].first, m_axis, m_dim) << std::endl;
         }
 
+        CGAL_assertion(p != FTP());
         const FT compare = compare_keys(
           p, m_reference[m_median].first, m_axis, m_dim);
         return compare < FT(0);
       }
     };
 
-    template<typename References>
-    void print_references(const References& references) const {
+    void print_reference(
+      const std::size_t dim,
+      const std::vector<Ref_pair>& reference) const {
 
-      for (const auto& reference : (*references)) {
-        std::cout << std::endl;
-        for (const auto& ref_pair : reference) {
-          std::cout << *(ref_pair.first) << std::endl;
+      std::cout << std::endl;
+      for (const auto& ref_pair : reference) {
+        std::cout << *(ref_pair.first) << std::endl;
+        for (std::size_t i = 0; i < dim; ++i) {
+          std::cout << ref_pair.first[i] << " ";
         }
+        std::cout << std::endl;
+        // std::cout << *(ref_pair.second) << std::endl;
       }
     }
 
+    void print_references(
+      const std::size_t dim,
+      const std::vector< std::vector<Ref_pair> >& references,
+      const std::string name) const {
+
+      std::cout << std::endl << "--- " << name << " : " << std::endl;
+      for (const auto& reference : references) {
+        print_reference(dim, reference);
+      }
+      // CGAL_assertion_msg(false, "TODO: CHECK PRINT REFERENCES!");
+    }
+
     void balanced_split(Container& c0, Container& c1, Separator& sep) const {
+
+      CGAL_assertion(!c0.is_last_call());
+      CGAL_assertion(!c1.is_last_call());
 
       CGAL_assertion(c0.dimension() == c1.dimension());
       CGAL_assertion(c0.is_valid());
@@ -380,6 +419,12 @@ namespace CGAL {
       const long end = c0.get_end();
 
       const auto& references = c0.get_references();
+
+      // std::cout << "dim: "   << dim   << std::endl;
+      // std::cout << "depth: " << depth << std::endl;
+      // std::cout << "start: " << start << std::endl;
+      // std::cout << "end: "   << end   << std::endl;
+      // print_references(dim, *references, "REF BEFORE 2");
 
       // NEW CODE!
       CGAL_assertion(dim   != static_cast<std::size_t>(-1));
@@ -393,40 +438,46 @@ namespace CGAL {
       CGAL_assertion(median >= 0);
 
       // std::cout << "data: "   << c0.size() << std::endl;
-      // std::cout << "start: "  << start     << std::endl;
-      // std::cout << "end: "    << end       << std::endl;
       // std::cout << "median: " << median    << std::endl;
 
       const Key_compare compare_keys;
-      std::vector<FTP> tmp((*references)[0].size());
-      CGAL_assertion(end > start + 2);
+      std::vector<Ref_pair> tmp((*references)[0].size());
+      // CGAL_assertion(end > start + 2);
+
+      bool is_last_call = false;
+      if (end <= start + 2) { // TODO: Should we change to start + 1 or start + 0?
+        is_last_call = true;
+        // CGAL_assertion_msg(false, "TODO: CHECK LAST CALL!");
+      }
+
       for (long i = start; i <= end; ++i) { // copy the first ref to save it
-        tmp[i] = (*references)[0][i].first;
+        tmp[i] = (*references)[0][i];
       }
 
       long lower, upper;
-      for (std::size_t i = 1; i < dim; ++i) { // apply permutations for dim - 1 axis
+      for (std::size_t k = 1; k < dim; ++k) { // apply permutations for dim - 1 axis
         lower = start - 1;
         upper = median;
 
-        for (long j = start; j <= end; ++j) { // always skip median key
+        for (long i = start; i <= end; ++i) { // always skip median key
           const FT compare = compare_keys(
-            (*references)[i][j].first, (*references)[0][median].first, axis, dim);
+            (*references)[k][i].first, (*references)[0][median].first, axis, dim);
           if (compare < FT(0)) {
-            (*references)[i-1][++lower].first = (*references)[i][j].first;
+            (*references)[k-1][++lower] = (*references)[k][i];
           } else if (compare > FT(0)) {
-            (*references)[i-1][++upper].first = (*references)[i][j].first;
+            (*references)[k-1][++upper] = (*references)[k][i];
           }
         }
       }
       CGAL_assertion(lower >= 0 && upper >= 0);
 
       for (long i = start; i <= end; ++i) { // copy back
-        (*references)[dim-1][i].first = tmp[i];
+        (*references)[dim-1][i] = tmp[i];
       }
 
-      // std::cout << "DEPTH: " << depth << std::endl;
-      // print_references(references);
+      // if (depth >= 0) {
+      //   print_references(dim, *references, "DEPTH " + std::to_string(depth));
+      // }
 
       ///////////////////////
 
@@ -452,11 +503,22 @@ namespace CGAL {
       ///////////////////////
 
       // NEW VERSION!
-      const Balanced_cmp cmp((*references)[dim-1], axis, median, dim);
+      const Balanced_cmp cmp((*references)[dim-1], axis, median, dim, start, end);
       const auto it = std::partition(c0.begin(), c0.end(), cmp);
 
       c1.set_range(c0.begin(), it);
       c0.set_range(it, c0.end());
+
+      // if (depth >= 0) {
+      //   std::cout << std::endl << "c0 container, depth: " << depth << std::endl;
+      //   for (const auto& item : c0) {
+      //     std::cout << *item << std::endl;
+      //   }
+      //   std::cout << std::endl << "c1 container, depth: " << depth << std::endl;
+      //   for (const auto& item : c1) {
+      //     std::cout << *item << std::endl;
+      //   }
+      // }
 
       ///////////////////////
 
@@ -495,6 +557,9 @@ namespace CGAL {
       const FT cutting_value = (c0.max_span_upper() + c0.max_span_lower()) / FT(2); // midpoint
       // const FT cutting_value = c0.median(sep.cutting_dimension()); // median
       sep.set_cutting_value(cutting_value);
+
+      c0.set_last_call(is_last_call);
+      c1.set_last_call(is_last_call);
 
       // std::cout << "c0.bbox: " << std::endl;
       // c0.bounding_box().print(std::cout);
