@@ -3,7 +3,7 @@
 #To run: $1 = name of the user
 #        $2 = name of the branch
 #        $3 = base ref name (master, 5.1.x, 5.2.x, etc...)
-#        $4 = if given, update the VERSION_NUMBER
+#        $4 = number of the PR
 
 
 if uname | grep -q -i cygwin; then
@@ -16,8 +16,9 @@ echo "CGAL_ROOT = $CGAL_ROOT" > log
 USER_REPO=$1
 BRANCH_NAME=$2
 BASE_NAME=$3
+PR_NUMBER=$4
+
 cd ${CGAL_ROOT}
-scp ${VERSION_NUMBER_SSH_URL} .
 cd ${CGAL_GIT_DIR}
 if [ ! -d cgal ]; then
   git clone --depth 1 --no-single-branch https://github.com/CGAL/cgal.git 
@@ -26,6 +27,9 @@ if [ ! -d cgal ]; then
   cd ..
 fi
 cd cgal
+CGAL_VERSION="CGAL-$(sed -E 's/#define CGAL_VERSION (.*\..*)-dev/\1/' <(grep "#define CGAL_VERSION " Installation/include/CGAL/version.h))-${PR_NUMBER}"
+echo $CGAL_VERSION > log
+exit 0
 git fetch --depth 1 cgal
 git remote add $USER_REPO https://github.com/$USER_REPO/cgal.git
 git fetch --depth 1 $USER_REPO
@@ -53,8 +57,10 @@ fi
 (
 #create the release from the branch
 echo " Create release..."
-echo "CGAL_VERSION=0.0-Ic-$(cat ${CGAL_ROOT}/VERSION_NUMBER)"> log
-cmake -DGIT_REPO=${CGAL_GIT_DIR}/cgal -DDESTINATION=${CGAL_ROOT}/CGAL-TEST -DPUBLIC=OFF -DTESTSUITE=ON -DCGAL_VERSION=0.0-Ic-$(cat ${CGAL_ROOT}/VERSION_NUMBER) -P ${CGAL_GIT_DIR}/cgal/Scripts/developer_scripts/cgal_create_release_with_cmake.cmake | tee log
+CGAL_VERSION="CGAL-$(sed -E 's/#define CGAL_VERSION (.*\..*)-dev/\1/' <(grep "#define CGAL_VERSION " Installation/include/CGAL/version.h))-${PR_NUMBER}"
+
+echo "CGAL_VERSION = ${CGAL_VERSION}"> log
+cmake -DGIT_REPO=${CGAL_GIT_DIR}/cgal -DDESTINATION=${CGAL_ROOT}/CGAL-TEST -DPUBLIC=OFF -DTESTSUITE=ON -DCGAL_VERSION=${CGAL_VERSION} -P ${CGAL_GIT_DIR}/cgal/Scripts/developer_scripts/cgal_create_release_with_cmake.cmake | tee log
 echo "done."
 DEST=$(sed -E 's/.*CGAL-TEST\/(.*)/\1/' log);
 
@@ -66,13 +72,6 @@ echo "starting testsuite..."
 
 ./autotest_cgal -c 
 
-if [ "$4" = "y" ]; then
-  cd ${CGAL_ROOT}
-  V=$(cat VERSION_NUMBER)
-  V=$(($V+1))
-  echo $V > VERSION_NUMBER
-  scp VERSION_NUMBER ${VERSION_NUMBER_SSH_URL}
-fi
 )>${CGAL_ROOT}/autotest.log2 2>&1 & 
 echo "finished."
 

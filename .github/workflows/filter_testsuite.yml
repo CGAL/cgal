@@ -73,18 +73,14 @@ jobs:
           LABEL="${{ steps.get_label.outputs.result }}"
           USER_NAME=$(echo $LABEL | cut -d':' -f 1)
           BRANCH_NAME=$(echo $LABEL | cut -d':' -f 2)
+          PR_NUMBER=$(python -c "import json; import os; y = json.load(open(os.environ['GITHUB_EVENT_PATH'])); print(y[\"number\"])")
           BASE="${{ steps.get_base.outputs.result }}"
           mapfile -t HOSTS < ~/ssh_host_list;
           for i in ${!HOSTS[@]}; do
             HOST=$(echo ${HOSTS[$i]}|cut -d' ' -f 1 )
             PATH_TO_SCRIPT=$(echo ${HOSTS[$i]}|cut -d' ' -f 2 )
-            if [ "$i" =  "0" ] ; then
-              echo "ssh ${HOST} ${PATH_TO_SCRIPT}/run_testsuite_from_branch_name.sh $USER_NAME $BRANCH_NAME $BASE y"
-              ssh ${HOST} "${PATH_TO_SCRIPT}/run_testsuite_from_branch_name.sh $USER_NAME $BRANCH_NAME $BASE y"
-            else
-              echo "ssh ${HOST} ${PATH_TO_SCRIPT}/run_testsuite_from_branch_name.sh $USER_NAME $BRANCH_NAME $BASE"
-              ssh ${HOST} "${PATH_TO_SCRIPT}/run_testsuite_from_branch_name.sh $USER_NAME $BRANCH_NAME $BASE"
-            fi
+            echo "ssh ${HOST} ${PATH_TO_SCRIPT}/run_testsuite_from_branch_name.sh $USER_NAME $BRANCH_NAME $BASE $PR_NUMBER"
+            ssh ${HOST} "${PATH_TO_SCRIPT}/run_testsuite_from_branch_name.sh $USER_NAME $BRANCH_NAME $BASE $PR_NUMBER"
           done
       - name: Post address
         uses: actions/github-script@v3
