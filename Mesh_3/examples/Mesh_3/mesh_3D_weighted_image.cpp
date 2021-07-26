@@ -42,21 +42,19 @@ int main(int argc, char* argv[])
   }
   /// [Loads image]
 
-  /// [Generate weights]
-  const float sigma = (argc > 2) ? atof(argv[2]) : 1.f;
+  /// [Domain creation]
+  const float sigma = 10.f;
   CGAL::Image_3 img_weights =
     CGAL::Mesh_3::generate_weights(image, sigma);
-  /// [Generate weights]
 
-  /// [Domain creation]
   Mesh_domain domain
     = Mesh_domain::create_labeled_image_mesh_domain(image,
-                                                    weights = img_weights,
+//                                                    weights = img_weights,
                                                     relative_error_bound = 1e-6);
   /// [Domain creation]
 
   // Mesh criteria
-  Mesh_criteria criteria(facet_angle=30, facet_size=6, facet_distance=0.5,
+  Mesh_criteria criteria(facet_angle=30, facet_size=6, facet_distance=0.2,
                          cell_radius_edge_ratio=3, cell_size=8);
 
   /// [Meshing]
