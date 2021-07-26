@@ -32,9 +32,17 @@ git fetch --depth 1 $USER_REPO
 git checkout $BRANCH_NAME
 git reset --hard $USER_REPO/$BRANCH_NAME
 #setup the list_test_packages
-LIST_OF_PKGS=$(git diff --name-only HEAD cgal/$BASE_NAME |cut -s -d/ -f1 |sort -u | xargs -I {} ls -d {}/package_info 2>/dev/null  |cut -d/ -f1 |egrep -v Installation||true)
+TMP_LIST=$(git diff --name-only HEAD cgal/$BASE_NAME |cut -s -d/ -f1 |sort -u | xargs -I {} ls -d {}/package_info 2>/dev/null  |cut -d/ -f1 |egrep -v Installation||true)
+LIST_OF_PKGS=""
+for PKG in $(ls) ; do
+  if [ -f $PKG/package_info/$PKG/dependencies ]; then
+    if [ -n "$(comm -12  <(echo "$LIST_OF_PKGS"|sort) <(cat $PKG/package_info/$PKG/dependencies|sort))" ]; then
+      LIST_OF_PKGS="$LIST_OF_PKGS $PKG"
+    fi
+  fi
+done
+if [ -f ${CGAL_ROOT}/list_test_packages ]; then rm ${CGAL_ROOT}/list_test_packages; fi
 if [ "$LIST_OF_PKGS" != "" ]; then
-  if [ -f ${CGAL_ROOT}/list_test_packages ]; then rm ${CGAL_ROOT}/list_test_packages; fi
   for f in $LIST_OF_PKGS
   do
     echo "echo \"$f\"" >> ${CGAL_ROOT}/list_test_packages
