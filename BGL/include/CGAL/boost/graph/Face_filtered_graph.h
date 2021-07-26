@@ -1374,21 +1374,21 @@ get(boost::halfedge_index_t, const Face_filtered_graph<Graph, FIMap, VIMap, HIMa
 
 // non-const
 template <class Graph, typename FIMap, typename VIMap, typename HIMap>
-typename boost::property_map<Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, boost::face_index_t >::const_type
+typename boost::property_map<Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, boost::face_index_t >::type
 get(boost::face_index_t, Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
 {
   return w.get_face_index_map();
 }
 
 template <class Graph, typename FIMap, typename VIMap, typename HIMap>
-typename boost::property_map<Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, boost::vertex_index_t >::const_type
+typename boost::property_map<Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, boost::vertex_index_t >::type
 get(boost::vertex_index_t, Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
 {
   return w.get_vertex_index_map();
 }
 
 template <class Graph, typename FIMap, typename VIMap, typename HIMap>
-typename boost::property_map<Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, boost::halfedge_index_t >::const_type
+typename boost::property_map<Face_filtered_graph<Graph, FIMap, VIMap, HIMap>, boost::halfedge_index_t >::type
 get(boost::halfedge_index_t, Face_filtered_graph<Graph, FIMap, VIMap, HIMap>& w)
 {
   return w.get_halfedge_index_map();
