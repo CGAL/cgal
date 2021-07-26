@@ -279,7 +279,8 @@ void test_index_property_maps(const Graph& g)
   typedef typename boost::graph_traits<Graph>::face_descriptor g_face_descriptor;
   std::map<g_face_descriptor, std::size_t> map;
   PMP::connected_components(g, boost::make_assoc_property_map(map), CGAL::parameters::all_default());
-  Adapter fg(g, 0, boost::make_assoc_property_map(map));
+  Adapter fg(g, -1, boost::make_assoc_property_map(map));
+  assert(is_empty(fg));
 
   // Non const
   typedef typename CGAL::GetInitializedVertexIndexMap<Adapter>::type VIMap;
@@ -292,6 +293,13 @@ void test_index_property_maps(const Graph& g)
 
   typedef typename CGAL::GetInitializedFaceIndexMap<Adapter>::type FIMap;
   FIMap fim = CGAL::get_initialized_face_index_map(fg);
+  assert(CGAL::BGL::internal::is_index_map_valid(fim, num_faces(fg), faces(fg)));
+
+  fg.set_selected_faces(0, boost::make_assoc_property_map(map));
+  assert(!is_empty(fg));
+
+  assert(CGAL::BGL::internal::is_index_map_valid(vim, num_vertices(fg), vertices(fg)));
+  assert(CGAL::BGL::internal::is_index_map_valid(him, num_halfedges(fg), halfedges(fg)));
   assert(CGAL::BGL::internal::is_index_map_valid(fim, num_faces(fg), faces(fg)));
 
   // Const
