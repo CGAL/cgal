@@ -97,13 +97,12 @@ cat << EOF
 
 compile_and_run()
 {
-
   if [ -z "\${CGAL_DATA_DIR}" ]; then
-    if [ -d ../../data ]; then
-      export CGAL_DATA_DIR=../../data
+    if [ -d \${CGAL_DIR}/data ]; then
+      export CGAL_DATA_DIR=\${CGAL_DIR}/data
     else
-      if [ -d ../../../Data/data ]; then
-        export CGAL_DATA_DIR=../../../Data/data
+      if [ -d \${CGAL_DIR}/Data/data ]; then
+        export CGAL_DATA_DIR=\${CGAL_DIR}/Data/data
       else
         echo "ERROR: Cannot run test script, please set the variable CGAL_DATA_DIR"
         exit 1
