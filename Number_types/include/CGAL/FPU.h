@@ -327,11 +327,6 @@ inline double IA_bug_sqrt(double d)
 }
 
 #  define CGAL_BUG_SQRT(d) IA_bug_sqrt(d)
-
-
-#elif defined __SSE2_MATH__
-// For SSE2, we need to call __builtin_sqrt() instead of libc's sqrt().
-#  define CGAL_BUG_SQRT(d) __builtin_sqrt(d)
 #elif defined __CYGWIN__
 inline double IA_bug_sqrt(double d)
 {
