@@ -17,7 +17,8 @@ Release date: December 2021
 
 ### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.4/Manual/packages.html#PkgKernel23)
 
-- Added `construct_centroid_2_object()` and `compute_determinant_2_object()` in `Projection_traits_xy_3`, `Projection_traits_xz_3`, and `Projection_traits_yz_3` classes.
+-   Added `construct_centroid_2_object()` and `compute_determinant_2_object()` in `Projection_traits_xy_3`, `Projection_traits_xz_3`,
+    and`Projection_traits_yz_3` classes.
 
 [Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)
 -----------
