@@ -138,7 +138,7 @@ private:
   bool built_;
   bool removed_;
 
-  using Ref_pair = typename Point_container::Ref_pair;
+  using FTP = typename Point_container::FTP;
   using Key_compare = typename Point_container::Key_compare;
   using References = typename Point_container::References;
 
@@ -148,12 +148,11 @@ private:
   void initialize_reference(
     const Point_d_const_iterator begin, const Point_d_const_iterator end,
     const typename SearchTraits::Construct_cartesian_const_iterator_d& construct_it,
-    std::vector<Ref_pair>& reference) const {
+    std::vector<FTP>& reference) const {
 
     std::size_t i = 0;
     for (auto it = begin; it != end; ++it, ++i) {
-      const auto bit = construct_it(**it);
-      reference[i] = std::make_pair(bit, *it); // copy refs to all points
+      reference[i] = construct_it(**it); // copy refs to all points
     }
   }
 
@@ -164,19 +163,18 @@ private:
   // duplicates are moved to the end of this array.
   // Should we actually remove them?
   std::size_t remove_duplicates(
-    std::vector<Ref_pair>& reference,
-    const std::size_t i, const std::size_t dim) const {
+    std::vector<FTP>& reference, const std::size_t axis, const std::size_t dim) const {
 
     std::size_t end = 0;
     const Key_compare compare_keys;
-    for (std::size_t j = 1; j < reference.size(); ++j) {
-      const FT compare = compare_keys( // p[i] > q[i]
-        reference[j].first /* p */, reference[j-1].first /* q */, i, dim);
+    for (std::size_t i = 1; i < reference.size(); ++i) {
+      const FT compare = compare_keys( // p[i] > q[i-1]
+        reference[i] /* p */, reference[i-1] /* q */, axis, dim);
 
       if (compare < FT(0)) {
         CGAL_assertion_msg(false, "ERROR: NEGATIVE COMPARE KEYS RESULT!");
       } else if (compare > FT(0)) {
-        reference[++end] = reference[j];
+        reference[++end] = reference[i];
       }
     }
     return end;
@@ -197,22 +195,21 @@ private:
 
   void print_reference(
     const std::size_t dim,
-    const std::vector<Ref_pair>& reference) const {
+    const std::vector<FTP>& reference) const {
 
     std::cout << std::endl;
-    for (const auto& ref_pair : reference) {
-      std::cout << *(ref_pair.first) << std::endl;
-      for (std::size_t i = 0; i < dim; ++i) {
-        std::cout << ref_pair.first[i] << " ";
+    for (std::size_t i = 0; i < reference.size(); ++i) {
+      std::cout << *(reference[i]) << std::endl;
+      for (std::size_t k = 0; k < dim; ++k) {
+        std::cout << reference[i][k] << " ";
       }
       std::cout << std::endl;
-      // std::cout << *(ref_pair.second) << std::endl;
     }
   }
 
   void print_references(
     const std::size_t dim,
-    const std::vector< std::vector<Ref_pair> >& references,
+    const std::vector< std::vector<FTP> >& references,
     const std::string name) const {
 
     std::cout << std::endl << "--- " << name << " : " << std::endl;
@@ -426,18 +423,18 @@ public:
                                "Parallel_tag is enabled but TBB is unavailable.");
 #endif
 
-    std::vector< std::vector<Ref_pair> > references;
+    std::vector< std::vector<FTP> > references;
     long start = -1, end = -1;
     if (m_create_balanced_tree) {
 
       const Key_compare compare_keys;
-      references.resize(dim_, std::vector<Ref_pair>(data.size()));
+      references.resize(dim_, std::vector<FTP>(data.size()));
       for (std::size_t i = 0; i < references.size(); ++i) {
         initialize_reference(data.begin(), data.end(),
         traits_.construct_cartesian_const_iterator_d_object(), references[i]);
         std::stable_sort(references[i].begin(), references[i].end(),
-          [&](const Ref_pair& p, const Ref_pair& q) {
-            return compare_keys(p.first, q.first, i, dim_) < FT(0);
+          [&](const FTP& p, const FTP& q) {
+            return compare_keys(p, q, i, dim_) < FT(0);
           }
         );
       }
@@ -467,7 +464,7 @@ public:
 
     if (m_create_balanced_tree) {
       const auto ref_ptr = std::make_shared<References>(references);
-      c.set_references(ref_ptr);
+      c.set_ref_ptr(ref_ptr);
       c.set_data(dim_, 0, start, end);
     }
 

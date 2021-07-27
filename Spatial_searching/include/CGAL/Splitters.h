@@ -315,7 +315,6 @@ namespace CGAL {
     using Separator = Separator_;
     using Key_compare = typename Container::Key_compare;
     using FTP = typename Container::FTP;
-    using Ref_pair = typename Container::Ref_pair;
     using Point_d = typename SearchTraits::Point_d;
 
     Balanced_splitter() : Base() { }
@@ -328,73 +327,78 @@ namespace CGAL {
       const long m_median;
       const std::size_t m_dim;
       const std::size_t m_axis;
-      const std::vector<Ref_pair>& m_reference;
+      const std::vector<FTP>& m_reference;
       const Key_compare compare_keys;
 
       Balanced_cmp(
-        const std::vector<Ref_pair>& reference,
+        const std::vector<FTP>& reference,
         const std::size_t axis, const long median, const std::size_t dim,
         const long start, const long end) :
       m_end(end), m_start(start), m_median(median),
       m_dim(dim), m_axis(axis), m_reference(reference)
       { }
 
+      // TODO: Can we find a better way to convert FTP to a point?
+      bool are_equal_points(const Point_d& p, const FTP q) const {
+
+        // std::cout << Point_3(q[0], q[1], q[2]) << " - " << p << std::endl;
+        for (std::size_t i = 0; i < m_dim; ++i) {
+          if (p[i] != q[i]) return false;
+        }
+        return true;
+      }
+
       // TODO: Can we avoid this linear search?
+      // I made it much shorter by going from start to end.
       bool operator()(const Point_d* pt) const {
 
-        // std::cout << "---- new line ----" << std::endl;
+        const auto& p = *pt;
         CGAL_assertion(m_median >= m_start && m_median <= m_end);
-        FTP p; bool is_median_found = true;
+        FTP ptr; bool is_median_found = true;
+
         for (long i = m_start; i <= m_end; ++i) {
-          const auto& ref_pair = m_reference[i];
-          // std::cout << *ref_pair.second << " - " << *pt << std::endl;
-          if (*ref_pair.second == *pt) {
-            p = ref_pair.first;
+          if (are_equal_points(p, m_reference[i])) {
+            ptr = m_reference[i];
             is_median_found = false;
             break;
           }
         }
 
         // If we enter this if, it means that we have found one of the medians
-        // from the previous steps.
+        // from the previous steps. This is usually a rare case.
         if (is_median_found) {
-          // std::cout << "median found: " << *pt << " : ";
-          for (const auto& ref_pair : m_reference) {
-            if (*ref_pair.second ==*pt) {
-              p = ref_pair.first;
+          for (std::size_t i = 0; i < m_reference.size(); ++i) {
+            if (are_equal_points(p, m_reference[i])) {
+              ptr = m_reference[i];
               break;
             }
           }
-          // CGAL_assertion(p != FTP());
-          // std::cout << compare_keys(
-          //   p, m_reference[m_median].first, m_axis, m_dim) << std::endl;
         }
 
-        CGAL_assertion(p != FTP());
+        CGAL_assertion(ptr != FTP());
         const FT compare = compare_keys(
-          p, m_reference[m_median].first, m_axis, m_dim);
+          ptr, m_reference[m_median], m_axis, m_dim);
         return compare < FT(0);
       }
     };
 
     void print_reference(
       const std::size_t dim,
-      const std::vector<Ref_pair>& reference) const {
+      const std::vector<FTP>& reference) const {
 
       std::cout << std::endl;
-      for (const auto& ref_pair : reference) {
-        std::cout << *(ref_pair.first) << std::endl;
-        for (std::size_t i = 0; i < dim; ++i) {
-          std::cout << ref_pair.first[i] << " ";
+      for (std::size_t i = 0; i < reference.size(); ++i) {
+        std::cout << *(reference[i]) << std::endl;
+        for (std::size_t k = 0; k < dim; ++k) {
+          std::cout << reference[i][k] << " ";
         }
         std::cout << std::endl;
-        // std::cout << *(ref_pair.second) << std::endl;
       }
     }
 
     void print_references(
       const std::size_t dim,
-      const std::vector< std::vector<Ref_pair> >& references,
+      const std::vector< std::vector<FTP> >& references,
       const std::string name) const {
 
       std::cout << std::endl << "--- " << name << " : " << std::endl;
@@ -417,7 +421,8 @@ namespace CGAL {
       const long start = c0.get_start();
       const long end = c0.get_end();
 
-      const auto& references = c0.get_references();
+      const auto& ref_ptr = c0.get_ref_ptr();
+      auto& references = *(ref_ptr);
 
       // std::cout << "dim: "   << dim   << std::endl;
       // std::cout << "depth: " << depth << std::endl;
@@ -437,37 +442,40 @@ namespace CGAL {
       // std::cout << "median: " << median    << std::endl;
 
       const Key_compare compare_keys;
-      std::vector<Ref_pair> tmp((*references)[0].size());
+      std::vector<FTP> tmp(references[0].size());
       CGAL_assertion_msg(end > start + 2, "ERROR: LAST CALL MUST BE AVOIDED!");
 
-      for (long i = start; i <= end; ++i) { // copy the first ref to save it
-        tmp[i] = (*references)[0][i];
+      // Copy the first ref to save it.
+      for (long i = start; i <= end; ++i) {
+        tmp[i] = references[0][i];
       }
 
+      // Apply permutations for dim - 1 axis.
       long lower, upper;
-      for (std::size_t k = 1; k < dim; ++k) { // apply permutations for dim - 1 axis
+      for (std::size_t k = 1; k < dim; ++k) {
         lower = start - 1;
         upper = median;
 
         for (long i = start; i <= end; ++i) { // always skip median key
           const FT compare = compare_keys(
-            (*references)[k][i].first, (*references)[0][median].first, axis, dim);
+            references[k][i], references[0][median], axis, dim);
           if (compare < FT(0)) {
-            (*references)[k-1][++lower] = (*references)[k][i];
+            references[k-1][++lower] = references[k][i];
           } else if (compare > FT(0)) {
-            (*references)[k-1][++upper] = (*references)[k][i];
+            references[k-1][++upper] = references[k][i];
           }
         }
       }
       CGAL_assertion(lower >= 0 && upper >= 0);
 
-      for (long i = start; i <= end; ++i) { // copy back
-        (*references)[dim-1][i] = tmp[i];
+      // Copy back.
+      for (long i = start; i <= end; ++i) {
+        references[dim-1][i] = tmp[i];
       }
 
       // print_references(dim, *references, "DEPTH " + std::to_string(depth));
 
-      const Balanced_cmp cmp((*references)[dim-1], axis, median, dim, start, end);
+      const Balanced_cmp cmp(references[dim-1], axis, median, dim, start, end);
       const auto it = std::partition(c0.begin(), c0.end(), cmp);
 
       c1.set_range(c0.begin(), it);
@@ -488,7 +496,7 @@ namespace CGAL {
       //   std::cout << *item << std::endl;
       // }
 
-      c1.set_references(references);
+      c1.set_ref_ptr(ref_ptr);
       c1.set_data(dim, depth + 1, start, lower);
       c0.set_data(dim, depth + 1, median + 1, upper);
 

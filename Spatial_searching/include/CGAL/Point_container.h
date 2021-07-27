@@ -58,12 +58,11 @@ private:
 public:
   using Construct_cartesian_const_iterator_d = typename Traits::Construct_cartesian_const_iterator_d;
   using FTP = typename Construct_cartesian_const_iterator_d::result_type;
-  using Ref_pair = std::pair<FTP, const Point_d*>;
-  using References = std::vector< std::vector<Ref_pair> >;
+  using References = std::vector< std::vector<FTP> >;
   using Ref_ptr = std::shared_ptr<References>;
 
 private:
-  Ref_ptr m_references;
+  Ref_ptr m_ref_ptr;
 
   long m_start = -1;
   long m_end = -1;
@@ -77,13 +76,13 @@ public:
   struct Key_compare {
 
     FT operator()(
-      const FTP p, const FTP q, // refs to points p and q
+      const FTP& p, const FTP& q, // refs to points p and q
       const std::size_t axis, // axis offset in (x, y, z, w, ...)
       const std::size_t dim) const { // dimension
 
       FT coords_diff = FT(0);
-      for (std::size_t i = 0; i < dim; ++i) {
-        const std::size_t idx = (i + axis) % dim; // stay inside dim
+      for (std::size_t k = 0; k < dim; ++k) {
+        const std::size_t idx = (k + axis) % dim; // stay inside dim
         coords_diff = p[idx] - q[idx];
         if (coords_diff != FT(0)) break;
       }
@@ -123,15 +122,15 @@ public:
   }
 
   inline const Ref_ptr&
-  get_references() const
+  get_ref_ptr() const
   {
-    return m_references;
+    return m_ref_ptr;
   }
 
   inline void
-  set_references(const Ref_ptr& references)
+  set_ref_ptr(const Ref_ptr& ref_ptr)
   {
-    m_references = references;
+    m_ref_ptr = ref_ptr;
   }
 
   void
