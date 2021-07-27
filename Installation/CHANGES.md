@@ -1,6 +1,11 @@
 Release History
 ===============
 
+[Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
+-----------
+
+Release date: December 2021
+
 ### [Weights](https://doc.cgal.org/5.4/Manual/packages.html#PkgWeights) (new package)
 
 -   This package provides a simple and unified interface to different types of weights.
@@ -10,6 +15,10 @@ Release History
     for a query point with respect to the vertices of a planar polygon; and weighting regions
     including all weights which are used to balance other weights.
 
+### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.4/Manual/packages.html#PkgKernel23)
+
+-   Added `construct_centroid_2_object()` and `compute_determinant_2_object()` in `Projection_traits_xy_3`, `Projection_traits_xz_3`,
+    and`Projection_traits_yz_3` classes.
 
 [Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)
 -----------
