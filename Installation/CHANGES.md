@@ -1,6 +1,20 @@
 Release History
 ===============
 
+[Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
+-----------
+
+Release date: December 2021
+
+### [Weights](https://doc.cgal.org/5.4/Manual/packages.html#PkgWeights) (new package)
+
+-   This package provides a simple and unified interface to different types of weights.
+    In particular, it groups all weights into three category: analytic weights including
+    all basic weights which can be computed analytically for a query point with respect to its
+    local neighbors in 2D and 3D; barycentric weights including all weights which can be computed
+    for a query point with respect to the vertices of a planar polygon; and weighting regions
+    including all weights which are used to balance other weights.
+
 ### [2D Generalized Barycentric Coordinates](https://doc.cgal.org/5.4/Manual/packages.html#PkgBarycentricCoordinates2) (breaking change, major changes)
 
 -   **Breaking change**: The headers `Segment_coordinates_2.h` and `Triangle_coordinates_2.h` are
@@ -21,15 +35,10 @@ Release History
 -   Added free functions for computing Wachspress, discrete harmonic, and mean value coordinates.
 -   All free functions and classes are now using ranges and property maps.
 
-### [Weights](https://doc.cgal.org/5.4/Manual/packages.html#PkgWeights) (new package)
+### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.4/Manual/packages.html#PkgKernel23)
 
--   This package provides a simple and unified interface to different types of weights.
-    In particular, it groups all weights into three category: analytic weights including
-    all basic weights which can be computed analytically for a query point with respect to its
-    local neighbors in 2D and 3D; barycentric weights including all weights which can be computed
-    for a query point with respect to the vertices of a planar polygon; and weighting regions
-    including all weights which are used to balance other weights.
-
+-   Added `construct_centroid_2_object()` and `compute_determinant_2_object()` in `Projection_traits_xy_3`, `Projection_traits_xz_3`,
+    and`Projection_traits_yz_3` classes.
 
 [Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)
 -----------
