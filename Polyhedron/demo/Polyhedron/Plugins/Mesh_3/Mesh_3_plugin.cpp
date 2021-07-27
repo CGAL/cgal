@@ -588,6 +588,17 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
       }
     }
   }
+  //weighted image
+  connect(ui.useWeights_checkbox,
+          SIGNAL(toggled(bool)),
+          ui.weightsSigma,
+          SLOT(setEnabled(bool)));
+  connect(ui.useWeights_checkbox,
+          SIGNAL(toggled(bool)),
+          ui.weightsSigma_label,
+          SLOT(setEnabled(bool)));
+  ui.weightsSigma->setValue(1.);
+
   // -----------------------------------
   // Get values
   // -----------------------------------
@@ -619,6 +630,8 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   const float iso_value = float(ui.iso_value_spinBox->value());
   const float value_outside = float(ui.value_outside_spinBox->value());
   const bool inside_is_less = ui.inside_is_less_checkBox->isChecked();
+  const bool use_weights = ui.useWeights_checkbox->isChecked();
+  const float sigma_weights = use_weights ? 0. : ui.weightsSigma->value();
   as_facegraph = (mesh_type == Mesh_type::SURFACE_ONLY)
                      ? ui.facegraphCheckBox->isChecked()
                      : false;
@@ -709,7 +722,9 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         image_item->isGray(),
         iso_value,
         value_outside,
-        inside_is_less);
+        inside_is_less,
+        use_weights,
+        sigma_weights);
     break;
   }
   default:

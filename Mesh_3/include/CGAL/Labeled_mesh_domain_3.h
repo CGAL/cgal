@@ -40,7 +40,6 @@
 #include <CGAL/Image_3.h>
 #include <CGAL/Mesh_3/Image_to_labeled_function_wrapper.h>
 #include <CGAL/Mesh_3/Image_plus_weights_to_labeled_function_wrapper.h>
-#include <CGAL/Mesh_3/generate_weights_from_labeled_image.h>
 
 // support for implicit functions
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
