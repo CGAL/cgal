@@ -39,7 +39,7 @@ void test_balanced_tree(const std::vector<Point_3>& /* points */) {
   using Splitter = CGAL::Balanced_splitter<STraits>;
   using Kd_tree  = CGAL::Kd_tree<STraits, Splitter>;
 
-  const unsigned int bucket_size = 5; // TODO: better test bucket size!
+  const unsigned int bucket_size = 5;
   std::cout << "* bucket size: " << bucket_size << std::endl;
   Splitter splitter(bucket_size);
 

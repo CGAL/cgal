@@ -22,6 +22,7 @@
 #include <CGAL/assertions.h>
 #include <vector>
 #include <memory>
+#include <algorithm>
 
 #include <CGAL/algorithm.h>
 #include <CGAL/Kd_tree_node.h>
@@ -154,40 +155,6 @@ private:
       const auto bit = construct_it(**it);
       reference[i] = std::make_pair(bit, *it); // copy refs to all points
     }
-    // print_reference(reference);
-  }
-
-  // TODO: Can we have a better stable and parallel sort here from boost?
-  void apply_merge_sort(
-    std::vector<Ref_pair>& reference,
-    std::vector<Ref_pair>& tmp,
-    const long low, const long high,
-    const std::size_t axis, const std::size_t dim) const {
-
-    long i, j, k;
-    const Key_compare compare_keys;
-    if (high > low) {
-
-      const long median = low + ( (high - low) >> 1 );
-      apply_merge_sort(reference, tmp, low, median, axis, dim);
-      apply_merge_sort(reference, tmp, median + 1, high, axis, dim);
-
-      for (i = median + 1; i > low; --i) {
-        tmp[i-1] = reference[i-1];
-      }
-
-      for (j = median; j < high; ++j) {
-        tmp[median+(high-j)] = reference[j+1];
-      }
-
-      for (k = low; k <= high; ++k) {
-        reference[k] =
-        ( compare_keys(tmp[i].first, tmp[j].first, axis, dim) < FT(0) ) ?
-          tmp[i++] :
-          tmp[j--] ;
-      }
-    }
-    // print_reference(reference);
   }
 
   // TODO: Be sure that we have the same reference vectors after we remove duplicates.
@@ -463,12 +430,16 @@ public:
     long start = -1, end = -1;
     if (m_create_balanced_tree) {
 
-      std::vector<Ref_pair> tmp(data.size());
+      const Key_compare compare_keys;
       references.resize(dim_, std::vector<Ref_pair>(data.size()));
       for (std::size_t i = 0; i < references.size(); ++i) {
         initialize_reference(data.begin(), data.end(),
         traits_.construct_cartesian_const_iterator_d_object(), references[i]);
-        apply_merge_sort(references[i], tmp, 0, references[i].size() - 1, i, dim_);
+        std::stable_sort(references[i].begin(), references[i].end(),
+          [&](const Ref_pair& p, const Ref_pair& q) {
+            return compare_keys(p.first, q.first, i, dim_) < FT(0);
+          }
+        );
       }
 
       // print_references(dim_, references, "REF AFTER SORT");
