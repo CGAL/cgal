@@ -450,7 +450,7 @@ typedef unsigned int FPU_CW_t;
 # elif defined  __aarch64__
 #define CGAL_IA_SETFPCW(CW) asm volatile ("MSR FPCR, %0" : :"r" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("MRS %0, FPCR" : "=r" (CW))
-typedef unsigned int FPU_CW_t;
+typedef unsigned long FPU_CW_t;
 #define CGAL_FE_TONEAREST    (0x0)
 #define CGAL_FE_TOWARDZERO   (0xC00000)
 #define CGAL_FE_UPWARD       (0x400000)
