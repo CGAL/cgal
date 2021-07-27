@@ -6,10 +6,6 @@
 #include <CGAL/Mesh_3/polylines_to_protect.h>
 #include <CGAL/Bbox_3.h>
 
-#ifdef CGAL_USE_ITK
-#include <CGAL/Mesh_3/generate_weights_from_labeled_image.h>
-#endif
-
 #include <Scene_c3t3_item.h>
 
 #include <vector>
@@ -208,8 +204,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
                                  float iso_value,
                                  float value_outside,
                                  bool inside_is_less,
-                                 bool use_weights,
-                                 float sigma_weights)
+                                 const Image* pWeights)
 {
   if (nullptr == pImage) { return nullptr; }
 
@@ -227,6 +222,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   param.tet_shape = tet_shape;
   param.manifold = manifold;
   param.image_3_ptr = pImage;
+  param.weights_ptr = pWeights;
   Scene_c3t3_item* p_new_item = new Scene_c3t3_item(surface_only);
   if(!is_gray)
   {
@@ -234,15 +230,12 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
 
     Image_mesh_domain* p_domain;
 #ifdef CGAL_USE_ITK
-    if (use_weights)
+    if(nullptr != pWeights)
     {
-      CGAL::Image_3 img_weights =
-        CGAL::Mesh_3::generate_weights(*pImage, sigma_weights);
-
       p_domain = new Image_mesh_domain
       (Image_mesh_domain::create_labeled_image_mesh_domain
        (p::image = *pImage,
-        p::weights = img_weights,
+        p::weights = *pWeights,
         p::relative_error_bound = 1e-6,
         p::construct_surface_patch_index =
         [](int i, int j) { return (i * 1000 + j); }

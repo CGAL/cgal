@@ -37,6 +37,10 @@ auto make_not_null(T&& t) {
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 #include "Scene_image_item.h"
 #include "Image_type.h"
+  #ifdef CGAL_USE_ITK
+  #include <CGAL/Mesh_3/generate_weights_from_labeled_image.h>
+  #endif
+
 #endif
 
 #include "Meshing_thread.h"
@@ -630,8 +634,10 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   const float iso_value = float(ui.iso_value_spinBox->value());
   const float value_outside = float(ui.value_outside_spinBox->value());
   const bool inside_is_less = ui.inside_is_less_checkBox->isChecked();
-  const bool use_weights = ui.useWeights_checkbox->isChecked();
-  const float sigma_weights = use_weights ? 0. : ui.weightsSigma->value();
+  const float sigma_weights = ui.useWeights_checkbox->isChecked()
+                            ? ui.weightsSigma->value() : 0.;
+  Image weights = nullptr;
+
   as_facegraph = (mesh_type == Mesh_type::SURFACE_ONLY)
                      ? ui.facegraphCheckBox->isChecked()
                      : false;
@@ -704,6 +710,10 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
       return;
     }
 
+#ifdef CGAL_USE_ITK
+    weights = CGAL::Mesh_3::generate_weights(*pImage, sigma_weights);
+#endif
+
     Scene_polylines_item::Polylines_container plc;
 
     thread = cgal_code_mesh_3(
@@ -723,8 +733,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         iso_value,
         value_outside,
         inside_is_less,
-        use_weights,
-        sigma_weights);
+        &weights);
     break;
   }
   default:
