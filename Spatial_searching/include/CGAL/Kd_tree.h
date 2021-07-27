@@ -180,13 +180,46 @@ private:
     return end;
   }
 
+  // TODO: Can we find a better way to convert FTP to a point?
+  bool are_equal_points(
+    const std::size_t dim, const FTP& p, const FTP& q) const {
+
+    // std::cout << Point_3(q[0], q[1], q[2]) << " - " << p << std::endl;
+    for (std::size_t i = 0; i < dim; ++i) {
+      if (p[i] != q[i]) return false;
+    }
+    return true;
+  }
+
   bool check_consistency(
-    const std::vector<std::size_t>& ref_end) const {
+    const std::size_t dim,
+    const std::vector<std::size_t>& ref_end,
+    const std::vector< std::vector<FTP> >& references) const {
 
     for (std::size_t i = 0; i < ref_end.size() - 1; ++i) {
       for (std::size_t j = i + 1; j < ref_end.size(); ++j) {
         if (ref_end[i] != ref_end[j]) {
+          CGAL_assertion_msg(false, "ERROR: REF END IS WRONG!");
           return false;
+        }
+      }
+    }
+
+    CGAL_assertion(references.size() == dim);
+    for (std::size_t i = 0; i < references.size() - 1; ++i) {
+      for (std::size_t j = i + 1; j < references.size(); ++j) {
+        const auto& refi = references[i];
+        const auto& refj = references[j];
+
+        for (const FTP& p : refi) {
+          bool found_point = false;
+          for (const FTP& q : refj) {
+            if (are_equal_points(dim, p, q)) {
+              found_point = true; break;
+            }
+          }
+          CGAL_assertion_msg(found_point, "ERROR: POINT FROM REFI IS NOT IN REFJ!");
+          if (!found_point) return false;
         }
       }
     }
@@ -447,7 +480,7 @@ public:
         ref_end[i] = static_cast<long>(remove_duplicates(references[i], i, dim_));
         // std::cout << "REF END " << i << ": " << ref_end[i] << std::endl;
       }
-      CGAL_assertion(check_consistency(ref_end));
+      CGAL_assertion(check_consistency(dim_, ref_end, references));
 
       start = 0;
       end   = ref_end[0];

@@ -339,7 +339,7 @@ namespace CGAL {
       { }
 
       // TODO: Can we find a better way to convert FTP to a point?
-      bool are_equal_points(const Point_d& p, const FTP q) const {
+      bool are_equal_points(const Point_d& p, const FTP& q) const {
 
         // std::cout << Point_3(q[0], q[1], q[2]) << " - " << p << std::endl;
         for (std::size_t i = 0; i < m_dim; ++i) {
