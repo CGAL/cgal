@@ -30,6 +30,10 @@ namespace CGAL {
   template <class SearchTraits, class Splitter, class UseExtendedNode, class EnablePointsCache>
   class Kd_tree;
 
+  namespace internal {
+    static std::size_t node_counter = 0;
+  }
+
   template < class TreeTraits, class Splitter, class UseExtendedNode, class EnablePointsCache >
   class Kd_tree_node {
 
@@ -52,11 +56,30 @@ namespace CGAL {
     typedef typename Kdt::D D;
 
     bool leaf;
+    std::size_t m_node_index = 0;
 
   public :
-    Kd_tree_node(bool leaf) : leaf(leaf) { }
+    Kd_tree_node(bool leaf) : leaf(leaf),
+    m_node_index(internal::node_counter++) { }
 
     bool is_leaf() const { return leaf; }
+
+    inline std::string
+    name() const
+    {
+      std::string node_name = "default_name";
+      if (is_leaf()) { // leaf node
+        node_name = "L" + std::to_string(m_node_index);
+      } else {
+        if (m_node_index == 0) { // root node
+          node_name = "R" + std::to_string(m_node_index);
+        } else { // internal node
+          node_name = "N" + std::to_string(m_node_index);
+        }
+      }
+      CGAL_assertion(node_name != "default_name");
+      return node_name;
+    }
 
     std::size_t
     num_items() const
@@ -182,6 +205,35 @@ namespace CGAL {
       }
     }
 
+    void
+    print(std::ostream& os) const
+    {
+      if (is_leaf()) { // draw leaf nodes
+
+        Leaf_node_const_handle node =
+          static_cast<Leaf_node_const_handle>(this);
+
+        os << std::endl;
+        if (node->size() > 0) {
+          os << node->name() << " [label=\"" << node->name() << ", Size: "
+          << node->size() << "\"] ;" << std::endl;
+        } else {
+          CGAL_assertion_msg(false, "ERROR: NODE SIZE IS ZERO!");
+        }
+
+      } else { // draw internal nodes
+
+        Internal_node_const_handle node =
+          static_cast<Internal_node_const_handle>(this);
+
+        os << std::endl;
+        os << node->name() << " [label=\"" << node->name() << "\"] ;" << std::endl;
+        os << node->name() << " -- " << node->lower()->name() << " ;";
+        node->lower()->print(os);
+        os << node->name() << " -- " << node->upper()->name() << " ;";
+        node->upper()->print(os);
+      }
+    }
 
     template <class OutputIterator, class FuzzyQueryItem>
     OutputIterator
