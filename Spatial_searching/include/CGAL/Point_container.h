@@ -150,6 +150,9 @@ public:
     m_depth = depth;
     m_start = start;
     m_end = end;
+    if (m_end <= m_start + 2) {
+      m_is_last_call = true;
+    }
   }
 
   inline void

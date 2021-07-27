@@ -445,10 +445,13 @@ namespace CGAL {
       // CGAL_assertion(end > start + 2);
 
       bool is_last_call = false;
-      if (end <= start + 2) { // TODO: Should we change to start + 1 or start + 0?
+      if (end <= start + 2) {
         is_last_call = true;
-        // CGAL_assertion_msg(false, "TODO: CHECK LAST CALL!");
+        // std::cout << "last call: " << end << " " << start << std::endl;
+        CGAL_assertion_msg(false, "ERROR: LAST CALL MUST BE AVOIDED!");
       }
+      c0.set_last_call(is_last_call);
+      c1.set_last_call(is_last_call);
 
       for (long i = start; i <= end; ++i) { // copy the first ref to save it
         tmp[i] = (*references)[0][i];
@@ -509,6 +512,9 @@ namespace CGAL {
       c1.set_range(c0.begin(), it);
       c0.set_range(it, c0.end());
 
+      CGAL_assertion(c0.size() > 0);
+      CGAL_assertion(c1.size() > 0);
+
       // if (depth >= 0) {
       //   std::cout << std::endl << "c0 container, depth: " << depth << std::endl;
       //   for (const auto& item : c0) {
@@ -557,9 +563,6 @@ namespace CGAL {
       const FT cutting_value = (c0.max_span_upper() + c0.max_span_lower()) / FT(2); // midpoint
       // const FT cutting_value = c0.median(sep.cutting_dimension()); // median
       sep.set_cutting_value(cutting_value);
-
-      c0.set_last_call(is_last_call);
-      c1.set_last_call(is_last_call);
 
       // std::cout << "c0.bbox: " << std::endl;
       // c0.bounding_box().print(std::cout);
