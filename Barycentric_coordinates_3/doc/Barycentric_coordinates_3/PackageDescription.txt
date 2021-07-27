@@ -2,45 +2,36 @@ namespace CGAL {
 namespace Barycentric_coordinates {
 
 /*!
-\defgroup PkgBarycentricCoordinates2Ref 2D Generalized Barycentric Coordinates Reference
+\defgroup PkgBarycentricCoordinates3Ref 3D Generalized Barycentric Coordinates Reference
 
-\defgroup PkgBarycentricCoordinates2RefConcepts Concepts
-\ingroup PkgBarycentricCoordinates2Ref
+\defgroup PkgBarycentricCoordinates3RefConcepts Concepts
+\ingroup PkgBarycentricCoordinates3Ref
 
 Generalized barycentric concepts.
 
-\defgroup PkgBarycentricCoordinates2RefAnalytic Analytic Coordinates
-\ingroup PkgBarycentricCoordinates2Ref
+\defgroup PkgBarycentricCoordinates3RefAnalytic Analytic Coordinates
+\ingroup PkgBarycentricCoordinates3Ref
 
 Analytic coordinates and related classes.
 
-\defgroup PkgBarycentricCoordinates2RefHarmonic Harmonic Coordinates
-\ingroup PkgBarycentricCoordinates2Ref
-
-Harmonic coordinates and related classes.
-
-\defgroup PkgBarycentricCoordinates2RefFunctions Free Functions
-\ingroup PkgBarycentricCoordinates2Ref
+\defgroup PkgBarycentricCoordinates3RefFunctions Free Functions
+\ingroup PkgBarycentricCoordinates3Ref
 
 Free functions to compute barycentric weights and coordinates.
 
-\defgroup PkgBarycentricCoordinates2RefDeprecated Deprecated
-\ingroup PkgBarycentricCoordinates2Ref
+\defgroup PkgBarycentricCoordinates3RefDeprecated Deprecated
+\ingroup PkgBarycentricCoordinates3Ref
 
-Deprecated classes and functions.
 
-\addtogroup PkgBarycentricCoordinates2Ref
-
-\cgalPkgDescriptionBegin{2D Generalized Barycentric Coordinates, PkgBarycentricCoordinates2}
+\cgalPkgDescriptionBegin{3D Generalized Barycentric Coordinates, PkgBarycentricCoordinates3}
 \cgalPkgPicture{barcoord_thumb.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez}
-\cgalPkgDesc{This package offers an efficient and robust implementation of 2D generalized barycentric
-coordinates defined for simple polygons in the plane. If coordinates with respect to multivariate
-scattered points instead of a polygon are required, please refer to natural neighbor
-coordinates from the Package \ref PkgInterpolation2.}
-\cgalPkgManuals{Chapter_2D_Generalized_Barycentric_Coordinates, PkgBarycentricCoordinates2Ref}
+\cgalPkgAuthors{Antonio Gomes, Dmitry Anisimov}
+\cgalPkgDesc{The package 3D Generalized Barycentric Coordinates offers an efficient and robust
+implementation of three-dimensional closed-form generalized barycentric coordinates
+defined for convex simplicial polytopes.}
+\cgalPkgManuals{Chapter_3D_Generalized_Barycentric_Coordinates, PkgBarycentricCoordinates3Ref}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
@@ -53,29 +44,18 @@ coordinates from the Package \ref PkgInterpolation2.}
 \cgalClassifedRefPages
 
 ## Concepts ##
-- `BarycentricTraits_2`
-- `DiscretizedDomain_2`
+- `BarycentricTraits_3`
 
 ## Analytic Coordinates ##
-- `Wachspress_coordinates_2<VertexRange, GeomTraits, PointMap>`
-- `Mean_value_coordinates_2<VertexRange, GeomTraits, PointMap>`
-- `Discrete_harmonic_coordinates_2<VertexRange, GeomTraits, PointMap>`
-
-## Harmonic Coordinates ##
-- `Delaunay_domain_2<VertexRange, GeomTraits, PointMap>`
-- `Harmonic_coordinates_2<VertexRange, DiscretizedDomain, GeomTraits, PointMap>`
+- `Wachspress_coordinates_2<PolygonMesh, GeomTraits, VertexToPointMap>`
+- `Mean_value_coordinates_2<PolygonMesh, GeomTraits, VertexToPointMap>`
+- `Discrete_harmonic_coordinates_3<PolygonMesh, GeomTraits, VertexToPointMap>`
 
 ## Free Functions ##
-- `segment_coordinates_2()`
-- `triangle_coordinates_2()`
-- `wachspress_weights_2()`
-- `wachspress_coordinates_2()`
-- `mean_value_weights_2()`
-- `mean_value_coordinates_2()`
-- `discrete_harmonic_weights_2()`
-- `discrete_harmonic_coordinates_2()`
-- `harmonic_coordinates_2()`
-- `boundary_coordinates_2()`
+- `tetrahedron_coordinates()`
+- `wachspress_coordinates_3()`
+- `mean_value_coordinates_3()`
+- `discrete_harmonic_coordinates_3()`
 */
 
 } /* namespace Barycentric_coordinates */

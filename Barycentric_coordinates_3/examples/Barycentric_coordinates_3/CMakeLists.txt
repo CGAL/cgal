@@ -15,6 +15,7 @@ if(CGAL_FOUND)
 
   create_single_source_cgal_program("tetrahedron_coordinates.cpp")
   create_single_source_cgal_program("shape_deformation.cpp")
+  create_single_source_cgal_program("wachspress_coordinates.cpp")
 
 else()
   message(WARNING "This program requires the CGAL library, and will not be compiled.")

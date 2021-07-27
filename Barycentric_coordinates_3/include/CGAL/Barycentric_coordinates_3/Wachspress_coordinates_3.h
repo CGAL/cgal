@@ -69,7 +69,7 @@ namespace Barycentric_coordinates {
     Wachspress_coordinates_3(
       const PolygonMesh& polygon_mesh,
       const Computation_policy_3 policy =
-      Computation_policy_3::DEFAULT,
+      Computation_policy_3::FAST,
       const GeomTraits traits = GeomTraits()) :
     Wachspress_coordinates_3(
       polygon_mesh,
@@ -105,11 +105,11 @@ namespace Barycentric_coordinates {
 
       switch(m_computation_policy){
 
-        case Computation_policy_3::DEFAULT:{
+        case Computation_policy_3::FAST:{
           return compute_coords(query, coordinates);
         }
 
-        case Computation_policy_3::WITH_EDGE_CASES:{
+        case Computation_policy_3::FAST_WITH_EDGE_CASES:{
           // Calculate query position relative to the polyhedron
           const auto edge_case = internal::locate_wrt_polyhedron(
             m_vertex_to_point_map, m_polygon_mesh, query, coordinates, m_traits);
@@ -257,7 +257,7 @@ namespace Barycentric_coordinates {
     const Point_3& query,
     OutIterator c_begin,
     const Computation_policy_3 policy =
-    Computation_policy_3::DEFAULT) {
+    Computation_policy_3::FAST) {
 
     using Geom_Traits = typename Kernel_traits<Point_3>::Kernel;
 

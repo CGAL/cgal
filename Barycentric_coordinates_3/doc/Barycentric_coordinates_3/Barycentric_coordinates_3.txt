@@ -3,10 +3,10 @@ namespace Barycentric_coordinates {
 
 /*!
 \mainpage User Manual
-\anchor Chapter_2D_Generalized_Barycentric_Coordinates
+\anchor Chapter_3D_Generalized_Barycentric_Coordinates
 \cgalAutoToc
 
-\authors Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez
+\authors Antonio Gomes, Dmitry Anisimov
 
 
 \section gbc_introduction Introduction

@@ -59,7 +59,7 @@ void test_coordinate() {
     std::back_inserter(sample_points), 100);
 
   // BC coordinates
-  BC bc_tetrahedron(tetrahedron, CP3::WITH_EDGE_CASES);
+  BC bc_tetrahedron(tetrahedron, CP3::FAST_WITH_EDGE_CASES);
 
   std::vector<FT> bc_coordinates_tetrahedron;
   int num_samples = 0;

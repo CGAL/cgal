@@ -68,7 +68,7 @@ namespace Barycentric_coordinates {
     Voronoi_coordinates_3(
       const PolygonMesh& polygon_mesh,
       const Computation_policy_3 policy =
-      Computation_policy_3::DEFAULT,
+      Computation_policy_3::FAST,
       const GeomTraits traits = GeomTraits()) :
     Voronoi_coordinates_3(
       polygon_mesh,
@@ -254,7 +254,7 @@ namespace Barycentric_coordinates {
     const Point_3& query,
     OutIterator c_begin,
     const Computation_policy_3 policy =
-    Computation_policy_3::DEFAULT) {
+    Computation_policy_3::FAST) {
 
     using Geom_Traits = typename Kernel_traits<Point_3>::Kernel;
     using SM = CGAL::Surface_mesh<Point_3>;

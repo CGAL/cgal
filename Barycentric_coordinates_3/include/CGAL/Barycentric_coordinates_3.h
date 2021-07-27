@@ -11,6 +11,10 @@
 // Author(s)     : Antonio Gomes, Dmitry Anisimov
 //
 
+/*!
+  \file Barycentric_coordinates_3.h
+*/
+
 #ifndef CGAL_BARYCENTRIC_COORDINATES_3_H
 #define CGAL_BARYCENTRIC_COORDINATES_3_H
 
