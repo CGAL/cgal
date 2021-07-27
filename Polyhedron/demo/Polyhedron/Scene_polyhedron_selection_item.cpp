@@ -2453,8 +2453,7 @@ QString Scene_polyhedron_selection_item::computeStats(int type)
     // Extract the part n°0 of the partition into a new, independent mesh
     if(selected_facets.size() == 0)
       return QString("n/a");
-    boost::vector_property_map<int,
-        boost::property_map<SMesh, boost::face_index_t>::type>
+    boost::vector_property_map<int, boost::property_map<CGAL::Face_filtered_graph<SMesh>, boost::face_index_t>::type>
         fccmap(get(boost::face_index, *d->filtered_graph));
 
     return QString::number(CGAL::Polygon_mesh_processing::connected_components(*d->filtered_graph, fccmap));
