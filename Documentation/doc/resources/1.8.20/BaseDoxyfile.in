@@ -290,6 +290,7 @@ ALIASES                = "cgal=%CGAL" \
                          "ceres=Ceres" \
                          "glpk=GLPK" \
                          "scip=SCIP" \
+                         "osqp=OSQP" \
                          "rs=RS" \
                          "rs3=RS3" \
                          "unix=Unix" \

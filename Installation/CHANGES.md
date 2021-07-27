@@ -9,6 +9,11 @@ Release date: December 2021
 
 -   Added the function `CGAL::Polygon_mesh_processing::match_faces()`, which, given two polygon meshes, identifies their common faces as well as as faces present in only either of them.
 
+###  [CGAL and Solvers](https://doc.cgal.org/5.4/Manual/packages.html#PkgSolverInterface)
+
+-   Added the [OSQP solver](https://osqp.org/) support. This solver enables to efficiently compute the convex Quadratic Programming (QP) problems arising in the context of several packages.
+
+
 [Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)
 -----------
 
