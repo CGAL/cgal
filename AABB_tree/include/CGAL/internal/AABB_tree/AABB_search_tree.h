@@ -97,7 +97,7 @@ namespace CGAL
 
         public:
                 template <class ConstPointIterator>
-                AABB_search_tree(ConstPointIterator begin, ConstPointIterator beyond, const bool preprocess = false)
+                AABB_search_tree(ConstPointIterator begin, ConstPointIterator beyond)
                     : m_tree{}
                 {
                         typedef typename Add_decorated_point<Traits,typename Traits::Primitive::Id>::Point_3 Decorated_point;
@@ -108,7 +108,6 @@ namespace CGAL
                                 ++begin;
                         }
                         m_tree.insert(points.begin(), points.end());
-                        if (preprocess) m_tree.preprocess();
                         m_tree.build();
                 }
 

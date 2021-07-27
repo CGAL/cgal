@@ -27,7 +27,6 @@
 #include <CGAL/Kd_tree_node.h>
 #include <CGAL/Splitters.h>
 #include <CGAL/internal/Get_dimension_tag.h>
-#include <CGAL/constructions_d.h>
 
 #include <boost/container/deque.hpp>
 #include <boost/optional.hpp>
@@ -155,9 +154,7 @@ private:
       const auto bit = construct_it(**it);
       reference[i] = std::make_pair(bit, *it); // copy refs to all points
     }
-
     // print_reference(reference);
-    // CGAL_assertion_msg(false, "TODO: FINISH INITIALIZE REFERENCE!");
   }
 
   // TODO: Can we have a better stable and parallel sort here from boost?
@@ -190,9 +187,7 @@ private:
           tmp[j--] ;
       }
     }
-
     // print_reference(reference);
-    // CGAL_assertion_msg(false, "TODO: FINISH APPLY MERGE SORT!");
   }
 
   // TODO: Be sure that we have the same reference vectors after we remove duplicates.
@@ -217,7 +212,6 @@ private:
         reference[++end] = reference[j];
       }
     }
-    // CGAL_assertion_msg(false, "TODO: FINISH REMOVE DUPLICATES!");
     return end;
   }
 
@@ -258,7 +252,6 @@ private:
     for (const auto& reference : references) {
       print_reference(dim, reference);
     }
-    CGAL_assertion_msg(false, "TODO: CHECK PRINT REFERENCES!");
   }
 
   // protected copy constructor
@@ -418,22 +411,6 @@ public:
     return pts.empty();
   }
 
-  // TODO: It is not really a job of the tree to remove duplicates.
-  // We should remove this function and related stuff in AABB tree.
-  void preprocess(const FT distance_threshold = FT(0)) {
-
-    // TODO: put squared_distance_d_object in SearchTraits.
-    if (pts.size() < 2) return;
-    std::sort(pts.begin(), pts.end());
-    const FT eps = distance_threshold * distance_threshold;
-    const auto last = std::unique(pts.begin(), pts.end(),
-      [&](const Point_d& p, const Point_d& q) {
-        return CGAL::squared_distance(p, q) <= eps;
-      }
-    );
-    pts.erase(last, pts.end());
-  }
-
   void build()
   {
     build<Sequential_tag>();
@@ -526,7 +503,7 @@ public:
     bbox = new Kd_tree_rectangle<FT,D>(c.bounding_box());
     if (c.size() <= split.bucket_size()){
       tree_root = create_leaf_node(c);
-    } else {
+    }else {
       tree_root = new_internal_node();
       create_internal_node (tree_root, c, ConcurrencyTag());
     }
