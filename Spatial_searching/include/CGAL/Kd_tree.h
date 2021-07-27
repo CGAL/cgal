@@ -318,13 +318,9 @@ private:
     if (try_parallel_internal_node_creation (nh, c, c_low, tag))
       return;
 
-    // std::cout << "c0 size: " << c_low.size() << std::endl;
-    // std::cout << "c1 size: " << c.size()     << std::endl;
-
     if (c_low.size() > split.bucket_size() && !c_low.is_last_call())
     {
       nh->lower_ch = new_internal_node();
-      // std::cout << "- building left node" << std::endl;
       create_internal_node (nh->lower_ch, c_low, tag);
     }
     else
@@ -333,7 +329,6 @@ private:
     if (c.size() > split.bucket_size() && !c.is_last_call())
     {
       nh->upper_ch = new_internal_node();
-      // std::cout << "- building right node" << std::endl;
       create_internal_node (nh->upper_ch, c, tag);
     }
     else
@@ -514,25 +509,10 @@ public:
 
       // print_references(dim_, references, "REF WITHOUT DUPLICATES");
 
-      // TODO: Can we do it using std::remove_if()?
-      // Or we can put it in preprocess().
-      // data.clear();
-      // data.reserve(end + 1);
-      // std::vector<Point_d> tmp_pts;
-      // tmp_pts.reserve(data.size());
-      // for (long i = start; i <= end; ++i) {
-      //   data.push_back(references[0][i].second);
-      //   tmp_pts.push_back(*data.back());
-      // }
-      // CGAL_assertion(data.size() == end + 1);
-      // CGAL_assertion(tmp_pts.size() == data.size());
-      // pts = tmp_pts;
-
       // std::cout << "* num clean points: " << pts.size() << std::endl;
       // for (const auto& pt : pts) {
       //   std::cout << pt << std::endl;
       // }
-      // CGAL_assertion_msg(false, "TODO: FINISH INITIALIZATION!");
     }
 
     Point_container c(dim_, data.begin(), data.end(), traits_);
@@ -548,9 +528,6 @@ public:
       tree_root = create_leaf_node(c);
     } else {
       tree_root = new_internal_node();
-      // std::cout << "- building root node" << std::endl;
-
-      // print_references(dim_, references, "REF BEFORE 1");
       create_internal_node (tree_root, c, ConcurrencyTag());
     }
 

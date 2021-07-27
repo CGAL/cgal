@@ -87,7 +87,6 @@ public:
         coords_diff = p[idx] - q[idx];
         if (coords_diff != FT(0)) break;
       }
-      // CGAL_assertion_msg(false, "TODO: FINISH COMPARE KEYS!");
       return coords_diff;
     }
   };
@@ -97,12 +96,6 @@ public:
   is_last_call() const
   {
     return m_is_last_call;
-  }
-
-  inline void
-  set_last_call(const bool new_last_call)
-  {
-    m_is_last_call = new_last_call;
   }
 
   inline std::size_t

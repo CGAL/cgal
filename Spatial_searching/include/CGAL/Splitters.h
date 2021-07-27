@@ -401,7 +401,6 @@ namespace CGAL {
       for (const auto& reference : references) {
         print_reference(dim, reference);
       }
-      // CGAL_assertion_msg(false, "TODO: CHECK PRINT REFERENCES!");
     }
 
     void balanced_split(Container& c0, Container& c1, Separator& sep) const {
@@ -424,9 +423,7 @@ namespace CGAL {
       // std::cout << "depth: " << depth << std::endl;
       // std::cout << "start: " << start << std::endl;
       // std::cout << "end: "   << end   << std::endl;
-      // print_references(dim, *references, "REF BEFORE 2");
 
-      // NEW CODE!
       CGAL_assertion(dim   != static_cast<std::size_t>(-1));
       CGAL_assertion(depth != static_cast<std::size_t>(-1));
 
@@ -437,21 +434,11 @@ namespace CGAL {
       const std::size_t axis = depth % dim;
       CGAL_assertion(median >= 0);
 
-      // std::cout << "data: "   << c0.size() << std::endl;
       // std::cout << "median: " << median    << std::endl;
 
       const Key_compare compare_keys;
       std::vector<Ref_pair> tmp((*references)[0].size());
-      // CGAL_assertion(end > start + 2);
-
-      bool is_last_call = false;
-      if (end <= start + 2) {
-        is_last_call = true;
-        // std::cout << "last call: " << end << " " << start << std::endl;
-        CGAL_assertion_msg(false, "ERROR: LAST CALL MUST BE AVOIDED!");
-      }
-      c0.set_last_call(is_last_call);
-      c1.set_last_call(is_last_call);
+      CGAL_assertion_msg(end > start + 2, "ERROR: LAST CALL MUST BE AVOIDED!");
 
       for (long i = start; i <= end; ++i) { // copy the first ref to save it
         tmp[i] = (*references)[0][i];
@@ -478,34 +465,8 @@ namespace CGAL {
         (*references)[dim-1][i] = tmp[i];
       }
 
-      // if (depth >= 0) {
-      //   print_references(dim, *references, "DEPTH " + std::to_string(depth));
-      // }
+      // print_references(dim, *references, "DEPTH " + std::to_string(depth));
 
-      ///////////////////////
-
-      // OLD CODE!
-
-      // c1.bounding_box() = c0.boundig_box();
-      // const int split_coord = static_cast<int>(axis); // TODO: Is it correct?
-      // const FT cutting_value = ((*references)[dim-1][median].first)[axis]; // TODO: Is it correct?
-
-      // std::cout << "split coord: "   << split_coord   << std::endl;
-      // std::cout << "cutting value: " << cutting_value << std::endl;
-
-      // const int split_coord = sep.cutting_dimension();
-      // const FT cutting_value = sep.cutting_value();
-
-      // c0.set_built_coordinate(split_coord);
-      // c1.set_built_coordinate(split_coord);
-
-      // auto construct_it = traits.construct_cartesian_const_iterator_d_object();
-      // Cmp<Traits> cmp(split_coord, cutting_value, construct_it);
-      // const iterator it = std::partition(c0.begin(), c0.end(), cmp);
-
-      ///////////////////////
-
-      // NEW VERSION!
       const Balanced_cmp cmp((*references)[dim-1], axis, median, dim, start, end);
       const auto it = std::partition(c0.begin(), c0.end(), cmp);
 
@@ -515,21 +476,17 @@ namespace CGAL {
       CGAL_assertion(c0.size() > 0);
       CGAL_assertion(c1.size() > 0);
 
-      // if (depth >= 0) {
-      //   std::cout << std::endl << "c0 container, depth: " << depth << std::endl;
-      //   for (const auto& item : c0) {
-      //     std::cout << *item << std::endl;
-      //   }
-      //   std::cout << std::endl << "c1 container, depth: " << depth << std::endl;
-      //   for (const auto& item : c1) {
-      //     std::cout << *item << std::endl;
-      //   }
+      // std::cout << "c0 size: " << c0.size() << std::endl;
+      // std::cout << "c1 size: " << c1.size() << std::endl;
+
+      // std::cout << std::endl << "c0 container, depth: " << depth << std::endl;
+      // for (const auto& item : c0) {
+      //   std::cout << *item << std::endl;
       // }
-
-      ///////////////////////
-
-      // std::cout << "pre size c0: " << c0.size() << std::endl;
-      // std::cout << "pre size c1: " << c1.size() << std::endl;
+      // std::cout << std::endl << "c1 container, depth: " << depth << std::endl;
+      // for (const auto& item : c1) {
+      //   std::cout << *item << std::endl;
+      // }
 
       c1.set_references(references);
       c1.set_data(dim, depth + 1, start, lower);
@@ -544,13 +501,11 @@ namespace CGAL {
 
       SearchTraits traits;
       auto construct_it = traits.construct_cartesian_const_iterator_d_object();
-      // c0.bounding_box().set_lower_bound(split_coord, cutting_value); // old version
       c0.bounding_box(). template update_from_point_pointers<
       typename SearchTraits::Construct_cartesian_const_iterator_d>(c0.begin(), c0.end(), construct_it);
       c0.tight_bounding_box(). template update_from_point_pointers<
       typename SearchTraits::Construct_cartesian_const_iterator_d>(c0.begin(), c0.end(), construct_it);
 
-      // c1.bounding_box().set_upper_bound(split_coord, cutting_value); // old version
       c1.bounding_box(). template update_from_point_pointers<
       typename SearchTraits::Construct_cartesian_const_iterator_d>(c1.begin(), c1.end(), construct_it);
       c1.tight_bounding_box(). template update_from_point_pointers<
@@ -561,7 +516,6 @@ namespace CGAL {
 
       sep.set_cutting_dimension(c0.max_span_coord());
       const FT cutting_value = (c0.max_span_upper() + c0.max_span_lower()) / FT(2); // midpoint
-      // const FT cutting_value = c0.median(sep.cutting_dimension()); // median
       sep.set_cutting_value(cutting_value);
 
       // std::cout << "c0.bbox: " << std::endl;
@@ -578,8 +532,6 @@ namespace CGAL {
 
       CGAL_assertion(c0.is_valid());
       CGAL_assertion(c1.is_valid());
-
-      // CGAL_assertion_msg(false, "TODO: FINISH BALANCED SPLIT!");
     }
 
     void operator()(
@@ -587,9 +539,7 @@ namespace CGAL {
 
       CGAL_assertion(c0.is_valid());
       CGAL_assertion(c1.is_valid());
-
       this->balanced_split(c0, c1, sep);
-      // CGAL_assertion_msg(false, "TODO: FINISH BALANCED SPLITTER!");
     }
   };
 
