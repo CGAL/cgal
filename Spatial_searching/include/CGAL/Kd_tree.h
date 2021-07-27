@@ -504,8 +504,8 @@ public:
     if (c.size() <= split.bucket_size()){
       tree_root = create_leaf_node(c);
     }else {
-      tree_root = new_internal_node();
-      create_internal_node (tree_root, c, ConcurrencyTag());
+       tree_root = new_internal_node();
+       create_internal_node (tree_root, c, ConcurrencyTag());
     }
 
     //Reorder vector for spatial locality
