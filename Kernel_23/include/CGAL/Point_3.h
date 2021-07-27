@@ -67,6 +67,9 @@ public:
   Point_3(const Rep& p)
       : Rep(p) {}
 
+  Point_3(Rep&& p)
+      : Rep(std::move(p)) {}
+
   explicit
   Point_3(const Weighted_point_3& wp)
     : Rep(wp.point())

@@ -69,6 +69,9 @@ public:
   Weighted_point_2(const Rep& p)
       : Rep(p) {}
 
+  Weighted_point_2(Rep&& p)
+      : Rep(std::move(p)) {}
+
   explicit
   Weighted_point_2(const Point_2& p)
     : Rep(typename R::Construct_weighted_point_2()(Return_base_tag(), p, 0))
