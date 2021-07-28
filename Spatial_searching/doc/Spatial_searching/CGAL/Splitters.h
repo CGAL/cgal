@@ -383,3 +383,55 @@ unsigned int bucket_size();
 
 }; /* end Sliding_midpoint */
 } /* end namespace CGAL */
+
+namespace CGAL {
+
+/*!
+\ingroup SplitterClasses
+
+Implements the <I>balanced</I> splitting rule.
+This splitting rule first pre-sorts all points in each of k dimensions, it then
+preserves the order of elements in each sort and splits the tree at the median element
+at each step by alternating between these k dimensions. This rule is based on the paper
+by R. A. Brown \cgalCite{cgal:b-bbkdt-15}.
+
+\cgalHeading{Parameters}
+
+Expects for the first template argument a model of the concept
+`SearchTraits`, for example `CGAL::Cartesian_d<double>`.
+
+Expects for the second template argument a model of the concept `SpatialSeparator`. It has as default value
+the type, `CGAL::Plane_separator<Traits::FT>`.
+
+\cgalModels `Splitter`
+
+\sa `Splitter`
+\sa `SpatialSeparator`
+
+*/
+template< typename Traits, typename SpatialSeparator >
+class Balanced_splitter {
+public:
+
+/// \name Creation
+/// @{
+
+/*!
+Constructor.
+*/
+Balanced_splitter(unsigned int bucket_size);
+
+/// @}
+
+/// \name Operations
+/// @{
+
+/*!
+Returns the bucket size of the leaf nodes.
+*/
+unsigned int bucket_size();
+
+/// @}
+
+}; /* end Balanced_splitter*/
+} /* end namespace CGAL */

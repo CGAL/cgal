@@ -468,7 +468,7 @@ public:
 
       // print_references(dim_, references, "REF AFTER SORT");
 
-      CGAL_assertion(references.size() == dim_);
+      CGAL_assertion(int(references.size()) == dim_);
       std::vector<std::size_t> ref_end(references.size());
       for (std::size_t i = 0; i < ref_end.size(); ++i) {
         ref_end[i] = static_cast<long>(remove_duplicates(references[i], i, dim_));
@@ -535,7 +535,7 @@ public:
     os << std::endl << "--- Tree (graphviz format): " << std::endl << std::endl;
     os << "graph G" << std::endl;
     os << "{" << std::endl << std::endl;
-    os << "label=\"Graph G. Num leafs: " << tree_root->num_nodes() << ". ";
+    os << "label=\"Graph G. Num leaves: " << tree_root->num_nodes() << ". ";
     os << "Num items: " << tree_root->num_items() << ".\"" << std::endl;
     os << tree_root->name() << " ;";
     tree_root->print(os);

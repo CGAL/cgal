@@ -92,7 +92,6 @@ public:
     }
   };
 
-public:
   inline bool
   is_last_call() const
   {

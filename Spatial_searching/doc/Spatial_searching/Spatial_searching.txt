@@ -173,11 +173,12 @@ because in general the query time will be less than using the default value.
 \section Spatial_SearchingSplitting_rule_section Splitting Rules
 
 Instead of using the default splitting rule `Sliding_midpoint` described below,
-a user may, depending upon the data, select
-one from the following splitting rules,
-which determine how a separating hyperplane is computed. Every splitter has
-degenerated worst cases, which may lead to a linear tree and a stack overflow.
-Switching the splitting rule to one of a different kind will solve the problem.
+a user may, depending upon the data, select one from the following splitting rules,
+which determine how a separating hyperplane is computed. Every splitter except for
+the `Balanced_splitter` has degenerated worst cases, which may lead to a linear tree
+and a stack overflow. Switching the splitting rule to one of a different kind will solve
+the problem. The `Balanced_splitter` produces the balanced tree by construction whereas
+its degenerated worst cases are not known.
 
 <DL>
 
@@ -265,6 +266,17 @@ the extreme cut that is closer to the median. If all the points lie
 to one side of this cut, then we slide the cut until it hits the first
 point. This may violate the aspect ratio bound, but will never
 generate empty cells.
+
+</DL>
+
+<DL>
+<DT><B> `Balanced_splitter`</B><DD>
+
+This splitting rule first pre-sorts all points in each of k dimensions. It then
+preserves the order of elements in each sort and splits the tree at the median element
+at each step by alternating between these k dimensions. This rule is based on the paper
+by R. A. Brown \cgalCite{cgal:b-bbkdt-15} and guarantees the balanced tree for
+any set of input points including possibly duplicate and collinear points.
 
 </DL>
 

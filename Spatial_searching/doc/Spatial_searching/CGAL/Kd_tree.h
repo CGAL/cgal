@@ -248,6 +248,12 @@ Inserts statistics of the tree into the output stream `s`.
 */
 std::ostream& statistics(std::ostream& s) const;
 
+/*!
+Inserts the tree in the <a href="https://graphviz.org/">`Graphviz`</a> format
+into the output stream `s`.
+*/
+void print(std::ostream& s) const;
+
 /// @}
 
 }; /* end Kd_tree */

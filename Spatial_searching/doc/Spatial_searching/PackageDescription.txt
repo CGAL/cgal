@@ -89,6 +89,7 @@ classes that are described in the reference pages.
 - `CGAL::Median_of_rectangle<Traits, SpatialSeparator>`
 - `CGAL::Midpoint_of_max_spread<Traits, SpatialSeparator>`
 - `CGAL::Midpoint_of_rectangle<Traits, SpatialSeparator>`
+- `CGAL::Balanced_splitter<Traits, SpatialSeparator>`
 
 \cgalCRPSection{Advanced Classes}
 - `CGAL::Kd_tree_node<Traits, Splitter, UseExtendedNode>`

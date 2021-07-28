@@ -319,6 +319,7 @@ namespace CGAL {
     Balanced_splitter() : Base() { }
     Balanced_splitter(const unsigned int bucket_size) : Base(bucket_size) { }
 
+  private:
     void print_reference(
       const std::size_t dim,
       const std::vector<FTP>& reference) const {
@@ -344,6 +345,7 @@ namespace CGAL {
       }
     }
 
+  public:
     void operator()(
       Separator& sep, Container& c0, Container& c1) const {
 
