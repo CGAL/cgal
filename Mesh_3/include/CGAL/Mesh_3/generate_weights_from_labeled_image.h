@@ -172,9 +172,9 @@ CGAL::Image_3 generate_weights_with_known_word_type(const CGAL::Image_3& image,
   internal::convert_image_3_to_itk(image, itk_img.GetPointer(), labels);
 
   using DuplicatorType = itk::ImageDuplicator<ImageType>;
-  using IndicatorFilter = itk::BinaryThresholdImageFilter<ImageType, ImageType>;
-  using GaussianFilterType = itk::RecursiveGaussianImageFilter<ImageType, ImageType>;
-  using MaximumImageFilterType = itk::MaximumImageFilter<ImageType>;
+  using IndicatorFilter = itk::BinaryThresholdImageFilter<ImageType, WeightsType>;
+  using GaussianFilterType = itk::RecursiveGaussianImageFilter<WeightsType, WeightsType>;
+  using MaximumImageFilterType = itk::MaximumImageFilter<WeightsType>;
 
   std::vector<typename ImageType::Pointer> indicators(labels.size());
   typename DuplicatorType::Pointer duplicator = DuplicatorType::New();
@@ -184,11 +184,6 @@ CGAL::Image_3 generate_weights_with_known_word_type(const CGAL::Image_3& image,
   int id = 0;
   for (Image_word_type label : labels)
   {
-    if (label == 0)
-    {
-      indicators.resize(labels.size() - 1);
-      continue;
-    }
     if (id > 0)
     {
       duplicator->SetInputImage(indicators[id - 1]);
@@ -198,12 +193,9 @@ CGAL::Image_3 generate_weights_with_known_word_type(const CGAL::Image_3& image,
   }
 
   id = 0;
-  typename ImageType::Pointer blured_max = ImageType::New();
+  typename WeightsType::Pointer blured_max = WeightsType::New();
   for (Image_word_type label : labels)
   {
-    if (label == 0)
-      continue;
-
 #ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
     std::cout << "\nLABEL = " << label << std::endl;
 #endif
@@ -260,9 +252,9 @@ CGAL::Image_3 generate_weights_with_known_word_type(const CGAL::Image_3& image,
 #ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
   std::cout << "non zero in image \t= " << internal::count_non_zero_pixels(image) << std::endl;
   std::cout << "non zero in weights \t= " << internal::count_non_zero_pixels(blured_max.GetPointer()) << std::endl;
-  //_writeImage(weights, "weights-image.inr.gz");
 #endif
 
+  _writeImage(weights, "weights-image.inr.gz");
   return CGAL::Image_3(weights);
 }
 /// @endcond
