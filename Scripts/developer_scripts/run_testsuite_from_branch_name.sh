@@ -12,35 +12,8 @@ if uname | grep -q -i cygwin; then
   set -o igncr
 fi
 source ~/.autofilterrc
-
-
-
-
-queue_insert (){
-echo "$1 $2 $3 $4">>$CGAL_ROOT/queue_file
-if [ ! -f running ];then
-  execute $1 $2 $3 $4
-fi
-}
-
-queue_pop(){
-mv queue_file tmp
-  egrep -v "$1 $2 $3 $4" tmp>$CGAL_ROOT/queue_file
-  if [ "$(<queue_file wc -w)" = "0" ]; then
-    rm running
-  else
-    line=$(head -n 1 queue_file)
-    USER_NAME=$(echo $line| cut -d' ' -f 1)
-    BRANCH_NAME=$(echo $line| cut -d' ' -f 2)
-    REF_NAME=$(echo $line| cut -d' ' -f 3)
-    PR_NUMBER=$(echo $line| cut -d' ' -f 4)
-    execute $USER_NAME $BRANCH_NAME $REF_NAME $PR_NUMBER
-  fi
-}
-
-execute()
-{
-touch running
+(
+cd $CGAL_ROOT
 USER_REPO=$1
 BRANCH_NAME=$2
 BASE_NAME=$3
@@ -96,16 +69,7 @@ echo "starting testsuite..."
 ./autotest_cgal -c 
 
 echo "finished."
-queue_pop $1 $2 $3 $4
-}
-
-
-(
-cd $CGAL_ROOT
-queue_insert $1 $2 $3 $4
-
 )>${CGAL_ROOT}/autotest.log2 2>&1 & 
-
 
 echo "exit."
 exit 0
