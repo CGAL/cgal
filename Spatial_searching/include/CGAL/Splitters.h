@@ -320,68 +320,6 @@ namespace CGAL {
     Balanced_splitter() : Base() { }
     Balanced_splitter(const unsigned int bucket_size) : Base(bucket_size) { }
 
-    struct Balanced_cmp {
-
-      const long m_end;
-      const long m_start;
-      const long m_median;
-      const std::size_t m_dim;
-      const std::size_t m_axis;
-      const std::vector<FTP>& m_reference;
-      const Key_compare compare_keys;
-
-      Balanced_cmp(
-        const std::vector<FTP>& reference,
-        const std::size_t axis, const long median, const std::size_t dim,
-        const long start, const long end) :
-      m_end(end), m_start(start), m_median(median),
-      m_dim(dim), m_axis(axis), m_reference(reference)
-      { }
-
-      // TODO: Can we find a better way to convert FTP to a point?
-      bool are_equal_points(const Point_d& p, const FTP& q) const {
-
-        // std::cout << Point_3(q[0], q[1], q[2]) << " - " << p << std::endl;
-        for (std::size_t i = 0; i < m_dim; ++i) {
-          if (p[i] != q[i]) return false;
-        }
-        return true;
-      }
-
-      // TODO: Can we avoid this linear search?
-      // I made it much shorter by going from start to end.
-      bool operator()(const Point_d* pt) const {
-
-        const auto& p = *pt;
-        CGAL_assertion(m_median >= m_start && m_median <= m_end);
-        FTP ptr; bool is_median_found = true;
-
-        for (long i = m_start; i <= m_end; ++i) {
-          if (are_equal_points(p, m_reference[i])) {
-            ptr = m_reference[i];
-            is_median_found = false;
-            break;
-          }
-        }
-
-        // If we enter this if, it means that we have found one of the medians
-        // from the previous steps. This is usually a rare case.
-        if (is_median_found) {
-          for (std::size_t i = 0; i < m_reference.size(); ++i) {
-            if (are_equal_points(p, m_reference[i])) {
-              ptr = m_reference[i];
-              break;
-            }
-          }
-        }
-
-        CGAL_assertion(ptr != FTP());
-        const FT compare = compare_keys(
-          ptr, m_reference[m_median], m_axis, m_dim);
-        return compare < FT(0);
-      }
-    };
-
     void print_reference(
       const std::size_t dim,
       const std::vector<FTP>& reference) const {
@@ -439,7 +377,7 @@ namespace CGAL {
       const std::size_t axis = depth % dim;
       CGAL_assertion(median >= 0);
 
-      // std::cout << "median: " << median    << std::endl;
+      // std::cout << "median: " << median << std::endl;
 
       const Key_compare compare_keys;
       std::vector<FTP> tmp(references[0].size());
@@ -473,10 +411,18 @@ namespace CGAL {
         references[dim-1][i] = tmp[i];
       }
 
-      // print_references(dim, *references, "DEPTH " + std::to_string(depth));
+      // print_references(dim, references, "DEPTH " + std::to_string(depth));
 
-      const Balanced_cmp cmp(references[dim-1], axis, median, dim, start, end);
-      const auto it = std::partition(c0.begin(), c0.end(), cmp);
+      SearchTraits traits;
+      auto construct_it = traits.construct_cartesian_const_iterator_d_object();
+      const auto it = std::partition(c0.begin(), c0.end(),
+        [&](const Point_d* pt) {
+          const auto p = construct_it(*pt);
+          const auto q = references[dim-1][median];
+          const FT compare = compare_keys(p, q, axis, dim);
+          return compare < FT(0);
+        }
+      );
 
       c1.set_range(c0.begin(), it);
       c0.set_range(it, c0.end());
@@ -507,8 +453,6 @@ namespace CGAL {
       // we recompute these values for tight bboxes and use midpoint as ref. The question is:
       // does it affect the search anyhow?
 
-      SearchTraits traits;
-      auto construct_it = traits.construct_cartesian_const_iterator_d_object();
       c0.bounding_box(). template update_from_point_pointers<
       typename SearchTraits::Construct_cartesian_const_iterator_d>(c0.begin(), c0.end(), construct_it);
       c0.tight_bounding_box(). template update_from_point_pointers<

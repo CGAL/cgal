@@ -54,11 +54,15 @@ void test_balanced_tree(const std::vector<Point_3>& /* points */) {
   // Test for default fuzzy search.
   std::cout << "* testing search: " << std::endl;
   using Fuzzy_sphere = CGAL::Fuzzy_sphere<STraits>;
-  Fuzzy_sphere fuzzy_sphere(Point_3(2,3,3), 2);
+  const auto radius = 2;
+  const Point_3 center(2,3,3);
+  Fuzzy_sphere fuzzy_sphere(center, radius);
 
   std::vector<Point_3> result;
   tree.search(std::back_inserter(result), fuzzy_sphere);
   std::cout << "- found points (fuzzy): " << result.size() << std::endl;
+  std::cout << "- center: " << center << std::endl;
+  std::cout << "- radius: " << radius << std::endl;
   for (const auto& point : result) {
     std::cout << point << std::endl;
   }
@@ -68,8 +72,9 @@ void test_balanced_tree(const std::vector<Point_3>& /* points */) {
   using Distance = CGAL::Euclidean_distance<STraits>;
   using Neighbor_search = CGAL::Orthogonal_k_neighbor_search<STraits, Distance, Splitter, Kd_tree>;
   const Point_3 query(2,3,3);
-  Neighbor_search nsearch(tree, query, 2);
+  Neighbor_search nsearch(tree, query, 3);
   std::cout << "- found points (orth k): " << std::distance(nsearch.begin(), nsearch.end()) << std::endl;
+  std::cout << "- query point: " << query << std::endl;
   for (auto it = nsearch.begin(); it != nsearch.end(); ++it) {
     std::cout << it->first << " with dist: " << CGAL::sqrt(it->second) << std::endl;
   }

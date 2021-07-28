@@ -80,6 +80,8 @@ public:
       const std::size_t axis, // axis offset in (x, y, z, w, ...)
       const std::size_t dim) const { // dimension
 
+      CGAL_assertion(p != FTP());
+      CGAL_assertion(q != FTP());
       FT coords_diff = FT(0);
       for (std::size_t k = 0; k < dim; ++k) {
         const std::size_t idx = (k + axis) % dim; // stay inside dim
@@ -145,11 +147,6 @@ public:
     if (m_end <= m_start + 2) {
       m_is_last_call = true;
     }
-  }
-
-  inline void
-  set_initial_depth(const std::size_t depth) {
-    m_depth = depth;
   }
 
   inline const Kd_tree_rectangle<FT,D>&

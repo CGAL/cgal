@@ -486,11 +486,6 @@ public:
       end   = ref_end[0];
 
       // print_references(dim_, references, "REF WITHOUT DUPLICATES");
-
-      // std::cout << "* num clean points: " << pts.size() << std::endl;
-      // for (const auto& pt : pts) {
-      //   std::cout << pt << std::endl;
-      // }
     }
 
     Point_container c(dim_, data.begin(), data.end(), traits_);
