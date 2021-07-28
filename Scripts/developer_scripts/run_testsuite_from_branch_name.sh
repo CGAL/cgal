@@ -43,7 +43,7 @@ for PKG in $(ls) ; do
   fi
 done
 if [ -f ${CGAL_ROOT}/list_test_packages ]; then rm ${CGAL_ROOT}/list_test_packages; fi
-echo "list of pkgs = $LIST_OF_PKGS">log
+echo "list of pkgs = $LIST_OF_PKGS">${CGAL_ROOT}/log
 if [ "$LIST_OF_PKGS" != "" ]; then
   for f in $LIST_OF_PKGS
   do
