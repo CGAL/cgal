@@ -44,7 +44,6 @@ for PKG in $(ls) ; do
   fi
 done
 if [ -f ${CGAL_ROOT}/list_test_packages ]; then rm ${CGAL_ROOT}/list_test_packages; fi
-echo "list of pkgs = ${LIST_OF_PKGS}">${CGAL_ROOT}/log
 if [ "$LIST_OF_PKGS" != "" ]; then
   for f in $LIST_OF_PKGS
   do
@@ -59,7 +58,6 @@ CGAL_VERSION="$(sed -E 's/#define CGAL_VERSION (.*\..*)-dev/\1/' <(grep "#define
 cmake -DGIT_REPO=${CGAL_GIT_DIR}/cgal -DDESTINATION=${CGAL_ROOT}/CGAL-TEST -DPUBLIC=OFF -DTESTSUITE=ON -DCGAL_VERSION=${CGAL_VERSION} -P ${CGAL_GIT_DIR}/cgal/Scripts/developer_scripts/cgal_create_release_with_cmake.cmake | tee log
 echo "done."
 DEST=$(sed -E 's/.*CGAL-TEST\/(.*)/\1/' log);
-echo "CGAL_VERSION = ${CGAL_VERSION}"> log
 
 cd ${CGAL_ROOT}
 
