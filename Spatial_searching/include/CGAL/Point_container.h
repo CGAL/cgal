@@ -155,20 +155,8 @@ public:
     return bbox;
   }
 
-  inline Kd_tree_rectangle<FT,D>&
-  bounding_box()
-  {
-    return bbox;
-  }
-
   inline const Kd_tree_rectangle<FT,D>&
   tight_bounding_box() const
-  {
-    return tbox;
-  }
-
-  inline Kd_tree_rectangle<FT,D>&
-  tight_bounding_box()
   {
     return tbox;
   }
@@ -183,12 +171,6 @@ public:
   built_coordinate() const
   {
     return built_coord;
-  }
-
-  inline void
-  set_built_coordinate(const int new_built_coord)
-  {
-    built_coord = new_built_coord;
   }
 
   // coordinate of the maximal span

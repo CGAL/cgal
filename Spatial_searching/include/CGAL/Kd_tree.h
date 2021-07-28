@@ -161,7 +161,6 @@ private:
   // We do not really remove duplicates here but rather move the pointer to the right end.
   // At the end, all unique points are moved to the beginning of the array and all
   // duplicates are moved to the end of this array.
-  // Should we actually remove them?
   std::size_t remove_duplicates(
     std::vector<FTP>& reference, const std::size_t axis, const std::size_t dim) const {
 
@@ -345,13 +344,8 @@ private:
       nh->upper_high_val = nh->cutting_value();
     }
 
-    // TODO: for balanced trees these criteria do not always pass for some reason.
-    if (!m_create_balanced_tree) {
-      // std::cout << "lower: " << nh->cutting_value() << " : " << nh->lower_low_val  << std::endl;
-      // std::cout << "upper: " << nh->cutting_value() << " : " << nh->upper_high_val << std::endl;
-      CGAL_assertion(nh->cutting_value() >= nh->lower_low_val);
-      CGAL_assertion(nh->cutting_value() <= nh->upper_high_val);
-    }
+    CGAL_assertion(nh->cutting_value() >= nh->lower_low_val);
+    CGAL_assertion(nh->cutting_value() <= nh->upper_high_val);
   }
 
   inline void handle_extended_node (Internal_node_handle, Point_container&, Point_container&, const Tag_false&) { }

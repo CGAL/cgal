@@ -315,7 +315,6 @@ namespace CGAL {
     using Separator = Separator_;
     using Key_compare = typename Container::Key_compare;
     using FTP = typename Container::FTP;
-    using Point_d = typename SearchTraits::Point_d;
 
     Balanced_splitter() : Base() { }
     Balanced_splitter(const unsigned int bucket_size) : Base(bucket_size) { }
@@ -345,13 +344,16 @@ namespace CGAL {
       }
     }
 
-    void balanced_split(Container& c0, Container& c1, Separator& sep) const {
+    void operator()(
+      Separator& sep, Container& c0, Container& c1) const {
+
+      CGAL_assertion(c0.is_valid());
+      CGAL_assertion(c1.is_valid());
 
       CGAL_assertion(!c0.is_last_call());
       CGAL_assertion(!c1.is_last_call());
 
       CGAL_assertion(c0.dimension() == c1.dimension());
-      CGAL_assertion(c0.is_valid());
 
       const std::size_t dim = c0.get_dim();
       const std::size_t depth = c0.get_depth();
@@ -413,19 +415,12 @@ namespace CGAL {
 
       // print_references(dim, references, "DEPTH " + std::to_string(depth));
 
-      SearchTraits traits;
-      auto construct_it = traits.construct_cartesian_const_iterator_d_object();
-      const auto it = std::partition(c0.begin(), c0.end(),
-        [&](const Point_d* pt) {
-          const auto p = construct_it(*pt);
-          const auto q = references[dim-1][median];
-          const FT compare = compare_keys(p, q, axis, dim);
-          return compare < FT(0);
-        }
-      );
+      tmp.clear();
+      const int split_coord = static_cast<int>(axis);
+      const FT cutting_value = references[dim-1][median][axis];
 
-      c1.set_range(c0.begin(), it);
-      c0.set_range(it, c0.end());
+      sep = Separator(split_coord, cutting_value);
+      c0.split(c1, sep);
 
       CGAL_assertion(c0.size() > 0);
       CGAL_assertion(c1.size() > 0);
@@ -437,6 +432,7 @@ namespace CGAL {
       // for (const auto& item : c0) {
       //   std::cout << *item << std::endl;
       // }
+
       // std::cout << std::endl << "c1 container, depth: " << depth << std::endl;
       // for (const auto& item : c1) {
       //   std::cout << *item << std::endl;
@@ -445,53 +441,6 @@ namespace CGAL {
       c1.set_ref_ptr(ref_ptr);
       c1.set_data(dim, depth + 1, start, lower);
       c0.set_data(dim, depth + 1, median + 1, upper);
-
-      // Adjust boxes and other data.
-      // TODO: The cutting value and split_coord obtained from the new algorithm
-      // do not satisfy the is_valid() criteria. Maybe it is correct and due to
-      // a different type of partition but maybe we do something wrong. For the moment,
-      // we recompute these values for tight bboxes and use midpoint as ref. The question is:
-      // does it affect the search anyhow?
-
-      c0.bounding_box(). template update_from_point_pointers<
-      typename SearchTraits::Construct_cartesian_const_iterator_d>(c0.begin(), c0.end(), construct_it);
-      c0.tight_bounding_box(). template update_from_point_pointers<
-      typename SearchTraits::Construct_cartesian_const_iterator_d>(c0.begin(), c0.end(), construct_it);
-
-      c1.bounding_box(). template update_from_point_pointers<
-      typename SearchTraits::Construct_cartesian_const_iterator_d>(c1.begin(), c1.end(), construct_it);
-      c1.tight_bounding_box(). template update_from_point_pointers<
-      typename SearchTraits::Construct_cartesian_const_iterator_d>(c1.begin(), c1.end(), construct_it);
-
-      c0.set_built_coordinate(c0.max_span_coord());
-      c1.set_built_coordinate(c0.max_span_coord());
-
-      sep.set_cutting_dimension(c0.max_span_coord());
-      const FT cutting_value = (c0.max_span_upper() + c0.max_span_lower()) / FT(2); // midpoint
-      sep.set_cutting_value(cutting_value);
-
-      // std::cout << "c0.bbox: " << std::endl;
-      // c0.bounding_box().print(std::cout);
-      // std::cout << "c0.tbox: " << std::endl;
-      // c0.tight_bounding_box().print(std::cout);
-      // std::cout << std::endl;
-
-      // std::cout << "c1.bbox: " << std::endl;
-      // c1.bounding_box().print(std::cout);
-      // std::cout << "c1.tbox: " << std::endl;
-      // c1.tight_bounding_box().print(std::cout);
-      // std::cout << std::endl;
-
-      CGAL_assertion(c0.is_valid());
-      CGAL_assertion(c1.is_valid());
-    }
-
-    void operator()(
-      Separator& sep, Container& c0, Container& c1) const {
-
-      CGAL_assertion(c0.is_valid());
-      CGAL_assertion(c1.is_valid());
-      this->balanced_split(c0, c1, sep);
     }
   };
 
