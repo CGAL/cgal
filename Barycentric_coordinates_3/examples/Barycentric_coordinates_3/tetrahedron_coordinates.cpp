@@ -16,10 +16,13 @@ int main(){
     const Point_3 p3(0.0, 0.0, 1.0);
 
     // Instantiate some interior, boundary, and exterior query points for which we compute coordinates.
-    const std::vector<Point_3> queries = {  Point_3(0.25f , 0.25f, 0.25f), Point_3(0.3f, 0.2f, 0.3f), Point_3(0.1f, 0.1f, 0.1f), Point_3(0.2f, 0.5f, 0.3f),                     // interior query points
-                                            Point_3(0.0f , 0.0f, 0.5f), Point_3(0.4f, 0.4f, 0.0f), Point_3(0.0f, 0.4f, 0.4f), Point_3(0.4f, 0.0f, 0.4f), Point_3(1.0/3, 1.0/3, 1.0/3), // boundary query points
-                                            Point_3(0.5f, 0.5f, 0.5f), Point_3(2.0f, 0.0f, 0.0f), Point_3(-1.0f, -1.0f, 1.0f), Point_3(0.5f, 0.5f, -2.0f)                      // exterior query points
-                                        };
+    const std::vector<Point_3> queries = {
+        Point_3(0.25f , 0.25f, 0.25f), Point_3(0.3f, 0.2f, 0.3f),         // interior query points
+        Point_3(0.1f, 0.1f, 0.1f), Point_3(0.2f, 0.5f, 0.3f),             // interior query points
+        Point_3(0.0f , 0.0f, 0.5f), Point_3(0.4f, 0.4f, 0.0f),            // boundary query points
+        Point_3(0.0f, 0.4f, 0.4f), Point_3(0.4f, 0.0f, 0.4f),             // boundary query points
+        Point_3(0.5f, 0.5f, 0.5f), Point_3(2.0f, 0.0f, 0.0f),             // exterior query points
+        Point_3(-1.0f, -1.0f, 1.0f), Point_3(0.5f, 0.5f, -2.0f)};           // exterior query point
 
     // Compute tetrahedra coordinates;
     std::vector<FT> coordinates;

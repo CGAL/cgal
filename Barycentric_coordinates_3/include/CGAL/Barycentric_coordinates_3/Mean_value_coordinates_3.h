@@ -23,6 +23,29 @@
 namespace CGAL {
 namespace Barycentric_coordinates {
 
+  /*!
+    \ingroup PkgBarycentricCoordinates3RefAnalytic
+
+    \brief 3D mean value coordinates.
+
+    This class implements 3D mean value coordinates, which can be computed
+    at any point in the plane.
+
+    Mean value coordinates are well-defined everywhere in the plane and are
+    non-negative in the kernel of a star-shaped polygon. The coordinates are
+    computed analytically. See more details in the user manual \ref compute_mv_coord "here".
+
+    \tparam PolygonMesh
+    must be a model of the concept `FaceListGraph`.
+
+    \tparam GeomTraits
+    a model of `BarycentricTraits_3`
+
+    \tparam PointMap
+    a model of ReadablePropertyMap with boost::graph_traits<PolygonMesh>::vertex_descriptor as
+    key type and Point_3 as value type. The default is `property_map_selector<PolygonMesh,
+    CGAL::vertex_point_t>::const_type`.
+  */
   template<
   typename PolygonMesh,
   typename GeomTraits,
@@ -31,6 +54,11 @@ namespace Barycentric_coordinates {
   class Mean_value_coordinates_3 {
 
   public:
+
+    /// \name Types
+    /// @{
+
+    /// \cond SKIP_IN_MANUAL
     using Polygon_mesh = PolygonMesh;
     using Geom_Traits = GeomTraits;
     using Vertex_to_point_map = VertexToPointMap;
@@ -40,11 +68,47 @@ namespace Barycentric_coordinates {
     using Dot_3 = typename GeomTraits::Compute_scalar_product_3;
     using Sqrt = typename internal::Get_sqrt<GeomTraits>::Sqrt;
     using Approximate_angle_3 = typename GeomTraits::Compute_approximate_angle_3;
+     /// \endcond
 
+    /// Number type.
 	  typedef typename GeomTraits::FT FT;
+
+    /// Point type.
     typedef typename GeomTraits::Point_3 Point_3;
+
+    /// Vector type.
     typedef typename GeomTraits::Vector_3 Vector_3;
 
+    /// @}
+
+    /// \name Initialization
+    /// @{
+
+    /*!
+      \brief initializes all internal data structures.
+
+      This class implements the behavior of mean value coordinates
+      for 3D query points.
+
+      \param polygon_mesh
+      an instance of `PolygonMesh` with the vertices of a simple polyhedron
+
+      \param policy
+      one of the `Computation_policy_3`;
+      the default is `Computation_policy_3::FAST`
+
+      \param traits
+      a traits class with geometric objects, predicates, and constructions;
+      the default initialization is provided
+
+      \param point_map
+      an instance of `VertexToPointMap` that maps a vertex from `polygon_mesh` to `Point_3`;
+      the default initialization is provided
+
+      \pre vertices(polygon_mesh).size() >= 4
+      \pre polygon_mesh is strongly convex
+      \pre polygon_mesh should only have triangular faces.
+    */
     Mean_value_coordinates_3(
       const PolygonMesh& polygon_mesh,
       const Computation_policy_3 policy,
@@ -69,6 +133,8 @@ namespace Barycentric_coordinates {
       angles.resize(3);
     }
 
+    /// @}
+
     Mean_value_coordinates_3(
       const PolygonMesh& polygon_mesh,
       const Computation_policy_3 policy =
@@ -80,14 +146,39 @@ namespace Barycentric_coordinates {
       get_const_property_map(CGAL::vertex_point, polygon_mesh),
       traits) { }
 
+    /// \name Access
+    /// @{
+
+    /*!
+      \brief computes 3D mean value coordinates.
+
+      This function fills `c_begin` with 3D mean value coordinates computed
+      at the `query` point with respect to the vertices of the input surface mesh.
+
+      The number of returned coordinates equals to the number of vertices.
+
+      After the coordinates \f$b_i\f$ with \f$i = 1\dots n\f$ are computed, where
+      \f$n\f$ is the number of vertices, the query point \f$q\f$ can be obtained
+      as \f$q = \sum_{i = 1}^{n}b_ip_i\f$, where \f$p_i\f$ are the polyhedron vertices.
+
+      \tparam OutIterator
+      a model of `OutputIterator` that accepts values of type `FT`
+
+      \param query
+      a query point
+
+      \param c_begin
+      the beginning of the destination range with the computed coordinates
+
+      \return an output iterator to the element in the destination range,
+      one past the last coordinate stored
+    */
     template<typename OutIterator>
     OutIterator operator()(const Point_3& query, OutIterator c_begin) {
       return compute(query, c_begin);
     }
 
-    VertexToPointMap get_vertex_to_point_map(){
-      return m_vertex_to_point_map;
-    }
+    /// @}
 
   private:
     const PolygonMesh& m_polygon_mesh;
@@ -269,6 +360,56 @@ namespace Barycentric_coordinates {
     }
   };
 
+  /*!
+    \ingroup PkgBarycentricCoordinates3RefFunctions
+
+    \brief computes 3D mean value weights.
+
+    This function computes 3D mean value weights at a given `query` point
+    with respect to the vertices of a simple `polyhedron`, that is one
+    weight per vertex. The weights are stored in a destination range
+    beginning at `c_begin`.
+
+    Internally, the class `Mean_value_coordinates_3` is used. If one wants to process
+    multiple query points, it is better to use that class. When using the free function,
+    internal memory is allocated for each query point, while when using the class,
+    it is allocated only once, which is much more efficient. However, for a few query
+    points, it is easier to use this function. It can also be used when the processing
+    time is not a concern.
+
+    \tparam Point_3
+    A model of `Kernel::Point_3`.
+
+    \tparam Mesh
+    must be a model of the concept `FaceListGraph`.
+
+    \tparam OutIterator
+    a model of `OutputIterator` that accepts values of type `GeomTraits::FT`
+
+    \param surface_mesh
+      an instance of `PolygonMesh` with the vertices of a simple polyhedron
+
+    \param query
+    a query point
+
+    \param c_begin
+    the beginning of the destination range with the computed weights
+
+    \param traits
+    a traits class with geometric objects, predicates, and constructions;
+    this parameter can be omitted if the traits class can be deduced from the point type
+
+    \param policy
+    one of the `Computation_policy_3`;
+    the default is `Computation_policy_2::FAST_WITH_EDGE_CASES`
+
+    \return an output iterator to the element in the destination range,
+    one past the last weight stored
+
+    \pre vertices(polygon_mesh).size() >= 4
+    \pre polygon_mesh is strongly convex
+    \pre polygon_mesh should only have triangular faces.
+  */
   template<
   typename Point_3,
   typename Mesh,

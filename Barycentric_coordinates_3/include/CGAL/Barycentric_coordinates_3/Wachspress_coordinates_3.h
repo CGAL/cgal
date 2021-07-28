@@ -23,6 +23,30 @@
 namespace CGAL {
 namespace Barycentric_coordinates {
 
+
+  /*!
+    \ingroup PkgBarycentricCoordinates3RefAnalytic
+
+    \brief 2D Wachspress coordinates.
+
+    This class implements 2D Wachspress coordinates ( \cite cgal:bc:fhk-gcbcocp-06,
+    \cite cgal:bc:mlbd-gbcip-02, \cite cgal:bc:w-rfeb-75 ), which can be computed
+    at any point inside a strictly convex polygon.
+
+    Wachspress coordinates are well-defined and non-negative in the closure
+    of a strictly convex polygon. The coordinates are computed analytically.
+    See more details in the user manual \ref compute_wp_coord "here".
+
+    \tparam VertexRange
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
+
+    \tparam GeomTraits
+    a model of `BarycentricTraits_2`
+
+    \tparam PointMap
+    a model of `ReadablePropertyMap` whose key type is `VertexRange::value_type` and
+    value type is `Point_2`. The default is `CGAL::Identity_property_map`.
+  */
   template<
   typename PolygonMesh,
   typename GeomTraits,
@@ -31,6 +55,11 @@ namespace Barycentric_coordinates {
   class Wachspress_coordinates_3 {
 
   public:
+
+    /// \name Types
+    /// @{
+
+    /// \cond SKIP_IN_MANUAL
     using Polygon_mesh = PolygonMesh;
     using Geom_Traits = GeomTraits;
     using Vertex_to_point_map = VertexToPointMap;
@@ -39,14 +68,47 @@ namespace Barycentric_coordinates {
     using Det_3 = typename GeomTraits::Compute_determinant_3;
     using Cross_3 = typename GeomTraits::Construct_cross_product_vector_3;
     using Construct_vec_3 = typename GeomTraits::Construct_vector_3;
+    /// \endcond
 
+    /// Number type.
 	  typedef typename GeomTraits::FT FT;
-    typedef typename GeomTraits::Point_3 Point_3;
-    typedef typename GeomTraits::Vector_3 Vector_3;
-    typedef typename GeomTraits::Plane_3 Plane_3;
-    typedef typename GeomTraits::Point_2 Point_2;
 
-  public:
+    /// Point type.
+    typedef typename GeomTraits::Point_3 Point_3;
+
+    /// Vector type.
+    typedef typename GeomTraits::Vector_3 Vector_3;
+
+    /// @}
+
+    /// \name Initialization
+    /// @{
+
+    /*!
+      \brief initializes all internal data structures.
+
+      This class implements the behavior of Wachspress coordinates
+      for 2D query points.
+
+      \param polygon
+      an instance of `VertexRange` with the vertices of a strictly convex polygon
+
+      \param policy
+      one of the `Computation_policy_2`;
+      the default is `Computation_policy_2::PRECISE_WITH_EDGE_CASES`
+
+      \param traits
+      a traits class with geometric objects, predicates, and constructions;
+      the default initialization is provided
+
+      \param point_map
+      an instance of `PointMap` that maps a vertex from `polygon` to `Point_2`;
+      the default initialization is provided
+
+      \pre polygon.size() >= 3
+      \pre polygon is simple
+      \pre polygon is strictly convex
+    */
     Wachspress_coordinates_3(
       const PolygonMesh& polygon_mesh,
       const Computation_policy_3 policy,
@@ -66,6 +128,8 @@ namespace Barycentric_coordinates {
       m_weights.resize(vertices(m_polygon_mesh).size());
     }
 
+    /// @}
+
     Wachspress_coordinates_3(
       const PolygonMesh& polygon_mesh,
       const Computation_policy_3 policy =
@@ -77,14 +141,39 @@ namespace Barycentric_coordinates {
       get_const_property_map(CGAL::vertex_point, polygon_mesh),
       traits) { }
 
+    /// \name Access
+    /// @{
+
+    /*!
+      \brief computes 2D Wachspress coordinates.
+
+      This function fills `c_begin` with 2D Wachspress coordinates computed
+      at the `query` point with respect to the vertices of the input polygon.
+
+      The number of returned coordinates equals to the number of polygon vertices.
+
+      After the coordinates \f$b_i\f$ with \f$i = 1\dots n\f$ are computed, where
+      \f$n\f$ is the number of polygon vertices, the query point \f$q\f$ can be obtained
+      as \f$q = \sum_{i = 1}^{n}b_ip_i\f$, where \f$p_i\f$ are the polygon vertices.
+
+      \tparam OutIterator
+      a model of `OutputIterator` that accepts values of type `FT`
+
+      \param query
+      a query point
+
+      \param c_begin
+      the beginning of the destination range with the computed coordinates
+
+      \return an output iterator to the element in the destination range,
+      one past the last coordinate stored
+    */
     template<typename OutIterator>
     OutIterator operator()(const Point_3& query, OutIterator c_begin) {
       return compute(query, c_begin);
     }
 
-    VertexToPointMap get_vertex_to_point_map(){
-      return m_vertex_to_point_map;
-    }
+    /// @}
 
   private:
     const PolygonMesh& m_polygon_mesh;
@@ -248,6 +337,57 @@ namespace Barycentric_coordinates {
 
   };
 
+  /*!
+    \ingroup PkgBarycentricCoordinates3RefFunctions
+
+    \brief computes 2D Wachspress weights.
+
+    This function computes 2D Wachspress weights at a given `query` point
+    with respect to the vertices of a strictly convex `polygon`, that is one
+    weight per vertex. The weights are stored in a destination range
+    beginning at `w_begin`.
+
+    Internally, the class `Wachspress_coordinates_2` is used. If one wants to process
+    multiple query points, it is better to use that class. When using the free function,
+    internal memory is allocated for each query point, while when using the class,
+    it is allocated only once, which is much more efficient. However, for a few query
+    points, it is easier to use this function. It can also be used when the processing
+    time is not a concern.
+
+    \tparam PointRange
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
+    and value type is `GeomTraits::Point_2`
+
+    \tparam OutIterator
+    a model of `OutputIterator` that accepts values of type `GeomTraits::FT`
+
+    \tparam GeomTraits
+    a model of `BarycentricTraits_2`
+
+    \param polygon
+    an instance of `PointRange` with 2D points, which form a strictly convex polygon
+
+    \param query
+    a query point
+
+    \param w_begin
+    the beginning of the destination range with the computed weights
+
+    \param traits
+    a traits class with geometric objects, predicates, and constructions;
+    this parameter can be omitted if the traits class can be deduced from the point type
+
+    \param policy
+    one of the `Computation_policy_2`;
+    the default is `Computation_policy_2::FAST_WITH_EDGE_CASES`
+
+    \return an output iterator to the element in the destination range,
+    one past the last weight stored
+
+    \pre polygon.size() >= 3
+    \pre polygon is simple
+    \pre polygon is strictly convex
+  */
   template<
   typename Point_3,
   typename Mesh,

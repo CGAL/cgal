@@ -19,9 +19,7 @@ Analytic coordinates and related classes.
 
 Free functions to compute barycentric weights and coordinates.
 
-\defgroup PkgBarycentricCoordinates3RefDeprecated Deprecated
-\ingroup PkgBarycentricCoordinates3Ref
-
+\addtogroup PkgBarycentricCoordinates3Ref
 
 \cgalPkgDescriptionBegin{3D Generalized Barycentric Coordinates, PkgBarycentricCoordinates3}
 \cgalPkgPicture{barcoord_thumb.png}
@@ -45,10 +43,11 @@ defined for convex simplicial polytopes.}
 
 ## Concepts ##
 - `BarycentricTraits_3`
+- `BarycentricCoordinates_3`
 
 ## Analytic Coordinates ##
-- `Wachspress_coordinates_2<PolygonMesh, GeomTraits, VertexToPointMap>`
-- `Mean_value_coordinates_2<PolygonMesh, GeomTraits, VertexToPointMap>`
+- `Wachspress_coordinates_3<PolygonMesh, GeomTraits, VertexToPointMap>`
+- `Mean_value_coordinates_3<PolygonMesh, GeomTraits, VertexToPointMap>`
 - `Discrete_harmonic_coordinates_3<PolygonMesh, GeomTraits, VertexToPointMap>`
 
 ## Free Functions ##

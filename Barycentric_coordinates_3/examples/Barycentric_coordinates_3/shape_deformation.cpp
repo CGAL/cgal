@@ -47,15 +47,15 @@ int main() {
 
   Surface_mesh quad_cage;
 
-  const Point_3 p0(2, -2, -2); const Point_3 p0_new(5, -5, -5);
-  const Point_3 p1(2, 2, -2); const Point_3 p1_new(3, 3, -3);
-  const Point_3 p2(-2, 2, -2); const Point_3 p2_new(-2, 2, -2);
-  const Point_3 p3(-2, -2, -2); const Point_3 p3_new(-3, -3, -3);
+  const Point_3 p0(2, -2, -2), p0_new(5, -5, -5);
+  const Point_3 p1(2, 2, -2), p1_new(3, 3, -3);
+  const Point_3 p2(-2, 2, -2), p2_new(-2, 2, -2);
+  const Point_3 p3(-2, -2, -2), p3_new(-3, -3, -3);
 
-  const Point_3 p4(-2, -2, 2); const Point_3 p4_new(-3, -3, 3);
-  const Point_3 p5(2, -2, 2); const Point_3 p5_new(4, -4, 4);
-  const Point_3 p6(2, 2, 2); const Point_3 p6_new(2, 2, 3);
-  const Point_3 p7(-2, 2, 2); const Point_3 p7_new(-3, 3, 3);
+  const Point_3 p4(-2, -2, 2), p4_new(-3, -3, 3);
+  const Point_3 p5(2, -2, 2), p5_new(4, -4, 4);
+  const Point_3 p6(2, 2, 2), p6_new(2, 2, 3);
+  const Point_3 p7(-2, 2, 2), p7_new(-3, 3, 3);
 
   CGAL::make_hexahedron(p0, p1, p2, p3, p4, p5, p6, p7, quad_cage);
   PMP::triangulate_faces(faces(quad_cage), quad_cage);

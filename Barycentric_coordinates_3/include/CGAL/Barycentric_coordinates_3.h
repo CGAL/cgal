@@ -11,14 +11,17 @@
 // Author(s)     : Antonio Gomes, Dmitry Anisimov
 //
 
-/*!
-  \file Barycentric_coordinates_3.h
-*/
-
 #ifndef CGAL_BARYCENTRIC_COORDINATES_3_H
 #define CGAL_BARYCENTRIC_COORDINATES_3_H
 
 // #include <CGAL/license/Barycentric_coordinates_3.h>
+
+/**
+* \ingroup PkgBarycentricCoordinates3Ref
+* \file CGAL/Barycentric_coordinates_3.h
+* A convenience header that includes all free functions and classes for
+* 3D barycentric coordinates in closed form.
+*/
 
 #include <CGAL/Barycentric_coordinates_3/tetrahedron_coordinates.h>
 #include <CGAL/Barycentric_coordinates_3/Wachspress_coordinates_3.h>

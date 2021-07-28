@@ -26,13 +26,32 @@ namespace CGAL {
 */
 namespace Barycentric_coordinates {
 
+/// \name Computation Policies
+/// @{
+
+/*!
+  `Computation_policy_3` provides a way to choose an asymptotic time complexity
+  of the algorithm and its precision for computing 3D barycentric weights and coordinates.
+*/
 enum class Computation_policy_3 {
 
+  /*!
+    Computation has a linear time complexity with respect to the number of
+    polygon vertices, but may suffer imprecisions near the polygon boundary.
+    No extra checks are carried out.
+  */
   FAST = 0,
-  FAST_WITH_EDGE_CASES = 1
 
+    /*!
+    Computation has a linear time complexity with respect to the number of
+    polygon vertices, but may suffer imprecisions near the polygon boundary. In
+    addition, we check a position of the query point with respect to the polygon
+    and use different computation strategies for different positions.
+  */
+  FAST_WITH_EDGE_CASES = 1
 };
 
+/// @}
 
 } // namespace Barycentric_coordinates
 } // namespace CGAL

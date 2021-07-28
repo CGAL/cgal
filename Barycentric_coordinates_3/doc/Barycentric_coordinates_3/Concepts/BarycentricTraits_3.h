@@ -2,17 +2,17 @@ namespace CGAL {
 namespace Barycentric_coordinates {
 
 /*!
-\ingroup PkgBarycentricCoordinates2RefConcepts
+\ingroup PkgBarycentricCoordinates3RefConcepts
 \cgalConcept
 
 A concept that describes the set of requirements of the template parameter
-`GeomTraits` used to parameterize all classes and functions with 2D barycentric
+`GeomTraits` used to parameterize all classes and functions with 3D barycentric
 coordinates from the namespace `CGAL::Barycentric_coordinates`.
 
 \cgalHasModel
 - All models of `Kernel`
 */
-class BarycentricTraits_2 {
+class BarycentricTraits_3 {
 
 public:
 
@@ -24,34 +24,24 @@ public:
 */
 typedef unspecified_type FT;
 
-/*!
-  `CGAL::Comparison_result` or `Uncertain<CGAL::Comparison_result>`.
-*/
-typedef unspecified_type Comparison_result;
-
-/*!
-  `CGAL::Orientation` or `Uncertain<CGAL::Orientation>`.
-*/
-typedef unspecified_type Orientation;
-
 /// @}
 
-/// \name 2D Geometric Objects
+/// \name 3D Geometric Objects
 /// @{
 
 /*!
-  A model of `Kernel::Point_2`.
+  A model of `Kernel::Point_3`.
 */
-typedef unspecified_type Point_2;
+typedef unspecified_type Point_3;
 
 /*!
-  A model of `Kernel::Vector_2`.
+  A model of `Kernel::Vector_3`.
 */
-typedef unspecified_type Vector_2;
+typedef unspecified_type Vector_3;
 
 /// @}
 
-/// \name 2D Generalized Constructions
+/// \name 3D Generalized Constructions
 /// @{
 
 /*!
