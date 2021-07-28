@@ -34,10 +34,11 @@ git checkout $BRANCH_NAME
 git reset --hard $USER_REPO/$BRANCH_NAME
 #setup the list_test_packages
 TMP_LIST=$(git diff --name-only HEAD cgal/$BASE_NAME |cut -s -d/ -f1 |sort -u | xargs -I {} ls -d {}/package_info 2>/dev/null  |cut -d/ -f1 |egrep -v Installation||true)
+
 LIST_OF_PKGS=""
 for PKG in $(ls) ; do
   if [ -f $PKG/package_info/$PKG/dependencies ]; then
-    if [ -n "$(comm -12  <(echo "$LIST_OF_PKGS"|sort) <(cat $PKG/package_info/$PKG/dependencies|sort))" ]; then
+    if [ -n "$(comm -12  <(echo "$TMP_LIST"|sort) <(cat $PKG/package_info/$PKG/dependencies|sort))" ]; then
       LIST_OF_PKGS="$LIST_OF_PKGS $PKG"
     fi
   fi
