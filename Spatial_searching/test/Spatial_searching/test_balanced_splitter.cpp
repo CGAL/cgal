@@ -21,22 +21,13 @@ using Point_3 = typename Kernel::Point_3;
 using STraits = CGAL::Search_traits_3<Kernel>;
 using Timer   = CGAL::Real_timer;
 
-void test_balanced_tree(const std::vector<Point_3>& /* points */) {
+using SM_splitter = CGAL::Sliding_midpoint<STraits>;
+using BL_splitter = CGAL::Balanced_splitter<STraits>;
 
-  std::vector<Point_3> points = {
-    Point_3(2,3,3), Point_3(5,4,2), Point_3(9,6,7), Point_3(4,7,9), Point_3(8,1,5),
-    Point_3(7,2,6), Point_3(9,4,1), Point_3(8,4,2), Point_3(9,7,8), Point_3(6,3,1),
-    Point_3(3,4,5), Point_3(1,6,8), Point_3(9,5,3), Point_3(2,1,3), Point_3(8,7,6),
-    Point_3(5,4,2), Point_3(6,3,1), Point_3(8,7,6), Point_3(9,6,7), Point_3(2,1,3),
-    Point_3(7,2,6), Point_3(4,7,9), Point_3(1,6,8), Point_3(3,4,5), Point_3(9,4,1)
-  };
-  assert(points.size() == 25);
+template<typename Splitter>
+void test_balanced_tree(const std::vector<Point_3>& points) {
+
   std::cout << "* num points: " << points.size() << std::endl;
-
-  // Other splitters.
-  // using Splitter = CGAL::Sliding_midpoint<STraits>;
-
-  using Splitter = CGAL::Balanced_splitter<STraits>;
   using Kd_tree  = CGAL::Kd_tree<STraits, Splitter>;
 
   const unsigned int bucket_size = 5;
@@ -45,10 +36,16 @@ void test_balanced_tree(const std::vector<Point_3>& /* points */) {
 
   std::cout << "* building the balanced tree ... " << std::endl;
   Kd_tree tree(points.begin(), points.end(), splitter);
+
+  Timer timer;
+  timer.start();
   tree.build();
-  std::cout << "* building done" << std::endl << std::endl;
+  timer.stop();
+
+  std::cout << "* building done in " << timer.time() << " sec." << std::endl << std::endl;
   tree.statistics(std::cout);
   tree.print(std::cout);
+  assert(tree.root()->depth() < 10);
 
   // Search.
   // Test for default fuzzy search.
@@ -84,17 +81,29 @@ int main(int argc, char* argv[]) {
 
   std::cout.precision(20);
   std::vector<Point_3> points;
-  const std::string filename = (argc > 1 ? argv[1] : "data/failure-tiny.xyz"); // "data/clean-result.xyz"
+
+  // "data/clean-result.xyz"; "data/failure-tiny.xyz";
+  const std::string filename = (argc > 1 ? argv[1] : "data/balanced.xyz");
   std::cout << "* input points: " << filename << std::endl;
   std::ifstream in(filename);
   CGAL::IO::set_ascii_mode(in);
+
+  // std::vector<Point_3> test_points = {
+  //   Point_3(2,3,3), Point_3(5,4,2), Point_3(9,6,7), Point_3(4,7,9), Point_3(8,1,5),
+  //   Point_3(7,2,6), Point_3(9,4,1), Point_3(8,4,2), Point_3(9,7,8), Point_3(6,3,1),
+  //   Point_3(3,4,5), Point_3(1,6,8), Point_3(9,5,3), Point_3(2,1,3), Point_3(8,7,6),
+  //   Point_3(5,4,2), Point_3(6,3,1), Point_3(8,7,6), Point_3(9,6,7), Point_3(2,1,3),
+  //   Point_3(7,2,6), Point_3(4,7,9), Point_3(1,6,8), Point_3(3,4,5), Point_3(9,4,1)
+  // };
+  // test_balanced_tree<BL_splitter>(test_points);
 
   Point_3 p, q; std::size_t count = 0;
   while (in >> p >> q) {
     points.push_back(p);
     ++count;
   }
+  assert(points.size() > 0);
 
-  test_balanced_tree(points);
+  test_balanced_tree<BL_splitter>(points);
   return EXIT_SUCCESS;
 }
