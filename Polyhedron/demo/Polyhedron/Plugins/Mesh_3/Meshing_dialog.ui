@@ -342,10 +342,10 @@
       <item row="3" column="1">
        <widget class="DoubleEdit" name="facetAngle">
         <property name="inputMask">
-         <string>25,00</string>
+         <string/>
         </property>
         <property name="text">
-         <string>25,00</string>
+         <string>25.00</string>
         </property>
        </widget>
       </item>
