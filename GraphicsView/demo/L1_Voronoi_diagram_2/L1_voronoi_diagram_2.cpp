@@ -24,9 +24,7 @@
 #include <QInputDialog>
 #include <boost/config.hpp>
 #include <boost/version.hpp>
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <CGAL/IO/WKT.h>
-#endif
 
 #include <fstream>
 
@@ -275,9 +273,7 @@ MainWindow::on_actionLoadPoints_triggered()
                                                   tr("Open Points file"),
                                                   ".",
                                                   tr("CGAL files (*.pts.cgal);;"
-                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                                                      "WKT files (*.wkt *.WKT);;"
-                                                   #endif
                                                      "All files (*)"));
   if(! fileName.isEmpty()){
     open(fileName);
@@ -295,9 +291,7 @@ MainWindow::open(QString fileName)
   std::ifstream ifs(qPrintable(fileName));
   if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
   {
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
     CGAL::IO::read_multi_point_WKT(ifs, m_sites);
-#endif
   }
   else
   {
@@ -322,16 +316,12 @@ MainWindow::on_actionSavePoints_triggered()
                                                   tr("Save points"),
                                                   ".",
                                                   tr("CGAL files (*.pts.cgal);;"
-                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                                                      "WKT files (*.wkt *.WKT);;"
-                                                   #endif
                                                      "All files (*)"));
   if(! fileName.isEmpty()) {
     std::ofstream ofs(qPrintable(fileName));
     if(fileName.endsWith(".wkt", Qt::CaseInsensitive)){
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
       CGAL::IO::write_multi_point_WKT(ofs, m_sites);
-#endif
     }else
       for(Points::iterator it = m_sites.begin();
           it != m_sites.end(); ++it)
