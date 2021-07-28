@@ -11,8 +11,8 @@ if uname | grep -q -i cygwin; then
   export SHELLOPTS
   set -o igncr
 fi
-(
 source ~/.autofilterrc
+(
 USER_REPO=$1
 BRANCH_NAME=$2
 BASE_NAME=$3
