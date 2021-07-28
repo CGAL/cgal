@@ -635,7 +635,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   const float value_outside = float(ui.value_outside_spinBox->value());
   const bool inside_is_less = ui.inside_is_less_checkBox->isChecked();
   const float sigma_weights = ui.useWeights_checkbox->isChecked()
-                            ? ui.weightsSigma->value() : 0.;
+                            ? ui.weightsSigma->value() : 0.f;
 
   as_facegraph = (mesh_type == Mesh_type::SURFACE_ONLY)
                      ? ui.facegraphCheckBox->isChecked()
@@ -709,13 +709,17 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
       return;
     }
 #ifdef CGAL_USE_ITK
-    if (sigma_weights > 0 && nullptr == image_item->image_weights())
+    if ( sigma_weights > 0
+      && sigma_weights != image_item->sigma_weights())
     {
-      image_item->set_image_weights(std::move(
-          CGAL::Mesh_3::generate_weights(*pImage, sigma_weights)));
+      image_item->set_image_weights(
+        std::move(CGAL::Mesh_3::generate_weights(*pImage, sigma_weights)),
+        sigma_weights);
     }
 #endif
-    const Image* pWeights = image_item->image_weights();
+    const Image* pWeights = sigma_weights > 0
+      ? image_item->image_weights()
+      : nullptr;
 
     Scene_polylines_item::Polylines_container plc;
 
