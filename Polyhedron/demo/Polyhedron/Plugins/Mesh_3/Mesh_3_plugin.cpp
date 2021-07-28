@@ -713,7 +713,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
       && sigma_weights != image_item->sigma_weights())
     {
       image_item->set_image_weights(
-        std::move(CGAL::Mesh_3::generate_weights(*pImage, sigma_weights)),
+        CGAL::Mesh_3::generate_weights(*pImage, sigma_weights),
         sigma_weights);
     }
 #endif
