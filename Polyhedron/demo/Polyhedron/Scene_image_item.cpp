@@ -450,6 +450,7 @@ struct Scene_image_item_priv
   bool is_ogl_4_3;
   Scene_image_item* item;
   internal::Vertex_buffer_helper* helper;
+  Image m_image_weights;
 
 //#endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
 };
@@ -494,6 +495,17 @@ Scene_image_item::compute_bbox() const
                 m_image->image()->tx+(m_image->xdim()-1) * m_image->vx(),
                 m_image->image()->ty+(m_image->ydim()-1) * m_image->vy(),
                 m_image->image()->tz+(m_image->zdim()-1) * m_image->vz()));
+}
+
+const Image*
+Scene_image_item::image_weights() const
+{
+  return &d->m_image_weights;
+}
+void
+Scene_image_item::set_image_weights(const Image& img)
+{
+  d->m_image_weights = img;
 }
 
 void

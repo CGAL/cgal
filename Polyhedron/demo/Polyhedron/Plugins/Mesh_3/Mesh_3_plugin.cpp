@@ -636,7 +636,6 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   const bool inside_is_less = ui.inside_is_less_checkBox->isChecked();
   const float sigma_weights = ui.useWeights_checkbox->isChecked()
                             ? ui.weightsSigma->value() : 0.;
-  Image weights = nullptr;
 
   as_facegraph = (mesh_type == Mesh_type::SURFACE_ONLY)
                      ? ui.facegraphCheckBox->isChecked()
@@ -709,10 +708,14 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
       QMessageBox::critical(mw, tr(""), tr("ERROR: no data in selected item"));
       return;
     }
-
 #ifdef CGAL_USE_ITK
-    weights = CGAL::Mesh_3::generate_weights(*pImage, sigma_weights);
+    if (sigma_weights > 0 && nullptr == image_item->image_weights())
+    {
+      image_item->set_image_weights(std::move(
+          CGAL::Mesh_3::generate_weights(*pImage, sigma_weights)));
+    }
 #endif
+    const Image* pWeights = image_item->image_weights();
 
     Scene_polylines_item::Polylines_container plc;
 
@@ -733,7 +736,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         iso_value,
         value_outside,
         inside_is_less,
-        &weights);
+        pWeights);
     break;
   }
   default:
