@@ -18,7 +18,7 @@ BRANCH_NAME=$2
 BASE_NAME=$3
 PR_NUMBER=$4
 
-cd ${CGAL_ROOT}
+
 cd ${CGAL_GIT_DIR}
 if [ ! -d cgal ]; then
   git clone --depth 1 --no-single-branch https://github.com/CGAL/cgal.git 
@@ -43,7 +43,7 @@ for PKG in $(ls) ; do
   fi
 done
 if [ -f ${CGAL_ROOT}/list_test_packages ]; then rm ${CGAL_ROOT}/list_test_packages; fi
-echo "list of pkgs = $LIST_OF_PKGS">${CGAL_ROOT}/log
+echo "list of pkgs = ${LIST_OF_PKGS}">${CGAL_ROOT}/log
 if [ "$LIST_OF_PKGS" != "" ]; then
   for f in $LIST_OF_PKGS
   do
@@ -55,10 +55,10 @@ fi
 #create the release from the branch
 echo " Create release..."
 CGAL_VERSION="$(sed -E 's/#define CGAL_VERSION (.*\..*)-dev/\1/' <(grep "#define CGAL_VERSION " Installation/include/CGAL/version.h))-Ic-${PR_NUMBER}"
-echo "CGAL_VERSION = ${CGAL_VERSION}"> log
 cmake -DGIT_REPO=${CGAL_GIT_DIR}/cgal -DDESTINATION=${CGAL_ROOT}/CGAL-TEST -DPUBLIC=OFF -DTESTSUITE=ON -DCGAL_VERSION=${CGAL_VERSION} -P ${CGAL_GIT_DIR}/cgal/Scripts/developer_scripts/cgal_create_release_with_cmake.cmake | tee log
 echo "done."
 DEST=$(sed -E 's/.*CGAL-TEST\/(.*)/\1/' log);
+echo "CGAL_VERSION = ${CGAL_VERSION}"> log
 
 cd ${CGAL_ROOT}
 
