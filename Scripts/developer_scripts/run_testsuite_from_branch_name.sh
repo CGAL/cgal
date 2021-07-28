@@ -54,7 +54,7 @@ if [ "$LIST_OF_PKGS" != "" ]; then
 fi
 #create the release from the branch
 echo " Create release..."
-CGAL_VERSION="CGAL-$(sed -E 's/#define CGAL_VERSION (.*\..*)-dev/\1/' <(grep "#define CGAL_VERSION " Installation/include/CGAL/version.h))-${PR_NUMBER}"
+CGAL_VERSION="$(sed -E 's/#define CGAL_VERSION (.*\..*)-dev/\1/' <(grep "#define CGAL_VERSION " Installation/include/CGAL/version.h))-Ic-${PR_NUMBER}"
 echo "CGAL_VERSION = ${CGAL_VERSION}"> log
 cmake -DGIT_REPO=${CGAL_GIT_DIR}/cgal -DDESTINATION=${CGAL_ROOT}/CGAL-TEST -DPUBLIC=OFF -DTESTSUITE=ON -DCGAL_VERSION=${CGAL_VERSION} -P ${CGAL_GIT_DIR}/cgal/Scripts/developer_scripts/cgal_create_release_with_cmake.cmake | tee log
 echo "done."
