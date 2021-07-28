@@ -45,6 +45,15 @@ jobs:
            const base = pr_content.data.base.ref
            console.log(base)
            return base
+      - uses: actions/github-script@v3
+        if: steps.get_round.outputs.result != 'stop'
+        id: get_pr_number
+        with:
+         result-encoding: string
+         script: |
+           //get pullrequest url
+           const pr_number = context.payload.issue.number
+           return pr_number
       - name: Run Testsuite
         if: steps.check.outputs.result != 'stop'
         run: |
@@ -66,14 +75,14 @@ jobs:
           #known hosts
           wget --no-check-certificate https://cgal.geometryfactory.com/CGAL/ssh_known_hosts -O ~/.ssh/known_hosts
           #config file
-          wget --no-check-certificate https://cgal.geometryfactory.com/CGAL/ssh_config -O ~/.ssh/config 
+          wget --no-check-certificate https://cgal.geometryfactory.com/CGAL/ssh_config -O ~/.ssh/config
           #list of hosts
           wget --no-check-certificate https://cgal.geometryfactory.com/CGAL/ssh_host_list -O ~/ssh_host_list
           #ssh command
           LABEL="${{ steps.get_label.outputs.result }}"
           USER_NAME=$(echo $LABEL | cut -d':' -f 1)
           BRANCH_NAME=$(echo $LABEL | cut -d':' -f 2)
-          PR_NUMBER=$(python -c "import json; import os; y = json.load(open(os.environ['GITHUB_EVENT_PATH'])); print(y[\"number\"])")
+          PR_NUMBER=${{ steps.get_pr_number.outputs.result }}
           BASE="${{ steps.get_base.outputs.result }}"
           mapfile -t HOSTS < ~/ssh_host_list;
           for i in ${!HOSTS[@]}; do
