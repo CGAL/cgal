@@ -600,13 +600,31 @@
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>detectComponents</tabstop>
+  <tabstop>protectEdges</tabstop>
+  <tabstop>protect</tabstop>
+  <tabstop>sharpEdgesAngle</tabstop>
+  <tabstop>edgeSizing</tabstop>
+  <tabstop>noEdgeSizing</tabstop>
+  <tabstop>approx</tabstop>
   <tabstop>noApprox</tabstop>
+  <tabstop>facetSizing</tabstop>
   <tabstop>noFacetSizing</tabstop>
+  <tabstop>facetAngle</tabstop>
   <tabstop>noAngle</tabstop>
+  <tabstop>tetSizing</tabstop>
   <tabstop>noTetSizing</tabstop>
+  <tabstop>tetShape</tabstop>
   <tabstop>noTetShape</tabstop>
+  <tabstop>value_outside_spinBox</tabstop>
+  <tabstop>iso_value_spinBox</tabstop>
+  <tabstop>inside_is_less_checkBox</tabstop>
+  <tabstop>useWeights_checkbox</tabstop>
+  <tabstop>weightsSigma</tabstop>
+  <tabstop>facegraphCheckBox</tabstop>
   <tabstop>checkBox</tabstop>
   <tabstop>manifoldCheckBox</tabstop>
+  <tabstop>facetTopology</tabstop>
  </tabstops>
  <resources/>
  <connections>
