@@ -11,9 +11,8 @@ if uname | grep -q -i cygwin; then
   export SHELLOPTS
   set -o igncr
 fi
-source ~/.autofilterrc
 (
-cd $CGAL_ROOT
+source ~/.autofilterrc
 USER_REPO=$1
 BRANCH_NAME=$2
 BASE_NAME=$3
@@ -44,6 +43,7 @@ for PKG in $(ls) ; do
   fi
 done
 if [ -f ${CGAL_ROOT}/list_test_packages ]; then rm ${CGAL_ROOT}/list_test_packages; fi
+echo "list of pkgs = $LIST_OF_PKGS">log
 if [ "$LIST_OF_PKGS" != "" ]; then
   for f in $LIST_OF_PKGS
   do
