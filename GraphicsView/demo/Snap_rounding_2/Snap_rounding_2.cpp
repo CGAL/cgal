@@ -20,9 +20,7 @@
 #include <CGAL/Qt/SegmentsGraphicsItem.h>
 #include <CGAL/Qt/PolylinesGraphicsItem.h>
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <CGAL/IO/WKT.h>
-#endif
 
 // for viewportsBbox
 #include <CGAL/Qt/utility.h>
@@ -252,9 +250,7 @@ MainWindow::on_actionLoadSegments_triggered()
                                                   tr("Open segment file"),
                                                   ".",
                                                   tr("Edge files (*.edg);;"
-                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                                                      "WKT files (*.wkt *.WKT);;"
-                                                   #endif
                                                      "All files (*)"));
   if(! fileName.isEmpty()){
     open(fileName);
@@ -270,7 +266,6 @@ MainWindow::open(QString fileName)
   std::ifstream ifs(qPrintable(fileName));
   if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
   {
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
     std::vector<std::vector<Point_2> > mls;
     CGAL::IO::read_multi_linestring_WKT(ifs, mls);
     for(const std::vector<Point_2>& ls : mls)
@@ -280,7 +275,6 @@ MainWindow::open(QString fileName)
       Segment_2 seg(ls[0], ls[1]);
       input.push_back(seg);
     }
-#endif
   }
   else {
     std::copy(std::istream_iterator<Segment_2>(ifs),
@@ -304,16 +298,13 @@ MainWindow::on_actionSaveSegments_triggered()
                                                   tr("Save points"),
                                                   ".",
                                                   tr("Edge files (*.edg);;"
-                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                                                      "WKT files (*.wkt *.WKT);;"
-                                                   #endif
                                                      "All files (*)"));
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
     ofs.precision(12);
     if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
     {
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
       std::vector<std::vector<Point_2> >mls;
       for(const Segment_2& seg : input)
       {
@@ -323,7 +314,6 @@ MainWindow::on_actionSaveSegments_triggered()
         mls.push_back(ls);
       }
       CGAL::IO::write_multi_linestring_WKT(ofs, mls);
-#endif
     }
     else
       std::copy(input.begin(), input.end(),  std::ostream_iterator<Segment_2>(ofs, "\n"));

@@ -66,6 +66,9 @@ public:
   Line_2(const RLine_2& l)  // conversion impl -> interface class
     : RLine_2(l) {}
 
+  Line_2(RLine_2&& l)
+    : RLine_2(std::move(l)) {}
+
   Line_2(const Point_2 &p, const Point_2 &q)
     : RLine_2(typename R::Construct_line_2()(Return_base_tag(), p,q)) {}
 

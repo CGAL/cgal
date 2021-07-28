@@ -70,6 +70,9 @@ public:
   Vector_3(const Rep& v)
       : Rep(v) {}
 
+  Vector_3(Rep&& v)
+      : Rep(std::move(v)) {}
+
   Vector_3(const Point_3& a, const Point_3& b)
     : Rep(typename R::Construct_vector_3()(Return_base_tag(), a, b)) {}
 

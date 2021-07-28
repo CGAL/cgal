@@ -70,6 +70,9 @@ public:
   Vector_2(const RVector_2& v)
       : RVector_2(v) {}
 
+  Vector_2(RVector_2&& v)
+      : RVector_2(std::move(v)) {}
+
   Vector_2(const Point_2& a, const Point_2& b)
       : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), a, b)) {}
 
