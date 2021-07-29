@@ -502,7 +502,7 @@ void test()
 template <class Mesh>
 void test_split_plane()
 {
-  // test with a clipper mesh
+//test with a splitter mesh
   Mesh tm1;
   std::ifstream input("data-coref/elephant.off");
   input >> tm1;
@@ -529,7 +529,45 @@ void test_split_plane()
   CGAL::clear(tm1);
   meshes.clear();
 
-  //test with SI
+//test with a non-closed splitter mesh (border edges in the plane)
+  input.open("data-coref/open_large_cube.off");
+  input >> tm1;
+
+  if(!input)
+  {
+    std::cerr<<"File not found. Aborting."<<std::endl;
+    assert(false);
+    return ;
+  }
+  input.close();
+
+  PMP::split(tm1,K::Plane_3(0,0,1,-1));
+  PMP::split_connected_components(tm1, meshes, params::all_default());
+  assert(meshes.size() == 281);
+
+  CGAL::clear(tm1);
+  meshes.clear();
+
+//test with a non-closed splitter mesh (border edges in the plane)
+  input.open("data-coref/open_large_cube.off");
+  input >> tm1;
+
+  if(!input)
+  {
+    std::cerr<<"File not found. Aborting."<<std::endl;
+    assert(false);
+    return ;
+  }
+  input.close();
+
+  PMP::split(tm1,K::Plane_3(0,-1,0,0.3));
+  PMP::split_connected_components(tm1, meshes, params::all_default());
+  assert(meshes.size() == 2);
+
+  CGAL::clear(tm1);
+  meshes.clear();
+
+//test with SI
   std::ifstream("data-clip/tet_si_to_split.off") >> tm1;
   if(num_vertices(tm1) == 0)
   {
