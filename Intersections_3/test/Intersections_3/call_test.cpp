@@ -63,8 +63,8 @@ void test(const int argc)
 
   typedef CGAL::Bbox_3                Bbox_3;
 
-  //we only want to check compilation
-  if(argc > 0)
+  // only check compilation
+  if(argc > 1)
   {
     // ---------------------------------------------------------------------------------------------
     //                                        INTERSECTION
