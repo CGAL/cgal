@@ -584,10 +584,7 @@ public:
                    m_required_samples);
 
                 if (callback && !callback(num_invalid / double(m_num_total_points))) {
-                  clear_octrees();
-                  clear_shape_factories();
-                  clear_candidates(candidates);
-                  m_num_available_points -= num_invalid;
+                  clear(num_invalid);
                   return false;
                 }
 
@@ -600,10 +597,7 @@ public:
               for(typename std::vector<Shape *(*)()>::iterator it =
                     m_shape_factories.begin(); it != m_shape_factories.end(); it++)        {
                 if (callback && !callback(num_invalid / double(m_num_total_points))) {
-                  clear_octrees();
-                  clear_shape_factories();
-                  clear_candidates(candidates);
-                  m_num_available_points -= num_invalid;
+                  clear(num_invalid);
                   return false;
                 }
                 Shape *p = (Shape *) (*it)();
@@ -673,10 +667,7 @@ public:
               get_best_candidate(candidates, m_num_available_points - num_invalid);
 
       if (callback && !callback(num_invalid / double(m_num_total_points))) {
-        clear_octrees();
-        clear_shape_factories();
-        clear_candidates(candidates);
-        m_num_available_points -= num_invalid;
+        clear(num_invalid);
         return false;
       }
 
@@ -702,10 +693,7 @@ public:
                                           m_options.cluster_epsilon);
 
       if (callback && !callback(num_invalid / double(m_num_total_points))) {
-        clear_octrees();
-        clear_shape_factories();
-        clear_candidates(candidates);
-        m_num_available_points -= num_invalid;
+        clear(num_invalid);
         return false;
       }
       // check score against min_points and clear out candidates if too low
@@ -724,10 +712,7 @@ public:
         best_candidate = nullptr;
 
         if (callback && !callback(num_invalid / double(m_num_total_points))) {
-          clear_octrees();
-          clear_shape_factories();
-          clear_candidates(candidates);
-          m_num_available_points -= num_invalid;
+          clear(num_invalid);
           return false;
         }
 
@@ -756,10 +741,7 @@ public:
         candidates.resize(empty);
 
         if (callback && !callback(num_invalid / double(m_num_total_points))) {
-          clear_octrees();
-          clear_shape_factories();
-          clear_candidates(candidates);
-          m_num_available_points -= num_invalid;
+          clear(num_invalid);
           return false;
         }
       } else if (stop_probability((std::size_t) best_candidate->expected_value(),
@@ -776,10 +758,7 @@ public:
                 boost::shared_ptr<Shape>(best_candidate));
 
         if (callback && !callback(num_invalid / double(m_num_total_points))) {
-          clear_octrees();
-          clear_shape_factories();
-          clear_candidates(candidates);
-          m_num_available_points -= num_invalid;
+          clear(num_invalid);
           return false;
         }
 
@@ -816,10 +795,7 @@ public:
         best_expected = 0;
 
         if (callback && !callback(num_invalid / double(m_num_total_points))) {
-          clear_octrees();
-          clear_shape_factories();
-          clear_candidates(candidates);
-          m_num_available_points -= num_invalid;
+          clear(num_invalid);
           return false;
         }
 
@@ -851,10 +827,7 @@ public:
         }
 
         if (callback && !callback(num_invalid / double(m_num_total_points))) {
-          clear_octrees();
-          clear_shape_factories();
-          clear_candidates(candidates);
-          m_num_available_points -= num_invalid;
+          clear(num_invalid);
           return false;
         }
 
@@ -877,10 +850,7 @@ public:
         ++generated_candidates;
 
       if (callback && !callback(num_invalid / double(m_num_total_points))) {
-        clear_octrees();
-        clear_shape_factories();
-        clear_candidates(candidates);
-        m_num_available_points -= num_invalid;
+        clear(num_invalid);
         return false;
       }
 
@@ -894,9 +864,7 @@ public:
              || best_expected >= m_options.min_points);
 
     // Clean up remaining candidates.
-    clear_candidates(candidates);
-    m_num_available_points -= num_invalid;
-
+    clear_candidates(num_invalid, candidates);
     return true;
   }
 
@@ -961,11 +929,21 @@ public:
   /// @}
 
 private:
-  void clear_candidates(std::vector<Shape *>& candidates) {
+  void clear(const std::size_t num_invalid) {
+
+    clear_octrees();
+    clear_shape_factories();
+    clear_candidates(num_invalid, candidates);
+  }
+
+  void clear_candidates(
+    const std::size_t num_invalid, std::vector<Shape *>& candidates) {
+
     for (std::size_t i = 0; i < candidates.size(); i++) {
       delete candidates[i];
     }
     candidates.resize(0);
+    m_num_available_points -= num_invalid;
   }
 
   int select_random_octree_level() {
