@@ -17,7 +17,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel          K;
 typedef CGAL::Polyhedron_3<K, CGAL::Polyhedron_items_with_id_3>      Polyhedron;
 
 //Optional visitor for orientation to demonstrate usage
-struct Visitor : public CGAL::Polygon_mesh_processing::internal::Polygon_soup_orientation_visitor
+struct Visitor : public CGAL::Polygon_mesh_processing::Default_orientation_visitor
 {
   void non_manifold_edge(const std::size_t& id1, const std::size_t& id2) final
   {
@@ -26,10 +26,6 @@ struct Visitor : public CGAL::Polygon_mesh_processing::internal::Polygon_soup_or
   void duplicated_vertex(const std::size_t& v1, const std::size_t& v2) final
   {
     std::cout<<v1<<" has been duplicated, the new id is "<<v2<<"."<<std::endl;
-  }
-  void non_manifold_vertex(const std::size_t&v) final
-  {
-    std::cout<<"The vertex "<<v<<" is not manifold."<<std::endl;
   }
   void point_id_in_polygon_updated(const std::size_t& p_id, const std::size_t& i1, const std::size_t& i2) final
   {

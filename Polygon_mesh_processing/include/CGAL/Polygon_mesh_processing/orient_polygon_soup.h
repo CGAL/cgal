@@ -38,17 +38,22 @@ namespace CGAL {
 
 namespace Polygon_mesh_processing {
 
-namespace internal {
-
-struct Polygon_soup_orientation_visitor{
+/** \ingroup PMP_orientation_grp
+ *  Default visitor model of `PMPOrientationVisitor`.
+ *  All of its functions have an empty body. This class can be used as a
+ *  base class if only some of the functions of the concept require to be
+ *  overridden.
+ */
+struct Default_orientation_visitor{
   inline virtual void non_manifold_edge(const std::size_t&, const std::size_t&){}
   inline virtual void duplicated_vertex(const std::size_t&, const std::size_t&){}
-  inline virtual void non_manifold_vertex(const std::size_t&){}
   inline virtual void point_id_in_polygon_updated(const std::size_t&, const std::size_t&, const std::size_t&){}
   inline virtual void polygon_orientation_reversed(const std::size_t&) {}
 };
 
-template<class PointRange, class PolygonRange, class Visitor = Polygon_soup_orientation_visitor>
+namespace internal {
+
+template<class PointRange, class PolygonRange, class Visitor = Default_orientation_visitor>
 struct Polygon_soup_orienter
 {
   typedef typename PointRange::value_type                               Point_3;
@@ -466,31 +471,6 @@ struct Polygon_soup_orienter
 };
 } // namespace internal
 
-//todo: Documentation
-template <class PointRange, class PolygonRange, class NamedParameters>
-bool orient_polygon_soup(PointRange& points,
-                         PolygonRange& polygons,
-                         const NamedParameters& np)
-{
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
-
-  typedef typename internal_np::Lookup_named_param_def <
-    internal_np::visitor_t,
-    NamedParameters,
-    internal::Polygon_soup_orientation_visitor//default
-  > ::type Visitor;
-  Visitor visitor(choose_parameter<Visitor>(get_parameter(np, internal_np::visitor)));
-  std::size_t inital_nb_pts = points.size();
-  internal::Polygon_soup_orienter<PointRange, PolygonRange, Visitor>
-      orienter(points, polygons, visitor);
-  orienter.fill_edge_map();
-  orienter.orient();
-  orienter.duplicate_singular_vertices();
-
-  return inital_nb_pts==points.size();
-}
-
 /**
  * \ingroup PMP_orientation_grp
  * tries to consistently orient a soup of polygons in 3D space.
@@ -515,15 +495,51 @@ bool orient_polygon_soup(PointRange& points,
  * @tparam PolygonRange a model of the concept `RandomAccessContainer`
  * whose `value_type` is a model of the concept `RandomAccessContainer`
  * whose `value_type` is `std::size_t`.
+ * \tparam NamedParameters a sequence of named parameters
  *
  * @param points points of the soup of polygons. Some additional points might be pushed back to resolve
  *               non-manifoldness or non-orientability issues.
  * @param polygons each element in the vector describes a polygon using the index of the points in `points`.
  *                 If needed the order of the indices of a polygon might be reversed.
+ * @param np optional sequence of named parameters among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{visitor}
+ *     \cgalParamDescription{a visitor used to track the non-manifold simplices and the modifications done to polygons during orientation.}
+ *     \cgalParamType{a class model of `PMPOrientationVisitor`}
+ *     \cgalParamDefault{`Default_orientation_visitor`}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
  * @return `true`  if the orientation operation succeded.
  * @return `false` if some points were duplicated, thus producing a self-intersecting polyhedron.
  *
  */
+template <class PointRange, class PolygonRange, class NamedParameters>
+bool orient_polygon_soup(PointRange& points,
+                         PolygonRange& polygons,
+                         const NamedParameters& np)
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::visitor_t,
+    NamedParameters,
+    Default_orientation_visitor//default
+  > ::type Visitor;
+  Visitor visitor(choose_parameter<Visitor>(get_parameter(np, internal_np::visitor)));
+  std::size_t inital_nb_pts = points.size();
+  internal::Polygon_soup_orienter<PointRange, PolygonRange, Visitor>
+      orienter(points, polygons, visitor);
+  orienter.fill_edge_map();
+  orienter.orient();
+  orienter.duplicate_singular_vertices();
+
+  return inital_nb_pts==points.size();
+}
+
+
 template <class PointRange, class PolygonRange>
 bool orient_polygon_soup(PointRange& points,
                          PolygonRange& polygons)
