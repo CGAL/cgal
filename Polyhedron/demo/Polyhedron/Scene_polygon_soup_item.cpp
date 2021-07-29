@@ -422,7 +422,7 @@ void Scene_polygon_soup_item::inside_out()
 bool
 Scene_polygon_soup_item::orient(std::vector<std::size_t>& non_manifold_vertices)
 {
-  struct Visitor : public CGAL::Polygon_mesh_processing::internal::Polygon_soup_orientation_visitor
+  struct Visitor : public CGAL::Polygon_mesh_processing::Default_orientation_visitor
   {
     std::vector<std::size_t>& nm_vertices;
 
