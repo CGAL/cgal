@@ -518,6 +518,9 @@ public:
     pts.swap(ptstmp);
 
     data.clear();
+    data.shrink_to_fit();
+    references.clear();
+    references.shrink_to_fit();
 
     built_ = true;
   }
