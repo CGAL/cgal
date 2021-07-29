@@ -43,7 +43,7 @@ namespace Barycentric_coordinates {
     \tparam VertexToPointMap
     a model of ReadablePropertyMap with boost::graph_traits<PolygonMesh>::vertex_descriptor as
     key type and Point_3 as value type. The default is `property_map_selector<PolygonMesh,
-    CGAL::vertex_point_t>::const_type`.
+    CGAL::vertex_point_t>`.
   */
   template<
   typename PolygonMesh,
