@@ -584,7 +584,7 @@ public:
                    m_required_samples);
 
                 if (callback && !callback(num_invalid / double(m_num_total_points))) {
-                  clear(num_invalid);
+                  clear(num_invalid, candidates);
                   return false;
                 }
 
@@ -597,7 +597,7 @@ public:
               for(typename std::vector<Shape *(*)()>::iterator it =
                     m_shape_factories.begin(); it != m_shape_factories.end(); it++)        {
                 if (callback && !callback(num_invalid / double(m_num_total_points))) {
-                  clear(num_invalid);
+                  clear(num_invalid, candidates);
                   return false;
                 }
                 Shape *p = (Shape *) (*it)();
@@ -667,7 +667,7 @@ public:
               get_best_candidate(candidates, m_num_available_points - num_invalid);
 
       if (callback && !callback(num_invalid / double(m_num_total_points))) {
-        clear(num_invalid);
+        clear(num_invalid, candidates);
         return false;
       }
 
@@ -693,7 +693,7 @@ public:
                                           m_options.cluster_epsilon);
 
       if (callback && !callback(num_invalid / double(m_num_total_points))) {
-        clear(num_invalid);
+        clear(num_invalid, candidates);
         return false;
       }
       // check score against min_points and clear out candidates if too low
@@ -712,7 +712,7 @@ public:
         best_candidate = nullptr;
 
         if (callback && !callback(num_invalid / double(m_num_total_points))) {
-          clear(num_invalid);
+          clear(num_invalid, candidates);
           return false;
         }
 
@@ -741,7 +741,7 @@ public:
         candidates.resize(empty);
 
         if (callback && !callback(num_invalid / double(m_num_total_points))) {
-          clear(num_invalid);
+          clear(num_invalid, candidates);
           return false;
         }
       } else if (stop_probability((std::size_t) best_candidate->expected_value(),
@@ -758,7 +758,7 @@ public:
                 boost::shared_ptr<Shape>(best_candidate));
 
         if (callback && !callback(num_invalid / double(m_num_total_points))) {
-          clear(num_invalid);
+          clear(num_invalid, candidates);
           return false;
         }
 
@@ -795,7 +795,7 @@ public:
         best_expected = 0;
 
         if (callback && !callback(num_invalid / double(m_num_total_points))) {
-          clear(num_invalid);
+          clear(num_invalid, candidates);
           return false;
         }
 
@@ -827,7 +827,7 @@ public:
         }
 
         if (callback && !callback(num_invalid / double(m_num_total_points))) {
-          clear(num_invalid);
+          clear(num_invalid, candidates);
           return false;
         }
 
@@ -850,7 +850,7 @@ public:
         ++generated_candidates;
 
       if (callback && !callback(num_invalid / double(m_num_total_points))) {
-        clear(num_invalid);
+        clear(num_invalid, candidates);
         return false;
       }
 
@@ -929,7 +929,8 @@ public:
   /// @}
 
 private:
-  void clear(const std::size_t num_invalid) {
+  void clear(
+    const std::size_t num_invalid, std::vector<Shape *>& candidates) {
 
     clear_octrees();
     clear_shape_factories();
