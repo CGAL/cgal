@@ -719,8 +719,8 @@ the following example.
 \cgalExample{Mesh_3/mesh_3D_weighted_image.cpp}
 
 \cgalFigureBegin{figure_weightedImage, weighted_images.jpg}
-Surface the output mesh generated with a very small `facet_distance`,
-without the weights (left) and with the weights (right).
+Surface of the output mesh generated with a very small `facet_distance`
+without the weights (left, 25563 vertices) and with the weights (right, 19936 vertices).
 \cgalFigureEnd
 
 
