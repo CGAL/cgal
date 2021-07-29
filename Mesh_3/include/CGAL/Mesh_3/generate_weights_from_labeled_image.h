@@ -215,7 +215,7 @@ CGAL::Image_3 generate_weights_with_known_word_type(const CGAL::Image_3& image,
     smoother->SetSigma(sigma);
     smoother->Update();
 
-    //take the max of indicator functions
+    //take the max of smoothed indicator functions
     if (id == 0)
       blured_max = smoother->GetOutput();
     else
@@ -226,6 +226,8 @@ CGAL::Image_3 generate_weights_with_known_word_type(const CGAL::Image_3& image,
       maximumImageFilter->Update();
       blured_max = maximumImageFilter->GetOutput();
     }
+
+    id++;
 
 #ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
     std::cout << "AFTER MAX (label = " << label << ") : " <<  std::endl;
