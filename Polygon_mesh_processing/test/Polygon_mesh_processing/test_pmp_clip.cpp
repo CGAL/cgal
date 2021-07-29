@@ -497,6 +497,64 @@ void test()
     PMP::clip(tm1, K::Plane_3(0,-1,0,0));
     assert(vertices(tm1).size() == 7);
   }
+
+  {
+    TriangleMesh tm1;
+    std::ifstream("data-coref/open_large_cube.off") >> tm1;
+    PMP::clip(tm1, K::Plane_3(0,0,1,-1), CGAL::parameters::use_compact_clipper(false));
+    assert(vertices(tm1).size()==753);
+  }
+
+  {
+    TriangleMesh tm1;
+    std::ifstream("data-coref/open_large_cube.off") >> tm1;
+    std::size_t nbv = vertices(tm1).size();
+    PMP::clip(tm1, K::Plane_3(0,0,1,-1), CGAL::parameters::use_compact_clipper(true));
+    assert(vertices(tm1).size()==nbv+2); // because of the plane diagonal
+  }
+
+  {
+    TriangleMesh tm1;
+    std::ifstream("data-coref/open_large_cube.off") >> tm1;
+    PMP::clip(tm1, K::Plane_3(0,0,1,-1), CGAL::parameters::use_compact_clipper(false).allow_self_intersections(true));
+    assert(vertices(tm1).size()==753);
+  }
+
+  {
+    TriangleMesh tm1;
+    std::ifstream("data-coref/open_large_cube.off") >> tm1;
+    std::size_t nbv = vertices(tm1).size();
+    PMP::clip(tm1, K::Plane_3(0,0,1,-1), CGAL::parameters::use_compact_clipper(true).allow_self_intersections(true));
+    assert(vertices(tm1).size()==nbv+2); // because of the plane diagonal
+  }
+
+  {
+    TriangleMesh tm1;
+    std::ifstream("data-coref/open_large_cube.off") >> tm1;
+    PMP::clip(tm1, K::Plane_3(0,0,-1,1), CGAL::parameters::use_compact_clipper(false));
+    assert(vertices(tm1).size()==0);
+  }
+
+  {
+    TriangleMesh tm1;
+    std::ifstream("data-coref/open_large_cube.off") >> tm1;
+    PMP::clip(tm1, K::Plane_3(0,0,-1,1), CGAL::parameters::use_compact_clipper(true));
+    assert(vertices(tm1).size()==176);
+  }
+
+  {
+    TriangleMesh tm1;
+    std::ifstream("data-coref/open_large_cube.off") >> tm1;
+    PMP::clip(tm1, K::Plane_3(0,0,-1,1), CGAL::parameters::use_compact_clipper(false).allow_self_intersections(true));
+    assert(vertices(tm1).size()==0);
+  }
+
+  {
+    TriangleMesh tm1;
+    std::ifstream("data-coref/open_large_cube.off") >> tm1;
+    PMP::clip(tm1, K::Plane_3(0,0,-1,1), CGAL::parameters::use_compact_clipper(true).allow_self_intersections(true));
+    assert(vertices(tm1).size()==176);
+  }
 }
 
 template <class Mesh>
