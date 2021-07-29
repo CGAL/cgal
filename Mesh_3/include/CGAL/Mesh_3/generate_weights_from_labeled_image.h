@@ -252,8 +252,8 @@ CGAL::Image_3 generate_weights_with_known_word_type(const CGAL::Image_3& image,
   }
 
 #ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
-  std::cout << "non zero in image \t= " << internal::count_non_white_pixels(image) << std::endl;
-  std::cout << "non zero in weights \t= " << internal::count_non_white_pixels(blured_max.GetPointer()) << std::endl;
+  std::cout << "non white in image \t= " << internal::count_non_white_pixels(image) << std::endl;
+  std::cout << "non white in weights \t= " << internal::count_non_white_pixels(blured_max.GetPointer()) << std::endl;
 #endif
 
   _writeImage(weights, "weights-image.inr.gz");
