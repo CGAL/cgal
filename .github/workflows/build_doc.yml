@@ -18,13 +18,15 @@ jobs:
            if(asso == 'OWNER' || asso == 'MEMBER') {
              const body = context.payload.comment.body
              if(body.includes("build:")) {
-               const re = /\/build:(\w+)\s*/;
+               const re = /\/(force-)?build:(\w+)\s*/;
                if(re.test(body)){
                  const res = re.exec(body)
                  if(body.includes("force-")) {
-                   echo "::set-output name=force::yes"
+                   return "res[1]:yes";
                  }
-                 return res[1];
+                 else{
+                   return "res[1]:no";
+                 }
                }
              }
            }
@@ -73,7 +75,9 @@ jobs:
         run: |
           set -ex
           PR_NUMBER=${{ steps.get_pr_number.outputs.result }}
-          ROUND=${{ steps.get_round.outputs.result }}
+          TMP_ROUND=${{ steps.get_round.outputs.result }}
+          ROUND=$(echo $TMP_ROUND | cut -d ":" -f 1)
+          force=$(echo $TMP_ROUND | cut -d ":" -f 2)
           wget --no-verbose cgal.github.io -O tmp.html
           const force = "${{steps.get_round.outputs.force}}"
           if ! egrep -q "\/$PR_NUMBER\/$ROUND" tmp.html || [ "$force" = "yes" ]; then
@@ -106,7 +110,7 @@ jobs:
             mv tmp.html index.html
             git add ${PR_NUMBER}/$ROUND index.html && git commit -q --amend -m "base commit" && git push -q -f -u origin master
           else
-            echo "::set-output name=DoxygenError::This round already exists."
+            echo "::set-output name=DoxygenError::This round already exists. Overwrite it with `/build-force`"
             exit 1
           fi
 
