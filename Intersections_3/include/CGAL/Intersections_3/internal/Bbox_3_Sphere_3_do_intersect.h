@@ -23,20 +23,22 @@ namespace Intersections {
 namespace internal {
 
 template <class K>
-bool do_intersect(const CGAL::Bbox_3& bbox,
-                  const typename K::Sphere_3& sphere,
-                  const K& k)
-{
-  return do_intersect_sphere_box_3(sphere, bbox, k);
-}
-
-
-template <class K>
 bool do_intersect(const typename K::Sphere_3& sphere,
                   const CGAL::Bbox_3& bbox,
                   const K& k)
 {
-  return do_intersect_sphere_box_3(sphere, bbox, k);
+  return do_intersect_sphere_box_3(sphere,
+                                   bbox.xmin(), bbox.ymin(), bbox.zmin(),
+                                   bbox.xmax(), bbox.ymax(), bbox.zmax(),
+                                   k);
+}
+
+template <class K>
+bool do_intersect(const CGAL::Bbox_3& bbox,
+                  const typename K::Sphere_3& sphere,
+                  const K& k)
+{
+  return do_intersect(sphere, bbox, k);
 }
 
 } // namespace internal

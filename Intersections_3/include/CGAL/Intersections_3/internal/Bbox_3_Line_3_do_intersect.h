@@ -17,41 +17,49 @@
 // inspired from http://cag.csail.mit.edu/~amy/papers/box-jgt.pdf
 
 #include <CGAL/Bbox_3.h>
+#include <CGAL/Coercion_traits.h>
+#include <CGAL/enum.h>
+#include <CGAL/number_utils.h>
 
 namespace CGAL {
 namespace Intersections {
 namespace internal {
 
-template <typename FT, typename BFT>
+template <typename LFT, typename BFT>
 inline
 bool
-bbox_line_do_intersect_aux(const FT& px, const FT& py, const FT& pz,
-                           const FT& vx, const FT& vy, const FT& vz,
-                           const BFT& bxmin, const BFT& bymin, const BFT& bzmin,
-                           const BFT& bxmax, const BFT& bymax, const BFT& bzmax)
+bbox_line_do_intersect_aux(const LFT px, const LFT py, const LFT pz,
+                           const LFT vx, const LFT vy, const LFT vz,
+                           const BFT bxmin, const BFT bymin, const BFT bzmin,
+                           const BFT bxmax, const BFT bymax, const BFT bzmax)
 {
-  if((px >= bxmin) && (px <= bxmax) &&
-     (py >= bymin) && (py <= bymax) &&
-     (pz >= bzmin) && (pz <= bzmax))
+  // use CGAL::compare to access the Coercion_traits between LFT and BFT
+
+  if(compare(px, bxmin) != SMALLER && compare(px, bxmax) != LARGER && // (px >= bxmin) && (px <= bxmax)
+     compare(py, bymin) != SMALLER && compare(py, bymax) != LARGER && // (py >= bymin) && (py <= bymax)
+     compare(pz, bzmin) != SMALLER && compare(pz, bzmax) != LARGER)   // (pz >= bzmin) && (pz <= bzmax)
   {
     return true;
   }
+
+  typedef typename Coercion_traits<LFT, BFT>::Type FT;
+  typename Coercion_traits<LFT, BFT>::Cast to_FT;
 
   // -----------------------------------
   // treat x coord
   // -----------------------------------
   FT dmin, tmin, tmax;
-  if(vx >= 0)
+  if(is_negative(vx))
   {
-    tmin = bxmin - px;
-    tmax = bxmax - px;
-    dmin = vx;
+    tmin = to_FT(px) - to_FT(bxmax);
+    tmax = to_FT(px) - to_FT(bxmin);
+    dmin = - to_FT(vx);
   }
-  else
+  else // vx >= LFT(0)
   {
-    tmin = px - bxmax;
-    tmax = px - bxmin;
-    dmin = -vx;
+    tmin = to_FT(bxmin) - to_FT(px);
+    tmax = to_FT(bxmax) - to_FT(px);
+    dmin = to_FT(vx);
   }
 
   //if px is not in the x-slab
@@ -64,23 +72,23 @@ bbox_line_do_intersect_aux(const FT& px, const FT& py, const FT& pz,
   // treat y coord
   // -----------------------------------
   FT d_, tmin_, tmax_;
-  if(vy >= 0)
+  if(is_negative(vy))
   {
-    tmin_ = bymin - py;
-    tmax_ = bymax - py;
-    d_ = vy;
+    tmin_ = to_FT(py) - to_FT(bymax);
+    tmax_ = to_FT(py) - to_FT(bymin);
+    d_ = - to_FT(vy);
   }
-  else
+  else // vy >= LFT(0)
   {
-    tmin_ = py - bymax;
-    tmax_ = py - bymin;
-    d_ = -vy;
+    tmin_ = to_FT(bymin) - to_FT(py);
+    tmax_ = to_FT(bymax) - to_FT(py);
+    d_ = to_FT(vy);
   }
 
-  if(d_ == FT(0))
+  if(is_zero(d_))
   {
     //if py is not in the y-slab
-    if((tmin_ > FT(0) || tmax_ < FT(0)))
+    if((is_positive(tmin_) || is_negative(tmax_)))
       return false;
   }
   else
@@ -104,17 +112,17 @@ bbox_line_do_intersect_aux(const FT& px, const FT& py, const FT& pz,
   // -----------------------------------
   // treat z coord
   // -----------------------------------
-  if(vz >= 0)
+  if(is_negative(vz))
   {
-    tmin_ = bzmin - pz;
-    tmax_ = bzmax - pz;
-    d_ = vz;
+    tmin_ = to_FT(pz) - to_FT(bzmax);
+    tmax_ = to_FT(pz) - to_FT(bzmin);
+    d_ = - to_FT(vz);
   }
-  else
+  else // vz >= LFT(0)
   {
-    tmin_ = pz - bzmax;
-    tmax_ = pz - bzmin;
-    d_ = -vz;
+    tmin_ = to_FT(bzmin) - to_FT(pz);
+    tmax_ = to_FT(bzmax) - to_FT(pz);
+    d_ = to_FT(vz);
   }
 
   // if pz is not in the z-slab
@@ -131,7 +139,6 @@ bool do_intersect(const typename K::Line_3& line,
                   const CGAL::Bbox_3& bbox,
                   const K&)
 {
-  typedef typename K::FT FT;
   typedef typename K::Point_3 Point_3;
   typedef typename K::Vector_3 Vector_3;
 
@@ -140,8 +147,8 @@ bool do_intersect(const typename K::Line_3& line,
 
   return bbox_line_do_intersect_aux(point.x(), point.y(), point.z(),
                                     v.x(), v.y(), v.z(),
-                                    FT(bbox.xmin()), FT(bbox.ymin()), FT(bbox.zmin()),
-                                    FT(bbox.xmax()), FT(bbox.ymax()), FT(bbox.zmax()));
+                                    bbox.xmin(), bbox.ymin(), bbox.zmin(),
+                                    bbox.xmax(), bbox.ymax(), bbox.zmax());
 }
 
 template <class K>

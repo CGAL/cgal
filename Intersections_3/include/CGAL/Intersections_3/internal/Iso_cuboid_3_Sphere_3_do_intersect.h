@@ -13,6 +13,7 @@
 #ifndef CGAL_INTERNAL_INTERSECTIONS_3_ISO_CUBOID_3_SPHERE_3_DO_INTERSECT_H
 #define CGAL_INTERNAL_INTERSECTIONS_3_ISO_CUBOID_3_SPHERE_3_DO_INTERSECT_H
 
+#include <CGAL/Coercion_traits.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Uncertain.h>
 
@@ -20,13 +21,17 @@ namespace CGAL {
 namespace Intersections {
 namespace internal {
 
-template <class K, class Box3> // Iso_cuboid_3 or Bbox_3
+template <class K, class BFT> // Iso_cuboid_3 or Bbox_3
 bool do_intersect_sphere_box_3(const typename K::Sphere_3& sphere,
-                               const Box3& bbox,
+                               const BFT bxmin, const BFT bymin, const BFT bzmin,
+                               const BFT bxmax, const BFT bymax, const BFT bzmax,
                                const K&)
 {
-  typedef typename K::FT FT;
+  typedef typename K::FT SFT;
+  typedef typename Coercion_traits<double, SFT>::Type FT;
   typedef typename K::Point_3 Point;
+
+  typename Coercion_traits<SFT, BFT>::Cast to_FT;
 
   FT d = FT(0);
   FT distance = FT(0);
@@ -34,18 +39,18 @@ bool do_intersect_sphere_box_3(const typename K::Sphere_3& sphere,
 
   const Point& center = sphere.center();
 
-  if(center.x() < FT{bbox.xmin()})
+  if(compare(center.x(), bxmin) == SMALLER)
   {
-    d = FT{bbox.xmin()} - center.x();
+    d = to_FT(bxmin) - to_FT(center.x());
     d = square(d);
     if(certainly(d > sr))
       return false;
 
     distance = d;
   }
-  else if(center.x() > FT{bbox.xmax()})
+  else if(compare(center.x(), bxmax) == LARGER)
   {
-    d = center.x() - FT{bbox.xmax()};
+    d = to_FT(center.x()) - to_FT(bxmax);
     d = square(d);
     if(certainly(d > sr))
       return false;
@@ -53,18 +58,18 @@ bool do_intersect_sphere_box_3(const typename K::Sphere_3& sphere,
     distance = d;
   }
 
-  if(center.y() < FT{bbox.ymin()})
+  if(compare(center.y(), bymin) == SMALLER)
   {
-    d = FT{bbox.ymin()} - center.y();
+    d = to_FT(bymin) - to_FT(center.y());
     d = square(d);
     if(certainly(d > sr))
       return false;
 
     distance += d;
   }
-  else if(center.y() > FT{bbox.ymax()})
+  else if(compare(center.y(), bymax) == LARGER)
   {
-    d = center.y() - FT{bbox.ymax()};
+    d = to_FT(center.y()) - to_FT(bymax);
     d = square(d);
     if(certainly(d > sr))
       return false;
@@ -72,46 +77,20 @@ bool do_intersect_sphere_box_3(const typename K::Sphere_3& sphere,
     distance += d;
   }
 
-  if(center.z() < FT{bbox.zmin()})
+  if(compare(center.z(), bzmin) == SMALLER)
   {
-    d = FT{bbox.zmin()} - center.z();
+    d = to_FT(bzmin) - to_FT(center.z());
     d = square(d);
     distance += d;
   }
-  else if(center.z() > FT{bbox.zmax()})
+  else if(compare(center.z(), bzmax) == LARGER)
   {
-    d = center.z() - FT{bbox.zmax()};
+    d = to_FT(center.z()) - to_FT(bzmax);
     d = square(d);
     distance += d;
   }
 
-//  For unknown reasons this causes a syntax error on VC2005
-//  but compiles fine on Linux and MAC
-//
-//  int i;
-//  for(i = 0; i < 3; ++i)
-//  {
-//    if(center[i] < (FT)bbox.min(i))
-//    {
-//      d = (FT)bbox.min(i) - center[i];
-//      distance += d * d;
-//    }
-//    else if(center[i] > (FT)bbox.max(i))
-//    {
-//      d = center[i] - (FT)bbox.max(i);
-//      distance += d * d;
-//    }
-//  }
-
-  return distance <= sr;
-}
-
-template <class K>
-bool do_intersect(const typename K::Iso_cuboid_3& ic,
-                  const typename K::Sphere_3& sphere,
-                  const K& k)
-{
-  return do_intersect_sphere_box_3(sphere, ic, k);
+  return (distance <= sr);
 }
 
 template <class K>
@@ -119,7 +98,18 @@ bool do_intersect(const typename K::Sphere_3& sphere,
                   const typename K::Iso_cuboid_3& ic,
                   const K& k)
 {
-  return do_intersect_sphere_box_3(sphere, ic, k);
+  return do_intersect_sphere_box_3(sphere,
+                                   (ic.min)().x(), (ic.min)().y(), (ic.min)().z(),
+                                   (ic.max)().x(), (ic.max)().y(), (ic.max)().z(),
+                                   k);
+}
+
+template <class K>
+bool do_intersect(const typename K::Iso_cuboid_3& ic,
+                  const typename K::Sphere_3& sphere,
+                  const K& k)
+{
+  return do_intersect(sphere, ic, k);
 }
 
 } // namespace internal
