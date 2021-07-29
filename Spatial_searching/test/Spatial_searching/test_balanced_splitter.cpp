@@ -241,7 +241,7 @@ void test_balanced_tree(
   std::cout << "* testing fuzzy search ... " << std::endl;
 
   const auto radius = 2;
-  const Point_3 center(2,3,3);
+  const Point_3 center(2,1,3);
   Fuzzy_sphere fuzzy_sphere(center, radius);
 
   std::vector<Point_3> result;
@@ -266,7 +266,7 @@ void test_balanced_tree(
   // Run orthogonal search when an extended node is required.
   std::cout << "* testing orthogonal search ... " << std::endl;
   result.clear();
-  const Point_3 query(2,3,3);
+  const Point_3 query(2,1,3);
   Neighbor_search nsearch(tree, query, 3);
 
   if (verbose) {
@@ -281,9 +281,9 @@ void test_balanced_tree(
 
   if (filename == "data/balanced.xyz") {
     assert(result.size() == 3);
-    assert(result[0] == Point_3(2,3,3));
+    assert(result[0] == Point_3(2,1,3));
     assert(result[1] == Point_3(2,1,3));
-    assert(result[2] == Point_3(2,1,3));
+    assert(result[2] == Point_3(2,3,3));
   }
 }
 
