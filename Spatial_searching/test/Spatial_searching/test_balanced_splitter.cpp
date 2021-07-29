@@ -3,8 +3,9 @@
 #include <fstream>
 
 #include <CGAL/Real_timer.h>
-#include <CGAL/Homogeneous_d.h>
+#include <CGAL/Cartesian_d.h>
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/point_generators_d.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
@@ -16,14 +17,15 @@
 
 using SCF   = CGAL::Simple_cartesian<float>;
 using SCD   = CGAL::Simple_cartesian<double>;
+using CDD   = CGAL::Cartesian_d<double>;
 using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
-using DKER  = CGAL::Homogeneous_d<double>;
 using Timer = CGAL::Real_timer;
 
 template<typename Kernel>
 void run_tests_2d() {
 
+  std::cout << "* testing 2D ..." << std::endl;
   using Point_2  = typename Kernel::Point_2;
   using Traits   = CGAL::Search_traits_2<Kernel>;
   using Splitter = CGAL::Balanced_splitter<Traits>;
@@ -42,21 +44,54 @@ void run_tests_2d() {
   Splitter splitter_bs_5(5);
   Kd_tree tree_0(points.begin(), points.end(), splitter_bs_5);
   tree_0.build();
-  tree_0.statistics(std::cout);
+  assert(tree_0.root()->depth() == 4);
+  assert(tree_0.root()->num_items() == points.size());
+  assert(tree_0.root()->num_nodes() == 5);
 
   // Default bucket size = 10.
   Kd_tree tree_1(points.begin(), points.end());
   tree_1.build();
-  tree_1.statistics(std::cout);
+  assert(tree_1.root()->depth() == 3);
+  assert(tree_1.root()->num_items() == points.size());
+  assert(tree_1.root()->num_nodes() == 3);
 
-  // assert(tree.root()->depth() == 3);
-  // assert(tree.root()->num_items() == points.size());
-  // assert(tree.root()->num_nodes() == 4);
+  // One line of collinear points with duplicates.
+  points.clear();
+  points = {
+    Point_2(0, 0), Point_2(1, 0), Point_2(2, 0), Point_2(3, 0), Point_2(4, 0),
+    Point_2(5, 0), Point_2(6, 0), Point_2(7, 0), Point_2(8, 0), Point_2(9, 0),
+    Point_2(0, 0), Point_2(1, 0), Point_2(2, 0), Point_2(3, 0), Point_2(4, 0),
+    Point_2(5, 0), Point_2(6, 0), Point_2(7, 0), Point_2(8, 0), Point_2(9, 0)
+  };
+  assert(points.size() == 20);
+
+  Kd_tree tree_2(points.begin(), points.end(), splitter_bs_5);
+  tree_2.build();
+  assert(tree_2.root()->depth() == 3);
+  assert(tree_2.root()->num_items() == points.size());
+  assert(tree_2.root()->num_nodes() == 4);
+
+  // Two lines of collinear points without duplicates.
+  points.clear();
+  points = {
+    Point_2(0, 0), Point_2(1, 0), Point_2(2, 0), Point_2(3, 0), Point_2(4, 0),
+    Point_2(5, 0), Point_2(6, 0), Point_2(7, 0), Point_2(8, 0), Point_2(9, 0),
+    Point_2(0, 1), Point_2(1, 1), Point_2(2, 1), Point_2(3, 1), Point_2(4, 1),
+    Point_2(5, 1), Point_2(6, 1), Point_2(7, 1), Point_2(8, 1), Point_2(9, 1)
+  };
+  assert(points.size() == 20);
+
+  Kd_tree tree_3(points.begin(), points.end(), splitter_bs_5);
+  tree_3.build();
+  assert(tree_3.root()->depth() == 4);
+  assert(tree_3.root()->num_items() == points.size());
+  assert(tree_3.root()->num_nodes() == 5);
 }
 
 template<typename Kernel>
 void run_tests_3d() {
 
+  std::cout << "* testing 3D ..." << std::endl;
   using Point_3  = typename Kernel::Point_3;
   using Traits   = CGAL::Search_traits_3<Kernel>;
   using Splitter = CGAL::Balanced_splitter<Traits>;
@@ -107,10 +142,24 @@ void run_tests_3d() {
 template<typename Kernel>
 void run_tests_kd() {
 
-  // using Traits   = DKER;
-  // using Point_d  = CGAL::Point_d<Traits>;
-  // using Splitter = CGAL::Balanced_splitter<Traits>;
-  // using Kd_tree  = CGAL::Kd_tree<Traits, Splitter>;
+  std::cout << "* testing KD ..." << std::endl;
+  using Traits   = CDD;
+  using Point_d  = CGAL::Point_d<Traits>;
+  using Splitter = CGAL::Balanced_splitter<Traits>;
+  using Kd_tree  = CGAL::Kd_tree<Traits, Splitter>;
+
+  using Point_generator = CGAL::Random_points_in_cube_d<Point_d>;
+
+  const int dim = 5;
+  std::vector<Point_d> points;
+  Point_generator generator(dim);
+  std::copy_n(generator, 50, std::back_inserter(points));
+  assert(points.size() == 50);
+
+  Kd_tree tree(points.begin(), points.end());
+  assert(tree.root()->depth() < 10);
+  assert(tree.root()->num_items() == points.size());
+  assert(tree.root()->num_nodes() > 0);
 }
 
 template<typename Kernel>
@@ -118,7 +167,7 @@ void run_all_tests() {
 
   run_tests_2d<Kernel>();
   run_tests_3d<Kernel>();
-  // run_tests_kd<Kernel>();
+  run_tests_kd<Kernel>();
 }
 
 template<typename Kernel>
@@ -169,9 +218,20 @@ void test_balanced_tree(
     tree.statistics(std::cout);
     tree.print(std::cout);
   }
-  assert(tree.root()->depth() == ref_depth);
+
+  if (ref_depth > 0) {
+    assert(tree.root()->depth() == ref_depth);
+  } else {
+    assert(tree.root()->depth() < 10);
+  }
+
   assert(tree.root()->num_items() == points.size());
-  assert(tree.root()->num_nodes() == ref_num_leaves);
+
+  if (ref_num_leaves != std::size_t(-1)) {
+    assert(tree.root()->num_nodes() == ref_num_leaves);
+  } else {
+    assert(tree.root()->num_nodes() > 0);
+  }
 
   // Search.
 
@@ -231,7 +291,7 @@ int main(int argc, char* argv[]) {
   std::cout.precision(20);
 
   if (argc > 1) {
-    test_balanced_tree<EPICK>(std::string(argv[1]), 3, 4, true);
+    test_balanced_tree<EPICK>(std::string(argv[1]), -1, -1, true);
     return EXIT_SUCCESS;
   } else {
     // This data set has duplicates.
@@ -242,17 +302,17 @@ int main(int argc, char* argv[]) {
 
   // Run tests.
   std::cout << std::endl;
-  std::cout << "- testing SCFKR kernel ... ";
+  std::cout << "- testing SCFKR kernel ... " << std::endl;
   run_all_tests<SCF>();
-  std::cout << "done with success! " << std::endl;
+  std::cout << "- done with success! " << std::endl;
 
-  std::cout << "- testing SCDKR kernel ... ";
+  std::cout << "- testing SCDKR kernel ... " << std::endl;
   run_all_tests<SCD>();
-  std::cout << "done with success! " << std::endl;
+  std::cout << "- done with success! " << std::endl;
 
-  std::cout << "- testing EPICK kernel ... ";
+  std::cout << "- testing EPICK kernel ... " << std::endl;
   run_all_tests<EPICK>();
-  std::cout << "done with success! " << std::endl;
+  std::cout << "- done with success! " << std::endl;
 
   // TODO: Should we fix EPECK for running this test?
   // std::cout << "- testing EPECK kernel ... ";
