@@ -162,10 +162,10 @@ private:
   // At the end, all unique points are moved to the beginning of the array and all
   // duplicates are moved to the end of this array.
   std::size_t remove_duplicates(
-    std::vector<FTP>& reference, const std::size_t axis, const std::size_t dim) const {
+    const Key_compare& compare_keys, std::vector<FTP>& reference,
+    const std::size_t axis, const std::size_t dim) const {
 
     std::size_t end = 0;
-    const Key_compare compare_keys;
     for (std::size_t i = 1; i < reference.size(); ++i) {
       const FT compare = compare_keys( // p[i] > q[i-1]
         reference[i] /* p */, reference[i-1] /* q */, axis, dim);
@@ -452,32 +452,36 @@ public:
     long start = -1, end = -1;
     if (m_create_balanced_tree) {
 
-      const Key_compare compare_keys;
       references.resize(dim_, std::vector<FTP>(data.size()));
-      for (std::size_t i = 0; i < references.size(); ++i) {
-        initialize_reference(data.begin(), data.end(),
-        traits_.construct_cartesian_const_iterator_d_object(), references[i]);
-        std::stable_sort(references[i].begin(), references[i].end(),
-          [&](const FTP& p, const FTP& q) {
-            return compare_keys(p, q, i, dim_) < FT(0);
-          }
-        );
-      }
-
-      // print_references(dim_, references, "REF AFTER SORT");
-
-      CGAL_assertion(int(references.size()) == dim_);
       std::vector<std::size_t> ref_end(references.size());
-      for (std::size_t i = 0; i < ref_end.size(); ++i) {
-        ref_end[i] = static_cast<long>(remove_duplicates(references[i], i, dim_));
-        // std::cout << "REF END " << i << ": " << ref_end[i] << std::endl;
+
+      #if defined(CGAL_TBB_STRUCTURE_IN_KD_TREE)
+      if (boost::is_convertible<ConcurrencyTag, CGAL::Parallel_tag>::value) {
+        CGAL_assertion_msg(false, "TODO: ADD PARALLEL BALANCED PREPROCESSING!");
+      } else
+      #endif
+      {
+        const Key_compare compare_keys;
+        for (std::size_t i = 0; i < references.size(); ++i) {
+          initialize_reference(data.begin(), data.end(),
+          traits_.construct_cartesian_const_iterator_d_object(), references[i]);
+          std::stable_sort(references[i].begin(), references[i].end(),
+            [&](const FTP& p, const FTP& q) {
+              return compare_keys(p, q, i, dim_) < FT(0);
+            }
+          );
+          ref_end[i] = static_cast<long>(remove_duplicates(
+            compare_keys, references[i], i, dim_));
+        }
       }
+
       CGAL_assertion(check_consistency(dim_, ref_end, references));
+      #ifdef KD_TREE_DEBUG
+      print_references(dim_, references, "REF PREPROCESS");
+      #endif
 
       start = 0;
       end   = ref_end[0];
-
-      // print_references(dim_, references, "REF WITHOUT DUPLICATES");
     }
 
     Point_container c(dim_, data.begin(), data.end(), traits_);

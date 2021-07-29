@@ -422,7 +422,7 @@ namespace CGAL {
       }
 
       #ifdef KD_TREE_DEBUG
-      print_references(dim, references, "DEPTH " + std::to_string(depth));
+      print_references(dim, references, "REF DEPTH " + std::to_string(depth));
       #endif
 
       // Split containers.
