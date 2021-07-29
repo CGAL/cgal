@@ -175,7 +175,7 @@ public:
   bool has_simplex_specific_property(internal::PLY_read_number* property, Edge_index)
   {
     const std::string& name = property->name();
-    if(name == "v0" || name == "v1")
+    if(name == "vertex1" || name == "vertex2")
       return true;
     return false;
   }
@@ -365,8 +365,8 @@ public:
   void process_line(PLY_element& element, Edge_index& ei)
   {
     IntType v0, v1;
-    element.assign(v0, "v0");
-    element.assign(v1, "v1");
+    element.assign(v0, "vertex1");
+    element.assign(v1, "vertex2");
 
     Halfedge_index hi = m_mesh.halfedge(m_map_v2v[std::size_t(v0)],
         m_map_v2v[std::size_t(v1)]);
@@ -961,8 +961,8 @@ bool write_PLY(std::ostream& os,
     if(!eprinters.empty())
     {
       os << "element edge " << sm.number_of_edges() << std::endl;
-      os << "property int v0" << std::endl;
-      os << "property int v1" << std::endl;
+      os << "property int vertex1" << std::endl;
+      os << "property int vertex2" << std::endl;
       os << oss.str();
     }
   }
