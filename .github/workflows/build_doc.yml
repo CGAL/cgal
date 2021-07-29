@@ -79,7 +79,6 @@ jobs:
           ROUND=$(echo $TMP_ROUND | cut -d ":" -f 1)
           force=$(echo $TMP_ROUND | cut -d ":" -f 2)
           wget --no-verbose cgal.github.io -O tmp.html
-          const force = "${{steps.get_round.outputs.force}}"
           if ! egrep -q "\/$PR_NUMBER\/$ROUND" tmp.html || [ "$force" = "yes" ]; then
             #list impacted packages
             LIST_OF_PKGS=$(git diff --name-only HEAD^1 HEAD |cut -s -d/ -f1 |sort -u | xargs -I {} echo {} && ls -d {}/package_info 2>/dev/null  |cut -d/ -f1 |egrep -v Installation||true)
