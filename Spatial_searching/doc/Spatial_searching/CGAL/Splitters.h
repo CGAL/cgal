@@ -389,11 +389,17 @@ namespace CGAL {
 /*!
 \ingroup SplitterClasses
 
+\cgalModifBegin
 Implements the <I>balanced</I> splitting rule.
 This splitting rule first pre-sorts all points in each of k dimensions, it then
 preserves the order of elements in each sort and splits the tree at the median element
 at each step by alternating between these k dimensions. This rule is based on the paper
 by R. A. Brown \cgalCite{cgal:b-bbkdt-15}.
+
+\note This splitter does not guarantee the maximum `bucket_size` provided by the user
+if duplicate points are present in the input data set. All duplicate points will also be
+stored in the leaves of the tree thus possibly exceeding the maximum size of the corresponding bucket.
+\cgalModifEnd
 
 \cgalHeading{Parameters}
 
