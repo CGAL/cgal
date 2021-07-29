@@ -29,11 +29,10 @@ namespace Barycentric_coordinates {
     \brief 3D mean value coordinates.
 
     This class implements 3D mean value coordinates, which can be computed
-    at any point in the plane.
+    at any point in the space.
 
-    Mean value coordinates are well-defined everywhere in the plane and are
-    non-negative in the kernel of a star-shaped polygon. The coordinates are
-    computed analytically. See more details in the user manual \ref compute_mv_coord "here".
+    Mean value coordinates are well-defined and non-negative in the closure
+    of a convex polyhedron with triangular faces. The coordinates are computed analytically.
 
     \tparam PolygonMesh
     must be a model of the concept `FaceListGraph`.
@@ -41,7 +40,7 @@ namespace Barycentric_coordinates {
     \tparam GeomTraits
     a model of `BarycentricTraits_3`
 
-    \tparam PointMap
+    \tparam VertexToPointMap
     a model of ReadablePropertyMap with boost::graph_traits<PolygonMesh>::vertex_descriptor as
     key type and Point_3 as value type. The default is `property_map_selector<PolygonMesh,
     CGAL::vertex_point_t>::const_type`.
@@ -91,7 +90,7 @@ namespace Barycentric_coordinates {
       for 3D query points.
 
       \param polygon_mesh
-      an instance of `PolygonMesh` with the vertices of a simple polyhedron
+      an instance of `PolygonMesh`, which must be a convex simplicial polyhedron
 
       \param policy
       one of the `Computation_policy_3`;
@@ -101,13 +100,13 @@ namespace Barycentric_coordinates {
       a traits class with geometric objects, predicates, and constructions;
       the default initialization is provided
 
-      \param point_map
+      \param vertex_to_point_map
       an instance of `VertexToPointMap` that maps a vertex from `polygon_mesh` to `Point_3`;
       the default initialization is provided
 
-      \pre vertices(polygon_mesh).size() >= 4
-      \pre polygon_mesh is strongly convex
-      \pre polygon_mesh should only have triangular faces.
+      \pre num_vertices(polygon_mesh) >= 4.
+      \pre polygon_mesh is strongly convex.
+      \pre polygon_mesh is simplicial.
     */
     Mean_value_coordinates_3(
       const PolygonMesh& polygon_mesh,
@@ -153,7 +152,7 @@ namespace Barycentric_coordinates {
       \brief computes 3D mean value coordinates.
 
       This function fills `c_begin` with 3D mean value coordinates computed
-      at the `query` point with respect to the vertices of the input surface mesh.
+      at the `query` point with respect to the vertices of the input polyhedron.
 
       The number of returned coordinates equals to the number of vertices.
 
@@ -363,11 +362,11 @@ namespace Barycentric_coordinates {
   /*!
     \ingroup PkgBarycentricCoordinates3RefFunctions
 
-    \brief computes 3D mean value weights.
+    \brief computes 3D mean value coordinates.
 
-    This function computes 3D mean value weights at a given `query` point
-    with respect to the vertices of a simple `polyhedron`, that is one
-    weight per vertex. The weights are stored in a destination range
+    This function computes 3D mean value coordinates at a given `query` point
+    with respect to the vertices of a convex `polyhedron` with triangular faces, that is one
+    weight per vertex. The coordinates are stored in a destination range
     beginning at `c_begin`.
 
     Internally, the class `Mean_value_coordinates_3` is used. If one wants to process
@@ -387,28 +386,24 @@ namespace Barycentric_coordinates {
     a model of `OutputIterator` that accepts values of type `GeomTraits::FT`
 
     \param surface_mesh
-      an instance of `PolygonMesh` with the vertices of a simple polyhedron
+      an instance of `PolygonMesh`, which must be a convex simplicial polyhedron
 
     \param query
     a query point
 
     \param c_begin
-    the beginning of the destination range with the computed weights
-
-    \param traits
-    a traits class with geometric objects, predicates, and constructions;
-    this parameter can be omitted if the traits class can be deduced from the point type
+    the beginning of the destination range with the computed coordinates
 
     \param policy
     one of the `Computation_policy_3`;
-    the default is `Computation_policy_2::FAST_WITH_EDGE_CASES`
+    the default is `Computation_policy_3::FAST_WITH_EDGE_CASES`
 
     \return an output iterator to the element in the destination range,
-    one past the last weight stored
+    one past the last coordinates stored
 
-    \pre vertices(polygon_mesh).size() >= 4
-    \pre polygon_mesh is strongly convex
-    \pre polygon_mesh should only have triangular faces.
+    \pre num_vertices(polygon_mesh) >= 4.
+    \pre polygon_mesh is strongly convex.
+    \pre polygon_mesh is simplicial.
   */
   template<
   typename Point_3,

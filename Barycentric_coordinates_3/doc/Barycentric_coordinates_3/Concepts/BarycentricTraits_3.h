@@ -30,6 +30,11 @@ typedef unspecified_type FT;
 /// @{
 
 /*!
+  A model of `Kernel::Point_2`.
+*/
+typedef unspecified_type Point_2;
+
+/*!
   A model of `Kernel::Point_3`.
 */
 typedef unspecified_type Point_3;
@@ -56,117 +61,72 @@ typedef unspecified_type Compute_area_2;
 /*!
   A construction object that must provide the function operator:
 
-  `FT operator(const Point_2& p, const Point_2& q)`
-
-  that returns the squared Euclidean distance between the points `p` and `q`.
+  `FT operator(const Point_3& p0, const Point_3& p1, const Point_3& p2, const Point_3& p3)`
+  
+  that returns the signed volume of the tetrahedron defined by the four points `p0`, `p1`, `p2`, and `p3`.
 */
-typedef unspecified_type Compute_squared_distance_2;
+typedef unspecified_type Compute_volume_3;
 
 /*!
   A construction object that must provide the function operator:
 
-  `FT operator(const Vector_2& v)`
-
-  that returns the squared length of the vector `v`.
+  `FT operator(const Vector_3& u, const Vector_3& v)`
+  
+  that returns an approximation of the angle between `u` and `v`.
+  The angle is given in degrees.
 */
-typedef unspecified_type Compute_squared_length_2;
+typedef unspecified_type Compute_approximate_angle_3;
 
 /*!
   A construction object that must provide the function operator:
 
-  `FT operator(const Vector_2& v, const Vector_2& w)`
-
-  that returns the scalar product of the vectors `v` and `w`.
+  `FT operator(const Vector_3& v, const Vector_3& w)`
+  
+  that returns the scalar (inner) product of the two vectors `v` and `w`.
 */
-typedef unspecified_type Compute_scalar_product_2;
+typedef unspecified_type Compute_scalar_product_3;
 
 /*!
   A construction object that must provide the function operator:
 
-  `FT operator(const Vector_2& v, const Vector_2& w)`
-
-  that returns the determinant of the vectors `v` and `w`.
+  `FT operator(const Vector_3& u, const Vector_3& v, const Vector_3& w)`
+  
+  that returns the determinant of the three vectors `u`, `v` and `w`.
 */
-typedef unspecified_type Compute_determinant_2;
+typedef unspecified_type Compute_determinant_3;
 
 /*!
   A construction object that must provide the function operator:
 
-  `%Vector_2 operator()(const Point_2& p, const Point_2& q)`
-
-  that returns the vector through the points `p` and `q`.
+  `FT operator(const FT& value)`
+  
+  that returns the square root of value.
 */
-typedef unspecified_type Construct_vector_2;
+typedef unspecified_type Sqrt;
+
+/*!
+  A construction object that must provide the function operator:
+
+  `Vector_3 operator(const Point_3& p, const Point_3& q)`
+  
+  that returns the vector `q` - `p`.
+*/
+typedef unspecified_type Construct_vector_3;
+
+/*!
+  A construction object that must provide the function operator:
+
+  `Vector_3 operator(const Vector_3& u, const Vector_3& v)`
+  
+  that returns the cross product between `u` and `v`.
+*/
+typedef unspecified_type Construct_cross_product_vector_3;
 
 /// @}
 
 /// \name 2D Generalized Predicates
 /// @{
 
-/*!
-  A predicate object that must provide the function operator:
-
-  `bool operator(const Point_2& p, const Point_2& q)`
-
-  that returns `true` if `p = q` and `false` otherwise.
-*/
-typedef unspecified_type Equal_2;
-
-/*!
-  A predicate object that must provide the function operator:
-
-  `bool operator(const Point_2& p, const Point_2& q, const Point_2& r)`
-
-  that returns `true` if the points `p`, `q`, and `r` are collinear and `false` otherwise.
-*/
-typedef unspecified_type Collinear_2;
-
-/*!
-  A predicate object that must provide the function operator:
-
-  `bool operator(const Point_2& p, const Point_2& q, const Point_2& r)`
-
-  that returns `true` if the point `q` lies between the points `p` and `r` and all three points are collinear.
-*/
-typedef unspecified_type Collinear_are_ordered_along_line_2;
-
-/*!
-  A predicate object that must provide the function operator:
-
-  `bool operator(const Point_2& p, const Point_2& q)`
-
-  that returns `true` iff the x-coordinate of `p` is smaller than the x-coordinate of `q` or
-  if they are the same and the y-coordinate of `p` is smaller than the y-coordinate of `q`.
-*/
-typedef unspecified_type Less_xy_2;
-
-/*!
-  A predicate object that must provide the function operator:
-
-  `Comparison_result operator(const Point_2& p, const Point_2& q)`
-
-  that compares the Cartesian x-coordinates of the points `p` and `q`.
-*/
-typedef unspecified_type Compare_x_2;
-
-/*!
-  A predicate object that must provide the function operator:
-
-  `Comparison_result operator(const Point_2& p, const Point_2& q)`
-
-  that compares the Cartesian y-coordinates of the points `p` and `q`.
-*/
-typedef unspecified_type Compare_y_2;
-
-/*!
-  A predicate object that must provide the function operator:
-
-  `Orientation operator(const Point_2& p, const Point_2& q, const Point_2& r)`
-
-  that returns `CGAL::LEFT_TURN` if `r` lies to the left of the oriented line `l` defined by `p` and `q`,
-  returns `CGAL::RIGHT_TURN` if `r` lies to the right of `l`, and returns `CGAL::COLLINEAR` if `r` lies on `l`.
-*/
-typedef unspecified_type Orientation_2;
 
 /// @}
 

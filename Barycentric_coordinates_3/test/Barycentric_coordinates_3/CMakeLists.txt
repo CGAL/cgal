@@ -18,7 +18,6 @@ if(CGAL_FOUND)
   create_single_source_cgal_program("test_wp_weights.cpp")
   create_single_source_cgal_program("test_dh_weights.cpp")
   create_single_source_cgal_program("test_mv_weights.cpp")
-  create_single_source_cgal_program("test_voronoi_weights.cpp")
   create_single_source_cgal_program("test_edge_cases.cpp")
   create_single_source_cgal_program("test_containers.cpp")
 

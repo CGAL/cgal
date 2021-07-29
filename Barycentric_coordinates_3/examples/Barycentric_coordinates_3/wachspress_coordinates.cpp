@@ -16,7 +16,7 @@ using WP = CGAL::Barycentric_coordinates::Wachspress_coordinates_3<Surface_mesh,
 int main()
 {
 
-  CGAL::Random_points_in_sphere_3<Point_3> gen(4.0);
+  CGAL::Random_points_in_sphere_3<Point_3> gen(1.0);
   std::vector<Point_3> points;
 
   const std::size_t number_of_points = 250;
@@ -25,7 +25,7 @@ int main()
   Surface_mesh sm;
   CGAL::convex_hull_3(points.begin(), points.end(), sm);
   PMP::triangulate_faces(faces(sm), sm);
-  const std::size_t number_of_vertices = CGAL::vertices(sm).size();
+  const std::size_t number_of_vertices = num_vertices(sm);
 
   WP wp(sm, CP3::FAST_WITH_EDGE_CASES);
 

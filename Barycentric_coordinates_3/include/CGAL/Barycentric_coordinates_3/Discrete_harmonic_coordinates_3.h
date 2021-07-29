@@ -28,23 +28,23 @@ namespace Barycentric_coordinates {
 
     \brief 3D discrete harmonic coordinates.
 
-    This class implements 2D discrete harmonic coordinates ( \cite cgal:bc:fhk-gcbcocp-06,
-    \cite cgal:pp-cdmsc-93, \cite cgal:bc:eddhls-maam-95 ), which can be computed
-    at any point inside a strictly convex polygon.
+    This class implements 3D discrete harmonic coordinates, which can be computed
+    at any point inside a convex polyhedron with triangular faces.
 
-    Discrete harmonic coordinates are well-defined in the closure of a strictly
-    convex polygon but they are not necessarily positive. The coordinates are
-    computed analytically. See more details in the user manual \ref compute_dh_coord "here".
+    Discrete harmonic coordinates are well-defined in the closure of a convex polyhedron
+    with triangular faces but they are not necessarily positive. The coordinates are
+    computed analytically.
 
-    \tparam VertexRange
-    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
+    \tparam PolygonMesh
+    must be a model of the concept `FaceListGraph`.
 
     \tparam GeomTraits
     a model of `BarycentricTraits_3`
 
-    \tparam PointMap
-    a model of `ReadablePropertyMap` whose key type is `VertexRange::value_type` and
-    value type is `Point_2`. The default is `CGAL::Identity_property_map`.
+    \tparam VertexToPointMap
+    a model of ReadablePropertyMap with boost::graph_traits<PolygonMesh>::vertex_descriptor as
+    key type and Point_3 as value type. The default is `property_map_selector<PolygonMesh,
+    CGAL::vertex_point_t>::const_type`.
   */
   template<
   typename PolygonMesh,
@@ -87,26 +87,26 @@ namespace Barycentric_coordinates {
       \brief initializes all internal data structures.
 
       This class implements the behavior of discrete harmonic coordinates
-      for 2D query points.
+      for 3D query points.
 
-      \param polygon
-      an instance of `VertexRange` with the vertices of a strictly convex polygon
+      \param polygon_mesh
+      an instance of `PolygonMesh`, which must be a convex simplicial polyhedron
 
       \param policy
-      one of the `Computation_policy_2`;
-      the default is `Computation_policy_2::PRECISE_WITH_EDGE_CASES`
+      one of the `Computation_policy_3`;
+      the default is `Computation_policy_3::FAST`
 
       \param traits
       a traits class with geometric objects, predicates, and constructions;
       the default initialization is provided
 
-      \param point_map
-      an instance of `PointMap` that maps a vertex from `polygon` to `Point_2`;
+      \param vertex_to_point_map
+      an instance of `VertexToPointMap` that maps a vertex from `polygon_mesh` to `Point_3`;
       the default initialization is provided
 
-      \pre polygon.size() >= 3
-      \pre polygon is simple
-      \pre polygon is strictly convex
+      \pre num_vertices(polygon_mesh) >= 4.
+      \pre polygon_mesh is strongly convex.
+      \pre polygon_mesh is simplicial.
     */
     Discrete_harmonic_coordinates_3(
       const PolygonMesh& polygon_mesh,
@@ -145,16 +145,16 @@ namespace Barycentric_coordinates {
 
 
     /*!
-      \brief computes 2D discrete harmonic coordinates.
+      \brief computes 3D discrete harmonic coordinates.
 
-      This function fills `c_begin` with 2D discrete harmonic coordinates computed
-      at the `query` point with respect to the vertices of the input polygon.
+      This function fills `c_begin` with 3D discrete harmonic coordinates computed
+      at the `query` point with respect to the vertices of the input polyhedron.
 
-      The number of returned coordinates equals to the number of polygon vertices.
+      The number of returned coordinates equals to the number of vertices.
 
       After the coordinates \f$b_i\f$ with \f$i = 1\dots n\f$ are computed, where
-      \f$n\f$ is the number of polygon vertices, the query point \f$q\f$ can be obtained
-      as \f$q = \sum_{i = 1}^{n}b_ip_i\f$, where \f$p_i\f$ are the polygon vertices.
+      \f$n\f$ is the number of vertices, the query point \f$q\f$ can be obtained
+      as \f$q = \sum_{i = 1}^{n}b_ip_i\f$, where \f$p_i\f$ are the polyhedron vertices.
 
       \tparam OutIterator
       a model of `OutputIterator` that accepts values of type `FT`
@@ -351,53 +351,48 @@ namespace Barycentric_coordinates {
   /*!
     \ingroup PkgBarycentricCoordinates3RefFunctions
 
-    \brief computes 2D discrete harmonic weights.
+    \brief computes 3D discrete harmonic coordinates.
 
-    This function computes 2D discrete harmonic weights at a given `query` point
-    with respect to the vertices of a strictly convex `polygon`, that is one
-    weight per vertex. The weights are stored in a destination range
-    beginning at `w_begin`.
+    This function computes 3D discrete harmonic coordinates at a given `query` point
+    with respect to the vertices of a convex `polyhedron` with triangular faces, that is one
+    coordinate per vertex. The coordinates are stored in a destination range
+    beginning at `c_begin`.
 
-    Internally, the class `Discrete_harmonic_coordinates_2` is used. If one wants to process
+    Internally, the class `Discrete_harmonic_coordinates_3` is used. If one wants to process
     multiple query points, it is better to use that class. When using the free function,
     internal memory is allocated for each query point, while when using the class,
     it is allocated only once, which is much more efficient. However, for a few query
     points, it is easier to use this function. It can also be used when the processing
     time is not a concern.
 
-    \tparam PointRange
-    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
-    and value type is `GeomTraits::Point_2`
+    \tparam Point_3
+    A model of `Kernel::Point_3`.
+
+    \tparam Mesh
+    must be a model of the concept `FaceListGraph`.
 
     \tparam OutIterator
     a model of `OutputIterator` that accepts values of type `GeomTraits::FT`
 
-    \tparam GeomTraits
-    a model of `BarycentricTraits_2`
-
-    \param polygon
-    an instance of `PointRange` with 2D points, which form a strictly convex polygon
+    \param surface_mesh
+      an instance of `PolygonMesh`, which must be a convex simplicial polyhedron
 
     \param query
     a query point
 
-    \param w_begin
-    the beginning of the destination range with the computed weights
-
-    \param traits
-    a traits class with geometric objects, predicates, and constructions;
-    this parameter can be omitted if the traits class can be deduced from the point type
+    \param c_begin
+    the beginning of the destination range with the computed coordinates
 
     \param policy
-    one of the `Computation_policy_2`;
-    the default is `Computation_policy_2::FAST_WITH_EDGE_CASES`
+    one of the `Computation_policy_3`;
+    the default is `Computation_policy_3::FAST_WITH_EDGE_CASES`
 
     \return an output iterator to the element in the destination range,
-    one past the last weight stored
+    one past the last coordinate stored
 
-    \pre polygon.size() >= 3
-    \pre polygon is simple
-    \pre polygon is strictly convex
+    \pre num_vertices(polygon_mesh) >= 4.
+    \pre polygon_mesh is strongly convex.
+    \pre polygon_mesh is simplicial.
   */
   template<
   typename Point_3,

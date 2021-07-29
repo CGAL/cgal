@@ -27,13 +27,12 @@ namespace Barycentric_coordinates{
     \brief computes tetrahedron coordinates.
 
     This function computes barycentric coordinates at a given `query` point
-    with respect to the points `p0`, `p1`, `p2`, and `p3, which form a tetrahedron, that is one
+    with respect to the points `p0`, `p1`, `p2`, and `p3`, which form a tetrahedron, that is one
     coordinate per point. The coordinates are stored in a destination range
     beginning at `c_begin`.
 
     After the coordinates \f$b_0\f$, \f$b_1\f$, \f$b_2\f$, and \f$b_2\f$ are computed, the query
-    point \f$q\f$ can be obtained as \f$q = b_0p_0 + b_1p_1 + b_2p_2 + b_3p_3\f$. See more details
-    in the user manual \ref compute_tetra_coord "here".
+    point \f$q\f$ can be obtained as \f$q = b_0p_0 + b_1p_1 + b_2p_2 + b_3p_3\f$.
 
     \tparam OutIterator
     a model of `OutputIterator` that accepts values of type `GeomTraits::FT`
@@ -108,12 +107,11 @@ namespace Barycentric_coordinates{
     \brief computes tetrahedron coordinates.
 
     This function computes barycentric coordinates at a given `query` point
-    with respect to the points `p0`, `p1`, `p2`, and `p3`, which form a triangle, that is one
+    with respect to the points `p0`, `p1`, `p2`, and `p3`, which form a tetrahedron, that is one
     coordinate per point. The coordinates are returned in a tuple.
 
     After the coordinates \f$b_0\f$, \f$b_1\f$, \f$b_2\f$, and \f$b_3\f$ are computed, the query
-    point \f$q\f$ can be obtained as \f$q = b_0p_0 + b_1p_1 + b_2p_2 + b_3p_3\f$. See more details
-    in the user manual \ref compute_tetra_coord "here".
+    point \f$q\f$ can be obtained as \f$q = b_0p_0 + b_1p_1 + b_2p_2 + b_3p_3\f$.
 
     \tparam GeomTraits
     a model of `BarycentricTraits_3`
