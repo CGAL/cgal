@@ -57,14 +57,9 @@ if [ ! -d "${CGAL_DOC_BUILD}/${CGAL_RELEASE_ID}" ]; then
     error "directory ${CGAL_DOC_BUILD}/${CGAL_RELEASE_ID} does not exist"
 fi
 cd "${CGAL_RELEASE_ID}"
+$HOME/Git/cgal-documentation-dockerfile/generate_documentation.sh $HOME/Git/cgal-documentation-dockerfile ${CGAL_DOC_BUILD}/${CGAL_RELEASE_ID} /srv/CGAL/www/Members/Manual_doxygen_test
 
-PYTHONPATH=/home/cgal-testsuite/.local/lib/python2.6/site-packages
-export PYTHONPATH
-PATH=/home/cgal-testsuite/local/bin:$PATH
-export PATH
-cd "$PWD/doc/scripts"
-bash -$- ./process_doc.sh /home/cgal-testsuite/local/bin/doxygen /home/mgimeno/bin/doxygen /srv/CGAL/www/Members/Manual_doxygen_test
-if head -2 ../../.scm-branch | grep -q cgal/master; then
+if head -2 .scm-branch | grep -q cgal/master; then
     rsync -a --delete "/srv/CGAL/www/Members/Manual_doxygen_test/${CGAL_RELEASE_ID}/output2/" /srv/CGAL/www/doc/master/
 fi
 rm -rf "${CGAL_DOC_BUILD}"
