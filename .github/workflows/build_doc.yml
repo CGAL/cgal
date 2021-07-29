@@ -76,13 +76,14 @@ jobs:
             #list impacted packages
             LIST_OF_PKGS=$(git diff --name-only HEAD^1 HEAD |cut -s -d/ -f1 |sort -u | xargs -I {} echo {} && ls -d {}/package_info 2>/dev/null  |cut -d/ -f1 |egrep -v Installation||true)
             if [ "$LIST_OF_PKGS" = "" ]; then
+              echo "::set-output name=DoxygenError::No package affected."
               exit 1
             fi
             cd build_doc && make -j2 doc
             make -j2 doc_with_postprocessing 2>tmp.log
             if [ -s tmp.log ]; then
               content=`cat ./tmp.log`
-              echo ::set-output name=DoxygenError::$(cat tmp.log)
+              echo "::set-output name=DoxygenError::$(cat tmp.log)"
               exit 1
             fi
             cd ..
@@ -101,6 +102,7 @@ jobs:
             mv tmp.html index.html
             git add ${PR_NUMBER}/$ROUND index.html && git commit -q --amend -m "base commit" && git push -q -f -u origin master
           else
+            echo "::set-output name=DoxygenError::This round already exists."
             exit 1
           fi
 
