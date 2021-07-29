@@ -110,7 +110,7 @@ jobs:
             mv tmp.html index.html
             git add ${PR_NUMBER}/$ROUND index.html && git commit -q --amend -m "base commit" && git push -q -f -u origin master
           else
-            echo "::set-output name=DoxygenError::This round already exists. Overwrite it with `/build-force`"
+            echo "::set-output name=DoxygenError::This round already exists. Overwrite it with `/force-build`"
             exit 1
           fi
 
