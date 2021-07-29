@@ -311,6 +311,7 @@ namespace CGAL {
 
   public:
     using FT = typename SearchTraits::FT;
+    using Point_d = typename SearchTraits::Point_d;
     using Container = Point_container<SearchTraits>;
     using Separator = Separator_;
     using Key_compare = typename Container::Key_compare;
@@ -417,15 +418,27 @@ namespace CGAL {
 
       // print_references(dim, references, "DEPTH " + std::to_string(depth));
 
+      // Split containers.
       tmp.clear();
+      SearchTraits traits;
+      auto construct_it = traits.construct_cartesian_const_iterator_d_object();
+      const auto it = std::partition(c0.begin(), c0.end(),
+        [&](const Point_d* pt) {
+          const auto p = construct_it(*pt);
+          const auto q = references[dim-1][median];
+          const FT compare = compare_keys(p, q, axis, dim);
+          return compare < FT(0);
+        }
+      );
+
+      c1.set_range(c0.begin(), it);
+      c0.set_range(it, c0.end());
+
       const int split_coord = static_cast<int>(axis);
       const FT cutting_value = references[dim-1][median][axis];
 
       sep = Separator(split_coord, cutting_value);
-      c0.split(c1, sep);
-
-      CGAL_assertion(c0.size() > 0);
-      CGAL_assertion(c1.size() > 0);
+      c0.balanced_split(c1, sep);
 
       // std::cout << "c0 size: " << c0.size() << std::endl;
       // std::cout << "c1 size: " << c1.size() << std::endl;
@@ -439,6 +452,9 @@ namespace CGAL {
       // for (const auto& item : c1) {
       //   std::cout << *item << std::endl;
       // }
+
+      CGAL_assertion(c0.size() > 0);
+      CGAL_assertion(c1.size() > 0);
 
       c1.set_ref_ptr(ref_ptr);
       c1.set_data(dim, depth + 1, start, lower);

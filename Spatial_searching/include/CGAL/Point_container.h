@@ -422,6 +422,32 @@ public:
     return b;
   }
 
+  template <class Separator>
+  void balanced_split(Point_container<Traits>& c, Separator& sep)
+  {
+    CGAL_assertion(is_valid());
+    CGAL_assertion(dimension() == c.dimension());
+
+    c.bbox = bbox;
+    const int split_coord = sep.cutting_dimension();
+    const FT cutting_value = sep.cutting_value();
+
+    built_coord = split_coord;
+    c.built_coord = split_coord;
+
+    auto construct_it = traits.construct_cartesian_const_iterator_d_object();
+
+    bbox.set_lower_bound(split_coord, cutting_value);
+    c.bbox.set_upper_bound(split_coord, cutting_value);
+
+    tbox. template update_from_point_pointers<
+    typename Traits::Construct_cartesian_const_iterator_d>(begin(), end(), construct_it);
+    c.tbox. template update_from_point_pointers<
+    typename Traits::Construct_cartesian_const_iterator_d>(c.begin(), c.end(), construct_it);
+
+    CGAL_assertion(is_valid());
+    CGAL_assertion(c.is_valid());
+  }
 
   // note that splitting is restricted to the built coordinate
   template <class Separator>
