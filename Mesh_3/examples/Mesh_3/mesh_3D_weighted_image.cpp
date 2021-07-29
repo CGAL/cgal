@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
   /// [Domain creation]
 
   // Mesh criteria
-  Mesh_criteria criteria(facet_angle=30, facet_size=6, facet_distance=0.2,
+  Mesh_criteria criteria(facet_angle=30, facet_size=6, facet_distance=0.5,
                          cell_radius_edge_ratio=3, cell_size=8);
 
   /// [Meshing]
