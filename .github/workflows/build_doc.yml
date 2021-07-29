@@ -21,6 +21,9 @@ jobs:
                const re = /\/build:(\w+)\s*/;
                if(re.test(body)){
                  const res = re.exec(body)
+                 if(body.includes("force-")) {
+                   echo "::set-output name=force::yes"
+                 }
                  return res[1];
                }
              }
@@ -72,7 +75,8 @@ jobs:
           PR_NUMBER=${{ steps.get_pr_number.outputs.result }}
           ROUND=${{ steps.get_round.outputs.result }}
           wget --no-verbose cgal.github.io -O tmp.html
-          if ! egrep -q "\/$PR_NUMBER\/$ROUND" tmp.html; then
+          const force = "${{steps.get_round.outputs.force}}"
+          if ! egrep -q "\/$PR_NUMBER\/$ROUND" tmp.html || [ "$force" = "yes" ]; then
             #list impacted packages
             LIST_OF_PKGS=$(git diff --name-only HEAD^1 HEAD |cut -s -d/ -f1 |sort -u | xargs -I {} echo {} && ls -d {}/package_info 2>/dev/null  |cut -d/ -f1 |egrep -v Installation||true)
             if [ "$LIST_OF_PKGS" = "" ]; then
