@@ -77,7 +77,7 @@ void convert_image_3_to_itk(const CGAL::Image_3& image,
 }
 
 #ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
-int count_non_zero_pixels(const CGAL::Image_3& image)
+int count_non_white_pixels(const CGAL::Image_3& image)
 {
   int nb_nonzero = 0;
   for (std::size_t i = 0; i < image.xdim(); ++i)
@@ -86,7 +86,7 @@ int count_non_zero_pixels(const CGAL::Image_3& image)
     {
       for (std::size_t k = 0; k < image.zdim(); ++k)
       {
-        if (image.value(i, j, k) != 0)
+        if (image.value(i, j, k) != 255)
           nb_nonzero++;
       }
     }
@@ -95,7 +95,7 @@ int count_non_zero_pixels(const CGAL::Image_3& image)
 }
 
 template<typename Image_word_type>
-int count_non_zero_pixels(const itk::Image<Image_word_type, 3>* image)
+int count_non_white_pixels(const itk::Image<Image_word_type, 3>* image)
 {
   int nb_nonzero = 0;
   const auto sizeOfImage = image->GetLargestPossibleRegion().GetSize();
@@ -108,7 +108,7 @@ int count_non_zero_pixels(const itk::Image<Image_word_type, 3>* image)
       for (std::size_t k = 0; k < sizeOfImage[2]; ++k)
       {
         const itk::Index<3>  index = { (Index)i, (Index)j, (Index)k };
-        if (image->GetPixel(index) != 0)
+        if (image->GetPixel(index) != 255)
           nb_nonzero++;
       }
     }
@@ -232,7 +232,7 @@ CGAL::Image_3 generate_weights_with_known_word_type(const CGAL::Image_3& image,
 #ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
     std::cout << "AFTER MAX (label = " << label << ") : " <<  std::endl;
     std::cout << "\tnon zero in max ("
-      << label << ")\t= " << internal::count_non_zero_pixels(blured_max.GetPointer()) << std::endl;
+      << label << ")\t= " << internal::count_non_white_pixels(blured_max.GetPointer()) << std::endl;
 #endif
   }
 
@@ -252,8 +252,8 @@ CGAL::Image_3 generate_weights_with_known_word_type(const CGAL::Image_3& image,
   }
 
 #ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
-  std::cout << "non zero in image \t= " << internal::count_non_zero_pixels(image) << std::endl;
-  std::cout << "non zero in weights \t= " << internal::count_non_zero_pixels(blured_max.GetPointer()) << std::endl;
+  std::cout << "non zero in image \t= " << internal::count_non_white_pixels(image) << std::endl;
+  std::cout << "non zero in weights \t= " << internal::count_non_white_pixels(blured_max.GetPointer()) << std::endl;
 #endif
 
   _writeImage(weights, "weights-image.inr.gz");
