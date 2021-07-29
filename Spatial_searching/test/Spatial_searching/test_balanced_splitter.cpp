@@ -1,3 +1,5 @@
+// #define KD_TREE_DEBUG // use this to output more debug info
+
 #include <cmath>
 #include <vector>
 #include <fstream>

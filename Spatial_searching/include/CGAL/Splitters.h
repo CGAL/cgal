@@ -367,10 +367,13 @@ namespace CGAL {
       const auto& ref_ptr = c0.get_ref_ptr();
       auto& references = *(ref_ptr);
 
-      // std::cout << "dim: "   << dim   << std::endl;
-      // std::cout << "depth: " << depth << std::endl;
-      // std::cout << "start: " << start << std::endl;
-      // std::cout << "end: "   << end   << std::endl;
+      #ifdef KD_TREE_DEBUG
+      std::cout << std::endl;
+      std::cout << "- dim: "   << dim   << std::endl;
+      std::cout << "- depth: " << depth << std::endl;
+      std::cout << "- start: " << start << std::endl;
+      std::cout << "- end: "   << end   << std::endl;
+      #endif
 
       CGAL_assertion(dim   != static_cast<std::size_t>(-1));
       CGAL_assertion(depth != static_cast<std::size_t>(-1));
@@ -382,7 +385,9 @@ namespace CGAL {
       const std::size_t axis = depth % dim;
       CGAL_assertion(median >= 0);
 
-      // std::cout << "median: " << median << std::endl;
+      #ifdef KD_TREE_DEBUG
+      std::cout << "- median: " << median << std::endl;
+      #endif
 
       const Key_compare compare_keys;
       std::vector<FTP> tmp(references[0].size());
@@ -416,7 +421,9 @@ namespace CGAL {
         references[dim-1][i] = tmp[i];
       }
 
-      // print_references(dim, references, "DEPTH " + std::to_string(depth));
+      #ifdef KD_TREE_DEBUG
+      print_references(dim, references, "DEPTH " + std::to_string(depth));
+      #endif
 
       // Split containers.
       tmp.clear();
@@ -437,21 +444,29 @@ namespace CGAL {
       const int split_coord = static_cast<int>(axis);
       const FT cutting_value = references[dim-1][median][axis];
 
+      #ifdef KD_TREE_DEBUG
+      std::cout << std::endl;
+      std::cout << "- cutting dimen: " << split_coord   << std::endl;
+      std::cout << "- cutting value: " << cutting_value << std::endl;
+      #endif
+
       sep = Separator(split_coord, cutting_value);
       c0.balanced_split(c1, sep);
 
-      // std::cout << "c0 size: " << c0.size() << std::endl;
-      // std::cout << "c1 size: " << c1.size() << std::endl;
+      #ifdef KD_TREE_DEBUG
+      std::cout << "- c0 size: " << c0.size() << std::endl;
+      std::cout << "- c1 size: " << c1.size() << std::endl;
 
-      // std::cout << std::endl << "c0 container, depth: " << depth << std::endl;
-      // for (const auto& item : c0) {
-      //   std::cout << *item << std::endl;
-      // }
+      std::cout << std::endl << "- c0 container, depth: " << depth << std::endl;
+      for (const auto& item : c0) {
+        std::cout << *item << std::endl;
+      }
 
-      // std::cout << std::endl << "c1 container, depth: " << depth << std::endl;
-      // for (const auto& item : c1) {
-      //   std::cout << *item << std::endl;
-      // }
+      std::cout << std::endl << "- c1 container, depth: " << depth << std::endl;
+      for (const auto& item : c1) {
+        std::cout << *item << std::endl;
+      }
+      #endif
 
       CGAL_assertion(c0.size() > 0);
       CGAL_assertion(c1.size() > 0);
