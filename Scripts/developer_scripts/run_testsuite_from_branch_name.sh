@@ -21,7 +21,7 @@ PR_NUMBER=$4
 
 cd ${CGAL_GIT_DIR}
 if [ ! -d cgal ]; then
-  git clone --depth 1 --no-single-branch https://github.com/CGAL/cgal.git 
+  git clone https://github.com/CGAL/cgal.git 
   cd cgal
   git remote rename origin cgal
   cd ..
