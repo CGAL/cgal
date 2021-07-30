@@ -63,7 +63,7 @@ jobs:
           script: |
             const address = "The testsuite is lauched. results will be found, after it is done, here : https://cgal.geometryfactory.com/~mgimeno/test_suite/TESTRESULTS/index.shtml "
             github.issues.createComment({
-              owner: "maxGimeno",
+              owner: "CGAL",
               repo: "cgal",
               issue_number: ${{ github.event.issue.number }},
               body: address
