@@ -27,9 +27,9 @@ if [ ! -d cgal ]; then
   cd ..
 fi
 cd cgal
-git fetch --depth 1 cgal
+git fetch cgal
 git remote add $USER_REPO https://github.com/$USER_REPO/cgal.git
-git fetch --depth 1 $USER_REPO
+git fetch $USER_REPO
 git checkout $BRANCH_NAME
 git reset --hard $USER_REPO/$BRANCH_NAME
 #setup the list_test_packages
