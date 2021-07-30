@@ -115,7 +115,7 @@ public:
     return index - x.index;
   }
 
-  reference operator[](difference_type i) const {
+  decltype(auto) operator[](difference_type i) const {
     return *(*this + i);
   }
 
