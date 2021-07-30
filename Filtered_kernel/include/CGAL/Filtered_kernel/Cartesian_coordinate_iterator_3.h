@@ -27,6 +27,8 @@ namespace CGAL {
 template <class K>
 class Cartesian_coordinate_iterator_3
 {
+
+protected:
   typedef typename K::Point_3 P;
   typedef typename K::Vector_3 V;
   boost::variant<const P*, const V*> var;
@@ -46,13 +48,14 @@ public:
   Cartesian_coordinate_iterator_3()
     : var((const P*) nullptr), index(0) {}
 
-  Cartesian_coordinate_iterator_3(const P *const p, int _index = 0)
+  Cartesian_coordinate_iterator_3(const P * const p, int _index = 0)
     : var(p), index(_index) {}
 
-  Cartesian_coordinate_iterator_3(const V *const v, int _index = 0)
+  Cartesian_coordinate_iterator_3(const V * const v, int _index = 0)
     : var(v), index(_index) {}
 
-  const FT
+
+  decltype(auto)
   operator*() const {
     if (const P* const* p = boost::get<const P*>(&var))
       return (*p)->cartesian(index);
@@ -61,7 +64,8 @@ public:
     return (*v)->cartesian(index);
   }
 
-  Self&  operator++() {
+  Self&
+  operator++() {
     index++;
     return *this;
   }
@@ -88,7 +92,7 @@ public:
 
   Self&
   operator+=(difference_type i) {
-    index+=i;
+    index += i;
     return *this;
   }
 
@@ -104,7 +108,8 @@ public:
     return tmp += i;
   }
 
-  Self operator-(difference_type i) const {
+  Self
+  operator-(difference_type i) const {
     Self tmp=*this;
     return tmp -= i;
   }
@@ -115,19 +120,23 @@ public:
     return index - x.index;
   }
 
-  reference operator[](difference_type i) const {
+  decltype(auto)
+  operator[](difference_type i) const {
     return *(*this + i);
   }
 
-  bool operator==(const Self& x) const {
-    return (var == x.var) && (index == x.index) ;
+  bool
+  operator==(const Self& x) const {
+    return (var == x.var) && (index == x.index);
   }
 
-  bool operator!=(const Self& x) const {
+  bool
+  operator!=(const Self& x) const {
     return ! (*this==x);
   }
 
-  bool operator<(const Self& x) const
+  bool
+  operator<(const Self& x) const
   {
     return (x - *this) > 0;
   }
