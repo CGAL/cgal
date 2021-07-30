@@ -505,7 +505,7 @@ struct Polygon_soup_orienter
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{visitor}
- *     \cgalParamDescription{a visitor used to track the non-manifold simplices and the modifications done to polygons during orientation.}
+ *     \cgalParamDescription{a visitor used to be notified of the presence of non-manifold simplices and of the modifications done to polygons during orientation.}
  *     \cgalParamType{a class model of `PMPOrientationVisitor`}
  *     \cgalParamDefault{`Default_orientation_visitor`}
  *   \cgalParamNEnd
