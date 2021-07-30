@@ -164,6 +164,10 @@ public:
     const std::string& name = property->name();
     if(name == "vertex1" || name == "vertex2")
       return true;
+#ifndef CGAL_NO_DEPRECATED_CODE
+    if(name == "v0" || name == "v1")
+      return true;
+#endif
     return false;
   }
 
