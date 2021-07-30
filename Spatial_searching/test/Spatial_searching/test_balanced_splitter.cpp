@@ -316,10 +316,9 @@ int main(int argc, char* argv[]) {
   run_all_tests<EPICK>();
   std::cout << "- done with success! " << std::endl;
 
-  // TODO: Should we fix EPECK for running this test?
-  // std::cout << "- testing EPECK kernel ... ";
-  // run_all_tests<EPECK>(); // triggers a warning about tmp ref return and seg fault
-  // std::cout << "done with success! " << std::endl;
+  std::cout << "- testing EPECK kernel ... " << std::endl;
+  run_all_tests<EPECK>();
+  std::cout << "done with success! " << std::endl;
   std::cout << std::endl;
 
   return EXIT_SUCCESS;
