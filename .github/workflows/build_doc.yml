@@ -22,10 +22,10 @@ jobs:
                if(re.test(body)){
                  const res = re.exec(body)
                  if(body.includes("force-")) {
-                   return "res[1]:yes";
+                   return res[2]+":yes"
                  }
                  else{
-                   return "res[1]:no";
+                   return res[2]+":no"
                  }
                }
              }
