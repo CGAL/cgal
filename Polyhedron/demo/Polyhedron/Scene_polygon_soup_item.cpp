@@ -429,9 +429,9 @@ Scene_polygon_soup_item::orient(std::vector<std::size_t>& non_manifold_vertices)
     Visitor(std::vector<std::size_t>& nm_vertices)
       :nm_vertices(nm_vertices){}
 
-    void duplicated_vertex(const std::size_t& v1, const std::size_t& v2) final
+    void non_manifold_vertex(const std::size_t& v) final
     {
-      nm_vertices.push_back(v1);
+      nm_vertices.push_back(v);
     }
   };
   if(isEmpty() || d->oriented)

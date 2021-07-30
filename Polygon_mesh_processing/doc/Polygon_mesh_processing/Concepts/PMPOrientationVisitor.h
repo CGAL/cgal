@@ -12,11 +12,14 @@
 class PMPOrientationVisitor{
 public:
 
-/// @name Functions used to report non-manifold edges
+/// @name Functions used to report non-manifold simplices
 /// @{
   /// is called each time an edge appears in more than 2 polygons.
   /// `id1` and `id2` are the ids, from the input point range, of the endpoints of the edge.
   void non_manifold_edge(const std::size_t & id1, const std::size_t& id2);
+  ///is called each time a vertex is found non-manifold.
+  /// `id`is the id of the non manifold vertex.
+  void non_manifold_vertex(const std::size_t & id);
 /// @}
 
 /// @name Functions used to report modifications done to the polygons

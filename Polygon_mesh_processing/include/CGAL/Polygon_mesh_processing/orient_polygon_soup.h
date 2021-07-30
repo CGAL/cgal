@@ -46,6 +46,7 @@ namespace Polygon_mesh_processing {
  */
 struct Default_orientation_visitor{
   inline virtual void non_manifold_edge(const std::size_t&, const std::size_t&){}
+  inline virtual void non_manifold_vertex(const std::size_t&){}
   inline virtual void duplicated_vertex(const std::size_t&, const std::size_t&){}
   inline virtual void point_id_in_polygon_updated(const std::size_t&, const std::size_t&, const std::size_t&){}
   inline virtual void polygon_orientation_reversed(const std::size_t&) {}
@@ -357,6 +358,7 @@ struct Polygon_soup_orienter
       std::set<P_ID> visited_polygons;
 
       bool first_pass = true;
+      bool is_nm = false;
       for(P_ID p_id : incident_polygons)
       {
         if ( !visited_polygons.insert(p_id).second ) continue; // already visited
@@ -365,6 +367,7 @@ struct Polygon_soup_orienter
         {
           vertices_to_duplicate.push_back(std::pair<V_ID, std::vector<P_ID> >());
           vertices_to_duplicate.back().first=v_id;
+          is_nm = true;
         }
 
         const std::array<V_ID,3>& neighbors = get_neighbor_vertices(v_id,p_id,polygons);
@@ -398,6 +401,10 @@ struct Polygon_soup_orienter
           while(true);
         }
         first_pass=false;
+      }
+      if (is_nm)
+      {
+        visitor.non_manifold_vertex(v_id);
       }
     }
 

@@ -23,6 +23,10 @@ struct Visitor : public CGAL::Polygon_mesh_processing::Default_orientation_visit
   {
     std::cout<<"The edge "<<id1<<", "<<id2<<" is not manifold."<<std::endl;
   }
+  void non_manifold_vertex(const std::size_t & id) final
+  {
+     std::cout<<"The vertex "<<id<<" is not manifold."<<std::endl;
+  }
   void duplicated_vertex(const std::size_t& v1, const std::size_t& v2) final
   {
     std::cout<<v1<<" has been duplicated, the new id is "<<v2<<"."<<std::endl;
