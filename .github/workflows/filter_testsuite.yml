@@ -6,10 +6,10 @@ on:
 
 jobs:
   build:
+    if: github.event.comment.user.login == 'maxGimeno' && contains(github.event.comment.body, '/testme')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/github-script@v3
-        if: github.event.comment.user.login == 'maxGimeno' && contains(github.event.comment.body, '/testme')
         id: get_label
         with:
          result-encoding: string
@@ -22,7 +22,6 @@ jobs:
            console.log(label)
            return label+":"+base
       - name: Run Testsuite
-        if: github.event.comment.user.login == 'maxGimeno' && contains(github.event.comment.body, '/testme')
         run: |
           mkdir -p ~/.ssh
           #ssh key
@@ -60,7 +59,6 @@ jobs:
           done
       - name: Post address
         uses: actions/github-script@v3
-        if: github.event.comment.user.login == 'maxGimeno' && contains(github.event.comment.body, '/testme')
         with:
           script: |
             const address = "The testsuite is lauched. results will be found, after it is done, here : https://cgal.geometryfactory.com/~mgimeno/test_suite/TESTRESULTS/index.shtml "
