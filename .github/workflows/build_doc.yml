@@ -118,7 +118,7 @@ jobs:
         if: ${{ success() && steps.get_round.outputs.result != 'stop' }}
         with:
           script: |
-            const tmp_round=${{ steps.get_round.outputs.result }};
+            const tmp_round = "${{ steps.get_round.outputs.result }}";
             const id = tmp_round.indexOf(":");
             const round = tmp_round.substring(0,id);
             const address = "The documentation is built. It will be available, after a few minutes, here : https://cgal.github.io/${{ steps.get_pr_number.outputs.result }}/"+round+"/Manual/index.html"
