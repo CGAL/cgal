@@ -175,7 +175,12 @@ public:
   bool has_simplex_specific_property(internal::PLY_read_number* property, Edge_index)
   {
     const std::string& name = property->name();
-    if(name == "vertex1" || name == "vertex2")
+    //v0/v1 kept for backward compatibility
+    if(name == "vertex1" || name == "vertex2"
+#ifndef CGAL_NO_DEPRECATED_CODE    
+      || name == "v0" || name == "v1"
+#endif
+      )
       return true;
     return false;
   }
