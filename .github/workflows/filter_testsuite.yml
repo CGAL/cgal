@@ -9,20 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/github-script@v3
-        id: check
-        with:
-         result-encoding: string
-         script: |
-           const userName = context.payload.comment.user.login
-           if(userName == 'maxGimeno') {
-             const body = context.payload.comment.body
-             if(body.includes("/testme")) {             
-               return 'OK'
-             }
-           }
-           return 'stop'
-      - uses: actions/github-script@v3
-        if: steps.check.result != 'stop'
+        if: github.event.comment.user.login == 'maxGimeno' && contains(github.event.comment.body, '/testme')
         id: get_label
         with:
          result-encoding: string
@@ -31,31 +18,11 @@ jobs:
            const pr_url = context.payload.issue.pull_request.url
            const pr_content = await github.request(pr_url)
            const label = pr_content.data.head.label
-           console.log(label)
-           return label
-      - uses: actions/github-script@v3
-        if: steps.check.result != 'stop'
-        id: get_base
-        with:
-         result-encoding: string
-         script: |
-           //get branch name and username   
-           const pr_url = context.payload.issue.pull_request.url
-           const pr_content = await github.request(pr_url)
            const base = pr_content.data.base.ref
-           console.log(base)
-           return base
-      - uses: actions/github-script@v3
-        if: steps.get_round.outputs.result != 'stop'
-        id: get_pr_number
-        with:
-         result-encoding: string
-         script: |
-           //get pullrequest url
-           const pr_number = context.payload.issue.number
-           return pr_number
+           console.log(label)
+           return label+":"+base
       - name: Run Testsuite
-        if: steps.check.outputs.result != 'stop'
+        if: github.event.comment.user.login == 'maxGimeno' && contains(github.event.comment.body, '/testme')
         run: |
           mkdir -p ~/.ssh
           #ssh key
@@ -82,8 +49,8 @@ jobs:
           LABEL="${{ steps.get_label.outputs.result }}"
           USER_NAME=$(echo $LABEL | cut -d':' -f 1)
           BRANCH_NAME=$(echo $LABEL | cut -d':' -f 2)
-          PR_NUMBER=${{ steps.get_pr_number.outputs.result }}
-          BASE="${{ steps.get_base.outputs.result }}"
+          BASE=$(echo $LABEL | cut -d':' -f 3)
+          PR_NUMBER=${{ github.event.issue.number }}
           mapfile -t HOSTS < ~/ssh_host_list;
           for i in ${!HOSTS[@]}; do
             HOST=$(echo ${HOSTS[$i]}|cut -d' ' -f 1 )
@@ -93,7 +60,7 @@ jobs:
           done
       - name: Post address
         uses: actions/github-script@v3
-        if: steps.check.outputs.result != 'stop'
+        if: github.event.comment.user.login == 'maxGimeno' && contains(github.event.comment.body, '/testme')
         with:
           script: |
             const address = "The testsuite is lauched. results will be found, after it is done, here : https://cgal.geometryfactory.com/~mgimeno/test_suite/TESTRESULTS/index.shtml "
