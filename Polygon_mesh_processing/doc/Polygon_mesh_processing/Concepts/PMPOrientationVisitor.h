@@ -16,11 +16,11 @@ public:
 /// @{
 
 /// called each time an edge appears in more than two polygons.
-/// `id1` and `id2` are the ids of the endpoints of the edge in the input point range.
+/// `id1` and `id2` are the vertex ids of the endpoints of the edge.
 void non_manifold_edge(const std::size_t & id1, const std::size_t& id2);
 
 /// called each time a non-manifold vertex is detected.
-/// `id` is the id of the non-manifold vertex.
+/// `id` is the id of the vertex has is non-manifold.
 void non_manifold_vertex(const std::size_t & id);
 
 /// @}
@@ -33,14 +33,14 @@ void non_manifold_vertex(const std::size_t & id);
 void polygon_orientation_reversed(const std::size_t& id) ;
 
 /// called for each non-manifold vertex (whether part of a non-manifold edge or not).
-/// Non-manifoldness is resolved in the algorithm by duplicating the point.
-/// `input_id` is the index of the input point, and `new_id` is the index of the new point.
-/// Note that a point might be duplicated several times.
+/// Non-manifoldness is resolved in the algorithm by duplicating the vertex.
+/// `input_id` is the index of the input vertex, and `new_id` is the index of the new vertex.
+/// Note that a vertex might be duplicated several times.
 void duplicated_vertex(const std::size_t& input_id, const std::size_t& new_id);
 
-/// called when the point with id `input_id` in polygon with id `pid` is replaced
-/// by the point with id `new_id`. This function is called after all calls to `duplicated_vertex()`.
-void point_id_in_polygon_updated(const std::size_t& pid, const std::size_t& input_id, const std::size_t& new_id);
+/// called when the vertex with id `input_id` in polygon with id `pid` is replaced
+/// by the vertex with id `new_id`. This function is called after all calls to `duplicated_vertex()`.
+void vertex_id_in_polygon_updated(const std::size_t& pid, const std::size_t& input_id, const std::size_t& new_id);
 
 /// @}
 };

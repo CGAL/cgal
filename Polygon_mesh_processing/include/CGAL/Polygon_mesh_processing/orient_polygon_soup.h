@@ -48,7 +48,7 @@ struct Default_orientation_visitor{
   inline virtual void non_manifold_edge(const std::size_t&, const std::size_t&){}
   inline virtual void non_manifold_vertex(const std::size_t&){}
   inline virtual void duplicated_vertex(const std::size_t&, const std::size_t&){}
-  inline virtual void point_id_in_polygon_updated(const std::size_t&, const std::size_t&, const std::size_t&){}
+  inline virtual void vertex_id_in_polygon_replaced(const std::size_t&, const std::size_t&, const std::size_t&){}
   inline virtual void polygon_orientation_reversed(const std::size_t&) {}
 };
 
@@ -149,7 +149,7 @@ struct Polygon_soup_orienter
     V_ID old_index,
     V_ID new_index)
   {
-    visitor.point_id_in_polygon_updated(polygon_id, old_index, new_index);
+    visitor.vertex_id_in_polygon_replaced(polygon_id, old_index, new_index);
     for(V_ID& i : polygons[polygon_id])
       if( i==old_index )
         i=new_index;

@@ -31,7 +31,7 @@ struct Visitor : public CGAL::Polygon_mesh_processing::Default_orientation_visit
   {
     std::cout << "The vertex " << v1 << " has been duplicated, its new id is " << v2 << "." << std::endl;
   }
-  void point_id_in_polygon_updated(const std::size_t& p_id, const std::size_t& i1, const std::size_t& i2) final
+  void vertex_id_in_polygon_replaced(const std::size_t& p_id, const std::size_t& i1, const std::size_t& i2) final
   {
     std::cout << "In the polygon " << p_id << ", the index " << i1 << " has been replaced by " << i2 << "." << std::endl;
   }
