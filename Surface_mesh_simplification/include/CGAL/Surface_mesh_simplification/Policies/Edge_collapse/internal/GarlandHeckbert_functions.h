@@ -128,6 +128,33 @@ typename GeomTraits::Vector_3 construct_unit_normal_from_face(
   return unit_normal(p, q, r);
 }
 
+template<typename VertexPointMap, typename TriangleMesh, typename GeomTraits> 
+typename GeomTraits::Vector_3 construct_edge_normal(
+    const VertexPointMap& point_map,
+    const TriangleMesh& tmesh, 
+    typename boost::graph_traits<TriangleMesh>::halfedge_descriptor he, 
+    const GeomTraits& gt)
+{
+  typedef typename GeomTraits::Vector_3 Vector_3;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+
+  // TODO we do a potentially redundant calculation here, as we have 
+  // almost certainly already calculated this when constructing a quadric for the face
+  const Vector_3 face_normal = construct_unit_normal_from_face(point_map, tmesh, face(he, tmesh), gt);
+
+  const vertex_descriptor vs = source(he, tmesh);
+  const vertex_descriptor vt = target(he, tmesh);
+
+  const Vector_3 edge_vector = Vector_3(get(point_map, vs), get(point_map, vt));
+  const Vector_3 discontinuity_normal = cross_product(edge_vector, face_normal);
+
+  // normalize
+  const Vector_3 normal = discontinuity_normal 
+    / sqrt(discontinuity_normal.squared_length());
+
+  return normal;
+}
+
 template<typename GeomTraits>
 Mat_4<GeomTraits> construct_classic_plane_quadric_from_normal(
     const typename GeomTraits::Vector_3& normal,
@@ -177,22 +204,8 @@ Mat_4<GeomTraits> construct_classic_plane_quadric_from_edge(
   typedef typename GeomTraits::Vector_3 Vector_3;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
 
-  // the "edge normal" is a vector perpendicular to the edge that lies
-  // inside the plane this edge is in
-  // 
-  // TODO we do a potentially redundant calculation here, as we have 
-  // almost certainly already calculated this when constructing a quadric for the face
-  const Vector_3 face_normal = construct_unit_normal_from_face(point_map, mesh, face(he, mesh), gt);
-
-  const vertex_descriptor vs = source(he, mesh);
-  const vertex_descriptor vt = target(he, mesh);
-
-  const Vector_3 edge_vector = Vector_3(get(point_map, vs), get(point_map, vt));
-  const Vector_3 discontinuity_normal = cross_product(edge_vector, face_normal);
-
-  // normalize
-  const Vector_3 normal = discontinuity_normal / sqrt(discontinuity_normal.squared_length());
-
+  Vector_3 normal = construct_edge_normal(point_map, mesh, he, gt);
+  
   // use this normal to construct the quadric analogously to constructing quadric
   // from the normal of the face
   return construct_classic_plane_quadric_from_normal(normal, get(point_map, source(he, mesh)), gt);
@@ -411,7 +424,7 @@ Mat_4<GeomTraits> construct_prob_triangle_quadric_from_face(
 template<typename GeomTraits>
 Col_4<GeomTraits> construct_optimal_point_invertible(const Mat_4<GeomTraits>& quadric)
 {
-  const Mat_4<GeomTraits> mat = unit_last_row(quadric);
+  const Mat_4<GeomTraits> mat = unit_last_row<GeomTraits>(quadric);
   Mat_4<GeomTraits> inverse;
 
   invert_matrix_4(mat, inverse);
@@ -428,7 +441,7 @@ Col_4<GeomTraits> construct_optimal_point_singular(
     const Col_4<GeomTraits>& p1) 
 {
   typedef typename GeomTraits::FT FT;
-  const Mat_4<GeomTraits> mat = unit_last_row(quadric);
+  const Mat_4<GeomTraits> mat = unit_last_row<GeomTraits>(quadric);
 
   Mat_4<GeomTraits> inverse;
 

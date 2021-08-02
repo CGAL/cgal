@@ -16,36 +16,25 @@
 #include <CGAL/license/Surface_mesh_simplification.h>
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_policy_base.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_optimizers.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_common.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_functions.h>
 #include <Eigen/Dense>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_plane_quadrics.h>
-#include <CGAL/Polygon_mesh_processing/compute_normal.h>
-
-#include <CGAL/boost/graph/Named_function_parameters.h>
-
-//CGAL_add_named_parameter(face_variance_map_t, face_variance_map, face_variance_map);
   
 namespace CGAL {
 namespace Surface_mesh_simplification {
 
 // derived class implements functions used in the base class that
 // takes the derived class as template argument - see "CRTP"
-//
-// derives from cost_base and placement_base
 template<typename TriangleMesh, typename GeomTraits, typename 
   FaceVarianceMap = Constant_property_map<
     typename boost::graph_traits<TriangleMesh>::face_descriptor, typename GeomTraits::FT
   >> 
 class GarlandHeckbert_probabilistic_policies :
-  public internal::GarlandHeckbert_plane_edges<TriangleMesh, GeomTraits>,
-  public internal::GarlandHeckbert_invertible_optimizer<GeomTraits>,
   public internal::GarlandHeckbert_placement_base<
     typename boost::property_map<
       TriangleMesh,
       CGAL::dynamic_vertex_property_t<Eigen::Matrix<typename GeomTraits::FT, 4, 4, Eigen::DontAlign>>
     >::type,
-    GeomTraits,
+    GeomTraits, 
     GarlandHeckbert_probabilistic_policies<TriangleMesh, GeomTraits>
   >,
   public internal::GarlandHeckbert_cost_base<
@@ -61,6 +50,7 @@ class GarlandHeckbert_probabilistic_policies :
   typedef typename GeomTraits::FT FT;
   
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor; 
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor; 
   
   typedef typename boost::property_traits<FaceVarianceMap>::value_type Face_variance;
 
@@ -137,13 +127,36 @@ class GarlandHeckbert_probabilistic_policies :
         face_descriptor f, 
         const GeomTraits& gt) const
     {
-      const Vector_3 normal = internal::common::construct_unit_normal_from_face<
-        GeomTraits, VPM, TriangleMesh>(point_map, tmesh, f, gt);
+      const Vector_3 normal = internal::construct_unit_normal_from_face<
+        VPM, TriangleMesh, GeomTraits>(point_map, tmesh, f, gt);
       
       const Point_3 p = get(point_map, source(halfedge(f, tmesh), tmesh));
 
       FT variance = get(face_variance_map, f);
-      return construct_quadric_from_normal(normal, p, gt, variance, variance);
+      
+      return internal::construct_prob_plane_quadric_from_normal(normal, p, gt, variance, variance);
+    }
+    
+    template<typename VPM>
+    Mat_4 construct_quadric_from_edge(
+        const VPM& point_map,
+        const TriangleMesh& tmesh, 
+        halfedge_descriptor he, 
+        const GeomTraits& gt) const
+    {
+      const Vector_3 normal = internal::construct_edge_normal(point_map, tmesh, he, gt);
+
+      const Point_3 p = get(point_map, source(he, tmesh));
+
+      FT variance = get(face_variance_map, face(he, tmesh));
+      
+      return internal::construct_prob_plane_quadric_from_normal(normal, p, gt, variance, variance);
+    }
+    
+    Col_4 construct_optimal_point(const Mat_4& quadric, const Col_4& p0, 
+        const Col_4& p1) const
+    {
+      return internal::construct_optimal_point_invertible<GeomTraits>(quadric);
     }
     
     const Get_cost& get_cost() const { return *this; }
@@ -152,51 +165,7 @@ class GarlandHeckbert_probabilistic_policies :
     
   private:
     Vertex_cost_map vcm_;
-   
-    Mat_4 construct_quadric_from_normal(
-        const Vector_3& mean_normal,
-        const Point_3& point, 
-        const GeomTraits& gt,
-        FT face_nv,
-        FT face_mv) const
-    {
-      auto squared_length = gt.compute_squared_length_3_object();
-      auto dot_product = gt.compute_scalar_product_3_object();
-      auto construct_vec_3 = gt.construct_vector_3_object();
-
-      const Vector_3 mean_vec = construct_vec_3(ORIGIN, point);
-      const FT dot_mnmv = dot_product(mean_normal, mean_vec);
-
-      // Eigen column vector of length 3
-      const Eigen::Matrix<FT, 3, 1> mean_n_col{mean_normal.x(), mean_normal.y(), mean_normal.z()};
-
-      // start by setting values along the diagonal
-      Mat_4 mat = face_nv * Mat_4::Identity();
-
-      // add outer product of the mean normal with itself
-      // to the upper left 3x3 block
-      mat.block(0, 0, 3, 3) += mean_n_col * mean_n_col.transpose();
-
-      // set the first 3 values of the last row and the first
-      // 3 values of the last column
-      // the negative sign comes from the fact that in the paper,
-      // the b column and row appear with a negative sign
-      const auto b1 = -(dot_mnmv * mean_normal + face_nv * mean_vec);
-
-      const Eigen::Matrix<FT, 3, 1> b {b1.x(), b1.y(), b1.z()};
-
-      mat.col(3).head(3) = b;
-      mat.row(3).head(3) = b.transpose();
-
-      // set the value in the bottom right corner, we get this by considering
-      // that we only have single variances given instead of covariance matrices
-      mat(3, 3) = CGAL::square(dot_mnmv)
-        + face_nv * squared_length(mean_vec)
-        + face_mv * squared_length(mean_normal)
-        + 3 * face_nv * face_mv;
-
-      return mat;
-    }
+    
     // give a very rough estimate of a decent variance for both parameters
     static std::pair<FT, FT> estimate_variances(const TriangleMesh& mesh, 
         const GeomTraits& gt)
