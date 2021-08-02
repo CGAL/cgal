@@ -64,17 +64,22 @@ namespace CGAL {
 
     bool is_leaf() const { return leaf; }
 
+    inline std::size_t
+    index() const {
+      return m_node_index;
+    }
+
     inline std::string
     name() const
     {
       std::string node_name = "default_name";
       if (is_leaf()) { // leaf node
-        node_name = "L" + std::to_string(m_node_index);
+        node_name = "L" + std::to_string(index());
       } else {
-        if (m_node_index == 0) { // root node
-          node_name = "R" + std::to_string(m_node_index);
+        if (index() == 0) { // root node
+          node_name = "R" + std::to_string(index());
         } else { // internal node
-          node_name = "N" + std::to_string(m_node_index);
+          node_name = "N" + std::to_string(index());
         }
       }
       CGAL_assertion(node_name != "default_name");
@@ -203,6 +208,27 @@ namespace CGAL {
         std::cout << "upper tree" << std::endl;
         node->upper()->print(d+1);
       }
+    }
+
+    template<typename OutputIterator>
+    OutputIterator
+    print(OutputIterator out) const
+    {
+      if (is_leaf()) { // draw leaf nodes
+        Leaf_node_const_handle node =
+          static_cast<Leaf_node_const_handle>(this);
+        if (node->size() > 0) {
+          for (iterator i = node->begin(); i != node->end(); ++i) {
+            *(out++) = std::make_pair(*i, node->index());
+          }
+        }
+      } else {
+        Internal_node_const_handle node =
+          static_cast<Internal_node_const_handle>(this);
+        node->lower()->print(out);
+        node->upper()->print(out);
+      }
+      return out;
     }
 
     void

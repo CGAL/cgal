@@ -4,6 +4,7 @@
 
 #include <boost/type_index.hpp>
 
+#include <CGAL/Random.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Simple_cartesian.h>
@@ -14,6 +15,7 @@
 #include <CGAL/boost/graph/generators.h>
 #include <CGAL/Aff_transformation_3.h>
 #include <CGAL/IO/write_xyz_points.h>
+#include <CGAL/IO/write_ply_points.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Euclidean_distance.h>
 #include <CGAL/Search_traits_3.h>
@@ -32,6 +34,26 @@ using SCF_traits   = CGAL::Search_traits_3<SCF>;
 using SCD_traits   = CGAL::Search_traits_3<SCD>;
 using EPICK_traits = CGAL::Search_traits_3<EPICK>;
 using EPECK_traits = CGAL::Search_traits_3<EPECK>;
+
+using Color = std::array<unsigned char, 3>;
+
+// Define how a color should be stored.
+namespace CGAL {
+  template<class F>
+  struct Output_rep< ::Color, F > {
+    const ::Color& c;
+    static const bool is_specialized = true;
+    Output_rep(const ::Color& c) : c(c) { }
+    std::ostream& operator()(std::ostream& out) const {
+      if (IO::is_ascii(out)) {
+        out << int(c[0]) << " " << int(c[1]) << " " << int(c[2]);
+      } else {
+        out.write(reinterpret_cast<const char*>(&c), sizeof(c));
+      }
+      return out;
+    }
+  };
+} // namespace CGAL
 
 template<typename Kernel>
 void save_bbox(
@@ -181,9 +203,11 @@ std::pair<double, double> bench_splitter(
   const std::size_t bucket_size,
   const std::size_t k,
   const std::vector<typename Kernel::Point_3>& point_set,
-  const std::vector<typename Kernel::Point_3>& query_points) {
+  const std::vector<typename Kernel::Point_3>& query_points,
+  const bool save_distribution = false) {
 
   Timer timer;
+  using Point_3 = typename Kernel::Point_3;
   using Kd_tree = CGAL::Kd_tree<Traits, Splitter>;
   using Distance = CGAL::Euclidean_distance<Traits>;
   using Neighbor_search = CGAL::Orthogonal_k_neighbor_search<Traits, Distance, Splitter, Kd_tree>;
@@ -206,6 +230,43 @@ std::pair<double, double> bench_splitter(
 
   if (verbose) {
     std::cout << "- AVG BUILDS TIME: " << avg_build_time << " sec." << std::endl;
+
+    if (save_distribution) {
+      using Point_with_color = std::pair<Point_3, Color>;
+      using PLY_Point_map = CGAL::First_of_pair_property_map<Point_with_color>;
+      using PLY_Color_map = CGAL::Second_of_pair_property_map<Point_with_color>;
+      using Point_with_index = std::pair<Point_3, std::size_t>;
+
+      std::ofstream outfile("5-leaves-distribution.ply");
+      std::vector<Point_with_index> pwi;
+      tree.print(std::back_inserter(pwi));
+      CGAL_assertion(pwi.size() > 0);
+
+      std::vector<Point_with_color> pwc;
+      pwc.reserve(pwi.size());
+      for (const auto& pair : pwi) {
+        CGAL::Random rand(static_cast<unsigned int>(pair.second));
+        const unsigned char r =
+          static_cast<unsigned char>(64 + rand.get_int(0, 192));
+        const unsigned char g =
+          static_cast<unsigned char>(64 + rand.get_int(0, 192));
+        const unsigned char b =
+          static_cast<unsigned char>(64 + rand.get_int(0, 192));
+        const Color color = CGAL::make_array(r, g, b);
+        pwc.push_back(std::make_pair(pair.first, color));
+      }
+      CGAL_assertion(pwc.size() == pwi.size());
+
+      CGAL::IO::set_ascii_mode(outfile);
+      CGAL::IO::write_PLY_with_properties(
+        outfile, pwc,
+        CGAL::make_ply_point_writer(PLY_Point_map()),
+          std::make_tuple(
+            PLY_Color_map(),
+            CGAL::PLY_property<unsigned char>("red"),
+            CGAL::PLY_property<unsigned char>("green"),
+            CGAL::PLY_property<unsigned char>("blue")));
+    }
   }
 
   // K neighbor search.
@@ -314,7 +375,7 @@ std::vector<double> bench_random_in_bbox(
   // Bench tree.
   if (verbose) std::cout << std::endl << "* SURFACE / SURFACE" << std::endl;
   auto pair = bench_splitter<Kernel, Traits, Splitter>(
-    verbose, num_iters, bucket_size, k, point_set, point_set);
+    verbose, num_iters, bucket_size, k, point_set, point_set, true);
   out.push_back(pair.first);
   out.push_back(pair.second);
 
@@ -398,7 +459,7 @@ std::vector<double> bench_translated(
   // Benching the tree.
   if (verbose) std::cout << std::endl << "* SURFACE / SURFACE" << std::endl;
   auto pair = bench_splitter<Kernel, Traits, Splitter>(
-    verbose, num_iters, bucket_size, k, point_set, point_set);
+    verbose, num_iters, bucket_size, k, point_set, point_set, true);
   out.push_back(pair.first);
   out.push_back(pair.second);
 

@@ -583,6 +583,12 @@ public:
     os << std::endl << "}" << std::endl << std::endl;
   }
 
+  template<typename OutputIterator>
+  OutputIterator print(OutputIterator out) const
+  {
+    return tree_root->print(out);
+  }
+
 private:
   //any call to this function is for the moment not threadsafe
   void const_build() const {
