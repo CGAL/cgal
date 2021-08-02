@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
 
   Pwn_vector points;
   std::ifstream file(path.c_str(), std::ios_base::in);
-  CGAL::set_ascii_mode(file);
+  CGAL::IO::set_ascii_mode(file);
   file.precision(20);
 
   if (!file ||

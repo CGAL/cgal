@@ -234,7 +234,7 @@ namespace Tests {
       const std::string path) const {
 
       std::ofstream file(path.c_str(), std::ios_base::out);
-      CGAL::set_ascii_mode(file);
+      CGAL::IO::set_ascii_mode(file);
       if (!file) {
         std::cerr <<
           "Error: cannot save the file: " << path << std::endl; return;

@@ -32,7 +32,7 @@ void initialize_contour(
 
   contour.clear();
   std::ifstream file(path.c_str(), std::ios_base::in);
-  CGAL::set_ascii_mode(file);
+  CGAL::IO::set_ascii_mode(file);
   file.precision(20);
 
   if (!file) {
@@ -236,7 +236,7 @@ void initialize_groups(
   std::vector< std::vector<Point_2> >& groups) {
 
   std::ifstream file(path.c_str(), std::ios_base::in);
-  CGAL::set_ascii_mode(file);
+  CGAL::IO::set_ascii_mode(file);
   file.precision(20);
 
   if (!file) {
