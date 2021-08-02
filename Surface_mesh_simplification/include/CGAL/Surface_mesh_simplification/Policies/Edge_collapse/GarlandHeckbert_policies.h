@@ -49,6 +49,9 @@ class GarlandHeckbert_policies :
   public:
   typedef typename GeomTraits::FT FT;
 
+  // This is ugly, we later only use the Mat_4 from the 
+  // Cost_base, but we want to define the matrix here already so it's nicer to define
+  // Cost_base in the first place
   typedef typename Eigen::Matrix<FT, 4, 4, Eigen::DontAlign> GH_matrix;
   typedef CGAL::dynamic_vertex_property_t<GH_matrix> Cost_property;
 

@@ -269,6 +269,8 @@ std::array<typename GeomTraits::Vector_3, 3> vectors_from_face(
     typename boost::graph_traits<TriangleMesh>::face_descriptor f, 
     const GeomTraits& gt) 
 {
+  auto construct_vector = gt.construct_vector_3_object();
+  
   typedef typename boost::property_traits<VertexPointMap>::reference Point_reference;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
   
@@ -295,7 +297,6 @@ Mat_4<GeomTraits> construct_classic_triangle_quadric_from_face(
     typename boost::graph_traits<TriangleMesh>::face_descriptor f, 
     const GeomTraits& gt)
 {
-  auto construct_vector = gt.construct_vector_3_object();
   auto cross_product = gt.construct_cross_product_vector_3_object();
   auto sum_vectors = gt.construct_sum_of_vectors_3_object();
   auto dot_product = gt.compute_scalar_product_3_object();
@@ -373,9 +374,9 @@ Mat_4<GeomTraits> construct_prob_triangle_quadric_from_face(
   const Vector_3 b_minus_c = sum_vectors(b, -c);
   const Vector_3 c_minus_a = sum_vectors(c, -a);
 
-  const Mat_3 cp_ab = skew_sym_mat_cross_product(a_minus_b);
-  const Mat_3 cp_bc = skew_sym_mat_cross_product(b_minus_c);
-  const Mat_3 cp_ca = skew_sym_mat_cross_product(c_minus_a);
+  const Mat_3 cp_ab = skew_sym_mat_cross_product<GeomTraits>(a_minus_b);
+  const Mat_3 cp_bc = skew_sym_mat_cross_product<GeomTraits>(b_minus_c);
+  const Mat_3 cp_ca = skew_sym_mat_cross_product<GeomTraits>(c_minus_a);
 
   const Vector_3 sum_of_cross_product = sum_vectors(sum_vectors(ab, bc), ca);
 
@@ -396,10 +397,10 @@ Mat_4<GeomTraits> construct_prob_triangle_quadric_from_face(
   // out the diagonal covariance matrices 
   const Eigen::Matrix<FT, 3, 1> res_b = det * sum_cp_col
     - var * (
-        vector_to_col_vec(cross_product(a_minus_b, ab))
-        + vector_to_col_vec(cross_product(b_minus_c, bc))
-        + vector_to_col_vec(cross_product(c_minus_a, ca)))
-    + 2 * vector_to_col_vec(sum_vectors(sum_vectors(a, b), c)) * var * var;
+        vector_to_col_vec<GeomTraits>(cross_product(a_minus_b, ab))
+        + vector_to_col_vec<GeomTraits>(cross_product(b_minus_c, bc))
+        + vector_to_col_vec<GeomTraits>(cross_product(c_minus_a, ca)))
+    + 2 * vector_to_col_vec<GeomTraits>(sum_vectors(sum_vectors(a, b), c)) * var * var;
 
   const FT res_c = det * det 
     + var * (

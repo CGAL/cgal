@@ -16,11 +16,7 @@
 #include <CGAL/license/Surface_mesh_simplification.h>
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_policy_base.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_optimizers.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_common.h>
 #include <Eigen/Dense>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_plane_quadrics.h>
-#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <CGAL/boost/graph/Named_function_parameters.h>
 
@@ -31,10 +27,10 @@ namespace Surface_mesh_simplification {
 // takes the derived class as template argument - see "CRTP"
 //
 // derives from cost_base and placement_base
-template<typename TriangleMesh, typename GeomTraits>
+template<typename TriangleMesh, typename GeomTraits, typename
+  FaceVarianceMap = Constant_property_map<
+  typename boost::graph_traits<TriangleMesh>::face_descriptor, typename GeomTraits::FT>>
 class GarlandHeckbert_probabilistic_tri_policies :
-  public internal::GarlandHeckbert_plane_edges<TriangleMesh, GeomTraits>,
-  public internal::GarlandHeckbert_invertible_optimizer<GeomTraits>,
   public internal::GarlandHeckbert_placement_base<
     typename boost::property_map<
       TriangleMesh,
@@ -52,6 +48,8 @@ class GarlandHeckbert_probabilistic_tri_policies :
     GarlandHeckbert_probabilistic_tri_policies<TriangleMesh, GeomTraits>
   >
 {
+
+  typedef typename boost::property_traits<FaceVarianceMap>::value_type Face_variance;
 
   public:
     typedef typename GeomTraits::FT FT;
@@ -99,17 +97,20 @@ class GarlandHeckbert_probabilistic_tri_policies :
       // initialize the private variable vcm so it's lifetime is bound to that of the policy's
       vcm_ = get(Cost_property(), tmesh);
 
-      std::tie(normal_variance, mean_variance) = estimate_variances(tmesh, GeomTraits());
-      
+      FT variance;
+      std::tie(variance, variance) = estimate_variances(tmesh, GeomTraits());
+
       // initialize both vcms
       Cost_base::init_vcm(vcm_);
       Placement_base::init_vcm(vcm_);
+
+      face_variance_map = FaceVarianceMap { variance };
     }
 
     GarlandHeckbert_probabilistic_tri_policies(TriangleMesh& tmesh,
                                            FT dm,
-                                           FT sdn,
-                                           FT sdp) : Cost_base(dm)
+                                           const FaceVarianceMap* fvm) 
+      : Cost_base(dm), face_variance_map(fvm)
     {
 
       // we need positive variances so that we always get an invertible matrix
@@ -122,78 +123,7 @@ class GarlandHeckbert_probabilistic_tri_policies :
       Cost_base::init_vcm(vcm_);
       Placement_base::init_vcm(vcm_);
     }
-    
-    Mat_4 construct_quadric_from_face(
-        const Vector_3& a, 
-        const Vector_3& b, 
-        const Vector_3& c, 
-        const FT var,
-        const GeomTraits& gt) const
-    {
-      // TODO much of this is the same as for classical triangle quadrics
-      auto construct_vector = gt.construct_vector_3_object();
-      auto cross_product = gt.construct_cross_product_vector_3_object();
-      auto sum_vectors = gt.construct_sum_of_vectors_3_object();
-      auto dot_product = gt.compute_scalar_product_3_object();
-
-      // calculate certain vectors used later
-      const Vector_3 ab = cross_product(a, b);
-      const Vector_3 bc = cross_product(b, c);
-      const Vector_3 ca = cross_product(c, a);
-
-      const Vector_3 a_minus_b = a - b;//sum_vectors(a, -b);
-      const Vector_3 b_minus_c = b - c;//sum_vectors(b, -c);
-      const Vector_3 c_minus_a = c - a;//sum_vectors(c, -a);
-      
-      const Mat_3 cp_ab = skew_sym_mat_cross_product(a_minus_b);
-      const Mat_3 cp_bc = skew_sym_mat_cross_product(b_minus_c);
-      const Mat_3 cp_ca = skew_sym_mat_cross_product(c_minus_a);
-      
-      const Vector_3 sum_of_cross_product = ab + bc + ca;//sum_vectors(sum_vectors(ab, bc), ca);
-
-      const Eigen::Matrix<FT, 3, 1, Eigen::DontAlign> 
-        sum_cp_col{ sum_of_cross_product.x(), sum_of_cross_product.y(), sum_of_cross_product.z() };
-      
-      Mat_3 A = sum_cp_col * sum_cp_col.transpose();
-      A += var * (cp_ab * cp_ab.transpose() + cp_bc * cp_bc.transpose() + cp_ca * cp_ca.transpose());
-
-      // add the 3 simple cross inference matrix - components (we only have one 
-      // variance here)
-      A += 6 * var * var * Mat_3::Identity();
-
-      // we need the determinant of matrix with columns a, b, c - we use the scalar triple product
-      const FT det = dot_product(ab, c);
-
-      // compute the b vector, this follows the formula directly - but we can factor
-      // out the diagonal covariance matrices 
-      const Eigen::Matrix<FT, 3, 1> res_b = det * sum_cp_col
-        - var * (
-          vector_to_col_vec(cross_product(a_minus_b, ab))
-        + vector_to_col_vec(cross_product(b_minus_c, bc))
-        + vector_to_col_vec(cross_product(c_minus_a, ca)))
-        + 2 * vector_to_col_vec(sum_vectors(sum_vectors(a, b), c)) * var * var;
-
-      const FT res_c = det * det 
-        + var * (
-          dot_product(ab, ab) 
-        + dot_product(bc, bc) 
-        + dot_product(ca, ca)) 
-        + var * var * ( 
-            2 * (
-            dot_product(a, a)
-          + dot_product(b, b)
-          + dot_product(c, c))
-        + 6 * var);
-
-      Mat_4 ret = Mat_4::Zero();
-      ret.block(0, 0, 3, 3) = A;
-      ret.block(3, 0, 1, 3) = -res_b.transpose();
-      ret.block(0, 3, 3, 1) = -res_b;
-      ret(3, 3) = res_c;
-
-      return ret;
-    }
-    
+        
     template<typename VPM, typename TM>
     Mat_4 construct_quadric_from_face(
         const VPM& point_map,
@@ -201,55 +131,38 @@ class GarlandHeckbert_probabilistic_tri_policies :
         typename boost::graph_traits<TM>::face_descriptor f, 
         const GeomTraits& gt) const
     {
-      // TODO much of this is the same as for classical triangle quadrics
-      auto construct_vector = gt.construct_vector_3_object();
-      auto cross_product = gt.construct_cross_product_vector_3_object();
-      auto sum_vectors = gt.construct_sum_of_vectors_3_object();
-      auto dot_product = gt.compute_scalar_product_3_object();
+        return internal::construct_prob_triangle_quadric_from_face(
+            point_map, tmesh, f, get(face_variance_map, f), gt);
+    }
 
-      typedef typename boost::property_traits<VPM>::reference Point_reference;
-      typedef typename boost::graph_traits<TM>::halfedge_descriptor halfedge_descriptor;
+    template<typename VPM, typename TM>
+    Mat_4 construct_quadric_from_edge(
+        const VPM& point_map,
+        const TM& tmesh, 
+        typename boost::graph_traits<TM>::halfedge_descriptor he, 
+        const GeomTraits& gt) const
+    {
+      // same as in probabilistic plane policy
+      const Vector_3 normal = internal::construct_edge_normal(point_map, tmesh, he, gt);
 
-      const FT var = mean_variance;
-      const halfedge_descriptor h = halfedge(f, tmesh);
+      const Point_3 p = get(point_map, source(he, tmesh));
 
-      // get all points and turn them into location vectors so we can use cross product on them
-      const Point_reference p = get(point_map, source(h, tmesh));
-      const Point_reference q = get(point_map, target(h, tmesh));
-      const Point_reference r = get(point_map, target(next(h, tmesh), tmesh));
-
-      Vector_3 a = construct_vector(ORIGIN, p);
-      Vector_3 b = construct_vector(ORIGIN, q);
-      Vector_3 c = construct_vector(ORIGIN, r);
-
-      return construct_quadric_from_face(a, b, c, var, gt);
+      FT variance = get(face_variance_map, face(he, tmesh));
+      
+      return internal::construct_prob_plane_quadric_from_normal(normal, p, gt, variance, variance);
     }
     
+    Col_4 construct_optimal_point(const Mat_4 quadric, const Col_4& p0, const Col_4& p1) const
+    {
+      return internal::construct_optimal_point_invertible<GeomTraits>(quadric);
+    }
     const Get_cost& get_cost() const { return *this; }
     const Get_placement& get_placement() const { return *this; }
     
   private:
     Vertex_cost_map vcm_;
-   
-    // get the matrix representation of the cross product, i.e.
-    // the matrix representing the linear form
-    // x -> v cross x
-    static Mat_3 skew_sym_mat_cross_product(const Vector_3& v) 
-    {
-      Mat_3 mat;
-
-      mat << 0, -v.z(), v.y(),
-          v.z(), 0, -v.x(),
-          -v.y(), v.x(), 0;
-
-      return mat;
-    }
-
-    static Eigen::Matrix<FT, 3, 1> vector_to_col_vec(const Vector_3& v) 
-    {
-      Eigen::Matrix<FT, 3, 1> col {v.x(), v.y(), v.z()};
-      return col;
-    }
+    
+    FaceVarianceMap face_variance_map;
     
    // give a very rough estimate of a decent variance for both parameters
     static std::pair<FT, FT> estimate_variances(const TriangleMesh& mesh, 
@@ -284,9 +197,6 @@ class GarlandHeckbert_probabilistic_tri_policies :
     // magic number determined by some testing, this is a good variance for models that
     // fit inside a [-1, 1]^3 unit cube
     static constexpr FT good_default_variance_unit = 0.05;
-    
-    FT mean_variance;
-    FT normal_variance;
 };
 
 } // namespace Surface_mesh_simplification
