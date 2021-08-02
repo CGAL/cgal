@@ -8,6 +8,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/boost/graph/generators.h>
@@ -20,10 +21,17 @@
 #include <CGAL/centroid.h>
 #include <CGAL/Kd_tree.h>
 
+using Timer = CGAL::Real_timer;
+
 using SCF   = CGAL::Simple_cartesian<float>;
 using SCD   = CGAL::Simple_cartesian<double>;
 using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
-using Timer = CGAL::Real_timer;
+using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
+
+using SCF_traits   = CGAL::Search_traits_3<SCF>;
+using SCD_traits   = CGAL::Search_traits_3<SCD>;
+using EPICK_traits = CGAL::Search_traits_3<EPICK>;
+using EPECK_traits = CGAL::Search_traits_3<EPECK>;
 
 template<typename Kernel>
 void save_bbox(
@@ -54,6 +62,7 @@ bool is_centered(std::vector<typename Kernel::Point_3>& point_set) {
 
 template<typename Kernel>
 typename Kernel::Point_3 translate_point_set(
+  const bool verbose,
   const typename Kernel::Vector_3& translation,
   std::vector<typename Kernel::Point_3>& point_set) {
 
@@ -62,13 +71,17 @@ typename Kernel::Point_3 translate_point_set(
     point = point.transform(
       Affine_transformation_3(CGAL::Translation(), translation));
   }
-  std::ofstream out("1-translated.xyz");
-  CGAL::IO::write_XYZ(out, point_set);
+
+  if (verbose) {
+    std::ofstream outfile("1-translated.xyz");
+    CGAL::IO::write_XYZ(outfile, point_set);
+  }
   return CGAL::centroid(point_set.begin(), point_set.end());
 }
 
 template<typename Kernel>
-void initialize_bbox(
+void initialize_bounding_box(
+  const bool verbose,
   const std::vector<typename Kernel::Point_3>& point_set,
   std::array<typename Kernel::Point_3, 8>& bbox) {
 
@@ -87,11 +100,14 @@ void initialize_bbox(
     Point_3(box.xmax(), box.ymin(), box.zmax()),
     Point_3(box.xmax(), box.ymax(), box.zmax()) };
 
-  save_bbox<Kernel>("2-tight-bbox.off", bbox);
+  if (verbose) {
+    save_bbox<Kernel>("2-tight-bbox.off", bbox);
+  }
 }
 
 template<typename Kernel>
 typename Kernel::FT enlarge_bounding_box(
+  const bool verbose,
   const typename Kernel::FT enlarge_bbox_ratio,
   std::array<typename Kernel::Point_3, 8>& bbox) {
 
@@ -112,12 +128,15 @@ typename Kernel::FT enlarge_bounding_box(
   const auto side_2 = maxp.y() - minp.y();
   const auto side_3 = maxp.z() - minp.z();
 
-  save_bbox<Kernel>("3-enlarged-bbox.off", bbox);
+  if (verbose) {
+    save_bbox<Kernel>("3-enlarged-bbox.off", bbox);
+  }
   return (CGAL::max)((CGAL::max)(side_1, side_2), side_3);
 }
 
 template<typename Kernel>
 void generate_query_points(
+  const bool verbose,
   const typename Kernel::FT a,
   const std::size_t num_query_points,
   const std::array<typename Kernel::Point_3, 8>& bbox,
@@ -149,12 +168,15 @@ void generate_query_points(
   }
   assert(query_points.size() == num_query_points);
 
-  std::ofstream out("4-query-points.xyz");
-  CGAL::IO::write_XYZ(out, query_points);
+  if (verbose) {
+    std::ofstream outfile("4-query-points.xyz");
+    CGAL::IO::write_XYZ(outfile, query_points);
+  }
 }
 
 template<typename Kernel, typename Traits, typename Splitter>
-void bench_splitter(
+std::pair<double, double> bench_splitter(
+  const bool verbose,
   const std::size_t num_iters,
   const std::size_t bucket_size,
   const std::size_t k,
@@ -166,8 +188,8 @@ void bench_splitter(
   using Distance = CGAL::Euclidean_distance<Traits>;
   using Neighbor_search = CGAL::Orthogonal_k_neighbor_search<Traits, Distance, Splitter, Kd_tree>;
 
-  // Building.
-  double build_time = 0.0;
+  // Building the tree.
+  double avg_build_time = 0.0;
   Splitter splitter(bucket_size);
   Kd_tree tree(splitter);
   for (std::size_t iter = 0; iter < num_iters; ++iter) {
@@ -176,13 +198,16 @@ void bench_splitter(
     timer.start();
     tree.build();
     timer.stop();
-    build_time += timer.time();
+    avg_build_time += timer.time();
     tree.clear();
   }
-  std::cout << "- AVG BUILDING TREE TIME: " << build_time << " sec." << std::endl;
+
+  if (verbose) {
+    std::cout << "- AVG BUILDS TIME: " << avg_build_time << " sec." << std::endl;
+  }
 
   // K neighbor search.
-  double search_time = 0.0;
+  double avg_search_time = 0.0;
   for (std::size_t iter = 0; iter < num_iters; ++iter) {
     timer.reset();
     timer.start();
@@ -195,29 +220,36 @@ void bench_splitter(
       assert(std::distance(nsearch.begin(), nsearch.end()) == count);
     }
     timer.stop();
-    search_time += timer.time();
+    avg_search_time += timer.time();
   }
-  std::cout << "- AVG K NEAIGHBOR SEARCH TIME: " << search_time << " sec." << std::endl;
+
+  if (verbose) {
+    std::cout << "- AVG SEARCH TIME: " << avg_search_time << " sec." << std::endl;
+  }
+  return std::make_pair(avg_build_time, avg_search_time);
 }
 
 template<typename Kernel, typename Traits, typename Splitter>
-void bench_random_in_bbox(
+std::vector<double> bench_random_in_bbox(
   const std::string filename, const bool verbose,
   std::size_t num_query_points, std::size_t num_iters,
   std::size_t bucket_size, std::size_t k) {
 
-  std::cout.precision(20);
-  std::cout << std::endl;
-  std::cout << "---- RANDOM IN BBOX BENCH" << std::endl;
-  std::cout << "- filename " << filename << " ... " << std::endl << std::endl;
+  if (verbose) {
+    std::cout << std::endl;
+    std::cout << "---- RANDOM IN BBOX BENCH" << std::endl;
+    std::cout << "- filename " << filename << " ... " << std::endl << std::endl;
+  }
+
+  std::vector<double> out;
+  out.push_back(k);
+  out.push_back(bucket_size);
 
   using FT = typename Kernel::FT;
   using Point_3 = typename Kernel::Point_3;
   using Vector_3 = typename Kernel::Vector_3;
 
   // Read point set.
-  if (verbose) std::cout << std::endl << "* reading input point set" << std::endl;
-
   Timer timer;
   timer.start();
   std::vector<Point_3> point_set;
@@ -228,97 +260,95 @@ void bench_random_in_bbox(
     point_set.push_back(p);
   }
   auto centroid = CGAL::centroid(point_set.begin(), point_set.end());
+  if (num_query_points == 0) num_query_points = point_set.size();
   assert(point_set.size() > 0);
   timer.stop();
-
-  std::cout << "- PARAMETERS: " << std::endl;
-  std::cout << "- num k: " << k << std::endl;
-  std::cout << "- bucket size: " << bucket_size << std::endl;
-  std::cout << "- num input points: " << point_set.size() << std::endl;
-  std::cout << "- num query points: " << (num_query_points == 0 ? point_set.size() : num_query_points) << std::endl;
-  std::cout << std::endl;
-
-  std::cout << "- SURFACE BUILD TIME: " << timer.time() << " sec." << std::endl;
+  out.push_back(timer.time());
 
   if (verbose) {
-    std::cout << "- number of points: " << point_set.size() << std::endl;
-    std::cout << "- centroid: " << centroid << std::endl;
-    std::ofstream out("0-original.xyz");
-    CGAL::IO::write_XYZ(out, point_set);
-  }
+    std::cout << "- PARAMETERS: " << std::endl;
+    std::cout << "-            num k: " << k << std::endl;
+    std::cout << "-      bucket size: " << bucket_size << std::endl;
+    std::cout << "- num input points: " << point_set.size() << std::endl;
+    std::cout << "- num query points: " << num_query_points << std::endl;
+    std::cout << std::endl;
 
-  if (num_query_points == 0) {
-    num_query_points = point_set.size();
+    std::cout << "- CREATE POINT TIME: " << out.back() << " sec." << std::endl;
+
+    std::ofstream outfile("0-original.xyz");
+    CGAL::IO::write_XYZ(outfile, point_set);
   }
 
   // Translate point set.
-  if (verbose) std::cout << std::endl << "* translating input point set" << std::endl;
   const Vector_3 translation(centroid, CGAL::ORIGIN);
-  centroid = translate_point_set<Kernel>(translation, point_set);
-  if (verbose) std::cout << "- centroid: " << centroid << std::endl;
+  translate_point_set<Kernel>(verbose, translation, point_set);
   assert(is_centered<Kernel>(point_set));
 
-  // Create a bbox.
-  if (verbose) std::cout << std::endl << "* creating tight bbox" << std::endl;
+  // Create tight bbox.
   std::array<Point_3, 8> bbox;
-  initialize_bbox<Kernel>(point_set, bbox);
-  if (verbose) std::cout << "- axis aligned bbox with 8 vertices" << std::endl;
+  initialize_bounding_box<Kernel>(verbose, point_set, bbox);
 
-  // Enlarge the bbox.
-  if (verbose) std::cout << std::endl << "* enlarging bbox" << std::endl;
+  // Enlarge bbox.
   const FT enlarge_bbox_ratio = FT(3) / FT(2);
-  if (verbose) std::cout << "- enlarge bbox ratio: " << enlarge_bbox_ratio << std::endl;
-  const FT longest_side = enlarge_bounding_box<Kernel>(enlarge_bbox_ratio, bbox);
-  if (verbose) std::cout << "- longest side: " << longest_side << std::endl;
+  const FT longest_side = enlarge_bounding_box<Kernel>(
+    verbose, enlarge_bbox_ratio, bbox);
 
-  // Generating random points.
-  if (verbose) std::cout << std::endl << "* generating random points" << std::endl;
-  if (verbose) std::cout << "- num queries: " << num_query_points << std::endl;
-
+  // Generate random points in bbox.
   timer.reset();
   timer.start();
   std::vector<Point_3> query_points;
-  generate_query_points<Kernel>(longest_side, num_query_points, bbox, query_points);
-  std::cout << "- RANDOM BUILD TIME: " << timer.time() << " sec." << std::endl;
+  generate_query_points<Kernel>(
+    verbose, longest_side, num_query_points, bbox, query_points);
+  timer.stop();
+  out.push_back(timer.time());
 
-  if (verbose) std::cout << "- num random points in bbox: " << query_points.size() << std::endl;
+  if (verbose) {
+    std::cout << "- CREATE QUERY TIME: " << out.back() << " sec." << std::endl;
+  }
 
-  // Benching the tree.
-  std::cout << std::endl << "* SURFACE / SURFACE" << std::endl;
-  bench_splitter<Kernel, Traits, Splitter>(
-    num_iters, bucket_size, k, point_set, point_set);
+  // Bench tree.
+  if (verbose) std::cout << std::endl << "* SURFACE / SURFACE" << std::endl;
+  auto pair = bench_splitter<Kernel, Traits, Splitter>(
+    verbose, num_iters, bucket_size, k, point_set, point_set);
+  out.push_back(pair.first);
+  out.push_back(pair.second);
 
-  std::cout << std::endl << "* SURFACE / RANDOM" << std::endl;
-  bench_splitter<Kernel, Traits, Splitter>(
-    num_iters, bucket_size, k, point_set, query_points);
+  if (verbose) std::cout << std::endl << "* SURFACE / RANDOM" << std::endl;
+  pair = bench_splitter<Kernel, Traits, Splitter>(
+    verbose, num_iters, bucket_size, k, point_set, query_points);
+  out.push_back(pair.first);
+  out.push_back(pair.second);
 
-  std::cout << std::endl << "* RANDOM / RANDOM" << std::endl;
-  bench_splitter<Kernel, Traits, Splitter>(
-    num_iters, bucket_size, k, query_points, query_points);
+  if (verbose) std::cout << std::endl << "* RANDOM / RANDOM" << std::endl;
+  pair = bench_splitter<Kernel, Traits, Splitter>(
+    verbose, num_iters, bucket_size, k, query_points, query_points);
+  out.push_back(pair.first);
+  out.push_back(pair.second);
 
-  std::cout << std::endl;
+  if (verbose) std::cout << std::endl;
+  return out;
 }
 
-template<typename Kernel>
-void bench_translated(
+template<typename Kernel, typename Traits, typename Splitter>
+std::vector<double> bench_translated(
   const std::string filename, const bool verbose,
   typename Kernel::FT d, std::size_t num_iters,
   std::size_t bucket_size, std::size_t k) {
 
-  std::cout.precision(20);
-  std::cout << std::endl;
-  std::cout << "---- TRANSLATION BENCH" << std::endl;
-  std::cout << "- filename " << filename << " ... " << std::endl << std::endl;
+  if (verbose) {
+    std::cout << std::endl;
+    std::cout << "---- TRANSLATION BENCH" << std::endl;
+    std::cout << "- filename " << filename << " ... " << std::endl << std::endl;
+  }
+
+  std::vector<double> out;
+  out.push_back(k);
+  out.push_back(bucket_size);
 
   using Point_3 = typename Kernel::Point_3;
   using Vector_3 = typename Kernel::Vector_3;
-  using Traits = CGAL::Search_traits_3<Kernel>;
-  using Balanced_splitter = CGAL::Balanced_splitter<Traits>;
-  using Sliding_midpoint = CGAL::Sliding_midpoint<Traits>;
 
   // Read point set.
-  if (verbose) std::cout << std::endl << "* reading input point set" << std::endl;
-
   Timer timer;
   timer.start();
   std::vector<Point_3> point_set;
@@ -328,92 +358,172 @@ void bench_translated(
   while (in >> p) {
     point_set.push_back(p);
   }
-  auto centroid = CGAL::centroid(point_set.begin(), point_set.end());
   assert(point_set.size() > 0);
   timer.stop();
-
-  std::cout << "- PARAMETERS: " << std::endl;
-  std::cout << "- num k: " << k << std::endl;
-  std::cout << "- bucket size: " << bucket_size << std::endl;
-  std::cout << "- num input points: " << point_set.size() << std::endl;
-  std::cout << "- num query points: " << point_set.size() << std::endl;
-  std::cout << std::endl;
-
-  std::cout << "- SURFACE BUILD TIME: " << timer.time() << " sec." << std::endl;
+  out.push_back(timer.time());
 
   if (verbose) {
-    std::cout << "- number of points: " << point_set.size() << std::endl;
-    std::cout << "- centroid: " << centroid << std::endl;
-    std::ofstream out("0-original.xyz");
-    CGAL::IO::write_XYZ(out, point_set);
+    std::cout << "- PARAMETERS: " << std::endl;
+    std::cout << "-            num k: " << k << std::endl;
+    std::cout << "-      bucket size: " << bucket_size << std::endl;
+    std::cout << "- num input points: " << point_set.size() << std::endl;
+    std::cout << "- num query points: " << point_set.size() << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "- CREATE POINT TIME: " << out.back() << " sec." << std::endl;
+
+    std::ofstream outfile("0-original.xyz");
+    CGAL::IO::write_XYZ(outfile, point_set);
   }
 
   // Translate point set.
-  if (verbose) std::cout << std::endl << "* creating query points by translation" << std::endl;
   timer.reset();
   timer.start();
   auto query_points = point_set;
   const Vector_3 translation(d, d, d);
-  centroid = translate_point_set<Kernel>(translation, query_points);
+  translate_point_set<Kernel>(verbose, translation, query_points);
+  CGAL_assertion(query_points.size() == point_set.size());
   timer.stop();
-  std::cout << "- TRANSLATION BUILD TIME: " << timer.time() << " sec." << std::endl;
+  out.push_back(timer.time());
 
-  if (verbose) std::cout << "- centroid: " << centroid << std::endl;
-  if (verbose) std::cout << "- num query points: " << query_points.size() << std::endl;
+  if (verbose) {
+    std::cout << "- CREATE QUERY TIME: " << out.back() << " sec." << std::endl;
+  }
 
   // Benching the tree.
-  if (verbose) std::cout << std::endl << "* processing balanced splitter" << std::endl;
-  if (verbose) std::cout << "- translation distance: " << d << std::endl;
-  bench_splitter<Kernel, Traits, Balanced_splitter>(
-    num_iters, bucket_size, k, point_set, query_points);
+  if (verbose) std::cout << std::endl << "* SURFACE / SURFACE" << std::endl;
+  auto pair = bench_splitter<Kernel, Traits, Splitter>(
+    verbose, num_iters, bucket_size, k, point_set, point_set);
+  out.push_back(pair.first);
+  out.push_back(pair.second);
 
-  if (verbose) std::cout << std::endl << "* processing sliding midpoint splitter" << std::endl;
-  if (verbose) std::cout << "- translation distance: " << d << std::endl;
-  bench_splitter<Kernel, Traits, Sliding_midpoint>(
-    num_iters, bucket_size, k, point_set, query_points);
+  if (verbose) std::cout << std::endl << "* SURFACE / TRANSLATED" << std::endl;
+  pair = bench_splitter<Kernel, Traits, Splitter>(
+    verbose, num_iters, bucket_size, k, point_set, query_points);
+  out.push_back(pair.first);
+  out.push_back(pair.second);
 
-  std::cout << std::endl;
+  if (verbose) std::cout << std::endl << "* TRANSLATED / TRANSLATED" << std::endl;
+  pair = bench_splitter<Kernel, Traits, Splitter>(
+    verbose, num_iters, bucket_size, k, query_points, query_points);
+  out.push_back(pair.first);
+  out.push_back(pair.second);
+
+  if (verbose) std::cout << std::endl;
+  return out;
 }
 
 template<typename Kernel, typename Traits, typename Splitter>
 void user_manual_bench(
   const std::string filename, const bool verbose, const std::size_t num_iters) {
 
-  std::cout << std::endl << " --- USER MANUAL BENCH: " << std::endl << std::endl;
+  // Parameters:
+  // std::size_t num_query_points; // number of query points; if 0 then it equals to the number of input points
+  // std::size_t bucket_size;      // max bucket size per tree leaf
+  // std::size_t k;                // number of k neighbors
+
+  std::cout << std::endl << " --- USER MANUAL BENCH --- " << std::endl << std::endl;
 
   std::cout << "- Kernel: " << boost::typeindex::type_id<Kernel>() << std::endl;
   std::cout << "- Splitter: " << boost::typeindex::type_id<Splitter>() << std::endl;
   std::cout << std::endl;
 
-  bench_random_in_bbox<Kernel, Traits, Splitter>(filename, verbose, 0, num_iters, 10, 10);
-  bench_random_in_bbox<Kernel, Traits, Splitter>(filename, verbose, 0, num_iters, 20, 10);
-  bench_random_in_bbox<Kernel, Traits, Splitter>(filename, verbose, 0, num_iters, 10, 20);
-  bench_random_in_bbox<Kernel, Traits, Splitter>(filename, verbose, 0, num_iters, 20, 20);
-  bench_random_in_bbox<Kernel, Traits, Splitter>(filename, verbose, 0, num_iters, 10, 30);
-  bench_random_in_bbox<Kernel, Traits, Splitter>(filename, verbose, 0, num_iters, 20, 30);
+  std::vector< std::vector<double> > out;
+  if (!verbose) {
+    std::cout << "k | ";
+    std::cout << "bucket size | ";
+    std::cout << "create points | ";
+    std::cout << "create queris | ";
+    std::cout << "surf/surf avg build | ";
+    std::cout << "surf/surf avg search | ";
+    std::cout << "surf/rndm avg build | ";
+    std::cout << "surf/rndm avg search | ";
+    std::cout << "rndm/rndm avg build | ";
+    std::cout << "rndm/rndm avg search";
+    std::cout << std::endl;
+  }
+
+  out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter>(filename, verbose, 0, num_iters, 10, 10));
+  out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter>(filename, verbose, 0, num_iters, 20, 10));
+  out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter>(filename, verbose, 0, num_iters, 10, 20));
+  out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter>(filename, verbose, 0, num_iters, 20, 20));
+  out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter>(filename, verbose, 0, num_iters, 10, 30));
+  out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter>(filename, verbose, 0, num_iters, 20, 30));
+
+  if (!verbose) {
+    for (std::size_t k = 0; k < out.size(); ++k) {
+      for (std::size_t i = 0; i < out[k].size(); ++i) std::cout << out[k][i] << " ";
+      std::cout << std::endl;
+    }
+    std::cout << std::endl;
+  }
+}
+
+template<typename Kernel, typename Traits, typename Splitter>
+void translated_bench(
+  const std::string filename, const bool verbose, const std::size_t num_iters) {
+
+  // Parameters:
+  // double d;                // offset distance between original point set and query points
+  // std::size_t bucket_size; // max bucket size per tree leaf
+  // std::size_t k;           // number of k neighbors
+
+  std::cout << std::endl << " --- TRANSLATED BENCH --- " << std::endl << std::endl;
+
+  std::cout << "- Kernel: " << boost::typeindex::type_id<Kernel>() << std::endl;
+  std::cout << "- Splitter: " << boost::typeindex::type_id<Splitter>() << std::endl;
+  std::cout << std::endl;
+
+  std::vector< std::vector<double> > out;
+  if (!verbose) {
+    std::cout << "k | ";
+    std::cout << "bucket size | ";
+    std::cout << "create points | ";
+    std::cout << "create queris | ";
+    std::cout << "surf/surf avg build | ";
+    std::cout << "surf/surf avg search | ";
+    std::cout << "surf/trnl avg build | ";
+    std::cout << "surf/trnl avg search | ";
+    std::cout << "trnl/trnl avg build | ";
+    std::cout << "trnl/trnl avg search";
+    std::cout << std::endl;
+  }
+
+  out.push_back(bench_translated<Kernel, Traits, Splitter>(filename, verbose, 0.05, num_iters, 10, 10));
+  out.push_back(bench_translated<Kernel, Traits, Splitter>(filename, verbose, 0.05, num_iters, 20, 10));
+  out.push_back(bench_translated<Kernel, Traits, Splitter>(filename, verbose, 0.05, num_iters, 10, 20));
+  out.push_back(bench_translated<Kernel, Traits, Splitter>(filename, verbose, 0.05, num_iters, 20, 20));
+  out.push_back(bench_translated<Kernel, Traits, Splitter>(filename, verbose, 0.05, num_iters, 10, 30));
+  out.push_back(bench_translated<Kernel, Traits, Splitter>(filename, verbose, 0.05, num_iters, 20, 30));
+
+  if (!verbose) {
+    for (std::size_t k = 0; k < out.size(); ++k) {
+      for (std::size_t i = 0; i < out[k].size(); ++i) std::cout << out[k][i] << " ";
+      std::cout << std::endl;
+    }
+    std::cout << std::endl;
+  }
 }
 
 int main(int argc, char* argv[]) {
 
   // Parameters:
-  // double d;                     // offset distance between original point set and query points
-  // std::size_t num_query_points; // number of query points; if 0 then it equals to the number of input points
-  // std::size_t num_iters;        // number of iterations to get average timing
-  // std::size_t bucket_size;      // max bucket size per tree leaf
-  // std::size_t k;                // number of k neighbors
+  std::cout.precision(20);
+  const bool verbose = false; // should we export data
+  const std::string filename = (argc > 1 ? argv[1] : "data/sphere.xyz"); // input file
+  const std::size_t num_iters = 1; // number of iterations to get average timing
 
-  const std::string filename = (argc > 1 ? argv[1] : "data/sphere.xyz");
-  const bool verbose = false;
-  const std::size_t num_iters = 1;
-
-  using SCD_traits = CGAL::Search_traits_3<SCD>;
-
-  // Reproduce the bench from the current user manual.
   user_manual_bench<SCD, SCD_traits, CGAL::Balanced_splitter<SCD_traits> >(
     filename, verbose, num_iters);
 
-  user_manual_bench<SCD, SCD_traits, CGAL::Sliding_midpoint<SCD_traits> >(
+  // user_manual_bench<SCD, SCD_traits, CGAL::Sliding_midpoint<SCD_traits> >(
+  //   filename, verbose, num_iters);
+
+  translated_bench<SCD, SCD_traits, CGAL::Balanced_splitter<SCD_traits> >(
     filename, verbose, num_iters);
+
+  // translated_bench<SCD, SCD_traits, CGAL::Sliding_midpoint<SCD_traits> >(
+  //   filename, verbose, num_iters);
 
   return EXIT_SUCCESS;
 }
