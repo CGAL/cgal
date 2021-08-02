@@ -379,7 +379,12 @@ template<typename Kernel, typename Traits, typename Splitter>
 void user_manual_bench(
   const std::string filename, const bool verbose, const std::size_t num_iters) {
 
-  std::cout << std::endl << " --- USER MANUAL BENCH: " << boost::typeindex::type_id<Kernel>() << std::endl << std::endl;
+  std::cout << std::endl << " --- USER MANUAL BENCH: " << std::endl << std::endl;
+
+  std::cout << "- Kernel: " << boost::typeindex::type_id<Kernel>() << std::endl;
+  std::cout << "- Splitter: " << boost::typeindex::type_id<Splitter>() << std::endl;
+  std::cout << std::endl;
+
   bench_random_in_bbox<Kernel, Traits, Splitter>(filename, verbose, 0, num_iters, 10, 10);
   bench_random_in_bbox<Kernel, Traits, Splitter>(filename, verbose, 0, num_iters, 20, 10);
   bench_random_in_bbox<Kernel, Traits, Splitter>(filename, verbose, 0, num_iters, 10, 20);
@@ -405,6 +410,9 @@ int main(int argc, char* argv[]) {
 
   // Reproduce the bench from the current user manual.
   user_manual_bench<SCD, SCD_traits, CGAL::Balanced_splitter<SCD_traits> >(
+    filename, verbose, num_iters);
+
+  user_manual_bench<SCD, SCD_traits, CGAL::Sliding_midpoint<SCD_traits> >(
     filename, verbose, num_iters);
 
   return EXIT_SUCCESS;
