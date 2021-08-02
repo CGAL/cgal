@@ -429,7 +429,7 @@ Scene_polygon_soup_item::orient(std::vector<std::size_t>& non_manifold_vertices)
     Visitor(std::vector<std::size_t>& nm_vertices)
       :nm_vertices(nm_vertices){}
 
-    void non_manifold_vertex(const std::size_t& v) final
+    void non_manifold_vertex(std::size_t v) final
     {
       nm_vertices.push_back(v);
     }

@@ -45,11 +45,11 @@ namespace Polygon_mesh_processing {
  *  overridden.
  */
 struct Default_orientation_visitor{
-  inline virtual void non_manifold_edge(const std::size_t&, const std::size_t&){}
-  inline virtual void non_manifold_vertex(const std::size_t&){}
-  inline virtual void duplicated_vertex(const std::size_t&, const std::size_t&){}
-  inline virtual void vertex_id_in_polygon_replaced(const std::size_t&, const std::size_t&, const std::size_t&){}
-  inline virtual void polygon_orientation_reversed(const std::size_t&) {}
+  inline virtual void non_manifold_edge(std::size_t, std::size_t){}
+  inline virtual void non_manifold_vertex(std::size_t){}
+  inline virtual void duplicated_vertex(std::size_t, std::size_t){}
+  inline virtual void vertex_id_in_polygon_replaced(std::size_t, std::size_t, std::size_t){}
+  inline virtual void polygon_orientation_reversed(std::size_t) {}
 };
 
 namespace internal {

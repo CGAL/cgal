@@ -19,7 +19,7 @@ typedef CGAL::Polyhedron_3<K, CGAL::Polyhedron_items_with_id_3>      Polyhedron;
 //Optional visitor for orientation to demonstrate usage
 struct Visitor : public CGAL::Polygon_mesh_processing::Default_orientation_visitor
 {
-  void non_manifold_edge(const std::size_t& id1, const std::size_t& id2) final
+  void non_manifold_edge(std::size_t id1, std::size_t id2) final
   {
     std::cout << "The edge " << id1 << ", " << id2 << " is not manifold." << std::endl;
   }
@@ -27,15 +27,15 @@ struct Visitor : public CGAL::Polygon_mesh_processing::Default_orientation_visit
   {
      std::cout << "The vertex " << id << " is not manifold." << std::endl;
   }
-  void duplicated_vertex(const std::size_t& v1, const std::size_t& v2) final
+  void duplicated_vertex(std::size_t v1, std::size_t v2) final
   {
     std::cout << "The vertex " << v1 << " has been duplicated, its new id is " << v2 << "." << std::endl;
   }
-  void vertex_id_in_polygon_replaced(const std::size_t& p_id, const std::size_t& i1, const std::size_t& i2) final
+  void vertex_id_in_polygon_replaced(std::size_t p_id, std::size_t i1, std::size_t i2) final
   {
     std::cout << "In the polygon " << p_id << ", the index " << i1 << " has been replaced by " << i2 << "." << std::endl;
   }
-  void polygon_orientation_reversed(const std::size_t& p_id) final
+  void polygon_orientation_reversed(std::size_t p_id) final
   {
     std::cout << "The polygon " << p_id << " has been reversed." << std::endl;
   }
