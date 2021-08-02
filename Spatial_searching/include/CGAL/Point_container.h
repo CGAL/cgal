@@ -79,7 +79,7 @@ public:
       for (std::size_t k = 0; k < dim; ++k) {
         const std::size_t idx = (k + axis) % dim; // stay inside dim
         coords_diff = p[idx] - q[idx];
-        if (coords_diff != FT(0)) break;
+        if (!CGAL::is_zero(coords_diff)) break;
       }
       return coords_diff;
     }
@@ -395,7 +395,7 @@ public:
   }
 
   template <class Separator>
-  void balanced_split(Point_container<Traits>& c, Separator& sep)
+  void balanced_split(Point_container<Traits>& c, const Separator& sep)
   {
     CGAL_assertion(is_valid());
     CGAL_assertion(dimension() == c.dimension());
