@@ -70,33 +70,74 @@ for all of these 250 points.
 
 \subsection dh_example Discrete Harmonic Coordinates
 
+This example is very similar to the one used with tetrahedron coordinates. 
+We started with a regular icosahedron and for points inside, outside and 
+at the boundary, we calculate discrete harmonic coordinates. In this example, 
+we use the fast with edge cases algorithm because it treats points very close 
+to the boundaries.
+\anchor dh_coord_example
+\cgalExample{Barycentric_coordinates_3/discrete_harmonic_coordinates.cpp}
+
+\subsection mv_example Mean Value Coordinates
+
+\anchor mv_coord_example
+\cgalExample{Barycentric_coordinates_3/mean_value_coordinates.cpp}
+
+\subsection shape_deform_example Shape deformation
+
 This is an example that shows how to deform a simple smooth sphere into 
 another shape, topologically equivalent. To achieve this, we enclose the 
 sphere inside a cube cage, then we calculate the barycentric 
 coordinate of each vertex with respect to the cube cage. After deforming 
 the cage, we calculate the linear combination of the points to get the 
 deformed sphere vertices.
-\anchor dh_coord_example
+\anchor shape_deform_example
 \cgalExample{Barycentric_coordinates_3/shape_deformation.cpp}
-
-\subsection mv_example Mean Value Coordinates
-
-This example is very similar to the one used with tetrahedron coordinates. 
-We started with a regular icosahedron and for points inside, outside and 
-at the boundary, we calculate mean value coordinates. In this example, we 
-use the fast with edge cases algorithm because it treats points very close 
-to the boundaries.
-\anchor mv_coord_example
-\cgalExample{Barycentric_coordinates_3/mean_value_coordinates.cpp}
 
 \section gbc_degeneracies Edge Cases
 
+The precision of each coordinate depends on the used `Kernel`. If an inexact kernel 
+is used and the user is not sure if the points are near the boundaries, `FAST_WITH_EDGE_CASES` 
+algorithm should be used.
 
 \section gbc_performance Performance
+
+Here are the results of the benchmark done for each coordinate. A total of 1000000 
+points were sampled regularly inside each shape.
+
+<table class="markdownTable" align="center">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadCenter">Coordinate type </th>
+<th class="markdownTableHeadCenter">Shape </th>
+<th class="markdownTableHeadCenter">Total time (in seconds)</th>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">Wachspress</td>
+<td class="markdownTableBodyCenter">Triangulated cube</td>
+<td class="markdownTableBodyCenter">59.1783669</td>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">Discrete Harmonic</td>
+<td class="markdownTableBodyCenter">Triangulated cube</td>
+<td class="markdownTableBodyCenter">167.832063</td>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">Mean Value</td>
+<td class="markdownTableBodyCenter">Triangulated cube</td>
+<td class="markdownTableBodyCenter">199.651994</td>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">Tetrahedron</td>
+<td class="markdownTableBodyCenter">Tetrahedron</td>
+<td class="markdownTableBodyCenter">1.612018108</td>
+</tr>
+</table>
 
 
 \section gbc_history History
 
+This package was introduced during GSoC 2021 and implemented by Antonio Gomes 
+under the supervision of Dmitry Anisimov.
 
 \section gbc_acknowledgments Acknowledgments
 

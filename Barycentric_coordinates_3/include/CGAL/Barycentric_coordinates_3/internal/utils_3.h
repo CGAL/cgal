@@ -210,8 +210,6 @@ public:
     OutIterator coordinates,
     const GeomTraits& traits){
 
-    using Point_3 = typename GeomTraits::Point_3;
-    using Vector_3 = typename GeomTraits::Vector_3;
     using FT = typename GeomTraits::FT;
     using Plane_3 = typename GeomTraits::Plane_3;
     using Point_2 = typename GeomTraits::Point_2;
@@ -267,7 +265,6 @@ public:
     OutIterator coordinates,
     const GeomTraits& traits){
 
-    using Point_3 = typename GeomTraits::Point_3;
     using Vector_3 = typename GeomTraits::Vector_3;
     using FT = typename GeomTraits::FT;
     const auto& dot_3 = traits.compute_scalar_product_3_object();

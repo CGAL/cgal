@@ -93,8 +93,8 @@ namespace Barycentric_coordinates {
       an instance of `PolygonMesh`, which must be a convex simplicial polyhedron
 
       \param policy
-      one of the `Computation_policy_3`;
-      the default is `Computation_policy_3::FAST`
+      one of the `CGAL::Barycentric_coordinates::Computation_policy_3`;
+      the default is `Computation_policy_3::FAST_WITH_EDGE_CASES`
 
       \param traits
       a traits class with geometric objects, predicates, and constructions;
@@ -132,7 +132,7 @@ namespace Barycentric_coordinates {
     Discrete_harmonic_coordinates_3(
       const PolygonMesh& polygon_mesh,
       const Computation_policy_3 policy =
-      Computation_policy_3::FAST,
+      Computation_policy_3::FAST_WITH_EDGE_CASES,
       const GeomTraits traits = GeomTraits()) :
     Discrete_harmonic_coordinates_3(
       polygon_mesh,
@@ -384,7 +384,7 @@ namespace Barycentric_coordinates {
     the beginning of the destination range with the computed coordinates
 
     \param policy
-    one of the `Computation_policy_3`;
+    one of the `CGAL::Barycentric_coordinates::Computation_policy_3`;
     the default is `Computation_policy_3::FAST_WITH_EDGE_CASES`
 
     \return an output iterator to the element in the destination range,
@@ -396,10 +396,10 @@ namespace Barycentric_coordinates {
   */
   template<
   typename Point_3,
-  typename Mesh,
+  typename PolygonMesh,
   typename OutIterator>
   OutIterator discrete_harmonic_coordinates_3(
-    const Mesh& surface_mesh,
+    const PolygonMesh& surface_mesh,
     const Point_3& query,
     OutIterator c_begin,
     const Computation_policy_3 policy =
@@ -407,7 +407,7 @@ namespace Barycentric_coordinates {
 
     using Geom_Traits = typename Kernel_traits<Point_3>::Kernel;
 
-    Discrete_harmonic_coordinates_3<Mesh, Geom_Traits> discrete_harmonic(surface_mesh, policy);
+    Discrete_harmonic_coordinates_3<PolygonMesh, Geom_Traits> discrete_harmonic(surface_mesh, policy);
     return discrete_harmonic(query, c_begin);
   }
 

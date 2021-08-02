@@ -7,7 +7,9 @@ namespace Barycentric_coordinates {
 
 A concept that describes the set of requirements of the template parameter
 `GeomTraits` used to parameterize all classes and functions with 3D barycentric
-coordinates from the namespace `CGAL::Barycentric_coordinates`.
+coordinates from the namespace `CGAL::Barycentric_coordinates`. The concept `BarycentricTraits_3` 
+extends the concept `BarycentricTraits_2` and adds the requirements for 3D objects.
+\cgalGeneralizes `BarycentricTraits_2`
 
 \cgalHasModel
 - All models of `Kernel`
@@ -30,11 +32,6 @@ typedef unspecified_type FT;
 /// @{
 
 /*!
-  A model of `Kernel::Point_2`.
-*/
-typedef unspecified_type Point_2;
-
-/*!
   A model of `Kernel::Point_3`.
 */
 typedef unspecified_type Point_3;
@@ -48,15 +45,6 @@ typedef unspecified_type Vector_3;
 
 /// \name 3D Generalized Constructions
 /// @{
-
-/*!
-  A construction object that must provide the function operator:
-
-  `FT operator(const Point_2& p, const Point_2& q, const Point_2& r)`
-
-  that returns the signed area of the triangle defined by the points `p`, `q`, and `r`.
-*/
-typedef unspecified_type Compute_area_2;
 
 /*!
   A construction object that must provide the function operator:
@@ -94,15 +82,6 @@ typedef unspecified_type Compute_scalar_product_3;
   that returns the determinant of the three vectors `u`, `v` and `w`.
 */
 typedef unspecified_type Compute_determinant_3;
-
-/*!
-  A construction object that must provide the function operator:
-
-  `FT operator(const FT& value)`
-  
-  that returns the square root of value.
-*/
-typedef unspecified_type Sqrt;
 
 /*!
   A construction object that must provide the function operator:

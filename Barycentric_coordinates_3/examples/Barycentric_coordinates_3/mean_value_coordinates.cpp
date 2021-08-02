@@ -11,19 +11,28 @@ using Point_3 =  Kernel::Point_3;
 using Surface_mesh = CGAL::Surface_mesh<Point_3>;
 namespace PMP = CGAL::Polygon_mesh_processing;
 using CP3 = CGAL::Barycentric_coordinates::Computation_policy_3;
-using MV = CGAL::Barycentric_coordinates::Mean_value_coordinates_3<Surface_mesh, Kernel>;
 
 int main(){
 
-  Surface_mesh icosahedron;
-  CGAL::make_icosahedron(icosahedron, Point_3(0.0, 0.0, 0.0), 2.0);
-  PMP::triangulate_faces(faces(icosahedron), icosahedron);
+  Surface_mesh concave;
+
+  const Point_3 p0(0.0, 3.0, 0.0);
+  const Point_3 p1(1.0, 1.0, 0.0);
+  const Point_3 p2(3.0, 0.0, 0.0);
+  const Point_3 p3(0.0, 0.0, 0.0);
+  const Point_3 p4(0.0, 0.0, 3.0);
+  const Point_3 p5(0.0, 3.0, 3.0);
+  const Point_3 p6(1.0, 1.0, 3.0);
+  const Point_3 p7(3.0, 0.0, 3.0);
+
+  CGAL::make_hexahedron(p0, p1, p2, p3, p4, p5, p6, p7, concave);
+  PMP::triangulate_faces(faces(concave), concave);
 
   std::vector<FT> coords;
   std::vector<Point_3> queries{
-    Point_3(-1, 1 + PHI, PHI), Point_3(0.5, (1+3*PHI)/2, PHI/2), Point_3(1, 1+PHI, -PHI), //Boundary
-    Point_3(-1, 1, 1), Point_3(0, 0, 1), Point_3(0, 2, 1),                                //Interior
-    Point_3(0, 2*PHI, 4), Point_3(0, 3, 2*PHI), Point_3(4, 0, 0)};                        //EXterior
+    Point_3(FT(1)/FT(2), FT(1)/FT(2), FT(1.0)), Point_3(FT(1)/FT(2), FT(1)/FT(2), FT(2.0)), // Only points in the kernel
+    Point_3(FT(4)/FT(3), FT(1)/FT(3), FT(1.0)), Point_3(FT(4)/FT(3), FT(1)/FT(3), FT(2.0)),
+    Point_3(FT(1)/FT(3), FT(4)/FT(3), FT(1.0)), Point_3(FT(1)/FT(3), FT(4)/FT(3), FT(2.0))};
 
   std::cout << std::endl << "Mean value coordinates : " << std::endl << std::endl;
 
@@ -31,7 +40,7 @@ int main(){
 
     coords.clear();
     CGAL::Barycentric_coordinates::mean_value_coordinates_3(
-      icosahedron, query, std::back_inserter(coords), CP3::FAST_WITH_EDGE_CASES);
+      concave, query, std::back_inserter(coords), CP3::FAST);
 
     // Output mean value coordinates.
     for (std::size_t i = 0; i < coords.size() -1; ++i) {

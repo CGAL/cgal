@@ -93,8 +93,8 @@ namespace Barycentric_coordinates {
       an instance of `PolygonMesh`, which must be a convex simplicial polyhedron
 
       \param policy
-      one of the `Computation_policy_3`;
-      the default is `Computation_policy_3::FAST`
+      one of the `CGAL::Barycentric_coordinates::Computation_policy_3`;
+      the default is `Computation_policy_3::FAST_WITH_EDGE_CASES`
 
       \param traits
       a traits class with geometric objects, predicates, and constructions;
@@ -105,7 +105,6 @@ namespace Barycentric_coordinates {
       the default initialization is provided
 
       \pre num_vertices(polygon_mesh) >= 4.
-      \pre polygon_mesh is strongly convex.
       \pre polygon_mesh is simplicial.
     */
     Mean_value_coordinates_3(
@@ -123,8 +122,6 @@ namespace Barycentric_coordinates {
     sqrt(internal::Get_sqrt<GeomTraits>::sqrt_object(m_traits)),
     m_approximate_angle_3(m_traits.compute_approximate_angle_3_object()) {
 
-      // Check if polyhedron is strongly convex
-      CGAL_assertion(is_strongly_convex_3(m_polygon_mesh, m_traits));
       m_weights.resize(vertices(m_polygon_mesh).size());
       query_vertex_vectors.resize(3);
       unit_vectors.resize(3);
@@ -137,7 +134,7 @@ namespace Barycentric_coordinates {
     Mean_value_coordinates_3(
       const PolygonMesh& polygon_mesh,
       const Computation_policy_3 policy =
-      Computation_policy_3::FAST,
+      Computation_policy_3::FAST_WITH_EDGE_CASES,
       const GeomTraits traits = GeomTraits()) :
     Mean_value_coordinates_3(
       polygon_mesh,
@@ -395,30 +392,29 @@ namespace Barycentric_coordinates {
     the beginning of the destination range with the computed coordinates
 
     \param policy
-    one of the `Computation_policy_3`;
+    one of the `CGAL::Barycentric_coordinates::Computation_policy_3`;
     the default is `Computation_policy_3::FAST_WITH_EDGE_CASES`
 
     \return an output iterator to the element in the destination range,
     one past the last coordinates stored
 
     \pre num_vertices(polygon_mesh) >= 4.
-    \pre polygon_mesh is strongly convex.
     \pre polygon_mesh is simplicial.
   */
   template<
   typename Point_3,
-  typename Mesh,
+  typename PolygonMesh,
   typename OutIterator>
   OutIterator mean_value_coordinates_3(
-    const Mesh& surface_mesh,
+    const PolygonMesh& surface_mesh,
     const Point_3& query,
     OutIterator c_begin,
     const Computation_policy_3 policy =
-    Computation_policy_3::FAST) {
+    Computation_policy_3::FAST_WITH_EDGE_CASES) {
 
     using Geom_Traits = typename Kernel_traits<Point_3>::Kernel;
 
-    Mean_value_coordinates_3<Mesh, Geom_Traits> mean_value(surface_mesh, policy);
+    Mean_value_coordinates_3<PolygonMesh, Geom_Traits> mean_value(surface_mesh, policy);
     return mean_value(query, c_begin);
   }
 

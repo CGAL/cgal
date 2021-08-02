@@ -33,9 +33,9 @@ defined for convex simplicial polytopes.}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
-\cgalPkgSince{....}
-\cgalPkgBib{....}
-\cgalPkgLicense{....}
+\cgalPkgSince{5.1}
+\cgalPkgBib{abha-gbc}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

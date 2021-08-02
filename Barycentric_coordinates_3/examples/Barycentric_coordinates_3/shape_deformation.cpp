@@ -8,7 +8,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 
-#include <CGAL/Barycentric_coordinates_3/Discrete_harmonic_coordinates_3.h>
+#include <CGAL/Barycentric_coordinates_3/Mean_value_coordinates_3.h>
 #include <fstream>
 
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
@@ -60,7 +60,7 @@ int main() {
   CGAL::make_hexahedron(p0, p1, p2, p3, p4, p5, p6, p7, quad_cage);
   PMP::triangulate_faces(faces(quad_cage), quad_cage);
 
-  CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_3<Surface_mesh, Kernel> dh(quad_cage);
+  CGAL::Barycentric_coordinates::Mean_value_coordinates_3<Surface_mesh, Kernel> mv(quad_cage);
   auto vertex_to_point_map = get_property_map(CGAL::vertex_point, deformed);
 
   std::vector<FT> coords;
@@ -71,7 +71,7 @@ int main() {
 
     const Point_3 vertex_val = get(vertex_to_point_map, v);
     coords.clear();
-    dh(vertex_val, std::back_inserter(coords));
+    mv(vertex_val, std::back_inserter(coords));
 
     FT x = FT(0), y = FT(0), z = FT(0);
     for(std::size_t i = 0; i < 8; i++){

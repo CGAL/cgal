@@ -150,12 +150,11 @@ namespace tests{
 
     CGAL::Random_points_in_tetrahedron_3<typename Kernel::Point_3> gen_in(tetra_inside);
     CGAL::Random_points_in_triangle_mesh_3<Mesh> gen_surf(tetra_surf);
-    std::copy_n(gen_in, n/2, out);
-    std::copy_n(gen_surf, n/2, out);
+    out = std::copy_n(gen_in, n/2, out);
+    out = std::copy_n(gen_surf, n/2, out);
 
     return out;
   }
-
 }
 
 #endif
