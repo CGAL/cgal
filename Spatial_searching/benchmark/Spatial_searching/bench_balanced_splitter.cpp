@@ -153,6 +153,7 @@ void generate_query_points(
 
 template<typename Kernel, typename Traits, typename Splitter>
 void bench_splitter(
+  const std::size_t num_iters,
   const std::size_t bucket_size,
   const std::size_t k,
   const std::vector<typename Kernel::Point_3>& point_set,
@@ -169,35 +170,46 @@ void bench_splitter(
   using Neighbor_search = CGAL::Orthogonal_k_neighbor_search<Traits, Distance, Splitter, Kd_tree>;
 
   // Building.
-  Splitter splitter(bucket_size);
-  Kd_tree tree(point_set.begin(), point_set.end(), splitter);
+  double build_time = 0.0;
   std::cout << "- building the tree ... ";
-  timer.reset();
-  timer.start();
-  tree.build();
-  timer.stop();
-  std::cout << "done in: " << timer.time() << " sec." << std::endl;
+  Splitter splitter(bucket_size);
+  Kd_tree tree(splitter);
+  for (std::size_t iter = 0; iter < num_iters; ++iter) {
+    tree.insert(point_set.begin(), point_set.end());
+    timer.reset();
+    timer.start();
+    tree.build();
+    timer.stop();
+    build_time += timer.time();
+    tree.clear();
+  }
+  std::cout << "done in: " << build_time << " sec." << std::endl;
 
   // K neighbor search.
+  double search_time = 0.0;
   std::cout << "- applying k neighbor search ... ";
-  timer.reset();
-  timer.start();
-  for (const auto& query_point : query_points) {
-    Neighbor_search nsearch(tree, query_point, k);
-    long count = 0;
-    for (auto it = nsearch.begin(); it != nsearch.end(); ++it) {
-      ++count;
+  for (std::size_t iter = 0; iter < num_iters; ++iter) {
+    timer.reset();
+    timer.start();
+    for (const auto& query_point : query_points) {
+      Neighbor_search nsearch(tree, query_point, k);
+      long count = 0;
+      for (auto it = nsearch.begin(); it != nsearch.end(); ++it) {
+        ++count;
+      }
+      assert(std::distance(nsearch.begin(), nsearch.end()) == count);
     }
-    assert(std::distance(nsearch.begin(), nsearch.end()) == count);
+    timer.stop();
+    search_time += timer.time();
   }
-  timer.stop();
-  std::cout << "done in: " << timer.time() << " sec." << std::endl;
+  std::cout << "done in: " << search_time << " sec." << std::endl;
 }
 
 template<typename Kernel>
 void bench_random_in_bbox(
   const std::string filename,
   const std::size_t num_query_points = 100,
+  const std::size_t num_iters = 1,
   const std::size_t bucket_size = 10,
   const std::size_t k = 6) {
 
@@ -258,10 +270,12 @@ void bench_random_in_bbox(
 
   // Benching the tree.
   std::cout << std::endl << "* processing balanced splitter" << std::endl;
-  bench_splitter<Kernel, Traits, Balanced_splitter>(bucket_size, k, point_set, query_points);
+  bench_splitter<Kernel, Traits, Balanced_splitter>(
+    num_iters, bucket_size, k, point_set, query_points);
 
   std::cout << std::endl << "* processing sliding midpoint splitter" << std::endl;
-  bench_splitter<Kernel, Traits, Sliding_midpoint>(bucket_size, k, point_set, query_points);
+  bench_splitter<Kernel, Traits, Sliding_midpoint>(
+    num_iters, bucket_size, k, point_set, query_points);
 
   std::cout << std::endl;
 }
@@ -270,6 +284,7 @@ template<typename Kernel>
 void bench_translated(
   const std::string filename,
   const typename Kernel::FT d = 0.1,
+  const std::size_t num_iters = 1,
   const std::size_t bucket_size = 10,
   const std::size_t k = 6) {
 
@@ -311,28 +326,39 @@ void bench_translated(
   // Benching the tree.
   std::cout << std::endl << "* processing balanced splitter" << std::endl;
   std::cout << "- translation distance: " << d << std::endl;
-  bench_splitter<Kernel, Traits, Balanced_splitter>(bucket_size, k, point_set, query_points);
+  bench_splitter<Kernel, Traits, Balanced_splitter>(
+    num_iters, bucket_size, k, point_set, query_points);
 
   std::cout << std::endl << "* processing sliding midpoint splitter" << std::endl;
   std::cout << "- translation distance: " << d << std::endl;
-  bench_splitter<Kernel, Traits, Sliding_midpoint>(bucket_size, k, point_set, query_points);
+  bench_splitter<Kernel, Traits, Sliding_midpoint>(
+    num_iters, bucket_size, k, point_set, query_points);
 }
 
 int main(int argc, char* argv[]) {
 
   double d;
-  std::size_t num_query_points, bucket_size, k;
+  std::size_t num_query_points, num_iters, bucket_size, k;
   const std::string filename = (argc > 1 ? argv[1] : "data/sphere.xyz");
 
   // BENCH 1.
-  num_query_points = 100;
-  bucket_size = 10;
-  k = 6;
-  bench_random_in_bbox<SCD>(filename, num_query_points, bucket_size, k);
+  // Here query points are randomly generated and uniform.
+  num_query_points = 100; // number of query points
+  num_iters = 1; // number of iterations to get average timing
+  bucket_size = 10; // max bucket size per tree leaf
+  k = 6; // number of k neighbors
+  bench_random_in_bbox<SCD>(
+    filename, num_query_points, num_iters, bucket_size, k);
 
   // BENCH 2.
-  d = 0.05;
-  bucket_size = 10;
-  k = 1;
-  bench_translated<SCD>(filename, d, bucket_size, k);
+  // Here the number of query points = the number of input points.
+  d = 0.05; // offset distance between original point set and query points
+  num_iters = 1; // number of iterations to get average timing
+  bucket_size = 10; // max bucket size per tree leaf
+  k = 1; // number of k neighbors
+  bench_translated<SCD>(
+    filename, d, num_iters, bucket_size, k);
+
+  // TODO: Add bench with non uniform triangles:
+  // dense in one part and sparse in the other.
 }
