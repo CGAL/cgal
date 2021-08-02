@@ -25,6 +25,7 @@
 #include <memory>
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/internal/Get_dimension_tag.h>
+#include <CGAL/number_utils.h>
 
 #include <boost/optional.hpp>
 
