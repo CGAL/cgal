@@ -16,9 +16,8 @@
 #include <CGAL/license/Surface_mesh_simplification.h>
 
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_optimizers.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_functions.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_policy_base.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_plane_quadrics.h>
 
 #include <Eigen/Dense>
 
@@ -29,9 +28,6 @@ namespace Surface_mesh_simplification {
 // takes the derived class as template argument - see "CRTP"
 template<typename TriangleMesh, typename GeomTraits>
 class GarlandHeckbert_policies : 
-  public internal::GarlandHeckbert_plane_edges<TriangleMesh, GeomTraits>,
-  public internal::GarlandHeckbert_plane_faces<TriangleMesh, GeomTraits>,
-  public internal::GarlandHeckbert_singular_optimizer<GeomTraits>,
   public internal::GarlandHeckbert_placement_base<
     typename boost::property_map<
       TriangleMesh, 
@@ -93,10 +89,40 @@ class GarlandHeckbert_policies :
     Cost_base::init_vcm(vcm_);
     Placement_base::init_vcm(vcm_);
   }
+  
+  template<typename VertexPointMap>
+  Mat_4 construct_quadric_from_face(
+      const VertexPointMap& point_map,
+      const TriangleMesh& tmesh,
+      typename boost::graph_traits<TriangleMesh>::face_descriptor f,
+      const GeomTraits& gt) const 
+  {
+    return internal::construct_classic_plane_quadric_from_face(
+        point_map, tmesh, f, gt);
+  }
+  
+  template<typename VertexPointMap>
+  Mat_4 construct_quadric_from_edge(
+      const VertexPointMap& point_map,
+      const TriangleMesh& tmesh,
+      typename boost::graph_traits<TriangleMesh>::halfedge_descriptor he,
+      const GeomTraits& gt) const 
+  {
+    return internal::construct_classic_plane_quadric_from_edge(
+        point_map, tmesh, he, gt);
+  }
+
+  Col_4 construct_optimal_point(const Mat_4& quadric, const Col_4& p0, const Col_4& p1) const
+  {
+    return internal::construct_optimal_point_singular<GeomTraits>(quadric, p0, p1);
+  }
 
   const Get_cost& get_cost() const { return *this; }
   const Get_placement& get_placement() const { return *this; }
 
+  // return a copy of the vertex cost map to inspect quadrics
+  Vertex_cost_map get_vcm() const { return vcm_; }
+  
   private:
   Vertex_cost_map vcm_;
 

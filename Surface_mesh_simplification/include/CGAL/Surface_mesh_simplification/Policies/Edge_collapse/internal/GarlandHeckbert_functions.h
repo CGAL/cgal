@@ -185,7 +185,8 @@ Mat_4<GeomTraits> construct_classic_plane_quadric_from_face(
     typename boost::graph_traits<TriangleMesh>::face_descriptor f,
     const GeomTraits& gt) 
 {
-  const Vector_3 normal = construct_unit_normal_from(point_map, mesh, f, gt);
+  const typename GeomTraits::Vector_3 normal 
+    = construct_unit_normal_from_face(point_map, mesh, f, gt);
 
   // get any point of the face 
   const auto p = get(point_map, source(halfedge(f, mesh), mesh));
