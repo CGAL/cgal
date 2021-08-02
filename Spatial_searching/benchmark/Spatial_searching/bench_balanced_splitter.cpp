@@ -193,14 +193,16 @@ std::pair<double, double> bench_splitter(
   Splitter splitter(bucket_size);
   Kd_tree tree(splitter);
   for (std::size_t iter = 0; iter < num_iters; ++iter) {
+    tree.clear();
     tree.insert(point_set.begin(), point_set.end());
     timer.reset();
     timer.start();
     tree.build();
     timer.stop();
     avg_build_time += timer.time();
-    tree.clear();
   }
+  CGAL_assertion(num_iters > 0);
+  avg_build_time /= static_cast<double>(num_iters);
 
   if (verbose) {
     std::cout << "- AVG BUILDS TIME: " << avg_build_time << " sec." << std::endl;
@@ -212,6 +214,7 @@ std::pair<double, double> bench_splitter(
     timer.reset();
     timer.start();
     for (const auto& query_point : query_points) {
+      CGAL_assertion(tree.size() != 0);
       Neighbor_search nsearch(tree, query_point, k);
       long count = 0;
       for (auto it = nsearch.begin(); it != nsearch.end(); ++it) {
@@ -222,6 +225,8 @@ std::pair<double, double> bench_splitter(
     timer.stop();
     avg_search_time += timer.time();
   }
+  CGAL_assertion(num_iters > 0);
+  avg_search_time /= static_cast<double>(num_iters);
 
   if (verbose) {
     std::cout << "- AVG SEARCH TIME: " << avg_search_time << " sec." << std::endl;
