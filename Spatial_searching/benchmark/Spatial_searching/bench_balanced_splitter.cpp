@@ -361,4 +361,5 @@ int main(int argc, char* argv[]) {
 
   // TODO: Add bench with non uniform triangles:
   // dense in one part and sparse in the other.
+  std::cout << std::endl;
 }

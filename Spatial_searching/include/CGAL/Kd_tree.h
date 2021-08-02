@@ -28,6 +28,7 @@
 #include <CGAL/Kd_tree_node.h>
 #include <CGAL/Splitters.h>
 #include <CGAL/internal/Get_dimension_tag.h>
+#include <CGAL/Real_timer.h>
 
 #include <boost/container/deque.hpp>
 #include <boost/optional.hpp>
@@ -140,10 +141,6 @@ private:
 
   using FTP = typename Point_container::FTP;
   using Key_compare = typename Point_container::Key_compare;
-  using References = typename Point_container::References;
-
-  static const bool m_create_balanced_tree =
-    std::is_same<Splitter, CGAL::Balanced_splitter<SearchTraits> >::value;
 
   void initialize_reference(
     const Point_d_const_iterator begin, const Point_d_const_iterator end,
@@ -246,6 +243,69 @@ private:
     for (const auto& reference : references) {
       print_reference(dim, reference);
     }
+  }
+
+  std::pair<long, long> initialize_references(
+    const std::integral_constant<bool, true>,
+    const std::size_t dim, std::vector<const Point_d*>& data) {
+
+    #ifdef KD_TREE_DEBUG
+    CGAL::Real_timer timer;
+    timer.start();
+    #endif
+
+    split.resize(dim, data.size());
+    auto& references = split.get_references();
+    CGAL_assertion(references.size() == dim);
+    CGAL_assertion(references[0].size() == data.size());
+    std::vector<std::size_t> ref_end(references.size());
+    CGAL_assertion(ref_end.size() == dim);
+
+    #if defined(CGAL_TBB_STRUCTURE_IN_KD_TREE)
+    if (boost::is_convertible<ConcurrencyTag, CGAL::Parallel_tag>::value) {
+      CGAL_assertion_msg(false, "TODO: ADD PARALLEL BALANCED PREPROCESSING!");
+    } else
+    #endif
+    {
+      const Key_compare compare_keys;
+      for (std::size_t i = 0; i < references.size(); ++i) {
+        initialize_reference(data.begin(), data.end(),
+        traits_.construct_cartesian_const_iterator_d_object(), references[i]);
+        std::stable_sort(references[i].begin(), references[i].end(),
+          [&](const FTP& p, const FTP& q) {
+            return compare_keys(p, q, i, dim) < FT(0);
+          }
+        );
+        ref_end[i] = static_cast<long>(remove_duplicates(
+          compare_keys, references[i], i, dim));
+      }
+    }
+    CGAL_assertion(check_consistency(dim, ref_end, references));
+
+    #ifdef KD_TREE_DEBUG
+    timer.stop();
+    std::cout << std::endl;
+    std::cout << "- internal preprocessing time: " << timer.time() << " sec.";
+    print_references(dim, references, "REF PREPROCESS");
+    #endif
+
+    const long start = 0;
+    const long end   = ref_end[0];
+    return std::make_pair(start, end);
+  }
+
+  std::pair<long, long> initialize_references(
+    const std::integral_constant<bool, false>,
+    const std::size_t /* dim */, std::vector<const Point_d*>& data) {
+    return std::make_pair(0, data.size());
+  }
+
+  void finalize_references(const std::integral_constant<bool, true>) {
+    split.clear();
+  }
+
+  void finalize_references(const std::integral_constant<bool, false>) {
+    return;
   }
 
   // protected copy constructor
@@ -448,49 +508,20 @@ public:
                                "Parallel_tag is enabled but TBB is unavailable.");
 #endif
 
-    std::vector< std::vector<FTP> > references;
     long start = -1, end = -1;
-    if (m_create_balanced_tree) {
-
-      references.resize(dim_, std::vector<FTP>(data.size()));
-      std::vector<std::size_t> ref_end(references.size());
-
-      #if defined(CGAL_TBB_STRUCTURE_IN_KD_TREE)
-      if (boost::is_convertible<ConcurrencyTag, CGAL::Parallel_tag>::value) {
-        CGAL_assertion_msg(false, "TODO: ADD PARALLEL BALANCED PREPROCESSING!");
-      } else
-      #endif
-      {
-        const Key_compare compare_keys;
-        for (std::size_t i = 0; i < references.size(); ++i) {
-          initialize_reference(data.begin(), data.end(),
-          traits_.construct_cartesian_const_iterator_d_object(), references[i]);
-          std::stable_sort(references[i].begin(), references[i].end(),
-            [&](const FTP& p, const FTP& q) {
-              return compare_keys(p, q, i, dim_) < FT(0);
-            }
-          );
-          ref_end[i] = static_cast<long>(remove_duplicates(
-            compare_keys, references[i], i, dim_));
-        }
-      }
-
-      CGAL_assertion(check_consistency(dim_, ref_end, references));
-      #ifdef KD_TREE_DEBUG
-      print_references(dim_, references, "REF PREPROCESS");
-      #endif
-
-      start = 0;
-      end   = ref_end[0];
-    }
+    CGAL_assertion(dim_ >= 0);
+    std::tie(start, end) = initialize_references(
+      typename std::is_same<Splitter, CGAL::Balanced_splitter<SearchTraits> >::type(),
+      static_cast<std::size_t>(dim_), data);
 
     Point_container c(dim_, data.begin(), data.end(), traits_);
+    CGAL_assertion(start >= 0 && end >= 0);
+    c.set_data(0, start, end);
 
-    if (m_create_balanced_tree) {
-      const auto ref_ptr = std::make_shared<References>(references);
-      c.set_ref_ptr(ref_ptr);
-      c.set_data(dim_, 0, start, end);
-    }
+    #ifdef KD_TREE_DEBUG
+    CGAL::Real_timer timer;
+    timer.start();
+    #endif
 
     bbox = new Kd_tree_rectangle<FT,D>(c.bounding_box());
     if (c.size() <= split.bucket_size()){
@@ -499,6 +530,12 @@ public:
        tree_root = new_internal_node();
        create_internal_node (tree_root, c, ConcurrencyTag());
     }
+
+    #ifdef KD_TREE_DEBUG
+    timer.stop();
+    std::cout << std::endl;
+    std::cout << "- internal building time: " << timer.time() << " sec." << std::endl;
+    #endif
 
     //Reorder vector for spatial locality
     std::vector<Point_d> ptstmp;
@@ -523,9 +560,8 @@ public:
 
     data.clear();
     data.shrink_to_fit();
-    references.clear();
-    references.shrink_to_fit();
-
+    finalize_references(
+      typename std::is_same<Splitter, CGAL::Balanced_splitter<SearchTraits> >::type());
     built_ = true;
   }
 

@@ -317,6 +317,10 @@ namespace CGAL {
     using Key_compare = typename Container::Key_compare;
     using FTP = typename Container::FTP;
 
+    std::vector<FTP> m_tmp;
+    std::vector< std::vector<FTP> > m_references;
+    const Key_compare m_compare_keys;
+
     Balanced_splitter() : Base() { }
     Balanced_splitter(const unsigned int bucket_size) : Base(bucket_size) { }
 
@@ -336,19 +340,34 @@ namespace CGAL {
     }
 
     void print_references(
-      const std::size_t dim,
-      const std::vector< std::vector<FTP> >& references,
-      const std::string name) const {
+      const std::size_t dim, const std::string name) const {
 
       std::cout << std::endl << "--- " << name << " : " << std::endl;
-      for (const auto& reference : references) {
+      for (const auto& reference : m_references) {
         print_reference(dim, reference);
       }
     }
 
   public:
+    std::vector< std::vector<FTP> >& get_references() {
+      return m_references;
+    }
+
+    void clear() {
+      m_tmp.clear();
+      m_references.clear();
+      m_tmp.shrink_to_fit();
+      m_references.shrink_to_fit();
+    }
+
+    void resize(const std::size_t dim, const std::size_t dsize) {
+      m_tmp.resize(dsize);
+      m_references.clear();
+      m_references.resize(dim, std::vector<FTP>(dsize));
+    }
+
     void operator()(
-      Separator& sep, Container& c0, Container& c1) const {
+      Separator& sep, Container& c0, Container& c1) {
 
       CGAL_assertion(c0.is_valid());
       CGAL_assertion(c1.is_valid());
@@ -357,15 +376,13 @@ namespace CGAL {
       CGAL_assertion(!c1.is_last_call());
 
       CGAL_assertion(c0.dimension() == c1.dimension());
+      const int dimension = c0.dimension();
+      CGAL_assertion(dimension >= 0);
+      const std::size_t dim = static_cast<std::size_t>(dimension);
 
-      const std::size_t dim = c0.get_dim();
       const std::size_t depth = c0.get_depth();
-
       const long start = c0.get_start();
       const long end = c0.get_end();
-
-      const auto& ref_ptr = c0.get_ref_ptr();
-      auto& references = *(ref_ptr);
 
       #ifdef KD_TREE_DEBUG
       std::cout << std::endl;
@@ -388,14 +405,12 @@ namespace CGAL {
       #ifdef KD_TREE_DEBUG
       std::cout << "- median: " << median << std::endl;
       #endif
-
-      const Key_compare compare_keys;
-      std::vector<FTP> tmp(references[0].size());
       CGAL_assertion_msg(end > start + 2, "ERROR: LAST CALL MUST BE AVOIDED!");
 
       // Copy the first ref to save it.
+      CGAL_assertion(m_tmp.size() == m_references[0].size());
       for (long i = start; i <= end; ++i) {
-        tmp[i] = references[0][i];
+        m_tmp[i] = m_references[0][i];
       }
 
       // Apply permutations for dim - 1 axis.
@@ -405,12 +420,12 @@ namespace CGAL {
         upper = median;
 
         for (long i = start; i <= end; ++i) { // always skip median key
-          const FT compare = compare_keys(
-            references[k][i], references[0][median], axis, dim);
+          const FT compare = m_compare_keys(
+            m_references[k][i], m_references[0][median], axis, dim);
           if (compare < FT(0)) {
-            references[k-1][++lower] = references[k][i];
+            m_references[k-1][++lower] = m_references[k][i];
           } else if (compare > FT(0)) {
-            references[k-1][++upper] = references[k][i];
+            m_references[k-1][++upper] = m_references[k][i];
           }
         }
       }
@@ -418,22 +433,21 @@ namespace CGAL {
 
       // Copy back.
       for (long i = start; i <= end; ++i) {
-        references[dim-1][i] = tmp[i];
+        m_references[dim-1][i] = m_tmp[i];
       }
 
       #ifdef KD_TREE_DEBUG
-      print_references(dim, references, "REF DEPTH " + std::to_string(depth));
+      print_references(dim, "REF DEPTH " + std::to_string(depth));
       #endif
 
       // Split containers.
-      tmp.clear();
       SearchTraits traits;
       auto construct_it = traits.construct_cartesian_const_iterator_d_object();
       const auto it = std::partition(c0.begin(), c0.end(),
         [&](const Point_d* pt) {
           const auto p = construct_it(*pt);
-          const auto q = references[dim-1][median];
-          const FT compare = compare_keys(p, q, axis, dim);
+          const auto q = m_references[dim-1][median];
+          const FT compare = m_compare_keys(p, q, axis, dim);
           return compare < FT(0);
         }
       );
@@ -442,7 +456,7 @@ namespace CGAL {
       c0.set_range(it, c0.end());
 
       const int split_coord = static_cast<int>(axis);
-      const FT cutting_value = references[dim-1][median][axis];
+      const FT cutting_value = m_references[dim-1][median][axis];
 
       #ifdef KD_TREE_DEBUG
       std::cout << std::endl;
@@ -471,9 +485,8 @@ namespace CGAL {
       CGAL_assertion(c0.size() > 0);
       CGAL_assertion(c1.size() > 0);
 
-      c1.set_ref_ptr(ref_ptr);
-      c1.set_data(dim, depth + 1, start, lower);
-      c0.set_data(dim, depth + 1, median + 1, upper);
+      c1.set_data(depth + 1, start, lower);
+      c0.set_data(depth + 1, median + 1, upper);
     }
   };
 

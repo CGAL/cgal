@@ -58,19 +58,12 @@ private:
 public:
   using Construct_cartesian_const_iterator_d = typename Traits::Construct_cartesian_const_iterator_d;
   using FTP = typename Construct_cartesian_const_iterator_d::result_type;
-  using References = std::vector< std::vector<FTP> >;
-  using Ref_ptr = std::shared_ptr<References>;
 
 private:
-  Ref_ptr m_ref_ptr;
-
+  bool m_is_last_call = false;
+  std::size_t m_depth = static_cast<std::size_t>(-1);
   long m_start = -1;
   long m_end = -1;
-
-  std::size_t m_dim = static_cast<std::size_t>(-1);
-  std::size_t m_depth = static_cast<std::size_t>(-1);
-
-  bool m_is_last_call = false;
 
 public:
   struct Key_compare {
@@ -99,12 +92,6 @@ public:
   }
 
   inline std::size_t
-  get_dim() const
-  {
-    return m_dim;
-  }
-
-  inline std::size_t
   get_depth() const
   {
     return m_depth;
@@ -122,24 +109,9 @@ public:
     return m_end;
   }
 
-  inline const Ref_ptr&
-  get_ref_ptr() const
-  {
-    return m_ref_ptr;
-  }
-
-  inline void
-  set_ref_ptr(const Ref_ptr& ref_ptr)
-  {
-    m_ref_ptr = ref_ptr;
-  }
-
   void
-  set_data(
-    const std::size_t dim, const std::size_t depth,
-    const long start, const long end)
+  set_data(const std::size_t depth, const long start, const long end)
   {
-    m_dim = dim;
     m_depth = depth;
     m_start = start;
     m_end = end;
