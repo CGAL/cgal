@@ -29,6 +29,7 @@
 #include <CGAL/Splitters.h>
 #include <CGAL/internal/Get_dimension_tag.h>
 #include <CGAL/Real_timer.h>
+#include <CGAL/number_utils.h>
 
 #include <boost/container/deque.hpp>
 #include <boost/optional.hpp>
@@ -164,12 +165,12 @@ private:
 
     std::size_t end = 0;
     for (std::size_t i = 1; i < reference.size(); ++i) {
-      const FT compare = compare_keys( // p[i] > q[i-1]
+      const FT res = compare_keys( // p[i] > q[i-1]
         reference[i] /* p */, reference[i-1] /* q */, axis, dim);
 
-      if (compare < FT(0)) {
+      if (CGAL::compare(res, FT(0)) == CGAL::SMALLER) {
         CGAL_assertion_msg(false, "ERROR: NEGATIVE COMPARE KEYS RESULT!");
-      } else if (compare > FT(0)) {
+      } else if (CGAL::compare(res, FT(0)) == CGAL::LARGER) {
         reference[++end] = reference[i];
       }
     }
@@ -273,7 +274,8 @@ private:
         traits_.construct_cartesian_const_iterator_d_object(), references[i]);
         std::stable_sort(references[i].begin(), references[i].end(),
           [&](const FTP& p, const FTP& q) {
-            return compare_keys(p, q, i, dim) < FT(0);
+            const FT res = compare_keys(p, q, i, dim);
+            return CGAL::compare(res, FT(0)) == CGAL::SMALLER;
           }
         );
         ref_end[i] = static_cast<long>(remove_duplicates(

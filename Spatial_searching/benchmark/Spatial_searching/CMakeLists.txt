@@ -27,7 +27,7 @@ create_single_source_cgal_program("nn3cgal.cpp")
 create_single_source_cgal_program("nn3nanoflan.cpp")
 create_single_source_cgal_program("sizeof.cpp")
 # create_single_source_cgal_program("deque.cpp") # does not compile, lots of errors
-create_single_source_cgal_program("bench_balanced_splitter.cpp")
+create_single_source_cgal_program("bench_splitters.cpp")
 foreach(
   target
   # Compare_ANN_STANN_CGAL # see above
@@ -44,6 +44,6 @@ foreach(
   nn3nanoflan
   sizeof
   # deque # see above
-  bench_balanced_splitter)
+  bench_splitters)
   target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
 endforeach()
