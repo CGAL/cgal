@@ -42,8 +42,8 @@ public:
   typedef std::random_access_iterator_tag iterator_category;
   typedef FT                              value_type;
   typedef int                             difference_type;
-  typedef const value_type&               reference;
-  typedef const value_type*               pointer;
+  typedef void                            pointer;
+  typedef value_type                      reference;
 
   Cartesian_coordinate_iterator_3()
     : var((const P*) nullptr), index(0) {}
@@ -55,7 +55,7 @@ public:
     : var(v), index(_index) {}
 
 
-  decltype(auto)
+  reference
   operator*() const {
     if (const P* const* p = boost::get<const P*>(&var))
       return (*p)->cartesian(index);
@@ -120,7 +120,7 @@ public:
     return index - x.index;
   }
 
-  decltype(auto)
+  reference
   operator[](difference_type i) const {
     return *(*this + i);
   }

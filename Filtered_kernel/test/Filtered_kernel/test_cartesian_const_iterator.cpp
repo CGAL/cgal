@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <CGAL/Search_traits_2.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -23,6 +24,10 @@ int main() {
   const FT d2 = p2[0] - q2[0];
   assert(d2 < FT(0));
 
+  const auto plen2 = std::distance(construct_it_2(pp2), construct_it_2(pp2, 0));
+  const auto qlen2 = std::distance(construct_it_2(qq2), construct_it_2(qq2, 0));
+  assert(plen2 == 2 && qlen2 == 2);
+
   // Testing 3D.
   Traits_3 traits_3;
   auto construct_it_3 = traits_3.construct_cartesian_const_iterator_d_object();
@@ -32,6 +37,10 @@ int main() {
   const auto q3 = construct_it_3(qq3);
   const FT d3 = q3[2] - p3[2];
   assert(d3 > FT(0));
+
+  const auto plen3 = std::distance(construct_it_3(pp3), construct_it_3(pp3, 0));
+  const auto qlen3 = std::distance(construct_it_3(qq3), construct_it_3(qq3, 0));
+  assert(plen3 == 3 && qlen3 == 3);
 
   return EXIT_SUCCESS;
 }
