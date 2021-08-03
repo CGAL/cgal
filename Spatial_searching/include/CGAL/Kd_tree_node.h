@@ -212,7 +212,7 @@ namespace CGAL {
 
     template<typename OutputIterator>
     OutputIterator
-    print(OutputIterator out) const
+    print_leaves(OutputIterator out) const
     {
       if (is_leaf()) { // draw leaf nodes
         Leaf_node_const_handle node =
@@ -225,8 +225,8 @@ namespace CGAL {
       } else {
         Internal_node_const_handle node =
           static_cast<Internal_node_const_handle>(this);
-        node->lower()->print(out);
-        node->upper()->print(out);
+        node->lower()->print_leaves(out);
+        node->upper()->print_leaves(out);
       }
       return out;
     }

@@ -3,6 +3,7 @@
 #include <cmath>
 #include <vector>
 #include <fstream>
+#include <iostream>
 
 #include <CGAL/Real_timer.h>
 #include <CGAL/Cartesian_d.h>
@@ -240,13 +241,14 @@ void test_balanced_tree(
   if (verbose) {
     std::cout << std::endl;
     tree.statistics(std::cout);
-    tree.print(std::cout);
+    std::ofstream outfile("0-tree");
+    tree.print(outfile);
   }
 
   if (ref_depth > 0) {
     assert(tree.root()->depth() == ref_depth);
   } else {
-    assert(tree.root()->depth() < 10);
+    assert(tree.root()->depth() < 100);
   }
 
   assert(tree.root()->num_items() == points.size());
@@ -260,6 +262,7 @@ void test_balanced_tree(
   // Search.
 
   // Run fuzzy sphere search.
+  std::cout << std::endl;
   std::cout << "* testing fuzzy search ... " << std::endl;
 
   const auto radius = 2;
@@ -315,9 +318,9 @@ void test_balanced_tree(
     using PLY_Color_map    = CGAL::Second_of_pair_property_map<Point_with_color>;
     using Point_with_index = std::pair<Point_3, std::size_t>;
 
-    std::ofstream outfile("leaves-distribution.ply");
+    std::ofstream outfile("1-leaves.ply");
     std::vector<Point_with_index> pwi;
-    tree.print(std::back_inserter(pwi));
+    tree.print_leaves(std::back_inserter(pwi));
     CGAL_assertion(pwi.size() > 0);
 
     std::vector<Point_with_color> pwc;

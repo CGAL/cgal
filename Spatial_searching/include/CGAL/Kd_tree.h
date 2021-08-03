@@ -586,9 +586,9 @@ public:
   }
 
   template<typename OutputIterator>
-  OutputIterator print(OutputIterator out) const
+  OutputIterator print_leaves(OutputIterator out) const
   {
-    return tree_root->print(out);
+    return tree_root->print_leaves(out);
   }
 
 private:

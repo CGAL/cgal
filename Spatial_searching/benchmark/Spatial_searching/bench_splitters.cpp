@@ -237,9 +237,9 @@ std::pair<double, double> bench_splitter(
       using PLY_Color_map = CGAL::Second_of_pair_property_map<Point_with_color>;
       using Point_with_index = std::pair<Point_3, std::size_t>;
 
-      std::ofstream outfile("5-leaves-distribution.ply");
+      std::ofstream outfile("5-leaves.ply");
       std::vector<Point_with_index> pwi;
-      tree.print(std::back_inserter(pwi));
+      tree.print_leaves(std::back_inserter(pwi));
       CGAL_assertion(pwi.size() > 0);
 
       std::vector<Point_with_color> pwc;
