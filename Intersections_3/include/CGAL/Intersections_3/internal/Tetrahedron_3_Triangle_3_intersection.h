@@ -134,8 +134,8 @@ build_intersection(const typename K::Tetrahedron_3& input_tetrahedron,
   //
   // Given an arbitrary segment, the code below sorts the other segments and the points
   // in a ccw order. Using a vector because the number of segments and points is bounded
-  // (max 4 segments and max 2 points) so the linear insertion is a little ugly,
-  // but it's not a big cost.
+  // (max 4 segments and max 2 points) so even if the linear insertion is a little ugly,
+  // it is not expensive anyway.
   //
   // Example:
   /*
@@ -153,9 +153,7 @@ build_intersection(const typename K::Tetrahedron_3& input_tetrahedron,
   // output will be 's0 s2 p0 s1'
 
   Segment_3& ref_s = segments.front();
-  const Point_3& ref_sp = ref_s.source();
-  const Point_3& ref_tp = ref_s.target();
-  Point_3 ref_z = ref_sp + input_triangle_normal;
+  Point_3 ref_z = ref_s.source() + input_triangle_normal;
 
   // The reference segment should be such that all other intersection parts are
   // on the positive side of the plane described by the normal of the triangle and ref_s
@@ -164,11 +162,11 @@ build_intersection(const typename K::Tetrahedron_3& input_tetrahedron,
   {
     const Segment_3& other = *slit;
 
-    if(k.orientation_3_object()(ref_sp, ref_z, ref_tp, other.source()) == CGAL::NEGATIVE ||
-       k.orientation_3_object()(ref_sp, ref_z, ref_tp, other.target()) == CGAL::NEGATIVE)
+    if(k.orientation_3_object()(ref_s.source(), ref_z, ref_s.target(), other.source()) == CGAL::NEGATIVE ||
+       k.orientation_3_object()(ref_s.source(), ref_z, ref_s.target(), other.target()) == CGAL::NEGATIVE)
     {
       ref_s = ref_s.opposite();
-      ref_z = ref_sp + input_triangle_normal;
+      ref_z = ref_s.source() + input_triangle_normal;
       swapped = true;
       break;
     }
@@ -179,15 +177,18 @@ build_intersection(const typename K::Tetrahedron_3& input_tetrahedron,
     for(PCI plit = points.begin(); plit != points.end(); ++plit)
     {
       const Point_3& other = *plit;
-      if(k.orientation_3_object()(ref_sp, ref_z, ref_tp, other) == CGAL::NEGATIVE)
+      if(k.orientation_3_object()(ref_s.source(), ref_z, ref_s.target(), other) == CGAL::NEGATIVE)
       {
         swapped = true;
         ref_s = ref_s.opposite();
-        ref_z = ref_sp + input_triangle_normal;
+        ref_z = ref_s.source() + input_triangle_normal;
         break;
       }
     }
   }
+
+  const Point_3& ref_sp = ref_s.source();
+  const Point_3& ref_tp = ref_s.target();
 
   // Now, order the other parts of the intersection
   std::list<boost::variant<SCI, PCI> > res_elements; // iterators to the points/segments
@@ -197,18 +198,16 @@ build_intersection(const typename K::Tetrahedron_3& input_tetrahedron,
   {
     // first, check if the segment is well oriented, meaning its source comes before its target (ccwly)
     Segment_3& curr_s = *slit;
-    const Point_3& sp = curr_s.source();
-    const Point_3& tp = curr_s.target();
 
-    if(sp == ref_sp || tp == ref_tp) // consecutive segments must have consistent orientation
+    if(curr_s.source() == ref_sp || curr_s.target() == ref_tp) // consecutive segments must have consistent orientation
     {
       curr_s = curr_s.opposite();
     }
-    else if(sp == ref_tp || tp == ref_sp)
+    else if(curr_s.source() == ref_tp || curr_s.target() == ref_sp)
     {
       // nothing to do here as we know that sp&tp are on the positive side of (normal, ref_s)
     }
-    else if(first_comes_first_pt(ref_sp, ref_z, tp, sp, k))
+    else if(first_comes_first_pt(ref_sp, ref_z, curr_s.target(), curr_s.source(), k))
     {
       curr_s = curr_s.opposite();
     }
@@ -217,7 +216,7 @@ build_intersection(const typename K::Tetrahedron_3& input_tetrahedron,
     for(auto rit = std::next(res_elements.begin()); ; ++rit)
     {
       // always pick the current segment's source to ensure ref_source != ref_other
-      if(rit == res_elements.end() || first_comes_first(ref_sp, ref_z, sp, *rit, k))
+      if(rit == res_elements.end() || first_comes_first(ref_sp, ref_z, curr_s.source(), *rit, k))
       {
         res_elements.insert(rit, slit);
         break;
@@ -227,10 +226,9 @@ build_intersection(const typename K::Tetrahedron_3& input_tetrahedron,
 
   for(PCI plit = points.begin(); plit != points.end(); ++plit)
   {
-    // first, check if the segment is well oriented, meaning its source comes before its target (ccwly)
     const Point_3& curr_p = *plit;
 
-    // Find where the current point fit in the boundary of the polygon intersection
+    // Find where the current point fits in the boundary of the polygon intersection
     for(auto rit = std::next(res_elements.begin()); ; ++rit)
     {
       if(rit == res_elements.end() || first_comes_first(ref_sp, ref_z, curr_p, *rit, k))
