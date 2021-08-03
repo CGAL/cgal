@@ -54,27 +54,28 @@ bool invert_matrix_4(const Matrix& m, Matrix& im)
       - m(0, 3) * ( m(1, 0) * A1223 - m(1, 1) * A0223 + m(1, 2) * A0123 );
   det = 1 / det;
 
-  if (det == 0)
+  if (det == 0.0)
   {
     return false;
   }
 
-  // we never actually use these values, so might as well not calculate them
+  // we never actually use values other than those in the third column,
+  // so might as well not calculate them
   //im(0, 0) = det *   ( m(1, 1) * A2323 - m(1, 2) * A1323 + m(1, 3) * A1223 );
   //im(0, 1) = det * - ( m(0, 1) * A2323 - m(0, 2) * A1323 + m(0, 3) * A1223 );
   //im(0, 2) = det *   ( m(0, 1) * A2313 - m(0, 2) * A1313 + m(0, 3) * A1213 );
-  //im(0, 3) = det * - ( m(0, 1) * A2312 - m(0, 2) * A1312 + m(0, 3) * A1212 );
+  im(0, 3) = det * - ( m(0, 1) * A2312 - m(0, 2) * A1312 + m(0, 3) * A1212 );
   //im(1, 0) = det * - ( m(1, 0) * A2323 - m(1, 2) * A0323 + m(1, 3) * A0223 );
   //im(1, 1) = det *   ( m(0, 0) * A2323 - m(0, 2) * A0323 + m(0, 3) * A0223 );
   //im(1, 2) = det * - ( m(0, 0) * A2313 - m(0, 2) * A0313 + m(0, 3) * A0213 );
-  //im(1, 3) = det *   ( m(0, 0) * A2312 - m(0, 2) * A0312 + m(0, 3) * A0212 );
+  im(1, 3) = det *   ( m(0, 0) * A2312 - m(0, 2) * A0312 + m(0, 3) * A0212 );
   //im(2, 0) = det *   ( m(1, 0) * A1323 - m(1, 1) * A0323 + m(1, 3) * A0123 );
   //im(2, 1) = det * - ( m(0, 0) * A1323 - m(0, 1) * A0323 + m(0, 3) * A0123 );
   //im(2, 2) = det *   ( m(0, 0) * A1313 - m(0, 1) * A0313 + m(0, 3) * A0113 );
-  //im(2, 3) = det * - ( m(0, 0) * A1312 - m(0, 1) * A0312 + m(0, 3) * A0112 );
-  im(3, 0) = det * - ( m(1, 0) * A1223 - m(1, 1) * A0223 + m(1, 2) * A0123 );
-  im(3, 1) = det *   ( m(0, 0) * A1223 - m(0, 1) * A0223 + m(0, 2) * A0123 );
-  im(3, 2) = det * - ( m(0, 0) * A1213 - m(0, 1) * A0213 + m(0, 2) * A0113 );
+  im(2, 3) = det * - ( m(0, 0) * A1312 - m(0, 1) * A0312 + m(0, 3) * A0112 );
+  //im(3, 0) = det * - ( m(1, 0) * A1223 - m(1, 1) * A0223 + m(1, 2) * A0123 );
+  //im(3, 1) = det *   ( m(0, 0) * A1223 - m(0, 1) * A0223 + m(0, 2) * A0123 );
+  //im(3, 2) = det * - ( m(0, 0) * A1213 - m(0, 1) * A0213 + m(0, 2) * A0113 );
   im(3, 3) = det *   ( m(0, 0) * A1212 - m(0, 1) * A0212 + m(0, 2) * A0112 );
 
   return true;
@@ -167,10 +168,10 @@ Mat_4<GeomTraits> construct_classic_plane_quadric_from_normal(
   auto construct_vector = gt.construct_vector_3_object();
 
   // negative dot product between the normal and the position vector
-  const FT d = - dot_product(normal, construct_vector(ORIGIN, point));
+  const FT d = -dot_product(normal, construct_vector(ORIGIN, point));
 
   // row vector given by d appended to the normal
-  const Eigen::Matrix<FT, 1, 4> row(normal.x(), normal.y(), normal.z(), d);
+  const Eigen::Matrix<FT, 1, 4> row (normal.x(), normal.y(), normal.z(), d);
 
   // outer product
   return row.transpose() * row;
@@ -426,12 +427,13 @@ Mat_4<GeomTraits> construct_prob_triangle_quadric_from_face(
 template<typename GeomTraits>
 Col_4<GeomTraits> construct_optimal_point_invertible(const Mat_4<GeomTraits>& quadric)
 {
-  const Mat_4<GeomTraits> mat = unit_last_row<GeomTraits>(quadric);
-  Mat_4<GeomTraits> inverse;
+  Mat_4<GeomTraits> x;
+  x << quadric.block(0, 0, 3, 4), 0, 0, 0, 1;
 
-  invert_matrix_4(mat, inverse);
+  Col_4<GeomTraits> opt_pt;
 
-  return inverse.col(3);
+  opt_pt = x.inverse().col(3); // == X.inverse() * (0 0 0 1)
+  return opt_pt;
 }
 
 // TODO change to return a three dimensional vector, also adjust for this in policy_base
@@ -443,21 +445,21 @@ Col_4<GeomTraits> construct_optimal_point_singular(
     const Col_4<GeomTraits>& p1) 
 {
   typedef typename GeomTraits::FT FT;
-  const Mat_4<GeomTraits> mat = unit_last_row<GeomTraits>(quadric);
-
-  Mat_4<GeomTraits> inverse;
-
+  
   // in this case, the matrix mat may no be invertible,
   // so we save the result to check
-  bool invertible = invert_matrix_4(mat, inverse);
+  Mat_4<GeomTraits> mat;
+  mat << quadric.block(0, 0, 3, 4), 0, 0, 0, 1;
 
+  Mat_4<GeomTraits> inverse;
+  bool invertible = invert_matrix_4(mat, inverse);
+  
   if (invertible)
   {
     return inverse.col(3);
   }
   else 
   {
-    // not invertible
     Col_4<GeomTraits> opt_pt;
 
     const Col_4<GeomTraits> p1mp0 = p1 - p0;
