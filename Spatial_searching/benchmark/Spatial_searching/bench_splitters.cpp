@@ -496,7 +496,7 @@ void user_manual_bench(
 
   std::vector< std::vector<double> > out;
   if (!verbose) {
-    std::cout << "k | ";
+    std::cout << "| k | ";
     std::cout << "bucket size | ";
     std::cout << "create points | ";
     std::cout << "create queris | ";
@@ -505,8 +505,9 @@ void user_manual_bench(
     std::cout << "surf/rndm avg build | ";
     std::cout << "surf/rndm avg search | ";
     std::cout << "rndm/rndm avg build | ";
-    std::cout << "rndm/rndm avg search";
+    std::cout << "rndm/rndm avg search |";
     std::cout << std::endl;
+    std::cout << "| -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |" << std::endl;
   }
 
   out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter>(filename, verbose, 0, num_iters, 10, 10));
@@ -518,7 +519,8 @@ void user_manual_bench(
 
   if (!verbose) {
     for (std::size_t k = 0; k < out.size(); ++k) {
-      for (std::size_t i = 0; i < out[k].size(); ++i) std::cout << out[k][i] << " ";
+      std::cout << "| ";
+      for (std::size_t i = 0; i < out[k].size(); ++i) std::cout << out[k][i] << " | ";
       std::cout << std::endl;
     }
     std::cout << std::endl;
@@ -542,7 +544,7 @@ void translated_bench(
 
   std::vector< std::vector<double> > out;
   if (!verbose) {
-    std::cout << "k | ";
+    std::cout << "| k | ";
     std::cout << "bucket size | ";
     std::cout << "create points | ";
     std::cout << "create queris | ";
@@ -551,8 +553,9 @@ void translated_bench(
     std::cout << "surf/trnl avg build | ";
     std::cout << "surf/trnl avg search | ";
     std::cout << "trnl/trnl avg build | ";
-    std::cout << "trnl/trnl avg search";
+    std::cout << "trnl/trnl avg search |";
     std::cout << std::endl;
+    std::cout << "| -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |" << std::endl;
   }
 
   out.push_back(bench_translated<Kernel, Traits, Splitter>(filename, verbose, 0.05, num_iters, 10, 10));
@@ -564,7 +567,8 @@ void translated_bench(
 
   if (!verbose) {
     for (std::size_t k = 0; k < out.size(); ++k) {
-      for (std::size_t i = 0; i < out[k].size(); ++i) std::cout << out[k][i] << " ";
+      std::cout << "| ";
+      for (std::size_t i = 0; i < out[k].size(); ++i) std::cout << out[k][i] << " | ";
       std::cout << std::endl;
     }
     std::cout << std::endl;
@@ -574,7 +578,10 @@ void translated_bench(
 int main(int argc, char* argv[]) {
 
   // Parameters:
+  // std::cout.precision(3);
+  // std::cout.setf(std::ios::fixed, std::ios::floatfield);
   std::cout.precision(20);
+
   const bool verbose = false; // should we export data
   const std::string filename = (argc > 1 ? argv[1] : "data/sphere.xyz"); // input file
   const std::size_t num_iters = 1; // number of iterations to get average timing
@@ -582,14 +589,14 @@ int main(int argc, char* argv[]) {
   user_manual_bench<SCD, SCD_traits, CGAL::Balanced_splitter<SCD_traits> >(
     filename, verbose, num_iters);
 
-  // user_manual_bench<SCD, SCD_traits, CGAL::Sliding_midpoint<SCD_traits> >(
-  //   filename, verbose, num_iters);
+  user_manual_bench<SCD, SCD_traits, CGAL::Sliding_midpoint<SCD_traits> >(
+    filename, verbose, num_iters);
 
   translated_bench<SCD, SCD_traits, CGAL::Balanced_splitter<SCD_traits> >(
     filename, verbose, num_iters);
 
-  // translated_bench<SCD, SCD_traits, CGAL::Sliding_midpoint<SCD_traits> >(
-  //   filename, verbose, num_iters);
+  translated_bench<SCD, SCD_traits, CGAL::Sliding_midpoint<SCD_traits> >(
+    filename, verbose, num_iters);
 
   return EXIT_SUCCESS;
 }
