@@ -54,6 +54,7 @@ defined for convex simplicial polytopes.}
 - `wachspress_coordinates_3()`
 - `mean_value_coordinates_3()`
 - `discrete_harmonic_coordinates_3()`
+- `boundary_coordinates_3()`
 */
 
 } /* namespace Barycentric_coordinates */

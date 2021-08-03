@@ -9,7 +9,7 @@ namespace Barycentric_coordinates {
 \authors Antonio Gomes, Dmitry Anisimov
 
 
-\section gbc_introduction Introduction
+\section gbc_3_introduction Introduction
 
 Barycentric coordinates are an important tool in computer graphics and geometric modeling. 
 Originally, these coordinates were used to represent a given point with respect to a simplex but have been later
@@ -22,7 +22,7 @@ In particular, this package includes an implementation of Wachspress, discrete h
  one extra function to calculate barycentric coordinates with respect to tetrahedrons.
 
 
-\section gbc_interface Software Design
+\section gbc_3_interface Software Design
 
 Wachspress, discrete harmonic, and mean value coordinates are all generalized barycentric coordinates 
 that can be computed analytically. In this implementation, we restrict our polyhedra to convex ones 
@@ -44,7 +44,7 @@ which are required for the computation. All models of Kernel can be used. A poly
 a model of the concept FaceListGraph with a property map that maps a vertex from the polyhedron to CGAL::Point_3.
 
 
-\section gbc_examples Examples
+\section gbc_3_examples Examples
 
 In order to facilitate the process of learning this package, we provide various examples
 with a basic usage of different barycentric components.
@@ -59,28 +59,32 @@ at the boundary of the tetrahedron.
 \anchor tetra_coord_example
 \cgalExample{Barycentric_coordinates_3/tetrahedron_coordinates.cpp}
 
-\subsection wp_example Wachspress Coordinates
+\subsection wp_3_example Wachspress Coordinates
 
 In this example, we generate 250 random points inside a unitary sphere, 
 centered at the origin, then we take the convex hull of this set of points 
 and use this as our polyhedron. Finally, we calculate Wachspress coordinates 
 for all of these 250 points.
-\anchor wp_coord_example
+\anchor wp_3_coord_example
 \cgalExample{Barycentric_coordinates_3/wachspress_coordinates.cpp}
 
-\subsection dh_example Discrete Harmonic Coordinates
+\subsection dh_3_example Discrete Harmonic Coordinates
 
 This example is very similar to the one used with tetrahedron coordinates. 
 We started with a regular icosahedron and for points inside, outside and 
 at the boundary, we calculate discrete harmonic coordinates. In this example, 
 we use the fast with edge cases algorithm because it treats points very close 
 to the boundaries.
-\anchor dh_coord_example
+\anchor dh_3_coord_example
 \cgalExample{Barycentric_coordinates_3/discrete_harmonic_coordinates.cpp}
 
-\subsection mv_example Mean Value Coordinates
+\subsection mv_3_example Mean Value Coordinates
 
-\anchor mv_coord_example
+This example shows how to compute mean value coordinates for a set of points in a 
+star-shaped polyhedron. We note that this type of coordinate is well-defined for a 
+concave polyhedron and it may yield negative coordinate values for points outside 
+the polyhedron's kernel. 
+\anchor mv_3_coord_example
 \cgalExample{Barycentric_coordinates_3/mean_value_coordinates.cpp}
 
 \subsection shape_deform_example Shape deformation
@@ -91,16 +95,18 @@ sphere inside a cube cage, then we calculate the barycentric
 coordinate of each vertex with respect to the cube cage. After deforming 
 the cage, we calculate the linear combination of the points to get the 
 deformed sphere vertices.
-\anchor shape_deform_example
+\anchor shape_deform_example_3
 \cgalExample{Barycentric_coordinates_3/shape_deformation.cpp}
 
-\section gbc_degeneracies Edge Cases
+\section gbc_3_degeneracies Edge Cases
 
 The precision of each coordinate depends on the used `Kernel`. If an inexact kernel 
 is used and the user is not sure if the points are near the boundaries, `FAST_WITH_EDGE_CASES` 
 algorithm should be used.
+Implementation details are describe in \cgalCite{cgal:bc:f-wmvc-14} for Wachspress and mean value 
+coordinates, and in \cgalCite{cgal:bc:jlw-ggcccsp-07} for discrete harmonic coordinates.
 
-\section gbc_performance Performance
+\section gbc_3_performance Performance
 
 Here are the results of the benchmark done for each coordinate. A total of 1000000 
 points were sampled regularly inside each shape.
@@ -134,12 +140,12 @@ points were sampled regularly inside each shape.
 </table>
 
 
-\section gbc_history History
+\section gbc_3_history History
 
 This package was introduced during GSoC 2021 and implemented by Antonio Gomes 
 under the supervision of Dmitry Anisimov.
 
-\section gbc_acknowledgments Acknowledgments
+\section gbc_3_acknowledgments Acknowledgments
 
 
 */

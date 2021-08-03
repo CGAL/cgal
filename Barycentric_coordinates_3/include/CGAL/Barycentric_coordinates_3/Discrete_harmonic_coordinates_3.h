@@ -374,8 +374,8 @@ namespace Barycentric_coordinates {
     \tparam OutIterator
     a model of `OutputIterator` that accepts values of type `GeomTraits::FT`
 
-    \param surface_mesh
-      an instance of `PolygonMesh`, which must be a convex simplicial polyhedron
+    \param polygon_mesh
+    an instance of `PolygonMesh`, which must be a convex simplicial polyhedron
 
     \param query
     a query point
@@ -399,7 +399,7 @@ namespace Barycentric_coordinates {
   typename PolygonMesh,
   typename OutIterator>
   OutIterator discrete_harmonic_coordinates_3(
-    const PolygonMesh& surface_mesh,
+    const PolygonMesh& polygon_mesh,
     const Point_3& query,
     OutIterator c_begin,
     const Computation_policy_3 policy =
@@ -407,7 +407,7 @@ namespace Barycentric_coordinates {
 
     using Geom_Traits = typename Kernel_traits<Point_3>::Kernel;
 
-    Discrete_harmonic_coordinates_3<PolygonMesh, Geom_Traits> discrete_harmonic(surface_mesh, policy);
+    Discrete_harmonic_coordinates_3<PolygonMesh, Geom_Traits> discrete_harmonic(polygon_mesh, policy);
     return discrete_harmonic(query, c_begin);
   }
 

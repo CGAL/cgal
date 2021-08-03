@@ -1,5 +1,3 @@
-#define PHI 1.6180339887498948482
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
@@ -30,9 +28,9 @@ int main(){
 
   std::vector<FT> coords;
   std::vector<Point_3> queries{
-    Point_3(FT(1)/FT(2), FT(1)/FT(2), FT(1.0)), Point_3(FT(1)/FT(2), FT(1)/FT(2), FT(2.0)), // Only points in the kernel
-    Point_3(FT(4)/FT(3), FT(1)/FT(3), FT(1.0)), Point_3(FT(4)/FT(3), FT(1)/FT(3), FT(2.0)),
-    Point_3(FT(1)/FT(3), FT(4)/FT(3), FT(1.0)), Point_3(FT(1)/FT(3), FT(4)/FT(3), FT(2.0))};
+    Point_3(FT(1)/FT(2), FT(1)/FT(2), FT(1.0)), Point_3(FT(1)/FT(2), FT(1)/FT(2), FT(2)), // Only points in the kernel
+    Point_3(FT(4)/FT(3), FT(1)/FT(3), FT(1.0)), Point_3(FT(4)/FT(3), FT(1)/FT(3), FT(2)),
+    Point_3(FT(1)/FT(3), FT(4)/FT(3), FT(1.0)), Point_3(FT(1)/FT(3), FT(4)/FT(3), FT(2))};
 
   std::cout << std::endl << "Mean value coordinates : " << std::endl << std::endl;
 

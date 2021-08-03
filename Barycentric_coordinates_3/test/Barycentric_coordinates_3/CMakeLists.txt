@@ -20,6 +20,7 @@ if(CGAL_FOUND)
   create_single_source_cgal_program("test_mv_weights.cpp")
   create_single_source_cgal_program("test_edge_cases.cpp")
   create_single_source_cgal_program("test_containers.cpp")
+  create_single_source_cgal_program("test_boundary_coordinates.cpp")
 
 else()
   message(WARNING "This program requires the CGAL library, and will not be compiled.")

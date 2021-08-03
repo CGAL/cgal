@@ -362,9 +362,8 @@ namespace Barycentric_coordinates {
     \tparam OutIterator
     a model of `OutputIterator` that accepts values of type `GeomTraits::FT`
 
-    \param surface_mesh
-      an instance of `PolygonMesh`, which must be a convex simplicial polyhedron
-
+    \param polygon_mesh
+    an instance of `PolygonMesh`, which must be a convex simplicial polyhedron
 
     \param query
     a query point
@@ -388,7 +387,7 @@ namespace Barycentric_coordinates {
   typename PolygonMesh,
   typename OutIterator>
   OutIterator wachspress_coordinates_3(
-    const PolygonMesh& surface_mesh,
+    const PolygonMesh& polygon_mesh,
     const Point_3& query,
     OutIterator c_begin,
     const Computation_policy_3 policy =
@@ -396,7 +395,7 @@ namespace Barycentric_coordinates {
 
     using Geom_Traits = typename Kernel_traits<Point_3>::Kernel;
 
-    Wachspress_coordinates_3<PolygonMesh, Geom_Traits> wachspress(surface_mesh, policy);
+    Wachspress_coordinates_3<PolygonMesh, Geom_Traits> wachspress(polygon_mesh, policy);
     return wachspress(query, c_begin);
   }
 

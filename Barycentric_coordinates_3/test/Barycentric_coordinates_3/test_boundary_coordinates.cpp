@@ -3,7 +3,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Barycentric_coordinates_3/tetrahedron_coordinates.h>
+#include <CGAL/Barycentric_coordinates_3/boundary_coordinates_3.h>
 
 #include "include/utils.h"
 
@@ -12,7 +12,7 @@ using SCKER = CGAL::Simple_cartesian<double>;
 using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
 
-template <typename Kernel>
+template<typename Kernel>
 void test_overloads(){
 
   using FT = typename Kernel::FT;
@@ -25,30 +25,31 @@ void test_overloads(){
   std::vector<Point_3> sample_points;
   std::vector<FT> tetra_coords(4);
 
-  //Interior and surface points
+  // 500 interior points + 500 surface points
   std::tie(tetrahedron, vertices) = tests::get_irregular_tetrahedron<Kernel, Mesh>();
   tests::random_points_tetrahedron<Kernel>(vertices, std::back_inserter(sample_points), 1000);
 
-  //Add vertices
-  for(auto& v : vertices)
-    sample_points.push_back(v);
-
-  //Exterior + interior points
-  std::vector<Point_3> ext_vertices = {Point_3(0.0, 0.0, 0.0), Point_3(5.0, 0.0, 0.0),
-                                       Point_3(0.0, 5.0, 0.0), Point_3(0.0, 0.0, 5.0)};
-  tests::random_points_tetrahedron<Kernel>(ext_vertices, std::back_inserter(sample_points), 1000);
-
+  std::size_t num_samples = 0;
   for(auto& point : sample_points){
 
     const FT x = point.x(), y = point.y(), z = point.z();
     const Point_3 query(x, y, z);
-    CGAL::Barycentric_coordinates::tetrahedron_coordinates(vertices[0], vertices[1],
-         vertices[2], vertices[3], query, tetra_coords.begin());
+    CGAL::Barycentric_coordinates::boundary_coordinates_3(tetrahedron, query, tetra_coords.begin());
 
-    assert(CGAL::abs(1-x-y-z - tetra_coords[0]) == FT(0) &&
-           CGAL::abs(x - tetra_coords[1]) == FT(0) &&
-           CGAL::abs(y - tetra_coords[2]) == FT(0) &&
-           CGAL::abs(z - tetra_coords[3]) == FT(0));
+    if(num_samples < 500){
+      assert(tetra_coords[0] == FT(0) &&
+             tetra_coords[1] == FT(0) &&
+             tetra_coords[2] == FT(0) &&
+             tetra_coords[3] == FT(0));
+    }
+    else{
+      assert(CGAL::abs(1-x-y-z - tetra_coords[0]) == FT(0) &&
+             CGAL::abs(x - tetra_coords[1]) == FT(0) &&
+             CGAL::abs(y - tetra_coords[2]) == FT(0) &&
+             CGAL::abs(z - tetra_coords[3]) == FT(0));
+    }
+
+    num_samples++;
   }
 }
 

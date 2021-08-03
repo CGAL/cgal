@@ -382,8 +382,8 @@ namespace Barycentric_coordinates {
     \tparam OutIterator
     a model of `OutputIterator` that accepts values of type `GeomTraits::FT`
 
-    \param surface_mesh
-      an instance of `PolygonMesh`, which must be a convex simplicial polyhedron
+    \param polygon_mesh
+    an instance of `PolygonMesh`, which must be a convex simplicial polyhedron
 
     \param query
     a query point
@@ -406,7 +406,7 @@ namespace Barycentric_coordinates {
   typename PolygonMesh,
   typename OutIterator>
   OutIterator mean_value_coordinates_3(
-    const PolygonMesh& surface_mesh,
+    const PolygonMesh& polygon_mesh,
     const Point_3& query,
     OutIterator c_begin,
     const Computation_policy_3 policy =
@@ -414,7 +414,7 @@ namespace Barycentric_coordinates {
 
     using Geom_Traits = typename Kernel_traits<Point_3>::Kernel;
 
-    Mean_value_coordinates_3<PolygonMesh, Geom_Traits> mean_value(surface_mesh, policy);
+    Mean_value_coordinates_3<PolygonMesh, Geom_Traits> mean_value(polygon_mesh, policy);
     return mean_value(query, c_begin);
   }
 
