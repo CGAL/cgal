@@ -831,12 +831,15 @@ void test_isocuboid()
              .allow_self_intersections(true));
   PMP::split_connected_components(tm, meshes, params::all_default());
   assert(meshes.size() == 4);
-  //if the order is not deterministc, put the num_vertices in a list and check
-  //if the list does contain all those numbers.
-  assert(vertices(meshes[0]).size() == 22);
-  assert(vertices(meshes[1]).size() == 23);
-  assert(vertices(meshes[2]).size() == 7);
-  assert(vertices(meshes[3]).size() == 4);
+
+  std::set<std::size_t> sizes;
+  for (int i=0; i<4; ++i)
+    sizes.insert(vertices(meshes[i]).size());
+
+  assert(sizes.count(22)==1);
+  assert(sizes.count(23)==1);
+  assert(sizes.count(7)==1);
+  assert(sizes.count(4)==1);
 
   CGAL::clear(tm);
   meshes.clear();
