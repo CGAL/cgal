@@ -10,7 +10,9 @@
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/IO/write_ply_points.h>
 #include <CGAL/Euclidean_distance.h>
 #include <CGAL/Search_traits_2.h>
 #include <CGAL/Search_traits_3.h>
@@ -23,6 +25,26 @@ using CDD   = CGAL::Cartesian_d<double>;
 using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
 using Timer = CGAL::Real_timer;
+
+using Color = std::array<unsigned char, 3>;
+
+// Define how a color should be stored.
+namespace CGAL {
+  template<class F>
+  struct Output_rep< ::Color, F > {
+    const ::Color& c;
+    static const bool is_specialized = true;
+    Output_rep(const ::Color& c) : c(c) { }
+    std::ostream& operator()(std::ostream& out) const {
+      if (IO::is_ascii(out)) {
+        out << int(c[0]) << " " << int(c[1]) << " " << int(c[2]);
+      } else {
+        out.write(reinterpret_cast<const char*>(&c), sizeof(c));
+      }
+      return out;
+    }
+  };
+} // namespace CGAL
 
 template<typename Kernel>
 void run_tests_2d() {
@@ -285,6 +307,44 @@ void test_balanced_tree(
     assert(result[1] == Point_3(2,1,3));
     assert(result[2] == Point_3(2,3,3));
   }
+
+  if (verbose) {
+
+    using Point_with_color = std::pair<Point_3, Color>;
+    using PLY_Point_map    = CGAL::First_of_pair_property_map<Point_with_color>;
+    using PLY_Color_map    = CGAL::Second_of_pair_property_map<Point_with_color>;
+    using Point_with_index = std::pair<Point_3, std::size_t>;
+
+    std::ofstream outfile("leaves-distribution.ply");
+    std::vector<Point_with_index> pwi;
+    tree.print(std::back_inserter(pwi));
+    CGAL_assertion(pwi.size() > 0);
+
+    std::vector<Point_with_color> pwc;
+    pwc.reserve(pwi.size());
+    for (const auto& pair : pwi) {
+      CGAL::Random rand(static_cast<unsigned int>(pair.second));
+      const unsigned char r =
+        static_cast<unsigned char>(64 + rand.get_int(0, 192));
+      const unsigned char g =
+        static_cast<unsigned char>(64 + rand.get_int(0, 192));
+      const unsigned char b =
+        static_cast<unsigned char>(64 + rand.get_int(0, 192));
+      const Color color = CGAL::make_array(r, g, b);
+      pwc.push_back(std::make_pair(pair.first, color));
+    }
+    CGAL_assertion(pwc.size() == pwi.size());
+
+    CGAL::IO::set_ascii_mode(outfile);
+    CGAL::IO::write_PLY_with_properties(
+      outfile, pwc,
+      CGAL::make_ply_point_writer(PLY_Point_map()),
+        std::make_tuple(
+          PLY_Color_map(),
+          CGAL::PLY_property<unsigned char>("red"),
+          CGAL::PLY_property<unsigned char>("green"),
+          CGAL::PLY_property<unsigned char>("blue")));
+  }
 }
 
 int main(int argc, char* argv[]) {
@@ -298,8 +358,10 @@ int main(int argc, char* argv[]) {
   } else {
     // This data set has duplicates.
     test_balanced_tree<EPICK>("data/balanced.xyz", 3, 4, false);
-    // This data set has duplicates.
-    test_balanced_tree<EPICK>("data/failure-tiny.xyz", 8, 82, false);
+    // This data set has duplicates and comes from nurbs.
+    test_balanced_tree<EPICK>("data/failure_with_duplicates.xyz", 8, 82, false);
+    // This data set is the bottleneck for all median splitters.
+    test_balanced_tree<EPICK>("data/bottleneck.xyz", 4, 5, false);
   }
 
   // Run tests.
