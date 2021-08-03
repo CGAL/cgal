@@ -575,7 +575,6 @@ public:
 
   void print(std::ostream& os) const
   {
-    os << std::endl << "--- Tree (graphviz format): " << std::endl << std::endl;
     os << "graph G" << std::endl;
     os << "{" << std::endl << std::endl;
     os << "label=\"Graph G. Num leaves: " << tree_root->num_nodes() << ". ";
