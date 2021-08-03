@@ -161,10 +161,8 @@ namespace Segments {
       std::vector<std::size_t>& neighbors) const {
 
       neighbors.clear();
-      CGAL_precondition(
-        query_index >= 0 && query_index < m_input_range.size());
-      CGAL_precondition(
-        m_groups.size() == m_input_range.size());
+      CGAL_precondition(query_index < m_input_range.size());
+      CGAL_precondition(m_groups.size() == m_input_range.size());
       if (query_index >= m_input_range.size()) return;
       neighbors = m_groups[query_index];
     }
@@ -249,8 +247,7 @@ namespace Segments {
 
       m_delaunay.clear();
       for (const auto seg_index : index_range) {
-        CGAL_assertion(
-          seg_index >= 0 && seg_index < m_input_range.size());
+        CGAL_assertion(seg_index < m_input_range.size());
 
         const auto& segment = get(
           m_segment_map, *(m_input_range.begin() + seg_index));
@@ -268,8 +265,7 @@ namespace Segments {
       vit != m_delaunay.finite_vertices_end(); ++vit) {
 
         const std::size_t seg_index_1 = vit->info();
-        CGAL_assertion(
-          seg_index_1 >= 0 && seg_index_1 < m_input_range.size());
+        CGAL_assertion(seg_index_1 < m_input_range.size());
         auto& neighbors = m_groups[seg_index_1];
         neighbors.clear();
 
@@ -280,8 +276,7 @@ namespace Segments {
           if (!m_delaunay.is_infinite(vc)) {
 
             const std::size_t seg_index_2 = vc->info();
-            CGAL_assertion(
-              seg_index_2 >= 0 && seg_index_2 < m_input_range.size());
+            CGAL_assertion(seg_index_2 < m_input_range.size());
             neighbors.push_back(seg_index_2);
           }
           ++vc;
@@ -314,8 +309,7 @@ namespace Segments {
     const Point_2 get_midpoint(
       const std::size_t seg_index) const {
 
-      CGAL_assertion(
-        seg_index >= 0 && seg_index < m_input_range.size());
+      CGAL_assertion(seg_index < m_input_range.size());
       const auto& segment = get(
         m_segment_map, *(m_input_range.begin() + seg_index));
       const auto& source = segment.source();

@@ -205,8 +205,8 @@ namespace Segments {
       const std::size_t i,
       const std::size_t j) const {
 
-      CGAL_precondition(i >= 0 && i < m_input_range.size());
-      CGAL_precondition(j >= 0 && j < m_input_range.size());
+      CGAL_precondition(i < m_input_range.size());
+      CGAL_precondition(j < m_input_range.size());
       CGAL_assertion(m_wraps.size() == m_input_range.size());
 
       const auto& wrapi = m_wraps[i];
@@ -250,8 +250,7 @@ namespace Segments {
 
         // Get angle.
         const std::size_t seg_index = wrap.index;
-        CGAL_assertion(
-          seg_index >= 0 && seg_index < solution.size());
+        CGAL_assertion(seg_index < solution.size());
         const FT difference = solution[seg_index];
         FT angle_deg = wrap.orientation + difference;
         if (angle_deg < FT(0)) angle_deg += FT(180);
@@ -392,8 +391,7 @@ namespace Segments {
       const IndexRange& index_range) {
 
       for (const auto seg_index : index_range) {
-        CGAL_assertion(
-          seg_index >= 0 && seg_index < m_wraps.size());
+        CGAL_assertion(seg_index < m_wraps.size());
         auto& wrap = m_wraps[seg_index];
 
         const auto& segment = get(m_segment_map,
@@ -407,8 +405,7 @@ namespace Segments {
       const IndexRange& index_range) {
 
       for (const auto seg_index : index_range) {
-        CGAL_assertion(
-          seg_index >= 0 && seg_index < m_wraps.size());
+        CGAL_assertion(seg_index < m_wraps.size());
         auto& wrap = m_wraps[seg_index];
         wrap.is_used = true;
       }

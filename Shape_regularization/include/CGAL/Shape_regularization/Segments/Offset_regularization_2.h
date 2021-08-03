@@ -211,8 +211,8 @@ namespace Segments {
       const std::size_t i,
       const std::size_t j) const {
 
-      CGAL_precondition(i >= 0 && i < m_input_range.size());
-      CGAL_precondition(j >= 0 && j < m_input_range.size());
+      CGAL_precondition(i < m_input_range.size());
+      CGAL_precondition(j < m_input_range.size());
       CGAL_assertion(m_wraps.size() == m_input_range.size());
 
       const auto& wrapi = m_wraps[i];
@@ -256,16 +256,14 @@ namespace Segments {
 
         // Get segment.
         const std::size_t seg_index = wrap.index;
-        CGAL_assertion(
-          seg_index >= 0 && seg_index < m_input_range.size());
+        CGAL_assertion(seg_index < m_input_range.size());
         const auto& segment = get(m_segment_map,
           *(m_input_range.begin() + seg_index));
         const auto& source = segment.source();
         const auto& target = segment.target();
 
         // Get update values.
-        CGAL_assertion(
-          seg_index >= 0 && seg_index < solution.size());
+        CGAL_assertion(seg_index < solution.size());
         const FT difference = solution[seg_index];
         const auto normal =
           internal::perpendicular_vector_2(wrap.direction);
@@ -395,10 +393,9 @@ namespace Segments {
     void update_segment_data(
       const IndexRange& index_range) {
 
-      Point_2 frame_origin; std::size_t count = 0;
+      Point_2 frame_origin(FT(0), FT(0)); std::size_t count = 0;
       for (const auto seg_index : index_range) {
-        CGAL_assertion(
-          seg_index >= 0 && seg_index < m_wraps.size());
+        CGAL_assertion(seg_index < m_wraps.size());
         auto& wrap = m_wraps[seg_index];
 
         const auto& segment =
@@ -415,10 +412,9 @@ namespace Segments {
     void update_wrappers(
       const IndexRange& index_range) {
 
-      Point_2 frame_origin; std::size_t count = 0;
+      Point_2 frame_origin(FT(0), FT(0)); std::size_t count = 0;
       for (const auto seg_index : index_range) {
-        CGAL_assertion(
-          seg_index >= 0 && seg_index < m_wraps.size());
+        CGAL_assertion(seg_index < m_wraps.size());
         auto& wrap = m_wraps[seg_index];
         wrap.is_used = true;
 

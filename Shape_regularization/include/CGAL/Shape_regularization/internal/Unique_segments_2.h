@@ -97,8 +97,7 @@ namespace internal {
       CGAL_assertion(collinear_group.size() > 0);
       if (collinear_group.size() == 1) {
         const std::size_t seg_index = collinear_group[0];
-        CGAL_assertion(
-          seg_index >= 0 && seg_index < m_input_range.size());
+        CGAL_assertion(seg_index < m_input_range.size());
         const auto& first = get(m_segment_map,
           *(m_input_range.begin() + seg_index));
         m_segments.push_back(first);
@@ -116,8 +115,7 @@ namespace internal {
 
       const std::size_t longest =
         find_longest_segment(collinear_group);
-      CGAL_assertion(
-        longest >= 0 && longest < m_input_range.size());
+      CGAL_assertion(longest < m_input_range.size());
       const auto& ref_segment = get(m_segment_map,
         *(m_input_range.begin() + longest));
 
@@ -153,8 +151,7 @@ namespace internal {
 
       FT sum_distance = FT(0);
       for (const std::size_t seg_index : collinear_group) {
-        CGAL_assertion(
-          seg_index >= 0 && seg_index < m_input_range.size());
+        CGAL_assertion(seg_index < m_input_range.size());
         const auto& segment = get(m_segment_map,
           *(m_input_range.begin() + seg_index));
 
@@ -178,8 +175,7 @@ namespace internal {
       std::size_t longest = std::size_t(-1);
 
       for (const std::size_t seg_index : collinear_group) {
-        CGAL_assertion(
-          seg_index >= 0 && seg_index < m_input_range.size());
+        CGAL_assertion(seg_index < m_input_range.size());
         const auto& segment = get(m_segment_map,
           *(m_input_range.begin() + seg_index));
 
@@ -208,8 +204,7 @@ namespace internal {
         const FT weight = weights[i];
 
         const std::size_t seg_index = collinear_group[i];
-        CGAL_assertion(
-          seg_index >= 0 && seg_index < m_input_range.size());
+        CGAL_assertion(seg_index < m_input_range.size());
         const auto& segment = get(m_segment_map,
           *(m_input_range.begin() + seg_index));
 
@@ -237,16 +232,13 @@ namespace internal {
       FT max_proj_value = -max_value;
 
       CGAL_assertion(collinear_group.size() > 0);
-      CGAL_assertion(
-        collinear_group[0] >= 0 &&
-        collinear_group[0] < m_input_range.size());
+      CGAL_assertion(collinear_group[0] < m_input_range.size());
       const auto& first = get(m_segment_map,
         *(m_input_range.begin() + collinear_group[0]));
 
       const Point_2& ref_point = first.source();
       for (const std::size_t seg_index : collinear_group) {
-        CGAL_assertion(
-          seg_index >= 0 && seg_index < m_input_range.size());
+        CGAL_assertion(seg_index < m_input_range.size());
         const auto& segment = get(m_segment_map,
           *(m_input_range.begin() + seg_index));
 

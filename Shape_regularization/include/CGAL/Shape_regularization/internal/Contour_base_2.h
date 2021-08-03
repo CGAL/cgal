@@ -289,22 +289,23 @@ namespace internal {
       std::vector<Segment_wrapper_2>& wraps,
       std::vector<std::size_t>& assigned) const {
 
-      const std::size_t n = wraps.size();
-      CGAL_assertion(assigned.size() == n);
-      for (std::size_t i = 0; i < n; ++i) {
+      CGAL_assertion(assigned.size() == wraps.size());
+      const int n = static_cast<int>(wraps.size());
+
+      for (int i = 0; i < n; ++i) {
         auto& wrap = wraps[i];
         if (wrap.is_used) continue;
 
-        std::size_t im = std::size_t(-1);
+        int im = -1;
         if (i > 0) im = i - 1;
-        std::size_t ip = std::size_t(-1);
+        int ip = -1;
         if (i < n - 1) ip = i + 1;
 
         bool stop = false;
-        std::size_t max_count = 0;
+        int max_count = 0;
         do {
 
-          if (im != std::size_t(-1) && wraps[im].is_used) {
+          if (im != -1 && wraps[im].is_used) {
             CGAL_assertion(i >= 0 && i < n);
             CGAL_assertion(im >= 0 && im < n);
             assigned[i] = assigned[im];
@@ -312,7 +313,7 @@ namespace internal {
             break;
           }
 
-          if (ip != std::size_t(-1) && wraps[ip].is_used) {
+          if (ip != -1 && wraps[ip].is_used) {
             CGAL_assertion(i >= 0 && i < n);
             CGAL_assertion(ip >= 0 && ip < n);
             assigned[i] = assigned[ip];
@@ -321,10 +322,10 @@ namespace internal {
           }
 
           if (stop) break;
-          if (im != std::size_t(-1) && im > 0) {
+          if (im != -1 && im > 0) {
             im = im - 1;
           }
-          if (ip != std::size_t(-1) && ip < n - 1) {
+          if (ip != -1 && ip < n - 1) {
             ip = ip + 1;
           }
 
@@ -346,15 +347,15 @@ namespace internal {
       std::vector<Segment_wrapper_2>& wraps,
       std::vector<std::size_t>& assigned) const {
 
-      const std::size_t n = wraps.size();
+      CGAL_assertion(assigned.size() == wraps.size());
+      const int n = static_cast<int>(wraps.size());
       std::vector<std::size_t> clean;
       clean.reserve(n);
 
-      CGAL_assertion(assigned.size() == n);
-      for (std::size_t i = 0; i < n; ++i) {
+      for (int i = 0; i < n; ++i) {
 
         if (i == 0) {
-          const std::size_t ip = 1;
+          const int ip = 1;
           CGAL_assertion(ip >= 0 && ip < n);
           const std::size_t di = assigned[i];
           const std::size_t dp = assigned[ip];
@@ -367,7 +368,7 @@ namespace internal {
         }
 
         if (i == n - 1) {
-          const std::size_t im = n - 2;
+          const int im = n - 2;
           CGAL_assertion(im >= 0 && im < n);
           const std::size_t dm = assigned[im];
           const std::size_t di = assigned[i];
@@ -379,8 +380,8 @@ namespace internal {
           continue;
         }
 
-        const std::size_t im = i - 1;
-        const std::size_t ip = i + 1;
+        const int im = i - 1;
+        const int ip = i + 1;
         CGAL_assertion(im >= 0 && im < n);
         const std::size_t dm = assigned[im];
         CGAL_assertion(i >= 0 && i < n);
@@ -462,19 +463,14 @@ namespace internal {
 
       CGAL_assertion(assigned.size() > 0);
       CGAL_assertion(bounds.size() == directions.size());
-      CGAL_assertion(
-        query_index >= 0 &&
-        query_index < assigned.size());
+      CGAL_assertion(query_index < assigned.size());
 
       const std::size_t direction_index = assigned[query_index];
       if (direction_index == std::size_t(-1)) {
         return;
       }
 
-      CGAL_assertion(
-        direction_index >= 0 &&
-        direction_index < directions.size());
-
+      CGAL_assertion(direction_index < directions.size());
       const auto& ref_direction = directions[direction_index];
       const auto& ref_bounds = bounds[direction_index];
 
