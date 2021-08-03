@@ -160,10 +160,6 @@ public:
                        Tr(p(-2,0,-2), P(0,0,5), p(10,0,0)),
                        S(p(0,0,1), p(1,0,1)));
 
-    // sharing a point on edge
-    check_intersection(tet, Tr(P(-2, 1, 0.5), P(-2, 0.75, 1.6), P(2, 0, 0.5)),
-                       P(0, 0.5, 0.5));
-
     // tr inside a face
     check_intersection(tet, Tr(P(0,0.9,0), P(0,0.1,0), P(0,0,0.9)),
                        Tr(P(0,0.9,0), P(0,0.1,0), P(0,0,0.9)));
@@ -214,6 +210,10 @@ public:
 
     if(this->has_exact_c)
     {
+      // sharing a point on edge
+      check_intersection(tet, Tr(P(-2, 1, 0.5), P(-2, 0.75, 1.6), P(2, 0, 0.5)),
+                         P(0, 0.5, 0.5));
+
       Tr tr(p(-2,2,0), p(2,2,0), P(0.25,0.25,0));
       auto res = CGAL::intersection(tet, tr);
       const Poly* poly = boost::get<Poly>(&*res);
@@ -266,19 +266,42 @@ public:
       os.insert(tet.bounded_side(tr1));
       os.insert(tet.bounded_side(tr2));
 
+      // conservative
       if(os.size() != 1 || (*os.begin() != CGAL::ON_UNBOUNDED_SIDE))
       {
         check_do_intersect(tet, tr);
 
+        if(!this->has_exact_c)
+          continue;
+
         auto res = CGAL::intersection(tet, tr);
-        if(const Poly* poly = boost::get<Poly>(&*res))
+
+        std::vector<P> points;
+        if(const P* pt = boost::get<P>(&*res))
         {
-          for(const P& pt : *poly) {
-            assert((tet.has_on_bounded_side(pt) || tet.has_on_boundary(pt)) && tr.has_on(pt));
-          }
+          points.push_back(*pt);
+        }
+        else if(const S* s = boost::get<S>(&*res))
+        {
+          points.push_back(s->source());
+          points.push_back(s->target());
+        }
+        else if(const Tr* itr = boost::get<Tr>(&*res))
+        {
+          points.push_back(itr->operator[](0));
+          points.push_back(itr->operator[](1));
+          points.push_back(itr->operator[](2));
+        }
+        else if(const Poly* poly = boost::get<Poly>(&*res))
+        {
+          points = *poly;
 
 //          assert(CGAL::is_simple_2(poly->begin(), poly->end(),
 //                                   CGAL::Projection_traits_3(tr.supporting_plane().orthogonal_vector())));
+        }
+
+        for(const P& pt : points) {
+          assert(!tet.has_on_unbounded_side(pt) && tr.has_on(pt));
         }
       }
     }

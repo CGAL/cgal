@@ -203,9 +203,7 @@ public:
   {
     check_do_intersect(o1, o2);
 
-    std::cout << "1 --------------" << std::endl;
     const auto res12 = CGAL::intersection(o1, o2);
-    std::cout << "2 --------------" << std::endl;
     const auto res21 = CGAL::intersection(o2, o1);
 
     Res tmp;
