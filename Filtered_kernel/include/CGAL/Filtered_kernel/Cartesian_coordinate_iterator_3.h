@@ -42,8 +42,6 @@ public:
   typedef std::random_access_iterator_tag iterator_category;
   typedef FT                              value_type;
   typedef int                             difference_type;
-  typedef const value_type&               reference;
-  typedef const value_type*               pointer;
 
   Cartesian_coordinate_iterator_3()
     : var((const P*) nullptr), index(0) {}
