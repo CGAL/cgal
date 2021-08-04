@@ -324,7 +324,7 @@ public:
   /// @{
 
   /*!
-    \brief converts a deprecated configuration (in compressed ASCII
+    \brief converts a deprecated configuration (in compressed \ascii
     format) to a new configuration (in binary format).
 
     The input file should be a GZIP container written by the

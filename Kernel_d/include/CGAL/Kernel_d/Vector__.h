@@ -444,7 +444,7 @@ std::istream& operator>>(std::istream& is, Vector_<NT_,AL_>& v)
       }
       break;
     default:
-      std::cerr<<"\nStream must be in ascii or binary mode"<<std::endl;
+      std::cerr<<"\nStream must be in ASCII or binary mode"<<std::endl;
       break;
   }
   return is;

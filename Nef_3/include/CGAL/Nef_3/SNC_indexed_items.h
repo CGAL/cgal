@@ -37,7 +37,7 @@ class Index_generator {
   static int get_unique_index()
   {
     // initialized with 0
-    // http://en.cppreference.com/w/cpp/language/zero_initialization
+    // https://en.cppreference.com/w/cpp/language/zero_initialization
 #ifdef CGAL_NO_ATOMIC
     static int unique;
 #else
