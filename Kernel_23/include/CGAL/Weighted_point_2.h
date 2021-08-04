@@ -69,6 +69,9 @@ public:
   Weighted_point_2(const Rep& p)
       : Rep(p) {}
 
+  Weighted_point_2(Rep&& p)
+      : Rep(std::move(p)) {}
+
   explicit
   Weighted_point_2(const Point_2& p)
     : Rep(typename R::Construct_weighted_point_2()(Return_base_tag(), p, 0))
@@ -294,7 +297,7 @@ extract(std::istream& is, Weighted_point_2<R>& p, const Cartesian_tag&)
         break;
     default:
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
     }
     if (is)
@@ -322,7 +325,7 @@ extract(std::istream& is, Weighted_point_2<R>& p, const Homogeneous_tag&)
         break;
     default:
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
   }
   if (is)

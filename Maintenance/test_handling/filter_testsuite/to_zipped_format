@@ -1,0 +1,232 @@
+#!/usr/bin/env perl
+
+use Cwd;
+use strict;
+
+my $TMPDIR;
+my $version = "";
+my $final_version;
+
+my $original_arguments=join(" ", @ARGV);
+
+sub print_log
+{
+    print TESTRESULTSLOG (@_);
+}
+
+sub print_log_err
+{
+    print TESTRESULTSLOG (@_);
+    print STDERR (@_);
+}
+
+sub usage {
+    print STDERR "$0: usage\n";
+    print STDERR "$0 [-v version] result1.tar[.gz] ...\n";
+    print STDERR "$0: you called it with the arguments:\n";
+    print STDERR "$0 $original_arguments\n";
+}
+
+sub make_tempdir()
+{
+    my $dirno = 1;
+    $TMPDIR = "TMP$dirno";
+    while ( -f $TMPDIR or -d $TMPDIR ) {
+	++$dirno;
+	$TMPDIR = "TMP$dirno";
+    }
+    mkdir($TMPDIR,0770) or die "Cannot create temporary directory $TMPDIR\n";
+}
+
+sub reformat_results($)
+{
+    $_ = shift;
+    s/\.tar//;
+    my $platform = $_;
+#    system("dos2unix ${platform}.txt ${platform}.txt");
+    open (PLATFORM_RESULTS,"<${platform}.txt") or return;
+    my $line;
+    while ( ($line = <PLATFORM_RESULTS>) && /^\s*$/) {
+    }
+    $_ = $line;
+    open (PLATFORM_INFO,">${platform}.info") or return;
+    open (PLATFORM_NEW_RESULTS,">${platform}.new_results") or return;
+    my ($CGAL_VERSION,$LEDA_VERSION,$COMPILER,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$MPFR,$ZLIB,$OPENGL,$BOOST,$QT,$QT4,$QT5,$CMAKE) = ("-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","no");
+    my ($LDFLAGS,$CXXFLAGS) = ("", "");
+    while (! /^------/) {
+        if(/^\s*$/) {
+            goto NEXT;
+        }
+	if(/^-- USING CMake version: ([\w\.-]+)/) {
+	    $CMAKE = $1;
+	}
+	if (/^CGAL_VERSION\s+([\w\.-]+)/) {
+	    $CGAL_VERSION = $1;
+	}
+	if (/LEDA_VERSION = '([^']+)'/) {
+	    $LEDA_VERSION="$1";
+	}
+	if (/LEDAWIN_VERSION = '([^']+)'/) {
+	    $LEDA_VERSION="$LEDA_VERSION+win";
+	}
+	if (/COMPILER_VERSION = '([^']+)'/) {
+	    $COMPILER = $1;
+	}
+	if (/^TESTER_NAME\s+(.*)$/) {
+	    $TESTER_NAME = $1;
+	}
+	if (/^TESTER_ADDRESS\s+(.*)$/) {
+	    $TESTER_ADDRESS = $1;
+	}
+	if (/MPFR_VERSION = '([^']+)'/) {
+	    $MPFR="$1";
+	}
+	if (/ZLIB_VERSION = '([^']+)'/) {
+	    $ZLIB="$1";
+	}
+	if (/OPENGL_VERSION = '([^']+)'/) {
+	    $OPENGL="$1";
+	}
+	if (/GMP_VERSION = '([^']+)'/) {
+	    $GMP="$1";
+	}
+	if (/GMPXX_VERSION = '([^']+)'/) {
+	    $GMP="$GMP+gmpxx";
+	}
+	if (/QT_VERSION = '([^']+)'/) {
+	    $QT="$1";
+	}
+	if (/QT4_VERSION = '([^']+)'/) {
+	    $QT4="$1";
+	}
+	if (/Qt5_VERSION = '([^']+)'/) {
+	    $QT5="$1";
+	}
+	if (/BOOST_VERSION = '([^']+)'/) {
+	    $BOOST="$1";
+	}
+#	if (/BOOST_THREAD_VERSION = '([^']+)'/) {
+#	    $BOOST="$BOOST+thread";
+#	}
+# 	if (/BOOST_PROGRAM_OPTIONS_VERSION = '([^']+)'/) {
+# 	    $BOOST="$BOOST+program_options";
+# 	}
+#	if (/BOOST_BIMAP_VERSION = '([^']+)'/) {
+#	    $BOOST="$BOOST+bimap";
+#	}
+	if (/USING +CXXFLAGS = '([^']*)'/) {
+	    $CXXFLAGS="$CXXFLAGS $1";
+	}
+	if (/USING +LDFLAGS = '([^']*)'/) {
+	    $LDFLAGS="$LDFLAGS $1";
+	}
+#        if(/^CGAL_TEST_PLATFORM /) {
+#            # should be the last one of the header
+#            last;
+#        }
+#        if(! /^[A-Z][a-z]/ ) {
+#            # the header is finished
+#            print PLATFORM_NEW_RESULTS $_;
+#            last;
+#        }
+NEXT:	if(! ($_= <PLATFORM_RESULTS>)) {
+            # should never happen!!
+            last;
+        }
+    }
+    while (<PLATFORM_RESULTS>) {
+	print PLATFORM_NEW_RESULTS $_;
+    }
+    rename("${platform}.new_results","${platform}.txt") or die "cannot rename!";
+    print PLATFORM_INFO <<"EOF";
+$CGAL_VERSION
+$COMPILER
+$TESTER_NAME
+$TESTER_ADDRESS
+$CMAKE
+$BOOST
+$MPFR
+$GMP
+$QT5
+$LEDA_VERSION
+$CXXFLAGS
+$LDFLAGS
+EOF
+    close(PLATFORM_INFO);
+    close(PLATFORM_RESULTS);
+    close(PLATFORM_NEW_RESULTS);
+    $final_version="CGAL-$CGAL_VERSION";
+    if ($version
+        && $version ne "CGAL-$CGAL_VERSION"
+        && ($version !~ /^CGAL-${CGAL_VERSION}-Ic?-[\d]+$/)) {
+	die "Wrong version in $platform: $CGAL_VERSION instead of $version.\n";
+    }
+}
+
+sub one_archive($)
+{
+    my $archive = shift;
+    if (! -f $archive) {
+	print STDERR "$archive is not a valid filename\n";
+	return 0;
+    }
+    if ( $archive =~ m/\.gz$/ ) {
+	system("gunzip", "$archive") == 0 or return 0;
+	$archive =~ s/\.gz$//;
+    }
+    if ( $archive =~ m/.*\.tgz$/ ) {
+	system("gunzip", "$archive") == 0 or return 0;
+	$archive =~ s/\.tgz$/.tar/;
+    }
+    if ( $archive !~ /\.tar$/) {
+	print STDERR "$0: $archive not a tar file\n";
+	return 0;
+    }
+    make_tempdir();
+    rename("$archive","$TMPDIR/$archive") or die "cannot rename(\"$archive\",\"$TMPDIR/$archive\")";
+    chdir("$TMPDIR") or die "cannot chdir";
+    system("gtar", "xf", "$archive") == 0 or die "cannot untar $archive";
+    unlink($archive);
+
+    reformat_results($archive);
+    system('gzip',glob("*/*")) == 0 or die "cannot gzip (while processing $archive)";
+    system('chmod','-R','a+r,og+w','.') == 0 or die "cannot chmod";
+    system('tar', 'cf', "../$archive", glob("*")) == 0 or die "cannot tar";
+    chdir('..') or die;
+    system('rm', '-rf', "$TMPDIR")== 0 or die "cannot rm -rf";
+    return 1;
+}
+
+sub all_archives() {
+    my $archive;
+    foreach $archive (@ARGV) {
+	if (one_archive($archive)) {
+            my $date=`date`;
+            chop $date;
+	    print_log("$final_version : $archive successfully reformatted. [ $date ]\n");
+	} else {
+	    print_log_err("$final_version : Could not reformat $archive\n");
+	}
+    }
+}
+
+if ($#ARGV < 0) {
+    usage;
+    exit 1;
+}
+
+if ($ARGV[0] eq "-v") {
+    shift;
+    $version = shift;
+}
+
+if ($#ARGV < 0) {
+    usage;
+    exit 1;
+}
+
+open (TESTRESULTSLOG, ">>../test_results.log")
+    or die "Could not open test_results.log\n";
+all_archives();
+close (TESTRESULTSLOG);
+exit 0;

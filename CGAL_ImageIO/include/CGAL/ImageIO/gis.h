@@ -88,7 +88,7 @@ exemple :
    -a age (entier)
    -s sexe (1/2)
    -l lateralite
-   -txt texte libre (ascii)
+   -txt texte libre (ASCII)
    -endtxt (fin du texte)
 
 

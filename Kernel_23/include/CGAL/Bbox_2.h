@@ -61,6 +61,8 @@ public:
   inline double     ymin() const;
   inline double     xmax() const;
   inline double     ymax() const;
+  inline double x_span() const;
+  inline double y_span() const;
 
   inline double     max BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
   inline double     min BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
@@ -90,6 +92,14 @@ inline
 double
 Bbox_2::ymax() const
 { return rep[3]; }
+
+inline double Bbox_2::x_span() const {
+  return xmax() - xmin();
+}
+
+inline double Bbox_2::y_span() const {
+  return ymax() - ymin();
+}
 
 inline
 bool

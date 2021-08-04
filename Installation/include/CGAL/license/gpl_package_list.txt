@@ -32,7 +32,7 @@ Minkowski_sum_3 3D Minkowski Sum of Polyhedra
 Nef_2 2D Boolean Operations on Nef Polygons
 Nef_3 3D Boolean Operations on Nef Polyhedra
 Nef_S2 2D Boolean Operations on Nef Polygons Embedded on the Sphere
-Orthtree Quadtrees, Octrees, and Orthrees
+Orthtree Quadtrees, Octrees, and Orthtrees
 Optimal_bounding_box Optimal Bounding Box
 Optimal_transportation_reconstruction_2 Optimal Transportation Curve Reconstruction
 Partition_2 2D Polygon Partitioning
