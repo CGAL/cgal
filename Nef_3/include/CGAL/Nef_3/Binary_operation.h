@@ -191,9 +191,8 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
       Halffacet_handle f;
 
       Point_3 p(normalized(ip));
-
+#ifdef CGAL_USE_TRACE
       CGAL_NEF_TRACEN("Intersection_call_back: intersection reported on " << p << " (normalized: " << normalized(p) << " )");
-#ifdef CGAL_NEF_DEBUG
       CGAL_NEF_TRACEN("edge 0 has source " << e0->source()->point() << " and direction " << e0->vector());
       if( CGAL::assign( e, o1)) {
         CGAL_NEF_TRACEN("edge 1 has source " << e->source()->point() << " and direction " << e->vector());
@@ -313,12 +312,6 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
     //    CGAL_NEF_SETDTHREAD(19*43*131);
     CGAL_NEF_TRACEN("=> binary operation");
 
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-    SNC_constructor C1(snc1);
-    C1.create_box();
-    SNC_constructor C2(snc2);
-    C2.create_box();
-#endif
 
     CGAL_NEF_TRACEN("\nnumber of vertices (so far...) = "
                     << this->sncp()->number_of_vertices());
@@ -537,18 +530,6 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
     }
     CGAL_NEF_TRACEN("\nnumber of vertices (so far...) = "
                     << this->sncp()->number_of_vertices());
-#elif defined CGAL_NEF3_INTERSECTION_NAIVE
-
-    CGAL::SNC_point_locator_naive<SNC_decorator> pln1;
-    CGAL::SNC_point_locator_naive<SNC_decorator> pln2;
-    pln1.initialize(const_cast<SNC_structure*>(&snc1));
-    pln2.initialize(const_cast<SNC_structure*>(&snc2));
-    Halfedge_iterator e0;
-    CGAL_forall_edges(e0,const_cast<SNC_structure&>(snc1))
-      pln2.intersect_with_edges_and_facets(e0,call_back0);
-    CGAL_forall_edges(e0,const_cast<SNC_structure&>(snc2))
-      pln1.intersect_with_facets( e0, call_back1);
-
 #else
     CGAL_NEF_TRACEN("intersection by fast box intersection");
         binop_intersection_test_segment_tree<SNC_decorator> binop_box_intersection;

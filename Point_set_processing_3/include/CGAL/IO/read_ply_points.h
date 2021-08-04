@@ -296,7 +296,7 @@ bool read_PLY(std::istream& is,
 
    \cgalNamedParamsBegin
      \cgalParamNBegin{use_binary_mode}
-       \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
+       \cgalParamDescription{indicates whether data should be read in binary (`true`) or in \ascii (`false`)}
        \cgalParamType{Boolean}
        \cgalParamDefault{`true`}
      \cgalParamNEnd

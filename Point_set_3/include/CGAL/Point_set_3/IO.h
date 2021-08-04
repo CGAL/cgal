@@ -113,11 +113,11 @@ namespace IO {
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{use_binary_mode}
-      \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
+      \cgalParamDescription{indicates whether data should be read in binary (`true`) or in \ascii (`false`)}
       \cgalParamType{Boolean}
       \cgalParamDefault{`true`}
       \cgalParamExtra{This parameter is only relevant for `PLY` writing: the `OFF` and `XYZ` formats
-                       are always ASCII, and the `LAS` format is always binary.}
+                       are always \ascii, and the `LAS` format is always binary.}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -151,10 +151,10 @@ bool read_point_set(const std::string& fname, CGAL::Point_set_3<Point, Vector>& 
 {
   return read_point_set(fname, ps, parameters::all_default());
 }
+/// \endcond
 
 } // namespace IO
 
-/// \endcond
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -207,11 +207,11 @@ namespace IO {
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{use_binary_mode}
-      \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+      \cgalParamDescription{indicates whether data should be written in binary (`true`) or in \ascii (`false`)}
       \cgalParamType{Boolean}
       \cgalParamDefault{`true`}
       \cgalParamExtra{This parameter is only relevant for `PLY` writing: the `OFF` and `XYZ` formats
-                      are always ASCII, and the `LAS` format is always binary.}
+                      are always \ascii, and the `LAS` format is always binary.}
     \cgalParamNEnd
 
     \cgalParamNBegin{stream_precision}

@@ -77,7 +77,7 @@ operator >> ( std::istream& is, CGAL::Min_circle_2<Traits_>& min_circle)
 
       case CGAL::IO::PRETTY:
         cerr << endl;
-        cerr << "Stream must be in ascii or binary mode" << endl;
+        cerr << "Stream must be in ASCII or binary mode" << endl;
         break;
 
       case CGAL::IO::ASCII:

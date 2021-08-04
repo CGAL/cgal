@@ -164,7 +164,7 @@ std::istream& operator>>(std::istream& is, SPolynomial<RT>& p)
     case CGAL::IO::BINARY :
       CGAL::read(is,m);CGAL::read(is,n);break;
     default:
-    CGAL_error_msg("\nStream must be in ascii or binary mode\n");
+    CGAL_error_msg("\nStream must be in ASCII or binary mode\n");
       break;
   }
   return is;
@@ -333,7 +333,7 @@ std::istream& operator>>(std::istream& is, Extended_point<RT>& p)
     case CGAL::IO::BINARY :
       CGAL::read(is,x);CGAL::read(is,y);CGAL::read(is,w); break;
     default:
-    CGAL_error_msg("\nStream must be in ascii or binary mode\n");
+    CGAL_error_msg("\nStream must be in ASCII or binary mode\n");
       break;
   }
   p = Extended_point<RT>(x,y,w);

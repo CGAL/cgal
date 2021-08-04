@@ -109,42 +109,25 @@ class Reflex_vertex_searcher : public Modifier_base<typename Nef_::SNC_structure
   int is_reflex_vertex(Vertex_handle vi) {
     int result = 0;
     SM_point_locator PL(&*vi);
-    Object_handle op(PL.locate(dir));
-    Object_handle on(PL.locate(dir.antipode()));
+    Object_handle o[2] = {PL.locate(dir), PL.locate(dir.antipode())};
 
-    bool markedsf[2];
-    SFace_handle sfp, sfn;
-    markedsf[0] = assign(sfp, op) && sfp->mark();
-    markedsf[1] = assign(sfn, on) && sfn->mark();
+    for(int i=0; i<2; ++i) {
+      SFace_handle sf;
+      bool markedsf = assign(sf, o[i]) && sf->mark();
 
-    CGAL_NEF_TRACEN("markedsf " << markedsf[0] << " " << markedsf[1]);
-    CGAL_NEF_TRACEN("sf " << &*sfp << "==" << &*sfn);
+      CGAL_NEF_TRACEN("markedsf " << markedsf);
+      CGAL_NEF_TRACEN("sf " << &*sf);
 
-    if(markedsf[0]) {
-      SFace_cycle_iterator sfci(sfp->sface_cycles_begin());
-      for(; sfci != sfp->sface_cycles_end(); ++sfci) {
-        SHalfedge_around_sface_circulator
-          sfc(sfci), send(sfc);
-        CGAL_For_all(sfc, send) {
-          int isrse = is_reflex_sedge<SNC_structure>(sfc, dir, false);
-          if(isrse==0) continue;
-          //          if(!markedsf[1] || sfp!=sfn)
-          isrse&=1;
-          result |= isrse;
-        }
-      }
-    }
-
-    if(/*sfp!=sfn &&*/ markedsf[1]) {
-      SFace_cycle_iterator sfci(sfn->sface_cycles_begin());
-      for(; sfci != sfn->sface_cycles_end(); ++sfci) {
-        SHalfedge_around_sface_circulator
-          sfc(sfci), send(sfc);
-        CGAL_For_all(sfc, send) {
-          int isrse = is_reflex_sedge<SNC_structure>(sfc, dir, false);
-          if(isrse==0) continue;
-          isrse&=2;
-          result |= isrse;
+      if(markedsf) {
+        SFace_cycle_iterator sfci(sf->sface_cycles_begin());
+        for(; sfci != sf->sface_cycles_end(); ++sfci) {
+          SHalfedge_around_sface_circulator sfc(sfci), send(sfc);
+          CGAL_For_all(sfc, send) {
+            int isrse = is_reflex_sedge<SNC_structure>(sfc, dir, false);
+            if(isrse == 0) continue;
+            isrse &= (i + 1);
+            result |= isrse;
+          }
         }
       }
     }

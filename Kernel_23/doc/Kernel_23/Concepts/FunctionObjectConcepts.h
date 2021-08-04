@@ -4996,6 +4996,10 @@ public:
   */
   Kernel::Point_2 operator()(const Kernel::Point_2& p,
                              const Kernel::Point_2& q );
+  /*!
+    computes the midpoint of the segment `s`.
+  */
+  Kernel::Point_2 operator()(const Kernel::Segment_2& s);
 
   /// @}
 
@@ -5022,6 +5026,11 @@ public:
   */
   Kernel::Point_3 operator()(const Kernel::Point_3& p,
                              const Kernel::Point_3& q );
+
+  /*!
+    computes the midpoint of the segment `s`.
+  */
+  Kernel::Point_3 operator()(const Kernel::Segment_3& s);
 
 
   /// @}

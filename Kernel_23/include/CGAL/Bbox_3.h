@@ -57,12 +57,15 @@ public:
   inline bool operator!=(const Bbox_3 &b) const;
 
   inline int dimension() const;
-  double  xmin() const;
-  double  ymin() const;
-  double  zmin() const;
-  double  xmax() const;
-  double  ymax() const;
-  double  zmax() const;
+  double xmin() const;
+  double ymin() const;
+  double zmin() const;
+  double xmax() const;
+  double ymax() const;
+  double zmax() const;
+  double x_span() const;
+  double y_span() const;
+  double z_span() const;
 
   inline double min BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
   inline double max BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
@@ -105,6 +108,18 @@ inline
 double
 Bbox_3::zmax() const
 { return rep[5]; }
+
+inline double Bbox_3::x_span() const {
+  return xmax() - xmin();
+}
+
+inline double Bbox_3::y_span() const {
+  return ymax() - ymin();
+}
+
+inline double Bbox_3::z_span() const {
+  return zmax() - zmin();
+}
 
 inline
 bool

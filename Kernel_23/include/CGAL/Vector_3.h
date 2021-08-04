@@ -70,6 +70,9 @@ public:
   Vector_3(const Rep& v)
       : Rep(v) {}
 
+  Vector_3(Rep&& v)
+      : Rep(std::move(v)) {}
+
   Vector_3(const Point_3& a, const Point_3& b)
     : Rep(typename R::Construct_vector_3()(Return_base_tag(), a, b)) {}
 
@@ -328,7 +331,7 @@ extract(std::istream& is, Vector_3<R>& v, const Cartesian_tag&)
     default:
       is.setstate(std::ios::failbit);
       std::cerr << "" << std::endl;
-      std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+      std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
       break;
   }
   if (is)
@@ -355,7 +358,7 @@ extract(std::istream& is, Vector_3<R>& v, const Homogeneous_tag&)
     default:
         is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
   }
   if (is)

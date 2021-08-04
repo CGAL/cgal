@@ -3475,7 +3475,7 @@ This package provides an <I>inserter</I> (the `<<` operator) and an
 `Arrangement_2<Traits,Dcel>` class that inserts and an arrangement
 object into an output stream and extracts an arrangement object from an
 input stream respectively. The arrangement is written using a simple
-predefined ASCII format that encodes the arrangement topology, as well
+predefined \ascii format that encodes the arrangement topology, as well
 as all geometric entities associated with vertices and edges.
 
 The ability to use the input/output operators, requires that the
@@ -3560,7 +3560,7 @@ with the basic arrangement structure.
 
 The arrangement package supplies an inserter and an extractor for the
 `Arrangement_with_history_2<Traits,Dcel>` class. The arrangement is
-represented using a simple predefined ASCII format. An object of the
+represented using a simple predefined \ascii format. An object of the
 `Arrangement_with_history_2<Traits,Dcel>` type can be saved and
 restored, as long as the `Curve_2` type defined by the traits
 class - as well as the `Point_2` type and the `X_monotone_curve_2`

@@ -39,7 +39,7 @@
 #include <sstream>
 
 namespace CGAL {
-#ifdef CGAL_NEF_DEBUG
+#ifdef CGAL_USE_TRACE
 #define PIS(s) (s->first())
 #endif
 

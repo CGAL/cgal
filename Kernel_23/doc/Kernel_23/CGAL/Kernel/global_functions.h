@@ -2242,11 +2242,24 @@ template <typename Kernel>
 CGAL::Point_2<Kernel> midpoint( const CGAL::Point_2<Kernel>& p,
 const CGAL::Point_2<Kernel>& q );
 
+
+  /*!
+computes the midpoint of the segment `s`.
+*/
+template <typename Kernel>
+CGAL::Point_2<Kernel> midpoint( const CGAL::Segment_2<Kernel>& s);
+
 /*!
 computes the midpoint of the segment `pq`.
 */
 template <typename Kernel>
 CGAL::Point_3<Kernel> midpoint( const CGAL::Point_3<Kernel>& p, const CGAL::Point_3<Kernel>& q );
+
+/*!
+computes the midpoint of the segment `s`.
+*/
+template <typename Kernel>
+CGAL::Point_3<Kernel> midpoint( const CGAL::Segment_3<Kernel>& s );
 
 /// @}
 

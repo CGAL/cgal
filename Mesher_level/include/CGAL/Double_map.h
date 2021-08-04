@@ -22,13 +22,7 @@
 #include <CGAL/function_objects.h> // for CGAL::Identity
 
 #include <boost/version.hpp>
-#if BOOST_VERSION >= 103500
 #  define CGAL_USE_BOOST_BIMAP
-#endif
-
-#if defined(CGAL_USE_BOOST_BIMAP) && BOOST_VERSION == 104100
-#include <CGAL/internal/container_fwd_fixed.hpp>
-#endif
 
 #ifdef CGAL_USE_BOOST_BIMAP
 #  if defined(BOOST_MSVC)

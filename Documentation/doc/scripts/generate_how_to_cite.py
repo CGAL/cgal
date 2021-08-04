@@ -161,7 +161,7 @@ def protect_accentuated_letters(authors):
   try:
     res.encode('ascii')
   except UnicodeEncodeError:
-    stderr.write("WARNING: a non ascii character has been found in author string for bibtex (probably a non-handled accentuated letter)."
+    stderr.write("WARNING: a non-ASCII character has been found in author string for bibtex (probably a non-handled accentuated letter)."
                  "Check the new package added and update the function protect_accentuated_letters in Documentation/scripts/generate_how_to_cite.py\n\n")
   return res
 

@@ -60,7 +60,7 @@ operator >> ( std::istream& is, CGAL::Optimisation_circle_2<K_>& c)
 
       case CGAL::IO::PRETTY:
         std::cerr << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
 
       case CGAL::IO::ASCII: {

@@ -46,7 +46,7 @@
 #include <boost/unordered_set.hpp>
 
 #ifdef CGAL_LINKED_WITH_TBB
-# include <tbb/parallel_do.h>
+# include <tbb/parallel_for_each.h>
 # include <mutex>
 #endif
 
@@ -1941,7 +1941,7 @@ private:
     // Parallel
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
-      tbb::parallel_do(
+      tbb::parallel_for_each(
         outdated_cells.begin(), outdated_cells.end(),
         Update_cell_facets<Self, FacetUpdater>(tr_, updater));
     }
@@ -2831,7 +2831,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
   // Parallel
   if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
-    tbb::parallel_do(first_cell, last_cell,
+    tbb::parallel_for_each(first_cell, last_cell,
       Update_cell<C3T3, Update_c3t3>(c3t3_, updater));
   }
   // Sequential
@@ -2853,7 +2853,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
   // Parallel
   if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
-    tbb::parallel_do(
+    tbb::parallel_for_each(
       facets.begin(), facets.end(),
       Update_facet<Self, C3T3, Update_c3t3, Vertex_to_proj_set>(
         *this, c3t3_, updater, vertex_to_proj)
