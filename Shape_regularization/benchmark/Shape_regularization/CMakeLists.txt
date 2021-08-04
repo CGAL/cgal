@@ -6,7 +6,7 @@ project(Shape_regularization_Benchmarks)
 cmake_minimum_required(VERSION 3.1...3.15)
 set(CMAKE_CXX_STANDARD 14)
 
-find_package(CGAL REQUIRED)
+find_package(CGAL REQUIRED COMPONENTS Core)
 message(STATUS "Found CGAL")
 
 include(${CGAL_USE_FILE})

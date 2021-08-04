@@ -6,7 +6,7 @@ project(Shape_regularization_Examples)
 cmake_minimum_required(VERSION 3.1...3.15)
 set(CMAKE_CXX_STANDARD 14)
 
-find_package(CGAL REQUIRED)
+find_package(CGAL REQUIRED COMPONENTS Core)
 message(STATUS "Found CGAL")
 
 include(${CGAL_USE_FILE})
@@ -32,7 +32,7 @@ if(TARGET CGAL::OSQP_support)
   endforeach()
 
   # Use Eigen.
-  find_package(Eigen3 QUIET)
+  find_package(Eigen3 3.1.0 QUIET) # (3.1.0 or greater)
   include(CGAL_Eigen3_support)
   if(TARGET CGAL::Eigen3_support)
     message(STATUS "Found Eigen")
