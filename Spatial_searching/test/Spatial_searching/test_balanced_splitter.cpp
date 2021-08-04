@@ -111,6 +111,11 @@ void run_tests_2d() {
   assert(tree_3.root()->depth() == 4);
   assert(tree_3.root()->num_items() == points.size());
   assert(tree_3.root()->num_nodes() == 5);
+
+  // Test remove methods.
+  const Point_2 query_to_remove(0,1);
+  tree_1.remove(query_to_remove);
+  assert(tree_1.root()->num_items() == points.size() - 1);
 }
 
 template<typename Kernel>
