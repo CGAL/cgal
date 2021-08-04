@@ -617,7 +617,7 @@ public:
 #else
     typename AABBTraits::Primitive::Datum_reference
 #endif
-    datum(Primitive& p)const
+    datum(Primitive& p) const
     {
       return Helper::get_datum(p, this->traits());
     }
