@@ -28,9 +28,9 @@ int main(int argc, char** argv) {
 
   // Load point set from a file.
 
-  if (!CGAL::read_points(((argc > 1) ? argv[1] : "data/cube.pwn"), std::back_inserter(points),
-                         CGAL::parameters::point_map(Point_map())
-                                          .normal_map(Normal_map())))
+  if (!CGAL::IO::read_points(((argc > 1) ? argv[1] : "data/cube.pwn"), std::back_inserter(points),
+                              CGAL::parameters::point_map(Point_map())
+                                              .normal_map(Normal_map())))
   {
     std::cerr << "Error: cannot read input file!" << std::endl;
     return EXIT_FAILURE;

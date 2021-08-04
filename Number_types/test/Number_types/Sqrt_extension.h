@@ -189,95 +189,95 @@ void sqrt_ext_pretty_output_test(){
     // TEST without Parens_as_product_tag
     {
         std::stringstream ss;
-        CGAL::set_pretty_mode(ss);
+        CGAL::IO::set_pretty_mode(ss);
         ss << EXT1(-1,0,2);
         assert( ss.str()=="-1");
     }{
         std::stringstream ss;
-        CGAL::set_pretty_mode(ss);
+        CGAL::IO::set_pretty_mode(ss);
         ss << EXT1(0,0,2);
         assert( ss.str() == "0");
     }{
         std::stringstream ss;
-        CGAL::set_pretty_mode(ss);
+        CGAL::IO::set_pretty_mode(ss);
         ss << EXT1(1,0,2);
         assert( ss.str() == "1");
     }{
         std::stringstream ss;
-        CGAL::set_pretty_mode(ss);
+        CGAL::IO::set_pretty_mode(ss);
         ss << EXT1(1,2,2);
         assert( ss.str() == "1+2*sqrt(2)");
     }{
         std::stringstream ss;
-        CGAL::set_pretty_mode(ss);
+        CGAL::IO::set_pretty_mode(ss);
         ss << EXT1(1,-2,2);
         assert( ss.str() == "1+(-2)*sqrt(2)");
     }{
         std::stringstream ss;
-        CGAL::set_pretty_mode(ss);
+        CGAL::IO::set_pretty_mode(ss);
         ss << EXT1(-1,2,2);
         assert( ss.str() == "-1+2*sqrt(2)");
     }{
         std::stringstream ss;
-        CGAL::set_pretty_mode(ss);
+        CGAL::IO::set_pretty_mode(ss);
         ss << EXT1(-1,-2,2);
         assert( ss.str() == "-1+(-2)*sqrt(2)");
     }{
         std::stringstream ss;
-        CGAL::set_pretty_mode(ss);
+        CGAL::IO::set_pretty_mode(ss);
         ss << EXT1(0,2,2);
         assert( ss.str()=="2*sqrt(2)");
     }{
         std::stringstream ss;
-        CGAL::set_pretty_mode(ss);
+        CGAL::IO::set_pretty_mode(ss);
         ss << EXT1(0,-2,2);
         assert( ss.str()=="(-2)*sqrt(2)");
     }
 // TEST with Parens_as_product_tag
     {
         std::stringstream ss;
-        CGAL::set_pretty_mode(ss);
-        ss << oformat(EXT1(-1,0,2),CGAL::Parens_as_product_tag());
+        CGAL::IO::set_pretty_mode(ss);
+        ss << CGAL::IO::oformat(EXT1(-1,0,2),CGAL::Parens_as_product_tag());
         assert( ss.str()=="(-1)");
     }{
         std::stringstream ss;
-        CGAL::set_pretty_mode(ss);
-        ss << oformat(EXT1(0,0,2),CGAL::Parens_as_product_tag());
+        CGAL::IO::set_pretty_mode(ss);
+        ss << CGAL::IO::oformat(EXT1(0,0,2),CGAL::Parens_as_product_tag());
         assert( ss.str() == "0");
     }{
         std::stringstream ss;
-        CGAL::set_pretty_mode(ss);
-        ss << oformat(EXT1(1,0,2),CGAL::Parens_as_product_tag());
+        CGAL::IO::set_pretty_mode(ss);
+        ss << CGAL::IO::oformat(EXT1(1,0,2),CGAL::Parens_as_product_tag());
         assert( ss.str() == "1");
     }{
         std::stringstream ss;
-        CGAL::set_pretty_mode(ss);
-        ss << oformat(EXT1(1,2,2),CGAL::Parens_as_product_tag());
+        CGAL::IO::set_pretty_mode(ss);
+        ss << CGAL::IO::oformat(EXT1(1,2,2),CGAL::Parens_as_product_tag());
         assert( ss.str() == "(1+2*sqrt(2))");
     }{
         std::stringstream ss;
-        CGAL::set_pretty_mode(ss);
-        ss << oformat(EXT1(1,-2,2),CGAL::Parens_as_product_tag());
+        CGAL::IO::set_pretty_mode(ss);
+        ss << CGAL::IO::oformat(EXT1(1,-2,2),CGAL::Parens_as_product_tag());
         assert( ss.str() == "(1+(-2)*sqrt(2))");
     }{
         std::stringstream ss;
-        CGAL::set_pretty_mode(ss);
-        ss << oformat(EXT1(-1,2,2),CGAL::Parens_as_product_tag());
+        CGAL::IO::set_pretty_mode(ss);
+        ss << CGAL::IO::oformat(EXT1(-1,2,2),CGAL::Parens_as_product_tag());
         assert( ss.str() == "(-1+2*sqrt(2))");
     }{
         std::stringstream ss;
-        CGAL::set_pretty_mode(ss);
-        ss << oformat(EXT1(-1,-2,2),CGAL::Parens_as_product_tag());
+        CGAL::IO::set_pretty_mode(ss);
+        ss << CGAL::IO::oformat(EXT1(-1,-2,2),CGAL::Parens_as_product_tag());
         assert( ss.str() == "(-1+(-2)*sqrt(2))");
     }{
         std::stringstream ss;
-        CGAL::set_pretty_mode(ss);
-        ss << oformat(EXT1(0,2,2),CGAL::Parens_as_product_tag());
+        CGAL::IO::set_pretty_mode(ss);
+        ss << CGAL::IO::oformat(EXT1(0,2,2),CGAL::Parens_as_product_tag());
         assert( ss.str()=="2*sqrt(2)");
     }{
         std::stringstream ss;
-        CGAL::set_pretty_mode(ss);
-        ss << oformat(EXT1(0,-2,2),CGAL::Parens_as_product_tag());
+        CGAL::IO::set_pretty_mode(ss);
+        ss << CGAL::IO::oformat(EXT1(0,-2,2),CGAL::Parens_as_product_tag());
         assert( ss.str()=="(-2)*sqrt(2)");
     }
 }

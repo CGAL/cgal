@@ -45,27 +45,27 @@ struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC
   { return alcc.is_marked(dh, is_root); }
 
   template<typename LCC>
-  CGAL::Color vertex_color(const LCC& /* alcc */,
+  CGAL::IO::Color vertex_color(const LCC& /* alcc */,
                            typename LCC::Dart_const_handle /* dh */) const
-  { return CGAL::Color(0,255,0); }
+  { return CGAL::IO::Color(0,255,0); }
 
   template<typename LCC>
   bool colored_edge(const LCC& alcc, typename LCC::Dart_const_handle dh) const
   { return alcc.is_marked(dh, belong_to_cycle); }
 
   template<typename LCC>
-  CGAL::Color edge_color(const LCC& /* alcc*/,
+  CGAL::IO::Color edge_color(const LCC& /* alcc*/,
                          typename LCC::Dart_const_handle /* dh */) const
-  { return CGAL::Color(0, 0, 255); }
+  { return CGAL::IO::Color(0, 0, 255); }
 
   template<typename LCC>
   bool colored_face(const LCC& /* alcc */,
                     typename LCC::Dart_const_handle /* dh */) const {return true;}
 
   template<typename LCC>
-  CGAL::Color face_color(const LCC& /* alcc */,
+  CGAL::IO::Color face_color(const LCC& /* alcc */,
                          typename LCC::Dart_const_handle /* dh */) const
-  {return CGAL::Color(211, 211, 211);}
+  {return CGAL::IO::Color(211, 211, 211);}
 
   template<typename LCC>
   bool colored_volume(const LCC& /* alcc */,
@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
   std::cout<<"File '"<<filename<<"' loaded. Running the main program..."<<std::endl;
 
   boost::unordered_map<Dart_handle, Dart_handle> origin_to_copy;
-  lcccopy.copy(lccoriginal, &origin_to_copy, NULL);
+  lcccopy.copy(lccoriginal, &origin_to_copy, nullptr);
 
   LCC_3::size_type is_root=lccoriginal.get_new_mark();
   LCC_3::size_type belong_to_cycle=lccoriginal.get_new_mark();

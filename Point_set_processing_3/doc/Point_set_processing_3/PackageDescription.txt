@@ -81,8 +81,8 @@ format.
 
 \cgalCRPSection{I/O (All Formats)}
 
-- `CGAL::read_points()`
-- `CGAL::write_points()`
+- `CGAL::IO::read_points()`
+- `CGAL::IO::write_points()`
 
 \cgalCRPSection{I/O (XYZ/OFF Formats)}
 
@@ -91,23 +91,23 @@ format.
 
 \cgalCRPSection{I/O (PLY Format)}
 
-- \link PkgPointSetProcessing3IOPly `CGAL::read_PLY()` \endlink
-- `CGAL::read_PLY_with_properties()`
-- \link PkgPointSetProcessing3IOPly `CGAL::write_PLY()` \endlink
-- `CGAL::write_PLY_with_properties()`
-- `CGAL::PLY_property<T>`
-- `CGAL::make_ply_point_reader()`
-- `CGAL::make_ply_point_writer()`
-- `CGAL::make_ply_normal_reader()`
-- `CGAL::make_ply_normal_writer()`
+- \link PkgPointSetProcessing3IOPly `CGAL::IO::read_PLY()` \endlink
+- `CGAL::IO::read_PLY_with_properties()`
+- \link PkgPointSetProcessing3IOPly `CGAL::IO::write_PLY()` \endlink
+- `CGAL::IO::write_PLY_with_properties()`
+- `CGAL::IO::PLY_property<T>`
+- `CGAL::IO::make_ply_point_reader()`
+- `CGAL::IO::make_ply_point_writer()`
+- `CGAL::IO::make_ply_normal_reader()`
+- `CGAL::IO::make_ply_normal_writer()`
 
 \cgalCRPSection{I/O (LAS Format)}
 
-- `CGAL::read_LAS()`
-- `CGAL::read_LAS_with_properties()`
-- `CGAL::write_LAS()`
-- `CGAL::write_LAS_with_properties()`
-- `CGAL::make_las_point_reader()`
-- `CGAL::make_las_point_writer()`
+- `CGAL::IO::read_LAS()`
+- `CGAL::IO::read_LAS_with_properties()`
+- `CGAL::IO::write_LAS()`
+- `CGAL::IO::write_LAS_with_properties()`
+- `CGAL::IO::make_las_point_reader()`
+- `CGAL::IO::make_las_point_writer()`
 
 */

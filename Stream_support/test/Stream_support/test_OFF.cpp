@@ -18,7 +18,7 @@ int main(int argc, char** argv)
   std::vector<Point> points;
   std::vector<Face> polygons;
 
-  bool ok = CGAL::read_OFF(off_file, points, polygons);
+  bool ok = CGAL::IO::read_OFF(off_file, points, polygons);
   assert(ok);
   std::cout << points.size() << " points and " << polygons.size() << " polygons" << std::endl;
 
@@ -28,41 +28,41 @@ int main(int argc, char** argv)
   points.clear();
   polygons.clear();
   std::string off_string(off_file);
-  ok = CGAL::read_OFF(off_string, points, polygons);
+  ok = CGAL::IO::read_OFF(off_string, points, polygons);
   assert(ok);
 
   points.clear();
   polygons.clear();
   std::ifstream is(off_file);
-  ok = CGAL::read_OFF(is, points, polygons);
+  ok = CGAL::IO::read_OFF(is, points, polygons);
   assert(ok);
   is.close();
   points.clear();
   polygons.clear();
 
   is.open(off_file, std::ios::binary);
-  ok = CGAL::read_OFF(is, points, polygons);
+  ok = CGAL::IO::read_OFF(is, points, polygons);
   assert(ok);
   is.close();
 
   std::ofstream os("tmp.off", std::ios::binary);
-  ok = CGAL::write_OFF(os, points, polygons);
+  ok = CGAL::IO::write_OFF(os, points, polygons);
   assert(ok);
   os.close();
 
-  ok = CGAL::write_OFF("tmp.off", points, polygons);
+  ok = CGAL::IO::write_OFF("tmp.off", points, polygons);
   assert(ok);
 
   std::vector<Point> pts_backup = points;
   std::vector<Face> pls_backup = polygons;
 
-  ok = CGAL::write_polygon_soup("tmp.off", points, polygons);
+  ok = CGAL::IO::write_polygon_soup("tmp.off", points, polygons);
   assert(ok);
 
   points.clear();
   polygons.clear();
 
-  ok = CGAL::read_polygon_soup("tmp.off", points, polygons);
+  ok = CGAL::IO::read_polygon_soup("tmp.off", points, polygons);
   assert(ok);
 
   assert(points.size() == pts_backup.size());

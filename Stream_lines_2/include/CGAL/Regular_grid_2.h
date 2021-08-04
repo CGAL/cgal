@@ -19,7 +19,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/streamlines_assertions.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <vector>
 
@@ -39,7 +39,7 @@ public:
   typedef typename StreamLinesTraits_2::Point_2 Point_2;
   typedef typename StreamLinesTraits_2::Vector_2 Vector_2;
 protected:
-  boost::shared_ptr< std::vector<FT> > vector_field;
+  std::shared_ptr< std::vector<FT> > vector_field;
   inline int get_index(int i,int j) const;
   int number_of_samples_x;
   int number_of_samples_y;
@@ -118,7 +118,7 @@ Regular_grid_2<StreamLinesTraits_2>::Regular_grid_2(int m,
   number_of_samples_y = n;
   domain_size_x = x;
   domain_size_y = y;
-  vector_field = boost::shared_ptr<std::vector<FT> >(new std::vector<FT>(number_of_samples_x*number_of_samples_y* 2));
+  vector_field = std::shared_ptr<std::vector<FT> >(new std::vector<FT>(number_of_samples_x*number_of_samples_y* 2));
 }
 
 

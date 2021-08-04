@@ -44,7 +44,7 @@ public:
     typedef typename GetK<Graph, NamedParameters>::Kernel                              Kernel;
     typedef typename Kernel::Vector_3                                                  Vector;
     typedef typename Kernel::Point_2                                                   Texture;
-    typedef CGAL::Color                                                                Color;
+    typedef CGAL::IO::Color                                                            Color;
 
     typedef typename CGAL::GetVertexPointMap<Graph, NamedParameters>::type             VPM;
 

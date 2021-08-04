@@ -278,6 +278,9 @@ void isotropic_remeshing(const FaceRange& faces
   unsigned int nb_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
   bool smoothing_1d = choose_parameter(get_parameter(np, internal_np::relax_constraints), false);
   unsigned int nb_laplacian = choose_parameter(get_parameter(np, internal_np::number_of_relaxation_steps), 1);
+  bool do_collapse = choose_parameter(get_parameter(np, internal_np::do_collapse), true);
+  bool do_split = choose_parameter(get_parameter(np, internal_np::do_split), true);
+  bool do_flip = choose_parameter(get_parameter(np, internal_np::do_flip), true);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
   std::cout << std::endl;
@@ -293,10 +296,13 @@ void isotropic_remeshing(const FaceRange& faces
 #endif
     if (target_edge_length>0)
     {
-      remesher.split_long_edges(high);
-      remesher.collapse_short_edges(low, high, collapse_constraints);
+      if(do_split)
+        remesher.split_long_edges(high);
+      if(do_collapse)
+        remesher.collapse_short_edges(low, high, collapse_constraints);
     }
-    remesher.equalize_valences();
+    if(do_flip)
+      remesher.flip_edges_for_valence_and_shape();
     remesher.tangential_relaxation(smoothing_1d, nb_laplacian);
     if ( choose_parameter(get_parameter(np, internal_np::do_project), true) )
       remesher.project_to_surface(get_parameter(np, internal_np::projection_functor));

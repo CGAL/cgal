@@ -4,8 +4,18 @@
 #include "arr_rat_functions.h"
 #include "arr_print.h"
 
+#ifndef CGAL_USE_CORE
+#include <iostream>
+
 int main() {
-  CGAL::set_pretty_mode(std::cout);             // for nice printouts.
+  std::cout << "Sorry, this example needs CORE ..." << std::endl;
+  return 0;
+}
+
+#else
+
+int main() {
+  CGAL::IO::set_pretty_mode(std::cout);             // for nice printouts.
 
   // Define a traits class object and a constructor for rational functions.
   Traits traits;
@@ -46,3 +56,5 @@ int main() {
 
   return 0;
 }
+
+#endif

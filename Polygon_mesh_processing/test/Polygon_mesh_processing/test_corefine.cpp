@@ -20,7 +20,7 @@ struct My_visitor :
     : i (new int(0) )
   {}
 
-  boost::shared_ptr<int> i;
+  std::shared_ptr<int> i;
 };
 
 void test(const char* f1, const char* f2)

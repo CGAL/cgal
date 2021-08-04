@@ -10,25 +10,25 @@ supporting <a href="https://isocpp.org/wiki/faq/cpp14">C++14</a> or later.
 \cgal \cgalReleaseNumber is supported (continuously tested) for the following compilers/operating systems:
 
 | Operating System | Compiler |
-| :------- | :--------------- |
-| Linux | \gnu `g++` 6.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} |
-|       | `Clang` \cgalFootnote{<A HREF="http://clang.llvm.org/">`http://clang.llvm.org/`</A>} compiler version 8.0.0 |
-| \ms Windows | \gnu `g++` 6.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} |
-|                 | \ms Visual `C++` 14.0, 15.9, 16.0 (\visualstudio 2015, 2017, and 2019)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">`https://visualstudio.microsoft.com/`</A>} |
-| MacOS X | \gnu `g++` 6.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} |
-|         | Apple `Clang` compiler versions 7.0.2 and 10.0.1 |
+| :----------      | :--------------- |
+| Linux            | \gnu `g++` 8.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} |
+|                  | `Clang` \cgalFootnote{<A HREF="http://clang.llvm.org/">`http://clang.llvm.org/`</A>} compiler version 11.1.0 |
+| \ms Windows      | \gnu `g++` 8.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} |
+|                  | \ms Visual `C++` 14.0, 15.9, 16.10 (\visualstudio 2015, 2017, and 2019)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">`https://visualstudio.microsoft.com/`</A>} |
+| MacOS X          | \gnu `g++` 8.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} |
+|                  | Apple `Clang` compiler versions 10.0.1 and 12.0.0 |
 
 <!-- Windows supported version are also listed on windows.html (must change both) -->
 
 Older versions of the above listed compilers might work, but no guarantee is provided.
 
 \section seccmake CMake
-<b>Version 3.12 or later</b>
+<b>Version 3.14 or later</b>
 
 In order to configure and build the \cgal examples, demos, or libraries,
 you need <a href="https://cmake.org/">CMake</a>, a cross-platform "makefile generator".
 
-This manual explains only the features of CMake which are needed in order to build \cgal.
+This manual explains only the features of CMake which are needed in order to use \cgal.
 Please refer to the <a href="https://cmake.org/documentation/">CMake documentation</a>
 for further details.
 
@@ -84,13 +84,13 @@ and for multi precision floating point numbers.
 \cgal combines floating point arithmetic with exact arithmetic
 in order to be efficient and reliable. \cgal has a built-in
 number type for that, but \gmp and \mpfr provide a faster
-solution, and we recommend to use them.
+solution, and we recommend using them.
 
 These libraries can be obtained from <A HREF="https://gmplib.org/">`https://gmplib.org/`</A>
 and <A HREF="https://www.mpfr.org/">`https://www.mpfr.org/`</A>.
 Since Visual \cpp is not properly supported by the \gmp and \mpfr projects,
-we provide precompiled versions of \gmp and \mpfr, which can be downloaded with the installer
-<a href="https://github.com/CGAL/cgal/releases">`CGAL-\cgalReleaseNumber``-Setup.exe`</a>.
+we provide precompiled versions of \gmp and \mpfr, which can be downloaded
+from the <a href="https://github.com/CGAL/cgal/releases">assets of a release</a>.
 
 \section secoptional3rdpartysoftware Optional Third Party Libraries
 
@@ -204,7 +204,7 @@ length integers, and for vectors, matrices, and polynomials over the
 integers and over finite fields. The optional library \ntl is used by \cgal
 to speed up operations of the Polynomial package, such as GCDs. It is recommended to install \ntl with support from \gmp.
 
-\ntl can be downloaded from <A HREF="https://www.shoup.net/ntl/">`https://www.shoup.net/ntl/`</A>.
+\ntl can be downloaded from <A HREF="https://libntl.org">`https://libntl.org`</A>.
 
 \subsection thirdpartyESBTL ESBTL
 
@@ -225,7 +225,7 @@ code. In order to use \tbb in \cgal programs, the executables
 should be linked with the CMake imported target `CGAL::TBB_support`
 provided in `CGAL_TBB_support.cmake`.
 
-The \tbb web site is <A HREF="https://www.threadingbuildingblocks.org">`https://www.threadingbuildingblocks.org`</A>.
+The \tbb web site is <A HREF="https://github.com/oneapi-src/oneTBB">`https://github.com/oneapi-src/oneTBB`</A>.
 
 \subsection thirdpartyLASlib LASlib
 
@@ -255,27 +255,6 @@ executables should be linked with the CMake imported target
 `CGAL::OpenCV_support` provided in `CGAL_OpenCV_support.cmake`.
 
 The \opencv web site is <A HREF="https://opencv.org/">`https://opencv.org/`</A>.
-
-\subsection thirdpartyTensorFlow TensorFlow
-
-\tensorflow is a library designed for machine learning and deep learning.
-
-In \cgal, the C++ API of \tensorflow is used by the \ref
-PkgClassification package for neural network. The C++ API can be
-compiled using CMake: it is distributed as part of the official
-package and is located in `tensorflow/contrib/cmake`. Be sure to
-enable and compile the following targets:
-
-- `tensorflow_BUILD_ALL_KERNELS`
-- `tensorflow_BUILD_PYTHON_BINDINGS`
-- `tensorflow_BUILD_SHARED_LIB`.
-
-In order to use \tensorflow in \cgal programs, the executables
-should be linked with the CMake imported target
-`CGAL::TensorFlow_support` provided in
-`CGAL_TensorFlow_support.cmake`.
-
-The \tensorflow web site is <A HREF="https://www.tensorflow.org/">`https://www.tensorflow.org/`</A>.
 
 \subsection thirdpartyMETIS METIS
 <b>Version 5.1 or later</b>
@@ -310,15 +289,16 @@ requires solving complex non-linear least squares problems.
 Visit the official website of the library at <A HREF="http://ceres-solver.org/index.html">`ceres-solver.org`</A>
 for more information.
 
+\attention \ceres indicates that `glog` is a recommended dependency. `glog` has `libunwind` as a recommended dependency.
+On some platforms, linking with `libunwind` was responsible for an increase of the runtime of the final application.
+If you experience such an issue, we recommand to compile \ceres without `glog` support.
+
 \subsection thirdpartyGLPK GLPK
 
 \glpk (GNU Linear Programming Kit) is a library for solving linear programming (LP), mixed integer programming (MIP), and other related problems.
 
-In \cgal, \glpk provides an optional linear integer program solver
-in the \ref PkgPolygonalSurfaceReconstruction package. In order to use
-\glpk in \cgal programs, the executables should be linked with the
-CMake imported target `CGAL::GLPK_support` provided in
-`CGAL_GLPK_support.cmake`.
+In \cgal, \glpk provides an optional linear integer program solver in the \ref PkgPolygonalSurfaceReconstruction package.
+In order to use \glpk in \cgal programs, the executables should be linked with the CMake imported target `CGAL::GLPK_support` provided in `CGAL_GLPK_support.cmake`.
 
 The \glpk web site is <A HREF="https://www.gnu.org/software/glpk/">`https://www.gnu.org/software/glpk/`</A>.
 
@@ -326,12 +306,18 @@ The \glpk web site is <A HREF="https://www.gnu.org/software/glpk/">`https://www.
 
 \scip (Solving Constraint Integer Programs) is currently one of the fastest open source solvers for mixed integer programming (MIP) and mixed integer nonlinear programming (MINLP).
 
-In \cgal, \scip provides an optional linear integer program solver
-in the \ref PkgPolygonalSurfaceReconstruction package. In order to use
-\scip in \cgal programs, the executables should be linked with the
-CMake imported target `CGAL::SCIP_support` provided in
-`CGAL_SCIP_support.cmake`.
+In \cgal, \scip provides an optional linear integer program solver in the \ref PkgPolygonalSurfaceReconstruction package.
+In order to use \scip in \cgal programs, the executables should be linked with the CMake imported target `CGAL::SCIP_support` provided in `CGAL_SCIP_support.cmake`.
 
 The \scip web site is <A HREF="http://scip.zib.de/">`http://scip.zib.de/`</A>.
+
+\subsection thirdpartyOSQP OSQP
+
+\osqp (Operator Splitting Quadratic Program) is currently one of the fastest open source solvers for convex Quadratic Programs (QP).
+
+In \cgal, \osqp provides an optional solver for the QP problems often arising in various computational geometry algorithms.
+In order to use \osqp in \cgal programs, the executables should be linked with the CMake imported target `CGAL::OSQP_support` provided in `CGAL_OSQP_support.cmake`.
+
+The \osqp web site is <A HREF="https://osqp.org">`https://osqp.org`</A>.
 
 */

@@ -25,7 +25,7 @@ typedef double RT;
 int main()
 {
   CGAL_KD_SETDTHREAD(11);
-  CGAL::set_pretty_mode ( std::cerr );
+  CGAL::IO::set_pretty_mode ( std::cerr );
   CGAL_TEST_START;
   {
     typedef CGAL::Homogeneous_d<RT> Kernel;

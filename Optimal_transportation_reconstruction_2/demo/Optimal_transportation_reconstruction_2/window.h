@@ -50,7 +50,7 @@ public:
   void openRecentFile_aux();
   void updateRecentFileActions();
   void addToRecentFiles(QString fileName);
-  void addRecentFiles(QMenu* menu, QAction* insertBefore = 0);
+  void addRecentFiles(QMenu* menu, QAction* insertBefore = nullptr);
   unsigned int maxNumberOfRecentFiles() const {return maxNumRecentFiles;}
 
   // io

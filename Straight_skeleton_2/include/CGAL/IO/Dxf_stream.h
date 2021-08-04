@@ -63,23 +63,23 @@ protected:
   Dxf_writer          mWriter ;
   int                 mDefaultDxfColor;
   int                 mDxfColor;
-  Color               mCgalColor ;
+  IO::Color           mCgalColor ;
   std::string         mLayer ;
 
   struct Color_less
   {
-    bool operator() ( Color const& a, Color const& b ) const
+    bool operator() ( IO::Color const& a, IO::Color const& b ) const
     {
       return Color_value(a) < Color_value(b);
     }
 
-    static int Color_value ( Color const& c )
+    static int Color_value ( IO::Color const& c )
     {
       return ( int(c.r()) << 16 ) + ( int(c.g()) << 8  ) + ( int(c.b()) ) ;
     }
   } ;
 
-  typedef std::map<Color,int,Color_less>  Color_table ;
+  typedef std::map<IO::Color,int,Color_less>  Color_table ;
   typedef typename Color_table::const_iterator Color_table_iterator ;
   Color_table mColorTable ;
 
@@ -103,7 +103,7 @@ public:
     mWriter          (out)
    ,mDefaultDxfColor (255)
    ,mDxfColor        (255)
-    ,mCgalColor       (white())
+    ,mCgalColor       (IO::white())
    ,mLayer           ("0")
   {
     setup_initial_color_table();
@@ -126,7 +126,7 @@ public:
   /*!
    * Get the current CGAL color.
    */
-  Color color () const { return mCgalColor ; }
+  IO::Color color () const { return mCgalColor ; }
 
   /*!
    * Get the current DXF color.
@@ -152,7 +152,7 @@ public:
    * Set the current color.
    * \pre The color must be defined.
    */
-  void set_color ( Color aColor )
+  void set_color ( IO::Color aColor )
   {
     mCgalColor = aColor ;
 
@@ -177,7 +177,7 @@ public:
    * \param aCgalColor The CGAL color.
    * \param aDxfColor  The DXF color.
    */
-  void define_color ( Color const& aCgalColor, int aDxfColor )
+  void define_color ( IO::Color const& aCgalColor, int aDxfColor )
   {
     mColorTable.insert( std::make_pair(aCgalColor,aDxfColor) ) ;
   }
@@ -265,7 +265,7 @@ public:
   /*!
    * Set the current color.
    */
-  Dxf_stream& operator<< ( Color const& aColor )
+  Dxf_stream& operator<< ( IO::Color const& aColor )
   {
     set_color (aColor);
     return (*this);
@@ -300,15 +300,15 @@ protected:
 
   void setup_initial_color_table()
   {
-    define_color(black(),0);
-    define_color(red(),1);
-    define_color(yellow(),2);
-    define_color(green(),3);
-    define_color(purple(),4);
-    define_color(blue(),5);
-    define_color(violet(),6);
-    define_color(white(),7);
-    define_color(gray(),8);
+    define_color(IO::black(),0);
+    define_color(IO::red(),1);
+    define_color(IO::yellow(),2);
+    define_color(IO::green(),3);
+    define_color(IO::purple(),4);
+    define_color(IO::blue(),5);
+    define_color(IO::violet(),6);
+    define_color(IO::white(),7);
+    define_color(IO::gray(),8);
   }
 
 };

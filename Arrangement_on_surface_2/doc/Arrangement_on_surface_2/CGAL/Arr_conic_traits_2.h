@@ -68,8 +68,8 @@ namespace CGAL {
  * `CORE_algebraic_number_traits` class as the `NtTraits` parameter, with
  * `Cartesian<NtTraits::Rational>` and `Cartesian<NtTraits::Algebraic>`
  * instantiating the two kernel types, respectively.  The number types in this
- * case are provided by the <span class="textsc">Core</span> library, with its
- * ability to exactly represent simple algebraic numbers.
+ * case are provided by the \core library, with its ability to exactly represent
+ * simple algebraic numbers.
  *
  * The traits class inherits its point type from `AlgKernel::Point_2`,
  * and defines a curve and \f$ x\f$-monotone curve types, as detailed below.

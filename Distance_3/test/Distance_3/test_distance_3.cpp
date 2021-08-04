@@ -112,6 +112,17 @@ struct Test {
   {
     std::cout << "Point - Triangle\n";
     check_squared_distance (p(0, 1, 2), T(p(0, 0, 0), p( 2, 0, 0), p( 0, 2, 0)), 4);
+
+    T t(p(0,0,0), p(3,0,0), p(3,3,0));
+    check_squared_distance (p(-1, -1, 0), t, 2);
+    check_squared_distance (p(-1,  0, 0), t, 1);
+    check_squared_distance (p(0, 0, 0), t, 0);
+    check_squared_distance (p(1, 0, 0), t, 0);
+    check_squared_distance (p(4, 0, 0), t, 1);
+    check_squared_distance (p(1, -1, 0), t, 1);
+    check_squared_distance (p(1, 1, 1), t, 1);
+    check_squared_distance (p(1, 0, 1), t, 1);
+    check_squared_distance (p(0, 0, 1), t, 1);
   }
 
   void P_Tet()

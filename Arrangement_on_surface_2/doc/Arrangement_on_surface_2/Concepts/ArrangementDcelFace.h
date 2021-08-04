@@ -1,33 +1,33 @@
-
 /*!
-\ingroup PkgArrangementOnSurface2ConceptsDCEL
-\cgalConcept
-
-A face record in a <span class="textsc">Dcel</span> data structure. A face
-represents a region, which may have outer and inner boundaries. A boundary
-conists of a chain of incident halfedges, referred to as a Connected Component
-of the Boundary (CCB). A face may be unbounded. Otherwise, it has one or more
-outer CCBs. A face may also be bounded by inner CCBs, and it may contain
-isolated vertices in its interior. A planar face may have only one outer CCBs
-and its inner CCBs are refered to as holes.
-
-\sa `ArrangementDcel`
-\sa `ArrangementDcelVertex`
-\sa `ArrangementDcelHalfedge`
-
-*/
+ * \ingroup PkgArrangementOnSurface2ConceptsDCEL
+ * \cgalConcept
+ *
+ * A face record in a \dcel data structure. A face represents a region, which
+ * may have outer and inner boundaries. A boundary conists of a chain of
+ * incident halfedges, referred to as a Connected Component of the Boundary
+ * (CCB). A face may be unbounded. Otherwise, it has one or more outer CCBs. A
+ * face may also be bounded by inner CCBs, and it may contain isolated vertices
+ * in its interior. A planar face may have only one outer CCBs and its inner
+ * CCBs are refered to as holes.
+ *
+ * \sa `ArrangementDcel`
+ * \sa `ArrangementDcelVertex`
+ * \sa `ArrangementDcelHalfedge`
+ */
 
 class ArrangementDcelFace {
 public:
 
 /// \name Types
-/// The non-mutable iterators `Outer_ccb_const_iterator`, `Inner_ccb_const_iterator`, `Hole_const_iterator`, and `Isolated_vertex_const_iterator` are also defined.
+/// The non-mutable iterators `Outer_ccb_const_iterator`,
+/// `Inner_ccb_const_iterator`, `Hole_const_iterator`, and
+/// `Isolated_vertex_const_iterator` are also defined.
 /// @{
 
-/*! the corresponding <span class="textsc">Dcel</span> vertex type. */
+/*! the corresponding \dcel vertex type. */
 typedef unspecified_type Vertex;
 
-/*! the corresponding <span class="textsc">Dcel</span> halfedge type. */
+/*! the corresponding \dcel halfedge type. */
 typedef unspecified_type Halfedge;
 
 /*! a bidirectional iterator over the outer CCBs of the face. Its value-type

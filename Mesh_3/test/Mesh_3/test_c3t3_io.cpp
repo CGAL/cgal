@@ -85,7 +85,7 @@ public:
   Output_rep( const T& tt) : t(tt) {}
   //! perform the output, calls \c operator\<\< by default.
   std::ostream& operator()( std::ostream& out) const {
-    if(is_ascii(out)) {
+    if(IO::is_ascii(out)) {
       out << (int)t;
     } else {
       CGAL::write(out, (int)t);
@@ -104,7 +104,7 @@ public:
   //! perform the output, calls \c operator\<\< by default.
   std::istream& operator()( std::istream& in) const {
     int i;
-    if(is_ascii(in)) {
+    if(IO::is_ascii(in)) {
       in >> i;
     } else {
       CGAL::read(in, i);
@@ -119,11 +119,11 @@ public:
 namespace std {
 std::ostream& operator<<(std::ostream& out,
                          MD_heterogeneous_types::Subdomain_index index) {
-  return out << CGAL::oformat(index);
+  return out << CGAL::IO::oformat(index);
 }
 std::istream& operator>>(std::istream& in,
                          MD_heterogeneous_types::Subdomain_index& index) {
-  return in >> CGAL::iformat(index);
+  return in >> CGAL::IO::iformat(index);
 }
 } // end namespace std
 
@@ -153,7 +153,7 @@ public:
   Output_rep( const T& tt) : t(tt) {}
   //! perform the output, calls \c operator\<\< by default.
   std::ostream& operator()( std::ostream& out) const {
-    if(is_ascii(out)) {
+    if(IO::is_ascii(out)) {
       out << t.first << " " << t.second;
     } else {
       CGAL::write(out, t.first);
@@ -172,7 +172,7 @@ public:
   Input_rep( T& tt) : t(tt) {}
   //! perform the output, calls \c operator\<\< by default.
   std::istream& operator()( std::istream& in) const {
-    if(is_ascii(in)) {
+    if(IO::is_ascii(in)) {
       in >> t.first >> t.second;
     } else {
       CGAL::read(in, t.first);
@@ -187,11 +187,11 @@ public:
 namespace std {
 std::ostream& operator<<(std::ostream& out,
                          MD_heterogeneous_types::Surface_patch_index index) {
-  return out << CGAL::oformat(index);
+  return out << CGAL::IO::oformat(index);
 }
 std::istream& operator>>(std::istream& in,
                          MD_heterogeneous_types::Surface_patch_index& index) {
-  return in >> CGAL::iformat(index);
+  return in >> CGAL::IO::iformat(index);
 }
 } // end namespace std
 
@@ -332,7 +332,7 @@ struct Test_c3t3_io {
     std::cout << "IO format: " << CGAL::Get_io_signature<C3t3>()() << std::endl;
     std::stringstream stream(mode);
     if(binary) {
-      CGAL::set_binary_mode(stream);
+      CGAL::IO::set_binary_mode(stream);
     }
     stream << c3t3;
     if(!binary) {
@@ -367,9 +367,9 @@ struct Test_c3t3_io {
                            ( binary ?
                              (std::ios_base::in | std::ios_base::binary)
                              : std::ios_base::in));
-      CGAL::Mesh_3::save_binary_file(ss, c3t3, binary);
+      CGAL::IO::save_binary_file(ss, c3t3, binary);
       assert(ss);
-      CGAL::Mesh_3::load_binary_file(ss, c3t3_bis);
+      CGAL::IO::load_binary_file(ss, c3t3_bis);
       assert(ss);
     }
     if(!check_equality(c3t3, c3t3_bis)) return false;
@@ -392,7 +392,7 @@ struct Test_c3t3_io {
       std::ofstream output(filename.c_str(),
                            binary ? (std::ios_base::out | std::ios_base::binary)
                            : std::ios_base::out);
-      CGAL::Mesh_3::save_binary_file(output, c3t3_bis, binary);
+      CGAL::IO::save_binary_file(output, c3t3_bis, binary);
     }
 
     c3t3_bis.clear();
@@ -401,7 +401,7 @@ struct Test_c3t3_io {
                           binary ? (std::ios_base::in | std::ios_base::binary)
                           : std::ios_base::in);
       assert(input);
-      CGAL::Mesh_3::load_binary_file(input, c3t3_bis);
+      CGAL::IO::load_binary_file(input, c3t3_bis);
       assert(input);
     }
     if(!check_equality(c3t3, c3t3_bis)) return false;

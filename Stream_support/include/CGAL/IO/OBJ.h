@@ -181,7 +181,6 @@ bool read_OBJ(std::istream& is,
 }
 
 } // namespace internal
-} // namespace IO
 
 /// \ingroup PkgStreamSupportIoFuncsOBJ
 ///
@@ -218,22 +217,22 @@ bool read_OBJ(std::istream& is,
               PolygonRange& polygons,
               const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-              , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
+              , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
               )
 {
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 
-  return IO::internal::read_OBJ(is, points, polygons,
-                                CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),
-                                verbose);
+  return internal::read_OBJ(is, points, polygons,
+                            CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),
+                            verbose);
 }
 
 /// \cond SKIP_IN_MANUAL
 
 template <typename PointRange, typename PolygonRange>
 bool read_OBJ(std::istream& is, PointRange& points, PolygonRange& polygons,
-              typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
+              typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr)
 {
   return read_OBJ(is, points, polygons, parameters::all_default());
 }
@@ -274,12 +273,12 @@ bool read_OBJ(const std::string& fname,
               PolygonRange& polygons,
               const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-              , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
+              , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
               )
 {
   std::ifstream is(fname);
-  CGAL::set_mode(is, CGAL::IO::ASCII);
+  CGAL::IO::set_mode(is, CGAL::IO::ASCII);
   return read_OBJ(is, points, polygons, np);
 }
 
@@ -287,7 +286,7 @@ bool read_OBJ(const std::string& fname,
 
 template <typename PointRange, typename PolygonRange>
 bool read_OBJ(const std::string& fname, PointRange& points, PolygonRange& polygons,
-              typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
+              typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr)
 {
   return read_OBJ(fname, points, polygons, parameters::all_default());
 }
@@ -319,7 +318,7 @@ bool read_OBJ(const std::string& fname, PointRange& points, PolygonRange& polygo
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
- *     \cgalParamDefault{`the precision of the stream `os``}
+ *     \cgalParamDefault{the precision of the stream `os`}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -333,7 +332,7 @@ bool write_OBJ(std::ostream& os,
                const PolygonRange& polygons,
                const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
+               , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
                )
 {
@@ -346,7 +345,7 @@ bool write_OBJ(std::ostream& os,
 
 template <typename PointRange, typename PolygonRange>
 bool write_OBJ(std::ostream& os, const PointRange& points, const PolygonRange& polygons,
-               typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
+               typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr)
 {
   return write_OBJ(os, points, polygons, parameters::all_default());
 }
@@ -388,12 +387,12 @@ bool write_OBJ(const std::string& fname,
                const PolygonRange& polygons,
                const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
+               , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
                )
 {
   std::ofstream os(fname);
-  CGAL::set_mode(os, CGAL::IO::ASCII);
+  CGAL::IO::set_mode(os, CGAL::IO::ASCII);
 
   return write_OBJ(os, points, polygons, np);
 }
@@ -402,12 +401,14 @@ bool write_OBJ(const std::string& fname,
 
 template <typename PointRange, typename PolygonRange>
 bool write_OBJ(const std::string& fname, const PointRange& points, const PolygonRange& polygons,
-               typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
+               typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr)
 {
   return write_OBJ(fname, points, polygons, parameters::all_default());
 }
 
 /// \endcond
+
+} // namespace IO
 
 } // namespace CGAL
 

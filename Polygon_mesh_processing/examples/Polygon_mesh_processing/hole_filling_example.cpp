@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
   const char* filename = (argc > 1) ? argv[1] : "data/mech-holes-shark.off";
 
   Polyhedron poly;
-  if(!PMP::read_polygon_mesh(filename, poly))
+  if(!PMP::IO::read_polygon_mesh(filename, poly))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;

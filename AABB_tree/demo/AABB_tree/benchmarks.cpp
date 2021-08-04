@@ -6,7 +6,7 @@
 
 void Scene::benchmark_intersections(const double duration)
 {
-    if(m_pPolyhedron == NULL)
+    if(m_pPolyhedron == nullptr)
     {
         std::cout << "Load polyhedron first." << std::endl;
         return;
@@ -67,7 +67,7 @@ void Scene::bench_intersections(Facet_tree& tree,
 
 void Scene::benchmark_distances(const double duration)
 {
-    if(m_pPolyhedron == NULL)
+    if(m_pPolyhedron == nullptr)
     {
         std::cout << "Load polyhedron first." << std::endl;
         return;
@@ -101,7 +101,7 @@ std::size_t Scene::nb_digits(std::size_t value)
 // refinement loop
 void Scene::bench_memory()
 {
-    if(m_pPolyhedron == NULL)
+    if(m_pPolyhedron == nullptr)
     {
         std::cout << "Load polyhedron first." << std::endl;
         return;
@@ -137,7 +137,7 @@ void Scene::bench_memory()
 
 void Scene::bench_construction()
 {
-    if(m_pPolyhedron == NULL)
+    if(m_pPolyhedron == nullptr)
     {
         std::cout << "Load polyhedron first." << std::endl;
         return;
@@ -174,7 +174,7 @@ void Scene::bench_construction()
 
 void Scene::bench_intersections_vs_nbt()
 {
-    if(m_pPolyhedron == NULL)
+    if(m_pPolyhedron == nullptr)
     {
         std::cout << "Load polyhedron first." << std::endl;
         return;
@@ -218,7 +218,7 @@ void Scene::bench_intersections_vs_nbt()
 
 void Scene::bench_distances_vs_nbt()
 {
-    if(m_pPolyhedron == NULL)
+    if(m_pPolyhedron == nullptr)
     {
         std::cout << "Load polyhedron first." << std::endl;
         return;

@@ -27,8 +27,8 @@ int main(int argc, char*argv[])
   // we use a property map that accesses the 1st element of the tuple.
 
   std::vector<IndexedPointWithColorTuple> points;
-  if (!CGAL::read_points(fname, std::back_inserter(points),
-                         CGAL::parameters::point_map(CGAL::Nth_of_tuple_property_map<1, IndexedPointWithColorTuple>())))
+  if (!CGAL::IO::read_points(fname, std::back_inserter(points),
+                             CGAL::parameters::point_map(CGAL::Nth_of_tuple_property_map<1, IndexedPointWithColorTuple>())))
   {
     std::cerr << "Error: cannot read file " << fname << std::endl;
     return EXIT_FAILURE;

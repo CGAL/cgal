@@ -3,8 +3,6 @@ namespace CGAL {
 /*!
 \ingroup PkgSnapRounding2Ref
 
-<span style="display:none">\f$ \def\A{{\cal A}} \f$ \f$ \def\S{{\cal S}} \f$</span>
-
 \tparam Traits must be a model of `SnapRoundingTraits_2`.
 \tparam InputIterator must be an iterator with value type `Traits::Segment_2`.
 \tparam OutputContainer must be a container with a method `push_back(const OutputContainer::value_type& c)`,
@@ -49,9 +47,9 @@ half-the-width-of-a-pixel away from any non-incident edge
 \cgalCite{cgal:hp-isr-02}. This package supports both methods. Algorithmic
 details and experimental results are given in \cgalCite{cgal:hp-isr-02}.
 
-Given a finite collection \f$ \S\f$ of segments in the plane, the
-arrangement of \f$ \S\f$ denoted \f$ \A(\S)\f$ is the subdivision of the plane
-into vertices, edges, and faces induced by \f$ \S\f$. A <I>vertex</I> of the arrangement is either a segment endpoint or
+Given a finite collection \f$ \Sc\f$ of segments in the plane, the
+arrangement of \f$ \Sc\f$ denoted \f$ \Ac(\Sc)\f$ is the subdivision of the plane
+into vertices, edges, and faces induced by \f$ \Sc\f$. A <I>vertex</I> of the arrangement is either a segment endpoint or
 the intersection of two segments. Given an arrangement of segments
 whose vertices are represented with arbitrary-precision coordinates,
 SR proceeds as follows. We tile the plane

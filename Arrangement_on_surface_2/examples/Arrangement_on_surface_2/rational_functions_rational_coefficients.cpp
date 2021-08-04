@@ -28,8 +28,8 @@ typedef Traits_2::Algebraic_real_1                 Alg_real_1;
 
 typedef CGAL::Arrangement_2<Traits_2>              Arrangement_2;
 
-int main() {
-  CGAL::set_pretty_mode(std::cout);             // for nice printouts.
+int main () {
+  CGAL::IO::set_pretty_mode(std::cout);             // for nice printouts.
 
   // Traits class object
   Traits_2 traits;

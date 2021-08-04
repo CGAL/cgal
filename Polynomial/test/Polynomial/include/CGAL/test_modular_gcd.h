@@ -35,7 +35,7 @@ void gcd_utcf_test(const NT& f, const NT& g, const NT& d) {
 template<class AT>
 void test_modular_gcd(Unique_factorization_domain_tag) {
 
-    ::CGAL::set_pretty_mode(std::cout);
+    ::CGAL::IO::set_pretty_mode(std::cout);
 
     typedef typename AT::Integer Integer;
     typedef Integer NT;
@@ -100,7 +100,7 @@ void test_modular_gcd(Integral_domain_tag) {
     test_special_polynomials<AT>(Integral_domain_tag());
 
 
-    ::CGAL::set_pretty_mode(std::cout);
+    ::CGAL::IO::set_pretty_mode(std::cout);
 
     typedef typename AT::Integer Integer;
     typedef CGAL::Sqrt_extension<Integer  ,Integer> int_EXT_1;
@@ -222,7 +222,7 @@ template<class AT>
 void test_special_polynomials(Integral_domain_tag) {
 
 
-    ::CGAL::set_pretty_mode(std::cout);
+    ::CGAL::IO::set_pretty_mode(std::cout);
 
     typedef typename AT::Integer Integer;
     typedef CGAL::Sqrt_extension<Integer  ,Integer> int_EXT_1;

@@ -40,9 +40,9 @@ int main (int argc, char** argv)
     filename_config = argv[2];
 
   Mesh mesh;
-  if(!CGAL::read_polygon_mesh(filename, mesh,
-                              // the PLY reader expects a binary file by default
-                              CGAL::parameters::use_binary_mode(false)))
+  if(!CGAL::IO::read_polygon_mesh(filename, mesh,
+                                  // the PLY reader expects a binary file by default
+                                  CGAL::parameters::use_binary_mode(false)))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;

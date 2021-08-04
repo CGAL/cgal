@@ -6,9 +6,8 @@ namespace CGAL {
  *
  * An object `arr` of the class `Arrangement_with_history_2` represents the
  * planar subdivision induced by a set of input curves \f$ \cal C\f$.  The
- * arrangement is represented as a doubly-connected edge-list (<span
- * class="textsc">Dcel</span>).  As is the case for the
- * `Arrangement_2<Traits,Dcel>`, each <span class="textsc">Dcel</span> vertex is
+ * arrangement is represented as a doubly-connected edge-list (\dcel).  As is
+ * the case for the `Arrangement_2<Traits,Dcel>`, each \dcel vertex is
  * associated with a point and each edge is associated with an \f$ x\f$-monotone
  * curve whose interior is disjoint from all other curves and points. Each such
  * \f$ x\f$-monotone curve is a subcurve of some \f$ C \in \cal C\f$, or may

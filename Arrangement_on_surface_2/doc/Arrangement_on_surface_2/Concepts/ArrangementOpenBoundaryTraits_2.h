@@ -32,11 +32,10 @@
  * `ArrangementOpenBoundaryTraits_2` must have all the four categories
  * convertible to `CGAL::Arr_open_side_tag`.\cgalFootnote{We intend to introduce
  * more concepts that require only a subset of the categories to be convertible
- * to `CGAL::Arr_open_side_tag`.} In this case the <span
- * class="textsc">Dcel</span> of the arrangement instantiated with the model is
- * initialized with an implicit bounding rectangle. When the parameter space is
- * bounded, it is the exact geometric embedding of the implicit bounding
- * rectangle.
+ * to `CGAL::Arr_open_side_tag`.} In this case the \dcel of the arrangement
+ * instantiated with the model is initialized with an implicit bounding
+ * rectangle. When the parameter space is bounded, it is the exact geometric
+ * embedding of the implicit bounding rectangle.
  *
  * \cgalRefines `ArrangementBasicTraits_2`
  *

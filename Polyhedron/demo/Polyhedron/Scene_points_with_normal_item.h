@@ -50,10 +50,6 @@ public:
   QMenu* contextMenu() Q_DECL_OVERRIDE;
 
   // IO
-#ifdef CGAL_LINKED_WITH_LASLIB
-  bool read_las_point_set(std::istream& in);
-  bool write_las_point_set(std::ostream& out) const;
-#endif // LAS
   bool read_ply_point_set(std::istream& in);
   bool write_ply_point_set(std::ostream& out, bool binary) const;
   bool read_off_point_set(std::istream& in);

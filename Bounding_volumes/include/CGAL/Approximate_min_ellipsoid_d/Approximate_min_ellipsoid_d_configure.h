@@ -20,7 +20,7 @@
 #include <iostream>
 #include <iomanip>
 
-#if (defined(CGAL_NO_ASSERTIONS) || defined(NDEBUG))
+#if defined(CGAL_NO_ASSERTIONS)
   #undef CGAL_APPEL_ASSERTION_MODE
   #undef CGAL_APPEL_EXP_ASSERTION_MODE
   #undef CGAL_APPEL_LOG_MODE

@@ -497,7 +497,7 @@ public:
 
     // Spatial sorting can only be applied to bare points, so we need an adaptor
     typedef typename Geom_traits::Construct_point_3 Construct_point_3;
-    typedef typename boost::result_of<const Construct_point_3(const Weighted_point&)>::type Ret;
+    typedef decltype(std::declval<const Construct_point_3>()(std::declval<const Weighted_point&>())) Ret;
     typedef boost::function_property_map<Construct_point_3, Weighted_point, Ret> fpmap;
     typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, fpmap> Search_traits_3;
 

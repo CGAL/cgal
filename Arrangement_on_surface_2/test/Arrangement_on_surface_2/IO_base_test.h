@@ -1675,12 +1675,13 @@ template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
                                                  X_monotone_curve_2& xcv)
 {
-  unsigned int flag;
-  is >> flag;
   Point_2 p1, p2;
   read_point(is, p1);
   read_point(is, p2);
   assert(p1 != p2);
+
+  unsigned int flag = static_cast<unsigned int>(-1);
+  is >> flag;
   if (flag == 1) {
     X_monotone_curve_2::Direction_3 normal;
     is >> normal;

@@ -484,7 +484,7 @@ file_output(std::ostream& os) const
   // write each level of the hierarchy
   for (unsigned int i = 0; i < ag_hierarchy_2__maxlevel; ++i) {
     hierarchy[i]->file_output(os);
-    if ( is_ascii(os) ) { os << std::endl << std::endl; }
+    if ( IO::is_ascii(os) ) { os << std::endl << std::endl; }
   }
 
   Vertex_map* V = new Vertex_map[ag_hierarchy_2__maxlevel];
@@ -520,22 +520,22 @@ file_output(std::ostream& os) const
   }
 
   // write up and down pointer info
-  if ( is_ascii(os) ) { os << std::endl << std::endl; }
+  if ( IO::is_ascii(os) ) { os << std::endl << std::endl; }
   for (unsigned int i = 0; i < ag_hierarchy_2__maxlevel; ++i) {
     os << i;
-    if ( is_ascii(os) ) { os << " "; }
+    if ( IO::is_ascii(os) ) { os << " "; }
     os << hierarchy[i]->number_of_vertices();
-    if ( is_ascii(os) ) { os << std::endl; }
+    if ( IO::is_ascii(os) ) { os << std::endl; }
     for (Finite_vertices_iterator vit = hierarchy[i]->finite_vertices_begin();
          vit != hierarchy[i]->finite_vertices_end(); ++vit) {
       os << V[i][vit];
-      if ( is_ascii(os) ) { os << " "; }
+      if ( IO::is_ascii(os) ) { os << " "; }
       os << V_down[i][vit];
-      if ( is_ascii(os) ) { os << " "; }
+      if ( IO::is_ascii(os) ) { os << " "; }
       os << V_up[i][vit];
-      if ( is_ascii(os) ) { os << std::endl; }
+      if ( IO::is_ascii(os) ) { os << std::endl; }
     }
-    if ( is_ascii(os) ) { os << std::endl << std::endl; }
+    if ( IO::is_ascii(os) ) { os << std::endl << std::endl; }
   }
 
   delete[] V;

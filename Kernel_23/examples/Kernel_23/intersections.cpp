@@ -13,13 +13,12 @@ typedef CGAL::Creator_uniform_2< Point, Segment>           Seg_creator;
 typedef CGAL::Join_input_iterator_2< P1, P2, Seg_creator>  Seg_iterator;
 
 struct Intersector{
-  typedef CGAL::cpp11::result_of<K::Intersect_2(Segment,Segment)>::type result_type;
   const Segment& s;
   K::Intersect_2 intersect;
 
   Intersector(const Segment& seg): s(seg) {}
 
-  result_type
+  decltype(auto)
   operator() ( const Segment& other) const
   {
     return intersect(s, other);

@@ -227,11 +227,11 @@ void Scene_nef_polyhedron_item_priv::compute_normals_and_vertices(void) const
                         Nef_polyhedron::SVertex_const_handle v = hc->source();
                         const Nef_polyhedron::Point_3& point = v->source()->point();
                         CDT::Vertex_handle vh = cdt.insert(point);
-                        if(first == 0) {
+                        if(first == nullptr) {
                             first = vh;
                         }
                         vh->info() = hc->source();
-                        if(previous != 0 && previous != vh) {
+                        if(previous != nullptr && previous != vh) {
                             cdt.insert_constraint(previous, vh);
                         }
                         previous = vh;
@@ -512,7 +512,7 @@ Scene_nef_polyhedron_item::nef_polyhedron()const {
 
 bool
 Scene_nef_polyhedron_item::isEmpty() const {
-    return (d->nef_poly == 0) || d->nef_poly->is_empty();
+    return (d->nef_poly == nullptr) || d->nef_poly->is_empty();
 }
 
 void
@@ -572,7 +572,7 @@ Scene_nef_polyhedron_item*
 Scene_nef_polyhedron_item::from_polygon_mesh(Scene_surface_mesh_item* item)
 {
   SMesh* sm = item->polyhedron();
-  if(!sm) return 0;
+  if(!sm) return nullptr;
   CGAL::Surface_mesh<Exact_Kernel::Point_3> exact_sm;
   CGAL::copy_face_graph(*sm, exact_sm);
   Nef_polyhedron* nef_poly = new Nef_polyhedron(exact_sm);

@@ -2950,6 +2950,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::FT        FT;
     typedef typename K::Point_2   Point_2;
+    typedef typename K::Segment_2 Segment_2;
   public:
     typedef Point_2          result_type;
 
@@ -2963,6 +2964,19 @@ namespace HomogeneousKernelFunctors {
                       p.hy()*qhw + q.hy()*phw,
                       phw * qhw * RT( 2));
     }
+
+    Point_2
+    operator()(const Segment_2& s) const
+    {
+      typedef typename K::RT RT;
+      const Point_2& p = s.source();
+      const Point_2& q = s.target();
+      const RT& phw = p.hw();
+      const RT& qhw = q.hw();
+      return Point_2( p.hx()*qhw + q.hx()*phw,
+                      p.hy()*qhw + q.hy()*phw,
+                      phw * qhw * RT( 2));
+    }
   };
 
   template <typename K>
@@ -2970,6 +2984,7 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::FT        FT;
     typedef typename K::Point_3   Point_3;
+    typedef typename K::Segment_3 Segment_3;
   public:
     typedef Point_3          result_type;
 
@@ -2977,6 +2992,20 @@ namespace HomogeneousKernelFunctors {
     operator()(const Point_3& p, const Point_3& q) const
     {
       typedef typename K::RT RT;
+      RT phw = p.hw();
+      RT qhw = q.hw();
+      return Point_3( p.hx()*qhw + q.hx()*phw,
+                      p.hy()*qhw + q.hy()*phw,
+                      p.hz()*qhw + q.hz()*phw,
+                      RT(2) * phw * qhw );
+    }
+
+    Point_3
+    operator()(const Segment_3& s) const
+    {
+      typedef typename K::RT RT;
+      const Point_3& p = s.source();
+      const Point_3& q = s.target();
       RT phw = p.hw();
       RT qhw = q.hw();
       return Point_3( p.hx()*qhw + q.hx()*phw,
@@ -3837,9 +3866,9 @@ namespace HomogeneousKernelFunctors {
       // p,q,r supposed to be non collinear
       // tests whether s is on the same side of p,q as r
       // returns :
-      // COLLINEAR if pqr collinear
-      // POSITIVE if qrp and qrs have the same orientation
-      // NEGATIVE if qrp and qrs have opposite orientations
+      // COLLINEAR if qps collinear
+      // POSITIVE if qpr and qps have the same orientation
+      // NEGATIVE if qpr and qps have opposite orientations
       CGAL_kernel_exactness_precondition( ! cl(p, q, r) );
       CGAL_kernel_exactness_precondition( cp(p, q, r, s) );
 
