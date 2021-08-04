@@ -2,15 +2,19 @@
 #define CGAL_SHAPE_REGULARIZATION_TESTS_SAVER_H
 
 // STL includes.
+#include <list>
 #include <vector>
 #include <string>
-#include <iostream>
 #include <fstream>
+#include <iostream>
+#include <algorithm>
 
 // CGAL includes.
-#include <CGAL/IO/io.h>
-#include <CGAL/property_map.h>
+#include <CGAL/utils.h>
+#include <CGAL/number_utils.h>
 #include <CGAL/squared_distance_2.h>
+#include <CGAL/property_map.h>
+#include <CGAL/IO/io.h>
 
 namespace CGAL {
 namespace Shape_regularization {

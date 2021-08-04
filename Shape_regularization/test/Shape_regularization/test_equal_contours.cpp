@@ -1,4 +1,3 @@
-#include "include/utils.h"
 #include "include/Saver.h"
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -34,10 +33,8 @@ void test_equal_contours() {
   //   "/Users/monet/Documents/gsoc/ggr/logs/op_input", 100);
 
   const bool is_closed = true;
-  CD closed_directions(
-    contour,  is_closed, pmap);
-  OD open_directions(
-    contour, !is_closed, pmap);
+  CD closed_directions(contour,  is_closed, pmap);
+  OD open_directions(contour, !is_closed, pmap);
 
   std::vector<Point_2> closed_contour;
   SR::Contours::regularize_closed_contour(

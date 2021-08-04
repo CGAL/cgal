@@ -1,4 +1,3 @@
-#include "include/utils.h"
 #include "include/Saver.h"
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -28,8 +27,7 @@ void test_open_contour_5_edges() {
   //   "/Users/monet/Documents/gsoc/ggr/logs/op5_input", 100);
 
   const bool is_closed = false;
-  CD directions(
-    contour, is_closed);
+  CD directions(contour, is_closed);
 
   std::vector<Point_2> regularized;
   SR::Contours::regularize_open_contour(
