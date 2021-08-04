@@ -8,7 +8,7 @@
 //#include <CGAL/IO/PLY_reader.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <boost/algorithm/string.hpp>
-// TODO: replace line 13 with line 12 in the future
+// TODO(kaimo hu): replace line 13 with line 12 when published
 // #include <CGAL/Polygon_mesh_processing/minimal_angle_remeshing.h>
 #include "../../include/CGAL/Polygon_mesh_processing/minimal_angle_remeshing.h"
 
