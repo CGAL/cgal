@@ -140,7 +140,6 @@ namespace Shape_regularization {
     m_traits(traits),
     m_parameters(Parameters()) {
 
-      CGAL_precondition(input_range.size() >= 2);
       clear();
     }
 
@@ -153,7 +152,9 @@ namespace Shape_regularization {
       \brief runs the shape regularization algorithm.
     */
     void regularize() {
+
       if (m_input_range.size() < 2) return;
+      CGAL_precondition(m_input_range.size() >= 2);
 
       // Graph = edges connecting neighbor segments.
       build_graph_of_neighbors();

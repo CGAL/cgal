@@ -128,8 +128,6 @@ namespace Segments {
       np, internal_np::segment_map), SegmentMap())),
     m_num_modified_segments(0) {
 
-      CGAL_precondition(
-        input_range.size() >= 2);
       const FT max_offset = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::maximum_offset), FT(1) / FT(2));
       CGAL_precondition(max_offset >= FT(0));
@@ -377,8 +375,8 @@ namespace Segments {
 
     void create_unique_group() {
 
-      CGAL_precondition(m_input_range.size() >= 2);
       if (m_input_range.size() < 2) return;
+      CGAL_precondition(m_input_range.size() >= 2);
 
       m_wraps.clear();
       m_wraps.resize(m_input_range.size());

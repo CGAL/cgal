@@ -56,7 +56,6 @@ namespace internal {
     m_grouping(
       input_range, np, segment_map, GeomTraits()) {
 
-      CGAL_precondition(input_range.size() > 0);
       const FT max_offset = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::maximum_offset), FT(1) / FT(5));
       const bool preserve_order = parameters::choose_parameter(

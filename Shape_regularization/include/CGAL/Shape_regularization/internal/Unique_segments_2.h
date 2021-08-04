@@ -59,7 +59,6 @@ namespace internal {
     m_grouping(
       input_range, np, segment_map, GeomTraits()) {
 
-      CGAL_precondition(input_range.size() > 0);
       make_unique_segments();
     }
 

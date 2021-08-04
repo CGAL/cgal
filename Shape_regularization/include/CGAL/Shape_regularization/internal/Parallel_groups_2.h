@@ -51,7 +51,6 @@ namespace internal {
     m_input_range(input_range),
     m_segment_map(segment_map) {
 
-      CGAL_precondition(input_range.size() > 0);
       const FT max_angle = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::maximum_angle), FT(5));
       const bool preserve_order = parameters::choose_parameter(

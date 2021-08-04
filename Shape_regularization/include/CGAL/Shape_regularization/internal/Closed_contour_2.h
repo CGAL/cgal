@@ -58,8 +58,8 @@ namespace internal {
     template<typename OutputIterator>
     OutputIterator regularize(OutputIterator contour) {
 
-      CGAL_assertion(m_wraps.size() >= 3);
       if (m_wraps.size() < 3) return contour;
+      CGAL_assertion(m_wraps.size() >= 3);
 
       rotate_contour(m_wraps);
       if (verbose()) {
@@ -109,8 +109,8 @@ namespace internal {
 
       // Clean.
       m_base.remove_zero_length_segments(wraps);
-      CGAL_assertion(wraps.size() >= 4);
       if (wraps.size() < 4) return false; // should be at least a quad
+      CGAL_assertion(wraps.size() >= 4);
 
       // Merge parallel/collinear segments.
       std::vector<Segment_2> segments;

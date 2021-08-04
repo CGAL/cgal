@@ -99,8 +99,6 @@ namespace Segments {
     m_input_range(input_range),
     m_segment_map(segment_map) {
 
-      CGAL_precondition(
-        input_range.size() >= 2);
       clear();
       create_unique_group();
     }
@@ -134,6 +132,8 @@ namespace Segments {
       }
 
       if (index_range.size() < 2) return;
+      CGAL_precondition(index_range.size() >= 2);
+
       build_delaunay_triangulation(index_range);
       add_neighbors();
       ++m_num_groups;
@@ -228,8 +228,8 @@ namespace Segments {
 
     void create_unique_group() {
 
-      CGAL_precondition(m_input_range.size() >= 2);
       if (m_input_range.size() < 2) return;
+      CGAL_precondition(m_input_range.size() >= 2);
 
       m_groups.clear();
       m_groups.resize(m_input_range.size());
@@ -246,6 +246,7 @@ namespace Segments {
       const IndexRange& index_range) {
 
       m_delaunay.clear();
+      CGAL_precondition(m_input_range.size() >= 2);
       for (const auto seg_index : index_range) {
         CGAL_assertion(seg_index < m_input_range.size());
 
