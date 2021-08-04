@@ -35,7 +35,7 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 // #include <CGAL/Weights/authalic_weights.h>
 #include <CGAL/Weights/cotangent_weights.h>
-#include <CGAL/Weights/mean_value_weights.h>
+#include <CGAL/Weights/tangent_weights.h>
 #include <CGAL/number_type_config.h>
 
 #if defined(CGAL_EIGEN3_ENABLED)
@@ -723,7 +723,7 @@ private:
                                               VertexIndexMap& vimap) const
   {
     auto vpm = get_const_property_map(CGAL::vertex_point, tmesh);
-    const CGAL::Weights::Mean_value_weight<Triangle_mesh, decltype(vpm)> compute_mvc(tmesh, vpm);
+    const CGAL::Weights::Edge_tangent_weight<Triangle_mesh, decltype(vpm)> compute_mvc(tmesh, vpm);
 
     const int i = get(vimap, v);
 
