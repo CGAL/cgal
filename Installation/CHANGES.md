@@ -1,5 +1,28 @@
 Release History
 ===============
+[Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
+-----------
+
+Release date: December 2021
+
+### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.4/Manual/packages.html#PkgKernel23)
+
+-   Added `construct_centroid_2_object()` and `compute_determinant_2_object()` in `Projection_traits_xy_3`, `Projection_traits_xz_3`,
+    and`Projection_traits_yz_3` classes.
+
+### [Polygon Mesh Processing](https://doc.cgal.org/5.4/Manual/packages.html#PkgPolygonMeshProcessing)
+
+-   Added the function `CGAL::Polygon_mesh_processing::match_faces()`, which, given two polygon meshes,
+    identifies their common faces as well as faces present in only either of them.
+
+-   Added the functions: `CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance()` that
+    computes an estimate of the one-sided Hausdorff distance between two triangle meshes which
+    is bounded by a user-specified error bound;  `CGAL::Polygon_mesh_processing::bounded_error_symmetric_Hausdorff_distance()` that computes
+    an estimate of the symmetric Hausdorff distance bounded by a user-specified error bound;
+    and `CGAL::Polygon_mesh_processing::is_Hausdorff_distance_larger()` that returns `true`
+    if the bounded-error Hausdorff distance between two meshes is larger than the user-specified
+    max distance.
+
 
 ### [Shape Regularization](https://doc.cgal.org/5.4/Manual/packages.html#PkgShapeRegularization) (new package)
 
@@ -17,6 +40,15 @@ Release History
 -----------
 
 Release date: July 2021
+
+### [General changes](https://doc.cgal.org/5.3/Manual/general_intro.html)
+
+-   The support for the compiled version of CGAL is dropped. Only the header-only version is supported.
+
+-   On Windows, the type used for `Exact_rational`, in `Epick` and indirectly (through `Lazy_exact_nt`)
+   `Epeck` may now be `boost::multiprecision::mpq_rational`, as has been the case on other platforms
+   for several releases. This depends on various options and is added to a list that includes
+   `mpq_class`, `CGAL::Gmpq`, `leda_rational` and `CGAL::Quotient<CGAL::MP_Float>`.
 
 ### [Quadtrees, Octrees, and Orthtrees](https://doc.cgal.org/5.3/Manual/packages.html#PkgOrthtree) (new package)
 

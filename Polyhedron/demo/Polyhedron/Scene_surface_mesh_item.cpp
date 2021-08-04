@@ -1513,11 +1513,48 @@ bool Scene_surface_mesh_item::hasPatchIds()
 bool
 Scene_surface_mesh_item::save(std::ostream& out) const
 {
+  std::vector<std::string> internal_properties;
+  std::vector<std::string> vprop = d->smesh_->properties<vertex_descriptor>();
+  std::vector<std::string> fprop = d->smesh_->properties<face_descriptor>();
+
+  QString message = tr("Do you want to save the following properties ? \n");
+
+  for(auto s : vprop)
+  {
+    if (s.compare("v:normal") == 0)
+    {
+      message.append(tr(" - Vertex Normals\n"));
+    }
+    else if(s.compare("v:texcoord") == 0 )
+    {
+      message.append(tr(" - Vertex UV Coordinates\n"));
+    }
+    else if(s.compare("v:color") == 0)
+    {
+      message.append(tr(" - Vertex Colors\n"));
+    }
+  }
+  for(auto s : fprop)
+  {
+    if(s.compare("f:color") == 0)
+    {
+      message.append(tr(" - Face Colors\n"));
+    }
+  }
+  QMessageBox::StandardButton save_internal_properties =
+      QMessageBox::question(CGAL::Three::Three::mainWindow(), tr("Save Properties"), message);
   QApplication::setOverrideCursor(Qt::WaitCursor);
   out.precision(17);
+  if(save_internal_properties == QMessageBox::Yes)
+  {
     out << *(d->smesh_);
-    QApplication::restoreOverrideCursor();
-    return (bool) out;
+  }
+  else
+  {
+    CGAL::IO::internal::write_OFF_BGL(out,*d->smesh_, CGAL::parameters::all_default());
+  }
+  QApplication::restoreOverrideCursor();
+  return (bool) out;
 }
 
 bool

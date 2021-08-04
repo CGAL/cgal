@@ -29,12 +29,7 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Triangulation_2/insert_constraints.h>
-
-#if defined(BOOST_MSVC) && (BOOST_VERSION == 105500)
-#include <set>
-#else
 #include <boost/container/flat_set.hpp>
-#endif
 
 
 namespace CGAL {
@@ -987,12 +982,7 @@ insert_subconstraint(Vertex_handle vaa,
     // edges may contain mirror edges. They no longer exist after triangulate_hole
     // so we have to remove them before calling get_bounded_faces
     if(! edges.empty()){
-
-#if defined(BOOST_MSVC) && (BOOST_VERSION == 105500)
-      std::set<Face_handle> faces(intersected_faces.begin(), intersected_faces.end());
-#else
       boost::container::flat_set<Face_handle> faces(intersected_faces.begin(), intersected_faces.end());
-#endif
       for(typename List_edges::iterator it = edges.begin(); it!= edges.end();){
         if(faces.find(it->first) != faces.end()){
           typename List_edges::iterator it2 = it;

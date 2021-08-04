@@ -25,9 +25,7 @@
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
 #include <CGAL/Qt/SegmentDelaunayGraphGraphicsItem.h>
 #include <CGAL/Constraints_loader.h>
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <CGAL/IO/WKT.h>
-#endif
 //#include <CGAL/Qt/Converter.h>
 
 // the two base classes
@@ -248,10 +246,8 @@ MainWindow::open(QString fileName)
       loadEdgConstraints(fileName);
       this->addToRecentFiles(fileName);
     } else if(fileName.endsWith(".wkt", Qt::CaseInsensitive)){
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
       loadWKTConstraints(fileName);
       this->addToRecentFiles(fileName);
-#endif
     }
   }
 }
@@ -264,9 +260,7 @@ MainWindow::on_actionLoadSegments_triggered()
                                                   ".",
                                                   tr("Edge files (*.edg);;"
                                                      "Polyline files (*.polygons.cgal);;"
-                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                                                      "WKT files (*.wkt *.WKT)"
-                                                   #endif
                                                      ));
   open(fileName);
 }
@@ -342,12 +336,10 @@ MainWindow::loadEdgConstraints(QString fileName)
 
 void
 MainWindow::loadWKTConstraints(QString
-                               #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                                fileName
-                               #endif
                                )
 {
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+
   typedef CGAL::Polygon_with_holes_2<K> Polygon;
   typedef std::vector<K::Point_2> LineString;
 
@@ -414,7 +406,6 @@ MainWindow::loadWKTConstraints(QString
   }while(ifs.good() && !ifs.eof());
   Q_EMIT( changed());
   actionRecenter->trigger();
-#endif
 }
 
 void

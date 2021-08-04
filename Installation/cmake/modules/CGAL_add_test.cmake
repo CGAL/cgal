@@ -74,6 +74,7 @@ function(expand_list_with_globbing list_name)
 endfunction()
 
 function(cgal_add_compilation_test exe_name)
+  cmake_policy(SET CMP0064 NEW)
   if(NOT CMAKE_VS_MSBUILD_COMMAND)
     if(TEST compilation_of__${exe_name})
       return()

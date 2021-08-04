@@ -152,33 +152,33 @@ public:
 
   /*!
     Inserts `i` into the stream. Puts whitespace around if the
-    stream is in ascii mode.
+    stream is in \ascii mode.
   */
   Geomview_stream& operator<<(int i);
 
   /*!
     Inserts `i` into the stream. Puts whitespace around if the
-    stream is in ascii mode.
+    stream is in \ascii mode.
   */
   Geomview_stream& operator<<(unsigned int i);
 
   /*!
     Inserts `i` into the stream. Puts whitespace around if the
-    stream is in ascii mode. Currently implemented by converting to int, so it
+    stream is in \ascii mode. Currently implemented by converting to int, so it
     can be truncated on 64 bit platforms.
   */
   Geomview_stream& operator<<(long i);
 
   /*!
     Inserts `i` into the stream. Puts whitespace around if the
-    stream is in ascii mode. Currently implemented by converting to unsigned int,
+    stream is in \ascii mode. Currently implemented by converting to unsigned int,
     so it can be truncated on 64 bit platforms.
   */
   Geomview_stream& operator<<(unsigned long i);
 
   /*!
     Inserts double `d` into the stream. Puts whitespace around if the
-    stream is in ascii mode.
+    stream is in \ascii mode.
   */
   Geomview_stream& operator<<(double d);
 
@@ -196,7 +196,7 @@ public:
 
   /*!
     Sets raw mode.  In raw mode, kernel points are output without headers and
-    footers, just the coordinates (in binary or ascii mode).  This allows the
+    footers, just the coordinates (in binary or \ascii mode). This allows the
     implementation of the stream functions for other objects to re-use the
     code for points internally, by temporary saving the raw mode to true, and
     restoring it after.
@@ -227,7 +227,7 @@ public:
   bool set_binary_mode(bool b = true);
 
   /*!
-    Sets whether we are in ascii mode.
+    Sets whether we are in \ascii mode.
   */
   bool set_ascii_mode(bool b = true);
 
@@ -237,7 +237,7 @@ public:
   bool get_binary_mode();
 
   /*!
-    Returns `true` iff `gs` is in ascii mode.
+    Returns `true` iff `gs` is in \ascii mode.
   */
   bool get_ascii_mode();
 
