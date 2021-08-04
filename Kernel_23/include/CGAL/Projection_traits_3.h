@@ -14,10 +14,9 @@
 #ifndef CGAL_PROJECTION_TRAITS_3_H
 #define CGAL_PROJECTION_TRAITS_3_H
 
-
 #include <CGAL/internal/Filtered_projection_traits_3.h>
 
-namespace CGAL{
+namespace CGAL {
 
 // This declaration is needed to break the cyclic dependency.
 template < class Filtered_kernel >
@@ -28,8 +27,7 @@ class Projection_traits_3
   : public Projection_traits_base_3<Kernel>
 {
 public:
-  explicit
-  Projection_traits_3(const typename Kernel::Vector_3& n_)
+  explicit Projection_traits_3(const typename Kernel::Vector_3& n_)
     : Projection_traits_base_3<Kernel>(n_)
   {}
 };
@@ -39,12 +37,11 @@ class Projection_traits_3<Kernel, true>
   : public Filtered_projection_traits_3<Kernel>
 {
 public:
-  explicit
-  Projection_traits_3(const typename Kernel::Vector_3& n_)
+  explicit Projection_traits_3(const typename Kernel::Vector_3& n_)
     : Filtered_projection_traits_3<Kernel>(n_)
   {}
 };
 
-} // end namespace CGAL
+} // namespace CGAL
 
 #endif // CGAL_PROJECTION_TRAITS_3_H

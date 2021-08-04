@@ -4,7 +4,7 @@ namespace CGAL{
 \ingroup kernel_classes
 
 The class `Projection_traits_3` works similarly to the `Projection_traits_xy_3`,
-`Projection_traits_xz_3`, and `Projection_traits_yz_3` traits classes, by enabling
+`Projection_traits_xz_3`, and `Projection_traits_yz_3` traits classes, enabling
 the use of 2D algorithms on the projections of 3D data onto an arbitrary plane.
 
 \tparam K must be a model of `Kernel`
@@ -39,7 +39,7 @@ public:
   /// concepts. The functors operate on the 2D projections of their
   /// arguments. They come with preconditions that projections of the
   /// arguments are non-degenerate, e.g. a line segment does not project
-  /// on a single point, two points do not project on the same point, etc.
+  /// on a single point, two points do not project onto the same point, etc.
   ///@}
 
   /// \name Creation

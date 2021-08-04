@@ -7,7 +7,7 @@ Release date:  December 2021
 
 ### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.3/Manual/packages.html#PkgKernel23)
 
--   Added documentation for the class `Projection_traits_3`, that enables the use of 2D algorithms on the projections of 3D data into an arbitrary plane.
+-   Added documentation for the class `Projection_traits_3`, which enables the use of 2D algorithms on the projections of 3D data onto an arbitrary plane.
 
 [Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)
 -----------
