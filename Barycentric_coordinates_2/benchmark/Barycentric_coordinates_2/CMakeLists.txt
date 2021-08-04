@@ -17,7 +17,7 @@ create_single_source_cgal_program("benchmark_polygon_16_vertices.cpp")
 create_single_source_cgal_program("benchmark_polygon_100_vertices.cpp")
 create_single_source_cgal_program("benchmark_mv_34_vertices.cpp")
 
-find_package(Eigen3 QUIET)
+find_package(Eigen3 3.1.0 QUIET) # (3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
 
