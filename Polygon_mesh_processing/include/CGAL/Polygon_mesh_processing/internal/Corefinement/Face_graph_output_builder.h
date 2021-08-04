@@ -514,7 +514,7 @@ public:
       Node_id index_q2 = get_node_id(q2, vertex_to_node_id2);
 
       // set boolean for the position of p1 wrt to q1 and q2
-      bool p1_eq_q1=is_border(h1_opp, tm1), p1_eq_q2=p1_eq_q1;
+      bool p1_eq_q1=false, p1_eq_q2=false;
       if (!is_border(h1_opp, tm1) && index_p1!=NID)
       {
         if (!is_border(h2_opp, tm2))
@@ -540,7 +540,7 @@ public:
       }
 
       // set boolean for the position of p2 wrt to q1 and q2
-      bool p2_eq_q1=is_border(h1, tm1), p2_eq_q2=p2_eq_q1;
+      bool p2_eq_q1=false, p2_eq_q2=false;
       if (!is_border(h1, tm1) && index_p2!=NID)
       {
         if (!is_border(h2_opp, tm2))
@@ -766,20 +766,23 @@ public:
             std::size_t patch_id_q1=tm2_patch_ids[ get(fids2, face(opposite(h2,tm2),tm2)) ];
             std::size_t patch_id_q2=tm2_patch_ids[ get(fids2, face(h2,tm2)) ];
 
-            //indicates that patch status will be updated
-            patch_status_not_set_tm1.reset(patch_id_p);
-            patch_status_not_set_tm2.reset(patch_id_q1);
-            patch_status_not_set_tm2.reset(patch_id_q2);
+            if (index_p!=index_q1 && index_p!=index_q2)
+            {
+              //indicates that patch status will be updated
+              patch_status_not_set_tm1.reset(patch_id_p);
+              patch_status_not_set_tm2.reset(patch_id_q1);
+              patch_status_not_set_tm2.reset(patch_id_q2);
 
-            bool p_is_between_q1q2 = sorted_around_edge(
-                ids.first, ids.second,
-                index_q1, index_q2, index_p,
-                q1, q2, p,
-                vpm2, vpm1,
-                nodes);
+              bool p_is_between_q1q2 = sorted_around_edge(
+                  ids.first, ids.second,
+                  index_q1, index_q2, index_p,
+                  q1, q2, p,
+                  vpm2, vpm1,
+                  nodes);
 
-            if (p_is_between_q1q2)
-              is_patch_inside_tm2.set(patch_id_p);
+              if (p_is_between_q1q2)
+                is_patch_inside_tm2.set(patch_id_p);
+            }
           }
         }
       }
