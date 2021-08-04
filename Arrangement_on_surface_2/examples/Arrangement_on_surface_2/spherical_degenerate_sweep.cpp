@@ -40,7 +40,7 @@ int main() {
   std::vector< Point_2 > points;
   std::vector< X_monotone_curve_2 > xcvs;
 
-  CGAL::set_pretty_mode(std::cout);
+  CGAL::IO::set_pretty_mode(std::cout);
 
   Point_2 sp = ctr_p(0, 0, -1);
   Point_2 np = ctr_p(0, 0, 1);
