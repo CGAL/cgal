@@ -50,7 +50,7 @@ typedef unspecified_type halfedge_descriptor;
   void add_retriangulation_edge(halfedge_descriptor h, Triangle_mesh& tm);
 /// @}
 
-/// @name Function used by corefine() when a new vertex is created
+/// @name Functions used by corefine() when a new vertex is created.
 /// @{
 
   /// called when a new intersection point is detected. The intersection is detected using
@@ -63,8 +63,8 @@ typedef unspecified_type halfedge_descriptor;
   ///            if `sdim==1` the edge of `h_f` contains the intersection point in its interior,
   ///            if `sdim==2` the face of `h_f` contains the intersection point in its interior.
   /// \param h_e a halfedge from `tm_e`
-  /// \param is_target_coplanar `true` iif the target of `h_e` is the intersection point
-  /// \param is_source_coplanar `true` iif the source of `h_e` is the intersection point
+  /// \param is_target_coplanar `true` iff the target of `h_e` is the intersection point
+  /// \param is_source_coplanar `true` iff the source of `h_e` is the intersection point
   /// \param tm_f mesh containing `h_f`
   /// \param tm_e mesh containing `h_e`
   void intersection_point_detected(std::size_t i_id,
@@ -110,9 +110,9 @@ typedef unspecified_type halfedge_descriptor;
   void intersection_edge_copy(halfedge_descriptor h_src1, const Triangle_mesh& tm_src1,
                               halfedge_descriptor h_src2, const Triangle_mesh& tm_src2,
                               halfedge_descriptor h_tgt,  Triangle_mesh& tm_tgt);
-  ///called before vertex `v_src` from `tm_src` is copied in `tm_tgt`
+  /// called before vertex `v_src` from `tm_src` is copied in `tm_tgt`
   void before_vertex_copy(vertex_descriptor v_src, const Triangle_mesh& tm_src, Triangle_mesh& tm_tgt);
-  ///called after vertex `v_src` from `tm_src` is copied in `tm_tgt`. The new vertex is `v_tgt`.
+  /// called after vertex `v_src` from `tm_src` is copied in `tm_tgt`. The new vertex is `v_tgt`.
   /// The point has already been put in the vertex point map.
   void after_vertex_copy(vertex_descriptor v_src, const Triangle_mesh& tm_src,
                          vertex_descriptor v_tgt, Triangle_mesh& tm_tgt);
