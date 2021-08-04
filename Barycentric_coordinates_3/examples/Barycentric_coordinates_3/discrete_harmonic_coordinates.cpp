@@ -3,6 +3,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+
 #include <CGAL/Barycentric_coordinates_3/Discrete_harmonic_coordinates_3.h>
 
 using Kernel =  CGAL::Exact_predicates_inexact_constructions_kernel;

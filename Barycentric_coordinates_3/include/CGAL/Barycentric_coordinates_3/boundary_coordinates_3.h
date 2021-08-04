@@ -37,8 +37,6 @@ namespace Barycentric_coordinates{
     coordinates are triangle coordinates, while all other coordinates are set to zero.
     If `query` is not on the boundary, all the coordinates are set to zero.
 
-    Internally, `triangle_coordinates_2()` are used.
-
     \tparam PolygonMesh
     must be a model of the concept `FaceListGraph`.
 
@@ -49,7 +47,7 @@ namespace Barycentric_coordinates{
     a model of `OutputIterator` that accepts values of type `GeomTraits::FT`
 
     \tparam VertexToPointMap
-    a model of ReadablePropertyMap with boost::graph_traits<PolygonMesh>::vertex_descriptor as
+    a property map with boost::graph_traits<PolygonMesh>::vertex_descriptor as
     key type and Point_3 as value type. The default is `property_map_selector<PolygonMesh,
     CGAL::vertex_point_t>`.
 
@@ -115,8 +113,6 @@ namespace Barycentric_coordinates{
     coordinates are triangle coordinates, while all other coordinates are set to zero.
     If `query` is not on the boundary, all the coordinates are set to zero.
 
-    Internally, `triangle_coordinates_2()` are used.
-
     \tparam PolygonMesh
     must be a model of the concept `FaceListGraph`.
 
@@ -127,7 +123,7 @@ namespace Barycentric_coordinates{
     a model of `OutputIterator` that accepts values of type `GeomTraits::FT`
 
     \tparam VertexToPointMap
-    a model of ReadablePropertyMap with boost::graph_traits<PolygonMesh>::vertex_descriptor as
+    a property map with boost::graph_traits<PolygonMesh>::vertex_descriptor as
     key type and Point_3 as value type. The default is `property_map_selector<PolygonMesh,
     CGAL::vertex_point_t>`.
 

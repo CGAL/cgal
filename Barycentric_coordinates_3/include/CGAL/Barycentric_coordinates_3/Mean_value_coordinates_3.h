@@ -28,11 +28,12 @@ namespace Barycentric_coordinates {
 
     \brief 3D mean value coordinates.
 
-    This class implements 3D mean value coordinates, which can be computed
-    at any point in the space.
+    This class implements 3D mean value coordinates ( \cite cgal:bc:f-wmvc-14,
+    \cite cgal:bc:jlw-ggcccsp-07 ), which can be computed at any point in the space.
 
-    Mean value coordinates are well-defined and non-negative in the closure
-    of a convex polyhedron with triangular faces. The coordinates are computed analytically.
+    Mean value coordinates are well-defined everywhere in the space and are
+    non-negative in the kernel of a star-shaped polyhedron. The coordinates are
+    computed analytically.
 
     \tparam PolygonMesh
     must be a model of the concept `FaceListGraph`.
@@ -41,7 +42,7 @@ namespace Barycentric_coordinates {
     a model of `BarycentricTraits_3`
 
     \tparam VertexToPointMap
-    a model of ReadablePropertyMap with boost::graph_traits<PolygonMesh>::vertex_descriptor as
+    a property map with boost::graph_traits<PolygonMesh>::vertex_descriptor as
     key type and Point_3 as value type. The default is `property_map_selector<PolygonMesh,
     CGAL::vertex_point_t>`.
   */
@@ -75,7 +76,7 @@ namespace Barycentric_coordinates {
     /// Point type.
     typedef typename GeomTraits::Point_3 Point_3;
 
-    /// Vector type.
+    /// %Vector type.
     typedef typename GeomTraits::Vector_3 Vector_3;
 
     /// @}
@@ -90,7 +91,7 @@ namespace Barycentric_coordinates {
       for 3D query points.
 
       \param polygon_mesh
-      an instance of `PolygonMesh`, which must be a convex simplicial polyhedron
+      an instance of `PolygonMesh`, which must be a simplicial polyhedron
 
       \param policy
       one of the `CGAL::Barycentric_coordinates::Computation_policy_3`;
@@ -362,7 +363,7 @@ namespace Barycentric_coordinates {
     \brief computes 3D mean value coordinates.
 
     This function computes 3D mean value coordinates at a given `query` point
-    with respect to the vertices of a convex `polyhedron` with triangular faces, that is one
+    with respect to the vertices of a `polyhedron` with triangular faces, that is one
     weight per vertex. The coordinates are stored in a destination range
     beginning at `c_begin`.
 
@@ -376,14 +377,14 @@ namespace Barycentric_coordinates {
     \tparam Point_3
     A model of `Kernel::Point_3`.
 
-    \tparam Mesh
+    \tparam PolygonMesh
     must be a model of the concept `FaceListGraph`.
 
     \tparam OutIterator
     a model of `OutputIterator` that accepts values of type `GeomTraits::FT`
 
     \param polygon_mesh
-    an instance of `PolygonMesh`, which must be a convex simplicial polyhedron
+    an instance of `PolygonMesh`, which must be a simplicial polyhedron
 
     \param query
     a query point

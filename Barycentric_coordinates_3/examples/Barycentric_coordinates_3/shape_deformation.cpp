@@ -89,4 +89,6 @@ int main() {
 
   std::ofstream out_deformed("deformed_sphere.off");
   out_deformed << deformed << std::endl;
+
+  return EXIT_SUCCESS;
 }

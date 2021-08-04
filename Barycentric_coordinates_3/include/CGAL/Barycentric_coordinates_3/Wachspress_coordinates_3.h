@@ -29,8 +29,9 @@ namespace Barycentric_coordinates {
 
     \brief 3D Wachspress coordinates.
 
-    This class implements 3D Wachspress coordinates, which can be computed
-    at any point inside a convex polyhedron with triangular faces.
+    This class implements 3D Wachspress coordinates ( \cite cgal:bc:f-wmvc-14,
+    \cite cgal:bc:jlw-ggcccsp-07 ), which can be computed at any point inside a convex
+    polyhedron with triangular faces.
 
     Wachspress coordinates are well-defined and non-negative in the closure of a convex
     polyhedron with triangular faces. The coordinates are computed analytically.
@@ -42,7 +43,7 @@ namespace Barycentric_coordinates {
     a model of `BarycentricTraits_3`
 
     \tparam VertexToPointMap
-    a model of ReadablePropertyMap with boost::graph_traits<PolygonMesh>::vertex_descriptor as
+    a property map with boost::graph_traits<PolygonMesh>::vertex_descriptor as
     key type and Point_3 as value type. The default is `property_map_selector<PolygonMesh,
     CGAL::vertex_point_t>`.
   */
@@ -75,7 +76,7 @@ namespace Barycentric_coordinates {
     /// Point type.
     typedef typename GeomTraits::Point_3 Point_3;
 
-    /// Vector type.
+    /// %Vector type.
     typedef typename GeomTraits::Vector_3 Vector_3;
 
     /// @}
@@ -356,7 +357,7 @@ namespace Barycentric_coordinates {
     \tparam Point_3
     A model of `Kernel::Point_3`.
 
-    \tparam Mesh
+    \tparam PolygonMesh
     must be a model of the concept `FaceListGraph`.
 
     \tparam OutIterator

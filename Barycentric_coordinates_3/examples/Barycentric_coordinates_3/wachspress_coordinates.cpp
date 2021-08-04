@@ -3,6 +3,7 @@
 #include <CGAL/point_generators_3.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+
 #include <CGAL/Barycentric_coordinates_3/Wachspress_coordinates_3.h>
 
 using Kernel =  CGAL::Exact_predicates_inexact_constructions_kernel;
