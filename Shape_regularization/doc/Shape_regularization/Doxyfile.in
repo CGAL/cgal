@@ -1,9 +1,8 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
-PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Shape Regularization"
-EXTRACT_ALL = false
 
-INPUT = ${CMAKE_SOURCE_DIR}/Shape_regularization/doc/Shape_regularization/ \
-${CMAKE_SOURCE_DIR}/Shape_regularization/include
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Shape Regularization"
+
+EXTRACT_ALL = false
 
 MACRO_EXPANSION    = YES
 EXPAND_ONLY_PREDEF = YES
