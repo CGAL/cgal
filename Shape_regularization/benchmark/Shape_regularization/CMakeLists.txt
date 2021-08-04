@@ -6,32 +6,28 @@ project(Shape_regularization_Benchmarks)
 cmake_minimum_required(VERSION 3.1...3.15)
 set(CMAKE_CXX_STANDARD 14)
 
-find_package(CGAL QUIET COMPONENTS Core)
-if(CGAL_FOUND)
-  message(STATUS "Found CGAL")
+find_package(CGAL REQUIRED)
+message(STATUS "Found CGAL")
 
-  include(${CGAL_USE_FILE})
-  include(CGAL_CreateSingleSourceCGALProgram)
+include(${CGAL_USE_FILE})
+include(CGAL_CreateSingleSourceCGALProgram)
 
-  # Find OSQP library and headers.
-  find_package(OSQP QUIET)
-  include(CGAL_OSQP_support)
-  if(TARGET CGAL::OSQP_support)
-    message(STATUS "Found OSQP")
+# Find OSQP library and headers.
+find_package(OSQP QUIET)
+include(CGAL_OSQP_support)
+if(TARGET CGAL::OSQP_support)
+  message(STATUS "Found OSQP")
 
-    set(osqp_targets
-    benchmark_contours
-    benchmark_qp_segments)
+  set(osqp_targets
+  benchmark_contours
+  benchmark_qp_segments)
 
-    foreach(osqp_target ${osqp_targets})
-      create_single_source_cgal_program("${osqp_target}.cpp")
-      if(TARGET ${osqp_target})
-        target_link_libraries(${osqp_target} PUBLIC CGAL::OSQP_support)
-      endif()
-    endforeach()
-  else()
-    message(STATUS "NOTICE: OSQP was not found. OSQP benchmarks won't be available.")
-  endif()
+  foreach(osqp_target ${osqp_targets})
+    create_single_source_cgal_program("${osqp_target}.cpp")
+    if(TARGET ${osqp_target})
+      target_link_libraries(${osqp_target} PUBLIC CGAL::OSQP_support)
+    endif()
+  endforeach()
 else()
-  message(WARNING "This program requires the CGAL library, and will not be compiled.")
+  message(NOTICE "OSQP was not found. OSQP benchmarks won't be available.")
 endif()
