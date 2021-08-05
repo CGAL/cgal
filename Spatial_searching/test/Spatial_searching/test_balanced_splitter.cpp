@@ -248,7 +248,7 @@ void run_all_tests() {
   run_tests_kd<Kernel>();
 }
 
-template<typename Kernel>
+template<typename Kernel, typename ConcurrencyTag = CGAL::Sequential_tag>
 void test_balanced_tree(
   const std::string filename,
   const int ref_depth,
@@ -288,7 +288,7 @@ void test_balanced_tree(
 
   Timer timer;
   timer.start();
-  tree.build();
+  tree. template build<ConcurrencyTag>();
   timer.stop();
 
   const auto memory_after = CGAL::Memory_sizer().resident_size();
@@ -424,6 +424,11 @@ int main(int argc, char* argv[]) {
     test_balanced_tree<EPICK>("data/failure_with_duplicates.xyz", 8, 82, false);
     // This data set is the bottleneck for all median splitters.
     test_balanced_tree<EPICK>("data/bottleneck.xyz", 4, 5, false);
+
+    #ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
+    // Test parallel version.
+    test_balanced_tree<EPICK, CGAL::Parallel_tag>("data/balanced.xyz", 3, 4, false);
+    #endif
   }
 
   // Run tests.

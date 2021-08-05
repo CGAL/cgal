@@ -14,3 +14,11 @@ file(
 foreach(cppfile ${cppfiles})
   create_single_source_cgal_program("${cppfile}")
 endforeach()
+
+find_package(TBB)
+include(CGAL_TBB_support)
+if(TARGET CGAL::TBB_support)
+  target_link_libraries(test_balanced_splitter PUBLIC CGAL::TBB_support)
+else()
+  message(NOTICE "Intel TBB was not found. The test_balanced_splitter will use sequential code.")
+endif()

@@ -57,6 +57,7 @@
   be disabled.
  */
 #if defined(CGAL_LINKED_WITH_TBB) && !defined(CGAL_DISABLE_TBB_STRUCTURE_IN_KD_TREE)
+#  include <tbb/parallel_for.h>
 #  include <tbb/parallel_invoke.h>
 #  include <tbb/concurrent_vector.h>
 #  define CGAL_TBB_STRUCTURE_IN_KD_TREE
@@ -143,10 +144,10 @@ private:
   using FTP = typename Point_container::FTP;
   using Key_compare = typename Point_container::Key_compare;
 
-  void initialize_reference(
+  static void initialize_reference(
     const Point_d_const_iterator begin, const Point_d_const_iterator end,
     const typename SearchTraits::Construct_cartesian_const_iterator_d& construct_it,
-    std::vector<FTP>& reference) const {
+    std::vector<FTP>& reference) {
 
     std::size_t i = 0;
     for (auto it = begin; it != end; ++it, ++i) {
@@ -159,9 +160,9 @@ private:
   // We do not really remove duplicates here but rather move the pointer to the right end.
   // At the end, all unique points are moved to the beginning of the array and all
   // duplicates are moved to the end of this array.
-  std::size_t remove_duplicates(
+  static std::size_t remove_duplicates(
     const Key_compare& compare_keys, std::vector<FTP>& reference,
-    const std::size_t axis, const std::size_t dim) const {
+    const std::size_t axis, const std::size_t dim) {
 
     std::size_t end = 0;
     for (std::size_t i = 1; i < reference.size(); ++i) {
@@ -251,24 +252,27 @@ private:
 
     const std::size_t m_dim;
     const Key_compare& m_compare_keys;
+    const std::vector<const Point_d *>& m_data;
     std::vector< std::vector<FTP> >& m_references;
     std::vector<std::size_t>& m_ref_end;
+    const SearchTraits m_traits;
 
   public:
     Create_reference(
       const std::size_t dim,
       const Key_compare& compare_keys,
+      const std::vector<const Point_d *>& data,
       std::vector< std::vector<FTP> >& references,
       std::vector<std::size_t>& ref_end) :
-    m_dim(dim), m_compare_keys(compare_keys),
+    m_dim(dim), m_compare_keys(compare_keys), m_data(data),
     m_references(references), m_ref_end(ref_end)
     { }
 
     void operator()(const tbb::blocked_range<std::size_t>& range) const {
 
       for (std::size_t i = range.begin(); i != range.end(); ++i) {
-        initialize_reference(data.begin(), data.end(),
-        traits_.construct_cartesian_const_iterator_d_object(), m_references[i]);
+        initialize_reference(m_data.begin(), m_data.end(),
+        m_traits.construct_cartesian_const_iterator_d_object(), m_references[i]);
 
         std::stable_sort(m_references[i].begin(), m_references[i].end(),
           [&](const FTP& p, const FTP& q) {
@@ -284,6 +288,7 @@ private:
   };
   #endif
 
+  template<typename ConcurrencyTag>
   std::pair<long, long> initialize_references(
     const std::integral_constant<bool, true>,
     const std::size_t dim, std::vector<const Point_d*>& data) {
@@ -303,10 +308,9 @@ private:
 
     #if defined(CGAL_TBB_STRUCTURE_IN_KD_TREE)
     if (boost::is_convertible<ConcurrencyTag, CGAL::Parallel_tag>::value) {
-      CGAL_assertion_msg(false, "TODO: ADD PARALLEL BALANCED PREPROCESSING!");
       tbb::parallel_for(
         tbb::blocked_range<std::size_t>(0, references.size()),
-        Create_reference(dim, compare_keys, references, ref_end));
+        Create_reference(dim, compare_keys, data, references, ref_end));
     } else
     #endif
     {
@@ -337,6 +341,7 @@ private:
     return std::make_pair(start, end);
   }
 
+  template<typename ConcurrencyTag>
   std::pair<long, long> initialize_references(
     const std::integral_constant<bool, false>,
     const std::size_t /* dim */, std::vector<const Point_d*>& data) {
@@ -553,7 +558,7 @@ public:
 
     long start = -1, end = -1;
     CGAL_assertion(dim_ >= 0);
-    std::tie(start, end) = initialize_references(
+    std::tie(start, end) = initialize_references<ConcurrencyTag>(
       typename std::is_same<Splitter, CGAL::Balanced_splitter<SearchTraits> >::type(),
       static_cast<std::size_t>(dim_), data);
 
