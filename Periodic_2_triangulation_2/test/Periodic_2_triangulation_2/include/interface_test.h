@@ -488,7 +488,7 @@ template <class T>
 void test_io(T &pt1, bool ex)
 {
   std::cout << "I/O" << std::endl;
-  std::cout << "  ascii" << std::endl;
+  std::cout << "  ASCII" << std::endl;
 
   std::stringstream ss1;
   ss1 << pt1;

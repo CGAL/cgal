@@ -65,6 +65,9 @@ public:
   Direction_2(const RDirection_2& d)
     : RDirection_2(d) {}
 
+  Direction_2(RDirection_2&& d)
+    : RDirection_2(std::move(d)) {}
+
   explicit Direction_2(const Vector_2& v)
     : RDirection_2(typename R::Construct_direction_2()(Return_base_tag(), v)) {}
 
@@ -233,7 +236,7 @@ extract(std::istream& is, Direction_2<R>& d, const Cartesian_tag&)
         break;
     default:
         is.setstate(std::ios::failbit);
-        std::cerr << std::endl << "Stream must be in ascii or binary mode"
+        std::cerr << std::endl << "Stream must be in ASCII or binary mode"
                   << std::endl;
         break;
     }
@@ -259,7 +262,7 @@ extract(std::istream& is, Direction_2<R>& d, const Homogeneous_tag&)
     default:
         is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
   }
   d = Direction_2<R>(x, y);

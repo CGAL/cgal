@@ -102,6 +102,17 @@ function(CGAL_setup_CGAL_dependencies target)
   target_include_directories(${target} INTERFACE
     $<INSTALL_INTERFACE:include>)
 
+  # Make CGAL depend on threads-support (for Epeck and Epeck_d)
+  if(CGAL_HAS_NO_THREADS)
+    target_compile_definitions(${target} INTERFACE CGAL_HAS_NO_THREADS)
+  else()
+    if(NOT TARGET Threads::Threads)
+      set(THREADS_PREFER_PTHREAD_FLAG ON)
+      find_package(Threads REQUIRED)
+    endif()
+    target_link_libraries(${target} INTERFACE Threads::Threads)
+  endif()
+
   # Now setup compilation flags
   if(MSVC)
     target_compile_options(${target} INTERFACE

@@ -70,6 +70,9 @@ public:
   Vector_2(const RVector_2& v)
       : RVector_2(v) {}
 
+  Vector_2(RVector_2&& v)
+      : RVector_2(std::move(v)) {}
+
   Vector_2(const Point_2& a, const Point_2& b)
       : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), a, b)) {}
 
@@ -347,7 +350,7 @@ extract(std::istream& is, Vector_2<R>& v, const Cartesian_tag&)
     default:
         is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
     }
     if (is)
@@ -374,7 +377,7 @@ extract(std::istream& is, Vector_2<R>& v, const Homogeneous_tag&)
     default:
         is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
   }
   v = Vector_2<R>(hx, hy, hw);

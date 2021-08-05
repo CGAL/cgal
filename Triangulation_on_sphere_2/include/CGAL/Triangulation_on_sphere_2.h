@@ -127,6 +127,9 @@ public:
   void swap(Triangulation_on_sphere_2& tr);
   Triangulation_on_sphere_2& operator=(Triangulation_on_sphere_2 tr); // intentional copy
 
+  // Destructor
+  ~Triangulation_on_sphere_2() = default;
+
 public:
   // Members
   const Geom_traits& geom_traits() const { return _gt; }

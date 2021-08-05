@@ -9,8 +9,6 @@
 #include <vector>
 #include <deque>
 
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
-
 #include <CGAL/IO/WKT.h>
 
 //typedef CGAL::Simple_cartesian<CGAL::Gmpq> Kernel;
@@ -44,9 +42,3 @@ int main(int argc, char* argv[])
   }
   return 0;
 }
-#else
-int main()
-{
-  return 0;
-}
-#endif

@@ -44,20 +44,12 @@ public:
   using Base::f;
 
 protected:
-#if defined(__POWERPC__) && \
-  defined(__GNUC__) && (__GNUC__ == 3 ) && (__GNUC_MINOR__ == 4)
-  // hack to avoid nasty warning for G++ 3.4 on Darwin
-  static FT OFFSET()
-  {
-    return FT(10000);
-  }
-#else
+
   static const FT& OFFSET()
   {
     static const FT offset_(10000);
     return offset_;
   }
-#endif
 
   template< class Stream >
   inline
