@@ -73,12 +73,19 @@ void run_tests_2d() {
   assert(tree_0.root()->num_items() == points.size());
   assert(tree_0.root()->num_nodes() == 5);
 
+  tree_0.remove(points[0]); // remove a point
+  assert(tree_0.root()->num_items() == points.size() - 1);
+
   // Default bucket size = 10.
   Kd_tree tree_1(points.begin(), points.end());
   tree_1.build();
   assert(tree_1.root()->depth() == 3);
   assert(tree_1.root()->num_items() == points.size());
   assert(tree_1.root()->num_nodes() == 3);
+
+  tree_1.remove(points[5]); // remove a point
+  tree_1.remove(points[8]); // remove another point
+  assert(tree_1.root()->num_items() == points.size() - 2);
 
   // One line of collinear points with duplicates.
   points.clear();
@@ -96,6 +103,11 @@ void run_tests_2d() {
   assert(tree_2.root()->num_items() == points.size());
   assert(tree_2.root()->num_nodes() == 4);
 
+  tree_2.remove(points[0]); // remove a point
+  assert(tree_2.root()->num_items() == points.size() - 1);
+  tree_2.remove(points[10]); // remove its duplicate
+  assert(tree_2.root()->num_items() == points.size() - 2);
+
   // Two lines of collinear points without duplicates.
   points.clear();
   points = {
@@ -112,10 +124,13 @@ void run_tests_2d() {
   assert(tree_3.root()->num_items() == points.size());
   assert(tree_3.root()->num_nodes() == 5);
 
-  // Test remove methods.
-  const Point_2 query_to_remove(0,1);
-  tree_1.remove(query_to_remove);
-  assert(tree_1.root()->num_items() == points.size() - 1);
+  // Remove n - 1 points.
+  for (std::size_t i = 0; i < points.size() - 1; ++i) {
+    tree_3.remove(points[i]);
+  }
+  assert(tree_3.root()->depth() == 1);
+  assert(tree_3.root()->num_items() == 1);
+  assert(tree_3.root()->num_nodes() == 1);
 }
 
 template<typename Kernel>
@@ -145,12 +160,20 @@ void run_tests_3d() {
   assert(tree_0.root()->num_items() == points.size());
   assert(tree_0.root()->num_nodes() == 4);
 
+  tree_0.remove(points[0]); // remove a point
+  assert(tree_0.root()->num_items() == points.size() - 1);
+
   // Default bucket size = 10.
   Kd_tree tree_1(points.begin(), points.end());
   tree_1.build();
   assert(tree_1.root()->depth() == 3);
   assert(tree_1.root()->num_items() == points.size());
   assert(tree_1.root()->num_nodes() == 4);
+
+  tree_1.remove(points[1]); // remove a point
+  assert(tree_1.root()->num_items() == points.size() - 1);
+  tree_1.remove(points[15]); // remove its duplicate
+  assert(tree_1.root()->num_items() == points.size() - 2);
 
   // Increase the bucket size but not too much.
   Splitter splitter_bs_15(15);
@@ -160,12 +183,24 @@ void run_tests_3d() {
   assert(tree_2.root()->num_items() == points.size());
   assert(tree_2.root()->num_nodes() == 2);
 
+  tree_2.remove(points[3]); // remove a point
+  tree_2.remove(points[6]); // remove another point
+  assert(tree_2.root()->num_items() == points.size() - 2);
+
   // The bucket size covers all points.
   Splitter splitter_bs_30(30);
   Kd_tree tree_3(points.begin(), points.end(), splitter_bs_30);
   tree_3.build();
   assert(tree_3.root()->depth() == 1);
   assert(tree_3.root()->num_items() == points.size());
+  assert(tree_3.root()->num_nodes() == 1);
+
+  // Remove n - 1 points.
+  for (std::size_t i = 0; i < points.size() - 1; ++i) {
+    tree_3.remove(points[i]);
+  }
+  assert(tree_3.root()->depth() == 1);
+  assert(tree_3.root()->num_items() == 1);
   assert(tree_3.root()->num_nodes() == 1);
 }
 
@@ -190,6 +225,18 @@ void run_tests_kd() {
   assert(tree.root()->depth() < 10);
   assert(tree.root()->num_items() == points.size());
   assert(tree.root()->num_nodes() > 0);
+
+  const auto prev_depth = tree.root()->depth();
+  const auto num_prev_items = tree.root()->num_items();
+  const auto num_prev_nodes = tree.root()->num_nodes();
+
+  // Remove n / 2 points.
+  for (std::size_t i = 0; i < points.size() / 2; ++i) {
+    tree.remove(points[i]);
+  }
+  assert(tree.root()->depth() <= prev_depth);
+  assert(tree.root()->num_items() <= num_prev_items);
+  assert(tree.root()->num_nodes() <= num_prev_nodes);
 }
 
 template<typename Kernel>
