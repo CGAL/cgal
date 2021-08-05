@@ -22,7 +22,7 @@ Free functions to compute barycentric coordinates.
 \addtogroup PkgBarycentricCoordinates3Ref
 
 \cgalPkgDescriptionBegin{3D Generalized Barycentric Coordinates, PkgBarycentricCoordinates3}
-\cgalPkgPicture{barcoord_thumb.png}
+\cgalPkgPicture{barcoord3_thumb.png}
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Antonio Gomes, Dmitry Anisimov}
