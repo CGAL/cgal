@@ -421,11 +421,11 @@ namespace CGAL {
         upper = median;
 
         for (long i = start; i <= end; ++i) { // always skip median key
-          const FT res = m_compare_keys(
+          const auto result = m_compare_keys(
             m_references[k][i], m_references[0][median], axis, dim);
-          if (CGAL::compare(res, FT(0)) == CGAL::SMALLER) {
+          if (result == CGAL::SMALLER) {
             m_references[k-1][++lower] = m_references[k][i];
-          } else if (CGAL::compare(res, FT(0)) == CGAL::LARGER) {
+          } else if (result == CGAL::LARGER) {
             m_references[k-1][++upper] = m_references[k][i];
           }
         }
@@ -448,8 +448,8 @@ namespace CGAL {
         [&](const Point_d* pt) {
           const auto p = construct_it(*pt);
           const auto q = m_references[dim-1][median];
-          const FT res = m_compare_keys(p, q, axis, dim);
-          return CGAL::compare(res, FT(0)) == CGAL::SMALLER;
+          const auto result = m_compare_keys(p, q, axis, dim);
+          return result == CGAL::SMALLER;
         }
       );
 

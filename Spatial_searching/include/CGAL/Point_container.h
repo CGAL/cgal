@@ -26,6 +26,7 @@
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/internal/Get_dimension_tag.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/enum.h>
 
 #include <boost/optional.hpp>
 
@@ -69,20 +70,20 @@ private:
 public:
   struct Key_compare {
 
-    FT operator()(
+    CGAL::Comparison_result operator()(
       const FTP& p, const FTP& q, // refs to points p and q
       const std::size_t axis, // axis offset in (x, y, z, w, ...)
       const std::size_t dim) const { // dimension
 
       CGAL_assertion(p != FTP());
       CGAL_assertion(q != FTP());
-      FT coords_diff = FT(0);
+      CGAL::Comparison_result result;
       for (std::size_t k = 0; k < dim; ++k) {
         const std::size_t idx = (k + axis) % dim; // stay inside dim
-        coords_diff = p[idx] - q[idx];
-        if (!CGAL::is_zero(coords_diff)) break;
+        result = CGAL::compare(p[idx], q[idx]);
+        if (result != CGAL::EQUAL) break;
       }
-      return coords_diff;
+      return result;
     }
   };
 

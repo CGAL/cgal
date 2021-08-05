@@ -166,12 +166,12 @@ private:
 
     std::size_t end = 0;
     for (std::size_t i = 1; i < reference.size(); ++i) {
-      const FT res = compare_keys( // p[i] > q[i-1]
+      const auto result = compare_keys( // p[i] > q[i-1]
         reference[i] /* p */, reference[i-1] /* q */, axis, dim);
 
-      if (CGAL::compare(res, FT(0)) == CGAL::SMALLER) {
+      if (result == CGAL::SMALLER) {
         CGAL_assertion_msg(false, "ERROR: NEGATIVE COMPARE KEYS RESULT!");
-      } else if (CGAL::compare(res, FT(0)) == CGAL::LARGER) {
+      } else if (result == CGAL::LARGER) {
         reference[++end] = reference[i];
       }
     }
@@ -276,8 +276,8 @@ private:
 
         std::stable_sort(m_references[i].begin(), m_references[i].end(),
           [&](const FTP& p, const FTP& q) {
-            const FT res = m_compare_keys(p, q, i, m_dim);
-            return CGAL::compare(res, FT(0)) == CGAL::SMALLER;
+            const auto result = m_compare_keys(p, q, i, m_dim);
+            return result == CGAL::SMALLER;
           }
         );
 
@@ -319,8 +319,8 @@ private:
         traits_.construct_cartesian_const_iterator_d_object(), references[i]);
         std::stable_sort(references[i].begin(), references[i].end(),
           [&](const FTP& p, const FTP& q) {
-            const FT res = compare_keys(p, q, i, dim);
-            return CGAL::compare(res, FT(0)) == CGAL::SMALLER;
+            const auto result = compare_keys(p, q, i, dim);
+            return result == CGAL::SMALLER;
           }
         );
         ref_end[i] = static_cast<long>(remove_duplicates(
