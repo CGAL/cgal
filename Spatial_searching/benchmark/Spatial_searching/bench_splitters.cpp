@@ -196,7 +196,7 @@ void generate_query_points(
   }
 }
 
-template<typename Kernel, typename Traits, typename Splitter>
+template<typename Kernel, typename Traits, typename Splitter, typename ConcurrencyTag>
 std::pair<double, double> bench_splitter(
   const bool verbose,
   const std::size_t num_iters,
@@ -221,7 +221,7 @@ std::pair<double, double> bench_splitter(
     tree.insert(point_set.begin(), point_set.end());
     timer.reset();
     timer.start();
-    tree.build();
+    tree. template build<ConcurrencyTag>();
     timer.stop();
     avg_build_time += timer.time();
   }
@@ -295,7 +295,7 @@ std::pair<double, double> bench_splitter(
   return std::make_pair(avg_build_time, avg_search_time);
 }
 
-template<typename Kernel, typename Traits, typename Splitter>
+template<typename Kernel, typename Traits, typename Splitter, typename ConcurrencyTag>
 std::vector<double> bench_random_in_bbox(
   const std::string filename, const bool verbose,
   std::size_t num_query_points, std::size_t num_iters,
@@ -374,19 +374,19 @@ std::vector<double> bench_random_in_bbox(
 
   // Bench tree.
   if (verbose) std::cout << std::endl << "* SURFACE / SURFACE" << std::endl;
-  auto pair = bench_splitter<Kernel, Traits, Splitter>(
+  auto pair = bench_splitter<Kernel, Traits, Splitter, ConcurrencyTag>(
     verbose, num_iters, bucket_size, k, point_set, point_set, true);
   out.push_back(pair.first);
   out.push_back(pair.second);
 
   if (verbose) std::cout << std::endl << "* SURFACE / RANDOM" << std::endl;
-  pair = bench_splitter<Kernel, Traits, Splitter>(
+  pair = bench_splitter<Kernel, Traits, Splitter, ConcurrencyTag>(
     verbose, num_iters, bucket_size, k, point_set, query_points);
   out.push_back(pair.first);
   out.push_back(pair.second);
 
   if (verbose) std::cout << std::endl << "* RANDOM / RANDOM" << std::endl;
-  pair = bench_splitter<Kernel, Traits, Splitter>(
+  pair = bench_splitter<Kernel, Traits, Splitter, ConcurrencyTag>(
     verbose, num_iters, bucket_size, k, query_points, query_points);
   out.push_back(pair.first);
   out.push_back(pair.second);
@@ -395,7 +395,7 @@ std::vector<double> bench_random_in_bbox(
   return out;
 }
 
-template<typename Kernel, typename Traits, typename Splitter>
+template<typename Kernel, typename Traits, typename Splitter, typename ConcurrencyTag>
 std::vector<double> bench_translated(
   const std::string filename, const bool verbose,
   typename Kernel::FT d, std::size_t num_iters,
@@ -458,19 +458,19 @@ std::vector<double> bench_translated(
 
   // Benching the tree.
   if (verbose) std::cout << std::endl << "* SURFACE / SURFACE" << std::endl;
-  auto pair = bench_splitter<Kernel, Traits, Splitter>(
+  auto pair = bench_splitter<Kernel, Traits, Splitter, ConcurrencyTag>(
     verbose, num_iters, bucket_size, k, point_set, point_set, true);
   out.push_back(pair.first);
   out.push_back(pair.second);
 
   if (verbose) std::cout << std::endl << "* SURFACE / TRANSLATED" << std::endl;
-  pair = bench_splitter<Kernel, Traits, Splitter>(
+  pair = bench_splitter<Kernel, Traits, Splitter, ConcurrencyTag>(
     verbose, num_iters, bucket_size, k, point_set, query_points);
   out.push_back(pair.first);
   out.push_back(pair.second);
 
   if (verbose) std::cout << std::endl << "* TRANSLATED / TRANSLATED" << std::endl;
-  pair = bench_splitter<Kernel, Traits, Splitter>(
+  pair = bench_splitter<Kernel, Traits, Splitter, ConcurrencyTag>(
     verbose, num_iters, bucket_size, k, query_points, query_points);
   out.push_back(pair.first);
   out.push_back(pair.second);
@@ -479,7 +479,7 @@ std::vector<double> bench_translated(
   return out;
 }
 
-template<typename Kernel, typename Traits, typename Splitter>
+template<typename Kernel, typename Traits, typename Splitter, typename ConcurrencyTag>
 void user_manual_bench(
   const std::string filename, const bool verbose, const std::size_t num_iters) {
 
@@ -510,12 +510,12 @@ void user_manual_bench(
     std::cout << "| -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |" << std::endl;
   }
 
-  out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter>(filename, verbose, 0, num_iters, 10, 10));
-  out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter>(filename, verbose, 0, num_iters, 20, 10));
-  out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter>(filename, verbose, 0, num_iters, 10, 20));
-  out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter>(filename, verbose, 0, num_iters, 20, 20));
-  out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter>(filename, verbose, 0, num_iters, 10, 30));
-  out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter>(filename, verbose, 0, num_iters, 20, 30));
+  out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter, ConcurrencyTag>(filename, verbose, 0, num_iters, 10, 10));
+  out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter, ConcurrencyTag>(filename, verbose, 0, num_iters, 20, 10));
+  out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter, ConcurrencyTag>(filename, verbose, 0, num_iters, 10, 20));
+  out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter, ConcurrencyTag>(filename, verbose, 0, num_iters, 20, 20));
+  out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter, ConcurrencyTag>(filename, verbose, 0, num_iters, 10, 30));
+  out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter, ConcurrencyTag>(filename, verbose, 0, num_iters, 20, 30));
 
   if (!verbose) {
     for (std::size_t k = 0; k < out.size(); ++k) {
@@ -527,7 +527,7 @@ void user_manual_bench(
   }
 }
 
-template<typename Kernel, typename Traits, typename Splitter>
+template<typename Kernel, typename Traits, typename Splitter, typename ConcurrencyTag>
 void translated_bench(
   const std::string filename, const bool verbose, const std::size_t num_iters) {
 
@@ -558,12 +558,12 @@ void translated_bench(
     std::cout << "| -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |" << std::endl;
   }
 
-  out.push_back(bench_translated<Kernel, Traits, Splitter>(filename, verbose, 0.05, num_iters, 10, 10));
-  out.push_back(bench_translated<Kernel, Traits, Splitter>(filename, verbose, 0.05, num_iters, 20, 10));
-  out.push_back(bench_translated<Kernel, Traits, Splitter>(filename, verbose, 0.05, num_iters, 10, 20));
-  out.push_back(bench_translated<Kernel, Traits, Splitter>(filename, verbose, 0.05, num_iters, 20, 20));
-  out.push_back(bench_translated<Kernel, Traits, Splitter>(filename, verbose, 0.05, num_iters, 10, 30));
-  out.push_back(bench_translated<Kernel, Traits, Splitter>(filename, verbose, 0.05, num_iters, 20, 30));
+  out.push_back(bench_translated<Kernel, Traits, Splitter, ConcurrencyTag>(filename, verbose, 0.05, num_iters, 10, 10));
+  out.push_back(bench_translated<Kernel, Traits, Splitter, ConcurrencyTag>(filename, verbose, 0.05, num_iters, 20, 10));
+  out.push_back(bench_translated<Kernel, Traits, Splitter, ConcurrencyTag>(filename, verbose, 0.05, num_iters, 10, 20));
+  out.push_back(bench_translated<Kernel, Traits, Splitter, ConcurrencyTag>(filename, verbose, 0.05, num_iters, 20, 20));
+  out.push_back(bench_translated<Kernel, Traits, Splitter, ConcurrencyTag>(filename, verbose, 0.05, num_iters, 10, 30));
+  out.push_back(bench_translated<Kernel, Traits, Splitter, ConcurrencyTag>(filename, verbose, 0.05, num_iters, 20, 30));
 
   if (!verbose) {
     for (std::size_t k = 0; k < out.size(); ++k) {
@@ -585,17 +585,18 @@ int main(int argc, char* argv[]) {
   const bool verbose = false; // should we export data
   const std::string filename = (argc > 1 ? argv[1] : "data/sphere.xyz"); // input file
   const std::size_t num_iters = 1; // number of iterations to get average timing
+  using TAG = CGAL::Sequential_tag;
 
-  user_manual_bench<SCD, SCD_traits, CGAL::Balanced_splitter<SCD_traits> >(
+  user_manual_bench<SCD, SCD_traits, CGAL::Balanced_splitter<SCD_traits>, TAG>(
     filename, verbose, num_iters);
 
-  user_manual_bench<SCD, SCD_traits, CGAL::Sliding_midpoint<SCD_traits> >(
+  user_manual_bench<SCD, SCD_traits, CGAL::Sliding_midpoint<SCD_traits>, TAG>(
     filename, verbose, num_iters);
 
-  translated_bench<SCD, SCD_traits, CGAL::Balanced_splitter<SCD_traits> >(
+  translated_bench<SCD, SCD_traits, CGAL::Balanced_splitter<SCD_traits>, TAG>(
     filename, verbose, num_iters);
 
-  translated_bench<SCD, SCD_traits, CGAL::Sliding_midpoint<SCD_traits> >(
+  translated_bench<SCD, SCD_traits, CGAL::Sliding_midpoint<SCD_traits>, TAG>(
     filename, verbose, num_iters);
 
   return EXIT_SUCCESS;
