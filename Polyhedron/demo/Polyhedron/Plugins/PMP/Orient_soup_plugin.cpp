@@ -254,25 +254,8 @@ void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline(std::vector<std
     QApplication::setOverrideCursor(Qt::WaitCursor);
     Scene_points_with_normal_item* points = nullptr;
 
-    //remove vertices already in NM edges
-
-    std::unordered_set<std::size_t> check_set;
-    for(Scene_polygon_soup_item::Edge edge : item->non_manifold_edges())
-    {
-      check_set.insert(edge[0]);
-      check_set.insert(edge[1]);
-    }
-
-    std::set<std::size_t> nm_vertices;
-    for(const auto& v : nm_points)
-    {
-      if(check_set.insert(v).second)
-      {
-        nm_vertices.insert(v);
-      }
-    }
     bool items_created = false;
-    if(nm_vertices.empty() && warn)
+    if(nm_points.empty() && warn)
     {
       delete points;
       CGAL::Three::Three::information(tr("There is no non-manifold vertex in this soup."));
@@ -281,7 +264,7 @@ void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline(std::vector<std
     {
       points = new Scene_points_with_normal_item();
       items_created = true;
-      for(std::size_t id : nm_vertices)
+      for(std::size_t id : nm_points)
       {
         points->point_set()->insert(item->points()[id]);
       }

@@ -45,11 +45,12 @@ namespace Polygon_mesh_processing {
  *  overridden.
  */
 struct Default_orientation_visitor{
-  inline virtual void non_manifold_edge(std::size_t, std::size_t){}
-  inline virtual void non_manifold_vertex(std::size_t){}
-  inline virtual void duplicated_vertex(std::size_t, std::size_t){}
-  inline virtual void vertex_id_in_polygon_replaced(std::size_t, std::size_t, std::size_t){}
-  inline virtual void polygon_orientation_reversed(std::size_t) {}
+  void non_manifold_edge(std::size_t, std::size_t, std::size_t){}
+  void non_manifold_vertex(std::size_t,std::size_t){}
+  void duplicated_vertex(std::size_t, std::size_t){}
+  void vertex_id_in_polygon_replaced(std::size_t, std::size_t, std::size_t){}
+  void polygon_orientation_reversed(std::size_t) {}
+  void link_connected_polygons(std::size_t, const std::vector<std::size_t>&){}
 };
 
 namespace internal {
@@ -80,7 +81,7 @@ struct Polygon_soup_orienter
   Edge_map edges;             //< the set of edges of the input polygons
   Marked_edges marked_edges;  //< the set of singular edges or edges incident
                               //<   to non-compatible orientation polygons
-  Visitor visitor;
+  Visitor& visitor;
 
   /// for each polygon referenced by its position in `polygons`, indicates
   /// the connected component it belongs too after orientation.
@@ -168,18 +169,12 @@ struct Polygon_soup_orienter
     }
   }
 
-  Polygon_soup_orienter(Points& points, Polygons& polygons, Visitor visitor)
+  Polygon_soup_orienter(Points& points, Polygons& polygons, Visitor& visitor)
     : points(points), polygons(polygons), edges(points.size()), visitor(visitor)
   {}
 
-  Polygon_soup_orienter(Points& points, Polygons& polygons)
-    : points(points), polygons(polygons), edges(points.size())
-  {
-  }
-
-
 //filling containers
-  static void fill_edge_map(Edge_map& edges, Marked_edges& marked_edges, const Polygons& polygons, Visitor visitor) {
+  static void fill_edge_map(Edge_map& edges, Marked_edges& marked_edges, const Polygons& polygons, Visitor& visitor) {
     // Fill edges
     for (P_ID i = 0; i < polygons.size(); ++i)
     {
@@ -208,7 +203,7 @@ struct Polygon_soup_orienter
 
         if (nb_edges > 2)
         {
-          visitor.non_manifold_edge(i0, i1);
+          visitor.non_manifold_edge(i0, i1, nb_edges);
           set_edge_marked(i0, i1, marked_edges);
         }
       }
@@ -357,24 +352,31 @@ struct Polygon_soup_orienter
       if ( incident_polygons.empty() ) continue; //isolated vertex
       std::set<P_ID> visited_polygons;
 
-      bool first_pass = true;
-      bool is_nm = false;
+      std::size_t nb_link_ccs=0;
       for(P_ID p_id : incident_polygons)
       {
         if ( !visited_polygons.insert(p_id).second ) continue; // already visited
 
-        if (!first_pass)
+        if (++nb_link_ccs != 1)
         {
+          // the vertex is non-manifold
           vertices_to_duplicate.push_back(std::pair<V_ID, std::vector<P_ID> >());
           vertices_to_duplicate.back().first=v_id;
-          is_nm = true;
+
+          // call the visitor only if the function has been overridden
+          if (nb_link_ccs==2 && &Visitor::link_connected_polygons != &Default_orientation_visitor::link_connected_polygons)
+          {
+            std::vector<std::size_t> tmp(visited_polygons.begin(), visited_polygons.end());
+            tmp.erase(std::remove(tmp.begin(), tmp.end(), p_id), tmp.end());
+            visitor.link_connected_polygons(v_id, tmp);
+          }
         }
 
         const std::array<V_ID,3>& neighbors = get_neighbor_vertices(v_id,p_id,polygons);
 
         V_ID next = neighbors[2];
 
-        if( !first_pass)
+        if(nb_link_ccs != 1)
           vertices_to_duplicate.back().second.push_back(p_id);
 
         do{
@@ -382,7 +384,7 @@ struct Polygon_soup_orienter
           std::tie(next, other_p_id) = next_cw_vertex_around_source(v_id, next, polygons, edges, marked_edges);
           if (next==v_id) break;
           visited_polygons.insert(other_p_id);
-          if( !first_pass)
+          if(nb_link_ccs != 1)
             vertices_to_duplicate.back().second.push_back(other_p_id);
         }
         while(next!=neighbors[0]);
@@ -395,17 +397,15 @@ struct Polygon_soup_orienter
             std::tie(next, other_p_id) = next_ccw_vertex_around_target(next, v_id, polygons, edges, marked_edges);
             if (next==v_id) break;
             visited_polygons.insert(other_p_id);
-            if( !first_pass)
+            if(nb_link_ccs != 1)
               vertices_to_duplicate.back().second.push_back(other_p_id);
           }
           while(true);
         }
-        first_pass=false;
+        if (nb_link_ccs != 1)
+          visitor.link_connected_polygons(v_id, vertices_to_duplicate.back().second);
       }
-      if (is_nm)
-      {
-        visitor.non_manifold_vertex(v_id);
-      }
+      if (nb_link_ccs != 1) visitor.non_manifold_vertex(v_id, nb_link_ccs);
     }
 
     /// now duplicate the vertices

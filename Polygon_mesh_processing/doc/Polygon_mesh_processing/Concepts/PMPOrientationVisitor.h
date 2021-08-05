@@ -17,11 +17,23 @@ public:
 
 /// called each time an edge appears in more than two polygons.
 /// `id1` and `id2` are the vertex ids of the endpoints of the edge.
-void non_manifold_edge(std::size_t id1, std::size_t id2);
+/// `nb_polygons` indicates the number of polygons containing that edge.
+void non_manifold_edge(std::size_t id1, std::size_t id2, std::size_t nb_polygons);
 
 /// called each time a non-manifold vertex is detected.
-/// `id` is the id of the vertex has is non-manifold.
-void non_manifold_vertex(std::size_t id);
+/// `vid` is the id of the vertex that is non-manifold.
+/// `nb_link_ccs` is the number of edge connected components of vertices
+/// in the link of the corresponding vertex.
+void non_manifold_vertex(std::size_t vid, std::size_t nb_link_ccs);
+
+/// called during the detection of a non-manifold vertex, one time
+/// per incident edge connected component of vertices in the link of the vertex with id `vid`.
+/// `id` is the id of the vertex that is non-manifold.
+/// `polygon_ids` contains the ids of the polygon in such a connected component.
+/// This function is called a number of times exactly equal to the parameter `nb_link_ccs`
+/// for the same vertex in `non_manifold_vertex()`. Note that the aforementioned function is
+/// called after all the calls to this function are done.
+void link_connected_polygons(std::size_t vid, const std::vector<std::size_t>& polygon_ids){}
 
 /// @}
 

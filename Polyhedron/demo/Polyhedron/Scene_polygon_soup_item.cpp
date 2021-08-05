@@ -424,14 +424,45 @@ Scene_polygon_soup_item::orient(std::vector<std::size_t>& non_manifold_vertices)
 {
   struct Visitor : public CGAL::Polygon_mesh_processing::Default_orientation_visitor
   {
-    std::vector<std::size_t>& nm_vertices;
+    const Polygon_soup::Polygons& polygons;
+    std::set<std::size_t>& nm_vertices;
+    std::set< std::pair<std::size_t, std::size_t> > nm_edges;
 
-    Visitor(std::vector<std::size_t>& nm_vertices)
-      :nm_vertices(nm_vertices){}
+    Visitor(const Polygon_soup::Polygons& polygons,
+            std::set<std::size_t>& nm_vertices)
+      : polygons(polygons)
+      , nm_vertices(nm_vertices)
+    {}
 
-    void non_manifold_vertex(std::size_t v) final
+    void non_manifold_edge(std::size_t v1, std::size_t v2, std::size_t)
     {
-      nm_vertices.push_back(v);
+      nm_edges.insert(CGAL::make_sorted_pair(v1, v2));
+    }
+
+    void link_connected_polygons(std::size_t v, const std::vector<std::size_t>& polygons_in_current_cycle)
+    {
+      // check if the current components of polygon incident to the link of the vertex contains
+      // a non-manifold edge. If no, then it is a "pure" non-manifold vertex in this component
+      if (!nm_edges.empty())
+        for(std::size_t pid : polygons_in_current_cycle)
+        {
+          for (std::size_t i=0; i<polygons[pid].size(); ++i)
+          {
+            if (polygons[pid][i]==v)
+            {
+              std::size_t vn1 = i==0?(polygons[pid].size()-1):(i-1);
+              std::size_t vn2 = i+1;
+              if (vn2==polygons[pid].size()) vn2=0;
+
+              if (nm_edges.count(CGAL::make_sorted_pair(polygons[pid][i], polygons[pid][vn1]))==1) return;
+              if (nm_edges.count(CGAL::make_sorted_pair(polygons[pid][i], polygons[pid][vn2]))==1) return;
+              break;
+            }
+            else
+              CGAL_assertion(i!=polygons[pid].size()-1); // the vertex is incident to the polygon
+          }
+        }
+      nm_vertices.insert(v);
     }
   };
   if(isEmpty() || d->oriented)
@@ -460,10 +491,12 @@ Scene_polygon_soup_item::orient(std::vector<std::size_t>& non_manifold_vertices)
     d->soup->polygons.swap(valid_polygons);
 
   bool res;
-  Visitor visitor(non_manifold_vertices);
+  std::set<std::size_t> nm_v_set;
+  Visitor visitor(valid_polygons, nm_v_set);
   QApplication::setOverrideCursor(Qt::WaitCursor);
   res =  CGAL::Polygon_mesh_processing::
     orient_polygon_soup(d->soup->points, d->soup->polygons, CGAL::parameters::visitor(visitor));
+  non_manifold_vertices.assign(nm_v_set.begin(), nm_v_set.end());
   QApplication::restoreOverrideCursor();
   return res;
 }
