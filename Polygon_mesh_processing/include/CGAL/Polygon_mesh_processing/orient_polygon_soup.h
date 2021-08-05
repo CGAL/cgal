@@ -39,7 +39,7 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 
 /** \ingroup PMP_orientation_grp
- *  Default visitor model of `PMPOrientationVisitor`.
+ *  Default visitor model of `PMPPolygonSoupOrientationVisitor`.
  *  All of its functions have an empty body. This class can be used as a
  *  base class if only some of the functions of the concept require to be
  *  overridden.
@@ -513,7 +513,7 @@ struct Polygon_soup_orienter
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{visitor}
  *     \cgalParamDescription{a visitor used to be notified of the presence of non-manifold simplices and of the modifications done to polygons during orientation.}
- *     \cgalParamType{a class model of `PMPOrientationVisitor`}
+ *     \cgalParamType{a class model of `PMPPolygonSoupOrientationVisitor`}
  *     \cgalParamDefault{`Default_orientation_visitor`}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
