@@ -17,6 +17,7 @@
 #include <CGAL/Euclidean_distance.h>
 #include <CGAL/Search_traits_2.h>
 #include <CGAL/Search_traits_3.h>
+#include <CGAL/Memory_sizer.h>
 #include <CGAL/Fuzzy_sphere.h>
 #include <CGAL/Kd_tree.h>
 
@@ -264,8 +265,8 @@ void test_balanced_tree(
   using Distance        = CGAL::Euclidean_distance<Traits>;
   using Fuzzy_sphere    = CGAL::Fuzzy_sphere<Traits>;
   using Neighbor_search = CGAL::Orthogonal_k_neighbor_search<Traits, Distance, Splitter, Kd_tree>;
+  using Point_3         = typename Kernel::Point_3;
 
-  using Point_3 = typename Kernel::Point_3;
   std::vector<Point_3> points;
   std::ifstream in(filename);
   CGAL::IO::set_ascii_mode(in);
@@ -281,6 +282,7 @@ void test_balanced_tree(
   std::cout << "* building the balanced tree ... " << std::endl;
 
   // Building a tree.
+  const auto memory_before = CGAL::Memory_sizer().resident_size();
   Splitter splitter(5); // bucket size = 5
   Kd_tree tree(points.begin(), points.end(), splitter);
 
@@ -289,8 +291,13 @@ void test_balanced_tree(
   tree.build();
   timer.stop();
 
+  const auto memory_after = CGAL::Memory_sizer().resident_size();
+  double memory = static_cast<double>(memory_after - memory_before); // bytes
+  memory /= 1000000.0; // megabytes
+
   std::cout << "* building done in " << timer.time() << " sec." << std::endl;
   if (verbose) {
+    std::cout << "* memory used: " << memory << " mb" << std::endl;
     std::cout << std::endl;
     tree.statistics(std::cout);
     std::ofstream outfile("0-tree");
