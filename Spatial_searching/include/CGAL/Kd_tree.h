@@ -246,6 +246,44 @@ private:
     }
   }
 
+  #ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
+  class Create_reference {
+
+    const std::size_t m_dim;
+    const Key_compare& m_compare_keys;
+    std::vector< std::vector<FTP> >& m_references;
+    std::vector<std::size_t>& m_ref_end;
+
+  public:
+    Create_reference(
+      const std::size_t dim,
+      const Key_compare& compare_keys,
+      std::vector< std::vector<FTP> >& references,
+      std::vector<std::size_t>& ref_end) :
+    m_dim(dim), m_compare_keys(compare_keys),
+    m_references(references), m_ref_end(ref_end)
+    { }
+
+    void operator()(const tbb::blocked_range<std::size_t>& range) const {
+
+      for (std::size_t i = range.begin(); i != range.end(); ++i) {
+        initialize_reference(data.begin(), data.end(),
+        traits_.construct_cartesian_const_iterator_d_object(), m_references[i]);
+
+        std::stable_sort(m_references[i].begin(), m_references[i].end(),
+          [&](const FTP& p, const FTP& q) {
+            const FT res = m_compare_keys(p, q, i, m_dim);
+            return CGAL::compare(res, FT(0)) == CGAL::SMALLER;
+          }
+        );
+
+        m_ref_end[i] = static_cast<long>(remove_duplicates(
+          m_compare_keys, m_references[i], i, m_dim));
+      }
+    }
+  };
+  #endif
+
   std::pair<long, long> initialize_references(
     const std::integral_constant<bool, true>,
     const std::size_t dim, std::vector<const Point_d*>& data) {
@@ -261,14 +299,17 @@ private:
     CGAL_assertion(references[0].size() == data.size());
     std::vector<std::size_t> ref_end(references.size());
     CGAL_assertion(ref_end.size() == dim);
+    const Key_compare compare_keys;
 
     #if defined(CGAL_TBB_STRUCTURE_IN_KD_TREE)
     if (boost::is_convertible<ConcurrencyTag, CGAL::Parallel_tag>::value) {
       CGAL_assertion_msg(false, "TODO: ADD PARALLEL BALANCED PREPROCESSING!");
+      tbb::parallel_for(
+        tbb::blocked_range<std::size_t>(0, references.size()),
+        Create_reference(dim, compare_keys, references, ref_end));
     } else
     #endif
     {
-      const Key_compare compare_keys;
       for (std::size_t i = 0; i < references.size(); ++i) {
         initialize_reference(data.begin(), data.end(),
         traits_.construct_cartesian_const_iterator_d_object(), references[i]);
