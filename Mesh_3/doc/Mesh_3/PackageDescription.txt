@@ -132,8 +132,4 @@ and their associated classes:
 
 - `CGAL::Mesh_optimization_return_code`
 - `CGAL::Mesh_facet_topology`
-
-\cgalCRPSection{Input/Output Functions}
-- `CGAL::IO::output_to_medit()` (deprecated)
-- `CGAL::IO::output_to_vtu()`
 */
