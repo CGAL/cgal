@@ -8,45 +8,38 @@ set(CMAKE_CXX_STANDARD 14)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror")
 
-find_package(CGAL QUIET COMPONENTS Core)
-if(CGAL_FOUND)
-  message(STATUS "Found CGAL")
+find_package(CGAL REQUIRED COMPONENTS Core)
+include(${CGAL_USE_FILE})
+include(CGAL_CreateSingleSourceCGALProgram)
 
-  include(${CGAL_USE_FILE})
-  include(CGAL_CreateSingleSourceCGALProgram)
+find_package(Boost REQUIRED)
+if(Boost_FOUND)
+  message(STATUS "Found Boost")
 
-  find_package(Boost REQUIRED)
-  if(Boost_FOUND)
-    message(STATUS "Found Boost")
+  find_package(Eigen3 3.1.0 REQUIRED)
+  if(Eigen3_FOUND)
+    message(STATUS "Found Eigen")
+    include(CGAL_Eigen_support)
 
-    find_package(Eigen3 3.1.0 REQUIRED)
-    if(Eigen3_FOUND)
-      message(STATUS "Found Eigen")
+    set(targets
+    kinetic_2d_example
+    kinetic_precomputed_shapes_example
+    kinetic_reconstruction_example
+    kinetic_random_shapes_example)
 
-      include(CGAL_Eigen_support)
+    set(project_linked_libraries)
+    set(project_compilation_definitions)
 
-      set(targets
-      kinetic_2d_example
-      kinetic_precomputed_shapes_example
-      kinetic_reconstruction_example
-      kinetic_random_shapes_example)
-
-      set(project_linked_libraries)
-      set(project_compilation_definitions)
-
-      foreach(target ${targets})
-        create_single_source_cgal_program("${target}.cpp")
-        if(TARGET ${target})
-          target_link_libraries(${target} PUBLIC ${project_linked_libraries} CGAL::Eigen_support)
-          target_compile_definitions(${target} PUBLIC ${project_compilation_definitions})
-        endif()
-      endforeach()
-    else()
-      message(ERROR "This program requires the Eigen library, and will not be compiled.")
-    endif()
+    foreach(target ${targets})
+      create_single_source_cgal_program("${target}.cpp")
+      if(TARGET ${target})
+        target_link_libraries(${target} PUBLIC ${project_linked_libraries} CGAL::Eigen_support)
+        target_compile_definitions(${target} PUBLIC ${project_compilation_definitions})
+      endif()
+    endforeach()
   else()
-    message(ERROR "This program requires the Boost library, and will not be compiled.")
+    message(ERROR "This program requires the Eigen library, and will not be compiled.")
   endif()
 else()
-  message(ERROR "This program requires the CGAL library, and will not be compiled.")
+  message(ERROR "This program requires the Boost library, and will not be compiled.")
 endif()
