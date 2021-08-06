@@ -188,7 +188,7 @@ bool build_finite_cells(Tr& tr,
           ++k;
         } while(f[0] != n0);
 
-        typename std::map<std::array<int,3>, Surface_patch_index>::const_iterator
+        typename boost::unordered_map<std::array<int,3>, Surface_patch_index>::const_iterator
           it = border_facets.find(f);
         if(it != border_facets.end())
         {
@@ -433,7 +433,7 @@ bool build_triangulation_from_file(std::istream& is,
 
   std::vector<Tet_with_ref> finite_cells;
   std::vector<Point_3> points;
-  std::map<Facet, typename Tr::Cell::Surface_patch_index> border_facets;
+  boost::unordered_map<Facet, typename Tr::Cell::Surface_patch_index> border_facets;
 
   // grab the vertices
   int dim;

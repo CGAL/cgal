@@ -58,7 +58,7 @@ The cells that lie outside the meshing domain are drawn in wire frame.
 
 \subsection TetSoupExample From Tetrahedron Soup to `Triangulation_3`
 
-In the example first example of this section, we build a random
+In the first example of this section, we build a random
 `Delaunay_triangulation_3` and use it to build a consistent though
 connectivity-free tetrahedron soup.
 The tetrahedron soup is then put back together in a
@@ -71,12 +71,13 @@ being set as the reference triangulation of a `Mesh_complex_3_in_triangulation_3
 \subsection IOExample Input/Output Example
 
 The example below illustrates how to use the IO functions
-for reading and writing a triangulation with the `Medit` file format.
+for reading and writing a triangulation with the `Medit` file format
+(See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.).
 
 \cgalExample{MDS_3/c3t3_example.cpp}
 
 
-\subsection MoreExamples More Examples in other packages
+\subsection MoreExamples More Examples In Other Packages
 
 The `Mesh_complex_3_in_triangulation_3` is widely used in the \ref PkgMesh3 package.
 Numerous more usage examples can be found in its \ref Mesh_3_section_examples section.
@@ -89,7 +90,7 @@ section.
 
 \section MDS_3History Implementation History
 
-The code of the `MeshComplex_3InTriangulation_3` and its variants was initially part of the package `Mesh_3`.
+The code of the `MeshComplex_3InTriangulation_3` and its variants was initially part of the package \ref PkgMesh3.
 With the meshing and remeshing processes becoming more versatile, it was moved to its own package in the
 release 5.4 of \cgal.
 

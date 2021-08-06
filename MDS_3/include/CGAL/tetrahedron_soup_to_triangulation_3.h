@@ -26,7 +26,7 @@
 
 #include <vector>
 #include <array>
-#include <map>
+#include <boost/unordered_map.hpp>
 
 namespace CGAL {
 
@@ -54,8 +54,8 @@ namespace CGAL {
 
     std::vector<Point> points;
     std::vector<std::array<int, 5> > finite_cells;
-    std::map<std::array<int, 3>, typename Tr::Cell::Surface_patch_index> border_facets;
-    std::map<Point, int> p2i;
+    boost::unordered_map<std::array<int, 3>, typename Tr::Cell::Surface_patch_index> border_facets;
+    boost::unordered_map<Point, int> p2i;
 
     CGAL_assertion_code(
       typename Triangulation::Geom_traits::Orientation_3 orientation =
@@ -107,8 +107,12 @@ namespace CGAL {
   *
   * @param points points of the soup of tetrahedra
   * @param tets each element in the range describes a tetrahedron using the indices of the points
-  * in `points` (indices 0 to 3), and the associated `Subdomain_index` (index 4)
-  * @param tr the 3D triangulation to be built
+  * in `points` (indices 0 to 3), and the associated `Subdomain_index` (index 4). It should
+  * describe a non self-intersecting set of tetrahedra, that cover the convex hull of the
+  * corresponding point set. The tetrahedra should form a valid triangulation with each
+  * pair of neighboring cells sharing one triangle.
+  * @param tr the 3D triangulation to be built. If non-empty, `tr` will be cleared prior to
+  * building the triangulation.
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
@@ -118,12 +122,12 @@ namespace CGAL {
   *     \cgalParamType{a class model of `AssociativeContainer`
   *                    whose key type is model of `RandomAccessContainer` containing `int`
   *                    and mapped type is `Tr::Cell::Surface_patch_index`}
-  *     \cgalParamDefault{An empty `std::map<std::array<int, 3>, typename Tr::Cell::Surface_patch_index>`}
+  *     \cgalParamDefault{An empty `boost::unordered_map<std::array<int, 3>, typename Tr::Cell::Surface_patch_index>`}
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
   * @pre `points` contains each point only once
-  * @post the output triangulation should be a triangulation of the convex hull of `points`
+  * @post the output triangulation must be a triangulation of the convex hull of `points`
   *
   * @sa `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
   */
@@ -139,7 +143,7 @@ namespace CGAL {
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
-    std::map<std::array<int, 3>,
+    boost::unordered_map<std::array<int, 3>,
              typename Triangulation::Cell::Surface_patch_index> empty_map;
     auto facets = choose_parameter(get_parameter(np, internal_np::surface_facets), empty_map);
 

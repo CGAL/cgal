@@ -194,7 +194,7 @@ namespace IO {
  * \ingroup PkgMDS3IOFunctions
  * @brief outputs a mesh complex to tetgen format
  * @param filename the path to the output file
- * @param c3t3 the mesh
+ * @param c3t3 the mesh complex
  * @param rebind if true, labels of cells are rebinded into [1..nb_of_labels]
  * @param show_patches if true, patches are labeled with different labels than
  * cells. If false, each surface facet is written twice, using label of

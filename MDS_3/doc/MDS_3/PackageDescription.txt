@@ -28,9 +28,9 @@
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Pierre Alliez, Clément Jamin, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec}
-\cgalPkgDesc{This package is devoted to the description of 3D Mesh Data Structures.
-  It provides an interface API for 3D meshes generated with CGAL or not,
-  to be processed with CGAL 3D mesh generation and remeshing algorithms,
+\cgalPkgDesc{This package provides a data structure to store a three-dimensional meshes and their subcomplexes.
+  It provides an API for 3D meshes generated with %CGAL or not,
+  to be processed with %CGAL 3D mesh generation and remeshing algorithms,
   along with iterators, IO functions and more helper functions.
   }
 \cgalPkgManuals{Chapter_3D_Mesh_Data_Structures,PkgMDS3Ref}
@@ -54,7 +54,7 @@ Here are the main concepts of this package:
 - `MeshComplex_3InTriangulation_3`
 - `MeshComplexWithFeatures_3InTriangulation_3`
 
-\cgalCRPSection{Classes}
+\cgalCRPSection{Class}
 
 - `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
 

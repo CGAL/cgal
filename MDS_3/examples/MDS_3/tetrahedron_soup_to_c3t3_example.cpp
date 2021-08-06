@@ -7,7 +7,7 @@
 
 #include <CGAL/tetrahedron_soup_to_triangulation_3.h>
 
-#include <boost/container/vector.hpp>
+#include <vector>
 #include <boost/unordered_map.hpp>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -27,9 +27,9 @@ int main(int , char* [])
   //a triangulation
   DT3 delaunay;
   boost::unordered_map<Vertex_handle, int>     v2i;
-  boost::container::vector<DT3::Point>          points(nbv);
-  boost::container::vector<Tetrahedron_3>       tetrahedra;
-  boost::container::vector<std::array<int, 5> > tets_by_indices;
+  std::vector<DT3::Point>                points(nbv);
+  std::vector<Tetrahedron_3>             tetrahedra;
+  std::vector<std::array<int, 5> >       tets_by_indices;
 
   //insert random points
   CGAL::Random_points_in_cube_3<Point_3> randp(2.);

@@ -353,12 +353,12 @@ void output_to_vtu_with_attributes(std::ostream& os,
 
 //! \ingroup PkgMDS3IOFunctions
 //!
-//! \brief writes a tetrahedron mesh using the `UnstructuredGrid` XML format.
+//! \brief writes a tetrahedral mesh complex using the `UnstructuredGrid` XML format.
 //!
 //! \tparam C3T3 a model of `MeshComplexWithFeatures_3InTriangulation_3`.
 //!
-//! \param os the stream used for writing.
-//! \param c3t3 the instance of `C3T3` to be written.
+//! \param os the stream used for writing
+//! \param c3t3 the mesh complex
 //! \param mode decides if the data should be written in binary (`IO::BINARY`)
 //!   or in ASCII (`IO::ASCII`).
 //!
