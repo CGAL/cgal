@@ -15,8 +15,14 @@ namespace CGAL {
 
   public:
 
+    typedef AABB_traits_construct_by_sorting<GeomTraits, AABBPrimitive, BboxMap> Traits;
+    typedef internal::Primitive_helper <Traits> Helper;
+    typedef AABBPrimitive Primitive;
+    typedef typename GeomTraits::Point_3 Point_3;
+
+  public:
+
     class Split_primitives {
-      typedef AABB_traits<GeomTraits, AABBPrimitive, BboxMap> Traits;
       const Traits &m_traits;
       mutable bool has_been_sorted = false;
 
@@ -24,9 +30,8 @@ namespace CGAL {
 
       struct Get_reference_point : public std::unary_function<const Primitive &, typename Traits::Point_3> {
         const Traits &m_traits;
-        typedef internal::Primitive_helper<Traits> Helper;
 
-        Get_reference_point(const AABB_traits<GeomTraits, AABBPrimitive, BboxMap> &traits)
+        Get_reference_point(const Traits &traits)
                 : m_traits(traits) {}
 
         typename Traits::Point_3 operator()(const Primitive &p) const {
@@ -34,25 +39,25 @@ namespace CGAL {
         }
       };
 
-      Split_primitives(const AABB_traits<GeomTraits, AABBPrimitive, BboxMap> &traits)
+      Split_primitives(const Traits &traits)
               : m_traits(traits) {}
 
       template<typename PrimitiveIterator>
       void operator()(PrimitiveIterator first,
                       PrimitiveIterator beyond,
-                      const typename AT::Bounding_box &bbox) const {
+                      const typename Traits::Bounding_box &bbox) const {
 
         // If this is our first time splitting the primitives, sort them along the hilbert curve
         // This should generally put nearby primitives close together in the list
         if (!has_been_sorted) {
 
           // Create a property map using our Get_reference_point functor
-          auto property_map = boost::make_function_property_map<Primitive, Traits::Point_3, Get_reference_point>(
+          auto property_map = boost::make_function_property_map<Primitive, Point_3, Get_reference_point>(
                   Get_reference_point(m_traits)
           );
 
           // Our search traits will use that property map
-          typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, decltype(property_map)> Search_traits_3;
+          typedef CGAL::Spatial_sort_traits_adapter_3<GeomTraits, decltype(property_map)> Search_traits_3;
 
           // Perform our hilbert sort using the search traits type with our custom property map
           CGAL::hilbert_sort<CGAL::Parallel_if_available_tag>(first, beyond, Search_traits_3(property_map));
