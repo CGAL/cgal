@@ -1246,6 +1246,7 @@ public:
   }
 
   void add_pfaces(
+    const FT min_time, const FT max_time,
     const PVertex& pvertex, const IVertex& ivertex,
     const PVertex& pv_prev, const PVertex& pv_next,
     const bool is_open, const bool reverse, const bool use_limit_lines,
@@ -1258,6 +1259,7 @@ public:
     CGAL_assertion(crossed_iedges.front().first != crossed_iedges.back().first);
 
     add_pfaces_global(
+      min_time, max_time,
       pvertex, ivertex, pv_prev, pv_next,
       is_open, reverse, use_limit_lines,
       crossed_iedges, new_pvertices);
@@ -1266,6 +1268,7 @@ public:
   }
 
   void add_pfaces_global(
+    const FT min_time, const FT max_time,
     const PVertex& pvertex, const IVertex& ivertex,
     const PVertex& pv_prev, const PVertex& pv_next,
     const bool is_open, bool reverse, const bool use_limit_lines,
@@ -1273,6 +1276,7 @@ public:
     std::vector<PVertex>& new_pvertices) {
 
     traverse_iedges_global(
+      min_time, max_time,
       pvertex, ivertex, pv_prev, pv_next,
       is_open, reverse, use_limit_lines,
       crossed_iedges, new_pvertices);
@@ -1283,6 +1287,7 @@ public:
       std::reverse(crossed_iedges.begin(), crossed_iedges.end());
 
       traverse_iedges_global(
+        min_time, max_time,
         pvertex, ivertex, pv_prev, pv_next,
         is_open, reverse, use_limit_lines,
         crossed_iedges, new_pvertices);
@@ -1296,6 +1301,7 @@ public:
   }
 
   void traverse_iedges_global(
+    const FT min_time, const FT max_time,
     const PVertex& pvertex, const IVertex& ivertex,
     const PVertex& pv_prev, const PVertex& pv_next,
     const bool is_open, const bool reverse, const bool use_limit_lines,
@@ -1358,7 +1364,9 @@ public:
           point_2(pvertex.first, opposite(iedge_ip, ivertex))) >= KSR::point_tolerance<FT>(),
         "TODO: TRAVERSE IEDGES GLOBAL, HANDLE ZERO-LENGTH IEDGE IP!");
 
-        add_new_pface(ivertex, pvertex, pv_prev, pv_next, is_open, reverse, i, iedge_ip, pvertices);
+        add_new_pface(
+          min_time, max_time, ivertex, pvertex,
+          pv_prev, pv_next, is_open, reverse, i, iedge_ip, pvertices);
         ++num_added_pfaces;
         continue;
       }
@@ -1379,6 +1387,7 @@ public:
   }
 
   void add_new_pface(
+    const FT min_time, const FT max_time,
     const IVertex& ivertex, const PVertex& pvertex, const PVertex& pv_prev, const PVertex& pv_next,
     const bool is_open, const bool reverse, const std::size_t idx, const IEdge& iedge,
     std::vector<PVertex>& pvertices) {
@@ -1402,7 +1411,8 @@ public:
       pv2 = pvertices[idx + 1];
     } else {
       create_new_pvertex(
-        ivertex, pvertex, pv_prev, pv_next, is_open, idx + 1, iedge, pvertices);
+        min_time, max_time, ivertex, pvertex,
+        pv_prev, pv_next, is_open, idx + 1, iedge, pvertices);
       pv2 = pvertices[idx + 1];
     }
     CGAL_assertion(pv2 != null_pvertex());
@@ -1419,6 +1429,7 @@ public:
   }
 
   void create_new_pvertex(
+    const FT min_time, const FT max_time,
     const IVertex& ivertex, const PVertex& pvertex, const PVertex& pv_prev, const PVertex& pv_next,
     const bool is_open, const std::size_t idx, const IEdge& iedge,
     std::vector<PVertex>& pvertices) {
@@ -1429,22 +1440,46 @@ public:
     Point_2 future_point; Vector_2 future_direction;
 
     if (!is_open) {
+      if (m_verbose) std::cout << "- handling back/front case" << std::endl;
       is_parallel = compute_future_point_and_direction(
         0, ivertex, pv_prev, pv_next, iedge, future_point, future_direction);
       if (is_parallel) {
-        if (m_verbose) std::cout << "- new pvertex, back/front, parallel case" << std::endl;
+        if (m_verbose) std::cout << "- new pvertex, back/front, parallel/reverse case" << std::endl;
         CGAL_assertion_msg(!is_parallel,
         "TODO: CREATE PVERTEX, BACK/FRONT, ADD PARALLEL CASE!");
       } else {
         if (m_verbose) std::cout << "- new pvertex, back/front, standard case" << std::endl;
       }
     } else {
+      if (m_verbose) std::cout << "- handling open case" << std::endl;
       is_parallel = compute_future_point_and_direction(
         pvertex, ivertex, pv_prev, pv_next, iedge, future_point, future_direction);
       if (is_parallel) {
-        if (m_verbose) std::cout << "- new pvertex, open, parallel case" << std::endl;
-        CGAL_assertion_msg(!is_parallel,
-        "TODO: CREATE_PVERTEX, OPEN, ADD PARALLEL CASE!");
+        if (m_verbose) std::cout << "- new pvertex, open, parallel/reverse case" << std::endl;
+
+        IEdge prev_iedge = null_iedge();
+        IEdge next_iedge = null_iedge();
+        if (is_intersecting_iedge(min_time, max_time, pv_prev, iedge)) {
+          prev_iedge = iedge;
+        }
+        if (is_intersecting_iedge(min_time, max_time, pv_next, iedge)) {
+          next_iedge = iedge;
+        }
+
+        if (prev_iedge == iedge) {
+          if (m_verbose) std::cout << "- new pvertex, open, prev, parallel case" << std::endl;
+          CGAL_assertion_msg(!is_parallel, "TODO: CREATE_PVERTEX, OPEN, PREV, ADD PARALLEL CASE!");
+        } else {
+          if (m_verbose) std::cout << "- new pvertex, open, prev, standard case" << std::endl;
+        }
+
+        if (next_iedge == iedge) {
+          if (m_verbose) std::cout << "- new pvertex, open, next, parallel case" << std::endl;
+          CGAL_assertion_msg(!is_parallel, "TODO: CREATE_PVERTEX, OPEN, NEXT, ADD PARALLEL CASE!");
+        } else {
+          if (m_verbose) std::cout << "- new pvertex, open, next, standard case" << std::endl;
+        }
+        CGAL_assertion_msg(!is_parallel, "TODO: CREATE_PVERTEX, OPEN, ADD PARALLEL CASE!");
       } else {
         if (m_verbose) std::cout << "- new pvertex, open, standard case" << std::endl;
       }
@@ -2867,7 +2902,7 @@ public:
     }
 
     if (CGAL::abs(m1 - m3) < tol || is_reversed) {
-      if (m_verbose) std::cout << "- prev parallel lines" << std::endl;
+      if (m_verbose) std::cout << "- prev parallel lines or reversed" << std::endl;
       is_parallel_prev = true;
       // Here, in the dot product, we can have maximum 1 zero-length vector.
       const FT prev_dot = current_vec_prev * iedge_vec;
@@ -2920,7 +2955,7 @@ public:
     }
 
     if (CGAL::abs(m2 - m3) < tol || is_reversed) {
-      if (m_verbose) std::cout << "- next parallel lines" << std::endl;
+      if (m_verbose) std::cout << "- next parallel lines or reversed" << std::endl;
       is_parallel_next = true;
       // Here, in the dot product, we can have maximum 1 zero-length vector.
       const FT next_dot = current_vec_next * iedge_vec;
@@ -3078,7 +3113,7 @@ public:
     }
 
     if (CGAL::abs(m2 - m3) < tol || is_reversed) {
-      if (m_verbose) std::cout << "- back/front parallel lines" << std::endl;
+      if (m_verbose) std::cout << "- back/front parallel lines or reversed" << std::endl;
       is_parallel = true;
       // Here, in the dot product, we can have maximum 1 zero-length vector.
       const FT next_dot = current_vec_next * iedge_vec;
@@ -3189,12 +3224,14 @@ public:
     }
 
     if (CGAL::abs(m2 - m3) < tol || is_reversed) {
-      if (m_verbose) std::cout << "- open parallel lines" << std::endl;
+      if (m_verbose) std::cout << "- open parallel lines or reversed" << std::endl;
       is_parallel = true;
       if (source_p == pv_point) {
+        if (m_verbose) std::cout << "- open moves backwards" << std::endl;
         future_point = target_p;
         // std::cout << point_3(target(iedge)) << std::endl;
       } else {
+        if (m_verbose) std::cout << "- open moves forwards" << std::endl;
         future_point = source_p;
         // std::cout << point_3(source(iedge)) << std::endl;
       }
@@ -3219,6 +3256,8 @@ public:
     const FT min_time, const FT max_time,
     const PVertex& pvertex, const IEdge& iedge) const {
 
+    CGAL_assertion(min_time >= FT(0));
+    CGAL_assertion(max_time >= FT(0));
     const FT time_step = (max_time - min_time) / FT(100);
     const FT time_1 = m_current_time - time_step;
     const FT time_2 = m_current_time + time_step;

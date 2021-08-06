@@ -527,7 +527,7 @@ private:
       const Event event = m_queue.pop();
       const FT current_time = event.time();
 
-      // const std::size_t sp_debug_idx = 10;
+      // const std::size_t sp_debug_idx = 20;
       if (m_export /* && event.pvertex().first == sp_debug_idx */) {
         if (iteration < 10) {
           dump(m_data, "iter-0" + std::to_string(iteration));
@@ -535,7 +535,7 @@ private:
           //   "-surface-mesh-" + std::to_string(sp_debug_idx));
           dump_event(m_data, event, "iter-0" + std::to_string(iteration));
         } else {
-          // if (iteration > 1400) {
+          // if (iteration > 5590 && iteration < 5690) {
             dump(m_data, "iter-" + std::to_string(iteration));
             // dump_2d_surface_mesh(m_data, sp_debug_idx, "iter-" + std::to_string(iteration) +
             //   "-surface-mesh-" + std::to_string(sp_debug_idx));
@@ -1797,6 +1797,7 @@ private:
 
     // Create new pfaces if any.
     m_data.add_pfaces(
+      min_time, max_time,
       pvertex, ivertex, back, prev, false, true, true,
       crossed_iedges, new_pvertices);
 
@@ -2010,6 +2011,7 @@ private:
 
     // Create new pfaces if any.
     m_data.add_pfaces(
+      min_time, max_time,
       pvertex, ivertex, front, next, false, false, true,
       crossed_iedges, new_pvertices);
 
@@ -2409,6 +2411,7 @@ private:
 
     // Create new pfaces if any.
     m_data.add_pfaces(
+      min_time, max_time,
       pvertex, ivertex, prev, next, true, false, true,
       crossed_iedges, new_pvertices);
 

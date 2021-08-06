@@ -1118,6 +1118,7 @@ private:
 
     // Create new pfaces if any.
     m_data.add_pfaces(
+      FT(-1), FT(-1),
       pvertex, ivertex, neighbors.first, neighbors.second,
       true, false, false, crossed_iedges, new_pvertices);
 
