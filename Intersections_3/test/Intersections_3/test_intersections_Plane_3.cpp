@@ -128,7 +128,8 @@ public:
     check_intersection(Pl(p(5,3,2), p(1,1,1), p(0,0,0)), P(99,99,99),
                        P(99,99,99));
 
-    if(this->has_exact_c)
+    // Homogeneous projections are broken
+    if(this->has_exact_c && std::is_same<typename K::Kernel_tag, CGAL::Cartesian_tag>::value)
     {
       for(int i=0; i<N; ++i)
       {

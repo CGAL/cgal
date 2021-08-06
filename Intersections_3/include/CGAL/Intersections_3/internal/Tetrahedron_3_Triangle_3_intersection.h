@@ -92,7 +92,7 @@ bool first_comes_first(const typename K::Point_3& ref_source,
 
 template <class K, class SegmentContainer, class PointContainer>
 typename Intersection_traits<K, typename K::Tetrahedron_3, typename K::Triangle_3>::result_type
-build_intersection(const typename K::Tetrahedron_3& input_tetrahedron,
+build_intersection(const typename K::Tetrahedron_3& /*input_tetrahedron*/,
                    const typename K::Triangle_3& input_triangle,
                    PointContainer& points,
                    SegmentContainer& segments,

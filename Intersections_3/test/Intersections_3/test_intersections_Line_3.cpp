@@ -339,17 +339,21 @@ public:
     {
       P tet0 = random_point(), tet1 = random_point(), tet2 = random_point(), tet3 = random_point();
 
-      if(std::set<P>({{tet0, tet1, tet2, tet3}}).size() != 4)
+      const Tet tet(tet0, tet1, tet2, tet3);
+      if(tet.is_degenerate())
         continue;
 
       P l0 = tet0 + CGAL::cross_product(V(tet0, tet1), V(tet0, tet2));
       P l1 = tet2 + CGAL::cross_product(V(tet2, tet1), V(tet2, tet0));
 
-      Tet tet(tet0, tet1, tet2, tet3);
       assert(tet.has_on_unbounded_side(l0) && tet.has_on_unbounded_side(l1));
 
-      if(CGAL::do_intersect(S(l0, l1), tet))
-        check_intersection(L(l0, l1), tet, tet, S(l0, l1));
+      const S s {l0, l1};
+      if(s.is_degenerate())
+        continue;
+
+      if(CGAL::do_intersect(s, tet))
+        check_intersection(L(l0, l1), tet, tet, s);
     }
   }
 
@@ -382,14 +386,17 @@ public:
     {
       P tr0 = random_point(), tr1 = random_point(), tr2 = random_point();
 
-      if(tr0 == tr1 || tr1 == tr2 || tr0 == tr2)
-        continue;
-
       P l0 = tr0 + CGAL::cross_product(V(tr0, tr1), V(tr0, tr2));
       P l1 = tr2 + CGAL::cross_product(V(tr2, tr1), V(tr2, tr0));
 
-      if(CGAL::do_intersect(S(l0, l1), Tr(tr0, tr1, tr2)))
-        check_intersection(L(l0, l1), Tr(tr0, tr1, tr2), Tr(tr0, tr1, tr2), S(l0, l1));
+      S s{l0, l1};
+      Tr tr{tr0, tr1, tr2};
+
+      if(s.is_degenerate() || tr.is_degenerate())
+        continue;
+
+      if(CGAL::do_intersect(s, tr))
+        check_intersection(L(l0, l1), tr, tr, s);
     }
   }
 
