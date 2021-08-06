@@ -27,10 +27,9 @@ void test_equal_contours() {
     Point_2(1, 1), Point_2(0, 1)
   };
   assert(contour.size() == 6);
-  // saver.export_closed_contour(contour,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/cl_input", 100);
-  // saver.export_open_contour(contour,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/op_input", 100);
+
+  // saver.export_closed_contour(contour, "cl_input", 100);
+  // saver.export_open_contour(contour, "op_input", 100);
 
   const bool is_closed = true;
   CD closed_directions(contour,  is_closed, pmap);

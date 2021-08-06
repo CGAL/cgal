@@ -34,8 +34,8 @@ void test_2_segments() {
     Segment_2(Point_2(FT(3) / FT(2), 4), Point_2(FT(3) / FT(2), 5))
   };
   assert(segments.size() == 2);
-  // saver.export_segments(segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/2_input", 100);
+
+  // saver.export_segments(segments, "2_input", 100);
 
   const FT max_angle_2 = FT(5);
   NQ neighbor_query(segments, smap);
@@ -60,8 +60,7 @@ void test_2_segments() {
   const std::size_t num_segments_angles =
     angle_regularization.number_of_modified_segments();
 
-  // saver.export_segments(segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/2_angles", 100);
+  // saver.export_segments(segments, "2_angles", 100);
 
   assert(segments.size() == 2);
   assert(parallel_groups.size() == 1);
@@ -102,10 +101,8 @@ void test_2_segments() {
   const std::size_t num_segments_offsets =
     offset_regularization.number_of_modified_segments();
 
-  // saver.export_segments(segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/2_offsets", 100);
-  // saver.export_segments(unique_segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/2_unique", 100);
+  // saver.export_segments(segments, "2_offsets", 100);
+  // saver.export_segments(unique_segments, "2_unique", 100);
 
   assert(segments.size() == 2);
   assert(collinear_groups.size() == 1);

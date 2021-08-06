@@ -28,24 +28,24 @@ void test_groups_parallel() {
     Segment_2(Point_2(3, 5), Point_2(6, 7)), // the top right group
     Segment_2(Point_2(7, 6), Point_2(4, 4))
   };
-  // saver.export_eps_segments(segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/gp_input", 100);
+
+  // saver.export_eps_segments(segments, "gp_input", 100);
 
   std::vector<Indices> groups;
   SR::Segments::parallel_groups(
     segments, std::back_inserter(groups));
   assert(groups.size() == 3);
 
-  // saver.export_eps_group(segments, groups[0], "/Users/monet/Documents/gsoc/ggr/logs/gp_group0", 100);
+  // saver.export_eps_group(segments, groups[0], "gp_group0", 100);
   assert(groups[0].size() == 3);
   assert(groups[0][0] == 0);
   assert(groups[0][1] == 1);
   assert(groups[0][2] == 2);
-  // saver.export_eps_group(segments, groups[1], "/Users/monet/Documents/gsoc/ggr/logs/gp_group1", 100);
+  // saver.export_eps_group(segments, groups[1], "gp_group1", 100);
   assert(groups[1].size() == 2);
   assert(groups[1][0] == 3);
   assert(groups[1][1] == 4);
-  // saver.export_eps_group(segments, groups[2], "/Users/monet/Documents/gsoc/ggr/logs/gp_group2", 100);
+  // saver.export_eps_group(segments, groups[2], "gp_group2", 100);
   assert(groups[2].size() == 2);
   assert(groups[2][0] == 5);
   assert(groups[2][1] == 6);
@@ -55,16 +55,16 @@ void test_groups_parallel() {
     segments, std::back_inserter(groups), CGAL::parameters::preserve_order(true));
   assert(groups.size() == 3);
 
-  // saver.export_eps_group(segments, groups[0], "/Users/monet/Documents/gsoc/ggr/logs/gp_group0_pr", 100);
+  // saver.export_eps_group(segments, groups[0], "gp_group0_pr", 100);
   assert(groups[0].size() == 3);
   assert(groups[0][0] == 0);
   assert(groups[0][1] == 1);
   assert(groups[0][2] == 2);
-  // saver.export_eps_group(segments, groups[1], "/Users/monet/Documents/gsoc/ggr/logs/gp_group1_pr", 100);
+  // saver.export_eps_group(segments, groups[1], "gp_group1_pr", 100);
   assert(groups[1].size() == 2);
   assert(groups[1][0] == 3);
   assert(groups[1][1] == 4);
-  // saver.export_eps_group(segments, groups[2], "/Users/monet/Documents/gsoc/ggr/logs/gp_group2_pr", 100);
+  // saver.export_eps_group(segments, groups[2], "gp_group2_pr", 100);
   assert(groups[2].size() == 2);
   assert(groups[2][0] == 5);
   assert(groups[2][1] == 6);

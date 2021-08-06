@@ -60,7 +60,7 @@ void create_pattern(
   assert(segments.size() == n);
 
   // CGAL::Shape_regularization::Tests::Saver<Kernel> saver;
-  // saver.export_eps_segments(segments, "/Users/monet/Documents/gsoc/ggr/logs/pattern", 100.0);
+  // saver.export_eps_segments(segments, "pattern", 100.0);
   // exit(EXIT_SUCCESS);
 }
 
@@ -90,7 +90,7 @@ void create_random_in_square(
   }
 
   // CGAL::Shape_regularization::Tests::Saver<Kernel> saver;
-  // saver.export_eps_segments(segments, "/Users/monet/Documents/gsoc/ggr/logs/pseudo_random", 1.0);
+  // saver.export_eps_segments(segments, "pseudo_random", 1.0);
   // exit(EXIT_SUCCESS);
 }
 
@@ -112,7 +112,7 @@ void create_random_in_circle(
   assert(segments.size() == n);
 
   // CGAL::Shape_regularization::Tests::Saver<Kernel> saver;
-  // saver.export_eps_segments(segments, "/Users/monet/Documents/gsoc/ggr/logs/random", 1.0);
+  // saver.export_eps_segments(segments, "random", 1.0);
   // exit(EXIT_SUCCESS);
 }
 

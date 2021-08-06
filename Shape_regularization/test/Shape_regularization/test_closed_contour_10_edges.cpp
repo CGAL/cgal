@@ -29,8 +29,8 @@ void test_closed_contour_10_edges() {
     Point_2(0.182071, 0.505309),
   };
   assert(contour.size() == 10);
-  // saver.export_closed_contour(contour,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/cl10_input", 100);
+
+  // saver.export_closed_contour(contour, "cl10_input", 100);
 
   const bool is_closed = true;
   CD directions(contour, is_closed);
@@ -43,8 +43,7 @@ void test_closed_contour_10_edges() {
   const std::size_t num_directions =
     directions.number_of_directions();
 
-  // saver.export_closed_contour(regularized,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/cl10_output", 100);
+  // saver.export_closed_contour(regularized, "cl10_output", 100);
 
   assert(num_directions == 1);
   assert(regularized.size() == 6);

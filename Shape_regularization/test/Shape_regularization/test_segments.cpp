@@ -53,8 +53,8 @@ void test_segments() {
   };
   const auto saved = segments;
   assert(segments.size() == 4);
-  // saver.export_segments(segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/sg_input", 100);
+
+  // saver.export_segments(segments, "sg_input", 100);
 
   NQ neighbor_query(segments);
   AR angle_regularization(segments);
@@ -69,8 +69,7 @@ void test_segments() {
   angle_regularization.orthogonal_groups(
     std::back_inserter(orthogonal_groups));
 
-  // saver.export_segments(segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/sg_angles", 100);
+  // saver.export_segments(segments, "sg_angles", 100);
 
   assert(segments.size() == 4);
   assert(has_no_difference(segments[0], saved[0]));
@@ -111,10 +110,8 @@ void test_segments() {
   offset_regularization.unique_segments(
     std::back_inserter(unique_segments));
 
-  // saver.export_segments(segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/sg_offsets", 100);
-  // saver.export_segments(unique_segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/sg_unique", 100);
+  // saver.export_segments(segments, "sg_offsets", 100);
+  // saver.export_segments(unique_segments, "sg_unique", 100);
 
   assert(segments.size() == 4);
   assert(has_no_difference(segments[0], saved[0]));

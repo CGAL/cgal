@@ -32,10 +32,9 @@ void test_cgal_solver() {
     Segment_2(Point_2(1, 1), Point_2(0, 1)),
     Segment_2(Point_2(0, 1), Point_2(0, 0))
   };
-
   assert(segments.size() == 4);
-  // saver.export_segments(segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/cgal_input", 100);
+
+  // saver.export_segments(segments, "cgal_input", 100);
 
   const FT max_angle_2 = FT(5);
   NQ neighbor_query(segments);
@@ -58,8 +57,7 @@ void test_cgal_solver() {
   const std::size_t num_segments_angles =
     angle_regularization.number_of_modified_segments();
 
-  // saver.export_segments(segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/cgal_angles", 100);
+  // saver.export_segments(segments, "cgal_angles", 100);
 
   assert(segments.size() == 4);
   assert(parallel_groups.size() == 2);

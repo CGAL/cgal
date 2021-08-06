@@ -26,8 +26,8 @@ void test_overloads() {
     Segment_2(Point_2(0, 1), Point_2(1, 1)),
   };
   assert(segments.size() == 2);
-  // saver.export_segments(segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/ol_input", 100);
+
+  // saver.export_segments(segments, "ol_input", 100);
 
   NQ neighbor_query(segments);
   AR angle_regularization(segments);

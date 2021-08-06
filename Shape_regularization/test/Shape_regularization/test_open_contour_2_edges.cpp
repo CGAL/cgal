@@ -21,8 +21,8 @@ void test_open_contour_2_edges() {
     Point_2(0, 0), Point_2(1, 0), Point_2(FT(11) / FT(10), FT(1) / FT(2))
   };
   assert(contour.size() == 3);
-  // saver.export_open_contour(contour,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/op2_input", 100);
+
+  // saver.export_open_contour(contour, "op2_input", 100);
 
   const bool is_closed = false;
   CD directions(contour, is_closed);
@@ -34,8 +34,7 @@ void test_open_contour_2_edges() {
   const std::size_t num_directions =
     directions.number_of_directions();
 
-  // saver.export_open_contour(regularized,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/op2_output", 100);
+  // saver.export_open_contour(regularized, "op2_output", 100);
 
   assert(num_directions == 1);
   assert(regularized.size() == 3);

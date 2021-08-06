@@ -39,8 +39,7 @@ void test_unique_segments() {
   //   Segment_2(Point_2(5.2, 2.4), Point_2(5.2, 3.0))
   // };
 
-  // saver.export_eps_segments(segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/us_input", 100);
+  // saver.export_eps_segments(segments, "us_input", 100);
 
   const Segments ref_segments = {
     Segment_2(Point_2( 1,  1), Point_2(7, 1)),
@@ -52,7 +51,7 @@ void test_unique_segments() {
   SR::Segments::unique_segments(
     segments, std::back_inserter(unique));
   assert(unique.size() == 4);
-  // saver.export_eps_segments(unique, "/Users/monet/Documents/gsoc/ggr/logs/us_output_df", 100);
+  // saver.export_eps_segments(unique, "us_output_df", 100);
   assert(unique[0] == ref_segments[0]);
   assert(unique[1] == ref_segments[1]);
   assert(unique[2] == segments[4]);
@@ -62,7 +61,7 @@ void test_unique_segments() {
   SR::Segments::unique_segments(
     segments, std::back_inserter(unique), CGAL::parameters::maximum_offset(1));
   assert(unique.size() == 3);
-  // saver.export_eps_segments(unique, "/Users/monet/Documents/gsoc/ggr/logs/us_output", 100);
+  // saver.export_eps_segments(unique, "us_output", 100);
   assert(unique[0] == ref_segments[0]);
   assert(unique[1] == ref_segments[1]);
   assert(unique[2] == ref_segments[2]);
@@ -73,7 +72,7 @@ void test_unique_segments() {
     maximum_offset(1).
     preserve_order(true));
   assert(unique.size() == 3);
-  // saver.export_eps_segments(unique, "/Users/monet/Documents/gsoc/ggr/logs/us_output_pr", 100);
+  // saver.export_eps_segments(unique, "us_output_pr", 100);
   assert(unique[0] == ref_segments[0]);
   assert(unique[1] == ref_segments[1]);
   assert(unique[2] == ref_segments[2]);

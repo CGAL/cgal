@@ -32,8 +32,8 @@ void test_1_segment() {
     Segment_2(Point_2(1, 1), Point_2(1, 4))
   };
   assert(segments.size() == 1);
-  // saver.export_segments(segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/1_input", 100);
+
+  // saver.export_segments(segments, "1_input", 100);
 
   NQ neighbor_query(segments, smap);
   AR angle_regularization(
@@ -55,8 +55,7 @@ void test_1_segment() {
   const std::size_t num_segments_angles =
     angle_regularization.number_of_modified_segments();
 
-  // saver.export_segments(segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/1_angles", 100);
+  // saver.export_segments(segments, "1_angles", 100);
 
   assert(segments.size() == 1);
   assert(parallel_groups.size() == 1);
@@ -88,10 +87,8 @@ void test_1_segment() {
   const std::size_t num_segments_offsets =
     offset_regularization.number_of_modified_segments();
 
-  // saver.export_segments(segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/1_offsets", 100);
-  // saver.export_segments(unique_segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/1_unique", 100);
+  // saver.export_segments(segments, "1_offsets", 100);
+  // saver.export_segments(unique_segments, "1_unique", 100);
 
   assert(segments.size() == 1);
   assert(collinear_groups.size() == 1);

@@ -20,19 +20,17 @@ void test_contour_orientation() {
     Point_2(0.1, 0.0), Point_2(1.1, 0.0), Point_2(1.0, 1.0), Point_2(0.0, 1.0)
   };
   assert(direct.size() == 4);
-  // saver.export_closed_contour(direct,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/cl_direct_input", 100);
-  // saver.export_open_contour(direct,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/op_dir_input", 100);
+
+  // saver.export_closed_contour(direct, "cl_direct_input", 100);
+  // saver.export_open_contour(direct, "op_dir_input", 100);
 
   const Contour reversed = {
     Point_2(0.1, 0.0), Point_2(0.0, 1.0), Point_2(1.0, 1.0), Point_2(1.1, 0.0)
   };
   assert(reversed.size() == 4);
-  // saver.export_closed_contour(reversed,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/cl_reversed_input", 100);
-  // saver.export_open_contour(reversed,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/op_rev_input", 100);
+
+  // saver.export_closed_contour(reversed, "cl_reversed_input", 100);
+  // saver.export_open_contour(reversed, "op_rev_input", 100);
 
   CD dclosed_direct(direct, true);
   CD dclosed_reversed(reversed, true);
@@ -43,10 +41,8 @@ void test_contour_orientation() {
   SR::Contours::regularize_closed_contour(
     reversed, dclosed_reversed, std::back_inserter(rclosed_reversed));
 
-  // saver.export_closed_contour(rclosed_direct,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/cl_dir_output", 100);
-  // saver.export_closed_contour(rclosed_reversed,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/cl_rev_output", 100);
+  // saver.export_closed_contour(rclosed_direct, "cl_dir_output", 100);
+  // saver.export_closed_contour(rclosed_reversed, "cl_rev_output", 100);
 
   assert(rclosed_direct.size() == 4);
   assert(rclosed_reversed.size() == 4);
@@ -60,10 +56,8 @@ void test_contour_orientation() {
   SR::Contours::regularize_open_contour(
     reversed, dopen_reversed, std::back_inserter(ropen_reversed));
 
-  // saver.export_open_contour(ropen_direct,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/op_dir_output", 100);
-  // saver.export_open_contour(ropen_reversed,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/op_rev_output", 100);
+  // saver.export_open_contour(ropen_direct, "op_dir_output", 100);
+  // saver.export_open_contour(ropen_reversed, "op_rev_output", 100);
 
   assert(ropen_direct.size() == 4);
   assert(ropen_reversed.size() == 4);

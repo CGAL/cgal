@@ -28,8 +28,8 @@ void test_directions_multiple_2() {
     Point_2(1, 7)
   };
   assert(contour.size() == 7);
-  // saver.export_closed_contour(contour,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/dm2_input", 100);
+
+  // saver.export_closed_contour(contour, "dm2_input", 100);
 
   const FT min_length_2 = FT(2);
   const FT max_angle_2 = FT(10);
@@ -73,15 +73,13 @@ void test_directions_multiple_2() {
   // SR::Contours::regularize_closed_contour(
   //   contour, closed_directions, std::back_inserter(regularized),
   //   CGAL::parameters::maximum_offset(2));
-  // saver.export_closed_contour(regularized,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/dm2_output_cl", 100);
+  // saver.export_closed_contour(regularized, "dm2_output_cl", 100);
 
   // regularized.clear();
   // SR::Contours::regularize_open_contour(
   //   contour, open_directions, std::back_inserter(regularized),
   //   CGAL::parameters::maximum_offset(2));
-  // saver.export_open_contour(regularized,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/dm2_output_op", 100);
+  // saver.export_open_contour(regularized, "dm2_output_op", 100);
 
   assert(closed_dirs[0] == open_dirs[0]);
   assert(closed_dirs[1] == open_dirs[1]);

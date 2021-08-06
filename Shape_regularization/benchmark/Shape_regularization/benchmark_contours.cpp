@@ -49,8 +49,8 @@ void create_pattern(
   assert(contour.size() == n);
 
   // CGAL::Shape_regularization::Tests::Saver<Kernel> saver;
-  // saver.export_eps_closed_contour(contour, "/Users/monet/Documents/gsoc/ggr/logs/pattern_closed", 100.0);
-  // saver.export_eps_open_contour(contour, "/Users/monet/Documents/gsoc/ggr/logs/pattern_open", 100.0);
+  // saver.export_eps_closed_contour(contour, "pattern_closed", 100.0);
+  // saver.export_eps_open_contour(contour, "pattern_open", 100.0);
   // exit(EXIT_SUCCESS);
 }
 
@@ -74,8 +74,8 @@ void create_pseudo_random(
   }
 
   // CGAL::Shape_regularization::Tests::Saver<Kernel> saver;
-  // saver.export_eps_closed_contour(contour, "/Users/monet/Documents/gsoc/ggr/logs/pseudo_random_closed", 100.0);
-  // saver.export_eps_open_contour(contour, "/Users/monet/Documents/gsoc/ggr/logs/pseudo_random_open", 100.0);
+  // saver.export_eps_closed_contour(contour, "pseudo_random_closed", 100.0);
+  // saver.export_eps_open_contour(contour, "pseudo_random_open", 100.0);
   // exit(EXIT_SUCCESS);
 }
 
@@ -99,8 +99,8 @@ void create_random(
   // assert(contour.size() == n);
 
   // CGAL::Shape_regularization::Tests::Saver<Kernel> saver;
-  // saver.export_eps_closed_contour(contour, "/Users/monet/Documents/gsoc/ggr/logs/random_closed", 1.0);
-  // saver.export_eps_open_contour(contour, "/Users/monet/Documents/gsoc/ggr/logs/random_open", 1.0);
+  // saver.export_eps_closed_contour(contour, "random_closed", 1.0);
+  // saver.export_eps_open_contour(contour, "random_open", 1.0);
   // exit(EXIT_SUCCESS);
 }
 

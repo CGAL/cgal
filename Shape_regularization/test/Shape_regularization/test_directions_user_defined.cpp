@@ -25,8 +25,8 @@ void test_directions_user_defined() {
     Point_2(1, 7)
   };
   assert(contour.size() == 7);
-  // saver.export_closed_contour(contour,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/du_input", 100);
+
+  // saver.export_closed_contour(contour, "du_input", 100);
 
   const std::vector<Direction_2> dirs = {
     Direction_2(1, 0),

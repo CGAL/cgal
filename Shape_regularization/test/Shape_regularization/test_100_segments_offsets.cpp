@@ -23,8 +23,8 @@ void test_100_segments_offsets() {
   Segments segments;
   SR::Tests::create_example_offsets(segments);
   assert(segments.size() == 100);
-  // saver.export_segments(segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/100o_input", 100);
+
+  // saver.export_segments(segments, "100o_input", 100);
 
   const FT max_angle_2 = FT(1);
   std::vector<Indices> parallel_groups;
@@ -39,8 +39,7 @@ void test_100_segments_offsets() {
   //   output.clear();
   //   for (const std::size_t idx : parallel_group)
   //     output.push_back(segments[idx]);
-  //   saver.export_segments(output,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/output_" + std::to_string(i), 100);
+  //   saver.export_segments(output, "output_" + std::to_string(i), 100);
   // }
 
   assert(segments.size() == 100);
@@ -70,10 +69,8 @@ void test_100_segments_offsets() {
   const std::size_t num_segments_offsets =
     offset_regularization.number_of_modified_segments();
 
-  // saver.export_segments(segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/100o_offsets", 100);
-  // saver.export_segments(unique_segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/100o_unique", 100);
+  // saver.export_segments(segments, "100o_offsets", 100);
+  // saver.export_segments(unique_segments, "100o_unique", 100);
 
   assert(segments.size() == 100);
   assert(collinear_groups.size() == parallel_groups.size());

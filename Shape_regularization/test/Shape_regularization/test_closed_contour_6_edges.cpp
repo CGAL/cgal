@@ -23,8 +23,8 @@ void test_closed_contour_6_edges() {
     Point_2(1, 1), Point_2(0, 1)
   };
   assert(contour.size() == 6);
-  // saver.export_closed_contour(contour,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/cl6_input", 100);
+
+  // saver.export_closed_contour(contour, "cl6_input", 100);
 
   const bool is_closed = true;
   CD directions(contour, is_closed);
@@ -37,8 +37,7 @@ void test_closed_contour_6_edges() {
   const std::size_t num_directions =
     directions.number_of_directions();
 
-  // saver.export_closed_contour(regularized,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/cl6_output", 100);
+  // saver.export_closed_contour(regularized, "cl6_output", 100);
 
   assert(num_directions == 1);
   assert(regularized.size() == 4);

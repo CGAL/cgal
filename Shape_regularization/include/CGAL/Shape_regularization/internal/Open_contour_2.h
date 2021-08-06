@@ -63,22 +63,19 @@ namespace internal {
 
       rotate_contour(m_wraps);
       if (verbose()) {
-        m_base.export_polylines(
-          m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/rotated");
+        m_base.export_polylines(m_wraps, "rotated");
       }
 
       bool success = optimize_contour(m_wraps);
       if (!success) return contour;
       if (verbose()) {
-        m_base.export_polylines(
-          m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/optimized");
+        m_base.export_polylines(m_wraps, "optimized");
       }
 
       success = connect_contour(m_wraps);
       if (!success) return contour;
       if (verbose()) {
-        m_base.export_polylines(
-          m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/connected");
+        m_base.export_polylines(m_wraps, "connected");
       }
 
       return update_input(m_wraps, contour);

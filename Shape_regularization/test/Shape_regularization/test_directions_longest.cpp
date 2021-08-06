@@ -22,8 +22,8 @@ void test_directions_longest() {
     Point_2(2, 1), Point_2(1, 1)
   };
   assert(contour.size() == 4);
-  // saver.export_closed_contour(contour,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/dl_input", 100);
+
+  // saver.export_closed_contour(contour, "dl_input", 100);
 
   const bool is_closed = true;
   LD closed_directions(contour,  is_closed);

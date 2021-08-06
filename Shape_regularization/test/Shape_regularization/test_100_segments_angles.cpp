@@ -23,8 +23,8 @@ void test_100_segments_angles() {
   Segments segments;
   SR::Tests::create_example_angles(segments);
   assert(segments.size() == 100);
-  // saver.export_segments(segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/100a_input", 100);
+
+  // saver.export_segments(segments, "100a_input", 100);
 
   const FT max_angle_2 = FT(40);
   NQ neighbor_query(segments);
@@ -44,8 +44,7 @@ void test_100_segments_angles() {
   //   output.clear();
   //   for (const std::size_t idx : parallel_group)
   //     output.push_back(segments[idx]);
-  //   saver.export_segments(output,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/output_" + std::to_string(i), 100);
+  //   saver.export_segments(output, "output_" + std::to_string(i), 100);
   // }
 
   std::vector<Indices> orthogonal_groups;
@@ -55,8 +54,7 @@ void test_100_segments_angles() {
   const std::size_t num_segments_angles =
     angle_regularization.number_of_modified_segments();
 
-  // saver.export_segments(segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/100a_angles", 100);
+  // saver.export_segments(segments, "100a_angles", 100);
 
   assert(segments.size() == 100);
   assert(parallel_groups.size() == 2);
