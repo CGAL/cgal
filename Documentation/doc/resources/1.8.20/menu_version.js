@@ -6,9 +6,9 @@
   var current_version_local = '5.3-beta1'
   var all_versions = [
       'master',
-      '5.3-beta1',
+      '5.3',
       'latest',
-      '5.2.2',
+      '5.2.3',
       '5.1.5',
       '5.0.4',
       '4.14.3',

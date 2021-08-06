@@ -15,13 +15,7 @@
 #include <CGAL/value_type_traits.h>
 
 #include <boost/version.hpp>
-#if BOOST_VERSION >= 104000
-  #include <boost/property_map/property_map.hpp>
-#else
-  #include <boost/property_map.hpp>
-  #include <boost/vector_property_map.hpp>
-
-#endif
+#include <boost/property_map/property_map.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <CGAL/tuple.h>
 

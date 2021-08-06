@@ -804,7 +804,7 @@ std::istream&  operator>>(std::istream& is, Matrix_<NT_,AL_>& M)
         is >> M(i/rdim,i%cdim);
       break;
     default:
-      std::cerr<<"\nStream must be in ascii or binary mode"<<std::endl;
+      std::cerr<<"\nStream must be in ASCII or binary mode"<<std::endl;
       break;
   }
   return is;

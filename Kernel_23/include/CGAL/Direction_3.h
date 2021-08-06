@@ -64,6 +64,9 @@ public:
   Direction_3(const Rep& d)
     : Rep(d) {}
 
+  Direction_3(Rep&& d)
+    : Rep(std::move(d)) {}
+
   explicit Direction_3(const Vector_3& v)
     : Rep(typename R::Construct_direction_3()(Return_base_tag(), v)) {}
 
@@ -192,7 +195,7 @@ extract(std::istream& is, Direction_3<R>& d, const Cartesian_tag&)
     default:
       is.setstate(std::ios::failbit);
       std::cerr << "" << std::endl;
-      std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+      std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
       break;
   }
   if (is)
@@ -218,7 +221,7 @@ extract(std::istream& is, Direction_3<R>& d, const Homogeneous_tag&)
     default:
         is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
   }
   if (is)
