@@ -38,8 +38,8 @@ void filter_segments(std::list<Segment>& segments)
                      return (l == r || l == r.opposite());
                    };
 
-  segments.sort(are_equal);
-  segments.erase(std::unique(segments.begin(), segments.end(), are_equal), segments.end());
+  auto it = std::unique(segments.begin(), segments.end(), are_equal);
+  segments.erase(it, segments.end());
 }
 
 // plane going through the ref segment's source, a point above (given by the normal of the input
