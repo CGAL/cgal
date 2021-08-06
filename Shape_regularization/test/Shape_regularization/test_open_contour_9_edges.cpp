@@ -1,7 +1,6 @@
 #include "include/Saver.h"
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Shape_regularization/regularize_contours.h>
 
 namespace SR = CGAL::Shape_regularization;
@@ -52,7 +51,6 @@ void test_open_contour_9_edges() {
 int main() {
   test_open_contour_9_edges< CGAL::Simple_cartesian<double> >();
   test_open_contour_9_edges< CGAL::Exact_predicates_inexact_constructions_kernel >();
-  test_open_contour_9_edges< CGAL::Exact_predicates_exact_constructions_kernel >();
   std::cout << "test_open_contour_9_edges: SUCCESS" << std::endl;
   return EXIT_SUCCESS;
 }
