@@ -65,14 +65,14 @@ Here are the main concepts of this package:
 
 \cgalCRPSection{Export Functions}
 
-- `CGAL::output_to_medit()`
-- `CGAL::output_to_vtu()`
-- `CGAL::output_to_tetgen()`
-- `CGAL::output_to_avizo()`
+- `CGAL::IO::output_to_vtu()`
+- `CGAL::IO::output_to_tetgen()`
+- `CGAL::IO::output_to_avizo()`
 
 \cgalCRPSection{Input/Output Functions}
 
-- `CGAL::write_MEDIT()`
-- `CGAL::read_MEDIT()`
+- `CGAL::IO::write_MEDIT()`
+- `CGAL::IO::read_MEDIT()`
+- `CGAL::IO::output_to_medit()` (deprecated)
 */
 

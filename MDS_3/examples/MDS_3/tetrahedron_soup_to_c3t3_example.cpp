@@ -6,6 +6,7 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 
 #include <CGAL/tetrahedron_soup_to_triangulation_3.h>
+#include <CGAL/IO/File_medit.h>
 
 #include <vector>
 #include <boost/unordered_map.hpp>
@@ -70,7 +71,7 @@ int main(int , char* [])
   c3t3.triangulation() = tr;
 
   std::ofstream ofs("c3t3_output.mesh");
-  c3t3.output_to_medit(ofs);
+  CGAL::IO::write_MEDIT(ofs, c3t3);
 
   return EXIT_SUCCESS;
 }

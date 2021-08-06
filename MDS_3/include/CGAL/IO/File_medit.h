@@ -911,7 +911,8 @@ output_to_medit(std::ostream& os,
 namespace IO {
 
 /**
- * @ingroup PkgMDS3ExportFunctions
+ * @ingroup PkgMDS3IOFunctions
+ * @deprecated This function is deprecated. Users should instead use `CGAL::IO::write_MEDIT()`
  * @brief outputs a mesh complex to the medit (`.mesh`) file format.
         See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
  * @param os the output stream
@@ -975,6 +976,7 @@ output_to_medit(std::ostream& os,
  *   \cgalParamDefault{`false`}
  *   \cgalParamExtra{This parameter should be set to `false` for the file to be readable by `read_MEDIT()`.}
  * \cgalParamNEnd
+ *
  * \cgalParamNBegin{all_cells}
  *   \cgalParamDescription{If `true`, all the cells in `t3` are written in `os`,
  *        however they belong to the complex or not.
@@ -983,6 +985,20 @@ output_to_medit(std::ostream& os,
  *   \cgalParamType{Boolean}
  *   \cgalParamDefault{`true`}
  *   \cgalParamExtra{If `all_vertices` is `true`, this parameter is ignored.}
+ * \cgalParamNEnd
+ *
+ * \cgalParamNBegin{rebind_labels}
+ *  \cgalParamDescription{if `true`, labels of cells are rebinded into `[1..nb_of_labels]`}
+ *  \cgalParamType{Boolean}
+ *  \cgalParamDefault{`false`}
+ * \cgalParamNEnd
+ *
+ * \cgalParamNBegin{show_patches}
+ *  \cgalParamDescription{if `true`, patches are labeled with different labels than
+ *                        cells. If `false`, each surface facet is written twice,
+ *                        using the label of each adjacent cell.}
+ *  \cgalParamType{Boolean}
+ *  \cgalParamDefault{`false`}
  * \cgalParamNEnd
  * \cgalNamedParamsEnd
  * \see \ref IOStreamMedit
@@ -1000,8 +1016,8 @@ void write_MEDIT(std::ostream& os,
   using parameters::choose_parameter;
 
   bool all_v = choose_parameter(get_parameter(np, internal_np::all_vertices), false);
-  bool rebind = false;
-  bool show_patches = false;
+  bool rebind = choose_parameter(get_parameter(np, internal_np::rebind_labels), false);;
+  bool show_patches = choose_parameter(get_parameter(np, internal_np::show_patches), false);
   bool all_c = all_v ||
     choose_parameter(get_parameter(np, internal_np::all_cells), true);
 
@@ -1038,6 +1054,7 @@ void write_MEDIT(std::ostream& os,
  *   \cgalParamDefault{`false`}
  *   \cgalParamExtra{This parameter should be set to `false` for the file to be readable by `read_MEDIT()`.}
  * \cgalParamNEnd
+
  * \cgalParamNBegin{all_cells}
  *   \cgalParamDescription{If `true`, all the cells in `t3` are written in `os`,
  *        however they belong to the complex or not.
@@ -1047,6 +1064,21 @@ void write_MEDIT(std::ostream& os,
  *   \cgalParamDefault{`true`}
  *   \cgalParamExtra{If `all_vertices` is `true`, this parameter is ignored.}
  * \cgalParamNEnd
+ *
+ * \cgalParamNBegin{rebind_labels}
+ *  \cgalParamDescription{if `true`, labels of cells are rebinded into `[1..nb_of_labels]`}
+ *  \cgalParamType{Boolean}
+ *  \cgalParamDefault{`false`}
+ * \cgalParamNEnd
+ *
+ * \cgalParamNBegin{show_patches}
+ *  \cgalParamDescription{if `true`, patches are labeled with different labels than
+ *                        cells. If `false`, each surface facet is written twice,
+ *                        using the label of each adjacent cell.}
+ *  \cgalParamType{Boolean}
+ *  \cgalParamDefault{`false`}
+ * \cgalParamNEnd
+
  * \cgalNamedParamsEnd
  * \see \ref IOStreamMedit
  */

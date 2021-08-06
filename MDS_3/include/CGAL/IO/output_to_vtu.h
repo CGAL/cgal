@@ -351,7 +351,7 @@ void output_to_vtu_with_attributes(std::ostream& os,
 
 } // namespace internal
 
-//! \ingroup PkgMDS3IOFunctions
+//! \ingroup PkgMDS3ExportFunctions
 //!
 //! \brief writes a tetrahedral mesh complex using the `UnstructuredGrid` XML format.
 //!

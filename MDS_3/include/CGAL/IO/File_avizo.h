@@ -27,9 +27,11 @@ namespace CGAL {
 namespace IO {
 
 /**
- * @brief outputs mesh to avizo format
- * @param os the stream
- * @param c3t3 the mesh
+ * @ingroup PkgMDS3ExportFunctions
+ * @brief outputs a mesh complex to the Avizo (`.am`) file format
+ * @tparam C3T3 a class model of `MeshComplex_3InTriangulation_3`
+ * @param os the output stream
+ * @param c3t3 the mesh complex
  * \see \ref IOStreamAvizo
  */
 template <class C3T3>

@@ -191,7 +191,7 @@ namespace IO {
 
 
 /**
- * \ingroup PkgMDS3IOFunctions
+ * \ingroup PkgMDS3ExportFunctions
  * @brief outputs a mesh complex to tetgen format
  * @param filename the path to the output file
  * @param c3t3 the mesh complex
