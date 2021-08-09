@@ -125,6 +125,11 @@ else()
   message(STATUS "NOTICE: Tests are not using Ceres.")
 endif()
 
+if (TARGET CGAL::Eigen3_support)
+  create_single_source_cgal_program("test_geodesic_isolevel_refinement.cpp")
+  target_link_libraries( test_geodesic_isolevel_refinement PUBLIC CGAL::Eigen3_support)
+endif()
+
 if(BUILD_TESTING)
   set_tests_properties(
     "execution   of  triangulate_hole_Polyhedron_3_no_delaunay_test"
