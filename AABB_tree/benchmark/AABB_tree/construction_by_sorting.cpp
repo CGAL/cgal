@@ -15,10 +15,12 @@
 #include <CGAL/Timer.h>
 #include <CGAL/point_generators_3.h>
 
+#include <boost/core/demangle.hpp>
+
 static std::size_t C = 100;
 static std::size_t T = 10000;
 
-template <typename K>
+template<typename K>
 std::vector<CGAL::Segment_3<K>> generate_queries(std::size_t n) {
   typedef CGAL::Point_3<K> Point_3;
   typedef CGAL::Segment_3<K> Segment_3;
@@ -139,87 +141,32 @@ double benchmark_sorting_traversal(std::string input_path) {
   return t.time() / queries.size();
 }
 
+template<typename K>
+void benchmark(std::string input_path) {
+
+  std::cout << "{| class=\"wikitable\"\n";
+  std::cout << "! " << boost::core::demangle(typeid(K).name()) << " !! Recursive Partition !! Hilbert Sort"
+            << "\n|-\n";
+  std::cout << "| construction || " << std::flush
+            << benchmark_recursive_partitioning_construction<K>(input_path) << " s || " << std::flush
+            << benchmark_sorting_construction<K>(input_path) << " s"
+            << "\n|-\n";
+  std::cout << "| traversal || " << std::flush
+            << benchmark_recursive_partitioning_traversal<K>(input_path) << " s || " << std::flush
+            << benchmark_sorting_traversal<K>(input_path) << " s"
+            << "\n|-\n";
+  std::cout << "|}\n\n";
+}
+
 int main(int argc, char **argv) {
 
   // Determine our data source, with a default if no path is provided
   std::string input_path = argc > 1 ? argv[1] : "data/handle.off";
 
-  std::cout << "{| class=\"wikitable\"\n";
-  std::cout << "! Simple Cartesian float !! Recursive Partition !! Hilbert Sort" << "\n|-\n";
-  std::cout << "| construction || " << std::flush
-            << benchmark_recursive_partitioning_construction<CGAL::Simple_cartesian<float>>(input_path)
-            << " s || " << std::flush
-            << benchmark_sorting_construction<CGAL::Simple_cartesian<float>>(input_path)
-            << " s" << "\n|-\n";
-  std::cout << "| traversal || " << std::flush
-            << benchmark_recursive_partitioning_traversal<CGAL::Simple_cartesian<float>>(input_path)
-            << " s || " << std::flush
-            << benchmark_sorting_traversal<CGAL::Simple_cartesian<float>>(input_path)
-            << " s" << "\n|-\n";
-  std::cout << "|}\n\n";
-
-
-  std::cout << "{| class=\"wikitable\"\n";
-  std::cout << "! Cartesian float !! Recursive Partition !! Hilbert Sort" << "\n|-\n";
-  std::cout << "| construction || " << std::flush
-            << benchmark_recursive_partitioning_construction<CGAL::Cartesian<float>>(input_path)
-            << " s || " << std::flush
-            << benchmark_sorting_construction<CGAL::Cartesian<float>>(input_path)
-            << " s" << "\n|-\n";
-  std::cout << "| traversal || " << std::flush
-            << benchmark_recursive_partitioning_traversal<CGAL::Cartesian<float>>(input_path)
-            << " s || " << std::flush
-            << benchmark_sorting_traversal<CGAL::Cartesian<float>>(input_path)
-            << " s" << "\n|-\n";
-  std::cout << "|}\n\n";
-
-
-  std::cout << "{| class=\"wikitable\"\n";
-  std::cout << "! Simple Cartesian double !! Recursive Partition !! Hilbert Sort" << "\n|-\n";
-  std::cout << "| construction || " << std::flush
-            << benchmark_recursive_partitioning_construction<CGAL::Simple_cartesian<double>>(input_path)
-            << " s || " << std::flush
-            << benchmark_sorting_construction<CGAL::Simple_cartesian<double>>(input_path)
-            << " s" << "\n|-\n";
-  std::cout << "| traversal || " << std::flush
-            << benchmark_recursive_partitioning_traversal<CGAL::Simple_cartesian<double>>(input_path)
-            << " s || " << std::flush
-            << benchmark_sorting_traversal<CGAL::Simple_cartesian<double>>(input_path)
-            << " s" << "\n|-\n";
-  std::cout << "|}\n\n";
-
-
-  std::cout << "{| class=\"wikitable\"\n";
-  std::cout << "! Cartesian double !! Recursive Partition !! Hilbert Sort" << "\n|-\n";
-  std::cout << "| construction || " << std::flush
-            << benchmark_recursive_partitioning_construction<CGAL::Cartesian<double>>(input_path)
-            << " s || " << std::flush
-            << benchmark_sorting_construction<CGAL::Cartesian<double>>(input_path)
-            << " s" << "\n|-\n";
-  std::cout << "| traversal || " << std::flush
-            << benchmark_recursive_partitioning_traversal<CGAL::Cartesian<double>>(input_path)
-            << " s || " << std::flush
-            << benchmark_sorting_traversal<CGAL::Cartesian<double>>(input_path)
-            << " s" << "\n|-\n";
-  std::cout << "|}\n\n";
-
-
-  std::cout << "{| class=\"wikitable\"\n";
-  std::cout << "! Epic !! Recursive Partition !! Hilbert Sort" << "\n|-\n";
-  std::cout << "| construction || " << std::flush
-            << benchmark_recursive_partitioning_construction<CGAL::Exact_predicates_inexact_constructions_kernel>(
-                    input_path)
-            << " s || " << std::flush
-            << benchmark_sorting_construction<CGAL::Exact_predicates_inexact_constructions_kernel>(input_path)
-            << " s" << "\n|-\n";
-  std::cout << "| traversal || " << std::flush
-
-            << benchmark_recursive_partitioning_traversal<CGAL::Exact_predicates_inexact_constructions_kernel>(
-                    input_path)
-            << " s || " << std::flush
-            << benchmark_sorting_traversal<CGAL::Exact_predicates_inexact_constructions_kernel>(input_path)
-            << " s" << "\n|-\n";
-  std::cout << "|}\n\n";
-
+  benchmark<CGAL::Simple_cartesian<float>>(input_path);
+  benchmark<CGAL::Cartesian<float>>(input_path);
+  benchmark<CGAL::Simple_cartesian<double>>(input_path);
+  benchmark<CGAL::Cartesian<double>>(input_path);
+  benchmark<CGAL::Exact_predicates_inexact_constructions_kernel>(input_path);
 
 }
