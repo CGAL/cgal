@@ -2,6 +2,14 @@
 #define AABB_TREE_TESTS_AABB_TRAITS_CONSTRUCT_BY_SORTING_H
 
 #include <CGAL/AABB_traits.h>
+#include <CGAL/hilbert_sort.h>
+#include <CGAL/spatial_sort.h>
+#include <CGAL/property_map.h>
+#include <CGAL/Spatial_sort_traits_adapter_3.h>
+
+#include <boost/property_map/function_property_map.hpp>
+#include <boost/optional.hpp>
+#include <boost/bind.hpp>
 
 namespace CGAL {
 
