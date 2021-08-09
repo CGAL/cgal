@@ -188,8 +188,7 @@ bool build_finite_cells(Tr& tr,
           ++k;
         } while(f[0] != n0);
 
-        typename boost::unordered_map<std::array<int,3>, Surface_patch_index>::const_iterator
-          it = border_facets.find(f);
+        typename FacetPatchMap::const_iterator it = border_facets.find(f);
         if(it != border_facets.end())
         {
           c->set_surface_patch_index(j, it->second);
