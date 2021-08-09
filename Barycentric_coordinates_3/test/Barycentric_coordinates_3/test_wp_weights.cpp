@@ -21,6 +21,8 @@ void test_overloads() {
   using Mesh = CGAL::Surface_mesh<Point_3>;
   namespace PMP = CGAL::Polygon_mesh_processing;
 
+
+
   // Cube
   Mesh cube;
   std::vector<Point_3> cube_coords;
