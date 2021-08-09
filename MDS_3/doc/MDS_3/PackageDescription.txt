@@ -28,7 +28,7 @@
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Pierre Alliez, Clément Jamin, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec}
-\cgalPkgDesc{This package provides a data structure to store a three-dimensional meshes and their subcomplexes.
+\cgalPkgDesc{This package provides a data structure to store three-dimensional meshes and their subcomplexes.
   It provides an API for 3D meshes generated with %CGAL or not,
   to be processed with %CGAL 3D mesh generation and remeshing algorithms,
   along with iterators, IO functions and more helper functions.

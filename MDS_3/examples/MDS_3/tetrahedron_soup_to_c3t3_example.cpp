@@ -9,7 +9,7 @@
 #include <CGAL/IO/File_medit.h>
 
 #include <vector>
-#include <boost/unordered_map.hpp>
+#include <unordered_map>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -27,7 +27,7 @@ int main(int , char* [])
 
   //a triangulation
   DT3 delaunay;
-  boost::unordered_map<Vertex_handle, int>     v2i;
+  std::unordered_map<Vertex_handle, int> v2i;
   std::vector<DT3::Point>                points(nbv);
   std::vector<Tetrahedron_3>             tetrahedra;
   std::vector<std::array<int, 5> >       tets_by_indices;
