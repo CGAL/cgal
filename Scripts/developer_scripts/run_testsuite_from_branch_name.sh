@@ -63,6 +63,9 @@ cd ${CGAL_ROOT}
 
 if [ -L CGAL-I ]; then rm CGAL-I; fi
 ln -s $PWD/CGAL-TEST/$DEST CGAL-I
+if [ -d CGAL-I/cmake/platforms ]; then
+  rm -rf CGAL-I/cmake/platforms/*
+fi
 echo "starting testsuite..."
 
 ./autotest_cgal -c 
