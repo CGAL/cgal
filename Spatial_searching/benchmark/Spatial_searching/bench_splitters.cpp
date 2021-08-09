@@ -37,6 +37,12 @@ using EPECK_traits = CGAL::Search_traits_3<EPECK>;
 
 using Color = std::array<unsigned char, 3>;
 
+enum class BENCH_TYPE {
+  ALL_SPLITTERS = 0,
+  BALANCED_SPLITTER = 1,
+  SLIDING_MIDPOINT = 2
+};
+
 // Define how a color should be stored.
 namespace CGAL {
   template<class F>
@@ -511,11 +517,11 @@ void user_manual_bench(
   }
 
   out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter, ConcurrencyTag>(filename, verbose, 0, num_iters, 10, 10));
-  out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter, ConcurrencyTag>(filename, verbose, 0, num_iters, 20, 10));
-  out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter, ConcurrencyTag>(filename, verbose, 0, num_iters, 10, 20));
-  out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter, ConcurrencyTag>(filename, verbose, 0, num_iters, 20, 20));
-  out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter, ConcurrencyTag>(filename, verbose, 0, num_iters, 10, 30));
-  out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter, ConcurrencyTag>(filename, verbose, 0, num_iters, 20, 30));
+  // out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter, ConcurrencyTag>(filename, verbose, 0, num_iters, 20, 10));
+  // out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter, ConcurrencyTag>(filename, verbose, 0, num_iters, 10, 20));
+  // out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter, ConcurrencyTag>(filename, verbose, 0, num_iters, 20, 20));
+  // out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter, ConcurrencyTag>(filename, verbose, 0, num_iters, 10, 30));
+  // out.push_back(bench_random_in_bbox<Kernel, Traits, Splitter, ConcurrencyTag>(filename, verbose, 0, num_iters, 20, 30));
 
   if (!verbose) {
     for (std::size_t k = 0; k < out.size(); ++k) {
@@ -587,17 +593,27 @@ int main(int argc, char* argv[]) {
   const std::size_t num_iters = 1; // number of iterations to get average timing
   using TAG = CGAL::Sequential_tag;
 
-  user_manual_bench<SCD, SCD_traits, CGAL::Balanced_splitter<SCD_traits>, TAG>(
-    filename, verbose, num_iters);
+  auto bench_type = BENCH_TYPE::ALL_SPLITTERS;
+  if (argc > 2) {
+    if (std::string(argv[2]) == "balanced") bench_type = BENCH_TYPE::BALANCED_SPLITTER;
+    else if (std::string(argv[2]) == "sliding") bench_type = BENCH_TYPE::SLIDING_MIDPOINT;
+  }
 
-  user_manual_bench<SCD, SCD_traits, CGAL::Sliding_midpoint<SCD_traits>, TAG>(
-    filename, verbose, num_iters);
+  if (bench_type == BENCH_TYPE::ALL_SPLITTERS || bench_type == BENCH_TYPE::BALANCED_SPLITTER) {
+    user_manual_bench<SCD, SCD_traits, CGAL::Balanced_splitter<SCD_traits>, TAG>(
+      filename, verbose, num_iters);
+  }
 
-  translated_bench<SCD, SCD_traits, CGAL::Balanced_splitter<SCD_traits>, TAG>(
-    filename, verbose, num_iters);
+  if (bench_type == BENCH_TYPE::ALL_SPLITTERS || bench_type == BENCH_TYPE::SLIDING_MIDPOINT) {
+    user_manual_bench<SCD, SCD_traits, CGAL::Sliding_midpoint<SCD_traits>, TAG>(
+      filename, verbose, num_iters);
+  }
 
-  translated_bench<SCD, SCD_traits, CGAL::Sliding_midpoint<SCD_traits>, TAG>(
-    filename, verbose, num_iters);
+  // translated_bench<SCD, SCD_traits, CGAL::Balanced_splitter<SCD_traits>, TAG>(
+  //   filename, verbose, num_iters);
+
+  // translated_bench<SCD, SCD_traits, CGAL::Sliding_midpoint<SCD_traits>, TAG>(
+  //   filename, verbose, num_iters);
 
   return EXIT_SUCCESS;
 }
