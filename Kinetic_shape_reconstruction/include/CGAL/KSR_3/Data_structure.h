@@ -2892,7 +2892,7 @@ public:
         std::cout << "- intersected point: " << to_3d(sp_idx, future_point_a) << std::endl;
       }
 
-      // If reversed, we most-likely in the parallel case and an intersection point
+      // If reversed, we are most-likely in the parallel case and an intersection point
       // is wrongly computed. This can happen even when we are bigger than tolerance.
       // This should not happen here, I guess. If happens, we should find different
       // solution or modify this solution.
@@ -2902,7 +2902,7 @@ public:
     }
 
     if (CGAL::abs(m1 - m3) < tol || is_reversed) {
-      if (m_verbose) std::cout << "- prev parallel lines or reversed" << std::endl;
+      if (m_verbose) std::cout << "- prev parallel lines" << std::endl;
       is_parallel_prev = true;
       // Here, in the dot product, we can have maximum 1 zero-length vector.
       const FT prev_dot = current_vec_prev * iedge_vec;
@@ -2945,7 +2945,7 @@ public:
         std::cout << "- intersected point: " << to_3d(sp_idx, future_point_b) << std::endl;
       }
 
-      // If reversed, we most-likely in the parallel case and an intersection point
+      // If reversed, we are most-likely in the parallel case and an intersection point
       // is wrongly computed. This can happen even when we are bigger than tolerance.
       // This should not happen here, I guess. If happens, we should find different
       // solution or modify this solution.
@@ -2955,7 +2955,7 @@ public:
     }
 
     if (CGAL::abs(m2 - m3) < tol || is_reversed) {
-      if (m_verbose) std::cout << "- next parallel lines or reversed" << std::endl;
+      if (m_verbose) std::cout << "- next parallel lines" << std::endl;
       is_parallel_next = true;
       // Here, in the dot product, we can have maximum 1 zero-length vector.
       const FT next_dot = current_vec_next * iedge_vec;
@@ -3106,14 +3106,25 @@ public:
         std::cout << "- intersected point: " << to_3d(sp_idx, future_point) << std::endl;
       }
 
-      // If reversed, we most-likely in the parallel case and an intersection point
+      // If reversed, we are most-likely in the parallel case and an intersection point
       // is wrongly computed. This can happen even when we are bigger than tolerance.
       is_reversed = is_reversed_direction(
         sp_idx, pinit, future_point, ivertex, iedge);
     }
 
+    const FT back_front_distance = KSR::distance(pinit, future_point);
+    if (m_verbose) std::cout << "- back/front distance: " << back_front_distance << std::endl;
+    CGAL_assertion(back_front_distance >= FT(0));
+    // It can still miss this tolerance and then we enter parallel case and fail!
+    const FT reversed_tol = tol * FT(1000);
+    if (is_reversed && back_front_distance < reversed_tol) {
+      is_reversed = false;
+      if (m_verbose) std::cout << "- back/front reversed, imprecise computation" << std::endl;
+      CGAL_assertion_msg(false, "TODO: BACK/FRONT HANDLE REVERSED CASE!");
+    }
+
     if (CGAL::abs(m2 - m3) < tol || is_reversed) {
-      if (m_verbose) std::cout << "- back/front parallel lines or reversed" << std::endl;
+      if (m_verbose) std::cout << "- back/front parallel lines" << std::endl;
       is_parallel = true;
       // Here, in the dot product, we can have maximum 1 zero-length vector.
       const FT next_dot = current_vec_next * iedge_vec;
@@ -3217,14 +3228,28 @@ public:
         std::cout << "- intersected point: " << to_3d(sp_idx, future_point) << std::endl;
       }
 
-      // If reversed, we most-likely in the parallel case and an intersection point
+      // If reversed, we are most-likely in the parallel case and an intersection point
       // is wrongly computed. This can happen even when we are bigger than tolerance.
       is_reversed = is_reversed_direction(
         sp_idx, pinit, future_point, ivertex, iedge);
     }
 
+    const FT open_distance = KSR::distance(pinit, future_point);
+    if (m_verbose) std::cout << "- open distance: " << open_distance << std::endl;
+    CGAL_assertion(open_distance >= FT(0));
+    // It can still miss this tolerance and then we enter parallel case and fail!
+    const FT reversed_tol = tol * FT(1000);
+    if (is_reversed && open_distance < reversed_tol) {
+      is_reversed = false;
+      // auto nvec = Vector_2(future_point, pinit);
+      // nvec = KSR::normalize(nvec);
+      // future_point = pinit + tol * nvec; // not a valid solution, tested
+      if (m_verbose) std::cout << "- open reversed, imprecise computation" << std::endl;
+      CGAL_assertion_msg(false, "TODO: OPEN HANDLE REVERSED CASE!");
+    }
+
     if (CGAL::abs(m2 - m3) < tol || is_reversed) {
-      if (m_verbose) std::cout << "- open parallel lines or reversed" << std::endl;
+      if (m_verbose) std::cout << "- open parallel lines" << std::endl;
       is_parallel = true;
       if (source_p == pv_point) {
         if (m_verbose) std::cout << "- open moves backwards" << std::endl;
