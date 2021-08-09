@@ -4,6 +4,7 @@
 #include <CGAL/Kinetic_shape_reconstruction_3.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/IO/OFF.h>
+#include <CGAL/IO/PLY.h>
 
 using SCF   = CGAL::Simple_cartesian<float>;
 using SCD   = CGAL::Simple_cartesian<double>;
@@ -54,12 +55,21 @@ bool run_test(
   using KSR = CGAL::Kinetic_shape_reconstruction_3<Traits>;
 
   ++num_tests;
-  std::ifstream input_file(input_filename);
+  std::ifstream input_file_off(input_filename);
+  std::ifstream input_file_ply(input_filename);
   std::vector<Point_3> input_vertices;
   std::vector< std::vector<std::size_t> > input_faces;
-  const bool is_input_success = CGAL::IO::read_OFF(input_file, input_vertices, input_faces);
-  assert(is_input_success);
-  if (!is_input_success) return false;
+
+  if (CGAL::IO::read_OFF(input_file_off, input_vertices, input_faces)) {
+    std::cout << "* reading the OFF file: " << input_filename << "!" << std::endl;
+    input_file_off.close();
+  } else if (CGAL::IO::read_PLY(input_file_ply, input_vertices, input_faces)) {
+    std::cout << "* reading the PLY file: " << input_filename << "!" << std::endl;
+    input_file_ply.close();
+  } else {
+    std::cerr << "ERROR: can't read the OFF/PLY file " << input_filename << "!" << std::endl;
+    return false;
+  }
   std::vector<double> times;
 
   std::cout << std::endl;
@@ -199,6 +209,7 @@ void run_all_tests() {
   ks.push_back(100);
 
   // Edge case tests.
+
   // flat bbox / 2 coplanar in XY
   results = {7,1,12,20,11,2};
   assert(run_test<Traits>("data/edge-case-test/test-flat-bbox-xy.off", ks, num_iters, results, all_times, num_tests));
@@ -222,6 +233,22 @@ void run_all_tests() {
   // edge touch / vertex touch / 2 coplanar
   results = {9,1,24,46,27,4};
   assert(run_test<Traits>("data/edge-case-test/test-5-polygons.off"  , ks, num_iters, results, all_times, num_tests));
+
+  // multiple collinear and duplicate input vertices
+  results = {8,1,18,33,19,3};
+  assert(run_test<Traits>("data/edge-case-test/test-collinear.off"     , ks, num_iters, results, all_times, num_tests));
+
+  // all events happen at the same time
+  results = {0,0,0,0,0,0};
+  assert(run_test<Traits>("data/edge-case-test/test-same-time.off"     , ks, num_iters, results, all_times, num_tests));
+
+  // failure case #1 that produces holes
+  results = {0,0,0,0,0,0};
+  assert(run_test<Traits>("data/edge-case-test/test-local-global-1.off", ks, num_iters, results, all_times, num_tests));
+
+  // failure case #2 that produces holes
+  results = {0,0,0,0,0,0};
+  assert(run_test<Traits>("data/edge-case-test/test-local-global-2.off", ks, num_iters, results, all_times, num_tests));
 
   // Stress tests 0.
   results = {7,1,14,24,13,2};
@@ -332,10 +359,10 @@ void run_all_tests() {
   assert(run_test<Traits>("data/stress-test-4/test-9-rnd-polygons-12-4.off", ks, num_iters, results, all_times, num_tests));
 
   // Stress tests 5.
-  // results = {21,2,468,1224,720,66}; // fails due to same time events
-  // assert(run_test<Traits>("data/stress-test-5/test-1-rnd-polygons-15-6.off", ks, num_iters, results, all_times, num_tests));
-  // results = {26,3,1037,2829,1693,161}; // sometimes fails for k = 3 in debug mode, random failures
-  // assert(run_test<Traits>("data/stress-test-5/test-2-rnd-polygons-20-4.off", ks, num_iters, results, all_times, num_tests));
+  results = {21,2,468,1224,720,66};
+  assert(run_test<Traits>("data/stress-test-5/test-1-rnd-polygons-15-6.off", ks, num_iters, results, all_times, num_tests));
+  results = {26,3,1037,2829,1693,161};
+  assert(run_test<Traits>("data/stress-test-5/test-2-rnd-polygons-20-4.off", ks, num_iters, results, all_times, num_tests));
 
   // Real data tests.
   results = {16,1,133,315,212,34};
@@ -345,23 +372,8 @@ void run_all_tests() {
   results = {25,3,606,1607,990,98};
   assert(run_test<Traits>("data/real-data-test/test-20-polygons.off", ks, num_iters, results, all_times, num_tests));
 
-  // Still to be done! Do not work due to the events, which happen at the same time.
-
-  // Polygons with multiple near-collinear points, fails in release.
-  // results = {8,1,18,33,19,3};
-  // assert(run_test<Traits>("data/edge-case-test/test-collinear.off"     , ks, num_iters, results, all_times, num_tests));
-
-  // All arrive at the same time, fails for k = 1.
-  // results = {0,0,0,0,0,0};
-  // assert(run_test<Traits>("data/edge-case-test/test-same-time.off"     , ks, num_iters, results, all_times, num_tests));
-
-  // No hanging pfaces, fails for k = 2.
-  // results = {0,0,0,0,0,0};
-  // assert(run_test<Traits>("data/edge-case-test/test-local-global-1.off", ks, num_iters, results, all_times, num_tests));
-
-  // Here, 1 hanging pface, fails for k = 3.
-  // results = {0,0,0,0,0,0};
-  // assert(run_test<Traits>("data/edge-case-test/test-local-global-2.off", ks, num_iters, results, all_times, num_tests));
+  // results = {0,0,0,0,0,0}; // fails for k = 1 and coplanarity = 0.1; and k = 6 and coplanarity = 0.5
+  // assert(run_test<Traits>("data/real-data-test/test-40-polygons.ply", ks, num_iters, results, all_times, num_tests));
 
   std::cout << std::endl << "--OUTPUT STATS:" << std::endl;
   std::cout << "* number of tests: "               << num_tests << std::endl;
@@ -400,8 +412,8 @@ int main(const int /* argc */, const char** /* argv */) {
   // are occurring in the Propagation only.
   // run_all_tests<EPECK>();
 
-  // Passes all tests except for those when events
-  // are happenning at the same time.
+  // Passes all tests except for those when
+  // intersections lead to accumulated errors.
   run_all_tests<EPICK>();
   return EXIT_SUCCESS;
 }
