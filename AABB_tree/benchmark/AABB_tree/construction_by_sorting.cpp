@@ -42,28 +42,6 @@ std::vector<CGAL::Segment_3<K>> generate_queries(std::size_t n) {
 }
 
 template<typename K>
-double benchmark_recursive_partitioning_construction(std::string input_path) {
-  typedef CGAL::Polyhedron_3<K> Polyhedron;
-  typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
-  typedef CGAL::AABB_traits<K, Primitive> Traits;
-  typedef CGAL::AABB_tree<Traits> Tree;
-
-  std::ifstream in(input_path);
-  Polyhedron polyhedron;
-  in >> polyhedron;
-
-  CGAL::Timer t;
-  t.start();
-  for (int i = 0; i < C; ++i) {
-    Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
-    tree.build();
-  }
-  t.stop();
-
-  return t.time() / C;
-}
-
-template<typename K>
 double benchmark_recursive_partitioning_traversal(std::string input_path) {
   typedef CGAL::Polyhedron_3<K> Polyhedron;
   typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
@@ -89,28 +67,6 @@ double benchmark_recursive_partitioning_traversal(std::string input_path) {
   t.stop();
 
   return t.time() / queries.size();
-}
-
-template<typename K>
-double benchmark_sorting_construction(std::string input_path) {
-  typedef CGAL::Polyhedron_3<K> Polyhedron;
-  typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
-  typedef CGAL::AABB_traits_construct_by_sorting<K, Primitive> Traits;
-  typedef CGAL::AABB_tree<Traits> Tree;
-
-  std::ifstream in(input_path);
-  Polyhedron polyhedron;
-  in >> polyhedron;
-
-  CGAL::Timer t;
-  t.start();
-  for (int i = 0; i < C; ++i) {
-    Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
-    tree.build();
-  }
-  t.stop();
-
-  return t.time() / C;
 }
 
 template<typename K>
@@ -141,15 +97,42 @@ double benchmark_sorting_traversal(std::string input_path) {
   return t.time() / queries.size();
 }
 
+template<typename Traits>
+double benchmark_construction(std::string input_path) {
+  typedef typename Traits::Geom_traits K;
+  typedef CGAL::AABB_tree<Traits> Tree;
+  typedef CGAL::Polyhedron_3<K> Polyhedron;
+  typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
+
+  std::ifstream in(input_path);
+  Polyhedron polyhedron;
+  in >> polyhedron;
+
+  CGAL::Timer t;
+  t.start();
+  for (int i = 0; i < C; ++i) {
+    Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
+    tree.build();
+  }
+  t.stop();
+
+  return t.time() / C;
+}
+
 template<typename K>
 void benchmark(std::string input_path) {
+  typedef CGAL::Polyhedron_3<K> Polyhedron;
+  typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
+
+  typedef CGAL::AABB_traits<K, Primitive> Traits_construct_by_splitting;
+  typedef CGAL::AABB_traits_construct_by_sorting<K, Primitive> Traits_construct_by_sorting;
 
   std::cout << "{| class=\"wikitable\"\n";
   std::cout << "! " << boost::core::demangle(typeid(K).name()) << " !! Recursive Partition !! Hilbert Sort"
             << "\n|-\n";
   std::cout << "| construction || " << std::flush
-            << benchmark_recursive_partitioning_construction<K>(input_path) << " s || " << std::flush
-            << benchmark_sorting_construction<K>(input_path) << " s"
+            << benchmark_construction<Traits_construct_by_splitting>(input_path) << " s || " << std::flush
+            << benchmark_construction<Traits_construct_by_sorting>(input_path) << " s"
             << "\n|-\n";
   std::cout << "| traversal || " << std::flush
             << benchmark_recursive_partitioning_traversal<K>(input_path) << " s || " << std::flush
