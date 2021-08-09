@@ -244,7 +244,7 @@ void Tuple_d<NT,LA>::read(std::istream& is)
       CGAL::read(is, d); v = Vector(d);
       while (i < d) { CGAL::read(is, v[i]); ++i; } break;
     default:
-    CGAL_error_msg("\nStream must be in ascii or binary mode\n");
+    CGAL_error_msg("\nStream must be in ASCII or binary mode\n");
   }
 }
 

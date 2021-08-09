@@ -910,9 +910,11 @@ which enables to treat one or several connected components as a face graph.
 
 \cgalExample{Polygon_mesh_processing/face_filtered_graph_example.cpp}
 
-\section PMPDistance Approximate Hausdorff Distance
+\section PMPDistance Hausdorff Distance
 
 This package provides methods to compute (approximate) distances between meshes and point sets.
+
+\subsection ApproxHD Approximate Hausdorff Distance
 
 The function \link approximate_Hausdorff_distance() `approximate_Hausdorff_distance()`\endlink
 computes an approximation of the Hausdorff distance from a mesh `tm1` to a mesh `tm2`. Given a
@@ -938,12 +940,12 @@ computes an approximation of the Hausdorff distance from a mesh to a point set.
 For each triangle, a lower and upper bound of the Hausdorff distance to the point set are computed.
 Triangles are refined until the difference between the bounds is lower than a user-defined precision threshold.
 
-\subsection AHDExample Approximate Hausdorff Distance Example
+\subsubsection AHDExample Approximate Hausdorff Distance Example
 In the following example, a mesh is isotropically remeshed and the approximate distance between the input and the output is computed.
 
 \cgalExample{Polygon_mesh_processing/hausdorff_distance_remeshing_example.cpp}
 
-\subsection PoissonDistanceExample Max Distance Between Point Set and Surface Example
+\subsubsection PoissonDistanceExample Max Distance Between Point Set and Surface Example
 In \ref Poisson_surface_reconstruction_3/poisson_reconstruction_example.cpp,
 a triangulated surface mesh is constructed from a point set using the
 \link PkgPoissonSurfaceReconstruction3 Poisson reconstruction algorithm \endlink,
@@ -951,6 +953,50 @@ and the distance between the point set and the reconstructed surface is computed
 with the following code:
 
 \snippet Poisson_surface_reconstruction_3/poisson_reconstruction_example.cpp PMP_distance_snippet
+
+\subsection BoundedHD Bounded Hausdorff Distance
+
+The function `CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance()`
+computes an estimate of the Hausdorff distance of two triangle meshes which is
+bounded by a user-given error bound. Given two meshes `tm1` and `tm2`, it follows
+the procedure given by \cgalCite{tang2009interactive}. Namely, a bounded volume hierarchy (BVH) is
+built on `tm1` and `tm2` respectively. The BVH on `tm1` is used to iterate over all
+triangles in `tm1`. Throughout the traversal, the procedure keeps track of a global
+lower and upper bound on the Hausdorff distance respectively. For each triangle
+`t` in `tm1`, by traversing the BVH on `tm2`, it is estimated via the global bounds
+whether `t` can still contribute to the actual Hausdorff distance. From this
+process, a set of candidate triangles is selected.
+
+The candidate triangles are subsequently subdivided and for each smaller
+triangle, the BVH on `tm2` is traversed again. This is repeated until the
+triangle is smaller than the user-given error bound, all vertices of the
+triangle are projected onto the same triangle in `tm2`, or the triangle's upper
+bound is lower than the global lower bound. After creation, the subdivided
+triangles are added to the list of candidate triangles. Thereby, all candidate
+triangles are processed until a triangle is found in which the Hausdorff
+distance is realized or in which it is guaranteed to be realized within the
+user-given error bound.
+
+In the current implementation, the BVH used is an AABB-tree and not the swept sphere
+volumes as used in the original implementation. This should explain the runtime difference
+observed with the original implementation.
+
+The function `CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance()` computes
+the one-sided Hausdorff distance from `tm1` to `tm2`. This component also provides
+the symmetric distance `CGAL::Polygon_mesh_processing::bounded_error_symmetric_Hausdorff_distance()`
+and an utility function called `CGAL::Polygon_mesh_processing::is_Hausdorff_distance_larger()`
+that returns `true` if the Hausdorff distance between two meshes is larger than the user-defined max distance.
+
+\subsubsection BHDExample Bounded Hausdorff Distance Example
+
+In the following examples: (a) the distance of a tetrahedron to a remeshed
+version of itself is computed, (b) the distance of two geometries is computed
+which is realized strictly in the interior of a triangle of the first geometry,
+(c) a perturbation of a user-given mesh is compared to the original user-given
+mesh, (d) two user-given meshes are compared, where the second mesh is gradually
+moved away from the first one.
+
+\cgalExample{Polygon_mesh_processing/hausdorff_bounded_error_distance_example.cpp}
 
 \section PMPDetectFeatures Feature Detection
 

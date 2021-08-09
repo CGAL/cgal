@@ -3,11 +3,33 @@ Release History
 [Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
 -----------
 
-Release date:  December 2021
+Release date: December 2021
 
-### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.3/Manual/packages.html#PkgKernel23)
+### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.4/Manual/packages.html#PkgKernel23)
+
+-   Added `construct_centroid_2_object()` and `compute_determinant_2_object()` in `Projection_traits_xy_3`, `Projection_traits_xz_3`,
+    and`Projection_traits_yz_3` classes.
 
 -   Added documentation for the class `Projection_traits_3`, which enables the use of 2D algorithms on the projections of 3D data onto an arbitrary plane.
+
+### [Polygon Mesh Processing](https://doc.cgal.org/5.4/Manual/packages.html#PkgPolygonMeshProcessing)
+
+-   Added the function `CGAL::Polygon_mesh_processing::match_faces()`, which, given two polygon meshes,
+    identifies their common faces as well as faces present in only either of them.
+
+-   Added the functions: `CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance()` that
+    computes an estimate of the one-sided Hausdorff distance between two triangle meshes which
+    is bounded by a user-specified error bound;  `CGAL::Polygon_mesh_processing::bounded_error_symmetric_Hausdorff_distance()` that computes
+    an estimate of the symmetric Hausdorff distance bounded by a user-specified error bound;
+    and `CGAL::Polygon_mesh_processing::is_Hausdorff_distance_larger()` that returns `true`
+    if the bounded-error Hausdorff distance between two meshes is larger than the user-specified
+    max distance.
+
+
+###  [CGAL and Solvers](https://doc.cgal.org/5.4/Manual/packages.html#PkgSolverInterface)
+
+-   Added the [OSQP solver](https://osqp.org/) support. This solver enables to efficiently compute the convex Quadratic Programming (QP) problems arising in the context of several packages.
+
 
 [Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)
 -----------

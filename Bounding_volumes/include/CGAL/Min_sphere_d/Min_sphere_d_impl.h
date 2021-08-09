@@ -77,7 +77,7 @@ operator >> ( std::istream& is, Min_sphere_d<Traits>& min_sphere)
 
       case IO::PRETTY:
         std::cerr << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
 
       case IO::ASCII:

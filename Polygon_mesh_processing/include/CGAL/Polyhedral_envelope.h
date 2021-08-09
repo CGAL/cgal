@@ -47,11 +47,11 @@
 // }
 //
 // The code below uses the version of
-// https://github.com/wangbolun300/fast-envelope  avaiable on 7th of October 2020
+// https://github.com/wangbolun300/fast-envelope available on 7th of October 2020.
 //
-// The code below only use the high level algorithms of checking that a query
-// is covered by a set of prisms, where each prism is an offset for an input triangle.
-// That is, we do not use indirect predicates
+// The code below only uses the high-level algorithms checking that a query
+// is covered by a set of prisms, where each prism is the offset of an input triangle.
+// That is, we do not use indirect predicates.
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_POLYHEDRAL_ENVELOPE_H
 #define CGAL_POLYGON_MESH_PROCESSING_POLYHEDRAL_ENVELOPE_H

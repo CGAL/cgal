@@ -17,7 +17,7 @@
 
 namespace CGAL {
 /*!
-\ingroup PkgSolverInterfaceRef
+\ingroup PkgSolverInterfaceLS
 
 The class `Eigen_vector` is a wrapper around `Eigen`
 <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1Matrix.html">vector type</a>,

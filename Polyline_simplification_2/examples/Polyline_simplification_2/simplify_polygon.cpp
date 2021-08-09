@@ -1,6 +1,5 @@
 #include <boost/config.hpp>
 #include <boost/version.hpp>
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <iostream>
 #include <fstream>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -30,9 +29,3 @@ int main(int argc, char* argv[])
 
   return 0;
 }
-#else
-int main()
-{
-  return 0;
-}
-#endif

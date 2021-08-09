@@ -59,6 +59,67 @@ bool test(std::string test_name)
   return cdt.is_valid();
 }
 
+
+template <class K, typename CDT_2_traits>
+bool test_segment_intersections(std::string test_name)
+{
+  std::cerr << "Testing " << test_name << std::endl;
+
+  CDT_2_traits traits(typename K::Vector_3(0,0,1));
+  typename CDT_2_traits::Intersect_2 intersect = traits.intersect_2_object();
+
+  typedef typename CDT_2_traits::Segment_2 Segment_2;
+  typedef typename CDT_2_traits::Point_2 Point_2;
+
+  // test point intersection
+  Segment_2 s1( Point_2(0,0,0), Point_2(1,1,0) ),
+            s2( Point_2(0,1,0), Point_2(1,0,0) );
+
+  CGAL::Object o = intersect(s1,s2);
+  assert( o.is<Point_2>() );
+
+// test segment overlap
+  Point_2 pts[4] = { Point_2(0,0,0), Point_2(1,0,1), Point_2(2,0,2), Point_2(4,0,3) };
+
+  o = intersect( Segment_2(pts[0], pts[1]), Segment_2(pts[2], pts[3]) );
+  assert( o.empty() );
+
+  // pure overlap
+  o = intersect( Segment_2(pts[0], pts[2]), Segment_2(pts[1], pts[3]) );
+  assert( o.is<Segment_2>() );
+  o = intersect( Segment_2(pts[0], pts[2]), Segment_2(pts[3], pts[1]) );
+  assert( o.is<Segment_2>() );
+  o = intersect( Segment_2(pts[2], pts[0]), Segment_2(pts[1], pts[3]) );
+  assert( o.is<Segment_2>() );
+  o = intersect( Segment_2(pts[2], pts[0]), Segment_2(pts[3], pts[1]) );
+  assert( o.is<Segment_2>() );
+  // segment fully included
+  o = intersect( Segment_2(pts[0], pts[3]), Segment_2(pts[1], pts[2]) );
+  assert( o.is<Segment_2>() );
+  assert( CGAL::object_cast<Segment_2>(o) == Segment_2(pts[1], pts[2]) );
+  // segment fully included with shared vertex
+  o = intersect( Segment_2(pts[0], pts[1]), Segment_2(pts[0], pts[2]) );
+  assert( o.is<Segment_2>() );
+  assert( CGAL::object_cast<Segment_2>(o) == Segment_2(pts[0], pts[1]) );
+  // segment sharing a vertex
+  o = intersect( Segment_2(pts[0], pts[1]), Segment_2(pts[1], pts[2]) );
+  assert( o.is<Point_2>() );
+  assert( CGAL::object_cast<Point_2>(o) == pts[1]);
+
+  // degenerate segment
+  Segment_2 sd(Point_2(1,0,6), Point_2(1,0,7));
+  o = intersect( Segment_2(pts[0], pts[2]), sd );
+  assert( o.is<Point_2>() );
+  o = intersect( Segment_2(pts[0], pts[1]), sd );
+  assert( o.is<Point_2>() );
+  o = intersect( Segment_2(pts[1], pts[0]), sd );
+  assert( o.is<Point_2>() );
+  o = intersect( Segment_2(pts[2], pts[3]), sd );
+  assert( o.empty() );
+
+  return true;
+}
+
 int main()
 {
   std::cerr.precision(17);
@@ -74,5 +135,12 @@ int main()
       test<CGAL::Epeck,
            CGAL::Projection_traits_3<Epeck> >
       ("CDT_2 in a 3D plane, with Epeck");
+  ok = ok && test_segment_intersections<CGAL::Epick,
+           CGAL::Triangulation_2_projection_traits_3<Epick> >
+      ("CDT_2 traits intersection with Epick");
+  ok = ok && test_segment_intersections<CGAL::Epeck,
+           CGAL::Triangulation_2_projection_traits_3<Epeck> >
+      ("CDT_2 traits intersection with Epeck");
+
   return ok ? 0 : 1;
 }

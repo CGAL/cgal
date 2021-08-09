@@ -25,7 +25,7 @@
 
 #include <boost/parameter/name.hpp>
 
-#if defined(__clang__) || (BOOST_GCC >= 40600)
+#if defined(__clang__) || defined(BOOST_GCC)
 #  define CGAL_IGNORE_UNUSED_VARIABLES \
     _Pragma("GCC diagnostic ignored \"-Wunused-variable\"") \
     _Pragma("GCC diagnostic ignored \"-Wunused-parameter\"")

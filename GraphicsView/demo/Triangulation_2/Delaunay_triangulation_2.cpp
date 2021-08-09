@@ -23,9 +23,7 @@
 #include "TriangulationPointInputAndConflictZone.h"
 #include <CGAL/Qt/TriangulationGraphicsItem.h>
 #include <CGAL/Qt/VoronoiGraphicsItem.h>
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <CGAL/IO/WKT.h>
-#endif
 
 // for viewportsBbox
 #include <CGAL/Qt/utility.h>
@@ -322,9 +320,7 @@ MainWindow::on_actionLoadPoints_triggered()
                                                   tr("Open Points file"),
                                                   ".",
                                                   tr("CGAL files (*.pts.cgal);;"
-                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                                                      "WKT files (*.WKT *.wkt);;"
-                                                   #endif
                                                      "All files (*)"));
   if(! fileName.isEmpty()){
     open(fileName);
@@ -343,9 +339,7 @@ MainWindow::open(QString fileName)
   std::vector<K::Point_2> points;
   if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
   {
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
     CGAL::IO::read_multi_point_WKT(ifs, points);
-#endif
   }
   else
     while(ifs >> p) {
@@ -370,15 +364,12 @@ MainWindow::on_actionSavePoints_triggered()
                                                   tr("Save points"),
                                                   ".",
                                                   tr("CGAL files (*.pts.cgal);;"
-                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                                                      "WKT files (*.WKT *.wkt);;"
-                                                   #endif
                                                      "All files (*)"));
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
     if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
     {
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
       std::vector<K::Point_2> points;
       points.reserve(dt.number_of_vertices());
       for(Delaunay::Finite_vertices_iterator
@@ -389,7 +380,6 @@ MainWindow::on_actionSavePoints_triggered()
         points.push_back(vit->point());
       }
       CGAL::IO::write_multi_point_WKT(ofs, points);
-#endif
     }
     else
       for(Delaunay::Finite_vertices_iterator

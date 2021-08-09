@@ -32,9 +32,6 @@ typedef CGAL::GLPK_mixed_integer_program_traits<double>                        M
 
 #endif
 
-
-#if defined(CGAL_USE_GLPK) || defined(CGAL_USE_SCIP)
-
 typedef typename MIP_Solver::Variable                        Variable;
 typedef typename MIP_Solver::Linear_objective        Linear_objective;
 typedef typename MIP_Solver::Linear_constraint        Linear_constraint;
@@ -99,15 +96,3 @@ int main()
                 return EXIT_FAILURE;
         }
 }
-
-
-#else
-
-int main(int , char**)
-{
-    std::cerr << "This test requires either GLPK or SCIP.\n";
-    return EXIT_SUCCESS;
-}
-
-#endif  // defined(CGAL_USE_GLPK) || defined(CGAL_USE_SCIP)
-
