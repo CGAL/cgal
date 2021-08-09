@@ -19,6 +19,7 @@ namespace CGAL {
   class AABB_traits_construct_by_sorting : public AABB_traits<GeomTraits, AABBPrimitive, BboxMap> {
 
   public:
+    typedef GeomTraits Geom_traits;
 
     typedef AABB_traits_construct_by_sorting<GeomTraits, AABBPrimitive, BboxMap> Traits;
     typedef internal::Primitive_helper <Traits> Helper;
