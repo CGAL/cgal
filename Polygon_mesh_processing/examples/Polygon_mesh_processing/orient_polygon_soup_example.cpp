@@ -26,7 +26,7 @@ struct Visitor : public CGAL::Polygon_mesh_processing::Default_orientation_visit
   }
   void non_manifold_vertex(std::size_t id, std::size_t nb_cycles)
   {
-     std::cout << "The vertex " << id << " is not manifold: "  << nb_lcc<< " connected components of vertices in the link." << std::endl;
+     std::cout << "The vertex " << id << " is not manifold: "  << nb_cycles << " connected components of vertices in the link." << std::endl;
   }
   void duplicated_vertex(std::size_t v1, std::size_t v2)
   {
