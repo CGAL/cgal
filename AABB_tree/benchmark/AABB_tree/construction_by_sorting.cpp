@@ -6,19 +6,21 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Surface_mesh/IO/PLY.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_traits_construct_by_sorting.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 #include <CGAL/point_generators_3.h>
 
 #include <boost/core/demangle.hpp>
 
 static std::size_t C = 100;
-static std::size_t T = 10000;
+static std::size_t T = 1000000;
 
 template<typename K>
 std::vector<CGAL::Ray_3<K>> generate_queries(std::size_t n) {
@@ -41,19 +43,18 @@ std::vector<CGAL::Ray_3<K>> generate_queries(std::size_t n) {
   return queries;
 }
 
-template<typename Traits>
-double benchmark_traversal(CGAL::Polyhedron_3<typename Traits::Geom_traits> polyhedron) {
+template<typename Traits, typename Data, typename Queries>
+double benchmark_traversal(Data polyhedron, Queries queries) {
   typedef CGAL::AABB_tree<Traits> Tree;
 
   Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
   tree.build();
 
-  auto queries = generate_queries<typename Traits::Geom_traits>(T);
   typedef typename Tree::AABB_traits::template Intersection_and_primitive_id<decltype(queries[0])>::Type Result_type;
   std::vector<Result_type> v;
   v.reserve(queries.size());
 
-  CGAL::Timer t;
+  CGAL::Real_timer t;
   t.start();
   for (const auto &query : queries)
     tree.template all_intersections(query, std::back_inserter(v));
@@ -62,11 +63,11 @@ double benchmark_traversal(CGAL::Polyhedron_3<typename Traits::Geom_traits> poly
   return t.time() / queries.size();
 }
 
-template<typename Traits>
-double benchmark_construction(CGAL::Polyhedron_3<typename Traits::Geom_traits> polyhedron) {
+template<typename Traits, typename Data>
+double benchmark_construction(Data polyhedron) {
   typedef CGAL::AABB_tree<Traits> Tree;
 
-  CGAL::Timer t;
+  CGAL::Real_timer t;
   t.start();
   for (int i = 0; i < C; ++i) {
     Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
@@ -79,7 +80,7 @@ double benchmark_construction(CGAL::Polyhedron_3<typename Traits::Geom_traits> p
 
 template<typename K>
 void benchmark(std::string input_path) {
-  typedef CGAL::Polyhedron_3<K> Polyhedron;
+  typedef CGAL::Surface_mesh<CGAL::Point_3<K>> Polyhedron;
   typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
 
   typedef CGAL::AABB_traits<K, Primitive> Traits_construct_by_splitting;
@@ -88,6 +89,9 @@ void benchmark(std::string input_path) {
   std::ifstream in(input_path);
   Polyhedron polyhedron;
   in >> polyhedron;
+//  CGAL::IO::read_PLY(in, polyhedron);
+
+  auto queries = generate_queries<K>(T);
 
   std::cout << "{| class=\"wikitable\"\n";
   std::cout << "! " << boost::core::demangle(typeid(K).name()) << " !! Recursive Partition !! Hilbert Sort"
@@ -97,8 +101,8 @@ void benchmark(std::string input_path) {
             << benchmark_construction<Traits_construct_by_sorting>(polyhedron) << " s"
             << "\n|-" << std::endl;
   std::cout << "| traversal || " << std::flush
-            << benchmark_traversal<Traits_construct_by_splitting>(polyhedron) << " s || " << std::flush
-            << benchmark_traversal<Traits_construct_by_sorting>(polyhedron) << " s"
+            << benchmark_traversal<Traits_construct_by_splitting>(polyhedron, queries) << " s || " << std::flush
+            << benchmark_traversal<Traits_construct_by_sorting>(polyhedron, queries) << " s"
             << "\n|-" << std::endl;
   std::cout << "|}\n" << std::endl;
 }
@@ -108,10 +112,10 @@ int main(int argc, char **argv) {
   // Determine our data source, with a default if no path is provided
   std::string input_path = argc > 1 ? argv[1] : "data/handle.off";
 
-  benchmark<CGAL::Simple_cartesian<float>>(input_path);
-  benchmark<CGAL::Cartesian<float>>(input_path);
-  benchmark<CGAL::Simple_cartesian<double>>(input_path);
-  benchmark<CGAL::Cartesian<double>>(input_path);
+//  benchmark<CGAL::Simple_cartesian<float>>(input_path);
+//  benchmark<CGAL::Cartesian<float>>(input_path);
+//  benchmark<CGAL::Simple_cartesian<double>>(input_path);
+//  benchmark<CGAL::Cartesian<double>>(input_path);
   benchmark<CGAL::Exact_predicates_inexact_constructions_kernel>(input_path);
 
 }
