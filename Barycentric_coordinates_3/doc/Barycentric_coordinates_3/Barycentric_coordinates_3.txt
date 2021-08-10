@@ -82,7 +82,7 @@ to the boundaries.
 
 This example shows how to compute mean value coordinates for a set of points in a 
 star-shaped polyhedron. We note that this type of coordinate is well-defined for a 
-concave polyhedron and it may yield negative coordinate values for points outside 
+concave polyhedron but it may yield negative coordinate values for points outside 
 the polyhedron's kernel. 
 \anchor mv_3_coord_example
 \cgalExample{Barycentric_coordinates_3/mean_value_coordinates.cpp}

@@ -22,7 +22,10 @@
 // Internal includes
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/convexity_check_3.h>
+#include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/Barycentric_coordinates_2/Triangle_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Wachspress_2.h>
+#include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
 
 namespace CGAL{
 namespace Barycentric_coordinates{
@@ -203,52 +206,93 @@ public:
     typename OutIterator,
     typename GeomTraits>
   OutIterator boundary_coordinates_3(
-    VertexRange vertex,
+    VertexRange& vertices_face,
     const VertexToPointMap& vertex_to_point_map,
     const PolygonMesh& polygon_mesh,
     const typename GeomTraits::Point_3& query,
     OutIterator coordinates,
-    const GeomTraits& traits){
+    const GeomTraits& traits,
+    bool use_wp_flag){
 
     using FT = typename GeomTraits::FT;
     using Plane_3 = typename GeomTraits::Plane_3;
     using Point_2 = typename GeomTraits::Point_2;
 
-    const auto v0 = *vertex; vertex++;
-    const auto v1 = *vertex; vertex++;
-    const auto v2 = *vertex;
-
-    // Check if the three vertices are not identical
-    CGAL_assertion(v0 != v1);
-    CGAL_assertion(v0 != v2);
-    CGAL_assertion(v1 != v2);
+    using Wachspress = CGAL::Barycentric_coordinates::Wachspress_2<GeomTraits>;
+    using Wachspress_coordinates = CGAL::Barycentric_coordinates::Generalized_barycentric_coordinates_2<Wachspress, GeomTraits>;
+    using Triangle_coordinates = CGAL::Barycentric_coordinates::Triangle_coordinates_2<GeomTraits>;
 
     const FT tol = get_tolerance<FT>();
+    const std::size_t num_sides_face = vertices_face.size();
+    const std::size_t num_vertices_polyhedron = num_vertices(polygon_mesh);
 
-    const Plane_3 plane_face(get(vertex_to_point_map, v0),
+    // Check if the vertices are distinct
+    for(auto itr1 = vertices_face.begin(); itr1 != vertices_face.end(); itr1++)
+      for(auto itr2 = std::next(itr1, 1); itr2 != vertices_face.end(); itr2++)
+        CGAL_assertion(*itr1 != *itr2);
+
+    // Create plane
+    auto vertex_itr = vertices_face.begin();
+    const auto v0 = *vertex_itr; vertex_itr++;
+    const auto v1 = *vertex_itr; vertex_itr++;
+    const auto v2 = *vertex_itr;
+    const Plane_3 face_plane(get(vertex_to_point_map, v0),
      get(vertex_to_point_map, v1), get(vertex_to_point_map, v2));
-    const Point_2 query_2d = plane_face.to_2d(query);
-    const Point_2 v0_2d = plane_face.to_2d(get(vertex_to_point_map, v0));
-    const Point_2 v1_2d = plane_face.to_2d(get(vertex_to_point_map, v1));
-    const Point_2 v2_2d = plane_face.to_2d(get(vertex_to_point_map, v2));
 
-    const std::array<FT, 3> coordinates_2d = compute_triangle_coordinates_2(
-      v0_2d, v1_2d, v2_2d, query_2d, traits);
+    // Store 2d vertices
+    std::vector<Point_2> polygon;
+    polygon.reserve(num_sides_face);
+    auto polygon_itr = std::back_inserter(polygon);
+    Point_2 query_2 = face_plane.to_2d(query);
+    for(auto v : vertices_face){
 
-    const auto vd = vertices(polygon_mesh);
-    for(const auto& v : vd){
+      *polygon_itr = face_plane.to_2d(get(vertex_to_point_map, v));
+      polygon_itr++;
+    }
 
-      if(v == v0)
-        *coordinates = CGAL::abs(coordinates_2d[0]) < tol? FT(0): coordinates_2d[0];
-      else if(v == v1)
-        *coordinates = CGAL::abs(coordinates_2d[1]) < tol? FT(0): coordinates_2d[1];
-      else if(v == v2)
-        *coordinates = CGAL::abs(coordinates_2d[2]) < tol? FT(0): coordinates_2d[2];
-      else
+    // Check convexity
+    CGAL_assertion(is_convex_2(polygon.begin(), polygon.end(), traits));
+
+    // Store 2d barycentric coordinates
+    std::vector<FT> bar_coords_2;
+    bar_coords_2.reserve(num_sides_face);
+
+    // Use wp_2 or triangle coordinates
+    if(use_wp_flag){
+
+      Wachspress_coordinates wachspress_coordinates(polygon.begin(), polygon.end());
+      wachspress_coordinates(query_2, std::back_inserter(bar_coords_2));
+    }
+    else{
+
+      CGAL_assertion(polygon.size() == 3);
+      Triangle_coordinates triangle_coordinates(polygon[0], polygon[1], polygon[2]);
+      triangle_coordinates(query_2, std::back_inserter(bar_coords_2));
+    }
+
+    // Fill coordinates
+    CGAL_assertion(bar_coords_2.size() == num_sides_face);
+    for(auto& vertex_polyhedron : vertices(polygon_mesh)){
+
+      bool found_vertex = false;
+      auto bar_coords_itr = bar_coords_2.begin();
+      for(auto vertex_face : vertices_face){
+
+        if(vertex_polyhedron == vertex_face){
+
+          *coordinates = CGAL::abs(*bar_coords_itr) < tol? FT(0): *bar_coords_itr;
+          found_vertex = true;
+          break;
+        }
+        bar_coords_itr++;
+      }
+
+      if(!found_vertex)
         *coordinates = FT(0);
 
       coordinates++;
     }
+
     return coordinates;
   }
 
@@ -263,7 +307,8 @@ public:
     const PolygonMesh& polygon_mesh,
     const typename GeomTraits::Point_3& query,
     OutIterator coordinates,
-    const GeomTraits& traits){
+    const GeomTraits& traits,
+    const bool use_wp_flag = false){
 
     using Vector_3 = typename GeomTraits::Vector_3;
     using FT = typename GeomTraits::FT;
@@ -302,7 +347,8 @@ public:
       if(CGAL::abs(perp_dist_i) < tol){
 
         if(!boundary_flag)
-          boundary_coordinates_3(vertex, vertex_to_point_map, polygon_mesh, query, coordinates, traits);
+          boundary_coordinates_3(vertices_face, vertex_to_point_map, polygon_mesh,
+           query, coordinates, traits, use_wp_flag);
         boundary_flag = true;
       }
       else if(perp_dist_i < 0)

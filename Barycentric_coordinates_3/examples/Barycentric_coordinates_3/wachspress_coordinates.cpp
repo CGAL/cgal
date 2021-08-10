@@ -25,7 +25,6 @@ int main()
 
   Surface_mesh sm;
   CGAL::convex_hull_3(points.begin(), points.end(), sm);
-  PMP::triangulate_faces(faces(sm), sm);
   const std::size_t number_of_vertices = num_vertices(sm);
 
   WP wp(sm, CP3::FAST_WITH_EDGE_CASES);

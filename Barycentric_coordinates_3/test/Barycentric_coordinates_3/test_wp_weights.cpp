@@ -12,6 +12,7 @@
 using SCKER = CGAL::Simple_cartesian<double>;
 using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
+using CP3 = CGAL::Barycentric_coordinates::Computation_policy_3;
 
 template<typename Kernel>
 void test_overloads() {
@@ -21,14 +22,10 @@ void test_overloads() {
   using Mesh = CGAL::Surface_mesh<Point_3>;
   namespace PMP = CGAL::Polygon_mesh_processing;
 
-
-
   // Cube
   Mesh cube;
   std::vector<Point_3> cube_coords;
-
   std::tie(cube, cube_coords) = tests::get_hexahedron<Kernel, Mesh>();
-  PMP::triangulate_faces(faces(cube), cube);
 
   CGAL::Barycentric_coordinates::Wachspress_coordinates_3<Mesh, Kernel> wp_cube(cube);
 

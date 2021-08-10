@@ -201,7 +201,7 @@ namespace Barycentric_coordinates {
         case Computation_policy_3::FAST_WITH_EDGE_CASES:{
           // Calculate query position relative to the polyhedron
           const auto edge_case = internal::locate_wrt_polyhedron(
-            m_vertex_to_point_map, m_polygon_mesh, query, coordinates, m_traits);
+            m_vertex_to_point_map, m_polygon_mesh, query, coordinates, m_traits, true);
 
           if(edge_case == internal::Edge_case::BOUNDARY) {
             return coordinates;
@@ -304,11 +304,6 @@ namespace Barycentric_coordinates {
 
       // Iterate using the circulator
       do{
-
-        // Check if it is a triangular mesh
-        const auto hedge = halfedge(*face_circulator, m_polygon_mesh);
-        const auto vertices = vertices_around_face(hedge, m_polygon_mesh);
-        CGAL_precondition(vertices.size() == 3);
 
         // Calculate normals of faces
         const Vector_3 face_normal_i = internal::get_face_normal(
