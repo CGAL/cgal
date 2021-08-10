@@ -592,7 +592,7 @@ public:
       break;
 
     default:
-      // should not happen
+      // must not happen
       return -1;
       break;
     }
@@ -974,7 +974,7 @@ output_to_medit(std::ostream& os,
  *                         `c->subdomain_index() != Subdomain_index()` are written}
  *   \cgalParamType{Boolean}
  *   \cgalParamDefault{`false`}
- *   \cgalParamExtra{This parameter should be set to `false` for the file to be readable by `read_MEDIT()`.}
+ *   \cgalParamExtra{This parameter must be set to `false` for the file to be readable by `read_MEDIT()`.}
  * \cgalParamNEnd
  *
  * \cgalParamNBegin{all_cells}
@@ -1052,7 +1052,7 @@ void write_MEDIT(std::ostream& os,
  *                         `c->subdomain_index() != Subdomain_index()` are written}
  *   \cgalParamType{Boolean}
  *   \cgalParamDefault{`false`}
- *   \cgalParamExtra{This parameter should be set to `false` for the file to be readable by `read_MEDIT()`.}
+ *   \cgalParamExtra{This parameter must be set to `false` for the file to be readable by `read_MEDIT()`.}
  * \cgalParamNEnd
 
  * \cgalParamNBegin{all_cells}
@@ -1117,7 +1117,7 @@ void write_MEDIT(std::ostream& os,
  * This function reads the data about vertices, surface facets and
  * triangulation cells from `in`, and builds a valid `T3` from it.
  *
- * Note that a valid 3D triangulation of \cgal should have a valid
+ * Note that a valid 3D triangulation of \cgal must have a valid
  * data structure (see `TriangulationDataStructure_3 `),
  * positively oriented cells,
  * and cover the geometric convex hull of all points in `t3`.

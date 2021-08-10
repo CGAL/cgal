@@ -178,19 +178,19 @@ void set_face_patches(const Index2FaceMap& i2f,
    *
    * @brief builds a `TriangleMesh` from the surface facets, with a consistent orientation at the interface of two subdomains.
    *
-   * This function exports the surface as a `TriangleMesh` and appends it to `graph`, using `orient_polygon_soup()`.
+   * This function exports the surface as a `TriangleMesh` and appends it to `tm`, using `orient_polygon_soup()`.
    *
    * @tparam C3T3 a model of `MeshComplexWithFeatures_3InTriangulation_3`.
-   * @tparam TriangleMesh a model of `MutableFaceGraph` with an internal point property map. The point type should be compatible with the one used in `C3T3`.
+   * @tparam TriangleMesh a model of `MutableFaceGraph` with an internal point property map. The point type must be compatible with the one used in `C3T3`.
    * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
    *
-   * @param c3t3 an instance of `C3T3`.
-   * @param graph an instance of `TriangleMesh`.
+   * @param c3t3 an instance of `C3T3`
+   * @param tm an instance of `TriangleMesh`
    * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
    *
    * \cgalNamedParamsBegin
    *   \cgalParamNBegin{face_patch_map}
-  *     \cgalParamDescription{a property map with the patch id's associated to the faces of `faces(graph)`}
+  *     \cgalParamDescription{a property map with the patch id's associated to the faces of `faces(tm)`}
   *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
   *                    as key type and the desired property, model of `CopyConstructible` and `LessThanComparable` as value type.}
   *     \cgalParamDefault{If not provided, faces patch ids are ignored.}
@@ -200,7 +200,7 @@ void set_face_patches(const Index2FaceMap& i2f,
   */
   template<class C3T3, class TriangleMesh, typename NamedParameters>
   void facets_in_complex_3_to_triangle_mesh(const C3T3& c3t3,
-    TriangleMesh& graph,
+    TriangleMesh& tm,
     const NamedParameters& np)
   {
     namespace PMP = CGAL::Polygon_mesh_processing;
@@ -223,7 +223,7 @@ void set_face_patches(const Index2FaceMap& i2f,
     CGAL_postcondition(PMP::is_polygon_soup_a_polygon_mesh(faces));
 
     boost::unordered_map<std::size_t, face_descriptor> i2f;
-    PMP::polygon_soup_to_polygon_mesh(points, faces, graph,
+    PMP::polygon_soup_to_polygon_mesh(points, faces, tm,
       CGAL::parameters::polygon_to_face_output_iterator(std::inserter(i2f, i2f.end())));
 
     using parameters::choose_parameter;
@@ -235,9 +235,9 @@ void set_face_patches(const Index2FaceMap& i2f,
   }
 
   template<class C3T3, class TriangleMesh>
-  void facets_in_complex_3_to_triangle_mesh(const C3T3& c3t3, TriangleMesh& graph)
+  void facets_in_complex_3_to_triangle_mesh(const C3T3& c3t3, TriangleMesh& tm)
   {
-    facets_in_complex_3_to_triangle_mesh(c3t3, graph, parameters::all_default());
+    facets_in_complex_3_to_triangle_mesh(c3t3, tm, parameters::all_default());
   }
 
 } // namespace CGAL

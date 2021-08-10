@@ -6,7 +6,7 @@
 
 /// \defgroup PkgMDS3Classes Classes
 /// \ingroup PkgMDS3Ref
-/// The classes in this group are the main classes involved .
+/// The class in this group is the main class involved .
 
 /// \defgroup PkgMDS3Functions Functions
 /// \ingroup PkgMDS3Ref

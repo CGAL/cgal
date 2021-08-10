@@ -549,9 +549,9 @@ for more details.
 
 \section Mesh_3_section_io Input/Output
 Several file formats are supported for writing a mesh:
+ - \ref IOStreamMedit, using `CGAL::IO::write_MEDIT()`
  - \ref IOStreamVTK, using `CGAL::IO::output_to_vtu()`
  - \ref IOStreamAvizo, using `CGAL::IO::output_to_avizo()`
- - \ref IOStreamMedit, using `CGAL::IO::output_to_medit()`
  - \ref IOStreamTetgen, using `CGAL::IO::output_to_tetgen()`
 
 \section Mesh_3_section_examples Examples

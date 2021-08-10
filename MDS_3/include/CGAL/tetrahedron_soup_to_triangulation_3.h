@@ -35,7 +35,7 @@ namespace CGAL {
   *
   * @tparam TetrahedronRange a model of `Range` whose value type is
   * a `Tetrahedron_3`
-  * @tparam Triangulation a valid triangulation class that has
+  * @tparam Triangulation a 3D triangulation class that has
   * a vertex base model of `MeshVertexBase_3`
   * and a cell base model of `MeshCellBase_3`
   *
@@ -43,7 +43,7 @@ namespace CGAL {
   * corresponding cell in `tr`
   * @param tr the 3D triangulation to be built
   *
-  * @post the output triangulation should be a triangulation of the convex hull of `tets`
+  * @post the output triangulation must be a triangulation of the convex hull of `tets`
   */
   template<typename TetrahedronRange, typename Triangulation>
   void tetrahedron_soup_to_triangulation_3(const TetrahedronRange& tets,
@@ -100,17 +100,18 @@ namespace CGAL {
   * whose value type is the point type
   * @tparam TetrahedronRange a model of the concept `RandomAccessContainer` whose
   * value type is a model of the concept `RandomAccessContainer` whose value type is `std::size_t`
-  * @tparam Triangulation a valid triangulation class that has
+  * @tparam Triangulation a 3D triangulation class that has
   * a vertex base model of `MeshVertexBase_3`
   * and a cell base model of `MeshCellBase_3`
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param points points of the soup of tetrahedra
   * @param tets each element in the range describes a tetrahedron using the indices of the points
-  * in `points` (indices 0 to 3), and the associated `Subdomain_index` (index 4). It should
+  * in `points` (indices 0 to 3), and the associated `Subdomain_index` (index 4). It must
   * describe a non self-intersecting set of tetrahedra, that cover the convex hull of the
-  * corresponding point set. The tetrahedra should form a valid triangulation with each
-  * pair of neighboring cells sharing one triangle.
+  * corresponding point set. The tetrahedra must form a valid triangulation with each
+  * pair of neighboring cells sharing exactly one triangle. Combinatorial validity and
+  * validity of the geometric embedding are required.
   * @param tr the 3D triangulation to be built. If non-empty, `tr` will be cleared prior to
   * building the triangulation.
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -128,6 +129,7 @@ namespace CGAL {
   *
   * @pre `points` contains each point only once
   * @post the output triangulation must be a triangulation of the convex hull of `points`
+  * @post `tr.is_valid()` returns `true`
   *
   * @sa `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
   */
