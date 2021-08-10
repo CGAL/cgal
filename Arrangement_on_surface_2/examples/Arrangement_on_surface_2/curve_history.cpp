@@ -13,11 +13,11 @@ typedef Arr_with_hist::Curve_handle                           Curve_handle;
 typedef CGAL::Arr_trapezoid_ric_point_location<Arr_with_hist> Point_location;
 
 int main() {
-  // Insert s1, s2, and s3 incrementally.
+  // Insert 3 curves incrementally.
   Arr_with_hist arr;
-  Curve_handle s1 = insert(arr, Segment(Point(0, 3), Point(4, 3)));
-  Curve_handle s2 = insert(arr, Segment(Point(3, 2), Point(3, 5)));
-  Curve_handle s3 = insert(arr, Segment(Point(2, 3), Point(5, 3)));
+  insert(arr, Segment(Point(0, 3), Point(4, 3)));
+  insert(arr, Segment(Point(3, 2), Point(3, 5)));
+  insert(arr, Segment(Point(2, 3), Point(5, 3)));
 
   // Insert three additional segments aggregately.
   Segment segs[] = {Segment(Point(2, 6), Point(7, 1)),

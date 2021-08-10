@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
       // There should be vit->degree()/2 lines intersecting at the current
       // vertex. We print their primal points and their indices.
       auto circ = vit->incident_halfedges();
-      for (auto d = 0; d < vit->degree() / 2; ++d) {
+      for (size_t d = 0; d < vit->degree() / 2; ++d) {
         k = circ->curve().data();     // The index of the primal point.
         std::cout << "Point no. " << k+1 << ": (" << points[k] << "), ";
         ++circ;

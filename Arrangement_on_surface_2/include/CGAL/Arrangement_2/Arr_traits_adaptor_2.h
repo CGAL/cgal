@@ -2052,12 +2052,14 @@ public:
       //           << "  " << cv2 << "," << cv2_to_right << "," << std::endl
       //           << "  " << p << ")" << std::endl;
 
-      auto equal = m_self->equal_2_object();
       auto min_vertex = m_self->construct_min_vertex_2_object();
       auto max_vertex = m_self->construct_max_vertex_2_object();
-      const auto q = (cv_to_right) ? min_vertex(cv) : max_vertex(cv);
-      const auto q1 = (cv1_to_right) ? min_vertex(cv1) : max_vertex(cv1);
-      const auto q2 = (cv2_to_right) ? min_vertex(cv2) : max_vertex(cv2);
+      CGAL_assertion_code
+        (auto equal = m_self->equal_2_object();
+         const auto q = (cv_to_right) ? min_vertex(cv) : max_vertex(cv);
+         const auto q1 = (cv1_to_right) ? min_vertex(cv1) : max_vertex(cv1);
+         const auto q2 = (cv2_to_right) ? min_vertex(cv2) : max_vertex(cv2);
+         )
       CGAL_assertion(equal(p, q));
       CGAL_assertion(equal(p, q1));
       CGAL_assertion(equal(p, q2));
@@ -2316,7 +2318,7 @@ public:
       auto is_on_y_identification = m_self->is_on_y_identification_2_object();
       auto cmp_y_near_bd = m_self->compare_y_near_boundary_2_object();
 
-      auto psy = ps_in_y(cv, ARR_MAX_END);
+      CGAL_assertion_code(auto psy = ps_in_y(cv, ARR_MAX_END));
       CGAL_assertion(psy == ARR_INTERIOR);
 
       auto on_y_idnt1 = is_on_y_identification(cv1);
@@ -2386,7 +2388,7 @@ public:
       auto cmp_y_near_bd = m_self->compare_y_near_boundary_2_object();
 
       // Precondition
-      auto psy = ps_in_y(cv, ARR_MIN_END);
+      CGAL_assertion_code(auto psy = ps_in_y(cv, ARR_MIN_END));
       CGAL_assertion(psy == ARR_INTERIOR);
 
       auto on_y_idnt = is_on_y_identification(cv);
@@ -2465,7 +2467,7 @@ public:
       auto cmp_y_near_bd = m_self->compare_y_near_boundary_2_object();
 
       // Precondition
-      auto psy = ps_in_y(cv, ARR_MIN_END);
+      CGAL_assertion_code(auto psy = ps_in_y(cv, ARR_MIN_END));
       CGAL_assertion(psy == ARR_INTERIOR);
 
       auto on_y_idnt = is_on_y_identification(cv);
@@ -2539,7 +2541,7 @@ public:
       auto is_on_y_identification = m_self->is_on_y_identification_2_object();
       auto cmp_y_near_bd = m_self->compare_y_near_boundary_2_object();
 
-      auto psy = ps_in_y(cv, ARR_MIN_END);
+      CGAL_assertion_code(auto psy = ps_in_y(cv, ARR_MIN_END));
       CGAL_assertion(psy == ARR_INTERIOR);
 
       auto on_y_idnt1 = is_on_y_identification(cv1);
@@ -2632,7 +2634,7 @@ public:
       auto is_on_y_identification = m_self->is_on_y_identification_2_object();
       auto cmp_y_near_bd = m_self->compare_y_near_boundary_2_object();
 
-      auto psy = ps_in_y(cv, ARR_MAX_END);
+      CGAL_assertion_code(auto psy = ps_in_y(cv, ARR_MAX_END));
       CGAL_assertion(psy == ARR_INTERIOR);
 
       auto on_y_idnt = is_on_y_identification(cv);
@@ -2658,7 +2660,7 @@ public:
 
       // psx == ARR_RIGHT_BOUNDARY)
       auto res = cmp_y_near_bd(cv, cv2, ARR_MAX_END);
-      if (res == EQUAL) cv_equal_cv2 == true;
+      if (res == EQUAL) cv_equal_cv2 = true;
       return (res == SMALLER);
     }
 
@@ -2711,7 +2713,7 @@ public:
       auto is_on_y_identification = m_self->is_on_y_identification_2_object();
       auto cmp_y_near_bd = m_self->compare_y_near_boundary_2_object();
 
-      auto psy = ps_in_y(cv, ARR_MAX_END);
+      CGAL_assertion_code(auto psy = ps_in_y(cv, ARR_MAX_END));
       CGAL_assertion(psy == ARR_INTERIOR);
 
       auto on_y_idnt = is_on_y_identification(cv);
@@ -2763,7 +2765,6 @@ public:
                         Arr_boundary_cond_tag) const
     {
       auto cmp_y_at_x_left = m_self->compare_y_at_x_left_2_object();
-      auto cmp_y_at_x_right = m_self->compare_y_at_x_right_2_object();
 
       auto res1 = cmp_y_at_x_left(cv, cv1, p);
       auto res2 = cmp_y_at_x_left(cv, cv2, p);
@@ -2772,13 +2773,11 @@ public:
       if (cv_equal_cv1 || cv_equal_cv2) return false;
 
       auto res = cmp_y_at_x_left(cv1, cv2, p);
-      if (res == LARGER)
-        // cv1 is above cv2
-        return (res1 == LARGER || res2 == SMALLER);
+      // cv1 is above cv2
+      if (res == LARGER) return (res1 == LARGER || res2 == SMALLER);
 
-      if (res == SMALLER)
-        // cv1 is below cv2
-        return (res1 == LARGER && res2  == SMALLER);
+      // cv1 is below cv2
+      if (res == SMALLER) return (res1 == LARGER && res2  == SMALLER);
 
       // res == EQUAL && res1 != EQUAL && res2 != EQUAL
       return true;
@@ -3096,7 +3095,7 @@ public:
      * Dispatch calls to traits that handle open and close boundaries, resp.
      * The only reason for this dispatcher is the poor choice of different
      * names for the Traits functors that handle close and open boundaries:
-     * Open boundary traits use: Compare_x_at_limit_2
+     * Open boundary traits use: Compare_x_near_boundary_2
      * Close boundary traits use: Compare_x_on_boundary_2
      */
     Comparison_result cmp_x_on_bnd(const Point_2& p,
@@ -3111,7 +3110,7 @@ public:
      * Dispatch calls to traits that handle open and close boundaries, resp.
      * The only reason for this dispatcher is the poor choice of different
      * names for the Traits functors that handle close and open boundaries:
-     * Open boundary traits use: Compare_x_at_limit_2
+     * Open boundary traits use: Compare_x_near_boundary_2
      * Close boundary traits use: Compare_x_on_boundary_2
      */
     Comparison_result cmp_x_on_bnd(const X_monotone_curve_2& c1,
@@ -3177,14 +3176,6 @@ public:
         // px1, px2, py1 are interior
         if (py1 == ARR_INTERIOR) {
           CGAL_assertion(py2 != ARR_INTERIOR);
-#if 0
-          // This code is retained (commented out) because in the future, when
-          // Compare_x_at_limit_2 and Compare_x_on_boundary will be consolidated,
-          // say, to Compare_x_on_boundary, it will replace the call below.
-          typedef typename Self::Compare_x_on_boundary_2 Compare_x_on_boundary_2;
-          Compare_x_on_boundary_2 cmp_x_on_bnd =
-            m_self.compare_x_on_boundary_2_object();
-#endif
           const Point_2& c1_max = m_self.construct_max_vertex_2_object()(c1);
           Comparison_result res = cmp_x_on_bnd(c1_max, c2, ARR_MAX_END);
           if (res != EQUAL) return res;
@@ -3195,14 +3186,6 @@ public:
         // px1, px2, py2 are interior
         if (py2 == ARR_INTERIOR) {
           CGAL_assertion(py1 != ARR_INTERIOR);
-#if 0
-          // This code is retained (commented out) because in the future, when
-          // Compare_x_at_limit_2 and Compare_x_on_boundary will be consolidated,
-          // say, to Compare_x_on_boundary, it will replace the call below.
-          typedef typename Self::Compare_x_on_boundary_2 Compare_x_on_boundary_2;
-          Compare_x_on_boundary_2 cmp_x_on_bnd =
-            m_self.compare_x_on_boundary_2_object();
-#endif
           const Point_2& c2_max = m_self.construct_max_vertex_2_object()(c2);
           Comparison_result res = cmp_x_on_bnd(c2_max, c1, ARR_MAX_END);
           if (res != EQUAL) return CGAL::opposite(res);
@@ -3211,14 +3194,6 @@ public:
         }
 
         // Both py1 and py2 not interior
-#if 0
-        // This code is retained (commented out) because in the future, when
-        // Compare_x_at_limit_2 and Compare_x_on_boundary will be consolidated,
-        // say, to Compare_x_on_boundary, it will replace the call below.
-        typedef typename Self::Compare_x_on_boundary_2 Compare_x_on_boundary_2;
-        Compare_x_on_boundary_2 cmp_x_on_bnd =
-            m_self.compare_x_on_boundary_2_object();
-#endif
         Comparison_result res = cmp_x_on_bnd(c1, ARR_MAX_END, c2, ARR_MAX_END);
         if (res != EQUAL) return res;
 
@@ -3351,14 +3326,6 @@ public:
         //
         if (min_py1 == ARR_INTERIOR) {
           CGAL_assertion(min_py2 != ARR_INTERIOR);
-#if 0
-          // This code is retained (commented out) because in the future, when
-          // Compare_x_at_limit_2 and Compare_x_on_boundary will be consolidated,
-          // say, to Compare_x_on_boundary, it will replace the call below.
-          typedef typename Self::Compare_x_on_boundary_2 Compare_x_on_boundary_2;
-          Compare_x_on_boundary_2 cmp_x_on_bnd =
-            m_self.compare_x_on_boundary_2_object();
-#endif
           const Point_2& c1_min = m_self.construct_min_vertex_2_object()(c1);
           Comparison_result res = cmp_x_on_bnd(c1_min, c2, ARR_MIN_END);
           if (res != EQUAL) return res;
@@ -3368,14 +3335,6 @@ public:
 
         if (min_py2 == ARR_INTERIOR) {
           CGAL_assertion(min_py1 != ARR_INTERIOR);
-#if 0
-          // This code is retained (commented out) because in the future, when
-          // Compare_x_at_limit_2 and Compare_x_on_boundary will be consolidated,
-          // say, to Compare_x_on_boundary, it will replace the call below.
-          typedef typename Self::Compare_x_on_boundary_2 Compare_x_on_boundary_2;
-          Compare_x_on_boundary_2 cmp_x_on_bnd =
-            m_self.compare_x_on_boundary_2_object();
-#endif
           const Point_2& c2_min = m_self.construct_min_vertex_2_object()(c2);
 
           Comparison_result res = cmp_x_on_bnd(c2_min, c1, ARR_MIN_END);
@@ -3385,14 +3344,6 @@ public:
         }
 
         // Both min_py1 and min_py2 not interior
-#if 0
-        // This code is retained (commented out) because in the future, when
-        // Compare_x_at_limit_2 and Compare_x_on_boundary will be consolidated,
-        // say, to Compare_x_on_boundary, it will replace the call below.
-        typedef typename Self::Compare_x_on_boundary_2 Compare_x_on_boundary_2;
-        Compare_x_on_boundary_2 cmp_x_on_bnd =
-            m_self.compare_x_on_boundary_2_object();
-#endif
         Comparison_result res = cmp_x_on_bnd(c1, ARR_MIN_END, c2, ARR_MIN_END);
         if (res != EQUAL) return res;
 

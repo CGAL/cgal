@@ -1030,7 +1030,7 @@ public:
   Parameter_space_in_y_2 parameter_space_in_y_2_object() const
   { return Parameter_space_in_y_2(); }
 
-  /*! A function object that compares the x-limits of arc ends on the
+  /*! A function object that compares the x-limits of line ends on the
    * boundary of the parameter space
    */
   class Compare_x_on_boundary_2 {

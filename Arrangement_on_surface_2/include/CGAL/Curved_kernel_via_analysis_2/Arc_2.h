@@ -1011,7 +1011,7 @@ public:
                                             compare_x_near_boundary_2)
         CGAL_precondition(Kernel_arc_2_equals_Arc_2 ||
                           dynamic_cast< const Kernel_arc_2* >(this) != nullptr);
-        return compare_x_near_limit_2(
+        return compare_x_near_boundary_2(
                 p, *dynamic_cast< const Kernel_arc_2* >(this), ce
         );
     }
@@ -1037,7 +1037,7 @@ public:
                                             compare_x_near_boundary_2)
         CGAL_precondition(Kernel_arc_2_equals_Arc_2 ||
                           dynamic_cast< const Kernel_arc_2* >(this) != nullptr);
-        return compare_x_near_limit_2(*dynamic_cast< const Kernel_arc_2* >(this), cv2, ce);
+        return compare_x_near_boundary_2(*dynamic_cast< const Kernel_arc_2* >(this), cv2, ce);
     }
 
     /*!\brief

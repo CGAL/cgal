@@ -44,9 +44,9 @@ int main() {
 
     std::cout << "   feature above: ";
     if (CGAL::assign(hh, curr.second))
-      std::cout << '[' << hh->curve() << ']\n';
+      std::cout << '[' << hh->curve() << "]\n";
     else if (CGAL::assign(vh, curr.second))
-      std::cout << '(' << vh->point() << ')\n';
+      std::cout << '(' << vh->point() << ")\n";
     else if (CGAL::assign(fh, curr.second)) std::cout << "NONE\n";
     else std::cout << "EMPTY\n";
   }
