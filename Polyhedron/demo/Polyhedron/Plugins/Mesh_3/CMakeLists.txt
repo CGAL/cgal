@@ -111,7 +111,7 @@ polyhedron_demo_plugin(c3t3_io_plugin C3t3_io_plugin KEYWORDS Viewer Mesh_3)
 target_link_libraries(c3t3_io_plugin PUBLIC scene_c3t3_item)
 
 polyhedron_demo_plugin(tetrahedra_filtering_plugin Tetrahedra_filtering_plugin KEYWORDS Mesh_3)
-target_link_libraries(tetrahedra_filtering_plugin  PUBLIC scene_tetrahedra_item scene_c3t3_item)
+target_link_libraries(tetrahedra_filtering_plugin  PUBLIC scene_c3t3_item scene_tetrahedra_item)
 
 qt5_wrap_ui(FilterUI_FILES Filter_widget.ui)
 polyhedron_demo_plugin(mesh_3_filter_domain_plugin Mesh_3_filter_domain_plugin ${FilterUI_FILES} KEYWORDS Viewer Mesh_3)
