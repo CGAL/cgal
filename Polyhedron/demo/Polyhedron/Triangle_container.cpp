@@ -150,6 +150,15 @@ void Triangle_container::initGL( Viewer_interface* viewer)
                          QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 2, 4*sizeof(float)));
         getVao(viewer)->addVbo(getVbo(Subdomain_indices));
       }
+      if(viewer->getShaderProgram(getProgram())->property("hasDistanceValues").toBool())
+      {
+        if(!getVbo(Distances))
+          setVbo(Distances,
+                 new Vbo("distance",
+                         Vbo::COLORS,
+                         QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1));
+        getVao(viewer)->addVbo(getVbo(Distances));
+      }
     }
   }
   setGLInit(viewer, true);
