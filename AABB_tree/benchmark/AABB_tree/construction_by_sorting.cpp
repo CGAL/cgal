@@ -21,9 +21,9 @@ static std::size_t C = 100;
 static std::size_t T = 10000;
 
 template<typename K>
-std::vector<CGAL::Segment_3<K>> generate_queries(std::size_t n) {
+std::vector<CGAL::Ray_3<K>> generate_queries(std::size_t n) {
   typedef CGAL::Point_3<K> Point_3;
-  typedef CGAL::Segment_3<K> Segment_3;
+  typedef CGAL::Ray_3<K> Ray_3;
 
   // Generate some points
   CGAL::Random r(23);
@@ -32,13 +32,13 @@ std::vector<CGAL::Segment_3<K>> generate_queries(std::size_t n) {
   points.reserve(n * 2);
   std::copy_n(g, n * 2, std::back_inserter(points));
 
-  // Combine those points into Segments
-  std::vector<Segment_3> segments;
-  segments.reserve(n);
+  // Combine those points into Rays
+  std::vector<Ray_3> queries;
+  queries.reserve(n);
   for (std::size_t i = 0, j = points.size() - 1; i < j; ++i, --j)
-    segments.push_back(Segment_3(points[i], points[j]));
+    queries.push_back(Ray_3(points[i], points[j]));
 
-  return segments;
+  return queries;
 }
 
 template<typename Traits>
@@ -91,16 +91,16 @@ void benchmark(std::string input_path) {
 
   std::cout << "{| class=\"wikitable\"\n";
   std::cout << "! " << boost::core::demangle(typeid(K).name()) << " !! Recursive Partition !! Hilbert Sort"
-            << "\n|-\n";
+            << "\n|-" << std::endl;
   std::cout << "| construction || " << std::flush
             << benchmark_construction<Traits_construct_by_splitting>(polyhedron) << " s || " << std::flush
             << benchmark_construction<Traits_construct_by_sorting>(polyhedron) << " s"
-            << "\n|-\n";
+            << "\n|-" << std::endl;
   std::cout << "| traversal || " << std::flush
             << benchmark_traversal<Traits_construct_by_splitting>(polyhedron) << " s || " << std::flush
             << benchmark_traversal<Traits_construct_by_sorting>(polyhedron) << " s"
-            << "\n|-\n";
-  std::cout << "|}\n\n";
+            << "\n|-" << std::endl;
+  std::cout << "|}\n" << std::endl;
 }
 
 int main(int argc, char **argv) {
