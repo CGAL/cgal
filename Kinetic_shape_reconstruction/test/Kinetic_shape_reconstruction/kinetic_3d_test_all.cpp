@@ -239,15 +239,15 @@ void run_all_tests() {
   assert(run_test<Traits>("data/edge-case-test/test-collinear.off"     , ks, num_iters, results, all_times, num_tests));
 
   // all events happen at the same time
-  results = {0,0,0,0,0,0};
+  results = {12,1,54,117,74,11};
   assert(run_test<Traits>("data/edge-case-test/test-same-time.off"     , ks, num_iters, results, all_times, num_tests));
 
   // failure case #1 that produces holes
-  results = {0,0,0,0,0,0};
+  results = {12,1,54,117,69,9};
   assert(run_test<Traits>("data/edge-case-test/test-local-global-1.off", ks, num_iters, results, all_times, num_tests));
 
   // failure case #2 that produces holes
-  results = {0,0,0,0,0,0};
+  results = {12,1,54,117,70,9};
   assert(run_test<Traits>("data/edge-case-test/test-local-global-2.off", ks, num_iters, results, all_times, num_tests));
 
   // Stress tests 0.
@@ -367,12 +367,12 @@ void run_all_tests() {
   // Real data tests.
   results = {16,1,133,315,212,34};
   assert(run_test<Traits>("data/real-data-test/test-10-polygons.off", ks, num_iters, results, all_times, num_tests));
-  results = {21,3,349,899,603,81};
+  results = {18,2,217,543,370,58};
   assert(run_test<Traits>("data/real-data-test/test-15-polygons.off", ks, num_iters, results, all_times, num_tests));
-  results = {25,3,606,1607,990,98};
+  results = {21,3,375,974,629,74};
   assert(run_test<Traits>("data/real-data-test/test-20-polygons.off", ks, num_iters, results, all_times, num_tests));
 
-  // results = {0,0,0,0,0,0}; // fails for k = 1 and coplanarity = 0.1; and k = 6 and coplanarity = 0.5
+  // results = {38,3,2556,7128,3272,133}; // fails for k = 1 and coplanarity = 0.1; and k = 6 and coplanarity = 0.5
   // assert(run_test<Traits>("data/real-data-test/test-40-polygons.ply", ks, num_iters, results, all_times, num_tests));
 
   std::cout << std::endl << "--OUTPUT STATS:" << std::endl;
