@@ -1,7 +1,6 @@
 todo:
 - test real data 40 polygons, k = 6, coplanarity = 0.5 - inexact intersections (hybrid mode?)
 - test real data 40 polygons, k = 1, coplanarity = 0.1 - inexact intersections (hybrid mode?)
-- inexact kernel: check all tests + random tests
 - exact kernel: check all tests + random tests
 - add hybrid mode
 - add random perturbations at the preprocessing step
@@ -9,5 +8,6 @@ todo:
 - try to find out where we lose the precison the most
 - run a random config and if fails call back and run on a different config until success
 - try to avoid errors by using a smaller step
-- update tests, uncomment those, which pass now
 - make intersections a part of kinetic traits that is exact
+- check new stress-test-6 files
+- fix EPECK errors

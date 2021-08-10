@@ -412,6 +412,10 @@ int main(const int /* argc */, const char** /* argv */) {
   // are occurring in the Propagation only.
   // run_all_tests<EPECK>();
 
+  // Not really important but just to see the failure rate.
+  // run_all_tests<SCF>(); // fails on stress-test-2/test-4-rnd-polygons-1-3.off
+  // run_all_tests<SCD>(); // passes all
+
   // Passes all tests except for those when
   // intersections lead to accumulated errors.
   run_all_tests<EPICK>();
