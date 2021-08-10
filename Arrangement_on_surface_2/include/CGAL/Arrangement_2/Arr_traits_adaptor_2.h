@@ -1094,10 +1094,11 @@ public:
     {
       // pt must be interior
       // xcv,ce must be bottom or top
-      CGAL_precondition_code(auto ps_in_y =
-                             m_self->parameter_space_in_y_2_object());
+      CGAL_precondition_code
+        (auto ps_in_y = m_self->parameter_space_in_y_2_object();
+         auto ps_y2 = ps_in_y(xcv, ce);
+         )
       CGAL_precondition(ps_in_y(pt) == ARR_INTERIOR);
-      CGAL_precondition_code(auto ps_y2 = ps_in_y(xcv,ce));
       CGAL_precondition((ps_y2 == ARR_BOTTOM_BOUNDARY) ||
                         (ps_y2 == ARR_TOP_BOUNDARY));
 
@@ -2052,10 +2053,10 @@ public:
       //           << "  " << cv2 << "," << cv2_to_right << "," << std::endl
       //           << "  " << p << ")" << std::endl;
 
-      auto min_vertex = m_self->construct_min_vertex_2_object();
-      auto max_vertex = m_self->construct_max_vertex_2_object();
       CGAL_assertion_code
         (auto equal = m_self->equal_2_object();
+         auto min_vertex = m_self->construct_min_vertex_2_object();
+         auto max_vertex = m_self->construct_max_vertex_2_object();
          const auto q = (cv_to_right) ? min_vertex(cv) : max_vertex(cv);
          const auto q1 = (cv1_to_right) ? min_vertex(cv1) : max_vertex(cv1);
          const auto q2 = (cv2_to_right) ? min_vertex(cv2) : max_vertex(cv2);
@@ -2314,11 +2315,13 @@ public:
                         Arr_has_contracted_side_tag) const
     {
       auto ps_in_x = m_self->parameter_space_in_x_2_object();
-      auto ps_in_y = m_self->parameter_space_in_y_2_object();
       auto is_on_y_identification = m_self->is_on_y_identification_2_object();
       auto cmp_y_near_bd = m_self->compare_y_near_boundary_2_object();
 
-      CGAL_assertion_code(auto psy = ps_in_y(cv, ARR_MAX_END));
+      CGAL_assertion_code
+        (auto ps_in_y = m_self->parameter_space_in_y_2_object();
+         auto psy = ps_in_y(cv, ARR_MAX_END);
+         )
       CGAL_assertion(psy == ARR_INTERIOR);
 
       auto on_y_idnt1 = is_on_y_identification(cv1);
@@ -2383,12 +2386,14 @@ public:
                         Arr_has_contracted_side_tag) const
     {
       auto ps_in_x = m_self->parameter_space_in_x_2_object();
-      auto ps_in_y = m_self->parameter_space_in_y_2_object();
       auto is_on_y_identification = m_self->is_on_y_identification_2_object();
       auto cmp_y_near_bd = m_self->compare_y_near_boundary_2_object();
 
       // Precondition
-      CGAL_assertion_code(auto psy = ps_in_y(cv, ARR_MIN_END));
+      CGAL_assertion_code
+        (auto ps_in_y = m_self->parameter_space_in_y_2_object();
+         auto psy = ps_in_y(cv, ARR_MIN_END);
+         )
       CGAL_assertion(psy == ARR_INTERIOR);
 
       auto on_y_idnt = is_on_y_identification(cv);
@@ -2462,12 +2467,14 @@ public:
                         Arr_has_contracted_side_tag) const
     {
       auto ps_in_x = m_self->parameter_space_in_x_2_object();
-      auto ps_in_y = m_self->parameter_space_in_y_2_object();
       auto is_on_y_identification = m_self->is_on_y_identification_2_object();
       auto cmp_y_near_bd = m_self->compare_y_near_boundary_2_object();
 
       // Precondition
-      CGAL_assertion_code(auto psy = ps_in_y(cv, ARR_MIN_END));
+      CGAL_assertion_code
+        (auto ps_in_y = m_self->parameter_space_in_y_2_object();
+         auto psy = ps_in_y(cv, ARR_MIN_END);
+         )
       CGAL_assertion(psy == ARR_INTERIOR);
 
       auto on_y_idnt = is_on_y_identification(cv);
@@ -2537,11 +2544,13 @@ public:
                         Arr_has_contracted_side_tag) const
     {
       auto ps_in_x = m_self->parameter_space_in_x_2_object();
-      auto ps_in_y = m_self->parameter_space_in_y_2_object();
       auto is_on_y_identification = m_self->is_on_y_identification_2_object();
       auto cmp_y_near_bd = m_self->compare_y_near_boundary_2_object();
 
-      CGAL_assertion_code(auto psy = ps_in_y(cv, ARR_MIN_END));
+      CGAL_assertion_code
+        (auto ps_in_y = m_self->parameter_space_in_y_2_object();
+         auto psy = ps_in_y(cv, ARR_MIN_END);
+         )
       CGAL_assertion(psy == ARR_INTERIOR);
 
       auto on_y_idnt1 = is_on_y_identification(cv1);
@@ -2630,11 +2639,13 @@ public:
                         Arr_has_contracted_side_tag) const
     {
       auto ps_in_x = m_self->parameter_space_in_x_2_object();
-      auto ps_in_y = m_self->parameter_space_in_y_2_object();
       auto is_on_y_identification = m_self->is_on_y_identification_2_object();
       auto cmp_y_near_bd = m_self->compare_y_near_boundary_2_object();
 
-      CGAL_assertion_code(auto psy = ps_in_y(cv, ARR_MAX_END));
+      CGAL_assertion_code
+        (auto ps_in_y = m_self->parameter_space_in_y_2_object();
+         auto psy = ps_in_y(cv, ARR_MAX_END);
+         )
       CGAL_assertion(psy == ARR_INTERIOR);
 
       auto on_y_idnt = is_on_y_identification(cv);
@@ -2709,11 +2720,13 @@ public:
                         Arr_has_contracted_side_tag) const
     {
       auto ps_in_x = m_self->parameter_space_in_x_2_object();
-      auto ps_in_y = m_self->parameter_space_in_y_2_object();
       auto is_on_y_identification = m_self->is_on_y_identification_2_object();
       auto cmp_y_near_bd = m_self->compare_y_near_boundary_2_object();
 
-      CGAL_assertion_code(auto psy = ps_in_y(cv, ARR_MAX_END));
+      CGAL_assertion_code
+        (auto ps_in_y = m_self->parameter_space_in_y_2_object();
+         auto psy = ps_in_y(cv, ARR_MAX_END);
+         )
       CGAL_assertion(psy == ARR_INTERIOR);
 
       auto on_y_idnt = is_on_y_identification(cv);
