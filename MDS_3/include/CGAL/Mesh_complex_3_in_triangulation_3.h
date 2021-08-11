@@ -1088,8 +1088,8 @@ public:
   */
   Facets_in_complex facets_in_complex() const
   {
-    return make_prevent_deref_range(facets_in_complex_begin(),
-                                    facets_in_complex_end());
+    return Facets_in_complex(facets_in_complex_begin(),
+                             facets_in_complex_end());
   }
   /*!
     returns a range of iterators over cells of the 3D complex.
