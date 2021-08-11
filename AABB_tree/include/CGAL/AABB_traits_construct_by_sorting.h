@@ -15,6 +15,36 @@ namespace CGAL {
   class AABB_tree;
 
 
+  /// This traits class provides the same functionality of the default AABB_traits class,
+  /// it can be used to enable faster construction of trees, at the cost of lower traversal speed.
+  /// This is done by sorting the primitives along the hilbert curve,
+  /// rather than repeatedly partitioning them along the longest axis of their bounding box.
+  ///
+  /// \cgalModels AABBTraits
+  /// \cgalModels AABBRayIntersectionTraits
+  ///
+  /// \tparam GeomTraits
+  /// must  be a model of the concept \ref AABBGeomTraits,
+  /// and provide the geometric types as well as the intersection tests and computations.
+  ///
+  /// \tparam AABBPrimitive
+  /// provide the type of primitives stored in the AABB_tree.
+  /// It is a model of the concept `AABBPrimitive` or `AABBPrimitiveWithSharedData`.
+  ///
+  /// \tparam BboxMap
+  /// must be a model of `ReadablePropertyMap` that has as key type a primitive id,
+  /// and as value type a `Bounding_box`.
+  /// If the type is `Default` the `Datum` must have the
+  /// member function `bbox()` that returns the bounding box  of the primitive.
+  ///
+  /// \tparam ConcurrencyTag
+  /// Must be one of CGAL::Sequential_tag, CGAL::Parallel_tag, or CGAL::Parallel_if_available_tag.
+  /// It is used to determine the algorithm used by the underlying hilbert sort.
+  ///
+  /// If the argument `GeomTraits` is a model of the concept \ref
+  /// AABBRayIntersectionGeomTraits, this class is also a model of \ref
+  /// AABBRayIntersectionTraits.
+  ///
   template<typename GeomTraits, typename AABBPrimitive, typename BboxMap = Default, class ConcurrencyTag = Sequential_tag>
   class AABB_traits_construct_by_sorting : public AABB_traits<GeomTraits, AABBPrimitive, BboxMap> {
 
@@ -30,6 +60,10 @@ namespace CGAL {
 
   public:
 
+    /// \internal
+    ///
+    /// Sorts the range provided exactly once, further calls will not attempt to sort the list
+    ///
     class Split_primitives {
       const Traits &m_traits;
       mutable bool has_been_sorted = false;

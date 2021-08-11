@@ -84,7 +84,7 @@ void benchmark(std::string input_path) {
   typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
 
   typedef CGAL::AABB_traits<K, Primitive, CGAL::Default> Traits_construct_by_splitting;
-  typedef CGAL::AABB_traits_construct_by_sorting<K, Primitive, CGAL::Default, CGAL::Parallel_tag> Traits_construct_by_sorting;
+  typedef CGAL::AABB_traits_construct_by_sorting<K, Primitive, CGAL::Default, CGAL::Parallel_if_available_tag> Traits_construct_by_sorting;
 
   std::ifstream in(input_path);
   Polyhedron polyhedron;
@@ -112,8 +112,8 @@ int main(int argc, char **argv) {
   // Determine our data source, with a default if no path is provided
   std::string input_path = argc > 1 ? argv[1] : "data/handle.off";
 
-//  benchmark<CGAL::Simple_cartesian<float>>(input_path);
-//  benchmark<CGAL::Simple_cartesian<double>>(input_path);
+  benchmark<CGAL::Simple_cartesian<float>>(input_path);
+  benchmark<CGAL::Simple_cartesian<double>>(input_path);
   benchmark<CGAL::Exact_predicates_inexact_constructions_kernel>(input_path);
 
 }
