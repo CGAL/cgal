@@ -1078,8 +1078,8 @@ public:
   */
   Edges_in_complex edges_in_complex() const
   {
-    return make_prevent_deref_range(edges_in_complex_begin(),
-                                    edges_in_complex_end());
+    return Edges_in_complex(edges_in_complex_begin(),
+                            edges_in_complex_end());
   }
   /*!
     returns a range of iterators over the facets of the 2D complex,
