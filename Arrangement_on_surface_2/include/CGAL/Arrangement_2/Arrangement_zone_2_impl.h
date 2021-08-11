@@ -901,8 +901,8 @@ _leftmost_intersection_with_face_boundary(Face_handle face, bool on_boundary)
   for (auto occb_it = face->outer_ccbs_begin();
        occb_it != face->outer_ccbs_end(); ++occb_it)
   {
-    auto he_first = *occb_it;
-    auto he_curr = he_first;
+    Ccb_halfedge_circulator he_first = *occb_it;
+    Ccb_halfedge_circulator he_curr = he_first;
     do _leftmost_intersection(he_curr, on_boundary, leftmost_on_right_boundary);
     while (++he_curr != he_first);
   }
@@ -911,8 +911,8 @@ _leftmost_intersection_with_face_boundary(Face_handle face, bool on_boundary)
   for (auto iccb_it = face->inner_ccbs_begin();
        iccb_it != face->inner_ccbs_end(); ++iccb_it)
   {
-    auto he_first = *iccb_it;
-    auto he_curr = he_first;
+    Ccb_halfedge_circulator he_first = *iccb_it;
+    Ccb_halfedge_circulator he_curr = he_first;
     do _leftmost_intersection(he_curr, on_boundary, leftmost_on_right_boundary);
     while (++he_curr != he_first);
   }
@@ -921,7 +921,9 @@ _leftmost_intersection_with_face_boundary(Face_handle face, bool on_boundary)
 
   // Traverse the isolated vertices inside the face (if there exist any), and
   // check whether an isolated vertex lies on the curve.
-  for (auto iv_it = face->isolated_vertices_begin();
+  typedef typename Arrangement_2::Isolated_vertex_iterator
+    Isolated_vertex_iterator;
+  for (Isolated_vertex_iterator iv_it = face->isolated_vertices_begin();
        iv_it != face->isolated_vertices_end(); ++iv_it)
   {
     // If the isolated vertex is not in the x-range of our curve, disregard it.
