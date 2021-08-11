@@ -63,16 +63,13 @@ Here are the main concepts of this package:
 - `CGAL::facets_in_complex_3_to_triangle_mesh()`
 - `CGAL::tetrahedron_soup_to_triangulation_3()`
 
-\cgalCRPSection{Export Functions}
-
-- `CGAL::IO::output_to_vtu()`
-- `CGAL::IO::output_to_tetgen()`
-- `CGAL::IO::output_to_avizo()`
-
 \cgalCRPSection{Input/Output Functions}
 
 - `CGAL::IO::write_MEDIT()`
 - `CGAL::IO::read_MEDIT()`
+- `CGAL::IO::output_to_vtu()`
+- `CGAL::IO::output_to_tetgen()`
+- `CGAL::IO::output_to_avizo()`
 - `CGAL::IO::output_to_medit()` (deprecated)
 */
 

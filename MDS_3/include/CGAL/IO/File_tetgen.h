@@ -192,7 +192,7 @@ namespace IO {
 
 /**
  * \ingroup PkgMDS3ExportFunctions
- * @brief outputs a mesh complex to tetgen format
+ * @brief exports a mesh complex to tetgen format
  * @param filename the path to the output file
  * @param c3t3 the mesh complex
  * @param rebind if true, labels of cells are rebinded into [1..nb_of_labels]

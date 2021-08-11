@@ -28,7 +28,7 @@ namespace IO {
 
 /**
  * @ingroup PkgMDS3ExportFunctions
- * @brief outputs a mesh complex to the Avizo (`.am`) file format
+ * @brief exports a mesh complex to the Avizo (`.am`) file format
  * @tparam C3T3 a class model of `MeshComplex_3InTriangulation_3`
  * @param os the output stream
  * @param c3t3 the mesh complex
