@@ -32,6 +32,8 @@
 
 #ifdef CGAL_HAS_THREADS
 #include <CGAL/mutex.h>
+#include "AABB_face_graph_triangle_primitive.h"
+
 #endif
 
 /// \file AABB_tree.h
@@ -576,17 +578,21 @@ public:
                 const std::size_t range,
                 const ComputeBbox& compute_bbox,
                 const SplitPrimitives& split_primitives,
-                const AABBTraits&);
+                const AABB_traits&);
 
-    template<typename ConstPrimitiveIterator, typename ComputeBbox>
-    void expand(
-            Node& node,
-            ConstPrimitiveIterator first,
-            ConstPrimitiveIterator beyond,
-            const std::size_t range,
-            const ComputeBbox& compute_bbox,
-            const typename AABB_traits_construct_by_sorting<typename AABB_traits::Geom_traits, Primitive>::Split_primitives& split_primitives,
-            const AABBTraits& traits) {
+template<typename ConstPrimitiveIterator, typename ComputeBbox>
+void expand(
+        Node& node,
+        ConstPrimitiveIterator first,
+        ConstPrimitiveIterator beyond,
+        const std::size_t range,
+        const ComputeBbox& compute_bbox,
+        const typename CGAL::AABB_traits_construct_by_sorting<
+                typename AABB_traits::Geom_traits,
+                typename AABB_traits::Primitive,
+                typename AABB_traits::Bbox_map,
+                typename AABB_traits::Concurrency_tag>::Split_primitives& split_primitives,
+        const AABB_traits& traits) {
 
       // sort primitives along longest axis aabb
       split_primitives(first, beyond, node.bbox());

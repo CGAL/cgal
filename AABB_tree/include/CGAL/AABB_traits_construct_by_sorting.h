@@ -15,15 +15,17 @@ namespace CGAL {
   class AABB_tree;
 
 
-  template<typename GeomTraits, typename AABBPrimitive, typename BboxMap = Default>
+  template<typename GeomTraits, typename AABBPrimitive, typename BboxMap = Default, class ConcurrencyTag = Sequential_tag>
   class AABB_traits_construct_by_sorting : public AABB_traits<GeomTraits, AABBPrimitive, BboxMap> {
 
   public:
     typedef GeomTraits Geom_traits;
-
-    typedef AABB_traits_construct_by_sorting<GeomTraits, AABBPrimitive, BboxMap> Traits;
-    typedef internal::Primitive_helper <Traits> Helper;
     typedef AABBPrimitive Primitive;
+    typedef BboxMap Bbox_map;
+    typedef ConcurrencyTag Concurrency_tag;
+
+    typedef AABB_traits_construct_by_sorting<GeomTraits, AABBPrimitive, BboxMap, Concurrency_tag> Traits;
+    typedef internal::Primitive_helper <Traits> Helper;
     typedef typename GeomTraits::Point_3 Point_3;
 
   public:
@@ -37,7 +39,7 @@ namespace CGAL {
       struct Get_reference_point : public std::unary_function<const Primitive &, typename Traits::Point_3> {
         const Traits &m_traits;
 
-        Get_reference_point(const Traits &traits)
+        explicit Get_reference_point(const Traits &traits)
                 : m_traits(traits) {}
 
         typename Traits::Point_3 operator()(const Primitive &p) const {
@@ -45,7 +47,7 @@ namespace CGAL {
         }
       };
 
-      Split_primitives(const Traits &traits)
+      explicit Split_primitives(const Traits &traits)
               : m_traits(traits) {}
 
       template<typename PrimitiveIterator>
@@ -66,7 +68,7 @@ namespace CGAL {
           typedef CGAL::Spatial_sort_traits_adapter_3<GeomTraits, decltype(property_map)> Search_traits_3;
 
           // Perform our hilbert sort using the search traits type with our custom property map
-          CGAL::hilbert_sort<CGAL::Parallel_if_available_tag>(first, beyond, Search_traits_3(property_map));
+          CGAL::hilbert_sort<Concurrency_tag>(first, beyond, Search_traits_3(property_map));
 
           // In the future, it's not necessary to re-sort the primitives (we can blindly partition them in the middle)
           has_been_sorted = true;
@@ -74,7 +76,7 @@ namespace CGAL {
       }
     };
 
-    Split_primitives split_primitives_object() const { return Split_primitives(*this); }
+    Traits::Split_primitives split_primitives_object() const { return Traits::Split_primitives(*this); }
   };
 }
 

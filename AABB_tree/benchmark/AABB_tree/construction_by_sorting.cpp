@@ -19,8 +19,8 @@
 
 #include <boost/core/demangle.hpp>
 
-static std::size_t C = 100;
-static std::size_t T = 1000000;
+static std::size_t C = 10;
+static std::size_t T = 100000;
 
 template<typename K>
 std::vector<CGAL::Ray_3<K>> generate_queries(std::size_t n) {
@@ -83,13 +83,13 @@ void benchmark(std::string input_path) {
   typedef CGAL::Surface_mesh<CGAL::Point_3<K>> Polyhedron;
   typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
 
-  typedef CGAL::AABB_traits<K, Primitive> Traits_construct_by_splitting;
-  typedef CGAL::AABB_traits_construct_by_sorting<K, Primitive> Traits_construct_by_sorting;
+  typedef CGAL::AABB_traits<K, Primitive, CGAL::Default> Traits_construct_by_splitting;
+  typedef CGAL::AABB_traits_construct_by_sorting<K, Primitive, CGAL::Default, CGAL::Parallel_tag> Traits_construct_by_sorting;
 
   std::ifstream in(input_path);
   Polyhedron polyhedron;
-  in >> polyhedron;
-//  CGAL::IO::read_PLY(in, polyhedron);
+//  in >> polyhedron;
+  CGAL::IO::read_PLY(in, polyhedron);
 
   auto queries = generate_queries<K>(T);
 
@@ -113,9 +113,7 @@ int main(int argc, char **argv) {
   std::string input_path = argc > 1 ? argv[1] : "data/handle.off";
 
 //  benchmark<CGAL::Simple_cartesian<float>>(input_path);
-//  benchmark<CGAL::Cartesian<float>>(input_path);
 //  benchmark<CGAL::Simple_cartesian<double>>(input_path);
-//  benchmark<CGAL::Cartesian<double>>(input_path);
   benchmark<CGAL::Exact_predicates_inexact_constructions_kernel>(input_path);
 
 }
