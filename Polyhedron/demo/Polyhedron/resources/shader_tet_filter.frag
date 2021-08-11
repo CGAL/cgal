@@ -7,7 +7,7 @@ in VS_OUT
   float dist[6];
   vec4 vertex;
   vec3 normal;
-  float stat_value;
+  flat float stat_value;
 }fs_in;
 
 uniform bool is_two_side;

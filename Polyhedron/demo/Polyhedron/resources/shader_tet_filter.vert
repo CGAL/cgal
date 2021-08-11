@@ -3,7 +3,7 @@
 in vec4 vertex;
 in vec3 normals;
 in vec4 colors;
-in float stat_value;
+in float distance;
 out VS_OUT
 {
   vec4 fP;
@@ -11,11 +11,12 @@ out VS_OUT
   float dist[6];
   vec4 vertex;
   vec3 normal;
-  float stat_value;
+  flat float stat_value;
 }vs_out;
 
 uniform mat4 mvp_matrix;
 uniform mat4 mv_matrix;
+uniform mat4 norm_matrix;
 uniform bool is_clipbox_on;
 uniform highp mat4 clipbox1;
 uniform highp mat4 clipbox2;
@@ -44,7 +45,13 @@ void main(void)
    vs_out.out_color=colors;
    vs_out.fP = mv_matrix * vertex;
    vs_out.vertex = vertex;
-   vs_out.stat_value= stat_value;
-   vs_out.normal= normals;
+   vs_out.stat_value= distance;
+
+   mat3 norm_matrix_3;
+   norm_matrix_3[0] = norm_matrix[0].xyz;
+   norm_matrix_3[1] = norm_matrix[1].xyz;
+   norm_matrix_3[2] = norm_matrix[2].xyz;
+   vs_out.normal = norm_matrix_3* normals;
+
    gl_Position = mvp_matrix * vertex;
 }

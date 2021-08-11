@@ -110,7 +110,8 @@ endif() #eigen
 polyhedron_demo_plugin(c3t3_io_plugin C3t3_io_plugin KEYWORDS Viewer Mesh_3)
 target_link_libraries(c3t3_io_plugin PUBLIC scene_c3t3_item)
 
-polyhedron_demo_plugin(tetrahedra_filtering_plugin Tetrahedra_filtering_plugin KEYWORDS Mesh_3)
+qt5_wrap_ui(tetraUI_FILES Tetrahedra_filter_widget.ui)
+polyhedron_demo_plugin(tetrahedra_filtering_plugin Tetrahedra_filtering_plugin ${tetraUI_FILES} KEYWORDS Mesh_3)
 target_link_libraries(tetrahedra_filtering_plugin  PUBLIC scene_c3t3_item scene_tetrahedra_item)
 
 qt5_wrap_ui(FilterUI_FILES Filter_widget.ui)
