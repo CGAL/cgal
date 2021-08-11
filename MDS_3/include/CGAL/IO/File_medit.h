@@ -70,14 +70,10 @@ public:
   Rebind_cell_pmap(const C3T3& c3t3)
     : r_c3t3_(c3t3)
   {
-    typedef typename C3T3::Cells_in_complex_iterator Cell_iterator;
-
     int first_index = 0;
     int index_counter = first_index + 1;
 
-    for( Cell_iterator cell_it = r_c3t3_.cells_in_complex_begin();
-         cell_it != r_c3t3_.cells_in_complex_end();
-         ++cell_it)
+    for( Cell_handle cell_it : r_c3t3_.cells_in_complex())
     {
       // Add subdomain index in internal map if needed
       std::pair<typename Subdomain_map::iterator, bool> is_insert_successful =
@@ -175,12 +171,9 @@ public:
 
   size_type subdomain_number() const
   {
-    typedef typename C3T3::Cells_in_complex_iterator Cell_iterator;
     std::set<Subdomain_index> subdomain_set;
 
-    for( Cell_iterator cell_it = r_c3t3_.cells_in_complex_begin();
-        cell_it != r_c3t3_.cells_in_complex_end();
-        ++cell_it)
+    for( Cell_handle cell_it : r_c3t3_.cells_in_complex())
     {
       // Add subdomain index in set
       subdomain_set.insert(subdomain_index(cell_it));
@@ -219,30 +212,23 @@ public:
     : r_c3t3_(c3t3)
     , cell_pmap_(cell_pmap)
   {
-    typedef typename C3T3::Facets_in_complex_iterator Facet_iterator;
-
     int first_index = 1;
     int index_counter = first_index;
 
-    for( Facet_iterator facet_it = r_c3t3_.facets_in_complex_begin();
-        facet_it != r_c3t3_.facets_in_complex_end();
-        ++facet_it)
+    for( Facet facet_it : r_c3t3_.facets_in_complex())
     {
       // Add surface index in internal map if needed
       std::pair<typename Surface_map::iterator, bool> is_insert_successful =
-          surface_map_.insert(std::make_pair(r_c3t3_.surface_patch_index(*facet_it),
+          surface_map_.insert(std::make_pair(r_c3t3_.surface_patch_index(facet_it),
                                              index_counter));
       if(is_insert_successful.second)
         ++index_counter;
     }
 
     // Find cell_pmap_ unused indices
-    typedef typename C3T3::Cells_in_complex_iterator Cell_iterator;
     std::set<int> cell_label_set;
 
-    for( Cell_iterator cell_it = r_c3t3_.cells_in_complex_begin();
-        cell_it != r_c3t3_.cells_in_complex_end();
-        ++cell_it)
+    for( typename C3T3::Cell_handle cell_it : r_c3t3_.cells_in_complex())
     {
       // Add subdomain index in set
       cell_label_set.insert(get(cell_pmap_, cell_it));
@@ -761,7 +747,6 @@ output_to_medit(std::ostream& os,
                 const bool all_cells = false)
 {
   typedef typename C3T3::Triangulation Tr;
-  typedef typename C3T3::Facets_in_complex_iterator Facet_iterator;
 
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Cell_handle   Cell_handle;
@@ -840,12 +825,8 @@ output_to_medit(std::ostream& os,
   os << "Triangles\n"
      << number_of_triangles << '\n';
 
-  for( Facet_iterator fit = c3t3.facets_in_complex_begin();
-       fit != c3t3.facets_in_complex_end();
-       ++fit)
+  for(typename C3T3::Facet f : c3t3.facets_in_complex())
   {
-    typename C3T3::Facet f = (*fit);
-
     // Apply priority among subdomains, to get consistent facet orientation per subdomain-pair interface.
     if ( print_each_facet_twice )
     {
@@ -864,13 +845,13 @@ output_to_medit(std::ostream& os,
       std::swap(vh2, vh3);
 
     os << V[vh1] << ' ' << V[vh2] << ' ' << V[vh3] << ' ';
-    os << get(facet_pmap, *fit) << '\n';
+    os << get(facet_pmap, f) << '\n';
 
     // Print triangle again if needed, with opposite orientation
     if ( print_each_facet_twice )
     {
       os << V[vh3] << ' ' << V[vh2] << ' ' << V[vh1] << ' ';
-      os << get(facet_twice_pmap, *fit) << '\n';
+      os << get(facet_twice_pmap, f) << '\n';
     }
   }
 
