@@ -447,8 +447,22 @@ bool build_triangulation_from_file(std::istream& is,
   if(verbose)
     std::cout << "Reading .mesh file..." << std::endl;
 
+  bool dont_replace_domain_0 = false;
+
   while(is >> word && word != "End")
   {
+    if (word.at(0) == '#')
+    {
+      is >> word;
+      if (word == "End")
+        break;
+      else if (word == "CGAL::Mesh_complex_3_in_triangulation_3")
+      {
+        dont_replace_domain_0 = true;//with CGAL meshes, domain 0 should be kept
+        continue;
+      }
+      //else skip other comments
+    }
     if(word == "Vertices")
     {
       is >> nv;
@@ -517,7 +531,8 @@ bool build_triangulation_from_file(std::istream& is,
 
   return build_triangulation(tr,
                       points, finite_cells, border_facets,
-                      verbose, replace_domain_0);
+                      verbose,
+                      replace_domain_0 && !dont_replace_domain_0);
 }
 
 }  // namespace MDS_3
