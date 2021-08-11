@@ -1,6 +1,5 @@
 #include <iostream>
 
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <CGAL/IO/WKT.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -120,14 +119,14 @@ Poly generate_polygon()
   border.push_back(br);
 
   Poly::Polygon_2 hole1;
-  hole1.emplace_back((xt+xmax)/2, (ymin+ymid)/2);
-  hole1.emplace_back((xt+xmax)/2, ymid);
-  hole1.emplace_back(xt+(xmax-xt)/4, (ymin+ymid)/2);
+  hole1.push_back(Point((xt+xmax)/2, (ymin+ymid)/2));
+  hole1.push_back(Point((xt+xmax)/2, ymid));
+  hole1.push_back(Point(xt+(xmax-xt)/4, (ymin+ymid)/2));
 
   Poly::Polygon_2 hole2;
-  hole2.emplace_back((xt+xmin)/2, (ymin+ymid)/2);
-  hole2.emplace_back((xt+xmin)/2, ymid);
-  hole2.emplace_back(xmin+(xt-xmin)/4, (ymin+ymid)/2);
+  hole2.push_back(Point((xt+xmin)/2, (ymin+ymid)/2));
+  hole2.push_back(Point((xt+xmin)/2, ymid));
+  hole2.push_back(Point(xmin+(xt-xmin)/4, (ymin+ymid)/2));
 
   Poly::Holes_container holes;
   holes.push_back(hole1);
@@ -279,9 +278,4 @@ int main()
 
   return EXIT_SUCCESS;
 }
-#else
-int main(int, char**)
-{
-  return EXIT_SUCCESS;
-}
-#endif
+

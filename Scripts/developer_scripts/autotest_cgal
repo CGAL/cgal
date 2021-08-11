@@ -380,6 +380,8 @@ setup_dirs()
   CGAL_DIR=`readlink "${CGAL_ROOT}/CGAL-I"`
 
   CGAL_TEST_DIR=${CGAL_DIR}/test
+  CGAL_DATA_DIR=${CGAL_DIR}/data
+  export CGAL_DATA_DIR=$(echo "$CGAL_DATA_DIR" | sed -E 's/\/cygdrive\/([a-z])\//\U\1:\//')
 
   if [ ! -d "${CGAL_DIR}/cmake" ]; then
     mkdir "${CGAL_DIR}/cmake"
@@ -619,9 +621,7 @@ LIST_TEST_PACKAGES='${LIST_TEST_PACKAGES}'
 CGAL_ROOT='${CGAL_ROOT}'
 
 rm -rf '${CGAL_BINARY_DIR}/test';
-
 if [ -f '${LIST_TEST_PACKAGES}' ]; then
-
   mkdir '${CGAL_BINARY_DIR}/test'
 
   cp '${CGAL_TEST_DIR}/collect_cgal_testresults_from_cmake' '${CGAL_BINARY_DIR}/test'
@@ -633,7 +633,10 @@ if [ -f '${LIST_TEST_PACKAGES}' ]; then
   for PACKAGE in \$(ls "${CGAL_TEST_DIR}"); do
     if [ -d "${CGAL_TEST_DIR}/\$PACKAGE" ]; then
       if source '${LIST_TEST_PACKAGES}' '${CGAL_ROOT}' | egrep -q \$PACKAGE; then
-        mkdir "\${CGAL_BINARY_DIR}/test/\${PACKAGE}"
+        mkdir "${CGAL_BINARY_DIR}/test/\${PACKAGE}"
+        cp -r "${CGAL_TEST_DIR}/\${PACKAGE}" '${CGAL_BINARY_DIR}/test'
+      elif [ "\$PACKAGE" = "resources" ]; then
+        mkdir "${CGAL_BINARY_DIR}/test/\${PACKAGE}"
         cp -r "${CGAL_TEST_DIR}/\${PACKAGE}" '${CGAL_BINARY_DIR}/test'
       else
         mkdir "${CGAL_BINARY_DIR}/test/\${PACKAGE}"

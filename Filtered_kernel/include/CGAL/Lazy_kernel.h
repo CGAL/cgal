@@ -331,6 +331,7 @@ public:
                          typename Approximate_kernel::Construct_weighted_point_2,
                          typename Exact_kernel::Construct_weighted_point_2,
                          E2A_,
+                         true,
                          Return_base_tag,
                          Point_2,
                          FT
@@ -341,6 +342,7 @@ public:
                          typename Approximate_kernel::Construct_weighted_point_2,
                          typename Exact_kernel::Construct_weighted_point_2,
                          E2A_,
+                         true,
                          Return_base_tag,
                          Point_2,
                          int
@@ -352,6 +354,8 @@ public:
       if(tn == typeid(LR).name()){
         LR * lr = static_cast<LR*>(p.ptr());
         if(lr->is_lazy()){
+          // Another thread could reset lr->l before this line, so we disable reset for Construct_weighted_point_2 in MT-mode.
+          // We could also always disable reset for Construct_weighted_point_2 and return lr->l here even if update_exact has run.
           return std::get<2>(lr->l);
         }
       }else{
@@ -383,6 +387,7 @@ public:
                          typename Approximate_kernel::Construct_weighted_point_3,
                          typename Exact_kernel::Construct_weighted_point_3,
                          E2A_,
+                         true,
                          Return_base_tag,
                          Point_3,
                          FT
@@ -393,6 +398,7 @@ public:
                          typename Approximate_kernel::Construct_weighted_point_3,
                          typename Exact_kernel::Construct_weighted_point_3,
                          E2A_,
+                         true,
                          Return_base_tag,
                          Point_3,
                          int
@@ -442,6 +448,7 @@ public:
                          typename Approximate_kernel::Construct_weighted_point_2,
                          typename Exact_kernel::Construct_weighted_point_2,
                          E2A_,
+                         true,
                          Return_base_tag,
                          Point_2,
                          FT
@@ -452,6 +459,7 @@ public:
                          typename Approximate_kernel::Construct_weighted_point_2,
                          typename Exact_kernel::Construct_weighted_point_2,
                          E2A_,
+                         true,
                          Return_base_tag,
                          Point_2,
                          int
@@ -501,6 +509,7 @@ public:
                          typename Approximate_kernel::Construct_weighted_point_3,
                          typename Exact_kernel::Construct_weighted_point_3,
                          E2A_,
+                         true,
                          Return_base_tag,
                          Point_3,
                          FT
@@ -511,6 +520,7 @@ public:
                          typename Approximate_kernel::Construct_weighted_point_3,
                          typename Exact_kernel::Construct_weighted_point_3,
                          E2A_,
+                         true,
                          Return_base_tag,
                          Point_3,
                          int

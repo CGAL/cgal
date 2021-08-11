@@ -127,8 +127,6 @@ if ( CGAL_FOUND )
         execution___of__test_meshing_verbose
         execution___of__test_meshing_polyhedron_with_features
         execution___of__test_meshing_implicit_function
-        execution___of__test_meshing_3D_image
-        execution___of__test_meshing_3D_gray_image
         execution___of__test_meshing_unit_tetrahedron
         execution___of__test_meshing_polyhedron
         execution___of__test_meshing_polyhedral_complex
@@ -136,7 +134,13 @@ if ( CGAL_FOUND )
         execution___of__test_mesh_3_issue_1554
         execution___of__test_mesh_polyhedral_domain_with_features_deprecated
         execution___of__test_mesh_cell_base_3
-      PROPERTY RUN_SERIAL 1)
+        PROPERTY RUN_SERIAL 1)
+      if(TARGET test_meshing_3D_image)
+        set_property(TEST
+          execution___of__test_meshing_3D_image
+          execution___of__test_meshing_3D_gray_image
+          PROPERTY RUN_SERIAL 1)
+      endif()
     endif()
   endif()
   if(TARGET ITT::ITT)
