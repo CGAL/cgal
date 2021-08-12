@@ -49,7 +49,6 @@ namespace Contours {
     \ingroup PkgShapeRegularizationRefContours
 
     \brief regularizes closed contours.
-    \anchor closed_contour
 
     Given a set of ordered 2D points connected by segments, which form a closed contour,
     this function enables to reinforce three types of regularities among consecutive edges of this contour:
@@ -165,8 +164,6 @@ namespace Contours {
 
     This function regularizes a closed contour with respect to the longest
     edge of this contour.
-
-    \sa \ref closed_contour "regularize_closed_contour()"
   */
   template<
   typename InputRange,
@@ -191,7 +188,6 @@ namespace Contours {
     \ingroup PkgShapeRegularizationRefContours
 
     \brief regularizes open contours.
-    \anchor open_contour
 
     Given a set of ordered 2D points connected by segments, which form an open contour,
     this function enables to reinforce three types of regularities among consecutive edges of this contour:
@@ -307,8 +303,6 @@ namespace Contours {
 
     This function regularizes an open contour with respect to the longest
     edge of this contour.
-
-    \sa \ref open_contour "regularize_open_contour()"
   */
   template<
   typename InputRange,
