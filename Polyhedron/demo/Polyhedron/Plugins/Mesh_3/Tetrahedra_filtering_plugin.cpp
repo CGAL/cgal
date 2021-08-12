@@ -36,6 +36,7 @@ public :
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*)Q_DECL_OVERRIDE {
     this->scene = scene_interface;
     this->mw = mainWindow;
+    this->tet_item = nullptr;
 
     QAction* actionFilterTets = new QAction("Tetrahedra Filtering", mw);
     if(actionFilterTets) {
@@ -66,9 +67,14 @@ public Q_SLOTS:
     {
       return;
     }
-    Scene_tetrahedra_item* tet_item = new Scene_tetrahedra_item(c3t3_item);
-    connect(c3t3_item, &Scene_c3t3_item::aboutToBeDestroyed, this, [this, tet_item](){
-      this->scene->erase(this->scene->item_id(tet_item));
+    if(tet_item)
+    {
+      scene->erase(this->scene->item_id(tet_item));
+    }
+    tet_item = new Scene_tetrahedra_item(c3t3_item);
+    connect(c3t3_item, &Scene_c3t3_item::aboutToBeDestroyed, this, [this](){
+      this->scene->erase(this->scene->item_id(this->tet_item));
+      this->tet_item = nullptr;
     });
     connect(tet_item, &Scene_tetrahedra_item::aboutToBeDestroyed, dock_widget, &DockWidget::hide);
     tet_item->setMinMinLabelPointer(dock_widget->minMinLabel);
@@ -88,6 +94,7 @@ public Q_SLOTS:
 private:
   DockWidget* dock_widget;
   QList<QAction*> _actions;
+  Scene_tetrahedra_item* tet_item;
 
 
 }; //end of class Tetrahedra_filtering_plugin
