@@ -379,15 +379,13 @@ private:
     boost::unordered_map<Vertex_handle,
     std::vector<Surface_patch_index> >& vertices_surface_indices)
   {
-    for (typename C3t3::Facets_in_complex_iterator
-         fit = c3t3.facets_in_complex_begin();
-         fit != c3t3.facets_in_complex_end(); ++fit)
+    for (Facet fit : c3t3.facets_in_complex())
     {
-      const Surface_patch_index& surface_index = c3t3.surface_patch_index(*fit);
+      const Surface_patch_index& surface_index = c3t3.surface_patch_index(fit);
 
       for (int i = 0; i < 3; i++)
       {
-        const Vertex_handle vi = fit->first->vertex(indices(fit->second, i));
+        const Vertex_handle vi = fit.first->vertex(indices(fit.second, i));
 
         std::vector<Surface_patch_index>& v_surface_indices = vertices_surface_indices[vi];
         if (std::find(v_surface_indices.begin(), v_surface_indices.end(), surface_index) == v_surface_indices.end())
