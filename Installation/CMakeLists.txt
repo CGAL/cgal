@@ -551,6 +551,24 @@ else()
 
   file(REMOVE "${CGAL_BINARY_DIR}/include/gmp.h")
 endif()
+if(CGAL_DISABLE_GMPXX)
+  message("Disable the GMPXX support")
+  list(REMOVE_ITEM CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES GMPXX)
+  unset(GMPXX_FOUND)
+  unset(GMPXX_FOUND CACHE)
+  unset(CGAL_USE_GMPXX)
+  unset(CGAL_USE_GMPXX CACHE)
+  # Nasty trick to make sure <gmpxx.h> is not used when CGAL_DISABLE_GMPXX is TRUE
+  file(WRITE "${CGAL_BINARY_DIR}/include/gmpxx.h"
+      "#error GMPXX is disabled by the CMake option CGAL_DISABLE_GMPXX")
+else()
+  list(APPEND CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES GMPXX)
+
+  # When CMake is run several times, to avoid duplicates.
+  list(REMOVE_DUPLICATES CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES)
+
+  file(REMOVE "${CGAL_BINARY_DIR}/include/gmpxx.h")
+endif()
 hide_variable(CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES)
 
 #--------------------------------------------------------------------------------------------------
