@@ -22,7 +22,6 @@
 
 /*!
 \addtogroup PkgMDS3Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{3D Mesh Data Structures,PkgMDS3}
 \cgalPkgPicture{knot_small.png}
 
