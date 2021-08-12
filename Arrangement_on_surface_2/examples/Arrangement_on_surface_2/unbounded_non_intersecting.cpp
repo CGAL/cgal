@@ -11,7 +11,7 @@ int main() {
   // Insert a line in the (currently single) unbounded face of the arrangement;
   // then, insert a point that lies on the line splitting it into two.
   X_monotone_curve c1 = Line(Point(-1, 0), Point(1, 0));
-  Halfedge_handle e1 = arr.insert_in_face_interior(c1, arr.unbounded_face());
+  arr.insert_in_face_interior(c1, arr.unbounded_face());
   Vertex_handle v = insert_point(arr, Point(0,0));
   CGAL_assertion(! v->is_at_open_boundary());
 
