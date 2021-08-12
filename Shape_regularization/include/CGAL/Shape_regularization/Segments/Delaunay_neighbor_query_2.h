@@ -84,24 +84,46 @@ namespace Segments {
     /*!
       \brief initializes all internal data structures.
 
+      \tparam NamedParameters
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+
       \param input_range
       a const range of 2D segments
 
-      \param segment_map
-      an instance of `SegmentMap` that maps an item from input range to `GeomTraits::Segment_2`;
-      this parameter can be omitted, the identity map `CGAL::Identity_property_map` is then used
+      \param np
+      an optional sequence of \ref bgl_namedparameters "Named Parameters"
+      among the ones listed below; this parameter can be omitted,
+      the default values are then used
+
+      \cgalNamedParamsBegin
+        \cgalParamNBegin{segment_map}
+          \cgalParamDescription{an instance of `SegmentMap` that maps an item from `input_range`
+          to `GeomTraits::Segment_2`}
+          \cgalParamDefault{`SegmentMap()`}
+        \cgalParamNEnd
+      \cgalNamedParamsEnd
 
       \pre input_range.size() >= 2
     */
+    template<typename NamedParameters>
     Delaunay_neighbor_query_2(
       const InputRange& input_range,
-      const SegmentMap segment_map = SegmentMap()) :
+      const NamedParameters& np) :
     m_input_range(input_range),
-    m_segment_map(segment_map) {
+    m_segment_map(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::segment_map), SegmentMap())) {
 
       clear();
       create_unique_group();
     }
+
+    /// \cond SKIP_IN_MANUAL
+    Delaunay_neighbor_query_2(
+      InputRange& input_range) :
+    Delaunay_neighbor_query_2(
+      input_range, CGAL::parameters::all_default())
+    { }
+    /// \endcond
 
     /*!
       \brief inserts a group of segments from `input_range` and finds their

@@ -37,7 +37,7 @@ void test_3_segments() {
     segments, CGAL::parameters::maximum_angle(max_angle_2));
 
   SR::Segments::regularize_segments(
-    segments, neighbor_query, angle_regularization, Traits());
+    segments, neighbor_query, angle_regularization);
 
   std::vector<Indices> parallel_groups;
   angle_regularization.parallel_groups(
@@ -75,7 +75,7 @@ void test_3_segments() {
   }
 
   SR::Segments::regularize_segments(
-    segments, neighbor_query, offset_regularization, Traits());
+    segments, neighbor_query, offset_regularization);
 
   std::vector<Indices> collinear_groups;
   offset_regularization.collinear_groups(

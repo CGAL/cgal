@@ -276,109 +276,7 @@ namespace Planes {
   #ifdef CGAL_TYPENAME_FOR_MSC
   #undef CGAL_TYPENAME_FOR_MSC
   #endif
-  /// \endcond
 
-  /*!
-    \ingroup PkgShapeRegularizationRefPlanes
-
-    \brief Hierarchical plane regularization.
-
-    Given a set of detected planes with their corresponding inlier sets,
-    this function enables to reinforce four types of regularities among these planes:
-    - *Parallelism*: planes, which are detected as near parallel, are made exactly parallel.
-    - *Orthogonality*: planes, which are detected as near orthogonal, are made exactly orthogonal.
-    - *Coplanarity*: parallel planes, which are detected as near coplanar, are made exactly coplanar.
-    - *Axis-Symmetry*: planes, which are detected as near symmetrical with respect to a user-specified axis,
-    are made exactly symmetrical.
-
-    %Planes are directly modified. Points are left unaltered, as well as their
-    relationship to the planes (no transfer of a point from a primitive plane to another).
-
-    This function infers a traits class `GeomTraits` from the `PointMap` value type.
-
-    The implementation follows \cgalCite{cgal:vla-lod-15}.
-
-    \tparam PlaneRange
-    a model of `Range` whose iterator type is `RandomAccessIterator`
-
-    \tparam PlaneMap
-    a model of `WritablePropertyMap` with the value type `CGAL::Plane_3<GeomTraits>`
-
-    \tparam PointRange
-    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
-
-    \tparam PointMap
-    a model of `ReadablePropertyMap` with the value type `CGAL::Point_3<GeomTraits>`
-
-    \tparam NamedParameters
-    a sequence of \ref bgl_namedparameters "Named Parameters"
-
-    \param planes
-    a range of planes to be regularized
-
-    \param plane_map
-    an instance of `PlaneMap` that maps an item from plane range to `GeomTraits::Plane_3`
-
-    \param points
-    a const range of points assigned to planes, see the `plane_index_map` below
-    for more details
-
-    \param point_map
-    an instance of `PointMap` that maps an item from point range to `GeomTraits::Point_3`
-
-    \param np
-    an optional sequence of \ref bgl_namedparameters "Named Parameters"
-    among the ones listed below; this parameter can be omitted,
-    the default values are then used
-
-    \cgalNamedParamsBegin
-      \cgalParamNBegin{plane_index_map}
-        \cgalParamDescription{a property map that associates the index of a point
-          in the `points` range to the index of a plane in the `planes` range (-1 if
-          point is not assigned to a plane)}
-        \cgalParamType{a model of `ReadablePropertyMap` with `std::size_t` as key type
-          and `int` as value type}
-        \cgalParamDefault{no default value}
-      \cgalParamNEnd
-      \cgalParamNBegin{maximum_angle}
-        \cgalParamDescription{maximum allowed angle in degrees between plane normals used
-          for parallelism, orthogonality, and axis symmetry}
-        \cgalParamType{`GeomTraits::FT`}
-        \cgalParamDefault{25 degrees}
-      \cgalParamNEnd
-      \cgalParamNBegin{maximum_offset}
-        \cgalParamDescription{maximum allowed orthogonal distance between two parallel planes
-          such that they are considered to be coplanar}
-        \cgalParamType{`GeomTraits::FT`}
-        \cgalParamDefault{0.01 unit length}
-      \cgalParamNEnd
-      \cgalParamNBegin{regularize_parallelism}
-        \cgalParamDescription{indicates whether parallelism should be regularized or not}
-        \cgalParamType{boolean}
-        \cgalParamDefault{true}
-      \cgalParamNEnd
-      \cgalParamNBegin{regularize_orthogonality}
-        \cgalParamDescription{indicates whether orthogonality should be regularized or not}
-        \cgalParamType{boolean}
-        \cgalParamDefault{true}
-      \cgalParamNEnd
-      \cgalParamNBegin{regularize_coplanarity}
-        \cgalParamDescription{indicates whether coplanarity should be regularized or not}
-        \cgalParamType{boolean}
-        \cgalParamDefault{true}
-      \cgalParamNEnd
-      \cgalParamNBegin{regularize_axis_symmetry}
-        \cgalParamDescription{indicates whether axis symmetry should be regularized or not}
-        \cgalParamType{boolean}
-        \cgalParamDefault{true}
-      \cgalParamNEnd
-      \cgalParamNBegin{symmetry_direction}
-        \cgalParamDescription{an axis for symmetry regularization}
-        \cgalParamType{`GeomTraits::Vector_3`}
-        \cgalParamDefault{Z axis that is `GeomTraits::Vector_3(0, 0, 1)`}
-      \cgalParamNEnd
-    \cgalNamedParamsEnd
-  */
   template<
   typename PlaneRange,
   typename PlaneMap,
@@ -440,7 +338,6 @@ namespace Planes {
       tol_angle, tol_copln, sym_dir);
   }
 
-  /// \cond SKIP_IN_MANUAL
   template<
   typename PlaneRange,
   typename PlaneMap,
@@ -454,6 +351,141 @@ namespace Planes {
 
     regularize_planes(
       planes, plane_map, points, point_map, CGAL::parameters::all_default());
+  }
+  /// \endcond
+
+  /*!
+    \ingroup PkgShapeRegularizationRefPlanes
+
+    \brief Hierarchical plane regularization.
+
+    Given a set of detected planes with their corresponding inlier sets,
+    this function enables to reinforce four types of regularities among these planes:
+    - *Parallelism*: planes, which are detected as near parallel, are made exactly parallel.
+    - *Orthogonality*: planes, which are detected as near orthogonal, are made exactly orthogonal.
+    - *Coplanarity*: parallel planes, which are detected as near coplanar, are made exactly coplanar.
+    - *Axis-Symmetry*: planes, which are detected as near symmetrical with respect to a user-specified axis,
+    are made exactly symmetrical.
+
+    %Planes are directly modified. Points are left unaltered, as well as their
+    relationship to the planes (no transfer of a point from a primitive plane to another).
+
+    This function infers a traits class `GeomTraits` from the `PointRange` value type.
+
+    The implementation follows \cgalCite{cgal:vla-lod-15}.
+
+    \tparam PlaneRange
+    a model of `Range` whose iterator type is `RandomAccessIterator`
+
+    \tparam PointRange
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
+
+    \tparam NamedParameters
+    a sequence of \ref bgl_namedparameters "Named Parameters"
+
+    \param planes
+    a range of planes to be regularized
+
+    \param points
+    a const range of points assigned to planes, see the `plane_index_map` below
+    for more details
+
+    \param np
+    an optional sequence of \ref bgl_namedparameters "Named Parameters"
+    among the ones listed below; this parameter can be omitted,
+    the default values are then used
+
+    \cgalNamedParamsBegin
+      \cgalParamNBegin{plane_map}
+        \cgalParamDescription{a property map that maps a plane from `planes` range to `CGAL::Plane_3<GeomTraits>`}
+        \cgalParamType{a model of `WritablePropertyMap` with the value type `CGAL::Plane_3<GeomTraits>`}
+        \cgalParamDefault{`PlaneMap()`}
+      \cgalParamNEnd
+      \cgalParamNBegin{point_map}
+        \cgalParamDescription{a property map that maps a point from `points` range to `CGAL::Point_3<GeomTraits>`}
+        \cgalParamType{a model of `ReadablePropertyMap` with the value type `CGAL::Point_3<GeomTraits>`}
+        \cgalParamDefault{`PointMap()`}
+      \cgalParamNEnd
+      \cgalParamNBegin{plane_index_map}
+        \cgalParamDescription{a property map that associates the index of a point
+          in the `points` range to the index of a plane in the `planes` range (-1 if
+          point is not assigned to a plane)}
+        \cgalParamType{a model of `ReadablePropertyMap` with `std::size_t` as key type and `int` as value type}
+        \cgalParamDefault{`PlaneIndexMap()`}
+      \cgalParamNEnd
+      \cgalParamNBegin{maximum_angle}
+        \cgalParamDescription{maximum allowed angle in degrees between plane normals used
+          for parallelism, orthogonality, and axis symmetry}
+        \cgalParamType{`GeomTraits::FT`}
+        \cgalParamDefault{25 degrees}
+      \cgalParamNEnd
+      \cgalParamNBegin{maximum_offset}
+        \cgalParamDescription{maximum allowed orthogonal distance between two parallel planes
+          such that they are considered to be coplanar}
+        \cgalParamType{`GeomTraits::FT`}
+        \cgalParamDefault{0.01 unit length}
+      \cgalParamNEnd
+      \cgalParamNBegin{regularize_parallelism}
+        \cgalParamDescription{indicates whether parallelism should be regularized or not}
+        \cgalParamType{boolean}
+        \cgalParamDefault{true}
+      \cgalParamNEnd
+      \cgalParamNBegin{regularize_orthogonality}
+        \cgalParamDescription{indicates whether orthogonality should be regularized or not}
+        \cgalParamType{boolean}
+        \cgalParamDefault{true}
+      \cgalParamNEnd
+      \cgalParamNBegin{regularize_coplanarity}
+        \cgalParamDescription{indicates whether coplanarity should be regularized or not}
+        \cgalParamType{boolean}
+        \cgalParamDefault{true}
+      \cgalParamNEnd
+      \cgalParamNBegin{regularize_axis_symmetry}
+        \cgalParamDescription{indicates whether axis symmetry should be regularized or not}
+        \cgalParamType{boolean}
+        \cgalParamDefault{true}
+      \cgalParamNEnd
+      \cgalParamNBegin{symmetry_direction}
+        \cgalParamDescription{an axis for symmetry regularization}
+        \cgalParamType{`GeomTraits::Vector_3`}
+        \cgalParamDefault{Z axis that is `GeomTraits::Vector_3(0, 0, 1)`}
+      \cgalParamNEnd
+    \cgalNamedParamsEnd
+  */
+  template<
+  typename PlaneRange,
+  typename PointRange,
+  typename NamedParameters>
+  void regularize_planes(
+    PlaneRange& planes,
+    const PointRange& points,
+    const NamedParameters& np) {
+
+    using parameters::get_parameter;
+    using parameters::choose_parameter;
+
+    using PlaneMap = typename CGAL::Point_set_processing_3::
+      GetPlaneMap<PlaneRange, NamedParameters>::type;
+    const PlaneMap plane_map =
+      choose_parameter(get_parameter(np, internal_np::plane_map), PlaneMap());
+
+    using PointMap = typename CGAL::
+      GetPointMap<PointRange, NamedParameters>::type;
+    const PointMap point_map =
+      choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+
+    regularize_planes(planes, plane_map, points, point_map, np);
+  }
+
+  /// \cond SKIP_IN_MANUAL
+  template<
+  typename PlaneRange,
+  typename PointRange>
+  void regularize_planes(
+    PlaneRange& planes, const PointRange& points) {
+
+    regularize_planes(
+      planes, points, CGAL::parameters::all_default());
   }
   /// \endcond
 

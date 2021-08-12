@@ -70,25 +70,39 @@ namespace Contours {
     /*!
       \brief initializes all internal data structures.
 
+      \tparam NamedParameters
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+
       \param input_range
       a const range of ordered 2D points, which form a contour
 
       \param is_closed
       indicates whether the contour is closed or open
 
-      \param point_map
-      an instance of `PointMap` that maps an item from input range to `GeomTraits::Point_2`;
-      this parameter can be omitted, the identity map `CGAL::Identity_property_map` is then used
+      \param np
+      an optional sequence of \ref bgl_namedparameters "Named Parameters"
+      among the ones listed below; this parameter can be omitted,
+      the default values are then used
+
+      \cgalNamedParamsBegin
+        \cgalParamNBegin{point_map}
+          \cgalParamDescription{an instance of `PointMap` that maps an item from `input_range`
+          to `GeomTraits::Point_2`}
+          \cgalParamDefault{`PointMap()`}
+        \cgalParamNEnd
+      \cgalNamedParamsEnd
 
       \pre input_range.size() >= 3 for closed contours
       \pre input_range.size() >= 2 for open contours
     */
+    template<typename NamedParameters>
     Longest_direction_2(
       const InputRange& input_range,
       const bool is_closed,
-      const PointMap point_map = PointMap()) :
+      const NamedParameters& np) :
     m_input_range(input_range),
-    m_point_map(point_map) {
+    m_point_map(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::point_map), PointMap())) {
 
       CGAL_precondition(m_input_range.size() >= 2);
 
@@ -106,6 +120,15 @@ namespace Contours {
         std::cout << std::endl;
       }
     }
+
+    /// \cond SKIP_IN_MANUAL
+    Longest_direction_2(
+      const InputRange& input_range,
+      const bool is_closed) :
+    Longest_direction_2(
+      input_range, is_closed, CGAL::parameters::all_default())
+    { }
+    /// \endcond
 
     /// @}
 

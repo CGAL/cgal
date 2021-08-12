@@ -37,7 +37,8 @@ void test_neighbor_query() {
   groups[1] = {4, 5, 6, 7}; // internal square
 
   Indices neighbors;
-  NQ neighbor_query(segments);
+  NQ neighbor_query(
+    segments, CGAL::parameters::all_default());
 
   // Check unique group.
   Segments edges;

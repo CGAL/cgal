@@ -72,7 +72,7 @@ int main() {
   };
 
   Regularizer regularizer(
-    objects, neighbor_query, regularization_type, quadratic_program, Kernel());
+    objects, neighbor_query, regularization_type, quadratic_program);
   regularizer.regularize();
 
   std::cout << "* regularized 2 objects" << std::endl;

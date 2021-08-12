@@ -38,7 +38,9 @@ void test_2_segments() {
   // saver.export_segments(segments, "2_input", 100);
 
   const FT max_angle_2 = FT(5);
-  NQ neighbor_query(segments, smap);
+  NQ neighbor_query(
+    segments, CGAL::parameters::
+    segment_map(smap));
   AR angle_regularization(
     segments, CGAL::parameters::
     maximum_angle(max_angle_2).
@@ -46,7 +48,7 @@ void test_2_segments() {
 
   QP qp_angles;
   QP_AR qp_ar(
-    segments, neighbor_query, angle_regularization, qp_angles, Traits());
+    segments, neighbor_query, angle_regularization, qp_angles);
   qp_ar.regularize();
 
   std::vector<Indices> parallel_groups;
@@ -87,7 +89,7 @@ void test_2_segments() {
 
   QP qp_offsets;
   QP_OR qp_or(
-    segments, neighbor_query, offset_regularization, qp_offsets, Traits());
+    segments, neighbor_query, offset_regularization, qp_offsets);
   qp_or.regularize();
 
   std::vector<Indices> collinear_groups;

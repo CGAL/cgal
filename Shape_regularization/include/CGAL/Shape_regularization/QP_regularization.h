@@ -107,6 +107,9 @@ namespace Shape_regularization {
     /*!
       \brief initializes all internal data structures.
 
+      \tparam NamedParameters
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+
       \param input_range
       a const range of input objects for shape regularization
 
@@ -121,27 +124,50 @@ namespace Shape_regularization {
       \param quadratic_program
       an instance of `QPSolver` to solve the quadratic programming problem
 
-      \param traits
-      an instance of `GeomTraits`; this parameter can be omitted if the traits class
-      can be deduced from the input value type
+      \param np
+      an optional sequence of \ref bgl_namedparameters "Named Parameters"
+      among the ones listed below; this parameter can be omitted,
+      the default values are then used
+
+      \cgalNamedParamsBegin
+        \cgalParamNBegin{geom_traits}
+          \cgalParamDescription{an instance of geometric traits class}
+          \cgalParamType{a model of `Kernel`}
+          \cgalParamDefault{`GeomTraits()`}
+        \cgalParamNEnd
+      \cgalNamedParamsEnd
 
       \pre input_range.size() >= 2
     */
+    template<typename NamedParameters>
     QP_regularization(
       const InputRange& input_range,
       NeighQuery& neighbor_query,
       RegType& regularization_type,
       QPSolver& quadratic_program,
-      const GeomTraits& traits = GeomTraits()) :
+      const NamedParameters& np) :
     m_input_range(input_range),
     m_neighbor_query(neighbor_query),
     m_regularization_type(regularization_type),
     m_quadratic_program(quadratic_program),
-    m_traits(traits),
+    m_traits(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::geom_traits), GeomTraits())),
     m_parameters(Parameters()) {
 
       clear();
     }
+
+    /// \cond SKIP_IN_MANUAL
+    QP_regularization(
+      const InputRange& input_range,
+      NeighQuery& neighbor_query,
+      RegType& regularization_type,
+      QPSolver& quadratic_program) :
+    QP_regularization(
+      input_range, neighbor_query, regularization_type, quadratic_program,
+      CGAL::parameters::all_default())
+    { }
+    /// \endcond
 
     /// @}
 
@@ -238,7 +264,7 @@ namespace Shape_regularization {
 
     // The field m_traits is not currently used. We should probably remove the
     // reference in case it will be used in the future!
-    const Traits& m_traits;
+    const Traits m_traits;
     const Parameters m_parameters;
 
     FT m_max_bound;

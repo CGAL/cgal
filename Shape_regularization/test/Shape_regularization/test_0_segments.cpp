@@ -32,7 +32,8 @@ void test_0_segments() {
 
   // saver.export_eps_segments(segments, "0_input", 100);
 
-  NQ neighbor_query(segments, smap);
+  NQ neighbor_query(
+    segments, CGAL::parameters::segment_map(smap));
   AR angle_regularization(
     segments, CGAL::parameters::segment_map(smap));
 

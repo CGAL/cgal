@@ -127,8 +127,10 @@ namespace Contours {
     using Point_2 = typename PointMap::value_type;
     using GeomTraits = typename CGAL::Kernel_traits<Point_2>::Kernel;
 
-    GeomTraits traits;
-    PointMap point_map;
+    const PointMap point_map = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::point_map), PointMap());
+    const GeomTraits traits = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::geom_traits), GeomTraits());
 
     CGAL_precondition(input_range.size() >= 3);
     using Contour_regularizer =
@@ -176,12 +178,13 @@ namespace Contours {
     CGAL_precondition(input_range.size() >= 3);
     using Iterator_type = typename InputRange::const_iterator;
     using Point_2 = typename std::iterator_traits<Iterator_type>::value_type;
-    using Kernel = typename Kernel_traits<Point_2>::Kernel;
-    using Contour_directions = Longest_direction_2<Kernel, InputRange>;
+    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
+    using Contour_directions = Longest_direction_2<GeomTraits, InputRange>;
+    GeomTraits traits;
 
     Contour_directions directions(input_range, true);
     return regularize_closed_contour(
-      input_range, directions, contour);
+      input_range, directions, contour, CGAL::parameters::geom_traits(traits));
   }
 
   /*!
@@ -266,8 +269,10 @@ namespace Contours {
     using Point_2 = typename PointMap::value_type;
     using GeomTraits = typename CGAL::Kernel_traits<Point_2>::Kernel;
 
-    GeomTraits traits;
-    PointMap point_map;
+    const PointMap point_map = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::point_map), PointMap());
+    const GeomTraits traits = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::geom_traits), GeomTraits());
 
     CGAL_precondition(input_range.size() >= 2);
     using Contour_regularizer =
@@ -315,12 +320,13 @@ namespace Contours {
     CGAL_precondition(input_range.size() >= 3);
     using Iterator_type = typename InputRange::const_iterator;
     using Point_2 = typename std::iterator_traits<Iterator_type>::value_type;
-    using Kernel = typename Kernel_traits<Point_2>::Kernel;
-    using Contour_directions = Longest_direction_2<Kernel, InputRange>;
+    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
+    using Contour_directions = Longest_direction_2<GeomTraits, InputRange>;
+    GeomTraits traits;
 
     Contour_directions directions(input_range, false);
     return regularize_open_contour(
-      input_range, directions, contour);
+      input_range, directions, contour, CGAL::parameters::geom_traits(traits));
   }
 
 } // namespace Contours

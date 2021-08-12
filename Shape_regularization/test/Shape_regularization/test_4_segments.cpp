@@ -40,7 +40,7 @@ void test_4_segments() {
 
   QP qp_angles;
   SR::Segments::regularize_segments(
-    segments, neighbor_query, angle_regularization, qp_angles, Traits());
+    segments, neighbor_query, angle_regularization, qp_angles);
 
   std::vector<Indices> parallel_groups;
   angle_regularization.parallel_groups(
@@ -80,7 +80,7 @@ void test_4_segments() {
 
   QP qp_offsets;
   SR::Segments::regularize_segments(
-    segments, neighbor_query, offset_regularization, qp_offsets, Traits());
+    segments, neighbor_query, offset_regularization, qp_offsets);
 
   std::vector<Indices> collinear_groups;
   offset_regularization.collinear_groups(

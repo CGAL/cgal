@@ -4,14 +4,13 @@
 #include <CGAL/Shape_regularization/regularize_contours.h>
 
 // Typedefs.
-using Kernel    = CGAL::Exact_predicates_inexact_constructions_kernel;
-using FT        = typename Kernel::FT;
-using Point_2   = typename Kernel::Point_2;
-using Contour   = std::vector<Point_2>;
-using Point_map = CGAL::Identity_property_map<Point_2>;
+using Kernel  = CGAL::Exact_predicates_inexact_constructions_kernel;
+using FT      = typename Kernel::FT;
+using Point_2 = typename Kernel::Point_2;
+using Contour = std::vector<Point_2>;
 
 using Contour_directions =
-  CGAL::Shape_regularization::Contours::Longest_direction_2<Kernel, Contour, Point_map>;
+  CGAL::Shape_regularization::Contours::Longest_direction_2<Kernel, Contour>;
 
 int main(int argc, char *argv[]) {
 
@@ -35,8 +34,7 @@ int main(int argc, char *argv[]) {
 
   // Regularize.
   const bool is_closed = false;
-  Contour_directions directions(
-    contour, is_closed, Point_map());
+  Contour_directions directions(contour, is_closed);
 
   std::vector<Point_2> regularized;
   CGAL::Shape_regularization::Contours::regularize_open_contour(

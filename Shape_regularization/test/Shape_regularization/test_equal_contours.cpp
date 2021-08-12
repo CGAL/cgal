@@ -32,8 +32,8 @@ void test_equal_contours() {
   // saver.export_open_contour(contour, "op_input", 100);
 
   const bool is_closed = true;
-  CD closed_directions(contour,  is_closed, pmap);
-  OD open_directions(contour, !is_closed, pmap);
+  CD closed_directions(contour,  is_closed, CGAL::parameters::point_map(pmap));
+  OD open_directions(contour, !is_closed, CGAL::parameters::point_map(pmap));
 
   std::vector<Point_2> closed_contour;
   SR::Contours::regularize_closed_contour(

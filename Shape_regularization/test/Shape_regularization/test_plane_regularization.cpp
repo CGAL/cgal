@@ -186,10 +186,11 @@ int main() {
 
     CGAL::Shape_regularization::Planes::regularize_planes(
       planes,
-      CGAL::Shape_detection::Plane_map<Traits>(),
       points,
-      Point_map(),
-      CGAL::parameters::plane_index_map(
+      CGAL::parameters::
+      plane_map(CGAL::Shape_detection::Plane_map<Traits>()).
+      point_map(Point_map()).
+      plane_index_map(
         CGAL::Shape_detection::Point_to_shape_index_map<Traits>(points, planes)).
       regularize_parallelism(true).
       regularize_orthogonality(false).
@@ -292,10 +293,11 @@ int main() {
 
     CGAL::Shape_regularization::Planes::regularize_planes(
       planes,
-      CGAL::Shape_detection::Plane_map<Traits>(),
       points,
-      Point_map(),
-      CGAL::parameters::plane_index_map(
+      CGAL::parameters::
+      point_map(Point_map()).
+      plane_map(CGAL::Shape_detection::Plane_map<Traits>()).
+      plane_index_map(
         CGAL::Shape_detection::Point_to_shape_index_map<Traits>(points, planes)).
       regularize_parallelism(true).
       regularize_orthogonality(false).

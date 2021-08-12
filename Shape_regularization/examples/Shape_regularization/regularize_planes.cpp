@@ -53,10 +53,11 @@ int main(int argc, char** argv) {
   // Regularize detected planes.
   CGAL::Shape_regularization::Planes::regularize_planes(
     planes,
-    Plane_map(),
     points,
-    Point_map(),
-    CGAL::parameters::plane_index_map(
+    CGAL::parameters::
+    plane_map(Plane_map()).
+    point_map(Point_map()).
+    plane_index_map(
       CGAL::Shape_detection::Point_to_shape_index_map<Traits>(points, planes)).
     regularize_coplanarity(false). // do not regularize coplanarity
     maximum_angle(FT(10))); // 10 degrees of tolerance for parallelism / orthogonality

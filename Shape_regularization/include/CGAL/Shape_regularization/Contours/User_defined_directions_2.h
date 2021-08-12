@@ -74,6 +74,9 @@ namespace Contours {
       \tparam DirectionRange
       a model of `ConstRange` whose value type is `GeomTraits::Direction_2`
 
+      \tparam NamedParameters
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+
       \param input_range
       a const range of ordered 2D points, which form a contour
 
@@ -83,9 +86,18 @@ namespace Contours {
       \param direction_range
       a const range with user-specified principal directions
 
-      \param point_map
-      an instance of `PointMap` that maps an item from input range to `GeomTraits::Point_2`;
-      this parameter can be omitted, the identity map `CGAL::Identity_property_map` is then used
+      \param np
+      an optional sequence of \ref bgl_namedparameters "Named Parameters"
+      among the ones listed below; this parameter can be omitted,
+      the default values are then used
+
+      \cgalNamedParamsBegin
+        \cgalParamNBegin{point_map}
+          \cgalParamDescription{an instance of `PointMap` that maps an item from `input_range`
+          to `GeomTraits::Point_2`}
+          \cgalParamDefault{`PointMap()`}
+        \cgalParamNEnd
+      \cgalNamedParamsEnd
 
       \pre direction_range.size() >= 1
       \pre direction_range.size() == input_range.size() for closed contours
@@ -94,14 +106,17 @@ namespace Contours {
       \pre input_range.size() >= 3 for closed contours
       \pre input_range.size() >= 2 for open contours
     */
-    template<typename DirectionRange>
+    template<
+    typename DirectionRange,
+    typename NamedParameters>
     User_defined_directions_2(
       const InputRange& input_range,
       const bool is_closed,
       const DirectionRange& direction_range,
-      const PointMap point_map = PointMap()) :
+      const NamedParameters& np) :
     m_input_range(input_range),
-    m_point_map(point_map),
+    m_point_map(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::point_map), PointMap())),
     m_max_angle_2(FT(5)) {
 
       CGAL_precondition(input_range.size() >= 2);
@@ -123,6 +138,17 @@ namespace Contours {
         std::cout << std::endl;
       }
     }
+
+    /// \cond SKIP_IN_MANUAL
+    template<typename DirectionRange>
+    User_defined_directions_2(
+      const InputRange& input_range,
+      const bool is_closed,
+      const DirectionRange& direction_range) :
+    User_defined_directions_2(
+      input_range, is_closed, direction_range, CGAL::parameters::all_default())
+    { }
+    /// \endcond
 
     /// @}
 

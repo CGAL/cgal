@@ -82,8 +82,8 @@ namespace Segments {
     \tparam QPSolver
     a model of `QuadraticProgramTraits`
 
-    \tparam GeomTraits
-    a model of `Kernel`
+    \tparam NamedParameters
+    a sequence of \ref bgl_namedparameters "Named Parameters"
 
     \param input_range
     a const range of input segments for shape regularization
@@ -92,21 +92,32 @@ namespace Segments {
     an instance of `NeighQuery` that is used internally to
     access neighbors of a segment; this parameter can be omitted together
     with the `regularization_type` parameter, in this case, all types of regularities
-    will be reinforced on the whole input range
+    will be reinforced on the whole input range and the default solver will be used (see below)
 
     \param regularization_type
     an instance of `RegType` that is used internally to
     obtain bounds and target values required by the regularization;
     this parameter can be omitted together with the `neighbor_query` parameter,
     in this case, all types of regularities will be reinforced on the whole input range
+    and the default solver will be used (see below)
 
     \param quadratic_program
     an instance of `QPSolver` to solve the quadratic programming problem;
     this parameter can be omitted, the default solver is `CGAL::OSQP_quadratic_program_traits`
 
-    \param traits
-    an instance of `GeomTraits`; this parameter can be omitted if the traits class
-    can be deduced from the input value type
+    \param np
+    an optional sequence of \ref bgl_namedparameters "Named Parameters"
+    among the ones listed below; this parameter can be omitted,
+    the default values are then used
+
+    \cgalNamedParamsBegin
+      \cgalParamNBegin{geom_traits}
+        \cgalParamDescription{an instance of geometric traits class}
+        \cgalParamType{a model of `Kernel`}
+        \cgalParamDefault{a CGAL `Kernel` deduced from the point type,
+        using `CGAL::Kernel_traits`}
+      \cgalParamNEnd
+    \cgalNamedParamsEnd
 
     \pre input_range.size() >= 2
 
@@ -118,135 +129,49 @@ namespace Segments {
   typename NeighQuery,
   typename RegType,
   typename QPSolver,
-  typename GeomTraits>
+  typename NamedParameters>
   void regularize_segments(
     InputRange& input_range,
     NeighQuery& neighbor_query,
     RegType& regularization_type,
     QPSolver& quadratic_program,
-    const GeomTraits& traits) {
+    const NamedParameters& np) {
+
+    using SegmentMap = typename internal::GetSegmentMap<InputRange, NamedParameters>::type;
+    using Segment_2 = typename SegmentMap::value_type;
+    using GeomTraits = typename CGAL::Kernel_traits<Segment_2>::Kernel;
 
     CGAL_precondition(input_range.size() >= 2);
     using Regularizer = QP_regularization<
       GeomTraits, InputRange, NeighQuery, RegType, QPSolver>;
 
     Regularizer regularizer(
-      input_range, neighbor_query, regularization_type, quadratic_program, traits);
+      input_range, neighbor_query, regularization_type, quadratic_program, np);
     regularizer.regularize();
   }
-
-  /*!
-    \ingroup PkgShapeRegularizationRefSegments
-
-    \brief regularizes angles in a set of 2D segments.
-
-    Given a set of unordered 2D segments, this function enables to reinforce
-    two types of regularities among these segments:
-    - *Parallelism*: segments, which are detected as near parallel, are made exactly parallel.
-    - *Orthogonality*: segments, which are detected as near orthogonal, are made exactly orthogonal.
-
-    \tparam InputRange
-    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
-
-    \tparam GeomTraits
-    a model of `Kernel`
-
-    \param input_range
-    a const range of input segments for angle regularization
-
-    \param traits
-    an instance of `GeomTraits`; this parameter can be omitted if the traits class
-    can be deduced from the input value type
-
-    \pre input_range.size() >= 2
-
-    \sa `regularize_segments()`
-    \sa `regularize_offsets()`
-  */
-  template<
-  typename InputRange,
-  typename GeomTraits>
-  void regularize_angles(
-    InputRange& input_range,
-    const GeomTraits& traits) {
-
-    CGAL_precondition(input_range.size() >= 2);
-    using Neighbor_query = Delaunay_neighbor_query_2<GeomTraits, InputRange>;
-    using Angle_regularization = Angle_regularization_2<GeomTraits, InputRange>;
-
-    Neighbor_query neighbor_query(input_range);
-    Angle_regularization angle_regularization(input_range);
-    regularize_segments(
-      input_range, neighbor_query, angle_regularization, traits);
-  }
-
-  /*!
-    \ingroup PkgShapeRegularizationRefSegments
-
-    \brief regularizes offsets in a set of 2D segments.
-
-    Given a set of parallel 2D segments, this function enables to reinforce
-    the collinearity property among these segments that is all parallel segments,
-    which are detected as near collinear, are made exactly collinear.
-
-    \tparam InputRange
-    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
-
-    \tparam GeomTraits
-    a model of `Kernel`
-
-    \param input_range
-    a const range of input segments for offset regularization
-
-    \param traits
-    an instance of `GeomTraits`; this parameter can be omitted if the traits class
-    can be deduced from the input value type
-
-    \pre input_range.size() >= 2
-
-    \sa `regularize_segments()`
-    \sa `regularize_angles()`
-  */
-  template<
-  typename InputRange,
-  typename GeomTraits>
-  void regularize_offsets(
-    InputRange& input_range,
-    const GeomTraits& traits) {
-
-    CGAL_precondition(input_range.size() >= 2);
-    using Neighbor_query = Delaunay_neighbor_query_2<GeomTraits, InputRange>;
-    using Offset_regularization = Offset_regularization_2<GeomTraits, InputRange>;
-
-    Neighbor_query neighbor_query(input_range);
-    Offset_regularization offset_regularization(input_range);
-    regularize_segments(
-      input_range, neighbor_query, offset_regularization, traits);
-  }
-
-  #if defined(CGAL_USE_OSQP) || defined(DOXYGEN_RUNNING)
 
   /// \cond SKIP_IN_MANUAL
   template<
   typename InputRange,
   typename NeighQuery,
   typename RegType,
-  typename GeomTraits>
+  typename QPSolver>
   void regularize_segments(
     InputRange& input_range,
     NeighQuery& neighbor_query,
     RegType& regularization_type,
-    const GeomTraits& traits) {
+    QPSolver& quadratic_program) {
 
     CGAL_precondition(input_range.size() >= 2);
-    using FT = typename GeomTraits::FT;
-    using QP = CGAL::OSQP_quadratic_program_traits<FT>;
-    QP quadratic_program;
-
     regularize_segments(
-      input_range, neighbor_query, regularization_type, quadratic_program, traits);
+      input_range, neighbor_query, regularization_type, quadratic_program,
+      CGAL::parameters::all_default());
   }
+  /// \endcond
 
+  #if defined(CGAL_USE_OSQP) || defined(DOXYGEN_RUNNING)
+
+  /// \cond SKIP_IN_MANUAL
   template<
   typename InputRange,
   typename NeighQuery,
@@ -267,17 +192,19 @@ namespace Segments {
     QP quadratic_program;
 
     regularize_segments(
-      input_range, neighbor_query, regularization_type, quadratic_program, traits);
+      input_range, neighbor_query, regularization_type, quadratic_program,
+      CGAL::parameters::geom_traits(traits));
   }
 
-  template<
-  typename InputRange,
-  typename GeomTraits>
+  template<typename InputRange>
   void regularize_segments(
-    InputRange& input_range,
-    const GeomTraits& traits) {
+    InputRange& input_range) {
 
     CGAL_precondition(input_range.size() >= 2);
+    using Iterator_type = typename InputRange::const_iterator;
+    using Segment_2 = typename std::iterator_traits<Iterator_type>::value_type;
+    using GeomTraits = typename Kernel_traits<Segment_2>::Kernel;
+
     using Indices = std::vector<std::size_t>;
     using Neighbor_query = Delaunay_neighbor_query_2<GeomTraits, InputRange>;
     using Angle_regularization = Angle_regularization_2<GeomTraits, InputRange>;
@@ -287,7 +214,7 @@ namespace Segments {
     Neighbor_query neighbor_query(input_range);
     Angle_regularization angle_regularization(input_range);
     regularize_segments(
-      input_range, neighbor_query, angle_regularization, traits);
+      input_range, neighbor_query, angle_regularization);
 
     std::vector<Indices> parallel_groups;
     angle_regularization.parallel_groups(
@@ -301,22 +228,33 @@ namespace Segments {
       offset_regularization.add_group(parallel_group);
     }
     regularize_segments(
-      input_range, neighbor_query, offset_regularization, traits);
+      input_range, neighbor_query, offset_regularization);
   }
+  /// \endcond
 
-  template<typename InputRange>
-  void regularize_segments(
-    InputRange& input_range) {
+  /*!
+    \ingroup PkgShapeRegularizationRefSegments
 
-    CGAL_precondition(input_range.size() >= 2);
-    using Iterator_type = typename InputRange::const_iterator;
-    using Segment_2 = typename std::iterator_traits<Iterator_type>::value_type;
-    using GeomTraits = typename Kernel_traits<Segment_2>::Kernel;
-    GeomTraits traits;
+    \brief regularizes angles in a set of 2D segments.
 
-    regularize_segments(input_range, traits);
-  }
+    Given a set of unordered 2D segments, this function enables to reinforce
+    two types of regularities among these segments:
+    - *Parallelism*: segments, which are detected as near parallel, are made exactly parallel.
+    - *Orthogonality*: segments, which are detected as near orthogonal, are made exactly orthogonal.
 
+    This is an utility function based on `regularize_segments()` that is using default parameters.
+
+    \tparam InputRange
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
+
+    \param input_range
+    a const range of input segments for angle regularization
+
+    \pre input_range.size() >= 2
+
+    \sa `regularize_segments()`
+    \sa `regularize_offsets()`
+  */
   template<typename InputRange>
   void regularize_angles(
     InputRange& input_range) {
@@ -325,11 +263,38 @@ namespace Segments {
     using Iterator_type = typename InputRange::const_iterator;
     using Segment_2 = typename std::iterator_traits<Iterator_type>::value_type;
     using GeomTraits = typename Kernel_traits<Segment_2>::Kernel;
-    GeomTraits traits;
 
-    regularize_angles(input_range, traits);
+    using Neighbor_query = Delaunay_neighbor_query_2<GeomTraits, InputRange>;
+    using Angle_regularization = Angle_regularization_2<GeomTraits, InputRange>;
+
+    Neighbor_query neighbor_query(input_range);
+    Angle_regularization angle_regularization(input_range);
+    regularize_segments(
+      input_range, neighbor_query, angle_regularization);
   }
 
+  /*!
+    \ingroup PkgShapeRegularizationRefSegments
+
+    \brief regularizes offsets in a set of 2D segments.
+
+    Given a set of parallel 2D segments, this function enables to reinforce
+    the collinearity property among these segments that is all parallel segments,
+    which are detected as near collinear, are made exactly collinear.
+
+    This is an utility function based on `regularize_segments()` that is using default parameters.
+
+    \tparam InputRange
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
+
+    \param input_range
+    a const range of input segments for offset regularization
+
+    \pre input_range.size() >= 2
+
+    \sa `regularize_segments()`
+    \sa `regularize_angles()`
+  */
   template<typename InputRange>
   void regularize_offsets(
     InputRange& input_range) {
@@ -338,11 +303,15 @@ namespace Segments {
     using Iterator_type = typename InputRange::const_iterator;
     using Segment_2 = typename std::iterator_traits<Iterator_type>::value_type;
     using GeomTraits = typename Kernel_traits<Segment_2>::Kernel;
-    GeomTraits traits;
 
-    regularize_offsets(input_range, traits);
+    using Neighbor_query = Delaunay_neighbor_query_2<GeomTraits, InputRange>;
+    using Offset_regularization = Offset_regularization_2<GeomTraits, InputRange>;
+
+    Neighbor_query neighbor_query(input_range);
+    Offset_regularization offset_regularization(input_range);
+    regularize_segments(
+      input_range, neighbor_query, offset_regularization);
   }
-  /// \endcond
 
   #endif // CGAL_USE_OSQP or DOXYGEN_RUNNING
 
@@ -426,8 +395,10 @@ namespace Segments {
     using Segment_2 = typename SegmentMap::value_type;
     using GeomTraits = typename CGAL::Kernel_traits<Segment_2>::Kernel;
 
-    GeomTraits traits;
-    SegmentMap segment_map;
+    const SegmentMap segment_map = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::segment_map), SegmentMap());
+    const GeomTraits traits = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::geom_traits), GeomTraits());
 
     CGAL_precondition(input_range.size() >= 1);
     using Parallel_groups_2 = internal::Parallel_groups_2<
@@ -531,8 +502,10 @@ namespace Segments {
     using Segment_2 = typename SegmentMap::value_type;
     using GeomTraits = typename CGAL::Kernel_traits<Segment_2>::Kernel;
 
-    GeomTraits traits;
-    SegmentMap segment_map;
+    const SegmentMap segment_map = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::segment_map), SegmentMap());
+    const GeomTraits traits = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::geom_traits), GeomTraits());
 
     CGAL_precondition(input_range.size() >= 1);
     using Collinear_groups_2 = internal::Collinear_groups_2<
@@ -636,8 +609,10 @@ namespace Segments {
     using Segment_2 = typename SegmentMap::value_type;
     using GeomTraits = typename CGAL::Kernel_traits<Segment_2>::Kernel;
 
-    GeomTraits traits;
-    SegmentMap segment_map;
+    const SegmentMap segment_map = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::segment_map), SegmentMap());
+    const GeomTraits traits = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::geom_traits), GeomTraits());
 
     CGAL_precondition(input_range.size() >= 1);
     using Orthogonal_groups_2 = internal::Orthogonal_groups_2<
@@ -740,8 +715,10 @@ namespace Segments {
     using Segment_2 = typename SegmentMap::value_type;
     using GeomTraits = typename CGAL::Kernel_traits<Segment_2>::Kernel;
 
-    GeomTraits traits;
-    SegmentMap segment_map;
+    const SegmentMap segment_map = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::segment_map), SegmentMap());
+    const GeomTraits traits = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::geom_traits), GeomTraits());
 
     CGAL_precondition(input_range.size() >= 1);
     using Unique_segments_2 = internal::Unique_segments_2<
