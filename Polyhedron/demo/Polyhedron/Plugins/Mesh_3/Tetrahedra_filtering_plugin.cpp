@@ -13,6 +13,7 @@
 #include "Scene_c3t3_item.h"
 #include "Scene_tetrahedra_item.h"
 #include "Messages_interface.h"
+#include "CGAL_double_edit.h"
 #include "ui_Tetrahedra_filter_widget.h"
 using namespace CGAL::Three;
 
@@ -116,13 +117,17 @@ public Q_SLOTS:
     tet_item->setMinMaxLabelPointer(dock_widget->minMaxLabel);
     tet_item->setMaxMinLabelPointer(dock_widget->maxMinLabel);
     tet_item->setMaxMaxLabelPointer(dock_widget->maxMaxLabel);
-    tet_item->setValueLabelPointer(dock_widget->valueLabel);
+    tet_item->setMinEditPointer(dock_widget->minEdit);
+    tet_item->setMaxEditPointer(dock_widget->maxEdit);
     tet_item->invalidateOpenGLBuffers();
+    tet_item->setName(QString("%1 filter").arg(c3t3_item->name()));
     c3t3_item->setVisible(false);
     scene->addItem(tet_item);
-    connect(dock_widget->minSlider, &QSlider::valueChanged, tet_item, &Scene_tetrahedra_item::setMinThreshold);
-    connect(dock_widget->maxSlider, &QSlider::valueChanged, tet_item, &Scene_tetrahedra_item::setMaxThreshold);
+    connect(dock_widget->minSlider, &QSlider::valueChanged, tet_item, QOverload<int>::of(&Scene_tetrahedra_item::setMinThreshold));
+    connect(dock_widget->maxSlider, &QSlider::valueChanged, tet_item, QOverload<int>::of(&Scene_tetrahedra_item::setMaxThreshold));
     connect(dock_widget->filterBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &Tetrahedra_filtering_plugin::onFilterIndexChanged);
+    connect(dock_widget->minEdit, &DoubleEdit::editingFinished, tet_item, QOverload<>::of(&Scene_tetrahedra_item::setMinThreshold));
+    connect(dock_widget->maxEdit, &DoubleEdit::editingFinished, tet_item, QOverload<>::of(&Scene_tetrahedra_item::setMaxThreshold));
 
     dock_widget->show();
   }

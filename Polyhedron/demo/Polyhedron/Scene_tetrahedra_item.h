@@ -23,6 +23,7 @@
 
 struct tet_item_priv;
 class QLabel;
+class DoubleEdit;
 
 class SCENE_TETRAHEDRA_ITEM_EXPORT Scene_tetrahedra_item : public CGAL::Three::Scene_item_rendering_helper
 {
@@ -45,18 +46,21 @@ public :
   void setMinMaxLabelPointer(QLabel*);
   void setMaxMinLabelPointer(QLabel*);
   void setMaxMaxLabelPointer(QLabel*);
-  void setValueLabelPointer(QLabel*);
+  void setMinEditPointer(DoubleEdit* );
+  void setMaxEditPointer(DoubleEdit* );
   Scene_c3t3_item* c3t3_item();
   public Q_SLOTS:
   void setMinThreshold(int);
+  void setMinThreshold(void);
   void setMaxThreshold(int);
+  void setMaxThreshold(void);
   void setFilter(int);
 
 private:
   friend struct tet_item_priv;
   tet_item_priv* d;
   void updateFilter() const;
-  void updateThresholds();
+  void updateThresholds(bool update = true);
 }; //end of class Scene_tetrahedra_item
 
 #endif // SCENE_TETRAHEDRA_ITEM_H

@@ -216,10 +216,37 @@
            <item>
             <widget class="QLabel" name="valueLabel">
              <property name="frameShape">
-              <enum>QFrame::StyledPanel</enum>
+              <enum>QFrame::NoFrame</enum>
              </property>
              <property name="text">
-              <string>Filtering Interval: [0;0]</string>
+              <string>Filtering Interval: [</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="DoubleEdit" name="minEdit">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="placeholderText">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>;</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="DoubleEdit" name="maxEdit"/>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>]</string>
              </property>
             </widget>
            </item>
@@ -233,6 +260,13 @@
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DoubleEdit</class>
+   <extends>QLineEdit</extends>
+   <header location="global">CGAL_double_edit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

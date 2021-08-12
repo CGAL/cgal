@@ -5,6 +5,7 @@
 #include <CGAL/Three/Three.h>
 #include "Scene_tetrahedra_item.h"
 #include "C3t3_type.h"
+#include "CGAL_double_edit.h"
 
 using namespace CGAL::Three;
 typedef Viewer_interface Vi;
@@ -28,7 +29,9 @@ struct tet_item_priv{
   QLabel* minMaxLabel;
   QLabel* maxMinLabel;
   QLabel* maxMaxLabel;
-  QLabel* valueLabel;
+
+  DoubleEdit* minEdit;
+  DoubleEdit* maxEdit;
 
   void draw_triangle(const Tr::Bare_point& a,
                      const Tr::Bare_point& b,
@@ -94,7 +97,9 @@ Scene_tetrahedra_item::Scene_tetrahedra_item(Scene_c3t3_item* c3t3_item)
   d->minMaxLabel = nullptr;
   d->maxMinLabel = nullptr;
   d->maxMaxLabel = nullptr;
-  d->valueLabel = nullptr;
+
+  d->minEdit = nullptr;
+  d->maxEdit = nullptr;
   setFlatMode();
   setTriangleContainer(0,
                        new Tri(Vi::PROGRAM_TETRA_FILTERING, false));
@@ -319,6 +324,20 @@ void Scene_tetrahedra_item::setMaxThreshold(int i)
   updateThresholds();
 }
 
+void Scene_tetrahedra_item::setMinThreshold(void)
+{
+  double i = d->minEdit->text().toDouble();
+  d->threshold_1 = 0.001*i;
+  updateThresholds(false);
+}
+
+void Scene_tetrahedra_item::setMaxThreshold(void)
+{
+  double i = d->maxEdit->text().toDouble();
+  d->threshold_2 = 0.001*i;
+  updateThresholds(false);
+}
+
 void Scene_tetrahedra_item::setFilter(int i)
 {
   d->filter_index = i;
@@ -341,7 +360,9 @@ void Scene_tetrahedra_item::updateFilter() const
 
   double a = 1/(d->extrema[d->filter_index][1] - d->extrema[d->filter_index][0]);
   double b = - d->extrema[d->filter_index][0]/(d->extrema[d->filter_index][1] - d->extrema[d->filter_index][0]);
-  d->valueLabel->setText(QString("Filtering Interval: [%1;%2]").arg((d->min_threshold - b)/a).arg((d->max_threshold - b)/a));
+
+  d->minEdit->setValue((d->min_threshold - b)/a);
+  d->maxEdit->setValue((d->max_threshold - b)/a);
   for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
   {
     setBuffersInit(static_cast<Vi*>(v), false);
@@ -352,14 +373,20 @@ void Scene_tetrahedra_item::setMinMinLabelPointer(QLabel* ptr){ d->minMinLabel =
 void Scene_tetrahedra_item::setMinMaxLabelPointer(QLabel* ptr){ d->minMaxLabel = ptr; }
 void Scene_tetrahedra_item::setMaxMinLabelPointer(QLabel* ptr){ d->maxMinLabel = ptr; }
 void Scene_tetrahedra_item::setMaxMaxLabelPointer(QLabel* ptr){ d->maxMaxLabel = ptr; }
-void Scene_tetrahedra_item::setValueLabelPointer(QLabel* ptr){ d->valueLabel = ptr; }
-void Scene_tetrahedra_item::updateThresholds()
+void Scene_tetrahedra_item::setMinEditPointer(DoubleEdit* ptr){ d->minEdit= ptr; }
+void Scene_tetrahedra_item::setMaxEditPointer(DoubleEdit* ptr){ d->maxEdit = ptr; }
+
+void Scene_tetrahedra_item::updateThresholds(bool update)
 {
   d->max_threshold = (std::max)(d->threshold_1, d->threshold_2);
   d->min_threshold = (std::min)(d->threshold_1, d->threshold_2);
-  double a = 1/(d->extrema[d->filter_index][1] - d->extrema[d->filter_index][0]);
-  double b = - d->extrema[d->filter_index][0]/(d->extrema[d->filter_index][1] - d->extrema[d->filter_index][0]);
-  d->valueLabel->setText(QString("Filtering Interval: [%1;%2]").arg((d->min_threshold - b)/a).arg((d->max_threshold - b)/a));
+  if(update)
+  {
+    double a = 1/(d->extrema[d->filter_index][1] - d->extrema[d->filter_index][0]);
+    double b = - d->extrema[d->filter_index][0]/(d->extrema[d->filter_index][1] - d->extrema[d->filter_index][0]);
+    d->minEdit->setValue((d->min_threshold - b)/a);
+    d->maxEdit->setValue((d->max_threshold - b)/a);
+  }
   redraw();
 }
 
