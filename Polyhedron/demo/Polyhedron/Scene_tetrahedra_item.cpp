@@ -87,8 +87,10 @@ Scene_tetrahedra_item::Scene_tetrahedra_item(Scene_c3t3_item* c3t3_item)
   d->maxMinLabel = nullptr;
   d->maxMaxLabel = nullptr;
   d->valueLabel = nullptr;
+  setFlatMode();
   setTriangleContainer(0,
                        new Tri(Vi::PROGRAM_TETRA_FILTERING, false));
+
 }
 
 void Scene_tetrahedra_item::draw(CGAL::Three::Viewer_interface* viewer) const

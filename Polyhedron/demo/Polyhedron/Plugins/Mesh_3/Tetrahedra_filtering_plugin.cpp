@@ -67,6 +67,10 @@ public Q_SLOTS:
       return;
     }
     Scene_tetrahedra_item* tet_item = new Scene_tetrahedra_item(c3t3_item);
+    connect(c3t3_item, &Scene_c3t3_item::aboutToBeDestroyed, this, [this, tet_item](){
+      this->scene->erase(this->scene->item_id(tet_item));
+    });
+    connect(tet_item, &Scene_tetrahedra_item::aboutToBeDestroyed, dock_widget, &DockWidget::hide);
     tet_item->setMinMinLabelPointer(dock_widget->minMinLabel);
     tet_item->setMinMaxLabelPointer(dock_widget->minMaxLabel);
     tet_item->setMaxMinLabelPointer(dock_widget->maxMinLabel);
@@ -78,6 +82,7 @@ public Q_SLOTS:
     connect(dock_widget->minSlider, &QSlider::valueChanged, tet_item, &Scene_tetrahedra_item::setMinThreshold);
     connect(dock_widget->maxSlider, &QSlider::valueChanged, tet_item, &Scene_tetrahedra_item::setMaxThreshold);
     connect(dock_widget->filterBox, QOverload<int>::of(&QComboBox::currentIndexChanged), tet_item, &Scene_tetrahedra_item::setFilter);
+
     dock_widget->show();
   }
 private:
