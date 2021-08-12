@@ -16,6 +16,9 @@
 
 #include <CGAL/Real_timer.h>
 #include <CGAL/point_generators_3.h>
+#include <CGAL/Surface_mesh_simplification/edge_collapse.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
+
 
 #include <boost/core/demangle.hpp>
 
@@ -87,9 +90,9 @@ void benchmark(std::string input_path) {
   typedef CGAL::AABB_traits_construct_by_sorting<K, Primitive, CGAL::Default, CGAL::Parallel_if_available_tag> Traits_construct_by_sorting;
 
   std::ifstream in(input_path);
-  Polyhedron polyhedron;
-//  in >> polyhedron;
-  CGAL::IO::read_PLY(in, polyhedron);
+  Polyhedron data;
+//  in >> data;
+  CGAL::IO::read_PLY(in, data);
 
   auto queries = generate_queries<K>(T);
 
@@ -97,23 +100,60 @@ void benchmark(std::string input_path) {
   std::cout << "! " << boost::core::demangle(typeid(K).name()) << " !! Recursive Partition !! Hilbert Sort"
             << "\n|-" << std::endl;
   std::cout << "| construction || " << std::flush
-            << benchmark_construction<Traits_construct_by_splitting>(polyhedron) << " s || " << std::flush
-            << benchmark_construction<Traits_construct_by_sorting>(polyhedron) << " s"
+            << benchmark_construction<Traits_construct_by_splitting>(data) << " s || " << std::flush
+            << benchmark_construction<Traits_construct_by_sorting>(data) << " s"
             << "\n|-" << std::endl;
   std::cout << "| traversal || " << std::flush
-            << benchmark_traversal<Traits_construct_by_splitting>(polyhedron, queries) << " s || " << std::flush
-            << benchmark_traversal<Traits_construct_by_sorting>(polyhedron, queries) << " s"
+            << benchmark_traversal<Traits_construct_by_splitting>(data, queries) << " s || " << std::flush
+            << benchmark_traversal<Traits_construct_by_sorting>(data, queries) << " s"
             << "\n|-" << std::endl;
   std::cout << "|}\n" << std::endl;
 }
+
+template<typename K>
+void breakeven(std::string input_path) {
+  typedef CGAL::Surface_mesh<CGAL::Point_3<K>> Data;
+  typedef CGAL::AABB_face_graph_triangle_primitive<Data> Primitive;
+
+  typedef CGAL::AABB_traits<K, Primitive, CGAL::Default> Traits_construct_by_splitting;
+  typedef CGAL::AABB_traits_construct_by_sorting<K, Primitive, CGAL::Default, CGAL::Parallel_if_available_tag> Traits_construct_by_sorting;
+
+  std::ifstream in(input_path);
+  Data data;
+  CGAL::IO::read_PLY(in, data);
+
+  auto queries = generate_queries<K>(T);
+
+  std::cout << "{| class=\"wikitable\"\n";
+  std::cout << "|+ " << boost::core::demangle(typeid(K).name()) << std::endl;
+  std::cout << "! # Primitives !! Recursive Partition Construction !! Hilbert Sort Construction !! Recursive Partition Traversal !! Hilbert Sort Traversal" << std::endl;
+  std::size_t target_num_primitives = std::pow(10, (int) std::log10(data.num_vertices()));
+  while (data.number_of_faces() > 100) {
+
+    CGAL::Surface_mesh_simplification::Count_stop_predicate<Data> stop_predicate(1 + target_num_primitives * 3 / 2);
+    CGAL::Surface_mesh_simplification::edge_collapse(data, stop_predicate);
+
+    std::cout << "|-" << std::endl;
+    std::cout << "| " << data.number_of_faces()
+              << " || " << benchmark_construction<Traits_construct_by_splitting>(data) << " s" << std::flush
+              << " || " << benchmark_construction<Traits_construct_by_sorting>(data) << " s" << std::flush
+            << " || " << benchmark_traversal<Traits_construct_by_splitting>(data, queries) << " s" << std::flush
+            << " || " << benchmark_traversal<Traits_construct_by_sorting>(data, queries) << " s" << std::endl;
+
+    target_num_primitives /= 10;
+  }
+  std::cout << "|}" << std::endl;
+}
+
 
 int main(int argc, char **argv) {
 
   // Determine our data source, with a default if no path is provided
   std::string input_path = argc > 1 ? argv[1] : "data/handle.off";
 
-  benchmark<CGAL::Simple_cartesian<float>>(input_path);
-  benchmark<CGAL::Simple_cartesian<double>>(input_path);
+  breakeven<CGAL::Exact_predicates_inexact_constructions_kernel>(input_path);
+//  benchmark<CGAL::Simple_cartesian<float>>(input_path);
+//  benchmark<CGAL::Simple_cartesian<double>>(input_path);
   benchmark<CGAL::Exact_predicates_inexact_constructions_kernel>(input_path);
 
 }
