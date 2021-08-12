@@ -46,6 +46,7 @@ public :
   void setMaxMinLabelPointer(QLabel*);
   void setMaxMaxLabelPointer(QLabel*);
   void setValueLabelPointer(QLabel*);
+  Scene_c3t3_item* c3t3_item();
   public Q_SLOTS:
   void setMinThreshold(int);
   void setMaxThreshold(int);

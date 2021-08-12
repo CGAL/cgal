@@ -349,3 +349,8 @@ void Scene_tetrahedra_item::updateThresholds()
   d->valueLabel->setText(QString("Filtering Interval: [%1;%2]").arg((d->min_threshold - b)/a).arg((d->max_threshold - b)/a));
   redraw();
 }
+
+Scene_c3t3_item* Scene_tetrahedra_item::c3t3_item()
+{
+  return d->c3t3_item;
+}

@@ -1,13 +1,18 @@
 #include <QApplication>
-#include <QMainWindow>
 #include <QAction>
 #include <QComboBox>
+#include <QMainWindow>
+#include <QMessageBox>
+#include <QPushButton>
 #include <QSlider>
 
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
+#include <CGAL/double.h>
 
 #include "Scene_c3t3_item.h"
 #include "Scene_tetrahedra_item.h"
+#include "Messages_interface.h"
 #include "ui_Tetrahedra_filter_widget.h"
 using namespace CGAL::Three;
 
@@ -19,7 +24,7 @@ public:
   DockWidget(QString name, QWidget *parent)
     :QDockWidget(name,parent)
   {
-   setupUi(this);
+    setupUi(this);
   }
 };
 
@@ -38,6 +43,7 @@ public :
     this->mw = mainWindow;
     this->tet_item = nullptr;
 
+
     QAction* actionFilterTets = new QAction("Tetrahedra Filtering", mw);
     if(actionFilterTets) {
       connect(actionFilterTets, &QAction::triggered,
@@ -47,17 +53,46 @@ public :
 
     dock_widget = new DockWidget("", mw);
     dock_widget->setVisible(false); // do not show at the beginning
+    dock_widget->domainBox->hide();
     addDockWidget(dock_widget);
+
+    connect(dock_widget->resetButton, &QPushButton::clicked, [this](){
+      filter();
+    });
   }
-  bool applicable(QAction*) const Q_DECL_OVERRIDE
+  bool applicable(QAction* a) const Q_DECL_OVERRIDE
   {
     return qobject_cast<Scene_c3t3_item*>( scene->item( scene->mainSelectionIndex() ) );
   }
   QList<QAction*> actions() const Q_DECL_OVERRIDE {
     return _actions;
   }
+  virtual void closure() override
+  {
+    dock_widget->hide();
+  }
 
 public Q_SLOTS:
+  void onFilterIndexChanged(int i)
+  {
+    if(i != 4)
+    {
+      tet_item->setVisible(true);
+      tet_item->c3t3_item()->setVisible(false);
+      tet_item->setFilter(i);
+      dock_widget->domainBox->hide();
+      dock_widget->intervalBox->show();
+    }
+    else
+    {
+      tet_item->setVisible(false);
+      tet_item->c3t3_item()->setVisible(true);
+      dock_widget->intervalBox->hide();
+      dock_widget->domainBox->show();
+      filter();
+    }
+
+  }
   void on_actionFilterTets_triggered()
   {
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
@@ -87,14 +122,78 @@ public Q_SLOTS:
     scene->addItem(tet_item);
     connect(dock_widget->minSlider, &QSlider::valueChanged, tet_item, &Scene_tetrahedra_item::setMinThreshold);
     connect(dock_widget->maxSlider, &QSlider::valueChanged, tet_item, &Scene_tetrahedra_item::setMaxThreshold);
-    connect(dock_widget->filterBox, QOverload<int>::of(&QComboBox::currentIndexChanged), tet_item, &Scene_tetrahedra_item::setFilter);
+    connect(dock_widget->filterBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &Tetrahedra_filtering_plugin::onFilterIndexChanged);
 
     dock_widget->show();
   }
+
+  void cleanup()
+  {
+    while(!buttons.empty())
+    {
+      auto button = buttons.back();
+      buttons.pop_back();
+      dock_widget->gridLayout->removeWidget(button);
+      buttons.removeAll(button);
+      delete button;
+    }
+    dock_widget->hide();
+  }
+
+  void filter()
+  {
+    if(!tet_item)
+      return;
+    Scene_c3t3_item* c3t3_item = tet_item->c3t3_item();
+    if(c3t3_item->subdomain_indices().size() > 96)
+    {
+      QMessageBox::warning(nullptr, "Warning", tr("The filtering is only available for items with less than 96 subdomains, and this one has %1").arg(c3t3_item->subdomain_indices().size()));
+      return;
+    }
+    int counter = 0;
+    int limit = static_cast<int>(std::ceil(CGAL::approximate_sqrt(EPICK::FT(c3t3_item->subdomain_indices().size()))));
+    QGridLayout *layout = dock_widget->gridLayout;
+    for (std::set<int>::iterator it = c3t3_item->subdomain_indices().begin(),
+         end = c3t3_item->subdomain_indices().end(); it != end; ++it)
+    {
+      int index = *it;
+      QPushButton* button = new QPushButton(tr("%1").arg(index));
+      buttons.push_back(button);
+      button->setCheckable(true);
+      button->setChecked(true);
+      QColor color = c3t3_item->getSubdomainIndexColor(index);
+      QString s("QPushButton { font-weight: bold; background: #"
+                + QString::number(90,16)
+                + QString::number(90,16)
+                + QString::number(90,16)
+                + "; color: red;} QPushButton:checked{ font-weight: bold; background: #"
+        + QString::number(color.red(),16)
+                + QString::number(color.green(),16)
+                + QString::number(color.blue(),16)
+        + "; color: black;}"
+      );
+
+      button->setStyleSheet(s);
+      connect(button, &QPushButton::toggled, [index, c3t3_item](bool){
+        c3t3_item->switchVisibleSubdomain(index);
+        c3t3_item->computeIntersection();
+        c3t3_item->redraw();
+
+      });
+      layout->addWidget(button,counter/limit, counter%limit);
+      ++counter;
+
+    }
+
+
+    connect(c3t3_item, &Scene_c3t3_item::aboutToBeDestroyed, this, &Tetrahedra_filtering_plugin::cleanup);
+  }
+
 private:
   DockWidget* dock_widget;
   QList<QAction*> _actions;
   Scene_tetrahedra_item* tet_item;
+  QVector<QPushButton*> buttons;
 
 
 }; //end of class Tetrahedra_filtering_plugin
