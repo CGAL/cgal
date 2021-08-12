@@ -965,8 +965,8 @@ bool write_PLY(std::ostream& os,
     if(!eprinters.empty())
     {
       os << "element edge " << sm.number_of_edges() << std::endl;
-      os << "property int v0" << std::endl;
-      os << "property int v1" << std::endl;
+      os << "property int vertex1" << std::endl;
+      os << "property int vertex2" << std::endl;
       os << oss.str();
     }
   }
