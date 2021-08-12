@@ -73,29 +73,14 @@ private:
   void update_incident_halfedge_after_split(Subcurve_* sc,
                                             Halfedge_handle he,
                                             Halfedge_handle new_he,
-                                            Tag_true)
-  {
-    std::vector<Subcurve*> leaves;
-    sc->all_leaves( std::back_inserter(leaves) );
-    for(Subcurve* ssc : leaves)
-    {
-      Event* last_event_on_ssc = ssc->last_event();
-      if (last_event_on_ssc->halfedge_handle() == he)
-        last_event_on_ssc->set_halfedge_handle(new_he->next());
-    }
-  }
+                                            Tag_true);
 
   // update halfedge pointing to events, case without overlaps
   template <class Subcurve_>
   void update_incident_halfedge_after_split(Subcurve_* sc,
                                             Halfedge_handle he,
                                             Halfedge_handle new_he,
-                                            Tag_false)
-  {
-    Event* last_event_on_sc = sc->last_event();
-    if (last_event_on_sc->halfedge_handle() == he)
-      last_event_on_sc->set_halfedge_handle(new_he->next());
-  }
+                                            Tag_false);
 
 public:
   /*! A notification invoked when a new subcurve is created. */
@@ -128,6 +113,43 @@ public:
 //-----------------------------------------------------------------------------
 // Member-function definitions:
 //-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+// update halfedge pointing to events, case with overlaps
+//
+template <typename Hlpr, typename Vis>
+template <class Subcurve_>
+void Arr_insertion_ss_visitor<Hlpr, Vis>::
+update_incident_halfedge_after_split(Subcurve_* sc,
+                                     Halfedge_handle he,
+                                     Halfedge_handle new_he,
+                                     Tag_true)
+{
+  std::vector<Subcurve*> leaves;
+  sc->all_leaves( std::back_inserter(leaves) );
+  for(Subcurve* ssc : leaves)
+  {
+    Event* last_event_on_ssc = ssc->last_event();
+    if (last_event_on_ssc->halfedge_handle() == he)
+      last_event_on_ssc->set_halfedge_handle(new_he->next());
+  }
+}
+
+//-----------------------------------------------------------------------------
+// update halfedge pointing to events, case without overlaps
+//
+template <typename Hlpr, typename Vis>
+template <class Subcurve_>
+void Arr_insertion_ss_visitor<Hlpr, Vis>::
+update_incident_halfedge_after_split(Subcurve_* sc,
+                                     Halfedge_handle he,
+                                     Halfedge_handle new_he,
+                                     Tag_false)
+{
+  Event* last_event_on_sc = sc->last_event();
+  if (last_event_on_sc->halfedge_handle() == he)
+    last_event_on_sc->set_halfedge_handle(new_he->next());
+}
 
 //-----------------------------------------------------------------------------
 // Check if the halfedge associated with the given subcurve will be split
