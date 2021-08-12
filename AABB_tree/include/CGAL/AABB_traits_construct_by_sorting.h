@@ -15,10 +15,16 @@ namespace CGAL {
   class AABB_tree;
 
 
-  /// This traits class provides the same functionality of the default AABB_traits class,
+  /// This traits class provides the same functionality of the default \ref AABB_traits class,
   /// it can be used to enable faster construction of trees, at the cost of lower traversal speed.
+  ///
   /// This is done by sorting the primitives along the hilbert curve,
   /// rather than repeatedly partitioning them along the longest axis of their bounding box.
+  /// The result is a tree that may contain nodes that have very high aspect ratios,
+  /// which means slower traversals on average.
+  /// In practice, construction can be up to 50% faster, and traversal tends to be around 20% slower.
+  /// Building the tree with the more optimal strategy tends not to become worthwhile
+  /// until that tree is used for on the order of 10^5 traversals.
   ///
   /// \cgalModels AABBTraits
   /// \cgalModels AABBRayIntersectionTraits
@@ -62,7 +68,8 @@ namespace CGAL {
 
     /// \internal
     ///
-    /// Sorts the range provided exactly once, further calls will not attempt to sort the list
+    /// A splitting algorithm that sorts the range provided along the hilbert curve exactly once,
+    /// further invocations of this functor will not attempt to sort the list
     ///
     class Split_primitives {
       const Traits &m_traits;
@@ -110,6 +117,10 @@ namespace CGAL {
       }
     };
 
+    /// Factory function that produces a splitting functor which is associated with this traits class.
+    ///
+    /// \return a new splitting function
+    ///
     Traits::Split_primitives split_primitives_object() const { return Traits::Split_primitives(*this); }
   };
 }

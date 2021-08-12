@@ -5,11 +5,12 @@
 
 The concept `AABBTraits` provides the geometric primitive types and methods for the class `CGAL::AABB_tree<AABBTraits>`.
 
-\cgalHasModel `CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>`
+\cgalHasModel `CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>`, `CGAL::AABB_traits_construct_by_sorting<AABBGeomTraits,AABBPrimitive>`
 
 \cgalRefines `SearchGeomTraits_3`
 
 \sa `CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>`
+\sa `CGAL::AABB_traits_construct_by_sorting<AABBGeomTraits,AABBPrimitive>`
 \sa `CGAL::AABB_tree<AABBTraits>`
 \sa `AABBPrimitive`
 
