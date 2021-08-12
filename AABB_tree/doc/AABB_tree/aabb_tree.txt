@@ -201,6 +201,15 @@ triangle set stored through two arrays: one array of points and one
 array of indices which refer to the point array. Here also the
 primitive internally uses a `boost::iterator_adaptor`.
 
+\subsection aabb_tree_examples_8 Fast construction of trees using the dedicated traits class
+
+In the following example, the first example's code is modified to use an alternative traits class
+which enables faster construction.
+\ref AABB_traits_construct_by_sorting can produce a tree more quickly than the standard traits,
+but individual traversals over that tree will generally be slower because it will have non-optimal topology.
+The
+\cgalExample{AABB_tree/AABB_fast_construction_example.cpp}
+
 \section aabb_tree_perf Performances
 
 We provide some performance numbers for the case where the AABB tree
