@@ -1,5 +1,5 @@
 #include <QLabel>
-
+#include <QColor>
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Triangle_container.h>
 #include <CGAL/Three/Three.h>
@@ -16,6 +16,7 @@ struct tet_item_priv{
   mutable std::vector<float> filter_values[4];
   mutable std::size_t positions_size;
   mutable std::vector<float> normals;
+  mutable std::vector<float> colors;
   mutable CGAL::qglviewer::Vec offset;
   float min_threshold;
   float max_threshold;
@@ -31,7 +32,8 @@ struct tet_item_priv{
 
   void draw_triangle(const Tr::Bare_point& a,
                      const Tr::Bare_point& b,
-                     const Tr::Bare_point& c)
+                     const Tr::Bare_point& c,
+                     const QColor& color)
   {
     const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
     Geom_traits::Vector_3 n = cross_product(b - a, c - a);
@@ -41,6 +43,11 @@ struct tet_item_priv{
       normals.push_back(static_cast<float>(n.x()));
       normals.push_back(static_cast<float>(n.y()));
       normals.push_back(static_cast<float>(n.z()));
+    };
+    auto push_color = [this](auto c) {
+      colors.push_back(static_cast<float>(c.redF()));
+      colors.push_back(static_cast<float>(c.greenF()));
+      colors.push_back(static_cast<float>(c.blueF()));
     };
 
     positions.push_back(static_cast<float>(a.x()+offset.x));
@@ -58,6 +65,7 @@ struct tet_item_priv{
     for (int i = 0; i<3; i++)
     {
       push_normal(n);
+      push_color(color);
     }
   }
 
@@ -172,6 +180,7 @@ void Scene_tetrahedra_item::computeElements()const
     const Tr::Bare_point& pb = wp2p(cit->vertex(1)->point());
     const Tr::Bare_point& pc = wp2p(cit->vertex(2)->point());
     const Tr::Bare_point& pd = wp2p(cit->vertex(3)->point());
+    const QColor color = d->c3t3_item->getSubdomainIndexColor(cit->subdomain_index());
     //0 - 1 : dihedral angle
     double min_dihedral_angle = 360.0;
     double max_dihedral_angle = -360.0;
@@ -217,10 +226,10 @@ void Scene_tetrahedra_item::computeElements()const
     if(rrr < d->extrema[2][0]) { d->extrema[2][0] = static_cast<float>(rrr); }
     if(rrr > d->extrema[2][1]) { d->extrema[2][1] = static_cast<float>(rrr); }
     tmp_rrr.push_back(rrr);
-    d->draw_triangle(pb, pa, pc);
-    d->draw_triangle(pa, pb, pd);
-    d->draw_triangle(pa, pd, pc);
-    d->draw_triangle(pb, pc, pd);
+    d->draw_triangle(pb, pa, pc, color);
+    d->draw_triangle(pa, pb, pd, color);
+    d->draw_triangle(pa, pd, pc, color);
+    d->draw_triangle(pb, pc, pd, color);
   }
   d->positions_size = d->positions.size();
   for(int i = 0; i< tmp_min.size(); ++i)
@@ -244,7 +253,10 @@ void Scene_tetrahedra_item::computeElements()const
   getTriangleContainer(0)->allocate(
         Tri::Flat_normals, d->normals.data(),
         static_cast<int>(d->normals.size()*sizeof(float)));
-  //Use the Distances vbo for the float filter values for convenience. They are p[robably not a distance, but the mechanism is already here so let's use it.
+  getTriangleContainer(0)->allocate(
+        Tri::FColors, d->colors.data(),
+        static_cast<int>(d->colors.size()*sizeof(float)));
+  //Use the Distances vbo for the float filter values for convenience. They are probably not a distance, but the mechanism is already here so let's use it.
   setBuffersFilled(true);
   updateFilter();
 }
@@ -291,7 +303,8 @@ void Scene_tetrahedra_item::initializeBuffers(CGAL::Three::Viewer_interface *vie
   d->positions.shrink_to_fit();
   d->normals.clear();
   d->normals.shrink_to_fit();
-  d->normals.shrink_to_fit();
+  d->colors.clear();
+  d->colors.shrink_to_fit();
 }
 
 void Scene_tetrahedra_item::setMinThreshold(int i)

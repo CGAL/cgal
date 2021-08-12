@@ -76,7 +76,7 @@
         </item>
         <item>
          <property name="text">
-          <string>Domain</string>
+          <string>Subdomain</string>
          </property>
         </item>
        </widget>
