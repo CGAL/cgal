@@ -38,6 +38,12 @@ Release date: December 2021
 -   Added the [OSQP solver](https://osqp.org/) support. This solver enables to efficiently compute the convex Quadratic Programming (QP) problems arising in the context of several packages.
 
 
+### [Point Set Processing](https://doc.cgal.org/5.4/Manual/packages.html#PkgPointSetProcessing3)
+
+-   Added support for `libpointmatcher::GenericDescriptorOutlierFilter`
+    that enables to provide a map from a point to a weight associated with this point.
+
+
 [Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)
 -----------
 

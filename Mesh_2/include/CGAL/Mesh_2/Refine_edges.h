@@ -504,6 +504,14 @@ public:
     va = edge.first->vertex(tr.cw (edge.second));
     vb = edge.first->vertex(tr.ccw(edge.second));
 
+#ifdef CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
+    std::cerr << "refinement_point_impl("
+              << "#" << va->time_stamp() << ": " << va->point() << ", "
+              << "#" << vb->time_stamp() << ": " << vb->point() << ") = ";
+    auto p = midpoint(va->point(), vb->point());
+    std::cerr << p << '\n';
+    return p;
+#endif // CGAL_MESH_2_DEBUG_BAD_FACES
     return midpoint(va->point(), vb->point());
   }
 

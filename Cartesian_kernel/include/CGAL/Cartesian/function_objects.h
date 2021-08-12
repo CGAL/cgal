@@ -606,6 +606,7 @@ namespace CartesianKernelFunctors {
   template <typename K>
   class Compare_slope_2
   {
+    typedef typename K::Point_2            Point_2;
     typedef typename K::Line_2             Line_2;
     typedef typename K::Segment_2          Segment_2;
   public:
@@ -624,6 +625,15 @@ namespace CartesianKernelFunctors {
                               s1.target().x(), s1.target().y(),
                               s2.source().x(), s2.source().y(),
                               s2.target().x(), s2.target().y());
+    }
+
+    result_type
+    operator()(const Point_2& s1s, const Point_2& s1t, const Point_2& s2s, const Point_2& s2t) const
+    {
+      return compare_slopesC2(s1s.x(), s1s.y(),
+                              s1t.x(), s1t.y(),
+                              s2s.x(), s2s.y(),
+                              s2t.x(), s2t.y());
     }
   };
 
