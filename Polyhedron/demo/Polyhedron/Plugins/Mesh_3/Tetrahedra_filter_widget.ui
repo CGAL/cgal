@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>404</width>
+    <height>406</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -80,14 +80,14 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1,0">
         <item>
-         <widget class="QLabel" name="minLabel">
+         <widget class="QLabel" name="minMinLabel">
           <property name="text">
            <string/>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QSlider" name="dummySlider">
+         <widget class="QSlider" name="minSlider">
           <property name="maximum">
            <number>100</number>
           </property>
@@ -106,7 +106,38 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="maxLabel">
+         <widget class="QLabel" name="minMaxLabel">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QLabel" name="maxMinLabel">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSlider" name="maxSlider">
+          <property name="maximum">
+           <number>100</number>
+          </property>
+          <property name="value">
+           <number>100</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="maxMaxLabel">
           <property name="text">
            <string/>
           </property>
