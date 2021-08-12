@@ -175,8 +175,12 @@ public:
   bool has_simplex_specific_property(internal::PLY_read_number* property, Edge_index)
   {
     const std::string& name = property->name();
+    if(name == "vertex1" || name == "vertex2")
+      return true;
+#ifndef CGAL_NO_DEPRECATED_CODE
     if(name == "v0" || name == "v1")
       return true;
+#endif
     return false;
   }
 
@@ -365,8 +369,8 @@ public:
   void process_line(PLY_element& element, Edge_index& ei)
   {
     IntType v0, v1;
-    element.assign(v0, "v0");
-    element.assign(v1, "v1");
+    element.assign(v0, "vertex1");
+    element.assign(v1, "vertex2");
 
     Halfedge_index hi = m_mesh.halfedge(m_map_v2v[std::size_t(v0)],
         m_map_v2v[std::size_t(v1)]);
