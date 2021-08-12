@@ -7,8 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>404</width>
-    <height>406</height>
+    <height>144</height>
    </rect>
+  </property>
+  <property name="toolTip">
+   <string>Only the tetrahedra with the values associated with the criterion that are inside the interval will be displayed.</string>
   </property>
   <property name="windowTitle">
    <string>Tetrahedra Properties</string>
@@ -165,8 +168,11 @@
         </item>
         <item>
          <widget class="QLabel" name="valueLabel">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
           <property name="text">
-           <string>0</string>
+           <string>Filtering Interval: [0;0]</string>
           </property>
          </widget>
         </item>

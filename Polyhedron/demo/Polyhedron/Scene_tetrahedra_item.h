@@ -55,6 +55,7 @@ private:
   friend struct tet_item_priv;
   tet_item_priv* d;
   void updateFilter() const;
+  void updateThresholds();
 }; //end of class Scene_tetrahedra_item
 
 #endif // SCENE_TETRAHEDRA_ITEM_H
