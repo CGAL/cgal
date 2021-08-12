@@ -132,9 +132,14 @@ _test_cls_triangulation_2( const Triangul & )
   assert( T1.number_of_vertices() == 0 );
 
   Triangul T3(T1);
-  Triangul T4 = T1;
-  T3.swap(T1);
+  assert(T3.tds().vertices().size() == T1.tds().vertices().size());
+  assert(T3.tds().faces().size() == T1.tds().faces().size());
 
+  Triangul T4 = T1;
+  assert(T4.tds().vertices().size() == T1.tds().vertices().size());
+  assert(T4.tds().faces().size() == T1.tds().faces().size());
+
+  T3.swap(T1);
 
   /**************************/
   /******* INSERTIONS *******/
@@ -162,6 +167,10 @@ _test_cls_triangulation_2( const Triangul & )
   assert( T0_1.number_of_faces() == 0);
   assert( T0_1.is_valid() );
 
+  Triangul T0_1b(T0_1);
+  assert(T0_1b.tds().vertices().size() == T0_1.tds().vertices().size());
+  assert(T0_1b.tds().faces().size() == T0_1.tds().faces().size());
+
   // test insert_first()
   Triangul T0_2;
   Vertex_handle v0_2_0 =   T0_2.insert_first(p0);
@@ -183,6 +192,10 @@ _test_cls_triangulation_2( const Triangul & )
   assert( T1_2.number_of_vertices() == 2 );
   assert( T1_2.number_of_faces() == 0 );
   assert( T1_2.is_valid() );
+
+  Triangul T1_2b(T1_2);
+  assert(T1_2b.tds().vertices().size() == T1_2.tds().vertices().size());
+  assert(T1_2b.tds().faces().size() == T1_2.tds().faces().size());
 
   // p1,p3,p2  [endpoints first]
   Triangul T1_3_0;
