@@ -118,6 +118,7 @@
 \package_listing{Point_set_3}
 \package_listing{Point_set_processing_3}
 \package_listing{Shape_detection}
+\package_listing{Shape_regularization}
 \package_listing{Stream_lines_2}
 \package_listing{Classification}
 \package_listing{Heat_method_3}
