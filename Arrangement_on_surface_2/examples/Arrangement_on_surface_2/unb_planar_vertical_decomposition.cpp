@@ -56,12 +56,12 @@ int main() {
     if (! curr.second) std::cout << "EMPTY\n";
     else {
       auto* vh = boost::get<Vertex_const_handle>(&*(curr.second));;
-      if (vh) std::cout << '(' << (*vh)->point() << ')\n';
+      if (vh) std::cout << '(' << (*vh)->point() << ")\n";
       else {
         auto* hh = boost::get<Halfedge_const_handle>(&*(curr.second));
         CGAL_assertion(hh);
         if (! (*hh)->is_fictitious())
-          std::cout << '[' << (*hh)->curve() << ']\n';
+          std::cout << '[' << (*hh)->curve() << "]\n";
         else std::cout << "NONE\n";
       }
     }
