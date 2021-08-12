@@ -60,30 +60,41 @@ to the user-specified conditions.}
 - `ContourDirections`
 
 ### %Segments ###
+
+#### Free Functions ####
 - `regularize_angles()`
 - `regularize_offsets()`
 - `regularize_segments()`
+
 #### Neighbor Queries ####
 - `Segments::Delaunay_neighbor_query_2<GeomTraits, InputRange, SegmentMap>`
+
 #### Regularization Types ####
 - `Segments::Angle_regularization_2<GeomTraits, InputRange, SegmentMap>`
 - `Segments::Offset_regularization_2<GeomTraits, InputRange, SegmentMap>`
+
 #### Grouping %Segments ####
 - `Segments::parallel_groups()`
 - `Segments::orthogonal_groups()`
 - `Segments::collinear_groups()`
+
 #### Simplifying %Segments ####
 - `Segments::unique_segments()`
 
 ### %Contours ###
+
+#### Free Functions ####
 - `regularize_closed_contour()`
 - `regularize_open_contour()`
+
 #### Estimating Directions ####
 - `Contours::Longest_direction_2<GeomTraits, InputRange, PointMap>`
 - `Contours::Multiple_directions_2<GeomTraits, InputRange, PointMap>`
 - `Contours::User_defined_directions_2<GeomTraits, InputRange, PointMap>`
 
 ### %Planes ###
+
+#### Free Functions ####
 - `regularize_planes()`
 
 ### QP Regularization ###
