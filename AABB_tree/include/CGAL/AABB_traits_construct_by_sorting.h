@@ -18,13 +18,16 @@ namespace CGAL {
   /// This traits class provides the same functionality of the default \ref AABB_traits class,
   /// it can be used to enable faster construction of trees, at the cost of lower traversal speed.
   ///
-  /// This is done by sorting the primitives along the hilbert curve,
+  /// This is done by sorting the primitives along the Hilbert curve,
   /// rather than repeatedly partitioning them along the longest axis of their bounding box.
   /// The result is a tree that may contain nodes that have very high aspect ratios,
   /// which means slower traversals on average.
+  ///
   /// In practice, construction can be up to 50% faster, and traversal tends to be around 20% slower.
-  /// Building the tree with the more optimal strategy tends not to become worthwhile
-  /// until that tree is used for on the order of 10^5 traversals.
+  /// The breakeven point at which building a tree using the more optimal approach becomes worthwhile
+  /// varies depending on the number of primitives.
+  /// Generally, the sort-based construction is useful until the tree is used for
+  /// thousands to hundreds of thousands of traversals.
   ///
   /// \cgalModels AABBTraits
   /// \cgalModels AABBRayIntersectionTraits
