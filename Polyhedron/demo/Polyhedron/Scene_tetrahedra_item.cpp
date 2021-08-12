@@ -19,6 +19,8 @@ struct tet_item_priv{
   mutable CGAL::qglviewer::Vec offset;
   float min_threshold;
   float max_threshold;
+  float threshold_1;
+  float threshold_2;
   int filter_index;
   double extrema[4][2];
   QLabel* minMinLabel;
@@ -69,6 +71,8 @@ Scene_tetrahedra_item::Scene_tetrahedra_item(Scene_c3t3_item* c3t3_item)
   d->positions_size = 0;
   d->min_threshold = 0.0f;
   d->max_threshold = 1.0f;
+  d->threshold_1 = 0.0f;
+  d->threshold_2 = 1.0f;
   d->filter_index = 0;
   d->extrema[0][0] = 360.0;
   d->extrema[0][1] = 360;
@@ -291,15 +295,9 @@ void Scene_tetrahedra_item::initializeBuffers(CGAL::Three::Viewer_interface *vie
 void Scene_tetrahedra_item::setMinThreshold(int i)
 {
   float tmp = 0.001*i;
-  if(tmp >= d->max_threshold)
-  {
-    d->min_threshold = d->max_threshold;
-
-  }
-  else
-  {
-    d->min_threshold = tmp;
-  }
+  d->threshold_1 = tmp;
+  d->max_threshold = (std::max)(d->threshold_1, d->threshold_2);
+  d->min_threshold = (std::min)(d->threshold_1, d->threshold_2);
 
   double a = 1/(d->extrema[d->filter_index][1] - d->extrema[d->filter_index][0]);
   double b = - d->extrema[d->filter_index][0]/(d->extrema[d->filter_index][1] - d->extrema[d->filter_index][0]);
@@ -310,14 +308,9 @@ void Scene_tetrahedra_item::setMinThreshold(int i)
 void Scene_tetrahedra_item::setMaxThreshold(int i)
 {
   float tmp = 0.001*i;
-  if(tmp <= d->min_threshold)
-  {
-    d->min_threshold = d->max_threshold;
-  }
-  else
-  {
-    d->max_threshold = tmp;
-  }
+  d->threshold_2 = tmp;
+  d->max_threshold = (std::max)(d->threshold_1, d->threshold_2);
+  d->min_threshold = (std::min)(d->threshold_1, d->threshold_2);
   double a = 1/(d->extrema[d->filter_index][1] - d->extrema[d->filter_index][0]);
   double b = - d->extrema[d->filter_index][0]/(d->extrema[d->filter_index][1] - d->extrema[d->filter_index][0]);
   d->valueLabel->setText(QString("Values: [%1;%2]").arg((d->min_threshold - b)/a).arg((d->max_threshold - b)/a));
