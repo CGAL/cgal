@@ -217,15 +217,12 @@ void Scene_tetrahedra_item::computeElements()const
     d->draw_triangle(pb, pc, pd);
   }
   d->positions_size = d->positions.size();
-  float vtest = static_cast<float>(tmp_v[keep]/(d->extrema[3][1]-d->extrema[3][0]) - d->extrema[3][0]/(d->extrema[3][1] - d->extrema[3][0]));
   for(int i = 0; i< tmp_min.size(); ++i)
   {
     float min = tmp_min[i]/(d->extrema[0][1]-d->extrema[0][0]) - d->extrema[0][0]/(d->extrema[0][1]-d->extrema[0][0]);
     float max = tmp_max[i]/(d->extrema[1][1]-d->extrema[1][0]) - d->extrema[1][0]/(d->extrema[1][1]-d->extrema[1][0]);
     float rrr = tmp_rrr[i]/(d->extrema[2][1]-d->extrema[2][0]) - d->extrema[2][0]/(d->extrema[2][1]-d->extrema[2][0]);
     float v = static_cast<float>(tmp_v[i]/(d->extrema[3][1]-d->extrema[3][0]) - d->extrema[3][0]/(d->extrema[3][1] - d->extrema[3][0]));
-    if(v == 1)
-      v = 100.0f;
     for(int j = 0; j< 12; ++j)
     {
       d->filter_values[0].push_back(min);
@@ -294,10 +291,14 @@ void Scene_tetrahedra_item::initializeBuffers(CGAL::Three::Viewer_interface *vie
 void Scene_tetrahedra_item::setMinThreshold(int i)
 {
   float tmp = 0.001*i;
-  d->min_threshold = tmp;
-  if(d->min_threshold > d->max_threshold)
+  if(tmp >= d->max_threshold)
   {
-    std::swap(d->min_threshold, d->max_threshold);
+    d->min_threshold = d->max_threshold;
+
+  }
+  else
+  {
+    d->min_threshold = tmp;
   }
 
   double a = 1/(d->extrema[d->filter_index][1] - d->extrema[d->filter_index][0]);
@@ -309,10 +310,13 @@ void Scene_tetrahedra_item::setMinThreshold(int i)
 void Scene_tetrahedra_item::setMaxThreshold(int i)
 {
   float tmp = 0.001*i;
-  d->max_threshold = tmp;
-  if(d->min_threshold > d->max_threshold)
+  if(tmp <= d->min_threshold)
   {
-    std::swap(d->min_threshold, d->max_threshold);
+    d->min_threshold = d->max_threshold;
+  }
+  else
+  {
+    d->max_threshold = tmp;
   }
   double a = 1/(d->extrema[d->filter_index][1] - d->extrema[d->filter_index][0]);
   double b = - d->extrema[d->filter_index][0]/(d->extrema[d->filter_index][1] - d->extrema[d->filter_index][0]);

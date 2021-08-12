@@ -17,13 +17,15 @@ uniform vec4 light_spec;
 uniform vec4 light_amb;
 uniform float spec_power ;
 uniform bool is_clipbox_on;
-uniform float threshold;
+uniform float min_threshold;
+uniform float max_threshold;
 
 out vec4 out_color;
 
 void main(void)
 {
-  if(fs_in.stat_value < threshold)
+  if(fs_in.stat_value < min_threshold
+     || fs_in.stat_value > max_threshold)
     discard;
   if(is_clipbox_on)
     if(fs_in.dist[0]>0.0 ||
