@@ -251,7 +251,7 @@ void Scene_tetrahedra_item::computeElements()const
 
 Scene_item* Scene_tetrahedra_item::clone() const
 {
-
+  return new Scene_tetrahedra_item(d->c3t3_item);
 }
 void Scene_tetrahedra_item::compute_bbox() const
 {
