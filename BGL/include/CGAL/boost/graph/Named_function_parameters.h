@@ -261,14 +261,16 @@ struct Named_function_parameters
 
 namespace parameters {
 
-Named_function_parameters<bool, internal_np::all_default_t>
+typedef Named_function_parameters<bool, internal_np::all_default_t>  Default_named_parameters;
+
+Default_named_parameters
 inline all_default()
 {
   typedef Named_function_parameters<bool, internal_np::all_default_t> Params;
   return Params();
 }
 
-Named_function_parameters<bool, internal_np::all_default_t>
+Default_named_parameters
 inline use_default_values()
 {
   return all_default();

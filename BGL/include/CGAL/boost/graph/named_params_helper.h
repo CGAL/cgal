@@ -29,8 +29,6 @@ namespace CGAL {
 
   namespace parameters
   {
-    typedef Named_function_parameters<bool, internal_np::all_default_t>  Default_named_parameters;
-
     template <class Parameter, class NamedParameters>
     struct Is_default
     {
