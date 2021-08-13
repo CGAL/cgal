@@ -12,10 +12,10 @@ include(CGAL_CreateSingleSourceCGALProgram)
 
 create_single_source_cgal_program("segment_coordinates.cpp")
 create_single_source_cgal_program("triangle_coordinates.cpp")
-create_single_source_cgal_program("Wachspress_coordinates.cpp")
+create_single_source_cgal_program("wachspress_coordinates.cpp")
 create_single_source_cgal_program("mean_value_coordinates.cpp")
 create_single_source_cgal_program("discrete_harmonic_coordinates.cpp")
-create_single_source_cgal_program("Terrain_height_modeling.cpp")
+create_single_source_cgal_program("terrain_height_modeling.cpp")
 
 # this code is deprecated:
 create_single_source_cgal_program("deprecated_coordinates.cpp")
