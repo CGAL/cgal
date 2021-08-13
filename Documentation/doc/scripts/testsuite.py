@@ -150,7 +150,7 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
         for index in range(0, len(results1)):
           result = [('./build_logs', './build_logs', (0,1))]
           results_master.extend(result)
-    for index in range(0, len(results1)-1):
+    for index in range(0, len(results1)):
         status='class="package-good"'
         no_errors = True
         no_warn = True
