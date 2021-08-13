@@ -213,9 +213,9 @@ namespace Barycentric_coordinates {
       const std::size_t i1 = m_element[1];
       const std::size_t i2 = m_element[2];
 
-      CGAL_assertion(i0 >= 0 && i0 < m_domain.number_of_vertices());
-      CGAL_assertion(i1 >= 0 && i1 < m_domain.number_of_vertices());
-      CGAL_assertion(i2 >= 0 && i2 < m_domain.number_of_vertices());
+      CGAL_assertion(i0 < m_domain.number_of_vertices());
+      CGAL_assertion(i1 < m_domain.number_of_vertices());
+      CGAL_assertion(i2 < m_domain.number_of_vertices());
 
       const auto& p0 = m_domain.vertex(i0);
       const auto& p1 = m_domain.vertex(i1);
@@ -276,7 +276,7 @@ namespace Barycentric_coordinates {
       \return an output iterator to the element in the destination range,
       one past the last coordinate stored
 
-      \pre query >= 0 && query < domain.number_of_vertices()
+      \pre query_index >= 0 && query_index < domain.number_of_vertices()
     */
     template<typename OutIterator>
     OutIterator operator()(
@@ -292,7 +292,7 @@ namespace Barycentric_coordinates {
         m_solve_is_called)) return c_begin;
 
       CGAL_precondition(
-        query_index >= 0 && query_index < m_domain.number_of_vertices());
+        query_index < m_domain.number_of_vertices());
       CGAL_assertion(m_boundary.size() > 0);
       CGAL_assertion(m_interior.size() > 0);
 
@@ -597,11 +597,11 @@ namespace Barycentric_coordinates {
               }
             } else {
               triplet_list.push_back(
-                TripletFT(indices[i], indices[idx], w));
+                TripletFT(int(indices[i]), int(indices[idx]), w));
             }
           }
           triplet_list.push_back(
-            TripletFT(indices[i], indices[i], W));
+            TripletFT(int(indices[i]), int(indices[i]), W));
         }
       }
 

@@ -364,7 +364,7 @@ namespace internal {
     switch (location) {
 
       case Query_point_location::ON_VERTEX: {
-        CGAL_assertion(index >= 0 && index < n);
+        CGAL_assertion(index < n);
 
         for (std::size_t i = 0; i < n; ++i)
           if (i == index) {
@@ -376,7 +376,7 @@ namespace internal {
       }
 
       case Query_point_location::ON_EDGE: {
-        CGAL_assertion(index >= 0 && index < n);
+        CGAL_assertion(index < n);
 
         if (index == n - 1) {
           return coordinates_on_last_edge_2(

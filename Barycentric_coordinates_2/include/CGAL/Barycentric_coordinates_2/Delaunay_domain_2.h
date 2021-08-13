@@ -224,8 +224,7 @@ namespace Barycentric_coordinates {
     const Point_2& vertex(
       const std::size_t query_index) const {
 
-      CGAL_precondition(
-        query_index >= 0 && query_index < number_of_vertices());
+      CGAL_precondition(query_index < number_of_vertices());
       return m_vhs[query_index]->point();
     }
 
@@ -243,8 +242,7 @@ namespace Barycentric_coordinates {
     bool is_on_boundary(
       const std::size_t query_index) const {
 
-      CGAL_precondition(
-        query_index >= 0 && query_index < number_of_vertices());
+      CGAL_precondition(query_index < number_of_vertices());
       return m_vhs[query_index]->info().is_on_boundary;
     }
 
@@ -267,8 +265,7 @@ namespace Barycentric_coordinates {
       const std::size_t query_index,
       std::vector<std::size_t>& neighbors) const {
 
-      CGAL_precondition(
-        query_index >= 0 && query_index < number_of_vertices());
+      CGAL_precondition(query_index < number_of_vertices());
       const auto vh = m_vhs[query_index];
       neighbors = vh->info().neighbors;
     }
@@ -294,7 +291,7 @@ namespace Barycentric_coordinates {
       triangle.clear();
       const auto fh = m_cdt.locate(query);
       if (fh->is_in_domain()) {
-        for (std::size_t i = 0; i < 3; ++i) {
+        for (int i = 0; i < 3; ++i) {
           triangle.push_back(fh->vertex(i)->info().index);
         }
       }
