@@ -70,6 +70,7 @@ Segment_Delaunay_graph_2 2D Segment Delaunay Graphs
 Segment_Delaunay_graph_Linf_2 L Infinity Segment Delaunay Graphs
 Set_movable_separability_2 2D Movable Separability of Sets
 Shape_detection Shape Detection
+Shape_regularization Shape Regularization
 Skin_surface_3 3D Skin Surface Meshing
 Snap_rounding_2 2D Snap Rounding
 Spatial_searching dD Spatial Searching
