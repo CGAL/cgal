@@ -1,4 +1,4 @@
-project( BGL_PMP )
+project( BGL_PMP_Examples )
 
 
 cmake_minimum_required(VERSION 2.8.11)
