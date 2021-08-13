@@ -32,11 +32,13 @@ Release date: December 2021
     if the bounded-error Hausdorff distance between two meshes is larger than the user-specified
     max distance.
 
+### [The Heat Method](https://doc.cgal.org/5.4/Manual/packages.html#PkgHeatMethod)
+
+-   Added the operator `operator(const Vector_3& v)`, which computes the squared length of `v`, to the `HeatMethodTraits_3` concept.
 
 ###  [CGAL and Solvers](https://doc.cgal.org/5.4/Manual/packages.html#PkgSolverInterface)
 
 -   Added the [OSQP solver](https://osqp.org/) support. This solver enables to efficiently compute the convex Quadratic Programming (QP) problems arising in the context of several packages.
-
 
 ### [Point Set Processing](https://doc.cgal.org/5.4/Manual/packages.html#PkgPointSetProcessing3)
 
