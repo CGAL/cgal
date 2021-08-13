@@ -43,18 +43,6 @@ enum Verbose_level {
   VERBOSE
 };
 
-// the named parameter header being not documented the doc is put here for now
-#ifdef DOXYGEN_RUNNING
-namespace parameters {
-
-/*! \ingroup bgl_namedparameters
- * This function is used when default parameters are just fine for approximation or meshing.
- */
-unspecified_type all_default();
-
-} // namespace parameters
-#endif
-
 /*!
  * \ingroup PkgTSMARef
  * @brief approximates the input mesh with plane proxies.

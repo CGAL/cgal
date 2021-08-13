@@ -56,6 +56,8 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace parameters {
 
+/// TODO: remove this one and deprecate it
+
 /*! \ingroup namedparameters
 This function can be used to indicate that all optional named parameters
 to be used are the default ones. This is particularly useful when a function

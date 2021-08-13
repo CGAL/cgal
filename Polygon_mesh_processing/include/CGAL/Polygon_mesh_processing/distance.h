@@ -1106,7 +1106,7 @@ double approximate_Hausdorff_distance(
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
- * The function `CGAL::parameters::all_default()` can be used to indicate to use the default values
+ * The function `CGAL::parameters::use_default_values()` can be used to indicate to use the default values
  * for `np1` and specify custom values for `np2`.
  */
 template< class Concurrency_tag,
