@@ -127,16 +127,6 @@
 #include <boost/config.hpp>
 #include <boost/version.hpp>
 
-// Hack: Boost<1.55 does not detect correctly the C++11 features of ICC.
-// We declare by hand two features that we need (variadic templates and
-// rvalue references).
-#if defined(__INTEL_COMPILER) && defined(__GXX_EXPERIMENTAL_CXX0X__)
-#  undef BOOST_NO_VARIADIC_TEMPLATES
-#  undef BOOST_NO_CXX11_VARIADIC_TEMPLATES
-#  undef BOOST_NO_RVALUE_REFERENCES
-#  undef BOOST_NO_CXX11_RVALUE_REFERENCES
-#endif
-
 #include <CGAL/version.h>
 
 //----------------------------------------------------------------------//
@@ -398,25 +388,6 @@ using std::max;
 #  if defined BOOST_HAS_THREADS || defined _OPENMP
 #    define CGAL_HAS_THREADS
 #  endif
-#endif
-
-#if __has_feature(cxx_thread_local) || \
-    ( (__GNUC__ > 0) && __cplusplus >= 201103L ) || \
-    ( _MSC_VER >= 1900 )
-// see also Installation/cmake/modules/config/support/CGAL_test_cpp_version.cpp
-#define CGAL_CAN_USE_CXX11_THREAD_LOCAL
-#endif
-
-#if (__has_include(<mutex>) && __cplusplus >= 201103L ) | \
-    ( (__GNUC__ > 0) && __cplusplus >= 201103L ) || \
-    ( _MSC_VER >= 1700 )
-#define CGAL_CAN_USE_CXX11_MUTEX
-#endif
-
-#if (__has_include(<atomic>) && __cplusplus >= 201103L ) || \
-    ( (__GNUC__ > 0) && __cplusplus >= 201103L ) || \
-    ( _MSC_VER >= 1700 )
-#define CGAL_CAN_USE_CXX11_ATOMIC
 #endif
 
 #ifndef CGAL_HAS_THREADS
