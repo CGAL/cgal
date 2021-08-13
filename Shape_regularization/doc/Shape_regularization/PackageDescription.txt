@@ -32,7 +32,7 @@ Models and functions that can be used when regularizing planes.
 
 
 \cgalPkgDescriptionBegin{Shape Regularization, PkgShapeRegularization}
-\cgalPkgPicture{logo.svg}
+\cgalPkgPicture{sr_logo_120x120.png}
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Dmitry Anisimov, Gennadii Sytov, Simon Giraudot, Jean-Philippe Bauchet, and Florent Lafarge}
