@@ -381,7 +381,7 @@ namespace internal {
                                          const FT& c_alpha,
                                          const FT& c_beta) -> Uncertain<Sign>
     {
-      return sign(- c_alpha * alpha + c_beta * beta);
+      return CGAL::sign(- c_alpha * alpha + c_beta * beta);
     };
 
     std::array< std::array<FT, 3>, 3> triangle  =
