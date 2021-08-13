@@ -35,6 +35,8 @@ set(list_of_whitelisted_headers_txt [=[
   CGAL/boost/graph/properties_PolyMesh_ArrayKernelT.h
   CGAL/boost/graph/graph_traits_TriMesh_ArrayKernelT.h
   CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h
+  CGAL/boost/graph/graph_traits_SurfaceMesh.h
+  CGAL/boost/graph/properties_SurfaceMesh.h
   CGAL/boost/graph/partition.h
   CGAL/boost/graph/METIS/partition_dual_graph.h
   CGAL/boost/graph/METIS/partition_graph.h
