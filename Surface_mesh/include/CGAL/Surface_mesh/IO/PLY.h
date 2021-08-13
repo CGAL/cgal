@@ -21,8 +21,6 @@
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
-#if !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
-
 #include <CGAL/IO/PLY.h>
 
 #ifdef DOXYGEN_RUNNING
@@ -1157,7 +1155,5 @@ CGAL_DEPRECATED bool write_ply(std::ostream& os, const Surface_mesh<P>& sm)
 #endif // CGAL_NO_DEPRECATED_CODE
 
 } // namespace CGAL
-
-#endif // !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
 
 #endif // CGAL_SURFACE_MESH_IO_PLY_H
