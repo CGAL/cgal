@@ -35,10 +35,10 @@ int main(int argc, char* argv[])
   boost::kruskal_minimum_spanning_tree(sm,
                                        std::back_inserter(mst));
 
- for(edge_descriptor e : mst){
+  for(edge_descriptor e : mst){
     vertex_descriptor s = source(e,sm);
     vertex_descriptor t = target(e,sm);
     std::cout << sm.position(s) << " -- " << sm.position(t) << std::endl;
- }
+  }
   return 0;
 }
