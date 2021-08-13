@@ -27,6 +27,12 @@ else()
   message(STATUS "Examples that use OpenMesh will not be compiled.")
 endif()
 
+find_package( pmp QUIET )
+
+if ( NOT pmp_FOUND )
+  message(STATUS "Examples that use PMP-library will not be compiled.")
+endif()
+
 # include for local directory
 
 # include for local package
@@ -130,6 +136,13 @@ if(TARGET CGAL::METIS_support)
 else()
   message(STATUS "Tests, which use the METIS library will not be compiled.")
 endif()
+
+if(pmp_FOUND)
+  create_single_source_cgal_program( "hole_filling_example_PMP.cpp")
+  target_link_libraries(hole_filling_example_PMP PRIVATE pmp)
+  target_link_libraries(hole_filling_example_PMP PUBLIC CGAL::Eigen3_support)
+endif(pmp_FOUND)
+
 
 find_package(TBB)
 include(CGAL_TBB_support)

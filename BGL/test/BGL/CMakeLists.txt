@@ -25,6 +25,8 @@ else()
   message(STATUS "Tests that use OpenMesh will not be compiled.")
 endif()
 
+find_package(pmp QUIET)
+
 # include for local package
 
 # Creating entries for all .cpp/.C files with "main" routine
@@ -152,3 +154,8 @@ if(3MF_LIBRARIES AND 3MF_INCLUDE_DIR  AND EXISTS "${3MF_INCLUDE_DIR}/Model/COM/N
 else()
   message(STATUS "NOTICE : This program requires the lib3MF library, and will not be compiled.")
 endif()
+
+#if(PMP_FOUND)
+  create_single_source_cgal_program( "graph_concept_PMP.cpp" )
+  target_link_libraries (graph_concept_PMP PRIVATE pmp )
+#endif()
