@@ -44,10 +44,6 @@
 #  define CGAL_NO_WARNINGS
 #endif
 
-#ifdef CGAL_CFG_NO_CPP0X_STATIC_ASSERT
-#include <boost/static_assert.hpp>
-#endif
-
 namespace CGAL {
 
 // function declarations
@@ -110,8 +106,6 @@ inline bool possibly(Uncertain<bool> c);
 #  define CGAL_assume_code(CODE) CGAL_assertion_code(CODE)
 #endif // no CGAL_NO_ASSERTIONS
 
-#ifndef CGAL_CFG_NO_CPP0X_STATIC_ASSERT
-
 #  if defined(CGAL_NO_ASSERTIONS)
 
 #    define CGAL_static_assertion(EX) \
@@ -129,28 +123,6 @@ inline bool possibly(Uncertain<bool> c);
      static_assert(EX, MSG)
 
 #  endif // no CGAL_NO_ASSERTIONS
-
-#else // if CGAL_CFG_NO_CPP0X_STATIC_ASSERT is true
-
-#  if defined(CGAL_NO_ASSERTIONS)
-
-#    define CGAL_static_assertion(EX) \
-     BOOST_STATIC_ASSERT(true) CGAL_UNUSED
-
-#    define CGAL_static_assertion_msg(EX,MSG) \
-     BOOST_STATIC_ASSERT(true) CGAL_UNUSED
-
-#  else // no CGAL_NO_ASSERTIONS
-
-#    define CGAL_static_assertion(EX) \
-     BOOST_STATIC_ASSERT(EX) CGAL_UNUSED
-
-#    define CGAL_static_assertion_msg(EX,MSG) \
-     BOOST_STATIC_ASSERT(EX) CGAL_UNUSED
-
-#  endif // no CGAL_NO_ASSERTIONS
-
-#endif // if CGAL_CFG_NO_CPP0X_STATIC_ASSERT is true
 
 #if defined(CGAL_NO_ASSERTIONS) || !defined(CGAL_CHECK_EXACTNESS)
 #  define CGAL_exactness_assertion(EX) (static_cast<void>(0))
