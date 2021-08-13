@@ -34,7 +34,7 @@ Release date: December 2021
 
 ### [The Heat Method](https://doc.cgal.org/5.4/Manual/packages.html#PkgHeatMethod)
 
--   Added the operator `operator(const Vector_3& v)`, which computes the squared length of `v`, to the `HeatMethodTraits_3` concept.
+-   **Breaking change**: Added the operator `operator(const Vector_3& v)`, which computes the squared length of `v`, to the `HeatMethodTraits_3` concept.
 
 ###  [CGAL and Solvers](https://doc.cgal.org/5.4/Manual/packages.html#PkgSolverInterface)
 
