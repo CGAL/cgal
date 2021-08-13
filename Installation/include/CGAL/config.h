@@ -223,9 +223,6 @@
 #define CGAL_CFG_NO_TR1_ARRAY 1
 // never use TR1
 #define CGAL_CFG_NO_TR1_TUPLE 1
-#if (__GNUC__ <= 0) || defined(__INTEL_COMPILER)
-#define CGAL_CFG_NO_STATEMENT_EXPRESSIONS 1
-#endif
 #if _MSC_VER==1800
 #define CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX
 #endif
