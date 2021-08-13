@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -27,8 +27,7 @@
 
 namespace CGAL {
 
-
-class pmp_edge_weight_pmap 
+class pmp_edge_weight_pmap
  : public boost::put_get_helper<double, pmp_edge_weight_pmap >
 {
   typedef pmp::SurfaceMesh SM;
@@ -49,11 +48,9 @@ public:
   }
 
 private:
-  
+
   const SM& sm;
 };
-
-  
 
 template <typename VEF>
 class pmp_index_pmap : public boost::put_get_helper<boost::uint32_t, pmp_index_pmap<VEF> >
@@ -102,7 +99,7 @@ get(boost::edge_weight_t, const SurfaceMesh& sm,
 {
   return CGAL::pmp_edge_weight_pmap(sm)[e];
 }
-  
+
 } // namespace pmp
 
 //
@@ -110,13 +107,15 @@ get(boost::edge_weight_t, const SurfaceMesh& sm,
 //
 
 namespace boost {
-template <>  
+
+template <>
 struct property_map<pmp::SurfaceMesh, boost::vertex_index_t >
 {
   typedef CGAL::pmp_index_pmap<pmp::Vertex> type;
   typedef CGAL::pmp_index_pmap<pmp::Vertex> const_type;
 };
-}
+
+} // namespace boost
 
 
 namespace pmp{
@@ -126,22 +125,22 @@ get(const boost::vertex_index_t&, const SurfaceMesh&)
 {
   return CGAL::pmp_index_pmap<Vertex>();
 }
-  
-}
+
+} // namespace pmp
 
 //
 // face_index
 //
 namespace boost{
- 
+
 template<>
 struct property_map<pmp::SurfaceMesh, boost::face_index_t >
 {
   typedef CGAL::pmp_index_pmap<pmp::Face> type;
   typedef CGAL::pmp_index_pmap<pmp::Face> const_type;
 };
-  
-}
+
+} // namespace boost
 
 namespace pmp{
 
@@ -150,23 +149,20 @@ get(const boost::face_index_t&, const SurfaceMesh&)
 {
   return CGAL::pmp_index_pmap<pmp::Face>();
 }
-}
+
+} // namespace pmp
 
 //
 // edge_index
 //
 namespace boost{
-  
+
 template <>
 struct property_map<pmp::SurfaceMesh, boost::edge_index_t >
 {
   typedef CGAL::pmp_index_pmap<CGAL::internal::PMP_edge> type;
   typedef CGAL::pmp_index_pmap<CGAL::internal::PMP_edge> const_type;
 };
-  
-}
-
-namespace boost{
 
 template <typename T>
 struct property_traits<pmp::VertexProperty<T>> {
@@ -175,7 +171,7 @@ struct property_traits<pmp::VertexProperty<T>> {
   typedef boost::lvalue_property_map_tag category;
   typedef typename pmp::VertexProperty<T>::reference reference;
 };
- 
+
 template <typename T>
 struct property_traits<pmp::HalfedgeProperty<T>> {
   typedef pmp::Halfedge key_type;
@@ -183,7 +179,7 @@ struct property_traits<pmp::HalfedgeProperty<T>> {
   typedef boost::lvalue_property_map_tag category;
   typedef typename pmp::HalfedgeProperty<T>::reference reference;
 };
-  
+
 template <typename T>
 struct property_traits<pmp::EdgeProperty<T>> {
   typedef pmp::Edge key_type;
@@ -191,15 +187,16 @@ struct property_traits<pmp::EdgeProperty<T>> {
   typedef boost::lvalue_property_map_tag category;
   typedef typename pmp::EdgeProperty<T>::reference reference;
 };
-  
+
 template <typename T>
 struct property_traits<pmp::FaceProperty<T>> {
   typedef pmp::Face key_type;
   typedef T value_type;
   typedef boost::lvalue_property_map_tag category;
   typedef typename pmp::FaceProperty<T>::reference reference;
-}; 
-}
+};
+
+} // namespace boost
 
 
 namespace pmp{
@@ -209,21 +206,22 @@ get(const boost::edge_index_t&, const SurfaceMesh&)
 {
   return CGAL::pmp_index_pmap<CGAL::internal::PMP_edge>();
 }
-}
+
+} // namespace pmp
 
 //
 // halfedge_index
 //
 namespace boost{
-  
+
 template <>
 struct property_map<pmp::SurfaceMesh, boost::halfedge_index_t >
 {
   typedef CGAL::pmp_index_pmap<pmp::Halfedge> type;
   typedef CGAL::pmp_index_pmap<pmp::Halfedge> const_type;
 };
-  
-}
+
+} // namespace boost
 
 namespace pmp{
 
@@ -232,8 +230,8 @@ get(const boost::halfedge_index_t&, const SurfaceMesh&)
 {
   return CGAL::pmp_index_pmap<Halfedge>();
 }
-  
-}
+
+} //namespace pmp
 
 //
 // vertex_point
@@ -250,26 +248,26 @@ struct VertexPointMap {
   VertexPointMap(const SurfaceMesh& sm)
     : sm(&const_cast<SurfaceMesh&>(sm))
   {}
-  
+
   inline friend value_type get(const VertexPointMap& pm, key_type v)
   {
     const Point& p = pm.sm->position(v);
-    return P(p[0],p[1],p[2]);   
+    return P(p[0],p[1],p[2]);
   }
-  
+
   inline friend void put(const VertexPointMap& pm, key_type v, const value_type& p)
   {
     pm.sm->position(v) = Point(p.x(),p.y(),p.z());
   }
-  
+
   SurfaceMesh* sm;
 };
-  
-}
+
+} // namespace pmp
 
 
 namespace boost{
-  
+
 template <>
 struct property_map<pmp::SurfaceMesh, CGAL::vertex_point_t >
 {
@@ -278,8 +276,8 @@ struct property_map<pmp::SurfaceMesh, CGAL::vertex_point_t >
   typedef pmp::VertexPointMap<P> type;
   typedef type const_type;
 };
-  
-}
+
+}  // boost namespace
 
 
 namespace pmp{
@@ -323,28 +321,16 @@ put(CGAL::vertex_point_t p, SurfaceMesh& sm,
 
 } // namespace pmp
 
-#if 0
-namespace boost {
-
-template <>
-struct edge_property_type<pmp::SurfaceMesh>
-{
-  typedef boost::edge_weight_t type;
-};
- 
-}
-#endif
-
 namespace CGAL {
 
 template <>
 struct graph_has_property<pmp::SurfaceMesh, boost::vertex_index_t>
   : CGAL::Tag_true {};
-  
+
 template <>
 struct graph_has_property<pmp::SurfaceMesh, boost::edge_index_t>
   : CGAL::Tag_true {};
-  
+
 template <>
 struct graph_has_property<pmp::SurfaceMesh, boost::halfedge_index_t>
   : CGAL::Tag_true {};
@@ -356,7 +342,7 @@ struct graph_has_property<pmp::SurfaceMesh, boost::face_index_t>
 template <>
 struct graph_has_property<pmp::SurfaceMesh, CGAL::vertex_point_t>
   : CGAL::Tag_true {};
-  
+
 template <>
 struct graph_has_property<pmp::SurfaceMesh, boost::edge_weight_t>
   : CGAL::Tag_true {};
@@ -487,7 +473,7 @@ remove_property(pmp::EdgeProperty<T> pm, pmp::SurfaceMesh& sm)
 {
   return sm.remove_edge_property(pm);
 }
-  
+
 template <typename T>
 void
 remove_property(pmp::HalfedgeProperty<T> pm, pmp::SurfaceMesh& sm)

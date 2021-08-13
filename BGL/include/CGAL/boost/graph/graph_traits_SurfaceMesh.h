@@ -165,7 +165,7 @@ struct Construct_pmp_edge_opposite
   result_type operator()(const T& h) const { return result_type(h).opposite_edge(); }
 };
 
-  } } // CGAL::internal
+} } // CGAL::internal
 
 namespace boost {
 
@@ -344,7 +344,7 @@ edges(const SurfaceMesh& sm)
 }
 
 
-  // fwd decl
+// fwd decl
 boost::graph_traits<SurfaceMesh>::halfedge_descriptor
 halfedge(boost::graph_traits<SurfaceMesh>::vertex_descriptor v,
          const SurfaceMesh& sm);
@@ -390,8 +390,8 @@ std::pair<boost::graph_traits<SurfaceMesh>::edge_descriptor,
           bool>
 edge(boost::graph_traits<SurfaceMesh>::vertex_descriptor u,
      boost::graph_traits<SurfaceMesh>::vertex_descriptor v,
-     const SurfaceMesh& sm) {
-
+     const SurfaceMesh& sm)
+{
   std::pair<boost::graph_traits<SurfaceMesh>::halfedge_descriptor,bool> res = halfedge(u,v,sm);
 
   return std::make_pair(edge(res.first,sm), res.second);
@@ -644,20 +644,6 @@ remove_vertex(boost::graph_traits<SurfaceMesh>::vertex_descriptor v,
 
   sm.delete_vertex(v);
 }
-
-
-#if 0
-inline
-void
-remove_edge(boost::graph_traits<SurfaceMesh>::vertex_descriptor u,
-            boost::graph_traits<SurfaceMesh>::vertex_descriptor v,
-            SurfaceMesh& sm)
-{
-  boost::graph_traits<SurfaceMesh>::edge_descriptor e = edge(u, v, sm);
-  sm.delete_edge(e);
-}
-#endif
-
 
 inline
 void
