@@ -21,6 +21,7 @@
 
 
 #include <boost/core/demangle.hpp>
+#include <random>
 
 static std::size_t C = 10;
 static std::size_t T = 100000;
@@ -91,8 +92,7 @@ void benchmark(std::string input_path) {
 
   std::ifstream in(input_path);
   Polyhedron data;
-//  in >> data;
-  CGAL::IO::read_PLY(in, data);
+  in >> data;
 
   auto queries = generate_queries<K>(T);
 
@@ -120,29 +120,30 @@ void breakeven(std::string input_path) {
 
   std::ifstream in(input_path);
   Data data;
-  CGAL::IO::read_PLY(in, data);
+  in >> data;
 
   auto queries = generate_queries<K>(T);
 
   std::cout << "{| class=\"wikitable\"\n";
   std::cout << "|+ " << boost::core::demangle(typeid(K).name()) << std::endl;
   std::cout
-          << "! # Primitives !! Recursive Partition Construction !! Hilbert Sort Construction !! Recursive Partition Traversal !! Hilbert Sort Traversal"
+          << "! # Primitives !!!! Recursive Partition Construction !! Hilbert Sort Construction !!!! Recursive Partition Traversal !! Hilbert Sort Traversal"
           << std::endl;
   std::size_t target_num_primitives = std::pow(10, (int) std::log10(data.number_of_faces()));
   while (data.number_of_faces() > 100) {
 
     std::cout << "|-" << std::endl;
     std::cout << "| " << data.number_of_faces()
-              << " || " << benchmark_construction<Traits_construct_by_splitting>(data) << " s" << std::flush
+              << " |||| " << benchmark_construction<Traits_construct_by_splitting>(data) << " s" << std::flush
               << " || " << benchmark_construction<Traits_construct_by_sorting>(data) << " s" << std::flush
-              << " || " << benchmark_traversal<Traits_construct_by_splitting>(data, queries) << " s" << std::flush
+              << " |||| " << benchmark_traversal<Traits_construct_by_splitting>(data, queries) << " s" << std::flush
               << " || " << benchmark_traversal<Traits_construct_by_sorting>(data, queries) << " s" << std::endl;
 
-    CGAL::Surface_mesh_simplification::Count_stop_predicate<Data> stop_predicate(1 + target_num_primitives * 3 / 2);
-    CGAL::Surface_mesh_simplification::edge_collapse(data, stop_predicate);
+    // Randomly remove some of the faces
+    std::shuffle(data.faces().begin(), data.faces().end(), std::mt19937(std::random_device()()));
+    data.resize(data.number_of_vertices(), data.number_of_edges(), target_num_primitives);
 
-    target_num_primitives /= 10;
+    target_num_primitives /= 2;
   }
   std::cout << "|}" << std::endl;
 }
@@ -156,6 +157,6 @@ int main(int argc, char **argv) {
   breakeven<CGAL::Exact_predicates_inexact_constructions_kernel>(input_path);
 //  benchmark<CGAL::Simple_cartesian<float>>(input_path);
 //  benchmark<CGAL::Simple_cartesian<double>>(input_path);
-  benchmark<CGAL::Exact_predicates_inexact_constructions_kernel>(input_path);
+//  benchmark<CGAL::Exact_predicates_inexact_constructions_kernel>(input_path);
 
 }

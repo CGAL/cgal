@@ -207,7 +207,6 @@ In the following example, the first example's code is modified to use an alterna
 which enables faster construction.
 \ref AABB_traits_construct_by_sorting can produce a tree more quickly than the standard traits,
 but individual traversals over that tree will generally be slower because it will have non-optimal topology.
-The
 \cgalExample{AABB_tree/AABB_fast_construction_example.cpp}
 
 \section aabb_tree_perf Performances

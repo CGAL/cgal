@@ -32,7 +32,6 @@
 
 #ifdef CGAL_HAS_THREADS
 #include <CGAL/mutex.h>
-#include "AABB_face_graph_triangle_primitive.h"
 
 #endif
 
