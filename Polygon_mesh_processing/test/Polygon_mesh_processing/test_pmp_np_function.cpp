@@ -14,6 +14,8 @@ void my_function_with_named_parameters(PolygonMesh& mesh, const NamedParameters&
 {
   //The class containing all the geometric definitions for the PolygonMesh
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type  Traits;
+  Traits t;
+  CGAL_USE(t);
   //A vertex-index-map that is either taken from the NPs, either an already initialized map for vertex-indices.
   //Also exists for Faces, Edges and Halfedges
   typedef typename CGAL::GetInitializedVertexIndexMap<PolygonMesh, NamedParameters>::type VertexIndexMap;
@@ -22,13 +24,9 @@ void my_function_with_named_parameters(PolygonMesh& mesh, const NamedParameters&
   //A face-normal-map either taken from the NPs, either a specified default map.
   typedef typename GetFaceNormalMap < PolygonMesh, NamedParameters>::type FNM;
 
-  typedef typename Traits::Point_3 Point_3;
-  typedef typename Traits::Vector_3 Vector_3;
   //The class defining all boost-graph types for the PolygonMesh, like vertex_descriptor and so.
   typedef boost::graph_traits<PolygonMesh> Graph_traits;
   typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
-  typedef typename Graph_traits::edge_descriptor edge_descriptor;
-  typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
 
   //in the case no helper function exists, this is how you get a type from a NP
   typedef Static_boolean_property_map<vertex_descriptor, false>                 Default_VCM;
