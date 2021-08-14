@@ -126,6 +126,7 @@ CGAL_add_named_parameter(non_manifold_feature_map_t, non_manifold_feature_map, n
 CGAL_add_named_parameter(polyhedral_envelope_epsilon_t, polyhedral_envelope_epsilon, polyhedral_envelope_epsilon)
 CGAL_add_named_parameter(match_faces_t, match_faces, match_faces)
 CGAL_add_named_parameter(face_epsilon_map_t, face_epsilon_map, face_epsilon_map)
+CGAL_add_named_parameter(maximum_number_t, maximum_number, maximum_number)
 CGAL_add_named_parameter(use_one_sided_hausdorff_t, use_one_sided_hausdorff, use_one_sided_hausdorff)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
@@ -215,3 +216,16 @@ CGAL_add_named_parameter(accuracy_t, accuracy, accuracy)
 CGAL_add_named_parameter(maximum_running_time_t, maximum_running_time, maximum_running_time)
 CGAL_add_named_parameter(overlap_t, overlap, overlap)
 CGAL_add_named_parameter(maximum_normal_deviation_t, maximum_normal_deviation, maximum_normal_deviation)
+
+// List of named parameters used in Shape_regularization package
+CGAL_add_named_parameter(minimum_length_t, minimum_length, minimum_length)
+CGAL_add_named_parameter(maximum_angle_t, maximum_angle, maximum_angle)
+CGAL_add_named_parameter(maximum_offset_t, maximum_offset, maximum_offset)
+CGAL_add_named_parameter(regularize_parallelism_t, regularize_parallelism, regularize_parallelism)
+CGAL_add_named_parameter(regularize_orthogonality_t, regularize_orthogonality, regularize_orthogonality)
+CGAL_add_named_parameter(regularize_coplanarity_t, regularize_coplanarity, regularize_coplanarity)
+CGAL_add_named_parameter(regularize_axis_symmetry_t, regularize_axis_symmetry, regularize_axis_symmetry)
+CGAL_add_named_parameter(symmetry_direction_t, symmetry_direction, symmetry_direction)
+CGAL_add_named_parameter(preserve_order_t, preserve_order, preserve_order)
+CGAL_add_named_parameter(adjust_directions_t, adjust_directions, adjust_directions)
+CGAL_add_named_parameter(segment_t, segment_map, segment_map)

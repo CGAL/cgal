@@ -293,7 +293,7 @@ QMenu* Scene_plane_item::contextMenu()
   if(!menuChanged) {
     menu->addSeparator();
     QAction* actionOrientPlane=
-        menu->addAction(tr("Set Plane Orientation"));
+        menu->addAction(tr("Set Plane Equation"));
     actionOrientPlane->setObjectName("actionOrientPlane");
     connect(actionOrientPlane, &QAction::triggered,
             this, &Scene_plane_item::setPlaneOrientation);

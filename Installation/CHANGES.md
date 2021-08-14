@@ -16,8 +16,7 @@ Release date: December 2021
 
 ### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.4/Manual/packages.html#PkgKernel23)
 
--   Added `construct_centroid_2_object()` and `compute_determinant_2_object()` in `Projection_traits_xy_3`, `Projection_traits_xz_3`,
-    and`Projection_traits_yz_3` classes.
+-   Added `construct_centroid_2_object()` and `compute_determinant_2_object()` in `Projection_traits_xy_3`, `Projection_traits_xz_3`, and`Projection_traits_yz_3` classes.
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/5.4/Manual/packages.html#PkgPolygonMeshProcessing)
 
@@ -32,9 +31,21 @@ Release date: December 2021
     if the bounded-error Hausdorff distance between two meshes is larger than the user-specified
     max distance.
 
+-   Added more functions in the [visitor of the corefinement based methods](https://doc.cgal.org/5.4/Polygon_mesh_processing/classPMPCorefinementVisitor.html)
+    to track all vertex creations.
+
+-   Added an option to [`CGAL::Polygon_mesh_processing::self_intersections()`](https://doc.cgal.org/5.4/Polygon_mesh_processing/group__PMP__intersection__grp.html#gaf19c80ec12cbff7ebe9e69453f1d40b8) to report only a limited number of intersections (`maximum_number()`)
+
 ### [The Heat Method](https://doc.cgal.org/5.4/Manual/packages.html#PkgHeatMethod)
 
--   **Breaking change**: Added the operator `operator(const Vector_3& v)`, which computes the squared length of `v`, to the `HeatMethodTraits_3` concept.
+-   **Breaking change**: Added the functor `Compute_squared_length_3` that has an operator `operator(const Vector_3& v)`, which computes the squared length of `v`, to the `HeatMethodTraits_3` concept.
+
+### [Shape Regularization](https://doc.cgal.org/5.4/Manual/packages.html#PkgShapeRegularization) (new package)
+
+-   This package enables to regularize a set of segments and open or closed contours in 2D
+    and a set of planes in 3D such that all input objects are rotated and aligned with respect to the
+    user-specified conditions. In addition, it provides a global regularization framework that can be
+    adjusted for the user needs and any type of geometric objects.
 
 ###  [CGAL and Solvers](https://doc.cgal.org/5.4/Manual/packages.html#PkgSolverInterface)
 

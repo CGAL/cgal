@@ -70,6 +70,7 @@ public:
   typedef GeometryTraits_2                              Geometry_traits_2;
   typedef Subcurve_                                     Subcurve;
   typedef Event_                                        Event;
+  typedef Tag_true                                      Handle_overlaps;
 
 private:
   typedef Geometry_traits_2                             Gt2;
