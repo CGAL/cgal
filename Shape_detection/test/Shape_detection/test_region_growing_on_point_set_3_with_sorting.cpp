@@ -140,7 +140,7 @@ int main(int argc, char *argv[]) {
           min_radius, max_radius,
           input_range.point_map(), input_range.normal_map());
      },
-     [](const auto& r) -> bool { return (r.size() > 30 && r.size() < 40); });
+     [](const auto& r) -> bool { return (r.size() > 28 && r.size() < 48); });
   if (!success)
     return EXIT_FAILURE;
 
@@ -165,7 +165,7 @@ int main(int argc, char *argv[]) {
           min_radius, max_radius,
           input_range.point_map(), input_range.normal_map());
      },
-     [](const auto& r) -> bool { return (r.size() > 5 && r.size() < 10); });
+     [](const auto& r) -> bool { return (r.size() > 4 && r.size() < 12); });
   if (!success)
     return EXIT_FAILURE;
 
