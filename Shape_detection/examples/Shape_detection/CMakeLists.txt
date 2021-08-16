@@ -30,7 +30,6 @@ if(TARGET CGAL::Eigen3_support)
     target
     efficient_RANSAC_basic
     efficient_RANSAC_with_callback
-    efficient_RANSAC_and_plane_regularization
     region_growing_lines_on_point_set_2
     region_growing_planes_on_point_set_3
     region_growing_cylinders_on_point_set_3
