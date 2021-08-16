@@ -392,11 +392,11 @@ private:
       std::cerr << "Regularization of planes... " << std::endl;
       CGAL::Shape_regularization::Planes::regularize_planes(
         planes,
-        CGAL::Identity_property_map<Plane_3>(),
+        plane_identity_map,
         *points,
         points->point_map(),
-        CGAL::parameters::plane_index_map(
-          CGAL::Shape_detection::RG::Point_to_shape_index_map(*points, regions)).
+        CGAL::parameters::
+        plane_index_map(point_to_region_map).
         regularize_parallelism(true).
         regularize_orthogonality(true).
         regularize_coplanarity(true).
@@ -680,7 +680,8 @@ private:
           CGAL::Shape_detection::Plane_map<Traits>(),
           *points,
           points->point_map(),
-          CGAL::parameters::plane_index_map(
+          CGAL::parameters::
+          plane_index_map(
             CGAL::Shape_detection::Point_to_shape_index_map<Traits>(*points, planes)).
           regularize_parallelism(true).
           regularize_orthogonality(true).
