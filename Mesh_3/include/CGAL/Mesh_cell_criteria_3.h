@@ -21,9 +21,7 @@
 #include <CGAL/Mesh_3/Is_mesh_domain_field_3.h>
 
 #include <boost/config.hpp>
-#if BOOST_VERSION >= 106600
 #  include <boost/callable_traits/is_invocable.hpp>
-#endif
 
 #include <type_traits>
 

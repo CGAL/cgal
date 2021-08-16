@@ -11,7 +11,7 @@ namespace IO {
 //! \param os the stream used for writing.
 //! \param tr the triangulated domain to be written.
 //! \param mode decides if the data should be written in binary (`BINARY`)
-//!   or in ASCII (`ASCII`).
+//!             or in \ascii (`ASCII`).
 //!
 template <class CDT>
 void write_VTU(std::ostream& os,

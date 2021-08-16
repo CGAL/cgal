@@ -19,7 +19,7 @@ summarized below are CMake variables.
 \subsection installation_component_selection Component Selection
 
 The following boolean variables indicate which \cgal components to
-configure and build. Their values can be ON or OFF.
+configure and/or build. Their values can be ON or OFF.
 
 
 | Variable | %Default Value   |

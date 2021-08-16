@@ -79,7 +79,7 @@ if(Boost_PROGRAM_OPTIONS_FOUND)
   list(APPEND CGAL_3RD_PARTY_LIBRARIES ${Boost_LIBRARIES})
 endif()
 
-if(Boost_FOUND AND Boost_VERSION GREATER 103400)
+if(Boost_FOUND )
   # Compilable benchmark
   set(BENCHMARK_SOURCE_FILES "concurrency.cpp")
   add_msvc_precompiled_header("StdAfx.h" "StdAfx.cpp" BENCHMARK_SOURCE_FILES)

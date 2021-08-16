@@ -316,6 +316,7 @@ void split_along_edges(TriangleMesh& tm,
   std::set<halfedge_descriptor> extra_border_hedges;
   for(std::size_t k=0; k<nb_shared_edges; ++k)
   {
+    if (is_border(shared_edges[k], tm)) continue;
     for(halfedge_descriptor h : halfedges_around_target(target(shared_edges[k], tm), tm))
       if(is_border(h, tm))
         extra_border_hedges.insert(h);
@@ -334,6 +335,7 @@ void split_along_edges(TriangleMesh& tm,
   // now duplicate the edge and set its pointers
   for(std::size_t k=0; k<nb_shared_edges; ++k)
   {
+    if (is_border(shared_edges[k], tm)) continue;
     halfedge_descriptor h    = halfedge(shared_edges[k], tm);
     face_descriptor fh = face(h, tm);
     //add edge

@@ -18,7 +18,7 @@
 #include <bitset>
 
 #include <boost/config.hpp>
-#if  (BOOST_GCC >= 40900)
+#if defined(BOOST_GCC)
 _Pragma("GCC diagnostic push")
 _Pragma("GCC diagnostic ignored \"-Warray-bounds\"")
 #endif
@@ -460,7 +460,7 @@ namespace CGAL {
                                 Items_, Alloc_, Concurrent_tag>::null_handle = nullptr;
 } // namespace CGAL
 
-#if  (BOOST_GCC >= 40900)
+#if defined(BOOST_GCC)
  _Pragma("GCC diagnostic pop")
 #endif
 #endif // CGAL_GMAP_LINEAR_CELL_COMPLEX_STORAGES_H //

@@ -209,7 +209,7 @@ The current implementation incorporates two open source solvers: \ref thirdparty
 with reasonably simple structure.
 In case you are reconstructing more complex objects, you may need to consider more efficient open source
 solvers (e.g., <a href = "https://projects.coin-or.org/Cbc">CBC</a>) or even commercial solvers (e.g.,
-<a href = "http://www.gurobi.com/">Gurobi</a>, <a href = "https://www.ibm.com/analytics/cplex-optimizer">CPLEX</a>).
+<a href = "https://www.gurobi.com/">Gurobi</a>, <a href = "https://www.ibm.com/analytics/cplex-optimizer">CPLEX</a>).
 The following table gives a rough idea of the performance of some solvers.
 
 | Model            | Problem Size <br>variables/constraints | Gurobi | CBC | SCIP | GLPK | LP_SOLVE |

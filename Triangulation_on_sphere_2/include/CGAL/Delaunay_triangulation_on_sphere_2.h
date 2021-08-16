@@ -147,6 +147,16 @@ public:
   {
   }
 
+  // Assignement
+  Delaunay_triangulation_on_sphere_2& operator=(Delaunay_triangulation_on_sphere_2 other) // intentional copy
+  {
+    Base::swap(static_cast<Base&>(other));
+    return *this;
+  }
+
+  // Destructor
+  ~Delaunay_triangulation_on_sphere_2() = default;
+
   // Predicates & Constructions
   Oriented_side side_of_oriented_circle(const Point& p, const Point& q, const Point& r, const Point& s, bool perturb = false) const;
   Oriented_side side_of_oriented_circle(const Face_handle f, const Point& p, bool perturb = false) const;

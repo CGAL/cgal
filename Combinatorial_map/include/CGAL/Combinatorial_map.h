@@ -55,7 +55,7 @@
 #endif
 
 #include <boost/config.hpp>
-#if  (BOOST_GCC >= 40900)
+#if defined(BOOST_GCC)
 _Pragma("GCC diagnostic push")
 _Pragma("GCC diagnostic ignored \"-Warray-bounds\"")
 #endif
@@ -4824,7 +4824,7 @@ namespace CGAL {
 
 } // namespace CGAL
 
-#if  (BOOST_GCC >= 40900)
+#if defined(BOOST_GCC)
  _Pragma("GCC diagnostic pop")
 #endif
 

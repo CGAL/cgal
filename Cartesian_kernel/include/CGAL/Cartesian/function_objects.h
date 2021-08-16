@@ -606,6 +606,7 @@ namespace CartesianKernelFunctors {
   template <typename K>
   class Compare_slope_2
   {
+    typedef typename K::Point_2            Point_2;
     typedef typename K::Line_2             Line_2;
     typedef typename K::Segment_2          Segment_2;
   public:
@@ -624,6 +625,15 @@ namespace CartesianKernelFunctors {
                               s1.target().x(), s1.target().y(),
                               s2.source().x(), s2.source().y(),
                               s2.target().x(), s2.target().y());
+    }
+
+    result_type
+    operator()(const Point_2& s1s, const Point_2& s1t, const Point_2& s2s, const Point_2& s2t) const
+    {
+      return compare_slopesC2(s1s.x(), s1s.y(),
+                              s1t.x(), s1t.y(),
+                              s2s.x(), s2s.y(),
+                              s2t.x(), s2t.y());
     }
   };
 
@@ -2741,6 +2751,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::FT        FT;
     typedef typename K::Point_2   Point_2;
+    typedef typename K::Segment_2 Segment_2;
   public:
     typedef Point_2          result_type;
 
@@ -2752,6 +2763,17 @@ namespace CartesianKernelFunctors {
       midpointC2(p.x(), p.y(), q.x(), q.y(), x, y);
       return construct_point_2(x, y);
     }
+
+    Point_2
+    operator()(const Segment_2& s) const
+    {
+      typename K::Construct_point_2 construct_point_2;
+      FT x, y;
+      const Point_2& p = s.source();
+      const Point_2& q = s.target();
+      midpointC2(p.x(), p.y(), q.x(), q.y(), x, y);
+      return construct_point_2(x, y);
+    }
   };
 
   template <typename K>
@@ -2759,12 +2781,24 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::FT        FT;
     typedef typename K::Point_3   Point_3;
+    typedef typename K::Segment_3 Segment_3;
   public:
     typedef Point_3               result_type;
 
     Point_3
     operator()(const Point_3& p, const Point_3& q) const
     {
+      typename K::Construct_point_3 construct_point_3;
+      FT x, y, z;
+      midpointC3(p.x(), p.y(), p.z(), q.x(), q.y(), q.z(), x, y, z);
+      return construct_point_3(x, y, z);
+    }
+
+    Point_3
+    operator()(const Segment_3& s) const
+    {
+      const Point_3& p = s.source();
+      const Point_3& q = s.target();
       typename K::Construct_point_3 construct_point_3;
       FT x, y, z;
       midpointC3(p.x(), p.y(), p.z(), q.x(), q.y(), q.z(), x, y, z);

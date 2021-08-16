@@ -67,7 +67,7 @@ void read(std::istream& is)
     case CGAL::IO::BINARY :
       CGAL::read(is, _p[0]); CGAL::read(is, _p[1]); break;
     default:
-    CGAL_error_msg("\nStream must be in ascii or binary mode\n");
+    CGAL_error_msg("\nStream must be in ASCII or binary mode\n");
   }
 }
 
