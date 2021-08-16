@@ -90,7 +90,7 @@ int main (int argc, char** argv)
 
   // Save in colored_spheres.ply
   std::ofstream out ("colored_spheres.ply");
-  CGAL::set_binary_mode (out);
+  CGAL::IO::set_binary_mode (out);
   out << points;
 
   return EXIT_SUCCESS;

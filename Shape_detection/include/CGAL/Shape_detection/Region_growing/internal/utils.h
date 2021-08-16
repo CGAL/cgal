@@ -44,6 +44,9 @@ namespace internal {
   public:
     FT operator()(const FT value) const {
 
+      // TODO: This happens for circles and cylinders only! Maybe after my
+      // precision cleaning in the new revision PR, this will be gone for all platforms.
+      if (value < FT(0)) return FT(0); // clamp to zero
       CGAL_precondition(value >= FT(0));
       return static_cast<FT>(CGAL::sqrt(CGAL::to_double(value)));
     }
