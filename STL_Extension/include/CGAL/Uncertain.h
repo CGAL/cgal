@@ -511,7 +511,7 @@ inline
 Uncertain<bool> CGAL_AND(bool a, const Uncertain<bool>& b)
 {
   return !a ? make_uncertain(false)
-            : a & b;
+            : b;
 }
 
 inline
@@ -538,7 +538,7 @@ inline
 Uncertain<bool> CGAL_OR(bool a, const Uncertain<bool>& b)
 {
   return a ? make_uncertain(true)
-            : a | b;
+            : b;
 }
 
 inline
