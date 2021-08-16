@@ -12,7 +12,7 @@ namespace CGAL {
 <img src="header.png" style="max-width:70%;"/>
 </center>
 
-This chapter describes two-dimensional triangulations on the sphere of \cgal. It is organized as follows:
+This chapter describes two-dimensional triangulations on the sphere. It is organized as follows:
 <ul>
   <li>Section \ref Section_2D_ToS_Definitions introduces the main definitions about triangulations on the sphere.</li>
   <li>Section \ref Section_2D_ToS_Implementation details the way two-dimensional triangulations on the sphere
@@ -235,6 +235,8 @@ Prototype code implementing the publication of Caroli et al. \cgalCite{cgal:ccpl
 was developed over the two internships of Oliver Rouiller and Claudia Werner at Inria,
 under the supervision of Monique Teillaud and with the help of Sébastien Loriot.
 Based on this prototype, Mael Rouxel-Labbé developed the initial version of this package.
+
+The work was partially supported by the grant ANR-17-CE40-0033 of the French National Research Agency ANR <a href="https://members.loria.fr/Monique.Teillaud/collab/SoS/">(project SoS)</a> and INTER/ANR/16/11554412/SoS of the Luxembourg National Research fund FNR.
 
 */
 } /* namespace CGAL */

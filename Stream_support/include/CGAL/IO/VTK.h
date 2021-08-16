@@ -363,7 +363,7 @@ void write_soup_polys_points(std::ostream& os,
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{use_binary_mode}
- *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+ *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in \ascii (`false`)}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
@@ -371,7 +371,7 @@ void write_soup_polys_points(std::ostream& os,
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
- *     \cgalParamDefault{`the precision of the stream `os``}
+ *     \cgalParamDefault{the precision of the stream `os`}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -461,7 +461,7 @@ bool write_VTP(std::ostream& os, const PointRange& points, const PolygonRange& p
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{use_binary_mode}
- *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+ *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in \ascii (`false`)}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd

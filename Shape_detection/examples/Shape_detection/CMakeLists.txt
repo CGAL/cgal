@@ -15,8 +15,6 @@ include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("efficient_RANSAC_basic.cpp")
   create_single_source_cgal_program("efficient_RANSAC_with_callback.cpp")
-  create_single_source_cgal_program(
-    "efficient_RANSAC_and_plane_regularization.cpp")
 
   create_single_source_cgal_program("region_growing_lines_on_point_set_2.cpp")
   create_single_source_cgal_program("region_growing_planes_on_point_set_3.cpp")

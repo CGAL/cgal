@@ -73,11 +73,11 @@ namespace IO {
      \cgalParamNEnd
 
      \cgalParamNBegin{use_binary_mode}
-       \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
+       \cgalParamDescription{indicates whether data should be read in binary (`true`) or in \ascii (`false`)}
        \cgalParamType{Boolean}
        \cgalParamDefault{`true`}
        \cgalParamExtra{This parameter is only relevant for `PLY` reading: the `OFF` and `XYZ` formats
-                       are always ASCII, and the `LAS` format is always binary.}
+                       are always \ascii, and the `LAS` format is always binary.}
      \cgalParamNEnd
   \cgalNamedParamsEnd
 

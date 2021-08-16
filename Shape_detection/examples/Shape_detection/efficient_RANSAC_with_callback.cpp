@@ -82,7 +82,6 @@ int main (int argc, char** argv) {
 
   // Detect registered shapes with the default parameters.
   ransac.detect(Efficient_ransac::Parameters(), timeout_callback);
-  assert(ransac.shapes().size() > 0);
 
   return EXIT_SUCCESS;
 }

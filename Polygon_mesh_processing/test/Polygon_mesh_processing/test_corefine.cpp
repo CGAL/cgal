@@ -14,13 +14,21 @@ template <class TriangleMesh>
 struct My_visitor :
   public CGAL::Polygon_mesh_processing::Corefinement::Default_visitor<TriangleMesh>
 {
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor VD;
+
   void after_subface_creations(TriangleMesh&){++(*i);}
+  void new_vertex_added(std::size_t, VD, const TriangleMesh& tm)
+  {
+    (*vmap).insert(std::make_pair(&tm, 0)).first->second+=1;
+  }
 
   My_visitor()
     : i (new int(0) )
+    , vmap(new std::map<const TriangleMesh*, int>())
   {}
 
   std::shared_ptr<int> i;
+  std::shared_ptr<std::map<const TriangleMesh*, int> > vmap;
 };
 
 void test(const char* f1, const char* f2)
@@ -40,6 +48,8 @@ void test(const char* f1, const char* f2)
   input.close();
   My_visitor<Surface_mesh> sm_v;
 
+  std::size_t nbv1_before=vertices(sm1).size();
+  std::size_t nbv2_before=vertices(sm2).size();
   std::size_t nb_v_before = num_vertices(sm1) + num_vertices(sm2);
   CGAL::Polygon_mesh_processing::corefine(sm1, sm2,
     CGAL::Polygon_mesh_processing::parameters::visitor(sm_v));
@@ -48,6 +58,8 @@ void test(const char* f1, const char* f2)
   assert(sm1.is_valid());
   assert(sm2.is_valid());
   assert((*(sm_v.i) != 0) == (nb_v_before!=nb_v_after));
+  assert(vertices(sm1).size() == (nbv1_before+(*sm_v.vmap)[&sm1]) );
+  assert(vertices(sm2).size() == (nbv2_before+(*sm_v.vmap)[&sm2]) );
 
   std::cout << "  with Polyhedron_3\n";
   Polyhedron_3 P, Q;
@@ -66,7 +78,8 @@ void test(const char* f1, const char* f2)
   nb_v_after = num_vertices(P) + num_vertices(Q);
 
   assert((*(sm_p.i) != 0)  == (nb_v_before!=nb_v_after));
-
+  assert(vertices(P).size() == (nbv1_before+(*sm_p.vmap)[&P]) );
+  assert(vertices(Q).size() == (nbv2_before+(*sm_p.vmap)[&Q]) );
   assert(*(sm_v.i) == *(sm_p.i));
   assert(P.is_valid());
   assert(Q.is_valid());

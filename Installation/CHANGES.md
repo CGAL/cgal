@@ -1,5 +1,59 @@
 Release History
 ===============
+[Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
+-----------
+
+Release date: December 2021
+
+### [Weights](https://doc.cgal.org/5.4/Manual/packages.html#PkgWeights) (new package)
+
+-   This package provides a simple and unified interface to different types of weights.
+    In particular, it groups all weights into three category: analytic weights including
+    all basic weights which can be computed analytically for a query point with respect to its
+    local neighbors in 2D and 3D; barycentric weights including all weights which can be computed
+    for a query point with respect to the vertices of a planar polygon; and weighting regions
+    including all weights which are used to balance other weights.
+
+### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.4/Manual/packages.html#PkgKernel23)
+
+-   Added `construct_centroid_2_object()` and `compute_determinant_2_object()` in `Projection_traits_xy_3`, `Projection_traits_xz_3`,
+    and`Projection_traits_yz_3` classes.
+
+### [Polygon Mesh Processing](https://doc.cgal.org/5.4/Manual/packages.html#PkgPolygonMeshProcessing)
+
+-   Added the function `CGAL::Polygon_mesh_processing::match_faces()`, which, given two polygon meshes,
+    identifies their common faces as well as faces present in only either of them.
+
+-   Added the functions: `CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance()` that
+    computes an estimate of the one-sided Hausdorff distance between two triangle meshes which
+    is bounded by a user-specified error bound;  `CGAL::Polygon_mesh_processing::bounded_error_symmetric_Hausdorff_distance()` that computes
+    an estimate of the symmetric Hausdorff distance bounded by a user-specified error bound;
+    and `CGAL::Polygon_mesh_processing::is_Hausdorff_distance_larger()` that returns `true`
+    if the bounded-error Hausdorff distance between two meshes is larger than the user-specified
+    max distance.
+
+-   Added more functions in the [visitor of the corefinement based methods](https://doc.cgal.org/5.4/Polygon_mesh_processing/classPMPCorefinementVisitor.html)
+    to track all vertex creations.
+
+-   Added an option to [`CGAL::Polygon_mesh_processing::self_intersections()`](https://doc.cgal.org/5.4/Polygon_mesh_processing/group__PMP__intersection__grp.html#gaf19c80ec12cbff7ebe9e69453f1d40b8) to report only a limited number of intersections (`maximum_number()`)
+
+### [Shape Regularization](https://doc.cgal.org/5.4/Manual/packages.html#PkgShapeRegularization) (new package)
+
+-   This package enables to regularize a set of segments and open or closed contours in 2D
+    and a set of planes in 3D such that all input objects are rotated and aligned with respect to the
+    user-specified conditions. In addition, it provides a global regularization framework that can be
+    adjusted for the user needs and any type of geometric objects.
+
+###  [CGAL and Solvers](https://doc.cgal.org/5.4/Manual/packages.html#PkgSolverInterface)
+
+-   Added the [OSQP solver](https://osqp.org/) support. This solver enables to efficiently compute the convex Quadratic Programming (QP) problems arising in the context of several packages.
+
+
+### [Point Set Processing](https://doc.cgal.org/5.4/Manual/packages.html#PkgPointSetProcessing3)
+
+-   Added support for `libpointmatcher::GenericDescriptorOutlierFilter`
+    that enables to provide a map from a point to a weight associated with this point.
+
 
 ### [Shape Detection](https://doc.cgal.org/5.4/Manual/packages.html#PkgShapeDetection)
 

@@ -68,6 +68,20 @@ public:
                  Traversal_traits& traits,
                  const std::size_t nb_primitives) const;
 
+  template<class Traversal_traits, class Query>
+  void traversal_with_priority(const Query& query,
+                               Traversal_traits& traits,
+                               const std::size_t nb_primitives) const;
+
+  template<class Primitive_vector, class Traversal_traits, class Query>
+  void traversal_with_priority_and_group_traversal(const Primitive_vector& primitives,
+                                                   const Query& query,
+                                                   Traversal_traits& traits,
+                                                   const std::size_t nb_primitives,
+                                                   std::size_t first_primitive_index,
+                                                   const std::size_t group_size_bound) const;
+
+
 private:
   typedef AABBTraits AABB_traits;
   typedef AABB_node<AABB_traits> Node;
@@ -148,6 +162,156 @@ AABB_node<Tr>::traversal(const Query& query,
     else if( traits.do_intersect(query, right_child()) )
     {
       right_child().traversal(query, traits, nb_primitives-nb_primitives/2);
+    }
+  }
+}
+
+template<typename Tr>
+template<class Traversal_traits, class Query>
+void
+AABB_node<Tr>::traversal_with_priority(const Query& query,
+                                       Traversal_traits& traits,
+                                       const std::size_t nb_primitives) const
+{
+  // Recursive traversal
+  switch(nb_primitives)
+  {
+  case 2:
+    traits.intersection(query, left_data());
+    if( traits.go_further() )
+    {
+      traits.intersection(query, right_data());
+    }
+    break;
+  case 3:
+    traits.intersection(query, left_data());
+    if( traits.go_further() && traits.do_intersect(query, right_child()) )
+    {
+      right_child().traversal_with_priority(query, traits, 2);
+    }
+    break;
+  default:
+    bool ileft, iright;
+    typename Traversal_traits::Priority pleft, pright;
+    std::tie(ileft, pleft) = traits.do_intersect_with_priority(query, left_child());
+    std::tie(iright, pright) = traits.do_intersect_with_priority(query, right_child());
+    CGAL_precondition( (ileft || iright) ? traits.do_intersect(query, *this) : true );
+
+    if(ileft)
+    {
+      if(iright)
+      {
+        // Both children have to be inspected.
+        if(pleft >= pright)
+        {
+          // Inspect the left child first, has higher priority.
+          left_child().traversal_with_priority(query, traits, nb_primitives/2);
+          if( traits.go_further() )
+            right_child().traversal_with_priority(query, traits, nb_primitives-nb_primitives/2);
+        }
+        else
+        {
+          // Inspect the right child first, has higher priority.
+          right_child().traversal_with_priority(query, traits, nb_primitives-nb_primitives/2);
+          if( traits.go_further() )
+            left_child().traversal_with_priority(query, traits, nb_primitives/2);
+        }
+      }
+      else
+      {
+        // Only the left child has to be inspected.
+        left_child().traversal_with_priority(query, traits, nb_primitives/2);
+      }
+    }
+    else
+    {
+      if(iright)
+      {
+        // Only the right child has to be inspected.
+        right_child().traversal_with_priority(query, traits, nb_primitives-nb_primitives/2);
+      }
+    }
+  }
+}
+
+// TODO: find a better name
+template<typename Tr>
+template<class Primitive_vector, class Traversal_traits, class Query>
+void
+AABB_node<Tr>::traversal_with_priority_and_group_traversal(const Primitive_vector& primitives,
+                                                           const Query& query,
+                                                           Traversal_traits& traits,
+                                                           const std::size_t nb_primitives,
+                                                           std::size_t first_primitive_index,
+                                                           const std::size_t group_traversal_bound) const
+{
+  // Group traversal
+  CGAL_assertion(group_traversal_bound >= 2);
+  if ( nb_primitives <= group_traversal_bound )
+  {
+    if ( !traits.do_intersect(query, *this) ) return;
+    CGAL_assertion(traits.do_intersect(query, *this));
+    traits.traverse_group(query, primitives.begin()+first_primitive_index, primitives.begin()+first_primitive_index+nb_primitives);
+    return;
+  }
+
+  // Recursive traversal
+  switch(nb_primitives)
+  {
+  case 2:
+    traits.intersection(query, left_data());
+    if( traits.go_further() )
+    {
+      traits.intersection(query, right_data());
+    }
+    break;
+  case 3:
+    traits.intersection(query, left_data());
+    if( traits.go_further() && traits.do_intersect(query, right_child()) )
+    {
+      right_child().traversal_with_priority_and_group_traversal(primitives, query, traits, 2, first_primitive_index+1, group_traversal_bound);
+    }
+    break;
+  default:
+    bool ileft, iright;
+    typename Traversal_traits::Priority pleft, pright;
+    std::tie(ileft, pleft) = traits.do_intersect_with_priority(query, left_child());
+    std::tie(iright, pright) = traits.do_intersect_with_priority(query, right_child());
+    CGAL_precondition( (ileft || iright) ? traits.do_intersect(query, *this) : true );
+
+    if(ileft)
+    {
+      if(iright)
+      {
+        // Both children have to be inspected.
+        if(pleft >= pright)
+        {
+          // Inspect the left child first, has higher priority.
+          left_child().traversal_with_priority_and_group_traversal(primitives, query, traits, nb_primitives/2, first_primitive_index, group_traversal_bound);
+          if( traits.go_further() )
+            right_child().traversal_with_priority_and_group_traversal(primitives, query, traits, nb_primitives-nb_primitives/2, first_primitive_index+nb_primitives/2, group_traversal_bound);
+        }
+        else
+        {
+          // Inspect the right child first, has higher priority.
+          right_child().traversal_with_priority_and_group_traversal(primitives, query, traits, nb_primitives-nb_primitives/2, first_primitive_index+nb_primitives/2, group_traversal_bound);
+          if( traits.go_further() )
+            left_child().traversal_with_priority_and_group_traversal(primitives, query, traits, nb_primitives/2, first_primitive_index, group_traversal_bound);
+        }
+      }
+      else
+      {
+        // Only the left child has to be inspected.
+        left_child().traversal_with_priority_and_group_traversal(primitives, query, traits, nb_primitives/2, first_primitive_index, group_traversal_bound);
+      }
+    }
+    else
+    {
+      if(iright)
+      {
+        // Only the right child has to be inspected.
+        right_child().traversal_with_priority_and_group_traversal(primitives, query, traits, nb_primitives-nb_primitives/2, first_primitive_index+nb_primitives/2, group_traversal_bound);
+      }
     }
   }
 }

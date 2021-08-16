@@ -93,6 +93,9 @@ public:
   Circle_3(const Rep& r)
     : Rep(r) {}
 
+  Circle_3(Rep&& r)
+    : Rep(std::move(r)) {}
+
   decltype(auto)
   diametral_sphere() const
   {
