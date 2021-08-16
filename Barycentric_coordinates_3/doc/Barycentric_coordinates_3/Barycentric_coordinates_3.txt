@@ -11,37 +11,37 @@ namespace Barycentric_coordinates {
 
 \section gbc_3_introduction Introduction
 
-Barycentric coordinates are an important tool in computer graphics and geometric modeling. 
+Barycentric coordinates are an important tool in computer graphics and geometric modeling.
 Originally, these coordinates were used to represent a given point with respect to a simplex but have been later
  generalized to more complex shapes.
 
-The package 3D Generalized Barycentric Coordinates offers an efficient and robust implementation 
+The package 3D Generalized Barycentric Coordinates offers an efficient and robust implementation
 of three-dimensional closed-form generalized barycentric coordinates defined for convex simplicial polytopes.
 
 In particular, this package includes an implementation of Wachspress, discrete harmonic, mean value, and
- one extra function to calculate barycentric coordinates with respect to tetrahedrons.
+ one extra function to calculate barycentric coordinates with respect to tetrahedra. In this implementation,
+ we restrict our polyhedra to convex ones with triangular faces, although some of the coordinates may
+ accept more general shapes.
 
 
 \section gbc_3_interface Software Design
 
-Wachspress, discrete harmonic, and mean value coordinates are all generalized barycentric coordinates 
-that can be computed analytically. In this implementation, we restrict our polyhedra to convex ones 
-with triangular faces, although some of the coordinates may accept more general shapes. 
+Wachspress, discrete harmonic, and mean value coordinates are all generalized barycentric coordinates
+that can be computed analytically.
+All of the three analytic coordinates can be computed either by instantiating a class or through a
+free function. Tetrahedron coordinates can be computed only through the free function.
 
-All of the three barycentric coordinates can be computed either by instantiating a class or through a 
-free function. Tetrahedron coordinates can be computed only through the free function. 
-
-We can specify a computation policy Barycentric_coordinates::Computation_policy_3 that can be FAST or 
+We can specify a computation policy Barycentric_coordinates::Computation_policy_3 that can be FAST or
 FAST_WITH_EDGE_CASES for each of the three coordinates. The difference between them is that FAST_WITH_EDGE_CASES
  treats points near the boundaries by projecting them into the face of the polyhedron and then calculating triangle coordinates.
 
 The output of a query point is the coordinate value with respect to each vertex, the number of coordinate
- values is the same as the number of vertices, and the ordering is also the same.
+ values being the same as the number of vertices, and the ordering is also the same.
 
-All class and function templates are parameterized by a traits class, which is a model of the concept 
-BarycentricTraits_3. It provides all necessary geometric primitives, predicates, and constructions, 
-which are required for the computation. All models of Kernel can be used. A polyhedron is provided as 
-a model of the concept FaceListGraph with a property map that maps a vertex from the polyhedron to CGAL::Point_3.
+All class and function templates are parameterized by a traits class, which is a model of the concept
+BarycentricTraits_3. It provides all necessary geometric primitives, predicates, and constructions,
+which are required for the computation. All models of Kernel can be used. A polyhedron is provided as
+a model of the concept FaceListGraph with a property map that maps a vertex from the polyhedron to BarycentricTraits_3::Point_3.
 
 
 \section gbc_3_examples Examples
@@ -52,97 +52,209 @@ with a basic usage of different barycentric components.
 
 \subsection tetra_example Tetrahedron Coordinates
 
-In this example, we use the global function tetrahedron_coordinates_in_tuple(). 
-We compute coordinates for the tetrahedron whose vertices are the points in the 
-set {(0,0,0), (1,0,0), (0,1,0), (0,0,1)}. Were used points inside, outside and 
+In this example, we use the global function tetrahedron_coordinates_in_tuple().
+We compute coordinates for the tetrahedron whose vertices are the points in the
+set {(0,0,0), (1,0,0), (0,1,0), (0,0,1)}. We use points inside, outside and
 at the boundary of the tetrahedron.
 \anchor tetra_coord_example
 \cgalExample{Barycentric_coordinates_3/tetrahedron_coordinates.cpp}
 
 \subsection wp_3_example Wachspress Coordinates
 
-In this example, we generate 250 random points inside a unitary sphere, 
-centered at the origin, then we take the convex hull of this set of points 
-and use this as our polyhedron. Finally, we calculate Wachspress coordinates 
+In this example, we generate 250 random points inside a unit sphere,
+centered at the origin, then we take the convex hull of this set of points
+and use this as our polyhedron. Finally, we calculate Wachspress coordinates
 for all of these 250 points.
 \anchor wp_3_coord_example
 \cgalExample{Barycentric_coordinates_3/wachspress_coordinates.cpp}
 
 \subsection dh_3_example Discrete Harmonic Coordinates
 
-This example is very similar to the one used with tetrahedron coordinates. 
-We started with a regular icosahedron and for points inside, outside and 
-at the boundary, we calculate discrete harmonic coordinates. In this example, 
-we use the fast with edge cases algorithm because it treats points very close 
+This example is very similar to the one used with tetrahedron coordinates.
+We start with a regular icosahedron and for points inside, outside and
+at the boundary, we calculate discrete harmonic coordinates. In this example,
+we use the fast with edge cases algorithm because it treats points very close
 to the boundaries.
 \anchor dh_3_coord_example
 \cgalExample{Barycentric_coordinates_3/discrete_harmonic_coordinates.cpp}
 
 \subsection mv_3_example Mean Value Coordinates
 
-This example shows how to compute mean value coordinates for a set of points in a 
-star-shaped polyhedron. We note that this type of coordinate is well-defined for a 
-concave polyhedron but it may yield negative coordinate values for points outside 
-the polyhedron's kernel. 
+This example shows how to compute mean value coordinates for a set of points in a
+star-shaped polyhedron. We note that this type of coordinate is well-defined for a
+concave polyhedron but it may yield negative coordinate values for points outside
+the polyhedron's kernel (shown in blue).
+
 \anchor mv_3_coord_example
+\cgalFigureBegin{mv_3_example, mv_coords_example_3.png}
+Example's point pattern.
+\cgalFigureEnd
+
 \cgalExample{Barycentric_coordinates_3/mean_value_coordinates.cpp}
 
-\subsection shape_deform_example Shape deformation
+\subsection shape_deform_example_3 Shape deformation
 
-This is an example that shows how to deform a simple smooth sphere into 
-another shape, topologically equivalent. To achieve this, we enclose the 
-sphere inside a cube cage, then we calculate the barycentric 
-coordinate of each vertex with respect to the cube cage. After deforming 
-the cage, we calculate the linear combination of the points to get the 
+This is an example that shows how to deform a simple smooth sphere into
+another shape, topologically equivalent. To achieve this, we enclose the
+sphere inside a cube cage, then we calculate the barycentric
+coordinate of each vertex with respect to the cube cage. After deforming
+the cage, we calculate the linear combination of the points to get the
 deformed sphere vertices.
-\anchor shape_deform_example_3
+
+\anchor shape_deform_example
+\cgalFigureBegin{shape_deform_example_3, shape_deform_example_3.png}
+The shape on the left is deformed into the shape on the right.
+\cgalFigureEnd
+
 \cgalExample{Barycentric_coordinates_3/shape_deformation.cpp}
 
 \section gbc_3_degeneracies Edge Cases
 
-The precision of each coordinate depends on the used `Kernel`. If an inexact kernel 
-is used and the user is not sure if the points are near the boundaries, `FAST_WITH_EDGE_CASES` 
+The precision of each coordinate depends on the used `Kernel`. If an inexact kernel
+is used and the user is not sure if the points are near the boundaries, `FAST_WITH_EDGE_CASES`
 algorithm should be used.
-Implementation details are describe in \cgalCite{cgal:bc:f-wmvc-14} for Wachspress and mean value 
+Implementation details are described in \cgalCite{cgal:bc:f-wmvc-14} for Wachspress and mean value
 coordinates, and in \cgalCite{cgal:bc:jlw-ggcccsp-07} for discrete harmonic coordinates.
+
+The main purpose of the FAST_WITH_EDGE_CASES algorithm is to extend the region where the analytical
+coordinates are well-defined. It adds the guarantee to calculate points near the boundaries. The
+way it works is very simple: before calculating any coordinate, the algorithm checks, for each face,
+if the distance between the query point and the plane is less than one predetermined tolerance. If so,
+instead of calculating the analytical form of the coordinates, it decomposes the query point with
+respect to this particular face and then calculates triangle coordinates. However, for Wachspress
+coordinates, the 2D version is used because the faces are not necessarily triangular. Note that for
+every vertice that does not belong to this face, the coordinate value will be zero.
+
+\subsection gbc_3_degeneracies_tetrahedron Tetrahedron Coordinates
+
+To compute tetrahedron coordinates of the query point `q`, we adopt the simple formula:
+<center>
+\f$w_i = \frac{V_i}{V}\f$
+</center>
+
+where \f$V_i\f$ is the signed volume of the sub-tetrahedron opposite to the vertex \f$i\f$ and \f$V\f$
+is the total volume of the tetrahedron, that is \f$V = V_0 + V_1 + V_2 + V_3\f$.
+
+These coordinates can be computed exactly if an exact number type is chosen, for any query point
+in the space and with respect to any non-degenerate tetrahedron.
+
+\subsection gbc_3_degeneracies_wachspress Wachspress Coordinates
+
+To compute Wachspress coordinates of the query point `q`, we adopt the simple formula:
+<center>
+\f$w_v({q}) = \sum_{i=2}^{k-1}det({p_{f_1}}({q}), {p_{f_i}}({q}), {p_{f_{i+1}}}({q}))\f$
+</center>
+
+where \f${p_f}({q}) = \frac{{n_f}}{h_f({q})}\f$, \f$h_f({q}) = ({v} - {q})\cdot {n_f}\f$ denote the
+perpendicular distance of \f$q\f$ to \f$f\f$, and for the face \f$f\f$, let \f${n_f}\f$ denote its unit outward normal.
+
+In this implementation, Wachspress coordinates are well defined in the closure of any convex
+polyhedra. If an exact number type is chosen, they are computed exactly.
+
+\subsection gbc_3_degeneracies_discrete_harmonic Discrete Harmonic Coordinates
+
+To compute discrete harmonic coordinates of the query point `q`, we adopt the simple formula:
+<center>
+\f$w_i = \sum_{v_i \in T} \frac{cot[\theta_i^T]h_i^T}{2}\f$
+</center>
+
+where, within a triangle face T = {v1, v2, v3}, \f$\theta_i^T\f$ is the dihedral angle between T and
+triangle {x,\f$v_{i+1}\f$, \f$v_{i−1}\f$}, and \f$h_i^T\f$ is the edge length \f$|v_{i+1} − v_{i−1}|\f$.
+
+Discrete harmonic coordinates cannot be computed exactly due to a square root operation.
+Although, if an exact number type is used, the default precision of the computation depends only on
+two CGAL functions: CGAL::to_double() and CGAL::sqrt(). In this implementation, discrete harmonic
+coordinates are well defined in the closure of any convex polyhedra with triangular faces. Unlike
+Wachspress coordinates, they are not necessarily positive.
+
+\subsection gbc_3_degeneracies_mean_value Mean Value Coordinates
+
+To compute mean value coordinates of the query point `q`, we adopt the simple formula:
+<center>
+\f$w_i = \frac{1}{2}\sum_{j=1}^3 \beta_j\frac{{m_j}\cdot {m_{i+1}}}{{e_i}\cdot {m_{i+1}}}\f$
+</center>
+
+where a vertex v is projected to the point (unit vector) \f$e_v = \frac{({v} - {q})}{|{v - q}|}\f$, and
+\f${m_i} = \frac{{e_i} \times {e_{i+1}}}{|{e_i} \times {e_{i+1}}|}\f$. \f$\beta_j \in (0, \pi)\f$ is the angle
+between \f$e_i\f$ and \f$e_{i+1}\f$.
+
+Like discrete harmonic, mean value coordinates cannot be computed exactly due to a square root
+operation. In this implementation, mean value coordinates are well defined everywhere in the space,
+but just for polyhedra with triangular faces. Also, they are non-negative in the kernel of a
+star-shaped polyhedron.
 
 \section gbc_3_performance Performance
 
-Here are the results of the benchmark done for each coordinate. A total of 1000000 
-points were sampled regularly inside each shape.
+Efficiency is really important in this implementation.
+These coordinates are used in applications that require
+calculations for millions of points, thus developing metrics
+to evaluate performance is absolutely necessary. In this section,
+we present benchmark results for each algorithm.
+
+To make the benchmark and evaluate runtimes, for each analytic coordinate,
+we regularly sample approximately $n^3$ ($n$ varying from 1 to 100) strictly
+interior points with respect to a cube with unit length, and then calculate
+its coordinate values (see figure bellow). The results are represented in a log-log
+scale plot and are the mean value of 10 loop iterations (see plot bellow).
+
+\cgalFigureBegin{bc_coords_bench_structure_3, bc_coords_bench_structure_3.png}
+Points shown in red are the sample points used to make the benchmark.
+\cgalFigureEnd
+
+The performance strongly depends on the chosen kernel,
+for this test we choose to use SCKER because is much faster than others.
+Also, we can see that time (wp) << time (dh) < time (mv). This happens because wp
+implementation has fewer instructions per loop than other two, so naturally
+the computation time tends to be faster.
+
+\cgalFigureBegin{bc_coords_bench_3, bc_coords_bench_3.png}
+Time in seconds to compute $n^3$ coordinate values for a cube. Are represented in the graph:
+Wachspress (blue), discrete harmonic (orange) and mean value (green).
+\cgalFigureEnd
+
+Tetrahedron coordinates are not shown in the same plot because the test is
+slightly different. For this one, we simply show in a table (see table bellow)
+the results for some pre-defined quantity of points. The test is done by regularly
+sampling strictly interior points with respect to a tetrahedron with
+unit sides that lies on the coordinate axis.
 
 <table class="markdownTable" align="center">
 <tr class="markdownTableHead">
-<th class="markdownTableHeadCenter">Coordinate type </th>
-<th class="markdownTableHeadCenter">Shape </th>
+<th class="markdownTableHeadCenter">Number of points </th>
 <th class="markdownTableHeadCenter">Total time (in seconds)</th>
 </tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">Wachspress</td>
-<td class="markdownTableBodyCenter">Triangulated cube</td>
-<td class="markdownTableBodyCenter">59.1783669</td>
+<td class="markdownTableBodyCenter">1000</td>
+<td class="markdownTableBodyCenter">0.002662682533</td>
 </tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">Discrete Harmonic</td>
-<td class="markdownTableBodyCenter">Triangulated cube</td>
-<td class="markdownTableBodyCenter">167.832063</td>
+<td class="markdownTableBodyCenter">50000</td>
+<td class="markdownTableBodyCenter">0.09459688663</td>
 </tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">Mean Value</td>
-<td class="markdownTableBodyCenter">Triangulated cube</td>
-<td class="markdownTableBodyCenter">199.651994</td>
+<td class="markdownTableBodyCenter">100000</td>
+<td class="markdownTableBodyCenter">0.1865084648</td>
 </tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">Tetrahedron</td>
-<td class="markdownTableBodyCenter">Tetrahedron</td>
-<td class="markdownTableBodyCenter">1.612018108</td>
+<td class="markdownTableBodyCenter">500000</td>
+<td class="markdownTableBodyCenter">0.8238497972</td>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">1000000</td>
+<td class="markdownTableBodyCenter">1.665773582</td>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">5000000</td>
+<td class="markdownTableBodyCenter">8.359417105</td>
 </tr>
 </table>
 
+To benchmark each coordinate, we used a 2.6 GHz Intel Core i7 processor (6 cores)
+and 16 GB DDR4 2933MHz memory. The installed operating system was Ubuntu 20.04 LTS.
 
 \section gbc_3_history History
 
-This package was introduced during GSoC 2021 and implemented by Antonio Gomes 
+This package was introduced during GSoC 2021 and implemented by Antonio Gomes
 under the supervision of Dmitry Anisimov.
 
 \section gbc_3_acknowledgments Acknowledgments

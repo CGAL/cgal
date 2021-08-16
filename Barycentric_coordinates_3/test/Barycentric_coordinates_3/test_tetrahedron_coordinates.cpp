@@ -43,12 +43,21 @@ void test_overloads(){
     const FT x = point.x(), y = point.y(), z = point.z();
     const Point_3 query(x, y, z);
     CGAL::Barycentric_coordinates::tetrahedron_coordinates(vertices[0], vertices[1],
-         vertices[2], vertices[3], query, tetra_coords.begin());
+      vertices[2], vertices[3], query, tetra_coords.begin());
+
+    const std::array<FT, 4> tetra_coords_array =
+    CGAL::Barycentric_coordinates::tetrahedron_coordinates_in_array(vertices[0], vertices[1],
+      vertices[2], vertices[3], query);
 
     assert(CGAL::abs(1-x-y-z - tetra_coords[0]) == FT(0) &&
            CGAL::abs(x - tetra_coords[1]) == FT(0) &&
            CGAL::abs(y - tetra_coords[2]) == FT(0) &&
            CGAL::abs(z - tetra_coords[3]) == FT(0));
+
+    assert(tetra_coords_array[0] == tetra_coords[0] &&
+           tetra_coords_array[1] == tetra_coords[1] &&
+           tetra_coords_array[2] == tetra_coords[2] &&
+           tetra_coords_array[3] == tetra_coords[3]);
   }
 }
 

@@ -147,20 +147,20 @@ public:
   template<
     typename Face,
     typename VertexToPointMap,
-    typename PolygonMesh,
+    typename TriangleMesh,
     typename GeomTraits>
   typename GeomTraits::Vector_3 get_face_normal(
     const Face& face,
     const VertexToPointMap& vertex_to_point_map,
-    const PolygonMesh& polygon_mesh,
+    const TriangleMesh& triangle_mesh,
     const GeomTraits& traits){
 
     using Point_3 = typename GeomTraits::Point_3;
     using Vector_3 = typename GeomTraits::Vector_3;
     const auto& cross_3 = traits.construct_cross_product_vector_3_object();
 
-    const auto hedge = halfedge(face, polygon_mesh);
-    const auto vertices = vertices_around_face(hedge, polygon_mesh);
+    const auto hedge = halfedge(face, triangle_mesh);
+    const auto vertices = vertices_around_face(hedge, triangle_mesh);
     CGAL_precondition(vertices.size() >= 3);
 
     auto vertex = vertices.begin();
@@ -199,16 +199,27 @@ public:
     return approximate_dot_3/approximate_cross_3_length;
   }
 
+  template<typename VertexRange>
+  inline bool are_vertices_distinct(VertexRange& vertices_face){
+
+    // Check if the vertices are distinct
+    for(auto itr1 = vertices_face.begin(); itr1 != vertices_face.end(); itr1++)
+      for(auto itr2 = std::next(itr1, 1); itr2 != vertices_face.end(); itr2++)
+        if(*itr1 == *itr2) return false;
+
+    return true;
+  }
+
   template<
     typename VertexRange,
     typename VertexToPointMap,
-    typename PolygonMesh,
+    typename TriangleMesh,
     typename OutIterator,
     typename GeomTraits>
   OutIterator boundary_coordinates_3(
     VertexRange& vertices_face,
     const VertexToPointMap& vertex_to_point_map,
-    const PolygonMesh& polygon_mesh,
+    const TriangleMesh& triangle_mesh,
     const typename GeomTraits::Point_3& query,
     OutIterator coordinates,
     const GeomTraits& traits,
@@ -224,12 +235,10 @@ public:
 
     const FT tol = get_tolerance<FT>();
     const std::size_t num_sides_face = vertices_face.size();
-    const std::size_t num_vertices_polyhedron = num_vertices(polygon_mesh);
+    const std::size_t num_vertices_polyhedron = num_vertices(triangle_mesh);
 
     // Check if the vertices are distinct
-    for(auto itr1 = vertices_face.begin(); itr1 != vertices_face.end(); itr1++)
-      for(auto itr2 = std::next(itr1, 1); itr2 != vertices_face.end(); itr2++)
-        CGAL_assertion(*itr1 != *itr2);
+    CGAL_assertion(are_vertices_distinct(vertices_face));
 
     // Create plane
     auto vertex_itr = vertices_face.begin();
@@ -272,7 +281,7 @@ public:
 
     // Fill coordinates
     CGAL_assertion(bar_coords_2.size() == num_sides_face);
-    for(auto& vertex_polyhedron : vertices(polygon_mesh)){
+    for(auto& vertex_polyhedron : vertices(triangle_mesh)){
 
       bool found_vertex = false;
       auto bar_coords_itr = bar_coords_2.begin();

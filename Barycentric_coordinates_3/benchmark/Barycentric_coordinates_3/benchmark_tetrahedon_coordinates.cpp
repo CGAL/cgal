@@ -13,6 +13,8 @@ int main() {
   const std::size_t number_of_y_coordinates = 100;
   const std::size_t number_of_z_coordinates = 100;
 
+  const std::size_t number_of_runs = 10;
+
   const FT zero = FT(0);
   const FT one = FT(1);
   const FT four = FT(4);
@@ -28,27 +30,32 @@ int main() {
 
   Timer timer;
   std::vector<FT> coordinates(4);
-
   double time = 0.0;
-  timer.start();
 
-  for (FT x = zero; x <= one; x += x_step){
-    for (FT y = zero; y <= one; y += y_step){
-      for (FT z = zero; z <= one; z += z_step){
+  for(std::size_t i = 0; i < number_of_runs; i++){
 
-        const Point_3 query(x, y, z);
-        CGAL::Barycentric_coordinates::tetrahedron_coordinates(
-          p0, p1, p2, p3, query, coordinates.begin());
+    timer.start();
+    for (FT x = zero; x <= one; x += x_step){
+      for (FT y = zero; y <= one; y += y_step){
+        for (FT z = zero; z <= one; z += z_step){
+
+          const Point_3 query(x, y, z);
+          CGAL::Barycentric_coordinates::tetrahedron_coordinates(
+            p0, p1, p2, p3, query, coordinates.begin());
+        }
       }
     }
+
+    timer.stop();
+    time += timer.time();
+    timer.reset();
   }
 
-  timer.stop();
-  time += timer.time();
-  timer.reset();
+  const double mean_time =
+    time / static_cast<double>(number_of_runs);
 
   std::cout.precision(10);
   std::cout << "benchmark_tretrahedron_coordinates (CPU time): " <<
-    time << " seconds" << std::endl;
+    mean_time << " seconds" << std::endl;
   return EXIT_SUCCESS;
 }

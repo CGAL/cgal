@@ -65,7 +65,7 @@ namespace Barycentric_coordinates{
     \return an output iterator to the element in the destination range,
     one past the last coordinate stored
 
-    \pre volume_3(p0, p1, p2, p3) != 0
+    \pre Compute_volume_3(p0, p1, p2, p3) != 0
   */
   template<
   typename OutIterator,
@@ -135,18 +135,14 @@ namespace Barycentric_coordinates{
     a traits class with geometric objects, predicates, and constructions;
     this parameter can be omitted if the traits class can be deduced from the point type
 
-    \return a tuple `std::tuple<GeomTraits::FT, GeomTraits::FT, GeomTraits::FT, GeomTraits::FT>`
+    \return a array `std::array<GeomTraits::FT, 4>`
     with the computed coordinates
 
-    \pre volume_3(p0, p1, p2, p3) != 0
+    \pre Compute_volume_3(p0, p1, p2, p3) != 0
   */
   template<typename GeomTraits>
-  std::tuple<
-  typename GeomTraits::FT,
-  typename GeomTraits::FT,
-  typename GeomTraits::FT,
-  typename GeomTraits::FT>
-  tetrahedron_coordinates_in_tuple(
+  std::array<typename GeomTraits::FT, 4>
+  tetrahedron_coordinates_in_array(
     const typename GeomTraits::Point_3& p0,
     const typename GeomTraits::Point_3& p1,
     const typename GeomTraits::Point_3& p2,
@@ -160,17 +156,13 @@ namespace Barycentric_coordinates{
     internal::tetrahedron_coordinates_impl(
       p0, p1, p2, p3, query, std::back_inserter(coordinates), traits);
     CGAL_assertion(coordinates.size() == 4);
-    return std::make_tuple(coordinates[0], coordinates[1], coordinates[2], coordinates[3]);
+    return {coordinates[0], coordinates[1], coordinates[2], coordinates[3]};
   }
 
-  //return tuple (infer from point_3)
+  //return array (infer from point_3)
   template<typename Point_3>
-  std::tuple<
-  typename Kernel_traits<Point_3>::Kernel::FT,
-  typename Kernel_traits<Point_3>::Kernel::FT,
-  typename Kernel_traits<Point_3>::Kernel::FT,
-  typename Kernel_traits<Point_3>::Kernel::FT>
-  tetrahedron_coordinates_in_tuple(
+  std::array<typename Kernel_traits<Point_3>::Kernel::FT, 4>
+  tetrahedron_coordinates_in_array(
     const Point_3& p0,
     const Point_3& p1,
     const Point_3& p2,
@@ -179,7 +171,7 @@ namespace Barycentric_coordinates{
 
     using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
     const GeomTraits traits;
-    return tetrahedron_coordinates_in_tuple(
+    return tetrahedron_coordinates_in_array(
       p0, p1, p2, p3, query, traits);
   }
 

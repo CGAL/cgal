@@ -7,6 +7,8 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 
+#include <fstream>
+
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using FT = typename Kernel::FT;
 using Point_3 = typename Kernel::Point_3;
@@ -19,7 +21,9 @@ using MVC3 = CGAL::Barycentric_coordinates::Mean_value_coordinates_3<SM, Kernel>
 using DHC3 = CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_3<SM, Kernel>;
 
 template<typename COORD>
-double benchmark_overload(){
+double benchmark_overload(const FT scale){
+
+  const std::size_t number_of_runs = 10;
 
   // Cube
   SM cube;
@@ -37,8 +41,7 @@ double benchmark_overload(){
 
   COORD bar_cube(cube);
 
-  const FT step  = FT(1) / FT(100);
-  const FT scale = FT(100);
+  const FT step  = FT(1) / scale;
   const FT limit = step*scale;
 
   std::vector<FT> bar_coordinates_cube;
@@ -48,38 +51,52 @@ double benchmark_overload(){
   double time = 0.0;
 
   // Sample interior points
-  timer.start();
-  for(FT x = step; x < limit; x += step){
-    for(FT y = step; y < limit; y += step){
-      for(FT z = step; z < limit; z += step){
+  for(std::size_t i = 0; i < number_of_runs; i++){
 
-        const Point_3 query(x, y, z);
-        bar_cube(query, bar_coordinates_cube.begin());
+    timer.start();
+    for(FT x = step; x < limit - step; x += step){
+      for(FT y = step; y < limit - step; y += step){
+        for(FT z = step; z < limit - step; z += step){
+
+          const Point_3 query(x, y, z);
+          bar_cube(query, bar_coordinates_cube.begin());
+        }
       }
     }
+    timer.stop();
+    time += timer.time();
+    timer.reset();
   }
-  timer.stop();
-  time += timer.time();
-  timer.reset();
 
-  return time;
+  const double mean_time =
+    time / static_cast<double>(number_of_runs);
+
+  return mean_time;
 }
 
 int main(){
 
-  std::cout.precision(10);
+  std::ofstream wp_file("wp_bench.txt");
+  std::ofstream dh_file("dh_bench.txt");
+  std::ofstream mv_file("mv_bench.txt");
 
-  std::cout << "Wachspress : " << std::endl;
-  std::cout << "benchmark_polyhedron_8_vertices (CPU time): " <<
-    benchmark_overload<WPC3>() << " seconds" << std::endl;
+  std::ofstream num_file("num_bench.txt");
 
-  std::cout << "Discrete Harmonic : " << std::endl;
-  std::cout << "benchmark_polyhedron_8_vertices (CPU time): " <<
-    benchmark_overload<DHC3>() << " seconds" << std::endl;
+  for(std::size_t i = 5; i <= 100; i += 5){
 
-  std::cout << "Mean Value : " << std::endl;
-  std::cout << "benchmark_polyhedron_8_vertices (CPU time): " <<
-    benchmark_overload<MVC3>() << " seconds" << std::endl;
+    wp_file << benchmark_overload<WPC3>(i) << std::endl;
+    dh_file << benchmark_overload<DHC3>(i) << std::endl;
+    mv_file << benchmark_overload<MVC3>(i) << std::endl;
+
+    num_file << i << std::endl;
+
+    std::cout << i << "\% complete" << std::endl;
+  }
+
+  wp_file.close();
+  dh_file.close();
+  mv_file.close();
+  num_file.close();
 
   return EXIT_SUCCESS;
 }

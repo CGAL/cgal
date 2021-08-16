@@ -37,7 +37,7 @@ namespace Barycentric_coordinates{
     coordinates are triangle coordinates, while all other coordinates are set to zero.
     If `query` is not on the boundary, all the coordinates are set to zero.
 
-    \tparam PolygonMesh
+    \tparam TriangleMesh
     must be a model of the concept `FaceListGraph`.
 
     \tparam GeomTraits
@@ -47,12 +47,12 @@ namespace Barycentric_coordinates{
     a model of `OutputIterator` that accepts values of type `GeomTraits::FT`
 
     \tparam VertexToPointMap
-    a property map with boost::graph_traits<PolygonMesh>::vertex_descriptor as
-    key type and Point_3 as value type. The default is `property_map_selector<PolygonMesh,
+    a property map with boost::graph_traits<TriangleMesh>::vertex_descriptor as
+    key type and Point_3 as value type. The default is `property_map_selector<TriangleMesh,
     CGAL::vertex_point_t>`.
 
-    \param polygon_mesh
-    an instance of `PolygonMesh`, which must be a convex simplicial polyhedron
+    \param triangle_mesh
+    an instance of `TriangleMesh`, which must be a convex simplicial polyhedron
 
     \param query
     a query point
@@ -65,35 +65,35 @@ namespace Barycentric_coordinates{
     the default initialization is provided
 
     \param vertex_to_point_map
-    an instance of `VertexToPointMap` that maps a vertex from `polygon_mesh` to `Point_3`;
+    an instance of `VertexToPointMap` that maps a vertex from `triangle_mesh` to `Point_3`;
     the default initialization is provided
 
     \return an output iterator to the element in the destination range,
     one past the last coordinate stored + the flag indicating whether the
     query point belongs to the polyhedron boundary
 
-    \pre num_vertices(polygon_mesh) >= 4.
-    \pre polygon_mesh is simplicial.
+    \pre num_vertices(triangle_mesh) >= 4.
+    \pre triangle_mesh is simplicial.
   */
   template<
-  typename PolygonMesh,
+  typename TriangleMesh,
   typename OutIterator,
   typename GeomTraits,
   typename VertexToPointMap>
   std::pair<OutIterator, bool> boundary_coordinates_3(
-    const PolygonMesh& polygon_mesh,
+    const TriangleMesh& triangle_mesh,
     const typename GeomTraits::Point_3& query,
     OutIterator c_begin,
     const GeomTraits& traits,
     const VertexToPointMap vertex_to_point_map) {
 
     const auto edge_case = internal::locate_wrt_polyhedron(
-      vertex_to_point_map, polygon_mesh, query, c_begin, traits);
+      vertex_to_point_map, triangle_mesh, query, c_begin, traits);
 
     if(edge_case == internal::Edge_case::BOUNDARY)
       return {c_begin, true};
     else{
-      internal::get_default(num_vertices(polygon_mesh), c_begin);
+      internal::get_default(num_vertices(triangle_mesh), c_begin);
       return {c_begin, false};
     }
   }
@@ -113,7 +113,7 @@ namespace Barycentric_coordinates{
     coordinates are triangle coordinates, while all other coordinates are set to zero.
     If `query` is not on the boundary, all the coordinates are set to zero.
 
-    \tparam PolygonMesh
+    \tparam TriangleMesh
     must be a model of the concept `FaceListGraph`.
 
     \tparam Point_3
@@ -123,12 +123,12 @@ namespace Barycentric_coordinates{
     a model of `OutputIterator` that accepts values of type `GeomTraits::FT`
 
     \tparam VertexToPointMap
-    a property map with boost::graph_traits<PolygonMesh>::vertex_descriptor as
-    key type and Point_3 as value type. The default is `property_map_selector<PolygonMesh,
+    a property map with boost::graph_traits<TriangleMesh>::vertex_descriptor as
+    key type and Point_3 as value type. The default is `property_map_selector<TriangleMesh,
     CGAL::vertex_point_t>`.
 
-    \param polygon_mesh
-    an instance of `PolygonMesh`, which must be a convex simplicial polyhedron
+    \param triangle_mesh
+    an instance of `TriangleMesh`, which must be a convex simplicial polyhedron
 
     \param query
     a query point
@@ -137,24 +137,24 @@ namespace Barycentric_coordinates{
     the beginning of the destination range with the computed coordinates
 
     \param vertex_to_point_map
-    an instance of `VertexToPointMap` that maps a vertex from `polygon_mesh` to `Point_3`;
+    an instance of `VertexToPointMap` that maps a vertex from `triangle_mesh` to `Point_3`;
     the default initialization is provided
 
     \return an output iterator to the element in the destination range,
     one past the last coordinate stored + the flag indicating whether the
     query point belongs to the polyhedron boundary
 
-    \pre num_vertices(polygon_mesh) >= 4.
-    \pre polygon_mesh is simplicial.
+    \pre num_vertices(triangle_mesh) >= 4.
+    \pre triangle_mesh is simplicial.
   */
   template<
-  typename PolygonMesh,
+  typename TriangleMesh,
   typename Point_3,
   typename OutIterator,
-  typename VertexToPointMap = typename property_map_selector<PolygonMesh,
+  typename VertexToPointMap = typename property_map_selector<TriangleMesh,
     CGAL::vertex_point_t>::const_type>
   std::pair<OutIterator, bool> boundary_coordinates_3(
-    const PolygonMesh& polygon_mesh,
+    const TriangleMesh& triangle_mesh,
     const Point_3& query,
     OutIterator c_begin,
     const VertexToPointMap vertex_to_point_map){
@@ -162,20 +162,20 @@ namespace Barycentric_coordinates{
     using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
     const GeomTraits traits;
 
-    return boundary_coordinates_3(polygon_mesh, query, c_begin, traits, vertex_to_point_map);
+    return boundary_coordinates_3(triangle_mesh, query, c_begin, traits, vertex_to_point_map);
   }
 
   template<
-  typename PolygonMesh,
+  typename TriangleMesh,
   typename Point_3,
   typename OutIterator>
   std::pair<OutIterator, bool> boundary_coordinates_3(
-    const PolygonMesh& polygon_mesh,
+    const TriangleMesh& triangle_mesh,
     const Point_3& query,
     OutIterator c_begin){
 
-    return boundary_coordinates_3(polygon_mesh, query, c_begin,
-     get_const_property_map(CGAL::vertex_point, polygon_mesh));
+    return boundary_coordinates_3(triangle_mesh, query, c_begin,
+     get_const_property_map(CGAL::vertex_point, triangle_mesh));
   }
 
 }

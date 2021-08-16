@@ -35,21 +35,21 @@ namespace Barycentric_coordinates {
     with triangular faces but they are not necessarily positive. The coordinates are
     computed analytically.
 
-    \tparam PolygonMesh
+    \tparam TriangleMesh
     must be a model of the concept `FaceListGraph`.
 
     \tparam GeomTraits
     a model of `BarycentricTraits_3`
 
     \tparam VertexToPointMap
-    a property map with boost::graph_traits<PolygonMesh>::vertex_descriptor as
-    key type and Point_3 as value type. The default is `property_map_selector<PolygonMesh,
+    a property map with boost::graph_traits<TriangleMesh>::vertex_descriptor as
+    key type and Point_3 as value type. The default is `property_map_selector<TriangleMesh,
     CGAL::vertex_point_t>`.
   */
   template<
-  typename PolygonMesh,
+  typename TriangleMesh,
   typename GeomTraits,
-  typename VertexToPointMap = typename property_map_selector<PolygonMesh,
+  typename VertexToPointMap = typename property_map_selector<TriangleMesh,
     CGAL::vertex_point_t>::const_type>
   class Discrete_harmonic_coordinates_3 {
 
@@ -59,7 +59,7 @@ namespace Barycentric_coordinates {
     /// @{
 
     /// \cond SKIP_IN_MANUAL
-    using Polygon_mesh = PolygonMesh;
+    using Triangle_mesh = TriangleMesh;
     using Geom_Traits = GeomTraits;
     using Vertex_to_point_map = VertexToPointMap;
 
@@ -89,8 +89,8 @@ namespace Barycentric_coordinates {
       This class implements the behavior of discrete harmonic coordinates
       for 3D query points.
 
-      \param polygon_mesh
-      an instance of `PolygonMesh`, which must be a convex simplicial polyhedron
+      \param triangle_mesh
+      an instance of `TriangleMesh`, which must be a convex simplicial polyhedron
 
       \param policy
       one of the `CGAL::Barycentric_coordinates::Computation_policy_3`;
@@ -101,19 +101,19 @@ namespace Barycentric_coordinates {
       the default initialization is provided
 
       \param vertex_to_point_map
-      an instance of `VertexToPointMap` that maps a vertex from `polygon_mesh` to `Point_3`;
+      an instance of `VertexToPointMap` that maps a vertex from `triangle_mesh` to `Point_3`;
       the default initialization is provided
 
-      \pre num_vertices(polygon_mesh) >= 4.
-      \pre polygon_mesh is strongly convex.
-      \pre polygon_mesh is simplicial.
+      \pre num_vertices(triangle_mesh) >= 4.
+      \pre triangle_mesh is strongly convex.
+      \pre triangle_mesh is simplicial.
     */
     Discrete_harmonic_coordinates_3(
-      const PolygonMesh& polygon_mesh,
+      const TriangleMesh& triangle_mesh,
       const Computation_policy_3 policy,
       const VertexToPointMap vertex_to_point_map,
       const GeomTraits traits = GeomTraits()) :
-    m_polygon_mesh(polygon_mesh),
+    m_triangle_mesh(triangle_mesh),
     m_computation_policy(policy),
     m_vertex_to_point_map(vertex_to_point_map),
     m_traits(traits),
@@ -123,21 +123,21 @@ namespace Barycentric_coordinates {
     sqrt(internal::Get_sqrt<GeomTraits>::sqrt_object(m_traits)){
 
       // Check if polyhedron is strongly convex
-      CGAL_assertion(is_strongly_convex_3(m_polygon_mesh, m_traits));
-      m_weights.resize(vertices(m_polygon_mesh).size());
+      CGAL_assertion(is_strongly_convex_3(m_triangle_mesh, m_traits));
+      m_weights.resize(vertices(m_triangle_mesh).size());
     }
 
     /// @}
 
     Discrete_harmonic_coordinates_3(
-      const PolygonMesh& polygon_mesh,
+      const TriangleMesh& triangle_mesh,
       const Computation_policy_3 policy =
       Computation_policy_3::FAST_WITH_EDGE_CASES,
       const GeomTraits traits = GeomTraits()) :
     Discrete_harmonic_coordinates_3(
-      polygon_mesh,
+      triangle_mesh,
       policy,
-      get_const_property_map(CGAL::vertex_point, polygon_mesh),
+      get_const_property_map(CGAL::vertex_point, triangle_mesh),
       traits) { }
 
     /// \name Access
@@ -176,7 +176,7 @@ namespace Barycentric_coordinates {
     /// @}
 
   private:
-    const PolygonMesh& m_polygon_mesh;
+    const TriangleMesh& m_triangle_mesh;
   	const Computation_policy_3 m_computation_policy;
   	const VertexToPointMap m_vertex_to_point_map; // use it to map vertex to Point_3
   	const GeomTraits m_traits;
@@ -201,7 +201,7 @@ namespace Barycentric_coordinates {
         case Computation_policy_3::FAST_WITH_EDGE_CASES:{
           // Calculate query position relative to the polyhedron
           const auto edge_case = internal::locate_wrt_polyhedron(
-            m_vertex_to_point_map, m_polygon_mesh, query, coordinates, m_traits);
+            m_vertex_to_point_map, m_triangle_mesh, query, coordinates, m_traits);
 
           if(edge_case == internal::Edge_case::BOUNDARY) {
             return coordinates;
@@ -220,7 +220,7 @@ namespace Barycentric_coordinates {
         }
 
         default:{
-          internal::get_default(vertices(m_polygon_mesh).size(), coordinates);
+          internal::get_default(vertices(m_triangle_mesh).size(), coordinates);
           return coordinates;
         }
       }
@@ -236,7 +236,7 @@ namespace Barycentric_coordinates {
       CGAL_assertion(sum != FT(0));
 
       // The coordinates must be saved in the same order as vertices in the vertex range.
-      const auto vd = vertices(m_polygon_mesh);
+      const auto vd = vertices(m_triangle_mesh);
       CGAL_assertion(m_weights.size() == vd.size());
 
       for (std::size_t vi = 0; vi < vd.size(); vi++) {
@@ -256,7 +256,7 @@ namespace Barycentric_coordinates {
 
 	    // Vertex index.
       std::size_t vi = 0;
-      const auto vd = vertices(m_polygon_mesh);
+      const auto vd = vertices(m_triangle_mesh);
 
       for (const auto& vertex : vd) {
 
@@ -280,10 +280,10 @@ namespace Barycentric_coordinates {
       const Point_3 vertex_val = get(m_vertex_to_point_map, vertex);
 
       // Circulator of faces around the vertex
-      CGAL::Face_around_target_circulator<Polygon_mesh>
-      face_circulator(halfedge(vertex, m_polygon_mesh), m_polygon_mesh);
+      CGAL::Face_around_target_circulator<Triangle_mesh>
+      face_circulator(halfedge(vertex, m_triangle_mesh), m_triangle_mesh);
 
-      CGAL::Face_around_target_circulator<Polygon_mesh>
+      CGAL::Face_around_target_circulator<Triangle_mesh>
       face_done(face_circulator);
 
       // Compute weight w_v
@@ -293,8 +293,8 @@ namespace Barycentric_coordinates {
       do{
 
         //Vertices around face iterator
-        const auto hedge = halfedge(*face_circulator, m_polygon_mesh);
-        const auto vertices = vertices_around_face(hedge, m_polygon_mesh);
+        const auto hedge = halfedge(*face_circulator, m_triangle_mesh);
+        const auto vertices = vertices_around_face(hedge, m_triangle_mesh);
         auto vertex_itr = vertices.begin();
         CGAL_precondition(vertices.size() == 3);
 
@@ -326,7 +326,7 @@ namespace Barycentric_coordinates {
          m_construct_vector_3(query, point1));
 
         const Vector_3 face_normal = internal::get_face_normal(
-          *face_circulator, m_vertex_to_point_map, m_polygon_mesh, m_traits);
+          *face_circulator, m_vertex_to_point_map, m_triangle_mesh, m_traits);
 
         FT cot_dihedral = internal::cot_dihedral_angle(
           face_normal, normal_query, m_traits);
@@ -346,7 +346,6 @@ namespace Barycentric_coordinates {
     }
 
   };
-
 
   /*!
     \ingroup PkgBarycentricCoordinates3RefFunctions
@@ -368,14 +367,14 @@ namespace Barycentric_coordinates {
     \tparam Point_3
     A model of `Kernel::Point_3`.
 
-    \tparam PolygonMesh
+    \tparam TriangleMesh
     must be a model of the concept `FaceListGraph`.
 
     \tparam OutIterator
     a model of `OutputIterator` that accepts values of type `GeomTraits::FT`
 
-    \param polygon_mesh
-    an instance of `PolygonMesh`, which must be a convex simplicial polyhedron
+    \param triangle_mesh
+    an instance of `TriangleMesh`, which must be a convex simplicial polyhedron
 
     \param query
     a query point
@@ -390,16 +389,16 @@ namespace Barycentric_coordinates {
     \return an output iterator to the element in the destination range,
     one past the last coordinate stored
 
-    \pre num_vertices(polygon_mesh) >= 4.
-    \pre polygon_mesh is strongly convex.
-    \pre polygon_mesh is simplicial.
+    \pre num_vertices(triangle_mesh) >= 4.
+    \pre triangle_mesh is strongly convex.
+    \pre triangle_mesh is simplicial.
   */
   template<
   typename Point_3,
-  typename PolygonMesh,
+  typename TriangleMesh,
   typename OutIterator>
   OutIterator discrete_harmonic_coordinates_3(
-    const PolygonMesh& polygon_mesh,
+    const TriangleMesh& triangle_mesh,
     const Point_3& query,
     OutIterator c_begin,
     const Computation_policy_3 policy =
@@ -407,7 +406,7 @@ namespace Barycentric_coordinates {
 
     using Geom_Traits = typename Kernel_traits<Point_3>::Kernel;
 
-    Discrete_harmonic_coordinates_3<PolygonMesh, Geom_Traits> discrete_harmonic(polygon_mesh, policy);
+    Discrete_harmonic_coordinates_3<TriangleMesh, Geom_Traits> discrete_harmonic(triangle_mesh, policy);
     return discrete_harmonic(query, c_begin);
   }
 
