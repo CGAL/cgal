@@ -61,7 +61,7 @@ bool circle_fit (const PointRange& points,
     = { FT(0), FT(0), FT(0), FT(0), FT(0),
         FT(0), FT(0), FT(0), FT(0), FT(0) };
 
-  A[0] = points.size();
+  A[0] = static_cast<FT>(points.size());
   for (const Point_2& p : points)
   {
     FT x = p.x() - bbox.xmin();
@@ -126,7 +126,7 @@ bool sphere_fit (const PointRange& points,
         FT(0), FT(0), FT(0), FT(0), FT(0),
         FT(0), FT(0), FT(0), FT(0), FT(0) };
 
-  A[0] = points.size();
+  A[0] = static_cast<FT>(points.size());
   for (const Point_3& p : points)
   {
     FT x = p.x() - bbox.xmin();
@@ -228,7 +228,7 @@ bool cylinder_fit (const PointRange& points,
     Line_3 line (point, axis);
     point = line.projection(ref);
 
-    point_on_axis = barycenter (point_on_axis, nb, point, 1);
+    point_on_axis = barycenter (point_on_axis, static_cast<FT>(nb), point, FT(1));
 
     radius += abs(radius);
 
