@@ -33,6 +33,7 @@
   double-typed seconds as argument and deals with it.
 */
 
+// @lrineau shall we simply ignore TBB_IMPLEMENT_CPP0X?
 #if defined(CGAL_LINKED_WITH_TBB)
 #  include <tbb/tbb_config.h>
 #  if TBB_IMPLEMENT_CPP0X
