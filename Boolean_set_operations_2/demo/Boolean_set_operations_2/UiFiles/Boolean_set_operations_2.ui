@@ -1,0 +1,2927 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Boolean_set_operations_2</class>
+ <widget class="QMainWindow" name="Boolean_set_operations_2">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1124</width>
+    <height>664</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Boolean Set Operations and Minkowksi Sum</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="Boolean_operations_2.qrc">
+    <normaloff>:/cgal/icons/resources/cgal_logo.xpm</normaloff>:/cgal/icons/resources/cgal_logo.xpm</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <widget class="QGraphicsView" name="graphicsView">
+      <property name="focusPolicy">
+       <enum>Qt::StrongFocus</enum>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOn</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOn</enum>
+      </property>
+      <property name="transformationAnchor">
+       <enum>QGraphicsView::NoAnchor</enum>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1124</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionNew" />
+    <addaction name="separator" />
+    <addaction name="actionOpenLinear" />
+    <addaction name="actionOpenDXF" />f
+    <addaction name="actionOpenBezier" />
+    <addaction name="separator" />
+    <addaction name="actionSaveCurrentBucket" />
+    <addaction name="separator" />
+    <addaction name="actionQuit" />
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+      <addaction name="actionInsertLinear"/> 
+      <addaction name="actionInsertCircular"/>
+      <addaction name="actionInsertBezier" />
+      <addaction name="separator"/>
+      <addaction name="actionAddColor" />
+      <addaction name="actionMinusColor" />
+      <addaction name="separator"/>
+      <addaction name="actionDeleteAll"/>
+      <addaction name="actionUndo"/>
+      <addaction name="actionNew"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionRecenter"/>
+    <addaction name="actionPAN"/>
+    <addaction name="separator"/>
+    <addaction name="showColorBucket"/>
+    <addaction name="showConsole"/>
+    <addaction name="showInfo"/>
+   </widget>
+   <widget class="QMenu" name="menu_Help">
+    <property name="title">
+     <string>Help</string>
+    </property>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <!-- <addaction name="menuOperations"/> -->
+   <addaction name="menuView"/>
+   <addaction name="menu_Help"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QDockWidget" name="consoleDockWidget">
+   <property name="minimumSize" >
+    <size>
+      <width>400</width>
+      <height>70</height>
+    </size>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::TopDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>Console</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <item>
+      <widget class="QTextEdit" name="consoleTextEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="sceneDockWidget">
+   <property name="minimumSize" >
+    <size>
+      <width>593</width>
+      <height>200</height>
+    </size>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="locale">
+    <locale language="English" country="UnitedStates"/>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::BottomDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>Operations</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContent">
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="0">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="spacing">
+            <number>0</number>
+          </property>
+         <item>
+          <widget class="QToolBar" name="operationsTootBar0" >
+           <attribute name="toolBarArea" >
+            <enum>TopToolBarArea</enum>
+           </attribute>
+           <attribute name="toolBarBreak" >
+            <bool>false</bool>
+           </attribute>
+           <addaction name="actionInsertLinear"/>
+           </widget>
+         </item>
+         <item>
+          <widget class="QToolBar" name="operationsTootBar01" >
+           <attribute name="toolBarArea" >
+            <enum>TopToolBarArea</enum>
+           </attribute>
+           <attribute name="toolBarBreak" >
+            <bool>false</bool>
+           </attribute>
+           <addaction name="actionInsertCircular"/>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolBar" name="operationsTootBar02" >
+           <attribute name="toolBarArea" >
+            <enum>TopToolBarArea</enum>
+           </attribute>
+           <attribute name="toolBarBreak" >
+            <bool>false</bool>
+           </attribute>
+           <addaction name="actionInsertBezier" />
+           </widget>
+         </item>
+         <item>
+          <widget class="QToolBar" name="operationsTootBar1" >
+           <attribute name="toolBarArea" >
+            <enum>TopToolBarArea</enum>
+           </attribute>
+           <attribute name="toolBarBreak" >
+            <bool>false</bool>
+           </attribute>
+           <addaction name="actionAddColor"/>          
+         </widget>
+        </item>
+        <item>
+          <widget class="QToolBar" name="operationsTootBar11" >
+           <attribute name="toolBarArea" >
+            <enum>TopToolBarArea</enum>
+           </attribute>
+           <attribute name="toolBarBreak" >
+            <bool>false</bool>
+           </attribute>
+           <addaction name="actionMinusColor"/>
+          </widget>
+        </item>
+        <item>
+          <widget class="QToolBar" name="OperationsToolBar2">
+           <attribute name="toolBarArea" >
+            <enum>TopToolBarArea</enum>
+           </attribute>
+           <attribute name="toolBarBreak" >
+            <bool>false</bool>
+           </attribute>
+           <addaction name="actionRecenter"/>
+          </widget>
+        </item>
+        <item>
+          <widget class="QToolBar" name="OperationsToolBar21">
+           <attribute name="toolBarArea" >
+            <enum>TopToolBarArea</enum>
+           </attribute>
+           <attribute name="toolBarBreak" >
+            <bool>false</bool>
+           </attribute>
+           <addaction name="actionPAN"/>
+          </widget>
+        </item>
+        <item>
+          <widget class="QToolBar" name="OperationsToolBar32">
+           <attribute name="toolBarArea" >
+            <enum>TopToolBarArea</enum>
+           </attribute>
+           <attribute name="toolBarBreak" >
+            <bool>false</bool>
+           </attribute>
+           <addaction name="actionDeleteAll"/>
+          </widget>
+        </item>
+        <item>
+          <widget class="QToolBar" name="OperationsToolBar33">
+           <attribute name="toolBarArea" >
+            <enum>TopToolBarArea</enum>
+           </attribute>
+           <attribute name="toolBarBreak" >
+            <bool>false</bool>
+           </attribute>
+           <addaction name="actionAxis"/>
+          </widget>
+        </item>
+        <item>
+          <widget class="QToolBar" name="OperationsToolBar34">
+           <attribute name="toolBarArea" >
+            <enum>TopToolBarArea</enum>
+           </attribute>
+           <attribute name="toolBarBreak" >
+            <bool>false</bool>
+           </attribute>
+           <addaction name="actionUndo" />
+          </widget>
+        </item>
+        <item>
+          <widget class="QToolBar" name="OperationsToolBar35">
+           <attribute name="toolBarArea" >
+            <enum>TopToolBarArea</enum>
+           </attribute>
+           <attribute name="toolBarBreak" >
+            <bool>false</bool>
+           </attribute>
+           <addaction name="actionNew" />
+          </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+        <widget class="QScrollArea" name="scrollArea_2">
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="scrollAreaWidgetContents_2">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>400</width>
+              <height>350</height>
+             </rect>
+            </property>
+            <widget class="QLabel" name="showBlueLabel">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>70</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Red</string>
+             </property>
+            </widget>
+            <widget class="QLabel" name="showRedLabel">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>100</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Black</string>
+             </property>
+            </widget>
+            <widget class="QLabel" name="showBlackLabel">
+              <property name="Visible">
+                <bool>true</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>130</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Blue</string>
+             </property>
+            </widget>
+            <widget class="QLabel" name="showBrownLabel">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>160</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Brown</string>
+             </property>
+            </widget>
+            <widget class="QLabel" name="showYellowLabel">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>190</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Yellow</string>
+             </property>
+            </widget>
+            <widget class="QLabel" name="showMagentaLabel">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>5</x>
+               <y>220</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Magenta</string>
+             </property>
+            </widget>
+            <widget class="QLabel" name="showAquaLabel">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>250</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Aqua</string>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showBlue">
+             <property name="geometry">
+              <rect>
+               <x>85</x>
+               <y>70</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showRed">
+             <property name="geometry">
+              <rect>
+               <x>85</x>
+               <y>100</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showBlack">
+              <property name="Visible">
+                <bool>true</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>85</x>
+               <y>130</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showBrown">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>85</x>
+               <y>160</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showYellow">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>85</x>
+               <y>190</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showMagenta">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>85</x>
+               <y>220</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showAqua">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>85</x>
+               <y>250</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QRadioButton" name="drawBlue">
+             <property name="geometry">
+              <rect>
+               <x>130</x>
+               <y>70</y>
+               <width>334</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QRadioButton" name="drawRed">
+             <property name="geometry">
+              <rect>
+               <x>130</x>
+               <y>100</y>
+               <width>334</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+            </widget>
+            <widget class="QRadioButton" name="drawBlack">
+              <property name="Visible">
+                <bool>true</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>130</x>
+               <y>130</y>
+               <width>120</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+            </widget>
+            <widget class="QRadioButton" name="drawBrown">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>130</x>
+               <y>160</y>
+               <width>120</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+            </widget>
+            <widget class="QRadioButton" name="drawYellow">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>130</x>
+               <y>190</y>
+               <width>120</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+            </widget>
+            <widget class="QRadioButton" name="drawMagenta">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>130</x>
+               <y>220</y>
+               <width>131</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+            </widget>
+            <widget class="QRadioButton" name="drawAqua">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>130</x>
+               <y>250</y>
+               <width>120</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showBlueComp">
+             <property name="geometry">
+              <rect>
+               <x>175</x>
+               <y>70</y>
+               <width>97</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showBlueInt">
+             <property name="geometry">
+              <rect>
+               <x>220</x>
+               <y>70</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showBlueUnion">
+             <property name="geometry">
+              <rect>
+               <x>265</x>
+               <y>70</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showBlueDiff">
+             <property name="geometry">
+              <rect>
+               <x>310</x>
+               <y>70</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showBlueSym_Diff">
+             <property name="geometry">
+              <rect>
+               <x>355</x>
+               <y>70</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showBlueMink_Sum">
+              <property name="Visible">
+                <bool>true</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>400</x>
+               <y>70</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showRedComp">
+             <property name="geometry">
+              <rect>
+               <x>175</x>
+               <y>100</y>
+               <width>97</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showRedInt">
+             <property name="geometry">
+              <rect>
+               <x>220</x>
+               <y>100</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showRedUnion">
+             <property name="geometry">
+              <rect>
+               <x>265</x>
+               <y>100</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showRedDiff">
+             <property name="geometry">
+              <rect>
+               <x>310</x>
+               <y>100</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showRedSym_Diff">
+             <property name="geometry">
+              <rect>
+               <x>355</x>
+               <y>100</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showRedMink_Sum">
+              <property name="Visible">
+                <bool>true</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>400</x>
+               <y>100</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showBlackComp">
+              <property name="Visible">
+                <bool>true</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>175</x>
+               <y>130</y>
+               <width>111</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showBlackInt">
+              <property name="Visible">
+                <bool>true</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>220</x>
+               <y>130</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showBlackUnion">
+              <property name="Visible">
+                <bool>true</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>265</x>
+               <y>130</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showBlackDiff">
+              <property name="Visible">
+                <bool>true</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>310</x>
+               <y>130</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showBlackSym_Diff">
+              <property name="Visible">
+                <bool>true</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>355</x>
+               <y>130</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showBlackMink_Sum">
+              <property name="Visible">
+                <bool>true</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>400</x>
+               <y>130</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showBrownComp">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>175</x>
+               <y>160</y>
+               <width>111</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showBrownInt">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>220</x>
+               <y>160</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showBrownUnion">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>265</x>
+               <y>160</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showBrownDiff">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>310</x>
+               <y>160</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showBrownSym_Diff">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>355</x>
+               <y>160</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showBrownMink_Sum">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>400</x>
+               <y>160</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showYellowComp">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>175</x>
+               <y>190</y>
+               <width>111</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showYellowInt">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>220</x>
+               <y>190</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showYellowUnion">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>265</x>
+               <y>190</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showYellowDiff">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>310</x>
+               <y>190</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showYellowSym_Diff">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>355</x>
+               <y>190</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showYellowMink_Sum">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>400</x>
+               <y>190</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showMagentaComp">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>175</x>
+               <y>220</y>
+               <width>131</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showMagentaInt">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>220</x>
+               <y>220</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showMagentaUnion">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>265</x>
+               <y>220</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showMagentaDiff">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>310</x>
+               <y>220</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showMagentaSym_Diff">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>355</x>
+               <y>220</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showMagentaMink_Sum">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>400</x>
+               <y>220</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showAquaComp">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>175</x>
+               <y>250</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showAquaInt">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>220</x>
+               <y>250</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showAquaUnion">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>265</x>
+               <y>250</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showAquaDiff">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>310</x>
+               <y>250</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showAquaSym_Diff">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>355</x>
+               <y>250</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showAquaMink_Sum">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>400</x>
+               <y>250</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+
+            <widget class="QCheckBox" name="copyBlue">
+             <property name="geometry">
+              <rect>
+               <x>445</x>
+               <y>70</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="copyRed">
+             <property name="geometry">
+              <rect>
+               <x>445</x>
+               <y>100</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="copyBlack">
+             <property name="geometry">
+              <rect>
+               <x>445</x>
+               <y>130</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="copyBrown">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>445</x>
+               <y>160</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="copyYellow">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>445</x>
+               <y>190</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="copyMagenta">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>445</x>
+               <y>220</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="copyAqua">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>445</x>
+               <y>250</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+
+
+            <widget class="QCheckBox" name="moveBlue">
+             <property name="geometry">
+              <rect>
+               <x>490</x>
+               <y>70</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="moveRed">
+             <property name="geometry">
+              <rect>
+               <x>490</x>
+               <y>100</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="moveBlack">
+             <property name="geometry">
+              <rect>
+               <x>490</x>
+               <y>130</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="moveBrown">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>490</x>
+               <y>160</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="moveYellow">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>490</x>
+               <y>190</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="moveMagenta">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>490</x>
+               <y>220</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="moveAqua">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>490</x>
+               <y>250</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="clearBlue">
+             <property name="geometry">
+              <rect>
+               <x>535</x>
+               <y>70</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="clearRed">
+             <property name="geometry">
+              <rect>
+               <x>535</x>
+               <y>100</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="clearBlack">
+             <property name="geometry">
+              <rect>
+               <x>535</x>
+               <y>130</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="clearBrown">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>535</x>
+               <y>160</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="clearYellow">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>535</x>
+               <y>190</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="clearMagenta">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>535</x>
+               <y>220</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="clearAqua">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+             <property name="geometry">
+              <rect>
+               <x>535</x>
+               <y>250</y>
+               <width>101</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="Line" name="line0">
+              <property name="geometry">
+                <rect>
+                <x>0</x>
+                <y>50</y>
+                <width>560</width>
+                <height>30</height>
+                </rect>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+            </widget>
+            <widget class="Line" name="line0006">
+              <property name="geometry">
+                <rect>
+                <x>70</x>
+                <y>0</y>
+                <width>7</width>
+                <height>155</height>
+                </rect>
+              </property>
+              <property name="visible">
+                <bool>true</bool>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+            </widget>
+            <widget class="Line" name="line1">
+              <property name="geometry">
+                <rect>
+                <x>115</x>
+                <y>0</y>
+                <width>7</width>
+                <height>155</height>
+                </rect>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+            </widget>
+            <widget class="Line" name="line2">
+              <property name="geometry">
+                <rect>
+                <x>155</x>
+                <y>0</y>
+                <width>7</width>
+                <height>155</height>
+                </rect>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+            </widget>
+            <widget class="Line" name="line3">
+              <property name="geometry">
+                <rect>
+                <x>200</x>
+                <y>0</y>
+                <width>7</width>
+                <height>155</height>
+                </rect>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+            </widget>
+            <widget class="Line" name="line4">
+              <property name="geometry">
+                <rect>
+                <x>245</x>
+                <y>0</y>
+                <width>7</width>
+                <height>155</height>
+                </rect>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+            </widget>
+            <widget class="Line" name="line5">
+              <property name="geometry">
+                <rect>
+                <x>290</x>
+                <y>0</y>
+                <width>7</width>
+                <height>155</height>
+                </rect>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+            </widget>
+            <widget class="Line" name="line6">
+              <property name="geometry">
+                <rect>
+                <x>335</x>
+                <y>0</y>
+                <width>7</width>
+                <height>155</height>
+                </rect>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+            </widget>
+            <widget class="Line" name="line0007">
+              <property name="geometry">
+                <rect>
+                <x>380</x>
+                <y>0</y>
+                <width>7</width>
+                <height>155</height>
+                </rect>
+              </property>
+              <property name="visible">
+                <bool>true</bool>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+            </widget>
+            <widget class="Line" name="line06">
+              <property name="Visible">
+                <bool>true</bool>
+              </property>
+              <property name="geometry">
+                <rect>
+                <x>425</x>
+                <y>0</y>
+                <width>7</width>
+                <height>155</height>
+                </rect>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+            </widget>
+            <widget class="Line" name="line061">
+              <property name="Visible">
+                <bool>true</bool>
+              </property>
+              <property name="geometry">
+                <rect>
+                <x>470</x>
+                <y>0</y>
+                <width>7</width>
+                <height>155</height>
+                </rect>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+            </widget>
+            <widget class="Line" name="line062">
+              <property name="Visible">
+                <bool>true</bool>
+              </property>
+              <property name="geometry">
+                <rect>
+                <x>515</x>
+                <y>0</y>
+                <width>7</width>
+                <height>155</height>
+                </rect>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+            </widget>
+            <widget class="Line" name="line063">
+              <property name="Visible">
+                <bool>true</bool>
+              </property>
+              <property name="geometry">
+                <rect>
+                <x>560</x>
+                <y>0</y>
+                <width>7</width>
+                <height>155</height>
+                </rect>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+            </widget>
+
+            <widget class="Line" name="line7">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+              <property name="geometry">
+                <rect>
+                <x>0</x>
+                <y>275</y>
+                <width>560</width>
+                <height>7</height>
+                </rect>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+            </widget>
+            <widget class="Line" name="line8">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+              <property name="geometry">
+                <rect>
+                <x>0</x>
+                <y>245</y>
+                <width>560</width>
+                <height>7</height>
+                </rect>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+            </widget>
+            <widget class="Line" name="line9">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+              <property name="geometry">
+                <rect>
+                <x>0</x>
+                <y>215</y>
+                <width>560</width>
+                <height>7</height>
+                </rect>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+            </widget>
+            <widget class="Line" name="line10">
+              <property name="Visible">
+                <bool>false</bool>
+              </property>
+              <property name="geometry">
+                <rect>
+                <x>0</x>
+                <y>185</y>
+                <width>560</width>
+                <height>7</height>
+                </rect>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+            </widget>
+            <widget class="Line" name="line11">
+              <property name="Visible">
+                <bool>true</bool>
+              </property>
+              <property name="geometry">
+                <rect>
+                <x>0</x>
+                <y>155</y>
+                <width>560</width>
+                <height>7</height>
+                </rect>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+            </widget>
+            <widget class="Line" name="line12">
+              <property name="Visible">
+                <bool>true</bool>
+              </property>
+              <property name="geometry">
+                <rect>
+                <x>0</x>
+                <y>125</y>
+                <width>560</width>
+                <height>7</height>
+                </rect>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+            </widget>
+            <widget class="Line" name="line13">
+              <property name="geometry">
+                <rect>
+                <x>0</x>
+                <y>95</y>
+                <width>560</width>
+                <height>7</height>
+                </rect>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+            </widget>
+
+
+            <widget class="QLabel" name="colorHeader" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="geometry">
+                <rect>
+                  <x>10</x>
+                  <y>15</y>
+                  <width>101</width>
+                  <height>40</height>  
+                </rect>
+              </property>
+              <property name="text" >
+               <string>Buckets</string>
+              </property>
+            </widget>
+            <widget class="QCheckBox" name="VisibleHeader">
+             <property name="geometry">
+              <rect>
+               <x>85</x>
+               <y>35</y>
+               <width>30</width>  
+               <height>30</height>  
+              </rect>
+             </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QLabel" name="VisibleIcon">
+              <property name="geometry">  
+                <rect>  
+                  <x>80</x>  
+                  <y>0</y>  
+                  <width>40</width>  
+                  <height>35</height>   
+                </rect> 
+              </property>   
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+                <property name="toolTip">
+              <string>Visible</string>
+             </property>
+             <property name="pixmap">  
+                <pixmap>:/cgal/icons/resources/vis.bmp</pixmap>  
+              </property> 
+            </widget>
+            <widget class="QLabel" name="DrawHeader" >  
+              <property name="pixmap">  
+                <pixmap>:/cgal/icons/resources/draw.png</pixmap>  
+              </property> 
+              <property name="geometry">  
+                <rect>  
+                  <x>120</x>  
+                  <y>15</y>  
+                  <width>101</width>  
+                  <height>35</height>   
+                </rect> 
+              </property>   
+              <property name="toolTip">
+                <string>Draw/Insert</string>
+              </property>
+              <property name="sizePolicy" > 
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >  
+                <horstretch>0</horstretch>  
+                <verstretch>0</verstretch>  
+               </sizepolicy>  
+              </property> 
+            </widget>
+            <widget class="QToolButton" name="actionComplementH">
+              <property name="geometry">
+                <rect>
+                  <x>165</x>
+                  <y>15</y>
+                  <width>33</width>
+                  <height>33</height>  
+                </rect>
+              </property>
+              <property name="IconSize">
+                <size>
+                  <width>27</width>
+                  <height>25</height>
+                </size>
+              </property>
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="icon">
+              <iconset resource="Boolean_operations_2.qrc">
+               <normaloff>:/cgal/icons/resources/comp_P.xpm</normaloff>:/cgal/icons/resources/comp_P.xpm</iconset>
+             </property>
+             <property name="toolTip">
+              <string>Complement</string>
+             </property>
+             <property name="shortcut">
+              <string>Ctrl+C</string>
+             </property>
+            </widget>
+            <widget class="QToolButton" name="actionIntersectionH">
+              <property name="geometry">
+                <rect>
+                  <x>210</x>
+                  <y>15</y>
+                  <width>33</width>
+                  <height>33</height>  
+                </rect>
+              </property>
+              <property name="IconSize">
+                <size>
+                  <width>27</width>
+                  <height>25</height>
+                </size>
+              </property>
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="icon">
+              <iconset resource="Boolean_operations_2.qrc">
+               <normaloff>:/cgal/icons/resources/intersection.xpm</normaloff>:/cgal/icons/resources/intersection.xpm</iconset>
+             </property>
+             <property name="toolTip">
+              <string>Intersection</string>
+             </property>
+             <property name="shortcut">
+              <string>Ctrl+I</string>
+             </property>
+            </widget>
+            <widget class="QToolButton" name="actionUnionH">
+              <property name="geometry">
+                <rect>
+                  <x>255</x>
+                  <y>15</y>
+                  <width>33</width>
+                  <height>33</height>  
+                </rect>
+              </property>
+              <property name="IconSize">
+                <size>
+                  <width>27</width>
+                  <height>25</height>
+                </size>
+              </property>
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="icon">
+              <iconset resource="Boolean_operations_2.qrc">
+               <normaloff>:/cgal/icons/resources/union.xpm</normaloff>:/cgal/icons/resources/union.xpm</iconset>
+             </property>
+             <property name="toolTip">
+              <string>Union</string>
+             </property>
+             <property name="shortcut">
+              <string>Ctrl+U</string>
+             </property>
+            </widget>
+            <widget class="QToolButton" name="actionDifferenceH">
+              <property name="geometry">
+                <rect>
+                  <x>300</x>
+                  <y>15</y>
+                  <width>33</width>
+                  <height>33</height>  
+                </rect>
+              </property>
+              <property name="IconSize">
+                <size>
+                  <width>27</width>
+                  <height>25</height>
+                </size>
+              </property>
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="icon">
+              <iconset resource="Boolean_operations_2.qrc">
+               <normaloff>:/cgal/icons/resources/diff_PQ.xpm</normaloff>:/cgal/icons/resources/diff_PQ.xpm</iconset>
+             </property>
+             <property name="toolTip">
+              <string>Difference</string>
+             </property>
+             <property name="shortcut">
+              <string>Ctrl+D</string>
+             </property>
+            </widget>
+            <widget class="QToolButton" name="actionSymmetric_DifferenceH">
+              <property name="geometry">
+                <rect>
+                  <x>345</x>
+                  <y>15</y>
+                  <width>33</width>
+                  <height>33</height>  
+                </rect>
+              </property>
+              <property name="IconSize">
+                <size>
+                  <width>27</width>
+                  <height>25</height>
+                </size>
+              </property>
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="icon">
+              <iconset resource="Boolean_operations_2.qrc">
+               <normaloff>:/cgal/icons/resources/symm_diff.xpm</normaloff>:/cgal/icons/resources/symm_diff.xpm</iconset>
+             </property>
+             <property name="toolTip">
+              <string>Symmetric Difference</string>
+             </property>
+             <property name="shortcut">
+              <string>Ctrl+S</string>
+             </property>
+            </widget>
+            <widget class="QToolButton" name="actionMinkowski_SumH">
+              <property name="geometry">
+                <rect>
+                  <x>390</x>
+                  <y>15</y>
+                  <width>33</width>
+                  <height>33</height>  
+                </rect>
+              </property>
+              <property name="IconSize">
+                <size>
+                  <width>27</width>
+                  <height>25</height>
+                </size>
+              </property>
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="icon">
+              <iconset resource="Boolean_operations_2.qrc">
+               <normaloff>:/cgal/icons/resources/mink_sum.xpm</normaloff>:/cgal/icons/resources/mink_sum.xpm</iconset>
+             </property>
+             <property name="toolTip">
+              <string>Minkowski Sum</string>
+             </property>
+             <property name="shortcut">
+              <string>Ctrl+M</string>
+             </property>
+            </widget>
+            <widget class="QToolButton" name="actionCopyH">
+              <property name="geometry">
+                <rect>
+                  <x>435</x>
+                  <y>15</y>
+                  <width>33</width>
+                  <height>33</height>  
+                </rect>
+              </property>
+              <property name="IconSize">
+                <size>
+                  <width>27</width>
+                  <height>25</height>
+                </size>
+              </property>
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="icon">
+              <iconset resource="Boolean_operations_2.qrc">
+               <normaloff>:/cgal/icons/resources/copy.png</normaloff>:/cgal/icons/resources/copy.png</iconset>
+             </property>
+             <property name="toolTip">
+              <string>Copy</string>
+             </property>
+             <property name="shortcut">
+              <string>Ctrl+Shift+C</string>
+             </property>
+            </widget>
+            <widget class="QToolButton" name="actionMoveH">
+              <property name="geometry">
+                <rect>
+                  <x>480</x>
+                  <y>15</y>
+                  <width>33</width>
+                  <height>33</height>  
+                </rect>
+              </property>
+              <property name="IconSize">
+                <size>
+                  <width>27</width>
+                  <height>25</height>
+                </size>
+              </property>
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="icon">
+              <iconset resource="Boolean_operations_2.qrc">
+               <normaloff>:/cgal/icons/resources/move.png</normaloff>:/cgal/icons/resources/move.png</iconset>
+             </property>
+             <property name="toolTip">
+              <string>Move</string>
+             </property>
+             <property name="shortcut">
+              <string>Ctrl+Shift+M</string>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showClear">
+             <property name="geometry">
+              <rect>
+               <x>535</x>
+               <y>35</y>
+               <width>140</width>
+               <height>22</height>  
+              </rect>
+             </property>
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QToolButton" name="actionClearH">
+              <property name="geometry">
+                <rect>
+                  <x>525</x>
+                  <y>0</y>
+                  <width>33</width>
+                  <height>33</height>  
+                </rect>
+              </property>
+              <property name="IconSize">
+                <size>
+                  <width>27</width>
+                  <height>25</height>
+                </size>
+              </property>
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="icon">
+              <iconset resource="Boolean_operations_2.qrc">
+               <normaloff>:/cgal/icons/resources/clear.png</normaloff>:/cgal/icons/resources/clear.png</iconset>
+             </property>
+             <property name="toolTip">
+              <string>Clear Selected Bucket</string>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showResult">
+             <property name="visible">
+              <bool>false</bool>
+             </property>
+             <property name="geometry">
+              <rect>
+               <x>140</x>
+               <y>270</y>
+               <width>140</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Result(Green)</string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="showCopy">
+             <property name="visible">
+              <bool>false</bool>
+             </property>
+             <property name="geometry">
+              <rect>
+               <x>140</x>
+               <y>270</y>
+               <width>140</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string></string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="infoDockWidget">
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea|Qt::BottomDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>Information</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QScrollArea" name="scrollArea">
+         <property name="minimumSize">
+          <size>
+           <width>350</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="scrollAreaWidgetContents">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>625</width>
+            <height>173</height>
+           </rect>
+          </property>
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="0" column="0">
+            <widget class="QLabel" name="infoLabel">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>1</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="contextMenuPolicy">
+              <enum>Qt::DefaultContextMenu</enum>
+             </property>
+             <property name="lineWidth">
+              <number>0</number>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="displayLabel">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <action name="actionOpenLinear">
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+     <normaloff>:/cgal/fileToolbar/fileOpen.png</normaloff>:/cgal/fileToolbar/fileOpen.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open Linear Polygon</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+     <normaloff>:/cgal/icons/resources/undo.png</normaloff>:/cgal/icons/resources/undo.png</iconset>
+   </property>
+   <property name="text">
+    <string>Undo</string>
+   </property>
+   <property name ="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="actionRecenter">
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+     <normaloff>:/cgal/icons/resources/fit-page-32.png</normaloff>:/cgal/icons/resources/fit-page-32.png</iconset>
+   </property>
+   <property name="text">
+    <string>Recenter Scene</string>
+   </property>
+   <property name ="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="Minkowksi_Sum">
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+     <normaloff>:/cgal/icons/resources/Minkowski_sum_2.png</normaloff>:/cgal/icons/resources/Minkowski_sum_2.png</iconset>
+   </property>
+   <property name="text">
+    <string>Minkowski Mode</string>
+   </property>
+   <property name="toolTip" >
+    <string>Minkowski Mode</string>
+   </property>
+  </action>
+  <action name="actionInsertLinear">
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+     <normaloff>:/cgal/icons/resources/insert_polygon.xpm</normaloff>:/cgal/icons/resources/insert_polygon.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Draw Linear polygon</string>
+   </property>
+   <property name="toolTip" >
+    <string>Draw Linear Polygon</string>
+   </property>
+  </action>
+  <action name="actionInsertCircular">
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name = "checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+     <normaloff>:/cgal/icons/resources/insert_circle.xpm</normaloff>:/cgal/icons/resources/insert_circle.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Draw Line segments and circular arcs</string>
+   </property>
+   <property name="toolTip" >
+    <string>Draw Line segments and circular arcs</string>
+   </property>
+  </action>
+  <action name="actionVisible">
+   <property name="checkable" >
+    <bool>true</bool>
+   </property> 
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+     <normaloff>:/cgal/icons/resources/vis.bmp</normaloff>:/cgal/icons/resources/vis.bmp</iconset>
+   </property>
+   <property name="text">
+    <string>Visible</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="text">
+    <string>&amp;About</string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionAdd_new_polygon">
+   <property name="text">
+    <string>Add new polygon</string>
+   </property>
+  </action>
+  <action name="showColorBucket">
+   <property name="text">
+    <string>Operations</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="showConsole">
+   <property name="text">
+    <string>Console</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="showInfo">
+   <property name="text">
+    <string>Info</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionPAN">
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>  
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+     <normaloff>:/cgal/icons/resources/hand.png</normaloff>:/cgal/icons/resources/hand.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Pan</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
+   </property>
+  </action>
+  <action name="actionAddColor">
+   <property name="checkable" >
+    <bool>false</bool>
+   </property>  
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+    <normaloff>:/cgal/icons/resources/add_bucket.svg</normaloff>:/cgal/icons/resources/add_bucket.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Add a Bucket</string>
+   </property>
+  </action>
+  <action name="actionMinusColor">
+    <property name="enabled">
+      <bool>false</bool>
+    </property>
+    <property name="Visible"  >
+      <bool>true</bool>
+    </property>
+    <property name="checkable" >
+     <bool>false</bool>
+    </property>
+    <property name="icon">
+      <iconset resource="Boolean_operations_2.qrc">
+      <normaloff>:/cgal/icons/minus</normaloff>:/cgal/icons/minus</iconset>
+    </property>
+    <property name="text">
+      <string>&amp;Bucket Removal Not Allowed</string>
+    </property>
+  </action>
+  <action name="actionDeleteAll">
+   <property name="icon">
+    <iconset resource="Boolean_operations_2.qrc">
+     <normaloff>:/cgal/icons/resources/check-off.png</normaloff>:/cgal/icons/resources/check-off.png</iconset>
+   </property> 
+   <property name="text">
+    <string>Delete all Buckets</string>
+   </property>
+  </action>
+  <action name="actionAxis" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>  
+   <property name="icon" >
+    <iconset resource="boolean_operations_2.qrc" >
+     <normaloff>:/cgal/icons/resources/axis.png</normaloff>:/cgal/icons/resources/axis.png</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;Axis</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+A</string>
+   </property>
+  </action>
+  <action name="actionNew" >
+   <property name="icon" >
+    <iconset resource="boolean_operations_2.qrc" >
+     <normaloff>:/cgal/icons/resources/reset.png</normaloff>:/cgal/icons/resources/reset.png</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;Reset</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+R</string>
+   </property>
+  </action>
+  <action name="actionOpenDXF" >
+   <property name="icon" >
+    <iconset resource="boolean_operations_2.qrc" >
+     <normaloff>:/cgal/fileToolbar/fileOpen.png</normaloff>:/cgal/fileToolbar/fileOpen.png</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;Open Line Segment and Circular Arcs</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
+   </property>
+  </action>
+  <action name="actionOpenBezier" >
+   <property name="icon" >
+    <iconset resource="boolean_operations_2.qrc" >
+     <normaloff>:/cgal/fileToolbar/fileOpen.png</normaloff>:/cgal/fileToolbar/fileOpen.png</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;Open Bezier Polygon</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+B</string>
+   </property>
+  </action>
+  <action name="actionSaveCurrentBucket" >
+   <property name="icon" >
+    <iconset resource="boolean_operations_2.qrc" >
+     <normaloff>:/cgal/fileToolbar/fileSave.png</normaloff>:/cgal/fileToolbar/fileSave.png</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;Save Active Set</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+   <action name="actionQuit" >
+   <property name="text" >
+    <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionInsertBezier" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>false</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="boolean_operations_2.qrc" >
+     <normaloff>:/cgal/icons/resources/insert_bezier.xpm</normaloff>:/cgal/icons/resources/insert_bezier.xpm
+    </iconset>
+   </property>
+   <property name="text" >
+    <string>Draw Bezier Polygon</string>
+   </property>
+   <property name="toolTip" >
+    <string>Draw Bezier Polygon</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="Boolean_operations_2.qrc"/>
+ </resources>
+ <connections/>
+</ui>
