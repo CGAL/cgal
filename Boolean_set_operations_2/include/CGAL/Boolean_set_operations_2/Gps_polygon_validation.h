@@ -257,6 +257,8 @@ bool is_simple_polygon(const typename Traits_2::Polygon_2& pgn,
      case Visitor::ERROR_VERTEX_INTERSECTION:
       CGAL_warning_msg(false, "The polygon boundary intersects at vertices.");
       break;
+
+     default: break;
     }
     return false;
   }
@@ -516,6 +518,8 @@ bool is_relatively_simple_polygon_with_holes
      case Visitor::ERROR_VERTEX_INTERSECTION:
       CGAL_warning_msg(false, "The outer boundary self intersects at vertices.");
       break;
+
+     default: break;
     }
     return false;
   }
