@@ -248,50 +248,50 @@ void test_bool()
         bool_assert(! (false & utrue));
         bool_assert(! (false & ufalse));
 
-        bool_assert(!CGAL_AND(true, false));
-        bool_assert(!CGAL_AND(false, true));
-        bool_assert(CGAL_AND(true, true));
-        bool_assert(!CGAL_AND(false, false));
-        bool_assert(!CGAL_AND(utrue, ufalse));
-        bool_assert(!CGAL_AND(ufalse, utrue));
-        bool_assert(CGAL_AND(utrue, utrue));
-        bool_assert(!CGAL_AND(ufalse, ufalse));
+        bool_assert(!CGAL::CGAL_AND(true, false));
+        bool_assert(!CGAL::CGAL_AND(false, true));
+        bool_assert(CGAL::CGAL_AND(true, true));
+        bool_assert(!CGAL::CGAL_AND(false, false));
+        bool_assert(!CGAL::CGAL_AND(utrue, ufalse));
+        bool_assert(!CGAL::CGAL_AND(ufalse, utrue));
+        bool_assert(CGAL::CGAL_AND(utrue, utrue));
+        bool_assert(!CGAL::CGAL_AND(ufalse, ufalse));
 
         bool_assert(CGAL_AND_3(true, true, true));
         bool_assert(!CGAL_AND_3(true, false, true));
 
-        bool_assert(CGAL_OR(true, false));
-        bool_assert(CGAL_OR(false, true));
-        bool_assert(CGAL_OR(true, true));
-        bool_assert(!CGAL_OR(false, false));
-        bool_assert(CGAL_OR(utrue, ufalse));
-        bool_assert(CGAL_OR(ufalse, utrue));
-        bool_assert(CGAL_OR(utrue, utrue));
-        bool_assert(!CGAL_OR(ufalse, ufalse));
+        bool_assert(CGAL::CGAL_OR(true, false));
+        bool_assert(CGAL::CGAL_OR(false, true));
+        bool_assert(CGAL::CGAL_OR(true, true));
+        bool_assert(!CGAL::CGAL_OR(false, false));
+        bool_assert(CGAL::CGAL_OR(utrue, ufalse));
+        bool_assert(CGAL::CGAL_OR(ufalse, utrue));
+        bool_assert(CGAL::CGAL_OR(utrue, utrue));
+        bool_assert(!CGAL::CGAL_OR(ufalse, ufalse));
 
         bool_assert(CGAL_OR_3(false, false, true));
         bool_assert(!CGAL_OR_3(false, false, false));
 
         try {
-          bool_assert( CGAL_AND(utrue, utrue));
-          bool_assert(!CGAL_AND(ufalse, ufalse));
-          bool_assert(!CGAL_AND(ufalse, utrue));
-          bool_assert(!CGAL_AND(utrue, ufalse));
-          bool_assert(indet.is_same(CGAL_AND(indet, indet)));
-          bool_assert(indet.is_same(CGAL_AND(utrue, indet)));
-          bool_assert(indet.is_same(CGAL_AND(indet, utrue)));
-          bool_assert(!CGAL_AND(ufalse, indet));
-          bool_assert(!CGAL_AND(indet, ufalse));
+          bool_assert( CGAL::CGAL_AND(utrue, utrue));
+          bool_assert(!CGAL::CGAL_AND(ufalse, ufalse));
+          bool_assert(!CGAL::CGAL_AND(ufalse, utrue));
+          bool_assert(!CGAL::CGAL_AND(utrue, ufalse));
+          bool_assert(indet.is_same(CGAL::CGAL_AND(indet, indet)));
+          bool_assert(indet.is_same(CGAL::CGAL_AND(utrue, indet)));
+          bool_assert(indet.is_same(CGAL::CGAL_AND(indet, utrue)));
+          bool_assert(!CGAL::CGAL_AND(ufalse, indet));
+          bool_assert(!CGAL::CGAL_AND(indet, ufalse));
 
-          bool_assert( CGAL_OR(utrue, utrue));
-          bool_assert(!CGAL_OR(ufalse, ufalse));
-          bool_assert( CGAL_OR(ufalse, utrue));
-          bool_assert( CGAL_OR(utrue, ufalse));
-          bool_assert(indet.is_same(CGAL_OR(indet, indet)));
-          bool_assert( CGAL_OR(utrue, indet));
-          bool_assert( CGAL_OR(indet, utrue));
-          bool_assert(indet.is_same(CGAL_OR(ufalse, indet)));
-          bool_assert(indet.is_same(CGAL_OR(indet, ufalse)));
+          bool_assert( CGAL::CGAL_OR(utrue, utrue));
+          bool_assert(!CGAL::CGAL_OR(ufalse, ufalse));
+          bool_assert( CGAL::CGAL_OR(ufalse, utrue));
+          bool_assert( CGAL::CGAL_OR(utrue, ufalse));
+          bool_assert(indet.is_same(CGAL::CGAL_OR(indet, indet)));
+          bool_assert( CGAL::CGAL_OR(utrue, indet));
+          bool_assert( CGAL::CGAL_OR(indet, utrue));
+          bool_assert(indet.is_same(CGAL::CGAL_OR(ufalse, indet)));
+          bool_assert(indet.is_same(CGAL::CGAL_OR(indet, ufalse)));
 
         } catch (CGAL::Uncertain_conversion_exception&) {
 #ifndef CGAL_CFG_NO_STATEMENT_EXPRESSIONS

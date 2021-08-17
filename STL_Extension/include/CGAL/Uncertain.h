@@ -554,9 +554,9 @@ Uncertain<bool> CGAL_OR(bool a, bool b)
   return make_uncertain(a || b);
 }
 
-#define CGAL_AND_3(X, Y, Z)  CGAL_AND(X, CGAL_AND(Y, Z))
-#define CGAL_AND_6(A, B, C, D, E, F)  CGAL_AND(CGAL_AND_3(A, B, C), CGAL_AND_3(D, E,F))
-#define CGAL_OR_3(X, Y, Z)   CGAL_OR(X, CGAL_OR(Y, Z))
+#define CGAL_AND_3(X, Y, Z)  CGAL::CGAL_AND(X, CGAL::CGAL_AND(Y, Z))
+#define CGAL_AND_6(A, B, C, D, E, F)  CGAL::CGAL_AND(CGAL::CGAL_AND_3(A, B, C), CGAL::CGAL_AND_3(D, E,F))
+#define CGAL_OR_3(X, Y, Z)   CGAL::CGAL_OR(X, CGAL::CGAL_OR(Y, Z))
 
 // make_certain() : Forcing a cast to certain (possibly throwing).
 // This is meant to be used only in cases where we cannot easily propagate the
