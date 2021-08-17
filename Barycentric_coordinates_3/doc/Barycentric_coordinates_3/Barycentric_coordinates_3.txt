@@ -136,7 +136,9 @@ where \f$V_i\f$ is the signed volume of the sub-tetrahedron opposite to the vert
 is the total volume of the tetrahedron, that is \f$V = V_0 + V_1 + V_2 + V_3\f$.
 
 These coordinates can be computed exactly if an exact number type is chosen, for any query point
-in the space and with respect to any non-degenerate tetrahedron.
+in the space and with respect to any non-degenerate tetrahedron. No special cases are handled. 
+The computation always yields the correct result. The notion of correctness depends on the precision 
+of the used number type. Note that for exterior points some coordinate values will be negative.
 
 \subsection gbc_3_degeneracies_wachspress Wachspress Coordinates
 
@@ -145,8 +147,12 @@ To compute Wachspress coordinates of the query point `q`, we adopt the simple fo
 \f$w_v({q}) = \sum_{i=2}^{k-1}det({p_{f_1}}({q}), {p_{f_i}}({q}), {p_{f_{i+1}}}({q}))\f$
 </center>
 
-where \f${p_f}({q}) = \frac{{n_f}}{h_f({q})}\f$, \f$h_f({q}) = ({v} - {q})\cdot {n_f}\f$ denote the
-perpendicular distance of \f$q\f$ to \f$f\f$, and for the face \f$f\f$, let \f${n_f}\f$ denote its unit outward normal.
+for each vertex \f$v\f$, let \f$f_1, f_2, ..., f_k\f$ be the \f$k\f$ faces incident to \f$v\f$. We 
+are assuming that the faces are taken in anticlockwise order.
+
+We can define \f${p_f}({q}) = \frac{{n_f}}{h_f({q})}\f$, 
+and \f$h_f({q}) = ({v} - {q})\cdot {n_f}\f$ as the perpendicular distance of \f$q\f$ to \f$f\f$. 
+For the face \f$f\f$, let \f${n_f}\f$ denote its unit outward normal.
 
 In this implementation, Wachspress coordinates are well defined in the closure of any convex
 polyhedra. If an exact number type is chosen, they are computed exactly.
@@ -155,7 +161,7 @@ polyhedra. If an exact number type is chosen, they are computed exactly.
 
 To compute discrete harmonic coordinates of the query point `q`, we adopt the simple formula:
 <center>
-\f$w_i = \sum_{v_i \in T} \frac{cot[\theta_i^T]h_i^T}{2}\f$
+\f$w_i = \sum_{T : v_i \in T} \frac{cot[\theta_i^T]h_i^T}{2}\f$
 </center>
 
 where, within a triangle face T = {v1, v2, v3}, \f$\theta_i^T\f$ is the dihedral angle between T and
@@ -192,10 +198,10 @@ to evaluate performance is absolutely necessary. In this section,
 we present benchmark results for each algorithm.
 
 To make the benchmark and evaluate runtimes, for each analytic coordinate,
-we regularly sample approximately $n^3$ ($n$ varying from 1 to 100) strictly
+we regularly sample approximately \f$n^3\f$ (\f$n\f$ varying from 1 to 100) strictly
 interior points with respect to a cube with unit length, and then calculate
-its coordinate values (see figure bellow). The results are represented in a log-log
-scale plot and are the mean value of 10 loop iterations (see plot bellow).
+its coordinate values (see figure below). The results are represented in a log-log
+scale plot and are the mean value of 10 loop iterations (see plot below).
 
 \cgalFigureBegin{bc_coords_bench_structure_3, bc_coords_bench_structure_3.png}
 Points shown in red are the sample points used to make the benchmark.
@@ -203,17 +209,17 @@ Points shown in red are the sample points used to make the benchmark.
 
 The performance strongly depends on the chosen kernel,
 for this test we choose to use SCKER because is much faster than others.
-Also, we can see that time (wp) << time (dh) < time (mv). This happens because wp
-implementation has fewer instructions per loop than other two, so naturally
+Also, we can see that time (WP) << time (DH) < time (MV). This happens because wp
+implementation has fewer instructions per loop than the other two, so naturally,
 the computation time tends to be faster.
 
 \cgalFigureBegin{bc_coords_bench_3, bc_coords_bench_3.png}
-Time in seconds to compute $n^3$ coordinate values for a cube. Are represented in the graph:
-Wachspress (blue), discrete harmonic (orange) and mean value (green).
+Time in seconds to compute \f$n^3\f$ coordinate values for a cube. Are represented in the graph:
+Wachspress (blue), discrete harmonic (orange), and mean value (green).
 \cgalFigureEnd
 
 Tetrahedron coordinates are not shown in the same plot because the test is
-slightly different. For this one, we simply show in a table (see table bellow)
+slightly different. For this one, we simply show in a table (see table below)
 the results for some pre-defined quantity of points. The test is done by regularly
 sampling strictly interior points with respect to a tetrahedron with
 unit sides that lies on the coordinate axis.
