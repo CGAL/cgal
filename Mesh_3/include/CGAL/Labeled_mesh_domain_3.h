@@ -422,7 +422,7 @@ public:
   // access Function type from inherited class
   typedef Function Fct;
 
-  typedef std::tuple<Point_3,Index,int> Intersection;
+  typedef std::tuple<Point_3,Index,int,bool> Intersection;
 
 
   typedef typename BGT::FT FT;
@@ -1212,7 +1212,7 @@ public:
           const Surface_patch_index sp_index =
             r_domain_.make_surface_index(value_at_p1, value_at_p2);
           const Index index = r_domain_.index_from_surface_patch_index(sp_index);
-          return Intersection(mid, index, 2);
+          return Intersection(mid, index, 2, false);
         }
 
         // Else we must go on
