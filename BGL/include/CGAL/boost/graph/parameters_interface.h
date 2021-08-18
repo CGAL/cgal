@@ -192,7 +192,6 @@ CGAL_add_named_parameter(maximum_running_time_t, maximum_running_time, maximum_r
 CGAL_add_named_parameter(overlap_t, overlap, overlap)
 CGAL_add_named_parameter(maximum_normal_deviation_t, maximum_normal_deviation, maximum_normal_deviation)
 
-
 // parameters added for minimal angle remeshing
 CGAL_add_named_parameter(max_error_threshold_t,max_error_threshold,max_error_threshold)
 CGAL_add_named_parameter(min_angle_threshold_t,min_angle_threshold,min_angle_threshold)
