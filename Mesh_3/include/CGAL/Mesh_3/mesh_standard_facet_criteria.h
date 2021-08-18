@@ -694,9 +694,9 @@ private:
 
 template <typename Tr>
 class Facet_criterion_visitor_with_features
-  : public Facet_criterion_visitor<Tr>
+  : public Mesh_3::Criterion_visitor<Tr, typename Tr::Facet>
 {
-  typedef Facet_criterion_visitor<Tr> Base;
+  typedef Mesh_3::Criterion_visitor<Tr, typename Tr::Facet> Base;
   typedef Facet_criterion_visitor_with_features<Tr> Self;
 
   typedef typename Tr::Geom_traits  Gt;
