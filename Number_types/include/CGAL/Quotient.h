@@ -44,7 +44,19 @@ namespace CGAL {
 // This function is not documented as a number type requirement for now.
 template < typename NT >
 inline void
-simplify_quotient(NT &, NT &) {}
+simplify_quotient(NT & /*a*/, NT & /*b*/) {
+
+  // const auto r = gcd(a, b);
+  // std::cout << "r: " << r << std::endl;
+  // std::cout << "a: " << a << std::endl;
+  // std::cout << "b: " << b << std::endl;
+  // a = a / r;
+  // std::cout << "new a: " << a << std::endl;
+  // b = b / r;
+  // std::cout << "new b: " << b << std::endl;
+  // std::cout << std::endl;
+
+}
 
 // This one should be replaced by some functor or tag.
 // Meanwhile, the class is specialized for Gmpz, mpz_class, leda_integer.
@@ -687,6 +699,19 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
       : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
+
+          // auto x = xx;
+          // auto& a = x.num; auto& b = x.den;
+          // const auto r = gcd(a, b);
+          // std::cout << "r: " << r << std::endl;
+          // std::cout << "a: " << a << std::endl;
+          // std::cout << "b: " << b << std::endl;
+          // a = a / r;
+          // std::cout << "new a: " << a << std::endl;
+          // b = b / r;
+          // std::cout << "new b: " << b << std::endl;
+          // std::cout << std::endl;
+
           Interval_nt<> quot =
                           Interval_nt<>(CGAL_NTS to_interval(x.numerator())) /
                           Interval_nt<>(CGAL_NTS to_interval(x.denominator()));
