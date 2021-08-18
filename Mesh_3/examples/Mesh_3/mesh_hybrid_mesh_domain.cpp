@@ -46,7 +46,7 @@ public:
 
   typedef K R;
   typedef K::Point_3 Point_3;
-  typedef std::tuple<Point_3, Index, int> Intersection;
+  typedef std::tuple<Point_3, Index, int, bool> Intersection;
 
   CGAL::Bbox_3 bbox() const {
     return implicit_domain.bbox() + polyhedron_domain.bbox();
@@ -126,7 +126,7 @@ public:
         r_domain_.implicit_domain.construct_intersection_object()(query);
       //if found, return it
       if(get<2>(implicit_inter) != 0) {
-        return Intersection(get<0>(implicit_inter), 2, get<2>(implicit_inter));
+        return Intersection(get<0>(implicit_inter), 2, get<2>(implicit_inter), false);
       }
 
       //intersection with polyhedral domain
@@ -136,7 +136,7 @@ public:
       if(get<2>(polyhedron_inter) != 0) {
         const Point_3 inter_point = get<0>(polyhedron_inter);
         if(!r_domain_.implicit_domain.is_in_domain_object()(inter_point)) {
-          return Intersection(inter_point, 1, get<2>(polyhedron_inter));
+          return Intersection(inter_point, 1, get<2>(polyhedron_inter), get<3>(polyhedron_inter));
         }
       }
       //no intersection found
