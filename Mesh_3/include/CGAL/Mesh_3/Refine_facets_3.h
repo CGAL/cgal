@@ -396,9 +396,10 @@ protected:
   typedef typename Criteria::Is_facet_bad Is_facet_bad;
   typedef typename MeshDomain::Surface_patch_index Surface_patch_index;
   typedef typename MeshDomain::Index Index;
+  typedef bool SelfIntersection;
 
   typedef typename boost::optional<
-    std::tuple<Surface_patch_index, Index, Bare_point> >
+    std::tuple<Surface_patch_index, Index, Bare_point, SelfIntersection> >
                                                       Facet_properties;
 
 
@@ -460,7 +461,12 @@ protected:
     return r_c3t3_.surface_patch_index(f.first, f.second);
   }
 
-  /// Sets index and dimension of vertex `v`.
+  void set_facet_on_self_intersection(const Facet& f, const bool& b) const
+  {
+    f.first->set_facet_on_self_intersection(f.second, b);
+  }
+
+  /// Sets index and dimension of vertex `v`
   void set_vertex_properties(Vertex_handle& v, const Index& index)
   {
     r_c3t3_.set_index(v, index);
@@ -1346,10 +1352,12 @@ conflicts_zone_impl(const Weighted_point& point
         const Surface_patch_index& surface_index = std::get<0>(*properties);
         const Index& surface_center_index = std::get<1>(*properties);
         const Bare_point& surface_center = std::get<2>(*properties);
+        const bool self_intersection = std::get<3>(*properties);
 
         // Facet is on surface: set facet properties
         this->set_facet_surface_center(facet, surface_center, surface_center_index);
         this->set_facet_on_surface(facet, surface_index);
+        this->set_facet_on_self_intersection(facet, self_intersection);
       }
       else
       {
@@ -1408,10 +1416,12 @@ conflicts_zone_impl(const Weighted_point& point
         const Surface_patch_index& surface_index = std::get<0>(*properties);
         const Index& surface_center_index = std::get<1>(*properties);
         const Bare_point& surface_center = std::get<2>(*properties);
+        const bool self_intersection = std::get<3>(*properties);
 
         // Facet is on surface: set facet properties
         this->set_facet_surface_center(facet, surface_center, surface_center_index);
         this->set_facet_on_surface(facet, surface_index);
+        this->set_facet_on_self_intersection(facet, self_intersection);
       }
       else
       {
@@ -1576,10 +1586,12 @@ treat_new_facet(Facet& facet)
     const Surface_patch_index& surface_index = std::get<0>(*properties);
     const Index& surface_center_index = std::get<1>(*properties);
     const Bare_point& surface_center = std::get<2>(*properties);
+    const bool self_intersection = std::get<3>(*properties);
 
     // Facet is on surface: set facet properties
     set_facet_surface_center(facet, surface_center, surface_center_index);
     set_facet_on_surface(facet, surface_index);
+    set_facet_on_self_intersection(facet, self_intersection);
 
     // Insert facet into refinement queue if needed
     const Is_facet_bad is_facet_bad = r_criteria_(r_tr_, facet);
@@ -1681,9 +1693,8 @@ compute_facet_properties(const Facet& facet,
       {
         fp =  Facet_properties(std::make_tuple(*surface,
                                       std::get<1>(intersect),
-                                      std::get<0>(intersect)));
-        facet.first->set_facet_on_self_intersection(facet.second,
-                                                    std::get<3>(intersect));
+                                      std::get<0>(intersect),
+                                      std::get<3>(intersect)));
       }
     }
   }
@@ -1723,9 +1734,8 @@ compute_facet_properties(const Facet& facet,
       {
         fp = Facet_properties(std::make_tuple(*surface,
                                       std::get<1>(intersect),
-                                      std::get<0>(intersect)));
-        facet.first->set_facet_on_self_intersection(facet.second,
-                                                    std::get<3>(intersect));
+                                      std::get<0>(intersect),
+                                      std::get<3>(intersect)));
       }
     }
   }
