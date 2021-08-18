@@ -19,6 +19,7 @@
 #include <CGAL/Random.h>
 
 #include <vector>
+#include <unordered_map>
 
 namespace CGAL {
 
@@ -27,7 +28,7 @@ namespace Classification {
 /*!
 \ingroup PkgClassificationLabel
 
-\brief Set of `Label` used as input by classification
+\brief sets of `Label` used as input by classification
 algorithms.
 
 */
@@ -85,7 +86,7 @@ public:
     \return a handle to the newly added label.
   */
   Label_handle add (const char* name,
-                    CGAL::Color color,
+                    CGAL::IO::Color color,
                     std::size_t standard_index = -1)
   {
     Label_handle out = std::make_shared<Classification::Label>
@@ -134,70 +135,70 @@ public:
   */
   Label_handle add (const char* name)
   {
-    static std::unordered_map<std::string, std::pair<std::size_t, CGAL::Color> > init_map;
+    static std::unordered_map<std::string, std::pair<std::size_t, CGAL::IO::Color> > init_map;
     if (init_map.empty())
     {
       init_map.insert (std::make_pair ("unassigned",
-                                       std::make_pair (2, CGAL::Color (0, 0, 0))));
+                                       std::make_pair (2, CGAL::IO::Color (0, 0, 0))));
       init_map.insert (std::make_pair ("ground",
-                                       std::make_pair (2, CGAL::Color (186, 189, 182))));
+                                       std::make_pair (2, CGAL::IO::Color (186, 189, 182))));
       init_map.insert (std::make_pair ("low_vegetation",
-                                       std::make_pair (3, CGAL::Color (78, 154, 6))));
+                                       std::make_pair (3, CGAL::IO::Color (78, 154, 6))));
       init_map.insert (std::make_pair ("medium_vegetation",
-                                       std::make_pair (4, CGAL::Color (138, 226, 52))));
+                                       std::make_pair (4, CGAL::IO::Color (138, 226, 52))));
       init_map.insert (std::make_pair ("high_vegetation",
-                                       std::make_pair (5, CGAL::Color (204, 255, 201))));
+                                       std::make_pair (5, CGAL::IO::Color (204, 255, 201))));
       init_map.insert (std::make_pair ("building",
-                                       std::make_pair (6, CGAL::Color (245, 121, 0))));
+                                       std::make_pair (6, CGAL::IO::Color (245, 121, 0))));
       init_map.insert (std::make_pair ("noise",
-                                       std::make_pair (7, CGAL::Color (128, 0, 0))));
+                                       std::make_pair (7, CGAL::IO::Color (128, 0, 0))));
       init_map.insert (std::make_pair ("reserved",
-                                       std::make_pair (8, CGAL::Color (233, 185, 110))));
+                                       std::make_pair (8, CGAL::IO::Color (233, 185, 110))));
       init_map.insert (std::make_pair ("water",
-                                       std::make_pair (9, CGAL::Color (114, 159, 207))));
+                                       std::make_pair (9, CGAL::IO::Color (114, 159, 207))));
       init_map.insert (std::make_pair ("rail",
-                                       std::make_pair (10, CGAL::Color (136, 46, 25))));
+                                       std::make_pair (10, CGAL::IO::Color (136, 46, 25))));
       init_map.insert (std::make_pair ("road_surface",
-                                       std::make_pair (11, CGAL::Color (56, 56, 56))));
+                                       std::make_pair (11, CGAL::IO::Color (56, 56, 56))));
       init_map.insert (std::make_pair ("reserved_2",
-                                       std::make_pair (12, CGAL::Color (193, 138, 51))));
+                                       std::make_pair (12, CGAL::IO::Color (193, 138, 51))));
       init_map.insert (std::make_pair ("wire_guard",
-                                       std::make_pair (13, CGAL::Color (37, 61, 136))));
+                                       std::make_pair (13, CGAL::IO::Color (37, 61, 136))));
       init_map.insert (std::make_pair ("wire_conductor",
-                                       std::make_pair (14, CGAL::Color (173, 127, 168))));
+                                       std::make_pair (14, CGAL::IO::Color (173, 127, 168))));
       init_map.insert (std::make_pair ("wire_conduct",
-                                       std::make_pair (14, CGAL::Color (173, 127, 168))));
+                                       std::make_pair (14, CGAL::IO::Color (173, 127, 168))));
       init_map.insert (std::make_pair ("transmission_tower",
-                                       std::make_pair (15, CGAL::Color (136, 138, 133))));
+                                       std::make_pair (15, CGAL::IO::Color (136, 138, 133))));
       init_map.insert (std::make_pair ("trans_tower",
-                                       std::make_pair (15, CGAL::Color (136, 138, 133))));
+                                       std::make_pair (15, CGAL::IO::Color (136, 138, 133))));
       init_map.insert (std::make_pair ("wire_connect",
-                                       std::make_pair (16, CGAL::Color (145, 64, 236))));
+                                       std::make_pair (16, CGAL::IO::Color (145, 64, 236))));
       init_map.insert (std::make_pair ("bridge_deck",
-                                       std::make_pair (17, CGAL::Color (213, 93, 93))));
+                                       std::make_pair (17, CGAL::IO::Color (213, 93, 93))));
       init_map.insert (std::make_pair ("high_noise",
-                                       std::make_pair (18, CGAL::Color (255, 0, 0))));
+                                       std::make_pair (18, CGAL::IO::Color (255, 0, 0))));
 
       // Undocumented additions
       init_map.insert (std::make_pair ("low_veget",
-                                       std::make_pair (3, CGAL::Color (78, 154, 6))));
+                                       std::make_pair (3, CGAL::IO::Color (78, 154, 6))));
       init_map.insert (std::make_pair ("medium_veget",
-                                       std::make_pair (4, CGAL::Color (138, 226, 52))));
+                                       std::make_pair (4, CGAL::IO::Color (138, 226, 52))));
       init_map.insert (std::make_pair ("vegetation",
-                                       std::make_pair (4, CGAL::Color (138, 226, 52))));
+                                       std::make_pair (4, CGAL::IO::Color (138, 226, 52))));
       init_map.insert (std::make_pair ("high_veget",
-                                       std::make_pair (5, CGAL::Color (204, 255, 201))));
+                                       std::make_pair (5, CGAL::IO::Color (204, 255, 201))));
       init_map.insert (std::make_pair ("roof",
-                                       std::make_pair (6, CGAL::Color (245, 121, 0))));
+                                       std::make_pair (6, CGAL::IO::Color (245, 121, 0))));
       init_map.insert (std::make_pair ("facade",
-                                       std::make_pair (-1, CGAL::Color (77, 131, 186))));
+                                       std::make_pair (-1, CGAL::IO::Color (77, 131, 186))));
     }
 
     std::string sname (name);
     auto found = init_map.find (sname);
     if (found == init_map.end())
       return add (name,
-                  CGAL::Color ((unsigned char)(m_random.get_int(64, 192)),
+                  CGAL::IO::Color ((unsigned char)(m_random.get_int(64, 192)),
                                (unsigned char)(m_random.get_int(64, 192)),
                                (unsigned char)(m_random.get_int(64, 192))));
 
@@ -326,8 +327,6 @@ public:
   /// @}
 
 };
-
-
 
 } // namespace Classification
 

@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Polyline_simplification_2_Demo)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
@@ -17,7 +17,7 @@ find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Widgets Svg)
+find_package(Qt5 QUIET COMPONENTS Script OpenGL Widgets Svg)
 
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)

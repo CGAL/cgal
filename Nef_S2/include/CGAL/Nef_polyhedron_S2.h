@@ -73,7 +73,12 @@ class Nef_polyhedron_S2_rep {
 public:
   Nef_polyhedron_S2_rep() : sm_() {}
   Nef_polyhedron_S2_rep(const Self&) : sm_() {}
-  ~Nef_polyhedron_S2_rep() { sm_.clear(); }
+  ~Nef_polyhedron_S2_rep() noexcept(!CGAL_ASSERTIONS_ENABLED)
+  {
+    CGAL_destructor_assertion_catch(
+      sm_.clear();
+    );
+  }
 };
 
 /*{\Moptions print_title=yes }*/

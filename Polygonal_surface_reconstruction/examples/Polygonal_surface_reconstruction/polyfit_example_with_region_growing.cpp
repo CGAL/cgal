@@ -1,6 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/IO/read_xyz_points.h>
-#include <CGAL/IO/Writer_OFF.h>
+#include <CGAL/IO/read_points.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
@@ -97,14 +96,13 @@ int main()
     std::cerr << "Failed open file \'" << input_file << "\'" << std::endl;
     return EXIT_FAILURE;
   }
+  input_stream.close();
   std::cout << "Loading point cloud: " << input_file << "...";
 
   CGAL::Timer t;
   t.start();
-    if (!input_stream ||
-    !CGAL::read_xyz_points(input_stream,
-      std::back_inserter(points),
-      CGAL::parameters::point_map(Point_map()).normal_map(Normal_map()))) {
+  if (!CGAL::IO::read_points(input_file.c_str(), std::back_inserter(points),
+                             CGAL::parameters::point_map(Point_map()).normal_map(Normal_map()))) {
 
     std::cerr << "Error: cannot read file " << input_file << std::endl;
     return EXIT_FAILURE;
@@ -177,12 +175,8 @@ int main()
   std::cout << "Saving...";
   t.reset();
   const std::string& output_file("data/cube_result.off");
-  std::ofstream output_stream(output_file.c_str());
-  if (output_stream && CGAL::write_off(output_stream, model)) {
-    // flush the buffer
-    output_stream << std::flush;
+  if (CGAL::IO::write_OFF(output_file, model))
     std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
-  }
   else {
     std::cerr << " Failed saving file." << std::endl;
     return EXIT_FAILURE;

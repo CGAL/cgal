@@ -13,17 +13,16 @@ typedef CGAL::Surface_mesh<Point_3>               Surface_mesh;
 
 int main(int argc, char* argv[])
 {
-  std::ifstream in( (argc>1)? argv[1] : "data/star.off");
-
+  const char* filename = (argc>1) ? argv[1] : "data/star.off";
   Surface_mesh poly;
-  if(!(in >> poly))
+  if(!CGAL::IO::read_polygon_mesh(filename, poly))
   {
-    std::cerr<<"Could not find input file."<<std::endl;
+    std::cerr<< "Cannot open input file." <<std::endl;
     return 1;
   }
 
-  Surface_mesh chull;
   // compute convex hull
+  Surface_mesh chull;
   CGAL::convex_hull_3(poly, chull);
 
   std::cout << "The convex hull contains " << chull.number_of_vertices() << " vertices" << std::endl;

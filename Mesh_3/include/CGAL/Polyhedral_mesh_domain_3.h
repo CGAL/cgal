@@ -439,9 +439,7 @@ public:
       if(r_domain_.query_is_cached(q))
       {
         const AABB_primitive_id primitive_id = r_domain_.cached_primitive_id();
-        typename cpp11::result_of<
-          typename IGT::Intersect_3(typename Primitive::Datum, Query)>::type o
-            = IGT().intersect_3_object()(Primitive(primitive_id).datum(),q);
+        const auto o = IGT().intersect_3_object()(Primitive(primitive_id).datum(),q);
         intersection = o ?
           Intersection_and_primitive_id(*o, primitive_id) :
           AABB_intersection();

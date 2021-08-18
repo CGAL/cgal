@@ -26,17 +26,17 @@ CGAL_DO_INTERSECT_FUNCTION(Plane_3, Line_3, 3)
 template < class K >
 inline
 boost::optional<typename K::Point_3>
-intersection_point(const Plane_3<K>& plane, const Line_3<K>& line)
+intersection_point_for_polyhedral_envelope(const Plane_3<K>& plane, const Line_3<K>& line)
 {
-  return K().intersect_point_3_object()(plane, line);
+  return K().intersect_point_3_for_polyhedral_envelope_object()(plane, line);
 }
 
   template < class K >
 inline
 boost::optional<typename K::Point_3>
-  intersection_point(const Line_3<K>& line, const Plane_3<K>& plane)
+  intersection_point_for_polyhedral_envelope(const Line_3<K>& line, const Plane_3<K>& plane)
 {
-  return K().intersect_point_3_object()(plane, line);
+  return K().intersect_point_3_for_polyhedral_envelope_object()(plane, line);
 }
 }
 

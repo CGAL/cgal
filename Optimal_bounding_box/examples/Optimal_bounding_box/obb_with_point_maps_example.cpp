@@ -2,6 +2,7 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/optimal_bounding_box.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
 #include <array>
 #include <fstream>
@@ -20,9 +21,10 @@ namespace CP = CGAL::parameters;
 
 int main(int argc, char** argv)
 {
-  std::ifstream input((argc > 1) ? argv[1] : "data/pig.off");
+  const char* filename = (argc > 1) ? argv[1] : "data/pig.off";
+
   Surface_mesh sm;
-  if (!input || !(input >> sm) || sm.is_empty())
+  if(!CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(filename, sm) || sm.is_empty())
   {
     std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;
@@ -34,7 +36,7 @@ int main(int argc, char** argv)
 
   // one can associate positions to the vertices of the mesh without changing the mesh
   std::unordered_map<vertex_descriptor, Point> translated_positions;
-  for(const vertex_descriptor v : vertices(sm))
+  for(const vertex_descriptor& v : vertices(sm))
     translated_positions[v] = sm.point(v) + Vector(1, 2, 3);
 
   CGAL::oriented_bounding_box(sm, obb_points,
@@ -42,7 +44,7 @@ int main(int argc, char** argv)
 
   // using a range of points
   std::vector<Point> points;
-  for(const vertex_descriptor v : vertices(sm))
+  for(const vertex_descriptor& v : vertices(sm))
     points.push_back(sm.point(v));
   CGAL::oriented_bounding_box(points, obb_points);
 

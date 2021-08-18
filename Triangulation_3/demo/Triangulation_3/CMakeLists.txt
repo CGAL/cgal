@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Triangulation_3_Demo)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
@@ -20,7 +20,7 @@ set(CMAKE_AUTOMOC ON)
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
-find_package(Qt5 QUIET COMPONENTS OpenGL Xml)
+find_package(Qt5 QUIET COMPONENTS OpenGL)
 
 if(Qt5_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
@@ -70,7 +70,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS T3_demo)
 
   target_link_libraries(T3_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt5)
-  target_link_libraries(T3_demo PRIVATE Qt5::OpenGL Qt5::Xml)
+  target_link_libraries(T3_demo PRIVATE Qt5::OpenGL)
   if(TARGET CGAL::TBB_support)
     target_link_libraries(T3_demo PUBLIC CGAL::TBB_support)
   endif()

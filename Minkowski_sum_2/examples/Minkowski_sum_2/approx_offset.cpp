@@ -2,7 +2,7 @@
 // Computing the approximated offset of a polygon.
 
 #include <fstream>
-#include <boost/timer.hpp>
+#include <CGAL/Timer.h>
 
 #include <CGAL/approximated_offset_2.h>
 
@@ -26,9 +26,10 @@ int main(int argc, char* argv[])
             << std::endl;
 
   // Approximate the offset polygon with radius 5 and error bound 0.00001.
-  boost::timer timer;
+  CGAL::Timer timer;
+  timer.start();
   Polygon_with_holes_2 offset = CGAL::approximated_offset_2(P, 5, 0.00001);
-  double secs = timer.elapsed();
+  double secs = timer.time();
 
   std::cout << "The offset polygon has " << offset.outer_boundary().size()
             << " vertices, " << offset.number_of_holes() << " holes."

@@ -13,15 +13,16 @@ typedef CGAL::Manhattan_distance_iso_box_point<TreeTraits> Distance;
 typedef CGAL::K_neighbor_search<TreeTraits, Distance> Neighbor_search;
 typedef Neighbor_search::Tree Tree;
 
-int  main() {
+int  main()
+{
   const int N = 1000;
   const unsigned int K = 10;
 
   Tree tree;
   Random_points_iterator rpit(4,1000.0);
-  for(int i = 0; i < N; i++){
+  for(int i = 0; i < N; i++)
     tree.insert(*rpit++);
-  }
+
   Point_d pp(0.1,0.1,0.1,0.1);
   Point_d qq(0.2,0.2,0.2,0.2);
   Iso_box_d query(pp,qq);

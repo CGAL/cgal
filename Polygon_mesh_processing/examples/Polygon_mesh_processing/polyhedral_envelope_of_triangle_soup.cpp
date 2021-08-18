@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedral_envelope.h>
-#include <CGAL/IO/OFF_reader.h>
+#include <CGAL/IO/OFF.h>
 
 #include <vector>
 #include <fstream>
@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
   std::vector<Point_3> points;
   std::vector<std::vector<std::size_t> > polygons;
 
-  CGAL::read_OFF(in, points, polygons);
+  CGAL::IO::read_OFF(in, points, polygons);
 
   Envelope envelope(points, polygons, eps);
 

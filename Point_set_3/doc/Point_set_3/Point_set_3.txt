@@ -105,7 +105,7 @@ format.
 
 The PLY format is the usual choice when storing an arbitrary number of
 additional properties of points is needed. \cgal provides a function
-`read_ply_point_set()` that allows the user to recover any PLY
+\link PkgPointSet3IOPLY `read_PLY()` \endlink that allows the user to recover any PLY
 property wanted, provided the adapted PLY interpreter is
 implemented.
 

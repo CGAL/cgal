@@ -47,7 +47,6 @@
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <boost/tuple/tuple.hpp>
-#include <boost/utility/result_of.hpp>
 #include <boost/unordered_map.hpp>
 
 #include <iostream>
@@ -92,7 +91,7 @@ struct Periodic_structural_filtering_selector_3<true>
 
 /**\class Periodic_3_triangulation_3
  *
- * \brief Implements functionality for computing in periodic space.
+ * \brief implements functionality for computing in periodic space.
  *
  * There are several things that are special to computing in $\mathbb{T}^3$
  * such as
@@ -650,7 +649,7 @@ public:
   // but       point()          -like functions have return type Point
 
   template<typename P> // can be Point or Point_3
-  typename boost::result_of<const typename GT::Construct_point_3(const P&)>::type
+  decltype(auto)
   construct_point(const P& p) const {
     return geom_traits().construct_point_3_object()(p);
   }
@@ -2498,7 +2497,7 @@ inline Bounded_side Periodic_3_triangulation_3<GT,TDS>::side_of_cell(
   }
 } // side_of_cell
 
-/*! \brief Insert point.
+/*! \brief inserts point.
 *
 * Inserts the point p into the triangulation. It assumes that
 * the cell c containing p is already known.
@@ -2829,7 +2828,7 @@ find_conflicts(Cell_handle d, const Offset& current_off,
   return it;
 }
 
-/*! \brief Insert point into triangulation.
+/*! \brief inserts point into triangulation.
  *
  * Inserts the point p into the triangulation. It expects
  * - a cell to start the point location
@@ -2939,7 +2938,7 @@ inline bool Periodic_3_triangulation_3<GT,TDS>::has_self_edges(Cell_handle c) co
       (c->vertex(2) == c->vertex(3)));
 }
 
-/*! \brief Tests if the triangulation is valid.
+/*! \brief tests if the triangulation is valid.
  *
  * A triangulation is valid if
  * - A cell is not its own neighbor.
@@ -3087,7 +3086,7 @@ inline void Periodic_3_triangulation_3<GT,TDS>::make_hole(Vertex_handle v,
   }
 }
 
-/*! \brief Remove a vertex from the triangulation.
+/*! \brief removes a vertex from the triangulation.
  *
  * Removes vertex v from the triangulation.
  */
@@ -3128,7 +3127,7 @@ remove(Vertex_handle v, PointRemover& r, Conflict_tester& t, CoverManager& cover
   }
 }
 
-/*! \brief Remove a vertex from the triangulation.
+/*! \brief removes a vertex from the triangulation.
  *
  * Removes vertex v from the triangulation.
  * It expects a reference to an instance of a PointRemover.
@@ -3340,7 +3339,7 @@ periodic_remove(Vertex_handle v, PointRemover& remover, CoverManager& cover_mana
 // ############################################################################
 // ############################################################################
 
-/** \brief Delete each redundant cell and the not anymore needed data
+/** \brief deletes each redundant cell and the not anymore needed data
  *  structures.
  *
  *  This function consists of four iterations over all cells and one
@@ -3859,7 +3858,7 @@ Periodic_3_triangulation_3<GT,TDS>::get_cell(const Vertex_handle* vh) const
   return Cell_handle();
 }
 
-/*! \brief Get the offset of tester.point() such that
+/*! \brief gets the offset of tester.point() such that
  * this point is in conflict with c w.r.t tester.get_offset().
  *
  * Implementation: Just try all eight possibilities.
@@ -4023,7 +4022,7 @@ operator>> (std::istream& is, Periodic_3_triangulation_3<GT,TDS>& tr)
   int cx=0, cy=0, cz=0;
   size_type n=0;
 
-  if(is_ascii(is)) {
+  if(IO::is_ascii(is)) {
     is >> domain;
     is >> cx >> cy >> cz;
     is >> n;
@@ -4079,7 +4078,7 @@ operator>> (std::istream& is, Periodic_3_triangulation_3<GT,TDS>& tr)
   // read offsets
   int off[4] = {0,0,0,0};
   for(std::size_t j=0; j < m; j++) {
-    if(is_ascii(is))
+    if(IO::is_ascii(is))
       is >> off[0] >> off[1] >> off[2] >> off[3];
     else {
       read(is,off[0]);
@@ -4130,7 +4129,7 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS>& tr)
   Covering_sheets cover = tr.number_of_sheets();
   size_type n = tr.number_of_vertices();
 
-  if(is_ascii(os))
+  if(IO::is_ascii(os))
     os << domain << std::endl
        << cover[0] << " " << cover[1] << " " << cover[2] << std::endl
        << n*cover[0]*cover[1]*cover[2] << std::endl;
@@ -4152,7 +4151,7 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS>& tr)
     for(Vertex_iterator it=tr.vertices_begin(); it!=tr.vertices_end(); ++it) {
       V[it] = i++;
       os << it->point();
-      if(is_ascii(os))
+      if(IO::is_ascii(os))
         os << std::endl;
     }
   } else {
@@ -4164,7 +4163,7 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS>& tr)
         continue;
 
       V[it]=i++;
-      if(is_ascii(os))
+      if(IO::is_ascii(os))
         os << it->point() << std::endl
            << Offset(0,0,0) << std::endl;
       else os << it->point() << Offset(0,0,0);
@@ -4176,7 +4175,7 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS>& tr)
         vvit = tr.virtual_vertices.find(vv[j]);
         CGAL_triangulation_assertion(vvit != tr.virtual_vertices.end());
         V[vv[j]] = i++;
-        if(is_ascii(os))
+        if(IO::is_ascii(os))
           os << vv[j]->point() << std::endl
              << vvit->second.second << std::endl;
         else os << vv[j]->point() << vvit->second.second;
@@ -4196,7 +4195,7 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS>& tr)
     //Cell_handle ch = std::find(tr.cells_begin(), tr.cells_end(), i);
     Cell_handle ch(it);
     for(int j=0; j<4; j++) {
-      if(is_ascii(os)) {
+      if(IO::is_ascii(os)) {
         os << ch->offset(j);
         if( j==3 )
           os << std::endl;
@@ -4214,7 +4213,7 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS>& tr)
   if(tr.number_of_vertices() != 0) {
       for(Cell_iterator it=tr.cells_begin(); it != tr.cells_end(); ++it) {
     os << *it; // other information
-    if(is_ascii(os))
+    if(IO::is_ascii(os))
       os << std::endl;
     }
   }

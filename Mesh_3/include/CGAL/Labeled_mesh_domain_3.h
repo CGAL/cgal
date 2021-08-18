@@ -27,11 +27,10 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/boost/parameter.h>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <CGAL/tuple.h>
 #include <CGAL/Origin.h>
 
-#include <CGAL/result_of.h>
 #include <functional>
 
 #include <CGAL/internal/Mesh_3/Handle_IO_for_pair_of_int.h>
@@ -149,7 +148,7 @@ protected:
   typedef typename Geom_traits::Sphere_3 Sphere_3;
   typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
   typedef typename Geom_traits::FT FT;
-  typedef boost::shared_ptr<CGAL::Random> CGAL_Random_share_ptr_t;
+  typedef std::shared_ptr<CGAL::Random> CGAL_Random_share_ptr_t;
   /// Returns squared error bound from \c bbox and \c error
   FT squared_error_bound(const Iso_cuboid_3& bbox, const FT& error) const
   {
@@ -590,9 +589,7 @@ public:
     template<typename Query>
     Surface_patch clip_to_segment(const Query& query) const
     {
-      typename cpp11::result_of<typename BGT::Intersect_3(Query, Iso_cuboid_3)>::type
-        clipped = CGAL::intersection(query, r_domain_.bbox_);
-
+      const auto clipped = CGAL::intersection(query, r_domain_.bbox_);
       if(clipped)
         if(const Segment_3* s = boost::get<Segment_3>(&*clipped))
           return this->operator()(*s);
@@ -720,9 +717,7 @@ public:
     template<typename Query>
     Intersection clip_to_segment(const Query& query) const
     {
-      typename cpp11::result_of<typename BGT::Intersect_3(Query, Iso_cuboid_3)>::type
-        clipped = CGAL::intersection(query, r_domain_.bbox_);
-
+      const auto clipped = CGAL::intersection(query, r_domain_.bbox_);
       if(clipped)
         if(const Segment_3* s = boost::get<Segment_3>(&*clipped))
           return this->operator()(*s);

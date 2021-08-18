@@ -476,10 +476,9 @@ is_crossover_outer_boundary(const typename Traits_2::Polygon_with_holes_2& pgn,
   return is_crossover_outer_boundary(pgn, traits, pl);
 }
 
-// previously known as Simple
 template <typename Traits_2>
-bool is_relatively_simple_polygon_with_holes
-(const typename Traits_2::Polygon_with_holes_2& pgn, const Traits_2& traits)
+bool is_relatively_simple_polygon
+(const typename Traits_2::Polygon_2& pgn, const Traits_2& traits)
 {
   typedef typename Traits_2::Curve_const_iterator       Curve_const_iterator;
   typedef std::pair<Curve_const_iterator,Curve_const_iterator>
@@ -489,11 +488,10 @@ bool is_relatively_simple_polygon_with_holes
   typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;
   typedef Gps_polygon_validation_visitor<Traits_2>      Visitor;
   typedef Ss2::Surface_sweep_2<Visitor>                 Surface_sweep;
-  typedef typename Traits_2::Polygon_with_holes_2       Polygon_with_holes_2;
 
   Construct_curves_2 construct_curves_func = traits.construct_curves_2_object();
   // Construct a container of all outer boundary curves.
-  Cci_pair itr_pair = construct_curves_func (pgn.outer_boundary());
+  Cci_pair itr_pair = construct_curves_func (pgn);
   std::list<X_monotone_curve_2>  outer_curves;
   std::copy(itr_pair.first, itr_pair.second, std::back_inserter(outer_curves));
   // Create visitor and sweep to verify outer boundary is relatively simple
@@ -504,19 +502,19 @@ bool is_relatively_simple_polygon_with_holes
     switch (relative_visitor.error_code()) {
      case Visitor::ERROR_NONE: break;
      case Visitor::ERROR_EDGE_INTERSECTION:
-      CGAL_warning_msg(false, "The outer boundary self intersects at edges.");
+      CGAL_warning_msg(false, "Polygon self intersects at edges.");
       break;
 
      case Visitor::ERROR_EDGE_VERTEX_INTERSECTION:
-      CGAL_warning_msg(false, "The outer boundary self (weakly) intersects.");
+      CGAL_warning_msg(false, "Polygon self (weakly) intersects.");
       break;
 
      case Visitor::ERROR_EDGE_OVERLAP:
-      CGAL_warning_msg(false, "The outer boundary self overlaps.");
+      CGAL_warning_msg(false, "Polygon self overlaps.");
       break;
 
      case Visitor::ERROR_VERTEX_INTERSECTION:
-      CGAL_warning_msg(false, "The outer boundary self intersects at vertices.");
+      CGAL_warning_msg(false, "Polygon self intersects at vertices.");
       break;
 
      default: break;
@@ -524,13 +522,33 @@ bool is_relatively_simple_polygon_with_holes
     return false;
   }
 
+  return true;
+}
+
+// previously known as Simple
+template <typename Traits_2>
+bool is_relatively_simple_polygon_with_holes
+(const typename Traits_2::Polygon_with_holes_2& pgn, const Traits_2& traits)
+{
+  bool outer_is_relatively_simple = is_relatively_simple_polygon(pgn.outer_boundary(), traits);
+  if (!outer_is_relatively_simple)
+  {
+    CGAL_warning_msg(false, "Outer boundary is not relatively simple.");
+    return false;
+  }
+
   // Verify every hole is simple
+  typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;
+  typedef typename Traits_2::Polygon_with_holes_2       Polygon_with_holes_2;
   typename Polygon_with_holes_2::Hole_const_iterator  hoit;
   std::list<X_monotone_curve_2>  hole_curves;
   for (hoit = pgn.holes_begin(); hoit != pgn.holes_end(); ++hoit) {
-    bool simple_hole = is_simple_polygon(*hoit, traits);
-    if (!simple_hole)
+    bool relatively_simple_hole = is_relatively_simple_polygon(*hoit, traits);
+    if (!relatively_simple_hole)
+    {
+      CGAL_warning_msg(false, "A hole is not relatively simple.");
       return false;
+    }
   }
   return true;
 }

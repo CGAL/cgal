@@ -4,7 +4,7 @@
 #include <CGAL/Timer.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/property_map.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/read_points.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Shape_detection/Efficient_RANSAC.h>
@@ -28,11 +28,9 @@ int main(int argc, char** argv) {
   Pwn_vector points;
 
   // Load point set from a file.
-  std::ifstream stream((argc > 1) ? argv[1] : "data/cube.pwn");
 
-  if (!stream ||
-    !CGAL::read_xyz_points(
-      stream,
+  if (!CGAL::IO::read_points(
+      ((argc > 1) ? argv[1] : "data/cube.pwn"),
       std::back_inserter(points),
       CGAL::parameters::point_map(Point_map()).
       normal_map(Normal_map()))) {

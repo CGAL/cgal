@@ -49,7 +49,6 @@ Section  \ref TDS3secintro.)
 \cgalClassifedRefPages
 
 \cgalCRPSection{Concepts}
-
 - `TriangulationDataStructure_3`
 - `TriangulationDataStructure_3::Cell`
 - `TriangulationDataStructure_3::Cell_data`

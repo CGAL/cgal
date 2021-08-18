@@ -231,7 +231,7 @@ vcm_convolve (ForwardIterator first,
    \tparam PointRange is a model of `Range`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 
-   \param points input point range.
+   \param points input point range
    \param ccov output range of covariance matrices.
    \param offset_radius offset_radius.
    \param convolution_radius convolution_radius.
@@ -404,7 +404,7 @@ vcm_estimate_normals_internal (PointRange& points,
    \tparam PointRange is a model of `Range`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 
-   \param points input point range.
+   \param points input point range
    \param offset_radius offset_radius.
    \param convolution_radius convolution_radius.
    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -479,7 +479,7 @@ vcm_estimate_normals (PointRange& points,
    \tparam PointRange is a model of `Range`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 
-   \param points input point range.
+   \param points input point range
    \param offset_radius offset_radius.
    \param k number of neighbor points used for convolution.
    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below

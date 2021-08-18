@@ -639,13 +639,13 @@ public:
        return _support;
     }
 
-    typename cpp11::result_of<typename CK::Construct_center_2(Circle_2)>::type
+    decltype(auto)
     center() const
     {
        return supporting_circle().center();
     }
 
-    typename cpp11::result_of<typename CK::Compute_squared_radius_2(Circle_2)>::type
+    decltype(auto)
     squared_radius() const
     {
        return supporting_circle().squared_radius();

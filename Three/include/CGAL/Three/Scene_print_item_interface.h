@@ -44,13 +44,13 @@ public:
   //! Prints all the primitive ids if their number is not too high. The limit is
   //! editable in the View menu of the application.
   virtual void printAllIds() = 0;
-  //! \brief Tests if an id should be displayed or not.
+  //! \brief tests if an id should be displayed or not.
   //!
   //! \returns true if the Id should be displayed
   //! \returns false if the Id should not be displayed (if it is hidden for example)
   virtual bool testDisplayId(double, double, double, CGAL::Three::Viewer_interface*)const = 0;
 
-  //! \brief Tests if this item should display its ids.
+  //! \brief tests if this item should display its ids.
   //!
   //! The default behavior is to only display ids of the currently selected item (\see mainSelectionIndex()).
   //! This function allows to override this behavior.

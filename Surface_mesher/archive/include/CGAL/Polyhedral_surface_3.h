@@ -31,7 +31,7 @@
 #include <CGAL/circulator.h>
 #include <CGAL/iterator.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/tuple/tuple.hpp>
 
 #include <CGAL/make_surface_mesh.h>
@@ -274,8 +274,8 @@ public:
   typedef Intersection_data_structure_3<Normalized_geom_traits,
                                         Segment_3> Subsegments_tree;
 #endif
-  typedef boost::shared_ptr<Subfacets_tree> Subfacets_tree_ptr;
-  typedef boost::shared_ptr<Subsegments_tree> Subsegments_tree_ptr;
+  typedef std::shared_ptr<Subfacets_tree> Subfacets_tree_ptr;
+  typedef std::shared_ptr<Subsegments_tree> Subsegments_tree_ptr;
 //   typedef typename Subsegments_tree::Point_with_index
 //   Intersection_point;
 
@@ -1252,13 +1252,13 @@ public:
   Subfacets_tree_ptr subfacets_tree_ptr;
   Subsegments_tree_ptr subsegments_tree_ptr;
   typedef std::set<Vertex_handle, Compare_vertex_iterators> Input_vertices;
-  boost::shared_ptr<Input_vertices> input_vertices_ptr;
+  std::shared_ptr<Input_vertices> input_vertices_ptr;
   typedef std::vector<Vertex_handle> Corner_vertices;
-  boost::shared_ptr<Corner_vertices> corner_vertices_ptr;
+  std::shared_ptr<Corner_vertices> corner_vertices_ptr;
   typedef std::vector<Vertex_handle> Edges_vertices;
-  boost::shared_ptr<Edges_vertices> edges_vertices_ptr;
+  std::shared_ptr<Edges_vertices> edges_vertices_ptr;
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_PINPOLYHEDRON
-  typedef boost::shared_ptr<PointInPolyhedron> PointInPolyhedron_ptr;
+  typedef std::shared_ptr<PointInPolyhedron> PointInPolyhedron_ptr;
   PointInPolyhedron_ptr pinpolyhedron_ptr;
 #endif
 

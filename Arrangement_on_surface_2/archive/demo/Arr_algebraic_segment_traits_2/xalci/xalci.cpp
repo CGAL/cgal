@@ -194,16 +194,16 @@ void xAlci_main_window::oc_analyse_click()
     Poly_int2 ress = fxx*fy*fy - ((fx*fy*fxy)*Poly_int1(2,0)) + fyy*fx*fx,
         res1 = f*fx, res2 = f*fy;
 
-    CGAL::set_pretty_mode(std::cout);
+    CGAL::IO::set_pretty_mode(std::cout);
     std::cout << "curv:\n " << ress << "\n\n";
     std::cout << "fx:\n " << fx << "\n\n";
     std::cout << "fy:\n " << fy << "\n\n";
     std::cout << "f*fx:\n " << res1 << "\n\n";
     std::cout << "f*fy:\n " << res2 << "\n\n";
 
-    CGAL::set_ascii_mode(std::cout);
+    CGAL::IO::set_ascii_mode(std::cout);
     std::cout << "f:\n " << f << "\n\n";
-    CGAL::set_pretty_mode(std::cout);
+    CGAL::IO::set_pretty_mode(std::cout);
     std::cout << "f:\n " << f << "\n\n";
 
     timer.reset();

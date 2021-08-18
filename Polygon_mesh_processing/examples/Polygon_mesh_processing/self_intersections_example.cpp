@@ -2,6 +2,8 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
+
 #include <CGAL/Real_timer.h>
 #include <CGAL/tags.h>
 
@@ -17,13 +19,12 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 int main(int argc, char* argv[])
 {
   const char* filename = (argc > 1) ? argv[1] : "data/pig.off";
-  std::ifstream input(filename);
 
   Mesh mesh;
-  if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh))
+  if(!PMP::IO::read_polygon_mesh(filename, mesh) || !CGAL::is_triangle_mesh(mesh))
   {
-    std::cerr << "Not a valid input file." << std::endl;
-    return EXIT_FAILURE;
+    std::cerr << "Invalid input." << std::endl;
+    return 1;
   }
 
   std::cout << "Using parallel mode? " << std::is_same<CGAL::Parallel_if_available_tag, CGAL::Parallel_tag>::value << std::endl;

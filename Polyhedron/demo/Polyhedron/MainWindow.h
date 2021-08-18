@@ -79,15 +79,15 @@ public:
    * Then it creates and initializes the scene and do the
    * connexions with the UI. Finally it loads the plugins.*/
 
-  MainWindow(const QStringList& keywords, bool verbose = false,QWidget* parent = 0);
+  MainWindow(const QStringList& keywords, bool verbose = false,QWidget* parent = nullptr);
   ~MainWindow();
 
-  /*! Finds an IO plugin.
+  /*! Finds an I/O plugin.
    * throws std::invalid_argument if no loader with that argument can be found
-   @returns the IO plugin associated with `loader_name`*/
+   @returns the I/O plugin associated with `loader_name`*/
   CGAL::Three::Polyhedron_demo_io_plugin_interface* findLoader(const QString& loader_name) const;
 
-  /*! \brief Loads on or more item with a given loader.
+  /*! \brief loads on or more item with a given loader.
    *
    * throws `std::logic_error` if loading does not succeed or
    * `std::invalid_argument` if `fileinfo` specifies an invalid file*/
@@ -379,7 +379,7 @@ protected:
    */
   void loadPlugins();
   /*!
-   * \brief Initializes the plugins.
+   * \brief initializes the plugins.
    * Makes pairs between plugins and object names and fills the Operations menu.
    * Called only once.
    */

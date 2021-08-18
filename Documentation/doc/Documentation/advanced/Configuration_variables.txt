@@ -19,7 +19,7 @@ summarized below are CMake variables.
 \subsection installation_component_selection Component Selection
 
 The following boolean variables indicate which \cgal components to
-configure and build. Their values can be ON or OFF.
+configure and/or build. Their values can be ON or OFF.
 
 
 | Variable | %Default Value   |
@@ -103,30 +103,30 @@ other but never both.
 
 \subsection installation_boost Boost Libraries
 
-In most cases, if \sc{Boost} is not automatically found, setting the `BOOST_ROOT`
+In most cases, if \boost is not automatically found, setting the `BOOST_ROOT`
 variable is enough. If it is not, you can specify the header and library
 directories individually. You can also provide the full pathname to a specific compiled library
 if it cannot be found in the library directory or its name is non-standard.
 
-By default, when \sc{Boost} binary libraries are needed, the shared versions
+By default, when \boost binary libraries are needed, the shared versions
 are used if present. You can set the variable
 `CGAL_Boost_USE_STATIC_LIBS` to `ON` if you want to link
 with static versions explicitly.
 
-On Windows, if you link with \sc{Boost} shared libraries, you must ensure that
+On Windows, if you link with \boost shared libraries, you must ensure that
 the `.dll` files are found by the dynamic linker, at run time.
-For example, you can add the path to the \sc{Boost} `.dll` to the
+For example, you can add the path to the \boost `.dll` to the
 `PATH` environment variable.
 
 | Variable              | Description                                                           | Type        |
 | :-                    | :-                    | :-             |
-| `BOOST_ROOT`\cgalFootnote{The environment variable can be spelled either `BOOST_ROOT` or `BOOSTROOT`} | Root directory of your \sc{Boost} installation | Either CMake or Environment |
+| `BOOST_ROOT`\cgalFootnote{The environment variable can be spelled either `BOOST_ROOT` or `BOOSTROOT`} | Root directory of your \boost installation | Either CMake or Environment |
 | `Boost_INCLUDE_DIR`   | Directory containing the `boost/version.hpp` file  | CMake |
 | `BOOST_INCLUDEDIR`    | Idem | Environment |
-| `Boost_LIBRARY_DIRS`  | Directory containing the compiled \sc{Boost} libraries  | CMake |
+| `Boost_LIBRARY_DIRS`  | Directory containing the compiled \boost libraries  | CMake |
 | `BOOST_LIBRARYDIR`    | Idem | Environment |
-| `Boost_(xyz)_LIBRARY_RELEASE`  | Full pathname to a release build of the compiled 'xyz' \sc{Boost} library | CMake |
-| `Boost_(xyz)_LIBRARY_DEBUG` | Full pathname to a debug build of the compiled 'xyz' \sc{Boost} library | CMake |
+| `Boost_(xyz)_LIBRARY_RELEASE`  | Full pathname to a release build of the compiled 'xyz' \boost library | CMake |
+| `Boost_(xyz)_LIBRARY_DEBUG` | Full pathname to a debug build of the compiled 'xyz' \boost library | CMake |
 
 
 \subsection installation_gmp GMP and MPFR Libraries
@@ -136,42 +136,42 @@ containing the libraries is needed and you would specify `GMP|MPFR_LIBRARY_DIR` 
 `GMP|MPFR_LIBRARIES`. On the other hand, under Linux the actual library filename is needed.
 Thus you would specify `GMP|MPFR_LIBRARIES`. In no case you need to specify both.
 
-\cgal uses both \sc{Gmp} and \sc{Mpfr} so both need to be supported. If either of them is unavailable the
-usage of \sc{Gmp} and of \sc{Mpfr} will be disabled.
+\cgal uses both \gmp and \mpfr so both need to be supported. If either of them is unavailable the
+usage of \gmp and of \mpfr will be disabled.
 
 
 | Variable              | Description                                                           | Type        |
 | :-                    | :-                    | :-             |
-| `CGAL_DISABLE_GMP`    | Indicates whether to search and use \sc{Gmp}/\sc{Mpfr} or not  | CMake |
-| `GMP_DIR`  | Directory of \sc{Gmp} default installation  | Environment |
+| `CGAL_DISABLE_GMP`    | Indicates whether to search and use \gmp/\mpfr or not  | CMake |
+| `GMP_DIR`  | Directory of \gmp default installation  | Environment |
 | `GMP_INCLUDE_DIR`  | Directory containing the `gmp.h` file  | CMake |
 | `GMP_INC_DIR` | Idem | Environment |
-| `GMP_LIBRARIES_DIR`  | Directory containing the compiled \sc{Gmp} library | CMake |
+| `GMP_LIBRARIES_DIR`  | Directory containing the compiled \gmp library | CMake |
 | `GMP_LIB_DIR` | Idem | Environment |
-| `GMP_LIBRARIES` | Full pathname of the compiled \sc{Gmp} library  | CMake |
+| `GMP_LIBRARIES` | Full pathname of the compiled \gmp library  | CMake |
 | `MPFR_INCLUDE_DIR` | Directory containing the `mpfr.h` file | CMake |
 | `MPFR_INC_DIR`  | Idem | Environment |
-| `MPFR_LIBRARIES_DIR` | Directory containing the compiled \sc{Mpfr} library | CMake |
+| `MPFR_LIBRARIES_DIR` | Directory containing the compiled \mpfr library | CMake |
 | `MPFR_LIB_DIR` | Idem | Environment |
-| `MPFR_LIBRARIES`  | Full pathname of the compiled \sc{Mpfr} library | CMake |
+| `MPFR_LIBRARIES`  | Full pathname of the compiled \mpfr library | CMake |
 
 
 
-Under Linux, the \sc{Gmpxx} is also searched for, and you may specify the following variables:
+Under Linux, the \gmpxx is also searched for, and you may specify the following variables:
 
 
 | Variable              | Description                                                           | Type        |
 | :-                    | :-                    | :-             |
-| `GMPXX_DIR` | Directory of \sc{gmpxx} default installation | Environment |
+| `GMPXX_DIR` | Directory of \gmpxx default installation | Environment |
 | `GMPXX_INCLUDE_DIR`  | Directory containing the `gmpxx.h` file  | CMake |
-| `GMPXX_LIBRARIES`  | Full pathname of the compiled \sc{Gmpxx} library  | CMake |
+| `GMPXX_LIBRARIES`  | Full pathname of the compiled \gmpxx library  | CMake |
 
 
 
 \subsection installation_qt5 Qt5 Library
 
 You must set the cmake or environment variable `Qt5_DIR` to point to the path
-to the directory containing the file `Qt5Config.cmake` created by your \sc{Qt}5 installation. If you are
+to the directory containing the file `Qt5Config.cmake` created by your \qt5 installation. If you are
 using the open source edition it should be `<path>/qt-everywhere-opensource-src-<version>/qtbase/lib/cmake/Qt5`.
 
 \subsection installation_leda LEDA Library
@@ -188,7 +188,7 @@ The variables specifying definitions and flags can be left undefined if they are
 | Variable               | Description           | Type        |
 | :-                     | :-                    | :-             |
 | `WITH_LEDA`            | Indicates whether to search and use \leda or not | CMake |
-| `LEDA_DIR`             | Directory of \sc{LEDA} default installation | Environment |
+| `LEDA_DIR`             | Directory of \leda default installation | Environment |
 | `LEDA_INCLUDE_DIR`     | Directory containing the file `LEDA/system/basic.h` | CMake |
 | `LEDA_LIBRARIES`       | Directory containing the compiled \leda libraries | CMake |
 | `LEDA_INC_DIR`         | Directory containing the file `LEDA/system/basic.h` | Environment |
@@ -203,21 +203,21 @@ The variables specifying definitions and flags can be left undefined if they are
 \subsection installation_mpfi MPFI Library
 
 \cgal provides a number type based on this library, but the \cgal library
-itself does not depend on \sc{Mpfi}. This means that this library must be
+itself does not depend on \mpfi. This means that this library must be
 configured when compiling an application that uses the above number type.
 
-When \sc{Mpfi} files are not on the standard path, the locations of the headers
+When \mpfi files are not on the standard path, the locations of the headers
 and library files must be specified by using environment variables.
 
 
 | Variable             | Description           | Type        |
 | :-                   | :-                    | :-             |
-| `MPFI_DIR`           |Directory of \sc{MPFI} default installation | Environment |
+| `MPFI_DIR`           |Directory of \mpfi default installation | Environment |
 | `MPFI_INCLUDE_DIR`   | Directory containing the `mpfi.h` file | CMake |
 | `MPFI_INC_DIR`       | Idem | Environment |
-| `MPFI_LIBRARIES_DIR` | Directory containing the compiled \sc{Mpfi} library | CMake |
+| `MPFI_LIBRARIES_DIR` | Directory containing the compiled \mpfi library | CMake |
 | `MPFI_LIB_DIR`       | Idem | Environment |
-| `MPFI_LIBRARIES`     | Full pathname of the compiled \sc{Mpfi} library | CMake |
+| `MPFI_LIBRARIES`     | Full pathname of the compiled \mpfi library | CMake |
 
 
 
@@ -231,55 +231,55 @@ CMake will try to find Rs in the standard header and library
 directories. When it is not automatically detected, the locations of the
 headers and library files must be specified using environment variables.
 
-Rs needs \sc{Gmp} 4.2 or later and \sc{Mpfi} 1.3.4 or later. The variables
+Rs needs \gmp 4.2 or later and \mpfi 1.3.4 or later. The variables
 related to the latter library may also need to be defined.
 
 
 | Variable             | Description           | Type        |
 | :-                   | :-                    | :-             |
-| `RS_DIR` | Directory of \sc{Rs} default installation | Environment |
+| `RS_DIR` | Directory of \rs default installation | Environment |
 | `RS_INCLUDE_DIR` | Directory containing the `rs_exports.h` file | CMake |
 | `RS_INC_DIR` | Idem | Environment |
-| `RS_LIBRARIES_DIR`  | Directory containing the compiled \sc{Rs} library | CMake |
+| `RS_LIBRARIES_DIR`  | Directory containing the compiled \rs library | CMake |
 | `RS_LIB_DIR` | Idem | Environment |
-| `RS_LIBRARIES` | Full pathname of the compiled \sc{Rs} library | CMake |
+| `RS_LIBRARIES` | Full pathname of the compiled \rs library | CMake |
 
-Similar variables exist for \sc{Rs3}.
+Similar variables exist for \rs3.
 
 | Variable             | Description           | Type        |
 | :-                   | :-                    | :-
-| `RS3_DIR` | Directory of \sc{Rs3} default installation | Environment |
+| `RS3_DIR` | Directory of \rs3 default installation | Environment |
 | `RS3_INCLUDE_DIR` | Directory containing the file `rs3_fncts.h` file | CMake |
 | `RS3_INC_DIR` | Idem | Environment |
-| `RS3_LIBRARIES_DIR` | Directory containing the compiled \sc{Rs3} library | CMake |
+| `RS3_LIBRARIES_DIR` | Directory containing the compiled \rs3 library | CMake |
 | `RS3_LIB_DIR` | Idem | Environment |
-| `RS3_LIBRARIES` | Full pathname of the compiled \sc{Rs3} library | CMake |
+| `RS3_LIBRARIES` | Full pathname of the compiled \rs3 library | CMake |
 
 
 \subsection installation_ntl NTL Library
 
 Some polynomial computations in \cgal's algebraic kernel
-are speed up when \sc{Ntl} is available.
+are speed up when \ntl is available.
 As the algebraic kernel is not compiled as a part of the \cgal
 library, this library is not detected nor configured at installation time.
 
-CMake will try to find \sc{Ntl} in the standard header and library
+CMake will try to find \ntl in the standard header and library
 directories. When it is not automatically detected, the locations of the
 headers and library files must be specified using environment variables.
 
 | Variable             | Description           | Type        |
 | :-                   | :-                    | :-             |
-| `NTL_DIR` | Directory of \sc{NTL} default installation | Environment |
+| `NTL_DIR` | Directory of \ntl default installation | Environment |
 | `NTL_INCLUDE_DIR` | Directory containing the `NTL/ZZX.h` file | CMake |
 | `NTL_INC_DIR` | Idem | Environment |
-| `NTL_LIBRARIES_DIR` | Directory containing the compiled \sc{Ntl} library | CMake |
+| `NTL_LIBRARIES_DIR` | Directory containing the compiled \ntl library | CMake |
 | `NTL_LIB_DIR` | Idem | Environment |
-| `NTL_LIBRARIES` | Full pathname of the compiled \sc{Ntl} library | CMake |
+| `NTL_LIBRARIES` | Full pathname of the compiled \ntl library | CMake |
 
 \subsection installation_eigen Eigen Library
 
-\sc{Eigen} is a header-only template library.
-Only the <I>directory</I> containing the header files of \sc{Eigen} 3.1 (or greater) is needed.
+\eigen is a header-only template library.
+Only the <I>directory</I> containing the header files of \eigen 3.1 (or greater) is needed.
 
 
 | Variable             | Description           | Type        |
@@ -289,35 +289,35 @@ Only the <I>directory</I> containing the header files of \sc{Eigen} 3.1 (or grea
 
 \subsection installation_esbtl ESBTL Library
 
-One skin surface example requires the \sc{Esbtl} library in order to read \sc{Pdb} files.
+One skin surface example requires the \esbtl library in order to read \pdb files.
 
-If \sc{Esbtl} is not automatically found, setting the `ESBTL_INC_DIR`
+If \esbtl is not automatically found, setting the `ESBTL_INC_DIR`
 environment variable is sufficient.
 
 
 | Variable             | Description           | Type        |
 | :-                   | :-                    | :-             |
-| `ESBTL_DIR` | Directory of \sc{ESBTL} default installation | Environment |
+| `ESBTL_DIR` | Directory of \esbtl default installation | Environment |
 | `ESBTL_INC_DIR` | Directory containing the `ESBTL/default.h` file | Environment |
 | `ESBTL_INCLUDE_DIR` | Directory containing the `ESBTL/default.h` file | CMake |
 
 \subsection installation_metis METIS Library
 
-Some BGL examples require the \sc{Metis} library in order to partition \sc{Metis} meshes.
+Some BGL examples require the \metis library in order to partition \metis meshes.
 
-If \sc{Metis} is not automatically found, setting the `METIS_INCLUDE_DIR` and `METIS_LIBRARY`
+If \metis is not automatically found, setting the `METIS_INCLUDE_DIR` and `METIS_LIBRARY`
 cmake variables is necessary.
 
 
 | Variable             | Description           | Type        |
 | :-                   | :-                    | :-             |
-| `METIS_INCLUDE_DIR` | Directory of \sc{Metis} default installation | CMAKE |
+| `METIS_INCLUDE_DIR` | Directory of \metis default installation | CMAKE |
 | `METIS_LIBRARY` | Directory containing the `libmetis.so or .lib` file | CMAKE |
 
 
 \subsection installation_tbb TBB Library
 
-If \sc{Tbb} is not automatically found, the user must set the `TBB_ROOT`
+If \tbb is not automatically found, the user must set the `TBB_ROOT`
 environment variable. The environment variable `TBB_ARCH_PLATFORM=<arch>/<compiler>` must be set.
 `<arch>` is `ia32` or `intel64`. `<compiler>` describes the Linux kernel, gcc version or Visual Studio version
 used. It should be set to what is used in `$TBB_ROOT/lib/<arch>`.
@@ -328,7 +328,7 @@ Note that the variables in the table below are being used.
 
 | Variable             | Description           | Type        |
 | :-                   | :-                    | :-             |
-| `TBB_ROOT` | Directory of \sc{Tbb} default installation | Environment |
+| `TBB_ROOT` | Directory of \tbb default installation | Environment |
 | `TBB_INCLUDE_DIRS` | Directory containing the `tbb/tbb.h` file | CMake |
 | `TBB_LIBRARY_DIRS` | Directory(ies) containing the compiled TBB libraries | CMake |
 | `TBB_LIBRARIES` | Full pathnames of the compiled TBB libraries (both release and debug versions, using "optimized" and "debug" CMake keywords). Note that if the debug versions are not found, the release versions will be used instead for the debug mode. | CMake |
@@ -353,15 +353,6 @@ If LASLIB is not automatically found, the following variables must be set:
 
 The environment variable `OPENCV_DIR` should be set to the directory
 containing the file `OpenCVConfig.cmake` provided by OpenCV.
-
-\subsection installation_TensorFlow TensorFlow library
-
-If TensorFlow is not automatically found, the following variables must be set:
-
-| Variable             | Description           | Type        |
-| :-                   | :-                    | :-             |
-| `TensorFlow_INCLUDE_DIR` | Directory containing the directories `tensorflow/core`, `tensorflow/cc`, etc. | CMake |
-| `TensorFlow_LIBRARY` | Full pathname of the compiled TensorFlow C++ library | CMake |
 
 \subsection installation_SCIP SCIP library
 

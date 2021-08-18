@@ -1,9 +1,11 @@
-#include <iostream>
-#include <fstream>
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
+
 #include <CGAL/Variational_shape_approximation.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
+
+#include <iostream>
+#include <fstream>
 
 namespace VSA = CGAL::Surface_mesh_approximation;
 
@@ -16,13 +18,16 @@ typedef CGAL::Variational_shape_approximation<Mesh, Vertex_point_map> Mesh_appro
 // L21 error metric
 typedef Mesh_approximation::Error_metric L21_metric;
 
-int main()
+int main(int argc, char** argv)
 {
+  const char* filename = (argc > 1) ? argv[1] : "data/bear.off";
+
   // reads input surface triangle mesh
   Mesh mesh;
-  std::ifstream file("data/bear.off");
-  if (!file || !(file >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
-    std::cerr << "Invalid off file." << std::endl;
+  if(!CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(filename, mesh) ||
+     !CGAL::is_triangle_mesh(mesh))
+  {
+    std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;
   }
 

@@ -163,8 +163,7 @@ class Single_wall_creator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
         lateral_sv_tgt[0]->twin() = lateral_sv_tgt[1];
         lateral_sv_tgt[1]->twin() = lateral_sv_tgt[0];
 #ifndef CGAL_NEF_NO_INDEXED_ITEMS
-        lateral_sv_tgt[0]->set_index();
-        lateral_sv_tgt[1]->set_index(lateral_sv_tgt[0]->get_index());
+        lateral_sv_tgt[1]->set_index(lateral_sv_tgt[0]->new_index());
 #endif
         return;
       }
@@ -174,8 +173,7 @@ class Single_wall_creator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
         opp->twin() = lateral_sv_tgt[0];
         lateral_sv_tgt[0]->twin() = opp;
 #ifndef CGAL_NEF_NO_INDEXED_ITEMS
-        opp->set_index();
-        lateral_sv_tgt[0]->set_index(opp->get_index());
+        lateral_sv_tgt[0]->set_index(opp->new_index());
 #endif
         lateral_sv_tgt[0] =
           SMW_tgt.add_lateral_svertex(Sphere_segment(lateral_sv_tgt[0]->point().antipode(),

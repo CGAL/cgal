@@ -1,4 +1,4 @@
-/// \defgroup PkgTriangulation2Ref 2D Triangulation Reference
+/// \defgroup PkgTriangulation2Ref 2D Triangulations Reference
 /// \defgroup PkgTriangulation2Concepts Concepts
 /// \ingroup PkgTriangulation2Ref
 
@@ -24,7 +24,7 @@
 /*!
 \addtogroup PkgTriangulation2Ref
 \todo check generated documentation
-\cgalPkgDescriptionBegin{2D Triangulation,PkgTriangulation2}
+\cgalPkgDescriptionBegin{2D Triangulations,PkgTriangulation2}
 \cgalPkgPicture{cdt2d-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Mariette Yvinec}

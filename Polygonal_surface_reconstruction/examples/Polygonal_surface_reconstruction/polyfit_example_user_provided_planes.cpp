@@ -1,6 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/IO/Writer_OFF.h>
-#include <CGAL/IO/read_ply_points.h>
+#include <CGAL/IO/read_points.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygonal_surface_reconstruction.h>
@@ -43,68 +42,62 @@ typedef CGAL::Nth_of_tuple_property_map<2, PNI>                                 
 int main()
 {
     const std::string& input_file("data/ball.ply");
-        std::ifstream input_stream(input_file.c_str());
+  std::ifstream input_stream(input_file.c_str());
 
-        std::vector<PNI> points; // store points
+  std::vector<PNI> points; // store points
 
-        std::cout << "Loading point cloud: " << input_file << "...";
-        CGAL::Timer t;
-        t.start();
+  std::cout << "Loading point cloud: " << input_file << "...";
+  CGAL::Timer t;
+  t.start();
 
-        if (!input_stream ||
-                !CGAL::read_ply_points_with_properties(
-                        input_stream,
-                        std::back_inserter(points),
-                        CGAL::make_ply_point_reader(Point_map()),
-                        CGAL::make_ply_normal_reader(Normal_map()),
-                        std::make_pair(Plane_index_map(), CGAL::PLY_property<int>("segment_index"))))
-        {
-                std::cerr << "Error: cannot read file " << input_file << std::endl;
-                return EXIT_FAILURE;
-        }
-        else
-                std::cout << " Done. " << points.size() << " points. Time: " << t.time() << " sec." << std::endl;
+  if (!CGAL::IO::read_PLY_with_properties(input_stream,
+                                          std::back_inserter(points),
+                                          CGAL::make_ply_point_reader(Point_map()),
+                                          CGAL::make_ply_normal_reader(Normal_map()),
+                                          std::make_pair(Plane_index_map(), CGAL::PLY_property<int>("segment_index"))))
+  {
+    std::cerr << "Error: cannot read file " << input_file << std::endl;
+    return EXIT_FAILURE;
+  }
+  else
+    std::cout << " Done. " << points.size() << " points. Time: " << t.time() << " sec." << std::endl;
 
-        //////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////
 
-        std::cout << "Generating candidate faces...";
-        t.reset();
+  std::cout << "Generating candidate faces...";
+  t.reset();
 
-        Polygonal_surface_reconstruction algo(
-                points,
-                Point_map(),
-                Normal_map(),
-                Plane_index_map()
-        );
+  Polygonal_surface_reconstruction algo(
+    points,
+    Point_map(),
+    Normal_map(),
+    Plane_index_map()
+  );
 
-        std::cout << " Done. Time: " << t.time() << " sec." << std::endl;
+  std::cout << " Done. Time: " << t.time() << " sec." << std::endl;
 
-        //////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////
 
-        Surface_mesh model;
+  Surface_mesh model;
 
-        std::cout << "Reconstructing...";
-        t.reset();
+  std::cout << "Reconstructing...";
+  t.reset();
 
-        if (!algo.reconstruct<MIP_Solver>(model)) {
-                std::cerr << " Failed: " << algo.error_message() << std::endl;
-                return EXIT_FAILURE;
-        }
+  if (!algo.reconstruct<MIP_Solver>(model)) {
+    std::cerr << " Failed: " << algo.error_message() << std::endl;
+    return EXIT_FAILURE;
+  }
 
-        // Saves the mesh model
+  // Saves the mesh model
     const std::string& output_file("data/ball_result.off");
-    std::ofstream output_stream(output_file.c_str());
-    if (output_stream && CGAL::write_off(output_stream, model)) {
-                // flush the buffer
-                output_stream << std::flush;
-                std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
-    }
-        else {
+    if (CGAL::IO::write_OFF(output_file, model))
+        std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
+    else {
         std::cerr << " Failed saving file." << std::endl;
         return EXIT_FAILURE;
     }
 
-        return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 

@@ -159,11 +159,11 @@ namespace CGAL {
     { return CK_Equal_2()(a0, a1); }
 
     result_type
-    operator() ( const Line_arc_2 &a0, const Circular_arc_2 &a1) const
+    operator() ( const Line_arc_2 &/*a0*/, const Circular_arc_2 &/*a1*/) const
     { return false; }
 
     result_type
-    operator() ( const Circular_arc_2 &a0, const Line_arc_2 &a1) const
+    operator() ( const Circular_arc_2 &/*a0*/, const Line_arc_2 &/*a1*/) const
     { return false; }
 
       result_type

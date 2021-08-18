@@ -327,7 +327,9 @@ in the Reference Manual.
 \cgalExample{Mesh_2/mesh_optimization.cpp}
 
 
-
+\section secMesh_2_IO Input/Output
+It is possible to export the result of a meshing in VTU, using the function `CGAL::IO::write_VTU()`.
+For more information about this format, see \ref IOStreamVTK.
 */
 } /* namespace CGAL */
 

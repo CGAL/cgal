@@ -680,7 +680,7 @@ namespace CGAL {
                 template <typename Kernel>
                 void Hypothesis<Kernel>::compute_triplet_intersections() {
                         triplet_intersections_.clear();
-                        if (supporting_planes_.size() < 4) // no closed surface will be constructed from less than 4 planes
+                        if (supporting_planes_.size() < 4) // no closed surface will be constructed from fewer than 4 planes
                                 return;
 
                         for (std::size_t i = 0; i < supporting_planes_.size(); ++i) {

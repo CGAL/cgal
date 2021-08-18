@@ -22,6 +22,7 @@
 #include <CGAL/config.h>
 #include <CGAL/utils.h>
 #include <CGAL/enum.h>
+#include <CGAL/IO/io.h>
 #include <algorithm>
 #include <iosfwd>
 #include <iostream>
@@ -111,19 +112,15 @@ are_strictly_ordered(const T & a, const T & b, const T & c, Compare cmp)
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 template <class ForwardIterator>
-inline
-CGAL_DEPRECATED
-ForwardIterator
-successor( ForwardIterator it )
+CGAL_DEPRECATED inline
+ForwardIterator successor( ForwardIterator it )
 {
   return ++it;
 }
 
 template <class BidirectionalIterator>
-inline
-CGAL_DEPRECATED
-BidirectionalIterator
-predecessor( BidirectionalIterator it )
+CGAL_DEPRECATED inline
+BidirectionalIterator predecessor( BidirectionalIterator it )
 {
   return --it;
 }
@@ -284,8 +281,8 @@ output_range(std::ostream& os,
 {
     InputIterator it = first;
     if (it != beyond) {
-        os << pre << oformat(*it) << post;
-        while (++it != beyond) os << sep << pre << oformat(*it) << post;
+        os << pre << CGAL::IO::oformat(*it) << post;
+        while (++it != beyond) os << sep << pre << CGAL::IO::oformat(*it) << post;
     }
     return os;
 }

@@ -1,5 +1,8 @@
 // 3D intersection tests.
 
+// We want to check that no division is performed for interface macro Do_intersect_3_RT
+#define CGAL_NO_MPZF_DIVISION_OPERATOR
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/MP_Float.h>
@@ -158,13 +161,35 @@ struct Test {
 
   void P_do_intersect()
   {
-    P p(0,0,0), q(1,0,0), r(2,0,0), s(10,10,10);
+    P p(0,0,0), q(1,0,0), r(2,0,0), s(10,10,10), s2(10,10,0), s3(10,-10,-1), t(3,0,0);
     Sph sph(p,1);
     Cub cub(p,r);
     assert(do_intersect(q,sph));
     assert(do_intersect(sph,q));
     assert(! do_intersect(s,cub));
     assert(! do_intersect(cub,s));
+
+    assert(do_intersect(sph, Tr(p,q,s)));
+    assert(do_intersect(sph, Tr(r,q,s)));
+    assert(! do_intersect(sph, Tr(r,s,t)));
+
+    assert(! do_intersect(sph, Tr(s,s2,s3)));
+
+    assert(do_intersect(sph, S(p,r)));
+    assert(do_intersect(sph, S(q,r)));
+    assert(do_intersect(sph, S(s,q)));
+    assert(! do_intersect(sph, S(s,r)));
+
+    assert(do_intersect(sph, L(p,r)));
+    assert(do_intersect(sph, L(q,r)));
+    assert(do_intersect(sph, L(s,q)));
+    assert(! do_intersect(sph, L(s,r)));
+
+    assert(do_intersect(sph, R(p,r)));
+    assert(do_intersect(sph, R(q,r)));
+    assert(do_intersect(sph, R(s,q)));
+    assert(! do_intersect(sph, R(s,r)));
+
   }
 
 
@@ -542,7 +567,7 @@ struct Test {
       if(b != b_tree) {
         std::stringstream err_msg;
         err_msg.precision(17);
-        CGAL::set_pretty_mode(err_msg);
+        CGAL::IO::set_pretty_mode(err_msg);
         err_msg << "do_intersect(\n"
                 << "             " << unit_bbox << "\n,\n"
                 << "             " << tr
@@ -672,7 +697,8 @@ struct Test {
                           P(0,1,0));
 
       check_intersection (tet, Pl(P(0,0.5,0), P(1,0.5,-5), P(0.5,0.5,0.5)),
-                          Tr(P(0.5,0.5,0), P(0,0.5,0), P(0,0.5,0.5)));
+                          Tr(P(0, 0.5, 0), P(0.5,0.5,0),  P(0,0.5,0.5)));
+
       Pl pl(P(0,0.9,0), P(0.9,0,0), P(0.9,0.01,0.06));
 
       typedef typename CGAL::Intersection_traits<K,
@@ -907,7 +933,7 @@ struct Test {
 
       //edge
       check_intersection (cub, Pl(P(1,1,1), P(1,2,1), P(1.5,0,0)),
-                          S(P(1,2,1), P(1,1,1)));
+                          S(P(1,1,1), P(1,2,1)));
 
 
       //face
@@ -924,6 +950,7 @@ struct Test {
         assert(p.x() == 1);
       }
       res = CGAL::intersection(cub, Pl(P(1,1,1), P(1,2,1), P(2,2,2)));
+
       poly = boost::get<std::vector<P> >(&*res);
       assert(poly != nullptr);
       assert(poly->size() == 4);
@@ -940,8 +967,8 @@ struct Test {
       check_intersection (cub, Pl(P(2, 1.66, 2),
                                   P(1.66,2,2),
                                   P(2,2,1.66)),
-                          Tr(P(2, 2, 1.66),
-                             P(1.66,2,2),
+                          Tr(P(1.66,2,2),
+                             P(2, 2, 1.66),
                              P(2,1.66,2)));
 
       //other edge
@@ -1100,7 +1127,7 @@ struct Test {
 
       //edge
       check_intersection (cub, Pl(P(1,1,1), P(1,2,1), P(1.5,0,0)),
-                          S(P(1,2,1), P(1,1,1)));
+                          S(P(1,1,1), P(1,2,1)));
       //face
       typedef typename CGAL::Intersection_traits<K,
           typename K::Plane_3,
@@ -1126,8 +1153,8 @@ struct Test {
       check_intersection (cub, Pl(P(2, 1.66, 2),
                                   P(1.66,2,2),
                                   P(2,2,1.66)),
-                          Tr(P(2, 2, 1.66),
-                             P(1.66,2,2),
+                          Tr(P(1.66,2,2),
+                             P(2, 2, 1.66),
                              P(2,1.66,2)));
 
       //random
@@ -1260,6 +1287,7 @@ struct Test {
     Bbox_L();
     Bbox_R();
     Bbox_Tr();
+
   }
 };
 

@@ -94,7 +94,7 @@ struct Scene_polyhedron_selection_item_priv{
     item(parent)
   {
     filtered_graph = nullptr;
-    item->setProperty("classname", QString("surface_mesh"));
+    item->setProperty("classname", QString("surface_mesh_selection"));
     keep_selection_valid = Scene_polyhedron_selection_item::None;
   }
 
@@ -861,7 +861,6 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_vertex_d
         }
       }
       return false;
-      break;
     }
       //Split vertex
     case 1:
@@ -1030,6 +1029,10 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_vertex_d
           setProperty("need_hl_restore", true);
           set_highlighting(false);
         }
+        if(property("need_invalidate_aabb_tree").toBool()){
+          polyhedron_item()->invalidate_aabb_tree();
+          setProperty("need_invalidate_aabb_tree", false);
+        }
         invalidateOpenGLBuffers();
         Q_EMIT updateInstructions("Ctrl+Right-click to move the point. \nHit Ctrl+Z to leave the selection. (2/2)");
       }
@@ -1075,7 +1078,6 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
     case -1:
     {
       return treat_classic_selection(selection);
-      break;
     }
       //Join vertex
     case 0:
@@ -1331,7 +1333,6 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_face_des
     case -1:
     {
       return treat_classic_selection(selection);
-      break;
     }
     //Split vertex
     case 1:
@@ -1802,7 +1803,7 @@ void Scene_polyhedron_selection_item::common_constructor()
   d->is_treated = false;
   d->poly_need_update = false;
   d->are_temp_buffers_filled = false;
-  d->poly = NULL;
+  d->poly = nullptr;
   d->ready_to_move = false;
   do_process = true;
   setProperty("no_picking", true);
@@ -1824,13 +1825,13 @@ void Scene_polyhedron_selection_item::common_constructor()
 }
 
 Scene_polyhedron_selection_item::Scene_polyhedron_selection_item()
-  : Scene_polyhedron_item_decorator(NULL, false)
+  : Scene_polyhedron_item_decorator(nullptr, false)
 {
   common_constructor();
 }
 
 Scene_polyhedron_selection_item::Scene_polyhedron_selection_item(Scene_face_graph_item* poly_item, QMainWindow* mw)
-  : Scene_polyhedron_item_decorator(NULL, false)
+  : Scene_polyhedron_item_decorator(nullptr, false)
 {
   common_constructor();
   QString sf = poly_item->property("source filename").toString();
@@ -1895,7 +1896,7 @@ void Scene_polyhedron_selection_item::invalidateOpenGLBuffers() {
       {
         CGAL::Three::Viewer_interface* viewer =
             static_cast<CGAL::Three::Viewer_interface*>(v);
-        if(viewer == NULL)
+        if(viewer == nullptr)
           continue;
         setBuffersInit(viewer, false);
         viewer->update();
@@ -1956,6 +1957,7 @@ void Scene_polyhedron_selection_item::moveVertex()
     put(vpm, vh, Point_3(d->manipulated_frame->position().x-offset.x,
                          d->manipulated_frame->position().y-offset.y,
                          d->manipulated_frame->position().z-offset.z));
+    setProperty("need_invalidate_aabb_tree", true);
     invalidateOpenGLBuffers();
     poly_item->updateVertex(vh);
    // poly_item->invalidateOpenGLBuffers();
@@ -1968,12 +1970,16 @@ void Scene_polyhedron_selection_item::validateMoveVertex()
   temp_selected_vertices.clear();
   CGAL::QGLViewer* viewer = Three::mainViewer();
   k_ring_selector.setEditMode(true);
-  viewer->setManipulatedFrame(NULL);
+  viewer->setManipulatedFrame(nullptr);
   invalidateOpenGLBuffers();
   poly_item->itemChanged();
   if(property("need_hl_restore").toBool()){
     set_highlighting(true);
     setProperty("need_hl_restore", false);
+  }
+  if(property("need_invalidate_aabb_tree").toBool()){
+    polyhedron_item()->invalidate_aabb_tree();
+    setProperty("need_invalidate_aabb_tree", false);
   }
   Q_EMIT updateInstructions("Select a vertex. (1/2)");
 }
@@ -2255,35 +2261,35 @@ void Scene_polyhedron_selection_item::printPrimitiveId(QPoint p, CGAL::Three::Vi
 {
   d->item->polyhedron_item()->printPrimitiveId(p, viewer);
 }
+
 bool Scene_polyhedron_selection_item::printVertexIds() const
 {
   return d->item->polyhedron_item()->printVertexIds();
-  return false;
 }
+
 bool Scene_polyhedron_selection_item::printEdgeIds() const
 {
-  d->item->polyhedron_item()->printEdgeIds();
-  return false;
+  return d->item->polyhedron_item()->printEdgeIds();
 }
+
 bool Scene_polyhedron_selection_item::printFaceIds() const
 {
   return d->item->polyhedron_item()->printFaceIds();
-  return false;
 }
+
 void Scene_polyhedron_selection_item::printAllIds()
 {
   d->item->polyhedron_item()->printAllIds();
 }
+
 bool Scene_polyhedron_selection_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)const
 {
   return d->item->polyhedron_item()->testDisplayId(x, y, z, viewer);
-  return false;
 }
 
 bool Scene_polyhedron_selection_item::shouldDisplayIds(CGAL::Three::Scene_item *current_item) const
 {
   return d->item->polyhedron_item() == current_item;
-  return false;
 }
 
 void Scene_polyhedron_selection_item::select_boundary()
@@ -2310,12 +2316,12 @@ Scene_polyhedron_selection_item::toolTip() const
                      "<p>Number of vertices: %2<br />"
                      "Number of edges: %3<br />"
                      "Number of faces: %4</p>")
-    .arg(this->name())
-    .arg(selected_vertices.size())
-    .arg(selected_edges.size())
-    .arg(selected_facets.size())
-    .arg(this->renderingModeName())
-    .arg(this->color().name());
+      .arg(this->name())
+      .arg(selected_vertices.size())
+      .arg(selected_edges.size())
+      .arg(selected_facets.size())
+      .arg(this->renderingModeName())
+      .arg(this->color().name());
 }
 
 void Scene_polyhedron_selection_item::initializeBuffers(Viewer_interface *v) const
@@ -2444,8 +2450,7 @@ QString Scene_polyhedron_selection_item::computeStats(int type)
     // Extract the part n°0 of the partition into a new, independent mesh
     if(selected_facets.size() == 0)
       return QString("n/a");
-    boost::vector_property_map<int,
-        boost::property_map<SMesh, boost::face_index_t>::type>
+    boost::vector_property_map<int, boost::property_map<CGAL::Face_filtered_graph<SMesh>, boost::face_index_t>::type>
         fccmap(get(boost::face_index, *d->filtered_graph));
 
     return QString::number(CGAL::Polygon_mesh_processing::connected_components(*d->filtered_graph, fccmap));

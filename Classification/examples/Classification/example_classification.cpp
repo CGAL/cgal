@@ -3,19 +3,21 @@
                               // converts 64 to 32 bits integers
 #endif
 
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Classification.h>
+#include <CGAL/bounding_box.h>
+#include <CGAL/tags.h>
+#include <CGAL/IO/read_points.h>
+#include <CGAL/IO/write_ply_points.h>
+
+#include <CGAL/Real_timer.h>
+
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <string>
 
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Classification.h>
-#include <CGAL/bounding_box.h>
-#include <CGAL/tags.h>
-#include <CGAL/IO/read_ply_points.h>
-#include <CGAL/IO/write_ply_points.h>
-
-#include <CGAL/Real_timer.h>
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
@@ -46,13 +48,13 @@ typedef Classification::Feature::Vertical_dispersion<Kernel, Point_range, Pmap> 
 
 int main (int argc, char** argv)
 {
-  std::string filename (argc > 1 ? argv[1] : "data/b9.ply");
-  std::ifstream in (filename.c_str());
-  std::vector<Point> pts;
+  const char* filename = (argc > 1) ? argv[1] : "data/b9.ply";
 
   std::cerr << "Reading input" << std::endl;
-  if (!in
-      || !(CGAL::read_ply_points (in, std::back_inserter (pts))))
+  std::vector<Point> pts;
+  if (!(CGAL::IO::read_points(filename, std::back_inserter(pts),
+                              // the PLY reader expects a binary file by default
+                              CGAL::parameters::use_binary_mode(false))))
   {
     std::cerr << "Error: cannot read " << filename << std::endl;
     return EXIT_FAILURE;
@@ -105,10 +107,10 @@ int main (int argc, char** argv)
   Label_handle ground = labels.add ("ground");
 
   // Init name and color
-  Label_handle vegetation = labels.add ("vegetation", CGAL::Color(0,255,0));
+  Label_handle vegetation = labels.add ("vegetation", CGAL::IO::Color(0,255,0));
 
   // Init name, Color and standard index (here, ASPRS building index)
-  Label_handle roof = labels.add ("roof", CGAL::Color (255, 0, 0), 6);
+  Label_handle roof = labels.add ("roof", CGAL::IO::Color (255, 0, 0), 6);
 
   //! [Labels]
   ///////////////////////////////////////////////////////////////////
@@ -209,7 +211,7 @@ int main (int argc, char** argv)
 
   std::ofstream f ("classification.ply");
 
-  CGAL::write_ply_points_with_properties
+  CGAL::IO::write_PLY_with_properties
     (f, CGAL::make_range (boost::counting_iterator<std::size_t>(0),
                           boost::counting_iterator<std::size_t>(pts.size())),
      CGAL::make_ply_point_writer (CGAL::make_property_map(pts)),

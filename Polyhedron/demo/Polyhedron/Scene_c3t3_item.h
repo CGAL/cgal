@@ -47,12 +47,12 @@ public:
   void setColor(QColor c) Q_DECL_OVERRIDE;
   bool save_binary(std::ostream& os) const
   {
-    return CGAL::Mesh_3::save_binary_file(os, c3t3());
+    return CGAL::IO::save_binary_file(os, c3t3());
   }
   bool save_ascii(std::ostream& os) const
   {
       os << "ascii CGAL c3t3 " << CGAL::Get_io_signature<C3t3>()() << "\n";
-      CGAL::set_ascii_mode(os);
+      CGAL::IO::set_ascii_mode(os);
       return !!(os << c3t3());
   }
 
@@ -128,6 +128,7 @@ public:
     float getShrinkFactor() const;
     bool keyPressEvent(QKeyEvent *) Q_DECL_OVERRIDE;
     bool eventFilter(QObject *, QEvent *) Q_DECL_OVERRIDE;
+    std::size_t number_of_patches() const;
   public Q_SLOTS:
 
   void on_spheres_color_changed();

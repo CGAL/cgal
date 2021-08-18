@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
 
   Surface_mesh copy;
 
-  copy_face_graph(mesh, copy, CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),Insert_iterator(t2q));
+  CGAL::copy_face_graph(mesh, copy, CGAL::parameters::face_to_face_output_iterator(Insert_iterator(t2q)));
 
   Visitor v(t2q);
   CGAL::Polygon_mesh_processing::triangulate_faces(copy,

@@ -191,16 +191,6 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
     return (sp1 == sp2.antipode());
   }
 
-  bool simplify_redundant_box_vertex(Vertex_handle v, bool snc_computed) {
-    //CGAL_warning("altered code");
-    return false;
-    if(snc_computed) return false;
-    if(!Infi_box::is_redundant_box_vertex(*v)) return false;
-    this->sncp()->delete_vertex(v);
-    simplified = true;
-    return true;
-  }
-
   bool simplify_redundant_vertex_in_volume(Vertex_handle v) {
     if(is_part_of_volume(v)) {
       //      CGAL_NEF_TRACEN("mark("<<IO->index(v)<<")="<<v->mark()<<", "<<
@@ -295,7 +285,6 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
     while( v != (*this->sncp()).vertices_end()) {
       Vertex_iterator v_next(v);
       ++v_next;
-      if(!simplify_redundant_box_vertex(v, snc_computed))
         if(!simplify_redundant_vertex_in_volume(v))
           if(!simplify_redundant_vertex_on_facet(v))
             simplify_redundant_vertex_on_edge(v, snc_computed);
@@ -620,8 +609,8 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
       SHalfedge_around_facet_circulator c(u), cend(c);
       CGAL_For_all( c, cend) {
         D.set_facet( c, f);
-        if( lexicographically_xyz_smaller(c->source()->source()->point(),
-                                          u_min->source()->source()->point()))
+        if( (c != u_min) && lexicographically_xyz_smaller(c->source()->source()->point(),
+                                                          u_min->source()->source()->point()))
           u_min = c;
         linked[c] = true;
       }

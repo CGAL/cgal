@@ -44,7 +44,7 @@ namespace Classification {
 /*!
   \ingroup PkgClassificationPointSet
 
-  \brief Generates a set of generic features for point set
+  \brief generates a set of generic features for point set
   classification.
 
   This class takes care of computing and storing all necessary data
@@ -65,7 +65,7 @@ namespace Classification {
   is `GeomTraits::Point_3`.
   \tparam ConcurrencyTag enables sequential versus parallel
   computation of `CGAL::Classification::Local_eigen_analysis`
-  objects. Possible values are `Parallel_tag` (default value is %CGAL
+  objects. Possible values are `Parallel_tag` (default value is \cgal
   is linked with TBB) or `Sequential_tag` (default value otherwise).
   \tparam DiagonalizeTraits model of `DiagonalizeTraits` used for
   matrix diagonalization. It can be omitted: if Eigen 3 (or greater)
@@ -355,7 +355,7 @@ public:
 
     \tparam ColorMap model of `ReadablePropertyMap`  whose key type is
     the value type of the iterator of `PointRange` and value type is
-    `CGAL::Color`.
+    `CGAL::IO::Color`.
 
     \param features the feature set where the features are instantiated.
     \param color_map property map to access the colors of the input points (if any).

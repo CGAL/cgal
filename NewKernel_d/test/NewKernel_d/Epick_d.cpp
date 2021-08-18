@@ -1,13 +1,4 @@
 #include <boost/config.hpp>
-#if defined(BOOST_GCC) && (__GNUC__ <= 4) && (__GNUC_MINOR__ < 4)
-
-#include <iostream>
-int main()
-{
-  std::cerr << "NOTICE: This test requires G++ >= 4.4, and will not be compiled." << std::endl;
-}
-
-#else
 
 //#define BOOST_RESULT_OF_USE_DECLTYPE 1
 #include <CGAL/Epick_d.h>
@@ -768,5 +759,3 @@ int main(){
   test4<CGAL::Epeck_d<CGAL::Dynamic_dimension_tag>>();
 #endif
 }
-
-#endif

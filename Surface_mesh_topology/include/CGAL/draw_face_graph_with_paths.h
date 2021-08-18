@@ -21,6 +21,7 @@
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
+#include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Random.h>
 
 namespace CGAL {
@@ -147,7 +148,7 @@ protected:
     if (m_current_dart!=lcc.darts().end())
     { // We want to draw only one dart
       Dart_const_handle selected_dart=m_current_dart; //lcc.dart_handle(m_current_dart);
-      compute_edge(selected_dart, CGAL::Color(255,0,0));
+      compute_edge(selected_dart, CGAL::IO::Color(255,0,0));
       lcc.template mark_cell<1>(selected_dart, markedges);
       compute_vertex(selected_dart);
 
@@ -216,7 +217,7 @@ protected:
     }
     while(cur!=dh);
 
-    // CGAL::Color c=m_fcolor.run(*lcc, dh);
+    // CGAL::IO::Color c=m_fcolor.run(*lcc, dh);
     face_begin(); //c);
 
     cur=dh;
@@ -240,13 +241,13 @@ protected:
     {
       if (m_draw_marked_darts && m_amark!=LCC::INVALID_MARK &&
           (lcc.is_marked(dh, m_amark) || lcc.is_marked(lcc.opposite2(dh), m_amark)))
-      { add_segment(p1, get_point(d2), CGAL::Color(0, 0, 255)); }
+      { add_segment(p1, get_point(d2), CGAL::IO::Color(0, 0, 255)); }
       else
       { add_segment(p1, get_point(d2)); }
     }
   }
 
-  void compute_edge(Dart_const_handle dh, const CGAL::Color& color)
+  void compute_edge(Dart_const_handle dh, const CGAL::IO::Color& color)
   {
     Point p1 = get_point(dh);
     Dart_const_handle d2 = lcc.other_extremity(dh);
@@ -366,7 +367,7 @@ protected:
     { return; }
 
     CGAL::Random random(static_cast<unsigned int>(i));
-    CGAL::Color color=get_random_color(random);
+    CGAL::IO::Color color=get_random_color(random);
 
     add_point(get_point((*m_paths)[i].get_ith_dart(0)), color);
     for (std::size_t j=0; j<(*m_paths)[i].length(); ++j)
@@ -409,6 +410,7 @@ void draw(const Mesh& alcc,
 
   if (!cgal_test_suite)
   {
+    CGAL::Qt::init_ogl_context(4,3);
     int argc=1;
     const char* argv[2]={"lccviewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));

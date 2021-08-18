@@ -22,6 +22,16 @@
 #include <CGAL/Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #endif
+
+#ifndef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
+#include <CGAL/centroid.h>
+#include <CGAL/Triangulation_vertex_base_with_info_2.h>
+#include <CGAL/Triangulation_face_base_with_info_2.h>
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/Triangulation_2_projection_traits_3.h>
+#include <queue>
+#endif
+
 #include <CGAL/utility.h>
 #include <CGAL/iterator.h>
 #include <CGAL/use.h>
@@ -782,11 +792,13 @@ public:
     std::pair<int, int> range(0, n-1);
     boost::tuple<boost::optional<Edge>, bool, bool> res = construct_3D_triangulation(P, range, tr, edge_exist);
     if(!res.template get<2>()) {
+#ifdef CGAL_HOLE_FILLING_VERBOSE
       #ifndef CGAL_TEST_SUITE
       CGAL_warning_msg(false, "Returning no output. Dimension of 3D Triangulation is below 2!");
       #else
       std::cerr << "W: Returning no output. Dimension of 3D Triangulation is below 2!\n";
       #endif
+#endif
       return Weight::NOT_VALID();
     }
 
@@ -806,11 +818,13 @@ public:
       }
 
       if(W.get(0, n-1) == Weight::NOT_VALID()) {
+#ifdef CGAL_HOLE_FILLING_VERBOSE
         #ifndef CGAL_TEST_SUITE
         CGAL_warning_msg(false, "Returning no output. No possible triangulation is found!");
         #else
         std::cerr << "W: Returning no output. No possible triangulation is found!\n";
         #endif
+#endif
         return Weight::NOT_VALID();
       }
 
@@ -1002,7 +1016,9 @@ private:
         Triangulate_hole_polyline<Kernel, Tracer, WeightCalculator, LookupTable> all_space;
         all_space.triangulate_all(P, Q, WC, std::make_pair(h.first, h.second), W, lambda);
         if(W.get(h.first, h.second) == Weight::NOT_VALID()) {
+#ifdef CGAL_HOLE_FILLING_VERBOSE
           CGAL_warning_msg(false, "Returning no output. Filling hole with incomplete patches is not successful!");
+#endif
           return Weight::NOT_VALID();
         }
       }
@@ -1023,7 +1039,9 @@ private:
           Triangulate_hole_polyline<Kernel, Tracer, WeightCalculator, LookupTable> all_space;
           all_space.triangulate_all(P, Q, WC, std::make_pair(h.first, h.second), W, lambda);
           if(W.get(h.first, h.second) == Weight::NOT_VALID()) {
+#ifdef CGAL_HOLE_FILLING_VERBOSE
             CGAL_warning_msg(false, "Returning no output. Filling hole with incomplete patches is not successful!");
+#endif
             return Weight::NOT_VALID();
           }
         }
@@ -1038,7 +1056,9 @@ private:
       tr.clear();
       boost::tuple<boost::optional<Edge>, bool, bool> res = construct_3D_triangulation(P, h, tr, edge_exist);
       if(!boost::get<0>(res)) {
+#ifdef CGAL_HOLE_FILLING_VERBOSE
         CGAL_warning_msg(false, "Returning no output. Filling hole with incomplete patches is not successful!");
+#endif
         return Weight::NOT_VALID();
       }
       start_edge = *boost::get<0>(res);
@@ -1098,12 +1118,14 @@ private:
       (P, Q, W, lambda, e_start, edge_graph, WC, false);
 
     if(W.get(0, n-1) == Weight::NOT_VALID()) {
+#ifdef CGAL_HOLE_FILLING_VERBOSE
       #ifndef CGAL_TEST_SUITE
       CGAL_warning_msg(false, "Returning no output using Delaunay triangulation.\n Falling back to the general Triangulation framework.");
       #else
       std::cerr << "W: Returning no output using Delaunay triangulation.\n"
                 << "Falling back to the general Triangulation framework.\n";
       #endif
+#endif
       return Weight::NOT_VALID();
     }
 
@@ -1144,11 +1166,13 @@ public:
     triangulate_all(P, Q, WC, std::make_pair(0,n-1), W, lambda);
 
     if(W.get(0,n-1) == Weight::NOT_VALID() || n <= 2) {
+#ifdef CGAL_HOLE_FILLING_VERBOSE
       #ifndef CGAL_TEST_SUITE
       CGAL_warning_msg(false, "Returning no output. No possible triangulation is found!");
       #else
       std::cerr << "W: Returning no output. No possible triangulation is found!\n";
       #endif
+#endif
       return Weight::NOT_VALID();
     }
 
@@ -1194,7 +1218,258 @@ public:
   }
 };
 
-/***********************************************************************************
+#ifndef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
+
+/************************************************************************
+ * Triangulate hole by using a cdt_2
+ ************************************************************************/
+// /!\ points.first == points.last
+
+template <typename Traits>
+bool is_planar_2(
+  const std::vector<typename Traits::Point_3>& points,
+  const typename Traits::Vector_3& avg_normal,
+  const typename Traits::FT max_squared_distance,
+  const Traits& traits) {
+
+  typedef typename Traits::FT FT;
+  typedef typename Traits::Point_3 Point_3;
+  typedef typename Traits::Plane_3 Plane_3;
+  typedef typename Traits::Construct_projected_point_3 Projection_3;
+  typedef typename Traits::Compute_squared_distance_3 Squared_distance_3;
+
+  const Projection_3 projection_3 =
+    traits.construct_projected_point_3_object();
+  const Squared_distance_3 squared_distance_3 =
+    traits.compute_squared_distance_3_object();
+
+  const std::size_t n = points.size() - 1; // the first equals to the last
+  if (n < 3) {
+    return false; // cant be a plane!
+  }
+
+  // Compute centroid.
+  const Point_3 centroid =
+    CGAL::centroid(points.begin(), points.end() - 1);
+
+  // Compute covariance matrix.
+  FT xx = FT(0), yy = FT(0), zz = FT(0);
+  FT xy = FT(0), xz = FT(0), yz = FT(0);
+  for (std::size_t i = 0; i < n; ++i) {
+    const Point_3& p = points[i];
+    const FT dx = p.x() - centroid.x();
+    const FT dy = p.y() - centroid.y();
+    const FT dz = p.z() - centroid.z();
+    xx += dx * dx; yy += dy * dy; zz += dz * dz;
+    xy += dx * dy; xz += dx * dz; yz += dy * dz;
+  }
+
+  // Check the planarity.
+  const FT x = yy * zz - yz * yz;
+  const FT y = xx * zz - xz * xz;
+  const FT z = xx * yy - xy * xy;
+  FT maxv = -FT(1);
+  maxv = (CGAL::max)(maxv, x);
+  maxv = (CGAL::max)(maxv, y);
+  maxv = (CGAL::max)(maxv, z);
+  if (maxv <= FT(0)) {
+    return false; // a good plane does not exist for sure!
+  }
+
+  // Here, avg_squared_distance is a little bit more tolerant than avg_distance^2.
+  CGAL_assertion(avg_normal != typename Traits::Vector_3());
+  const Plane_3 plane = Plane_3(centroid, avg_normal);
+  FT avg_squared_distance = FT(0);
+  for (std::size_t i = 0; i < n; ++i) {
+    const Point_3& p = points[i];
+    const Point_3  q = projection_3(plane, p);
+    avg_squared_distance += CGAL::abs(squared_distance_3(p, q));
+  }
+  avg_squared_distance /= static_cast<FT>(n);
+  // std::cout << "avg squared distance: " << avg_squared_distance << std::endl;
+
+  CGAL_assertion(max_squared_distance >= FT(0));
+  if (avg_squared_distance > max_squared_distance) {
+    return false; // the user distance criteria are not satisfied!
+  }
+
+  // std::cout << "The hole seems to be near planar." << std::endl;
+  return true;
+}
+
+template <
+  typename PointRange, // need size()
+  typename Tracer,
+  typename Validity_checker,
+  typename Traits
+>
+bool
+triangulate_hole_polyline_with_cdt(const PointRange& points,
+                                   Tracer& tracer,
+                                   const Validity_checker& is_valid,
+                                   const Traits& traits,
+                                   const typename Traits::FT max_squared_distance)
+{
+  typedef typename Traits::FT FT;
+  typedef typename Traits::Point_3 Point_3;
+  typedef typename Traits::Vector_3 Vector_3;
+  typedef typename Traits::Collinear_3 Collinear_3;
+
+  // Compute an average normal of the hole.
+  const Collinear_3 collinear_3 =
+    traits.collinear_3_object();
+
+  std::vector<Point_3> P(std::begin(points), std::end(points));
+  CGAL_assertion(P.size() >= 3);
+  if (P.front() != P.back()) {
+    P.push_back(P.front());
+  }
+
+  FT x = FT(0), y = FT(0), z = FT(0);
+  std::size_t num_normals = 0;
+  const Point_3& ref_point = P[0];
+  const std::size_t size = P.size() - 1;
+  for (std::size_t i = 1; i < size - 1; ++i) {
+    const std::size_t ip = i + 1;
+
+    const Point_3& p1 = ref_point; // 3 points, which form a triangle
+    const Point_3& p2 = P[i];
+    const Point_3& p3 = P[ip];
+
+    // Skip in case we have collinear points.
+    if (collinear_3(p1, p2, p3)) {
+      continue;
+    }
+
+    // Computing the normal of a triangle.
+    const Vector_3 n = CGAL::normal(p1, p2, p3);
+    // If it is a positive normal ->
+    if (
+      ( n.x() >  FT(0)                                    ) ||
+      ( n.x() == FT(0) && n.y() >  FT(0)                  ) ||
+      ( n.x() == FT(0) && n.y() == FT(0) && n.z() > FT(0) )) {
+      x += n.x(); y += n.y(); z += n.z();
+    } else { // otherwise invert ->
+      x -= n.x(); y -= n.y(); z -= n.z();
+    }
+    ++num_normals;
+  }
+
+  if (num_normals < 1) {
+    // std::cerr << "WARNING: num normals, cdt 2 falls back to the original solution!" << std::endl;
+    return false;
+  }
+
+  // Setting the final normal.
+  x /= static_cast<FT>(num_normals);
+  y /= static_cast<FT>(num_normals);
+  z /= static_cast<FT>(num_normals);
+  const Vector_3 avg_normal = Vector_3(x, y, z);
+  // std::cout << "avg normal: " << avg_normal << std::endl;
+
+  // Checking the hole planarity.
+  if (!is_planar_2(P, avg_normal, max_squared_distance, traits)) {
+    // std::cerr << "WARNING: planarity, cdt 2 falls back to the original solution!" << std::endl;
+    return false;
+  }
+
+  // Checking the hole simplicity.
+  typedef Triangulation_2_projection_traits_3<Traits> P_traits;
+  const P_traits p_traits(avg_normal);
+  if (!is_simple_2(P.begin(), P.end() - 1, p_traits)) {
+    // std::cerr << "WARNING: simplicity, cdt 2 falls back to the original solution!" << std::endl;
+    return false;
+  }
+
+  Lookup_table_map<int> lambda(static_cast<int>(size), -1);
+
+  // Create and fill the cdt_2.
+  typedef CGAL::Triangulation_vertex_base_with_info_2<std::size_t, P_traits> Vb;
+  typedef CGAL::Triangulation_face_base_with_info_2<bool, P_traits>          Fbi;
+  typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fbi>         Fb;
+  typedef CGAL::Triangulation_data_structure_2<Vb, Fb>                       TDS;
+  // If the polygon is simple, there should be no intersection.
+  typedef CGAL::No_constraint_intersection_tag                               Itag;
+  typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits, TDS, Itag>    CDT;
+  P_traits cdt_traits(avg_normal);
+  CDT cdt(cdt_traits);
+
+  std::vector< std::pair<Point_3, std::size_t> > points_and_ids;
+  points_and_ids.reserve(size);
+  for (std::size_t i = 0; i < size; ++i) {
+    points_and_ids.push_back(std::make_pair(P[i], i));
+  }
+
+  std::vector<typename CDT::Vertex_handle> vertices(size);
+  cdt.insert(points_and_ids.begin(), points_and_ids.end());
+  for (typename CDT::Vertex_handle v : cdt.finite_vertex_handles()) {
+    vertices[v->info()] = v;
+  }
+
+  for (std::size_t i = 0; i < size; ++i) {
+    const std::size_t ip = (i + 1) % size;
+    if (vertices[i] != vertices[ip]) {
+      cdt.insert_constraint(vertices[i], vertices[ip]);
+    }
+  }
+
+  // Mark external faces.
+  for (typename CDT::All_faces_iterator fit = cdt.all_faces_begin(),
+    end = cdt.all_faces_end(); fit != end; ++fit) {
+    fit->info() = false;
+  }
+
+  std::queue<typename CDT::Face_handle> face_queue;
+  face_queue.push(cdt.infinite_vertex()->face());
+  while (!face_queue.empty()) {
+
+    typename CDT::Face_handle fh = face_queue.front();
+    face_queue.pop();
+    if (fh->info()) {
+      continue;
+    }
+
+    fh->info() = true;
+    for (int i = 0; i < 3; ++i) {
+      if (!cdt.is_constrained(typename CDT::Edge(fh, i))) {
+        face_queue.push(fh->neighbor(i));
+      }
+    }
+  }
+
+  if (cdt.dimension() != 2 || cdt.number_of_vertices() != size) {
+    // std::cerr << "WARNING: dim + num vertices, cdt 2 falls back to the original solution!" << std::endl;
+    return false;
+  }
+
+  // Fill the lambda.
+  for (typename CDT::Finite_faces_iterator fit = cdt.finite_faces_begin(),
+    end = cdt.finite_faces_end(); fit != end; ++fit) {
+    if (!fit->info()) { // if it is not external
+
+      std::vector<int> is(3);
+      for (int i = 0; i < 3; ++i) {
+        is[i] = static_cast<int>(fit->vertex(i)->info());
+      }
+
+      std::sort(is.begin(), is.end());
+      lambda.put(is[0], is[2], is[1]);
+      if (!is_valid(P, is[0], is[1], is[2])) {
+        // std::cerr << "WARNING: validity, cdt 2 falls back to the original solution!" << std::endl;
+        return false;
+      }
+    }
+  }
+
+  // Call the tracer. It correctly orients the patch faces.
+  // std::cout << "CDT is being used!" << std::endl;
+  tracer(lambda, 0, static_cast<int>(size) - 1);
+  return true;
+}
+
+#endif
+
+/*******************************************************************************
  * Internal entry point for both polyline and Polyhedron_3 triangulation functions
  ***********************************************************************************/
 template <
@@ -1212,6 +1487,8 @@ triangulate_hole_polyline(const PointRange1& points,
                           bool use_delaunay_triangulation,
                           const Kernel&)
 {
+  CGAL_assertion(!points.empty());
+
   typedef Kernel        K;
   typedef typename K::Point_3    Point_3;
   #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3

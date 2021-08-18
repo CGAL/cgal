@@ -322,7 +322,7 @@ employing the authors) of this work, a pointer to the file containing its text i
 <LI>\$URL\$ : canonical path to the file on github,
 <LI>\$Id\$ : the release version the file is from.
 </UL>
-<LI> Then [SPDX license identifier](https://spdx.org/). For GPL-3+ it should be `SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial`,
+<LI> Then [SPDX license identifier](https://spdx.dev/). For GPL-3+ it should be `SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial`,
 and  `SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial` for LGPL-3+.
 <LI>Then the authors of (non-negligible parts of) this file are listed, with
 optional affiliation or e-mail address.

@@ -38,20 +38,20 @@ namespace SMP = CGAL::Surface_mesh_parameterization;
 
 int main(int argc, char** argv)
 {
-  std::ifstream in_mesh((argc>1) ? argv[1] : "data/lion.off");
-  if(!in_mesh){
-    std::cerr << "Error: problem loading the input data" << std::endl;
-    return EXIT_FAILURE;
-  }
+  const char* filename = (argc>1) ? argv[1] : "data/lion.off";
 
   SurfaceMesh sm;
-  in_mesh >> sm;
+  if(!CGAL::IO::read_polygon_mesh(filename, sm))
+  {
+    std::cerr << "Invalid input file." << std::endl;
+    return EXIT_FAILURE;
+  }
 
   // Two property maps to store the seam edges and vertices
   Seam_edge_pmap seam_edge_pm = sm.add_property_map<SM_edge_descriptor, bool>("e:on_seam", false).first;
   Seam_vertex_pmap seam_vertex_pm = sm.add_property_map<SM_vertex_descriptor, bool>("v:on_seam", false).first;
 
-  const char* filename = (argc>2) ? argv[2] : "data/lion.selection.txt";
+  const char* selection_filename = (argc>2) ? argv[2] : "data/lion.selection.txt";
 
   // Read the constraints on the border
   std::ifstream in(filename);
@@ -65,7 +65,7 @@ int main(int argc, char** argv)
   }
 
   Mesh mesh(sm, seam_edge_pm, seam_vertex_pm);
-  SM_halfedge_descriptor smhd = mesh.add_seams(filename);
+  SM_halfedge_descriptor smhd = mesh.add_seams(selection_filename);
   if(smhd == SM_halfedge_descriptor() ) {
     std::cerr << "Warning: No seams in input" << std::endl;
   }

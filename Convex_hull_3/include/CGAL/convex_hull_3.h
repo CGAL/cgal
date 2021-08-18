@@ -43,7 +43,6 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/is_iterator.h>
 
-#include <boost/bind.hpp>
 #include <boost/next_prior.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
 #include <boost/type_traits/is_same.hpp>
@@ -576,7 +575,8 @@ farthest_outside_point(Face_handle f, std::list<Point>& outside_set,
    Outside_set_iterator farthest_it =
           std::max_element(outside_set.begin(),
                            outside_set.end(),
-                           boost::bind(less_dist_to_plane, plane, _1, _2));
+                           [&less_dist_to_plane,&plane](const Point& p1, const Point& p2)
+                           { return less_dist_to_plane(plane, p1, p2); });
    return farthest_it;
 }
 
@@ -795,8 +795,10 @@ ch_quickhull_face_graph(std::list<typename Traits::Point_3>& points,
   // plane.
   std::pair<P3_iterator, P3_iterator> min_max;
   min_max = CGAL::min_max_element(points.begin(), points.end(),
-                                  boost::bind(compare_dist, plane, _1, _2),
-                                  boost::bind(compare_dist, plane, _1, _2));
+                                  [&compare_dist, &plane](const Point_3& p1, const Point_3& p2)
+                                  { return compare_dist(plane, p1, p2); },
+                                  [&compare_dist, &plane](const Point_3& p1, const Point_3& p2)
+                                  { return compare_dist(plane, p1, p2); });
   P3_iterator max_it;
   if (coplanar(*point1_it, *point2_it, *point3_it, *min_max.second))
   {
@@ -929,8 +931,10 @@ convex_hull_3(InputIterator first, InputIterator beyond,
      Less_dist less_dist = traits.less_distance_to_point_3_object();
      P3_iterator_pair endpoints =
       min_max_element(points.begin(), points.end(),
-                      boost::bind(less_dist, *points.begin(), _1, _2),
-                      boost::bind(less_dist, *points.begin(), _1, _2));
+                      [&points, &less_dist](const Point_3& p1, const Point_3& p2)
+                      { return less_dist(*points.begin(), p1, p2); },
+                      [&points, &less_dist](const Point_3& p1, const Point_3& p2)
+                      { return less_dist(*points.begin(), p1, p2); });
 
      typename Traits::Construct_segment_3 construct_segment =
             traits.construct_segment_3_object();
@@ -1032,8 +1036,10 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
     Less_dist less_dist = traits.less_distance_to_point_3_object();
     P3_iterator_pair endpoints =
     min_max_element(points.begin(), points.end(),
-                    boost::bind(less_dist, *points.begin(), _1, _2),
-                    boost::bind(less_dist, *points.begin(), _1, _2));
+                    [&points, &less_dist](const Point_3& p1, const Point_3& p2)
+                    { return less_dist(*points.begin(), p1, p2); },
+                    [&points, &less_dist](const Point_3& p1, const Point_3& p2)
+                    { return less_dist(*points.begin(), p1, p2); });
     Convex_hull_3::internal::add_isolated_points(*endpoints.first, polyhedron);
     Convex_hull_3::internal::add_isolated_points(*endpoints.second, polyhedron);
     return;

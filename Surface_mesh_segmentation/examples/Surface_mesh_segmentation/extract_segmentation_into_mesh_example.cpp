@@ -1,10 +1,12 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
+
+#include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
-#include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/mesh_segmentation.h>
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -15,14 +17,16 @@ typedef boost::graph_traits<SM>::face_descriptor face_descriptor;
 
 int main(int argc, char** argv )
 {
+  const char* filename = (argc > 1) ? argv[1] : "data/cactus.off";
+
   SM mesh;
-  if (argc==2){
-    std::ifstream input(argv[1]);
-    input >> mesh;
-  } else {
-    std::ifstream cactus("data/cactus.off");
-    cactus >> mesh;
+  if(!CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(filename, mesh) ||
+     !CGAL::is_triangle_mesh(mesh))
+  {
+    std::cerr << "Invalid input file." << std::endl;
+    return EXIT_FAILURE;
   }
+
   typedef SM::Property_map<face_descriptor,double> Facet_double_map;
   Facet_double_map sdf_property_map;
 
@@ -45,6 +49,7 @@ int main(int argc, char** argv )
   {
     segment_mesh.set_selected_faces(id, segment_property_map);
     std::cout << "Segment "<<id<<"'s area is : "<<CGAL::Polygon_mesh_processing::area(segment_mesh)<<std::endl;
+
     SM out;
     CGAL::copy_face_graph(segment_mesh, out);
     std::ostringstream oss;

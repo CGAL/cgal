@@ -16,8 +16,6 @@
 #include <iostream>
 #include <math.h>
 
-#include <QDomElement>
-
 // Included by all files as vec.h is at the end of the include hierarchy
 #include <CGAL/export/Qt.h>
 
@@ -334,12 +332,6 @@ Normalizing a null vector will result in \c NaN values. */
   void projectOnPlane(const Vec &normal);
   //@}
 
-  /*! @name XML representation */
-  //@{
-  explicit Vec(const QDomElement &element);
-  QDomElement domElement(const QString &name, QDomDocument &document) const;
-  void initFromDOMElement(const QDomElement &element);
-//@}
 
 #ifdef DOXYGEN
   /*! @name Output stream */

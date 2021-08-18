@@ -1,22 +1,5 @@
-cmake_minimum_required(VERSION 3.1...3.15)
-project(Polyhedron_Demo)
-
-if(NOT POLICY CMP0070 AND POLICY CMP0053)
-  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
-  cmake_policy(SET CMP0053 OLD)
-endif()
-if(POLICY CMP0071)
-  cmake_policy(SET CMP0071 NEW)
-endif()
-if(POLICY CMP0072)
-  # About the use of OpenGL
-  cmake_policy(SET CMP0072 NEW)
-endif()
-
-if(POLICY CMP0074)
-  cmake_policy(SET CMP0074 NEW)
-endif()
-
+cmake_minimum_required(VERSION 3.1...3.20)
+project( Polyhedron_Demo )
 include(FeatureSummary)
 
 # Find includes in corresponding build directories
@@ -32,10 +15,6 @@ if(has_cpp11 LESS 0)
       "NOTICE: This demo requires a C++11 compiler and will not be compiled.")
   return()
 endif()
-
-# Use C++11 for this directory and its sub-directories.
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 #Defines flags to emulate windows behavior for linking error generation
 if(CMAKE_CXX_COMPILER_ID EQUAL Clang
@@ -69,8 +48,8 @@ include(${CGAL_USE_FILE})
 
 find_package(
   Qt5 QUIET
-  COMPONENTS OpenGL Script
-  OPTIONAL_COMPONENTS ScriptTools WebSockets)
+  COMPONENTS OpenGL Script Widgets
+  OPTIONAL_COMPONENTS ScriptTools WebSockets Network)
 
 set_package_properties(
   Qt5 PROPERTIES
@@ -93,17 +72,14 @@ set_package_properties(
   PURPOSE
     "Requiered for the Polyhedron Edit, Parameterization, Jet fitting, Classification plugin, Surface reconstruction, Normal estimation, Smoothing, Average spacing, Feature detection, Hole Filling and Fairing plugins ."
 )
-include(CGAL_Eigen_support)
+include(CGAL_Eigen3_support)
 
 find_package(METIS)
+include(CGAL_METIS_support)
 set_package_properties(
   METIS PROPERTIES
   DESCRIPTION "A library for partitionning."
   PURPOSE "Requiered for the partition plugin.")
-
-if(METIS_FOUND)
-  include_directories(${METIS_INCLUDE_DIRS})
-endif()
 
 # Activate concurrency?
 option(POLYHEDRON_DEMO_ACTIVATE_CONCURRENCY "Enable concurrency" ON)
@@ -234,22 +210,20 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     Polyhedron_demo_plugin_helper.cpp
     CGAL_double_edit.cpp)
   target_link_libraries(demo_framework PUBLIC Qt5::OpenGL Qt5::Widgets Qt5::Gui
-                                              Qt5::Script)
+                                              Qt5::Script CGAL::CGAL_Qt5)
   if(TARGET Qt5::WebSockets)
     target_link_libraries(demo_framework PUBLIC Qt5::WebSockets)
     message(
       STATUS "Qt5WebSockets was found. Using WebSockets is therefore possible.")
   endif()
 
-  cgal_add_compilation_test(demo_framework)
+  #compilation_of__demo_framework is defined in polyhedron_demo_macros.cmake
   # Let's define `three_EXPORT` during the compilation of `demo_framework`,
   # in addition of `demo_framework_EXPORT` (defined automatically by
   # CMake). That is to deal with the visibility of symbols of
   # `Three.h`/`Three.cpp`.
   target_compile_definitions(demo_framework PRIVATE three_EXPORTS=1)
-  if(CGAL_HEADER_ONLY)
-    target_compile_definitions(demo_framework PRIVATE -DCGAL_USE_Qt5_RESOURCES)
-  endif()
+  target_compile_definitions(demo_framework PRIVATE -DCGAL_USE_Qt5_RESOURCES)
 
   add_library(scene_basic_objects SHARED Scene_plane_item.cpp
                                          Scene_spheres_item.cpp)
@@ -267,23 +241,11 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   target_link_libraries(point_dialog PUBLIC Qt5::OpenGL Qt5::Gui Qt5::Script
                                             Qt5::Widgets)
 
-  add_custom_target(all_scene_items)
-  if(BUILD_TESTING)
-    cgal_add_compilation_test(all_scene_items)
-    set_property(
-      TEST compilation_of__all_scene_items
-      APPEND
-      PROPERTY DEPENDS compilation_of__demo_framework)
-    set_property(TEST compilation_of__all_scene_items APPEND PROPERTY TIMEOUT
-                                                                      1700)
-  endif(BUILD_TESTING)
-
   macro(add_item item_name)
     add_library(${item_name} SHARED ${ARGN})
     target_link_libraries(
       ${item_name} PUBLIC demo_framework ${CGAL_LIBRARIES} Qt5::OpenGL Qt5::Gui
                           Qt5::Script Qt5::Widgets)
-    add_dependencies(all_scene_items ${item_name})
     add_to_cached_list(CGAL_EXECUTABLE_TARGETS ${item_name})
   endmacro(add_item)
 
@@ -330,19 +292,19 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   add_item(scene_movable_sm_item Plugins/AABB_tree/Scene_movable_sm_item.cpp)
 
-  if(TARGET CGAL::Eigen_support)
+  if(TARGET CGAL::Eigen3_support)
     add_item(scene_textured_item Scene_textured_surface_mesh_item.cpp
              texture.cpp)
-    target_link_libraries(scene_textured_item PUBLIC CGAL::Eigen_support)
+    target_link_libraries(scene_textured_item PUBLIC CGAL::Eigen3_support)
     qt5_wrap_ui(editionUI_FILES Plugins/Surface_mesh_deformation/Deform_mesh.ui)
     add_item(scene_edit_item
              Plugins/Surface_mesh_deformation/Scene_edit_polyhedron_item.cpp
              ${editionUI_FILES})
     target_link_libraries(
-      scene_edit_item PUBLIC CGAL::Eigen_support scene_surface_mesh_item
+      scene_edit_item PUBLIC CGAL::Eigen3_support scene_surface_mesh_item
                              scene_k_ring_selection scene_basic_objects)
     add_item(scene_mcf_item Plugins/PMP/Scene_mcf_item.cpp)
-    target_link_libraries(scene_mcf_item PUBLIC CGAL::Eigen_support)
+    target_link_libraries(scene_mcf_item PUBLIC CGAL::Eigen3_support)
   endif()
 
   add_item(scene_implicit_function_item Scene_implicit_function_item.cpp)
@@ -356,26 +318,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
                         PUBLIC scene_surface_mesh_item)
 
   add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)
-  if(TARGET CGAL::Eigen_support)
+  if(TARGET CGAL::Eigen3_support)
     target_link_libraries(scene_points_with_normal_item
-                          PUBLIC CGAL::Eigen_support)
-  endif()
-
-  find_package(LASLIB)
-  set_package_properties(
-    LASLIB PROPERTIES
-    DESCRIPTION "A library for some I/O."
-    PURPOSE "Requiered for reading or writing LAS files.")
-
-  include(CGAL_LASLIB_support)
-  if(TARGET CGAL::LASLIB_support)
-    target_link_libraries(scene_points_with_normal_item
-                          PUBLIC CGAL::LASLIB_support)
-    if(MSVC)
-      target_compile_definitions(
-        scene_points_with_normal_item
-        PUBLIC "-D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS")
-    endif()
+                          PUBLIC CGAL::Eigen3_support)
   endif()
 
   if(TBB_FOUND)
@@ -477,9 +422,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGAL_PMP)
 
   #WS Server
-  if(TARGET Qt5::WebSockets)
+  if(TARGET Qt5::WebSockets AND TARGET Qt5::Network)
     add_executable(WS_server Server_ws.cpp)
-    target_link_libraries(WS_server PUBLIC Qt5::WebSockets)
+    target_link_libraries(WS_server PUBLIC Qt5::WebSockets Qt5::Widgets Qt5::Network)
     message(
       STATUS "Qt5WebSockets was found. Using WebSockets is therefore possible.")
   endif()

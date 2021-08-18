@@ -32,7 +32,7 @@ namespace Classification {
 /*!
 \ingroup PkgClassificationFeature
 
-\brief Set of features (see `Feature_base`) used as input by
+\brief sets of features (see `Feature_base`) used as input by
 classification algorithms. This class handles both the instantiation,
 the addition and the deletion of features.
 
@@ -228,7 +228,7 @@ public:
   {
 #ifdef CGAL_LINKED_WITH_TBB
     m_tasks->wait();
-    m_tasks.release();
+    m_tasks.reset();
     m_adders.clear();
 #endif
   }

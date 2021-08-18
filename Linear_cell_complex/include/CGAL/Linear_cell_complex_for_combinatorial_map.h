@@ -206,6 +206,7 @@ namespace CGAL {
                                    origin_to_copy, copy_to_origin);
       }
 
+      void clear() { Base::clear(); } //need explicit definition for Has_member_clear in bgl helpers
     };
 
 } // namespace CGAL

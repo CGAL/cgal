@@ -1,5 +1,3 @@
-#include <iostream>
-#include <fstream>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Timer.h>
@@ -10,6 +8,9 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_placement.h>
 
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Bounded_normal_change_filter.h>
+
+#include <iostream>
+#include <fstream>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
@@ -70,10 +71,7 @@ int main(int argc, char** argv)
                                       .get_placement(Placement()));
 
   std::cout << t.time() << " sec" << std::endl;
-
-  std::ofstream os((argc > 3) ? argv[3] : "out.off");
-  os.precision(17);
-  os << surface_mesh;
+  CGAL::IO::write_polygon_mesh((argc > 3) ? argv[3] : "out.off", surface_mesh, CGAL::parameters::stream_precision(17));
 
   return EXIT_SUCCESS;
 }
