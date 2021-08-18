@@ -11,8 +11,7 @@ endif()
 
 find_package(CGAL COMPONENTS Qt5 Core)
 
-set( QT_USE_QTMAIN   TRUE )
-include(${CGAL_USE_FILE})
+set(QT_USE_QTMAIN TRUE)
 
 find_package(Qt5 QUIET COMPONENTS Widgets Script Svg)
 
