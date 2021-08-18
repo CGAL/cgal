@@ -473,7 +473,7 @@ public:
         bool self_intersection = false;
         if (r_domain_.self_intersections_pmap_ != boost::none)
         {
-          boost::property_map<Polyhedron, CGAL::dynamic_face_property_t<bool> >::type
+          typename boost::property_map<Polyhedron, CGAL::dynamic_face_property_t<bool> >::type
             si_pmap = r_domain_.self_intersections_pmap_.get();
 
           self_intersection = get(si_pmap, primitive_id.first);
