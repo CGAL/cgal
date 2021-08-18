@@ -473,13 +473,10 @@ public:
         bool self_intersection = false;
         if (r_domain_.self_intersections_pmap_ != boost::none)
         {
-          auto f = primitive_id.first;
-          boost::graph_traits<Polyhedron>::face_descriptor fd = f;
-
           boost::property_map<Polyhedron, CGAL::dynamic_face_property_t<bool> >::type
             si_pmap = r_domain_.self_intersections_pmap_.get();
 
-          self_intersection = get(si_pmap, fd);
+          self_intersection = get(si_pmap, primitive_id.first);
         }
 
         // intersection may be either a point or a segment
