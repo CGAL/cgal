@@ -82,6 +82,11 @@ create_single_source_cgal_program("mesh_polyhedral_domain_sm.cpp")
 target_link_libraries(mesh_polyhedral_domain_sm PUBLIC CGAL::Eigen3_support)
 
 create_single_source_cgal_program(
+  "mesh_polyhedral_domain_with_self_intersections.cpp")
+target_link_libraries(mesh_polyhedral_domain_with_self_intersections
+                      PUBLIC CGAL::Eigen3_support)
+
+create_single_source_cgal_program(
   "mesh_polyhedral_domain_with_surface_inside.cpp")
 target_link_libraries(mesh_polyhedral_domain_with_surface_inside
                       PUBLIC CGAL::Eigen3_support)

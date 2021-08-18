@@ -150,7 +150,7 @@ public:
   typedef typename Mesh_3::internal::Index_generator<
     Subdomain_index, Surface_patch_index>::type           Index;
 
-  typedef std::tuple<Point_3,Index,int> Intersection;
+  typedef std::tuple<Point_3,Index,int,bool> Intersection;
 
 
   typedef typename IGT::FT         FT;
@@ -196,6 +196,10 @@ public:
   typedef typename AABB_tree_::Primitive_id               AABB_primitive_id;
   typedef typename AABB_traits::Bounding_box              Bounding_box;
 
+private:
+  typedef typename boost::property_map<Polyhedron,
+                                       CGAL::dynamic_face_property_t<bool> >::type SIMap;
+
 public:
 
   /// Default constructor
@@ -203,6 +207,7 @@ public:
     : tree_()
     , bounding_tree_(&tree_)
     , p_rng_(p_rng)
+    , self_intersections_pmap_(boost::none)
   {
   }
 
@@ -211,10 +216,12 @@ public:
    * @param polyhedron the polyhedron describing the polyhedral surface
    */
   Polyhedral_mesh_domain_3(const Polyhedron& p,
-                           CGAL::Random* p_rng = nullptr)
+                           CGAL::Random* p_rng = nullptr,
+                           const boost::optional<SIMap>& simap = boost::none)
     : tree_()
     , bounding_tree_(&tree_) // the bounding tree is tree_
     , p_rng_(p_rng)
+    , self_intersections_pmap_(simap)
   {
     this->add_primitives(p);
     if(! is_triangle_mesh(p)) {
@@ -226,10 +233,12 @@ public:
 
   Polyhedral_mesh_domain_3(const Polyhedron& p,
                            const Polyhedron& bounding_polyhedron,
-                           CGAL::Random* p_rng = nullptr)
+                           CGAL::Random* p_rng = nullptr,
+                           const boost::optional<SIMap>& simap = boost::none)
     : tree_()
     , bounding_tree_(new AABB_tree_)
     , p_rng_(p_rng)
+    , self_intersections_pmap_(simap)
   {
     this->add_primitives(p);
     this->add_primitives(bounding_polyhedron);
@@ -256,9 +265,11 @@ public:
   Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin,
                            InputPolyhedraPtrIterator end,
                            const Polyhedron& bounding_polyhedron,
-                           CGAL::Random* p_rng = nullptr)
+                           CGAL::Random* p_rng = nullptr,
+                           const boost::optional<SIMap>& simap = boost::none)
     : p_rng_(p_rng)
     , delete_rng_(false)
+    , self_intersections_pmap_(simap)
   {
     if(begin != end) {
       for(; begin != end; ++begin) {
@@ -287,8 +298,10 @@ public:
   template <typename InputPolyhedraPtrIterator>
   Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin,
                            InputPolyhedraPtrIterator end,
-                           CGAL::Random* p_rng = nullptr)
+                           CGAL::Random* p_rng = nullptr,
+                           const boost::optional<SIMap>& simap = boost::none)
     : p_rng_(p_rng)
+    , self_intersections_pmap_(simap)
   {
     if(begin != end) {
       for(; begin != end; ++begin) {
@@ -457,6 +470,18 @@ public:
         // Get primitive
         AABB_primitive_id primitive_id = intersection->second;
 
+        bool self_intersection = false;
+        if (r_domain_.self_intersections_pmap_ != boost::none)
+        {
+          auto f = primitive_id.first;
+          boost::graph_traits<Polyhedron>::face_descriptor fd = f;
+
+          boost::property_map<Polyhedron, CGAL::dynamic_face_property_t<bool> >::type
+            si_pmap = r_domain_.self_intersections_pmap_.get();
+
+          self_intersection = get(si_pmap, fd);
+        }
+
         // intersection may be either a point or a segment
         if ( const Bare_point* p_intersect_pt =
              boost::get<Bare_point>( &(intersection->first) ) )
@@ -464,7 +489,8 @@ public:
           return Intersection(*p_intersect_pt,
                               r_domain_.index_from_surface_patch_index(
                                 r_domain_.make_surface_index(primitive_id)),
-                              2);
+                              2,
+                              self_intersection);
         }
         else if ( const Segment_3* p_intersect_seg =
                   boost::get<Segment_3>(&(intersection->first)))
@@ -474,7 +500,8 @@ public:
           return Intersection(p_intersect_seg->source(),
                               r_domain_.index_from_surface_patch_index(
                                 r_domain_.make_surface_index(primitive_id)),
-                              2);
+                              2,
+                              self_intersection);
         }
         else {
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
@@ -624,6 +651,10 @@ private:
   //random number generator for Construct_initial_points
   CGAL::Random* p_rng_;
   bool delete_rng_;
+
+  //property map storing whether support polyhedron facets
+  //take part into a self-intersection of the domain
+  boost::optional<SIMap> self_intersections_pmap_;
 
 public:
 

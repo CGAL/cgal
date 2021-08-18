@@ -313,6 +313,7 @@ public:
       surface_index_table_[i] = rhs.surface_index_table_[i];
       surface_center_table_[i]= rhs.surface_center_table_[i];
       surface_center_index_table_[i] = rhs.surface_center_index_table_[i];
+      self_intersections_table_[i] = rhs.self_intersections_table_[i];
     }
   }
 
@@ -575,6 +576,17 @@ public:
     return ( !( Surface_patch_index() == surface_index_table_[facet] ));
   }
 
+  void set_facet_on_self_intersection(const int facet, const bool b)
+  {
+    CGAL_precondition(facet >= 0 && facet < 4);
+    self_intersections_table_[facet] = b;
+  }
+  bool is_facet_on_self_intersection(const int facet) const
+  {
+    CGAL_precondition(facet >= 0 && facet < 4);
+    return self_intersections_table_[facet];
+  }
+
   // -----------------------------------
   // Backward Compatibility
   // -----------------------------------
@@ -637,6 +649,10 @@ private:
   /// Stores surface center of each facet of the cell
   std::array<Point_3, 4> surface_center_table_ = {};
   /// Stores surface center index of each facet of the cell
+  std::array<Index, 4> surface_center_index_table_ = {};
+  /// Stores whether a facet has its surface center on a facet involved
+  /// in self-intersections
+  std::array<bool, 4> self_intersections_table_ = {};
 
   std::array<Cell_handle, 4> N;
   std::array<Vertex_handle, 4> V;
@@ -646,7 +662,6 @@ private:
 #endif
   std::size_t time_stamp_;
 
-  std::array<Index, 4> surface_center_index_table_ = {};
   /// Stores visited facets (4 first bits)
 
   //  Point_container _hidden;

@@ -1678,9 +1678,13 @@ compute_facet_properties(const Facet& facet,
           r_oracle_.surface_patch_index(std::get<1>(intersect)));
       if(surface)
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-      fp =  Facet_properties(std::make_tuple(*surface,
-                                    std::get<1>(intersect),
-                                    std::get<0>(intersect)));
+      {
+        fp =  Facet_properties(std::make_tuple(*surface,
+                                      std::get<1>(intersect),
+                                      std::get<0>(intersect)));
+        facet.first->set_facet_on_self_intersection(facet.second,
+                                                    std::get<3>(intersect));
+      }
     }
   }
   // If the dual is a ray
@@ -1720,6 +1724,8 @@ compute_facet_properties(const Facet& facet,
         fp = Facet_properties(std::make_tuple(*surface,
                                       std::get<1>(intersect),
                                       std::get<0>(intersect)));
+        facet.first->set_facet_on_self_intersection(facet.second,
+                                                    std::get<3>(intersect));
       }
     }
   }

@@ -644,13 +644,59 @@ public:
 
 };  // end class Facet_criterion_visitor
 
-
-
 template <typename Tr>
-class Facet_criterion_visitor_with_features
+class Facet_criterion_visitor_with_self_intersections
   : public Mesh_3::Criterion_visitor<Tr, typename Tr::Facet>
 {
   typedef Mesh_3::Criterion_visitor<Tr, typename Tr::Facet> Base;
+  typedef Facet_criterion_visitor_with_self_intersections<Tr> Self;
+
+public:
+  typedef Mesh_3::Abstract_criterion<Tr, Self> Criterion;
+  typedef typename Base::Quality Facet_quality;
+  typedef typename Base::Is_bad  Is_facet_bad;
+  typedef typename Base::Handle Handle;
+  typedef Handle Facet;
+
+  // Constructor
+  Facet_criterion_visitor_with_self_intersections(const Tr& tr, const Facet& f)
+    : Base(tr, f)
+    , has_self_intersections_(false)
+  {
+    if (f.first->is_facet_on_self_intersection(f.second))
+      has_self_intersections_ = true;
+    else
+    {
+      const Facet& mf = tr.mirror_facet(f);
+      if(mf.first->is_facet_on_self_intersection(mf.second))
+        has_self_intersections_ = true;
+    }
+  }
+
+  // Destructor
+  ~Facet_criterion_visitor_with_self_intersections() {}
+
+  using Base::do_visit;
+
+  void visit(const Criterion& criterion)
+  {
+    if (has_self_intersections_)
+    {
+      Base::increment_counter();
+      return;
+    }
+    Base::do_visit(criterion);
+  }
+
+private:
+  bool has_self_intersections_;
+};//end class Facet_criterion_visitor_with_self_intersections
+
+template <typename Tr>
+class Facet_criterion_visitor_with_features
+  : public Facet_criterion_visitor<Tr>
+{
+  typedef Facet_criterion_visitor<Tr> Base;
   typedef Facet_criterion_visitor_with_features<Tr> Self;
 
   typedef typename Tr::Geom_traits  Gt;
