@@ -208,13 +208,15 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpCorners(bool input_di
 
         boost::property_map<FaceGraph, CGAL::vertex_is_feature_t>::type vif
                 = get(CGAL::vertex_is_feature, *pMesh);
-        boost::graph_traits<FaceGraph>::vertex_descriptor v = *vertices(*pMesh).begin();
 
         PMP::detect_sharp_corners(angle,vif,*pMesh);
         std::size_t sharp_corners = 0;
-        if(get(vif,v) && v != *vertices(*pMesh).end())
+        for (boost::graph_traits<FaceGraph>::vertex_descriptor v : vertices(*pMesh))
+        {
+          if (get(vif, v) && v != *vertices(*pMesh).end())
             ++sharp_corners;
-        v++;
+        }
+        std::cout << sharp_corners << " sharp corners" << std::endl;
 
         //update item
         item->setItemIsMulticolor(true);
