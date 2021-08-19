@@ -60,8 +60,9 @@ template <typename Kernel>
 class Arr_segment_traits_2 : public Kernel {
 public:
 
-  /// \name Types
-  /// @{
+  //! \name Types
+  //! @{
+
   //! the segment type.
   typedef typename Kernel::Segment_2            Segment_2;
 
@@ -71,23 +72,23 @@ public:
   //! the point type.
   typedef typename Kernel::Point_2              Point_2;
 
-  /// @}
+  //! @}
 
   /*! The `X_monotone_curve_2` class nested within the traits class is
    * used to represent segments.
    */
   class X_monotone_curve_2 {
   public:
-    /// \name Creation
-    /// @{
+    //! \name Creation
+    //! @{
 
     /*! constructs default. */
     X_monotone_curve_2();
 
-    /// @}
+    //! @}
 
-    /// \name Access Functions
-    /// @{
+    //! \name Access Functions
+    //! @{
 
     //! obtains the (lexicographically) left endpoint.
     const Point_2& left() const;
@@ -104,7 +105,7 @@ public:
     //! determines whether the curve is directed lexicographic from left to right
     bool is_directed_right() const;
 
-    /// @}
+    //! @}
   };
 
   //! The curve type.
@@ -112,8 +113,8 @@ public:
 
   Class Trim_2 {
   public:
-    /// \name Creation
-    /// @{
+    //! \name Creation
+    //! @{
 
     /*! trims the given x-monotone curve to an from src to tgt.
      * \ pre `src` and `tgt` lies on the curve
@@ -121,7 +122,7 @@ public:
     X_monotone_curve_2(const X_monotone_curve_2& xcv,
                        const Point_2& src, const Point_2& tgt) const;
 
-    /// @}
+    //! @}
   } /* end Arr_segment_traits_2::Trim_2 */
 
 }; /* end Arr_segment_traits_2 */
