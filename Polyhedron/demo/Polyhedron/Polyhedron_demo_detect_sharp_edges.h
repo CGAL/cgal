@@ -44,7 +44,7 @@ namespace CGAL
     // Detect corners in current polyhedron
     typename boost::property_map<Polyhedron,vertex_is_feature_t>::type vif =
         get(CGAL::vertex_is_feature, *pMesh);
-    CGAL::Polygon_mesh_processing::detect_sharp_corners(angle, vif,*pMesh);
+    CGAL::Polygon_mesh_processing::detect_sharp_corners(*pMesh, angle, vif);
   }
 
 }//end namespace CGAL

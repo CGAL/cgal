@@ -77,18 +77,21 @@ is_sharp_corner(const typename boost::graph_traits<PolygonMesh>::halfedge_descri
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+  namespace PMP = CGAL::Polygon_mesh_processing;
 
   typename GetVertexPointMap<PolygonMesh,NamedParameters>::const_type
-                             vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+            vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                    get_const_property_map(CGAL::vertex_point, polygonMesh));
   typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
 
   edge_descriptor e1 = edge(he,polygonMesh);
   edge_descriptor e2 = edge(next(he,polygonMesh),polygonMesh);
 
-  const FT a = CGAL::Polygon_mesh_processing::edge_length(e1,polygonMesh);
-  const FT b = CGAL::Polygon_mesh_processing::edge_length(e2,polygonMesh);
-  const FT c = CGAL::approximate_sqrt(CGAL::squared_distance(get(vpm, source(e1, polygonMesh)),get(vpm, target(e2, polygonMesh))));
+  const FT a = PMP::edge_length(e1, polygonMesh, np);
+  const FT b = PMP::edge_length(e2, polygonMesh, np);
+  const FT c = CGAL::approximate_sqrt(
+                CGAL::squared_distance(get(vpm, source(e1, polygonMesh)),
+                                       get(vpm, target(e2, polygonMesh))));
   const FT edge_cosine = (CGAL::square(a)+CGAL::square(b)-CGAL::square(c))/(2*a*b);
 
   if ( edge_cosine <= cos_angle )
@@ -253,22 +256,15 @@ template<typename GT,
 }
 
 
-template<typename GT,
+template<typename PolygonMesh,
          typename FT,
-         typename PolygonMesh,
          typename VIFMap,
-         typename ECMap>
+         typename NamedParameters>
 void sharp_corner_call(const PolygonMesh& pmesh,
-                       FT angle_in_deg,
+                       const FT& angle_in_deg,
                        VIFMap vertex_is_feature_map,
-                       ECMap ecmap)
+                       const NamedParameters& np)
 {
-  // Initialize edges
-  for(typename boost::graph_traits<PolygonMesh>::edge_descriptor ed :
-               edges(pmesh))
-  {
-    put(ecmap, ed, 0);
-  }
   FT cos_angle ( std::cos(CGAL::to_double(angle_in_deg) * CGAL_PI / 180.) );
 
   // Detect sharp corners
@@ -276,39 +272,13 @@ void sharp_corner_call(const PolygonMesh& pmesh,
   {
     typename boost::graph_traits<PolygonMesh>::halfedge_descriptor he = halfedge(ed,pmesh);
     if(angle_in_deg != FT(180)
-      && internal::is_sharp_corner(he,cos_angle,pmesh,parameters::all_default()))
-    {
-      put(vertex_is_feature_map, source(he, pmesh), true);
-      put(ecmap, edge(he,pmesh), get(ecmap, edge(he,pmesh))+1);
-    }
-  }
-}
-
-
-template<typename GT,
-         typename FT,
-         typename PolygonMesh,
-         typename VIFMap>
- void sharp_corner_call(const PolygonMesh& pmesh,
-                        FT& angle_in_deg,
-                        VIFMap vertex_is_feature_map,
-                        const internal_np::Param_not_found&)
-{
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor     edge_descriptor;
-
-  FT cos_angle ( std::cos(CGAL::to_double(angle_in_deg) * CGAL_PI / 180.) );
-
-  // Detect sharp corners
-  for(edge_descriptor ed : edges(pmesh))
-  {
-    halfedge_descriptor he = halfedge(ed,pmesh);
-    if(angle_in_deg != FT(180) && internal::is_sharp_corner(he,cos_angle,pmesh,parameters::all_default()))
+      && internal::is_sharp_corner(he,cos_angle,pmesh,np))
     {
       put(vertex_is_feature_map, source(he, pmesh), true);
     }
   }
 }
+
 } //end internal
 
 /*!
@@ -375,7 +345,11 @@ void detect_sharp_edges(PolygonMesh& pmesh,
 }
 
 
-/*
+/*!
+* \ingroup PMP_detect_features_grp
+* \todo write documentation
+*
+* named parameters : vertex_point_map
 */
 #ifdef DOXYGEN_RUNNING
 template <typename PolygonMesh, typename FT,
@@ -383,22 +357,16 @@ template <typename PolygonMesh, typename FT,
 #else
 template <typename PolygonMesh, typename VertexIsFeatureMap, typename NamedParameters>
 #endif
-void detect_sharp_corners(
+void detect_sharp_corners(const PolygonMesh& pmesh,
 #ifdef DOXYGEN_RUNNING
-    FT angle_in_deg,
+    const FT& angle_in_deg,
 #else
-    typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT angle_in_deg,
+    const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT& angle_in_deg,
 #endif
     VertexIsFeatureMap vertex_is_feature_map,
-    const PolygonMesh& pmesh,
     const NamedParameters& np)
 {
-  //extract types from named NPs
-  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
-  typedef typename GT::FT                      FT;
-
-  internal::sharp_corner_call<GT, FT>(pmesh, angle_in_deg,vertex_is_feature_map,
-                                      parameters::get_parameter(np,internal_np::edge_is_constrained));
+  internal::sharp_corner_call(pmesh, angle_in_deg, vertex_is_feature_map, np);
 }
 
 
@@ -592,11 +560,11 @@ void detect_sharp_edges(PolygonMesh& p,
 }
 
 template<typename PolygonMesh, typename VertexIsFeatureMap, typename FT>
-void detect_sharp_corners(FT angle_in_deg,
-                          VertexIsFeatureMap vertex_is_feature_map,
-                          const PolygonMesh& p)
+void detect_sharp_corners(const PolygonMesh& p,
+                          const FT& angle_in_deg,
+                          VertexIsFeatureMap vertex_is_feature_map)
 {
-  detect_sharp_corners(angle_in_deg, vertex_is_feature_map, p,
+  detect_sharp_corners(p, angle_in_deg, vertex_is_feature_map,
                        parameters::all_default());
 }
 

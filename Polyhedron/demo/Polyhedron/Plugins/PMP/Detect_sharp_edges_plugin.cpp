@@ -209,7 +209,7 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpCorners(bool input_di
         boost::property_map<FaceGraph, CGAL::vertex_is_feature_t>::type vif
                 = get(CGAL::vertex_is_feature, *pMesh);
 
-        PMP::detect_sharp_corners(angle,vif,*pMesh);
+        PMP::detect_sharp_corners(*pMesh, angle, vif);
         std::size_t sharp_corners = 0;
         for (boost::graph_traits<FaceGraph>::vertex_descriptor v : vertices(*pMesh))
         {
