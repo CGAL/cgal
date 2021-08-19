@@ -237,7 +237,7 @@ void Scene_tetrahedra_item::computeElements()const
     d->draw_triangle(pb, pc, pd, color);
   }
   d->positions_size = d->positions.size();
-  for(int i = 0; i< tmp_min.size(); ++i)
+  for(std::size_t i = 0; i< tmp_min.size(); ++i)
   {
     float min = tmp_min[i]/(d->extrema[0][1]-d->extrema[0][0]) - d->extrema[0][0]/(d->extrema[0][1]-d->extrema[0][0]);
     float max = tmp_max[i]/(d->extrema[1][1]-d->extrema[1][0]) - d->extrema[1][0]/(d->extrema[1][1]-d->extrema[1][0]);
